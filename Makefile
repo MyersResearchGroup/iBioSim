@@ -1,12 +1,12 @@
 #Makefile for tools
 
-GENENET_EXE = bin/GeneNet_fake
+all: geneNet Reb2Sac
 
-
-all: $(GENENET_EXE)
-
-$(GENENET_EXE):
+geneNet:
 	make -C GeneNet
+
+Reb2Sac:
+	cd reb2sac; ./install-reb2sac-linux.sh
 
 .PHONY: clean
 
