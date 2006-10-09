@@ -1,0 +1,117 @@
+<?xml version="1.0"?>
+
+<!-- Comments are just as important in buildfiles, do -->
+<!-- not avoid writing them! -->
+<project name="gui" default="all" basedir=".">
+
+    <!-- Project-wide settings.  All directories are relative to the -->
+    <!-- project directories -->
+    <property name="src.dir" value="./src"/>
+    <property name="doc.dir" value="./doc"/>
+    <property name="lib.dir" value="./lib"/>
+    <property name="dist.dir" value="./dist"/>
+    <property name="bin.dir" value="./bin"/>
+    
+    <!-- Build directories -->
+    <property name="build.dir" value="./build"/>
+    <property name="build.classes" value="${build.dir}/classes"/>
+    <property name="build.lib" value="${build.dir}/lib"/>
+    
+    <!-- Global settings -->
+    <property name="debug.flag" value="on"/>
+
+    <!-- Classpath -->
+    <path id="classpath">
+         <fileset dir="${lib.dir}">
+            <include name="jcommon-1.0.4.jar"/>
+	    <include name="jfreechart-1.0.1.jar"/>
+            <include name="libsbml/lib/libsbmlj.jar"/>
+         </fileset>
+         <pathelement path="${build_dir}"/>
+     </path>
+    
+    <!-- default task -->		
+    <target name="all" depends="pre-clean,deploy,build,post-clean">
+    </target>
+
+    <!-- executes the gui -->
+    <target name="exe" depends="deploy,build">
+	<exec executable="${bin.dir}/gui"/>
+    </target>
+
+    <!-- Prepare the temporary directories for -->
+    <!-- the start of the build. These can usually -->
+    <!-- be deleted afterwards. -->
+    <target name="init">
+      <mkdir dir="${build.classes}"/>
+      <mkdir dir="${build.dir}"/>
+      <mkdir dir="${build.lib}"/>
+      <mkdir dir="${doc.dir}/api"/>
+
+      <!-- Set the internal value for current time -->
+      <!-- These can be referenced in an echo... -->
+      <tstamp/>
+
+      <!-- ...like here! -->
+      <echo message="${TSTAMP}"/>
+     
+    </target>
+    
+    <!-- Build the GUI -->
+    <target name="build" depends="init">
+        <javac destdir="${build.classes}"
+               debug="${debug.flag}"
+               deprecation="on"
+		   classpathref="classpath">
+          <src path="${src.dir}"/>
+	  </javac>	
+        <jar jarfile="${build.lib}/gui.jar" basedir="${build.classes}">
+	    <manifest>
+		<attribute name="Main-Class" value="biomodelsim.core.gui.BioModelSim"/>
+		<attribute name="Class-Path" value="${basedir}/lib/jcommon-1.0.4.jar ${basedir}/lib/jfreechart-1.0.1.jar ${basedir}/lib/libsbml/lib/libsbmlj.jar"/>
+      	    </manifest>
+	</jar>
+    </target>
+ 
+    <!-- Deploy  -->
+    <target name="deploy" depends="build,javadoc">
+        <!-- Create the distribution directory -->        
+        <mkdir dir="${dist.dir}"/>
+        <mkdir dir="${dist.dir}/lib"/>
+        <mkdir dir="${dist.dir}/doc"/>
+
+        <!-- Copy the primary program and modules -->                
+        <copy todir="${dist.dir}/lib">
+          <fileset dir="${build.lib}" includes="*.jar"/>
+        </copy>       
+
+        <!-- Copy the documentation -->        
+        <copy todir="${dist.dir}/doc">
+          <fileset dir="${doc.dir}"/>
+        </copy>        
+    </target>
+
+    <!-- Generate the API documentation -->
+    <target name="javadoc" depends="build">
+      <mkdir dir="${doc.dir}/api"/>
+      <javadoc packagenames="*.*"
+               sourcepath="${src.dir}"
+               destdir="${doc.dir}/api"
+               author="true"
+               version="true"
+               use="true" />
+    </target>
+
+    <!-- Delete classfiles built during previous builds.  Leave directories -->
+    <target name="pre-clean">
+	<delete dir="${build.dir}"/>
+        <delete dir="${doc.dir}"/>
+    </target>
+
+    <!-- Delete build files after build is done.  Leave directories -->
+    <target name="post-clean">
+        <delete dir="${build.dir}"/>
+	<delete dir="${doc.dir}"/>
+    </target>
+
+</project>
