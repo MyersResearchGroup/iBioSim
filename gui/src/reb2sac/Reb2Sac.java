@@ -5,6 +5,7 @@ import java.util.*;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+
 import org.sbml.libsbml.*;
 import biomodelsim.core.gui.*;
 import buttons.core.gui.*;
@@ -194,17 +195,21 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 
 	private Log log; // the log
 
+	private JTabbedPane simTab; // the simulation tab
+
 	/**
 	 * This is the constructor for the GUI. It initializes all the input fields,
 	 * puts them on panels, adds the panels to the frame, and then displays the
 	 * GUI.
 	 */
-	public Reb2Sac(String sbmlFile, String root, BioModelSim biomodelsim, String simName, Log log) {
+	public Reb2Sac(String sbmlFile, String root, BioModelSim biomodelsim, String simName, Log log,
+			JTabbedPane simTab, String open) {
 		this.biomodelsim = biomodelsim;
 		this.sbmlFile = sbmlFile;
 		this.root = root;
 		this.simName = simName;
 		this.log = log;
+		this.simTab = simTab;
 
 		/*
 		 * // Creates a new frame frame = new JFrame("reb2sac GUI"); // Makes it
@@ -770,6 +775,31 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 		// mainPanel.add(browseHolder, "North");
 		this.add(tab, "Center");
 		this.add(runHolder, "South");
+		SBMLReader reader = new SBMLReader();
+		SBMLDocument document = reader.readSBML(sbmlFile);
+		Model model = document.getModel();
+		ArrayList<String> listOfSpecs = new ArrayList<String>();
+		if (model != null) {
+			ListOf listOfSpecies = model.getListOfSpecies();
+			for (int i = 0; i < model.getNumSpecies(); i++) {
+				Species species = (Species) listOfSpecies.get(i);
+				listOfSpecs.add(species.getName());
+			}
+		}
+		Object[] list = listOfSpecs.toArray();
+		intSpecies.setListData(list);
+		termCond.setListData(list);
+		statesSpecs.setListData(list);
+		int rem = availSpecies.getItemCount();
+		for (int i = 0; i < rem; i++) {
+			availSpecies.removeItemAt(0);
+		}
+		for (int i = 0; i < list.length; i++) {
+			availSpecies.addItem(((String) list[i]).replace(" ", "_"));
+		}
+		if (open != null) {
+			open(open);
+		}
 
 		// Packs the frame and displays it
 		/*
@@ -1162,7 +1192,7 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 			try {
 				time = Double.parseDouble(this.time.getText().trim());
 			} catch (Exception e1) {
-				JOptionPane.showMessageDialog(this, "You must enter a double "
+				JOptionPane.showMessageDialog(biomodelsim.frame(), "You must enter a double "
 						+ "into the time text field!", "Time Must Be A Double",
 						JOptionPane.ERROR_MESSAGE);
 				return;
@@ -1170,7 +1200,7 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 			try {
 				mod = Integer.parseInt(ssaModNum.getText().trim());
 			} catch (Exception e1) {
-				JOptionPane.showMessageDialog(this, "You must enter an integer "
+				JOptionPane.showMessageDialog(biomodelsim.frame(), "You must enter an integer "
 						+ "into the amount change text field!", "Amount Change Must Be An Integer",
 						JOptionPane.ERROR_MESSAGE);
 				return;
@@ -1188,8 +1218,9 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 				modify = "/";
 			}
 			if (availSpecies.getSelectedItem() == null) {
-				JOptionPane.showMessageDialog(this, "You must select a model for simulation "
-						+ "in order to add a user defined condition.",
+				JOptionPane.showMessageDialog(biomodelsim.frame(),
+						"You must select a model for simulation "
+								+ "in order to add a user defined condition.",
 						"Select A Model For Simulation", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
@@ -1279,7 +1310,7 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 				ssaAddPanel.add(ssaAddPanel1, "North");
 				ssaAddPanel.add(ssaAddPanel2, "Center");
 				String[] options = { "Save", "Cancel" };
-				int value = JOptionPane.showOptionDialog(this, ssaAddPanel,
+				int value = JOptionPane.showOptionDialog(biomodelsim.frame(), ssaAddPanel,
 						"Edit User Defined Data", JOptionPane.YES_NO_OPTION,
 						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 				if (value == JOptionPane.YES_OPTION) {
@@ -1288,17 +1319,20 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 					try {
 						time1 = Double.parseDouble(time.getText().trim());
 					} catch (Exception e1) {
-						JOptionPane.showMessageDialog(this, "You must enter a double "
-								+ "into the time text field!", "Time Must Be A Double",
-								JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(biomodelsim.frame(),
+								"You must enter a double " + "into the time text field!",
+								"Time Must Be A Double", JOptionPane.ERROR_MESSAGE);
 						return;
 					}
 					try {
 						mod1 = Integer.parseInt(ssaModNum.getText().trim());
 					} catch (Exception e1) {
-						JOptionPane.showMessageDialog(this, "You must enter an integer "
-								+ "into the amount change text field!",
-								"Amount Change Must Be An Integer", JOptionPane.ERROR_MESSAGE);
+						JOptionPane
+								.showMessageDialog(biomodelsim.frame(),
+										"You must enter an integer "
+												+ "into the amount change text field!",
+										"Amount Change Must Be An Integer",
+										JOptionPane.ERROR_MESSAGE);
 						return;
 					}
 					String modify;
@@ -1314,7 +1348,7 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 						modify = "/";
 					}
 					if (availSpecies.getSelectedItem() == null) {
-						JOptionPane.showMessageDialog(this,
+						JOptionPane.showMessageDialog(biomodelsim.frame(),
 								"You must select a model for simulation "
 										+ "in order to add a user defined condition.",
 								"Select A Model For Simulation", JOptionPane.ERROR_MESSAGE);
@@ -1357,9 +1391,9 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 		else if (e.getSource() == newSSA) {
 			if (ssaChange) {
 				Object[] options = { "Save", "Cancel" };
-				int value = JOptionPane.showOptionDialog(this, "Save Changes?", "Save",
-						JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
-						options[0]);
+				int value = JOptionPane.showOptionDialog(biomodelsim.frame(), "Save Changes?",
+						"Save", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
+						options, options[0]);
 				if (value == JOptionPane.YES_OPTION) {
 					if (!ssaFile.getText().trim().equals("")) {
 						file = new File(ssaFile.getText().trim());
@@ -1371,8 +1405,8 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 					if (!filename.equals("")) {
 						if (new File(filename).exists()) {
 							Object[] options1 = { "Overwrite", "Cancel" };
-							value = JOptionPane.showOptionDialog(this, "File already exists."
-									+ " Overwrite?", "File Already Exists",
+							value = JOptionPane.showOptionDialog(biomodelsim.frame(),
+									"File already exists." + " Overwrite?", "File Already Exists",
 									JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
 									options1, options1[0]);
 							if (value == JOptionPane.YES_OPTION) {
@@ -1394,7 +1428,7 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 									out.close();
 									ssaChange = false;
 								} catch (Exception e1) {
-									JOptionPane.showMessageDialog(this,
+									JOptionPane.showMessageDialog(biomodelsim.frame(),
 											"Unable to save user defined file!",
 											"Error Saving File", JOptionPane.ERROR_MESSAGE);
 									return;
@@ -1419,7 +1453,7 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 								out.close();
 								ssaChange = false;
 							} catch (Exception e1) {
-								JOptionPane.showMessageDialog(this,
+								JOptionPane.showMessageDialog(biomodelsim.frame(),
 										"Unable to save user defined file!", "Error Saving File",
 										JOptionPane.ERROR_MESSAGE);
 								return;
@@ -1463,9 +1497,10 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 			if (!filename.equals("")) {
 				if (new File(filename).exists()) {
 					Object[] options = { "Overwrite", "Cancel" };
-					int value = JOptionPane.showOptionDialog(this, "File already exists."
-							+ " Overwrite?", "File Already Exists", JOptionPane.YES_NO_OPTION,
-							JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+					int value = JOptionPane.showOptionDialog(biomodelsim.frame(),
+							"File already exists." + " Overwrite?", "File Already Exists",
+							JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
+							options[0]);
 					if (value == JOptionPane.YES_OPTION) {
 						try {
 							FileOutputStream out = new FileOutputStream(new File(filename));
@@ -1485,7 +1520,7 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 							out.close();
 							ssaChange = false;
 						} catch (Exception e1) {
-							JOptionPane.showMessageDialog(this,
+							JOptionPane.showMessageDialog(biomodelsim.frame(),
 									"Unable to save user defined file!", "Error Saving File",
 									JOptionPane.ERROR_MESSAGE);
 						}
@@ -1509,8 +1544,9 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 						out.close();
 						ssaChange = false;
 					} catch (Exception e1) {
-						JOptionPane.showMessageDialog(this, "Unable to save user defined file!",
-								"Error Saving File", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(biomodelsim.frame(),
+								"Unable to save user defined file!", "Error Saving File",
+								JOptionPane.ERROR_MESSAGE);
 					}
 				}
 				ssaFile.setText(filename);
@@ -1527,9 +1563,9 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 			if (!openFile.equals("")) {
 				if (ssaChange) {
 					Object[] options = { "Save", "Cancel" };
-					int value = JOptionPane.showOptionDialog(this, "Save Changes?", "Save",
-							JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
-							options[0]);
+					int value = JOptionPane.showOptionDialog(biomodelsim.frame(), "Save Changes?",
+							"Save", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
+							options, options[0]);
 					if (value == JOptionPane.YES_OPTION) {
 						if (!ssaFile.getText().trim().equals("")) {
 							file = new File(ssaFile.getText().trim());
@@ -1541,10 +1577,10 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 						if (!filename.equals("")) {
 							if (new File(filename).exists()) {
 								Object[] options1 = { "Overwrite", "Cancel" };
-								value = JOptionPane.showOptionDialog(this, "File already exists."
-										+ " Overwrite?", "File Already Exists",
-										JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
-										options1, options1[0]);
+								value = JOptionPane.showOptionDialog(biomodelsim.frame(),
+										"File already exists." + " Overwrite?",
+										"File Already Exists", JOptionPane.YES_NO_OPTION,
+										JOptionPane.PLAIN_MESSAGE, null, options1, options1[0]);
 								if (value == JOptionPane.YES_OPTION) {
 									try {
 										FileOutputStream out = new FileOutputStream(new File(
@@ -1565,7 +1601,7 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 										out.close();
 										ssaChange = false;
 									} catch (Exception e1) {
-										JOptionPane.showMessageDialog(this,
+										JOptionPane.showMessageDialog(biomodelsim.frame(),
 												"Unable to save user defined file!",
 												"Error Saving File", JOptionPane.ERROR_MESSAGE);
 										return;
@@ -1590,7 +1626,7 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 									out.close();
 									ssaChange = false;
 								} catch (Exception e1) {
-									JOptionPane.showMessageDialog(this,
+									JOptionPane.showMessageDialog(biomodelsim.frame(),
 											"Unable to save user defined file!",
 											"Error Saving File", JOptionPane.ERROR_MESSAGE);
 									return;
@@ -1611,15 +1647,17 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 								getData += get;
 							}
 						} else {
-							JOptionPane.showMessageDialog(this, "Unable to load user defined file!"
-									+ "\nPlease select a valid user defined file to load.",
+							JOptionPane.showMessageDialog(biomodelsim.frame(),
+									"Unable to load user defined file!"
+											+ "\nPlease select a valid user defined file to load.",
 									"Error Loading File", JOptionPane.ERROR_MESSAGE);
 							return;
 						}
 					}
 				} catch (Exception e1) {
-					JOptionPane.showMessageDialog(this, "Unable to load user defined file!",
-							"Error Loading File", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(biomodelsim.frame(),
+							"Unable to load user defined file!", "Error Loading File",
+							JOptionPane.ERROR_MESSAGE);
 				}
 				ssaFile.setText(openFile);
 				if (!getData.equals("")) {
@@ -1916,13 +1954,15 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 		// if the add properties button is clicked
 		else if (e.getSource() == addProp) {
 			if (prop.getText().trim().equals("")) {
-				JOptionPane.showMessageDialog(this, "Enter a property into the property field!",
-						"Must Enter A Property", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(biomodelsim.frame(),
+						"Enter a property into the property field!", "Must Enter A Property",
+						JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 			if (value.getText().trim().equals("")) {
-				JOptionPane.showMessageDialog(this, "Enter a value into the value field!",
-						"Must Enter A Value", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(biomodelsim.frame(),
+						"Enter a value into the value field!", "Must Enter A Value",
+						JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 			String add = prop.getText().trim() + "=" + value.getText().trim();
@@ -2030,8 +2070,9 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 				timeLimit = Double.parseDouble(limit.getText().trim());
 			}
 		} catch (Exception e1) {
-			JOptionPane.showMessageDialog(this, "Must Enter A Double In The Time Limit Field.",
-					"Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(biomodelsim.frame(),
+					"Must Enter A Double In The Time Limit Field.", "Error",
+					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		try {
@@ -2039,8 +2080,9 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 				printInterval = Double.parseDouble(interval.getText().trim());
 			}
 		} catch (Exception e1) {
-			JOptionPane.showMessageDialog(this, "Must Enter A Double In The Print Interval Field.",
-					"Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(biomodelsim.frame(),
+					"Must Enter A Double In The Print Interval Field.", "Error",
+					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		try {
@@ -2048,8 +2090,9 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 				timeStep = Double.parseDouble(step.getText().trim());
 			}
 		} catch (Exception e1) {
-			JOptionPane.showMessageDialog(this, "Must Enter A Double In The Time Step Field.",
-					"Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(biomodelsim.frame(),
+					"Must Enter A Double In The Time Step Field.", "Error",
+					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		String useSbmlFile = sbmlFile;
@@ -2065,39 +2108,42 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 		 * "work" + File.separator + filename).exists()) { num++; filename =
 		 * "sim" + num; } dir.setText(filename);
 		 */
-		new File(root + File.separator + "work" + File.separator + outDir).mkdir();
-		SBMLReader reader = new SBMLReader();
-		SBMLDocument document = reader.readSBML(sbmlFile);
-		String[] sbml1 = sbmlFile.split(File.separator);
-		useSbmlFile = root + File.separator + "work" + File.separator + outDir + File.separator
-				+ sbml1[sbml1.length - 1];
-		try {
-			FileOutputStream out = new FileOutputStream(new File(useSbmlFile));
-			SBMLWriter writer = new SBMLWriter();
-			String doc = writer.writeToString(document);
-			byte[] output = doc.getBytes();
-			out.write(output);
-			out.close();
-		} catch (Exception e) {
-			JOptionPane.showMessageDialog(this, "Unable to copy sbml file to output location.",
-					"Error", JOptionPane.ERROR_MESSAGE);
-		}
-
+		// new File(root + File.separator + "work" + File.separator +
+		// outDir).mkdir();
+		// SBMLReader reader = new SBMLReader();
+		// SBMLDocument document = reader.readSBML(sbmlFile);
+		// String[] sbml1 = sbmlFile.split(File.separator);
+		// useSbmlFile = root + File.separator + "work" + File.separator +
+		// outDir + File.separator
+		// + sbml1[sbml1.length - 1];
+		// try {
+		// FileOutputStream out = new FileOutputStream(new File(useSbmlFile));
+		// SBMLWriter writer = new SBMLWriter();
+		// String doc = writer.writeToString(document);
+		// byte[] output = doc.getBytes();
+		// out.write(output);
+		// out.close();
+		// } catch (Exception e) {
+		// JOptionPane.showMessageDialog(this, "Unable to copy sbml file to
+		// output location.",
+		// "Error", JOptionPane.ERROR_MESSAGE);
+		// }
 		// }
 		try {
 			if (seed.isEnabled()) {
 				rndSeed = Long.parseLong(seed.getText().trim());
 			}
 		} catch (Exception e1) {
-			JOptionPane.showMessageDialog(this, "Must Enter An Integer In The Random Seed Field.",
-					"Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(biomodelsim.frame(),
+					"Must Enter An Integer In The Random Seed Field.", "Error",
+					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		try {
 			if (runs.isEnabled()) {
 				run = Integer.parseInt(runs.getText().trim());
 				if (run < 0) {
-					JOptionPane.showMessageDialog(this,
+					JOptionPane.showMessageDialog(biomodelsim.frame(),
 							"Must Enter A Positive Integer In The Runs Field."
 									+ "\nProceding With Default:  1", "Error",
 							JOptionPane.ERROR_MESSAGE);
@@ -2105,8 +2151,9 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 				}
 			}
 		} catch (Exception e1) {
-			JOptionPane.showMessageDialog(this, "Must Enter A Positive Integer In The Runs Field.",
-					"Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(biomodelsim.frame(),
+					"Must Enter A Positive Integer In The Runs Field.", "Error",
+					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		String printer_id;
@@ -2137,7 +2184,7 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 				rap1 = Double.parseDouble(rapid1.getText().trim());
 			}
 		} catch (Exception e1) {
-			JOptionPane.showMessageDialog(this, "Must Enter A Double In The Rapid"
+			JOptionPane.showMessageDialog(biomodelsim.frame(), "Must Enter A Double In The Rapid"
 					+ " Equilibrium Condition 1 Field.", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
@@ -2146,7 +2193,7 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 				rap2 = Double.parseDouble(rapid2.getText().trim());
 			}
 		} catch (Exception e1) {
-			JOptionPane.showMessageDialog(this, "Must Enter A Double In The Rapid"
+			JOptionPane.showMessageDialog(biomodelsim.frame(), "Must Enter A Double In The Rapid"
 					+ " Equilibrium Condition 2 Field.", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
@@ -2155,8 +2202,9 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 				qss = Double.parseDouble(qssa.getText().trim());
 			}
 		} catch (Exception e1) {
-			JOptionPane.showMessageDialog(this, "Must Enter A Double In The QSSA Condition Field.",
-					"Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(biomodelsim.frame(),
+					"Must Enter A Double In The QSSA Condition Field.", "Error",
+					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		try {
@@ -2164,7 +2212,7 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 				con = Integer.parseInt(maxCon.getText().trim());
 			}
 		} catch (Exception e1) {
-			JOptionPane.showMessageDialog(this, "Must Enter An Integer In The Max"
+			JOptionPane.showMessageDialog(biomodelsim.frame(), "Must Enter An Integer In The Max"
 					+ " Concentration Threshold Field.", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
@@ -2207,13 +2255,15 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 					out.close();
 					ssaChange = false;
 				} catch (Exception e1) {
-					JOptionPane.showMessageDialog(this, "Unable to save user defined file!",
-							"Error Saving File", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(biomodelsim.frame(),
+							"Unable to save user defined file!", "Error Saving File",
+							JOptionPane.ERROR_MESSAGE);
 					return;
 				}
 			} else {
-				JOptionPane.showMessageDialog(this, "You must create or load a user defined file"
-						+ " if you are using ssa!", "SSA File Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(biomodelsim.frame(),
+						"You must create or load a user defined file" + " if you are using ssa!",
+						"SSA File Error", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 		}
@@ -2331,20 +2381,21 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 			getProps.store(new FileOutputStream(new File(propName)),
 					getFilename[getFilename.length - 1].substring(0, cut) + " Properties");
 		} catch (Exception e) {
-			JOptionPane.showMessageDialog(this, "Unable to add properties to property file.",
-					"Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(biomodelsim.frame(),
+					"Unable to add properties to property file.", "Error",
+					JOptionPane.ERROR_MESSAGE);
 		}
 		int exit = runProgram.execute(useSbmlFile, sbml, dot, xhtml, this, ODE, monteCarlo, sim,
 				printer_id, printer_track_quantity, root + File.separator + "work" + File.separator
 						+ outDir, run, nary, 1, intSpecies, log, usingSSA,
-				ssaFile.getText().trim(), biomodelsim);
+				ssaFile.getText().trim(), biomodelsim, simTab);
 		if (nary.isSelected() && exit == 0) {
 			new Nary_Run(this, amountTerm, ge, gt, eq, lt, le, quantity, simulators, useSbmlFile
 					.split(File.separator), useSbmlFile, sbml, dot, xhtml, nary, ODE, monteCarlo,
 					timeLimit, printInterval, root + File.separator + "work" + File.separator
 							+ outDir, rndSeed, run, printer_id, printer_track_quantity, termCond,
 					intSpecies, rap1, rap2, qss, con, log, usingSSA, ssaFile.getText().trim(),
-					biomodelsim);
+					biomodelsim, simTab);
 		}
 		running.setCursor(null);
 		running.dispose();
@@ -2429,7 +2480,7 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 					ssaAddPanel.add(ssaAddPanel1, "North");
 					ssaAddPanel.add(ssaAddPanel2, "Center");
 					String[] options = { "Save", "Cancel" };
-					int value = JOptionPane.showOptionDialog(this, ssaAddPanel,
+					int value = JOptionPane.showOptionDialog(biomodelsim.frame(), ssaAddPanel,
 							"Edit User Defined Data", JOptionPane.YES_NO_OPTION,
 							JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 					if (value == JOptionPane.YES_OPTION) {
@@ -2438,16 +2489,17 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 						try {
 							time1 = Double.parseDouble(time.getText().trim());
 						} catch (Exception e1) {
-							JOptionPane.showMessageDialog(this, "You must enter a double "
-									+ "into the time text field!", "Time Must Be A Double",
-									JOptionPane.ERROR_MESSAGE);
+							JOptionPane.showMessageDialog(biomodelsim.frame(),
+									"You must enter a double " + "into the time text field!",
+									"Time Must Be A Double", JOptionPane.ERROR_MESSAGE);
 							return;
 						}
 						try {
 							mod1 = Integer.parseInt(ssaModNum.getText().trim());
 						} catch (Exception e1) {
-							JOptionPane.showMessageDialog(this, "You must enter an integer "
-									+ "into the amount change text field!",
+							JOptionPane.showMessageDialog(biomodelsim.frame(),
+									"You must enter an integer "
+											+ "into the amount change text field!",
 									"Amount Change Must Be An Integer", JOptionPane.ERROR_MESSAGE);
 							return;
 						}
@@ -2464,7 +2516,7 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 							modify = "/";
 						}
 						if (availSpecies.getSelectedItem() == null) {
-							JOptionPane.showMessageDialog(this,
+							JOptionPane.showMessageDialog(biomodelsim.frame(),
 									"You must select a model for simulation "
 											+ "in order to add a user defined condition.",
 									"Select A Model For Simulation", JOptionPane.ERROR_MESSAGE);
@@ -2542,8 +2594,9 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 				timeLimit = Double.parseDouble(limit.getText().trim());
 			}
 		} catch (Exception e1) {
-			JOptionPane.showMessageDialog(this, "Must Enter A Double In The Time Limit Field.",
-					"Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(biomodelsim.frame(),
+					"Must Enter A Double In The Time Limit Field.", "Error",
+					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		try {
@@ -2551,8 +2604,9 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 				printInterval = Double.parseDouble(interval.getText().trim());
 			}
 		} catch (Exception e1) {
-			JOptionPane.showMessageDialog(this, "Must Enter A Double In The Print Interval Field.",
-					"Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(biomodelsim.frame(),
+					"Must Enter A Double In The Print Interval Field.", "Error",
+					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		try {
@@ -2560,8 +2614,9 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 				timeStep = Double.parseDouble(step.getText().trim());
 			}
 		} catch (Exception e1) {
-			JOptionPane.showMessageDialog(this, "Must Enter A Double In The Time Step Field.",
-					"Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(biomodelsim.frame(),
+					"Must Enter A Double In The Time Step Field.", "Error",
+					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		outDir = root + File.separator + "work" + File.separator + simName; // dir.getText().trim();
@@ -2570,15 +2625,16 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 				rndSeed = Long.parseLong(seed.getText().trim());
 			}
 		} catch (Exception e1) {
-			JOptionPane.showMessageDialog(this, "Must Enter An Integer In The Random Seed Field.",
-					"Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(biomodelsim.frame(),
+					"Must Enter An Integer In The Random Seed Field.", "Error",
+					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		try {
 			if (runs.isEnabled()) {
 				run = Integer.parseInt(runs.getText().trim());
 				if (run < 0) {
-					JOptionPane.showMessageDialog(this,
+					JOptionPane.showMessageDialog(biomodelsim.frame(),
 							"Must Enter A Positive Integer In The Runs Field."
 									+ "\nProceding With Default:  1", "Error",
 							JOptionPane.ERROR_MESSAGE);
@@ -2586,8 +2642,9 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 				}
 			}
 		} catch (Exception e1) {
-			JOptionPane.showMessageDialog(this, "Must Enter A Positive Integer In The Runs Field.",
-					"Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(biomodelsim.frame(),
+					"Must Enter A Positive Integer In The Runs Field.", "Error",
+					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		String printer_id;
@@ -2617,7 +2674,7 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 				rap1 = Double.parseDouble(rapid1.getText().trim());
 			}
 		} catch (Exception e1) {
-			JOptionPane.showMessageDialog(this, "Must Enter A Double In The Rapid"
+			JOptionPane.showMessageDialog(biomodelsim.frame(), "Must Enter A Double In The Rapid"
 					+ " Equilibrium Condition 1 Field.", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
@@ -2626,7 +2683,7 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 				rap2 = Double.parseDouble(rapid2.getText().trim());
 			}
 		} catch (Exception e1) {
-			JOptionPane.showMessageDialog(this, "Must Enter A Double In The Rapid"
+			JOptionPane.showMessageDialog(biomodelsim.frame(), "Must Enter A Double In The Rapid"
 					+ " Equilibrium Condition 2 Field.", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
@@ -2635,8 +2692,9 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 				qss = Double.parseDouble(qssa.getText().trim());
 			}
 		} catch (Exception e1) {
-			JOptionPane.showMessageDialog(this, "Must Enter A Double In The QSSA Condition Field.",
-					"Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(biomodelsim.frame(),
+					"Must Enter A Double In The QSSA Condition Field.", "Error",
+					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		try {
@@ -2644,7 +2702,7 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 				con = Integer.parseInt(maxCon.getText().trim());
 			}
 		} catch (Exception e1) {
-			JOptionPane.showMessageDialog(this, "Must Enter An Integer In The Max"
+			JOptionPane.showMessageDialog(biomodelsim.frame(), "Must Enter An Integer In The Max"
 					+ " Concentration Threshold Field.", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
@@ -2687,13 +2745,15 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 					out.close();
 					ssaChange = false;
 				} catch (Exception e1) {
-					JOptionPane.showMessageDialog(this, "Unable to save user defined file!",
-							"Error Saving File", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(biomodelsim.frame(),
+							"Unable to save user defined file!", "Error Saving File",
+							JOptionPane.ERROR_MESSAGE);
 					return;
 				}
 			} else {
-				JOptionPane.showMessageDialog(this, "You must create or load a user defined file!",
-						"SSA File Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(biomodelsim.frame(),
+						"You must create or load a user defined file!", "SSA File Error",
+						JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 		}
@@ -2722,9 +2782,10 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 		if (!filename.equals("")) {
 			if (new File(filename).exists()) {
 				Object[] options = { "Overwrite", "Cancel" };
-				int value = JOptionPane.showOptionDialog(this, "File already exists."
-						+ " Overwrite?", "File Already Exists", JOptionPane.YES_NO_OPTION,
-						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+				int value = JOptionPane.showOptionDialog(biomodelsim.frame(),
+						"File already exists." + " Overwrite?", "File Already Exists",
+						JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
+						options[0]);
 				if (value == JOptionPane.YES_OPTION) {
 					try {
 						runProgram.createProperties(timeLimit, printInterval, timeStep, outDir,
@@ -2734,8 +2795,9 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 								ssaFile.getText().trim());
 						savedTo = filename;
 					} catch (Exception e1) {
-						JOptionPane.showMessageDialog(this, "Unable to save properties file!",
-								"Error Saving Properties", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(biomodelsim.frame(),
+								"Unable to save properties file!", "Error Saving Properties",
+								JOptionPane.ERROR_MESSAGE);
 					}
 				}
 			} else {
@@ -2746,10 +2808,254 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 							rap2, qss, con, usingSSA, ssaFile.getText().trim());
 					savedTo = filename;
 				} catch (Exception e1) {
-					JOptionPane.showMessageDialog(this, "Unable save to properties file!",
-							"Error Saving Properties", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(biomodelsim.frame(),
+							"Unable save to properties file!", "Error Saving Properties",
+							JOptionPane.ERROR_MESSAGE);
 				}
 			}
+		}
+	}
+
+	/**
+	 * Loads the simulate options.
+	 */
+	public void open(String openFile) {
+		Properties load = new Properties();
+		try {
+			if (!openFile.equals("")) {
+				load.load(new FileInputStream(new File(openFile)));
+				String selected = load.getProperty("simulation.printer");
+				if (selected.equals("tsd.printer")) {
+					tsd.setSelected(true);
+				} else if (selected.equals("csv.printer")) {
+					csv.setSelected(true);
+				} else if (selected.equals("dat.printer")) {
+					dat.setSelected(true);
+				} else {
+					_null.setSelected(true);
+				}
+				savedTo = openFile;
+				String[] getFilename = savedTo.split(File.separator);
+				int cut = 0;
+				for (int i = 0; i < getFilename[getFilename.length - 1].length(); i++) {
+					if (getFilename[getFilename.length - 1].charAt(i) == '.') {
+						cut = i;
+					}
+				}
+				String filename = "";
+				if (new File((savedTo.substring(0, savedTo.length()
+						- getFilename[getFilename.length - 1].length()))
+						+ getFilename[getFilename.length - 1].substring(0, cut) + ".sbml").exists()) {
+					filename = (savedTo.substring(0, savedTo.length()
+							- getFilename[getFilename.length - 1].length()))
+							+ getFilename[getFilename.length - 1].substring(0, cut) + ".sbml";
+				} else if (new File((savedTo.substring(0, savedTo.length()
+						- getFilename[getFilename.length - 1].length()))
+						+ getFilename[getFilename.length - 1].substring(0, cut) + ".xml").exists()) {
+					filename = (savedTo.substring(0, savedTo.length()
+							- getFilename[getFilename.length - 1].length()))
+							+ getFilename[getFilename.length - 1].substring(0, cut) + ".xml";
+				}
+				try {
+					sbmlFile = filename;
+					ArrayList<String> listOfSpecs = new ArrayList<String>();
+					SBMLReader reader = new SBMLReader();
+					SBMLDocument document = reader.readSBML(filename);
+					Model model = document.getModel();
+					if (model != null) {
+						ListOf listOfSpecies = model.getListOfSpecies();
+						for (int i = 0; i < model.getNumSpecies(); i++) {
+							Species species = (Species) listOfSpecies.get(i);
+							listOfSpecs.add(species.getName());
+						}
+					}
+					Object[] list = listOfSpecs.toArray();
+					intSpecies.setListData(list);
+					termCond.setListData(list);
+					statesSpecs.setListData(list);
+					int rem = availSpecies.getItemCount();
+					for (int i = 0; i < rem; i++) {
+						availSpecies.removeItemAt(0);
+					}
+					for (int i = 0; i < list.length; i++) {
+						availSpecies.addItem(((String) list[i]).replace(" ", "_"));
+					}
+				} catch (Exception e1) {
+				}
+				species.setListData(new Object[0]);
+				terminations.setListData(new Object[0]);
+				String check;
+				if (load.containsKey("reb2sac.abstraction.method.3.1")) {
+					check = load.getProperty("reb2sac.abstraction.method.3.1");
+					if (check.equals("kinetic-law-constants-simplifier")) {
+						none.setSelected(true);
+						Button_Enabling.enableNoneOrAbs(ODE, monteCarlo, markov, seed, seedLabel,
+								runs, runsLabel, stepLabel, step, limitLabel, limit, intervalLabel,
+								interval, simulators, simulatorsLabel, explanation, description,
+								none, intSpecies, species, spLabel, speciesLabel, addIntSpecies,
+								removeIntSpecies, rapid1, rapid2, qssa, maxCon, rapidLabel1,
+								rapidLabel2, qssaLabel, maxConLabel, usingSSA, clearIntSpecies);
+					}
+				}
+				if (load.containsKey("reb2sac.abstraction.method.2.2")) {
+					check = load.getProperty("reb2sac.abstraction.method.2.2");
+					if (check.equals("dimerization-reduction")) {
+						abstraction.setSelected(true);
+						Button_Enabling.enableNoneOrAbs(ODE, monteCarlo, markov, seed, seedLabel,
+								runs, runsLabel, stepLabel, step, limitLabel, limit, intervalLabel,
+								interval, simulators, simulatorsLabel, explanation, description,
+								none, intSpecies, species, spLabel, speciesLabel, addIntSpecies,
+								removeIntSpecies, rapid1, rapid2, qssa, maxCon, rapidLabel1,
+								rapidLabel2, qssaLabel, maxConLabel, usingSSA, clearIntSpecies);
+					} else if (check.equals("dimerization-reduction-level-assignment")) {
+						nary.setSelected(true);
+						Button_Enabling.enableNary(ODE, monteCarlo, markov, seed, seedLabel, runs,
+								runsLabel, stepLabel, step, limitLabel, limit, intervalLabel,
+								interval, simulators, simulatorsLabel, explanation, description,
+								intSpecies, species, spLabel, speciesLabel, addIntSpecies,
+								removeIntSpecies, rapid1, rapid2, qssa, maxCon, rapidLabel1,
+								rapidLabel2, qssaLabel, maxConLabel, usingSSA, clearIntSpecies);
+					}
+				}
+				if (load.containsKey("ode.simulation.time.limit")) {
+					ODE.setSelected(true);
+					Button_Enabling.enableODE(seed, seedLabel, runs, runsLabel, stepLabel, step,
+							limitLabel, limit, intervalLabel, interval, simulators,
+							simulatorsLabel, explanation, description, usingSSA);
+					limit.setText(load.getProperty("ode.simulation.time.limit"));
+					interval.setText(load.getProperty("ode.simulation.print.interval"));
+					step.setText(load.getProperty("ode.simulation.time.step"));
+				} else if (load.containsKey("monte.carlo.simulation.time.limit")) {
+					monteCarlo.setSelected(true);
+					Button_Enabling.enableMonteCarlo(seed, seedLabel, runs, runsLabel, stepLabel,
+							step, limitLabel, limit, intervalLabel, interval, simulators,
+							simulatorsLabel, explanation, description, usingSSA);
+					limit.setText(load.getProperty("monte.carlo.simulation.time.limit"));
+					interval.setText(load.getProperty("monte.carlo.simulation.print.interval"));
+					seed.setText(load.getProperty("monte.carlo.simulation.random.seed"));
+					runs.setText(load.getProperty("monte.carlo.simulation.runs"));
+				} else {
+					if (nary.isSelected()) {
+						markov.setSelected(true);
+						Button_Enabling.enableMarkov(seed, seedLabel, runs, runsLabel, stepLabel,
+								step, limitLabel, limit, intervalLabel, interval, simulators,
+								simulatorsLabel, explanation, description, usingSSA);
+					} else {
+						sbml.setSelected(true);
+						Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel,
+								stepLabel, step, limitLabel, limit, intervalLabel, interval,
+								simulators, simulatorsLabel, explanation, description);
+					}
+				}
+				trackingQuantity.setSelectedItem(load
+						.getProperty("simulation.printer.tracking.quantity"));
+				ArrayList<String> getLists = new ArrayList<String>();
+				int i = 1;
+				while (load.containsKey("simulation.run.termination.condition." + i)) {
+					getLists.add(load.getProperty("simulation.run.termination.condition." + i));
+					i++;
+				}
+				termConditions = getLists.toArray();
+				terminations.setListData(termConditions);
+				getLists = new ArrayList<String>();
+				i = 1;
+				while (load.containsKey("reb2sac.interesting.species." + i)) {
+					getLists.add(load.getProperty("reb2sac.interesting.species." + i));
+					i++;
+				}
+				interestingSpecies = getLists.toArray();
+				species.setListData(interestingSpecies);
+				if (load.containsKey("reb2sac.rapid.equilibrium.condition.1")) {
+					rapid1.setText(load.getProperty("reb2sac.rapid.equilibrium.condition.1"));
+				}
+				if (load.containsKey("reb2sac.rapid.equilibrium.condition.2")) {
+					rapid2.setText(load.getProperty("reb2sac.rapid.equilibrium.condition.2"));
+				}
+				if (load.containsKey("reb2sac.qssa.condition.1")) {
+					qssa.setText(load.getProperty("reb2sac.qssa.condition.1"));
+				}
+				if (load.containsKey("reb2sac.operator.max.concentration.threshold")) {
+					maxCon
+							.setText(load
+									.getProperty("reb2sac.operator.max.concentration.threshold"));
+				}
+				if (load.containsKey("simulation.time.series.species.level.file")) {
+					usingSSA.setEnabled(true);
+					ssaFileLabel.setEnabled(true);
+					ssaFile.setEnabled(true);
+					newSSA.setEnabled(true);
+					loadSSA.setEnabled(true);
+					saveSSA.setEnabled(true);
+					usingSSA.setSelected(true);
+					description.setEnabled(false);
+					explanation.setEnabled(false);
+					simulators.setEnabled(false);
+					simulatorsLabel.setEnabled(false);
+					ssaFile.setText(load.getProperty("simulation.time.series.species.level.file"));
+					String getData = "";
+					try {
+						Scanner scan = new Scanner(new File(load
+								.getProperty("simulation.time.series.species.level.file")));
+						while (scan.hasNextLine()) {
+							String get = scan.nextLine();
+							if (get.split("").length == 3) {
+								if (scan.hasNextLine()) {
+									getData += get + "\n";
+								} else {
+									getData += get;
+								}
+							}
+						}
+					} catch (Exception e1) {
+					}
+					if (!getData.equals("")) {
+						ssaList = getData.split("\n");
+					} else {
+						ssaList = new Object[0];
+					}
+					ssa.setListData(ssaList);
+					ssa.setEnabled(true);
+					timeLabel.setEnabled(true);
+					time.setEnabled(true);
+					availSpecies.setEnabled(true);
+					ssaMod.setEnabled(true);
+					ssaModNum.setEnabled(true);
+					addSSA.setEnabled(true);
+					editSSA.setEnabled(true);
+					removeSSA.setEnabled(true);
+					ODE.setEnabled(false);
+					markov.setEnabled(false);
+				} else {
+					ssaFileLabel.setEnabled(false);
+					description.setEnabled(true);
+					explanation.setEnabled(true);
+					simulators.setEnabled(true);
+					simulatorsLabel.setEnabled(true);
+					ssaFileLabel.setEnabled(false);
+					ssaFile.setEnabled(false);
+					newSSA.setEnabled(false);
+					loadSSA.setEnabled(false);
+					saveSSA.setEnabled(false);
+					usingSSA.setSelected(false);
+					ssa.setEnabled(false);
+					timeLabel.setEnabled(false);
+					time.setEnabled(false);
+					availSpecies.setEnabled(false);
+					ssaMod.setEnabled(false);
+					ssaModNum.setEnabled(false);
+					addSSA.setEnabled(false);
+					editSSA.setEnabled(false);
+					removeSSA.setEnabled(false);
+					if (!nary.isSelected()) {
+						ODE.setEnabled(true);
+					} else {
+						markov.setEnabled(true);
+					}
+				}
+			}
+		} catch (Exception e1) {
+			JOptionPane.showMessageDialog(biomodelsim.frame(), "Unable to load properties file!",
+					"Error Loading Properties", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 	/*

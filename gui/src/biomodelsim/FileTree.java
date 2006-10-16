@@ -167,6 +167,19 @@ public class FileTree extends JPanel {
 		File f;
 		ArrayList<String> files = new ArrayList<String>();
 		// Make two passes, one for Dirs and one for Files. This is #1.
+		for (int i = 0; i < current.getChildCount(); i++) {
+			boolean remove = true;
+			for (int j = 0; j < ol.size(); j++) {
+				String cur = "" + current.getChildAt(i);
+				if (cur.equals(ol.get(j))) {
+					remove = false;
+				}
+			}
+			if (remove) {
+				current.remove(i);
+				i--;
+			}
+		}
 		for (int i = 0; i < ol.size(); i++) {
 			String thisObject = (String) ol.get(i);
 			String newPath;
