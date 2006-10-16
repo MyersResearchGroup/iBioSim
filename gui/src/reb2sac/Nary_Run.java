@@ -5,6 +5,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
+
 import biomodelsim.core.gui.*;
 import buttons.core.gui.*;
 
@@ -106,6 +107,8 @@ public class Nary_Run implements ActionListener, Runnable {
 
 	private BioModelSim biomodelsim; // tstubd gui
 
+	private JTabbedPane simTab; // the simulation tab
+
 	/**
 	 * This constructs a new Nary_Run object. This object is a GUI that contains
 	 * input fields for the nary abstraction. This constructor initializes the
@@ -118,7 +121,7 @@ public class Nary_Run implements ActionListener, Runnable {
 			JRadioButton monteCarlo, double timeLimit, double printInterval, String outDir,
 			long rndSeed, int run, String printer_id, String printer_track_quantity,
 			String[] termCond, String[] intSpecies, double rap1, double rap2, double qss, int con,
-			Log log, JCheckBox usingSSA, String ssaFile, BioModelSim biomodelsim) {
+			Log log, JCheckBox usingSSA, String ssaFile, BioModelSim biomodelsim, JTabbedPane simTab) {
 		// intitializes the member variables
 		this.rap1 = rap1;
 		this.rap2 = rap2;
@@ -153,6 +156,7 @@ public class Nary_Run implements ActionListener, Runnable {
 		this.usingSSA = usingSSA;
 		this.ssaFile = ssaFile;
 		this.biomodelsim = biomodelsim;
+		this.simTab = simTab;
 
 		// creates the nary frame and adds a window listener
 		naryFrame = new JFrame("Nary Properties");
@@ -525,7 +529,7 @@ public class Nary_Run implements ActionListener, Runnable {
 				rap2, qss, con, counts, usingSSA, ssaFile);
 		runProgram.execute(filename, sbml, dot, xhtml, naryFrame, ODE, monteCarlo, sim, printer_id,
 				printer_track_quantity, outDir, run, nary, 2, intSpecies, log, usingSSA, ssaFile,
-				biomodelsim);
+				biomodelsim, simTab);
 		running.setCursor(null);
 		running.dispose();
 		naryCancel.removeActionListener(runProgram);
