@@ -79,7 +79,7 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 	 */
 	private JRadioButton ge2, gt2, eq2, le2, lt2;
 
-	private JButton run; // The run button
+	private JButton run, save; // The save and run button
 
 	// private JMenuItem newGUI; // The new menu item
 
@@ -319,6 +319,8 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 		// inputHolderRight.add(dir);
 		inputHolder.add(inputHolderLeft, "West");
 		inputHolder.add(inputHolderRight, "Center");
+		JPanel topInputHolder = new JPanel();
+		topInputHolder.add(inputHolder);
 		// dirBrowse.addActionListener(this);
 
 		// Creates the interesting species JList
@@ -429,15 +431,19 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 
 		// Creates the main tabbed panel
 		JPanel mainTabbedPanel = new JPanel(new BorderLayout());
-		mainTabbedPanel.add(inputHolder, "Center");
+		mainTabbedPanel.add(topInputHolder, "Center");
 		JPanel upperPanel = new JPanel(new BorderLayout());
 		upperPanel.add(radioButtonPanel, "North");
 		upperPanel.add(printButtonPanel, "South");
 		mainTabbedPanel.add(upperPanel, "North");
 
 		// Creates the run button
-		run = new JButton("Run");
+		run = new JButton("Save And Run");
+		save = new JButton("Save");
 		JPanel runHolder = new JPanel();
+		runHolder.add(save);
+		save.addActionListener(this);
+		save.setMnemonic(KeyEvent.VK_S);
 		runHolder.add(run);
 		run.addActionListener(this);
 		run.setMnemonic(KeyEvent.VK_R);
@@ -1061,6 +1067,8 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 		// if the Run button is clicked
 		else if (e.getSource() == run) {
 			new Thread(this).start();
+		} else if (e.getSource() == save) {
+			save();
 		}
 		/*
 		 * // if the close log menu item is clicked else if (e.getSource() ==
@@ -2095,7 +2103,6 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-		String useSbmlFile = sbmlFile;
 		// if (dir.isEnabled()) {
 		// String getDir = simName;
 		outDir = simName;
@@ -2269,14 +2276,13 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 		}
 		// logFrame.setVisible(true);
 		int cut = 0;
-		String filename = useSbmlFile;
-		String[] getFilename = filename.trim().split(File.separator);
+		String[] getFilename = sbmlFile.split(File.separator);
 		for (int i = 0; i < getFilename[getFilename.length - 1].length(); i++) {
 			if (getFilename[getFilename.length - 1].charAt(i) == '.') {
 				cut = i;
 			}
 		}
-		String propName = filename.substring(0, filename.length()
+		String propName = sbmlFile.substring(0, sbmlFile.length()
 				- getFilename[getFilename.length - 1].length())
 				+ getFilename[getFilename.length - 1].substring(0, cut) + ".properties";
 		log.addText("Creating properties file:\n" + propName + "\n");
@@ -2366,8 +2372,8 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 		 */
 		runProgram.createProperties(timeLimit, printInterval, timeStep, root + File.separator
 				+ "work" + File.separator + outDir, rndSeed, run, termCond, intSpecies, printer_id,
-				printer_track_quantity, useSbmlFile.split(File.separator), selectedButtons, this,
-				useSbmlFile, rap1, rap2, qss, con, usingSSA, ssaFile.getText().trim());
+				printer_track_quantity, sbmlFile.split(File.separator), selectedButtons, this,
+				sbmlFile, rap1, rap2, qss, con, usingSSA, ssaFile.getText().trim());
 		int[] indecies = properties.getSelectedIndices();
 		props = Buttons.getList(props, properties);
 		properties.setSelectedIndices(indecies);
@@ -2378,6 +2384,7 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 				String[] split = ((String) props[i]).split("=");
 				getProps.setProperty(split[0], split[1]);
 			}
+			getProps.setProperty("selected.simulator", sim);
 			getProps.store(new FileOutputStream(new File(propName)),
 					getFilename[getFilename.length - 1].substring(0, cut) + " Properties");
 		} catch (Exception e) {
@@ -2385,13 +2392,13 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 					"Unable to add properties to property file.", "Error",
 					JOptionPane.ERROR_MESSAGE);
 		}
-		int exit = runProgram.execute(useSbmlFile, sbml, dot, xhtml, this, ODE, monteCarlo, sim,
+		int exit = runProgram.execute(sbmlFile, sbml, dot, xhtml, this, ODE, monteCarlo, sim,
 				printer_id, printer_track_quantity, root + File.separator + "work" + File.separator
 						+ outDir, run, nary, 1, intSpecies, log, usingSSA,
 				ssaFile.getText().trim(), biomodelsim, simTab);
 		if (nary.isSelected() && exit == 0) {
-			new Nary_Run(this, amountTerm, ge, gt, eq, lt, le, quantity, simulators, useSbmlFile
-					.split(File.separator), useSbmlFile, sbml, dot, xhtml, nary, ODE, monteCarlo,
+			new Nary_Run(this, amountTerm, ge, gt, eq, lt, le, quantity, simulators, sbmlFile
+					.split(File.separator), sbmlFile, sbml, dot, xhtml, nary, ODE, monteCarlo,
 					timeLimit, printInterval, root + File.separator + "work" + File.separator
 							+ outDir, rndSeed, run, printer_id, printer_track_quantity, termCond,
 					intSpecies, rap1, rap2, qss, con, log, usingSSA, ssaFile.getText().trim(),
@@ -2758,62 +2765,40 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 			}
 		}
 		Run runProgram = new Run();
-		if (savedTo == null) {
-			if (!sbmlFile.equals("")) {
-				int cut = 0;
-				String filename = sbmlFile;
-				String[] getFilename = filename.trim().split(File.separator);
-				for (int i = 0; i < getFilename[getFilename.length - 1].length(); i++) {
-					if (getFilename[getFilename.length - 1].charAt(i) == '.') {
-						cut = i;
-					}
-				}
-				String propName = filename.substring(0, filename.length()
-						- getFilename[getFilename.length - 1].length())
-						+ getFilename[getFilename.length - 1].substring(0, cut) + ".properties";
-				file = new File(propName);
-			} else {
-				file = null;
-			}
-		} else {
-			file = new File(savedTo);
-		}
-		String filename = Buttons.browse(this, file, null, JFileChooser.FILES_ONLY, "Save");
-		if (!filename.equals("")) {
-			if (new File(filename).exists()) {
-				Object[] options = { "Overwrite", "Cancel" };
-				int value = JOptionPane.showOptionDialog(biomodelsim.frame(),
-						"File already exists." + " Overwrite?", "File Already Exists",
-						JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
-						options[0]);
-				if (value == JOptionPane.YES_OPTION) {
-					try {
-						runProgram.createProperties(timeLimit, printInterval, timeStep, outDir,
-								rndSeed, run, termCond, intSpecies, printer_id,
-								printer_track_quantity, filename.split(File.separator),
-								selectedButtons, this, filename, rap1, rap2, qss, con, usingSSA,
-								ssaFile.getText().trim());
-						savedTo = filename;
-					} catch (Exception e1) {
-						JOptionPane.showMessageDialog(biomodelsim.frame(),
-								"Unable to save properties file!", "Error Saving Properties",
-								JOptionPane.ERROR_MESSAGE);
-					}
-				}
-			} else {
-				try {
-					runProgram.createProperties(timeLimit, printInterval, timeStep, outDir,
-							rndSeed, run, termCond, intSpecies, printer_id, printer_track_quantity,
-							filename.split(File.separator), selectedButtons, this, filename, rap1,
-							rap2, qss, con, usingSSA, ssaFile.getText().trim());
-					savedTo = filename;
-				} catch (Exception e1) {
-					JOptionPane.showMessageDialog(biomodelsim.frame(),
-							"Unable save to properties file!", "Error Saving Properties",
-							JOptionPane.ERROR_MESSAGE);
-				}
+		int cut = 0;
+		String[] getFilename = sbmlFile.split(File.separator);
+		for (int i = 0; i < getFilename[getFilename.length - 1].length(); i++) {
+			if (getFilename[getFilename.length - 1].charAt(i) == '.') {
+				cut = i;
 			}
 		}
+		String propName = sbmlFile.substring(0, sbmlFile.length()
+				- getFilename[getFilename.length - 1].length())
+				+ getFilename[getFilename.length - 1].substring(0, cut) + ".properties";
+		log.addText("Creating properties file:\n" + propName + "\n");
+		runProgram.createProperties(timeLimit, printInterval, timeStep, outDir, rndSeed, run,
+				termCond, intSpecies, printer_id, printer_track_quantity, sbmlFile
+						.split(File.separator), selectedButtons, this, sbmlFile, rap1, rap2, qss,
+				con, usingSSA, ssaFile.getText().trim());
+		int[] indecies = properties.getSelectedIndices();
+		props = Buttons.getList(props, properties);
+		properties.setSelectedIndices(indecies);
+		try {
+			Properties getProps = new Properties();
+			getProps.load(new FileInputStream(new File(propName)));
+			for (int i = 0; i < props.length; i++) {
+				String[] split = ((String) props[i]).split("=");
+				getProps.setProperty(split[0], split[1]);
+			}
+			getProps.setProperty("selected.simulator", (String)simulators.getSelectedItem());
+			getProps.store(new FileOutputStream(new File(propName)),
+					getFilename[getFilename.length - 1].substring(0, cut) + " Properties");
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(biomodelsim.frame(),
+					"Unable to add properties to property file.", "Error",
+					JOptionPane.ERROR_MESSAGE);
+		}
+		biomodelsim.refreshTree();
 	}
 
 	/**
@@ -3053,6 +3038,7 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 					}
 				}
 			}
+			simulators.setSelectedItem(load.getProperty("selected.simulator"));
 		} catch (Exception e1) {
 			JOptionPane.showMessageDialog(biomodelsim.frame(), "Unable to load properties file!",
 					"Error Loading Properties", JOptionPane.ERROR_MESSAGE);

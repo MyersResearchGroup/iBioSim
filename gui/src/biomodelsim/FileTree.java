@@ -36,6 +36,7 @@ package biomodelsim.core.gui;
  */
 
 import java.awt.*;
+import java.awt.event.*;
 import java.io.*;
 import java.util.*;
 import javax.swing.*;
@@ -49,7 +50,7 @@ import javax.swing.tree.*;
  * @author Ian Darwin
  * @modified_by Curtis Madsen
  */
-public class FileTree extends JPanel {
+public class FileTree extends JPanel implements MouseListener {
 
 	private static final long serialVersionUID = -6799125543270861304L;
 
@@ -64,7 +65,7 @@ public class FileTree extends JPanel {
 	/**
 	 * Construct a FileTree
 	 */
-	public FileTree(final File dir) {
+	public FileTree(final File dir, BioModelSim biomodelsim) {
 		setLayout(new BorderLayout());
 
 		this.dir = dir;
@@ -87,6 +88,8 @@ public class FileTree extends JPanel {
 					// System.out.println("You selected " + fileLocation);
 				}
 			});
+			tree.addMouseListener(this);
+			tree.addMouseListener(biomodelsim);
 		} else {
 			tree = new JTree(new DefaultMutableTreeNode());
 		}
@@ -104,7 +107,11 @@ public class FileTree extends JPanel {
 		String curPath = dir.getPath();
 		DefaultMutableTreeNode curDir = new DefaultMutableTreeNode(dir.getName());
 		if (curTop != null) { // should only be null at root
-			curTop.add(curDir);
+			if (curTop.getParent() == null) {
+				curTop.add(curDir);
+			} else if (!(curTop.getParent().toString().equals("work"))) {
+				curTop.add(curDir);
+			}
 		} else {
 			root = curDir;
 		}
@@ -132,8 +139,13 @@ public class FileTree extends JPanel {
 				files.add(thisObject);
 		}
 		// Pass two: for files.
-		for (int fnum = 0; fnum < files.size(); fnum++)
-			curDir.add(new DefaultMutableTreeNode(files.get(fnum)));
+		for (int fnum = 0; fnum < files.size(); fnum++) {
+			if (curDir.getParent() == null) {
+				curDir.add(new DefaultMutableTreeNode(files.get(fnum)));
+			} else if (!(curDir.getParent().toString().equals("work"))) {
+				curDir.add(new DefaultMutableTreeNode(files.get(fnum)));
+			}
+		}
 		return curDir;
 	}
 
@@ -150,7 +162,11 @@ public class FileTree extends JPanel {
 			boolean add) {
 		String curPath = dir.getPath();
 		if (add) {
-			parent.add(current);
+			if (parent == null || parent.getParent() == null) {
+				parent.add(current);
+			} else if (!(parent.getParent().toString().equals("work"))) {
+				parent.add(current);
+			}
 		}
 		ArrayList<String> ol = new ArrayList<String>();
 		String[] tmp = dir.list();
@@ -218,7 +234,11 @@ public class FileTree extends JPanel {
 				}
 			}
 			if (doAdd) {
-				current.add(new DefaultMutableTreeNode(files.get(fnum)));
+				if (parent == null) {
+					current.add(new DefaultMutableTreeNode(files.get(fnum)));
+				} else if (!(parent.toString().equals("work"))) {
+					current.add(new DefaultMutableTreeNode(files.get(fnum)));
+				}
 			}
 		}
 	}
@@ -230,4 +250,38 @@ public class FileTree extends JPanel {
 	public Dimension getPreferredSize() {
 		return new Dimension(200, 400);
 	}
+
+	public void mouseClicked(MouseEvent e) {
+	}
+
+	public void mousePressed(MouseEvent e) {
+		if (!e.isPopupTrigger())
+			return;
+
+		int selRow = tree.getRowForLocation(e.getX(), e.getY());
+		if (selRow < 0)
+			return;
+
+		TreePath selPath = tree.getPathForLocation(e.getX(), e.getY());
+		tree.setSelectionPath(selPath);
+	}
+
+	public void mouseReleased(MouseEvent e) {
+		if (!e.isPopupTrigger())
+			return;
+
+		int selRow = tree.getRowForLocation(e.getX(), e.getY());
+		if (selRow < 0)
+			return;
+
+		TreePath selPath = tree.getPathForLocation(e.getX(), e.getY());
+		tree.setSelectionPath(selPath);
+	}
+
+	public void mouseEntered(MouseEvent e) {
+	}
+
+	public void mouseExited(MouseEvent e) {
+	}
+
 }
