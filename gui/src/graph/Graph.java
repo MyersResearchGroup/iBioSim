@@ -35,8 +35,6 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 	private Component component; // the main gui's component
 
-	private JMenuItem closeButton, jpeg, png, open; // menu items
-
 	/*
 	 * Buttons used in graph window
 	 */
@@ -328,34 +326,6 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			next = new JButton("View Next");
 			next.addActionListener(this);
 		}
-
-		// Creates a menu for the graph frame
-		JMenuBar menuBar = new JMenuBar();
-		JMenu fileMenu = new JMenu("File");
-		fileMenu.setMnemonic(KeyEvent.VK_F);
-		menuBar.add(fileMenu);
-		open = new JMenuItem("Open");
-		closeButton = new JMenuItem("Close");
-		jpeg = new JMenuItem("Save As JPEG");
-		png = new JMenuItem("Save As PNG");
-		open.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.ALT_MASK));
-		closeButton.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.ALT_MASK));
-		png.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, ActionEvent.ALT_MASK));
-		jpeg.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_J, ActionEvent.ALT_MASK));
-		open.setMnemonic(KeyEvent.VK_O);
-		closeButton.setMnemonic(KeyEvent.VK_C);
-		png.setMnemonic(KeyEvent.VK_P);
-		jpeg.setMnemonic(KeyEvent.VK_J);
-		open.addActionListener(this);
-		closeButton.addActionListener(this);
-		jpeg.addActionListener(this);
-		png.addActionListener(this);
-		fileMenu.add(open);
-		fileMenu.addSeparator();
-		fileMenu.add(jpeg);
-		fileMenu.add(png);
-		fileMenu.addSeparator();
-		fileMenu.add(closeButton);
 
 		// creates the buttons for the graph frame
 		JPanel ButtonHolder = new JPanel();
@@ -759,337 +729,56 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				}
 			}
 		}
-		// if the close menu item is clicked
-		else if (e.getSource() == closeButton) {
-			// graphFrame.dispose();
-		}
-		// if the open menu item is clicked
-		else if (e.getSource() == open) {
-			File file = null;
-			String filename = Buttons.browse(this, file, null, JFileChooser.FILES_ONLY, "Graph");
-			if (!filename.equals("")) {
-				try {
-					String[] split = filename.split(File.separator);
-					String last = split[split.length - 1];
-					String first = filename.substring(0, filename.length() - last.length());
-					String printer = filename.substring(filename.length() - 3);
-					String id = printer + ".printer";
-					JRadioButton button = new JRadioButton();
-					if (last.substring(0, 3).equals("run")) {
-						button.setSelected(true);
-						String get = "";
-						for (int i = 0; i < last.length(); i++) {
-							if (Character.isDigit(last.charAt(i))) {
-								get += last.charAt(i);
-							}
-						}
-						int number = Integer.parseInt(get);
-						int runs = Integer.parseInt((String) JOptionPane.showInputDialog(this,
-								"Please enter the number of output files in this simulation:",
-								"Enter Number Of Runs", JOptionPane.PLAIN_MESSAGE, null, null,
-								number));
-						int i = 0;
-						try {
-							for (i = number; i <= runs; i++) {
-								InputStream test = new FileInputStream(new File((first + "run-" + i
-										+ "." + printer)));
-								test.read();
-							}
-						} catch (Exception e2) {
-							runs = i - 1;
-						}
-						runs = Math.max(number, runs);
-						if (keep.isSelected()) {
-							XYSeriesCollection datasetReplace = new XYSeriesCollection();
-							for (int j = 0; j < boxes.size(); j++) {
-								if (boxes.get(j).isSelected()) {
-									datasetReplace.addSeries(dataset.getSeries(j));
-								}
-							}
-							dataset = datasetReplace;
-							biomodelsim.removeTab(this);
-							biomodelsim
-									.addTab("Graph", new Graph(first + "run-1." + printer,
-											component, printer_track_quantity1,
-											"read-in-data average" + " simulation results", button,
-											"read-in-data", id, first, runs, new String[0], number,
-											dataset, time, biomodelsim));
-						} else {
-							biomodelsim.removeTab(this);
-							biomodelsim.addTab("Graph", new Graph(first + "run-1." + printer,
-									component, printer_track_quantity1, "read-in-data average"
-											+ " simulation results", button, "read-in-data", id,
-									first, runs, new String[0], number, null, time, biomodelsim));
-						}
-					} else {
-						button.setSelected(false);
-						if (keep.isSelected()) {
-							XYSeriesCollection datasetReplace = new XYSeriesCollection();
-							for (int j = 0; j < boxes.size(); j++) {
-								if (boxes.get(j).isSelected()) {
-									datasetReplace.addSeries(dataset.getSeries(j));
-								}
-							}
-							dataset = datasetReplace;
-							biomodelsim.removeTab(this);
-							biomodelsim.addTab("Graph", new Graph(filename, component,
-									printer_track_quantity1, "read-in-data simulation results",
-									button, "read-in-data", id, first, 1, new String[0], -1,
-									dataset, time, biomodelsim));
-						} else {
-							biomodelsim.removeTab(this);
-							biomodelsim.addTab("Graph", new Graph(filename, component,
-									printer_track_quantity1, "read-in-data simulation results",
-									button, "read-in-data", id, first, 1, new String[0], -1, null,
-									time, biomodelsim));
-						}
-					}
-					// graphFrame.dispose();
-				} catch (Exception e1) {
-					JOptionPane.showMessageDialog(this, "Error reading in data!"
-							+ "\nFile may be named incorrectly" + " or may be invalid.", "Error",
-							JOptionPane.ERROR_MESSAGE);
-				}
-			}
-		}
-		// if the save as jpeg menu item is clicked
-		else if (e.getSource() == jpeg) {
-			try {
-				File file;
-				if (savedPics != null) {
-					file = new File(savedPics);
-				} else {
-					file = null;
-				}
-				String filename = Buttons.browse(this, file, null, JFileChooser.FILES_ONLY, "Save");
-				if (!filename.equals("")) {
-					if (filename.substring((filename.length() - 4), filename.length()).equals(
-							".jpg")
-							|| filename.substring((filename.length() - 5), filename.length())
-									.equals(".jpeg")) {
-					} else {
-						filename += ".jpg";
-					}
-					file = new File(filename);
-					if (file.exists()) {
-						Object[] options = { "Overwrite", "Cancel" };
-						int value = JOptionPane.showOptionDialog(this, "File already exists."
-								+ " Overwrite?", "File Already Exists", JOptionPane.YES_NO_OPTION,
-								JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-						if (value == JOptionPane.YES_OPTION) {
-							int width = -1;
-							int height = -1;
-							JPanel sizePanel = new JPanel(new GridLayout(2, 2));
-							JLabel heightLabel = new JLabel("Desired pixel height:");
-							JLabel widthLabel = new JLabel("Desired pixel width:");
-							JTextField heightField = new JTextField("400");
-							JTextField widthField = new JTextField("650");
-							sizePanel.add(widthLabel);
-							sizePanel.add(widthField);
-							sizePanel.add(heightLabel);
-							sizePanel.add(heightField);
-							Object[] options2 = { "Save", "Cancel" };
-							value = JOptionPane.showOptionDialog(this, sizePanel,
-									"Enter Size Of File", JOptionPane.YES_NO_OPTION,
-									JOptionPane.PLAIN_MESSAGE, null, options2, options2[0]);
-							if (value == JOptionPane.YES_OPTION) {
-								while (width == -1 || height == -1)
-									try {
-										width = Integer.parseInt(widthField.getText().trim());
-										height = Integer.parseInt(heightField.getText().trim());
-										if (width < 1 || height < 1) {
-											JOptionPane.showMessageDialog(this,
-													"Width and height must be positive integers!",
-													"Error", JOptionPane.ERROR_MESSAGE);
-											JOptionPane.showOptionDialog(this, sizePanel,
-													"Enter Size Of File",
-													JOptionPane.YES_NO_OPTION,
-													JOptionPane.PLAIN_MESSAGE, null, options2,
-													options2[0]);
-										}
-									} catch (Exception e2) {
-										JOptionPane.showMessageDialog(this,
-												"Width and height must be positive integers!",
-												"Error", JOptionPane.ERROR_MESSAGE);
-										width = -1;
-										height = -1;
-										JOptionPane.showOptionDialog(this, sizePanel,
-												"Enter Size Of File", JOptionPane.YES_NO_OPTION,
-												JOptionPane.PLAIN_MESSAGE, null, options2,
-												options2[0]);
-									}
-							}
-							ChartUtilities.saveChartAsJPEG(file, chart, width, height);
-							savedPics = filename;
-						}
-					} else {
-						int width = -1;
-						int height = -1;
-						JPanel sizePanel = new JPanel(new GridLayout(2, 2));
-						JLabel heightLabel = new JLabel("Desired pixel height:");
-						JLabel widthLabel = new JLabel("Desired pixel width:");
-						JTextField heightField = new JTextField("400");
-						JTextField widthField = new JTextField("650");
-						sizePanel.add(widthLabel);
-						sizePanel.add(widthField);
-						sizePanel.add(heightLabel);
-						sizePanel.add(heightField);
-						Object[] options2 = { "Save", "Cancel" };
-						int value = JOptionPane.showOptionDialog(this, sizePanel,
-								"Enter Size Of File", JOptionPane.YES_NO_OPTION,
-								JOptionPane.PLAIN_MESSAGE, null, options2, options2[0]);
-						if (value == JOptionPane.YES_OPTION) {
-							while (width == -1 || height == -1)
-								try {
-									width = Integer.parseInt(widthField.getText().trim());
-									height = Integer.parseInt(heightField.getText().trim());
-									if (width < 1 || height < 1) {
-										JOptionPane.showMessageDialog(this,
-												"Width and height must be positive integers!",
-												"Error", JOptionPane.ERROR_MESSAGE);
-										JOptionPane.showOptionDialog(this, sizePanel,
-												"Enter Size Of File", JOptionPane.YES_NO_OPTION,
-												JOptionPane.PLAIN_MESSAGE, null, options2,
-												options2[0]);
-									}
-								} catch (Exception e2) {
-									JOptionPane.showMessageDialog(this,
-											"Width and height must be positive integers!", "Error",
-											JOptionPane.ERROR_MESSAGE);
-									width = -1;
-									height = -1;
-									JOptionPane.showOptionDialog(this, sizePanel,
-											"Enter Size Of File", JOptionPane.YES_NO_OPTION,
-											JOptionPane.PLAIN_MESSAGE, null, options2, options2[0]);
-								}
-						}
-						ChartUtilities.saveChartAsJPEG(file, chart, width, height);
-						savedPics = filename;
-					}
-				}
-			} catch (IOException e1) {
-				JOptionPane.showMessageDialog(this, "Unable To Save File!", "Error",
-						JOptionPane.ERROR_MESSAGE);
-			}
-		}
-		// if the save as png menu item is clicked
-		else if (e.getSource() == png) {
-			try {
-				File file;
-				if (savedPics != null) {
-					file = new File(savedPics);
-				} else {
-					file = null;
-				}
-				String filename = Buttons.browse(this, file, null, JFileChooser.FILES_ONLY, "Save");
-				if (!filename.equals("")) {
-					if (filename.substring((filename.length() - 4), filename.length()).equals(
-							".png")) {
-					} else {
-						filename += ".png";
-					}
-					file = new File(filename);
-					if (file.exists()) {
-						Object[] options = { "Overwrite", "Cancel" };
-						int value = JOptionPane.showOptionDialog(this, "File already exists."
-								+ " Overwrite?", "File Already Exists", JOptionPane.YES_NO_OPTION,
-								JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-						if (value == JOptionPane.YES_OPTION) {
-							int width = -1;
-							int height = -1;
-							JPanel sizePanel = new JPanel(new GridLayout(2, 2));
-							JLabel heightLabel = new JLabel("Desired pixel height:");
-							JLabel widthLabel = new JLabel("Desired pixel width:");
-							JTextField heightField = new JTextField("400");
-							JTextField widthField = new JTextField("650");
-							sizePanel.add(widthLabel);
-							sizePanel.add(widthField);
-							sizePanel.add(heightLabel);
-							sizePanel.add(heightField);
-							Object[] options2 = { "Save", "Cancel" };
-							value = JOptionPane.showOptionDialog(this, sizePanel,
-									"Enter Size Of File", JOptionPane.YES_NO_OPTION,
-									JOptionPane.PLAIN_MESSAGE, null, options2, options2[0]);
-							if (value == JOptionPane.YES_OPTION) {
-								while (width == -1 || height == -1)
-									try {
-										width = Integer.parseInt(widthField.getText().trim());
-										height = Integer.parseInt(heightField.getText().trim());
-										if (width < 1 || height < 1) {
-											JOptionPane.showMessageDialog(this,
-													"Width and height must be positive integers!",
-													"Error", JOptionPane.ERROR_MESSAGE);
-											JOptionPane.showOptionDialog(this, sizePanel,
-													"Enter Size Of File",
-													JOptionPane.YES_NO_OPTION,
-													JOptionPane.PLAIN_MESSAGE, null, options2,
-													options2[0]);
-										}
-									} catch (Exception e2) {
-										JOptionPane.showMessageDialog(this,
-												"Width and height must be positive integers!",
-												"Error", JOptionPane.ERROR_MESSAGE);
-										width = -1;
-										height = -1;
-										JOptionPane.showOptionDialog(this, sizePanel,
-												"Enter Size Of File", JOptionPane.YES_NO_OPTION,
-												JOptionPane.PLAIN_MESSAGE, null, options2,
-												options2[0]);
-									}
-							}
-							ChartUtilities.saveChartAsJPEG(file, chart, width, height);
-							savedPics = filename;
-						}
-					} else {
-						int width = -1;
-						int height = -1;
-						JPanel sizePanel = new JPanel(new GridLayout(2, 2));
-						JLabel heightLabel = new JLabel("Desired pixel height:");
-						JLabel widthLabel = new JLabel("Desired pixel width:");
-						JTextField heightField = new JTextField("400");
-						JTextField widthField = new JTextField("650");
-						sizePanel.add(widthLabel);
-						sizePanel.add(widthField);
-						sizePanel.add(heightLabel);
-						sizePanel.add(heightField);
-						Object[] options2 = { "Save", "Cancel" };
-						int value = JOptionPane.showOptionDialog(this, sizePanel,
-								"Enter Size Of File", JOptionPane.YES_NO_OPTION,
-								JOptionPane.PLAIN_MESSAGE, null, options2, options2[0]);
-						if (value == JOptionPane.YES_OPTION) {
-							while (width == -1 || height == -1)
-								try {
-									width = Integer.parseInt(widthField.getText().trim());
-									height = Integer.parseInt(heightField.getText().trim());
-									if (width < 1 || height < 1) {
-										JOptionPane.showMessageDialog(this,
-												"Width and height must be positive integers!",
-												"Error", JOptionPane.ERROR_MESSAGE);
-										JOptionPane.showOptionDialog(this, sizePanel,
-												"Enter Size Of File", JOptionPane.YES_NO_OPTION,
-												JOptionPane.PLAIN_MESSAGE, null, options2,
-												options2[0]);
-									}
-								} catch (Exception e2) {
-									JOptionPane.showMessageDialog(this,
-											"Width and height must be positive integers!", "Error",
-											JOptionPane.ERROR_MESSAGE);
-									width = -1;
-									height = -1;
-									JOptionPane.showOptionDialog(this, sizePanel,
-											"Enter Size Of File", JOptionPane.YES_NO_OPTION,
-											JOptionPane.PLAIN_MESSAGE, null, options2, options2[0]);
-								}
-						}
-						ChartUtilities.saveChartAsJPEG(file, chart, width, height);
-						savedPics = filename;
-					}
-				}
-			} catch (IOException e1) {
-				JOptionPane.showMessageDialog(this, "Unable To Save File!", "Error",
-						JOptionPane.ERROR_MESSAGE);
-			}
-		}
+		/*
+		 * // if the open menu item is clicked else if (e.getSource() == open) {
+		 * File file = null; String filename = Buttons.browse(this, file, null,
+		 * JFileChooser.FILES_ONLY, "Graph"); if (!filename.equals("")) { try {
+		 * String[] split = filename.split(File.separator); String last =
+		 * split[split.length - 1]; String first = filename.substring(0,
+		 * filename.length() - last.length()); String printer =
+		 * filename.substring(filename.length() - 3); String id = printer +
+		 * ".printer"; JRadioButton button = new JRadioButton(); if
+		 * (last.substring(0, 3).equals("run")) { button.setSelected(true);
+		 * String get = ""; for (int i = 0; i < last.length(); i++) { if
+		 * (Character.isDigit(last.charAt(i))) { get += last.charAt(i); } } int
+		 * number = Integer.parseInt(get); int runs = Integer.parseInt((String)
+		 * JOptionPane.showInputDialog(this, "Please enter the number of output
+		 * files in this simulation:", "Enter Number Of Runs",
+		 * JOptionPane.PLAIN_MESSAGE, null, null, number)); int i = 0; try { for
+		 * (i = number; i <= runs; i++) { InputStream test = new
+		 * FileInputStream(new File((first + "run-" + i + "." + printer)));
+		 * test.read(); } } catch (Exception e2) { runs = i - 1; } runs =
+		 * Math.max(number, runs); if (keep.isSelected()) { XYSeriesCollection
+		 * datasetReplace = new XYSeriesCollection(); for (int j = 0; j <
+		 * boxes.size(); j++) { if (boxes.get(j).isSelected()) {
+		 * datasetReplace.addSeries(dataset.getSeries(j)); } } dataset =
+		 * datasetReplace; biomodelsim.removeTab(this); biomodelsim
+		 * .addTab("Graph", new Graph(first + "run-1." + printer, component,
+		 * printer_track_quantity1, "read-in-data average" + " simulation
+		 * results", button, "read-in-data", id, first, runs, new String[0],
+		 * number, dataset, time, biomodelsim)); } else {
+		 * biomodelsim.removeTab(this); biomodelsim.addTab("Graph", new
+		 * Graph(first + "run-1." + printer, component, printer_track_quantity1,
+		 * "read-in-data average" + " simulation results", button,
+		 * "read-in-data", id, first, runs, new String[0], number, null, time,
+		 * biomodelsim)); } } else { button.setSelected(false); if
+		 * (keep.isSelected()) { XYSeriesCollection datasetReplace = new
+		 * XYSeriesCollection(); for (int j = 0; j < boxes.size(); j++) { if
+		 * (boxes.get(j).isSelected()) {
+		 * datasetReplace.addSeries(dataset.getSeries(j)); } } dataset =
+		 * datasetReplace; biomodelsim.removeTab(this);
+		 * biomodelsim.addTab("Graph", new Graph(filename, component,
+		 * printer_track_quantity1, "read-in-data simulation results", button,
+		 * "read-in-data", id, first, 1, new String[0], -1, dataset, time,
+		 * biomodelsim)); } else { biomodelsim.removeTab(this);
+		 * biomodelsim.addTab("Graph", new Graph(filename, component,
+		 * printer_track_quantity1, "read-in-data simulation results", button,
+		 * "read-in-data", id, first, 1, new String[0], -1, null, time,
+		 * biomodelsim)); } } // graphFrame.dispose(); } catch (Exception e1) {
+		 * JOptionPane.showMessageDialog(this, "Error reading in data!" +
+		 * "\nFile may be named incorrectly" + " or may be invalid.", "Error",
+		 * JOptionPane.ERROR_MESSAGE); } } }
+		 */
 		// if the change dimensions button is clicked
 		else if (e.getSource() == changeSize) {
 			XYPlot plot = chart.getXYPlot();
@@ -1118,8 +807,11 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				axis.setRange(minX, maxX);
 				axis.setTickUnit(new NumberTickUnit(scaleX));
 			} catch (Exception e1) {
-				JOptionPane.showMessageDialog(this, "Must enter doubles into the inputs "
-						+ "to change the graph's dimensions!", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane
+						.showMessageDialog(biomodelsim.frame(),
+								"Must enter doubles into the inputs "
+										+ "to change the graph's dimensions!", "Error",
+								JOptionPane.ERROR_MESSAGE);
 			}
 		}
 		// if the select all button is clicked
@@ -1311,8 +1003,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		scroll.setPreferredSize(new Dimension(500, 100));
 		scroll.setViewportView(titlePanel);
 		Object[] options = { "Ok", "Cancel" };
-		int value = JOptionPane.showOptionDialog(this, scroll, "Edit Title And Labels",
-				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+		int value = JOptionPane.showOptionDialog(biomodelsim.frame(), scroll,
+				"Edit Title And Labels", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
+				null, options, options[0]);
 		if (value == JOptionPane.YES_OPTION) {
 			chart.setTitle(title.getText().trim());
 			time = x.getText().trim();
@@ -1353,5 +1046,143 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	 * This method currently does nothing.
 	 */
 	public void mouseExited(MouseEvent e) {
+	}
+
+	/**
+	 * This method saves the graph as a jpeg or as a png file.
+	 */
+	public void save(boolean jpeg) {
+		try {
+			File file;
+			if (savedPics != null) {
+				file = new File(savedPics);
+			} else {
+				file = null;
+			}
+			String filename = Buttons.browse(this, file, null, JFileChooser.FILES_ONLY, "Save");
+			if (!filename.equals("")) {
+				if (jpeg) {
+					if (filename.substring((filename.length() - 4), filename.length()).equals(
+							".jpg")
+							|| filename.substring((filename.length() - 5), filename.length())
+									.equals(".jpeg")) {
+					} else {
+						filename += ".jpg";
+					}
+				} else {
+					if (filename.substring((filename.length() - 4), filename.length()).equals(
+							".png")) {
+					} else {
+						filename += ".png";
+					}
+				}
+				file = new File(filename);
+				if (file.exists()) {
+					Object[] options = { "Overwrite", "Cancel" };
+					int value = JOptionPane.showOptionDialog(biomodelsim.frame(),
+							"File already exists." + " Overwrite?", "File Already Exists",
+							JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
+							options[0]);
+					if (value == JOptionPane.YES_OPTION) {
+						int width = -1;
+						int height = -1;
+						JPanel sizePanel = new JPanel(new GridLayout(2, 2));
+						JLabel heightLabel = new JLabel("Desired pixel height:");
+						JLabel widthLabel = new JLabel("Desired pixel width:");
+						JTextField heightField = new JTextField("400");
+						JTextField widthField = new JTextField("650");
+						sizePanel.add(widthLabel);
+						sizePanel.add(widthField);
+						sizePanel.add(heightLabel);
+						sizePanel.add(heightField);
+						Object[] options2 = { "Save", "Cancel" };
+						value = JOptionPane.showOptionDialog(biomodelsim.frame(), sizePanel,
+								"Enter Size Of File", JOptionPane.YES_NO_OPTION,
+								JOptionPane.PLAIN_MESSAGE, null, options2, options2[0]);
+						if (value == JOptionPane.YES_OPTION) {
+							while (width == -1 || height == -1)
+								try {
+									width = Integer.parseInt(widthField.getText().trim());
+									height = Integer.parseInt(heightField.getText().trim());
+									if (width < 1 || height < 1) {
+										JOptionPane.showMessageDialog(biomodelsim.frame(),
+												"Width and height must be positive integers!",
+												"Error", JOptionPane.ERROR_MESSAGE);
+										JOptionPane.showOptionDialog(biomodelsim.frame(),
+												sizePanel, "Enter Size Of File",
+												JOptionPane.YES_NO_OPTION,
+												JOptionPane.PLAIN_MESSAGE, null, options2,
+												options2[0]);
+									}
+								} catch (Exception e2) {
+									JOptionPane.showMessageDialog(biomodelsim.frame(),
+											"Width and height must be positive integers!", "Error",
+											JOptionPane.ERROR_MESSAGE);
+									width = -1;
+									height = -1;
+									JOptionPane.showOptionDialog(biomodelsim.frame(), sizePanel,
+											"Enter Size Of File", JOptionPane.YES_NO_OPTION,
+											JOptionPane.PLAIN_MESSAGE, null, options2, options2[0]);
+								}
+						}
+						if (jpeg) {
+							ChartUtilities.saveChartAsJPEG(file, chart, width, height);
+						} else {
+							ChartUtilities.saveChartAsPNG(file, chart, width, height);
+						}
+						savedPics = filename;
+					}
+				} else {
+					int width = -1;
+					int height = -1;
+					JPanel sizePanel = new JPanel(new GridLayout(2, 2));
+					JLabel heightLabel = new JLabel("Desired pixel height:");
+					JLabel widthLabel = new JLabel("Desired pixel width:");
+					JTextField heightField = new JTextField("400");
+					JTextField widthField = new JTextField("650");
+					sizePanel.add(widthLabel);
+					sizePanel.add(widthField);
+					sizePanel.add(heightLabel);
+					sizePanel.add(heightField);
+					Object[] options2 = { "Save", "Cancel" };
+					int value = JOptionPane.showOptionDialog(biomodelsim.frame(), sizePanel,
+							"Enter Size Of File", JOptionPane.YES_NO_OPTION,
+							JOptionPane.PLAIN_MESSAGE, null, options2, options2[0]);
+					if (value == JOptionPane.YES_OPTION) {
+						while (width == -1 || height == -1)
+							try {
+								width = Integer.parseInt(widthField.getText().trim());
+								height = Integer.parseInt(heightField.getText().trim());
+								if (width < 1 || height < 1) {
+									JOptionPane.showMessageDialog(biomodelsim.frame(),
+											"Width and height must be positive integers!", "Error",
+											JOptionPane.ERROR_MESSAGE);
+									JOptionPane.showOptionDialog(biomodelsim.frame(), sizePanel,
+											"Enter Size Of File", JOptionPane.YES_NO_OPTION,
+											JOptionPane.PLAIN_MESSAGE, null, options2, options2[0]);
+								}
+							} catch (Exception e2) {
+								JOptionPane.showMessageDialog(biomodelsim.frame(),
+										"Width and height must be positive integers!", "Error",
+										JOptionPane.ERROR_MESSAGE);
+								width = -1;
+								height = -1;
+								JOptionPane.showOptionDialog(biomodelsim.frame(), sizePanel,
+										"Enter Size Of File", JOptionPane.YES_NO_OPTION,
+										JOptionPane.PLAIN_MESSAGE, null, options2, options2[0]);
+							}
+					}
+					if (jpeg) {
+						ChartUtilities.saveChartAsJPEG(file, chart, width, height);
+					} else {
+						ChartUtilities.saveChartAsPNG(file, chart, width, height);
+					}
+					savedPics = filename;
+				}
+			}
+		} catch (IOException e1) {
+			JOptionPane.showMessageDialog(biomodelsim.frame(), "Unable To Save File!", "Error",
+					JOptionPane.ERROR_MESSAGE);
+		}
 	}
 }

@@ -25,8 +25,6 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 */
 	private static final long serialVersionUID = 8236967001410906807L;
 
-	// private JFrame sbmlFrame; // sbml frame
-
 	private SBMLDocument document; // sbml document
 
 	private String file; // SBML file
@@ -2428,56 +2426,16 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 * Saves the sbml file.
 	 */
 	public void save() {
-		/*
-		 * File file; if (this.file != null) { file = new File(this.file); }
-		 * else { file = null; } String filename = Buttons .browse(this, file,
-		 * null, JFileChooser.FILES_ONLY, "Save");
-		 */
-		String filename = this.file;
-		if (!filename.equals("")) {
-			if (filename.substring((filename.length() - 5), filename.length()).equals(".sbml")
-					|| filename.substring((filename.length() - 4), filename.length())
-							.equals(".xml")) {
-			} else {
-				filename += ".sbml";
-			}
-			if (new File(filename).exists()) {
-				Object[] options = { "Overwrite", "Cancel" };
-				int value = JOptionPane.showOptionDialog(this, "File already exists."
-						+ " Overwrite?", "File Already Exists", JOptionPane.YES_NO_OPTION,
-						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-				if (value == JOptionPane.YES_OPTION) {
-					try {
-						FileOutputStream out = new FileOutputStream(new File(filename));
-						SBMLWriter writer = new SBMLWriter();
-						String doc = writer.writeToString(document);
-						byte[] output = doc.getBytes();
-						out.write(output);
-						out.close();
-						// this.file = filename;
-						// sbmlFrame.dispose();
-						// new SBML_Editor(filename);
-					} catch (Exception e1) {
-						JOptionPane.showMessageDialog(this, "Unable to save sbml file!",
-								"Error Saving File", JOptionPane.ERROR_MESSAGE);
-					}
-				}
-			} else {
-				try {
-					FileOutputStream out = new FileOutputStream(new File(filename));
-					SBMLWriter writer = new SBMLWriter();
-					String doc = writer.writeToString(document);
-					byte[] output = doc.getBytes();
-					out.write(output);
-					out.close();
-					// this.file = filename;
-					// sbmlFrame.dispose();
-					// new SBML_Editor(filename);
-				} catch (Exception e1) {
-					JOptionPane.showMessageDialog(this, "Unable to save sbml file!",
-							"Error Saving File", JOptionPane.ERROR_MESSAGE);
-				}
-			}
+		try {
+			FileOutputStream out = new FileOutputStream(new File(file));
+			SBMLWriter writer = new SBMLWriter();
+			String doc = writer.writeToString(document);
+			byte[] output = doc.getBytes();
+			out.write(output);
+			out.close();
+		} catch (Exception e1) {
+			JOptionPane.showMessageDialog(this, "Unable to save sbml file!", "Error Saving File",
+					JOptionPane.ERROR_MESSAGE);
 		}
 	}
 }
