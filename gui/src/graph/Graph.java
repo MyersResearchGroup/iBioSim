@@ -99,6 +99,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 	private BioModelSim biomodelsim; // tstubd gui
 
+	private JButton save, exportJPeg, exportPng, duplicate; // buttons
+
 	/**
 	 * Creates a Graph Object from the data given and calls the private graph
 	 * helper method.
@@ -335,6 +337,18 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		SpecialButtonHolder.add(filled);
 		SpecialButtonHolder.add(resize);
 		SpecialButtonHolder.add(changeSize);
+		save = new JButton("Save");
+		exportJPeg = new JButton("Export As JPEG");
+		exportPng = new JButton("Export As PNG");
+		duplicate = new JButton("Duplicate");
+		save.addActionListener(this);
+		exportJPeg.addActionListener(this);
+		exportPng.addActionListener(this);
+		duplicate.addActionListener(this);
+		ButtonHolder.add(save);
+		ButtonHolder.add(exportJPeg);
+		ButtonHolder.add(exportPng);
+		ButtonHolder.add(duplicate);
 		JPanel AllButtonsHolder = new JPanel(new BorderLayout());
 
 		// puts all the components of the graph gui into a display panel
@@ -858,6 +872,22 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				rend.setShapesVisible(false);
 			}
 		}
+		// if the save button is clicked
+		else if (e.getSource() == save) {
+			save();
+		}
+		// if the export as jpeg button is clicked
+		else if (e.getSource() == exportJPeg) {
+			export(true);
+		}
+		// if the export as png button is clicked
+		else if (e.getSource() == exportPng) {
+			export(false);
+		}
+		// if the duplicate button is clicked
+		else if (e.getSource() == duplicate) {
+
+		}
 		// if one of the species check boxes is clicked
 		else {
 			for (int i = 0; i < boxes.size(); i++) {
@@ -876,6 +906,12 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				}
 			}
 		}
+	}
+
+	/**
+	 * Save the graph data in a file.
+	 */
+	public void save() {
 	}
 
 	/**
@@ -1051,7 +1087,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	/**
 	 * This method saves the graph as a jpeg or as a png file.
 	 */
-	public void save(boolean jpeg) {
+	public void export(boolean jpeg) {
 		try {
 			File file;
 			if (savedPics != null) {

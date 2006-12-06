@@ -6,6 +6,8 @@ import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
 import org.sbml.libsbml.*;
+
+import reb2sac.core.gui.Reb2Sac;
 import buttons.core.gui.*;
 
 /**
@@ -181,11 +183,16 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 
 	private String kineticL; // kinetic law
 
+	private Reb2Sac reb2sac; // reb2sac options
+
+	private JButton saveNoRun, run; // save and run buttons
+
 	/**
 	 * Creates a new SBML_Editor and sets up the frame where the user can edit a
 	 * new sbml file.
 	 */
-	public SBML_Editor() {
+	public SBML_Editor(Reb2Sac reb2sac) {
+		this.reb2sac = reb2sac;
 		createSbmlFrame("");
 	}
 
@@ -193,7 +200,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 * Creates a new SBML_Editor and sets up the frame where the user can edit
 	 * the sbml file given to this constructor.
 	 */
-	public SBML_Editor(String file) {
+	public SBML_Editor(String file, Reb2Sac reb2sac) {
+		this.reb2sac = reb2sac;
 		createSbmlFrame(file);
 	}
 
@@ -451,6 +459,19 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		this.add(mainPanelNorth, "North");
 		this.add(mainPanelCenter, "Center");
 		change = false;
+		if (reb2sac != null) {
+			saveNoRun = new JButton("Save");
+			run = new JButton("Save And Run");
+			saveNoRun.setMnemonic(KeyEvent.VK_S);
+			run.setMnemonic(KeyEvent.VK_R);
+			saveNoRun.addActionListener(this);
+			run.addActionListener(this);
+			JPanel saveRun = new JPanel();
+			saveRun.add(saveNoRun);
+			saveRun.add(run);
+			JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, null, saveRun);
+			this.add(splitPane, "South");
+		}
 		/*
 		 * sbmlFrame.setContentPane(mainPanel); sbmlFrame.setJMenuBar(menuBar);
 		 * sbmlFrame.pack(); Dimension screenSize; try { Toolkit tk =
@@ -472,8 +493,16 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 * pushed and what input fields contain data.
 	 */
 	public void actionPerformed(ActionEvent e) {
+		// if the run button is clicked
+		if (e.getSource() == run) {
+			reb2sac.getRunButton().doClick();
+		}
+		// if the save button is clicked
+		else if (e.getSource() == saveNoRun) {
+			reb2sac.getSaveButton().doClick();
+		}
 		// if the add comparment button is clicked
-		if (e.getSource() == addCompart) {
+		else if (e.getSource() == addCompart) {
 			if (!compart.getText().trim().equals("")) {
 				JList add = new JList();
 				Object[] adding = { compart.getText().trim() };
@@ -1404,7 +1433,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					}
 				}
 			}
-			new SBML_Editor();
+			new SBML_Editor(reb2sac);
 			// sbmlFrame.dispose();
 		}
 		// if the load menu item is clicked
@@ -1492,7 +1521,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 								}
 							}
 						}
-						new SBML_Editor(filename);
+						new SBML_Editor(filename, reb2sac);
 						// sbmlFrame.dispose();
 					}
 				} catch (Exception e1) {
@@ -1612,7 +1641,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 														+ "\nIt contains errors!", "Error",
 												JOptionPane.ERROR_MESSAGE);
 									} else {
-										new SBML_Editor(filename);
+										new SBML_Editor(filename, reb2sac);
 										// sbmlFrame.dispose();
 									}
 								} catch (Exception e2) {
@@ -1635,7 +1664,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 													+ "\nIt contains errors!", "Error",
 											JOptionPane.ERROR_MESSAGE);
 								} else {
-									new SBML_Editor(filename);
+									new SBML_Editor(filename, reb2sac);
 									// sbmlFrame.dispose();
 								}
 							} catch (Exception e2) {

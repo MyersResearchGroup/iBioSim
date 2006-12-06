@@ -5,8 +5,9 @@ import java.util.*;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-
 import org.sbml.libsbml.*;
+import sbmleditor.core.gui.*;
+import graph.core.gui.*;
 import biomodelsim.core.gui.*;
 import buttons.core.gui.*;
 
@@ -196,6 +197,10 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 	private Log log; // the log
 
 	private JTabbedPane simTab; // the simulation tab
+
+	private SBML_Editor sbmlEditor; // sbml editor
+
+	private JTextArea sadFile;
 
 	/**
 	 * This is the constructor for the GUI. It initializes all the input fields,
@@ -539,6 +544,12 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 		mainTermCond.add(termCondPanel, "Center");
 		mainTermCond.add(termOptionsPanel, "South");
 
+		JPanel sadTermCondPanel = new JPanel(new BorderLayout());
+		sadFile = new JTextArea();
+		JScrollPane scroll9 = new JScrollPane();
+		scroll9.setViewportView(sadFile);
+		sadTermCondPanel.add(scroll9, "Center");
+
 		// Creates the check states tab
 		statesSpecs = new JList();
 		checkStates = new JList();
@@ -772,6 +783,7 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 		JTabbedPane tab = new JTabbedPane();
 		tab.addTab("Simulation", mainTabbedPanel);
 		tab.addTab("Termination Conditions", mainTermCond);
+		tab.addTab("Advanced Termination Conditions", sadTermCondPanel);
 		tab.addTab("Interesting Species", speciesHolder);
 		tab.addTab("User Defined Data File", ssaPanel);
 		tab.addTab("States User Is Interested In", mainCheckState);
@@ -1066,8 +1078,10 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 		 */
 		// if the Run button is clicked
 		else if (e.getSource() == run) {
+			sbmlEditor.save();
 			new Thread(this).start();
 		} else if (e.getSource() == save) {
+			sbmlEditor.save();
 			save();
 		}
 		/*
@@ -2370,10 +2384,22 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 		 * 
 		 * public void windowDeactivated(WindowEvent arg0) { } }; }
 		 */
+		if (sadFile.getText().trim().length() != 0) {
+			try {
+				FileOutputStream out = new FileOutputStream(new File(root + File.separator + "work"
+						+ File.separator + outDir + File.separator + outDir + ".sad"));
+				byte[] output = sadFile.getText().trim().getBytes();
+				out.write(output);
+				out.close();
+			} catch (Exception e) {
+			}
+		}
 		runProgram.createProperties(timeLimit, printInterval, timeStep, root + File.separator
 				+ "work" + File.separator + outDir, rndSeed, run, termCond, intSpecies, printer_id,
 				printer_track_quantity, sbmlFile.split(File.separator), selectedButtons, this,
-				sbmlFile, rap1, rap2, qss, con, usingSSA, ssaFile.getText().trim());
+				sbmlFile, rap1, rap2, qss, con, usingSSA, ssaFile.getText().trim(), sadFile
+						.getText().trim(), new File(root + File.separator + "work" + File.separator
+						+ outDir + File.separator + outDir + ".sad"));
 		int[] indecies = properties.getSelectedIndices();
 		props = Buttons.getList(props, properties);
 		properties.setSelectedIndices(indecies);
@@ -2776,10 +2802,22 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 				- getFilename[getFilename.length - 1].length())
 				+ getFilename[getFilename.length - 1].substring(0, cut) + ".properties";
 		log.addText("Creating properties file:\n" + propName + "\n");
+		if (sadFile.getText().trim().length() != 0) {
+			try {
+				FileOutputStream out = new FileOutputStream(new File(root + File.separator + "work"
+						+ File.separator + outDir + File.separator + outDir + ".sad"));
+				byte[] output = sadFile.getText().trim().getBytes();
+				out.write(output);
+				out.close();
+			} catch (Exception e) {
+			}
+		}
 		runProgram.createProperties(timeLimit, printInterval, timeStep, outDir, rndSeed, run,
 				termCond, intSpecies, printer_id, printer_track_quantity, sbmlFile
 						.split(File.separator), selectedButtons, this, sbmlFile, rap1, rap2, qss,
-				con, usingSSA, ssaFile.getText().trim());
+				con, usingSSA, ssaFile.getText().trim(), sadFile.getText().trim(), new File(root
+						+ File.separator + "work" + File.separator + outDir + File.separator
+						+ outDir + ".sad"));
 		int[] indecies = properties.getSelectedIndices();
 		props = Buttons.getList(props, properties);
 		properties.setSelectedIndices(indecies);
@@ -2790,7 +2828,7 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 				String[] split = ((String) props[i]).split("=");
 				getProps.setProperty(split[0], split[1]);
 			}
-			getProps.setProperty("selected.simulator", (String)simulators.getSelectedItem());
+			getProps.setProperty("selected.simulator", (String) simulators.getSelectedItem());
 			getProps.store(new FileOutputStream(new File(propName)),
 					getFilename[getFilename.length - 1].substring(0, cut) + " Properties");
 		} catch (Exception e) {
@@ -2919,6 +2957,16 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 					interval.setText(load.getProperty("monte.carlo.simulation.print.interval"));
 					seed.setText(load.getProperty("monte.carlo.simulation.random.seed"));
 					runs.setText(load.getProperty("monte.carlo.simulation.runs"));
+					if (load.containsKey("simulation.run.termination.decider")
+							&& load.getProperty("simulation.run.termination.decider").equals("sad")) {
+						FileInputStream input = new FileInputStream(new File(load
+								.getProperty("computation.analysis.sad.path")));
+						int read = input.read();
+						while (read != -1) {
+							sadFile.append("" + (char) read);
+							read = input.read();
+						}
+					}
 				} else {
 					if (nary.isSelected()) {
 						markov.setSelected(true);
@@ -3038,15 +3086,80 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 					}
 				}
 			}
-			simulators.setSelectedItem(load.getProperty("selected.simulator"));
+			try {
+				simulators.setSelectedItem(load.getProperty("selected.simulator"));
+			} catch (Exception e2) {
+			}
 		} catch (Exception e1) {
 			JOptionPane.showMessageDialog(biomodelsim.frame(), "Unable to load properties file!",
 					"Error Loading Properties", JOptionPane.ERROR_MESSAGE);
 		}
 	}
+
+	public Graph createGraph(String graphFile) {
+		String outDir = ".";
+		int run = 1;
+		outDir = root + File.separator + "work" + File.separator + simName;
+		try {
+			if (runs.isEnabled()) {
+				run = Integer.parseInt(runs.getText().trim());
+				if (run < 0) {
+					JOptionPane.showMessageDialog(biomodelsim.frame(),
+							"Must Enter A Positive Integer In The Runs Field."
+									+ "\nProceding With Default:  1", "Error",
+							JOptionPane.ERROR_MESSAGE);
+					run = 1;
+				}
+			}
+		} catch (Exception e1) {
+			JOptionPane.showMessageDialog(biomodelsim.frame(),
+					"Must Enter A Positive Integer In The Runs Field.", "Error",
+					JOptionPane.ERROR_MESSAGE);
+			return null;
+		}
+		String printer_id;
+		if (tsd.isSelected()) {
+			printer_id = "tsd.printer";
+		} else if (csv.isSelected()) {
+			printer_id = "csv.printer";
+		} else if (dat.isSelected()) {
+			printer_id = "dat.printer";
+		} else {
+			printer_id = "null.printer";
+		}
+		String printer_track_quantity = (String) trackingQuantity.getSelectedItem();
+		int[] index = species.getSelectedIndices();
+		String[] intSpecies = Buttons.getList(interestingSpecies, species);
+		species.setSelectedIndices(index);
+		if (monteCarlo.isSelected()) {
+			return new Graph(graphFile, biomodelsim.frame(), printer_track_quantity, simulators
+					.getSelectedItem()
+					+ " run average simulation results", monteCarlo, (String) simulators
+					.getSelectedItem(), printer_id, outDir, run, intSpecies, -1, null, "time",
+					biomodelsim);
+		} else {
+			return new Graph(graphFile, biomodelsim.frame(), printer_track_quantity, simulators
+					.getSelectedItem()
+					+ " simulation results", monteCarlo, (String) simulators.getSelectedItem(),
+					printer_id, outDir, run, intSpecies, -1, null, "time", biomodelsim);
+		}
+	}
+
+	public JButton getRunButton() {
+		return run;
+	}
+
+	public JButton getSaveButton() {
+		return save;
+	}
+
 	/*
 	 * /** This is the main method. It excecutes the GUI FrontEnd program. /
 	 * public static void main(String args[]) { System.loadLibrary("sbmlj"); new
 	 * GUI(null, null, null); }
 	 */
+
+	public void setSbml(SBML_Editor sbml) {
+		sbmlEditor = sbml;
+	}
 }

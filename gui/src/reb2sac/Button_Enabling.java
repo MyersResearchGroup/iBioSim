@@ -17,12 +17,12 @@ public class Button_Enabling {
 	public static void enableNoneOrAbs(JRadioButton ODE, JRadioButton monteCarlo,
 			JRadioButton markov, JTextField seed, JLabel seedLabel, JTextField runs,
 			JLabel runsLabel, JLabel stepLabel, JTextField step, JLabel limitLabel,
-			JTextField limit, JLabel intervalLabel, JTextField interval, JComboBox simulators, JLabel simulatorsLabel, JLabel explanation,
-			JLabel description, JRadioButton none, JList intSpecies, JList species, JLabel spLabel,
-			JLabel speciesLabel, JButton addIntSpecies, JButton removeIntSpecies,
-			JTextField rapid1, JTextField rapid2, JTextField qssa, JTextField maxCon,
-			JLabel rapidLabel1, JLabel rapidLabel2, JLabel qssaLabel, JLabel maxConLabel,
-			JCheckBox usingSSA, JButton clearIntSpecies) {
+			JTextField limit, JLabel intervalLabel, JTextField interval, JComboBox simulators,
+			JLabel simulatorsLabel, JLabel explanation, JLabel description, JRadioButton none,
+			JList intSpecies, JList species, JLabel spLabel, JLabel speciesLabel,
+			JButton addIntSpecies, JButton removeIntSpecies, JTextField rapid1, JTextField rapid2,
+			JTextField qssa, JTextField maxCon, JLabel rapidLabel1, JLabel rapidLabel2,
+			JLabel qssaLabel, JLabel maxConLabel, JCheckBox usingSSA, JButton clearIntSpecies) {
 		if (!usingSSA.isSelected()) {
 			ODE.setEnabled(true);
 		}
@@ -79,8 +79,8 @@ public class Button_Enabling {
 			limit.setEnabled(true);
 			intervalLabel.setEnabled(true);
 			interval.setEnabled(true);
-			//dirLabel.setEnabled(true);
-			//dir.setEnabled(true);
+			// dirLabel.setEnabled(true);
+			// dir.setEnabled(true);
 			if (!usingSSA.isSelected()) {
 				simulators.setEnabled(true);
 				simulatorsLabel.setEnabled(true);
@@ -103,12 +103,12 @@ public class Button_Enabling {
 	public static void enableNary(JRadioButton ODE, JRadioButton monteCarlo, JRadioButton markov,
 			JTextField seed, JLabel seedLabel, JTextField runs, JLabel runsLabel, JLabel stepLabel,
 			JTextField step, JLabel limitLabel, JTextField limit, JLabel intervalLabel,
-			JTextField interval, JComboBox simulators,
-			JLabel simulatorsLabel, JLabel explanation, JLabel description, JList intSpecies,
-			JList species, JLabel spLabel, JLabel speciesLabel, JButton addIntSpecies,
-			JButton removeIntSpecies, JTextField rapid1, JTextField rapid2, JTextField qssa,
-			JTextField maxCon, JLabel rapidLabel1, JLabel rapidLabel2, JLabel qssaLabel,
-			JLabel maxConLabel, JCheckBox usingSSA, JButton clearIntSpecies) {
+			JTextField interval, JComboBox simulators, JLabel simulatorsLabel, JLabel explanation,
+			JLabel description, JList intSpecies, JList species, JLabel spLabel,
+			JLabel speciesLabel, JButton addIntSpecies, JButton removeIntSpecies,
+			JTextField rapid1, JTextField rapid2, JTextField qssa, JTextField maxCon,
+			JLabel rapidLabel1, JLabel rapidLabel2, JLabel qssaLabel, JLabel maxConLabel,
+			JCheckBox usingSSA, JButton clearIntSpecies) {
 		ODE.setEnabled(false);
 		monteCarlo.setEnabled(true);
 		if (!usingSSA.isSelected()) {
@@ -143,8 +143,8 @@ public class Button_Enabling {
 			limit.setEnabled(true);
 			intervalLabel.setEnabled(true);
 			interval.setEnabled(true);
-			//dirLabel.setEnabled(true);
-			//dir.setEnabled(true);
+			// dirLabel.setEnabled(true);
+			// dir.setEnabled(true);
 			if (!usingSSA.isSelected()) {
 				simulators.setEnabled(true);
 				simulatorsLabel.setEnabled(true);
@@ -164,8 +164,8 @@ public class Button_Enabling {
 	 */
 	public static void enableODE(JTextField seed, JLabel seedLabel, JTextField runs,
 			JLabel runsLabel, JLabel stepLabel, JTextField step, JLabel limitLabel,
-			JTextField limit, JLabel intervalLabel, JTextField interval, JComboBox simulators, JLabel simulatorsLabel, JLabel explanation,
-			JLabel description, JCheckBox usingSSA) {
+			JTextField limit, JLabel intervalLabel, JTextField interval, JComboBox simulators,
+			JLabel simulatorsLabel, JLabel explanation, JLabel description, JCheckBox usingSSA) {
 		seed.setEnabled(false);
 		seedLabel.setEnabled(false);
 		runs.setEnabled(false);
@@ -176,8 +176,8 @@ public class Button_Enabling {
 		limit.setEnabled(true);
 		intervalLabel.setEnabled(true);
 		interval.setEnabled(true);
-		//dirLabel.setEnabled(true);
-		//dir.setEnabled(true);
+		// dirLabel.setEnabled(true);
+		// dir.setEnabled(true);
 		if (!usingSSA.isSelected()) {
 			simulators.setEnabled(true);
 			simulatorsLabel.setEnabled(true);
@@ -199,8 +199,8 @@ public class Button_Enabling {
 	 */
 	public static void enableMonteCarlo(JTextField seed, JLabel seedLabel, JTextField runs,
 			JLabel runsLabel, JLabel stepLabel, JTextField step, JLabel limitLabel,
-			JTextField limit, JLabel intervalLabel, JTextField interval, JComboBox simulators, JLabel simulatorsLabel, JLabel explanation,
-			JLabel description, JCheckBox usingSSA) {
+			JTextField limit, JLabel intervalLabel, JTextField interval, JComboBox simulators,
+			JLabel simulatorsLabel, JLabel explanation, JLabel description, JCheckBox usingSSA) {
 		seed.setEnabled(true);
 		seedLabel.setEnabled(true);
 		runs.setEnabled(true);
@@ -211,8 +211,8 @@ public class Button_Enabling {
 		limit.setEnabled(true);
 		intervalLabel.setEnabled(true);
 		interval.setEnabled(true);
-		//dirLabel.setEnabled(true);
-		//dir.setEnabled(true);
+		// dirLabel.setEnabled(true);
+		// dir.setEnabled(true);
 		if (!usingSSA.isSelected()) {
 			simulators.setEnabled(true);
 			simulatorsLabel.setEnabled(true);
@@ -231,8 +231,8 @@ public class Button_Enabling {
 	 */
 	public static void enableMarkov(JTextField seed, JLabel seedLabel, JTextField runs,
 			JLabel runsLabel, JLabel stepLabel, JTextField step, JLabel limitLabel,
-			JTextField limit, JLabel intervalLabel, JTextField interval, JComboBox simulators, JLabel simulatorsLabel, JLabel explanation,
-			JLabel description, JCheckBox usingSSA) {
+			JTextField limit, JLabel intervalLabel, JTextField interval, JComboBox simulators,
+			JLabel simulatorsLabel, JLabel explanation, JLabel description, JCheckBox usingSSA) {
 		seed.setEnabled(false);
 		seedLabel.setEnabled(false);
 		runs.setEnabled(false);
@@ -243,8 +243,8 @@ public class Button_Enabling {
 		limit.setEnabled(false);
 		intervalLabel.setEnabled(false);
 		interval.setEnabled(false);
-		//dirLabel.setEnabled(false);
-		//dir.setEnabled(false);
+		// dirLabel.setEnabled(false);
+		// dir.setEnabled(false);
 		if (!usingSSA.isSelected()) {
 			simulators.setEnabled(true);
 			simulatorsLabel.setEnabled(true);
@@ -261,8 +261,8 @@ public class Button_Enabling {
 	 */
 	public static void enableSbmlDotAndXhtml(JTextField seed, JLabel seedLabel, JTextField runs,
 			JLabel runsLabel, JLabel stepLabel, JTextField step, JLabel limitLabel,
-			JTextField limit, JLabel intervalLabel, JTextField interval, JComboBox simulators, JLabel simulatorsLabel, JLabel explanation,
-			JLabel description) {
+			JTextField limit, JLabel intervalLabel, JTextField interval, JComboBox simulators,
+			JLabel simulatorsLabel, JLabel explanation, JLabel description) {
 		seed.setEnabled(false);
 		seedLabel.setEnabled(false);
 		runs.setEnabled(false);
@@ -273,8 +273,8 @@ public class Button_Enabling {
 		limit.setEnabled(false);
 		intervalLabel.setEnabled(false);
 		interval.setEnabled(false);
-		//dirLabel.setEnabled(false);
-		//dir.setEnabled(false);
+		// dirLabel.setEnabled(false);
+		// dir.setEnabled(false);
 		simulators.setEnabled(false);
 		simulatorsLabel.setEnabled(false);
 		explanation.setEnabled(false);
