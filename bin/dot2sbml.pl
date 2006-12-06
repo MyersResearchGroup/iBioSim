@@ -10,15 +10,21 @@ sub getuid{
 }
 
 sub main{
-    my $file = $ARGV[0];
-    open (FILE, "$file") or die "I cannot open dot $file\n";
-    @dot_file = <FILE>;
-    close FILE;
-    $dot_file = join ("", @dot_file);
-
-    #create the normal sbml file
-    fill_hashes();
-    create_real_network($file);
+    if ($#ARGV != 2){
+	print "Usage: dot2sbml.pl dotfile outfile\n";
+    }
+    else{
+	my $file = $ARGV[0];
+	open (FILE, "$file") or die "I cannot open dot $file\n";
+	@dot_file = <FILE>;
+	close FILE;
+	open (OUT, ">$ARGV[1]") or die "I cannot open out file $ARGV[1]\n";
+	$dot_file = join ("", @dot_file);
+	
+	#create the normal sbml file
+	fill_hashes();
+	create_real_network($file);
+    }
 
 }
 
@@ -135,23 +141,23 @@ sub fill_hashes{
 sub create_real_network{
     my $abv_name = shift;
 
-    print "<?xml version=\"1.0\"?>\n<sbml xmlns=\"http://www.sbml.org/sbml/level2\" version=\"1\" level=\"2\">\n<model id=\"$abv_name\">\n<listOfCompartments>\n  <compartment id=\"default\" />\n</listOfCompartments>\n\n<listOfSpecies>\n";
+    print OUT "<?xml version=\"1.0\"?>\n<sbml xmlns=\"http://www.sbml.org/sbml/level2\" version=\"1\" level=\"2\">\n<model id=\"$abv_name\">\n<listOfCompartments>\n  <compartment id=\"default\" />\n</listOfCompartments>\n\n<listOfSpecies>\n";
 
     #Print the genes
     for ($i = 0; $i <= $#genes; $i++){
-	print "\t<species id = \"$genes[$i]\"  name = \"$genes[$i]\" compartment = \"default\" initialConcentration = \"$initial_concentration[$i]\"/>\n";
+	print OUT "\t<species id = \"$genes[$i]\"  name = \"$genes[$i]\" compartment = \"default\" initialConcentration = \"$initial_concentration[$i]\"/>\n";
     }
     #print the rnap
-    print "\t<species id = \"rnap\"  name = \"RNAP\" compartment = \"default\" initialConcentration = \"30\"/>\n";
+    print OUT "\t<species id = \"rnap\"  name = \"RNAP\" compartment = \"default\" initialConcentration = \"30\"/>\n";
 
     foreach $name (@genes){
 	if ($name =~ m/spastic/){
 	}
 	else{
 	    #print out a promoter'
-	    print "\t<species id = \"pro_$name\"  name = \"pro_$name\" compartment = \"default\" initialConcentration = \"1.0\"/>\n";
+	    print OUT "\t<species id = \"pro_$name\"  name = \"pro_$name\" compartment = \"default\" initialConcentration = \"1.0\"/>\n";
 	    #print out the rnap bindings to the promoters species
-	    print "\t<species id = \"rnap_pro_$name\"  name = \"rnap_pro_$name\" compartment = \"default\" initialConcentration = \"0.0\"/>\n";
+	    print OUT "\t<species id = \"rnap_pro_$name\"  name = \"rnap_pro_$name\" compartment = \"default\" initialConcentration = \"0.0\"/>\n";
 	    
 	    for (my $i = 1; $i <= $gwa{$name}; $i++){ #gene has activation promoter
 		#print out the rnap bindings to the promoters species
@@ -160,7 +166,7 @@ sub create_real_network{
 		    $i++;
 		    @g = split (/,/,$act{"$name:$i"});
 		}
-		print "\t<species id = \"rnap_apro_$i\_$name\"  name = \"rnap_apro_$i\_$name\" compartment = \"default\" initialConcentration = \"0.0\"/>\n";
+		print OUT "\t<species id = \"rnap_apro_$i\_$name\"  name = \"rnap_apro_$i\_$name\" compartment = \"default\" initialConcentration = \"0.0\"/>\n";
 	    }
 	    for (my $i = 1; $i <= $gwr{$name}; $i++){ #gene has repression promoter
 		#print the bound state of the rep promoters
@@ -169,12 +175,12 @@ sub create_real_network{
 		    $i++;
 		    @g = split (/,/,$rep{"$name:$i"});
 		}
-		print "\t<species id = \"bound_rep_$i\_$name\"  name = \"bound_rep_$i\_$name\" compartment = \"default\" initialConcentration = \"0.0\"/>\n";
+		print OUT "\t<species id = \"bound_rep_$i\_$name\"  name = \"bound_rep_$i\_$name\" compartment = \"default\" initialConcentration = \"0.0\"/>\n";
 	    }
 	}
     }
     
-    print "</listOfSpecies>\n\n<listOfReactions>\n";
+    print OUT "</listOfSpecies>\n\n<listOfReactions>\n";
 
 #setup the dedgadations
 for (my $i = 0; $i <= $#genes; $i++){
@@ -183,7 +189,7 @@ for (my $i = 0; $i <= $#genes; $i++){
 
 	if (not $genes[$i] =~ m/spastic/i){
 	    my $deg = 0.0002888113;
-print <<END;
+print OUT <<END;
 <reaction id = "degradation_$genes[$i]" reversible="false" >
   <listOfReactants>
     <speciesReference species = "$genes[$i]" stoichiometry = "1"/>
@@ -201,7 +207,7 @@ END
         }
 	else{
 	    #the gene is spastic, and the activation and deg_rates should match
-print <<END;
+print OUT <<END;
 <reaction id = "degradation_$genes[$i]" reversible="false" >
   <listOfReactants>
     <speciesReference species = "$genes[$i]" stoichiometry = "1"/>
@@ -268,7 +274,7 @@ foreach $name (@genes){
     #print "Checking $name for turnoff\n";
     if ($turn_off{$name} != 1){
 	if ($name =~ m/spastic/i){
-print <<END;
+print OUT <<END;
 <reaction id = "creation_$name" reversible="false" >
   <listOfProducts>
     <speciesReference species = "$name" stoichiometry = "1"/>
@@ -289,7 +295,7 @@ END
 		#is not activated give it the full rate
 		$ocr = 0.1;
 	    }
-print <<END; 
+print OUT <<END; 
 <reaction id = "R_rnap_$name" >
   <listOfReactants>
     <speciesReference species = "rnap" stoichiometry = "1"/>
@@ -340,7 +346,7 @@ END
 #	if ($g[2] =~ m/label=([0-9]+[.]*[0-9]*)/){
 #	    $a_rate = $1;
 #	}
-print <<END; 
+print OUT <<END; 
 
 <reaction id = "R_$i\_$g[0]_activates_$g[1]" >
   <listOfReactants>
@@ -394,7 +400,7 @@ END
 #	    $r_rate = $1;
 #	}
 
-print <<END; 
+print OUT <<END; 
 
 <reaction id = "R_$i\_$g[0]_represses_$g[1]" >
     <listOfReactants>
@@ -422,7 +428,7 @@ END
 
 
 
-print <<END;
+print OUT <<END;
 </listOfReactions>
 </model>
 </sbml>
