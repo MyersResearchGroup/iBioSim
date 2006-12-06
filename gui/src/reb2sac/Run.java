@@ -29,7 +29,7 @@ public class Run implements ActionListener {
 			String outDir, long rndSeed, int run, String[] termCond, String[] intSpecies,
 			String printer_id, String printer_track_quantity, String[] getFilename,
 			String selectedButtons, Component component, String filename, double rap1, double rap2,
-			double qss, int con, JCheckBox usingSSA, String ssaFile) {
+			double qss, int con, JCheckBox usingSSA, String ssaFile, String sad, File sadFile) {
 		Properties abs = new Properties();
 		if (selectedButtons.equals("abs_ODE") || selectedButtons.equals("abs_monteCarlo")
 				|| selectedButtons.equals("nary_monteCarlo")
@@ -98,6 +98,10 @@ public class Run implements ActionListener {
 			abs.setProperty("monte.carlo.simulation.random.seed", "" + rndSeed);
 			abs.setProperty("monte.carlo.simulation.runs", "" + run);
 			abs.setProperty("monte.carlo.simulation.out.dir", outDir);
+			if (sad.length() != 0) {
+				abs.setProperty("simulation.run.termination.decider", "sad");
+				abs.setProperty("computation.analysis.sad.path", sadFile.getAbsolutePath());
+			}
 		}
 		if (usingSSA.isSelected() && selectedButtons.contains("monteCarlo")) {
 			abs.setProperty("simulation.time.series.species.level.file", ssaFile);
@@ -373,7 +377,7 @@ public class Run implements ActionListener {
 				if (nary.isSelected() && naryRun == 1) {
 				} else if (sbml.isSelected()) {
 					File outXml = new File("out.xml");
-					new SBML_Editor(outXml.getAbsolutePath());
+					new SBML_Editor(outXml.getAbsolutePath(), null);
 				} else if (dot.isSelected()) {
 					File outDot = new File("out.dot");
 					exec.exec("dotty " + outDot.getAbsolutePath());
@@ -382,7 +386,7 @@ public class Run implements ActionListener {
 					exec.exec("firefox " + outXhtml.getAbsolutePath());
 				} else if (usingSSA.isSelected()) {
 					if (!printer_id.equals("null.printer")) {
-						simTab.remove(simTab.getComponents().length - 1);
+						// simTab.remove(simTab.getComponents().length - 1);
 						simTab.addTab("Graph", new Graph(outDir + File.separator + "run-1."
 								+ printer_id.substring(0, printer_id.length() - 8), component,
 								printer_track_quantity, "ssa average simulation results",
@@ -393,7 +397,7 @@ public class Run implements ActionListener {
 				} else {
 					if (!printer_id.equals("null.printer")) {
 						if (ode.isSelected()) {
-							simTab.remove(simTab.getComponents().length - 1);
+							// simTab.remove(simTab.getComponents().length - 1);
 							simTab.addTab("Graph", new Graph(outDir + File.separator + sim
 									+ "-run." + printer_id.substring(0, printer_id.length() - 8),
 									component, printer_track_quantity, sim + " simulation results",
@@ -402,7 +406,7 @@ public class Run implements ActionListener {
 							simTab.getComponentAt(simTab.getComponents().length - 1).setName(
 									"Graph");
 						} else if (monteCarlo.isSelected()) {
-							simTab.remove(simTab.getComponents().length - 1);
+							// simTab.remove(simTab.getComponents().length - 1);
 							simTab.addTab("Graph", new Graph(outDir + File.separator + "run-1."
 									+ printer_id.substring(0, printer_id.length() - 8), component,
 									printer_track_quantity,
