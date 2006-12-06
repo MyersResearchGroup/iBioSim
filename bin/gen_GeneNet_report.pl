@@ -1,16 +1,14 @@
 #!/usr/bin/perl
 
 
-$genenet_dir = "GeneNet/";
-$reports_dir = "GeneNet/";
-#$file_name_to_use = "GeneNet_method.csv";
-$file_name_to_use = "GeneNet_PF_0_4_method.csv";
-#$file_name_to_use = "GeneNet_PF_0_51_method.csv";
+$genenet_dir = $ARGV[0];
+$reports_dir = $ARGV[1];
+$file_name_to_use = $ARGV[2];
+$out_name = $ARGV[3];
 
 #remove the last / in dir
 $reports_dir =~ s/\/$//;
 
-my $out_name = $file_name_to_use;
 
 sub main{
     my @files = `ls $genenet_dir*/*.dot`;
@@ -18,6 +16,10 @@ sub main{
     print "Sorting dir\n";
     @files = dir_sort(\@files);
     print "Done sorting dir\n";
+    if ($#files < 1){
+	print "Error, no files found\n";
+	exit(1);
+    }
 
     open (OUT, ">$reports_dir/$out_name") or die "Cannot open out file '$reports_dir/$out_name'\n";
     print OUT ",,,,,GeneNet,,GeneNet,,,GeneNet Time,,,,,,,\n";
@@ -38,7 +40,7 @@ sub main{
 	    
 	    print OUT ",,,,";
 	    write_final(@running_genenet);
-	    print OUT "\n\n";
+	    print OUT "\n";
 	    undef @running_genenet;
 	}
 	
@@ -47,7 +49,12 @@ sub main{
 	@running_genenet = addit(\@running_genenet,\@tmp1);
 	write_out_file($file);
 	write_initial(@tmp1);
-	print OUT join(",",@tmp1);
+	if ($tmp1[0] != $tmp1[2]){
+	    print OUT ",ERROR: $tmp1[0] $tmp1[2],$tmp1[1],$tmp1[3]";
+	}
+	else{
+	    print OUT ",$tmp1[0],$tmp1[1],$tmp1[3]";
+	}
 	write_time();
 	print OUT "\n";
 	#print "Done with $file\n";
@@ -59,7 +66,7 @@ sub main{
 
     print OUT ",,,,";
     write_final(@running_genenet);
-    print OUT "\n\n\n";
+    print OUT "\n\n";
     print OUT "Overview:\n$overview\n\n";
 }
 
@@ -196,7 +203,7 @@ sub check_correctness{
     my $dot_file = shift;
     my $filename = $dot_file;
     $filename =~ s/(.*)\/(.*)/$1\/work\/$2\/$file_name_to_use/;
-    $filename =~ s/[.]csv/.dot/g;
+    #$filename =~ s/[.]csv/.dot/g;
     $dot_file = "$dot_file.dot";
 
     if (not -e "$dot_file"){
