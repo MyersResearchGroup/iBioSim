@@ -10,7 +10,7 @@ sub getuid{
 }
 
 sub main{
-    if ($#ARGV != 2){
+    if ($#ARGV != 1){
 	print "Usage: dot2sbml.pl dotfile outfile\n";
     }
     else{
