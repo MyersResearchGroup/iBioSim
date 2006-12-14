@@ -109,6 +109,8 @@ public class Nary_Run implements ActionListener, Runnable {
 
 	private JTabbedPane simTab; // the simulation tab
 
+	private Reb2Sac reb2sac;
+
 	/**
 	 * This constructs a new Nary_Run object. This object is a GUI that contains
 	 * input fields for the nary abstraction. This constructor initializes the
@@ -121,8 +123,10 @@ public class Nary_Run implements ActionListener, Runnable {
 			JRadioButton monteCarlo, double timeLimit, double printInterval, String outDir,
 			long rndSeed, int run, String printer_id, String printer_track_quantity,
 			String[] termCond, String[] intSpecies, double rap1, double rap2, double qss, int con,
-			Log log, JCheckBox usingSSA, String ssaFile, BioModelSim biomodelsim, JTabbedPane simTab) {
+			Log log, JCheckBox usingSSA, String ssaFile, BioModelSim biomodelsim,
+			JTabbedPane simTab, Reb2Sac reb2sac) {
 		// intitializes the member variables
+		this.reb2sac = reb2sac;
 		this.rap1 = rap1;
 		this.rap2 = rap2;
 		this.qss = qss;
@@ -529,7 +533,7 @@ public class Nary_Run implements ActionListener, Runnable {
 				rap2, qss, con, counts, usingSSA, ssaFile);
 		runProgram.execute(filename, sbml, dot, xhtml, naryFrame, ODE, monteCarlo, sim, printer_id,
 				printer_track_quantity, outDir, run, nary, 2, intSpecies, log, usingSSA, ssaFile,
-				biomodelsim, simTab);
+				biomodelsim, simTab, reb2sac);
 		running.setCursor(null);
 		running.dispose();
 		naryCancel.removeActionListener(runProgram);
