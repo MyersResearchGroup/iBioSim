@@ -786,7 +786,7 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 		tab.addTab("Advanced Termination Conditions", sadTermCondPanel);
 		tab.addTab("Interesting Species", speciesHolder);
 		tab.addTab("User Defined Data File", ssaPanel);
-		tab.addTab("States User Is Interested In", mainCheckState);
+		//***tab.addTab("States User Is Interested In", mainCheckState);***
 		tab.addTab("Properties", propertiesPanel);
 		tab.addTab("Advanced Options", advanced);
 		this.setLayout(new BorderLayout());
@@ -2421,14 +2421,14 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 		int exit = runProgram.execute(sbmlFile, sbml, dot, xhtml, this, ODE, monteCarlo, sim,
 				printer_id, printer_track_quantity, root + File.separator + "work" + File.separator
 						+ outDir, run, nary, 1, intSpecies, log, usingSSA,
-				ssaFile.getText().trim(), biomodelsim, simTab);
+				ssaFile.getText().trim(), biomodelsim, simTab, this);
 		if (nary.isSelected() && exit == 0) {
 			new Nary_Run(this, amountTerm, ge, gt, eq, lt, le, quantity, simulators, sbmlFile
 					.split(File.separator), sbmlFile, sbml, dot, xhtml, nary, ODE, monteCarlo,
 					timeLimit, printInterval, root + File.separator + "work" + File.separator
 							+ outDir, rndSeed, run, printer_id, printer_track_quantity, termCond,
 					intSpecies, rap1, rap2, qss, con, log, usingSSA, ssaFile.getText().trim(),
-					biomodelsim, simTab);
+					biomodelsim, simTab, this);
 		}
 		running.setCursor(null);
 		running.dispose();
@@ -2980,8 +2980,10 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 								simulators, simulatorsLabel, explanation, description);
 					}
 				}
-				trackingQuantity.setSelectedItem(load
-						.getProperty("simulation.printer.tracking.quantity"));
+				if (load.containsKey("simulation.printer.tracking.quantity")) {
+					trackingQuantity.setSelectedItem(load
+							.getProperty("simulation.printer.tracking.quantity"));
+				}
 				ArrayList<String> getLists = new ArrayList<String>();
 				int i = 1;
 				while (load.containsKey("simulation.run.termination.condition." + i)) {
@@ -3086,9 +3088,8 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 					}
 				}
 			}
-			try {
+			if (load.containsKey("selected.simulator")) {
 				simulators.setSelectedItem(load.getProperty("selected.simulator"));
-			} catch (Exception e2) {
 			}
 		} catch (Exception e1) {
 			JOptionPane.showMessageDialog(biomodelsim.frame(), "Unable to load properties file!",
@@ -3136,12 +3137,12 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 					.getSelectedItem()
 					+ " run average simulation results", monteCarlo, (String) simulators
 					.getSelectedItem(), printer_id, outDir, run, intSpecies, -1, null, "time",
-					biomodelsim);
+					biomodelsim, this);
 		} else {
 			return new Graph(graphFile, biomodelsim.frame(), printer_track_quantity, simulators
 					.getSelectedItem()
 					+ " simulation results", monteCarlo, (String) simulators.getSelectedItem(),
-					printer_id, outDir, run, intSpecies, -1, null, "time", biomodelsim);
+					printer_id, outDir, run, intSpecies, -1, null, "time", biomodelsim, this);
 		}
 	}
 
@@ -3161,5 +3162,9 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 
 	public void setSbml(SBML_Editor sbml) {
 		sbmlEditor = sbml;
+	}
+
+	public void addGraphTab(Component tab) {
+		simTab.addTab("Graph", tab);
 	}
 }

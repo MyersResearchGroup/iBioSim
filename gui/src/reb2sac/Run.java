@@ -253,7 +253,7 @@ public class Run implements ActionListener {
 			Component component, JRadioButton ode, JRadioButton monteCarlo, String sim,
 			String printer_id, String printer_track_quantity, String outDir, int run,
 			JRadioButton nary, int naryRun, String[] intSpecies, Log log, JCheckBox usingSSA,
-			String ssaFile, BioModelSim biomodelsim, JTabbedPane simTab) {
+			String ssaFile, BioModelSim biomodelsim, JTabbedPane simTab, Reb2Sac sac) {
 		Runtime exec = Runtime.getRuntime();
 		int exitValue = 255;
 		try {
@@ -391,7 +391,7 @@ public class Run implements ActionListener {
 								+ printer_id.substring(0, printer_id.length() - 8), component,
 								printer_track_quantity, "ssa average simulation results",
 								monteCarlo, "ssa", printer_id, outDir, run, intSpecies, -1, null,
-								"time", biomodelsim));
+								"time", biomodelsim, sac));
 						simTab.getComponentAt(simTab.getComponents().length - 1).setName("Graph");
 					}
 				} else {
@@ -402,7 +402,7 @@ public class Run implements ActionListener {
 									+ "-run." + printer_id.substring(0, printer_id.length() - 8),
 									component, printer_track_quantity, sim + " simulation results",
 									monteCarlo, sim, printer_id, outDir, run, intSpecies, -1, null,
-									"time", biomodelsim));
+									"time", biomodelsim, sac));
 							simTab.getComponentAt(simTab.getComponents().length - 1).setName(
 									"Graph");
 						} else if (monteCarlo.isSelected()) {
@@ -412,7 +412,7 @@ public class Run implements ActionListener {
 									printer_track_quantity,
 									sim + " run average simulation results", monteCarlo, sim,
 									printer_id, outDir, run, intSpecies, -1, null, "time",
-									biomodelsim));
+									biomodelsim, sac));
 							simTab.getComponentAt(simTab.getComponents().length - 1).setName(
 									"Graph");
 						}

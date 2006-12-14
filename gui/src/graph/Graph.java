@@ -6,12 +6,15 @@ import java.awt.event.*;
 import java.text.*;
 import java.util.*;
 import javax.swing.*;
+
 import org.jfree.chart.*;
 import org.jfree.chart.axis.*;
 import org.jfree.chart.event.*;
 import org.jfree.chart.plot.*;
 import org.jfree.chart.renderer.xy.*;
 import org.jfree.data.xy.*;
+
+import reb2sac.core.gui.Reb2Sac;
 import biomodelsim.core.gui.*;
 import buttons.core.gui.*;
 
@@ -101,6 +104,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 	private JButton save, exportJPeg, exportPng, duplicate; // buttons
 
+	private Reb2Sac reb2sac;
+
 	/**
 	 * Creates a Graph Object from the data given and calls the private graph
 	 * helper method.
@@ -108,8 +113,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	public Graph(String file, Component component, String printer_track_quantity, String label,
 			JRadioButton monteCarlo, String sim, String printer_id, String outDir, int run,
 			String[] intSpecies, int readIn, XYSeriesCollection dataset, String time,
-			BioModelSim biomodelsim) {
+			BioModelSim biomodelsim, Reb2Sac sac) {
 		// initializes member variables
+		reb2sac = sac;
 		this.sim1 = sim;
 		this.run = run;
 		this.component = component;
@@ -345,10 +351,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		exportJPeg.addActionListener(this);
 		exportPng.addActionListener(this);
 		duplicate.addActionListener(this);
-		ButtonHolder.add(save);
+		//***ButtonHolder.add(save);***
 		ButtonHolder.add(exportJPeg);
 		ButtonHolder.add(exportPng);
-		ButtonHolder.add(duplicate);
+		//***ButtonHolder.add(duplicate);***
 		JPanel AllButtonsHolder = new JPanel(new BorderLayout());
 
 		// puts all the components of the graph gui into a display panel
@@ -365,7 +371,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		monteSpecialHolder.add(monteCarloHolder, "South");
 		AllButtonsHolder.add(inputHolder, "North");
 		AllButtonsHolder.add(monteSpecialHolder, "Center");
-		AllButtonsHolder.add(ButtonHolder, "South");
+		JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, ButtonHolder, null);
+		splitPane.setDividerSize(0);
+		AllButtonsHolder.add(splitPane, "South");
 		this.removeAll();
 		this.setLayout(new BorderLayout());
 		this.add(graph, "Center");
@@ -886,7 +894,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		}
 		// if the duplicate button is clicked
 		else if (e.getSource() == duplicate) {
-
+			if (reb2sac != null) {
+				Graph g = this;
+				reb2sac.addGraphTab(g);
+			}
 		}
 		// if one of the species check boxes is clicked
 		else {
@@ -912,6 +923,16 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	 * Save the graph data in a file.
 	 */
 	public void save() {
+		String save = "";
+		save += "XMin: " + XMin.getText() + "\n";
+		save += "XMax: " + XMax.getText() + "\n";
+		save += "XScale: " + XScale.getText() + "\n";
+		save += "YMin: " + YMin.getText() + "\n";
+		save += "YMax: " + YMax.getText() + "\n";
+		save += "YScale: " + YScale.getText() + "\n";
+		save += "Keep: " + keep.isSelected() + "\n";
+		save += "Visible: " + shapes.isSelected() + "\n";
+		save += "Filled: " + filled.isSelected() + "\n";
 	}
 
 	/**
@@ -1095,7 +1116,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			} else {
 				file = null;
 			}
-			String filename = Buttons.browse(this, file, null, JFileChooser.FILES_ONLY, "Save");
+			String filename = Buttons.browse(biomodelsim.frame(), file, null,
+					JFileChooser.FILES_ONLY, "Save");
 			if (!filename.equals("")) {
 				if (jpeg) {
 					if (filename.substring((filename.length() - 4), filename.length()).equals(

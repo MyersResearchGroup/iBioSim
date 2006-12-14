@@ -188,4 +188,8 @@ public class Learn implements ActionListener {
 			Buttons.browse(frame, dir, experiments, JFileChooser.DIRECTORIES_ONLY, "Open");
 		}
 	}
+	
+	public static void main(String args[]) {
+		new Learn();
+	}
 }
