@@ -72,7 +72,7 @@ public class BioModelSim implements MouseListener, ActionListener {
 	 */
 	public BioModelSim() {
 		// Creates a new frame
-		frame = new JFrame("BioModelSim");
+		frame = new JFrame("BioSim");
 
 		// Makes it so that clicking the x in the corner closes the program
 		WindowListener w = new WindowListener() {
