@@ -350,7 +350,9 @@ public class BioModelSim implements MouseListener, ActionListener {
 						+ " --cpp_cmp_output_donotInvertSortOrder --cpp_seedParents"
 						+ " --cmp_score_mustNotWinMajority " + tree.getFile() + " > run.log");
 				learn.waitFor();
-				exec.exec("dotty " + new File(tree.getFile() + File.separator + "method.dot").getAbsolutePath());
+				exec.exec("dotty "
+						+ new File(tree.getFile() + File.separator + "method.dot")
+								.getAbsolutePath());
 			} catch (Exception e1) {
 				JOptionPane.showMessageDialog(frame, "Unable to laren from data.", "Error",
 						JOptionPane.ERROR_MESSAGE);
