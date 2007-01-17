@@ -786,7 +786,7 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 		tab.addTab("Advanced Termination Conditions", sadTermCondPanel);
 		tab.addTab("Interesting Species", speciesHolder);
 		tab.addTab("User Defined Data File", ssaPanel);
-		//***tab.addTab("States User Is Interested In", mainCheckState);***
+		// ***tab.addTab("States User Is Interested In", mainCheckState);***
 		tab.addTab("Properties", propertiesPanel);
 		tab.addTab("Advanced Options", advanced);
 		this.setLayout(new BorderLayout());

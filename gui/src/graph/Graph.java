@@ -76,7 +76,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 	private ArrayList<double[]> maxAndMin; // Arraylist of max and min values
 
-	private ArrayList<ArrayList<Double>> data, variance; // graph data
+	private ArrayList<ArrayList<Double>> data, variance, deviation; // graph
+
+	// data
 
 	private ArrayList<ArrayList<Double>> average = null; // average of data
 
@@ -309,17 +311,20 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		inputHolder.add(changeHolder2, "South");
 
 		// creates combo box for choosing which run to display
-		String[] add = new String[run + 2];
+		String[] add = new String[run + 3];
 		add[0] = "Average";
 		add[1] = "Variance";
+		add[2] = "Standard Deviation";
 		for (int i = 0; i < run; i++) {
-			add[i + 2] = "" + (i + 1);
+			add[i + 3] = "" + (i + 1);
 		}
 		JLabel selectLabel = new JLabel("Select Next:");
 		if (monteCarlo.isSelected()) {
 			select = new JComboBox(add);
 			if (label.contains("variance")) {
 				select.setSelectedItem("Variance");
+			} else if (label.contains("deviation")) {
+				select.setSelectedItem("Standard Deviation");
 			} else if (label.contains("average")) {
 				select.setSelectedItem("Average");
 			} else {
@@ -351,10 +356,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		exportJPeg.addActionListener(this);
 		exportPng.addActionListener(this);
 		duplicate.addActionListener(this);
-		//***ButtonHolder.add(save);***
+		// ***ButtonHolder.add(save);***
 		ButtonHolder.add(exportJPeg);
 		ButtonHolder.add(exportPng);
-		//***ButtonHolder.add(duplicate);***
+		// ***ButtonHolder.add(duplicate);***
 		JPanel AllButtonsHolder = new JPanel(new BorderLayout());
 
 		// puts all the components of the graph gui into a display panel
@@ -426,6 +431,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			String label, int num) {
 		if (label.contains("variance")) {
 			data = variance;
+		} else if (label.contains("deviation")) {
+
+			data = deviation;
 		} else if (label.contains("average") && num != 1) {
 			data = average;
 		} else {
@@ -651,6 +659,14 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				}
 				if (label.contains("average")) {
 					average = data;
+					deviation = variance;
+					for (int i = 0; i < deviation.size(); i++) {
+						for (int j = 1; j < deviation.get(i).size(); j++) {
+							double get = deviation.get(i).get(j);
+							double srt = Math.sqrt(get);
+							deviation.get(i).set(j, srt);
+						}
+					}
 				}
 			} catch (Exception e) {
 				JOptionPane.showMessageDialog(component, "Error Reading Data!"
@@ -732,6 +748,37 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								+ printer_id1.substring(0, printer_id1.length() - 8), component,
 								printer_track_quantity1, sim1 + " run variance simulation results",
 								intSpecies, -1);
+					}
+				} else if (choice.equals("Standard Deviation")) {
+					if (sim1.equals("read-in-data")) {
+						if (keep.isSelected()) {
+							XYSeriesCollection datasetReplace = new XYSeriesCollection();
+							for (int i = 0; i < boxes.size(); i++) {
+								if (boxes.get(i).isSelected()) {
+									datasetReplace.addSeries(dataset.getSeries(i));
+								}
+							}
+							dataset = datasetReplace;
+						}
+						graph(outDir1 + File.separator + "run-" + 1 + "."
+								+ printer_id1.substring(0, printer_id1.length() - 8), component,
+								printer_track_quantity1, sim1
+										+ " standard deviation simulation results", intSpecies, -1);
+					} else {
+						if (keep.isSelected()) {
+							XYSeriesCollection datasetReplace = new XYSeriesCollection();
+							for (int i = 0; i < boxes.size(); i++) {
+								if (boxes.get(i).isSelected()) {
+									datasetReplace.addSeries(dataset.getSeries(i));
+								}
+							}
+							dataset = datasetReplace;
+						}
+						graph(outDir1 + File.separator + "run-" + 1 + "."
+								+ printer_id1.substring(0, printer_id1.length() - 8), component,
+								printer_track_quantity1, sim1
+										+ " run standard deviation simulation results", intSpecies,
+								-1);
 					}
 				} else {
 					int next = Integer.parseInt(choice);
