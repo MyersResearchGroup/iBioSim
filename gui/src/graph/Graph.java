@@ -659,12 +659,16 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				}
 				if (label.contains("average")) {
 					average = data;
-					deviation = variance;
-					for (int i = 0; i < deviation.size(); i++) {
-						for (int j = 1; j < deviation.get(i).size(); j++) {
-							double get = deviation.get(i).get(j);
-							double srt = Math.sqrt(get);
-							deviation.get(i).set(j, srt);
+					deviation = new ArrayList<ArrayList<Double>>();
+					for (int i = 0; i < variance.size(); i++) {
+						deviation.add(new ArrayList<Double>());
+						for (int j = 0; j < variance.get(i).size(); j++) {
+							deviation.get(i).add(variance.get(i).get(j));
+						}
+					}
+					for (int i = 1; i < deviation.size(); i++) {
+						for (int j = 0; j < deviation.get(i).size(); j++) {
+							deviation.get(i).set(j, Math.sqrt(deviation.get(i).get(j)));
 						}
 					}
 				}
