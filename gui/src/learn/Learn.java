@@ -3,7 +3,9 @@ package learn.core.gui;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+
 import javax.swing.*;
+
 import buttons.core.gui.*;
 
 /**
@@ -29,16 +31,27 @@ public class Learn implements ActionListener {
 
 	private JMenuItem close; // the close menu item
 
-	private JTextArea thresholds; // threshold text area
-
 	private JTextArea encodings; // encodings text area
+
+	private JComboBox debug; // debug combo box
+
+	private JTextField activation, repression, parent;
+
+	private JTextField windowRising, windowSize, numBins;
+
+	private JTextField influenceLevel, relaxIPDelta, letNThrough;
+
+	private JCheckBox harshenBoundsOnTie, donotInvertSortOrder, seedParents;
+
+	private JCheckBox mustNotWinMajority, donotTossSingleRatioParents,
+			donotTossChangedInfluenceSingleParents;
 
 	/**
 	 * This is the constructor for the Learn class. It initializes all the input
 	 * fields, puts them on panels, adds the panels to the frame, and then
 	 * displays the frame.
 	 */
-	public Learn() {
+	public Learn(String directory) {
 		// Creates a new frame
 		frame = new JFrame("Learn");
 
@@ -80,6 +93,7 @@ public class Learn implements ActionListener {
 		browseExper.addActionListener(this);
 		initNetwork = new JTextField(39);
 		experiments = new JTextField(39);
+		experiments.setText(directory);
 		initNet1.add(initNetLabel);
 		initNet1.add(initNetwork);
 		initNet1.add(browseInit);
@@ -90,15 +104,69 @@ public class Learn implements ActionListener {
 		initNet.add(initNet2);
 
 		// Sets up the thresholds area
-		JPanel thresholdPanel = new JPanel(new BorderLayout());
-		thresholds = new JTextArea();
-		JLabel thresholdsLabel = new JLabel("Thresholds:");
-		JScrollPane scroll = new JScrollPane();
-		scroll.setMinimumSize(new Dimension(260, 200));
-		scroll.setPreferredSize(new Dimension(276, 132));
-		scroll.setViewportView(thresholds);
-		thresholdPanel.add(thresholdsLabel, "North");
-		thresholdPanel.add(scroll, "Center");
+		JPanel thresholdPanel = new JPanel(new GridLayout(13, 2));
+		JLabel debugLabel = new JLabel("Debug Level:");
+		String[] options = new String[4];
+		options[0] = "0";
+		options[1] = "1";
+		options[2] = "2";
+		options[3] = "3";
+		debug = new JComboBox(options);
+		thresholdPanel.add(debugLabel);
+		thresholdPanel.add(debug);
+		JLabel activationLabel = new JLabel("Activation Threshold:");
+		activation = new JTextField("1.15");
+		thresholdPanel.add(activationLabel);
+		thresholdPanel.add(activation);
+		JLabel repressionLabel = new JLabel("Repression Threshold:");
+		repression = new JTextField("0.75");
+		thresholdPanel.add(repressionLabel);
+		thresholdPanel.add(repression);
+		JLabel parentLabel = new JLabel("Score To Be A Parent:");
+		parent = new JTextField("0.5");
+		thresholdPanel.add(parentLabel);
+		thresholdPanel.add(parent);
+		JLabel windowRisingLabel = new JLabel("Window Rising Amount:");
+		windowRising = new JTextField("1");
+		thresholdPanel.add(windowRisingLabel);
+		thresholdPanel.add(windowRising);
+		JLabel windowSizeLabel = new JLabel("Window Size:");
+		windowSize = new JTextField("1");
+		thresholdPanel.add(windowSizeLabel);
+		thresholdPanel.add(windowSize);
+		JLabel numBinsLabel = new JLabel("Number Of Bins:");
+		numBins = new JTextField("3");
+		thresholdPanel.add(numBinsLabel);
+		thresholdPanel.add(numBins);
+		JLabel influenceLevelLabel = new JLabel("Influence Level Delta:");
+		influenceLevel = new JTextField("0.01");
+		thresholdPanel.add(influenceLevelLabel);
+		thresholdPanel.add(influenceLevel);
+		JLabel relaxIPDeltaLabel = new JLabel("Relax InitialParents Delta:");
+		relaxIPDelta = new JTextField("0.025");
+		thresholdPanel.add(relaxIPDeltaLabel);
+		thresholdPanel.add(relaxIPDelta);
+		JLabel letNThroughLabel = new JLabel("Minimum Number Of SelectInitalParents:");
+		letNThrough = new JTextField("1");
+		thresholdPanel.add(letNThroughLabel);
+		thresholdPanel.add(letNThrough);
+		harshenBoundsOnTie = new JCheckBox("Harshen Bounds On Tie");
+		harshenBoundsOnTie.setSelected(true);
+		donotInvertSortOrder = new JCheckBox("Do Not Invert Sort Order");
+		donotInvertSortOrder.setSelected(true);
+		seedParents = new JCheckBox("Parents Should Be Ranked By Score");
+		seedParents.setSelected(true);
+		mustNotWinMajority = new JCheckBox("Must Not Win Majority");
+		mustNotWinMajority.setSelected(true);
+		donotTossSingleRatioParents = new JCheckBox("Single Ratio Parents Should Be Kept");
+		donotTossChangedInfluenceSingleParents = new JCheckBox(
+				"Parents That Change Influence Should Not Be Tossed");
+		thresholdPanel.add(harshenBoundsOnTie);
+		thresholdPanel.add(donotInvertSortOrder);
+		thresholdPanel.add(seedParents);
+		thresholdPanel.add(mustNotWinMajority);
+		thresholdPanel.add(donotTossSingleRatioParents);
+		thresholdPanel.add(donotTossChangedInfluenceSingleParents);
 
 		// Sets up the encodings area
 		JPanel encodingPanel = new JPanel(new BorderLayout());
@@ -187,9 +255,43 @@ public class Learn implements ActionListener {
 			}
 			Buttons.browse(frame, dir, experiments, JFileChooser.DIRECTORIES_ONLY, "Open");
 		}
+		// if the run button is selected
+		else if (e.getSource() == run) {
+			try {
+				String geneNet = "GeneNet";
+				if (harshenBoundsOnTie.isSelected()) {
+					geneNet += " --cpp_harshenBoundsOnTie";
+				}
+				if (donotInvertSortOrder.isSelected()) {
+					geneNet += " --cpp_cmp_output_donotInvertSortOrder";
+				}
+				if (seedParents.isSelected()) {
+					geneNet += " --cpp_seedParents";
+				}
+				if (mustNotWinMajority.isSelected()) {
+					geneNet += " --cmp_score_mustNotWinMajority";
+				}
+				if (donotTossSingleRatioParents.isSelected()) {
+					geneNet += " --score_donotTossSingleRatioParents";
+				}
+				if (donotTossChangedInfluenceSingleParents.isSelected()) {
+					geneNet += " --output_donotTossChangedInfluenceSingleParents";
+				}
+				Runtime exec = Runtime.getRuntime();
+				Process learn = exec.exec(geneNet + " " + experiments.getText().trim()
+						+ " > run.log");
+				learn.waitFor();
+				exec.exec("dotty "
+						+ new File(experiments.getText().trim() + File.separator + "method.dot")
+								.getAbsolutePath());
+			} catch (Exception e1) {
+				JOptionPane.showMessageDialog(frame, "Unable to learn from data.", "Error",
+						JOptionPane.ERROR_MESSAGE);
+			}
+		}
 	}
-	
+
 	public static void main(String args[]) {
-		new Learn();
+		new Learn(null);
 	}
 }
