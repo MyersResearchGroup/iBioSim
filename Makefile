@@ -1,12 +1,15 @@
 #Makefile for tools
 
-all: geneNet Reb2Sac
+all: geneNet Reb2Sac Gui
 
 geneNet:
 	make -C GeneNet
 
 Reb2Sac:
 	cd reb2sac; ./install-reb2sac-linux.sh
+
+Gui:
+	cd gui; ant
 
 .PHONY: clean
 
