@@ -14,21 +14,26 @@ import buttons.core.gui.*;
  * 
  * @author Curtis Madsen
  */
-public class Learn implements ActionListener {
+public class Learn extends JPanel implements ActionListener, KeyListener {
 
-	private JFrame frame; // Frame where components of the GUI are displayed
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5806315070287184299L;
+
+	// private JFrame frame; // Frame where components of the GUI are displayed
 
 	private JTextField initNetwork; // text field for initial network
 
 	private JButton browseInit; // the browse initial network button
 
-	private JTextField experiments; // text field for experiments directory
+	// private JTextField experiments; // text field for experiments directory
 
-	private JButton browseExper; // the browse experiments directory button
+	// private JButton browseExper; // the browse experiments directory button
 
 	private JButton run; // the run button
 
-	private JMenuItem close; // the close menu item
+	// private JMenuItem close; // the close menu item
 
 	private JComboBox debug; // debug combo box
 
@@ -55,40 +60,36 @@ public class Learn implements ActionListener {
 
 	private JButton suggest;
 
+	private String directory;
+
+	private JLabel numBinsLabel;
+
 	/**
 	 * This is the constructor for the Learn class. It initializes all the input
 	 * fields, puts them on panels, adds the panels to the frame, and then
 	 * displays the frame.
 	 */
 	public Learn(String directory) {
-		// Creates a new frame
-		frame = new JFrame("Learn");
-
-		// Makes it so that clicking the x in the corner closes the program
-		WindowListener w = new WindowListener() {
-			public void windowClosing(WindowEvent arg0) {
-				frame.dispose();
-			}
-
-			public void windowOpened(WindowEvent arg0) {
-			}
-
-			public void windowClosed(WindowEvent arg0) {
-			}
-
-			public void windowIconified(WindowEvent arg0) {
-			}
-
-			public void windowDeiconified(WindowEvent arg0) {
-			}
-
-			public void windowActivated(WindowEvent arg0) {
-			}
-
-			public void windowDeactivated(WindowEvent arg0) {
-			}
-		};
-		frame.addWindowListener(w);
+		this.directory = directory;
+		/*
+		 * // Creates a new frame frame = new JFrame("Learn"); // Makes it so
+		 * that clicking the x in the corner closes the program WindowListener w =
+		 * new WindowListener() { public void windowClosing(WindowEvent arg0) {
+		 * frame.dispose(); }
+		 * 
+		 * public void windowOpened(WindowEvent arg0) { }
+		 * 
+		 * public void windowClosed(WindowEvent arg0) { }
+		 * 
+		 * public void windowIconified(WindowEvent arg0) { }
+		 * 
+		 * public void windowDeiconified(WindowEvent arg0) { }
+		 * 
+		 * public void windowActivated(WindowEvent arg0) { }
+		 * 
+		 * public void windowDeactivated(WindowEvent arg0) { } };
+		 * frame.addWindowListener(w);
+		 */
 
 		// Sets up the encodings area
 		JPanel radioPanel = new JPanel(new BorderLayout());
@@ -119,26 +120,24 @@ public class Learn implements ActionListener {
 		encodingPanel.add(scroll2, "Center");
 
 		// Sets up initial network and experiments text fields
-		JPanel initNet = new JPanel(new GridLayout(2, 1));
-		JPanel initNet1 = new JPanel();
-		JPanel initNet2 = new JPanel();
-		JLabel expLabel = new JLabel("Experiments:    ");
+		JPanel initNet = new JPanel();
+		// JPanel initNet2 = new JPanel();
+		// JLabel expLabel = new JLabel("Experiments: ");
 		JLabel initNetLabel = new JLabel("Initial Network:");
 		browseInit = new JButton("Browse");
-		browseExper = new JButton("Browse");
+		// browseExper = new JButton("Browse");
 		browseInit.addActionListener(this);
-		browseExper.addActionListener(this);
+		// browseExper.addActionListener(this);
 		initNetwork = new JTextField(39);
-		experiments = new JTextField(39);
-		experiments.setText(directory);
-		initNet1.add(initNetLabel);
-		initNet1.add(initNetwork);
-		initNet1.add(browseInit);
-		initNet2.add(expLabel);
-		initNet2.add(experiments);
-		initNet2.add(browseExper);
-		initNet.add(initNet1);
-		initNet.add(initNet2);
+		// experiments = new JTextField(39);
+		// experiments.setText(directory);
+		initNet.add(initNetLabel);
+		initNet.add(initNetwork);
+		initNet.add(browseInit);
+		// initNet2.add(expLabel);
+		// initNet2.add(experiments);
+		// initNet2.add(browseExper);
+		// initNet.add(initNet2);
 
 		// Sets up the thresholds area
 		JPanel thresholdPanel = new JPanel(new GridLayout(14, 2));
@@ -171,10 +170,6 @@ public class Learn implements ActionListener {
 		windowSize = new JTextField("1");
 		thresholdPanel.add(windowSizeLabel);
 		thresholdPanel.add(windowSize);
-		JLabel numBinsLabel = new JLabel("Number Of Bins:");
-		numBins = new JTextField("3");
-		thresholdPanel.add(numBinsLabel);
-		thresholdPanel.add(numBins);
 		JLabel influenceLevelLabel = new JLabel("Influence Level Delta:");
 		influenceLevel = new JTextField("0.01");
 		thresholdPanel.add(influenceLevelLabel);
@@ -188,9 +183,13 @@ public class Learn implements ActionListener {
 		thresholdPanel.add(letNThroughLabel);
 		thresholdPanel.add(letNThrough);
 		JLabel backgroundLabel = new JLabel("Background Knowledge Filter:");
-		background = new JTextField("0.0");
+		background = new JTextField("0.51");
 		thresholdPanel.add(backgroundLabel);
 		thresholdPanel.add(background);
+		numBinsLabel = new JLabel("Number Of Bins:");
+		numBins = new JTextField("3");
+		thresholdPanel.add(numBinsLabel);
+		thresholdPanel.add(numBins);
 		harshenBoundsOnTie = new JCheckBox("Harshen Bounds On Tie");
 		harshenBoundsOnTie.setSelected(true);
 		donotInvertSortOrder = new JCheckBox("Do Not Invert Sort Order");
@@ -216,51 +215,39 @@ public class Learn implements ActionListener {
 		run.addActionListener(this);
 		run.setMnemonic(KeyEvent.VK_L);
 
-		// Creates a menu for the gui
-		JMenuBar menuBar = new JMenuBar();
-		JMenu file = new JMenu("File");
-		file.setMnemonic(KeyEvent.VK_F);
-		menuBar.add(file);
-		close = new JMenuItem("Close");
-		close.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.ALT_MASK));
-		close.setMnemonic(KeyEvent.VK_C);
-		close.addActionListener(this);
-		file.add(close);
+		/*
+		 * // Creates a menu for the gui JMenuBar menuBar = new JMenuBar();
+		 * JMenu file = new JMenu("File"); file.setMnemonic(KeyEvent.VK_F);
+		 * menuBar.add(file); close = new JMenuItem("Close");
+		 * close.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C,
+		 * ActionEvent.ALT_MASK)); close.setMnemonic(KeyEvent.VK_C);
+		 * close.addActionListener(this); file.add(close);
+		 */
 
 		// Creates the main panel
-		JPanel mainPanel = new JPanel(new BorderLayout());
+		this.setLayout(new BorderLayout());
 		JPanel middlePanel = new JPanel(new BorderLayout());
 		middlePanel.add(radioPanel, "Center");
 		middlePanel.add(runHolder, "South");
-		mainPanel.add(initNet, "North");
+		this.add(initNet, "North");
 		JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, middlePanel, null);
 		splitPane.setDividerSize(0);
-		mainPanel.add(thresholdPanel, "Center");
-		mainPanel.add(splitPane, "South");
+		this.add(thresholdPanel, "Center");
+		this.add(splitPane, "South");
 
-		// Packs the frame and displays it
-		frame.setContentPane(mainPanel);
-		frame.setJMenuBar(menuBar);
-		frame.pack();
-		Dimension screenSize;
-		try {
-			Toolkit tk = Toolkit.getDefaultToolkit();
-			screenSize = tk.getScreenSize();
-		} catch (AWTError awe) {
-			screenSize = new Dimension(640, 480);
-		}
-		Dimension frameSize = frame.getSize();
-
-		if (frameSize.height > screenSize.height) {
-			frameSize.height = screenSize.height;
-		}
-		if (frameSize.width > screenSize.width) {
-			frameSize.width = screenSize.width;
-		}
-		int x = screenSize.width / 2 - frameSize.width / 2;
-		int y = screenSize.height / 2 - frameSize.height / 2;
-		frame.setLocation(x, y);
-		frame.setVisible(true);
+		/*
+		 * // Packs the frame and displays it frame.setContentPane(mainPanel);
+		 * frame.setJMenuBar(menuBar); frame.pack(); Dimension screenSize; try {
+		 * Toolkit tk = Toolkit.getDefaultToolkit(); screenSize =
+		 * tk.getScreenSize(); } catch (AWTError awe) { screenSize = new
+		 * Dimension(640, 480); } Dimension frameSize = frame.getSize();
+		 * 
+		 * if (frameSize.height > screenSize.height) { frameSize.height =
+		 * screenSize.height; } if (frameSize.width > screenSize.width) {
+		 * frameSize.width = screenSize.width; } int x = screenSize.width / 2 -
+		 * frameSize.width / 2; int y = screenSize.height / 2 - frameSize.height /
+		 * 2; frame.setLocation(x, y); frame.setVisible(true);
+		 */
 	}
 
 	/**
@@ -268,34 +255,47 @@ public class Learn implements ActionListener {
 	 * buttons are selected.
 	 */
 	public void actionPerformed(ActionEvent e) {
-		// if the close menu item is selected
-		if (e.getSource() == close) {
-			frame.dispose();
+		if (e.getActionCommand().contains("box")) {
+			int num = Integer.parseInt(e.getActionCommand().substring(3)) - 1;
+			if (((JCheckBox) this.species.get(num).get(0)).isSelected()) {
+				((JTextField) this.species.get(num).get(2)).setText("0");
+				editText(num);
+				for (int i = 1; i < this.species.get(num).size(); i++) {
+					this.species.get(num).get(i).setEnabled(false);
+				}
+			} else {
+				for (int i = 1; i < this.species.get(num).size(); i++) {
+					this.species.get(num).get(i).setEnabled(true);
+				}
+			}
 		} else if (e.getSource() == user) {
-			levels();
+			numBinsLabel.setEnabled(false);
+			numBins.setEnabled(false);
+			levelsBin();
 		} else if (e.getSource() == auto) {
+			numBinsLabel.setEnabled(true);
+			numBins.setEnabled(true);
 			for (Component c : speciesPanel.getComponents()) {
 				for (Component d : ((JPanel) c).getComponents()) {
 					d.setEnabled(false);
 				}
 			}
+		} else if (e.getSource() == suggest) {
+			levels();
 		}
 		// if the browse initial network button is clicked
 		else if (e.getSource() == browseInit) {
-			Buttons.browse(frame, new File(initNetwork.getText().trim()), initNetwork,
+			Buttons.browse(this, new File(initNetwork.getText().trim()), initNetwork,
 					JFileChooser.FILES_ONLY, "Open");
 		}
-		// if the browse experiments directory button is clicked
-		else if (e.getSource() == browseExper) {
-			File dir;
-			if (experiments.getText().trim().equals("")) {
-				dir = null;
-			} else {
-				dir = new File(experiments.getText().trim() + File.separator + ".");
-			}
-			Buttons.browse(frame, dir, experiments, JFileChooser.DIRECTORIES_ONLY, "Open");
-			levels();
-		}
+		/*
+		 * // if the browse experiments directory button is clicked else if
+		 * (e.getSource() == browseExper) { File dir; if
+		 * (experiments.getText().trim().equals("")) { dir = null; } else { dir =
+		 * new File(experiments.getText().trim() + File.separator + "."); }
+		 * Buttons.browse(this, dir, experiments, JFileChooser.DIRECTORIES_ONLY,
+		 * "Open"); levels(); }
+		 */
 		// if the run button is selected
 		else if (e.getSource() == run) {
 			try {
@@ -324,12 +324,13 @@ public class Learn implements ActionListener {
 					double background = Double.parseDouble(this.background.getText().trim());
 					geneNet += " -bkf " + background;
 				} catch (Exception e2) {
-					JOptionPane.showMessageDialog(frame, "Must enter numbers into input fields.",
+					JOptionPane.showMessageDialog(this, "Must enter numbers into input fields.",
 							"Error", JOptionPane.ERROR_MESSAGE);
 				}
 				if (user.isSelected()) {
-					FileWriter write = new FileWriter(new File(experiments.getText().trim()
-							+ File.separator + "levels.lvl"));
+					FileWriter write = new FileWriter(new File(directory + File.separator
+							+ "levels.lvl"));
+					write.write("time, 0\n");
 					for (int i = 0; i < species.size(); i++) {
 						write.write(((JTextField) species.get(i).get(1)).getText().trim());
 						for (int j = 2; j < species.get(i).size(); j++) {
@@ -360,32 +361,29 @@ public class Learn implements ActionListener {
 					geneNet += " --output_donotTossChangedInfluenceSingleParents";
 				}
 				Runtime exec = Runtime.getRuntime();
-				Process learn = exec.exec(geneNet + " " + experiments.getText().trim());
+				Process learn = exec.exec(geneNet + " " + directory);
 				learn.waitFor();
 				String output = "";
 				InputStream reb = learn.getInputStream();
+				FileWriter out = new FileWriter(new File(directory + File.separator + "run.log"));
 				int read = reb.read();
 				while (read != -1) {
 					output += (char) read;
+					out.write((char) read);
 					read = reb.read();
 				}
-				if (!output.equals("")) {
-					FileWriter out = new FileWriter(new File(experiments.getText().trim()
-							+ File.separator + "run.log"));
-					out.write(output);
-					System.out.println("Output:\n" + output + "\n");
-				}
-				if (new File(experiments.getText().trim() + File.separator + "method.dot").exists()) {
+				out.close();
+				if (new File(directory + File.separator + "method.dot").exists()) {
 					exec
 							.exec("dotty "
-									+ new File(experiments.getText().trim() + File.separator
-											+ "method.dot").getAbsolutePath());
+									+ new File(directory + File.separator + "method.dot")
+											.getAbsolutePath());
 				} else {
-					JOptionPane.showMessageDialog(frame, "A dot file was not generated."
+					JOptionPane.showMessageDialog(this, "A dot file was not generated."
 							+ "\nPlease see the run.log file.", "Error", JOptionPane.ERROR_MESSAGE);
 				}
 			} catch (Exception e1) {
-				JOptionPane.showMessageDialog(frame, "Unable to learn from data.", "Error",
+				JOptionPane.showMessageDialog(this, "Unable to learn from data.", "Error",
 						JOptionPane.ERROR_MESSAGE);
 			}
 		}
@@ -394,20 +392,29 @@ public class Learn implements ActionListener {
 	private void levels() {
 		ArrayList<String> str = null;
 		try {
+			FileWriter write = new FileWriter(new File(directory + File.separator + "levels.lvl"));
+			write.write("time, 0\n");
+			for (int i = 0; i < species.size(); i++) {
+				write.write(((JTextField) species.get(i).get(1)).getText().trim());
+				for (int j = 2; j < species.get(i).size(); j++) {
+					write.write(", " + ((JTextField) species.get(i).get(j)).getText().trim());
+				}
+				write.write("\n");
+			}
+			write.close();
 			Runtime exec = Runtime.getRuntime();
-			Process learn = exec.exec("GeneNet --lvl " + experiments.getText().trim());
+			Process learn = exec.exec("GeneNet --readLevels --lvl " + directory);
 			learn.waitFor();
-			Scanner f = new Scanner(new File(experiments.getText().trim() + File.separator
-					+ "levels.lvl"));
+			Scanner f = new Scanner(new File(directory + File.separator + "levels.lvl"));
 			str = new ArrayList<String>();
 			while (f.hasNextLine()) {
 				str.add(f.nextLine());
 			}
 		} catch (Exception e1) {
 		}
-		if (!experiments.getText().trim().equals("")) {
+		if (!directory.equals("")) {
 			File n = null;
-			for (File f : new File(experiments.getText().trim()).listFiles()) {
+			for (File f : new File(directory).listFiles()) {
 				if (f.getAbsolutePath().contains(".tsd")) {
 					n = f;
 				}
@@ -480,7 +487,9 @@ public class Learn implements ActionListener {
 					label.add(new JLabel("cutoff " + (i + 1)));
 				}
 				speciesPanel.add(label);
+				int j = 0;
 				for (String s : species) {
+					j++;
 					JPanel sp = new JPanel(new GridLayout());
 					ArrayList<Component> specs = new ArrayList<Component>();
 					specs.add(new JCheckBox());
@@ -488,8 +497,12 @@ public class Learn implements ActionListener {
 					specs.add(new JTextField());
 					((JTextField) specs.get(1)).setEditable(false);
 					sp.add(specs.get(0));
+					((JCheckBox) specs.get(0)).addActionListener(this);
+					((JCheckBox) specs.get(0)).setActionCommand("box" + j);
 					sp.add(specs.get(1));
 					sp.add(specs.get(2));
+					((JTextField) specs.get(2)).addKeyListener(this);
+					((JTextField) specs.get(2)).setName("text" + j);
 					this.species.add(specs);
 					if (str != null) {
 						for (String st : str) {
@@ -502,6 +515,10 @@ public class Learn implements ActionListener {
 										specs.add(new JTextField(getString[i + 2].trim()));
 										sp.add(specs.get(i + 3));
 									}
+									for (int i = Integer.parseInt(((JTextField) specs.get(2))
+											.getText()) - 1; i < max - 3; i++) {
+										sp.add(new JLabel());
+									}
 								}
 							}
 						}
@@ -513,7 +530,167 @@ public class Learn implements ActionListener {
 		}
 	}
 
-	public static void main(String args[]) {
-		new Learn(null);
+	private void levelsBin() {
+		if (!directory.equals("")) {
+			File n = null;
+			for (File f : new File(directory).listFiles()) {
+				if (f.getAbsolutePath().contains(".tsd")) {
+					n = f;
+				}
+			}
+			if (n != null) {
+				InputStream input;
+				ArrayList<String> species = new ArrayList<String>();
+				try {
+					input = new FileInputStream(n);
+					boolean reading = true;
+					char cha;
+					int readCount = 0;
+					while (reading) {
+						String word = "";
+						boolean readWord = true;
+						while (readWord) {
+							int read = input.read();
+							readCount++;
+							if (read == -1) {
+								reading = false;
+								readWord = false;
+							}
+							cha = (char) read;
+							if (Character.isWhitespace(cha)) {
+								input.mark(3);
+								char next = (char) input.read();
+								char after = (char) input.read();
+								String check = "" + next + after;
+								if (word.equals("0") || check.equals("0,")) {
+									readWord = false;
+								} else {
+									word += cha;
+								}
+								input.reset();
+							} else if (cha == ',' || cha == ':' || cha == ';' || cha == '!'
+									|| cha == '?' || cha == '\"' || cha == '\'' || cha == '('
+									|| cha == ')' || cha == '{' || cha == '}' || cha == '['
+									|| cha == ']' || cha == '<' || cha == '>' || cha == '*'
+									|| cha == '=' || cha == '#') {
+								if (!word.equals("") && !word.equals("time")) {
+									try {
+										Integer.parseInt(word);
+									} catch (Exception e2) {
+										species.add(word);
+									}
+								}
+								word = "";
+							} else if (read != -1) {
+								word += cha;
+							}
+						}
+					}
+				} catch (Exception e1) {
+				}
+				speciesPanel.removeAll();
+				this.species = new ArrayList<ArrayList<Component>>();
+				speciesPanel.setLayout(new GridLayout(species.size() + 1, 1));
+				JPanel label = new JPanel(new GridLayout());
+				label.add(new JLabel("Do Not Use"));
+				label.add(new JLabel("Species"));
+				label.add(new JLabel("Number Of Levels"));
+				for (int i = 0; i < Integer.parseInt(numBins.getText().trim()) - 1; i++) {
+					label.add(new JLabel("cutoff " + (i + 1)));
+				}
+				speciesPanel.add(label);
+				int j = 0;
+				for (String s : species) {
+					j++;
+					JPanel sp = new JPanel(new GridLayout());
+					ArrayList<Component> specs = new ArrayList<Component>();
+					specs.add(new JCheckBox());
+					specs.add(new JTextField(s));
+					specs.add(new JTextField(numBins.getText().trim()));
+					((JTextField) specs.get(1)).setEditable(false);
+					sp.add(specs.get(0));
+					((JCheckBox) specs.get(0)).addActionListener(this);
+					((JCheckBox) specs.get(0)).setActionCommand("box" + j);
+					sp.add(specs.get(1));
+					sp.add(specs.get(2));
+					((JTextField) specs.get(2)).addKeyListener(this);
+					((JTextField) specs.get(2)).setName("text" + j);
+					this.species.add(specs);
+					for (int i = 0; i < Integer.parseInt(((JTextField) specs.get(2)).getText()) - 1; i++) {
+						specs.add(new JTextField("0"));
+						sp.add(specs.get(i + 3));
+					}
+					speciesPanel.add(sp);
+				}
+				speciesPanel.validate();
+			}
+		}
+	}
+
+	public void keyTyped(KeyEvent e) {
+		if (((JTextField) e.getSource()).getName().contains("text")) {
+			if (!((JTextField) e.getSource()).getText().trim().equals("")) {
+				int num = Integer.parseInt(((JTextField) e.getSource()).getName().substring(4)) - 1;
+				editText(num);
+			}
+		}
+	}
+
+	public void keyPressed(KeyEvent e) {
+		if (((JTextField) e.getSource()).getName().contains("text")) {
+			if (!((JTextField) e.getSource()).getText().trim().equals("")) {
+				int num = Integer.parseInt(((JTextField) e.getSource()).getName().substring(4)) - 1;
+				editText(num);
+			}
+		}
+	}
+
+	public void keyReleased(KeyEvent e) {
+		if (((JTextField) e.getSource()).getName().contains("text")) {
+			if (!((JTextField) e.getSource()).getText().trim().equals("")) {
+				int num = Integer.parseInt(((JTextField) e.getSource()).getName().substring(4)) - 1;
+				editText(num);
+			}
+		}
+	}
+
+	private void editText(int num) {
+		ArrayList<Component> specs = new ArrayList<Component>();
+		specs.add(this.species.get(num).get(0));
+		specs.add(this.species.get(num).get(1));
+		specs.add(this.species.get(num).get(2));
+		for (int i = 0; i < Integer.parseInt(((JTextField) specs.get(2)).getText().trim()) - 1; i++) {
+			try {
+				specs.add(this.species.get(num).get(i + 3));
+			} catch (Exception e1) {
+				specs.add(new JTextField("0"));
+			}
+		}
+		this.species.set(num, specs);
+		speciesPanel.removeAll();
+		speciesPanel.setLayout(new GridLayout(species.size() + 1, 1));
+		int max = 0;
+		for (int i = 0; i < this.species.size(); i++) {
+			max = Math.max(max, species.get(i).size());
+		}
+		JPanel label = new JPanel(new GridLayout());
+		label.add(new JLabel("Do Not Use"));
+		label.add(new JLabel("Species"));
+		label.add(new JLabel("Number Of Levels"));
+		for (int i = 0; i < max - 3; i++) {
+			label.add(new JLabel("cutoff " + (i + 1)));
+		}
+		speciesPanel.add(label);
+		for (int i = 0; i < this.species.size(); i++) {
+			JPanel sp = new JPanel(new GridLayout());
+			for (int j = 0; j < species.get(i).size(); j++) {
+				sp.add(species.get(i).get(j));
+			}
+			for (int j = species.get(i).size(); j < max; j++) {
+				sp.add(new JLabel());
+			}
+			speciesPanel.add(sp);
+		}
+		speciesPanel.validate();
 	}
 }
