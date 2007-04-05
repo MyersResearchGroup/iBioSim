@@ -403,7 +403,7 @@ public class Learn extends JPanel implements ActionListener, KeyListener {
 			}
 			write.close();
 			Runtime exec = Runtime.getRuntime();
-			Process learn = exec.exec("GeneNet --readLevels --lvl " + directory);
+			Process learn = exec.exec("GeneNet --lvl " + directory);
 			learn.waitFor();
 			Scanner f = new Scanner(new File(directory + File.separator + "levels.lvl"));
 			str = new ArrayList<String>();
