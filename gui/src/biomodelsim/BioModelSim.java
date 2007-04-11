@@ -287,7 +287,7 @@ public class BioModelSim implements MouseListener, ActionListener {
 						JTabbedPane simTab = new JTabbedPane();
 						Reb2Sac reb2sac = new Reb2Sac(getAFile, root, this, split[split.length - 1]
 								.trim(), log, simTab, openFile);
-						simTab.addTab("Options", reb2sac);
+						simTab.addTab("Simulation", reb2sac);
 						simTab.getComponentAt(simTab.getComponents().length - 1)
 								.setName("Simulate");
 						SBML_Editor sbml = new SBML_Editor(getAFile, reb2sac);
@@ -314,11 +314,9 @@ public class BioModelSim implements MouseListener, ActionListener {
 				String simName = JOptionPane.showInputDialog(frame, "Enter simulation id:",
 						"Simulation ID", JOptionPane.PLAIN_MESSAGE);
 				if (simName != null && !simName.equals("")) {
-					new File(root + File.separator + "work" + File.separator + simName).mkdir();
+					new File(root + File.separator + simName).mkdir();
 					String[] dot = tree.getFile().split(File.separator);
 					String sbmlFile = root
-							+ File.separator
-							+ "work"
 							+ File.separator
 							+ simName
 							+ File.separator
@@ -330,13 +328,13 @@ public class BioModelSim implements MouseListener, ActionListener {
 					JTabbedPane simTab = new JTabbedPane();
 					Reb2Sac reb2sac = new Reb2Sac(sbmlFile, root, this, simName.trim(), log,
 							simTab, null);
-					simTab.addTab("Options", reb2sac);
+					simTab.addTab("Simulation", reb2sac);
 					simTab.getComponentAt(simTab.getComponents().length - 1).setName("Simulate");
 					SBML_Editor sbml = new SBML_Editor(sbmlFile, reb2sac);
 					reb2sac.setSbml(sbml);
 					simTab.addTab("SBML Editor", sbml);
 					simTab.getComponentAt(simTab.getComponents().length - 1).setName("SBML Editor");
-					Learn learn = new Learn(root + File.separator + "work" + File.separator
+					Learn learn = new Learn(root + File.separator
 							+ simName);
 					simTab.addTab("Learn", learn);
 					simTab.getComponentAt(simTab.getComponents().length - 1).setName("Learn");
@@ -469,9 +467,9 @@ public class BioModelSim implements MouseListener, ActionListener {
 				String simName = JOptionPane.showInputDialog(frame, "Enter simulation id:",
 						"Simulation ID", JOptionPane.PLAIN_MESSAGE);
 				if (simName != null && !simName.equals("")) {
-					new File(root + File.separator + "work" + File.separator + simName).mkdir();
+					new File(root +  File.separator + simName).mkdir();
 					String[] sbml1 = tree.getFile().split(File.separator);
-					String sbmlFile = root + File.separator + "work" + File.separator + simName
+					String sbmlFile = root + File.separator + simName
 							+ File.separator + sbml1[sbml1.length - 1];
 					try {
 						FileOutputStream out = new FileOutputStream(new File(sbmlFile));
@@ -489,13 +487,13 @@ public class BioModelSim implements MouseListener, ActionListener {
 					JTabbedPane simTab = new JTabbedPane();
 					Reb2Sac reb2sac = new Reb2Sac(sbmlFile, root, this, simName.trim(), log,
 							simTab, null);
-					simTab.addTab("Options", reb2sac);
+					simTab.addTab("Simulation", reb2sac);
 					simTab.getComponentAt(simTab.getComponents().length - 1).setName("Simulate");
 					SBML_Editor sbml = new SBML_Editor(sbmlFile, reb2sac);
 					reb2sac.setSbml(sbml);
 					simTab.addTab("SBML Editor", sbml);
 					simTab.getComponentAt(simTab.getComponents().length - 1).setName("SBML Editor");
-					Learn learn = new Learn(root + File.separator + "work" + File.separator
+					Learn learn = new Learn(root + File.separator
 							+ simName);
 					simTab.addTab("Learn", learn);
 					simTab.getComponentAt(simTab.getComponents().length - 1).setName("Learn");
@@ -533,11 +531,9 @@ public class BioModelSim implements MouseListener, ActionListener {
 					String simName = JOptionPane.showInputDialog(frame, "Enter simulation id:",
 							"Simulation ID", JOptionPane.PLAIN_MESSAGE);
 					if (simName != null && !simName.equals("")) {
-						new File(root + File.separator + "work" + File.separator + simName).mkdir();
+						new File(root + File.separator + simName).mkdir();
 						String[] dot = tree.getFile().split(File.separator);
 						String sbmlFile = root
-								+ File.separator
-								+ "work"
 								+ File.separator
 								+ simName
 								+ File.separator
@@ -551,7 +547,7 @@ public class BioModelSim implements MouseListener, ActionListener {
 						JTabbedPane simTab = new JTabbedPane();
 						Reb2Sac reb2sac = new Reb2Sac(sbmlFile, root, this, simName.trim(), log,
 								simTab, null);
-						simTab.addTab("Options", reb2sac);
+						simTab.addTab("Simulation", reb2sac);
 						simTab.getComponentAt(simTab.getComponents().length - 1)
 								.setName("Simulate");
 						SBML_Editor sbml = new SBML_Editor(sbmlFile, reb2sac);
@@ -559,7 +555,7 @@ public class BioModelSim implements MouseListener, ActionListener {
 						simTab.addTab("SBML Editor", sbml);
 						simTab.getComponentAt(simTab.getComponents().length - 1).setName(
 								"SBML Editor");
-						Learn learn = new Learn(root + File.separator + "work" + File.separator
+						Learn learn = new Learn(root  + File.separator
 								+ simName);
 						simTab.addTab("Learn", learn);
 						simTab.getComponentAt(simTab.getComponents().length - 1).setName("Learn");
@@ -582,9 +578,9 @@ public class BioModelSim implements MouseListener, ActionListener {
 					String simName = JOptionPane.showInputDialog(frame, "Enter simulation id:",
 							"Simulation ID", JOptionPane.PLAIN_MESSAGE);
 					if (simName != null && !simName.equals("")) {
-						new File(root + File.separator + "work" + File.separator + simName).mkdir();
+						new File(root  + File.separator + simName).mkdir();
 						String[] sbml1 = tree.getFile().split(File.separator);
-						String sbmlFile = root + File.separator + "work" + File.separator + simName
+						String sbmlFile = root  + File.separator + simName
 								+ File.separator + sbml1[sbml1.length - 1];
 						try {
 							FileOutputStream out = new FileOutputStream(new File(sbmlFile));
@@ -602,7 +598,7 @@ public class BioModelSim implements MouseListener, ActionListener {
 						JTabbedPane simTab = new JTabbedPane();
 						Reb2Sac reb2sac = new Reb2Sac(sbmlFile, root, this, simName.trim(), log,
 								simTab, null);
-						simTab.addTab("Options", reb2sac);
+						simTab.addTab("Simulation", reb2sac);
 						simTab.getComponentAt(simTab.getComponents().length - 1)
 								.setName("Simulate");
 						SBML_Editor sbml = new SBML_Editor(sbmlFile, reb2sac);
@@ -610,7 +606,7 @@ public class BioModelSim implements MouseListener, ActionListener {
 						simTab.addTab("SBML Editor", sbml);
 						simTab.getComponentAt(simTab.getComponents().length - 1).setName(
 								"SBML Editor");
-						Learn learn = new Learn(root + File.separator + "work" + File.separator
+						Learn learn = new Learn(root  + File.separator
 								+ simName);
 						simTab.addTab("Learn", learn);
 						simTab.getComponentAt(simTab.getComponents().length - 1).setName("Learn");
@@ -641,9 +637,6 @@ public class BioModelSim implements MouseListener, ActionListener {
 			projDir = Buttons.browse(frame, f, null, JFileChooser.DIRECTORIES_ONLY, "Open");
 			if (!projDir.equals("")) {
 				if (new File(projDir).isDirectory()) {
-					if (!(new File(root + File.separator + "work").exists())) {
-						new File(root + File.separator + "work").mkdir();
-					}
 					root = projDir;
 					refresh();
 					tab.removeAll();
@@ -687,7 +680,7 @@ public class BioModelSim implements MouseListener, ActionListener {
 						JTabbedPane simTab = new JTabbedPane();
 						Reb2Sac reb2sac = new Reb2Sac(getAFile, root, this, split[split.length - 1]
 								.trim(), log, simTab, openFile);
-						simTab.addTab("Options", reb2sac);
+						simTab.addTab("Simulation", reb2sac);
 						simTab.getComponentAt(simTab.getComponents().length - 1)
 								.setName("Simulate");
 						SBML_Editor sbml = new SBML_Editor(getAFile, reb2sac);
@@ -751,7 +744,6 @@ public class BioModelSim implements MouseListener, ActionListener {
 			if (!filename.equals("")) {
 				root = filename;
 				new File(root).mkdir();
-				new File(root + File.separator + "work").mkdir();
 				refresh();
 				tab.removeAll();
 			}
@@ -1074,7 +1066,8 @@ public class BioModelSim implements MouseListener, ActionListener {
 				popup.add(graph);
 				popup.add(delete);
 			} else if (new File(tree.getFile()).isDirectory()) {
-				if (new File(tree.getFile()).getParentFile().getName().equals("work")) {
+				if (new File(tree.getFile()).getParentFile().getName().equals(
+						tree.getRoot().toString())) {
 					JMenuItem open = new JMenuItem("Open Simulation");
 					open.addActionListener(this);
 					open.setActionCommand("openSim");

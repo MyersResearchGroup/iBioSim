@@ -781,7 +781,7 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 
 		// Creates the tabs and adds them to the main panel
 		JTabbedPane tab = new JTabbedPane();
-		tab.addTab("Simulation", mainTabbedPanel);
+		tab.addTab("Options", mainTabbedPanel);
 		tab.addTab("Termination Conditions", mainTermCond);
 		tab.addTab("Advanced Termination Conditions", sadTermCondPanel);
 		tab.addTab("Interesting Species", speciesHolder);
