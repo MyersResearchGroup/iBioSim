@@ -5,6 +5,7 @@ import java.awt.event.*;
 import java.io.*;
 import java.util.*;
 import javax.swing.*;
+
 import buttons.core.gui.*;
 
 /**
@@ -332,10 +333,18 @@ public class Learn extends JPanel implements ActionListener, KeyListener {
 							+ "levels.lvl"));
 					write.write("time, 0\n");
 					for (int i = 0; i < species.size(); i++) {
-						write.write(((JTextField) species.get(i).get(1)).getText().trim());
+						if (((JTextField) species.get(i).get(1)).getText().trim().equals("")) {
+							write.write("-1");
+						} else {
+							write.write(((JTextField) species.get(i).get(1)).getText().trim());
+						}
 						for (int j = 2; j < species.get(i).size(); j++) {
-							write.write(", "
-									+ ((JTextField) species.get(i).get(j)).getText().trim());
+							if (((JTextField) species.get(i).get(j)).getText().trim().equals("")) {
+								write.write("-1");
+							} else {
+								write.write(", "
+										+ ((JTextField) species.get(i).get(j)).getText().trim());
+							}
 						}
 						write.write("\n");
 					}
@@ -395,15 +404,23 @@ public class Learn extends JPanel implements ActionListener, KeyListener {
 			FileWriter write = new FileWriter(new File(directory + File.separator + "levels.lvl"));
 			write.write("time, 0\n");
 			for (int i = 0; i < species.size(); i++) {
-				write.write(((JTextField) species.get(i).get(1)).getText().trim());
+				if (((JTextField) species.get(i).get(1)).getText().trim().equals("")) {
+					write.write("-1");
+				} else {
+					write.write(((JTextField) species.get(i).get(1)).getText().trim());
+				}
 				for (int j = 2; j < species.get(i).size(); j++) {
-					write.write(", " + ((JTextField) species.get(i).get(j)).getText().trim());
+					if (((JTextField) species.get(i).get(j)).getText().trim().equals("")) {
+						write.write("-1");
+					} else {
+						write.write(", " + ((JTextField) species.get(i).get(j)).getText().trim());
+					}
 				}
 				write.write("\n");
 			}
 			write.close();
 			Runtime exec = Runtime.getRuntime();
-			Process learn = exec.exec("GeneNet --lvl " + directory);
+			Process learn = exec.exec("GeneNet --readLevels --lvl " + directory);
 			learn.waitFor();
 			Scanner f = new Scanner(new File(directory + File.separator + "levels.lvl"));
 			str = new ArrayList<String>();
@@ -617,7 +634,7 @@ public class Learn extends JPanel implements ActionListener, KeyListener {
 					((JTextField) specs.get(2)).setName("text" + j);
 					this.species.add(specs);
 					for (int i = 0; i < Integer.parseInt(((JTextField) specs.get(2)).getText()) - 1; i++) {
-						specs.add(new JTextField("0"));
+						specs.add(new JTextField(""));
 						sp.add(specs.get(i + 3));
 					}
 					speciesPanel.add(sp);
@@ -654,6 +671,69 @@ public class Learn extends JPanel implements ActionListener, KeyListener {
 		}
 	}
 
+	/*
+	private void editText(int num) {
+		ArrayList<Component> specs = species.get(num);
+		try {
+			Component[] panels = speciesPanel.getComponents();
+			int boxes = Integer.parseInt(((JTextField) specs.get(2)).getText().trim());
+			if ((specs.size() - 3) < boxes) {
+				for (int i = 0; i < boxes - 1; i++) {
+					try {
+						specs.get(i + 3);
+					} catch (Exception e1) {
+						JTextField temp = new JTextField("");
+						((JPanel) panels[num + 1]).add(temp);
+						specs.add(temp);
+					}
+				}
+			} else {
+				try {
+					while (true) {
+						specs.remove(boxes + 3);
+						((JPanel) panels[num + 1]).remove(boxes + 3);
+					}
+				} catch (Exception e1) {
+				}
+			}
+			int max = 0;
+			for (int i = 0; i < this.species.size(); i++) {
+				max = Math.max(max, species.get(i).size());
+			}
+			if (((JPanel) panels[0]).getComponentCount() < max) {
+				for (int i = 0; i < max - 3; i++) {
+					try {
+						((JPanel) panels[0]).getComponent(i + 3);
+					} catch (Exception e) {
+						((JPanel) panels[0]).add(new JLabel("cutoff " + (i + 1)));
+					}
+				}
+			} else {
+				try {
+					while (true) {
+						((JPanel) panels[0]).remove(max);
+					}
+				} catch (Exception e) {
+				}
+			}
+			for (int i = 1; i < panels.length; i++) {
+				JPanel sp = (JPanel) panels[i];
+				if (max > sp.getComponentCount()) {
+					for (int j = sp.getComponentCount(); j < max; j++) {
+						sp.add(new JLabel());
+					}
+				} else {
+					for (int j = max; j < sp.getComponentCount(); j++) {
+						sp.remove(j);
+					}
+				}
+			}
+			speciesPanel.validate();
+		} catch (Exception e) {
+		}
+	}
+	*/
+	
 	private void editText(int num) {
 		ArrayList<Component> specs = new ArrayList<Component>();
 		specs.add(this.species.get(num).get(0));
