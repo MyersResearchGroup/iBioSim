@@ -244,7 +244,7 @@ public class BioModelSim implements MouseListener, ActionListener {
 					String openFile = "";
 					String graphFile = "";
 					for (int i = 0; i < list.length; i++) {
-						if (!(new File(list[i]).isDirectory())) {
+						if (!(new File(list[i]).isDirectory()) && list[i].length() > 4) {
 							String end = "";
 							for (int j = 1; j < 5; j++) {
 								end = list[i].charAt(list[i].length() - j) + end;
@@ -334,8 +334,7 @@ public class BioModelSim implements MouseListener, ActionListener {
 					reb2sac.setSbml(sbml);
 					simTab.addTab("SBML Editor", sbml);
 					simTab.getComponentAt(simTab.getComponents().length - 1).setName("SBML Editor");
-					Learn learn = new Learn(root + File.separator
-							+ simName);
+					Learn learn = new Learn(root + File.separator + simName);
 					simTab.addTab("Learn", learn);
 					simTab.getComponentAt(simTab.getComponents().length - 1).setName("Learn");
 					// simTab.addTab("Graph", new JPanel());
@@ -467,10 +466,10 @@ public class BioModelSim implements MouseListener, ActionListener {
 				String simName = JOptionPane.showInputDialog(frame, "Enter simulation id:",
 						"Simulation ID", JOptionPane.PLAIN_MESSAGE);
 				if (simName != null && !simName.equals("")) {
-					new File(root +  File.separator + simName).mkdir();
+					new File(root + File.separator + simName).mkdir();
 					String[] sbml1 = tree.getFile().split(File.separator);
-					String sbmlFile = root + File.separator + simName
-							+ File.separator + sbml1[sbml1.length - 1];
+					String sbmlFile = root + File.separator + simName + File.separator
+							+ sbml1[sbml1.length - 1];
 					try {
 						FileOutputStream out = new FileOutputStream(new File(sbmlFile));
 						SBMLWriter writer = new SBMLWriter();
@@ -493,8 +492,7 @@ public class BioModelSim implements MouseListener, ActionListener {
 					reb2sac.setSbml(sbml);
 					simTab.addTab("SBML Editor", sbml);
 					simTab.getComponentAt(simTab.getComponents().length - 1).setName("SBML Editor");
-					Learn learn = new Learn(root + File.separator
-							+ simName);
+					Learn learn = new Learn(root + File.separator + simName);
 					simTab.addTab("Learn", learn);
 					simTab.getComponentAt(simTab.getComponents().length - 1).setName("Learn");
 					// simTab.addTab("Graph", new JPanel());
@@ -555,8 +553,7 @@ public class BioModelSim implements MouseListener, ActionListener {
 						simTab.addTab("SBML Editor", sbml);
 						simTab.getComponentAt(simTab.getComponents().length - 1).setName(
 								"SBML Editor");
-						Learn learn = new Learn(root  + File.separator
-								+ simName);
+						Learn learn = new Learn(root + File.separator + simName);
 						simTab.addTab("Learn", learn);
 						simTab.getComponentAt(simTab.getComponents().length - 1).setName("Learn");
 						// simTab.addTab("Graph", new JPanel());
@@ -578,10 +575,10 @@ public class BioModelSim implements MouseListener, ActionListener {
 					String simName = JOptionPane.showInputDialog(frame, "Enter simulation id:",
 							"Simulation ID", JOptionPane.PLAIN_MESSAGE);
 					if (simName != null && !simName.equals("")) {
-						new File(root  + File.separator + simName).mkdir();
+						new File(root + File.separator + simName).mkdir();
 						String[] sbml1 = tree.getFile().split(File.separator);
-						String sbmlFile = root  + File.separator + simName
-								+ File.separator + sbml1[sbml1.length - 1];
+						String sbmlFile = root + File.separator + simName + File.separator
+								+ sbml1[sbml1.length - 1];
 						try {
 							FileOutputStream out = new FileOutputStream(new File(sbmlFile));
 							SBMLWriter writer = new SBMLWriter();
@@ -606,8 +603,7 @@ public class BioModelSim implements MouseListener, ActionListener {
 						simTab.addTab("SBML Editor", sbml);
 						simTab.getComponentAt(simTab.getComponents().length - 1).setName(
 								"SBML Editor");
-						Learn learn = new Learn(root  + File.separator
-								+ simName);
+						Learn learn = new Learn(root + File.separator + simName);
 						simTab.addTab("Learn", learn);
 						simTab.getComponentAt(simTab.getComponents().length - 1).setName("Learn");
 						// simTab.addTab("Graph", new JPanel());
