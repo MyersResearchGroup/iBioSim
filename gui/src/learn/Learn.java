@@ -671,7 +671,6 @@ public class Learn extends JPanel implements ActionListener, KeyListener {
 		}
 	}
 
-	/*
 	private void editText(int num) {
 		ArrayList<Component> specs = species.get(num);
 		try {
@@ -689,9 +688,16 @@ public class Learn extends JPanel implements ActionListener, KeyListener {
 				}
 			} else {
 				try {
-					while (true) {
-						specs.remove(boxes + 3);
-						((JPanel) panels[num + 1]).remove(boxes + 3);
+					if (boxes > 0) {
+						while (true) {
+							specs.remove(boxes + 2);
+							((JPanel) panels[num + 1]).remove(boxes + 2);
+						}
+					} else if (boxes == 0) {
+						while (true) {
+							specs.remove(3);
+							((JPanel) panels[num + 1]).remove(3);
+						}
 					}
 				} catch (Exception e1) {
 				}
@@ -718,12 +724,17 @@ public class Learn extends JPanel implements ActionListener, KeyListener {
 			}
 			for (int i = 1; i < panels.length; i++) {
 				JPanel sp = (JPanel) panels[i];
+				for (int j = sp.getComponentCount() - 1; j >= 3; j--) {
+					if (sp.getComponent(j) instanceof JLabel) {
+						sp.remove(j);
+					}
+				}
 				if (max > sp.getComponentCount()) {
 					for (int j = sp.getComponentCount(); j < max; j++) {
 						sp.add(new JLabel());
 					}
 				} else {
-					for (int j = max; j < sp.getComponentCount(); j++) {
+					for (int j = sp.getComponentCount() - 2; j >= max; j--) {
 						sp.remove(j);
 					}
 				}
@@ -731,46 +742,5 @@ public class Learn extends JPanel implements ActionListener, KeyListener {
 			speciesPanel.validate();
 		} catch (Exception e) {
 		}
-	}
-	*/
-	
-	private void editText(int num) {
-		ArrayList<Component> specs = new ArrayList<Component>();
-		specs.add(this.species.get(num).get(0));
-		specs.add(this.species.get(num).get(1));
-		specs.add(this.species.get(num).get(2));
-		for (int i = 0; i < Integer.parseInt(((JTextField) specs.get(2)).getText().trim()) - 1; i++) {
-			try {
-				specs.add(this.species.get(num).get(i + 3));
-			} catch (Exception e1) {
-				specs.add(new JTextField("0"));
-			}
-		}
-		this.species.set(num, specs);
-		speciesPanel.removeAll();
-		speciesPanel.setLayout(new GridLayout(species.size() + 1, 1));
-		int max = 0;
-		for (int i = 0; i < this.species.size(); i++) {
-			max = Math.max(max, species.get(i).size());
-		}
-		JPanel label = new JPanel(new GridLayout());
-		label.add(new JLabel("Do Not Use"));
-		label.add(new JLabel("Species"));
-		label.add(new JLabel("Number Of Levels"));
-		for (int i = 0; i < max - 3; i++) {
-			label.add(new JLabel("cutoff " + (i + 1)));
-		}
-		speciesPanel.add(label);
-		for (int i = 0; i < this.species.size(); i++) {
-			JPanel sp = new JPanel(new GridLayout());
-			for (int j = 0; j < species.get(i).size(); j++) {
-				sp.add(species.get(i).get(j));
-			}
-			for (int j = species.get(i).size(); j < max; j++) {
-				sp.add(new JLabel());
-			}
-			speciesPanel.add(sp);
-		}
-		speciesPanel.validate();
 	}
 }
