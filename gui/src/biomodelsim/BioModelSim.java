@@ -6,6 +6,7 @@ import java.io.*;
 import javax.swing.*;
 import javax.swing.plaf.basic.*;
 import org.sbml.libsbml.*;
+
 import reb2sac.core.gui.*;
 import learn.core.gui.*;
 import sbmleditor.core.gui.*;
@@ -24,6 +25,8 @@ public class BioModelSim implements MouseListener, ActionListener {
 	private JFrame frame; // Frame where components of the GUI are displayed
 
 	private JMenuItem newTstubd; // The new menu item
+
+	private JMenuItem newModel; // The new menu item
 
 	private JMenuItem exit; // The exit menu item
 
@@ -114,6 +117,7 @@ public class BioModelSim implements MouseListener, ActionListener {
 		help.setMnemonic(KeyEvent.VK_H);
 		JMenu importMenu = new JMenu("Import");
 		JMenu openMenu = new JMenu("Open");
+		JMenu newMenu = new JMenu("New");
 		menuBar.add(file);
 		menuBar.add(tools);
 		// ***menuBar.add(help);***
@@ -126,7 +130,8 @@ public class BioModelSim implements MouseListener, ActionListener {
 		save = new JMenuItem("Save");
 		openProj = new JMenuItem("Open Project");
 		openSim = new JMenuItem("Open Simulation");
-		newTstubd = new JMenuItem("New");
+		newTstubd = new JMenuItem("New Project");
+		newModel = new JMenuItem("New Model");
 		display = new JMenuItem("Display");
 		print = new JMenuItem("Print");
 		importSbml = new JMenuItem("sbml");
@@ -142,6 +147,7 @@ public class BioModelSim implements MouseListener, ActionListener {
 		_abstract.addActionListener(this);
 		manual.addActionListener(this);
 		newTstubd.addActionListener(this);
+		newModel.addActionListener(this);
 		exit.addActionListener(this);
 		about.addActionListener(this);
 		display.addActionListener(this);
@@ -151,23 +157,27 @@ public class BioModelSim implements MouseListener, ActionListener {
 		graph.addActionListener(this);
 		exit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, ActionEvent.ALT_MASK));
 		newTstubd.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.ALT_MASK));
+		newModel.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, ActionEvent.ALT_MASK));
 		save.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.ALT_MASK));
 		print.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, ActionEvent.ALT_MASK));
 		display.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D, ActionEvent.ALT_MASK));
 		about.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ActionEvent.ALT_MASK));
-		manual.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, ActionEvent.ALT_MASK));
+		manual.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, ActionEvent.ALT_MASK));
 		editor.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, ActionEvent.ALT_MASK));
 		graph.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, ActionEvent.ALT_MASK));
 		exit.setMnemonic(KeyEvent.VK_X);
 		newTstubd.setMnemonic(KeyEvent.VK_N);
+		newModel.setMnemonic(KeyEvent.VK_M);
 		save.setMnemonic(KeyEvent.VK_S);
 		print.setMnemonic(KeyEvent.VK_P);
 		display.setMnemonic(KeyEvent.VK_D);
 		about.setMnemonic(KeyEvent.VK_A);
-		manual.setMnemonic(KeyEvent.VK_M);
+		manual.setMnemonic(KeyEvent.VK_L);
 		editor.setMnemonic(KeyEvent.VK_E);
 		graph.setMnemonic(KeyEvent.VK_G);
-		file.add(newTstubd);
+		file.add(newMenu);
+		newMenu.add(newTstubd);
+		newMenu.add(newModel);
 		file.add(openMenu);
 		openMenu.add(openProj);
 		openMenu.add(openSim);
@@ -295,7 +305,7 @@ public class BioModelSim implements MouseListener, ActionListener {
 						simTab.addTab("SBML Editor", sbml);
 						simTab.getComponentAt(simTab.getComponents().length - 1).setName(
 								"SBML Editor");
-						Learn learn = new Learn(tree.getFile());
+						Learn learn = new Learn(tree.getFile(), log);
 						simTab.addTab("Learn", learn);
 						simTab.getComponentAt(simTab.getComponents().length - 1).setName("Learn");
 						if (!graphFile.equals("")) {
@@ -334,7 +344,7 @@ public class BioModelSim implements MouseListener, ActionListener {
 					reb2sac.setSbml(sbml);
 					simTab.addTab("SBML Editor", sbml);
 					simTab.getComponentAt(simTab.getComponents().length - 1).setName("SBML Editor");
-					Learn learn = new Learn(root + File.separator + simName);
+					Learn learn = new Learn(root + File.separator + simName, log);
 					simTab.addTab("Learn", learn);
 					simTab.getComponentAt(simTab.getComponents().length - 1).setName("Learn");
 					// simTab.addTab("Graph", new JPanel());
@@ -492,7 +502,7 @@ public class BioModelSim implements MouseListener, ActionListener {
 					reb2sac.setSbml(sbml);
 					simTab.addTab("SBML Editor", sbml);
 					simTab.getComponentAt(simTab.getComponents().length - 1).setName("SBML Editor");
-					Learn learn = new Learn(root + File.separator + simName);
+					Learn learn = new Learn(root + File.separator + simName, log);
 					simTab.addTab("Learn", learn);
 					simTab.getComponentAt(simTab.getComponents().length - 1).setName("Learn");
 					// simTab.addTab("Graph", new JPanel());
@@ -553,7 +563,7 @@ public class BioModelSim implements MouseListener, ActionListener {
 						simTab.addTab("SBML Editor", sbml);
 						simTab.getComponentAt(simTab.getComponents().length - 1).setName(
 								"SBML Editor");
-						Learn learn = new Learn(root + File.separator + simName);
+						Learn learn = new Learn(root + File.separator + simName, log);
 						simTab.addTab("Learn", learn);
 						simTab.getComponentAt(simTab.getComponents().length - 1).setName("Learn");
 						// simTab.addTab("Graph", new JPanel());
@@ -603,7 +613,7 @@ public class BioModelSim implements MouseListener, ActionListener {
 						simTab.addTab("SBML Editor", sbml);
 						simTab.getComponentAt(simTab.getComponents().length - 1).setName(
 								"SBML Editor");
-						Learn learn = new Learn(root + File.separator + simName);
+						Learn learn = new Learn(root + File.separator + simName, log);
 						simTab.addTab("Learn", learn);
 						simTab.getComponentAt(simTab.getComponents().length - 1).setName("Learn");
 						// simTab.addTab("Graph", new JPanel());
@@ -684,7 +694,7 @@ public class BioModelSim implements MouseListener, ActionListener {
 						simTab.addTab("SBML Editor", sbml);
 						simTab.getComponentAt(simTab.getComponents().length - 1).setName(
 								"SBML Editor");
-						Learn learn = new Learn(tree.getFile());
+						Learn learn = new Learn(tree.getFile(), log);
 						simTab.addTab("Learn", learn);
 						simTab.getComponentAt(simTab.getComponents().length - 1).setName("Learn");
 						// simTab.addTab("Graph", new JPanel());
@@ -742,6 +752,39 @@ public class BioModelSim implements MouseListener, ActionListener {
 				new File(root).mkdir();
 				refresh();
 				tab.removeAll();
+			}
+		}
+		// if the new model menu item is selected
+		else if (e.getSource() == newModel) {
+			try {
+				String simName = JOptionPane.showInputDialog(frame, "Enter a name for the model:",
+						"Model Name", JOptionPane.PLAIN_MESSAGE);
+				if (simName.length() > 4) {
+					if (!simName.substring(simName.length() - 5).equals(".sbml")
+							&& !simName.substring(simName.length() - 4).equals(".xml")) {
+						simName += ".sbml";
+					}
+				} else {
+					simName += ".sbml";
+				}
+				if (simName != null && !simName.equals("")) {
+					File f = new File(root + File.separator + simName);
+					f.createNewFile();
+					SBMLDocument document = new SBMLDocument();
+					document.createModel();
+					document.setLevel(2);
+					FileOutputStream out = new FileOutputStream(f);
+					SBMLWriter writer = new SBMLWriter();
+					String doc = writer.writeToString(document);
+					byte[] output = doc.getBytes();
+					out.write(output);
+					out.close();
+					addTab("SBML Editor", new SBML_Editor(f.getAbsolutePath(), null));
+					refreshTree();
+				}
+			} catch (Exception e1) {
+				JOptionPane.showMessageDialog(frame, "Unable to create new model.", "Error",
+						JOptionPane.ERROR_MESSAGE);
 			}
 		}
 		// if the import sbml menu item is selected
