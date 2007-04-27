@@ -5,7 +5,7 @@ import java.awt.event.*;
 import java.io.*;
 import java.util.*;
 import javax.swing.*;
-
+import biomodelsim.core.gui.*;
 import buttons.core.gui.*;
 
 /**
@@ -65,12 +65,15 @@ public class Learn extends JPanel implements ActionListener, KeyListener {
 
 	private JLabel numBinsLabel;
 
+	private Log log;
+
 	/**
 	 * This is the constructor for the Learn class. It initializes all the input
 	 * fields, puts them on panels, adds the panels to the frame, and then
 	 * displays the frame.
 	 */
-	public Learn(String directory) {
+	public Learn(String directory, Log log) {
+		this.log = log;
 		this.directory = directory;
 		/*
 		 * // Creates a new frame frame = new JFrame("Learn"); // Makes it so
@@ -108,6 +111,7 @@ public class Learn extends JPanel implements ActionListener, KeyListener {
 		selection.add(auto);
 		selection.add(user);
 		selection.add(suggest);
+		suggest.setEnabled(false);
 		JPanel encodingPanel = new JPanel(new BorderLayout());
 		speciesPanel = new JPanel();
 		JLabel encodingsLabel = new JLabel("Species Levels:");
@@ -141,39 +145,40 @@ public class Learn extends JPanel implements ActionListener, KeyListener {
 		// initNet.add(initNet2);
 
 		// Sets up the thresholds area
-		JPanel thresholdPanel = new JPanel(new GridLayout(14, 2));
+		JPanel thresholdPanel1 = new JPanel(new GridLayout(8, 2));
+		JPanel thresholdPanel2 = new JPanel(new GridLayout(6, 2));
 		JLabel activationLabel = new JLabel("For Vote Threshold (Tf):");
 		activation = new JTextField("1.33");
-		thresholdPanel.add(activationLabel);
-		thresholdPanel.add(activation);
+		thresholdPanel1.add(activationLabel);
+		thresholdPanel1.add(activation);
 		JLabel repressionLabel = new JLabel("Against Vote Threshold (Ta):");
 		repression = new JTextField("0.75");
-		thresholdPanel.add(repressionLabel);
-		thresholdPanel.add(repression);
+		thresholdPanel1.add(repressionLabel);
+		thresholdPanel1.add(repression);
 		JLabel parentLabel = new JLabel("Initial Influence Threshold (Ti):");
 		parent = new JTextField("0.5");
-		thresholdPanel.add(parentLabel);
-		thresholdPanel.add(parent);
+		thresholdPanel1.add(parentLabel);
+		thresholdPanel1.add(parent);
 		JLabel backgroundLabel = new JLabel("Final Influence Threshold (Tp):");
 		background = new JTextField("0.51");
-		thresholdPanel.add(backgroundLabel);
-		thresholdPanel.add(background);
+		thresholdPanel1.add(backgroundLabel);
+		thresholdPanel1.add(background);
 		JLabel influenceLevelLabel = new JLabel("Influence Level Delta (Tm):");
 		influenceLevel = new JTextField("0.01");
-		thresholdPanel.add(influenceLevelLabel);
-		thresholdPanel.add(influenceLevel);
+		thresholdPanel1.add(influenceLevelLabel);
+		thresholdPanel1.add(influenceLevel);
 		JLabel letNThroughLabel = new JLabel("Minimum Initial Vectors (Tn):");
 		letNThrough = new JTextField("1");
-		thresholdPanel.add(letNThroughLabel);
-		thresholdPanel.add(letNThrough);
+		thresholdPanel1.add(letNThroughLabel);
+		thresholdPanel1.add(letNThrough);
 		JLabel relaxIPDeltaLabel = new JLabel("Relax Thresholds Delta (Tr):");
 		relaxIPDelta = new JTextField("0.025");
-		thresholdPanel.add(relaxIPDeltaLabel);
-		thresholdPanel.add(relaxIPDelta);
+		thresholdPanel1.add(relaxIPDeltaLabel);
+		thresholdPanel1.add(relaxIPDelta);
 		numBinsLabel = new JLabel("Number Of Bins:");
 		numBins = new JTextField("3");
-		thresholdPanel.add(numBinsLabel);
-		thresholdPanel.add(numBins);
+		thresholdPanel1.add(numBinsLabel);
+		thresholdPanel1.add(numBins);
 		JLabel debugLabel = new JLabel("Debug Level:");
 		String[] options = new String[4];
 		options[0] = "0";
@@ -181,16 +186,16 @@ public class Learn extends JPanel implements ActionListener, KeyListener {
 		options[2] = "2";
 		options[3] = "3";
 		debug = new JComboBox(options);
-		thresholdPanel.add(debugLabel);
-		thresholdPanel.add(debug);
+		thresholdPanel2.add(debugLabel);
+		thresholdPanel2.add(debug);
 		JLabel windowRisingLabel = new JLabel("Window Rising Amount:");
 		windowRising = new JTextField("1");
-		thresholdPanel.add(windowRisingLabel);
-		thresholdPanel.add(windowRising);
+		thresholdPanel2.add(windowRisingLabel);
+		thresholdPanel2.add(windowRising);
 		JLabel windowSizeLabel = new JLabel("Window Size:");
 		windowSize = new JTextField("1");
-		thresholdPanel.add(windowSizeLabel);
-		thresholdPanel.add(windowSize);
+		thresholdPanel2.add(windowSizeLabel);
+		thresholdPanel2.add(windowSize);
 		harshenBoundsOnTie = new JCheckBox("Harshen Bounds On Tie");
 		harshenBoundsOnTie.setSelected(true);
 		donotInvertSortOrder = new JCheckBox("Do Not Invert Sort Order");
@@ -202,12 +207,12 @@ public class Learn extends JPanel implements ActionListener, KeyListener {
 		donotTossSingleRatioParents = new JCheckBox("Single Ratio Parents Should Be Kept");
 		donotTossChangedInfluenceSingleParents = new JCheckBox(
 				"Parents That Change Influence Should Not Be Tossed");
-		thresholdPanel.add(harshenBoundsOnTie);
-		thresholdPanel.add(donotInvertSortOrder);
-		thresholdPanel.add(seedParents);
-		thresholdPanel.add(mustNotWinMajority);
-		thresholdPanel.add(donotTossSingleRatioParents);
-		thresholdPanel.add(donotTossChangedInfluenceSingleParents);
+		thresholdPanel2.add(harshenBoundsOnTie);
+		thresholdPanel2.add(donotInvertSortOrder);
+		thresholdPanel2.add(seedParents);
+		thresholdPanel2.add(mustNotWinMajority);
+		thresholdPanel2.add(donotTossSingleRatioParents);
+		thresholdPanel2.add(donotTossChangedInfluenceSingleParents);
 
 		// Creates the run button
 		run = new JButton("Learn");
@@ -228,13 +233,21 @@ public class Learn extends JPanel implements ActionListener, KeyListener {
 		// Creates the main panel
 		this.setLayout(new BorderLayout());
 		JPanel middlePanel = new JPanel(new BorderLayout());
+		JPanel firstTab = new JPanel(new BorderLayout());
+		JPanel secondTab = new JPanel(new BorderLayout());
 		middlePanel.add(radioPanel, "Center");
-		middlePanel.add(runHolder, "South");
-		this.add(initNet, "North");
+		firstTab.add(initNet, "North");
+		firstTab.add(thresholdPanel1, "Center");
 		JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, middlePanel, null);
 		splitPane.setDividerSize(0);
-		this.add(thresholdPanel, "Center");
-		this.add(splitPane, "South");
+		secondTab.add(thresholdPanel2, "North");
+		firstTab.add(splitPane, "South");
+
+		JTabbedPane tab = new JTabbedPane();
+		tab.addTab("Basic Options", firstTab);
+		tab.addTab("Advanced Options", secondTab);
+		this.add(tab, "Center");
+		this.add(runHolder, "South");
 
 		/*
 		 * // Packs the frame and displays it frame.setContentPane(mainPanel);
@@ -272,10 +285,12 @@ public class Learn extends JPanel implements ActionListener, KeyListener {
 		} else if (e.getSource() == user) {
 			numBinsLabel.setEnabled(false);
 			numBins.setEnabled(false);
+			suggest.setEnabled(true);
 			levelsBin();
 		} else if (e.getSource() == auto) {
 			numBinsLabel.setEnabled(true);
 			numBins.setEnabled(true);
+			suggest.setEnabled(false);
 			for (Component c : speciesPanel.getComponents()) {
 				for (Component d : ((JPanel) c).getComponents()) {
 					d.setEnabled(false);
@@ -340,7 +355,7 @@ public class Learn extends JPanel implements ActionListener, KeyListener {
 						}
 						for (int j = 2; j < species.get(i).size(); j++) {
 							if (((JTextField) species.get(i).get(j)).getText().trim().equals("")) {
-								write.write("-1");
+								write.write(", -1");
 							} else {
 								write.write(", "
 										+ ((JTextField) species.get(i).get(j)).getText().trim());
@@ -371,6 +386,7 @@ public class Learn extends JPanel implements ActionListener, KeyListener {
 				}
 				Runtime exec = Runtime.getRuntime();
 				Process learn = exec.exec(geneNet + " " + directory);
+				log.addText("Exectuting:\n" + geneNet + " " + directory + "\n");
 				learn.waitFor();
 				String output = "";
 				InputStream reb = learn.getInputStream();
@@ -382,6 +398,7 @@ public class Learn extends JPanel implements ActionListener, KeyListener {
 					read = reb.read();
 				}
 				out.close();
+				log.addText("Output:\n" + output + "\n");
 				if (new File(directory + File.separator + "method.dot").exists()) {
 					exec
 							.exec("dotty "
@@ -411,7 +428,7 @@ public class Learn extends JPanel implements ActionListener, KeyListener {
 				}
 				for (int j = 2; j < species.get(i).size(); j++) {
 					if (((JTextField) species.get(i).get(j)).getText().trim().equals("")) {
-						write.write("-1");
+						write.write(", -1");
 					} else {
 						write.write(", " + ((JTextField) species.get(i).get(j)).getText().trim());
 					}
@@ -419,9 +436,21 @@ public class Learn extends JPanel implements ActionListener, KeyListener {
 				write.write("\n");
 			}
 			write.close();
+			log.addText("Exectuting:\nGeneNet --readLevels --lvl " + directory + "\n");
 			Runtime exec = Runtime.getRuntime();
 			Process learn = exec.exec("GeneNet --readLevels --lvl " + directory);
 			learn.waitFor();
+			String output = "";
+			InputStream reb = learn.getInputStream();
+			FileWriter out = new FileWriter(new File(directory + File.separator + "run.log"));
+			int read = reb.read();
+			while (read != -1) {
+				output += (char) read;
+				out.write((char) read);
+				read = reb.read();
+			}
+			out.close();
+			log.addText("Output:\n" + output + "\n");
 			Scanner f = new Scanner(new File(directory + File.separator + "levels.lvl"));
 			str = new ArrayList<String>();
 			while (f.hasNextLine()) {
