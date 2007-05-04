@@ -472,6 +472,15 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, saveRun, null);
 			splitPane.setDividerSize(0);
 			this.add(splitPane, "South");
+		} else {
+			saveNoRun = new JButton("Save");
+			saveNoRun.setMnemonic(KeyEvent.VK_S);
+			saveNoRun.addActionListener(this);
+			JPanel saveRun = new JPanel();
+			saveRun.add(saveNoRun);
+			JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, saveRun, null);
+			splitPane.setDividerSize(0);
+			this.add(splitPane, "South");
 		}
 		/*
 		 * sbmlFrame.setContentPane(mainPanel); sbmlFrame.setJMenuBar(menuBar);
@@ -500,7 +509,11 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		}
 		// if the save button is clicked
 		else if (e.getSource() == saveNoRun) {
-			reb2sac.getSaveButton().doClick();
+			if (reb2sac != null) {
+				reb2sac.getSaveButton().doClick();
+			} else {
+				save();
+			}
 		}
 		// if the add comparment button is clicked
 		else if (e.getSource() == addCompart) {
@@ -1732,7 +1745,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			}
 			name = new JTextField();
 			ID = new JTextField();
-			init = new JTextField();
+			init = new JTextField("0.0");
 			int[] index = compartments.getSelectedIndices();
 			String[] add = Buttons.getList(comps, compartments);
 			compartments.setSelectedIndices(index);
@@ -2239,7 +2252,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			}
 			Object[] choices = species.toArray();
 			productSpecies = new JComboBox(choices);
-			productStoiciometry = new JTextField();
+			productStoiciometry = new JTextField("1");
 			addSaveProducts = new JButton(option);
 			cancelProducts = new JButton("Cancel");
 			if (option.equals("Save")) {
@@ -2330,7 +2343,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			}
 			Object[] choices = species.toArray();
 			reactantSpecies = new JComboBox(choices);
-			reactantStoiciometry = new JTextField();
+			reactantStoiciometry = new JTextField("1");
 			addSaveReactants = new JButton(option);
 			cancelReactants = new JButton("Cancel");
 			if (option.equals("Save")) {
