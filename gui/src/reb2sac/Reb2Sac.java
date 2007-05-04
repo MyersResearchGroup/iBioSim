@@ -279,8 +279,9 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 		odeSimulators[4] = "rk8pd";
 		odeSimulators[5] = "rkf45";
 		explanation = new JLabel("Description Of Selected Simulator:     ");
-		description = new JLabel("Euler method");
+		description = new JLabel("Embedded Runge-Kutta-Fehlberg (4, 5) method");
 		simulators = new JComboBox(odeSimulators);
+		simulators.setSelectedItem("rkf45");
 		simulators.addActionListener(this);
 		limit = new JTextField("0.0", 39);
 		interval = new JTextField("1.0", 15);
@@ -1045,16 +1046,28 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 			if (simulators.getItemCount() == 0) {
 				description.setText("");
 			} else if (simulators.getSelectedItem().equals("euler")) {
+				step.setEnabled(false);
+				stepLabel.setEnabled(false);
 				description.setText("Euler method");
 			} else if (simulators.getSelectedItem().equals("gear1")) {
+				step.setEnabled(true);
+				stepLabel.setEnabled(true);
 				description.setText("Gear method, M=1");
 			} else if (simulators.getSelectedItem().equals("gear2")) {
+				step.setEnabled(true);
+				stepLabel.setEnabled(true);
 				description.setText("Gear method, M=2");
 			} else if (simulators.getSelectedItem().equals("rk4imp")) {
+				step.setEnabled(true);
+				stepLabel.setEnabled(true);
 				description.setText("Implicit 4th order Runge-Kutta at Gaussian points");
 			} else if (simulators.getSelectedItem().equals("rk8pd")) {
+				step.setEnabled(true);
+				stepLabel.setEnabled(true);
 				description.setText("Embedded Runge-Kutta Prince-Dormand (8,9) method");
 			} else if (simulators.getSelectedItem().equals("rkf45")) {
+				step.setEnabled(true);
+				stepLabel.setEnabled(true);
 				description.setText("Embedded Runge-Kutta-Fehlberg (4, 5) method");
 			} else if (simulators.getSelectedItem().equals("gillespie")) {
 				description.setText("Gillespie's direct method");

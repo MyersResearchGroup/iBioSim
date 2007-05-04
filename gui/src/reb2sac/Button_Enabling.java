@@ -94,6 +94,7 @@ public class Button_Enabling {
 			simulators.addItem("rk4imp");
 			simulators.addItem("rk8pd");
 			simulators.addItem("rkf45");
+			simulators.setSelectedItem("rkf45");
 		}
 	}
 
@@ -191,6 +192,7 @@ public class Button_Enabling {
 		simulators.addItem("rk4imp");
 		simulators.addItem("rk8pd");
 		simulators.addItem("rkf45");
+		simulators.setSelectedItem("rkf45");
 	}
 
 	/**

@@ -756,35 +756,40 @@ public class BioModelSim implements MouseListener, ActionListener {
 		}
 		// if the new model menu item is selected
 		else if (e.getSource() == newModel) {
-			try {
-				String simName = JOptionPane.showInputDialog(frame, "Enter a name for the model:",
-						"Model Name", JOptionPane.PLAIN_MESSAGE);
-				if (simName.length() > 4) {
-					if (!simName.substring(simName.length() - 5).equals(".sbml")
-							&& !simName.substring(simName.length() - 4).equals(".xml")) {
+			if (root != null) {
+				try {
+					String simName = JOptionPane.showInputDialog(frame,
+							"Enter a name for the model:", "Model Name", JOptionPane.PLAIN_MESSAGE);
+					if (simName.length() > 4) {
+						if (!simName.substring(simName.length() - 5).equals(".sbml")
+								&& !simName.substring(simName.length() - 4).equals(".xml")) {
+							simName += ".sbml";
+						}
+					} else {
 						simName += ".sbml";
 					}
-				} else {
-					simName += ".sbml";
+					if (simName != null && !simName.equals("")) {
+						File f = new File(root + File.separator + simName);
+						f.createNewFile();
+						SBMLDocument document = new SBMLDocument();
+						document.createModel();
+						document.setLevel(2);
+						FileOutputStream out = new FileOutputStream(f);
+						SBMLWriter writer = new SBMLWriter();
+						String doc = writer.writeToString(document);
+						byte[] output = doc.getBytes();
+						out.write(output);
+						out.close();
+						addTab("SBML Editor", new SBML_Editor(f.getAbsolutePath(), null));
+						refreshTree();
+					}
+				} catch (Exception e1) {
+					JOptionPane.showMessageDialog(frame, "Unable to create new model.", "Error",
+							JOptionPane.ERROR_MESSAGE);
 				}
-				if (simName != null && !simName.equals("")) {
-					File f = new File(root + File.separator + simName);
-					f.createNewFile();
-					SBMLDocument document = new SBMLDocument();
-					document.createModel();
-					document.setLevel(2);
-					FileOutputStream out = new FileOutputStream(f);
-					SBMLWriter writer = new SBMLWriter();
-					String doc = writer.writeToString(document);
-					byte[] output = doc.getBytes();
-					out.write(output);
-					out.close();
-					addTab("SBML Editor", new SBML_Editor(f.getAbsolutePath(), null));
-					refreshTree();
-				}
-			} catch (Exception e1) {
-				JOptionPane.showMessageDialog(frame, "Unable to create new model.", "Error",
-						JOptionPane.ERROR_MESSAGE);
+			} else {
+				JOptionPane.showMessageDialog(frame, "You must open or create a project first.",
+						"Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 		// if the import sbml menu item is selected
@@ -998,6 +1003,7 @@ public class BioModelSim implements MouseListener, ActionListener {
 	 */
 	public void addTab(String name, Component panel) {
 		tab.addTab(name, panel);
+		tab.setSelectedIndex(tab.getComponents().length - 1);
 		tab.getComponentAt(tab.getComponents().length - 1).setName(name);
 	}
 
@@ -1122,18 +1128,20 @@ public class BioModelSim implements MouseListener, ActionListener {
 				}
 			}
 			maybeShowPopup(e);
+		} else if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2) {
+			if (tree.getFile().substring(tree.getFile().length() - 4).equals("sbml")
+					|| tree.getFile().substring(tree.getFile().length() - 4).equals(".xml")) {
+				try {
+					addTab("SBML Editor", new SBML_Editor(tree.getFile(), null));
+				} catch (Exception e1) {
+					JOptionPane.showMessageDialog(frame, "You must select a valid sbml file.",
+							"Error", JOptionPane.ERROR_MESSAGE);
+				}
+			}
 		}
 	}
 
 	public void mouseReleased(MouseEvent e) {
-		/*
-		 * popup.removeAll();
-		 * if(tree.getFile().substring(tree.getFile().length() -
-		 * 4).equals("sbml") || tree.getFile().substring(tree.getFile().length() -
-		 * 4).equals(".xml")) { JMenuItem edit = new JMenuItem("Edit");
-		 * edit.addActionListener(this); edit.setActionCommand("sbmlEditor");
-		 * popup.add(edit); } maybeShowPopup(e);
-		 */
 	}
 
 	private void maybeShowPopup(MouseEvent e) {
