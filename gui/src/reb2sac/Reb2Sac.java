@@ -288,7 +288,7 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 		step = new JTextField("1.0", 15);
 		int next = 1;
 		String filename = "sim" + next;
-		while (new File(root + File.separator + "work" + File.separator + filename).exists()) {
+		while (new File(root + File.separator + filename).exists()) {
 			next++;
 			filename = "sim" + next;
 		}
@@ -1046,28 +1046,28 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 			if (simulators.getItemCount() == 0) {
 				description.setText("");
 			} else if (simulators.getSelectedItem().equals("euler")) {
-				step.setEnabled(false);
-				stepLabel.setEnabled(false);
+				step.setEnabled(true);
+				stepLabel.setEnabled(true);
 				description.setText("Euler method");
 			} else if (simulators.getSelectedItem().equals("gear1")) {
-				step.setEnabled(true);
-				stepLabel.setEnabled(true);
+				step.setEnabled(false);
+				stepLabel.setEnabled(false);
 				description.setText("Gear method, M=1");
 			} else if (simulators.getSelectedItem().equals("gear2")) {
-				step.setEnabled(true);
-				stepLabel.setEnabled(true);
+				step.setEnabled(false);
+				stepLabel.setEnabled(false);
 				description.setText("Gear method, M=2");
 			} else if (simulators.getSelectedItem().equals("rk4imp")) {
-				step.setEnabled(true);
-				stepLabel.setEnabled(true);
+				step.setEnabled(false);
+				stepLabel.setEnabled(false);
 				description.setText("Implicit 4th order Runge-Kutta at Gaussian points");
 			} else if (simulators.getSelectedItem().equals("rk8pd")) {
-				step.setEnabled(true);
-				stepLabel.setEnabled(true);
+				step.setEnabled(false);
+				stepLabel.setEnabled(false);
 				description.setText("Embedded Runge-Kutta Prince-Dormand (8,9) method");
 			} else if (simulators.getSelectedItem().equals("rkf45")) {
-				step.setEnabled(true);
-				stepLabel.setEnabled(true);
+				step.setEnabled(false);
+				stepLabel.setEnabled(false);
 				description.setText("Embedded Runge-Kutta-Fehlberg (4, 5) method");
 			} else if (simulators.getSelectedItem().equals("gillespie")) {
 				description.setText("Gillespie's direct method");
@@ -1498,12 +1498,10 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 				}
 			}
 			int next = 1;
-			String filename = root + File.separator + "work" + File.separator + "untitled" + next
-					+ ".dat";
+			String filename = root + File.separator + "untitled" + next + ".dat";
 			while (new File(filename).exists()) {
 				next++;
-				filename = root + File.separator + "work" + File.separator + "untitled" + next
-						+ ".dat";
+				filename = root + File.separator + "untitled" + next + ".dat";
 			}
 			ssaFile.setText(filename);
 			ssaList = new Object[0];
@@ -2399,8 +2397,8 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 		 */
 		if (sadFile.getText().trim().length() != 0) {
 			try {
-				FileOutputStream out = new FileOutputStream(new File(root + File.separator + "work"
-						+ File.separator + outDir + File.separator + outDir + ".sad"));
+				FileOutputStream out = new FileOutputStream(new File(root + File.separator + outDir
+						+ File.separator + outDir + ".sad"));
 				byte[] output = sadFile.getText().trim().getBytes();
 				out.write(output);
 				out.close();
@@ -2408,11 +2406,10 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 			}
 		}
 		runProgram.createProperties(timeLimit, printInterval, timeStep, root + File.separator
-				+ "work" + File.separator + outDir, rndSeed, run, termCond, intSpecies, printer_id,
-				printer_track_quantity, sbmlFile.split(File.separator), selectedButtons, this,
-				sbmlFile, rap1, rap2, qss, con, usingSSA, ssaFile.getText().trim(), sadFile
-						.getText().trim(), new File(root + File.separator + "work" + File.separator
-						+ outDir + File.separator + outDir + ".sad"));
+				+ outDir, rndSeed, run, termCond, intSpecies, printer_id, printer_track_quantity,
+				sbmlFile.split(File.separator), selectedButtons, this, sbmlFile, rap1, rap2, qss,
+				con, usingSSA, ssaFile.getText().trim(), sadFile.getText().trim(), new File(root
+						+ File.separator + outDir + File.separator + outDir + ".sad"));
 		int[] indecies = properties.getSelectedIndices();
 		props = Buttons.getList(props, properties);
 		properties.setSelectedIndices(indecies);
@@ -2432,16 +2429,14 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 					JOptionPane.ERROR_MESSAGE);
 		}
 		int exit = runProgram.execute(sbmlFile, sbml, dot, xhtml, this, ODE, monteCarlo, sim,
-				printer_id, printer_track_quantity, root + File.separator + "work" + File.separator
-						+ outDir, run, nary, 1, intSpecies, log, usingSSA,
-				ssaFile.getText().trim(), biomodelsim, simTab, this);
+				printer_id, printer_track_quantity, root + File.separator + outDir, run, nary, 1,
+				intSpecies, log, usingSSA, ssaFile.getText().trim(), biomodelsim, simTab, this);
 		if (nary.isSelected() && exit == 0) {
 			new Nary_Run(this, amountTerm, ge, gt, eq, lt, le, quantity, simulators, sbmlFile
 					.split(File.separator), sbmlFile, sbml, dot, xhtml, nary, ODE, monteCarlo,
-					timeLimit, printInterval, root + File.separator + "work" + File.separator
-							+ outDir, rndSeed, run, printer_id, printer_track_quantity, termCond,
-					intSpecies, rap1, rap2, qss, con, log, usingSSA, ssaFile.getText().trim(),
-					biomodelsim, simTab, this);
+					timeLimit, printInterval, root + File.separator + outDir, rndSeed, run,
+					printer_id, printer_track_quantity, termCond, intSpecies, rap1, rap2, qss, con,
+					log, usingSSA, ssaFile.getText().trim(), biomodelsim, simTab, this);
 		}
 		running.setCursor(null);
 		running.dispose();
@@ -2665,7 +2660,7 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-		outDir = root + File.separator + "work" + File.separator + simName; // dir.getText().trim();
+		outDir = root + File.separator + simName; // dir.getText().trim();
 		try {
 			if (seed.isEnabled()) {
 				rndSeed = Long.parseLong(seed.getText().trim());
@@ -2817,8 +2812,8 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 		log.addText("Creating properties file:\n" + propName + "\n");
 		if (sadFile.getText().trim().length() != 0) {
 			try {
-				FileOutputStream out = new FileOutputStream(new File(root + File.separator + "work"
-						+ File.separator + outDir + File.separator + outDir + ".sad"));
+				FileOutputStream out = new FileOutputStream(new File(root + File.separator + outDir
+						+ File.separator + outDir + ".sad"));
 				byte[] output = sadFile.getText().trim().getBytes();
 				out.write(output);
 				out.close();
@@ -2829,8 +2824,7 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 				termCond, intSpecies, printer_id, printer_track_quantity, sbmlFile
 						.split(File.separator), selectedButtons, this, sbmlFile, rap1, rap2, qss,
 				con, usingSSA, ssaFile.getText().trim(), sadFile.getText().trim(), new File(root
-						+ File.separator + "work" + File.separator + outDir + File.separator
-						+ outDir + ".sad"));
+						+ File.separator + outDir + File.separator + outDir + ".sad"));
 		int[] indecies = properties.getSelectedIndices();
 		props = Buttons.getList(props, properties);
 		properties.setSelectedIndices(indecies);
@@ -3113,7 +3107,7 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 	public Graph createGraph(String graphFile) {
 		String outDir = ".";
 		int run = 1;
-		outDir = root + File.separator + "work" + File.separator + simName;
+		outDir = root + File.separator + simName;
 		try {
 			if (runs.isEnabled()) {
 				run = Integer.parseInt(runs.getText().trim());

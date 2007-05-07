@@ -3,6 +3,7 @@ package biomodelsim.core.gui;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+
 import javax.swing.*;
 import javax.swing.plaf.basic.*;
 import org.sbml.libsbml.*;
@@ -205,7 +206,7 @@ public class BioModelSim implements MouseListener, ActionListener {
 		mainPanel = new JPanel(new BorderLayout());
 		tree = new FileTree(null, this);
 		tab = new JTabbedPane();
-		tab.setPreferredSize(new Dimension(850, 650));
+		tab.setPreferredSize(new Dimension(900, 650));
 		tab.setUI(new TabbedPaneCloseButtonUI());
 		mainPanel.add(tree, "West");
 		mainPanel.add(tab, "Center");
@@ -331,9 +332,31 @@ public class BioModelSim implements MouseListener, ActionListener {
 							+ simName
 							+ File.separator
 							+ (dot[dot.length - 1].substring(0, dot[dot.length - 1].length() - 3) + "sbml");
+					log.addText("Exectuting:\ndot2sbml.pl " + tree.getFile() + " " + sbmlFile
+							+ "\n");
 					Runtime exec = Runtime.getRuntime();
 					Process dot2sbml = exec.exec("dot2sbml.pl " + tree.getFile() + " " + sbmlFile);
 					dot2sbml.waitFor();
+					String error = "";
+					String output = "";
+					InputStream reb = dot2sbml.getErrorStream();
+					int read = reb.read();
+					while (read != -1) {
+						error += (char) read;
+						read = reb.read();
+					}
+					reb = dot2sbml.getInputStream();
+					read = reb.read();
+					while (read != -1) {
+						output += (char) read;
+						read = reb.read();
+					}
+					if (!error.equals("")) {
+						log.addText("Errors:\n" + error + "\n");
+					}
+					if (!output.equals("")) {
+						log.addText("Output:\n" + output + "\n");
+					}
 					refreshTree();
 					JTabbedPane simTab = new JTabbedPane();
 					Reb2Sac reb2sac = new Reb2Sac(sbmlFile, root, this, simName.trim(), log,
@@ -373,9 +396,30 @@ public class BioModelSim implements MouseListener, ActionListener {
 		// if the edit popup menu is selected on a dot file
 		else if (e.getActionCommand().equals("dotEditor")) {
 			try {
+				log.addText("Exectuting:\nemacs " + tree.getFile() + "\n");
 				Runtime exec = Runtime.getRuntime();
 				Process edit = exec.exec("emacs " + tree.getFile());
 				edit.waitFor();
+				String error = "";
+				String output = "";
+				InputStream reb = edit.getErrorStream();
+				int read = reb.read();
+				while (read != -1) {
+					error += (char) read;
+					read = reb.read();
+				}
+				reb = edit.getInputStream();
+				read = reb.read();
+				while (read != -1) {
+					output += (char) read;
+					read = reb.read();
+				}
+				if (!error.equals("")) {
+					log.addText("Errors:\n" + error + "\n");
+				}
+				if (!output.equals("")) {
+					log.addText("Output:\n" + output + "\n");
+				}
 			} catch (Exception e1) {
 				JOptionPane.showMessageDialog(frame, "Unable to open dot file editor.", "Error",
 						JOptionPane.ERROR_MESSAGE);
@@ -414,11 +458,69 @@ public class BioModelSim implements MouseListener, ActionListener {
 						new String[0], new String[0], "tsd.printer", "amount", tree.getFile()
 								.split(File.separator), "none", frame, tree.getFile(), 0.1, 0.1,
 						0.1, 15, dummy, "", "", null);
+				log.addText("Exectuting:\nreb2sac --target.encoding=dot " + tree.getFile() + "\n");
+				String[] split = tree.getFile().split(File.separator);
+				String outFile = tree.getFile().substring(0,
+						tree.getFile().length() - split[split.length - 1].length());
+				outFile += "out.dot";
 				Runtime exec = Runtime.getRuntime();
 				Process graph = exec.exec("reb2sac --target.encoding=dot " + tree.getFile());
 				graph.waitFor();
+				String error = "";
+				String output = "";
+				InputStream reb = graph.getErrorStream();
+				int read = reb.read();
+				while (read != -1) {
+					error += (char) read;
+					read = reb.read();
+				}
+				reb = graph.getInputStream();
+				read = reb.read();
+				while (read != -1) {
+					output += (char) read;
+					read = reb.read();
+				}
+				if (!error.equals("")) {
+					log.addText("Errors:\n" + error + "\n");
+				}
+				if (!output.equals("")) {
+					log.addText("Output:\n" + output + "\n");
+				}
 				File outDot = new File("out.dot");
-				exec.exec("dotty " + outDot.getAbsolutePath());
+				FileReader r = new FileReader(outDot);
+				FileWriter w = new FileWriter(outFile);
+				int getNext = r.read();
+				while (getNext != -1) {
+					w.write(getNext);
+					getNext = r.read();
+				}
+				r.close();
+				w.close();
+				outDot.delete();
+				outDot = new File(outFile);
+				log.addText("Exectuting:\ndotty " + outDot.getAbsolutePath() + "\n");
+				graph = exec.exec("dotty " + outDot.getAbsolutePath());
+				graph.waitFor();
+				error = "";
+				output = "";
+				reb = graph.getErrorStream();
+				read = reb.read();
+				while (read != -1) {
+					error += (char) read;
+					read = reb.read();
+				}
+				reb = graph.getInputStream();
+				read = reb.read();
+				while (read != -1) {
+					output += (char) read;
+					read = reb.read();
+				}
+				if (!error.equals("")) {
+					log.addText("Errors:\n" + error + "\n");
+				}
+				if (!output.equals("")) {
+					log.addText("Output:\n" + output + "\n");
+				}
 				String remove;
 				if (tree.getFile().substring(tree.getFile().length() - 4).equals("sbml")) {
 					remove = tree.getFile().substring(0, tree.getFile().length() - 4)
@@ -428,6 +530,7 @@ public class BioModelSim implements MouseListener, ActionListener {
 							+ ".properties";
 				}
 				new File(remove).delete();
+				refreshTree();
 			} catch (Exception e1) {
 				JOptionPane.showMessageDialog(frame, "Error graphing sbml file.", "Error",
 						JOptionPane.ERROR_MESSAGE);
@@ -447,11 +550,71 @@ public class BioModelSim implements MouseListener, ActionListener {
 						new String[0], new String[0], "tsd.printer", "amount", tree.getFile()
 								.split(File.separator), "none", frame, tree.getFile(), 0.1, 0.1,
 						0.1, 15, dummy, "", "", null);
+				log
+						.addText("Exectuting:\nreb2sac --target.encoding=xhtml " + tree.getFile()
+								+ "\n");
+				String[] split = tree.getFile().split(File.separator);
+				String outFile = tree.getFile().substring(0,
+						tree.getFile().length() - split[split.length - 1].length());
+				outFile += "out.xhtml";
 				Runtime exec = Runtime.getRuntime();
 				Process browse = exec.exec("reb2sac --target.encoding=xhtml " + tree.getFile());
 				browse.waitFor();
+				String error = "";
+				String output = "";
+				InputStream reb = browse.getErrorStream();
+				int read = reb.read();
+				while (read != -1) {
+					error += (char) read;
+					read = reb.read();
+				}
+				reb = browse.getInputStream();
+				read = reb.read();
+				while (read != -1) {
+					output += (char) read;
+					read = reb.read();
+				}
+				if (!error.equals("")) {
+					log.addText("Errors:\n" + error + "\n");
+				}
+				if (!output.equals("")) {
+					log.addText("Output:\n" + output + "\n");
+				}
 				File outXhtml = new File("out.xhtml");
-				exec.exec("firefox " + outXhtml.getAbsolutePath());
+				FileReader r = new FileReader(outXhtml);
+				FileWriter w = new FileWriter(outFile);
+				int getNext = r.read();
+				while (getNext != -1) {
+					w.write(getNext);
+					getNext = r.read();
+				}
+				r.close();
+				w.close();
+				outXhtml.delete();
+				outXhtml = new File(outFile);
+				log.addText("Exectuting:\nfirefox " + outXhtml.getAbsolutePath() + "\n");
+				browse = exec.exec("firefox " + outXhtml.getAbsolutePath());
+				browse.waitFor();
+				error = "";
+				output = "";
+				reb = browse.getErrorStream();
+				read = reb.read();
+				while (read != -1) {
+					error += (char) read;
+					read = reb.read();
+				}
+				reb = browse.getInputStream();
+				read = reb.read();
+				while (read != -1) {
+					output += (char) read;
+					read = reb.read();
+				}
+				if (!error.equals("")) {
+					log.addText("Errors:\n" + error + "\n");
+				}
+				if (!output.equals("")) {
+					log.addText("Output:\n" + output + "\n");
+				}
 				String remove;
 				if (tree.getFile().substring(tree.getFile().length() - 4).equals("sbml")) {
 					remove = tree.getFile().substring(0, tree.getFile().length() - 4)
@@ -461,6 +624,7 @@ public class BioModelSim implements MouseListener, ActionListener {
 							+ ".properties";
 				}
 				new File(remove).delete();
+				refreshTree();
 			} catch (Exception e1) {
 				JOptionPane.showMessageDialog(frame, "Error viewing sbml file in a browser.",
 						"Error", JOptionPane.ERROR_MESSAGE);
@@ -525,8 +689,31 @@ public class BioModelSim implements MouseListener, ActionListener {
 		// if the graph dot popup menu is selected
 		else if (e.getActionCommand().equals("graphDot")) {
 			try {
+				log.addText("Exectuting:\ndotty " + new File(tree.getFile()).getAbsolutePath()
+						+ "\n");
 				Runtime exec = Runtime.getRuntime();
-				exec.exec("dotty " + new File(tree.getFile()).getAbsolutePath());
+				Process graph = exec.exec("dotty " + new File(tree.getFile()).getAbsolutePath());
+				graph.waitFor();
+				String error = "";
+				String output = "";
+				InputStream reb = graph.getErrorStream();
+				int read = reb.read();
+				while (read != -1) {
+					error += (char) read;
+					read = reb.read();
+				}
+				reb = graph.getInputStream();
+				read = reb.read();
+				while (read != -1) {
+					output += (char) read;
+					read = reb.read();
+				}
+				if (!error.equals("")) {
+					log.addText("Errors:\n" + error + "\n");
+				}
+				if (!output.equals("")) {
+					log.addText("Output:\n" + output + "\n");
+				}
 			} catch (Exception e1) {
 				JOptionPane.showMessageDialog(frame, "Unable to view this dot file.", "Error",
 						JOptionPane.ERROR_MESSAGE);
@@ -547,10 +734,33 @@ public class BioModelSim implements MouseListener, ActionListener {
 								+ File.separator
 								+ (dot[dot.length - 1].substring(0,
 										dot[dot.length - 1].length() - 3) + "sbml");
+						log.addText("Exectuting:\ndot2sbml.pl " + tree.getFile() + " " + sbmlFile
+								+ "\n");
 						Runtime exec = Runtime.getRuntime();
 						Process dot2sbml = exec.exec("dot2sbml.pl " + tree.getFile() + " "
 								+ sbmlFile);
 						dot2sbml.waitFor();
+						dot2sbml.waitFor();
+						String error = "";
+						String output = "";
+						InputStream reb = dot2sbml.getErrorStream();
+						int read = reb.read();
+						while (read != -1) {
+							error += (char) read;
+							read = reb.read();
+						}
+						reb = dot2sbml.getInputStream();
+						read = reb.read();
+						while (read != -1) {
+							output += (char) read;
+							read = reb.read();
+						}
+						if (!error.equals("")) {
+							log.addText("Errors:\n" + error + "\n");
+						}
+						if (!output.equals("")) {
+							log.addText("Output:\n" + output + "\n");
+						}
 						refreshTree();
 						JTabbedPane simTab = new JTabbedPane();
 						Reb2Sac reb2sac = new Reb2Sac(sbmlFile, root, this, simName.trim(), log,
@@ -774,6 +984,9 @@ public class BioModelSim implements MouseListener, ActionListener {
 						SBMLDocument document = new SBMLDocument();
 						document.createModel();
 						document.setLevel(2);
+						Compartment c = document.getModel().createCompartment();
+						c.setName("default");
+						c.setId("default");
 						FileOutputStream out = new FileOutputStream(f);
 						SBMLWriter writer = new SBMLWriter();
 						String doc = writer.writeToString(document);
