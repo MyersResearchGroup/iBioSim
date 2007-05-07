@@ -15,7 +15,7 @@ import buttons.core.gui.*;
  * 
  * @author Curtis Madsen
  */
-public class Learn extends JPanel implements ActionListener, KeyListener {
+public class Learn extends JPanel implements ActionListener {
 
 	/**
 	 * 
@@ -42,7 +42,9 @@ public class Learn extends JPanel implements ActionListener, KeyListener {
 
 	private JTextField background;
 
-	private JTextField windowRising, windowSize, numBins;
+	private JTextField windowRising, windowSize;
+
+	private JComboBox numBins;
 
 	private JTextField influenceLevel, relaxIPDelta, letNThrough;
 
@@ -66,6 +68,8 @@ public class Learn extends JPanel implements ActionListener, KeyListener {
 	private JLabel numBinsLabel;
 
 	private Log log;
+
+	private JTabbedPane tab;
 
 	/**
 	 * This is the constructor for the Learn class. It initializes all the input
@@ -176,7 +180,9 @@ public class Learn extends JPanel implements ActionListener, KeyListener {
 		thresholdPanel1.add(relaxIPDeltaLabel);
 		thresholdPanel1.add(relaxIPDelta);
 		numBinsLabel = new JLabel("Number Of Bins:");
-		numBins = new JTextField("3");
+		String[] bins = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
+		numBins = new JComboBox(bins);
+		numBins.setSelectedItem("3");
 		thresholdPanel1.add(numBinsLabel);
 		thresholdPanel1.add(numBins);
 		JLabel debugLabel = new JLabel("Debug Level:");
@@ -243,11 +249,13 @@ public class Learn extends JPanel implements ActionListener, KeyListener {
 		secondTab.add(thresholdPanel2, "North");
 		firstTab.add(splitPane, "South");
 
-		JTabbedPane tab = new JTabbedPane();
+		tab = new JTabbedPane();
 		tab.addTab("Basic Options", firstTab);
 		tab.addTab("Advanced Options", secondTab);
 		this.add(tab, "Center");
 		this.add(runHolder, "South");
+		user.doClick();
+		auto.doClick();
 
 		/*
 		 * // Packs the frame and displays it frame.setContentPane(mainPanel);
@@ -272,32 +280,46 @@ public class Learn extends JPanel implements ActionListener, KeyListener {
 		if (e.getActionCommand().contains("box")) {
 			int num = Integer.parseInt(e.getActionCommand().substring(3)) - 1;
 			if (((JCheckBox) this.species.get(num).get(0)).isSelected()) {
-				((JTextField) this.species.get(num).get(2)).setText("0");
+				((JComboBox) this.species.get(num).get(2)).setSelectedItem("0");
 				editText(num);
+				tab.setSelectedIndex(1);
+				tab.setSelectedIndex(0);
 				for (int i = 1; i < this.species.get(num).size(); i++) {
 					this.species.get(num).get(i).setEnabled(false);
 				}
 			} else {
-				for (int i = 1; i < this.species.get(num).size(); i++) {
-					this.species.get(num).get(i).setEnabled(true);
+				this.species.get(num).get(1).setEnabled(true);
+				if (user.isSelected()) {
+					for (int i = 2; i < this.species.get(num).size(); i++) {
+						this.species.get(num).get(i).setEnabled(true);
+					}
 				}
 			}
+		} else if (e.getActionCommand().contains("text")) {
+			int num = Integer.parseInt(e.getActionCommand().substring(4)) - 1;
+			editText(num);
+			tab.setSelectedIndex(1);
+			tab.setSelectedIndex(0);
 		} else if (e.getSource() == user) {
 			numBinsLabel.setEnabled(false);
 			numBins.setEnabled(false);
 			suggest.setEnabled(true);
 			levelsBin();
+			tab.setSelectedIndex(1);
+			tab.setSelectedIndex(0);
 		} else if (e.getSource() == auto) {
 			numBinsLabel.setEnabled(true);
 			numBins.setEnabled(true);
 			suggest.setEnabled(false);
 			for (Component c : speciesPanel.getComponents()) {
-				for (Component d : ((JPanel) c).getComponents()) {
-					d.setEnabled(false);
+				for (int i = 2; i < ((JPanel) c).getComponentCount(); i++) {
+					((JPanel) c).getComponent(i).setEnabled(false);
 				}
 			}
 		} else if (e.getSource() == suggest) {
 			levels();
+			tab.setSelectedIndex(1);
+			tab.setSelectedIndex(0);
 		}
 		// if the browse initial network button is clicked
 		else if (e.getSource() == browseInit) {
@@ -328,7 +350,7 @@ public class Learn extends JPanel implements ActionListener, KeyListener {
 					geneNet += " --windowRisingAmount " + windowRising;
 					int windowSize = Integer.parseInt(this.windowSize.getText().trim());
 					geneNet += " --windowSize " + windowSize;
-					int numBins = Integer.parseInt(this.numBins.getText().trim());
+					int numBins = Integer.parseInt((String) this.numBins.getSelectedItem());
 					geneNet += " --numBins " + numBins;
 					double influenceLevel = Double
 							.parseDouble(this.influenceLevel.getText().trim());
@@ -353,7 +375,8 @@ public class Learn extends JPanel implements ActionListener, KeyListener {
 						} else {
 							write.write(((JTextField) species.get(i).get(1)).getText().trim());
 						}
-						for (int j = 2; j < species.get(i).size(); j++) {
+						write.write(", " + ((JComboBox) species.get(i).get(2)).getSelectedItem());
+						for (int j = 3; j < species.get(i).size(); j++) {
 							if (((JTextField) species.get(i).get(j)).getText().trim().equals("")) {
 								write.write(", -1");
 							} else {
@@ -426,7 +449,8 @@ public class Learn extends JPanel implements ActionListener, KeyListener {
 				} else {
 					write.write(((JTextField) species.get(i).get(1)).getText().trim());
 				}
-				for (int j = 2; j < species.get(i).size(); j++) {
+				write.write(", " + ((JComboBox) species.get(i).get(2)).getSelectedItem());
+				for (int j = 3; j < species.get(i).size(); j++) {
 					if (((JTextField) species.get(i).get(j)).getText().trim().equals("")) {
 						write.write(", -1");
 					} else {
@@ -540,29 +564,31 @@ public class Learn extends JPanel implements ActionListener, KeyListener {
 					ArrayList<Component> specs = new ArrayList<Component>();
 					specs.add(new JCheckBox());
 					specs.add(new JTextField(s));
-					specs.add(new JTextField());
+					String[] options = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
+					specs.add(new JComboBox(options));
 					((JTextField) specs.get(1)).setEditable(false);
 					sp.add(specs.get(0));
 					((JCheckBox) specs.get(0)).addActionListener(this);
 					((JCheckBox) specs.get(0)).setActionCommand("box" + j);
 					sp.add(specs.get(1));
 					sp.add(specs.get(2));
-					((JTextField) specs.get(2)).addKeyListener(this);
-					((JTextField) specs.get(2)).setName("text" + j);
+					((JComboBox) specs.get(2)).addActionListener(this);
+					((JComboBox) specs.get(2)).setActionCommand("text" + j);
 					this.species.add(specs);
 					if (str != null) {
 						for (String st : str) {
 							String[] getString = st.split(",");
 							if (getString[0].trim().equals(s)) {
 								if (getString.length >= 2) {
-									((JTextField) specs.get(2)).setText(getString[1].trim());
+									((JComboBox) specs.get(2)).setSelectedItem(getString[1].trim());
 									for (int i = 0; i < Integer
-											.parseInt(((JTextField) specs.get(2)).getText()) - 1; i++) {
+											.parseInt((String) ((JComboBox) specs.get(2))
+													.getSelectedItem()) - 1; i++) {
 										specs.add(new JTextField(getString[i + 2].trim()));
 										sp.add(specs.get(i + 3));
 									}
-									for (int i = Integer.parseInt(((JTextField) specs.get(2))
-											.getText()) - 1; i < max - 3; i++) {
+									for (int i = Integer.parseInt((String) ((JComboBox) specs
+											.get(2)).getSelectedItem()) - 1; i < max - 3; i++) {
 										sp.add(new JLabel());
 									}
 								}
@@ -571,7 +597,6 @@ public class Learn extends JPanel implements ActionListener, KeyListener {
 					}
 					speciesPanel.add(sp);
 				}
-				speciesPanel.validate();
 			}
 		}
 	}
@@ -641,7 +666,7 @@ public class Learn extends JPanel implements ActionListener, KeyListener {
 				label.add(new JLabel("Do Not Use"));
 				label.add(new JLabel("Species"));
 				label.add(new JLabel("Number Of Levels"));
-				for (int i = 0; i < Integer.parseInt(numBins.getText().trim()) - 1; i++) {
+				for (int i = 0; i < Integer.parseInt((String) numBins.getSelectedItem()) - 1; i++) {
 					label.add(new JLabel("cutoff " + (i + 1)));
 				}
 				speciesPanel.add(label);
@@ -652,50 +677,26 @@ public class Learn extends JPanel implements ActionListener, KeyListener {
 					ArrayList<Component> specs = new ArrayList<Component>();
 					specs.add(new JCheckBox());
 					specs.add(new JTextField(s));
-					specs.add(new JTextField(numBins.getText().trim()));
+					String[] options = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
+					JComboBox combo = new JComboBox(options);
+					specs.add(combo);
+					combo.setSelectedItem(numBins.getSelectedItem());
 					((JTextField) specs.get(1)).setEditable(false);
 					sp.add(specs.get(0));
 					((JCheckBox) specs.get(0)).addActionListener(this);
 					((JCheckBox) specs.get(0)).setActionCommand("box" + j);
 					sp.add(specs.get(1));
 					sp.add(specs.get(2));
-					((JTextField) specs.get(2)).addKeyListener(this);
-					((JTextField) specs.get(2)).setName("text" + j);
+					((JComboBox) specs.get(2)).addActionListener(this);
+					((JComboBox) specs.get(2)).setActionCommand("text" + j);
 					this.species.add(specs);
-					for (int i = 0; i < Integer.parseInt(((JTextField) specs.get(2)).getText()) - 1; i++) {
+					for (int i = 0; i < Integer.parseInt((String) ((JComboBox) specs.get(2))
+							.getSelectedItem()) - 1; i++) {
 						specs.add(new JTextField(""));
 						sp.add(specs.get(i + 3));
 					}
 					speciesPanel.add(sp);
 				}
-				speciesPanel.validate();
-			}
-		}
-	}
-
-	public void keyTyped(KeyEvent e) {
-		if (((JTextField) e.getSource()).getName().contains("text")) {
-			if (!((JTextField) e.getSource()).getText().trim().equals("")) {
-				int num = Integer.parseInt(((JTextField) e.getSource()).getName().substring(4)) - 1;
-				editText(num);
-			}
-		}
-	}
-
-	public void keyPressed(KeyEvent e) {
-		if (((JTextField) e.getSource()).getName().contains("text")) {
-			if (!((JTextField) e.getSource()).getText().trim().equals("")) {
-				int num = Integer.parseInt(((JTextField) e.getSource()).getName().substring(4)) - 1;
-				editText(num);
-			}
-		}
-	}
-
-	public void keyReleased(KeyEvent e) {
-		if (((JTextField) e.getSource()).getName().contains("text")) {
-			if (!((JTextField) e.getSource()).getText().trim().equals("")) {
-				int num = Integer.parseInt(((JTextField) e.getSource()).getName().substring(4)) - 1;
-				editText(num);
 			}
 		}
 	}
@@ -704,7 +705,7 @@ public class Learn extends JPanel implements ActionListener, KeyListener {
 		ArrayList<Component> specs = species.get(num);
 		try {
 			Component[] panels = speciesPanel.getComponents();
-			int boxes = Integer.parseInt(((JTextField) specs.get(2)).getText().trim());
+			int boxes = Integer.parseInt((String) ((JComboBox) specs.get(2)).getSelectedItem());
 			if ((specs.size() - 3) < boxes) {
 				for (int i = 0; i < boxes - 1; i++) {
 					try {
@@ -768,7 +769,6 @@ public class Learn extends JPanel implements ActionListener, KeyListener {
 					}
 				}
 			}
-			speciesPanel.validate();
 		} catch (Exception e) {
 		}
 	}

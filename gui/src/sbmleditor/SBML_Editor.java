@@ -5,10 +5,9 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
-
 import org.sbml.libsbml.*;
-
-import reb2sac.core.gui.Reb2Sac;
+import biomodelsim.core.gui.*;
+import reb2sac.core.gui.*;
 import buttons.core.gui.*;
 
 /**
@@ -194,12 +193,15 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 
 	private JButton saveNoRun, run; // save and run buttons
 
+	private Log log;
+
 	/**
 	 * Creates a new SBML_Editor and sets up the frame where the user can edit a
 	 * new sbml file.
 	 */
-	public SBML_Editor(Reb2Sac reb2sac) {
+	public SBML_Editor(Reb2Sac reb2sac, Log log) {
 		this.reb2sac = reb2sac;
+		this.log = log;
 		createSbmlFrame("");
 	}
 
@@ -207,8 +209,9 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 * Creates a new SBML_Editor and sets up the frame where the user can edit
 	 * the sbml file given to this constructor.
 	 */
-	public SBML_Editor(String file, Reb2Sac reb2sac) {
+	public SBML_Editor(String file, Reb2Sac reb2sac, Log log) {
 		this.reb2sac = reb2sac;
+		this.log = log;
 		createSbmlFrame(file);
 	}
 
@@ -1497,7 +1500,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					}
 				}
 			}
-			new SBML_Editor(reb2sac);
+			new SBML_Editor(reb2sac, log);
 			// sbmlFrame.dispose();
 		}
 		// if the load menu item is clicked
@@ -1585,7 +1588,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 								}
 							}
 						}
-						new SBML_Editor(filename, reb2sac);
+						new SBML_Editor(filename, reb2sac, log);
 						// sbmlFrame.dispose();
 					}
 				} catch (Exception e1) {
@@ -1705,7 +1708,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 														+ "\nIt contains errors!", "Error",
 												JOptionPane.ERROR_MESSAGE);
 									} else {
-										new SBML_Editor(filename, reb2sac);
+										new SBML_Editor(filename, reb2sac, log);
 										// sbmlFrame.dispose();
 									}
 								} catch (Exception e2) {
@@ -1728,7 +1731,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 													+ "\nIt contains errors!", "Error",
 											JOptionPane.ERROR_MESSAGE);
 								} else {
-									new SBML_Editor(filename, reb2sac);
+									new SBML_Editor(filename, reb2sac, log);
 									// sbmlFrame.dispose();
 								}
 							} catch (Exception e2) {
@@ -2602,6 +2605,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 */
 	public void save() {
 		try {
+			log.addText("Saving sbml file:\n" + file + "\n");
 			FileOutputStream out = new FileOutputStream(new File(file));
 			SBMLWriter writer = new SBMLWriter();
 			String doc = writer.writeToString(document);

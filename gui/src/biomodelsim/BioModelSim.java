@@ -274,7 +274,7 @@ public class BioModelSim implements MouseListener, ActionListener {
 								}
 							} else if (end.equals(".tsd") || end.equals(".dat")
 									|| end.equals(".csv")) {
-								if (end.contains("run-1")) {
+								if (list[i].contains("run-1.")) {
 									graphFile = filename + File.separator + list[i];
 								}
 							}
@@ -301,7 +301,7 @@ public class BioModelSim implements MouseListener, ActionListener {
 						simTab.addTab("Simulation", reb2sac);
 						simTab.getComponentAt(simTab.getComponents().length - 1)
 								.setName("Simulate");
-						SBML_Editor sbml = new SBML_Editor(getAFile, reb2sac);
+						SBML_Editor sbml = new SBML_Editor(getAFile, reb2sac, log);
 						reb2sac.setSbml(sbml);
 						simTab.addTab("SBML Editor", sbml);
 						simTab.getComponentAt(simTab.getComponents().length - 1).setName(
@@ -363,7 +363,7 @@ public class BioModelSim implements MouseListener, ActionListener {
 							simTab, null);
 					simTab.addTab("Simulation", reb2sac);
 					simTab.getComponentAt(simTab.getComponents().length - 1).setName("Simulate");
-					SBML_Editor sbml = new SBML_Editor(sbmlFile, reb2sac);
+					SBML_Editor sbml = new SBML_Editor(sbmlFile, reb2sac, log);
 					reb2sac.setSbml(sbml);
 					simTab.addTab("SBML Editor", sbml);
 					simTab.getComponentAt(simTab.getComponents().length - 1).setName("SBML Editor");
@@ -438,7 +438,7 @@ public class BioModelSim implements MouseListener, ActionListener {
 		// if the edit popup menu is selected on an sbml file
 		else if (e.getActionCommand().equals("sbmlEditor")) {
 			try {
-				addTab("SBML Editor", new SBML_Editor(tree.getFile(), null));
+				addTab("SBML Editor", new SBML_Editor(tree.getFile(), null, log));
 			} catch (Exception e1) {
 				JOptionPane.showMessageDialog(frame, "You must select a valid sbml file.", "Error",
 						JOptionPane.ERROR_MESSAGE);
@@ -662,7 +662,7 @@ public class BioModelSim implements MouseListener, ActionListener {
 							simTab, null);
 					simTab.addTab("Simulation", reb2sac);
 					simTab.getComponentAt(simTab.getComponents().length - 1).setName("Simulate");
-					SBML_Editor sbml = new SBML_Editor(sbmlFile, reb2sac);
+					SBML_Editor sbml = new SBML_Editor(sbmlFile, reb2sac, log);
 					reb2sac.setSbml(sbml);
 					simTab.addTab("SBML Editor", sbml);
 					simTab.getComponentAt(simTab.getComponents().length - 1).setName("SBML Editor");
@@ -768,7 +768,7 @@ public class BioModelSim implements MouseListener, ActionListener {
 						simTab.addTab("Simulation", reb2sac);
 						simTab.getComponentAt(simTab.getComponents().length - 1)
 								.setName("Simulate");
-						SBML_Editor sbml = new SBML_Editor(sbmlFile, reb2sac);
+						SBML_Editor sbml = new SBML_Editor(sbmlFile, reb2sac, log);
 						reb2sac.setSbml(sbml);
 						simTab.addTab("SBML Editor", sbml);
 						simTab.getComponentAt(simTab.getComponents().length - 1).setName(
@@ -818,7 +818,7 @@ public class BioModelSim implements MouseListener, ActionListener {
 						simTab.addTab("Simulation", reb2sac);
 						simTab.getComponentAt(simTab.getComponents().length - 1)
 								.setName("Simulate");
-						SBML_Editor sbml = new SBML_Editor(sbmlFile, reb2sac);
+						SBML_Editor sbml = new SBML_Editor(sbmlFile, reb2sac, log);
 						reb2sac.setSbml(sbml);
 						simTab.addTab("SBML Editor", sbml);
 						simTab.getComponentAt(simTab.getComponents().length - 1).setName(
@@ -853,9 +853,21 @@ public class BioModelSim implements MouseListener, ActionListener {
 			projDir = Buttons.browse(frame, f, null, JFileChooser.DIRECTORIES_ONLY, "Open");
 			if (!projDir.equals("")) {
 				if (new File(projDir).isDirectory()) {
+					// boolean isProject = false;
+					// for (String temp : new File(projDir).list()) {
+					// if (temp.contains(".prj")) {
+					// isProject = true;
+					// }
+					// }
+					// if (isProject) {
 					root = projDir;
 					refresh();
 					tab.removeAll();
+					// } else {
+					// JOptionPane.showMessageDialog(frame, "You must select a
+					// valid project.",
+					// "Error", JOptionPane.ERROR_MESSAGE);
+					// }
 				} else {
 					JOptionPane.showMessageDialog(frame, "You must select a valid project.",
 							"Error", JOptionPane.ERROR_MESSAGE);
@@ -899,7 +911,7 @@ public class BioModelSim implements MouseListener, ActionListener {
 						simTab.addTab("Simulation", reb2sac);
 						simTab.getComponentAt(simTab.getComponents().length - 1)
 								.setName("Simulate");
-						SBML_Editor sbml = new SBML_Editor(getAFile, reb2sac);
+						SBML_Editor sbml = new SBML_Editor(getAFile, reb2sac, log);
 						reb2sac.setSbml(sbml);
 						simTab.addTab("SBML Editor", sbml);
 						simTab.getComponentAt(simTab.getComponents().length - 1).setName(
@@ -928,9 +940,9 @@ public class BioModelSim implements MouseListener, ActionListener {
 							+ " save the graph as?", "Save Changes", JOptionPane.YES_NO_OPTION,
 							JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 					if (value == JOptionPane.YES_OPTION) {
-						((Graph) tab.getSelectedComponent()).save();
+						((Graph) tab.getSelectedComponent()).export(true);
 					} else {
-						((Graph) tab.getSelectedComponent()).save();
+						((Graph) tab.getSelectedComponent()).export(false);
 					}
 				} else {
 					JTabbedPane simTab = (JTabbedPane) tab.getSelectedComponent();
@@ -945,9 +957,9 @@ public class BioModelSim implements MouseListener, ActionListener {
 								"Save Changes", JOptionPane.YES_NO_OPTION,
 								JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 						if (value == JOptionPane.YES_OPTION) {
-							((Graph) simTab.getSelectedComponent()).save();
+							((Graph) simTab.getSelectedComponent()).export(true);
 						} else {
-							((Graph) simTab.getSelectedComponent()).save();
+							((Graph) simTab.getSelectedComponent()).export(false);
 						}
 					}
 				}
@@ -960,6 +972,17 @@ public class BioModelSim implements MouseListener, ActionListener {
 			if (!filename.equals("")) {
 				root = filename;
 				new File(root).mkdir();
+				// try {
+				// new FileWriter(new File(
+				// root
+				// + File.separator
+				// + root
+				// .substring(root.length()
+				// - root.split(File.separator)[root
+				// .split(File.separator).length - 1]
+				// .length()) + ".prj")).close();
+				// } catch (IOException e1) {
+				// }
 				refresh();
 				tab.removeAll();
 			}
@@ -993,7 +1016,7 @@ public class BioModelSim implements MouseListener, ActionListener {
 						byte[] output = doc.getBytes();
 						out.write(output);
 						out.close();
-						addTab("SBML Editor", new SBML_Editor(f.getAbsolutePath(), null));
+						addTab("SBML Editor", new SBML_Editor(f.getAbsolutePath(), null, log));
 						refreshTree();
 					}
 				} catch (Exception e1) {
@@ -1037,7 +1060,7 @@ public class BioModelSim implements MouseListener, ActionListener {
 		// if the SBML Editor menu item is clicked
 		else if (e.getSource() == editor) {
 			try {
-				addTab("SBML Editor", new SBML_Editor(tree.getFile(), null));
+				addTab("SBML Editor", new SBML_Editor(tree.getFile(), null, log));
 			} catch (Exception e1) {
 				JOptionPane.showMessageDialog(frame, "You must select a valid sbml file.", "Error",
 						JOptionPane.ERROR_MESSAGE);
@@ -1253,9 +1276,9 @@ public class BioModelSim implements MouseListener, ActionListener {
 					"Save Changes", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE,
 					null, options, options[0]);
 			if (value == JOptionPane.YES_OPTION) {
-				((Graph) tab.getComponentAt(index)).save();
+				((Graph) tab.getComponentAt(index)).export(true);
 			} else if (value == JOptionPane.NO_OPTION) {
-				((Graph) tab.getComponentAt(index)).save();
+				((Graph) tab.getComponentAt(index)).export(false);
 			}
 		} else {
 			for (int i = 0; i < ((JTabbedPane) tab.getComponentAt(index)).getTabCount(); i++) {
@@ -1268,7 +1291,18 @@ public class BioModelSim implements MouseListener, ActionListener {
 							.save();
 				} else if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i).getName()
 						.equals("Graph")) {
-					((Graph) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).save();
+					Object[] options = { "Save As JPEG", "Save As PNG", "Cancel" };
+					int value = JOptionPane.showOptionDialog(frame,
+							"Do you want to save the graph?", "Save Changes",
+							JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null,
+							options, options[0]);
+					if (value == JOptionPane.YES_OPTION) {
+						((Graph) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i))
+								.export(true);
+					} else if (value == JOptionPane.NO_OPTION) {
+						((Graph) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i))
+								.export(false);
+					}
 				}
 			}
 		}
@@ -1345,7 +1379,7 @@ public class BioModelSim implements MouseListener, ActionListener {
 			if (tree.getFile().substring(tree.getFile().length() - 4).equals("sbml")
 					|| tree.getFile().substring(tree.getFile().length() - 4).equals(".xml")) {
 				try {
-					addTab("SBML Editor", new SBML_Editor(tree.getFile(), null));
+					addTab("SBML Editor", new SBML_Editor(tree.getFile(), null, log));
 				} catch (Exception e1) {
 					JOptionPane.showMessageDialog(frame, "You must select a valid sbml file.",
 							"Error", JOptionPane.ERROR_MESSAGE);
