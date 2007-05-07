@@ -5,6 +5,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
+
 import org.sbml.libsbml.*;
 
 import reb2sac.core.gui.Reb2Sac;
@@ -31,13 +32,19 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 
 	private String file; // SBML file
 
-	private JButton addCompart, removeCompart; // compartment buttons
+	private JButton addCompart, removeCompart, editCompart; // compartment
 
-	private JTextField compart; // compartment text field
+	// buttons
 
 	private Object[] comps; // array of compartments
 
 	private JList compartments; // JList of compartments
+
+	private JTextField compName, compID;
+
+	private JButton addSaveCompart, cancelCompart;
+
+	private JFrame compartFrame;
 
 	private JButton addSpec, removeSpec, editSpec; // species buttons
 
@@ -60,13 +67,13 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 
 	private boolean amount; // determines if the species have amount set
 
-	private boolean id; // determines if the compartments have id set
-
 	private boolean model; // determines if the model has id set
 
 	private boolean usingParamId; // determines if the parameters have id set
 
 	private boolean usingReacId; // determines if the reactions have id set
+
+	private boolean id;
 
 	private boolean change; // determines if any changes were made
 
@@ -248,22 +255,25 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 
 		// sets up the compartments editor
 		JPanel comp = new JPanel(new BorderLayout());
-		JPanel addComp = new JPanel(new BorderLayout());
-		compart = new JTextField(15);
+		// JPanel addComp = new JPanel(new BorderLayout());
+		// compart = new JTextField(15);
 		JPanel addRemComp = new JPanel();
 		addCompart = new JButton("Add Compartment");
 		removeCompart = new JButton("Remove Compartment");
+		editCompart = new JButton("Edit Compartment");
 		addRemComp.add(addCompart);
 		addRemComp.add(removeCompart);
+		addRemComp.add(editCompart);
 		addCompart.addActionListener(this);
 		removeCompart.addActionListener(this);
-		addComp.add(compart, "North");
-		addComp.add(addRemComp, "South");
+		editCompart.addActionListener(this);
+		// addComp.add(compart, "North");
+		// addComp.add(addRemComp, "South");
 		JLabel compartmentsLabel = new JLabel("List Of Compartments:");
 		compartments = new JList();
 		JScrollPane scroll = new JScrollPane();
-		scroll.setMinimumSize(new Dimension(260, 200));
-		scroll.setPreferredSize(new Dimension(276, 132));
+		scroll.setMinimumSize(new Dimension(260, 220));
+		scroll.setPreferredSize(new Dimension(276, 152));
 		scroll.setViewportView(compartments);
 		ListOf listOfCompartments = model.getListOfCompartments();
 		ArrayList<String> sbml = new ArrayList<String>();
@@ -272,17 +282,17 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			Compartment compartment = (Compartment) listOfCompartments.get(i);
 			if (compartment.isSetId()) {
 				sbml.add(compartment.getId());
+				id = true;
 			} else {
 				sbml.add(compartment.getName());
 			}
-			id = compartment.isSetId();
 		}
 		comps = sbml.toArray();
 		compartments.setListData(comps);
 		compartments.addMouseListener(this);
 		comp.add(compartmentsLabel, "North");
 		comp.add(scroll, "Center");
-		comp.add(addComp, "South");
+		comp.add(addRemComp, "South");
 
 		// sets up the species editor
 		JPanel spec = new JPanel(new BorderLayout());
@@ -517,20 +527,9 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		}
 		// if the add comparment button is clicked
 		else if (e.getSource() == addCompart) {
-			if (!compart.getText().trim().equals("")) {
-				JList add = new JList();
-				Object[] adding = { compart.getText().trim() };
-				add.setListData(adding);
-				add.setSelectedIndex(0);
-				comps = Buttons.add(comps, compartments, add, false, null, null, null, null, null,
-						null, null, this);
-				if (id) {
-					document.getModel().createCompartment().setId(compart.getText().trim());
-				} else {
-					document.getModel().createCompartment().setName(compart.getText().trim());
-				}
-				change = true;
-			}
+			compartEditor("Add");
+		} else if (e.getSource() == editCompart) {
+			compartEditor("Save");
 		}
 		// if the remove compartment button is clicked
 		else if (e.getSource() == removeCompart) {
@@ -663,6 +662,57 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				parameters.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 				parameters.setSelectedIndex(0);
 			}
+		} else if (e.getSource() == addSaveCompart) {
+			if (id && compID.getText().trim().equals("")) {
+				JOptionPane.showMessageDialog(compartFrame,
+						"You must enter an id into the id field!", "Enter An ID",
+						JOptionPane.ERROR_MESSAGE);
+			} else if (!id && compName.getText().trim().equals("")) {
+				JOptionPane.showMessageDialog(compartFrame,
+						"You must enter a name into the name field!", "Enter A Name",
+						JOptionPane.ERROR_MESSAGE);
+			} else {
+				String addComp = "";
+				if (id) {
+					addComp = compID.getText().trim();
+				} else {
+					addComp = compName.getText().trim();
+				}
+				if (addSaveCompart.getText().equals("Save")) {
+					int index = compartments.getSelectedIndex();
+					compartments.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+					comps = Buttons.getList(comps, compartments);
+					compartments.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+					Compartment c = document.getModel().getCompartment(index);
+					c.setName(compName.getText().trim());
+					c.setId(compID.getText().trim());
+					comps[index] = addComp;
+					compartments.setListData(comps);
+					compartments.setSelectedIndex(index);
+				} else {
+					int index = compartments.getSelectedIndex();
+					Compartment c = document.getModel().createCompartment();
+					c.setName(compName.getText().trim());
+					c.setId(compID.getText().trim());
+					JList add = new JList();
+					Object[] adding = { addComp };
+					add.setListData(adding);
+					add.setSelectedIndex(0);
+					compartments.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+					comps = Buttons.add(comps, compartments, add, false, null, null, null, null,
+							null, null, null, this);
+					compartments.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+					if (document.getModel().getNumCompartments() == 1) {
+						compartments.setSelectedIndex(0);
+					} else {
+						compartments.setSelectedIndex(index);
+					}
+				}
+				change = true;
+				compartFrame.dispose();
+			}
+		} else if (e.getSource() == cancelCompart) {
+			compartFrame.dispose();
 		}
 		// if the add or save species button is clicked
 		else if (e.getSource() == addSaveSpecies) {
@@ -1697,6 +1747,88 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		// if the close menu item is clicked
 		else if (e.getSource() == close) {
 			// sbmlFrame.dispose();
+		}
+	}
+
+	/**
+	 * Creates a frame used to edit compartments or create new ones.
+	 */
+	private void compartEditor(String option) {
+		if (option.equals("Save") && compartments.getSelectedIndex() == -1) {
+			JOptionPane.showMessageDialog(this, "No compartments selected!",
+					"Must Select A Compartment", JOptionPane.ERROR_MESSAGE);
+		} else {
+			compartFrame = new JFrame("Compartments");
+			WindowListener w = new WindowListener() {
+				public void windowClosing(WindowEvent arg0) {
+					compartFrame.dispose();
+				}
+
+				public void windowOpened(WindowEvent arg0) {
+				}
+
+				public void windowClosed(WindowEvent arg0) {
+				}
+
+				public void windowIconified(WindowEvent arg0) {
+				}
+
+				public void windowDeiconified(WindowEvent arg0) {
+				}
+
+				public void windowActivated(WindowEvent arg0) {
+				}
+
+				public void windowDeactivated(WindowEvent arg0) {
+				}
+			};
+			compartFrame.addWindowListener(w);
+			JPanel compartPanel = new JPanel(new GridLayout(3, 2));
+			JLabel nameLabel = new JLabel("Name:");
+			JLabel idLabel = new JLabel("ID:");
+			compName = new JTextField();
+			compID = new JTextField();
+			addSaveCompart = new JButton(option);
+			cancelCompart = new JButton("Cancel");
+			if (option.equals("Save")) {
+				try {
+					Compartment compartment = document.getModel().getCompartment(
+							compartments.getSelectedIndex());
+					compName.setText(compartment.getName());
+					compID.setText(compartment.getId());
+				} catch (Exception e) {
+
+				}
+			}
+			addSaveCompart.addActionListener(this);
+			cancelCompart.addActionListener(this);
+			compartPanel.add(nameLabel);
+			compartPanel.add(compName);
+			compartPanel.add(idLabel);
+			compartPanel.add(compID);
+			compartPanel.add(addSaveCompart);
+			compartPanel.add(cancelCompart);
+			compartFrame.setContentPane(compartPanel);
+			compartFrame.pack();
+			Dimension screenSize;
+			try {
+				Toolkit tk = Toolkit.getDefaultToolkit();
+				screenSize = tk.getScreenSize();
+			} catch (AWTError awe) {
+				screenSize = new Dimension(640, 480);
+			}
+			Dimension frameSize = compartFrame.getSize();
+
+			if (frameSize.height > screenSize.height) {
+				frameSize.height = screenSize.height;
+			}
+			if (frameSize.width > screenSize.width) {
+				frameSize.width = screenSize.width;
+			}
+			int x = screenSize.width / 2 - frameSize.width / 2;
+			int y = screenSize.height / 2 - frameSize.height / 2;
+			compartFrame.setLocation(x, y);
+			compartFrame.setVisible(true);
 		}
 	}
 

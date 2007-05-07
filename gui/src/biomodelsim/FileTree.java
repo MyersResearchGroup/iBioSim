@@ -253,9 +253,31 @@ public class FileTree extends JPanel implements MouseListener {
 			}
 			if (doAdd) {
 				if (parent == null) {
-					current.add(new DefaultMutableTreeNode(files.get(fnum)));
+					int insert = 0;
+					for (int i = 0; i < current.getChildCount(); i++) {
+						if (!current.getChildAt(i).toString().contains(".sbml")
+								&& !current.getChildAt(i).toString().contains(".xml")
+								&& !current.getChildAt(i).toString().contains(".dot")) {
+						} else if (current.getChildAt(i).toString().compareToIgnoreCase(
+								files.get(fnum).toString()) > 0) {
+							break;
+						}
+						insert++;
+					}
+					current.insert(new DefaultMutableTreeNode(files.get(fnum)), insert);
 				} else if (!(parent.toString().equals(root.toString()))) {
-					current.add(new DefaultMutableTreeNode(files.get(fnum)));
+					int insert = 0;
+					for (int i = 0; i < current.getChildCount(); i++) {
+						if (!current.getChildAt(i).toString().contains(".sbml")
+								&& !current.getChildAt(i).toString().contains(".xml")
+								&& !current.getChildAt(i).toString().contains(".dot")) {
+						} else if (current.getChildAt(i).toString().compareToIgnoreCase(
+								files.get(fnum).toString()) > 0) {
+							break;
+						}
+						insert++;
+					}
+					current.insert(new DefaultMutableTreeNode(files.get(fnum)), insert);
 				}
 			}
 		}
