@@ -104,7 +104,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 	private BioModelSim biomodelsim; // tstubd gui
 
-	private JButton save, exportJPeg, exportPng, duplicate; // buttons
+	private JButton exportJPeg, exportPng, duplicate; // buttons
 
 	private Reb2Sac reb2sac;
 
@@ -348,11 +348,11 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		SpecialButtonHolder.add(filled);
 		SpecialButtonHolder.add(resize);
 		SpecialButtonHolder.add(changeSize);
-		save = new JButton("Save");
+		// ***save = new JButton("Save");***
 		exportJPeg = new JButton("Export As JPEG");
 		exportPng = new JButton("Export As PNG");
 		duplicate = new JButton("Duplicate");
-		save.addActionListener(this);
+		// ***save.addActionListener(this);***
 		exportJPeg.addActionListener(this);
 		exportPng.addActionListener(this);
 		duplicate.addActionListener(this);
@@ -931,10 +931,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				rend.setShapesVisible(false);
 			}
 		}
-		// if the save button is clicked
-		else if (e.getSource() == save) {
-			save();
-		}
+		/*
+		 * // if the save button is clicked else if (e.getSource() == save) {
+		 * save(); }
+		 */
 		// if the export as jpeg button is clicked
 		else if (e.getSource() == exportJPeg) {
 			export(true);
@@ -968,22 +968,6 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				}
 			}
 		}
-	}
-
-	/**
-	 * Save the graph data in a file.
-	 */
-	public void save() {
-		String save = "";
-		save += "XMin: " + XMin.getText() + "\n";
-		save += "XMax: " + XMax.getText() + "\n";
-		save += "XScale: " + XScale.getText() + "\n";
-		save += "YMin: " + YMin.getText() + "\n";
-		save += "YMax: " + YMax.getText() + "\n";
-		save += "YScale: " + YScale.getText() + "\n";
-		save += "Keep: " + keep.isSelected() + "\n";
-		save += "Visible: " + shapes.isSelected() + "\n";
-		save += "Filled: " + filled.isSelected() + "\n";
 	}
 
 	/**

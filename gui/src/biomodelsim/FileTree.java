@@ -175,7 +175,9 @@ public class FileTree extends JPanel implements MouseListener {
 					}
 					if (parent.getChildAt(i).toString().contains(".sbml")
 							|| parent.getChildAt(i).toString().contains(".xml")
-							|| parent.getChildAt(i).toString().contains(".dot")) {
+							|| parent.getChildAt(i).toString().contains(".xhtml")
+							|| parent.getChildAt(i).toString().contains(".dot")
+							|| parent.getChildAt(i).toString().contains(".prj")) {
 						break;
 					}
 					insert++;
@@ -257,7 +259,9 @@ public class FileTree extends JPanel implements MouseListener {
 					for (int i = 0; i < current.getChildCount(); i++) {
 						if (!current.getChildAt(i).toString().contains(".sbml")
 								&& !current.getChildAt(i).toString().contains(".xml")
-								&& !current.getChildAt(i).toString().contains(".dot")) {
+								&& !current.getChildAt(i).toString().contains(".xhtml")
+								&& !current.getChildAt(i).toString().contains(".dot")
+								&& !current.getChildAt(i).toString().contains(".prj")) {
 						} else if (current.getChildAt(i).toString().compareToIgnoreCase(
 								files.get(fnum).toString()) > 0) {
 							break;
@@ -270,7 +274,9 @@ public class FileTree extends JPanel implements MouseListener {
 					for (int i = 0; i < current.getChildCount(); i++) {
 						if (!current.getChildAt(i).toString().contains(".sbml")
 								&& !current.getChildAt(i).toString().contains(".xml")
-								&& !current.getChildAt(i).toString().contains(".dot")) {
+								&& !current.getChildAt(i).toString().contains(".xhtml")
+								&& !current.getChildAt(i).toString().contains(".dot")
+								&& !current.getChildAt(i).toString().contains(".prj")) {
 						} else if (current.getChildAt(i).toString().compareToIgnoreCase(
 								files.get(fnum).toString()) > 0) {
 							break;

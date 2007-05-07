@@ -377,7 +377,7 @@ public class Run implements ActionListener {
 				if (nary.isSelected() && naryRun == 1) {
 				} else if (sbml.isSelected()) {
 					File outXml = new File("out.xml");
-					new SBML_Editor(outXml.getAbsolutePath(), null);
+					new SBML_Editor(outXml.getAbsolutePath(), null, log);
 				} else if (dot.isSelected()) {
 					File outDot = new File("out.dot");
 					exec.exec("dotty " + outDot.getAbsolutePath());
