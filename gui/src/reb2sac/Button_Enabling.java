@@ -79,8 +79,6 @@ public class Button_Enabling {
 			limit.setEnabled(true);
 			intervalLabel.setEnabled(true);
 			interval.setEnabled(true);
-			// dirLabel.setEnabled(true);
-			// dir.setEnabled(true);
 			if (!usingSSA.isSelected()) {
 				simulators.setEnabled(true);
 				simulatorsLabel.setEnabled(true);
@@ -144,8 +142,6 @@ public class Button_Enabling {
 			limit.setEnabled(true);
 			intervalLabel.setEnabled(true);
 			interval.setEnabled(true);
-			// dirLabel.setEnabled(true);
-			// dir.setEnabled(true);
 			if (!usingSSA.isSelected()) {
 				simulators.setEnabled(true);
 				simulatorsLabel.setEnabled(true);
@@ -177,8 +173,6 @@ public class Button_Enabling {
 		limit.setEnabled(true);
 		intervalLabel.setEnabled(true);
 		interval.setEnabled(true);
-		// dirLabel.setEnabled(true);
-		// dir.setEnabled(true);
 		if (!usingSSA.isSelected()) {
 			simulators.setEnabled(true);
 			simulatorsLabel.setEnabled(true);
@@ -213,8 +207,6 @@ public class Button_Enabling {
 		limit.setEnabled(true);
 		intervalLabel.setEnabled(true);
 		interval.setEnabled(true);
-		// dirLabel.setEnabled(true);
-		// dir.setEnabled(true);
 		if (!usingSSA.isSelected()) {
 			simulators.setEnabled(true);
 			simulatorsLabel.setEnabled(true);
@@ -245,8 +237,6 @@ public class Button_Enabling {
 		limit.setEnabled(false);
 		intervalLabel.setEnabled(false);
 		interval.setEnabled(false);
-		// dirLabel.setEnabled(false);
-		// dir.setEnabled(false);
 		if (!usingSSA.isSelected()) {
 			simulators.setEnabled(true);
 			simulatorsLabel.setEnabled(true);
@@ -275,8 +265,6 @@ public class Button_Enabling {
 		limit.setEnabled(false);
 		intervalLabel.setEnabled(false);
 		interval.setEnabled(false);
-		// dirLabel.setEnabled(false);
-		// dir.setEnabled(false);
 		simulators.setEnabled(false);
 		simulatorsLabel.setEnabled(false);
 		explanation.setEnabled(false);

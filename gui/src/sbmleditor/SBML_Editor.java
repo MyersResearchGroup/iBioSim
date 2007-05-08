@@ -31,9 +31,10 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 
 	private String file; // SBML file
 
-	private JButton addCompart, removeCompart, editCompart; // compartment
-
-	// buttons
+	/*
+	 * compartment buttons
+	 */
+	private JButton addCompart, removeCompart, editCompart;
 
 	private Object[] comps; // array of compartments
 
@@ -58,11 +59,6 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	private JButton addSaveSpecies, cancelSpecies; // edit species buttons
 
 	private JFrame speciesFrame; // frame for editting species
-
-	/*
-	 * new, load, save, view, and close menu items
-	 */
-	private JMenuItem newFile, load, save, view, close;
 
 	private boolean amount; // determines if the species have amount set
 
@@ -226,25 +222,6 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			this.file = null;
 		}
 
-		/*
-		 * // creates the sbml frame sbmlFrame = new JFrame("SBML Editor");
-		 * WindowListener w = new WindowListener() { public void
-		 * windowClosing(WindowEvent arg0) { sbmlFrame.dispose(); }
-		 * 
-		 * public void windowOpened(WindowEvent arg0) { }
-		 * 
-		 * public void windowClosed(WindowEvent arg0) { }
-		 * 
-		 * public void windowIconified(WindowEvent arg0) { }
-		 * 
-		 * public void windowDeiconified(WindowEvent arg0) { }
-		 * 
-		 * public void windowActivated(WindowEvent arg0) { }
-		 * 
-		 * public void windowDeactivated(WindowEvent arg0) { } };
-		 * sbmlFrame.addWindowListener(w);
-		 */
-
 		// creates the sbml reader and reads the sbml file
 		Model model;
 		if (!file.equals("")) {
@@ -258,8 +235,6 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 
 		// sets up the compartments editor
 		JPanel comp = new JPanel(new BorderLayout());
-		// JPanel addComp = new JPanel(new BorderLayout());
-		// compart = new JTextField(15);
 		JPanel addRemComp = new JPanel();
 		addCompart = new JButton("Add Compartment");
 		removeCompart = new JButton("Remove Compartment");
@@ -270,8 +245,6 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		addCompart.addActionListener(this);
 		removeCompart.addActionListener(this);
 		editCompart.addActionListener(this);
-		// addComp.add(compart, "North");
-		// addComp.add(addRemComp, "South");
 		JLabel compartmentsLabel = new JLabel("List Of Compartments:");
 		compartments = new JList();
 		JScrollPane scroll = new JScrollPane();
@@ -412,45 +385,10 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		param.add(addParams, "South");
 
 		// adds the main panel to the frame and displays it
-		// JPanel mainPanel = new JPanel(new BorderLayout());
 		JPanel mainPanelNorth = new JPanel();
 		JPanel mainPanelCenter = new JPanel(new BorderLayout());
 		JPanel mainPanelCenterUp = new JPanel();
 		JPanel mainPanelCenterDown = new JPanel();
-		JMenuBar menuBar = new JMenuBar();
-		JMenu fileMenu = new JMenu("File");
-		fileMenu.setMnemonic(KeyEvent.VK_F);
-		JMenu viewMenu = new JMenu("View");
-		viewMenu.setMnemonic(KeyEvent.VK_V);
-		menuBar.add(fileMenu);
-		menuBar.add(viewMenu);
-		newFile = new JMenuItem("New");
-		load = new JMenuItem("Open");
-		save = new JMenuItem("Save");
-		view = new JMenuItem("View As Text File");
-		close = new JMenuItem("Close");
-		newFile.addActionListener(this);
-		load.addActionListener(this);
-		save.addActionListener(this);
-		view.addActionListener(this);
-		close.addActionListener(this);
-		newFile.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.ALT_MASK));
-		load.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.ALT_MASK));
-		save.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.ALT_MASK));
-		view.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, ActionEvent.ALT_MASK));
-		close.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.ALT_MASK));
-		newFile.setMnemonic(KeyEvent.VK_N);
-		load.setMnemonic(KeyEvent.VK_O);
-		save.setMnemonic(KeyEvent.VK_S);
-		view.setMnemonic(KeyEvent.VK_T);
-		close.setMnemonic(KeyEvent.VK_C);
-		fileMenu.add(newFile);
-		fileMenu.add(load);
-		fileMenu.addSeparator();
-		fileMenu.add(save);
-		viewMenu.add(view);
-		fileMenu.addSeparator();
-		fileMenu.add(close);
 		mainPanelCenterUp.add(comp);
 		mainPanelCenterUp.add(spec);
 		mainPanelCenterDown.add(reac);
@@ -495,20 +433,6 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			splitPane.setDividerSize(0);
 			this.add(splitPane, "South");
 		}
-		/*
-		 * sbmlFrame.setContentPane(mainPanel); sbmlFrame.setJMenuBar(menuBar);
-		 * sbmlFrame.pack(); Dimension screenSize; try { Toolkit tk =
-		 * Toolkit.getDefaultToolkit(); screenSize = tk.getScreenSize(); } catch
-		 * (AWTError awe) { screenSize = new Dimension(640, 480); } Dimension
-		 * frameSize = sbmlFrame.getSize();
-		 * 
-		 * if (frameSize.height > screenSize.height) { frameSize.height =
-		 * screenSize.height; } if (frameSize.width > screenSize.width) {
-		 * frameSize.width = screenSize.width; } int x = screenSize.width / 2 -
-		 * frameSize.width / 2; int y = screenSize.height / 2 - frameSize.height /
-		 * 2; sbmlFrame.setLocation(x, y); change = false;
-		 * sbmlFrame.setVisible(true);
-		 */
 	}
 
 	/**
@@ -1436,321 +1360,6 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		else if (e.getSource() == cancelReactants) {
 			reactantFrame.dispose();
 		}
-		// if the new menu item is clicked
-		else if (e.getSource() == newFile) {
-			if (change) {
-				Object[] options = { "Save", "Cancel" };
-				int value = JOptionPane.showOptionDialog(this, "Save Changes?", "Save",
-						JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
-						options[0]);
-				if (value == JOptionPane.YES_OPTION) {
-					File file;
-					if (this.file != null) {
-						file = new File(this.file);
-					} else {
-						file = null;
-					}
-					String filename = Buttons.browse(this, file, null, JFileChooser.FILES_ONLY,
-							"Save");
-					if (!filename.equals("")) {
-						if (filename.substring((filename.length() - 5), filename.length()).equals(
-								".sbml")
-								|| filename.substring((filename.length() - 4), filename.length())
-										.equals(".xml")) {
-						} else {
-							filename += ".sbml";
-						}
-						if (new File(filename).exists()) {
-							Object[] options1 = { "Overwrite", "Cancel" };
-							value = JOptionPane.showOptionDialog(this, "File already exists."
-									+ " Overwrite?", "File Already Exists",
-									JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
-									options1, options1[0]);
-							if (value == JOptionPane.YES_OPTION) {
-								try {
-									FileOutputStream out = new FileOutputStream(new File(filename));
-									SBMLWriter writer = new SBMLWriter();
-									String doc = writer.writeToString(document);
-									byte[] output = doc.getBytes();
-									out.write(output);
-									out.close();
-									this.file = filename;
-								} catch (Exception e1) {
-									JOptionPane.showMessageDialog(this,
-											"Unable to save sbml file!", "Error Saving File",
-											JOptionPane.ERROR_MESSAGE);
-									return;
-								}
-							}
-						} else {
-							try {
-								FileOutputStream out = new FileOutputStream(new File(filename));
-								SBMLWriter writer = new SBMLWriter();
-								String doc = writer.writeToString(document);
-								byte[] output = doc.getBytes();
-								out.write(output);
-								out.close();
-								this.file = filename;
-							} catch (Exception e1) {
-								JOptionPane.showMessageDialog(this, "Unable to save sbml file!",
-										"Error Saving File", JOptionPane.ERROR_MESSAGE);
-								return;
-							}
-						}
-					}
-				}
-			}
-			new SBML_Editor(reb2sac, log);
-			// sbmlFrame.dispose();
-		}
-		// if the load menu item is clicked
-		else if (e.getSource() == load) {
-			File file;
-			if (this.file != null) {
-				file = new File(this.file);
-			} else {
-				file = null;
-			}
-			String filename = Buttons.browse(this, file, null, JFileChooser.FILES_ONLY, "Open");
-			if (!filename.equals("")) {
-				try {
-					SBMLReader reader = new SBMLReader();
-					SBMLDocument docu = reader.readSBML(filename);
-					if (docu.getNumFatals() > 0 || docu.getNumErrors() > 0
-							|| docu.getNumWarnings() > 0) {
-						JOptionPane.showMessageDialog(this, "Unable to load this sbml file!"
-								+ "\nIt contains errors!", "Error", JOptionPane.ERROR_MESSAGE);
-					} else {
-						if (change) {
-							Object[] options = { "Save", "Cancel" };
-							int value = JOptionPane.showOptionDialog(this, "Save Changes?", "Save",
-									JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
-									options, options[0]);
-							if (value == JOptionPane.YES_OPTION) {
-								File file1;
-								if (this.file != null) {
-									file1 = new File(this.file);
-								} else {
-									file1 = null;
-								}
-								String filename1 = Buttons.browse(this, file1, null,
-										JFileChooser.FILES_ONLY, "Save");
-								if (!filename1.equals("")) {
-									if (filename1.substring((filename1.length() - 5),
-											filename1.length()).equals(".sbml")
-											|| filename1.substring((filename1.length() - 4),
-													filename1.length()).equals(".xml")) {
-									} else {
-										filename1 += ".sbml";
-									}
-									if (new File(filename1).exists()) {
-										Object[] options1 = { "Overwrite", "Cancel" };
-										value = JOptionPane.showOptionDialog(this,
-												"File already exists." + " Overwrite?",
-												"File Already Exists", JOptionPane.YES_NO_OPTION,
-												JOptionPane.PLAIN_MESSAGE, null, options1,
-												options1[0]);
-										if (value == JOptionPane.YES_OPTION) {
-											try {
-												FileOutputStream out = new FileOutputStream(
-														new File(filename1));
-												SBMLWriter writer = new SBMLWriter();
-												String doc = writer.writeToString(document);
-												byte[] output = doc.getBytes();
-												out.write(output);
-												out.close();
-												this.file = filename1;
-											} catch (Exception e1) {
-												JOptionPane.showMessageDialog(this,
-														"Unable to save sbml file!",
-														"Error Saving File",
-														JOptionPane.ERROR_MESSAGE);
-												return;
-											}
-										}
-									} else {
-										try {
-											FileOutputStream out = new FileOutputStream(new File(
-													filename1));
-											SBMLWriter writer = new SBMLWriter();
-											String doc = writer.writeToString(document);
-											byte[] output = doc.getBytes();
-											out.write(output);
-											out.close();
-											this.file = filename1;
-										} catch (Exception e1) {
-											JOptionPane.showMessageDialog(this,
-													"Unable to save sbml file!",
-													"Error Saving File", JOptionPane.ERROR_MESSAGE);
-											return;
-										}
-									}
-								}
-							}
-						}
-						new SBML_Editor(filename, reb2sac, log);
-						// sbmlFrame.dispose();
-					}
-				} catch (Exception e1) {
-					JOptionPane.showMessageDialog(this,
-							"You must select a valid sbml file to load!", "Error",
-							JOptionPane.ERROR_MESSAGE);
-				}
-			}
-		}
-		/*
-		 * // if the save menu item is clicked else if (e.getSource() == save) {
-		 * File file; if (this.file != null) { file = new File(this.file); }
-		 * else { file = null; } String filename = Buttons .browse(this, file,
-		 * null, JFileChooser.FILES_ONLY, "Save"); if (!filename.equals("")) {
-		 * if (filename.substring((filename.length() - 5),
-		 * filename.length()).equals(".sbml") ||
-		 * filename.substring((filename.length() - 4),
-		 * filename.length()).equals( ".xml")) { } else { filename += ".sbml"; }
-		 * if (new File(filename).exists()) { Object[] options = { "Overwrite",
-		 * "Cancel" }; int value = JOptionPane.showOptionDialog(this, "File
-		 * already exists." + " Overwrite?", "File Already Exists",
-		 * JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
-		 * options[0]); if (value == JOptionPane.YES_OPTION) { try {
-		 * FileOutputStream out = new FileOutputStream(new File(filename));
-		 * SBMLWriter writer = new SBMLWriter(); String doc =
-		 * writer.writeToString(document); byte[] output = doc.getBytes();
-		 * out.write(output); out.close(); this.file = filename;
-		 * //sbmlFrame.dispose(); new SBML_Editor(filename); } catch (Exception
-		 * e1) { JOptionPane.showMessageDialog(this, "Unable to save sbml
-		 * file!", "Error Saving File", JOptionPane.ERROR_MESSAGE); } } } else {
-		 * try { FileOutputStream out = new FileOutputStream(new
-		 * File(filename)); SBMLWriter writer = new SBMLWriter(); String doc =
-		 * writer.writeToString(document); byte[] output = doc.getBytes();
-		 * out.write(output); out.close(); this.file = filename;
-		 * //sbmlFrame.dispose(); new SBML_Editor(filename); } catch (Exception
-		 * e1) { JOptionPane.showMessageDialog(this, "Unable to save sbml
-		 * file!", "Error Saving File", JOptionPane.ERROR_MESSAGE); } } } }
-		 */
-		// if the view file menu item is clicked
-		else if (e.getSource() == view) {
-			int value = -1;
-			JTextArea sbmlEditor = new JTextArea();
-			try {
-				JPanel sbmlPanel = new JPanel(new BorderLayout());
-				JPanel labelPanel = new JPanel(new BorderLayout());
-				JLabel sbmlLabel1;
-				if (this.file != null) {
-					sbmlLabel1 = new JLabel(this.file);
-				} else {
-					sbmlLabel1 = new JLabel("SBML Text File");
-				}
-				JLabel sbmlLabel2 = new JLabel("Warning, editing this file directly"
-						+ " and saving it could cause the program to crash.");
-				JScrollPane scroll = new JScrollPane();
-				scroll.setMinimumSize(new Dimension(1000, 500));
-				scroll.setPreferredSize(new Dimension(1000, 500));
-				SBMLWriter writer = new SBMLWriter();
-				String doc = writer.writeToString(document);
-				sbmlEditor.setText(doc);
-				sbmlEditor.setSelectionStart(0);
-				sbmlEditor.setSelectionEnd(1);
-				sbmlEditor.setSelectionEnd(0);
-				scroll.setViewportView(sbmlEditor);
-				labelPanel.add(sbmlLabel1, "North");
-				labelPanel.add(sbmlLabel2, "Center");
-				sbmlPanel.add(labelPanel, "North");
-				sbmlPanel.add(scroll, "Center");
-				Object[] options = { "Save", "Close" };
-				if (this.file != null) {
-					value = JOptionPane.showOptionDialog(this, sbmlPanel, this.file,
-							JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
-							options[0]);
-				} else {
-					value = JOptionPane.showOptionDialog(this, sbmlPanel, "SBML Text File",
-							JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
-							options[0]);
-				}
-			} catch (Exception e1) {
-				JOptionPane.showMessageDialog(this, "Unable to open sbml file for viewing!",
-						"Error Opening File", JOptionPane.ERROR_MESSAGE);
-			}
-			try {
-				if (value == JOptionPane.YES_OPTION) {
-					File file;
-					if (this.file != null) {
-						file = new File(this.file);
-					} else {
-						file = null;
-					}
-					String filename = Buttons.browse(this, file, null, JFileChooser.FILES_ONLY,
-							"Save");
-					if (!filename.equals("")) {
-						if (filename.substring((filename.length() - 4), filename.length()).equals(
-								"sbml")
-								|| filename.substring((filename.length() - 3), filename.length())
-										.equals("xml")) {
-						} else {
-							filename += ".sbml";
-						}
-						if (new File(filename).exists()) {
-							Object[] options = { "Overwrite", "Cancel" };
-							value = JOptionPane.showOptionDialog(this, "File already exists."
-									+ " Overwrite?", "File Already Exists",
-									JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
-									options, options[0]);
-							if (value == JOptionPane.YES_OPTION) {
-								OutputStream output = new FileOutputStream(new File(filename));
-								output.write(sbmlEditor.getText().getBytes());
-								output.close();
-								try {
-									SBMLReader reader = new SBMLReader();
-									SBMLDocument docu = reader.readSBML(filename);
-									if (docu.getNumFatals() > 0 || docu.getNumErrors() > 0
-											|| docu.getNumWarnings() > 0) {
-										JOptionPane.showMessageDialog(this,
-												"Unable to load this sbml file!"
-														+ "\nIt contains errors!", "Error",
-												JOptionPane.ERROR_MESSAGE);
-									} else {
-										new SBML_Editor(filename, reb2sac, log);
-										// sbmlFrame.dispose();
-									}
-								} catch (Exception e2) {
-									JOptionPane.showMessageDialog(this,
-											"Unable to load the new sbml file!",
-											"Error Loading File", JOptionPane.ERROR_MESSAGE);
-								}
-							}
-						} else {
-							OutputStream output = new FileOutputStream(new File(filename));
-							output.write(sbmlEditor.getText().getBytes());
-							output.close();
-							try {
-								SBMLReader reader = new SBMLReader();
-								SBMLDocument docu = reader.readSBML(filename);
-								if (docu.getNumFatals() > 0 || docu.getNumErrors() > 0
-										|| docu.getNumWarnings() > 0) {
-									JOptionPane.showMessageDialog(this,
-											"Unable to load this sbml file!"
-													+ "\nIt contains errors!", "Error",
-											JOptionPane.ERROR_MESSAGE);
-								} else {
-									new SBML_Editor(filename, reb2sac, log);
-									// sbmlFrame.dispose();
-								}
-							} catch (Exception e2) {
-								JOptionPane.showMessageDialog(this,
-										"Unable to load the new sbml file!", "Error Loading File",
-										JOptionPane.ERROR_MESSAGE);
-							}
-						}
-					}
-				}
-			} catch (Exception e1) {
-				JOptionPane.showMessageDialog(this, "Unable to save sbml file!",
-						"Error Saving File", JOptionPane.ERROR_MESSAGE);
-			}
-		}
-		// if the close menu item is clicked
-		else if (e.getSource() == close) {
-			// sbmlFrame.dispose();
-		}
 	}
 
 	/**
@@ -2600,6 +2209,10 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		change = true;
 	}
 
+	public boolean hasChanged() {
+		return change;
+	}
+
 	/**
 	 * Saves the sbml file.
 	 */
@@ -2612,6 +2225,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			byte[] output = doc.getBytes();
 			out.write(output);
 			out.close();
+			change = false;
 		} catch (Exception e1) {
 			JOptionPane.showMessageDialog(this, "Unable to save sbml file!", "Error Saving File",
 					JOptionPane.ERROR_MESSAGE);

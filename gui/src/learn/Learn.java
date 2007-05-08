@@ -22,19 +22,11 @@ public class Learn extends JPanel implements ActionListener {
 	 */
 	private static final long serialVersionUID = -5806315070287184299L;
 
-	// private JFrame frame; // Frame where components of the GUI are displayed
-
 	private JTextField initNetwork; // text field for initial network
 
 	private JButton browseInit; // the browse initial network button
 
-	// private JTextField experiments; // text field for experiments directory
-
-	// private JButton browseExper; // the browse experiments directory button
-
 	private JButton run; // the run button
-
-	// private JMenuItem close; // the close menu item
 
 	private JComboBox debug; // debug combo box
 
@@ -54,8 +46,6 @@ public class Learn extends JPanel implements ActionListener {
 			donotTossChangedInfluenceSingleParents;
 
 	private ArrayList<ArrayList<Component>> species;
-
-	// private ArrayList<JComboBox> numberOfLevels;
 
 	private JPanel speciesPanel;
 
@@ -79,25 +69,6 @@ public class Learn extends JPanel implements ActionListener {
 	public Learn(String directory, Log log) {
 		this.log = log;
 		this.directory = directory;
-		/*
-		 * // Creates a new frame frame = new JFrame("Learn"); // Makes it so
-		 * that clicking the x in the corner closes the program WindowListener w =
-		 * new WindowListener() { public void windowClosing(WindowEvent arg0) {
-		 * frame.dispose(); }
-		 * 
-		 * public void windowOpened(WindowEvent arg0) { }
-		 * 
-		 * public void windowClosed(WindowEvent arg0) { }
-		 * 
-		 * public void windowIconified(WindowEvent arg0) { }
-		 * 
-		 * public void windowDeiconified(WindowEvent arg0) { }
-		 * 
-		 * public void windowActivated(WindowEvent arg0) { }
-		 * 
-		 * public void windowDeactivated(WindowEvent arg0) { } };
-		 * frame.addWindowListener(w);
-		 */
 
 		// Sets up the encodings area
 		JPanel radioPanel = new JPanel(new BorderLayout());
@@ -130,23 +101,13 @@ public class Learn extends JPanel implements ActionListener {
 
 		// Sets up initial network and experiments text fields
 		JPanel initNet = new JPanel();
-		// JPanel initNet2 = new JPanel();
-		// JLabel expLabel = new JLabel("Experiments: ");
 		JLabel initNetLabel = new JLabel("Background Knowledge Network:");
 		browseInit = new JButton("Browse");
-		// browseExper = new JButton("Browse");
 		browseInit.addActionListener(this);
-		// browseExper.addActionListener(this);
 		initNetwork = new JTextField(39);
-		// experiments = new JTextField(39);
-		// experiments.setText(directory);
 		initNet.add(initNetLabel);
 		initNet.add(initNetwork);
 		initNet.add(browseInit);
-		// initNet2.add(expLabel);
-		// initNet2.add(experiments);
-		// initNet2.add(browseExper);
-		// initNet.add(initNet2);
 
 		// Sets up the thresholds area
 		JPanel thresholdPanel1 = new JPanel(new GridLayout(8, 2));
@@ -227,15 +188,6 @@ public class Learn extends JPanel implements ActionListener {
 		run.addActionListener(this);
 		run.setMnemonic(KeyEvent.VK_L);
 
-		/*
-		 * // Creates a menu for the gui JMenuBar menuBar = new JMenuBar();
-		 * JMenu file = new JMenu("File"); file.setMnemonic(KeyEvent.VK_F);
-		 * menuBar.add(file); close = new JMenuItem("Close");
-		 * close.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C,
-		 * ActionEvent.ALT_MASK)); close.setMnemonic(KeyEvent.VK_C);
-		 * close.addActionListener(this); file.add(close);
-		 */
-
 		// Creates the main panel
 		this.setLayout(new BorderLayout());
 		JPanel middlePanel = new JPanel(new BorderLayout());
@@ -256,20 +208,6 @@ public class Learn extends JPanel implements ActionListener {
 		this.add(runHolder, "South");
 		user.doClick();
 		auto.doClick();
-
-		/*
-		 * // Packs the frame and displays it frame.setContentPane(mainPanel);
-		 * frame.setJMenuBar(menuBar); frame.pack(); Dimension screenSize; try {
-		 * Toolkit tk = Toolkit.getDefaultToolkit(); screenSize =
-		 * tk.getScreenSize(); } catch (AWTError awe) { screenSize = new
-		 * Dimension(640, 480); } Dimension frameSize = frame.getSize();
-		 * 
-		 * if (frameSize.height > screenSize.height) { frameSize.height =
-		 * screenSize.height; } if (frameSize.width > screenSize.width) {
-		 * frameSize.width = screenSize.width; } int x = screenSize.width / 2 -
-		 * frameSize.width / 2; int y = screenSize.height / 2 - frameSize.height /
-		 * 2; frame.setLocation(x, y); frame.setVisible(true);
-		 */
 	}
 
 	/**
@@ -326,14 +264,6 @@ public class Learn extends JPanel implements ActionListener {
 			Buttons.browse(this, new File(initNetwork.getText().trim()), initNetwork,
 					JFileChooser.FILES_ONLY, "Open");
 		}
-		/*
-		 * // if the browse experiments directory button is clicked else if
-		 * (e.getSource() == browseExper) { File dir; if
-		 * (experiments.getText().trim().equals("")) { dir = null; } else { dir =
-		 * new File(experiments.getText().trim() + File.separator + "."); }
-		 * Buttons.browse(this, dir, experiments, JFileChooser.DIRECTORIES_ONLY,
-		 * "Open"); levels(); }
-		 */
 		// if the run button is selected
 		else if (e.getSource() == run) {
 			try {

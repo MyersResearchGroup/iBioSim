@@ -376,17 +376,106 @@ public class Run implements ActionListener {
 			} else {
 				if (nary.isSelected() && naryRun == 1) {
 				} else if (sbml.isSelected()) {
+					String[] split = filename.split(File.separator);
+					String outFile = filename.substring(0, filename.length()
+							- split[split.length - 1].length());
+					outFile += "out.xml";
 					File outXml = new File("out.xml");
-					new SBML_Editor(outXml.getAbsolutePath(), null, log);
+					FileReader r = new FileReader(outXml);
+					FileWriter w = new FileWriter(outFile);
+					int getNext = r.read();
+					while (getNext != -1) {
+						w.write(getNext);
+						getNext = r.read();
+					}
+					r.close();
+					w.close();
+					outXml.delete();
+					outXml = new File(outFile);
+					biomodelsim.addTab("SBML Editor", new SBML_Editor(outXml.getAbsolutePath(),
+							null, log));
 				} else if (dot.isSelected()) {
+					String[] split = filename.split(File.separator);
+					String outFile = filename.substring(0, filename.length()
+							- split[split.length - 1].length());
+					outFile += "out.dot";
 					File outDot = new File("out.dot");
-					exec.exec("dotty " + outDot.getAbsolutePath());
+					FileReader r = new FileReader(outDot);
+					FileWriter w = new FileWriter(outFile);
+					int getNext = r.read();
+					while (getNext != -1) {
+						w.write(getNext);
+						getNext = r.read();
+					}
+					r.close();
+					w.close();
+					outDot.delete();
+					outDot = new File(outFile);
+					log.addText("Exectuting:\ndotty " + outDot.getAbsolutePath() + "\n");
+					Process graph = exec.exec("dotty " + outDot.getAbsolutePath());
+					graph.waitFor();
+					error = "";
+					output = "";
+					InputStream reb = graph.getErrorStream();
+					int read = reb.read();
+					while (read != -1) {
+						error += (char) read;
+						read = reb.read();
+					}
+					reb = graph.getInputStream();
+					read = reb.read();
+					while (read != -1) {
+						output += (char) read;
+						read = reb.read();
+					}
+					if (!error.equals("")) {
+						log.addText("Errors:\n" + error + "\n");
+					}
+					if (!output.equals("")) {
+						log.addText("Output:\n" + output + "\n");
+					}
 				} else if (xhtml.isSelected()) {
+					String[] split = filename.split(File.separator);
+					String outFile = filename.substring(0, filename.length()
+							- split[split.length - 1].length());
+					outFile += "out.xhtml";
 					File outXhtml = new File("out.xhtml");
-					exec.exec("firefox " + outXhtml.getAbsolutePath());
+					FileReader r = new FileReader(outXhtml);
+					FileWriter w = new FileWriter(outFile);
+					int getNext = r.read();
+					while (getNext != -1) {
+						w.write(getNext);
+						getNext = r.read();
+					}
+					r.close();
+					w.close();
+					outXhtml.delete();
+					outXhtml = new File(outFile);
+					log.addText("Exectuting:\nfirefox " + outXhtml.getAbsolutePath() + "\n");
+					Process browse = exec.exec("firefox " + outXhtml.getAbsolutePath());
+					browse.waitFor();
+					error = "";
+					output = "";
+					InputStream reb = browse.getErrorStream();
+					int read = reb.read();
+					while (read != -1) {
+						error += (char) read;
+						read = reb.read();
+					}
+					reb = browse.getInputStream();
+					read = reb.read();
+					while (read != -1) {
+						output += (char) read;
+						read = reb.read();
+					}
+					if (!error.equals("")) {
+						log.addText("Errors:\n" + error + "\n");
+					}
+					if (!output.equals("")) {
+						log.addText("Output:\n" + output + "\n");
+					}
 				} else if (usingSSA.isSelected()) {
 					if (!printer_id.equals("null.printer")) {
-						// simTab.remove(simTab.getComponents().length - 1);
 						simTab.addTab("Graph", new Graph(outDir + File.separator + "run-1."
 								+ printer_id.substring(0, printer_id.length() - 8), component,
 								printer_track_quantity, "ssa average simulation results",
@@ -397,7 +486,6 @@ public class Run implements ActionListener {
 				} else {
 					if (!printer_id.equals("null.printer")) {
 						if (ode.isSelected()) {
-							// simTab.remove(simTab.getComponents().length - 1);
 							simTab.addTab("Graph", new Graph(outDir + File.separator + sim
 									+ "-run." + printer_id.substring(0, printer_id.length() - 8),
 									component, printer_track_quantity, sim + " simulation results",
@@ -406,7 +494,6 @@ public class Run implements ActionListener {
 							simTab.getComponentAt(simTab.getComponents().length - 1).setName(
 									"Graph");
 						} else if (monteCarlo.isSelected()) {
-							// simTab.remove(simTab.getComponents().length - 1);
 							simTab.addTab("Graph", new Graph(outDir + File.separator + "run-1."
 									+ printer_id.substring(0, printer_id.length() - 8), component,
 									printer_track_quantity,
