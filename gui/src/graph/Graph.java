@@ -34,8 +34,6 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	 */
 	private static final long serialVersionUID = 4350596002373546900L;
 
-	// private JFrame graphFrame; // Frame used for graphing
-
 	private Component component; // the main gui's component
 
 	/*
@@ -76,9 +74,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 	private ArrayList<double[]> maxAndMin; // Arraylist of max and min values
 
-	private ArrayList<ArrayList<Double>> data, variance, deviation; // graph
-
-	// data
+	/*
+	 * graph data
+	 */
+	private ArrayList<ArrayList<Double>> data, variance, deviation;
 
 	private ArrayList<ArrayList<Double>> average = null; // average of data
 
@@ -87,10 +86,6 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	private JCheckBox shapes; // check box for visible shapes
 
 	private JCheckBox filled; // check box for filled in shapes
-
-	// private int height = 0; // frame height
-
-	// private int width = 0; // frame width
 
 	private String[] intSpecies; // interesting species
 
@@ -242,7 +237,6 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 		// creates check boxes for species
 		ArrayList<JPanel> checkBoxes = new ArrayList<JPanel>();
-		// JPanel display = new JPanel(new BorderLayout());
 		checkBoxes.add(new JPanel());
 		int check = 0;
 		for (int i = 0; i < boxes.size(); i++) {
@@ -348,18 +342,14 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		SpecialButtonHolder.add(filled);
 		SpecialButtonHolder.add(resize);
 		SpecialButtonHolder.add(changeSize);
-		// ***save = new JButton("Save");***
 		exportJPeg = new JButton("Export As JPEG");
 		exportPng = new JButton("Export As PNG");
 		duplicate = new JButton("Duplicate");
-		// ***save.addActionListener(this);***
 		exportJPeg.addActionListener(this);
 		exportPng.addActionListener(this);
 		duplicate.addActionListener(this);
-		// ***ButtonHolder.add(save);***
 		ButtonHolder.add(exportJPeg);
 		ButtonHolder.add(exportPng);
-		// ***ButtonHolder.add(duplicate);***
 		JPanel AllButtonsHolder = new JPanel(new BorderLayout());
 
 		// puts all the components of the graph gui into a display panel
@@ -388,39 +378,6 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		determineMaxAndMin();
 		resize();
 		this.revalidate();
-
-		/*
-		 * // creates the graph frame, adds the display panel, and displays it
-		 * graphFrame = new JFrame("Simulation Results"); WindowListener w = new
-		 * WindowListener() { public void windowClosing(WindowEvent arg0) {
-		 * graphFrame.dispose(); }
-		 * 
-		 * public void windowOpened(WindowEvent arg0) { }
-		 * 
-		 * public void windowClosed(WindowEvent arg0) { }
-		 * 
-		 * public void windowIconified(WindowEvent arg0) { }
-		 * 
-		 * public void windowDeiconified(WindowEvent arg0) { }
-		 * 
-		 * public void windowActivated(WindowEvent arg0) { }
-		 * 
-		 * public void windowDeactivated(WindowEvent arg0) { } };
-		 * graphFrame.addWindowListener(w); graphFrame.setContentPane(display);
-		 * graphFrame.setJMenuBar(menuBar); graphFrame.pack(); if (height == 0 &&
-		 * width == 0) { height = graphFrame.getHeight(); width =
-		 * graphFrame.getWidth(); } graphFrame.setSize(width, height); Dimension
-		 * screenSize; try { Toolkit tk = Toolkit.getDefaultToolkit();
-		 * screenSize = tk.getScreenSize(); } catch (AWTError awe) { screenSize =
-		 * new Dimension(640, 480); } Dimension frameSize =
-		 * graphFrame.getSize();
-		 * 
-		 * if (frameSize.height > screenSize.height) { frameSize.height =
-		 * screenSize.height; } if (frameSize.width > screenSize.width) {
-		 * frameSize.width = screenSize.width; } int x = screenSize.width / 2 -
-		 * frameSize.width / 2; int y = screenSize.height / 2 - frameSize.height /
-		 * 2; graphFrame.setLocation(x, y); graphFrame.setVisible(true);
-		 */
 	}
 
 	/**
@@ -688,9 +645,6 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	public void actionPerformed(ActionEvent e) {
 		// if the next button is clicked
 		if (e.getSource() == next) {
-			// height = graphFrame.getHeight();
-			// width = graphFrame.getWidth();
-			// graphFrame.dispose();
 			if (monteCarlo.isSelected()) {
 				String choice = (String) select.getSelectedItem();
 				if (choice.equals("Average")) {
@@ -802,56 +756,6 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				}
 			}
 		}
-		/*
-		 * // if the open menu item is clicked else if (e.getSource() == open) {
-		 * File file = null; String filename = Buttons.browse(this, file, null,
-		 * JFileChooser.FILES_ONLY, "Graph"); if (!filename.equals("")) { try {
-		 * String[] split = filename.split(File.separator); String last =
-		 * split[split.length - 1]; String first = filename.substring(0,
-		 * filename.length() - last.length()); String printer =
-		 * filename.substring(filename.length() - 3); String id = printer +
-		 * ".printer"; JRadioButton button = new JRadioButton(); if
-		 * (last.substring(0, 3).equals("run")) { button.setSelected(true);
-		 * String get = ""; for (int i = 0; i < last.length(); i++) { if
-		 * (Character.isDigit(last.charAt(i))) { get += last.charAt(i); } } int
-		 * number = Integer.parseInt(get); int runs = Integer.parseInt((String)
-		 * JOptionPane.showInputDialog(this, "Please enter the number of output
-		 * files in this simulation:", "Enter Number Of Runs",
-		 * JOptionPane.PLAIN_MESSAGE, null, null, number)); int i = 0; try { for
-		 * (i = number; i <= runs; i++) { InputStream test = new
-		 * FileInputStream(new File((first + "run-" + i + "." + printer)));
-		 * test.read(); } } catch (Exception e2) { runs = i - 1; } runs =
-		 * Math.max(number, runs); if (keep.isSelected()) { XYSeriesCollection
-		 * datasetReplace = new XYSeriesCollection(); for (int j = 0; j <
-		 * boxes.size(); j++) { if (boxes.get(j).isSelected()) {
-		 * datasetReplace.addSeries(dataset.getSeries(j)); } } dataset =
-		 * datasetReplace; biomodelsim.removeTab(this); biomodelsim
-		 * .addTab("Graph", new Graph(first + "run-1." + printer, component,
-		 * printer_track_quantity1, "read-in-data average" + " simulation
-		 * results", button, "read-in-data", id, first, runs, new String[0],
-		 * number, dataset, time, biomodelsim)); } else {
-		 * biomodelsim.removeTab(this); biomodelsim.addTab("Graph", new
-		 * Graph(first + "run-1." + printer, component, printer_track_quantity1,
-		 * "read-in-data average" + " simulation results", button,
-		 * "read-in-data", id, first, runs, new String[0], number, null, time,
-		 * biomodelsim)); } } else { button.setSelected(false); if
-		 * (keep.isSelected()) { XYSeriesCollection datasetReplace = new
-		 * XYSeriesCollection(); for (int j = 0; j < boxes.size(); j++) { if
-		 * (boxes.get(j).isSelected()) {
-		 * datasetReplace.addSeries(dataset.getSeries(j)); } } dataset =
-		 * datasetReplace; biomodelsim.removeTab(this);
-		 * biomodelsim.addTab("Graph", new Graph(filename, component,
-		 * printer_track_quantity1, "read-in-data simulation results", button,
-		 * "read-in-data", id, first, 1, new String[0], -1, dataset, time,
-		 * biomodelsim)); } else { biomodelsim.removeTab(this);
-		 * biomodelsim.addTab("Graph", new Graph(filename, component,
-		 * printer_track_quantity1, "read-in-data simulation results", button,
-		 * "read-in-data", id, first, 1, new String[0], -1, null, time,
-		 * biomodelsim)); } } // graphFrame.dispose(); } catch (Exception e1) {
-		 * JOptionPane.showMessageDialog(this, "Error reading in data!" +
-		 * "\nFile may be named incorrectly" + " or may be invalid.", "Error",
-		 * JOptionPane.ERROR_MESSAGE); } } }
-		 */
 		// if the change dimensions button is clicked
 		else if (e.getSource() == changeSize) {
 			XYPlot plot = chart.getXYPlot();
@@ -931,10 +835,6 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				rend.setShapesVisible(false);
 			}
 		}
-		/*
-		 * // if the save button is clicked else if (e.getSource() == save) {
-		 * save(); }
-		 */
 		// if the export as jpeg button is clicked
 		else if (e.getSource() == exportJPeg) {
 			export(true);

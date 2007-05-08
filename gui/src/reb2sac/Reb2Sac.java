@@ -21,11 +21,7 @@ import buttons.core.gui.*;
  * 
  * @author Curtis Madsen
  */
-public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runnable, MouseListener {
-
-	// private JFrame frame; // Frame where components of the GUI are displayed
-
-	// private JTextField SBMLFile; // Text field for file chooser
+public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseListener {
 
 	/**
 	 * 
@@ -36,15 +32,11 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 
 	private JTextField amountState; // Amount for check state
 
-	// private JButton fileBrowse, dirBrowse; // Browse buttons
-
 	/*
 	 * Buttons for adding and removing conditions, species, and states
 	 */
 	private JButton addIntSpecies, removeIntSpecies, addTermCond, removeTermCond, clearIntSpecies,
 			clearTermCond, addCheckState, removeCheckState, clearCheckState;
-
-	private File file;// , directory; // SBML file and output directory
 
 	/*
 	 * Radio Buttons that represent the different abstractions
@@ -82,16 +74,6 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 
 	private JButton run, save; // The save and run button
 
-	// private JMenuItem newGUI; // The new menu item
-
-	// private JMenuItem exit; // The exit menu item
-
-	// private JMenuItem viewLog; // The log menu item
-
-	// private JMenuItem save; // The save menu item
-
-	// private JMenuItem open; // The open menu item
-
 	/*
 	 * Added interesting species and termination conditions
 	 */
@@ -106,14 +88,12 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 	/*
 	 * Text fields for changes in the abstraction
 	 */
-	private JTextField limit, interval, step, seed, runs;// , dir;
+	private JTextField limit, interval, step, seed, runs;
 
 	/*
 	 * Labels for the changes in the abstraction
 	 */
-	private JLabel limitLabel, intervalLabel, stepLabel, seedLabel, runsLabel;// ,
-
-	// dirLabel;
+	private JLabel limitLabel, intervalLabel, stepLabel, seedLabel, runsLabel;
 
 	/*
 	 * Description of selected simulator
@@ -146,14 +126,8 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 	 */
 	private JLabel rapidLabel1, rapidLabel2, qssaLabel, maxConLabel;
 
-	// private JFrame logFrame; // Frame for log
+	private String userdefined;
 
-	// private JTextArea logArea; // TextArea for logging
-
-	/*
-	 * Menu Items for log frame
-	 */
-	// private JMenuItem closeLog, newLog, saveLog, openLog;
 	private JTextField ssaFile; // text field for ssa file
 
 	private JCheckBox usingSSA; // check box for using ssa
@@ -170,13 +144,11 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 
 	private JButton addSSA, editSSA, removeSSA; // Buttons for editing SSA
 
-	private JButton newSSA, loadSSA, saveSSA; // Buttons for SSA file
+	private JButton newSSA; // Buttons for SSA file
 
 	private JLabel ssaFileLabel, timeLabel; // Label for SSA
 
 	private Object[] ssaList; // array for ssa JList
-
-	private boolean ssaChange; // determines change in the ssa fields
 
 	private String savedTo; // location where file is saved
 
@@ -215,36 +187,7 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 		this.simName = simName;
 		this.log = log;
 		this.simTab = simTab;
-
-		/*
-		 * // Creates a new frame frame = new JFrame("reb2sac GUI"); // Makes it
-		 * so that clicking the x in the corner closes the program
-		 * WindowListener w = new WindowListener() { public void
-		 * windowClosing(WindowEvent arg0) { frame.dispose(); }
-		 * 
-		 * public void windowOpened(WindowEvent arg0) { }
-		 * 
-		 * public void windowClosed(WindowEvent arg0) { }
-		 * 
-		 * public void windowIconified(WindowEvent arg0) { }
-		 * 
-		 * public void windowDeiconified(WindowEvent arg0) { }
-		 * 
-		 * public void windowActivated(WindowEvent arg0) { }
-		 * 
-		 * public void windowDeactivated(WindowEvent arg0) { } };
-		 * frame.addWindowListener(w);
-		 */
-
-		/*
-		 * // Creates file chooser ot choose an SBML file JLabel reb2sacLabel =
-		 * new JLabel(); SBMLFile = new JTextField(39); fileBrowse = new
-		 * JButton(); reb2sacLabel.setText("Selected Model:");
-		 * fileBrowse.setText("Browse"); fileBrowse.addActionListener(this);
-		 * JPanel browseHolder = new JPanel(); browseHolder.add(reb2sacLabel);
-		 * browseHolder.add(SBMLFile); browseHolder.add(fileBrowse);
-		 * SBMLFile.addKeyListener(this);
-		 */
+		userdefined = root + File.separator + simName + File.separator + "user-defined.dat";
 
 		// Sets up the radio buttons and the combo box for the printer
 		String items[] = new String[2];
@@ -299,11 +242,8 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 		limitLabel = new JLabel("Time Limit:");
 		intervalLabel = new JLabel("Print Interval:");
 		stepLabel = new JLabel("Time Step:");
-		// dirLabel = new JLabel("Simulation ID:");
 		seedLabel = new JLabel("Random Seed:");
 		runsLabel = new JLabel("Runs:");
-		// dirBrowse = new JButton("Browse");
-		// dirBrowsePanel.add(dirBrowse);
 		JPanel inputHolder = new JPanel(new BorderLayout());
 		JPanel inputHolderLeft = new JPanel(new GridLayout(7, 1));
 		JPanel inputHolderRight = new JPanel(new GridLayout(7, 1));
@@ -321,13 +261,10 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 		inputHolderRight.add(seed);
 		inputHolderLeft.add(runsLabel);
 		inputHolderRight.add(runs);
-		// inputHolderLeft.add(dirLabel);
-		// inputHolderRight.add(dir);
 		inputHolder.add(inputHolderLeft, "West");
 		inputHolder.add(inputHolderRight, "Center");
 		JPanel topInputHolder = new JPanel();
 		topInputHolder.add(inputHolder);
-		// dirBrowse.addActionListener(this);
 
 		// Creates the interesting species JList
 		intSpecies = new JList();
@@ -453,33 +390,6 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 		runHolder.add(run);
 		run.addActionListener(this);
 		run.setMnemonic(KeyEvent.VK_R);
-
-		/*
-		 * // Creates a menu for the gui JMenuBar menuBar = new JMenuBar();
-		 * JMenu file = new JMenu("File"); file.setMnemonic(KeyEvent.VK_F);
-		 * JMenu view = new JMenu("View"); view.setMnemonic(KeyEvent.VK_V);
-		 * menuBar.add(file); menuBar.add(view); viewLog = new JMenuItem("Log");
-		 * save = new JMenuItem("Save"); open = new JMenuItem("Open"); newGUI =
-		 * new JMenuItem("New"); exit = new JMenuItem("Exit");
-		 * save.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,
-		 * ActionEvent.ALT_MASK));
-		 * open.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O,
-		 * ActionEvent.ALT_MASK));
-		 * exit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X,
-		 * ActionEvent.ALT_MASK));
-		 * viewLog.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L,
-		 * ActionEvent.ALT_MASK));
-		 * newGUI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N,
-		 * ActionEvent.ALT_MASK)); save.setMnemonic(KeyEvent.VK_S);
-		 * open.setMnemonic(KeyEvent.VK_O); exit.setMnemonic(KeyEvent.VK_X);
-		 * viewLog.setMnemonic(KeyEvent.VK_L);
-		 * newGUI.setMnemonic(KeyEvent.VK_N); save.addActionListener(this);
-		 * open.addActionListener(this); viewLog.addActionListener(this);
-		 * newGUI.addActionListener(this); exit.addActionListener(this);
-		 * file.add(newGUI); file.add(open); file.addSeparator();
-		 * file.add(save); file.addSeparator(); file.add(exit);
-		 * view.add(viewLog);
-		 */
 
 		// Creates the termination conditions tab
 		termCond = new JList();
@@ -666,32 +576,22 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 		JPanel ssaPanel = new JPanel(new BorderLayout());
 		JPanel filePanel = new JPanel(new BorderLayout());
 		JPanel filePanel1 = new JPanel();
-		JPanel filePanel2 = new JPanel();
 		ssaFileLabel = new JLabel("User Defined Data File:");
 		ssaFileLabel.setEnabled(false);
 		ssaFile = new JTextField(39);
-		ssaFile.addKeyListener(this);
+		ssaFile.setText(userdefined);
 		ssaFile.setEnabled(false);
-		newSSA = new JButton("New");
+		ssaFile.setEditable(false);
+		newSSA = new JButton("Clear");
 		newSSA.setEnabled(false);
 		newSSA.addActionListener(this);
-		loadSSA = new JButton("Load");
-		loadSSA.setEnabled(false);
-		loadSSA.addActionListener(this);
-		saveSSA = new JButton("Save");
-		saveSSA.setEnabled(false);
-		saveSSA.addActionListener(this);
 		usingSSA = new JCheckBox("Use User Defined Data File");
 		usingSSA.setSelected(false);
 		usingSSA.addActionListener(this);
 		filePanel1.add(ssaFileLabel);
 		filePanel1.add(ssaFile);
-		filePanel2.add(newSSA);
-		filePanel2.add(loadSSA);
-		filePanel2.add(saveSSA);
 		filePanel.add(usingSSA, "North");
 		filePanel.add(filePanel1, "Center");
-		filePanel.add(filePanel2, "South");
 		ssa = new JList();
 		ssa.setEnabled(false);
 		ssa.addMouseListener(this);
@@ -737,13 +637,53 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 		ssaAddPanel3.add(addSSA);
 		ssaAddPanel3.add(editSSA);
 		ssaAddPanel3.add(removeSSA);
+		ssaAddPanel3.add(newSSA);
 		ssaAddPanel.add(ssaAddPanel1, "North");
 		ssaAddPanel.add(ssaAddPanel2, "Center");
 		ssaAddPanel.add(ssaAddPanel3, "South");
 		ssaPanel.add(filePanel, "North");
 		ssaPanel.add(scroll5, "Center");
 		ssaPanel.add(ssaAddPanel, "South");
-		ssaChange = false;
+		if (new File(userdefined).exists()) {
+			String getData = "";
+			try {
+				Scanner scan = new Scanner(new File(userdefined));
+				while (scan.hasNextLine()) {
+					String get = scan.nextLine();
+					if (get.split(" ").length == 3) {
+						if (scan.hasNextLine()) {
+							getData += get + "\n";
+						} else {
+							getData += get;
+						}
+					} else {
+						JOptionPane.showMessageDialog(biomodelsim.frame(),
+								"Unable to load user defined file!", "Error Loading File",
+								JOptionPane.ERROR_MESSAGE);
+						return;
+					}
+				}
+			} catch (Exception e1) {
+				JOptionPane.showMessageDialog(biomodelsim.frame(),
+						"Unable to load user defined file!", "Error Loading File",
+						JOptionPane.ERROR_MESSAGE);
+			}
+			if (!getData.equals("")) {
+				ssaList = getData.split("\n");
+			} else {
+				ssaList = new Object[0];
+			}
+			ssa.setListData(ssaList);
+			ssa.setEnabled(true);
+			timeLabel.setEnabled(true);
+			time.setEnabled(true);
+			availSpecies.setEnabled(true);
+			ssaMod.setEnabled(true);
+			ssaModNum.setEnabled(true);
+			addSSA.setEnabled(true);
+			editSSA.setEnabled(true);
+			removeSSA.setEnabled(true);
+		}
 
 		// Creates tab for adding properties
 		JPanel propertiesPanel = new JPanel(new BorderLayout());
@@ -787,11 +727,9 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 		tab.addTab("Advanced Termination Conditions", sadTermCondPanel);
 		tab.addTab("Interesting Species", speciesHolder);
 		tab.addTab("User Defined Data File", ssaPanel);
-		// ***tab.addTab("States User Is Interested In", mainCheckState);***
 		tab.addTab("Properties", propertiesPanel);
 		tab.addTab("Advanced Options", advanced);
 		this.setLayout(new BorderLayout());
-		// mainPanel.add(browseHolder, "North");
 		this.add(tab, "Center");
 		this.add(runHolder, "South");
 		SBMLReader reader = new SBMLReader();
@@ -819,75 +757,6 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 		if (open != null) {
 			open(open);
 		}
-
-		// Packs the frame and displays it
-		/*
-		 * frame.setContentPane(mainPanel); frame.setJMenuBar(menuBar);
-		 * frame.pack(); Dimension screenSize; try { Toolkit tk =
-		 * Toolkit.getDefaultToolkit(); screenSize = tk.getScreenSize(); } catch
-		 * (AWTError awe) { screenSize = new Dimension(640, 480); } Dimension
-		 * frameSize = frame.getSize();
-		 * 
-		 * if (frameSize.height > screenSize.height) { frameSize.height =
-		 * screenSize.height; } if (frameSize.width > screenSize.width) {
-		 * frameSize.width = screenSize.width; } int x = screenSize.width / 2 -
-		 * frameSize.width / 2; int y = screenSize.height / 2 - frameSize.height /
-		 * 2; frame.setLocation(x, y); frame.setVisible(true);
-		 */
-
-		/*
-		 * // Sets up the log frame logFrame = new JFrame("Log"); WindowListener
-		 * w1 = new WindowListener() { public void windowClosing(WindowEvent
-		 * arg0) { logFrame.setVisible(false); }
-		 * 
-		 * public void windowOpened(WindowEvent arg0) { }
-		 * 
-		 * public void windowClosed(WindowEvent arg0) { }
-		 * 
-		 * public void windowIconified(WindowEvent arg0) { }
-		 * 
-		 * public void windowDeiconified(WindowEvent arg0) { }
-		 * 
-		 * public void windowActivated(WindowEvent arg0) { }
-		 * 
-		 * public void windowDeactivated(WindowEvent arg0) { } };
-		 * logFrame.addWindowListener(w1); // sets up the log text area and menu
-		 * JPanel logPanel = new JPanel(); logArea = new JTextArea();
-		 * logArea.setEditable(false); JScrollPane scroll4 = new JScrollPane();
-		 * scroll4.setPreferredSize(new Dimension(700, 500));
-		 * scroll4.setViewportView(logArea); JMenuBar logMenuBar = new
-		 * JMenuBar(); JMenu logFile = new JMenu("File");
-		 * logFile.setMnemonic(KeyEvent.VK_F); logMenuBar.add(logFile); closeLog =
-		 * new JMenuItem("Close"); openLog = new JMenuItem("Open"); newLog = new
-		 * JMenuItem("New"); saveLog = new JMenuItem("Save");
-		 * closeLog.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C,
-		 * ActionEvent.ALT_MASK));
-		 * openLog.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O,
-		 * ActionEvent.ALT_MASK));
-		 * newLog.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N,
-		 * ActionEvent.ALT_MASK));
-		 * saveLog.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,
-		 * ActionEvent.ALT_MASK)); closeLog.setMnemonic(KeyEvent.VK_C);
-		 * openLog.setMnemonic(KeyEvent.VK_O);
-		 * newLog.setMnemonic(KeyEvent.VK_N);
-		 * saveLog.setMnemonic(KeyEvent.VK_S); openLog.addActionListener(this);
-		 * closeLog.addActionListener(this); newLog.addActionListener(this);
-		 * saveLog.addActionListener(this); logFile.add(newLog);
-		 * logFile.add(openLog); logFile.addSeparator(); logFile.add(saveLog);
-		 * logFile.addSeparator(); logFile.add(closeLog); logPanel.add(scroll4); //
-		 * adds the log panel to the log frame
-		 * logFrame.setContentPane(logPanel); logFrame.setJMenuBar(logMenuBar);
-		 * logFrame.pack(); Dimension screenSize; try { Toolkit tk =
-		 * Toolkit.getDefaultToolkit(); screenSize = tk.getScreenSize(); } catch
-		 * (AWTError awe) { screenSize = new Dimension(640, 480); } Dimension
-		 * frameSize = logFrame.getSize();
-		 * 
-		 * if (frameSize.height > screenSize.height) { frameSize.height =
-		 * screenSize.height; } if (frameSize.width > screenSize.width) {
-		 * frameSize.width = screenSize.width; } int x = screenSize.width / 2 -
-		 * frameSize.width / 2; int y = screenSize.height / 2 - frameSize.height /
-		 * 2; logFrame.setLocation(x, y);
-		 */
 	}
 
 	/**
@@ -899,106 +768,64 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 		if (e.getSource() == none) {
 			Button_Enabling.enableNoneOrAbs(ODE, monteCarlo, markov, seed, seedLabel, runs,
 					runsLabel, stepLabel, step, limitLabel, limit, intervalLabel, interval,
-					// dirLabel, dir,
 					simulators, simulatorsLabel, explanation, description, none, intSpecies,
 					species, spLabel, speciesLabel, addIntSpecies, removeIntSpecies, rapid1,
 					rapid2, qssa, maxCon, rapidLabel1, rapidLabel2, qssaLabel, maxConLabel,
-					// dirBrowse,
 					usingSSA, clearIntSpecies);
 		}
 		// if the abstraction Radio Button is selected
 		else if (e.getSource() == abstraction) {
 			Button_Enabling.enableNoneOrAbs(ODE, monteCarlo, markov, seed, seedLabel, runs,
 					runsLabel, stepLabel, step, limitLabel, limit, intervalLabel, interval,
-					// dirLabel, dir,
 					simulators, simulatorsLabel, explanation, description, none, intSpecies,
 					species, spLabel, speciesLabel, addIntSpecies, removeIntSpecies, rapid1,
 					rapid2, qssa, maxCon, rapidLabel1, rapidLabel2, qssaLabel, maxConLabel,
-					// dirBrowse,
 					usingSSA, clearIntSpecies);
 		}
 		// if the nary Radio Button is selected
 		else if (e.getSource() == nary) {
 			Button_Enabling.enableNary(ODE, monteCarlo, markov, seed, seedLabel, runs, runsLabel,
-					stepLabel, step, limitLabel, limit, intervalLabel, interval, // dirLabel,
-					// dir,
-					simulators, simulatorsLabel, explanation, description, intSpecies, species,
-					spLabel, speciesLabel, addIntSpecies, removeIntSpecies, rapid1, rapid2, qssa,
-					maxCon, rapidLabel1, rapidLabel2, qssaLabel, maxConLabel, usingSSA,
-					clearIntSpecies);
+					stepLabel, step, limitLabel, limit, intervalLabel, interval, simulators,
+					simulatorsLabel, explanation, description, intSpecies, species, spLabel,
+					speciesLabel, addIntSpecies, removeIntSpecies, rapid1, rapid2, qssa, maxCon,
+					rapidLabel1, rapidLabel2, qssaLabel, maxConLabel, usingSSA, clearIntSpecies);
 		}
 		// if the ODE Radio Button is selected
 		else if (e.getSource() == ODE) {
 			Button_Enabling.enableODE(seed, seedLabel, runs, runsLabel, stepLabel, step,
-					limitLabel, limit, intervalLabel, interval, // dirLabel,
-					// dir,
-					simulators, simulatorsLabel, explanation, description,
-					// dirBrowse,
-					usingSSA);
+					limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel,
+					explanation, description, usingSSA);
 		}
 		// if the monteCarlo Radio Button is selected
 		else if (e.getSource() == monteCarlo) {
 			Button_Enabling.enableMonteCarlo(seed, seedLabel, runs, runsLabel, stepLabel, step,
-					limitLabel, limit, intervalLabel, interval, // dirLabel,
-					// dir,
-					simulators, simulatorsLabel, explanation, description,
-					// dirBrowse,
-					usingSSA);
+					limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel,
+					explanation, description, usingSSA);
 		}
 		// if the markov Radio Button is selected
 		else if (e.getSource() == markov) {
 			Button_Enabling.enableMarkov(seed, seedLabel, runs, runsLabel, stepLabel, step,
-					limitLabel, limit, intervalLabel, interval,// dirLabel,
-					// dir,
-					simulators, simulatorsLabel, explanation, description,
-					// dirBrowse,
-					usingSSA);
+					limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel,
+					explanation, description, usingSSA);
 		}
 		// if the sbml Radio Button is selected
 		else if (e.getSource() == sbml) {
 			Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel, stepLabel,
-					step, limitLabel, limit, intervalLabel, interval, // dirLabel,
-					// dir,
-					simulators, simulatorsLabel, explanation, description);// ,
-			// dirBrowse);
+					step, limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel,
+					explanation, description);
 		}
 		// if the dot Radio Button is selected
 		else if (e.getSource() == dot) {
 			Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel, stepLabel,
-					step, limitLabel, limit, intervalLabel, interval, // dirLabel,
-					// dir,
-					simulators, simulatorsLabel, explanation, description);// ,
-			// dirBrowse);
+					step, limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel,
+					explanation, description);
 		}
 		// if the xhtml Radio Button is selected
 		else if (e.getSource() == xhtml) {
 			Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel, stepLabel,
-					step, limitLabel, limit, intervalLabel, interval, // dirLabel,
-					// dir,
-					simulators, simulatorsLabel, explanation, description);// ,
-			// dirBrowse);
+					step, limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel,
+					explanation, description);
 		}
-		/*
-		 * // if the selected model Browse button is clicked else if
-		 * (e.getSource() == fileBrowse) { file = new
-		 * File(SBMLFile.getText().trim()); Buttons.browse(frame, file,
-		 * SBMLFile, JFileChooser.FILES_ONLY, "Open"); String filename =
-		 * SBMLFile.getText().trim(); SBMLReader reader = new SBMLReader();
-		 * SBMLDocument document = reader.readSBML(filename); Model model =
-		 * document.getModel(); ArrayList<String> listOfSpecs = new ArrayList<String>();
-		 * if (model != null) { ListOf listOfSpecies = model.getListOfSpecies();
-		 * for (int i = 0; i < model.getNumSpecies(); i++) { Species species =
-		 * (Species) listOfSpecies.get(i); listOfSpecs.add(species.getName()); } }
-		 * Object[] list = listOfSpecs.toArray(); intSpecies.setListData(list);
-		 * termCond.setListData(list); statesSpecs.setListData(list); int rem =
-		 * availSpecies.getItemCount(); for (int i = 0; i < rem; i++) {
-		 * availSpecies.removeItemAt(0); } for (int i = 0; i < list.length; i++) {
-		 * availSpecies.addItem(((String) list[i]).replace(" ", "_")); } } // if
-		 * the output directory Browse button is clicked else if (e.getSource() ==
-		 * dirBrowse) { directory = new File(dir.getText().trim() +
-		 * File.separator + "."); Buttons.browse(frame, directory, dir,
-		 * JFileChooser.DIRECTORIES_ONLY, "Open"); }
-		 */
 		// if the add interesting species button is clicked
 		else if (e.getSource() == addIntSpecies) {
 			interestingSpecies = Buttons.add(interestingSpecies, species, intSpecies, false,
@@ -1082,13 +909,6 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 				description.setText("Transient Distribution Analysis");
 			}
 		}
-		/*
-		 * // if the New menu item is clicked else if (e.getSource() == newGUI) {
-		 * frame.dispose(); new GUI(sbmlFile, root, tstubd); } // if the Exit
-		 * menu item is clicked else if (e.getSource() == exit) {
-		 * frame.dispose(); } // if the view log menu item is clicked else if
-		 * (e.getSource() == viewLog) { logFrame.setVisible(true); }
-		 */
 		// if the Run button is clicked
 		else if (e.getSource() == run) {
 			sbmlEditor.save();
@@ -1097,66 +917,12 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 			sbmlEditor.save();
 			save();
 		}
-		/*
-		 * // if the close log menu item is clicked else if (e.getSource() ==
-		 * closeLog) { logFrame.setVisible(false); } // if the open log menu
-		 * item is clicked else if (e.getSource() == openLog) { file = null;
-		 * String openFile = Buttons.browse(logFrame, file, null,
-		 * JFileChooser.FILES_ONLY, "Open"); if (!openFile.equals("")) {
-		 * Object[] options = { "Save", "Cancel" }; int value =
-		 * JOptionPane.showOptionDialog(logFrame, "Save Current Log File?",
-		 * "Save", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
-		 * options, options[0]); if (value == JOptionPane.YES_OPTION) { file =
-		 * null; String filename = Buttons.browse(logFrame, file, null,
-		 * JFileChooser.FILES_ONLY, "Save"); if (!filename.equals("")) { if (new
-		 * File(filename).exists()) { Object[] options1 = { "Overwrite",
-		 * "Cancel" }; value = JOptionPane.showOptionDialog(logFrame, "File
-		 * already exists." + " Overwrite?", "File Already Exists",
-		 * JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options1,
-		 * options1[0]); if (value == JOptionPane.YES_OPTION) { try {
-		 * FileOutputStream out = new FileOutputStream(new File(filename));
-		 * byte[] output = logArea.getText().getBytes(); out.write(output);
-		 * out.close(); } catch (Exception e1) {
-		 * JOptionPane.showMessageDialog(logFrame, "Unable to save log file!",
-		 * "Error Saving File", JOptionPane.ERROR_MESSAGE); return; } } } else {
-		 * try { FileOutputStream out = new FileOutputStream(new
-		 * File(filename)); byte[] output = logArea.getText().getBytes();
-		 * out.write(output); out.close(); ssaChange = false; } catch (Exception
-		 * e1) { JOptionPane.showMessageDialog(logFrame, "Unable to save log
-		 * file!", "Error Saving File", JOptionPane.ERROR_MESSAGE); return; } } } }
-		 * try { InputStream input = new FileInputStream(new File(openFile));
-		 * int read = input.read(); logArea.setText(""); while (read != -1) {
-		 * logArea.append("" + (char) read); read = input.read(); } } catch
-		 * (Exception e2) { JOptionPane.showMessageDialog(logFrame, "Unable to
-		 * load log file!", "Error Loading File", JOptionPane.ERROR_MESSAGE); } } } //
-		 * if the new log menu item is clicked else if (e.getSource() == newLog) {
-		 * logArea.setText(""); } // if the save log menu item is clicked else
-		 * if (e.getSource() == saveLog) { file = null; String filename =
-		 * Buttons.browse(logFrame, file, null, JFileChooser.FILES_ONLY,
-		 * "Save"); if (!filename.equals("")) { if (new File(filename).exists()) {
-		 * Object[] options = { "Overwrite", "Cancel" }; int value =
-		 * JOptionPane.showOptionDialog(logFrame, "File already exists." + "
-		 * Overwrite?", "File Already Exists", JOptionPane.YES_NO_OPTION,
-		 * JOptionPane.PLAIN_MESSAGE, null, options, options[0]); if (value ==
-		 * JOptionPane.YES_OPTION) { try { FileOutputStream out = new
-		 * FileOutputStream(new File(filename)); byte[] output =
-		 * logArea.getText().getBytes(); out.write(output); out.close(); } catch
-		 * (Exception e1) { JOptionPane.showMessageDialog(logFrame, "Unable to
-		 * save log file!", "Error Saving File", JOptionPane.ERROR_MESSAGE); } } }
-		 * else { try { FileOutputStream out = new FileOutputStream(new
-		 * File(filename)); byte[] output = logArea.getText().getBytes();
-		 * out.write(output); out.close(); } catch (Exception e1) {
-		 * JOptionPane.showMessageDialog(logFrame, "Unable to save log file!",
-		 * "Error Saving File", JOptionPane.ERROR_MESSAGE); } } } }
-		 */
 		// if the using ssa check box is clicked
 		else if (e.getSource() == usingSSA) {
 			if (usingSSA.isSelected()) {
 				ssaFileLabel.setEnabled(true);
 				ssaFile.setEnabled(true);
 				newSSA.setEnabled(true);
-				loadSSA.setEnabled(true);
-				saveSSA.setEnabled(true);
 				usingSSA.setSelected(true);
 				description.setEnabled(false);
 				explanation.setEnabled(false);
@@ -1167,20 +933,16 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 					ODE.setSelected(false);
 					monteCarlo.setSelected(true);
 					Button_Enabling.enableMonteCarlo(seed, seedLabel, runs, runsLabel, stepLabel,
-							step, limitLabel, limit, intervalLabel, interval, // dirLabel,
-							// dir,
-							simulators, simulatorsLabel, explanation, description,// dirBrowse,
-							usingSSA);
+							step, limitLabel, limit, intervalLabel, interval, simulators,
+							simulatorsLabel, explanation, description, usingSSA);
 				}
 				markov.setEnabled(false);
 				if (markov.isSelected()) {
 					markov.setSelected(false);
 					monteCarlo.setSelected(true);
 					Button_Enabling.enableMonteCarlo(seed, seedLabel, runs, runsLabel, stepLabel,
-							step, limitLabel, limit, intervalLabel, interval, // dirLabel,
-							// dir,
-							simulators, simulatorsLabel, explanation, description,// dirBrowse,
-							usingSSA);
+							step, limitLabel, limit, intervalLabel, interval, simulators,
+							simulatorsLabel, explanation, description, usingSSA);
 				}
 				if (!ssaFile.getText().trim().equals("")) {
 					ssa.setEnabled(true);
@@ -1201,8 +963,6 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 				ssaFileLabel.setEnabled(false);
 				ssaFile.setEnabled(false);
 				newSSA.setEnabled(false);
-				loadSSA.setEnabled(false);
-				saveSSA.setEnabled(false);
 				usingSSA.setSelected(false);
 				ssa.setEnabled(false);
 				timeLabel.setEnabled(false);
@@ -1287,7 +1047,6 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 				ssaList[in] = temp2;
 			}
 			ssa.setListData(ssaList);
-			ssaChange = true;
 		}
 		// if the edit ssa button is clicked
 		else if (e.getSource() == editSSA) {
@@ -1413,100 +1172,17 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 						ssaList[in] = temp2;
 					}
 					ssa.setListData(ssaList);
-					ssaChange = true;
 				}
 			}
 		}
 		// if the remove ssa button is clicked
 		else if (e.getSource() == removeSSA) {
 			Buttons.remove(ssa, ssaList);
-			ssaChange = true;
 		}
 		// if the new ssa button is clicked
 		else if (e.getSource() == newSSA) {
-			if (ssaChange) {
-				Object[] options = { "Save", "Cancel" };
-				int value = JOptionPane.showOptionDialog(biomodelsim.frame(), "Save Changes?",
-						"Save", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
-						options, options[0]);
-				if (value == JOptionPane.YES_OPTION) {
-					if (!ssaFile.getText().trim().equals("")) {
-						file = new File(ssaFile.getText().trim());
-					} else {
-						file = null;
-					}
-					String filename = Buttons.browse(this, file, null, JFileChooser.FILES_ONLY,
-							"Save");
-					if (!filename.equals("")) {
-						if (new File(filename).exists()) {
-							Object[] options1 = { "Overwrite", "Cancel" };
-							value = JOptionPane.showOptionDialog(biomodelsim.frame(),
-									"File already exists." + " Overwrite?", "File Already Exists",
-									JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
-									options1, options1[0]);
-							if (value == JOptionPane.YES_OPTION) {
-								try {
-									FileOutputStream out = new FileOutputStream(new File(filename));
-									int[] index = ssa.getSelectedIndices();
-									ssaList = Buttons.getList(ssaList, ssa);
-									ssa.setSelectedIndices(index);
-									String save = "";
-									for (int i = 0; i < ssaList.length; i++) {
-										if (i == ssaList.length - 1) {
-											save += ssaList[i];
-										} else {
-											save += ssaList[i] + "\n";
-										}
-									}
-									byte[] output = save.getBytes();
-									out.write(output);
-									out.close();
-									ssaChange = false;
-								} catch (Exception e1) {
-									JOptionPane.showMessageDialog(biomodelsim.frame(),
-											"Unable to save user defined file!",
-											"Error Saving File", JOptionPane.ERROR_MESSAGE);
-									return;
-								}
-							}
-						} else {
-							try {
-								FileOutputStream out = new FileOutputStream(new File(filename));
-								int[] index = ssa.getSelectedIndices();
-								ssaList = Buttons.getList(ssaList, ssa);
-								ssa.setSelectedIndices(index);
-								String save = "";
-								for (int i = 0; i < ssaList.length; i++) {
-									if (i == ssaList.length - 1) {
-										save += ssaList[i];
-									} else {
-										save += ssaList[i] + "\n";
-									}
-								}
-								byte[] output = save.getBytes();
-								out.write(output);
-								out.close();
-								ssaChange = false;
-							} catch (Exception e1) {
-								JOptionPane.showMessageDialog(biomodelsim.frame(),
-										"Unable to save user defined file!", "Error Saving File",
-										JOptionPane.ERROR_MESSAGE);
-								return;
-							}
-						}
-					}
-				}
-			}
-			int next = 1;
-			String filename = root + File.separator + "untitled" + next + ".dat";
-			while (new File(filename).exists()) {
-				next++;
-				filename = root + File.separator + "untitled" + next + ".dat";
-			}
-			ssaFile.setText(filename);
 			ssaList = new Object[0];
 			ssa.setListData(ssaList);
-			ssaChange = false;
 			if (!ssaFile.getText().trim().equals("")) {
 				ssa.setEnabled(true);
 				timeLabel.setEnabled(true);
@@ -1519,467 +1195,6 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 				removeSSA.setEnabled(true);
 			}
 		}
-		// if the save ssa button is clicked
-		else if (e.getSource() == saveSSA) {
-			if (!ssaFile.getText().trim().equals("")) {
-				file = new File(ssaFile.getText().trim());
-			} else {
-				file = null;
-			}
-			String filename = Buttons.browse(this, file, null, JFileChooser.FILES_ONLY, "Save");
-			if (!filename.equals("")) {
-				if (new File(filename).exists()) {
-					Object[] options = { "Overwrite", "Cancel" };
-					int value = JOptionPane.showOptionDialog(biomodelsim.frame(),
-							"File already exists." + " Overwrite?", "File Already Exists",
-							JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
-							options[0]);
-					if (value == JOptionPane.YES_OPTION) {
-						try {
-							FileOutputStream out = new FileOutputStream(new File(filename));
-							int[] index = ssa.getSelectedIndices();
-							ssaList = Buttons.getList(ssaList, ssa);
-							ssa.setSelectedIndices(index);
-							String save = "";
-							for (int i = 0; i < ssaList.length; i++) {
-								if (i == ssaList.length - 1) {
-									save += ssaList[i];
-								} else {
-									save += ssaList[i] + "\n";
-								}
-							}
-							byte[] output = save.getBytes();
-							out.write(output);
-							out.close();
-							ssaChange = false;
-						} catch (Exception e1) {
-							JOptionPane.showMessageDialog(biomodelsim.frame(),
-									"Unable to save user defined file!", "Error Saving File",
-									JOptionPane.ERROR_MESSAGE);
-						}
-					}
-				} else {
-					try {
-						FileOutputStream out = new FileOutputStream(new File(filename));
-						int[] index = ssa.getSelectedIndices();
-						ssaList = Buttons.getList(ssaList, ssa);
-						ssa.setSelectedIndices(index);
-						String save = "";
-						for (int i = 0; i < ssaList.length; i++) {
-							if (i == ssaList.length - 1) {
-								save += ssaList[i];
-							} else {
-								save += ssaList[i] + "\n";
-							}
-						}
-						byte[] output = save.getBytes();
-						out.write(output);
-						out.close();
-						ssaChange = false;
-					} catch (Exception e1) {
-						JOptionPane.showMessageDialog(biomodelsim.frame(),
-								"Unable to save user defined file!", "Error Saving File",
-								JOptionPane.ERROR_MESSAGE);
-					}
-				}
-				ssaFile.setText(filename);
-			}
-		}
-		// if the load ssa button is clicked
-		else if (e.getSource() == loadSSA) {
-			if (!ssaFile.getText().trim().equals("")) {
-				file = new File(ssaFile.getText().trim());
-			} else {
-				file = null;
-			}
-			String openFile = Buttons.browse(this, file, null, JFileChooser.FILES_ONLY, "Open");
-			if (!openFile.equals("")) {
-				if (ssaChange) {
-					Object[] options = { "Save", "Cancel" };
-					int value = JOptionPane.showOptionDialog(biomodelsim.frame(), "Save Changes?",
-							"Save", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
-							options, options[0]);
-					if (value == JOptionPane.YES_OPTION) {
-						if (!ssaFile.getText().trim().equals("")) {
-							file = new File(ssaFile.getText().trim());
-						} else {
-							file = null;
-						}
-						String filename = Buttons.browse(this, file, null, JFileChooser.FILES_ONLY,
-								"Save");
-						if (!filename.equals("")) {
-							if (new File(filename).exists()) {
-								Object[] options1 = { "Overwrite", "Cancel" };
-								value = JOptionPane.showOptionDialog(biomodelsim.frame(),
-										"File already exists." + " Overwrite?",
-										"File Already Exists", JOptionPane.YES_NO_OPTION,
-										JOptionPane.PLAIN_MESSAGE, null, options1, options1[0]);
-								if (value == JOptionPane.YES_OPTION) {
-									try {
-										FileOutputStream out = new FileOutputStream(new File(
-												filename));
-										int[] index = ssa.getSelectedIndices();
-										ssaList = Buttons.getList(ssaList, ssa);
-										ssa.setSelectedIndices(index);
-										String save = "";
-										for (int i = 0; i < ssaList.length; i++) {
-											if (i == ssaList.length - 1) {
-												save += ssaList[i];
-											} else {
-												save += ssaList[i] + "\n";
-											}
-										}
-										byte[] output = save.getBytes();
-										out.write(output);
-										out.close();
-										ssaChange = false;
-									} catch (Exception e1) {
-										JOptionPane.showMessageDialog(biomodelsim.frame(),
-												"Unable to save user defined file!",
-												"Error Saving File", JOptionPane.ERROR_MESSAGE);
-										return;
-									}
-								}
-							} else {
-								try {
-									FileOutputStream out = new FileOutputStream(new File(filename));
-									int[] index = ssa.getSelectedIndices();
-									ssaList = Buttons.getList(ssaList, ssa);
-									ssa.setSelectedIndices(index);
-									String save = "";
-									for (int i = 0; i < ssaList.length; i++) {
-										if (i == ssaList.length - 1) {
-											save += ssaList[i];
-										} else {
-											save += ssaList[i] + "\n";
-										}
-									}
-									byte[] output = save.getBytes();
-									out.write(output);
-									out.close();
-									ssaChange = false;
-								} catch (Exception e1) {
-									JOptionPane.showMessageDialog(biomodelsim.frame(),
-											"Unable to save user defined file!",
-											"Error Saving File", JOptionPane.ERROR_MESSAGE);
-									return;
-								}
-							}
-						}
-					}
-				}
-				String getData = "";
-				try {
-					Scanner scan = new Scanner(new File(openFile));
-					while (scan.hasNextLine()) {
-						String get = scan.nextLine();
-						if (get.split(" ").length == 3) {
-							if (scan.hasNextLine()) {
-								getData += get + "\n";
-							} else {
-								getData += get;
-							}
-						} else {
-							JOptionPane.showMessageDialog(biomodelsim.frame(),
-									"Unable to load user defined file!"
-											+ "\nPlease select a valid user defined file to load.",
-									"Error Loading File", JOptionPane.ERROR_MESSAGE);
-							return;
-						}
-					}
-				} catch (Exception e1) {
-					JOptionPane.showMessageDialog(biomodelsim.frame(),
-							"Unable to load user defined file!", "Error Loading File",
-							JOptionPane.ERROR_MESSAGE);
-				}
-				ssaFile.setText(openFile);
-				if (!getData.equals("")) {
-					ssaList = getData.split("\n");
-				} else {
-					ssaList = new Object[0];
-				}
-				ssa.setListData(ssaList);
-				ssa.setEnabled(true);
-				timeLabel.setEnabled(true);
-				time.setEnabled(true);
-				availSpecies.setEnabled(true);
-				ssaMod.setEnabled(true);
-				ssaModNum.setEnabled(true);
-				addSSA.setEnabled(true);
-				editSSA.setEnabled(true);
-				removeSSA.setEnabled(true);
-			}
-		}
-		/*
-		 * // if the save menu item is selected else if (e.getSource() == save) {
-		 * double timeLimit = 0.0; double printInterval = 1.0; double timeStep =
-		 * 1.0; String outDir = "."; long rndSeed = 314159; int run = 1; try {
-		 * if (limit.isEnabled()) { timeLimit =
-		 * Double.parseDouble(limit.getText().trim()); } } catch (Exception e1) {
-		 * JOptionPane.showMessageDialog(this, "Must Enter A Double In The Time
-		 * Limit Field.", "Error", JOptionPane.ERROR_MESSAGE); return; } try {
-		 * if (interval.isEnabled()) { printInterval =
-		 * Double.parseDouble(interval.getText().trim()); } } catch (Exception
-		 * e1) { JOptionPane.showMessageDialog(this, "Must Enter A Double In The
-		 * Print Interval Field.", "Error", JOptionPane.ERROR_MESSAGE); return; }
-		 * try { if (step.isEnabled()) { timeStep =
-		 * Double.parseDouble(step.getText().trim()); } } catch (Exception e1) {
-		 * JOptionPane.showMessageDialog(this, "Must Enter A Double In The Time
-		 * Step Field.", "Error", JOptionPane.ERROR_MESSAGE); return; } outDir =
-		 * root + File.separator + "work" + File.separator +
-		 * dir.getText().trim(); try { if (seed.isEnabled()) { rndSeed =
-		 * Long.parseLong(seed.getText().trim()); } } catch (Exception e1) {
-		 * JOptionPane.showMessageDialog(this, "Must Enter An Integer In The
-		 * Random Seed Field.", "Error", JOptionPane.ERROR_MESSAGE); return; }
-		 * try { if (runs.isEnabled()) { run =
-		 * Integer.parseInt(runs.getText().trim()); if (run < 0) {
-		 * JOptionPane.showMessageDialog(this, "Must Enter A Positive Integer In
-		 * The Runs Field." + "\nProceding With Default: 1", "Error",
-		 * JOptionPane.ERROR_MESSAGE); run = 1; } } } catch (Exception e1) {
-		 * JOptionPane.showMessageDialog(this, "Must Enter A Positive Integer In
-		 * The Runs Field.", "Error", JOptionPane.ERROR_MESSAGE); return; }
-		 * String printer_id; if (tsd.isSelected()) { printer_id =
-		 * "tsd.printer"; } else if (csv.isSelected()) { printer_id =
-		 * "csv.printer"; } else if (dat.isSelected()) { printer_id =
-		 * "dat.printer"; } else { printer_id = "null.printer"; } String
-		 * printer_track_quantity = (String) trackingQuantity.getSelectedItem();
-		 * int[] index = terminations.getSelectedIndices(); String[] termCond =
-		 * Buttons.getList(termConditions, terminations);
-		 * terminations.setSelectedIndices(index); index =
-		 * species.getSelectedIndices(); String[] intSpecies =
-		 * Buttons.getList(interestingSpecies, species);
-		 * species.setSelectedIndices(index); String selectedButtons = "";
-		 * double rap1 = 0.1; double rap2 = 0.1; double qss = 0.1; int con = 15;
-		 * try { if (rapid1.isEnabled()) { rap1 =
-		 * Double.parseDouble(rapid1.getText().trim()); } } catch (Exception e1) {
-		 * JOptionPane.showMessageDialog(this, "Must Enter A Double In The
-		 * Rapid" + " Equilibrium Condition 1 Field.", "Error",
-		 * JOptionPane.ERROR_MESSAGE); return; } try { if (rapid2.isEnabled()) {
-		 * rap2 = Double.parseDouble(rapid2.getText().trim()); } } catch
-		 * (Exception e1) { JOptionPane.showMessageDialog(this, "Must Enter A
-		 * Double In The Rapid" + " Equilibrium Condition 2 Field.", "Error",
-		 * JOptionPane.ERROR_MESSAGE); return; } try { if (qssa.isEnabled()) {
-		 * qss = Double.parseDouble(qssa.getText().trim()); } } catch (Exception
-		 * e1) { JOptionPane.showMessageDialog(this, "Must Enter A Double In The
-		 * QSSA Condition Field.", "Error", JOptionPane.ERROR_MESSAGE); return; }
-		 * try { if (maxCon.isEnabled()) { con =
-		 * Integer.parseInt(maxCon.getText().trim()); } } catch (Exception e1) {
-		 * JOptionPane.showMessageDialog(this, "Must Enter An Integer In The
-		 * Max" + " Concentration Threshold Field.", "Error",
-		 * JOptionPane.ERROR_MESSAGE); return; } if (none.isSelected() &&
-		 * ODE.isSelected()) { selectedButtons = "none_ODE"; } else if
-		 * (none.isSelected() && monteCarlo.isSelected()) { selectedButtons =
-		 * "none_monteCarlo"; } else if (abstraction.isSelected() &&
-		 * ODE.isSelected()) { selectedButtons = "abs_ODE"; } else if
-		 * (abstraction.isSelected() && monteCarlo.isSelected()) {
-		 * selectedButtons = "abs_monteCarlo"; } else if (nary.isSelected() &&
-		 * monteCarlo.isSelected()) { selectedButtons = "nary_monteCarlo"; }
-		 * else if (nary.isSelected() && markov.isSelected()) { selectedButtons =
-		 * "nary_markov"; } else if (none.isSelected()) { selectedButtons =
-		 * "none"; } else if (abstraction.isSelected()) { selectedButtons =
-		 * "abs"; } else if (nary.isSelected()) { selectedButtons = "nary"; } if
-		 * (usingSSA.isSelected()) { if (!ssaFile.getText().trim().equals("")) {
-		 * try { FileOutputStream out = new FileOutputStream(new
-		 * File(ssaFile.getText() .trim())); int[] indecies =
-		 * ssa.getSelectedIndices(); ssaList = Buttons.getList(ssaList, ssa);
-		 * ssa.setSelectedIndices(indecies); String save = ""; for (int i = 0; i <
-		 * ssaList.length; i++) { if (i == ssaList.length - 1) { save +=
-		 * ssaList[i]; } else { save += ssaList[i] + "\n"; } } byte[] output =
-		 * save.getBytes(); out.write(output); out.close(); ssaChange = false; }
-		 * catch (Exception e1) { JOptionPane.showMessageDialog(this, "Unable to
-		 * save user defined file!", "Error Saving File",
-		 * JOptionPane.ERROR_MESSAGE); return; } } else {
-		 * JOptionPane.showMessageDialog(this, "You must create or load a user
-		 * defined file!", "SSA File Error", JOptionPane.ERROR_MESSAGE); return; } }
-		 * Run runProgram = new Run(); if (savedTo == null) { if
-		 * (!sbmlFile.equals("")) { int cut = 0; String filename = sbmlFile;
-		 * String[] getFilename = filename.trim().split(File.separator); for
-		 * (int i = 0; i < getFilename[getFilename.length - 1].length(); i++) {
-		 * if (getFilename[getFilename.length - 1].charAt(i) == '.') { cut = i; } }
-		 * String propName = filename.substring(0, filename.length() -
-		 * getFilename[getFilename.length - 1].length()) +
-		 * getFilename[getFilename.length - 1].substring(0, cut) +
-		 * ".properties"; file = new File(propName); } else { file = null; } }
-		 * else { file = new File(savedTo); } String filename =
-		 * Buttons.browse(this, file, null, JFileChooser.FILES_ONLY, "Save"); if
-		 * (!filename.equals("")) { if (new File(filename).exists()) { Object[]
-		 * options = { "Overwrite", "Cancel" }; int value =
-		 * JOptionPane.showOptionDialog(this, "File already exists." + "
-		 * Overwrite?", "File Already Exists", JOptionPane.YES_NO_OPTION,
-		 * JOptionPane.PLAIN_MESSAGE, null, options, options[0]); if (value ==
-		 * JOptionPane.YES_OPTION) { try {
-		 * runProgram.createProperties(timeLimit, printInterval, timeStep,
-		 * outDir, rndSeed, run, termCond, intSpecies, printer_id,
-		 * printer_track_quantity, filename.split(File.separator),
-		 * selectedButtons, this, filename, rap1, rap2, qss, con, usingSSA,
-		 * ssaFile.getText().trim()); savedTo = filename; } catch (Exception e1) {
-		 * JOptionPane.showMessageDialog(this, "Unable to save properties
-		 * file!", "Error Saving Properties", JOptionPane.ERROR_MESSAGE); } } }
-		 * else { try { runProgram.createProperties(timeLimit, printInterval,
-		 * timeStep, outDir, rndSeed, run, termCond, intSpecies, printer_id,
-		 * printer_track_quantity, filename.split(File.separator),
-		 * selectedButtons, this, filename, rap1, rap2, qss, con, usingSSA,
-		 * ssaFile.getText().trim()); savedTo = filename; } catch (Exception e1) {
-		 * JOptionPane.showMessageDialog(this, "Unable save to properties
-		 * file!", "Error Saving Properties", JOptionPane.ERROR_MESSAGE); } } } }
-		 */
-		// if the open menu item is selected
-		/*
-		 * else if (e.getSource() == open) { Properties load = new Properties();
-		 * if (savedTo == null) { file = null; } else { file = new
-		 * File(savedTo); } String openFile = Buttons.browse(this, file, null,
-		 * JFileChooser.FILES_ONLY, "Open"); try { if (!openFile.equals("")) {
-		 * load.load(new FileInputStream(new File(openFile))); String selected =
-		 * load.getProperty("simulation.printer"); if
-		 * (selected.equals("tsd.printer")) { tsd.setSelected(true); } else if
-		 * (selected.equals("csv.printer")) { csv.setSelected(true); } else if
-		 * (selected.equals("dat.printer")) { dat.setSelected(true); } else {
-		 * _null.setSelected(true); } savedTo = openFile; String[] getFilename =
-		 * savedTo.split(File.separator); int cut = 0; for (int i = 0; i <
-		 * getFilename[getFilename.length - 1].length(); i++) { if
-		 * (getFilename[getFilename.length - 1].charAt(i) == '.') { cut = i; } }
-		 * String filename = ""; if (new File((savedTo.substring(0,
-		 * savedTo.length() - getFilename[getFilename.length - 1].length())) +
-		 * getFilename[getFilename.length - 1].substring(0, cut) + ".sbml")
-		 * .exists()) { filename = (savedTo.substring(0, savedTo.length() -
-		 * getFilename[getFilename.length - 1].length())) +
-		 * getFilename[getFilename.length - 1].substring(0, cut) + ".sbml"; }
-		 * else if (new File((savedTo.substring(0, savedTo.length() -
-		 * getFilename[getFilename.length - 1].length())) +
-		 * getFilename[getFilename.length - 1].substring(0, cut) + ".xml")
-		 * .exists()) { filename = (savedTo.substring(0, savedTo.length() -
-		 * getFilename[getFilename.length - 1].length())) +
-		 * getFilename[getFilename.length - 1].substring(0, cut) + ".xml"; } try {
-		 * sbmlFile = filename; ArrayList<String> listOfSpecs = new ArrayList<String>();
-		 * SBMLReader reader = new SBMLReader(); SBMLDocument document =
-		 * reader.readSBML(filename); Model model = document.getModel(); if
-		 * (model != null) { ListOf listOfSpecies = model.getListOfSpecies();
-		 * for (int i = 0; i < model.getNumSpecies(); i++) { Species species =
-		 * (Species) listOfSpecies.get(i); listOfSpecs.add(species.getName()); } }
-		 * Object[] list = listOfSpecs.toArray(); intSpecies.setListData(list);
-		 * termCond.setListData(list); statesSpecs.setListData(list); int rem =
-		 * availSpecies.getItemCount(); for (int i = 0; i < rem; i++) {
-		 * availSpecies.removeItemAt(0); } for (int i = 0; i < list.length; i++) {
-		 * availSpecies.addItem(((String) list[i]).replace(" ", "_")); } } catch
-		 * (Exception e1) { } species.setListData(new Object[0]);
-		 * terminations.setListData(new Object[0]); String check; if
-		 * (load.containsKey("reb2sac.abstraction.method.3.1")) { check =
-		 * load.getProperty("reb2sac.abstraction.method.3.1"); if
-		 * (check.equals("kinetic-law-constants-simplifier")) {
-		 * none.setSelected(true); Button_Enabling.enableNoneOrAbs(ODE,
-		 * monteCarlo, markov, seed, seedLabel, runs, runsLabel, stepLabel,
-		 * step, limitLabel, limit, intervalLabel, interval, // dirLabel, //
-		 * dir, simulators, simulatorsLabel, explanation, description, none,
-		 * intSpecies, species, spLabel, speciesLabel, addIntSpecies,
-		 * removeIntSpecies, rapid1, rapid2, qssa, maxCon, rapidLabel1,
-		 * rapidLabel2, qssaLabel, maxConLabel, // dirBrowse, usingSSA,
-		 * clearIntSpecies); } } if
-		 * (load.containsKey("reb2sac.abstraction.method.2.2")) { check =
-		 * load.getProperty("reb2sac.abstraction.method.2.2"); if
-		 * (check.equals("dimerization-reduction")) {
-		 * abstraction.setSelected(true); Button_Enabling.enableNoneOrAbs(ODE,
-		 * monteCarlo, markov, seed, seedLabel, runs, runsLabel, stepLabel,
-		 * step, limitLabel, limit, intervalLabel, interval, // dirLabel, //
-		 * dir, simulators, simulatorsLabel, explanation, description, none,
-		 * intSpecies, species, spLabel, speciesLabel, addIntSpecies,
-		 * removeIntSpecies, rapid1, rapid2, qssa, maxCon, rapidLabel1,
-		 * rapidLabel2, qssaLabel, maxConLabel, // dirBrowse, usingSSA,
-		 * clearIntSpecies); } else if
-		 * (check.equals("dimerization-reduction-level-assignment")) {
-		 * nary.setSelected(true); Button_Enabling.enableNary(ODE, monteCarlo,
-		 * markov, seed, seedLabel, runs, runsLabel, stepLabel, step,
-		 * limitLabel, limit, intervalLabel, interval, // dirLabel, // dir,
-		 * simulators, simulatorsLabel, explanation, description, intSpecies,
-		 * species, spLabel, speciesLabel, addIntSpecies, removeIntSpecies,
-		 * rapid1, rapid2, qssa, maxCon, rapidLabel1, rapidLabel2, qssaLabel,
-		 * maxConLabel, usingSSA, clearIntSpecies); } } if
-		 * (load.containsKey("ode.simulation.time.limit")) {
-		 * ODE.setSelected(true); Button_Enabling.enableODE(seed, seedLabel,
-		 * runs, runsLabel, stepLabel, step, limitLabel, limit, intervalLabel,
-		 * interval, // dirLabel, // dir, simulators, simulatorsLabel,
-		 * explanation, description,// dirBrowse, usingSSA);
-		 * limit.setText(load.getProperty("ode.simulation.time.limit"));
-		 * interval.setText(load.getProperty("ode.simulation.print.interval"));
-		 * step.setText(load.getProperty("ode.simulation.time.step")); //
-		 * String[] simID = // load.getProperty("ode.simulation.out.dir").split( //
-		 * File.separator); // dir.setText(simID[simID.length - 1]); } else if
-		 * (load.containsKey("monte.carlo.simulation.time.limit")) {
-		 * monteCarlo.setSelected(true); Button_Enabling.enableMonteCarlo(seed,
-		 * seedLabel, runs, runsLabel, stepLabel, step, limitLabel, limit,
-		 * intervalLabel, interval, // dirLabel, dir, simulators,
-		 * simulatorsLabel, explanation, description,// dirBrowse, usingSSA);
-		 * limit.setText(load.getProperty("monte.carlo.simulation.time.limit"));
-		 * interval.setText(load.getProperty("monte.carlo.simulation.print.interval"));
-		 * seed.setText(load.getProperty("monte.carlo.simulation.random.seed"));
-		 * runs.setText(load.getProperty("monte.carlo.simulation.runs")); //
-		 * String[] simID = //
-		 * load.getProperty("monte.carlo.simulation.out.dir").split( //
-		 * File.separator); // dir.setText(simID[simID.length - 1]); } else { if
-		 * (nary.isSelected()) { markov.setSelected(true);
-		 * Button_Enabling.enableMarkov(seed, seedLabel, runs, runsLabel,
-		 * stepLabel, step, limitLabel, limit, intervalLabel, interval, //
-		 * dirLabel, dir, simulators, simulatorsLabel, explanation,
-		 * description,// dirBrowse, usingSSA); } else { sbml.setSelected(true);
-		 * Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs,
-		 * runsLabel, stepLabel, step, limitLabel, limit, intervalLabel,
-		 * interval, // dirLabel, dir, simulators, simulatorsLabel, explanation,
-		 * description);// , // dirBrowse); } }
-		 * trackingQuantity.setSelectedItem(load
-		 * .getProperty("simulation.printer.tracking.quantity")); ArrayList<String>
-		 * getLists = new ArrayList<String>(); int i = 1; while
-		 * (load.containsKey("simulation.run.termination.condition." + i)) {
-		 * getLists.add(load.getProperty("simulation.run.termination.condition." +
-		 * i)); i++; } termConditions = getLists.toArray();
-		 * terminations.setListData(termConditions); getLists = new ArrayList<String>();
-		 * i = 1; while (load.containsKey("reb2sac.interesting.species." + i)) {
-		 * getLists.add(load.getProperty("reb2sac.interesting.species." + i));
-		 * i++; } interestingSpecies = getLists.toArray();
-		 * species.setListData(interestingSpecies); if
-		 * (load.containsKey("reb2sac.rapid.equilibrium.condition.1")) {
-		 * rapid1.setText(load.getProperty("reb2sac.rapid.equilibrium.condition.1")); }
-		 * if (load.containsKey("reb2sac.rapid.equilibrium.condition.2")) {
-		 * rapid2.setText(load.getProperty("reb2sac.rapid.equilibrium.condition.2")); }
-		 * if (load.containsKey("reb2sac.qssa.condition.1")) {
-		 * qssa.setText(load.getProperty("reb2sac.qssa.condition.1")); } if
-		 * (load.containsKey("reb2sac.operator.max.concentration.threshold")) {
-		 * maxCon.setText(load
-		 * .getProperty("reb2sac.operator.max.concentration.threshold")); } if
-		 * (load.containsKey("simulation.time.series.species.level.file")) {
-		 * usingSSA.setEnabled(true); ssaFileLabel.setEnabled(true);
-		 * ssaFile.setEnabled(true); newSSA.setEnabled(true);
-		 * loadSSA.setEnabled(true); saveSSA.setEnabled(true);
-		 * usingSSA.setSelected(true); description.setEnabled(false);
-		 * explanation.setEnabled(false); simulators.setEnabled(false);
-		 * simulatorsLabel.setEnabled(false); ssaFile.setText(load
-		 * .getProperty("simulation.time.series.species.level.file")); String
-		 * getData = ""; try { Scanner scan = new Scanner(new File(load
-		 * .getProperty("simulation.time.series.species.level.file"))); while
-		 * (scan.hasNextLine()) { String get = scan.nextLine(); if (get.split("
-		 * ").length == 3) { if (scan.hasNextLine()) { getData += get + "\n"; }
-		 * else { getData += get; } } } } catch (Exception e1) { } if
-		 * (!getData.equals("")) { ssaList = getData.split("\n"); } else {
-		 * ssaList = new Object[0]; } ssa.setListData(ssaList);
-		 * ssa.setEnabled(true); timeLabel.setEnabled(true);
-		 * time.setEnabled(true); availSpecies.setEnabled(true);
-		 * ssaMod.setEnabled(true); ssaModNum.setEnabled(true);
-		 * addSSA.setEnabled(true); editSSA.setEnabled(true);
-		 * removeSSA.setEnabled(true); ODE.setEnabled(false);
-		 * markov.setEnabled(false); } else { ssaFileLabel.setEnabled(false);
-		 * description.setEnabled(true); explanation.setEnabled(true);
-		 * simulators.setEnabled(true); simulatorsLabel.setEnabled(true);
-		 * ssaFileLabel.setEnabled(false); ssaFile.setEnabled(false);
-		 * newSSA.setEnabled(false); loadSSA.setEnabled(false);
-		 * saveSSA.setEnabled(false); usingSSA.setSelected(false);
-		 * ssa.setEnabled(false); timeLabel.setEnabled(false);
-		 * time.setEnabled(false); availSpecies.setEnabled(false);
-		 * ssaMod.setEnabled(false); ssaModNum.setEnabled(false);
-		 * addSSA.setEnabled(false); editSSA.setEnabled(false);
-		 * removeSSA.setEnabled(false); if (!nary.isSelected()) {
-		 * ODE.setEnabled(true); } else { markov.setEnabled(true); } } } } catch
-		 * (Exception e1) { JOptionPane.showMessageDialog(this, "Unable to load
-		 * properties file!", "Error Loading Properties",
-		 * JOptionPane.ERROR_MESSAGE); } }
-		 */
 		// if the remove properties button is clicked
 		else if (e.getSource() == removeProp) {
 			Buttons.remove(properties, props);
@@ -2009,80 +1224,6 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 	}
 
 	/**
-	 * This method currently does nothing.
-	 */
-	public void keyTyped(KeyEvent e) {
-	}
-
-	/**
-	 * This method currently does nothing.
-	 */
-	public void keyPressed(KeyEvent e) {
-	}
-
-	/**
-	 * Invoked when a key has been released on the file chooser or the ssa file
-	 * field.
-	 */
-	public void keyReleased(KeyEvent e) {
-		/*
-		 * if (e.getSource() == SBMLFile) { String filename =
-		 * SBMLFile.getText().trim(); SBMLReader reader = new SBMLReader();
-		 * SBMLDocument document = reader.readSBML(filename); Model model =
-		 * document.getModel(); ArrayList<String> listOfSpecs = new ArrayList<String>();
-		 * if (model != null) { ListOf listOfSpecies = model.getListOfSpecies();
-		 * for (int i = 0; i < model.getNumSpecies(); i++) { Species species =
-		 * (Species) listOfSpecies.get(i); listOfSpecs.add(species.getName()); } }
-		 * Object[] list = listOfSpecs.toArray(); intSpecies.setListData(list);
-		 * termCond.setListData(list); statesSpecs.setListData(list); int rem =
-		 * availSpecies.getItemCount(); for (int i = 0; i < rem; i++) {
-		 * availSpecies.removeItemAt(0); } for (int i = 0; i < list.length; i++) {
-		 * availSpecies.addItem(((String) list[i]).replace(" ", "_")); } } else
-		 */if (e.getSource() == ssaFile) {
-			if (!ssaFile.getText().trim().equals("")) {
-				String getData = "";
-				try {
-					Scanner scan = new Scanner(new File(ssaFile.getText().trim()));
-					while (scan.hasNextLine()) {
-						String get = scan.nextLine();
-						if (get.split(" ").length == 3) {
-							if (scan.hasNextLine()) {
-								getData += get + "\n";
-							} else {
-								getData += get;
-							}
-						} else {
-							return;
-						}
-					}
-				} catch (Exception e1) {
-				}
-				ssaList = getData.split("\n");
-				ssa.setListData(ssaList);
-				ssa.setEnabled(true);
-				timeLabel.setEnabled(true);
-				time.setEnabled(true);
-				availSpecies.setEnabled(true);
-				ssaMod.setEnabled(true);
-				ssaModNum.setEnabled(true);
-				addSSA.setEnabled(true);
-				editSSA.setEnabled(true);
-				removeSSA.setEnabled(true);
-			} else {
-				ssa.setEnabled(false);
-				timeLabel.setEnabled(false);
-				time.setEnabled(false);
-				availSpecies.setEnabled(false);
-				ssaMod.setEnabled(false);
-				ssaModNum.setEnabled(false);
-				addSSA.setEnabled(false);
-				editSSA.setEnabled(false);
-				removeSSA.setEnabled(false);
-			}
-		}
-	}
-
-	/**
 	 * If the run button is pressed, this method starts a new thread for the
 	 * simulation.
 	 */
@@ -2093,11 +1234,6 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 		String outDir = "";
 		long rndSeed = 314159;
 		int run = 1;
-		/*
-		 * if (sbmlFile.equals("")) { JOptionPane.showMessageDialog(frame,
-		 * "Please Select A Model.", "Error", JOptionPane.ERROR_MESSAGE);
-		 * return; }
-		 */
 		try {
 			if (limit.isEnabled()) {
 				timeLimit = Double.parseDouble(limit.getText().trim());
@@ -2128,39 +1264,7 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-		// if (dir.isEnabled()) {
-		// String getDir = simName;
 		outDir = simName;
-		/*
-		 * int end = 0; for (int i = getDir.length() - 1; i >= 0; i--) { if
-		 * (!Character.isDigit(getDir.charAt(i))) { end = i + 1; break; } } int
-		 * num; if (end == getDir.length()) { num = 1; } else { num =
-		 * Integer.parseInt(getDir.substring(end)) + 1; } String filename =
-		 * getDir.substring(0, end) + num; while (new File(root + File.separator +
-		 * "work" + File.separator + filename).exists()) { num++; filename =
-		 * "sim" + num; } dir.setText(filename);
-		 */
-		// new File(root + File.separator + "work" + File.separator +
-		// outDir).mkdir();
-		// SBMLReader reader = new SBMLReader();
-		// SBMLDocument document = reader.readSBML(sbmlFile);
-		// String[] sbml1 = sbmlFile.split(File.separator);
-		// useSbmlFile = root + File.separator + "work" + File.separator +
-		// outDir + File.separator
-		// + sbml1[sbml1.length - 1];
-		// try {
-		// FileOutputStream out = new FileOutputStream(new File(useSbmlFile));
-		// SBMLWriter writer = new SBMLWriter();
-		// String doc = writer.writeToString(document);
-		// byte[] output = doc.getBytes();
-		// out.write(output);
-		// out.close();
-		// } catch (Exception e) {
-		// JOptionPane.showMessageDialog(this, "Unable to copy sbml file to
-		// output location.",
-		// "Error", JOptionPane.ERROR_MESSAGE);
-		// }
-		// }
 		try {
 			if (seed.isEnabled()) {
 				rndSeed = Long.parseLong(seed.getText().trim());
@@ -2267,39 +1371,38 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 		} else if (nary.isSelected()) {
 			selectedButtons = "nary";
 		}
-		if (usingSSA.isSelected()) {
-			if (!ssaFile.getText().trim().equals("")) {
-				try {
-					FileOutputStream out = new FileOutputStream(new File(ssaFile.getText().trim()));
-					int[] indecies = ssa.getSelectedIndices();
-					ssaList = Buttons.getList(ssaList, ssa);
-					ssa.setSelectedIndices(indecies);
-					String save = "";
-					for (int i = 0; i < ssaList.length; i++) {
-						if (i == ssaList.length - 1) {
-							save += ssaList[i];
-						} else {
-							save += ssaList[i] + "\n";
-						}
+		if (!ssaFile.getText().trim().equals("")) {
+			try {
+				FileOutputStream out = new FileOutputStream(new File(ssaFile.getText().trim()));
+				int[] indecies = ssa.getSelectedIndices();
+				ssaList = Buttons.getList(ssaList, ssa);
+				ssa.setSelectedIndices(indecies);
+				String save = "";
+				for (int i = 0; i < ssaList.length; i++) {
+					if (i == ssaList.length - 1) {
+						save += ssaList[i];
+					} else {
+						save += ssaList[i] + "\n";
 					}
-					byte[] output = save.getBytes();
-					out.write(output);
-					out.close();
-					ssaChange = false;
-				} catch (Exception e1) {
-					JOptionPane.showMessageDialog(biomodelsim.frame(),
-							"Unable to save user defined file!", "Error Saving File",
-							JOptionPane.ERROR_MESSAGE);
-					return;
 				}
-			} else {
+				byte[] output = save.getBytes();
+				out.write(output);
+				out.close();
+				if (!usingSSA.isSelected() && save.trim().equals("")) {
+					new File(ssaFile.getText().trim()).delete();
+				}
+			} catch (Exception e1) {
 				JOptionPane.showMessageDialog(biomodelsim.frame(),
-						"You must create or load a user defined file" + " if you are using ssa!",
-						"SSA File Error", JOptionPane.ERROR_MESSAGE);
+						"Unable to save user defined file!", "Error Saving File",
+						JOptionPane.ERROR_MESSAGE);
 				return;
 			}
+		} else {
+			JOptionPane.showMessageDialog(biomodelsim.frame(),
+					"You must create or load a user defined file!", "SSA File Error",
+					JOptionPane.ERROR_MESSAGE);
+			return;
 		}
-		// logFrame.setVisible(true);
 		int cut = 0;
 		String[] getFilename = sbmlFile.split(File.separator);
 		for (int i = 0; i < getFilename[getFilename.length - 1].length(); i++) {
@@ -2377,24 +1480,6 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 		running.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 		Run runProgram = new Run();
 		cancel.addActionListener(runProgram);
-		// exit.addActionListener(runProgram);
-		/*
-		 * WindowListener[] ws = frame.getWindowListeners(); for (int j = 0; j <
-		 * ws.length; j++) { ws[j] = new WindowListener() { public void
-		 * windowClosing(WindowEvent arg0) { exit.doClick(); }
-		 * 
-		 * public void windowOpened(WindowEvent arg0) { }
-		 * 
-		 * public void windowClosed(WindowEvent arg0) { }
-		 * 
-		 * public void windowIconified(WindowEvent arg0) { }
-		 * 
-		 * public void windowDeiconified(WindowEvent arg0) { }
-		 * 
-		 * public void windowActivated(WindowEvent arg0) { }
-		 * 
-		 * public void windowDeactivated(WindowEvent arg0) { } }; }
-		 */
 		if (sadFile.getText().trim().length() != 0) {
 			try {
 				FileOutputStream out = new FileOutputStream(new File(root + File.separator + outDir
@@ -2440,7 +1525,6 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 		}
 		running.setCursor(null);
 		running.dispose();
-		// this.exit.removeActionListener(runProgram);
 		biomodelsim.refreshTree();
 	}
 
@@ -2587,7 +1671,6 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 							ssaList[in] = temp2;
 						}
 						ssa.setListData(ssaList);
-						ssaChange = true;
 					}
 				}
 			} else if (e.getSource() == properties) {
@@ -2660,7 +1743,7 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-		outDir = root + File.separator + simName; // dir.getText().trim();
+		outDir = root + File.separator + simName;
 		try {
 			if (seed.isEnabled()) {
 				rndSeed = Long.parseLong(seed.getText().trim());
@@ -2766,37 +1849,37 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 		} else if (nary.isSelected()) {
 			selectedButtons = "nary";
 		}
-		if (usingSSA.isSelected()) {
-			if (!ssaFile.getText().trim().equals("")) {
-				try {
-					FileOutputStream out = new FileOutputStream(new File(ssaFile.getText().trim()));
-					int[] indecies = ssa.getSelectedIndices();
-					ssaList = Buttons.getList(ssaList, ssa);
-					ssa.setSelectedIndices(indecies);
-					String save = "";
-					for (int i = 0; i < ssaList.length; i++) {
-						if (i == ssaList.length - 1) {
-							save += ssaList[i];
-						} else {
-							save += ssaList[i] + "\n";
-						}
+		if (!ssaFile.getText().trim().equals("")) {
+			try {
+				FileOutputStream out = new FileOutputStream(new File(ssaFile.getText().trim()));
+				int[] indecies = ssa.getSelectedIndices();
+				ssaList = Buttons.getList(ssaList, ssa);
+				ssa.setSelectedIndices(indecies);
+				String save = "";
+				for (int i = 0; i < ssaList.length; i++) {
+					if (i == ssaList.length - 1) {
+						save += ssaList[i];
+					} else {
+						save += ssaList[i] + "\n";
 					}
-					byte[] output = save.getBytes();
-					out.write(output);
-					out.close();
-					ssaChange = false;
-				} catch (Exception e1) {
-					JOptionPane.showMessageDialog(biomodelsim.frame(),
-							"Unable to save user defined file!", "Error Saving File",
-							JOptionPane.ERROR_MESSAGE);
-					return;
 				}
-			} else {
+				byte[] output = save.getBytes();
+				out.write(output);
+				out.close();
+				if (!usingSSA.isSelected() && save.trim().equals("")) {
+					new File(ssaFile.getText().trim()).delete();
+				}
+			} catch (Exception e1) {
 				JOptionPane.showMessageDialog(biomodelsim.frame(),
-						"You must create or load a user defined file!", "SSA File Error",
+						"Unable to save user defined file!", "Error Saving File",
 						JOptionPane.ERROR_MESSAGE);
 				return;
 			}
+		} else {
+			JOptionPane.showMessageDialog(biomodelsim.frame(),
+					"You must create or load a user defined file!", "SSA File Error",
+					JOptionPane.ERROR_MESSAGE);
+			return;
 		}
 		Run runProgram = new Run();
 		int cut = 0;
@@ -3026,8 +2109,6 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 					ssaFileLabel.setEnabled(true);
 					ssaFile.setEnabled(true);
 					newSSA.setEnabled(true);
-					loadSSA.setEnabled(true);
-					saveSSA.setEnabled(true);
 					usingSSA.setSelected(true);
 					description.setEnabled(false);
 					explanation.setEnabled(false);
@@ -3040,7 +2121,7 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 								.getProperty("simulation.time.series.species.level.file")));
 						while (scan.hasNextLine()) {
 							String get = scan.nextLine();
-							if (get.split("").length == 3) {
+							if (get.split(" ").length == 3) {
 								if (scan.hasNextLine()) {
 									getData += get + "\n";
 								} else {
@@ -3076,8 +2157,6 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 					ssaFileLabel.setEnabled(false);
 					ssaFile.setEnabled(false);
 					newSSA.setEnabled(false);
-					loadSSA.setEnabled(false);
-					saveSSA.setEnabled(false);
 					usingSSA.setSelected(false);
 					ssa.setEnabled(false);
 					timeLabel.setEnabled(false);
@@ -3160,12 +2239,6 @@ public class Reb2Sac extends JPanel implements ActionListener, KeyListener, Runn
 	public JButton getSaveButton() {
 		return save;
 	}
-
-	/*
-	 * /** This is the main method. It excecutes the GUI FrontEnd program. /
-	 * public static void main(String args[]) { System.loadLibrary("sbmlj"); new
-	 * GUI(null, null, null); }
-	 */
 
 	public void setSbml(SBML_Editor sbml) {
 		sbmlEditor = sbml;
