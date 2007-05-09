@@ -253,7 +253,7 @@ public class Run implements ActionListener {
 			Component component, JRadioButton ode, JRadioButton monteCarlo, String sim,
 			String printer_id, String printer_track_quantity, String outDir, int run,
 			JRadioButton nary, int naryRun, String[] intSpecies, Log log, JCheckBox usingSSA,
-			String ssaFile, BioModelSim biomodelsim, JTabbedPane simTab, Reb2Sac sac) {
+			String ssaFile, BioModelSim biomodelsim, JTabbedPane simTab) {
 		Runtime exec = Runtime.getRuntime();
 		int exitValue = 255;
 		try {
@@ -476,32 +476,87 @@ public class Run implements ActionListener {
 					}
 				} else if (usingSSA.isSelected()) {
 					if (!printer_id.equals("null.printer")) {
-						simTab.addTab("Graph", new Graph(outDir + File.separator + "run-1."
-								+ printer_id.substring(0, printer_id.length() - 8), component,
-								printer_track_quantity, "ssa average simulation results",
-								monteCarlo, "ssa", printer_id, outDir, run, intSpecies, -1, null,
-								"time", biomodelsim, sac));
-						simTab.getComponentAt(simTab.getComponents().length - 1).setName("Graph");
+						int change = -1;
+						for (int i = 0; i < simTab.getComponentCount(); i++) {
+							if (simTab.getComponentAt(i).getName().equals("StochGraph")) {
+								change = i;
+							}
+						}
+						if (change == -1) {
+							simTab.addTab("StochGraph", new Graph(outDir + File.separator
+									+ "run-1." + printer_id.substring(0, printer_id.length() - 8),
+									component, printer_track_quantity,
+									"ssa average simulation results", monteCarlo, "ssa",
+									printer_id, outDir, run, intSpecies, -1, null, "time",
+									biomodelsim));
+							simTab.getComponentAt(simTab.getComponents().length - 1).setName(
+									"StochGraph");
+						} else {
+							simTab.setComponentAt(change, new Graph(outDir + File.separator
+									+ "run-1." + printer_id.substring(0, printer_id.length() - 8),
+									component, printer_track_quantity,
+									"ssa average simulation results", monteCarlo, "ssa",
+									printer_id, outDir, run, intSpecies, -1, null, "time",
+									biomodelsim));
+							simTab.getComponentAt(change).setName("StochGraph");
+						}
 					}
 				} else {
 					if (!printer_id.equals("null.printer")) {
 						if (ode.isSelected()) {
-							simTab.addTab("Graph", new Graph(outDir + File.separator + sim
-									+ "-run." + printer_id.substring(0, printer_id.length() - 8),
-									component, printer_track_quantity, sim + " simulation results",
-									monteCarlo, sim, printer_id, outDir, run, intSpecies, -1, null,
-									"time", biomodelsim, sac));
-							simTab.getComponentAt(simTab.getComponents().length - 1).setName(
-									"Graph");
+							int change = -1;
+							for (int i = 0; i < simTab.getComponentCount(); i++) {
+								if (simTab.getComponentAt(i).getName().equals("ODEGraph")) {
+									change = i;
+								}
+							}
+							if (change == -1) {
+								simTab.addTab("ODEGraph", new Graph(outDir + File.separator + sim
+										+ "-run."
+										+ printer_id.substring(0, printer_id.length() - 8),
+										component, printer_track_quantity, sim
+												+ " simulation results", monteCarlo, sim,
+										printer_id, outDir, run, intSpecies, -1, null, "time",
+										biomodelsim));
+								simTab.getComponentAt(simTab.getComponents().length - 1).setName(
+										"ODEGraph");
+							} else {
+								simTab.setComponentAt(change, new Graph(outDir + File.separator
+										+ sim + "-run."
+										+ printer_id.substring(0, printer_id.length() - 8),
+										component, printer_track_quantity, sim
+												+ " simulation results", monteCarlo, sim,
+										printer_id, outDir, run, intSpecies, -1, null, "time",
+										biomodelsim));
+								simTab.getComponentAt(change).setName("ODEGraph");
+							}
 						} else if (monteCarlo.isSelected()) {
-							simTab.addTab("Graph", new Graph(outDir + File.separator + "run-1."
-									+ printer_id.substring(0, printer_id.length() - 8), component,
-									printer_track_quantity,
-									sim + " run average simulation results", monteCarlo, sim,
-									printer_id, outDir, run, intSpecies, -1, null, "time",
-									biomodelsim, sac));
-							simTab.getComponentAt(simTab.getComponents().length - 1).setName(
-									"Graph");
+							int change = -1;
+							for (int i = 0; i < simTab.getComponentCount(); i++) {
+								if (simTab.getComponentAt(i).getName().equals("StochGraph")) {
+									change = i;
+								}
+							}
+							if (change == -1) {
+								simTab.addTab("StochGraph", new Graph(outDir + File.separator
+										+ "run-1."
+										+ printer_id.substring(0, printer_id.length() - 8),
+										component, printer_track_quantity, sim
+												+ " run average simulation results", monteCarlo,
+										sim, printer_id, outDir, run, intSpecies, -1, null, "time",
+										biomodelsim));
+								simTab.getComponentAt(simTab.getComponents().length - 1).setName(
+										"StochGraph");
+							} else {
+								simTab.setComponentAt(change, new Graph(outDir + File.separator
+										+ "run-1."
+										+ printer_id.substring(0, printer_id.length() - 8),
+										component, printer_track_quantity, sim
+												+ " run average simulation results", monteCarlo,
+										sim, printer_id, outDir, run, intSpecies, -1, null, "time",
+										biomodelsim));
+								simTab.getComponentAt(change).setName("StochGraph");
+							}
 						}
 					}
 				}

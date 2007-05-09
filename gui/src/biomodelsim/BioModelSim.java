@@ -629,12 +629,25 @@ public class BioModelSim implements MouseListener, ActionListener {
 					((Reb2Sac) tab.getSelectedComponent()).save();
 				} else if (tab.getSelectedComponent().getName().equals("SBML Editor")) {
 					((SBML_Editor) tab.getSelectedComponent()).save();
-				} else if (tab.getSelectedComponent().getName().equals("Graph")) {
+				} else if (tab.getSelectedComponent().getName().contains("Graph")) {
 					Object[] options = { "Save As JPEG", "Save As PNG", "Cancel" };
-					int value = JOptionPane.showOptionDialog(frame, "Which type would you like to"
-							+ " save the graph as?", "Save Changes",
-							JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null,
-							options, options[0]);
+					int value;
+					if (tab.getSelectedComponent().getName().contains("ODE")) {
+						value = JOptionPane.showOptionDialog(frame, "Which type would you like to"
+								+ " save the ode graph as?", "Save Changes",
+								JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null,
+								options, options[0]);
+					} else if (tab.getSelectedComponent().getName().contains("Stoch")) {
+						value = JOptionPane.showOptionDialog(frame, "Which type would you like to"
+								+ " save the stochastic graph as?", "Save Changes",
+								JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null,
+								options, options[0]);
+					} else {
+						value = JOptionPane.showOptionDialog(frame, "Which type would you like to"
+								+ " save the graph as?", "Save Changes",
+								JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null,
+								options, options[0]);
+					}
 					if (value == JOptionPane.YES_OPTION) {
 						((Graph) tab.getSelectedComponent()).export(true);
 					} else {
@@ -646,12 +659,26 @@ public class BioModelSim implements MouseListener, ActionListener {
 						((Reb2Sac) simTab.getSelectedComponent()).save();
 					} else if (simTab.getSelectedComponent().getName().equals("SBML Editor")) {
 						((SBML_Editor) simTab.getSelectedComponent()).save();
-					} else if (simTab.getSelectedComponent().getName().equals("Graph")) {
+					} else if (simTab.getSelectedComponent().getName().contains("Graph")) {
 						Object[] options = { "Save As JPEG", "Save As PNG", "Cancel" };
-						int value = JOptionPane.showOptionDialog(frame,
-								"Which type would you like to" + " save the graph as?",
-								"Save Changes", JOptionPane.YES_NO_CANCEL_OPTION,
-								JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+						int value;
+						if (simTab.getSelectedComponent().getName().contains("ODE")) {
+							value = JOptionPane.showOptionDialog(frame,
+									"Which type would you like to" + " save the ode graph as?",
+									"Save Changes", JOptionPane.YES_NO_CANCEL_OPTION,
+									JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+						} else if (simTab.getSelectedComponent().getName().contains("Stoch")) {
+							value = JOptionPane.showOptionDialog(frame,
+									"Which type would you like to"
+											+ " save the stochastic graph as?", "Save Changes",
+									JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE,
+									null, options, options[0]);
+						} else {
+							value = JOptionPane.showOptionDialog(frame,
+									"Which type would you like to" + " save the graph as?",
+									"Save Changes", JOptionPane.YES_NO_CANCEL_OPTION,
+									JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+						}
 						if (value == JOptionPane.YES_OPTION) {
 							((Graph) simTab.getSelectedComponent()).export(true);
 						} else {
@@ -785,12 +812,12 @@ public class BioModelSim implements MouseListener, ActionListener {
 								addTab("Graph", new Graph(first + "run-1." + printer, frame,
 										"amount", "read-in-data average" + " simulation results",
 										button, "read-in-data", id, first, runs, new String[0], -1,
-										null, "time", this, null));
+										null, "time", this));
 							} else {
 								button.setSelected(false);
 								addTab("Graph", new Graph(filename, frame, "amount",
 										"read-in-data simulation results", button, "read-in-data",
-										id, first, 1, new String[0], -1, null, "time", this, null));
+										id, first, 1, new String[0], -1, null, "time", this));
 							}
 						}
 					} else {
@@ -831,12 +858,12 @@ public class BioModelSim implements MouseListener, ActionListener {
 							addTab("Graph", new Graph(first + "run-1." + printer, frame, "amount",
 									"read-in-data average" + " simulation results", button,
 									"read-in-data", id, first, runs, new String[0], number, null,
-									"time", this, null));
+									"time", this));
 						} else {
 							button.setSelected(false);
 							addTab("Graph", new Graph(filename, frame, "amount",
 									"read-in-data simulation results", button, "read-in-data", id,
-									first, 1, new String[0], -1, null, "time", this, null));
+									first, 1, new String[0], -1, null, "time", this));
 						}
 					} catch (Exception e1) {
 						JOptionPane.showMessageDialog(frame, "Error reading in data!"
@@ -929,11 +956,23 @@ public class BioModelSim implements MouseListener, ActionListener {
 			} else {
 				return 1;
 			}
-		} else if (tab.getComponentAt(index).getName().equals("Graph")) {
+		} else if (tab.getComponentAt(index).getName().contains("Graph")) {
 			Object[] options = { "Save As JPEG", "Save As PNG", "Don't Save" };
-			int value = JOptionPane.showOptionDialog(frame, "Do you want to save the graph?",
-					"Save Changes", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE,
-					null, options, options[0]);
+			int value;
+			if (tab.getComponentAt(index).getName().contains("ODE")) {
+				value = JOptionPane.showOptionDialog(frame, "Do you want to save the ode graph?",
+						"Save Changes", JOptionPane.YES_NO_CANCEL_OPTION,
+						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+			} else if (tab.getComponentAt(index).getName().contains("Stoch")) {
+				value = JOptionPane.showOptionDialog(frame,
+						"Do you want to save the stochastic graph?", "Save Changes",
+						JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
+						options[0]);
+			} else {
+				value = JOptionPane.showOptionDialog(frame, "Do you want to save the graph?",
+						"Save Changes", JOptionPane.YES_NO_CANCEL_OPTION,
+						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+			}
 			if (value == JOptionPane.YES_OPTION) {
 				((Graph) tab.getComponentAt(index)).export(true);
 			} else if (value == JOptionPane.NO_OPTION) {
@@ -950,12 +989,27 @@ public class BioModelSim implements MouseListener, ActionListener {
 					((SBML_Editor) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i))
 							.save();
 				} else if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i).getName()
-						.equals("Graph")) {
+						.contains("Graph")) {
 					Object[] options = { "Save As JPEG", "Save As PNG", "Don't Save" };
-					int value = JOptionPane.showOptionDialog(frame,
-							"Do you want to save the graph?", "Save Changes",
-							JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null,
-							options, options[0]);
+					int value;
+					if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i).getName()
+							.contains("ODE")) {
+						value = JOptionPane.showOptionDialog(frame,
+								"Do you want to save the ode graph?", "Save Changes",
+								JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null,
+								options, options[0]);
+					} else if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i).getName()
+							.contains("Stoch")) {
+						value = JOptionPane.showOptionDialog(frame,
+								"Do you want to save the stochastic graph?", "Save Changes",
+								JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null,
+								options, options[0]);
+					} else {
+						value = JOptionPane.showOptionDialog(frame,
+								"Do you want to save the graph?", "Save Changes",
+								JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null,
+								options, options[0]);
+					}
 					if (value == JOptionPane.YES_OPTION) {
 						((Graph) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i))
 								.export(true);
@@ -1185,7 +1239,9 @@ public class BioModelSim implements MouseListener, ActionListener {
 				String[] list = new File(filename).list();
 				String getAFile = "";
 				String openFile = "";
-				String graphFile = "";
+				String odeGraphFile = "";
+				String stochGraphFile = "";
+				// String graphFile = "";
 				for (int i = 0; i < list.length; i++) {
 					if (!(new File(list[i]).isDirectory()) && list[i].length() > 4) {
 						String end = "";
@@ -1206,26 +1262,34 @@ public class BioModelSim implements MouseListener, ActionListener {
 							}
 						} else if (end.equals(".tsd") || end.equals(".dat") || end.equals(".csv")) {
 							if (list[i].contains("run-1.")) {
-								graphFile = filename + File.separator + list[i];
+								stochGraphFile = filename + File.separator + list[i];
+							} else if (list[i].contains("euler-run.")
+									|| list[i].contains("gear1-run.")
+									|| list[i].contains("gear2-run.")
+									|| list[i].contains("rk4imp-run.")
+									|| list[i].contains("rk8pd-run.")
+									|| list[i].contains("rkf45-run.")) {
+								odeGraphFile = filename + File.separator + list[i];
 							}
 						}
 					}
 				}
-				if (graphFile.equals("")) {
-					for (int i = 0; i < list.length; i++) {
-						if (!(new File(list[i]).isDirectory())) {
-							String end = "";
-							for (int j = 1; j < 5; j++) {
-								end = list[i].charAt(list[i].length() - j) + end;
-							}
-							if (end.equals(".tsd") || end.equals(".dat") || end.equals(".csv")) {
-								if (!list[i].equals("user-defined.dat")) {
-									graphFile = filename + File.separator + list[i];
-								}
-							}
-						}
-					}
-				}
+				// if (graphFile.equals("")) {
+				// for (int i = 0; i < list.length; i++) {
+				// if (!(new File(list[i]).isDirectory())) {
+				// String end = "";
+				// for (int j = 1; j < 5; j++) {
+				// end = list[i].charAt(list[i].length() - j) + end;
+				// }
+				// if (end.equals(".tsd") || end.equals(".dat") ||
+				// end.equals(".csv")) {
+				// if (!list[i].equals("user-defined.dat")) {
+				// graphFile = filename + File.separator + list[i];
+				// }
+				// }
+				// }
+				// }
+				// }
 				if (!getAFile.equals("")) {
 					String[] split = filename.split(File.separator);
 					JTabbedPane simTab = new JTabbedPane();
@@ -1240,9 +1304,15 @@ public class BioModelSim implements MouseListener, ActionListener {
 					Learn learn = new Learn(tree.getFile(), log);
 					simTab.addTab("Learn", learn);
 					simTab.getComponentAt(simTab.getComponents().length - 1).setName("Learn");
-					if (!graphFile.equals("")) {
-						simTab.addTab("Graph", reb2sac.createGraph(graphFile));
-						simTab.getComponentAt(simTab.getComponents().length - 1).setName("Graph");
+					if (!odeGraphFile.equals("")) {
+						simTab.addTab("ODEGraph", reb2sac.createGraph(odeGraphFile));
+						simTab.getComponentAt(simTab.getComponents().length - 1)
+								.setName("ODEGraph");
+					}
+					if (!stochGraphFile.equals("")) {
+						simTab.addTab("StochGraph", reb2sac.createGraph(stochGraphFile));
+						simTab.getComponentAt(simTab.getComponents().length - 1).setName(
+								"StochGraph");
 					}
 					addTab(split[split.length - 1], simTab);
 				}
@@ -1303,7 +1373,7 @@ public class BioModelSim implements MouseListener, ActionListener {
 							&& (x <= tabRect.x + tabRect.width - 8) && (y >= 5) && (y <= 15)) {
 						if (tab.getComponentAt(tabIndex).getName().equals("Simulate")
 								|| tab.getComponentAt(tabIndex).getName().equals("SBML Editor")
-								|| tab.getComponentAt(tabIndex).getName().equals("Graph")) {
+								|| tab.getComponentAt(tabIndex).getName().contains("Graph")) {
 							if (save(tabIndex) == 1) {
 								tabPane.remove(tabIndex);
 							}

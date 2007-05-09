@@ -1495,15 +1495,23 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					"Unable to add properties to property file.", "Error",
 					JOptionPane.ERROR_MESSAGE);
 		}
+		if (monteCarlo.isSelected()) {
+			File[] files = new File(root + File.separator + outDir).listFiles();
+			for (File f : files) {
+				if (f.getName().contains("run-")) {
+					f.delete();
+				}
+			}
+		}
 		int exit = runProgram.execute(sbmlFile, sbml, dot, xhtml, this, ODE, monteCarlo, sim,
 				printer_id, printer_track_quantity, root + File.separator + outDir, run, nary, 1,
-				intSpecies, log, usingSSA, userdefined, biomodelsim, simTab, this);
+				intSpecies, log, usingSSA, userdefined, biomodelsim, simTab);
 		if (nary.isSelected() && exit == 0) {
 			new Nary_Run(this, amountTerm, ge, gt, eq, lt, le, quantity, simulators, sbmlFile
 					.split(File.separator), sbmlFile, sbml, dot, xhtml, nary, ODE, monteCarlo,
 					timeLimit, printInterval, root + File.separator + outDir, rndSeed, run,
 					printer_id, printer_track_quantity, termCond, intSpecies, rap1, rap2, qss, con,
-					log, usingSSA, userdefined, biomodelsim, simTab, this);
+					log, usingSSA, userdefined, biomodelsim, simTab);
 		}
 		running.setCursor(null);
 		running.dispose();
@@ -2181,31 +2189,51 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					JOptionPane.ERROR_MESSAGE);
 			return null;
 		}
+		String end = "";
+		if (graphFile.length() >= 4) {
+			for (int i = 0; i < 4; i++) {
+				end = graphFile.charAt(graphFile.length() - 1 - i) + end;
+			}
+		}
 		String printer_id;
-		if (tsd.isSelected()) {
-			printer_id = "tsd.printer";
-		} else if (csv.isSelected()) {
-			printer_id = "csv.printer";
-		} else if (dat.isSelected()) {
-			printer_id = "dat.printer";
+		if (!end.equals("")) {
+			if (end.equals(".tsd")) {
+				printer_id = "tsd.printer";
+			} else if (end.equals(".csv")) {
+				printer_id = "csv.printer";
+			} else if (end.equals(".dat")) {
+				printer_id = "dat.printer";
+			} else {
+				printer_id = "null.printer";
+			}
 		} else {
-			printer_id = "null.printer";
+			if (tsd.isSelected()) {
+				printer_id = "tsd.printer";
+			} else if (csv.isSelected()) {
+				printer_id = "csv.printer";
+			} else if (dat.isSelected()) {
+				printer_id = "dat.printer";
+			} else {
+				printer_id = "null.printer";
+			}
 		}
 		String printer_track_quantity = (String) trackingQuantity.getSelectedItem();
 		int[] index = species.getSelectedIndices();
 		String[] intSpecies = Buttons.getList(interestingSpecies, species);
 		species.setSelectedIndices(index);
-		if (monteCarlo.isSelected()) {
-			return new Graph(graphFile, biomodelsim.frame(), printer_track_quantity, simulators
-					.getSelectedItem()
-					+ " run average simulation results", monteCarlo, (String) simulators
-					.getSelectedItem(), printer_id, outDir, run, intSpecies, -1, null, "time",
-					biomodelsim, this);
+		if (graphFile.split(File.separator)[graphFile.split(File.separator).length - 1]
+				.contains("run-")) {
+			JRadioButton b = new JRadioButton();
+			b.setSelected(true);
+			return new Graph(graphFile, biomodelsim.frame(), printer_track_quantity,
+					"stochastic run average simulation results", b, "stochastic", printer_id,
+					outDir, run, intSpecies, -1, null, "time", biomodelsim);
 		} else {
-			return new Graph(graphFile, biomodelsim.frame(), printer_track_quantity, simulators
-					.getSelectedItem()
-					+ " simulation results", monteCarlo, (String) simulators.getSelectedItem(),
-					printer_id, outDir, run, intSpecies, -1, null, "time", biomodelsim, this);
+			JRadioButton b = new JRadioButton();
+			b.setSelected(false);
+			return new Graph(graphFile, biomodelsim.frame(), printer_track_quantity,
+					"ode simulation results", b, "ode", printer_id, outDir, 1, intSpecies, -1,
+					null, "time", biomodelsim);
 		}
 	}
 
@@ -2219,9 +2247,5 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 
 	public void setSbml(SBML_Editor sbml) {
 		sbmlEditor = sbml;
-	}
-
-	public void addGraphTab(Component tab) {
-		simTab.addTab("Graph", tab);
 	}
 }
