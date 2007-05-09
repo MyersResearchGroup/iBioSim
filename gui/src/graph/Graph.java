@@ -6,15 +6,12 @@ import java.awt.event.*;
 import java.text.*;
 import java.util.*;
 import javax.swing.*;
-
 import org.jfree.chart.*;
 import org.jfree.chart.axis.*;
 import org.jfree.chart.event.*;
 import org.jfree.chart.plot.*;
 import org.jfree.chart.renderer.xy.*;
 import org.jfree.data.xy.*;
-
-import reb2sac.core.gui.Reb2Sac;
 import biomodelsim.core.gui.*;
 import buttons.core.gui.*;
 
@@ -99,9 +96,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 	private BioModelSim biomodelsim; // tstubd gui
 
-	private JButton exportJPeg, exportPng, duplicate; // buttons
-
-	private Reb2Sac reb2sac;
+	private JButton exportJPeg, exportPng; // buttons
 
 	private HashMap<String, Paint> colors;
 
@@ -114,9 +109,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	public Graph(String file, Component component, String printer_track_quantity, String label,
 			JRadioButton monteCarlo, String sim, String printer_id, String outDir, int run,
 			String[] intSpecies, int readIn, XYSeriesCollection dataset, String time,
-			BioModelSim biomodelsim, Reb2Sac sac) {
+			BioModelSim biomodelsim) {
 		// initializes member variables
-		reb2sac = sac;
 		this.sim1 = sim;
 		this.run = run;
 		this.component = component;
@@ -188,13 +182,20 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			}
 		}
 		int kept = 0;
+		ArrayList<String> names = new ArrayList<String>();
 		if (!keep.isSelected()) {
+			for (int i = 0; i < dataset.getSeriesCount(); i++) {
+				names.add(dataset.getSeries(i).getKey().toString());
+			}
 			dataset = new XYSeriesCollection();
 		} else {
 			kept = dataset.getSeriesCount();
 		}
 		for (int i = 0; i < graphData.size(); i++) {
 			dataset.addSeries(graphData.get(i));
+			if (names.size() != 0) {
+				dataset.getSeries(i).setKey(names.get(i));
+			}
 		}
 		if (keep.isSelected()) {
 			boxes = new ArrayList<JCheckBox>();
@@ -215,10 +216,17 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		}
 
 		// creates the graph from the dataset and adds it to a chart panel
+		XYItemRenderer ren = null;
+		if (chart != null) {
+			ren = chart.getXYPlot().getRenderer();
+		}
 		chart = ChartFactory.createXYLineChart(label, time, printer_track_quantity, dataset,
 				PlotOrientation.VERTICAL, true, true, false);
 		chart.addProgressListener(this);
 		XYPlot plot = chart.getXYPlot();
+		if (ren != null) {
+			plot.setRenderer(ren);
+		}
 		XYLineAndShapeRenderer rend = (XYLineAndShapeRenderer) plot.getRenderer();
 		if (filled.isSelected()) {
 			rend.setShapesFilled(true);
@@ -349,10 +357,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		SpecialButtonHolder.add(changeSize);
 		exportJPeg = new JButton("Export As JPEG");
 		exportPng = new JButton("Export As PNG");
-		duplicate = new JButton("Duplicate");
 		exportJPeg.addActionListener(this);
 		exportPng.addActionListener(this);
-		duplicate.addActionListener(this);
 		ButtonHolder.add(exportJPeg);
 		ButtonHolder.add(exportPng);
 		JPanel AllButtonsHolder = new JPanel(new BorderLayout());
@@ -847,13 +853,6 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		// if the export as png button is clicked
 		else if (e.getSource() == exportPng) {
 			export(false);
-		}
-		// if the duplicate button is clicked
-		else if (e.getSource() == duplicate) {
-			if (reb2sac != null) {
-				Graph g = this;
-				reb2sac.addGraphTab(g);
-			}
 		}
 		// if one of the species check boxes is clicked
 		else {
