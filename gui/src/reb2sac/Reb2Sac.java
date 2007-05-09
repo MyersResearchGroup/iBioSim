@@ -128,8 +128,6 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 
 	private String userdefined;
 
-	private JTextField ssaFile; // text field for ssa file
-
 	private JCheckBox usingSSA; // check box for using ssa
 
 	private JComboBox availSpecies; // species for SSA
@@ -146,7 +144,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 
 	private JButton newSSA; // Buttons for SSA file
 
-	private JLabel ssaFileLabel, timeLabel; // Label for SSA
+	private JLabel timeLabel; // Label for SSA
 
 	private Object[] ssaList; // array for ssa JList
 
@@ -574,24 +572,12 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 
 		// Creates the ssa with user defined species level update feature tab
 		JPanel ssaPanel = new JPanel(new BorderLayout());
-		JPanel filePanel = new JPanel(new BorderLayout());
-		JPanel filePanel1 = new JPanel();
-		ssaFileLabel = new JLabel("User Defined Data File:");
-		ssaFileLabel.setEnabled(false);
-		ssaFile = new JTextField(39);
-		ssaFile.setText(userdefined);
-		ssaFile.setEnabled(false);
-		ssaFile.setEditable(false);
 		newSSA = new JButton("Clear");
 		newSSA.setEnabled(false);
 		newSSA.addActionListener(this);
 		usingSSA = new JCheckBox("Use User Defined Data File");
 		usingSSA.setSelected(false);
 		usingSSA.addActionListener(this);
-		filePanel1.add(ssaFileLabel);
-		filePanel1.add(ssaFile);
-		filePanel.add(usingSSA, "North");
-		filePanel.add(filePanel1, "Center");
 		ssa = new JList();
 		ssa.setEnabled(false);
 		ssa.addMouseListener(this);
@@ -641,7 +627,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		ssaAddPanel.add(ssaAddPanel1, "North");
 		ssaAddPanel.add(ssaAddPanel2, "Center");
 		ssaAddPanel.add(ssaAddPanel3, "South");
-		ssaPanel.add(filePanel, "North");
+		ssaPanel.add(usingSSA, "North");
 		ssaPanel.add(scroll5, "Center");
 		ssaPanel.add(ssaAddPanel, "South");
 		if (new File(userdefined).exists()) {
@@ -920,8 +906,6 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		// if the using ssa check box is clicked
 		else if (e.getSource() == usingSSA) {
 			if (usingSSA.isSelected()) {
-				ssaFileLabel.setEnabled(true);
-				ssaFile.setEnabled(true);
 				newSSA.setEnabled(true);
 				usingSSA.setSelected(true);
 				description.setEnabled(false);
@@ -944,7 +928,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 							step, limitLabel, limit, intervalLabel, interval, simulators,
 							simulatorsLabel, explanation, description, usingSSA);
 				}
-				if (!ssaFile.getText().trim().equals("")) {
+				if (!userdefined.equals("")) {
 					ssa.setEnabled(true);
 					timeLabel.setEnabled(true);
 					time.setEnabled(true);
@@ -960,8 +944,6 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				explanation.setEnabled(true);
 				simulators.setEnabled(true);
 				simulatorsLabel.setEnabled(true);
-				ssaFileLabel.setEnabled(false);
-				ssaFile.setEnabled(false);
 				newSSA.setEnabled(false);
 				usingSSA.setSelected(false);
 				ssa.setEnabled(false);
@@ -1183,7 +1165,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		else if (e.getSource() == newSSA) {
 			ssaList = new Object[0];
 			ssa.setListData(ssaList);
-			if (!ssaFile.getText().trim().equals("")) {
+			if (!userdefined.equals("")) {
 				ssa.setEnabled(true);
 				timeLabel.setEnabled(true);
 				time.setEnabled(true);
@@ -1371,9 +1353,9 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		} else if (nary.isSelected()) {
 			selectedButtons = "nary";
 		}
-		if (!ssaFile.getText().trim().equals("")) {
+		if (!userdefined.equals("")) {
 			try {
-				FileOutputStream out = new FileOutputStream(new File(ssaFile.getText().trim()));
+				FileOutputStream out = new FileOutputStream(new File(userdefined));
 				int[] indecies = ssa.getSelectedIndices();
 				ssaList = Buttons.getList(ssaList, ssa);
 				ssa.setSelectedIndices(indecies);
@@ -1389,7 +1371,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				out.write(output);
 				out.close();
 				if (!usingSSA.isSelected() && save.trim().equals("")) {
-					new File(ssaFile.getText().trim()).delete();
+					new File(userdefined).delete();
 				}
 			} catch (Exception e1) {
 				JOptionPane.showMessageDialog(biomodelsim.frame(),
@@ -1493,7 +1475,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		runProgram.createProperties(timeLimit, printInterval, timeStep, root + File.separator
 				+ outDir, rndSeed, run, termCond, intSpecies, printer_id, printer_track_quantity,
 				sbmlFile.split(File.separator), selectedButtons, this, sbmlFile, rap1, rap2, qss,
-				con, usingSSA, ssaFile.getText().trim(), sadFile.getText().trim(), new File(root
+				con, usingSSA, userdefined, sadFile.getText().trim(), new File(root
 						+ File.separator + outDir + File.separator + outDir + ".sad"));
 		int[] indecies = properties.getSelectedIndices();
 		props = Buttons.getList(props, properties);
@@ -1515,13 +1497,13 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		}
 		int exit = runProgram.execute(sbmlFile, sbml, dot, xhtml, this, ODE, monteCarlo, sim,
 				printer_id, printer_track_quantity, root + File.separator + outDir, run, nary, 1,
-				intSpecies, log, usingSSA, ssaFile.getText().trim(), biomodelsim, simTab, this);
+				intSpecies, log, usingSSA, userdefined, biomodelsim, simTab, this);
 		if (nary.isSelected() && exit == 0) {
 			new Nary_Run(this, amountTerm, ge, gt, eq, lt, le, quantity, simulators, sbmlFile
 					.split(File.separator), sbmlFile, sbml, dot, xhtml, nary, ODE, monteCarlo,
 					timeLimit, printInterval, root + File.separator + outDir, rndSeed, run,
 					printer_id, printer_track_quantity, termCond, intSpecies, rap1, rap2, qss, con,
-					log, usingSSA, ssaFile.getText().trim(), biomodelsim, simTab, this);
+					log, usingSSA, userdefined, biomodelsim, simTab, this);
 		}
 		running.setCursor(null);
 		running.dispose();
@@ -1849,9 +1831,9 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		} else if (nary.isSelected()) {
 			selectedButtons = "nary";
 		}
-		if (!ssaFile.getText().trim().equals("")) {
+		if (!userdefined.equals("")) {
 			try {
-				FileOutputStream out = new FileOutputStream(new File(ssaFile.getText().trim()));
+				FileOutputStream out = new FileOutputStream(new File(userdefined));
 				int[] indecies = ssa.getSelectedIndices();
 				ssaList = Buttons.getList(ssaList, ssa);
 				ssa.setSelectedIndices(indecies);
@@ -1867,7 +1849,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				out.write(output);
 				out.close();
 				if (!usingSSA.isSelected() && save.trim().equals("")) {
-					new File(ssaFile.getText().trim()).delete();
+					new File(userdefined).delete();
 				}
 			} catch (Exception e1) {
 				JOptionPane.showMessageDialog(biomodelsim.frame(),
@@ -1906,7 +1888,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		runProgram.createProperties(timeLimit, printInterval, timeStep, outDir, rndSeed, run,
 				termCond, intSpecies, printer_id, printer_track_quantity, sbmlFile
 						.split(File.separator), selectedButtons, this, sbmlFile, rap1, rap2, qss,
-				con, usingSSA, ssaFile.getText().trim(), sadFile.getText().trim(), new File(root
+				con, usingSSA, userdefined, sadFile.getText().trim(), new File(root
 						+ File.separator + outDir + File.separator + outDir + ".sad"));
 		int[] indecies = properties.getSelectedIndices();
 		props = Buttons.getList(props, properties);
@@ -2106,15 +2088,13 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				}
 				if (load.containsKey("simulation.time.series.species.level.file")) {
 					usingSSA.setEnabled(true);
-					ssaFileLabel.setEnabled(true);
-					ssaFile.setEnabled(true);
 					newSSA.setEnabled(true);
 					usingSSA.setSelected(true);
 					description.setEnabled(false);
 					explanation.setEnabled(false);
 					simulators.setEnabled(false);
 					simulatorsLabel.setEnabled(false);
-					ssaFile.setText(load.getProperty("simulation.time.series.species.level.file"));
+					userdefined = load.getProperty("simulation.time.series.species.level.file");
 					String getData = "";
 					try {
 						Scanner scan = new Scanner(new File(load
@@ -2149,13 +2129,10 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					ODE.setEnabled(false);
 					markov.setEnabled(false);
 				} else {
-					ssaFileLabel.setEnabled(false);
 					description.setEnabled(true);
 					explanation.setEnabled(true);
 					simulators.setEnabled(true);
 					simulatorsLabel.setEnabled(true);
-					ssaFileLabel.setEnabled(false);
-					ssaFile.setEnabled(false);
 					newSSA.setEnabled(false);
 					usingSSA.setSelected(false);
 					ssa.setEnabled(false);

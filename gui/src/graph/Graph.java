@@ -103,6 +103,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 	private Reb2Sac reb2sac;
 
+	private HashMap<String, Paint> colors;
+
+	private HashMap<String, Shape> shape;
+
 	/**
 	 * Creates a Graph Object from the data given and calls the private graph
 	 * helper method.
@@ -130,6 +134,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		}
 
 		// graph the output data
+		setUpShapesAndColors();
 		graph(file, component, printer_track_quantity, label, intSpecies, readIn);
 	}
 
@@ -970,7 +975,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	 * the title and labels of the chart.
 	 */
 	public void mouseClicked(MouseEvent e) {
-		JPanel titlePanel = new JPanel(new GridLayout(dataset.getSeriesCount() + 3, 2));
+		JPanel titlePanel = new JPanel(new GridLayout(dataset.getSeriesCount() + 3, 4));
 		JLabel titleLabel = new JLabel("Title:");
 		JLabel xLabel = new JLabel("X-Axis Label:");
 		JLabel yLabel = new JLabel("Y-Axis Label:");
@@ -979,20 +984,48 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		JTextField y = new JTextField(chart.getXYPlot().getRangeAxis().getLabel(), 20);
 		titlePanel.add(titleLabel);
 		titlePanel.add(title);
+		titlePanel.add(new JPanel());
+		titlePanel.add(new JPanel());
 		titlePanel.add(xLabel);
 		titlePanel.add(x);
+		titlePanel.add(new JPanel());
+		titlePanel.add(new JPanel());
 		titlePanel.add(yLabel);
 		titlePanel.add(y);
+		titlePanel.add(new JPanel());
+		titlePanel.add(new JPanel());
 		ArrayList<JLabel> seriesLabel = new ArrayList<JLabel>();
 		ArrayList<JTextField> series = new ArrayList<JTextField>();
+		ArrayList<JComboBox> colors = new ArrayList<JComboBox>();
+		ArrayList<JComboBox> shapes = new ArrayList<JComboBox>();
 		for (int i = 0; i < dataset.getSeriesCount(); i++) {
 			seriesLabel.add(new JLabel("Species " + (i + 1) + " Label"));
 			series.add(new JTextField(dataset.getSeries(i).getKey().toString(), 20));
+			Object[] col = this.colors.keySet().toArray();
+			Arrays.sort(col);
+			Object[] shap = this.shape.keySet().toArray();
+			Arrays.sort(shap);
+			JComboBox colBox = new JComboBox(col);
+			for (Object c : col) {
+				if (this.colors.get(c).equals(chart.getXYPlot().getRenderer().getSeriesPaint(i))) {
+					colBox.setSelectedItem(c);
+				}
+			}
+			JComboBox shapBox = new JComboBox(shap);
+			for (Object s : shap) {
+				if (this.shape.get(s).equals(chart.getXYPlot().getRenderer().getSeriesShape(i))) {
+					shapBox.setSelectedItem(s);
+				}
+			}
+			colors.add(colBox);
+			shapes.add(shapBox);
 			titlePanel.add(seriesLabel.get(i));
 			titlePanel.add(series.get(i));
+			titlePanel.add(colors.get(i));
+			titlePanel.add(shapes.get(i));
 		}
 		JScrollPane scroll = new JScrollPane();
-		scroll.setPreferredSize(new Dimension(500, 100));
+		scroll.setPreferredSize(new Dimension(900, 300));
 		scroll.setViewportView(titlePanel);
 		Object[] options = { "Ok", "Cancel" };
 		int value = JOptionPane.showOptionDialog(biomodelsim.frame(), scroll,
@@ -1006,6 +1039,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			chart.getXYPlot().getRangeAxis().setLabel(printer_track_quantity1);
 			for (int i = 0; i < dataset.getSeriesCount(); i++) {
 				dataset.getSeries(i).setKey(series.get(i).getText().trim());
+				chart.getXYPlot().getRenderer().setSeriesPaint(i,
+						this.colors.get(colors.get(i).getSelectedItem()));
+				chart.getXYPlot().getRenderer().setSeriesShape(i,
+						this.shape.get(shapes.get(i).getSelectedItem()));
 				boxes.get(i).setText(series.get(i).getText().trim());
 				if (boxes.get(i).isSelected()) {
 					XYPlot plot = chart.getXYPlot();
@@ -1038,6 +1075,56 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	 * This method currently does nothing.
 	 */
 	public void mouseExited(MouseEvent e) {
+	}
+
+	private void setUpShapesAndColors() {
+		DefaultDrawingSupplier draw = new DefaultDrawingSupplier();
+		colors = new HashMap<String, Paint>();
+		shape = new HashMap<String, Shape>();
+		colors.put("Red", draw.getNextPaint());
+		colors.put("Blue", draw.getNextPaint());
+		colors.put("Green", draw.getNextPaint());
+		colors.put("Yellow", draw.getNextPaint());
+		colors.put("Magenta", draw.getNextPaint());
+		colors.put("Cyan", draw.getNextPaint());
+		colors.put("Tan", draw.getNextPaint());
+		colors.put("Gray (Dark)", draw.getNextPaint());
+		colors.put("Red (Dark)", draw.getNextPaint());
+		colors.put("Blue (Dark)", draw.getNextPaint());
+		colors.put("Green (Dark)", draw.getNextPaint());
+		colors.put("Yellow (Dark)", draw.getNextPaint());
+		colors.put("Magenta (Dark)", draw.getNextPaint());
+		colors.put("Cyan (Dark)", draw.getNextPaint());
+		colors.put("Black", draw.getNextPaint());
+		colors.put("Red 2", draw.getNextPaint());
+		colors.put("Blue 2", draw.getNextPaint());
+		colors.put("Green 2", draw.getNextPaint());
+		colors.put("Yellow 2", draw.getNextPaint());
+		colors.put("Magenta 2", draw.getNextPaint());
+		colors.put("Cyan 2", draw.getNextPaint());
+		colors.put("Gray (Light)", draw.getNextPaint());
+		colors.put("Red (Extra Dark)", draw.getNextPaint());
+		colors.put("Blue (Extra Dark)", draw.getNextPaint());
+		colors.put("Green (Extra Dark)", draw.getNextPaint());
+		colors.put("Yellow (Extra Dark)", draw.getNextPaint());
+		colors.put("Magenta (Extra Dark)", draw.getNextPaint());
+		colors.put("Cyan (Extra Dark)", draw.getNextPaint());
+		colors.put("Red (Light)", draw.getNextPaint());
+		colors.put("Blue (Light)", draw.getNextPaint());
+		colors.put("Green (Light)", draw.getNextPaint());
+		colors.put("Yellow (Light)", draw.getNextPaint());
+		colors.put("Magenta (Light)", draw.getNextPaint());
+		colors.put("Cyan (Light)", draw.getNextPaint());
+		shape.put("Square", draw.getNextShape());
+		shape.put("Circle", draw.getNextShape());
+		shape.put("Triangle", draw.getNextShape());
+		shape.put("Diamond", draw.getNextShape());
+		shape.put("Vertical Rectangle", draw.getNextShape());
+		shape.put("Upside Down Triangle", draw.getNextShape());
+		shape.put("Half Circle", draw.getNextShape());
+		shape.put("Arrow", draw.getNextShape());
+		shape.put("Horizontal Rectangle", draw.getNextShape());
+		shape.put("Backwards Arrow", draw.getNextShape());
 	}
 
 	/**
