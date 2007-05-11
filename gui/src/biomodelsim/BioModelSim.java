@@ -1241,7 +1241,7 @@ public class BioModelSim implements MouseListener, ActionListener {
 				String openFile = "";
 				String odeGraphFile = "";
 				String stochGraphFile = "";
-				// String graphFile = "";
+				int run = 0;
 				for (int i = 0; i < list.length; i++) {
 					if (!(new File(list[i]).isDirectory()) && list[i].length() > 4) {
 						String end = "";
@@ -1261,8 +1261,14 @@ public class BioModelSim implements MouseListener, ActionListener {
 								openFile = null;
 							}
 						} else if (end.equals(".tsd") || end.equals(".dat") || end.equals(".csv")) {
-							if (list[i].contains("run-1.")) {
-								stochGraphFile = filename + File.separator + list[i];
+							if (list[i].contains("run-")) {
+								int tempNum = Integer.parseInt(list[i].substring(4, list[i]
+										.length()
+										- end.length()));
+								if (tempNum > run) {
+									run = tempNum;
+									stochGraphFile = filename + File.separator + list[i];
+								}
 							} else if (list[i].contains("euler-run.")
 									|| list[i].contains("gear1-run.")
 									|| list[i].contains("gear2-run.")
@@ -1274,22 +1280,6 @@ public class BioModelSim implements MouseListener, ActionListener {
 						}
 					}
 				}
-				// if (graphFile.equals("")) {
-				// for (int i = 0; i < list.length; i++) {
-				// if (!(new File(list[i]).isDirectory())) {
-				// String end = "";
-				// for (int j = 1; j < 5; j++) {
-				// end = list[i].charAt(list[i].length() - j) + end;
-				// }
-				// if (end.equals(".tsd") || end.equals(".dat") ||
-				// end.equals(".csv")) {
-				// if (!list[i].equals("user-defined.dat")) {
-				// graphFile = filename + File.separator + list[i];
-				// }
-				// }
-				// }
-				// }
-				// }
 				if (!getAFile.equals("")) {
 					String[] split = filename.split(File.separator);
 					JTabbedPane simTab = new JTabbedPane();
@@ -1305,12 +1295,12 @@ public class BioModelSim implements MouseListener, ActionListener {
 					simTab.addTab("Learn", learn);
 					simTab.getComponentAt(simTab.getComponents().length - 1).setName("Learn");
 					if (!odeGraphFile.equals("")) {
-						simTab.addTab("ODEGraph", reb2sac.createGraph(odeGraphFile));
+						simTab.addTab("ODEGraph", reb2sac.createGraph(odeGraphFile, 1));
 						simTab.getComponentAt(simTab.getComponents().length - 1)
 								.setName("ODEGraph");
 					}
 					if (!stochGraphFile.equals("")) {
-						simTab.addTab("StochGraph", reb2sac.createGraph(stochGraphFile));
+						simTab.addTab("StochGraph", reb2sac.createGraph(stochGraphFile, run));
 						simTab.getComponentAt(simTab.getComponents().length - 1).setName(
 								"StochGraph");
 					}
@@ -1404,6 +1394,10 @@ public class BioModelSim implements MouseListener, ActionListener {
 	}
 
 	public void mouseExited(MouseEvent e) {
+	}
+
+	public JMenuItem getExitButton() {
+		return exit;
 	}
 
 	/**

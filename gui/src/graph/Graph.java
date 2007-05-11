@@ -139,6 +139,15 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	private void graph(String file, Component component, String printer_track_quantity,
 			String label, String[] intSpecies, int readIn) {
 		// reads output data
+		ArrayList<ShapeAndPaint> shapesAndPaints = new ArrayList<ShapeAndPaint>();
+		if (chart != null) {
+			for (int i = 0; i < boxes.size(); i++) {
+				if (boxes.get(i).isSelected()) {
+					shapesAndPaints.add(new ShapeAndPaint(chart.getXYPlot().getRenderer()
+							.getSeriesShape(i), chart.getXYPlot().getRenderer().getSeriesPaint(i)));
+				}
+			}
+		}
 		if (average != null) {
 			readData(file, component, printer_track_quantity, label, 2);
 		} else {
@@ -152,17 +161,17 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						boxes.get(i - 1).setSelected(true);
 					}
 				}
-				keep = new JCheckBox("Keep Graphed Data");
-				if (dataset.getSeriesCount() != 0) {
-					keep.setSelected(true);
-				} else {
-					keep.setSelected(false);
-				}
-				shapes = new JCheckBox("Visible Shapes");
-				shapes.setSelected(true);
-				filled = new JCheckBox("Filled In Shapes");
-				filled.setSelected(true);
 			}
+			keep = new JCheckBox("Keep Graphed Data");
+			if (dataset.getSeriesCount() != 0) {
+				keep.setSelected(true);
+			} else {
+				keep.setSelected(false);
+			}
+			shapes = new JCheckBox("Visible Shapes");
+			shapes.setSelected(true);
+			filled = new JCheckBox("Filled In Shapes");
+			filled.setSelected(true);
 		}
 		if (readIn != -1) {
 			file = outDir1 + File.separator + "run-" + readIn + "."
@@ -176,16 +185,21 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		for (int i = 1; i < graphSpecies.size(); i++) {
 			graphData.add(new XYSeries(graphSpecies.get(i)));
 		}
-		for (int i = 0; i < (data.get(0)).size(); i++) {
-			for (int j = 1; j < graphSpecies.size(); j++) {
-				graphData.get(j - 1).add((data.get(0)).get(i), (data.get(j)).get(i));
+		if (data.size() != 0) {
+			for (int i = 0; i < (data.get(0)).size(); i++) {
+				for (int j = 1; j < graphSpecies.size(); j++) {
+					graphData.get(j - 1).add((data.get(0)).get(i), (data.get(j)).get(i));
+				}
 			}
 		}
+		boolean equal = dataset.getSeriesCount() == graphData.size();
 		int kept = 0;
 		ArrayList<String> names = new ArrayList<String>();
 		if (!keep.isSelected()) {
-			for (int i = 0; i < dataset.getSeriesCount(); i++) {
-				names.add(dataset.getSeries(i).getKey().toString());
+			if (equal) {
+				for (int i = 0; i < dataset.getSeriesCount(); i++) {
+					names.add(dataset.getSeries(i).getKey().toString());
+				}
 			}
 			dataset = new XYSeriesCollection();
 		} else {
@@ -224,7 +238,12 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				PlotOrientation.VERTICAL, true, true, false);
 		chart.addProgressListener(this);
 		XYPlot plot = chart.getXYPlot();
-		if (ren != null) {
+		if (keep.isSelected()) {
+			for (int i = 0; i < shapesAndPaints.size(); i++) {
+				plot.getRenderer().setSeriesShape(i, shapesAndPaints.get(i).getShape());
+				plot.getRenderer().setSeriesPaint(i, shapesAndPaints.get(i).getPaint());
+			}
+		} else if (ren != null && equal) {
 			plot.setRenderer(ren);
 		}
 		XYLineAndShapeRenderer rend = (XYLineAndShapeRenderer) plot.getRenderer();
@@ -318,16 +337,19 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		inputHolder.add(changeHolder2, "South");
 
 		// creates combo box for choosing which run to display
-		String[] add = new String[run + 3];
-		add[0] = "Average";
-		add[1] = "Variance";
-		add[2] = "Standard Deviation";
+		ArrayList<String> add = new ArrayList<String>();
+		add.add("Average");
+		add.add("Variance");
+		add.add("Standard Deviation");
 		for (int i = 0; i < run; i++) {
-			add[i + 3] = "" + (i + 1);
+			if (new File(outDir1 + File.separator + "run-" + (i + 1) + "."
+					+ printer_id1.substring(0, printer_id1.length() - 8)).exists()) {
+				add.add("" + (i + 1));
+			}
 		}
 		JLabel selectLabel = new JLabel("Select Next:");
 		if (monteCarlo.isSelected()) {
-			select = new JComboBox(add);
+			select = new JComboBox(add.toArray());
 			if (label.contains("variance")) {
 				select.setSelectedItem("Variance");
 			} else if (label.contains("deviation")) {
@@ -400,7 +422,6 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		if (label.contains("variance")) {
 			data = variance;
 		} else if (label.contains("deviation")) {
-
 			data = deviation;
 		} else if (label.contains("average") && num != 1) {
 			data = average;
@@ -457,8 +478,13 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						if (getNum == 0) {
 							boolean first = true;
 							int runsToMake;
+							int firstOne = -1;
 							if (label.contains("average")) {
 								runsToMake = run;
+								String[] findNum = file.split(File.separator);
+								String search = findNum[findNum.length - 1];
+								firstOne = Integer.parseInt(search
+										.substring(4, search.length() - 4));
 							} else {
 								runsToMake = 1;
 							}
@@ -474,22 +500,57 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							}
 							for (int j = 0; j < runsToMake; j++) {
 								int counter = 1;
+								int skip = firstOne;
 								if (!first) {
-									input = new BufferedInputStream(new ProgressMonitorInputStream(
-											component, "Reading Reb2sac Output Data From "
-													+ new File(file.substring(0, file.length() - 5)
-															+ (j + 1)
-															+ "."
-															+ printer_id1.substring(0, printer_id1
-																	.length() - 8)).getName(),
-											new FileInputStream(new File(file.substring(0, file
-													.length() - 5)
-													+ (j + 1)
-													+ "."
-													+ printer_id1.substring(0,
-															printer_id1.length() - 8)))));
-									for (int i = 0; i < readCount; i++) {
-										input.read();
+									if (firstOne != 1) {
+										j--;
+										firstOne = 1;
+									}
+									boolean loop = true;
+									while (loop && j < runsToMake && (j + 1) != skip) {
+										if (new File(outDir1
+												+ File.separator
+												+ "run-"
+												+ (j + 1)
+												+ "."
+												+ printer_id1
+														.substring(0, printer_id1.length() - 8))
+												.exists()) {
+											input = new BufferedInputStream(
+													new ProgressMonitorInputStream(
+															component,
+															"Reading Reb2sac Output Data From "
+																	+ new File(
+																			outDir1
+																					+ File.separator
+																					+ "run-"
+																					+ (j + 1)
+																					+ "."
+																					+ printer_id1
+																							.substring(
+																									0,
+																									printer_id1
+																											.length() - 8))
+																			.getName(),
+															new FileInputStream(
+																	new File(
+																			outDir1
+																					+ File.separator
+																					+ "run-"
+																					+ (j + 1)
+																					+ "."
+																					+ printer_id1
+																							.substring(
+																									0,
+																									printer_id1
+																											.length() - 8)))));
+											for (int i = 0; i < readCount; i++) {
+												input.read();
+											}
+											loop = false;
+										} else {
+											j++;
+										}
 									}
 								}
 								reading = true;
@@ -1118,12 +1179,12 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		shape.put("Circle", draw.getNextShape());
 		shape.put("Triangle", draw.getNextShape());
 		shape.put("Diamond", draw.getNextShape());
-		shape.put("Vertical Rectangle", draw.getNextShape());
-		shape.put("Upside Down Triangle", draw.getNextShape());
-		shape.put("Half Circle", draw.getNextShape());
+		shape.put("Rectangle (Vertical)", draw.getNextShape());
+		shape.put("Triangle (Upside Down)", draw.getNextShape());
+		shape.put("Circle (Half)", draw.getNextShape());
 		shape.put("Arrow", draw.getNextShape());
-		shape.put("Horizontal Rectangle", draw.getNextShape());
-		shape.put("Backwards Arrow", draw.getNextShape());
+		shape.put("Rectangle (Horizontal)", draw.getNextShape());
+		shape.put("Arrow (Backwards)", draw.getNextShape());
 	}
 
 	/**
@@ -1262,6 +1323,25 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		} catch (IOException e1) {
 			JOptionPane.showMessageDialog(biomodelsim.frame(), "Unable To Save File!", "Error",
 					JOptionPane.ERROR_MESSAGE);
+		}
+	}
+
+	private class ShapeAndPaint {
+		private Shape shape;
+
+		private Paint paint;
+
+		private ShapeAndPaint(Shape s, Paint p) {
+			shape = s;
+			paint = p;
+		}
+
+		private Shape getShape() {
+			return shape;
+		}
+
+		private Paint getPaint() {
+			return paint;
 		}
 	}
 }
