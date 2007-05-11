@@ -1462,6 +1462,35 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		running.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 		Run runProgram = new Run();
 		cancel.addActionListener(runProgram);
+		biomodelsim.getExitButton().addActionListener(runProgram);
+		WindowListener[] ws = biomodelsim.frame().getWindowListeners();
+		for (int j = 0; j < ws.length; j++) {
+			biomodelsim.frame().removeWindowListener(ws[j]);
+		}
+		WindowListener window = new WindowListener() {
+			public void windowClosing(WindowEvent arg0) {
+				biomodelsim.getExitButton().doClick();
+			}
+
+			public void windowOpened(WindowEvent arg0) {
+			}
+
+			public void windowClosed(WindowEvent arg0) {
+			}
+
+			public void windowIconified(WindowEvent arg0) {
+			}
+
+			public void windowDeiconified(WindowEvent arg0) {
+			}
+
+			public void windowActivated(WindowEvent arg0) {
+			}
+
+			public void windowDeactivated(WindowEvent arg0) {
+			}
+		};
+		biomodelsim.frame().addWindowListener(window);
 		if (sadFile.getText().trim().length() != 0) {
 			try {
 				FileOutputStream out = new FileOutputStream(new File(root + File.separator + outDir
@@ -1503,9 +1532,10 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				}
 			}
 		}
-		int exit = runProgram.execute(sbmlFile, sbml, dot, xhtml, this, ODE, monteCarlo, sim,
-				printer_id, printer_track_quantity, root + File.separator + outDir, run, nary, 1,
-				intSpecies, log, usingSSA, userdefined, biomodelsim, simTab);
+		int exit = runProgram.execute(sbmlFile, sbml, dot, xhtml, biomodelsim.frame(), ODE,
+				monteCarlo, sim, printer_id, printer_track_quantity,
+				root + File.separator + outDir, run, nary, 1, intSpecies, log, usingSSA,
+				userdefined, biomodelsim, simTab);
 		if (nary.isSelected() && exit == 0) {
 			new Nary_Run(this, amountTerm, ge, gt, eq, lt, le, quantity, simulators, sbmlFile
 					.split(File.separator), sbmlFile, sbml, dot, xhtml, nary, ODE, monteCarlo,
@@ -1515,6 +1545,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		}
 		running.setCursor(null);
 		running.dispose();
+		biomodelsim.getExitButton().removeActionListener(runProgram);
 		biomodelsim.refreshTree();
 	}
 
@@ -2168,27 +2199,9 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		}
 	}
 
-	public Graph createGraph(String graphFile) {
+	public Graph createGraph(String graphFile, int run) {
 		String outDir = ".";
-		int run = 1;
 		outDir = root + File.separator + simName;
-		try {
-			if (runs.isEnabled()) {
-				run = Integer.parseInt(runs.getText().trim());
-				if (run < 0) {
-					JOptionPane.showMessageDialog(biomodelsim.frame(),
-							"Must Enter A Positive Integer In The Runs Field."
-									+ "\nProceding With Default:  1", "Error",
-							JOptionPane.ERROR_MESSAGE);
-					run = 1;
-				}
-			}
-		} catch (Exception e1) {
-			JOptionPane.showMessageDialog(biomodelsim.frame(),
-					"Must Enter A Positive Integer In The Runs Field.", "Error",
-					JOptionPane.ERROR_MESSAGE);
-			return null;
-		}
 		String end = "";
 		if (graphFile.length() >= 4) {
 			for (int i = 0; i < 4; i++) {
