@@ -104,6 +104,7 @@
 
     <!-- Delete classfiles built during previous builds.  Leave directories -->
     <target name="pre-clean">
+	<delete dir="${dist.dir}"/>
 	<delete dir="${build.dir}"/>
         <delete dir="${doc.dir}"/>
     </target>
