@@ -482,7 +482,7 @@ public class Learn extends JPanel implements ActionListener {
 				JPanel label = new JPanel(new GridLayout());
 				label.add(new JLabel("Do Not Use"));
 				label.add(new JLabel("Species"));
-				label.add(new JLabel("Number Of Levels"));
+				label.add(new JLabel("Number Of Bins"));
 				for (int i = 0; i < max - 3; i++) {
 					label.add(new JLabel("cutoff " + (i + 1)));
 				}
@@ -595,7 +595,7 @@ public class Learn extends JPanel implements ActionListener {
 				JPanel label = new JPanel(new GridLayout());
 				label.add(new JLabel("Do Not Use"));
 				label.add(new JLabel("Species"));
-				label.add(new JLabel("Number Of Levels"));
+				label.add(new JLabel("Number Of Bins"));
 				for (int i = 0; i < Integer.parseInt((String) numBins.getSelectedItem()) - 1; i++) {
 					label.add(new JLabel("cutoff " + (i + 1)));
 				}

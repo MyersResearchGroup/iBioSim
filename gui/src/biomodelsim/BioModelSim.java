@@ -67,8 +67,6 @@ public class BioModelSim implements MouseListener, ActionListener {
 
 	private JPopupMenu popup; // popup menu
 
-	private String projDir;
-
 	/**
 	 * This is the constructor for the Tstubd class. It initializes all the
 	 * input fields, puts them on panels, adds the panels to the frame, and then
@@ -573,19 +571,15 @@ public class BioModelSim implements MouseListener, ActionListener {
 			String filename = Buttons.browse(frame, null, null, JFileChooser.DIRECTORIES_ONLY,
 					"New");
 			if (!filename.equals("")) {
+				new File(filename).mkdir();
+				try {
+					new FileWriter(new File(filename + File.separator + ".prj")).close();
+				} catch (IOException e1) {
+					JOptionPane.showMessageDialog(frame, "Unable create a new project.", "Error",
+							JOptionPane.ERROR_MESSAGE);
+					return;
+				}
 				root = filename;
-				new File(root).mkdir();
-				// try {
-				// new FileWriter(new File(
-				// root
-				// + File.separator
-				// + root
-				// .substring(root.length()
-				// - root.split(File.separator)[root
-				// .split(File.separator).length - 1]
-				// .length()) + ".prj")).close();
-				// } catch (IOException e1) {
-				// }
 				refresh();
 				tab.removeAll();
 			}
@@ -593,29 +587,28 @@ public class BioModelSim implements MouseListener, ActionListener {
 		// if the open project menu item is selected
 		else if (e.getSource() == openProj) {
 			File f;
-			if (projDir == null) {
+			if (root == null) {
 				f = null;
 			} else {
-				f = new File(projDir);
+				f = new File(root);
 			}
-			projDir = Buttons.browse(frame, f, null, JFileChooser.DIRECTORIES_ONLY, "Open");
+			String projDir = Buttons.browse(frame, f, null, JFileChooser.DIRECTORIES_ONLY, "Open");
 			if (!projDir.equals("")) {
 				if (new File(projDir).isDirectory()) {
-					// boolean isProject = false;
-					// for (String temp : new File(projDir).list()) {
-					// if (temp.contains(".prj")) {
-					// isProject = true;
-					// }
-					// }
-					// if (isProject) {
-					root = projDir;
-					refresh();
-					tab.removeAll();
-					// } else {
-					// JOptionPane.showMessageDialog(frame, "You must select a
-					// valid project.",
-					// "Error", JOptionPane.ERROR_MESSAGE);
-					// }
+					boolean isProject = false;
+					for (String temp : new File(projDir).list()) {
+						if (temp.equals(".prj")) {
+							isProject = true;
+						}
+					}
+					if (isProject) {
+						root = projDir;
+						refresh();
+						tab.removeAll();
+					} else {
+						JOptionPane.showMessageDialog(frame, "You must select a valid project.",
+								"Error", JOptionPane.ERROR_MESSAGE);
+					}
 				} else {
 					JOptionPane.showMessageDialog(frame, "You must select a valid project.",
 							"Error", JOptionPane.ERROR_MESSAGE);
@@ -732,8 +725,8 @@ public class BioModelSim implements MouseListener, ActionListener {
 		// if the import sbml menu item is selected
 		else if (e.getSource() == importSbml) {
 			if (root != null) {
-				String filename = Buttons
-						.browse(frame, null, null, JFileChooser.FILES_ONLY, "Open");
+				String filename = Buttons.browse(frame, new File(root), null,
+						JFileChooser.FILES_ONLY, "Open");
 				if (!filename.equals("")) {
 					String[] file = filename.split(File.separator);
 					try {

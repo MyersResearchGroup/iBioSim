@@ -224,7 +224,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		simulators = new JComboBox(odeSimulators);
 		simulators.setSelectedItem("rkf45");
 		simulators.addActionListener(this);
-		limit = new JTextField("0.0", 39);
+		limit = new JTextField("100.0", 39);
 		interval = new JTextField("1.0", 15);
 		step = new JTextField("1.0", 15);
 		int next = 1;
@@ -1210,7 +1210,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 	 * simulation.
 	 */
 	public void run() {
-		double timeLimit = 0.0;
+		double timeLimit = 100.0;
 		double printInterval = 1.0;
 		double timeStep = 1.0;
 		String outDir = "";
@@ -1728,7 +1728,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 	 * Saves the simulate options.
 	 */
 	public void save() {
-		double timeLimit = 0.0;
+		double timeLimit = 100.0;
 		double printInterval = 1.0;
 		double timeStep = 1.0;
 		String outDir = ".";
