@@ -40,7 +40,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 
 	private JList compartments; // JList of compartments
 
-	private JTextField compName, compID;
+	private JTextField compID;// , compName;
 
 	private JButton addSaveCompart, cancelCompart;
 
@@ -52,7 +52,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 
 	private JList species; // JList of species
 
-	private JTextField name, ID, init; // species text fields
+	private JTextField ID, init;// , name; // species text fields
 
 	private JComboBox comp; // compartment combo box
 
@@ -61,14 +61,6 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	private JFrame speciesFrame; // frame for editting species
 
 	private boolean amount; // determines if the species have amount set
-
-	private boolean model; // determines if the model has id set
-
-	private boolean usingParamId; // determines if the parameters have id set
-
-	private boolean usingReacId; // determines if the reactions have id set
-
-	private boolean id;
 
 	private boolean change; // determines if any changes were made
 
@@ -93,7 +85,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	/*
 	 * parameters text fields
 	 */
-	private JTextField paramName, paramID, paramValue;
+	private JTextField paramID, paramValue;// , paramName;
 
 	private JButton addSaveParams, cancelParams; // edit parameters buttons
 
@@ -112,14 +104,9 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	private JFrame reacParameterFrame;
 
 	/*
-	 * determines if the reations parameters have id set
-	 */
-	private boolean reacUsingParamId;
-
-	/*
 	 * reaction parameters text fields
 	 */
-	private JTextField reacParamName, reacParamID, reacParamValue;
+	private JTextField reacParamID, reacParamValue;// , reacParamName;
 
 	/*
 	 * edit reaction parameters buttons
@@ -128,7 +115,9 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 
 	private ArrayList<Parameter> changedParameters; // ArrayList of parameters
 
-	private JTextField reacName, reacID; // reaction name and id text fields
+	private JTextField reacID;// , reacName; // reaction name and id text
+
+	// fields
 
 	private JComboBox reacReverse; // reaction reversible combo box
 
@@ -191,6 +180,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 
 	private Log log;
 
+	private ArrayList<String> usedIDs;
+
 	/**
 	 * Creates a new SBML_Editor and sets up the frame where the user can edit a
 	 * new sbml file.
@@ -233,6 +224,28 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			model = document.createModel();
 		}
 
+		usedIDs = new ArrayList<String>();
+		ListOf ids = model.getListOfCompartments();
+		for (int i = 0; i < ids.getNumItems(); i++) {
+			usedIDs.add(((Compartment) ids.get(i)).getId());
+		}
+		ids = model.getListOfParameters();
+		for (int i = 0; i < ids.getNumItems(); i++) {
+			usedIDs.add(((Parameter) ids.get(i)).getId());
+		}
+		ids = model.getListOfReactions();
+		for (int i = 0; i < ids.getNumItems(); i++) {
+			usedIDs.add(((Reaction) ids.get(i)).getId());
+			ListOf ids2 = ((Reaction) ids.get(i)).getKineticLaw().getListOfParameters();
+			for (int j = 0; j < ids2.getNumItems(); j++) {
+				usedIDs.add(((Parameter) ids2.get(j)).getId());
+			}
+		}
+		ids = model.getListOfSpecies();
+		for (int i = 0; i < ids.getNumItems(); i++) {
+			usedIDs.add(((Species) ids.get(i)).getId());
+		}
+
 		// sets up the compartments editor
 		JPanel comp = new JPanel(new BorderLayout());
 		JPanel addRemComp = new JPanel();
@@ -253,17 +266,13 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		scroll.setViewportView(compartments);
 		ListOf listOfCompartments = model.getListOfCompartments();
 		ArrayList<String> sbml = new ArrayList<String>();
-		id = false;
 		for (int i = 0; i < model.getNumCompartments(); i++) {
 			Compartment compartment = (Compartment) listOfCompartments.get(i);
-			if (compartment.isSetId()) {
-				sbml.add(compartment.getId());
-				id = true;
-			} else {
-				sbml.add(compartment.getName());
-			}
+			sbml.add(compartment.getId());
 		}
-		comps = sbml.toArray();
+		Object[] sbmlList = sbml.toArray();
+		Arrays.sort(sbmlList);
+		comps = sbmlList;
 		compartments.setListData(comps);
 		compartments.addMouseListener(this);
 		comp.add(compartmentsLabel, "North");
@@ -295,10 +304,12 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		for (int i = 0; i < model.getNumSpecies(); i++) {
 			Species species = (Species) listOfSpecies.get(i);
 			amount = species.isSetInitialAmount();
-			sbml.add(species.getName() + " " + species.getCompartment() + " "
+			sbml.add(species.getId() + " " + species.getCompartment() + " "
 					+ species.getInitialAmount());
 		}
-		specs = sbml.toArray();
+		sbmlList = sbml.toArray();
+		Arrays.sort(sbmlList);
+		specs = sbmlList;
 		species.setListData(specs);
 		species.setSelectedIndex(0);
 		species.addMouseListener(this);
@@ -322,22 +333,18 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		reactions = new JList();
 		reactions.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		JScrollPane scroll2 = new JScrollPane();
-		scroll2.setMinimumSize(new Dimension(260, 220));
-		scroll2.setPreferredSize(new Dimension(276, 152));
+		scroll2.setMinimumSize(new Dimension(400, 220));
+		scroll2.setPreferredSize(new Dimension(436, 152));
 		scroll2.setViewportView(reactions);
 		ListOf listOfReactions = model.getListOfReactions();
 		sbml = new ArrayList<String>();
 		for (int i = 0; i < model.getNumReactions(); i++) {
 			Reaction reaction = (Reaction) listOfReactions.get(i);
-			if (reaction.isSetName()) {
-				usingReacId = false;
-				sbml.add(reaction.getName());
-			} else {
-				usingReacId = true;
-				sbml.add(reaction.getId());
-			}
+			sbml.add(reaction.getId());
 		}
-		reacts = sbml.toArray();
+		sbmlList = sbml.toArray();
+		Arrays.sort(sbmlList);
+		reacts = sbmlList;
 		reactions.setListData(reacts);
 		reactions.setSelectedIndex(0);
 		reactions.addMouseListener(this);
@@ -366,17 +373,13 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		scroll3.setViewportView(parameters);
 		ListOf listOfParameters = model.getListOfParameters();
 		sbml = new ArrayList<String>();
-		usingParamId = false;
 		for (int i = 0; i < model.getNumParameters(); i++) {
 			Parameter parameter = (Parameter) listOfParameters.get(i);
-			if (parameter.isSetId()) {
-				usingParamId = true;
-				sbml.add(parameter.getId() + " " + parameter.getValue());
-			} else {
-				sbml.add(parameter.getName() + " " + parameter.getValue());
-			}
+			sbml.add(parameter.getId() + " " + parameter.getValue());
 		}
-		params = sbml.toArray();
+		sbmlList = sbml.toArray();
+		Arrays.sort(sbmlList);
+		params = sbmlList;
 		parameters.setListData(params);
 		parameters.setSelectedIndex(0);
 		parameters.addMouseListener(this);
@@ -395,13 +398,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		mainPanelCenterDown.add(param);
 		mainPanelCenter.add(mainPanelCenterUp, "North");
 		mainPanelCenter.add(mainPanelCenterDown, "South");
-		if (model.isSetId()) {
-			modelID = new JTextField(model.getId(), 20);
-			this.model = true;
-		} else {
-			modelID = new JTextField(model.getName(), 20);
-			this.model = false;
-		}
+		modelID = new JTextField(model.getId(), 50);
 		modelID.addKeyListener(this);
 		JLabel modelIDLabel = new JLabel("Model ID:");
 		mainPanelNorth.add(modelIDLabel);
@@ -460,7 +457,15 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		}
 		// if the remove compartment button is clicked
 		else if (e.getSource() == removeCompart) {
-			document.getModel().getListOfCompartments().remove(compartments.getSelectedIndex());
+			Compartment tempComp = document.getModel().getCompartment(
+					(String) compartments.getSelectedValue());
+			ListOf c = document.getModel().getListOfCompartments();
+			for (int i = 0; i < c.getNumItems(); i++) {
+				if (((Compartment) c.get(i)).getId().equals(tempComp.getId())) {
+					c.remove(i);
+				}
+			}
+			usedIDs.remove(compartments.getSelectedValue());
 			Buttons.remove(compartments, comps);
 		}
 		// if the add species button is clicked
@@ -483,34 +488,36 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					for (int j = 0; j < reaction.getNumProducts(); j++) {
 						if (reaction.getProduct(j).isSetSpecies()) {
 							String specRef = reaction.getProduct(j).getSpecies();
-							if (((Species) model.getListOfSpecies().get(species.getSelectedIndex()))
-									.getName().equals(specRef)) {
+							if (model.getSpecies(
+									((String) species.getSelectedValue()).split(" ")[0]).getId()
+									.equals(specRef)) {
 								remove = false;
-								if (usingReacId) {
-									productsUsing.add(reaction.getId());
-								} else {
-									productsUsing.add(reaction.getName());
-								}
+								productsUsing.add(reaction.getId());
 							}
 						}
 					}
 					for (int j = 0; j < reaction.getNumReactants(); j++) {
 						if (reaction.getReactant(j).isSetSpecies()) {
 							String specRef = reaction.getReactant(j).getSpecies();
-							if (((Species) model.getListOfSpecies().get(species.getSelectedIndex()))
-									.getName().equals(specRef)) {
+							if (model.getSpecies(
+									((String) species.getSelectedValue()).split(" ")[0]).getId()
+									.equals(specRef)) {
 								remove = false;
-								if (usingReacId) {
-									reactantsUsing.add(reaction.getId());
-								} else {
-									reactantsUsing.add(reaction.getName());
-								}
+								reactantsUsing.add(reaction.getId());
 							}
 						}
 					}
 				}
 				if (remove) {
-					model.getListOfSpecies().remove(species.getSelectedIndex());
+					Species tempSpecies = document.getModel().getSpecies(
+							((String) species.getSelectedValue()).split(" ")[0]);
+					ListOf s = document.getModel().getListOfSpecies();
+					for (int i = 0; i < s.getNumItems(); i++) {
+						if (((Species) s.get(i)).getId().equals(tempSpecies.getId())) {
+							s.remove(i);
+						}
+					}
+					usedIDs.remove(tempSpecies.getId());
 					species.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 					Buttons.remove(species, specs);
 					species.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -565,7 +572,15 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		// if the remove reactions button is clicked
 		else if (e.getSource() == removeReac) {
 			if (reactions.getSelectedIndex() != -1) {
-				document.getModel().getListOfReactions().remove(reactions.getSelectedIndex());
+				Reaction tempReaction = document.getModel().getReaction(
+						(String) reactions.getSelectedValue());
+				ListOf r = document.getModel().getListOfReactions();
+				for (int i = 0; i < r.getNumItems(); i++) {
+					if (((Reaction) r.get(i)).getId().equals(tempReaction.getId())) {
+						r.remove(i);
+					}
+				}
+				usedIDs.remove(reactions.getSelectedValue());
 				reactions.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 				Buttons.remove(reactions, reacts);
 				reactions.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -583,44 +598,57 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		// if the remove parameters button is clicked
 		else if (e.getSource() == removeParam) {
 			if (parameters.getSelectedIndex() != -1) {
-				document.getModel().getListOfParameters().remove(parameters.getSelectedIndex());
+				Parameter tempParameter = document.getModel().getParameter(
+						((String) parameters.getSelectedValue()).split(" ")[0]);
+				ListOf p = document.getModel().getListOfParameters();
+				for (int i = 0; i < p.getNumItems(); i++) {
+					if (((Reaction) p.get(i)).getId().equals(tempParameter.getId())) {
+						p.remove(i);
+					}
+				}
+				usedIDs.remove(tempParameter.getId());
 				parameters.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 				Buttons.remove(parameters, params);
 				parameters.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 				parameters.setSelectedIndex(0);
 			}
 		} else if (e.getSource() == addSaveCompart) {
-			if (id && compID.getText().trim().equals("")) {
+			if (compID.getText().trim().equals("")) {
 				JOptionPane.showMessageDialog(compartFrame,
 						"You must enter an id into the id field!", "Enter An ID",
 						JOptionPane.ERROR_MESSAGE);
-			} else if (!id && compName.getText().trim().equals("")) {
-				JOptionPane.showMessageDialog(compartFrame,
-						"You must enter a name into the name field!", "Enter A Name",
-						JOptionPane.ERROR_MESSAGE);
 			} else {
 				String addComp = "";
-				if (id) {
-					addComp = compID.getText().trim();
-				} else {
-					addComp = compName.getText().trim();
+				addComp = compID.getText().trim();
+				if (usedIDs.contains(addComp)
+						&& !addComp.equals((String) compartments.getSelectedValue())) {
+					JOptionPane.showMessageDialog(compartFrame,
+							"You must enter a unique id into the id field!", "Enter A Unique ID",
+							JOptionPane.ERROR_MESSAGE);
+					return;
 				}
 				if (addSaveCompart.getText().equals("Save")) {
 					int index = compartments.getSelectedIndex();
+					String value = (String) compartments.getSelectedValue();
 					compartments.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 					comps = Buttons.getList(comps, compartments);
 					compartments.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-					Compartment c = document.getModel().getCompartment(index);
-					c.setName(compName.getText().trim());
+					Compartment c = document.getModel().getCompartment(value);
 					c.setId(compID.getText().trim());
+					for (int i = 0; i < usedIDs.size(); i++) {
+						if (usedIDs.get(i).equals(value)) {
+							usedIDs.set(i, addComp);
+						}
+					}
 					comps[index] = addComp;
+					Arrays.sort(comps);
 					compartments.setListData(comps);
 					compartments.setSelectedIndex(index);
 				} else {
 					int index = compartments.getSelectedIndex();
 					Compartment c = document.getModel().createCompartment();
-					c.setName(compName.getText().trim());
 					c.setId(compID.getText().trim());
+					usedIDs.add(addComp);
 					JList add = new JList();
 					Object[] adding = { addComp };
 					add.setListData(adding);
@@ -628,6 +656,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					compartments.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 					comps = Buttons.add(comps, compartments, add, false, null, null, null, null,
 							null, null, null, this);
+					Arrays.sort(comps);
+					compartments.setListData(comps);
 					compartments.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 					if (document.getModel().getNumCompartments() == 1) {
 						compartments.setSelectedIndex(0);
@@ -643,25 +673,38 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		}
 		// if the add or save species button is clicked
 		else if (e.getSource() == addSaveSpecies) {
-			if (name.getText().trim().equals("")) {
+			if (ID.getText().trim().equals("")) {
 				JOptionPane.showMessageDialog(speciesFrame,
-						"You must enter a name into the name field!", "Enter A Name",
+						"You must enter an id into the id field!", "Enter An ID",
 						JOptionPane.ERROR_MESSAGE);
 			} else {
 				try {
 					double initial = Double.parseDouble(init.getText().trim());
-					String addSpec = name.getText().trim() + " " + comp.getSelectedItem() + " "
+					String addSpec = ID.getText().trim() + " " + comp.getSelectedItem() + " "
 							+ initial;
+					if (usedIDs.contains(ID.getText().trim())
+							&& !ID.getText().trim().equals(
+									((String) species.getSelectedValue()).split(" ")[0])) {
+						JOptionPane.showMessageDialog(speciesFrame,
+								"You must enter a unique id into the id field!",
+								"Enter A Unique ID", JOptionPane.ERROR_MESSAGE);
+						return;
+					}
 					if (addSaveSpecies.getText().equals("Save")) {
 						int index = species.getSelectedIndex();
+						String value = ((String) species.getSelectedValue()).split(" ")[0];
 						species.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 						specs = Buttons.getList(specs, species);
 						species.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-						Species specie = document.getModel().getSpecies(index);
-						String speciesName = specie.getName();
-						specie.setName(name.getText().trim());
+						Species specie = document.getModel().getSpecies(value);
+						String speciesName = specie.getId();
 						specie.setCompartment((String) comp.getSelectedItem());
 						specie.setId(ID.getText().trim());
+						for (int i = 0; i < usedIDs.size(); i++) {
+							if (usedIDs.get(i).equals(value)) {
+								usedIDs.set(i, ID.getText().trim());
+							}
+						}
 						Model model = document.getModel();
 						for (int i = 0; i < model.getNumReactions(); i++) {
 							Reaction reaction = (Reaction) document.getModel().getListOfReactions()
@@ -670,7 +713,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 								if (reaction.getProduct(j).isSetSpecies()) {
 									SpeciesReference specRef = reaction.getProduct(j);
 									if (speciesName.equals(specRef.getSpecies())) {
-										specRef.setSpecies(specie.getName());
+										specRef.setSpecies(specie.getId());
 									}
 								}
 							}
@@ -678,7 +721,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 								if (reaction.getReactant(j).isSetSpecies()) {
 									SpeciesReference specRef = reaction.getReactant(j);
 									if (speciesName.equals(specRef.getSpecies())) {
-										specRef.setSpecies(specie.getName());
+										specRef.setSpecies(specie.getId());
 									}
 								}
 							}
@@ -689,14 +732,15 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 							specie.setInitialConcentration(initial);
 						}
 						specs[index] = addSpec;
+						Arrays.sort(specs);
 						species.setListData(specs);
 						species.setSelectedIndex(index);
 					} else {
 						int index = species.getSelectedIndex();
 						Species specie = document.getModel().createSpecies();
-						specie.setName(name.getText().trim());
 						specie.setCompartment((String) comp.getSelectedItem());
 						specie.setId(ID.getText().trim());
+						usedIDs.add(ID.getText().trim());
 						if (amount) {
 							specie.setInitialAmount(initial);
 						} else {
@@ -709,6 +753,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						species.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 						specs = Buttons.add(specs, species, add, false, null, null, null, null,
 								null, null, null, this);
+						Arrays.sort(specs);
+						species.setListData(specs);
 						species.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 						if (document.getModel().getNumSpecies() == 1) {
 							species.setSelectedIndex(0);
@@ -738,29 +784,29 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		}
 		// if the add or save reactions button is clicked
 		else if (e.getSource() == addSaveReactions) {
-			if (usingReacId && reacID.getText().trim().equals("")) {
+			if (reacID.getText().trim().equals("")) {
 				JOptionPane.showMessageDialog(reactionFrame,
 						"You must enter an ID into the ID field!", "Enter An ID",
 						JOptionPane.ERROR_MESSAGE);
-			} else if (!usingReacId && reacName.getText().trim().equals("")) {
-				JOptionPane.showMessageDialog(reactionFrame,
-						"You must enter a name into the name field!", "Enter A Name",
-						JOptionPane.ERROR_MESSAGE);
 			} else {
 				String reac;
-				if (usingReacId) {
-					reac = reacID.getText().trim();
-				} else {
-					reac = reacName.getText().trim();
+				reac = reacID.getText().trim();
+				if (usedIDs.contains(reacID.getText().trim())
+						&& !reacID.getText().trim().equals((String) reactions.getSelectedValue())) {
+					JOptionPane.showMessageDialog(reactionFrame,
+							"You must enter a unique id into the id field!", "Enter A Unique ID",
+							JOptionPane.ERROR_MESSAGE);
+					return;
 				}
 				int kineticCheck;
 				if (addSaveReactions.getText().equals("Save")) {
 					int index = reactions.getSelectedIndex();
+					String value = (String) reactions.getSelectedValue();
 					kineticCheck = index;
 					reactions.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 					reacts = Buttons.getList(reacts, reactions);
 					reactions.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-					Reaction react = document.getModel().getReaction(index);
+					Reaction react = document.getModel().getReaction(value);
 					ListOf remove;
 					long size;
 					try {
@@ -790,15 +836,20 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					for (int i = 0; i < changedReactants.size(); i++) {
 						react.addReactant(changedReactants.get(i));
 					}
-					react.setName(reacName.getText().trim());
 					if (reacReverse.getSelectedItem().equals("true")) {
 						react.setReversible(true);
 					} else {
 						react.setReversible(false);
 					}
 					react.setId(reacID.getText().trim());
+					for (int i = 0; i < usedIDs.size(); i++) {
+						if (usedIDs.get(i).equals(value)) {
+							usedIDs.set(i, reacID.getText().trim());
+						}
+					}
 					react.getKineticLaw().setFormula(kineticLaw.getText().trim());
 					reacts[index] = reac;
+					Arrays.sort(reacts);
 					reactions.setListData(reacts);
 					reactions.setSelectedIndex(index);
 				} else {
@@ -815,13 +866,13 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					for (int i = 0; i < changedReactants.size(); i++) {
 						react.addReactant(changedReactants.get(i));
 					}
-					react.setName(reacName.getText().trim());
 					if (reacReverse.getSelectedItem().equals("true")) {
 						react.setReversible(true);
 					} else {
 						react.setReversible(false);
 					}
 					react.setId(reacID.getText().trim());
+					usedIDs.add(reacID.getText().trim());
 					react.getKineticLaw().setFormula(kineticLaw.getText().trim());
 					JList add = new JList();
 					Object[] adding = { reac };
@@ -830,6 +881,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					reactions.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 					reacts = Buttons.add(reacts, reactions, add, false, null, null, null, null,
 							null, null, null, this);
+					Arrays.sort(reacts);
+					reactions.setListData(reacts);
 					reactions.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 					if (document.getModel().getNumReactions() == 1) {
 						reactions.setSelectedIndex(0);
@@ -860,15 +913,11 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					document = reader.readSBMLFromString(documentWritten);
 					ListOf sbml = r.getKineticLaw().getListOfParameters();
 					for (int i = 0; i < sbml.getNumItems(); i++) {
-						if (reacUsingParamId) {
-							validKineticVars.add(((Parameter) sbml.get(i)).getId());
-						} else {
-							validKineticVars.add(((Parameter) sbml.get(i)).getName());
-						}
+						validKineticVars.add(((Parameter) sbml.get(i)).getId());
 					}
 					sbml = document.getModel().getListOfSpecies();
 					for (int i = 0; i < sbml.getNumItems(); i++) {
-						validKineticVars.add(((Species) sbml.get(i)).getName());
+						validKineticVars.add(((Species) sbml.get(i)).getId());
 					}
 					sbml = r.getListOfReactants();
 					for (int i = 0; i < sbml.getNumItems(); i++) {
@@ -880,11 +929,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					}
 					sbml = document.getModel().getListOfParameters();
 					for (int i = 0; i < sbml.getNumItems(); i++) {
-						if (usingParamId) {
-							validKineticVars.add(((Parameter) sbml.get(i)).getId());
-						} else {
-							validKineticVars.add(((Parameter) sbml.get(i)).getName());
-						}
+						validKineticVars.add(((Parameter) sbml.get(i)).getId());
 					}
 					if (!docu.getModel().getReaction(0).getKineticLaw().isSetFormula()) {
 						if (addSaveReactions.getText().equals("Save")) {
@@ -897,7 +942,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 									.setFormula(kineticL);
 						}
 						if (!addSaveReactions.getText().equals("Save")) {
-							JOptionPane.showMessageDialog(parameterFrame,
+							JOptionPane.showMessageDialog(reactionFrame,
 									"Unable to parse kinetic law!", "Kinetic Law Error",
 									JOptionPane.ERROR_MESSAGE);
 							reactions
@@ -908,7 +953,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						} else {
 							JOptionPane
 									.showMessageDialog(
-											parameterFrame,
+											reactionFrame,
 											"Unable to parse kinetic law!"
 													+ "\nAll others parts of the reaction have been saved.",
 											"Kinetic Law Error", JOptionPane.ERROR_MESSAGE);
@@ -1028,7 +1073,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 							scroll.setMinimumSize(new Dimension(300, 300));
 							scroll.setPreferredSize(new Dimension(300, 300));
 							scroll.setViewportView(messageArea);
-							JOptionPane.showMessageDialog(parameterFrame, scroll,
+							JOptionPane.showMessageDialog(reactionFrame, scroll,
 									"Kinetic Law Error", JOptionPane.ERROR_MESSAGE);
 							if (!addSaveReactions.getText().equals("Save")) {
 								reactions
@@ -1056,40 +1101,45 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		}
 		// if the add or save parameters button is clicked
 		else if (e.getSource() == addSaveParams) {
-			if (usingParamId && paramID.getText().trim().equals("")) {
+			if (paramID.getText().trim().equals("")) {
 				JOptionPane.showMessageDialog(parameterFrame,
 						"You must enter an ID into the ID field!", "Enter An ID",
-						JOptionPane.ERROR_MESSAGE);
-			} else if (!usingParamId && paramName.getText().trim().equals("")) {
-				JOptionPane.showMessageDialog(parameterFrame,
-						"You must enter a name into the name field!", "Enter A Name",
 						JOptionPane.ERROR_MESSAGE);
 			} else {
 				try {
 					double value = Double.parseDouble(paramValue.getText().trim());
-					String param;
-					if (!paramID.getText().trim().equals("")) {
-						param = paramID.getText().trim() + " " + value;
-					} else {
-						param = paramName.getText().trim() + " " + value;
+					String param = paramID.getText().trim() + " " + value;
+					if (usedIDs.contains(paramID.getText().trim())
+							&& !paramID.getText().trim().equals(
+									((String) parameters.getSelectedValue()).split(" ")[0])) {
+						JOptionPane.showMessageDialog(parameterFrame,
+								"You must enter a unique id into the id field!",
+								"Enter A Unique ID", JOptionPane.ERROR_MESSAGE);
+						return;
 					}
 					if (addSaveParams.getText().equals("Save")) {
 						int index = parameters.getSelectedIndex();
-						Parameter paramet = document.getModel().getParameter(index);
+						String v = ((String) parameters.getSelectedValue()).split(" ")[0];
+						Parameter paramet = document.getModel().getParameter(v);
 						parameters.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 						params = Buttons.getList(params, parameters);
 						parameters.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-						paramet.setName(paramName.getText().trim());
 						paramet.setId(paramID.getText().trim());
+						for (int i = 0; i < usedIDs.size(); i++) {
+							if (usedIDs.get(i).equals(v)) {
+								usedIDs.set(i, paramID.getText().trim());
+							}
+						}
 						paramet.setValue(value);
 						params[index] = param;
+						Arrays.sort(params);
 						parameters.setListData(params);
 						parameters.setSelectedIndex(index);
 					} else {
 						int index = parameters.getSelectedIndex();
 						Parameter paramet = document.getModel().createParameter();
-						paramet.setName(paramName.getText().trim());
 						paramet.setId(paramID.getText().trim());
+						usedIDs.add(paramID.getText().trim());
 						paramet.setValue(value);
 						JList add = new JList();
 						Object[] adding = { param };
@@ -1098,14 +1148,11 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						parameters.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 						params = Buttons.add(params, parameters, add, false, null, null, null,
 								null, null, null, null, this);
+						Arrays.sort(params);
+						parameters.setListData(params);
 						parameters.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 						if (document.getModel().getNumParameters() == 1) {
 							parameters.setSelectedIndex(0);
-							if (!paramID.getText().trim().equals("")) {
-								usingParamId = true;
-							} else {
-								usingParamId = false;
-							}
 						} else {
 							parameters.setSelectedIndex(index);
 						}
@@ -1125,42 +1172,52 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		}
 		// if the add or save reaction parameters button is clicked
 		else if (e.getSource() == reacAddSaveParams) {
-			if (reacUsingParamId && reacParamID.getText().trim().equals("")) {
+			if (reacParamID.getText().trim().equals("")) {
 				JOptionPane.showMessageDialog(reacParameterFrame,
 						"You must enter an ID into the ID field!", "Enter An ID",
-						JOptionPane.ERROR_MESSAGE);
-			} else if (!reacUsingParamId && reacParamName.getText().trim().equals("")) {
-				JOptionPane.showMessageDialog(reacParameterFrame,
-						"You must enter a name into the name field!", "Enter A Name",
 						JOptionPane.ERROR_MESSAGE);
 			} else {
 				try {
 					double value = Double.parseDouble(reacParamValue.getText().trim());
-					String param;
-					if (!reacParamID.getText().trim().equals("")) {
-						param = reacParamID.getText().trim() + " " + value;
-					} else {
-						param = reacParamName.getText().trim() + " " + value;
+					String param = reacParamID.getText().trim() + " " + value;
+					if (usedIDs.contains(reacParamID.getText().trim())
+							&& !reacParamID.getText().trim().equals(
+									((String) reacParameters.getSelectedValue()).split(" ")[0])) {
+						JOptionPane.showMessageDialog(reacParameterFrame,
+								"You must enter a unique id into the id field!",
+								"Enter A Unique ID", JOptionPane.ERROR_MESSAGE);
+						return;
 					}
 					if (reacAddSaveParams.getText().equals("Save")) {
 						int index = reacParameters.getSelectedIndex();
-						Parameter paramet = changedParameters.get(index);
+						String v = ((String) reacParameters.getSelectedValue()).split(" ")[0];
+						Parameter paramet = null;
+						for (Parameter p : changedParameters) {
+							if (p.getId().equals(v)) {
+								paramet = p;
+							}
+						}
 						reacParameters
 								.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 						reacParams = Buttons.getList(reacParams, reacParameters);
 						reacParameters.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-						paramet.setName(reacParamName.getText().trim());
 						paramet.setId(reacParamID.getText().trim());
+						for (int i = 0; i < usedIDs.size(); i++) {
+							if (usedIDs.get(i).equals(v)) {
+								usedIDs.set(i, reacParamID.getText().trim());
+							}
+						}
 						paramet.setValue(value);
 						reacParams[index] = param;
+						Arrays.sort(reacParams);
 						reacParameters.setListData(reacParams);
 						reacParameters.setSelectedIndex(index);
 					} else {
 						int index = reacParameters.getSelectedIndex();
 						Parameter paramet = new Parameter();
 						changedParameters.add(paramet);
-						paramet.setName(reacParamName.getText().trim());
 						paramet.setId(reacParamID.getText().trim());
+						usedIDs.add(reacParamID.getText().trim());
 						paramet.setValue(value);
 						JList add = new JList();
 						Object[] adding = { param };
@@ -1170,16 +1227,14 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 								.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 						reacParams = Buttons.add(reacParams, reacParameters, add, false, null,
 								null, null, null, null, null, null, reactionFrame);
+						Arrays.sort(reacParams);
+						reacParameters.setListData(reacParams);
 						reacParameters.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 						try {
-							if (document.getModel().getReaction(reactions.getSelectedIndex())
-									.getKineticLaw().getNumParameters() == 1) {
+							if (document.getModel().getReaction(
+									((String) reactions.getSelectedValue())).getKineticLaw()
+									.getNumParameters() == 1) {
 								reacParameters.setSelectedIndex(0);
-								if (!reacParamID.getText().trim().equals("")) {
-									reacUsingParamId = true;
-								} else {
-									reacUsingParamId = false;
-								}
 							} else {
 								reacParameters.setSelectedIndex(index);
 							}
@@ -1211,7 +1266,13 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		// if the remove reactions parameters button is clicked
 		else if (e.getSource() == reacRemoveParam) {
 			if (reacParameters.getSelectedIndex() != -1) {
-				changedParameters.remove(reacParameters.getSelectedIndex());
+				String v = ((String) reacParameters.getSelectedValue()).split(" ")[0];
+				for (int i = 0; i < changedParameters.size(); i++) {
+					if (changedParameters.get(i).getId().equals(v)) {
+						changedParameters.remove(i);
+					}
+				}
+				usedIDs.remove(v);
 				reacParameters.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 				Buttons.remove(reacParameters, reacParams);
 				reacParameters.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -1228,7 +1289,13 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		}
 		// if the remove reactants button is clicked
 		else if (e.getSource() == removeReactant) {
-			if (reacParameters.getSelectedIndex() != -1) {
+			if (reactants.getSelectedIndex() != -1) {
+				String v = ((String) reactants.getSelectedValue()).split(" ")[0];
+				for (int i = 0; i < changedReactants.size(); i++) {
+					if (changedReactants.get(i).getSpecies().equals(v)) {
+						changedReactants.remove(i);
+					}
+				}
 				changedReactants.remove(reactants.getSelectedIndex());
 				reactants.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 				Buttons.remove(reactants, reacta);
@@ -1246,8 +1313,13 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		}
 		// if the remove products button is clicked
 		else if (e.getSource() == removeProduct) {
-			if (reacParameters.getSelectedIndex() != -1) {
-				changedProducts.remove(products.getSelectedIndex());
+			if (products.getSelectedIndex() != -1) {
+				String v = ((String) products.getSelectedValue()).split(" ")[0];
+				for (int i = 0; i < changedProducts.size(); i++) {
+					if (changedProducts.get(i).getSpecies().equals(v)) {
+						changedProducts.remove(i);
+					}
+				}
 				products.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 				Buttons.remove(products, product);
 				products.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -1261,13 +1333,20 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				String prod = productSpecies.getSelectedItem() + " " + value;
 				if (addSaveProducts.getText().equals("Save")) {
 					int index = products.getSelectedIndex();
-					SpeciesReference produ = changedProducts.get(index);
+					String v = ((String) products.getSelectedValue()).split(" ")[0];
+					SpeciesReference produ = null;
+					for (SpeciesReference p : changedProducts) {
+						if (p.getSpecies().equals(v)) {
+							produ = p;
+						}
+					}
 					products.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 					product = Buttons.getList(product, products);
 					products.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 					produ.setSpecies((String) productSpecies.getSelectedItem());
 					produ.setStoichiometry(value);
 					product[index] = prod;
+					Arrays.sort(product);
 					products.setListData(product);
 					products.setSelectedIndex(index);
 				} else {
@@ -1283,9 +1362,12 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					products.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 					product = Buttons.add(product, products, add, false, null, null, null, null,
 							null, null, null, reactionFrame);
+					Arrays.sort(product);
+					products.setListData(product);
 					products.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 					try {
-						if (document.getModel().getReaction(reactions.getSelectedIndex())
+						if (document.getModel()
+								.getReaction(((String) reactions.getSelectedValue()))
 								.getNumProducts() == 1) {
 							products.setSelectedIndex(0);
 						} else {
@@ -1314,13 +1396,20 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				String react = reactantSpecies.getSelectedItem() + " " + value;
 				if (addSaveReactants.getText().equals("Save")) {
 					int index = reactants.getSelectedIndex();
-					SpeciesReference reactan = changedReactants.get(index);
+					String v = ((String) reactants.getSelectedValue()).split(" ")[0];
+					SpeciesReference reactan = null;
+					for (SpeciesReference r : changedReactants) {
+						if (r.getSpecies().equals(v)) {
+							reactan = r;
+						}
+					}
 					reactants.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 					reacta = Buttons.getList(reacta, reactants);
 					reactants.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 					reactan.setSpecies((String) reactantSpecies.getSelectedItem());
 					reactan.setStoichiometry(value);
 					reacta[index] = react;
+					Arrays.sort(reacta);
 					reactants.setListData(reacta);
 					reactants.setSelectedIndex(index);
 				} else {
@@ -1336,9 +1425,12 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					reactants.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 					reacta = Buttons.add(reacta, reactants, add, false, null, null, null, null,
 							null, null, null, reactionFrame);
+					Arrays.sort(reacta);
+					reactants.setListData(reacta);
 					reactants.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 					try {
-						if (document.getModel().getReaction(reactions.getSelectedIndex())
+						if (document.getModel()
+								.getReaction(((String) reactions.getSelectedValue()))
 								.getNumReactants() == 1) {
 							reactants.setSelectedIndex(0);
 						} else {
@@ -1395,18 +1487,15 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				}
 			};
 			compartFrame.addWindowListener(w);
-			JPanel compartPanel = new JPanel(new GridLayout(3, 2));
-			JLabel nameLabel = new JLabel("Name:");
+			JPanel compartPanel = new JPanel(new GridLayout(2, 2));
 			JLabel idLabel = new JLabel("ID:");
-			compName = new JTextField();
 			compID = new JTextField();
 			addSaveCompart = new JButton(option);
 			cancelCompart = new JButton("Cancel");
 			if (option.equals("Save")) {
 				try {
 					Compartment compartment = document.getModel().getCompartment(
-							compartments.getSelectedIndex());
-					compName.setText(compartment.getName());
+							((String) compartments.getSelectedValue()));
 					compID.setText(compartment.getId());
 				} catch (Exception e) {
 
@@ -1414,8 +1503,6 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			}
 			addSaveCompart.addActionListener(this);
 			cancelCompart.addActionListener(this);
-			compartPanel.add(nameLabel);
-			compartPanel.add(compName);
 			compartPanel.add(idLabel);
 			compartPanel.add(compID);
 			compartPanel.add(addSaveCompart);
@@ -1477,8 +1564,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				}
 			};
 			speciesFrame.addWindowListener(w);
-			JPanel speciesPanel = new JPanel(new GridLayout(5, 2));
-			JLabel nameLabel = new JLabel("Name:");
+			JPanel speciesPanel = new JPanel(new GridLayout(4, 2));
 			JLabel idLabel = new JLabel("ID:");
 			JLabel compLabel = new JLabel("Compartment:");
 			JLabel initLabel;
@@ -1487,7 +1573,6 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			} else {
 				initLabel = new JLabel("Initial Concentration:");
 			}
-			name = new JTextField();
 			ID = new JTextField();
 			init = new JTextField("0.0");
 			int[] index = compartments.getSelectedIndices();
@@ -1504,8 +1589,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			cancelSpecies = new JButton("Cancel");
 			if (option.equals("Save")) {
 				try {
-					Species specie = document.getModel().getSpecies(species.getSelectedIndex());
-					name.setText(specie.getName());
+					Species specie = document.getModel().getSpecies(
+							((String) species.getSelectedValue()).split(" ")[0]);
 					ID.setText(specie.getId());
 					init.setText("" + specie.getInitialAmount());
 					comp.setSelectedItem(specie.getCompartment());
@@ -1515,8 +1600,6 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			}
 			addSaveSpecies.addActionListener(this);
 			cancelSpecies.addActionListener(this);
-			speciesPanel.add(nameLabel);
-			speciesPanel.add(name);
 			speciesPanel.add(idLabel);
 			speciesPanel.add(ID);
 			speciesPanel.add(compLabel);
@@ -1583,13 +1666,11 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			};
 			reactionFrame.addWindowListener(w);
 			JPanel reactionPanelNorth = new JPanel();
-			JPanel reactionPanelNorth1 = new JPanel(new GridLayout(3, 2));
+			JPanel reactionPanelNorth1 = new JPanel(new GridLayout(2, 2));
 			JPanel reactionPanelNorth2 = new JPanel();
 			JPanel reactionPanelCentral = new JPanel(new GridLayout(2, 2));
 			JPanel reactionPanelSouth = new JPanel();
 			JPanel reactionPanel = new JPanel(new BorderLayout());
-			JLabel name = new JLabel("Name:");
-			reacName = new JTextField(15);
 			JLabel id = new JLabel("ID:");
 			reacID = new JTextField(15);
 			JLabel reverse = new JLabel("Reversible:");
@@ -1598,8 +1679,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			addSaveReactions = new JButton(option);
 			cancelReactions = new JButton("Cancel");
 			if (option.equals("Save")) {
-				Reaction reac = document.getModel().getReaction(reactions.getSelectedIndex());
-				reacName.setText(reac.getName());
+				Reaction reac = document.getModel().getReaction(
+						((String) reactions.getSelectedValue()));
 				reacID.setText(reac.getId());
 				if (reac.getReversible()) {
 					reacReverse.setSelectedItem("true");
@@ -1630,22 +1711,19 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			scroll.setViewportView(reacParameters);
 			ArrayList<String> sbml = new ArrayList<String>();
 			changedParameters = new ArrayList<Parameter>();
-			reacUsingParamId = false;
 			if (option.equals("Save")) {
 				ListOf listOfParameters = document.getModel().getReaction(
-						reactions.getSelectedIndex()).getKineticLaw().getListOfParameters();
+						((String) reactions.getSelectedValue())).getKineticLaw()
+						.getListOfParameters();
 				for (int i = 0; i < listOfParameters.getNumItems(); i++) {
 					Parameter parameter = (Parameter) listOfParameters.get(i);
 					changedParameters.add(parameter);
-					if (parameter.isSetId()) {
-						reacUsingParamId = true;
-						sbml.add(parameter.getId() + " " + parameter.getValue());
-					} else {
-						sbml.add(parameter.getName() + " " + parameter.getValue());
-					}
+					sbml.add(parameter.getId() + " " + parameter.getValue());
 				}
 			}
-			reacParams = sbml.toArray();
+			Object[] sbmlList = sbml.toArray();
+			Arrays.sort(sbmlList);
+			reacParams = sbmlList;
 			reacParameters.setListData(reacParams);
 			reacParameters.setSelectedIndex(0);
 			reacParameters.addMouseListener(this);
@@ -1675,16 +1753,18 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			kineticL = "";
 			if (option.equals("Save")) {
 				ListOf listOfReactants = document.getModel().getReaction(
-						reactions.getSelectedIndex()).getListOfReactants();
+						((String) reactions.getSelectedValue())).getListOfReactants();
 				for (int i = 0; i < listOfReactants.getNumItems(); i++) {
 					SpeciesReference reactant = (SpeciesReference) listOfReactants.get(i);
 					changedReactants.add(reactant);
 					sbml.add(reactant.getSpecies() + " " + reactant.getStoichiometry());
 				}
-				kineticL = document.getModel().getReaction(reactions.getSelectedIndex())
+				kineticL = document.getModel().getReaction(((String) reactions.getSelectedValue()))
 						.getKineticLaw().getFormula();
 			}
-			reacta = sbml.toArray();
+			sbmlList = sbml.toArray();
+			Arrays.sort(sbmlList);
+			reacta = sbmlList;
 			reactants.setListData(reacta);
 			reactants.setSelectedIndex(0);
 			reactants.addMouseListener(this);
@@ -1713,14 +1793,16 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			changedProducts = new ArrayList<SpeciesReference>();
 			if (option.equals("Save")) {
 				ListOf listOfProducts = document.getModel().getReaction(
-						reactions.getSelectedIndex()).getListOfProducts();
+						((String) reactions.getSelectedValue())).getListOfProducts();
 				for (int i = 0; i < listOfProducts.getNumItems(); i++) {
 					SpeciesReference product = (SpeciesReference) listOfProducts.get(i);
 					changedProducts.add(product);
 					sbml.add(product.getSpecies() + " " + product.getStoichiometry());
 				}
 			}
-			product = sbml.toArray();
+			sbmlList = sbml.toArray();
+			Arrays.sort(sbmlList);
+			product = sbmlList;
 			products.setListData(product);
 			products.setSelectedIndex(0);
 			products.addMouseListener(this);
@@ -1736,14 +1818,12 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			scroll4.setPreferredSize(new Dimension(100, 100));
 			scroll4.setViewportView(kineticLaw);
 			if (option.equals("Save")) {
-				kineticLaw.setText(document.getModel().getReaction(reactions.getSelectedIndex())
-						.getKineticLaw().getFormula());
+				kineticLaw.setText(document.getModel().getReaction(
+						((String) reactions.getSelectedValue())).getKineticLaw().getFormula());
 			}
 			JPanel kineticPanel = new JPanel(new BorderLayout());
 			kineticPanel.add(kineticLabel, "North");
 			kineticPanel.add(scroll4, "Center");
-			reactionPanelNorth1.add(name);
-			reactionPanelNorth1.add(reacName);
 			reactionPanelNorth1.add(id);
 			reactionPanelNorth1.add(reacID);
 			reactionPanelNorth1.add(reverse);
@@ -1816,11 +1896,9 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				}
 			};
 			parameterFrame.addWindowListener(w);
-			JPanel parametersPanel = new JPanel(new GridLayout(4, 2));
-			JLabel nameLabel = new JLabel("Name:");
+			JPanel parametersPanel = new JPanel(new GridLayout(3, 2));
 			JLabel idLabel = new JLabel("ID:");
 			JLabel valueLabel = new JLabel("Value:");
-			paramName = new JTextField();
 			paramID = new JTextField();
 			paramValue = new JTextField();
 			addSaveParams = new JButton(option);
@@ -1828,9 +1906,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			if (option.equals("Save")) {
 				try {
 					Parameter paramet = document.getModel().getParameter(
-							parameters.getSelectedIndex());
+							((String) parameters.getSelectedValue()).split(" ")[0]);
 					paramID.setText(paramet.getId());
-					paramName.setText(paramet.getName());
 					paramValue.setText("" + paramet.getValue());
 				} catch (Exception e) {
 
@@ -1838,8 +1915,6 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			}
 			addSaveParams.addActionListener(this);
 			cancelParams.addActionListener(this);
-			parametersPanel.add(nameLabel);
-			parametersPanel.add(paramName);
 			parametersPanel.add(idLabel);
 			parametersPanel.add(paramID);
 			parametersPanel.add(valueLabel);
@@ -1903,25 +1978,26 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				}
 			};
 			reacParameterFrame.addWindowListener(w);
-			JPanel parametersPanel = new JPanel(new GridLayout(4, 2));
-			JLabel nameLabel = new JLabel("Name:");
+			JPanel parametersPanel = new JPanel(new GridLayout(3, 2));
 			JLabel idLabel = new JLabel("ID:");
 			JLabel valueLabel = new JLabel("Value:");
-			reacParamName = new JTextField();
 			reacParamID = new JTextField();
 			reacParamValue = new JTextField();
 			reacAddSaveParams = new JButton(option);
 			reacCancelParams = new JButton("Cancel");
 			if (option.equals("Save")) {
-				Parameter paramet = changedParameters.get(reacParameters.getSelectedIndex());
+				String v = ((String) reacParameters.getSelectedValue()).split(" ")[0];
+				Parameter paramet = null;
+				for (Parameter p : changedParameters) {
+					if (p.getId().equals(v)) {
+						paramet = p;
+					}
+				}
 				reacParamID.setText(paramet.getId());
-				reacParamName.setText(paramet.getName());
 				reacParamValue.setText("" + paramet.getValue());
 			}
 			reacAddSaveParams.addActionListener(this);
 			reacCancelParams.addActionListener(this);
-			parametersPanel.add(nameLabel);
-			parametersPanel.add(reacParamName);
 			parametersPanel.add(idLabel);
 			parametersPanel.add(reacParamID);
 			parametersPanel.add(valueLabel);
@@ -1992,15 +2068,23 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			ArrayList<String> species = new ArrayList<String>();
 			amount = false;
 			for (int i = 0; i < listOfSpecies.getNumItems(); i++) {
-				species.add(((Species) listOfSpecies.get(i)).getName());
+				species.add(((Species) listOfSpecies.get(i)).getId());
 			}
-			Object[] choices = species.toArray();
+			Object[] speciesList = species.toArray();
+			Arrays.sort(speciesList);
+			Object[] choices = speciesList;
 			productSpecies = new JComboBox(choices);
 			productStoiciometry = new JTextField("1");
 			addSaveProducts = new JButton(option);
 			cancelProducts = new JButton("Cancel");
 			if (option.equals("Save")) {
-				SpeciesReference product = changedProducts.get(products.getSelectedIndex());
+				String v = ((String) products.getSelectedValue()).split(" ")[0];
+				SpeciesReference product = null;
+				for (SpeciesReference p : changedProducts) {
+					if (p.getSpecies().equals(v)) {
+						product = p;
+					}
+				}
 				productSpecies.setSelectedItem(product.getSpecies());
 				productStoiciometry.setText("" + product.getStoichiometry());
 			}
@@ -2083,15 +2167,23 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			ArrayList<String> species = new ArrayList<String>();
 			amount = false;
 			for (int i = 0; i < listOfSpecies.getNumItems(); i++) {
-				species.add(((Species) listOfSpecies.get(i)).getName());
+				species.add(((Species) listOfSpecies.get(i)).getId());
 			}
-			Object[] choices = species.toArray();
+			Object[] speciesList = species.toArray();
+			Arrays.sort(speciesList);
+			Object[] choices = speciesList;
 			reactantSpecies = new JComboBox(choices);
 			reactantStoiciometry = new JTextField("1");
 			addSaveReactants = new JButton(option);
 			cancelReactants = new JButton("Cancel");
 			if (option.equals("Save")) {
-				SpeciesReference reactant = changedReactants.get(reactants.getSelectedIndex());
+				String v = ((String) reactants.getSelectedValue()).split(" ")[0];
+				SpeciesReference reactant = null;
+				for (SpeciesReference r : changedReactants) {
+					if (r.getSpecies().equals(v)) {
+						reactant = r;
+					}
+				}
 				reactantSpecies.setSelectedItem(reactant.getSpecies());
 				reactantStoiciometry.setText("" + reactant.getStoichiometry());
 			}
@@ -2141,9 +2233,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	public void mouseClicked(MouseEvent e) {
 		if (e.getClickCount() == 2) {
 			if (e.getSource() == compartments) {
-				document.getModel().getListOfCompartments().remove(compartments.getSelectedIndex());
-				Buttons.remove(compartments, comps);
-				change = true;
+				compartEditor("Save");
 			} else if (e.getSource() == species) {
 				speciesEditor("Save");
 			} else if (e.getSource() == reactions) {
@@ -2201,11 +2291,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 */
 	public void keyReleased(KeyEvent e) {
 		Model model = document.getModel();
-		if (this.model) {
-			model.setId(modelID.getText());
-		} else {
-			model.setName(modelID.getText());
-		}
+		model.setId(modelID.getText().trim());
 		change = true;
 	}
 
