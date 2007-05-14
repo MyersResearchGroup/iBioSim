@@ -23,6 +23,18 @@ public class FileTree extends JPanel implements MouseListener {
 
 	private JTree tree; // JTree
 
+	public static final ImageIcon ICON_DOT = new ImageIcon(System.getenv("BIOSIM") + File.separator
+			+ "gui" + File.separator + "icons" + File.separator + "dot.jpg");
+
+	public static final ImageIcon ICON_SBML = new ImageIcon(System.getenv("BIOSIM")
+			+ File.separator + "gui" + File.separator + "icons" + File.separator + "sbml.jpg");
+
+	public static final ImageIcon ICON_SIMULATION = new ImageIcon(System.getenv("BIOSIM")
+			+ File.separator + "gui" + File.separator + "icons" + File.separator + "simulation.jpg");
+
+	public static final ImageIcon ICON_PROJECT = new ImageIcon(System.getenv("BIOSIM")
+			+ File.separator + "gui" + File.separator + "icons" + File.separator + "project.jpg");
+
 	/**
 	 * Construct a FileTree
 	 */
@@ -33,6 +45,8 @@ public class FileTree extends JPanel implements MouseListener {
 		// Make a tree list with all the nodes, and make it a JTree
 		if (dir != null) {
 			tree = new JTree(addNodes(null, dir));
+			TreeCellRenderer renderer = new IconCellRenderer();
+			tree.setCellRenderer(renderer);
 			// Add a listener
 			tree.addTreeSelectionListener(new TreeSelectionListener() {
 				public void valueChanged(TreeSelectionEvent e) {
@@ -65,7 +79,12 @@ public class FileTree extends JPanel implements MouseListener {
 	 */
 	DefaultMutableTreeNode addNodes(DefaultMutableTreeNode curTop, File dir) {
 		String curPath = dir.getPath();
-		DefaultMutableTreeNode curDir = new DefaultMutableTreeNode(dir.getName());
+		DefaultMutableTreeNode curDir;
+		if (curTop == null) {
+			curDir = new DefaultMutableTreeNode(new IconData(ICON_PROJECT, null, dir.getName()));
+		} else {
+			curDir = new DefaultMutableTreeNode(new IconData(ICON_SIMULATION, null, dir.getName()));
+		}
 		if (curTop != null) { // should only be null at root
 			if (curTop.getParent() == null) {
 				curTop.add(curDir);
@@ -99,9 +118,27 @@ public class FileTree extends JPanel implements MouseListener {
 		// Pass two: for files.
 		for (int fnum = 0; fnum < files.size(); fnum++) {
 			if (curDir.getParent() == null) {
-				curDir.add(new DefaultMutableTreeNode(files.get(fnum)));
+				if (files.get(fnum).toString().contains(".sbml")
+						|| files.get(fnum).toString().contains(".xml")) {
+					curDir.add(new DefaultMutableTreeNode(new IconData(ICON_SBML, null, files
+							.get(fnum))));
+				} else if (files.get(fnum).toString().contains(".dot")) {
+					curDir.add(new DefaultMutableTreeNode(new IconData(ICON_DOT, null, files
+							.get(fnum))));
+				} else {
+					curDir.add(new DefaultMutableTreeNode(files.get(fnum)));
+				}
 			} else if (!(curDir.getParent().toString().equals(root.toString()))) {
-				curDir.add(new DefaultMutableTreeNode(files.get(fnum)));
+				if (files.get(fnum).toString().contains(".sbml")
+						|| files.get(fnum).toString().contains(".xml")) {
+					curDir.add(new DefaultMutableTreeNode(new IconData(ICON_SBML, null, files
+							.get(fnum))));
+				} else if (files.get(fnum).toString().contains(".dot")) {
+					curDir.add(new DefaultMutableTreeNode(new IconData(ICON_DOT, null, files
+							.get(fnum))));
+				} else {
+					curDir.add(new DefaultMutableTreeNode(files.get(fnum)));
+				}
 			}
 		}
 		return curDir;
@@ -188,7 +225,8 @@ public class FileTree extends JPanel implements MouseListener {
 					}
 				}
 				if (doAdd) {
-					fixTree(current, new DefaultMutableTreeNode(f.getName()), f, doAdd);
+					fixTree(current, new DefaultMutableTreeNode(new IconData(ICON_SIMULATION, null,
+							f.getName())), f, doAdd);
 				} else {
 					fixTree(current, (DefaultMutableTreeNode) current.getChildAt(getChild), f,
 							doAdd);
@@ -220,7 +258,16 @@ public class FileTree extends JPanel implements MouseListener {
 						}
 						insert++;
 					}
-					current.insert(new DefaultMutableTreeNode(files.get(fnum)), insert);
+					if (files.get(fnum).toString().contains(".sbml")
+							|| files.get(fnum).toString().contains(".xml")) {
+						current.insert(new DefaultMutableTreeNode(new IconData(ICON_SBML, null,
+								files.get(fnum))), insert);
+					} else if (files.get(fnum).toString().contains(".dot")) {
+						current.insert(new DefaultMutableTreeNode(new IconData(ICON_DOT, null,
+								files.get(fnum))), insert);
+					} else {
+						current.insert(new DefaultMutableTreeNode(files.get(fnum)), insert);
+					}
 				} else if (!(parent.toString().equals(root.toString()))) {
 					int insert = 0;
 					for (int i = 0; i < current.getChildCount(); i++) {
@@ -234,7 +281,16 @@ public class FileTree extends JPanel implements MouseListener {
 						}
 						insert++;
 					}
-					current.insert(new DefaultMutableTreeNode(files.get(fnum)), insert);
+					if (files.get(fnum).toString().contains(".sbml")
+							|| files.get(fnum).toString().contains(".xml")) {
+						current.insert(new DefaultMutableTreeNode(new IconData(ICON_SBML, null,
+								files.get(fnum))), insert);
+					} else if (files.get(fnum).toString().contains(".dot")) {
+						current.insert(new DefaultMutableTreeNode(new IconData(ICON_DOT, null,
+								files.get(fnum))), insert);
+					} else {
+						current.insert(new DefaultMutableTreeNode(files.get(fnum)), insert);
+					}
 				}
 			}
 		}
@@ -281,4 +337,112 @@ public class FileTree extends JPanel implements MouseListener {
 	public void mouseExited(MouseEvent e) {
 	}
 
+	class IconCellRenderer extends JLabel implements TreeCellRenderer {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 4060683095197368584L;
+
+		protected Color m_textSelectionColor;
+
+		protected Color m_textNonSelectionColor;
+
+		protected Color m_bkSelectionColor;
+
+		protected Color m_bkNonSelectionColor;
+
+		protected Color m_borderSelectionColor;
+
+		protected boolean m_selected;
+
+		public IconCellRenderer() {
+			super();
+			m_textSelectionColor = UIManager.getColor("Tree.selectionForeground");
+			m_textNonSelectionColor = UIManager.getColor("Tree.textForeground");
+			m_bkSelectionColor = UIManager.getColor("Tree.selectionBackground");
+			m_bkNonSelectionColor = UIManager.getColor("Tree.textBackground");
+			m_borderSelectionColor = UIManager.getColor("Tree.selectionBorderColor");
+			setOpaque(false);
+		}
+
+		public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel,
+				boolean expanded, boolean leaf, int row, boolean hasFocus)
+
+		{
+			DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
+			Object obj = node.getUserObject();
+			setText(obj.toString());
+
+			if (obj instanceof Boolean)
+				setText("Retrieving data...");
+
+			if (obj instanceof IconData) {
+				IconData idata = (IconData) obj;
+				if (expanded)
+					setIcon(idata.getExpandedIcon());
+				else
+					setIcon(idata.getIcon());
+			} else
+				setIcon(null);
+
+			setFont(tree.getFont());
+			setForeground(sel ? m_textSelectionColor : m_textNonSelectionColor);
+			setBackground(sel ? m_bkSelectionColor : m_bkNonSelectionColor);
+			m_selected = sel;
+			return this;
+		}
+
+		public void paintComponent(Graphics g) {
+			Color bColor = getBackground();
+			Icon icon = getIcon();
+
+			g.setColor(bColor);
+			int offset = 0;
+			if (icon != null && getText() != null)
+				offset = (icon.getIconWidth() + getIconTextGap());
+			g.fillRect(offset, 0, getWidth() - 1 - offset, getHeight() - 1);
+
+			if (m_selected) {
+				g.setColor(m_borderSelectionColor);
+				g.drawRect(offset, 0, getWidth() - 1 - offset, getHeight() - 1);
+			}
+			super.paintComponent(g);
+		}
+	}
+
+	class IconData {
+		protected Icon m_icon;
+
+		protected Icon m_expandedIcon;
+
+		protected Object m_data;
+
+		public IconData(Icon icon, Object data) {
+			m_icon = icon;
+			m_expandedIcon = null;
+			m_data = data;
+		}
+
+		public IconData(Icon icon, Icon expandedIcon, Object data) {
+			m_icon = icon;
+			m_expandedIcon = expandedIcon;
+			m_data = data;
+		}
+
+		public Icon getIcon() {
+			return m_icon;
+		}
+
+		public Icon getExpandedIcon() {
+			return m_expandedIcon != null ? m_expandedIcon : m_icon;
+		}
+
+		public Object getObject() {
+			return m_data;
+		}
+
+		public String toString() {
+			return m_data.toString();
+		}
+	}
 }
