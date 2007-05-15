@@ -302,28 +302,7 @@ public class BioModelSim implements MouseListener, ActionListener {
 			try {
 				log.addText("Exectuting:\nemacs " + tree.getFile() + "\n");
 				Runtime exec = Runtime.getRuntime();
-				Process edit = exec.exec("emacs " + tree.getFile());
-				edit.waitFor();
-				String error = "";
-				String output = "";
-				InputStream reb = edit.getErrorStream();
-				int read = reb.read();
-				while (read != -1) {
-					error += (char) read;
-					read = reb.read();
-				}
-				reb = edit.getInputStream();
-				read = reb.read();
-				while (read != -1) {
-					output += (char) read;
-					read = reb.read();
-				}
-				if (!error.equals("")) {
-					log.addText("Errors:\n" + error + "\n");
-				}
-				if (!output.equals("")) {
-					log.addText("Output:\n" + output + "\n");
-				}
+				exec.exec("emacs " + tree.getFile());
 			} catch (Exception e1) {
 				JOptionPane.showMessageDialog(frame, "Unable to open dot file editor.", "Error",
 						JOptionPane.ERROR_MESSAGE);
@@ -402,28 +381,7 @@ public class BioModelSim implements MouseListener, ActionListener {
 				outDot.delete();
 				outDot = new File(outFile);
 				log.addText("Exectuting:\ndotty " + outDot.getAbsolutePath() + "\n");
-				graph = exec.exec("dotty " + outDot.getAbsolutePath());
-				graph.waitFor();
-				error = "";
-				output = "";
-				reb = graph.getErrorStream();
-				read = reb.read();
-				while (read != -1) {
-					error += (char) read;
-					read = reb.read();
-				}
-				reb = graph.getInputStream();
-				read = reb.read();
-				while (read != -1) {
-					output += (char) read;
-					read = reb.read();
-				}
-				if (!error.equals("")) {
-					log.addText("Errors:\n" + error + "\n");
-				}
-				if (!output.equals("")) {
-					log.addText("Output:\n" + output + "\n");
-				}
+				exec.exec("dotty " + outDot.getAbsolutePath());
 				String remove;
 				if (tree.getFile().substring(tree.getFile().length() - 4).equals("sbml")) {
 					remove = tree.getFile().substring(0, tree.getFile().length() - 4)
@@ -496,28 +454,7 @@ public class BioModelSim implements MouseListener, ActionListener {
 				outXhtml.delete();
 				outXhtml = new File(outFile);
 				log.addText("Exectuting:\nfirefox " + outXhtml.getAbsolutePath() + "\n");
-				browse = exec.exec("firefox " + outXhtml.getAbsolutePath());
-				browse.waitFor();
-				error = "";
-				output = "";
-				reb = browse.getErrorStream();
-				read = reb.read();
-				while (read != -1) {
-					error += (char) read;
-					read = reb.read();
-				}
-				reb = browse.getInputStream();
-				read = reb.read();
-				while (read != -1) {
-					output += (char) read;
-					read = reb.read();
-				}
-				if (!error.equals("")) {
-					log.addText("Errors:\n" + error + "\n");
-				}
-				if (!output.equals("")) {
-					log.addText("Output:\n" + output + "\n");
-				}
+				exec.exec("firefox " + outXhtml.getAbsolutePath());
 				String remove;
 				if (tree.getFile().substring(tree.getFile().length() - 4).equals("sbml")) {
 					remove = tree.getFile().substring(0, tree.getFile().length() - 4)
@@ -539,28 +476,7 @@ public class BioModelSim implements MouseListener, ActionListener {
 				log.addText("Exectuting:\ndotty " + new File(tree.getFile()).getAbsolutePath()
 						+ "\n");
 				Runtime exec = Runtime.getRuntime();
-				Process graph = exec.exec("dotty " + new File(tree.getFile()).getAbsolutePath());
-				graph.waitFor();
-				String error = "";
-				String output = "";
-				InputStream reb = graph.getErrorStream();
-				int read = reb.read();
-				while (read != -1) {
-					error += (char) read;
-					read = reb.read();
-				}
-				reb = graph.getInputStream();
-				read = reb.read();
-				while (read != -1) {
-					output += (char) read;
-					read = reb.read();
-				}
-				if (!error.equals("")) {
-					log.addText("Errors:\n" + error + "\n");
-				}
-				if (!output.equals("")) {
-					log.addText("Output:\n" + output + "\n");
-				}
+				exec.exec("dotty " + new File(tree.getFile()).getAbsolutePath());
 			} catch (Exception e1) {
 				JOptionPane.showMessageDialog(frame, "Unable to view this dot file.", "Error",
 						JOptionPane.ERROR_MESSAGE);
@@ -1090,29 +1006,7 @@ public class BioModelSim implements MouseListener, ActionListener {
 					log.addText("Exectuting:\ndotty " + new File(tree.getFile()).getAbsolutePath()
 							+ "\n");
 					Runtime exec = Runtime.getRuntime();
-					Process graph = exec
-							.exec("dotty " + new File(tree.getFile()).getAbsolutePath());
-					graph.waitFor();
-					String error = "";
-					String output = "";
-					InputStream reb = graph.getErrorStream();
-					int read = reb.read();
-					while (read != -1) {
-						error += (char) read;
-						read = reb.read();
-					}
-					reb = graph.getInputStream();
-					read = reb.read();
-					while (read != -1) {
-						output += (char) read;
-						read = reb.read();
-					}
-					if (!error.equals("")) {
-						log.addText("Errors:\n" + error + "\n");
-					}
-					if (!output.equals("")) {
-						log.addText("Output:\n" + output + "\n");
-					}
+					exec.exec("dotty " + new File(tree.getFile()).getAbsolutePath());
 				} catch (Exception e1) {
 					JOptionPane.showMessageDialog(frame, "Unable to view this dot file.", "Error",
 							JOptionPane.ERROR_MESSAGE);
