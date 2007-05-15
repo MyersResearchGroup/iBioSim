@@ -36,7 +36,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 */
 	private JButton addCompart, removeCompart, editCompart;
 
-	private Object[] comps; // array of compartments
+	private String[] comps; // array of compartments
 
 	private JList compartments; // JList of compartments
 
@@ -48,7 +48,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 
 	private JButton addSpec, removeSpec, editSpec; // species buttons
 
-	private Object[] specs; // array of species
+	private String[] specs; // array of species
 
 	private JList species; // JList of species
 
@@ -68,7 +68,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 
 	private JList reactions; // JList of reactions
 
-	private Object[] reacts; // array of reactions
+	private String[] reacts; // array of reactions
 
 	private JButton addReac, removeReac, editReac; // reactions buttons
 
@@ -76,7 +76,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 
 	private JList parameters; // JList of parameters
 
-	private Object[] params; // array of parameters
+	private String[] params; // array of parameters
 
 	private JButton addParam, removeParam, editParam; // parameters buttons
 
@@ -91,7 +91,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 
 	private JList reacParameters; // JList of reaction parameters
 
-	private Object[] reacParams; // array of reaction parameters
+	private String[] reacParams; // array of reaction parameters
 
 	/*
 	 * reaction parameters buttons
@@ -130,7 +130,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 
 	private JList reactants; // JList for reactants
 
-	private Object[] reacta; // array for reactants
+	private String[] reacta; // array for reactants
 
 	/*
 	 * ArrayList of reactants
@@ -144,7 +144,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 
 	private JList products; // JList for products
 
-	private Object[] product; // array for products
+	private String[] product; // array for products
 
 	/*
 	 * ArrayList of products
@@ -265,14 +265,12 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		scroll.setPreferredSize(new Dimension(276, 152));
 		scroll.setViewportView(compartments);
 		ListOf listOfCompartments = model.getListOfCompartments();
-		ArrayList<String> sbml = new ArrayList<String>();
+		comps = new String[(int) model.getNumCompartments()];
 		for (int i = 0; i < model.getNumCompartments(); i++) {
 			Compartment compartment = (Compartment) listOfCompartments.get(i);
-			sbml.add(compartment.getId());
+			comps[i] = compartment.getId();
 		}
-		Object[] sbmlList = sbml.toArray();
-		Arrays.sort(sbmlList);
-		comps = sbmlList;
+		sort(comps);
 		compartments.setListData(comps);
 		compartments.addMouseListener(this);
 		comp.add(compartmentsLabel, "North");
@@ -299,17 +297,15 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		scroll1.setPreferredSize(new Dimension(276, 152));
 		scroll1.setViewportView(species);
 		ListOf listOfSpecies = model.getListOfSpecies();
-		sbml = new ArrayList<String>();
+		specs = new String[(int) model.getNumSpecies()];
 		amount = false;
 		for (int i = 0; i < model.getNumSpecies(); i++) {
 			Species species = (Species) listOfSpecies.get(i);
 			amount = species.isSetInitialAmount();
-			sbml.add(species.getId() + " " + species.getCompartment() + " "
-					+ species.getInitialAmount());
+			specs[i] = species.getId() + " " + species.getCompartment() + " "
+					+ species.getInitialAmount();
 		}
-		sbmlList = sbml.toArray();
-		Arrays.sort(sbmlList);
-		specs = sbmlList;
+		sort(specs);
 		species.setListData(specs);
 		species.setSelectedIndex(0);
 		species.addMouseListener(this);
@@ -337,14 +333,12 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		scroll2.setPreferredSize(new Dimension(436, 152));
 		scroll2.setViewportView(reactions);
 		ListOf listOfReactions = model.getListOfReactions();
-		sbml = new ArrayList<String>();
+		reacts = new String[(int) model.getNumReactions()];
 		for (int i = 0; i < model.getNumReactions(); i++) {
 			Reaction reaction = (Reaction) listOfReactions.get(i);
-			sbml.add(reaction.getId());
+			reacts[i] = reaction.getId();
 		}
-		sbmlList = sbml.toArray();
-		Arrays.sort(sbmlList);
-		reacts = sbmlList;
+		sort(reacts);
 		reactions.setListData(reacts);
 		reactions.setSelectedIndex(0);
 		reactions.addMouseListener(this);
@@ -372,14 +366,12 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		scroll3.setPreferredSize(new Dimension(276, 152));
 		scroll3.setViewportView(parameters);
 		ListOf listOfParameters = model.getListOfParameters();
-		sbml = new ArrayList<String>();
+		params = new String[(int) model.getNumParameters()];
 		for (int i = 0; i < model.getNumParameters(); i++) {
 			Parameter parameter = (Parameter) listOfParameters.get(i);
-			sbml.add(parameter.getId() + " " + parameter.getValue());
+			params[i] = parameter.getId() + " " + parameter.getValue();
 		}
-		sbmlList = sbml.toArray();
-		Arrays.sort(sbmlList);
-		params = sbmlList;
+		sort(params);
 		parameters.setListData(params);
 		parameters.setSelectedIndex(0);
 		parameters.addMouseListener(this);
@@ -641,7 +633,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						}
 					}
 					comps[index] = addComp;
-					Arrays.sort(comps);
+					sort(comps);
 					compartments.setListData(comps);
 					compartments.setSelectedIndex(index);
 				} else {
@@ -654,9 +646,13 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					add.setListData(adding);
 					add.setSelectedIndex(0);
 					compartments.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-					comps = Buttons.add(comps, compartments, add, false, null, null, null, null,
+					adding = Buttons.add(comps, compartments, add, false, null, null, null, null,
 							null, null, null, this);
-					Arrays.sort(comps);
+					comps = new String[adding.length];
+					for (int i = 0; i < adding.length; i++) {
+						comps[i] = (String) adding[i];
+					}
+					sort(comps);
 					compartments.setListData(comps);
 					compartments.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 					if (document.getModel().getNumCompartments() == 1) {
@@ -732,7 +728,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 							specie.setInitialConcentration(initial);
 						}
 						specs[index] = addSpec;
-						Arrays.sort(specs);
+						sort(specs);
 						species.setListData(specs);
 						species.setSelectedIndex(index);
 					} else {
@@ -751,9 +747,13 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						add.setListData(adding);
 						add.setSelectedIndex(0);
 						species.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-						specs = Buttons.add(specs, species, add, false, null, null, null, null,
+						adding = Buttons.add(specs, species, add, false, null, null, null, null,
 								null, null, null, this);
-						Arrays.sort(specs);
+						specs = new String[adding.length];
+						for (int i = 0; i < adding.length; i++) {
+							specs[i] = (String) adding[i];
+						}
+						sort(specs);
 						species.setListData(specs);
 						species.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 						if (document.getModel().getNumSpecies() == 1) {
@@ -849,7 +849,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					}
 					react.getKineticLaw().setFormula(kineticLaw.getText().trim());
 					reacts[index] = reac;
-					Arrays.sort(reacts);
+					sort(reacts);
 					reactions.setListData(reacts);
 					reactions.setSelectedIndex(index);
 				} else {
@@ -879,9 +879,13 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					add.setListData(adding);
 					add.setSelectedIndex(0);
 					reactions.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-					reacts = Buttons.add(reacts, reactions, add, false, null, null, null, null,
+					adding = Buttons.add(reacts, reactions, add, false, null, null, null, null,
 							null, null, null, this);
-					Arrays.sort(reacts);
+					reacts = new String[adding.length];
+					for (int i = 0; i < adding.length; i++) {
+						reacts[i] = (String) adding[i];
+					}
+					sort(reacts);
 					reactions.setListData(reacts);
 					reactions.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 					if (document.getModel().getNumReactions() == 1) {
@@ -1132,7 +1136,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						}
 						paramet.setValue(value);
 						params[index] = param;
-						Arrays.sort(params);
+						sort(params);
 						parameters.setListData(params);
 						parameters.setSelectedIndex(index);
 					} else {
@@ -1146,9 +1150,13 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						add.setListData(adding);
 						add.setSelectedIndex(0);
 						parameters.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-						params = Buttons.add(params, parameters, add, false, null, null, null,
+						adding = Buttons.add(params, parameters, add, false, null, null, null,
 								null, null, null, null, this);
-						Arrays.sort(params);
+						params = new String[adding.length];
+						for (int i = 0; i < adding.length; i++) {
+							params[i] = (String) adding[i];
+						}
+						sort(params);
 						parameters.setListData(params);
 						parameters.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 						if (document.getModel().getNumParameters() == 1) {
@@ -1209,7 +1217,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						}
 						paramet.setValue(value);
 						reacParams[index] = param;
-						Arrays.sort(reacParams);
+						sort(reacParams);
 						reacParameters.setListData(reacParams);
 						reacParameters.setSelectedIndex(index);
 					} else {
@@ -1225,9 +1233,13 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						add.setSelectedIndex(0);
 						reacParameters
 								.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-						reacParams = Buttons.add(reacParams, reacParameters, add, false, null,
-								null, null, null, null, null, null, reactionFrame);
-						Arrays.sort(reacParams);
+						adding = Buttons.add(reacParams, reacParameters, add, false, null, null,
+								null, null, null, null, null, reactionFrame);
+						reacParams = new String[adding.length];
+						for (int i = 0; i < adding.length; i++) {
+							reacParams[i] = (String) adding[i];
+						}
+						sort(reacParams);
 						reacParameters.setListData(reacParams);
 						reacParameters.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 						try {
@@ -1346,7 +1358,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					produ.setSpecies((String) productSpecies.getSelectedItem());
 					produ.setStoichiometry(value);
 					product[index] = prod;
-					Arrays.sort(product);
+					sort(product);
 					products.setListData(product);
 					products.setSelectedIndex(index);
 				} else {
@@ -1360,9 +1372,13 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					add.setListData(adding);
 					add.setSelectedIndex(0);
 					products.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-					product = Buttons.add(product, products, add, false, null, null, null, null,
+					adding = Buttons.add(product, products, add, false, null, null, null, null,
 							null, null, null, reactionFrame);
-					Arrays.sort(product);
+					product = new String[adding.length];
+					for (int i = 0; i < adding.length; i++) {
+						product[i] = (String) adding[i];
+					}
+					sort(product);
 					products.setListData(product);
 					products.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 					try {
@@ -1409,7 +1425,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					reactan.setSpecies((String) reactantSpecies.getSelectedItem());
 					reactan.setStoichiometry(value);
 					reacta[index] = react;
-					Arrays.sort(reacta);
+					sort(reacta);
 					reactants.setListData(reacta);
 					reactants.setSelectedIndex(index);
 				} else {
@@ -1423,9 +1439,13 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					add.setListData(adding);
 					add.setSelectedIndex(0);
 					reactants.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-					reacta = Buttons.add(reacta, reactants, add, false, null, null, null, null,
+					adding = Buttons.add(reacta, reactants, add, false, null, null, null, null,
 							null, null, null, reactionFrame);
-					Arrays.sort(reacta);
+					reacta = new String[adding.length];
+					for (int i = 0; i < adding.length; i++) {
+						reacta[i] = (String) adding[i];
+					}
+					sort(reacta);
 					reactants.setListData(reacta);
 					reactants.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 					try {
@@ -1709,21 +1729,20 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			scroll.setMinimumSize(new Dimension(260, 220));
 			scroll.setPreferredSize(new Dimension(276, 152));
 			scroll.setViewportView(reacParameters);
-			ArrayList<String> sbml = new ArrayList<String>();
+			reacParams = new String[0];
 			changedParameters = new ArrayList<Parameter>();
 			if (option.equals("Save")) {
 				ListOf listOfParameters = document.getModel().getReaction(
 						((String) reactions.getSelectedValue())).getKineticLaw()
 						.getListOfParameters();
+				reacParams = new String[(int) listOfParameters.getNumItems()];
 				for (int i = 0; i < listOfParameters.getNumItems(); i++) {
 					Parameter parameter = (Parameter) listOfParameters.get(i);
 					changedParameters.add(parameter);
-					sbml.add(parameter.getId() + " " + parameter.getValue());
+					reacParams[i] = parameter.getId() + " " + parameter.getValue();
 				}
 			}
-			Object[] sbmlList = sbml.toArray();
-			Arrays.sort(sbmlList);
-			reacParams = sbmlList;
+			sort(reacParams);
 			reacParameters.setListData(reacParams);
 			reacParameters.setSelectedIndex(0);
 			reacParameters.addMouseListener(this);
@@ -1748,23 +1767,22 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			scroll2.setMinimumSize(new Dimension(260, 220));
 			scroll2.setPreferredSize(new Dimension(276, 152));
 			scroll2.setViewportView(reactants);
-			sbml = new ArrayList<String>();
+			reacta = new String[0];
 			changedReactants = new ArrayList<SpeciesReference>();
 			kineticL = "";
 			if (option.equals("Save")) {
 				ListOf listOfReactants = document.getModel().getReaction(
 						((String) reactions.getSelectedValue())).getListOfReactants();
+				reacta = new String[(int) listOfReactants.getNumItems()];
 				for (int i = 0; i < listOfReactants.getNumItems(); i++) {
 					SpeciesReference reactant = (SpeciesReference) listOfReactants.get(i);
 					changedReactants.add(reactant);
-					sbml.add(reactant.getSpecies() + " " + reactant.getStoichiometry());
+					reacta[i] = reactant.getSpecies() + " " + reactant.getStoichiometry();
 				}
 				kineticL = document.getModel().getReaction(((String) reactions.getSelectedValue()))
 						.getKineticLaw().getFormula();
 			}
-			sbmlList = sbml.toArray();
-			Arrays.sort(sbmlList);
-			reacta = sbmlList;
+			sort(reacta);
 			reactants.setListData(reacta);
 			reactants.setSelectedIndex(0);
 			reactants.addMouseListener(this);
@@ -1789,20 +1807,19 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			scroll3.setMinimumSize(new Dimension(260, 220));
 			scroll3.setPreferredSize(new Dimension(276, 152));
 			scroll3.setViewportView(products);
-			sbml = new ArrayList<String>();
+			product = new String[0];
 			changedProducts = new ArrayList<SpeciesReference>();
 			if (option.equals("Save")) {
 				ListOf listOfProducts = document.getModel().getReaction(
 						((String) reactions.getSelectedValue())).getListOfProducts();
+				product = new String[(int) listOfProducts.getNumItems()];
 				for (int i = 0; i < listOfProducts.getNumItems(); i++) {
 					SpeciesReference product = (SpeciesReference) listOfProducts.get(i);
 					changedProducts.add(product);
-					sbml.add(product.getSpecies() + " " + product.getStoichiometry());
+					this.product[i] = product.getSpecies() + " " + product.getStoichiometry();
 				}
 			}
-			sbmlList = sbml.toArray();
-			Arrays.sort(sbmlList);
-			product = sbmlList;
+			sort(product);
 			products.setListData(product);
 			products.setSelectedIndex(0);
 			products.addMouseListener(this);
@@ -2070,8 +2087,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			for (int i = 0; i < listOfSpecies.getNumItems(); i++) {
 				species.add(((Species) listOfSpecies.get(i)).getId());
 			}
-			Object[] speciesList = species.toArray();
-			Arrays.sort(speciesList);
+			String[] speciesList = (String[]) species.toArray();
+			sort(speciesList);
 			Object[] choices = speciesList;
 			productSpecies = new JComboBox(choices);
 			productStoiciometry = new JTextField("1");
@@ -2169,8 +2186,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			for (int i = 0; i < listOfSpecies.getNumItems(); i++) {
 				species.add(((Species) listOfSpecies.get(i)).getId());
 			}
-			Object[] speciesList = species.toArray();
-			Arrays.sort(speciesList);
+			String[] speciesList = (String[]) species.toArray();
+			sort(speciesList);
 			Object[] choices = speciesList;
 			reactantSpecies = new JComboBox(choices);
 			reactantStoiciometry = new JTextField("1");
@@ -2297,6 +2314,21 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 
 	public boolean hasChanged() {
 		return change;
+	}
+
+	private void sort(String[] sort) {
+		int i, j;
+		String index;
+
+		for (i = 1; i < sort.length; i++) {
+			index = sort[i];
+			j = i;
+			while ((j > 0) && sort[j - 1].compareToIgnoreCase(index) > 0) {
+				sort[j] = sort[j - 1];
+				j = j - 1;
+			}
+			sort[j] = index;
+		}
 	}
 
 	/**
