@@ -1032,6 +1032,8 @@ public class BioModelSim implements MouseListener, ActionListener {
 					"Simulation ID", JOptionPane.PLAIN_MESSAGE);
 			if (simName != null && !simName.equals("")) {
 				new File(root + File.separator + simName).mkdir();
+				new FileWriter(new File(root + File.separator + simName + File.separator + ".sim"))
+						.close();
 				String[] dot = tree.getFile().split(File.separator);
 				String sbmlFile = root
 						+ File.separator
@@ -1086,6 +1088,8 @@ public class BioModelSim implements MouseListener, ActionListener {
 					"Simulation ID", JOptionPane.PLAIN_MESSAGE);
 			if (simName != null && !simName.equals("")) {
 				new File(root + File.separator + simName).mkdir();
+				new FileWriter(new File(root + File.separator + simName + File.separator + ".sim"))
+						.close();
 				String[] sbml1 = tree.getFile().split(File.separator);
 				String sbmlFile = root + File.separator + simName + File.separator
 						+ sbml1[sbml1.length - 1];
