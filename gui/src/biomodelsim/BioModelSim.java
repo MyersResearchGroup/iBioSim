@@ -125,7 +125,7 @@ public class BioModelSim implements MouseListener, ActionListener {
 		about = new JMenuItem("About");
 		save = new JMenuItem("Save");
 		openProj = new JMenuItem("Open Project");
-		openSim = new JMenuItem("Open Simulation");
+		openSim = new JMenuItem("Open Analysis View");
 		newTstubd = new JMenuItem("New Project");
 		newModel = new JMenuItem("New Model");
 		display = new JMenuItem("Display");
@@ -953,7 +953,7 @@ public class BioModelSim implements MouseListener, ActionListener {
 				JMenuItem browse = new JMenuItem("View In Browser");
 				browse.addActionListener(this);
 				browse.setActionCommand("browse");
-				JMenuItem simulate = new JMenuItem("Create A Simulation");
+				JMenuItem simulate = new JMenuItem("Create Analysis View");
 				simulate.addActionListener(this);
 				simulate.setActionCommand("simulate");
 				JMenuItem delete = new JMenuItem("Delete");
@@ -965,7 +965,7 @@ public class BioModelSim implements MouseListener, ActionListener {
 				popup.add(simulate);
 				popup.add(delete);
 			} else if (tree.getFile().substring(tree.getFile().length() - 3).equals("dot")) {
-				JMenuItem create = new JMenuItem("Create A Simulation");
+				JMenuItem create = new JMenuItem("Create Analysis View");
 				create.addActionListener(this);
 				create.setActionCommand("createSim");
 				JMenuItem edit = new JMenuItem("Edit Graph");
@@ -982,7 +982,7 @@ public class BioModelSim implements MouseListener, ActionListener {
 				popup.add(graph);
 				popup.add(delete);
 			} else if (new File(tree.getFile()).isDirectory() && !tree.getFile().equals(root)) {
-				JMenuItem open = new JMenuItem("Open Simulation");
+				JMenuItem open = new JMenuItem("Open Analysis View");
 				open.addActionListener(this);
 				open.setActionCommand("openSim");
 				JMenuItem delete = new JMenuItem("Delete");
