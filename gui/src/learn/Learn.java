@@ -38,7 +38,7 @@ public class Learn extends JPanel implements ActionListener {
 
 	private JComboBox numBins;
 
-	private JTextField influenceLevel, relaxIPDelta, letNThrough;
+	private JTextField influenceLevel, relaxIPDelta, letNThrough, maxVectorSize;
 
 	private JCheckBox harshenBoundsOnTie, donotInvertSortOrder, seedParents;
 
@@ -110,7 +110,7 @@ public class Learn extends JPanel implements ActionListener {
 		initNet.add(browseInit);
 
 		// Sets up the thresholds area
-		JPanel thresholdPanel1 = new JPanel(new GridLayout(8, 2));
+		JPanel thresholdPanel1 = new JPanel(new GridLayout(9, 2));
 		JPanel thresholdPanel2 = new JPanel(new GridLayout(6, 2));
 		JLabel activationLabel = new JLabel("For Vote Threshold (Tf):");
 		activation = new JTextField("1.33");
@@ -136,6 +136,10 @@ public class Learn extends JPanel implements ActionListener {
 		letNThrough = new JTextField("1");
 		thresholdPanel1.add(letNThroughLabel);
 		thresholdPanel1.add(letNThrough);
+		JLabel maxVectorSizeLabel = new JLabel("Max Vector Size (Tj)");
+		maxVectorSize = new JTextField("2");
+		thresholdPanel1.add(maxVectorSizeLabel);
+		thresholdPanel1.add(maxVectorSize);
 		JLabel relaxIPDeltaLabel = new JLabel("Relax Thresholds Delta (Tr):");
 		relaxIPDelta = new JTextField("0.025");
 		thresholdPanel1.add(relaxIPDeltaLabel);
@@ -289,6 +293,8 @@ public class Learn extends JPanel implements ActionListener {
 					geneNet += " --relaxIPDelta " + relaxIPDelta;
 					int letNThrough = Integer.parseInt(this.letNThrough.getText().trim());
 					geneNet += " --sip_letNThrough " + letNThrough;
+					int maxVectorSize = Integer.parseInt(this.maxVectorSize.getText().trim());
+					geneNet += " -tj " + maxVectorSize;
 					double background = Double.parseDouble(this.background.getText().trim());
 					geneNet += " -bkf " + background;
 				} catch (Exception e2) {
@@ -484,7 +490,7 @@ public class Learn extends JPanel implements ActionListener {
 				label.add(new JLabel("Species"));
 				label.add(new JLabel("Number Of Bins"));
 				for (int i = 0; i < max - 3; i++) {
-					label.add(new JLabel("cutoff " + (i + 1)));
+					label.add(new JLabel("Cutoff " + (i + 1)));
 				}
 				speciesPanel.add(label);
 				int j = 0;
@@ -597,7 +603,7 @@ public class Learn extends JPanel implements ActionListener {
 				label.add(new JLabel("Species"));
 				label.add(new JLabel("Number Of Bins"));
 				for (int i = 0; i < Integer.parseInt((String) numBins.getSelectedItem()) - 1; i++) {
-					label.add(new JLabel("cutoff " + (i + 1)));
+					label.add(new JLabel("Cutoff " + (i + 1)));
 				}
 				speciesPanel.add(label);
 				int j = 0;
@@ -671,7 +677,7 @@ public class Learn extends JPanel implements ActionListener {
 					try {
 						((JPanel) panels[0]).getComponent(i + 3);
 					} catch (Exception e) {
-						((JPanel) panels[0]).add(new JLabel("cutoff " + (i + 1)));
+						((JPanel) panels[0]).add(new JLabel("Cutoff " + (i + 1)));
 					}
 				}
 			} else {
