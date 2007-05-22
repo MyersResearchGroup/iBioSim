@@ -3,11 +3,9 @@ package biomodelsim.core.gui;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
-
 import javax.swing.*;
 import javax.swing.plaf.basic.*;
 import org.sbml.libsbml.*;
-
 import reb2sac.core.gui.*;
 import learn.core.gui.*;
 import sbmleditor.core.gui.*;
@@ -71,6 +69,8 @@ public class BioSim implements MouseListener, ActionListener {
 	 * This is the constructor for the Tstubd class. It initializes all the
 	 * input fields, puts them on panels, adds the panels to the frame, and then
 	 * displays the frame.
+	 * 
+	 * @throws Exception
 	 */
 	public BioSim() {
 		// Creates a new frame
@@ -117,7 +117,7 @@ public class BioSim implements MouseListener, ActionListener {
 		JMenu newMenu = new JMenu("New");
 		menuBar.add(file);
 		menuBar.add(tools);
-		// ***menuBar.add(help);***
+		menuBar.add(help);
 		simulate = new JMenuItem("Simulate");
 		synthesize = new JMenuItem("Synthesize");
 		_abstract = new JMenuItem("Abstract");
@@ -234,8 +234,68 @@ public class BioSim implements MouseListener, ActionListener {
 	 * selected.
 	 */
 	public void actionPerformed(ActionEvent e) {
+		if (e.getSource() == about) {
+			final JFrame f = new JFrame("About");
+			JLabel bioSim = new JLabel("BioSim 1.0");
+			Font font = bioSim.getFont();
+			font = font.deriveFont(Font.BOLD, 36.0f);
+			bioSim.setFont(font);
+			JLabel uOfU = new JLabel("University of Utah");
+			JButton credits = new JButton("Credits");
+			credits.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					Object[] options = { "Close" };
+					JOptionPane.showOptionDialog(f, "Nathan Barker\nHiroyuki Kuwahara\n"
+							+ "Curtis Madsen\nChris Myers\nNam Nguyen", "Credits",
+							JOptionPane.YES_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
+							options[0]);
+				}
+			});
+			JButton close = new JButton("Close");
+			close.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					f.dispose();
+				}
+			});
+			JPanel buttons = new JPanel();
+			buttons.add(credits);
+			buttons.add(close);
+			JPanel aboutPanel = new JPanel(new GridLayout(3, 1));
+			aboutPanel.add(bioSim);
+			aboutPanel.add(uOfU);
+			aboutPanel.add(buttons);
+			f.setContentPane(aboutPanel);
+			f.pack();
+			Dimension screenSize;
+			try {
+				Toolkit tk = Toolkit.getDefaultToolkit();
+				screenSize = tk.getScreenSize();
+			} catch (AWTError awe) {
+				screenSize = new Dimension(640, 480);
+			}
+			Dimension frameSize = f.getSize();
+
+			if (frameSize.height > screenSize.height) {
+				frameSize.height = screenSize.height;
+			}
+			if (frameSize.width > screenSize.width) {
+				frameSize.width = screenSize.width;
+			}
+			int x = screenSize.width / 2 - frameSize.width / 2;
+			int y = screenSize.height / 2 - frameSize.height / 2;
+			f.setLocation(x, y);
+			f.setVisible(true);
+		} else if (e.getSource() == manual) {
+			try {
+				Runtime exec = Runtime.getRuntime();
+				exec.exec("firefox " + System.getenv("BIOSIM") + "/docs/BioSim.html");
+			} catch (IOException e1) {
+				JOptionPane.showMessageDialog(frame, "Unable to open manual.", "Error",
+						JOptionPane.ERROR_MESSAGE);
+			}
+		}
 		// if the exit menu item is selected
-		if (e.getSource() == exit) {
+		else if (e.getSource() == exit) {
 			System.exit(1);
 		}
 		// if the open popup menu is selected on a sim directory
