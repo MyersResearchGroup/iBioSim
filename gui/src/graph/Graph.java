@@ -94,7 +94,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 	private JCheckBox keep; // check box for keeping data on graph
 
-	private BioModelSim biomodelsim; // tstubd gui
+	private BioSim biomodelsim; // tstubd gui
 
 	private JButton exportJPeg, exportPng; // buttons
 
@@ -109,7 +109,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	public Graph(String file, Component component, String printer_track_quantity, String label,
 			JRadioButton monteCarlo, String sim, String printer_id, String outDir, int run,
 			String[] intSpecies, int readIn, XYSeriesCollection dataset, String time,
-			BioModelSim biomodelsim) {
+			BioSim biomodelsim) {
 		// initializes member variables
 		this.sim1 = sim;
 		this.run = run;
