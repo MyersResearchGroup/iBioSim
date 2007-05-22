@@ -38,7 +38,7 @@ public class FileTree extends JPanel implements MouseListener {
 	/**
 	 * Construct a FileTree
 	 */
-	public FileTree(final File dir, BioModelSim biomodelsim) {
+	public FileTree(final File dir, BioSim biomodelsim) {
 		setLayout(new BorderLayout());
 
 		this.dir = dir;

@@ -160,7 +160,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 
 	private String sbmlFile, root; // sbml file and root directory
 
-	private BioModelSim biomodelsim; // reference to the tstubd class
+	private BioSim biomodelsim; // reference to the tstubd class
 
 	private String simName; // simulation id
 
@@ -177,7 +177,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 	 * puts them on panels, adds the panels to the frame, and then displays the
 	 * GUI.
 	 */
-	public Reb2Sac(String sbmlFile, String root, BioModelSim biomodelsim, String simName, Log log,
+	public Reb2Sac(String sbmlFile, String root, BioSim biomodelsim, String simName, Log log,
 			JTabbedPane simTab, String open) {
 		this.biomodelsim = biomodelsim;
 		this.sbmlFile = sbmlFile;

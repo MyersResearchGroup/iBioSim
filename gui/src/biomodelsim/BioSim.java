@@ -21,7 +21,7 @@ import buttons.core.gui.*;
  * 
  * @author Curtis Madsen
  */
-public class BioModelSim implements MouseListener, ActionListener {
+public class BioSim implements MouseListener, ActionListener {
 
 	private JFrame frame; // Frame where components of the GUI are displayed
 
@@ -72,7 +72,7 @@ public class BioModelSim implements MouseListener, ActionListener {
 	 * input fields, puts them on panels, adds the panels to the frame, and then
 	 * displays the frame.
 	 */
-	public BioModelSim() {
+	public BioSim() {
 		// Creates a new frame
 		frame = new JFrame("BioSim");
 
@@ -1296,6 +1296,6 @@ public class BioModelSim implements MouseListener, ActionListener {
 	 */
 	public static void main(String args[]) {
 		System.loadLibrary("sbmlj");
-		new BioModelSim();
+		new BioSim();
 	}
 }

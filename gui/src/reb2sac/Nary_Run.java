@@ -105,7 +105,7 @@ public class Nary_Run implements ActionListener, Runnable {
 
 	private String ssaFile; // ssa filename
 
-	private BioModelSim biomodelsim; // tstubd gui
+	private BioSim biomodelsim; // tstubd gui
 
 	private JTabbedPane simTab; // the simulation tab
 
@@ -121,7 +121,7 @@ public class Nary_Run implements ActionListener, Runnable {
 			JRadioButton monteCarlo, double timeLimit, double printInterval, String outDir,
 			long rndSeed, int run, String printer_id, String printer_track_quantity,
 			String[] termCond, String[] intSpecies, double rap1, double rap2, double qss, int con,
-			Log log, JCheckBox usingSSA, String ssaFile, BioModelSim biomodelsim, JTabbedPane simTab) {
+			Log log, JCheckBox usingSSA, String ssaFile, BioSim biomodelsim, JTabbedPane simTab) {
 		// intitializes the member variables
 		this.rap1 = rap1;
 		this.rap2 = rap2;
