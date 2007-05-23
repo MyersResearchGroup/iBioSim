@@ -67,7 +67,7 @@
 	  </javac>	
         <jar jarfile="${build.lib}/gui.jar" basedir="${build.classes}">
 	    <manifest>
-		<attribute name="Main-Class" value="biomodelsim.core.gui.BioModelSim"/>
+		<attribute name="Main-Class" value="biomodelsim.core.gui.BioSim"/>
 		<attribute name="Class-Path" value="${basedir}/lib/jcommon-1.0.4.jar ${basedir}/lib/jfreechart-1.0.1.jar ${basedir}/lib/libsbml/lib/libsbmlj.jar"/>
       	    </manifest>
 	</jar>
