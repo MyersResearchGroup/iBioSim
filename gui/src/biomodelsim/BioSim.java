@@ -422,11 +422,11 @@ public class BioSim implements MouseListener, ActionListener {
 					output += (char) read;
 					read = reb.read();
 				}
-				if (!error.equals("")) {
-					log.addText("Errors:\n" + error + "\n");
-				}
 				if (!output.equals("")) {
 					log.addText("Output:\n" + output + "\n");
+				}
+				if (!error.equals("")) {
+					log.addText("Errors:\n" + error + "\n");
 				}
 				File outDot = new File("out.dot");
 				FileReader r = new FileReader(outDot);
@@ -495,11 +495,11 @@ public class BioSim implements MouseListener, ActionListener {
 					output += (char) read;
 					read = reb.read();
 				}
-				if (!error.equals("")) {
-					log.addText("Errors:\n" + error + "\n");
-				}
 				if (!output.equals("")) {
 					log.addText("Output:\n" + output + "\n");
+				}
+				if (!error.equals("")) {
+					log.addText("Errors:\n" + error + "\n");
 				}
 				File outXhtml = new File("out.xhtml");
 				FileReader r = new FileReader(outXhtml);
@@ -1118,11 +1118,11 @@ public class BioSim implements MouseListener, ActionListener {
 					output += (char) read;
 					read = reb.read();
 				}
-				if (!error.equals("")) {
-					log.addText("Errors:\n" + error + "\n");
-				}
 				if (!output.equals("")) {
 					log.addText("Output:\n" + output + "\n");
+				}
+				if (!error.equals("")) {
+					log.addText("Errors:\n" + error + "\n");
 				}
 				refreshTree();
 				JTabbedPane simTab = new JTabbedPane();

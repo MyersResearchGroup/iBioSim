@@ -34,16 +34,16 @@ public class Learn extends JPanel implements ActionListener {
 
 	private JTextField background;
 
-	private JTextField windowRising, windowSize;
+	// private JTextField windowRising, windowSize;
 
 	private JComboBox numBins;
 
 	private JTextField influenceLevel, relaxIPDelta, letNThrough, maxVectorSize;
 
-	private JCheckBox harshenBoundsOnTie, donotInvertSortOrder, seedParents;
+	// private JCheckBox harshenBoundsOnTie, donotInvertSortOrder, seedParents;
 
-	private JCheckBox mustNotWinMajority, donotTossSingleRatioParents,
-			donotTossChangedInfluenceSingleParents;
+	// private JCheckBox mustNotWinMajority, donotTossSingleRatioParents,
+	// donotTossChangedInfluenceSingleParents;
 
 	private ArrayList<ArrayList<Component>> species;
 
@@ -111,7 +111,7 @@ public class Learn extends JPanel implements ActionListener {
 
 		// Sets up the thresholds area
 		JPanel thresholdPanel1 = new JPanel(new GridLayout(9, 2));
-		JPanel thresholdPanel2 = new JPanel(new GridLayout(6, 2));
+		JPanel thresholdPanel2 = new JPanel(new GridLayout(1, 2));
 		JLabel activationLabel = new JLabel("For Vote Threshold (Tf):");
 		activation = new JTextField("1.33");
 		thresholdPanel1.add(activationLabel);
@@ -159,31 +159,32 @@ public class Learn extends JPanel implements ActionListener {
 		debug = new JComboBox(options);
 		thresholdPanel2.add(debugLabel);
 		thresholdPanel2.add(debug);
-		JLabel windowRisingLabel = new JLabel("Window Rising Amount:");
-		windowRising = new JTextField("1");
-		thresholdPanel2.add(windowRisingLabel);
-		thresholdPanel2.add(windowRising);
-		JLabel windowSizeLabel = new JLabel("Window Size:");
-		windowSize = new JTextField("1");
-		thresholdPanel2.add(windowSizeLabel);
-		thresholdPanel2.add(windowSize);
-		harshenBoundsOnTie = new JCheckBox("Harshen Bounds On Tie");
-		harshenBoundsOnTie.setSelected(true);
-		donotInvertSortOrder = new JCheckBox("Do Not Invert Sort Order");
-		donotInvertSortOrder.setSelected(true);
-		seedParents = new JCheckBox("Parents Should Be Ranked By Score");
-		seedParents.setSelected(true);
-		mustNotWinMajority = new JCheckBox("Must Not Win Majority");
-		mustNotWinMajority.setSelected(true);
-		donotTossSingleRatioParents = new JCheckBox("Single Ratio Parents Should Be Kept");
-		donotTossChangedInfluenceSingleParents = new JCheckBox(
-				"Parents That Change Influence Should Not Be Tossed");
-		thresholdPanel2.add(harshenBoundsOnTie);
-		thresholdPanel2.add(donotInvertSortOrder);
-		thresholdPanel2.add(seedParents);
-		thresholdPanel2.add(mustNotWinMajority);
-		thresholdPanel2.add(donotTossSingleRatioParents);
-		thresholdPanel2.add(donotTossChangedInfluenceSingleParents);
+		/*
+		 * JLabel windowRisingLabel = new JLabel("Window Rising Amount:");
+		 * windowRising = new JTextField("1");
+		 * thresholdPanel2.add(windowRisingLabel);
+		 * thresholdPanel2.add(windowRising); JLabel windowSizeLabel = new
+		 * JLabel("Window Size:"); windowSize = new JTextField("1");
+		 * thresholdPanel2.add(windowSizeLabel);
+		 * thresholdPanel2.add(windowSize); harshenBoundsOnTie = new
+		 * JCheckBox("Harshen Bounds On Tie");
+		 * harshenBoundsOnTie.setSelected(true); donotInvertSortOrder = new
+		 * JCheckBox("Do Not Invert Sort Order");
+		 * donotInvertSortOrder.setSelected(true); seedParents = new
+		 * JCheckBox("Parents Should Be Ranked By Score");
+		 * seedParents.setSelected(true); mustNotWinMajority = new
+		 * JCheckBox("Must Not Win Majority");
+		 * mustNotWinMajority.setSelected(true); donotTossSingleRatioParents =
+		 * new JCheckBox("Single Ratio Parents Should Be Kept");
+		 * donotTossChangedInfluenceSingleParents = new JCheckBox( "Parents That
+		 * Change Influence Should Not Be Tossed");
+		 * thresholdPanel2.add(harshenBoundsOnTie);
+		 * thresholdPanel2.add(donotInvertSortOrder);
+		 * thresholdPanel2.add(seedParents);
+		 * thresholdPanel2.add(mustNotWinMajority);
+		 * thresholdPanel2.add(donotTossSingleRatioParents);
+		 * thresholdPanel2.add(donotTossChangedInfluenceSingleParents);
+		 */
 
 		// Creates the run button
 		run = new JButton("Learn");
@@ -280,10 +281,12 @@ public class Learn extends JPanel implements ActionListener {
 					geneNet += " -r " + repression;
 					double parent = Double.parseDouble(this.parent.getText().trim());
 					geneNet += " -v " + parent;
-					int windowRising = Integer.parseInt(this.windowRising.getText().trim());
-					geneNet += " --windowRisingAmount " + windowRising;
-					int windowSize = Integer.parseInt(this.windowSize.getText().trim());
-					geneNet += " --windowSize " + windowSize;
+					// int windowRising =
+					// Integer.parseInt(this.windowRising.getText().trim());
+					// geneNet += " --windowRisingAmount " + windowRising;
+					// int windowSize =
+					// Integer.parseInt(this.windowSize.getText().trim());
+					// geneNet += " --windowSize " + windowSize;
 					int numBins = Integer.parseInt((String) this.numBins.getSelectedItem());
 					geneNet += " --numBins " + numBins;
 					double influenceLevel = Double
@@ -325,24 +328,20 @@ public class Learn extends JPanel implements ActionListener {
 					write.close();
 					geneNet += " --readLevels";
 				}
-				if (harshenBoundsOnTie.isSelected()) {
-					geneNet += " --cpp_harshenBoundsOnTie";
-				}
-				if (donotInvertSortOrder.isSelected()) {
-					geneNet += " --cpp_cmp_output_donotInvertSortOrder";
-				}
-				if (seedParents.isSelected()) {
-					geneNet += " --cpp_seedParents";
-				}
-				if (mustNotWinMajority.isSelected()) {
-					geneNet += " --cmp_score_mustNotWinMajority";
-				}
-				if (donotTossSingleRatioParents.isSelected()) {
-					geneNet += " --score_donotTossSingleRatioParents";
-				}
-				if (donotTossChangedInfluenceSingleParents.isSelected()) {
-					geneNet += " --output_donotTossChangedInfluenceSingleParents";
-				}
+				/*
+				 * if (harshenBoundsOnTie.isSelected()) { geneNet += "
+				 * --cpp_harshenBoundsOnTie"; } if
+				 * (donotInvertSortOrder.isSelected()) { geneNet += "
+				 * --cpp_cmp_output_donotInvertSortOrder"; } if
+				 * (seedParents.isSelected()) { geneNet += " --cpp_seedParents"; }
+				 * if (mustNotWinMajority.isSelected()) { geneNet += "
+				 * --cmp_score_mustNotWinMajority"; } if
+				 * (donotTossSingleRatioParents.isSelected()) { geneNet += "
+				 * --score_donotTossSingleRatioParents"; } if
+				 * (donotTossChangedInfluenceSingleParents.isSelected()) {
+				 * geneNet += "
+				 * --output_donotTossChangedInfluenceSingleParents"; }
+				 */
 				Runtime exec = Runtime.getRuntime();
 				Process learn = exec.exec(geneNet + " " + directory);
 				log.addText("Exectuting:\n" + geneNet + " " + directory + "\n");
@@ -490,7 +489,7 @@ public class Learn extends JPanel implements ActionListener {
 				label.add(new JLabel("Species"));
 				label.add(new JLabel("Number Of Bins"));
 				for (int i = 0; i < max - 3; i++) {
-					label.add(new JLabel("Cutoff " + (i + 1)));
+					label.add(new JLabel("Level " + (i + 1)));
 				}
 				speciesPanel.add(label);
 				int j = 0;
@@ -603,7 +602,7 @@ public class Learn extends JPanel implements ActionListener {
 				label.add(new JLabel("Species"));
 				label.add(new JLabel("Number Of Bins"));
 				for (int i = 0; i < Integer.parseInt((String) numBins.getSelectedItem()) - 1; i++) {
-					label.add(new JLabel("Cutoff " + (i + 1)));
+					label.add(new JLabel("Level " + (i + 1)));
 				}
 				speciesPanel.add(label);
 				int j = 0;
@@ -677,7 +676,7 @@ public class Learn extends JPanel implements ActionListener {
 					try {
 						((JPanel) panels[0]).getComponent(i + 3);
 					} catch (Exception e) {
-						((JPanel) panels[0]).add(new JLabel("Cutoff " + (i + 1)));
+						((JPanel) panels[0]).add(new JLabel("Level " + (i + 1)));
 					}
 				}
 			} else {

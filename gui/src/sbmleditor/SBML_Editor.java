@@ -225,6 +225,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		}
 
 		usedIDs = new ArrayList<String>();
+		usedIDs.add(model.getId());
 		ListOf ids = model.getListOfCompartments();
 		for (int i = 0; i < ids.getNumItems(); i++) {
 			usedIDs.add(((Compartment) ids.get(i)).getId());
@@ -2307,9 +2308,16 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 * Invoked when a key has been released in the model's id field.
 	 */
 	public void keyReleased(KeyEvent e) {
-		Model model = document.getModel();
-		model.setId(modelID.getText().trim());
-		change = true;
+		String s = usedIDs.get(0);
+		usedIDs.set(0, null);
+		if (!usedIDs.contains(modelID.getText().trim())) {
+			Model model = document.getModel();
+			model.setId(modelID.getText().trim());
+			usedIDs.set(0, modelID.getText().trim());
+			change = true;
+		} else {
+			usedIDs.set(0, s);
+		}
 	}
 
 	public boolean hasChanged() {
