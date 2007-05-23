@@ -351,11 +351,11 @@ public class Run implements ActionListener {
 					read = reb.read();
 				}
 			}
-			if (!error.equals("")) {
-				log.addText("Errors:\n" + error + "\n");
-			}
 			if (!output.equals("")) {
 				log.addText("Output:\n" + output + "\n");
+			}
+			if (!error.equals("")) {
+				log.addText("Errors:\n" + error + "\n");
 			}
 			log.addText("Total Simulation Time: " + time + "\n\n");
 			if (exitValue != 0) {
@@ -428,11 +428,11 @@ public class Run implements ActionListener {
 						output += (char) read;
 						read = reb.read();
 					}
-					if (!error.equals("")) {
-						log.addText("Errors:\n" + error + "\n");
-					}
 					if (!output.equals("")) {
 						log.addText("Output:\n" + output + "\n");
+					}
+					if (!error.equals("")) {
+						log.addText("Errors:\n" + error + "\n");
 					}
 				} else if (xhtml.isSelected()) {
 					String[] split = filename.split(File.separator);
@@ -468,11 +468,11 @@ public class Run implements ActionListener {
 						output += (char) read;
 						read = reb.read();
 					}
-					if (!error.equals("")) {
-						log.addText("Errors:\n" + error + "\n");
-					}
 					if (!output.equals("")) {
 						log.addText("Output:\n" + output + "\n");
+					}
+					if (!error.equals("")) {
+						log.addText("Errors:\n" + error + "\n");
 					}
 				} else if (usingSSA.isSelected()) {
 					if (!printer_id.equals("null.printer")) {

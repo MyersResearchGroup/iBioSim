@@ -36,14 +36,12 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	/*
 	 * Buttons used in graph window
 	 */
-	private JButton next, changeSize, addAll, removeAll;
+	private JButton next, changeSize, addAll, removeAll, editGraph;
 
 	/*
 	 * ArrayList of Check Boxes used to graph output data
 	 */
 	private ArrayList<JCheckBox> boxes;
-
-	private JCheckBox resize; // Auto resize check box
 
 	private JFreeChart chart; // Graph of the output data
 
@@ -79,10 +77,6 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	private ArrayList<ArrayList<Double>> average = null; // average of data
 
 	private ArrayList<String> graphSpecies; // names of species in the graph
-
-	private JCheckBox shapes; // check box for visible shapes
-
-	private JCheckBox filled; // check box for filled in shapes
 
 	private String[] intSpecies; // interesting species
 
@@ -154,7 +148,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			readData(file, component, printer_track_quantity, label, 1);
 			boxes = new ArrayList<JCheckBox>();
 			for (int i = 1; i < graphSpecies.size(); i++) {
-				boxes.add(new JCheckBox(graphSpecies.get(i)));
+				boxes.add(new JCheckBox());// graphSpecies.get(i)));
 				boxes.get(i - 1).setSelected(false);
 				for (int j = 0; j < intSpecies.length; j++) {
 					if (graphSpecies.get(i).equals(intSpecies[j])) {
@@ -168,10 +162,6 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			} else {
 				keep.setSelected(false);
 			}
-			shapes = new JCheckBox("Visible Shapes");
-			shapes.setSelected(true);
-			filled = new JCheckBox("Filled In Shapes");
-			filled.setSelected(true);
 		}
 		if (readIn != -1) {
 			file = outDir1 + File.separator + "run-" + readIn + "."
@@ -214,7 +204,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		if (keep.isSelected()) {
 			boxes = new ArrayList<JCheckBox>();
 			for (int i = 0; i < dataset.getSeriesCount(); i++) {
-				boxes.add(new JCheckBox(dataset.getSeries(i).getKey().toString()));
+				boxes.add(new JCheckBox());
 				boxes.get(i).setSelected(false);
 			}
 			for (int i = 0; i < kept; i++) {
@@ -224,7 +214,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		if (boxes.size() > dataset.getSeriesCount()) {
 			boxes = new ArrayList<JCheckBox>();
 			for (int i = 0; i < dataset.getSeriesCount(); i++) {
-				boxes.add(new JCheckBox(dataset.getSeries(i).getKey().toString()));
+				boxes.add(new JCheckBox());
 				boxes.get(i).setSelected(false);
 			}
 		}
@@ -247,16 +237,6 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			plot.setRenderer(ren);
 		}
 		XYLineAndShapeRenderer rend = (XYLineAndShapeRenderer) plot.getRenderer();
-		if (filled.isSelected()) {
-			rend.setShapesFilled(true);
-		} else {
-			rend.setShapesFilled(false);
-		}
-		if (shapes.isSelected()) {
-			rend.setShapesVisible(true);
-		} else {
-			rend.setShapesVisible(false);
-		}
 		for (int i = 0; i < dataset.getSeriesCount(); i++) {
 			if (boxes.get(i).isSelected()) {
 				rend.setSeriesVisible(i, true);
@@ -267,74 +247,21 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		ChartPanel graph = new ChartPanel(chart);
 		graph.addMouseListener(this);
 
-		// creates check boxes for species
-		ArrayList<JPanel> checkBoxes = new ArrayList<JPanel>();
-		checkBoxes.add(new JPanel());
-		int check = 0;
-		for (int i = 0; i < boxes.size(); i++) {
-			if (i != 0 && (i % 10) == 0) {
-				checkBoxes.add(new JPanel());
-				check++;
-			}
-			boxes.get(i).addActionListener(this);
-			boxes.get(i).setActionCommand("button" + i);
-			checkBoxes.get(check).add(boxes.get(i));
-		}
-
-		// creates the resize and filled check box
-		resize = new JCheckBox("Auto Resize");
-		resize.setSelected(true);
-		resize.addActionListener(this);
-		filled.addActionListener(this);
-		shapes.addActionListener(this);
-
 		// creates text fields for changing the graph's dimensions
-		JPanel changeHolder1 = new JPanel();
-		JPanel changeHolder2 = new JPanel();
-		JLabel xMin = new JLabel("X-Min:");
-		JLabel xMax = new JLabel("X-Max:");
-		JLabel xScale = new JLabel("X-Step:");
-		JLabel yMin = new JLabel("Y-Min:");
-		JLabel yMax = new JLabel("Y-Max:");
-		JLabel yScale = new JLabel("Y-Step:");
 		XMin = new JTextField();
 		XMax = new JTextField();
 		XScale = new JTextField();
 		YMin = new JTextField();
 		YMax = new JTextField();
 		YScale = new JTextField();
-		changeSize = new JButton("Change Dimensions");
-		addAll = new JButton("Select All");
-		removeAll = new JButton("Deselect All");
+		changeSize = new JButton("Resize Graph");
+		addAll = new JButton("Graph All");
+		removeAll = new JButton("Ungraph All");
+		editGraph = new JButton("Edit Graph");
 		changeSize.addActionListener(this);
 		addAll.addActionListener(this);
 		removeAll.addActionListener(this);
-		XMin.setPreferredSize(new java.awt.Dimension(200, 20));
-		XMax.setPreferredSize(new java.awt.Dimension(200, 20));
-		XScale.setPreferredSize(new java.awt.Dimension(200, 20));
-		YMin.setPreferredSize(new java.awt.Dimension(200, 20));
-		YMax.setPreferredSize(new java.awt.Dimension(200, 20));
-		YScale.setPreferredSize(new java.awt.Dimension(200, 20));
-		changeHolder1.add(xMin);
-		changeHolder1.add(XMin);
-		changeHolder1.add(xMax);
-		changeHolder1.add(XMax);
-		changeHolder1.add(xScale);
-		changeHolder1.add(XScale);
-		changeHolder2.add(yMin);
-		changeHolder2.add(YMin);
-		changeHolder2.add(yMax);
-		changeHolder2.add(YMax);
-		changeHolder2.add(yScale);
-		changeHolder2.add(YScale);
-		JPanel inputHolder = new JPanel(new BorderLayout());
-		JPanel allCheckBoxes = new JPanel(new GridLayout(checkBoxes.size(), 1));
-		for (int i = 0; i < checkBoxes.size(); i++) {
-			allCheckBoxes.add(checkBoxes.get(i));
-		}
-		inputHolder.add(allCheckBoxes, "North");
-		inputHolder.add(changeHolder1, "Center");
-		inputHolder.add(changeHolder2, "South");
+		editGraph.addActionListener(this);
 
 		// creates combo box for choosing which run to display
 		ArrayList<String> add = new ArrayList<String>();
@@ -371,12 +298,6 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 		// creates the buttons for the graph frame
 		JPanel ButtonHolder = new JPanel();
-		JPanel SpecialButtonHolder = new JPanel();
-		SpecialButtonHolder.add(keep);
-		SpecialButtonHolder.add(shapes);
-		SpecialButtonHolder.add(filled);
-		SpecialButtonHolder.add(resize);
-		SpecialButtonHolder.add(changeSize);
 		exportJPeg = new JButton("Export As JPEG");
 		exportPng = new JButton("Export As PNG");
 		exportJPeg.addActionListener(this);
@@ -386,18 +307,21 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		JPanel AllButtonsHolder = new JPanel(new BorderLayout());
 
 		// puts all the components of the graph gui into a display panel
+		JPanel SpecialButtonHolder = new JPanel();
 		JPanel monteCarloHolder = new JPanel();
 		JPanel monteSpecialHolder = new JPanel(new BorderLayout());
-		monteSpecialHolder.add(SpecialButtonHolder, "North");
-		monteCarloHolder.add(addAll);
-		monteCarloHolder.add(removeAll);
+		SpecialButtonHolder.add(editGraph);
+		SpecialButtonHolder.add(addAll);
+		SpecialButtonHolder.add(removeAll);
+		SpecialButtonHolder.add(changeSize);
 		if (monteCarlo.isSelected()) {
 			monteCarloHolder.add(selectLabel);
 			monteCarloHolder.add(select);
 			monteCarloHolder.add(next);
+			monteCarloHolder.add(keep);
 		}
+		monteSpecialHolder.add(SpecialButtonHolder, "Center");
 		monteSpecialHolder.add(monteCarloHolder, "South");
-		AllButtonsHolder.add(inputHolder, "North");
 		AllButtonsHolder.add(monteSpecialHolder, "Center");
 		JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, ButtonHolder, null);
 		splitPane.setDividerSize(0);
@@ -830,38 +754,11 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		}
 		// if the change dimensions button is clicked
 		else if (e.getSource() == changeSize) {
-			XYPlot plot = chart.getXYPlot();
-			try {
-				NumberAxis axis = (NumberAxis) plot.getRangeAxis();
-				axis.setAutoTickUnitSelection(false);
-				NumberFormat num = NumberFormat.getInstance();
-				num.setMaximumFractionDigits(4);
-				num.setGroupingUsed(false);
-				double minY = Double.parseDouble(YMin.getText().trim());
-				minY = Double.parseDouble(num.format(minY));
-				double maxY = Double.parseDouble(YMax.getText().trim());
-				maxY = Double.parseDouble(num.format(maxY));
-				double scaleY = Double.parseDouble(YScale.getText().trim());
-				scaleY = Double.parseDouble(num.format(scaleY));
-				axis.setRange(minY, maxY);
-				axis.setTickUnit(new NumberTickUnit(scaleY));
-				axis = (NumberAxis) plot.getDomainAxis();
-				axis.setAutoTickUnitSelection(false);
-				double minX = Double.parseDouble(XMin.getText().trim());
-				minX = Double.parseDouble(num.format(minX));
-				double maxX = Double.parseDouble(XMax.getText().trim());
-				maxX = Double.parseDouble(num.format(maxX));
-				double scaleX = Double.parseDouble(XScale.getText().trim());
-				scaleX = Double.parseDouble(num.format(scaleX));
-				axis.setRange(minX, maxX);
-				axis.setTickUnit(new NumberTickUnit(scaleX));
-			} catch (Exception e1) {
-				JOptionPane
-						.showMessageDialog(biomodelsim.frame(),
-								"Must enter doubles into the inputs "
-										+ "to change the graph's dimensions!", "Error",
-								JOptionPane.ERROR_MESSAGE);
-			}
+			resize();
+		}
+		// if the edit Graph button is clicked
+		else if (e.getSource() == editGraph) {
+			editGraph();
 		}
 		// if the select all button is clicked
 		else if (e.getSource() == addAll) {
@@ -883,30 +780,6 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			}
 			resize();
 		}
-		// if the resize check box is clicked
-		else if (e.getSource() == resize) {
-			resize();
-		}
-		// if the filled in shapes check box is clicked
-		else if (e.getSource() == filled) {
-			XYPlot plot = chart.getXYPlot();
-			XYLineAndShapeRenderer rend = (XYLineAndShapeRenderer) plot.getRenderer();
-			if (filled.isSelected()) {
-				rend.setShapesFilled(true);
-			} else {
-				rend.setShapesFilled(false);
-			}
-		}
-		// if the visible shapes check box is clicked
-		else if (e.getSource() == shapes) {
-			XYPlot plot = chart.getXYPlot();
-			XYLineAndShapeRenderer rend = (XYLineAndShapeRenderer) plot.getRenderer();
-			if (shapes.isSelected()) {
-				rend.setShapesVisible(true);
-			} else {
-				rend.setShapesVisible(false);
-			}
-		}
 		// if the export as jpeg button is clicked
 		else if (e.getSource() == exportJPeg) {
 			export(true);
@@ -914,24 +787,6 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		// if the export as png button is clicked
 		else if (e.getSource() == exportPng) {
 			export(false);
-		}
-		// if one of the species check boxes is clicked
-		else {
-			for (int i = 0; i < boxes.size(); i++) {
-				if (e.getActionCommand().equals("button" + i)) {
-					if (boxes.get(i).isSelected()) {
-						XYPlot plot = chart.getXYPlot();
-						XYItemRenderer rend = plot.getRenderer();
-						rend.setSeriesVisible(i, true);
-						resize();
-					} else {
-						XYPlot plot = chart.getXYPlot();
-						XYItemRenderer rend = plot.getRenderer();
-						rend.setSeriesVisible(i, false);
-						resize();
-					}
-				}
-			}
 		}
 	}
 
@@ -963,46 +818,44 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	 * Private method used to auto resize the graph.
 	 */
 	private void resize() {
-		if (resize.isSelected()) {
-			NumberFormat num = NumberFormat.getInstance();
-			num.setMaximumFractionDigits(4);
-			num.setGroupingUsed(false);
-			XYPlot plot = chart.getXYPlot();
-			XYItemRenderer rend = plot.getRenderer();
-			double minY = Double.MAX_VALUE;
-			double maxY = Double.MIN_VALUE;
-			double minX = Double.MAX_VALUE;
-			double maxX = Double.MIN_VALUE;
-			for (int j = 0; j < dataset.getSeriesCount(); j++) {
-				Boolean visible = rend.getSeriesVisible(j);
-				if (visible == null || visible.equals(true)) {
-					maxY = Math.max(maxAndMin.get(j)[3], maxY);
-					minY = Math.min(maxAndMin.get(j)[1], minY);
-					maxX = Math.max(maxAndMin.get(j)[2], maxX);
-					minX = Math.min(maxAndMin.get(j)[0], minX);
-				}
+		NumberFormat num = NumberFormat.getInstance();
+		num.setMaximumFractionDigits(4);
+		num.setGroupingUsed(false);
+		XYPlot plot = chart.getXYPlot();
+		XYItemRenderer rend = plot.getRenderer();
+		double minY = Double.MAX_VALUE;
+		double maxY = Double.MIN_VALUE;
+		double minX = Double.MAX_VALUE;
+		double maxX = Double.MIN_VALUE;
+		for (int j = 0; j < dataset.getSeriesCount(); j++) {
+			Boolean visible = rend.getSeriesVisible(j);
+			if (visible == null || visible.equals(true)) {
+				maxY = Math.max(maxAndMin.get(j)[3], maxY);
+				minY = Math.min(maxAndMin.get(j)[1], minY);
+				maxX = Math.max(maxAndMin.get(j)[2], maxX);
+				minX = Math.min(maxAndMin.get(j)[0], minX);
 			}
-			NumberAxis axis = (NumberAxis) plot.getRangeAxis();
-			if (minY == Double.MAX_VALUE || maxY == Double.MIN_VALUE) {
-				axis.setRange(-1, 1);
-			} else if ((maxY - minY) < .001) {
-				axis.setRange(minY - 1, maxY + 1);
-			} else {
-				axis.setRange(Double.parseDouble(num.format(minY - (Math.abs(minY) * .1))), Double
-						.parseDouble(num.format(maxY + (Math.abs(maxY) * .1))));
-			}
-			axis.setAutoTickUnitSelection(true);
-			axis = (NumberAxis) plot.getDomainAxis();
-			if (minX == Double.MAX_VALUE || maxX == Double.MIN_VALUE) {
-				axis.setRange(-1, 1);
-			} else if ((maxX - minX) < .001) {
-				axis.setRange(minX - 1, maxX + 1);
-			} else {
-				axis.setRange(Double.parseDouble(num.format(minX)), Double.parseDouble(num
-						.format(maxX)));
-			}
-			axis.setAutoTickUnitSelection(true);
 		}
+		NumberAxis axis = (NumberAxis) plot.getRangeAxis();
+		if (minY == Double.MAX_VALUE || maxY == Double.MIN_VALUE) {
+			axis.setRange(-1, 1);
+		} else if ((maxY - minY) < .001) {
+			axis.setRange(minY - 1, maxY + 1);
+		} else {
+			axis.setRange(Double.parseDouble(num.format(minY - (Math.abs(minY) * .1))), Double
+					.parseDouble(num.format(maxY + (Math.abs(maxY) * .1))));
+		}
+		axis.setAutoTickUnitSelection(true);
+		axis = (NumberAxis) plot.getDomainAxis();
+		if (minX == Double.MAX_VALUE || maxX == Double.MIN_VALUE) {
+			axis.setRange(-1, 1);
+		} else if ((maxX - minX) < .001) {
+			axis.setRange(minX - 1, maxX + 1);
+		} else {
+			axis.setRange(Double.parseDouble(num.format(minX)), Double
+					.parseDouble(num.format(maxX)));
+		}
+		axis.setAutoTickUnitSelection(true);
 	}
 
 	/**
@@ -1035,82 +888,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	 * the title and labels of the chart.
 	 */
 	public void mouseClicked(MouseEvent e) {
-		JPanel titlePanel = new JPanel(new GridLayout(dataset.getSeriesCount() + 3, 4));
-		JLabel titleLabel = new JLabel("Title:");
-		JLabel xLabel = new JLabel("X-Axis Label:");
-		JLabel yLabel = new JLabel("Y-Axis Label:");
-		JTextField title = new JTextField(chart.getTitle().getText(), 20);
-		JTextField x = new JTextField(chart.getXYPlot().getDomainAxis().getLabel(), 20);
-		JTextField y = new JTextField(chart.getXYPlot().getRangeAxis().getLabel(), 20);
-		titlePanel.add(titleLabel);
-		titlePanel.add(title);
-		titlePanel.add(new JPanel());
-		titlePanel.add(new JPanel());
-		titlePanel.add(xLabel);
-		titlePanel.add(x);
-		titlePanel.add(new JPanel());
-		titlePanel.add(new JPanel());
-		titlePanel.add(yLabel);
-		titlePanel.add(y);
-		titlePanel.add(new JPanel());
-		titlePanel.add(new JPanel());
-		ArrayList<JLabel> seriesLabel = new ArrayList<JLabel>();
-		ArrayList<JTextField> series = new ArrayList<JTextField>();
-		ArrayList<JComboBox> colors = new ArrayList<JComboBox>();
-		ArrayList<JComboBox> shapes = new ArrayList<JComboBox>();
-		for (int i = 0; i < dataset.getSeriesCount(); i++) {
-			seriesLabel.add(new JLabel("Species " + (i + 1) + " Label"));
-			series.add(new JTextField(dataset.getSeries(i).getKey().toString(), 20));
-			Object[] col = this.colors.keySet().toArray();
-			Arrays.sort(col);
-			Object[] shap = this.shape.keySet().toArray();
-			Arrays.sort(shap);
-			JComboBox colBox = new JComboBox(col);
-			for (Object c : col) {
-				if (this.colors.get(c).equals(chart.getXYPlot().getRenderer().getSeriesPaint(i))) {
-					colBox.setSelectedItem(c);
-				}
-			}
-			JComboBox shapBox = new JComboBox(shap);
-			for (Object s : shap) {
-				if (this.shape.get(s).equals(chart.getXYPlot().getRenderer().getSeriesShape(i))) {
-					shapBox.setSelectedItem(s);
-				}
-			}
-			colors.add(colBox);
-			shapes.add(shapBox);
-			titlePanel.add(seriesLabel.get(i));
-			titlePanel.add(series.get(i));
-			titlePanel.add(colors.get(i));
-			titlePanel.add(shapes.get(i));
-		}
-		JScrollPane scroll = new JScrollPane();
-		scroll.setPreferredSize(new Dimension(900, 300));
-		scroll.setViewportView(titlePanel);
-		Object[] options = { "Ok", "Cancel" };
-		int value = JOptionPane.showOptionDialog(biomodelsim.frame(), scroll,
-				"Edit Title And Labels", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
-				null, options, options[0]);
-		if (value == JOptionPane.YES_OPTION) {
-			chart.setTitle(title.getText().trim());
-			time = x.getText().trim();
-			chart.getXYPlot().getDomainAxis().setLabel(time);
-			printer_track_quantity1 = y.getText().trim();
-			chart.getXYPlot().getRangeAxis().setLabel(printer_track_quantity1);
-			for (int i = 0; i < dataset.getSeriesCount(); i++) {
-				dataset.getSeries(i).setKey(series.get(i).getText().trim());
-				chart.getXYPlot().getRenderer().setSeriesPaint(i,
-						this.colors.get(colors.get(i).getSelectedItem()));
-				chart.getXYPlot().getRenderer().setSeriesShape(i,
-						this.shape.get(shapes.get(i).getSelectedItem()));
-				boxes.get(i).setText(series.get(i).getText().trim());
-				if (boxes.get(i).isSelected()) {
-					XYPlot plot = chart.getXYPlot();
-					XYItemRenderer rend = plot.getRenderer();
-					rend.setSeriesVisible(i, true);
-				}
-			}
-		}
+		editGraph();
 	}
 
 	/**
@@ -1185,6 +963,172 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		shape.put("Arrow", draw.getNextShape());
 		shape.put("Rectangle (Horizontal)", draw.getNextShape());
 		shape.put("Arrow (Backwards)", draw.getNextShape());
+	}
+
+	private void editGraph() {
+		JPanel titlePanel = new JPanel(new GridLayout(dataset.getSeriesCount() + 4, 6));
+		JLabel titleLabel = new JLabel("Title:");
+		JLabel xLabel = new JLabel("X-Axis Label:");
+		JLabel yLabel = new JLabel("Y-Axis Label:");
+		JTextField title = new JTextField(chart.getTitle().getText(), 5);
+		JTextField x = new JTextField(chart.getXYPlot().getDomainAxis().getLabel(), 5);
+		JTextField y = new JTextField(chart.getXYPlot().getRangeAxis().getLabel(), 5);
+		JLabel xMin = new JLabel("X-Min:");
+		JLabel xMax = new JLabel("X-Max:");
+		JLabel xScale = new JLabel("X-Step:");
+		JLabel yMin = new JLabel("Y-Min:");
+		JLabel yMax = new JLabel("Y-Max:");
+		JLabel yScale = new JLabel("Y-Step:");
+		titlePanel.add(titleLabel);
+		titlePanel.add(title);
+		titlePanel.add(xMin);
+		titlePanel.add(XMin);
+		titlePanel.add(yMin);
+		titlePanel.add(YMin);
+		titlePanel.add(xLabel);
+		titlePanel.add(x);
+		titlePanel.add(xMax);
+		titlePanel.add(XMax);
+		titlePanel.add(yMax);
+		titlePanel.add(YMax);
+		titlePanel.add(yLabel);
+		titlePanel.add(y);
+		titlePanel.add(xScale);
+		titlePanel.add(XScale);
+		titlePanel.add(yScale);
+		titlePanel.add(YScale);
+		ArrayList<JLabel> seriesLabel = new ArrayList<JLabel>();
+		ArrayList<JTextField> series = new ArrayList<JTextField>();
+		ArrayList<JComboBox> colors = new ArrayList<JComboBox>();
+		ArrayList<JComboBox> shapes = new ArrayList<JComboBox>();
+		ArrayList<JCheckBox> visible = new ArrayList<JCheckBox>();
+		ArrayList<JCheckBox> filled = new ArrayList<JCheckBox>();
+		for (int i = 0; i < dataset.getSeriesCount(); i++) {
+			XYLineAndShapeRenderer rend = (XYLineAndShapeRenderer) chart.getXYPlot().getRenderer();
+			JCheckBox tempBox = new JCheckBox("Visible Shapes");
+			try {
+				tempBox.setSelected(rend.getSeriesShapesVisible(i));
+			} catch (Exception e) {
+				tempBox.setSelected(true);
+			}
+			visible.add(tempBox);
+			tempBox = new JCheckBox("Filled In Shapes");
+			try {
+				tempBox.setSelected(rend.getSeriesShapesFilled(i));
+			} catch (Exception e) {
+				tempBox.setSelected(true);
+			}
+			filled.add(tempBox);
+			seriesLabel.add(new JLabel("Species " + (i + 1) + " Label:"));
+			series.add(new JTextField(dataset.getSeries(i).getKey().toString(), 5));
+			Object[] col = this.colors.keySet().toArray();
+			Arrays.sort(col);
+			Object[] shap = this.shape.keySet().toArray();
+			Arrays.sort(shap);
+			JComboBox colBox = new JComboBox(col);
+			for (Object c : col) {
+				if (this.colors.get(c).equals(chart.getXYPlot().getRenderer().getSeriesPaint(i))) {
+					colBox.setSelectedItem(c);
+				}
+			}
+			JComboBox shapBox = new JComboBox(shap);
+			for (Object s : shap) {
+				if (this.shape.get(s).equals(chart.getXYPlot().getRenderer().getSeriesShape(i))) {
+					shapBox.setSelectedItem(s);
+				}
+			}
+			colors.add(colBox);
+			shapes.add(shapBox);
+			JPanel temp = new JPanel(new BorderLayout());
+			temp.add(boxes.get(i), "West");
+			temp.add(series.get(i), "Center");
+			titlePanel.add(seriesLabel.get(i));
+			titlePanel.add(temp);
+			titlePanel.add(colors.get(i));
+			titlePanel.add(shapes.get(i));
+			titlePanel.add(visible.get(i));
+			titlePanel.add(filled.get(i));
+		}
+		JScrollPane scroll = new JScrollPane();
+		scroll.setPreferredSize(new Dimension(1100, 300));
+		scroll.setViewportView(titlePanel);
+		Object[] options = { "Ok", "Cancel" };
+		int value = JOptionPane.showOptionDialog(biomodelsim.frame(), scroll,
+				"Edit Title And Labels", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
+				null, options, options[0]);
+		if (value == JOptionPane.YES_OPTION) {
+			for (int i = 0; i < boxes.size(); i++) {
+				if (boxes.get(i).isSelected()) {
+					XYPlot plot = chart.getXYPlot();
+					XYItemRenderer rend = plot.getRenderer();
+					rend.setSeriesVisible(i, true);
+				} else {
+					XYPlot plot = chart.getXYPlot();
+					XYItemRenderer rend = plot.getRenderer();
+					rend.setSeriesVisible(i, false);
+				}
+				XYLineAndShapeRenderer rend = (XYLineAndShapeRenderer) chart.getXYPlot()
+						.getRenderer();
+				if (visible.get(i).isSelected()) {
+					rend.setSeriesShapesFilled(i, true);
+				} else {
+					rend.setSeriesShapesFilled(i, false);
+				}
+				if (filled.get(i).isSelected()) {
+					rend.setSeriesShapesVisible(i, true);
+				} else {
+					rend.setSeriesShapesVisible(i, false);
+				}
+			}
+			XYPlot plot = chart.getXYPlot();
+			chart.setTitle(title.getText().trim());
+			time = x.getText().trim();
+			chart.getXYPlot().getDomainAxis().setLabel(time);
+			printer_track_quantity1 = y.getText().trim();
+			chart.getXYPlot().getRangeAxis().setLabel(printer_track_quantity1);
+			for (int i = 0; i < dataset.getSeriesCount(); i++) {
+				dataset.getSeries(i).setKey(series.get(i).getText().trim());
+				chart.getXYPlot().getRenderer().setSeriesPaint(i,
+						this.colors.get(colors.get(i).getSelectedItem()));
+				chart.getXYPlot().getRenderer().setSeriesShape(i,
+						this.shape.get(shapes.get(i).getSelectedItem()));
+				if (boxes.get(i).isSelected()) {
+					XYItemRenderer render = plot.getRenderer();
+					render.setSeriesVisible(i, true);
+				}
+			}
+			try {
+				NumberAxis axis = (NumberAxis) plot.getRangeAxis();
+				axis.setAutoTickUnitSelection(false);
+				NumberFormat num = NumberFormat.getInstance();
+				num.setMaximumFractionDigits(4);
+				num.setGroupingUsed(false);
+				double minY = Double.parseDouble(YMin.getText().trim());
+				minY = Double.parseDouble(num.format(minY));
+				double maxY = Double.parseDouble(YMax.getText().trim());
+				maxY = Double.parseDouble(num.format(maxY));
+				double scaleY = Double.parseDouble(YScale.getText().trim());
+				scaleY = Double.parseDouble(num.format(scaleY));
+				axis.setRange(minY, maxY);
+				axis.setTickUnit(new NumberTickUnit(scaleY));
+				axis = (NumberAxis) plot.getDomainAxis();
+				axis.setAutoTickUnitSelection(false);
+				double minX = Double.parseDouble(XMin.getText().trim());
+				minX = Double.parseDouble(num.format(minX));
+				double maxX = Double.parseDouble(XMax.getText().trim());
+				maxX = Double.parseDouble(num.format(maxX));
+				double scaleX = Double.parseDouble(XScale.getText().trim());
+				scaleX = Double.parseDouble(num.format(scaleX));
+				axis.setRange(minX, maxX);
+				axis.setTickUnit(new NumberTickUnit(scaleX));
+			} catch (Exception e1) {
+				JOptionPane
+						.showMessageDialog(biomodelsim.frame(),
+								"Must enter doubles into the inputs "
+										+ "to change the graph's dimensions!", "Error",
+								JOptionPane.ERROR_MESSAGE);
+			}
+		}
 	}
 
 	/**
