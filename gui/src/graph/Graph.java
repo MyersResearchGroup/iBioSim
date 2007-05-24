@@ -243,6 +243,12 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			} else {
 				rend.setSeriesVisible(i, false);
 			}
+			if (rend.getSeriesShapesVisible(i) == null) {
+				rend.setSeriesShapesVisible(i, true);
+			}
+			if (rend.getSeriesShapesFilled(i) == null) {
+				rend.setSeriesShapesFilled(i, true);
+			}
 		}
 		ChartPanel graph = new ChartPanel(chart);
 		graph.addMouseListener(this);
@@ -254,7 +260,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		YMin = new JTextField();
 		YMax = new JTextField();
 		YScale = new JTextField();
-		changeSize = new JButton("Resize Graph");
+		changeSize = new JButton("Resize Graph To Best Fit");
 		addAll = new JButton("Graph All");
 		removeAll = new JButton("Ungraph All");
 		editGraph = new JButton("Edit Graph");
@@ -319,9 +325,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			monteCarloHolder.add(select);
 			monteCarloHolder.add(next);
 			monteCarloHolder.add(keep);
+			monteSpecialHolder.add(monteCarloHolder, "South");
 		}
 		monteSpecialHolder.add(SpecialButtonHolder, "Center");
-		monteSpecialHolder.add(monteCarloHolder, "South");
 		AllButtonsHolder.add(monteSpecialHolder, "Center");
 		JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, ButtonHolder, null);
 		splitPane.setDividerSize(0);
@@ -888,7 +894,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	 * the title and labels of the chart.
 	 */
 	public void mouseClicked(MouseEvent e) {
-		editGraph();
+		if (e.getClickCount() == 2) {
+			editGraph();
+		}
 	}
 
 	/**
@@ -1006,18 +1014,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		for (int i = 0; i < dataset.getSeriesCount(); i++) {
 			XYLineAndShapeRenderer rend = (XYLineAndShapeRenderer) chart.getXYPlot().getRenderer();
 			JCheckBox tempBox = new JCheckBox("Visible Shapes");
-			try {
-				tempBox.setSelected(rend.getSeriesShapesVisible(i));
-			} catch (Exception e) {
-				tempBox.setSelected(true);
-			}
+			tempBox.setSelected(rend.getSeriesShapesVisible(i));
 			visible.add(tempBox);
 			tempBox = new JCheckBox("Filled In Shapes");
-			try {
-				tempBox.setSelected(rend.getSeriesShapesFilled(i));
-			} catch (Exception e) {
-				tempBox.setSelected(true);
-			}
+			tempBox.setSelected(rend.getSeriesShapesFilled(i));
 			filled.add(tempBox);
 			seriesLabel.add(new JLabel("Species " + (i + 1) + " Label:"));
 			series.add(new JTextField(dataset.getSeries(i).getKey().toString(), 5));
@@ -1070,14 +1070,14 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				XYLineAndShapeRenderer rend = (XYLineAndShapeRenderer) chart.getXYPlot()
 						.getRenderer();
 				if (visible.get(i).isSelected()) {
-					rend.setSeriesShapesFilled(i, true);
-				} else {
-					rend.setSeriesShapesFilled(i, false);
-				}
-				if (filled.get(i).isSelected()) {
 					rend.setSeriesShapesVisible(i, true);
 				} else {
 					rend.setSeriesShapesVisible(i, false);
+				}
+				if (filled.get(i).isSelected()) {
+					rend.setSeriesShapesFilled(i, true);
+				} else {
+					rend.setSeriesShapesFilled(i, false);
 				}
 			}
 			XYPlot plot = chart.getXYPlot();
