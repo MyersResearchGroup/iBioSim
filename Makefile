@@ -16,7 +16,7 @@ Gui:
 clean:
 	rm $(shell cat .cvsignore)
 	make -C GeneNet clean
-	make -C reb2sac clean
+	make -C reb2sac distclean
 
 
 
