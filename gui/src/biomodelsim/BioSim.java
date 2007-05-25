@@ -663,15 +663,15 @@ public class BioSim implements MouseListener, ActionListener {
 				try {
 					String simName = JOptionPane.showInputDialog(frame,
 							"Enter a name for the model:", "Model Name", JOptionPane.PLAIN_MESSAGE);
-					if (simName.length() > 4) {
-						if (!simName.substring(simName.length() - 5).equals(".sbml")
-								&& !simName.substring(simName.length() - 4).equals(".xml")) {
+					if (simName != null && !simName.equals("")) {
+						if (simName.length() > 4) {
+							if (!simName.substring(simName.length() - 5).equals(".sbml")
+									&& !simName.substring(simName.length() - 4).equals(".xml")) {
+								simName += ".sbml";
+							}
+						} else {
 							simName += ".sbml";
 						}
-					} else {
-						simName += ".sbml";
-					}
-					if (simName != null && !simName.equals("")) {
 						File f = new File(root + File.separator + simName);
 						f.createNewFile();
 						SBMLDocument document = new SBMLDocument();
