@@ -41,31 +41,37 @@ A project is a collection of model and data files.
 <br>&nbsp;
 
 <h2><a name="NEWPROJ"></a>Creating projects</h2>
-Curtis please fill in here
+To create a new project, select the File drop down menu from the toolbar and select "New Project" under the New option.  You will then be prompted to browse to a desired location for and to give a name to the project directory.  After you do this, click the new button and a new project directory will be created.
 <br>&nbsp;
 
 <h2><a name="OPENPROJ"></a>Opening projects</h2>
-Curtis please fill in here
+To open a project, select the File drop down menu from the toolbar and select "Open Project" under the Open option.  You will then be prompted to browse to a project directory that you want to open.  After you select the project directory, click open and the project will open.
 <br>&nbsp;
 
 <h1><a name="MODELS"></a>MODELS</h1>
-Curtis please fill in here
+A model is a representation of biochemical reaction networks.  A model can represent metabolic networks, cell-signaling pathways, regulatory networks, and other kinds of systems studied in systems biology.
 <br>&nbsp;
 
 <h2><a name="NEWMODEl"></a>Creating SBML models</h2>
-Curtis please fill in here
+To create a new SBML model, you must first have a project open.  Once this is done, select the File drop down menu from the toolbar and select "New Model" under the New option.  You will then be prompted to give a name to your model.  Once a name is entered, an SBML editor will open in a new tab.
 <br>&nbsp;
 
 <h2><a name="IMPORTSBML"></a>Importing SBML models</h2>
-Curtis please fill in here
+To import an SBML model, you must first have a project open.  Once this is done, select the File drop down menu from the toolbar and select "sbml" under the Import option.  You will then be prompted to select a model to import.  Select a desired model and click the open button to import the SBML model into the project.
 <br>&nbsp;
 
 <h2><a name="SBMLEDIT"></a>Editing SBML models</h2>
-Curtis please fill in here
+<p>To edit an SBML model, you must first have a project open.  Once this is done, either right click on the model you want to edit and select "Edit" or select the model you want to edit and select "SBML Editor" under the Tools drop down menu on the toolbar.  This will open up an SBML editor in a new tab.  You can also edit an SBML model that is part of a simulation by right clicking on a simulation directory, by selecting "Open Analysis View", and then by selecting the "SBML Editor" tab.</p>
+You can now add, edit, and remove compartments, species, reactions, and parameters.
+<ul>
+<li>To add a new item, click on one of the add buttons.  You will then be prompted to provide a unique id and some properties for this new item.  After you have filled out all of the required fields, click add and the new item will be added to the SBML model.</li>
+<li>To edit an existing item, select that item from the list and click the edit button.  An editing window will open and you will be able to change the properties of that item.  When you are done editing this item, click save to save the changes to the item.</li>
+<li>To remove an item from the model, select that item and click the remove button.  The item will then be removed from the model.  However, if you try to remove a species that is used in a reaction, you will first have to remove the reaction or remove the species from the reaction in order to remove the species from the model.</li>
+</ul>
 <br>&nbsp;
 
 <h2><a name="VIEWSBML"></a>Viewing SBML models</h2>
-Curtis please fill in here
+To view an SBML model, you must first have a project open.  Once this is done, right click on the model you want to view.  There are two ways to view a model.  You can either select the "View As Graph" option or the "View In Browser" option.  The "View As Graph" option will convert the model to a dot file and then will open that file with dotty.  The "View In Browser" option will covert the model to an xhtml file and will open that file with firefox.
 <br>&nbsp;
 
 <h1><a name="ANALYSIS"></a>Analysis</h1>
@@ -168,7 +174,27 @@ detailed information while the GeneNet algorithm is running</p>
 <br>&nbsp;
 
 <h2><a name="GRAPHING"></a>Graphing</h2>
-Curtis please fill in here
+To graph data, perform a simulation to create some data or right click on a simulation directory that has data in it and select "Open Analysis View".  If you performed an ode simulation, you will see a "ODEGraph" tab, and if you performed a monte carlo simulation, you will see a "StochGraph" tab.  Select one of these tabs and you will have some graphing options.  By double clicking on the graph or selecting the "Edit Graph" button, you will be able to change what is graphed and how the graph looks.  Here are your options:
+<ul>
+<li>Title - The Title Of The Graph</li>
+<li>X-Axis Label - The Label Displayed For The X-Axis</li>
+<li>Y-Axis Label - The Label Displayed For The Y-Axis</li>
+<li>X-Min - The Starting Value For The X-Axis</li>
+<li>X-Max - The Ending Value For The X-Axis</li>
+<li>X-Step - The Increment Of The X-Axis</li>
+<li>Y-Min - The Starting Value For The Y-Axis</li>
+<li>Y-Max - The Ending Value For The Y-Axis</li>
+<li>Y-Step - The Increment Of The Y-Axis</li>
+<li>Species # Label - The Label Of The #th Species In The Legend</li>
+<li>Check Box By Species # Label - Determines Whether Or Not This Species Is Displayed On The Graph</li>
+<li>Drop Down Menu Of Colors - The Color That Will Be Used To Draw The Line For This Species</li>
+<li>Drop Down Menu Of Shapes - The Shape That Will Be Used To Mark The Points On The Line For This Species</li>
+<li>Visible Shapes Check Box - Determines Whether Or Not Shapes Will Be Visible On The Line For This Species</li>
+<li>Filled In Shapes Check Box - Determines Whether Or Not Shapes Will Be Filled In On The Line For This Species</li>
+</ul>
+<p>The "Graph All" button will graph all of the species and will automatically resize the graph to the best fit.  The "Ungraph All" button with remove all of the species from the graph and resize the graph so that the point (0,0) is in the middle of the graph.  The "Resize Graph To Best Fit" button will resize the graph so that all of the graphed species can be seen in the graph.</p>
+<p>If you are looking at a "StochGraph", you can view the average of all runs, the variance of all runs, the standard deviation of all runs, or an individual run.  To do this, select which of these you would like to view in the drop down menu by "Select Next:" and click the "View Next" button.  If you have selected the "Keep Graphed Data" check box when you do this, everything that is currently graphed will stay on the graph and the data from the item you selected will be added to the graph.</p>
+To save the graph, click either the "Export As JPEG" or "Export As PNG" button.  You will then be prompted to give a desired pixel height and width for the file.  Once this is done, you will be prompted to select a location and a name for the file you are saving.  After you make these selections, click the "Save" button and the file will be saved.
 <br>&nbsp;
 
 </td></tr></tbody></table></body></html>
