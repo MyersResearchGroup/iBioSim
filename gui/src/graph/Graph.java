@@ -1136,6 +1136,50 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	 */
 	public void export(boolean jpeg) {
 		try {
+			int width = -1;
+			int height = -1;
+			JPanel sizePanel = new JPanel(new GridLayout(2, 2));
+			JLabel heightLabel = new JLabel("Desired pixel height:");
+			JLabel widthLabel = new JLabel("Desired pixel width:");
+			JTextField heightField = new JTextField("400");
+			JTextField widthField = new JTextField("650");
+			sizePanel.add(widthLabel);
+			sizePanel.add(widthField);
+			sizePanel.add(heightLabel);
+			sizePanel.add(heightField);
+			Object[] options2 = { "Save", "Cancel" };
+			int value = JOptionPane.showOptionDialog(biomodelsim.frame(), sizePanel,
+					"Enter Size Of File", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
+					null, options2, options2[0]);
+			if (value == JOptionPane.YES_OPTION) {
+				while (value == JOptionPane.YES_OPTION && (width == -1 || height == -1))
+					try {
+						width = Integer.parseInt(widthField.getText().trim());
+						height = Integer.parseInt(heightField.getText().trim());
+						if (width < 1 || height < 1) {
+							JOptionPane.showMessageDialog(biomodelsim.frame(),
+									"Width and height must be positive integers!", "Error",
+									JOptionPane.ERROR_MESSAGE);
+							width = -1;
+							height = -1;
+							value = JOptionPane.showOptionDialog(biomodelsim.frame(), sizePanel,
+									"Enter Size Of File", JOptionPane.YES_NO_OPTION,
+									JOptionPane.PLAIN_MESSAGE, null, options2, options2[0]);
+						}
+					} catch (Exception e2) {
+						JOptionPane.showMessageDialog(biomodelsim.frame(),
+								"Width and height must be positive integers!", "Error",
+								JOptionPane.ERROR_MESSAGE);
+						width = -1;
+						height = -1;
+						value = JOptionPane.showOptionDialog(biomodelsim.frame(), sizePanel,
+								"Enter Size Of File", JOptionPane.YES_NO_OPTION,
+								JOptionPane.PLAIN_MESSAGE, null, options2, options2[0]);
+					}
+			}
+			if (value == JOptionPane.NO_OPTION) {
+				return;
+			}
 			File file;
 			if (savedPics != null) {
 				file = new File(savedPics);
@@ -1163,52 +1207,11 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				file = new File(filename);
 				if (file.exists()) {
 					Object[] options = { "Overwrite", "Cancel" };
-					int value = JOptionPane.showOptionDialog(biomodelsim.frame(),
+					value = JOptionPane.showOptionDialog(biomodelsim.frame(),
 							"File already exists." + " Overwrite?", "File Already Exists",
 							JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
 							options[0]);
 					if (value == JOptionPane.YES_OPTION) {
-						int width = -1;
-						int height = -1;
-						JPanel sizePanel = new JPanel(new GridLayout(2, 2));
-						JLabel heightLabel = new JLabel("Desired pixel height:");
-						JLabel widthLabel = new JLabel("Desired pixel width:");
-						JTextField heightField = new JTextField("400");
-						JTextField widthField = new JTextField("650");
-						sizePanel.add(widthLabel);
-						sizePanel.add(widthField);
-						sizePanel.add(heightLabel);
-						sizePanel.add(heightField);
-						Object[] options2 = { "Save", "Cancel" };
-						value = JOptionPane.showOptionDialog(biomodelsim.frame(), sizePanel,
-								"Enter Size Of File", JOptionPane.YES_NO_OPTION,
-								JOptionPane.PLAIN_MESSAGE, null, options2, options2[0]);
-						if (value == JOptionPane.YES_OPTION) {
-							while (width == -1 || height == -1)
-								try {
-									width = Integer.parseInt(widthField.getText().trim());
-									height = Integer.parseInt(heightField.getText().trim());
-									if (width < 1 || height < 1) {
-										JOptionPane.showMessageDialog(biomodelsim.frame(),
-												"Width and height must be positive integers!",
-												"Error", JOptionPane.ERROR_MESSAGE);
-										JOptionPane.showOptionDialog(biomodelsim.frame(),
-												sizePanel, "Enter Size Of File",
-												JOptionPane.YES_NO_OPTION,
-												JOptionPane.PLAIN_MESSAGE, null, options2,
-												options2[0]);
-									}
-								} catch (Exception e2) {
-									JOptionPane.showMessageDialog(biomodelsim.frame(),
-											"Width and height must be positive integers!", "Error",
-											JOptionPane.ERROR_MESSAGE);
-									width = -1;
-									height = -1;
-									JOptionPane.showOptionDialog(biomodelsim.frame(), sizePanel,
-											"Enter Size Of File", JOptionPane.YES_NO_OPTION,
-											JOptionPane.PLAIN_MESSAGE, null, options2, options2[0]);
-								}
-						}
 						if (jpeg) {
 							ChartUtilities.saveChartAsJPEG(file, chart, width, height);
 						} else {
@@ -1217,45 +1220,6 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						savedPics = filename;
 					}
 				} else {
-					int width = -1;
-					int height = -1;
-					JPanel sizePanel = new JPanel(new GridLayout(2, 2));
-					JLabel heightLabel = new JLabel("Desired pixel height:");
-					JLabel widthLabel = new JLabel("Desired pixel width:");
-					JTextField heightField = new JTextField("400");
-					JTextField widthField = new JTextField("650");
-					sizePanel.add(widthLabel);
-					sizePanel.add(widthField);
-					sizePanel.add(heightLabel);
-					sizePanel.add(heightField);
-					Object[] options2 = { "Save", "Cancel" };
-					int value = JOptionPane.showOptionDialog(biomodelsim.frame(), sizePanel,
-							"Enter Size Of File", JOptionPane.YES_NO_OPTION,
-							JOptionPane.PLAIN_MESSAGE, null, options2, options2[0]);
-					if (value == JOptionPane.YES_OPTION) {
-						while (width == -1 || height == -1)
-							try {
-								width = Integer.parseInt(widthField.getText().trim());
-								height = Integer.parseInt(heightField.getText().trim());
-								if (width < 1 || height < 1) {
-									JOptionPane.showMessageDialog(biomodelsim.frame(),
-											"Width and height must be positive integers!", "Error",
-											JOptionPane.ERROR_MESSAGE);
-									JOptionPane.showOptionDialog(biomodelsim.frame(), sizePanel,
-											"Enter Size Of File", JOptionPane.YES_NO_OPTION,
-											JOptionPane.PLAIN_MESSAGE, null, options2, options2[0]);
-								}
-							} catch (Exception e2) {
-								JOptionPane.showMessageDialog(biomodelsim.frame(),
-										"Width and height must be positive integers!", "Error",
-										JOptionPane.ERROR_MESSAGE);
-								width = -1;
-								height = -1;
-								JOptionPane.showOptionDialog(biomodelsim.frame(), sizePanel,
-										"Enter Size Of File", JOptionPane.YES_NO_OPTION,
-										JOptionPane.PLAIN_MESSAGE, null, options2, options2[0]);
-							}
-					}
 					if (jpeg) {
 						ChartUtilities.saveChartAsJPEG(file, chart, width, height);
 					} else {
