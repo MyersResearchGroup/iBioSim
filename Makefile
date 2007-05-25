@@ -14,9 +14,9 @@ Gui:
 .PHONY: clean
 
 clean:
-	rm $(shell cat .cvsignore)
 	make -C GeneNet clean
 	make -C reb2sac distclean
+	rm $(shell cat .cvsignore)
 
 
 
