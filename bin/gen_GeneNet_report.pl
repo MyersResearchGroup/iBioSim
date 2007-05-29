@@ -11,7 +11,7 @@ $reports_dir =~ s/\/$//;
 
 
 sub main{
-    my @files = `ls $genenet_dir*/*.dot`;
+    my @files = `ls $genenet_dir*/*/*/$file_name_to_use`;
     
     print "Sorting dir\n";
     @files = dir_sort(\@files);
@@ -72,11 +72,11 @@ sub main{
 
 sub add_overview{
     my $exp_name = shift;
-    if ($exp_name =~ m/^.*\/(.*)_([0-9]+)_([0-9]+)_([0-9]+)_([0-9]+)_([0-9]+)($|[.])/){
+    if ($exp_name =~ m/^.*\/([^\/]*)_[0-9]+\/[^\/]*_([0-9]+)_([0-9]+)_([0-9]+)_([0-9]+)\//){
 	$overview = "$overview$1,$3,$4,$5,$6";
     }
     else{
-	$exp_name =~ s/.*\/(.*)/$1/;
+	$exp_name =~ s/.*?\/(.*?)\/.*/$1/;
 	$exp_name =~ s/[.]*//;
 	$overview = "$overview$exp_name,,,,";
     }
@@ -88,9 +88,9 @@ sub add_overview{
 sub not_matching{
     my $a = shift;
     my $b = shift;
-    if ($a =~ m/^(.*)_([0-9]+)_([0-9]+)_([0-9]+)_([0-9]+)_([0-9]+)($|[.])/){
+    if ($a =~ m/^(.*)_([0-9]+)\/[^\/]*_([0-9]+)_([0-9]+)_([0-9]+)_([0-9]+)\//){
 	my @a = ($1,$2, $3, $4, $5,$6);
-	if ($b =~ m/^(.*)_([0-9]+)_([0-9]+)_([0-9]+)_([0-9]+)_([0-9]+)($|[.])/){
+	if ($b =~ m/^(.*)_([0-9]+)\/[^\/]*_([0-9]+)_([0-9]+)_([0-9]+)_([0-9]+)\//){
 	    my @b = ($1,$2, $3, $4, $5, $6);
 	    if ($a[0] eq $b[0]){
 		my @cmp = (5,4,3);
@@ -120,7 +120,7 @@ sub addit{
 
 sub write_out_file{
     my $file = shift;
-    if ($file =~ m/^.*\/(.*)_([0-9]+)_([0-9]+)_([0-9]+)_([0-9]+)($|[.])/){
+    if ($file =~ m/^.*\/(.*_[0-9]+)\/[^\/]*_([0-9]+)_([0-9]+)_([0-9]+)_([0-9]+)\//){
 	my $name = $1;
 	my $num_genes = $2;
 	my $experiments = $3;
@@ -129,7 +129,8 @@ sub write_out_file{
 	print OUT "$name,$num_genes,$experiments,$interval,$ending_time";
     }
     else{
-	$file =~ s/.*\/(.*)/$1/;
+	#print "Error matching $file\n";
+	$file =~ s/.*?\/(.*?)\/.*/$1/;
 	print OUT "$file,,,,";
     }
 }
@@ -174,9 +175,11 @@ sub write_time{
 #0.51user 0.00system 0:00.52elapsed 98%CPU (0avgtext+0avgdata 0maxresident)k
 #0inputs+0outputs (0major+853minor)pagefaults 0swaps
     my $f = "$file";
-    $f =~ s/(.*)\/(.*)/$1\/work\/$2\/time.txt/;
+    my $tmp = $file_name_to_use;
+    $tmp =~ s/(.*)_.*/$1\_time.txt/;
+    $f =~ s/(.*)\/.*/$1\/$tmp/;
     if (-e "$f"){
-	open (A, "$f") or die "Cannot open time file\n";
+	open (A, "$f") or die "Cannot open time file $f\n";
 	my @a = <A>;
 	close A;
 
@@ -200,11 +203,12 @@ sub write_time{
 }
 
 sub check_correctness{
-    my $dot_file = shift;
-    my $filename = $dot_file;
-    $filename =~ s/(.*)\/(.*)/$1\/work\/$2\/$file_name_to_use/;
+    my $filename = shift;
+    my $dot_file = $filename;
+    $dot_file =~ s/(.*)\/(.*)\/(.*)\/([^\/]*)/$1\/$2\/$2.dot/;
     #$filename =~ s/[.]csv/.dot/g;
-    $dot_file = "$dot_file.dot";
+    $filename = "$filename.dot";
+    #$dot_file = "$dot_file.dot";
 
     if (not -e "$dot_file"){
 	print "ERROR: unable to check correctness for non exsistant? dot $dot_file\n";
@@ -292,9 +296,9 @@ sub dir_sort_a{
     my $a = shift;
     my $b = shift;
 
-    if ($a =~ m/^(.*)_([0-9]+)_([0-9]+)_([0-9]+)_([0-9]+)_([0-9]+)($|[.])/){
+    if ($a =~ m/^(.*)_([0-9]+)\/[^\/]*_([0-9]+)_([0-9]+)_([0-9]+)_([0-9]+)\//){
 	my @a = ($1,$2, $3, $4, $5,$6);
-	if ($b =~ m/^(.*)_([0-9]+)_([0-9]+)_([0-9]+)_([0-9]+)_([0-9]+)($|[.])/){
+	if ($b =~ m/^(.*)_([0-9]+)\/[^\/]*_([0-9]+)_([0-9]+)_([0-9]+)_([0-9]+)\//){
 	    my @b = ($1,$2, $3, $4, $5, $6);
 	    if ($a[0] eq $b[0]){
 		my @cmp = (5,4,3,1);
