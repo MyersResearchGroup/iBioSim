@@ -810,10 +810,14 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			XYSeriesCollection dataset = (XYSeriesCollection) plot.getDataset();
 			XYSeries series = dataset.getSeries(j);
 			for (int k = 0; k < series.getItemCount(); k++) {
-				maxY = Math.max(series.getY(k).doubleValue(), maxY);
-				minY = Math.min(series.getY(k).doubleValue(), minY);
-				maxX = Math.max(series.getX(k).doubleValue(), maxX);
-				minX = Math.min(series.getX(k).doubleValue(), minX);
+				if (series.getY(k).doubleValue() != Double.NaN) {
+					maxY = Math.max(series.getY(k).doubleValue(), maxY);
+					minY = Math.min(series.getY(k).doubleValue(), minY);
+				}
+				if (series.getX(k).doubleValue() != Double.NaN) {
+					maxX = Math.max(series.getX(k).doubleValue(), maxX);
+					minX = Math.min(series.getX(k).doubleValue(), minX);
+				}
 			}
 			double[] add = { minX, minY, maxX, maxY };
 			maxAndMin.add(add);

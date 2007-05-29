@@ -120,15 +120,15 @@ public class Learn extends JPanel implements ActionListener {
 		repression = new JTextField("0.75");
 		thresholdPanel1.add(repressionLabel);
 		thresholdPanel1.add(repression);
-		JLabel parentLabel = new JLabel("Initial Influence Threshold (Ti):");
+		JLabel parentLabel = new JLabel("First Round IV Threshold (Ti):");
 		parent = new JTextField("0.5");
 		thresholdPanel1.add(parentLabel);
 		thresholdPanel1.add(parent);
-		JLabel backgroundLabel = new JLabel("Final Influence Threshold (Tp):");
+		JLabel backgroundLabel = new JLabel("Pre-Competition IV Filter Threshold (Tp):");
 		background = new JTextField("0.51");
 		thresholdPanel1.add(backgroundLabel);
 		thresholdPanel1.add(background);
-		JLabel influenceLevelLabel = new JLabel("Influence Level Delta (Tm):");
+		JLabel influenceLevelLabel = new JLabel("Merge IVs Delta (Tm):");
 		influenceLevel = new JTextField("0.01");
 		thresholdPanel1.add(influenceLevelLabel);
 		thresholdPanel1.add(influenceLevel);
@@ -276,11 +276,11 @@ public class Learn extends JPanel implements ActionListener {
 				geneNet += " --debug " + debug.getSelectedItem();
 				try {
 					double activation = Double.parseDouble(this.activation.getText().trim());
-					geneNet += " -a " + activation;
+					geneNet += " -tf " + activation;
 					double repression = Double.parseDouble(this.repression.getText().trim());
-					geneNet += " -r " + repression;
+					geneNet += " -ta " + repression;
 					double parent = Double.parseDouble(this.parent.getText().trim());
-					geneNet += " -v " + parent;
+					geneNet += " -ti " + parent;
 					// int windowRising =
 					// Integer.parseInt(this.windowRising.getText().trim());
 					// geneNet += " --windowRisingAmount " + windowRising;
@@ -291,15 +291,15 @@ public class Learn extends JPanel implements ActionListener {
 					geneNet += " --numBins " + numBins;
 					double influenceLevel = Double
 							.parseDouble(this.influenceLevel.getText().trim());
-					geneNet += " -id " + influenceLevel;
+					geneNet += " -tm " + influenceLevel;
 					double relaxIPDelta = Double.parseDouble(this.relaxIPDelta.getText().trim());
-					geneNet += " --relaxIPDelta " + relaxIPDelta;
+					geneNet += " -tr " + relaxIPDelta;
 					int letNThrough = Integer.parseInt(this.letNThrough.getText().trim());
-					geneNet += " --sip_letNThrough " + letNThrough;
+					geneNet += " -tn " + letNThrough;
 					int maxVectorSize = Integer.parseInt(this.maxVectorSize.getText().trim());
 					geneNet += " -tj " + maxVectorSize;
 					double background = Double.parseDouble(this.background.getText().trim());
-					geneNet += " -bkf " + background;
+					geneNet += " -tp " + background;
 				} catch (Exception e2) {
 					JOptionPane.showMessageDialog(this, "Must enter numbers into input fields.",
 							"Error", JOptionPane.ERROR_MESSAGE);
