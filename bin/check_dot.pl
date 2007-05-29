@@ -7,8 +7,20 @@
 #In REPORTS, a similar function is called to determine recall and precision called check_correctness"
 #gen_current_method_dot_overview.pl contains this function.
 
+if ($#ARGV == 1){
+    print "Normal Usage: ./check_dot.pl Unchecked_Dot, Master_Dot, Out_Dot\n";
+    print "Assumed usage: ./check_dot.pl Unchecked_Dot, [find the masterdot ] Out_Dot\n";
+    $assumed = $ARGV[1];
+    $assumed =~ s/(.*)\/(.*)\/(.*)\/([^\/]*).dot/$1\/$2\/$2.dot/;
+    if (not -e "$assumed"){
+	print "ERROR: Unable to find a master dot file at $assumed\n";
+	exit(1);
+    }
+    $ARGV[2] = $ARGV[1];
+    $ARGV[1] = $assumed;
 
-if ($#ARGV != 2){
+}
+elsif ($#ARGV != 2){
     print "Usage: ./check_dot.pl Unchecked_Dot, Master_Dot, Out_Dot\n";
     exit(1);
 }
