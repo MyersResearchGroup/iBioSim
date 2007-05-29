@@ -61,7 +61,7 @@ To import an SBML model, you must first have a project open.  Once this is done,
 <br>&nbsp;
 
 <h2><a name="SBMLEDIT"></a>Editing SBML models</h2>
-<p>To edit an SBML model, you must first have a project open.  Once this is done, either right click on the model you want to edit and select "Edit" or select the model you want to edit and select "SBML Editor" under the Tools drop down menu on the toolbar.  This will open up an SBML editor in a new tab.  You can also edit an SBML model that is part of a simulation by right clicking on a simulation directory, by selecting "Open Analysis View", and then by selecting the "SBML Editor" tab.</p>
+<p>To edit an SBML model, you must first have a project open.  Once this is done, either right click on the model you want to edit and select "Edit" or select the model you want to edit and select "SBML Editor" under the Tools drop down menu on the toolbar.  This will open up an SBML editor in a new tab.  You can also edit an SBML model that is part of an analysis by right clicking on an analysis directory, by selecting "Open Analysis View", and then by selecting the "SBML Editor" tab.</p>
 You can now add, edit, and remove compartments, species, reactions, and parameters.
 <ul>
 <li>To add a new item, click on one of the add buttons.  You will then be prompted to provide a unique id and some properties for this new item.  After you have filled out all of the required fields, click add and the new item will be added to the SBML model.</li>
@@ -75,7 +75,7 @@ To view an SBML model, you must first have a project open.  Once this is done, r
 <br>&nbsp;
 
 <h1><a name="ANALYSIS"></a>Analysis</h1>
-creating analysis view etc...
+To perform analysis, you must first have a project open.  Once this is done, right click on a model and select "Create Analysis View"  or select a model and select "Analyze" under the Tools drop down menu on the toolbar.  You will then be prompted to give a name to your analysis.  After a name is entered, a tab with analysis options will open.  You can also open up an analysis tab by right clicking on an analysis directory and selecting "Open Analysis View".
 <br>&nbsp;
 
 <h2><a name="SIMULATION"></a>Simulation</h2>
@@ -93,7 +93,7 @@ et.al. </p>
 <h3>Learning network connectivity from simulated data</h3>
 <ul>
 <li>Open a project</li>
-<li>Right click on a simulation directory and select "Open Simulation"</li>
+<li>Right click on an analysis directory and select "Open Analysis View"</li>
 <li>Select the "Learn" tab</li>
 <li>Basic threshold values have been already choosen</li>
 <li>Select the species that you do not wish to learn connections to or from by clicking the checkbox 
@@ -174,7 +174,7 @@ detailed information while the GeneNet algorithm is running</p>
 <br>&nbsp;
 
 <h2><a name="GRAPHING"></a>Graphing</h2>
-To graph data, perform a simulation to create some data or right click on a simulation directory that has data in it and select "Open Analysis View".  If you performed an ode simulation, you will see a "ODEGraph" tab, and if you performed a monte carlo simulation, you will see a "StochGraph" tab.  Select one of these tabs and you will have some graphing options.  By double clicking on the graph or selecting the "Edit Graph" button, you will be able to change what is graphed and how the graph looks.  Here are your options:
+To graph data, perform a simulation to create some data or right click on an analysis directory that has data in it and select "Open Analysis View".  If you performed an ode simulation, you will see a "ODEGraph" tab, and if you performed a monte carlo simulation, you will see a "StochGraph" tab.  Select one of these tabs and you will have some graphing options.  By double clicking on the graph or selecting the "Edit Graph" button, you will be able to change what is graphed and how the graph looks.  Here are your options:
 <ul>
 <li>Title - The Title Of The Graph</li>
 <li>X-Axis Label - The Label Displayed For The X-Axis</li>
