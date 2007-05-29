@@ -61,6 +61,20 @@ for (my $i = 0; $i <= $#in2; $i++){
     }
 }
 
+#draw things acording to the following plan
+#        \ True
+#Reported \   a            r     n
+#          \ ___________________________
+#      a    | blue   | red    | gray    |
+#           | solid  | dashed | dashed  |
+#           |-----------------|---------|
+#      r    | blue   | red    | gray    |
+#           | dashed | dashed | dashed  |
+#           |-----------------|---------|
+#      n    | blue   | red    |         |
+#           | dotted | dotted |         |
+#           -----------------------------
+#
 while ($in2 =~ m/s([0-9]+) -> s([0-9]+) (.+)arrowhead=((vee|tee))/g){
     my $state1 = $1;
     my $state2 = $2;
@@ -80,6 +94,22 @@ while ($in2 =~ m/s([0-9]+) -> s([0-9]+) (.+)arrowhead=((vee|tee))/g){
 	print CHECKED "s$state1 -> s$state2 $mid arrowhead=$arc,style=dashed]\n";
     }
 }
+
+while ($in1 =~ m/s([0-9]+) -> s([0-9]+) (.+)arrowhead=((vee|tee))/g){
+    my $state1 = $1;
+    my $state2 = $2;
+    my $mid = $3;
+    my $arc = $4;
+    if ($in2 =~ m/s$state1 -> s$state2 .*arrowhead=/){
+	#do nothing as this was already taken care of above
+    }
+    else{
+	print CHECKED "s$state1 -> s$state2 $mid arrowhead=$arc,style=dashed]\n";
+    }
+}
+
+
+
 
 print CHECKED "\n}\n";
 
