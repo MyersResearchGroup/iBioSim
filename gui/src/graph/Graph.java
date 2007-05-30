@@ -171,6 +171,18 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		}
 
 		// stores data into a dataset
+		for (int i = 2; i < graphSpecies.size(); i++) {
+			String index = graphSpecies.get(i);
+			ArrayList<Double> index2 = data.get(i);
+			int j = i;
+			while ((j > 1) && graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
+				graphSpecies.set(j, graphSpecies.get(j - 1));
+				data.set(j, data.get(j - 1));
+				j = j - 1;
+			}
+			graphSpecies.set(j, index);
+			data.set(j, index2);
+		}
 		ArrayList<XYSeries> graphData = new ArrayList<XYSeries>();
 		for (int i = 1; i < graphSpecies.size(); i++) {
 			graphData.add(new XYSeries(graphSpecies.get(i)));
@@ -428,11 +440,13 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							if (label.contains("average")) {
 								(variance.get(0)).add(0.0);
 							}
+							boolean weird = false;
 							for (int j = 0; j < runsToMake; j++) {
 								int counter = 1;
 								int skip = firstOne;
 								if (!first) {
 									if (firstOne != 1) {
+										weird = true;
 										j--;
 										firstOne = 1;
 									}
@@ -539,31 +553,61 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 												insert = counter;
 												double old = (data.get(insert)).get(insert
 														/ graphSpecies.size());
-												(data.get(insert))
-														.set(
-																insert / graphSpecies.size(),
-																old
-																		+ ((Double
-																				.parseDouble(word) - old) / (j + 1)));
+												if (weird) {
+													(data.get(insert))
+															.set(
+																	insert / graphSpecies.size(),
+																	old
+																			+ ((Double
+																					.parseDouble(word) - old) / (j + 2)));
+												} else {
+													(data.get(insert))
+															.set(
+																	insert / graphSpecies.size(),
+																	old
+																			+ ((Double
+																					.parseDouble(word) - old) / (j + 1)));
+												}
 												double newMean = (data.get(insert)).get(insert
 														/ graphSpecies.size());
 												if (label.contains("average")) {
 													if (insert == 0) {
-														(variance.get(insert))
-																.set(
-																		insert
-																				/ graphSpecies
-																						.size(),
-																		old
-																				+ ((Double
-																						.parseDouble(word) - old) / (j + 1)));
+														if (weird) {
+															(variance.get(insert))
+																	.set(
+																			insert
+																					/ graphSpecies
+																							.size(),
+																			old
+																					+ ((Double
+																							.parseDouble(word) - old) / (j + 2)));
+														} else {
+															(variance.get(insert))
+																	.set(
+																			insert
+																					/ graphSpecies
+																							.size(),
+																			old
+																					+ ((Double
+																							.parseDouble(word) - old) / (j + 1)));
+														}
 													} else {
-														double vary = (((j - 1) * (variance
-																.get(insert)).get(insert
-																/ graphSpecies.size())) + (Double
-																.parseDouble(word) - newMean)
-																* (Double.parseDouble(word) - old))
-																/ j;
+														double vary;
+														if (weird) {
+															vary = ((j * (variance.get(insert))
+																	.get(insert
+																			/ graphSpecies.size())) + (Double
+																	.parseDouble(word) - newMean)
+																	* (Double.parseDouble(word) - old))
+																	/ (j + 1);
+														} else {
+															vary = (((j - 1) * (variance
+																	.get(insert)).get(insert
+																	/ graphSpecies.size())) + (Double
+																	.parseDouble(word) - newMean)
+																	* (Double.parseDouble(word) - old))
+																	/ j;
+														}
 														(variance.get(insert)).set(insert
 																/ graphSpecies.size(), vary);
 													}
@@ -572,31 +616,61 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 												insert = counter % graphSpecies.size();
 												double old = (data.get(insert)).get(counter
 														/ graphSpecies.size());
-												(data.get(insert))
-														.set(
-																counter / graphSpecies.size(),
-																old
-																		+ ((Double
-																				.parseDouble(word) - old) / (j + 1)));
+												if (weird) {
+													(data.get(insert))
+															.set(
+																	counter / graphSpecies.size(),
+																	old
+																			+ ((Double
+																					.parseDouble(word) - old) / (j + 2)));
+												} else {
+													(data.get(insert))
+															.set(
+																	counter / graphSpecies.size(),
+																	old
+																			+ ((Double
+																					.parseDouble(word) - old) / (j + 1)));
+												}
 												double newMean = (data.get(insert)).get(counter
 														/ graphSpecies.size());
 												if (label.contains("average")) {
 													if (insert == 0) {
-														(variance.get(insert))
-																.set(
-																		counter
-																				/ graphSpecies
-																						.size(),
-																		old
-																				+ ((Double
-																						.parseDouble(word) - old) / (j + 1)));
+														if (weird) {
+															(variance.get(insert))
+																	.set(
+																			counter
+																					/ graphSpecies
+																							.size(),
+																			old
+																					+ ((Double
+																							.parseDouble(word) - old) / (j + 2)));
+														} else {
+															(variance.get(insert))
+																	.set(
+																			counter
+																					/ graphSpecies
+																							.size(),
+																			old
+																					+ ((Double
+																							.parseDouble(word) - old) / (j + 1)));
+														}
 													} else {
-														double vary = (((j - 1) * (variance
-																.get(insert)).get(counter
-																/ graphSpecies.size())) + (Double
-																.parseDouble(word) - newMean)
-																* (Double.parseDouble(word) - old))
-																/ j;
+														double vary;
+														if (weird) {
+															vary = ((j * (variance.get(insert))
+																	.get(counter
+																			/ graphSpecies.size())) + (Double
+																	.parseDouble(word) - newMean)
+																	* (Double.parseDouble(word) - old))
+																	/ (j + 1);
+														} else {
+															vary = (((j - 1) * (variance
+																	.get(insert)).get(counter
+																	/ graphSpecies.size())) + (Double
+																	.parseDouble(word) - newMean)
+																	* (Double.parseDouble(word) - old))
+																	/ j;
+														}
 														(variance.get(insert)).set(counter
 																/ graphSpecies.size(), vary);
 													}
@@ -810,14 +884,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			XYSeriesCollection dataset = (XYSeriesCollection) plot.getDataset();
 			XYSeries series = dataset.getSeries(j);
 			for (int k = 0; k < series.getItemCount(); k++) {
-				if (series.getY(k).doubleValue() != Double.NaN) {
-					maxY = Math.max(series.getY(k).doubleValue(), maxY);
-					minY = Math.min(series.getY(k).doubleValue(), minY);
-				}
-				if (series.getX(k).doubleValue() != Double.NaN) {
-					maxX = Math.max(series.getX(k).doubleValue(), maxX);
-					minX = Math.min(series.getX(k).doubleValue(), minX);
-				}
+				maxY = Math.max(series.getY(k).doubleValue(), maxY);
+				minY = Math.min(series.getY(k).doubleValue(), minY);
+				maxX = Math.max(series.getX(k).doubleValue(), maxX);
+				minX = Math.min(series.getX(k).doubleValue(), minX);
 			}
 			double[] add = { minX, minY, maxX, maxY };
 			maxAndMin.add(add);

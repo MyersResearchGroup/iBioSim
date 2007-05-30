@@ -222,7 +222,7 @@ public class Learn extends JPanel implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().contains("box")) {
 			int num = Integer.parseInt(e.getActionCommand().substring(3)) - 1;
-			if (((JCheckBox) this.species.get(num).get(0)).isSelected()) {
+			if (!((JCheckBox) this.species.get(num).get(0)).isSelected()) {
 				((JComboBox) this.species.get(num).get(2)).setSelectedItem("0");
 				editText(num);
 				tab.setSelectedIndex(1);
@@ -485,7 +485,7 @@ public class Learn extends JPanel implements ActionListener {
 					}
 				}
 				JPanel label = new JPanel(new GridLayout());
-				label.add(new JLabel("Do Not Use"));
+				label.add(new JLabel("Use"));
 				label.add(new JLabel("Species"));
 				label.add(new JLabel("Number Of Bins"));
 				for (int i = 0; i < max - 3; i++) {
@@ -497,7 +497,9 @@ public class Learn extends JPanel implements ActionListener {
 					j++;
 					JPanel sp = new JPanel(new GridLayout());
 					ArrayList<Component> specs = new ArrayList<Component>();
-					specs.add(new JCheckBox());
+					JCheckBox check = new JCheckBox();
+					check.setSelected(true);
+					specs.add(check);
 					specs.add(new JTextField(s));
 					String[] options = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
 					specs.add(new JComboBox(options));
@@ -598,7 +600,7 @@ public class Learn extends JPanel implements ActionListener {
 				this.species = new ArrayList<ArrayList<Component>>();
 				speciesPanel.setLayout(new GridLayout(species.size() + 1, 1));
 				JPanel label = new JPanel(new GridLayout());
-				label.add(new JLabel("Do Not Use"));
+				label.add(new JLabel("Use"));
 				label.add(new JLabel("Species"));
 				label.add(new JLabel("Number Of Bins"));
 				for (int i = 0; i < Integer.parseInt((String) numBins.getSelectedItem()) - 1; i++) {
@@ -610,7 +612,9 @@ public class Learn extends JPanel implements ActionListener {
 					j++;
 					JPanel sp = new JPanel(new GridLayout());
 					ArrayList<Component> specs = new ArrayList<Component>();
-					specs.add(new JCheckBox());
+					JCheckBox check = new JCheckBox();
+					check.setSelected(true);
+					specs.add(check);
 					specs.add(new JTextField(s));
 					String[] options = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
 					JComboBox combo = new JComboBox(options);

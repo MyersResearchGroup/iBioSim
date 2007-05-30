@@ -2327,7 +2327,6 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	private void sort(String[] sort) {
 		int i, j;
 		String index;
-
 		for (i = 1; i < sort.length; i++) {
 			index = sort[i];
 			j = i;
