@@ -12,6 +12,9 @@ import org.jfree.chart.event.*;
 import org.jfree.chart.plot.*;
 import org.jfree.chart.renderer.xy.*;
 import org.jfree.data.xy.*;
+import com.lowagie.text.*;
+import com.lowagie.text.Rectangle;
+import com.lowagie.text.pdf.*;
 import biomodelsim.core.gui.*;
 import buttons.core.gui.*;
 
@@ -90,7 +93,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 	private BioSim biomodelsim; // tstubd gui
 
-	private JButton exportJPeg, exportPng; // buttons
+	private JButton exportJPeg, exportPng, exportPdf; // buttons
 
 	private HashMap<String, Paint> colors;
 
@@ -318,10 +321,13 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		JPanel ButtonHolder = new JPanel();
 		exportJPeg = new JButton("Export As JPEG");
 		exportPng = new JButton("Export As PNG");
+		exportPdf = new JButton("Export As PDF");
 		exportJPeg.addActionListener(this);
 		exportPng.addActionListener(this);
+		exportPdf.addActionListener(this);
 		ButtonHolder.add(exportJPeg);
 		ButtonHolder.add(exportPng);
+		ButtonHolder.add(exportPdf);
 		JPanel AllButtonsHolder = new JPanel(new BorderLayout());
 
 		// puts all the components of the graph gui into a display panel
@@ -440,13 +446,12 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							if (label.contains("average")) {
 								(variance.get(0)).add(0.0);
 							}
-							boolean weird = false;
+							int count = 0;
+							int skip = firstOne;
 							for (int j = 0; j < runsToMake; j++) {
 								int counter = 1;
-								int skip = firstOne;
 								if (!first) {
 									if (firstOne != 1) {
-										weird = true;
 										j--;
 										firstOne = 1;
 									}
@@ -492,6 +497,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 												input.read();
 											}
 											loop = false;
+											count++;
 										} else {
 											j++;
 										}
@@ -553,61 +559,31 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 												insert = counter;
 												double old = (data.get(insert)).get(insert
 														/ graphSpecies.size());
-												if (weird) {
-													(data.get(insert))
-															.set(
-																	insert / graphSpecies.size(),
-																	old
-																			+ ((Double
-																					.parseDouble(word) - old) / (j + 2)));
-												} else {
-													(data.get(insert))
-															.set(
-																	insert / graphSpecies.size(),
-																	old
-																			+ ((Double
-																					.parseDouble(word) - old) / (j + 1)));
-												}
+												(data.get(insert))
+														.set(
+																insert / graphSpecies.size(),
+																old
+																		+ ((Double
+																				.parseDouble(word) - old) / (count + 1)));
 												double newMean = (data.get(insert)).get(insert
 														/ graphSpecies.size());
 												if (label.contains("average")) {
 													if (insert == 0) {
-														if (weird) {
-															(variance.get(insert))
-																	.set(
-																			insert
-																					/ graphSpecies
-																							.size(),
-																			old
-																					+ ((Double
-																							.parseDouble(word) - old) / (j + 2)));
-														} else {
-															(variance.get(insert))
-																	.set(
-																			insert
-																					/ graphSpecies
-																							.size(),
-																			old
-																					+ ((Double
-																							.parseDouble(word) - old) / (j + 1)));
-														}
+														(variance.get(insert))
+																.set(
+																		insert
+																				/ graphSpecies
+																						.size(),
+																		old
+																				+ ((Double
+																						.parseDouble(word) - old) / (count + 1)));
 													} else {
-														double vary;
-														if (weird) {
-															vary = ((j * (variance.get(insert))
-																	.get(insert
-																			/ graphSpecies.size())) + (Double
-																	.parseDouble(word) - newMean)
-																	* (Double.parseDouble(word) - old))
-																	/ (j + 1);
-														} else {
-															vary = (((j - 1) * (variance
-																	.get(insert)).get(insert
-																	/ graphSpecies.size())) + (Double
-																	.parseDouble(word) - newMean)
-																	* (Double.parseDouble(word) - old))
-																	/ j;
-														}
+														double vary = (((count - 1) * (variance
+																.get(insert)).get(insert
+																/ graphSpecies.size())) + (Double
+																.parseDouble(word) - newMean)
+																* (Double.parseDouble(word) - old))
+																/ count;
 														(variance.get(insert)).set(insert
 																/ graphSpecies.size(), vary);
 													}
@@ -616,61 +592,31 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 												insert = counter % graphSpecies.size();
 												double old = (data.get(insert)).get(counter
 														/ graphSpecies.size());
-												if (weird) {
-													(data.get(insert))
-															.set(
-																	counter / graphSpecies.size(),
-																	old
-																			+ ((Double
-																					.parseDouble(word) - old) / (j + 2)));
-												} else {
-													(data.get(insert))
-															.set(
-																	counter / graphSpecies.size(),
-																	old
-																			+ ((Double
-																					.parseDouble(word) - old) / (j + 1)));
-												}
+												(data.get(insert))
+														.set(
+																counter / graphSpecies.size(),
+																old
+																		+ ((Double
+																				.parseDouble(word) - old) / (count + 1)));
 												double newMean = (data.get(insert)).get(counter
 														/ graphSpecies.size());
 												if (label.contains("average")) {
 													if (insert == 0) {
-														if (weird) {
-															(variance.get(insert))
-																	.set(
-																			counter
-																					/ graphSpecies
-																							.size(),
-																			old
-																					+ ((Double
-																							.parseDouble(word) - old) / (j + 2)));
-														} else {
-															(variance.get(insert))
-																	.set(
-																			counter
-																					/ graphSpecies
-																							.size(),
-																			old
-																					+ ((Double
-																							.parseDouble(word) - old) / (j + 1)));
-														}
+														(variance.get(insert))
+																.set(
+																		counter
+																				/ graphSpecies
+																						.size(),
+																		old
+																				+ ((Double
+																						.parseDouble(word) - old) / (count + 1)));
 													} else {
-														double vary;
-														if (weird) {
-															vary = ((j * (variance.get(insert))
-																	.get(counter
-																			/ graphSpecies.size())) + (Double
-																	.parseDouble(word) - newMean)
-																	* (Double.parseDouble(word) - old))
-																	/ (j + 1);
-														} else {
-															vary = (((j - 1) * (variance
-																	.get(insert)).get(counter
-																	/ graphSpecies.size())) + (Double
-																	.parseDouble(word) - newMean)
-																	* (Double.parseDouble(word) - old))
-																	/ j;
-														}
+														double vary = (((count - 1) * (variance
+																.get(insert)).get(counter
+																/ graphSpecies.size())) + (Double
+																.parseDouble(word) - newMean)
+																* (Double.parseDouble(word) - old))
+																/ count;
 														(variance.get(insert)).set(counter
 																/ graphSpecies.size(), vary);
 													}
@@ -862,11 +808,15 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		}
 		// if the export as jpeg button is clicked
 		else if (e.getSource() == exportJPeg) {
-			export(true);
+			export(0);
 		}
 		// if the export as png button is clicked
 		else if (e.getSource() == exportPng) {
-			export(false);
+			export(1);
+		}
+		// if the export as pdf button is clicked
+		else if (e.getSource() == exportPdf) {
+			export(2);
 		}
 	}
 
@@ -1039,11 +989,11 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		shape.put("Circle", draw.getNextShape());
 		shape.put("Triangle", draw.getNextShape());
 		shape.put("Diamond", draw.getNextShape());
-		shape.put("Rectangle (Vertical)", draw.getNextShape());
+		shape.put("Rectangle (Horizontal)", draw.getNextShape());
 		shape.put("Triangle (Upside Down)", draw.getNextShape());
 		shape.put("Circle (Half)", draw.getNextShape());
 		shape.put("Arrow", draw.getNextShape());
-		shape.put("Rectangle (Horizontal)", draw.getNextShape());
+		shape.put("Rectangle (Vertical)", draw.getNextShape());
 		shape.put("Arrow (Backwards)", draw.getNextShape());
 	}
 
@@ -1208,7 +1158,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	/**
 	 * This method saves the graph as a jpeg or as a png file.
 	 */
-	public void export(boolean jpeg) {
+	public void export(int output) {
 		try {
 			int width = -1;
 			int height = -1;
@@ -1263,7 +1213,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			String filename = Buttons.browse(biomodelsim.frame(), file, null,
 					JFileChooser.FILES_ONLY, "Save");
 			if (!filename.equals("")) {
-				if (jpeg) {
+				if (output == 0) {
 					if (filename.substring((filename.length() - 4), filename.length()).equals(
 							".jpg")
 							|| filename.substring((filename.length() - 5), filename.length())
@@ -1271,11 +1221,17 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					} else {
 						filename += ".jpg";
 					}
-				} else {
+				} else if (output == 1) {
 					if (filename.substring((filename.length() - 4), filename.length()).equals(
 							".png")) {
 					} else {
 						filename += ".png";
+					}
+				} else if (output == 2) {
+					if (filename.substring((filename.length() - 4), filename.length()).equals(
+							".pdf")) {
+					} else {
+						filename += ".pdf";
 					}
 				}
 				file = new File(filename);
@@ -1286,23 +1242,50 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
 							options[0]);
 					if (value == JOptionPane.YES_OPTION) {
-						if (jpeg) {
+						if (output == 0) {
 							ChartUtilities.saveChartAsJPEG(file, chart, width, height);
-						} else {
+						} else if (output == 1) {
 							ChartUtilities.saveChartAsPNG(file, chart, width, height);
+						} else if (output == 2) {
+							Rectangle pagesize = new Rectangle(width, height);
+							Document document = new Document(pagesize, 50, 50, 50, 50);
+							PdfWriter writer = PdfWriter.getInstance(document,
+									new FileOutputStream(file));
+							document.open();
+							PdfContentByte cb = writer.getDirectContent();
+							PdfTemplate tp = cb.createTemplate(width, height);
+							Graphics2D g2 = tp.createGraphics(width, height,
+									new DefaultFontMapper());
+							chart.draw(g2, new java.awt.Rectangle(width, height));
+							g2.dispose();
+							cb.addTemplate(tp, 0, 0);
+							document.close();
 						}
 						savedPics = filename;
 					}
 				} else {
-					if (jpeg) {
+					if (output == 0) {
 						ChartUtilities.saveChartAsJPEG(file, chart, width, height);
-					} else {
+					} else if (output == 1) {
 						ChartUtilities.saveChartAsPNG(file, chart, width, height);
+					} else if (output == 2) {
+						Rectangle pagesize = new Rectangle(width, height);
+						Document document = new Document(pagesize, 50, 50, 50, 50);
+						PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(
+								file));
+						document.open();
+						PdfContentByte cb = writer.getDirectContent();
+						PdfTemplate tp = cb.createTemplate(width, height);
+						Graphics2D g2 = tp.createGraphics(width, height, new DefaultFontMapper());
+						chart.draw(g2, new java.awt.Rectangle(width, height));
+						g2.dispose();
+						cb.addTemplate(tp, 0, 0);
+						document.close();
 					}
 					savedPics = filename;
 				}
 			}
-		} catch (IOException e1) {
+		} catch (Exception e1) {
 			JOptionPane.showMessageDialog(biomodelsim.frame(), "Unable To Save File!", "Error",
 					JOptionPane.ERROR_MESSAGE);
 		}

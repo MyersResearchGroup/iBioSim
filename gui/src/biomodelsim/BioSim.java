@@ -599,60 +599,145 @@ public class BioSim implements MouseListener, ActionListener {
 				} else if (tab.getSelectedComponent().getName().equals("SBML Editor")) {
 					((SBML_Editor) tab.getSelectedComponent()).save();
 				} else if (tab.getSelectedComponent().getName().contains("Graph")) {
-					Object[] options = { "Save As JPEG", "Save As PNG", "Cancel" };
-					int value;
+					final JFrame f = new JFrame("Save");
+					JButton saveAsJpeg = new JButton("Save As JPEG");
+					saveAsJpeg.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent e) {
+							((Graph) tab.getSelectedComponent()).export(0);
+							f.dispose();
+						}
+					});
+					JButton saveAsPng = new JButton("Save As PNG");
+					saveAsPng.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent e) {
+							((Graph) tab.getSelectedComponent()).export(1);
+							f.dispose();
+						}
+					});
+					JButton saveAsPdf = new JButton("Save As PDF");
+					saveAsPdf.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent e) {
+							((Graph) tab.getSelectedComponent()).export(2);
+							f.dispose();
+						}
+					});
+					JButton cancel = new JButton("Cancel");
+					saveAsPdf.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent e) {
+							f.dispose();
+						}
+					});
+					JPanel buttons = new JPanel();
+					buttons.add(saveAsJpeg);
+					buttons.add(saveAsPng);
+					buttons.add(saveAsPdf);
+					buttons.add(cancel);
+					JLabel text;
 					if (tab.getSelectedComponent().getName().contains("ODE")) {
-						value = JOptionPane.showOptionDialog(frame, "Which type would you like to"
-								+ " save the ode graph as?", "Save Changes",
-								JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null,
-								options, options[0]);
+						text = new JLabel("Which type would you like to save the ode graph as?");
 					} else if (tab.getSelectedComponent().getName().contains("Stoch")) {
-						value = JOptionPane.showOptionDialog(frame, "Which type would you like to"
-								+ " save the stochastic graph as?", "Save Changes",
-								JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null,
-								options, options[0]);
+						text = new JLabel(
+								"Which type would you like to save the stochastic graph as?");
 					} else {
-						value = JOptionPane.showOptionDialog(frame, "Which type would you like to"
-								+ " save the graph as?", "Save Changes",
-								JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null,
-								options, options[0]);
+						text = new JLabel("Which type would you like to save the graph as?");
 					}
-					if (value == JOptionPane.YES_OPTION) {
-						((Graph) tab.getSelectedComponent()).export(true);
-					} else {
-						((Graph) tab.getSelectedComponent()).export(false);
+					JPanel textPanel = new JPanel(new GridLayout(2, 1));
+					textPanel.add(text);
+					textPanel.add(buttons);
+					f.setContentPane(textPanel);
+					f.pack();
+					Dimension screenSize;
+					try {
+						Toolkit tk = Toolkit.getDefaultToolkit();
+						screenSize = tk.getScreenSize();
+					} catch (AWTError awe) {
+						screenSize = new Dimension(640, 480);
 					}
+					Dimension frameSize = f.getSize();
+
+					if (frameSize.height > screenSize.height) {
+						frameSize.height = screenSize.height;
+					}
+					if (frameSize.width > screenSize.width) {
+						frameSize.width = screenSize.width;
+					}
+					int x = screenSize.width / 2 - frameSize.width / 2;
+					int y = screenSize.height / 2 - frameSize.height / 2;
+					f.setLocation(x, y);
+					f.setVisible(true);
 				} else {
-					JTabbedPane simTab = (JTabbedPane) tab.getSelectedComponent();
+					final JTabbedPane simTab = (JTabbedPane) tab.getSelectedComponent();
 					if (simTab.getSelectedComponent().getName().equals("Simulate")) {
 						((Reb2Sac) simTab.getSelectedComponent()).save();
 					} else if (simTab.getSelectedComponent().getName().equals("SBML Editor")) {
 						((SBML_Editor) simTab.getSelectedComponent()).save();
 					} else if (simTab.getSelectedComponent().getName().contains("Graph")) {
-						Object[] options = { "Save As JPEG", "Save As PNG", "Cancel" };
-						int value;
+						final JFrame f = new JFrame("Save");
+						JButton saveAsJpeg = new JButton("Save As JPEG");
+						saveAsJpeg.addActionListener(new ActionListener() {
+							public void actionPerformed(ActionEvent e) {
+								((Graph) simTab.getSelectedComponent()).export(0);
+								f.dispose();
+							}
+						});
+						JButton saveAsPng = new JButton("Save As PNG");
+						saveAsPng.addActionListener(new ActionListener() {
+							public void actionPerformed(ActionEvent e) {
+								((Graph) simTab.getSelectedComponent()).export(1);
+								f.dispose();
+							}
+						});
+						JButton saveAsPdf = new JButton("Save As PDF");
+						saveAsPdf.addActionListener(new ActionListener() {
+							public void actionPerformed(ActionEvent e) {
+								((Graph) simTab.getSelectedComponent()).export(2);
+								f.dispose();
+							}
+						});
+						JButton cancel = new JButton("Cancel");
+						saveAsPdf.addActionListener(new ActionListener() {
+							public void actionPerformed(ActionEvent e) {
+								f.dispose();
+							}
+						});
+						JPanel buttons = new JPanel();
+						buttons.add(saveAsJpeg);
+						buttons.add(saveAsPng);
+						buttons.add(saveAsPdf);
+						buttons.add(cancel);
+						JLabel text;
 						if (simTab.getSelectedComponent().getName().contains("ODE")) {
-							value = JOptionPane.showOptionDialog(frame,
-									"Which type would you like to" + " save the ode graph as?",
-									"Save Changes", JOptionPane.YES_NO_CANCEL_OPTION,
-									JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+							text = new JLabel("Which type would you like to save the ode graph as?");
 						} else if (simTab.getSelectedComponent().getName().contains("Stoch")) {
-							value = JOptionPane.showOptionDialog(frame,
-									"Which type would you like to"
-											+ " save the stochastic graph as?", "Save Changes",
-									JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE,
-									null, options, options[0]);
+							text = new JLabel(
+									"Which type would you like to save the stochastic graph as?");
 						} else {
-							value = JOptionPane.showOptionDialog(frame,
-									"Which type would you like to" + " save the graph as?",
-									"Save Changes", JOptionPane.YES_NO_CANCEL_OPTION,
-									JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+							text = new JLabel("Which type would you like to save the graph as?");
 						}
-						if (value == JOptionPane.YES_OPTION) {
-							((Graph) simTab.getSelectedComponent()).export(true);
-						} else {
-							((Graph) simTab.getSelectedComponent()).export(false);
+						JPanel textPanel = new JPanel(new GridLayout(2, 1));
+						textPanel.add(text);
+						textPanel.add(buttons);
+						f.setContentPane(textPanel);
+						f.pack();
+						Dimension screenSize;
+						try {
+							Toolkit tk = Toolkit.getDefaultToolkit();
+							screenSize = tk.getScreenSize();
+						} catch (AWTError awe) {
+							screenSize = new Dimension(640, 480);
 						}
+						Dimension frameSize = f.getSize();
+
+						if (frameSize.height > screenSize.height) {
+							frameSize.height = screenSize.height;
+						}
+						if (frameSize.width > screenSize.width) {
+							frameSize.width = screenSize.width;
+						}
+						int x = screenSize.width / 2 - frameSize.width / 2;
+						int y = screenSize.height / 2 - frameSize.height / 2;
+						f.setLocation(x, y);
+						f.setVisible(true);
 					}
 				}
 			}
@@ -926,27 +1011,72 @@ public class BioSim implements MouseListener, ActionListener {
 				return 1;
 			}
 		} else if (tab.getComponentAt(index).getName().contains("Graph")) {
-			Object[] options = { "Save As JPEG", "Save As PNG", "Don't Save" };
-			int value;
+			final JFrame f = new JFrame("Save");
+			final int index2 = index;
+			JButton saveAsJpeg = new JButton("Save As JPEG");
+			saveAsJpeg.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					((Graph) tab.getComponentAt(index2)).export(0);
+					f.dispose();
+				}
+			});
+			JButton saveAsPng = new JButton("Save As PNG");
+			saveAsPng.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					((Graph) tab.getComponentAt(index2)).export(1);
+					f.dispose();
+				}
+			});
+			JButton saveAsPdf = new JButton("Save As PDF");
+			saveAsPdf.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					((Graph) tab.getComponentAt(index2)).export(2);
+					f.dispose();
+				}
+			});
+			JButton cancel = new JButton("Cancel");
+			saveAsPdf.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					f.dispose();
+				}
+			});
+			JPanel buttons = new JPanel();
+			buttons.add(saveAsJpeg);
+			buttons.add(saveAsPng);
+			buttons.add(saveAsPdf);
+			buttons.add(cancel);
+			JLabel text;
 			if (tab.getComponentAt(index).getName().contains("ODE")) {
-				value = JOptionPane.showOptionDialog(frame, "Do you want to save the ode graph?",
-						"Save Changes", JOptionPane.YES_NO_CANCEL_OPTION,
-						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+				text = new JLabel("Which type would you like to save the ode graph as?");
 			} else if (tab.getComponentAt(index).getName().contains("Stoch")) {
-				value = JOptionPane.showOptionDialog(frame,
-						"Do you want to save the stochastic graph?", "Save Changes",
-						JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
-						options[0]);
+				text = new JLabel("Which type would you like to save the stochastic graph as?");
 			} else {
-				value = JOptionPane.showOptionDialog(frame, "Do you want to save the graph?",
-						"Save Changes", JOptionPane.YES_NO_CANCEL_OPTION,
-						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+				text = new JLabel("Which type would you like to save the graph as?");
 			}
-			if (value == JOptionPane.YES_OPTION) {
-				((Graph) tab.getComponentAt(index)).export(true);
-			} else if (value == JOptionPane.NO_OPTION) {
-				((Graph) tab.getComponentAt(index)).export(false);
+			JPanel textPanel = new JPanel(new GridLayout(2, 1));
+			textPanel.add(text);
+			textPanel.add(buttons);
+			f.setContentPane(textPanel);
+			f.pack();
+			Dimension screenSize;
+			try {
+				Toolkit tk = Toolkit.getDefaultToolkit();
+				screenSize = tk.getScreenSize();
+			} catch (AWTError awe) {
+				screenSize = new Dimension(640, 480);
 			}
+			Dimension frameSize = f.getSize();
+
+			if (frameSize.height > screenSize.height) {
+				frameSize.height = screenSize.height;
+			}
+			if (frameSize.width > screenSize.width) {
+				frameSize.width = screenSize.width;
+			}
+			int x = screenSize.width / 2 - frameSize.width / 2;
+			int y = screenSize.height / 2 - frameSize.height / 2;
+			f.setLocation(x, y);
+			f.setVisible(true);
 			return 1;
 		} else {
 			for (int i = 0; i < ((JTabbedPane) tab.getComponentAt(index)).getTabCount(); i++) {
@@ -959,33 +1089,76 @@ public class BioSim implements MouseListener, ActionListener {
 							.save();
 				} else if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i).getName()
 						.contains("Graph")) {
-					Object[] options = { "Save As JPEG", "Save As PNG", "Don't Save" };
-					int value;
+					final JFrame f = new JFrame("Save");
+					final Graph g = ((Graph) ((JTabbedPane) tab.getComponentAt(index))
+							.getComponent(i));
+					JButton saveAsJpeg = new JButton("Save As JPEG");
+					saveAsJpeg.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent e) {
+							g.export(0);
+							f.dispose();
+						}
+					});
+					JButton saveAsPng = new JButton("Save As PNG");
+					saveAsPng.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent e) {
+							g.export(1);
+							f.dispose();
+						}
+					});
+					JButton saveAsPdf = new JButton("Save As PDF");
+					saveAsPdf.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent e) {
+							g.export(2);
+							f.dispose();
+						}
+					});
+					JButton cancel = new JButton("Cancel");
+					saveAsPdf.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent e) {
+							f.dispose();
+						}
+					});
+					JPanel buttons = new JPanel();
+					buttons.add(saveAsJpeg);
+					buttons.add(saveAsPng);
+					buttons.add(saveAsPdf);
+					buttons.add(cancel);
+					JLabel text;
 					if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i).getName()
 							.contains("ODE")) {
-						value = JOptionPane.showOptionDialog(frame,
-								"Do you want to save the ode graph?", "Save Changes",
-								JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null,
-								options, options[0]);
+						text = new JLabel("Which type would you like to save the ode graph as?");
 					} else if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i).getName()
 							.contains("Stoch")) {
-						value = JOptionPane.showOptionDialog(frame,
-								"Do you want to save the stochastic graph?", "Save Changes",
-								JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null,
-								options, options[0]);
+						text = new JLabel(
+								"Which type would you like to save the stochastic graph as?");
 					} else {
-						value = JOptionPane.showOptionDialog(frame,
-								"Do you want to save the graph?", "Save Changes",
-								JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null,
-								options, options[0]);
+						text = new JLabel("Which type would you like to save the graph as?");
 					}
-					if (value == JOptionPane.YES_OPTION) {
-						((Graph) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i))
-								.export(true);
-					} else if (value == JOptionPane.NO_OPTION) {
-						((Graph) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i))
-								.export(false);
+					JPanel textPanel = new JPanel(new GridLayout(2, 1));
+					textPanel.add(text);
+					textPanel.add(buttons);
+					f.setContentPane(textPanel);
+					f.pack();
+					Dimension screenSize;
+					try {
+						Toolkit tk = Toolkit.getDefaultToolkit();
+						screenSize = tk.getScreenSize();
+					} catch (AWTError awe) {
+						screenSize = new Dimension(640, 480);
 					}
+					Dimension frameSize = f.getSize();
+
+					if (frameSize.height > screenSize.height) {
+						frameSize.height = screenSize.height;
+					}
+					if (frameSize.width > screenSize.width) {
+						frameSize.width = screenSize.width;
+					}
+					int x = screenSize.width / 2 - frameSize.width / 2;
+					int y = screenSize.height / 2 - frameSize.height / 2;
+					f.setLocation(x, y);
+					f.setVisible(true);
 				}
 			}
 			return 1;
