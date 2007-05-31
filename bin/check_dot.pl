@@ -66,19 +66,19 @@ for (my $i = 0; $i <= $#in2; $i++){
 #          \ ___________________________
 #      a    | blue   | red    | black   |
 #           | solid  | dashed | dashed  |
-#           | vee    | tee    | vee     |
+#           | normal | tee    | onormal |
 #           |-----------------|---------|
 #      r    | blue   | red    | black   |
 #           | dashed | solid  | dashed  |
-#           | vee    | tee    | tee     |
+#           | normal | tee    | obox    |
 #           |-----------------|---------|
-#      n    | gray   | gray   |         |
+#      n    | blue   | red    |         |
 #           | dotted | dotted |         |
-#           | vee    | tee    |         |
+#           | normal | tee    |         |
 #           -----------------------------
 #
 #Check the first 2 columns above
-while ($in1 =~ m/s([0-9]+) -> s([0-9]+) (.+)arrowhead=((vee|tee))/g){
+while ($in1 =~ m/s([0-9]+) -> s([0-9]+) (.+)arrowhead= *((vee|tee))/g){
     my $state1 = $1;
     my $state2 = $2;
     my $mid = $3;
@@ -91,13 +91,24 @@ while ($in1 =~ m/s([0-9]+) -> s([0-9]+) (.+)arrowhead=((vee|tee))/g){
 #	}
 #    }
     if ($in2 =~ m/s$state1 -> s$state2 (.*)arrowhead=$arc/){
-	print CHECKED "s$state1 -> s$state2 $1 arrowhead=$arc]\n";
+	$tmp = $1;
+	$arc =~ s/vee/normal/;
+	print CHECKED "s$state1 -> s$state2 $tmp arrowhead=$arc]\n";
     }
     elsif ($in2 =~ m/s$state1 -> s$state2 (.*)arrowhead=/){
-	print CHECKED "s$state1 -> s$state2 $1 style=dashed, arrowhead=$arc]\n";
+	$tmp = $1;
+	if ($tmp =~ m/blue/){
+	    $tmp =~ s/blue/firebrick/;
+	}
+	else{
+	    $tmp =~ s/firebrick/blue/;
+	}
+	$arc =~ s/vee/normal/;
+	print CHECKED "s$state1 -> s$state2 $tmp style=dashed, arrowhead=$arc]\n";
     }
     else{
-	$mid =~ s/color=\"[^\"]+/color=\"gray/;
+	$arc =~ s/vee/normal/;
+	#$mid =~ s/color=\"[^\"]+/color=\"gray/;
 	print CHECKED "s$state1 -> s$state2 $mid style=dotted, arrowhead=$arc]\n";
     }
 }
@@ -112,6 +123,8 @@ while ($in2 =~ m/s([0-9]+) -> s([0-9]+) (.+)arrowhead=((vee|tee))/g){
     }
     else{
 	$mid =~ s/color=\"[^\"]+/color=\"black/;
+	$arc =~ s/(vee|normal)/onormal/;
+	$arc =~ s/tee/obox/;
 	print CHECKED "s$state1 -> s$state2 $mid style=dashed, arrowhead=$arc]\n";
     }
 }
