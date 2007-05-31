@@ -176,7 +176,7 @@ sub write_time{
 #0inputs+0outputs (0major+853minor)pagefaults 0swaps
     my $f = "$file";
     my $tmp = $file_name_to_use;
-    $tmp =~ s/(.*)_.*/$1\_time.txt/;
+    $tmp =~ s/(.*)[.].*/$1\_time.txt/;
     $f =~ s/(.*)\/.*/$1\/$tmp/;
     if (-e "$f"){
 	open (A, "$f") or die "Cannot open time file $f\n";
@@ -204,71 +204,60 @@ sub write_time{
 
 sub check_correctness{
     my $filename = shift;
-    my $dot_file = $filename;
-    $dot_file =~ s/(.*)\/(.*)\/(.*)\/([^\/]*)/$1\/$2\/$2.dot/;
-    #$filename =~ s/[.]csv/.dot/g;
     $filename = "$filename.dot";
-    #$dot_file = "$dot_file.dot";
 
-    if (not -e "$dot_file"){
-	print "ERROR: unable to check correctness for non exsistant? dot $dot_file\n";
-	exit(1);
-    }
     if (not -e "$filename"){
 	print "ERROR: unable to check correctness for non exsistant? file '$filename'\n";
 	exit(1);
     }
-    open (IN1, "$dot_file") or die "I cannot check dot correctness for $dot_file\n";
-    open (IN2, "$filename") or die "I cannot check correctness for $filename\n";
+    open (IN, "$filename") or die "I cannot check correctness for $filename\n";
 
-    my @in1 = <IN1>;
-    my @in2 = <IN2>;
-    close IN1;
-    close IN2;
+    my @in = <IN>;
+    close IN;
 
-    my $in1 = join ("",@in1);
-    my $in2 = join ("",@in2);
+    my $in = join ("",@in);
 
-    $in1 =~ s/sp_//g;
-    $in2 =~ s/sp_//g;
+    $in =~ s/sp_//g;
 
-    my $r_c = 0;
-    my $r_t = 0;
-    #check precision
-    while ($in1 =~ m/s([0-9]+) -> s([0-9]+) .+arrowhead=((vee|tee))/g){
-	$r_t++;
+    my $not_found_arcs = 0;
+    my $correct_arcs = 0;
+    my $wrong_influence_arcs = 0;
+    my $extra_arcs = 0;
+
+    while ($in =~ m/s([0-9]+) -> s([0-9]+) \[ *color *= *\"(.*?)\"(.+)arrowhead=((vee|tee))/g){
 	my $state1 = $1;
 	my $state2 = $2;
-	my $arc = $3;
-	if ($in2 =~ m/s$state1 -> s$state2 .*arrowhead=$arc/){
-	    $r_c++;
+	my $color = $3;
+	my $mid = $4;
+	my $arc = $5;
+	if ($color =~ m/gray/i){
+	    $not_found_arcs++;
+	}
+	elsif ($color =~ m/black/i){
+	    $extra_arcs++;
+	}
+	elsif($mid =~ m/dashed/i){
+	    $wrong_influence_arcs++;
+	}
+	else{
+	    $correct_arcs++;
 	}
     }
-    #print "\tRecall: $r_c/$r_t = '" . $r_c/$r_t . "'\n";
-    #print LOG ",Recall: $r_c/$r_t =," . $r_c/$r_t . "\n";
 
-    my $p_c = 0;
-    my $p_t = 0;
-    #check precision
-    while ($in2 =~ m/s([0-9]+) -> s([0-9]+) (.+)arrowhead=((vee|tee))/g){
-	$p_t++;
-	my $state1 = $1;
-	my $state2 = $2;
-	my $mid = $3;
-	my $arc = $4;
-	if ($in1 =~ m/s$state1 -> s$state2 .*arrowhead=$arc/){
-	    $p_c++;
-	}
+    my $num_genes = 0;
+    while ($in =~ m/s[0-9]+ \[/g){
+	$num_genes++;
     }
-    if ($p_t > 0){
-	#print "\tPrecision: $p_c/$p_t = '" . $p_c/$p_t . "'\n";
-	#print LOG ",Precision: $p_c/$p_t = ," . $p_c/$p_t . "\n";
-    }
-    else{
-	#print "\tPrecision: $p_c/$p_t = '0'\n";
-	#print LOG ",Precision: $p_c/$p_t = ,0\n";
-    }
+    my $total_possible_arcs = $num_genes * ($num_genes-1);
+    my $total_influence_arcs = $not_found_arcs + $wrong_influence_arcs + $correct_arcs;
+    my $total_absent_arcs = $total_possible_arcs - $total_influence_arcs;
+    my $correct_absent_arcs = $total_absent_arcs - $extra_arcs;
 
+
+    my $r_c = $correct_arcs;
+    my $r_t = $total_influence_arcs;
+    my $p_c = $correct_arcs;
+    my $p_t = $correct_arcs + $wrong_influence_arcs;
     return ($r_c,$r_t,$p_c,$p_t);
 
 }
