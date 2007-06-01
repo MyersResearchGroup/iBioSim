@@ -1,5 +1,5 @@
 #!/bin/ksh
 #
 # run-time wrapper for reb2sac_gui
-export LD_LIBRARY_PATH=$PWD/../lib/libsbml/lib:$LD_LIBRARY_PATH
-exec java -jar $PWD/../dist/lib/gui.jar "$@"
+export LD_LIBRARY_PATH=$BIOSIM/gui/lib/libsbml/lib:$LD_LIBRARY_PATH
+exec java -jar $BIOSIM/gui/dist/lib/gui.jar "$@"

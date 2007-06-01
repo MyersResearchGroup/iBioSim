@@ -69,7 +69,7 @@
         <jar jarfile="${build.lib}/gui.jar" basedir="${build.classes}">
 	    <manifest>
 		<attribute name="Main-Class" value="biomodelsim.core.gui.BioSim"/>
-		<attribute name="Class-Path" value="${basedir}/lib/jcommon-1.0.9.jar ${basedir}/lib/jfreechart-1.0.5.jar ${basedir}/lib/itext-2.0.3.jar ${basedir}/lib/libsbml/lib/libsbmlj.jar"/>
+		<attribute name="Class-Path" value="../../lib/jcommon-1.0.9.jar ../../lib/jfreechart-1.0.5.jar ../../lib/itext-2.0.3.jar ../../lib/libsbml/lib/libsbmlj.jar"/>
       	    </manifest>
 	</jar>
     </target>
