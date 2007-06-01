@@ -5,7 +5,10 @@ import java.awt.*;
 import java.awt.event.*;
 import java.text.*;
 import java.util.*;
+
 import javax.swing.*;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.jfree.chart.*;
@@ -100,6 +103,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	private HashMap<String, Paint> colors;
 
 	private HashMap<String, Shape> shape;
+
+	// private String selected;
 
 	/**
 	 * Creates a Graph Object from the data given and calls the private graph
@@ -265,6 +270,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			}
 			if (rend.getSeriesShapesFilled(i) == null) {
 				rend.setSeriesShapesFilled(i, true);
+			}
+			if (rend.getSeriesLinesVisible(i) == null) {
+				rend.setSeriesLinesVisible(i, true);
 			}
 		}
 		ChartPanel graph = new ChartPanel(chart);
@@ -1004,9 +1012,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		JLabel titleLabel = new JLabel("Title:");
 		JLabel xLabel = new JLabel("X-Axis Label:");
 		JLabel yLabel = new JLabel("Y-Axis Label:");
-		JTextField title = new JTextField(chart.getTitle().getText(), 5);
-		JTextField x = new JTextField(chart.getXYPlot().getDomainAxis().getLabel(), 5);
-		JTextField y = new JTextField(chart.getXYPlot().getRangeAxis().getLabel(), 5);
+		final JTextField title = new JTextField(chart.getTitle().getText(), 5);
+		final JTextField x = new JTextField(chart.getXYPlot().getDomainAxis().getLabel(), 5);
+		final JTextField y = new JTextField(chart.getXYPlot().getRangeAxis().getLabel(), 5);
 		JLabel xMin = new JLabel("X-Min:");
 		JLabel xMax = new JLabel("X-Max:");
 		JLabel xScale = new JLabel("X-Step:");
@@ -1043,24 +1051,41 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			}
 		}
 		JTree tree = new JTree(simDir);
-		JPanel speciesPanel = new JPanel(new GridLayout(dataset.getSeriesCount() + 1, 6));
-		JLabel use = new JLabel("Use");
+		JScrollPane scrollpane = new JScrollPane();
+		scrollpane.getViewport().add(tree);
+		// selected = "";
+		tree.addTreeSelectionListener(new TreeSelectionListener() {
+			public void valueChanged(TreeSelectionEvent e) {
+				// DefaultMutableTreeNode node = (DefaultMutableTreeNode)
+				// e.getPath()
+				// .getLastPathComponent();
+				// selected = node.toString();
+			}
+		});
+		tree.setSelectionRow(1);
+		JPanel speciesPanel1 = new JPanel(new GridLayout(dataset.getSeriesCount() + 1, 1));
+		JPanel speciesPanel2 = new JPanel(new GridLayout(dataset.getSeriesCount() + 1, 3));
+		JPanel speciesPanel3 = new JPanel(new GridLayout(dataset.getSeriesCount() + 1, 3));
+		JLabel use = new JLabel("Use  ");
 		JLabel specs = new JLabel("Species");
 		JLabel color = new JLabel("Color");
 		JLabel shape = new JLabel("Shape");
+		JLabel connectedLabel = new JLabel("Connected  ");
 		JLabel visibleLabel = new JLabel("Visible");
 		JLabel filledLabel = new JLabel("Filled");
-		speciesPanel.add(use);
-		speciesPanel.add(specs);
-		speciesPanel.add(color);
-		speciesPanel.add(shape);
-		speciesPanel.add(visibleLabel);
-		speciesPanel.add(filledLabel);
-		ArrayList<JTextField> series = new ArrayList<JTextField>();
-		ArrayList<JComboBox> colors = new ArrayList<JComboBox>();
-		ArrayList<JComboBox> shapes = new ArrayList<JComboBox>();
-		ArrayList<JCheckBox> visible = new ArrayList<JCheckBox>();
-		ArrayList<JCheckBox> filled = new ArrayList<JCheckBox>();
+		speciesPanel1.add(use);
+		speciesPanel2.add(specs);
+		speciesPanel2.add(color);
+		speciesPanel2.add(shape);
+		speciesPanel3.add(connectedLabel);
+		speciesPanel3.add(visibleLabel);
+		speciesPanel3.add(filledLabel);
+		final ArrayList<JTextField> series = new ArrayList<JTextField>();
+		final ArrayList<JComboBox> colors = new ArrayList<JComboBox>();
+		final ArrayList<JComboBox> shapes = new ArrayList<JComboBox>();
+		final ArrayList<JCheckBox> connected = new ArrayList<JCheckBox>();
+		final ArrayList<JCheckBox> visible = new ArrayList<JCheckBox>();
+		final ArrayList<JCheckBox> filled = new ArrayList<JCheckBox>();
 		for (int i = 0; i < dataset.getSeriesCount(); i++) {
 			XYLineAndShapeRenderer rend = (XYLineAndShapeRenderer) chart.getXYPlot().getRenderer();
 			JCheckBox tempBox = new JCheckBox();
@@ -1069,6 +1094,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			tempBox = new JCheckBox();
 			tempBox.setSelected(rend.getSeriesShapesFilled(i));
 			filled.add(tempBox);
+			tempBox = new JCheckBox();
+			tempBox.setSelected(rend.getSeriesLinesVisible(i));
+			connected.add(tempBox);
 			series.add(new JTextField(dataset.getSeries(i).getKey().toString(), 5));
 			Object[] col = this.colors.keySet().toArray();
 			Arrays.sort(col);
@@ -1088,99 +1116,144 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			}
 			colors.add(colBox);
 			shapes.add(shapBox);
-			speciesPanel.add(boxes.get(i));
-			speciesPanel.add(series.get(i));
-			speciesPanel.add(colors.get(i));
-			speciesPanel.add(shapes.get(i));
-			speciesPanel.add(visible.get(i));
-			speciesPanel.add(filled.get(i));
+			speciesPanel1.add(boxes.get(i));
+			speciesPanel2.add(series.get(i));
+			speciesPanel2.add(colors.get(i));
+			speciesPanel2.add(shapes.get(i));
+			speciesPanel3.add(connected.get(i));
+			speciesPanel3.add(visible.get(i));
+			speciesPanel3.add(filled.get(i));
 		}
 		JScrollPane scroll = new JScrollPane();
-		scroll.setPreferredSize(new Dimension(1100, 300));
-		JPanel speciesPanel1 = new JPanel();
-		speciesPanel1.add(speciesPanel);
+		scroll.setPreferredSize(new Dimension(950, 500));
+		JPanel speciesPanel = new JPanel(new BorderLayout());
+		speciesPanel.add(speciesPanel1, "West");
+		speciesPanel.add(speciesPanel2, "Center");
+		speciesPanel.add(speciesPanel3, "East");
+		JPanel specPanel = new JPanel();
+		specPanel.add(speciesPanel);
 		JPanel editPanel = new JPanel(new BorderLayout());
 		editPanel.add(titlePanel, "North");
-		editPanel.add(speciesPanel1, "Center");
-		editPanel.add(tree, "West");
+		editPanel.add(specPanel, "Center");
+		editPanel.add(scrollpane, "West");
 		scroll.setViewportView(editPanel);
-		Object[] options = { "Ok", "Cancel" };
-		int value = JOptionPane.showOptionDialog(biomodelsim.frame(), scroll,
-				"Edit Title And Labels", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
-				null, options, options[0]);
-		if (value == JOptionPane.YES_OPTION) {
-			for (int i = 0; i < boxes.size(); i++) {
-				if (boxes.get(i).isSelected()) {
-					XYPlot plot = chart.getXYPlot();
-					XYItemRenderer rend = plot.getRenderer();
-					rend.setSeriesVisible(i, true);
-				} else {
-					XYPlot plot = chart.getXYPlot();
-					XYItemRenderer rend = plot.getRenderer();
-					rend.setSeriesVisible(i, false);
+		final JFrame f = new JFrame("Edit Title And Labels");
+		JButton ok = new JButton("Ok");
+		final HashMap<String, Shape> shapey = this.shape;
+		final HashMap<String, Paint> colory = this.colors;
+		ok.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				for (int i = 0; i < boxes.size(); i++) {
+					if (boxes.get(i).isSelected()) {
+						XYPlot plot = chart.getXYPlot();
+						XYItemRenderer rend = plot.getRenderer();
+						rend.setSeriesVisible(i, true);
+					} else {
+						XYPlot plot = chart.getXYPlot();
+						XYItemRenderer rend = plot.getRenderer();
+						rend.setSeriesVisible(i, false);
+					}
+					XYLineAndShapeRenderer rend = (XYLineAndShapeRenderer) chart.getXYPlot()
+							.getRenderer();
+					if (visible.get(i).isSelected()) {
+						rend.setSeriesShapesVisible(i, true);
+					} else {
+						rend.setSeriesShapesVisible(i, false);
+					}
+					if (filled.get(i).isSelected()) {
+						rend.setSeriesShapesFilled(i, true);
+					} else {
+						rend.setSeriesShapesFilled(i, false);
+					}
+					if (connected.get(i).isSelected()) {
+						rend.setSeriesLinesVisible(i, true);
+					} else {
+						rend.setSeriesLinesVisible(i, false);
+					}
 				}
-				XYLineAndShapeRenderer rend = (XYLineAndShapeRenderer) chart.getXYPlot()
-						.getRenderer();
-				if (visible.get(i).isSelected()) {
-					rend.setSeriesShapesVisible(i, true);
-				} else {
-					rend.setSeriesShapesVisible(i, false);
+				XYPlot plot = chart.getXYPlot();
+				chart.setTitle(title.getText().trim());
+				time = x.getText().trim();
+				chart.getXYPlot().getDomainAxis().setLabel(time);
+				printer_track_quantity1 = y.getText().trim();
+				chart.getXYPlot().getRangeAxis().setLabel(printer_track_quantity1);
+				for (int i = 0; i < dataset.getSeriesCount(); i++) {
+					dataset.getSeries(i).setKey(series.get(i).getText().trim());
+					chart.getXYPlot().getRenderer().setSeriesPaint(i,
+							colory.get(colors.get(i).getSelectedItem()));
+					chart.getXYPlot().getRenderer().setSeriesShape(i,
+							shapey.get(shapes.get(i).getSelectedItem()));
+					if (boxes.get(i).isSelected()) {
+						XYItemRenderer render = plot.getRenderer();
+						render.setSeriesVisible(i, true);
+					}
 				}
-				if (filled.get(i).isSelected()) {
-					rend.setSeriesShapesFilled(i, true);
-				} else {
-					rend.setSeriesShapesFilled(i, false);
+				try {
+					NumberAxis axis = (NumberAxis) plot.getRangeAxis();
+					axis.setAutoTickUnitSelection(false);
+					NumberFormat num = NumberFormat.getInstance();
+					num.setMaximumFractionDigits(4);
+					num.setGroupingUsed(false);
+					double minY = Double.parseDouble(YMin.getText().trim());
+					minY = Double.parseDouble(num.format(minY));
+					double maxY = Double.parseDouble(YMax.getText().trim());
+					maxY = Double.parseDouble(num.format(maxY));
+					double scaleY = Double.parseDouble(YScale.getText().trim());
+					scaleY = Double.parseDouble(num.format(scaleY));
+					axis.setRange(minY, maxY);
+					axis.setTickUnit(new NumberTickUnit(scaleY));
+					axis = (NumberAxis) plot.getDomainAxis();
+					axis.setAutoTickUnitSelection(false);
+					double minX = Double.parseDouble(XMin.getText().trim());
+					minX = Double.parseDouble(num.format(minX));
+					double maxX = Double.parseDouble(XMax.getText().trim());
+					maxX = Double.parseDouble(num.format(maxX));
+					double scaleX = Double.parseDouble(XScale.getText().trim());
+					scaleX = Double.parseDouble(num.format(scaleX));
+					axis.setRange(minX, maxX);
+					axis.setTickUnit(new NumberTickUnit(scaleX));
+				} catch (Exception e1) {
+					JOptionPane.showMessageDialog(biomodelsim.frame(),
+							"Must enter doubles into the inputs "
+									+ "to change the graph's dimensions!", "Error",
+							JOptionPane.ERROR_MESSAGE);
 				}
+				f.dispose();
 			}
-			XYPlot plot = chart.getXYPlot();
-			chart.setTitle(title.getText().trim());
-			time = x.getText().trim();
-			chart.getXYPlot().getDomainAxis().setLabel(time);
-			printer_track_quantity1 = y.getText().trim();
-			chart.getXYPlot().getRangeAxis().setLabel(printer_track_quantity1);
-			for (int i = 0; i < dataset.getSeriesCount(); i++) {
-				dataset.getSeries(i).setKey(series.get(i).getText().trim());
-				chart.getXYPlot().getRenderer().setSeriesPaint(i,
-						this.colors.get(colors.get(i).getSelectedItem()));
-				chart.getXYPlot().getRenderer().setSeriesShape(i,
-						this.shape.get(shapes.get(i).getSelectedItem()));
-				if (boxes.get(i).isSelected()) {
-					XYItemRenderer render = plot.getRenderer();
-					render.setSeriesVisible(i, true);
-				}
+		});
+		JButton cancel = new JButton("Cancel");
+		cancel.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				f.dispose();
 			}
-			try {
-				NumberAxis axis = (NumberAxis) plot.getRangeAxis();
-				axis.setAutoTickUnitSelection(false);
-				NumberFormat num = NumberFormat.getInstance();
-				num.setMaximumFractionDigits(4);
-				num.setGroupingUsed(false);
-				double minY = Double.parseDouble(YMin.getText().trim());
-				minY = Double.parseDouble(num.format(minY));
-				double maxY = Double.parseDouble(YMax.getText().trim());
-				maxY = Double.parseDouble(num.format(maxY));
-				double scaleY = Double.parseDouble(YScale.getText().trim());
-				scaleY = Double.parseDouble(num.format(scaleY));
-				axis.setRange(minY, maxY);
-				axis.setTickUnit(new NumberTickUnit(scaleY));
-				axis = (NumberAxis) plot.getDomainAxis();
-				axis.setAutoTickUnitSelection(false);
-				double minX = Double.parseDouble(XMin.getText().trim());
-				minX = Double.parseDouble(num.format(minX));
-				double maxX = Double.parseDouble(XMax.getText().trim());
-				maxX = Double.parseDouble(num.format(maxX));
-				double scaleX = Double.parseDouble(XScale.getText().trim());
-				scaleX = Double.parseDouble(num.format(scaleX));
-				axis.setRange(minX, maxX);
-				axis.setTickUnit(new NumberTickUnit(scaleX));
-			} catch (Exception e1) {
-				JOptionPane
-						.showMessageDialog(biomodelsim.frame(),
-								"Must enter doubles into the inputs "
-										+ "to change the graph's dimensions!", "Error",
-								JOptionPane.ERROR_MESSAGE);
-			}
+		});
+		JPanel buttonPanel = new JPanel();
+		buttonPanel.add(ok);
+		buttonPanel.add(cancel);
+		JPanel all = new JPanel(new BorderLayout());
+		all.add(scroll, "Center");
+		all.add(buttonPanel, "South");
+		f.setContentPane(all);
+		f.pack();
+		Dimension screenSize;
+		try {
+			Toolkit tk = Toolkit.getDefaultToolkit();
+			screenSize = tk.getScreenSize();
+		} catch (AWTError awe) {
+			screenSize = new Dimension(640, 480);
 		}
+		Dimension frameSize = f.getSize();
+
+		if (frameSize.height > screenSize.height) {
+			frameSize.height = screenSize.height;
+		}
+		if (frameSize.width > screenSize.width) {
+			frameSize.width = screenSize.width;
+		}
+		int xx = screenSize.width / 2 - frameSize.width / 2;
+		int yy = screenSize.height / 2 - frameSize.height / 2;
+		f.setLocation(xx, yy);
+		f.setVisible(true);
 	}
 
 	/**
@@ -1318,6 +1391,73 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					JOptionPane.ERROR_MESSAGE);
 		}
 	}
+
+	/*
+	 * private ArrayList<ArrayList<Double>> calculateAverage(String startFile,
+	 * String fileStem) { InputStream input; ArrayList<ArrayList<Double>>
+	 * average = new ArrayList<ArrayList<Double>>(); try { input = new
+	 * BufferedInputStream(new ProgressMonitorInputStream(component, "Reading
+	 * Reb2sac Output Data From " + new File(startFile).getName(), new
+	 * FileInputStream(new File(startFile)))); graphSpecies = new ArrayList<String>();
+	 * boolean reading = true; char cha; int readCount = 0; while (reading) {
+	 * String word = ""; boolean readWord = true; while (readWord) { int read =
+	 * input.read(); readCount++; if (read == -1) { reading = false; readWord =
+	 * false; } cha = (char) read; if (Character.isWhitespace(cha)) {
+	 * input.mark(3); char next = (char) input.read(); char after = (char)
+	 * input.read(); String check = "" + next + after; if (word.equals("") ||
+	 * word.equals("0") || check.equals("0,")) { readWord = false; } else { word +=
+	 * cha; } input.reset(); } else if (cha == ',' || cha == ':' || cha == ';' ||
+	 * cha == '!' || cha == '?' || cha == '\"' || cha == '\'' || cha == '(' ||
+	 * cha == ')' || cha == '{' || cha == '}' || cha == '[' || cha == ']' || cha == '<' ||
+	 * cha == '>' || cha == '*' || cha == '=' || cha == '#') { readWord = false; }
+	 * else if (read != -1) { word += cha; } } int getNum; try { getNum =
+	 * Integer.parseInt(word); if (getNum == 0) { boolean first = true; int
+	 * runsToMake = 1; for (String f : new File(outDir1).list()) { if
+	 * (f.contains(fileStem)) { int tempNum =
+	 * Integer.parseInt(f.substring(fileStem.length(), f .length() - 4)); if
+	 * (tempNum > runsToMake) { runsToMake = tempNum; } } } for (int i = 0; i <
+	 * graphSpecies.size(); i++) { average.add(new ArrayList<Double>()); }
+	 * (average.get(0)).add(0.0); int count = 0; for (int j = 0; j < runsToMake;
+	 * j++) { int counter = 1; if (!first) { boolean loop = true; while (loop &&
+	 * j < runsToMake) { if (new File(outDir1 + File.separator + "run-" + (j +
+	 * 1) + "." + printer_id1.substring(0, printer_id1.length() - 8)) .exists()) {
+	 * input = new BufferedInputStream( new ProgressMonitorInputStream(
+	 * component, "Reading Reb2sac Output Data From " + new File( outDir1 +
+	 * File.separator + "run-" + (j + 1) + "." + printer_id1 .substring( 0,
+	 * printer_id1 .length() - 8)) .getName(), new FileInputStream(new
+	 * File(outDir1 + File.separator + "run-" + (j + 1) + "." +
+	 * printer_id1.substring(0, printer_id1.length() - 8))))); for (int i = 0; i <
+	 * readCount; i++) { input.read(); } loop = false; count++; } else { j++; } } }
+	 * reading = true; while (reading) { word = ""; readWord = true; int read;
+	 * while (readWord) { read = input.read(); cha = (char) read; while
+	 * (!Character.isWhitespace(cha) && cha != ',' && cha != ':' && cha != ';' &&
+	 * cha != '!' && cha != '?' && cha != '\"' && cha != '\'' && cha != '(' &&
+	 * cha != ')' && cha != '{' && cha != '}' && cha != '[' && cha != ']' && cha != '<' &&
+	 * cha != '>' && cha != '_' && cha != '*' && cha != '=' && read != -1) {
+	 * word += cha; read = input.read(); cha = (char) read; } if (read == -1) {
+	 * reading = false; first = false; } readWord = false; } int insert; if
+	 * (!word.equals("")) { if (first) { if (counter < graphSpecies.size()) {
+	 * insert = counter; (average.get(insert)).add(Double.parseDouble(word)); }
+	 * else { insert = counter % graphSpecies.size();
+	 * (average.get(insert)).add(Double.parseDouble(word)); } } else { if
+	 * (counter < graphSpecies.size()) { insert = counter; double old =
+	 * (average.get(insert)).get(insert / graphSpecies.size());
+	 * (average.get(insert)) .set( insert / graphSpecies.size(), old +
+	 * ((Double.parseDouble(word) - old) / (count + 1))); } else { insert =
+	 * counter % graphSpecies.size(); double old =
+	 * (average.get(insert)).get(counter / graphSpecies.size());
+	 * (average.get(insert)) .set( counter / graphSpecies.size(), old +
+	 * ((Double.parseDouble(word) - old) / (count + 1))); } } counter++; } } } } }
+	 * catch (Exception e1) { if (word.equals("")) { } else {
+	 * graphSpecies.add(word); } } } } catch (Exception e) {
+	 * JOptionPane.showMessageDialog(component, "Error Reading Data!" + "\nThere
+	 * was an error reading the simulation output data.", "Error Reading Data",
+	 * JOptionPane.ERROR_MESSAGE); } return average; }
+	 * 
+	 * private void calculateVariance() { }
+	 * 
+	 * private void calculateStandardDeviation() { }
+	 */
 
 	private class ShapeAndPaint {
 		private Shape shape;

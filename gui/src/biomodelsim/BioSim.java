@@ -634,15 +634,7 @@ public class BioSim implements MouseListener, ActionListener {
 					buttons.add(saveAsPng);
 					buttons.add(saveAsPdf);
 					buttons.add(cancel);
-					JLabel text;
-					if (tab.getSelectedComponent().getName().contains("ODE")) {
-						text = new JLabel("Which type would you like to save the ode graph as?");
-					} else if (tab.getSelectedComponent().getName().contains("Stoch")) {
-						text = new JLabel(
-								"Which type would you like to save the stochastic graph as?");
-					} else {
-						text = new JLabel("Which type would you like to save the graph as?");
-					}
+					JLabel text = new JLabel("Which type would you like to save the graph as?");
 					JPanel textPanel = new JPanel(new GridLayout(2, 1));
 					textPanel.add(text);
 					textPanel.add(buttons);
@@ -707,15 +699,7 @@ public class BioSim implements MouseListener, ActionListener {
 						buttons.add(saveAsPng);
 						buttons.add(saveAsPdf);
 						buttons.add(cancel);
-						JLabel text;
-						if (simTab.getSelectedComponent().getName().contains("ODE")) {
-							text = new JLabel("Which type would you like to save the ode graph as?");
-						} else if (simTab.getSelectedComponent().getName().contains("Stoch")) {
-							text = new JLabel(
-									"Which type would you like to save the stochastic graph as?");
-						} else {
-							text = new JLabel("Which type would you like to save the graph as?");
-						}
+						JLabel text = new JLabel("Which type would you like to save the graph as?");
 						JPanel textPanel = new JPanel(new GridLayout(2, 1));
 						textPanel.add(text);
 						textPanel.add(buttons);
@@ -1047,14 +1031,7 @@ public class BioSim implements MouseListener, ActionListener {
 			buttons.add(saveAsPng);
 			buttons.add(saveAsPdf);
 			buttons.add(cancel);
-			JLabel text;
-			if (tab.getComponentAt(index).getName().contains("ODE")) {
-				text = new JLabel("Which type would you like to save the ode graph as?");
-			} else if (tab.getComponentAt(index).getName().contains("Stoch")) {
-				text = new JLabel("Which type would you like to save the stochastic graph as?");
-			} else {
-				text = new JLabel("Which type would you like to save the graph as?");
-			}
+			JLabel text = new JLabel("Which type would you like to save the graph as?");
 			JPanel textPanel = new JPanel(new GridLayout(2, 1));
 			textPanel.add(text);
 			textPanel.add(buttons);
@@ -1126,17 +1103,7 @@ public class BioSim implements MouseListener, ActionListener {
 					buttons.add(saveAsPng);
 					buttons.add(saveAsPdf);
 					buttons.add(cancel);
-					JLabel text;
-					if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i).getName()
-							.contains("ODE")) {
-						text = new JLabel("Which type would you like to save the ode graph as?");
-					} else if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i).getName()
-							.contains("Stoch")) {
-						text = new JLabel(
-								"Which type would you like to save the stochastic graph as?");
-					} else {
-						text = new JLabel("Which type would you like to save the graph as?");
-					}
+					JLabel text = new JLabel("Which type would you like to save the graph as?");
 					JPanel textPanel = new JPanel(new GridLayout(2, 1));
 					textPanel.add(text);
 					textPanel.add(buttons);
@@ -1365,8 +1332,8 @@ public class BioSim implements MouseListener, ActionListener {
 				String[] list = new File(filename).list();
 				String getAFile = "";
 				String openFile = "";
-				String odeGraphFile = "";
-				String stochGraphFile = "";
+				String graphFile = "";
+				boolean ode = false;
 				int run = 0;
 				for (int i = 0; i < list.length; i++) {
 					if (!(new File(list[i]).isDirectory()) && list[i].length() > 4) {
@@ -1393,7 +1360,8 @@ public class BioSim implements MouseListener, ActionListener {
 										- end.length()));
 								if (tempNum > run) {
 									run = tempNum;
-									stochGraphFile = filename + File.separator + list[i];
+									graphFile = filename + File.separator + list[i];
+									ode = false;
 								}
 							} else if (list[i].contains("euler-run.")
 									|| list[i].contains("gear1-run.")
@@ -1401,7 +1369,8 @@ public class BioSim implements MouseListener, ActionListener {
 									|| list[i].contains("rk4imp-run.")
 									|| list[i].contains("rk8pd-run.")
 									|| list[i].contains("rkf45-run.")) {
-								odeGraphFile = filename + File.separator + list[i];
+								graphFile = filename + File.separator + list[i];
+								ode = true;
 							}
 						}
 					}
@@ -1420,15 +1389,16 @@ public class BioSim implements MouseListener, ActionListener {
 					Learn learn = new Learn(tree.getFile(), log);
 					simTab.addTab("Learn", learn);
 					simTab.getComponentAt(simTab.getComponents().length - 1).setName("Learn");
-					if (!odeGraphFile.equals("")) {
-						simTab.addTab("ODEGraph", reb2sac.createGraph(odeGraphFile, 1));
-						simTab.getComponentAt(simTab.getComponents().length - 1)
-								.setName("ODEGraph");
-					}
-					if (!stochGraphFile.equals("")) {
-						simTab.addTab("StochGraph", reb2sac.createGraph(stochGraphFile, run));
-						simTab.getComponentAt(simTab.getComponents().length - 1).setName(
-								"StochGraph");
+					if (!graphFile.equals("")) {
+						if (ode) {
+							simTab.addTab("Graph", reb2sac.createGraph(graphFile, 1));
+							simTab.getComponentAt(simTab.getComponents().length - 1).setName(
+									"Graph");
+						} else {
+							simTab.addTab("Graph", reb2sac.createGraph(graphFile, run));
+							simTab.getComponentAt(simTab.getComponents().length - 1).setName(
+									"Graph");
+						}
 					}
 					addTab(split[split.length - 1], simTab);
 				}

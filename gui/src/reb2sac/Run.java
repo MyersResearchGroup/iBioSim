@@ -478,19 +478,19 @@ public class Run implements ActionListener {
 					if (!printer_id.equals("null.printer")) {
 						int change = -1;
 						for (int i = 0; i < simTab.getComponentCount(); i++) {
-							if (simTab.getComponentAt(i).getName().equals("StochGraph")) {
+							if (simTab.getComponentAt(i).getName().equals("Graph")) {
 								change = i;
 							}
 						}
 						if (change == -1) {
-							simTab.addTab("StochGraph", new Graph(outDir + File.separator
+							simTab.addTab("Graph", new Graph(outDir + File.separator
 									+ "run-1." + printer_id.substring(0, printer_id.length() - 8),
 									component, printer_track_quantity,
 									"ssa average simulation results", monteCarlo, "ssa",
 									printer_id, outDir, run, intSpecies, -1, null, "time",
 									biomodelsim));
 							simTab.getComponentAt(simTab.getComponents().length - 1).setName(
-									"StochGraph");
+									"Graph");
 						} else {
 							simTab.setComponentAt(change, new Graph(outDir + File.separator
 									+ "run-1." + printer_id.substring(0, printer_id.length() - 8),
@@ -498,7 +498,7 @@ public class Run implements ActionListener {
 									"ssa average simulation results", monteCarlo, "ssa",
 									printer_id, outDir, run, intSpecies, -1, null, "time",
 									biomodelsim));
-							simTab.getComponentAt(change).setName("StochGraph");
+							simTab.getComponentAt(change).setName("Graph");
 						}
 					}
 				} else {
@@ -506,12 +506,12 @@ public class Run implements ActionListener {
 						if (ode.isSelected()) {
 							int change = -1;
 							for (int i = 0; i < simTab.getComponentCount(); i++) {
-								if (simTab.getComponentAt(i).getName().equals("ODEGraph")) {
+								if (simTab.getComponentAt(i).getName().equals("Graph")) {
 									change = i;
 								}
 							}
 							if (change == -1) {
-								simTab.addTab("ODEGraph", new Graph(outDir + File.separator + sim
+								simTab.addTab("Graph", new Graph(outDir + File.separator + sim
 										+ "-run."
 										+ printer_id.substring(0, printer_id.length() - 8),
 										component, printer_track_quantity, sim
@@ -519,7 +519,7 @@ public class Run implements ActionListener {
 										printer_id, outDir, run, intSpecies, -1, null, "time",
 										biomodelsim));
 								simTab.getComponentAt(simTab.getComponents().length - 1).setName(
-										"ODEGraph");
+										"Graph");
 							} else {
 								simTab.setComponentAt(change, new Graph(outDir + File.separator
 										+ sim + "-run."
@@ -528,17 +528,17 @@ public class Run implements ActionListener {
 												+ " simulation results", monteCarlo, sim,
 										printer_id, outDir, run, intSpecies, -1, null, "time",
 										biomodelsim));
-								simTab.getComponentAt(change).setName("ODEGraph");
+								simTab.getComponentAt(change).setName("Graph");
 							}
 						} else if (monteCarlo.isSelected()) {
 							int change = -1;
 							for (int i = 0; i < simTab.getComponentCount(); i++) {
-								if (simTab.getComponentAt(i).getName().equals("StochGraph")) {
+								if (simTab.getComponentAt(i).getName().equals("Graph")) {
 									change = i;
 								}
 							}
 							if (change == -1) {
-								simTab.addTab("StochGraph", new Graph(outDir + File.separator
+								simTab.addTab("Graph", new Graph(outDir + File.separator
 										+ "run-1."
 										+ printer_id.substring(0, printer_id.length() - 8),
 										component, printer_track_quantity, sim
@@ -546,7 +546,7 @@ public class Run implements ActionListener {
 										sim, printer_id, outDir, run, intSpecies, -1, null, "time",
 										biomodelsim));
 								simTab.getComponentAt(simTab.getComponents().length - 1).setName(
-										"StochGraph");
+										"Graph");
 							} else {
 								simTab.setComponentAt(change, new Graph(outDir + File.separator
 										+ "run-1."
@@ -555,7 +555,7 @@ public class Run implements ActionListener {
 												+ " run average simulation results", monteCarlo,
 										sim, printer_id, outDir, run, intSpecies, -1, null, "time",
 										biomodelsim));
-								simTab.getComponentAt(change).setName("StochGraph");
+								simTab.getComponentAt(change).setName("Graph");
 							}
 						}
 					}
