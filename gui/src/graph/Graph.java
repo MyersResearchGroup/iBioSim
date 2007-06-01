@@ -6,6 +6,8 @@ import java.awt.event.*;
 import java.text.*;
 import java.util.*;
 import javax.swing.*;
+import javax.swing.tree.DefaultMutableTreeNode;
+
 import org.jfree.chart.*;
 import org.jfree.chart.axis.*;
 import org.jfree.chart.event.*;
@@ -998,7 +1000,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	}
 
 	private void editGraph() {
-		JPanel titlePanel = new JPanel(new GridLayout(dataset.getSeriesCount() + 4, 6));
+		JPanel titlePanel = new JPanel(new GridLayout(3, 6));
 		JLabel titleLabel = new JLabel("Title:");
 		JLabel xLabel = new JLabel("X-Axis Label:");
 		JLabel yLabel = new JLabel("Y-Axis Label:");
@@ -1029,7 +1031,31 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		titlePanel.add(XScale);
 		titlePanel.add(yScale);
 		titlePanel.add(YScale);
-		ArrayList<JLabel> seriesLabel = new ArrayList<JLabel>();
+		String simDirString = outDir1.split(File.separator)[outDir1.split(File.separator).length - 1];
+		DefaultMutableTreeNode simDir = new DefaultMutableTreeNode(simDirString);
+		simDir.add(new DefaultMutableTreeNode("Average"));
+		simDir.add(new DefaultMutableTreeNode("Variance"));
+		simDir.add(new DefaultMutableTreeNode("Standard Deviation"));
+		for (int i = 0; i < run; i++) {
+			if (new File(outDir1 + File.separator + "run-" + (i + 1) + "."
+					+ printer_id1.substring(0, printer_id1.length() - 8)).exists()) {
+				simDir.add(new DefaultMutableTreeNode("run-" + (i + 1)));
+			}
+		}
+		JTree tree = new JTree(simDir);
+		JPanel speciesPanel = new JPanel(new GridLayout(dataset.getSeriesCount() + 1, 6));
+		JLabel use = new JLabel("Use");
+		JLabel specs = new JLabel("Species");
+		JLabel color = new JLabel("Color");
+		JLabel shape = new JLabel("Shape");
+		JLabel visibleLabel = new JLabel("Visible");
+		JLabel filledLabel = new JLabel("Filled");
+		speciesPanel.add(use);
+		speciesPanel.add(specs);
+		speciesPanel.add(color);
+		speciesPanel.add(shape);
+		speciesPanel.add(visibleLabel);
+		speciesPanel.add(filledLabel);
 		ArrayList<JTextField> series = new ArrayList<JTextField>();
 		ArrayList<JComboBox> colors = new ArrayList<JComboBox>();
 		ArrayList<JComboBox> shapes = new ArrayList<JComboBox>();
@@ -1037,13 +1063,12 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		ArrayList<JCheckBox> filled = new ArrayList<JCheckBox>();
 		for (int i = 0; i < dataset.getSeriesCount(); i++) {
 			XYLineAndShapeRenderer rend = (XYLineAndShapeRenderer) chart.getXYPlot().getRenderer();
-			JCheckBox tempBox = new JCheckBox("Visible Shapes");
+			JCheckBox tempBox = new JCheckBox();
 			tempBox.setSelected(rend.getSeriesShapesVisible(i));
 			visible.add(tempBox);
-			tempBox = new JCheckBox("Filled In Shapes");
+			tempBox = new JCheckBox();
 			tempBox.setSelected(rend.getSeriesShapesFilled(i));
 			filled.add(tempBox);
-			seriesLabel.add(new JLabel("Species " + (i + 1) + " Label:"));
 			series.add(new JTextField(dataset.getSeries(i).getKey().toString(), 5));
 			Object[] col = this.colors.keySet().toArray();
 			Arrays.sort(col);
@@ -1063,19 +1088,22 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			}
 			colors.add(colBox);
 			shapes.add(shapBox);
-			JPanel temp = new JPanel(new BorderLayout());
-			temp.add(boxes.get(i), "West");
-			temp.add(series.get(i), "Center");
-			titlePanel.add(seriesLabel.get(i));
-			titlePanel.add(temp);
-			titlePanel.add(colors.get(i));
-			titlePanel.add(shapes.get(i));
-			titlePanel.add(visible.get(i));
-			titlePanel.add(filled.get(i));
+			speciesPanel.add(boxes.get(i));
+			speciesPanel.add(series.get(i));
+			speciesPanel.add(colors.get(i));
+			speciesPanel.add(shapes.get(i));
+			speciesPanel.add(visible.get(i));
+			speciesPanel.add(filled.get(i));
 		}
 		JScrollPane scroll = new JScrollPane();
 		scroll.setPreferredSize(new Dimension(1100, 300));
-		scroll.setViewportView(titlePanel);
+		JPanel speciesPanel1 = new JPanel();
+		speciesPanel1.add(speciesPanel);
+		JPanel editPanel = new JPanel(new BorderLayout());
+		editPanel.add(titlePanel, "North");
+		editPanel.add(speciesPanel1, "Center");
+		editPanel.add(tree, "West");
+		scroll.setViewportView(editPanel);
 		Object[] options = { "Ok", "Cancel" };
 		int value = JOptionPane.showOptionDialog(biomodelsim.frame(), scroll,
 				"Edit Title And Labels", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
