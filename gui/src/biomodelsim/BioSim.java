@@ -260,10 +260,12 @@ public class BioSim implements MouseListener, ActionListener {
 			JPanel buttons = new JPanel();
 			buttons.add(credits);
 			buttons.add(close);
-			JPanel aboutPanel = new JPanel(new GridLayout(3, 1));
-			aboutPanel.add(bioSim);
-			aboutPanel.add(uOfU);
-			aboutPanel.add(buttons);
+			JPanel aboutPanel = new JPanel(new BorderLayout());
+			JPanel uOfUPanel = new JPanel();
+			uOfUPanel.add(uOfU);
+			aboutPanel.add(bioSim, "North");
+			aboutPanel.add(uOfUPanel, "Center");
+			aboutPanel.add(buttons, "South");
 			f.setContentPane(aboutPanel);
 			f.pack();
 			Dimension screenSize;
@@ -622,7 +624,7 @@ public class BioSim implements MouseListener, ActionListener {
 						}
 					});
 					JButton cancel = new JButton("Cancel");
-					saveAsPdf.addActionListener(new ActionListener() {
+					cancel.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent e) {
 							f.dispose();
 						}
@@ -695,7 +697,7 @@ public class BioSim implements MouseListener, ActionListener {
 							}
 						});
 						JButton cancel = new JButton("Cancel");
-						saveAsPdf.addActionListener(new ActionListener() {
+						cancel.addActionListener(new ActionListener() {
 							public void actionPerformed(ActionEvent e) {
 								f.dispose();
 							}
@@ -1035,7 +1037,7 @@ public class BioSim implements MouseListener, ActionListener {
 				}
 			});
 			JButton cancel = new JButton("Cancel");
-			saveAsPdf.addActionListener(new ActionListener() {
+			cancel.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					f.dispose();
 				}
@@ -1114,7 +1116,7 @@ public class BioSim implements MouseListener, ActionListener {
 						}
 					});
 					JButton cancel = new JButton("Cancel");
-					saveAsPdf.addActionListener(new ActionListener() {
+					cancel.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent e) {
 							f.dispose();
 						}
