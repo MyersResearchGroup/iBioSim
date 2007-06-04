@@ -5,19 +5,21 @@ import java.awt.*;
 import java.awt.event.*;
 import java.text.*;
 import java.util.*;
-
 import javax.swing.*;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
-
+import org.apache.batik.dom.*;
+import org.apache.batik.svggen.*;
 import org.jfree.chart.*;
 import org.jfree.chart.axis.*;
 import org.jfree.chart.event.*;
 import org.jfree.chart.plot.*;
 import org.jfree.chart.renderer.xy.*;
 import org.jfree.data.xy.*;
-import com.lowagie.text.*;
+import org.jibble.epsgraphics.EpsGraphics2D;
+import org.w3c.dom.*;
+import com.lowagie.text.Document;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.*;
 import biomodelsim.core.gui.*;
@@ -98,7 +100,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 	private BioSim biomodelsim; // tstubd gui
 
-	private JButton exportJPeg, exportPng, exportPdf; // buttons
+	private JButton exportJPeg, exportPng, exportPdf, exportEps, exportSvg; // buttons
 
 	private HashMap<String, Paint> colors;
 
@@ -332,12 +334,18 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		exportJPeg = new JButton("Export As JPEG");
 		exportPng = new JButton("Export As PNG");
 		exportPdf = new JButton("Export As PDF");
+		exportEps = new JButton("Export As EPS");
+		exportSvg = new JButton("Export As SVG");
 		exportJPeg.addActionListener(this);
 		exportPng.addActionListener(this);
 		exportPdf.addActionListener(this);
+		exportEps.addActionListener(this);
+		exportSvg.addActionListener(this);
 		ButtonHolder.add(exportJPeg);
 		ButtonHolder.add(exportPng);
 		ButtonHolder.add(exportPdf);
+		ButtonHolder.add(exportEps);
+		ButtonHolder.add(exportSvg);
 		JPanel AllButtonsHolder = new JPanel(new BorderLayout());
 
 		// puts all the components of the graph gui into a display panel
@@ -828,6 +836,14 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		else if (e.getSource() == exportPdf) {
 			export(2);
 		}
+		// if the export as eps button is clicked
+		else if (e.getSource() == exportEps) {
+			export(3);
+		}
+		// if the export as svg button is clicked
+		else if (e.getSource() == exportSvg) {
+			export(4);
+		}
 	}
 
 	/**
@@ -1315,24 +1331,60 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					JFileChooser.FILES_ONLY, "Save");
 			if (!filename.equals("")) {
 				if (output == 0) {
-					if (filename.substring((filename.length() - 4), filename.length()).equals(
-							".jpg")
-							|| filename.substring((filename.length() - 5), filename.length())
-									.equals(".jpeg")) {
-					} else {
+					if (filename.length() < 4) {
 						filename += ".jpg";
+					} else if (filename.length() < 5
+							&& !filename.substring((filename.length() - 4), filename.length())
+									.equals(".jpg")) {
+						filename += ".jpg";
+					} else {
+						if (filename.substring((filename.length() - 4), filename.length()).equals(
+								".jpg")
+								|| filename.substring((filename.length() - 5), filename.length())
+										.equals(".jpeg")) {
+						} else {
+							filename += ".jpg";
+						}
 					}
 				} else if (output == 1) {
-					if (filename.substring((filename.length() - 4), filename.length()).equals(
-							".png")) {
-					} else {
+					if (filename.length() < 4) {
 						filename += ".png";
+					} else {
+						if (filename.substring((filename.length() - 4), filename.length()).equals(
+								".png")) {
+						} else {
+							filename += ".png";
+						}
 					}
 				} else if (output == 2) {
-					if (filename.substring((filename.length() - 4), filename.length()).equals(
-							".pdf")) {
-					} else {
+					if (filename.length() < 4) {
 						filename += ".pdf";
+					} else {
+						if (filename.substring((filename.length() - 4), filename.length()).equals(
+								".pdf")) {
+						} else {
+							filename += ".pdf";
+						}
+					}
+				} else if (output == 3) {
+					if (filename.length() < 4) {
+						filename += ".eps";
+					} else {
+						if (filename.substring((filename.length() - 4), filename.length()).equals(
+								".eps")) {
+						} else {
+							filename += ".eps";
+						}
+					}
+				} else if (output == 4) {
+					if (filename.length() < 4) {
+						filename += ".svg";
+					} else {
+						if (filename.substring((filename.length() - 4), filename.length()).equals(
+								".svg")) {
+						} else {
+							filename += ".svg";
+						}
 					}
 				}
 				file = new File(filename);
@@ -1361,6 +1413,23 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							g2.dispose();
 							cb.addTemplate(tp, 0, 0);
 							document.close();
+						} else if (output == 3) {
+							Graphics2D g = new EpsGraphics2D();
+							chart.draw(g, new java.awt.Rectangle(width, height));
+							Writer out = new FileWriter(file);
+							out.write(g.toString());
+							out.close();
+						} else if (output == 4) {
+							DOMImplementation domImpl = GenericDOMImplementation
+									.getDOMImplementation();
+							org.w3c.dom.Document document = domImpl.createDocument(null, "svg",
+									null);
+							SVGGraphics2D svgGenerator = new SVGGraphics2D(document);
+							chart.draw(svgGenerator, new java.awt.Rectangle(width, height));
+							boolean useCSS = true;
+							Writer out = new OutputStreamWriter(new FileOutputStream(file), "UTF-8");
+							svgGenerator.stream(out, useCSS);
+							out.close();
 						}
 						savedPics = filename;
 					}
@@ -1382,6 +1451,21 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						g2.dispose();
 						cb.addTemplate(tp, 0, 0);
 						document.close();
+					} else if (output == 3) {
+						Graphics2D g = new EpsGraphics2D();
+						chart.draw(g, new java.awt.Rectangle(width, height));
+						Writer out = new FileWriter(file);
+						out.write(g.toString());
+						out.close();
+					} else if (output == 4) {
+						DOMImplementation domImpl = GenericDOMImplementation.getDOMImplementation();
+						org.w3c.dom.Document document = domImpl.createDocument(null, "svg", null);
+						SVGGraphics2D svgGenerator = new SVGGraphics2D(document);
+						chart.draw(svgGenerator, new java.awt.Rectangle(width, height));
+						boolean useCSS = true;
+						Writer out = new OutputStreamWriter(new FileOutputStream(file), "UTF-8");
+						svgGenerator.stream(out, useCSS);
+						out.close();
 					}
 					savedPics = filename;
 				}

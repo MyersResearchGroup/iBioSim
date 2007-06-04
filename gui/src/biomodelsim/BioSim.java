@@ -623,6 +623,20 @@ public class BioSim implements MouseListener, ActionListener {
 							f.dispose();
 						}
 					});
+					JButton saveAsEps = new JButton("Save As EPS");
+					saveAsEps.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent e) {
+							((Graph) tab.getSelectedComponent()).export(3);
+							f.dispose();
+						}
+					});
+					JButton saveAsSvg = new JButton("Save As SVG");
+					saveAsSvg.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent e) {
+							((Graph) tab.getSelectedComponent()).export(4);
+							f.dispose();
+						}
+					});
 					JButton cancel = new JButton("Cancel");
 					cancel.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent e) {
@@ -633,6 +647,8 @@ public class BioSim implements MouseListener, ActionListener {
 					buttons.add(saveAsJpeg);
 					buttons.add(saveAsPng);
 					buttons.add(saveAsPdf);
+					buttons.add(saveAsEps);
+					buttons.add(saveAsSvg);
 					buttons.add(cancel);
 					JLabel text = new JLabel("Which type would you like to save the graph as?");
 					JPanel textPanel = new JPanel(new GridLayout(2, 1));
@@ -688,6 +704,20 @@ public class BioSim implements MouseListener, ActionListener {
 								f.dispose();
 							}
 						});
+						JButton saveAsEps = new JButton("Save As EPS");
+						saveAsEps.addActionListener(new ActionListener() {
+							public void actionPerformed(ActionEvent e) {
+								((Graph) simTab.getSelectedComponent()).export(3);
+								f.dispose();
+							}
+						});
+						JButton saveAsSvg = new JButton("Save As SVG");
+						saveAsSvg.addActionListener(new ActionListener() {
+							public void actionPerformed(ActionEvent e) {
+								((Graph) simTab.getSelectedComponent()).export(4);
+								f.dispose();
+							}
+						});
 						JButton cancel = new JButton("Cancel");
 						cancel.addActionListener(new ActionListener() {
 							public void actionPerformed(ActionEvent e) {
@@ -698,6 +728,8 @@ public class BioSim implements MouseListener, ActionListener {
 						buttons.add(saveAsJpeg);
 						buttons.add(saveAsPng);
 						buttons.add(saveAsPdf);
+						buttons.add(saveAsEps);
+						buttons.add(saveAsSvg);
 						buttons.add(cancel);
 						JLabel text = new JLabel("Which type would you like to save the graph as?");
 						JPanel textPanel = new JPanel(new GridLayout(2, 1));
@@ -1020,6 +1052,20 @@ public class BioSim implements MouseListener, ActionListener {
 					f.dispose();
 				}
 			});
+			JButton saveAsEps = new JButton("Save As EPS");
+			saveAsEps.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					((Graph) tab.getComponentAt(index2)).export(3);
+					f.dispose();
+				}
+			});
+			JButton saveAsSvg = new JButton("Save As SVG");
+			saveAsSvg.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					((Graph) tab.getComponentAt(index2)).export(4);
+					f.dispose();
+				}
+			});
 			JButton cancel = new JButton("Cancel");
 			cancel.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
@@ -1030,6 +1076,8 @@ public class BioSim implements MouseListener, ActionListener {
 			buttons.add(saveAsJpeg);
 			buttons.add(saveAsPng);
 			buttons.add(saveAsPdf);
+			buttons.add(saveAsEps);
+			buttons.add(saveAsSvg);
 			buttons.add(cancel);
 			JLabel text = new JLabel("Which type would you like to save the graph as?");
 			JPanel textPanel = new JPanel(new GridLayout(2, 1));
@@ -1092,6 +1140,20 @@ public class BioSim implements MouseListener, ActionListener {
 							f.dispose();
 						}
 					});
+					JButton saveAsEps = new JButton("Save As EPS");
+					saveAsEps.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent e) {
+							g.export(3);
+							f.dispose();
+						}
+					});
+					JButton saveAsSvg = new JButton("Save As SVG");
+					saveAsSvg.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent e) {
+							g.export(4);
+							f.dispose();
+						}
+					});
 					JButton cancel = new JButton("Cancel");
 					cancel.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent e) {
@@ -1102,6 +1164,8 @@ public class BioSim implements MouseListener, ActionListener {
 					buttons.add(saveAsJpeg);
 					buttons.add(saveAsPng);
 					buttons.add(saveAsPdf);
+					buttons.add(saveAsEps);
+					buttons.add(saveAsSvg);
 					buttons.add(cancel);
 					JLabel text = new JLabel("Which type would you like to save the graph as?");
 					JPanel textPanel = new JPanel(new GridLayout(2, 1));
