@@ -1,7 +1,7 @@
 Set the environment variable BIOSIM to the directory where you have installed
 the program.  For example,
 
-setenv BIOSIM <path>/BioModelSim
+setenv BIOSIM <path>/BioSim
 
 Put the BioModelSim/bin directory in your path.  For example,
 
