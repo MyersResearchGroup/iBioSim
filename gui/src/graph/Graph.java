@@ -82,9 +82,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	/*
 	 * graph data
 	 */
-	private ArrayList<ArrayList<Double>> data, variance, deviation;
-
-	private ArrayList<ArrayList<Double>> average = null; // average of data
+	private ArrayList<ArrayList<Double>> data;
 
 	private ArrayList<String> graphSpecies; // names of species in the graph
 
@@ -106,7 +104,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 	private HashMap<String, Shape> shape;
 
-	// private String selected;
+	private String selected;
+
+	private ArrayList<ArrayList<Boolean>> graphed;
 
 	/**
 	 * Creates a Graph Object from the data given and calls the private graph
@@ -154,13 +154,16 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				}
 			}
 		}
-		if (average != null) {
-			readData(file, component, printer_track_quantity, label, 2);
+		if (data != null) {
+			data = readData(file, component, printer_track_quantity, label);
 		} else {
-			readData(file, component, printer_track_quantity, label, 1);
+			data = readData(file, component, printer_track_quantity, label);
 			boxes = new ArrayList<JCheckBox>();
 			for (int i = 1; i < graphSpecies.size(); i++) {
-				boxes.add(new JCheckBox());// graphSpecies.get(i)));
+				JCheckBox temp = new JCheckBox();
+				temp.addActionListener(this);
+				temp.setActionCommand("box" + i);
+				boxes.add(temp);
 				boxes.get(i - 1).setSelected(false);
 				for (int j = 0; j < intSpecies.length; j++) {
 					if (graphSpecies.get(i).equals(intSpecies[j])) {
@@ -179,7 +182,23 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			file = outDir1 + File.separator + "run-" + readIn + "."
 					+ printer_id1.substring(0, printer_id1.length() - 8);
 			label = sim1 + " run-" + readIn + " simulation results";
-			readData(file, component, printer_track_quantity, label, 2);
+			data = readData(file, component, printer_track_quantity, label);
+		}
+
+		graphed = new ArrayList<ArrayList<Boolean>>();
+		graphed.add(new ArrayList<Boolean>());
+		graphed.add(new ArrayList<Boolean>());
+		graphed.add(new ArrayList<Boolean>());
+		for (int i = 0; i < run; i++) {
+			if (new File(outDir1 + File.separator + "run-" + (i + 1) + "."
+					+ printer_id1.substring(0, printer_id1.length() - 8)).exists()) {
+				graphed.add(new ArrayList<Boolean>());
+			}
+		}
+		for (int i = 0; i < graphed.size(); i++) {
+			for (int j = 1; j < graphSpecies.size(); j++) {
+				graphed.get(i).add(false);
+			}
 		}
 
 		// stores data into a dataset
@@ -228,7 +247,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		if (keep.isSelected()) {
 			boxes = new ArrayList<JCheckBox>();
 			for (int i = 0; i < dataset.getSeriesCount(); i++) {
-				boxes.add(new JCheckBox());
+				JCheckBox temp = new JCheckBox();
+				temp.addActionListener(this);
+				temp.setActionCommand("box" + (i + 1));
+				boxes.add(temp);
 				boxes.get(i).setSelected(false);
 			}
 			for (int i = 0; i < kept; i++) {
@@ -238,7 +260,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		if (boxes.size() > dataset.getSeriesCount()) {
 			boxes = new ArrayList<JCheckBox>();
 			for (int i = 0; i < dataset.getSeriesCount(); i++) {
-				boxes.add(new JCheckBox());
+				JCheckBox temp = new JCheckBox();
+				temp.addActionListener(this);
+				temp.setActionCommand("box" + (i + 1));
+				boxes.add(temp);
 				boxes.get(i).setSelected(false);
 			}
 		}
@@ -383,15 +408,24 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	 * This private helper method parses the output file of ODE, monte carlo,
 	 * and markov abstractions.
 	 */
-	private void readData(String file, Component component, String printer_track_quantity,
-			String label, int num) {
+	private ArrayList<ArrayList<Double>> readData(String file, Component component,
+			String printer_track_quantity, String label) {
+		String[] s = file.split(File.separator);
+		String getLast = s[s.length - 1];
+		String stem = "";
+		int t = 0;
+		while (!Character.isDigit(getLast.charAt(t))) {
+			stem += getLast.charAt(t);
+			t++;
+		}
 		if (label.contains("variance")) {
-			data = variance;
+			return calculateAverageVarianceDeviation(file, stem, 1);
 		} else if (label.contains("deviation")) {
-			data = deviation;
-		} else if (label.contains("average") && num != 1) {
-			data = average;
+			return calculateAverageVarianceDeviation(file, stem, 2);
+		} else if (label.contains("average")) {
+			return calculateAverageVarianceDeviation(file, stem, 0);
 		} else {
+			ArrayList<ArrayList<Double>> data = new ArrayList<ArrayList<Double>>();
 			InputStream input;
 			component.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 			try {
@@ -399,10 +433,6 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						"Reading Reb2sac Output Data From " + new File(file).getName(),
 						new FileInputStream(new File(file))));
 				graphSpecies = new ArrayList<String>();
-				data = new ArrayList<ArrayList<Double>>();
-				if (label.contains("average")) {
-					variance = new ArrayList<ArrayList<Double>>();
-				}
 				boolean reading = true;
 				char cha;
 				int readCount = 0;
@@ -442,207 +472,43 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					try {
 						getNum = Integer.parseInt(word);
 						if (getNum == 0) {
-							boolean first = true;
-							int runsToMake;
-							int firstOne = -1;
-							if (label.contains("average")) {
-								runsToMake = run;
-								String[] findNum = file.split(File.separator);
-								String search = findNum[findNum.length - 1];
-								firstOne = Integer.parseInt(search
-										.substring(4, search.length() - 4));
-							} else {
-								runsToMake = 1;
-							}
 							for (int i = 0; i < graphSpecies.size(); i++) {
 								data.add(new ArrayList<Double>());
-								if (label.contains("average")) {
-									variance.add(new ArrayList<Double>());
-								}
 							}
 							(data.get(0)).add(0.0);
-							if (label.contains("average")) {
-								(variance.get(0)).add(0.0);
-							}
-							int count = 0;
-							int skip = firstOne;
-							for (int j = 0; j < runsToMake; j++) {
-								int counter = 1;
-								if (!first) {
-									if (firstOne != 1) {
-										j--;
-										firstOne = 1;
-									}
-									boolean loop = true;
-									while (loop && j < runsToMake && (j + 1) != skip) {
-										if (new File(outDir1
-												+ File.separator
-												+ "run-"
-												+ (j + 1)
-												+ "."
-												+ printer_id1
-														.substring(0, printer_id1.length() - 8))
-												.exists()) {
-											input = new BufferedInputStream(
-													new ProgressMonitorInputStream(
-															component,
-															"Reading Reb2sac Output Data From "
-																	+ new File(
-																			outDir1
-																					+ File.separator
-																					+ "run-"
-																					+ (j + 1)
-																					+ "."
-																					+ printer_id1
-																							.substring(
-																									0,
-																									printer_id1
-																											.length() - 8))
-																			.getName(),
-															new FileInputStream(
-																	new File(
-																			outDir1
-																					+ File.separator
-																					+ "run-"
-																					+ (j + 1)
-																					+ "."
-																					+ printer_id1
-																							.substring(
-																									0,
-																									printer_id1
-																											.length() - 8)))));
-											for (int i = 0; i < readCount; i++) {
-												input.read();
-											}
-											loop = false;
-											count++;
-										} else {
-											j++;
-										}
-									}
-								}
-								reading = true;
-								while (reading) {
-									word = "";
-									readWord = true;
-									int read;
-									while (readWord) {
+							int counter = 1;
+							reading = true;
+							while (reading) {
+								word = "";
+								readWord = true;
+								int read;
+								while (readWord) {
+									read = input.read();
+									cha = (char) read;
+									while (!Character.isWhitespace(cha) && cha != ',' && cha != ':'
+											&& cha != ';' && cha != '!' && cha != '?'
+											&& cha != '\"' && cha != '\'' && cha != '('
+											&& cha != ')' && cha != '{' && cha != '}' && cha != '['
+											&& cha != ']' && cha != '<' && cha != '>' && cha != '_'
+											&& cha != '*' && cha != '=' && read != -1) {
+										word += cha;
 										read = input.read();
 										cha = (char) read;
-										while (!Character.isWhitespace(cha) && cha != ','
-												&& cha != ':' && cha != ';' && cha != '!'
-												&& cha != '?' && cha != '\"' && cha != '\''
-												&& cha != '(' && cha != ')' && cha != '{'
-												&& cha != '}' && cha != '[' && cha != ']'
-												&& cha != '<' && cha != '>' && cha != '_'
-												&& cha != '*' && cha != '=' && read != -1) {
-											word += cha;
-											read = input.read();
-											cha = (char) read;
-										}
-										if (read == -1) {
-											reading = false;
-											first = false;
-										}
-										readWord = false;
 									}
-									int insert;
-									if (!word.equals("")) {
-										if (first) {
-											if (counter < graphSpecies.size()) {
-												insert = counter;
-												(data.get(insert)).add(Double.parseDouble(word));
-												if (label.contains("average")) {
-													if (insert == 0) {
-														(variance.get(insert)).add(Double
-																.parseDouble(word));
-													} else {
-														(variance.get(insert)).add(0.0);
-													}
-												}
-											} else {
-												insert = counter % graphSpecies.size();
-												(data.get(insert)).add(Double.parseDouble(word));
-												if (label.contains("average")) {
-													if (insert == 0) {
-														(variance.get(insert)).add(Double
-																.parseDouble(word));
-													} else {
-														(variance.get(insert)).add(0.0);
-													}
-												}
-											}
-										} else {
-											if (counter < graphSpecies.size()) {
-												insert = counter;
-												double old = (data.get(insert)).get(insert
-														/ graphSpecies.size());
-												(data.get(insert))
-														.set(
-																insert / graphSpecies.size(),
-																old
-																		+ ((Double
-																				.parseDouble(word) - old) / (count + 1)));
-												double newMean = (data.get(insert)).get(insert
-														/ graphSpecies.size());
-												if (label.contains("average")) {
-													if (insert == 0) {
-														(variance.get(insert))
-																.set(
-																		insert
-																				/ graphSpecies
-																						.size(),
-																		old
-																				+ ((Double
-																						.parseDouble(word) - old) / (count + 1)));
-													} else {
-														double vary = (((count - 1) * (variance
-																.get(insert)).get(insert
-																/ graphSpecies.size())) + (Double
-																.parseDouble(word) - newMean)
-																* (Double.parseDouble(word) - old))
-																/ count;
-														(variance.get(insert)).set(insert
-																/ graphSpecies.size(), vary);
-													}
-												}
-											} else {
-												insert = counter % graphSpecies.size();
-												double old = (data.get(insert)).get(counter
-														/ graphSpecies.size());
-												(data.get(insert))
-														.set(
-																counter / graphSpecies.size(),
-																old
-																		+ ((Double
-																				.parseDouble(word) - old) / (count + 1)));
-												double newMean = (data.get(insert)).get(counter
-														/ graphSpecies.size());
-												if (label.contains("average")) {
-													if (insert == 0) {
-														(variance.get(insert))
-																.set(
-																		counter
-																				/ graphSpecies
-																						.size(),
-																		old
-																				+ ((Double
-																						.parseDouble(word) - old) / (count + 1)));
-													} else {
-														double vary = (((count - 1) * (variance
-																.get(insert)).get(counter
-																/ graphSpecies.size())) + (Double
-																.parseDouble(word) - newMean)
-																* (Double.parseDouble(word) - old))
-																/ count;
-														(variance.get(insert)).set(counter
-																/ graphSpecies.size(), vary);
-													}
-												}
-											}
-										}
-										counter++;
+									if (read == -1) {
+										reading = false;
 									}
+									readWord = false;
+								}
+								int insert;
+								if (!word.equals("")) {
+									if (counter < graphSpecies.size()) {
+										insert = counter;
+									} else {
+										insert = counter % graphSpecies.size();
+									}
+									(data.get(insert)).add(Double.parseDouble(word));
+									counter++;
 								}
 							}
 						}
@@ -654,27 +520,13 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						}
 					}
 				}
-				if (label.contains("average")) {
-					average = data;
-					deviation = new ArrayList<ArrayList<Double>>();
-					for (int i = 0; i < variance.size(); i++) {
-						deviation.add(new ArrayList<Double>());
-						for (int j = 0; j < variance.get(i).size(); j++) {
-							deviation.get(i).add(variance.get(i).get(j));
-						}
-					}
-					for (int i = 1; i < deviation.size(); i++) {
-						for (int j = 0; j < deviation.get(i).size(); j++) {
-							deviation.get(i).set(j, Math.sqrt(deviation.get(i).get(j)));
-						}
-					}
-				}
 			} catch (Exception e) {
 				JOptionPane.showMessageDialog(component, "Error Reading Data!"
 						+ "\nThere was an error reading the simulation output data.",
 						"Error Reading Data", JOptionPane.ERROR_MESSAGE);
 			}
 			component.setCursor(null);
+			return data;
 		}
 	}
 
@@ -683,8 +535,23 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	 * boxes are selected.
 	 */
 	public void actionPerformed(ActionEvent e) {
+		// if a box to graph a species is selected
+		if (e.getActionCommand().contains("box")) {
+			int species = Integer.parseInt(e.getActionCommand().substring(3));
+			int select;
+			if (selected.equals("Average")) {
+				select = 0;
+			} else if (selected.equals("Variance")) {
+				select = 1;
+			} else if (selected.equals("Standard Deviation")) {
+				select = 2;
+			} else {
+				select = Integer.parseInt(selected.substring(4)) + 2;
+			}
+			graphed.get(select).set(species - 1, !graphed.get(select).get(species - 1));
+		}
 		// if the next button is clicked
-		if (e.getSource() == next) {
+		else if (e.getSource() == next) {
 			if (monteCarlo.isSelected()) {
 				String choice = (String) select.getSelectedItem();
 				if (choice.equals("Average")) {
@@ -1069,13 +936,25 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		JTree tree = new JTree(simDir);
 		JScrollPane scrollpane = new JScrollPane();
 		scrollpane.getViewport().add(tree);
-		// selected = "";
+		selected = "";
 		tree.addTreeSelectionListener(new TreeSelectionListener() {
 			public void valueChanged(TreeSelectionEvent e) {
-				// DefaultMutableTreeNode node = (DefaultMutableTreeNode)
-				// e.getPath()
-				// .getLastPathComponent();
-				// selected = node.toString();
+				DefaultMutableTreeNode node = (DefaultMutableTreeNode) e.getPath()
+						.getLastPathComponent();
+				selected = node.toString();
+				int select;
+				if (selected.equals("Average")) {
+					select = 0;
+				} else if (selected.equals("Variance")) {
+					select = 1;
+				} else if (selected.equals("Standard Deviation")) {
+					select = 2;
+				} else {
+					select = Integer.parseInt(selected.substring(4)) + 2;
+				}
+				for (int i = 0; i < boxes.size(); i++) {
+					boxes.get(i).setSelected(graphed.get(select).get(i));
+				}
 			}
 		});
 		tree.setSelectionRow(1);
@@ -1476,72 +1355,263 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		}
 	}
 
-	/*
-	 * private ArrayList<ArrayList<Double>> calculateAverage(String startFile,
-	 * String fileStem) { InputStream input; ArrayList<ArrayList<Double>>
-	 * average = new ArrayList<ArrayList<Double>>(); try { input = new
-	 * BufferedInputStream(new ProgressMonitorInputStream(component, "Reading
-	 * Reb2sac Output Data From " + new File(startFile).getName(), new
-	 * FileInputStream(new File(startFile)))); graphSpecies = new ArrayList<String>();
-	 * boolean reading = true; char cha; int readCount = 0; while (reading) {
-	 * String word = ""; boolean readWord = true; while (readWord) { int read =
-	 * input.read(); readCount++; if (read == -1) { reading = false; readWord =
-	 * false; } cha = (char) read; if (Character.isWhitespace(cha)) {
-	 * input.mark(3); char next = (char) input.read(); char after = (char)
-	 * input.read(); String check = "" + next + after; if (word.equals("") ||
-	 * word.equals("0") || check.equals("0,")) { readWord = false; } else { word +=
-	 * cha; } input.reset(); } else if (cha == ',' || cha == ':' || cha == ';' ||
-	 * cha == '!' || cha == '?' || cha == '\"' || cha == '\'' || cha == '(' ||
-	 * cha == ')' || cha == '{' || cha == '}' || cha == '[' || cha == ']' || cha == '<' ||
-	 * cha == '>' || cha == '*' || cha == '=' || cha == '#') { readWord = false; }
-	 * else if (read != -1) { word += cha; } } int getNum; try { getNum =
-	 * Integer.parseInt(word); if (getNum == 0) { boolean first = true; int
-	 * runsToMake = 1; for (String f : new File(outDir1).list()) { if
-	 * (f.contains(fileStem)) { int tempNum =
-	 * Integer.parseInt(f.substring(fileStem.length(), f .length() - 4)); if
-	 * (tempNum > runsToMake) { runsToMake = tempNum; } } } for (int i = 0; i <
-	 * graphSpecies.size(); i++) { average.add(new ArrayList<Double>()); }
-	 * (average.get(0)).add(0.0); int count = 0; for (int j = 0; j < runsToMake;
-	 * j++) { int counter = 1; if (!first) { boolean loop = true; while (loop &&
-	 * j < runsToMake) { if (new File(outDir1 + File.separator + "run-" + (j +
-	 * 1) + "." + printer_id1.substring(0, printer_id1.length() - 8)) .exists()) {
-	 * input = new BufferedInputStream( new ProgressMonitorInputStream(
-	 * component, "Reading Reb2sac Output Data From " + new File( outDir1 +
-	 * File.separator + "run-" + (j + 1) + "." + printer_id1 .substring( 0,
-	 * printer_id1 .length() - 8)) .getName(), new FileInputStream(new
-	 * File(outDir1 + File.separator + "run-" + (j + 1) + "." +
-	 * printer_id1.substring(0, printer_id1.length() - 8))))); for (int i = 0; i <
-	 * readCount; i++) { input.read(); } loop = false; count++; } else { j++; } } }
-	 * reading = true; while (reading) { word = ""; readWord = true; int read;
-	 * while (readWord) { read = input.read(); cha = (char) read; while
-	 * (!Character.isWhitespace(cha) && cha != ',' && cha != ':' && cha != ';' &&
-	 * cha != '!' && cha != '?' && cha != '\"' && cha != '\'' && cha != '(' &&
-	 * cha != ')' && cha != '{' && cha != '}' && cha != '[' && cha != ']' && cha != '<' &&
-	 * cha != '>' && cha != '_' && cha != '*' && cha != '=' && read != -1) {
-	 * word += cha; read = input.read(); cha = (char) read; } if (read == -1) {
-	 * reading = false; first = false; } readWord = false; } int insert; if
-	 * (!word.equals("")) { if (first) { if (counter < graphSpecies.size()) {
-	 * insert = counter; (average.get(insert)).add(Double.parseDouble(word)); }
-	 * else { insert = counter % graphSpecies.size();
-	 * (average.get(insert)).add(Double.parseDouble(word)); } } else { if
-	 * (counter < graphSpecies.size()) { insert = counter; double old =
-	 * (average.get(insert)).get(insert / graphSpecies.size());
-	 * (average.get(insert)) .set( insert / graphSpecies.size(), old +
-	 * ((Double.parseDouble(word) - old) / (count + 1))); } else { insert =
-	 * counter % graphSpecies.size(); double old =
-	 * (average.get(insert)).get(counter / graphSpecies.size());
-	 * (average.get(insert)) .set( counter / graphSpecies.size(), old +
-	 * ((Double.parseDouble(word) - old) / (count + 1))); } } counter++; } } } } }
-	 * catch (Exception e1) { if (word.equals("")) { } else {
-	 * graphSpecies.add(word); } } } } catch (Exception e) {
-	 * JOptionPane.showMessageDialog(component, "Error Reading Data!" + "\nThere
-	 * was an error reading the simulation output data.", "Error Reading Data",
-	 * JOptionPane.ERROR_MESSAGE); } return average; }
-	 * 
-	 * private void calculateVariance() { }
-	 * 
-	 * private void calculateStandardDeviation() { }
-	 */
+	private ArrayList<ArrayList<Double>> calculateAverageVarianceDeviation(String startFile,
+			String fileStem, int choice) {
+		InputStream input;
+		ArrayList<ArrayList<Double>> average = new ArrayList<ArrayList<Double>>();
+		ArrayList<ArrayList<Double>> variance = new ArrayList<ArrayList<Double>>();
+		ArrayList<ArrayList<Double>> deviation = new ArrayList<ArrayList<Double>>();
+		try {
+			input = new BufferedInputStream(new ProgressMonitorInputStream(component,
+					"Reading Reb2sac Output Data From " + new File(startFile).getName(),
+					new FileInputStream(new File(startFile))));
+			graphSpecies = new ArrayList<String>();
+			boolean reading = true;
+			char cha;
+			int readCount = 0;
+			while (reading) {
+				String word = "";
+				boolean readWord = true;
+				while (readWord) {
+					int read = input.read();
+					readCount++;
+					if (read == -1) {
+						reading = false;
+						readWord = false;
+					}
+					cha = (char) read;
+					if (Character.isWhitespace(cha)) {
+						input.mark(3);
+						char next = (char) input.read();
+						char after = (char) input.read();
+						String check = "" + next + after;
+						if (word.equals("") || word.equals("0") || check.equals("0,")) {
+							readWord = false;
+						} else {
+							word += cha;
+						}
+						input.reset();
+					} else if (cha == ',' || cha == ':' || cha == ';' || cha == '!' || cha == '?'
+							|| cha == '\"' || cha == '\'' || cha == '(' || cha == ')' || cha == '{'
+							|| cha == '}' || cha == '[' || cha == ']' || cha == '<' || cha == '>'
+							|| cha == '*' || cha == '=' || cha == '#') {
+						readWord = false;
+					} else if (read != -1) {
+						word += cha;
+					}
+				}
+				int getNum;
+				try {
+					getNum = Integer.parseInt(word);
+					if (getNum == 0) {
+						boolean first = true;
+						int runsToMake = 1;
+						String[] findNum = startFile.split(File.separator);
+						String search = findNum[findNum.length - 1];
+						int firstOne = Integer.parseInt(search.substring(4, search.length() - 4));
+						for (String f : new File(outDir1).list()) {
+							if (f.contains(fileStem)) {
+								int tempNum = Integer.parseInt(f.substring(fileStem.length(), f
+										.length() - 4));
+								if (tempNum > runsToMake) {
+									runsToMake = tempNum;
+								}
+							}
+						}
+						for (int i = 0; i < graphSpecies.size(); i++) {
+							average.add(new ArrayList<Double>());
+							variance.add(new ArrayList<Double>());
+						}
+						(average.get(0)).add(0.0);
+						(variance.get(0)).add(0.0);
+						int count = 0;
+						int skip = firstOne;
+						for (int j = 0; j < runsToMake; j++) {
+							int counter = 1;
+							if (!first) {
+								if (firstOne != 1) {
+									j--;
+									firstOne = 1;
+								}
+								boolean loop = true;
+								while (loop && j < runsToMake && (j + 1) != skip) {
+									if (new File(outDir1 + File.separator + fileStem + (j + 1)
+											+ "."
+											+ printer_id1.substring(0, printer_id1.length() - 8))
+											.exists()) {
+										input = new BufferedInputStream(
+												new ProgressMonitorInputStream(
+														component,
+														"Reading Reb2sac Output Data From "
+																+ new File(
+																		outDir1
+																				+ File.separator
+																				+ fileStem
+																				+ (j + 1)
+																				+ "."
+																				+ printer_id1
+																						.substring(
+																								0,
+																								printer_id1
+																										.length() - 8))
+																		.getName(),
+														new FileInputStream(new File(outDir1
+																+ File.separator
+																+ fileStem
+																+ (j + 1)
+																+ "."
+																+ printer_id1.substring(0,
+																		printer_id1.length() - 8)))));
+										for (int i = 0; i < readCount; i++) {
+											input.read();
+										}
+										loop = false;
+										count++;
+									} else {
+										j++;
+									}
+								}
+							}
+							reading = true;
+							while (reading) {
+								word = "";
+								readWord = true;
+								int read;
+								while (readWord) {
+									read = input.read();
+									cha = (char) read;
+									while (!Character.isWhitespace(cha) && cha != ',' && cha != ':'
+											&& cha != ';' && cha != '!' && cha != '?'
+											&& cha != '\"' && cha != '\'' && cha != '('
+											&& cha != ')' && cha != '{' && cha != '}' && cha != '['
+											&& cha != ']' && cha != '<' && cha != '>' && cha != '_'
+											&& cha != '*' && cha != '=' && read != -1) {
+										word += cha;
+										read = input.read();
+										cha = (char) read;
+									}
+									if (read == -1) {
+										reading = false;
+										first = false;
+									}
+									readWord = false;
+								}
+								int insert;
+								if (!word.equals("")) {
+									if (first) {
+										if (counter < graphSpecies.size()) {
+											insert = counter;
+											(average.get(insert)).add(Double.parseDouble(word));
+											if (insert == 0) {
+												(variance.get(insert))
+														.add(Double.parseDouble(word));
+											} else {
+												(variance.get(insert)).add(0.0);
+											}
+										} else {
+											insert = counter % graphSpecies.size();
+											(average.get(insert)).add(Double.parseDouble(word));
+											if (insert == 0) {
+												(variance.get(insert))
+														.add(Double.parseDouble(word));
+											} else {
+												(variance.get(insert)).add(0.0);
+											}
+										}
+									} else {
+										if (counter < graphSpecies.size()) {
+											insert = counter;
+											double old = (average.get(insert)).get(insert
+													/ graphSpecies.size());
+											(average.get(insert))
+													.set(
+															insert / graphSpecies.size(),
+															old
+																	+ ((Double.parseDouble(word) - old) / (count + 1)));
+											double newMean = (average.get(insert)).get(insert
+													/ graphSpecies.size());
+											if (insert == 0) {
+												(variance.get(insert))
+														.set(
+																insert / graphSpecies.size(),
+																old
+																		+ ((Double
+																				.parseDouble(word) - old) / (count + 1)));
+											} else {
+												double vary = (((count - 1) * (variance.get(insert))
+														.get(insert / graphSpecies.size())) + (Double
+														.parseDouble(word) - newMean)
+														* (Double.parseDouble(word) - old))
+														/ count;
+												(variance.get(insert)).set(insert
+														/ graphSpecies.size(), vary);
+											}
+										} else {
+											insert = counter % graphSpecies.size();
+											double old = (average.get(insert)).get(counter
+													/ graphSpecies.size());
+											(average.get(insert))
+													.set(
+															counter / graphSpecies.size(),
+															old
+																	+ ((Double.parseDouble(word) - old) / (count + 1)));
+											double newMean = (average.get(insert)).get(counter
+													/ graphSpecies.size());
+											if (insert == 0) {
+												(variance.get(insert))
+														.set(
+																counter / graphSpecies.size(),
+																old
+																		+ ((Double
+																				.parseDouble(word) - old) / (count + 1)));
+											} else {
+												double vary = (((count - 1) * (variance.get(insert))
+														.get(counter / graphSpecies.size())) + (Double
+														.parseDouble(word) - newMean)
+														* (Double.parseDouble(word) - old))
+														/ count;
+												(variance.get(insert)).set(counter
+														/ graphSpecies.size(), vary);
+											}
+										}
+									}
+									counter++;
+								}
+							}
+						}
+					}
+				} catch (Exception e1) {
+					if (word.equals("")) {
+					} else {
+						graphSpecies.add(word);
+					}
+				}
+			}
+			deviation = new ArrayList<ArrayList<Double>>();
+			for (int i = 0; i < variance.size(); i++) {
+				deviation.add(new ArrayList<Double>());
+				for (int j = 0; j < variance.get(i).size(); j++) {
+					deviation.get(i).add(variance.get(i).get(j));
+				}
+			}
+			for (int i = 1; i < deviation.size(); i++) {
+				for (int j = 0; j < deviation.get(i).size(); j++) {
+					deviation.get(i).set(j, Math.sqrt(deviation.get(i).get(j)));
+				}
+			}
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(component, "Error Reading Data!"
+					+ "\nThere was an error reading the simulation output data.",
+					"Error Reading Data", JOptionPane.ERROR_MESSAGE);
+		}
+		if (choice == 0) {
+			return average;
+		} else if (choice == 1) {
+			return variance;
+		} else {
+			return deviation;
+		}
+	}
 
 	private class ShapeAndPaint {
 		private Shape shape;
