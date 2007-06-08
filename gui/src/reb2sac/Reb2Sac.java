@@ -227,6 +227,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		limit = new JTextField("100.0", 39);
 		interval = new JTextField("1.0", 15);
 		step = new JTextField("1.0", 15);
+		step.setEnabled(false);
 		int next = 1;
 		String filename = "sim" + next;
 		while (new File(root + File.separator + filename).exists()) {
