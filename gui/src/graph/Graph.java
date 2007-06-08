@@ -414,9 +414,13 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		String getLast = s[s.length - 1];
 		String stem = "";
 		int t = 0;
-		while (!Character.isDigit(getLast.charAt(t))) {
-			stem += getLast.charAt(t);
-			t++;
+		try {
+			while (!Character.isDigit(getLast.charAt(t))) {
+				stem += getLast.charAt(t);
+				t++;
+			}
+		} catch (Exception e) {
+
 		}
 		if (label.contains("variance")) {
 			return calculateAverageVarianceDeviation(file, stem, 1);
@@ -675,6 +679,11 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		else if (e.getSource() == addAll) {
 			for (int i = 0; i < boxes.size(); i++) {
 				boxes.get(i).setSelected(true);
+				for (ArrayList<Boolean> b : graphed) {
+					for (int j = 0; j < b.size(); j++) {
+						b.set(j, true);
+					}
+				}
 				XYPlot plot = chart.getXYPlot();
 				XYItemRenderer rend = plot.getRenderer();
 				rend.setSeriesVisible(i, true);
@@ -685,6 +694,11 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		else if (e.getSource() == removeAll) {
 			for (int i = 0; i < boxes.size(); i++) {
 				boxes.get(i).setSelected(false);
+				for (ArrayList<Boolean> b : graphed) {
+					for (int j = 0; j < b.size(); j++) {
+						b.set(j, false);
+					}
+				}
 				XYPlot plot = chart.getXYPlot();
 				XYItemRenderer rend = plot.getRenderer();
 				rend.setSeriesVisible(i, false);
@@ -950,10 +964,20 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				} else if (selected.equals("Standard Deviation")) {
 					select = 2;
 				} else {
-					select = Integer.parseInt(selected.substring(4)) + 2;
+					try {
+						select = Integer.parseInt(selected.substring(4)) + 2;
+					} catch (Exception e1) {
+						select = -1;
+					}
 				}
-				for (int i = 0; i < boxes.size(); i++) {
-					boxes.get(i).setSelected(graphed.get(select).get(i));
+				if (select != -1) {
+					for (int i = 0; i < boxes.size(); i++) {
+						try {
+							boxes.get(i).setSelected(graphed.get(select).get(i));
+						} catch (Exception e1) {
+
+						}
+					}
 				}
 			}
 		});
