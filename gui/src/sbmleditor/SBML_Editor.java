@@ -2083,12 +2083,11 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			JLabel speciesLabel = new JLabel("Species:");
 			JLabel stoiciLabel = new JLabel("Stoiciometry:");
 			ListOf listOfSpecies = document.getModel().getListOfSpecies();
-			ArrayList<String> species = new ArrayList<String>();
 			amount = false;
+			String[] speciesList = new String[(int) listOfSpecies.getNumItems()];
 			for (int i = 0; i < listOfSpecies.getNumItems(); i++) {
-				species.add(((Species) listOfSpecies.get(i)).getId());
+				speciesList[i] = ((Species) listOfSpecies.get(i)).getId();
 			}
-			String[] speciesList = (String[]) species.toArray();
 			sort(speciesList);
 			Object[] choices = speciesList;
 			productSpecies = new JComboBox(choices);
@@ -2182,12 +2181,11 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			JLabel speciesLabel = new JLabel("Species:");
 			JLabel stoiciLabel = new JLabel("Stoiciometry:");
 			ListOf listOfSpecies = document.getModel().getListOfSpecies();
-			ArrayList<String> species = new ArrayList<String>();
 			amount = false;
+			String[] speciesList = new String[(int) listOfSpecies.getNumItems()];
 			for (int i = 0; i < listOfSpecies.getNumItems(); i++) {
-				species.add(((Species) listOfSpecies.get(i)).getId());
+				speciesList[i] = ((Species) listOfSpecies.get(i)).getId();
 			}
-			String[] speciesList = (String[]) species.toArray();
 			sort(speciesList);
 			Object[] choices = speciesList;
 			reactantSpecies = new JComboBox(choices);
