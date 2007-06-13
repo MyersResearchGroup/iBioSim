@@ -1,0 +1,23 @@
+rm -rf CVS
+rm -rf bin/CVS
+rm -rf docs/CVS
+rm -rf examples/CVS
+rm -rf examples/*/CVS
+rm -rf examples/*/*/CVS
+rm -rf examples/*/*/*/CVS
+rm -rf examples/*/*/*/*/CVS
+rm -rf GeneNet
+rm -rf gui/CVS
+rm -rf gui/*/CVS
+rm -rf gui/*/*/CVS
+rm -rf gui/*/*/*/CVS
+rm -rf gui/*/*/*/*/CVS
+rm -rf gui/*/*/*/*/*/CVS
+rm -rf gui/*/*/*/*/*/CVS
+rm -rf include/CVS
+rm -rf include/*/CVS
+rm -rf include/*/*/CVS
+rm -rf lib/CVS
+rm -rf reb2sac
+cd ..
+tar zcvf BioSim.tgz BioSim
