@@ -858,9 +858,7 @@ public class BioSim implements MouseListener, ActionListener {
 							String first = filename.substring(0, filename.length() - last.length());
 							String printer = filename.substring(filename.length() - 3);
 							String id = printer + ".printer";
-							JRadioButton button = new JRadioButton();
 							if (last.substring(0, 3).equals("run")) {
-								button.setSelected(true);
 								String get = "";
 								for (int i = 0; i < last.length(); i++) {
 									if (Character.isDigit(last.charAt(i))) {
@@ -881,15 +879,13 @@ public class BioSim implements MouseListener, ActionListener {
 									runs = i - 1;
 								}
 								runs = Math.max(number, runs);
-								addTab("Graph", new Graph(first + "run-1." + printer, frame,
-										"amount", "read-in-data average" + " simulation results",
-										button, "read-in-data", id, first, runs, new String[0], -1,
-										null, "time", this));
+								addTab("Graph", new Graph(first + "run-1." + printer, "amount",
+										"read-in-data average simulation results", id, first, runs,
+										-1, null, "time", this));
 							} else {
-								button.setSelected(false);
-								addTab("Graph", new Graph(filename, frame, "amount",
-										"read-in-data simulation results", button, "read-in-data",
-										id, first, 1, new String[0], -1, null, "time", this));
+								addTab("Graph", new Graph(filename, "amount",
+										"read-in-data simulation results", id, first, 1, -1, null,
+										"time", this));
 							}
 						}
 					} else {
@@ -904,9 +900,7 @@ public class BioSim implements MouseListener, ActionListener {
 						String first = filename.substring(0, filename.length() - last.length());
 						String printer = filename.substring(filename.length() - 3);
 						String id = printer + ".printer";
-						JRadioButton button = new JRadioButton();
 						if (last.substring(0, 3).equals("run")) {
-							button.setSelected(true);
 							String get = "";
 							for (int i = 0; i < last.length(); i++) {
 								if (Character.isDigit(last.charAt(i))) {
@@ -927,15 +921,13 @@ public class BioSim implements MouseListener, ActionListener {
 								runs = i - 1;
 							}
 							runs = Math.max(number, runs);
-							addTab("Graph", new Graph(first + "run-1." + printer, frame, "amount",
-									"read-in-data average" + " simulation results", button,
-									"read-in-data", id, first, runs, new String[0], number, null,
-									"time", this));
+							addTab("Graph", new Graph(first + "run-1." + printer, "amount",
+									"read-in-data average simulation results", id, first, runs,
+									number, null, "time", this));
 						} else {
-							button.setSelected(false);
-							addTab("Graph", new Graph(filename, frame, "amount",
-									"read-in-data simulation results", button, "read-in-data", id,
-									first, 1, new String[0], -1, null, "time", this));
+							addTab("Graph", new Graph(filename, "amount",
+									"read-in-data simulation results", id, first, 1, -1, null,
+									"time", this));
 						}
 					} catch (Exception e1) {
 						JOptionPane.showMessageDialog(frame, "Error reading in data!"

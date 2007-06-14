@@ -2233,21 +2233,19 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		}
 		String printer_track_quantity = (String) trackingQuantity.getSelectedItem();
 		int[] index = species.getSelectedIndices();
-		String[] intSpecies = Buttons.getList(interestingSpecies, species);
 		species.setSelectedIndices(index);
 		if (graphFile.split(File.separator)[graphFile.split(File.separator).length - 1]
 				.contains("run-")) {
 			JRadioButton b = new JRadioButton();
 			b.setSelected(true);
-			return new Graph(graphFile, biomodelsim.frame(), printer_track_quantity,
-					"stochastic run average simulation results", b, "stochastic", printer_id,
-					outDir, run, intSpecies, -1, null, "time", biomodelsim);
+			return new Graph(graphFile, printer_track_quantity,
+					"stochastic run average simulation results", printer_id, outDir, run, -1, null,
+					"time", biomodelsim);
 		} else {
 			JRadioButton b = new JRadioButton();
 			b.setSelected(false);
-			return new Graph(graphFile, biomodelsim.frame(), printer_track_quantity,
-					"ode simulation results", b, "ode", printer_id, outDir, 1, intSpecies, -1,
-					null, "time", biomodelsim);
+			return new Graph(graphFile, printer_track_quantity, "ode simulation results",
+					printer_id, outDir, 1, -1, null, "time", biomodelsim);
 		}
 	}
 
