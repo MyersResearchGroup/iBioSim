@@ -41,17 +41,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	 */
 	private static final long serialVersionUID = 4350596002373546900L;
 
-	private Component component; // the main gui's component
-
 	/*
 	 * Buttons used in graph window
 	 */
-	private JButton next, changeSize, addAll, removeAll, editGraph;
-
-	/*
-	 * ArrayList of Check Boxes used to graph output data
-	 */
-	private ArrayList<JCheckBox> boxes;
+	private JButton changeSize, addAll, removeAll, editGraph;
 
 	private JFreeChart chart; // Graph of the output data
 
@@ -59,18 +52,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 	private String printer_track_quantity1; // label for y-axis on chart
 
-	private String sim1; // simulator used
-
 	private String outDir1; // output directory
 
 	private String printer_id1; // printer id
-
-	private JComboBox select; // combo box for selecting next
-
-	/*
-	 * radio button used to determine which abstraction is running
-	 */
-	private JRadioButton monteCarlo;
 
 	/*
 	 * Text fields used to change the graph window
@@ -79,14 +63,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 	private ArrayList<double[]> maxAndMin; // Arraylist of max and min values
 
-	/*
-	 * graph data
-	 */
-	private ArrayList<ArrayList<Double>> data;
-
 	private ArrayList<String> graphSpecies; // names of species in the graph
-
-	private String[] intSpecies; // interesting species
 
 	private String savedPics; // directory for saved pictures
 
@@ -94,37 +71,32 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 	private XYSeriesCollection dataset; // dataset of data
 
-	private JCheckBox keep; // check box for keeping data on graph
-
 	private BioSim biomodelsim; // tstubd gui
 
 	private JButton exportJPeg, exportPng, exportPdf, exportEps, exportSvg; // buttons
 
 	private HashMap<String, Paint> colors;
 
-	private HashMap<String, Shape> shape;
+	private HashMap<String, Shape> shapes;
 
-	private String selected;
+	private String selected, lastSelected;
 
-	private ArrayList<ArrayList<Boolean>> graphed;
+	private LinkedList<GraphSpecies> graphed;
+
+	private DefaultDrawingSupplier draw;
 
 	/**
 	 * Creates a Graph Object from the data given and calls the private graph
 	 * helper method.
 	 */
-	public Graph(String file, Component component, String printer_track_quantity, String label,
-			JRadioButton monteCarlo, String sim, String printer_id, String outDir, int run,
-			String[] intSpecies, int readIn, XYSeriesCollection dataset, String time,
+	public Graph(String file, String printer_track_quantity, String label, String printer_id,
+			String outDir, int run, int readIn, XYSeriesCollection dataset, String time,
 			BioSim biomodelsim) {
 		// initializes member variables
-		this.sim1 = sim;
 		this.run = run;
-		this.component = component;
 		this.printer_track_quantity1 = printer_track_quantity;
 		this.outDir1 = outDir;
 		this.printer_id1 = printer_id;
-		this.monteCarlo = monteCarlo;
-		this.intSpecies = intSpecies;
 		this.time = time;
 		this.biomodelsim = biomodelsim;
 		if (dataset == null) {
@@ -135,173 +107,21 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 		// graph the output data
 		setUpShapesAndColors();
-		graph(file, component, printer_track_quantity, label, intSpecies, readIn);
+		graphed = new LinkedList<GraphSpecies>();
+		selected = "";
+		graph(file, printer_track_quantity, label, readIn);
 	}
 
 	/**
 	 * This private helper method calls the private readData method, sets up a
 	 * graph frame, and graphs the data.
 	 */
-	private void graph(String file, Component component, String printer_track_quantity,
-			String label, String[] intSpecies, int readIn) {
-		// reads output data
-		ArrayList<ShapeAndPaint> shapesAndPaints = new ArrayList<ShapeAndPaint>();
-		if (chart != null) {
-			for (int i = 0; i < boxes.size(); i++) {
-				if (boxes.get(i).isSelected()) {
-					shapesAndPaints.add(new ShapeAndPaint(chart.getXYPlot().getRenderer()
-							.getSeriesShape(i), chart.getXYPlot().getRenderer().getSeriesPaint(i)));
-				}
-			}
-		}
-		if (data != null) {
-			data = readData(file, component, printer_track_quantity, label);
-		} else {
-			data = readData(file, component, printer_track_quantity, label);
-			boxes = new ArrayList<JCheckBox>();
-			for (int i = 1; i < graphSpecies.size(); i++) {
-				JCheckBox temp = new JCheckBox();
-				temp.addActionListener(this);
-				temp.setActionCommand("box" + i);
-				boxes.add(temp);
-				boxes.get(i - 1).setSelected(false);
-				for (int j = 0; j < intSpecies.length; j++) {
-					if (graphSpecies.get(i).equals(intSpecies[j])) {
-						boxes.get(i - 1).setSelected(true);
-					}
-				}
-			}
-			keep = new JCheckBox("Keep Graphed Data");
-			if (dataset.getSeriesCount() != 0) {
-				keep.setSelected(true);
-			} else {
-				keep.setSelected(false);
-			}
-		}
-		if (readIn != -1) {
-			file = outDir1 + File.separator + "run-" + readIn + "."
-					+ printer_id1.substring(0, printer_id1.length() - 8);
-			label = sim1 + " run-" + readIn + " simulation results";
-			data = readData(file, component, printer_track_quantity, label);
-		}
-
-		graphed = new ArrayList<ArrayList<Boolean>>();
-		graphed.add(new ArrayList<Boolean>());
-		graphed.add(new ArrayList<Boolean>());
-		graphed.add(new ArrayList<Boolean>());
-		for (int i = 0; i < run; i++) {
-			if (new File(outDir1 + File.separator + "run-" + (i + 1) + "."
-					+ printer_id1.substring(0, printer_id1.length() - 8)).exists()) {
-				graphed.add(new ArrayList<Boolean>());
-			}
-		}
-		for (int i = 0; i < graphed.size(); i++) {
-			for (int j = 1; j < graphSpecies.size(); j++) {
-				graphed.get(i).add(false);
-			}
-		}
-
-		// stores data into a dataset
-		for (int i = 2; i < graphSpecies.size(); i++) {
-			String index = graphSpecies.get(i);
-			ArrayList<Double> index2 = data.get(i);
-			int j = i;
-			while ((j > 1) && graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
-				graphSpecies.set(j, graphSpecies.get(j - 1));
-				data.set(j, data.get(j - 1));
-				j = j - 1;
-			}
-			graphSpecies.set(j, index);
-			data.set(j, index2);
-		}
-		ArrayList<XYSeries> graphData = new ArrayList<XYSeries>();
-		for (int i = 1; i < graphSpecies.size(); i++) {
-			graphData.add(new XYSeries(graphSpecies.get(i)));
-		}
-		if (data.size() != 0) {
-			for (int i = 0; i < (data.get(0)).size(); i++) {
-				for (int j = 1; j < graphSpecies.size(); j++) {
-					graphData.get(j - 1).add((data.get(0)).get(i), (data.get(j)).get(i));
-				}
-			}
-		}
-		boolean equal = dataset.getSeriesCount() == graphData.size();
-		int kept = 0;
-		ArrayList<String> names = new ArrayList<String>();
-		if (!keep.isSelected()) {
-			if (equal) {
-				for (int i = 0; i < dataset.getSeriesCount(); i++) {
-					names.add(dataset.getSeries(i).getKey().toString());
-				}
-			}
-			dataset = new XYSeriesCollection();
-		} else {
-			kept = dataset.getSeriesCount();
-		}
-		for (int i = 0; i < graphData.size(); i++) {
-			dataset.addSeries(graphData.get(i));
-			if (names.size() != 0) {
-				dataset.getSeries(i).setKey(names.get(i));
-			}
-		}
-		if (keep.isSelected()) {
-			boxes = new ArrayList<JCheckBox>();
-			for (int i = 0; i < dataset.getSeriesCount(); i++) {
-				JCheckBox temp = new JCheckBox();
-				temp.addActionListener(this);
-				temp.setActionCommand("box" + (i + 1));
-				boxes.add(temp);
-				boxes.get(i).setSelected(false);
-			}
-			for (int i = 0; i < kept; i++) {
-				boxes.get(i).setSelected(true);
-			}
-		}
-		if (boxes.size() > dataset.getSeriesCount()) {
-			boxes = new ArrayList<JCheckBox>();
-			for (int i = 0; i < dataset.getSeriesCount(); i++) {
-				JCheckBox temp = new JCheckBox();
-				temp.addActionListener(this);
-				temp.setActionCommand("box" + (i + 1));
-				boxes.add(temp);
-				boxes.get(i).setSelected(false);
-			}
-		}
-
+	private void graph(String file, String printer_track_quantity, String label, int readIn) {
 		// creates the graph from the dataset and adds it to a chart panel
-		XYItemRenderer ren = null;
-		if (chart != null) {
-			ren = chart.getXYPlot().getRenderer();
-		}
+		readGraphSpecies(file, biomodelsim.frame());
 		chart = ChartFactory.createXYLineChart(label, time, printer_track_quantity, dataset,
 				PlotOrientation.VERTICAL, true, true, false);
 		chart.addProgressListener(this);
-		XYPlot plot = chart.getXYPlot();
-		if (keep.isSelected()) {
-			for (int i = 0; i < shapesAndPaints.size(); i++) {
-				plot.getRenderer().setSeriesShape(i, shapesAndPaints.get(i).getShape());
-				plot.getRenderer().setSeriesPaint(i, shapesAndPaints.get(i).getPaint());
-			}
-		} else if (ren != null && equal) {
-			plot.setRenderer(ren);
-		}
-		XYLineAndShapeRenderer rend = (XYLineAndShapeRenderer) plot.getRenderer();
-		for (int i = 0; i < dataset.getSeriesCount(); i++) {
-			if (boxes.get(i).isSelected()) {
-				rend.setSeriesVisible(i, true);
-			} else {
-				rend.setSeriesVisible(i, false);
-			}
-			if (rend.getSeriesShapesVisible(i) == null) {
-				rend.setSeriesShapesVisible(i, true);
-			}
-			if (rend.getSeriesShapesFilled(i) == null) {
-				rend.setSeriesShapesFilled(i, true);
-			}
-			if (rend.getSeriesLinesVisible(i) == null) {
-				rend.setSeriesLinesVisible(i, true);
-			}
-		}
 		ChartPanel graph = new ChartPanel(chart);
 		graph.addMouseListener(this);
 
@@ -320,39 +140,6 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		addAll.addActionListener(this);
 		removeAll.addActionListener(this);
 		editGraph.addActionListener(this);
-
-		// creates combo box for choosing which run to display
-		ArrayList<String> add = new ArrayList<String>();
-		add.add("Average");
-		add.add("Variance");
-		add.add("Standard Deviation");
-		for (int i = 0; i < run; i++) {
-			if (new File(outDir1 + File.separator + "run-" + (i + 1) + "."
-					+ printer_id1.substring(0, printer_id1.length() - 8)).exists()) {
-				add.add("" + (i + 1));
-			}
-		}
-		JLabel selectLabel = new JLabel("Select Next:");
-		if (monteCarlo.isSelected()) {
-			select = new JComboBox(add.toArray());
-			if (label.contains("variance")) {
-				select.setSelectedItem("Variance");
-			} else if (label.contains("deviation")) {
-				select.setSelectedItem("Standard Deviation");
-			} else if (label.contains("average")) {
-				select.setSelectedItem("Average");
-			} else {
-				String selected = "";
-				for (int i = 0; i < label.length(); i++) {
-					if (Character.isDigit(label.charAt(i))) {
-						selected += label.charAt(i);
-					}
-				}
-				select.setSelectedItem(selected);
-			}
-			next = new JButton("View Next");
-			next.addActionListener(this);
-		}
 
 		// creates the buttons for the graph frame
 		JPanel ButtonHolder = new JPanel();
@@ -375,21 +162,11 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 		// puts all the components of the graph gui into a display panel
 		JPanel SpecialButtonHolder = new JPanel();
-		JPanel monteCarloHolder = new JPanel();
-		JPanel monteSpecialHolder = new JPanel(new BorderLayout());
 		SpecialButtonHolder.add(editGraph);
 		SpecialButtonHolder.add(addAll);
 		SpecialButtonHolder.add(removeAll);
 		SpecialButtonHolder.add(changeSize);
-		if (monteCarlo.isSelected()) {
-			monteCarloHolder.add(selectLabel);
-			monteCarloHolder.add(select);
-			monteCarloHolder.add(next);
-			monteCarloHolder.add(keep);
-			monteSpecialHolder.add(monteCarloHolder, "South");
-		}
-		monteSpecialHolder.add(SpecialButtonHolder, "Center");
-		AllButtonsHolder.add(monteSpecialHolder, "Center");
+		AllButtonsHolder.add(SpecialButtonHolder, "Center");
 		JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, ButtonHolder, null);
 		splitPane.setDividerSize(0);
 		AllButtonsHolder.add(splitPane, "South");
@@ -402,6 +179,72 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		determineMaxAndMin();
 		resize();
 		this.revalidate();
+	}
+
+	private void readGraphSpecies(String file, Component component) {
+		InputStream input;
+		component.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+		try {
+			input = new BufferedInputStream(new ProgressMonitorInputStream(component,
+					"Reading Reb2sac Output Data From " + new File(file).getName(),
+					new FileInputStream(new File(file))));
+			graphSpecies = new ArrayList<String>();
+			boolean reading = true;
+			char cha;
+			int readCount = 0;
+			while (reading) {
+				String word = "";
+				boolean readWord = true;
+				while (readWord) {
+					int read = input.read();
+					readCount++;
+					if (read == -1) {
+						reading = false;
+						readWord = false;
+					}
+					cha = (char) read;
+					if (Character.isWhitespace(cha)) {
+						input.mark(3);
+						char next = (char) input.read();
+						char after = (char) input.read();
+						String check = "" + next + after;
+						if (word.equals("") || word.equals("0") || check.equals("0,")) {
+							readWord = false;
+						} else {
+							word += cha;
+						}
+						input.reset();
+					} else if (cha == ',' || cha == ':' || cha == ';' || cha == '!' || cha == '?'
+							|| cha == '\"' || cha == '\'' || cha == '(' || cha == ')' || cha == '{'
+							|| cha == '}' || cha == '[' || cha == ']' || cha == '<' || cha == '>'
+							|| cha == '*' || cha == '=' || cha == '#') {
+						readWord = false;
+					} else if (read != -1) {
+						word += cha;
+					}
+				}
+				int getNum;
+				try {
+					getNum = Integer.parseInt(word);
+					if (getNum == 0) {
+						int read = 0;
+						while (read != -1) {
+							read = input.read();
+						}
+					}
+				} catch (Exception e1) {
+					if (word.equals("")) {
+					} else {
+						graphSpecies.add(word);
+					}
+				}
+			}
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(component, "Error Reading Data!"
+					+ "\nThere was an error reading the simulation output data.",
+					"Error Reading Data", JOptionPane.ERROR_MESSAGE);
+		}
+		component.setCursor(null);
 	}
 
 	/**
@@ -436,7 +279,6 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				input = new BufferedInputStream(new ProgressMonitorInputStream(component,
 						"Reading Reb2sac Output Data From " + new File(file).getName(),
 						new FileInputStream(new File(file))));
-				graphSpecies = new ArrayList<String>();
 				boolean reading = true;
 				char cha;
 				int readCount = 0;
@@ -517,11 +359,6 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							}
 						}
 					} catch (Exception e1) {
-						if (word.equals("")) {
-
-						} else {
-							graphSpecies.add(word);
-						}
 					}
 				}
 			} catch (Exception e) {
@@ -539,136 +376,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	 * boxes are selected.
 	 */
 	public void actionPerformed(ActionEvent e) {
-		// if a box to graph a species is selected
-		if (e.getActionCommand().contains("box")) {
-			int species = Integer.parseInt(e.getActionCommand().substring(3));
-			int select;
-			if (selected.equals("Average")) {
-				select = 0;
-			} else if (selected.equals("Variance")) {
-				select = 1;
-			} else if (selected.equals("Standard Deviation")) {
-				select = 2;
-			} else {
-				select = Integer.parseInt(selected.substring(4)) + 2;
-			}
-			graphed.get(select).set(species - 1, !graphed.get(select).get(species - 1));
-		}
-		// if the next button is clicked
-		else if (e.getSource() == next) {
-			if (monteCarlo.isSelected()) {
-				String choice = (String) select.getSelectedItem();
-				if (choice.equals("Average")) {
-					if (sim1.equals("read-in-data")) {
-						if (keep.isSelected()) {
-							XYSeriesCollection datasetReplace = new XYSeriesCollection();
-							for (int i = 0; i < boxes.size(); i++) {
-								if (boxes.get(i).isSelected()) {
-									datasetReplace.addSeries(dataset.getSeries(i));
-								}
-							}
-							dataset = datasetReplace;
-						}
-						graph(outDir1 + File.separator + "run-" + 1 + "."
-								+ printer_id1.substring(0, printer_id1.length() - 8), component,
-								printer_track_quantity1, sim1 + " average simulation results",
-								intSpecies, -1);
-					} else {
-						if (keep.isSelected()) {
-							XYSeriesCollection datasetReplace = new XYSeriesCollection();
-							for (int i = 0; i < boxes.size(); i++) {
-								if (boxes.get(i).isSelected()) {
-									datasetReplace.addSeries(dataset.getSeries(i));
-								}
-							}
-							dataset = datasetReplace;
-						}
-						graph(outDir1 + File.separator + "run-" + 1 + "."
-								+ printer_id1.substring(0, printer_id1.length() - 8), component,
-								printer_track_quantity1, sim1 + " run average simulation results",
-								intSpecies, -1);
-					}
-				} else if (choice.equals("Variance")) {
-					if (sim1.equals("read-in-data")) {
-						if (keep.isSelected()) {
-							XYSeriesCollection datasetReplace = new XYSeriesCollection();
-							for (int i = 0; i < boxes.size(); i++) {
-								if (boxes.get(i).isSelected()) {
-									datasetReplace.addSeries(dataset.getSeries(i));
-								}
-							}
-							dataset = datasetReplace;
-						}
-						graph(outDir1 + File.separator + "run-" + 1 + "."
-								+ printer_id1.substring(0, printer_id1.length() - 8), component,
-								printer_track_quantity1, sim1 + " variance simulation results",
-								intSpecies, -1);
-					} else {
-						if (keep.isSelected()) {
-							XYSeriesCollection datasetReplace = new XYSeriesCollection();
-							for (int i = 0; i < boxes.size(); i++) {
-								if (boxes.get(i).isSelected()) {
-									datasetReplace.addSeries(dataset.getSeries(i));
-								}
-							}
-							dataset = datasetReplace;
-						}
-						graph(outDir1 + File.separator + "run-" + 1 + "."
-								+ printer_id1.substring(0, printer_id1.length() - 8), component,
-								printer_track_quantity1, sim1 + " run variance simulation results",
-								intSpecies, -1);
-					}
-				} else if (choice.equals("Standard Deviation")) {
-					if (sim1.equals("read-in-data")) {
-						if (keep.isSelected()) {
-							XYSeriesCollection datasetReplace = new XYSeriesCollection();
-							for (int i = 0; i < boxes.size(); i++) {
-								if (boxes.get(i).isSelected()) {
-									datasetReplace.addSeries(dataset.getSeries(i));
-								}
-							}
-							dataset = datasetReplace;
-						}
-						graph(outDir1 + File.separator + "run-" + 1 + "."
-								+ printer_id1.substring(0, printer_id1.length() - 8), component,
-								printer_track_quantity1, sim1
-										+ " standard deviation simulation results", intSpecies, -1);
-					} else {
-						if (keep.isSelected()) {
-							XYSeriesCollection datasetReplace = new XYSeriesCollection();
-							for (int i = 0; i < boxes.size(); i++) {
-								if (boxes.get(i).isSelected()) {
-									datasetReplace.addSeries(dataset.getSeries(i));
-								}
-							}
-							dataset = datasetReplace;
-						}
-						graph(outDir1 + File.separator + "run-" + 1 + "."
-								+ printer_id1.substring(0, printer_id1.length() - 8), component,
-								printer_track_quantity1, sim1
-										+ " run standard deviation simulation results", intSpecies,
-								-1);
-					}
-				} else {
-					int next = Integer.parseInt(choice);
-					if (keep.isSelected()) {
-						XYSeriesCollection datasetReplace = new XYSeriesCollection();
-						for (int i = 0; i < boxes.size(); i++) {
-							if (boxes.get(i).isSelected()) {
-								datasetReplace.addSeries(dataset.getSeries(i));
-							}
-						}
-						dataset = datasetReplace;
-					}
-					graph(outDir1 + File.separator + "run-" + next + "."
-							+ printer_id1.substring(0, printer_id1.length() - 8), component,
-							printer_track_quantity1, sim1 + " run-" + next + " simulation results",
-							intSpecies, -1);
-				}
-			}
-		}
 		// if the change dimensions button is clicked
-		else if (e.getSource() == changeSize) {
+		if (e.getSource() == changeSize) {
+			determineMaxAndMin();
 			resize();
 		}
 		// if the edit Graph button is clicked
@@ -677,32 +387,22 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		}
 		// if the select all button is clicked
 		else if (e.getSource() == addAll) {
-			for (int i = 0; i < boxes.size(); i++) {
-				boxes.get(i).setSelected(true);
-				for (ArrayList<Boolean> b : graphed) {
-					for (int j = 0; j < b.size(); j++) {
-						b.set(j, true);
-					}
-				}
+			for (int i = 0; i < dataset.getSeriesCount(); i++) {
 				XYPlot plot = chart.getXYPlot();
 				XYItemRenderer rend = plot.getRenderer();
 				rend.setSeriesVisible(i, true);
 			}
+			determineMaxAndMin();
 			resize();
 		}
 		// if the deselect all button is clicked
 		else if (e.getSource() == removeAll) {
-			for (int i = 0; i < boxes.size(); i++) {
-				boxes.get(i).setSelected(false);
-				for (ArrayList<Boolean> b : graphed) {
-					for (int j = 0; j < b.size(); j++) {
-						b.set(j, false);
-					}
-				}
+			for (int i = 0; i < dataset.getSeriesCount(); i++) {
 				XYPlot plot = chart.getXYPlot();
 				XYItemRenderer rend = plot.getRenderer();
 				rend.setSeriesVisible(i, false);
 			}
+			determineMaxAndMin();
 			resize();
 		}
 		// if the export as jpeg button is clicked
@@ -855,9 +555,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	}
 
 	private void setUpShapesAndColors() {
-		DefaultDrawingSupplier draw = new DefaultDrawingSupplier();
+		draw = new DefaultDrawingSupplier();
 		colors = new HashMap<String, Paint>();
-		shape = new HashMap<String, Shape>();
+		shapes = new HashMap<String, Shape>();
 		colors.put("Red", draw.getNextPaint());
 		colors.put("Blue", draw.getNextPaint());
 		colors.put("Green", draw.getNextPaint());
@@ -892,16 +592,16 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		colors.put("Yellow (Light)", draw.getNextPaint());
 		colors.put("Magenta (Light)", draw.getNextPaint());
 		colors.put("Cyan (Light)", draw.getNextPaint());
-		shape.put("Square", draw.getNextShape());
-		shape.put("Circle", draw.getNextShape());
-		shape.put("Triangle", draw.getNextShape());
-		shape.put("Diamond", draw.getNextShape());
-		shape.put("Rectangle (Horizontal)", draw.getNextShape());
-		shape.put("Triangle (Upside Down)", draw.getNextShape());
-		shape.put("Circle (Half)", draw.getNextShape());
-		shape.put("Arrow", draw.getNextShape());
-		shape.put("Rectangle (Vertical)", draw.getNextShape());
-		shape.put("Arrow (Backwards)", draw.getNextShape());
+		shapes.put("Square", draw.getNextShape());
+		shapes.put("Circle", draw.getNextShape());
+		shapes.put("Triangle", draw.getNextShape());
+		shapes.put("Diamond", draw.getNextShape());
+		shapes.put("Rectangle (Horizontal)", draw.getNextShape());
+		shapes.put("Triangle (Upside Down)", draw.getNextShape());
+		shapes.put("Circle (Half)", draw.getNextShape());
+		shapes.put("Arrow", draw.getNextShape());
+		shapes.put("Rectangle (Vertical)", draw.getNextShape());
+		shapes.put("Arrow (Backwards)", draw.getNextShape());
 	}
 
 	private void editGraph() {
@@ -938,23 +638,132 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		titlePanel.add(YScale);
 		String simDirString = outDir1.split(File.separator)[outDir1.split(File.separator).length - 1];
 		DefaultMutableTreeNode simDir = new DefaultMutableTreeNode(simDirString);
-		simDir.add(new DefaultMutableTreeNode("Average"));
-		simDir.add(new DefaultMutableTreeNode("Variance"));
-		simDir.add(new DefaultMutableTreeNode("Standard Deviation"));
+		String[] files = new File(outDir1).list();
+		boolean add = false;
+		for (String file : files) {
+			if (file.contains(printer_id1.substring(0, printer_id1.length() - 8))) {
+				if (file.contains("run-")) {
+					add = true;
+				} else {
+					simDir.add(new DefaultMutableTreeNode(file.substring(0, file.length() - 4)));
+				}
+			}
+		}
+		if (add) {
+			simDir.add(new DefaultMutableTreeNode("Average"));
+			simDir.add(new DefaultMutableTreeNode("Variance"));
+			simDir.add(new DefaultMutableTreeNode("Standard Deviation"));
+		}
 		for (int i = 0; i < run; i++) {
 			if (new File(outDir1 + File.separator + "run-" + (i + 1) + "."
 					+ printer_id1.substring(0, printer_id1.length() - 8)).exists()) {
 				simDir.add(new DefaultMutableTreeNode("run-" + (i + 1)));
 			}
 		}
-		JTree tree = new JTree(simDir);
+		JPanel speciesPanel1 = new JPanel(new GridLayout(graphSpecies.size(), 1));
+		JPanel speciesPanel2 = new JPanel(new GridLayout(graphSpecies.size(), 3));
+		JPanel speciesPanel3 = new JPanel(new GridLayout(graphSpecies.size(), 3));
+		JLabel use = new JLabel("Use  ");
+		JLabel specs = new JLabel("Species");
+		JLabel color = new JLabel("Color");
+		JLabel shape = new JLabel("Shape");
+		JLabel connectedLabel = new JLabel("Connected  ");
+		JLabel visibleLabel = new JLabel("Visible");
+		JLabel filledLabel = new JLabel("Filled");
+		speciesPanel1.add(use);
+		speciesPanel2.add(specs);
+		speciesPanel2.add(color);
+		speciesPanel2.add(shape);
+		speciesPanel3.add(connectedLabel);
+		speciesPanel3.add(visibleLabel);
+		speciesPanel3.add(filledLabel);
+		final ArrayList<JCheckBox> boxes = new ArrayList<JCheckBox>();
+		final ArrayList<JTextField> series = new ArrayList<JTextField>();
+		final ArrayList<JComboBox> colors = new ArrayList<JComboBox>();
+		final ArrayList<JComboBox> shapes = new ArrayList<JComboBox>();
+		final ArrayList<JCheckBox> connected = new ArrayList<JCheckBox>();
+		final ArrayList<JCheckBox> visible = new ArrayList<JCheckBox>();
+		final ArrayList<JCheckBox> filled = new ArrayList<JCheckBox>();
+		final HashMap<String, Shape> shapey = this.shapes;
+		final HashMap<String, Paint> colory = this.colors;
+		for (int i = 0; i < graphSpecies.size() - 1; i++) {
+			JCheckBox temp = new JCheckBox();
+			temp.setActionCommand("" + i);
+			temp.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					int i = Integer.parseInt(e.getActionCommand());
+					if (((JCheckBox) e.getSource()).isSelected()) {
+						Paint p = draw.getNextPaint();
+						Shape s = draw.getNextShape();
+						Object[] set = colory.keySet().toArray();
+						for (int j = 0; j < set.length; j++) {
+							if (p == colory.get(set[j])) {
+								colors.get(i).setSelectedItem(set[j]);
+							}
+						}
+						set = shapey.keySet().toArray();
+						for (int j = 0; j < set.length; j++) {
+							if (s == shapey.get(set[j])) {
+								shapes.get(i).setSelectedItem(set[j]);
+							}
+						}
+					} else {
+						colors.get(i).setSelectedIndex(0);
+						shapes.get(i).setSelectedIndex(0);
+					}
+				}
+			});
+			boxes.add(temp);
+			visible.add(new JCheckBox());
+			visible.get(i).setSelected(true);
+			filled.add(new JCheckBox());
+			filled.get(i).setSelected(true);
+			connected.add(new JCheckBox());
+			connected.get(i).setSelected(true);
+			series.add(new JTextField(graphSpecies.get(i + 1)));
+			Object[] col = this.colors.keySet().toArray();
+			Arrays.sort(col);
+			Object[] shap = this.shapes.keySet().toArray();
+			Arrays.sort(shap);
+			JComboBox colBox = new JComboBox(col);
+			JComboBox shapBox = new JComboBox(shap);
+			colors.add(colBox);
+			shapes.add(shapBox);
+			speciesPanel1.add(boxes.get(i));
+			speciesPanel2.add(series.get(i));
+			speciesPanel2.add(colors.get(i));
+			speciesPanel2.add(shapes.get(i));
+			speciesPanel3.add(connected.get(i));
+			speciesPanel3.add(visible.get(i));
+			speciesPanel3.add(filled.get(i));
+		}
+		final JTree tree = new JTree(simDir);
 		JScrollPane scrollpane = new JScrollPane();
 		scrollpane.getViewport().add(tree);
-		selected = "";
 		tree.addTreeSelectionListener(new TreeSelectionListener() {
 			public void valueChanged(TreeSelectionEvent e) {
 				DefaultMutableTreeNode node = (DefaultMutableTreeNode) e.getPath()
 						.getLastPathComponent();
+				if (!selected.equals("")) {
+					ArrayList<GraphSpecies> remove = new ArrayList<GraphSpecies>();
+					for (GraphSpecies g : graphed) {
+						if (g.getRunNumber().equals(selected)) {
+							remove.add(g);
+						}
+					}
+					for (GraphSpecies g : remove) {
+						graphed.remove(g);
+					}
+					for (int i = 0; i < boxes.size(); i++) {
+						if (boxes.get(i).isSelected()) {
+							graphed.add(new GraphSpecies(shapey
+									.get(shapes.get(i).getSelectedItem()), colory.get(colors.get(i)
+									.getSelectedItem()), filled.get(i).isSelected(), visible.get(i)
+									.isSelected(), connected.get(i).isSelected(), selected, series
+									.get(i).getText().trim(), i));
+						}
+					}
+				}
 				selected = node.toString();
 				int select;
 				if (selected.equals("Average")) {
@@ -971,77 +780,38 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					}
 				}
 				if (select != -1) {
+					for (int i = 0; i < series.size(); i++) {
+						series.get(i).setText(graphSpecies.get(i + 1));
+					}
 					for (int i = 0; i < boxes.size(); i++) {
-						try {
-							boxes.get(i).setSelected(graphed.get(select).get(i));
-						} catch (Exception e1) {
-
+						boxes.get(i).setSelected(false);
+					}
+					for (GraphSpecies g : graphed) {
+						if (g.getRunNumber().equals(selected)) {
+							boxes.get(g.getNumber()).setSelected(true);
+							series.get(g.getNumber()).setText(g.getSpecies());
+							colors.get(g.getNumber()).setSelectedItem(
+									g.getShapeAndPaint().getPaintName());
+							shapes.get(g.getNumber()).setSelectedItem(
+									g.getShapeAndPaint().getShapeName());
+							connected.get(g.getNumber()).setSelected(g.getConnected());
+							visible.get(g.getNumber()).setSelected(g.getVisible());
+							filled.get(g.getNumber()).setSelected(g.getFilled());
 						}
 					}
 				}
 			}
 		});
-		tree.setSelectionRow(1);
-		JPanel speciesPanel1 = new JPanel(new GridLayout(dataset.getSeriesCount() + 1, 1));
-		JPanel speciesPanel2 = new JPanel(new GridLayout(dataset.getSeriesCount() + 1, 3));
-		JPanel speciesPanel3 = new JPanel(new GridLayout(dataset.getSeriesCount() + 1, 3));
-		JLabel use = new JLabel("Use  ");
-		JLabel specs = new JLabel("Species");
-		JLabel color = new JLabel("Color");
-		JLabel shape = new JLabel("Shape");
-		JLabel connectedLabel = new JLabel("Connected  ");
-		JLabel visibleLabel = new JLabel("Visible");
-		JLabel filledLabel = new JLabel("Filled");
-		speciesPanel1.add(use);
-		speciesPanel2.add(specs);
-		speciesPanel2.add(color);
-		speciesPanel2.add(shape);
-		speciesPanel3.add(connectedLabel);
-		speciesPanel3.add(visibleLabel);
-		speciesPanel3.add(filledLabel);
-		final ArrayList<JTextField> series = new ArrayList<JTextField>();
-		final ArrayList<JComboBox> colors = new ArrayList<JComboBox>();
-		final ArrayList<JComboBox> shapes = new ArrayList<JComboBox>();
-		final ArrayList<JCheckBox> connected = new ArrayList<JCheckBox>();
-		final ArrayList<JCheckBox> visible = new ArrayList<JCheckBox>();
-		final ArrayList<JCheckBox> filled = new ArrayList<JCheckBox>();
-		for (int i = 0; i < dataset.getSeriesCount(); i++) {
-			XYLineAndShapeRenderer rend = (XYLineAndShapeRenderer) chart.getXYPlot().getRenderer();
-			JCheckBox tempBox = new JCheckBox();
-			tempBox.setSelected(rend.getSeriesShapesVisible(i));
-			visible.add(tempBox);
-			tempBox = new JCheckBox();
-			tempBox.setSelected(rend.getSeriesShapesFilled(i));
-			filled.add(tempBox);
-			tempBox = new JCheckBox();
-			tempBox.setSelected(rend.getSeriesLinesVisible(i));
-			connected.add(tempBox);
-			series.add(new JTextField(dataset.getSeries(i).getKey().toString(), 5));
-			Object[] col = this.colors.keySet().toArray();
-			Arrays.sort(col);
-			Object[] shap = this.shape.keySet().toArray();
-			Arrays.sort(shap);
-			JComboBox colBox = new JComboBox(col);
-			for (Object c : col) {
-				if (this.colors.get(c).equals(chart.getXYPlot().getRenderer().getSeriesPaint(i))) {
-					colBox.setSelectedItem(c);
-				}
+		boolean stop = false;
+		for (int i = 1; i < tree.getRowCount(); i++) {
+			tree.setSelectionRow(i);
+			if (selected.equals(lastSelected)) {
+				stop = true;
+				break;
 			}
-			JComboBox shapBox = new JComboBox(shap);
-			for (Object s : shap) {
-				if (this.shape.get(s).equals(chart.getXYPlot().getRenderer().getSeriesShape(i))) {
-					shapBox.setSelectedItem(s);
-				}
-			}
-			colors.add(colBox);
-			shapes.add(shapBox);
-			speciesPanel1.add(boxes.get(i));
-			speciesPanel2.add(series.get(i));
-			speciesPanel2.add(colors.get(i));
-			speciesPanel2.add(shapes.get(i));
-			speciesPanel3.add(connected.get(i));
-			speciesPanel3.add(visible.get(i));
-			speciesPanel3.add(filled.get(i));
+		}
+		if (!stop) {
+			tree.setSelectionRow(1);
 		}
 		JScrollPane scroll = new JScrollPane();
 		scroll.setPreferredSize(new Dimension(950, 500));
@@ -1058,55 +828,100 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		scroll.setViewportView(editPanel);
 		final JFrame f = new JFrame("Edit Title And Labels");
 		JButton ok = new JButton("Ok");
-		final HashMap<String, Shape> shapey = this.shape;
-		final HashMap<String, Paint> colory = this.colors;
 		ok.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				for (int i = 0; i < boxes.size(); i++) {
-					if (boxes.get(i).isSelected()) {
-						XYPlot plot = chart.getXYPlot();
-						XYItemRenderer rend = plot.getRenderer();
-						rend.setSeriesVisible(i, true);
-					} else {
-						XYPlot plot = chart.getXYPlot();
-						XYItemRenderer rend = plot.getRenderer();
-						rend.setSeriesVisible(i, false);
-					}
-					XYLineAndShapeRenderer rend = (XYLineAndShapeRenderer) chart.getXYPlot()
-							.getRenderer();
-					if (visible.get(i).isSelected()) {
-						rend.setSeriesShapesVisible(i, true);
-					} else {
-						rend.setSeriesShapesVisible(i, false);
-					}
-					if (filled.get(i).isSelected()) {
-						rend.setSeriesShapesFilled(i, true);
-					} else {
-						rend.setSeriesShapesFilled(i, false);
-					}
-					if (connected.get(i).isSelected()) {
-						rend.setSeriesLinesVisible(i, true);
-					} else {
-						rend.setSeriesLinesVisible(i, false);
+				lastSelected = selected;
+				tree.setSelectionRow(-1);
+				for (int i = 1; i < tree.getRowCount(); i++) {
+					tree.setSelectionRow(i);
+				}
+				for (int i = 1; i < tree.getRowCount(); i++) {
+					tree.setSelectionRow(i);
+					if (selected.equals(lastSelected)) {
+						break;
 					}
 				}
+				selected = "";
+				ArrayList<XYSeries> graphData = new ArrayList<XYSeries>();
+				XYLineAndShapeRenderer rend = (XYLineAndShapeRenderer) chart.getXYPlot()
+						.getRenderer();
+				int thisOne = -1;
+				for (GraphSpecies g : graphed) {
+					thisOne++;
+					rend.setSeriesVisible(thisOne, true);
+					rend.setSeriesLinesVisible(thisOne, g.getConnected());
+					rend.setSeriesShapesFilled(thisOne, g.getFilled());
+					rend.setSeriesShapesVisible(thisOne, g.getVisible());
+					rend.setSeriesPaint(thisOne, g.getShapeAndPaint().getPaint());
+					rend.setSeriesShape(thisOne, g.getShapeAndPaint().getShape());
+					if (!g.getRunNumber().equals("Average") && !g.getRunNumber().equals("Variance")
+							&& !g.getRunNumber().equals("Standard Deviation")) {
+						readGraphSpecies(outDir1 + File.separator + g.getRunNumber() + "."
+								+ printer_id1.substring(0, printer_id1.length() - 8), biomodelsim
+								.frame());
+						ArrayList<ArrayList<Double>> data = readData(outDir1 + File.separator
+								+ g.getRunNumber() + "."
+								+ printer_id1.substring(0, printer_id1.length() - 8), biomodelsim
+								.frame(), printer_track_quantity1, g.getRunNumber());
+						for (int i = 2; i < graphSpecies.size(); i++) {
+							String index = graphSpecies.get(i);
+							ArrayList<Double> index2 = data.get(i);
+							int j = i;
+							while ((j > 1)
+									&& graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
+								graphSpecies.set(j, graphSpecies.get(j - 1));
+								data.set(j, data.get(j - 1));
+								j = j - 1;
+							}
+							graphSpecies.set(j, index);
+							data.set(j, index2);
+						}
+						graphData.add(new XYSeries(g.getSpecies()));
+						if (data.size() != 0) {
+							for (int i = 0; i < (data.get(0)).size(); i++) {
+								graphData.get(graphData.size() - 1).add((data.get(0)).get(i),
+										(data.get(g.getNumber() + 1)).get(i));
+							}
+						}
+					} else {
+						readGraphSpecies(outDir1 + File.separator + "run-1."
+								+ printer_id1.substring(0, printer_id1.length() - 8), biomodelsim
+								.frame());
+						ArrayList<ArrayList<Double>> data = readData(outDir1 + File.separator
+								+ "run-1." + printer_id1.substring(0, printer_id1.length() - 8),
+								biomodelsim.frame(), printer_track_quantity1, g.getRunNumber()
+										.toLowerCase());
+						for (int i = 2; i < graphSpecies.size(); i++) {
+							String index = graphSpecies.get(i);
+							ArrayList<Double> index2 = data.get(i);
+							int j = i;
+							while ((j > 1)
+									&& graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
+								graphSpecies.set(j, graphSpecies.get(j - 1));
+								data.set(j, data.get(j - 1));
+								j = j - 1;
+							}
+							graphSpecies.set(j, index);
+							data.set(j, index2);
+						}
+						graphData.add(new XYSeries(g.getSpecies()));
+						if (data.size() != 0) {
+							for (int i = 0; i < (data.get(0)).size(); i++) {
+								graphData.get(graphData.size() - 1).add((data.get(0)).get(i),
+										(data.get(g.getNumber() + 1)).get(i));
+							}
+						}
+					}
+				}
+				dataset = new XYSeriesCollection();
+				for (int i = 0; i < graphData.size(); i++) {
+					dataset.addSeries(graphData.get(i));
+				}
+				fixGraph(title.getText().trim(), x.getText().trim(), y.getText().trim(), dataset);
+				chart.getXYPlot().setRenderer(rend);
 				XYPlot plot = chart.getXYPlot();
-				chart.setTitle(title.getText().trim());
 				time = x.getText().trim();
-				chart.getXYPlot().getDomainAxis().setLabel(time);
 				printer_track_quantity1 = y.getText().trim();
-				chart.getXYPlot().getRangeAxis().setLabel(printer_track_quantity1);
-				for (int i = 0; i < dataset.getSeriesCount(); i++) {
-					dataset.getSeries(i).setKey(series.get(i).getText().trim());
-					chart.getXYPlot().getRenderer().setSeriesPaint(i,
-							colory.get(colors.get(i).getSelectedItem()));
-					chart.getXYPlot().getRenderer().setSeriesShape(i,
-							shapey.get(shapes.get(i).getSelectedItem()));
-					if (boxes.get(i).isSelected()) {
-						XYItemRenderer render = plot.getRenderer();
-						render.setSeriesVisible(i, true);
-					}
-				}
 				try {
 					NumberAxis axis = (NumberAxis) plot.getRangeAxis();
 					axis.setAutoTickUnitSelection(false);
@@ -1173,6 +988,53 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		int yy = screenSize.height / 2 - frameSize.height / 2;
 		f.setLocation(xx, yy);
 		f.setVisible(true);
+	}
+
+	private void fixGraph(String title, String x, String y, XYSeriesCollection dataset) {
+		chart = ChartFactory.createXYLineChart(title, x, y, dataset, PlotOrientation.VERTICAL,
+				true, true, false);
+		chart.addProgressListener(this);
+		ChartPanel graph = new ChartPanel(chart);
+		graph.addMouseListener(this);
+		changeSize = new JButton("Resize Graph To Best Fit");
+		addAll = new JButton("Graph All");
+		removeAll = new JButton("Ungraph All");
+		editGraph = new JButton("Edit Graph");
+		changeSize.addActionListener(this);
+		addAll.addActionListener(this);
+		removeAll.addActionListener(this);
+		editGraph.addActionListener(this);
+		JPanel ButtonHolder = new JPanel();
+		exportJPeg = new JButton("Export As JPEG");
+		exportPng = new JButton("Export As PNG");
+		exportPdf = new JButton("Export As PDF");
+		exportEps = new JButton("Export As EPS");
+		exportSvg = new JButton("Export As SVG");
+		exportJPeg.addActionListener(this);
+		exportPng.addActionListener(this);
+		exportPdf.addActionListener(this);
+		exportEps.addActionListener(this);
+		exportSvg.addActionListener(this);
+		ButtonHolder.add(exportJPeg);
+		ButtonHolder.add(exportPng);
+		ButtonHolder.add(exportPdf);
+		ButtonHolder.add(exportEps);
+		ButtonHolder.add(exportSvg);
+		JPanel AllButtonsHolder = new JPanel(new BorderLayout());
+		JPanel SpecialButtonHolder = new JPanel();
+		SpecialButtonHolder.add(editGraph);
+		SpecialButtonHolder.add(addAll);
+		SpecialButtonHolder.add(removeAll);
+		SpecialButtonHolder.add(changeSize);
+		AllButtonsHolder.add(SpecialButtonHolder, "Center");
+		JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, ButtonHolder, null);
+		splitPane.setDividerSize(0);
+		AllButtonsHolder.add(splitPane, "South");
+		this.removeAll();
+		this.setLayout(new BorderLayout());
+		this.add(graph, "Center");
+		this.add(AllButtonsHolder, "South");
+		this.revalidate();
 	}
 
 	/**
@@ -1386,10 +1248,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		ArrayList<ArrayList<Double>> variance = new ArrayList<ArrayList<Double>>();
 		ArrayList<ArrayList<Double>> deviation = new ArrayList<ArrayList<Double>>();
 		try {
-			input = new BufferedInputStream(new ProgressMonitorInputStream(component,
+			input = new BufferedInputStream(new ProgressMonitorInputStream(biomodelsim.frame(),
 					"Reading Reb2sac Output Data From " + new File(startFile).getName(),
 					new FileInputStream(new File(startFile))));
-			graphSpecies = new ArrayList<String>();
 			boolean reading = true;
 			char cha;
 			int readCount = 0;
@@ -1465,7 +1326,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 											.exists()) {
 										input = new BufferedInputStream(
 												new ProgressMonitorInputStream(
-														component,
+														biomodelsim.frame(),
 														"Reading Reb2sac Output Data From "
 																+ new File(
 																		outDir1
@@ -1605,10 +1466,6 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						}
 					}
 				} catch (Exception e1) {
-					if (word.equals("")) {
-					} else {
-						graphSpecies.add(word);
-					}
 				}
 			}
 			deviation = new ArrayList<ArrayList<Double>>();
@@ -1624,7 +1481,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				}
 			}
 		} catch (Exception e) {
-			JOptionPane.showMessageDialog(component, "Error Reading Data!"
+			JOptionPane.showMessageDialog(biomodelsim.frame(), "Error Reading Data!"
 					+ "\nThere was an error reading the simulation output data.",
 					"Error Reading Data", JOptionPane.ERROR_MESSAGE);
 		}
@@ -1653,6 +1510,75 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 		private Paint getPaint() {
 			return paint;
+		}
+
+		private String getShapeName() {
+			Object[] set = shapes.keySet().toArray();
+			for (int i = 0; i < set.length; i++) {
+				if (shape == shapes.get(set[i])) {
+					return (String) set[i];
+				}
+			}
+			return "Unknown Shape";
+		}
+
+		private String getPaintName() {
+			Object[] set = colors.keySet().toArray();
+			for (int i = 0; i < set.length; i++) {
+				if (paint == colors.get(set[i])) {
+					return (String) set[i];
+				}
+			}
+			return "Unknown Color";
+		}
+	}
+
+	private class GraphSpecies {
+		private ShapeAndPaint sP;
+
+		private boolean filled, visible, connected;
+
+		private String runNumber, species;
+
+		private int number;
+
+		private GraphSpecies(Shape s, Paint p, boolean filled, boolean visible, boolean connected,
+				String runNumber, String species, int number) {
+			sP = new ShapeAndPaint(s, p);
+			this.filled = filled;
+			this.visible = visible;
+			this.connected = connected;
+			this.runNumber = runNumber;
+			this.species = species;
+			this.number = number;
+		}
+
+		private int getNumber() {
+			return number;
+		}
+
+		private String getSpecies() {
+			return species;
+		}
+
+		private ShapeAndPaint getShapeAndPaint() {
+			return sP;
+		}
+
+		private boolean getFilled() {
+			return filled;
+		}
+
+		private boolean getVisible() {
+			return visible;
+		}
+
+		private boolean getConnected() {
+			return connected;
+		}
+
+		private String getRunNumber() {
+			return runNumber;
 		}
 	}
 }
