@@ -83,7 +83,11 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 	private LinkedList<GraphSpecies> graphed;
 
-	private DefaultDrawingSupplier draw;
+	private Queue<Paint> thePaints;
+
+	private Queue<Shape> theShapes;
+
+	private int ode;
 
 	/**
 	 * Creates a Graph Object from the data given and calls the private graph
@@ -245,6 +249,15 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					"Error Reading Data", JOptionPane.ERROR_MESSAGE);
 		}
 		component.setCursor(null);
+		for (int i = 2; i < graphSpecies.size(); i++) {
+			String index = graphSpecies.get(i);
+			int j = i;
+			while ((j > 1) && graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
+				graphSpecies.set(j, graphSpecies.get(j - 1));
+				j = j - 1;
+			}
+			graphSpecies.set(j, index);
+		}
 	}
 
 	/**
@@ -555,7 +568,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	}
 
 	private void setUpShapesAndColors() {
-		draw = new DefaultDrawingSupplier();
+		DefaultDrawingSupplier draw = new DefaultDrawingSupplier();
+		theShapes = new LinkedList<Shape>();
+		thePaints = new LinkedList<Paint>();
 		colors = new HashMap<String, Paint>();
 		shapes = new HashMap<String, Shape>();
 		colors.put("Red", draw.getNextPaint());
@@ -573,12 +588,12 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		colors.put("Magenta (Dark)", draw.getNextPaint());
 		colors.put("Cyan (Dark)", draw.getNextPaint());
 		colors.put("Black", draw.getNextPaint());
-		colors.put("Red 2", draw.getNextPaint());
-		colors.put("Blue 2", draw.getNextPaint());
-		colors.put("Green 2", draw.getNextPaint());
-		colors.put("Yellow 2", draw.getNextPaint());
-		colors.put("Magenta 2", draw.getNextPaint());
-		colors.put("Cyan 2", draw.getNextPaint());
+		colors.put("Red ", draw.getNextPaint());
+		colors.put("Blue ", draw.getNextPaint());
+		colors.put("Green ", draw.getNextPaint());
+		colors.put("Yellow ", draw.getNextPaint());
+		colors.put("Magenta ", draw.getNextPaint());
+		colors.put("Cyan ", draw.getNextPaint());
 		colors.put("Gray (Light)", draw.getNextPaint());
 		colors.put("Red (Extra Dark)", draw.getNextPaint());
 		colors.put("Blue (Extra Dark)", draw.getNextPaint());
@@ -592,6 +607,40 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		colors.put("Yellow (Light)", draw.getNextPaint());
 		colors.put("Magenta (Light)", draw.getNextPaint());
 		colors.put("Cyan (Light)", draw.getNextPaint());
+		thePaints.add(draw.getNextPaint());
+		thePaints.add(draw.getNextPaint());
+		thePaints.add(draw.getNextPaint());
+		thePaints.add(draw.getNextPaint());
+		thePaints.add(draw.getNextPaint());
+		thePaints.add(draw.getNextPaint());
+		thePaints.add(draw.getNextPaint());
+		thePaints.add(draw.getNextPaint());
+		thePaints.add(draw.getNextPaint());
+		thePaints.add(draw.getNextPaint());
+		thePaints.add(draw.getNextPaint());
+		thePaints.add(draw.getNextPaint());
+		thePaints.add(draw.getNextPaint());
+		thePaints.add(draw.getNextPaint());
+		thePaints.add(draw.getNextPaint());
+		thePaints.add(draw.getNextPaint());
+		thePaints.add(draw.getNextPaint());
+		thePaints.add(draw.getNextPaint());
+		thePaints.add(draw.getNextPaint());
+		thePaints.add(draw.getNextPaint());
+		thePaints.add(draw.getNextPaint());
+		thePaints.add(draw.getNextPaint());
+		thePaints.add(draw.getNextPaint());
+		thePaints.add(draw.getNextPaint());
+		thePaints.add(draw.getNextPaint());
+		thePaints.add(draw.getNextPaint());
+		thePaints.add(draw.getNextPaint());
+		thePaints.add(draw.getNextPaint());
+		thePaints.add(draw.getNextPaint());
+		thePaints.add(draw.getNextPaint());
+		thePaints.add(draw.getNextPaint());
+		thePaints.add(draw.getNextPaint());
+		thePaints.add(draw.getNextPaint());
+		thePaints.add(draw.getNextPaint());
 		shapes.put("Square", draw.getNextShape());
 		shapes.put("Circle", draw.getNextShape());
 		shapes.put("Triangle", draw.getNextShape());
@@ -602,6 +651,16 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		shapes.put("Arrow", draw.getNextShape());
 		shapes.put("Rectangle (Vertical)", draw.getNextShape());
 		shapes.put("Arrow (Backwards)", draw.getNextShape());
+		theShapes.add(draw.getNextShape());
+		theShapes.add(draw.getNextShape());
+		theShapes.add(draw.getNextShape());
+		theShapes.add(draw.getNextShape());
+		theShapes.add(draw.getNextShape());
+		theShapes.add(draw.getNextShape());
+		theShapes.add(draw.getNextShape());
+		theShapes.add(draw.getNextShape());
+		theShapes.add(draw.getNextShape());
+		theShapes.add(draw.getNextShape());
 	}
 
 	private void editGraph() {
@@ -640,12 +699,14 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		DefaultMutableTreeNode simDir = new DefaultMutableTreeNode(simDirString);
 		String[] files = new File(outDir1).list();
 		boolean add = false;
+		ode = 0;
 		for (String file : files) {
 			if (file.contains(printer_id1.substring(0, printer_id1.length() - 8))) {
 				if (file.contains("run-")) {
 					add = true;
 				} else {
 					simDir.add(new DefaultMutableTreeNode(file.substring(0, file.length() - 4)));
+					ode++;
 				}
 			}
 		}
@@ -693,8 +754,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				public void actionPerformed(ActionEvent e) {
 					int i = Integer.parseInt(e.getActionCommand());
 					if (((JCheckBox) e.getSource()).isSelected()) {
-						Paint p = draw.getNextPaint();
-						Shape s = draw.getNextShape();
+						Paint p = thePaints.poll();
+						Shape s = theShapes.poll();
+						thePaints.add(p);
+						theShapes.add(s);
 						Object[] set = colory.keySet().toArray();
 						for (int j = 0; j < set.length; j++) {
 							if (p == colory.get(set[j])) {
@@ -767,14 +830,16 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				selected = node.toString();
 				int select;
 				if (selected.equals("Average")) {
-					select = 0;
+					select = 0 + ode;
 				} else if (selected.equals("Variance")) {
-					select = 1;
+					select = 1 + ode;
 				} else if (selected.equals("Standard Deviation")) {
-					select = 2;
+					select = 2 + ode;
+				} else if (selected.contains("-run")) {
+					select = ode;
 				} else {
 					try {
-						select = Integer.parseInt(selected.substring(4)) + 2;
+						select = Integer.parseInt(selected.substring(4)) + 2 + ode;
 					} catch (Exception e1) {
 						select = -1;
 					}
