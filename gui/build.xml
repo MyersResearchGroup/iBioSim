@@ -39,11 +39,11 @@
      </path>
     
     <!-- default task -->		
-    <target name="all" depends="pre-clean,deploy,build,post-clean">
+    <target name="all" depends="pre-clean,build,deploy,post-clean">
     </target>
 
     <!-- executes the gui -->
-    <target name="exe" depends="deploy,build">
+    <target name="exe" depends="all">
 	<exec executable="${bin.dir}/gui"/>
     </target>
 
@@ -54,7 +54,6 @@
       <mkdir dir="${build.classes}"/>
       <mkdir dir="${build.dir}"/>
       <mkdir dir="${build.lib}"/>
-      <mkdir dir="${doc.dir}/api"/>
 
       <!-- Set the internal value for current time -->
       <!-- These can be referenced in an echo... -->
@@ -76,22 +75,31 @@
         <jar jarfile="${build.lib}/gui.jar" basedir="${build.classes}">
 	    <manifest>
 		<attribute name="Main-Class" value="biomodelsim.core.gui.BioSim"/>
-		<attribute name="Class-Path" value="${basedir}/lib/jcommon-1.0.9.jar ${basedir}/lib/jfreechart-1.0.5.jar ${basedir}/lib/itext-2.0.3.jar ${basedir}/lib/batik-awt-util.jar ${basedir}/lib/batik-dom.jar ${basedir}/lib/batik-ext.jar ${basedir}/lib/batik-svggen.jar ${basedir}/lib/batik-util.jar ${basedir}/lib/batik-xml.jar ${basedir}/lib/epsgraphics.jar ${basedir}/lib/libsbml/lib/libsbmlj.jar"/>
+		<attribute name="Class-Path" value="../../lib/jcommon-1.0.9.jar ../../lib/jfreechart-1.0.5.jar ../../lib/itext-2.0.3.jar ../../lib/batik-awt-util.jar ../../lib/batik-dom.jar ../../lib/batik-ext.jar ../../lib/batik-svggen.jar ../../lib/batik-util.jar ../../lib/batik-xml.jar ../../lib/epsgraphics.jar ../../lib/libsbml/lib/libsbmlj.jar"/>
       	    </manifest>
 	</jar>
     </target>
  
-    <!-- Deploy  -->
-    <target name="deploy" depends="build,javadoc">
+    <!-- Deploy -->
+    <target name="deploy" depends="build">
         <!-- Create the distribution directory -->        
         <mkdir dir="${dist.dir}"/>
         <mkdir dir="${dist.dir}/lib"/>
-        <mkdir dir="${dist.dir}/doc"/>
+	<mkdir dir="${dist.dir}/classes"/>
 
         <!-- Copy the primary program and modules -->                
         <copy todir="${dist.dir}/lib">
           <fileset dir="${build.lib}" includes="*.jar"/>
-        </copy>       
+        </copy>
+	<copy todir="${dist.dir}/classes">
+	  <fileset dir="${build.classes}"/>
+        </copy>                
+    </target>
+
+    <!-- Deploy Documentation -->
+    <target name="deploy-javadoc" depends="javadoc,deploy">
+        <!-- Create the documentation distribution directory -->
+        <mkdir dir="${dist.dir}/doc"/>        
 
         <!-- Copy the documentation -->        
         <copy todir="${dist.dir}/doc">
@@ -110,17 +118,16 @@
                use="true" />
     </target>
 
-    <!-- Delete classfiles built during previous builds.  Leave directories -->
+    <!-- Delete classfiles built during previous builds. -->
     <target name="pre-clean">
 	<delete dir="${dist.dir}"/>
 	<delete dir="${build.dir}"/>
         <delete dir="${doc.dir}"/>
     </target>
 
-    <!-- Delete build files after build is done.  Leave directories -->
+    <!-- Delete build files after build is done. -->
     <target name="post-clean">
         <delete dir="${build.dir}"/>
 	<delete dir="${doc.dir}"/>
     </target>
-
 </project>
