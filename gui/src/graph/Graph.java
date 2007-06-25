@@ -83,11 +83,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 	private LinkedList<GraphSpecies> graphed;
 
-	private Queue<Paint> thePaints;
-
-	private Queue<Shape> theShapes;
-
 	private int ode;
+
+	private DefaultDrawingSupplier draw;
 
 	/**
 	 * Creates a Graph Object from the data given and calls the private graph
@@ -123,6 +121,15 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	private void graph(String file, String printer_track_quantity, String label, int readIn) {
 		// creates the graph from the dataset and adds it to a chart panel
 		readGraphSpecies(file, biomodelsim.frame());
+		for (int i = 2; i < graphSpecies.size(); i++) {
+			String index = graphSpecies.get(i);
+			int j = i;
+			while ((j > 1) && graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
+				graphSpecies.set(j, graphSpecies.get(j - 1));
+				j = j - 1;
+			}
+			graphSpecies.set(j, index);
+		}
 		chart = ChartFactory.createXYLineChart(label, time, printer_track_quantity, dataset,
 				PlotOrientation.VERTICAL, true, true, false);
 		chart.addProgressListener(this);
@@ -249,15 +256,6 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					"Error Reading Data", JOptionPane.ERROR_MESSAGE);
 		}
 		component.setCursor(null);
-		for (int i = 2; i < graphSpecies.size(); i++) {
-			String index = graphSpecies.get(i);
-			int j = i;
-			while ((j > 1) && graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
-				graphSpecies.set(j, graphSpecies.get(j - 1));
-				j = j - 1;
-			}
-			graphSpecies.set(j, index);
-		}
 	}
 
 	/**
@@ -568,9 +566,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	}
 
 	private void setUpShapesAndColors() {
-		DefaultDrawingSupplier draw = new DefaultDrawingSupplier();
-		theShapes = new LinkedList<Shape>();
-		thePaints = new LinkedList<Paint>();
+		draw = new DefaultDrawingSupplier();
 		colors = new HashMap<String, Paint>();
 		shapes = new HashMap<String, Shape>();
 		colors.put("Red", draw.getNextPaint());
@@ -607,40 +603,6 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		colors.put("Yellow (Light)", draw.getNextPaint());
 		colors.put("Magenta (Light)", draw.getNextPaint());
 		colors.put("Cyan (Light)", draw.getNextPaint());
-		thePaints.add(draw.getNextPaint());
-		thePaints.add(draw.getNextPaint());
-		thePaints.add(draw.getNextPaint());
-		thePaints.add(draw.getNextPaint());
-		thePaints.add(draw.getNextPaint());
-		thePaints.add(draw.getNextPaint());
-		thePaints.add(draw.getNextPaint());
-		thePaints.add(draw.getNextPaint());
-		thePaints.add(draw.getNextPaint());
-		thePaints.add(draw.getNextPaint());
-		thePaints.add(draw.getNextPaint());
-		thePaints.add(draw.getNextPaint());
-		thePaints.add(draw.getNextPaint());
-		thePaints.add(draw.getNextPaint());
-		thePaints.add(draw.getNextPaint());
-		thePaints.add(draw.getNextPaint());
-		thePaints.add(draw.getNextPaint());
-		thePaints.add(draw.getNextPaint());
-		thePaints.add(draw.getNextPaint());
-		thePaints.add(draw.getNextPaint());
-		thePaints.add(draw.getNextPaint());
-		thePaints.add(draw.getNextPaint());
-		thePaints.add(draw.getNextPaint());
-		thePaints.add(draw.getNextPaint());
-		thePaints.add(draw.getNextPaint());
-		thePaints.add(draw.getNextPaint());
-		thePaints.add(draw.getNextPaint());
-		thePaints.add(draw.getNextPaint());
-		thePaints.add(draw.getNextPaint());
-		thePaints.add(draw.getNextPaint());
-		thePaints.add(draw.getNextPaint());
-		thePaints.add(draw.getNextPaint());
-		thePaints.add(draw.getNextPaint());
-		thePaints.add(draw.getNextPaint());
 		shapes.put("Square", draw.getNextShape());
 		shapes.put("Circle", draw.getNextShape());
 		shapes.put("Triangle", draw.getNextShape());
@@ -651,16 +613,6 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		shapes.put("Arrow", draw.getNextShape());
 		shapes.put("Rectangle (Vertical)", draw.getNextShape());
 		shapes.put("Arrow (Backwards)", draw.getNextShape());
-		theShapes.add(draw.getNextShape());
-		theShapes.add(draw.getNextShape());
-		theShapes.add(draw.getNextShape());
-		theShapes.add(draw.getNextShape());
-		theShapes.add(draw.getNextShape());
-		theShapes.add(draw.getNextShape());
-		theShapes.add(draw.getNextShape());
-		theShapes.add(draw.getNextShape());
-		theShapes.add(draw.getNextShape());
-		theShapes.add(draw.getNextShape());
 	}
 
 	private void editGraph() {
@@ -724,20 +676,16 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		JPanel speciesPanel1 = new JPanel(new GridLayout(graphSpecies.size(), 1));
 		JPanel speciesPanel2 = new JPanel(new GridLayout(graphSpecies.size(), 3));
 		JPanel speciesPanel3 = new JPanel(new GridLayout(graphSpecies.size(), 3));
-		JLabel use = new JLabel("Use  ");
+		final JCheckBox use = new JCheckBox("Use");
 		JLabel specs = new JLabel("Species");
 		JLabel color = new JLabel("Color");
 		JLabel shape = new JLabel("Shape");
-		JLabel connectedLabel = new JLabel("Connected  ");
-		JLabel visibleLabel = new JLabel("Visible");
-		JLabel filledLabel = new JLabel("Filled");
-		speciesPanel1.add(use);
-		speciesPanel2.add(specs);
-		speciesPanel2.add(color);
-		speciesPanel2.add(shape);
-		speciesPanel3.add(connectedLabel);
-		speciesPanel3.add(visibleLabel);
-		speciesPanel3.add(filledLabel);
+		final JCheckBox connectedLabel = new JCheckBox("Connected");
+		final JCheckBox visibleLabel = new JCheckBox("Visible");
+		final JCheckBox filledLabel = new JCheckBox("Filled");
+		connectedLabel.setSelected(true);
+		visibleLabel.setSelected(true);
+		filledLabel.setSelected(true);
 		final ArrayList<JCheckBox> boxes = new ArrayList<JCheckBox>();
 		final ArrayList<JTextField> series = new ArrayList<JTextField>();
 		final ArrayList<JComboBox> colors = new ArrayList<JComboBox>();
@@ -745,8 +693,72 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		final ArrayList<JCheckBox> connected = new ArrayList<JCheckBox>();
 		final ArrayList<JCheckBox> visible = new ArrayList<JCheckBox>();
 		final ArrayList<JCheckBox> filled = new ArrayList<JCheckBox>();
+		use.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (use.isSelected()) {
+					for (JCheckBox box : boxes) {
+						if (!box.isSelected()) {
+							box.doClick();
+						}
+					}
+				} else {
+					for (JCheckBox box : boxes) {
+						if (box.isSelected()) {
+							box.doClick();
+						}
+					}
+				}
+			}
+		});
+		connectedLabel.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (connectedLabel.isSelected()) {
+					for (JCheckBox box : connected) {
+						box.setSelected(true);
+					}
+				} else {
+					for (JCheckBox box : connected) {
+						box.setSelected(false);
+					}
+				}
+			}
+		});
+		visibleLabel.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (visibleLabel.isSelected()) {
+					for (JCheckBox box : visible) {
+						box.setSelected(true);
+					}
+				} else {
+					for (JCheckBox box : visible) {
+						box.setSelected(false);
+					}
+				}
+			}
+		});
+		filledLabel.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (filledLabel.isSelected()) {
+					for (JCheckBox box : filled) {
+						box.setSelected(true);
+					}
+				} else {
+					for (JCheckBox box : filled) {
+						box.setSelected(false);
+					}
+				}
+			}
+		});
+		speciesPanel1.add(use);
+		speciesPanel2.add(specs);
+		speciesPanel2.add(color);
+		speciesPanel2.add(shape);
+		speciesPanel3.add(connectedLabel);
+		speciesPanel3.add(visibleLabel);
+		speciesPanel3.add(filledLabel);
 		final HashMap<String, Shape> shapey = this.shapes;
 		final HashMap<String, Paint> colory = this.colors;
+		final JTree tree = new JTree(simDir);
 		for (int i = 0; i < graphSpecies.size() - 1; i++) {
 			JCheckBox temp = new JCheckBox();
 			temp.setActionCommand("" + i);
@@ -754,25 +766,42 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				public void actionPerformed(ActionEvent e) {
 					int i = Integer.parseInt(e.getActionCommand());
 					if (((JCheckBox) e.getSource()).isSelected()) {
-						Paint p = thePaints.poll();
-						Shape s = theShapes.poll();
-						thePaints.add(p);
-						theShapes.add(s);
+						// DefaultDrawingSupplier draw2 = new
+						// DefaultDrawingSupplier();
+						// int[] selectedRow = tree.getSelectionRows();
+						// Paint paint = draw2.getNextPaint();
+						// boolean used = true;
+						// while (used) {
+						// boolean paintUsed = false;
+						// for (int j = 1; j < tree.getRowCount(); j++) {
+						// tree.setSelectionRow(j);
+						// for (int k = 0; k <boxes.size(); k ++) {
+						// if (boxes.get(k).isSelected()) {
+						// if (colors.get(k) == paint) {
+						// paintUsed = true;
+						// }
+						// shapes.get(k);
+						// }
+						// }
+						// }
+						// if (paintUsed)
+						// }
+						// tree.setSelectionRows(selectedRow);
+						Paint paint = draw.getNextPaint();
 						Object[] set = colory.keySet().toArray();
 						for (int j = 0; j < set.length; j++) {
-							if (p == colory.get(set[j])) {
+							if (paint == colory.get(set[j])) {
 								colors.get(i).setSelectedItem(set[j]);
 							}
 						}
+						Shape shape = draw.getNextShape();
 						set = shapey.keySet().toArray();
 						for (int j = 0; j < set.length; j++) {
-							if (s == shapey.get(set[j])) {
+							if (shape == shapey.get(set[j])) {
 								shapes.get(i).setSelectedItem(set[j]);
 							}
 						}
 					} else {
-						colors.get(i).setSelectedIndex(0);
-						shapes.get(i).setSelectedIndex(0);
 					}
 				}
 			});
@@ -800,7 +829,6 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			speciesPanel3.add(visible.get(i));
 			speciesPanel3.add(filled.get(i));
 		}
-		final JTree tree = new JTree(simDir);
 		JScrollPane scrollpane = new JScrollPane();
 		scrollpane.getViewport().add(tree);
 		tree.addTreeSelectionListener(new TreeSelectionListener() {
