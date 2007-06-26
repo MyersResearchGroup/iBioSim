@@ -41,11 +41,6 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	 */
 	private static final long serialVersionUID = 4350596002373546900L;
 
-	/*
-	 * Buttons used in graph window
-	 */
-	private JButton changeSize, addAll, removeAll, editGraph;
-
 	private JFreeChart chart; // Graph of the output data
 
 	private int run; // total number of runs
@@ -69,8 +64,6 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 	private String time; // label for x-axis on chart
 
-	private XYSeriesCollection dataset; // dataset of data
-
 	private BioSim biomodelsim; // tstubd gui
 
 	private JButton exportJPeg, exportPng, exportPdf, exportEps, exportSvg; // buttons
@@ -85,7 +78,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 	private int ode;
 
-	private DefaultDrawingSupplier draw;
+	private JCheckBox resize;
 
 	/**
 	 * Creates a Graph Object from the data given and calls the private graph
@@ -101,24 +94,28 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		this.printer_id1 = printer_id;
 		this.time = time;
 		this.biomodelsim = biomodelsim;
+		XYSeriesCollection data;
 		if (dataset == null) {
-			this.dataset = new XYSeriesCollection();
+			data = new XYSeriesCollection();
 		} else {
-			this.dataset = dataset;
+			data = dataset;
 		}
 
 		// graph the output data
 		setUpShapesAndColors();
 		graphed = new LinkedList<GraphSpecies>();
 		selected = "";
-		graph(file, printer_track_quantity, label, readIn);
+		graph(file, printer_track_quantity, label, readIn, data);
 	}
 
 	/**
 	 * This private helper method calls the private readData method, sets up a
 	 * graph frame, and graphs the data.
+	 * 
+	 * @param dataset
 	 */
-	private void graph(String file, String printer_track_quantity, String label, int readIn) {
+	private void graph(String file, String printer_track_quantity, String label, int readIn,
+			XYSeriesCollection dataset) {
 		// creates the graph from the dataset and adds it to a chart panel
 		readGraphSpecies(file, biomodelsim.frame());
 		for (int i = 2; i < graphSpecies.size(); i++) {
@@ -137,20 +134,14 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		graph.addMouseListener(this);
 
 		// creates text fields for changing the graph's dimensions
+		resize = new JCheckBox("Auto Resize");
+		resize.setSelected(true);
 		XMin = new JTextField();
 		XMax = new JTextField();
 		XScale = new JTextField();
 		YMin = new JTextField();
 		YMax = new JTextField();
 		YScale = new JTextField();
-		changeSize = new JButton("Resize Graph To Best Fit");
-		addAll = new JButton("Graph All");
-		removeAll = new JButton("Ungraph All");
-		editGraph = new JButton("Edit Graph");
-		changeSize.addActionListener(this);
-		addAll.addActionListener(this);
-		removeAll.addActionListener(this);
-		editGraph.addActionListener(this);
 
 		// creates the buttons for the graph frame
 		JPanel ButtonHolder = new JPanel();
@@ -169,26 +160,18 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		ButtonHolder.add(exportPdf);
 		ButtonHolder.add(exportEps);
 		ButtonHolder.add(exportSvg);
-		JPanel AllButtonsHolder = new JPanel(new BorderLayout());
 
 		// puts all the components of the graph gui into a display panel
-		JPanel SpecialButtonHolder = new JPanel();
-		SpecialButtonHolder.add(editGraph);
-		SpecialButtonHolder.add(addAll);
-		SpecialButtonHolder.add(removeAll);
-		SpecialButtonHolder.add(changeSize);
-		AllButtonsHolder.add(SpecialButtonHolder, "Center");
 		JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, ButtonHolder, null);
 		splitPane.setDividerSize(0);
-		AllButtonsHolder.add(splitPane, "South");
 		this.removeAll();
 		this.setLayout(new BorderLayout());
 		this.add(graph, "Center");
-		this.add(AllButtonsHolder, "South");
+		this.add(splitPane, "South");
 
 		// determines maximum and minimum values and resizes
-		determineMaxAndMin();
-		resize();
+		determineMaxAndMin(dataset);
+		resize(dataset);
 		this.revalidate();
 	}
 
@@ -387,37 +370,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	 * boxes are selected.
 	 */
 	public void actionPerformed(ActionEvent e) {
-		// if the change dimensions button is clicked
-		if (e.getSource() == changeSize) {
-			determineMaxAndMin();
-			resize();
-		}
-		// if the edit Graph button is clicked
-		else if (e.getSource() == editGraph) {
-			editGraph();
-		}
-		// if the select all button is clicked
-		else if (e.getSource() == addAll) {
-			for (int i = 0; i < dataset.getSeriesCount(); i++) {
-				XYPlot plot = chart.getXYPlot();
-				XYItemRenderer rend = plot.getRenderer();
-				rend.setSeriesVisible(i, true);
-			}
-			determineMaxAndMin();
-			resize();
-		}
-		// if the deselect all button is clicked
-		else if (e.getSource() == removeAll) {
-			for (int i = 0; i < dataset.getSeriesCount(); i++) {
-				XYPlot plot = chart.getXYPlot();
-				XYItemRenderer rend = plot.getRenderer();
-				rend.setSeriesVisible(i, false);
-			}
-			determineMaxAndMin();
-			resize();
-		}
 		// if the export as jpeg button is clicked
-		else if (e.getSource() == exportJPeg) {
+		if (e.getSource() == exportJPeg) {
 			export(0);
 		}
 		// if the export as png button is clicked
@@ -440,8 +394,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 	/**
 	 * Private method used to calculate max and min of the graph.
+	 * 
+	 * @param dataset
 	 */
-	private void determineMaxAndMin() {
+	private void determineMaxAndMin(XYSeriesCollection dataset) {
 		maxAndMin = new ArrayList<double[]>();
 		XYPlot plot = chart.getXYPlot();
 		for (int j = 0; j < dataset.getSeriesCount(); j++) {
@@ -449,8 +405,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			double maxY = Double.MIN_VALUE;
 			double minX = Double.MAX_VALUE;
 			double maxX = Double.MIN_VALUE;
-			XYSeriesCollection dataset = (XYSeriesCollection) plot.getDataset();
-			XYSeries series = dataset.getSeries(j);
+			XYSeriesCollection dataset1 = (XYSeriesCollection) plot.getDataset();
+			XYSeries series = dataset1.getSeries(j);
 			for (int k = 0; k < series.getItemCount(); k++) {
 				maxY = Math.max(series.getY(k).doubleValue(), maxY);
 				minY = Math.min(series.getY(k).doubleValue(), minY);
@@ -465,7 +421,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	/**
 	 * Private method used to auto resize the graph.
 	 */
-	private void resize() {
+	private void resize(XYSeriesCollection dataset) {
 		NumberFormat num = NumberFormat.getInstance();
 		num.setMaximumFractionDigits(4);
 		num.setGroupingUsed(false);
@@ -566,7 +522,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	}
 
 	private void setUpShapesAndColors() {
-		draw = new DefaultDrawingSupplier();
+		DefaultDrawingSupplier draw = new DefaultDrawingSupplier();
 		colors = new HashMap<String, Paint>();
 		shapes = new HashMap<String, Shape>();
 		colors.put("Red", draw.getNextPaint());
@@ -616,19 +572,77 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	}
 
 	private void editGraph() {
-		JPanel titlePanel = new JPanel(new GridLayout(3, 6));
+		JPanel titlePanel = new JPanel(new GridLayout(4, 6));
 		JLabel titleLabel = new JLabel("Title:");
 		JLabel xLabel = new JLabel("X-Axis Label:");
 		JLabel yLabel = new JLabel("Y-Axis Label:");
 		final JTextField title = new JTextField(chart.getTitle().getText(), 5);
 		final JTextField x = new JTextField(chart.getXYPlot().getDomainAxis().getLabel(), 5);
 		final JTextField y = new JTextField(chart.getXYPlot().getRangeAxis().getLabel(), 5);
-		JLabel xMin = new JLabel("X-Min:");
-		JLabel xMax = new JLabel("X-Max:");
-		JLabel xScale = new JLabel("X-Step:");
-		JLabel yMin = new JLabel("Y-Min:");
-		JLabel yMax = new JLabel("Y-Max:");
-		JLabel yScale = new JLabel("Y-Step:");
+		final JLabel xMin = new JLabel("X-Min:");
+		final JLabel xMax = new JLabel("X-Max:");
+		final JLabel xScale = new JLabel("X-Step:");
+		final JLabel yMin = new JLabel("Y-Min:");
+		final JLabel yMax = new JLabel("Y-Max:");
+		final JLabel yScale = new JLabel("Y-Step:");
+		resize.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (((JCheckBox) e.getSource()).isSelected()) {
+					xMin.setEnabled(false);
+					XMin.setEnabled(false);
+					xMax.setEnabled(false);
+					XMax.setEnabled(false);
+					xScale.setEnabled(false);
+					XScale.setEnabled(false);
+					yMin.setEnabled(false);
+					YMin.setEnabled(false);
+					yMax.setEnabled(false);
+					YMax.setEnabled(false);
+					yScale.setEnabled(false);
+					YScale.setEnabled(false);
+				} else {
+					xMin.setEnabled(true);
+					XMin.setEnabled(true);
+					xMax.setEnabled(true);
+					XMax.setEnabled(true);
+					xScale.setEnabled(true);
+					XScale.setEnabled(true);
+					yMin.setEnabled(true);
+					YMin.setEnabled(true);
+					yMax.setEnabled(true);
+					YMax.setEnabled(true);
+					yScale.setEnabled(true);
+					YScale.setEnabled(true);
+				}
+			}
+		});
+		if (resize.isSelected()) {
+			xMin.setEnabled(false);
+			XMin.setEnabled(false);
+			xMax.setEnabled(false);
+			XMax.setEnabled(false);
+			xScale.setEnabled(false);
+			XScale.setEnabled(false);
+			yMin.setEnabled(false);
+			YMin.setEnabled(false);
+			yMax.setEnabled(false);
+			YMax.setEnabled(false);
+			yScale.setEnabled(false);
+			YScale.setEnabled(false);
+		} else {
+			xMin.setEnabled(true);
+			XMin.setEnabled(true);
+			xMax.setEnabled(true);
+			XMax.setEnabled(true);
+			xScale.setEnabled(true);
+			XScale.setEnabled(true);
+			yMin.setEnabled(true);
+			YMin.setEnabled(true);
+			yMax.setEnabled(true);
+			YMax.setEnabled(true);
+			yScale.setEnabled(true);
+			YScale.setEnabled(true);
+		}
 		titlePanel.add(titleLabel);
 		titlePanel.add(title);
 		titlePanel.add(xMin);
@@ -647,8 +661,14 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		titlePanel.add(XScale);
 		titlePanel.add(yScale);
 		titlePanel.add(YScale);
+		titlePanel.add(new JPanel());
+		titlePanel.add(new JPanel());
+		titlePanel.add(new JPanel());
+		titlePanel.add(new JPanel());
+		titlePanel.add(new JPanel());
+		titlePanel.add(resize);
 		String simDirString = outDir1.split(File.separator)[outDir1.split(File.separator).length - 1];
-		DefaultMutableTreeNode simDir = new DefaultMutableTreeNode(simDirString);
+		final DefaultMutableTreeNode simDir = new DefaultMutableTreeNode(simDirString);
 		String[] files = new File(outDir1).list();
 		boolean add = false;
 		ode = 0;
@@ -766,33 +786,160 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				public void actionPerformed(ActionEvent e) {
 					int i = Integer.parseInt(e.getActionCommand());
 					if (((JCheckBox) e.getSource()).isSelected()) {
-						// DefaultDrawingSupplier draw2 = new
-						// DefaultDrawingSupplier();
-						// int[] selectedRow = tree.getSelectionRows();
-						// Paint paint = draw2.getNextPaint();
-						// boolean used = true;
-						// while (used) {
-						// boolean paintUsed = false;
-						// for (int j = 1; j < tree.getRowCount(); j++) {
-						// tree.setSelectionRow(j);
-						// for (int k = 0; k <boxes.size(); k ++) {
-						// if (boxes.get(k).isSelected()) {
-						// if (colors.get(k) == paint) {
-						// paintUsed = true;
-						// }
-						// shapes.get(k);
-						// }
-						// }
-						// }
-						// if (paintUsed)
-						// }
-						// tree.setSelectionRows(selectedRow);
+						String s = series.get(i).getText();
+						((JCheckBox) e.getSource()).setSelected(false);
+						int[] cols = new int[34];
+						int[] shaps = new int[10];
+						int[] selectedRow = tree.getSelectionRows();
+						for (int j = 1; j < tree.getRowCount(); j++) {
+							tree.setSelectionRow(j);
+							for (int k = 0; k < boxes.size(); k++) {
+								if (boxes.get(k).isSelected()) {
+									if (colors.get(k).getSelectedItem().equals("Red")) {
+										cols[0]++;
+									} else if (colors.get(k).getSelectedItem().equals("Blue")) {
+										cols[1]++;
+									} else if (colors.get(k).getSelectedItem().equals("Green")) {
+										cols[2]++;
+									} else if (colors.get(k).getSelectedItem().equals("Yellow")) {
+										cols[3]++;
+									} else if (colors.get(k).getSelectedItem().equals("Magenta")) {
+										cols[4]++;
+									} else if (colors.get(k).getSelectedItem().equals("Cyan")) {
+										cols[5]++;
+									} else if (colors.get(k).getSelectedItem().equals("Tan")) {
+										cols[6]++;
+									} else if (colors.get(k).getSelectedItem()
+											.equals("Gray (Dark)")) {
+										cols[7]++;
+									} else if (colors.get(k).getSelectedItem().equals("Red (Dark)")) {
+										cols[8]++;
+									} else if (colors.get(k).getSelectedItem()
+											.equals("Blue (Dark)")) {
+										cols[9]++;
+									} else if (colors.get(k).getSelectedItem().equals(
+											"Green (Dark)")) {
+										cols[10]++;
+									} else if (colors.get(k).getSelectedItem().equals(
+											"Yellow (Dark)")) {
+										cols[11]++;
+									} else if (colors.get(k).getSelectedItem().equals(
+											"Magenta (Dark)")) {
+										cols[12]++;
+									} else if (colors.get(k).getSelectedItem()
+											.equals("Cyan (Dark)")) {
+										cols[13]++;
+									} else if (colors.get(k).getSelectedItem().equals("Black")) {
+										cols[14]++;
+									} else if (colors.get(k).getSelectedItem().equals("Red ")) {
+										cols[15]++;
+									} else if (colors.get(k).getSelectedItem().equals("Blue ")) {
+										cols[16]++;
+									} else if (colors.get(k).getSelectedItem().equals("Green ")) {
+										cols[17]++;
+									} else if (colors.get(k).getSelectedItem().equals("Yellow ")) {
+										cols[18]++;
+									} else if (colors.get(k).getSelectedItem().equals("Magenta ")) {
+										cols[19]++;
+									} else if (colors.get(k).getSelectedItem().equals("Cyan ")) {
+										cols[20]++;
+									} else if (colors.get(k).getSelectedItem().equals(
+											"Gray (Light)")) {
+										cols[21]++;
+									} else if (colors.get(k).getSelectedItem().equals(
+											"Red (Extra Dark)")) {
+										cols[22]++;
+									} else if (colors.get(k).getSelectedItem().equals(
+											"Blue (Extra Dark)")) {
+										cols[23]++;
+									} else if (colors.get(k).getSelectedItem().equals(
+											"Green (Extra Dark)")) {
+										cols[24]++;
+									} else if (colors.get(k).getSelectedItem().equals(
+											"Yellow (Extra Dark)")) {
+										cols[25]++;
+									} else if (colors.get(k).getSelectedItem().equals(
+											"Magenta (Extra Dark)")) {
+										cols[26]++;
+									} else if (colors.get(k).getSelectedItem().equals(
+											"Cyan (Extra Dark)")) {
+										cols[27]++;
+									} else if (colors.get(k).getSelectedItem()
+											.equals("Red (Light)")) {
+										cols[28]++;
+									} else if (colors.get(k).getSelectedItem().equals(
+											"Blue (Light)")) {
+										cols[29]++;
+									} else if (colors.get(k).getSelectedItem().equals(
+											"Green (Light)")) {
+										cols[30]++;
+									} else if (colors.get(k).getSelectedItem().equals(
+											"Yellow (Light)")) {
+										cols[31]++;
+									} else if (colors.get(k).getSelectedItem().equals(
+											"Magenta (Light)")) {
+										cols[32]++;
+									} else if (colors.get(k).getSelectedItem().equals(
+											"Cyan (Light)")) {
+										cols[33]++;
+									}
+									if (shapes.get(k).getSelectedItem().equals("Square")) {
+										shaps[0]++;
+									} else if (shapes.get(k).getSelectedItem().equals("Circle")) {
+										shaps[1]++;
+									} else if (shapes.get(k).getSelectedItem().equals("Triangle")) {
+										shaps[2]++;
+									} else if (shapes.get(k).getSelectedItem().equals("Diamond")) {
+										shaps[3]++;
+									} else if (shapes.get(k).getSelectedItem().equals(
+											"Rectangle (Horizontal)")) {
+										shaps[4]++;
+									} else if (shapes.get(k).getSelectedItem().equals(
+											"Triangle (Upside Down)")) {
+										shaps[5]++;
+									} else if (shapes.get(k).getSelectedItem().equals(
+											"Circle (Half)")) {
+										shaps[6]++;
+									} else if (shapes.get(k).getSelectedItem().equals("Arrow")) {
+										shaps[7]++;
+									} else if (shapes.get(k).getSelectedItem().equals(
+											"Rectangle (Vertical)")) {
+										shaps[8]++;
+									} else if (shapes.get(k).getSelectedItem().equals(
+											"Arrow (Backwards)")) {
+										shaps[9]++;
+									}
+								}
+							}
+						}
+						tree.setSelectionRows(selectedRow);
+						((JCheckBox) e.getSource()).setSelected(true);
+						series.get(i).setText(s);
+						int colorSet = 0;
+						for (int j = 1; j < cols.length; j++) {
+							if (cols[j] < cols[colorSet]) {
+								colorSet = j;
+							}
+						}
+						int shapeSet = 0;
+						for (int j = 1; j < shaps.length; j++) {
+							if (shaps[j] < shaps[shapeSet]) {
+								shapeSet = j;
+							}
+						}
+						DefaultDrawingSupplier draw = new DefaultDrawingSupplier();
+						for (int j = 0; j < colorSet; j++) {
+							draw.getNextPaint();
+						}
 						Paint paint = draw.getNextPaint();
 						Object[] set = colory.keySet().toArray();
 						for (int j = 0; j < set.length; j++) {
 							if (paint == colory.get(set[j])) {
 								colors.get(i).setSelectedItem(set[j]);
 							}
+						}
+						for (int j = 0; j < shapeSet; j++) {
+							draw.getNextShape();
 						}
 						Shape shape = draw.getNextShape();
 						set = shapey.keySet().toArray();
@@ -801,7 +948,20 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								shapes.get(i).setSelectedItem(set[j]);
 							}
 						}
+						boolean allChecked = true;
+						for (JCheckBox temp : boxes) {
+							if (!temp.isSelected()) {
+								allChecked = false;
+							}
+						}
+						if (allChecked) {
+							use.setSelected(true);
+						}
 					} else {
+						use.setSelected(false);
+						colors.get(i).setSelectedIndex(0);
+						shapes.get(i).setSelectedIndex(0);
+
 					}
 				}
 			});
@@ -892,6 +1052,48 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							filled.get(g.getNumber()).setSelected(g.getFilled());
 						}
 					}
+					boolean allChecked = true;
+					for (int i = 0; i < boxes.size(); i++) {
+						if (!boxes.get(i).isSelected()) {
+							allChecked = false;
+							String s = "";
+							int[] selection = tree.getSelectionRows();
+							if (selection != null) {
+								for (int j : selection) {
+									s = simDir.getChildAt(j - 1).toString();
+								}
+								if (s.equals("Average")) {
+									s = "(" + (char) 967 + ")";
+								} else if (s.equals("Variance")) {
+									s = "(" + (char) 948 + (char) 178 + ")";
+								} else if (s.equals("Standard Deviation")) {
+									s = "(" + (char) 948 + ")";
+								} else {
+									s = "(" + s + ")";
+								}
+								String text = series.get(i).getText();
+								String end = "";
+								if (text.length() >= s.length()) {
+									for (int j = 0; j < s.length(); j++) {
+										end = text.charAt(text.length() - 1 - j) + end;
+									}
+									if (!s.equals(end)) {
+										text += " " + s;
+									}
+								} else {
+									text += " " + s;
+								}
+								series.get(i).setText(text);
+							}
+							colors.get(i).setSelectedIndex(0);
+							shapes.get(i).setSelectedIndex(0);
+						}
+					}
+					if (allChecked) {
+						use.setSelected(true);
+					} else {
+						use.setSelected(false);
+					}
 				}
 			}
 		});
@@ -907,7 +1109,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			tree.setSelectionRow(1);
 		}
 		JScrollPane scroll = new JScrollPane();
-		scroll.setPreferredSize(new Dimension(950, 500));
+		scroll.setPreferredSize(new Dimension(1050, 500));
 		JPanel speciesPanel = new JPanel(new BorderLayout());
 		speciesPanel.add(speciesPanel1, "West");
 		speciesPanel.add(speciesPanel2, "Center");
@@ -923,6 +1125,35 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		JButton ok = new JButton("Ok");
 		ok.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				double minY;
+				double maxY;
+				double scaleY;
+				double minX;
+				double maxX;
+				double scaleX;
+				try {
+					minY = Double.parseDouble(YMin.getText().trim());
+					maxY = Double.parseDouble(YMax.getText().trim());
+					scaleY = Double.parseDouble(YScale.getText().trim());
+					minX = Double.parseDouble(XMin.getText().trim());
+					maxX = Double.parseDouble(XMax.getText().trim());
+					scaleX = Double.parseDouble(XScale.getText().trim());
+					NumberFormat num = NumberFormat.getInstance();
+					num.setMaximumFractionDigits(4);
+					num.setGroupingUsed(false);
+					minY = Double.parseDouble(num.format(minY));
+					maxY = Double.parseDouble(num.format(maxY));
+					scaleY = Double.parseDouble(num.format(scaleY));
+					minX = Double.parseDouble(num.format(minX));
+					maxX = Double.parseDouble(num.format(maxX));
+					scaleX = Double.parseDouble(num.format(scaleX));
+				} catch (Exception e1) {
+					JOptionPane.showMessageDialog(biomodelsim.frame(),
+							"Must enter doubles into the inputs "
+									+ "to change the graph's dimensions!", "Error",
+							JOptionPane.ERROR_MESSAGE);
+					return;
+				}
 				lastSelected = selected;
 				tree.setSelectionRow(-1);
 				for (int i = 1; i < tree.getRowCount(); i++) {
@@ -939,6 +1170,17 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				XYLineAndShapeRenderer rend = (XYLineAndShapeRenderer) chart.getXYPlot()
 						.getRenderer();
 				int thisOne = -1;
+				for (int i = 1; i < graphed.size(); i++) {
+					GraphSpecies index = graphed.get(i);
+					int j = i;
+					while ((j > 0)
+							&& (graphed.get(j - 1).getSpecies().compareToIgnoreCase(
+									index.getSpecies()) > 0)) {
+						graphed.set(j, graphed.get(j - 1));
+						j = j - 1;
+					}
+					graphed.set(j, index);
+				}
 				for (GraphSpecies g : graphed) {
 					thisOne++;
 					rend.setSeriesVisible(thisOne, true);
@@ -1006,7 +1248,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						}
 					}
 				}
-				dataset = new XYSeriesCollection();
+				XYSeriesCollection dataset = new XYSeriesCollection();
 				for (int i = 0; i < graphData.size(); i++) {
 					dataset.addSeries(graphData.get(i));
 				}
@@ -1015,35 +1257,18 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				XYPlot plot = chart.getXYPlot();
 				time = x.getText().trim();
 				printer_track_quantity1 = y.getText().trim();
-				try {
+				if (resize.isSelected()) {
+					determineMaxAndMin(dataset);
+					resize(dataset);
+				} else {
 					NumberAxis axis = (NumberAxis) plot.getRangeAxis();
 					axis.setAutoTickUnitSelection(false);
-					NumberFormat num = NumberFormat.getInstance();
-					num.setMaximumFractionDigits(4);
-					num.setGroupingUsed(false);
-					double minY = Double.parseDouble(YMin.getText().trim());
-					minY = Double.parseDouble(num.format(minY));
-					double maxY = Double.parseDouble(YMax.getText().trim());
-					maxY = Double.parseDouble(num.format(maxY));
-					double scaleY = Double.parseDouble(YScale.getText().trim());
-					scaleY = Double.parseDouble(num.format(scaleY));
 					axis.setRange(minY, maxY);
 					axis.setTickUnit(new NumberTickUnit(scaleY));
 					axis = (NumberAxis) plot.getDomainAxis();
 					axis.setAutoTickUnitSelection(false);
-					double minX = Double.parseDouble(XMin.getText().trim());
-					minX = Double.parseDouble(num.format(minX));
-					double maxX = Double.parseDouble(XMax.getText().trim());
-					maxX = Double.parseDouble(num.format(maxX));
-					double scaleX = Double.parseDouble(XScale.getText().trim());
-					scaleX = Double.parseDouble(num.format(scaleX));
 					axis.setRange(minX, maxX);
 					axis.setTickUnit(new NumberTickUnit(scaleX));
-				} catch (Exception e1) {
-					JOptionPane.showMessageDialog(biomodelsim.frame(),
-							"Must enter doubles into the inputs "
-									+ "to change the graph's dimensions!", "Error",
-							JOptionPane.ERROR_MESSAGE);
 				}
 				f.dispose();
 			}
@@ -1051,6 +1276,18 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		JButton cancel = new JButton("Cancel");
 		cancel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				lastSelected = selected;
+				tree.setSelectionRow(-1);
+				for (int i = 1; i < tree.getRowCount(); i++) {
+					tree.setSelectionRow(i);
+				}
+				for (int i = 1; i < tree.getRowCount(); i++) {
+					tree.setSelectionRow(i);
+					if (selected.equals(lastSelected)) {
+						break;
+					}
+				}
+				selected = "";
 				f.dispose();
 			}
 		});
@@ -1089,14 +1326,6 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		chart.addProgressListener(this);
 		ChartPanel graph = new ChartPanel(chart);
 		graph.addMouseListener(this);
-		changeSize = new JButton("Resize Graph To Best Fit");
-		addAll = new JButton("Graph All");
-		removeAll = new JButton("Ungraph All");
-		editGraph = new JButton("Edit Graph");
-		changeSize.addActionListener(this);
-		addAll.addActionListener(this);
-		removeAll.addActionListener(this);
-		editGraph.addActionListener(this);
 		JPanel ButtonHolder = new JPanel();
 		exportJPeg = new JButton("Export As JPEG");
 		exportPng = new JButton("Export As PNG");
@@ -1113,20 +1342,12 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		ButtonHolder.add(exportPdf);
 		ButtonHolder.add(exportEps);
 		ButtonHolder.add(exportSvg);
-		JPanel AllButtonsHolder = new JPanel(new BorderLayout());
-		JPanel SpecialButtonHolder = new JPanel();
-		SpecialButtonHolder.add(editGraph);
-		SpecialButtonHolder.add(addAll);
-		SpecialButtonHolder.add(removeAll);
-		SpecialButtonHolder.add(changeSize);
-		AllButtonsHolder.add(SpecialButtonHolder, "Center");
 		JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, ButtonHolder, null);
 		splitPane.setDividerSize(0);
-		AllButtonsHolder.add(splitPane, "South");
 		this.removeAll();
 		this.setLayout(new BorderLayout());
 		this.add(graph, "Center");
-		this.add(AllButtonsHolder, "South");
+		this.add(splitPane, "South");
 		this.revalidate();
 	}
 
