@@ -4,7 +4,9 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.util.*;
+
 import javax.swing.*;
+
 import biomodelsim.core.gui.*;
 import buttons.core.gui.*;
 
@@ -461,7 +463,7 @@ public class Learn extends JPanel implements ActionListener {
 									|| cha == '=' || cha == '#') {
 								if (!word.equals("") && !word.equals("time")) {
 									try {
-										Integer.parseInt(word);
+										Double.parseDouble(word);
 									} catch (Exception e2) {
 										species.add(word);
 									}
@@ -583,7 +585,7 @@ public class Learn extends JPanel implements ActionListener {
 									|| cha == '=' || cha == '#') {
 								if (!word.equals("") && !word.equals("time")) {
 									try {
-										Integer.parseInt(word);
+										Double.parseDouble(word);
 									} catch (Exception e2) {
 										species.add(word);
 									}
