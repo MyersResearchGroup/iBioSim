@@ -492,9 +492,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	 * the title and labels of the chart.
 	 */
 	public void mouseClicked(MouseEvent e) {
-		if (e.getClickCount() == 2) {
-			editGraph();
-		}
+		editGraph();
 	}
 
 	/**
@@ -572,6 +570,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	}
 
 	private void editGraph() {
+		final ArrayList<GraphSpecies> old = new ArrayList<GraphSpecies>();
+		for (GraphSpecies g : graphed) {
+			old.add(g);
+		}
 		JPanel titlePanel = new JPanel(new GridLayout(4, 6));
 		JLabel titleLabel = new JLabel("Title:");
 		JLabel xLabel = new JLabel("X-Axis Label:");
@@ -1276,18 +1278,14 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		JButton cancel = new JButton("Cancel");
 		cancel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				lastSelected = selected;
-				tree.setSelectionRow(-1);
-				for (int i = 1; i < tree.getRowCount(); i++) {
-					tree.setSelectionRow(i);
-				}
-				for (int i = 1; i < tree.getRowCount(); i++) {
-					tree.setSelectionRow(i);
-					if (selected.equals(lastSelected)) {
-						break;
-					}
-				}
 				selected = "";
+				int size = graphed.size();
+				for (int i = 0; i < size; i++) {
+					graphed.remove();
+				}
+				for (GraphSpecies g : old) {
+					graphed.add(g);
+				}
 				f.dispose();
 			}
 		});

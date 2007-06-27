@@ -268,7 +268,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		// Creates the interesting species JList
 		intSpecies = new JList();
 		species = new JList();
-		spLabel = new JLabel("Availiable Species:");
+		spLabel = new JLabel("Available Species:");
 		speciesLabel = new JLabel("Interesting Species:");
 		JPanel speciesHolder = new JPanel(new BorderLayout());
 		JPanel listOfSpeciesLabelHolder = new JPanel(new GridLayout(1, 2));
@@ -400,7 +400,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		removeTermCond.addActionListener(this);
 		clearTermCond.addActionListener(this);
 		amountTerm = new JTextField("0.0", 15);
-		JLabel spLabel2 = new JLabel("Availiable Species:");
+		JLabel spLabel2 = new JLabel("Available Species:");
 		JLabel specLabel = new JLabel("Termination Conditions:");
 		JScrollPane scroll2 = new JScrollPane();
 		scroll2.setMinimumSize(new Dimension(260, 200));
@@ -470,7 +470,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		removeCheckState.addActionListener(this);
 		clearCheckState.addActionListener(this);
 		amountState = new JTextField("0.0", 15);
-		JLabel speciLabel = new JLabel("Availiable Species:");
+		JLabel speciLabel = new JLabel("Available Species:");
 		JLabel stateLabel = new JLabel("States User Is Interested In Reaching:");
 		JScrollPane scroll7 = new JScrollPane();
 		scroll7.setMinimumSize(new Dimension(260, 200));

@@ -613,12 +613,19 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			} else {
 				String addComp = "";
 				addComp = compID.getText().trim();
-				if (usedIDs.contains(addComp)
-						&& !addComp.equals((String) compartments.getSelectedValue())) {
-					JOptionPane.showMessageDialog(compartFrame,
-							"You must enter a unique id into the id field!", "Enter A Unique ID",
-							JOptionPane.ERROR_MESSAGE);
-					return;
+				if (usedIDs.contains(addComp)) {
+					if (addSaveCompart.getText().equals("Save")
+							&& !addComp.equals((String) compartments.getSelectedValue())) {
+						JOptionPane.showMessageDialog(compartFrame,
+								"You must enter a unique id into the id field!",
+								"Enter A Unique ID", JOptionPane.ERROR_MESSAGE);
+						return;
+					} else if (addSaveCompart.getText().equals("Add")) {
+						JOptionPane.showMessageDialog(compartFrame,
+								"You must enter a unique id into the id field!",
+								"Enter A Unique ID", JOptionPane.ERROR_MESSAGE);
+						return;
+					}
 				}
 				if (addSaveCompart.getText().equals("Save")) {
 					int index = compartments.getSelectedIndex();
@@ -679,13 +686,20 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					double initial = Double.parseDouble(init.getText().trim());
 					String addSpec = ID.getText().trim() + " " + comp.getSelectedItem() + " "
 							+ initial;
-					if (usedIDs.contains(ID.getText().trim())
-							&& !ID.getText().trim().equals(
-									((String) species.getSelectedValue()).split(" ")[0])) {
-						JOptionPane.showMessageDialog(speciesFrame,
-								"You must enter a unique id into the id field!",
-								"Enter A Unique ID", JOptionPane.ERROR_MESSAGE);
-						return;
+					if (usedIDs.contains(ID.getText().trim())) {
+						if (addSaveSpecies.getText().equals("Save")
+								&& !ID.getText().trim().equals(
+										((String) species.getSelectedValue()).split(" ")[0])) {
+							JOptionPane.showMessageDialog(speciesFrame,
+									"You must enter a unique id into the id field!",
+									"Enter A Unique ID", JOptionPane.ERROR_MESSAGE);
+							return;
+						} else if (addSaveSpecies.getText().equals("Add")) {
+							JOptionPane.showMessageDialog(speciesFrame,
+									"You must enter a unique id into the id field!",
+									"Enter A Unique ID", JOptionPane.ERROR_MESSAGE);
+							return;
+						}
 					}
 					if (addSaveSpecies.getText().equals("Save")) {
 						int index = species.getSelectedIndex();
@@ -792,12 +806,20 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			} else {
 				String reac;
 				reac = reacID.getText().trim();
-				if (usedIDs.contains(reacID.getText().trim())
-						&& !reacID.getText().trim().equals((String) reactions.getSelectedValue())) {
-					JOptionPane.showMessageDialog(reactionFrame,
-							"You must enter a unique id into the id field!", "Enter A Unique ID",
-							JOptionPane.ERROR_MESSAGE);
-					return;
+				if (usedIDs.contains(reacID.getText().trim())) {
+					if (addSaveReactions.getText().equals("Save")
+							&& !reacID.getText().trim().equals(
+									(String) reactions.getSelectedValue())) {
+						JOptionPane.showMessageDialog(reactionFrame,
+								"You must enter a unique id into the id field!",
+								"Enter A Unique ID", JOptionPane.ERROR_MESSAGE);
+						return;
+					} else if (addSaveReactions.getText().equals("Add")) {
+						JOptionPane.showMessageDialog(reactionFrame,
+								"You must enter a unique id into the id field!",
+								"Enter A Unique ID", JOptionPane.ERROR_MESSAGE);
+						return;
+					}
 				}
 				int kineticCheck;
 				if (addSaveReactions.getText().equals("Save")) {
@@ -1114,13 +1136,20 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				try {
 					double value = Double.parseDouble(paramValue.getText().trim());
 					String param = paramID.getText().trim() + " " + value;
-					if (usedIDs.contains(paramID.getText().trim())
-							&& !paramID.getText().trim().equals(
-									((String) parameters.getSelectedValue()).split(" ")[0])) {
-						JOptionPane.showMessageDialog(parameterFrame,
-								"You must enter a unique id into the id field!",
-								"Enter A Unique ID", JOptionPane.ERROR_MESSAGE);
-						return;
+					if (usedIDs.contains(paramID.getText().trim())) {
+						if (addSaveParams.getText().equals("Save")
+								&& !paramID.getText().trim().equals(
+										((String) parameters.getSelectedValue()).split(" ")[0])) {
+							JOptionPane.showMessageDialog(parameterFrame,
+									"You must enter a unique id into the id field!",
+									"Enter A Unique ID", JOptionPane.ERROR_MESSAGE);
+							return;
+						} else if (addSaveParams.getText().equals("Add")) {
+							JOptionPane.showMessageDialog(parameterFrame,
+									"You must enter a unique id into the id field!",
+									"Enter A Unique ID", JOptionPane.ERROR_MESSAGE);
+							return;
+						}
 					}
 					if (addSaveParams.getText().equals("Save")) {
 						int index = parameters.getSelectedIndex();
@@ -1189,13 +1218,20 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				try {
 					double value = Double.parseDouble(reacParamValue.getText().trim());
 					String param = reacParamID.getText().trim() + " " + value;
-					if (usedIDs.contains(reacParamID.getText().trim())
-							&& !reacParamID.getText().trim().equals(
-									((String) reacParameters.getSelectedValue()).split(" ")[0])) {
-						JOptionPane.showMessageDialog(reacParameterFrame,
-								"You must enter a unique id into the id field!",
-								"Enter A Unique ID", JOptionPane.ERROR_MESSAGE);
-						return;
+					if (usedIDs.contains(reacParamID.getText().trim())) {
+						if (reacAddSaveParams.getText().equals("Save")
+								&& !reacParamID.getText().trim().equals(
+										((String) reacParameters.getSelectedValue()).split(" ")[0])) {
+							JOptionPane.showMessageDialog(reacParameterFrame,
+									"You must enter a unique id into the id field!",
+									"Enter A Unique ID", JOptionPane.ERROR_MESSAGE);
+							return;
+						} else if (reacAddSaveParams.getText().equals("Add")) {
+							JOptionPane.showMessageDialog(reacParameterFrame,
+									"You must enter a unique id into the id field!",
+									"Enter A Unique ID", JOptionPane.ERROR_MESSAGE);
+							return;
+						}
 					}
 					if (reacAddSaveParams.getText().equals("Save")) {
 						int index = reacParameters.getSelectedIndex();
@@ -1697,6 +1733,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			JLabel reverse = new JLabel("Reversible:");
 			String[] options = { "true", "false" };
 			reacReverse = new JComboBox(options);
+			reacReverse.setSelectedItem("false");
 			addSaveReactions = new JButton(option);
 			cancelReactions = new JButton("Cancel");
 			if (option.equals("Save")) {

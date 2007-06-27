@@ -1251,26 +1251,30 @@ public class BioSim implements MouseListener, ActionListener {
 			}
 			maybeShowPopup(e);
 		} else if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2) {
-			if (tree.getFile().substring(tree.getFile().length() - 4).equals("sbml")
-					|| tree.getFile().substring(tree.getFile().length() - 4).equals(".xml")) {
-				try {
-					addTab("SBML Editor", new SBML_Editor(tree.getFile(), null, log));
-				} catch (Exception e1) {
-					JOptionPane.showMessageDialog(frame, "You must select a valid sbml file.",
-							"Error", JOptionPane.ERROR_MESSAGE);
+			if (tree.getFile() != null) {
+				if (tree.getFile().length() >= 4
+						&& tree.getFile().substring(tree.getFile().length() - 4).equals("sbml")
+						|| tree.getFile().substring(tree.getFile().length() - 4).equals(".xml")) {
+					try {
+						addTab("SBML Editor", new SBML_Editor(tree.getFile(), null, log));
+					} catch (Exception e1) {
+						JOptionPane.showMessageDialog(frame, "You must select a valid sbml file.",
+								"Error", JOptionPane.ERROR_MESSAGE);
+					}
+				} else if (tree.getFile().length() >= 3
+						&& tree.getFile().substring(tree.getFile().length() - 3).equals("dot")) {
+					try {
+						log.addText("Exectuting:\ndotty "
+								+ new File(tree.getFile()).getAbsolutePath() + "\n");
+						Runtime exec = Runtime.getRuntime();
+						exec.exec("dotty " + new File(tree.getFile()).getAbsolutePath());
+					} catch (Exception e1) {
+						JOptionPane.showMessageDialog(frame, "Unable to view this dot file.",
+								"Error", JOptionPane.ERROR_MESSAGE);
+					}
+				} else if (new File(tree.getFile()).isDirectory() && !tree.getFile().equals(root)) {
+					openSim();
 				}
-			} else if (tree.getFile().substring(tree.getFile().length() - 3).equals("dot")) {
-				try {
-					log.addText("Exectuting:\ndotty " + new File(tree.getFile()).getAbsolutePath()
-							+ "\n");
-					Runtime exec = Runtime.getRuntime();
-					exec.exec("dotty " + new File(tree.getFile()).getAbsolutePath());
-				} catch (Exception e1) {
-					JOptionPane.showMessageDialog(frame, "Unable to view this dot file.", "Error",
-							JOptionPane.ERROR_MESSAGE);
-				}
-			} else if (new File(tree.getFile()).isDirectory() && !tree.getFile().equals(root)) {
-				openSim();
 			}
 		}
 	}
