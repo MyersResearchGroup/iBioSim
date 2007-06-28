@@ -727,10 +727,19 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			ListOf listOfSpecies = model.getListOfSpecies();
 			for (int i = 0; i < model.getNumSpecies(); i++) {
 				Species species = (Species) listOfSpecies.get(i);
-				listOfSpecs.add(species.getName());
+				listOfSpecs.add(species.getId());
 			}
 		}
 		Object[] list = listOfSpecs.toArray();
+		for (int i = 1; i < list.length; i++) {
+			String index = (String) list[i];
+			int j = i;
+			while ((j > 0) && ((String) list[j - 1]).compareToIgnoreCase(index) > 0) {
+				list[j] = list[j - 1];
+				j = j - 1;
+			}
+			list[j] = index;
+		}
 		intSpecies.setListData(list);
 		termCond.setListData(list);
 		statesSpecs.setListData(list);
@@ -2259,5 +2268,39 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 
 	public void setSbml(SBML_Editor sbml) {
 		sbmlEditor = sbml;
+	}
+
+	public void updateSpeciesList() {
+		SBMLReader reader = new SBMLReader();
+		SBMLDocument document = reader.readSBML(sbmlFile);
+		Model model = document.getModel();
+		ArrayList<String> listOfSpecs = new ArrayList<String>();
+		if (model != null) {
+			ListOf listOfSpecies = model.getListOfSpecies();
+			for (int i = 0; i < model.getNumSpecies(); i++) {
+				Species species = (Species) listOfSpecies.get(i);
+				listOfSpecs.add(species.getId());
+			}
+		}
+		Object[] list = listOfSpecs.toArray();
+		for (int i = 1; i < list.length; i++) {
+			String index = (String) list[i];
+			int j = i;
+			while ((j > 0) && ((String) list[j - 1]).compareToIgnoreCase(index) > 0) {
+				list[j] = list[j - 1];
+				j = j - 1;
+			}
+			list[j] = index;
+		}
+		intSpecies.setListData(list);
+		termCond.setListData(list);
+		statesSpecs.setListData(list);
+		int rem = availSpecies.getItemCount();
+		for (int i = 0; i < rem; i++) {
+			availSpecies.removeItemAt(0);
+		}
+		for (int i = 0; i < list.length; i++) {
+			availSpecies.addItem(((String) list[i]).replace(" ", "_"));
+		}
 	}
 }

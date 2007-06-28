@@ -2386,6 +2386,9 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			out.write(output);
 			out.close();
 			change = false;
+			if (reb2sac != null) {
+				reb2sac.updateSpeciesList();
+			}
 		} catch (Exception e1) {
 			JOptionPane.showMessageDialog(this, "Unable to save sbml file!", "Error Saving File",
 					JOptionPane.ERROR_MESSAGE);

@@ -131,6 +131,13 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				PlotOrientation.VERTICAL, true, true, false);
 		chart.addProgressListener(this);
 		ChartPanel graph = new ChartPanel(chart);
+		graph.setLayout(new GridLayout(1, 1));
+		JLabel edit = new JLabel("Click Here To Edit The Graph");
+		Font font = edit.getFont();
+		font = font.deriveFont(Font.BOLD, 42.0f);
+		edit.setFont(font);
+		edit.setHorizontalAlignment(SwingConstants.CENTER);
+		graph.add(edit);
 		graph.addMouseListener(this);
 
 		// creates text fields for changing the graph's dimensions
