@@ -29,27 +29,13 @@ public class BioSim implements MouseListener, ActionListener {
 
 	private JMenuItem exit; // The exit menu item
 
-	private JMenuItem display; // The display menu item
-
-	private JMenuItem print; // The print menu item
-
 	private JMenuItem importSbml; // The import menu item
-
-	private JMenuItem simulate; // The simulate menu item
-
-	private JMenuItem synthesize; // The synthesize menu item
-
-	private JMenuItem _abstract; // The abstract menu item
 
 	private JMenuItem manual; // The manual menu item
 
 	private JMenuItem about; // The about menu item
 
-	private JMenuItem save; // The save menu item
-
-	private JMenuItem openProj, openSim; // The open menu item
-
-	private JMenuItem editor; // The sbml editor menu item
+	private JMenuItem openProj; // The open menu item
 
 	private JMenuItem graph; // The graph menu item
 
@@ -108,91 +94,56 @@ public class BioSim implements MouseListener, ActionListener {
 		JMenuBar menuBar = new JMenuBar();
 		JMenu file = new JMenu("File");
 		file.setMnemonic(KeyEvent.VK_F);
-		JMenu tools = new JMenu("Tools");
-		tools.setMnemonic(KeyEvent.VK_T);
 		JMenu help = new JMenu("Help");
 		help.setMnemonic(KeyEvent.VK_H);
 		JMenu importMenu = new JMenu("Import");
 		JMenu openMenu = new JMenu("Open");
 		JMenu newMenu = new JMenu("New");
 		menuBar.add(file);
-		menuBar.add(tools);
 		menuBar.add(help);
-		simulate = new JMenuItem("Simulate");
-		synthesize = new JMenuItem("Synthesize");
-		_abstract = new JMenuItem("Abstract");
 		manual = new JMenuItem("Manual");
 		about = new JMenuItem("About");
-		save = new JMenuItem("Save");
 		openProj = new JMenuItem("Open Project");
-		openSim = new JMenuItem("Open Analysis View");
 		newTstubd = new JMenuItem("New Project");
 		newModel = new JMenuItem("New Model");
-		display = new JMenuItem("Display");
-		print = new JMenuItem("Print");
-		importSbml = new JMenuItem("sbml");
+		importSbml = new JMenuItem("SBML");
 		exit = new JMenuItem("Exit");
-		editor = new JMenuItem("SBML Editor");
-		graph = new JMenuItem("Graph Data");
-		simulate.addActionListener(this);
-		save.addActionListener(this);
+		graph = new JMenuItem("New Graph");
 		openProj.addActionListener(this);
-		openSim.addActionListener(this);
-		synthesize.addActionListener(this);
-		_abstract.addActionListener(this);
 		manual.addActionListener(this);
 		newTstubd.addActionListener(this);
 		newModel.addActionListener(this);
 		exit.addActionListener(this);
 		about.addActionListener(this);
-		display.addActionListener(this);
-		print.addActionListener(this);
 		importSbml.addActionListener(this);
-		editor.addActionListener(this);
 		graph.addActionListener(this);
 		exit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, ActionEvent.ALT_MASK));
 		newTstubd.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.ALT_MASK));
+		openProj.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.ALT_MASK));
 		newModel.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, ActionEvent.ALT_MASK));
-		save.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.ALT_MASK));
-		print.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, ActionEvent.ALT_MASK));
-		display.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D, ActionEvent.ALT_MASK));
 		about.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ActionEvent.ALT_MASK));
 		manual.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, ActionEvent.ALT_MASK));
-		editor.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, ActionEvent.ALT_MASK));
 		graph.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, ActionEvent.ALT_MASK));
 		exit.setMnemonic(KeyEvent.VK_X);
 		newTstubd.setMnemonic(KeyEvent.VK_N);
+		openProj.setMnemonic(KeyEvent.VK_O);
 		newModel.setMnemonic(KeyEvent.VK_M);
-		save.setMnemonic(KeyEvent.VK_S);
-		print.setMnemonic(KeyEvent.VK_P);
-		display.setMnemonic(KeyEvent.VK_D);
 		about.setMnemonic(KeyEvent.VK_A);
 		manual.setMnemonic(KeyEvent.VK_L);
-		editor.setMnemonic(KeyEvent.VK_E);
 		graph.setMnemonic(KeyEvent.VK_G);
 		file.add(newMenu);
 		newMenu.add(newTstubd);
 		newMenu.add(newModel);
+		newMenu.add(graph);
 		file.add(openMenu);
 		openMenu.add(openProj);
-		openMenu.add(openSim);
-		file.addSeparator();
-		file.add(save);
 		file.addSeparator();
 		file.add(importMenu);
 		importMenu.add(importSbml);
 		file.addSeparator();
-		// ***file.add(display);***
-		// ***file.add(print);***
-		// ***file.addSeparator();***
 		file.add(exit);
 		help.add(manual);
 		help.add(about);
-		tools.add(simulate);
-		tools.add(editor);
-		tools.add(graph);
-		// ***tools.add(synthesize);***
-		// ***tools.add(_abstract);***
 		root = null;
 
 		// Packs the frame and displays it
@@ -304,15 +255,6 @@ public class BioSim implements MouseListener, ActionListener {
 		else if (e.getActionCommand().equals("openSim")) {
 			openSim();
 		}
-		// if the open simulation menu item is selected
-		else if (e.getSource() == openSim) {
-			if (root != null) {
-				openSim();
-			} else {
-				JOptionPane.showMessageDialog(frame, "You must open or create a project first.",
-						"Error", JOptionPane.ERROR_MESSAGE);
-			}
-		}
 		// if the create simulation popup menu is selected on a dot file
 		else if (e.getActionCommand().equals("createSim")) {
 			try {
@@ -331,16 +273,6 @@ public class BioSim implements MouseListener, ActionListener {
 				e1.printStackTrace();
 				JOptionPane.showMessageDialog(frame,
 						"You must select a valid sbml file for simulation.", "Error",
-						JOptionPane.ERROR_MESSAGE);
-			}
-		}
-		// if the simulate menu item is selected
-		else if (e.getSource() == simulate) {
-			try {
-				simulate(tree.getFile().substring(tree.getFile().length() - 3).equals("dot"));
-			} catch (Exception e1) {
-				JOptionPane.showMessageDialog(frame,
-						"You must select a valid sbml or dot file for simulation.", "Error",
 						JOptionPane.ERROR_MESSAGE);
 			}
 		}
@@ -372,15 +304,6 @@ public class BioSim implements MouseListener, ActionListener {
 		}
 		// if the edit popup menu is selected on an sbml file
 		else if (e.getActionCommand().equals("sbmlEditor")) {
-			try {
-				addTab("SBML Editor", new SBML_Editor(tree.getFile(), null, log));
-			} catch (Exception e1) {
-				JOptionPane.showMessageDialog(frame, "You must select a valid sbml file.", "Error",
-						JOptionPane.ERROR_MESSAGE);
-			}
-		}
-		// if the SBML Editor menu item is clicked
-		else if (e.getSource() == editor) {
 			try {
 				addTab("SBML Editor", new SBML_Editor(tree.getFile(), null, log));
 			} catch (Exception e1) {
@@ -593,173 +516,6 @@ public class BioSim implements MouseListener, ActionListener {
 				}
 			}
 		}
-		// if the save menu is selected
-		else if (e.getSource() == save) {
-			if (tab.getSelectedComponent() != null) {
-				if (tab.getSelectedComponent().getName().equals("Simulate")) {
-					((Reb2Sac) tab.getSelectedComponent()).save();
-				} else if (tab.getSelectedComponent().getName().equals("SBML Editor")) {
-					((SBML_Editor) tab.getSelectedComponent()).save();
-				} else if (tab.getSelectedComponent().getName().contains("Graph")) {
-					final JFrame f = new JFrame("Save");
-					JButton saveAsJpeg = new JButton("Save As JPEG");
-					saveAsJpeg.addActionListener(new ActionListener() {
-						public void actionPerformed(ActionEvent e) {
-							((Graph) tab.getSelectedComponent()).export(0);
-							f.dispose();
-						}
-					});
-					JButton saveAsPng = new JButton("Save As PNG");
-					saveAsPng.addActionListener(new ActionListener() {
-						public void actionPerformed(ActionEvent e) {
-							((Graph) tab.getSelectedComponent()).export(1);
-							f.dispose();
-						}
-					});
-					JButton saveAsPdf = new JButton("Save As PDF");
-					saveAsPdf.addActionListener(new ActionListener() {
-						public void actionPerformed(ActionEvent e) {
-							((Graph) tab.getSelectedComponent()).export(2);
-							f.dispose();
-						}
-					});
-					JButton saveAsEps = new JButton("Save As EPS");
-					saveAsEps.addActionListener(new ActionListener() {
-						public void actionPerformed(ActionEvent e) {
-							((Graph) tab.getSelectedComponent()).export(3);
-							f.dispose();
-						}
-					});
-					JButton saveAsSvg = new JButton("Save As SVG");
-					saveAsSvg.addActionListener(new ActionListener() {
-						public void actionPerformed(ActionEvent e) {
-							((Graph) tab.getSelectedComponent()).export(4);
-							f.dispose();
-						}
-					});
-					JButton cancel = new JButton("Cancel");
-					cancel.addActionListener(new ActionListener() {
-						public void actionPerformed(ActionEvent e) {
-							f.dispose();
-						}
-					});
-					JPanel buttons = new JPanel();
-					buttons.add(saveAsJpeg);
-					buttons.add(saveAsPng);
-					buttons.add(saveAsPdf);
-					buttons.add(saveAsEps);
-					buttons.add(saveAsSvg);
-					buttons.add(cancel);
-					JLabel text = new JLabel("Which type would you like to save the graph as?");
-					JPanel textPanel = new JPanel(new GridLayout(2, 1));
-					textPanel.add(text);
-					textPanel.add(buttons);
-					f.setContentPane(textPanel);
-					f.pack();
-					Dimension screenSize;
-					try {
-						Toolkit tk = Toolkit.getDefaultToolkit();
-						screenSize = tk.getScreenSize();
-					} catch (AWTError awe) {
-						screenSize = new Dimension(640, 480);
-					}
-					Dimension frameSize = f.getSize();
-
-					if (frameSize.height > screenSize.height) {
-						frameSize.height = screenSize.height;
-					}
-					if (frameSize.width > screenSize.width) {
-						frameSize.width = screenSize.width;
-					}
-					int x = screenSize.width / 2 - frameSize.width / 2;
-					int y = screenSize.height / 2 - frameSize.height / 2;
-					f.setLocation(x, y);
-					f.setVisible(true);
-				} else {
-					final JTabbedPane simTab = (JTabbedPane) tab.getSelectedComponent();
-					if (simTab.getSelectedComponent().getName().equals("Simulate")) {
-						((Reb2Sac) simTab.getSelectedComponent()).save();
-					} else if (simTab.getSelectedComponent().getName().equals("SBML Editor")) {
-						((SBML_Editor) simTab.getSelectedComponent()).save();
-					} else if (simTab.getSelectedComponent().getName().contains("Graph")) {
-						final JFrame f = new JFrame("Save");
-						JButton saveAsJpeg = new JButton("Save As JPEG");
-						saveAsJpeg.addActionListener(new ActionListener() {
-							public void actionPerformed(ActionEvent e) {
-								((Graph) simTab.getSelectedComponent()).export(0);
-								f.dispose();
-							}
-						});
-						JButton saveAsPng = new JButton("Save As PNG");
-						saveAsPng.addActionListener(new ActionListener() {
-							public void actionPerformed(ActionEvent e) {
-								((Graph) simTab.getSelectedComponent()).export(1);
-								f.dispose();
-							}
-						});
-						JButton saveAsPdf = new JButton("Save As PDF");
-						saveAsPdf.addActionListener(new ActionListener() {
-							public void actionPerformed(ActionEvent e) {
-								((Graph) simTab.getSelectedComponent()).export(2);
-								f.dispose();
-							}
-						});
-						JButton saveAsEps = new JButton("Save As EPS");
-						saveAsEps.addActionListener(new ActionListener() {
-							public void actionPerformed(ActionEvent e) {
-								((Graph) simTab.getSelectedComponent()).export(3);
-								f.dispose();
-							}
-						});
-						JButton saveAsSvg = new JButton("Save As SVG");
-						saveAsSvg.addActionListener(new ActionListener() {
-							public void actionPerformed(ActionEvent e) {
-								((Graph) simTab.getSelectedComponent()).export(4);
-								f.dispose();
-							}
-						});
-						JButton cancel = new JButton("Cancel");
-						cancel.addActionListener(new ActionListener() {
-							public void actionPerformed(ActionEvent e) {
-								f.dispose();
-							}
-						});
-						JPanel buttons = new JPanel();
-						buttons.add(saveAsJpeg);
-						buttons.add(saveAsPng);
-						buttons.add(saveAsPdf);
-						buttons.add(saveAsEps);
-						buttons.add(saveAsSvg);
-						buttons.add(cancel);
-						JLabel text = new JLabel("Which type would you like to save the graph as?");
-						JPanel textPanel = new JPanel(new GridLayout(2, 1));
-						textPanel.add(text);
-						textPanel.add(buttons);
-						f.setContentPane(textPanel);
-						f.pack();
-						Dimension screenSize;
-						try {
-							Toolkit tk = Toolkit.getDefaultToolkit();
-							screenSize = tk.getScreenSize();
-						} catch (AWTError awe) {
-							screenSize = new Dimension(640, 480);
-						}
-						Dimension frameSize = f.getSize();
-
-						if (frameSize.height > screenSize.height) {
-							frameSize.height = screenSize.height;
-						}
-						if (frameSize.width > screenSize.width) {
-							frameSize.width = screenSize.width;
-						}
-						int x = screenSize.width / 2 - frameSize.width / 2;
-						int y = screenSize.height / 2 - frameSize.height / 2;
-						f.setLocation(x, y);
-						f.setVisible(true);
-					}
-				}
-			}
-		}
 		// if the new model menu item is selected
 		else if (e.getSource() == newModel) {
 			if (root != null) {
@@ -837,54 +593,58 @@ public class BioSim implements MouseListener, ActionListener {
 				if (new File(filename).isDirectory()) {
 					String[] list = new File(filename).list();
 					String getAFile = "";
+					boolean ode = false;
+					int run = 1;
 					for (int i = 0; i < list.length; i++) {
-						String end = "";
-						for (int j = 1; j < 4; j++) {
-							end = list[i].charAt(list[i].length() - j) + end;
-						}
-						if (end.equals("csv") || end.equals("dat") || end.equals("tsd")) {
-							getAFile = filename + File.separator + list[i];
+						if (!(new File(list[i]).isDirectory()) && list[i].length() > 4) {
+							String end = "";
+							for (int j = 1; j < 5; j++) {
+								end = list[i].charAt(list[i].length() - j) + end;
+							}
+							if (end.equals(".tsd") || end.equals(".dat") || end.equals(".csv")) {
+								if (list[i].contains("run-")) {
+									int tempNum = Integer.parseInt(list[i].substring(4, list[i]
+											.length()
+											- end.length()));
+									if (tempNum > run) {
+										run = tempNum;
+										getAFile = filename + File.separator + list[i];
+										ode = false;
+									}
+								} else if (list[i].contains("euler-run.")
+										|| list[i].contains("gear1-run.")
+										|| list[i].contains("gear2-run.")
+										|| list[i].contains("rk4imp-run.")
+										|| list[i].contains("rk8pd-run.")
+										|| list[i].contains("rkf45-run.")) {
+									getAFile = filename + File.separator + list[i];
+									ode = true;
+								}
+							}
 						}
 					}
 					if (!getAFile.equals("")) {
-						filename = getAFile;
 						String end = "";
 						for (int j = 1; j < 4; j++) {
-							end = filename.charAt(filename.length() - j) + end;
+							end = getAFile.charAt(getAFile.length() - j) + end;
 						}
 						if (end.equals("csv") || end.equals("dat") || end.equals("tsd")) {
-							String[] split = filename.split(File.separator);
+							String[] split = getAFile.split(File.separator);
 							String last = split[split.length - 1];
-							String first = filename.substring(0, filename.length() - last.length());
-							String printer = filename.substring(filename.length() - 3);
+							String first = getAFile.substring(0, getAFile.length() - last.length());
+							String printer = getAFile.substring(getAFile.length() - 3);
 							String id = printer + ".printer";
-							if (last.substring(0, 3).equals("run")) {
-								String get = "";
-								for (int i = 0; i < last.length(); i++) {
-									if (Character.isDigit(last.charAt(i))) {
-										get += last.charAt(i);
-									}
-								}
-								int number = Integer.parseInt(get);
-								int runs;
-								int i = 1;
-								try {
-									while (true) {
-										InputStream test = new FileInputStream(new File((first
-												+ "run-" + i + "." + printer)));
-										test.read();
-										i++;
-									}
-								} catch (Exception e2) {
-									runs = i - 1;
-								}
-								runs = Math.max(number, runs);
-								addTab("Graph", new Graph(first + "run-1." + printer, "amount",
-										"read-in-data average simulation results", id, first, runs,
-										-1, null, "time", this));
+							if (!ode) {
+								addTab("Graph", new Graph(getAFile, "amount",
+										filename.split(File.separator)[filename
+												.split(File.separator).length - 1]
+												+ " simulation results", id, first, run, -1, null,
+										"time", this));
 							} else {
-								addTab("Graph", new Graph(filename, "amount",
-										"read-in-data simulation results", id, first, 1, -1, null,
+								addTab("Graph", new Graph(getAFile, "amount",
+										filename.split(File.separator)[filename
+												.split(File.separator).length - 1]
+												+ " simulation results", id, first, run, -1, null,
 										"time", this));
 							}
 						}
@@ -893,52 +653,7 @@ public class BioSim implements MouseListener, ActionListener {
 								"This directory contains no simulation data.", "Error",
 								JOptionPane.ERROR_MESSAGE);
 					}
-				} else {
-					try {
-						String[] split = filename.split(File.separator);
-						String last = split[split.length - 1];
-						String first = filename.substring(0, filename.length() - last.length());
-						String printer = filename.substring(filename.length() - 3);
-						String id = printer + ".printer";
-						if (last.substring(0, 3).equals("run")) {
-							String get = "";
-							for (int i = 0; i < last.length(); i++) {
-								if (Character.isDigit(last.charAt(i))) {
-									get += last.charAt(i);
-								}
-							}
-							int number = Integer.parseInt(get);
-							int runs;
-							int i = 1;
-							try {
-								while (true) {
-									InputStream test = new FileInputStream(new File((first + "run-"
-											+ i + "." + printer)));
-									test.read();
-									i++;
-								}
-							} catch (Exception e2) {
-								runs = i - 1;
-							}
-							runs = Math.max(number, runs);
-							addTab("Graph", new Graph(first + "run-1." + printer, "amount",
-									"read-in-data average simulation results", id, first, runs,
-									number, null, "time", this));
-						} else {
-							addTab("Graph", new Graph(filename, "amount",
-									"read-in-data simulation results", id, first, 1, -1, null,
-									"time", this));
-						}
-					} catch (Exception e1) {
-						JOptionPane.showMessageDialog(frame, "Error reading in data!"
-								+ "\nFile may be named incorrectly" + " or may be invalid.",
-								"Error", JOptionPane.ERROR_MESSAGE);
-					}
 				}
-			} else {
-				JOptionPane.showMessageDialog(frame,
-						"You must select a valid file or directory to graph data.", "Error",
-						JOptionPane.ERROR_MESSAGE);
 			}
 		}
 	}
@@ -1394,7 +1109,7 @@ public class BioSim implements MouseListener, ActionListener {
 				String openFile = "";
 				String graphFile = "";
 				boolean ode = false;
-				int run = 0;
+				int run = 1;
 				for (int i = 0; i < list.length; i++) {
 					if (!(new File(list[i]).isDirectory()) && list[i].length() > 4) {
 						String end = "";
@@ -1451,7 +1166,7 @@ public class BioSim implements MouseListener, ActionListener {
 					simTab.getComponentAt(simTab.getComponents().length - 1).setName("Learn");
 					if (!graphFile.equals("")) {
 						if (ode) {
-							simTab.addTab("Graph", reb2sac.createGraph(graphFile, 1));
+							simTab.addTab("Graph", reb2sac.createGraph(graphFile, run));
 							simTab.getComponentAt(simTab.getComponents().length - 1).setName(
 									"Graph");
 						} else {

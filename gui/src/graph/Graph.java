@@ -1078,6 +1078,11 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								} else if (s.equals("Standard Deviation")) {
 									s = "(" + (char) 948 + ")";
 								} else {
+									if (s.contains("-run")) {
+										s = s.substring(0, s.length() - 4);
+									} else if (s.contains("run-")) {
+										s = s.substring(4);
+									}
 									s = "(" + s + ")";
 								}
 								String text = series.get(i).getText();
