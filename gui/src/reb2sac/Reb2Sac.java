@@ -2274,14 +2274,13 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				.contains("run-")) {
 			JRadioButton b = new JRadioButton();
 			b.setSelected(true);
-			return new Graph(graphFile, printer_track_quantity,
-					"stochastic run average simulation results", printer_id, outDir, run, -1, null,
-					"time", biomodelsim);
+			return new Graph(graphFile, printer_track_quantity, simName + " simulation results",
+					printer_id, outDir, run, -1, null, "time", biomodelsim);
 		} else {
 			JRadioButton b = new JRadioButton();
 			b.setSelected(false);
-			return new Graph(graphFile, printer_track_quantity, "ode simulation results",
-					printer_id, outDir, 1, -1, null, "time", biomodelsim);
+			return new Graph(graphFile, printer_track_quantity, simName + " simulation results",
+					printer_id, outDir, run, -1, null, "time", biomodelsim);
 		}
 	}
 
