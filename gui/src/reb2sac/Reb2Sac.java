@@ -1565,7 +1565,6 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		running.setCursor(null);
 		running.dispose();
 		biomodelsim.getExitButton().removeActionListener(runProgram);
-		biomodelsim.refreshTree();
 	}
 
 	/**

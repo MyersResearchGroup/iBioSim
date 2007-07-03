@@ -588,72 +588,78 @@ public class BioSim implements MouseListener, ActionListener {
 		}
 		// if the Graph data menu item is clicked
 		else if (e.getSource() == graph) {
-			String filename = tree.getFile();
-			if (filename != null && !filename.equals("")) {
-				if (new File(filename).isDirectory()) {
-					String[] list = new File(filename).list();
-					String getAFile = "";
-					boolean ode = false;
-					int run = 1;
-					for (int i = 0; i < list.length; i++) {
-						if (!(new File(list[i]).isDirectory()) && list[i].length() > 4) {
-							String end = "";
-							for (int j = 1; j < 5; j++) {
-								end = list[i].charAt(list[i].length() - j) + end;
-							}
-							if (end.equals(".tsd") || end.equals(".dat") || end.equals(".csv")) {
-								if (list[i].contains("run-")) {
-									int tempNum = Integer.parseInt(list[i].substring(4, list[i]
-											.length()
-											- end.length()));
-									if (tempNum > run) {
-										run = tempNum;
+			if (root != null) {
+				String filename = tree.getFile();
+				if (filename != null && !filename.equals("")) {
+					if (new File(filename).isDirectory()) {
+						String[] list = new File(filename).list();
+						String getAFile = "";
+						boolean ode = false;
+						int run = 1;
+						for (int i = 0; i < list.length; i++) {
+							if (!(new File(list[i]).isDirectory()) && list[i].length() > 4) {
+								String end = "";
+								for (int j = 1; j < 5; j++) {
+									end = list[i].charAt(list[i].length() - j) + end;
+								}
+								if (end.equals(".tsd") || end.equals(".dat") || end.equals(".csv")) {
+									if (list[i].contains("run-")) {
+										int tempNum = Integer.parseInt(list[i].substring(4, list[i]
+												.length()
+												- end.length()));
+										if (tempNum > run) {
+											run = tempNum;
+											getAFile = filename + File.separator + list[i];
+											ode = false;
+										}
+									} else if (list[i].contains("euler-run.")
+											|| list[i].contains("gear1-run.")
+											|| list[i].contains("gear2-run.")
+											|| list[i].contains("rk4imp-run.")
+											|| list[i].contains("rk8pd-run.")
+											|| list[i].contains("rkf45-run.")) {
 										getAFile = filename + File.separator + list[i];
-										ode = false;
+										ode = true;
 									}
-								} else if (list[i].contains("euler-run.")
-										|| list[i].contains("gear1-run.")
-										|| list[i].contains("gear2-run.")
-										|| list[i].contains("rk4imp-run.")
-										|| list[i].contains("rk8pd-run.")
-										|| list[i].contains("rkf45-run.")) {
-									getAFile = filename + File.separator + list[i];
-									ode = true;
 								}
 							}
 						}
-					}
-					if (!getAFile.equals("")) {
-						String end = "";
-						for (int j = 1; j < 4; j++) {
-							end = getAFile.charAt(getAFile.length() - j) + end;
-						}
-						if (end.equals("csv") || end.equals("dat") || end.equals("tsd")) {
-							String[] split = getAFile.split(File.separator);
-							String last = split[split.length - 1];
-							String first = getAFile.substring(0, getAFile.length() - last.length());
-							String printer = getAFile.substring(getAFile.length() - 3);
-							String id = printer + ".printer";
-							if (!ode) {
-								addTab("Graph", new Graph(getAFile, "amount",
-										filename.split(File.separator)[filename
-												.split(File.separator).length - 1]
-												+ " simulation results", id, first, run, -1, null,
-										"time", this));
-							} else {
-								addTab("Graph", new Graph(getAFile, "amount",
-										filename.split(File.separator)[filename
-												.split(File.separator).length - 1]
-												+ " simulation results", id, first, run, -1, null,
-										"time", this));
+						if (!getAFile.equals("")) {
+							String end = "";
+							for (int j = 1; j < 4; j++) {
+								end = getAFile.charAt(getAFile.length() - j) + end;
 							}
+							if (end.equals("csv") || end.equals("dat") || end.equals("tsd")) {
+								String[] split = getAFile.split(File.separator);
+								String last = split[split.length - 1];
+								String first = getAFile.substring(0, getAFile.length()
+										- last.length());
+								String printer = getAFile.substring(getAFile.length() - 3);
+								String id = printer + ".printer";
+								if (!ode) {
+									addTab("Graph", new Graph(getAFile, "amount",
+											filename.split(File.separator)[filename
+													.split(File.separator).length - 1]
+													+ " simulation results", id, first, run, -1,
+											null, "time", this));
+								} else {
+									addTab("Graph", new Graph(getAFile, "amount",
+											filename.split(File.separator)[filename
+													.split(File.separator).length - 1]
+													+ " simulation results", id, first, run, -1,
+											null, "time", this));
+								}
+							}
+						} else {
+							JOptionPane.showMessageDialog(frame,
+									"This directory contains no simulation data.", "Error",
+									JOptionPane.ERROR_MESSAGE);
 						}
-					} else {
-						JOptionPane.showMessageDialog(frame,
-								"This directory contains no simulation data.", "Error",
-								JOptionPane.ERROR_MESSAGE);
 					}
 				}
+			} else {
+				JOptionPane.showMessageDialog(frame, "You must open or create a project first.",
+						"Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 	}
@@ -1005,8 +1011,8 @@ public class BioSim implements MouseListener, ActionListener {
 
 	private void simulate(boolean isDot) throws Exception {
 		if (isDot) {
-			String simName = JOptionPane.showInputDialog(frame, "Enter simulation id:",
-					"Simulation ID", JOptionPane.PLAIN_MESSAGE);
+			String simName = JOptionPane.showInputDialog(frame, "Enter analysis id:",
+					"Analysis ID", JOptionPane.PLAIN_MESSAGE);
 			if (simName != null && !simName.equals("")) {
 				new File(root + File.separator + simName).mkdir();
 				new FileWriter(new File(root + File.separator + simName + File.separator + ".sim"))
@@ -1061,8 +1067,8 @@ public class BioSim implements MouseListener, ActionListener {
 			SBMLDocument document = reader.readSBML(tree.getFile());
 			document.getModel().getName();
 			document.setLevel(2);
-			String simName = JOptionPane.showInputDialog(frame, "Enter simulation id:",
-					"Simulation ID", JOptionPane.PLAIN_MESSAGE);
+			String simName = JOptionPane.showInputDialog(frame, "Enter analysis id:",
+					"Analysis ID", JOptionPane.PLAIN_MESSAGE);
 			if (simName != null && !simName.equals("")) {
 				new File(root + File.separator + simName).mkdir();
 				new FileWriter(new File(root + File.separator + simName + File.separator + ".sim"))

@@ -459,7 +459,10 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				}
 			}
 			usedIDs.remove(compartments.getSelectedValue());
+			compartments.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 			Buttons.remove(compartments, comps);
+			compartments.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			compartments.setSelectedIndex(0);
 		}
 		// if the add species button is clicked
 		else if (e.getSource() == addSpec) {
@@ -595,7 +598,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						((String) parameters.getSelectedValue()).split(" ")[0]);
 				ListOf p = document.getModel().getListOfParameters();
 				for (int i = 0; i < p.getNumItems(); i++) {
-					if (((Reaction) p.get(i)).getId().equals(tempParameter.getId())) {
+					if (((Parameter) p.get(i)).getId().equals(tempParameter.getId())) {
 						p.remove(i);
 					}
 				}
@@ -1345,7 +1348,6 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						changedReactants.remove(i);
 					}
 				}
-				changedReactants.remove(reactants.getSelectedIndex());
 				reactants.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 				Buttons.remove(reactants, reacta);
 				reactants.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
