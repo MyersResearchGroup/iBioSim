@@ -51,7 +51,7 @@ public class Learn extends JPanel implements ActionListener {
 
 	private JPanel speciesPanel;
 
-	private JRadioButton user, auto;
+	private JRadioButton user, auto, spacing, data;
 
 	private JButton suggest;
 
@@ -74,28 +74,46 @@ public class Learn extends JPanel implements ActionListener {
 
 		// Sets up the encodings area
 		JPanel radioPanel = new JPanel(new BorderLayout());
-		JPanel selection = new JPanel();
+		JPanel selection1 = new JPanel();
+		JPanel selection2 = new JPanel();
+		JPanel selection = new JPanel(new BorderLayout());
+		spacing = new JRadioButton("Equal Spacing Of Bins");
+		data = new JRadioButton("Equal Data Per Bins");
 		user = new JRadioButton("Use User Generated Levels");
 		auto = new JRadioButton("Use Auto Generated Levels");
 		suggest = new JButton("Suggest Levels");
 		ButtonGroup select = new ButtonGroup();
 		select.add(auto);
 		select.add(user);
+		ButtonGroup select2 = new ButtonGroup();
+		select2.add(spacing);
+		select2.add(data);
 		auto.setSelected(true);
 		user.addActionListener(this);
 		auto.addActionListener(this);
 		suggest.addActionListener(this);
-		selection.add(auto);
-		selection.add(user);
-		selection.add(suggest);
+		spacing.setSelected(true);
+		data.addActionListener(this);
+		spacing.addActionListener(this);
+		data.addActionListener(this);
+		selection1.add(spacing);
+		selection1.add(data);
+		selection2.add(auto);
+		selection2.add(user);
+		selection2.add(suggest);
+		selection.add(selection1, "North");
+		selection.add(selection2, "Center");
 		suggest.setEnabled(false);
 		JPanel encodingPanel = new JPanel(new BorderLayout());
 		speciesPanel = new JPanel();
+		JPanel sP = new JPanel();
+		((FlowLayout) sP.getLayout()).setAlignment(FlowLayout.LEFT);
+		sP.add(speciesPanel);
 		JLabel encodingsLabel = new JLabel("Species Levels:");
 		JScrollPane scroll2 = new JScrollPane();
 		scroll2.setMinimumSize(new Dimension(260, 200));
 		scroll2.setPreferredSize(new Dimension(276, 132));
-		scroll2.setViewportView(speciesPanel);
+		scroll2.setViewportView(sP);
 		radioPanel.add(selection, "North");
 		radioPanel.add(encodingPanel, "Center");
 		encodingPanel.add(encodingsLabel, "North");
@@ -112,46 +130,49 @@ public class Learn extends JPanel implements ActionListener {
 		initNet.add(browseInit);
 
 		// Sets up the thresholds area
-		JPanel thresholdPanel1 = new JPanel(new GridLayout(9, 2));
-		JPanel thresholdPanel2 = new JPanel(new GridLayout(1, 2));
+		JPanel thresholdPanel1 = new JPanel(new GridLayout(3, 2));
+		JPanel thresholdPanel2 = new JPanel(new GridLayout(7, 2));
 		JLabel activationLabel = new JLabel("For Vote Threshold (Tf):");
 		activation = new JTextField("1.33");
-		thresholdPanel1.add(activationLabel);
-		thresholdPanel1.add(activation);
+		thresholdPanel2.add(activationLabel);
+		thresholdPanel2.add(activation);
 		JLabel repressionLabel = new JLabel("Against Vote Threshold (Ta):");
 		repression = new JTextField("0.75");
-		thresholdPanel1.add(repressionLabel);
-		thresholdPanel1.add(repression);
-		JLabel parentLabel = new JLabel("First Round IV Threshold (Ti):");
+		thresholdPanel2.add(repressionLabel);
+		thresholdPanel2.add(repression);
+		JLabel parentLabel = new JLabel("First Round Influence Vector Threshold (Ti):");
 		parent = new JTextField("0.5");
-		thresholdPanel1.add(parentLabel);
-		thresholdPanel1.add(parent);
-		JLabel backgroundLabel = new JLabel("Pre-Competition IV Filter Threshold (Tp):");
+		thresholdPanel2.add(parentLabel);
+		thresholdPanel2.add(parent);
+		JLabel backgroundLabel = new JLabel(
+				"Pre-Competition Influence Vector Filter Threshold (Tp):  ");
 		background = new JTextField("0.51");
-		thresholdPanel1.add(backgroundLabel);
-		thresholdPanel1.add(background);
-		JLabel influenceLevelLabel = new JLabel("Merge IVs Delta (Tm):");
+		thresholdPanel2.add(backgroundLabel);
+		thresholdPanel2.add(background);
+		JLabel influenceLevelLabel = new JLabel("Merge Influence Vectors Delta (Tm):");
 		influenceLevel = new JTextField("0.01");
-		thresholdPanel1.add(influenceLevelLabel);
-		thresholdPanel1.add(influenceLevel);
+		thresholdPanel2.add(influenceLevelLabel);
+		thresholdPanel2.add(influenceLevel);
 		JLabel letNThroughLabel = new JLabel("Minimum Initial Vectors (Tn):");
 		letNThrough = new JTextField("1");
 		thresholdPanel1.add(letNThroughLabel);
 		thresholdPanel1.add(letNThrough);
-		JLabel maxVectorSizeLabel = new JLabel("Max Vector Size (Tj)");
+		JLabel maxVectorSizeLabel = new JLabel("Max Influence Vector Size (Tj):  ");
 		maxVectorSize = new JTextField("2");
 		thresholdPanel1.add(maxVectorSizeLabel);
 		thresholdPanel1.add(maxVectorSize);
 		JLabel relaxIPDeltaLabel = new JLabel("Relax Thresholds Delta (Tr):");
 		relaxIPDelta = new JTextField("0.025");
-		thresholdPanel1.add(relaxIPDeltaLabel);
-		thresholdPanel1.add(relaxIPDelta);
+		thresholdPanel2.add(relaxIPDeltaLabel);
+		thresholdPanel2.add(relaxIPDelta);
 		numBinsLabel = new JLabel("Number Of Bins:");
 		String[] bins = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
 		numBins = new JComboBox(bins);
 		numBins.setSelectedItem("3");
 		thresholdPanel1.add(numBinsLabel);
 		thresholdPanel1.add(numBins);
+		JPanel thresholdPanelHold1 = new JPanel();
+		thresholdPanelHold1.add(thresholdPanel1);
 		JLabel debugLabel = new JLabel("Debug Level:");
 		String[] options = new String[4];
 		options[0] = "0";
@@ -161,6 +182,8 @@ public class Learn extends JPanel implements ActionListener {
 		debug = new JComboBox(options);
 		thresholdPanel2.add(debugLabel);
 		thresholdPanel2.add(debug);
+		JPanel thresholdPanelHold2 = new JPanel();
+		thresholdPanelHold2.add(thresholdPanel2);
 		/*
 		 * JLabel windowRisingLabel = new JLabel("Window Rising Amount:");
 		 * windowRising = new JTextField("1");
@@ -199,14 +222,16 @@ public class Learn extends JPanel implements ActionListener {
 		this.setLayout(new BorderLayout());
 		JPanel middlePanel = new JPanel(new BorderLayout());
 		JPanel firstTab = new JPanel(new BorderLayout());
+		JPanel firstTab1 = new JPanel(new BorderLayout());
 		JPanel secondTab = new JPanel(new BorderLayout());
 		middlePanel.add(radioPanel, "Center");
-		firstTab.add(initNet, "North");
-		firstTab.add(thresholdPanel1, "Center");
+		firstTab1.add(initNet, "North");
+		firstTab1.add(thresholdPanelHold1, "Center");
+		firstTab.add(firstTab1, "North");
 		JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, middlePanel, null);
 		splitPane.setDividerSize(0);
-		secondTab.add(thresholdPanel2, "North");
-		firstTab.add(splitPane, "South");
+		secondTab.add(thresholdPanelHold2, "North");
+		firstTab.add(splitPane, "Center");
 
 		tab = new JTabbedPane();
 		tab.addTab("Basic Options", firstTab);

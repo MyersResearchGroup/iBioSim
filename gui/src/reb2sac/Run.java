@@ -412,28 +412,7 @@ public class Run implements ActionListener {
 					outDot.delete();
 					outDot = new File(outFile);
 					log.addText("Exectuting:\ndotty " + outDot.getAbsolutePath() + "\n");
-					Process graph = exec.exec("dotty " + outDot.getAbsolutePath());
-					graph.waitFor();
-					error = "";
-					output = "";
-					InputStream reb = graph.getErrorStream();
-					int read = reb.read();
-					while (read != -1) {
-						error += (char) read;
-						read = reb.read();
-					}
-					reb = graph.getInputStream();
-					read = reb.read();
-					while (read != -1) {
-						output += (char) read;
-						read = reb.read();
-					}
-					if (!output.equals("")) {
-						log.addText("Output:\n" + output + "\n");
-					}
-					if (!error.equals("")) {
-						log.addText("Errors:\n" + error + "\n");
-					}
+					exec.exec("dotty " + outDot.getAbsolutePath());
 				} else if (xhtml.isSelected()) {
 					String[] split = filename.split(File.separator);
 					String outFile = filename.substring(0, filename.length()
@@ -452,28 +431,7 @@ public class Run implements ActionListener {
 					outXhtml.delete();
 					outXhtml = new File(outFile);
 					log.addText("Exectuting:\nfirefox " + outXhtml.getAbsolutePath() + "\n");
-					Process browse = exec.exec("firefox " + outXhtml.getAbsolutePath());
-					browse.waitFor();
-					error = "";
-					output = "";
-					InputStream reb = browse.getErrorStream();
-					int read = reb.read();
-					while (read != -1) {
-						error += (char) read;
-						read = reb.read();
-					}
-					reb = browse.getInputStream();
-					read = reb.read();
-					while (read != -1) {
-						output += (char) read;
-						read = reb.read();
-					}
-					if (!output.equals("")) {
-						log.addText("Output:\n" + output + "\n");
-					}
-					if (!error.equals("")) {
-						log.addText("Errors:\n" + error + "\n");
-					}
+					exec.exec("firefox " + outXhtml.getAbsolutePath());
 				} else if (usingSSA.isSelected()) {
 					if (!printer_id.equals("null.printer")) {
 						int change = -1;
