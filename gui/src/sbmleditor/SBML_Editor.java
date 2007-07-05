@@ -5,6 +5,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
+
 import org.sbml.libsbml.*;
 import biomodelsim.core.gui.*;
 import reb2sac.core.gui.*;
@@ -42,10 +43,6 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 
 	private JTextField compID;// , compName;
 
-	private JButton addSaveCompart, cancelCompart;
-
-	private JFrame compartFrame;
-
 	private JButton addSpec, removeSpec, editSpec; // species buttons
 
 	private String[] specs; // array of species
@@ -55,10 +52,6 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	private JTextField ID, init;// , name; // species text fields
 
 	private JComboBox comp; // compartment combo box
-
-	private JButton addSaveSpecies, cancelSpecies; // edit species buttons
-
-	private JFrame speciesFrame; // frame for editting species
 
 	private boolean amount; // determines if the species have amount set
 
@@ -72,22 +65,16 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 
 	private JButton addReac, removeReac, editReac; // reactions buttons
 
-	private JFrame reactionFrame; // frame for editting reactions
-
 	private JList parameters; // JList of parameters
 
 	private String[] params; // array of parameters
 
 	private JButton addParam, removeParam, editParam; // parameters buttons
 
-	private JFrame parameterFrame; // frame for editting parameters
-
 	/*
 	 * parameters text fields
 	 */
 	private JTextField paramID, paramValue;// , paramName;
-
-	private JButton addSaveParams, cancelParams; // edit parameters buttons
 
 	private JList reacParameters; // JList of reaction parameters
 
@@ -99,19 +86,9 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	private JButton reacAddParam, reacRemoveParam, reacEditParam;
 
 	/*
-	 * frame for editting reaction parameters
-	 */
-	private JFrame reacParameterFrame;
-
-	/*
 	 * reaction parameters text fields
 	 */
 	private JTextField reacParamID, reacParamValue;// , reacParamName;
-
-	/*
-	 * edit reaction parameters buttons
-	 */
-	private JButton reacAddSaveParams, reacCancelParams;
 
 	private ArrayList<Parameter> changedParameters; // ArrayList of parameters
 
@@ -120,8 +97,6 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	// fields
 
 	private JComboBox reacReverse; // reaction reversible combo box
-
-	private JButton addSaveReactions, cancelReactions; // buttons for reactions
 
 	/*
 	 * reactant buttons
@@ -150,14 +125,6 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 * ArrayList of products
 	 */
 	private ArrayList<SpeciesReference> changedProducts;
-
-	private JFrame productFrame; // product editing frame
-
-	private JFrame reactantFrame; // reactant editing frame
-
-	private JButton addSaveProducts, cancelProducts; // edit product buttons
-
-	private JButton addSaveReactants, cancelReactants; // edit reactant buttons
 
 	private JComboBox productSpecies; // ComboBox for product editing
 
@@ -450,19 +417,21 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		}
 		// if the remove compartment button is clicked
 		else if (e.getSource() == removeCompart) {
-			Compartment tempComp = document.getModel().getCompartment(
-					(String) compartments.getSelectedValue());
-			ListOf c = document.getModel().getListOfCompartments();
-			for (int i = 0; i < c.getNumItems(); i++) {
-				if (((Compartment) c.get(i)).getId().equals(tempComp.getId())) {
-					c.remove(i);
+			if (compartments.getSelectedIndex() != -1) {
+				Compartment tempComp = document.getModel().getCompartment(
+						(String) compartments.getSelectedValue());
+				ListOf c = document.getModel().getListOfCompartments();
+				for (int i = 0; i < c.getNumItems(); i++) {
+					if (((Compartment) c.get(i)).getId().equals(tempComp.getId())) {
+						c.remove(i);
+					}
 				}
+				usedIDs.remove(compartments.getSelectedValue());
+				compartments.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+				Buttons.remove(compartments, comps);
+				compartments.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+				compartments.setSelectedIndex(0);
 			}
-			usedIDs.remove(compartments.getSelectedValue());
-			compartments.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-			Buttons.remove(compartments, comps);
-			compartments.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-			compartments.setSelectedIndex(0);
 		}
 		// if the add species button is clicked
 		else if (e.getSource() == addSpec) {
@@ -550,7 +519,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					scroll.setMinimumSize(new Dimension(300, 300));
 					scroll.setPreferredSize(new Dimension(300, 300));
 					scroll.setViewportView(messageArea);
-					JOptionPane.showMessageDialog(speciesFrame, scroll, "Unable To Remove Species",
+					JOptionPane.showMessageDialog(this, scroll, "Unable To Remove Species",
 							JOptionPane.ERROR_MESSAGE);
 				}
 			}
@@ -608,704 +577,6 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				parameters.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 				parameters.setSelectedIndex(0);
 			}
-		} else if (e.getSource() == addSaveCompart) {
-			if (compID.getText().trim().equals("")) {
-				JOptionPane.showMessageDialog(compartFrame,
-						"You must enter an id into the id field!", "Enter An ID",
-						JOptionPane.ERROR_MESSAGE);
-			} else {
-				String addComp = "";
-				addComp = compID.getText().trim();
-				if (usedIDs.contains(addComp)) {
-					if (addSaveCompart.getText().equals("Save")
-							&& !addComp.equals((String) compartments.getSelectedValue())) {
-						JOptionPane.showMessageDialog(compartFrame,
-								"You must enter a unique id into the id field!",
-								"Enter A Unique ID", JOptionPane.ERROR_MESSAGE);
-						return;
-					} else if (addSaveCompart.getText().equals("Add")) {
-						JOptionPane.showMessageDialog(compartFrame,
-								"You must enter a unique id into the id field!",
-								"Enter A Unique ID", JOptionPane.ERROR_MESSAGE);
-						return;
-					}
-				}
-				if (addSaveCompart.getText().equals("Save")) {
-					int index = compartments.getSelectedIndex();
-					String value = (String) compartments.getSelectedValue();
-					compartments.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-					comps = Buttons.getList(comps, compartments);
-					compartments.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-					Compartment c = document.getModel().getCompartment(value);
-					c.setId(compID.getText().trim());
-					for (int i = 0; i < usedIDs.size(); i++) {
-						if (usedIDs.get(i).equals(value)) {
-							usedIDs.set(i, addComp);
-						}
-					}
-					comps[index] = addComp;
-					sort(comps);
-					compartments.setListData(comps);
-					compartments.setSelectedIndex(index);
-				} else {
-					int index = compartments.getSelectedIndex();
-					Compartment c = document.getModel().createCompartment();
-					c.setId(compID.getText().trim());
-					usedIDs.add(addComp);
-					JList add = new JList();
-					Object[] adding = { addComp };
-					add.setListData(adding);
-					add.setSelectedIndex(0);
-					compartments.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-					adding = Buttons.add(comps, compartments, add, false, null, null, null, null,
-							null, null, null, this);
-					comps = new String[adding.length];
-					for (int i = 0; i < adding.length; i++) {
-						comps[i] = (String) adding[i];
-					}
-					sort(comps);
-					compartments.setListData(comps);
-					compartments.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-					if (document.getModel().getNumCompartments() == 1) {
-						compartments.setSelectedIndex(0);
-					} else {
-						compartments.setSelectedIndex(index);
-					}
-				}
-				change = true;
-				compartFrame.dispose();
-			}
-		} else if (e.getSource() == cancelCompart) {
-			compartFrame.dispose();
-		}
-		// if the add or save species button is clicked
-		else if (e.getSource() == addSaveSpecies) {
-			if (ID.getText().trim().equals("")) {
-				JOptionPane.showMessageDialog(speciesFrame,
-						"You must enter an id into the id field!", "Enter An ID",
-						JOptionPane.ERROR_MESSAGE);
-			} else {
-				try {
-					double initial = Double.parseDouble(init.getText().trim());
-					String addSpec = ID.getText().trim() + " " + comp.getSelectedItem() + " "
-							+ initial;
-					if (usedIDs.contains(ID.getText().trim())) {
-						if (addSaveSpecies.getText().equals("Save")
-								&& !ID.getText().trim().equals(
-										((String) species.getSelectedValue()).split(" ")[0])) {
-							JOptionPane.showMessageDialog(speciesFrame,
-									"You must enter a unique id into the id field!",
-									"Enter A Unique ID", JOptionPane.ERROR_MESSAGE);
-							return;
-						} else if (addSaveSpecies.getText().equals("Add")) {
-							JOptionPane.showMessageDialog(speciesFrame,
-									"You must enter a unique id into the id field!",
-									"Enter A Unique ID", JOptionPane.ERROR_MESSAGE);
-							return;
-						}
-					}
-					if (addSaveSpecies.getText().equals("Save")) {
-						int index = species.getSelectedIndex();
-						String value = ((String) species.getSelectedValue()).split(" ")[0];
-						species.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-						specs = Buttons.getList(specs, species);
-						species.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-						Species specie = document.getModel().getSpecies(value);
-						String speciesName = specie.getId();
-						specie.setCompartment((String) comp.getSelectedItem());
-						specie.setId(ID.getText().trim());
-						for (int i = 0; i < usedIDs.size(); i++) {
-							if (usedIDs.get(i).equals(value)) {
-								usedIDs.set(i, ID.getText().trim());
-							}
-						}
-						Model model = document.getModel();
-						for (int i = 0; i < model.getNumReactions(); i++) {
-							Reaction reaction = (Reaction) document.getModel().getListOfReactions()
-									.get(i);
-							for (int j = 0; j < reaction.getNumProducts(); j++) {
-								if (reaction.getProduct(j).isSetSpecies()) {
-									SpeciesReference specRef = reaction.getProduct(j);
-									if (speciesName.equals(specRef.getSpecies())) {
-										specRef.setSpecies(specie.getId());
-									}
-								}
-							}
-							for (int j = 0; j < reaction.getNumReactants(); j++) {
-								if (reaction.getReactant(j).isSetSpecies()) {
-									SpeciesReference specRef = reaction.getReactant(j);
-									if (speciesName.equals(specRef.getSpecies())) {
-										specRef.setSpecies(specie.getId());
-									}
-								}
-							}
-						}
-						if (amount) {
-							specie.setInitialAmount(initial);
-						} else {
-							specie.setInitialConcentration(initial);
-						}
-						specs[index] = addSpec;
-						sort(specs);
-						species.setListData(specs);
-						species.setSelectedIndex(index);
-					} else {
-						int index = species.getSelectedIndex();
-						Species specie = document.getModel().createSpecies();
-						specie.setCompartment((String) comp.getSelectedItem());
-						specie.setId(ID.getText().trim());
-						usedIDs.add(ID.getText().trim());
-						if (amount) {
-							specie.setInitialAmount(initial);
-						} else {
-							specie.setInitialConcentration(initial);
-						}
-						JList add = new JList();
-						Object[] adding = { addSpec };
-						add.setListData(adding);
-						add.setSelectedIndex(0);
-						species.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-						adding = Buttons.add(specs, species, add, false, null, null, null, null,
-								null, null, null, this);
-						specs = new String[adding.length];
-						for (int i = 0; i < adding.length; i++) {
-							specs[i] = (String) adding[i];
-						}
-						sort(specs);
-						species.setListData(specs);
-						species.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-						if (document.getModel().getNumSpecies() == 1) {
-							species.setSelectedIndex(0);
-						} else {
-							species.setSelectedIndex(index);
-						}
-					}
-					change = true;
-					speciesFrame.dispose();
-				} catch (Exception e1) {
-					if (amount) {
-						JOptionPane.showMessageDialog(speciesFrame,
-								"You must enter a double into the initial" + " amount field!",
-								"Enter A Valid Initial Concentration", JOptionPane.ERROR_MESSAGE);
-					} else {
-						JOptionPane.showMessageDialog(speciesFrame,
-								"You must enter a double into the initial"
-										+ " concentration field!",
-								"Enter A Valid Initial Concentration", JOptionPane.ERROR_MESSAGE);
-					}
-				}
-			}
-		}
-		// if the cancel species button is clicked
-		else if (e.getSource() == cancelSpecies) {
-			speciesFrame.dispose();
-		}
-		// if the add or save reactions button is clicked
-		else if (e.getSource() == addSaveReactions) {
-			if (reacID.getText().trim().equals("")) {
-				JOptionPane.showMessageDialog(reactionFrame,
-						"You must enter an ID into the ID field!", "Enter An ID",
-						JOptionPane.ERROR_MESSAGE);
-			} else {
-				String reac;
-				reac = reacID.getText().trim();
-				if (usedIDs.contains(reacID.getText().trim())) {
-					if (addSaveReactions.getText().equals("Save")
-							&& !reacID.getText().trim().equals(
-									(String) reactions.getSelectedValue())) {
-						JOptionPane.showMessageDialog(reactionFrame,
-								"You must enter a unique id into the id field!",
-								"Enter A Unique ID", JOptionPane.ERROR_MESSAGE);
-						return;
-					} else if (addSaveReactions.getText().equals("Add")) {
-						JOptionPane.showMessageDialog(reactionFrame,
-								"You must enter a unique id into the id field!",
-								"Enter A Unique ID", JOptionPane.ERROR_MESSAGE);
-						return;
-					}
-				}
-				int kineticCheck;
-				if (addSaveReactions.getText().equals("Save")) {
-					int index = reactions.getSelectedIndex();
-					String value = (String) reactions.getSelectedValue();
-					kineticCheck = index;
-					reactions.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-					reacts = Buttons.getList(reacts, reactions);
-					reactions.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-					Reaction react = document.getModel().getReaction(value);
-					ListOf remove;
-					long size;
-					try {
-						remove = react.getKineticLaw().getListOfParameters();
-						size = remove.getNumItems();
-						for (int i = 0; i < size; i++) {
-							remove.remove(0);
-						}
-					} catch (Exception e1) {
-					}
-					for (int i = 0; i < changedParameters.size(); i++) {
-						react.getKineticLaw().addParameter(changedParameters.get(i));
-					}
-					remove = react.getListOfProducts();
-					size = remove.getNumItems();
-					for (int i = 0; i < size; i++) {
-						remove.remove(0);
-					}
-					for (int i = 0; i < changedProducts.size(); i++) {
-						react.addProduct(changedProducts.get(i));
-					}
-					remove = react.getListOfReactants();
-					size = remove.getNumItems();
-					for (int i = 0; i < size; i++) {
-						remove.remove(0);
-					}
-					for (int i = 0; i < changedReactants.size(); i++) {
-						react.addReactant(changedReactants.get(i));
-					}
-					if (reacReverse.getSelectedItem().equals("true")) {
-						react.setReversible(true);
-					} else {
-						react.setReversible(false);
-					}
-					react.setId(reacID.getText().trim());
-					for (int i = 0; i < usedIDs.size(); i++) {
-						if (usedIDs.get(i).equals(value)) {
-							usedIDs.set(i, reacID.getText().trim());
-						}
-					}
-					react.getKineticLaw().setFormula(kineticLaw.getText().trim());
-					reacts[index] = reac;
-					sort(reacts);
-					reactions.setListData(reacts);
-					reactions.setSelectedIndex(index);
-				} else {
-					int index = reactions.getSelectedIndex();
-					Reaction react = document.getModel().getReaction(
-							document.getModel().getNumReactions() - 1);
-					kineticCheck = (int) (document.getModel().getNumReactions() - 1);
-					for (int i = 0; i < changedParameters.size(); i++) {
-						react.getKineticLaw().addParameter(changedParameters.get(i));
-					}
-					for (int i = 0; i < changedProducts.size(); i++) {
-						react.addProduct(changedProducts.get(i));
-					}
-					for (int i = 0; i < changedReactants.size(); i++) {
-						react.addReactant(changedReactants.get(i));
-					}
-					if (reacReverse.getSelectedItem().equals("true")) {
-						react.setReversible(true);
-					} else {
-						react.setReversible(false);
-					}
-					react.setId(reacID.getText().trim());
-					usedIDs.add(reacID.getText().trim());
-					react.getKineticLaw().setFormula(kineticLaw.getText().trim());
-					JList add = new JList();
-					Object[] adding = { reac };
-					add.setListData(adding);
-					add.setSelectedIndex(0);
-					reactions.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-					adding = Buttons.add(reacts, reactions, add, false, null, null, null, null,
-							null, null, null, this);
-					reacts = new String[adding.length];
-					for (int i = 0; i < adding.length; i++) {
-						reacts[i] = (String) adding[i];
-					}
-					sort(reacts);
-					reactions.setListData(reacts);
-					reactions.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-					if (document.getModel().getNumReactions() == 1) {
-						reactions.setSelectedIndex(0);
-					} else {
-						reactions.setSelectedIndex(index);
-					}
-				}
-				change = true;
-				if (!kineticLaw.getText().trim().equals("")) {
-					ArrayList<String> validKineticVars = new ArrayList<String>();
-					ArrayList<String> invalidKineticVars = new ArrayList<String>();
-					Reaction r;
-					if (addSaveReactions.getText().equals("Save")) {
-						r = document.getModel().getReaction(kineticCheck);
-					} else if (kineticCheck == -1) {
-						r = document.getModel().getReaction(0);
-					} else {
-						r = document.getModel().getReaction(reacts.length - 1);
-					}
-					SBMLDocument docu = new SBMLDocument();
-					Model m = docu.createModel();
-					m.addReaction(r);
-					SBMLWriter writer = new SBMLWriter();
-					String doc = writer.writeToString(docu);
-					String documentWritten = writer.writeToString(document);
-					SBMLReader reader = new SBMLReader();
-					docu = reader.readSBMLFromString(doc);
-					document = reader.readSBMLFromString(documentWritten);
-					ListOf sbml = r.getKineticLaw().getListOfParameters();
-					for (int i = 0; i < sbml.getNumItems(); i++) {
-						validKineticVars.add(((Parameter) sbml.get(i)).getId());
-					}
-					sbml = document.getModel().getListOfSpecies();
-					for (int i = 0; i < sbml.getNumItems(); i++) {
-						validKineticVars.add(((Species) sbml.get(i)).getId());
-					}
-					sbml = r.getListOfReactants();
-					for (int i = 0; i < sbml.getNumItems(); i++) {
-						validKineticVars.add(((SpeciesReference) sbml.get(i)).getSpecies());
-					}
-					sbml = r.getListOfProducts();
-					for (int i = 0; i < sbml.getNumItems(); i++) {
-						validKineticVars.add(((SpeciesReference) sbml.get(i)).getSpecies());
-					}
-					sbml = document.getModel().getListOfParameters();
-					for (int i = 0; i < sbml.getNumItems(); i++) {
-						validKineticVars.add(((Parameter) sbml.get(i)).getId());
-					}
-					if (!docu.getModel().getReaction(0).getKineticLaw().isSetFormula()) {
-						if (addSaveReactions.getText().equals("Save")) {
-							document.getModel().getReaction(kineticCheck).getKineticLaw()
-									.setFormula(kineticL);
-						} else if (kineticCheck != -1) {
-							document.getModel().getReaction(0).getKineticLaw().setFormula(kineticL);
-						} else {
-							document.getModel().getReaction(reacts.length - 1).getKineticLaw()
-									.setFormula(kineticL);
-						}
-						if (!addSaveReactions.getText().equals("Save")) {
-							JOptionPane.showMessageDialog(reactionFrame,
-									"Unable to parse kinetic law!", "Kinetic Law Error",
-									JOptionPane.ERROR_MESSAGE);
-							reactions
-									.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-							Buttons.remove(reactions, reacts);
-							reactions.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-							reactions.setSelectedIndex(0);
-						} else {
-							JOptionPane
-									.showMessageDialog(
-											reactionFrame,
-											"Unable to parse kinetic law!"
-													+ "\nAll others parts of the reaction have been saved.",
-											"Kinetic Law Error", JOptionPane.ERROR_MESSAGE);
-						}
-					} else {
-						String[] splitLaw = docu.getModel().getReaction(0).getKineticLaw()
-								.getFormula().split(" ");
-						boolean pass = true;
-						for (int i = 0; i < splitLaw.length; i++) {
-							if (splitLaw[i].equals("+") || splitLaw[i].equals("-")
-									|| splitLaw[i].equals("*") || splitLaw[i].equals("/")
-									|| splitLaw[i].equals("INF")) {
-
-							} else if ((splitLaw[i].contains("(") && splitLaw[i].contains(")"))) {
-								String subString = (String) splitLaw[i].substring(splitLaw[i]
-										.indexOf('(') + 1, splitLaw[i].indexOf(')'));
-								try {
-									Double.parseDouble(subString);
-								} catch (Exception e1) {
-									invalidKineticVars.add(subString);
-									for (int j = 0; j < validKineticVars.size(); j++) {
-										if (subString.equals(validKineticVars.get(j))) {
-											pass = true;
-											invalidKineticVars.remove(subString);
-											break;
-										}
-										pass = false;
-									}
-								}
-							} else if (splitLaw[i].contains("(") && splitLaw[i].contains(",")) {
-								String subString = (String) splitLaw[i].substring(splitLaw[i]
-										.indexOf('(') + 1, splitLaw[i].indexOf(','));
-								try {
-									Double.parseDouble(subString);
-								} catch (Exception e1) {
-									invalidKineticVars.add(subString);
-									for (int j = 0; j < validKineticVars.size(); j++) {
-										if (subString.equals(validKineticVars.get(j))) {
-											pass = true;
-											invalidKineticVars.remove(subString);
-											break;
-										}
-										pass = false;
-									}
-								}
-							} else if (splitLaw[i].endsWith(")")) {
-								String subString = (String) splitLaw[i].substring(0, splitLaw[i]
-										.indexOf(')'));
-								try {
-									Double.parseDouble(subString);
-								} catch (Exception e1) {
-									invalidKineticVars.add(subString);
-									for (int j = 0; j < validKineticVars.size(); j++) {
-										if (subString.equals(validKineticVars.get(j))) {
-											pass = true;
-											invalidKineticVars.remove(subString);
-											break;
-										}
-										pass = false;
-									}
-								}
-							} else if (splitLaw[i].startsWith("(")) {
-								String subString = (String) splitLaw[i].substring(splitLaw[i]
-										.indexOf('(') + 1);
-								try {
-									Double.parseDouble(subString);
-								} catch (Exception e1) {
-									invalidKineticVars.add(subString);
-									for (int j = 0; j < validKineticVars.size(); j++) {
-										if (subString.equals(validKineticVars.get(j))) {
-											pass = true;
-											invalidKineticVars.remove(subString);
-											break;
-										}
-										pass = false;
-									}
-								}
-							} else {
-								try {
-									Double.parseDouble(splitLaw[i]);
-								} catch (Exception e1) {
-									invalidKineticVars.add(splitLaw[i]);
-									for (int j = 0; j < validKineticVars.size(); j++) {
-										if (splitLaw[i].equals(validKineticVars.get(j))) {
-											pass = true;
-											invalidKineticVars.remove(splitLaw[i]);
-											break;
-										}
-										pass = false;
-									}
-								}
-							}
-						}
-						if (!pass || validKineticVars.size() == 0 || invalidKineticVars.size() != 0) {
-							String invalid = "";
-							for (int i = 0; i < invalidKineticVars.size(); i++) {
-								if (i == invalidKineticVars.size() - 1) {
-									invalid += invalidKineticVars.get(i);
-								} else {
-									invalid += invalidKineticVars.get(i) + "\n";
-								}
-							}
-							String message;
-							if (!addSaveReactions.getText().equals("Save")) {
-								message = "Kinetic law contains unknown variables.\n\n"
-										+ "Unkown variables:\n" + invalid;
-							} else {
-								message = "Kinetic law contains unknown variables.\n"
-										+ "However, the reaction with this kinetic law has been saved.\n\n"
-										+ "Unkown variables:\n" + invalid;
-							}
-							JTextArea messageArea = new JTextArea(message);
-							messageArea.setLineWrap(true);
-							messageArea.setWrapStyleWord(true);
-							messageArea.setEditable(false);
-							JScrollPane scroll = new JScrollPane();
-							scroll.setMinimumSize(new Dimension(300, 300));
-							scroll.setPreferredSize(new Dimension(300, 300));
-							scroll.setViewportView(messageArea);
-							JOptionPane.showMessageDialog(reactionFrame, scroll,
-									"Kinetic Law Error", JOptionPane.ERROR_MESSAGE);
-							if (!addSaveReactions.getText().equals("Save")) {
-								reactions
-										.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-								Buttons.remove(reactions, reacts);
-								reactions.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-								reactions.setSelectedIndex(0);
-							}
-						} else {
-							reactionFrame.dispose();
-						}
-					}
-				} else {
-					reactionFrame.dispose();
-				}
-			}
-		}
-		// if the cancel species button is clicked
-		else if (e.getSource() == cancelReactions) {
-			if (addSaveReactions.getText().equals("Add")) {
-				document.getModel().getListOfReactions().remove(
-						document.getModel().getNumReactions() - 1);
-			}
-			reactionFrame.dispose();
-		}
-		// if the add or save parameters button is clicked
-		else if (e.getSource() == addSaveParams) {
-			if (paramID.getText().trim().equals("")) {
-				JOptionPane.showMessageDialog(parameterFrame,
-						"You must enter an ID into the ID field!", "Enter An ID",
-						JOptionPane.ERROR_MESSAGE);
-			} else {
-				try {
-					double value = Double.parseDouble(paramValue.getText().trim());
-					String param = paramID.getText().trim() + " " + value;
-					if (usedIDs.contains(paramID.getText().trim())) {
-						if (addSaveParams.getText().equals("Save")
-								&& !paramID.getText().trim().equals(
-										((String) parameters.getSelectedValue()).split(" ")[0])) {
-							JOptionPane.showMessageDialog(parameterFrame,
-									"You must enter a unique id into the id field!",
-									"Enter A Unique ID", JOptionPane.ERROR_MESSAGE);
-							return;
-						} else if (addSaveParams.getText().equals("Add")) {
-							JOptionPane.showMessageDialog(parameterFrame,
-									"You must enter a unique id into the id field!",
-									"Enter A Unique ID", JOptionPane.ERROR_MESSAGE);
-							return;
-						}
-					}
-					if (addSaveParams.getText().equals("Save")) {
-						int index = parameters.getSelectedIndex();
-						String v = ((String) parameters.getSelectedValue()).split(" ")[0];
-						Parameter paramet = document.getModel().getParameter(v);
-						parameters.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-						params = Buttons.getList(params, parameters);
-						parameters.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-						paramet.setId(paramID.getText().trim());
-						for (int i = 0; i < usedIDs.size(); i++) {
-							if (usedIDs.get(i).equals(v)) {
-								usedIDs.set(i, paramID.getText().trim());
-							}
-						}
-						paramet.setValue(value);
-						params[index] = param;
-						sort(params);
-						parameters.setListData(params);
-						parameters.setSelectedIndex(index);
-					} else {
-						int index = parameters.getSelectedIndex();
-						Parameter paramet = document.getModel().createParameter();
-						paramet.setId(paramID.getText().trim());
-						usedIDs.add(paramID.getText().trim());
-						paramet.setValue(value);
-						JList add = new JList();
-						Object[] adding = { param };
-						add.setListData(adding);
-						add.setSelectedIndex(0);
-						parameters.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-						adding = Buttons.add(params, parameters, add, false, null, null, null,
-								null, null, null, null, this);
-						params = new String[adding.length];
-						for (int i = 0; i < adding.length; i++) {
-							params[i] = (String) adding[i];
-						}
-						sort(params);
-						parameters.setListData(params);
-						parameters.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-						if (document.getModel().getNumParameters() == 1) {
-							parameters.setSelectedIndex(0);
-						} else {
-							parameters.setSelectedIndex(index);
-						}
-					}
-					change = true;
-					parameterFrame.dispose();
-				} catch (Exception e1) {
-					JOptionPane.showMessageDialog(parameterFrame,
-							"You must enter a double into the value" + " field!",
-							"Enter A Valid Value", JOptionPane.ERROR_MESSAGE);
-				}
-			}
-		}
-		// if the cancel parameters button is clicked
-		else if (e.getSource() == cancelParams) {
-			parameterFrame.dispose();
-		}
-		// if the add or save reaction parameters button is clicked
-		else if (e.getSource() == reacAddSaveParams) {
-			if (reacParamID.getText().trim().equals("")) {
-				JOptionPane.showMessageDialog(reacParameterFrame,
-						"You must enter an ID into the ID field!", "Enter An ID",
-						JOptionPane.ERROR_MESSAGE);
-			} else {
-				try {
-					double value = Double.parseDouble(reacParamValue.getText().trim());
-					String param = reacParamID.getText().trim() + " " + value;
-					if (usedIDs.contains(reacParamID.getText().trim())) {
-						if (reacAddSaveParams.getText().equals("Save")
-								&& !reacParamID.getText().trim().equals(
-										((String) reacParameters.getSelectedValue()).split(" ")[0])) {
-							JOptionPane.showMessageDialog(reacParameterFrame,
-									"You must enter a unique id into the id field!",
-									"Enter A Unique ID", JOptionPane.ERROR_MESSAGE);
-							return;
-						} else if (reacAddSaveParams.getText().equals("Add")) {
-							JOptionPane.showMessageDialog(reacParameterFrame,
-									"You must enter a unique id into the id field!",
-									"Enter A Unique ID", JOptionPane.ERROR_MESSAGE);
-							return;
-						}
-					}
-					if (reacAddSaveParams.getText().equals("Save")) {
-						int index = reacParameters.getSelectedIndex();
-						String v = ((String) reacParameters.getSelectedValue()).split(" ")[0];
-						Parameter paramet = null;
-						for (Parameter p : changedParameters) {
-							if (p.getId().equals(v)) {
-								paramet = p;
-							}
-						}
-						reacParameters
-								.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-						reacParams = Buttons.getList(reacParams, reacParameters);
-						reacParameters.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-						paramet.setId(reacParamID.getText().trim());
-						for (int i = 0; i < usedIDs.size(); i++) {
-							if (usedIDs.get(i).equals(v)) {
-								usedIDs.set(i, reacParamID.getText().trim());
-							}
-						}
-						paramet.setValue(value);
-						reacParams[index] = param;
-						sort(reacParams);
-						reacParameters.setListData(reacParams);
-						reacParameters.setSelectedIndex(index);
-					} else {
-						int index = reacParameters.getSelectedIndex();
-						Parameter paramet = new Parameter();
-						changedParameters.add(paramet);
-						paramet.setId(reacParamID.getText().trim());
-						usedIDs.add(reacParamID.getText().trim());
-						paramet.setValue(value);
-						JList add = new JList();
-						Object[] adding = { param };
-						add.setListData(adding);
-						add.setSelectedIndex(0);
-						reacParameters
-								.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-						adding = Buttons.add(reacParams, reacParameters, add, false, null, null,
-								null, null, null, null, null, reactionFrame);
-						reacParams = new String[adding.length];
-						for (int i = 0; i < adding.length; i++) {
-							reacParams[i] = (String) adding[i];
-						}
-						sort(reacParams);
-						reacParameters.setListData(reacParams);
-						reacParameters.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-						try {
-							if (document.getModel().getReaction(
-									((String) reactions.getSelectedValue())).getKineticLaw()
-									.getNumParameters() == 1) {
-								reacParameters.setSelectedIndex(0);
-							} else {
-								reacParameters.setSelectedIndex(index);
-							}
-						} catch (Exception e2) {
-							reacParameters.setSelectedIndex(0);
-						}
-					}
-					change = true;
-					reacParameterFrame.dispose();
-				} catch (Exception e1) {
-					JOptionPane.showMessageDialog(reacParameterFrame,
-							"You must enter a double into the value" + " field!",
-							"Enter A Valid Value", JOptionPane.ERROR_MESSAGE);
-				}
-			}
-		}
-		// if the cancel reactions parameters button is clicked
-		else if (e.getSource() == reacCancelParams) {
-			reacParameterFrame.dispose();
 		}
 		// if the add reactions parameters button is clicked
 		else if (e.getSource() == reacAddParam) {
@@ -1377,140 +648,6 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				products.setSelectedIndex(0);
 			}
 		}
-		// if the add or save products button is clicked
-		else if (e.getSource() == addSaveProducts) {
-			try {
-				double value = Double.parseDouble(productStoiciometry.getText().trim());
-				String prod = productSpecies.getSelectedItem() + " " + value;
-				if (addSaveProducts.getText().equals("Save")) {
-					int index = products.getSelectedIndex();
-					String v = ((String) products.getSelectedValue()).split(" ")[0];
-					SpeciesReference produ = null;
-					for (SpeciesReference p : changedProducts) {
-						if (p.getSpecies().equals(v)) {
-							produ = p;
-						}
-					}
-					products.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-					product = Buttons.getList(product, products);
-					products.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-					produ.setSpecies((String) productSpecies.getSelectedItem());
-					produ.setStoichiometry(value);
-					product[index] = prod;
-					sort(product);
-					products.setListData(product);
-					products.setSelectedIndex(index);
-				} else {
-					int index = products.getSelectedIndex();
-					SpeciesReference produ = new SpeciesReference();
-					changedProducts.add(produ);
-					produ.setSpecies((String) productSpecies.getSelectedItem());
-					produ.setStoichiometry(value);
-					JList add = new JList();
-					Object[] adding = { prod };
-					add.setListData(adding);
-					add.setSelectedIndex(0);
-					products.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-					adding = Buttons.add(product, products, add, false, null, null, null, null,
-							null, null, null, reactionFrame);
-					product = new String[adding.length];
-					for (int i = 0; i < adding.length; i++) {
-						product[i] = (String) adding[i];
-					}
-					sort(product);
-					products.setListData(product);
-					products.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-					try {
-						if (document.getModel()
-								.getReaction(((String) reactions.getSelectedValue()))
-								.getNumProducts() == 1) {
-							products.setSelectedIndex(0);
-						} else {
-							products.setSelectedIndex(index);
-						}
-					} catch (Exception e2) {
-						products.setSelectedIndex(0);
-					}
-				}
-				change = true;
-				productFrame.dispose();
-			} catch (Exception e1) {
-				JOptionPane.showMessageDialog(productFrame,
-						"You must enter a double into the stoiciometry" + " field!",
-						"Enter A Valid Value", JOptionPane.ERROR_MESSAGE);
-			}
-		}
-		// if the cancel products button is clicked
-		else if (e.getSource() == cancelProducts) {
-			productFrame.dispose();
-		}
-		// if the add or save reactants button is clicked
-		else if (e.getSource() == addSaveReactants) {
-			try {
-				double value = Double.parseDouble(reactantStoiciometry.getText().trim());
-				String react = reactantSpecies.getSelectedItem() + " " + value;
-				if (addSaveReactants.getText().equals("Save")) {
-					int index = reactants.getSelectedIndex();
-					String v = ((String) reactants.getSelectedValue()).split(" ")[0];
-					SpeciesReference reactan = null;
-					for (SpeciesReference r : changedReactants) {
-						if (r.getSpecies().equals(v)) {
-							reactan = r;
-						}
-					}
-					reactants.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-					reacta = Buttons.getList(reacta, reactants);
-					reactants.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-					reactan.setSpecies((String) reactantSpecies.getSelectedItem());
-					reactan.setStoichiometry(value);
-					reacta[index] = react;
-					sort(reacta);
-					reactants.setListData(reacta);
-					reactants.setSelectedIndex(index);
-				} else {
-					int index = reactants.getSelectedIndex();
-					SpeciesReference reactan = new SpeciesReference();
-					changedReactants.add(reactan);
-					reactan.setSpecies((String) reactantSpecies.getSelectedItem());
-					reactan.setStoichiometry(value);
-					JList add = new JList();
-					Object[] adding = { react };
-					add.setListData(adding);
-					add.setSelectedIndex(0);
-					reactants.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-					adding = Buttons.add(reacta, reactants, add, false, null, null, null, null,
-							null, null, null, reactionFrame);
-					reacta = new String[adding.length];
-					for (int i = 0; i < adding.length; i++) {
-						reacta[i] = (String) adding[i];
-					}
-					sort(reacta);
-					reactants.setListData(reacta);
-					reactants.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-					try {
-						if (document.getModel()
-								.getReaction(((String) reactions.getSelectedValue()))
-								.getNumReactants() == 1) {
-							reactants.setSelectedIndex(0);
-						} else {
-							reactants.setSelectedIndex(index);
-						}
-					} catch (Exception e2) {
-						reactants.setSelectedIndex(0);
-					}
-				}
-				change = true;
-				reactantFrame.dispose();
-			} catch (Exception e1) {
-				JOptionPane.showMessageDialog(reactantFrame,
-						"You must enter a double into the stoiciometry" + " field!",
-						"Enter A Valid Value", JOptionPane.ERROR_MESSAGE);
-			}
-		}
-		// if the cancel reactants button is clicked
-		else if (e.getSource() == cancelReactants) {
-			reactantFrame.dispose();
-		}
 	}
 
 	/**
@@ -1521,72 +658,113 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			JOptionPane.showMessageDialog(this, "No compartments selected!",
 					"Must Select A Compartment", JOptionPane.ERROR_MESSAGE);
 		} else {
-			compartFrame = new JFrame("Compartments");
-			WindowListener w = new WindowListener() {
-				public void windowClosing(WindowEvent arg0) {
-					compartFrame.dispose();
-				}
-
-				public void windowOpened(WindowEvent arg0) {
-				}
-
-				public void windowClosed(WindowEvent arg0) {
-				}
-
-				public void windowIconified(WindowEvent arg0) {
-				}
-
-				public void windowDeiconified(WindowEvent arg0) {
-				}
-
-				public void windowActivated(WindowEvent arg0) {
-				}
-
-				public void windowDeactivated(WindowEvent arg0) {
-				}
-			};
-			compartFrame.addWindowListener(w);
-			JPanel compartPanel = new JPanel(new GridLayout(2, 2));
+			JPanel compartPanel = new JPanel();
+			JPanel compPanel = new JPanel(new GridLayout(1, 2));
 			JLabel idLabel = new JLabel("ID:");
-			compID = new JTextField();
-			addSaveCompart = new JButton(option);
-			cancelCompart = new JButton("Cancel");
+			compID = new JTextField(12);
 			if (option.equals("Save")) {
 				try {
 					Compartment compartment = document.getModel().getCompartment(
 							((String) compartments.getSelectedValue()));
 					compID.setText(compartment.getId());
 				} catch (Exception e) {
-
 				}
 			}
-			addSaveCompart.addActionListener(this);
-			cancelCompart.addActionListener(this);
-			compartPanel.add(idLabel);
-			compartPanel.add(compID);
-			compartPanel.add(addSaveCompart);
-			compartPanel.add(cancelCompart);
-			compartFrame.setContentPane(compartPanel);
-			compartFrame.pack();
-			Dimension screenSize;
-			try {
-				Toolkit tk = Toolkit.getDefaultToolkit();
-				screenSize = tk.getScreenSize();
-			} catch (AWTError awe) {
-				screenSize = new Dimension(640, 480);
+			compPanel.add(idLabel);
+			compPanel.add(compID);
+			compartPanel.add(compPanel);
+			Object[] options = { option, "Cancel" };
+			int value = JOptionPane
+					.showOptionDialog(this, compartPanel, "Compartment Editor",
+							JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
+							options[0]);
+			if (value == JOptionPane.YES_OPTION) {
+				boolean error = true;
+				while (error && value == JOptionPane.YES_OPTION) {
+					error = false;
+					if (compID.getText().trim().equals("")) {
+						JOptionPane.showMessageDialog(this,
+								"You must enter an id into the id field!", "Enter An ID",
+								JOptionPane.ERROR_MESSAGE);
+						error = true;
+						value = JOptionPane.showOptionDialog(this, compartPanel,
+								"Compartment Editor", JOptionPane.YES_NO_OPTION,
+								JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+					} else {
+						String addComp = "";
+						addComp = compID.getText().trim();
+						if (usedIDs.contains(addComp)) {
+							if (option.equals("Save")
+									&& !addComp.equals((String) compartments.getSelectedValue())) {
+								JOptionPane.showMessageDialog(this,
+										"You must enter a unique id into the id field!",
+										"Enter A Unique ID", JOptionPane.ERROR_MESSAGE);
+								error = true;
+							} else if (option.equals("Add")) {
+								JOptionPane.showMessageDialog(this,
+										"You must enter a unique id into the id field!",
+										"Enter A Unique ID", JOptionPane.ERROR_MESSAGE);
+								error = true;
+							}
+						}
+						if (!error) {
+							if (option.equals("Save")) {
+								int index = compartments.getSelectedIndex();
+								String val = (String) compartments.getSelectedValue();
+								compartments
+										.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+								comps = Buttons.getList(comps, compartments);
+								compartments.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+								Compartment c = document.getModel().getCompartment(val);
+								c.setId(compID.getText().trim());
+								for (int i = 0; i < usedIDs.size(); i++) {
+									if (usedIDs.get(i).equals(val)) {
+										usedIDs.set(i, addComp);
+									}
+								}
+								comps[index] = addComp;
+								sort(comps);
+								compartments.setListData(comps);
+								compartments.setSelectedIndex(index);
+							} else {
+								int index = compartments.getSelectedIndex();
+								Compartment c = document.getModel().createCompartment();
+								c.setId(compID.getText().trim());
+								usedIDs.add(addComp);
+								JList add = new JList();
+								Object[] adding = { addComp };
+								add.setListData(adding);
+								add.setSelectedIndex(0);
+								compartments
+										.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+								adding = Buttons.add(comps, compartments, add, false, null, null,
+										null, null, null, null, null, this);
+								comps = new String[adding.length];
+								for (int i = 0; i < adding.length; i++) {
+									comps[i] = (String) adding[i];
+								}
+								sort(comps);
+								compartments.setListData(comps);
+								compartments.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+								if (document.getModel().getNumCompartments() == 1) {
+									compartments.setSelectedIndex(0);
+								} else {
+									compartments.setSelectedIndex(index);
+								}
+							}
+							change = true;
+						}
+						if (error) {
+							value = JOptionPane.showOptionDialog(this, compartPanel,
+									"Compartment Editor", JOptionPane.YES_NO_OPTION,
+									JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+						}
+					}
+				}
+				if (value == JOptionPane.NO_OPTION) {
+					return;
+				}
 			}
-			Dimension frameSize = compartFrame.getSize();
-
-			if (frameSize.height > screenSize.height) {
-				frameSize.height = screenSize.height;
-			}
-			if (frameSize.width > screenSize.width) {
-				frameSize.width = screenSize.width;
-			}
-			int x = screenSize.width / 2 - frameSize.width / 2;
-			int y = screenSize.height / 2 - frameSize.height / 2;
-			compartFrame.setLocation(x, y);
-			compartFrame.setVisible(true);
 		}
 	}
 
@@ -1598,32 +776,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			JOptionPane.showMessageDialog(this, "No species selected!", "Must Select A Species",
 					JOptionPane.ERROR_MESSAGE);
 		} else {
-			speciesFrame = new JFrame("Species");
-			WindowListener w = new WindowListener() {
-				public void windowClosing(WindowEvent arg0) {
-					speciesFrame.dispose();
-				}
-
-				public void windowOpened(WindowEvent arg0) {
-				}
-
-				public void windowClosed(WindowEvent arg0) {
-				}
-
-				public void windowIconified(WindowEvent arg0) {
-				}
-
-				public void windowDeiconified(WindowEvent arg0) {
-				}
-
-				public void windowActivated(WindowEvent arg0) {
-				}
-
-				public void windowDeactivated(WindowEvent arg0) {
-				}
-			};
-			speciesFrame.addWindowListener(w);
-			JPanel speciesPanel = new JPanel(new GridLayout(4, 2));
+			JPanel speciesPanel = new JPanel(new GridLayout(3, 2));
 			JLabel idLabel = new JLabel("ID:");
 			JLabel compLabel = new JLabel("Compartment:");
 			JLabel initLabel;
@@ -1644,8 +797,6 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				add[0] = "default";
 			}
 			comp = new JComboBox(add);
-			addSaveSpecies = new JButton(option);
-			cancelSpecies = new JButton("Cancel");
 			if (option.equals("Save")) {
 				try {
 					Species specie = document.getModel().getSpecies(
@@ -1654,40 +805,161 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					init.setText("" + specie.getInitialAmount());
 					comp.setSelectedItem(specie.getCompartment());
 				} catch (Exception e) {
-
 				}
 			}
-			addSaveSpecies.addActionListener(this);
-			cancelSpecies.addActionListener(this);
 			speciesPanel.add(idLabel);
 			speciesPanel.add(ID);
 			speciesPanel.add(compLabel);
 			speciesPanel.add(comp);
 			speciesPanel.add(initLabel);
 			speciesPanel.add(init);
-			speciesPanel.add(addSaveSpecies);
-			speciesPanel.add(cancelSpecies);
-			speciesFrame.setContentPane(speciesPanel);
-			speciesFrame.pack();
-			Dimension screenSize;
-			try {
-				Toolkit tk = Toolkit.getDefaultToolkit();
-				screenSize = tk.getScreenSize();
-			} catch (AWTError awe) {
-				screenSize = new Dimension(640, 480);
+			Object[] options = { option, "Cancel" };
+			int value = JOptionPane
+					.showOptionDialog(this, speciesPanel, "Species Editor",
+							JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
+							options[0]);
+			if (value == JOptionPane.YES_OPTION) {
+				boolean error = true;
+				while (error && value == JOptionPane.YES_OPTION) {
+					error = false;
+					if (ID.getText().trim().equals("")) {
+						JOptionPane.showMessageDialog(this,
+								"You must enter an id into the id field!", "Enter An ID",
+								JOptionPane.ERROR_MESSAGE);
+						error = true;
+						value = JOptionPane.showOptionDialog(this, speciesPanel, "Species Editor",
+								JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
+								options, options[0]);
+					} else {
+						try {
+							double initial = Double.parseDouble(init.getText().trim());
+							String addSpec = ID.getText().trim() + " " + comp.getSelectedItem()
+									+ " " + initial;
+							if (usedIDs.contains(ID.getText().trim())) {
+								if (option.equals("Save")
+										&& !ID.getText().trim()
+												.equals(
+														((String) species.getSelectedValue())
+																.split(" ")[0])) {
+									JOptionPane.showMessageDialog(this,
+											"You must enter a unique id into the id field!",
+											"Enter A Unique ID", JOptionPane.ERROR_MESSAGE);
+									error = true;
+								} else if (option.equals("Add")) {
+									JOptionPane.showMessageDialog(this,
+											"You must enter a unique id into the id field!",
+											"Enter A Unique ID", JOptionPane.ERROR_MESSAGE);
+									error = true;
+								}
+							}
+							if (!error) {
+								if (option.equals("Save")) {
+									int index1 = species.getSelectedIndex();
+									String val = ((String) species.getSelectedValue()).split(" ")[0];
+									species
+											.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+									specs = Buttons.getList(specs, species);
+									species.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+									Species specie = document.getModel().getSpecies(val);
+									String speciesName = specie.getId();
+									specie.setCompartment((String) comp.getSelectedItem());
+									specie.setId(ID.getText().trim());
+									for (int i = 0; i < usedIDs.size(); i++) {
+										if (usedIDs.get(i).equals(val)) {
+											usedIDs.set(i, ID.getText().trim());
+										}
+									}
+									Model model = document.getModel();
+									for (int i = 0; i < model.getNumReactions(); i++) {
+										Reaction reaction = (Reaction) document.getModel()
+												.getListOfReactions().get(i);
+										for (int j = 0; j < reaction.getNumProducts(); j++) {
+											if (reaction.getProduct(j).isSetSpecies()) {
+												SpeciesReference specRef = reaction.getProduct(j);
+												if (speciesName.equals(specRef.getSpecies())) {
+													specRef.setSpecies(specie.getId());
+												}
+											}
+										}
+										for (int j = 0; j < reaction.getNumReactants(); j++) {
+											if (reaction.getReactant(j).isSetSpecies()) {
+												SpeciesReference specRef = reaction.getReactant(j);
+												if (speciesName.equals(specRef.getSpecies())) {
+													specRef.setSpecies(specie.getId());
+												}
+											}
+										}
+									}
+									if (amount) {
+										specie.setInitialAmount(initial);
+									} else {
+										specie.setInitialConcentration(initial);
+									}
+									specs[index1] = addSpec;
+									sort(specs);
+									species.setListData(specs);
+									species.setSelectedIndex(index1);
+								} else {
+									int index1 = species.getSelectedIndex();
+									Species specie = document.getModel().createSpecies();
+									specie.setCompartment((String) comp.getSelectedItem());
+									specie.setId(ID.getText().trim());
+									usedIDs.add(ID.getText().trim());
+									if (amount) {
+										specie.setInitialAmount(initial);
+									} else {
+										specie.setInitialConcentration(initial);
+									}
+									JList addIt = new JList();
+									Object[] adding = { addSpec };
+									addIt.setListData(adding);
+									addIt.setSelectedIndex(0);
+									species
+											.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+									adding = Buttons.add(specs, species, addIt, false, null, null,
+											null, null, null, null, null, this);
+									specs = new String[adding.length];
+									for (int i = 0; i < adding.length; i++) {
+										specs[i] = (String) adding[i];
+									}
+									sort(specs);
+									species.setListData(specs);
+									species.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+									if (document.getModel().getNumSpecies() == 1) {
+										species.setSelectedIndex(0);
+									} else {
+										species.setSelectedIndex(index1);
+									}
+								}
+								change = true;
+							}
+						} catch (Exception e1) {
+							error = true;
+							if (amount) {
+								JOptionPane.showMessageDialog(this,
+										"You must enter a double into the initial"
+												+ " amount field!",
+										"Enter A Valid Initial Concentration",
+										JOptionPane.ERROR_MESSAGE);
+							} else {
+								JOptionPane.showMessageDialog(this,
+										"You must enter a double into the initial"
+												+ " concentration field!",
+										"Enter A Valid Initial Concentration",
+										JOptionPane.ERROR_MESSAGE);
+							}
+						}
+						if (error) {
+							value = JOptionPane.showOptionDialog(this, speciesPanel,
+									"Species Editor", JOptionPane.YES_NO_OPTION,
+									JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+						}
+					}
+				}
 			}
-			Dimension frameSize = speciesFrame.getSize();
-
-			if (frameSize.height > screenSize.height) {
-				frameSize.height = screenSize.height;
+			if (value == JOptionPane.NO_OPTION) {
+				return;
 			}
-			if (frameSize.width > screenSize.width) {
-				frameSize.width = screenSize.width;
-			}
-			int x = screenSize.width / 2 - frameSize.width / 2;
-			int y = screenSize.height / 2 - frameSize.height / 2;
-			speciesFrame.setLocation(x, y);
-			speciesFrame.setVisible(true);
 		}
 	}
 
@@ -1699,36 +971,11 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			JOptionPane.showMessageDialog(this, "No reaction selected!", "Must Select A Reaction",
 					JOptionPane.ERROR_MESSAGE);
 		} else {
-			reactionFrame = new JFrame("Reactions");
-			WindowListener w = new WindowListener() {
-				public void windowClosing(WindowEvent arg0) {
-					reactionFrame.dispose();
-				}
 
-				public void windowOpened(WindowEvent arg0) {
-				}
-
-				public void windowClosed(WindowEvent arg0) {
-				}
-
-				public void windowIconified(WindowEvent arg0) {
-				}
-
-				public void windowDeiconified(WindowEvent arg0) {
-				}
-
-				public void windowActivated(WindowEvent arg0) {
-				}
-
-				public void windowDeactivated(WindowEvent arg0) {
-				}
-			};
-			reactionFrame.addWindowListener(w);
 			JPanel reactionPanelNorth = new JPanel();
 			JPanel reactionPanelNorth1 = new JPanel(new GridLayout(2, 2));
 			JPanel reactionPanelNorth2 = new JPanel();
 			JPanel reactionPanelCentral = new JPanel(new GridLayout(2, 2));
-			JPanel reactionPanelSouth = new JPanel();
 			JPanel reactionPanel = new JPanel(new BorderLayout());
 			JLabel id = new JLabel("ID:");
 			reacID = new JTextField(15);
@@ -1736,8 +983,6 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			String[] options = { "true", "false" };
 			reacReverse = new JComboBox(options);
 			reacReverse.setSelectedItem("false");
-			addSaveReactions = new JButton(option);
-			cancelReactions = new JButton("Cancel");
 			if (option.equals("Save")) {
 				Reaction reac = document.getModel().getReaction(
 						((String) reactions.getSelectedValue()));
@@ -1748,8 +993,6 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					reacReverse.setSelectedItem("false");
 				}
 			}
-			addSaveReactions.addActionListener(this);
-			cancelReactions.addActionListener(this);
 			JPanel param = new JPanel(new BorderLayout());
 			JPanel addParams = new JPanel();
 			reacAddParam = new JButton("Add Parameter");
@@ -1891,32 +1134,357 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			reactionPanelCentral.add(productsPanel);
 			reactionPanelCentral.add(param);
 			reactionPanelCentral.add(kineticPanel);
-			reactionPanelSouth.add(addSaveReactions);
-			reactionPanelSouth.add(cancelReactions);
 			reactionPanel.add(reactionPanelNorth, "North");
 			reactionPanel.add(reactionPanelCentral, "Center");
-			reactionPanel.add(reactionPanelSouth, "South");
-			reactionFrame.setContentPane(reactionPanel);
-			reactionFrame.pack();
-			Dimension screenSize;
-			try {
-				Toolkit tk = Toolkit.getDefaultToolkit();
-				screenSize = tk.getScreenSize();
-			} catch (AWTError awe) {
-				screenSize = new Dimension(640, 480);
-			}
-			Dimension frameSize = reactionFrame.getSize();
+			Object[] options1 = { option, "Cancel" };
+			int value = JOptionPane.showOptionDialog(this, reactionPanel, "Reaction Editor",
+					JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options1,
+					options1[0]);
+			if (value == JOptionPane.YES_OPTION) {
+				boolean error = true;
+				while (error && value == JOptionPane.YES_OPTION) {
+					error = false;
+					if (reacID.getText().trim().equals("")) {
+						JOptionPane.showMessageDialog(this,
+								"You must enter an ID into the ID field!", "Enter An ID",
+								JOptionPane.ERROR_MESSAGE);
+						error = true;
+					} else {
+						String reac;
+						reac = reacID.getText().trim();
+						if (usedIDs.contains(reacID.getText().trim())) {
+							if (option.equals("Save")
+									&& !reacID.getText().trim().equals(
+											(String) reactions.getSelectedValue())) {
+								JOptionPane.showMessageDialog(this,
+										"You must enter a unique id into the id field!",
+										"Enter A Unique ID", JOptionPane.ERROR_MESSAGE);
+								error = true;
+							} else if (option.equals("Add")) {
+								JOptionPane.showMessageDialog(this,
+										"You must enter a unique id into the id field!",
+										"Enter A Unique ID", JOptionPane.ERROR_MESSAGE);
+								error = true;
+							}
+						}
+						int kineticCheck;
+						if (!error) {
+							if (option.equals("Save")) {
+								int index = reactions.getSelectedIndex();
+								String val = (String) reactions.getSelectedValue();
+								kineticCheck = index;
+								reactions
+										.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+								reacts = Buttons.getList(reacts, reactions);
+								reactions.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+								Reaction react = document.getModel().getReaction(val);
+								ListOf remove;
+								long size;
+								try {
+									remove = react.getKineticLaw().getListOfParameters();
+									size = remove.getNumItems();
+									for (int i = 0; i < size; i++) {
+										remove.remove(0);
+									}
+								} catch (Exception e1) {
+								}
+								for (int i = 0; i < changedParameters.size(); i++) {
+									react.getKineticLaw().addParameter(changedParameters.get(i));
+								}
+								remove = react.getListOfProducts();
+								size = remove.getNumItems();
+								for (int i = 0; i < size; i++) {
+									remove.remove(0);
+								}
+								for (int i = 0; i < changedProducts.size(); i++) {
+									react.addProduct(changedProducts.get(i));
+								}
+								remove = react.getListOfReactants();
+								size = remove.getNumItems();
+								for (int i = 0; i < size; i++) {
+									remove.remove(0);
+								}
+								for (int i = 0; i < changedReactants.size(); i++) {
+									react.addReactant(changedReactants.get(i));
+								}
+								if (reacReverse.getSelectedItem().equals("true")) {
+									react.setReversible(true);
+								} else {
+									react.setReversible(false);
+								}
+								react.setId(reacID.getText().trim());
+								for (int i = 0; i < usedIDs.size(); i++) {
+									if (usedIDs.get(i).equals(val)) {
+										usedIDs.set(i, reacID.getText().trim());
+									}
+								}
+								react.getKineticLaw().setFormula(kineticLaw.getText().trim());
+								reacts[index] = reac;
+								sort(reacts);
+								reactions.setListData(reacts);
+								reactions.setSelectedIndex(index);
+							} else {
+								int index = reactions.getSelectedIndex();
+								Reaction react = document.getModel().getReaction(
+										document.getModel().getNumReactions() - 1);
+								kineticCheck = (int) (document.getModel().getNumReactions() - 1);
+								for (int i = 0; i < changedParameters.size(); i++) {
+									react.getKineticLaw().addParameter(changedParameters.get(i));
+								}
+								for (int i = 0; i < changedProducts.size(); i++) {
+									react.addProduct(changedProducts.get(i));
+								}
+								for (int i = 0; i < changedReactants.size(); i++) {
+									react.addReactant(changedReactants.get(i));
+								}
+								if (reacReverse.getSelectedItem().equals("true")) {
+									react.setReversible(true);
+								} else {
+									react.setReversible(false);
+								}
+								react.setId(reacID.getText().trim());
+								usedIDs.add(reacID.getText().trim());
+								react.getKineticLaw().setFormula(kineticLaw.getText().trim());
+								JList add = new JList();
+								Object[] adding = { reac };
+								add.setListData(adding);
+								add.setSelectedIndex(0);
+								reactions
+										.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+								adding = Buttons.add(reacts, reactions, add, false, null, null,
+										null, null, null, null, null, this);
+								reacts = new String[adding.length];
+								for (int i = 0; i < adding.length; i++) {
+									reacts[i] = (String) adding[i];
+								}
+								sort(reacts);
+								reactions.setListData(reacts);
+								reactions.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+								if (document.getModel().getNumReactions() == 1) {
+									reactions.setSelectedIndex(0);
+								} else {
+									reactions.setSelectedIndex(index);
+								}
+							}
+							change = true;
+							if (!kineticLaw.getText().trim().equals("")) {
+								ArrayList<String> validKineticVars = new ArrayList<String>();
+								ArrayList<String> invalidKineticVars = new ArrayList<String>();
+								Reaction r;
+								if (option.equals("Save")) {
+									r = document.getModel().getReaction(kineticCheck);
+								} else if (kineticCheck == -1) {
+									r = document.getModel().getReaction(0);
+								} else {
+									r = document.getModel().getReaction(reacts.length - 1);
+								}
+								SBMLDocument docu = new SBMLDocument();
+								Model m = docu.createModel();
+								m.addReaction(r);
+								SBMLWriter writer = new SBMLWriter();
+								String doc = writer.writeToString(docu);
+								String documentWritten = writer.writeToString(document);
+								SBMLReader reader = new SBMLReader();
+								docu = reader.readSBMLFromString(doc);
+								document = reader.readSBMLFromString(documentWritten);
+								ListOf sbml = r.getKineticLaw().getListOfParameters();
+								for (int i = 0; i < sbml.getNumItems(); i++) {
+									validKineticVars.add(((Parameter) sbml.get(i)).getId());
+								}
+								sbml = document.getModel().getListOfSpecies();
+								for (int i = 0; i < sbml.getNumItems(); i++) {
+									validKineticVars.add(((Species) sbml.get(i)).getId());
+								}
+								sbml = r.getListOfReactants();
+								for (int i = 0; i < sbml.getNumItems(); i++) {
+									validKineticVars.add(((SpeciesReference) sbml.get(i))
+											.getSpecies());
+								}
+								sbml = r.getListOfProducts();
+								for (int i = 0; i < sbml.getNumItems(); i++) {
+									validKineticVars.add(((SpeciesReference) sbml.get(i))
+											.getSpecies());
+								}
+								sbml = document.getModel().getListOfParameters();
+								for (int i = 0; i < sbml.getNumItems(); i++) {
+									validKineticVars.add(((Parameter) sbml.get(i)).getId());
+								}
+								if (!docu.getModel().getReaction(0).getKineticLaw().isSetFormula()) {
+									if (option.equals("Save")) {
+										document.getModel().getReaction(kineticCheck)
+												.getKineticLaw().setFormula(kineticL);
+									} else if (kineticCheck != -1) {
+										document.getModel().getReaction(0).getKineticLaw()
+												.setFormula(kineticL);
+									} else {
+										document.getModel().getReaction(reacts.length - 1)
+												.getKineticLaw().setFormula(kineticL);
+									}
+									if (option.equals("Save")) {
+										JOptionPane.showMessageDialog(this,
+												"Unable to parse kinetic law!",
+												"Kinetic Law Error", JOptionPane.ERROR_MESSAGE);
+										reactions
+												.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+										Buttons.remove(reactions, reacts);
+										reactions
+												.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+										reactions.setSelectedIndex(0);
+									} else {
+										JOptionPane
+												.showMessageDialog(
+														this,
+														"Unable to parse kinetic law!"
+																+ "\nAll others parts of the reaction have been saved.",
+														"Kinetic Law Error",
+														JOptionPane.ERROR_MESSAGE);
+									}
+								} else {
+									String[] splitLaw = docu.getModel().getReaction(0)
+											.getKineticLaw().getFormula().split(" ");
+									boolean pass = true;
+									for (int i = 0; i < splitLaw.length; i++) {
+										if (splitLaw[i].equals("+") || splitLaw[i].equals("-")
+												|| splitLaw[i].equals("*")
+												|| splitLaw[i].equals("/")
+												|| splitLaw[i].equals("INF")) {
 
-			if (frameSize.height > screenSize.height) {
-				frameSize.height = screenSize.height;
+										} else if ((splitLaw[i].contains("(") && splitLaw[i]
+												.contains(")"))) {
+											String subString = (String) splitLaw[i].substring(
+													splitLaw[i].indexOf('(') + 1, splitLaw[i]
+															.indexOf(')'));
+											try {
+												Double.parseDouble(subString);
+											} catch (Exception e1) {
+												invalidKineticVars.add(subString);
+												for (int j = 0; j < validKineticVars.size(); j++) {
+													if (subString.equals(validKineticVars.get(j))) {
+														pass = true;
+														invalidKineticVars.remove(subString);
+														break;
+													}
+													pass = false;
+												}
+											}
+										} else if (splitLaw[i].contains("(")
+												&& splitLaw[i].contains(",")) {
+											String subString = (String) splitLaw[i].substring(
+													splitLaw[i].indexOf('(') + 1, splitLaw[i]
+															.indexOf(','));
+											try {
+												Double.parseDouble(subString);
+											} catch (Exception e1) {
+												invalidKineticVars.add(subString);
+												for (int j = 0; j < validKineticVars.size(); j++) {
+													if (subString.equals(validKineticVars.get(j))) {
+														pass = true;
+														invalidKineticVars.remove(subString);
+														break;
+													}
+													pass = false;
+												}
+											}
+										} else if (splitLaw[i].endsWith(")")) {
+											String subString = (String) splitLaw[i].substring(0,
+													splitLaw[i].indexOf(')'));
+											try {
+												Double.parseDouble(subString);
+											} catch (Exception e1) {
+												invalidKineticVars.add(subString);
+												for (int j = 0; j < validKineticVars.size(); j++) {
+													if (subString.equals(validKineticVars.get(j))) {
+														pass = true;
+														invalidKineticVars.remove(subString);
+														break;
+													}
+													pass = false;
+												}
+											}
+										} else if (splitLaw[i].startsWith("(")) {
+											String subString = (String) splitLaw[i]
+													.substring(splitLaw[i].indexOf('(') + 1);
+											try {
+												Double.parseDouble(subString);
+											} catch (Exception e1) {
+												invalidKineticVars.add(subString);
+												for (int j = 0; j < validKineticVars.size(); j++) {
+													if (subString.equals(validKineticVars.get(j))) {
+														pass = true;
+														invalidKineticVars.remove(subString);
+														break;
+													}
+													pass = false;
+												}
+											}
+										} else {
+											try {
+												Double.parseDouble(splitLaw[i]);
+											} catch (Exception e1) {
+												invalidKineticVars.add(splitLaw[i]);
+												for (int j = 0; j < validKineticVars.size(); j++) {
+													if (splitLaw[i].equals(validKineticVars.get(j))) {
+														pass = true;
+														invalidKineticVars.remove(splitLaw[i]);
+														break;
+													}
+													pass = false;
+												}
+											}
+										}
+									}
+									if (!pass || validKineticVars.size() == 0
+											|| invalidKineticVars.size() != 0) {
+										String invalid = "";
+										for (int i = 0; i < invalidKineticVars.size(); i++) {
+											if (i == invalidKineticVars.size() - 1) {
+												invalid += invalidKineticVars.get(i);
+											} else {
+												invalid += invalidKineticVars.get(i) + "\n";
+											}
+										}
+										String message;
+										if (!option.equals("Save")) {
+											message = "Kinetic law contains unknown variables.\n\n"
+													+ "Unkown variables:\n" + invalid;
+										} else {
+											message = "Kinetic law contains unknown variables.\n"
+													+ "However, the reaction with this kinetic law has been saved.\n\n"
+													+ "Unkown variables:\n" + invalid;
+										}
+										JTextArea messageArea = new JTextArea(message);
+										messageArea.setLineWrap(true);
+										messageArea.setWrapStyleWord(true);
+										messageArea.setEditable(false);
+										JScrollPane scrolls = new JScrollPane();
+										scrolls.setMinimumSize(new Dimension(300, 300));
+										scrolls.setPreferredSize(new Dimension(300, 300));
+										scrolls.setViewportView(messageArea);
+										JOptionPane.showMessageDialog(this, scrolls,
+												"Kinetic Law Error", JOptionPane.ERROR_MESSAGE);
+										if (!option.equals("Save")) {
+											reactions
+													.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+											Buttons.remove(reactions, reacts);
+											reactions
+													.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+											reactions.setSelectedIndex(0);
+										}
+									}
+								}
+							}
+						}
+					}
+					if (error) {
+						value = JOptionPane.showOptionDialog(this, reactionPanel,
+								"Reaction Editor", JOptionPane.YES_NO_OPTION,
+								JOptionPane.PLAIN_MESSAGE, null, options1, options1[0]);
+					}
+				}
 			}
-			if (frameSize.width > screenSize.width) {
-				frameSize.width = screenSize.width;
+			if (value == JOptionPane.NO_OPTION) {
+				return;
 			}
-			int x = screenSize.width / 2 - frameSize.width / 2;
-			int y = screenSize.height / 2 - frameSize.height / 2;
-			reactionFrame.setLocation(x, y);
-			reactionFrame.setVisible(true);
 		}
 	}
 
@@ -1928,38 +1496,11 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			JOptionPane.showMessageDialog(this, "No parameter selected!",
 					"Must Select A Parameter", JOptionPane.ERROR_MESSAGE);
 		} else {
-			parameterFrame = new JFrame("Parameters");
-			WindowListener w = new WindowListener() {
-				public void windowClosing(WindowEvent arg0) {
-					parameterFrame.dispose();
-				}
-
-				public void windowOpened(WindowEvent arg0) {
-				}
-
-				public void windowClosed(WindowEvent arg0) {
-				}
-
-				public void windowIconified(WindowEvent arg0) {
-				}
-
-				public void windowDeiconified(WindowEvent arg0) {
-				}
-
-				public void windowActivated(WindowEvent arg0) {
-				}
-
-				public void windowDeactivated(WindowEvent arg0) {
-				}
-			};
-			parameterFrame.addWindowListener(w);
-			JPanel parametersPanel = new JPanel(new GridLayout(3, 2));
+			JPanel parametersPanel = new JPanel(new GridLayout(2, 2));
 			JLabel idLabel = new JLabel("ID:");
 			JLabel valueLabel = new JLabel("Value:");
 			paramID = new JTextField();
 			paramValue = new JTextField();
-			addSaveParams = new JButton(option);
-			cancelParams = new JButton("Cancel");
 			if (option.equals("Save")) {
 				try {
 					Parameter paramet = document.getModel().getParameter(
@@ -1970,35 +1511,113 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 
 				}
 			}
-			addSaveParams.addActionListener(this);
-			cancelParams.addActionListener(this);
 			parametersPanel.add(idLabel);
 			parametersPanel.add(paramID);
 			parametersPanel.add(valueLabel);
 			parametersPanel.add(paramValue);
-			parametersPanel.add(addSaveParams);
-			parametersPanel.add(cancelParams);
-			parameterFrame.setContentPane(parametersPanel);
-			parameterFrame.pack();
-			Dimension screenSize;
-			try {
-				Toolkit tk = Toolkit.getDefaultToolkit();
-				screenSize = tk.getScreenSize();
-			} catch (AWTError awe) {
-				screenSize = new Dimension(640, 480);
+			Object[] options = { option, "Cancel" };
+			int value = JOptionPane
+					.showOptionDialog(this, parametersPanel, "Parameter Editor",
+							JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
+							options[0]);
+			if (value == JOptionPane.YES_OPTION) {
+				boolean error = true;
+				while (error && value == JOptionPane.YES_OPTION) {
+					error = false;
+					if (paramID.getText().trim().equals("")) {
+						JOptionPane.showMessageDialog(this,
+								"You must enter an ID into the ID field!", "Enter An ID",
+								JOptionPane.ERROR_MESSAGE);
+						error = true;
+					} else {
+						try {
+							double val = Double.parseDouble(paramValue.getText().trim());
+							String param = paramID.getText().trim() + " " + val;
+							if (usedIDs.contains(paramID.getText().trim())) {
+								if (option.equals("Save")
+										&& !paramID.getText().trim()
+												.equals(
+														((String) parameters.getSelectedValue())
+																.split(" ")[0])) {
+									JOptionPane.showMessageDialog(this,
+											"You must enter a unique id into the id field!",
+											"Enter A Unique ID", JOptionPane.ERROR_MESSAGE);
+									error = true;
+								} else if (option.equals("Add")) {
+									JOptionPane.showMessageDialog(this,
+											"You must enter a unique id into the id field!",
+											"Enter A Unique ID", JOptionPane.ERROR_MESSAGE);
+									error = true;
+								}
+							}
+							if (!error) {
+								if (option.equals("Save")) {
+									int index = parameters.getSelectedIndex();
+									String v = ((String) parameters.getSelectedValue()).split(" ")[0];
+									Parameter paramet = document.getModel().getParameter(v);
+									parameters
+											.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+									params = Buttons.getList(params, parameters);
+									parameters
+											.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+									paramet.setId(paramID.getText().trim());
+									for (int i = 0; i < usedIDs.size(); i++) {
+										if (usedIDs.get(i).equals(v)) {
+											usedIDs.set(i, paramID.getText().trim());
+										}
+									}
+									paramet.setValue(val);
+									params[index] = param;
+									sort(params);
+									parameters.setListData(params);
+									parameters.setSelectedIndex(index);
+								} else {
+									int index = parameters.getSelectedIndex();
+									Parameter paramet = document.getModel().createParameter();
+									paramet.setId(paramID.getText().trim());
+									usedIDs.add(paramID.getText().trim());
+									paramet.setValue(val);
+									JList add = new JList();
+									Object[] adding = { param };
+									add.setListData(adding);
+									add.setSelectedIndex(0);
+									parameters
+											.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+									adding = Buttons.add(params, parameters, add, false, null,
+											null, null, null, null, null, null, this);
+									params = new String[adding.length];
+									for (int i = 0; i < adding.length; i++) {
+										params[i] = (String) adding[i];
+									}
+									sort(params);
+									parameters.setListData(params);
+									parameters
+											.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+									if (document.getModel().getNumParameters() == 1) {
+										parameters.setSelectedIndex(0);
+									} else {
+										parameters.setSelectedIndex(index);
+									}
+								}
+								change = true;
+							}
+						} catch (Exception e1) {
+							JOptionPane.showMessageDialog(this,
+									"You must enter a double into the value" + " field!",
+									"Enter A Valid Value", JOptionPane.ERROR_MESSAGE);
+							error = true;
+						}
+					}
+					if (error) {
+						value = JOptionPane.showOptionDialog(this, parametersPanel,
+								"Parameter Editor", JOptionPane.YES_NO_OPTION,
+								JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+					}
+				}
 			}
-			Dimension frameSize = parameterFrame.getSize();
-
-			if (frameSize.height > screenSize.height) {
-				frameSize.height = screenSize.height;
+			if (value == JOptionPane.NO_OPTION) {
+				return;
 			}
-			if (frameSize.width > screenSize.width) {
-				frameSize.width = screenSize.width;
-			}
-			int x = screenSize.width / 2 - frameSize.width / 2;
-			int y = screenSize.height / 2 - frameSize.height / 2;
-			parameterFrame.setLocation(x, y);
-			parameterFrame.setVisible(true);
 		}
 	}
 
@@ -2007,41 +1626,14 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 */
 	private void reacParametersEditor(String option) {
 		if (option.equals("Save") && reacParameters.getSelectedIndex() == -1) {
-			JOptionPane.showMessageDialog(reactionFrame, "No parameter selected!",
+			JOptionPane.showMessageDialog(this, "No parameter selected!",
 					"Must Select A Parameter", JOptionPane.ERROR_MESSAGE);
 		} else {
-			reacParameterFrame = new JFrame("Parameters");
-			WindowListener w = new WindowListener() {
-				public void windowClosing(WindowEvent arg0) {
-					reacParameterFrame.dispose();
-				}
-
-				public void windowOpened(WindowEvent arg0) {
-				}
-
-				public void windowClosed(WindowEvent arg0) {
-				}
-
-				public void windowIconified(WindowEvent arg0) {
-				}
-
-				public void windowDeiconified(WindowEvent arg0) {
-				}
-
-				public void windowActivated(WindowEvent arg0) {
-				}
-
-				public void windowDeactivated(WindowEvent arg0) {
-				}
-			};
-			reacParameterFrame.addWindowListener(w);
-			JPanel parametersPanel = new JPanel(new GridLayout(3, 2));
+			JPanel parametersPanel = new JPanel(new GridLayout(2, 2));
 			JLabel idLabel = new JLabel("ID:");
 			JLabel valueLabel = new JLabel("Value:");
 			reacParamID = new JTextField();
 			reacParamValue = new JTextField();
-			reacAddSaveParams = new JButton(option);
-			reacCancelParams = new JButton("Cancel");
 			if (option.equals("Save")) {
 				String v = ((String) reacParameters.getSelectedValue()).split(" ")[0];
 				Parameter paramet = null;
@@ -2053,35 +1645,125 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				reacParamID.setText(paramet.getId());
 				reacParamValue.setText("" + paramet.getValue());
 			}
-			reacAddSaveParams.addActionListener(this);
-			reacCancelParams.addActionListener(this);
 			parametersPanel.add(idLabel);
 			parametersPanel.add(reacParamID);
 			parametersPanel.add(valueLabel);
 			parametersPanel.add(reacParamValue);
-			parametersPanel.add(reacAddSaveParams);
-			parametersPanel.add(reacCancelParams);
-			reacParameterFrame.setContentPane(parametersPanel);
-			reacParameterFrame.pack();
-			Dimension screenSize;
-			try {
-				Toolkit tk = Toolkit.getDefaultToolkit();
-				screenSize = tk.getScreenSize();
-			} catch (AWTError awe) {
-				screenSize = new Dimension(640, 480);
+			Object[] options = { option, "Cancel" };
+			int value = JOptionPane
+					.showOptionDialog(this, parametersPanel, "Parameter Editor",
+							JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
+							options[0]);
+			if (value == JOptionPane.YES_OPTION) {
+				boolean error = true;
+				while (error && value == JOptionPane.YES_OPTION) {
+					error = false;
+					if (reacParamID.getText().trim().equals("")) {
+						JOptionPane.showMessageDialog(this,
+								"You must enter an ID into the ID field!", "Enter An ID",
+								JOptionPane.ERROR_MESSAGE);
+						error = true;
+					} else {
+						try {
+							double val = Double.parseDouble(reacParamValue.getText().trim());
+							String param = reacParamID.getText().trim() + " " + val;
+							if (usedIDs.contains(reacParamID.getText().trim())) {
+								if (option.equals("Save")
+										&& !reacParamID.getText().trim().equals(
+												((String) reacParameters.getSelectedValue())
+														.split(" ")[0])) {
+									JOptionPane.showMessageDialog(this,
+											"You must enter a unique id into the id field!",
+											"Enter A Unique ID", JOptionPane.ERROR_MESSAGE);
+									error = true;
+								} else if (option.equals("Add")) {
+									JOptionPane.showMessageDialog(this,
+											"You must enter a unique id into the id field!",
+											"Enter A Unique ID", JOptionPane.ERROR_MESSAGE);
+									error = true;
+								}
+							}
+							if (!error) {
+								if (option.equals("Save")) {
+									int index = reacParameters.getSelectedIndex();
+									String v = ((String) reacParameters.getSelectedValue())
+											.split(" ")[0];
+									Parameter paramet = null;
+									for (Parameter p : changedParameters) {
+										if (p.getId().equals(v)) {
+											paramet = p;
+										}
+									}
+									reacParameters
+											.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+									reacParams = Buttons.getList(reacParams, reacParameters);
+									reacParameters
+											.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+									paramet.setId(reacParamID.getText().trim());
+									for (int i = 0; i < usedIDs.size(); i++) {
+										if (usedIDs.get(i).equals(v)) {
+											usedIDs.set(i, reacParamID.getText().trim());
+										}
+									}
+									paramet.setValue(val);
+									reacParams[index] = param;
+									sort(reacParams);
+									reacParameters.setListData(reacParams);
+									reacParameters.setSelectedIndex(index);
+								} else {
+									int index = reacParameters.getSelectedIndex();
+									Parameter paramet = new Parameter();
+									changedParameters.add(paramet);
+									paramet.setId(reacParamID.getText().trim());
+									usedIDs.add(reacParamID.getText().trim());
+									paramet.setValue(val);
+									JList add = new JList();
+									Object[] adding = { param };
+									add.setListData(adding);
+									add.setSelectedIndex(0);
+									reacParameters
+											.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+									adding = Buttons.add(reacParams, reacParameters, add, false,
+											null, null, null, null, null, null, null, this);
+									reacParams = new String[adding.length];
+									for (int i = 0; i < adding.length; i++) {
+										reacParams[i] = (String) adding[i];
+									}
+									sort(reacParams);
+									reacParameters.setListData(reacParams);
+									reacParameters
+											.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+									try {
+										if (document.getModel().getReaction(
+												((String) reactions.getSelectedValue()))
+												.getKineticLaw().getNumParameters() == 1) {
+											reacParameters.setSelectedIndex(0);
+										} else {
+											reacParameters.setSelectedIndex(index);
+										}
+									} catch (Exception e2) {
+										reacParameters.setSelectedIndex(0);
+									}
+								}
+								change = true;
+							}
+						} catch (Exception e1) {
+							JOptionPane.showMessageDialog(this,
+									"You must enter a double into the value" + " field!",
+									"Enter A Valid Value", JOptionPane.ERROR_MESSAGE);
+							error = true;
+						}
+					}
+					if (error) {
+						value = JOptionPane.showOptionDialog(this, parametersPanel,
+								"Parameter Editor", JOptionPane.YES_NO_OPTION,
+								JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+					}
+				}
 			}
-			Dimension frameSize = reacParameterFrame.getSize();
-
-			if (frameSize.height > screenSize.height) {
-				frameSize.height = screenSize.height;
+			if (value == JOptionPane.NO_OPTION) {
+				return;
 			}
-			if (frameSize.width > screenSize.width) {
-				frameSize.width = screenSize.width;
-			}
-			int x = screenSize.width / 2 - frameSize.width / 2;
-			int y = screenSize.height / 2 - frameSize.height / 2;
-			reacParameterFrame.setLocation(x, y);
-			reacParameterFrame.setVisible(true);
 		}
 	}
 
@@ -2090,35 +1772,10 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 */
 	public void productsEditor(String option) {
 		if (option.equals("Save") && products.getSelectedIndex() == -1) {
-			JOptionPane.showMessageDialog(reactionFrame, "No product selected!",
-					"Must Select A Product", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(this, "No product selected!", "Must Select A Product",
+					JOptionPane.ERROR_MESSAGE);
 		} else {
-			productFrame = new JFrame("Products");
-			WindowListener w = new WindowListener() {
-				public void windowClosing(WindowEvent arg0) {
-					productFrame.dispose();
-				}
-
-				public void windowOpened(WindowEvent arg0) {
-				}
-
-				public void windowClosed(WindowEvent arg0) {
-				}
-
-				public void windowIconified(WindowEvent arg0) {
-				}
-
-				public void windowDeiconified(WindowEvent arg0) {
-				}
-
-				public void windowActivated(WindowEvent arg0) {
-				}
-
-				public void windowDeactivated(WindowEvent arg0) {
-				}
-			};
-			productFrame.addWindowListener(w);
-			JPanel productsPanel = new JPanel(new GridLayout(3, 2));
+			JPanel productsPanel = new JPanel(new GridLayout(2, 2));
 			JLabel speciesLabel = new JLabel("Species:");
 			JLabel stoiciLabel = new JLabel("Stoiciometry:");
 			ListOf listOfSpecies = document.getModel().getListOfSpecies();
@@ -2131,8 +1788,6 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			Object[] choices = speciesList;
 			productSpecies = new JComboBox(choices);
 			productStoiciometry = new JTextField("1");
-			addSaveProducts = new JButton(option);
-			cancelProducts = new JButton("Cancel");
 			if (option.equals("Save")) {
 				String v = ((String) products.getSelectedValue()).split(" ")[0];
 				SpeciesReference product = null;
@@ -2144,41 +1799,96 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				productSpecies.setSelectedItem(product.getSpecies());
 				productStoiciometry.setText("" + product.getStoichiometry());
 			}
-			addSaveProducts.addActionListener(this);
-			cancelProducts.addActionListener(this);
 			productsPanel.add(speciesLabel);
 			productsPanel.add(productSpecies);
 			productsPanel.add(stoiciLabel);
 			productsPanel.add(productStoiciometry);
-			productsPanel.add(addSaveProducts);
-			productsPanel.add(cancelProducts);
-			productFrame.setContentPane(productsPanel);
-			productFrame.pack();
-			Dimension screenSize;
-			try {
-				Toolkit tk = Toolkit.getDefaultToolkit();
-				screenSize = tk.getScreenSize();
-			} catch (AWTError awe) {
-				screenSize = new Dimension(640, 480);
-			}
-			Dimension frameSize = productFrame.getSize();
-
-			if (frameSize.height > screenSize.height) {
-				frameSize.height = screenSize.height;
-			}
-			if (frameSize.width > screenSize.width) {
-				frameSize.width = screenSize.width;
-			}
-			int x = screenSize.width / 2 - frameSize.width / 2;
-			int y = screenSize.height / 2 - frameSize.height / 2;
-			productFrame.setLocation(x, y);
-			productFrame.setVisible(true);
 			if (choices.length == 0) {
-				JOptionPane.showMessageDialog(productFrame,
+				JOptionPane.showMessageDialog(this,
 						"There are no species availiable to be products."
 								+ "\nAdd species to this sbml file first.", "No Species",
 						JOptionPane.ERROR_MESSAGE);
-				productFrame.dispose();
+				return;
+			}
+			Object[] options = { option, "Cancel" };
+			int value = JOptionPane
+					.showOptionDialog(this, productsPanel, "Products Editor",
+							JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
+							options[0]);
+			if (value == JOptionPane.YES_OPTION) {
+				boolean error = true;
+				while (error && value == JOptionPane.YES_OPTION) {
+					error = false;
+					try {
+						double val = Double.parseDouble(productStoiciometry.getText().trim());
+						String prod = productSpecies.getSelectedItem() + " " + val;
+						if (option.equals("Save")) {
+							int index = products.getSelectedIndex();
+							String v = ((String) products.getSelectedValue()).split(" ")[0];
+							SpeciesReference produ = null;
+							for (SpeciesReference p : changedProducts) {
+								if (p.getSpecies().equals(v)) {
+									produ = p;
+								}
+							}
+							products
+									.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+							product = Buttons.getList(product, products);
+							products.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+							produ.setSpecies((String) productSpecies.getSelectedItem());
+							produ.setStoichiometry(val);
+							product[index] = prod;
+							sort(product);
+							products.setListData(product);
+							products.setSelectedIndex(index);
+						} else {
+							int index = products.getSelectedIndex();
+							SpeciesReference produ = new SpeciesReference();
+							changedProducts.add(produ);
+							produ.setSpecies((String) productSpecies.getSelectedItem());
+							produ.setStoichiometry(val);
+							JList add = new JList();
+							Object[] adding = { prod };
+							add.setListData(adding);
+							add.setSelectedIndex(0);
+							products
+									.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+							adding = Buttons.add(product, products, add, false, null, null, null,
+									null, null, null, null, this);
+							product = new String[adding.length];
+							for (int i = 0; i < adding.length; i++) {
+								product[i] = (String) adding[i];
+							}
+							sort(product);
+							products.setListData(product);
+							products.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+							try {
+								if (document.getModel().getReaction(
+										((String) reactions.getSelectedValue())).getNumProducts() == 1) {
+									products.setSelectedIndex(0);
+								} else {
+									products.setSelectedIndex(index);
+								}
+							} catch (Exception e2) {
+								products.setSelectedIndex(0);
+							}
+						}
+						change = true;
+					} catch (Exception e1) {
+						JOptionPane.showMessageDialog(this,
+								"You must enter a double into the stoiciometry" + " field!",
+								"Enter A Valid Value", JOptionPane.ERROR_MESSAGE);
+						error = true;
+					}
+					if (error) {
+						value = JOptionPane.showOptionDialog(this, productsPanel,
+								"Products Editor", JOptionPane.YES_NO_OPTION,
+								JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+					}
+				}
+			}
+			if (value == JOptionPane.NO_OPTION) {
+				return;
 			}
 		}
 	}
@@ -2188,35 +1898,10 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 */
 	public void reactantsEditor(String option) {
 		if (option.equals("Save") && reactants.getSelectedIndex() == -1) {
-			JOptionPane.showMessageDialog(reactionFrame, "No reactant selected!",
-					"Must Select A Reactant", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(this, "No reactant selected!", "Must Select A Reactant",
+					JOptionPane.ERROR_MESSAGE);
 		} else {
-			reactantFrame = new JFrame("Reactants");
-			WindowListener w = new WindowListener() {
-				public void windowClosing(WindowEvent arg0) {
-					reactantFrame.dispose();
-				}
-
-				public void windowOpened(WindowEvent arg0) {
-				}
-
-				public void windowClosed(WindowEvent arg0) {
-				}
-
-				public void windowIconified(WindowEvent arg0) {
-				}
-
-				public void windowDeiconified(WindowEvent arg0) {
-				}
-
-				public void windowActivated(WindowEvent arg0) {
-				}
-
-				public void windowDeactivated(WindowEvent arg0) {
-				}
-			};
-			reactantFrame.addWindowListener(w);
-			JPanel reactantsPanel = new JPanel(new GridLayout(3, 2));
+			JPanel reactantsPanel = new JPanel(new GridLayout(2, 2));
 			JLabel speciesLabel = new JLabel("Species:");
 			JLabel stoiciLabel = new JLabel("Stoiciometry:");
 			ListOf listOfSpecies = document.getModel().getListOfSpecies();
@@ -2229,8 +1914,6 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			Object[] choices = speciesList;
 			reactantSpecies = new JComboBox(choices);
 			reactantStoiciometry = new JTextField("1");
-			addSaveReactants = new JButton(option);
-			cancelReactants = new JButton("Cancel");
 			if (option.equals("Save")) {
 				String v = ((String) reactants.getSelectedValue()).split(" ")[0];
 				SpeciesReference reactant = null;
@@ -2242,41 +1925,96 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				reactantSpecies.setSelectedItem(reactant.getSpecies());
 				reactantStoiciometry.setText("" + reactant.getStoichiometry());
 			}
-			addSaveReactants.addActionListener(this);
-			cancelReactants.addActionListener(this);
 			reactantsPanel.add(speciesLabel);
 			reactantsPanel.add(reactantSpecies);
 			reactantsPanel.add(stoiciLabel);
 			reactantsPanel.add(reactantStoiciometry);
-			reactantsPanel.add(addSaveReactants);
-			reactantsPanel.add(cancelReactants);
-			reactantFrame.setContentPane(reactantsPanel);
-			reactantFrame.pack();
-			Dimension screenSize;
-			try {
-				Toolkit tk = Toolkit.getDefaultToolkit();
-				screenSize = tk.getScreenSize();
-			} catch (AWTError awe) {
-				screenSize = new Dimension(640, 480);
-			}
-			Dimension frameSize = reactantFrame.getSize();
-
-			if (frameSize.height > screenSize.height) {
-				frameSize.height = screenSize.height;
-			}
-			if (frameSize.width > screenSize.width) {
-				frameSize.width = screenSize.width;
-			}
-			int x = screenSize.width / 2 - frameSize.width / 2;
-			int y = screenSize.height / 2 - frameSize.height / 2;
-			reactantFrame.setLocation(x, y);
-			reactantFrame.setVisible(true);
 			if (choices.length == 0) {
-				JOptionPane.showMessageDialog(productFrame,
+				JOptionPane.showMessageDialog(this,
 						"There are no species availiable to be reactants."
 								+ "\nAdd species to this sbml file first.", "No Species",
 						JOptionPane.ERROR_MESSAGE);
-				reactantFrame.dispose();
+				return;
+			}
+			Object[] options = { option, "Cancel" };
+			int value = JOptionPane
+					.showOptionDialog(this, reactantsPanel, "Reactants Editor",
+							JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
+							options[0]);
+			if (value == JOptionPane.YES_OPTION) {
+				boolean error = true;
+				while (error && value == JOptionPane.YES_OPTION) {
+					error = false;
+					try {
+						double val = Double.parseDouble(reactantStoiciometry.getText().trim());
+						String react = reactantSpecies.getSelectedItem() + " " + val;
+						if (option.equals("Save")) {
+							int index = reactants.getSelectedIndex();
+							String v = ((String) reactants.getSelectedValue()).split(" ")[0];
+							SpeciesReference reactan = null;
+							for (SpeciesReference r : changedReactants) {
+								if (r.getSpecies().equals(v)) {
+									reactan = r;
+								}
+							}
+							reactants
+									.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+							reacta = Buttons.getList(reacta, reactants);
+							reactants.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+							reactan.setSpecies((String) reactantSpecies.getSelectedItem());
+							reactan.setStoichiometry(val);
+							reacta[index] = react;
+							sort(reacta);
+							reactants.setListData(reacta);
+							reactants.setSelectedIndex(index);
+						} else {
+							int index = reactants.getSelectedIndex();
+							SpeciesReference reactan = new SpeciesReference();
+							changedReactants.add(reactan);
+							reactan.setSpecies((String) reactantSpecies.getSelectedItem());
+							reactan.setStoichiometry(val);
+							JList add = new JList();
+							Object[] adding = { react };
+							add.setListData(adding);
+							add.setSelectedIndex(0);
+							reactants
+									.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+							adding = Buttons.add(reacta, reactants, add, false, null, null, null,
+									null, null, null, null, this);
+							reacta = new String[adding.length];
+							for (int i = 0; i < adding.length; i++) {
+								reacta[i] = (String) adding[i];
+							}
+							sort(reacta);
+							reactants.setListData(reacta);
+							reactants.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+							try {
+								if (document.getModel().getReaction(
+										((String) reactions.getSelectedValue())).getNumReactants() == 1) {
+									reactants.setSelectedIndex(0);
+								} else {
+									reactants.setSelectedIndex(index);
+								}
+							} catch (Exception e2) {
+								reactants.setSelectedIndex(0);
+							}
+						}
+						change = true;
+					} catch (Exception e1) {
+						JOptionPane.showMessageDialog(this,
+								"You must enter a double into the stoiciometry" + " field!",
+								"Enter A Valid Value", JOptionPane.ERROR_MESSAGE);
+						error = true;
+					}
+					if (error) {
+						value = JOptionPane.showOptionDialog(this, reactantsPanel,
+								"Reactants Editor", JOptionPane.YES_NO_OPTION,
+								JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+					}
+				}
+			}
+			if (value == JOptionPane.NO_OPTION) {
+				return;
 			}
 		}
 	}
