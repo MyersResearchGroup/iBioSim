@@ -149,6 +149,10 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 
 	private ArrayList<String> usedIDs;
 
+	private ArrayList<String> thisReactionParams;
+
+	// private HashMap<String, ArrayList<String>> reactionUsedIDs;
+
 	/**
 	 * Creates a new SBML_Editor and sets up the frame where the user can edit a
 	 * new sbml file.
@@ -204,10 +208,6 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		ids = model.getListOfReactions();
 		for (int i = 0; i < ids.getNumItems(); i++) {
 			usedIDs.add(((Reaction) ids.get(i)).getId());
-			ListOf ids2 = ((Reaction) ids.get(i)).getKineticLaw().getListOfParameters();
-			for (int j = 0; j < ids2.getNumItems(); j++) {
-				usedIDs.add(((Parameter) ids2.get(j)).getId());
-			}
 		}
 		ids = model.getListOfSpecies();
 		for (int i = 0; i < ids.getNumItems(); i++) {
@@ -418,19 +418,63 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		// if the remove compartment button is clicked
 		else if (e.getSource() == removeCompart) {
 			if (compartments.getSelectedIndex() != -1) {
-				Compartment tempComp = document.getModel().getCompartment(
-						(String) compartments.getSelectedValue());
-				ListOf c = document.getModel().getListOfCompartments();
-				for (int i = 0; i < c.getNumItems(); i++) {
-					if (((Compartment) c.get(i)).getId().equals(tempComp.getId())) {
-						c.remove(i);
+				if (document.getModel().getNumCompartments() != 1) {
+					boolean remove = true;
+					ArrayList<String> speciesUsing = new ArrayList<String>();
+					for (int i = 0; i < document.getModel().getNumSpecies(); i++) {
+						Species species = (Species) document.getModel().getListOfSpecies().get(i);
+						if (species.isSetCompartment()) {
+							if (species.getCompartment().equals(
+									(String) compartments.getSelectedValue())) {
+								remove = false;
+								speciesUsing.add(species.getId());
+							}
+						}
 					}
+					if (remove) {
+						Compartment tempComp = document.getModel().getCompartment(
+								(String) compartments.getSelectedValue());
+						ListOf c = document.getModel().getListOfCompartments();
+						for (int i = 0; i < c.getNumItems(); i++) {
+							if (((Compartment) c.get(i)).getId().equals(tempComp.getId())) {
+								c.remove(i);
+							}
+						}
+						usedIDs.remove(compartments.getSelectedValue());
+						compartments
+								.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+						Buttons.remove(compartments, comps);
+						compartments.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+						compartments.setSelectedIndex(0);
+					} else {
+						String species = "";
+						String[] specs = speciesUsing.toArray(new String[0]);
+						sort(specs);
+						for (int i = 0; i < specs.length; i++) {
+							if (i == specs.length - 1) {
+								species += specs[i];
+							} else {
+								species += specs[i] + "\n";
+							}
+						}
+						String message = "Unable to remove the selected compartment.";
+						if (speciesUsing.size() != 0) {
+							message += "\n\nIt contains the following species:\n" + species;
+						}
+						JTextArea messageArea = new JTextArea(message);
+						messageArea.setEditable(false);
+						JScrollPane scroll = new JScrollPane();
+						scroll.setMinimumSize(new Dimension(300, 300));
+						scroll.setPreferredSize(new Dimension(300, 300));
+						scroll.setViewportView(messageArea);
+						JOptionPane.showMessageDialog(this, scroll, "Unable To Remove Compartment",
+								JOptionPane.ERROR_MESSAGE);
+					}
+				} else {
+					JOptionPane.showMessageDialog(this,
+							"Each model must contain at least one compartment.",
+							"Unable To Remove Compartment", JOptionPane.ERROR_MESSAGE);
 				}
-				usedIDs.remove(compartments.getSelectedValue());
-				compartments.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-				Buttons.remove(compartments, comps);
-				compartments.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-				compartments.setSelectedIndex(0);
 			}
 		}
 		// if the add species button is clicked
@@ -490,18 +534,22 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				} else {
 					String reactants = "";
 					String products = "";
-					for (int i = 0; i < reactantsUsing.size(); i++) {
-						if (i == reactantsUsing.size() - 1) {
-							reactants += reactantsUsing.get(i);
+					String[] reacts = reactantsUsing.toArray(new String[0]);
+					sort(reacts);
+					String[] prods = productsUsing.toArray(new String[0]);
+					sort(prods);
+					for (int i = 0; i < reacts.length; i++) {
+						if (i == reacts.length - 1) {
+							reactants += reacts[i];
 						} else {
-							reactants += reactantsUsing.get(i) + "\n";
+							reactants += reacts[i] + "\n";
 						}
 					}
-					for (int i = 0; i < productsUsing.size(); i++) {
-						if (i == productsUsing.size() - 1) {
-							products += productsUsing.get(i);
+					for (int i = 0; i < prods.length; i++) {
+						if (i == prods.length - 1) {
+							products += prods[i];
 						} else {
-							products += productsUsing.get(i) + "\n";
+							products += prods[i] + "\n";
 						}
 					}
 					String message = "Unable to remove the selected species.";
@@ -595,7 +643,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						changedParameters.remove(i);
 					}
 				}
-				usedIDs.remove(v);
+				thisReactionParams.remove(v);
 				reacParameters.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 				Buttons.remove(reacParameters, reacParams);
 				reacParameters.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -726,6 +774,26 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 								sort(comps);
 								compartments.setListData(comps);
 								compartments.setSelectedIndex(index);
+								for (int i = 0; i < document.getModel().getNumSpecies(); i++) {
+									Species species = document.getModel().getSpecies(i);
+									if (species.getCompartment().equals(val)) {
+										species.setCompartment(addComp);
+									}
+								}
+								int index1 = species.getSelectedIndex();
+								species
+										.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+								specs = Buttons.getList(specs, species);
+								species.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+								for (int i = 0; i < specs.length; i++) {
+									if (specs[i].split(" ")[1].equals(val)) {
+										specs[i] = specs[i].split(" ")[0] + " " + addComp + " "
+												+ specs[i].split(" ")[2];
+									}
+								}
+								sort(specs);
+								species.setListData(specs);
+								species.setSelectedIndex(index1);
 							} else {
 								int index = compartments.getSelectedIndex();
 								Compartment c = document.getModel().createCompartment();
@@ -971,7 +1039,6 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			JOptionPane.showMessageDialog(this, "No reaction selected!", "Must Select A Reaction",
 					JOptionPane.ERROR_MESSAGE);
 		} else {
-
 			JPanel reactionPanelNorth = new JPanel();
 			JPanel reactionPanelNorth1 = new JPanel(new GridLayout(2, 2));
 			JPanel reactionPanelNorth2 = new JPanel();
@@ -1019,11 +1086,25 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						((String) reactions.getSelectedValue())).getKineticLaw()
 						.getListOfParameters();
 				reacParams = new String[(int) listOfParameters.getNumItems()];
+				thisReactionParams = new ArrayList<String>();
 				for (int i = 0; i < listOfParameters.getNumItems(); i++) {
 					Parameter parameter = (Parameter) listOfParameters.get(i);
 					changedParameters.add(parameter);
+					thisReactionParams.add(parameter.getId());
 					reacParams[i] = parameter.getId() + " " + parameter.getValue();
 				}
+			} else {
+				Parameter p = new Parameter();
+				p.setId("kf");
+				p.setValue(0.1);
+				changedParameters.add(p);
+				p = new Parameter();
+				p.setId("kr");
+				p.setValue(0.1);
+				changedParameters.add(p);
+				reacParams = new String[2];
+				reacParams[0] = "kf 0.1";
+				reacParams[1] = "kr 0.1";
 			}
 			sort(reacParams);
 			reacParameters.setListData(reacParams);
@@ -1667,7 +1748,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						try {
 							double val = Double.parseDouble(reacParamValue.getText().trim());
 							String param = reacParamID.getText().trim() + " " + val;
-							if (usedIDs.contains(reacParamID.getText().trim())) {
+							if (thisReactionParams.contains(reacParamID.getText().trim())) {
 								if (option.equals("Save")
 										&& !reacParamID.getText().trim().equals(
 												((String) reacParameters.getSelectedValue())
@@ -1682,6 +1763,11 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 											"Enter A Unique ID", JOptionPane.ERROR_MESSAGE);
 									error = true;
 								}
+							} else if (usedIDs.contains(reacParamID.getText().trim())) {
+								JOptionPane.showMessageDialog(this,
+										"You must enter a unique id into the id field!",
+										"Enter A Unique ID", JOptionPane.ERROR_MESSAGE);
+								error = true;
 							}
 							if (!error) {
 								if (option.equals("Save")) {
@@ -1700,9 +1786,9 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 									reacParameters
 											.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 									paramet.setId(reacParamID.getText().trim());
-									for (int i = 0; i < usedIDs.size(); i++) {
-										if (usedIDs.get(i).equals(v)) {
-											usedIDs.set(i, reacParamID.getText().trim());
+									for (int i = 0; i < thisReactionParams.size(); i++) {
+										if (thisReactionParams.get(i).equals(v)) {
+											thisReactionParams.set(i, reacParamID.getText().trim());
 										}
 									}
 									paramet.setValue(val);
@@ -1715,7 +1801,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 									Parameter paramet = new Parameter();
 									changedParameters.add(paramet);
 									paramet.setId(reacParamID.getText().trim());
-									usedIDs.add(reacParamID.getText().trim());
+									thisReactionParams.add(reacParamID.getText().trim());
 									paramet.setValue(val);
 									JList add = new JList();
 									Object[] adding = { param };
@@ -1824,53 +1910,96 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						String prod = productSpecies.getSelectedItem() + " " + val;
 						if (option.equals("Save")) {
 							int index = products.getSelectedIndex();
-							String v = ((String) products.getSelectedValue()).split(" ")[0];
-							SpeciesReference produ = null;
-							for (SpeciesReference p : changedProducts) {
-								if (p.getSpecies().equals(v)) {
-									produ = p;
-								}
-							}
 							products
 									.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 							product = Buttons.getList(product, products);
 							products.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-							produ.setSpecies((String) productSpecies.getSelectedItem());
-							produ.setStoichiometry(val);
-							product[index] = prod;
-							sort(product);
-							products.setListData(product);
 							products.setSelectedIndex(index);
+							for (int i = 0; i < product.length; i++) {
+								if (i != index) {
+									if (product[i].split(" ")[0].equals(productSpecies
+											.getSelectedItem())) {
+										error = true;
+										JOptionPane
+												.showMessageDialog(
+														this,
+														"Unable to add species as a product.\n"
+																+ "Each species can only be used as a product once.",
+														"Species Can Only Be Used Once",
+														JOptionPane.ERROR_MESSAGE);
+									}
+								}
+							}
+							if (!error) {
+								String v = ((String) products.getSelectedValue()).split(" ")[0];
+								SpeciesReference produ = null;
+								for (SpeciesReference p : changedProducts) {
+									if (p.getSpecies().equals(v)) {
+										produ = p;
+									}
+								}
+								products
+										.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+								product = Buttons.getList(product, products);
+								products.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+								produ.setSpecies((String) productSpecies.getSelectedItem());
+								produ.setStoichiometry(val);
+								product[index] = prod;
+								sort(product);
+								products.setListData(product);
+								products.setSelectedIndex(index);
+							}
 						} else {
 							int index = products.getSelectedIndex();
-							SpeciesReference produ = new SpeciesReference();
-							changedProducts.add(produ);
-							produ.setSpecies((String) productSpecies.getSelectedItem());
-							produ.setStoichiometry(val);
-							JList add = new JList();
-							Object[] adding = { prod };
-							add.setListData(adding);
-							add.setSelectedIndex(0);
 							products
 									.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-							adding = Buttons.add(product, products, add, false, null, null, null,
-									null, null, null, null, this);
-							product = new String[adding.length];
-							for (int i = 0; i < adding.length; i++) {
-								product[i] = (String) adding[i];
-							}
-							sort(product);
-							products.setListData(product);
+							product = Buttons.getList(product, products);
 							products.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-							try {
-								if (document.getModel().getReaction(
-										((String) reactions.getSelectedValue())).getNumProducts() == 1) {
-									products.setSelectedIndex(0);
-								} else {
-									products.setSelectedIndex(index);
+							products.setSelectedIndex(index);
+							for (int i = 0; i < product.length; i++) {
+								if (product[i].split(" ")[0].equals(productSpecies
+										.getSelectedItem())) {
+									error = true;
+									JOptionPane
+											.showMessageDialog(
+													this,
+													"Unable to add species as a product.\n"
+															+ "Each species can only be used as a product once.",
+													"Species Can Only Be Used Once",
+													JOptionPane.ERROR_MESSAGE);
 								}
-							} catch (Exception e2) {
-								products.setSelectedIndex(0);
+							}
+							if (!error) {
+								SpeciesReference produ = new SpeciesReference();
+								changedProducts.add(produ);
+								produ.setSpecies((String) productSpecies.getSelectedItem());
+								produ.setStoichiometry(val);
+								JList add = new JList();
+								Object[] adding = { prod };
+								add.setListData(adding);
+								add.setSelectedIndex(0);
+								products
+										.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+								adding = Buttons.add(product, products, add, false, null, null,
+										null, null, null, null, null, this);
+								product = new String[adding.length];
+								for (int i = 0; i < adding.length; i++) {
+									product[i] = (String) adding[i];
+								}
+								sort(product);
+								products.setListData(product);
+								products.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+								try {
+									if (document.getModel().getReaction(
+											((String) reactions.getSelectedValue()))
+											.getNumProducts() == 1) {
+										products.setSelectedIndex(0);
+									} else {
+										products.setSelectedIndex(index);
+									}
+								} catch (Exception e2) {
+									products.setSelectedIndex(0);
+								}
 							}
 						}
 						change = true;
@@ -1950,53 +2079,96 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						String react = reactantSpecies.getSelectedItem() + " " + val;
 						if (option.equals("Save")) {
 							int index = reactants.getSelectedIndex();
-							String v = ((String) reactants.getSelectedValue()).split(" ")[0];
-							SpeciesReference reactan = null;
-							for (SpeciesReference r : changedReactants) {
-								if (r.getSpecies().equals(v)) {
-									reactan = r;
-								}
-							}
 							reactants
 									.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 							reacta = Buttons.getList(reacta, reactants);
 							reactants.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-							reactan.setSpecies((String) reactantSpecies.getSelectedItem());
-							reactan.setStoichiometry(val);
-							reacta[index] = react;
-							sort(reacta);
-							reactants.setListData(reacta);
 							reactants.setSelectedIndex(index);
+							for (int i = 0; i < reacta.length; i++) {
+								if (i != index) {
+									if (reacta[i].split(" ")[0].equals(reactantSpecies
+											.getSelectedItem())) {
+										error = true;
+										JOptionPane
+												.showMessageDialog(
+														this,
+														"Unable to add species as a reactant.\n"
+																+ "Each species can only be used as a reactant once.",
+														"Species Can Only Be Used Once",
+														JOptionPane.ERROR_MESSAGE);
+									}
+								}
+							}
+							if (!error) {
+								String v = ((String) reactants.getSelectedValue()).split(" ")[0];
+								SpeciesReference reactan = null;
+								for (SpeciesReference r : changedReactants) {
+									if (r.getSpecies().equals(v)) {
+										reactan = r;
+									}
+								}
+								reactants
+										.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+								reacta = Buttons.getList(reacta, reactants);
+								reactants.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+								reactan.setSpecies((String) reactantSpecies.getSelectedItem());
+								reactan.setStoichiometry(val);
+								reacta[index] = react;
+								sort(reacta);
+								reactants.setListData(reacta);
+								reactants.setSelectedIndex(index);
+							}
 						} else {
 							int index = reactants.getSelectedIndex();
-							SpeciesReference reactan = new SpeciesReference();
-							changedReactants.add(reactan);
-							reactan.setSpecies((String) reactantSpecies.getSelectedItem());
-							reactan.setStoichiometry(val);
-							JList add = new JList();
-							Object[] adding = { react };
-							add.setListData(adding);
-							add.setSelectedIndex(0);
 							reactants
 									.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-							adding = Buttons.add(reacta, reactants, add, false, null, null, null,
-									null, null, null, null, this);
-							reacta = new String[adding.length];
-							for (int i = 0; i < adding.length; i++) {
-								reacta[i] = (String) adding[i];
-							}
-							sort(reacta);
-							reactants.setListData(reacta);
+							reacta = Buttons.getList(reacta, reactants);
 							reactants.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-							try {
-								if (document.getModel().getReaction(
-										((String) reactions.getSelectedValue())).getNumReactants() == 1) {
-									reactants.setSelectedIndex(0);
-								} else {
-									reactants.setSelectedIndex(index);
+							reactants.setSelectedIndex(index);
+							for (int i = 0; i < reacta.length; i++) {
+								if (reacta[i].split(" ")[0].equals(reactantSpecies
+										.getSelectedItem())) {
+									error = true;
+									JOptionPane
+											.showMessageDialog(
+													this,
+													"Unable to add species as a reactant.\n"
+															+ "Each species can only be used as a reactant once.",
+													"Species Can Only Be Used Once",
+													JOptionPane.ERROR_MESSAGE);
 								}
-							} catch (Exception e2) {
-								reactants.setSelectedIndex(0);
+							}
+							if (!error) {
+								SpeciesReference reactan = new SpeciesReference();
+								changedReactants.add(reactan);
+								reactan.setSpecies((String) reactantSpecies.getSelectedItem());
+								reactan.setStoichiometry(val);
+								JList add = new JList();
+								Object[] adding = { react };
+								add.setListData(adding);
+								add.setSelectedIndex(0);
+								reactants
+										.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+								adding = Buttons.add(reacta, reactants, add, false, null, null,
+										null, null, null, null, null, this);
+								reacta = new String[adding.length];
+								for (int i = 0; i < adding.length; i++) {
+									reacta[i] = (String) adding[i];
+								}
+								sort(reacta);
+								reactants.setListData(reacta);
+								reactants.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+								try {
+									if (document.getModel().getReaction(
+											((String) reactions.getSelectedValue()))
+											.getNumReactants() == 1) {
+										reactants.setSelectedIndex(0);
+									} else {
+										reactants.setSelectedIndex(index);
+									}
+								} catch (Exception e2) {
+									reactants.setSelectedIndex(0);
+								}
 							}
 						}
 						change = true;
