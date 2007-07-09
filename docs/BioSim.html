@@ -53,21 +53,49 @@ A model is a representation of biochemical reaction networks.  A model can repre
 <br>&nbsp;
 
 <h2><a name="NEWMODEl"></a>Creating SBML models</h2>
-To create a new SBML model, you must first have a project open.  Once this is done, select the File drop down menu from the toolbar and select "New Model" under the New option.  You will then be prompted to give a name to your model.  Once a name is entered, an SBML editor will open in a new tab.
+To create a new SBML model, you must first have a project open.  Once this is done, select the File drop down menu from the toolbar and select "New Model" under the New option.  You will then be prompted to give a model id.  Once an id is entered, an SBML editor will open in a new tab.
 <br>&nbsp;
 
 <h2><a name="IMPORTSBML"></a>Importing SBML models</h2>
-To import an SBML model, you must first have a project open.  Once this is done, select the File drop down menu from the toolbar and select "sbml" under the Import option.  You will then be prompted to select a model to import.  Select a desired model and click the open button to import the SBML model into the project.
+To import an SBML model, you must first have a project open.  Once this is done, select the File drop down menu from the toolbar and select "SBML" under the Import option.  You will then be prompted to select a model to import.  Select a desired model and click the open button to import the SBML model into the project.
 <br>&nbsp;
 
 <h2><a name="SBMLEDIT"></a>Editing SBML models</h2>
-<p>To edit an SBML model, you must first have a project open.  Once this is done, either right click on the model you want to edit and select "Edit" or select the model you want to edit and select "SBML Editor" under the Tools drop down menu on the toolbar.  This will open up an SBML editor in a new tab.  You can also edit an SBML model that is part of an analysis by right clicking on an analysis directory, by selecting "Open Analysis View", and then by selecting the "SBML Editor" tab.</p>
-You can now add, edit, and remove compartments, species, reactions, and parameters.
+<p>To edit an SBML model, you must first have a project open.  Once this is done, right click on the model you want to edit and select "Edit".  This will open up an SBML editor in a new tab.  You can also edit an SBML model that is part of an analysis by right clicking on an analysis directory, by selecting "Open Analysis View", and then by selecting the "SBML Editor" tab.</p>
+<h3>Adding, Editing, And Removing</h3>
 <ul>
 <li>To add a new item, click on one of the add buttons.  You will then be prompted to provide a unique id and some properties for this new item.  After you have filled out all of the required fields, click add and the new item will be added to the SBML model.</li>
 <li>To edit an existing item, select that item from the list and click the edit button.  An editing window will open and you will be able to change the properties of that item.  When you are done editing this item, click save to save the changes to the item.</li>
-<li>To remove an item from the model, select that item and click the remove button.  The item will then be removed from the model.  However, if you try to remove a species that is used in a reaction, you will first have to remove the reaction or remove the species from the reaction in order to remove the species from the model.</li>
+<li>To remove an item from the model, select that item and click the remove button.  The item will then be removed from the model.  However, if you try to remove a species that is used in a reaction, you will first have to remove the reaction or remove the species from the reaction in order to remove the species from the model.  Likewise, if you try to remove a compartment that contains species, you will have to remove the species before you will be able to remove the compartment.</li>
 </ul>
+<h3>Kinetic Law Formula Syntax</h3>
+Kinetic law formulas are expressed as text strings using a simple C-like syntax.  Here are some syntax rules when dealing with kinetic law formulas:
+<ul>
+<li>Acceptable operators include add (+), subtract (-), multiply (*), and divide (/)</li>
+<li>Supported functions include:
+<ul>
+<li>abs(x) - Absolute Value</li>
+<li>acos(x) - Arc Cosine</li>
+<li>asin(x) - Arc Sine</li>
+<li>atan(x) - Arc Tangent</li>
+<li>ceil(x) - Ceiling</li>
+<li>cos(x) - Cosine</li>
+<li>exp(x) - e^x</li>
+<li>floor(x) - Floor</li>
+<li>log(x) - Natural Log</li>
+<li>log(#, x) - Log Base #</li>
+<li>sqr(x) - Squared</li>
+<li>pow(x, y) - x^y</li>
+<li>sqrt(x) - Square Root</li>
+<li>root(#, x) - x to the # root</li>
+<li>sin(x) - Sine</li>
+<li>tan(x) - Tangent</li>
+</ul>
+</li>
+<li>Acceptable variables include anything listed in the products, reactants, or parameter fields.</li>
+<li>Real Numbers can also be entered into a kinetic law formula.</li>
+</ul>
+The kinetic law editor also includes two buttons.  The "Use Mass Action" button will compute a mass action formula for you and enter it into the kinetic law editor.  The "Clear" button will clear the kinetic law editor.
 <br>&nbsp;
 
 <h2><a name="VIEWSBML"></a>Viewing SBML models</h2>
@@ -75,7 +103,7 @@ To view an SBML model, you must first have a project open.  Once this is done, r
 <br>&nbsp;
 
 <h1><a name="ANALYSIS"></a>Analysis</h1>
-To perform analysis, you must first have a project open.  Once this is done, right click on a model and select "Create Analysis View"  or select a model and select "Analyze" under the Tools drop down menu on the toolbar.  You will then be prompted to give a name to your analysis.  After a name is entered, a tab with analysis options will open.  You can also open up an analysis tab by right clicking on an analysis directory and selecting "Open Analysis View".
+To perform analysis, you must first have a project open.  Once this is done, right click on a model and select "Create Analysis View".  You will then be prompted to give a name to your analysis.  After a name is entered, a tab with analysis options will open.  You can also open up an analysis tab by right clicking on an analysis directory and selecting "Open Analysis View".
 <br>&nbsp;
 
 <h2><a name="SIMULATION"></a>Simulation</h2>
@@ -174,7 +202,7 @@ detailed information while the GeneNet algorithm is running</p>
 <br>&nbsp;
 
 <h2><a name="GRAPHING"></a>Graphing</h2>
-To graph data, perform a simulation to create some data or right click on an analysis directory that has data in it and select "Open Analysis View".  You will see a "Graph" tab.  Select this tab and you will have some graphing options.  By double clicking on the graph or selecting the "Edit Graph" button, you will be able to change what is graphed and how the graph looks.  Here are your options:
+To graph data, perform a simulation to create some data or right click on an analysis directory that has data in it and select "Open Analysis View".  You will see a "Graph" tab.  Select this tab and you will have some graphing options.  By clicking on the graph, you will be able to change what is graphed and how the graph looks.  Here are your options:
 <ul>
 <li>Title - The Title Of The Graph</li>
 <li>X-Axis Label - The Label Displayed For The X-Axis</li>
@@ -185,6 +213,7 @@ To graph data, perform a simulation to create some data or right click on an ana
 <li>Y-Min - The Starting Value For The Y-Axis</li>
 <li>Y-Max - The Ending Value For The Y-Axis</li>
 <li>Y-Step - The Increment Of The Y-Axis</li>
+<li>Auto Resize Check Box - Determines Whether Or Not To Automatically Resize The Graph To The Best Fit</li>
 <li>Data Selection Menu - This Menu Displays All Of The Available Sets Off Data You Can Graph.  Select A Set Of Data And Then You Can Select Which Species To Display</li>
 <li>Use Check Box - Determines Whether Or Not This Species Is Displayed On The Graph</li>
 <li>Species Label - The Name Displayed On The Graph For This Species</li>
@@ -194,7 +223,6 @@ To graph data, perform a simulation to create some data or right click on an ana
 <li>Visible Check Box - Determines Whether Or Not Shapes Will Be Visible On The Line For This Species</li>
 <li>Filled Check Box - Determines Whether Or Not Shapes Will Be Filled In On The Line For This Species</li>
 </ul>
-<p>The "Graph All" button will graph all of the species that have been selected in the "Edit Graph" options and will automatically resize the graph to the best fit.  The "Ungraph All" button with remove all of the species that have been selected in the "Edit Graph" options from the graph and resize the graph so that the point (0,0) is in the middle of the graph.  The "Resize Graph To Best Fit" button will resize the graph so that all of the graphed species can be seen in the graph.</p>
 To save the graph, select one of the "Export" buttons.  You will then be prompted to give a desired pixel height and width for the file.  Once this is done, you will be prompted to select a location and a name for the file you are saving.  After you make these selections, click the "Save" button and the file will be saved.
 <br>&nbsp;
 
