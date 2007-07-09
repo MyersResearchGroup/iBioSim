@@ -92,12 +92,10 @@ public class Learn extends JPanel implements ActionListener {
 		user.addActionListener(this);
 		auto.addActionListener(this);
 		suggest.addActionListener(this);
-		spacing.setSelected(true);
+		data.setSelected(true);
 		data.addActionListener(this);
-		spacing.addActionListener(this);
-		data.addActionListener(this);
-		selection1.add(spacing);
 		selection1.add(data);
+		selection1.add(spacing);
 		selection2.add(auto);
 		selection2.add(user);
 		selection2.add(suggest);
@@ -369,9 +367,12 @@ public class Learn extends JPanel implements ActionListener {
 				 * geneNet += "
 				 * --output_donotTossChangedInfluenceSingleParents"; }
 				 */
+				if (spacing.isSelected()) {
+					geneNet += " -binN";
+				}
 				Runtime exec = Runtime.getRuntime();
 				Process learn = exec.exec(geneNet + " " + directory);
-				log.addText("Exectuting:\n" + geneNet + " " + directory + "\n");
+				log.addText("Executing:\n" + geneNet + " " + directory + "\n");
 				learn.waitFor();
 				String output = "";
 				InputStream reb = learn.getInputStream();
@@ -422,9 +423,15 @@ public class Learn extends JPanel implements ActionListener {
 				write.write("\n");
 			}
 			write.close();
-			log.addText("Exectuting:\nGeneNet --readLevels --lvl " + directory + "\n");
+			String geneNet = "";
+			if (spacing.isSelected()) {
+				geneNet = "GeneNet --readLevels --lvl -binN";
+			} else {
+				geneNet = "GeneNet --readLevels --lvl";
+			}
+			log.addText("Executing:\n" + geneNet + " " + directory + "\n");
 			Runtime exec = Runtime.getRuntime();
-			Process learn = exec.exec("GeneNet --readLevels --lvl " + directory);
+			Process learn = exec.exec(geneNet + " " + directory);
 			learn.waitFor();
 			String output = "";
 			InputStream reb = learn.getInputStream();

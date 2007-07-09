@@ -258,30 +258,43 @@ public class Run implements ActionListener {
 		int exitValue = 255;
 		try {
 			long time1;
+			String out = filename;
+			if (out.length() > 4 && out.substring(out.length() - 5, out.length()).equals(".sbml")) {
+				out = out.substring(0, out.length() - 5);
+			} else if (out.length() > 3
+					&& out.substring(out.length() - 4, out.length()).equals(".xml")) {
+				out = out.substring(0, out.length() - 4);
+			}
 			if (nary.isSelected() && naryRun == 1) {
-				log.addText("Exectuting:\nreb2sac --target.encoding=nary-level " + filename + "\n");
+				log.addText("Executing:\nreb2sac --target.encoding=nary-level " + filename + "\n");
 				time1 = System.nanoTime();
 				reb2sac = exec.exec("reb2sac --target.encoding=nary-level " + filename);
 			} else if (sbml.isSelected()) {
-				log.addText("Exectuting:\nreb2sac --target.encoding=sbml " + filename + "\n");
+				log.addText("Executing:\nreb2sac --target.encoding=sbml --out=" + out + ".xml "
+						+ filename + "\n");
 				time1 = System.nanoTime();
-				reb2sac = exec.exec("reb2sac --target.encoding=sbml " + filename);
+				reb2sac = exec.exec("reb2sac --target.encoding=sbml --out=" + out + ".xml "
+						+ filename);
 			} else if (dot.isSelected()) {
-				log.addText("Exectuting:\nreb2sac --target.encoding=dot " + filename + "\n");
+				log.addText("Executing:\nreb2sac --target.encoding=dot --out=" + out + ".dot "
+						+ filename + "\n");
 				time1 = System.nanoTime();
-				reb2sac = exec.exec("reb2sac --target.encoding=dot " + filename);
+				reb2sac = exec.exec("reb2sac --target.encoding=dot --out=" + out + ".dot "
+						+ filename);
 			} else if (xhtml.isSelected()) {
-				log.addText("Exectuting:\nreb2sac --target.encoding=xhtml " + filename + "\n");
+				log.addText("Executing:\nreb2sac --target.encoding=xhtml --out=" + out + ".xhtml "
+						+ filename + "\n");
 				time1 = System.nanoTime();
-				reb2sac = exec.exec("reb2sac --target.encoding=xhtml " + filename);
+				reb2sac = exec.exec("reb2sac --target.encoding=xhtml --out=" + out + ".xhtml "
+						+ filename);
 			} else if (usingSSA.isSelected()) {
-				log.addText("Exectuting:\nreb2sac --target.encoding=ssa-with-user-update "
+				log.addText("Executing:\nreb2sac --target.encoding=ssa-with-user-update "
 						+ filename + "\n");
 				time1 = System.nanoTime();
 				reb2sac = exec.exec("reb2sac --target.encoding=ssa-with-user-update " + filename);
 			} else {
 				log
-						.addText("Exectuting:\nreb2sac --target.encoding=" + sim + " " + filename
+						.addText("Executing:\nreb2sac --target.encoding=" + sim + " " + filename
 								+ "\n");
 				time1 = System.nanoTime();
 				reb2sac = exec.exec("reb2sac --target.encoding=" + sim + " " + filename);
@@ -376,62 +389,14 @@ public class Run implements ActionListener {
 			} else {
 				if (nary.isSelected() && naryRun == 1) {
 				} else if (sbml.isSelected()) {
-					String[] split = filename.split(File.separator);
-					String outFile = filename.substring(0, filename.length()
-							- split[split.length - 1].length());
-					outFile += "out.xml";
-					File outXml = new File("out.xml");
-					FileReader r = new FileReader(outXml);
-					FileWriter w = new FileWriter(outFile);
-					int getNext = r.read();
-					while (getNext != -1) {
-						w.write(getNext);
-						getNext = r.read();
-					}
-					r.close();
-					w.close();
-					outXml.delete();
-					outXml = new File(outFile);
-					biomodelsim.addTab("SBML Editor", new SBML_Editor(outXml.getAbsolutePath(),
-							null, log));
+					biomodelsim.addTab("SBML Editor", new SBML_Editor(out + ".xml", null, log,
+							biomodelsim));
 				} else if (dot.isSelected()) {
-					String[] split = filename.split(File.separator);
-					String outFile = filename.substring(0, filename.length()
-							- split[split.length - 1].length());
-					outFile += "out.dot";
-					File outDot = new File("out.dot");
-					FileReader r = new FileReader(outDot);
-					FileWriter w = new FileWriter(outFile);
-					int getNext = r.read();
-					while (getNext != -1) {
-						w.write(getNext);
-						getNext = r.read();
-					}
-					r.close();
-					w.close();
-					outDot.delete();
-					outDot = new File(outFile);
-					log.addText("Exectuting:\ndotty " + outDot.getAbsolutePath() + "\n");
-					exec.exec("dotty " + outDot.getAbsolutePath());
+					log.addText("Executing:\ndotty " + out + ".dot" + "\n");
+					exec.exec("dotty " + out + ".dot");
 				} else if (xhtml.isSelected()) {
-					String[] split = filename.split(File.separator);
-					String outFile = filename.substring(0, filename.length()
-							- split[split.length - 1].length());
-					outFile += "out.xhtml";
-					File outXhtml = new File("out.xhtml");
-					FileReader r = new FileReader(outXhtml);
-					FileWriter w = new FileWriter(outFile);
-					int getNext = r.read();
-					while (getNext != -1) {
-						w.write(getNext);
-						getNext = r.read();
-					}
-					r.close();
-					w.close();
-					outXhtml.delete();
-					outXhtml = new File(outFile);
-					log.addText("Exectuting:\nfirefox " + outXhtml.getAbsolutePath() + "\n");
-					exec.exec("firefox " + outXhtml.getAbsolutePath());
+					log.addText("Executing:\nfirefox " + out + ".xhtml" + "\n");
+					exec.exec("firefox " + out + ".xhtml");
 				} else if (usingSSA.isSelected()) {
 					if (!printer_id.equals("null.printer")) {
 						int change = -1;

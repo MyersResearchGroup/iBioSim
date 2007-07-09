@@ -187,7 +187,7 @@ public class BioSim implements MouseListener, ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == about) {
 			final JFrame f = new JFrame("About");
-			JLabel bioSim = new JLabel("BioSim 0.1");
+			JLabel bioSim = new JLabel("BioSim 0.2");
 			Font font = bioSim.getFont();
 			font = font.deriveFont(Font.BOLD, 36.0f);
 			bioSim.setFont(font);
@@ -294,7 +294,7 @@ public class BioSim implements MouseListener, ActionListener {
 		// if the edit popup menu is selected on a dot file
 		else if (e.getActionCommand().equals("dotEditor")) {
 			try {
-				log.addText("Exectuting:\nemacs " + tree.getFile() + "\n");
+				log.addText("Executing:\nemacs " + tree.getFile() + "\n");
 				Runtime exec = Runtime.getRuntime();
 				exec.exec("emacs " + tree.getFile());
 			} catch (Exception e1) {
@@ -305,7 +305,7 @@ public class BioSim implements MouseListener, ActionListener {
 		// if the edit popup menu is selected on an sbml file
 		else if (e.getActionCommand().equals("sbmlEditor")) {
 			try {
-				addTab("SBML Editor", new SBML_Editor(tree.getFile(), null, log));
+				addTab("SBML Editor", new SBML_Editor(tree.getFile(), null, log, this));
 			} catch (Exception e1) {
 				JOptionPane.showMessageDialog(frame, "You must select a valid sbml file.", "Error",
 						JOptionPane.ERROR_MESSAGE);
@@ -325,13 +325,19 @@ public class BioSim implements MouseListener, ActionListener {
 						new String[0], new String[0], "tsd.printer", "amount", tree.getFile()
 								.split(File.separator), "none", frame, tree.getFile(), 0.1, 0.1,
 						0.1, 15, dummy, "", "", null);
-				log.addText("Exectuting:\nreb2sac --target.encoding=dot " + tree.getFile() + "\n");
-				String[] split = tree.getFile().split(File.separator);
-				String outFile = tree.getFile().substring(0,
-						tree.getFile().length() - split[split.length - 1].length());
-				outFile += "out.dot";
+				String out = tree.getFile();
+				if (out.length() > 4
+						&& out.substring(out.length() - 5, out.length()).equals(".sbml")) {
+					out = out.substring(0, out.length() - 5) + ".dot";
+				} else if (out.length() > 3
+						&& out.substring(out.length() - 4, out.length()).equals(".xml")) {
+					out = out.substring(0, out.length() - 4) + ".dot";
+				}
+				log.addText("Executing:\nreb2sac --target.encoding=dot --out=" + out + " "
+						+ tree.getFile() + "\n");
 				Runtime exec = Runtime.getRuntime();
-				Process graph = exec.exec("reb2sac --target.encoding=dot " + tree.getFile());
+				Process graph = exec.exec("reb2sac --target.encoding=dot --out=" + out + " "
+						+ tree.getFile());
 				graph.waitFor();
 				String error = "";
 				String output = "";
@@ -353,20 +359,8 @@ public class BioSim implements MouseListener, ActionListener {
 				if (!error.equals("")) {
 					log.addText("Errors:\n" + error + "\n");
 				}
-				File outDot = new File("out.dot");
-				FileReader r = new FileReader(outDot);
-				FileWriter w = new FileWriter(outFile);
-				int getNext = r.read();
-				while (getNext != -1) {
-					w.write(getNext);
-					getNext = r.read();
-				}
-				r.close();
-				w.close();
-				outDot.delete();
-				outDot = new File(outFile);
-				log.addText("Exectuting:\ndotty " + outDot.getAbsolutePath() + "\n");
-				exec.exec("dotty " + outDot.getAbsolutePath());
+				log.addText("Executing:\ndotty " + out + "\n");
+				exec.exec("dotty " + out);
 				String remove;
 				if (tree.getFile().substring(tree.getFile().length() - 4).equals("sbml")) {
 					remove = tree.getFile().substring(0, tree.getFile().length() - 4)
@@ -396,15 +390,19 @@ public class BioSim implements MouseListener, ActionListener {
 						new String[0], new String[0], "tsd.printer", "amount", tree.getFile()
 								.split(File.separator), "none", frame, tree.getFile(), 0.1, 0.1,
 						0.1, 15, dummy, "", "", null);
-				log
-						.addText("Exectuting:\nreb2sac --target.encoding=xhtml " + tree.getFile()
-								+ "\n");
-				String[] split = tree.getFile().split(File.separator);
-				String outFile = tree.getFile().substring(0,
-						tree.getFile().length() - split[split.length - 1].length());
-				outFile += "out.xhtml";
+				String out = tree.getFile();
+				if (out.length() > 4
+						&& out.substring(out.length() - 5, out.length()).equals(".sbml")) {
+					out = out.substring(0, out.length() - 5) + ".xhtml";
+				} else if (out.length() > 3
+						&& out.substring(out.length() - 4, out.length()).equals(".xml")) {
+					out = out.substring(0, out.length() - 4) + ".xhtml";
+				}
+				log.addText("Executing:\nreb2sac --target.encoding=xhtml --out=" + out + " "
+						+ tree.getFile() + "\n");
 				Runtime exec = Runtime.getRuntime();
-				Process browse = exec.exec("reb2sac --target.encoding=xhtml " + tree.getFile());
+				Process browse = exec.exec("reb2sac --target.encoding=xhtml --out=" + out + " "
+						+ tree.getFile());
 				browse.waitFor();
 				String error = "";
 				String output = "";
@@ -426,20 +424,8 @@ public class BioSim implements MouseListener, ActionListener {
 				if (!error.equals("")) {
 					log.addText("Errors:\n" + error + "\n");
 				}
-				File outXhtml = new File("out.xhtml");
-				FileReader r = new FileReader(outXhtml);
-				FileWriter w = new FileWriter(outFile);
-				int getNext = r.read();
-				while (getNext != -1) {
-					w.write(getNext);
-					getNext = r.read();
-				}
-				r.close();
-				w.close();
-				outXhtml.delete();
-				outXhtml = new File(outFile);
-				log.addText("Exectuting:\nfirefox " + outXhtml.getAbsolutePath() + "\n");
-				exec.exec("firefox " + outXhtml.getAbsolutePath());
+				log.addText("Executing:\nfirefox " + out + "\n");
+				exec.exec("firefox " + out);
 				String remove;
 				if (tree.getFile().substring(tree.getFile().length() - 4).equals("sbml")) {
 					remove = tree.getFile().substring(0, tree.getFile().length() - 4)
@@ -449,7 +435,6 @@ public class BioSim implements MouseListener, ActionListener {
 							+ ".properties";
 				}
 				new File(remove).delete();
-				refreshTree();
 			} catch (Exception e1) {
 				JOptionPane.showMessageDialog(frame, "Error viewing sbml file in a browser.",
 						"Error", JOptionPane.ERROR_MESSAGE);
@@ -458,7 +443,7 @@ public class BioSim implements MouseListener, ActionListener {
 		// if the graph dot popup menu is selected
 		else if (e.getActionCommand().equals("graphDot")) {
 			try {
-				log.addText("Exectuting:\ndotty " + new File(tree.getFile()).getAbsolutePath()
+				log.addText("Executing:\ndotty " + new File(tree.getFile()).getAbsolutePath()
 						+ "\n");
 				Runtime exec = Runtime.getRuntime();
 				exec.exec("dotty " + new File(tree.getFile()).getAbsolutePath());
@@ -520,8 +505,8 @@ public class BioSim implements MouseListener, ActionListener {
 		else if (e.getSource() == newModel) {
 			if (root != null) {
 				try {
-					String simName = JOptionPane.showInputDialog(frame,
-							"Enter a name for the model:", "Model Name", JOptionPane.PLAIN_MESSAGE);
+					String simName = JOptionPane.showInputDialog(frame, "Enter Model ID:",
+							"Model ID", JOptionPane.PLAIN_MESSAGE);
 					if (simName != null && !simName.equals("")) {
 						if (simName.length() > 4) {
 							if (!simName.substring(simName.length() - 5).equals(".sbml")
@@ -531,6 +516,14 @@ public class BioSim implements MouseListener, ActionListener {
 						} else {
 							simName += ".sbml";
 						}
+						String modelID = "";
+						if (simName.length() > 4) {
+							if (simName.substring(simName.length() - 5).equals(".sbml")) {
+								modelID = simName.substring(0, simName.length() - 5);
+							} else {
+								modelID = simName.substring(0, simName.length() - 4);
+							}
+						}
 						File f = new File(root + File.separator + simName);
 						f.createNewFile();
 						SBMLDocument document = new SBMLDocument();
@@ -539,13 +532,14 @@ public class BioSim implements MouseListener, ActionListener {
 						Compartment c = document.getModel().createCompartment();
 						c.setName("default");
 						c.setId("default");
+						document.getModel().setId(modelID);
 						FileOutputStream out = new FileOutputStream(f);
 						SBMLWriter writer = new SBMLWriter();
 						String doc = writer.writeToString(document);
 						byte[] output = doc.getBytes();
 						out.write(output);
 						out.close();
-						addTab("SBML Editor", new SBML_Editor(f.getAbsolutePath(), null, log));
+						addTab("SBML Editor", new SBML_Editor(f.getAbsolutePath(), null, log, this));
 						refreshTree();
 					}
 				} catch (Exception e1) {
@@ -977,7 +971,7 @@ public class BioSim implements MouseListener, ActionListener {
 						&& tree.getFile().substring(tree.getFile().length() - 4).equals("sbml")
 						|| tree.getFile().substring(tree.getFile().length() - 4).equals(".xml")) {
 					try {
-						addTab("SBML Editor", new SBML_Editor(tree.getFile(), null, log));
+						addTab("SBML Editor", new SBML_Editor(tree.getFile(), null, log, this));
 					} catch (Exception e1) {
 						JOptionPane.showMessageDialog(frame, "You must select a valid sbml file.",
 								"Error", JOptionPane.ERROR_MESSAGE);
@@ -985,7 +979,7 @@ public class BioSim implements MouseListener, ActionListener {
 				} else if (tree.getFile().length() >= 3
 						&& tree.getFile().substring(tree.getFile().length() - 3).equals("dot")) {
 					try {
-						log.addText("Exectuting:\ndotty "
+						log.addText("Executing:\ndotty "
 								+ new File(tree.getFile()).getAbsolutePath() + "\n");
 						Runtime exec = Runtime.getRuntime();
 						exec.exec("dotty " + new File(tree.getFile()).getAbsolutePath());
@@ -1023,7 +1017,7 @@ public class BioSim implements MouseListener, ActionListener {
 						+ simName
 						+ File.separator
 						+ (dot[dot.length - 1].substring(0, dot[dot.length - 1].length() - 3) + "sbml");
-				log.addText("Exectuting:\ndot2sbml.pl " + tree.getFile() + " " + sbmlFile + "\n");
+				log.addText("Executing:\ndot2sbml.pl " + tree.getFile() + " " + sbmlFile + "\n");
 				Runtime exec = Runtime.getRuntime();
 				Process dot2sbml = exec.exec("dot2sbml.pl " + tree.getFile() + " " + sbmlFile);
 				dot2sbml.waitFor();
@@ -1053,7 +1047,7 @@ public class BioSim implements MouseListener, ActionListener {
 						null);
 				simTab.addTab("Simulation", reb2sac);
 				simTab.getComponentAt(simTab.getComponents().length - 1).setName("Simulate");
-				SBML_Editor sbml = new SBML_Editor(sbmlFile, reb2sac, log);
+				SBML_Editor sbml = new SBML_Editor(sbmlFile, reb2sac, log, this);
 				reb2sac.setSbml(sbml);
 				simTab.addTab("SBML Editor", sbml);
 				simTab.getComponentAt(simTab.getComponents().length - 1).setName("SBML Editor");
@@ -1094,7 +1088,7 @@ public class BioSim implements MouseListener, ActionListener {
 						null);
 				simTab.addTab("Simulation", reb2sac);
 				simTab.getComponentAt(simTab.getComponents().length - 1).setName("Simulate");
-				SBML_Editor sbml = new SBML_Editor(sbmlFile, reb2sac, log);
+				SBML_Editor sbml = new SBML_Editor(sbmlFile, reb2sac, log, this);
 				reb2sac.setSbml(sbml);
 				simTab.addTab("SBML Editor", sbml);
 				simTab.getComponentAt(simTab.getComponents().length - 1).setName("SBML Editor");
@@ -1163,7 +1157,7 @@ public class BioSim implements MouseListener, ActionListener {
 							.trim(), log, simTab, openFile);
 					simTab.addTab("Simulation", reb2sac);
 					simTab.getComponentAt(simTab.getComponents().length - 1).setName("Simulate");
-					SBML_Editor sbml = new SBML_Editor(getAFile, reb2sac, log);
+					SBML_Editor sbml = new SBML_Editor(getAFile, reb2sac, log, this);
 					reb2sac.setSbml(sbml);
 					simTab.addTab("SBML Editor", sbml);
 					simTab.getComponentAt(simTab.getComponents().length - 1).setName("SBML Editor");
