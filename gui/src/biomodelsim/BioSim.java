@@ -305,7 +305,9 @@ public class BioSim implements MouseListener, ActionListener {
 		// if the edit popup menu is selected on an sbml file
 		else if (e.getActionCommand().equals("sbmlEditor")) {
 			try {
-				addTab("SBML Editor", new SBML_Editor(tree.getFile(), null, log, this));
+				addTab(
+						tree.getFile().split(File.separator)[tree.getFile().split(File.separator).length - 1],
+						new SBML_Editor(tree.getFile(), null, log, this));
 			} catch (Exception e1) {
 				JOptionPane.showMessageDialog(frame, "You must select a valid sbml file.", "Error",
 						JOptionPane.ERROR_MESSAGE);
@@ -539,7 +541,9 @@ public class BioSim implements MouseListener, ActionListener {
 						byte[] output = doc.getBytes();
 						out.write(output);
 						out.close();
-						addTab("SBML Editor", new SBML_Editor(f.getAbsolutePath(), null, log, this));
+						addTab(f.getAbsolutePath().split(File.separator)[f.getAbsolutePath().split(
+								File.separator).length - 1], new SBML_Editor(f.getAbsolutePath(),
+								null, log, this));
 						refreshTree();
 					}
 				} catch (Exception e1) {
@@ -971,7 +975,9 @@ public class BioSim implements MouseListener, ActionListener {
 						&& tree.getFile().substring(tree.getFile().length() - 4).equals("sbml")
 						|| tree.getFile().substring(tree.getFile().length() - 4).equals(".xml")) {
 					try {
-						addTab("SBML Editor", new SBML_Editor(tree.getFile(), null, log, this));
+						addTab(tree.getFile().split(File.separator)[tree.getFile().split(
+								File.separator).length - 1], new SBML_Editor(tree.getFile(), null,
+								log, this));
 					} catch (Exception e1) {
 						JOptionPane.showMessageDialog(frame, "You must select a valid sbml file.",
 								"Error", JOptionPane.ERROR_MESSAGE);
