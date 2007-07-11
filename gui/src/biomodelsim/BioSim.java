@@ -1068,8 +1068,6 @@ public class BioSim implements MouseListener, ActionListener {
 				font = font.deriveFont(Font.BOLD, 42.0f);
 				noDataLearn.setFont(font);
 				noDataLearn.setHorizontalAlignment(SwingConstants.CENTER);
-				// Learn learn = new Learn(root + File.separator + simName,
-				// log);
 				simTab.addTab("Learn", noDataLearn);
 				simTab.getComponentAt(simTab.getComponents().length - 1).setName("Learn");
 				addTab(simName, simTab, null);
@@ -1122,8 +1120,6 @@ public class BioSim implements MouseListener, ActionListener {
 				font = font.deriveFont(Font.BOLD, 42.0f);
 				noDataLearn.setFont(font);
 				noDataLearn.setHorizontalAlignment(SwingConstants.CENTER);
-				// Learn learn = new Learn(root + File.separator + simName,
-				// log);
 				simTab.addTab("Learn", noDataLearn);
 				simTab.getComponentAt(simTab.getComponents().length - 1).setName("Learn");
 				addTab(simName, simTab, null);
