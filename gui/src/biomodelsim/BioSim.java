@@ -65,7 +65,7 @@ public class BioSim implements MouseListener, ActionListener {
 		// Makes it so that clicking the x in the corner closes the program
 		WindowListener w = new WindowListener() {
 			public void windowClosing(WindowEvent arg0) {
-				System.exit(1);
+				exit.doClick();
 			}
 
 			public void windowOpened(WindowEvent arg0) {
@@ -249,6 +249,22 @@ public class BioSim implements MouseListener, ActionListener {
 		}
 		// if the exit menu item is selected
 		else if (e.getSource() == exit) {
+			for (int i = 0; i < tab.getTabCount(); i++) {
+				if (tab.getComponentAt(i).getName().equals("Simulate")
+						|| tab.getComponentAt(i).getName().equals("SBML Editor")
+						|| tab.getComponentAt(i).getName().contains("Graph")) {
+					save(i, false);
+				} else {
+					Object[] options = { "Yes", "No", "Cancel" };
+					int value = JOptionPane.showOptionDialog(frame,
+							"Do you want to save changes to " + tab.getTitleAt(i) + "?",
+							"Save Changes", JOptionPane.YES_NO_CANCEL_OPTION,
+							JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+					if (value == JOptionPane.YES_OPTION) {
+						save(i, true);
+					}
+				}
+			}
 			System.exit(1);
 		}
 		// if the open popup menu is selected on a sim directory
@@ -712,10 +728,16 @@ public class BioSim implements MouseListener, ActionListener {
 		tab.remove(component);
 	}
 
+	public JTabbedPane getTab() {
+		return tab;
+	}
+
 	/**
 	 * Prompts the user to save work that has been done.
+	 * 
+	 * @param wait
 	 */
-	public int save(int index) {
+	public int save(int index, boolean wait) {
 		if (tab.getComponentAt(index).getName().equals("Simulate")) {
 			Object[] options = { "Save", "Cancel" };
 			int value = JOptionPane.showOptionDialog(frame, "Do you want to save changes to the"
@@ -728,8 +750,8 @@ public class BioSim implements MouseListener, ActionListener {
 		} else if (tab.getComponentAt(index).getName().equals("SBML Editor")) {
 			if (((SBML_Editor) tab.getComponentAt(index)).hasChanged()) {
 				Object[] options = { "Yes", "No", "Cancel" };
-				int value = JOptionPane.showOptionDialog(frame,
-						"Do you want to save changes to the" + " sbml file?", "Save Changes",
+				int value = JOptionPane.showOptionDialog(frame, "Do you want to save changes to "
+						+ tab.getTitleAt(index) + "?", "Save Changes",
 						JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
 						options[0]);
 				if (value == JOptionPane.YES_OPTION) {
@@ -744,81 +766,29 @@ public class BioSim implements MouseListener, ActionListener {
 				return 1;
 			}
 		} else if (tab.getComponentAt(index).getName().contains("Graph")) {
-			final JFrame f = new JFrame("Save");
-			final int index2 = index;
-			JButton saveAsJpeg = new JButton("Save As JPEG");
-			saveAsJpeg.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					((Graph) tab.getComponentAt(index2)).export(0);
-					f.dispose();
+			Graph g = (Graph) tab.getComponentAt(index);
+			Object[] options = { "Export", "Cancel" };
+			Object[] saveOptions = { "JPEG", "PNG", "PDF", "EPS", "SVG" };
+			JComboBox choice = new JComboBox(saveOptions);
+			JPanel export = new JPanel();
+			export.add(new JLabel("Select output filetype for exporting graph:"));
+			export.add(choice);
+			int value = JOptionPane
+					.showOptionDialog(frame, export, "Export", JOptionPane.YES_NO_OPTION,
+							JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+			if (value == JOptionPane.YES_OPTION) {
+				if (choice.getSelectedItem().equals("JPEG")) {
+					g.export(0);
+				} else if (choice.getSelectedItem().equals("PNG")) {
+					g.export(1);
+				} else if (choice.getSelectedItem().equals("PDF")) {
+					g.export(2);
+				} else if (choice.getSelectedItem().equals("EPS")) {
+					g.export(3);
+				} else {
+					g.export(4);
 				}
-			});
-			JButton saveAsPng = new JButton("Save As PNG");
-			saveAsPng.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					((Graph) tab.getComponentAt(index2)).export(1);
-					f.dispose();
-				}
-			});
-			JButton saveAsPdf = new JButton("Save As PDF");
-			saveAsPdf.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					((Graph) tab.getComponentAt(index2)).export(2);
-					f.dispose();
-				}
-			});
-			JButton saveAsEps = new JButton("Save As EPS");
-			saveAsEps.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					((Graph) tab.getComponentAt(index2)).export(3);
-					f.dispose();
-				}
-			});
-			JButton saveAsSvg = new JButton("Save As SVG");
-			saveAsSvg.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					((Graph) tab.getComponentAt(index2)).export(4);
-					f.dispose();
-				}
-			});
-			JButton cancel = new JButton("Cancel");
-			cancel.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					f.dispose();
-				}
-			});
-			JPanel buttons = new JPanel();
-			buttons.add(saveAsJpeg);
-			buttons.add(saveAsPng);
-			buttons.add(saveAsPdf);
-			buttons.add(saveAsEps);
-			buttons.add(saveAsSvg);
-			buttons.add(cancel);
-			JLabel text = new JLabel("Which type would you like to save the graph as?");
-			JPanel textPanel = new JPanel(new GridLayout(2, 1));
-			textPanel.add(text);
-			textPanel.add(buttons);
-			f.setContentPane(textPanel);
-			f.pack();
-			Dimension screenSize;
-			try {
-				Toolkit tk = Toolkit.getDefaultToolkit();
-				screenSize = tk.getScreenSize();
-			} catch (AWTError awe) {
-				screenSize = new Dimension(640, 480);
 			}
-			Dimension frameSize = f.getSize();
-
-			if (frameSize.height > screenSize.height) {
-				frameSize.height = screenSize.height;
-			}
-			if (frameSize.width > screenSize.width) {
-				frameSize.width = screenSize.width;
-			}
-			int x = screenSize.width / 2 - frameSize.width / 2;
-			int y = screenSize.height / 2 - frameSize.height / 2;
-			f.setLocation(x, y);
-			f.setVisible(true);
 			return 1;
 		} else {
 			for (int i = 0; i < ((JTabbedPane) tab.getComponentAt(index)).getTabCount(); i++) {
@@ -832,82 +802,30 @@ public class BioSim implements MouseListener, ActionListener {
 				} else if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i).getName()
 						.contains("Graph")) {
 					if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof Graph) {
-						final JFrame f = new JFrame("Save");
-						final Graph g = ((Graph) ((JTabbedPane) tab.getComponentAt(index))
+						Graph g = ((Graph) ((JTabbedPane) tab.getComponentAt(index))
 								.getComponent(i));
-						JButton saveAsJpeg = new JButton("Save As JPEG");
-						saveAsJpeg.addActionListener(new ActionListener() {
-							public void actionPerformed(ActionEvent e) {
+						Object[] options = { "Export", "Cancel" };
+						Object[] saveOptions = { "JPEG", "PNG", "PDF", "EPS", "SVG" };
+						JComboBox choice = new JComboBox(saveOptions);
+						JPanel export = new JPanel();
+						export.add(new JLabel("Select output filetype for exporting graph:"));
+						export.add(choice);
+						int value = JOptionPane.showOptionDialog(frame, export, "Export",
+								JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
+								options, options[0]);
+						if (value == JOptionPane.YES_OPTION) {
+							if (choice.getSelectedItem().equals("JPEG")) {
 								g.export(0);
-								f.dispose();
-							}
-						});
-						JButton saveAsPng = new JButton("Save As PNG");
-						saveAsPng.addActionListener(new ActionListener() {
-							public void actionPerformed(ActionEvent e) {
+							} else if (choice.getSelectedItem().equals("PNG")) {
 								g.export(1);
-								f.dispose();
-							}
-						});
-						JButton saveAsPdf = new JButton("Save As PDF");
-						saveAsPdf.addActionListener(new ActionListener() {
-							public void actionPerformed(ActionEvent e) {
+							} else if (choice.getSelectedItem().equals("PDF")) {
 								g.export(2);
-								f.dispose();
-							}
-						});
-						JButton saveAsEps = new JButton("Save As EPS");
-						saveAsEps.addActionListener(new ActionListener() {
-							public void actionPerformed(ActionEvent e) {
+							} else if (choice.getSelectedItem().equals("EPS")) {
 								g.export(3);
-								f.dispose();
-							}
-						});
-						JButton saveAsSvg = new JButton("Save As SVG");
-						saveAsSvg.addActionListener(new ActionListener() {
-							public void actionPerformed(ActionEvent e) {
+							} else {
 								g.export(4);
-								f.dispose();
 							}
-						});
-						JButton cancel = new JButton("Cancel");
-						cancel.addActionListener(new ActionListener() {
-							public void actionPerformed(ActionEvent e) {
-								f.dispose();
-							}
-						});
-						JPanel buttons = new JPanel();
-						buttons.add(saveAsJpeg);
-						buttons.add(saveAsPng);
-						buttons.add(saveAsPdf);
-						buttons.add(saveAsEps);
-						buttons.add(saveAsSvg);
-						buttons.add(cancel);
-						JLabel text = new JLabel("Which type would you like to save the graph as?");
-						JPanel textPanel = new JPanel(new GridLayout(2, 1));
-						textPanel.add(text);
-						textPanel.add(buttons);
-						f.setContentPane(textPanel);
-						f.pack();
-						Dimension screenSize;
-						try {
-							Toolkit tk = Toolkit.getDefaultToolkit();
-							screenSize = tk.getScreenSize();
-						} catch (AWTError awe) {
-							screenSize = new Dimension(640, 480);
 						}
-						Dimension frameSize = f.getSize();
-
-						if (frameSize.height > screenSize.height) {
-							frameSize.height = screenSize.height;
-						}
-						if (frameSize.width > screenSize.width) {
-							frameSize.width = screenSize.width;
-						}
-						int x = screenSize.width / 2 - frameSize.width / 2;
-						int y = screenSize.height / 2 - frameSize.height / 2;
-						f.setLocation(x, y);
-						f.setVisible(true);
 					}
 				}
 			}
@@ -1289,17 +1207,17 @@ public class BioSim implements MouseListener, ActionListener {
 						if (tab.getComponentAt(tabIndex).getName().equals("Simulate")
 								|| tab.getComponentAt(tabIndex).getName().equals("SBML Editor")
 								|| tab.getComponentAt(tabIndex).getName().contains("Graph")) {
-							if (save(tabIndex) == 1) {
+							if (save(tabIndex, false) == 1) {
 								tabPane.remove(tabIndex);
 							}
 						} else {
 							Object[] options = { "Yes", "No", "Cancel" };
 							int value = JOptionPane.showOptionDialog(frame,
-									"Do you want to save changes to the" + " simulation?",
+									"Do you want to save changes to the analysis view?",
 									"Save Changes", JOptionPane.YES_NO_CANCEL_OPTION,
 									JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 							if (value == JOptionPane.YES_OPTION) {
-								if (save(tabIndex) == 1) {
+								if (save(tabIndex, false) == 1) {
 									tabPane.remove(tabIndex);
 								}
 							} else if (value == JOptionPane.NO_OPTION) {

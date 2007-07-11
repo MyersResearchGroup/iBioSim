@@ -5,7 +5,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
-
 import org.sbml.libsbml.*;
 import biomodelsim.core.gui.*;
 import reb2sac.core.gui.*;
@@ -455,6 +454,15 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					byte[] output = doc.getBytes();
 					out.write(output);
 					out.close();
+					JTabbedPane tab = biosim.getTab();
+					for (int i = 0; i < tab.getTabCount(); i++) {
+						if (tab.getTitleAt(i).equals(
+								file.split(File.separator)[file.split(File.separator).length - 1])) {
+							tab.setTitleAt(i, simName);
+							tab.setComponentAt(i, new SBML_Editor(newFile, reb2sac, log, biosim));
+							tab.getComponentAt(i).setName("SBML Editor");
+						}
+					}
 					biosim.refreshTree();
 				} catch (Exception e1) {
 					JOptionPane.showMessageDialog(biosim.frame(), "Unable to save sbml file!",
