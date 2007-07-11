@@ -155,8 +155,6 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 
 	private JButton useMassAction, clearKineticLaw;
 
-	private String kf, kr;
-
 	/**
 	 * Creates a new SBML_Editor and sets up the frame where the user can edit a
 	 * new sbml file.
@@ -700,13 +698,6 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						changedParameters.remove(i);
 					}
 				}
-				if (changedParameters.size() == 0) {
-					kf = "kf";
-					kr = "kr";
-				} else if (changedParameters.size() == 1) {
-					kf = changedParameters.get(0).getId();
-					kr = changedParameters.get(0).getId();
-				}
 				thisReactionParams.remove(v);
 				reacParameters.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 				Buttons.remove(reacParameters, reacParams);
@@ -766,6 +757,18 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		}
 		// if the use mass action button is clicked
 		else if (e.getSource() == useMassAction) {
+			String kf;
+			String kr;
+			if (changedParameters.size() == 0) {
+				kf = "kf";
+				kr = "kr";
+			} else if (changedParameters.size() == 1) {
+				kf = changedParameters.get(0).getId();
+				kr = changedParameters.get(0).getId();
+			} else {
+				kf = changedParameters.get(0).getId();
+				kr = changedParameters.get(1).getId();
+			}
 			String kinetic = kf;
 			for (SpeciesReference s : changedReactants) {
 				if (s.getStoichiometry() == 1) {
@@ -1175,35 +1178,11 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						((String) reactions.getSelectedValue())).getKineticLaw()
 						.getListOfParameters();
 				reacParams = new String[(int) listOfParameters.getNumItems()];
-				kf = "";
-				kr = "";
 				for (int i = 0; i < listOfParameters.getNumItems(); i++) {
 					Parameter parameter = (Parameter) listOfParameters.get(i);
 					changedParameters.add(parameter);
 					thisReactionParams.add(parameter.getId());
 					reacParams[i] = parameter.getId() + " " + parameter.getValue();
-					if (parameter.getId().contains("kf")) {
-						kf = parameter.getId();
-					}
-					if (parameter.getId().contains("kr")) {
-						kr = parameter.getId();
-					}
-				}
-				if (kf.equals("")) {
-					if (changedParameters.size() > 0) {
-						kf = changedParameters.get(0).getId();
-					} else {
-						kf = "kf";
-					}
-				}
-				if (kr.equals("")) {
-					if (changedParameters.size() > 1) {
-						kr = changedParameters.get(1).getId();
-					} else if (changedParameters.size() > 0) {
-						kr = changedParameters.get(0).getId();
-					} else {
-						kr = "kr";
-					}
 				}
 			} else {
 				Parameter p = new Parameter();
@@ -1217,8 +1196,6 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				reacParams = new String[2];
 				reacParams[0] = "kf 0.1";
 				reacParams[1] = "kr 0.1";
-				kf = "kf";
-				kr = "kr";
 				thisReactionParams.add("kf");
 				thisReactionParams.add("kr");
 			}
@@ -1886,12 +1863,6 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 									int index = reacParameters.getSelectedIndex();
 									String v = ((String) reacParameters.getSelectedValue())
 											.split(" ")[0];
-									if (kf.equals(v)) {
-										kf = reacParamID.getText().trim();
-									}
-									if (kr.equals(v)) {
-										kr = reacParamID.getText().trim();
-									}
 									Parameter paramet = null;
 									for (Parameter p : changedParameters) {
 										if (p.getId().equals(v)) {
@@ -1915,12 +1886,6 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 									reacParameters.setListData(reacParams);
 									reacParameters.setSelectedIndex(index);
 								} else {
-									if (changedParameters.size() == 0) {
-										kf = reacParamID.getText().trim();
-										kr = reacParamID.getText().trim();
-									} else if (changedParameters.size() == 1) {
-										kr = reacParamID.getText().trim();
-									}
 									int index = reacParameters.getSelectedIndex();
 									Parameter paramet = new Parameter();
 									changedParameters.add(paramet);
