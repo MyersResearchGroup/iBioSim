@@ -700,6 +700,13 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						changedParameters.remove(i);
 					}
 				}
+				if (changedParameters.size() == 0) {
+					kf = "kf";
+					kr = "kr";
+				} else if (changedParameters.size() == 1) {
+					kf = changedParameters.get(0).getId();
+					kr = changedParameters.get(0).getId();
+				}
 				thisReactionParams.remove(v);
 				reacParameters.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 				Buttons.remove(reacParameters, reacParams);
@@ -1879,6 +1886,12 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 									int index = reacParameters.getSelectedIndex();
 									String v = ((String) reacParameters.getSelectedValue())
 											.split(" ")[0];
+									if (kf.equals(v)) {
+										kf = reacParamID.getText().trim();
+									}
+									if (kr.equals(v)) {
+										kr = reacParamID.getText().trim();
+									}
 									Parameter paramet = null;
 									for (Parameter p : changedParameters) {
 										if (p.getId().equals(v)) {
@@ -1902,6 +1915,12 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 									reacParameters.setListData(reacParams);
 									reacParameters.setSelectedIndex(index);
 								} else {
+									if (changedParameters.size() == 0) {
+										kf = reacParamID.getText().trim();
+										kr = reacParamID.getText().trim();
+									} else if (changedParameters.size() == 1) {
+										kr = reacParamID.getText().trim();
+									}
 									int index = reacParameters.getSelectedIndex();
 									Parameter paramet = new Parameter();
 									changedParameters.add(paramet);
