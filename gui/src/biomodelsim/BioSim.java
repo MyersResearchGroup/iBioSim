@@ -307,7 +307,7 @@ public class BioSim implements MouseListener, ActionListener {
 			try {
 				addTab(
 						tree.getFile().split(File.separator)[tree.getFile().split(File.separator).length - 1],
-						new SBML_Editor(tree.getFile(), null, log, this));
+						new SBML_Editor(tree.getFile(), null, log, this), "SBML Editor");
 			} catch (Exception e1) {
 				JOptionPane.showMessageDialog(frame, "You must select a valid sbml file.", "Error",
 						JOptionPane.ERROR_MESSAGE);
@@ -543,7 +543,7 @@ public class BioSim implements MouseListener, ActionListener {
 						out.close();
 						addTab(f.getAbsolutePath().split(File.separator)[f.getAbsolutePath().split(
 								File.separator).length - 1], new SBML_Editor(f.getAbsolutePath(),
-								null, log, this));
+								null, log, this), "SBML Editor");
 						refreshTree();
 					}
 				} catch (Exception e1) {
@@ -639,13 +639,13 @@ public class BioSim implements MouseListener, ActionListener {
 											filename.split(File.separator)[filename
 													.split(File.separator).length - 1]
 													+ " simulation results", id, first, run, -1,
-											null, "time", this));
+											null, "time", this), null);
 								} else {
 									addTab("Graph", new Graph(getAFile, "amount",
 											filename.split(File.separator)[filename
 													.split(File.separator).length - 1]
 													+ " simulation results", id, first, run, -1,
-											null, "time", this));
+											null, "time", this), null);
 								}
 							}
 						} else {
@@ -695,10 +695,14 @@ public class BioSim implements MouseListener, ActionListener {
 	/**
 	 * This method adds the given Component to a tab.
 	 */
-	public void addTab(String name, Component panel) {
+	public void addTab(String name, Component panel, String tabName) {
 		tab.addTab(name, panel);
 		tab.setSelectedIndex(tab.getComponents().length - 1);
-		tab.getComponentAt(tab.getComponents().length - 1).setName(name);
+		if (tabName != null) {
+			tab.getComponentAt(tab.getComponents().length - 1).setName(tabName);
+		} else {
+			tab.getComponentAt(tab.getComponents().length - 1).setName(name);
+		}
 	}
 
 	/**
@@ -827,82 +831,84 @@ public class BioSim implements MouseListener, ActionListener {
 							.save();
 				} else if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i).getName()
 						.contains("Graph")) {
-					final JFrame f = new JFrame("Save");
-					final Graph g = ((Graph) ((JTabbedPane) tab.getComponentAt(index))
-							.getComponent(i));
-					JButton saveAsJpeg = new JButton("Save As JPEG");
-					saveAsJpeg.addActionListener(new ActionListener() {
-						public void actionPerformed(ActionEvent e) {
-							g.export(0);
-							f.dispose();
+					if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof Graph) {
+						final JFrame f = new JFrame("Save");
+						final Graph g = ((Graph) ((JTabbedPane) tab.getComponentAt(index))
+								.getComponent(i));
+						JButton saveAsJpeg = new JButton("Save As JPEG");
+						saveAsJpeg.addActionListener(new ActionListener() {
+							public void actionPerformed(ActionEvent e) {
+								g.export(0);
+								f.dispose();
+							}
+						});
+						JButton saveAsPng = new JButton("Save As PNG");
+						saveAsPng.addActionListener(new ActionListener() {
+							public void actionPerformed(ActionEvent e) {
+								g.export(1);
+								f.dispose();
+							}
+						});
+						JButton saveAsPdf = new JButton("Save As PDF");
+						saveAsPdf.addActionListener(new ActionListener() {
+							public void actionPerformed(ActionEvent e) {
+								g.export(2);
+								f.dispose();
+							}
+						});
+						JButton saveAsEps = new JButton("Save As EPS");
+						saveAsEps.addActionListener(new ActionListener() {
+							public void actionPerformed(ActionEvent e) {
+								g.export(3);
+								f.dispose();
+							}
+						});
+						JButton saveAsSvg = new JButton("Save As SVG");
+						saveAsSvg.addActionListener(new ActionListener() {
+							public void actionPerformed(ActionEvent e) {
+								g.export(4);
+								f.dispose();
+							}
+						});
+						JButton cancel = new JButton("Cancel");
+						cancel.addActionListener(new ActionListener() {
+							public void actionPerformed(ActionEvent e) {
+								f.dispose();
+							}
+						});
+						JPanel buttons = new JPanel();
+						buttons.add(saveAsJpeg);
+						buttons.add(saveAsPng);
+						buttons.add(saveAsPdf);
+						buttons.add(saveAsEps);
+						buttons.add(saveAsSvg);
+						buttons.add(cancel);
+						JLabel text = new JLabel("Which type would you like to save the graph as?");
+						JPanel textPanel = new JPanel(new GridLayout(2, 1));
+						textPanel.add(text);
+						textPanel.add(buttons);
+						f.setContentPane(textPanel);
+						f.pack();
+						Dimension screenSize;
+						try {
+							Toolkit tk = Toolkit.getDefaultToolkit();
+							screenSize = tk.getScreenSize();
+						} catch (AWTError awe) {
+							screenSize = new Dimension(640, 480);
 						}
-					});
-					JButton saveAsPng = new JButton("Save As PNG");
-					saveAsPng.addActionListener(new ActionListener() {
-						public void actionPerformed(ActionEvent e) {
-							g.export(1);
-							f.dispose();
-						}
-					});
-					JButton saveAsPdf = new JButton("Save As PDF");
-					saveAsPdf.addActionListener(new ActionListener() {
-						public void actionPerformed(ActionEvent e) {
-							g.export(2);
-							f.dispose();
-						}
-					});
-					JButton saveAsEps = new JButton("Save As EPS");
-					saveAsEps.addActionListener(new ActionListener() {
-						public void actionPerformed(ActionEvent e) {
-							g.export(3);
-							f.dispose();
-						}
-					});
-					JButton saveAsSvg = new JButton("Save As SVG");
-					saveAsSvg.addActionListener(new ActionListener() {
-						public void actionPerformed(ActionEvent e) {
-							g.export(4);
-							f.dispose();
-						}
-					});
-					JButton cancel = new JButton("Cancel");
-					cancel.addActionListener(new ActionListener() {
-						public void actionPerformed(ActionEvent e) {
-							f.dispose();
-						}
-					});
-					JPanel buttons = new JPanel();
-					buttons.add(saveAsJpeg);
-					buttons.add(saveAsPng);
-					buttons.add(saveAsPdf);
-					buttons.add(saveAsEps);
-					buttons.add(saveAsSvg);
-					buttons.add(cancel);
-					JLabel text = new JLabel("Which type would you like to save the graph as?");
-					JPanel textPanel = new JPanel(new GridLayout(2, 1));
-					textPanel.add(text);
-					textPanel.add(buttons);
-					f.setContentPane(textPanel);
-					f.pack();
-					Dimension screenSize;
-					try {
-						Toolkit tk = Toolkit.getDefaultToolkit();
-						screenSize = tk.getScreenSize();
-					} catch (AWTError awe) {
-						screenSize = new Dimension(640, 480);
-					}
-					Dimension frameSize = f.getSize();
+						Dimension frameSize = f.getSize();
 
-					if (frameSize.height > screenSize.height) {
-						frameSize.height = screenSize.height;
+						if (frameSize.height > screenSize.height) {
+							frameSize.height = screenSize.height;
+						}
+						if (frameSize.width > screenSize.width) {
+							frameSize.width = screenSize.width;
+						}
+						int x = screenSize.width / 2 - frameSize.width / 2;
+						int y = screenSize.height / 2 - frameSize.height / 2;
+						f.setLocation(x, y);
+						f.setVisible(true);
 					}
-					if (frameSize.width > screenSize.width) {
-						frameSize.width = screenSize.width;
-					}
-					int x = screenSize.width / 2 - frameSize.width / 2;
-					int y = screenSize.height / 2 - frameSize.height / 2;
-					f.setLocation(x, y);
-					f.setVisible(true);
 				}
 			}
 			return 1;
@@ -977,7 +983,7 @@ public class BioSim implements MouseListener, ActionListener {
 					try {
 						addTab(tree.getFile().split(File.separator)[tree.getFile().split(
 								File.separator).length - 1], new SBML_Editor(tree.getFile(), null,
-								log, this));
+								log, this), "SBML Editor");
 					} catch (Exception e1) {
 						JOptionPane.showMessageDialog(frame, "You must select a valid sbml file.",
 								"Error", JOptionPane.ERROR_MESSAGE);
@@ -1057,10 +1063,23 @@ public class BioSim implements MouseListener, ActionListener {
 				reb2sac.setSbml(sbml);
 				simTab.addTab("SBML Editor", sbml);
 				simTab.getComponentAt(simTab.getComponents().length - 1).setName("SBML Editor");
-				Learn learn = new Learn(root + File.separator + simName, log);
-				simTab.addTab("Learn", learn);
+				JLabel noDataLearn = new JLabel("No data available");
+				Font font = noDataLearn.getFont();
+				font = font.deriveFont(Font.BOLD, 42.0f);
+				noDataLearn.setFont(font);
+				noDataLearn.setHorizontalAlignment(SwingConstants.CENTER);
+				// Learn learn = new Learn(root + File.separator + simName,
+				// log);
+				simTab.addTab("Learn", noDataLearn);
 				simTab.getComponentAt(simTab.getComponents().length - 1).setName("Learn");
-				addTab(simName, simTab);
+				addTab(simName, simTab, null);
+				JLabel noData = new JLabel("No data available");
+				font = noData.getFont();
+				font = font.deriveFont(Font.BOLD, 42.0f);
+				noData.setFont(font);
+				noData.setHorizontalAlignment(SwingConstants.CENTER);
+				simTab.addTab("Graph", noData);
+				simTab.getComponentAt(simTab.getComponents().length - 1).setName("Graph");
 			}
 		} else {
 			SBMLReader reader = new SBMLReader();
@@ -1098,10 +1117,23 @@ public class BioSim implements MouseListener, ActionListener {
 				reb2sac.setSbml(sbml);
 				simTab.addTab("SBML Editor", sbml);
 				simTab.getComponentAt(simTab.getComponents().length - 1).setName("SBML Editor");
-				Learn learn = new Learn(root + File.separator + simName, log);
-				simTab.addTab("Learn", learn);
+				JLabel noDataLearn = new JLabel("No data available");
+				Font font = noDataLearn.getFont();
+				font = font.deriveFont(Font.BOLD, 42.0f);
+				noDataLearn.setFont(font);
+				noDataLearn.setHorizontalAlignment(SwingConstants.CENTER);
+				// Learn learn = new Learn(root + File.separator + simName,
+				// log);
+				simTab.addTab("Learn", noDataLearn);
 				simTab.getComponentAt(simTab.getComponents().length - 1).setName("Learn");
-				addTab(simName, simTab);
+				addTab(simName, simTab, null);
+				JLabel noData = new JLabel("No data available");
+				font = noData.getFont();
+				font = font.deriveFont(Font.BOLD, 42.0f);
+				noData.setFont(font);
+				noData.setHorizontalAlignment(SwingConstants.CENTER);
+				simTab.addTab("Graph", noData);
+				simTab.getComponentAt(simTab.getComponents().length - 1).setName("Graph");
 			}
 		}
 	}
@@ -1115,6 +1147,7 @@ public class BioSim implements MouseListener, ActionListener {
 				String openFile = "";
 				String graphFile = "";
 				boolean ode = false;
+				boolean stoch = false;
 				int run = 1;
 				for (int i = 0; i < list.length; i++) {
 					if (!(new File(list[i]).isDirectory()) && list[i].length() > 4) {
@@ -1136,6 +1169,7 @@ public class BioSim implements MouseListener, ActionListener {
 							}
 						} else if (end.equals(".tsd") || end.equals(".dat") || end.equals(".csv")) {
 							if (list[i].contains("run-")) {
+								stoch = true;
 								int tempNum = Integer.parseInt(list[i].substring(4, list[i]
 										.length()
 										- end.length()));
@@ -1167,9 +1201,19 @@ public class BioSim implements MouseListener, ActionListener {
 					reb2sac.setSbml(sbml);
 					simTab.addTab("SBML Editor", sbml);
 					simTab.getComponentAt(simTab.getComponents().length - 1).setName("SBML Editor");
-					Learn learn = new Learn(tree.getFile(), log);
-					simTab.addTab("Learn", learn);
-					simTab.getComponentAt(simTab.getComponents().length - 1).setName("Learn");
+					if (stoch) {
+						Learn learn = new Learn(tree.getFile(), log);
+						simTab.addTab("Learn", learn);
+						simTab.getComponentAt(simTab.getComponents().length - 1).setName("Learn");
+					} else {
+						JLabel noDataLearn = new JLabel("No data available");
+						Font font = noDataLearn.getFont();
+						font = font.deriveFont(Font.BOLD, 42.0f);
+						noDataLearn.setFont(font);
+						noDataLearn.setHorizontalAlignment(SwingConstants.CENTER);
+						simTab.addTab("Learn", noDataLearn);
+						simTab.getComponentAt(simTab.getComponents().length - 1).setName("Learn");
+					}
 					if (!graphFile.equals("")) {
 						if (ode) {
 							simTab.addTab("Graph", reb2sac.createGraph(graphFile, run));
@@ -1180,8 +1224,16 @@ public class BioSim implements MouseListener, ActionListener {
 							simTab.getComponentAt(simTab.getComponents().length - 1).setName(
 									"Graph");
 						}
+					} else {
+						JLabel noData = new JLabel("No data available");
+						Font font = noData.getFont();
+						font = font.deriveFont(Font.BOLD, 42.0f);
+						noData.setFont(font);
+						noData.setHorizontalAlignment(SwingConstants.CENTER);
+						simTab.addTab("Graph", noData);
+						simTab.getComponentAt(simTab.getComponents().length - 1).setName("Graph");
 					}
-					addTab(split[split.length - 1], simTab);
+					addTab(split[split.length - 1], simTab, null);
 				}
 			}
 		}
