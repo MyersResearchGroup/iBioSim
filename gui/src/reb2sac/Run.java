@@ -430,8 +430,11 @@ public class Run implements ActionListener {
 							}
 						}
 						if (change != -1) {
-							simTab.setComponentAt(change, new Learn(outDir, log));
-							simTab.getComponentAt(change).setName("Learn");
+							if (simTab.getComponentAt(change) instanceof Learn) {
+							} else {
+								simTab.setComponentAt(change, new Learn(outDir, log));
+								simTab.getComponentAt(change).setName("Learn");
+							}
 						}
 					}
 				} else {
@@ -496,8 +499,11 @@ public class Run implements ActionListener {
 								}
 							}
 							if (change != -1) {
-								simTab.setComponentAt(change, new Learn(outDir, log));
-								simTab.getComponentAt(change).setName("Learn");
+								if (simTab.getComponentAt(change) instanceof Learn) {
+								} else {
+									simTab.setComponentAt(change, new Learn(outDir, log));
+									simTab.getComponentAt(change).setName("Learn");
+								}
 							}
 						}
 					}
