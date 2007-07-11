@@ -1162,12 +1162,12 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			scroll.setViewportView(reacParameters);
 			reacParams = new String[0];
 			changedParameters = new ArrayList<Parameter>();
+			thisReactionParams = new ArrayList<String>();
 			if (option.equals("Save")) {
 				ListOf listOfParameters = document.getModel().getReaction(
 						((String) reactions.getSelectedValue())).getKineticLaw()
 						.getListOfParameters();
 				reacParams = new String[(int) listOfParameters.getNumItems()];
-				thisReactionParams = new ArrayList<String>();
 				kf = "";
 				kr = "";
 				for (int i = 0; i < listOfParameters.getNumItems(); i++) {
@@ -1212,6 +1212,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				reacParams[1] = "kr 0.1";
 				kf = "kf";
 				kr = "kr";
+				thisReactionParams.add("kf");
+				thisReactionParams.add("kr");
 			}
 			sort(reacParams);
 			reacParameters.setListData(reacParams);

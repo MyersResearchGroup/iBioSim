@@ -6,6 +6,8 @@ import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
 
+import learn.core.gui.Learn;
+
 import biomodelsim.core.gui.*;
 import graph.core.gui.*;
 import buttons.core.gui.*;
@@ -293,9 +295,7 @@ public class Run implements ActionListener {
 				time1 = System.nanoTime();
 				reb2sac = exec.exec("reb2sac --target.encoding=ssa-with-user-update " + filename);
 			} else {
-				log
-						.addText("Executing:\nreb2sac --target.encoding=" + sim + " " + filename
-								+ "\n");
+				log.addText("Executing:\nreb2sac --target.encoding=" + sim + " " + filename + "\n");
 				time1 = System.nanoTime();
 				reb2sac = exec.exec("reb2sac --target.encoding=" + sim + " " + filename);
 			}
@@ -390,7 +390,7 @@ public class Run implements ActionListener {
 				if (nary.isSelected() && naryRun == 1) {
 				} else if (sbml.isSelected()) {
 					biomodelsim.addTab("SBML Editor", new SBML_Editor(out + ".xml", null, log,
-							biomodelsim));
+							biomodelsim), null);
 				} else if (dot.isSelected()) {
 					log.addText("Executing:\ndotty " + out + ".dot" + "\n");
 					exec.exec("dotty " + out + ".dot");
@@ -422,6 +422,16 @@ public class Run implements ActionListener {
 											+ " simulation results", printer_id, outDir, run, -1,
 									null, "time", biomodelsim));
 							simTab.getComponentAt(change).setName("Graph");
+						}
+						change = -1;
+						for (int i = 0; i < simTab.getComponentCount(); i++) {
+							if (simTab.getComponentAt(i).getName().equals("Learn")) {
+								change = i;
+							}
+						}
+						if (change != -1) {
+							simTab.setComponentAt(change, new Learn(outDir, log));
+							simTab.getComponentAt(change).setName("Learn");
 						}
 					}
 				} else {
@@ -478,6 +488,16 @@ public class Run implements ActionListener {
 												+ " simulation results", printer_id, outDir, run,
 										-1, null, "time", biomodelsim));
 								simTab.getComponentAt(change).setName("Graph");
+							}
+							change = -1;
+							for (int i = 0; i < simTab.getComponentCount(); i++) {
+								if (simTab.getComponentAt(i).getName().equals("Learn")) {
+									change = i;
+								}
+							}
+							if (change != -1) {
+								simTab.setComponentAt(change, new Learn(outDir, log));
+								simTab.getComponentAt(change).setName("Learn");
 							}
 						}
 					}
