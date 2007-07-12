@@ -285,13 +285,15 @@ public class Nary_Run implements ActionListener, Runnable {
 			counts.add(count);
 			int in;
 			for (int out = 1; out < get.size(); out++) {
-				double temp = Double.parseDouble(get.get(out));
-				in = out;
-				while (in > 0 && Double.parseDouble(get.get(in - 1)) >= temp) {
-					get.set(in, get.get(in - 1));
-					--in;
+				if (!get.get(out).equals("<<unknown>>")) {
+					double temp = Double.parseDouble(get.get(out));
+					in = out;
+					while (in > 0 && Double.parseDouble(get.get(in - 1)) >= temp) {
+						get.set(in, get.get(in - 1));
+						--in;
+					}
+					get.set(in, temp + "");
 				}
-				get.set(in, temp + "");
 			}
 			consLevel.get(i).setListData(get.toArray());
 			conLevel.set(i, get.toArray());
