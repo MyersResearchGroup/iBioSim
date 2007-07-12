@@ -44,11 +44,6 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 	private JRadioButton none, abstraction, nary, ODE, monteCarlo, markov;
 
 	/*
-	 * Combo Box for printer tracking quantity
-	 */
-	private JComboBox trackingQuantity;
-
-	/*
 	 * Combo Box for quantity for termination condition
 	 */
 	private JComboBox quantity;
@@ -57,8 +52,6 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 	 * Combo Box for quantity for check states
 	 */
 	private JComboBox quantity2;
-
-	private JRadioButton tsd, csv, dat, _null; // Radio Buttons for the printer
 
 	private JRadioButton sbml, dot, xhtml; // Radio Buttons output option
 
@@ -186,30 +179,6 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		this.log = log;
 		this.simTab = simTab;
 		userdefined = root + File.separator + simName + File.separator + "user-defined.dat";
-
-		// Sets up the radio buttons and the combo box for the printer
-		String items[] = new String[2];
-		items[0] = "amount";
-		items[1] = "concentration";
-		trackingQuantity = new JComboBox(items);
-		JLabel printer = new JLabel("Choose A Printer-id:");
-		tsd = new JRadioButton("tsd");
-		csv = new JRadioButton("csv");
-		dat = new JRadioButton("dat");
-		_null = new JRadioButton("null");
-		ButtonGroup print = new ButtonGroup();
-		print.add(tsd);
-		print.add(csv);
-		print.add(dat);
-		print.add(_null);
-		tsd.setSelected(true);
-		JPanel printButtonPanel = new JPanel();
-		printButtonPanel.add(printer);
-		printButtonPanel.add(tsd);
-		printButtonPanel.add(csv);
-		printButtonPanel.add(dat);
-		printButtonPanel.add(_null);
-		printButtonPanel.add(trackingQuantity);
 
 		// Creates the input fields for the changes in abstraction
 		String[] odeSimulators = new String[6];
@@ -374,10 +343,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		// Creates the main tabbed panel
 		JPanel mainTabbedPanel = new JPanel(new BorderLayout());
 		mainTabbedPanel.add(topInputHolder, "Center");
-		JPanel upperPanel = new JPanel(new BorderLayout());
-		upperPanel.add(radioButtonPanel, "North");
-		upperPanel.add(printButtonPanel, "South");
-		mainTabbedPanel.add(upperPanel, "North");
+		mainTabbedPanel.add(radioButtonPanel, "North");
 
 		// Creates the run button
 		run = new JButton("Save And Run");
@@ -1293,17 +1259,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-		String printer_id;
-		if (tsd.isSelected()) {
-			printer_id = "tsd.printer";
-		} else if (csv.isSelected()) {
-			printer_id = "csv.printer";
-		} else if (dat.isSelected()) {
-			printer_id = "dat.printer";
-		} else {
-			printer_id = "null.printer";
-		}
-		String printer_track_quantity = (String) trackingQuantity.getSelectedItem();
+		String printer_id = "tsd.printer";
+		String printer_track_quantity = "amount";
 		String sim = (String) simulators.getSelectedItem();
 		int[] index = terminations.getSelectedIndices();
 		String[] termCond = Buttons.getList(termConditions, terminations);
@@ -1819,17 +1776,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-		String printer_id;
-		if (tsd.isSelected()) {
-			printer_id = "tsd.printer";
-		} else if (csv.isSelected()) {
-			printer_id = "csv.printer";
-		} else if (dat.isSelected()) {
-			printer_id = "dat.printer";
-		} else {
-			printer_id = "null.printer";
-		}
-		String printer_track_quantity = (String) trackingQuantity.getSelectedItem();
+		String printer_id = "tsd.printer";
+		String printer_track_quantity = "amount";
 		int[] index = terminations.getSelectedIndices();
 		String[] termCond = Buttons.getList(termConditions, terminations);
 		terminations.setSelectedIndices(index);
@@ -1985,16 +1933,207 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		try {
 			if (!openFile.equals("")) {
 				load.load(new FileInputStream(new File(openFile)));
-				String selected = load.getProperty("simulation.printer");
-				if (selected.equals("tsd.printer")) {
-					tsd.setSelected(true);
-				} else if (selected.equals("csv.printer")) {
-					csv.setSelected(true);
-				} else if (selected.equals("dat.printer")) {
-					dat.setSelected(true);
-				} else {
-					_null.setSelected(true);
+				ArrayList<String> loadProperties = new ArrayList<String>();
+				for (Object key : load.keySet()) {
+					if (key.equals("reb2sac.abstraction.method.0.1")) {
+						if (!load.getProperty("reb2sac.abstraction.method.0.1").equals(
+								"enzyme-kinetic-qssa-1")) {
+							loadProperties.add("reb2sac.abstraction.method.0.1="
+									+ load.getProperty("reb2sac.abstraction.method.0.1"));
+						}
+					} else if (key.equals("reb2sac.abstraction.method.0.2")) {
+						if (!load.getProperty("reb2sac.abstraction.method.0.2").equals(
+								"reversible-to-irreversible-transformer")) {
+							loadProperties.add("reb2sac.abstraction.method.0.2="
+									+ load.getProperty("reb2sac.abstraction.method.0.2"));
+						}
+					} else if (key.equals("reb2sac.abstraction.method.0.3")) {
+						if (!load.getProperty("reb2sac.abstraction.method.0.3").equals(
+								"multiple-products-reaction-eliminator")) {
+							loadProperties.add("reb2sac.abstraction.method.0.3="
+									+ load.getProperty("reb2sac.abstraction.method.0.3"));
+						}
+					} else if (key.equals("reb2sac.abstraction.method.0.4")) {
+						if (!load.getProperty("reb2sac.abstraction.method.0.4").equals(
+								"multiple-reactants-reaction-eliminator")) {
+							loadProperties.add("reb2sac.abstraction.method.0.4="
+									+ load.getProperty("reb2sac.abstraction.method.0.4"));
+						}
+					} else if (key.equals("reb2sac.abstraction.method.0.5")) {
+						if (!load.getProperty("reb2sac.abstraction.method.0.5").equals(
+								"single-reactant-product-reaction-eliminator")) {
+							loadProperties.add("reb2sac.abstraction.method.0.5="
+									+ load.getProperty("reb2sac.abstraction.method.0.5"));
+						}
+					} else if (key.equals("reb2sac.abstraction.method.0.6")) {
+						if (!load.getProperty("reb2sac.abstraction.method.0.6").equals(
+								"dimer-to-monomer-substitutor")) {
+							loadProperties.add("reb2sac.abstraction.method.0.6="
+									+ load.getProperty("reb2sac.abstraction.method.0.6"));
+						}
+					} else if (key.equals("reb2sac.abstraction.method.0.7")) {
+						if (!load.getProperty("reb2sac.abstraction.method.0.7").equals(
+								"inducer-structure-transformer")) {
+							loadProperties.add("reb2sac.abstraction.method.0.7="
+									+ load.getProperty("reb2sac.abstraction.method.0.7"));
+						}
+					} else if (key.equals("reb2sac.abstraction.method.1.1")) {
+						if (!load.getProperty("reb2sac.abstraction.method.1.1").equals(
+								"modifier-structure-transformer")) {
+							loadProperties.add("reb2sac.abstraction.method.1.1="
+									+ load.getProperty("reb2sac.abstraction.method.1.1"));
+						}
+					} else if (key.equals("reb2sac.abstraction.method.1.2")) {
+						if (!load.getProperty("reb2sac.abstraction.method.1.2").equals(
+								"modifier-constant-propagation")) {
+							loadProperties.add("reb2sac.abstraction.method.1.2="
+									+ load.getProperty("reb2sac.abstraction.method.1.2"));
+						}
+					} else if (key.equals("reb2sac.abstraction.method.2.1")) {
+						if (!load.getProperty("reb2sac.abstraction.method.2.1").equals(
+								"operator-site-forward-binding-remover")) {
+							loadProperties.add("reb2sac.abstraction.method.2.1="
+									+ load.getProperty("reb2sac.abstraction.method.2.1"));
+						}
+					} else if (key.equals("reb2sac.abstraction.method.2.3")) {
+						if (!load.getProperty("reb2sac.abstraction.method.2.3").equals(
+								"enzyme-kinetic-rapid-equilibrium-1")) {
+							loadProperties.add("reb2sac.abstraction.method.2.3="
+									+ load.getProperty("reb2sac.abstraction.method.2.3"));
+						}
+					} else if (key.equals("reb2sac.abstraction.method.2.4")) {
+						if (!load.getProperty("reb2sac.abstraction.method.2.4").equals(
+								"irrelevant-species-remover")) {
+							loadProperties.add("reb2sac.abstraction.method.2.4="
+									+ load.getProperty("reb2sac.abstraction.method.2.4"));
+						}
+					} else if (key.equals("reb2sac.abstraction.method.2.5")) {
+						if (!load.getProperty("reb2sac.abstraction.method.2.5").equals(
+								"inducer-structure-transformer")) {
+							loadProperties.add("reb2sac.abstraction.method.2.5="
+									+ load.getProperty("reb2sac.abstraction.method.2.5"));
+						}
+					} else if (key.equals("reb2sac.abstraction.method.2.6")) {
+						if (!load.getProperty("reb2sac.abstraction.method.2.6").equals(
+								"modifier-constant-propagation")) {
+							loadProperties.add("reb2sac.abstraction.method.2.6="
+									+ load.getProperty("reb2sac.abstraction.method.2.6"));
+						}
+					} else if (key.equals("reb2sac.abstraction.method.2.7")) {
+						if (!load.getProperty("reb2sac.abstraction.method.2.7").equals(
+								"similar-reaction-combiner")) {
+							loadProperties.add("reb2sac.abstraction.method.2.7="
+									+ load.getProperty("reb2sac.abstraction.method.2.7"));
+						}
+					} else if (key.equals("reb2sac.abstraction.method.2.8")) {
+						if (!load.getProperty("reb2sac.abstraction.method.2.8").equals(
+								"modifier-constant-propagation")) {
+							loadProperties.add("reb2sac.abstraction.method.2.8="
+									+ load.getProperty("reb2sac.abstraction.method.2.8"));
+						}
+					} else if (key.equals("reb2sac.abstraction.method.2.2")) {
+						if (!load.getProperty("reb2sac.abstraction.method.2.2").equals(
+								"dimerization-reduction")
+								&& !load.getProperty("reb2sac.abstraction.method.2.2").equals(
+										"dimerization-reduction-level-assignment")) {
+							loadProperties.add("reb2sac.abstraction.method.2.2="
+									+ load.getProperty("reb2sac.abstraction.method.2.2"));
+						}
+					} else if (key.equals("reb2sac.abstraction.method.3.1")) {
+						if (!load.getProperty("reb2sac.abstraction.method.3.1").equals(
+								"kinetic-law-constants-simplifier")
+								&& !load.getProperty("reb2sac.abstraction.method.3.1").equals(
+										"reversible-to-irreversible-transformer")
+								&& !load.getProperty("reb2sac.abstraction.method.3.1").equals(
+										"nary-order-unary-transformer")) {
+							loadProperties.add("reb2sac.abstraction.method.3.1="
+									+ load.getProperty("reb2sac.abstraction.method.3.1"));
+						}
+					} else if (key.equals("reb2sac.abstraction.method.3.2")) {
+						if (!load.getProperty("reb2sac.abstraction.method.3.2").equals(
+								"kinetic-law-constants-simplifier")
+								&& !load.getProperty("reb2sac.abstraction.method.3.2").equals(
+										"modifier-constant-propagation")) {
+							loadProperties.add("reb2sac.abstraction.method.3.2="
+									+ load.getProperty("reb2sac.abstraction.method.3.2"));
+						}
+					} else if (key.equals("reb2sac.abstraction.method.3.3")) {
+						if (!load.getProperty("reb2sac.abstraction.method.3.3").equals(
+								"absolute-inhibition-generator")) {
+							loadProperties.add("reb2sac.abstraction.method.3.3="
+									+ load.getProperty("reb2sac.abstraction.method.3.3"));
+						}
+					} else if (key.equals("reb2sac.abstraction.method.3.4")) {
+						if (!load.getProperty("reb2sac.abstraction.method.3.4").equals(
+								"final-state-generator")) {
+							loadProperties.add("reb2sac.abstraction.method.3.4="
+									+ load.getProperty("reb2sac.abstraction.method.3.4"));
+						}
+					} else if (key.equals("reb2sac.abstraction.method.3.5")) {
+						if (!load.getProperty("reb2sac.abstraction.method.3.5").equals(
+								"stop-flag-generator")) {
+							loadProperties.add("reb2sac.abstraction.method.3.5="
+									+ load.getProperty("reb2sac.abstraction.method.3.5"));
+						}
+					} else if (key.equals("reb2sac.nary.order.decider")) {
+						if (!load.getProperty("reb2sac.nary.order.decider").equals("distinct")) {
+							loadProperties.add("reb2sac.nary.order.decider="
+									+ load.getProperty("reb2sac.nary.order.decider"));
+						}
+					} else if (key.equals("simulation.printer")) {
+						if (!load.getProperty("simulation.printer").equals("tsd.printer")) {
+							loadProperties.add("simulation.printer="
+									+ load.getProperty("simulation.printer"));
+						}
+					} else if (key.equals("simulation.printer.tracking.quantity")) {
+						if (!load.getProperty("simulation.printer.tracking.quantity").equals(
+								"amount")) {
+							loadProperties.add("simulation.printer.tracking.quantity="
+									+ load.getProperty("simulation.printer.tracking.quantity"));
+						}
+					} else if (((String) key).length() > 27
+							&& ((String) key).substring(0, 28).equals(
+									"reb2sac.interesting.species.")) {
+					} else if (key.equals("reb2sac.rapid.equilibrium.condition.1")) {
+					} else if (key.equals("reb2sac.rapid.equilibrium.condition.2")) {
+					} else if (key.equals("reb2sac.qssa.condition.1")) {
+					} else if (key.equals("reb2sac.operator.max.concentration.threshold")) {
+					} else if (key.equals("ode.simulation.time.limit")) {
+					} else if (key.equals("ode.simulation.print.interval")) {
+					} else if (key.equals("ode.simulation.time.step")) {
+					} else if (key.equals("ode.simulation.out.dir")) {
+					} else if (key.equals("monte.carlo.simulation.time.limit")) {
+					} else if (key.equals("monte.carlo.simulation.print.interval")) {
+					} else if (key.equals("monte.carlo.simulation.random.seed")) {
+					} else if (key.equals("monte.carlo.simulation.runs")) {
+					} else if (key.equals("monte.carlo.simulation.out.dir")) {
+					} else if (key.equals("simulation.run.termination.decider")) {
+						if (!load.getProperty("simulation.run.termination.decider").equals("sad")) {
+							loadProperties.add("simulation.run.termination.decider="
+									+ load.getProperty("simulation.run.termination.decider"));
+						}
+					} else if (key.equals("computation.analysis.sad.path")) {
+					} else if (key.equals("simulation.time.series.species.level.file")) {
+					} else if (key.equals("selected.simulator")) {
+					} else if (((String) key).length() > 36
+							&& ((String) key).substring(0, 37).equals(
+									"simulation.run.termination.condition.")) {
+					} else if (((String) key).length() > 37
+							&& ((String) key).substring(0, 38).equals(
+									"reb2sac.absolute.inhibition.threshold.")) {
+					} else if (((String) key).length() > 27
+							&& ((String) key).substring(0, 28).equals(
+									"reb2sac.concentration.level.")) {
+					} else if (((String) key).length() > 19
+							&& ((String) key).substring(0, 20).equals("reb2sac.final.state.")) {
+					} else if (key.equals("reb2sac.analysis.stop.enabled")) {
+					} else if (key.equals("reb2sac.analysis.stop.rate")) {
+					} else {
+						loadProperties.add(key + "=" + load.getProperty((String) key));
+					}
 				}
+				props = loadProperties.toArray(props);
+				properties.setListData(props);
 				savedTo = openFile;
 				String[] getFilename = savedTo.split(File.separator);
 				int cut = 0;
@@ -2127,10 +2266,6 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 								simulators, simulatorsLabel, explanation, description);
 					}
 				}
-				if (load.containsKey("simulation.printer.tracking.quantity")) {
-					trackingQuantity.setSelectedItem(load
-							.getProperty("simulation.printer.tracking.quantity"));
-				}
 				ArrayList<String> getLists = new ArrayList<String>();
 				int i = 1;
 				while (load.containsKey("simulation.run.termination.condition." + i)) {
@@ -2236,37 +2371,9 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 	}
 
 	public Graph createGraph(String graphFile, int run) {
-		String outDir = ".";
-		outDir = root + File.separator + simName;
-		String end = "";
-		if (graphFile.length() >= 4) {
-			for (int i = 0; i < 4; i++) {
-				end = graphFile.charAt(graphFile.length() - 1 - i) + end;
-			}
-		}
-		String printer_id;
-		if (!end.equals("")) {
-			if (end.equals(".tsd")) {
-				printer_id = "tsd.printer";
-			} else if (end.equals(".csv")) {
-				printer_id = "csv.printer";
-			} else if (end.equals(".dat")) {
-				printer_id = "dat.printer";
-			} else {
-				printer_id = "null.printer";
-			}
-		} else {
-			if (tsd.isSelected()) {
-				printer_id = "tsd.printer";
-			} else if (csv.isSelected()) {
-				printer_id = "csv.printer";
-			} else if (dat.isSelected()) {
-				printer_id = "dat.printer";
-			} else {
-				printer_id = "null.printer";
-			}
-		}
-		String printer_track_quantity = (String) trackingQuantity.getSelectedItem();
+		String outDir = root + File.separator + simName;
+		String printer_id = "tsd.printer";
+		String printer_track_quantity = "amount";
 		int[] index = species.getSelectedIndices();
 		species.setSelectedIndices(index);
 		if (graphFile.split(File.separator)[graphFile.split(File.separator).length - 1]
