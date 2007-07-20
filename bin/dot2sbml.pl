@@ -89,6 +89,7 @@ sub fill_hashes{
     undef %gwr;
     undef %rep;
     undef %act;
+    undef %dimers;
     $uid = 0;
     
 
@@ -109,13 +110,16 @@ sub fill_hashes{
 	$initial_concentration[$i] = "0.0";
     }
 
-    while ($dot_file =~ m/(^|\n) *([^ \n]*) *\-\> *([^ \n]*) *\[(.*)arrowhead=([^,\]]*)/g){
+    while ($dot_file =~ m/(^|\n) *([^ \n]*) *\-\> *([^ \n]*) *\[(.*)arrowhead=([^,\]]*)(.*)/g){
 	my $g1 = $2;
 	my $g2 = $3;
 	my $info = $4;
 	my $arrowhead = $5;
+	my $extra_info = $6;
 	$g1 = $mapping{$g1};
 	$g2 = $mapping{$g2};
+
+	my $total_info = "$info,$extra_info";
 
 	#fill in that the gene has a promoter
 	$gwp{$g2}++;
@@ -123,16 +127,27 @@ sub fill_hashes{
 	if ($arrowhead eq "vee"){
 	    #print "ACT Found '$2' -> '$3' with arrowhead '$4'\n";
 	    $gwa{$g2}++;
-	    $act{"$g2:$gwa{$g2}"} = "$g1,$g2,$info";
+	    $act{"$g2:$gwa{$g2}"} = "$g1,$g2,$total_info";
 	}
 	elsif($arrowhead eq "tee"){
 	    #print "REP Found '$2' -> '$3' with arrowhead '$4'\n";
 	    $gwr{$g2}++;
-	    $rep{"$g2:$gwr{$g2}"} = "$g1,$g2,$info";
+	    $rep{"$g2:$gwr{$g2}"} = "$g1,$g2,$total_info";
 	}
 	else{
 	    print "Found '$2' -> '$3' with arrowhead '$4'\n";
 	    print "Unhandled arrowhead case $arrowhead: exiting\n";
+	}
+	if ($total_info =~ m/label="*([0-9]+)/){
+	    print "Found a dimer for $g1\n";
+	    my $d = $1;
+	    if (exists($dimers{$g1}) and $dimers{$g1} != $d){
+		print "ERROR: unhandled dimerization.  Unable to create different dimerizations, '$dimers{$g1}' and '$d'";
+		exit(0);
+	    }
+	    else{
+		$dimers{$g1} = $d;
+	    }
 	}
     }
 }
@@ -145,19 +160,19 @@ sub create_real_network{
 
     #Print the genes
     for ($i = 0; $i <= $#genes; $i++){
-	print OUT "\t<species id = \"$genes[$i]\"  name = \"$genes[$i]\" compartment = \"default\" initialConcentration = \"$initial_concentration[$i]\"/>\n";
+	print OUT "\t<species id = \"$genes[$i]\"  name = \"$genes[$i]\" compartment = \"default\" initialAmount = \"$initial_concentration[$i]\"/>\n";
     }
     #print the rnap
-    print OUT "\t<species id = \"rnap\"  name = \"RNAP\" compartment = \"default\" initialConcentration = \"30\"/>\n";
+    print OUT "\t<species id = \"rnap\"  name = \"RNAP\" compartment = \"default\" initialAmount = \"30\"/>\n";
 
     foreach $name (@genes){
 	if ($name =~ m/spastic/){
 	}
 	else{
 	    #print out a promoter'
-	    print OUT "\t<species id = \"pro_$name\"  name = \"pro_$name\" compartment = \"default\" initialConcentration = \"1.0\"/>\n";
+	    print OUT "\t<species id = \"pro_$name\"  name = \"pro_$name\" compartment = \"default\" initialAmount = \"1.0\"/>\n";
 	    #print out the rnap bindings to the promoters species
-	    print OUT "\t<species id = \"rnap_pro_$name\"  name = \"rnap_pro_$name\" compartment = \"default\" initialConcentration = \"0.0\"/>\n";
+	    print OUT "\t<species id = \"rnap_pro_$name\"  name = \"rnap_pro_$name\" compartment = \"default\" initialAmount = \"0.0\"/>\n";
 	    
 	    for (my $i = 1; $i <= $gwa{$name}; $i++){ #gene has activation promoter
 		#print out the rnap bindings to the promoters species
@@ -166,7 +181,7 @@ sub create_real_network{
 		    $i++;
 		    @g = split (/,/,$act{"$name:$i"});
 		}
-		print OUT "\t<species id = \"rnap_apro_$i\_$name\"  name = \"rnap_apro_$i\_$name\" compartment = \"default\" initialConcentration = \"0.0\"/>\n";
+		print OUT "\t<species id = \"rnap_apro_$i\_$name\"  name = \"rnap_apro_$i\_$name\" compartment = \"default\" initialAmount = \"0.0\"/>\n";
 	    }
 	    for (my $i = 1; $i <= $gwr{$name}; $i++){ #gene has repression promoter
 		#print the bound state of the rep promoters
@@ -175,11 +190,15 @@ sub create_real_network{
 		    $i++;
 		    @g = split (/,/,$rep{"$name:$i"});
 		}
-		print OUT "\t<species id = \"bound_rep_$i\_$name\"  name = \"bound_rep_$i\_$name\" compartment = \"default\" initialConcentration = \"0.0\"/>\n";
+		print OUT "\t<species id = \"bound_rep_$i\_$name\"  name = \"bound_rep_$i\_$name\" compartment = \"default\" initialAmount = \"0.0\"/>\n";
 	    }
 	}
     }
-    
+    #print out the dimers
+    foreach $key (keys %dimers){
+	print OUT "\t<species id = \"$key\_$dimers{$key}\"  name = \"$key\_$dimers{$key}\" compartment = \"default\" initialAmount = \"0.0\"/>\n";
+    }
+
     print OUT "</listOfSpecies>\n\n<listOfReactions>\n";
 
 #setup the dedgadations
@@ -188,17 +207,22 @@ for (my $i = 0; $i <= $#genes; $i++){
     if (not $initial_concentration[$i] eq $mh_con){
 
 	if (not $genes[$i] =~ m/spastic/i){
-	    my $deg = 0.0002888113;
+	    my $deg = 0.0003;
 print OUT <<END;
-<reaction id = "degradation_$genes[$i]" reversible="false" >
+<reaction id = "degradation_$genes[$i]" reversible="false">
   <listOfReactants>
     <speciesReference species = "$genes[$i]" stoichiometry = "1"/>
   </listOfReactants>
   <kineticLaw>
     <math xmlns="http://www.w3.org/1998/Math/MathML">
-      <apply><times/><ci>kr_deg_$genes[$i]</ci><ci>$genes[$i]</ci></apply></math>
+      <apply>
+        <times/>
+        <ci>k_deg</ci>
+        <ci>$genes[$i]</ci>
+      </apply>
+    </math>
     <listOfParameters>
-      <parameter id = "kr_deg_$genes[$i]" name = "k" value = "$deg"/>
+      <parameter id = "k_deg" name = "k_deg" value = "$deg"/>
     </listOfParameters>
   </kineticLaw>
 </reaction>
@@ -208,15 +232,16 @@ END
 	else{
 	    #the gene is spastic, and the activation and deg_rates should match
 print OUT <<END;
-<reaction id = "degradation_$genes[$i]" reversible="false" >
+<reaction id = "degradation_$genes[$i]" reversible="false">
   <listOfReactants>
     <speciesReference species = "$genes[$i]" stoichiometry = "1"/>
   </listOfReactants>
   <kineticLaw>
     <math xmlns="http://www.w3.org/1998/Math/MathML">
-      <ci>kr_deg_$genes[$i]</ci></math>
+      <ci>kr_deg</ci>
+    </math>
     <listOfParameters>
-      <parameter id = "kr_deg_$genes[$i]" name = "k" value = "$spastic"/>
+      <parameter id = "k_deg" name = "k_deg" value = "$spastic"/>
     </listOfParameters>
   </kineticLaw>
 </reaction>
@@ -228,12 +253,52 @@ END
 }
 
 
+
+#setup the dimers
+foreach $key (keys %dimers){
+print OUT <<END;
+<reaction id = "dimerization_$key\_$dimers{$key}" reversible="false">
+  <listOfReactants>
+    <speciesReference species = "$key" stoichiometry = "$dimers{$key}"/>
+  </listOfReactants>
+  <listOfProducts>
+    <speciesReference species = "$key\_$dimers{$key}" stoichiometry = "1"/>
+  </listOfProducts>
+  <kineticLaw>
+    <math xmlns="http://www.w3.org/1998/Math/MathML">
+      <apply>
+        <minus/>
+        <apply>
+          <times/>
+          <ci>kf_d</ci>
+          <ci>$key</ci>
+        </apply>
+        <apply>
+          <times/>
+          <ci>kr</ci>
+          <ci>$key\_$dimers{$key}</ci>
+        </apply>
+      </apply>
+    </math>
+    <listOfParameters>
+      <parameter id = "kf_d" name = "kf_d" value = "20"/>
+      <parameter id = "kr" name = "kr" value = "1.0"/>
+    </listOfParameters>
+  </kineticLaw>
+</reaction>
+
+END
+
+    
+}
+
+
 #setup the activation and degradation for the spastic things
 #for (my $i = 0; $i <= $#genes; $i++){
 #if ($genes[$i] =~ m/spastic/i){
 #    #add in the degradation for the newly created gene
 #print OUT <<END;
-#<reaction id = "degradation_helper_$genes[$i]" reversible="false" >
+#<reaction id = "degradation_helper_$genes[$i]" reversible="false">
 #  <listOfReactants>
 #  <speciesReference species = "pro_$genes[$i]" stoichiometry = "1"/>
 #  </listOfReactants>
@@ -246,7 +311,7 @@ END
 #  </kineticLaw>
 #</reaction>
 #
-#<reaction id = "activation_helper_$genes[$i]" reversible="false" >
+#<reaction id = "activation_helper_$genes[$i]" reversible="false">
 #  <listOfProducts>
 #    <speciesReference species = "pro_$genes[$i]" stoichiometry = "1"/>
 #  </listOfProducts>
@@ -275,16 +340,17 @@ foreach $name (@genes){
     if ($turn_off{$name} != 1){
 	if ($name =~ m/spastic/i){
 print OUT <<END;
-<reaction id = "creation_$name" reversible="false" >
+<reaction id = "creation_$name" reversible="false">
   <listOfProducts>
     <speciesReference species = "$name" stoichiometry = "1"/>
   </listOfProducts>
   <kineticLaw>
     <math xmlns="http://www.w3.org/1998/Math/MathML">
-      <ci>k_$name</ci></math>
-      <listOfParameters>
-        <parameter id = "k_$name" name = "k" value = "$spastic"/>
-      </listOfParameters>
+      <ci>kf_un</ci>
+    </math>
+    <listOfParameters>
+      <parameter id = "kf_un" name = "kf_un" value = "$spastic"/>
+    </listOfParameters>
   </kineticLaw>
 </reaction>
 
@@ -296,7 +362,7 @@ END
 		$ocr = 0.1;
 	    }
 print OUT <<END; 
-<reaction id = "R_rnap_$name" >
+<reaction id = "R_rnap_$name" reversible="true">
   <listOfReactants>
     <speciesReference species = "rnap" stoichiometry = "1"/>
     <speciesReference species = "pro_$name" stoichiometry = "1"/>
@@ -306,15 +372,29 @@ print OUT <<END;
   </listOfProducts>
   <kineticLaw>
     <math xmlns="http://www.w3.org/1998/Math/MathML">
-      <apply><minus/><apply><times/><ci>kf_R_rnap_$name$uid</ci><ci>pro_$name</ci><ci>rnap</ci></apply><apply><times/><ci>kr_R_rnap_$name$uid</ci><ci>rnap_pro_$name</ci></apply></apply></math>
+      <apply>
+        <minus/>
+        <apply>
+          <times/>
+          <ci>kf</ci>
+          <ci>pro_$name</ci>
+          <ci>rnap</ci>
+        </apply>
+        <apply>
+        <times/>
+        <ci>kr</ci>
+        <ci>rnap_pro_$name</ci>
+        </apply>
+      </apply>
+    </math>
     <listOfParameters>
-      <parameter id = "kf_R_rnap_$name$uid" name = "kf" value = "$rnap_binding"/>
-      <parameter id = "kr_R_rnap_$name$uid" name = "kr" value = "1.0"/>
+      <parameter id = "kf" name = "kf" value = "$rnap_binding"/>
+      <parameter id = "kr" name = "kr" value = "1.0"/>
     </listOfParameters>
   </kineticLaw>
 </reaction>
 
-<reaction id = "R_rnap_pro_$name" reversible="false" >
+<reaction id = "R_rnap_pro_$name" reversible="false">
   <listOfReactants>
     <speciesReference species = "rnap_pro_$name" stoichiometry = "1"/>
   </listOfReactants>
@@ -324,50 +404,79 @@ print OUT <<END;
   </listOfProducts>
   <kineticLaw>
     <math xmlns="http://www.w3.org/1998/Math/MathML">
-      <apply><times/><ci>k_R_rnap_pro_$name$uid</ci><ci>rnap_pro_$name</ci></apply></math>
+      <apply>
+        <times/>
+        <ci>koc</ci>
+        <ci>rnap_pro_$name</ci>
+      </apply>
+    </math>
     <listOfParameters>
-      <parameter id = "k_R_rnap_pro_$name$uid" name = "k" value = "$ocr"/>
+      <parameter id = "koc" name = "koc" value = "$ocr"/>
     </listOfParameters>
   </kineticLaw>
 </reaction>
 
 END
 }
+
+
+#setup the activation pathway
     for (my $i = 1; $i <= $gwa{$name}; $i++){ #gene has activation promoter
-	my $uid = getuid();
-	my @g = split (/,/,$act{"$name:$i"});
-	while ($g[0] eq ""){
-	    $i++;
-	    @g = split (/,/,$act{"$name:$i"});
-	}
-#	my $bind_rate = 0.0011;
-	my $bind_rate = 0.00033;
-	my $a_rate = 0.1;
+        my $uid = getuid();
+        my @g = split (/,/,$act{"$name:$i"});
+        while ($g[0] eq ""){
+            $i++;
+            @g = split (/,/,$act{"$name:$i"});
+        }
+#        my $bind_rate = 0.0011;
+        my $bind_rate = 0.00033;
+        my $a_rate = 0.1;
 #	if ($g[2] =~ m/label=([0-9]+[.]*[0-9]*)/){
 #	    $a_rate = $1;
 #	}
+
+	my $activating_species = $g[0];
+	if ($act{"$name:$i"} =~ m/label="*([0-9]+)/){
+	    $activating_species = "$g[0]\_$1";
+	}
+
 print OUT <<END; 
 
-<reaction id = "R_$i\_$g[0]_activates_$g[1]" >
+<reaction id = "R_$i\_$activating_species\_activates_$g[1]" reversible="true">
   <listOfReactants>
     <speciesReference species = "rnap" stoichiometry = "1"/>
     <speciesReference species = "pro_$g[1]" stoichiometry = "1"/>
-    <speciesReference species = "$g[0]" stoichiometry = "1"/>
+    <speciesReference species = "$activating_species" stoichiometry = "1"/>
   </listOfReactants>
   <listOfProducts>
     <speciesReference species = "rnap_apro_$i\_$g[1]" stoichiometry = "1"/>
   </listOfProducts>
   <kineticLaw>
     <math xmlns="http://www.w3.org/1998/Math/MathML">
-      <apply><minus/><apply><times/><ci>kf_R_2_$uid</ci><ci>rnap</ci><ci>pro_$g[1]</ci><ci>$g[0]</ci></apply><apply><times/><ci>kr_R_2_$uid</ci><ci>rnap_apro_$i\_$g[1]</ci></apply></apply></math>
+      <apply>
+        <minus/>
+          <apply>
+            <times/>
+            <ci>kf</ci>
+            <ci>rnap</ci>
+            <ci>pro_$g[1]</ci>
+            <ci>$g[0]</ci>
+          </apply>
+        <apply>
+          <times/>
+          <ci>kr</ci>
+          <ci>rnap_apro_$i\_$g[1]</ci>
+        </apply>
+      </apply>
+    </math>
     <listOfParameters>
-      <parameter id = "kf_R_2_$uid" name = "kf" value = "$bind_rate"/>
-      <parameter id = "kr_R_2_$uid" name = "kr" value = "1.0"/>
+      <parameter id = "kf" name = "kf" value = "$bind_rate"/>
+      <parameter id = "kr" name = "kr" value = "1.0"/>
     </listOfParameters>
   </kineticLaw>
 </reaction>
 
-<reaction id = "R_$i\_activation_part2_$g[0]_to_$g[1]" reversible="false" >
+<reaction id = "R_$i\_activation_part2_$g[0]_to_$g[1]" reversible="false">
   <listOfReactants>
     <speciesReference species = "rnap_apro_$i\_$g[1]" stoichiometry = "1"/>
   </listOfReactants>
@@ -377,15 +486,22 @@ print OUT <<END;
   </listOfProducts>
   <kineticLaw>
     <math xmlns="http://www.w3.org/1998/Math/MathML">
-      <apply><times/><ci>k_f_activation_1_2_$uid</ci><ci>rnap_apro_$i\_$g[1]</ci></apply></math>
+      <apply>
+        <times/>
+        <ci>koc</ci>
+        <ci>rnap_apro_$i\_$g[1]</ci>
+      </apply>
+    </math>
     <listOfParameters>
-      <parameter id = "k_f_activation_1_2_$uid" name = "k" value = "$a_rate"/>
+      <parameter id = "koc" name = "koc" value = "$a_rate"/>
     </listOfParameters>
   </kineticLaw>
 </reaction>
 END
 }
 
+
+#setup the repression pathway
     for (my $i = 1; $i <= $gwr{$name}; $i++){ #gene has repression promoter
 	my $uid = getuid();
 	my @g = split (/,/,$rep{"$name:$i"});
@@ -400,22 +516,40 @@ END
 #	    $r_rate = $1;
 #	}
 
+	my $repression_species = $g[0];
+	if ($rep{"$name:$i"} =~ m/label="*([0-9]+)/){
+	    $repression_species = "$g[0]\_$1";
+	}
 print OUT <<END; 
 
-<reaction id = "R_$i\_$g[0]_represses_$g[1]" >
+<reaction id = "R_$i\_$repression_species\_represses_$g[1]" reversible="true">
     <listOfReactants>
       <speciesReference species = "pro_$g[1]" stoichiometry = "1"/>
-      <speciesReference species = "$g[0]" stoichiometry = "1"/>
+      <speciesReference species = "$repression_species" stoichiometry = "1"/>
     </listOfReactants>
     <listOfProducts>
       <speciesReference species = "bound_rep_$i\_$g[1]" stoichiometry = "1"/>
     </listOfProducts>
     <kineticLaw>
     <math xmlns="http://www.w3.org/1998/Math/MathML">
-      <apply><minus/><apply><times/><ci>kf_R_1_$uid</ci><ci>pro_$g[1]</ci><ci>$g[0]</ci></apply><apply><times/><ci>kr_R_1_$uid</ci><ci>bound_rep_$i\_$g[1]</ci></apply></apply></math>
+      <apply>
+        <minus/>
+        <apply>
+          <times/>
+          <ci>kf_rep</ci>
+          <ci>pro_$g[1]</ci>
+          <ci>$g[0]</ci>
+        </apply>
+        <apply>
+          <times/>
+          <ci>kr</ci>
+          <ci>bound_rep_$i\_$g[1]</ci>
+        </apply>
+      </apply>
+    </math>
     <listOfParameters>
-      <parameter id = "kf_R_1_$uid" name = "kf" value = "$r_rate"/>
-      <parameter id = "kr_R_1_$uid" name = "kr" value = "1.0"/>
+      <parameter id = "kf_rep" name = "kf_rep" value = "$r_rate"/>
+      <parameter id = "kr" name = "kr" value = "1.0"/>
     </listOfParameters>
     </kineticLaw>
 </reaction>
