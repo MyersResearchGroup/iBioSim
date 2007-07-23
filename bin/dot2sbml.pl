@@ -125,17 +125,17 @@ sub fill_hashes{
 	$gwp{$g2}++;
 
 	if ($arrowhead eq "vee"){
-	    #print "ACT Found '$2' -> '$3' with arrowhead '$4'\n";
+	    #print "ACT Found '$2' -> '$3' with arrowhead '$arrowhead'\n";
 	    $gwa{$g2}++;
 	    $act{"$g2:$gwa{$g2}"} = "$g1,$g2,$total_info";
 	}
 	elsif($arrowhead eq "tee"){
-	    #print "REP Found '$2' -> '$3' with arrowhead '$4'\n";
+	    #print "REP Found '$2' -> '$3' with arrowhead '$arrowhead'\n";
 	    $gwr{$g2}++;
 	    $rep{"$g2:$gwr{$g2}"} = "$g1,$g2,$total_info";
 	}
 	else{
-	    print "Found '$2' -> '$3' with arrowhead '$4'\n";
+	    print "Found '$2' -> '$3' with arrowhead '$arrowhead'\n";
 	    print "Unhandled arrowhead case $arrowhead: exiting\n";
 	}
 	if ($total_info =~ m/label="*([0-9]+[,|\"])/){ #"
@@ -436,7 +436,7 @@ END
 #	}
 
 	my $activating_species = $g[0];
-	if ($act{"$name:$i"} =~ m/label="*([0-9]+)/){
+	if ($act{"$name:$i"} =~ m/label="*([0-9]+[\"])/){ #"
 	    $activating_species = "$g[0]\_$1";
 	}
 
@@ -517,7 +517,7 @@ END
 #	}
 
 	my $repression_species = $g[0];
-	if ($rep{"$name:$i"} =~ m/label="*([0-9]+)/){
+	if ($rep{"$name:$i"} =~ m/label="*([0-9]+[\"])/){
 	    $repression_species = "$g[0]\_$1";
 	}
 print OUT <<END; 
