@@ -138,7 +138,7 @@ sub fill_hashes{
 	    print "Found '$2' -> '$3' with arrowhead '$4'\n";
 	    print "Unhandled arrowhead case $arrowhead: exiting\n";
 	}
-	if ($total_info =~ m/label="*([0-9]+[,|\"])/){
+	if ($total_info =~ m/label="*([0-9]+[,|\"])/){ #"
 	    print "Found a dimer for $g1 in '$total_info'\n";
 	    my $d = $1;
 	    if (exists($dimers{$g1}) and $dimers{$g1} != $d){
@@ -238,7 +238,7 @@ print OUT <<END;
   </listOfReactants>
   <kineticLaw>
     <math xmlns="http://www.w3.org/1998/Math/MathML">
-      <ci>kr_deg</ci>
+      <ci>k_deg</ci>
     </math>
     <listOfParameters>
       <parameter id = "k_deg" name = "k_deg" value = "$spastic"/>
