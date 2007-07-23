@@ -29,7 +29,9 @@ public class BioSim implements MouseListener, ActionListener {
 
 	private JMenuItem exit; // The exit menu item
 
-	private JMenuItem importSbml; // The import menu item
+	private JMenuItem importSbml; // The import sbml menu item
+
+	private JMenuItem importDot; // The import dot menu item
 
 	private JMenuItem manual; // The manual menu item
 
@@ -107,6 +109,7 @@ public class BioSim implements MouseListener, ActionListener {
 		newTstubd = new JMenuItem("New Project");
 		newModel = new JMenuItem("New Model");
 		importSbml = new JMenuItem("SBML");
+		importDot = new JMenuItem("Dot");
 		exit = new JMenuItem("Exit");
 		graph = new JMenuItem("New Graph");
 		openProj.addActionListener(this);
@@ -116,6 +119,7 @@ public class BioSim implements MouseListener, ActionListener {
 		exit.addActionListener(this);
 		about.addActionListener(this);
 		importSbml.addActionListener(this);
+		importDot.addActionListener(this);
 		graph.addActionListener(this);
 		exit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, ActionEvent.ALT_MASK));
 		newTstubd.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.ALT_MASK));
@@ -139,6 +143,7 @@ public class BioSim implements MouseListener, ActionListener {
 		openMenu.add(openProj);
 		file.addSeparator();
 		file.add(importMenu);
+		importMenu.add(importDot);
 		importMenu.add(importSbml);
 		file.addSeparator();
 		file.add(exit);
@@ -588,6 +593,42 @@ public class BioSim implements MouseListener, ActionListener {
 						String doc = writer.writeToString(document);
 						byte[] output = doc.getBytes();
 						out.write(output);
+						out.close();
+						refreshTree();
+					} catch (Exception e1) {
+						JOptionPane.showMessageDialog(frame, "Unable to import file.", "Error",
+								JOptionPane.ERROR_MESSAGE);
+					}
+				}
+			} else {
+				JOptionPane.showMessageDialog(frame, "You must open or create a project first.",
+						"Error", JOptionPane.ERROR_MESSAGE);
+			}
+		}
+		// if the import dot menu item is selected
+		else if (e.getSource() == importDot) {
+			if (root != null) {
+				String filename = Buttons.browse(frame, new File(root), null,
+						JFileChooser.FILES_ONLY, "Open");
+				if (filename.length() > 3
+						&& !filename.substring(filename.length() - 4, filename.length()).equals(
+								".dot")) {
+					JOptionPane.showMessageDialog(frame,
+							"You must select a valid dot file to import.", "Error",
+							JOptionPane.ERROR_MESSAGE);
+					return;
+				} else if (!filename.equals("")) {
+					String[] file = filename.split(File.separator);
+					try {
+						FileOutputStream out = new FileOutputStream(new File(root + File.separator
+								+ file[file.length - 1]));
+						FileInputStream in = new FileInputStream(new File(filename));
+						int read = in.read();
+						while (read != -1) {
+							out.write(read);
+							read = in.read();
+						}
+						in.close();
 						out.close();
 						refreshTree();
 					} catch (Exception e1) {
