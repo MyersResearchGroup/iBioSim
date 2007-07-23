@@ -1461,13 +1461,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 								ArrayList<String> validKineticVars = new ArrayList<String>();
 								ArrayList<String> invalidKineticVars = new ArrayList<String>();
 								Reaction r;
-								if (option.equals("Save")) {
-									r = document.getModel().getReaction(kineticCheck);
-								} else if (kineticCheck == -1) {
-									r = document.getModel().getReaction(0);
-								} else {
-									r = document.getModel().getReaction(reacts.length - 1);
-								}
+								r = document.getModel().getReaction(kineticCheck);
 								SBMLDocument docu = new SBMLDocument();
 								Model m = docu.createModel();
 								m.addReaction(r);
@@ -1476,6 +1470,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 								String documentWritten = writer.writeToString(document);
 								SBMLReader reader = new SBMLReader();
 								docu = reader.readSBMLFromString(doc);
+								System.out.println(doc);
 								document = reader.readSBMLFromString(documentWritten);
 								ListOf sbml = r.getKineticLaw().getListOfParameters();
 								for (int i = 0; i < sbml.getNumItems(); i++) {
@@ -1494,6 +1489,10 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 								sbml = document.getModel().getListOfParameters();
 								for (int i = 0; i < sbml.getNumItems(); i++) {
 									validKineticVars.add(((Parameter) sbml.get(i)).getId());
+								}
+								sbml = document.getModel().getListOfSpecies();
+								for (int i = 0; i < sbml.getNumItems(); i++) {
+									validKineticVars.add(((Species) sbml.get(i)).getId());
 								}
 								if (!docu.getModel().getReaction(0).getKineticLaw().isSetFormula()) {
 									if (option.equals("Save")) {
@@ -1642,14 +1641,6 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 										scrolls.setViewportView(messageArea);
 										JOptionPane.showMessageDialog(biosim.frame(), scrolls,
 												"Kinetic Law Error", JOptionPane.ERROR_MESSAGE);
-										if (!option.equals("Save")) {
-											reactions
-													.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-											Buttons.remove(reactions, reacts);
-											reactions
-													.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-											reactions.setSelectedIndex(0);
-										}
 									}
 								}
 							}
