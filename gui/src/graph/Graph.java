@@ -1798,57 +1798,81 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 									} else {
 										if (counter < graphSpecies.size()) {
 											insert = counter;
-											double old = (average.get(insert)).get(insert
-													/ graphSpecies.size());
-											(average.get(insert))
-													.set(
-															insert / graphSpecies.size(),
-															old
-																	+ ((Double.parseDouble(word) - old) / (count + 1)));
-											double newMean = (average.get(insert)).get(insert
-													/ graphSpecies.size());
-											if (insert == 0) {
-												(variance.get(insert))
+											try {
+												double old = (average.get(insert)).get(insert
+														/ graphSpecies.size());
+												(average.get(insert))
 														.set(
 																insert / graphSpecies.size(),
 																old
 																		+ ((Double
 																				.parseDouble(word) - old) / (count + 1)));
-											} else {
-												double vary = (((count - 1) * (variance.get(insert))
-														.get(insert / graphSpecies.size())) + (Double
-														.parseDouble(word) - newMean)
-														* (Double.parseDouble(word) - old))
-														/ count;
-												(variance.get(insert)).set(insert
-														/ graphSpecies.size(), vary);
+												double newMean = (average.get(insert)).get(insert
+														/ graphSpecies.size());
+												if (insert == 0) {
+													(variance.get(insert))
+															.set(
+																	insert / graphSpecies.size(),
+																	old
+																			+ ((Double
+																					.parseDouble(word) - old) / (count + 1)));
+												} else {
+													double vary = (((count - 1) * (variance
+															.get(insert)).get(insert
+															/ graphSpecies.size())) + (Double
+															.parseDouble(word) - newMean)
+															* (Double.parseDouble(word) - old))
+															/ count;
+													(variance.get(insert)).set(insert
+															/ graphSpecies.size(), vary);
+												}
+											} catch (Exception e2) {
+												(average.get(insert)).add(Double.parseDouble(word));
+												if (insert == 0) {
+													(variance.get(insert)).add(Double
+															.parseDouble(word));
+												} else {
+													(variance.get(insert)).add(0.0);
+												}
 											}
 										} else {
 											insert = counter % graphSpecies.size();
-											double old = (average.get(insert)).get(counter
-													/ graphSpecies.size());
-											(average.get(insert))
-													.set(
-															counter / graphSpecies.size(),
-															old
-																	+ ((Double.parseDouble(word) - old) / (count + 1)));
-											double newMean = (average.get(insert)).get(counter
-													/ graphSpecies.size());
-											if (insert == 0) {
-												(variance.get(insert))
+											try {
+												double old = (average.get(insert)).get(counter
+														/ graphSpecies.size());
+												(average.get(insert))
 														.set(
 																counter / graphSpecies.size(),
 																old
 																		+ ((Double
 																				.parseDouble(word) - old) / (count + 1)));
-											} else {
-												double vary = (((count - 1) * (variance.get(insert))
-														.get(counter / graphSpecies.size())) + (Double
-														.parseDouble(word) - newMean)
-														* (Double.parseDouble(word) - old))
-														/ count;
-												(variance.get(insert)).set(counter
-														/ graphSpecies.size(), vary);
+												double newMean = (average.get(insert)).get(counter
+														/ graphSpecies.size());
+												if (insert == 0) {
+													(variance.get(insert))
+															.set(
+																	counter / graphSpecies.size(),
+																	old
+																			+ ((Double
+																					.parseDouble(word) - old) / (count + 1)));
+												} else {
+													double vary = (((count - 1) * (variance
+															.get(insert)).get(counter
+															/ graphSpecies.size())) + (Double
+															.parseDouble(word) - newMean)
+															* (Double.parseDouble(word) - old))
+															/ count;
+													(variance.get(insert)).set(counter
+															/ graphSpecies.size(), vary);
+												}
+											} catch (Exception e2) {
+												(average.get(insert)).add(Double.parseDouble(word));
+												if (insert == 0) {
+													(variance.get(insert)).add(Double
+															.parseDouble(word));
+												} else {
+													(variance.get(insert)).add(0.0);
+												}
 											}
 										}
 									}

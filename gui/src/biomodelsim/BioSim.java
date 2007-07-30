@@ -155,7 +155,7 @@ public class BioSim implements MouseListener, ActionListener {
 		mainPanel = new JPanel(new BorderLayout());
 		tree = new FileTree(null, this);
 		tab = new JTabbedPane();
-		tab.setPreferredSize(new Dimension(900, 650));
+		tab.setPreferredSize(new Dimension(950, 650));
 		tab.setUI(new TabbedPaneCloseButtonUI());
 		mainPanel.add(tree, "West");
 		mainPanel.add(tab, "Center");
@@ -586,7 +586,6 @@ public class BioSim implements MouseListener, ActionListener {
 					try {
 						SBMLReader reader = new SBMLReader();
 						SBMLDocument document = reader.readSBML(filename);
-						document.getModel().getName();
 						FileOutputStream out = new FileOutputStream(new File(root + File.separator
 								+ file[file.length - 1]));
 						SBMLWriter writer = new SBMLWriter();
@@ -976,7 +975,7 @@ public class BioSim implements MouseListener, ActionListener {
 
 	private void simulate(boolean isDot) throws Exception {
 		if (isDot) {
-			String simName = JOptionPane.showInputDialog(frame, "Enter analysis id:",
+			String simName = JOptionPane.showInputDialog(frame, "Enter Analysis ID:",
 					"Analysis ID", JOptionPane.PLAIN_MESSAGE);
 			if (simName != null && !simName.equals("")) {
 				new File(root + File.separator + simName).mkdir();
@@ -1041,7 +1040,6 @@ public class BioSim implements MouseListener, ActionListener {
 		} else {
 			SBMLReader reader = new SBMLReader();
 			SBMLDocument document = reader.readSBML(tree.getFile());
-			document.getModel().getName();
 			document.setLevel(2);
 			String simName = JOptionPane.showInputDialog(frame, "Enter analysis id:",
 					"Analysis ID", JOptionPane.PLAIN_MESSAGE);
@@ -1290,5 +1288,74 @@ public class BioSim implements MouseListener, ActionListener {
 	public static void main(String args[]) {
 		System.loadLibrary("sbmlj");
 		new BioSim();
+	}
+
+	public void copySim(String newSim) {
+		try {
+			new File(root + File.separator + newSim).mkdir();
+			new FileWriter(new File(root + File.separator + newSim + File.separator + ".sim"))
+					.close();
+			String oldSim = tab.getTitleAt(tab.getSelectedIndex());
+			String[] s = new File(root + File.separator + oldSim).list();
+			String sbmlFile = "";
+			String propertiesFile = "";
+			for (String ss : s) {
+				if (ss.length() > 4 && ss.substring(ss.length() - 5).equals(".sbml")) {
+					SBMLReader reader = new SBMLReader();
+					SBMLDocument document = reader.readSBML(root + File.separator + oldSim
+							+ File.separator + ss);
+					FileOutputStream out = new FileOutputStream(new File(root + File.separator
+							+ newSim + File.separator + ss));
+					SBMLWriter writer = new SBMLWriter();
+					String doc = writer.writeToString(document);
+					byte[] output = doc.getBytes();
+					out.write(output);
+					out.close();
+					sbmlFile = root + File.separator + newSim + File.separator + ss;
+				} else if (ss.length() > 10 && ss.substring(ss.length() - 11).equals(".properties")) {
+					FileOutputStream out = new FileOutputStream(new File(root + File.separator
+							+ newSim + File.separator + ss));
+					FileInputStream in = new FileInputStream(new File(root + File.separator
+							+ oldSim + File.separator + ss));
+					int read = in.read();
+					while (read != -1) {
+						out.write(read);
+						read = in.read();
+					}
+					in.close();
+					out.close();
+					propertiesFile = root + File.separator + newSim + File.separator + ss;
+				}
+			}
+			refreshTree();
+			JTabbedPane simTab = new JTabbedPane();
+			Reb2Sac reb2sac = new Reb2Sac(sbmlFile, root, this, newSim, log, simTab, propertiesFile);
+			simTab.addTab("Simulation", reb2sac);
+			simTab.getComponentAt(simTab.getComponents().length - 1).setName("Simulate");
+			SBML_Editor sbml = new SBML_Editor(sbmlFile, reb2sac, log, this);
+			reb2sac.setSbml(sbml);
+			simTab.addTab("SBML Editor", sbml);
+			simTab.getComponentAt(simTab.getComponents().length - 1).setName("SBML Editor");
+			JLabel noDataLearn = new JLabel("No data available");
+			Font font = noDataLearn.getFont();
+			font = font.deriveFont(Font.BOLD, 42.0f);
+			noDataLearn.setFont(font);
+			noDataLearn.setHorizontalAlignment(SwingConstants.CENTER);
+			simTab.addTab("Learn", noDataLearn);
+			simTab.getComponentAt(simTab.getComponents().length - 1).setName("Learn");
+			JLabel noData = new JLabel("No data available");
+			Font font1 = noData.getFont();
+			font1 = font1.deriveFont(Font.BOLD, 42.0f);
+			noData.setFont(font1);
+			noData.setHorizontalAlignment(SwingConstants.CENTER);
+			simTab.addTab("Graph", noData);
+			simTab.getComponentAt(simTab.getComponents().length - 1).setName("Graph");
+			tab.setComponentAt(tab.getSelectedIndex(), simTab);
+			tab.setTitleAt(tab.getSelectedIndex(), newSim);
+			tab.getComponentAt(tab.getSelectedIndex()).setName(newSim);
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(frame, "Unable to copy simulation.", "Error",
+					JOptionPane.ERROR_MESSAGE);
+		}
 	}
 }

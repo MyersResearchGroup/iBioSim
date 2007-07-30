@@ -6,6 +6,7 @@ import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
 import org.sbml.libsbml.*;
+
 import biomodelsim.core.gui.*;
 import reb2sac.core.gui.*;
 import buttons.core.gui.*;
@@ -62,7 +63,10 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 
 	private String[] reacts; // array of reactions
 
-	private JButton addReac, removeReac, editReac; // reactions buttons
+	/*
+	 * reactions buttons
+	 */
+	private JButton addReac, removeReac, editReac, copyReac;
 
 	private JList parameters; // JList of parameters
 
@@ -292,12 +296,15 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		addReac = new JButton("Add Reaction");
 		removeReac = new JButton("Remove Reaction");
 		editReac = new JButton("Edit Reaction");
+		copyReac = new JButton("Copy Reaction");
 		addReacs.add(addReac);
 		addReacs.add(removeReac);
 		addReacs.add(editReac);
+		addReacs.add(copyReac);
 		addReac.addActionListener(this);
 		removeReac.addActionListener(this);
 		editReac.addActionListener(this);
+		copyReac.addActionListener(this);
 		JLabel reactionsLabel = new JLabel("List Of Reactions:");
 		reactions = new JList();
 		reactions.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -375,13 +382,17 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		if (reb2sac != null) {
 			saveNoRun = new JButton("Save");
 			run = new JButton("Save And Run");
+			saveAs = new JButton("Save As");
 			saveNoRun.setMnemonic(KeyEvent.VK_S);
 			run.setMnemonic(KeyEvent.VK_R);
+			saveAs.setMnemonic(KeyEvent.VK_A);
 			saveNoRun.addActionListener(this);
 			run.addActionListener(this);
+			saveAs.addActionListener(this);
 			JPanel saveRun = new JPanel();
 			saveRun.add(saveNoRun);
 			saveRun.add(run);
+			saveRun.add(saveAs);
 			JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, saveRun, null);
 			splitPane.setDividerSize(0);
 			this.add(splitPane, "South");
@@ -420,55 +431,64 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		}
 		// if the save as button is clicked
 		else if (e.getSource() == saveAs) {
-			String simName = JOptionPane.showInputDialog(biosim.frame(), "Enter Model ID:",
-					"Model ID", JOptionPane.PLAIN_MESSAGE);
-			if (simName != null && !simName.equals("")) {
-				if (simName.length() > 4) {
-					if (!simName.substring(simName.length() - 5).equals(".sbml")
-							&& !simName.substring(simName.length() - 4).equals(".xml")) {
+			if (reb2sac != null) {
+				reb2sac.getSaveAsButton().doClick();
+			} else {
+				String simName = JOptionPane.showInputDialog(biosim.frame(), "Enter Model ID:",
+						"Model ID", JOptionPane.PLAIN_MESSAGE);
+				if (simName != null && !simName.equals("")) {
+					if (simName.length() > 4) {
+						if (!simName.substring(simName.length() - 5).equals(".sbml")
+								&& !simName.substring(simName.length() - 4).equals(".xml")) {
+							simName += ".sbml";
+						}
+					} else {
 						simName += ".sbml";
 					}
-				} else {
-					simName += ".sbml";
-				}
-				String modelID = "";
-				if (simName.length() > 4) {
-					if (simName.substring(simName.length() - 5).equals(".sbml")) {
-						modelID = simName.substring(0, simName.length() - 5);
-					} else {
-						modelID = simName.substring(0, simName.length() - 4);
-					}
-				}
-				String oldId = document.getModel().getId();
-				document.getModel().setId(modelID);
-				String newFile = file;
-				newFile = newFile.substring(0, newFile.length()
-						- newFile.split(File.separator)[newFile.split(File.separator).length - 1]
-								.length())
-						+ simName;
-				try {
-					log.addText("Saving sbml file as:\n" + newFile + "\n");
-					FileOutputStream out = new FileOutputStream(new File(newFile));
-					SBMLWriter writer = new SBMLWriter();
-					String doc = writer.writeToString(document);
-					byte[] output = doc.getBytes();
-					out.write(output);
-					out.close();
-					JTabbedPane tab = biosim.getTab();
-					for (int i = 0; i < tab.getTabCount(); i++) {
-						if (tab.getTitleAt(i).equals(
-								file.split(File.separator)[file.split(File.separator).length - 1])) {
-							tab.setTitleAt(i, simName);
-							tab.setComponentAt(i, new SBML_Editor(newFile, reb2sac, log, biosim));
-							tab.getComponentAt(i).setName("SBML Editor");
+					String modelID = "";
+					if (simName.length() > 4) {
+						if (simName.substring(simName.length() - 5).equals(".sbml")) {
+							modelID = simName.substring(0, simName.length() - 5);
+						} else {
+							modelID = simName.substring(0, simName.length() - 4);
 						}
 					}
-					biosim.refreshTree();
-				} catch (Exception e1) {
-					JOptionPane.showMessageDialog(biosim.frame(), "Unable to save sbml file!",
-							"Error Saving File", JOptionPane.ERROR_MESSAGE);
-				} finally {
-					document.getModel().setId(oldId);
+					String oldId = document.getModel().getId();
+					document.getModel().setId(modelID);
+					String newFile = file;
+					newFile = newFile
+							.substring(0,
+									newFile.length()
+											- newFile.split(File.separator)[newFile
+													.split(File.separator).length - 1].length())
+							+ simName;
+					try {
+						log.addText("Saving sbml file as:\n" + newFile + "\n");
+						FileOutputStream out = new FileOutputStream(new File(newFile));
+						SBMLWriter writer = new SBMLWriter();
+						String doc = writer.writeToString(document);
+						byte[] output = doc.getBytes();
+						out.write(output);
+						out.close();
+						JTabbedPane tab = biosim.getTab();
+						for (int i = 0; i < tab.getTabCount(); i++) {
+							if (tab
+									.getTitleAt(i)
+									.equals(
+											file.split(File.separator)[file.split(File.separator).length - 1])) {
+								tab.setTitleAt(i, simName);
+								tab.setComponentAt(i,
+										new SBML_Editor(newFile, reb2sac, log, biosim));
+								tab.getComponentAt(i).setName("SBML Editor");
+							}
+						}
+						biosim.refreshTree();
+					} catch (Exception e1) {
+						JOptionPane.showMessageDialog(biosim.frame(), "Unable to save sbml file!",
+								"Error Saving File", JOptionPane.ERROR_MESSAGE);
+					} finally {
+						document.getModel().setId(oldId);
+					}
 				}
 			}
 		}
@@ -637,13 +657,58 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		}
 		// if the add reactions button is clicked
 		else if (e.getSource() == addReac) {
-			Reaction react = document.getModel().createReaction();
-			react.setKineticLaw(new KineticLaw());
 			reactionsEditor("Add");
 		}
 		// if the edit reactions button is clicked
 		else if (e.getSource() == editReac) {
 			reactionsEditor("Save");
+		}
+		// if the copy reactions button is clicked
+		else if (e.getSource() == copyReac) {
+			String reacID = JOptionPane.showInputDialog(biosim.frame(), "Enter New Reaction ID:",
+					"Reaction ID", JOptionPane.PLAIN_MESSAGE);
+			if (!usedIDs.contains(reacID.trim()) && !reacID.trim().equals("")) {
+				Reaction react = document.getModel().createReaction();
+				react.setKineticLaw(new KineticLaw());
+				int index = reactions.getSelectedIndex();
+				Reaction r = document.getModel().getReaction((String) reactions.getSelectedValue());
+				for (int i = 0; i < r.getKineticLaw().getNumParameters(); i++) {
+					react.getKineticLaw().addParameter(
+							(Parameter) r.getKineticLaw().getListOfParameters().get(i));
+				}
+				for (int i = 0; i < r.getNumProducts(); i++) {
+					react.addProduct(r.getProduct(i));
+				}
+				for (int i = 0; i < r.getNumReactants(); i++) {
+					react.addReactant(r.getReactant(i));
+				}
+				react.setReversible(r.getReversible());
+				react.setId(reacID.trim());
+				usedIDs.add(reacID.trim());
+				react.getKineticLaw().setFormula(r.getKineticLaw().getFormula());
+				JList add = new JList();
+				Object[] adding = { reacID.trim() };
+				add.setListData(adding);
+				add.setSelectedIndex(0);
+				reactions.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+				adding = Buttons.add(reacts, reactions, add, false, null, null, null, null, null,
+						null, null, biosim.frame());
+				reacts = new String[adding.length];
+				for (int i = 0; i < adding.length; i++) {
+					reacts[i] = (String) adding[i];
+				}
+				sort(reacts);
+				reactions.setListData(reacts);
+				reactions.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+				if (document.getModel().getNumReactions() == 1) {
+					reactions.setSelectedIndex(0);
+				} else {
+					reactions.setSelectedIndex(index);
+				}
+			} else {
+				JOptionPane.showMessageDialog(biosim.frame(), "You must enter a unique id!",
+						"Enter A Unique ID", JOptionPane.ERROR_MESSAGE);
+			}
 		}
 		// if the remove reactions button is clicked
 		else if (e.getSource() == removeReac) {
@@ -1357,12 +1422,12 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 								error = true;
 							}
 						}
-						int kineticCheck;
+						String kineticCheck;
 						if (!error) {
 							if (option.equals("Save")) {
 								int index = reactions.getSelectedIndex();
 								String val = (String) reactions.getSelectedValue();
-								kineticCheck = index;
+								kineticCheck = reacID.getText().trim();
 								reactions
 										.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 								reacts = Buttons.getList(reacts, reactions);
@@ -1414,10 +1479,10 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 								reactions.setListData(reacts);
 								reactions.setSelectedIndex(index);
 							} else {
+								Reaction react = document.getModel().createReaction();
+								react.setKineticLaw(new KineticLaw());
 								int index = reactions.getSelectedIndex();
-								Reaction react = document.getModel().getReaction(
-										document.getModel().getNumReactions() - 1);
-								kineticCheck = (int) (document.getModel().getNumReactions() - 1);
+								kineticCheck = reacID.getText().trim();
 								for (int i = 0; i < changedParameters.size(); i++) {
 									react.getKineticLaw().addParameter(changedParameters.get(i));
 								}
@@ -1470,7 +1535,6 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 								String documentWritten = writer.writeToString(document);
 								SBMLReader reader = new SBMLReader();
 								docu = reader.readSBMLFromString(doc);
-								System.out.println(doc);
 								document = reader.readSBMLFromString(documentWritten);
 								ListOf sbml = r.getKineticLaw().getListOfParameters();
 								for (int i = 0; i < sbml.getNumItems(); i++) {
@@ -1495,16 +1559,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 									validKineticVars.add(((Species) sbml.get(i)).getId());
 								}
 								if (!docu.getModel().getReaction(0).getKineticLaw().isSetFormula()) {
-									if (option.equals("Save")) {
-										document.getModel().getReaction(kineticCheck)
-												.getKineticLaw().setFormula(kineticL);
-									} else if (kineticCheck != -1) {
-										document.getModel().getReaction(0).getKineticLaw()
-												.setFormula(kineticL);
-									} else {
-										document.getModel().getReaction(reacts.length - 1)
-												.getKineticLaw().setFormula(kineticL);
-									}
+									document.getModel().getReaction(kineticCheck).getKineticLaw()
+											.setFormula(kineticL);
 									if (option.equals("Save")) {
 										JOptionPane.showMessageDialog(biosim.frame(),
 												"Unable to parse kinetic law!",
