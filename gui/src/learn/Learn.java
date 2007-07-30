@@ -47,6 +47,8 @@ public class Learn extends JPanel implements ActionListener {
 	// private JCheckBox mustNotWinMajority, donotTossSingleRatioParents,
 	// donotTossChangedInfluenceSingleParents;
 
+	private JCheckBox noSUCC, PRED, basicFBP;
+
 	private ArrayList<ArrayList<Component>> species;
 
 	private JPanel speciesPanel;
@@ -129,7 +131,7 @@ public class Learn extends JPanel implements ActionListener {
 
 		// Sets up the thresholds area
 		JPanel thresholdPanel1 = new JPanel(new GridLayout(3, 2));
-		JPanel thresholdPanel2 = new JPanel(new GridLayout(7, 2));
+		JPanel thresholdPanel2 = new JPanel(new GridLayout(10, 2));
 		JLabel activationLabel = new JLabel("For Vote Threshold (Tf):");
 		activation = new JTextField("1.33");
 		thresholdPanel2.add(activationLabel);
@@ -180,6 +182,15 @@ public class Learn extends JPanel implements ActionListener {
 		debug = new JComboBox(options);
 		thresholdPanel2.add(debugLabel);
 		thresholdPanel2.add(debug);
+		noSUCC = new JCheckBox("Do not use successors when calculating probabilities");
+		PRED = new JCheckBox("Use predecessors when calculating probabilities");
+		basicFBP = new JCheckBox("Use the basic implementation of the FindBaseProb function");
+		thresholdPanel2.add(noSUCC);
+		thresholdPanel2.add(new JPanel());
+		thresholdPanel2.add(PRED);
+		thresholdPanel2.add(new JPanel());
+		thresholdPanel2.add(basicFBP);
+		thresholdPanel2.add(new JPanel());
 		JPanel thresholdPanelHold2 = new JPanel();
 		thresholdPanelHold2.add(thresholdPanel2);
 		/*
@@ -325,6 +336,15 @@ public class Learn extends JPanel implements ActionListener {
 					geneNet += " -tj " + maxVectorSize;
 					double background = Double.parseDouble(this.background.getText().trim());
 					geneNet += " -tp " + background;
+					if (noSUCC.isSelected()) {
+						geneNet += " -noSUCC";
+					}
+					if (PRED.isSelected()) {
+						geneNet += " -PRED";
+					}
+					if (basicFBP.isSelected()) {
+						geneNet += " -basicFBP";
+					}
 				} catch (Exception e2) {
 					JOptionPane.showMessageDialog(this, "Must enter numbers into input fields.",
 							"Error", JOptionPane.ERROR_MESSAGE);
@@ -353,6 +373,7 @@ public class Learn extends JPanel implements ActionListener {
 					write.close();
 					geneNet += " --readLevels";
 				}
+				geneNet += " --cpp_harshenBoundsOnTie --cpp_cmp_output_donotInvertSortOrder --cpp_seedParents --cmp_score_mustNotWinMajority";
 				/*
 				 * if (harshenBoundsOnTie.isSelected()) { geneNet += "
 				 * --cpp_harshenBoundsOnTie"; } if
