@@ -224,24 +224,30 @@ sub check_correctness{
     my $wrong_influence_arcs = 0;
     my $extra_arcs = 0;
 
-    while ($in =~ m/s([0-9]+) -> s([0-9]+) \[ *color *= *\"(.*?)\"(.+)arrowhead=((vee|tee))/g){
-	my $state1 = $1;
-	my $state2 = $2;
-	my $color = $3;
-	my $mid = $4;
-	my $arc = $5;
-	if ($color =~ m/gray/i){
-	    $not_found_arcs++;
-	}
-	elsif ($color =~ m/black/i){
+    while ($in =~ m/s([0-9]+) -> s([0-9]+) (.*)/g){
+        my $left = $3;
+        #print "Matched with '$left'\n";
+        if ($left =~ m/black/){ #should not have been reported
 	    $extra_arcs++;
-	}
-	elsif($mid =~ m/dashed/i){
+            #$precision_total++;
+        }
+        elsif ($left =~ m/dotted/){ #It is there, but not found
+	    $not_found_arcs++;
+            #$recall_total++;
+        }
+        elsif ($left =~ m/dashed/){ #wrong influence type
+            print "Extra arcs";
 	    $wrong_influence_arcs++;
-	}
-	else{
+            #$precision_total++;
+            #$recall_total++;
+        }
+        else{ #there and reported
 	    $correct_arcs++;
-	}
+            #$precision_correct++;
+            #$precision_total++;
+            #$recall_correct++;
+            #$recall_total++;
+        }
     }
 
     my $num_genes = 0;
