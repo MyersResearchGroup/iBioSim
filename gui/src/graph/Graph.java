@@ -1480,7 +1480,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			sizePanel.add(widthField);
 			sizePanel.add(heightLabel);
 			sizePanel.add(heightField);
-			Object[] options2 = { "Save", "Cancel" };
+			Object[] options2 = { "Export", "Cancel" };
 			int value = JOptionPane.showOptionDialog(biomodelsim.frame(), sizePanel,
 					"Enter Size Of File", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
 					null, options2, options2[0]);
@@ -1664,7 +1664,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				}
 			}
 		} catch (Exception e1) {
-			JOptionPane.showMessageDialog(biomodelsim.frame(), "Unable To Save File!", "Error",
+			JOptionPane.showMessageDialog(biomodelsim.frame(), "Unable To Export File!", "Error",
 					JOptionPane.ERROR_MESSAGE);
 		}
 	}
