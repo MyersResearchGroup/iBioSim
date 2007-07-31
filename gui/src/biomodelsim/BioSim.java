@@ -192,7 +192,7 @@ public class BioSim implements MouseListener, ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == about) {
 			final JFrame f = new JFrame("About");
-			JLabel bioSim = new JLabel("BioSim 0.2");
+			JLabel bioSim = new JLabel("BioSim 0.3");
 			Font font = bioSim.getFont();
 			font = font.deriveFont(Font.BOLD, 36.0f);
 			bioSim.setFont(font);
@@ -809,21 +809,6 @@ public class BioSim implements MouseListener, ActionListener {
 		} else if (tab.getComponentAt(index).getName().contains("Graph")) {
 			Graph g = (Graph) tab.getComponentAt(index);
 			g.save();
-			/*
-			 * Object[] options = { "Export", "Cancel" }; Object[] saveOptions = {
-			 * "JPEG", "PNG", "PDF", "EPS", "SVG" }; JComboBox choice = new
-			 * JComboBox(saveOptions); JPanel export = new JPanel();
-			 * export.add(new JLabel("Select output filetype for exporting
-			 * graph:")); export.add(choice); int value = JOptionPane
-			 * .showOptionDialog(frame, export, "Export",
-			 * JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
-			 * options, options[0]); if (value == JOptionPane.YES_OPTION) { if
-			 * (choice.getSelectedItem().equals("JPEG")) { g.export(0); } else
-			 * if (choice.getSelectedItem().equals("PNG")) { g.export(1); } else
-			 * if (choice.getSelectedItem().equals("PDF")) { g.export(2); } else
-			 * if (choice.getSelectedItem().equals("EPS")) { g.export(3); } else {
-			 * g.export(4); } }
-			 */
 			return 1;
 		} else {
 			for (int i = 0; i < ((JTabbedPane) tab.getComponentAt(index)).getTabCount(); i++) {
@@ -840,26 +825,6 @@ public class BioSim implements MouseListener, ActionListener {
 						Graph g = ((Graph) ((JTabbedPane) tab.getComponentAt(index))
 								.getComponent(i));
 						g.save();
-						/*
-						 * Object[] options = { "Export", "Cancel" }; Object[]
-						 * saveOptions = { "JPEG", "PNG", "PDF", "EPS", "SVG" };
-						 * JComboBox choice = new JComboBox(saveOptions); JPanel
-						 * export = new JPanel(); export.add(new JLabel("Select
-						 * output filetype for exporting graph:"));
-						 * export.add(choice); int value =
-						 * JOptionPane.showOptionDialog(frame, export, "Export",
-						 * JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
-						 * null, options, options[0]); if (value ==
-						 * JOptionPane.YES_OPTION) { if
-						 * (choice.getSelectedItem().equals("JPEG")) {
-						 * g.export(0); } else if
-						 * (choice.getSelectedItem().equals("PNG")) {
-						 * g.export(1); } else if
-						 * (choice.getSelectedItem().equals("PDF")) {
-						 * g.export(2); } else if
-						 * (choice.getSelectedItem().equals("EPS")) {
-						 * g.export(3); } else { g.export(4); } }
-						 */
 					}
 				}
 			}
