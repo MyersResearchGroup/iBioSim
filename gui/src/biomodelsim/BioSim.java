@@ -648,6 +648,7 @@ public class BioSim implements MouseListener, ActionListener {
 					if (new File(filename).isDirectory()) {
 						String[] list = new File(filename).list();
 						String getAFile = "";
+						String open = null;
 						boolean ode = false;
 						int run = 1;
 						for (int i = 0; i < list.length; i++) {
@@ -675,6 +676,8 @@ public class BioSim implements MouseListener, ActionListener {
 										getAFile = filename + File.separator + list[i];
 										ode = true;
 									}
+								} else if (end.equals(".grf")) {
+									open = filename + File.separator + list[i];
 								}
 							}
 						}
@@ -694,14 +697,14 @@ public class BioSim implements MouseListener, ActionListener {
 									addTab("Graph", new Graph(getAFile, "amount",
 											filename.split(File.separator)[filename
 													.split(File.separator).length - 1]
-													+ " simulation results", id, first, run, -1,
-											null, "time", this), null);
+													+ " simulation results", id, first, -1, null,
+											"time", this, open, log), null);
 								} else {
 									addTab("Graph", new Graph(getAFile, "amount",
 											filename.split(File.separator)[filename
 													.split(File.separator).length - 1]
-													+ " simulation results", id, first, run, -1,
-											null, "time", this), null);
+													+ " simulation results", id, first, -1, null,
+											"time", this, open, log), null);
 								}
 							}
 						} else {
@@ -774,14 +777,12 @@ public class BioSim implements MouseListener, ActionListener {
 
 	/**
 	 * Prompts the user to save work that has been done.
-	 * 
-	 * @param wait
 	 */
 	public int save(int index, boolean wait) {
 		if (tab.getComponentAt(index).getName().equals("Simulate")) {
 			Object[] options = { "Save", "Cancel" };
-			int value = JOptionPane.showOptionDialog(frame, "Do you want to save changes to the"
-					+ " simulation?", "Save Changes", JOptionPane.YES_NO_OPTION,
+			int value = JOptionPane.showOptionDialog(frame, "Do you want to save changes to "
+					+ tab.getTitleAt(index) + "?", "Save Changes", JOptionPane.YES_NO_OPTION,
 					JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 			if (value == JOptionPane.YES_OPTION) {
 				((Reb2Sac) tab.getComponentAt(index)).save();
@@ -807,28 +808,22 @@ public class BioSim implements MouseListener, ActionListener {
 			}
 		} else if (tab.getComponentAt(index).getName().contains("Graph")) {
 			Graph g = (Graph) tab.getComponentAt(index);
-			Object[] options = { "Export", "Cancel" };
-			Object[] saveOptions = { "JPEG", "PNG", "PDF", "EPS", "SVG" };
-			JComboBox choice = new JComboBox(saveOptions);
-			JPanel export = new JPanel();
-			export.add(new JLabel("Select output filetype for exporting graph:"));
-			export.add(choice);
-			int value = JOptionPane
-					.showOptionDialog(frame, export, "Export", JOptionPane.YES_NO_OPTION,
-							JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-			if (value == JOptionPane.YES_OPTION) {
-				if (choice.getSelectedItem().equals("JPEG")) {
-					g.export(0);
-				} else if (choice.getSelectedItem().equals("PNG")) {
-					g.export(1);
-				} else if (choice.getSelectedItem().equals("PDF")) {
-					g.export(2);
-				} else if (choice.getSelectedItem().equals("EPS")) {
-					g.export(3);
-				} else {
-					g.export(4);
-				}
-			}
+			g.save();
+			/*
+			 * Object[] options = { "Export", "Cancel" }; Object[] saveOptions = {
+			 * "JPEG", "PNG", "PDF", "EPS", "SVG" }; JComboBox choice = new
+			 * JComboBox(saveOptions); JPanel export = new JPanel();
+			 * export.add(new JLabel("Select output filetype for exporting
+			 * graph:")); export.add(choice); int value = JOptionPane
+			 * .showOptionDialog(frame, export, "Export",
+			 * JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
+			 * options, options[0]); if (value == JOptionPane.YES_OPTION) { if
+			 * (choice.getSelectedItem().equals("JPEG")) { g.export(0); } else
+			 * if (choice.getSelectedItem().equals("PNG")) { g.export(1); } else
+			 * if (choice.getSelectedItem().equals("PDF")) { g.export(2); } else
+			 * if (choice.getSelectedItem().equals("EPS")) { g.export(3); } else {
+			 * g.export(4); } }
+			 */
 			return 1;
 		} else {
 			for (int i = 0; i < ((JTabbedPane) tab.getComponentAt(index)).getTabCount(); i++) {
@@ -844,28 +839,27 @@ public class BioSim implements MouseListener, ActionListener {
 					if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof Graph) {
 						Graph g = ((Graph) ((JTabbedPane) tab.getComponentAt(index))
 								.getComponent(i));
-						Object[] options = { "Export", "Cancel" };
-						Object[] saveOptions = { "JPEG", "PNG", "PDF", "EPS", "SVG" };
-						JComboBox choice = new JComboBox(saveOptions);
-						JPanel export = new JPanel();
-						export.add(new JLabel("Select output filetype for exporting graph:"));
-						export.add(choice);
-						int value = JOptionPane.showOptionDialog(frame, export, "Export",
-								JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
-								options, options[0]);
-						if (value == JOptionPane.YES_OPTION) {
-							if (choice.getSelectedItem().equals("JPEG")) {
-								g.export(0);
-							} else if (choice.getSelectedItem().equals("PNG")) {
-								g.export(1);
-							} else if (choice.getSelectedItem().equals("PDF")) {
-								g.export(2);
-							} else if (choice.getSelectedItem().equals("EPS")) {
-								g.export(3);
-							} else {
-								g.export(4);
-							}
-						}
+						g.save();
+						/*
+						 * Object[] options = { "Export", "Cancel" }; Object[]
+						 * saveOptions = { "JPEG", "PNG", "PDF", "EPS", "SVG" };
+						 * JComboBox choice = new JComboBox(saveOptions); JPanel
+						 * export = new JPanel(); export.add(new JLabel("Select
+						 * output filetype for exporting graph:"));
+						 * export.add(choice); int value =
+						 * JOptionPane.showOptionDialog(frame, export, "Export",
+						 * JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
+						 * null, options, options[0]); if (value ==
+						 * JOptionPane.YES_OPTION) { if
+						 * (choice.getSelectedItem().equals("JPEG")) {
+						 * g.export(0); } else if
+						 * (choice.getSelectedItem().equals("PNG")) {
+						 * g.export(1); } else if
+						 * (choice.getSelectedItem().equals("PDF")) {
+						 * g.export(2); } else if
+						 * (choice.getSelectedItem().equals("EPS")) {
+						 * g.export(3); } else { g.export(4); } }
+						 */
 					}
 				}
 			}
@@ -1099,6 +1093,7 @@ public class BioSim implements MouseListener, ActionListener {
 				String getAFile = "";
 				String openFile = "";
 				String graphFile = "";
+				String open = null;
 				boolean ode = false;
 				boolean stoch = false;
 				int run = 1;
@@ -1140,6 +1135,8 @@ public class BioSim implements MouseListener, ActionListener {
 								graphFile = filename + File.separator + list[i];
 								ode = true;
 							}
+						} else if (end.equals(".grf")) {
+							open = filename + File.separator + list[i];
 						}
 					}
 				}
@@ -1169,11 +1166,11 @@ public class BioSim implements MouseListener, ActionListener {
 					}
 					if (!graphFile.equals("")) {
 						if (ode) {
-							simTab.addTab("Graph", reb2sac.createGraph(graphFile, run));
+							simTab.addTab("Graph", reb2sac.createGraph(graphFile, open));
 							simTab.getComponentAt(simTab.getComponents().length - 1).setName(
 									"Graph");
 						} else {
-							simTab.addTab("Graph", reb2sac.createGraph(graphFile, run));
+							simTab.addTab("Graph", reb2sac.createGraph(graphFile, open));
 							simTab.getComponentAt(simTab.getComponents().length - 1).setName(
 									"Graph");
 						}
@@ -1252,9 +1249,10 @@ public class BioSim implements MouseListener, ActionListener {
 						} else {
 							Object[] options = { "Yes", "No", "Cancel" };
 							int value = JOptionPane.showOptionDialog(frame,
-									"Do you want to save changes to the analysis view?",
-									"Save Changes", JOptionPane.YES_NO_CANCEL_OPTION,
-									JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+									"Do you want to save changes to " + tab.getTitleAt(tabIndex)
+											+ "?", "Save Changes",
+									JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE,
+									null, options, options[0]);
 							if (value == JOptionPane.YES_OPTION) {
 								if (save(tabIndex, false) == 1) {
 									tabPane.remove(tabIndex);

@@ -43,13 +43,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 	private JFreeChart chart; // Graph of the output data
 
-	private int run; // total number of runs
+	private String outDir; // output directory
 
-	private String printer_track_quantity1; // label for y-axis on chart
-
-	private String outDir1; // output directory
-
-	private String printer_id1; // printer id
+	private String printer_id; // printer id
 
 	/*
 	 * Text fields used to change the graph window
@@ -61,6 +57,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	private String savedPics; // directory for saved pictures
 
 	private BioSim biomodelsim; // tstubd gui
+
+	private JButton save;
 
 	private JButton exportJPeg, exportPng, exportPdf, exportEps, exportSvg; // buttons
 
@@ -76,18 +74,21 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 	private boolean displayed;
 
+	private Log log;
+
 	/**
 	 * Creates a Graph Object from the data given and calls the private graph
 	 * helper method.
+	 * 
+	 * @param open
 	 */
 	public Graph(String file, String printer_track_quantity, String label, String printer_id,
-			String outDir, int run, int readIn, XYSeriesCollection dataset, String time,
-			BioSim biomodelsim) {
+			String outDir, int readIn, XYSeriesCollection dataset, String time, BioSim biomodelsim,
+			String open, Log log) {
 		// initializes member variables
-		this.run = run;
-		this.printer_track_quantity1 = printer_track_quantity;
-		this.outDir1 = outDir;
-		this.printer_id1 = printer_id;
+		this.log = log;
+		this.outDir = outDir;
+		this.printer_id = printer_id;
 		this.biomodelsim = biomodelsim;
 		XYSeriesCollection data;
 		if (dataset == null) {
@@ -103,6 +104,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		selected = "";
 		lastSelected = "";
 		graph(file, printer_track_quantity, label, readIn, data, time);
+		if (open != null) {
+			open(open);
+		}
 	}
 
 	/**
@@ -150,16 +154,19 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 		// creates the buttons for the graph frame
 		JPanel ButtonHolder = new JPanel();
+		save = new JButton("Save");
 		exportJPeg = new JButton("Export As JPEG");
 		exportPng = new JButton("Export As PNG");
 		exportPdf = new JButton("Export As PDF");
 		exportEps = new JButton("Export As EPS");
 		exportSvg = new JButton("Export As SVG");
+		save.addActionListener(this);
 		exportJPeg.addActionListener(this);
 		exportPng.addActionListener(this);
 		exportPdf.addActionListener(this);
 		exportEps.addActionListener(this);
 		exportSvg.addActionListener(this);
+		ButtonHolder.add(save);
 		ButtonHolder.add(exportJPeg);
 		ButtonHolder.add(exportPng);
 		ButtonHolder.add(exportPdf);
@@ -374,8 +381,12 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	 * boxes are selected.
 	 */
 	public void actionPerformed(ActionEvent e) {
+		// if the save button is clicked
+		if (e.getSource() == save) {
+			save();
+		}
 		// if the export as jpeg button is clicked
-		if (e.getSource() == exportJPeg) {
+		else if (e.getSource() == exportJPeg) {
 			export(0);
 		}
 		// if the export as png button is clicked
@@ -651,12 +662,12 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			titlePanel.add(new JPanel());
 			titlePanel.add(new JPanel());
 			titlePanel.add(resize);
-			String simDirString = outDir1.split(File.separator)[outDir1.split(File.separator).length - 1];
+			String simDirString = outDir.split(File.separator)[outDir.split(File.separator).length - 1];
 			final DefaultMutableTreeNode simDir = new DefaultMutableTreeNode(simDirString);
-			String[] files = new File(outDir1).list();
+			String[] files = new File(outDir).list();
 			boolean add = false;
 			for (String file : files) {
-				if (file.contains(printer_id1.substring(0, printer_id1.length() - 8))) {
+				if (file.contains(printer_id.substring(0, printer_id.length() - 8))) {
 					if (file.contains("run-")) {
 						add = true;
 					} else {
@@ -671,9 +682,24 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				simDir.add(new DefaultMutableTreeNode("Variance"));
 				simDir.add(new DefaultMutableTreeNode("Standard Deviation"));
 			}
+			int run = 1;
+			for (String s : new File(outDir).list()) {
+				if (s.length() > 4) {
+					String end = "";
+					for (int j = 1; j < 5; j++) {
+						end = s.charAt(s.length() - j) + end;
+					}
+					if (end.equals(".tsd") || end.equals(".dat") || end.equals(".csv")) {
+						if (s.contains("run-")) {
+							run = Math.max(run, Integer.parseInt(s.substring(4, s.length()
+									- end.length())));
+						}
+					}
+				}
+			}
 			for (int i = 0; i < run; i++) {
-				if (new File(outDir1 + File.separator + "run-" + (i + 1) + "."
-						+ printer_id1.substring(0, printer_id1.length() - 8)).exists()) {
+				if (new File(outDir + File.separator + "run-" + (i + 1) + "."
+						+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
 					simDir.add(new DefaultMutableTreeNode("run-" + (i + 1)));
 				}
 			}
@@ -1268,13 +1294,13 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						if (!g.getRunNumber().equals("Average")
 								&& !g.getRunNumber().equals("Variance")
 								&& !g.getRunNumber().equals("Standard Deviation")) {
-							readGraphSpecies(outDir1 + File.separator + g.getRunNumber() + "."
-									+ printer_id1.substring(0, printer_id1.length() - 8),
-									biomodelsim.frame());
-							ArrayList<ArrayList<Double>> data = readData(outDir1 + File.separator
+							readGraphSpecies(outDir + File.separator + g.getRunNumber() + "."
+									+ printer_id.substring(0, printer_id.length() - 8), biomodelsim
+									.frame());
+							ArrayList<ArrayList<Double>> data = readData(outDir + File.separator
 									+ g.getRunNumber() + "."
-									+ printer_id1.substring(0, printer_id1.length() - 8),
-									biomodelsim.frame(), printer_track_quantity1, g.getRunNumber());
+									+ printer_id.substring(0, printer_id.length() - 8), biomodelsim
+									.frame(), y.getText().trim(), g.getRunNumber());
 							for (int i = 2; i < graphSpecies.size(); i++) {
 								String index = graphSpecies.get(i);
 								ArrayList<Double> index2 = data.get(i);
@@ -1296,13 +1322,12 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								}
 							}
 						} else {
-							readGraphSpecies(outDir1 + File.separator + "run-1."
-									+ printer_id1.substring(0, printer_id1.length() - 8),
-									biomodelsim.frame());
-							ArrayList<ArrayList<Double>> data = readData(
-									outDir1 + File.separator + "run-1."
-											+ printer_id1.substring(0, printer_id1.length() - 8),
-									biomodelsim.frame(), printer_track_quantity1, g.getRunNumber()
+							readGraphSpecies(outDir + File.separator + "run-1."
+									+ printer_id.substring(0, printer_id.length() - 8), biomodelsim
+									.frame());
+							ArrayList<ArrayList<Double>> data = readData(outDir + File.separator
+									+ "run-1." + printer_id.substring(0, printer_id.length() - 8),
+									biomodelsim.frame(), y.getText().trim(), g.getRunNumber()
 											.toLowerCase());
 							for (int i = 2; i < graphSpecies.size(); i++) {
 								String index = graphSpecies.get(i);
@@ -1334,7 +1359,6 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							dataset);
 					chart.getXYPlot().setRenderer(rend);
 					XYPlot plot = chart.getXYPlot();
-					printer_track_quantity1 = y.getText().trim();
 					if (resize.isSelected()) {
 						resize(dataset);
 					} else {
@@ -1402,18 +1426,30 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				true, true, false);
 		chart.addProgressListener(this);
 		ChartPanel graph = new ChartPanel(chart);
+		if (graphed.isEmpty()) {
+			graph.setLayout(new GridLayout(1, 1));
+			JLabel edit = new JLabel("Click here to create graph");
+			Font font = edit.getFont();
+			font = font.deriveFont(Font.BOLD, 42.0f);
+			edit.setFont(font);
+			edit.setHorizontalAlignment(SwingConstants.CENTER);
+			graph.add(edit);
+		}
 		graph.addMouseListener(this);
 		JPanel ButtonHolder = new JPanel();
+		save = new JButton("Save");
 		exportJPeg = new JButton("Export As JPEG");
 		exportPng = new JButton("Export As PNG");
 		exportPdf = new JButton("Export As PDF");
 		exportEps = new JButton("Export As EPS");
 		exportSvg = new JButton("Export As SVG");
+		save.addActionListener(this);
 		exportJPeg.addActionListener(this);
 		exportPng.addActionListener(this);
 		exportPdf.addActionListener(this);
 		exportEps.addActionListener(this);
 		exportSvg.addActionListener(this);
+		ButtonHolder.add(save);
 		ButtonHolder.add(exportJPeg);
 		ButtonHolder.add(exportPng);
 		ButtonHolder.add(exportPdf);
@@ -1686,7 +1722,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						String[] findNum = startFile.split(File.separator);
 						String search = findNum[findNum.length - 1];
 						int firstOne = Integer.parseInt(search.substring(4, search.length() - 4));
-						for (String f : new File(outDir1).list()) {
+						for (String f : new File(outDir).list()) {
 							if (f.contains(fileStem)) {
 								int tempNum = Integer.parseInt(f.substring(fileStem.length(), f
 										.length() - 4));
@@ -1712,33 +1748,32 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								}
 								boolean loop = true;
 								while (loop && j < runsToMake && (j + 1) != skip) {
-									if (new File(outDir1 + File.separator + fileStem + (j + 1)
-											+ "."
-											+ printer_id1.substring(0, printer_id1.length() - 8))
+									if (new File(outDir + File.separator + fileStem + (j + 1) + "."
+											+ printer_id.substring(0, printer_id.length() - 8))
 											.exists()) {
 										input = new BufferedInputStream(
 												new ProgressMonitorInputStream(
 														biomodelsim.frame(),
 														"Reading Reb2sac Output Data From "
 																+ new File(
-																		outDir1
+																		outDir
 																				+ File.separator
 																				+ fileStem
 																				+ (j + 1)
 																				+ "."
-																				+ printer_id1
+																				+ printer_id
 																						.substring(
 																								0,
-																								printer_id1
+																								printer_id
 																										.length() - 8))
 																		.getName(),
-														new FileInputStream(new File(outDir1
+														new FileInputStream(new File(outDir
 																+ File.separator
 																+ fileStem
 																+ (j + 1)
 																+ "."
-																+ printer_id1.substring(0,
-																		printer_id1.length() - 8)))));
+																+ printer_id.substring(0,
+																		printer_id.length() - 8)))));
 										for (int i = 0; i < readCount; i++) {
 											input.read();
 										}
@@ -1907,6 +1942,209 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			return variance;
 		} else {
 			return deviation;
+		}
+	}
+
+	public void save() {
+		Properties graph = new Properties();
+		graph.setProperty("title", chart.getTitle().getText());
+		graph.setProperty("x.axis", chart.getXYPlot().getDomainAxis().getLabel());
+		graph.setProperty("y.axis", chart.getXYPlot().getRangeAxis().getLabel());
+		graph.setProperty("x.min", XMin.getText());
+		graph.setProperty("x.max", XMax.getText());
+		graph.setProperty("x.scale", XScale.getText());
+		graph.setProperty("y.min", YMin.getText());
+		graph.setProperty("y.max", YMax.getText());
+		graph.setProperty("y.scale", YScale.getText());
+		graph.setProperty("auto.resize", "" + resize.isSelected());
+		for (int i = 0; i < graphed.size(); i++) {
+			graph.setProperty("species.connected." + i, "" + graphed.get(i).getConnected());
+			graph.setProperty("species.filled." + i, "" + graphed.get(i).getFilled());
+			graph.setProperty("species.number." + i, "" + graphed.get(i).getNumber());
+			graph.setProperty("species.run.number." + i, graphed.get(i).getRunNumber());
+			graph.setProperty("species.name." + i, graphed.get(i).getSpecies());
+			graph.setProperty("species.visible." + i, "" + graphed.get(i).getVisible());
+			graph.setProperty("species.paint." + i, graphed.get(i).getShapeAndPaint()
+					.getPaintName());
+			graph.setProperty("species.shape." + i, graphed.get(i).getShapeAndPaint()
+					.getShapeName());
+		}
+		try {
+			graph.store(new FileOutputStream(new File(outDir + File.separator + "graph.grf")),
+					"Graph Data");
+			log.addText("Saving graph file:\n" + outDir + File.separator
+					+ outDir.split(File.separator)[outDir.split(File.separator).length - 1]
+					+ ".grf" + "\n");
+		} catch (Exception except) {
+			JOptionPane.showMessageDialog(biomodelsim.frame(), "Unable To Save Graph!", "Error",
+					JOptionPane.ERROR_MESSAGE);
+		}
+	}
+
+	private void open(String filename) {
+		Properties graph = new Properties();
+		try {
+			graph.load(new FileInputStream(new File(filename)));
+			XMin.setText(graph.getProperty("x.min"));
+			XMax.setText(graph.getProperty("x.max"));
+			XScale.setText(graph.getProperty("x.scale"));
+			YMin.setText(graph.getProperty("y.min"));
+			YMax.setText(graph.getProperty("y.max"));
+			YScale.setText(graph.getProperty("y.scale"));
+			if (graph.getProperty("auto.resize").equals("true")) {
+				resize.setSelected(true);
+			} else {
+				resize.setSelected(false);
+			}
+			int next = 0;
+			while (graph.containsKey("species.name." + next)) {
+				boolean connected, filled, visible;
+				if (graph.getProperty("species.connected." + next).equals("true")) {
+					connected = true;
+				} else {
+					connected = false;
+				}
+				if (graph.getProperty("species.filled." + next).equals("true")) {
+					filled = true;
+				} else {
+					filled = false;
+				}
+				if (graph.getProperty("species.visible." + next).equals("true")) {
+					visible = true;
+				} else {
+					visible = false;
+				}
+				graphed.add(new GraphSpecies(
+						shapes.get(graph.getProperty("species.shape." + next)), colors.get(graph
+								.getProperty("species.paint." + next)), filled, visible, connected,
+						graph.getProperty("species.run.number." + next), graph
+								.getProperty("species.name." + next), Integer.parseInt(graph
+								.getProperty("species.number." + next))));
+				next++;
+			}
+			double minY = 0;
+			double maxY = 0;
+			double scaleY = 0;
+			double minX = 0;
+			double maxX = 0;
+			double scaleX = 0;
+			try {
+				minY = Double.parseDouble(YMin.getText().trim());
+				maxY = Double.parseDouble(YMax.getText().trim());
+				scaleY = Double.parseDouble(YScale.getText().trim());
+				minX = Double.parseDouble(XMin.getText().trim());
+				maxX = Double.parseDouble(XMax.getText().trim());
+				scaleX = Double.parseDouble(XScale.getText().trim());
+				NumberFormat num = NumberFormat.getInstance();
+				num.setMaximumFractionDigits(4);
+				num.setGroupingUsed(false);
+				minY = Double.parseDouble(num.format(minY));
+				maxY = Double.parseDouble(num.format(maxY));
+				scaleY = Double.parseDouble(num.format(scaleY));
+				minX = Double.parseDouble(num.format(minX));
+				maxX = Double.parseDouble(num.format(maxX));
+				scaleX = Double.parseDouble(num.format(scaleX));
+			} catch (Exception e1) {
+			}
+			ArrayList<XYSeries> graphData = new ArrayList<XYSeries>();
+			XYLineAndShapeRenderer rend = (XYLineAndShapeRenderer) chart.getXYPlot().getRenderer();
+			int thisOne = -1;
+			for (int i = 1; i < graphed.size(); i++) {
+				GraphSpecies index = graphed.get(i);
+				int j = i;
+				while ((j > 0)
+						&& (graphed.get(j - 1).getSpecies().compareToIgnoreCase(index.getSpecies()) > 0)) {
+					graphed.set(j, graphed.get(j - 1));
+					j = j - 1;
+				}
+				graphed.set(j, index);
+			}
+			for (GraphSpecies g : graphed) {
+				thisOne++;
+				rend.setSeriesVisible(thisOne, true);
+				rend.setSeriesLinesVisible(thisOne, g.getConnected());
+				rend.setSeriesShapesFilled(thisOne, g.getFilled());
+				rend.setSeriesShapesVisible(thisOne, g.getVisible());
+				rend.setSeriesPaint(thisOne, g.getShapeAndPaint().getPaint());
+				rend.setSeriesShape(thisOne, g.getShapeAndPaint().getShape());
+				if (!g.getRunNumber().equals("Average") && !g.getRunNumber().equals("Variance")
+						&& !g.getRunNumber().equals("Standard Deviation")) {
+					readGraphSpecies(outDir + File.separator + g.getRunNumber() + "."
+							+ printer_id.substring(0, printer_id.length() - 8), biomodelsim.frame());
+					ArrayList<ArrayList<Double>> data = readData(outDir + File.separator
+							+ g.getRunNumber() + "."
+							+ printer_id.substring(0, printer_id.length() - 8),
+							biomodelsim.frame(), graph.getProperty("y.axis"), g.getRunNumber());
+					for (int i = 2; i < graphSpecies.size(); i++) {
+						String index = graphSpecies.get(i);
+						ArrayList<Double> index2 = data.get(i);
+						int j = i;
+						while ((j > 1) && graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
+							graphSpecies.set(j, graphSpecies.get(j - 1));
+							data.set(j, data.get(j - 1));
+							j = j - 1;
+						}
+						graphSpecies.set(j, index);
+						data.set(j, index2);
+					}
+					graphData.add(new XYSeries(g.getSpecies()));
+					if (data.size() != 0) {
+						for (int i = 0; i < (data.get(0)).size(); i++) {
+							graphData.get(graphData.size() - 1).add((data.get(0)).get(i),
+									(data.get(g.getNumber() + 1)).get(i));
+						}
+					}
+				} else {
+					readGraphSpecies(outDir + File.separator + "run-1."
+							+ printer_id.substring(0, printer_id.length() - 8), biomodelsim.frame());
+					ArrayList<ArrayList<Double>> data = readData(outDir + File.separator + "run-1."
+							+ printer_id.substring(0, printer_id.length() - 8),
+							biomodelsim.frame(), graph.getProperty("y.axis"), g.getRunNumber()
+									.toLowerCase());
+					for (int i = 2; i < graphSpecies.size(); i++) {
+						String index = graphSpecies.get(i);
+						ArrayList<Double> index2 = data.get(i);
+						int j = i;
+						while ((j > 1) && graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
+							graphSpecies.set(j, graphSpecies.get(j - 1));
+							data.set(j, data.get(j - 1));
+							j = j - 1;
+						}
+						graphSpecies.set(j, index);
+						data.set(j, index2);
+					}
+					graphData.add(new XYSeries(g.getSpecies()));
+					if (data.size() != 0) {
+						for (int i = 0; i < (data.get(0)).size(); i++) {
+							graphData.get(graphData.size() - 1).add((data.get(0)).get(i),
+									(data.get(g.getNumber() + 1)).get(i));
+						}
+					}
+				}
+			}
+			XYSeriesCollection dataset = new XYSeriesCollection();
+			for (int i = 0; i < graphData.size(); i++) {
+				dataset.addSeries(graphData.get(i));
+			}
+			fixGraph(graph.getProperty("title"), graph.getProperty("x.axis"), graph
+					.getProperty("y.axis"), dataset);
+			chart.getXYPlot().setRenderer(rend);
+			XYPlot plot = chart.getXYPlot();
+			if (resize.isSelected()) {
+				resize(dataset);
+			} else {
+				NumberAxis axis = (NumberAxis) plot.getRangeAxis();
+				axis.setAutoTickUnitSelection(false);
+				axis.setRange(minY, maxY);
+				axis.setTickUnit(new NumberTickUnit(scaleY));
+				axis = (NumberAxis) plot.getDomainAxis();
+				axis.setAutoTickUnitSelection(false);
+				axis.setRange(minX, maxX);
+				axis.setTickUnit(new NumberTickUnit(scaleX));
+			}
+		} catch (Exception except) {
+			JOptionPane.showMessageDialog(biomodelsim.frame(), "Unable To Load Graph!", "Error",
+					JOptionPane.ERROR_MESSAGE);
 		}
 	}
 

@@ -538,7 +538,7 @@ public class Nary_Run implements ActionListener, Runnable {
 			}
 		}
 		runProgram.execute(filename, sbml, dot, xhtml, naryFrame, ODE, monteCarlo, sim, printer_id,
-				printer_track_quantity, outDir, run, nary, 2, intSpecies, log, usingSSA, ssaFile,
+				printer_track_quantity, outDir, nary, 2, intSpecies, log, usingSSA, ssaFile,
 				biomodelsim, simTab);
 		running.setCursor(null);
 		running.dispose();
