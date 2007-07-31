@@ -253,9 +253,9 @@ public class Run implements ActionListener {
 	 */
 	public int execute(String filename, JRadioButton sbml, JRadioButton dot, JRadioButton xhtml,
 			Component component, JRadioButton ode, JRadioButton monteCarlo, String sim,
-			String printer_id, String printer_track_quantity, String outDir, int run,
-			JRadioButton nary, int naryRun, String[] intSpecies, Log log, JCheckBox usingSSA,
-			String ssaFile, BioSim biomodelsim, JTabbedPane simTab) {
+			String printer_id, String printer_track_quantity, String outDir, JRadioButton nary,
+			int naryRun, String[] intSpecies, Log log, JCheckBox usingSSA, String ssaFile,
+			BioSim biomodelsim, JTabbedPane simTab) {
 		Runtime exec = Runtime.getRuntime();
 		int exitValue = 255;
 		try {
@@ -410,8 +410,8 @@ public class Run implements ActionListener {
 									+ printer_id.substring(0, printer_id.length() - 8),
 									printer_track_quantity, outDir.split(File.separator)[outDir
 											.split(File.separator).length - 1]
-											+ " simulation results", printer_id, outDir, run, -1,
-									null, "time", biomodelsim));
+											+ " simulation results", printer_id, outDir, -1, null,
+									"time", biomodelsim, null, log));
 							simTab.getComponentAt(simTab.getComponents().length - 1).setName(
 									"Graph");
 						} else {
@@ -419,8 +419,8 @@ public class Run implements ActionListener {
 									+ "run-1." + printer_id.substring(0, printer_id.length() - 8),
 									printer_track_quantity, outDir.split(File.separator)[outDir
 											.split(File.separator).length - 1]
-											+ " simulation results", printer_id, outDir, run, -1,
-									null, "time", biomodelsim));
+											+ " simulation results", printer_id, outDir, -1, null,
+									"time", biomodelsim, null, log));
 							simTab.getComponentAt(change).setName("Graph");
 						}
 						change = -1;
@@ -452,8 +452,8 @@ public class Run implements ActionListener {
 										+ printer_id.substring(0, printer_id.length() - 8),
 										printer_track_quantity, outDir.split(File.separator)[outDir
 												.split(File.separator).length - 1]
-												+ " simulation results", printer_id, outDir, run,
-										-1, null, "time", biomodelsim));
+												+ " simulation results", printer_id, outDir, -1,
+										null, "time", biomodelsim, null, log));
 								simTab.getComponentAt(simTab.getComponents().length - 1).setName(
 										"Graph");
 							} else {
@@ -462,8 +462,8 @@ public class Run implements ActionListener {
 										+ printer_id.substring(0, printer_id.length() - 8),
 										printer_track_quantity, outDir.split(File.separator)[outDir
 												.split(File.separator).length - 1]
-												+ " simulation results", printer_id, outDir, run,
-										-1, null, "time", biomodelsim));
+												+ " simulation results", printer_id, outDir, -1,
+										null, "time", biomodelsim, null, log));
 								simTab.getComponentAt(change).setName("Graph");
 							}
 						} else if (monteCarlo.isSelected()) {
@@ -478,8 +478,8 @@ public class Run implements ActionListener {
 										+ printer_id.substring(0, printer_id.length() - 8),
 										printer_track_quantity, outDir.split(File.separator)[outDir
 												.split(File.separator).length - 1]
-												+ " simulation results", printer_id, outDir, run,
-										-1, null, "time", biomodelsim));
+												+ " simulation results", printer_id, outDir, -1,
+										null, "time", biomodelsim, null, log));
 								simTab.getComponentAt(simTab.getComponents().length - 1).setName(
 										"Graph");
 							} else {
@@ -488,8 +488,8 @@ public class Run implements ActionListener {
 										+ printer_id.substring(0, printer_id.length() - 8),
 										printer_track_quantity, outDir.split(File.separator)[outDir
 												.split(File.separator).length - 1]
-												+ " simulation results", printer_id, outDir, run,
-										-1, null, "time", biomodelsim));
+												+ " simulation results", printer_id, outDir, -1,
+										null, "time", biomodelsim, null, log));
 								simTab.getComponentAt(change).setName("Graph");
 							}
 							change = -1;

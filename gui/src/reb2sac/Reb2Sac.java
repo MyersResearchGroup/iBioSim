@@ -1745,8 +1745,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		}
 		int exit = runProgram.execute(sbmlFile, sbml, dot, xhtml, biomodelsim.frame(), ODE,
 				monteCarlo, sim, printer_id, printer_track_quantity,
-				root + File.separator + outDir, run, nary, 1, intSpecies, log, usingSSA,
-				userdefined, biomodelsim, simTab);
+				root + File.separator + outDir, nary, 1, intSpecies, log, usingSSA, userdefined,
+				biomodelsim, simTab);
 		if (nary.isSelected() && exit == 0) {
 			new Nary_Run(this, amountTerm, ge, gt, eq, lt, le, quantity, simulators, sbmlFile
 					.split(File.separator), sbmlFile, sbml, dot, xhtml, nary, ODE, monteCarlo,
@@ -2651,7 +2651,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		}
 	}
 
-	public Graph createGraph(String graphFile, int run) {
+	public Graph createGraph(String graphFile, String open) {
 		String outDir = root + File.separator + simName;
 		String printer_id = "tsd.printer";
 		String printer_track_quantity = "amount";
@@ -2662,12 +2662,12 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			JRadioButton b = new JRadioButton();
 			b.setSelected(true);
 			return new Graph(graphFile, printer_track_quantity, simName + " simulation results",
-					printer_id, outDir, run, -1, null, "time", biomodelsim);
+					printer_id, outDir, -1, null, "time", biomodelsim, open, log);
 		} else {
 			JRadioButton b = new JRadioButton();
 			b.setSelected(false);
 			return new Graph(graphFile, printer_track_quantity, simName + " simulation results",
-					printer_id, outDir, run, -1, null, "time", biomodelsim);
+					printer_id, outDir, -1, null, "time", biomodelsim, open, log);
 		}
 	}
 
