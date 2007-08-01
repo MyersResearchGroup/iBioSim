@@ -2421,4 +2421,13 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					"Error Saving File", JOptionPane.ERROR_MESSAGE);
 		}
 	}
+
+	public void setFile(String newFile) {
+		file = newFile;
+	}
+
+	public void setModelID(String modelID) {
+		this.modelID.setText(modelID);
+		document.getModel().setId(modelID);
+	}
 }
