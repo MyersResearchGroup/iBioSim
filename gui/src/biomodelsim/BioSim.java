@@ -6,6 +6,7 @@ import java.io.*;
 import javax.swing.*;
 import javax.swing.plaf.basic.*;
 import org.sbml.libsbml.*;
+
 import reb2sac.core.gui.*;
 import learn.core.gui.*;
 import sbmleditor.core.gui.*;
@@ -299,6 +300,14 @@ public class BioSim implements MouseListener, ActionListener {
 		}
 		// if the delete popup menu is selected on a sim directory
 		else if (e.getActionCommand().equals("deleteSim")) {
+			for (int i = 0; i < tab.getTabCount(); i++) {
+				if (tab.getTitleAt(i)
+						.equals(
+								tree.getFile().split(File.separator)[tree.getFile().split(
+										File.separator).length - 1])) {
+					tab.remove(i);
+				}
+			}
 			File dir = new File(tree.getFile());
 			if (dir.isDirectory()) {
 				deleteDir(dir);
@@ -309,6 +318,14 @@ public class BioSim implements MouseListener, ActionListener {
 		}
 		// if the delete popup menu is selected
 		else if (e.getActionCommand().equals("delete")) {
+			for (int i = 0; i < tab.getTabCount(); i++) {
+				if (tab.getTitleAt(i)
+						.equals(
+								tree.getFile().split(File.separator)[tree.getFile().split(
+										File.separator).length - 1])) {
+					tab.remove(i);
+				}
+			}
 			new File(tree.getFile()).delete();
 			tree.fixTree();
 		}
@@ -553,7 +570,6 @@ public class BioSim implements MouseListener, ActionListener {
 						document.createModel();
 						document.setLevel(2);
 						Compartment c = document.getModel().createCompartment();
-						c.setName("default");
 						c.setId("default");
 						document.getModel().setId(modelID);
 						FileOutputStream out = new FileOutputStream(f);
@@ -718,6 +734,197 @@ public class BioSim implements MouseListener, ActionListener {
 				JOptionPane.showMessageDialog(frame, "You must open or create a project first.",
 						"Error", JOptionPane.ERROR_MESSAGE);
 			}
+		} else if (e.getActionCommand().equals("copy")) {
+			String modelID = null;
+			String copy = JOptionPane.showInputDialog(frame, "Enter A New Filename:", "Rename",
+					JOptionPane.PLAIN_MESSAGE);
+			try {
+				if (copy != null && !copy.equals("")) {
+					if (tree.getFile().length() >= 4
+							&& tree.getFile().substring(tree.getFile().length() - 4).equals("sbml")
+							|| tree.getFile().substring(tree.getFile().length() - 4).equals(".xml")) {
+						if (copy.length() > 4) {
+							if (!copy.substring(copy.length() - 5).equals(".sbml")
+									&& !copy.substring(copy.length() - 4).equals(".xml")) {
+								copy += ".sbml";
+							}
+						} else {
+							copy += ".sbml";
+						}
+						if (copy.length() > 4) {
+							if (copy.substring(copy.length() - 5).equals(".sbml")) {
+								modelID = copy.substring(0, copy.length() - 5);
+							} else {
+								modelID = copy.substring(0, copy.length() - 4);
+							}
+						}
+					} else if (tree.getFile().length() >= 3
+							&& tree.getFile().substring(tree.getFile().length() - 3).equals("dot")) {
+						if (copy.length() > 3) {
+							if (!copy.substring(copy.length() - 4).equals(".dot")) {
+								copy += ".dot";
+							}
+						} else {
+							copy += ".dot";
+						}
+					}
+				}
+				if (modelID != null) {
+					SBMLReader reader = new SBMLReader();
+					SBMLDocument document = new SBMLDocument();
+					document = reader.readSBML(tree.getFile());
+					document.getModel().setId(modelID);
+					FileOutputStream out = new FileOutputStream(new File(root + File.separator
+							+ copy));
+					SBMLWriter writer = new SBMLWriter();
+					String doc = writer.writeToString(document);
+					byte[] output = doc.getBytes();
+					out.write(output);
+					out.close();
+				} else if (tree.getFile().length() >= 3
+						&& tree.getFile().substring(tree.getFile().length() - 3).equals("dot")) {
+					FileOutputStream out = new FileOutputStream(new File(root + File.separator
+							+ copy));
+					FileInputStream in = new FileInputStream(new File(tree.getFile()));
+					int read = in.read();
+					while (read != -1) {
+						out.write(read);
+						read = in.read();
+					}
+					in.close();
+					out.close();
+				} else {
+					new File(root + File.separator + copy).mkdir();
+					new FileWriter(new File(root + File.separator + copy + File.separator + ".sim"))
+							.close();
+					String[] s = new File(tree.getFile()).list();
+					for (String ss : s) {
+						if (ss.length() > 4 && ss.substring(ss.length() - 5).equals(".sbml")) {
+							SBMLReader reader = new SBMLReader();
+							SBMLDocument document = reader.readSBML(tree.getFile() + File.separator
+									+ ss);
+							FileOutputStream out = new FileOutputStream(new File(root
+									+ File.separator + copy + File.separator + ss));
+							SBMLWriter writer = new SBMLWriter();
+							String doc = writer.writeToString(document);
+							byte[] output = doc.getBytes();
+							out.write(output);
+							out.close();
+						} else if (ss.length() > 10
+								&& ss.substring(ss.length() - 11).equals(".properties")) {
+							FileOutputStream out = new FileOutputStream(new File(root
+									+ File.separator + copy + File.separator + ss));
+							FileInputStream in = new FileInputStream(new File(tree.getFile()
+									+ File.separator + ss));
+							int read = in.read();
+							while (read != -1) {
+								out.write(read);
+								read = in.read();
+							}
+							in.close();
+							out.close();
+						}
+					}
+				}
+				refreshTree();
+			} catch (Exception e1) {
+				JOptionPane.showMessageDialog(frame, "Unable to copy file.", "Error",
+						JOptionPane.ERROR_MESSAGE);
+			}
+		} else if (e.getActionCommand().equals("rename")) {
+			try {
+				String modelID = null;
+				String rename = JOptionPane.showInputDialog(frame, "Enter A New Filename:",
+						"Rename", JOptionPane.PLAIN_MESSAGE);
+				if (rename != null && !rename.equals("")) {
+					if (tree.getFile().length() >= 4
+							&& tree.getFile().substring(tree.getFile().length() - 4).equals("sbml")
+							|| tree.getFile().substring(tree.getFile().length() - 4).equals(".xml")) {
+						if (rename.length() > 4) {
+							if (!rename.substring(rename.length() - 5).equals(".sbml")
+									&& !rename.substring(rename.length() - 4).equals(".xml")) {
+								rename += ".sbml";
+							}
+						} else {
+							rename += ".sbml";
+						}
+						if (rename.length() > 4) {
+							if (rename.substring(rename.length() - 5).equals(".sbml")) {
+								modelID = rename.substring(0, rename.length() - 5);
+							} else {
+								modelID = rename.substring(0, rename.length() - 4);
+							}
+						}
+					} else if (tree.getFile().length() >= 3
+							&& tree.getFile().substring(tree.getFile().length() - 3).equals("dot")) {
+						if (rename.length() > 3) {
+							if (!rename.substring(rename.length() - 4).equals(".dot")) {
+								rename += ".dot";
+							}
+						} else {
+							rename += ".dot";
+						}
+					}
+					new File(tree.getFile()).renameTo(new File(root + File.separator + rename));
+					if (modelID != null) {
+						SBMLReader reader = new SBMLReader();
+						SBMLDocument document = new SBMLDocument();
+						document = reader.readSBML(root + File.separator + rename);
+						document.getModel().setId(modelID);
+						FileOutputStream out = new FileOutputStream(new File(root + File.separator
+								+ rename));
+						SBMLWriter writer = new SBMLWriter();
+						String doc = writer.writeToString(document);
+						byte[] output = doc.getBytes();
+						out.write(output);
+						out.close();
+					}
+					for (int i = 0; i < tab.getTabCount(); i++) {
+						if (tab.getTitleAt(i).equals(
+								tree.getFile().split(File.separator)[tree.getFile().split(
+										File.separator).length - 1])) {
+							if (tree.getFile().length() > 3
+									&& tree.getFile().substring(tree.getFile().length() - 4)
+											.equals("sbml")
+									|| tree.getFile().substring(tree.getFile().length() - 4)
+											.equals(".xml")) {
+								((SBML_Editor) tab.getComponentAt(i)).setModelID(modelID);
+								((SBML_Editor) tab.getComponentAt(i)).setFile(root + File.separator
+										+ rename);
+								tab.setTitleAt(i, rename);
+							} else {
+								for (int j = 0; j < ((JTabbedPane) tab.getComponentAt(i))
+										.getTabCount(); j++) {
+									if (((JTabbedPane) tab.getComponentAt(i)).getComponent(j)
+											.getName().equals("Simulate")) {
+										((Reb2Sac) ((JTabbedPane) tab.getComponentAt(i))
+												.getComponent(j)).setSim(rename);
+									} else if (((JTabbedPane) tab.getComponentAt(i))
+											.getComponent(j).getName().contains("Graph")) {
+										if (((JTabbedPane) tab.getComponentAt(i)).getComponent(j) instanceof Graph) {
+											Graph g = ((Graph) ((JTabbedPane) tab.getComponentAt(i))
+													.getComponent(j));
+											g.setDirectory(root + File.separator + rename);
+										}
+									} else if (((JTabbedPane) tab.getComponentAt(i))
+											.getComponent(j).getName().equals("Learn")) {
+										if (((JTabbedPane) tab.getComponentAt(i)).getComponent(j) instanceof Learn) {
+											Learn l = ((Learn) ((JTabbedPane) tab.getComponentAt(i))
+													.getComponent(j));
+											l.setDirectory(root + File.separator + rename);
+										}
+									}
+								}
+								tab.setTitleAt(i, rename);
+							}
+						}
+					}
+					refreshTree();
+				}
+			} catch (Exception e1) {
+				JOptionPane.showMessageDialog(frame, "Unable to rename selected file.", "Error",
+						JOptionPane.ERROR_MESSAGE);
+			}
 		}
 	}
 
@@ -842,7 +1049,8 @@ public class BioSim implements MouseListener, ActionListener {
 	public void mousePressed(MouseEvent e) {
 		if (e.getButton() == MouseEvent.BUTTON3) {
 			popup.removeAll();
-			if (tree.getFile().substring(tree.getFile().length() - 4).equals("sbml")
+			if (tree.getFile().length() > 3
+					&& tree.getFile().substring(tree.getFile().length() - 4).equals("sbml")
 					|| tree.getFile().substring(tree.getFile().length() - 4).equals(".xml")) {
 				JMenuItem edit = new JMenuItem("Edit");
 				edit.addActionListener(this);
@@ -859,16 +1067,27 @@ public class BioSim implements MouseListener, ActionListener {
 				JMenuItem delete = new JMenuItem("Delete");
 				delete.addActionListener(this);
 				delete.setActionCommand("delete");
-				popup.add(edit);
+				JMenuItem copy = new JMenuItem("Copy");
+				copy.addActionListener(this);
+				copy.setActionCommand("copy");
+				JMenuItem rename = new JMenuItem("Rename");
+				rename.addActionListener(this);
+				rename.setActionCommand("rename");
+				popup.add(simulate);
+				popup.addSeparator();
 				popup.add(graph);
 				popup.add(browse);
-				popup.add(simulate);
+				popup.addSeparator();
+				popup.add(edit);
+				popup.add(copy);
+				popup.add(rename);
 				popup.add(delete);
-			} else if (tree.getFile().substring(tree.getFile().length() - 3).equals("dot")) {
+			} else if (tree.getFile().length() > 2
+					&& tree.getFile().substring(tree.getFile().length() - 3).equals("dot")) {
 				JMenuItem create = new JMenuItem("Create Analysis View");
 				create.addActionListener(this);
 				create.setActionCommand("createSim");
-				JMenuItem edit = new JMenuItem("Edit Graph");
+				JMenuItem edit = new JMenuItem("Edit");
 				edit.addActionListener(this);
 				edit.setActionCommand("dotEditor");
 				JMenuItem graph = new JMenuItem("View Graph");
@@ -877,9 +1096,19 @@ public class BioSim implements MouseListener, ActionListener {
 				JMenuItem delete = new JMenuItem("Delete");
 				delete.addActionListener(this);
 				delete.setActionCommand("delete");
+				JMenuItem copy = new JMenuItem("Copy");
+				copy.addActionListener(this);
+				copy.setActionCommand("copy");
+				JMenuItem rename = new JMenuItem("Rename");
+				rename.addActionListener(this);
+				rename.setActionCommand("rename");
 				popup.add(create);
-				popup.add(edit);
+				popup.addSeparator();
 				popup.add(graph);
+				popup.addSeparator();
+				popup.add(edit);
+				popup.add(copy);
+				popup.add(rename);
 				popup.add(delete);
 			} else if (new File(tree.getFile()).isDirectory() && !tree.getFile().equals(root)) {
 				JMenuItem open = new JMenuItem("Open Analysis View");
@@ -888,7 +1117,16 @@ public class BioSim implements MouseListener, ActionListener {
 				JMenuItem delete = new JMenuItem("Delete");
 				delete.addActionListener(this);
 				delete.setActionCommand("deleteSim");
+				JMenuItem copy = new JMenuItem("Copy");
+				copy.addActionListener(this);
+				copy.setActionCommand("copy");
+				JMenuItem rename = new JMenuItem("Rename");
+				rename.addActionListener(this);
+				rename.setActionCommand("rename");
 				popup.add(open);
+				popup.addSeparator();
+				popup.add(copy);
+				popup.add(rename);
 				popup.add(delete);
 			}
 			maybeShowPopup(e);

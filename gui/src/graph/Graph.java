@@ -1375,7 +1375,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					f.dispose();
 				}
 			});
-			JButton cancel = new JButton("Cancel");
+			final JButton cancel = new JButton("Cancel");
 			cancel.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					selected = "";
@@ -1396,6 +1396,30 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			JPanel all = new JPanel(new BorderLayout());
 			all.add(scroll, "Center");
 			all.add(buttonPanel, "South");
+			WindowListener w = new WindowListener() {
+				public void windowClosing(WindowEvent arg0) {
+					cancel.doClick();
+				}
+
+				public void windowOpened(WindowEvent arg0) {
+				}
+
+				public void windowClosed(WindowEvent arg0) {
+				}
+
+				public void windowIconified(WindowEvent arg0) {
+				}
+
+				public void windowDeiconified(WindowEvent arg0) {
+				}
+
+				public void windowActivated(WindowEvent arg0) {
+				}
+
+				public void windowDeactivated(WindowEvent arg0) {
+				}
+			};
+			f.addWindowListener(w);
 			f.setContentPane(all);
 			f.pack();
 			Dimension screenSize;
@@ -2234,5 +2258,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		private String getRunNumber() {
 			return runNumber;
 		}
+	}
+
+	public void setDirectory(String newDirectory) {
+		outDir = newDirectory;
 	}
 }

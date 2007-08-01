@@ -766,4 +766,8 @@ public class Learn extends JPanel implements ActionListener {
 		} catch (Exception e) {
 		}
 	}
+
+	public void setDirectory(String newDirectory) {
+		directory = newDirectory;
+	}
 }
