@@ -63,8 +63,6 @@ public class Learn extends JPanel implements ActionListener {
 
 	private Log log;
 
-	private JTabbedPane tab;
-
 	/**
 	 * This is the constructor for the Learn class. It initializes all the input
 	 * fields, puts them on panels, adds the panels to the frame, and then
@@ -242,7 +240,7 @@ public class Learn extends JPanel implements ActionListener {
 		secondTab.add(thresholdPanelHold2, "North");
 		firstTab.add(splitPane, "Center");
 
-		tab = new JTabbedPane();
+		JTabbedPane tab = new JTabbedPane();
 		tab.addTab("Basic Options", firstTab);
 		tab.addTab("Advanced Options", secondTab);
 		this.add(tab, "Center");
@@ -261,8 +259,8 @@ public class Learn extends JPanel implements ActionListener {
 			if (!((JCheckBox) this.species.get(num).get(0)).isSelected()) {
 				((JComboBox) this.species.get(num).get(2)).setSelectedItem("0");
 				editText(num);
-				tab.setSelectedIndex(1);
-				tab.setSelectedIndex(0);
+				speciesPanel.revalidate();
+				speciesPanel.repaint();
 				for (int i = 1; i < this.species.get(num).size(); i++) {
 					this.species.get(num).get(i).setEnabled(false);
 				}
@@ -277,15 +275,15 @@ public class Learn extends JPanel implements ActionListener {
 		} else if (e.getActionCommand().contains("text")) {
 			int num = Integer.parseInt(e.getActionCommand().substring(4)) - 1;
 			editText(num);
-			tab.setSelectedIndex(1);
-			tab.setSelectedIndex(0);
+			speciesPanel.revalidate();
+			speciesPanel.repaint();
 		} else if (e.getSource() == user) {
 			numBinsLabel.setEnabled(false);
 			numBins.setEnabled(false);
 			suggest.setEnabled(true);
 			levelsBin();
-			tab.setSelectedIndex(1);
-			tab.setSelectedIndex(0);
+			speciesPanel.revalidate();
+			speciesPanel.repaint();
 		} else if (e.getSource() == auto) {
 			numBinsLabel.setEnabled(true);
 			numBins.setEnabled(true);
@@ -297,8 +295,8 @@ public class Learn extends JPanel implements ActionListener {
 			}
 		} else if (e.getSource() == suggest) {
 			levels();
-			tab.setSelectedIndex(1);
-			tab.setSelectedIndex(0);
+			speciesPanel.revalidate();
+			speciesPanel.repaint();
 		}
 		// if the browse initial network button is clicked
 		else if (e.getSource() == browseInit) {

@@ -406,21 +406,17 @@ public class Run implements ActionListener {
 							}
 						}
 						if (change == -1) {
-							simTab.addTab("Graph", new Graph(outDir + File.separator + "run-1."
-									+ printer_id.substring(0, printer_id.length() - 8),
-									printer_track_quantity, outDir.split(File.separator)[outDir
-											.split(File.separator).length - 1]
-											+ " simulation results", printer_id, outDir, -1, null,
-									"time", biomodelsim, null, log));
+							simTab.addTab("Graph", new Graph(printer_track_quantity, outDir
+									.split(File.separator)[outDir.split(File.separator).length - 1]
+									+ " simulation results", printer_id, outDir, -1, null, "time",
+									biomodelsim, null, log, null));
 							simTab.getComponentAt(simTab.getComponents().length - 1).setName(
 									"Graph");
 						} else {
-							simTab.setComponentAt(change, new Graph(outDir + File.separator
-									+ "run-1." + printer_id.substring(0, printer_id.length() - 8),
-									printer_track_quantity, outDir.split(File.separator)[outDir
-											.split(File.separator).length - 1]
-											+ " simulation results", printer_id, outDir, -1, null,
-									"time", biomodelsim, null, log));
+							simTab.setComponentAt(change, new Graph(printer_track_quantity, outDir
+									.split(File.separator)[outDir.split(File.separator).length - 1]
+									+ " simulation results", printer_id, outDir, -1, null, "time",
+									biomodelsim, null, log, null));
 							simTab.getComponentAt(change).setName("Graph");
 						}
 						change = -1;
@@ -447,23 +443,23 @@ public class Run implements ActionListener {
 								}
 							}
 							if (change == -1) {
-								simTab.addTab("Graph", new Graph(outDir + File.separator + sim
-										+ "-run."
-										+ printer_id.substring(0, printer_id.length() - 8),
-										printer_track_quantity, outDir.split(File.separator)[outDir
-												.split(File.separator).length - 1]
-												+ " simulation results", printer_id, outDir, -1,
-										null, "time", biomodelsim, null, log));
+								simTab.addTab("Graph",
+										new Graph(printer_track_quantity,
+												outDir.split(File.separator)[outDir
+														.split(File.separator).length - 1]
+														+ " simulation results", printer_id,
+												outDir, -1, null, "time", biomodelsim, null, log,
+												null));
 								simTab.getComponentAt(simTab.getComponents().length - 1).setName(
 										"Graph");
 							} else {
-								simTab.setComponentAt(change, new Graph(outDir + File.separator
-										+ sim + "-run."
-										+ printer_id.substring(0, printer_id.length() - 8),
-										printer_track_quantity, outDir.split(File.separator)[outDir
-												.split(File.separator).length - 1]
-												+ " simulation results", printer_id, outDir, -1,
-										null, "time", biomodelsim, null, log));
+								simTab.setComponentAt(change,
+										new Graph(printer_track_quantity,
+												outDir.split(File.separator)[outDir
+														.split(File.separator).length - 1]
+														+ " simulation results", printer_id,
+												outDir, -1, null, "time", biomodelsim, null, log,
+												null));
 								simTab.getComponentAt(change).setName("Graph");
 							}
 						} else if (monteCarlo.isSelected()) {
@@ -474,22 +470,23 @@ public class Run implements ActionListener {
 								}
 							}
 							if (change == -1) {
-								simTab.addTab("Graph", new Graph(outDir + File.separator + "run-1."
-										+ printer_id.substring(0, printer_id.length() - 8),
-										printer_track_quantity, outDir.split(File.separator)[outDir
-												.split(File.separator).length - 1]
-												+ " simulation results", printer_id, outDir, -1,
-										null, "time", biomodelsim, null, log));
+								simTab.addTab("Graph",
+										new Graph(printer_track_quantity,
+												outDir.split(File.separator)[outDir
+														.split(File.separator).length - 1]
+														+ " simulation results", printer_id,
+												outDir, -1, null, "time", biomodelsim, null, log,
+												null));
 								simTab.getComponentAt(simTab.getComponents().length - 1).setName(
 										"Graph");
 							} else {
-								simTab.setComponentAt(change, new Graph(outDir + File.separator
-										+ "run-1."
-										+ printer_id.substring(0, printer_id.length() - 8),
-										printer_track_quantity, outDir.split(File.separator)[outDir
-												.split(File.separator).length - 1]
-												+ " simulation results", printer_id, outDir, -1,
-										null, "time", biomodelsim, null, log));
+								simTab.setComponentAt(change,
+										new Graph(printer_track_quantity,
+												outDir.split(File.separator)[outDir
+														.split(File.separator).length - 1]
+														+ " simulation results", printer_id,
+												outDir, -1, null, "time", biomodelsim, null, log,
+												null));
 								simTab.getComponentAt(change).setName("Graph");
 							}
 							change = -1;
