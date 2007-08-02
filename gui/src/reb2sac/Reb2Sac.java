@@ -2634,24 +2634,14 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		}
 	}
 
-	public Graph createGraph(String graphFile, String open) {
+	public Graph createGraph(String open) {
 		String outDir = root + File.separator + simName;
 		String printer_id = "tsd.printer";
 		String printer_track_quantity = "amount";
 		int[] index = species.getSelectedIndices();
 		species.setSelectedIndices(index);
-		if (graphFile.split(File.separator)[graphFile.split(File.separator).length - 1]
-				.contains("run-")) {
-			JRadioButton b = new JRadioButton();
-			b.setSelected(true);
-			return new Graph(graphFile, printer_track_quantity, simName + " simulation results",
-					printer_id, outDir, -1, null, "time", biomodelsim, open, log);
-		} else {
-			JRadioButton b = new JRadioButton();
-			b.setSelected(false);
-			return new Graph(graphFile, printer_track_quantity, simName + " simulation results",
-					printer_id, outDir, -1, null, "time", biomodelsim, open, log);
-		}
+		return new Graph(printer_track_quantity, simName + " simulation results", printer_id,
+				outDir, -1, null, "time", biomodelsim, open, log, null);
 	}
 
 	public JButton getRunButton() {

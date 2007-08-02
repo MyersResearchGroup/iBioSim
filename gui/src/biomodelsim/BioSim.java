@@ -659,76 +659,11 @@ public class BioSim implements MouseListener, ActionListener {
 		// if the Graph data menu item is clicked
 		else if (e.getSource() == graph) {
 			if (root != null) {
-				String filename = tree.getFile();
-				if (filename != null && !filename.equals("")) {
-					if (new File(filename).isDirectory()) {
-						String[] list = new File(filename).list();
-						String getAFile = "";
-						String open = null;
-						boolean ode = false;
-						int run = 1;
-						for (int i = 0; i < list.length; i++) {
-							if (!(new File(list[i]).isDirectory()) && list[i].length() > 4) {
-								String end = "";
-								for (int j = 1; j < 5; j++) {
-									end = list[i].charAt(list[i].length() - j) + end;
-								}
-								if (end.equals(".tsd") || end.equals(".dat") || end.equals(".csv")) {
-									if (list[i].contains("run-")) {
-										int tempNum = Integer.parseInt(list[i].substring(4, list[i]
-												.length()
-												- end.length()));
-										if (tempNum > run) {
-											run = tempNum;
-											getAFile = filename + File.separator + list[i];
-											ode = false;
-										}
-									} else if (list[i].contains("euler-run.")
-											|| list[i].contains("gear1-run.")
-											|| list[i].contains("gear2-run.")
-											|| list[i].contains("rk4imp-run.")
-											|| list[i].contains("rk8pd-run.")
-											|| list[i].contains("rkf45-run.")) {
-										getAFile = filename + File.separator + list[i];
-										ode = true;
-									}
-								} else if (end.equals(".grf")) {
-									open = filename + File.separator + list[i];
-								}
-							}
-						}
-						if (!getAFile.equals("")) {
-							String end = "";
-							for (int j = 1; j < 4; j++) {
-								end = getAFile.charAt(getAFile.length() - j) + end;
-							}
-							if (end.equals("csv") || end.equals("dat") || end.equals("tsd")) {
-								String[] split = getAFile.split(File.separator);
-								String last = split[split.length - 1];
-								String first = getAFile.substring(0, getAFile.length()
-										- last.length());
-								String printer = getAFile.substring(getAFile.length() - 3);
-								String id = printer + ".printer";
-								if (!ode) {
-									addTab("Graph", new Graph(getAFile, "amount",
-											filename.split(File.separator)[filename
-													.split(File.separator).length - 1]
-													+ " simulation results", id, first, -1, null,
-											"time", this, open, log), null);
-								} else {
-									addTab("Graph", new Graph(getAFile, "amount",
-											filename.split(File.separator)[filename
-													.split(File.separator).length - 1]
-													+ " simulation results", id, first, -1, null,
-											"time", this, open, log), null);
-								}
-							}
-						} else {
-							JOptionPane.showMessageDialog(frame,
-									"This directory contains no simulation data.", "Error",
-									JOptionPane.ERROR_MESSAGE);
-						}
-					}
+				String graphName = JOptionPane.showInputDialog(frame,
+						"Enter A Name For The Graph:", "Graph Name", JOptionPane.PLAIN_MESSAGE);
+				if (graphName != null && !graphName.trim().equals("")) {
+					addTab("Graph", new Graph("amount", graphName.trim(), "tsd.printer", root, -1,
+							null, "time", this, null, log, graphName.trim()), null);
 				}
 			} else {
 				JOptionPane.showMessageDialog(frame, "You must open or create a project first.",
@@ -1297,7 +1232,6 @@ public class BioSim implements MouseListener, ActionListener {
 				String openFile = "";
 				String graphFile = "";
 				String open = null;
-				boolean ode = false;
 				boolean stoch = false;
 				int run = 1;
 				for (int i = 0; i < list.length; i++) {
@@ -1327,7 +1261,6 @@ public class BioSim implements MouseListener, ActionListener {
 								if (tempNum > run) {
 									run = tempNum;
 									graphFile = filename + File.separator + list[i];
-									ode = false;
 								}
 							} else if (list[i].contains("euler-run.")
 									|| list[i].contains("gear1-run.")
@@ -1336,7 +1269,6 @@ public class BioSim implements MouseListener, ActionListener {
 									|| list[i].contains("rk8pd-run.")
 									|| list[i].contains("rkf45-run.")) {
 								graphFile = filename + File.separator + list[i];
-								ode = true;
 							}
 						} else if (end.equals(".grf")) {
 							open = filename + File.separator + list[i];
@@ -1368,15 +1300,8 @@ public class BioSim implements MouseListener, ActionListener {
 						simTab.getComponentAt(simTab.getComponents().length - 1).setName("Learn");
 					}
 					if (!graphFile.equals("")) {
-						if (ode) {
-							simTab.addTab("Graph", reb2sac.createGraph(graphFile, open));
-							simTab.getComponentAt(simTab.getComponents().length - 1).setName(
-									"Graph");
-						} else {
-							simTab.addTab("Graph", reb2sac.createGraph(graphFile, open));
-							simTab.getComponentAt(simTab.getComponents().length - 1).setName(
-									"Graph");
-						}
+						simTab.addTab("Graph", reb2sac.createGraph(open));
+						simTab.getComponentAt(simTab.getComponents().length - 1).setName("Graph");
 					} else {
 						JLabel noData = new JLabel("No data available");
 						Font font = noData.getFont();
