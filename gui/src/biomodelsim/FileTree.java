@@ -122,22 +122,42 @@ public class FileTree extends JPanel implements MouseListener {
 		// Pass two: for files.
 		for (int fnum = 0; fnum < files.size(); fnum++) {
 			if (curDir.getParent() == null) {
-				if (files.get(fnum).toString().contains(".sbml")
-						|| files.get(fnum).toString().contains(".xml")) {
+				if (files.get(fnum).toString().length() > 4
+						&& files.get(fnum).toString().substring(
+								files.get(fnum).toString().length() - 5).equals(".sbml")
+						|| files.get(fnum).toString().length() > 3
+						&& files.get(fnum).toString().substring(
+								files.get(fnum).toString().length() - 4).equals(".xml")) {
 					curDir.add(new DefaultMutableTreeNode(new IconData(ICON_SBML, null, files
 							.get(fnum))));
-				} else if (files.get(fnum).toString().contains(".dot")) {
+				} else if (files.get(fnum).toString().length() > 3
+						&& files.get(fnum).toString().substring(
+								files.get(fnum).toString().length() - 4).equals(".dot")) {
 					curDir.add(new DefaultMutableTreeNode(new IconData(ICON_DOT, null, files
 							.get(fnum))));
+				} else if (files.get(fnum).toString().length() > 3
+						&& files.get(fnum).toString().substring(
+								files.get(fnum).toString().length() - 4).equals(".grf")) {
+					curDir.add(new DefaultMutableTreeNode(files.get(fnum)));
 				}
 			} else if (!(curDir.getParent().toString().equals(root.toString()))) {
-				if (files.get(fnum).toString().contains(".sbml")
-						|| files.get(fnum).toString().contains(".xml")) {
+				if (files.get(fnum).toString().length() > 4
+						&& files.get(fnum).toString().substring(
+								files.get(fnum).toString().length() - 5).equals(".sbml")
+						|| files.get(fnum).toString().length() > 3
+						&& files.get(fnum).toString().substring(
+								files.get(fnum).toString().length() - 4).equals(".xml")) {
 					curDir.add(new DefaultMutableTreeNode(new IconData(ICON_SBML, null, files
 							.get(fnum))));
-				} else if (files.get(fnum).toString().contains(".dot")) {
+				} else if (files.get(fnum).toString().length() > 3
+						&& files.get(fnum).toString().substring(
+								files.get(fnum).toString().length() - 4).equals(".dot")) {
 					curDir.add(new DefaultMutableTreeNode(new IconData(ICON_DOT, null, files
 							.get(fnum))));
+				} else if (files.get(fnum).toString().length() > 3
+						&& files.get(fnum).toString().substring(
+								files.get(fnum).toString().length() - 4).equals(".grf")) {
+					curDir.add(new DefaultMutableTreeNode(files.get(fnum)));
 				}
 			}
 		}
@@ -169,7 +189,8 @@ public class FileTree extends JPanel implements MouseListener {
 					}
 					if (parent.getChildAt(i).toString().contains(".sbml")
 							|| parent.getChildAt(i).toString().contains(".xml")
-							|| parent.getChildAt(i).toString().contains(".dot")) {
+							|| parent.getChildAt(i).toString().contains(".dot")
+							|| parent.getChildAt(i).toString().contains(".grf")) {
 						break;
 					}
 					insert++;
@@ -253,40 +274,62 @@ public class FileTree extends JPanel implements MouseListener {
 					for (int i = 0; i < current.getChildCount(); i++) {
 						if (!current.getChildAt(i).toString().contains(".sbml")
 								&& !current.getChildAt(i).toString().contains(".xml")
-								&& !current.getChildAt(i).toString().contains(".dot")) {
+								&& !current.getChildAt(i).toString().contains(".dot")
+								&& !current.getChildAt(i).toString().contains(".grf")) {
 						} else if (current.getChildAt(i).toString().compareToIgnoreCase(
 								files.get(fnum).toString()) > 0) {
 							break;
 						}
 						insert++;
 					}
-					if (files.get(fnum).toString().contains(".sbml")
-							|| files.get(fnum).toString().contains(".xml")) {
+					if (files.get(fnum).toString().length() > 4
+							&& files.get(fnum).toString().substring(
+									files.get(fnum).toString().length() - 5).equals(".sbml")
+							|| files.get(fnum).toString().length() > 3
+							&& files.get(fnum).toString().substring(
+									files.get(fnum).toString().length() - 4).equals(".xml")) {
 						current.insert(new DefaultMutableTreeNode(new IconData(ICON_SBML, null,
 								files.get(fnum))), insert);
-					} else if (files.get(fnum).toString().contains(".dot")) {
+					} else if (files.get(fnum).toString().length() > 3
+							&& files.get(fnum).toString().substring(
+									files.get(fnum).toString().length() - 4).equals(".dot")) {
 						current.insert(new DefaultMutableTreeNode(new IconData(ICON_DOT, null,
 								files.get(fnum))), insert);
+					} else if (files.get(fnum).toString().length() > 3
+							&& files.get(fnum).toString().substring(
+									files.get(fnum).toString().length() - 4).equals(".grf")) {
+						current.insert(new DefaultMutableTreeNode(files.get(fnum)), insert);
 					}
 				} else if (!(parent.toString().equals(root.toString()))) {
 					int insert = 0;
 					for (int i = 0; i < current.getChildCount(); i++) {
 						if (!current.getChildAt(i).toString().contains(".sbml")
 								&& !current.getChildAt(i).toString().contains(".xml")
-								&& !current.getChildAt(i).toString().contains(".dot")) {
+								&& !current.getChildAt(i).toString().contains(".dot")
+								&& !current.getChildAt(i).toString().contains(".grf")) {
 						} else if (current.getChildAt(i).toString().compareToIgnoreCase(
 								files.get(fnum).toString()) > 0) {
 							break;
 						}
 						insert++;
 					}
-					if (files.get(fnum).toString().contains(".sbml")
-							|| files.get(fnum).toString().contains(".xml")) {
+					if (files.get(fnum).toString().length() > 4
+							&& files.get(fnum).toString().substring(
+									files.get(fnum).toString().length() - 5).equals(".sbml")
+							|| files.get(fnum).toString().length() > 3
+							&& files.get(fnum).toString().substring(
+									files.get(fnum).toString().length() - 4).equals(".xml")) {
 						current.insert(new DefaultMutableTreeNode(new IconData(ICON_SBML, null,
 								files.get(fnum))), insert);
-					} else if (files.get(fnum).toString().contains(".dot")) {
+					} else if (files.get(fnum).toString().length() > 3
+							&& files.get(fnum).toString().substring(
+									files.get(fnum).toString().length() - 4).equals(".dot")) {
 						current.insert(new DefaultMutableTreeNode(new IconData(ICON_DOT, null,
 								files.get(fnum))), insert);
+					} else if (files.get(fnum).toString().length() > 3
+							&& files.get(fnum).toString().substring(
+									files.get(fnum).toString().length() - 4).equals(".grf")) {
+						current.insert(new DefaultMutableTreeNode(files.get(fnum)), insert);
 					}
 				}
 			}

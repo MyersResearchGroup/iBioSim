@@ -113,7 +113,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		if (graphName != null) {
 			this.graphName = graphName;
 		} else {
-			this.graphName = outDir.split(File.separator)[outDir.split(File.separator).length - 1];
+			this.graphName = outDir.split(File.separator)[outDir.split(File.separator).length - 1]
+					+ ".grf";
 		}
 		this.outDir = outDir;
 		this.printer_id = printer_id;
@@ -846,6 +847,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			speciesPanel3.add(visibleLabel);
 			speciesPanel3.add(filledLabel);
 			final JTree tree = new JTree(simDir);
+			for (int i = 0; i < tree.getRowCount(); i++) {
+				tree.expandRow(i);
+			}
 			JScrollPane scrollpane = new JScrollPane();
 			scrollpane.getViewport().add(tree);
 			final JPanel specPanel = new JPanel();
@@ -854,8 +858,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				public void valueChanged(TreeSelectionEvent e) {
 					DefaultMutableTreeNode node = (DefaultMutableTreeNode) e.getPath()
 							.getLastPathComponent();
-					selected = node.toString();
 					if (!directories.contains(node.toString())) {
+						selected = node.toString();
 						int select;
 						if (selected.equals("Average")) {
 							select = 0;
@@ -2442,11 +2446,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			graph.setProperty("species.directory." + i, graphed.get(i).getDirectory());
 		}
 		try {
-			graph.store(
-					new FileOutputStream(new File(outDir + File.separator + graphName + ".grf")),
+			graph.store(new FileOutputStream(new File(outDir + File.separator + graphName)),
 					"Graph Data");
-			log.addText("Saving graph file:\n" + outDir + File.separator + graphName + ".grf"
-					+ "\n");
+			log.addText("Creating graph file:\n" + outDir + File.separator + graphName + "\n");
 		} catch (Exception except) {
 			JOptionPane.showMessageDialog(biomodelsim.frame(), "Unable To Save Graph!", "Error",
 					JOptionPane.ERROR_MESSAGE);
@@ -2803,5 +2805,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 	public void setDirectory(String newDirectory) {
 		outDir = newDirectory;
+	}
+
+	public void setGraphName(String graphName) {
+		this.graphName = graphName;
 	}
 }
