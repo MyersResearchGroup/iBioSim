@@ -1343,6 +1343,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			interval.setEnabled(false);
 			limitLabel.setEnabled(false);
 			intervalLabel.setEnabled(false);
+			Random rnd = new Random();
+			seed.setText("" + rnd.nextInt());
 			int cut = 0;
 			String[] getFilename = sbmlFile.split(File.separator);
 			for (int i = 0; i < getFilename[getFilename.length - 1].length(); i++) {
@@ -1768,6 +1770,10 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				limitLabel.setEnabled(false);
 				intervalLabel.setEnabled(false);
 			}
+		}
+		if (append.isSelected()) {
+			Random rnd = new Random();
+			seed.setText("" + rnd.nextInt());
 		}
 	}
 

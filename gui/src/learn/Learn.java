@@ -34,8 +34,6 @@ public class Learn extends JPanel implements ActionListener {
 
 	private JTextField activation, repression, parent;
 
-	private JTextField background;
-
 	// private JTextField windowRising, windowSize;
 
 	private JComboBox numBins;
@@ -129,7 +127,7 @@ public class Learn extends JPanel implements ActionListener {
 
 		// Sets up the thresholds area
 		JPanel thresholdPanel1 = new JPanel(new GridLayout(3, 2));
-		JPanel thresholdPanel2 = new JPanel(new GridLayout(10, 2));
+		JPanel thresholdPanel2 = new JPanel(new GridLayout(9, 2));
 		JLabel activationLabel = new JLabel("For Vote Threshold (Tf):");
 		activation = new JTextField("1.33");
 		thresholdPanel2.add(activationLabel);
@@ -142,11 +140,6 @@ public class Learn extends JPanel implements ActionListener {
 		parent = new JTextField("0.5");
 		thresholdPanel2.add(parentLabel);
 		thresholdPanel2.add(parent);
-		JLabel backgroundLabel = new JLabel(
-				"Pre-Competition Influence Vector Filter Threshold (Tp):  ");
-		background = new JTextField("0.51");
-		thresholdPanel2.add(backgroundLabel);
-		thresholdPanel2.add(background);
 		JLabel influenceLevelLabel = new JLabel("Merge Influence Vectors Delta (Tm):");
 		influenceLevel = new JTextField("0.01");
 		thresholdPanel2.add(influenceLevelLabel);
@@ -332,8 +325,6 @@ public class Learn extends JPanel implements ActionListener {
 					geneNet += " -tn " + letNThrough;
 					int maxVectorSize = Integer.parseInt(this.maxVectorSize.getText().trim());
 					geneNet += " -tj " + maxVectorSize;
-					double background = Double.parseDouble(this.background.getText().trim());
-					geneNet += " -tp " + background;
 					if (noSUCC.isSelected()) {
 						geneNet += " -noSUCC";
 					}
