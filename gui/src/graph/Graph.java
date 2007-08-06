@@ -682,11 +682,21 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			String simDirString = outDir.split(File.separator)[outDir.split(File.separator).length - 1];
 			final DefaultMutableTreeNode simDir = new DefaultMutableTreeNode(simDirString);
 			String[] files = new File(outDir).list();
+			for (int i = 1; i < files.length; i++) {
+				String index = files[i];
+				int j = i;
+				while ((j > 0) && files[j - 1].compareToIgnoreCase(index) > 0) {
+					files[j] = files[j - 1];
+					j = j - 1;
+				}
+				files[j] = index;
+			}
 			boolean add = false;
 			final ArrayList<String> directories = new ArrayList<String>();
 			for (String file : files) {
-				if (file.substring(file.length() - 4).equals(
-						"." + printer_id.substring(0, printer_id.length() - 8))) {
+				if (file.length() > 3
+						&& file.substring(file.length() - 4).equals(
+								"." + printer_id.substring(0, printer_id.length() - 8))) {
 					if (file.contains("run-")) {
 						add = true;
 					} else {
@@ -695,46 +705,59 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 										.substring(0, file.length() - 4)));
 					}
 				} else if (new File(outDir + File.separator + file).isDirectory()) {
-					directories.add(file);
-					DefaultMutableTreeNode d = new DefaultMutableTreeNode(file);
-					boolean add2 = false;
-					for (String f : new File(outDir + File.separator + file).list()) {
-						if (f.contains(printer_id.substring(0, printer_id.length() - 8))) {
-							if (f.contains("run-")) {
-								add2 = true;
-							} else {
-								d.add(new DefaultMutableTreeNode(f.substring(0, f.length() - 4)));
-							}
+					boolean addIt = false;
+					for (String getFile : new File(outDir + File.separator + file).list()) {
+						if (getFile.length() > 3
+								&& getFile.substring(getFile.length() - 4).equals(
+										"." + printer_id.substring(0, printer_id.length() - 8))) {
+							addIt = true;
 						}
 					}
-					if (add2) {
-						d.add(new DefaultMutableTreeNode("Average"));
-						d.add(new DefaultMutableTreeNode("Variance"));
-						d.add(new DefaultMutableTreeNode("Standard Deviation"));
-					}
-					int run = 1;
-					for (String s : new File(outDir + File.separator + file).list()) {
-						if (s.length() > 4) {
-							String end = "";
-							for (int j = 1; j < 5; j++) {
-								end = s.charAt(s.length() - j) + end;
-							}
-							if (end.equals(".tsd") || end.equals(".dat") || end.equals(".csv")) {
-								if (s.contains("run-")) {
-									run = Math.max(run, Integer.parseInt(s.substring(4, s.length()
-											- end.length())));
+					if (addIt) {
+						directories.add(file);
+						DefaultMutableTreeNode d = new DefaultMutableTreeNode(file);
+						boolean add2 = false;
+						for (String f : new File(outDir + File.separator + file).list()) {
+							if (f.contains(printer_id.substring(0, printer_id.length() - 8))) {
+								if (f.contains("run-")) {
+									add2 = true;
+								} else {
+									d
+											.add(new DefaultMutableTreeNode(f.substring(0, f
+													.length() - 4)));
 								}
 							}
 						}
-					}
-					for (int i = 0; i < run; i++) {
-						if (new File(outDir + File.separator + file + File.separator + "run-"
-								+ (i + 1) + "." + printer_id.substring(0, printer_id.length() - 8))
-								.exists()) {
-							d.add(new DefaultMutableTreeNode("run-" + (i + 1)));
+						if (add2) {
+							d.add(new DefaultMutableTreeNode("Average"));
+							d.add(new DefaultMutableTreeNode("Variance"));
+							d.add(new DefaultMutableTreeNode("Standard Deviation"));
 						}
+						int run = 1;
+						for (String s : new File(outDir + File.separator + file).list()) {
+							if (s.length() > 4) {
+								String end = "";
+								for (int j = 1; j < 5; j++) {
+									end = s.charAt(s.length() - j) + end;
+								}
+								if (end.equals(".tsd") || end.equals(".dat") || end.equals(".csv")) {
+									if (s.contains("run-")) {
+										run = Math.max(run, Integer.parseInt(s.substring(4, s
+												.length()
+												- end.length())));
+									}
+								}
+							}
+						}
+						for (int i = 0; i < run; i++) {
+							if (new File(outDir + File.separator + file + File.separator + "run-"
+									+ (i + 1) + "."
+									+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
+								d.add(new DefaultMutableTreeNode("run-" + (i + 1)));
+							}
+						}
+						simDir.add(d);
 					}
-					simDir.add(d);
 				}
 			}
 			if (add) {
@@ -763,89 +786,6 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					simDir.add(new DefaultMutableTreeNode("run-" + (i + 1)));
 				}
 			}
-			JPanel speciesPanel1 = new JPanel(new GridLayout(1, 1));
-			JPanel speciesPanel2 = new JPanel(new GridLayout(1, 3));
-			JPanel speciesPanel3 = new JPanel(new GridLayout(1, 3));
-			use = new JCheckBox("Use");
-			JLabel specs = new JLabel("Species");
-			JLabel color = new JLabel("Color");
-			JLabel shape = new JLabel("Shape");
-			connectedLabel = new JCheckBox("Connected");
-			visibleLabel = new JCheckBox("Visible");
-			filledLabel = new JCheckBox("Filled");
-			connectedLabel.setSelected(true);
-			visibleLabel.setSelected(true);
-			filledLabel.setSelected(true);
-			boxes = new ArrayList<JCheckBox>();
-			series = new ArrayList<JTextField>();
-			colorsCombo = new ArrayList<JComboBox>();
-			shapesCombo = new ArrayList<JComboBox>();
-			connected = new ArrayList<JCheckBox>();
-			visible = new ArrayList<JCheckBox>();
-			filled = new ArrayList<JCheckBox>();
-			use.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					if (use.isSelected()) {
-						for (JCheckBox box : boxes) {
-							if (!box.isSelected()) {
-								box.doClick();
-							}
-						}
-					} else {
-						for (JCheckBox box : boxes) {
-							if (box.isSelected()) {
-								box.doClick();
-							}
-						}
-					}
-				}
-			});
-			connectedLabel.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					if (connectedLabel.isSelected()) {
-						for (JCheckBox box : connected) {
-							box.setSelected(true);
-						}
-					} else {
-						for (JCheckBox box : connected) {
-							box.setSelected(false);
-						}
-					}
-				}
-			});
-			visibleLabel.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					if (visibleLabel.isSelected()) {
-						for (JCheckBox box : visible) {
-							box.setSelected(true);
-						}
-					} else {
-						for (JCheckBox box : visible) {
-							box.setSelected(false);
-						}
-					}
-				}
-			});
-			filledLabel.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					if (filledLabel.isSelected()) {
-						for (JCheckBox box : filled) {
-							box.setSelected(true);
-						}
-					} else {
-						for (JCheckBox box : filled) {
-							box.setSelected(false);
-						}
-					}
-				}
-			});
-			speciesPanel1.add(use);
-			speciesPanel2.add(specs);
-			speciesPanel2.add(color);
-			speciesPanel2.add(shape);
-			speciesPanel3.add(connectedLabel);
-			speciesPanel3.add(visibleLabel);
-			speciesPanel3.add(filledLabel);
 			final JTree tree = new JTree(simDir);
 			for (int i = 0; i < tree.getRowCount(); i++) {
 				tree.expandRow(i);
@@ -881,7 +821,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							if (directories.contains(node.getParent().toString())) {
 								specPanel.add(fixGraphCoices(node.getParent().toString()));
 							} else {
-								specPanel.add(fixGraphCoices(null));
+								specPanel.add(fixGraphCoices(""));
 							}
 							specPanel.revalidate();
 							specPanel.repaint();
@@ -891,17 +831,35 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							for (int i = 0; i < boxes.size(); i++) {
 								boxes.get(i).setSelected(false);
 							}
-							for (GraphSpecies g : graphed) {
-								if (g.getRunNumber().equals(selected)) {
-									boxes.get(g.getNumber()).setSelected(true);
-									series.get(g.getNumber()).setText(g.getSpecies());
-									colorsCombo.get(g.getNumber()).setSelectedItem(
-											g.getShapeAndPaint().getPaintName());
-									shapesCombo.get(g.getNumber()).setSelectedItem(
-											g.getShapeAndPaint().getShapeName());
-									connected.get(g.getNumber()).setSelected(g.getConnected());
-									visible.get(g.getNumber()).setSelected(g.getVisible());
-									filled.get(g.getNumber()).setSelected(g.getFilled());
+							if (directories.contains(node.getParent().toString())) {
+								for (GraphSpecies g : graphed) {
+									if (g.getRunNumber().equals(selected)
+											&& g.getDirectory().equals(node.getParent().toString())) {
+										boxes.get(g.getNumber()).setSelected(true);
+										series.get(g.getNumber()).setText(g.getSpecies());
+										colorsCombo.get(g.getNumber()).setSelectedItem(
+												g.getShapeAndPaint().getPaintName());
+										shapesCombo.get(g.getNumber()).setSelectedItem(
+												g.getShapeAndPaint().getShapeName());
+										connected.get(g.getNumber()).setSelected(g.getConnected());
+										visible.get(g.getNumber()).setSelected(g.getVisible());
+										filled.get(g.getNumber()).setSelected(g.getFilled());
+									}
+								}
+							} else {
+								for (GraphSpecies g : graphed) {
+									if (g.getRunNumber().equals(selected)
+											&& g.getDirectory().equals("")) {
+										boxes.get(g.getNumber()).setSelected(true);
+										series.get(g.getNumber()).setText(g.getSpecies());
+										colorsCombo.get(g.getNumber()).setSelectedItem(
+												g.getShapeAndPaint().getPaintName());
+										shapesCombo.get(g.getNumber()).setSelectedItem(
+												g.getShapeAndPaint().getShapeName());
+										connected.get(g.getNumber()).setSelected(g.getConnected());
+										visible.get(g.getNumber()).setSelected(g.getVisible());
+										filled.get(g.getNumber()).setSelected(g.getFilled());
+									}
 								}
 							}
 							boolean allChecked = true;
@@ -1301,7 +1259,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	}
 
 	private JPanel fixGraphCoices(final String directory) {
-		if (directory == null) {
+		if (directory.equals("")) {
 			if (selected.equals("Average") || selected.equals("Variance")
 					|| selected.equals("Standard Deviation")) {
 				int nextOne = 1;
@@ -1383,11 +1341,15 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			public void actionPerformed(ActionEvent e) {
 				if (connectedLabel.isSelected()) {
 					for (JCheckBox box : connected) {
-						box.setSelected(true);
+						if (!box.isSelected()) {
+							box.doClick();
+						}
 					}
 				} else {
 					for (JCheckBox box : connected) {
-						box.setSelected(false);
+						if (box.isSelected()) {
+							box.doClick();
+						}
 					}
 				}
 			}
@@ -1396,11 +1358,15 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			public void actionPerformed(ActionEvent e) {
 				if (visibleLabel.isSelected()) {
 					for (JCheckBox box : visible) {
-						box.setSelected(true);
+						if (!box.isSelected()) {
+							box.doClick();
+						}
 					}
 				} else {
 					for (JCheckBox box : visible) {
-						box.setSelected(false);
+						if (box.isSelected()) {
+							box.doClick();
+						}
 					}
 				}
 			}
@@ -1409,11 +1375,15 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			public void actionPerformed(ActionEvent e) {
 				if (filledLabel.isSelected()) {
 					for (JCheckBox box : filled) {
-						box.setSelected(true);
+						if (!box.isSelected()) {
+							box.doClick();
+						}
 					}
 				} else {
 					for (JCheckBox box : filled) {
-						box.setSelected(false);
+						if (box.isSelected()) {
+							box.doClick();
+						}
 					}
 				}
 			}
@@ -1717,26 +1687,19 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						if (allChecked) {
 							use.setSelected(true);
 						}
-						if (directory == null) {
-							graphed.add(new GraphSpecies(shapey.get(shapesCombo.get(i)
-									.getSelectedItem()), colory.get(colorsCombo.get(i)
-									.getSelectedItem()), filled.get(i).isSelected(), visible.get(i)
-									.isSelected(), connected.get(i).isSelected(), selected, series
-									.get(i).getText().trim(), i, ""));
-						} else {
-							graphed.add(new GraphSpecies(shapey.get(shapesCombo.get(i)
-									.getSelectedItem()), colory.get(colorsCombo.get(i)
-									.getSelectedItem()), filled.get(i).isSelected(), visible.get(i)
-									.isSelected(), connected.get(i).isSelected(), selected, series
-									.get(i).getText().trim(), i, directory));
-						}
+						graphed.add(new GraphSpecies(shapey.get(shapesCombo.get(i)
+								.getSelectedItem()), colory.get(colorsCombo.get(i)
+								.getSelectedItem()), filled.get(i).isSelected(), visible.get(i)
+								.isSelected(), connected.get(i).isSelected(), selected, series.get(
+								i).getText().trim(), i, directory));
 					} else {
 						use.setSelected(false);
 						colorsCombo.get(i).setSelectedIndex(0);
 						shapesCombo.get(i).setSelectedIndex(0);
 						ArrayList<GraphSpecies> remove = new ArrayList<GraphSpecies>();
 						for (GraphSpecies g : graphed) {
-							if (g.getRunNumber().equals(selected) && g.getNumber() == i) {
+							if (g.getRunNumber().equals(selected) && g.getNumber() == i
+									&& g.getDirectory().equals(directory)) {
 								remove.add(g);
 							}
 						}
@@ -1748,8 +1711,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			});
 			boxes.add(temp);
 			temp = new JCheckBox();
+			temp.setActionCommand("" + i);
 			temp.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
+					int i = Integer.parseInt(e.getActionCommand());
 					if (((JCheckBox) e.getSource()).isSelected()) {
 						boolean allChecked = true;
 						for (JCheckBox temp : visible) {
@@ -1760,16 +1725,30 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						if (allChecked) {
 							visibleLabel.setSelected(true);
 						}
+						for (GraphSpecies g : graphed) {
+							if (g.getRunNumber().equals(selected) && g.getNumber() == i
+									&& g.getDirectory().equals(directory)) {
+								g.setVisible(true);
+							}
+						}
 					} else {
 						visibleLabel.setSelected(false);
+						for (GraphSpecies g : graphed) {
+							if (g.getRunNumber().equals(selected) && g.getNumber() == i
+									&& g.getDirectory().equals(directory)) {
+								g.setVisible(false);
+							}
+						}
 					}
 				}
 			});
 			visible.add(temp);
 			visible.get(i).setSelected(true);
 			temp = new JCheckBox();
+			temp.setActionCommand("" + i);
 			temp.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
+					int i = Integer.parseInt(e.getActionCommand());
 					if (((JCheckBox) e.getSource()).isSelected()) {
 						boolean allChecked = true;
 						for (JCheckBox temp : filled) {
@@ -1780,16 +1759,30 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						if (allChecked) {
 							filledLabel.setSelected(true);
 						}
+						for (GraphSpecies g : graphed) {
+							if (g.getRunNumber().equals(selected) && g.getNumber() == i
+									&& g.getDirectory().equals(directory)) {
+								g.setFilled(true);
+							}
+						}
 					} else {
 						filledLabel.setSelected(false);
+						for (GraphSpecies g : graphed) {
+							if (g.getRunNumber().equals(selected) && g.getNumber() == i
+									&& g.getDirectory().equals(directory)) {
+								g.setFilled(false);
+							}
+						}
 					}
 				}
 			});
 			filled.add(temp);
 			filled.get(i).setSelected(true);
 			temp = new JCheckBox();
+			temp.setActionCommand("" + i);
 			temp.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
+					int i = Integer.parseInt(e.getActionCommand());
 					if (((JCheckBox) e.getSource()).isSelected()) {
 						boolean allChecked = true;
 						for (JCheckBox temp : connected) {
@@ -1800,8 +1793,20 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						if (allChecked) {
 							connectedLabel.setSelected(true);
 						}
+						for (GraphSpecies g : graphed) {
+							if (g.getRunNumber().equals(selected) && g.getNumber() == i
+									&& g.getDirectory().equals(directory)) {
+								g.setConnected(true);
+							}
+						}
 					} else {
 						connectedLabel.setSelected(false);
+						for (GraphSpecies g : graphed) {
+							if (g.getRunNumber().equals(selected) && g.getNumber() == i
+									&& g.getDirectory().equals(directory)) {
+								g.setConnected(false);
+							}
+						}
 					}
 				}
 			});
@@ -1813,7 +1818,31 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			Object[] shap = this.shapes.keySet().toArray();
 			Arrays.sort(shap);
 			JComboBox colBox = new JComboBox(col);
+			colBox.setActionCommand("" + i);
+			colBox.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					int i = Integer.parseInt(e.getActionCommand());
+					for (GraphSpecies g : graphed) {
+						if (g.getRunNumber().equals(selected) && g.getNumber() == i
+								&& g.getDirectory().equals(directory)) {
+							g.setPaint((String) ((JComboBox) e.getSource()).getSelectedItem());
+						}
+					}
+				}
+			});
 			JComboBox shapBox = new JComboBox(shap);
+			shapBox.setActionCommand("" + i);
+			shapBox.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					int i = Integer.parseInt(e.getActionCommand());
+					for (GraphSpecies g : graphed) {
+						if (g.getRunNumber().equals(selected) && g.getNumber() == i
+								&& g.getDirectory().equals(directory)) {
+							g.setShape((String) ((JComboBox) e.getSource()).getSelectedItem());
+						}
+					}
+				}
+			});
 			colorsCombo.add(colBox);
 			shapesCombo.add(shapBox);
 			speciesPanel1.add(boxes.get(i));
@@ -2747,6 +2776,14 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			}
 			return "Unknown Color";
 		}
+
+		public void setPaint(String paint) {
+			this.paint = colors.get(paint);
+		}
+
+		public void setShape(String shape) {
+			this.shape = shapes.get(shape);
+		}
 	}
 
 	private class GraphSpecies {
@@ -2768,6 +2805,26 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			this.species = species;
 			this.number = number;
 			this.directory = directory;
+		}
+
+		public void setPaint(String paint) {
+			sP.setPaint(paint);
+		}
+
+		public void setShape(String shape) {
+			sP.setShape(shape);
+		}
+
+		private void setVisible(boolean b) {
+			visible = b;
+		}
+
+		private void setFilled(boolean b) {
+			filled = b;
+		}
+
+		private void setConnected(boolean b) {
+			connected = b;
 		}
 
 		private int getNumber() {
