@@ -4,11 +4,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.util.*;
-
 import javax.swing.*;
-
 import biomodelsim.core.gui.*;
-import buttons.core.gui.*;
 
 /**
  * This class creates a GUI for the Learn program. It implements the
@@ -24,9 +21,11 @@ public class Learn extends JPanel implements ActionListener {
 	 */
 	private static final long serialVersionUID = -5806315070287184299L;
 
-	private JTextField initNetwork; // text field for initial network
+	// private JTextField initNetwork; // text field for initial network
 
-	private JButton browseInit; // the browse initial network button
+	// private JButton browseInit; // the browse initial network button
+
+	private JComboBox directories;
 
 	private JButton run; // the run button
 
@@ -61,12 +60,14 @@ public class Learn extends JPanel implements ActionListener {
 
 	private Log log;
 
+	private String root;
+
 	/**
 	 * This is the constructor for the Learn class. It initializes all the input
 	 * fields, puts them on panels, adds the panels to the frame, and then
 	 * displays the frame.
 	 */
-	public Learn(String directory, Log log) {
+	public Learn(String directory, Log log, boolean topLevel, String[] directories) {
 		this.log = log;
 		this.directory = directory;
 
@@ -116,14 +117,29 @@ public class Learn extends JPanel implements ActionListener {
 		encodingPanel.add(scroll2, "Center");
 
 		// Sets up initial network and experiments text fields
-		JPanel initNet = new JPanel();
-		JLabel initNetLabel = new JLabel("Background Knowledge Network:");
-		browseInit = new JButton("Browse");
-		browseInit.addActionListener(this);
-		initNetwork = new JTextField(39);
-		initNet.add(initNetLabel);
-		initNet.add(initNetwork);
-		initNet.add(browseInit);
+		// JPanel initNet = new JPanel();
+		// JLabel initNetLabel = new JLabel("Background Knowledge Network:");
+		// browseInit = new JButton("Browse");
+		// browseInit.addActionListener(this);
+		// initNetwork = new JTextField(39);
+		// initNet.add(initNetLabel);
+		// initNet.add(initNetwork);
+		// initNet.add(browseInit);
+
+		JPanel directoryPanel = new JPanel();
+		JLabel directoryLabel = new JLabel("Directory To Draw Data From:");
+		this.directories = new JComboBox(directories);
+		this.directories.addActionListener(this);
+		directoryPanel.add(directoryLabel);
+		directoryPanel.add(this.directories);
+		if (!topLevel) {
+			this.directories.setEnabled(false);
+			this.directories.setSelectedItem(directory.split(File.separator)[directory
+					.split(File.separator).length - 1]);
+		} else {
+			root = this.directory;
+			this.directory = root + File.separator + this.directories.getSelectedItem();
+		}
 
 		// Sets up the thresholds area
 		JPanel thresholdPanel1 = new JPanel(new GridLayout(3, 2));
@@ -225,7 +241,8 @@ public class Learn extends JPanel implements ActionListener {
 		JPanel firstTab1 = new JPanel(new BorderLayout());
 		JPanel secondTab = new JPanel(new BorderLayout());
 		middlePanel.add(radioPanel, "Center");
-		firstTab1.add(initNet, "North");
+		// firstTab1.add(initNet, "North");
+		firstTab1.add(directoryPanel, "North");
 		firstTab1.add(thresholdPanelHold1, "Center");
 		firstTab.add(firstTab1, "North");
 		JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, middlePanel, null);
@@ -290,12 +307,17 @@ public class Learn extends JPanel implements ActionListener {
 			levels();
 			speciesPanel.revalidate();
 			speciesPanel.repaint();
+		} else if (e.getSource() == directories) {
+			directory = root + File.separator + this.directories.getSelectedItem();
+			user.doClick();
+			auto.doClick();
 		}
 		// if the browse initial network button is clicked
-		else if (e.getSource() == browseInit) {
-			Buttons.browse(this, new File(initNetwork.getText().trim()), initNetwork,
-					JFileChooser.FILES_ONLY, "Open");
-		}
+		// else if (e.getSource() == browseInit) {
+		// Buttons.browse(this, new File(initNetwork.getText().trim()),
+		// initNetwork,
+		// JFileChooser.FILES_ONLY, "Open");
+		// }
 		// if the run button is selected
 		else if (e.getSource() == run) {
 			try {

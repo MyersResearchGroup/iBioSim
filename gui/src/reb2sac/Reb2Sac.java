@@ -1737,14 +1737,14 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				monteCarlo, sim, printer_id, printer_track_quantity,
 				root + File.separator + outDir, nary, 1, intSpecies, log, usingSSA, root
 						+ File.separator + simName + File.separator + "user-defined.dat",
-				biomodelsim, simTab);
+				biomodelsim, simTab, root);
 		if (nary.isSelected() && exit == 0) {
 			new Nary_Run(this, amountTerm, ge, gt, eq, lt, le, quantity, simulators, sbmlFile
 					.split(File.separator), sbmlFile, sbml, dot, xhtml, nary, ODE, monteCarlo,
 					timeLimit, printInterval, root + File.separator + outDir, rndSeed, run,
 					printer_id, printer_track_quantity, termCond, intSpecies, rap1, rap2, qss, con,
 					log, usingSSA, root + File.separator + simName + File.separator
-							+ "user-defined.dat", biomodelsim, simTab);
+							+ "user-defined.dat", biomodelsim, simTab, root);
 		}
 		running.setCursor(null);
 		running.dispose();

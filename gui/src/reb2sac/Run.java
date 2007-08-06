@@ -4,6 +4,7 @@ import java.io.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
+
 import javax.swing.*;
 
 import learn.core.gui.Learn;
@@ -255,7 +256,7 @@ public class Run implements ActionListener {
 			Component component, JRadioButton ode, JRadioButton monteCarlo, String sim,
 			String printer_id, String printer_track_quantity, String outDir, JRadioButton nary,
 			int naryRun, String[] intSpecies, Log log, JCheckBox usingSSA, String ssaFile,
-			BioSim biomodelsim, JTabbedPane simTab) {
+			BioSim biomodelsim, JTabbedPane simTab, String root) {
 		Runtime exec = Runtime.getRuntime();
 		int exitValue = 255;
 		try {
@@ -428,7 +429,37 @@ public class Run implements ActionListener {
 						if (change != -1) {
 							if (simTab.getComponentAt(change) instanceof Learn) {
 							} else {
-								simTab.setComponentAt(change, new Learn(outDir, log));
+								ArrayList<String> directories = new ArrayList<String>();
+								for (String s : new File(root).list()) {
+									if (new File(root + File.separator + s).isDirectory()) {
+										boolean add1 = false;
+										boolean add2 = false;
+										for (String ss : new File(root + File.separator + s).list()) {
+											if (ss.equals(".sim")) {
+												add1 = true;
+											}
+											if (ss.length() > 3
+													&& ss.substring(ss.length() - 4).equals(".tsd")) {
+												add2 = true;
+											}
+										}
+										if (add1 && add2) {
+											directories.add(s);
+										}
+									}
+								}
+								for (int i = 1; i < directories.size(); i++) {
+									String index = directories.get(i);
+									int j = i;
+									while ((j > 0)
+											&& directories.get(j - 1).compareToIgnoreCase(index) > 0) {
+										directories.set(j, directories.get(j - 1));
+										j = j - 1;
+									}
+									directories.set(j, index);
+								}
+								simTab.setComponentAt(change, new Learn(outDir, log, false,
+										directories.toArray(new String[0])));
 								simTab.getComponentAt(change).setName("Learn");
 							}
 						}
@@ -498,7 +529,40 @@ public class Run implements ActionListener {
 							if (change != -1) {
 								if (simTab.getComponentAt(change) instanceof Learn) {
 								} else {
-									simTab.setComponentAt(change, new Learn(outDir, log));
+									ArrayList<String> directories = new ArrayList<String>();
+									for (String s : new File(root).list()) {
+										if (new File(root + File.separator + s).isDirectory()) {
+											boolean add1 = false;
+											boolean add2 = false;
+											for (String ss : new File(root + File.separator + s)
+													.list()) {
+												if (ss.equals(".sim")) {
+													add1 = true;
+												}
+												if (ss.length() > 3
+														&& ss.substring(ss.length() - 4).equals(
+																".tsd")) {
+													add2 = true;
+												}
+											}
+											if (add1 && add2) {
+												directories.add(s);
+											}
+										}
+									}
+									for (int i = 1; i < directories.size(); i++) {
+										String index = directories.get(i);
+										int j = i;
+										while ((j > 0)
+												&& directories.get(j - 1)
+														.compareToIgnoreCase(index) > 0) {
+											directories.set(j, directories.get(j - 1));
+											j = j - 1;
+										}
+										directories.set(j, index);
+									}
+									simTab.setComponentAt(change, new Learn(outDir, log, false,
+											directories.toArray(new String[0])));
 									simTab.getComponentAt(change).setName("Learn");
 								}
 							}

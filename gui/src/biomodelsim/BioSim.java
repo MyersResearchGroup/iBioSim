@@ -3,6 +3,7 @@ package biomodelsim.core.gui;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+import java.util.*;
 import javax.swing.*;
 import javax.swing.plaf.basic.*;
 import org.sbml.libsbml.*;
@@ -26,6 +27,8 @@ public class BioSim implements MouseListener, ActionListener {
 	private JMenuItem newTstubd; // The new menu item
 
 	private JMenuItem newModel; // The new menu item
+
+	private JMenuItem newLearn; // The new learn menu item
 
 	private JMenuItem exit; // The exit menu item
 
@@ -112,6 +115,7 @@ public class BioSim implements MouseListener, ActionListener {
 		importDot = new JMenuItem("Dot");
 		exit = new JMenuItem("Exit");
 		graph = new JMenuItem("New Graph");
+		newLearn = new JMenuItem("New Learn");
 		openProj.addActionListener(this);
 		manual.addActionListener(this);
 		newTstubd.addActionListener(this);
@@ -121,24 +125,28 @@ public class BioSim implements MouseListener, ActionListener {
 		importSbml.addActionListener(this);
 		importDot.addActionListener(this);
 		graph.addActionListener(this);
+		newLearn.addActionListener(this);
 		exit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, ActionEvent.ALT_MASK));
 		newTstubd.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.ALT_MASK));
 		openProj.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.ALT_MASK));
 		newModel.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, ActionEvent.ALT_MASK));
 		about.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ActionEvent.ALT_MASK));
-		manual.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, ActionEvent.ALT_MASK));
+		manual.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_U, ActionEvent.ALT_MASK));
 		graph.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, ActionEvent.ALT_MASK));
+		newLearn.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, ActionEvent.ALT_MASK));
 		exit.setMnemonic(KeyEvent.VK_X);
 		newTstubd.setMnemonic(KeyEvent.VK_N);
 		openProj.setMnemonic(KeyEvent.VK_O);
 		newModel.setMnemonic(KeyEvent.VK_M);
 		about.setMnemonic(KeyEvent.VK_A);
-		manual.setMnemonic(KeyEvent.VK_L);
+		manual.setMnemonic(KeyEvent.VK_U);
 		graph.setMnemonic(KeyEvent.VK_G);
+		newLearn.setMnemonic(KeyEvent.VK_L);
 		file.add(newMenu);
 		newMenu.add(newTstubd);
 		newMenu.add(newModel);
 		newMenu.add(graph);
+		newMenu.add(newLearn);
 		file.add(openMenu);
 		openMenu.add(openProj);
 		file.addSeparator();
@@ -259,7 +267,7 @@ public class BioSim implements MouseListener, ActionListener {
 						|| tab.getComponentAt(i).getName().equals("SBML Editor")
 						|| tab.getComponentAt(i).getName().contains("Graph")) {
 					save(i, false);
-				} else {
+				} else if (!tab.getTitleAt(i).equals("Learn")) {
 					Object[] options = { "Yes", "No", "Cancel" };
 					int value = JOptionPane.showOptionDialog(frame,
 							"Do you want to save changes to " + tab.getTitleAt(i) + "?",
@@ -679,15 +687,52 @@ public class BioSim implements MouseListener, ActionListener {
 				JOptionPane.showMessageDialog(frame, "You must open or create a project first.",
 						"Error", JOptionPane.ERROR_MESSAGE);
 			}
+		} else if (e.getSource() == newLearn) {
+			if (root != null) {
+				ArrayList<String> directories = new ArrayList<String>();
+				for (String s : new File(root).list()) {
+					if (new File(root + File.separator + s).isDirectory()) {
+						boolean add1 = false;
+						boolean add2 = false;
+						for (String ss : new File(root + File.separator + s).list()) {
+							if (ss.equals(".sim")) {
+								add1 = true;
+							}
+							if (ss.length() > 3 && ss.substring(ss.length() - 4).equals(".tsd")) {
+								add2 = true;
+							}
+						}
+						if (add1 && add2) {
+							directories.add(s);
+						}
+					}
+				}
+				for (int i = 1; i < directories.size(); i++) {
+					String index = directories.get(i);
+					int j = i;
+					while ((j > 0) && directories.get(j - 1).compareToIgnoreCase(index) > 0) {
+						directories.set(j, directories.get(j - 1));
+						j = j - 1;
+					}
+					directories.set(j, index);
+				}
+				addTab("Learn", new Learn(root, log, true, directories.toArray(new String[0])),
+						null);
+			} else {
+				JOptionPane.showMessageDialog(frame, "You must open or create a project first.",
+						"Error", JOptionPane.ERROR_MESSAGE);
+			}
 		} else if (e.getActionCommand().equals("copy")) {
 			String modelID = null;
 			String copy = JOptionPane.showInputDialog(frame, "Enter A New Filename:", "Rename",
 					JOptionPane.PLAIN_MESSAGE);
 			if (copy != null) {
 				copy = copy.trim();
+			} else {
+				return;
 			}
 			try {
-				if (copy != null && !copy.equals("")) {
+				if (!copy.equals("")) {
 					if (tree.getFile().length() >= 5
 							&& tree.getFile().substring(tree.getFile().length() - 5)
 									.equals(".sbml") || tree.getFile().length() >= 4
@@ -726,6 +771,13 @@ public class BioSim implements MouseListener, ActionListener {
 							copy += ".grf";
 						}
 					}
+				}
+				if (copy.equals(tree.getFile().split(File.separator)[tree.getFile().split(
+						File.separator).length - 1])) {
+					JOptionPane.showMessageDialog(frame, "Unable to copy file."
+							+ "\nNew filename must be different than old filename.", "Error",
+							JOptionPane.ERROR_MESSAGE);
+					return;
 				}
 				boolean write = true;
 				if (new File(root + File.separator + copy).exists()) {
@@ -818,8 +870,10 @@ public class BioSim implements MouseListener, ActionListener {
 						"Rename", JOptionPane.PLAIN_MESSAGE);
 				if (rename != null) {
 					rename = rename.trim();
+				} else {
+					return;
 				}
-				if (rename != null && !rename.equals("")) {
+				if (!rename.equals("")) {
 					if (tree.getFile().length() >= 5
 							&& tree.getFile().substring(tree.getFile().length() - 5)
 									.equals(".sbml") || tree.getFile().length() >= 4
@@ -857,6 +911,13 @@ public class BioSim implements MouseListener, ActionListener {
 						} else {
 							rename += ".grf";
 						}
+					}
+					if (rename.equals(tree.getFile().split(File.separator)[tree.getFile().split(
+							File.separator).length - 1])) {
+						JOptionPane.showMessageDialog(frame, "Unable to rename file."
+								+ "\nNew filename must be different than old filename.", "Error",
+								JOptionPane.ERROR_MESSAGE);
+						return;
 					}
 					boolean write = true;
 					if (new File(root + File.separator + rename).exists()) {
@@ -1417,7 +1478,36 @@ public class BioSim implements MouseListener, ActionListener {
 					simTab.addTab("SBML Editor", sbml);
 					simTab.getComponentAt(simTab.getComponents().length - 1).setName("SBML Editor");
 					if (stoch) {
-						Learn learn = new Learn(tree.getFile(), log);
+						ArrayList<String> directories = new ArrayList<String>();
+						for (String s : new File(root).list()) {
+							if (new File(root + File.separator + s).isDirectory()) {
+								boolean add1 = false;
+								boolean add2 = false;
+								for (String ss : new File(root + File.separator + s).list()) {
+									if (ss.equals(".sim")) {
+										add1 = true;
+									}
+									if (ss.length() > 3
+											&& ss.substring(ss.length() - 4).equals(".tsd")) {
+										add2 = true;
+									}
+								}
+								if (add1 && add2) {
+									directories.add(s);
+								}
+							}
+						}
+						for (int i = 1; i < directories.size(); i++) {
+							String index = directories.get(i);
+							int j = i;
+							while ((j > 0) && directories.get(j - 1).compareToIgnoreCase(index) > 0) {
+								directories.set(j, directories.get(j - 1));
+								j = j - 1;
+							}
+							directories.set(j, index);
+						}
+						Learn learn = new Learn(tree.getFile(), log, false, directories
+								.toArray(new String[0]));
 						simTab.addTab("Learn", learn);
 						simTab.getComponentAt(simTab.getComponents().length - 1).setName("Learn");
 					} else {
@@ -1504,7 +1594,7 @@ public class BioSim implements MouseListener, ActionListener {
 							if (save(tabIndex, false) == 1) {
 								tabPane.remove(tabIndex);
 							}
-						} else {
+						} else if (!tab.getTitleAt(tabIndex).equals("Learn")) {
 							Object[] options = { "Yes", "No", "Cancel" };
 							int value = JOptionPane.showOptionDialog(frame,
 									"Do you want to save changes to " + tab.getTitleAt(tabIndex)
@@ -1518,6 +1608,8 @@ public class BioSim implements MouseListener, ActionListener {
 							} else if (value == JOptionPane.NO_OPTION) {
 								tabPane.remove(tabIndex);
 							}
+						} else {
+							tabPane.remove(tabIndex);
 						}
 					}
 				}
