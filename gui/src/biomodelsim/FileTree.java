@@ -35,6 +35,9 @@ public class FileTree extends JPanel implements MouseListener {
 	public static final ImageIcon ICON_PROJECT = new ImageIcon(System.getenv("BIOSIM")
 			+ File.separator + "gui" + File.separator + "icons" + File.separator + "project.jpg");
 
+	public static final ImageIcon ICON_GRAPH = new ImageIcon(System.getenv("BIOSIM")
+			+ File.separator + "gui" + File.separator + "icons" + File.separator + "graph.jpg");
+
 	/**
 	 * Construct a FileTree
 	 */
@@ -138,7 +141,8 @@ public class FileTree extends JPanel implements MouseListener {
 				} else if (files.get(fnum).toString().length() > 3
 						&& files.get(fnum).toString().substring(
 								files.get(fnum).toString().length() - 4).equals(".grf")) {
-					curDir.add(new DefaultMutableTreeNode(files.get(fnum)));
+					curDir.add(new DefaultMutableTreeNode(new IconData(ICON_GRAPH, null, files
+							.get(fnum))));
 				}
 			} else if (!(curDir.getParent().toString().equals(root.toString()))) {
 				if (files.get(fnum).toString().length() > 4
@@ -157,7 +161,8 @@ public class FileTree extends JPanel implements MouseListener {
 				} else if (files.get(fnum).toString().length() > 3
 						&& files.get(fnum).toString().substring(
 								files.get(fnum).toString().length() - 4).equals(".grf")) {
-					curDir.add(new DefaultMutableTreeNode(files.get(fnum)));
+					curDir.add(new DefaultMutableTreeNode(new IconData(ICON_GRAPH, null, files
+							.get(fnum))));
 				}
 			}
 		}
@@ -298,7 +303,8 @@ public class FileTree extends JPanel implements MouseListener {
 					} else if (files.get(fnum).toString().length() > 3
 							&& files.get(fnum).toString().substring(
 									files.get(fnum).toString().length() - 4).equals(".grf")) {
-						current.insert(new DefaultMutableTreeNode(files.get(fnum)), insert);
+						current.insert(new DefaultMutableTreeNode(new IconData(ICON_GRAPH, null,
+								files.get(fnum))), insert);
 					}
 				} else if (!(parent.toString().equals(root.toString()))) {
 					int insert = 0;
@@ -329,7 +335,8 @@ public class FileTree extends JPanel implements MouseListener {
 					} else if (files.get(fnum).toString().length() > 3
 							&& files.get(fnum).toString().substring(
 									files.get(fnum).toString().length() - 4).equals(".grf")) {
-						current.insert(new DefaultMutableTreeNode(files.get(fnum)), insert);
+						current.insert(new DefaultMutableTreeNode(new IconData(ICON_GRAPH, null,
+								files.get(fnum))), insert);
 					}
 				}
 			}
