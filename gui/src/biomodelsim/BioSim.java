@@ -3,12 +3,9 @@ package biomodelsim.core.gui;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
-import java.util.Properties;
-
 import javax.swing.*;
 import javax.swing.plaf.basic.*;
 import org.sbml.libsbml.*;
-
 import reb2sac.core.gui.*;
 import learn.core.gui.*;
 import sbmleditor.core.gui.*;
@@ -692,8 +689,8 @@ public class BioSim implements MouseListener, ActionListener {
 			try {
 				if (copy != null && !copy.equals("")) {
 					if (tree.getFile().length() >= 5
-							&& tree.getFile().substring(tree.getFile().length() - 5).equals("sbml")
-							|| tree.getFile().length() >= 4
+							&& tree.getFile().substring(tree.getFile().length() - 5)
+									.equals(".sbml") || tree.getFile().length() >= 4
 							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".xml")) {
 						if (copy.length() > 4) {
 							if (!copy.substring(copy.length() - 5).equals(".sbml")
@@ -730,65 +727,86 @@ public class BioSim implements MouseListener, ActionListener {
 						}
 					}
 				}
-				if (modelID != null) {
-					SBMLReader reader = new SBMLReader();
-					SBMLDocument document = new SBMLDocument();
-					document = reader.readSBML(tree.getFile());
-					document.getModel().setId(modelID);
-					FileOutputStream out = new FileOutputStream(new File(root + File.separator
-							+ copy));
-					SBMLWriter writer = new SBMLWriter();
-					String doc = writer.writeToString(document);
-					byte[] output = doc.getBytes();
-					out.write(output);
-					out.close();
-				} else if (tree.getFile().length() >= 4
-						&& tree.getFile().substring(tree.getFile().length() - 4).equals(".dot")
-						|| tree.getFile().substring(tree.getFile().length() - 4).equals(".grf")) {
-					FileOutputStream out = new FileOutputStream(new File(root + File.separator
-							+ copy));
-					FileInputStream in = new FileInputStream(new File(tree.getFile()));
-					int read = in.read();
-					while (read != -1) {
-						out.write(read);
-						read = in.read();
-					}
-					in.close();
-					out.close();
-				} else {
-					new File(root + File.separator + copy).mkdir();
-					new FileWriter(new File(root + File.separator + copy + File.separator + ".sim"))
-							.close();
-					String[] s = new File(tree.getFile()).list();
-					for (String ss : s) {
-						if (ss.length() > 4 && ss.substring(ss.length() - 5).equals(".sbml")) {
-							SBMLReader reader = new SBMLReader();
-							SBMLDocument document = reader.readSBML(tree.getFile() + File.separator
-									+ ss);
-							FileOutputStream out = new FileOutputStream(new File(root
-									+ File.separator + copy + File.separator + ss));
-							SBMLWriter writer = new SBMLWriter();
-							String doc = writer.writeToString(document);
-							byte[] output = doc.getBytes();
-							out.write(output);
-							out.close();
-						} else if (ss.length() > 10
-								&& ss.substring(ss.length() - 11).equals(".properties")) {
-							FileOutputStream out = new FileOutputStream(new File(root
-									+ File.separator + copy + File.separator + ss));
-							FileInputStream in = new FileInputStream(new File(tree.getFile()
-									+ File.separator + ss));
-							int read = in.read();
-							while (read != -1) {
-								out.write(read);
-								read = in.read();
-							}
-							in.close();
-							out.close();
+				boolean write = true;
+				if (new File(root + File.separator + copy).exists()) {
+					Object[] options = { "Overwrite", "Cancel" };
+					int value = JOptionPane.showOptionDialog(frame, "File already exists."
+							+ "\nDo you want to overwrite?", "Overwrite",
+							JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
+							options[0]);
+					if (value == JOptionPane.YES_OPTION) {
+						write = true;
+						File dir = new File(root + File.separator + copy);
+						if (dir.isDirectory()) {
+							deleteDir(dir);
+						} else {
+							dir.delete();
 						}
+					} else {
+						write = false;
 					}
 				}
-				refreshTree();
+				if (write) {
+					if (modelID != null) {
+						SBMLReader reader = new SBMLReader();
+						SBMLDocument document = new SBMLDocument();
+						document = reader.readSBML(tree.getFile());
+						document.getModel().setId(modelID);
+						FileOutputStream out = new FileOutputStream(new File(root + File.separator
+								+ copy));
+						SBMLWriter writer = new SBMLWriter();
+						String doc = writer.writeToString(document);
+						byte[] output = doc.getBytes();
+						out.write(output);
+						out.close();
+					} else if (tree.getFile().length() >= 4
+							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".dot")
+							|| tree.getFile().substring(tree.getFile().length() - 4).equals(".grf")) {
+						FileOutputStream out = new FileOutputStream(new File(root + File.separator
+								+ copy));
+						FileInputStream in = new FileInputStream(new File(tree.getFile()));
+						int read = in.read();
+						while (read != -1) {
+							out.write(read);
+							read = in.read();
+						}
+						in.close();
+						out.close();
+					} else {
+						new File(root + File.separator + copy).mkdir();
+						new FileWriter(new File(root + File.separator + copy + File.separator
+								+ ".sim")).close();
+						String[] s = new File(tree.getFile()).list();
+						for (String ss : s) {
+							if (ss.length() > 4 && ss.substring(ss.length() - 5).equals(".sbml")) {
+								SBMLReader reader = new SBMLReader();
+								SBMLDocument document = reader.readSBML(tree.getFile()
+										+ File.separator + ss);
+								FileOutputStream out = new FileOutputStream(new File(root
+										+ File.separator + copy + File.separator + ss));
+								SBMLWriter writer = new SBMLWriter();
+								String doc = writer.writeToString(document);
+								byte[] output = doc.getBytes();
+								out.write(output);
+								out.close();
+							} else if (ss.length() > 10
+									&& ss.substring(ss.length() - 11).equals(".properties")) {
+								FileOutputStream out = new FileOutputStream(new File(root
+										+ File.separator + copy + File.separator + ss));
+								FileInputStream in = new FileInputStream(new File(tree.getFile()
+										+ File.separator + ss));
+								int read = in.read();
+								while (read != -1) {
+									out.write(read);
+									read = in.read();
+								}
+								in.close();
+								out.close();
+							}
+						}
+					}
+					refreshTree();
+				}
 			} catch (Exception e1) {
 				JOptionPane.showMessageDialog(frame, "Unable to copy file.", "Error",
 						JOptionPane.ERROR_MESSAGE);
@@ -840,90 +858,90 @@ public class BioSim implements MouseListener, ActionListener {
 							rename += ".grf";
 						}
 					}
-					if (new File(tree.getFile()).isDirectory()) {
-						for (String s : new File(root).list()) {
-							if (s.length() >= 4 && s.substring(s.length() - 4).equals(".grf")) {
-								Properties graph = new Properties();
-								try {
-									graph.load(new FileInputStream(new File(root + File.separator
-											+ s)));
-									int next = 0;
-									while (graph.containsKey("species.directory." + next)) {
-										if (graph.getProperty("species.directory." + next).equals(
-												tree.getFile().split(File.separator)[tree.getFile()
-														.split(File.separator).length - 1])) {
-											graph.setProperty("species.directory." + next, rename);
-										}
-										next++;
-									}
-									graph.store(new FileOutputStream(new File(root + File.separator
-											+ s)), "Graph Data");
-								} catch (Exception e1) {
-								}
-							}
-						}
-					}
-					new File(tree.getFile()).renameTo(new File(root + File.separator + rename));
-					if (modelID != null) {
-						SBMLReader reader = new SBMLReader();
-						SBMLDocument document = new SBMLDocument();
-						document = reader.readSBML(root + File.separator + rename);
-						document.getModel().setId(modelID);
-						FileOutputStream out = new FileOutputStream(new File(root + File.separator
-								+ rename));
-						SBMLWriter writer = new SBMLWriter();
-						String doc = writer.writeToString(document);
-						byte[] output = doc.getBytes();
-						out.write(output);
-						out.close();
-					}
-					for (int i = 0; i < tab.getTabCount(); i++) {
-						if (tab.getTitleAt(i).equals(
-								tree.getFile().split(File.separator)[tree.getFile().split(
-										File.separator).length - 1])) {
-							if (tree.getFile().length() > 4
-									&& tree.getFile().substring(tree.getFile().length() - 5)
-											.equals(".sbml")
-									|| tree.getFile().length() > 3
-									&& tree.getFile().substring(tree.getFile().length() - 4)
-											.equals(".xml")) {
-								((SBML_Editor) tab.getComponentAt(i)).setModelID(modelID);
-								((SBML_Editor) tab.getComponentAt(i)).setFile(root + File.separator
-										+ rename);
-								tab.setTitleAt(i, rename);
-							} else if (tree.getFile().length() > 3
-									&& tree.getFile().substring(tree.getFile().length() - 4)
-											.equals(".grf")) {
-								((Graph) tab.getComponentAt(i)).setGraphName(rename);
-								tab.setTitleAt(i, rename);
+					boolean write = true;
+					if (new File(root + File.separator + rename).exists()) {
+						Object[] options = { "Overwrite", "Cancel" };
+						int value = JOptionPane.showOptionDialog(frame, "File already exists."
+								+ "\nDo you want to overwrite?", "Overwrite",
+								JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
+								options, options[0]);
+						if (value == JOptionPane.YES_OPTION) {
+							write = true;
+							File dir = new File(root + File.separator + rename);
+							if (dir.isDirectory()) {
+								deleteDir(dir);
 							} else {
-								for (int j = 0; j < ((JTabbedPane) tab.getComponentAt(i))
-										.getTabCount(); j++) {
-									if (((JTabbedPane) tab.getComponentAt(i)).getComponent(j)
-											.getName().equals("Simulate")) {
-										((Reb2Sac) ((JTabbedPane) tab.getComponentAt(i))
-												.getComponent(j)).setSim(rename);
-									} else if (((JTabbedPane) tab.getComponentAt(i))
-											.getComponent(j).getName().contains("Graph")) {
-										if (((JTabbedPane) tab.getComponentAt(i)).getComponent(j) instanceof Graph) {
-											Graph g = ((Graph) ((JTabbedPane) tab.getComponentAt(i))
-													.getComponent(j));
-											g.setDirectory(root + File.separator + rename);
-										}
-									} else if (((JTabbedPane) tab.getComponentAt(i))
-											.getComponent(j).getName().equals("Learn")) {
-										if (((JTabbedPane) tab.getComponentAt(i)).getComponent(j) instanceof Learn) {
-											Learn l = ((Learn) ((JTabbedPane) tab.getComponentAt(i))
-													.getComponent(j));
-											l.setDirectory(root + File.separator + rename);
-										}
-									}
-								}
-								tab.setTitleAt(i, rename);
+								dir.delete();
 							}
+						} else {
+							write = false;
 						}
 					}
-					refreshTree();
+					if (write) {
+						new File(tree.getFile()).renameTo(new File(root + File.separator + rename));
+						if (modelID != null) {
+							SBMLReader reader = new SBMLReader();
+							SBMLDocument document = new SBMLDocument();
+							document = reader.readSBML(root + File.separator + rename);
+							document.getModel().setId(modelID);
+							FileOutputStream out = new FileOutputStream(new File(root
+									+ File.separator + rename));
+							SBMLWriter writer = new SBMLWriter();
+							String doc = writer.writeToString(document);
+							byte[] output = doc.getBytes();
+							out.write(output);
+							out.close();
+						}
+						for (int i = 0; i < tab.getTabCount(); i++) {
+							if (tab.getTitleAt(i).equals(
+									tree.getFile().split(File.separator)[tree.getFile().split(
+											File.separator).length - 1])) {
+								if (tree.getFile().length() > 4
+										&& tree.getFile().substring(tree.getFile().length() - 5)
+												.equals(".sbml")
+										|| tree.getFile().length() > 3
+										&& tree.getFile().substring(tree.getFile().length() - 4)
+												.equals(".xml")) {
+									((SBML_Editor) tab.getComponentAt(i)).setModelID(modelID);
+									((SBML_Editor) tab.getComponentAt(i)).setFile(root
+											+ File.separator + rename);
+									tab.setTitleAt(i, rename);
+								} else if (tree.getFile().length() > 3
+										&& tree.getFile().substring(tree.getFile().length() - 4)
+												.equals(".grf")) {
+									((Graph) tab.getComponentAt(i)).setGraphName(rename);
+									tab.setTitleAt(i, rename);
+								} else {
+									for (int j = 0; j < ((JTabbedPane) tab.getComponentAt(i))
+											.getTabCount(); j++) {
+										if (((JTabbedPane) tab.getComponentAt(i)).getComponent(j)
+												.getName().equals("Simulate")) {
+											((Reb2Sac) ((JTabbedPane) tab.getComponentAt(i))
+													.getComponent(j)).setSim(rename);
+										} else if (((JTabbedPane) tab.getComponentAt(i))
+												.getComponent(j).getName().contains("Graph")) {
+											if (((JTabbedPane) tab.getComponentAt(i))
+													.getComponent(j) instanceof Graph) {
+												Graph g = ((Graph) ((JTabbedPane) tab
+														.getComponentAt(i)).getComponent(j));
+												g.setDirectory(root + File.separator + rename);
+											}
+										} else if (((JTabbedPane) tab.getComponentAt(i))
+												.getComponent(j).getName().equals("Learn")) {
+											if (((JTabbedPane) tab.getComponentAt(i))
+													.getComponent(j) instanceof Learn) {
+												Learn l = ((Learn) ((JTabbedPane) tab
+														.getComponentAt(i)).getComponent(j));
+												l.setDirectory(root + File.separator + rename);
+											}
+										}
+									}
+									tab.setTitleAt(i, rename);
+								}
+							}
+						}
+						refreshTree();
+					}
 				}
 			} catch (Exception e1) {
 				JOptionPane.showMessageDialog(frame, "Unable to rename selected file.", "Error",
