@@ -1,230 +1,751 @@
-<html><head>
-
-  <meta name="GENERATOR" content="Myers Research Group"><title>Myers Circuit Research Group</title></head><body bgcolor="#dddddd" link="#0000aa">
-
-<table border="0" cellpadding="0" cellspacing="5" width="850">
-
-<tbody><tr>
-
-<td width="480">
-
-<br>
-<center>
-<hr>
-<h1>BioSim Manual</h1>
-<hr>
-</center>
-
-<ul>
-<li><font size="+1"><a href="#PROJECTS">Projects</a></font></li>
-<ul>
-<li><a href="#NEWPROJ">Creating projects</a></font></li>
-<li><a href="#OPENPROJ">Opening projects</a></font></li>
-</ul>
-<li><font size="+1"><a href="#MODELS">SBML Models</a></font></li>
-<ul>
-<li><a href="#NEWMODEL">Creating SBML models</a></font></li>
-<li><a href="#IMPORTSBML">Importing SBML models</a></font></li>
-<li><a href="#SBMLEDIT">Editing SBML models</a></font></li>
-<li><a href="#VIEWSBML">Viewing SBML models</a></font></li>
-</ul>
-<li><font size="+1"><a href="#ANALYSIS">Analysis</a></font></li>
-<ul>
-<li><a href="#SIMULATION">Simulation</a></font></li>
-<li><a href="#LEARNING">Learning</a></font></li>
-<li><a href="#GRAPHING">Graphing</a></font></li>
-</ul>
-</ul>
-
-<h1><a name="PROJECTS"></a>Projects</h1>
-A project is a collection of model and data files.
-<br>&nbsp;
-
-<h2><a name="NEWPROJ"></a>Creating projects</h2>
-To create a new project, select the File drop down menu from the toolbar and select "New Project" under the New option.  You will then be prompted to browse to a desired location for and to give a name to the project directory.  After you do this, click the new button and a new project directory will be created.
-<br>&nbsp;
-
-<h2><a name="OPENPROJ"></a>Opening projects</h2>
-To open a project, select the File drop down menu from the toolbar and select "Open Project" under the Open option.  You will then be prompted to browse to a project directory that you want to open.  After you select the project directory, click open and the project will open.
-<br>&nbsp;
-
-<h1><a name="MODELS"></a>MODELS</h1>
-A model is a representation of biochemical reaction networks.  A model can represent metabolic networks, cell-signaling pathways, regulatory networks, and other kinds of systems studied in systems biology.
-<br>&nbsp;
-
-<h2><a name="NEWMODEl"></a>Creating SBML models</h2>
-To create a new SBML model, you must first have a project open.  Once this is done, select the File drop down menu from the toolbar and select "New Model" under the New option.  You will then be prompted to give a model id.  Once an id is entered, an SBML editor will open in a new tab.
-<br>&nbsp;
-
-<h2><a name="IMPORTSBML"></a>Importing SBML models</h2>
-To import an SBML model, you must first have a project open.  Once this is done, select the File drop down menu from the toolbar and select "SBML" under the Import option.  You will then be prompted to select a model to import.  Select a desired model and click the open button to import the SBML model into the project.
-<br>&nbsp;
-
-<h2><a name="SBMLEDIT"></a>Editing SBML models</h2>
-<p>To edit an SBML model, you must first have a project open.  Once this is done, right click on the model you want to edit and select "Edit".  This will open up an SBML editor in a new tab.  You can also edit an SBML model that is part of an analysis by right clicking on an analysis directory, by selecting "Open Analysis View", and then by selecting the "SBML Editor" tab.</p>
-<h3>Adding, Editing, And Removing</h3>
-<ul>
-<li>To add a new item, click on one of the add buttons.  You will then be prompted to provide a unique id and some properties for this new item.  After you have filled out all of the required fields, click add and the new item will be added to the SBML model.</li>
-<li>To edit an existing item, select that item from the list and click the edit button.  An editing window will open and you will be able to change the properties of that item.  When you are done editing this item, click save to save the changes to the item.</li>
-<li>To remove an item from the model, select that item and click the remove button.  The item will then be removed from the model.  However, if you try to remove a species that is used in a reaction, you will first have to remove the reaction or remove the species from the reaction in order to remove the species from the model.  Likewise, if you try to remove a compartment that contains species, you will have to remove the species before you will be able to remove the compartment.</li>
-</ul>
-<h3>Kinetic Law Formula Syntax</h3>
-Kinetic law formulas are expressed as text strings using a simple C-like syntax.  Here are some syntax rules when dealing with kinetic law formulas:
-<ul>
-<li>Acceptable operators include:  add (+), subtract (-), multiply (*), and divide (/)</li>
-<li>Supported functions include:
-<ul>
-<li>abs(x) - Absolute Value</li>
-<li>acos(x) - Arc Cosine</li>
-<li>asin(x) - Arc Sine</li>
-<li>atan(x) - Arc Tangent</li>
-<li>ceil(x) - Ceiling</li>
-<li>cos(x) - Cosine</li>
-<li>exp(x) - e^x</li>
-<li>floor(x) - Floor</li>
-<li>log(x) - Natural Log</li>
-<li>log(#, x) - Log Base #</li>
-<li>sqr(x) - Squared</li>
-<li>pow(x, y) - x^y</li>
-<li>sqrt(x) - Square Root</li>
-<li>root(#, x) - x to the # root</li>
-<li>sin(x) - Sine</li>
-<li>tan(x) - Tangent</li>
-</ul>
-</li>
-<li>Acceptable variables include anything listed in the products, reactants, or parameter fields.</li>
-<li>Real Numbers can also be entered into a kinetic law formula.</li>
-</ul>
-The kinetic law editor also includes two buttons.  The "Use Mass Action" button will compute a mass action formula for you and enter it into the kinetic law editor.  The "Clear" button will clear the kinetic law editor.
-<br>&nbsp;
-
-<h2><a name="VIEWSBML"></a>Viewing SBML models</h2>
-To view an SBML model, you must first have a project open.  Once this is done, right click on the model you want to view.  There are two ways to view a model.  You can either select the "View As Graph" option or the "View In Browser" option.  The "View As Graph" option will convert the model to a dot file and then will open that file with dotty.  The "View In Browser" option will covert the model to an xhtml file and will open that file with firefox.
-<br>&nbsp;
-
-<h1><a name="ANALYSIS"></a>Analysis</h1>
-To perform analysis, you must first have a project open.  Once this is done, right click on a model and select "Create Analysis View".  You will then be prompted to give a name to your analysis.  After a name is entered, a tab with analysis options will open.  You can also open up an analysis tab by right clicking on an analysis directory and selecting "Open Analysis View".
-<br>&nbsp;
-
-<h2><a name="SIMULATION"></a>Simulation</h2>
-Hiro please fill in here, add sections if you like.
-<br>&nbsp;
-
-<h2><a name="LEARNING"></a>Learning</h2>
-<p>The learning tab in the BioSim toolkit is use to try and understand
-the workings between species in a genetic regulatory network.  The
-learning algorithm is applied to time series data that can either be
-manually entered, or simulated from an sbml file.  The learning
-algorithm implemented in BioSim is based on the work by Barker
-et.al. </p>
-
-<h3>Learning network connectivity from simulated data</h3>
-<ul>
-<li>Open a project</li>
-<li>Right click on an analysis directory and select "Open Analysis View"</li>
-<li>Select the "Learn" tab</li>
-<li>Basic threshold values have been already choosen</li>
-<li>Select the species that you do not wish to learn connections to or from by clicking the checkbox 
-  in the "Do Not Learn" section next to the species name</li>
-<li>Click the "Learn" button</li>
-<li>A network is now shown.  The nodes in the graph are the selected species, and the verticies of the graph are the activation and repression connections.  An activation connection is shown with a blue arrow and a repression connection is shown with a red tee.</li>
-</ul>
-<h3>Basic Options</h3>
-<ul>
-<li>Background Knowledge Network</li>
-
-<p>The Background Knowledge Network field allows the user to input
-known information reguarding the network of interest.  The names of
-these species must match the names used in the simulation
-directory.</p>
-
-<li>For Vote Threshold (Tf)</li>
-<p>Tf is a threshold passed to the Score function which is used to
-    cast a vote in favor of an influence vector when a probability
-    ratio is greater than this threshold value.</p>
-
-<li>Against Vote Threshold (Ta)</li>
-<p>Ta is a threshold passed to the Score function which is used to
-    cast a vote against an influence vector when a probability ratio
-    is less than this threshold value.</p>
-
-<li>First Round IV Threshold (Ti)</li>
-<p>Ti is a threshold passed to the Score function representing the score of an influence vector
-    with no influences in it (i.e. |i|=0)</p>
-
-<li>Pre-competition IV Filter Threshold (Tp)</li>
-<p>Tp is a threshold value used in the CombineInfluenceVectors algorithm to filter or remove low
-    scoring influence vectors before competing them</p>
-
-<li>Merge IVs delta (Tm)</li>
-<p>Tm is a threshold value used in the CombineInfluenceVectors
-algorithm to determine if two influence vectors have a close enough
-score to even be considered for merging.</p>
-
-<li>Minimum Initial Vectors (Tn)</li>
-<p> Tn is a threshold value used in the CreateInfluenceVectorSet
-      algorithm and represents the minimum number of influence vectors
-      constructed in this algorithm</p>
-
-<li>Max Vector Size (Tj)</li>
-<p>Tj is a threshold value used in the CombineInfluenceVectors
-      algorithm to determine the maximal size of merged influence
-      vectors</p>
-
-<li>Relax Thresholds Delta (Tr)</li>
-<p>Tr is a threshold value used when relaxing thresholds</p>
-
-<li>Number of Bins</li>
-<p>The Number of Bins value specifies how many values the encoded time series data can assume</p>
-
-<li>Use User Generated Levels</li>
-<p>The User Generated Levels radio button allows the user to provide specific data value cuttofs for encoding the data</p>
-
-<ul>
-<li>The Suggest Cuttofs Button</li>
-<p>The Suggest Cuttofs Button pre-populates the cuttof fields with
-cuttofs that try to maximize the number of data points in each bin</p>
-
-</ul>
-
-<li>The Do Not Use checkbox</li>
-<p>The Do Not Use checkbox allows the user to specify which species to include when learning network connectivity</p>
-
-</ul>
-
-<h3>Advanced Options</h3>
-<ul>
-<li>Debug Level</li>
-<p>The Debug Level drop down menu allows the user to receive more
-detailed information while the GeneNet algorithm is running</p>
-
-</ul>
-<br>&nbsp;
-
-<h2><a name="GRAPHING"></a>Graphing</h2>
-To graph data, perform a simulation to create some data or right click on an analysis directory that has data in it and select "Open Analysis View".  You will see a "Graph" tab.  Select this tab and you will have some graphing options.  By clicking on the graph, you will be able to change what is graphed and how the graph looks.  Here are your options:
-<ul>
-<li>Title - The Title Of The Graph</li>
-<li>X-Axis Label - The Label Displayed For The X-Axis</li>
-<li>Y-Axis Label - The Label Displayed For The Y-Axis</li>
-<li>X-Min - The Starting Value For The X-Axis</li>
-<li>X-Max - The Ending Value For The X-Axis</li>
-<li>X-Step - The Increment Of The X-Axis</li>
-<li>Y-Min - The Starting Value For The Y-Axis</li>
-<li>Y-Max - The Ending Value For The Y-Axis</li>
-<li>Y-Step - The Increment Of The Y-Axis</li>
-<li>Auto Resize Check Box - Determines Whether Or Not To Automatically Resize The Graph To The Best Fit</li>
-<li>Data Selection Menu - This Menu Displays All Of The Available Sets Off Data You Can Graph.  Select A Set Of Data And Then You Can Select Which Species To Display</li>
-<li>Use Check Box - Determines Whether Or Not This Species Is Displayed On The Graph</li>
-<li>Species Label - The Name Displayed On The Graph For This Species</li>
-<li>Drop Down Menu Of Colors - The Color That Will Be Used To Draw The Line For This Species</li>
-<li>Drop Down Menu Of Shapes - The Shape That Will Be Used To Mark The Points On The Line For This Species</li>
-<li>Connected Check Box - Determines Whether Or Not A Line Will Be Drawn That Connects The Shapes For This Species</li>
-<li>Visible Check Box - Determines Whether Or Not Shapes Will Be Visible On The Line For This Species</li>
-<li>Filled Check Box - Determines Whether Or Not Shapes Will Be Filled In On The Line For This Species</li>
-</ul>
-<p>To save the graph, click the "Save" button.  This will save the data of the graph to a file so when you re-open the analysis view, it will reload this data and display what was graphed.</p>
-To export the graph, click one of the "Export" buttons.  You will then be prompted to give a desired pixel height and width for the file.  Once this is done, you will be prompted to select a location and a name for the file you are saving.  After you make these selections, click the "Export" button and the graph will be exported.
-<br>&nbsp;
-
-</td></tr></tbody></table></body></html>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
+	<TITLE>Myers Circuit Research Group</TITLE>
+	<META NAME="GENERATOR" CONTENT="OpenOffice.org 2.2  (Linux)">
+	<META NAME="CREATED" CONTENT="20070806;14370600">
+	<META NAME="CHANGEDBY" CONTENT="Hiroyuki Kuwahara">
+	<META NAME="CHANGED" CONTENT="20070806;17452900">
+	<STYLE TYPE="text/css">
+	<!--
+		A:link { color: #0000aa }
+	-->
+	</STYLE>
+</HEAD>
+<BODY LANG="en-US" LINK="#0000aa" BGCOLOR="#dddddd" DIR="LTR">
+<TABLE WIDTH=848 BORDER=0 CELLPADDING=0 CELLSPACING=0 STYLE="page-break-before: always">
+	<COL WIDTH=848>
+	<TR>
+		<TD WIDTH=848>
+			<P STYLE="margin-bottom: 0in"><BR>
+			</P>
+			<HR>
+			<H1 ALIGN=CENTER>BioSim Manual</H1>
+			<HR>
+			<UL>
+				<LI><P STYLE="margin-bottom: 0in"><A HREF="#PROJECTS"><FONT SIZE=4>Projects</FONT></A>
+								</P>
+				<UL>
+					<LI><P STYLE="margin-bottom: 0in"><A HREF="#NEWPROJ">Creating
+					projects</A> 
+					</P>
+					<LI><P STYLE="margin-bottom: 0in"><A HREF="#OPENPROJ">Opening
+					projects</A> 
+					</P>
+				</UL>
+				<LI><P STYLE="margin-bottom: 0in"><A HREF="#MODELS"><FONT SIZE=4>SBML
+				Models</FONT></A> 
+				</P>
+				<UL>
+					<LI><P STYLE="margin-bottom: 0in"><A HREF="#NEWMODEL">Creating
+					SBML models</A> 
+					</P>
+					<LI><P STYLE="margin-bottom: 0in"><A HREF="#IMPORTSBML">Importing
+					SBML models</A> 
+					</P>
+					<LI><P STYLE="margin-bottom: 0in"><A HREF="#SBMLEDIT">Editing
+					SBML models</A> 
+					</P>
+					<LI><P STYLE="margin-bottom: 0in"><A HREF="#VIEWSBML">Viewing
+					SBML models</A> 
+					</P>
+				</UL>
+				<LI><P STYLE="margin-bottom: 0in"><A HREF="#ANALYSIS"><FONT SIZE=4>Analysis</FONT></A>
+								</P>
+				<UL>
+					<LI><P STYLE="margin-bottom: 0in"><A HREF="#SIMULATION">Simulation</A>
+										</P>
+					<LI><P STYLE="margin-bottom: 0in"><A HREF="#LEARNING">Learning</A>
+										</P>
+					<LI><P><A HREF="#GRAPHING">Graphing</A> 
+					</P>
+				</UL>
+			</UL>
+			<H1><A NAME="PROJECTS"></A>Projects</H1>
+			<P>A project is a collection of model and data files. <BR>&nbsp; 
+			</P>
+			<H2><A NAME="NEWPROJ"></A>Creating projects</H2>
+			<P>To create a new project, select the File drop down menu from
+			the toolbar and select &quot;New Project&quot; under the New
+			option. You will then be prompted to browse to a desired location
+			for and to give a name to the project directory. After you do
+			this, click the new button and a new project directory will be
+			created. <BR>&nbsp; 
+			</P>
+			<H2><A NAME="OPENPROJ"></A>Opening projects</H2>
+			<P>To open a project, select the File drop down menu from the
+			toolbar and select &quot;Open Project&quot; under the Open option.
+			You will then be prompted to browse to a project directory that
+			you want to open. After you select the project directory, click
+			open and the project will open. <BR>&nbsp; 
+			</P>
+			<H1><A NAME="MODELS"></A>MODELS</H1>
+			<P>A model is a representation of biochemical reaction networks. A
+			model can represent metabolic networks, cell-signaling pathways,
+			regulatory networks, and other kinds of systems studied in systems
+			biology. <BR>&nbsp; 
+			</P>
+			<H2><A NAME="NEWMODEl"></A>Creating SBML models</H2>
+			<P>To create a new SBML model, you must first have a project open.
+			Once this is done, select the File drop down menu from the toolbar
+			and select &quot;New Model&quot; under the New option. You will
+			then be prompted to give a model id. Once an id is entered, an
+			SBML editor will open in a new tab. <BR>&nbsp; 
+			</P>
+			<H2><A NAME="IMPORTSBML"></A>Importing SBML models</H2>
+			<P>To import an SBML model, you must first have a project open.
+			Once this is done, select the File drop down menu from the toolbar
+			and select &quot;SBML&quot; under the Import option. You will then
+			be prompted to select a model to import. Select a desired model
+			and click the open button to import the SBML model into the
+			project. <BR>&nbsp; 
+			</P>
+			<H2><A NAME="SBMLEDIT"></A>Editing SBML models</H2>
+			<P>To edit an SBML model, you must first have a project open. Once
+			this is done, right click on the model you want to edit and select
+			&quot;Edit&quot;. This will open up an SBML editor in a new tab.
+			You can also edit an SBML model that is part of an analysis by
+			right clicking on an analysis directory, by selecting &quot;Open
+			Analysis View&quot;, and then by selecting the &quot;SBML Editor&quot;
+			tab.</P>
+			<H3>Adding, Editing, And Removing</H3>
+			<UL>
+				<LI><P STYLE="margin-bottom: 0in">To add a new item, click on one
+				of the add buttons. You will then be prompted to provide a unique
+				id and some properties for this new item. After you have filled
+				out all of the required fields, click add and the new item will
+				be added to the SBML model. 
+				</P>
+				<LI><P STYLE="margin-bottom: 0in">To edit an existing item,
+				select that item from the list and click the edit button. An
+				editing window will open and you will be able to change the
+				properties of that item. When you are done editing this item,
+				click save to save the changes to the item. 
+				</P>
+				<LI><P>To remove an item from the model, select that item and
+				click the remove button. The item will then be removed from the
+				model. However, if you try to remove a species that is used in a
+				reaction, you will first have to remove the reaction or remove
+				the species from the reaction in order to remove the species from
+				the model. Likewise, if you try to remove a compartment that
+				contains species, you will have to remove the species before you
+				will be able to remove the compartment. 
+				</P>
+			</UL>
+			<H3>Kinetic Law Formula Syntax</H3>
+			<P>Kinetic law formulas are expressed as text strings using a
+			simple C-like syntax. Here are some syntax rules when dealing with
+			kinetic law formulas: 
+			</P>
+			<UL>
+				<LI><P STYLE="margin-bottom: 0in">Acceptable operators include:
+				add (+), subtract (-), multiply (*), and divide (/) 
+				</P>
+				<LI><P STYLE="margin-bottom: 0in">Supported functions include: 
+				</P>
+				<UL>
+					<LI><P STYLE="margin-bottom: 0in">abs(x) - Absolute Value 
+					</P>
+					<LI><P STYLE="margin-bottom: 0in">acos(x) - Arc Cosine 
+					</P>
+					<LI><P STYLE="margin-bottom: 0in">asin(x) - Arc Sine 
+					</P>
+					<LI><P STYLE="margin-bottom: 0in">atan(x) - Arc Tangent 
+					</P>
+					<LI><P STYLE="margin-bottom: 0in">ceil(x) - Ceiling 
+					</P>
+					<LI><P STYLE="margin-bottom: 0in">cos(x) - Cosine 
+					</P>
+					<LI><P STYLE="margin-bottom: 0in">exp(x) - e^x 
+					</P>
+					<LI><P STYLE="margin-bottom: 0in">floor(x) - Floor 
+					</P>
+					<LI><P STYLE="margin-bottom: 0in">log(x) - Natural Log 
+					</P>
+					<LI><P STYLE="margin-bottom: 0in">log(#, x) - Log Base # 
+					</P>
+					<LI><P STYLE="margin-bottom: 0in">sqr(x) - Squared 
+					</P>
+					<LI><P STYLE="margin-bottom: 0in">pow(x, y) - x^y 
+					</P>
+					<LI><P STYLE="margin-bottom: 0in">sqrt(x) - Square Root 
+					</P>
+					<LI><P STYLE="margin-bottom: 0in">root(#, x) - x to the # root 
+					</P>
+					<LI><P STYLE="margin-bottom: 0in">sin(x) - Sine 
+					</P>
+					<LI><P STYLE="margin-bottom: 0in">tan(x) - Tangent 
+					</P>
+				</UL>
+				<LI><P STYLE="margin-bottom: 0in">Acceptable variables include
+				anything listed in the products, reactants, or parameter fields. 
+				</P>
+				<LI><P>Real Numbers can also be entered into a kinetic law
+				formula. 
+				</P>
+			</UL>
+			<P>The kinetic law editor also includes two buttons. The &quot;Use
+			Mass Action&quot; button will compute a mass action formula for
+			you and enter it into the kinetic law editor. The &quot;Clear&quot;
+			button will clear the kinetic law editor. <BR>&nbsp; 
+			</P>
+			<H2><A NAME="VIEWSBML"></A>Viewing SBML models</H2>
+			<P>To view an SBML model, you must first have a project open. Once
+			this is done, right click on the model you want to view. There are
+			two ways to view a model. You can either select the &quot;View As
+			Graph&quot; option or the &quot;View In Browser&quot; option. The
+			&quot;View As Graph&quot; option will convert the model to a dot
+			file and then will open that file with dotty. The &quot;View In
+			Browser&quot; option will covert the model to an xhtml file and
+			will open that file with firefox. <BR>&nbsp; 
+			</P>
+			<H1><A NAME="ANALYSIS"></A>Analysis</H1>
+			<P>To perform analysis, you must first have a project open. Once
+			this is done, right click on a model and select &quot;Create
+			Analysis View&quot;. You will then be prompted to give a name to
+			your analysis. After a name is entered, a tab with analysis
+			options will open. You can also open up an analysis tab by right
+			clicking on an analysis directory and selecting &quot;Open
+			Analysis View&quot;.   <BR>&nbsp; 
+			</P>
+			<H2><A NAME="SIMULATION"></A>Simulation</H2>
+			<P>BioSim comes with a number of simulation methods, ranging from
+			continuous-deterministic simulation methods to discrete-stochastic
+			simulation methods.  In order to perform efficient temporal
+			behavior analysis, various model abstraction can be automatically
+			applied. Here, you will find the ABC’s of each sub-tab of the
+			simulation tab.   This supports limited functionalities of the
+			modeling and analysis tool called REB2SAC.  
+			</P>
+			<H3>Options</H3>
+			<P>The radio button on the top of this tab specifies the levels of
+			abstraction.   Choose ‘None’ if you don’t want to abstract
+			your model, ‘Abstraction’ if you want to perform the default
+			reaction-based abstraction, and ‘Abstraction &amp; Nary’ if
+			you want to further abstract your model by generating its
+			finite-state Markov chain model (note this option may not work
+			with the current version of BioSim). 
+			</P>
+			<P>The radio button below of that  specifies the simulation type. 
+			‘ODE’ is the continuous-deterministic simulation method, ‘
+			Monte Carlo’ is the discrete-stochastic simulation method,
+			‘Markov’ performs temporal probability distribution analysis
+			on finite-state Markov chain model (note this option may not work
+			with the current version of BioSim), ‘sbml’ outputs the model
+			in SBML format, ‘dot’ outputs the structure of the model in
+			the dot format, ‘xhtml’ outputs the information on the model
+			in xhtml format with MathML presentation entries for kinetic laws.
+						</P>
+			<P>The next redio button asks if you want to overwrite the
+			simulation runs or if you want to append more simulation runs. 
+			Choose `overwrite’ to overwrite simulation runs and ‘append’
+			to append simulation runs.  Initially, if you don’t have not
+			performed any simulation, this option is disabled. 
+			</P>
+			<P>The next field specifies the simulation method you want to use
+			based on the simulation type you specified.</P>
+			<UL>
+				<LI><P>ODE 
+				</P>
+			</UL>
+			<DL>
+				<DD>
+				<TABLE WIDTH=611 BORDER=1 CELLPADDING=4 CELLSPACING=3 STYLE="page-break-inside: avoid">
+					<COL WIDTH=192>
+					<COL WIDTH=392>
+					<TR VALIGN=TOP>
+						<TD WIDTH=192>
+							<P ALIGN=CENTER>Method ID</P>
+						</TD>
+						<TD WIDTH=392>
+							<P ALIGN=LEFT>Description</P>
+						</TD>
+					</TR>
+					<TR VALIGN=TOP>
+						<TD WIDTH=192>
+							<P ALIGN=CENTER>euler</P>
+						</TD>
+						<TD WIDTH=392>
+							<P ALIGN=LEFT>The forward Euler Method</P>
+						</TD>
+					</TR>
+					<TR VALIGN=TOP>
+						<TD WIDTH=192>
+							<P ALIGN=CENTER>gear1</P>
+						</TD>
+						<TD WIDTH=392>
+							<P ALIGN=LEFT>Gear Method M=1 (see GSL manual for more info)</P>
+						</TD>
+					</TR>
+					<TR VALIGN=TOP>
+						<TD WIDTH=192>
+							<P ALIGN=CENTER>gear2</P>
+						</TD>
+						<TD WIDTH=392>
+							<P ALIGN=LEFT>Gear Method M=2 (see GSL manual for more info)</P>
+						</TD>
+					</TR>
+					<TR VALIGN=TOP>
+						<TD WIDTH=192>
+							<P ALIGN=CENTER><A NAME="st"></A>rk4imp</P>
+						</TD>
+						<TD WIDTH=392>
+							<P ALIGN=LEFT>Implicit 4th order Runge-Kutta at Gaussian
+							points (see GSL manual for more info)</P>
+						</TD>
+					</TR>
+					<TR VALIGN=TOP>
+						<TD WIDTH=192>
+							<P ALIGN=CENTER>rk8pd</P>
+						</TD>
+						<TD WIDTH=392>
+							<P ALIGN=LEFT>Embedded Runge-Kutta Prince-Dormand (8,9) method
+							(see GSL manual for more info)</P>
+						</TD>
+					</TR>
+					<TR VALIGN=TOP>
+						<TD WIDTH=192>
+							<P ALIGN=CENTER>rkf45</P>
+						</TD>
+						<TD WIDTH=392>
+							<P ALIGN=LEFT>Embedded Runge-Kutta-Fehlberg (4, 5) method (see
+							GSL manual for more info)</P>
+						</TD>
+					</TR>
+				</TABLE>
+			</DL>
+			<P><BR><BR>
+			</P>
+			<UL>
+				<LI><P>Monte Carlo</P>
+			</UL>
+			<DL>
+				<DD>
+				<TABLE WIDTH=614 BORDER=1 CELLPADDING=4 CELLSPACING=3 STYLE="page-break-inside: avoid">
+					<COL WIDTH=194>
+					<COL WIDTH=393>
+					<TR VALIGN=TOP>
+						<TD WIDTH=194>
+							<P ALIGN=CENTER>Method ID</P>
+						</TD>
+						<TD WIDTH=393>
+							<P ALIGN=LEFT>Description</P>
+						</TD>
+					</TR>
+					<TR VALIGN=TOP>
+						<TD WIDTH=194>
+							<P ALIGN=CENTER>gillespie</P>
+						</TD>
+						<TD WIDTH=393>
+							<P ALIGN=LEFT>Gillespie's SSA in Direct method</P>
+						</TD>
+					</TR>
+					<TR VALIGN=TOP>
+						<TD WIDTH=194>
+							<P ALIGN=CENTER>emc-sim</P>
+						</TD>
+						<TD WIDTH=393>
+							<P ALIGN=LEFT>Monte Carlo simulation with jump count as
+							independent variable</P>
+						</TD>
+					</TR>
+					<TR VALIGN=TOP>
+						<TD WIDTH=194>
+							<P ALIGN=CENTER>bunker</P>
+						</TD>
+						<TD WIDTH=393>
+							<P ALIGN=LEFT>Bunker's method: Next reaction time step is
+							calculated using the average.   
+							</P>
+						</TD>
+					</TR>
+					<TR VALIGN=TOP>
+						<TD WIDTH=194>
+							<P ALIGN=CENTER>nmc</P>
+						</TD>
+						<TD WIDTH=393>
+							<P ALIGN=LEFT>Monte Carlo simulation with normally distributed
+							next reaction time</P>
+						</TD>
+					</TR>
+				</TABLE>
+			</DL>
+			<P><BR><BR>
+			</P>
+			<P>There are some properties that needs to be set for simulation. 
+			Below is the table specifies such simulation properties.</P>
+			<TABLE WIDTH=667 BORDER=1 CELLPADDING=4 CELLSPACING=3 STYLE="page-break-inside: avoid">
+				<COL WIDTH=235>
+				<COL WIDTH=405>
+				<TR VALIGN=TOP>
+					<TD WIDTH=235>
+						<P ALIGN=CENTER>Filed</P>
+					</TD>
+					<TD WIDTH=405>
+						<P>Description 
+						</P>
+					</TD>
+				</TR>
+				<TR VALIGN=TOP>
+					<TD WIDTH=235>
+						<P ALIGN=CENTER>Time Limit</P>
+					</TD>
+					<TD WIDTH=405>
+						<P>The simulation time limit</P>
+					</TD>
+				</TR>
+				<TR VALIGN=TOP>
+					<TD WIDTH=235>
+						<P ALIGN=CENTER>Print Interval</P>
+					</TD>
+					<TD WIDTH=405>
+						<P>The print time interval of each simulation run</P>
+					</TD>
+				</TR>
+				<TR VALIGN=TOP>
+					<TD WIDTH=235>
+						<P ALIGN=CENTER>Time Step</P>
+					</TD>
+					<TD WIDTH=405>
+						<P>The time step for the Euler method</P>
+					</TD>
+				</TR>
+				<TR VALIGN=TOP>
+					<TD WIDTH=235>
+						<P ALIGN=CENTER>Random Seed</P>
+					</TD>
+					<TD WIDTH=405>
+						<P>An integer number as a seed to generate random numbers for
+						the Monte Carlo simulation methods</P>
+					</TD>
+				</TR>
+				<TR VALIGN=TOP>
+					<TD WIDTH=235>
+						<P ALIGN=CENTER>Runs</P>
+					</TD>
+					<TD WIDTH=405>
+						<P>A number of Monte Carlo simulation runs to perform</P>
+					</TD>
+				</TR>
+			</TABLE>
+			<P><BR><BR>
+			</P>
+			<H3>Termination Conditions</H3>
+			<P>The termination conditions can specify a set of simple
+			conditions to terminate each simulation run (either ODE or Monte
+			Carlo) before the time limit when at least one of them is
+			satisfied.   This option can be very useful for analysis of 
+			</P>
+			<H3>Advanced Termination Conditions</H3>
+			<P><FONT FACE="Nimbus Roman No9 L, serif"><FONT SIZE=3>The format
+			of each SAD: </FONT></FONT>
+			</P>
+			<P><FONT FACE="Courier 10 Pitch"><FONT SIZE=2><FONT FACE="Courier 10 Pitch"><FONT SIZE=2>term
+			&lt;id&gt; {</FONT></FONT></FONT></FONT></P>
+			<P>  <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>desc &lt;string&gt;;</FONT></FONT></P>
+			<P>  <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>cond &lt;bool-exp&gt;;</FONT></FONT></P>
+			<P><FONT FACE="Courier 10 Pitch"><FONT SIZE=2>}</FONT></FONT></P>
+			<P><FONT FACE="Nimbus Roman No9 L, serif"><FONT SIZE=3>where &lt;id&gt;
+			is the ID for this termination condition, desc is the description
+			of this termination condition,and cond is the predicate which must
+			hold to terminate a simulation/analysis procedure.</FONT></FONT></P>
+			<P><FONT FACE="Courier 10 Pitch"><FONT SIZE=2><FONT FACE="Courier 10 Pitch"><FONT SIZE=2>bool-exp
+			:= </FONT></FONT></FONT></FONT>
+			</P>
+			<P>      <FONT FACE="Courier 10 Pitch"><FONT SIZE=2><FONT FACE="Courier 10 Pitch"><FONT SIZE=2>&lt;logical_exp&gt;</FONT></FONT></FONT></FONT></P>
+			<P>    <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>|  &lt;comp_exp&gt;</FONT></FONT></P>
+			<P><BR><BR>
+			</P>
+			<P><FONT FACE="Courier 10 Pitch"><FONT SIZE=2>logical_exp :=</FONT></FONT></P>
+			<P>      <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>&lt;bool_exp&gt;
+			&amp;&amp; &lt;bool_exp&gt;   // and </FONT></FONT>
+			</P>
+			<P>    <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>| &lt;bool_exp&gt;
+			|| &lt;bool_exp&gt;   // or </FONT></FONT>
+			</P>
+			<P>    <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>| !&lt;bool_exp&gt;
+			               // not</FONT></FONT></P>
+			<P>    <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>| (
+			&lt;logical_exp&gt; )            </FONT></FONT>
+			</P>
+			<P><BR><BR>
+			</P>
+			<P> <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>comp_exp :=</FONT></FONT></P>
+			<P>      <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>&lt;num_exp&gt;
+			&lt;= &lt;num_exp&gt;     // less than or equal to</FONT></FONT></P>
+			<P>    <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>| &lt;num_exp&gt;
+			&lt; &lt;num_exp&gt;      // less than</FONT></FONT></P>
+			<P>    <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>| &lt;num_exp&gt;
+			&gt;= &lt;num_exp&gt;     // greater than or equal to</FONT></FONT></P>
+			<P>    <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>| &lt;num_exp&gt;
+			&gt; &lt;num_exp&gt;      // greater than</FONT></FONT></P>
+			<P>    <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>| &lt;num_exp&gt;
+			= &lt;num_exp&gt;      // equal to</FONT></FONT></P>
+			<P>    <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>| ( &lt;comp_exp&gt;
+			)                         </FONT></FONT>
+			</P>
+			<P><BR><BR>
+			</P>
+			<P> <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>num_exp := </FONT></FONT>
+			</P>
+			<P>      <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>&lt;num_exp&gt;
+			+ &lt;num_exp&gt;       </FONT></FONT>
+			</P>
+			<P>    <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>| &lt;num_exp&gt;
+			- &lt;num_exp&gt; </FONT></FONT>
+			</P>
+			<P>    <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>| &lt;num_exp&gt;
+			* &lt;num_exp&gt; </FONT></FONT>
+			</P>
+			<P>    <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>| &lt;num_exp&gt;
+			/ &lt;num_exp&gt;         // floating point division </FONT></FONT>
+			</P>
+			<P>    <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>| - &lt;num_exp&gt;
+			                  // unary minus </FONT></FONT>
+			</P>
+			<P>    <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>| ( &lt;num_exp&gt;
+			)            </FONT></FONT>
+			</P>
+			<P>    <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>| exp( &lt;num_exp&gt;
+			)              // e^x            </FONT></FONT>
+			</P>
+			<P>    <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>| pow(
+			&lt;num_exp&gt;, &lt;num_exp&gt; )   // x^y         </FONT></FONT>
+			</P>
+			<P>    <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>| log( &lt;num_exp&gt;
+			)              // ln(x)  </FONT></FONT>
+			</P>
+			<P>    <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>| &lt;constant&gt;
+			                   // constant e.g., 1, 3.14159265, 1.0e-103, etc 
+			    </FONT></FONT>
+			</P>
+			<P>    <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>| t             
+			               // variable representing time  </FONT></FONT>
+			</P>
+			<P>    <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>| #$&lt;species-id&gt;</FONT></FONT></P>
+			<P>    <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>| %$&lt;species-id&gt;</FONT></FONT></P>
+			<P>    <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>|
+			#@&lt;reaction-id&gt;</FONT></FONT></P>
+			<P> 
+			</P>
+			<P><FONT FACE="Nimbus Roman No9 L, serif"><FONT SIZE=3><FONT FACE="Nimbus Roman No9 L, serif"><FONT SIZE=3>where
+			$&lt;species-id&gt; represent species, #$&lt;species-id&gt; is the
+			variable for the molecular count of &lt;species-id&gt;,
+			%$&lt;species-id&gt; is the variable for concentration of
+			&lt;species-id&gt;, @&lt;reaction-id&gt; represent reaction,
+			</FONT></FONT>#@&lt;reaction-id&gt; is the variable for the number
+			of firings of &lt;reaction-id&gt;, and t is the variable
+			representing time</FONT></FONT></P>
+			<H3>Interesting Species 
+			</H3>
+			<P>Interesting species are the ones that are used in the analysis,
+			and hence are those which should not be abstracted. 
+			</P>
+			<H3>User Defined Data File</H3>
+			<P>This can deterministically specify how the state of each
+			species can  change at some specified time point in Gillespie’s
+			SSA. 
+			</P>
+			<H3>Properties 
+			</H3>
+			<P>Here, you can specify additional properties for your analysis</P>
+			<H3>Advanced Options</H3>
+			<P><BR><BR>
+			</P>
+			<H2>Learning</H2>
+			<P>The learning tab in the BioSim toolkit is use to try and
+			understand the workings between species in a genetic regulatory
+			network. The learning algorithm is applied to time series data
+			that can either be manually entered, or simulated from an sbml
+			file. The learning algorithm implemented in BioSim is based on the
+			work by Barker et.al. 
+			</P>
+			<H3>Learning network connectivity from simulated data</H3>
+			<UL>
+				<LI><P STYLE="margin-bottom: 0in">Open a project 
+				</P>
+				<LI><P STYLE="margin-bottom: 0in">Right click on an analysis
+				directory and select &quot;Open Analysis View&quot; 
+				</P>
+				<LI><P STYLE="margin-bottom: 0in">Select the &quot;Learn&quot;
+				tab 
+				</P>
+				<LI><P STYLE="margin-bottom: 0in">Basic threshold values have
+				been already choosen 
+				</P>
+				<LI><P STYLE="margin-bottom: 0in">Select the species that you do
+				not wish to learn connections to or from by clicking the checkbox
+				in the &quot;Do Not Learn&quot; section next to the species name 
+				</P>
+				<LI><P STYLE="margin-bottom: 0in">Click the &quot;Learn&quot;
+				button 
+				</P>
+				<LI><P>A network is now shown. The nodes in the graph are the
+				selected species, and the verticies of the graph are the
+				activation and repression connections. An activation connection
+				is shown with a blue arrow and a repression connection is shown
+				with a red tee. 
+				</P>
+			</UL>
+			<H3>Basic Options</H3>
+			<UL>
+				<LI><P>Background Knowledge Network 
+				</P>
+				<P>The Background Knowledge Network field allows the user to
+				input known information reguarding the network of interest. The
+				names of these species must match the names used in the
+				simulation directory.</P>
+				<LI><P>For Vote Threshold (Tf) 
+				</P>
+				<P>Tf is a threshold passed to the Score function which is used
+				to cast a vote in favor of an influence vector when a probability
+				ratio is greater than this threshold value.</P>
+				<LI><P>Against Vote Threshold (Ta) 
+				</P>
+				<P>Ta is a threshold passed to the Score function which is used
+				to cast a vote against an influence vector when a probability
+				ratio is less than this threshold value.</P>
+				<LI><P>First Round IV Threshold (Ti) 
+				</P>
+				<P>Ti is a threshold passed to the Score function representing
+				the score of an influence vector with no influences in it (i.e.
+				|i|=0)</P>
+				<LI><P>Pre-competition IV Filter Threshold (Tp) 
+				</P>
+				<P>Tp is a threshold value used in the CombineInfluenceVectors
+				algorithm to filter or remove low scoring influence vectors
+				before competing them</P>
+				<LI><P>Merge IVs delta (Tm) 
+				</P>
+				<P>Tm is a threshold value used in the CombineInfluenceVectors
+				algorithm to determine if two influence vectors have a close
+				enough score to even be considered for merging.</P>
+				<LI><P>Minimum Initial Vectors (Tn) 
+				</P>
+				<P>Tn is a threshold value used in the CreateInfluenceVectorSet
+				algorithm and represents the minimum number of influence vectors
+				constructed in this algorithm</P>
+				<LI><P>Max Vector Size (Tj) 
+				</P>
+				<P>Tj is a threshold value used in the CombineInfluenceVectors
+				algorithm to determine the maximal size of merged influence
+				vectors</P>
+				<LI><P>Relax Thresholds Delta (Tr) 
+				</P>
+				<P>Tr is a threshold value used when relaxing thresholds</P>
+				<LI><P>Number of Bins 
+				</P>
+				<P>The Number of Bins value specifies how many values the encoded
+				time series data can assume</P>
+				<LI><P>Use User Generated Levels 
+				</P>
+				<P>The User Generated Levels radio button allows the user to
+				provide specific data value cuttofs for encoding the data</P>
+				<UL>
+					<LI><P>The Suggest Cuttofs Button 
+					</P>
+					<P>The Suggest Cuttofs Button pre-populates the cuttof fields
+					with cuttofs that try to maximize the number of data points in
+					each bin</P>
+				</UL>
+				<LI><P>The Do Not Use checkbox 
+				</P>
+				<P>The Do Not Use checkbox allows the user to specify which
+				species to include when learning network connectivity</P>
+			</UL>
+			<H3>Advanced Options</H3>
+			<UL>
+				<LI><P>Debug Level 
+				</P>
+				<P>The Debug Level drop down menu allows the user to receive more
+				detailed information while the GeneNet algorithm is running</P>
+			</UL>
+			<P><BR>&nbsp; 
+			</P>
+			<H2>Graphing</H2>
+			<P>To graph data, perform a simulation to create some data or
+			right click on an analysis directory that has data in it and
+			select &quot;Open Analysis View&quot;. You will see a &quot;Graph&quot;
+			tab. Select this tab and you will have some graphing options. By
+			clicking on the graph, you will be able to change what is graphed
+			and how the graph looks. Here are your options: 
+			</P>
+			<UL>
+				<LI><P STYLE="margin-bottom: 0in">Title - The Title Of The Graph 
+				</P>
+				<LI><P STYLE="margin-bottom: 0in">X-Axis Label - The Label
+				Displayed For The X-Axis 
+				</P>
+				<LI><P STYLE="margin-bottom: 0in">Y-Axis Label - The Label
+				Displayed For The Y-Axis 
+				</P>
+				<LI><P STYLE="margin-bottom: 0in">X-Min - The Starting Value For
+				The X-Axis 
+				</P>
+				<LI><P STYLE="margin-bottom: 0in">X-Max - The Ending Value For
+				The X-Axis 
+				</P>
+				<LI><P STYLE="margin-bottom: 0in">X-Step - The Increment Of The
+				X-Axis 
+				</P>
+				<LI><P STYLE="margin-bottom: 0in">Y-Min - The Starting Value For
+				The Y-Axis 
+				</P>
+				<LI><P STYLE="margin-bottom: 0in">Y-Max - The Ending Value For
+				The Y-Axis 
+				</P>
+				<LI><P STYLE="margin-bottom: 0in">Y-Step - The Increment Of The
+				Y-Axis 
+				</P>
+				<LI><P STYLE="margin-bottom: 0in">Auto Resize Check Box -
+				Determines Whether Or Not To Automatically Resize The Graph To
+				The Best Fit 
+				</P>
+				<LI><P STYLE="margin-bottom: 0in">Data Selection Menu - This Menu
+				Displays All Of The Available Sets Off Data You Can Graph. Select
+				A Set Of Data And Then You Can Select Which Species To Display 
+				</P>
+				<LI><P STYLE="margin-bottom: 0in">Use Check Box - Determines
+				Whether Or Not This Species Is Displayed On The Graph 
+				</P>
+				<LI><P STYLE="margin-bottom: 0in">Species Label - The Name
+				Displayed On The Graph For This Species 
+				</P>
+				<LI><P STYLE="margin-bottom: 0in">Drop Down Menu Of Colors - The
+				Color That Will Be Used To Draw The Line For This Species 
+				</P>
+				<LI><P STYLE="margin-bottom: 0in">Drop Down Menu Of Shapes - The
+				Shape That Will Be Used To Mark The Points On The Line For This
+				Species 
+				</P>
+				<LI><P STYLE="margin-bottom: 0in">Connected Check Box -
+				Determines Whether Or Not A Line Will Be Drawn That Connects The
+				Shapes For This Species 
+				</P>
+				<LI><P STYLE="margin-bottom: 0in">Visible Check Box - Determines
+				Whether Or Not Shapes Will Be Visible On The Line For This
+				Species 
+				</P>
+				<LI><P>Filled Check Box - Determines Whether Or Not Shapes Will
+				Be Filled In On The Line For This Species 
+				</P>
+			</UL>
+			<P>To save the graph, click the &quot;Save&quot; button. This will
+			save the data of the graph to a file so when you re-open the
+			analysis view, it will reload this data and display what was
+			graphed.</P>
+			<P>To export the graph, click one of the &quot;Export&quot;
+			buttons. You will then be prompted to give a desired pixel height
+			and width for the file. Once this is done, you will be prompted to
+			select a location and a name for the file you are saving. After
+			you make these selections, click the &quot;Export&quot; button and
+			the graph will be exported. <BR>&nbsp; 
+			</P>
+		</TD>
+	</TR>
+</TABLE>
+<P><BR><BR>
+</P>
+</BODY>
+</HTML>
