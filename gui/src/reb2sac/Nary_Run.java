@@ -56,11 +56,6 @@ public class Nary_Run implements ActionListener, Runnable {
 	 */
 	private JRadioButton ge, gt, eq, le, lt;
 
-	/*
-	 * Combo Box for quantity for termination condition
-	 */
-	private JComboBox quantity;
-
 	private JComboBox simulators; // Combo Box for possible simulators
 
 	private String filename; // name of sbml file
@@ -117,14 +112,13 @@ public class Nary_Run implements ActionListener, Runnable {
 	 * member variables and creates the nary frame.
 	 */
 	public Nary_Run(Component component, JTextField amountTerm, JRadioButton ge, JRadioButton gt,
-			JRadioButton eq, JRadioButton lt, JRadioButton le, JComboBox quantity,
-			JComboBox simulators, String[] getFilename, String filename, JRadioButton sbml,
-			JRadioButton dot, JRadioButton xhtml, JRadioButton nary, JRadioButton ODE,
-			JRadioButton monteCarlo, double timeLimit, double printInterval, String outDir,
-			long rndSeed, int run, String printer_id, String printer_track_quantity,
-			String[] termCond, String[] intSpecies, double rap1, double rap2, double qss, int con,
-			Log log, JCheckBox usingSSA, String ssaFile, BioSim biomodelsim, JTabbedPane simTab,
-			String root) {
+			JRadioButton eq, JRadioButton lt, JRadioButton le, JComboBox simulators,
+			String[] getFilename, String filename, JRadioButton sbml, JRadioButton dot,
+			JRadioButton xhtml, JRadioButton nary, JRadioButton ODE, JRadioButton monteCarlo,
+			double timeLimit, double printInterval, String outDir, long rndSeed, int run,
+			String printer_id, String printer_track_quantity, String[] termCond,
+			String[] intSpecies, double rap1, double rap2, double qss, int con, Log log,
+			JCheckBox usingSSA, String ssaFile, BioSim biomodelsim, JTabbedPane simTab, String root) {
 		// intitializes the member variables
 		this.root = root;
 		this.rap1 = rap1;
@@ -139,7 +133,6 @@ public class Nary_Run implements ActionListener, Runnable {
 		this.eq = eq;
 		this.le = le;
 		this.lt = lt;
-		this.quantity = quantity;
 		this.timeLimit = timeLimit;
 		this.printInterval = printInterval;
 		this.outDir = outDir;
@@ -231,6 +224,12 @@ public class Nary_Run implements ActionListener, Runnable {
 		Properties naryProps = new Properties();
 		try {
 			naryProps.load(new FileInputStream(new File("species.properties")));
+			naryProps.store(new FileOutputStream(new File(outDir + File.separator
+					+ "species.properties")), "");
+			naryProps = new Properties();
+			new File("species.properties").delete();
+			naryProps.load(new FileInputStream(new File(outDir + File.separator
+					+ "species.properties")));
 		} catch (Exception e1) {
 			JOptionPane.showMessageDialog(component, "Properties File Not Found!",
 					"File Not Found", JOptionPane.ERROR_MESSAGE);
@@ -392,7 +391,7 @@ public class Nary_Run implements ActionListener, Runnable {
 			add.setListData(adding);
 			add.setSelectedIndex(0);
 			finalStates = Buttons.add(finalStates, finalState, add, false, amountTerm, ge, gt, eq,
-					lt, le, quantity, naryFrame);
+					lt, le, naryFrame);
 		}
 		// if the remove button for the final states is clicked
 		else if (e.getSource() == finalRemove) {
@@ -416,7 +415,7 @@ public class Nary_Run implements ActionListener, Runnable {
 						add.setListData(adding);
 						add.setSelectedIndex(0);
 						Object[] sort = Buttons.add(conLevel.get(number), consLevel.get(number),
-								add, false, amountTerm, ge, gt, eq, lt, le, quantity, naryFrame);
+								add, false, amountTerm, ge, gt, eq, lt, le, naryFrame);
 						int in;
 						for (int out = 1; out < sort.length; out++) {
 							double temp = Double.parseDouble((String) sort[out]);

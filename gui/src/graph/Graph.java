@@ -941,6 +941,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 									connectedLabel.setSelected(false);
 								}
 							}
+						} else {
+							specPanel.removeAll();
+							specPanel.revalidate();
+							specPanel.repaint();
 						}
 					}
 				});

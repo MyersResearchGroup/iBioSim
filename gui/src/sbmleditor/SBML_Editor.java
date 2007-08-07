@@ -692,7 +692,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				add.setSelectedIndex(0);
 				reactions.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 				adding = Buttons.add(reacts, reactions, add, false, null, null, null, null, null,
-						null, null, biosim.frame());
+						null, biosim.frame());
 				reacts = new String[adding.length];
 				for (int i = 0; i < adding.length; i++) {
 					reacts[i] = (String) adding[i];
@@ -971,7 +971,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 								compartments
 										.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 								adding = Buttons.add(comps, compartments, add, false, null, null,
-										null, null, null, null, null, biosim.frame());
+										null, null, null, null, biosim.frame());
 								comps = new String[adding.length];
 								for (int i = 0; i < adding.length; i++) {
 									comps[i] = (String) adding[i];
@@ -1149,7 +1149,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 									species
 											.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 									adding = Buttons.add(specs, species, addIt, false, null, null,
-											null, null, null, null, null, biosim.frame());
+											null, null, null, null, biosim.frame());
 									specs = new String[adding.length];
 									for (int i = 0; i < adding.length; i++) {
 										specs[i] = (String) adding[i];
@@ -1507,7 +1507,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 								reactions
 										.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 								adding = Buttons.add(reacts, reactions, add, false, null, null,
-										null, null, null, null, null, biosim.frame());
+										null, null, null, null, biosim.frame());
 								reacts = new String[adding.length];
 								for (int i = 0; i < adding.length; i++) {
 									reacts[i] = (String) adding[i];
@@ -1810,7 +1810,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 									parameters
 											.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 									adding = Buttons.add(params, parameters, add, false, null,
-											null, null, null, null, null, null, biosim.frame());
+											null, null, null, null, null, biosim.frame());
 									params = new String[adding.length];
 									for (int i = 0; i < adding.length; i++) {
 										params[i] = (String) adding[i];
@@ -1954,8 +1954,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 									reacParameters
 											.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 									adding = Buttons.add(reacParams, reacParameters, add, false,
-											null, null, null, null, null, null, null, biosim
-													.frame());
+											null, null, null, null, null, null, biosim.frame());
 									reacParams = new String[adding.length];
 									for (int i = 0; i < adding.length; i++) {
 										reacParams[i] = (String) adding[i];
@@ -2125,7 +2124,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 								products
 										.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 								adding = Buttons.add(product, products, add, false, null, null,
-										null, null, null, null, null, biosim.frame());
+										null, null, null, null, biosim.frame());
 								product = new String[adding.length];
 								for (int i = 0; i < adding.length; i++) {
 									product[i] = (String) adding[i];
@@ -2293,7 +2292,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 								reactants
 										.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 								adding = Buttons.add(reacta, reactants, add, false, null, null,
-										null, null, null, null, null, biosim.frame());
+										null, null, null, null, biosim.frame());
 								reacta = new String[adding.length];
 								for (int i = 0; i < adding.length; i++) {
 									reacta[i] = (String) adding[i];

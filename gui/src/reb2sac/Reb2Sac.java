@@ -32,28 +32,16 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 
 	private JTextField amountTerm; // Amount for termination condition
 
-	private JTextField amountState; // Amount for check state
-
 	/*
-	 * Buttons for adding and removing conditions, species, and states
+	 * Buttons for adding and removing conditions and species
 	 */
 	private JButton addIntSpecies, removeIntSpecies, addTermCond, removeTermCond, clearIntSpecies,
-			clearTermCond, addCheckState, removeCheckState, clearCheckState;
+			clearTermCond;
 
 	/*
 	 * Radio Buttons that represent the different abstractions
 	 */
 	private JRadioButton none, abstraction, nary, ODE, monteCarlo, markov;
-
-	/*
-	 * Combo Box for quantity for termination condition
-	 */
-	private JComboBox quantity;
-
-	/*
-	 * Combo Box for quantity for check states
-	 */
-	private JComboBox quantity2;
 
 	private JRadioButton sbml, dot, xhtml; // Radio Buttons output option
 
@@ -61,11 +49,6 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 	 * Radio Buttons for termination conditions
 	 */
 	private JRadioButton ge, gt, eq, le, lt;
-
-	/*
-	 * Radio Buttons for check states
-	 */
-	private JRadioButton ge2, gt2, eq2, le2, lt2;
 
 	private JButton run, save, saveAs; // The save and run button
 
@@ -77,8 +60,6 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 	private JList intSpecies, termCond; // List of species in sbml file
 
 	private JLabel spLabel, speciesLabel; // Labels for interesting species
-
-	private JList checkStates, statesSpecs; // JLists used for check states
 
 	/*
 	 * Text fields for changes in the abstraction
@@ -104,11 +85,6 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 	 * List of species with termination conditions
 	 */
 	private Object[] termConditions = new Object[0];
-
-	/*
-	 * List of species with check states
-	 */
-	private Object[] states = new Object[0];
 
 	private JComboBox simulators; // Combo Box for possible simulators
 
@@ -403,10 +379,6 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		JPanel mainTermCond = new JPanel(new BorderLayout());
 		JPanel termCondPanel = new JPanel(new GridLayout(1, 2));
 		JPanel speciesPanel = new JPanel(new GridLayout(1, 2));
-		String items2[] = new String[2];
-		items2[0] = "amount";
-		items2[1] = "concentration";
-		quantity = new JComboBox(items2);
 		ge = new JRadioButton(">=");
 		gt = new JRadioButton(">");
 		eq = new JRadioButton("=");
@@ -422,7 +394,6 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		JPanel termOptionsPanel = new JPanel(new BorderLayout());
 		JPanel termSelectionPanel = new JPanel();
 		JPanel termButtonPanel = new JPanel();
-		termSelectionPanel.add(quantity);
 		termSelectionPanel.add(gt);
 		termSelectionPanel.add(ge);
 		termSelectionPanel.add(eq);
@@ -449,70 +420,6 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		JScrollPane scroll9 = new JScrollPane();
 		scroll9.setViewportView(sadFile);
 		sadTermCondPanel.add(scroll9, "Center");
-
-		// Creates the check states tab
-		statesSpecs = new JList();
-		checkStates = new JList();
-		addCheckState = new JButton("Add State");
-		removeCheckState = new JButton("Remove State");
-		clearCheckState = new JButton("Clear State");
-		addCheckState.addActionListener(this);
-		removeCheckState.addActionListener(this);
-		clearCheckState.addActionListener(this);
-		amountState = new JTextField("0.0", 15);
-		JLabel speciLabel = new JLabel("Available Species:");
-		JLabel stateLabel = new JLabel("States User Is Interested In Reaching:");
-		JScrollPane scroll7 = new JScrollPane();
-		scroll7.setMinimumSize(new Dimension(260, 200));
-		scroll7.setPreferredSize(new Dimension(276, 132));
-		scroll7.setViewportView(statesSpecs);
-		JScrollPane scroll8 = new JScrollPane();
-		scroll8.setMinimumSize(new Dimension(260, 200));
-		scroll8.setPreferredSize(new Dimension(276, 132));
-		scroll8.setViewportView(checkStates);
-		JPanel mainCheckState = new JPanel(new BorderLayout());
-		JPanel checkStatePanel = new JPanel(new GridLayout(1, 2));
-		JPanel speciesPanel2 = new JPanel(new GridLayout(1, 2));
-		String items3[] = new String[2];
-		items3[0] = "amount";
-		items3[1] = "concentration";
-		quantity2 = new JComboBox(items3);
-		ge2 = new JRadioButton(">=");
-		gt2 = new JRadioButton(">");
-		eq2 = new JRadioButton("=");
-		le2 = new JRadioButton("<=");
-		lt2 = new JRadioButton("<");
-		ButtonGroup conditions = new ButtonGroup();
-		conditions.add(gt2);
-		conditions.add(ge2);
-		conditions.add(eq2);
-		conditions.add(le2);
-		conditions.add(lt2);
-		gt2.setSelected(true);
-		JPanel stateOptionsPanel = new JPanel(new BorderLayout());
-		JPanel stateSelectionPanel = new JPanel();
-		JPanel stateButtonPanel = new JPanel();
-		stateSelectionPanel.add(quantity2);
-		stateSelectionPanel.add(gt2);
-		stateSelectionPanel.add(ge2);
-		stateSelectionPanel.add(eq2);
-		stateSelectionPanel.add(le2);
-		stateSelectionPanel.add(lt2);
-		stateSelectionPanel.add(amountState);
-		stateButtonPanel.add(addCheckState);
-		stateButtonPanel.add(removeCheckState);
-		stateButtonPanel.add(clearCheckState);
-		stateOptionsPanel.add(stateSelectionPanel, "North");
-		stateOptionsPanel.add(stateButtonPanel, "South");
-		speciesPanel2.add(speciLabel);
-		speciesPanel2.add(stateLabel);
-		checkStatePanel.add(scroll7);
-		checkStatePanel.add(scroll8);
-		statesSpecs.addMouseListener(this);
-		checkStates.addMouseListener(this);
-		mainCheckState.add(speciesPanel2, "North");
-		mainCheckState.add(checkStatePanel, "Center");
-		mainCheckState.add(stateOptionsPanel, "South");
 
 		// Creates some advanced options
 		JPanel advancedGrid = new JPanel(new GridLayout(8, 2));
@@ -734,7 +641,6 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		}
 		intSpecies.setListData(list);
 		termCond.setListData(list);
-		statesSpecs.setListData(list);
 		int rem = availSpecies.getItemCount();
 		for (int i = 0; i < rem; i++) {
 			availSpecies.removeItemAt(0);
@@ -903,7 +809,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		// if the add interesting species button is clicked
 		else if (e.getSource() == addIntSpecies) {
 			interestingSpecies = Buttons.add(interestingSpecies, species, intSpecies, false,
-					amountTerm, ge, gt, eq, lt, le, quantity, this);
+					amountTerm, ge, gt, eq, lt, le, this);
 		}
 		// if the remove interesting species button is clicked
 		else if (e.getSource() == removeIntSpecies) {
@@ -917,7 +823,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		// if the add termination conditions button is clicked
 		else if (e.getSource() == addTermCond) {
 			termConditions = Buttons.add(termConditions, terminations, termCond, true, amountTerm,
-					ge, gt, eq, lt, le, quantity, this);
+					ge, gt, eq, lt, le, this);
 		}
 		// if the remove termination conditions button is clicked
 		else if (e.getSource() == removeTermCond) {
@@ -927,20 +833,6 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		else if (e.getSource() == clearTermCond) {
 			termConditions = new Object[0];
 			terminations.setListData(termConditions);
-		}
-		// if the add check state button is clicked
-		else if (e.getSource() == addCheckState) {
-			states = Buttons.add(states, checkStates, statesSpecs, true, amountState, ge2, gt2,
-					eq2, lt2, le2, quantity2, this);
-		}
-		// if the remove check state button is clicked
-		else if (e.getSource() == removeCheckState) {
-			Buttons.remove(checkStates, states);
-		}
-		// if the clear check state button is clicked
-		else if (e.getSource() == clearCheckState) {
-			states = new Object[0];
-			checkStates.setListData(states);
 		}
 		// if the simulators combo box is selected
 		else if (e.getSource() == simulators) {
@@ -1131,7 +1023,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			addSSA.setListData(adding);
 			addSSA.setSelectedIndex(0);
 			ssaList = Buttons.add(ssaList, ssa, addSSA, false, null, null, null, null, null, null,
-					null, this);
+					this);
 			int[] index = ssa.getSelectedIndices();
 			ssaList = Buttons.getList(ssaList, ssa);
 			ssa.setSelectedIndices(index);
@@ -1332,7 +1224,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			addPropery.setListData(adding);
 			addPropery.setSelectedIndex(0);
 			props = Buttons.add(props, properties, addPropery, false, null, null, null, null, null,
-					null, null, this);
+					null, this);
 		} else if (e.getSource() == overwrite) {
 			limit.setEnabled(true);
 			interval.setEnabled(true);
@@ -1739,7 +1631,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 						+ File.separator + simName + File.separator + "user-defined.dat",
 				biomodelsim, simTab, root);
 		if (nary.isSelected() && exit == 0) {
-			new Nary_Run(this, amountTerm, ge, gt, eq, lt, le, quantity, simulators, sbmlFile
+			new Nary_Run(this, amountTerm, ge, gt, eq, lt, le, simulators, sbmlFile
 					.split(File.separator), sbmlFile, sbml, dot, xhtml, nary, ODE, monteCarlo,
 					timeLimit, printInterval, root + File.separator + outDir, rndSeed, run,
 					printer_id, printer_track_quantity, termCond, intSpecies, rap1, rap2, qss, con,
@@ -1786,19 +1678,14 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		if (e.getClickCount() == 2) {
 			if (e.getSource() == intSpecies) {
 				interestingSpecies = Buttons.add(interestingSpecies, species, intSpecies, false,
-						amountTerm, ge, gt, eq, lt, le, quantity, this);
+						amountTerm, ge, gt, eq, lt, le, this);
 			} else if (e.getSource() == species) {
 				Buttons.remove(species, interestingSpecies);
 			} else if (e.getSource() == termCond) {
 				termConditions = Buttons.add(termConditions, terminations, termCond, true,
-						amountTerm, ge, gt, eq, lt, le, quantity, this);
+						amountTerm, ge, gt, eq, lt, le, this);
 			} else if (e.getSource() == terminations) {
 				Buttons.remove(terminations, termConditions);
-			} else if (e.getSource() == statesSpecs) {
-				states = Buttons.add(states, checkStates, statesSpecs, true, amountState, ge2, gt2,
-						eq2, lt2, le2, quantity2, this);
-			} else if (e.getSource() == checkStates) {
-				Buttons.remove(checkStates, states);
 			} else if (e.getSource() == ssa) {
 				if (ssa.getSelectedIndex() != -1) {
 					String[] get = ((String) ssaList[ssa.getSelectedIndex()]).split(" ");
@@ -2447,7 +2334,6 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					}
 					intSpecies.setListData(list);
 					termCond.setListData(list);
-					statesSpecs.setListData(list);
 					int rem = availSpecies.getItemCount();
 					for (int i = 0; i < rem; i++) {
 						availSpecies.removeItemAt(0);
@@ -2686,7 +2572,6 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		}
 		intSpecies.setListData(list);
 		termCond.setListData(list);
-		statesSpecs.setListData(list);
 		int rem = availSpecies.getItemCount();
 		for (int i = 0; i < rem; i++) {
 			availSpecies.removeItemAt(0);

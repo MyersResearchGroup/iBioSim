@@ -62,6 +62,8 @@ public class Learn extends JPanel implements ActionListener {
 
 	private String root;
 
+	private boolean topLevel;
+
 	/**
 	 * This is the constructor for the Learn class. It initializes all the input
 	 * fields, puts them on panels, adds the panels to the frame, and then
@@ -70,6 +72,7 @@ public class Learn extends JPanel implements ActionListener {
 	public Learn(String directory, Log log, boolean topLevel, String[] directories) {
 		this.log = log;
 		this.directory = directory;
+		this.topLevel = topLevel;
 
 		// Sets up the encodings area
 		JPanel radioPanel = new JPanel(new BorderLayout());
@@ -125,21 +128,6 @@ public class Learn extends JPanel implements ActionListener {
 		// initNet.add(initNetLabel);
 		// initNet.add(initNetwork);
 		// initNet.add(browseInit);
-
-		JPanel directoryPanel = new JPanel();
-		JLabel directoryLabel = new JLabel("Directory To Draw Data From:");
-		this.directories = new JComboBox(directories);
-		this.directories.addActionListener(this);
-		directoryPanel.add(directoryLabel);
-		directoryPanel.add(this.directories);
-		if (!topLevel) {
-			this.directories.setEnabled(false);
-			this.directories.setSelectedItem(directory.split(File.separator)[directory
-					.split(File.separator).length - 1]);
-		} else {
-			root = this.directory;
-			this.directory = root + File.separator + this.directories.getSelectedItem();
-		}
 
 		// Sets up the thresholds area
 		JPanel thresholdPanel1 = new JPanel(new GridLayout(3, 2));
@@ -234,6 +222,21 @@ public class Learn extends JPanel implements ActionListener {
 		run.addActionListener(this);
 		run.setMnemonic(KeyEvent.VK_L);
 
+		JPanel directoryPanel = new JPanel();
+		JLabel directoryLabel = new JLabel("Directory To Draw Data From:");
+		this.directories = new JComboBox(directories);
+		this.directories.addActionListener(this);
+		directoryPanel.add(directoryLabel);
+		directoryPanel.add(this.directories);
+		if (!topLevel) {
+			this.directories.setEnabled(false);
+			this.directories.setSelectedItem(this.directory.split(File.separator)[this.directory
+					.split(File.separator).length - 1]);
+		} else {
+			root = this.directory;
+			this.directory = root + File.separator + this.directories.getSelectedItem();
+		}
+
 		// Creates the main panel
 		this.setLayout(new BorderLayout());
 		JPanel middlePanel = new JPanel(new BorderLayout());
@@ -308,7 +311,9 @@ public class Learn extends JPanel implements ActionListener {
 			speciesPanel.revalidate();
 			speciesPanel.repaint();
 		} else if (e.getSource() == directories) {
-			directory = root + File.separator + this.directories.getSelectedItem();
+			if (topLevel) {
+				directory = root + File.separator + this.directories.getSelectedItem();
+			}
 			user.doClick();
 			auto.doClick();
 		}
