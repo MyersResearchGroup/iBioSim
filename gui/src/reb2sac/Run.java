@@ -152,7 +152,9 @@ public class Run implements ActionListener {
 			String ssaFile) {
 		Properties nary = new Properties();
 		try {
-			nary.load(new FileInputStream(new File("species.properties")));
+			nary
+					.load(new FileInputStream(new File(outDir + File.separator
+							+ "species.properties")));
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(component, "Species Properties File Not Found!",
 					"File Not Found", JOptionPane.ERROR_MESSAGE);

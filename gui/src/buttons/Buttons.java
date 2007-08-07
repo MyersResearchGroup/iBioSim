@@ -73,7 +73,7 @@ public class Buttons {
 	 */
 	public static Object[] add(Object[] currentList, JList list, JList add, boolean isTermCond,
 			JTextField amountTerm, JRadioButton ge, JRadioButton gt, JRadioButton eq,
-			JRadioButton lt, JRadioButton le, JComboBox quantity, Component component) {
+			JRadioButton lt, JRadioButton le, Component component) {
 		int[] select = new int[currentList.length];
 		for (int i = 0; i < currentList.length; i++) {
 			select[i] = i;
@@ -94,15 +94,15 @@ public class Buttons {
 					return currentList;
 				}
 				if (ge.isSelected()) {
-					newSelected[i] = temp + "." + quantity.getSelectedItem() + ".ge." + amount;
+					newSelected[i] = temp + ".amount.ge." + amount;
 				} else if (gt.isSelected()) {
-					newSelected[i] = temp + "." + quantity.getSelectedItem() + ".gt." + amount;
+					newSelected[i] = temp + ".amount.gt." + amount;
 				} else if (eq.isSelected()) {
-					newSelected[i] = temp + "." + quantity.getSelectedItem() + ".eq." + amount;
+					newSelected[i] = temp + ".amount.eq." + amount;
 				} else if (lt.isSelected()) {
-					newSelected[i] = temp + "." + quantity.getSelectedItem() + ".lt." + amount;
+					newSelected[i] = temp + ".amount.lt." + amount;
 				} else if (le.isSelected()) {
-					newSelected[i] = temp + "." + quantity.getSelectedItem() + ".le." + amount;
+					newSelected[i] = temp + ".amount.le." + amount;
 				}
 			}
 		}
