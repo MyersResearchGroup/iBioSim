@@ -402,27 +402,21 @@ public class Run implements ActionListener {
 					exec.exec("firefox " + out + ".xhtml");
 				} else if (usingSSA.isSelected()) {
 					if (!printer_id.equals("null.printer")) {
-						int change = -1;
 						for (int i = 0; i < simTab.getComponentCount(); i++) {
 							if (simTab.getComponentAt(i).getName().equals("Graph")) {
-								change = i;
+								if (simTab.getComponentAt(i) instanceof Graph) {
+									((Graph) simTab.getComponentAt(i)).refresh();
+								} else {
+									simTab.setComponentAt(i, new Graph(printer_track_quantity,
+											outDir.split(File.separator)[outDir
+													.split(File.separator).length - 1]
+													+ " simulation results", printer_id, outDir,
+											-1, null, "time", biomodelsim, null, log, null));
+									simTab.getComponentAt(i).setName("Graph");
+								}
 							}
 						}
-						if (change == -1) {
-							simTab.addTab("Graph", new Graph(printer_track_quantity, outDir
-									.split(File.separator)[outDir.split(File.separator).length - 1]
-									+ " simulation results", printer_id, outDir, -1, null, "time",
-									biomodelsim, null, log, null));
-							simTab.getComponentAt(simTab.getComponents().length - 1).setName(
-									"Graph");
-						} else {
-							simTab.setComponentAt(change, new Graph(printer_track_quantity, outDir
-									.split(File.separator)[outDir.split(File.separator).length - 1]
-									+ " simulation results", printer_id, outDir, -1, null, "time",
-									biomodelsim, null, log, null));
-							simTab.getComponentAt(change).setName("Graph");
-						}
-						change = -1;
+						int change = -1;
 						for (int i = 0; i < simTab.getComponentCount(); i++) {
 							if (simTab.getComponentAt(i).getName().equals("Learn")) {
 								change = i;
@@ -469,60 +463,38 @@ public class Run implements ActionListener {
 				} else {
 					if (!printer_id.equals("null.printer")) {
 						if (ode.isSelected()) {
-							int change = -1;
 							for (int i = 0; i < simTab.getComponentCount(); i++) {
 								if (simTab.getComponentAt(i).getName().equals("Graph")) {
-									change = i;
+									if (simTab.getComponentAt(i) instanceof Graph) {
+										((Graph) simTab.getComponentAt(i)).refresh();
+									} else {
+										simTab.setComponentAt(i, new Graph(printer_track_quantity,
+												outDir.split(File.separator)[outDir
+														.split(File.separator).length - 1]
+														+ " simulation results", printer_id,
+												outDir, -1, null, "time", biomodelsim, null, log,
+												null));
+										simTab.getComponentAt(i).setName("Graph");
+									}
 								}
-							}
-							if (change == -1) {
-								simTab.addTab("Graph",
-										new Graph(printer_track_quantity,
-												outDir.split(File.separator)[outDir
-														.split(File.separator).length - 1]
-														+ " simulation results", printer_id,
-												outDir, -1, null, "time", biomodelsim, null, log,
-												null));
-								simTab.getComponentAt(simTab.getComponents().length - 1).setName(
-										"Graph");
-							} else {
-								simTab.setComponentAt(change,
-										new Graph(printer_track_quantity,
-												outDir.split(File.separator)[outDir
-														.split(File.separator).length - 1]
-														+ " simulation results", printer_id,
-												outDir, -1, null, "time", biomodelsim, null, log,
-												null));
-								simTab.getComponentAt(change).setName("Graph");
 							}
 						} else if (monteCarlo.isSelected()) {
-							int change = -1;
 							for (int i = 0; i < simTab.getComponentCount(); i++) {
 								if (simTab.getComponentAt(i).getName().equals("Graph")) {
-									change = i;
+									if (simTab.getComponentAt(i) instanceof Graph) {
+										((Graph) simTab.getComponentAt(i)).refresh();
+									} else {
+										simTab.setComponentAt(i, new Graph(printer_track_quantity,
+												outDir.split(File.separator)[outDir
+														.split(File.separator).length - 1]
+														+ " simulation results", printer_id,
+												outDir, -1, null, "time", biomodelsim, null, log,
+												null));
+										simTab.getComponentAt(i).setName("Graph");
+									}
 								}
 							}
-							if (change == -1) {
-								simTab.addTab("Graph",
-										new Graph(printer_track_quantity,
-												outDir.split(File.separator)[outDir
-														.split(File.separator).length - 1]
-														+ " simulation results", printer_id,
-												outDir, -1, null, "time", biomodelsim, null, log,
-												null));
-								simTab.getComponentAt(simTab.getComponents().length - 1).setName(
-										"Graph");
-							} else {
-								simTab.setComponentAt(change,
-										new Graph(printer_track_quantity,
-												outDir.split(File.separator)[outDir
-														.split(File.separator).length - 1]
-														+ " simulation results", printer_id,
-												outDir, -1, null, "time", biomodelsim, null, log,
-												null));
-								simTab.getComponentAt(change).setName("Graph");
-							}
-							change = -1;
+							int change = -1;
 							for (int i = 0; i < simTab.getComponentCount(); i++) {
 								if (simTab.getComponentAt(i).getName().equals("Learn")) {
 									change = i;
