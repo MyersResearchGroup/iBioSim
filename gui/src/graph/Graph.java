@@ -1090,7 +1090,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 									boolean ableToGraph = false;
 									try {
 										for (String s : new File(outDir).list()) {
-											if (s.substring(0, 4).equals("run-")) {
+											if (s.length() > 3 && s.substring(0, 4).equals("run-")) {
 												ableToGraph = true;
 											}
 										}
@@ -1197,7 +1197,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 									try {
 										for (String s : new File(outDir + File.separator
 												+ g.getDirectory()).list()) {
-											if (s.substring(0, 4).equals("run-")) {
+											if (s.length() > 3 && s.substring(0, 4).equals("run-")) {
 												ableToGraph = true;
 											}
 										}
@@ -2754,7 +2754,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					boolean ableToGraph = false;
 					try {
 						for (String s : new File(outDir).list()) {
-							if (s.substring(0, 4).equals("run-")) {
+							if (s.length() > 3 && s.substring(0, 4).equals("run-")) {
 								ableToGraph = true;
 							}
 						}
@@ -2859,7 +2859,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					boolean ableToGraph = false;
 					try {
 						for (String s : new File(outDir + File.separator + g.getDirectory()).list()) {
-							if (s.substring(0, 4).equals("run-")) {
+							if (s.length() > 3 && s.substring(0, 4).equals("run-")) {
 								ableToGraph = true;
 							}
 						}
