@@ -2734,12 +2734,17 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							graphSpecies.set(j, index);
 							data.set(j, index2);
 						}
-						graphData.add(new XYSeries(g.getSpecies()));
-						if (data.size() != 0) {
-							for (int i = 0; i < (data.get(0)).size(); i++) {
-								graphData.get(graphData.size() - 1).add((data.get(0)).get(i),
-										(data.get(g.getNumber() + 1)).get(i));
+						if (g.getNumber() + 1 < graphSpecies.size()) {
+							graphData.add(new XYSeries(g.getSpecies()));
+							if (data.size() != 0) {
+								for (int i = 0; i < (data.get(0)).size(); i++) {
+									graphData.get(graphData.size() - 1).add((data.get(0)).get(i),
+											(data.get(g.getNumber() + 1)).get(i));
+								}
 							}
+						} else {
+							unableToGraph.add(g);
+							thisOne--;
 						}
 					} else {
 						unableToGraph.add(g);
@@ -2782,12 +2787,17 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							graphSpecies.set(j, index);
 							data.set(j, index2);
 						}
-						graphData.add(new XYSeries(g.getSpecies()));
-						if (data.size() != 0) {
-							for (int i = 0; i < (data.get(0)).size(); i++) {
-								graphData.get(graphData.size() - 1).add((data.get(0)).get(i),
-										(data.get(g.getNumber() + 1)).get(i));
+						if (g.getNumber() + 1 < graphSpecies.size()) {
+							graphData.add(new XYSeries(g.getSpecies()));
+							if (data.size() != 0) {
+								for (int i = 0; i < (data.get(0)).size(); i++) {
+									graphData.get(graphData.size() - 1).add((data.get(0)).get(i),
+											(data.get(g.getNumber() + 1)).get(i));
+								}
 							}
+						} else {
+							unableToGraph.add(g);
+							thisOne--;
 						}
 					} else {
 						unableToGraph.add(g);
@@ -2829,12 +2839,17 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							graphSpecies.set(j, index);
 							data.set(j, index2);
 						}
-						graphData.add(new XYSeries(g.getSpecies()));
-						if (data.size() != 0) {
-							for (int i = 0; i < (data.get(0)).size(); i++) {
-								graphData.get(graphData.size() - 1).add((data.get(0)).get(i),
-										(data.get(g.getNumber() + 1)).get(i));
+						if (g.getNumber() + 1 < graphSpecies.size()) {
+							graphData.add(new XYSeries(g.getSpecies()));
+							if (data.size() != 0) {
+								for (int i = 0; i < (data.get(0)).size(); i++) {
+									graphData.get(graphData.size() - 1).add((data.get(0)).get(i),
+											(data.get(g.getNumber() + 1)).get(i));
+								}
 							}
+						} else {
+							unableToGraph.add(g);
+							thisOne--;
 						}
 					} else {
 						unableToGraph.add(g);
@@ -2880,12 +2895,17 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							graphSpecies.set(j, index);
 							data.set(j, index2);
 						}
-						graphData.add(new XYSeries(g.getSpecies()));
-						if (data.size() != 0) {
-							for (int i = 0; i < (data.get(0)).size(); i++) {
-								graphData.get(graphData.size() - 1).add((data.get(0)).get(i),
-										(data.get(g.getNumber() + 1)).get(i));
+						if (g.getNumber() + 1 < graphSpecies.size()) {
+							graphData.add(new XYSeries(g.getSpecies()));
+							if (data.size() != 0) {
+								for (int i = 0; i < (data.get(0)).size(); i++) {
+									graphData.get(graphData.size() - 1).add((data.get(0)).get(i),
+											(data.get(g.getNumber() + 1)).get(i));
+								}
 							}
+						} else {
+							unableToGraph.add(g);
+							thisOne--;
 						}
 					} else {
 						unableToGraph.add(g);

@@ -5,6 +5,7 @@ import java.awt.event.*;
 import java.io.*;
 import java.util.*;
 import javax.swing.*;
+
 import biomodelsim.core.gui.*;
 
 /**
@@ -44,7 +45,9 @@ public class Learn extends JPanel implements ActionListener {
 	// private JCheckBox mustNotWinMajority, donotTossSingleRatioParents,
 	// donotTossChangedInfluenceSingleParents;
 
-	private JCheckBox noSUCC, PRED, basicFBP;
+	private JRadioButton succ, pred, both;
+
+	private JCheckBox basicFBP;
 
 	private ArrayList<ArrayList<Component>> species;
 
@@ -132,11 +135,11 @@ public class Learn extends JPanel implements ActionListener {
 		// Sets up the thresholds area
 		JPanel thresholdPanel1 = new JPanel(new GridLayout(3, 2));
 		JPanel thresholdPanel2 = new JPanel(new GridLayout(9, 2));
-		JLabel activationLabel = new JLabel("For Vote Threshold (Tf):");
-		activation = new JTextField("1.33");
+		JLabel activationLabel = new JLabel("For Vote Threshold (Ta):");
+		activation = new JTextField("1.15");
 		thresholdPanel2.add(activationLabel);
 		thresholdPanel2.add(activation);
-		JLabel repressionLabel = new JLabel("Against Vote Threshold (Ta):");
+		JLabel repressionLabel = new JLabel("Against Vote Threshold (Tr):");
 		repression = new JTextField("0.75");
 		thresholdPanel2.add(repressionLabel);
 		thresholdPanel2.add(repression);
@@ -145,25 +148,25 @@ public class Learn extends JPanel implements ActionListener {
 		thresholdPanel2.add(parentLabel);
 		thresholdPanel2.add(parent);
 		JLabel influenceLevelLabel = new JLabel("Merge Influence Vectors Delta (Tm):");
-		influenceLevel = new JTextField("0.01");
+		influenceLevel = new JTextField("0.0");
 		thresholdPanel2.add(influenceLevelLabel);
 		thresholdPanel2.add(influenceLevel);
 		JLabel letNThroughLabel = new JLabel("Minimum Initial Vectors (Tn):");
-		letNThrough = new JTextField("1");
+		letNThrough = new JTextField("2");
 		thresholdPanel1.add(letNThroughLabel);
 		thresholdPanel1.add(letNThrough);
 		JLabel maxVectorSizeLabel = new JLabel("Max Influence Vector Size (Tj):  ");
 		maxVectorSize = new JTextField("2");
 		thresholdPanel1.add(maxVectorSizeLabel);
 		thresholdPanel1.add(maxVectorSize);
-		JLabel relaxIPDeltaLabel = new JLabel("Relax Thresholds Delta (Tr):");
+		JLabel relaxIPDeltaLabel = new JLabel("Relax Thresholds Delta (Tt):");
 		relaxIPDelta = new JTextField("0.025");
 		thresholdPanel2.add(relaxIPDeltaLabel);
 		thresholdPanel2.add(relaxIPDelta);
 		numBinsLabel = new JLabel("Number Of Bins:");
 		String[] bins = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
 		numBins = new JComboBox(bins);
-		numBins.setSelectedItem("3");
+		numBins.setSelectedItem("4");
 		thresholdPanel1.add(numBinsLabel);
 		thresholdPanel1.add(numBins);
 		JPanel thresholdPanelHold1 = new JPanel();
@@ -177,12 +180,21 @@ public class Learn extends JPanel implements ActionListener {
 		debug = new JComboBox(options);
 		thresholdPanel2.add(debugLabel);
 		thresholdPanel2.add(debug);
-		noSUCC = new JCheckBox("Do not use successors when calculating probabilities");
-		PRED = new JCheckBox("Use predecessors when calculating probabilities");
+		succ = new JRadioButton("Successors");
+		pred = new JRadioButton("Predecesors");
+		both = new JRadioButton("Both");
+		succ.setSelected(true);
 		basicFBP = new JCheckBox("Use the basic implementation of the FindBaseProb function");
-		thresholdPanel2.add(noSUCC);
-		thresholdPanel2.add(new JPanel());
-		thresholdPanel2.add(PRED);
+		ButtonGroup succOrPred = new ButtonGroup();
+		succOrPred.add(succ);
+		succOrPred.add(pred);
+		succOrPred.add(both);
+		JPanel three = new JPanel();
+		three.add(succ);
+		three.add(pred);
+		three.add(both);
+		((FlowLayout) three.getLayout()).setAlignment(FlowLayout.LEFT);
+		thresholdPanel2.add(three);
 		thresholdPanel2.add(new JPanel());
 		thresholdPanel2.add(basicFBP);
 		thresholdPanel2.add(new JPanel());
@@ -330,9 +342,9 @@ public class Learn extends JPanel implements ActionListener {
 				geneNet += " --debug " + debug.getSelectedItem();
 				try {
 					double activation = Double.parseDouble(this.activation.getText().trim());
-					geneNet += " -tf " + activation;
+					geneNet += " -ta " + activation;
 					double repression = Double.parseDouble(this.repression.getText().trim());
-					geneNet += " -ta " + repression;
+					geneNet += " -tr " + repression;
 					double parent = Double.parseDouble(this.parent.getText().trim());
 					geneNet += " -ti " + parent;
 					// int windowRising =
@@ -347,15 +359,17 @@ public class Learn extends JPanel implements ActionListener {
 							.parseDouble(this.influenceLevel.getText().trim());
 					geneNet += " -tm " + influenceLevel;
 					double relaxIPDelta = Double.parseDouble(this.relaxIPDelta.getText().trim());
-					geneNet += " -tr " + relaxIPDelta;
+					geneNet += " -tt " + relaxIPDelta;
 					int letNThrough = Integer.parseInt(this.letNThrough.getText().trim());
 					geneNet += " -tn " + letNThrough;
 					int maxVectorSize = Integer.parseInt(this.maxVectorSize.getText().trim());
 					geneNet += " -tj " + maxVectorSize;
-					if (noSUCC.isSelected()) {
-						geneNet += " -noSUCC";
+					if (succ.isSelected()) {
 					}
-					if (PRED.isSelected()) {
+					if (pred.isSelected()) {
+						geneNet += " -noSUCC -PRED";
+					}
+					if (both.isSelected()) {
 						geneNet += " -PRED";
 					}
 					if (basicFBP.isSelected()) {
