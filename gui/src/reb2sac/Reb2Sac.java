@@ -5,9 +5,7 @@ import java.util.*;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-
 import org.sbml.libsbml.*;
-
 import sbmleditor.core.gui.*;
 import graph.core.gui.*;
 import biomodelsim.core.gui.*;
@@ -1666,6 +1664,11 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		if (append.isSelected()) {
 			Random rnd = new Random();
 			seed.setText("" + rnd.nextInt());
+		}
+		for (int i = 0; i < biomodelsim.getTab().getTabCount(); i++) {
+			if (biomodelsim.getTab().getComponentAt(i) instanceof Graph) {
+				((Graph) biomodelsim.getTab().getComponentAt(i)).refresh();
+			}
 		}
 	}
 
