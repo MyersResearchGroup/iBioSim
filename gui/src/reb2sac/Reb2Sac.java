@@ -23,9 +23,6 @@ import buttons.core.gui.*;
  */
 public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseListener {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 3181014495993143825L;
 
 	private JTextField amountTerm; // Amount for termination condition
@@ -2536,7 +2533,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		int[] index = species.getSelectedIndices();
 		species.setSelectedIndices(index);
 		return new Graph(printer_track_quantity, simName + " simulation results", printer_id,
-				outDir, -1, null, "time", biomodelsim, open, log, null);
+				outDir, "time", biomodelsim, open, log, null);
 	}
 
 	public JButton getRunButton() {

@@ -38,6 +38,9 @@ public class FileTree extends JPanel implements MouseListener {
 	public static final ImageIcon ICON_GRAPH = new ImageIcon(System.getenv("BIOSIM")
 			+ File.separator + "gui" + File.separator + "icons" + File.separator + "graph.jpg");
 
+	public static final ImageIcon ICON_LEARN = new ImageIcon(System.getenv("BIOSIM")
+			+ File.separator + "gui" + File.separator + "icons" + File.separator + "learn.jpg");
+
 	/**
 	 * Construct a FileTree
 	 */
@@ -47,7 +50,7 @@ public class FileTree extends JPanel implements MouseListener {
 		this.dir = dir;
 		// Make a tree list with all the nodes, and make it a JTree
 		if (dir != null) {
-			tree = new JTree(addNodes(null, dir));
+			tree = new JTree(addNodes(null, dir, true));
 			TreeCellRenderer renderer = new IconCellRenderer();
 			tree.setCellRenderer(renderer);
 			// Add a listener
@@ -80,13 +83,18 @@ public class FileTree extends JPanel implements MouseListener {
 	/**
 	 * Add nodes from under "dir" into curTop. Highly recursive.
 	 */
-	DefaultMutableTreeNode addNodes(DefaultMutableTreeNode curTop, File dir) {
+	DefaultMutableTreeNode addNodes(DefaultMutableTreeNode curTop, File dir, boolean sim) {
 		String curPath = dir.getPath();
 		DefaultMutableTreeNode curDir;
 		if (curTop == null) {
 			curDir = new DefaultMutableTreeNode(new IconData(ICON_PROJECT, null, dir.getName()));
 		} else {
-			curDir = new DefaultMutableTreeNode(new IconData(ICON_SIMULATION, null, dir.getName()));
+			if (sim) {
+				curDir = new DefaultMutableTreeNode(new IconData(ICON_SIMULATION, null, dir
+						.getName()));
+			} else {
+				curDir = new DefaultMutableTreeNode(new IconData(ICON_LEARN, null, dir.getName()));
+			}
 		}
 		if (curTop != null) { // should only be null at root
 			if (curTop.getParent() == null) {
@@ -116,7 +124,9 @@ public class FileTree extends JPanel implements MouseListener {
 			if ((f = new File(newPath)).isDirectory() && !f.getName().equals("CVS")) {
 				for (String s : f.list()) {
 					if (s.equals(".sim")) {
-						addNodes(curDir, f);
+						addNodes(curDir, f, true);
+					} else if (s.equals(".lrn")) {
+						addNodes(curDir, f, false);
 					}
 				}
 			} else if (!f.getName().equals("CVS"))
@@ -255,8 +265,30 @@ public class FileTree extends JPanel implements MouseListener {
 							fixTree(current, new DefaultMutableTreeNode(new IconData(
 									ICON_SIMULATION, null, f.getName())), f, doAdd);
 						} else {
-							fixTree(current, (DefaultMutableTreeNode) current.getChildAt(getChild),
-									f, doAdd);
+							current.remove(getChild);
+							doAdd = true;
+							fixTree(current, new DefaultMutableTreeNode(new IconData(
+									ICON_SIMULATION, null, f.getName())), f, doAdd);
+						}
+					} else if (s.equals(".lrn")) {
+						String get = "";
+						boolean doAdd = true;
+						int getChild = 0;
+						for (int j = 0; j < current.getChildCount(); j++) {
+							get = "" + current.getChildAt(j);
+							if (get.equals(f.getName())) {
+								doAdd = false;
+								getChild = j;
+							}
+						}
+						if (doAdd) {
+							fixTree(current, new DefaultMutableTreeNode(new IconData(ICON_LEARN,
+									null, f.getName())), f, doAdd);
+						} else {
+							current.remove(getChild);
+							doAdd = true;
+							fixTree(current, new DefaultMutableTreeNode(new IconData(ICON_LEARN,
+									null, f.getName())), f, doAdd);
 						}
 					}
 				}

@@ -4,11 +4,7 @@ import java.io.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
-
 import javax.swing.*;
-
-import learn.core.gui.Learn;
-
 import biomodelsim.core.gui.*;
 import graph.core.gui.*;
 import buttons.core.gui.*;
@@ -411,52 +407,9 @@ public class Run implements ActionListener {
 											outDir.split(File.separator)[outDir
 													.split(File.separator).length - 1]
 													+ " simulation results", printer_id, outDir,
-											-1, null, "time", biomodelsim, null, log, null));
+											"time", biomodelsim, null, log, null));
 									simTab.getComponentAt(i).setName("Graph");
 								}
-							}
-						}
-						int change = -1;
-						for (int i = 0; i < simTab.getComponentCount(); i++) {
-							if (simTab.getComponentAt(i).getName().equals("Learn")) {
-								change = i;
-							}
-						}
-						if (change != -1) {
-							if (simTab.getComponentAt(change) instanceof Learn) {
-							} else {
-								ArrayList<String> directories = new ArrayList<String>();
-								for (String s : new File(root).list()) {
-									if (new File(root + File.separator + s).isDirectory()) {
-										boolean add1 = false;
-										boolean add2 = false;
-										for (String ss : new File(root + File.separator + s).list()) {
-											if (ss.equals(".sim")) {
-												add1 = true;
-											}
-											if (ss.length() > 3
-													&& ss.substring(ss.length() - 4).equals(".tsd")) {
-												add2 = true;
-											}
-										}
-										if (add1 && add2) {
-											directories.add(s);
-										}
-									}
-								}
-								for (int i = 1; i < directories.size(); i++) {
-									String index = directories.get(i);
-									int j = i;
-									while ((j > 0)
-											&& directories.get(j - 1).compareToIgnoreCase(index) > 0) {
-										directories.set(j, directories.get(j - 1));
-										j = j - 1;
-									}
-									directories.set(j, index);
-								}
-								simTab.setComponentAt(change, new Learn(outDir, log, false,
-										directories.toArray(new String[0])));
-								simTab.getComponentAt(change).setName("Learn");
 							}
 						}
 					}
@@ -472,8 +425,7 @@ public class Run implements ActionListener {
 												outDir.split(File.separator)[outDir
 														.split(File.separator).length - 1]
 														+ " simulation results", printer_id,
-												outDir, -1, null, "time", biomodelsim, null, log,
-												null));
+												outDir, "time", biomodelsim, null, log, null));
 										simTab.getComponentAt(i).setName("Graph");
 									}
 								}
@@ -488,56 +440,9 @@ public class Run implements ActionListener {
 												outDir.split(File.separator)[outDir
 														.split(File.separator).length - 1]
 														+ " simulation results", printer_id,
-												outDir, -1, null, "time", biomodelsim, null, log,
-												null));
+												outDir, "time", biomodelsim, null, log, null));
 										simTab.getComponentAt(i).setName("Graph");
 									}
-								}
-							}
-							int change = -1;
-							for (int i = 0; i < simTab.getComponentCount(); i++) {
-								if (simTab.getComponentAt(i).getName().equals("Learn")) {
-									change = i;
-								}
-							}
-							if (change != -1) {
-								if (simTab.getComponentAt(change) instanceof Learn) {
-								} else {
-									ArrayList<String> directories = new ArrayList<String>();
-									for (String s : new File(root).list()) {
-										if (new File(root + File.separator + s).isDirectory()) {
-											boolean add1 = false;
-											boolean add2 = false;
-											for (String ss : new File(root + File.separator + s)
-													.list()) {
-												if (ss.equals(".sim")) {
-													add1 = true;
-												}
-												if (ss.length() > 3
-														&& ss.substring(ss.length() - 4).equals(
-																".tsd")) {
-													add2 = true;
-												}
-											}
-											if (add1 && add2) {
-												directories.add(s);
-											}
-										}
-									}
-									for (int i = 1; i < directories.size(); i++) {
-										String index = directories.get(i);
-										int j = i;
-										while ((j > 0)
-												&& directories.get(j - 1)
-														.compareToIgnoreCase(index) > 0) {
-											directories.set(j, directories.get(j - 1));
-											j = j - 1;
-										}
-										directories.set(j, index);
-									}
-									simTab.setComponentAt(change, new Learn(outDir, log, false,
-											directories.toArray(new String[0])));
-									simTab.getComponentAt(change).setName("Learn");
 								}
 							}
 						}
