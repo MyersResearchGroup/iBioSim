@@ -72,7 +72,6 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 		scroll1.setMinimumSize(new Dimension(260, 200));
 		scroll1.setPreferredSize(new Dimension(276, 132));
 		scroll1.setViewportView(table);
-		table.setFillsViewportHeight(true);
 		addData = new JButton("Add Data Point");
 		addData.addActionListener(this);
 		removeData = new JButton("Remove Data Point");
