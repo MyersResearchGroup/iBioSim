@@ -23,9 +23,6 @@ import buttons.core.gui.*;
  */
 public class SBML_Editor extends JPanel implements ActionListener, MouseListener {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 8236967001410906807L;
 
 	private SBMLDocument document; // sbml document
@@ -667,6 +664,9 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		else if (e.getSource() == copyReac) {
 			String reacID = JOptionPane.showInputDialog(biosim.frame(), "Enter New Reaction ID:",
 					"Reaction ID", JOptionPane.PLAIN_MESSAGE);
+			if (reacID == null) {
+				return;
+			}
 			if (!usedIDs.contains(reacID.trim()) && !reacID.trim().equals("")) {
 				Reaction react = document.getModel().createReaction();
 				react.setKineticLaw(new KineticLaw());
@@ -1121,6 +1121,19 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 												}
 											}
 										}
+										String s = " " + reaction.getKineticLaw().getFormula()
+												+ " ";
+										s = s.replace(" " + speciesName + " ", " " + specie.getId()
+												+ " ");
+										s = s.replace("(" + speciesName + ")", "(" + specie.getId()
+												+ ")");
+										s = s.replace("(" + speciesName + " ", "(" + specie.getId()
+												+ " ");
+										s = s.replace("(" + speciesName + ",", "(" + specie.getId()
+												+ ",");
+										s = s.replace(" " + speciesName + ")", " " + specie.getId()
+												+ ")");
+										reaction.getKineticLaw().setFormula(s.trim());
 									}
 									if (amount) {
 										specie.setInitialAmount(initial);
@@ -1553,10 +1566,6 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 								sbml = document.getModel().getListOfParameters();
 								for (int i = 0; i < sbml.getNumItems(); i++) {
 									validKineticVars.add(((Parameter) sbml.get(i)).getId());
-								}
-								sbml = document.getModel().getListOfSpecies();
-								for (int i = 0; i < sbml.getNumItems(); i++) {
-									validKineticVars.add(((Species) sbml.get(i)).getId());
 								}
 								if (!docu.getModel().getReaction(0).getKineticLaw().isSetFormula()) {
 									document.getModel().getReaction(kineticCheck).getKineticLaw()

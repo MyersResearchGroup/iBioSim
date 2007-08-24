@@ -17,16 +17,11 @@ import biomodelsim.core.gui.*;
  */
 public class Learn extends JPanel implements ActionListener {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -5806315070287184299L;
 
 	// private JTextField initNetwork; // text field for initial network
 
 	// private JButton browseInit; // the browse initial network button
-
-	private JComboBox directories;
 
 	private JButton run; // the run button
 
@@ -63,19 +58,14 @@ public class Learn extends JPanel implements ActionListener {
 
 	private Log log;
 
-	private String root;
-
-	private boolean topLevel;
-
 	/**
 	 * This is the constructor for the Learn class. It initializes all the input
 	 * fields, puts them on panels, adds the panels to the frame, and then
 	 * displays the frame.
 	 */
-	public Learn(String directory, Log log, boolean topLevel, String[] directories) {
+	public Learn(String directory, Log log) {
 		this.log = log;
 		this.directory = directory;
-		this.topLevel = topLevel;
 
 		// Sets up the encodings area
 		JPanel radioPanel = new JPanel(new BorderLayout());
@@ -234,21 +224,6 @@ public class Learn extends JPanel implements ActionListener {
 		run.addActionListener(this);
 		run.setMnemonic(KeyEvent.VK_L);
 
-		JPanel directoryPanel = new JPanel();
-		JLabel directoryLabel = new JLabel("Directory To Draw Data From:");
-		this.directories = new JComboBox(directories);
-		this.directories.addActionListener(this);
-		directoryPanel.add(directoryLabel);
-		directoryPanel.add(this.directories);
-		if (!topLevel) {
-			this.directories.setEnabled(false);
-			this.directories.setSelectedItem(this.directory.split(File.separator)[this.directory
-					.split(File.separator).length - 1]);
-		} else {
-			root = this.directory;
-			this.directory = root + File.separator + this.directories.getSelectedItem();
-		}
-
 		// Creates the main panel
 		this.setLayout(new BorderLayout());
 		JPanel middlePanel = new JPanel(new BorderLayout());
@@ -257,7 +232,6 @@ public class Learn extends JPanel implements ActionListener {
 		JPanel secondTab = new JPanel(new BorderLayout());
 		middlePanel.add(radioPanel, "Center");
 		// firstTab1.add(initNet, "North");
-		firstTab1.add(directoryPanel, "North");
 		firstTab1.add(thresholdPanelHold1, "Center");
 		firstTab.add(firstTab1, "North");
 		JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, middlePanel, null);
@@ -279,25 +253,18 @@ public class Learn extends JPanel implements ActionListener {
 	 * buttons are selected.
 	 */
 	public void actionPerformed(ActionEvent e) {
-		if (e.getActionCommand().contains("box")) {
-			int num = Integer.parseInt(e.getActionCommand().substring(3)) - 1;
-			if (!((JCheckBox) this.species.get(num).get(0)).isSelected()) {
-				((JComboBox) this.species.get(num).get(2)).setSelectedItem("0");
-				editText(num);
-				speciesPanel.revalidate();
-				speciesPanel.repaint();
-				for (int i = 1; i < this.species.get(num).size(); i++) {
-					this.species.get(num).get(i).setEnabled(false);
-				}
-			} else {
-				this.species.get(num).get(1).setEnabled(true);
-				if (user.isSelected()) {
-					for (int i = 2; i < this.species.get(num).size(); i++) {
-						this.species.get(num).get(i).setEnabled(true);
-					}
-				}
-			}
-		} else if (e.getActionCommand().contains("text")) {
+		/*
+		 * if (e.getActionCommand().contains("box")) { int num =
+		 * Integer.parseInt(e.getActionCommand().substring(3)) - 1; if
+		 * (!((JCheckBox) this.species.get(num).get(0)).isSelected()) {
+		 * ((JComboBox) this.species.get(num).get(2)).setSelectedItem("0");
+		 * editText(num); speciesPanel.revalidate(); speciesPanel.repaint(); for
+		 * (int i = 1; i < this.species.get(num).size(); i++) {
+		 * this.species.get(num).get(i).setEnabled(false); } } else {
+		 * this.species.get(num).get(1).setEnabled(true); if (user.isSelected()) {
+		 * for (int i = 2; i < this.species.get(num).size(); i++) {
+		 * this.species.get(num).get(i).setEnabled(true); } } } } else
+		 */if (e.getActionCommand().contains("text")) {
 			int num = Integer.parseInt(e.getActionCommand().substring(4)) - 1;
 			editText(num);
 			speciesPanel.revalidate();
@@ -314,7 +281,7 @@ public class Learn extends JPanel implements ActionListener {
 			numBins.setEnabled(true);
 			suggest.setEnabled(false);
 			for (Component c : speciesPanel.getComponents()) {
-				for (int i = 2; i < ((JPanel) c).getComponentCount(); i++) {
+				for (int i = 1; i < ((JPanel) c).getComponentCount(); i++) {
 					((JPanel) c).getComponent(i).setEnabled(false);
 				}
 			}
@@ -322,12 +289,6 @@ public class Learn extends JPanel implements ActionListener {
 			levels();
 			speciesPanel.revalidate();
 			speciesPanel.repaint();
-		} else if (e.getSource() == directories) {
-			if (topLevel) {
-				directory = root + File.separator + this.directories.getSelectedItem();
-			}
-			user.doClick();
-			auto.doClick();
 		}
 		// if the browse initial network button is clicked
 		// else if (e.getSource() == browseInit) {
@@ -384,13 +345,13 @@ public class Learn extends JPanel implements ActionListener {
 							+ "levels.lvl"));
 					write.write("time, 0\n");
 					for (int i = 0; i < species.size(); i++) {
-						if (((JTextField) species.get(i).get(1)).getText().trim().equals("")) {
+						if (((JTextField) species.get(i).get(0)).getText().trim().equals("")) {
 							write.write("-1");
 						} else {
-							write.write(((JTextField) species.get(i).get(1)).getText().trim());
+							write.write(((JTextField) species.get(i).get(0)).getText().trim());
 						}
-						write.write(", " + ((JComboBox) species.get(i).get(2)).getSelectedItem());
-						for (int j = 3; j < species.get(i).size(); j++) {
+						write.write(", " + ((JComboBox) species.get(i).get(1)).getSelectedItem());
+						for (int j = 2; j < species.get(i).size(); j++) {
 							if (((JTextField) species.get(i).get(j)).getText().trim().equals("")) {
 								write.write(", -1");
 							} else {
@@ -458,13 +419,13 @@ public class Learn extends JPanel implements ActionListener {
 			FileWriter write = new FileWriter(new File(directory + File.separator + "levels.lvl"));
 			write.write("time, 0\n");
 			for (int i = 0; i < species.size(); i++) {
-				if (((JTextField) species.get(i).get(1)).getText().trim().equals("")) {
+				if (((JTextField) species.get(i).get(0)).getText().trim().equals("")) {
 					write.write("-1");
 				} else {
-					write.write(((JTextField) species.get(i).get(1)).getText().trim());
+					write.write(((JTextField) species.get(i).get(0)).getText().trim());
 				}
-				write.write(", " + ((JComboBox) species.get(i).get(2)).getSelectedItem());
-				for (int j = 3; j < species.get(i).size(); j++) {
+				write.write(", " + ((JComboBox) species.get(i).get(1)).getSelectedItem());
+				for (int j = 2; j < species.get(i).size(); j++) {
 					if (((JTextField) species.get(i).get(j)).getText().trim().equals("")) {
 						write.write(", -1");
 					} else {
@@ -516,34 +477,21 @@ public class Learn extends JPanel implements ActionListener {
 					input = new FileInputStream(n);
 					boolean reading = true;
 					char cha;
-					int readCount = 0;
 					while (reading) {
 						String word = "";
 						boolean readWord = true;
 						while (readWord) {
 							int read = input.read();
-							readCount++;
 							if (read == -1) {
 								reading = false;
 								readWord = false;
 							}
 							cha = (char) read;
 							if (Character.isWhitespace(cha)) {
-								input.mark(3);
-								char next = (char) input.read();
-								char after = (char) input.read();
-								String check = "" + next + after;
-								if (word.equals("0") || check.equals("0,")) {
-									readWord = false;
-								} else {
-									word += cha;
-								}
-								input.reset();
-							} else if (cha == ',' || cha == ':' || cha == ';' || cha == '!'
-									|| cha == '?' || cha == '\"' || cha == '\'' || cha == '('
-									|| cha == ')' || cha == '{' || cha == '}' || cha == '['
-									|| cha == ']' || cha == '<' || cha == '>' || cha == '*'
-									|| cha == '=' || cha == '#') {
+								word += cha;
+							} else if (cha == ',' || cha == ':' || cha == ';' || cha == '\"'
+									|| cha == '\'' || cha == '(' || cha == ')' || cha == '['
+									|| cha == ']') {
 								if (!word.equals("") && !word.equals("time")) {
 									try {
 										Double.parseDouble(word);
@@ -570,7 +518,7 @@ public class Learn extends JPanel implements ActionListener {
 					}
 				}
 				JPanel label = new JPanel(new GridLayout());
-				label.add(new JLabel("Use"));
+				// label.add(new JLabel("Use"));
 				label.add(new JLabel("Species"));
 				label.add(new JLabel("Number Of Bins"));
 				for (int i = 0; i < max - 3; i++) {
@@ -582,35 +530,35 @@ public class Learn extends JPanel implements ActionListener {
 					j++;
 					JPanel sp = new JPanel(new GridLayout());
 					ArrayList<Component> specs = new ArrayList<Component>();
-					JCheckBox check = new JCheckBox();
-					check.setSelected(true);
-					specs.add(check);
+					// JCheckBox check = new JCheckBox();
+					// check.setSelected(true);
+					// specs.add(check);
 					specs.add(new JTextField(s));
 					String[] options = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
 					specs.add(new JComboBox(options));
-					((JTextField) specs.get(1)).setEditable(false);
+					((JTextField) specs.get(0)).setEditable(false);
+					// sp.add(specs.get(0));
+					// ((JCheckBox) specs.get(0)).addActionListener(this);
+					// ((JCheckBox) specs.get(0)).setActionCommand("box" + j);
 					sp.add(specs.get(0));
-					((JCheckBox) specs.get(0)).addActionListener(this);
-					((JCheckBox) specs.get(0)).setActionCommand("box" + j);
 					sp.add(specs.get(1));
-					sp.add(specs.get(2));
-					((JComboBox) specs.get(2)).addActionListener(this);
-					((JComboBox) specs.get(2)).setActionCommand("text" + j);
+					((JComboBox) specs.get(1)).addActionListener(this);
+					((JComboBox) specs.get(1)).setActionCommand("text" + j);
 					this.species.add(specs);
 					if (str != null) {
 						for (String st : str) {
 							String[] getString = st.split(",");
 							if (getString[0].trim().equals(s)) {
 								if (getString.length >= 2) {
-									((JComboBox) specs.get(2)).setSelectedItem(getString[1].trim());
+									((JComboBox) specs.get(1)).setSelectedItem(getString[1].trim());
 									for (int i = 0; i < Integer
-											.parseInt((String) ((JComboBox) specs.get(2))
+											.parseInt((String) ((JComboBox) specs.get(1))
 													.getSelectedItem()) - 1; i++) {
 										specs.add(new JTextField(getString[i + 2].trim()));
-										sp.add(specs.get(i + 3));
+										sp.add(specs.get(i + 2));
 									}
 									for (int i = Integer.parseInt((String) ((JComboBox) specs
-											.get(2)).getSelectedItem()) - 1; i < max - 3; i++) {
+											.get(1)).getSelectedItem()) - 1; i < max - 3; i++) {
 										sp.add(new JLabel());
 									}
 								}
@@ -621,6 +569,7 @@ public class Learn extends JPanel implements ActionListener {
 				}
 			}
 		}
+		editText(0);
 	}
 
 	private void levelsBin() {
@@ -638,34 +587,21 @@ public class Learn extends JPanel implements ActionListener {
 					input = new FileInputStream(n);
 					boolean reading = true;
 					char cha;
-					int readCount = 0;
 					while (reading) {
 						String word = "";
 						boolean readWord = true;
 						while (readWord) {
 							int read = input.read();
-							readCount++;
 							if (read == -1) {
 								reading = false;
 								readWord = false;
 							}
 							cha = (char) read;
 							if (Character.isWhitespace(cha)) {
-								input.mark(3);
-								char next = (char) input.read();
-								char after = (char) input.read();
-								String check = "" + next + after;
-								if (word.equals("0") || check.equals("0,")) {
-									readWord = false;
-								} else {
-									word += cha;
-								}
-								input.reset();
-							} else if (cha == ',' || cha == ':' || cha == ';' || cha == '!'
-									|| cha == '?' || cha == '\"' || cha == '\'' || cha == '('
-									|| cha == ')' || cha == '{' || cha == '}' || cha == '['
-									|| cha == ']' || cha == '<' || cha == '>' || cha == '*'
-									|| cha == '=' || cha == '#') {
+								word += cha;
+							} else if (cha == ',' || cha == ':' || cha == ';' || cha == '\"'
+									|| cha == '\'' || cha == '(' || cha == ')' || cha == '['
+									|| cha == ']') {
 								if (!word.equals("") && !word.equals("time")) {
 									try {
 										Double.parseDouble(word);
@@ -685,7 +621,7 @@ public class Learn extends JPanel implements ActionListener {
 				this.species = new ArrayList<ArrayList<Component>>();
 				speciesPanel.setLayout(new GridLayout(species.size() + 1, 1));
 				JPanel label = new JPanel(new GridLayout());
-				label.add(new JLabel("Use"));
+				// label.add(new JLabel("Use"));
 				label.add(new JLabel("Species"));
 				label.add(new JLabel("Number Of Bins"));
 				for (int i = 0; i < Integer.parseInt((String) numBins.getSelectedItem()) - 1; i++) {
@@ -697,27 +633,27 @@ public class Learn extends JPanel implements ActionListener {
 					j++;
 					JPanel sp = new JPanel(new GridLayout());
 					ArrayList<Component> specs = new ArrayList<Component>();
-					JCheckBox check = new JCheckBox();
-					check.setSelected(true);
-					specs.add(check);
+					// JCheckBox check = new JCheckBox();
+					// check.setSelected(true);
+					// specs.add(check);
 					specs.add(new JTextField(s));
 					String[] options = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
 					JComboBox combo = new JComboBox(options);
 					specs.add(combo);
 					combo.setSelectedItem(numBins.getSelectedItem());
-					((JTextField) specs.get(1)).setEditable(false);
+					((JTextField) specs.get(0)).setEditable(false);
+					// sp.add(specs.get(0));
+					// ((JCheckBox) specs.get(0)).addActionListener(this);
+					// ((JCheckBox) specs.get(0)).setActionCommand("box" + j);
 					sp.add(specs.get(0));
-					((JCheckBox) specs.get(0)).addActionListener(this);
-					((JCheckBox) specs.get(0)).setActionCommand("box" + j);
 					sp.add(specs.get(1));
-					sp.add(specs.get(2));
-					((JComboBox) specs.get(2)).addActionListener(this);
-					((JComboBox) specs.get(2)).setActionCommand("text" + j);
+					((JComboBox) specs.get(1)).addActionListener(this);
+					((JComboBox) specs.get(1)).setActionCommand("text" + j);
 					this.species.add(specs);
-					for (int i = 0; i < Integer.parseInt((String) ((JComboBox) specs.get(2))
+					for (int i = 0; i < Integer.parseInt((String) ((JComboBox) specs.get(1))
 							.getSelectedItem()) - 1; i++) {
 						specs.add(new JTextField(""));
-						sp.add(specs.get(i + 3));
+						sp.add(specs.get(i + 2));
 					}
 					speciesPanel.add(sp);
 				}
@@ -729,11 +665,11 @@ public class Learn extends JPanel implements ActionListener {
 		ArrayList<Component> specs = species.get(num);
 		try {
 			Component[] panels = speciesPanel.getComponents();
-			int boxes = Integer.parseInt((String) ((JComboBox) specs.get(2)).getSelectedItem());
-			if ((specs.size() - 3) < boxes) {
+			int boxes = Integer.parseInt((String) ((JComboBox) specs.get(1)).getSelectedItem());
+			if ((specs.size() - 2) < boxes) {
 				for (int i = 0; i < boxes - 1; i++) {
 					try {
-						specs.get(i + 3);
+						specs.get(i + 2);
 					} catch (Exception e1) {
 						JTextField temp = new JTextField("");
 						((JPanel) panels[num + 1]).add(temp);
@@ -744,13 +680,13 @@ public class Learn extends JPanel implements ActionListener {
 				try {
 					if (boxes > 0) {
 						while (true) {
-							specs.remove(boxes + 2);
-							((JPanel) panels[num + 1]).remove(boxes + 2);
+							specs.remove(boxes + 1);
+							((JPanel) panels[num + 1]).remove(boxes + 1);
 						}
 					} else if (boxes == 0) {
 						while (true) {
-							specs.remove(3);
-							((JPanel) panels[num + 1]).remove(3);
+							specs.remove(2);
+							((JPanel) panels[num + 1]).remove(2);
 						}
 					}
 				} catch (Exception e1) {
@@ -761,9 +697,9 @@ public class Learn extends JPanel implements ActionListener {
 				max = Math.max(max, species.get(i).size());
 			}
 			if (((JPanel) panels[0]).getComponentCount() < max) {
-				for (int i = 0; i < max - 3; i++) {
+				for (int i = 0; i < max - 2; i++) {
 					try {
-						((JPanel) panels[0]).getComponent(i + 3);
+						((JPanel) panels[0]).getComponent(i + 2);
 					} catch (Exception e) {
 						((JPanel) panels[0]).add(new JLabel("Level " + (i + 1)));
 					}
@@ -778,7 +714,7 @@ public class Learn extends JPanel implements ActionListener {
 			}
 			for (int i = 1; i < panels.length; i++) {
 				JPanel sp = (JPanel) panels[i];
-				for (int j = sp.getComponentCount() - 1; j >= 3; j--) {
+				for (int j = sp.getComponentCount() - 1; j >= 2; j--) {
 					if (sp.getComponent(j) instanceof JLabel) {
 						sp.remove(j);
 					}
