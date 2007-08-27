@@ -1062,20 +1062,20 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 															.getRunNumber(), null));
 											data = allData.get(g.getRunNumber() + " "
 													+ g.getDirectory());
-										}
-										for (int i = 2; i < graphSpecies.size(); i++) {
-											String index = graphSpecies.get(i);
-											ArrayList<Double> index2 = data.get(i);
-											int j = i;
-											while ((j > 1)
-													&& graphSpecies.get(j - 1).compareToIgnoreCase(
-															index) > 0) {
-												graphSpecies.set(j, graphSpecies.get(j - 1));
-												data.set(j, data.get(j - 1));
-												j = j - 1;
+											for (int i = 2; i < graphSpecies.size(); i++) {
+												String index = graphSpecies.get(i);
+												ArrayList<Double> index2 = data.get(i);
+												int j = i;
+												while ((j > 1)
+														&& graphSpecies.get(j - 1)
+																.compareToIgnoreCase(index) > 0) {
+													graphSpecies.set(j, graphSpecies.get(j - 1));
+													data.set(j, data.get(j - 1));
+													j = j - 1;
+												}
+												graphSpecies.set(j, index);
+												data.set(j, index2);
 											}
-											graphSpecies.set(j, index);
-											data.set(j, index2);
 										}
 										graphData.add(new XYSeries(g.getSpecies()));
 										if (data.size() != 0) {
@@ -1128,20 +1128,20 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 															.getRunNumber().toLowerCase(), null));
 											data = allData.get(g.getRunNumber() + " "
 													+ g.getDirectory());
-										}
-										for (int i = 2; i < graphSpecies.size(); i++) {
-											String index = graphSpecies.get(i);
-											ArrayList<Double> index2 = data.get(i);
-											int j = i;
-											while ((j > 1)
-													&& graphSpecies.get(j - 1).compareToIgnoreCase(
-															index) > 0) {
-												graphSpecies.set(j, graphSpecies.get(j - 1));
-												data.set(j, data.get(j - 1));
-												j = j - 1;
+											for (int i = 2; i < graphSpecies.size(); i++) {
+												String index = graphSpecies.get(i);
+												ArrayList<Double> index2 = data.get(i);
+												int j = i;
+												while ((j > 1)
+														&& graphSpecies.get(j - 1)
+																.compareToIgnoreCase(index) > 0) {
+													graphSpecies.set(j, graphSpecies.get(j - 1));
+													data.set(j, data.get(j - 1));
+													j = j - 1;
+												}
+												graphSpecies.set(j, index);
+												data.set(j, index2);
 											}
-											graphSpecies.set(j, index);
-											data.set(j, index2);
 										}
 										graphData.add(new XYSeries(g.getSpecies()));
 										if (data.size() != 0) {
@@ -1194,20 +1194,20 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 															.getRunNumber(), g.getDirectory()));
 											data = allData.get(g.getRunNumber() + " "
 													+ g.getDirectory());
-										}
-										for (int i = 2; i < graphSpecies.size(); i++) {
-											String index = graphSpecies.get(i);
-											ArrayList<Double> index2 = data.get(i);
-											int j = i;
-											while ((j > 1)
-													&& graphSpecies.get(j - 1).compareToIgnoreCase(
-															index) > 0) {
-												graphSpecies.set(j, graphSpecies.get(j - 1));
-												data.set(j, data.get(j - 1));
-												j = j - 1;
+											for (int i = 2; i < graphSpecies.size(); i++) {
+												String index = graphSpecies.get(i);
+												ArrayList<Double> index2 = data.get(i);
+												int j = i;
+												while ((j > 1)
+														&& graphSpecies.get(j - 1)
+																.compareToIgnoreCase(index) > 0) {
+													graphSpecies.set(j, graphSpecies.get(j - 1));
+													data.set(j, data.get(j - 1));
+													j = j - 1;
+												}
+												graphSpecies.set(j, index);
+												data.set(j, index2);
 											}
-											graphSpecies.set(j, index);
-											data.set(j, index2);
 										}
 										graphData.add(new XYSeries(g.getSpecies()));
 										if (data.size() != 0) {
@@ -1264,20 +1264,20 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 															.getDirectory()));
 											data = allData.get(g.getRunNumber() + " "
 													+ g.getDirectory());
-										}
-										for (int i = 2; i < graphSpecies.size(); i++) {
-											String index = graphSpecies.get(i);
-											ArrayList<Double> index2 = data.get(i);
-											int j = i;
-											while ((j > 1)
-													&& graphSpecies.get(j - 1).compareToIgnoreCase(
-															index) > 0) {
-												graphSpecies.set(j, graphSpecies.get(j - 1));
-												data.set(j, data.get(j - 1));
-												j = j - 1;
+											for (int i = 2; i < graphSpecies.size(); i++) {
+												String index = graphSpecies.get(i);
+												ArrayList<Double> index2 = data.get(i);
+												int j = i;
+												while ((j > 1)
+														&& graphSpecies.get(j - 1)
+																.compareToIgnoreCase(index) > 0) {
+													graphSpecies.set(j, graphSpecies.get(j - 1));
+													data.set(j, data.get(j - 1));
+													j = j - 1;
+												}
+												graphSpecies.set(j, index);
+												data.set(j, index2);
 											}
-											graphSpecies.set(j, index);
-											data.set(j, index2);
 										}
 										graphData.add(new XYSeries(g.getSpecies()));
 										if (data.size() != 0) {
