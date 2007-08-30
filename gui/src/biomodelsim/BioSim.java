@@ -1945,29 +1945,51 @@ public class BioSim implements MouseListener, ActionListener {
 		}
 	}
 
-	public void refreshLearn(String learnName) {
+	public void refreshLearn(String learnName, boolean data) {
 		for (int i = 0; i < tab.getComponentCount(); i++) {
 			if (tab.getTitleAt(i).equals(learnName)) {
 				for (int j = 0; j < ((JTabbedPane) tab.getComponentAt(i)).getComponentCount(); j++) {
 					if (((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j).getName().equals(
 							"Graph")) {
-						if (((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j) instanceof Graph) {
-							((Graph) ((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j))
-									.refresh();
+						if (data) {
+							if (((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j) instanceof Graph) {
+								((Graph) ((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j))
+										.refresh();
+							} else {
+								((JTabbedPane) tab.getComponentAt(i)).setComponentAt(j, new Graph(
+										"amount", learnName + " data", "tsd.printer", root
+												+ File.separator + learnName, "time", this, null,
+										log, null));
+								((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j).setName(
+										"Graph");
+							}
 						} else {
-							((JTabbedPane) tab.getComponentAt(i)).setComponentAt(j, new Graph(
-									"amount", learnName + " data", "tsd.printer", root
-											+ File.separator + learnName, "time", this, null, log,
-									null));
+							JLabel noData1 = new JLabel("No data available");
+							Font font = noData1.getFont();
+							font = font.deriveFont(Font.BOLD, 42.0f);
+							noData1.setFont(font);
+							noData1.setHorizontalAlignment(SwingConstants.CENTER);
+							((JTabbedPane) tab.getComponentAt(i)).setComponentAt(j, noData1);
 							((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j)
 									.setName("Graph");
 						}
 					} else if (((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j).getName()
 							.equals("Learn")) {
-						if (((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j) instanceof Learn) {
+						if (data) {
+							if (((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j) instanceof Learn) {
+							} else {
+								((JTabbedPane) tab.getComponentAt(i)).setComponentAt(j, new Learn(
+										root + File.separator + learnName, log));
+								((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j).setName(
+										"Learn");
+							}
 						} else {
-							((JTabbedPane) tab.getComponentAt(i)).setComponentAt(j, new Learn(root
-									+ File.separator + learnName, log));
+							JLabel noData = new JLabel("No data available");
+							Font font = noData.getFont();
+							font = font.deriveFont(Font.BOLD, 42.0f);
+							noData.setFont(font);
+							noData.setHorizontalAlignment(SwingConstants.CENTER);
+							((JTabbedPane) tab.getComponentAt(i)).setComponentAt(j, noData);
 							((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j)
 									.setName("Learn");
 						}
