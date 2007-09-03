@@ -3,7 +3,7 @@
 <HEAD>
 	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
 	<TITLE>Myers Circuit Research Group</TITLE>
-	<META NAME="GENERATOR" CONTENT="OpenOffice.org 2.2  (Linux)">
+	<META NAME="GENERATOR" CONTENT="Microsoft FrontPage 5.0">
 	<META NAME="CREATED" CONTENT="20070806;14370600">
 	<META NAME="CHANGEDBY" CONTENT="Hiroyuki Kuwahara">
 	<META NAME="CHANGED" CONTENT="20070806;17452900">
@@ -288,7 +288,7 @@
 					</TR>
 					<TR VALIGN=TOP>
 						<TD WIDTH=192>
-							<P ALIGN=CENTER><A NAME="st"></A>rk4imp</P>
+							<P ALIGN=CENTER>rk4imp</P>
 						</TD>
 						<TD WIDTH=392>
 							<P ALIGN=LEFT>Implicit 4th order Runge-Kutta at Gaussian
@@ -435,7 +435,8 @@
 			<P>The termination conditions can specify a set of simple
 			conditions to terminate each simulation run (either ODE or Monte
 			Carlo) before the time limit when at least one of them is
-			satisfied.   This option can be very useful for analysis of 
+			satisfied.   This option can, for example, be very useful for 
+            computational analysis of phenotype variations. 
 			</P>
 			<H3>Advanced Termination Conditions</H3>
 			<P><FONT FACE="Nimbus Roman No9 L, serif"><FONT SIZE=3>The format
@@ -536,7 +537,7 @@
 			&lt;species-id&gt;, @&lt;reaction-id&gt; represent reaction,
 			</FONT></FONT>#@&lt;reaction-id&gt; is the variable for the number
 			of firings of &lt;reaction-id&gt;, and t is the variable
-			representing time</FONT></FONT></P>
+			representing time.</FONT></FONT></P>
 			<H3>Interesting Species 
 			</H3>
 			<P>Interesting species are the ones that are used in the analysis,
@@ -549,8 +550,51 @@
 			</P>
 			<H3>Properties 
 			</H3>
-			<P>Here, you can specify additional properties for your analysis</P>
+			<P>Here, you can specify additional properties for your analysis.&nbsp; 
+            Each property consists of property ID and its value.&nbsp; For 
+            example, property <i>reb2sac.abstraction.method.1.x</i>&nbsp; 
+            specifies a list of abstraction methods used for pre-processing, 
+            property <i>reb2sac.abstraction.method.2.x </i>specifies a list of 
+            abstraction methods used in the main abstraction loop, and&nbsp; 
+            property <i>abstraction.method.3.x</i> is a list of abstraction 
+            methods used for post-processing.&nbsp; These abstraction method 
+            properties can take the following values:</P>
+			<ul>
+              <li>modifier-structure-transformer</li>
+              <li>modifier-constant-propagation</li>
+              <li>operator-site-forward-binding-remover</li>
+              <li>nary-order-unary-transformer2</li>
+              <li>kinetic-law-constants-simplifier</li>
+              <li>enzyme-kinetic-rapid-equilibrium-1</li>
+              <li>dimer-to-monomer-substitutor</li>
+              <li>dimerization-reduction</li>
+              <li>kinetic-law-constants-simplifier</li>
+              <li>irrelevant-species-remover</li>
+              <li>inducer-structure-transformer</li>
+              <li>final-state-generator</li>
+              <li>similar-reaction-combiner</li>
+              <li>absolute-inhibition-generator</li>
+              <li>reversible-to-irreversible-transformer</li>
+              <li>multiple-products-reaction-eliminator</li>
+              <li>multiple-reactants-reaction-eliminator</li>
+              <li>single-reactant-product-reaction-eliminator</li>
+              <li>stop-flag-generator</li>
+              <li>enzyme-kinetic-qssa-1</li>
+              <li>birth-death-generator4</li>
+              <li>max-concentration-reaction-adder</li>
+              <li>dummy-abstraction-method</li>
+            </ul>
+			<H3>&nbsp;</H3>
 			<H3>Advanced Options</H3>
+			<P>This allows the user to set the properties of QSSA and rapid 
+            equilibrium methods.&nbsp;&nbsp;
+			</P>
+			<P>For example, <i>reb2sac.rapid.equilibrium.condition.1 </i>
+            specifies the threshold T1 such that the rapid equilibrium condition 
+            fails when T1 &gt; E0 / (S0 + k-1/k1), and <i>
+            reb2sac.rapid.equilibrium.condition.2 </i>specifies the threshold T2 
+            such that the rapid equilibrium condition fails when T1 &gt; k2 /k-1.</P>
+			<P>&nbsp;</P>
 			<P><BR><BR>
 			</P>
 			<H2>Learning</H2>
