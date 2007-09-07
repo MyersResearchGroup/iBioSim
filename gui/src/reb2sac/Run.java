@@ -20,6 +20,16 @@ public class Run implements ActionListener {
 
 	private Process reb2sac;
 
+	private String separator;
+
+	public Run() {
+		if (File.separator.equals("\\")) {
+			separator = "\\\\";
+		} else {
+			separator = File.separator;
+		}
+	}
+
 	/**
 	 * This method is given which buttons are selected and creates the
 	 * properties file from all the other information given.
@@ -148,9 +158,7 @@ public class Run implements ActionListener {
 			String ssaFile) {
 		Properties nary = new Properties();
 		try {
-			nary
-					.load(new FileInputStream(new File(outDir + File.separator
-							+ "species.properties")));
+			nary.load(new FileInputStream(new File(outDir + separator + "species.properties")));
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(component, "Species Properties File Not Found!",
 					"File Not Found", JOptionPane.ERROR_MESSAGE);
@@ -403,11 +411,14 @@ public class Run implements ActionListener {
 								if (simTab.getComponentAt(i) instanceof Graph) {
 									((Graph) simTab.getComponentAt(i)).refresh();
 								} else {
-									simTab.setComponentAt(i, new Graph(printer_track_quantity,
-											outDir.split(File.separator)[outDir
-													.split(File.separator).length - 1]
-													+ " simulation results", printer_id, outDir,
-											"time", biomodelsim, null, log, null));
+									simTab
+											.setComponentAt(i,
+													new Graph(printer_track_quantity, outDir
+															.split(separator)[outDir
+															.split(separator).length - 1]
+															+ " simulation results", printer_id,
+															outDir, "time", biomodelsim, null, log,
+															null));
 									simTab.getComponentAt(i).setName("Graph");
 								}
 							}
@@ -421,11 +432,13 @@ public class Run implements ActionListener {
 									if (simTab.getComponentAt(i) instanceof Graph) {
 										((Graph) simTab.getComponentAt(i)).refresh();
 									} else {
-										simTab.setComponentAt(i, new Graph(printer_track_quantity,
-												outDir.split(File.separator)[outDir
-														.split(File.separator).length - 1]
-														+ " simulation results", printer_id,
-												outDir, "time", biomodelsim, null, log, null));
+										simTab.setComponentAt(i,
+												new Graph(printer_track_quantity,
+														outDir.split(separator)[outDir
+																.split(separator).length - 1]
+																+ " simulation results",
+														printer_id, outDir, "time", biomodelsim,
+														null, log, null));
 										simTab.getComponentAt(i).setName("Graph");
 									}
 								}
@@ -436,11 +449,13 @@ public class Run implements ActionListener {
 									if (simTab.getComponentAt(i) instanceof Graph) {
 										((Graph) simTab.getComponentAt(i)).refresh();
 									} else {
-										simTab.setComponentAt(i, new Graph(printer_track_quantity,
-												outDir.split(File.separator)[outDir
-														.split(File.separator).length - 1]
-														+ " simulation results", printer_id,
-												outDir, "time", biomodelsim, null, log, null));
+										simTab.setComponentAt(i,
+												new Graph(printer_track_quantity,
+														outDir.split(separator)[outDir
+																.split(separator).length - 1]
+																+ " simulation results",
+														printer_id, outDir, "time", biomodelsim,
+														null, log, null));
 										simTab.getComponentAt(i).setName("Graph");
 									}
 								}

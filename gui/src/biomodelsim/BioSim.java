@@ -55,6 +55,8 @@ public class BioSim implements MouseListener, ActionListener {
 
 	private JPopupMenu popup; // popup menu
 
+	private String separator;
+
 	/**
 	 * This is the constructor for the Tstubd class. It initializes all the
 	 * input fields, puts them on panels, adds the panels to the frame, and then
@@ -63,6 +65,12 @@ public class BioSim implements MouseListener, ActionListener {
 	 * @throws Exception
 	 */
 	public BioSim() {
+		if (File.separator.equals("\\")) {
+			separator = "\\\\";
+		} else {
+			separator = File.separator;
+		}
+
 		// Creates a new frame
 		frame = new JFrame("BioSim");
 
@@ -304,10 +312,10 @@ public class BioSim implements MouseListener, ActionListener {
 		// if the delete popup menu is selected on a sim directory
 		else if (e.getActionCommand().equals("deleteSim")) {
 			for (int i = 0; i < tab.getTabCount(); i++) {
-				if (tab.getTitleAt(i)
+				if (tab
+						.getTitleAt(i)
 						.equals(
-								tree.getFile().split(File.separator)[tree.getFile().split(
-										File.separator).length - 1])) {
+								tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
 					tab.remove(i);
 				}
 			}
@@ -322,10 +330,10 @@ public class BioSim implements MouseListener, ActionListener {
 		// if the delete popup menu is selected
 		else if (e.getActionCommand().equals("delete")) {
 			for (int i = 0; i < tab.getTabCount(); i++) {
-				if (tab.getTitleAt(i)
+				if (tab
+						.getTitleAt(i)
 						.equals(
-								tree.getFile().split(File.separator)[tree.getFile().split(
-										File.separator).length - 1])) {
+								tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
 					tab.remove(i);
 				}
 			}
@@ -346,8 +354,7 @@ public class BioSim implements MouseListener, ActionListener {
 		// if the edit popup menu is selected on an sbml file
 		else if (e.getActionCommand().equals("sbmlEditor")) {
 			try {
-				addTab(
-						tree.getFile().split(File.separator)[tree.getFile().split(File.separator).length - 1],
+				addTab(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],
 						new SBML_Editor(tree.getFile(), null, log, this), "SBML Editor");
 			} catch (Exception e1) {
 				JOptionPane.showMessageDialog(frame, "You must select a valid sbml file.", "Error",
@@ -360,14 +367,15 @@ public class BioSim implements MouseListener, ActionListener {
 				Run run = new Run();
 				JCheckBox dummy = new JCheckBox();
 				dummy.setSelected(false);
-				run.createProperties(0, 1, 1, tree.getFile().substring(
-						0,
-						tree.getFile().length()
-								- (tree.getFile().split(File.separator)[tree.getFile().split(
-										File.separator).length - 1].length())), 314159, 1,
+				run.createProperties(0, 1, 1, tree.getFile()
+						.substring(
+								0,
+								tree.getFile().length()
+										- (tree.getFile().split(separator)[tree.getFile().split(
+												separator).length - 1].length())), 314159, 1,
 						new String[0], new String[0], "tsd.printer", "amount", tree.getFile()
-								.split(File.separator), "none", frame, tree.getFile(), 0.1, 0.1,
-						0.1, 15, dummy, "", "", null);
+								.split(separator), "none", frame, tree.getFile(), 0.1, 0.1, 0.1,
+						15, dummy, "", "", null);
 				String out = tree.getFile();
 				if (out.length() > 4
 						&& out.substring(out.length() - 5, out.length()).equals(".sbml")) {
@@ -425,14 +433,15 @@ public class BioSim implements MouseListener, ActionListener {
 				Run run = new Run();
 				JCheckBox dummy = new JCheckBox();
 				dummy.setSelected(false);
-				run.createProperties(0, 1, 1, tree.getFile().substring(
-						0,
-						tree.getFile().length()
-								- (tree.getFile().split(File.separator)[tree.getFile().split(
-										File.separator).length - 1].length())), 314159, 1,
+				run.createProperties(0, 1, 1, tree.getFile()
+						.substring(
+								0,
+								tree.getFile().length()
+										- (tree.getFile().split(separator)[tree.getFile().split(
+												separator).length - 1].length())), 314159, 1,
 						new String[0], new String[0], "tsd.printer", "amount", tree.getFile()
-								.split(File.separator), "none", frame, tree.getFile(), 0.1, 0.1,
-						0.1, 15, dummy, "", "", null);
+								.split(separator), "none", frame, tree.getFile(), 0.1, 0.1, 0.1,
+						15, dummy, "", "", null);
 				String out = tree.getFile();
 				if (out.length() > 4
 						&& out.substring(out.length() - 5, out.length()).equals(".sbml")) {
@@ -521,7 +530,7 @@ public class BioSim implements MouseListener, ActionListener {
 				}
 				new File(filename).mkdir();
 				try {
-					new FileWriter(new File(filename + File.separator + ".prj")).close();
+					new FileWriter(new File(filename + separator + ".prj")).close();
 				} catch (IOException e1) {
 					JOptionPane.showMessageDialog(frame, "Unable create a new project.", "Error",
 							JOptionPane.ERROR_MESSAGE);
@@ -587,7 +596,7 @@ public class BioSim implements MouseListener, ActionListener {
 								modelID = simName.substring(0, simName.length() - 4);
 							}
 						}
-						File f = new File(root + File.separator + simName);
+						File f = new File(root + separator + simName);
 						if (f.exists()) {
 							Object[] options = { "Overwrite", "Cancel" };
 							int value = JOptionPane.showOptionDialog(frame, "File already exists."
@@ -595,7 +604,7 @@ public class BioSim implements MouseListener, ActionListener {
 									JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
 									options, options[0]);
 							if (value == JOptionPane.YES_OPTION) {
-								File dir = new File(root + File.separator + simName);
+								File dir = new File(root + separator + simName);
 								if (dir.isDirectory()) {
 									deleteDir(dir);
 								} else {
@@ -623,9 +632,9 @@ public class BioSim implements MouseListener, ActionListener {
 						byte[] output = doc.getBytes();
 						out.write(output);
 						out.close();
-						addTab(f.getAbsolutePath().split(File.separator)[f.getAbsolutePath().split(
-								File.separator).length - 1], new SBML_Editor(f.getAbsolutePath(),
-								null, log, this), "SBML Editor");
+						addTab(f.getAbsolutePath().split(separator)[f.getAbsolutePath().split(
+								separator).length - 1], new SBML_Editor(f.getAbsolutePath(), null,
+								log, this), "SBML Editor");
 						refreshTree();
 					}
 				} catch (Exception e1) {
@@ -643,11 +652,11 @@ public class BioSim implements MouseListener, ActionListener {
 				String filename = Buttons.browse(frame, new File(root), null,
 						JFileChooser.FILES_ONLY, "Open");
 				if (!filename.equals("")) {
-					String[] file = filename.split(File.separator);
+					String[] file = filename.split(separator);
 					try {
 						SBMLReader reader = new SBMLReader();
 						SBMLDocument document = reader.readSBML(filename);
-						FileOutputStream out = new FileOutputStream(new File(root + File.separator
+						FileOutputStream out = new FileOutputStream(new File(root + separator
 								+ file[file.length - 1]));
 						SBMLWriter writer = new SBMLWriter();
 						String doc = writer.writeToString(document);
@@ -678,9 +687,9 @@ public class BioSim implements MouseListener, ActionListener {
 							JOptionPane.ERROR_MESSAGE);
 					return;
 				} else if (!filename.equals("")) {
-					String[] file = filename.split(File.separator);
+					String[] file = filename.split(separator);
 					try {
-						FileOutputStream out = new FileOutputStream(new File(root + File.separator
+						FileOutputStream out = new FileOutputStream(new File(root + separator
 								+ file[file.length - 1]));
 						FileInputStream in = new FileInputStream(new File(filename));
 						int read = in.read();
@@ -715,7 +724,7 @@ public class BioSim implements MouseListener, ActionListener {
 					} else {
 						graphName += ".grf";
 					}
-					File f = new File(root + File.separator + graphName);
+					File f = new File(root + separator + graphName);
 					if (f.exists()) {
 						Object[] options = { "Overwrite", "Cancel" };
 						int value = JOptionPane.showOptionDialog(frame, "File already exists."
@@ -723,7 +732,7 @@ public class BioSim implements MouseListener, ActionListener {
 								JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
 								options, options[0]);
 						if (value == JOptionPane.YES_OPTION) {
-							File dir = new File(root + File.separator + graphName);
+							File dir = new File(root + separator + graphName);
 							if (dir.isDirectory()) {
 								deleteDir(dir);
 							} else {
@@ -756,7 +765,7 @@ public class BioSim implements MouseListener, ActionListener {
 				if (lrnName != null && !lrnName.trim().equals("")) {
 					lrnName = lrnName.trim();
 					try {
-						File f = new File(root + File.separator + lrnName);
+						File f = new File(root + separator + lrnName);
 						if (f.exists()) {
 							Object[] options = { "Overwrite", "Cancel" };
 							int value = JOptionPane.showOptionDialog(frame, "File already exists."
@@ -764,7 +773,7 @@ public class BioSim implements MouseListener, ActionListener {
 									JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
 									options, options[0]);
 							if (value == JOptionPane.YES_OPTION) {
-								File dir = new File(root + File.separator + lrnName);
+								File dir = new File(root + separator + lrnName);
 								if (dir.isDirectory()) {
 									deleteDir(dir);
 								} else {
@@ -779,9 +788,9 @@ public class BioSim implements MouseListener, ActionListener {
 								return;
 							}
 						}
-						new File(root + File.separator + lrnName).mkdir();
-						new FileWriter(new File(root + File.separator + lrnName + File.separator
-								+ ".lrn")).close();
+						new File(root + separator + lrnName).mkdir();
+						new FileWriter(new File(root + separator + lrnName + separator + ".lrn"))
+								.close();
 						try {
 							String end = "background";
 							if (tree.getFile().length() > 4
@@ -793,8 +802,8 @@ public class BioSim implements MouseListener, ActionListener {
 											.equals(".dot")) {
 								end = "background.dot";
 							}
-							FileOutputStream out = new FileOutputStream(new File(root
-									+ File.separator + lrnName + File.separator + end));
+							FileOutputStream out = new FileOutputStream(new File(root + separator
+									+ lrnName + separator + end));
 							FileInputStream in = new FileInputStream(new File(tree.getFile()));
 							int read = in.read();
 							while (read != -1) {
@@ -810,8 +819,8 @@ public class BioSim implements MouseListener, ActionListener {
 						}
 						refreshTree();
 						JTabbedPane lrnTab = new JTabbedPane();
-						lrnTab.addTab("Data Manager", new DataManager(root + File.separator
-								+ lrnName, this));
+						lrnTab.addTab("Data Manager", new DataManager(root + separator + lrnName,
+								this));
 						lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName(
 								"Data Manager");
 						JLabel noData = new JLabel("No data available");
@@ -889,15 +898,15 @@ public class BioSim implements MouseListener, ActionListener {
 						}
 					}
 				}
-				if (copy.equals(tree.getFile().split(File.separator)[tree.getFile().split(
-						File.separator).length - 1])) {
+				if (copy
+						.equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
 					JOptionPane.showMessageDialog(frame, "Unable to copy file."
 							+ "\nNew filename must be different than old filename.", "Error",
 							JOptionPane.ERROR_MESSAGE);
 					return;
 				}
 				boolean write = true;
-				if (new File(root + File.separator + copy).exists()) {
+				if (new File(root + separator + copy).exists()) {
 					Object[] options = { "Overwrite", "Cancel" };
 					int value = JOptionPane.showOptionDialog(frame, "File already exists."
 							+ "\nDo you want to overwrite?", "Overwrite",
@@ -905,7 +914,7 @@ public class BioSim implements MouseListener, ActionListener {
 							options[0]);
 					if (value == JOptionPane.YES_OPTION) {
 						write = true;
-						File dir = new File(root + File.separator + copy);
+						File dir = new File(root + separator + copy);
 						if (dir.isDirectory()) {
 							deleteDir(dir);
 						} else {
@@ -926,7 +935,7 @@ public class BioSim implements MouseListener, ActionListener {
 						SBMLDocument document = new SBMLDocument();
 						document = reader.readSBML(tree.getFile());
 						document.getModel().setId(modelID);
-						FileOutputStream out = new FileOutputStream(new File(root + File.separator
+						FileOutputStream out = new FileOutputStream(new File(root + separator
 								+ copy));
 						SBMLWriter writer = new SBMLWriter();
 						String doc = writer.writeToString(document);
@@ -936,7 +945,7 @@ public class BioSim implements MouseListener, ActionListener {
 					} else if (tree.getFile().length() >= 4
 							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".dot")
 							|| tree.getFile().substring(tree.getFile().length() - 4).equals(".grf")) {
-						FileOutputStream out = new FileOutputStream(new File(root + File.separator
+						FileOutputStream out = new FileOutputStream(new File(root + separator
 								+ copy));
 						FileInputStream in = new FileInputStream(new File(tree.getFile()));
 						int read = in.read();
@@ -954,18 +963,18 @@ public class BioSim implements MouseListener, ActionListener {
 							}
 						}
 						if (sim) {
-							new File(root + File.separator + copy).mkdir();
-							new FileWriter(new File(root + File.separator + copy + File.separator
-									+ ".sim")).close();
+							new File(root + separator + copy).mkdir();
+							new FileWriter(new File(root + separator + copy + separator + ".sim"))
+									.close();
 							String[] s = new File(tree.getFile()).list();
 							for (String ss : s) {
 								if (ss.length() > 4
 										&& ss.substring(ss.length() - 5).equals(".sbml")) {
 									SBMLReader reader = new SBMLReader();
 									SBMLDocument document = reader.readSBML(tree.getFile()
-											+ File.separator + ss);
+											+ separator + ss);
 									FileOutputStream out = new FileOutputStream(new File(root
-											+ File.separator + copy + File.separator + ss));
+											+ separator + copy + separator + ss));
 									SBMLWriter writer = new SBMLWriter();
 									String doc = writer.writeToString(document);
 									byte[] output = doc.getBytes();
@@ -974,10 +983,10 @@ public class BioSim implements MouseListener, ActionListener {
 								} else if (ss.length() > 10
 										&& ss.substring(ss.length() - 11).equals(".properties")) {
 									FileOutputStream out = new FileOutputStream(new File(root
-											+ File.separator + copy + File.separator + ss));
+											+ separator + copy + separator + ss));
 									FileInputStream in = new FileInputStream(new File(tree
 											.getFile()
-											+ File.separator + ss));
+											+ separator + ss));
 									int read = in.read();
 									while (read != -1) {
 										out.write(read);
@@ -988,10 +997,10 @@ public class BioSim implements MouseListener, ActionListener {
 								} else if (ss.length() > 3
 										&& ss.substring(ss.length() - 4).equals(".tsd")) {
 									FileOutputStream out = new FileOutputStream(new File(root
-											+ File.separator + copy + File.separator + ss));
+											+ separator + copy + separator + ss));
 									FileInputStream in = new FileInputStream(new File(tree
 											.getFile()
-											+ File.separator + ss));
+											+ separator + ss));
 									int read = in.read();
 									while (read != -1) {
 										out.write(read);
@@ -1002,17 +1011,17 @@ public class BioSim implements MouseListener, ActionListener {
 								}
 							}
 						} else {
-							new File(root + File.separator + copy).mkdir();
-							new FileWriter(new File(root + File.separator + copy + File.separator
-									+ ".lrn")).close();
+							new File(root + separator + copy).mkdir();
+							new FileWriter(new File(root + separator + copy + separator + ".lrn"))
+									.close();
 							String[] s = new File(tree.getFile()).list();
 							for (String ss : s) {
 								if (ss.length() > 3 && ss.substring(ss.length() - 4).equals(".tsd")) {
 									FileOutputStream out = new FileOutputStream(new File(root
-											+ File.separator + copy + File.separator + ss));
+											+ separator + copy + separator + ss));
 									FileInputStream in = new FileInputStream(new File(tree
 											.getFile()
-											+ File.separator + ss));
+											+ separator + ss));
 									int read = in.read();
 									while (read != -1) {
 										out.write(read);
@@ -1079,15 +1088,15 @@ public class BioSim implements MouseListener, ActionListener {
 							rename += ".grf";
 						}
 					}
-					if (rename.equals(tree.getFile().split(File.separator)[tree.getFile().split(
-							File.separator).length - 1])) {
+					if (rename.equals(tree.getFile().split(separator)[tree.getFile().split(
+							separator).length - 1])) {
 						JOptionPane.showMessageDialog(frame, "Unable to rename file."
 								+ "\nNew filename must be different than old filename.", "Error",
 								JOptionPane.ERROR_MESSAGE);
 						return;
 					}
 					boolean write = true;
-					if (new File(root + File.separator + rename).exists()) {
+					if (new File(root + separator + rename).exists()) {
 						Object[] options = { "Overwrite", "Cancel" };
 						int value = JOptionPane.showOptionDialog(frame, "File already exists."
 								+ "\nDo you want to overwrite?", "Overwrite",
@@ -1095,7 +1104,7 @@ public class BioSim implements MouseListener, ActionListener {
 								options, options[0]);
 						if (value == JOptionPane.YES_OPTION) {
 							write = true;
-							File dir = new File(root + File.separator + rename);
+							File dir = new File(root + separator + rename);
 							if (dir.isDirectory()) {
 								deleteDir(dir);
 							} else {
@@ -1111,14 +1120,14 @@ public class BioSim implements MouseListener, ActionListener {
 						}
 					}
 					if (write) {
-						new File(tree.getFile()).renameTo(new File(root + File.separator + rename));
+						new File(tree.getFile()).renameTo(new File(root + separator + rename));
 						if (modelID != null) {
 							SBMLReader reader = new SBMLReader();
 							SBMLDocument document = new SBMLDocument();
-							document = reader.readSBML(root + File.separator + rename);
+							document = reader.readSBML(root + separator + rename);
 							document.getModel().setId(modelID);
-							FileOutputStream out = new FileOutputStream(new File(root
-									+ File.separator + rename));
+							FileOutputStream out = new FileOutputStream(new File(root + separator
+									+ rename));
 							SBMLWriter writer = new SBMLWriter();
 							String doc = writer.writeToString(document);
 							byte[] output = doc.getBytes();
@@ -1126,9 +1135,10 @@ public class BioSim implements MouseListener, ActionListener {
 							out.close();
 						}
 						for (int i = 0; i < tab.getTabCount(); i++) {
-							if (tab.getTitleAt(i).equals(
-									tree.getFile().split(File.separator)[tree.getFile().split(
-											File.separator).length - 1])) {
+							if (tab.getTitleAt(i)
+									.equals(
+											tree.getFile().split(separator)[tree.getFile().split(
+													separator).length - 1])) {
 								if (tree.getFile().length() > 4
 										&& tree.getFile().substring(tree.getFile().length() - 5)
 												.equals(".sbml")
@@ -1136,8 +1146,8 @@ public class BioSim implements MouseListener, ActionListener {
 										&& tree.getFile().substring(tree.getFile().length() - 4)
 												.equals(".xml")) {
 									((SBML_Editor) tab.getComponentAt(i)).setModelID(modelID);
-									((SBML_Editor) tab.getComponentAt(i)).setFile(root
-											+ File.separator + rename);
+									((SBML_Editor) tab.getComponentAt(i)).setFile(root + separator
+											+ rename);
 									tab.setTitleAt(i, rename);
 								} else if (tree.getFile().length() > 3
 										&& tree.getFile().substring(tree.getFile().length() - 4)
@@ -1157,7 +1167,7 @@ public class BioSim implements MouseListener, ActionListener {
 													.getComponent(j) instanceof Graph) {
 												Graph g = ((Graph) ((JTabbedPane) tab
 														.getComponentAt(i)).getComponent(j));
-												g.setDirectory(root + File.separator + rename);
+												g.setDirectory(root + separator + rename);
 											}
 										}
 									}
@@ -1174,10 +1184,18 @@ public class BioSim implements MouseListener, ActionListener {
 			}
 		} else if (e.getActionCommand().equals("openGraph")) {
 			addTab(
-					tree.getFile().split(File.separator)[tree.getFile().split(File.separator).length - 1],
-					new Graph("amount", "title", "tsd.printer", root, "time", this, tree.getFile(),
-							log, tree.getFile().split(File.separator)[tree.getFile().split(
-									File.separator).length - 1]), "Graph");
+					tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],
+					new Graph(
+							"amount",
+							"title",
+							"tsd.printer",
+							root,
+							"time",
+							this,
+							tree.getFile(),
+							log,
+							tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]),
+					"Graph");
 		}
 	}
 
@@ -1440,9 +1458,9 @@ public class BioSim implements MouseListener, ActionListener {
 						|| tree.getFile().length() >= 4
 						&& tree.getFile().substring(tree.getFile().length() - 4).equals(".xml")) {
 					try {
-						addTab(tree.getFile().split(File.separator)[tree.getFile().split(
-								File.separator).length - 1], new SBML_Editor(tree.getFile(), null,
-								log, this), "SBML Editor");
+						addTab(
+								tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],
+								new SBML_Editor(tree.getFile(), null, log, this), "SBML Editor");
 					} catch (Exception e1) {
 						JOptionPane.showMessageDialog(frame, "You must select a valid sbml file.",
 								"Error", JOptionPane.ERROR_MESSAGE);
@@ -1460,11 +1478,11 @@ public class BioSim implements MouseListener, ActionListener {
 					}
 				} else if (tree.getFile().length() >= 4
 						&& tree.getFile().substring(tree.getFile().length() - 4).equals(".grf")) {
-					addTab(tree.getFile().split(File.separator)[tree.getFile()
-							.split(File.separator).length - 1], new Graph("amount", "title",
-							"tsd.printer", root, "time", this, tree.getFile(), log,
-							tree.getFile().split(File.separator)[tree.getFile().split(
-									File.separator).length - 1]), "Graph");
+					addTab(
+							tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],
+							new Graph("amount", "title", "tsd.printer", root, "time", this, tree
+									.getFile(), log, tree.getFile().split(separator)[tree.getFile()
+									.split(separator).length - 1]), "Graph");
 				} else if (new File(tree.getFile()).isDirectory() && !tree.getFile().equals(root)) {
 					boolean sim = false;
 					for (String s : new File(tree.getFile()).list()) {
@@ -1497,7 +1515,7 @@ public class BioSim implements MouseListener, ActionListener {
 					"Analysis ID", JOptionPane.PLAIN_MESSAGE);
 			if (simName != null && !simName.trim().equals("")) {
 				simName = simName.trim();
-				File f = new File(root + File.separator + simName);
+				File f = new File(root + separator + simName);
 				if (f.exists()) {
 					Object[] options = { "Overwrite", "Cancel" };
 					int value = JOptionPane.showOptionDialog(frame, "File already exists."
@@ -1505,7 +1523,7 @@ public class BioSim implements MouseListener, ActionListener {
 							JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
 							options[0]);
 					if (value == JOptionPane.YES_OPTION) {
-						File dir = new File(root + File.separator + simName);
+						File dir = new File(root + separator + simName);
 						if (dir.isDirectory()) {
 							deleteDir(dir);
 						} else {
@@ -1520,14 +1538,13 @@ public class BioSim implements MouseListener, ActionListener {
 						return;
 					}
 				}
-				new File(root + File.separator + simName).mkdir();
-				new FileWriter(new File(root + File.separator + simName + File.separator + ".sim"))
-						.close();
-				String[] dot = tree.getFile().split(File.separator);
+				new File(root + separator + simName).mkdir();
+				new FileWriter(new File(root + separator + simName + separator + ".sim")).close();
+				String[] dot = tree.getFile().split(separator);
 				String sbmlFile = root
-						+ File.separator
+						+ separator
 						+ simName
-						+ File.separator
+						+ separator
 						+ (dot[dot.length - 1].substring(0, dot[dot.length - 1].length() - 3) + "sbml");
 				log.addText("Executing:\ndot2sbml.pl " + tree.getFile() + " " + sbmlFile + "\n");
 				Runtime exec = Runtime.getRuntime();
@@ -1580,7 +1597,7 @@ public class BioSim implements MouseListener, ActionListener {
 					"Analysis ID", JOptionPane.PLAIN_MESSAGE);
 			if (simName != null && !simName.trim().equals("")) {
 				simName = simName.trim();
-				File f = new File(root + File.separator + simName);
+				File f = new File(root + separator + simName);
 				if (f.exists()) {
 					Object[] options = { "Overwrite", "Cancel" };
 					int value = JOptionPane.showOptionDialog(frame, "File already exists."
@@ -1588,7 +1605,7 @@ public class BioSim implements MouseListener, ActionListener {
 							JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
 							options[0]);
 					if (value == JOptionPane.YES_OPTION) {
-						File dir = new File(root + File.separator + simName);
+						File dir = new File(root + separator + simName);
 						if (dir.isDirectory()) {
 							deleteDir(dir);
 						} else {
@@ -1603,12 +1620,10 @@ public class BioSim implements MouseListener, ActionListener {
 						return;
 					}
 				}
-				new File(root + File.separator + simName).mkdir();
-				new FileWriter(new File(root + File.separator + simName + File.separator + ".sim"))
-						.close();
-				String[] sbml1 = tree.getFile().split(File.separator);
-				String sbmlFile = root + File.separator + simName + File.separator
-						+ sbml1[sbml1.length - 1];
+				new File(root + separator + simName).mkdir();
+				new FileWriter(new File(root + separator + simName + separator + ".sim")).close();
+				String[] sbml1 = tree.getFile().split(separator);
+				String sbmlFile = root + separator + simName + separator + sbml1[sbml1.length - 1];
 				try {
 					FileOutputStream out = new FileOutputStream(new File(sbmlFile));
 					SBMLWriter writer = new SBMLWriter();
@@ -1662,11 +1677,11 @@ public class BioSim implements MouseListener, ActionListener {
 									- end.length()));
 							if (tempNum > run) {
 								run = tempNum;
-								graphFile = tree.getFile() + File.separator + list[i];
+								graphFile = tree.getFile() + separator + list[i];
 							}
 						}
 					} else if (end.equals(".grf")) {
-						open = tree.getFile() + File.separator + list[i];
+						open = tree.getFile() + separator + list[i];
 					}
 				}
 			}
@@ -1676,8 +1691,8 @@ public class BioSim implements MouseListener, ActionListener {
 			lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Data Manager");
 			lrnTab.addTab("Learn", new Learn(tree.getFile(), log));
 			lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Learn");
-			lrnTab.addTab("Graph", new Graph("amount", tree.getFile().split(File.separator)[tree
-					.getFile().split(File.separator).length - 1]
+			lrnTab.addTab("Graph", new Graph("amount", tree.getFile().split(separator)[tree
+					.getFile().split(separator).length - 1]
 					+ " data", "tsd.printer", tree.getFile(), "time", this, open, log, null));
 			lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Graph");
 		} else {
@@ -1698,9 +1713,8 @@ public class BioSim implements MouseListener, ActionListener {
 			lrnTab.addTab("Graph", noData1);
 			lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Graph");
 		}
-		addTab(
-				tree.getFile().split(File.separator)[tree.getFile().split(File.separator).length - 1],
-				lrnTab, null);
+		addTab(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1], lrnTab,
+				null);
 	}
 
 	private void openSim() {
@@ -1720,13 +1734,13 @@ public class BioSim implements MouseListener, ActionListener {
 							end = list[i].charAt(list[i].length() - j) + end;
 						}
 						if (end.equals("sbml")) {
-							getAFile = filename + File.separator + list[i];
+							getAFile = filename + separator + list[i];
 							openFile = getAFile.replace("sbml", "properties");
 							if (!(new File(openFile).exists())) {
 								openFile = null;
 							}
 						} else if (end.equals(".xml")) {
-							getAFile = filename + File.separator + list[i];
+							getAFile = filename + separator + list[i];
 							openFile = getAFile.replace("xml", "properties");
 							if (!(new File(openFile).exists())) {
 								openFile = null;
@@ -1738,7 +1752,7 @@ public class BioSim implements MouseListener, ActionListener {
 										- end.length()));
 								if (tempNum > run) {
 									run = tempNum;
-									graphFile = filename + File.separator + list[i];
+									graphFile = filename + separator + list[i];
 								}
 							} else if (list[i].contains("euler-run.")
 									|| list[i].contains("gear1-run.")
@@ -1746,15 +1760,15 @@ public class BioSim implements MouseListener, ActionListener {
 									|| list[i].contains("rk4imp-run.")
 									|| list[i].contains("rk8pd-run.")
 									|| list[i].contains("rkf45-run.")) {
-								graphFile = filename + File.separator + list[i];
+								graphFile = filename + separator + list[i];
 							}
 						} else if (end.equals(".grf")) {
-							open = filename + File.separator + list[i];
+							open = filename + separator + list[i];
 						}
 					}
 				}
 				if (!getAFile.equals("")) {
-					String[] split = filename.split(File.separator);
+					String[] split = filename.split(separator);
 					JTabbedPane simTab = new JTabbedPane();
 					Reb2Sac reb2sac = new Reb2Sac(getAFile, root, this, split[split.length - 1]
 							.trim(), log, simTab, openFile);
@@ -1885,31 +1899,30 @@ public class BioSim implements MouseListener, ActionListener {
 
 	public void copySim(String newSim) {
 		try {
-			new File(root + File.separator + newSim).mkdir();
-			new FileWriter(new File(root + File.separator + newSim + File.separator + ".sim"))
-					.close();
+			new File(root + separator + newSim).mkdir();
+			new FileWriter(new File(root + separator + newSim + separator + ".sim")).close();
 			String oldSim = tab.getTitleAt(tab.getSelectedIndex());
-			String[] s = new File(root + File.separator + oldSim).list();
+			String[] s = new File(root + separator + oldSim).list();
 			String sbmlFile = "";
 			String propertiesFile = "";
 			for (String ss : s) {
 				if (ss.length() > 4 && ss.substring(ss.length() - 5).equals(".sbml")) {
 					SBMLReader reader = new SBMLReader();
-					SBMLDocument document = reader.readSBML(root + File.separator + oldSim
-							+ File.separator + ss);
-					FileOutputStream out = new FileOutputStream(new File(root + File.separator
-							+ newSim + File.separator + ss));
+					SBMLDocument document = reader.readSBML(root + separator + oldSim + separator
+							+ ss);
+					FileOutputStream out = new FileOutputStream(new File(root + separator + newSim
+							+ separator + ss));
 					SBMLWriter writer = new SBMLWriter();
 					String doc = writer.writeToString(document);
 					byte[] output = doc.getBytes();
 					out.write(output);
 					out.close();
-					sbmlFile = root + File.separator + newSim + File.separator + ss;
+					sbmlFile = root + separator + newSim + separator + ss;
 				} else if (ss.length() > 10 && ss.substring(ss.length() - 11).equals(".properties")) {
-					FileOutputStream out = new FileOutputStream(new File(root + File.separator
-							+ newSim + File.separator + ss));
-					FileInputStream in = new FileInputStream(new File(root + File.separator
-							+ oldSim + File.separator + ss));
+					FileOutputStream out = new FileOutputStream(new File(root + separator + newSim
+							+ separator + ss));
+					FileInputStream in = new FileInputStream(new File(root + separator + oldSim
+							+ separator + ss));
 					int read = in.read();
 					while (read != -1) {
 						out.write(read);
@@ -1917,7 +1930,7 @@ public class BioSim implements MouseListener, ActionListener {
 					}
 					in.close();
 					out.close();
-					propertiesFile = root + File.separator + newSim + File.separator + ss;
+					propertiesFile = root + separator + newSim + separator + ss;
 				}
 			}
 			refreshTree();
@@ -1958,8 +1971,8 @@ public class BioSim implements MouseListener, ActionListener {
 							} else {
 								((JTabbedPane) tab.getComponentAt(i)).setComponentAt(j, new Graph(
 										"amount", learnName + " data", "tsd.printer", root
-												+ File.separator + learnName, "time", this, null,
-										log, null));
+												+ separator + learnName, "time", this, null, log,
+										null));
 								((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j).setName(
 										"Graph");
 							}
@@ -1979,7 +1992,7 @@ public class BioSim implements MouseListener, ActionListener {
 							if (((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j) instanceof Learn) {
 							} else {
 								((JTabbedPane) tab.getComponentAt(i)).setComponentAt(j, new Learn(
-										root + File.separator + learnName, log));
+										root + separator + learnName, log));
 								((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j).setName(
 										"Learn");
 							}
