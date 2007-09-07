@@ -155,6 +155,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 
 	private JButton useMassAction, clearKineticLaw;
 
+	private String separator;
+
 	/**
 	 * Creates a new SBML_Editor and sets up the frame where the user can edit a
 	 * new sbml file.
@@ -181,6 +183,12 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 * Private helper method that helps create the sbml frame.
 	 */
 	private void createSbmlFrame(String file) {
+		if (File.separator.equals("\\")) {
+			separator = "\\\\";
+		} else {
+			separator = File.separator;
+		}
+
 		// intitializes the member variables
 		if (!file.equals("")) {
 			this.file = file;
@@ -453,11 +461,9 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					String oldId = document.getModel().getId();
 					document.getModel().setId(modelID);
 					String newFile = file;
-					newFile = newFile
-							.substring(0,
-									newFile.length()
-											- newFile.split(File.separator)[newFile
-													.split(File.separator).length - 1].length())
+					newFile = newFile.substring(0, newFile.length()
+							- newFile.split(separator)[newFile.split(separator).length - 1]
+									.length())
 							+ simName;
 					try {
 						log.addText("Saving sbml file as:\n" + newFile + "\n");
@@ -469,10 +475,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						out.close();
 						JTabbedPane tab = biosim.getTab();
 						for (int i = 0; i < tab.getTabCount(); i++) {
-							if (tab
-									.getTitleAt(i)
-									.equals(
-											file.split(File.separator)[file.split(File.separator).length - 1])) {
+							if (tab.getTitleAt(i).equals(
+									file.split(separator)[file.split(separator).length - 1])) {
 								tab.setTitleAt(i, simName);
 								tab.setComponentAt(i,
 										new SBML_Editor(newFile, reb2sac, log, biosim));

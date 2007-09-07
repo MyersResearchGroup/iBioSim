@@ -58,12 +58,20 @@ public class Learn extends JPanel implements ActionListener {
 
 	private Log log;
 
+	private String separator;
+
 	/**
 	 * This is the constructor for the Learn class. It initializes all the input
 	 * fields, puts them on panels, adds the panels to the frame, and then
 	 * displays the frame.
 	 */
 	public Learn(String directory, Log log) {
+		if (File.separator.equals("\\")) {
+			separator = "\\\\";
+		} else {
+			separator = File.separator;
+		}
+
 		this.log = log;
 		this.directory = directory;
 
@@ -341,8 +349,8 @@ public class Learn extends JPanel implements ActionListener {
 							"Error", JOptionPane.ERROR_MESSAGE);
 				}
 				if (user.isSelected()) {
-					FileWriter write = new FileWriter(new File(directory + File.separator
-							+ "levels.lvl"));
+					FileWriter write = new FileWriter(
+							new File(directory + separator + "levels.lvl"));
 					write.write("time, 0\n");
 					for (int i = 0; i < species.size(); i++) {
 						if (((JTextField) species.get(i).get(0)).getText().trim().equals("")) {
@@ -388,7 +396,7 @@ public class Learn extends JPanel implements ActionListener {
 				learn.waitFor();
 				String output = "";
 				InputStream reb = learn.getInputStream();
-				FileWriter out = new FileWriter(new File(directory + File.separator + "run.log"));
+				FileWriter out = new FileWriter(new File(directory + separator + "run.log"));
 				int read = reb.read();
 				while (read != -1) {
 					output += (char) read;
@@ -397,11 +405,9 @@ public class Learn extends JPanel implements ActionListener {
 				}
 				out.close();
 				log.addText("Output:\n" + output + "\n");
-				if (new File(directory + File.separator + "method.dot").exists()) {
-					exec
-							.exec("dotty "
-									+ new File(directory + File.separator + "method.dot")
-											.getAbsolutePath());
+				if (new File(directory + separator + "method.dot").exists()) {
+					exec.exec("dotty "
+							+ new File(directory + separator + "method.dot").getAbsolutePath());
 				} else {
 					JOptionPane.showMessageDialog(this, "A dot file was not generated."
 							+ "\nPlease see the run.log file.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -416,7 +422,7 @@ public class Learn extends JPanel implements ActionListener {
 	private void levels() {
 		ArrayList<String> str = null;
 		try {
-			FileWriter write = new FileWriter(new File(directory + File.separator + "levels.lvl"));
+			FileWriter write = new FileWriter(new File(directory + separator + "levels.lvl"));
 			write.write("time, 0\n");
 			for (int i = 0; i < species.size(); i++) {
 				if (((JTextField) species.get(i).get(0)).getText().trim().equals("")) {
@@ -447,7 +453,7 @@ public class Learn extends JPanel implements ActionListener {
 			learn.waitFor();
 			String output = "";
 			InputStream reb = learn.getInputStream();
-			FileWriter out = new FileWriter(new File(directory + File.separator + "run.log"));
+			FileWriter out = new FileWriter(new File(directory + separator + "run.log"));
 			int read = reb.read();
 			while (read != -1) {
 				output += (char) read;
@@ -456,7 +462,7 @@ public class Learn extends JPanel implements ActionListener {
 			}
 			out.close();
 			log.addText("Output:\n" + output + "\n");
-			Scanner f = new Scanner(new File(directory + File.separator + "levels.lvl"));
+			Scanner f = new Scanner(new File(directory + separator + "levels.lvl"));
 			str = new ArrayList<String>();
 			while (f.hasNextLine()) {
 				str.add(f.nextLine());

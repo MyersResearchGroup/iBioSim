@@ -25,12 +25,20 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 
 	private BioSim biosim;
 
+	private String separator;
+
 	public DataManager(String directory, BioSim biosim) {
+		if (File.separator.equals("\\")) {
+			separator = "\\\\";
+		} else {
+			separator = File.separator;
+		}
+
 		this.biosim = biosim;
 		this.directory = directory;
 		try {
 			Properties p = new Properties();
-			p.load(new FileInputStream(new File(directory + File.separator + ".lrn")));
+			p.load(new FileInputStream(new File(directory + separator + ".lrn")));
 			String[] s = p.values().toArray(new String[0]);
 			sort(s);
 			files = new JList(s);
@@ -101,13 +109,13 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 			if (files.getSelectedIndices().length > 0) {
 				try {
 					Properties p = new Properties();
-					p.load(new FileInputStream(new File(directory + File.separator + ".lrn")));
+					p.load(new FileInputStream(new File(directory + separator + ".lrn")));
 					Object[] delete = files.getSelectedValues();
 					for (Object file : delete) {
 						int run = 0;
 						String[] list = new File(directory).list();
 						for (int i = 0; i < list.length; i++) {
-							if (!(new File(directory + File.separator + list[i]).isDirectory())
+							if (!(new File(directory + separator + list[i]).isDirectory())
 									&& list[i].length() > 4) {
 								String end = "";
 								for (int j = 1; j < 5; j++) {
@@ -128,12 +136,12 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 						for (String s : p.keySet().toArray(new String[0])) {
 							if (p.getProperty(s).equals(file)) {
 								if (s.equals("run-" + run + ".tsd")) {
-									new File(directory + File.separator + s).delete();
+									new File(directory + separator + s).delete();
 									p.remove(s);
 								} else {
-									new File(directory + File.separator + s).delete();
-									new File(directory + File.separator + "run-" + run + ".tsd")
-											.renameTo(new File(directory + File.separator + s));
+									new File(directory + separator + s).delete();
+									new File(directory + separator + "run-" + run + ".tsd")
+											.renameTo(new File(directory + separator + s));
 									p.setProperty(s, p.getProperty("run-" + run + ".tsd"));
 									p.remove("run-" + run + ".tsd");
 								}
@@ -141,14 +149,15 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 							}
 						}
 					}
-					p.store(new FileOutputStream(new File(directory + File.separator + ".lrn")),
+					p.store(new FileOutputStream(new File(directory + separator + ".lrn")),
 							"Learn File Data");
 					String[] s = p.values().toArray(new String[0]);
 					sort(s);
 					files.setListData(s);
 					if (s.length == 0) {
-						biosim.refreshLearn(directory.split(File.separator)[directory
-								.split(File.separator).length - 1], false);
+						biosim.refreshLearn(
+								directory.split(separator)[directory.split(separator).length - 1],
+								false);
 					}
 				} catch (Exception e1) {
 					JOptionPane.showMessageDialog(biosim.frame(),
@@ -171,7 +180,7 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 					return;
 				}
 				Properties p = new Properties();
-				p.load(new FileInputStream(new File(directory + File.separator + ".lrn")));
+				p.load(new FileInputStream(new File(directory + separator + ".lrn")));
 				int index = files.getSelectedIndex();
 				String[] list = Buttons.getList(
 						new String[p.keySet().toArray(new String[0]).length], files);
@@ -189,7 +198,7 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 						p.setProperty(s, rename);
 					}
 				}
-				p.store(new FileOutputStream(new File(directory + File.separator + ".lrn")),
+				p.store(new FileOutputStream(new File(directory + separator + ".lrn")),
 						"Learn File Data");
 				String[] s = p.values().toArray(new String[0]);
 				sort(s);
@@ -216,7 +225,7 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 				int run = 0;
 				String[] list = new File(directory).list();
 				for (int i = 0; i < list.length; i++) {
-					if (!(new File(directory + File.separator + list[i]).isDirectory())
+					if (!(new File(directory + separator + list[i]).isDirectory())
 							&& list[i].length() > 4) {
 						String end = "";
 						for (int j = 1; j < 5; j++) {
@@ -235,7 +244,7 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 					}
 				}
 				Properties p = new Properties();
-				p.load(new FileInputStream(new File(directory + File.separator + ".lrn")));
+				p.load(new FileInputStream(new File(directory + separator + ".lrn")));
 				int index = files.getSelectedIndex();
 				list = Buttons.getList(new String[p.keySet().toArray(new String[0]).length], files);
 				files.setSelectedIndex(index);
@@ -250,10 +259,10 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 				for (String s : p.keySet().toArray(new String[0])) {
 					if (p.getProperty(s).equals(files.getSelectedValue())) {
 						String end = "run-" + (run + 1) + ".tsd";
-						FileOutputStream out = new FileOutputStream(new File(directory
-								+ File.separator + end));
-						FileInputStream in = new FileInputStream(new File(directory
-								+ File.separator + s));
+						FileOutputStream out = new FileOutputStream(new File(directory + separator
+								+ end));
+						FileInputStream in = new FileInputStream(
+								new File(directory + separator + s));
 						int read = in.read();
 						while (read != -1) {
 							out.write(read);
@@ -264,7 +273,7 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 						p.setProperty(end, copy);
 					}
 				}
-				p.store(new FileOutputStream(new File(directory + File.separator + ".lrn")),
+				p.store(new FileOutputStream(new File(directory + separator + ".lrn")),
 						"Learn File Data");
 				String[] s = p.values().toArray(new String[0]);
 				sort(s);
@@ -275,13 +284,12 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 			}
 		} else if (e.getSource() == copyFromView) {
 			String root = directory.substring(0, directory.length()
-					- directory.split(File.separator)[directory.split(File.separator).length - 1]
-							.length());
+					- directory.split(separator)[directory.split(separator).length - 1].length());
 			ArrayList<String> list = new ArrayList<String>();
 			for (String s : new File(root).list()) {
-				if (new File(root + File.separator + s).isDirectory()
-						&& !s.equals(directory.split(File.separator)[directory
-								.split(File.separator).length - 1])) {
+				if (new File(root + separator + s).isDirectory()
+						&& !s
+								.equals(directory.split(separator)[directory.split(separator).length - 1])) {
 					list.add(s);
 				}
 			}
@@ -303,7 +311,7 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 					int run = 0;
 					String[] lists = new File(directory).list();
 					for (int i = 0; i < lists.length; i++) {
-						if (!(new File(directory + File.separator + lists[i]).isDirectory())
+						if (!(new File(directory + separator + lists[i]).isDirectory())
 								&& lists[i].length() > 4) {
 							String end = "";
 							for (int j = 1; j < 5; j++) {
@@ -321,16 +329,15 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 							}
 						}
 					}
-					String[] list1 = new File(root + File.separator + sims.getSelectedValue())
-							.list();
+					String[] list1 = new File(root + separator + sims.getSelectedValue()).list();
 					Properties p = new Properties();
 					try {
-						p.load(new FileInputStream(new File(directory + File.separator + ".lrn")));
+						p.load(new FileInputStream(new File(directory + separator + ".lrn")));
 					} catch (Exception e1) {
 					}
 					for (int i = 0; i < list1.length; i++) {
-						if (!(new File(root + File.separator + sims.getSelectedValue()
-								+ File.separator + list1[i]).isDirectory())
+						if (!(new File(root + separator + sims.getSelectedValue() + separator
+								+ list1[i]).isDirectory())
 								&& list1[i].length() > 4) {
 							String end = "";
 							for (int j = 1; j < 5; j++) {
@@ -340,10 +347,10 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 								try {
 									String last = "run-" + (run + 1) + ".tsd";
 									FileOutputStream out = new FileOutputStream(new File(directory
-											+ File.separator + last));
+											+ separator + last));
 									FileInputStream in = new FileInputStream(new File(root
-											+ File.separator + sims.getSelectedValue()
-											+ File.separator + list1[i]));
+											+ separator + sims.getSelectedValue() + separator
+											+ list1[i]));
 									int read = in.read();
 									while (read != -1) {
 										out.write(read);
@@ -351,7 +358,7 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 									}
 									in.close();
 									out.close();
-									p.setProperty(last, sims.getSelectedValue() + File.separator
+									p.setProperty(last, sims.getSelectedValue() + separator
 											+ list1[i]);
 									run++;
 								} catch (Exception e1) {
@@ -366,12 +373,11 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 						String[] ss = p.values().toArray(new String[0]);
 						sort(ss);
 						files.setListData(ss);
-						p
-								.store(new FileOutputStream(new File(directory + File.separator
-										+ ".lrn")), "Learn File Data");
+						p.store(new FileOutputStream(new File(directory + separator + ".lrn")),
+								"Learn File Data");
 						if (ss.length > 0) {
-							biosim.refreshLearn(directory.split(File.separator)[directory
-									.split(File.separator).length - 1], true);
+							biosim.refreshLearn(directory.split(separator)[directory
+									.split(separator).length - 1], true);
 						}
 					} catch (Exception e1) {
 					}
@@ -389,7 +395,7 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 				int run = 0;
 				String[] list = new File(directory).list();
 				for (int i = 0; i < list.length; i++) {
-					if (!(new File(directory + File.separator + list[i]).isDirectory())
+					if (!(new File(directory + separator + list[i]).isDirectory())
 							&& list[i].length() > 4) {
 						String end = "";
 						for (int j = 1; j < 5; j++) {
@@ -411,11 +417,11 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 					String[] list1 = new File(importFile).list();
 					Properties p = new Properties();
 					try {
-						p.load(new FileInputStream(new File(directory + File.separator + ".lrn")));
+						p.load(new FileInputStream(new File(directory + separator + ".lrn")));
 					} catch (Exception e1) {
 					}
 					for (int i = 0; i < list1.length; i++) {
-						if (!(new File(importFile + File.separator + list1[i]).isDirectory())
+						if (!(new File(importFile + separator + list1[i]).isDirectory())
 								&& list1[i].length() > 4) {
 							String end = "";
 							for (int j = 1; j < 5; j++) {
@@ -425,9 +431,9 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 								try {
 									String last = "run-" + (run + 1) + ".tsd";
 									FileOutputStream out = new FileOutputStream(new File(directory
-											+ File.separator + last));
+											+ separator + last));
 									FileInputStream in = new FileInputStream(new File(importFile
-											+ File.separator + list1[i]));
+											+ separator + list1[i]));
 									int read = in.read();
 									while (read != -1) {
 										out.write(read);
@@ -435,7 +441,7 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 									}
 									in.close();
 									out.close();
-									p.setProperty(last, importFile + File.separator + list1[i]);
+									p.setProperty(last, importFile + separator + list1[i]);
 									run++;
 								} catch (Exception e1) {
 									JOptionPane.showMessageDialog(biosim.frame(),
@@ -449,12 +455,11 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 						String[] s = p.values().toArray(new String[0]);
 						sort(s);
 						files.setListData(s);
-						p
-								.store(new FileOutputStream(new File(directory + File.separator
-										+ ".lrn")), "Learn File Data");
+						p.store(new FileOutputStream(new File(directory + separator + ".lrn")),
+								"Learn File Data");
 						if (s.length > 0) {
-							biosim.refreshLearn(directory.split(File.separator)[directory
-									.split(File.separator).length - 1], true);
+							biosim.refreshLearn(directory.split(separator)[directory
+									.split(separator).length - 1], true);
 						}
 					} catch (Exception e1) {
 					}
@@ -465,7 +470,7 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 						try {
 							String end = "run-" + (run + 1) + ".tsd";
 							FileOutputStream out = new FileOutputStream(new File(directory
-									+ File.separator + end));
+									+ separator + end));
 							FileInputStream in = new FileInputStream(new File(importFile));
 							int read = in.read();
 							while (read != -1) {
@@ -475,17 +480,16 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 							in.close();
 							out.close();
 							Properties p = new Properties();
-							p.load(new FileInputStream(
-									new File(directory + File.separator + ".lrn")));
+							p.load(new FileInputStream(new File(directory + separator + ".lrn")));
 							p.setProperty(end, importFile);
-							p.store(new FileOutputStream(new File(directory + File.separator
-									+ ".lrn")), "Learn File Data");
+							p.store(new FileOutputStream(new File(directory + separator + ".lrn")),
+									"Learn File Data");
 							String[] s = p.values().toArray(new String[0]);
 							sort(s);
 							files.setListData(s);
 							if (s.length > 0) {
-								biosim.refreshLearn(directory.split(File.separator)[directory
-										.split(File.separator).length - 1], true);
+								biosim.refreshLearn(directory.split(separator)[directory
+										.split(separator).length - 1], true);
 							}
 						} catch (Exception e1) {
 							JOptionPane.showMessageDialog(biosim.frame(), "Unable to import file.",

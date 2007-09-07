@@ -106,6 +106,8 @@ public class Nary_Run implements ActionListener, Runnable {
 
 	private String root;
 
+	private String separator;
+
 	/**
 	 * This constructs a new Nary_Run object. This object is a GUI that contains
 	 * input fields for the nary abstraction. This constructor initializes the
@@ -119,6 +121,12 @@ public class Nary_Run implements ActionListener, Runnable {
 			String printer_id, String printer_track_quantity, String[] termCond,
 			String[] intSpecies, double rap1, double rap2, double qss, int con, Log log,
 			JCheckBox usingSSA, String ssaFile, BioSim biomodelsim, JTabbedPane simTab, String root) {
+		if (File.separator.equals("\\")) {
+			separator = "\\\\";
+		} else {
+			separator = File.separator;
+		}
+
 		// intitializes the member variables
 		this.root = root;
 		this.rap1 = rap1;
@@ -224,12 +232,12 @@ public class Nary_Run implements ActionListener, Runnable {
 		Properties naryProps = new Properties();
 		try {
 			naryProps.load(new FileInputStream(new File("species.properties")));
-			naryProps.store(new FileOutputStream(new File(outDir + File.separator
-					+ "species.properties")), "");
+			naryProps.store(new FileOutputStream(
+					new File(outDir + separator + "species.properties")), "");
 			naryProps = new Properties();
 			new File("species.properties").delete();
-			naryProps.load(new FileInputStream(new File(outDir + File.separator
-					+ "species.properties")));
+			naryProps
+					.load(new FileInputStream(new File(outDir + separator + "species.properties")));
 		} catch (Exception e1) {
 			JOptionPane.showMessageDialog(component, "Properties File Not Found!",
 					"File Not Found", JOptionPane.ERROR_MESSAGE);

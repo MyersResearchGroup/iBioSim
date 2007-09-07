@@ -23,6 +23,8 @@ public class FileTree extends JPanel implements MouseListener {
 
 	private JTree tree; // JTree
 
+	private String separator;
+
 	public static final ImageIcon ICON_DOT = new ImageIcon(System.getenv("BIOSIM") + File.separator
 			+ "gui" + File.separator + "icons" + File.separator + "dot.jpg");
 
@@ -45,6 +47,12 @@ public class FileTree extends JPanel implements MouseListener {
 	 * Construct a FileTree
 	 */
 	public FileTree(final File dir, BioSim biomodelsim) {
+		if (File.separator.equals("\\")) {
+			separator = "\\\\";
+		} else {
+			separator = File.separator;
+		}
+
 		setLayout(new BorderLayout());
 
 		this.dir = dir;
@@ -61,7 +69,7 @@ public class FileTree extends JPanel implements MouseListener {
 					fileLocation = "";
 					while (node != null) {
 						if (node.getParent() != null) {
-							fileLocation = File.separator + node + fileLocation;
+							fileLocation = separator + node + fileLocation;
 						}
 						node = (DefaultMutableTreeNode) node.getParent();
 					}
@@ -120,7 +128,7 @@ public class FileTree extends JPanel implements MouseListener {
 			if (curPath.equals("."))
 				newPath = thisObject;
 			else
-				newPath = curPath + File.separator + thisObject;
+				newPath = curPath + separator + thisObject;
 			if ((f = new File(newPath)).isDirectory() && !f.getName().equals("CVS")) {
 				for (String s : f.list()) {
 					if (s.equals(".sim")) {
@@ -247,7 +255,7 @@ public class FileTree extends JPanel implements MouseListener {
 			if (curPath.equals("."))
 				newPath = thisObject;
 			else
-				newPath = curPath + File.separator + thisObject;
+				newPath = curPath + separator + thisObject;
 			if ((f = new File(newPath)).isDirectory() && !f.getName().equals("CVS")) {
 				for (String s : f.list()) {
 					if (s.equals(".sim")) {
