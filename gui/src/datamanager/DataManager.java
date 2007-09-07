@@ -170,6 +170,10 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 						"You can only select one file to rename at a time.", "Error",
 						JOptionPane.ERROR_MESSAGE);
 				return;
+			} else if (files.getSelectedIndices().length < 1) {
+				JOptionPane.showMessageDialog(biosim.frame(), "You must select a file to rename.",
+						"Error", JOptionPane.ERROR_MESSAGE);
+				return;
 			}
 			try {
 				String rename = JOptionPane.showInputDialog(biosim.frame(),
@@ -212,6 +216,10 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 				JOptionPane.showMessageDialog(biosim.frame(),
 						"You can only select one file to copy at a time.", "Error",
 						JOptionPane.ERROR_MESSAGE);
+				return;
+			} else if (files.getSelectedIndices().length < 1) {
+				JOptionPane.showMessageDialog(biosim.frame(), "You must select a file to copy.",
+						"Error", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 			try {
