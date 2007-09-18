@@ -17,7 +17,7 @@ public class Log extends JPanel {
 		logArea = new JTextArea();
 		logArea.setEditable(false);
 		JScrollPane scroll4 = new JScrollPane();
-		scroll4.setPreferredSize(new Dimension(1150, 200));
+		scroll4.setPreferredSize(new Dimension(1150, 150));
 		scroll4.setViewportView(logArea);
 		this.add(scroll4);
 	}
