@@ -1088,6 +1088,13 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 									error = true;
 								}
 							}
+							if (ID.getText().trim().contains("-")
+									|| ID.getText().trim().contains(" ")) {
+								JOptionPane.showMessageDialog(biosim.frame(),
+										"The id field cannot contain any '-'s or ' 's!",
+										"Invalid ID", JOptionPane.ERROR_MESSAGE);
+								error = true;
+							}
 							if (!error) {
 								if (option.equals("Save")) {
 									int index1 = species.getSelectedIndex();
@@ -1438,6 +1445,12 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 										"Enter A Unique ID", JOptionPane.ERROR_MESSAGE);
 								error = true;
 							}
+						}
+						if (kineticLaw.getText().trim().equals("")) {
+							JOptionPane.showMessageDialog(biosim.frame(),
+									"You must enter a kinetic law into this reaction!",
+									"Enter A Kinetic Law", JOptionPane.ERROR_MESSAGE);
+							error = true;
 						}
 						String kineticCheck;
 						if (!error) {

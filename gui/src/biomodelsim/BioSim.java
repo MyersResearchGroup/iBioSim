@@ -165,7 +165,7 @@ public class BioSim implements MouseListener, ActionListener {
 		mainPanel = new JPanel(new BorderLayout());
 		tree = new FileTree(null, this);
 		tab = new JTabbedPane();
-		tab.setPreferredSize(new Dimension(950, 650));
+		tab.setPreferredSize(new Dimension(950, 550));
 		tab.setUI(new TabbedPaneCloseButtonUI());
 		mainPanel.add(tree, "West");
 		mainPanel.add(tab, "Center");
@@ -1328,7 +1328,7 @@ public class BioSim implements MouseListener, ActionListener {
 	}
 
 	public void mousePressed(MouseEvent e) {
-		if (e.getButton() == MouseEvent.BUTTON3) {
+		if (e.getButton() == MouseEvent.BUTTON3 && e.isPopupTrigger()) {
 			popup.removeAll();
 			if (tree.getFile().length() > 4
 					&& tree.getFile().substring(tree.getFile().length() - 5).equals(".sbml")
@@ -1450,7 +1450,9 @@ public class BioSim implements MouseListener, ActionListener {
 				popup.add(rename);
 				popup.add(delete);
 			}
-			maybeShowPopup(e);
+			if (popup.getComponentCount() != 0) {
+				popup.show(e.getComponent(), e.getX(), e.getY());
+			}
 		} else if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2) {
 			if (tree.getFile() != null) {
 				if (tree.getFile().length() >= 5
@@ -1501,11 +1503,131 @@ public class BioSim implements MouseListener, ActionListener {
 	}
 
 	public void mouseReleased(MouseEvent e) {
-	}
-
-	private void maybeShowPopup(MouseEvent e) {
-		if (e.isPopupTrigger() && popup.getComponentCount() != 0) {
-			popup.show(e.getComponent(), e.getX(), e.getY());
+		if (e.getButton() == MouseEvent.BUTTON3 && e.isPopupTrigger()) {
+			popup.removeAll();
+			if (tree.getFile().length() > 4
+					&& tree.getFile().substring(tree.getFile().length() - 5).equals(".sbml")
+					|| tree.getFile().length() > 3
+					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".xml")) {
+				JMenuItem edit = new JMenuItem("Edit");
+				edit.addActionListener(this);
+				edit.setActionCommand("sbmlEditor");
+				JMenuItem graph = new JMenuItem("View As Graph");
+				graph.addActionListener(this);
+				graph.setActionCommand("graph");
+				JMenuItem browse = new JMenuItem("View In Browser");
+				browse.addActionListener(this);
+				browse.setActionCommand("browse");
+				JMenuItem simulate = new JMenuItem("Create Analysis View");
+				simulate.addActionListener(this);
+				simulate.setActionCommand("simulate");
+				JMenuItem createLearn = new JMenuItem("Create Learn View");
+				createLearn.addActionListener(this);
+				createLearn.setActionCommand("createLearn");
+				JMenuItem delete = new JMenuItem("Delete");
+				delete.addActionListener(this);
+				delete.setActionCommand("delete");
+				JMenuItem copy = new JMenuItem("Copy");
+				copy.addActionListener(this);
+				copy.setActionCommand("copy");
+				JMenuItem rename = new JMenuItem("Rename");
+				rename.addActionListener(this);
+				rename.setActionCommand("rename");
+				popup.add(simulate);
+				popup.add(createLearn);
+				popup.addSeparator();
+				popup.add(graph);
+				popup.add(browse);
+				popup.addSeparator();
+				popup.add(edit);
+				popup.add(copy);
+				popup.add(rename);
+				popup.add(delete);
+			} else if (tree.getFile().length() > 3
+					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".dot")) {
+				JMenuItem create = new JMenuItem("Create Analysis View");
+				create.addActionListener(this);
+				create.setActionCommand("createSim");
+				JMenuItem createLearn = new JMenuItem("Create Learn View");
+				createLearn.addActionListener(this);
+				createLearn.setActionCommand("createLearn");
+				JMenuItem edit = new JMenuItem("Edit");
+				edit.addActionListener(this);
+				edit.setActionCommand("dotEditor");
+				JMenuItem graph = new JMenuItem("View Graph");
+				graph.addActionListener(this);
+				graph.setActionCommand("graphDot");
+				JMenuItem delete = new JMenuItem("Delete");
+				delete.addActionListener(this);
+				delete.setActionCommand("delete");
+				JMenuItem copy = new JMenuItem("Copy");
+				copy.addActionListener(this);
+				copy.setActionCommand("copy");
+				JMenuItem rename = new JMenuItem("Rename");
+				rename.addActionListener(this);
+				rename.setActionCommand("rename");
+				popup.add(create);
+				popup.add(createLearn);
+				popup.addSeparator();
+				popup.add(graph);
+				popup.addSeparator();
+				popup.add(edit);
+				popup.add(copy);
+				popup.add(rename);
+				popup.add(delete);
+			} else if (tree.getFile().length() > 3
+					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".grf")) {
+				JMenuItem edit = new JMenuItem("View/Edit");
+				edit.addActionListener(this);
+				edit.setActionCommand("openGraph");
+				JMenuItem delete = new JMenuItem("Delete");
+				delete.addActionListener(this);
+				delete.setActionCommand("delete");
+				JMenuItem copy = new JMenuItem("Copy");
+				copy.addActionListener(this);
+				copy.setActionCommand("copy");
+				JMenuItem rename = new JMenuItem("Rename");
+				rename.addActionListener(this);
+				rename.setActionCommand("rename");
+				popup.add(edit);
+				popup.add(copy);
+				popup.add(rename);
+				popup.add(delete);
+			} else if (new File(tree.getFile()).isDirectory() && !tree.getFile().equals(root)) {
+				boolean sim = false;
+				for (String s : new File(tree.getFile()).list()) {
+					if (s.equals(".sim")) {
+						sim = true;
+					}
+				}
+				JMenuItem open;
+				if (sim) {
+					open = new JMenuItem("Open Analysis View");
+					open.addActionListener(this);
+					open.setActionCommand("openSim");
+				} else {
+					open = new JMenuItem("Open Learn View");
+					open.addActionListener(this);
+					open.setActionCommand("openLearn");
+				}
+				JMenuItem delete = new JMenuItem("Delete");
+				delete.addActionListener(this);
+				delete.setActionCommand("deleteSim");
+				JMenuItem copy = new JMenuItem("Copy");
+				copy.addActionListener(this);
+				copy.setActionCommand("copy");
+				JMenuItem rename = new JMenuItem("Rename");
+				rename.addActionListener(this);
+				rename.setActionCommand("rename");
+				popup.add(open);
+				popup.addSeparator();
+				popup.add(copy);
+				popup.add(rename);
+				popup.add(delete);
+			}
+			if (popup.getComponentCount() != 0) {
+				popup.show(e.getComponent(), e.getX(), e.getY());
+			}
 		}
 	}
 
