@@ -119,7 +119,7 @@ public class BioSim implements MouseListener, ActionListener {
 		newTstubd = new JMenuItem("New Project");
 		newModel = new JMenuItem("New Model");
 		importSbml = new JMenuItem("SBML");
-		importDot = new JMenuItem("Network");
+		importDot = new JMenuItem("Circuit");
 		exit = new JMenuItem("Exit");
 		graph = new JMenuItem("New Graph");
 		openProj.addActionListener(this);
@@ -1337,10 +1337,10 @@ public class BioSim implements MouseListener, ActionListener {
 				JMenuItem edit = new JMenuItem("Edit");
 				edit.addActionListener(this);
 				edit.setActionCommand("sbmlEditor");
-				JMenuItem graph = new JMenuItem("View As Graph");
+				JMenuItem graph = new JMenuItem("View Network");
 				graph.addActionListener(this);
 				graph.setActionCommand("graph");
-				JMenuItem browse = new JMenuItem("View In Browser");
+				JMenuItem browse = new JMenuItem("View in Browser");
 				browse.addActionListener(this);
 				browse.setActionCommand("browse");
 				JMenuItem simulate = new JMenuItem("Create Analysis View");
@@ -1379,7 +1379,7 @@ public class BioSim implements MouseListener, ActionListener {
 				JMenuItem edit = new JMenuItem("Edit");
 				edit.addActionListener(this);
 				edit.setActionCommand("dotEditor");
-				JMenuItem graph = new JMenuItem("View Graph");
+				JMenuItem graph = new JMenuItem("View Circuit");
 				graph.addActionListener(this);
 				graph.setActionCommand("graphDot");
 				JMenuItem delete = new JMenuItem("Delete");
@@ -1512,10 +1512,10 @@ public class BioSim implements MouseListener, ActionListener {
 				JMenuItem edit = new JMenuItem("Edit");
 				edit.addActionListener(this);
 				edit.setActionCommand("sbmlEditor");
-				JMenuItem graph = new JMenuItem("View As Graph");
+				JMenuItem graph = new JMenuItem("View Network");
 				graph.addActionListener(this);
 				graph.setActionCommand("graph");
-				JMenuItem browse = new JMenuItem("View In Browser");
+				JMenuItem browse = new JMenuItem("View in Browser");
 				browse.addActionListener(this);
 				browse.setActionCommand("browse");
 				JMenuItem simulate = new JMenuItem("Create Analysis View");
