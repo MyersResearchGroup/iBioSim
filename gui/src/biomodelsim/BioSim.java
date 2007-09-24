@@ -119,7 +119,7 @@ public class BioSim implements MouseListener, ActionListener {
 		newTstubd = new JMenuItem("New Project");
 		newModel = new JMenuItem("New Model");
 		importSbml = new JMenuItem("SBML");
-		importDot = new JMenuItem("Dot");
+		importDot = new JMenuItem("Network");
 		exit = new JMenuItem("Exit");
 		graph = new JMenuItem("New Graph");
 		openProj.addActionListener(this);
