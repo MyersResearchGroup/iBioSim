@@ -145,11 +145,11 @@ public class Learn extends JPanel implements ActionListener {
 		influenceLevel = new JTextField("0.0");
 		thresholdPanel2.add(influenceLevelLabel);
 		thresholdPanel2.add(influenceLevel);
-		JLabel letNThroughLabel = new JLabel("Minimum Number of Initial Vectors (Tn):");
+		JLabel letNThroughLabel = new JLabel("Minimum Number of Initial Vectors (Tn):  ");
 		letNThrough = new JTextField("2");
 		thresholdPanel1.add(letNThroughLabel);
 		thresholdPanel1.add(letNThrough);
-		JLabel maxVectorSizeLabel = new JLabel("Maximum Influence Vector Size (Tj):  ");
+		JLabel maxVectorSizeLabel = new JLabel("Maximum Influence Vector Size (Tj):");
 		maxVectorSize = new JTextField("2");
 		thresholdPanel1.add(maxVectorSizeLabel);
 		thresholdPanel1.add(maxVectorSize);
