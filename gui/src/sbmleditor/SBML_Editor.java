@@ -2033,7 +2033,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		} else {
 			JPanel productsPanel = new JPanel(new GridLayout(2, 2));
 			JLabel speciesLabel = new JLabel("Species:");
-			JLabel stoiciLabel = new JLabel("Stoiciometry:");
+			JLabel stoiciLabel = new JLabel("Stoichiometry:");
 			ListOf listOfSpecies = document.getModel().getListOfSpecies();
 			amount = false;
 			String[] speciesList = new String[(int) listOfSpecies.getNumItems()];
@@ -2201,7 +2201,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		} else {
 			JPanel reactantsPanel = new JPanel(new GridLayout(2, 2));
 			JLabel speciesLabel = new JLabel("Species:");
-			JLabel stoiciLabel = new JLabel("Stoiciometry:");
+			JLabel stoiciLabel = new JLabel("Stoichiometry:");
 			ListOf listOfSpecies = document.getModel().getListOfSpecies();
 			amount = false;
 			String[] speciesList = new String[(int) listOfSpecies.getNumItems()];
