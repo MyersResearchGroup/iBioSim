@@ -15,7 +15,7 @@ import biomodelsim.core.gui.*;
  * 
  * @author Curtis Madsen
  */
-public class Learn extends JPanel implements ActionListener {
+public class Learn extends JPanel implements ActionListener, Runnable {
 
 	private static final long serialVersionUID = -5806315070287184299L;
 
@@ -60,18 +60,21 @@ public class Learn extends JPanel implements ActionListener {
 
 	private String separator;
 
+	private BioSim biosim;
+
 	/**
 	 * This is the constructor for the Learn class. It initializes all the input
 	 * fields, puts them on panels, adds the panels to the frame, and then
 	 * displays the frame.
 	 */
-	public Learn(String directory, Log log) {
+	public Learn(String directory, Log log, BioSim biosim) {
 		if (File.separator.equals("\\")) {
 			separator = "\\\\";
 		} else {
 			separator = File.separator;
 		}
 
+		this.biosim = biosim;
 		this.log = log;
 		this.directory = directory;
 
@@ -306,116 +309,7 @@ public class Learn extends JPanel implements ActionListener {
 		// }
 		// if the run button is selected
 		else if (e.getSource() == run) {
-			try {
-				String geneNet = "GeneNet";
-				geneNet += " --debug " + debug.getSelectedItem();
-				try {
-					double activation = Double.parseDouble(this.activation.getText().trim());
-					geneNet += " -ta " + activation;
-					double repression = Double.parseDouble(this.repression.getText().trim());
-					geneNet += " -tr " + repression;
-					double parent = Double.parseDouble(this.parent.getText().trim());
-					geneNet += " -ti " + parent;
-					// int windowRising =
-					// Integer.parseInt(this.windowRising.getText().trim());
-					// geneNet += " --windowRisingAmount " + windowRising;
-					// int windowSize =
-					// Integer.parseInt(this.windowSize.getText().trim());
-					// geneNet += " --windowSize " + windowSize;
-					int numBins = Integer.parseInt((String) this.numBins.getSelectedItem());
-					geneNet += " --numBins " + numBins;
-					double influenceLevel = Double
-							.parseDouble(this.influenceLevel.getText().trim());
-					geneNet += " -tm " + influenceLevel;
-					double relaxIPDelta = Double.parseDouble(this.relaxIPDelta.getText().trim());
-					geneNet += " -tt " + relaxIPDelta;
-					int letNThrough = Integer.parseInt(this.letNThrough.getText().trim());
-					geneNet += " -tn " + letNThrough;
-					int maxVectorSize = Integer.parseInt(this.maxVectorSize.getText().trim());
-					geneNet += " -tj " + maxVectorSize;
-					if (succ.isSelected()) {
-					}
-					if (pred.isSelected()) {
-						geneNet += " -noSUCC -PRED";
-					}
-					if (both.isSelected()) {
-						geneNet += " -PRED";
-					}
-					if (basicFBP.isSelected()) {
-						geneNet += " -basicFBP";
-					}
-				} catch (Exception e2) {
-					JOptionPane.showMessageDialog(this, "Must enter numbers into input fields.",
-							"Error", JOptionPane.ERROR_MESSAGE);
-				}
-				if (user.isSelected()) {
-					FileWriter write = new FileWriter(
-							new File(directory + separator + "levels.lvl"));
-					write.write("time, 0\n");
-					for (int i = 0; i < species.size(); i++) {
-						if (((JTextField) species.get(i).get(0)).getText().trim().equals("")) {
-							write.write("-1");
-						} else {
-							write.write(((JTextField) species.get(i).get(0)).getText().trim());
-						}
-						write.write(", " + ((JComboBox) species.get(i).get(1)).getSelectedItem());
-						for (int j = 2; j < species.get(i).size(); j++) {
-							if (((JTextField) species.get(i).get(j)).getText().trim().equals("")) {
-								write.write(", -1");
-							} else {
-								write.write(", "
-										+ ((JTextField) species.get(i).get(j)).getText().trim());
-							}
-						}
-						write.write("\n");
-					}
-					write.close();
-					geneNet += " --readLevels";
-				}
-				geneNet += " --cpp_harshenBoundsOnTie --cpp_cmp_output_donotInvertSortOrder --cpp_seedParents --cmp_score_mustNotWinMajority";
-				/*
-				 * if (harshenBoundsOnTie.isSelected()) { geneNet += "
-				 * --cpp_harshenBoundsOnTie"; } if
-				 * (donotInvertSortOrder.isSelected()) { geneNet += "
-				 * --cpp_cmp_output_donotInvertSortOrder"; } if
-				 * (seedParents.isSelected()) { geneNet += " --cpp_seedParents"; }
-				 * if (mustNotWinMajority.isSelected()) { geneNet += "
-				 * --cmp_score_mustNotWinMajority"; } if
-				 * (donotTossSingleRatioParents.isSelected()) { geneNet += "
-				 * --score_donotTossSingleRatioParents"; } if
-				 * (donotTossChangedInfluenceSingleParents.isSelected()) {
-				 * geneNet += "
-				 * --output_donotTossChangedInfluenceSingleParents"; }
-				 */
-				if (spacing.isSelected()) {
-					geneNet += " -binN";
-				}
-				Runtime exec = Runtime.getRuntime();
-				Process learn = exec.exec(geneNet + " " + directory);
-				log.addText("Executing:\n" + geneNet + " " + directory + "\n");
-				learn.waitFor();
-				String output = "";
-				InputStream reb = learn.getInputStream();
-				FileWriter out = new FileWriter(new File(directory + separator + "run.log"));
-				int read = reb.read();
-				while (read != -1) {
-					output += (char) read;
-					out.write((char) read);
-					read = reb.read();
-				}
-				out.close();
-				log.addText("Output:\n" + output + "\n");
-				if (new File(directory + separator + "method.dot").exists()) {
-					exec.exec("dotty "
-							+ new File(directory + separator + "method.dot").getAbsolutePath());
-				} else {
-					JOptionPane.showMessageDialog(this, "A dot file was not generated."
-							+ "\nPlease see the run.log file.", "Error", JOptionPane.ERROR_MESSAGE);
-				}
-			} catch (Exception e1) {
-				JOptionPane.showMessageDialog(this, "Unable to learn from data.", "Error",
-						JOptionPane.ERROR_MESSAGE);
-			}
+			new Thread(this).start();
 		}
 	}
 
@@ -741,5 +635,230 @@ public class Learn extends JPanel implements ActionListener {
 
 	public void setDirectory(String newDirectory) {
 		directory = newDirectory;
+	}
+
+	public void run() {
+		try {
+			String geneNet = "GeneNet";
+			geneNet += " --debug " + debug.getSelectedItem();
+			try {
+				double activation = Double.parseDouble(this.activation.getText().trim());
+				geneNet += " -ta " + activation;
+				double repression = Double.parseDouble(this.repression.getText().trim());
+				geneNet += " -tr " + repression;
+				double parent = Double.parseDouble(this.parent.getText().trim());
+				geneNet += " -ti " + parent;
+				// int windowRising =
+				// Integer.parseInt(this.windowRising.getText().trim());
+				// geneNet += " --windowRisingAmount " + windowRising;
+				// int windowSize =
+				// Integer.parseInt(this.windowSize.getText().trim());
+				// geneNet += " --windowSize " + windowSize;
+				int numBins = Integer.parseInt((String) this.numBins.getSelectedItem());
+				geneNet += " --numBins " + numBins;
+				double influenceLevel = Double.parseDouble(this.influenceLevel.getText().trim());
+				geneNet += " -tm " + influenceLevel;
+				double relaxIPDelta = Double.parseDouble(this.relaxIPDelta.getText().trim());
+				geneNet += " -tt " + relaxIPDelta;
+				int letNThrough = Integer.parseInt(this.letNThrough.getText().trim());
+				geneNet += " -tn " + letNThrough;
+				int maxVectorSize = Integer.parseInt(this.maxVectorSize.getText().trim());
+				geneNet += " -tj " + maxVectorSize;
+				if (succ.isSelected()) {
+				}
+				if (pred.isSelected()) {
+					geneNet += " -noSUCC -PRED";
+				}
+				if (both.isSelected()) {
+					geneNet += " -PRED";
+				}
+				if (basicFBP.isSelected()) {
+					geneNet += " -basicFBP";
+				}
+			} catch (Exception e2) {
+				JOptionPane.showMessageDialog(this, "Must enter numbers into input fields.",
+						"Error", JOptionPane.ERROR_MESSAGE);
+			}
+			if (user.isSelected()) {
+				FileWriter write = new FileWriter(new File(directory + separator + "levels.lvl"));
+				write.write("time, 0\n");
+				for (int i = 0; i < species.size(); i++) {
+					if (((JTextField) species.get(i).get(0)).getText().trim().equals("")) {
+						write.write("-1");
+					} else {
+						write.write(((JTextField) species.get(i).get(0)).getText().trim());
+					}
+					write.write(", " + ((JComboBox) species.get(i).get(1)).getSelectedItem());
+					for (int j = 2; j < species.get(i).size(); j++) {
+						if (((JTextField) species.get(i).get(j)).getText().trim().equals("")) {
+							write.write(", -1");
+						} else {
+							write.write(", "
+									+ ((JTextField) species.get(i).get(j)).getText().trim());
+						}
+					}
+					write.write("\n");
+				}
+				write.close();
+				geneNet += " --readLevels";
+			}
+			geneNet += " --cpp_harshenBoundsOnTie --cpp_cmp_output_donotInvertSortOrder --cpp_seedParents --cmp_score_mustNotWinMajority";
+			/*
+			 * if (harshenBoundsOnTie.isSelected()) { geneNet += "
+			 * --cpp_harshenBoundsOnTie"; } if
+			 * (donotInvertSortOrder.isSelected()) { geneNet += "
+			 * --cpp_cmp_output_donotInvertSortOrder"; } if
+			 * (seedParents.isSelected()) { geneNet += " --cpp_seedParents"; }
+			 * if (mustNotWinMajority.isSelected()) { geneNet += "
+			 * --cmp_score_mustNotWinMajority"; } if
+			 * (donotTossSingleRatioParents.isSelected()) { geneNet += "
+			 * --score_donotTossSingleRatioParents"; } if
+			 * (donotTossChangedInfluenceSingleParents.isSelected()) { geneNet += "
+			 * --output_donotTossChangedInfluenceSingleParents"; }
+			 */
+			if (spacing.isSelected()) {
+				geneNet += " -binN";
+			}
+			final JButton cancel = new JButton("Cancel");
+			final JFrame running = new JFrame("Running...");
+			WindowListener w = new WindowListener() {
+				public void windowClosing(WindowEvent arg0) {
+					cancel.doClick();
+					running.dispose();
+				}
+
+				public void windowOpened(WindowEvent arg0) {
+				}
+
+				public void windowClosed(WindowEvent arg0) {
+				}
+
+				public void windowIconified(WindowEvent arg0) {
+				}
+
+				public void windowDeiconified(WindowEvent arg0) {
+				}
+
+				public void windowActivated(WindowEvent arg0) {
+				}
+
+				public void windowDeactivated(WindowEvent arg0) {
+				}
+			};
+			running.addWindowListener(w);
+			JPanel text = new JPanel();
+			JPanel progBar = new JPanel();
+			JPanel button = new JPanel();
+			JPanel all = new JPanel(new BorderLayout());
+			JLabel label = new JLabel("Working...");
+			JProgressBar progress = new JProgressBar();
+			progress.setStringPainted(true);
+			progress.setString("");
+			progress.setIndeterminate(true);
+			text.add(label);
+			progBar.add(progress);
+			button.add(cancel);
+			all.add(text, "North");
+			all.add(progBar, "Center");
+			all.add(button, "South");
+			running.setContentPane(all);
+			running.pack();
+			Dimension screenSize;
+			try {
+				Toolkit tk = Toolkit.getDefaultToolkit();
+				screenSize = tk.getScreenSize();
+			} catch (AWTError awe) {
+				screenSize = new Dimension(640, 480);
+			}
+			Dimension frameSize = running.getSize();
+
+			if (frameSize.height > screenSize.height) {
+				frameSize.height = screenSize.height;
+			}
+			if (frameSize.width > screenSize.width) {
+				frameSize.width = screenSize.width;
+			}
+			int x = screenSize.width / 2 - frameSize.width / 2;
+			int y = screenSize.height / 2 - frameSize.height / 2;
+			running.setLocation(x, y);
+			running.setVisible(true);
+			running.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+			WindowListener[] ws = biosim.frame().getWindowListeners();
+			for (int j = 0; j < ws.length; j++) {
+				biosim.frame().removeWindowListener(ws[j]);
+			}
+			WindowListener window = new WindowListener() {
+				public void windowClosing(WindowEvent arg0) {
+					biosim.getExitButton().doClick();
+				}
+
+				public void windowOpened(WindowEvent arg0) {
+				}
+
+				public void windowClosed(WindowEvent arg0) {
+				}
+
+				public void windowIconified(WindowEvent arg0) {
+				}
+
+				public void windowDeiconified(WindowEvent arg0) {
+				}
+
+				public void windowActivated(WindowEvent arg0) {
+				}
+
+				public void windowDeactivated(WindowEvent arg0) {
+				}
+			};
+			biosim.frame().addWindowListener(window);
+			Runtime exec = Runtime.getRuntime();
+			log.addText("Executing:\n" + geneNet + " " + directory + "\n");
+			final Process learn = exec.exec(geneNet + " " + directory);
+			cancel.setActionCommand("Cancel");
+			cancel.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					learn.destroy();
+					running.setCursor(null);
+					running.dispose();
+				}
+			});
+			biosim.getExitButton().setActionCommand("Exit program");
+			biosim.getExitButton().addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					learn.destroy();
+					running.setCursor(null);
+					running.dispose();
+				}
+			});
+			int exitValue = learn.waitFor();
+			if (exitValue == 143) {
+				JOptionPane.showMessageDialog(biosim.frame(), "Learning was"
+						+ " canceled by the user.", "Canceled Learning", JOptionPane.ERROR_MESSAGE);
+			} else {
+				String output = "";
+				InputStream reb = learn.getInputStream();
+				FileWriter out = new FileWriter(new File(directory + separator + "run.log"));
+				int read = reb.read();
+				while (read != -1) {
+					output += (char) read;
+					out.write((char) read);
+					read = reb.read();
+				}
+				out.close();
+				log.addText("Output:\n" + output + "\n");
+				if (new File(directory + separator + "method.dot").exists()) {
+					exec.exec("dotty "
+							+ new File(directory + separator + "method.dot").getAbsolutePath());
+				} else {
+					JOptionPane.showMessageDialog(biosim.frame(), "A dot file was not generated."
+							+ "\nPlease see the run.log file.", "Error", JOptionPane.ERROR_MESSAGE);
+				}
+				running.setCursor(null);
+				running.dispose();
+			}
+		} catch (Exception e1) {
+			JOptionPane.showMessageDialog(biosim.frame(), "Unable to learn from data.", "Error",
+					JOptionPane.ERROR_MESSAGE);
+		}
 	}
 }

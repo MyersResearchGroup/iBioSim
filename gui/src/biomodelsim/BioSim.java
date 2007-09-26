@@ -1379,7 +1379,7 @@ public class BioSim implements MouseListener, ActionListener {
 				JMenuItem edit = new JMenuItem("Edit");
 				edit.addActionListener(this);
 				edit.setActionCommand("dotEditor");
-				JMenuItem graph = new JMenuItem("View Circuit");
+				JMenuItem graph = new JMenuItem("View Graph");
 				graph.addActionListener(this);
 				graph.setActionCommand("graphDot");
 				JMenuItem delete = new JMenuItem("Delete");
@@ -1554,7 +1554,7 @@ public class BioSim implements MouseListener, ActionListener {
 				JMenuItem edit = new JMenuItem("Edit");
 				edit.addActionListener(this);
 				edit.setActionCommand("dotEditor");
-				JMenuItem graph = new JMenuItem("View Graph");
+				JMenuItem graph = new JMenuItem("View Circuit");
 				graph.addActionListener(this);
 				graph.setActionCommand("graphDot");
 				JMenuItem delete = new JMenuItem("Delete");
@@ -1811,7 +1811,7 @@ public class BioSim implements MouseListener, ActionListener {
 		if (!graphFile.equals("")) {
 			lrnTab.addTab("Data Manager", new DataManager(tree.getFile(), this));
 			lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Data Manager");
-			lrnTab.addTab("Learn", new Learn(tree.getFile(), log));
+			lrnTab.addTab("Learn", new Learn(tree.getFile(), log, this));
 			lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Learn");
 			lrnTab.addTab("Graph", new Graph("amount", tree.getFile().split(separator)[tree
 					.getFile().split(separator).length - 1]
@@ -2120,7 +2120,7 @@ public class BioSim implements MouseListener, ActionListener {
 							if (((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j) instanceof Learn) {
 							} else {
 								((JTabbedPane) tab.getComponentAt(i)).setComponentAt(j, new Learn(
-										root + separator + learnName, log));
+										root + separator + learnName, log, this));
 								((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j).setName(
 										"Learn");
 							}
