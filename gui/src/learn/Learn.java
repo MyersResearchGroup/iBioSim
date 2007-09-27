@@ -830,31 +830,33 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 					running.dispose();
 				}
 			});
+			String output = "";
+			InputStream reb = learn.getInputStream();
+			InputStreamReader isr = new InputStreamReader(reb);
+			BufferedReader br = new BufferedReader(isr);
+			FileWriter out = new FileWriter(new File(directory + separator + "run.log"));
+
+			while ((output=br.readLine())!=null) {
+			    log.addText(output);
+			    out.write(output);
+			    out.write("\n");
+			}
+			out.close();
 			int exitValue = learn.waitFor();
 			if (exitValue == 143) {
 				JOptionPane.showMessageDialog(biosim.frame(), "Learning was"
 						+ " canceled by the user.", "Canceled Learning", JOptionPane.ERROR_MESSAGE);
 			} else {
-				String output = "";
-				InputStream reb = learn.getInputStream();
-				FileWriter out = new FileWriter(new File(directory + separator + "run.log"));
-				int read = reb.read();
-				while (read != -1) {
-					output += (char) read;
-					out.write((char) read);
-					read = reb.read();
-				}
-				out.close();
-				log.addText("Output:\n" + output + "\n");
-				if (new File(directory + separator + "method.dot").exists()) {
-					exec.exec("dotty "
-							+ new File(directory + separator + "method.dot").getAbsolutePath());
-				} else {
-					JOptionPane.showMessageDialog(biosim.frame(), "A dot file was not generated."
-							+ "\nPlease see the run.log file.", "Error", JOptionPane.ERROR_MESSAGE);
-				}
-				running.setCursor(null);
-				running.dispose();
+			    if (new File(directory + separator + "method.dot").exists()) {
+				exec.exec("dotty "
+					  + new File(directory + separator + "method.dot").getAbsolutePath());
+			    } else {
+				JOptionPane.showMessageDialog(biosim.frame(), "A dot file was not generated."
+							      + "\nPlease see the run.log file.", "Error", 
+							      JOptionPane.ERROR_MESSAGE);
+			    }
+			    running.setCursor(null);
+			    running.dispose();
 			}
 		} catch (Exception e1) {
 			JOptionPane.showMessageDialog(biosim.frame(), "Unable to learn from data.", "Error",
