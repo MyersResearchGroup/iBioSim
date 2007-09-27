@@ -837,7 +837,7 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 			FileWriter out = new FileWriter(new File(directory + separator + "run.log"));
 
 			while ((output=br.readLine())!=null) {
-			    log.addText(output);
+			    // log.addText(output);
 			    out.write(output);
 			    out.write("\n");
 			}
