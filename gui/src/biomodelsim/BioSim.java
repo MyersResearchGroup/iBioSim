@@ -256,7 +256,7 @@ public class BioSim implements MouseListener, ActionListener {
 		} else if (e.getSource() == manual) {
 			try {
 				Runtime exec = Runtime.getRuntime();
-				exec.exec("firefox " + System.getenv("BIOSIM") + "/docs/BioSim.html");
+				exec.exec("gnome-open " + System.getenv("BIOSIM") + "/docs/BioSim.html");
 			} catch (IOException e1) {
 				JOptionPane.showMessageDialog(frame, "Unable to open manual.", "Error",
 						JOptionPane.ERROR_MESSAGE);
@@ -476,8 +476,8 @@ public class BioSim implements MouseListener, ActionListener {
 				if (!error.equals("")) {
 					log.addText("Errors:\n" + error + "\n");
 				}
-				log.addText("Executing:\nfirefox " + out + "\n");
-				exec.exec("firefox " + out);
+				log.addText("Executing:\ngnome-open " + out + "\n");
+				exec.exec("gnome-open " + out);
 				String remove;
 				if (tree.getFile().substring(tree.getFile().length() - 4).equals("sbml")) {
 					remove = tree.getFile().substring(0, tree.getFile().length() - 4)
