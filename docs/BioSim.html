@@ -869,7 +869,7 @@ More advanced behavior can be modeled by using extra fields.  The promoter field
 groups a set of species together.  The examples below shows how the promoter field works.
 In the circuit model below, species A represses the production of species B and C, independently.  If there
 was exactly 1 molecule of species A, it would only be able to represses production of species B or C, but not both.
-
+<p>
 digraph G {<BR>
 s1 [shape=ellipse,color=black,label="A"];<BR>
 s2 [shape=ellipse,color=black,label="B"];<BR>
@@ -881,7 +881,7 @@ s1 -> s3 [color="blue4",arrowhead=tee]<BR>
 
 With the promoter field, one species A now represses the promoter "P1", which produces both species B and C.  This
 means that one molecule of species A will repress the production of both species B and C.  
-
+<p>
 digraph G {<BR>
 s1 [shape=ellipse,color=black,label="A"];<BR>
 s2 [shape=ellipse,color=black,label="B"];<BR>
@@ -897,7 +897,7 @@ and degradation reactions.  The reactions contain a promoter label "P1".  This m
 that the species C can be activated by both s1 and s2.  Combined with the type flag
 of biochemical, this creates a biochemical reaction where species A and B combine together
 to form a complex to activate production of species C.
-
+<p>
 digraph G {<BR>
 s1 [shape=ellipse,color=black,label="A",const=true];<BR>
 s2 [shape=ellipse,color=black,label="B",const=true];<BR>
