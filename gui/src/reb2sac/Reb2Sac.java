@@ -1535,34 +1535,6 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		Run runProgram = new Run();
 		cancel.addActionListener(runProgram);
 		biomodelsim.getExitButton().addActionListener(runProgram);
-		WindowListener[] ws = biomodelsim.frame().getWindowListeners();
-		for (int j = 0; j < ws.length; j++) {
-			biomodelsim.frame().removeWindowListener(ws[j]);
-		}
-		WindowListener window = new WindowListener() {
-			public void windowClosing(WindowEvent arg0) {
-				biomodelsim.getExitButton().doClick();
-			}
-
-			public void windowOpened(WindowEvent arg0) {
-			}
-
-			public void windowClosed(WindowEvent arg0) {
-			}
-
-			public void windowIconified(WindowEvent arg0) {
-			}
-
-			public void windowDeiconified(WindowEvent arg0) {
-			}
-
-			public void windowActivated(WindowEvent arg0) {
-			}
-
-			public void windowDeactivated(WindowEvent arg0) {
-			}
-		};
-		biomodelsim.frame().addWindowListener(window);
 		if (sadFile.getText().trim().length() != 0) {
 			try {
 				FileOutputStream out = new FileOutputStream(new File(root + separator + outDir
