@@ -402,8 +402,8 @@ public class Run implements ActionListener {
 					log.addText("Executing:\ndotty " + out + ".dot" + "\n");
 					exec.exec("dotty " + out + ".dot");
 				} else if (xhtml.isSelected()) {
-					log.addText("Executing:\nfirefox " + out + ".xhtml" + "\n");
-					exec.exec("firefox " + out + ".xhtml");
+					log.addText("Executing:\ngnome-open " + out + ".xhtml" + "\n");
+					exec.exec("gnome-open " + out + ".xhtml");
 				} else if (usingSSA.isSelected()) {
 					if (!printer_id.equals("null.printer")) {
 						for (int i = 0; i < simTab.getComponentCount(); i++) {

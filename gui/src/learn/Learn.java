@@ -783,34 +783,6 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 			running.setLocation(x, y);
 			running.setVisible(true);
 			running.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-			WindowListener[] ws = biosim.frame().getWindowListeners();
-			for (int j = 0; j < ws.length; j++) {
-				biosim.frame().removeWindowListener(ws[j]);
-			}
-			WindowListener window = new WindowListener() {
-				public void windowClosing(WindowEvent arg0) {
-					biosim.getExitButton().doClick();
-				}
-
-				public void windowOpened(WindowEvent arg0) {
-				}
-
-				public void windowClosed(WindowEvent arg0) {
-				}
-
-				public void windowIconified(WindowEvent arg0) {
-				}
-
-				public void windowDeiconified(WindowEvent arg0) {
-				}
-
-				public void windowActivated(WindowEvent arg0) {
-				}
-
-				public void windowDeactivated(WindowEvent arg0) {
-				}
-			};
-			biosim.frame().addWindowListener(window);
 			Runtime exec = Runtime.getRuntime();
 			log.addText("Executing:\n" + geneNet + " " + directory + "\n");
 			final Process learn = exec.exec(geneNet + " " + directory);
@@ -830,33 +802,34 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 					running.dispose();
 				}
 			});
-			String output = "";
-			InputStream reb = learn.getInputStream();
-			InputStreamReader isr = new InputStreamReader(reb);
-			BufferedReader br = new BufferedReader(isr);
-			FileWriter out = new FileWriter(new File(directory + separator + "run.log"));
-
-			while ((output=br.readLine())!=null) {
-			    // log.addText(output);
-			    out.write(output);
-			    out.write("\n");
+			try {
+				String output = "";
+				InputStream reb = learn.getInputStream();
+				InputStreamReader isr = new InputStreamReader(reb);
+				BufferedReader br = new BufferedReader(isr);
+				FileWriter out = new FileWriter(new File(directory + separator + "run.log"));
+				while ((output = br.readLine()) != null) {
+					// log.addText(output);
+					out.write(output);
+					out.write("\n");
+				}
+				out.close();
+			} catch (Exception e) {
 			}
-			out.close();
 			int exitValue = learn.waitFor();
 			if (exitValue == 143) {
 				JOptionPane.showMessageDialog(biosim.frame(), "Learning was"
 						+ " canceled by the user.", "Canceled Learning", JOptionPane.ERROR_MESSAGE);
 			} else {
-			    if (new File(directory + separator + "method.dot").exists()) {
-				exec.exec("dotty "
-					  + new File(directory + separator + "method.dot").getAbsolutePath());
-			    } else {
-				JOptionPane.showMessageDialog(biosim.frame(), "A dot file was not generated."
-							      + "\nPlease see the run.log file.", "Error", 
-							      JOptionPane.ERROR_MESSAGE);
-			    }
-			    running.setCursor(null);
-			    running.dispose();
+				if (new File(directory + separator + "method.dot").exists()) {
+					exec.exec("dotty "
+							+ new File(directory + separator + "method.dot").getAbsolutePath());
+				} else {
+					JOptionPane.showMessageDialog(biosim.frame(), "A dot file was not generated."
+							+ "\nPlease see the run.log file.", "Error", JOptionPane.ERROR_MESSAGE);
+				}
+				running.setCursor(null);
+				running.dispose();
 			}
 		} catch (Exception e1) {
 			JOptionPane.showMessageDialog(biosim.frame(), "Unable to learn from data.", "Error",
