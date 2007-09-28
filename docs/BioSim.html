@@ -865,6 +865,48 @@ s1 -> s2 [color="firebrick4",arrowhead=tee]<BR>
 }
 </p>
 
+More advanced behavior can be modeled by using extra fields.  The promoter field
+groups a set of species together.  The examples below shows how the promoter field works.
+In the circuit model below, species A represses the production of species B and C, independently.  If there
+was exactly 1 molecule of species A, it would only be able to represses production of species B or C, but not both.
+
+digraph G {<BR>
+s1 [shape=ellipse,color=black,label="A"];<BR>
+s2 [shape=ellipse,color=black,label="B"];<BR>
+s3 [shape=ellipse,color=black,label="C"];<BR>
+s1 -> s2 [color="blue4",arrowhead=tee]<BR>
+s1 -> s3 [color="blue4",arrowhead=tee]<BR>
+}
+</p>
+
+With the promoter field, one species A now represses the promoter "P1", which produces both species B and C.  This
+means that one molecule of species A will repress the production of both species B and C.  
+
+digraph G {<BR>
+s1 [shape=ellipse,color=black,label="A"];<BR>
+s2 [shape=ellipse,color=black,label="B"];<BR>
+s3 [shape=ellipse,color=black,label="C"];<BR>
+s1 -> s2 [color="blue4",arrowhead=tee,promoter="P1"]<BR>
+s1 -> s3 [color="blue4",arrowhead=tee,promoter="P1"]<BR>
+}
+</p>
+
+The example below shows how to model an AND gate.  The species A and B have
+the constant flag set to true.  This means that A and B have no production
+and degradation reactions.  The reactions contain a promoter label "P1".  This means
+that the species C can be activated by both s1 and s2.  Combined with the type flag
+of biochemical, this creates a biochemical reaction where species A and B combine together
+to form a complex to activate production of species C.
+
+digraph G {<BR>
+s1 [shape=ellipse,color=black,label="A",const=true];<BR>
+s2 [shape=ellipse,color=black,label="B",const=true];<BR>
+s3 [shape=ellipse,color=black,label="C"];<BR>
+s1 -> s3 [color="blue4",arrowhead=vee,promoter="P1",type=biochemical]<BR>
+s2 -> s3 [color="blue4",arrowhead=vee,promoter="P1",type=biochemical]<BR>
+}
+</p>
+
 <H1><A NAME="TSD"></A>Time Series Data Format</H1>
 The time series data format is composed of a parenthesized and 
 comma-separated set of time points.  Each time point is composed of a
