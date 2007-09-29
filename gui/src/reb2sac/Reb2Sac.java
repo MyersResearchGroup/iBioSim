@@ -1499,11 +1499,12 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		JPanel progBar = new JPanel();
 		JPanel button = new JPanel();
 		JPanel all = new JPanel(new BorderLayout());
-		JLabel label = new JLabel("Working...");
+		JLabel label = new JLabel("Progress");
 		JProgressBar progress = new JProgressBar();
 		progress.setStringPainted(true);
 		progress.setString("");
-		progress.setIndeterminate(true);
+		//progress.setIndeterminate(true);
+		progress.setValue(0);
 		text.add(label);
 		progBar.add(progress);
 		button.add(cancel);
@@ -1544,6 +1545,12 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				out.close();
 			} catch (Exception e) {
 			}
+		}
+		int steps;
+		if (ODE.isSelected()) {
+		  steps = (int)(timeLimit / printInterval);  
+		} else {
+		  steps = run;
 		}
 		runProgram.createProperties(timeLimit, printInterval, timeStep, root + separator + outDir,
 				rndSeed, run, termCond, intSpecies, printer_id, printer_track_quantity, sbmlFile
@@ -1601,7 +1608,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		int exit = runProgram.execute(sbmlFile, sbml, dot, xhtml, biomodelsim.frame(), ODE,
 				monteCarlo, sim, printer_id, printer_track_quantity, root + separator + outDir,
 				nary, 1, intSpecies, log, usingSSA, root + separator + simName + separator
-						+ "user-defined.dat", biomodelsim, simTab, root);
+					      + "user-defined.dat", biomodelsim, simTab, root, progress, steps);
 		if (nary.isSelected() && exit == 0) {
 			new Nary_Run(this, amountTerm, ge, gt, eq, lt, le, simulators, sbmlFile
 					.split(separator), sbmlFile, sbml, dot, xhtml, nary, ODE, monteCarlo,

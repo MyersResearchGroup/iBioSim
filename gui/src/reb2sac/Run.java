@@ -262,7 +262,7 @@ public class Run implements ActionListener {
 			Component component, JRadioButton ode, JRadioButton monteCarlo, String sim,
 			String printer_id, String printer_track_quantity, String outDir, JRadioButton nary,
 			int naryRun, String[] intSpecies, Log log, JCheckBox usingSSA, String ssaFile,
-			BioSim biomodelsim, JTabbedPane simTab, String root) {
+			   BioSim biomodelsim, JTabbedPane simTab, String root, JProgressBar progress, int steps) {
 		Runtime exec = Runtime.getRuntime();
 		int exitValue = 255;
 		try {
@@ -310,7 +310,12 @@ public class Run implements ActionListener {
 			InputStream reb = reb2sac.getInputStream();
 			InputStreamReader isr = new InputStreamReader(reb);
 			BufferedReader br = new BufferedReader(isr);
+			int count=0;
 			while ((output = br.readLine()) != null) {
+			  if (steps > 0) { 
+			    count++;
+			    progress.setValue(100*count/steps);
+			  }
 			  log.addText(output);
 			}
 			exitValue = reb2sac.waitFor();

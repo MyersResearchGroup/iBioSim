@@ -750,11 +750,11 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 			JPanel progBar = new JPanel();
 			JPanel button = new JPanel();
 			JPanel all = new JPanel(new BorderLayout());
-			JLabel label = new JLabel("Working...");
+			JLabel label = new JLabel("Progress");
 			JProgressBar progress = new JProgressBar();
 			progress.setStringPainted(true);
 			progress.setString("");
-			progress.setIndeterminate(true);
+			progress.setValue(0);
 			text.add(label);
 			progBar.add(progress);
 			button.add(cancel);
@@ -808,9 +808,12 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 				InputStreamReader isr = new InputStreamReader(reb);
 				BufferedReader br = new BufferedReader(isr);
 				FileWriter out = new FileWriter(new File(directory + separator + "run.log"));
+				int count=0;
 				while ((output = br.readLine()) != null) {
 				  if (output.startsWith("Gene = ",0)) {
-				    log.addText(output);
+				    //log.addText(output);
+				    count++;
+				    progress.setValue(100*count/species.size());
 				  }
 				  out.write(output);
 				  out.write("\n");
