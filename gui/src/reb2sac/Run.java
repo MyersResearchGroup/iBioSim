@@ -314,7 +314,7 @@ public class Run implements ActionListener {
 			while ((output = br.readLine()) != null) {
 			  if (steps > 0) { 
 			    count++;
-			    progress.setValue(100*count/steps);
+			    progress.setValue(count);
 			  }
 			  //log.addText(output);
 			}

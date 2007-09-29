@@ -751,9 +751,9 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 			JPanel button = new JPanel();
 			JPanel all = new JPanel(new BorderLayout());
 			JLabel label = new JLabel("Progress");
-			JProgressBar progress = new JProgressBar();
+			JProgressBar progress = new JProgressBar(0,species.size());
 			progress.setStringPainted(true);
-			progress.setString("");
+			//progress.setString("");
 			progress.setValue(0);
 			text.add(label);
 			progBar.add(progress);
@@ -813,7 +813,7 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 				  if (output.startsWith("Gene = ",0)) {
 				    //log.addText(output);
 				    count++;
-				    progress.setValue(100*count/species.size());
+				    progress.setValue(count);
 				  }
 				  out.write(output);
 				  out.write("\n");

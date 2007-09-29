@@ -1500,9 +1500,15 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		JPanel button = new JPanel();
 		JPanel all = new JPanel(new BorderLayout());
 		JLabel label = new JLabel("Progress");
-		JProgressBar progress = new JProgressBar();
+		int steps;
+		if (ODE.isSelected()) {
+		  steps = (int)(timeLimit / printInterval);  
+		} else {
+		  steps = run;
+		}
+		JProgressBar progress = new JProgressBar(0,steps);
 		progress.setStringPainted(true);
-		progress.setString("");
+		//progress.setString("");
 		//progress.setIndeterminate(true);
 		progress.setValue(0);
 		text.add(label);
@@ -1545,12 +1551,6 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				out.close();
 			} catch (Exception e) {
 			}
-		}
-		int steps;
-		if (ODE.isSelected()) {
-		  steps = (int)(timeLimit / printInterval);  
-		} else {
-		  steps = run;
 		}
 		runProgram.createProperties(timeLimit, printInterval, timeStep, root + separator + outDir,
 				rndSeed, run, termCond, intSpecies, printer_id, printer_track_quantity, sbmlFile
