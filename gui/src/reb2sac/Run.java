@@ -316,7 +316,7 @@ public class Run implements ActionListener {
 			    count++;
 			    progress.setValue(100*count/steps);
 			  }
-			  log.addText(output);
+			  //log.addText(output);
 			}
 			exitValue = reb2sac.waitFor();
 			long time2 = System.nanoTime();
