@@ -809,9 +809,11 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 				BufferedReader br = new BufferedReader(isr);
 				FileWriter out = new FileWriter(new File(directory + separator + "run.log"));
 				while ((output = br.readLine()) != null) {
-					// log.addText(output);
-					out.write(output);
-					out.write("\n");
+				  if (output.startsWith("Gene = ",0)) {
+				    log.addText(output);
+				  }
+				  out.write(output);
+				  out.write("\n");
 				}
 				out.close();
 			} catch (Exception e) {
