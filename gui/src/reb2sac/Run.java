@@ -306,6 +306,13 @@ public class Run implements ActionListener {
 				time1 = System.nanoTime();
 				reb2sac = exec.exec("reb2sac --target.encoding=" + sim + " " + filename);
 			}
+			String output = "";
+			InputStream reb = reb2sac.getInputStream();
+			InputStreamReader isr = new InputStreamReader(reb);
+			BufferedReader br = new BufferedReader(isr);
+			while ((output = br.readLine()) != null) {
+			  log.addText(output);
+			}
 			exitValue = reb2sac.waitFor();
 			long time2 = System.nanoTime();
 			long minutes;
@@ -356,9 +363,10 @@ public class Run implements ActionListener {
 				time = secs + secondLabel;
 			}
 			String error = "";
-			String output = "";
+			output = "";
+			/*
 			if (exitValue != 143) {
-				InputStream reb = reb2sac.getErrorStream();
+				reb = reb2sac.getErrorStream();
 				int read = reb.read();
 				while (read != -1) {
 					error += (char) read;
@@ -371,6 +379,7 @@ public class Run implements ActionListener {
 					read = reb.read();
 				}
 			}
+			*/
 			if (!output.equals("")) {
 				log.addText("Output:\n" + output + "\n");
 			}
