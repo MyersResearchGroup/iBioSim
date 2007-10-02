@@ -99,7 +99,7 @@ public class BioSim implements MouseListener, ActionListener {
 			}
 		};
 		frame.addWindowListener(w);
-
+		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		popup = new JPopupMenu();
 
 		// Creates a menu for the frame
@@ -268,7 +268,9 @@ public class BioSim implements MouseListener, ActionListener {
 				if (tab.getComponentAt(i).getName().equals("Simulate")
 						|| tab.getComponentAt(i).getName().equals("SBML Editor")
 						|| tab.getComponentAt(i).getName().contains("Graph")) {
-					save(i, false);
+					if (save(i, false) == 0) {
+						return;
+					}
 				} else if (!tab.getTitleAt(i).equals("Learn")) {
 					Object[] options = { "Yes", "No", "Cancel" };
 					int value = JOptionPane.showOptionDialog(frame,
@@ -277,6 +279,8 @@ public class BioSim implements MouseListener, ActionListener {
 							JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 					if (value == JOptionPane.YES_OPTION) {
 						save(i, true);
+					} else if (value == JOptionPane.CANCEL_OPTION) {
+						return;
 					}
 				}
 			}
@@ -506,6 +510,26 @@ public class BioSim implements MouseListener, ActionListener {
 		}
 		// if the new menu item is selected
 		else if (e.getSource() == newTstubd) {
+			for (int i = 0; i < tab.getTabCount(); i++) {
+				if (tab.getComponentAt(i).getName().equals("Simulate")
+						|| tab.getComponentAt(i).getName().equals("SBML Editor")
+						|| tab.getComponentAt(i).getName().contains("Graph")) {
+					if (save(i, false) == 0) {
+						return;
+					}
+				} else if (!tab.getTitleAt(i).equals("Learn")) {
+					Object[] options = { "Yes", "No", "Cancel" };
+					int value = JOptionPane.showOptionDialog(frame,
+							"Do you want to save changes to " + tab.getTitleAt(i) + "?",
+							"Save Changes", JOptionPane.YES_NO_CANCEL_OPTION,
+							JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+					if (value == JOptionPane.YES_OPTION) {
+						save(i, true);
+					} else if (value == JOptionPane.CANCEL_OPTION) {
+						return;
+					}
+				}
+			}
 			String filename = Buttons.browse(frame, null, null, JFileChooser.DIRECTORIES_ONLY,
 					"New");
 			if (!filename.trim().equals("")) {
@@ -543,6 +567,26 @@ public class BioSim implements MouseListener, ActionListener {
 		}
 		// if the open project menu item is selected
 		else if (e.getSource() == openProj) {
+			for (int i = 0; i < tab.getTabCount(); i++) {
+				if (tab.getComponentAt(i).getName().equals("Simulate")
+						|| tab.getComponentAt(i).getName().equals("SBML Editor")
+						|| tab.getComponentAt(i).getName().contains("Graph")) {
+					if (save(i, false) == 0) {
+						return;
+					}
+				} else if (!tab.getTitleAt(i).equals("Learn")) {
+					Object[] options = { "Yes", "No", "Cancel" };
+					int value = JOptionPane.showOptionDialog(frame,
+							"Do you want to save changes to " + tab.getTitleAt(i) + "?",
+							"Save Changes", JOptionPane.YES_NO_CANCEL_OPTION,
+							JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+					if (value == JOptionPane.YES_OPTION) {
+						save(i, true);
+					} else if (value == JOptionPane.CANCEL_OPTION) {
+						return;
+					}
+				}
+			}
 			File f;
 			if (root == null) {
 				f = null;
