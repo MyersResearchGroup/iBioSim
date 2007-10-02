@@ -262,7 +262,7 @@ public class Run implements ActionListener {
 			Component component, JRadioButton ode, JRadioButton monteCarlo, String sim,
 			String printer_id, String printer_track_quantity, String outDir, JRadioButton nary,
 			int naryRun, String[] intSpecies, Log log, JCheckBox usingSSA, String ssaFile,
-			   BioSim biomodelsim, JTabbedPane simTab, String root, JProgressBar progress, int steps) {
+			BioSim biomodelsim, JTabbedPane simTab, String root, JProgressBar progress, int steps) {
 		Runtime exec = Runtime.getRuntime();
 		int exitValue = 255;
 		try {
@@ -306,17 +306,23 @@ public class Run implements ActionListener {
 				time1 = System.nanoTime();
 				reb2sac = exec.exec("reb2sac --target.encoding=" + sim + " " + filename);
 			}
-			String output = "";
+			String error = "";
 			InputStream reb = reb2sac.getInputStream();
 			InputStreamReader isr = new InputStreamReader(reb);
 			BufferedReader br = new BufferedReader(isr);
-			int count=0;
-			while ((output = br.readLine()) != null) {
-			  if (steps > 0) { 
-			    count++;
-			    progress.setValue(count);
-			  }
-			  //log.addText(output);
+			int count = 0;
+			while (br.readLine() != null) {
+				if (steps > 0) {
+					count++;
+					progress.setValue(count);
+				}
+				// log.addText(output);
+			}
+			InputStream reb2 = reb2sac.getErrorStream();
+			int read = reb2.read();
+			while (read != -1) {
+				error += (char) read;
+				read = reb2.read();
 			}
 			exitValue = reb2sac.waitFor();
 			long time2 = System.nanoTime();
@@ -366,27 +372,6 @@ public class Run implements ActionListener {
 				time = minutes + minuteLabel + secs + secondLabel;
 			} else {
 				time = secs + secondLabel;
-			}
-			String error = "";
-			output = "";
-			/*
-			if (exitValue != 143) {
-				reb = reb2sac.getErrorStream();
-				int read = reb.read();
-				while (read != -1) {
-					error += (char) read;
-					read = reb.read();
-				}
-				reb = reb2sac.getInputStream();
-				read = reb.read();
-				while (read != -1) {
-					output += (char) read;
-					read = reb.read();
-				}
-			}
-			*/
-			if (!output.equals("")) {
-				log.addText("Output:\n" + output + "\n");
 			}
 			if (!error.equals("")) {
 				log.addText("Errors:\n" + error + "\n");

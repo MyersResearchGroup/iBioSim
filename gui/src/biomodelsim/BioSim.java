@@ -3,7 +3,7 @@ package biomodelsim.core.gui;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
-
+import java.util.Properties;
 import javax.swing.*;
 import javax.swing.plaf.basic.*;
 import org.sbml.libsbml.*;
@@ -389,7 +389,6 @@ public class BioSim implements MouseListener, ActionListener {
 				Runtime exec = Runtime.getRuntime();
 				Process graph = exec.exec("reb2sac --target.encoding=dot --out=" + out + " "
 						+ tree.getFile());
-				graph.waitFor();
 				String error = "";
 				String output = "";
 				InputStream reb = graph.getErrorStream();
@@ -410,6 +409,7 @@ public class BioSim implements MouseListener, ActionListener {
 				if (!error.equals("")) {
 					log.addText("Errors:\n" + error + "\n");
 				}
+				graph.waitFor();
 				log.addText("Executing:\ndotty " + out + "\n");
 				exec.exec("dotty " + out);
 				String remove;
@@ -455,7 +455,6 @@ public class BioSim implements MouseListener, ActionListener {
 				Runtime exec = Runtime.getRuntime();
 				Process browse = exec.exec("reb2sac --target.encoding=xhtml --out=" + out + " "
 						+ tree.getFile());
-				browse.waitFor();
 				String error = "";
 				String output = "";
 				InputStream reb = browse.getErrorStream();
@@ -476,6 +475,7 @@ public class BioSim implements MouseListener, ActionListener {
 				if (!error.equals("")) {
 					log.addText("Errors:\n" + error + "\n");
 				}
+				browse.waitFor();
 				log.addText("Executing:\ngnome-open " + out + "\n");
 				exec.exec("gnome-open " + out);
 				String remove;
@@ -850,7 +850,7 @@ public class BioSim implements MouseListener, ActionListener {
 			}
 		} else if (e.getActionCommand().equals("copy")) {
 			String modelID = null;
-			String copy = JOptionPane.showInputDialog(frame, "Enter A New Filename:", "Rename",
+			String copy = JOptionPane.showInputDialog(frame, "Enter A New Filename:", "Copy",
 					JOptionPane.PLAIN_MESSAGE);
 			if (copy != null) {
 				copy = copy.trim();
@@ -994,8 +994,18 @@ public class BioSim implements MouseListener, ActionListener {
 									}
 									in.close();
 									out.close();
+									Properties copyProps = new Properties();
+									copyProps.load(new FileInputStream(new File(root + separator
+											+ copy + separator + ss)));
+									copyProps.setProperty(
+											"simulation.time.series.species.level.file", root
+													+ separator + copy + separator
+													+ "user-defined.dat");
+									copyProps.store(new FileOutputStream(new File((root + separator
+											+ copy + separator + ss))), copy + " Properties");
 								} else if (ss.length() > 3
-										&& ss.substring(ss.length() - 4).equals(".tsd")) {
+										&& (ss.substring(ss.length() - 4).equals(".tsd") || ss
+												.substring(ss.length() - 4).equals(".dat"))) {
 									FileOutputStream out = new FileOutputStream(new File(root
 											+ separator + copy + separator + ss));
 									FileInputStream in = new FileInputStream(new File(tree
@@ -1012,11 +1022,11 @@ public class BioSim implements MouseListener, ActionListener {
 							}
 						} else {
 							new File(root + separator + copy).mkdir();
-							new FileWriter(new File(root + separator + copy + separator + ".lrn"))
-									.close();
 							String[] s = new File(tree.getFile()).list();
 							for (String ss : s) {
-								if (ss.length() > 3 && ss.substring(ss.length() - 4).equals(".tsd")) {
+								if (ss.length() > 3
+										&& (ss.substring(ss.length() - 4).equals(".tsd") || ss
+												.substring(ss.length() - 4).equals(".lrn"))) {
 									FileOutputStream out = new FileOutputStream(new File(root
 											+ separator + copy + separator + ss));
 									FileInputStream in = new FileInputStream(new File(tree
@@ -1133,6 +1143,26 @@ public class BioSim implements MouseListener, ActionListener {
 							byte[] output = doc.getBytes();
 							out.write(output);
 							out.close();
+						} else if (new File(root + separator + rename).isDirectory()
+								&& new File(root + separator + rename + separator + ".sim")
+										.exists()) {
+							String[] list = new File(root + separator + rename).list();
+							String props = null;
+							for (String ss : list) {
+								if (ss.length() > 10
+										&& ss.substring(ss.length() - 11).equals(".properties")) {
+									props = ss;
+								}
+							}
+							if (props != null) {
+								Properties copyProps = new Properties();
+								copyProps.load(new FileInputStream(new File(root + separator
+										+ rename + separator + props)));
+								copyProps.setProperty("simulation.time.series.species.level.file",
+										root + separator + rename + separator + "user-defined.dat");
+								copyProps.store(new FileOutputStream(new File((root + separator
+										+ rename + separator + props))), rename + " Properties");
+							}
 						}
 						for (int i = 0; i < tab.getTabCount(); i++) {
 							if (tab.getTitleAt(i)
@@ -1671,7 +1701,6 @@ public class BioSim implements MouseListener, ActionListener {
 				log.addText("Executing:\ndot2sbml.pl " + tree.getFile() + " " + sbmlFile + "\n");
 				Runtime exec = Runtime.getRuntime();
 				Process dot2sbml = exec.exec("dot2sbml.pl " + tree.getFile() + " " + sbmlFile);
-				dot2sbml.waitFor();
 				String error = "";
 				String output = "";
 				InputStream reb = dot2sbml.getErrorStream();
@@ -1692,6 +1721,7 @@ public class BioSim implements MouseListener, ActionListener {
 				if (!error.equals("")) {
 					log.addText("Errors:\n" + error + "\n");
 				}
+				dot2sbml.waitFor();
 				refreshTree();
 				JTabbedPane simTab = new JTabbedPane();
 				Reb2Sac reb2sac = new Reb2Sac(sbmlFile, root, this, simName.trim(), log, simTab,
@@ -2059,6 +2089,25 @@ public class BioSim implements MouseListener, ActionListener {
 					in.close();
 					out.close();
 					propertiesFile = root + separator + newSim + separator + ss;
+					Properties copyProps = new Properties();
+					copyProps.load(new FileInputStream(new File(root + separator + newSim
+							+ separator + ss)));
+					copyProps.setProperty("simulation.time.series.species.level.file", root
+							+ separator + newSim + separator + "user-defined.dat");
+					copyProps.store(new FileOutputStream(new File((root + separator + newSim
+							+ separator + ss))), newSim + " Properties");
+				} else if (ss.length() > 3 && ss.substring(ss.length() - 4).equals(".dat")) {
+					FileOutputStream out = new FileOutputStream(new File(root + separator + newSim
+							+ separator + ss));
+					FileInputStream in = new FileInputStream(new File(root + separator + oldSim
+							+ separator + ss));
+					int read = in.read();
+					while (read != -1) {
+						out.write(read);
+						read = in.read();
+					}
+					in.close();
+					out.close();
 				}
 			}
 			refreshTree();

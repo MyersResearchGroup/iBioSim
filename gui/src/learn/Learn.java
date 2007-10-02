@@ -344,18 +344,17 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 			log.addText("Executing:\n" + geneNet + " " + directory + "\n");
 			Runtime exec = Runtime.getRuntime();
 			Process learn = exec.exec(geneNet + " " + directory);
-			learn.waitFor();
 			String output = "";
 			InputStream reb = learn.getInputStream();
+			InputStreamReader isr = new InputStreamReader(reb);
+			BufferedReader br = new BufferedReader(isr);
 			FileWriter out = new FileWriter(new File(directory + separator + "run.log"));
-			int read = reb.read();
-			while (read != -1) {
-				output += (char) read;
-				out.write((char) read);
-				read = reb.read();
+			while ((output = br.readLine()) != null) {
+				out.write(output);
+				out.write("\n");
 			}
 			out.close();
-			log.addText("Output:\n" + output + "\n");
+			learn.waitFor();
 			Scanner f = new Scanner(new File(directory + separator + "levels.lvl"));
 			str = new ArrayList<String>();
 			while (f.hasNextLine()) {
@@ -751,9 +750,9 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 			JPanel button = new JPanel();
 			JPanel all = new JPanel(new BorderLayout());
 			JLabel label = new JLabel("Progress");
-			JProgressBar progress = new JProgressBar(0,species.size());
+			JProgressBar progress = new JProgressBar(0, species.size());
 			progress.setStringPainted(true);
-			//progress.setString("");
+			// progress.setString("");
 			progress.setValue(0);
 			text.add(label);
 			progBar.add(progress);
@@ -808,15 +807,15 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 				InputStreamReader isr = new InputStreamReader(reb);
 				BufferedReader br = new BufferedReader(isr);
 				FileWriter out = new FileWriter(new File(directory + separator + "run.log"));
-				int count=0;
+				int count = 0;
 				while ((output = br.readLine()) != null) {
-				  if (output.startsWith("Gene = ",0)) {
-				    //log.addText(output);
-				    count++;
-				    progress.setValue(count);
-				  }
-				  out.write(output);
-				  out.write("\n");
+					if (output.startsWith("Gene = ", 0)) {
+						// log.addText(output);
+						count++;
+						progress.setValue(count);
+					}
+					out.write(output);
+					out.write("\n");
 				}
 				out.close();
 			} catch (Exception e) {
