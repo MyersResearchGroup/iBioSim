@@ -2759,6 +2759,16 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						ArrayList<ArrayList<Double>> data;
 						if (allData.containsKey(g.getRunNumber() + " " + g.getDirectory())) {
 							data = allData.get(g.getRunNumber() + " " + g.getDirectory());
+							for (int i = 2; i < graphSpecies.size(); i++) {
+								String index = graphSpecies.get(i);
+								int j = i;
+								while ((j > 1)
+										&& graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
+									graphSpecies.set(j, graphSpecies.get(j - 1));
+									j = j - 1;
+								}
+								graphSpecies.set(j, index);
+							}
 						} else {
 							data = readData(outDir + separator + g.getRunNumber() + "."
 									+ printer_id.substring(0, printer_id.length() - 8), biomodelsim
@@ -2779,7 +2789,15 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							}
 							allData.put(g.getRunNumber() + " " + g.getDirectory(), data);
 						}
-						if (g.getNumber() + 1 < graphSpecies.size()) {
+						boolean set = false;
+						for (int i = 1; i < graphSpecies.size(); i++) {
+							String compare = g.getSpecies().replace('(', '~');
+							if (graphSpecies.get(i).equals(compare.split("~")[0].trim())) {
+								g.setNumber(i - 1);
+								set = true;
+							}
+						}
+						if (g.getNumber() + 1 < graphSpecies.size() && set) {
 							graphData.add(new XYSeries(g.getSpecies()));
 							if (data.size() != 0) {
 								for (int i = 0; i < (data.get(0)).size(); i++) {
@@ -2818,6 +2836,16 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						ArrayList<ArrayList<Double>> data;
 						if (allData.containsKey(g.getRunNumber() + " " + g.getDirectory())) {
 							data = allData.get(g.getRunNumber() + " " + g.getDirectory());
+							for (int i = 2; i < graphSpecies.size(); i++) {
+								String index = graphSpecies.get(i);
+								int j = i;
+								while ((j > 1)
+										&& graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
+									graphSpecies.set(j, graphSpecies.get(j - 1));
+									j = j - 1;
+								}
+								graphSpecies.set(j, index);
+							}
 						} else {
 							data = readData(outDir + separator + "run-1."
 									+ printer_id.substring(0, printer_id.length() - 8), biomodelsim
@@ -2838,7 +2866,15 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							}
 							allData.put(g.getRunNumber() + " " + g.getDirectory(), data);
 						}
-						if (g.getNumber() + 1 < graphSpecies.size()) {
+						boolean set = false;
+						for (int i = 1; i < graphSpecies.size(); i++) {
+							String compare = g.getSpecies().replace('(', '~');
+							if (graphSpecies.get(i).equals(compare.split("~")[0].trim())) {
+								g.setNumber(i - 1);
+								set = true;
+							}
+						}
+						if (g.getNumber() + 1 < graphSpecies.size() && set) {
 							graphData.add(new XYSeries(g.getSpecies()));
 							if (data.size() != 0) {
 								for (int i = 0; i < (data.get(0)).size(); i++) {
@@ -2875,6 +2911,16 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						ArrayList<ArrayList<Double>> data;
 						if (allData.containsKey(g.getRunNumber() + " " + g.getDirectory())) {
 							data = allData.get(g.getRunNumber() + " " + g.getDirectory());
+							for (int i = 2; i < graphSpecies.size(); i++) {
+								String index = graphSpecies.get(i);
+								int j = i;
+								while ((j > 1)
+										&& graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
+									graphSpecies.set(j, graphSpecies.get(j - 1));
+									j = j - 1;
+								}
+								graphSpecies.set(j, index);
+							}
 						} else {
 							data = readData(outDir + separator + g.getDirectory() + separator
 									+ g.getRunNumber() + "."
@@ -2896,7 +2942,15 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							}
 							allData.put(g.getRunNumber() + " " + g.getDirectory(), data);
 						}
-						if (g.getNumber() + 1 < graphSpecies.size()) {
+						boolean set = false;
+						for (int i = 1; i < graphSpecies.size(); i++) {
+							String compare = g.getSpecies().replace('(', '~');
+							if (graphSpecies.get(i).equals(compare.split("~")[0].trim())) {
+								g.setNumber(i - 1);
+								set = true;
+							}
+						}
+						if (g.getNumber() + 1 < graphSpecies.size() && set) {
 							graphData.add(new XYSeries(g.getSpecies()));
 							if (data.size() != 0) {
 								for (int i = 0; i < (data.get(0)).size(); i++) {
@@ -2936,6 +2990,16 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						ArrayList<ArrayList<Double>> data;
 						if (allData.containsKey(g.getRunNumber() + " " + g.getDirectory())) {
 							data = allData.get(g.getRunNumber() + " " + g.getDirectory());
+							for (int i = 2; i < graphSpecies.size(); i++) {
+								String index = graphSpecies.get(i);
+								int j = i;
+								while ((j > 1)
+										&& graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
+									graphSpecies.set(j, graphSpecies.get(j - 1));
+									j = j - 1;
+								}
+								graphSpecies.set(j, index);
+							}
 						} else {
 							data = readData(outDir + separator + g.getDirectory() + separator
 									+ "run-1." + printer_id.substring(0, printer_id.length() - 8),
@@ -2957,7 +3021,15 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							}
 							allData.put(g.getRunNumber() + " " + g.getDirectory(), data);
 						}
-						if (g.getNumber() + 1 < graphSpecies.size()) {
+						boolean set = false;
+						for (int i = 1; i < graphSpecies.size(); i++) {
+							String compare = g.getSpecies().replace('(', '~');
+							if (graphSpecies.get(i).equals(compare.split("~")[0].trim())) {
+								g.setNumber(i - 1);
+								set = true;
+							}
+						}
+						if (g.getNumber() + 1 < graphSpecies.size() && set) {
 							graphData.add(new XYSeries(g.getSpecies()));
 							if (data.size() != 0) {
 								for (int i = 0; i < (data.get(0)).size(); i++) {
@@ -3067,6 +3139,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			this.species = species;
 			this.number = number;
 			this.directory = directory;
+		}
+
+		public void setNumber(int number) {
+			this.number = number;
 		}
 
 		private void setSpecies(String species) {
