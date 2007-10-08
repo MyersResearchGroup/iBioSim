@@ -337,13 +337,15 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 			write.close();
 			String geneNet = "";
 			if (spacing.isSelected()) {
-				geneNet = "GeneNet --readLevels --lvl -binN";
+				geneNet = "GeneNet --readLevels --lvl -binN .";
 			} else {
-				geneNet = "GeneNet --readLevels --lvl";
+				geneNet = "GeneNet --readLevels --lvl .";
 			}
 			log.addText("Executing:\n" + geneNet + " " + directory + "\n");
 			Runtime exec = Runtime.getRuntime();
-			Process learn = exec.exec(geneNet + " " + directory);
+			File work = new File(directory);
+			Process learn = exec.exec(geneNet,null,work);
+			//Process learn = exec.exec(geneNet + " " + directory);
 			String output = "";
 			InputStream reb = learn.getInputStream();
 			InputStreamReader isr = new InputStreamReader(reb);
@@ -638,7 +640,7 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 
 	public void run() {
 		try {
-			String geneNet = "GeneNet";
+		        String geneNet = "GeneNet";
 			geneNet += " --debug " + debug.getSelectedItem();
 			try {
 				double activation = Double.parseDouble(this.activation.getText().trim());
@@ -784,7 +786,10 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 			running.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 			Runtime exec = Runtime.getRuntime();
 			log.addText("Executing:\n" + geneNet + " " + directory + "\n");
-			final Process learn = exec.exec(geneNet + " " + directory);
+			geneNet += " .";
+			File work = new File(directory);
+			final Process learn = exec.exec(geneNet,null,work);
+			//final Process learn = exec.exec(geneNet + " " + directory);
 			cancel.setActionCommand("Cancel");
 			cancel.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
@@ -826,8 +831,11 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 						+ " canceled by the user.", "Canceled Learning", JOptionPane.ERROR_MESSAGE);
 			} else {
 				if (new File(directory + separator + "method.dot").exists()) {
-					exec.exec("dotty "
-							+ new File(directory + separator + "method.dot").getAbsolutePath());
+				  String command = "dotty method.dot";
+				  
+				  log.addText("Executing:\n" + "dotty " + directory + separator  + "method.dot\n");
+			          exec.exec(command,null,work);
+				  //exec.exec("dotty " + new File(directory + separator + "method.dot").getAbsolutePath());
 				} else {
 					JOptionPane.showMessageDialog(biosim.frame(), "A dot file was not generated."
 							+ "\nPlease see the run.log file.", "Error", JOptionPane.ERROR_MESSAGE);
