@@ -109,7 +109,7 @@ public class Run implements ActionListener {
 			abs.setProperty("monte.carlo.simulation.out.dir", outDir);
 			if (sad.length() != 0) {
 				abs.setProperty("simulation.run.termination.decider", "sad");
-				abs.setProperty("computation.analysis.sad.path", sadFile.getAbsolutePath());
+				abs.setProperty("computation.analysis.sad.path", "."); //sadFile.getAbsolutePath());
 			}
 		}
 		if (usingSSA.isSelected() && selectedButtons.contains("monteCarlo")) {
@@ -267,7 +267,20 @@ public class Run implements ActionListener {
 		int exitValue = 255;
 		try {
 			long time1;
-			String out = filename;
+			String directory = "";
+			String theFile = "";
+			if (filename.lastIndexOf('/') >= 0) {
+			  directory = filename.substring(0,filename.lastIndexOf('/')+1);
+			  theFile = filename.substring(filename.lastIndexOf('/')+1);
+			}
+			if (filename.lastIndexOf('\\') >= 0) {
+			  directory = filename.substring(0,filename.lastIndexOf('\\')+1);
+			  theFile = filename.substring(filename.lastIndexOf('\\')+1);
+			}
+			log.addText("Dir:" + directory + " File:" + theFile + "\n");
+			File work = new File(directory);
+			String out = theFile;
+
 			if (out.length() > 4 && out.substring(out.length() - 5, out.length()).equals(".sbml")) {
 				out = out.substring(0, out.length() - 5);
 			} else if (out.length() > 3
@@ -277,34 +290,43 @@ public class Run implements ActionListener {
 			if (nary.isSelected() && naryRun == 1) {
 				log.addText("Executing:\nreb2sac --target.encoding=nary-level " + filename + "\n");
 				time1 = System.nanoTime();
-				reb2sac = exec.exec("reb2sac --target.encoding=nary-level " + filename);
+				reb2sac = exec.exec("reb2sac --target.encoding=nary-level " + theFile,null,work);
+				//reb2sac = exec.exec("reb2sac --target.encoding=nary-level " + filename);
 			} else if (sbml.isSelected()) {
 				log.addText("Executing:\nreb2sac --target.encoding=sbml --out=" + out + ".xml "
 						+ filename + "\n");
 				time1 = System.nanoTime();
 				reb2sac = exec.exec("reb2sac --target.encoding=sbml --out=" + out + ".xml "
-						+ filename);
+						    + theFile,null,work);
+				//reb2sac = exec.exec("reb2sac --target.encoding=sbml --out=" + out + ".xml "
+				//		+ filename);
 			} else if (dot.isSelected()) {
 				log.addText("Executing:\nreb2sac --target.encoding=dot --out=" + out + ".dot "
 						+ filename + "\n");
 				time1 = System.nanoTime();
 				reb2sac = exec.exec("reb2sac --target.encoding=dot --out=" + out + ".dot "
-						+ filename);
+						    + theFile,null,work);
+				//reb2sac = exec.exec("reb2sac --target.encoding=dot --out=" + out + ".dot "
+				//		+ filename);
 			} else if (xhtml.isSelected()) {
 				log.addText("Executing:\nreb2sac --target.encoding=xhtml --out=" + out + ".xhtml "
 						+ filename + "\n");
 				time1 = System.nanoTime();
 				reb2sac = exec.exec("reb2sac --target.encoding=xhtml --out=" + out + ".xhtml "
-						+ filename);
+						    + theFile,null,work);
+				//reb2sac = exec.exec("reb2sac --target.encoding=xhtml --out=" + out + ".xhtml "
+				//		+ filename);
 			} else if (usingSSA.isSelected()) {
 				log.addText("Executing:\nreb2sac --target.encoding=ssa-with-user-update "
 						+ filename + "\n");
 				time1 = System.nanoTime();
-				reb2sac = exec.exec("reb2sac --target.encoding=ssa-with-user-update " + filename);
+				reb2sac = exec.exec("reb2sac --target.encoding=ssa-with-user-update " + theFile,null,work);
+				//reb2sac = exec.exec("reb2sac --target.encoding=ssa-with-user-update " + filename);
 			} else {
 				log.addText("Executing:\nreb2sac --target.encoding=" + sim + " " + filename + "\n");
 				time1 = System.nanoTime();
-				reb2sac = exec.exec("reb2sac --target.encoding=" + sim + " " + filename);
+				reb2sac = exec.exec("reb2sac --target.encoding=" + sim + " " + theFile,null,work);
+				//reb2sac = exec.exec("reb2sac --target.encoding=" + sim + " " + filename);
 			}
 			String error = "";
 			InputStream reb = reb2sac.getInputStream();
@@ -395,14 +417,16 @@ public class Run implements ActionListener {
 			} else {
 				if (nary.isSelected() && naryRun == 1) {
 				} else if (sbml.isSelected()) {
-					biomodelsim.addTab("SBML Editor", new SBML_Editor(out + ".xml", null, log,
+					biomodelsim.addTab("SBML Editor", new SBML_Editor(directory + out + ".xml", null, log,
 							biomodelsim), null);
 				} else if (dot.isSelected()) {
-					log.addText("Executing:\ndotty " + out + ".dot" + "\n");
-					exec.exec("dotty " + out + ".dot");
+					log.addText("Executing:\ndotty " + directory + out + ".dot" + "\n");
+					exec.exec("dotty " + out + ".dot",null,work);
+					//exec.exec("dotty " + out + ".dot");
 				} else if (xhtml.isSelected()) {
-					log.addText("Executing:\ngnome-open " + out + ".xhtml" + "\n");
-					exec.exec("gnome-open " + out + ".xhtml");
+					log.addText("Executing:\ngnome-open " + directory + out + ".xhtml" + "\n");
+					exec.exec("gnome-open " + out + ".xhtml",null,work);
+					//exec.exec("gnome-open " + out + ".xhtml");
 				} else if (usingSSA.isSelected()) {
 					if (!printer_id.equals("null.printer")) {
 						for (int i = 0; i < simTab.getComponentCount(); i++) {

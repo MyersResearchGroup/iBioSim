@@ -1552,10 +1552,13 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			} catch (Exception e) {
 			}
 		}
-		runProgram.createProperties(timeLimit, printInterval, timeStep, root + separator + outDir,
+		runProgram.createProperties(timeLimit, printInterval, timeStep,".", 
+					    //root + separator + outDir,
 				rndSeed, run, termCond, intSpecies, printer_id, printer_track_quantity, sbmlFile
 						.split(separator), selectedButtons, this, sbmlFile, rap1, rap2, qss, con,
-				usingSSA, root + separator + simName + separator + "user-defined.dat", sadFile
+				usingSSA, 
+					    //root + separator + simName + separator + 
+					    "user-defined.dat", sadFile
 						.getText().trim(), new File(root + separator + outDir + separator + outDir
 						+ ".sad"));
 		int[] indecies = properties.getSelectedIndices();
@@ -2028,10 +2031,14 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			} catch (Exception e) {
 			}
 		}
-		runProgram.createProperties(timeLimit, printInterval, timeStep, outDir, rndSeed, run,
+		runProgram.createProperties(timeLimit, printInterval, timeStep, ".",
+					    //outDir, 
+					    rndSeed, run,
 				termCond, intSpecies, printer_id, printer_track_quantity,
 				sbmlFile.split(separator), selectedButtons, this, sbmlFile, rap1, rap2, qss, con,
-				usingSSA, root + separator + simName + separator + "user-defined.dat", sadFile
+				usingSSA, 
+					    //root + separator + simName + separator + 
+					    "user-defined.dat", sadFile
 						.getText().trim(), new File(root + separator + outDir + separator + outDir
 						+ ".sad"));
 		int[] indecies = properties.getSelectedIndices();
