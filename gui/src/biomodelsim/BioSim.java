@@ -359,16 +359,27 @@ public class BioSim implements MouseListener, ActionListener {
 		// if the edit popup menu is selected on a dot file
 		else if (e.getActionCommand().equals("dotEditor")) {
 			try {
-			  String theFile = tree.getFile();
+			  String directory = "";
+			  String theFile = "";
+			  String filename = tree.getFile();
+			  if (filename.lastIndexOf('/') >= 0) {
+			    directory = filename.substring(0,filename.lastIndexOf('/')+1);
+			    theFile = filename.substring(filename.lastIndexOf('/')+1);
+			  }
+			  if (filename.lastIndexOf('\\') >= 0) {
+			    directory = filename.substring(0,filename.lastIndexOf('\\')+1);
+			    theFile = filename.substring(filename.lastIndexOf('\\')+1);
+			  }
+			  File work = new File(directory);
 			  String command = "";
 			  if (System.getProperty("os.name").contentEquals("Linux")) {
 			    command = "emacs ";
 			  } else {
 			    command = "cmd /c start ";
 			  }
-			  log.addText("Executing:\n" + command + theFile + "\n");
+			  log.addText("Executing:\n" + command + directory + theFile + "\n");
 			  Runtime exec = Runtime.getRuntime();
-			  exec.exec(command + theFile);
+			  exec.exec(command + theFile,null,work);
 			} catch (Exception e1) {
 				JOptionPane.showMessageDialog(frame, "Unable to open dot file editor.", "Error",
 						JOptionPane.ERROR_MESSAGE);
@@ -399,19 +410,31 @@ public class BioSim implements MouseListener, ActionListener {
 						new String[0], new String[0], "tsd.printer", "amount", tree.getFile()
 								.split(separator), "none", frame, tree.getFile(), 0.1, 0.1, 0.1,
 						15, dummy, "", "", null);
-				String out = tree.getFile();
+				String filename = tree.getFile();
+				String directory = "";
+				String theFile = "";
+				if (filename.lastIndexOf('/') >= 0) {
+				  directory = filename.substring(0,filename.lastIndexOf('/')+1);
+				  theFile = filename.substring(filename.lastIndexOf('/')+1);
+				}
+				if (filename.lastIndexOf('\\') >= 0) {
+				  directory = filename.substring(0,filename.lastIndexOf('\\')+1);
+				  theFile = filename.substring(filename.lastIndexOf('\\')+1);
+				}
+				File work = new File(directory);
+				String out = theFile;
 				if (out.length() > 4
 						&& out.substring(out.length() - 5, out.length()).equals(".sbml")) {
-					out = out.substring(0, out.length() - 5) + ".dot";
+				  out = out.substring(0, out.length() - 5);
 				} else if (out.length() > 3
 						&& out.substring(out.length() - 4, out.length()).equals(".xml")) {
-					out = out.substring(0, out.length() - 4) + ".dot";
+				  out = out.substring(0, out.length() - 4);
 				}
-				log.addText("Executing:\nreb2sac --target.encoding=dot --out=" + out + " "
-						+ tree.getFile() + "\n");
+				log.addText("Executing:\nreb2sac --target.encoding=dot --out=" + directory + out + ".viz "
+						+ directory + theFile + "\n");
 				Runtime exec = Runtime.getRuntime();
-				Process graph = exec.exec("reb2sac --target.encoding=dot --out=" + out + " "
-						+ tree.getFile());
+				Process graph = exec.exec("reb2sac --target.encoding=dot --out=" + out + ".viz "
+							  + theFile,null,work);
 				String error = "";
 				String output = "";
 				InputStream reb = graph.getErrorStream();
@@ -433,8 +456,8 @@ public class BioSim implements MouseListener, ActionListener {
 					log.addText("Errors:\n" + error + "\n");
 				}
 				graph.waitFor();
-				log.addText("Executing:\ndotty " + out + "\n");
-				exec.exec("dotty " + out);
+				log.addText("Executing:\ndotty " + directory + out + ".viz\n");
+				exec.exec("dotty " + out + ".viz",null,work);
 				String remove;
 				if (tree.getFile().substring(tree.getFile().length() - 4).equals("sbml")) {
 					remove = tree.getFile().substring(0, tree.getFile().length() - 4)
@@ -465,19 +488,31 @@ public class BioSim implements MouseListener, ActionListener {
 						new String[0], new String[0], "tsd.printer", "amount", tree.getFile()
 								.split(separator), "none", frame, tree.getFile(), 0.1, 0.1, 0.1,
 						15, dummy, "", "", null);
-				String out = tree.getFile();
+				String filename = tree.getFile();
+				String directory = "";
+				String theFile = "";
+				if (filename.lastIndexOf('/') >= 0) {
+				  directory = filename.substring(0,filename.lastIndexOf('/')+1);
+				  theFile = filename.substring(filename.lastIndexOf('/')+1);
+				}
+				if (filename.lastIndexOf('\\') >= 0) {
+				  directory = filename.substring(0,filename.lastIndexOf('\\')+1);
+				  theFile = filename.substring(filename.lastIndexOf('\\')+1);
+				}
+				File work = new File(directory);
+				String out = theFile;
 				if (out.length() > 4
 						&& out.substring(out.length() - 5, out.length()).equals(".sbml")) {
-					out = out.substring(0, out.length() - 5) + ".xhtml";
+				  out = out.substring(0, out.length() - 5);
 				} else if (out.length() > 3
 						&& out.substring(out.length() - 4, out.length()).equals(".xml")) {
-					out = out.substring(0, out.length() - 4) + ".xhtml";
+				  out = out.substring(0, out.length() - 4);
 				}
-				log.addText("Executing:\nreb2sac --target.encoding=xhtml --out=" + out + " "
+				log.addText("Executing:\nreb2sac --target.encoding=xhtml --out=" + directory + out + ".xhtml "
 						+ tree.getFile() + "\n");
 				Runtime exec = Runtime.getRuntime();
-				Process browse = exec.exec("reb2sac --target.encoding=xhtml --out=" + out + " "
-						+ tree.getFile());
+				Process browse = exec.exec("reb2sac --target.encoding=xhtml --out=" + out + ".xhtml "
+							   + theFile,null,work);
 				String error = "";
 				String output = "";
 				InputStream reb = browse.getErrorStream();
@@ -506,8 +541,8 @@ public class BioSim implements MouseListener, ActionListener {
 				} else {
 				  command = "cmd /c start ";
 				}
-				log.addText("Executing:\n" + command + out + "\n");
-				exec.exec(command + out);
+				log.addText("Executing:\n" + command + directory + out + ".xhtml\n");
+				exec.exec(command + out + ".xhtml",null,work);
 				String remove;
 				if (tree.getFile().substring(tree.getFile().length() - 4).equals("sbml")) {
 					remove = tree.getFile().substring(0, tree.getFile().length() - 4)
@@ -525,10 +560,21 @@ public class BioSim implements MouseListener, ActionListener {
 		// if the graph dot popup menu is selected
 		else if (e.getActionCommand().equals("graphDot")) {
 			try {
-				log.addText("Executing:\ndotty " + new File(tree.getFile()).getAbsolutePath()
-						+ "\n");
+			        String filename = tree.getFile();
+				String directory = "";
+				String theFile = "";
+				if (filename.lastIndexOf('/') >= 0) {
+				  directory = filename.substring(0,filename.lastIndexOf('/')+1);
+				  theFile = filename.substring(filename.lastIndexOf('/')+1);
+				}
+				if (filename.lastIndexOf('\\') >= 0) {
+				  directory = filename.substring(0,filename.lastIndexOf('\\')+1);
+				  theFile = filename.substring(filename.lastIndexOf('\\')+1);
+				}
+				File work = new File(directory);
+				log.addText("Executing:\ndotty " + directory + theFile + "\n");
 				Runtime exec = Runtime.getRuntime();
-				exec.exec("dotty " + new File(tree.getFile()).getAbsolutePath());
+				exec.exec("dotty " + theFile,null,work);
 			} catch (Exception e1) {
 				JOptionPane.showMessageDialog(frame, "Unable to view this dot file.", "Error",
 						JOptionPane.ERROR_MESSAGE);
@@ -1570,10 +1616,21 @@ public class BioSim implements MouseListener, ActionListener {
 				} else if (tree.getFile().length() >= 4
 						&& tree.getFile().substring(tree.getFile().length() - 4).equals(".dot")) {
 					try {
-						log.addText("Executing:\ndotty "
-								+ new File(tree.getFile()).getAbsolutePath() + "\n");
-						Runtime exec = Runtime.getRuntime();
-						exec.exec("dotty " + new File(tree.getFile()).getAbsolutePath());
+					  String filename = tree.getFile();
+					  String directory = "";
+					  String theFile = "";
+					  if (filename.lastIndexOf('/') >= 0) {
+					    directory = filename.substring(0,filename.lastIndexOf('/')+1);
+					    theFile = filename.substring(filename.lastIndexOf('/')+1);
+					  }
+					  if (filename.lastIndexOf('\\') >= 0) {
+					    directory = filename.substring(0,filename.lastIndexOf('\\')+1);
+					    theFile = filename.substring(filename.lastIndexOf('\\')+1);
+					  }
+					  File work = new File(directory);
+					  log.addText("Executing:\ndotty " + directory + theFile + "\n");
+					  Runtime exec = Runtime.getRuntime();
+					  exec.exec("dotty " + theFile,null,work);
 					} catch (Exception e1) {
 						JOptionPane.showMessageDialog(frame, "Unable to view this dot file.",
 								"Error", JOptionPane.ERROR_MESSAGE);
