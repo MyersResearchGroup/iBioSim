@@ -277,7 +277,6 @@ public class Run implements ActionListener {
 			  directory = filename.substring(0,filename.lastIndexOf('\\')+1);
 			  theFile = filename.substring(filename.lastIndexOf('\\')+1);
 			}
-			log.addText("Dir:" + directory + " File:" + theFile + "\n");
 			File work = new File(directory);
 			String out = theFile;
 
@@ -291,42 +290,33 @@ public class Run implements ActionListener {
 				log.addText("Executing:\nreb2sac --target.encoding=nary-level " + filename + "\n");
 				time1 = System.nanoTime();
 				reb2sac = exec.exec("reb2sac --target.encoding=nary-level " + theFile,null,work);
-				//reb2sac = exec.exec("reb2sac --target.encoding=nary-level " + filename);
 			} else if (sbml.isSelected()) {
 				log.addText("Executing:\nreb2sac --target.encoding=sbml --out=" + out + ".xml "
 						+ filename + "\n");
 				time1 = System.nanoTime();
 				reb2sac = exec.exec("reb2sac --target.encoding=sbml --out=" + out + ".xml "
 						    + theFile,null,work);
-				//reb2sac = exec.exec("reb2sac --target.encoding=sbml --out=" + out + ".xml "
-				//		+ filename);
 			} else if (dot.isSelected()) {
 				log.addText("Executing:\nreb2sac --target.encoding=dot --out=" + out + ".dot "
 						+ filename + "\n");
 				time1 = System.nanoTime();
 				reb2sac = exec.exec("reb2sac --target.encoding=dot --out=" + out + ".dot "
 						    + theFile,null,work);
-				//reb2sac = exec.exec("reb2sac --target.encoding=dot --out=" + out + ".dot "
-				//		+ filename);
 			} else if (xhtml.isSelected()) {
 				log.addText("Executing:\nreb2sac --target.encoding=xhtml --out=" + out + ".xhtml "
 						+ filename + "\n");
 				time1 = System.nanoTime();
 				reb2sac = exec.exec("reb2sac --target.encoding=xhtml --out=" + out + ".xhtml "
 						    + theFile,null,work);
-				//reb2sac = exec.exec("reb2sac --target.encoding=xhtml --out=" + out + ".xhtml "
-				//		+ filename);
 			} else if (usingSSA.isSelected()) {
 				log.addText("Executing:\nreb2sac --target.encoding=ssa-with-user-update "
 						+ filename + "\n");
 				time1 = System.nanoTime();
 				reb2sac = exec.exec("reb2sac --target.encoding=ssa-with-user-update " + theFile,null,work);
-				//reb2sac = exec.exec("reb2sac --target.encoding=ssa-with-user-update " + filename);
 			} else {
 				log.addText("Executing:\nreb2sac --target.encoding=" + sim + " " + filename + "\n");
 				time1 = System.nanoTime();
 				reb2sac = exec.exec("reb2sac --target.encoding=" + sim + " " + theFile,null,work);
-				//reb2sac = exec.exec("reb2sac --target.encoding=" + sim + " " + filename);
 			}
 			String error = "";
 			InputStream reb = reb2sac.getInputStream();
@@ -422,11 +412,14 @@ public class Run implements ActionListener {
 				} else if (dot.isSelected()) {
 					log.addText("Executing:\ndotty " + directory + out + ".dot" + "\n");
 					exec.exec("dotty " + out + ".dot",null,work);
-					//exec.exec("dotty " + out + ".dot");
 				} else if (xhtml.isSelected()) {
-					log.addText("Executing:\ngnome-open " + directory + out + ".xhtml" + "\n");
-					exec.exec("gnome-open " + out + ".xhtml",null,work);
-					//exec.exec("gnome-open " + out + ".xhtml");
+				        if (System.getProperty("os.name").contentEquals("Linux")) {
+					  log.addText("Executing:\ngnome-open " + directory + out + ".xhtml" + "\n");
+					  exec.exec("gnome-open " + out + ".xhtml",null,work); 
+					} else {
+					  log.addText("Executing:\ncmd /c start " + directory + out + ".xhtml" + "\n");
+					  exec.exec("cmd /c start " + out + ".xhtml",null,work); 
+					}
 				} else if (usingSSA.isSelected()) {
 					if (!printer_id.equals("null.printer")) {
 						for (int i = 0; i < simTab.getComponentCount(); i++) {

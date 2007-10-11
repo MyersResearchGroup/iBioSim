@@ -255,8 +255,20 @@ public class BioSim implements MouseListener, ActionListener {
 			f.setVisible(true);
 		} else if (e.getSource() == manual) {
 			try {
-				Runtime exec = Runtime.getRuntime();
-				exec.exec("gnome-open " + System.getenv("BIOSIM") + "/docs/BioSim.html");
+			  String directory = "";
+			  String theFile = "BioSim.html";
+			  String command = "";
+			  if (System.getProperty("os.name").contentEquals("Linux")) {
+			    directory = System.getenv("BIOSIM") + "/docs/";
+			    command = "gnome-open ";
+			  } else {
+			    directory = System.getenv("BIOSIM") + "\\docs\\";
+			    command = "cmd /c start ";
+			  }
+			  File work = new File(directory);
+			  log.addText("Executing:\n" + command + directory + theFile + "\n");
+			  Runtime exec = Runtime.getRuntime();
+			  exec.exec(command + theFile,null,work);
 			} catch (IOException e1) {
 				JOptionPane.showMessageDialog(frame, "Unable to open manual.", "Error",
 						JOptionPane.ERROR_MESSAGE);
@@ -347,9 +359,16 @@ public class BioSim implements MouseListener, ActionListener {
 		// if the edit popup menu is selected on a dot file
 		else if (e.getActionCommand().equals("dotEditor")) {
 			try {
-				log.addText("Executing:\nemacs " + tree.getFile() + "\n");
-				Runtime exec = Runtime.getRuntime();
-				exec.exec("emacs " + tree.getFile());
+			  String theFile = tree.getFile();
+			  String command = "";
+			  if (System.getProperty("os.name").contentEquals("Linux")) {
+			    command = "emacs ";
+			  } else {
+			    command = "cmd /c start ";
+			  }
+			  log.addText("Executing:\n" + command + theFile + "\n");
+			  Runtime exec = Runtime.getRuntime();
+			  exec.exec(command + theFile);
 			} catch (Exception e1) {
 				JOptionPane.showMessageDialog(frame, "Unable to open dot file editor.", "Error",
 						JOptionPane.ERROR_MESSAGE);
@@ -480,8 +499,15 @@ public class BioSim implements MouseListener, ActionListener {
 					log.addText("Errors:\n" + error + "\n");
 				}
 				browse.waitFor();
-				log.addText("Executing:\ngnome-open " + out + "\n");
-				exec.exec("gnome-open " + out);
+
+				String command = "";
+				if (System.getProperty("os.name").contentEquals("Linux")) {
+				  command = "gnome-open ";
+				} else {
+				  command = "cmd /c start ";
+				}
+				log.addText("Executing:\n" + command + out + "\n");
+				exec.exec(command + out);
 				String remove;
 				if (tree.getFile().substring(tree.getFile().length() - 4).equals("sbml")) {
 					remove = tree.getFile().substring(0, tree.getFile().length() - 4)
