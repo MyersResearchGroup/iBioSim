@@ -345,7 +345,6 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 			Runtime exec = Runtime.getRuntime();
 			File work = new File(directory);
 			Process learn = exec.exec(geneNet,null,work);
-			//Process learn = exec.exec(geneNet + " " + directory);
 			String output = "";
 			InputStream reb = learn.getInputStream();
 			InputStreamReader isr = new InputStreamReader(reb);
@@ -789,7 +788,6 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 			geneNet += " .";
 			File work = new File(directory);
 			final Process learn = exec.exec(geneNet,null,work);
-			//final Process learn = exec.exec(geneNet + " " + directory);
 			cancel.setActionCommand("Cancel");
 			cancel.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
@@ -835,7 +833,6 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 				  
 				  log.addText("Executing:\n" + "dotty " + directory + separator  + "method.dot\n");
 			          exec.exec(command,null,work);
-				  //exec.exec("dotty " + new File(directory + separator + "method.dot").getAbsolutePath());
 				} else {
 					JOptionPane.showMessageDialog(biosim.frame(), "A dot file was not generated."
 							+ "\nPlease see the run.log file.", "Error", JOptionPane.ERROR_MESSAGE);
