@@ -828,10 +828,10 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 				JOptionPane.showMessageDialog(biosim.frame(), "Learning was"
 						+ " canceled by the user.", "Canceled Learning", JOptionPane.ERROR_MESSAGE);
 			} else {
-				if (new File(directory + separator + "method.dot").exists()) {
-				  String command = "dotty method.dot";
+				if (new File(directory + separator + "method.ckt").exists()) {
+				  String command = "dotty method.ckt";
 				  
-				  log.addText("Executing:\n" + "dotty " + directory + separator  + "method.dot\n");
+				  log.addText("Executing:\n" + "dotty " + directory + separator  + "method.ckt\n");
 			          exec.exec(command,null,work);
 				} else {
 					JOptionPane.showMessageDialog(biosim.frame(), "A dot file was not generated."

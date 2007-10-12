@@ -310,7 +310,7 @@ public class BioSim implements MouseListener, ActionListener {
 				simulate(true);
 			} catch (Exception e1) {
 				JOptionPane.showMessageDialog(frame,
-						"You must select a valid dot file for simulation.", "Error",
+						"You must select a valid ckt file for simulation.", "Error",
 						JOptionPane.ERROR_MESSAGE);
 			}
 		}
@@ -381,7 +381,7 @@ public class BioSim implements MouseListener, ActionListener {
 			  Runtime exec = Runtime.getRuntime();
 			  exec.exec(command + theFile,null,work);
 			} catch (Exception e1) {
-				JOptionPane.showMessageDialog(frame, "Unable to open dot file editor.", "Error",
+				JOptionPane.showMessageDialog(frame, "Unable to open ckt file editor.", "Error",
 						JOptionPane.ERROR_MESSAGE);
 			}
 		}
@@ -576,7 +576,7 @@ public class BioSim implements MouseListener, ActionListener {
 				Runtime exec = Runtime.getRuntime();
 				exec.exec("dotty " + theFile,null,work);
 			} catch (Exception e1) {
-				JOptionPane.showMessageDialog(frame, "Unable to view this dot file.", "Error",
+				JOptionPane.showMessageDialog(frame, "Unable to view this ckt file.", "Error",
 						JOptionPane.ERROR_MESSAGE);
 			}
 		}
@@ -797,9 +797,9 @@ public class BioSim implements MouseListener, ActionListener {
 						JFileChooser.FILES_ONLY, "Open");
 				if (filename.length() > 3
 						&& !filename.substring(filename.length() - 4, filename.length()).equals(
-								".dot")) {
+								".ckt")) {
 					JOptionPane.showMessageDialog(frame,
-							"You must select a valid dot file to import.", "Error",
+							"You must select a valid ckt file to import.", "Error",
 							JOptionPane.ERROR_MESSAGE);
 					return;
 				} else if (!filename.equals("")) {
@@ -915,8 +915,8 @@ public class BioSim implements MouseListener, ActionListener {
 								end = "background.sbml";
 							} else if (tree.getFile().length() > 3
 									&& tree.getFile().substring(tree.getFile().length() - 4)
-											.equals(".dot")) {
-								end = "background.dot";
+											.equals(".ckt")) {
+								end = "background.ckt";
 							}
 							FileOutputStream out = new FileOutputStream(new File(root + separator
 									+ lrnName + separator + end));
@@ -995,13 +995,13 @@ public class BioSim implements MouseListener, ActionListener {
 							}
 						}
 					} else if (tree.getFile().length() >= 4
-							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".dot")) {
+							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".ckt")) {
 						if (copy.length() > 3) {
-							if (!copy.substring(copy.length() - 4).equals(".dot")) {
-								copy += ".dot";
+							if (!copy.substring(copy.length() - 4).equals(".ckt")) {
+								copy += ".ckt";
 							}
 						} else {
-							copy += ".dot";
+							copy += ".ckt";
 						}
 					} else if (tree.getFile().length() >= 4
 							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".grf")) {
@@ -1059,7 +1059,7 @@ public class BioSim implements MouseListener, ActionListener {
 						out.write(output);
 						out.close();
 					} else if (tree.getFile().length() >= 4
-							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".dot")
+							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".ckt")
 							|| tree.getFile().substring(tree.getFile().length() - 4).equals(".grf")) {
 						FileOutputStream out = new FileOutputStream(new File(root + separator
 								+ copy));
@@ -1196,13 +1196,13 @@ public class BioSim implements MouseListener, ActionListener {
 							}
 						}
 					} else if (tree.getFile().length() >= 4
-							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".dot")) {
+							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".ckt")) {
 						if (rename.length() > 3) {
-							if (!rename.substring(rename.length() - 4).equals(".dot")) {
-								rename += ".dot";
+							if (!rename.substring(rename.length() - 4).equals(".ckt")) {
+								rename += ".ckt";
 							}
 						} else {
-							rename += ".dot";
+							rename += ".ckt";
 						}
 					} else if (tree.getFile().length() >= 4
 							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".grf")) {
@@ -1515,7 +1515,7 @@ public class BioSim implements MouseListener, ActionListener {
 				popup.add(rename);
 				popup.add(delete);
 			} else if (tree.getFile().length() > 3
-					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".dot")) {
+					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".ckt")) {
 				JMenuItem create = new JMenuItem("Create Analysis View");
 				create.addActionListener(this);
 				create.setActionCommand("createSim");
@@ -1614,7 +1614,7 @@ public class BioSim implements MouseListener, ActionListener {
 								"Error", JOptionPane.ERROR_MESSAGE);
 					}
 				} else if (tree.getFile().length() >= 4
-						&& tree.getFile().substring(tree.getFile().length() - 4).equals(".dot")) {
+						&& tree.getFile().substring(tree.getFile().length() - 4).equals(".ckt")) {
 					try {
 					  String filename = tree.getFile();
 					  String directory = "";
@@ -1632,7 +1632,7 @@ public class BioSim implements MouseListener, ActionListener {
 					  Runtime exec = Runtime.getRuntime();
 					  exec.exec("dotty " + theFile,null,work);
 					} catch (Exception e1) {
-						JOptionPane.showMessageDialog(frame, "Unable to view this dot file.",
+						JOptionPane.showMessageDialog(frame, "Unable to view this ckt file.",
 								"Error", JOptionPane.ERROR_MESSAGE);
 					}
 				} else if (tree.getFile().length() >= 4
@@ -1701,7 +1701,7 @@ public class BioSim implements MouseListener, ActionListener {
 				popup.add(rename);
 				popup.add(delete);
 			} else if (tree.getFile().length() > 3
-					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".dot")) {
+					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".ckt")) {
 				JMenuItem create = new JMenuItem("Create Analysis View");
 				create.addActionListener(this);
 				create.setActionCommand("createSim");
