@@ -1525,7 +1525,7 @@ public class BioSim implements MouseListener, ActionListener {
 				JMenuItem edit = new JMenuItem("Edit");
 				edit.addActionListener(this);
 				edit.setActionCommand("dotEditor");
-				JMenuItem graph = new JMenuItem("View Graph");
+				JMenuItem graph = new JMenuItem("View Circuit");
 				graph.addActionListener(this);
 				graph.setActionCommand("graphDot");
 				JMenuItem delete = new JMenuItem("Delete");
