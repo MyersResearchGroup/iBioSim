@@ -1,3 +1,5 @@
+Note: You should install graphviz in order to view reaction networks.
+
 Set the environment variable BIOSIM to the directory where you have installed
 the program.  For example,
 
