@@ -109,7 +109,7 @@ public class Run implements ActionListener {
 			abs.setProperty("monte.carlo.simulation.out.dir", outDir);
 			if (sad.length() != 0) {
 				abs.setProperty("simulation.run.termination.decider", "sad");
-				abs.setProperty("computation.analysis.sad.path", "."); //sadFile.getAbsolutePath());
+				abs.setProperty("computation.analysis.sad.path", sadFile.getName());
 			}
 		}
 		if (usingSSA.isSelected() && selectedButtons.contains("monteCarlo")) {

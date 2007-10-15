@@ -2392,7 +2392,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					runs.setText(load.getProperty("monte.carlo.simulation.runs"));
 					if (load.containsKey("simulation.run.termination.decider")
 							&& load.getProperty("simulation.run.termination.decider").equals("sad")) {
-						FileInputStream input = new FileInputStream(new File(load
+					  // This needs to be a full path
+						FileInputStream input = new FileInputStream(new File(root + separator + simName + separator + load
 								.getProperty("computation.analysis.sad.path")));
 						int read = input.read();
 						while (read != -1) {
@@ -2453,6 +2454,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					simulatorsLabel.setEnabled(false);
 					String getData = "";
 					try {
+					  // Need to make this b
 						Scanner scan = new Scanner(new File(load
 								.getProperty("simulation.time.series.species.level.file")));
 						while (scan.hasNextLine()) {
@@ -2472,7 +2474,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					} else {
 						ssaList = new Object[0];
 					}
-					ssa.setListData(ssaList);
+					//ssa.setListData(ssaList);
 					ssa.setEnabled(true);
 					timeLabel.setEnabled(true);
 					time.setEnabled(true);
