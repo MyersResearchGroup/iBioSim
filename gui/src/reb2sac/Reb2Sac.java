@@ -1559,8 +1559,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				usingSSA, 
 					    //root + separator + simName + separator + 
 					    "user-defined.dat", sadFile
-						.getText().trim(), new File(root + separator + outDir + separator + outDir
-						+ ".sad"));
+						.getText().trim(), new File(root + separator + outDir + separator + outDir + ".sad"));
 		int[] indecies = properties.getSelectedIndices();
 		props = Buttons.getList(props, properties);
 		properties.setSelectedIndices(indecies);
@@ -1871,7 +1870,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-		outDir = root + separator + simName;
+		outDir = simName;
+		//		outDir = root + separator + simName;
 		try {
 			if (seed.isEnabled()) {
 				rndSeed = Long.parseLong(seed.getText().trim());
@@ -2039,8 +2039,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				usingSSA, 
 					    //root + separator + simName + separator + 
 					    "user-defined.dat", sadFile
-						.getText().trim(), new File(root + separator + outDir + separator + outDir
-						+ ".sad"));
+						.getText().trim(), new File(root + separator + outDir + separator + outDir + ".sad"));
 		int[] indecies = properties.getSelectedIndices();
 		props = Buttons.getList(props, properties);
 		properties.setSelectedIndices(indecies);
