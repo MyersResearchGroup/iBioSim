@@ -319,22 +319,25 @@ public class Run implements ActionListener {
 				reb2sac = exec.exec("reb2sac --target.encoding=" + sim + " " + theFile, null, work);
 			}
 			String error = "";
-			InputStream reb = reb2sac.getInputStream();
-			InputStreamReader isr = new InputStreamReader(reb);
-			BufferedReader br = new BufferedReader(isr);
-			int count = 0;
-			while (br.readLine() != null) {
-				if (steps > 0) {
-					count++;
-					progress.setValue(count);
+			try {
+				InputStream reb = reb2sac.getInputStream();
+				InputStreamReader isr = new InputStreamReader(reb);
+				BufferedReader br = new BufferedReader(isr);
+				int count = 0;
+				while (br.readLine() != null) {
+					if (steps > 0) {
+						count++;
+						progress.setValue(count);
+					}
+					// log.addText(output);
 				}
-				// log.addText(output);
-			}
-			InputStream reb2 = reb2sac.getErrorStream();
-			int read = reb2.read();
-			while (read != -1) {
-				error += (char) read;
-				read = reb2.read();
+				InputStream reb2 = reb2sac.getErrorStream();
+				int read = reb2.read();
+				while (read != -1) {
+					error += (char) read;
+					read = reb2.read();
+				}
+			} catch (Exception e) {
 			}
 			exitValue = reb2sac.waitFor();
 			long time2 = System.nanoTime();
