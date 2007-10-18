@@ -344,7 +344,7 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 			log.addText("Executing:\n" + geneNet + " " + directory + "\n");
 			Runtime exec = Runtime.getRuntime();
 			File work = new File(directory);
-			Process learn = exec.exec(geneNet,null,work);
+			Process learn = exec.exec(geneNet, null, work);
 			String output = "";
 			InputStream reb = learn.getInputStream();
 			InputStreamReader isr = new InputStreamReader(reb);
@@ -639,7 +639,7 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 
 	public void run() {
 		try {
-		        String geneNet = "GeneNet";
+			String geneNet = "GeneNet";
 			geneNet += " --debug " + debug.getSelectedItem();
 			try {
 				double activation = Double.parseDouble(this.activation.getText().trim());
@@ -787,7 +787,7 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 			log.addText("Executing:\n" + geneNet + " " + directory + "\n");
 			geneNet += " .";
 			File work = new File(directory);
-			final Process learn = exec.exec(geneNet,null,work);
+			final Process learn = exec.exec(geneNet, null, work);
 			cancel.setActionCommand("Cancel");
 			cancel.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
@@ -829,10 +829,10 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 						+ " canceled by the user.", "Canceled Learning", JOptionPane.ERROR_MESSAGE);
 			} else {
 				if (new File(directory + separator + "method.ckt").exists()) {
-				  String command = "dotty method.ckt";
-				  
-				  log.addText("Executing:\n" + "dotty " + directory + separator  + "method.ckt\n");
-			          exec.exec(command,null,work);
+					String command = "dotty method.ckt";
+
+					log.addText("Executing:\n" + "dotty " + directory + separator + "method.ckt\n");
+					exec.exec(command, null, work);
 				} else {
 					JOptionPane.showMessageDialog(biosim.frame(), "A dot file was not generated."
 							+ "\nPlease see the run.log file.", "Error", JOptionPane.ERROR_MESSAGE);

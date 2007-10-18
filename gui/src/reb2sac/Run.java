@@ -270,16 +270,15 @@ public class Run implements ActionListener {
 			String directory = "";
 			String theFile = "";
 			if (filename.lastIndexOf('/') >= 0) {
-			  directory = filename.substring(0,filename.lastIndexOf('/')+1);
-			  theFile = filename.substring(filename.lastIndexOf('/')+1);
+				directory = filename.substring(0, filename.lastIndexOf('/') + 1);
+				theFile = filename.substring(filename.lastIndexOf('/') + 1);
 			}
 			if (filename.lastIndexOf('\\') >= 0) {
-			  directory = filename.substring(0,filename.lastIndexOf('\\')+1);
-			  theFile = filename.substring(filename.lastIndexOf('\\')+1);
+				directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
+				theFile = filename.substring(filename.lastIndexOf('\\') + 1);
 			}
 			File work = new File(directory);
 			String out = theFile;
-
 			if (out.length() > 4 && out.substring(out.length() - 5, out.length()).equals(".sbml")) {
 				out = out.substring(0, out.length() - 5);
 			} else if (out.length() > 3
@@ -289,34 +288,35 @@ public class Run implements ActionListener {
 			if (nary.isSelected() && naryRun == 1) {
 				log.addText("Executing:\nreb2sac --target.encoding=nary-level " + filename + "\n");
 				time1 = System.nanoTime();
-				reb2sac = exec.exec("reb2sac --target.encoding=nary-level " + theFile,null,work);
+				reb2sac = exec.exec("reb2sac --target.encoding=nary-level " + theFile, null, work);
 			} else if (sbml.isSelected()) {
 				log.addText("Executing:\nreb2sac --target.encoding=sbml --out=" + out + ".xml "
 						+ filename + "\n");
 				time1 = System.nanoTime();
 				reb2sac = exec.exec("reb2sac --target.encoding=sbml --out=" + out + ".xml "
-						    + theFile,null,work);
+						+ theFile, null, work);
 			} else if (dot.isSelected()) {
 				log.addText("Executing:\nreb2sac --target.encoding=dot --out=" + out + ".dot "
 						+ filename + "\n");
 				time1 = System.nanoTime();
 				reb2sac = exec.exec("reb2sac --target.encoding=dot --out=" + out + ".dot "
-						    + theFile,null,work);
+						+ theFile, null, work);
 			} else if (xhtml.isSelected()) {
 				log.addText("Executing:\nreb2sac --target.encoding=xhtml --out=" + out + ".xhtml "
 						+ filename + "\n");
 				time1 = System.nanoTime();
 				reb2sac = exec.exec("reb2sac --target.encoding=xhtml --out=" + out + ".xhtml "
-						    + theFile,null,work);
+						+ theFile, null, work);
 			} else if (usingSSA.isSelected()) {
 				log.addText("Executing:\nreb2sac --target.encoding=ssa-with-user-update "
 						+ filename + "\n");
 				time1 = System.nanoTime();
-				reb2sac = exec.exec("reb2sac --target.encoding=ssa-with-user-update " + theFile,null,work);
+				reb2sac = exec.exec("reb2sac --target.encoding=ssa-with-user-update " + theFile,
+						null, work);
 			} else {
 				log.addText("Executing:\nreb2sac --target.encoding=" + sim + " " + filename + "\n");
 				time1 = System.nanoTime();
-				reb2sac = exec.exec("reb2sac --target.encoding=" + sim + " " + theFile,null,work);
+				reb2sac = exec.exec("reb2sac --target.encoding=" + sim + " " + theFile, null, work);
 			}
 			String error = "";
 			InputStream reb = reb2sac.getInputStream();
@@ -407,18 +407,20 @@ public class Run implements ActionListener {
 			} else {
 				if (nary.isSelected() && naryRun == 1) {
 				} else if (sbml.isSelected()) {
-					biomodelsim.addTab("SBML Editor", new SBML_Editor(directory + out + ".xml", null, log,
-							biomodelsim), null);
+					biomodelsim.addTab("SBML Editor", new SBML_Editor(directory + out + ".xml",
+							null, log, biomodelsim), null);
 				} else if (dot.isSelected()) {
 					log.addText("Executing:\ndotty " + directory + out + ".dot" + "\n");
-					exec.exec("dotty " + out + ".dot",null,work);
+					exec.exec("dotty " + out + ".dot", null, work);
 				} else if (xhtml.isSelected()) {
-				        if (System.getProperty("os.name").contentEquals("Linux")) {
-					  log.addText("Executing:\ngnome-open " + directory + out + ".xhtml" + "\n");
-					  exec.exec("gnome-open " + out + ".xhtml",null,work); 
+					if (System.getProperty("os.name").contentEquals("Linux")) {
+						log.addText("Executing:\ngnome-open " + directory + out + ".xhtml" + "\n");
+						exec.exec("gnome-open " + out + ".xhtml", null, work);
 					} else {
-					  log.addText("Executing:\ncmd /c start " + directory + out + ".xhtml" + "\n");
-					  exec.exec("cmd /c start " + out + ".xhtml",null,work); 
+						log
+								.addText("Executing:\ncmd /c start " + directory + out + ".xhtml"
+										+ "\n");
+						exec.exec("cmd /c start " + out + ".xhtml", null, work);
 					}
 				} else if (usingSSA.isSelected()) {
 					if (!printer_id.equals("null.printer")) {
