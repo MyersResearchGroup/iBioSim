@@ -2059,20 +2059,8 @@ public class BioSim implements MouseListener, ActionListener {
 							}
 							if (end.equals("sbml")) {
 								getAFile = filename + separator + list[i];
-								if (openFile.equals("")) {
-									openFile = getAFile.replace("sbml", "properties");
-									if (!(new File(openFile).exists())) {
-										openFile = null;
-									}
-								}
-							} else if (end.equals(".xml")) {
+							} else if (end.equals(".xml") && getAFile.equals("")) {
 								getAFile = filename + separator + list[i];
-								if (openFile.equals("")) {
-									openFile = getAFile.replace("xml", "properties");
-									if (!(new File(openFile).exists())) {
-										openFile = null;
-									}
-								}
 							} else if (end.equals("ties") && list[i].contains("properties")) {
 								openFile = filename + separator + list[i];
 							} else if (end.equals(".tsd") || end.equals(".dat")

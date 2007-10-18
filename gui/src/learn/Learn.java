@@ -345,16 +345,19 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 			Runtime exec = Runtime.getRuntime();
 			File work = new File(directory);
 			Process learn = exec.exec(geneNet, null, work);
-			String output = "";
-			InputStream reb = learn.getInputStream();
-			InputStreamReader isr = new InputStreamReader(reb);
-			BufferedReader br = new BufferedReader(isr);
-			FileWriter out = new FileWriter(new File(directory + separator + "run.log"));
-			while ((output = br.readLine()) != null) {
-				out.write(output);
-				out.write("\n");
+			try {
+				String output = "";
+				InputStream reb = learn.getInputStream();
+				InputStreamReader isr = new InputStreamReader(reb);
+				BufferedReader br = new BufferedReader(isr);
+				FileWriter out = new FileWriter(new File(directory + separator + "run.log"));
+				while ((output = br.readLine()) != null) {
+					out.write(output);
+					out.write("\n");
+				}
+				out.close();
+			} catch (Exception e) {
 			}
-			out.close();
 			learn.waitFor();
 			Scanner f = new Scanner(new File(directory + separator + "levels.lvl"));
 			str = new ArrayList<String>();
@@ -830,7 +833,6 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 			} else {
 				if (new File(directory + separator + "method.ckt").exists()) {
 					String command = "dotty method.ckt";
-
 					log.addText("Executing:\n" + "dotty " + directory + separator + "method.ckt\n");
 					exec.exec(command, null, work);
 				} else {
