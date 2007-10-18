@@ -795,6 +795,16 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				scrollpane.getViewport().add(tree);
 				final JPanel specPanel = new JPanel();
 				final JFrame f = new JFrame("Edit Graph");
+				boolean stop = false;
+				int selectionRow = 1;
+				for (int i = 1; i < tree.getRowCount(); i++) {
+					tree.setSelectionRow(i);
+					if (selected.equals(lastSelected)) {
+						stop = true;
+						selectionRow = i;
+						break;
+					}
+				}
 				tree.addTreeSelectionListener(new TreeSelectionListener() {
 					public void valueChanged(TreeSelectionEvent e) {
 						DefaultMutableTreeNode node = (DefaultMutableTreeNode) e.getPath()
@@ -964,16 +974,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						}
 					}
 				});
-				boolean stop = false;
-				for (int i = 1; i < tree.getRowCount(); i++) {
-					tree.setSelectionRow(i);
-					if (selected.equals(lastSelected)) {
-						stop = true;
-						break;
-					}
-				}
 				if (!stop) {
 					tree.setSelectionRow(1);
+				} else {
+					tree.setSelectionRow(selectionRow);
 				}
 				JScrollPane scroll = new JScrollPane();
 				scroll.setPreferredSize(new Dimension(1050, 500));

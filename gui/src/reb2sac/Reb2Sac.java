@@ -1552,14 +1552,14 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			} catch (Exception e) {
 			}
 		}
-		runProgram.createProperties(timeLimit, printInterval, timeStep,".", 
-					    //root + separator + outDir,
+		runProgram.createProperties(timeLimit, printInterval, timeStep, ".",
+				// root + separator + outDir,
 				rndSeed, run, termCond, intSpecies, printer_id, printer_track_quantity, sbmlFile
 						.split(separator), selectedButtons, this, sbmlFile, rap1, rap2, qss, con,
-				usingSSA, 
-					    //root + separator + simName + separator + 
-					    "user-defined.dat", sadFile
-						.getText().trim(), new File(root + separator + outDir + separator + outDir + ".sad"));
+				usingSSA,
+				// root + separator + simName + separator +
+				"user-defined.dat", sadFile.getText().trim(), new File(root + separator + outDir
+						+ separator + outDir + ".sad"));
 		int[] indecies = properties.getSelectedIndices();
 		props = Buttons.getList(props, properties);
 		properties.setSelectedIndices(indecies);
@@ -1871,7 +1871,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			return;
 		}
 		outDir = simName;
-		//		outDir = root + separator + simName;
+		// outDir = root + separator + simName;
 		try {
 			if (seed.isEnabled()) {
 				rndSeed = Long.parseLong(seed.getText().trim());
@@ -2032,14 +2032,13 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			}
 		}
 		runProgram.createProperties(timeLimit, printInterval, timeStep, ".",
-					    //outDir, 
-					    rndSeed, run,
-				termCond, intSpecies, printer_id, printer_track_quantity,
-				sbmlFile.split(separator), selectedButtons, this, sbmlFile, rap1, rap2, qss, con,
-				usingSSA, 
-					    //root + separator + simName + separator + 
-					    "user-defined.dat", sadFile
-						.getText().trim(), new File(root + separator + outDir + separator + outDir + ".sad"));
+				// outDir,
+				rndSeed, run, termCond, intSpecies, printer_id, printer_track_quantity, sbmlFile
+						.split(separator), selectedButtons, this, sbmlFile, rap1, rap2, qss, con,
+				usingSSA,
+				// root + separator + simName + separator +
+				"user-defined.dat", sadFile.getText().trim(), new File(root + separator + outDir
+						+ separator + outDir + ".sad"));
 		int[] indecies = properties.getSelectedIndices();
 		props = Buttons.getList(props, properties);
 		properties.setSelectedIndices(indecies);
@@ -2391,9 +2390,9 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					runs.setText(load.getProperty("monte.carlo.simulation.runs"));
 					if (load.containsKey("simulation.run.termination.decider")
 							&& load.getProperty("simulation.run.termination.decider").equals("sad")) {
-					  // CHECK: This needs to be a full path
-						FileInputStream input = new FileInputStream(new File(root + separator + simName + separator + load
-								.getProperty("computation.analysis.sad.path")));
+						FileInputStream input = new FileInputStream(new File(root + separator
+								+ simName + separator
+								+ load.getProperty("computation.analysis.sad.path")));
 						int read = input.read();
 						while (read != -1) {
 							sadFile.append("" + (char) read);
@@ -2453,9 +2452,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					simulatorsLabel.setEnabled(false);
 					String getData = "";
 					try {
-					  // CHECK: This needs to be a full path
-					  Scanner scan = new Scanner(new File(root + separator + simName + separator + load
-								.getProperty("simulation.time.series.species.level.file")));
+						Scanner scan = new Scanner(new File(root + separator + simName + separator
+								+ load.getProperty("simulation.time.series.species.level.file")));
 						while (scan.hasNextLine()) {
 							String get = scan.nextLine();
 							if (get.split(" ").length == 3) {
@@ -2473,7 +2471,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					} else {
 						ssaList = new Object[0];
 					}
-					//ssa.setListData(ssaList);
+					// ssa.setListData(ssaList);
 					ssa.setEnabled(true);
 					timeLabel.setEnabled(true);
 					time.setEnabled(true);
