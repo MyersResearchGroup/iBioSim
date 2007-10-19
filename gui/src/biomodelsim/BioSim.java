@@ -1355,7 +1355,7 @@ public class BioSim implements MouseListener, ActionListener {
 				}
 			}
 			count++;
-		} while (!dir.delete() || count != 100);
+		} while (!dir.delete() && count != 100);
 		if (count == 100) {
 			JOptionPane.showMessageDialog(frame, "Unable to delete.", "Error",
 					JOptionPane.ERROR_MESSAGE);
