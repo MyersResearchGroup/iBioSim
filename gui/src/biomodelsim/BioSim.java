@@ -1343,6 +1343,7 @@ public class BioSim implements MouseListener, ActionListener {
 	}
 
 	private void deleteDir(File dir) {
+		int count = 0;
 		do {
 			File[] list = dir.listFiles();
 			System.gc();
@@ -1353,7 +1354,12 @@ public class BioSim implements MouseListener, ActionListener {
 					list[i].delete();
 				}
 			}
-		} while (!dir.delete());
+			count++;
+		} while (!dir.delete() || count != 100);
+		if (count == 100) {
+			JOptionPane.showMessageDialog(frame, "Unable to delete.", "Error",
+					JOptionPane.ERROR_MESSAGE);
+		}
 	}
 
 	/**
