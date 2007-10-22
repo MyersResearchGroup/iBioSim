@@ -415,7 +415,7 @@ public class BioSim implements MouseListener, ActionListener {
 				Run run = new Run();
 				JCheckBox dummy = new JCheckBox();
 				dummy.setSelected(false);
-				run.createProperties(0, 1, 1, tree.getFile()
+				run.createProperties(0, 1, 1, 1, tree.getFile()
 						.substring(
 								0,
 								tree.getFile().length()
@@ -494,7 +494,7 @@ public class BioSim implements MouseListener, ActionListener {
 				Run run = new Run();
 				JCheckBox dummy = new JCheckBox();
 				dummy.setSelected(false);
-				run.createProperties(0, 1, 1, tree.getFile()
+				run.createProperties(0, 1, 1, 1, tree.getFile()
 						.substring(
 								0,
 								tree.getFile().length()
