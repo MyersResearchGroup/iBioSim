@@ -59,12 +59,12 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 	/*
 	 * Text fields for changes in the abstraction
 	 */
-	private JTextField limit, interval, step, seed, runs;
+        private JTextField limit, interval, step, absErr, seed, runs;
 
 	/*
 	 * Labels for the changes in the abstraction
 	 */
-	private JLabel limitLabel, intervalLabel, stepLabel, seedLabel, runsLabel;
+        private JLabel limitLabel, intervalLabel, stepLabel, errorLabel, seedLabel, runsLabel;
 
 	/*
 	 * Description of selected simulator
@@ -179,6 +179,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		interval = new JTextField("1.0", 15);
 		step = new JTextField("1.0", 15);
 		step.setEnabled(false);
+		absErr = new JTextField("1.0E-9", 15);
+		absErr.setEnabled(true);
 		int next = 1;
 		String filename = "sim" + next;
 		while (new File(root + separator + filename).exists()) {
@@ -192,11 +194,12 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		limitLabel = new JLabel("Time Limit:");
 		intervalLabel = new JLabel("Print Interval:");
 		stepLabel = new JLabel("Time Step:");
+		errorLabel = new JLabel("Absolute Error:");
 		seedLabel = new JLabel("Random Seed:");
 		runsLabel = new JLabel("Runs:");
 		JPanel inputHolder = new JPanel(new BorderLayout());
-		JPanel inputHolderLeft = new JPanel(new GridLayout(7, 1));
-		JPanel inputHolderRight = new JPanel(new GridLayout(7, 1));
+		JPanel inputHolderLeft = new JPanel(new GridLayout(8, 1));
+		JPanel inputHolderRight = new JPanel(new GridLayout(8, 1));
 		inputHolderLeft.add(simulatorsLabel);
 		inputHolderRight.add(simulators);
 		inputHolderLeft.add(explanation);
@@ -207,6 +210,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		inputHolderRight.add(interval);
 		inputHolderLeft.add(stepLabel);
 		inputHolderRight.add(step);
+		inputHolderLeft.add(errorLabel);
+		inputHolderRight.add(absErr);
 		inputHolderLeft.add(seedLabel);
 		inputHolderRight.add(seed);
 		inputHolderLeft.add(runsLabel);
@@ -289,6 +294,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		seedLabel.setEnabled(false);
 		runs.setEnabled(false);
 		runsLabel.setEnabled(false);
+		stepLabel.setEnabled(false);
+		errorLabel.setEnabled(true);
 		JPanel odeMonteAndMarkovPanel = new JPanel();
 		odeMonteAndMarkovPanel.add(choose2);
 		odeMonteAndMarkovPanel.add(ODE);
@@ -670,7 +677,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		// if the none Radio Button is selected
 		if (e.getSource() == none) {
 			Button_Enabling.enableNoneOrAbs(ODE, monteCarlo, markov, seed, seedLabel, runs,
-					runsLabel, stepLabel, step, limitLabel, limit, intervalLabel, interval,
+					runsLabel, stepLabel, step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval,
 					simulators, simulatorsLabel, explanation, description, none, intSpecies,
 					species, spLabel, speciesLabel, addIntSpecies, removeIntSpecies, rapid1,
 					rapid2, qssa, maxCon, rapidLabel1, rapidLabel2, qssaLabel, maxConLabel,
@@ -695,7 +702,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		// if the abstraction Radio Button is selected
 		else if (e.getSource() == abstraction) {
 			Button_Enabling.enableNoneOrAbs(ODE, monteCarlo, markov, seed, seedLabel, runs,
-					runsLabel, stepLabel, step, limitLabel, limit, intervalLabel, interval,
+					runsLabel, stepLabel, step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval,
 					simulators, simulatorsLabel, explanation, description, none, intSpecies,
 					species, spLabel, speciesLabel, addIntSpecies, removeIntSpecies, rapid1,
 					rapid2, qssa, maxCon, rapidLabel1, rapidLabel2, qssaLabel, maxConLabel,
@@ -720,7 +727,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		// if the nary Radio Button is selected
 		else if (e.getSource() == nary) {
 			Button_Enabling.enableNary(ODE, monteCarlo, markov, seed, seedLabel, runs, runsLabel,
-					stepLabel, step, limitLabel, limit, intervalLabel, interval, simulators,
+					stepLabel, step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval, simulators,
 					simulatorsLabel, explanation, description, intSpecies, species, spLabel,
 					speciesLabel, addIntSpecies, removeIntSpecies, rapid1, rapid2, qssa, maxCon,
 					rapidLabel1, rapidLabel2, qssaLabel, maxConLabel, usingSSA, clearIntSpecies);
@@ -744,7 +751,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		// if the ODE Radio Button is selected
 		else if (e.getSource() == ODE) {
 			Button_Enabling.enableODE(seed, seedLabel, runs, runsLabel, stepLabel, step,
-					limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel,
+					errorLabel, absErr, limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel,
 					explanation, description, usingSSA);
 			overwrite.setEnabled(false);
 			append.setEnabled(false);
@@ -753,7 +760,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		// if the monteCarlo Radio Button is selected
 		else if (e.getSource() == monteCarlo) {
 			Button_Enabling.enableMonteCarlo(seed, seedLabel, runs, runsLabel, stepLabel, step,
-					limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel,
+					errorLabel, absErr, limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel,
 					explanation, description, usingSSA);
 			if (runFiles) {
 				overwrite.setEnabled(true);
@@ -775,7 +782,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		// if the markov Radio Button is selected
 		else if (e.getSource() == markov) {
 			Button_Enabling.enableMarkov(seed, seedLabel, runs, runsLabel, stepLabel, step,
-					limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel,
+					errorLabel, absErr, limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel,
 					explanation, description, usingSSA);
 			overwrite.setEnabled(false);
 			append.setEnabled(false);
@@ -784,7 +791,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		// if the sbml Radio Button is selected
 		else if (e.getSource() == sbml) {
 			Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel, stepLabel,
-					step, limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel,
+					step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel,
 					explanation, description);
 			overwrite.setEnabled(false);
 			append.setEnabled(false);
@@ -793,7 +800,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		// if the dot Radio Button is selected
 		else if (e.getSource() == dot) {
 			Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel, stepLabel,
-					step, limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel,
+					step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel,
 					explanation, description);
 			overwrite.setEnabled(false);
 			append.setEnabled(false);
@@ -802,7 +809,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		// if the xhtml Radio Button is selected
 		else if (e.getSource() == xhtml) {
 			Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel, stepLabel,
-					step, limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel,
+					step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel,
 					explanation, description);
 			overwrite.setEnabled(false);
 			append.setEnabled(false);
@@ -843,26 +850,38 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			} else if (simulators.getSelectedItem().equals("euler")) {
 				step.setEnabled(true);
 				stepLabel.setEnabled(true);
+				absErr.setEnabled(false);
+				errorLabel.setEnabled(false);
 				description.setText("Euler method");
 			} else if (simulators.getSelectedItem().equals("gear1")) {
 				step.setEnabled(false);
 				stepLabel.setEnabled(false);
+				absErr.setEnabled(true);
+				errorLabel.setEnabled(true);
 				description.setText("Gear method, M=1");
 			} else if (simulators.getSelectedItem().equals("gear2")) {
 				step.setEnabled(false);
 				stepLabel.setEnabled(false);
+				absErr.setEnabled(true);
+				errorLabel.setEnabled(true);
 				description.setText("Gear method, M=2");
 			} else if (simulators.getSelectedItem().equals("rk4imp")) {
 				step.setEnabled(false);
 				stepLabel.setEnabled(false);
+				absErr.setEnabled(true);
+				errorLabel.setEnabled(true);
 				description.setText("Implicit 4th order Runge-Kutta at Gaussian points");
 			} else if (simulators.getSelectedItem().equals("rk8pd")) {
 				step.setEnabled(false);
 				stepLabel.setEnabled(false);
+				absErr.setEnabled(true);
+				errorLabel.setEnabled(true);
 				description.setText("Embedded Runge-Kutta Prince-Dormand (8,9) method");
 			} else if (simulators.getSelectedItem().equals("rkf45")) {
 				step.setEnabled(false);
 				stepLabel.setEnabled(false);
+				absErr.setEnabled(true);
+				errorLabel.setEnabled(true);
 				description.setText("Embedded Runge-Kutta-Fehlberg (4, 5) method");
 			} else if (simulators.getSelectedItem().equals("gillespie")) {
 				description.setText("Gillespie's direct method");
@@ -905,7 +924,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					ODE.setSelected(false);
 					monteCarlo.setSelected(true);
 					Button_Enabling.enableMonteCarlo(seed, seedLabel, runs, runsLabel, stepLabel,
-							step, limitLabel, limit, intervalLabel, interval, simulators,
+							step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval, simulators,
 							simulatorsLabel, explanation, description, usingSSA);
 					if (runFiles) {
 						overwrite.setEnabled(true);
@@ -929,7 +948,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					markov.setSelected(false);
 					monteCarlo.setSelected(true);
 					Button_Enabling.enableMonteCarlo(seed, seedLabel, runs, runsLabel, stepLabel,
-							step, limitLabel, limit, intervalLabel, interval, simulators,
+							step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval, simulators,
 							simulatorsLabel, explanation, description, usingSSA);
 					if (runFiles) {
 						overwrite.setEnabled(true);
@@ -1275,6 +1294,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		double timeLimit = 100.0;
 		double printInterval = 1.0;
 		double timeStep = 1.0;
+		double absError = 1.0e-9;
 		String outDir = "";
 		long rndSeed = 314159;
 		int run = 1;
@@ -1297,6 +1317,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		try {
 			if (step.isEnabled()) {
 				timeStep = Double.parseDouble(step.getText().trim());
+			} else if (absErr.isEnabled()) {
+			        absError = Double.parseDouble(absErr.getText().trim());
 			}
 		} catch (Exception e1) {
 			JOptionPane.showMessageDialog(biomodelsim.frame(),
@@ -1552,7 +1574,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			} catch (Exception e) {
 			}
 		}
-		runProgram.createProperties(timeLimit, printInterval, timeStep, ".",
+		runProgram.createProperties(timeLimit, printInterval, timeStep, absError, ".",
 				// root + separator + outDir,
 				rndSeed, run, termCond, intSpecies, printer_id, printer_track_quantity, sbmlFile
 						.split(separator), selectedButtons, this, sbmlFile, rap1, rap2, qss, con,
@@ -1841,6 +1863,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		double timeLimit = 100.0;
 		double printInterval = 1.0;
 		double timeStep = 1.0;
+		double absError = 1.0e-9;
 		String outDir = ".";
 		long rndSeed = 314159;
 		int run = 1;
@@ -1863,6 +1886,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		try {
 			if (step.isEnabled()) {
 				timeStep = Double.parseDouble(step.getText().trim());
+			} else if (absErr.isEnabled()) {
+				absError = Double.parseDouble(absErr.getText().trim());
 			}
 		} catch (Exception e1) {
 			JOptionPane.showMessageDialog(biomodelsim.frame(),
@@ -2031,7 +2056,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			} catch (Exception e) {
 			}
 		}
-		runProgram.createProperties(timeLimit, printInterval, timeStep, ".",
+		runProgram.createProperties(timeLimit, printInterval, timeStep, absError, ".",
 				// outDir,
 				rndSeed, run, termCond, intSpecies, printer_id, printer_track_quantity, sbmlFile
 						.split(separator), selectedButtons, this, sbmlFile, rap1, rap2, qss, con,
@@ -2242,6 +2267,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					} else if (key.equals("ode.simulation.time.limit")) {
 					} else if (key.equals("ode.simulation.print.interval")) {
 					} else if (key.equals("ode.simulation.time.step")) {
+					} else if (key.equals("ode.simulation.absolute.error")) {
 					} else if (key.equals("ode.simulation.out.dir")) {
 					} else if (key.equals("monte.carlo.simulation.time.limit")) {
 					} else if (key.equals("monte.carlo.simulation.print.interval")) {
@@ -2339,7 +2365,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					if (check.equals("kinetic-law-constants-simplifier")) {
 						none.setSelected(true);
 						Button_Enabling.enableNoneOrAbs(ODE, monteCarlo, markov, seed, seedLabel,
-								runs, runsLabel, stepLabel, step, limitLabel, limit, intervalLabel,
+								runs, runsLabel, stepLabel, step, errorLabel, absErr, limitLabel, limit, intervalLabel,
 								interval, simulators, simulatorsLabel, explanation, description,
 								none, intSpecies, species, spLabel, speciesLabel, addIntSpecies,
 								removeIntSpecies, rapid1, rapid2, qssa, maxCon, rapidLabel1,
@@ -2351,7 +2377,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					if (check.equals("dimerization-reduction")) {
 						abstraction.setSelected(true);
 						Button_Enabling.enableNoneOrAbs(ODE, monteCarlo, markov, seed, seedLabel,
-								runs, runsLabel, stepLabel, step, limitLabel, limit, intervalLabel,
+								runs, runsLabel, stepLabel, step, errorLabel, absErr, limitLabel, limit, intervalLabel,
 								interval, simulators, simulatorsLabel, explanation, description,
 								none, intSpecies, species, spLabel, speciesLabel, addIntSpecies,
 								removeIntSpecies, rapid1, rapid2, qssa, maxCon, rapidLabel1,
@@ -2359,7 +2385,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					} else if (check.equals("dimerization-reduction-level-assignment")) {
 						nary.setSelected(true);
 						Button_Enabling.enableNary(ODE, monteCarlo, markov, seed, seedLabel, runs,
-								runsLabel, stepLabel, step, limitLabel, limit, intervalLabel,
+								runsLabel, stepLabel, step, errorLabel, absErr, limitLabel, limit, intervalLabel,
 								interval, simulators, simulatorsLabel, explanation, description,
 								intSpecies, species, spLabel, speciesLabel, addIntSpecies,
 								removeIntSpecies, rapid1, rapid2, qssa, maxCon, rapidLabel1,
@@ -2368,12 +2394,13 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				}
 				if (load.containsKey("ode.simulation.time.limit")) {
 					ODE.setSelected(true);
-					Button_Enabling.enableODE(seed, seedLabel, runs, runsLabel, stepLabel, step,
+					Button_Enabling.enableODE(seed, seedLabel, runs, runsLabel, stepLabel, step, errorLabel, absErr, 
 							limitLabel, limit, intervalLabel, interval, simulators,
 							simulatorsLabel, explanation, description, usingSSA);
 					limit.setText(load.getProperty("ode.simulation.time.limit"));
 					interval.setText(load.getProperty("ode.simulation.print.interval"));
 					step.setText(load.getProperty("ode.simulation.time.step"));
+					absErr.setText(load.getProperty("ode.simulation.absolute.error"));
 				} else if (load.containsKey("monte.carlo.simulation.time.limit")) {
 					monteCarlo.setSelected(true);
 					if (runFiles) {
@@ -2382,7 +2409,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 						choose3.setEnabled(true);
 					}
 					Button_Enabling.enableMonteCarlo(seed, seedLabel, runs, runsLabel, stepLabel,
-							step, limitLabel, limit, intervalLabel, interval, simulators,
+							step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval, simulators,
 							simulatorsLabel, explanation, description, usingSSA);
 					limit.setText(load.getProperty("monte.carlo.simulation.time.limit"));
 					interval.setText(load.getProperty("monte.carlo.simulation.print.interval"));
@@ -2403,12 +2430,12 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					if (nary.isSelected()) {
 						markov.setSelected(true);
 						Button_Enabling.enableMarkov(seed, seedLabel, runs, runsLabel, stepLabel,
-								step, limitLabel, limit, intervalLabel, interval, simulators,
+								step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval, simulators,
 								simulatorsLabel, explanation, description, usingSSA);
 					} else {
 						sbml.setSelected(true);
 						Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel,
-								stepLabel, step, limitLabel, limit, intervalLabel, interval,
+								stepLabel, step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval,
 								simulators, simulatorsLabel, explanation, description);
 					}
 				}

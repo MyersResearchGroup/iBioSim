@@ -34,7 +34,7 @@ public class Run implements ActionListener {
 	 * This method is given which buttons are selected and creates the
 	 * properties file from all the other information given.
 	 */
-	public void createProperties(double timeLimit, double printInterval, double timeStep,
+	public void createProperties(double timeLimit, double printInterval, double timeStep, double absError,
 			String outDir, long rndSeed, int run, String[] termCond, String[] intSpecies,
 			String printer_id, String printer_track_quantity, String[] getFilename,
 			String selectedButtons, Component component, String filename, double rap1, double rap2,
@@ -99,6 +99,7 @@ public class Run implements ActionListener {
 			abs.setProperty("ode.simulation.time.limit", "" + timeLimit);
 			abs.setProperty("ode.simulation.print.interval", "" + printInterval);
 			abs.setProperty("ode.simulation.time.step", "" + timeStep);
+			abs.setProperty("ode.simulation.absolute.error", "" + absError);
 			abs.setProperty("ode.simulation.out.dir", outDir);
 		}
 		if (selectedButtons.equals("none_monteCarlo") || selectedButtons.equals("abs_monteCarlo")) {
