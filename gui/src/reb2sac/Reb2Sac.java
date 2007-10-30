@@ -1321,9 +1321,15 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			        absError = Double.parseDouble(absErr.getText().trim());
 			}
 		} catch (Exception e1) {
-			JOptionPane.showMessageDialog(biomodelsim.frame(),
-					"Must Enter A Double In The Time Step Field.", "Error",
-					JOptionPane.ERROR_MESSAGE);
+			if (step.isEnabled()) {
+			  JOptionPane.showMessageDialog(biomodelsim.frame(),
+							"Must Enter A Double In The Time Step Field.", "Error",
+							JOptionPane.ERROR_MESSAGE);
+			} else if (absErr.isEnabled()) {
+			  JOptionPane.showMessageDialog(biomodelsim.frame(),
+							"Must Enter A Double In The Absolute Error Field.", "Error",
+							JOptionPane.ERROR_MESSAGE);
+			}
 			return;
 		}
 		outDir = simName;
@@ -1890,9 +1896,15 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				absError = Double.parseDouble(absErr.getText().trim());
 			}
 		} catch (Exception e1) {
-			JOptionPane.showMessageDialog(biomodelsim.frame(),
-					"Must Enter A Double In The Time Step Field.", "Error",
-					JOptionPane.ERROR_MESSAGE);
+			if (step.isEnabled()) {
+			  JOptionPane.showMessageDialog(biomodelsim.frame(),
+							"Must Enter A Double In The Time Step Field.", "Error",
+							JOptionPane.ERROR_MESSAGE);
+			} else if (absErr.isEnabled()) {
+			  JOptionPane.showMessageDialog(biomodelsim.frame(),
+							"Must Enter A Double In The Absolute Error Field.", "Error",
+							JOptionPane.ERROR_MESSAGE);
+			}
 			return;
 		}
 		outDir = simName;
