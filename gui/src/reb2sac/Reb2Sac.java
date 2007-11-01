@@ -2412,7 +2412,11 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					limit.setText(load.getProperty("ode.simulation.time.limit"));
 					interval.setText(load.getProperty("ode.simulation.print.interval"));
 					step.setText(load.getProperty("ode.simulation.time.step"));
-					absErr.setText(load.getProperty("ode.simulation.absolute.error"));
+					if (load.containsKey("ode.simulation.absolute.error")) {
+					  absErr.setText(load.getProperty("ode.simulation.absolute.error"));
+					} else {
+					  absErr = new JTextField("1.0E-9", 15);
+					}
 				} else if (load.containsKey("monte.carlo.simulation.time.limit")) {
 					monteCarlo.setSelected(true);
 					if (runFiles) {
