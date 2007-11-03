@@ -37,7 +37,9 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 		this.directory = directory;
 		try {
 			Properties p = new Properties();
-			p.load(new FileInputStream(new File(directory + separator + ".lrn")));
+			FileInputStream load = new FileInputStream(new File(directory + separator + ".lrn"));
+			p.load(load);
+			load.close();
 			String[] s = p.values().toArray(new String[0]);
 			sort(s);
 			files = new JList(s);
@@ -108,7 +110,10 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 			if (files.getSelectedIndices().length > 0) {
 				try {
 					Properties p = new Properties();
-					p.load(new FileInputStream(new File(directory + separator + ".lrn")));
+					FileInputStream load = new FileInputStream(new File(directory + separator
+							+ ".lrn"));
+					p.load(load);
+					load.close();
 					Object[] delete = files.getSelectedValues();
 					for (Object file : delete) {
 						int run = 0;
@@ -148,8 +153,10 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 							}
 						}
 					}
-					p.store(new FileOutputStream(new File(directory + separator + ".lrn")),
-							"Learn File Data");
+					FileOutputStream store = new FileOutputStream(new File(directory + separator
+							+ ".lrn"));
+					p.store(store, "Learn File Data");
+					store.close();
 					String[] s = p.values().toArray(new String[0]);
 					sort(s);
 					files.setListData(s);
@@ -183,7 +190,9 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 					return;
 				}
 				Properties p = new Properties();
-				p.load(new FileInputStream(new File(directory + separator + ".lrn")));
+				FileInputStream load = new FileInputStream(new File(directory + separator + ".lrn"));
+				p.load(load);
+				load.close();
 				int index = files.getSelectedIndex();
 				String[] list = Buttons.getList(
 						new String[p.keySet().toArray(new String[0]).length], files);
@@ -201,8 +210,10 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 						p.setProperty(s, rename);
 					}
 				}
-				p.store(new FileOutputStream(new File(directory + separator + ".lrn")),
-						"Learn File Data");
+				FileOutputStream store = new FileOutputStream(new File(directory + separator
+						+ ".lrn"));
+				p.store(store, "Learn File Data");
+				store.close();
 				String[] s = p.values().toArray(new String[0]);
 				sort(s);
 				files.setListData(s);
@@ -251,7 +262,9 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 					}
 				}
 				Properties p = new Properties();
-				p.load(new FileInputStream(new File(directory + separator + ".lrn")));
+				FileInputStream load = new FileInputStream(new File(directory + separator + ".lrn"));
+				p.load(load);
+				load.close();
 				int index = files.getSelectedIndex();
 				list = Buttons.getList(new String[p.keySet().toArray(new String[0]).length], files);
 				files.setSelectedIndex(index);
@@ -280,8 +293,10 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 						p.setProperty(end, copy);
 					}
 				}
-				p.store(new FileOutputStream(new File(directory + separator + ".lrn")),
-						"Learn File Data");
+				FileOutputStream store = new FileOutputStream(new File(directory + separator
+						+ ".lrn"));
+				p.store(store, "Learn File Data");
+				store.close();
 				String[] s = p.values().toArray(new String[0]);
 				sort(s);
 				files.setListData(s);
@@ -339,7 +354,10 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 					String[] list1 = new File(root + separator + sims.getSelectedValue()).list();
 					Properties p = new Properties();
 					try {
-						p.load(new FileInputStream(new File(directory + separator + ".lrn")));
+						FileInputStream load = new FileInputStream(new File(directory + separator
+								+ ".lrn"));
+						p.load(load);
+						load.close();
 					} catch (Exception e1) {
 					}
 					for (int i = 0; i < list1.length; i++) {
@@ -380,8 +398,10 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 						String[] ss = p.values().toArray(new String[0]);
 						sort(ss);
 						files.setListData(ss);
-						p.store(new FileOutputStream(new File(directory + separator + ".lrn")),
-								"Learn File Data");
+						FileOutputStream store = new FileOutputStream(new File(directory
+								+ separator + ".lrn"));
+						p.store(store, "Learn File Data");
+						store.close();
 						if (ss.length > 0) {
 							biosim.refreshLearn(directory.split(separator)[directory
 									.split(separator).length - 1], true);
@@ -424,7 +444,10 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 					String[] list1 = new File(importFile).list();
 					Properties p = new Properties();
 					try {
-						p.load(new FileInputStream(new File(directory + separator + ".lrn")));
+						FileInputStream load = new FileInputStream(new File(directory + separator
+								+ ".lrn"));
+						p.load(load);
+						load.close();
 					} catch (Exception e1) {
 					}
 					for (int i = 0; i < list1.length; i++) {
@@ -462,8 +485,10 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 						String[] s = p.values().toArray(new String[0]);
 						sort(s);
 						files.setListData(s);
-						p.store(new FileOutputStream(new File(directory + separator + ".lrn")),
-								"Learn File Data");
+						FileOutputStream store = new FileOutputStream(new File(directory
+								+ separator + ".lrn"));
+						p.store(store, "Learn File Data");
+						store.close();
 						if (s.length > 0) {
 							biosim.refreshLearn(directory.split(separator)[directory
 									.split(separator).length - 1], true);
@@ -487,10 +512,15 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 							in.close();
 							out.close();
 							Properties p = new Properties();
-							p.load(new FileInputStream(new File(directory + separator + ".lrn")));
+							FileInputStream load = new FileInputStream(new File(directory
+									+ separator + ".lrn"));
+							p.load(load);
+							load.close();
 							p.setProperty(end, importFile);
-							p.store(new FileOutputStream(new File(directory + separator + ".lrn")),
-									"Learn File Data");
+							FileOutputStream store = new FileOutputStream(new File(directory
+									+ separator + ".lrn"));
+							p.store(store, "Learn File Data");
+							store.close();
 							String[] s = p.values().toArray(new String[0]);
 							sort(s);
 							files.setListData(s);

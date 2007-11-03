@@ -5,7 +5,6 @@ import java.awt.event.*;
 import java.io.*;
 import java.util.*;
 import javax.swing.*;
-
 import biomodelsim.core.gui.*;
 
 /**
@@ -356,6 +355,9 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 					out.write("\n");
 				}
 				out.close();
+				br.close();
+				isr.close();
+				reb.close();
 			} catch (Exception e) {
 			}
 			learn.waitFor();
@@ -374,10 +376,9 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 				}
 			}
 			if (n != null) {
-				InputStream input;
 				ArrayList<String> species = new ArrayList<String>();
 				try {
-					input = new FileInputStream(n);
+					InputStream input = new FileInputStream(n);
 					boolean reading = true;
 					char cha;
 					while (reading) {
@@ -408,6 +409,7 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 							}
 						}
 					}
+					input.close();
 				} catch (Exception e1) {
 				}
 				speciesPanel.removeAll();
@@ -484,10 +486,9 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 				}
 			}
 			if (n != null) {
-				InputStream input;
 				ArrayList<String> species = new ArrayList<String>();
 				try {
-					input = new FileInputStream(n);
+					InputStream input = new FileInputStream(n);
 					boolean reading = true;
 					char cha;
 					while (reading) {
@@ -518,6 +519,7 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 							}
 						}
 					}
+					input.close();
 				} catch (Exception e1) {
 				}
 				speciesPanel.removeAll();
@@ -823,6 +825,9 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 					out.write(output);
 					out.write("\n");
 				}
+				br.close();
+				isr.close();
+				reb.close();
 				out.close();
 			} catch (Exception e) {
 			}

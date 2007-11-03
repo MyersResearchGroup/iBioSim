@@ -20,7 +20,7 @@ import buttons.core.gui.*;
  * 
  * @author Curtis Madsen
  */
-public class BioSim implements MouseListener, ActionListener {
+public class BioSim implements MouseListener, ActionListener, KeyListener {
 
 	private JFrame frame; // Frame where components of the GUI are displayed
 
@@ -170,6 +170,7 @@ public class BioSim implements MouseListener, ActionListener {
 		mainPanel.add(tab, "Center");
 		log = new Log();
 		mainPanel.add(log, "South");
+		mainPanel.addKeyListener(this);
 		frame.setContentPane(mainPanel);
 		frame.setJMenuBar(menuBar);
 		frame.pack();
@@ -457,12 +458,14 @@ public class BioSim implements MouseListener, ActionListener {
 					error += (char) read;
 					read = reb.read();
 				}
+				reb.close();
 				reb = graph.getInputStream();
 				read = reb.read();
 				while (read != -1) {
 					output += (char) read;
 					read = reb.read();
 				}
+				reb.close();
 				if (!output.equals("")) {
 					log.addText("Output:\n" + output + "\n");
 				}
@@ -536,12 +539,14 @@ public class BioSim implements MouseListener, ActionListener {
 					error += (char) read;
 					read = reb.read();
 				}
+				reb.close();
 				reb = browse.getInputStream();
 				read = reb.read();
 				while (read != -1) {
 					output += (char) read;
 					read = reb.read();
 				}
+				reb.close();
 				if (!output.equals("")) {
 					log.addText("Output:\n" + output + "\n");
 				}
@@ -1866,12 +1871,14 @@ public class BioSim implements MouseListener, ActionListener {
 					error += (char) read;
 					read = reb.read();
 				}
+				reb.close();
 				reb = dot2sbml.getInputStream();
 				read = reb.read();
 				while (read != -1) {
 					output += (char) read;
 					read = reb.read();
 				}
+				reb.close();
 				if (!output.equals("")) {
 					log.addText("Output:\n" + output + "\n");
 				}
@@ -2353,6 +2360,18 @@ public class BioSim implements MouseListener, ActionListener {
 					}
 				}
 			}
+		}
+	}
+
+	public void keyPressed(KeyEvent e) {
+	}
+
+	public void keyReleased(KeyEvent e) {
+	}
+
+	public void keyTyped(KeyEvent e) {
+		if (e.getKeyChar() == '') {
+			tab.remove(tab.getSelectedIndex());
 		}
 	}
 }
