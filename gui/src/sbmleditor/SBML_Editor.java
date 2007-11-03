@@ -6,7 +6,6 @@ import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
 import org.sbml.libsbml.*;
-
 import biomodelsim.core.gui.*;
 import reb2sac.core.gui.*;
 import buttons.core.gui.*;

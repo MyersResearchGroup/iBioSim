@@ -34,11 +34,12 @@ public class Run implements ActionListener {
 	 * This method is given which buttons are selected and creates the
 	 * properties file from all the other information given.
 	 */
-	public void createProperties(double timeLimit, double printInterval, double timeStep, double absError,
-			String outDir, long rndSeed, int run, String[] termCond, String[] intSpecies,
-			String printer_id, String printer_track_quantity, String[] getFilename,
-			String selectedButtons, Component component, String filename, double rap1, double rap2,
-			double qss, int con, JCheckBox usingSSA, String ssaFile, String sad, File sadFile) {
+	public void createProperties(double timeLimit, double printInterval, double timeStep,
+			double absError, String outDir, long rndSeed, int run, String[] termCond,
+			String[] intSpecies, String printer_id, String printer_track_quantity,
+			String[] getFilename, String selectedButtons, Component component, String filename,
+			double rap1, double rap2, double qss, int con, JCheckBox usingSSA, String ssaFile,
+			String sad, File sadFile) {
 		Properties abs = new Properties();
 		if (selectedButtons.equals("abs_ODE") || selectedButtons.equals("abs_monteCarlo")
 				|| selectedButtons.equals("nary_monteCarlo")
@@ -134,10 +135,12 @@ public class Run implements ActionListener {
 					cut = i;
 				}
 			}
-			abs.store(new FileOutputStream(new File((filename.substring(0, filename.length()
+			FileOutputStream store = new FileOutputStream(new File((filename.substring(0, filename
+					.length()
 					- getFilename[getFilename.length - 1].length()))
-					+ getFilename[getFilename.length - 1].substring(0, cut) + ".properties")),
-					getFilename[getFilename.length - 1].substring(0, cut) + " Properties");
+					+ getFilename[getFilename.length - 1].substring(0, cut) + ".properties"));
+			abs.store(store, getFilename[getFilename.length - 1].substring(0, cut) + " Properties");
+			store.close();
 		} catch (Exception except) {
 			JOptionPane.showMessageDialog(component, "Unable To Save Properties File!"
 					+ "\nMake sure you select a model for abstraction.", "Unable To Save File",
@@ -159,7 +162,10 @@ public class Run implements ActionListener {
 			String ssaFile) {
 		Properties nary = new Properties();
 		try {
-			nary.load(new FileInputStream(new File(outDir + separator + "species.properties")));
+			FileInputStream load = new FileInputStream(new File(outDir + separator
+					+ "species.properties"));
+			nary.load(load);
+			load.close();
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(component, "Species Properties File Not Found!",
 					"File Not Found", JOptionPane.ERROR_MESSAGE);
@@ -241,13 +247,15 @@ public class Run implements ActionListener {
 			}
 		}
 		try {
-			nary.store(new FileOutputStream(new File((filename.substring(0, filename.length()
+			FileOutputStream store = new FileOutputStream(new File((filename.substring(0, filename
+					.length()
 					- getFilename[getFilename.length - 1].length()))
 					+ getFilename[getFilename.length - 1].substring(0,
-							getFilename[getFilename.length - 1].length() - 5) + ".properties")),
-					getFilename[getFilename.length - 1].substring(0,
-							getFilename[getFilename.length - 1].length() - 5)
-							+ " Properties");
+							getFilename[getFilename.length - 1].length() - 5) + ".properties"));
+			nary.store(store, getFilename[getFilename.length - 1].substring(0,
+					getFilename[getFilename.length - 1].length() - 5)
+					+ " Properties");
+			store.close();
 		} catch (Exception except) {
 			JOptionPane.showMessageDialog(component, "Unable To Save Properties File!"
 					+ "\nMake sure you select a model for simulation.", "Unable To Save File",
@@ -338,6 +346,10 @@ public class Run implements ActionListener {
 					error += (char) read;
 					read = reb2.read();
 				}
+				br.close();
+				isr.close();
+				reb.close();
+				reb2.close();
 			} catch (Exception e) {
 			}
 			exitValue = reb2sac.waitFor();

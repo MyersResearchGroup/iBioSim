@@ -5,7 +5,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
-
 import biomodelsim.core.gui.*;
 import buttons.core.gui.*;
 
@@ -231,13 +230,18 @@ public class Nary_Run implements ActionListener, Runnable {
 		// reads in the species properties to determine which species to use
 		Properties naryProps = new Properties();
 		try {
-			naryProps.load(new FileInputStream(new File("species.properties")));
-			naryProps.store(new FileOutputStream(
-					new File(outDir + separator + "species.properties")), "");
+			FileInputStream load = new FileInputStream(new File("species.properties"));
+			naryProps.load(load);
+			load.close();
+			FileOutputStream store = new FileOutputStream(new File(outDir + separator
+					+ "species.properties"));
+			naryProps.store(store, "");
+			store.close();
 			naryProps = new Properties();
 			new File("species.properties").delete();
-			naryProps
-					.load(new FileInputStream(new File(outDir + separator + "species.properties")));
+			load = new FileInputStream(new File(outDir + separator + "species.properties"));
+			naryProps.load(load);
+			load.close();
 		} catch (Exception e1) {
 			JOptionPane.showMessageDialog(component, "Properties File Not Found!",
 					"File Not Found", JOptionPane.ERROR_MESSAGE);
@@ -557,5 +561,4 @@ public class Nary_Run implements ActionListener, Runnable {
 		running.dispose();
 		naryCancel.removeActionListener(runProgram);
 	}
-
 }

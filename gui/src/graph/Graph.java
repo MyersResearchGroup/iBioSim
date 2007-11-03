@@ -5,7 +5,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.text.*;
 import java.util.*;
-
 import javax.swing.*;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
@@ -203,12 +202,12 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	}
 
 	private void readGraphSpecies(String file, Component component) {
-		InputStream input;
 		component.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 		try {
-			input = new BufferedInputStream(new ProgressMonitorInputStream(component,
-					"Reading Reb2sac Output Data From " + new File(file).getName(),
-					new FileInputStream(new File(file))));
+			FileInputStream fileInput = new FileInputStream(new File(file));
+			ProgressMonitorInputStream prog = new ProgressMonitorInputStream(component,
+					"Reading Reb2sac Output Data From " + new File(file).getName(), fileInput);
+			InputStream input = new BufferedInputStream(prog);
 			graphSpecies = new ArrayList<String>();
 			boolean reading = true;
 			char cha;
@@ -258,6 +257,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					}
 				}
 			}
+			input.close();
+			prog.close();
+			fileInput.close();
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(component, "Error Reading Data!"
 					+ "\nThere was an error reading the simulation output data.",
@@ -291,12 +293,12 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			return calculateAverageVarianceDeviation(file, stem, 0, directory);
 		} else {
 			ArrayList<ArrayList<Double>> data = new ArrayList<ArrayList<Double>>();
-			InputStream input;
 			component.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 			try {
-				input = new BufferedInputStream(new ProgressMonitorInputStream(component,
-						"Reading Reb2sac Output Data From " + new File(file).getName(),
-						new FileInputStream(new File(file))));
+				FileInputStream fileInput = new FileInputStream(new File(file));
+				ProgressMonitorInputStream prog = new ProgressMonitorInputStream(component,
+						"Reading Reb2sac Output Data From " + new File(file).getName(), fileInput);
+				InputStream input = new BufferedInputStream(prog);
 				boolean reading = true;
 				char cha;
 				int readCount = 0;
@@ -379,6 +381,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					} catch (Exception e1) {
 					}
 				}
+				input.close();
+				prog.close();
+				fileInput.close();
 			} catch (Exception e) {
 				JOptionPane.showMessageDialog(component, "Error Reading Data!"
 						+ "\nThere was an error reading the simulation output data.",
@@ -2204,8 +2209,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						} else if (output == 2) {
 							Rectangle pagesize = new Rectangle(width, height);
 							Document document = new Document(pagesize, 50, 50, 50, 50);
-							PdfWriter writer = PdfWriter.getInstance(document,
-									new FileOutputStream(file));
+							FileOutputStream out = new FileOutputStream(file);
+							PdfWriter writer = PdfWriter.getInstance(document, out);
 							document.open();
 							PdfContentByte cb = writer.getDirectContent();
 							PdfTemplate tp = cb.createTemplate(width, height);
@@ -2215,6 +2220,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							g2.dispose();
 							cb.addTemplate(tp, 0, 0);
 							document.close();
+							out.close();
 						} else if (output == 3) {
 							Graphics2D g = new EpsGraphics2D();
 							chart.draw(g, new java.awt.Rectangle(width, height));
@@ -2230,9 +2236,11 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							svgGenerator.setSVGCanvasSize(new Dimension(width, height));
 							chart.draw(svgGenerator, new java.awt.Rectangle(width, height));
 							boolean useCSS = true;
-							Writer out = new OutputStreamWriter(new FileOutputStream(file), "UTF-8");
+							FileOutputStream outStream = new FileOutputStream(file);
+							Writer out = new OutputStreamWriter(outStream, "UTF-8");
 							svgGenerator.stream(out, useCSS);
 							out.close();
+							outStream.close();
 						}
 						savedPics = filename;
 					}
@@ -2244,8 +2252,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					} else if (output == 2) {
 						Rectangle pagesize = new Rectangle(width, height);
 						Document document = new Document(pagesize, 50, 50, 50, 50);
-						PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(
-								file));
+						FileOutputStream out = new FileOutputStream(file);
+						PdfWriter writer = PdfWriter.getInstance(document, out);
 						document.open();
 						PdfContentByte cb = writer.getDirectContent();
 						PdfTemplate tp = cb.createTemplate(width, height);
@@ -2254,6 +2262,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						g2.dispose();
 						cb.addTemplate(tp, 0, 0);
 						document.close();
+						out.close();
 					} else if (output == 3) {
 						Graphics2D g = new EpsGraphics2D();
 						chart.draw(g, new java.awt.Rectangle(width, height));
@@ -2266,9 +2275,11 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						SVGGraphics2D svgGenerator = new SVGGraphics2D(document);
 						chart.draw(svgGenerator, new java.awt.Rectangle(width, height));
 						boolean useCSS = true;
-						Writer out = new OutputStreamWriter(new FileOutputStream(file), "UTF-8");
+						FileOutputStream outStream = new FileOutputStream(file);
+						Writer out = new OutputStreamWriter(outStream, "UTF-8");
 						svgGenerator.stream(out, useCSS);
 						out.close();
+						outStream.close();
 					}
 					savedPics = filename;
 				}
@@ -2281,14 +2292,14 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 	private ArrayList<ArrayList<Double>> calculateAverageVarianceDeviation(String startFile,
 			String fileStem, int choice, String directory) {
-		InputStream input;
 		ArrayList<ArrayList<Double>> average = new ArrayList<ArrayList<Double>>();
 		ArrayList<ArrayList<Double>> variance = new ArrayList<ArrayList<Double>>();
 		ArrayList<ArrayList<Double>> deviation = new ArrayList<ArrayList<Double>>();
 		try {
-			input = new BufferedInputStream(new ProgressMonitorInputStream(biomodelsim.frame(),
-					"Reading Reb2sac Output Data From " + new File(startFile).getName(),
-					new FileInputStream(new File(startFile))));
+			FileInputStream fileInput = new FileInputStream(new File(startFile));
+			ProgressMonitorInputStream prog = new ProgressMonitorInputStream(biomodelsim.frame(),
+					"Reading Reb2sac Output Data From " + new File(startFile).getName(), fileInput);
+			InputStream input = new BufferedInputStream(prog);
 			boolean reading = true;
 			char cha;
 			int readCount = 0;
@@ -2374,34 +2385,27 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 										if (new File(outDir + separator + fileStem + (j + 1) + "."
 												+ printer_id.substring(0, printer_id.length() - 8))
 												.exists()) {
-											input = new BufferedInputStream(
-													new ProgressMonitorInputStream(
-															biomodelsim.frame(),
-															"Reading Reb2sac Output Data From "
-																	+ new File(
-																			outDir
-																					+ separator
-																					+ fileStem
-																					+ (j + 1)
-																					+ "."
-																					+ printer_id
-																							.substring(
-																									0,
-																									printer_id
-																											.length() - 8))
-																			.getName(),
-															new FileInputStream(
-																	new File(
-																			outDir
-																					+ separator
-																					+ fileStem
-																					+ (j + 1)
-																					+ "."
-																					+ printer_id
-																							.substring(
-																									0,
-																									printer_id
-																											.length() - 8)))));
+											input.close();
+											prog.close();
+											fileInput.close();
+											fileInput = new FileInputStream(new File(outDir
+													+ separator
+													+ fileStem
+													+ (j + 1)
+													+ "."
+													+ printer_id.substring(0,
+															printer_id.length() - 8)));
+											prog = new ProgressMonitorInputStream(biomodelsim
+													.frame(), "Reading Reb2sac Output Data From "
+													+ new File(outDir
+															+ separator
+															+ fileStem
+															+ (j + 1)
+															+ "."
+															+ printer_id.substring(0, printer_id
+																	.length() - 8)).getName(),
+													fileInput);
+											input = new BufferedInputStream(prog);
 											for (int i = 0; i < readCount; i++) {
 												input.read();
 											}
@@ -2415,38 +2419,31 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 												+ fileStem + (j + 1) + "."
 												+ printer_id.substring(0, printer_id.length() - 8))
 												.exists()) {
-											input = new BufferedInputStream(
-													new ProgressMonitorInputStream(
-															biomodelsim.frame(),
-															"Reading Reb2sac Output Data From "
-																	+ new File(
-																			outDir
-																					+ separator
-																					+ directory
-																					+ separator
-																					+ fileStem
-																					+ (j + 1)
-																					+ "."
-																					+ printer_id
-																							.substring(
-																									0,
-																									printer_id
-																											.length() - 8))
-																			.getName(),
-															new FileInputStream(
-																	new File(
-																			outDir
-																					+ separator
-																					+ directory
-																					+ separator
-																					+ fileStem
-																					+ (j + 1)
-																					+ "."
-																					+ printer_id
-																							.substring(
-																									0,
-																									printer_id
-																											.length() - 8)))));
+											input.close();
+											prog.close();
+											fileInput.close();
+											fileInput = new FileInputStream(new File(outDir
+													+ separator
+													+ directory
+													+ separator
+													+ fileStem
+													+ (j + 1)
+													+ "."
+													+ printer_id.substring(0,
+															printer_id.length() - 8)));
+											prog = new ProgressMonitorInputStream(biomodelsim
+													.frame(), "Reading Reb2sac Output Data From "
+													+ new File(outDir
+															+ separator
+															+ directory
+															+ separator
+															+ fileStem
+															+ (j + 1)
+															+ "."
+															+ printer_id.substring(0, printer_id
+																	.length() - 8)).getName(),
+													fileInput);
+											input = new BufferedInputStream(prog);
 											for (int i = 0; i < readCount; i++) {
 												input.read();
 											}
@@ -2605,6 +2602,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					deviation.get(i).set(j, Math.sqrt(deviation.get(i).get(j)));
 				}
 			}
+			input.close();
+			prog.close();
+			fileInput.close();
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(biomodelsim.frame(), "Error Reading Data!"
 					+ "\nThere was an error reading the simulation output data.",
@@ -2645,8 +2645,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			graph.setProperty("species.directory." + i, graphed.get(i).getDirectory());
 		}
 		try {
-			graph.store(new FileOutputStream(new File(outDir + separator + graphName)),
-					"Graph Data");
+			FileOutputStream store = new FileOutputStream(new File(outDir + separator + graphName));
+			graph.store(store, "Graph Data");
+			store.close();
 			log.addText("Creating graph file:\n" + outDir + separator + graphName + "\n");
 		} catch (Exception except) {
 			JOptionPane.showMessageDialog(biomodelsim.frame(), "Unable To Save Graph!", "Error",
@@ -2657,7 +2658,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	private void open(String filename) {
 		Properties graph = new Properties();
 		try {
-			graph.load(new FileInputStream(new File(filename)));
+			FileInputStream load = new FileInputStream(new File(filename));
+			graph.load(load);
+			load.close();
 			XMin.setText(graph.getProperty("x.min"));
 			XMax.setText(graph.getProperty("x.max"));
 			XScale.setText(graph.getProperty("x.scale"));
