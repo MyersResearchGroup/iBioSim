@@ -20,7 +20,7 @@ import buttons.core.gui.*;
  * 
  * @author Curtis Madsen
  */
-public class BioSim implements MouseListener, ActionListener, KeyListener {
+public class BioSim implements MouseListener, ActionListener {
 
 	private JFrame frame; // Frame where components of the GUI are displayed
 
@@ -163,14 +163,13 @@ public class BioSim implements MouseListener, ActionListener, KeyListener {
 		// Packs the frame and displays it
 		mainPanel = new JPanel(new BorderLayout());
 		tree = new FileTree(null, this);
+		log = new Log();
 		tab = new JTabbedPane();
 		tab.setPreferredSize(new Dimension(950, 550));
 		tab.setUI(new TabbedPaneCloseButtonUI());
 		mainPanel.add(tree, "West");
 		mainPanel.add(tab, "Center");
-		log = new Log();
 		mainPanel.add(log, "South");
-		mainPanel.addKeyListener(this);
 		frame.setContentPane(mainPanel);
 		frame.setJMenuBar(menuBar);
 		frame.pack();
@@ -193,6 +192,43 @@ public class BioSim implements MouseListener, ActionListener, KeyListener {
 		int y = screenSize.height / 2 - frameSize.height / 2;
 		frame.setLocation(x, y);
 		frame.setVisible(true);
+		KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(
+				new KeyEventDispatcher() {
+					public boolean dispatchKeyEvent(KeyEvent e) {
+						if (e.getID() == KeyEvent.KEY_TYPED) {
+							if (e.getKeyChar() == '') {
+								if (tab.getTabCount() > 0) {
+									if (tab.getSelectedComponent().getName().equals("Simulate")
+											|| tab.getSelectedComponent().getName().equals(
+													"SBML Editor")
+											|| tab.getSelectedComponent().getName().contains(
+													"Graph")) {
+										if (save(tab.getSelectedIndex(), false) != 0) {
+											tab.remove(tab.getSelectedIndex());
+										}
+									} else if (!tab.getTitleAt(tab.getSelectedIndex()).equals(
+											"Learn")) {
+										Object[] options = { "Yes", "No", "Cancel" };
+										int value = JOptionPane.showOptionDialog(frame,
+												"Do you want to save changes to "
+														+ tab.getTitleAt(tab.getSelectedIndex())
+														+ "?", "Save Changes",
+												JOptionPane.YES_NO_CANCEL_OPTION,
+												JOptionPane.PLAIN_MESSAGE, null, options,
+												options[0]);
+										if (value == JOptionPane.YES_OPTION) {
+											save(tab.getSelectedIndex(), true);
+											tab.remove(tab.getSelectedIndex());
+										} else if (value == JOptionPane.NO_OPTION) {
+											tab.remove(tab.getSelectedIndex());
+										}
+									}
+								}
+							}
+						}
+						return false;
+					}
+				});
 	}
 
 	/**
@@ -1390,12 +1426,12 @@ public class BioSim implements MouseListener, ActionListener, KeyListener {
 	 */
 	public void addTab(String name, Component panel, String tabName) {
 		tab.addTab(name, panel);
-		tab.setSelectedIndex(tab.getComponents().length - 1);
 		if (tabName != null) {
 			tab.getComponentAt(tab.getComponents().length - 1).setName(tabName);
 		} else {
 			tab.getComponentAt(tab.getComponents().length - 1).setName(name);
 		}
+		tab.setSelectedIndex(tab.getComponents().length - 1);
 	}
 
 	/**
@@ -2360,18 +2396,6 @@ public class BioSim implements MouseListener, ActionListener, KeyListener {
 					}
 				}
 			}
-		}
-	}
-
-	public void keyPressed(KeyEvent e) {
-	}
-
-	public void keyReleased(KeyEvent e) {
-	}
-
-	public void keyTyped(KeyEvent e) {
-		if (e.getKeyChar() == '') {
-			tab.remove(tab.getSelectedIndex());
 		}
 	}
 }

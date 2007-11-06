@@ -565,6 +565,39 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			}
 			if (!getData.equals("")) {
 				ssaList = getData.split("\n");
+				ArrayList<String> sortName = new ArrayList<String>();
+				for (int i = 0; i < ssaList.length; i++) {
+					sortName.add(((String) ssaList[i]).split(" ")[1]);
+				}
+				int in, out;
+				for (out = 1; out < sortName.size(); out++) {
+					String temp = sortName.get(out);
+					String temp2 = (String) ssaList[out];
+					in = out;
+					while (in > 0 && sortName.get(in - 1).compareToIgnoreCase(temp) > 0) {
+						sortName.set(in, sortName.get(in - 1));
+						ssaList[in] = ssaList[in - 1];
+						--in;
+					}
+					sortName.set(in, temp);
+					ssaList[in] = temp2;
+				}
+				ArrayList<Double> sort = new ArrayList<Double>();
+				for (int i = 0; i < ssaList.length; i++) {
+					sort.add(Double.parseDouble(((String) ssaList[i]).split(" ")[0]));
+				}
+				for (out = 1; out < sort.size(); out++) {
+					double temp = sort.get(out);
+					String temp2 = (String) ssaList[out];
+					in = out;
+					while (in > 0 && sort.get(in - 1) > temp) {
+						sort.set(in, sort.get(in - 1));
+						ssaList[in] = ssaList[in - 1];
+						--in;
+					}
+					sort.set(in, temp);
+					ssaList[in] = temp2;
+				}
 			} else {
 				ssaList = new Object[0];
 			}
@@ -1039,32 +1072,59 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 						"Select A Model For Simulation", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
+
 			String add = time + " " + availSpecies.getSelectedItem() + " " + modify + mod;
-			JList addSSA = new JList();
-			Object[] adding = { add };
-			addSSA.setListData(adding);
-			addSSA.setSelectedIndex(0);
-			ssaList = Buttons.add(ssaList, ssa, addSSA, false, null, null, null, null, null, null,
-					this);
-			int[] index = ssa.getSelectedIndices();
-			ssaList = Buttons.getList(ssaList, ssa);
-			ssa.setSelectedIndices(index);
-			ArrayList<Double> sort = new ArrayList<Double>();
+			boolean done = false;
 			for (int i = 0; i < ssaList.length; i++) {
-				sort.add(Double.parseDouble(((String) ssaList[i]).split(" ")[0]));
-			}
-			int in, out;
-			for (out = 1; out < sort.size(); out++) {
-				double temp = sort.get(out);
-				String temp2 = (String) ssaList[out];
-				in = out;
-				while (in > 0 && sort.get(in - 1) > temp) {
-					sort.set(in, sort.get(in - 1));
-					ssaList[in] = ssaList[in - 1];
-					--in;
+				String[] get = ((String) ssaList[i]).split(" ");
+				if (get[0].equals(time + "") && get[1].equals(availSpecies.getSelectedItem() + "")) {
+					ssaList[i] = add;
+					done = true;
 				}
-				sort.set(in, temp);
-				ssaList[in] = temp2;
+			}
+			if (!done) {
+				JList addSSA = new JList();
+				Object[] adding = { add };
+				addSSA.setListData(adding);
+				addSSA.setSelectedIndex(0);
+				ssaList = Buttons.add(ssaList, ssa, addSSA, false, null, null, null, null, null,
+						null, this);
+				int[] index = ssa.getSelectedIndices();
+				ssaList = Buttons.getList(ssaList, ssa);
+				ssa.setSelectedIndices(index);
+				ArrayList<String> sortName = new ArrayList<String>();
+				for (int i = 0; i < ssaList.length; i++) {
+					sortName.add(((String) ssaList[i]).split(" ")[1]);
+				}
+				int in, out;
+				for (out = 1; out < sortName.size(); out++) {
+					String temp = sortName.get(out);
+					String temp2 = (String) ssaList[out];
+					in = out;
+					while (in > 0 && sortName.get(in - 1).compareToIgnoreCase(temp) > 0) {
+						sortName.set(in, sortName.get(in - 1));
+						ssaList[in] = ssaList[in - 1];
+						--in;
+					}
+					sortName.set(in, temp);
+					ssaList[in] = temp2;
+				}
+				ArrayList<Double> sort = new ArrayList<Double>();
+				for (int i = 0; i < ssaList.length; i++) {
+					sort.add(Double.parseDouble(((String) ssaList[i]).split(" ")[0]));
+				}
+				for (out = 1; out < sort.size(); out++) {
+					double temp = sort.get(out);
+					String temp2 = (String) ssaList[out];
+					in = out;
+					while (in > 0 && sort.get(in - 1) > temp) {
+						sort.set(in, sort.get(in - 1));
+						ssaList[in] = ssaList[in - 1];
+						--in;
+					}
+					sort.set(in, temp);
+					ssaList[in] = temp2;
+				}
 			}
 			ssa.setListData(ssaList);
 		}
@@ -1179,15 +1239,31 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					}
 					ssaList[ssa.getSelectedIndex()] = time1 + " " + availSpecies.getSelectedItem()
 							+ " " + modify + mod1;
-					ssa.setListData(ssaList);
 					int[] index = ssa.getSelectedIndices();
+					ssa.setListData(ssaList);
 					ssaList = Buttons.getList(ssaList, ssa);
 					ssa.setSelectedIndices(index);
+					ArrayList<String> sortName = new ArrayList<String>();
+					for (int i = 0; i < ssaList.length; i++) {
+						sortName.add(((String) ssaList[i]).split(" ")[1]);
+					}
+					int in, out;
+					for (out = 1; out < sortName.size(); out++) {
+						String temp = sortName.get(out);
+						String temp2 = (String) ssaList[out];
+						in = out;
+						while (in > 0 && sortName.get(in - 1).compareToIgnoreCase(temp) > 0) {
+							sortName.set(in, sortName.get(in - 1));
+							ssaList[in] = ssaList[in - 1];
+							--in;
+						}
+						sortName.set(in, temp);
+						ssaList[in] = temp2;
+					}
 					ArrayList<Double> sort = new ArrayList<Double>();
 					for (int i = 0; i < ssaList.length; i++) {
 						sort.add(Double.parseDouble(((String) ssaList[i]).split(" ")[0]));
 					}
-					int in, out;
 					for (out = 1; out < sort.size(); out++) {
 						double temp = sort.get(out);
 						String temp2 = (String) ssaList[out];
@@ -1201,6 +1277,35 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 						ssaList[in] = temp2;
 					}
 					ssa.setListData(ssaList);
+					ArrayList<Integer> count = new ArrayList<Integer>();
+					for (int i = 0; i < ssaList.length; i++) {
+						String[] remove = ((String) ssaList[i]).split(" ");
+						if (remove[0].equals(time1 + "")
+								&& remove[1].equals(availSpecies.getSelectedItem() + "")) {
+							count.add(i);
+						}
+					}
+					if (count.size() > 1) {
+						boolean done = false;
+						for (int i : count) {
+							String[] remove = ((String) ssaList[i]).split(" ");
+							if (!remove[2].equals(modify + mod1) && !done) {
+								ssa.setSelectedIndex(i);
+								Buttons.remove(ssa, ssaList);
+								index = ssa.getSelectedIndices();
+								ssaList = Buttons.getList(ssaList, ssa);
+								ssa.setSelectedIndices(index);
+								done = true;
+							}
+						}
+						if (!done) {
+							ssa.setSelectedIndex(count.get(0));
+							Buttons.remove(ssa, ssaList);
+							index = ssa.getSelectedIndices();
+							ssaList = Buttons.getList(ssaList, ssa);
+							ssa.setSelectedIndices(index);
+						}
+					}
 				}
 			}
 		}
@@ -1628,8 +1733,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				}
 			}
 			FileOutputStream store = new FileOutputStream(new File(propName));
-			getProps.store(store,
-					getFilename[getFilename.length - 1].substring(0, cut) + " Properties");
+			getProps.store(store, getFilename[getFilename.length - 1].substring(0, cut)
+					+ " Properties");
 			store.close();
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(biomodelsim.frame(),
@@ -1710,137 +1815,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			} else if (e.getSource() == terminations) {
 				Buttons.remove(terminations, termConditions);
 			} else if (e.getSource() == ssa) {
-				if (ssa.getSelectedIndex() != -1) {
-					String[] get = ((String) ssaList[ssa.getSelectedIndex()]).split(" ");
-					JPanel ssaAddPanel = new JPanel(new BorderLayout());
-					JPanel ssaAddPanel1 = new JPanel();
-					JPanel ssaAddPanel2 = new JPanel();
-					JLabel timeLabel = new JLabel("At time step: ");
-					JTextField time = new JTextField(15);
-					time.setText(get[0]);
-					String filename = sbmlFile;
-					SBMLReader reader = new SBMLReader();
-					SBMLDocument document = reader.readSBML(filename);
-					Model model = document.getModel();
-					ArrayList<String> listOfSpecs = new ArrayList<String>();
-					if (model != null) {
-						ListOf listOfSpecies = model.getListOfSpecies();
-						for (int i = 0; i < model.getNumSpecies(); i++) {
-							Species species = (Species) listOfSpecies.get(i);
-							listOfSpecs.add(species.getId());
-						}
-					}
-					Object[] list = listOfSpecs.toArray();
-					for (int i = 1; i < list.length; i++) {
-						String index = (String) list[i];
-						int j = i;
-						while ((j > 0) && ((String) list[j - 1]).compareToIgnoreCase(index) > 0) {
-							list[j] = list[j - 1];
-							j = j - 1;
-						}
-						list[j] = index;
-					}
-					JComboBox availSpecies = new JComboBox();
-					for (int i = 0; i < list.length; i++) {
-						availSpecies.addItem(((String) list[i]).replace(" ", "_"));
-					}
-					availSpecies.setSelectedItem(get[1]);
-					String[] mod = new String[5];
-					mod[0] = "goes to";
-					mod[1] = "is added by";
-					mod[2] = "is subtracted by";
-					mod[3] = "is multiplied by";
-					mod[4] = "is divided by";
-					JComboBox ssaMod = new JComboBox(mod);
-					if (get[2].substring(0, 1).equals("=")) {
-						ssaMod.setSelectedItem("goes to");
-					} else if (get[2].substring(0, 1).equals("+")) {
-						ssaMod.setSelectedItem("is added by");
-					} else if (get[2].substring(0, 1).equals("-")) {
-						ssaMod.setSelectedItem("is subtracted by");
-					} else if (get[2].substring(0, 1).equals("*")) {
-						ssaMod.setSelectedItem("is multiplied by");
-					} else if (get[2].substring(0, 1).equals("/")) {
-						ssaMod.setSelectedItem("is divided by");
-					}
-					JTextField ssaModNum = new JTextField(15);
-					ssaModNum.setText(get[2].substring(1));
-					ssaAddPanel1.add(timeLabel);
-					ssaAddPanel1.add(time);
-					ssaAddPanel1.add(availSpecies);
-					ssaAddPanel2.add(ssaMod);
-					ssaAddPanel2.add(ssaModNum);
-					ssaAddPanel.add(ssaAddPanel1, "North");
-					ssaAddPanel.add(ssaAddPanel2, "Center");
-					String[] options = { "Save", "Cancel" };
-					int value = JOptionPane.showOptionDialog(biomodelsim.frame(), ssaAddPanel,
-							"Edit User Defined Data", JOptionPane.YES_NO_OPTION,
-							JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-					if (value == JOptionPane.YES_OPTION) {
-						double time1 = 0;
-						int mod1 = 0;
-						try {
-							time1 = Double.parseDouble(time.getText().trim());
-						} catch (Exception e1) {
-							JOptionPane.showMessageDialog(biomodelsim.frame(),
-									"You must enter a double " + "into the time text field!",
-									"Time Must Be A Double", JOptionPane.ERROR_MESSAGE);
-							return;
-						}
-						try {
-							mod1 = Integer.parseInt(ssaModNum.getText().trim());
-						} catch (Exception e1) {
-							JOptionPane.showMessageDialog(biomodelsim.frame(),
-									"You must enter an integer "
-											+ "into the amount change text field!",
-									"Amount Change Must Be An Integer", JOptionPane.ERROR_MESSAGE);
-							return;
-						}
-						String modify;
-						if (ssaMod.getSelectedItem().equals("goes to")) {
-							modify = "=";
-						} else if (ssaMod.getSelectedItem().equals("is added by")) {
-							modify = "+";
-						} else if (ssaMod.getSelectedItem().equals("is subtracted by")) {
-							modify = "-";
-						} else if (ssaMod.getSelectedItem().equals("is multiplied by")) {
-							modify = "*";
-						} else {
-							modify = "/";
-						}
-						if (availSpecies.getSelectedItem() == null) {
-							JOptionPane.showMessageDialog(biomodelsim.frame(),
-									"You must select a model for simulation "
-											+ "in order to add a user defined condition.",
-									"Select A Model For Simulation", JOptionPane.ERROR_MESSAGE);
-							return;
-						}
-						ssaList[ssa.getSelectedIndex()] = time1 + " "
-								+ availSpecies.getSelectedItem() + " " + modify + mod1;
-						ssa.setListData(ssaList);
-						int[] index = ssa.getSelectedIndices();
-						ssaList = Buttons.getList(ssaList, ssa);
-						ssa.setSelectedIndices(index);
-						ArrayList<Double> sort = new ArrayList<Double>();
-						for (int i = 0; i < ssaList.length; i++) {
-							sort.add(Double.parseDouble(((String) ssaList[i]).split(" ")[0]));
-						}
-						int in, out;
-						for (out = 1; out < sort.size(); out++) {
-							double temp = sort.get(out);
-							String temp2 = (String) ssaList[out];
-							in = out;
-							while (in > 0 && sort.get(in - 1) > temp) {
-								sort.set(in, sort.get(in - 1));
-								ssaList[in] = ssaList[in - 1];
-								--in;
-							}
-							sort.set(in, temp);
-							ssaList[in] = temp2;
-						}
-						ssa.setListData(ssaList);
-					}
-				}
+				editSSA.doClick();
 			} else if (e.getSource() == properties) {
 				Buttons.remove(properties, props);
 			}
@@ -2107,8 +2082,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				}
 			}
 			FileOutputStream store = new FileOutputStream(new File(propName));
-			getProps.store(store,
-					getFilename[getFilename.length - 1].substring(0, cut) + " Properties");
+			getProps.store(store, getFilename[getFilename.length - 1].substring(0, cut)
+					+ " Properties");
 			store.close();
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(biomodelsim.frame(),
@@ -2509,46 +2484,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 									.getProperty("reb2sac.operator.max.concentration.threshold"));
 				}
 				if (load.containsKey("simulation.time.series.species.level.file")) {
-					usingSSA.setEnabled(true);
-					newSSA.setEnabled(true);
-					usingSSA.setSelected(true);
-					description.setEnabled(false);
-					explanation.setEnabled(false);
-					simulators.setEnabled(false);
-					simulatorsLabel.setEnabled(false);
-					String getData = "";
-					try {
-						Scanner scan = new Scanner(new File(root + separator + simName + separator
-								+ load.getProperty("simulation.time.series.species.level.file")));
-						while (scan.hasNextLine()) {
-							String get = scan.nextLine();
-							if (get.split(" ").length == 3) {
-								if (scan.hasNextLine()) {
-									getData += get + "\n";
-								} else {
-									getData += get;
-								}
-							}
-						}
-					} catch (Exception e1) {
-					}
-					if (!getData.equals("")) {
-						ssaList = getData.split("\n");
-					} else {
-						ssaList = new Object[0];
-					}
-					// ssa.setListData(ssaList);
-					ssa.setEnabled(true);
-					timeLabel.setEnabled(true);
-					time.setEnabled(true);
-					availSpecies.setEnabled(true);
-					ssaMod.setEnabled(true);
-					ssaModNum.setEnabled(true);
-					addSSA.setEnabled(true);
-					editSSA.setEnabled(true);
-					removeSSA.setEnabled(true);
-					ODE.setEnabled(false);
-					markov.setEnabled(false);
+					usingSSA.doClick();
 				} else {
 					description.setEnabled(true);
 					explanation.setEnabled(true);
