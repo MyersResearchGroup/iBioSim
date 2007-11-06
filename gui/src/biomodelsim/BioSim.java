@@ -56,6 +56,8 @@ public class BioSim implements MouseListener, ActionListener {
 
 	private String separator;
 
+	private KeyEventDispatcher dispatcher;
+
 	/**
 	 * This is the constructor for the Tstubd class. It initializes all the
 	 * input fields, puts them on panels, adds the panels to the frame, and then
@@ -192,43 +194,42 @@ public class BioSim implements MouseListener, ActionListener {
 		int y = screenSize.height / 2 - frameSize.height / 2;
 		frame.setLocation(x, y);
 		frame.setVisible(true);
-		KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(
-				new KeyEventDispatcher() {
-					public boolean dispatchKeyEvent(KeyEvent e) {
-						if (e.getID() == KeyEvent.KEY_TYPED) {
-							if (e.getKeyChar() == '') {
-								if (tab.getTabCount() > 0) {
-									if (tab.getSelectedComponent().getName().equals("Simulate")
-											|| tab.getSelectedComponent().getName().equals(
-													"SBML Editor")
-											|| tab.getSelectedComponent().getName().contains(
-													"Graph")) {
-										if (save(tab.getSelectedIndex(), false) != 0) {
-											tab.remove(tab.getSelectedIndex());
-										}
-									} else if (!tab.getTitleAt(tab.getSelectedIndex()).equals(
-											"Learn")) {
-										Object[] options = { "Yes", "No", "Cancel" };
-										int value = JOptionPane.showOptionDialog(frame,
-												"Do you want to save changes to "
-														+ tab.getTitleAt(tab.getSelectedIndex())
-														+ "?", "Save Changes",
-												JOptionPane.YES_NO_CANCEL_OPTION,
-												JOptionPane.PLAIN_MESSAGE, null, options,
-												options[0]);
-										if (value == JOptionPane.YES_OPTION) {
-											save(tab.getSelectedIndex(), true);
-											tab.remove(tab.getSelectedIndex());
-										} else if (value == JOptionPane.NO_OPTION) {
-											tab.remove(tab.getSelectedIndex());
-										}
-									}
+		dispatcher = new KeyEventDispatcher() {
+			public boolean dispatchKeyEvent(KeyEvent e) {
+				if (e.getID() == KeyEvent.KEY_TYPED) {
+					if (e.getKeyChar() == '') {
+						if (tab.getTabCount() > 0) {
+							KeyboardFocusManager.getCurrentKeyboardFocusManager()
+									.removeKeyEventDispatcher(dispatcher);
+							if (tab.getSelectedComponent().getName().equals("Simulate")
+									|| tab.getSelectedComponent().getName().equals("SBML Editor")
+									|| tab.getSelectedComponent().getName().contains("Graph")) {
+								if (save(tab.getSelectedIndex(), false) != 0) {
+									tab.remove(tab.getSelectedIndex());
+								}
+							} else if (!tab.getTitleAt(tab.getSelectedIndex()).equals("Learn")) {
+								Object[] options = { "Yes", "No", "Cancel" };
+								int value = JOptionPane.showOptionDialog(frame,
+										"Do you want to save changes to "
+												+ tab.getTitleAt(tab.getSelectedIndex()) + "?",
+										"Save Changes", JOptionPane.YES_NO_CANCEL_OPTION,
+										JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+								if (value == JOptionPane.YES_OPTION) {
+									save(tab.getSelectedIndex(), true);
+									tab.remove(tab.getSelectedIndex());
+								} else if (value == JOptionPane.NO_OPTION) {
+									tab.remove(tab.getSelectedIndex());
 								}
 							}
+							KeyboardFocusManager.getCurrentKeyboardFocusManager()
+									.addKeyEventDispatcher(dispatcher);
 						}
-						return false;
 					}
-				});
+				}
+				return false;
+			}
+		};
+		KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(dispatcher);
 	}
 
 	/**
