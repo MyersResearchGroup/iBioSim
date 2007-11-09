@@ -1470,14 +1470,16 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		}
 		if (!runs.isEnabled()) {
 			for (String runs : new File(root + separator + simName).list()) {
-				String end = "";
-				for (int j = 1; j < 5; j++) {
-					end = runs.charAt(runs.length() - j) + end;
-				}
-				if (end.equals(".tsd") || end.equals(".dat") || end.equals(".csv")) {
-					if (runs.contains("run-")) {
-						run = Math.max(run, Integer.parseInt(runs.substring(4, runs.length()
-								- end.length())));
+				if (runs.length() >= 4) {
+					String end = "";
+					for (int j = 1; j < 5; j++) {
+						end = runs.charAt(runs.length() - j) + end;
+					}
+					if (end.equals(".tsd") || end.equals(".dat") || end.equals(".csv")) {
+						if (runs.contains("run-")) {
+							run = Math.max(run, Integer.parseInt(runs.substring(4, runs.length()
+									- end.length())));
+						}
 					}
 				}
 			}
