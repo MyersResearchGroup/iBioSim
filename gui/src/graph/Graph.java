@@ -39,6 +39,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	private static final long serialVersionUID = 4350596002373546900L;
 
 	private JFreeChart chart; // Graph of the output data
+ 
+	private XYSeriesCollection curData; // Data in the current graph
 
 	private String outDir; // output directory
 
@@ -57,7 +59,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 	private JButton save;
 
-	private JButton exportJPeg, exportPng, exportPdf, exportEps, exportSvg; // buttons
+        private JButton exportJPeg, exportPng, exportPdf, exportEps, exportSvg, exportCsv; // buttons
 
 	private HashMap<String, Paint> colors;
 
@@ -175,18 +177,21 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		exportPdf = new JButton("Export As PDF");
 		exportEps = new JButton("Export As EPS");
 		exportSvg = new JButton("Export As SVG");
+		exportCsv = new JButton("Export As CSV");
 		save.addActionListener(this);
 		exportJPeg.addActionListener(this);
 		exportPng.addActionListener(this);
 		exportPdf.addActionListener(this);
 		exportEps.addActionListener(this);
 		exportSvg.addActionListener(this);
+		exportCsv.addActionListener(this);
 		ButtonHolder.add(save);
 		ButtonHolder.add(exportJPeg);
 		ButtonHolder.add(exportPng);
 		ButtonHolder.add(exportPdf);
 		ButtonHolder.add(exportEps);
 		ButtonHolder.add(exportSvg);
+		ButtonHolder.add(exportCsv);
 
 		// puts all the components of the graph gui into a display panel
 		JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, ButtonHolder, null);
@@ -422,6 +427,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		// if the export as svg button is clicked
 		else if (e.getSource() == exportSvg) {
 			export(4);
+		}
+		else if (e.getSource() == exportCsv) {
+			export(5);
 		}
 	}
 
@@ -2037,6 +2045,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	}
 
 	private void fixGraph(String title, String x, String y, XYSeriesCollection dataset) {
+	        curData = dataset;
 		chart = ChartFactory.createXYLineChart(title, x, y, dataset, PlotOrientation.VERTICAL,
 				true, true, false);
 		chart.addProgressListener(this);
@@ -2058,18 +2067,21 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		exportPdf = new JButton("Export As PDF");
 		exportEps = new JButton("Export As EPS");
 		exportSvg = new JButton("Export As SVG");
+		exportCsv = new JButton("Export As CSV");
 		save.addActionListener(this);
 		exportJPeg.addActionListener(this);
 		exportPng.addActionListener(this);
 		exportPdf.addActionListener(this);
 		exportEps.addActionListener(this);
 		exportSvg.addActionListener(this);
+		exportCsv.addActionListener(this);
 		ButtonHolder.add(save);
 		ButtonHolder.add(exportJPeg);
 		ButtonHolder.add(exportPng);
 		ButtonHolder.add(exportPdf);
 		ButtonHolder.add(exportEps);
 		ButtonHolder.add(exportSvg);
+		ButtonHolder.add(exportCsv);
 		JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, ButtonHolder, null);
 		splitPane.setDividerSize(0);
 		this.removeAll();
@@ -2083,7 +2095,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	 * This method saves the graph as a jpeg or as a png file.
 	 */
 	public void export(int output) {
-		try {
+		try {   
 			int width = -1;
 			int height = -1;
 			JPanel sizePanel = new JPanel(new GridLayout(2, 2));
@@ -2096,37 +2108,40 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			sizePanel.add(heightLabel);
 			sizePanel.add(heightField);
 			Object[] options2 = { "Export", "Cancel" };
-			int value = JOptionPane.showOptionDialog(biomodelsim.frame(), sizePanel,
-					"Enter Size Of File", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
-					null, options2, options2[0]);
-			if (value == JOptionPane.YES_OPTION) {
-				while (value == JOptionPane.YES_OPTION && (width == -1 || height == -1))
-					try {
-						width = Integer.parseInt(widthField.getText().trim());
-						height = Integer.parseInt(heightField.getText().trim());
-						if (width < 1 || height < 1) {
-							JOptionPane.showMessageDialog(biomodelsim.frame(),
-									"Width and height must be positive integers!", "Error",
-									JOptionPane.ERROR_MESSAGE);
-							width = -1;
-							height = -1;
-							value = JOptionPane.showOptionDialog(biomodelsim.frame(), sizePanel,
-									"Enter Size Of File", JOptionPane.YES_NO_OPTION,
-									JOptionPane.PLAIN_MESSAGE, null, options2, options2[0]);
-						}
-					} catch (Exception e2) {
-						JOptionPane.showMessageDialog(biomodelsim.frame(),
+			int value;
+			if (output != 5) {
+			  value = JOptionPane.showOptionDialog(biomodelsim.frame(), sizePanel,
+								   "Enter Size Of File", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
+								   null, options2, options2[0]);
+			  if (value == JOptionPane.YES_OPTION) {
+			    while (value == JOptionPane.YES_OPTION && (width == -1 || height == -1))
+			      try {
+				width = Integer.parseInt(widthField.getText().trim());
+				height = Integer.parseInt(heightField.getText().trim());
+				if (width < 1 || height < 1) {
+				  JOptionPane.showMessageDialog(biomodelsim.frame(),
 								"Width and height must be positive integers!", "Error",
 								JOptionPane.ERROR_MESSAGE);
-						width = -1;
-						height = -1;
-						value = JOptionPane.showOptionDialog(biomodelsim.frame(), sizePanel,
-								"Enter Size Of File", JOptionPane.YES_NO_OPTION,
-								JOptionPane.PLAIN_MESSAGE, null, options2, options2[0]);
-					}
-			}
-			if (value == JOptionPane.NO_OPTION) {
-				return;
+				  width = -1;
+				  height = -1;
+				  value = JOptionPane.showOptionDialog(biomodelsim.frame(), sizePanel,
+								       "Enter Size Of File", JOptionPane.YES_NO_OPTION,
+								       JOptionPane.PLAIN_MESSAGE, null, options2, options2[0]);
+				}
+			      } catch (Exception e2) {
+				JOptionPane.showMessageDialog(biomodelsim.frame(),
+							      "Width and height must be positive integers!", "Error",
+							      JOptionPane.ERROR_MESSAGE);
+				width = -1;
+				height = -1;
+				value = JOptionPane.showOptionDialog(biomodelsim.frame(), sizePanel,
+								     "Enter Size Of File", JOptionPane.YES_NO_OPTION,
+								     JOptionPane.PLAIN_MESSAGE, null, options2, options2[0]);
+			      }
+			  }
+			  if (value == JOptionPane.NO_OPTION) {
+			    return;
+			  }
 			}
 			File file;
 			if (savedPics != null) {
@@ -2193,6 +2208,16 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							filename += ".svg";
 						}
 					}
+				} else if (output == 5) {
+					if (filename.length() < 4) {
+						filename += ".csv";
+					} else {
+						if (filename.substring((filename.length() - 4), filename.length()).equals(
+								".csv")) {
+						} else {
+							filename += ".csv";
+						}
+					}
 				}
 				file = new File(filename);
 				if (file.exists()) {
@@ -2241,6 +2266,28 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							svgGenerator.stream(out, useCSS);
 							out.close();
 							outStream.close();
+						} else if (output == 5) {
+						        FileOutputStream csvFile = new FileOutputStream(file);
+							PrintWriter csvWriter = new PrintWriter(csvFile);
+							csvWriter.print("Time");
+							for (int i = 0; i < curData.getSeriesCount(); i++) {
+							  csvWriter.print(", " + curData.getSeriesKey(i));
+							}
+							csvWriter.println("");
+							XYSeries data = curData.getSeries(0);
+							for (int j = 0; j < data.getItemCount(); j++) {
+							  for (int i = 0; i < curData.getSeriesCount(); i++) {
+							    data = curData.getSeries(i);
+							    XYDataItem item = data.getDataItem(j);
+							    if (i==0) {
+							      csvWriter.print(item.getX());
+							    }
+							    csvWriter.print(", " + item.getY());
+							  }
+							  csvWriter.println("");
+							}
+							csvWriter.close();
+							csvFile.close();
 						}
 						savedPics = filename;
 					}
@@ -2280,6 +2327,28 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						svgGenerator.stream(out, useCSS);
 						out.close();
 						outStream.close();
+					} else if (output == 5) {
+					        FileOutputStream csvFile = new FileOutputStream(file);
+						PrintWriter csvWriter = new PrintWriter(csvFile);
+						csvWriter.print("Time");
+						for (int i = 0; i < curData.getSeriesCount(); i++) {
+						  csvWriter.print(", " + curData.getSeriesKey(i));
+						}
+						csvWriter.println("");
+						XYSeries data = curData.getSeries(0);
+						for (int j = 0; j < data.getItemCount(); j++) {
+						  for (int i = 0; i < curData.getSeriesCount(); i++) {
+						    data = curData.getSeries(i);
+						    XYDataItem item = data.getDataItem(j);
+						    if (i==0) {
+						      csvWriter.print(item.getX());
+						    }
+						    csvWriter.print(", " + item.getY());
+						  }
+						  csvWriter.println("");
+						}
+						csvWriter.close();
+						csvFile.close();
 					}
 					savedPics = filename;
 				}
