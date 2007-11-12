@@ -39,7 +39,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	private static final long serialVersionUID = 4350596002373546900L;
 
 	private JFreeChart chart; // Graph of the output data
- 
+
 	private XYSeriesCollection curData; // Data in the current graph
 
 	private String outDir; // output directory
@@ -59,7 +59,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 	private JButton save;
 
-        private JButton exportJPeg, exportPng, exportPdf, exportEps, exportSvg, exportCsv; // buttons
+	private JButton exportJPeg, exportPng, exportPdf, exportEps, exportSvg, exportCsv; // buttons
 
 	private HashMap<String, Paint> colors;
 
@@ -427,8 +427,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		// if the export as svg button is clicked
 		else if (e.getSource() == exportSvg) {
 			export(4);
-		}
-		else if (e.getSource() == exportCsv) {
+		} else if (e.getSource() == exportCsv) {
 			export(5);
 		}
 	}
@@ -835,7 +834,11 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								select = 0;
 							} else {
 								try {
-									select = Integer.parseInt(selected.substring(4)) + 2;
+									if (selected.contains("run-")) {
+										select = Integer.parseInt(selected.substring(4)) + 2;
+									} else {
+										select = -1;
+									}
 								} catch (Exception e1) {
 									select = -1;
 								}
@@ -2045,7 +2048,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	}
 
 	private void fixGraph(String title, String x, String y, XYSeriesCollection dataset) {
-	        curData = dataset;
+		curData = dataset;
 		chart = ChartFactory.createXYLineChart(title, x, y, dataset, PlotOrientation.VERTICAL,
 				true, true, false);
 		chart.addProgressListener(this);
@@ -2095,7 +2098,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	 * This method saves the graph as a jpeg or as a png file.
 	 */
 	public void export(int output) {
-		try {   
+		try {
 			int width = -1;
 			int height = -1;
 			JPanel sizePanel = new JPanel(new GridLayout(2, 2));
@@ -2110,38 +2113,38 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			Object[] options2 = { "Export", "Cancel" };
 			int value;
 			if (output != 5) {
-			  value = JOptionPane.showOptionDialog(biomodelsim.frame(), sizePanel,
-								   "Enter Size Of File", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
-								   null, options2, options2[0]);
-			  if (value == JOptionPane.YES_OPTION) {
-			    while (value == JOptionPane.YES_OPTION && (width == -1 || height == -1))
-			      try {
-				width = Integer.parseInt(widthField.getText().trim());
-				height = Integer.parseInt(heightField.getText().trim());
-				if (width < 1 || height < 1) {
-				  JOptionPane.showMessageDialog(biomodelsim.frame(),
-								"Width and height must be positive integers!", "Error",
-								JOptionPane.ERROR_MESSAGE);
-				  width = -1;
-				  height = -1;
-				  value = JOptionPane.showOptionDialog(biomodelsim.frame(), sizePanel,
-								       "Enter Size Of File", JOptionPane.YES_NO_OPTION,
-								       JOptionPane.PLAIN_MESSAGE, null, options2, options2[0]);
-				}
-			      } catch (Exception e2) {
-				JOptionPane.showMessageDialog(biomodelsim.frame(),
-							      "Width and height must be positive integers!", "Error",
-							      JOptionPane.ERROR_MESSAGE);
-				width = -1;
-				height = -1;
 				value = JOptionPane.showOptionDialog(biomodelsim.frame(), sizePanel,
-								     "Enter Size Of File", JOptionPane.YES_NO_OPTION,
-								     JOptionPane.PLAIN_MESSAGE, null, options2, options2[0]);
-			      }
-			  }
-			  if (value == JOptionPane.NO_OPTION) {
-			    return;
-			  }
+						"Enter Size Of File", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
+						null, options2, options2[0]);
+				if (value == JOptionPane.YES_OPTION) {
+					while (value == JOptionPane.YES_OPTION && (width == -1 || height == -1))
+						try {
+							width = Integer.parseInt(widthField.getText().trim());
+							height = Integer.parseInt(heightField.getText().trim());
+							if (width < 1 || height < 1) {
+								JOptionPane.showMessageDialog(biomodelsim.frame(),
+										"Width and height must be positive integers!", "Error",
+										JOptionPane.ERROR_MESSAGE);
+								width = -1;
+								height = -1;
+								value = JOptionPane.showOptionDialog(biomodelsim.frame(),
+										sizePanel, "Enter Size Of File", JOptionPane.YES_NO_OPTION,
+										JOptionPane.PLAIN_MESSAGE, null, options2, options2[0]);
+							}
+						} catch (Exception e2) {
+							JOptionPane.showMessageDialog(biomodelsim.frame(),
+									"Width and height must be positive integers!", "Error",
+									JOptionPane.ERROR_MESSAGE);
+							width = -1;
+							height = -1;
+							value = JOptionPane.showOptionDialog(biomodelsim.frame(), sizePanel,
+									"Enter Size Of File", JOptionPane.YES_NO_OPTION,
+									JOptionPane.PLAIN_MESSAGE, null, options2, options2[0]);
+						}
+				}
+				if (value == JOptionPane.NO_OPTION) {
+					return;
+				}
 			}
 			File file;
 			if (savedPics != null) {
@@ -2267,24 +2270,24 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							out.close();
 							outStream.close();
 						} else if (output == 5) {
-						        FileOutputStream csvFile = new FileOutputStream(file);
+							FileOutputStream csvFile = new FileOutputStream(file);
 							PrintWriter csvWriter = new PrintWriter(csvFile);
 							csvWriter.print("Time");
 							for (int i = 0; i < curData.getSeriesCount(); i++) {
-							  csvWriter.print(", " + curData.getSeriesKey(i));
+								csvWriter.print(", " + curData.getSeriesKey(i));
 							}
 							csvWriter.println("");
 							XYSeries data = curData.getSeries(0);
 							for (int j = 0; j < data.getItemCount(); j++) {
-							  for (int i = 0; i < curData.getSeriesCount(); i++) {
-							    data = curData.getSeries(i);
-							    XYDataItem item = data.getDataItem(j);
-							    if (i==0) {
-							      csvWriter.print(item.getX());
-							    }
-							    csvWriter.print(", " + item.getY());
-							  }
-							  csvWriter.println("");
+								for (int i = 0; i < curData.getSeriesCount(); i++) {
+									data = curData.getSeries(i);
+									XYDataItem item = data.getDataItem(j);
+									if (i == 0) {
+										csvWriter.print(item.getX());
+									}
+									csvWriter.print(", " + item.getY());
+								}
+								csvWriter.println("");
 							}
 							csvWriter.close();
 							csvFile.close();
@@ -2328,24 +2331,24 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						out.close();
 						outStream.close();
 					} else if (output == 5) {
-					        FileOutputStream csvFile = new FileOutputStream(file);
+						FileOutputStream csvFile = new FileOutputStream(file);
 						PrintWriter csvWriter = new PrintWriter(csvFile);
 						csvWriter.print("Time");
 						for (int i = 0; i < curData.getSeriesCount(); i++) {
-						  csvWriter.print(", " + curData.getSeriesKey(i));
+							csvWriter.print(", " + curData.getSeriesKey(i));
 						}
 						csvWriter.println("");
 						XYSeries data = curData.getSeries(0);
 						for (int j = 0; j < data.getItemCount(); j++) {
-						  for (int i = 0; i < curData.getSeriesCount(); i++) {
-						    data = curData.getSeries(i);
-						    XYDataItem item = data.getDataItem(j);
-						    if (i==0) {
-						      csvWriter.print(item.getX());
-						    }
-						    csvWriter.print(", " + item.getY());
-						  }
-						  csvWriter.println("");
+							for (int i = 0; i < curData.getSeriesCount(); i++) {
+								data = curData.getSeries(i);
+								XYDataItem item = data.getDataItem(j);
+								if (i == 0) {
+									csvWriter.print(item.getX());
+								}
+								csvWriter.print(", " + item.getY());
+							}
+							csvWriter.println("");
 						}
 						csvWriter.close();
 						csvFile.close();
