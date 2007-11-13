@@ -855,15 +855,25 @@ circuit, and the edges in the graph represent the activation and repression
 relationships between the species.  An activation relationship
 is shown with a blue (blue4) arrow (vee) and a repression relationship is 
 shown with a red (firebrick4) tee.  An example is shown below for a simple 
-genetic circuit in which the species CI represses CII while CII activates CI.  
+genetic circuit in which the species CI dimer represses CII while CII activates CI
+production.  
+
 <p>
 digraph G {<BR>
 s1 [shape=ellipse,color=black,label="CI"];<BR>
 s2 [shape=ellipse,color=black,label="CII"];<BR>
 s2 -> s1 [color="blue4",arrowhead=vee]<BR>
-s1 -> s2 [color="firebrick4",arrowhead=tee]<BR>
+s1 -> s2 [color="firebrick4",label="2",arrowhead=tee]<BR>
 }
 </p>
+
+The label field in the species declaration is the name of the species.  The
+arrowhead field in the relationship declaration represents the type of relationship between
+the species.  Repression is labeled with a tee and activation is labeled with a vee.
+The label field in the relationship declaration represents how many molecules are necessary
+to activate or repress the production of the species.  In the case of s1->s2,
+the label field is "2", which means two molecules of CI are required to form a dimer
+to repress CII.  
 
 More advanced behavior can be modeled by using extra fields.  The promoter field
 groups a set of species together.  The examples below shows how the promoter field works.
