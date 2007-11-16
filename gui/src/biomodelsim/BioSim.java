@@ -239,7 +239,7 @@ public class BioSim implements MouseListener, ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == about) {
 			final JFrame f = new JFrame("About");
-			JLabel bioSim = new JLabel("BioSim 0.56");
+			JLabel bioSim = new JLabel("BioSim 0.57");
 			Font font = bioSim.getFont();
 			font = font.deriveFont(Font.BOLD, 36.0f);
 			bioSim.setFont(font);
@@ -394,6 +394,50 @@ public class BioSim implements MouseListener, ActionListener {
 			System.gc();
 			new File(tree.getFile()).delete();
 			refreshTree();
+		}
+		// if the edit popup menu is selected on a dot file
+		else if (e.getActionCommand().equals("createSBML")) {
+			try {
+				String[] dot = tree.getFile().split(separator);
+				String sbmlFile = dot[dot.length - 1].substring(0, dot[dot.length - 1].length() - 3) + "sbml";
+				log.addText("Executing:\ndot2sbml.pl " + tree.getFile() + " " + root + separator + sbmlFile + "\n");
+				Runtime exec = Runtime.getRuntime();
+				String command;
+				if (System.getProperty("os.name").contentEquals("Linux")) {
+				  command = "dot2sbml.pl " + tree.getFile() + " " + root + separator + sbmlFile;
+				} else {
+				  command = "C:\\Perl\\bin\\perl.exe " + System.getenv("BIOSIM") + "\\bin\\dot2sbml.pl " + tree.getFile() + " " + root + separator + sbmlFile;
+				}
+				Process dot2sbml = exec.exec(command);
+ 				String error = "";
+				String output = "";
+				InputStream reb = dot2sbml.getErrorStream();
+				int read = reb.read();
+				while (read != -1) {
+					error += (char) read;
+					read = reb.read();
+				}
+				reb.close();
+				reb = dot2sbml.getInputStream();
+				read = reb.read();
+				while (read != -1) {
+					output += (char) read;
+					read = reb.read();
+				}
+				reb.close();
+				if (!output.equals("")) {
+					log.addText("Output:\n" + output + "\n");
+				}
+				if (!error.equals("")) {
+					log.addText("Errors:\n" + error + "\n");
+				}
+				dot2sbml.waitFor();
+				refreshTree();
+				addTab(sbmlFile,new SBML_Editor(root + separator + sbmlFile, null, log, this), "SBML Editor");
+			} catch (Exception e1) {
+				JOptionPane.showMessageDialog(frame, "Unable to create SBML file.", "Error",
+						JOptionPane.ERROR_MESSAGE);
+			}
 		}
 		// if the edit popup menu is selected on a dot file
 		else if (e.getActionCommand().equals("dotEditor")) {
@@ -1569,6 +1613,9 @@ public class BioSim implements MouseListener, ActionListener {
 				JMenuItem createLearn = new JMenuItem("Create Learn View");
 				createLearn.addActionListener(this);
 				createLearn.setActionCommand("createLearn");
+				JMenuItem createSBML= new JMenuItem("Create SBML File");
+				createSBML.addActionListener(this);
+				createSBML.setActionCommand("createSBML");
 				JMenuItem edit = new JMenuItem("Edit");
 				edit.addActionListener(this);
 				edit.setActionCommand("dotEditor");
@@ -1586,6 +1633,7 @@ public class BioSim implements MouseListener, ActionListener {
 				rename.setActionCommand("rename");
 				popup.add(create);
 				popup.add(createLearn);
+				popup.add(createSBML);
 				popup.addSeparator();
 				popup.add(graph);
 				popup.addSeparator();
@@ -1779,6 +1827,9 @@ public class BioSim implements MouseListener, ActionListener {
 				JMenuItem createLearn = new JMenuItem("Create Learn View");
 				createLearn.addActionListener(this);
 				createLearn.setActionCommand("createLearn");
+				JMenuItem createSBML= new JMenuItem("Create SBML File");
+				createSBML.addActionListener(this);
+				createSBML.setActionCommand("createSBML");
 				JMenuItem edit = new JMenuItem("Edit");
 				edit.addActionListener(this);
 				edit.setActionCommand("dotEditor");
@@ -1796,6 +1847,7 @@ public class BioSim implements MouseListener, ActionListener {
 				rename.setActionCommand("rename");
 				popup.add(create);
 				popup.add(createLearn);
+				popup.add(createSBML);
 				popup.addSeparator();
 				popup.add(graph);
 				popup.addSeparator();
