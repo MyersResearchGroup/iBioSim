@@ -230,7 +230,7 @@ public class Nary_Run implements ActionListener, Runnable {
 		// reads in the species properties to determine which species to use
 		Properties naryProps = new Properties();
 		try {
-			FileInputStream load = new FileInputStream(new File("species.properties"));
+			FileInputStream load = new FileInputStream(new File(outDir + separator + "species.properties"));
 			naryProps.load(load);
 			load.close();
 			FileOutputStream store = new FileOutputStream(new File(outDir + separator
