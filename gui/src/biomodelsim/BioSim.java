@@ -239,7 +239,7 @@ public class BioSim implements MouseListener, ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == about) {
 			final JFrame f = new JFrame("About");
-			JLabel bioSim = new JLabel("BioSim 0.55");
+			JLabel bioSim = new JLabel("BioSim 0.56");
 			Font font = bioSim.getFont();
 			font = font.deriveFont(Font.BOLD, 36.0f);
 			bioSim.setFont(font);
@@ -1899,8 +1899,14 @@ public class BioSim implements MouseListener, ActionListener {
 						+ (dot[dot.length - 1].substring(0, dot[dot.length - 1].length() - 3) + "sbml");
 				log.addText("Executing:\ndot2sbml.pl " + tree.getFile() + " " + sbmlFile + "\n");
 				Runtime exec = Runtime.getRuntime();
-				Process dot2sbml = exec.exec("dot2sbml.pl " + tree.getFile() + " " + sbmlFile);
-				String error = "";
+				String command;
+				if (System.getProperty("os.name").contentEquals("Linux")) {
+				  command = "dot2sbml.pl " + tree.getFile() + " " + sbmlFile;
+				} else {
+				  command = "C:\\Perl\\bin\\perl.exe " + System.getenv("BIOSIM") + "\\bin\\dot2sbml.pl " + tree.getFile() + " " + sbmlFile;
+				}
+				Process dot2sbml = exec.exec(command);
+ 				String error = "";
 				String output = "";
 				InputStream reb = dot2sbml.getErrorStream();
 				int read = reb.read();
@@ -2111,7 +2117,8 @@ public class BioSim implements MouseListener, ActionListener {
 								getAFile = filename + separator + list[i];
 							} else if (end.equals(".xml") && getAFile.equals("")) {
 								getAFile = filename + separator + list[i];
-							} else if (end.equals("ties") && list[i].contains("properties")) {
+							} else if (end.equals("ties") && list[i].contains("properties")
+								   && !(list[i].equals("species.properties"))) {
 								openFile = filename + separator + list[i];
 							} else if (end.equals(".tsd") || end.equals(".dat")
 									|| end.equals(".csv")) {
