@@ -59,7 +59,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 	private JButton save;
 
-	private JButton exportJPeg, exportPng, exportPdf, exportEps, exportSvg, exportCsv; // buttons
+	private JButton export; // buttons
+
+	// private JButton exportJPeg, exportPng, exportPdf, exportEps, exportSvg, exportCsv; // buttons
 
 	private HashMap<String, Paint> colors;
 
@@ -172,26 +174,29 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		// creates the buttons for the graph frame
 		JPanel ButtonHolder = new JPanel();
 		save = new JButton("Save");
-		exportJPeg = new JButton("Export As JPEG");
-		exportPng = new JButton("Export As PNG");
-		exportPdf = new JButton("Export As PDF");
-		exportEps = new JButton("Export As EPS");
-		exportSvg = new JButton("Export As SVG");
-		exportCsv = new JButton("Export As CSV");
+		export = new JButton("Export");
+// 		exportJPeg = new JButton("Export As JPEG");
+// 		exportPng = new JButton("Export As PNG");
+// 		exportPdf = new JButton("Export As PDF");
+// 		exportEps = new JButton("Export As EPS");
+// 		exportSvg = new JButton("Export As SVG");
+// 		exportCsv = new JButton("Export As CSV");
 		save.addActionListener(this);
-		exportJPeg.addActionListener(this);
-		exportPng.addActionListener(this);
-		exportPdf.addActionListener(this);
-		exportEps.addActionListener(this);
-		exportSvg.addActionListener(this);
-		exportCsv.addActionListener(this);
+		export.addActionListener(this);
+// 		exportJPeg.addActionListener(this);
+// 		exportPng.addActionListener(this);
+// 		exportPdf.addActionListener(this);
+// 		exportEps.addActionListener(this);
+// 		exportSvg.addActionListener(this);
+// 		exportCsv.addActionListener(this);
 		ButtonHolder.add(save);
-		ButtonHolder.add(exportJPeg);
-		ButtonHolder.add(exportPng);
-		ButtonHolder.add(exportPdf);
-		ButtonHolder.add(exportEps);
-		ButtonHolder.add(exportSvg);
-		ButtonHolder.add(exportCsv);
+		ButtonHolder.add(export);
+// 		ButtonHolder.add(exportJPeg);
+// 		ButtonHolder.add(exportPng);
+// 		ButtonHolder.add(exportPdf);
+// 		ButtonHolder.add(exportEps);
+// 		ButtonHolder.add(exportSvg);
+// 		ButtonHolder.add(exportCsv);
 
 		// puts all the components of the graph gui into a display panel
 		JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, ButtonHolder, null);
@@ -408,28 +413,32 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		if (e.getSource() == save) {
 			save();
 		}
-		// if the export as jpeg button is clicked
-		else if (e.getSource() == exportJPeg) {
-			export(0);
+		// if the export button is clicked
+		else if (e.getSource() == export) {
+			export();
 		}
-		// if the export as png button is clicked
-		else if (e.getSource() == exportPng) {
-			export(1);
-		}
-		// if the export as pdf button is clicked
-		else if (e.getSource() == exportPdf) {
-			export(2);
-		}
-		// if the export as eps button is clicked
-		else if (e.getSource() == exportEps) {
-			export(3);
-		}
-		// if the export as svg button is clicked
-		else if (e.getSource() == exportSvg) {
-			export(4);
-		} else if (e.getSource() == exportCsv) {
-			export(5);
-		}
+// 		// if the export as jpeg button is clicked
+// 		else if (e.getSource() == exportJPeg) {
+// 			export(0);
+// 		}
+// 		// if the export as png button is clicked
+// 		else if (e.getSource() == exportPng) {
+// 			export(1);
+// 		}
+// 		// if the export as pdf button is clicked
+// 		else if (e.getSource() == exportPdf) {
+// 			export(2);
+// 		}
+// 		// if the export as eps button is clicked
+// 		else if (e.getSource() == exportEps) {
+// 			export(3);
+// 		}
+// 		// if the export as svg button is clicked
+// 		else if (e.getSource() == exportSvg) {
+// 			export(4);
+// 		} else if (e.getSource() == exportCsv) {
+// 			export(5);
+// 		}
 	}
 
 	/**
@@ -2065,26 +2074,29 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		graph.addMouseListener(this);
 		JPanel ButtonHolder = new JPanel();
 		save = new JButton("Save");
-		exportJPeg = new JButton("Export As JPEG");
-		exportPng = new JButton("Export As PNG");
-		exportPdf = new JButton("Export As PDF");
-		exportEps = new JButton("Export As EPS");
-		exportSvg = new JButton("Export As SVG");
-		exportCsv = new JButton("Export As CSV");
+		export = new JButton("Export");
+// 		exportJPeg = new JButton("Export As JPEG");
+// 		exportPng = new JButton("Export As PNG");
+// 		exportPdf = new JButton("Export As PDF");
+// 		exportEps = new JButton("Export As EPS");
+// 		exportSvg = new JButton("Export As SVG");
+// 		exportCsv = new JButton("Export As CSV");
 		save.addActionListener(this);
-		exportJPeg.addActionListener(this);
-		exportPng.addActionListener(this);
-		exportPdf.addActionListener(this);
-		exportEps.addActionListener(this);
-		exportSvg.addActionListener(this);
-		exportCsv.addActionListener(this);
+		export.addActionListener(this);
+// 		exportJPeg.addActionListener(this);
+// 		exportPng.addActionListener(this);
+// 		exportPdf.addActionListener(this);
+// 		exportEps.addActionListener(this);
+// 		exportSvg.addActionListener(this);
+// 		exportCsv.addActionListener(this);
 		ButtonHolder.add(save);
-		ButtonHolder.add(exportJPeg);
-		ButtonHolder.add(exportPng);
-		ButtonHolder.add(exportPdf);
-		ButtonHolder.add(exportEps);
-		ButtonHolder.add(exportSvg);
-		ButtonHolder.add(exportCsv);
+		ButtonHolder.add(export);
+// 		ButtonHolder.add(exportJPeg);
+// 		ButtonHolder.add(exportPng);
+// 		ButtonHolder.add(exportPdf);
+// 		ButtonHolder.add(exportEps);
+// 		ButtonHolder.add(exportSvg);
+// 		ButtonHolder.add(exportCsv);
 		JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, ButtonHolder, null);
 		splitPane.setDividerSize(0);
 		this.removeAll();
@@ -2097,8 +2109,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	/**
 	 * This method saves the graph as a jpeg or as a png file.
 	 */
-	public void export(int output) {
+	public void export() {
 		try {
+  		        int output = 2;  /* Default is currently pdf */
 			int width = -1;
 			int height = -1;
 			JPanel sizePanel = new JPanel(new GridLayout(2, 2));
@@ -2112,7 +2125,40 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			sizePanel.add(heightField);
 			Object[] options2 = { "Export", "Cancel" };
 			int value;
-			if (output != 5) {
+			File file;
+			if (savedPics != null) {
+				file = new File(savedPics);
+			} else {
+				file = null;
+			}
+			String filename = Buttons.browse(biomodelsim.frame(), file, null,
+					JFileChooser.FILES_ONLY, "Export");
+			if ((filename.length() > 4) && (filename.substring((filename.length() - 4), filename.length())
+							.equals(".jpg"))) {
+			  output=0;
+			} else if ((filename.length() > 4) && (filename.substring((filename.length() - 4), filename.length())
+							       .equals(".png"))) {
+			  output=1;
+			} else if ((filename.length() > 4) && (filename.substring((filename.length() - 4), filename.length())
+							       .equals(".pdf"))) {
+			  output=2;
+			} else if ((filename.length() > 4) && (filename.substring((filename.length() - 4), filename.length())
+							       .equals(".eps"))) {
+			  output=3;
+			} else if ((filename.length() > 4) && (filename.substring((filename.length() - 4), filename.length())
+							       .equals(".svg"))) {
+			  output=4;
+			} else if ((filename.length() > 4) && (filename.substring((filename.length() - 4), filename.length())
+							       .equals(".csv"))) {
+			  output=5;
+			} else if ((filename.length() > 4) && (filename.substring((filename.length() - 4), filename.length())
+							       .equals(".dat"))) {
+			  output=6;
+			} else if ((filename.length() > 4) && (filename.substring((filename.length() - 4), filename.length())
+							       .equals(".tsd"))) {
+			  output=7;
+			} 
+			if ((!filename.equals("")) && (output != 5) && (output != 6) && (output != 7)) {
 				value = JOptionPane.showOptionDialog(biomodelsim.frame(), sizePanel,
 						"Enter Size Of File", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
 						null, options2, options2[0]);
@@ -2146,82 +2192,74 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					return;
 				}
 			}
-			File file;
-			if (savedPics != null) {
-				file = new File(savedPics);
-			} else {
-				file = null;
-			}
-			String filename = Buttons.browse(biomodelsim.frame(), file, null,
-					JFileChooser.FILES_ONLY, "Save");
 			if (!filename.equals("")) {
-				if (output == 0) {
-					if (filename.length() < 4) {
-						filename += ".jpg";
-					} else if (filename.length() < 5
-							&& !filename.substring((filename.length() - 4), filename.length())
-									.equals(".jpg")) {
-						filename += ".jpg";
-					} else {
-						if (filename.substring((filename.length() - 4), filename.length()).equals(
-								".jpg")
-								|| filename.substring((filename.length() - 5), filename.length())
-										.equals(".jpeg")) {
-						} else {
-							filename += ".jpg";
-						}
-					}
-				} else if (output == 1) {
-					if (filename.length() < 4) {
-						filename += ".png";
-					} else {
-						if (filename.substring((filename.length() - 4), filename.length()).equals(
-								".png")) {
-						} else {
-							filename += ".png";
-						}
-					}
-				} else if (output == 2) {
-					if (filename.length() < 4) {
-						filename += ".pdf";
-					} else {
-						if (filename.substring((filename.length() - 4), filename.length()).equals(
-								".pdf")) {
-						} else {
-							filename += ".pdf";
-						}
-					}
-				} else if (output == 3) {
-					if (filename.length() < 4) {
-						filename += ".eps";
-					} else {
-						if (filename.substring((filename.length() - 4), filename.length()).equals(
-								".eps")) {
-						} else {
-							filename += ".eps";
-						}
-					}
-				} else if (output == 4) {
-					if (filename.length() < 4) {
-						filename += ".svg";
-					} else {
-						if (filename.substring((filename.length() - 4), filename.length()).equals(
-								".svg")) {
-						} else {
-							filename += ".svg";
-						}
-					}
-				} else if (output == 5) {
-					if (filename.length() < 4) {
-						filename += ".csv";
-					} else {
-						if (filename.substring((filename.length() - 4), filename.length()).equals(
-								".csv")) {
-						} else {
-							filename += ".csv";
-						}
-					}
-				}
+// 				if (output == 0) {
+// 					if (filename.length() < 4) {
+// 						filename += ".jpg";
+// 					} else if (filename.length() < 5
+// 							&& !filename.substring((filename.length() - 4), filename.length())
+// 									.equals(".jpg")) {
+// 						filename += ".jpg";
+// 					} else {
+// 						if (filename.substring((filename.length() - 4), filename.length()).equals(
+// 								".jpg")
+// 								|| filename.substring((filename.length() - 5), filename.length())
+// 										.equals(".jpeg")) {
+// 						} else {
+// 							filename += ".jpg";
+// 						}
+// 					}
+// 				} else if (output == 1) {
+// 					if (filename.length() < 4) {
+// 						filename += ".png";
+// 					} else {
+// 						if (filename.substring((filename.length() - 4), filename.length()).equals(
+// 								".png")) {
+// 						} else {
+// 							filename += ".png";
+// 						}
+// 					}
+// 				} else if (output == 2) {
+// 					if (filename.length() < 4) {
+// 						filename += ".pdf";
+// 					} else {
+// 						if (filename.substring((filename.length() - 4), filename.length()).equals(
+// 								".pdf")) {
+// 						} else {
+// 							filename += ".pdf";
+// 						}
+// 					}
+// 				} else if (output == 3) {
+// 					if (filename.length() < 4) {
+// 						filename += ".eps";
+// 					} else {
+// 						if (filename.substring((filename.length() - 4), filename.length()).equals(
+// 								".eps")) {
+// 						} else {
+// 							filename += ".eps";
+// 						}
+// 					}
+// 				} else if (output == 4) {
+// 					if (filename.length() < 4) {
+// 						filename += ".svg";
+// 					} else {
+// 						if (filename.substring((filename.length() - 4), filename.length()).equals(
+// 								".svg")) {
+// 						} else {
+// 							filename += ".svg";
+// 						}
+// 					}
+// 				} else if (output == 5) {
+// 					if (filename.length() < 4) {
+// 						filename += ".csv";
+// 					} else {
+// 						if (filename.substring((filename.length() - 4), filename.length()).equals(
+// 								".csv")) {
+// 						} else {
+// 							filename += ".csv";
+// 						}
+// 					}
+// 				}
 				file = new File(filename);
 				if (file.exists()) {
 					Object[] options = { "Overwrite", "Cancel" };
@@ -2269,25 +2307,70 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							svgGenerator.stream(out, useCSS);
 							out.close();
 							outStream.close();
-						} else if (output == 5) {
-							FileOutputStream csvFile = new FileOutputStream(file);
+						} else if ((output == 5)||(output == 6)||(output == 7)) {
+						        FileOutputStream csvFile = new FileOutputStream(file);
 							PrintWriter csvWriter = new PrintWriter(csvFile);
-							csvWriter.print("Time");
-							for (int i = 0; i < curData.getSeriesCount(); i++) {
-								csvWriter.print(", " + curData.getSeriesKey(i));
+							if (output == 7) {
+							  csvWriter.print("((");
+							} else if (output == 6) {
+							  csvWriter.print("#");
 							}
-							csvWriter.println("");
-							XYSeries data = curData.getSeries(0);
-							for (int j = 0; j < data.getItemCount(); j++) {
-								for (int i = 0; i < curData.getSeriesCount(); i++) {
-									data = curData.getSeries(i);
-									XYDataItem item = data.getDataItem(j);
-									if (i == 0) {
-										csvWriter.print(item.getX());
-									}
-									csvWriter.print(", " + item.getY());
-								}
-								csvWriter.println("");
+							csvWriter.print("\"Time\"");
+							int count = curData.getSeries(0).getItemCount();
+							int pos = 0;
+							for (int i = 0; i < curData.getSeriesCount(); i++) {
+							  if (output == 6) {
+							    csvWriter.print(" ");
+							  } else {
+							    csvWriter.print(",");
+							  }
+							  csvWriter.print("\""+curData.getSeriesKey(i)+"\"");
+							  if (curData.getSeries(i).getItemCount() > count) {
+							    count = curData.getSeries(i).getItemCount();
+							    pos = i;
+							  }
+							}
+							if (output == 7) {
+							  csvWriter.print(")");
+							} else {
+							  csvWriter.println("");
+							}
+							for (int j = 0; j < count; j++) {
+							  if (output == 7) {
+							    csvWriter.print(",");
+							  }
+							  for (int i = 0; i < curData.getSeriesCount(); i++) {
+							    if (i == 0) {
+							      if (output == 7) {
+								csvWriter.print("(");
+							      } 
+							      csvWriter.print(curData.getSeries(pos).getDataItem(j).getX());
+							    }
+							    XYSeries data = curData.getSeries(i);
+							    if (j < data.getItemCount()) {
+							      XYDataItem item = data.getDataItem(j);
+							      if (output == 6) {
+								csvWriter.print(" ");
+							      } else {
+								csvWriter.print(",");
+							      }
+							      csvWriter.print(item.getY());
+							    } else {
+							      if (output == 6) {
+								csvWriter.print(" ");
+							      } else {
+								csvWriter.print(",");
+							      }
+							    }
+							  }
+							  if (output == 7) {
+							    csvWriter.print(")");
+							  } else {
+							    csvWriter.println("");
+							  }
+							}
+							if (output == 7) {
+							  csvWriter.println(")");
 							}
 							csvWriter.close();
 							csvFile.close();
@@ -2330,25 +2413,70 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						svgGenerator.stream(out, useCSS);
 						out.close();
 						outStream.close();
-					} else if (output == 5) {
-						FileOutputStream csvFile = new FileOutputStream(file);
+				        } else if ((output == 5)||(output == 6)||(output == 7)) {
+					        FileOutputStream csvFile = new FileOutputStream(file);
 						PrintWriter csvWriter = new PrintWriter(csvFile);
-						csvWriter.print("Time");
-						for (int i = 0; i < curData.getSeriesCount(); i++) {
-							csvWriter.print(", " + curData.getSeriesKey(i));
+						if (output == 7) {
+						  csvWriter.print("((");
+						} else if (output == 6) {
+						  csvWriter.print("#");
 						}
-						csvWriter.println("");
-						XYSeries data = curData.getSeries(0);
-						for (int j = 0; j < data.getItemCount(); j++) {
-							for (int i = 0; i < curData.getSeriesCount(); i++) {
-								data = curData.getSeries(i);
-								XYDataItem item = data.getDataItem(j);
-								if (i == 0) {
-									csvWriter.print(item.getX());
-								}
-								csvWriter.print(", " + item.getY());
-							}
-							csvWriter.println("");
+						csvWriter.print("Time");
+						int count = curData.getSeries(0).getItemCount();
+						int pos = 0;
+						for (int i = 0; i < curData.getSeriesCount(); i++) {
+						  if (output == 6) {
+						    csvWriter.print(" ");
+						  } else {
+						    csvWriter.print(",");
+						  }
+						  csvWriter.print(curData.getSeriesKey(i));
+						  if (curData.getSeries(i).getItemCount() > count) {
+						    count = curData.getSeries(i).getItemCount();
+						    pos = i;
+						  }
+						}
+						if (output == 7) {
+						  csvWriter.print(")");
+						} else {
+						  csvWriter.println("");
+						}
+						for (int j = 0; j < count; j++) {
+						  if (output == 7) {
+						    csvWriter.print(",");
+						  }
+						  for (int i = 0; i < curData.getSeriesCount(); i++) {
+						    if (i == 0) {
+						      if (output == 7) {
+							csvWriter.print("(");
+						      } 
+						      csvWriter.print(curData.getSeries(pos).getDataItem(j).getX());
+						    }
+						    XYSeries data = curData.getSeries(i);
+						    if (j < data.getItemCount()) {
+						      XYDataItem item = data.getDataItem(j);
+						      if (output == 6) {
+							csvWriter.print(" ");
+						      } else {
+							csvWriter.print(",");
+						      }
+						      csvWriter.print(item.getY());
+						    } else {
+						      if (output == 6) {
+							csvWriter.print(" ");
+						      } else {
+							csvWriter.print(",");
+						      }
+						    }
+						  }
+						  if (output == 7) {
+						    csvWriter.print(")");
+						  } else {
+						    csvWriter.println("");
+						  }
+						}
+						if (output == 7) {
+						  csvWriter.println(")");
 						}
 						csvWriter.close();
 						csvFile.close();

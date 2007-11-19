@@ -19,6 +19,22 @@ public class Buttons {
 	public static String browse(Component browse, File file, JTextField text, int i, String approve) {
 		String filename = "";
 		JFileChooser fc = new JFileChooser();
+		ExampleFileFilter csvFilter = new ExampleFileFilter();
+		csvFilter.addExtension("csv");
+		ExampleFileFilter datFilter = new ExampleFileFilter();
+		datFilter.addExtension("dat");
+		ExampleFileFilter tsdFilter = new ExampleFileFilter();
+		tsdFilter.addExtension("tsd");
+		ExampleFileFilter epsFilter = new ExampleFileFilter();
+		epsFilter.addExtension("eps");
+		ExampleFileFilter jpgFilter = new ExampleFileFilter();
+		jpgFilter.addExtension("jpg");
+		ExampleFileFilter pdfFilter = new ExampleFileFilter();
+		pdfFilter.addExtension("pdf");
+		ExampleFileFilter pngFilter = new ExampleFileFilter();
+		pngFilter.addExtension("png");
+		ExampleFileFilter svgFilter = new ExampleFileFilter();
+		svgFilter.addExtension("svg");
 		if (file != null) {
 			fc.setSelectedFile(file);
 		}
@@ -28,6 +44,18 @@ public class Buttons {
 			retValue = fc.showSaveDialog(browse);
 		} else if (approve.equals("Open")) {
 			retValue = fc.showOpenDialog(browse);
+		} else if (approve.equals("Export")) {
+                        fc.addChoosableFileFilter(csvFilter);
+                        fc.addChoosableFileFilter(datFilter);
+                        fc.addChoosableFileFilter(epsFilter);
+                        fc.addChoosableFileFilter(jpgFilter);
+                        fc.addChoosableFileFilter(pdfFilter);
+                        fc.addChoosableFileFilter(pngFilter);
+                        fc.addChoosableFileFilter(svgFilter);
+                        fc.addChoosableFileFilter(tsdFilter);
+                        fc.setAcceptAllFileFilterUsed(false);
+                        fc.setFileFilter(pdfFilter);
+			retValue = fc.showDialog(browse, approve);
 		} else {
 			retValue = fc.showDialog(browse, approve);
 		}
@@ -37,6 +65,36 @@ public class Buttons {
 				text.setText(file.getPath());
 			}
 			filename = file.getPath();
+			if (approve.equals("Export")) {
+			  if ((filename.length() < 4) || 
+			      (!(filename.substring((filename.length() - 4), filename.length()).equals(".jpg")) &&
+			       !(filename.substring((filename.length() - 4), filename.length()).equals(".png")) &&
+			       !(filename.substring((filename.length() - 4), filename.length()).equals(".pdf")) &&
+			       !(filename.substring((filename.length() - 4), filename.length()).equals(".eps")) &&
+			       !(filename.substring((filename.length() - 4), filename.length()).equals(".svg")) &&
+			       !(filename.substring((filename.length() - 4), filename.length()).equals(".dat")) &&
+			       !(filename.substring((filename.length() - 4), filename.length()).equals(".tsd")) &&
+			       !(filename.substring((filename.length() - 4), filename.length()).equals(".csv")))) {
+			    ExampleFileFilter selectedFilter = (ExampleFileFilter)fc.getFileFilter();
+			    if (selectedFilter==jpgFilter) {
+			      filename+=".jpg";
+			    } else if (selectedFilter==pngFilter) {
+			      filename+=".png";
+			    } else if (selectedFilter==pdfFilter) {
+			      filename+=".pdf";
+			    } else if (selectedFilter==epsFilter) {
+			      filename+=".eps";
+			    } else if (selectedFilter==svgFilter) {
+			      filename+=".svg";
+			    } else if (selectedFilter==datFilter) {
+			      filename+=".dat";
+			    } else if (selectedFilter==tsdFilter) {
+			      filename+=".tsd";
+			    } else if (selectedFilter==csvFilter) {
+			      filename+=".csv";
+			    } 
+			  }
+			}
 		}
 		return filename;
 	}
