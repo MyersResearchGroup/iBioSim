@@ -41,10 +41,7 @@ public class Run implements ActionListener {
 			double rap1, double rap2, double qss, int con, JCheckBox usingSSA, String ssaFile,
 			String sad, File sadFile) {
 		Properties abs = new Properties();
-		if (selectedButtons.equals("abs_ODE") || selectedButtons.equals("abs_monteCarlo")
-				|| selectedButtons.equals("nary_monteCarlo")
-				|| selectedButtons.equals("nary_markov") || selectedButtons.equals("abs")
-				|| selectedButtons.equals("nary")) {
+		if (selectedButtons.contains("abs") || selectedButtons.contains("nary")) {
 			abs.setProperty("reb2sac.abstraction.method.0.1", "enzyme-kinetic-qssa-1");
 			abs.setProperty("reb2sac.abstraction.method.0.2",
 					"reversible-to-irreversible-transformer");
@@ -75,35 +72,52 @@ public class Run implements ActionListener {
 		}
 		abs.setProperty("simulation.printer", printer_id);
 		abs.setProperty("simulation.printer.tracking.quantity", printer_track_quantity);
-		if (selectedButtons.equals("none_ODE") || selectedButtons.equals("none")) {
-			abs.setProperty("reb2sac.abstraction.method.3.1", "kinetic-law-constants-simplifier");
-		} else if (selectedButtons.equals("none_monteCarlo")) {
+		if (selectedButtons.equals("none_monteCarlo")) {
 			abs.setProperty("reb2sac.abstraction.method.3.1",
 					"reversible-to-irreversible-transformer");
 			abs.setProperty("reb2sac.abstraction.method.3.2", "kinetic-law-constants-simplifier");
+		} else if (selectedButtons.contains("none")) {
+			abs.setProperty("reb2sac.abstraction.method.3.1", "kinetic-law-constants-simplifier");
 		}
-		if (selectedButtons.equals("abs_ODE") || selectedButtons.equals("abs_monteCarlo")
-				|| selectedButtons.equals("nary_monteCarlo")
-				|| selectedButtons.equals("nary_markov") || selectedButtons.equals("abs")
-				|| selectedButtons.equals("nary")) {
-			for (int i = 0; i < intSpecies.length; i++) {
-				if (intSpecies[i] != "") {
-					abs.setProperty("reb2sac.interesting.species." + (i + 1), "" + intSpecies[i]);
-				}
-			}
-			abs.setProperty("reb2sac.rapid.equilibrium.condition.1", "" + rap1);
-			abs.setProperty("reb2sac.rapid.equilibrium.condition.2", "" + rap2);
-			abs.setProperty("reb2sac.qssa.condition.1", "" + qss);
-			abs.setProperty("reb2sac.operator.max.concentration.threshold", "" + con);
+		for (int i = 0; i < intSpecies.length; i++) {
+		  if (intSpecies[i] != "") {
+		    abs.setProperty("reb2sac.interesting.species." + (i + 1), "" + intSpecies[i]);
+		  }
 		}
-		if (selectedButtons.equals("none_ODE") || selectedButtons.equals("abs_ODE")) {
+		abs.setProperty("reb2sac.rapid.equilibrium.condition.1", "" + rap1);
+		abs.setProperty("reb2sac.rapid.equilibrium.condition.2", "" + rap2);
+		abs.setProperty("reb2sac.qssa.condition.1", "" + qss);
+		abs.setProperty("reb2sac.operator.max.concentration.threshold", "" + con);
+		if (selectedButtons.contains("none")) {
+		  abs.setProperty("reb2sac.abstraction.method","none");
+		} if (selectedButtons.contains("abs")) {
+		  abs.setProperty("reb2sac.abstraction.method","abs");
+		} else if (selectedButtons.contains("nary")) {
+		  abs.setProperty("reb2sac.abstraction.method","nary");
+		}
+		if (selectedButtons.contains("ODE")) {
+		  abs.setProperty("reb2sac.simulation.method","ODE");
+		} else if (selectedButtons.contains("monteCarlo")) {
+		  abs.setProperty("reb2sac.simulation.method","monteCarlo");
+		} else if (selectedButtons.contains("markov")) {
+		  abs.setProperty("reb2sac.simulation.method","markov");
+		} else if (selectedButtons.contains("sbml")) {
+		  abs.setProperty("reb2sac.simulation.method","sbml");
+		} else if (selectedButtons.contains("dot")) {
+		  abs.setProperty("reb2sac.simulation.method","dot");
+		} else if (selectedButtons.contains("xhtml")) {
+		  abs.setProperty("reb2sac.simulation.method","xhtml");
+		} 
+		if (!selectedButtons.contains("monteCarlo")) {
+		  //		if (selectedButtons.equals("none_ODE") || selectedButtons.equals("abs_ODE")) {
 			abs.setProperty("ode.simulation.time.limit", "" + timeLimit);
 			abs.setProperty("ode.simulation.print.interval", "" + printInterval);
 			abs.setProperty("ode.simulation.time.step", "" + timeStep);
 			abs.setProperty("ode.simulation.absolute.error", "" + absError);
 			abs.setProperty("ode.simulation.out.dir", outDir);
 		}
-		if (selectedButtons.equals("none_monteCarlo") || selectedButtons.equals("abs_monteCarlo")) {
+		if (!selectedButtons.contains("ODE")) {
+		  //		if (selectedButtons.equals("none_monteCarlo") || selectedButtons.equals("abs_monteCarlo")) {
 			abs.setProperty("monte.carlo.simulation.time.limit", "" + timeLimit);
 			abs.setProperty("monte.carlo.simulation.print.interval", "" + printInterval);
 			abs.setProperty("monte.carlo.simulation.random.seed", "" + rndSeed);
@@ -203,8 +217,10 @@ public class Run implements ActionListener {
 		nary.setProperty("reb2sac.analysis.stop.enabled", stopE);
 		nary.setProperty("reb2sac.analysis.stop.rate", "" + stopR);
 		for (int i = 0; i < getSpeciesProps.size(); i++) {
-			nary.setProperty("reb2sac.absolute.inhibition.threshold." + getSpeciesProps.get(i),
-					inhib.get(i).getText().trim());
+		        if (!(inhib.get(i).getText().trim() !=  "<<none>>")) {
+			  nary.setProperty("reb2sac.absolute.inhibition.threshold." + getSpeciesProps.get(i),
+					   inhib.get(i).getText().trim());
+			}
 			String[] consLevels = Buttons.getList(conLevel.get(i), consLevel.get(i));
 			for (int j = 0; j < counts.get(i); j++) {
 				nary
@@ -221,10 +237,10 @@ public class Run implements ActionListener {
 			nary.setProperty("monte.carlo.simulation.print.interval", "" + printInterval);
 			nary.setProperty("monte.carlo.simulation.random.seed", "" + rndSeed);
 			nary.setProperty("monte.carlo.simulation.runs", "" + run);
-			nary.setProperty("monte.carlo.simulation.out.dir", outDir);
+			nary.setProperty("monte.carlo.simulation.out.dir", ".");
 		}
 		for (int i = 0; i < finalS.length; i++) {
-			if (finalS[i] != "") {
+		        if (finalS[i].trim() != "<<unknown>>") {
 				nary.setProperty("reb2sac.final.state." + (i + 1), "" + finalS[i]);
 			}
 		}

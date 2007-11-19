@@ -250,8 +250,8 @@ public class Nary_Run implements ActionListener, Runnable {
 		getSpeciesProps = new ArrayList<String>();
 		while (iter.hasNext()) {
 			String next = (String) iter.next();
-			if (next.contains("inhibition")) {
-				String[] get = next.split("d");
+			if (next.contains("specification")) {
+				String[] get = next.split("e");
 				getSpeciesProps.add(get[get.length - 1].substring(1, get[get.length - 1].length()));
 			}
 		}
@@ -274,12 +274,12 @@ public class Nary_Run implements ActionListener, Runnable {
 			JPanel newPanel1 = new JPanel(new GridLayout(1, 2));
 			JPanel newPanel2 = new JPanel(new GridLayout(1, 2));
 			JPanel label = new JPanel();
-			label.add(new JLabel(getSpeciesProps.get(i) + " Absolution Inhibition Threshold:"));
+			label.add(new JLabel(getSpeciesProps.get(i) + " Absolute Inhibition Threshold:"));
 			newPanel1.add(label);
 			JPanel text = new JPanel();
 			inhib.add(new JTextField());
 			inhib.get(i).setPreferredSize(new Dimension(260, 20));
-			inhib.get(i).setText("<<unknown>>");
+			inhib.get(i).setText("<<none>>");
 			text.add(inhib.get(i));
 			newPanel1.add(text);
 			JPanel otherLabel = new JPanel();
@@ -292,7 +292,7 @@ public class Nary_Run implements ActionListener, Runnable {
 			int count = 0;
 			while (iter.hasNext()) {
 				String next = (String) iter.next();
-				if (next.contains("concentration.level." + getSpeciesProps.get(i))) {
+				if (next.contains("concentration.level." + getSpeciesProps.get(i)+".")) {
 					get.add(naryProps.getProperty(next));
 					count++;
 				}
@@ -300,7 +300,7 @@ public class Nary_Run implements ActionListener, Runnable {
 			counts.add(count);
 			int in;
 			for (int out = 1; out < get.size(); out++) {
-				if (!get.get(out).equals("<<unknown>>")) {
+				if (!get.get(out).equals("<<none>>")) {
 					double temp = Double.parseDouble(get.get(out));
 					in = out;
 					while (in > 0 && Double.parseDouble(get.get(in - 1)) >= temp) {
@@ -493,11 +493,12 @@ public class Nary_Run implements ActionListener, Runnable {
 		JPanel progBar = new JPanel();
 		JPanel button = new JPanel();
 		JPanel all = new JPanel(new BorderLayout());
-		JLabel label = new JLabel("Working...");
-		JProgressBar progress = new JProgressBar();
+		JLabel label = new JLabel("Progress");
+		JProgressBar progress = new JProgressBar(0, run);
 		progress.setStringPainted(true);
-		progress.setString("");
-		progress.setIndeterminate(true);
+		//progress.setString("");
+		//progress.setIndeterminate(true);
+		progress.setValue(0);
 		text.add(label);
 		progBar.add(progress);
 		button.add(naryCancel);
@@ -541,8 +542,7 @@ public class Nary_Run implements ActionListener, Runnable {
 		Run runProgram = new Run();
 		naryCancel.addActionListener(runProgram);
 		runProgram.createNaryProperties(timeLimit, printInterval,
-				".",
-				// outDir,
+						outDir,
 				rndSeed, run, printer_id, printer_track_quantity, getFilename, naryFrame, filename,
 				monteCarlo, stopE, stopR, finalS, inhib, consLevel, getSpeciesProps, conLevel,
 				termCond, intSpecies, rap1, rap2, qss, con, counts, usingSSA, ssaFile);
@@ -556,7 +556,7 @@ public class Nary_Run implements ActionListener, Runnable {
 		}
 		runProgram.execute(filename, sbml, dot, xhtml, naryFrame, ODE, monteCarlo, sim, printer_id,
 				printer_track_quantity, outDir, nary, 2, intSpecies, log, usingSSA, ssaFile,
-				biomodelsim, simTab, root, progress, -1);
+				biomodelsim, simTab, root, progress, run);
 		running.setCursor(null);
 		running.dispose();
 		naryCancel.removeActionListener(runProgram);
