@@ -554,8 +554,10 @@ public class BioSim implements MouseListener, ActionListener {
 					log.addText("Errors:\n" + error + "\n");
 				}
 				graph.waitFor();
-				log.addText("Executing:\ndotty " + directory + out + ".viz\n");
-				exec.exec("dotty " + out + ".viz", null, work);
+				if (error.equals("")) {
+				  log.addText("Executing:\ndotty " + directory + out + ".viz\n");
+				  exec.exec("dotty " + out + ".viz", null, work);
+				}
 				String remove;
 				if (tree.getFile().substring(tree.getFile().length() - 4).equals("sbml")) {
 					remove = tree.getFile().substring(0, tree.getFile().length() - 4)
@@ -637,13 +639,15 @@ public class BioSim implements MouseListener, ActionListener {
 				browse.waitFor();
 
 				String command = "";
-				if (System.getProperty("os.name").contentEquals("Linux")) {
-					command = "gnome-open ";
-				} else {
-					command = "cmd /c start ";
+				if (error.equals("")) {
+				    if (System.getProperty("os.name").contentEquals("Linux")) {
+				      command = "gnome-open ";
+				    } else {
+				      command = "cmd /c start ";
+				    }
+				    log.addText("Executing:\n" + command + directory + out + ".xhtml\n");
+				    exec.exec(command + out + ".xhtml", null, work);
 				}
-				log.addText("Executing:\n" + command + directory + out + ".xhtml\n");
-				exec.exec(command + out + ".xhtml", null, work);
 				String remove;
 				if (tree.getFile().substring(tree.getFile().length() - 4).equals("sbml")) {
 					remove = tree.getFile().substring(0, tree.getFile().length() - 4)
