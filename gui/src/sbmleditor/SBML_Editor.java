@@ -1601,82 +1601,29 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 									}
 								} else {
 									String[] splitLaw = docu.getModel().getReaction(0)
-											.getKineticLaw().getFormula().split(" ");
+											.getKineticLaw().getFormula().split(" |\\(|\\)|\\,");
 									boolean pass = true;
 									for (int i = 0; i < splitLaw.length; i++) {
 										if (splitLaw[i].equals("+") || splitLaw[i].equals("-")
 												|| splitLaw[i].equals("*")
 												|| splitLaw[i].equals("/")
+												|| splitLaw[i].equals("abs")
+												|| splitLaw[i].equals("acos")
+												|| splitLaw[i].equals("asin")
+												|| splitLaw[i].equals("atan")
+												|| splitLaw[i].equals("ceil")
+												|| splitLaw[i].equals("cos")
+												|| splitLaw[i].equals("exp")
+												|| splitLaw[i].equals("floor")
+												|| splitLaw[i].equals("log")
+												|| splitLaw[i].equals("sqr")
+												|| splitLaw[i].equals("pow")
+												|| splitLaw[i].equals("sqrt")
+												|| splitLaw[i].equals("root")
+												|| splitLaw[i].equals("sin")
+												|| splitLaw[i].equals("tan")
+												|| splitLaw[i].equals("")
 												|| splitLaw[i].equals("INF")) {
-
-										} else if ((splitLaw[i].contains("(") && splitLaw[i]
-												.contains(")"))) {
-											String subString = (String) splitLaw[i].substring(
-													splitLaw[i].indexOf('(') + 1, splitLaw[i]
-															.indexOf(')'));
-											try {
-												Double.parseDouble(subString);
-											} catch (Exception e1) {
-												invalidKineticVars.add(subString);
-												for (int j = 0; j < validKineticVars.size(); j++) {
-													if (subString.equals(validKineticVars.get(j))) {
-														pass = true;
-														invalidKineticVars.remove(subString);
-														break;
-													}
-													pass = false;
-												}
-											}
-										} else if (splitLaw[i].contains("(")
-												&& splitLaw[i].contains(",")) {
-											String subString = (String) splitLaw[i].substring(
-													splitLaw[i].indexOf('(') + 1, splitLaw[i]
-															.indexOf(','));
-											try {
-												Double.parseDouble(subString);
-											} catch (Exception e1) {
-												invalidKineticVars.add(subString);
-												for (int j = 0; j < validKineticVars.size(); j++) {
-													if (subString.equals(validKineticVars.get(j))) {
-														pass = true;
-														invalidKineticVars.remove(subString);
-														break;
-													}
-													pass = false;
-												}
-											}
-										} else if (splitLaw[i].endsWith(")")) {
-											String subString = (String) splitLaw[i].substring(0,
-													splitLaw[i].indexOf(')'));
-											try {
-												Double.parseDouble(subString);
-											} catch (Exception e1) {
-												invalidKineticVars.add(subString);
-												for (int j = 0; j < validKineticVars.size(); j++) {
-													if (subString.equals(validKineticVars.get(j))) {
-														pass = true;
-														invalidKineticVars.remove(subString);
-														break;
-													}
-													pass = false;
-												}
-											}
-										} else if (splitLaw[i].startsWith("(")) {
-											String subString = (String) splitLaw[i]
-													.substring(splitLaw[i].indexOf('(') + 1);
-											try {
-												Double.parseDouble(subString);
-											} catch (Exception e1) {
-												invalidKineticVars.add(subString);
-												for (int j = 0; j < validKineticVars.size(); j++) {
-													if (subString.equals(validKineticVars.get(j))) {
-														pass = true;
-														invalidKineticVars.remove(subString);
-														break;
-													}
-													pass = false;
-												}
-											}
 										} else {
 											try {
 												Double.parseDouble(splitLaw[i]);
