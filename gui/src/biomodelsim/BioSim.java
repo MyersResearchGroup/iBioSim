@@ -239,7 +239,7 @@ public class BioSim implements MouseListener, ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == about) {
 			final JFrame f = new JFrame("About");
-			JLabel bioSim = new JLabel("BioSim 0.57");
+			JLabel bioSim = new JLabel("BioSim 0.58");
 			Font font = bioSim.getFont();
 			font = font.deriveFont(Font.BOLD, 36.0f);
 			bioSim.setFont(font);
@@ -402,13 +402,26 @@ public class BioSim implements MouseListener, ActionListener {
 				String sbmlFile = dot[dot.length - 1].substring(0, dot[dot.length - 1].length() - 3) + "sbml";
 				log.addText("Executing:\ndot2sbml.pl " + tree.getFile() + " " + root + separator + sbmlFile + "\n");
 				Runtime exec = Runtime.getRuntime();
+				String filename = tree.getFile();
+				String directory = "";
+				String theFile = "";
+				if (filename.lastIndexOf('/') >= 0) {
+					directory = filename.substring(0, filename.lastIndexOf('/') + 1);
+					theFile = filename.substring(filename.lastIndexOf('/') + 1);
+				}
+				if (filename.lastIndexOf('\\') >= 0) {
+					directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
+					theFile = filename.substring(filename.lastIndexOf('\\') + 1);
+				}
+				File work = new File(directory);
+
 				String command;
 				if (System.getProperty("os.name").contentEquals("Linux")) {
-				  command = "dot2sbml.pl " + tree.getFile() + " " + root + separator + sbmlFile;
+				  command = "dot2sbml.pl " + theFile + " " + sbmlFile;
 				} else {
-				  command = "C:\\Perl\\bin\\perl.exe " + System.getenv("BIOSIM") + "\\bin\\dot2sbml.pl " + tree.getFile() + " " + root + separator + sbmlFile;
+				  command = "C:\\Perl\\bin\\perl.exe " + System.getenv("BIOSIM") + "\\bin\\dot2sbml.pl " + theFile + " " + sbmlFile;
 				}
-				Process dot2sbml = exec.exec(command);
+				Process dot2sbml = exec.exec(command,null,work);
  				String error = "";
 				String output = "";
 				InputStream reb = dot2sbml.getErrorStream();
@@ -1947,21 +1960,40 @@ public class BioSim implements MouseListener, ActionListener {
 				}
 				new File(root + separator + simName).mkdir();
 				new FileWriter(new File(root + separator + simName + separator + ".sim")).close();
+
+
+
+
+
+
 				String[] dot = tree.getFile().split(separator);
-				String sbmlFile = root
+				String sbmlFile = /* root
 						+ separator
 						+ simName
 						+ separator
-						+ (dot[dot.length - 1].substring(0, dot[dot.length - 1].length() - 3) + "sbml");
-				log.addText("Executing:\ndot2sbml.pl " + tree.getFile() + " " + sbmlFile + "\n");
+						+ */ (dot[dot.length - 1].substring(0, dot[dot.length - 1].length() - 3) + "sbml");
+				log.addText("Executing:\ndot2sbml.pl " + tree.getFile() + " " + root + separator + simName + separator + sbmlFile + "\n");
 				Runtime exec = Runtime.getRuntime();
+				String filename = tree.getFile();
+				String directory = "";
+				String theFile = "";
+				if (filename.lastIndexOf('/') >= 0) {
+					directory = filename.substring(0, filename.lastIndexOf('/') + 1);
+					theFile = filename.substring(filename.lastIndexOf('/') + 1);
+				}
+				if (filename.lastIndexOf('\\') >= 0) {
+					directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
+					theFile = filename.substring(filename.lastIndexOf('\\') + 1);
+				}
+				File work = new File(directory);
+
 				String command;
 				if (System.getProperty("os.name").contentEquals("Linux")) {
-				  command = "dot2sbml.pl " + tree.getFile() + " " + sbmlFile;
+				  command = "dot2sbml.pl " + theFile + " " + simName + separator + sbmlFile;
 				} else {
-				  command = "C:\\Perl\\bin\\perl.exe " + System.getenv("BIOSIM") + "\\bin\\dot2sbml.pl " + tree.getFile() + " " + sbmlFile;
+				  command = "C:\\Perl\\bin\\perl.exe " + System.getenv("BIOSIM") + "\\bin\\dot2sbml.pl " + theFile + " " + simName + separator + sbmlFile;
 				}
-				Process dot2sbml = exec.exec(command);
+				Process dot2sbml = exec.exec(command,null,work);
  				String error = "";
 				String output = "";
 				InputStream reb = dot2sbml.getErrorStream();
@@ -1987,11 +2019,11 @@ public class BioSim implements MouseListener, ActionListener {
 				dot2sbml.waitFor();
 				refreshTree();
 				JTabbedPane simTab = new JTabbedPane();
-				Reb2Sac reb2sac = new Reb2Sac(sbmlFile, root, this, simName.trim(), log, simTab,
+				Reb2Sac reb2sac = new Reb2Sac(directory + simName + separator + sbmlFile, root, this, simName.trim(), log, simTab,
 						null);
 				simTab.addTab("Simulation", reb2sac);
 				simTab.getComponentAt(simTab.getComponents().length - 1).setName("Simulate");
-				SBML_Editor sbml = new SBML_Editor(sbmlFile, reb2sac, log, this);
+				SBML_Editor sbml = new SBML_Editor(directory + simName + separator + sbmlFile, reb2sac, log, this);
 				reb2sac.setSbml(sbml);
 				simTab.addTab("SBML Editor", sbml);
 				simTab.getComponentAt(simTab.getComponents().length - 1).setName("SBML Editor");
