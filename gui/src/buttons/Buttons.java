@@ -45,16 +45,16 @@ public class Buttons {
 		} else if (approve.equals("Open")) {
 			retValue = fc.showOpenDialog(browse);
 		} else if (approve.equals("Export")) {
-                        fc.addChoosableFileFilter(csvFilter);
-                        fc.addChoosableFileFilter(datFilter);
-                        fc.addChoosableFileFilter(epsFilter);
-                        fc.addChoosableFileFilter(jpgFilter);
-                        fc.addChoosableFileFilter(pdfFilter);
-                        fc.addChoosableFileFilter(pngFilter);
-                        fc.addChoosableFileFilter(svgFilter);
-                        fc.addChoosableFileFilter(tsdFilter);
-                        fc.setAcceptAllFileFilterUsed(false);
-                        fc.setFileFilter(pdfFilter);
+			fc.addChoosableFileFilter(csvFilter);
+			fc.addChoosableFileFilter(datFilter);
+			fc.addChoosableFileFilter(epsFilter);
+			fc.addChoosableFileFilter(jpgFilter);
+			fc.addChoosableFileFilter(pdfFilter);
+			fc.addChoosableFileFilter(pngFilter);
+			fc.addChoosableFileFilter(svgFilter);
+			fc.addChoosableFileFilter(tsdFilter);
+			fc.setAcceptAllFileFilterUsed(false);
+			fc.setFileFilter(pdfFilter);
 			retValue = fc.showDialog(browse, approve);
 		} else {
 			retValue = fc.showDialog(browse, approve);
@@ -66,34 +66,41 @@ public class Buttons {
 			}
 			filename = file.getPath();
 			if (approve.equals("Export")) {
-			  if ((filename.length() < 4) || 
-			      (!(filename.substring((filename.length() - 4), filename.length()).equals(".jpg")) &&
-			       !(filename.substring((filename.length() - 4), filename.length()).equals(".png")) &&
-			       !(filename.substring((filename.length() - 4), filename.length()).equals(".pdf")) &&
-			       !(filename.substring((filename.length() - 4), filename.length()).equals(".eps")) &&
-			       !(filename.substring((filename.length() - 4), filename.length()).equals(".svg")) &&
-			       !(filename.substring((filename.length() - 4), filename.length()).equals(".dat")) &&
-			       !(filename.substring((filename.length() - 4), filename.length()).equals(".tsd")) &&
-			       !(filename.substring((filename.length() - 4), filename.length()).equals(".csv")))) {
-			    ExampleFileFilter selectedFilter = (ExampleFileFilter)fc.getFileFilter();
-			    if (selectedFilter==jpgFilter) {
-			      filename+=".jpg";
-			    } else if (selectedFilter==pngFilter) {
-			      filename+=".png";
-			    } else if (selectedFilter==pdfFilter) {
-			      filename+=".pdf";
-			    } else if (selectedFilter==epsFilter) {
-			      filename+=".eps";
-			    } else if (selectedFilter==svgFilter) {
-			      filename+=".svg";
-			    } else if (selectedFilter==datFilter) {
-			      filename+=".dat";
-			    } else if (selectedFilter==tsdFilter) {
-			      filename+=".tsd";
-			    } else if (selectedFilter==csvFilter) {
-			      filename+=".csv";
-			    } 
-			  }
+				if ((filename.length() < 4)
+						|| (!(filename.substring((filename.length() - 4), filename.length())
+								.equals(".jpg"))
+								&& !(filename.substring((filename.length() - 4), filename.length())
+										.equals(".png"))
+								&& !(filename.substring((filename.length() - 4), filename.length())
+										.equals(".pdf"))
+								&& !(filename.substring((filename.length() - 4), filename.length())
+										.equals(".eps"))
+								&& !(filename.substring((filename.length() - 4), filename.length())
+										.equals(".svg"))
+								&& !(filename.substring((filename.length() - 4), filename.length())
+										.equals(".dat"))
+								&& !(filename.substring((filename.length() - 4), filename.length())
+										.equals(".tsd")) && !(filename.substring(
+								(filename.length() - 4), filename.length()).equals(".csv")))) {
+					ExampleFileFilter selectedFilter = (ExampleFileFilter) fc.getFileFilter();
+					if (selectedFilter == jpgFilter) {
+						filename += ".jpg";
+					} else if (selectedFilter == pngFilter) {
+						filename += ".png";
+					} else if (selectedFilter == pdfFilter) {
+						filename += ".pdf";
+					} else if (selectedFilter == epsFilter) {
+						filename += ".eps";
+					} else if (selectedFilter == svgFilter) {
+						filename += ".svg";
+					} else if (selectedFilter == datFilter) {
+						filename += ".dat";
+					} else if (selectedFilter == tsdFilter) {
+						filename += ".tsd";
+					} else if (selectedFilter == csvFilter) {
+						filename += ".csv";
+					}
+				}
 			}
 		}
 		return filename;
@@ -147,8 +154,8 @@ public class Buttons {
 					amount = Double.parseDouble(amountTerm.getText().trim());
 				} catch (Exception except) {
 					JOptionPane.showMessageDialog(component,
-							"Must Enter A Double In The Termination Condition Field.", "Error",
-							JOptionPane.ERROR_MESSAGE);
+							"Must Enter A Real Number Into The Termination Condition Field.",
+							"Error", JOptionPane.ERROR_MESSAGE);
 					return currentList;
 				}
 				if (ge.isSelected()) {

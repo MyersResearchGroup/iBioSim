@@ -4,6 +4,7 @@ import java.io.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
+
 import javax.swing.*;
 import org.sbml.libsbml.*;
 import biomodelsim.core.gui.*;
@@ -156,14 +157,25 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 
 	private String separator;
 
+	private boolean paramsOnly;
+
+	private String simDir;
+
+	private String paramFile;
+
+	private ArrayList<String> parameterChanges;
+
 	/**
 	 * Creates a new SBML_Editor and sets up the frame where the user can edit a
 	 * new sbml file.
 	 */
-	public SBML_Editor(Reb2Sac reb2sac, Log log, BioSim biosim) {
+	public SBML_Editor(Reb2Sac reb2sac, Log log, BioSim biosim, String simDir, String paramFile) {
 		this.reb2sac = reb2sac;
+		paramsOnly = (reb2sac != null);
 		this.log = log;
 		this.biosim = biosim;
+		this.simDir = simDir;
+		this.paramFile = paramFile;
 		createSbmlFrame("");
 	}
 
@@ -171,10 +183,14 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 * Creates a new SBML_Editor and sets up the frame where the user can edit
 	 * the sbml file given to this constructor.
 	 */
-	public SBML_Editor(String file, Reb2Sac reb2sac, Log log, BioSim biosim) {
+	public SBML_Editor(String file, Reb2Sac reb2sac, Log log, BioSim biosim, String simDir,
+			String paramFile) {
 		this.reb2sac = reb2sac;
+		paramsOnly = (reb2sac != null);
 		this.log = log;
 		this.biosim = biosim;
+		this.simDir = simDir;
+		this.paramFile = paramFile;
 		createSbmlFrame(file);
 	}
 
@@ -239,6 +255,23 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		addCompart.addActionListener(this);
 		removeCompart.addActionListener(this);
 		editCompart.addActionListener(this);
+		if (paramsOnly) {
+			parameterChanges = new ArrayList<String>();
+			try {
+				Scanner scan = new Scanner(new File(paramFile));
+				if (scan.hasNextLine()) {
+					scan.nextLine();
+				}
+				while (scan.hasNextLine()) {
+					parameterChanges.add(scan.nextLine());
+				}
+				scan.close();
+			} catch (Exception e) {
+			}
+			addCompart.setEnabled(false);
+			removeCompart.setEnabled(false);
+			editCompart.setEnabled(false);
+		}
 		JLabel compartmentsLabel = new JLabel("List Of Compartments:");
 		compartments = new JList();
 		JScrollPane scroll = new JScrollPane();
@@ -270,6 +303,10 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		addSpec.addActionListener(this);
 		removeSpec.addActionListener(this);
 		editSpec.addActionListener(this);
+		if (paramsOnly) {
+			addSpec.setEnabled(false);
+			removeSpec.setEnabled(false);
+		}
 		JLabel speciesLabel = new JLabel("List Of Species:");
 		species = new JList();
 		species.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -283,8 +320,23 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		for (int i = 0; i < model.getNumSpecies(); i++) {
 			Species species = (Species) listOfSpecies.get(i);
 			amount = species.isSetInitialAmount();
-			specs[i] = species.getId() + " " + species.getCompartment() + " "
+			String s = species.getId() + " " + species.getCompartment() + " "
 					+ species.getInitialAmount();
+			if (paramsOnly) {
+				for (int j = 0; j < parameterChanges.size(); j++) {
+					if (parameterChanges.get(j).split(" ")[0].equals(species.getId())) {
+						s = parameterChanges.get(j);
+						if (amount) {
+							species.setInitialAmount(Double.parseDouble(parameterChanges.get(j)
+									.split(" ")[2]));
+						} else {
+							species.setInitialConcentration(Double.parseDouble(parameterChanges
+									.get(j).split(" ")[2]));
+						}
+					}
+				}
+			}
+			specs[i] = s;
 		}
 		sort(specs);
 		species.setListData(specs);
@@ -309,6 +361,11 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		removeReac.addActionListener(this);
 		editReac.addActionListener(this);
 		copyReac.addActionListener(this);
+		if (paramsOnly) {
+			addReac.setEnabled(false);
+			removeReac.setEnabled(false);
+			copyReac.setEnabled(false);
+		}
 		JLabel reactionsLabel = new JLabel("List Of Reactions:");
 		reactions = new JList();
 		reactions.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -320,6 +377,17 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		reacts = new String[(int) model.getNumReactions()];
 		for (int i = 0; i < model.getNumReactions(); i++) {
 			Reaction reaction = (Reaction) listOfReactions.get(i);
+			ListOf params = reaction.getKineticLaw().getListOfParameters();
+			for (int j = 0; j < params.getNumItems(); j++) {
+				Parameter paramet = ((Parameter) (params.get(j)));
+				for (int k = 0; k < parameterChanges.size(); k++) {
+					if (parameterChanges.get(k).split(" ")[0].equals(reaction.getId() + "/"
+							+ paramet.getId())) {
+						paramet.setValue(Double.parseDouble(parameterChanges.get(k).split(" ")[1]));
+					}
+				}
+
+			}
 			reacts[i] = reaction.getId();
 		}
 		sort(reacts);
@@ -342,6 +410,10 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		addParam.addActionListener(this);
 		removeParam.addActionListener(this);
 		editParam.addActionListener(this);
+		if (paramsOnly) {
+			addParam.setEnabled(false);
+			removeParam.setEnabled(false);
+		}
 		JLabel parametersLabel = new JLabel("List Of Parameters Defined Outside The Kinetic Law:");
 		parameters = new JList();
 		parameters.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -353,7 +425,17 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		params = new String[(int) model.getNumParameters()];
 		for (int i = 0; i < model.getNumParameters(); i++) {
 			Parameter parameter = (Parameter) listOfParameters.get(i);
-			params[i] = parameter.getId() + " " + parameter.getValue();
+			String p = parameter.getId() + " " + parameter.getValue();
+			if (paramsOnly) {
+				for (int j = 0; j < parameterChanges.size(); j++) {
+					if (parameterChanges.get(j).split(" ")[0].equals(parameter.getId())) {
+						p = parameterChanges.get(j);
+						parameter.setValue(Double
+								.parseDouble(parameterChanges.get(j).split(" ")[1]));
+					}
+				}
+			}
+			params[i] = p;
 		}
 		sort(params);
 		parameters.setListData(params);
@@ -383,7 +465,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		this.add(mainPanelNorth, "North");
 		this.add(mainPanelCenter, "Center");
 		change = false;
-		if (reb2sac != null) {
+		if (paramsOnly) {
 			saveNoRun = new JButton("Save");
 			run = new JButton("Save And Run");
 			saveAs = new JButton("Save As");
@@ -427,7 +509,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		}
 		// if the save button is clicked
 		else if (e.getSource() == saveNoRun) {
-			if (reb2sac != null) {
+			if (paramsOnly) {
 				reb2sac.getSaveButton().doClick();
 			} else {
 				save();
@@ -435,7 +517,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		}
 		// if the save as button is clicked
 		else if (e.getSource() == saveAs) {
-			if (reb2sac != null) {
+			if (paramsOnly) {
 				reb2sac.getSaveAsButton().doClick();
 			} else {
 				String simName = JOptionPane.showInputDialog(biosim.frame(), "Enter Model ID:",
@@ -477,8 +559,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 							if (tab.getTitleAt(i).equals(
 									file.split(separator)[file.split(separator).length - 1])) {
 								tab.setTitleAt(i, simName);
-								tab.setComponentAt(i,
-										new SBML_Editor(newFile, reb2sac, log, biosim));
+								tab.setComponentAt(i, new SBML_Editor(newFile, reb2sac, log,
+										biosim, simDir, paramFile));
 								tab.getComponentAt(i).setName("SBML Editor");
 							}
 						}
@@ -1012,7 +1094,12 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			JOptionPane.showMessageDialog(biosim.frame(), "No species selected!",
 					"Must Select A Species", JOptionPane.ERROR_MESSAGE);
 		} else {
-			JPanel speciesPanel = new JPanel(new GridLayout(3, 2));
+			JPanel speciesPanel;
+			if (paramsOnly) {
+				speciesPanel = new JPanel(new GridLayout(4, 2));
+			} else {
+				speciesPanel = new JPanel(new GridLayout(3, 2));
+			}
 			JLabel idLabel = new JLabel("ID:");
 			JLabel compLabel = new JLabel("Compartment:");
 			JLabel initLabel;
@@ -1024,7 +1111,9 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			ID = new JTextField();
 			init = new JTextField("0.0");
 			int[] index = compartments.getSelectedIndices();
+			compartments.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 			String[] add = Buttons.getList(comps, compartments);
+			compartments.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			compartments.setSelectedIndices(index);
 			try {
 				add[0].getBytes();
@@ -1033,6 +1122,13 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				add[0] = "default";
 			}
 			comp = new JComboBox(add);
+			String[] list = { "Default", "Custom", "Sweep" };
+			final JComboBox type = new JComboBox(list);
+			if (paramsOnly) {
+				ID.setEditable(false);
+				comp.setEnabled(false);
+				init.setEditable(false);
+			}
 			if (option.equals("Save")) {
 				try {
 					Species specie = document.getModel().getSpecies(
@@ -1040,6 +1136,10 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					ID.setText(specie.getId());
 					init.setText("" + specie.getInitialAmount());
 					comp.setSelectedItem(specie.getCompartment());
+					if (((String) species.getSelectedValue()).split(" ").length > 3 && paramsOnly) {
+						type.setSelectedItem(((String) species.getSelectedValue()).split(" ")[3]);
+						init.setEditable(true);
+					}
 				} catch (Exception e) {
 				}
 			}
@@ -1047,6 +1147,26 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			speciesPanel.add(ID);
 			speciesPanel.add(compLabel);
 			speciesPanel.add(comp);
+			if (paramsOnly) {
+				JLabel typeLabel = new JLabel("Type:");
+				type.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						if (!((String) type.getSelectedItem()).equals("Default")) {
+							init.setEditable(true);
+						} else {
+							init.setEditable(false);
+							SBMLReader reader = new SBMLReader();
+							SBMLDocument d = reader.readSBML(file);
+							init.setText(d.getModel().getSpecies(
+									((String) species.getSelectedValue()).split(" ")[0])
+									.getInitialAmount()
+									+ "");
+						}
+					}
+				});
+				speciesPanel.add(typeLabel);
+				speciesPanel.add(type);
+			}
 			speciesPanel.add(initLabel);
 			speciesPanel.add(init);
 			Object[] options = { option, "Cancel" };
@@ -1068,8 +1188,14 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					} else {
 						try {
 							double initial = Double.parseDouble(init.getText().trim());
-							String addSpec = ID.getText().trim() + " " + comp.getSelectedItem()
-									+ " " + initial;
+							String addSpec;
+							if (paramsOnly && !((String) type.getSelectedItem()).equals("Default")) {
+								addSpec = ID.getText().trim() + " " + comp.getSelectedItem() + " "
+										+ initial + " " + type.getSelectedItem();
+							} else {
+								addSpec = ID.getText().trim() + " " + comp.getSelectedItem() + " "
+										+ initial;
+							}
 							if (usedIDs.contains(ID.getText().trim())) {
 								if (option.equals("Save")
 										&& !ID.getText().trim()
@@ -1154,6 +1280,21 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 									sort(specs);
 									species.setListData(specs);
 									species.setSelectedIndex(index1);
+									if (paramsOnly) {
+										int remove = -1;
+										for (int i = 0; i < parameterChanges.size(); i++) {
+											if (parameterChanges.get(i).split(" ")[0].equals(ID
+													.getText().trim())) {
+												remove = i;
+											}
+										}
+										if (remove != -1) {
+											parameterChanges.remove(remove);
+										}
+										if (!((String) type.getSelectedItem()).equals("Default")) {
+											parameterChanges.add(addSpec);
+										}
+									}
 								} else {
 									int index1 = species.getSelectedIndex();
 									Species specie = document.getModel().createSpecies();
@@ -1192,13 +1333,13 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 							error = true;
 							if (amount) {
 								JOptionPane.showMessageDialog(biosim.frame(),
-										"You must enter a double into the initial"
+										"You must enter a real number into the initial"
 												+ " amount field!",
 										"Enter A Valid Initial Concentration",
 										JOptionPane.ERROR_MESSAGE);
 							} else {
 								JOptionPane.showMessageDialog(biosim.frame(),
-										"You must enter a double into the initial"
+										"You must enter a real number into the initial"
 												+ " concentration field!",
 										"Enter A Valid Initial Concentration",
 										JOptionPane.ERROR_MESSAGE);
@@ -1278,7 +1419,17 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					Parameter parameter = (Parameter) listOfParameters.get(i);
 					changedParameters.add(parameter);
 					thisReactionParams.add(parameter.getId());
-					reacParams[i] = parameter.getId() + " " + parameter.getValue();
+					String p = parameter.getId() + " " + parameter.getValue();
+					if (paramsOnly) {
+						for (int j = 0; j < parameterChanges.size(); j++) {
+							if (parameterChanges.get(j).split(" ")[0].equals(reactions
+									.getSelectedValue()
+									+ "/" + parameter.getId())) {
+								p = parameterChanges.get(j).split("/")[1];
+							}
+						}
+					}
+					reacParams[i] = p;
 				}
 			} else {
 				Parameter p = new Parameter();
@@ -1414,6 +1565,21 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			reactionPanelCentral.add(kineticPanel);
 			reactionPanel.add(reactionPanelNorth, "North");
 			reactionPanel.add(reactionPanelCentral, "Center");
+			if (paramsOnly) {
+				reacID.setEditable(false);
+				reacReverse.setEnabled(false);
+				reacAddParam.setEnabled(false);
+				reacRemoveParam.setEnabled(false);
+				addReactant.setEnabled(false);
+				removeReactant.setEnabled(false);
+				editReactant.setEnabled(false);
+				addProduct.setEnabled(false);
+				removeProduct.setEnabled(false);
+				editProduct.setEnabled(false);
+				kineticLaw.setEditable(false);
+				useMassAction.setEnabled(false);
+				clearKineticLaw.setEnabled(false);
+			}
 			Object[] options1 = { option, "Cancel" };
 			int value = JOptionPane.showOptionDialog(biosim.frame(), reactionPanel,
 					"Reaction Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
@@ -1695,23 +1861,61 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			JOptionPane.showMessageDialog(biosim.frame(), "No parameter selected!",
 					"Must Select A Parameter", JOptionPane.ERROR_MESSAGE);
 		} else {
-			JPanel parametersPanel = new JPanel(new GridLayout(2, 2));
+			JPanel parametersPanel;
+			if (paramsOnly) {
+				parametersPanel = new JPanel(new GridLayout(3, 2));
+			} else {
+				parametersPanel = new JPanel(new GridLayout(2, 2));
+			}
 			JLabel idLabel = new JLabel("ID:");
 			JLabel valueLabel = new JLabel("Value:");
 			paramID = new JTextField();
 			paramValue = new JTextField();
+			if (paramsOnly) {
+				paramID.setEditable(false);
+				paramValue.setEditable(false);
+			}
+			String[] list = { "Default", "Custom", "Sweep" };
+			final JComboBox type = new JComboBox(list);
 			if (option.equals("Save")) {
 				try {
 					Parameter paramet = document.getModel().getParameter(
 							((String) parameters.getSelectedValue()).split(" ")[0]);
 					paramID.setText(paramet.getId());
 					paramValue.setText("" + paramet.getValue());
+					if (((String) parameters.getSelectedValue()).split(" ").length > 2
+							&& paramsOnly) {
+						type
+								.setSelectedItem(((String) parameters.getSelectedValue())
+										.split(" ")[2]);
+						paramValue.setEditable(true);
+					}
 				} catch (Exception e) {
 
 				}
 			}
 			parametersPanel.add(idLabel);
 			parametersPanel.add(paramID);
+			if (paramsOnly) {
+				JLabel typeLabel = new JLabel("Type:");
+				type.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						if (!((String) type.getSelectedItem()).equals("Default")) {
+							paramValue.setEditable(true);
+						} else {
+							paramValue.setEditable(false);
+							SBMLReader reader = new SBMLReader();
+							SBMLDocument d = reader.readSBML(file);
+							paramValue.setText(d.getModel().getParameter(
+									((String) parameters.getSelectedValue()).split(" ")[0])
+									.getValue()
+									+ "");
+						}
+					}
+				});
+				parametersPanel.add(typeLabel);
+				parametersPanel.add(type);
+			}
 			parametersPanel.add(valueLabel);
 			parametersPanel.add(paramValue);
 			Object[] options = { option, "Cancel" };
@@ -1730,7 +1934,13 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					} else {
 						try {
 							double val = Double.parseDouble(paramValue.getText().trim());
-							String param = paramID.getText().trim() + " " + val;
+							String param;
+							if (paramsOnly && !((String) type.getSelectedItem()).equals("Default")) {
+								param = paramID.getText().trim() + " " + val + " "
+										+ type.getSelectedItem();
+							} else {
+								param = paramID.getText().trim() + " " + val;
+							}
 							if (usedIDs.contains(paramID.getText().trim())) {
 								if (option.equals("Save")
 										&& !paramID.getText().trim()
@@ -1769,6 +1979,21 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 									sort(params);
 									parameters.setListData(params);
 									parameters.setSelectedIndex(index);
+									if (paramsOnly) {
+										int remove = -1;
+										for (int i = 0; i < parameterChanges.size(); i++) {
+											if (parameterChanges.get(i).split(" ")[0]
+													.equals(paramID.getText().trim())) {
+												remove = i;
+											}
+										}
+										if (remove != -1) {
+											parameterChanges.remove(remove);
+										}
+										if (!((String) type.getSelectedItem()).equals("Default")) {
+											parameterChanges.add(param);
+										}
+									}
 								} else {
 									int index = parameters.getSelectedIndex();
 									Parameter paramet = document.getModel().createParameter();
@@ -1801,7 +2026,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 							}
 						} catch (Exception e1) {
 							JOptionPane.showMessageDialog(biosim.frame(),
-									"You must enter a double into the value" + " field!",
+									"You must enter a real number into the value" + " field!",
 									"Enter A Valid Value", JOptionPane.ERROR_MESSAGE);
 							error = true;
 						}
@@ -1827,11 +2052,22 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			JOptionPane.showMessageDialog(biosim.frame(), "No parameter selected!",
 					"Must Select A Parameter", JOptionPane.ERROR_MESSAGE);
 		} else {
-			JPanel parametersPanel = new JPanel(new GridLayout(2, 2));
+			JPanel parametersPanel;
+			if (paramsOnly) {
+				parametersPanel = new JPanel(new GridLayout(3, 2));
+			} else {
+				parametersPanel = new JPanel(new GridLayout(2, 2));
+			}
 			JLabel idLabel = new JLabel("ID:");
 			JLabel valueLabel = new JLabel("Value:");
 			reacParamID = new JTextField();
 			reacParamValue = new JTextField();
+			if (paramsOnly) {
+				reacParamID.setEditable(false);
+				reacParamValue.setEditable(false);
+			}
+			String[] list = { "Default", "Custom", "Sweep" };
+			final JComboBox type = new JComboBox(list);
 			if (option.equals("Save")) {
 				String v = ((String) reacParameters.getSelectedValue()).split(" ")[0];
 				Parameter paramet = null;
@@ -1842,9 +2078,46 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				}
 				reacParamID.setText(paramet.getId());
 				reacParamValue.setText("" + paramet.getValue());
+				if (((String) reacParameters.getSelectedValue()).split(" ").length > 2
+						&& paramsOnly) {
+					type
+							.setSelectedItem(((String) reacParameters.getSelectedValue())
+									.split(" ")[2]);
+					reacParamValue.setEditable(true);
+				}
 			}
 			parametersPanel.add(idLabel);
 			parametersPanel.add(reacParamID);
+			if (paramsOnly) {
+				JLabel typeLabel = new JLabel("Type:");
+				type.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						if (!((String) type.getSelectedItem()).equals("Default")) {
+							reacParamValue.setEditable(true);
+						} else {
+							reacParamValue.setEditable(false);
+							SBMLReader reader = new SBMLReader();
+							SBMLDocument d = reader.readSBML(file);
+							ListOf list = d.getModel().getReaction(
+									((String) reactions.getSelectedValue())).getKineticLaw()
+									.getListOfParameters();
+							int number = -1;
+							for (int i = 0; i < list.getNumItems(); i++) {
+								if (((Parameter) list.get(i)).getId().equals(
+										((String) reacParameters.getSelectedValue()).split(" ")[0])) {
+									number = i;
+								}
+							}
+							reacParamValue.setText(d.getModel().getReaction(
+									((String) reactions.getSelectedValue())).getKineticLaw()
+									.getParameter(number).getValue()
+									+ "");
+						}
+					}
+				});
+				parametersPanel.add(typeLabel);
+				parametersPanel.add(type);
+			}
 			parametersPanel.add(valueLabel);
 			parametersPanel.add(reacParamValue);
 			Object[] options = { option, "Cancel" };
@@ -1863,7 +2136,13 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					} else {
 						try {
 							double val = Double.parseDouble(reacParamValue.getText().trim());
-							String param = reacParamID.getText().trim() + " " + val;
+							String param;
+							if (paramsOnly && !((String) type.getSelectedItem()).equals("Default")) {
+								param = reacParamID.getText().trim() + " " + val + " "
+										+ type.getSelectedItem();
+							} else {
+								param = reacParamID.getText().trim() + " " + val;
+							}
 							if (thisReactionParams.contains(reacParamID.getText().trim())) {
 								if (option.equals("Save")
 										&& !reacParamID.getText().trim().equals(
@@ -1912,6 +2191,23 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 									sort(reacParams);
 									reacParameters.setListData(reacParams);
 									reacParameters.setSelectedIndex(index);
+									if (paramsOnly) {
+										int remove = -1;
+										for (int i = 0; i < parameterChanges.size(); i++) {
+											if (parameterChanges.get(i).split(" ")[0]
+													.equals(reactions.getSelectedValue() + "/"
+															+ reacParamID.getText().trim())) {
+												remove = i;
+											}
+										}
+										if (remove != -1) {
+											parameterChanges.remove(remove);
+										}
+										if (!((String) type.getSelectedItem()).equals("Default")) {
+											parameterChanges.add(reactions.getSelectedValue() + "/"
+													+ param);
+										}
+									}
 								} else {
 									int index = reacParameters.getSelectedIndex();
 									Parameter paramet = new Parameter();
@@ -1951,7 +2247,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 							}
 						} catch (Exception e1) {
 							JOptionPane.showMessageDialog(biosim.frame(),
-									"You must enter a double into the value" + " field!",
+									"You must enter a real number into the value" + " field!",
 									"Enter A Valid Value", JOptionPane.ERROR_MESSAGE);
 							error = true;
 						}
@@ -2120,7 +2416,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						change = true;
 					} catch (Exception e1) {
 						JOptionPane.showMessageDialog(biosim.frame(),
-								"You must enter a double into the stoiciometry" + " field!",
+								"You must enter a real number into the stoiciometry" + " field!",
 								"Enter A Valid Value", JOptionPane.ERROR_MESSAGE);
 						error = true;
 					}
@@ -2288,7 +2584,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						change = true;
 					} catch (Exception e1) {
 						JOptionPane.showMessageDialog(biosim.frame(),
-								"You must enter a double into the stoiciometry" + " field!",
+								"You must enter a real number into the stoiciometry" + " field!",
 								"Enter A Valid Value", JOptionPane.ERROR_MESSAGE);
 						error = true;
 					}
@@ -2312,7 +2608,9 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	public void mouseClicked(MouseEvent e) {
 		if (e.getClickCount() == 2) {
 			if (e.getSource() == compartments) {
-				compartEditor("Save");
+				if (!paramsOnly) {
+					compartEditor("Save");
+				}
 			} else if (e.getSource() == species) {
 				speciesEditor("Save");
 			} else if (e.getSource() == reactions) {
@@ -2322,9 +2620,13 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			} else if (e.getSource() == reacParameters) {
 				reacParametersEditor("Save");
 			} else if (e.getSource() == reactants) {
-				reactantsEditor("Save");
+				if (!paramsOnly) {
+					reactantsEditor("Save");
+				}
 			} else if (e.getSource() == products) {
-				productsEditor("Save");
+				if (!paramsOnly) {
+					productsEditor("Save");
+				}
 			}
 		}
 	}
@@ -2371,25 +2673,55 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		}
 	}
 
-	/**
-	 * Saves the sbml file.
-	 */
-	public void save() {
+	public void createSBML() {
 		try {
-			log.addText("Saving sbml file:\n" + file + "\n");
-			FileOutputStream out = new FileOutputStream(new File(file));
+			FileOutputStream out = new FileOutputStream(new File(paramFile));
+			out.write((file + "\n").getBytes());
+			for (String s : parameterChanges) {
+				out.write((s + "\n").getBytes());
+			}
+			out.close();
+		} catch (Exception e1) {
+			JOptionPane.showMessageDialog(biosim.frame(), "Unable to save parameter file!",
+					"Error Saving File", JOptionPane.ERROR_MESSAGE);
+		}
+		try {
+			FileOutputStream out = new FileOutputStream(new File(simDir + separator
+					+ file.split(separator)[file.split(separator).length - 1]));
 			SBMLWriter writer = new SBMLWriter();
 			String doc = writer.writeToString(document);
 			byte[] output = doc.getBytes();
 			out.write(output);
 			out.close();
-			change = false;
-			if (reb2sac != null) {
-				reb2sac.updateSpeciesList();
-			}
 		} catch (Exception e1) {
-			JOptionPane.showMessageDialog(biosim.frame(), "Unable to save sbml file!",
-					"Error Saving File", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(biosim.frame(), "Unable to create sbml file!",
+					"Error Creating File", JOptionPane.ERROR_MESSAGE);
+		}
+	}
+
+	/**
+	 * Saves the sbml file.
+	 */
+	public void save() {
+		if (paramsOnly) {
+			createSBML();
+		} else {
+			try {
+				log.addText("Saving sbml file:\n" + file + "\n");
+				FileOutputStream out = new FileOutputStream(new File(file));
+				SBMLWriter writer = new SBMLWriter();
+				String doc = writer.writeToString(document);
+				byte[] output = doc.getBytes();
+				out.write(output);
+				out.close();
+				change = false;
+				if (paramsOnly) {
+					reb2sac.updateSpeciesList();
+				}
+			} catch (Exception e1) {
+				JOptionPane.showMessageDialog(biosim.frame(), "Unable to save sbml file!",
+						"Error Saving File", JOptionPane.ERROR_MESSAGE);
+			}
 		}
 	}
 
