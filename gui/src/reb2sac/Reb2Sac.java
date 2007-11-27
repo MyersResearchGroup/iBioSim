@@ -142,13 +142,15 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 
 	private String separator;
 
+	private String sbmlProp;
+
 	/**
 	 * This is the constructor for the GUI. It initializes all the input fields,
 	 * puts them on panels, adds the panels to the frame, and then displays the
 	 * GUI.
 	 */
-	public Reb2Sac(String sbmlFile, String root, BioSim biomodelsim, String simName, Log log,
-			JTabbedPane simTab, String open) {
+	public Reb2Sac(String sbmlFile, String sbmlProp, String root, BioSim biomodelsim,
+			String simName, Log log, JTabbedPane simTab, String open) {
 		if (File.separator.equals("\\")) {
 			separator = "\\\\";
 		} else {
@@ -157,6 +159,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 
 		this.biomodelsim = biomodelsim;
 		this.sbmlFile = sbmlFile;
+		this.sbmlProp = sbmlProp;
 		this.root = root;
 		this.simName = simName;
 		this.log = log;
@@ -1040,8 +1043,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			try {
 				time = Double.parseDouble(this.time.getText().trim());
 			} catch (Exception e1) {
-				JOptionPane.showMessageDialog(biomodelsim.frame(), "You must enter a double "
-						+ "into the time text field!", "Time Must Be A Double",
+				JOptionPane.showMessageDialog(biomodelsim.frame(), "You must enter a real "
+						+ "number into the time text field!", "Time Must Be A Real Number",
 						JOptionPane.ERROR_MESSAGE);
 				return;
 			}
@@ -1203,8 +1206,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 						time1 = Double.parseDouble(time.getText().trim());
 					} catch (Exception e1) {
 						JOptionPane.showMessageDialog(biomodelsim.frame(),
-								"You must enter a double " + "into the time text field!",
-								"Time Must Be A Double", JOptionPane.ERROR_MESSAGE);
+								"You must enter a real number " + "into the time text field!",
+								"Time Must Be A Real Number", JOptionPane.ERROR_MESSAGE);
 						return;
 					}
 					try {
@@ -1365,13 +1368,13 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			Random rnd = new Random();
 			seed.setText("" + rnd.nextInt());
 			int cut = 0;
-			String[] getFilename = sbmlFile.split(separator);
+			String[] getFilename = sbmlProp.split(separator);
 			for (int i = 0; i < getFilename[getFilename.length - 1].length(); i++) {
 				if (getFilename[getFilename.length - 1].charAt(i) == '.') {
 					cut = i;
 				}
 			}
-			String propName = sbmlFile.substring(0, sbmlFile.length()
+			String propName = sbmlProp.substring(0, sbmlProp.length()
 					- getFilename[getFilename.length - 1].length())
 					+ getFilename[getFilename.length - 1].substring(0, cut) + ".properties";
 			try {
@@ -1410,7 +1413,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			timeLimit = Double.parseDouble(limit.getText().trim());
 		} catch (Exception e1) {
 			JOptionPane.showMessageDialog(biomodelsim.frame(),
-					"Must Enter A Double In The Time Limit Field.", "Error",
+					"Must Enter A Real Number Into The Time Limit Field.", "Error",
 					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
@@ -1418,59 +1421,59 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			printInterval = Double.parseDouble(interval.getText().trim());
 		} catch (Exception e1) {
 			JOptionPane.showMessageDialog(biomodelsim.frame(),
-					"Must Enter A Double In The Print Interval Field.", "Error",
+					"Must Enter A Real Number Into The Print Interval Field.", "Error",
 					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		try {
-		  //if (step.isEnabled()) {
-				timeStep = Double.parseDouble(step.getText().trim());
-				//}
+			// if (step.isEnabled()) {
+			timeStep = Double.parseDouble(step.getText().trim());
+			// }
 		} catch (Exception e1) {
-		  //			if (step.isEnabled()) {
-				JOptionPane.showMessageDialog(biomodelsim.frame(),
-						"Must Enter A Double In The Time Step Field.", "Error",
-						JOptionPane.ERROR_MESSAGE);
-				//}
+			// if (step.isEnabled()) {
+			JOptionPane.showMessageDialog(biomodelsim.frame(),
+					"Must Enter A Real Number Into The Time Step Field.", "Error",
+					JOptionPane.ERROR_MESSAGE);
+			// }
 			return;
 		}
 		try {
-		  //if (absErr.isEnabled()) {
-				absError = Double.parseDouble(absErr.getText().trim());
-				//}
+			// if (absErr.isEnabled()) {
+			absError = Double.parseDouble(absErr.getText().trim());
+			// }
 		} catch (Exception e1) {
-		  //if (absErr.isEnabled()) {
-				JOptionPane.showMessageDialog(biomodelsim.frame(),
-						"Must Enter A Double In The Absolute Error Field.", "Error",
-						JOptionPane.ERROR_MESSAGE);
-				//}
+			// if (absErr.isEnabled()) {
+			JOptionPane.showMessageDialog(biomodelsim.frame(),
+					"Must Enter A Real Number Into The Absolute Error Field.", "Error",
+					JOptionPane.ERROR_MESSAGE);
+			// }
 			return;
 		}
 		outDir = simName;
 		try {
-		  //if (seed.isEnabled()) {
-				rndSeed = Long.parseLong(seed.getText().trim());
-				//}
+			// if (seed.isEnabled()) {
+			rndSeed = Long.parseLong(seed.getText().trim());
+			// }
 		} catch (Exception e1) {
 			JOptionPane.showMessageDialog(biomodelsim.frame(),
-					"Must Enter An Integer In The Random Seed Field.", "Error",
+					"Must Enter An Integer Into The Random Seed Field.", "Error",
 					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		try {
-		  //if (runs.isEnabled()) {
-				run = Integer.parseInt(runs.getText().trim());
-				if (run < 0) {
-					JOptionPane.showMessageDialog(biomodelsim.frame(),
-							"Must Enter A Positive Integer In The Runs Field."
-									+ "\nProceding With Default:  1", "Error",
-							JOptionPane.ERROR_MESSAGE);
-					run = 1;
-				}
-				//}
+			// if (runs.isEnabled()) {
+			run = Integer.parseInt(runs.getText().trim());
+			if (run < 0) {
+				JOptionPane.showMessageDialog(biomodelsim.frame(),
+						"Must Enter A Positive Integer Into The Runs Field."
+								+ "\nProceding With Default:  1", "Error",
+						JOptionPane.ERROR_MESSAGE);
+				run = 1;
+			}
+			// }
 		} catch (Exception e1) {
 			JOptionPane.showMessageDialog(biomodelsim.frame(),
-					"Must Enter A Positive Integer In The Runs Field.", "Error",
+					"Must Enter A Positive Integer Into The Runs Field.", "Error",
 					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
@@ -1505,39 +1508,39 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		double qss = 0.1;
 		int con = 15;
 		try {
-		  //if (rapid1.isEnabled()) {
-				rap1 = Double.parseDouble(rapid1.getText().trim());
-				//}
+			// if (rapid1.isEnabled()) {
+			rap1 = Double.parseDouble(rapid1.getText().trim());
+			// }
 		} catch (Exception e1) {
-			JOptionPane.showMessageDialog(biomodelsim.frame(), "Must Enter A Double In The Rapid"
-					+ " Equilibrium Condition 1 Field.", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(biomodelsim.frame(), "Must Enter A Real Number Into The"
+					+ " Rapid Equilibrium Condition 1 Field.", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		try {
-		  //if (rapid2.isEnabled()) {
-				rap2 = Double.parseDouble(rapid2.getText().trim());
-				//}
+			// if (rapid2.isEnabled()) {
+			rap2 = Double.parseDouble(rapid2.getText().trim());
+			// }
 		} catch (Exception e1) {
-			JOptionPane.showMessageDialog(biomodelsim.frame(), "Must Enter A Double In The Rapid"
-					+ " Equilibrium Condition 2 Field.", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(biomodelsim.frame(), "Must Enter A Real Number Into The"
+					+ " Rapid Equilibrium Condition 2 Field.", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		try {
-		  //if (qssa.isEnabled()) {
-				qss = Double.parseDouble(qssa.getText().trim());
-				//}
+			// if (qssa.isEnabled()) {
+			qss = Double.parseDouble(qssa.getText().trim());
+			// }
 		} catch (Exception e1) {
 			JOptionPane.showMessageDialog(biomodelsim.frame(),
-					"Must Enter A Double In The QSSA Condition Field.", "Error",
+					"Must Enter A Real Number Into The QSSA Condition Field.", "Error",
 					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		try {
-		  //if (maxCon.isEnabled()) {
-				con = Integer.parseInt(maxCon.getText().trim());
-				//}
+			// if (maxCon.isEnabled()) {
+			con = Integer.parseInt(maxCon.getText().trim());
+			// }
 		} catch (Exception e1) {
-			JOptionPane.showMessageDialog(biomodelsim.frame(), "Must Enter An Integer In The Max"
+			JOptionPane.showMessageDialog(biomodelsim.frame(), "Must Enter An Integer Into The Max"
 					+ " Concentration Threshold Field.", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
@@ -1598,13 +1601,13 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			return;
 		}
 		int cut = 0;
-		String[] getFilename = sbmlFile.split(separator);
+		String[] getFilename = sbmlProp.split(separator);
 		for (int i = 0; i < getFilename[getFilename.length - 1].length(); i++) {
 			if (getFilename[getFilename.length - 1].charAt(i) == '.') {
 				cut = i;
 			}
 		}
-		String propName = sbmlFile.substring(0, sbmlFile.length()
+		String propName = sbmlProp.substring(0, sbmlProp.length()
 				- getFilename[getFilename.length - 1].length())
 				+ getFilename[getFilename.length - 1].substring(0, cut) + ".properties";
 		String monteLimit = "";
@@ -1712,8 +1715,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		}
 		runProgram.createProperties(timeLimit, printInterval, timeStep, absError, ".",
 				// root + separator + outDir,
-				rndSeed, run, termCond, intSpecies, printer_id, printer_track_quantity, sbmlFile
-						.split(separator), selectedButtons, this, sbmlFile, rap1, rap2, qss, con,
+				rndSeed, run, termCond, intSpecies, printer_id, printer_track_quantity, sbmlProp
+						.split(separator), selectedButtons, this, sbmlProp, rap1, rap2, qss, con,
 				usingSSA,
 				// root + separator + simName + separator +
 				"user-defined.dat", sadFile.getText().trim(), new File(root + separator + outDir
@@ -1769,13 +1772,13 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				}
 			}
 		}
-		int exit = runProgram.execute(sbmlFile, sbml, dot, xhtml, biomodelsim.frame(), ODE,
+		int exit = runProgram.execute(sbmlProp, sbml, dot, xhtml, biomodelsim.frame(), ODE,
 				monteCarlo, sim, printer_id, printer_track_quantity, root + separator + outDir,
 				nary, 1, intSpecies, log, usingSSA, root + separator + simName + separator
 						+ "user-defined.dat", biomodelsim, simTab, root, progress, steps);
 		if (nary.isSelected() && exit == 0) {
-			new Nary_Run(this, amountTerm, ge, gt, eq, lt, le, simulators, sbmlFile
-					.split(separator), sbmlFile, sbml, dot, xhtml, nary, ODE, monteCarlo,
+			new Nary_Run(this, amountTerm, ge, gt, eq, lt, le, simulators, sbmlProp
+					.split(separator), sbmlProp, sbml, dot, xhtml, nary, ODE, monteCarlo,
 					timeLimit, printInterval, root + separator + outDir, rndSeed, run, printer_id,
 					printer_track_quantity, termCond, intSpecies, rap1, rap2, qss, con, log,
 					usingSSA, root + separator + simName + separator + "user-defined.dat",
@@ -1881,7 +1884,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			timeLimit = Double.parseDouble(limit.getText().trim());
 		} catch (Exception e1) {
 			JOptionPane.showMessageDialog(biomodelsim.frame(),
-					"Must Enter A Double In The Time Limit Field.", "Error",
+					"Must Enter A Real Number Into The Time Limit Field.", "Error",
 					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
@@ -1889,60 +1892,60 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			printInterval = Double.parseDouble(interval.getText().trim());
 		} catch (Exception e1) {
 			JOptionPane.showMessageDialog(biomodelsim.frame(),
-					"Must Enter A Double In The Print Interval Field.", "Error",
+					"Must Enter A Real Number Into The Print Interval Field.", "Error",
 					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		try {
-		  //if (step.isEnabled()) {
-				timeStep = Double.parseDouble(step.getText().trim());
-				//}
+			// if (step.isEnabled()) {
+			timeStep = Double.parseDouble(step.getText().trim());
+			// }
 		} catch (Exception e1) {
 			if (step.isEnabled()) {
 				JOptionPane.showMessageDialog(biomodelsim.frame(),
-						"Must Enter A Double In The Time Step Field.", "Error",
+						"Must Enter A Real Number Into The Time Step Field.", "Error",
 						JOptionPane.ERROR_MESSAGE);
 			}
 			return;
 		}
 		try {
-		  // if (absErr.isEnabled()) {
-				absError = Double.parseDouble(absErr.getText().trim());
-				//}
+			// if (absErr.isEnabled()) {
+			absError = Double.parseDouble(absErr.getText().trim());
+			// }
 		} catch (Exception e1) {
-		  //if (absErr.isEnabled()) {
-				JOptionPane.showMessageDialog(biomodelsim.frame(),
-						"Must Enter A Double In The Absolute Error Field.", "Error",
-						JOptionPane.ERROR_MESSAGE);
-				//}
+			// if (absErr.isEnabled()) {
+			JOptionPane.showMessageDialog(biomodelsim.frame(),
+					"Must Enter A Real Number Into The Absolute Error Field.", "Error",
+					JOptionPane.ERROR_MESSAGE);
+			// }
 			return;
 		}
 		outDir = simName;
 		// outDir = root + separator + simName;
 		try {
-		  //if (seed.isEnabled()) {
-				rndSeed = Long.parseLong(seed.getText().trim());
-				//}
+			// if (seed.isEnabled()) {
+			rndSeed = Long.parseLong(seed.getText().trim());
+			// }
 		} catch (Exception e1) {
 			JOptionPane.showMessageDialog(biomodelsim.frame(),
-					"Must Enter An Integer In The Random Seed Field.", "Error",
+					"Must Enter An Integer Into The Random Seed Field.", "Error",
 					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		try {
-		  //if (runs.isEnabled()) {
-				run = Integer.parseInt(runs.getText().trim());
-				if (run < 0) {
-					JOptionPane.showMessageDialog(biomodelsim.frame(),
-							"Must Enter A Positive Integer In The Runs Field."
-									+ "\nProceeding With Default:  1", "Error",
-							JOptionPane.ERROR_MESSAGE);
-					run = 1;
-				}
-				//}
+			// if (runs.isEnabled()) {
+			run = Integer.parseInt(runs.getText().trim());
+			if (run < 0) {
+				JOptionPane.showMessageDialog(biomodelsim.frame(),
+						"Must Enter A Positive Integer Into The Runs Field."
+								+ "\nProceding With Default:  1", "Error",
+						JOptionPane.ERROR_MESSAGE);
+				run = 1;
+			}
+			// }
 		} catch (Exception e1) {
 			JOptionPane.showMessageDialog(biomodelsim.frame(),
-					"Must Enter A Positive Integer In The Runs Field.", "Error",
+					"Must Enter A Positive Integer Into The Runs Field.", "Error",
 					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
@@ -1960,39 +1963,39 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		double qss = 0.1;
 		int con = 15;
 		try {
-		  //if (rapid1.isEnabled()) {
-				rap1 = Double.parseDouble(rapid1.getText().trim());
-				//}
+			// if (rapid1.isEnabled()) {
+			rap1 = Double.parseDouble(rapid1.getText().trim());
+			// }
 		} catch (Exception e1) {
-			JOptionPane.showMessageDialog(biomodelsim.frame(), "Must Enter A Double In The Rapid"
-					+ " Equilibrium Condition 1 Field.", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(biomodelsim.frame(), "Must Enter A Real Number Into The"
+					+ " Rapid Equilibrium Condition 1 Field.", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		try {
-		  //if (rapid2.isEnabled()) {
-				rap2 = Double.parseDouble(rapid2.getText().trim());
-				//}
+			// if (rapid2.isEnabled()) {
+			rap2 = Double.parseDouble(rapid2.getText().trim());
+			// }
 		} catch (Exception e1) {
-			JOptionPane.showMessageDialog(biomodelsim.frame(), "Must Enter A Double In The Rapid"
-					+ " Equilibrium Condition 2 Field.", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(biomodelsim.frame(), "Must Enter A Real Number Into The"
+					+ " Rapid Equilibrium Condition 2 Field.", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		try {
-		  //if (qssa.isEnabled()) {
-				qss = Double.parseDouble(qssa.getText().trim());
-				//}
+			// if (qssa.isEnabled()) {
+			qss = Double.parseDouble(qssa.getText().trim());
+			// }
 		} catch (Exception e1) {
 			JOptionPane.showMessageDialog(biomodelsim.frame(),
-					"Must Enter A Double In The QSSA Condition Field.", "Error",
+					"Must Enter A Real Number Into The QSSA Condition Field.", "Error",
 					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		try {
-		  //if (maxCon.isEnabled()) {
-				con = Integer.parseInt(maxCon.getText().trim());
-				//}
+			// if (maxCon.isEnabled()) {
+			con = Integer.parseInt(maxCon.getText().trim());
+			// }
 		} catch (Exception e1) {
-			JOptionPane.showMessageDialog(biomodelsim.frame(), "Must Enter An Integer In The Max"
+			JOptionPane.showMessageDialog(biomodelsim.frame(), "Must Enter An Integer Into The Max"
 					+ " Concentration Threshold Field.", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
@@ -2054,13 +2057,13 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		}
 		Run runProgram = new Run();
 		int cut = 0;
-		String[] getFilename = sbmlFile.split(separator);
+		String[] getFilename = sbmlProp.split(separator);
 		for (int i = 0; i < getFilename[getFilename.length - 1].length(); i++) {
 			if (getFilename[getFilename.length - 1].charAt(i) == '.') {
 				cut = i;
 			}
 		}
-		String propName = sbmlFile.substring(0, sbmlFile.length()
+		String propName = sbmlProp.substring(0, sbmlProp.length()
 				- getFilename[getFilename.length - 1].length())
 				+ getFilename[getFilename.length - 1].substring(0, cut) + ".properties";
 		String monteLimit = "";
@@ -2094,8 +2097,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		}
 		runProgram.createProperties(timeLimit, printInterval, timeStep, absError, ".",
 				// outDir,
-				rndSeed, run, termCond, intSpecies, printer_id, printer_track_quantity, sbmlFile
-						.split(separator), selectedButtons, this, sbmlFile, rap1, rap2, qss, con,
+				rndSeed, run, termCond, intSpecies, printer_id, printer_track_quantity, sbmlProp
+						.split(separator), selectedButtons, this, sbmlProp, rap1, rap2, qss, con,
 				usingSSA,
 				// root + separator + simName + separator +
 				"user-defined.dat", sadFile.getText().trim(), new File(root + separator + outDir
@@ -2368,7 +2371,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 							+ getFilename[getFilename.length - 1].substring(0, cut) + ".xml";
 				}
 				try {
-					sbmlFile = filename;
+					filename = sbmlFile;
 					ArrayList<String> listOfSpecs = new ArrayList<String>();
 					SBMLReader reader = new SBMLReader();
 					SBMLDocument document = reader.readSBML(filename);
@@ -2440,99 +2443,100 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					}
 				}
 				if (load.containsKey("ode.simulation.time.limit")) {
-				    limit.setText(load.getProperty("ode.simulation.time.limit"));
+					limit.setText(load.getProperty("ode.simulation.time.limit"));
 				}
 				if (load.containsKey("ode.simulation.print.interval")) {
-				  interval.setText(load.getProperty("ode.simulation.print.interval"));
+					interval.setText(load.getProperty("ode.simulation.print.interval"));
 				}
 				if (load.containsKey("ode.simulation.time.step")) {
-				  step.setText(load.getProperty("ode.simulation.time.step"));
+					step.setText(load.getProperty("ode.simulation.time.step"));
 				}
 				if (load.containsKey("ode.simulation.absolute.error")) {
-				  absErr.setText(load.getProperty("ode.simulation.absolute.error"));
+					absErr.setText(load.getProperty("ode.simulation.absolute.error"));
 				} else {
-				  absErr = new JTextField("1.0E-9", 15);
+					absErr = new JTextField("1.0E-9", 15);
 				}
 				if (load.containsKey("monte.carlo.simulation.time.limit")) {
-				  limit.setText(load.getProperty("monte.carlo.simulation.time.limit"));
+					limit.setText(load.getProperty("monte.carlo.simulation.time.limit"));
 				}
 				if (load.containsKey("monte.carlo.simulation.print.interval")) {
-				  interval.setText(load.getProperty("monte.carlo.simulation.print.interval"));
+					interval.setText(load.getProperty("monte.carlo.simulation.print.interval"));
 				}
 				if (load.containsKey("monte.carlo.simulation.random.seed")) {
-				  seed.setText(load.getProperty("monte.carlo.simulation.random.seed"));
+					seed.setText(load.getProperty("monte.carlo.simulation.random.seed"));
 				}
 				if (load.containsKey("monte.carlo.simulation.runs")) {
-				  runs.setText(load.getProperty("monte.carlo.simulation.runs"));
+					runs.setText(load.getProperty("monte.carlo.simulation.runs"));
 				}
 				if (load.containsKey("simulation.run.termination.decider")
-				    && load.getProperty("simulation.run.termination.decider").equals("sad")) {
-				  FileInputStream input = new FileInputStream(new File(root + separator
-										       + simName + separator
-										       + load.getProperty("computation.analysis.sad.path")));
-				  int read = input.read();
-				  while (read != -1) {
-				    sadFile.append("" + (char) read);
-				    read = input.read();
-				  }
-				  input.close();
+						&& load.getProperty("simulation.run.termination.decider").equals("sad")) {
+					FileInputStream input = new FileInputStream(new File(root + separator + simName
+							+ separator + load.getProperty("computation.analysis.sad.path")));
+					int read = input.read();
+					while (read != -1) {
+						sadFile.append("" + (char) read);
+						read = input.read();
+					}
+					input.close();
 				}
 				if (load.containsKey("reb2sac.simulation.method")) {
-				  if (load.getProperty("reb2sac.simulation.method").equals("ODE")) {
-				    ODE.setSelected(true);
-				    Button_Enabling.enableODE(seed, seedLabel, runs, runsLabel, stepLabel, step,
-							      errorLabel, absErr, limitLabel, limit, intervalLabel, interval,
-							      simulators, simulatorsLabel, explanation, description, usingSSA);
-				  } else if (load.getProperty("reb2sac.simulation.method").equals("monteCarlo")) {
-				    monteCarlo.setSelected(true);
-				    if (runFiles) {
-				      overwrite.setEnabled(true);
-				      append.setEnabled(true);
-				      choose3.setEnabled(true);
-				    }
-				    Button_Enabling.enableMonteCarlo(seed, seedLabel, runs, runsLabel, stepLabel,
-								     step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval,
-								     simulators, simulatorsLabel, explanation, description, usingSSA);
-				  } else if (load.getProperty("reb2sac.simulation.method").equals("markov")) {
-				    markov.setSelected(true);
-				    Button_Enabling.enableMarkov(seed, seedLabel, runs, runsLabel, stepLabel,
-								 step, errorLabel, absErr, limitLabel, limit, intervalLabel,
-								 interval, simulators, simulatorsLabel, explanation, description,
-								 usingSSA);
-				  } else if (load.getProperty("reb2sac.simulation.method").equals("sbml")) {
-				    sbml.setSelected(true);
-				    Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel,
-									  stepLabel, step, errorLabel, absErr, limitLabel, limit,
-									  intervalLabel, interval, simulators, simulatorsLabel, explanation,
-									  description);
-				  } else if (load.getProperty("reb2sac.simulation.method").equals("dot")) {
-				    dot.setSelected(true);
-				    Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel,
-									  stepLabel, step, errorLabel, absErr, limitLabel, limit,
-									  intervalLabel, interval, simulators, simulatorsLabel, explanation,
-									  description);
-				  } else if (load.getProperty("reb2sac.simulation.method").equals("xhtml")) {
-				    xhtml.setSelected(true);
-				    Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel,
-									  stepLabel, step, errorLabel, absErr, limitLabel, limit,
-									  intervalLabel, interval, simulators, simulatorsLabel, explanation,
-									  description);
-				  }
+					if (load.getProperty("reb2sac.simulation.method").equals("ODE")) {
+						ODE.setSelected(true);
+						Button_Enabling.enableODE(seed, seedLabel, runs, runsLabel, stepLabel,
+								step, errorLabel, absErr, limitLabel, limit, intervalLabel,
+								interval, simulators, simulatorsLabel, explanation, description,
+								usingSSA);
+					} else if (load.getProperty("reb2sac.simulation.method").equals("monteCarlo")) {
+						monteCarlo.setSelected(true);
+						if (runFiles) {
+							overwrite.setEnabled(true);
+							append.setEnabled(true);
+							choose3.setEnabled(true);
+						}
+						Button_Enabling.enableMonteCarlo(seed, seedLabel, runs, runsLabel,
+								stepLabel, step, errorLabel, absErr, limitLabel, limit,
+								intervalLabel, interval, simulators, simulatorsLabel, explanation,
+								description, usingSSA);
+					} else if (load.getProperty("reb2sac.simulation.method").equals("markov")) {
+						markov.setSelected(true);
+						Button_Enabling.enableMarkov(seed, seedLabel, runs, runsLabel, stepLabel,
+								step, errorLabel, absErr, limitLabel, limit, intervalLabel,
+								interval, simulators, simulatorsLabel, explanation, description,
+								usingSSA);
+					} else if (load.getProperty("reb2sac.simulation.method").equals("sbml")) {
+						sbml.setSelected(true);
+						Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel,
+								stepLabel, step, errorLabel, absErr, limitLabel, limit,
+								intervalLabel, interval, simulators, simulatorsLabel, explanation,
+								description);
+					} else if (load.getProperty("reb2sac.simulation.method").equals("dot")) {
+						dot.setSelected(true);
+						Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel,
+								stepLabel, step, errorLabel, absErr, limitLabel, limit,
+								intervalLabel, interval, simulators, simulatorsLabel, explanation,
+								description);
+					} else if (load.getProperty("reb2sac.simulation.method").equals("xhtml")) {
+						xhtml.setSelected(true);
+						Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel,
+								stepLabel, step, errorLabel, absErr, limitLabel, limit,
+								intervalLabel, interval, simulators, simulatorsLabel, explanation,
+								description);
+					}
 				}
 				if (load.containsKey("reb2sac.abstraction.method")) {
-				  if (load.getProperty("reb2sac.abstraction.method").equals("none")) {
-				    none.setSelected(true);
-				    abstraction.setSelected(false);
-				    nary.setSelected(false);
-				  } else if (load.getProperty("reb2sac.abstraction.method").equals("abs")) {
-				    none.setSelected(false);
-				    abstraction.setSelected(true);
-				    nary.setSelected(false);
-				  } else if (load.getProperty("reb2sac.abstraction.method").equals("nary")) {
-				    none.setSelected(false);
-				    abstraction.setSelected(false);
-				    nary.setSelected(true);
-				  } 
+					if (load.getProperty("reb2sac.abstraction.method").equals("none")) {
+						none.setSelected(true);
+						abstraction.setSelected(false);
+						nary.setSelected(false);
+					} else if (load.getProperty("reb2sac.abstraction.method").equals("abs")) {
+						none.setSelected(false);
+						abstraction.setSelected(true);
+						nary.setSelected(false);
+					} else if (load.getProperty("reb2sac.abstraction.method").equals("nary")) {
+						none.setSelected(false);
+						abstraction.setSelected(false);
+						nary.setSelected(true);
+					}
 				}
 				ArrayList<String> getLists = new ArrayList<String>();
 				int i = 1;
@@ -2658,13 +2662,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 	}
 
 	public void setSim(String newSimName) {
-		for (String s : new File(root + separator + newSimName).list()) {
-			if (s.length() > 3 && s.substring(s.length() - 4).equals("sbml")
-					|| s.substring(s.length() - 4).equals(".xml")) {
-				sbmlFile = root + separator + newSimName + separator + s;
-			}
-		}
+		sbmlProp = root + separator + newSimName + separator
+				+ sbmlFile.split(separator)[sbmlFile.split(separator).length - 1];
 		simName = newSimName;
-		sbmlEditor.setFile(sbmlFile);
 	}
 }

@@ -230,7 +230,8 @@ public class Nary_Run implements ActionListener, Runnable {
 		// reads in the species properties to determine which species to use
 		Properties naryProps = new Properties();
 		try {
-			FileInputStream load = new FileInputStream(new File(outDir + separator + "species.properties"));
+			FileInputStream load = new FileInputStream(new File(outDir + separator
+					+ "species.properties"));
 			naryProps.load(load);
 			load.close();
 			FileOutputStream store = new FileOutputStream(new File(outDir + separator
@@ -292,7 +293,7 @@ public class Nary_Run implements ActionListener, Runnable {
 			int count = 0;
 			while (iter.hasNext()) {
 				String next = (String) iter.next();
-				if (next.contains("concentration.level." + getSpeciesProps.get(i)+".")) {
+				if (next.contains("concentration.level." + getSpeciesProps.get(i) + ".")) {
 					get.add(naryProps.getProperty(next));
 					count++;
 				}
@@ -419,7 +420,7 @@ public class Nary_Run implements ActionListener, Runnable {
 					double get = Double.parseDouble(texts.get(number).getText().trim());
 					if (get < 0) {
 						JOptionPane.showMessageDialog(naryFrame,
-								"Concentration Levels Must Be Positive Doubles.", "Error",
+								"Concentration Levels Must Be Positive Real Numbers.", "Error",
 								JOptionPane.ERROR_MESSAGE);
 					} else {
 						JList add = new JList();
@@ -442,7 +443,7 @@ public class Nary_Run implements ActionListener, Runnable {
 					}
 				} catch (Exception e1) {
 					JOptionPane.showMessageDialog(naryFrame,
-							"Concentration Levels Must Be Positive Doubles.", "Error",
+							"Concentration Levels Must Be Positive Real Numbers.", "Error",
 							JOptionPane.ERROR_MESSAGE);
 				}
 
@@ -496,8 +497,8 @@ public class Nary_Run implements ActionListener, Runnable {
 		JLabel label = new JLabel("Progress");
 		JProgressBar progress = new JProgressBar(0, run);
 		progress.setStringPainted(true);
-		//progress.setString("");
-		//progress.setIndeterminate(true);
+		// progress.setString("");
+		// progress.setIndeterminate(true);
 		progress.setValue(0);
 		text.add(label);
 		progBar.add(progress);
@@ -534,18 +535,17 @@ public class Nary_Run implements ActionListener, Runnable {
 			stopR = Double.parseDouble(stopRate.getText().trim());
 		} catch (Exception e1) {
 			JOptionPane.showMessageDialog(naryFrame,
-					"Must Enter A Double In The Analysis Stop Rate Field.", "Error",
+					"Must Enter A Real Number Into The Analysis Stop Rate Field.", "Error",
 					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		String[] finalS = Buttons.getList(finalStates, finalState);
 		Run runProgram = new Run();
 		naryCancel.addActionListener(runProgram);
-		runProgram.createNaryProperties(timeLimit, printInterval,
-						outDir,
-				rndSeed, run, printer_id, printer_track_quantity, getFilename, naryFrame, filename,
-				monteCarlo, stopE, stopR, finalS, inhib, consLevel, getSpeciesProps, conLevel,
-				termCond, intSpecies, rap1, rap2, qss, con, counts, usingSSA, ssaFile);
+		runProgram.createNaryProperties(timeLimit, printInterval, outDir, rndSeed, run, printer_id,
+				printer_track_quantity, getFilename, naryFrame, filename, monteCarlo, stopE, stopR,
+				finalS, inhib, consLevel, getSpeciesProps, conLevel, termCond, intSpecies, rap1,
+				rap2, qss, con, counts, usingSSA, ssaFile);
 		if (monteCarlo.isSelected()) {
 			File[] files = new File(outDir).listFiles();
 			for (File f : files) {

@@ -3,6 +3,7 @@ package biomodelsim.core.gui;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+import java.util.Scanner;
 import javax.swing.*;
 import javax.swing.plaf.basic.*;
 import org.sbml.libsbml.*;
@@ -239,7 +240,7 @@ public class BioSim implements MouseListener, ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == about) {
 			final JFrame f = new JFrame("About");
-			JLabel bioSim = new JLabel("BioSim 0.58");
+			JLabel bioSim = new JLabel("BioSim 0.6");
 			Font font = bioSim.getFont();
 			font = font.deriveFont(Font.BOLD, 36.0f);
 			bioSim.setFont(font);
@@ -399,8 +400,11 @@ public class BioSim implements MouseListener, ActionListener {
 		else if (e.getActionCommand().equals("createSBML")) {
 			try {
 				String[] dot = tree.getFile().split(separator);
-				String sbmlFile = dot[dot.length - 1].substring(0, dot[dot.length - 1].length() - 3) + "sbml";
-				log.addText("Executing:\ndot2sbml.pl " + tree.getFile() + " " + root + separator + sbmlFile + "\n");
+				String sbmlFile = dot[dot.length - 1]
+						.substring(0, dot[dot.length - 1].length() - 3)
+						+ "sbml";
+				log.addText("Executing:\ndot2sbml.pl " + tree.getFile() + " " + root + separator
+						+ sbmlFile + "\n");
 				Runtime exec = Runtime.getRuntime();
 				String filename = tree.getFile();
 				String directory = "";
@@ -417,12 +421,13 @@ public class BioSim implements MouseListener, ActionListener {
 
 				String command;
 				if (System.getProperty("os.name").contentEquals("Linux")) {
-				  command = "dot2sbml.pl " + theFile + " " + sbmlFile;
+					command = "dot2sbml.pl " + theFile + " " + sbmlFile;
 				} else {
-				  command = "C:\\Perl\\bin\\perl.exe " + System.getenv("BIOSIM") + "\\bin\\dot2sbml.pl " + theFile + " " + sbmlFile;
+					command = "C:\\Perl\\bin\\perl.exe " + System.getenv("BIOSIM")
+							+ "\\bin\\dot2sbml.pl " + theFile + " " + sbmlFile;
 				}
-				Process dot2sbml = exec.exec(command,null,work);
- 				String error = "";
+				Process dot2sbml = exec.exec(command, null, work);
+				String error = "";
 				String output = "";
 				InputStream reb = dot2sbml.getErrorStream();
 				int read = reb.read();
@@ -446,7 +451,8 @@ public class BioSim implements MouseListener, ActionListener {
 				}
 				dot2sbml.waitFor();
 				refreshTree();
-				addTab(sbmlFile,new SBML_Editor(root + separator + sbmlFile, null, log, this), "SBML Editor");
+				addTab(sbmlFile, new SBML_Editor(root + separator + sbmlFile, null, log, this,
+						null, null), "SBML Editor");
 			} catch (Exception e1) {
 				JOptionPane.showMessageDialog(frame, "Unable to create SBML file.", "Error",
 						JOptionPane.ERROR_MESSAGE);
@@ -497,7 +503,8 @@ public class BioSim implements MouseListener, ActionListener {
 				if (!done) {
 					addTab(
 							tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],
-							new SBML_Editor(tree.getFile(), null, log, this), "SBML Editor");
+							new SBML_Editor(tree.getFile(), null, log, this, null, null),
+							"SBML Editor");
 				}
 			} catch (Exception e1) {
 				JOptionPane.showMessageDialog(frame, "You must select a valid sbml file.", "Error",
@@ -568,8 +575,8 @@ public class BioSim implements MouseListener, ActionListener {
 				}
 				graph.waitFor();
 				if (error.equals("")) {
-				  log.addText("Executing:\ndotty " + directory + out + ".viz\n");
-				  exec.exec("dotty " + out + ".viz", null, work);
+					log.addText("Executing:\ndotty " + directory + out + ".viz\n");
+					exec.exec("dotty " + out + ".viz", null, work);
 				}
 				String remove;
 				if (tree.getFile().substring(tree.getFile().length() - 4).equals("sbml")) {
@@ -653,13 +660,13 @@ public class BioSim implements MouseListener, ActionListener {
 
 				String command = "";
 				if (error.equals("")) {
-				    if (System.getProperty("os.name").contentEquals("Linux")) {
-				      command = "gnome-open ";
-				    } else {
-				      command = "cmd /c start ";
-				    }
-				    log.addText("Executing:\n" + command + directory + out + ".xhtml\n");
-				    exec.exec(command + out + ".xhtml", null, work);
+					if (System.getProperty("os.name").contentEquals("Linux")) {
+						command = "gnome-open ";
+					} else {
+						command = "cmd /c start ";
+					}
+					log.addText("Executing:\n" + command + directory + out + ".xhtml\n");
+					exec.exec(command + out + ".xhtml", null, work);
 				}
 				String remove;
 				if (tree.getFile().substring(tree.getFile().length() - 4).equals("sbml")) {
@@ -871,7 +878,7 @@ public class BioSim implements MouseListener, ActionListener {
 						out.close();
 						addTab(f.getAbsolutePath().split(separator)[f.getAbsolutePath().split(
 								separator).length - 1], new SBML_Editor(f.getAbsolutePath(), null,
-								log, this), "SBML Editor");
+								log, this, null, null), "SBML Editor");
 						refreshTree();
 					}
 				} catch (Exception e1) {
@@ -1236,8 +1243,9 @@ public class BioSim implements MouseListener, ActionListener {
 									out.close();
 								} else if (ss.length() > 3
 										&& (ss.substring(ss.length() - 4).equals(".tsd")
-												|| ss.substring(ss.length() - 4).equals(".dat") || ss
-												.substring(ss.length() - 4).equals(".sad"))) {
+												|| ss.substring(ss.length() - 4).equals(".dat")
+												|| ss.substring(ss.length() - 4).equals(".sad") || ss
+												.substring(ss.length() - 4).equals(".pms"))) {
 									FileOutputStream out = new FileOutputStream(new File(root
 											+ separator + copy + separator + ss));
 									FileInputStream in = new FileInputStream(new File(tree
@@ -1630,7 +1638,7 @@ public class BioSim implements MouseListener, ActionListener {
 				JMenuItem createLearn = new JMenuItem("Create Learn View");
 				createLearn.addActionListener(this);
 				createLearn.setActionCommand("createLearn");
-				JMenuItem createSBML= new JMenuItem("Create SBML File");
+				JMenuItem createSBML = new JMenuItem("Create SBML File");
 				createSBML.addActionListener(this);
 				createSBML.setActionCommand("createSBML");
 				JMenuItem edit = new JMenuItem("Edit");
@@ -1731,7 +1739,8 @@ public class BioSim implements MouseListener, ActionListener {
 						if (!done) {
 							addTab(
 									tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],
-									new SBML_Editor(tree.getFile(), null, log, this), "SBML Editor");
+									new SBML_Editor(tree.getFile(), null, log, this, null, null),
+									"SBML Editor");
 						}
 					} catch (Exception e1) {
 						JOptionPane.showMessageDialog(frame, "You must select a valid sbml file.",
@@ -1844,7 +1853,7 @@ public class BioSim implements MouseListener, ActionListener {
 				JMenuItem createLearn = new JMenuItem("Create Learn View");
 				createLearn.addActionListener(this);
 				createLearn.setActionCommand("createLearn");
-				JMenuItem createSBML= new JMenuItem("Create SBML File");
+				JMenuItem createSBML = new JMenuItem("Create SBML File");
 				createSBML.addActionListener(this);
 				createSBML.setActionCommand("createSBML");
 				JMenuItem edit = new JMenuItem("Edit");
@@ -1960,19 +1969,12 @@ public class BioSim implements MouseListener, ActionListener {
 				}
 				new File(root + separator + simName).mkdir();
 				new FileWriter(new File(root + separator + simName + separator + ".sim")).close();
-
-
-
-
-
-
 				String[] dot = tree.getFile().split(separator);
-				String sbmlFile = /* root
-						+ separator
-						+ simName
-						+ separator
-						+ */ (dot[dot.length - 1].substring(0, dot[dot.length - 1].length() - 3) + "sbml");
-				log.addText("Executing:\ndot2sbml.pl " + tree.getFile() + " " + root + separator + simName + separator + sbmlFile + "\n");
+				String sbmlFile = /*
+									 * root + separator + simName + separator +
+									 */(dot[dot.length - 1].substring(0, dot[dot.length - 1].length() - 3) + "sbml");
+				log.addText("Executing:\ndot2sbml.pl " + tree.getFile() + " " + root + separator
+						+ simName + separator + sbmlFile + "\n");
 				Runtime exec = Runtime.getRuntime();
 				String filename = tree.getFile();
 				String directory = "";
@@ -1989,12 +1991,14 @@ public class BioSim implements MouseListener, ActionListener {
 
 				String command;
 				if (System.getProperty("os.name").contentEquals("Linux")) {
-				  command = "dot2sbml.pl " + theFile + " " + simName + separator + sbmlFile;
+					command = "dot2sbml.pl " + theFile + " " + simName + separator + sbmlFile;
 				} else {
-				  command = "C:\\Perl\\bin\\perl.exe " + System.getenv("BIOSIM") + "\\bin\\dot2sbml.pl " + theFile + " " + simName + separator + sbmlFile;
+					command = "C:\\Perl\\bin\\perl.exe " + System.getenv("BIOSIM")
+							+ "\\bin\\dot2sbml.pl " + theFile + " " + simName + separator
+							+ sbmlFile;
 				}
-				Process dot2sbml = exec.exec(command,null,work);
- 				String error = "";
+				Process dot2sbml = exec.exec(command, null, work);
+				String error = "";
 				String output = "";
 				InputStream reb = dot2sbml.getErrorStream();
 				int read = reb.read();
@@ -2018,12 +2022,19 @@ public class BioSim implements MouseListener, ActionListener {
 				}
 				dot2sbml.waitFor();
 				refreshTree();
+				sbmlFile = root
+						+ separator
+						+ simName
+						+ separator
+						+ (dot[dot.length - 1].substring(0, dot[dot.length - 1].length() - 3) + "sbml");
 				JTabbedPane simTab = new JTabbedPane();
-				Reb2Sac reb2sac = new Reb2Sac(directory + simName + separator + sbmlFile, root, this, simName.trim(), log, simTab,
-						null);
+				Reb2Sac reb2sac = new Reb2Sac(sbmlFile, sbmlFile, root, this, simName.trim(), log,
+						simTab, null);
 				simTab.addTab("Simulation", reb2sac);
 				simTab.getComponentAt(simTab.getComponents().length - 1).setName("Simulate");
-				SBML_Editor sbml = new SBML_Editor(directory + simName + separator + sbmlFile, reb2sac, log, this);
+				SBML_Editor sbml = new SBML_Editor(sbmlFile, reb2sac, log, this, root + separator
+						+ simName.trim(), root + separator + simName.trim() + separator
+						+ simName.trim() + ".pms");
 				reb2sac.setSbml(sbml);
 				simTab.addTab("SBML Editor", sbml);
 				simTab.getComponentAt(simTab.getComponents().length - 1).setName("SBML Editor");
@@ -2070,27 +2081,38 @@ public class BioSim implements MouseListener, ActionListener {
 				}
 				new File(root + separator + simName).mkdir();
 				new FileWriter(new File(root + separator + simName + separator + ".sim")).close();
+				String sbmlFile = tree.getFile();
 				String[] sbml1 = tree.getFile().split(separator);
-				String sbmlFile = root + separator + simName + separator + sbml1[sbml1.length - 1];
+				String sbmlFileProp = root + separator + simName + separator
+						+ sbml1[sbml1.length - 1];
 				try {
-					FileOutputStream out = new FileOutputStream(new File(sbmlFile));
-					SBMLWriter writer = new SBMLWriter();
-					String doc = writer.writeToString(document);
-					byte[] output = doc.getBytes();
-					out.write(output);
+					FileOutputStream out = new FileOutputStream(new File(root + separator
+							+ simName.trim() + separator + simName.trim() + ".pms"));
+					out.write((sbmlFile + "\n").getBytes());
 					out.close();
 				} catch (Exception e1) {
-					JOptionPane.showMessageDialog(frame,
-							"Unable to copy sbml file to output location.", "Error",
-							JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(frame, "Unable to save parameter file!",
+							"Error Saving File", JOptionPane.ERROR_MESSAGE);
 				}
+				new FileOutputStream(new File(sbmlFileProp)).close();
+				/*
+				 * try { FileOutputStream out = new FileOutputStream(new
+				 * File(sbmlFile)); SBMLWriter writer = new SBMLWriter(); String
+				 * doc = writer.writeToString(document); byte[] output =
+				 * doc.getBytes(); out.write(output); out.close(); } catch
+				 * (Exception e1) { JOptionPane.showMessageDialog(frame, "Unable
+				 * to copy sbml file to output location.", "Error",
+				 * JOptionPane.ERROR_MESSAGE); }
+				 */
 				refreshTree();
 				JTabbedPane simTab = new JTabbedPane();
-				Reb2Sac reb2sac = new Reb2Sac(sbmlFile, root, this, simName.trim(), log, simTab,
-						null);
+				Reb2Sac reb2sac = new Reb2Sac(sbmlFile, sbmlFileProp, root, this, simName.trim(),
+						log, simTab, null);
 				simTab.addTab("Simulation", reb2sac);
 				simTab.getComponentAt(simTab.getComponents().length - 1).setName("Simulate");
-				SBML_Editor sbml = new SBML_Editor(sbmlFile, reb2sac, log, this);
+				SBML_Editor sbml = new SBML_Editor(sbmlFile, reb2sac, log, this, root + separator
+						+ simName.trim(), root + separator + simName.trim() + separator
+						+ simName.trim() + ".pms");
 				reb2sac.setSbml(sbml);
 				simTab.addTab("SBML Editor", sbml);
 				simTab.getComponentAt(simTab.getComponents().length - 1).setName("SBML Editor");
@@ -2206,7 +2228,7 @@ public class BioSim implements MouseListener, ActionListener {
 							} else if (end.equals(".xml") && getAFile.equals("")) {
 								getAFile = filename + separator + list[i];
 							} else if (end.equals("ties") && list[i].contains("properties")
-								   && !(list[i].equals("species.properties"))) {
+									&& !(list[i].equals("species.properties"))) {
 								openFile = filename + separator + list[i];
 							} else if (end.equals(".tsd") || end.equals(".dat")
 									|| end.equals(".csv")) {
@@ -2233,13 +2255,44 @@ public class BioSim implements MouseListener, ActionListener {
 					}
 					if (!getAFile.equals("")) {
 						String[] split = filename.split(separator);
+						String pmsFile = root + separator + split[split.length - 1].trim()
+								+ separator + split[split.length - 1].trim() + ".pms";
+						String sbmlLoadFile = null;
+						if (new File(pmsFile).exists()) {
+							try {
+								Scanner s = new Scanner(new File(pmsFile));
+								if (s.hasNextLine()) {
+									sbmlLoadFile = s.nextLine();
+								}
+								while (s.hasNextLine()) {
+									s.nextLine();
+								}
+								s.close();
+							} catch (Exception e) {
+								JOptionPane.showMessageDialog(frame, "Unable to load sbml file.",
+										"Error", JOptionPane.ERROR_MESSAGE);
+								return;
+							}
+						} else {
+							sbmlLoadFile = root
+									+ separator
+									+ getAFile.split(separator)[getAFile.split(separator).length - 1];
+							if (!new File(sbmlLoadFile).exists()) {
+								JOptionPane.showMessageDialog(frame, "Unable to load sbml file.",
+										"Error", JOptionPane.ERROR_MESSAGE);
+								return;
+							}
+						}
 						JTabbedPane simTab = new JTabbedPane();
-						Reb2Sac reb2sac = new Reb2Sac(getAFile, root, this, split[split.length - 1]
-								.trim(), log, simTab, openFile);
+						Reb2Sac reb2sac = new Reb2Sac(sbmlLoadFile, getAFile, root, this,
+								split[split.length - 1].trim(), log, simTab, openFile);
 						simTab.addTab("Simulation", reb2sac);
 						simTab.getComponentAt(simTab.getComponents().length - 1)
 								.setName("Simulate");
-						SBML_Editor sbml = new SBML_Editor(getAFile, reb2sac, log, this);
+						SBML_Editor sbml = new SBML_Editor(sbmlLoadFile, reb2sac, log, this, root
+								+ separator + split[split.length - 1].trim(), root + separator
+								+ split[split.length - 1].trim() + separator
+								+ split[split.length - 1].trim() + ".pms");
 						reb2sac.setSbml(sbml);
 						simTab.addTab("SBML Editor", sbml);
 						simTab.getComponentAt(simTab.getComponents().length - 1).setName(
@@ -2374,6 +2427,7 @@ public class BioSim implements MouseListener, ActionListener {
 			String[] s = new File(root + separator + oldSim).list();
 			String sbmlFile = "";
 			String propertiesFile = "";
+			String sbmlLoadFile = null;
 			for (String ss : s) {
 				if (ss.length() > 4 && ss.substring(ss.length() - 5).equals(".sbml")) {
 					SBMLReader reader = new SBMLReader();
@@ -2401,8 +2455,9 @@ public class BioSim implements MouseListener, ActionListener {
 					out.close();
 					propertiesFile = root + separator + newSim + separator + ss;
 				} else if (ss.length() > 3
-						&& (ss.substring(ss.length() - 4).equals(".dat") || ss.substring(
-								ss.length() - 4).equals(".sad"))) {
+						&& (ss.substring(ss.length() - 4).equals(".dat")
+								|| ss.substring(ss.length() - 4).equals(".sad") || ss.substring(
+								ss.length() - 4).equals(".pms"))) {
 					FileOutputStream out = new FileOutputStream(new File(root + separator + newSim
 							+ separator + ss));
 					FileInputStream in = new FileInputStream(new File(root + separator + oldSim
@@ -2414,14 +2469,32 @@ public class BioSim implements MouseListener, ActionListener {
 					}
 					in.close();
 					out.close();
+					if (ss.substring(ss.length() - 4).equals(".pms")) {
+						try {
+							Scanner scan = new Scanner(new File(root + separator + newSim
+									+ separator + ss));
+							if (scan.hasNextLine()) {
+								sbmlLoadFile = scan.nextLine();
+							}
+							while (scan.hasNextLine()) {
+								scan.nextLine();
+							}
+							scan.close();
+						} catch (Exception e) {
+							JOptionPane.showMessageDialog(frame, "Unable to load sbml file.",
+									"Error", JOptionPane.ERROR_MESSAGE);
+						}
+					}
 				}
 			}
 			refreshTree();
 			JTabbedPane simTab = new JTabbedPane();
-			Reb2Sac reb2sac = new Reb2Sac(sbmlFile, root, this, newSim, log, simTab, propertiesFile);
+			Reb2Sac reb2sac = new Reb2Sac(sbmlLoadFile, sbmlFile, root, this, newSim, log, simTab,
+					propertiesFile);
 			simTab.addTab("Simulation", reb2sac);
 			simTab.getComponentAt(simTab.getComponents().length - 1).setName("Simulate");
-			SBML_Editor sbml = new SBML_Editor(sbmlFile, reb2sac, log, this);
+			SBML_Editor sbml = new SBML_Editor(sbmlLoadFile, reb2sac, log, this, root + separator
+					+ newSim, root + separator + newSim + separator + newSim + ".pms");
 			reb2sac.setSbml(sbml);
 			simTab.addTab("SBML Editor", sbml);
 			simTab.getComponentAt(simTab.getComponents().length - 1).setName("SBML Editor");
