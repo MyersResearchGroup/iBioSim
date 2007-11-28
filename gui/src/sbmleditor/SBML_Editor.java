@@ -377,16 +377,18 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		reacts = new String[(int) model.getNumReactions()];
 		for (int i = 0; i < model.getNumReactions(); i++) {
 			Reaction reaction = (Reaction) listOfReactions.get(i);
-			ListOf params = reaction.getKineticLaw().getListOfParameters();
-			for (int j = 0; j < params.getNumItems(); j++) {
-				Parameter paramet = ((Parameter) (params.get(j)));
-				for (int k = 0; k < parameterChanges.size(); k++) {
-					if (parameterChanges.get(k).split(" ")[0].equals(reaction.getId() + "/"
-							+ paramet.getId())) {
-						paramet.setValue(Double.parseDouble(parameterChanges.get(k).split(" ")[1]));
+			if (paramsOnly) {
+				ListOf params = reaction.getKineticLaw().getListOfParameters();
+				for (int j = 0; j < params.getNumItems(); j++) {
+					Parameter paramet = ((Parameter) (params.get(j)));
+					for (int k = 0; k < parameterChanges.size(); k++) {
+						if (parameterChanges.get(k).split(" ")[0].equals(reaction.getId() + "/"
+								+ paramet.getId())) {
+							paramet.setValue(Double
+									.parseDouble(parameterChanges.get(k).split(" ")[1]));
+						}
 					}
 				}
-
 			}
 			reacts[i] = reaction.getId();
 		}
