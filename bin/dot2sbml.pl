@@ -1,4 +1,5 @@
-#!/usr/bin/perl
+#Currently can not handle a promoter that can both be activated and repressed
+#!/usr/bin/perl -w
 
 use Getopt::Std;
 
