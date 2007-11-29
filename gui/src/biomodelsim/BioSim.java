@@ -2359,9 +2359,12 @@ public class BioSim implements MouseListener, ActionListener {
 									+ separator
 									+ getAFile.split(separator)[getAFile.split(separator).length - 1];
 							if (!new File(sbmlLoadFile).exists()) {
+							        sbmlLoadFile = getAFile;
+								/*
 								JOptionPane.showMessageDialog(frame, "Unable to load sbml file.",
 										"Error", JOptionPane.ERROR_MESSAGE);
 								return;
+								*/
 							}
 						}
 						JTabbedPane simTab = new JTabbedPane();
