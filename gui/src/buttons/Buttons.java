@@ -35,6 +35,10 @@ public class Buttons {
 		pngFilter.addExtension("png");
 		ExampleFileFilter svgFilter = new ExampleFileFilter();
 		svgFilter.addExtension("svg");
+		ExampleFileFilter sbmlFilter = new ExampleFileFilter();
+		sbmlFilter.addExtension("sbml");
+		ExampleFileFilter cktFilter = new ExampleFileFilter();
+		cktFilter.addExtension("ckt");
 		if (file != null) {
 			fc.setSelectedFile(file);
 		}
@@ -55,6 +59,16 @@ public class Buttons {
 			fc.addChoosableFileFilter(tsdFilter);
 			fc.setAcceptAllFileFilterUsed(false);
 			fc.setFileFilter(pdfFilter);
+			retValue = fc.showDialog(browse, approve);
+		} else if (approve.equals("Import SBML")) {
+			fc.addChoosableFileFilter(sbmlFilter);
+			fc.setAcceptAllFileFilterUsed(false);
+			fc.setFileFilter(sbmlFilter);
+			retValue = fc.showDialog(browse, approve);
+		} else if (approve.equals("Import Circuit")) {
+			fc.addChoosableFileFilter(cktFilter);
+			fc.setAcceptAllFileFilterUsed(false);
+			fc.setFileFilter(cktFilter);
 			retValue = fc.showDialog(browse, approve);
 		} else {
 			retValue = fc.showDialog(browse, approve);

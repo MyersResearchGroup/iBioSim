@@ -29,6 +29,8 @@ public class BioSim implements MouseListener, ActionListener {
 
 	private JMenuItem newModel; // The new menu item
 
+	private JMenuItem newCircuit; // The new menu item
+
 	private JMenuItem exit; // The exit menu item
 
 	private JMenuItem importSbml; // The import sbml menu item
@@ -119,7 +121,8 @@ public class BioSim implements MouseListener, ActionListener {
 		about = new JMenuItem("About");
 		openProj = new JMenuItem("Open Project");
 		newTstubd = new JMenuItem("New Project");
-		newModel = new JMenuItem("New Model");
+		newCircuit = new JMenuItem("New Circuit Model");
+		newModel = new JMenuItem("New SBML Model");
 		importSbml = new JMenuItem("SBML");
 		importDot = new JMenuItem("Circuit");
 		exit = new JMenuItem("Exit");
@@ -127,6 +130,7 @@ public class BioSim implements MouseListener, ActionListener {
 		openProj.addActionListener(this);
 		manual.addActionListener(this);
 		newTstubd.addActionListener(this);
+		newCircuit.addActionListener(this);
 		newModel.addActionListener(this);
 		exit.addActionListener(this);
 		about.addActionListener(this);
@@ -136,19 +140,26 @@ public class BioSim implements MouseListener, ActionListener {
 		exit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, ActionEvent.ALT_MASK));
 		newTstubd.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.ALT_MASK));
 		openProj.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.ALT_MASK));
-		newModel.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, ActionEvent.ALT_MASK));
+		newCircuit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.ALT_MASK));
+		newModel.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.ALT_MASK));
 		about.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ActionEvent.ALT_MASK));
 		manual.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_U, ActionEvent.ALT_MASK));
 		graph.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, ActionEvent.ALT_MASK));
+		importDot.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, ActionEvent.ALT_MASK));
+		importSbml.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, ActionEvent.ALT_MASK));
 		exit.setMnemonic(KeyEvent.VK_X);
 		newTstubd.setMnemonic(KeyEvent.VK_N);
 		openProj.setMnemonic(KeyEvent.VK_O);
-		newModel.setMnemonic(KeyEvent.VK_M);
+		newCircuit.setMnemonic(KeyEvent.VK_C);
+		newModel.setMnemonic(KeyEvent.VK_S);
 		about.setMnemonic(KeyEvent.VK_A);
 		manual.setMnemonic(KeyEvent.VK_U);
 		graph.setMnemonic(KeyEvent.VK_G);
+		importDot.setMnemonic(KeyEvent.VK_T);
+		importSbml.setMnemonic(KeyEvent.VK_L);
 		file.add(newMenu);
 		newMenu.add(newTstubd);
+		newMenu.add(newCircuit);
 		newMenu.add(newModel);
 		newMenu.add(graph);
 		file.add(openMenu);
@@ -492,19 +503,15 @@ public class BioSim implements MouseListener, ActionListener {
 			try {
 				boolean done = false;
 				for (int i = 0; i < tab.getTabCount(); i++) {
-					if (tab
-							.getTitleAt(i)
-							.equals(
-									tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
+					if (tab.getTitleAt(i).equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
 						tab.setSelectedIndex(i);
 						done = true;
 					}
 				}
 				if (!done) {
-					addTab(
-							tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],
-							new SBML_Editor(tree.getFile(), null, log, this, null, null),
-							"SBML Editor");
+					addTab(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],
+					       new SBML_Editor(tree.getFile(), null, log, this, null, null),
+					       "SBML Editor");
 				}
 			} catch (Exception e1) {
 				JOptionPane.showMessageDialog(frame, "You must select a valid sbml file.", "Error",
@@ -815,11 +822,88 @@ public class BioSim implements MouseListener, ActionListener {
 				}
 			}
 		}
-		// if the new model menu item is selected
+		// if the new circuit model menu item is selected
+		else if (e.getSource() == newCircuit) {
+			if (root != null) {
+				try {
+					String simName = JOptionPane.showInputDialog(frame, "Enter Circuit Model ID:",
+							"Model ID", JOptionPane.PLAIN_MESSAGE);
+					if (simName != null && !simName.trim().equals("")) {
+						simName = simName.trim();
+						if (simName.length() > 4) {
+						  if (!simName.substring(simName.length() - 4).equals(".ckt")) {
+						    simName += ".ckt";
+						  }
+						} else {
+						  simName += ".ckt";
+						}
+						String modelID = "";
+						if (simName.length() > 4) {
+							if (simName.substring(simName.length() - 4).equals(".ckt")) {
+								modelID = simName.substring(0, simName.length() - 4);
+							} 
+						}
+						File f = new File(root + separator + simName);
+						if (f.exists()) {
+							Object[] options = { "Overwrite", "Cancel" };
+							int value = JOptionPane.showOptionDialog(frame, "File already exists."
+									+ "\nDo you want to overwrite?", "Overwrite",
+									JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
+									options, options[0]);
+							if (value == JOptionPane.YES_OPTION) {
+								File dir = new File(root + separator + simName);
+								if (dir.isDirectory()) {
+									deleteDir(dir);
+								} else {
+									System.gc();
+									dir.delete();
+								}
+								for (int i = 0; i < tab.getTabCount(); i++) {
+									if (tab.getTitleAt(i).equals(simName)) {
+										tab.remove(i);
+									}
+								}
+							} else {
+								return;
+							}
+						}
+						f.createNewFile();
+						FileOutputStream out = new FileOutputStream(f);
+						String doc = "digraph " + modelID + " {\n";
+						doc += "s1 [shape=ellipse,color=black,label=\"CI\"];\n";
+						doc += "s2 [shape=ellipse,color=black,label=\"CII\"];\n";
+						doc += "s2 -> s1 [color=\"blue4\",arrowhead=vee];\n";
+						doc += "s1 -> s2 [color=\"firebrick4\",label=\"2\",arrowhead=tee];\n";
+						doc += "}\n";
+						byte[] output = doc.getBytes();
+						out.write(output);
+						out.close();
+						File work = new File(root);
+						String command = "";
+						if (System.getProperty("os.name").contentEquals("Linux")) {
+						  command = "emacs ";
+						} else {
+						  command = "cmd /c start ";
+						}
+						log.addText("Executing:\n" + command + root + simName + "\n");
+						Runtime exec = Runtime.getRuntime();
+						exec.exec(command + simName, null, work);
+						refreshTree();
+					}
+				} catch (Exception e1) {
+					JOptionPane.showMessageDialog(frame, "Unable to create new model.", "Error",
+							JOptionPane.ERROR_MESSAGE);
+				}
+			} else {
+				JOptionPane.showMessageDialog(frame, "You must open or create a project first.",
+						"Error", JOptionPane.ERROR_MESSAGE);
+			}
+		}
+		// if the new SBML model menu item is selected
 		else if (e.getSource() == newModel) {
 			if (root != null) {
 				try {
-					String simName = JOptionPane.showInputDialog(frame, "Enter Model ID:",
+					String simName = JOptionPane.showInputDialog(frame, "Enter SBML Model ID:",
 							"Model ID", JOptionPane.PLAIN_MESSAGE);
 					if (simName != null && !simName.trim().equals("")) {
 						simName = simName.trim();
@@ -894,7 +978,7 @@ public class BioSim implements MouseListener, ActionListener {
 		else if (e.getSource() == importSbml) {
 			if (root != null) {
 				String filename = Buttons.browse(frame, new File(root), null,
-						JFileChooser.FILES_ONLY, "Open");
+						JFileChooser.FILES_ONLY, "Import SBML");
 				if (!filename.equals("")) {
 					String[] file = filename.split(separator);
 					try {
@@ -922,7 +1006,7 @@ public class BioSim implements MouseListener, ActionListener {
 		else if (e.getSource() == importDot) {
 			if (root != null) {
 				String filename = Buttons.browse(frame, new File(root), null,
-						JFileChooser.FILES_ONLY, "Open");
+						JFileChooser.FILES_ONLY, "Import Circuit");
 				if (filename.length() > 3
 						&& !filename.substring(filename.length() - 4, filename.length()).equals(
 								".ckt")) {
@@ -1728,19 +1812,16 @@ public class BioSim implements MouseListener, ActionListener {
 					try {
 						boolean done = false;
 						for (int i = 0; i < tab.getTabCount(); i++) {
-							if (tab.getTitleAt(i)
-									.equals(
-											tree.getFile().split(separator)[tree.getFile().split(
+							if (tab.getTitleAt(i).equals(tree.getFile().split(separator)[tree.getFile().split(
 													separator).length - 1])) {
 								tab.setSelectedIndex(i);
 								done = true;
 							}
 						}
 						if (!done) {
-							addTab(
-									tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],
-									new SBML_Editor(tree.getFile(), null, log, this, null, null),
-									"SBML Editor");
+							addTab(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],
+							       new SBML_Editor(tree.getFile(), null, log, this, null, null),
+							       "SBML Editor");
 						}
 					} catch (Exception e1) {
 						JOptionPane.showMessageDialog(frame, "You must select a valid sbml file.",
