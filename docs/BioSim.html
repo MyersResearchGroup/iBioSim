@@ -905,6 +905,37 @@ s1 -> s3 [color="blue4",arrowhead=tee,promoter="P1"]<BR>
 }
 </p>
 
+The promoter field can also be used to separate production reactions.  In the example
+below, both species A and B can repress the production of species C.  If either is present,
+then very little C will be produced.  This behavior is an NOR gate.  
+<p>
+digraph G {<BR>
+s1 [shape=ellipse,color=black,label="A"];<BR>
+s2 [shape=ellipse,color=black,label="B"];<BR>
+s3 [shape=ellipse,color=black,label="C"];<BR>
+s1 -> s3 [color="blue4",arrowhead=tee]<BR>
+s2 -> s3 [color="blue4",arrowhead=tee]<BR>
+}
+</p>
+
+However, if there needs to be two different sources of production for species C, the 
+promoter field can be used to accomplish this.  In the example below, A represses
+the production of C by binding to the P1 promoter, and B represses the production of
+C by binding to the P2 promoter.  Both A and B needs to be present to fully repress
+the level of C.  If either is at a low level, then the level of C will be high.  This
+behavior is a NAND gate.
+
+<p>
+digraph G {<BR>
+s1 [shape=ellipse,color=black,label="A"];<BR>
+s2 [shape=ellipse,color=black,label="B"];<BR>
+s3 [shape=ellipse,color=black,label="C"];<BR>
+s1 -> s3 [color="blue4",arrowhead=tee,promoter="P1"]<BR>
+s2 -> s3 [color="blue4",arrowhead=tee,promoter="P2"]<BR>
+}
+</p>
+
+
 The example below shows how to model an AND gate.  The species A and B have
 the constant flag set to true.  This means that A and B have no production
 and degradation reactions.  The reactions contain a promoter label "P1".  This means
