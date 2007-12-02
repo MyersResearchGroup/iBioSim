@@ -18,7 +18,7 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 
 	private JTable table;
 
-	private JButton addData, removeData, editData, copyData;
+        private JButton saveData, addData, removeData, editData, copyData;
 
 	private JButton add, remove, rename, copy, copyFromView, importFile;
 
@@ -80,6 +80,8 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 		scroll1.setMinimumSize(new Dimension(260, 200));
 		scroll1.setPreferredSize(new Dimension(276, 132));
 		scroll1.setViewportView(table);
+		saveData = new JButton("Save");
+		saveData.addActionListener(this);
 		addData = new JButton("Add Data Point");
 		addData.addActionListener(this);
 		removeData = new JButton("Remove Data Point");
@@ -89,6 +91,7 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 		copyData = new JButton("Copy Data Point");
 		copyData.addActionListener(this);
 		JPanel dataButtons = new JPanel();
+		dataButtons.add(saveData);
 		dataButtons.add(addData);
 		dataButtons.add(removeData);
 		dataButtons.add(editData);
@@ -539,6 +542,7 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 					}
 				}
 			}
+		} else if (e.getSource() == saveData) {
 		} else if (e.getSource() == addData) {
 		} else if (e.getSource() == removeData) {
 		} else if (e.getSource() == editData) {
