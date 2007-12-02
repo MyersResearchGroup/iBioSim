@@ -19,6 +19,12 @@ public class Buttons {
 	public static String browse(Component browse, File file, JTextField text, int i, String approve) {
 		String filename = "";
 		JFileChooser fc = new JFileChooser();
+
+		/* This sets the default directory to the one where BioSim is executed */
+		/* String startDir = System.getProperty("user.dir");
+		File curDir = new File(startDir);
+		fc.setCurrentDirectory(curDir); */
+
 		ExampleFileFilter csvFilter = new ExampleFileFilter();
 		csvFilter.addExtension("csv");
 		ExampleFileFilter datFilter = new ExampleFileFilter();

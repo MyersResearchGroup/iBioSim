@@ -1124,7 +1124,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				add[0] = "default";
 			}
 			comp = new JComboBox(add);
-			String[] list = { "Default", "Custom", "Sweep" };
+			String[] list = { "Original", "Custom", "Sweep" };
 			final JComboBox type = new JComboBox(list);
 			if (paramsOnly) {
 				ID.setEditable(false);
@@ -1153,7 +1153,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				JLabel typeLabel = new JLabel("Type:");
 				type.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						if (!((String) type.getSelectedItem()).equals("Default")) {
+						if (!((String) type.getSelectedItem()).equals("Original")) {
 							init.setEditable(true);
 						} else {
 							init.setEditable(false);
@@ -1191,7 +1191,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						try {
 							double initial = Double.parseDouble(init.getText().trim());
 							String addSpec;
-							if (paramsOnly && !((String) type.getSelectedItem()).equals("Default")) {
+							if (paramsOnly && !((String) type.getSelectedItem()).equals("Original")) {
 								addSpec = ID.getText().trim() + " " + comp.getSelectedItem() + " "
 										+ initial + " " + type.getSelectedItem();
 							} else {
@@ -1293,7 +1293,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 										if (remove != -1) {
 											parameterChanges.remove(remove);
 										}
-										if (!((String) type.getSelectedItem()).equals("Default")) {
+										if (!((String) type.getSelectedItem()).equals("Original")) {
 											parameterChanges.add(addSpec);
 										}
 									}
@@ -1877,7 +1877,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				paramID.setEditable(false);
 				paramValue.setEditable(false);
 			}
-			String[] list = { "Default", "Custom", "Sweep" };
+			String[] list = { "Original", "Custom", "Sweep" };
 			final JComboBox type = new JComboBox(list);
 			if (option.equals("Save")) {
 				try {
@@ -1902,7 +1902,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				JLabel typeLabel = new JLabel("Type:");
 				type.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						if (!((String) type.getSelectedItem()).equals("Default")) {
+						if (!((String) type.getSelectedItem()).equals("Original")) {
 							paramValue.setEditable(true);
 						} else {
 							paramValue.setEditable(false);
@@ -1937,7 +1937,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						try {
 							double val = Double.parseDouble(paramValue.getText().trim());
 							String param;
-							if (paramsOnly && !((String) type.getSelectedItem()).equals("Default")) {
+							if (paramsOnly && !((String) type.getSelectedItem()).equals("Original")) {
 								param = paramID.getText().trim() + " " + val + " "
 										+ type.getSelectedItem();
 							} else {
@@ -1992,7 +1992,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 										if (remove != -1) {
 											parameterChanges.remove(remove);
 										}
-										if (!((String) type.getSelectedItem()).equals("Default")) {
+										if (!((String) type.getSelectedItem()).equals("Original")) {
 											parameterChanges.add(param);
 										}
 									}
@@ -2068,7 +2068,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				reacParamID.setEditable(false);
 				reacParamValue.setEditable(false);
 			}
-			String[] list = { "Default", "Custom", "Sweep" };
+			String[] list = { "Original", "Custom", "Sweep" };
 			final JComboBox type = new JComboBox(list);
 			if (option.equals("Save")) {
 				String v = ((String) reacParameters.getSelectedValue()).split(" ")[0];
@@ -2094,7 +2094,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				JLabel typeLabel = new JLabel("Type:");
 				type.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						if (!((String) type.getSelectedItem()).equals("Default")) {
+						if (!((String) type.getSelectedItem()).equals("Original")) {
 							reacParamValue.setEditable(true);
 						} else {
 							reacParamValue.setEditable(false);
@@ -2139,7 +2139,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						try {
 							double val = Double.parseDouble(reacParamValue.getText().trim());
 							String param;
-							if (paramsOnly && !((String) type.getSelectedItem()).equals("Default")) {
+							if (paramsOnly && !((String) type.getSelectedItem()).equals("Original")) {
 								param = reacParamID.getText().trim() + " " + val + " "
 										+ type.getSelectedItem();
 							} else {
@@ -2205,7 +2205,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 										if (remove != -1) {
 											parameterChanges.remove(remove);
 										}
-										if (!((String) type.getSelectedItem()).equals("Default")) {
+										if (!((String) type.getSelectedItem()).equals("Original")) {
 											parameterChanges.add(reactions.getSelectedValue() + "/"
 													+ param);
 										}

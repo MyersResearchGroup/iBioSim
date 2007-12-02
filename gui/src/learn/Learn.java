@@ -22,7 +22,7 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 
 	// private JButton browseInit; // the browse initial network button
 
-	private JButton run; // the run button
+        private JButton save,run,viewCkt,saveCkt,viewLog; // the run button
 
 	private JComboBox debug; // debug combo box
 
@@ -51,7 +51,7 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 
 	private JButton suggest;
 
-	private String directory;
+        private String directory,lrnFile;
 
 	private JLabel numBinsLabel;
 
@@ -60,6 +60,8 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 	private String separator;
 
 	private BioSim biosim;
+
+        private String learnFile;
 
 	/**
 	 * This is the constructor for the Learn class. It initializes all the input
@@ -76,6 +78,8 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 		this.biosim = biosim;
 		this.log = log;
 		this.directory = directory;
+		String[] getFilename = directory.split(separator);
+		lrnFile = getFilename[getFilename.length - 1] + ".lrn";
 
 		// Sets up the encodings area
 		JPanel radioPanel = new JPanel(new BorderLayout());
@@ -136,32 +140,32 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 		JPanel thresholdPanel1 = new JPanel(new GridLayout(4, 2));
 		JPanel thresholdPanel2 = new JPanel(new GridLayout(8, 2));
 		JLabel activationLabel = new JLabel("Ratio For Activation (Ta):");
-		activation = new JTextField("1.15");
 		thresholdPanel2.add(activationLabel);
+		activation = new JTextField("1.15");
 		thresholdPanel2.add(activation);
 		JLabel repressionLabel = new JLabel("Ratio For Repression (Tr):");
-		repression = new JTextField("0.75");
 		thresholdPanel2.add(repressionLabel);
+		repression = new JTextField("0.75");
 		thresholdPanel2.add(repression);
 		JLabel influenceLevelLabel = new JLabel("Merge Influence Vectors Delta (Tm):");
-		influenceLevel = new JTextField("0.0");
 		thresholdPanel2.add(influenceLevelLabel);
+		influenceLevel = new JTextField("0.0");
 		thresholdPanel2.add(influenceLevel);
 		JLabel letNThroughLabel = new JLabel("Minimum Number of Initial Vectors (Tn):  ");
-		letNThrough = new JTextField("2");
 		thresholdPanel1.add(letNThroughLabel);
+		letNThrough = new JTextField("2");
 		thresholdPanel1.add(letNThrough);
 		JLabel maxVectorSizeLabel = new JLabel("Maximum Influence Vector Size (Tj):");
-		maxVectorSize = new JTextField("2");
 		thresholdPanel1.add(maxVectorSizeLabel);
+		maxVectorSize = new JTextField("2");
 		thresholdPanel1.add(maxVectorSize);
 		JLabel parentLabel = new JLabel("Score for Empty Influence Vector (Ti):");
-		parent = new JTextField("0.5");
 		thresholdPanel1.add(parentLabel);
+		parent = new JTextField("0.5");
 		thresholdPanel1.add(parent);
 		JLabel relaxIPDeltaLabel = new JLabel("Relax Thresholds Delta (Tt):");
-		relaxIPDelta = new JTextField("0.025");
 		thresholdPanel2.add(relaxIPDeltaLabel);
+		relaxIPDelta = new JTextField("0.025");
 		thresholdPanel2.add(relaxIPDelta);
 		numBinsLabel = new JLabel("Number Of Bins:");
 		String[] bins = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
@@ -227,12 +231,113 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 		 * thresholdPanel2.add(donotTossChangedInfluenceSingleParents);
 		 */
 
+		// load parameters
+		Properties load = new Properties();
+		learnFile="";
+		try {
+		  FileInputStream in = new FileInputStream(new File(directory + separator + lrnFile));
+		  load.load(in);
+		  in.close();
+		  if (load.containsKey("genenet.file")) {
+		    learnFile = load.getProperty("genenet.file");
+		  }
+		  if (load.containsKey("genenet.Tn")) {
+		    letNThrough = new JTextField(load.getProperty("genenet.Tn"));
+		  }
+		  if (load.containsKey("genenet.Tj")) {
+		    maxVectorSize = new JTextField(load.getProperty("genenet.Tj"));
+		  }
+		  if (load.containsKey("genenet.Ti")) {
+		    parent = new JTextField(load.getProperty("genenet.Ti"));
+		  }
+		  if (load.containsKey("genenet.Ta")) {
+		    activation = new JTextField(load.getProperty("genenet.Ta"));
+		  }
+		  if (load.containsKey("genenet.Tr")) {
+		    repression = new JTextField(load.getProperty("genenet.Tr"));
+		  }
+		  if (load.containsKey("genenet.Tm")) {
+		    influenceLevel = new JTextField(load.getProperty("genenet.Tm"));
+		  }
+		  if (load.containsKey("genenet.Tt")) {
+		    relaxIPDelta = new JTextField(load.getProperty("genenet.Tt"));
+		  }
+		  if (load.containsKey("genenet.bins")) {
+		    numBins.setSelectedItem(load.getProperty("genenet.bins"));
+		  }
+		  if (load.containsKey("genenet.debug")) {
+		    debug.setSelectedItem(load.getProperty("genenet.debug"));
+		  }
+		  if (load.containsKey("genenet.equal")) {
+		    if (load.getProperty("genenet.equal").equals("data")) {
+		      data.setSelected(true);
+		    } else {
+		      spacing.setSelected(true);
+		    }
+		  }
+		  if (load.containsKey("genenet.use")) {
+		    if (load.getProperty("genenet.use").equals("auto")) {
+		      auto.setSelected(true);
+		    } else {
+		      user.setSelected(true);
+		    }
+		  }
+		  if (load.containsKey("genenet.find.base.prob")) {
+		    if (load.getProperty("genenet.find.base.prob").equals("true")) {
+		      basicFBP.setSelected(true);
+		    }
+		  }
+		  if (load.containsKey("genenet.data.type")) {
+		    if (load.getProperty("genenet.data.type").equals("succ")) {
+		      succ.setSelected(true);
+		    } else if (load.getProperty("genenet.data.type").equals("pred")) {
+		      pred.setSelected(true);
+		    } else {
+		      both.setSelected(true);
+		    }
+		  }
+		} catch (Exception e) {
+		  JOptionPane.showMessageDialog(biosim.frame(), "Unable to load properties file!",
+						"Error Loading Properties", JOptionPane.ERROR_MESSAGE);
+		}
+
 		// Creates the run button
-		run = new JButton("Learn");
+		save = new JButton("Save");
 		JPanel runHolder = new JPanel();
+		runHolder.add(save);
+		save.addActionListener(this);
+		save.setMnemonic(KeyEvent.VK_S);
+
+		// Creates the run button
+		run = new JButton("Save and Learn");
 		runHolder.add(run);
 		run.addActionListener(this);
 		run.setMnemonic(KeyEvent.VK_L);
+
+		// Creates the view circuit button
+		viewCkt = new JButton("View Circuit");
+		runHolder.add(viewCkt);
+		viewCkt.addActionListener(this);
+		viewCkt.setMnemonic(KeyEvent.VK_V);
+
+		// Creates the save circuit button
+		saveCkt = new JButton("Save Circuit");
+		runHolder.add(saveCkt);
+		saveCkt.addActionListener(this);
+		saveCkt.setMnemonic(KeyEvent.VK_C);
+
+		// Creates the view circuit button
+		viewLog = new JButton("View Run Log");
+		runHolder.add(viewLog);
+		viewLog.addActionListener(this);
+		viewLog.setMnemonic(KeyEvent.VK_R);
+		if (!(new File(directory + separator + "method.ckt").exists())) {
+		  viewCkt.setEnabled(false);
+		  saveCkt.setEnabled(false);
+		}
+		if (!(new File(directory + separator + "run.log").exists())) {
+		  viewLog.setEnabled(false);
+		}
 
 		// Creates the main panel
 		this.setLayout(new BorderLayout());
@@ -254,8 +359,14 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 		tab.addTab("Advanced Options", secondTab);
 		this.add(tab, "Center");
 		this.add(runHolder, "South");
-		user.doClick();
-		auto.doClick();
+		if (user.isSelected()) {
+		  auto.doClick();
+		  user.doClick();
+		  levels(true);
+		} else {
+		  user.doClick();
+		  auto.doClick();
+		}
 	}
 
 	/**
@@ -296,7 +407,7 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 				}
 			}
 		} else if (e.getSource() == suggest) {
-			levels();
+			levels(false);
 			speciesPanel.revalidate();
 			speciesPanel.repaint();
 		}
@@ -308,13 +419,27 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 		// }
 		// if the run button is selected
 		else if (e.getSource() == run) {
+		        save();
 			new Thread(this).start();
+		}
+		else if (e.getSource() == save) {
+		        save();
+		}
+		else if (e.getSource() == viewCkt) {
+		        viewCkt();
+		}
+		else if (e.getSource() == viewLog) {
+		        viewLog();
+		}
+		else if (e.getSource() == saveCkt) {
+		        saveCkt();
 		}
 	}
 
-	private void levels() {
+	private void levels(boolean readfile) {
 		ArrayList<String> str = null;
-		try {
+	        try {
+		  if (!readfile) {
 			FileWriter write = new FileWriter(new File(directory + separator + "levels.lvl"));
 			write.write("time, 0\n");
 			for (int i = 0; i < species.size(); i++) {
@@ -361,12 +486,13 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 			} catch (Exception e) {
 			}
 			learn.waitFor();
-			Scanner f = new Scanner(new File(directory + separator + "levels.lvl"));
-			str = new ArrayList<String>();
-			while (f.hasNextLine()) {
-				str.add(f.nextLine());
-			}
-		} catch (Exception e1) {
+		  }
+		  Scanner f = new Scanner(new File(directory + separator + "levels.lvl"));
+		  str = new ArrayList<String>();
+		  while (f.hasNextLine()) {
+		    str.add(f.nextLine());
+		  } 
+		}catch (Exception e1) {
 		}
 		if (!directory.equals("")) {
 			File n = null;
@@ -642,6 +768,151 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 		directory = newDirectory;
 	}
 
+	public void saveCkt() {
+	  try {
+	    File work = new File(directory);
+	    if (new File(directory + separator + "method.ckt").exists()) {
+	      String copy = JOptionPane.showInputDialog(biosim.frame(), "Enter Circuit Name:", "Save Circuit",
+							JOptionPane.PLAIN_MESSAGE);
+	      if (copy != null) {
+		copy = copy.trim();
+	      } else {
+		return;
+	      }
+	      if (!copy.equals("")) {
+		if (copy.length() > 3) {
+		  if (!copy.substring(copy.length() - 4).equals(".ckt")) {
+		    copy += ".ckt";
+		  }
+		} else {
+		  copy += ".ckt";
+		}
+	      }
+	      biosim.saveCkt(copy,directory + separator + "method.ckt");
+	    } else {
+	      JOptionPane.showMessageDialog(biosim.frame(), "No circuit has been generated yet.",
+					    "Error", JOptionPane.ERROR_MESSAGE);
+	    }
+	  } catch (Exception e1) {
+	    JOptionPane.showMessageDialog(biosim.frame(), "Unable to save circuit.", "Error",
+					  JOptionPane.ERROR_MESSAGE);
+	  }
+	}
+
+	public void viewCkt() {
+	  try {
+	    File work = new File(directory);
+	    if (new File(directory + separator + "method.ckt").exists()) {
+	      String command = "dotty method.ckt";
+	      log.addText("Executing:\n" + "dotty " + directory + separator + "method.ckt\n");
+	      Runtime exec = Runtime.getRuntime();
+	      exec.exec(command, null, work);
+	    } else {
+	      JOptionPane.showMessageDialog(biosim.frame(), "No circuit has been generated yet.",
+					    "Error", JOptionPane.ERROR_MESSAGE);
+	    }
+	  } catch (Exception e1) {
+	    JOptionPane.showMessageDialog(biosim.frame(), "Unable to view circuit.", "Error",
+					  JOptionPane.ERROR_MESSAGE);
+	  }
+	}
+
+	public void viewLog() {
+	  try {
+	    String message="";
+	    File work = new File(directory);
+	    if (new File(directory + separator + "run.log").exists()) {
+	      File log = new File(directory+separator+"run.log");
+	      BufferedReader input = new BufferedReader(new FileReader(log));
+	      String line = null;
+	      while (( line = input.readLine()) != null){
+		message += line;
+		message += System.getProperty("line.separator");
+	      }
+	      input.close();
+	      JTextArea messageArea = new JTextArea(message);
+	      messageArea.setLineWrap(true);
+	      messageArea.setWrapStyleWord(true);
+	      messageArea.setEditable(false);
+	      JScrollPane scrolls = new JScrollPane();
+	      scrolls.setMinimumSize(new Dimension(500, 500));
+	      scrolls.setPreferredSize(new Dimension(500, 500));
+	      scrolls.setViewportView(messageArea);
+	      JOptionPane.showMessageDialog(biosim.frame(), scrolls,
+					    "Run Log", JOptionPane.INFORMATION_MESSAGE);
+	    } else {
+	      JOptionPane.showMessageDialog(biosim.frame(), "No run log exists.",
+					    "Error", JOptionPane.ERROR_MESSAGE);
+	    }
+	  } catch (Exception e1) {
+	    JOptionPane.showMessageDialog(biosim.frame(), "Unable to view run log.", "Error",
+					  JOptionPane.ERROR_MESSAGE);
+	  }
+	}
+
+	public void save() {
+		try {
+		        Properties prop = new Properties();
+			prop.setProperty("genenet.file",learnFile);
+			prop.setProperty("genenet.Tn",this.letNThrough.getText().trim());
+			prop.setProperty("genenet.Tj",this.maxVectorSize.getText().trim());
+			prop.setProperty("genenet.Ti",this.parent.getText().trim());
+			prop.setProperty("genenet.Ta",this.activation.getText().trim());
+			prop.setProperty("genenet.Tr",this.repression.getText().trim());
+			prop.setProperty("genenet.Tm",this.influenceLevel.getText().trim());
+			prop.setProperty("genenet.Tt",this.relaxIPDelta.getText().trim());
+			prop.setProperty("genenet.bins",(String)this.numBins.getSelectedItem());
+			prop.setProperty("genenet.debug",(String)this.debug.getSelectedItem());
+			if (spacing.isSelected()) {
+			  prop.setProperty("genenet.equal","spacing");
+			} else {
+			  prop.setProperty("genenet.equal","data");
+			}
+			if (auto.isSelected()) {
+			  prop.setProperty("genenet.use","auto");
+			} else {
+			  prop.setProperty("genenet.use","user");
+			}
+			if (succ.isSelected()) {
+			  prop.setProperty("genenet.data.type","succ");
+			} else if (pred.isSelected()) {
+			  prop.setProperty("genenet.data.type","pred");
+			} else {
+			  prop.setProperty("genenet.data.type","both");
+			}
+			if (basicFBP.isSelected()) {
+			  prop.setProperty("genenet.find.base.prob","true");
+			} else {
+			  prop.setProperty("genenet.find.base.prob","false");
+			}
+			FileOutputStream out = new FileOutputStream(new File(directory + separator + lrnFile));
+			prop.store(out,learnFile);
+			out.close();
+			FileWriter write = new FileWriter(new File(directory + separator + "levels.lvl"));
+			write.write("time, 0\n");
+			for (int i = 0; i < species.size(); i++) {
+				if (((JTextField) species.get(i).get(0)).getText().trim().equals("")) {
+					write.write("-1");
+				} else {
+					write.write(((JTextField) species.get(i).get(0)).getText().trim());
+				}
+				write.write(", " + ((JComboBox) species.get(i).get(1)).getSelectedItem());
+				for (int j = 2; j < species.get(i).size(); j++) {
+					if (((JTextField) species.get(i).get(j)).getText().trim().equals("")) {
+						write.write(", -1");
+					} else {
+						write.write(", " + ((JTextField) species.get(i).get(j)).getText().trim());
+					}
+				}
+				write.write("\n");
+			}
+			write.close();
+		} catch (Exception e1) {
+			JOptionPane.showMessageDialog(biosim.frame(), "Unable to save parameter file!",
+					"Error Saving File", JOptionPane.ERROR_MESSAGE);
+		}
+	}
+
 	public void run() {
 		try {
 			String geneNet = "GeneNet";
@@ -846,6 +1117,13 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 				}
 				running.setCursor(null);
 				running.dispose();
+				if (new File(directory + separator + "method.ckt").exists()) {
+				  viewCkt.setEnabled(true);
+				  saveCkt.setEnabled(true);
+				}
+				if (new File(directory + separator + "run.log").exists()) {
+				  viewLog.setEnabled(true);
+				}
 			}
 		} catch (Exception e1) {
 			JOptionPane.showMessageDialog(biosim.frame(), "Unable to learn from data.", "Error",

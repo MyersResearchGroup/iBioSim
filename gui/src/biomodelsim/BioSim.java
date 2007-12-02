@@ -1121,31 +1121,18 @@ public class BioSim implements MouseListener, ActionListener {
 						new File(root + separator + lrnName).mkdir();
 						new FileWriter(new File(root + separator + lrnName + separator + ".lrn"))
 								.close();
+
+						String sbmlFile = tree.getFile();
+						String[] getFilename = sbmlFile.split(separator);
+						String sbmlFileNoPath = getFilename[getFilename.length - 1];
 						try {
-							String end = "background";
-							if (tree.getFile().length() > 4
-									&& tree.getFile().substring(tree.getFile().length() - 5)
-											.equals(".sbml")) {
-								end = "background.sbml";
-							} else if (tree.getFile().length() > 3
-									&& tree.getFile().substring(tree.getFile().length() - 4)
-											.equals(".ckt")) {
-								end = "background.ckt";
-							}
-							FileOutputStream out = new FileOutputStream(new File(root + separator
-									+ lrnName + separator + end));
-							FileInputStream in = new FileInputStream(new File(tree.getFile()));
-							int read = in.read();
-							while (read != -1) {
-								out.write(read);
-								read = in.read();
-							}
-							in.close();
-							out.close();
+						  FileOutputStream out = new FileOutputStream(new File(root + separator
+							+ lrnName.trim() + separator + lrnName.trim() + ".lrn"));
+						  out.write(("genenet.file=" + sbmlFileNoPath + "\n").getBytes());
+						  out.close();
 						} catch (Exception e1) {
-							JOptionPane.showMessageDialog(frame,
-									"Unable to copy file into learn view.", "Error",
-									JOptionPane.ERROR_MESSAGE);
+						  JOptionPane.showMessageDialog(frame, "Unable to save parameter file!",
+										"Error Saving File", JOptionPane.ERROR_MESSAGE);
 						}
 						refreshTree();
 						JTabbedPane lrnTab = new JTabbedPane();
@@ -1612,6 +1599,15 @@ public class BioSim implements MouseListener, ActionListener {
 				((Reb2Sac) tab.getComponentAt(index)).save();
 			}
 			return 1;
+		} else if (tab.getComponentAt(index).getName().equals("Learn")) {
+			Object[] options = { "Save", "Cancel" };
+			int value = JOptionPane.showOptionDialog(frame, "Do you want to save changes to "
+					+ tab.getTitleAt(index) + "?", "Save Changes", JOptionPane.YES_NO_OPTION,
+					JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+			if (value == JOptionPane.YES_OPTION) {
+				((Learn) tab.getComponentAt(index)).save();
+			}
+			return 1;
 		} else if (tab.getComponentAt(index).getName().equals("SBML Editor")) {
 			if (((SBML_Editor) tab.getComponentAt(index)).hasChanged()) {
 				Object[] options = { "Yes", "No", "Cancel" };
@@ -1654,6 +1650,12 @@ public class BioSim implements MouseListener, ActionListener {
 					((SBML_Editor) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i))
 							.save();
 				} else if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i).getName()
+						.equals("Learn")) {
+				         if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof Learn) {
+					   ((Learn) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i))
+					     .save();
+					 }
+				} else if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i).getName()
 						.contains("Graph")) {
 					if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof Graph) {
 						Graph g = ((Graph) ((JTabbedPane) tab.getComponentAt(index))
@@ -1664,6 +1666,54 @@ public class BioSim implements MouseListener, ActionListener {
 			}
 			return 1;
 		}
+	}
+
+	/**
+	 * Saves a circuit from a learn view to the project view
+	 */
+	public void saveCkt(String filename,String path) {
+	  try {
+	    boolean write = true;
+	    if (new File(root + separator + filename).exists()) {
+	      Object[] options = { "Overwrite", "Cancel" };
+	      int value = JOptionPane.showOptionDialog(frame, "File already exists."
+						       + "\nDo you want to overwrite?", "Overwrite",
+						       JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
+						       options[0]);
+	      if (value == JOptionPane.YES_OPTION) {
+		write = true;
+		File dir = new File(root + separator + filename);
+		if (dir.isDirectory()) {
+		  deleteDir(dir);
+		} else {
+		  System.gc();
+		  dir.delete();
+		}
+		for (int i = 0; i < tab.getTabCount(); i++) {
+		  if (tab.getTitleAt(i).equals(filename)) {
+		    tab.remove(i);
+		  }
+		}
+	      } else {
+		write = false;
+	      }
+	    }
+	    if (write) {
+	      FileOutputStream out = new FileOutputStream(new File(root + separator + filename));
+	      FileInputStream in = new FileInputStream(new File(path));
+	      int read = in.read();
+	      while (read != -1) {
+		out.write(read);
+		read = in.read();
+	      }
+	      in.close();
+	      out.close();
+	      refreshTree();
+	    }
+	  } catch (Exception e1) {
+	    JOptionPane.showMessageDialog(frame, "Unable to save circuit.", "Error",
+					  JOptionPane.ERROR_MESSAGE);
+	  }
 	}
 
 	/**
@@ -2496,7 +2546,7 @@ public class BioSim implements MouseListener, ActionListener {
 	}
 
 	/**
-	 * This is the main method. It excecutes the Tstubd GUI FrontEnd program.
+	 * This is the main method. It excecutes the BioSim GUI FrontEnd program.
 	 */
 	public static void main(String args[]) {
 		System.loadLibrary("sbmlj");
