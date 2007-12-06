@@ -318,11 +318,44 @@ public class Run implements ActionListener {
 				time1 = System.nanoTime();
 				reb2sac = exec.exec("reb2sac --target.encoding=nary-level " + theFile, null, work);
 			} else if (sbml.isSelected()) {
-				log.addText("Executing:\nreb2sac --target.encoding=sbml --out=" + out + ".xml "
-						+ filename + "\n");
-				time1 = System.nanoTime();
-				reb2sac = exec.exec("reb2sac --target.encoding=sbml --out=" + out + ".xml "
-						+ theFile, null, work);
+			        String sbmlName = JOptionPane.showInputDialog(component,"Enter SBML Model ID:",
+									      "Model ID", JOptionPane.PLAIN_MESSAGE);
+				if (sbmlName != null && !sbmlName.trim().equals("")) {
+				  sbmlName = sbmlName.trim();
+				  if (sbmlName.length() > 4) {
+				    if (!sbmlName.substring(sbmlName.length() - 4).equals(".sbml")) {
+				      sbmlName += ".sbml";
+				    }
+				  } else {
+				    sbmlName += ".sbml";
+				  }
+				  File f = new File(root + separator + sbmlName);
+				  if (f.exists()) {
+				    Object[] options = { "Overwrite", "Cancel" };
+				    int value = JOptionPane.showOptionDialog(component, "File already exists."
+									     + "\nDo you want to overwrite?", "Overwrite",
+									     JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
+									     options, options[0]);
+				    if (value == JOptionPane.YES_OPTION) {
+				      File dir = new File(root + separator + sbmlName);
+				      if (dir.isDirectory()) {
+					biomodelsim.deleteDir(dir);
+				      } else {
+					System.gc();
+					dir.delete();
+				      }
+				    } else {
+				      return 0;
+				    }
+				  }
+				  log.addText("Executing:\nreb2sac --target.encoding=sbml --out=" + ".." + separator + sbmlName + " "
+					      + filename + "\n");
+				  time1 = System.nanoTime();
+				  reb2sac = exec.exec("reb2sac --target.encoding=sbml --out=" + ".." + separator + sbmlName + " "
+						      + theFile, null, work);
+				} else {
+				  time1 = System.nanoTime();
+				}
 			} else if (dot.isSelected()) {
 				log.addText("Executing:\nreb2sac --target.encoding=dot --out=" + out + ".dot "
 						+ filename + "\n");
@@ -372,6 +405,9 @@ public class Run implements ActionListener {
 			} catch (Exception e) {
 			}
 			exitValue = reb2sac.waitFor();
+			if (sbml.isSelected()) {
+			  biomodelsim.refreshTree();
+			}
 			long time2 = System.nanoTime();
 			long minutes;
 			long hours;

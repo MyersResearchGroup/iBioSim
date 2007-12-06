@@ -1524,7 +1524,7 @@ public class BioSim implements MouseListener, ActionListener {
 		}
 	}
 
-	private void deleteDir(File dir) {
+	public void deleteDir(File dir) {
 		int count = 0;
 		do {
 			File[] list = dir.listFiles();

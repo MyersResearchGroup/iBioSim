@@ -309,9 +309,9 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		markov.addActionListener(this);
 
 		// Sets up the radio buttons for output option
-		sbml = new JRadioButton("sbml");
-		dot = new JRadioButton("dot");
-		xhtml = new JRadioButton("xhtml");
+		sbml = new JRadioButton("SBML");
+		dot = new JRadioButton("Network");
+		xhtml = new JRadioButton("Browser");
 		sbml.setSelected(true);
 		odeMonteAndMarkovPanel.add(sbml);
 		odeMonteAndMarkovPanel.add(dot);
@@ -2503,19 +2503,19 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 								step, errorLabel, absErr, limitLabel, limit, intervalLabel,
 								interval, simulators, simulatorsLabel, explanation, description,
 								usingSSA);
-					} else if (load.getProperty("reb2sac.simulation.method").equals("sbml")) {
+					} else if (load.getProperty("reb2sac.simulation.method").equals("SBML")) {
 						sbml.setSelected(true);
 						Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel,
 								stepLabel, step, errorLabel, absErr, limitLabel, limit,
 								intervalLabel, interval, simulators, simulatorsLabel, explanation,
 								description);
-					} else if (load.getProperty("reb2sac.simulation.method").equals("dot")) {
+					} else if (load.getProperty("reb2sac.simulation.method").equals("Network")) {
 						dot.setSelected(true);
 						Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel,
 								stepLabel, step, errorLabel, absErr, limitLabel, limit,
 								intervalLabel, interval, simulators, simulatorsLabel, explanation,
 								description);
-					} else if (load.getProperty("reb2sac.simulation.method").equals("xhtml")) {
+					} else if (load.getProperty("reb2sac.simulation.method").equals("Browser")) {
 						xhtml.setSelected(true);
 						Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel,
 								stepLabel, step, errorLabel, absErr, limitLabel, limit,
