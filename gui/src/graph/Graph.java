@@ -177,7 +177,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 		// creates the buttons for the graph frame
 		JPanel ButtonHolder = new JPanel();
-		save = new JButton("Save");
+		save = new JButton("Save Graph");
 		export = new JButton("Export");
 		// exportJPeg = new JButton("Export As JPEG");
 		// exportPng = new JButton("Export As PNG");
@@ -2078,7 +2078,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		}
 		graph.addMouseListener(this);
 		JPanel ButtonHolder = new JPanel();
-		save = new JButton("Save");
+		save = new JButton("Save Graph");
 		export = new JButton("Export");
 		// exportJPeg = new JButton("Export As JPEG");
 		// exportPng = new JButton("Export As PNG");
