@@ -1627,18 +1627,22 @@ public class BioSim implements MouseListener, ActionListener {
 				return 1;
 			}
 		} else if (tab.getComponentAt(index).getName().contains("Graph")) {
-			Object[] options = { "Yes", "No", "Cancel" };
-			int value = JOptionPane.showOptionDialog(frame, "Do you want to save changes to "
-					+ tab.getTitleAt(index) + "?", "Save Changes",
-					JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
-					options[0]);
-			if (value == JOptionPane.YES_OPTION) {
-				((Graph) tab.getComponentAt(index)).save();
-				return 1;
-			} else if (value == JOptionPane.NO_OPTION) {
-				return 1;
+			if (((Graph) tab.getComponentAt(index)).hasChanged()) {
+			  Object[] options = { "Yes", "No", "Cancel" };
+			  int value = JOptionPane.showOptionDialog(frame, "Do you want to save changes to "
+								   + tab.getTitleAt(index) + "?", "Save Changes",
+								   JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
+								   options[0]);
+			  if (value == JOptionPane.YES_OPTION) {
+			    ((Graph) tab.getComponentAt(index)).save();
+			    return 1;
+			  } else if (value == JOptionPane.NO_OPTION) {
+			    return 1;
+			  } else {
+			    return 0;
+			  }
 			} else {
-				return 0;
+			  return 1;
 			}
 		} else {
 			for (int i = 0; i < ((JTabbedPane) tab.getComponentAt(index)).getTabCount(); i++) {

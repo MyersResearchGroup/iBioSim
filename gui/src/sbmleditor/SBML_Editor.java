@@ -613,6 +613,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						Buttons.remove(compartments, comps);
 						compartments.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 						compartments.setSelectedIndex(0);
+						change = true;
 					} else {
 						String species = "";
 						String[] specs = speciesUsing.toArray(new String[0]);
@@ -698,6 +699,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					Buttons.remove(species, specs);
 					species.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 					species.setSelectedIndex(0);
+					change = true;
 				} else {
 					String reactants = "";
 					String products = "";
@@ -792,6 +794,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				} else {
 					reactions.setSelectedIndex(index);
 				}
+				change = true;
 			} else {
 				JOptionPane.showMessageDialog(biosim.frame(), "You must enter a unique id!",
 						"Enter A Unique ID", JOptionPane.ERROR_MESSAGE);
@@ -813,6 +816,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				Buttons.remove(reactions, reacts);
 				reactions.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 				reactions.setSelectedIndex(0);
+				change = true;
 			}
 		}
 		// if the add parameters button is clicked
@@ -839,6 +843,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				Buttons.remove(parameters, params);
 				parameters.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 				parameters.setSelectedIndex(0);
+				change = true;
 			}
 		}
 		// if the add reactions parameters button is clicked
@@ -863,6 +868,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				Buttons.remove(reacParameters, reacParams);
 				reacParameters.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 				reacParameters.setSelectedIndex(0);
+				change = true;
 			}
 		}
 		// if the add reactants button is clicked
@@ -886,6 +892,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				Buttons.remove(reactants, reacta);
 				reactants.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 				reactants.setSelectedIndex(0);
+				change = true;
 			}
 		}
 		// if the add products button is clicked
@@ -909,11 +916,13 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				Buttons.remove(products, product);
 				products.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 				products.setSelectedIndex(0);
+				change = true;
 			}
 		}
 		// if the clear button is clicked
 		else if (e.getSource() == clearKineticLaw) {
 			kineticLaw.setText("");
+			change = true;
 		}
 		// if the use mass action button is clicked
 		else if (e.getSource() == useMassAction) {
@@ -948,6 +957,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				}
 			}
 			kineticLaw.setText(kinetic);
+			change = true;
 		}
 	}
 
