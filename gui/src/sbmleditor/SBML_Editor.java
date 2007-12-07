@@ -470,17 +470,13 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		if (paramsOnly) {
 			saveNoRun = new JButton("Save");
 			run = new JButton("Save And Run");
-			saveAs = new JButton("Save As");
 			saveNoRun.setMnemonic(KeyEvent.VK_S);
 			run.setMnemonic(KeyEvent.VK_R);
-			saveAs.setMnemonic(KeyEvent.VK_A);
 			saveNoRun.addActionListener(this);
 			run.addActionListener(this);
-			saveAs.addActionListener(this);
 			JPanel saveRun = new JPanel();
 			saveRun.add(saveNoRun);
 			saveRun.add(run);
-			saveRun.add(saveAs);
 			JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, saveRun, null);
 			splitPane.setDividerSize(0);
 			this.add(splitPane, "South");
@@ -519,9 +515,6 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		}
 		// if the save as button is clicked
 		else if (e.getSource() == saveAs) {
-			if (paramsOnly) {
-				reb2sac.getSaveAsButton().doClick();
-			} else {
 				String simName = JOptionPane.showInputDialog(biosim.frame(), "Enter Model ID:",
 						"Model ID", JOptionPane.PLAIN_MESSAGE);
 				if (simName != null && !simName.equals("")) {
@@ -574,7 +567,6 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						document.getModel().setId(oldId);
 					}
 				}
-			}
 		}
 		// if the add comparment button is clicked
 		else if (e.getSource() == addCompart) {
