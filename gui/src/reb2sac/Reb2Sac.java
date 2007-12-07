@@ -45,7 +45,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 	 */
 	private JRadioButton ge, gt, eq, le, lt;
 
-	private JButton run, save, saveAs; // The save and run button
+        private JButton run, save; // The save and run button
 
 	/*
 	 * Added interesting species and termination conditions
@@ -360,7 +360,6 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		// Creates the run button
 		run = new JButton("Save And Run");
 		save = new JButton("Save");
-		saveAs = new JButton("Save As");
 		JPanel runHolder = new JPanel();
 		runHolder.add(save);
 		save.addActionListener(this);
@@ -368,9 +367,6 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		runHolder.add(run);
 		run.addActionListener(this);
 		run.setMnemonic(KeyEvent.VK_R);
-		runHolder.add(saveAs);
-		saveAs.addActionListener(this);
-		saveAs.setMnemonic(KeyEvent.VK_A);
 
 		// Creates the termination conditions tab
 		termCond = new JList();
@@ -946,12 +942,6 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		} else if (e.getSource() == save) {
 			sbmlEditor.save();
 			save();
-		} else if (e.getSource() == saveAs) {
-			String simName = JOptionPane.showInputDialog(biomodelsim.frame(), "Enter Analysis ID:",
-					"Analysis ID", JOptionPane.PLAIN_MESSAGE);
-			if (simName != null && !simName.trim().equals("")) {
-				biomodelsim.copySim(simName.trim());
-			}
 		}
 		// if the using ssa check box is clicked
 		else if (e.getSource() == usingSSA) {
@@ -2663,10 +2653,6 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		for (int i = 0; i < list.length; i++) {
 			availSpecies.addItem(((String) list[i]).replace(" ", "_"));
 		}
-	}
-
-	public JButton getSaveAsButton() {
-		return saveAs;
 	}
 
 	public void setSim(String newSimName) {
