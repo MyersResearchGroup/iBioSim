@@ -103,11 +103,11 @@ public class Run implements ActionListener {
 		} else if (selectedButtons.contains("markov")) {
 			abs.setProperty("reb2sac.simulation.method", "markov");
 		} else if (selectedButtons.contains("sbml")) {
-			abs.setProperty("reb2sac.simulation.method", "sbml");
+			abs.setProperty("reb2sac.simulation.method", "SBML");
 		} else if (selectedButtons.contains("dot")) {
-			abs.setProperty("reb2sac.simulation.method", "dot");
+			abs.setProperty("reb2sac.simulation.method", "Network");
 		} else if (selectedButtons.contains("xhtml")) {
-			abs.setProperty("reb2sac.simulation.method", "xhtml");
+			abs.setProperty("reb2sac.simulation.method", "Browser");
 		}
 		if (!selectedButtons.contains("monteCarlo")) {
 			// if (selectedButtons.equals("none_ODE") ||
@@ -405,9 +405,6 @@ public class Run implements ActionListener {
 			} catch (Exception e) {
 			}
 			exitValue = reb2sac.waitFor();
-			if (sbml.isSelected()) {
-			  biomodelsim.refreshTree();
-			}
 			long time2 = System.nanoTime();
 			long minutes;
 			long hours;
@@ -480,6 +477,7 @@ public class Run implements ActionListener {
 				} else if (sbml.isSelected()) {
 					biomodelsim.addTab("SBML Editor", new SBML_Editor(directory + out + ".xml",
 							null, log, biomodelsim, null, null), null);
+					biomodelsim.refreshTree();
 				} else if (dot.isSelected()) {
 					log.addText("Executing:\ndotty " + directory + out + ".dot" + "\n");
 					exec.exec("dotty " + out + ".dot", null, work);
