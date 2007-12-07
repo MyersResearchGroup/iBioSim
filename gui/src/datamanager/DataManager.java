@@ -18,7 +18,7 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 
 	private JTable table;
 
-        private JButton saveData, addData, removeData, editData, copyData;
+	private JButton saveData, addData, removeData, editData, copyData;
 
 	private JButton add, remove, rename, copy, copyFromView, importFile;
 

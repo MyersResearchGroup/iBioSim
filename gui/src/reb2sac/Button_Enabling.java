@@ -258,6 +258,7 @@ public class Button_Enabling {
 			description.setEnabled(true);
 		}
 		simulators.removeAllItems();
+		simulators.addItem("atacs");
 		simulators.addItem("ctmc-transient");
 	}
 

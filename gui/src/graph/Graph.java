@@ -104,7 +104,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 	private String separator;
 
-        private boolean change;
+	private boolean change;
+
 	/**
 	 * Creates a Graph Object from the data given and calls the private graph
 	 * helper method.
