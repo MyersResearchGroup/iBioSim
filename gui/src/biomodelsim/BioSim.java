@@ -3,7 +3,7 @@ package biomodelsim.core.gui;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
-import java.util.Scanner;
+import java.util.*;
 import javax.swing.*;
 import javax.swing.plaf.basic.*;
 import org.sbml.libsbml.*;
@@ -493,6 +493,15 @@ public class BioSim implements MouseListener, ActionListener {
 		// if the graph popup menu is selected on an sbml file
 		else if (e.getActionCommand().equals("graph")) {
 			try {
+			        for (int i = 0; i < tab.getTabCount(); i++) {
+				  if (tab.getTitleAt(i).equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
+				    tab.setSelectedIndex(i);
+				    if (save(i) != 1) {
+				      return;
+				    }
+				    break;
+				  }
+				}
 				Run run = new Run();
 				JCheckBox dummy = new JCheckBox();
 				dummy.setSelected(false);
@@ -576,6 +585,15 @@ public class BioSim implements MouseListener, ActionListener {
 		// if the browse popup menu is selected on an sbml file
 		else if (e.getActionCommand().equals("browse")) {
 			try {
+			        for (int i = 0; i < tab.getTabCount(); i++) {
+				  if (tab.getTitleAt(i).equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
+				    tab.setSelectedIndex(i);
+				    if (save(i) != 1) {
+				      return;
+				    }
+				    break;
+				  }
+				}
 				Run run = new Run();
 				JCheckBox dummy = new JCheckBox();
 				dummy.setSelected(false);
@@ -1031,6 +1049,15 @@ public class BioSim implements MouseListener, ActionListener {
 			}
 		} else if (e.getActionCommand().equals("createLearn")) {
 			if (root != null) {
+			        for (int i = 0; i < tab.getTabCount(); i++) {
+				  if (tab.getTitleAt(i).equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
+				    tab.setSelectedIndex(i);
+				    if (save(i) != 1) {
+				      return;
+				    }
+				    break;
+				  }
+				}
 				String lrnName = JOptionPane.showInputDialog(frame, "Enter Learn ID:",
 						"Learn View ID", JOptionPane.PLAIN_MESSAGE);
 				if (lrnName != null && !lrnName.trim().equals("")) {
@@ -1108,6 +1135,15 @@ public class BioSim implements MouseListener, ActionListener {
 						"Error", JOptionPane.ERROR_MESSAGE);
 			}
 		} else if (e.getActionCommand().equals("copy")) {
+		        for (int i = 0; i < tab.getTabCount(); i++) {
+			  if (tab.getTitleAt(i).equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
+			    tab.setSelectedIndex(i);
+			    if (save(i) != 1) {
+			      return;
+			    }
+			    break;
+			  }
+			}
 			String modelID = null;
 			String copy = JOptionPane.showInputDialog(frame, "Enter A New Filename:", "Copy",
 					JOptionPane.PLAIN_MESSAGE);
@@ -1304,6 +1340,15 @@ public class BioSim implements MouseListener, ActionListener {
 			}
 		} else if (e.getActionCommand().equals("rename")) {
 			try {
+			        for (int i = 0; i < tab.getTabCount(); i++) {
+				  if (tab.getTitleAt(i).equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
+				    tab.setSelectedIndex(i);
+				    if (save(i) != 1) {
+				      return;
+				    }
+				    break;
+				  }
+				}
 				String modelID = null;
 				String rename = JOptionPane.showInputDialog(frame, "Enter A New Filename:",
 						"Rename", JOptionPane.PLAIN_MESSAGE);
@@ -2166,6 +2211,15 @@ public class BioSim implements MouseListener, ActionListener {
 				addTab(simName, simTab, null);
 			}
 		} else {
+		        for (int i = 0; i < tab.getTabCount(); i++) {
+			  if (tab.getTitleAt(i).equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
+			    tab.setSelectedIndex(i);
+			    if (save(i) != 1) {
+			      return;
+			    }
+			    break;
+			  }
+			}
 			SBMLReader reader = new SBMLReader();
 			SBMLDocument document = reader.readSBML(tree.getFile());
 			document.setLevel(2);
@@ -2283,6 +2337,30 @@ public class BioSim implements MouseListener, ActionListener {
 						}
 					}
 				}
+			}
+
+			String lrnFile = tree.getFile() + separator + tree.getFile().split(separator)[tree.getFile().split(separator).length - 1] + ".lrn";
+			Properties load = new Properties();
+			String learnFile="";
+			try {
+			  FileInputStream in = new FileInputStream(new File(lrnFile));
+			  load.load(in);
+			  in.close();
+			  if (load.containsKey("genenet.file")) {
+			    learnFile = load.getProperty("genenet.file");
+			  }
+			} catch (Exception e) {
+			  JOptionPane.showMessageDialog(frame(), "Unable to load properties file!",
+							"Error Loading Properties", JOptionPane.ERROR_MESSAGE);
+			}
+			for (int i = 0; i < tab.getTabCount(); i++) {
+			  if (tab.getTitleAt(i).equals(learnFile.split(separator)[learnFile.split(separator).length - 1])) {
+			    tab.setSelectedIndex(i);
+			    if (save(i) != 1) {
+			      return;
+			    }
+			    break;
+			  }
 			}
 			if (!graphFile.equals("")) {
 				lrnTab.addTab("Data Manager", new DataManager(tree.getFile(), this));
@@ -2403,6 +2481,15 @@ public class BioSim implements MouseListener, ActionListener {
 								 * JOptionPane.ERROR_MESSAGE); return;
 								 */
 							}
+						}
+						for (int i = 0; i < tab.getTabCount(); i++) {
+						  if (tab.getTitleAt(i).equals(sbmlLoadFile.split(separator)[sbmlLoadFile.split(separator).length - 1])) {
+						    tab.setSelectedIndex(i);
+						    if (save(i) != 1) {
+						      return;
+						    }
+						    break;
+						  }
 						}
 						JTabbedPane simTab = new JTabbedPane();
 						Reb2Sac reb2sac = new Reb2Sac(sbmlLoadFile, getAFile, root, this,
