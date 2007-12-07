@@ -145,27 +145,27 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 		JLabel activationLabel = new JLabel("Ratio For Activation (Ta):");
 		thresholdPanel2.add(activationLabel);
 		activation = new JTextField("1.15");
-		activation.addActionListener(this);
+		//activation.addActionListener(this);
 		thresholdPanel2.add(activation);
 		JLabel repressionLabel = new JLabel("Ratio For Repression (Tr):");
 		thresholdPanel2.add(repressionLabel);
 		repression = new JTextField("0.75");
-		repression.addActionListener(this);
+		//repression.addActionListener(this);
 		thresholdPanel2.add(repression);
 		JLabel influenceLevelLabel = new JLabel("Merge Influence Vectors Delta (Tm):");
 		thresholdPanel2.add(influenceLevelLabel);
 		influenceLevel = new JTextField("0.0");
-		influenceLevel.addActionListener(this);
+		//influenceLevel.addActionListener(this);
 		thresholdPanel2.add(influenceLevel);
 		JLabel letNThroughLabel = new JLabel("Minimum Number of Initial Vectors (Tn):  ");
 		thresholdPanel1.add(letNThroughLabel);
 		letNThrough = new JTextField("2");
-		letNThrough.addActionListener(this);
+		//letNThrough.addActionListener(this);
 		thresholdPanel1.add(letNThrough);
 		JLabel maxVectorSizeLabel = new JLabel("Maximum Influence Vector Size (Tj):");
 		thresholdPanel1.add(maxVectorSizeLabel);
 		maxVectorSize = new JTextField("2");
-		maxVectorSize.addActionListener(this);
+		//maxVectorSize.addActionListener(this);
 		thresholdPanel1.add(maxVectorSize);
 		JLabel parentLabel = new JLabel("Score for Empty Influence Vector (Ti):");
 		thresholdPanel1.add(parentLabel);
@@ -175,7 +175,7 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 		JLabel relaxIPDeltaLabel = new JLabel("Relax Thresholds Delta (Tt):");
 		thresholdPanel2.add(relaxIPDeltaLabel);
 		relaxIPDelta = new JTextField("0.025");
-		relaxIPDelta.addActionListener(this);
+		//relaxIPDelta.addActionListener(this);
 		thresholdPanel2.add(relaxIPDelta);
 		numBinsLabel = new JLabel("Number Of Bins:");
 		String[] bins = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
@@ -258,25 +258,25 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 				learnFile = load.getProperty("genenet.file");
 			}
 			if (load.containsKey("genenet.Tn")) {
-				letNThrough = new JTextField(load.getProperty("genenet.Tn"));
+				letNThrough .setText(load.getProperty("genenet.Tn"));
 			}
 			if (load.containsKey("genenet.Tj")) {
-				maxVectorSize = new JTextField(load.getProperty("genenet.Tj"));
+				maxVectorSize.setText(load.getProperty("genenet.Tj"));
 			}
 			if (load.containsKey("genenet.Ti")) {
-				parent = new JTextField(load.getProperty("genenet.Ti"));
+				parent.setText(load.getProperty("genenet.Ti"));
 			}
 			if (load.containsKey("genenet.Ta")) {
-				activation = new JTextField(load.getProperty("genenet.Ta"));
+				activation.setText(load.getProperty("genenet.Ta"));
 			}
 			if (load.containsKey("genenet.Tr")) {
-				repression = new JTextField(load.getProperty("genenet.Tr"));
+				repression.setText(load.getProperty("genenet.Tr"));
 			}
 			if (load.containsKey("genenet.Tm")) {
-				influenceLevel = new JTextField(load.getProperty("genenet.Tm"));
+				influenceLevel.setText(load.getProperty("genenet.Tm"));
 			}
 			if (load.containsKey("genenet.Tt")) {
-				relaxIPDelta = new JTextField(load.getProperty("genenet.Tt"));
+				relaxIPDelta.setText(load.getProperty("genenet.Tt"));
 			}
 			if (load.containsKey("genenet.bins")) {
 				numBins.setSelectedItem(load.getProperty("genenet.bins"));
@@ -499,6 +499,7 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 					br.close();
 					isr.close();
 					reb.close();
+					viewLog.setEnabled(true);
 				} catch (Exception e) {
 				}
 				learn.waitFor();
@@ -834,17 +835,16 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 
 	public void viewLog() {
 		try {
-			String message = "";
 			if (new File(directory + separator + "run.log").exists()) {
 				File log = new File(directory + separator + "run.log");
 				BufferedReader input = new BufferedReader(new FileReader(log));
 				String line = null;
+				JTextArea messageArea = new JTextArea();
 				while ((line = input.readLine()) != null) {
-					message += line;
-					message += System.getProperty("line.separator");
+				  messageArea.append(line);
+				  messageArea.append(System.getProperty("line.separator"));
 				}
 				input.close();
-				JTextArea messageArea = new JTextArea(message);
 				messageArea.setLineWrap(true);
 				messageArea.setWrapStyleWord(true);
 				messageArea.setEditable(false);
@@ -1115,6 +1115,7 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 				isr.close();
 				reb.close();
 				out.close();
+				viewLog.setEnabled(true);
 			} catch (Exception e) {
 			}
 			int exitValue = learn.waitFor();
