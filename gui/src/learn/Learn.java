@@ -63,6 +63,7 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 
         private String learnFile;
 
+        private boolean change;
 	/**
 	 * This is the constructor for the Learn class. It initializes all the input
 	 * fields, puts them on panels, adds the panels to the frame, and then
@@ -99,6 +100,7 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 		select2.add(data);
 		auto.setSelected(true);
 		user.addActionListener(this);
+		spacing.addActionListener(this);
 		auto.addActionListener(this);
 		suggest.addActionListener(this);
 		data.setSelected(true);
@@ -142,35 +144,43 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 		JLabel activationLabel = new JLabel("Ratio For Activation (Ta):");
 		thresholdPanel2.add(activationLabel);
 		activation = new JTextField("1.15");
+		activation.addActionListener(this);
 		thresholdPanel2.add(activation);
 		JLabel repressionLabel = new JLabel("Ratio For Repression (Tr):");
 		thresholdPanel2.add(repressionLabel);
 		repression = new JTextField("0.75");
+		repression.addActionListener(this);
 		thresholdPanel2.add(repression);
 		JLabel influenceLevelLabel = new JLabel("Merge Influence Vectors Delta (Tm):");
 		thresholdPanel2.add(influenceLevelLabel);
 		influenceLevel = new JTextField("0.0");
+		influenceLevel.addActionListener(this);
 		thresholdPanel2.add(influenceLevel);
 		JLabel letNThroughLabel = new JLabel("Minimum Number of Initial Vectors (Tn):  ");
 		thresholdPanel1.add(letNThroughLabel);
 		letNThrough = new JTextField("2");
+		letNThrough.addActionListener(this);
 		thresholdPanel1.add(letNThrough);
 		JLabel maxVectorSizeLabel = new JLabel("Maximum Influence Vector Size (Tj):");
 		thresholdPanel1.add(maxVectorSizeLabel);
 		maxVectorSize = new JTextField("2");
+		maxVectorSize.addActionListener(this);
 		thresholdPanel1.add(maxVectorSize);
 		JLabel parentLabel = new JLabel("Score for Empty Influence Vector (Ti):");
 		thresholdPanel1.add(parentLabel);
 		parent = new JTextField("0.5");
+		parent.addActionListener(this);
 		thresholdPanel1.add(parent);
 		JLabel relaxIPDeltaLabel = new JLabel("Relax Thresholds Delta (Tt):");
 		thresholdPanel2.add(relaxIPDeltaLabel);
 		relaxIPDelta = new JTextField("0.025");
+		relaxIPDelta.addActionListener(this);
 		thresholdPanel2.add(relaxIPDelta);
 		numBinsLabel = new JLabel("Number Of Bins:");
 		String[] bins = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
 		numBins = new JComboBox(bins);
 		numBins.setSelectedItem("4");
+		numBins.addActionListener(this);
 		thresholdPanel1.add(numBinsLabel);
 		thresholdPanel1.add(numBins);
 		JPanel thresholdPanelHold1 = new JPanel();
@@ -182,13 +192,18 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 		options[2] = "2";
 		options[3] = "3";
 		debug = new JComboBox(options);
+		debug.addActionListener(this);
 		thresholdPanel2.add(debugLabel);
 		thresholdPanel2.add(debug);
 		succ = new JRadioButton("Successors");
 		pred = new JRadioButton("Predecessors");
 		both = new JRadioButton("Both");
 		succ.setSelected(true);
+		succ.addActionListener(this);
+		pred.addActionListener(this);
+		both.addActionListener(this);
 		basicFBP = new JCheckBox("Basic FindBaseProb");
+		basicFBP.addActionListener(this);
 		ButtonGroup succOrPred = new ButtonGroup();
 		succOrPred.add(succ);
 		succOrPred.add(pred);
@@ -367,6 +382,7 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 		  user.doClick();
 		  auto.doClick();
 		}
+		change = false;
 	}
 
 	/**
@@ -385,7 +401,9 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 		 * this.species.get(num).get(1).setEnabled(true); if (user.isSelected()) {
 		 * for (int i = 2; i < this.species.get(num).size(); i++) {
 		 * this.species.get(num).get(i).setEnabled(true); } } } } else
-		 */if (e.getActionCommand().contains("text")) {
+		 */
+   	        change = true;
+	        if (e.getActionCommand().contains("text")) {
 			int num = Integer.parseInt(e.getActionCommand().substring(4)) - 1;
 			editText(num);
 			speciesPanel.revalidate();
@@ -907,6 +925,7 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 				write.write("\n");
 			}
 			write.close();
+   		        change = false;
 		} catch (Exception e1) {
 			JOptionPane.showMessageDialog(biosim.frame(), "Unable to save parameter file!",
 					"Error Saving File", JOptionPane.ERROR_MESSAGE);
@@ -1129,5 +1148,9 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 			JOptionPane.showMessageDialog(biosim.frame(), "Unable to learn from data.", "Error",
 					JOptionPane.ERROR_MESSAGE);
 		}
+	}
+
+	public boolean hasChanged() {		
+		return change;
 	}
 }

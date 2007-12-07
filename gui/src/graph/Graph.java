@@ -2841,7 +2841,6 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	}
 
 	public void save() {
-	        change = false;
 		Properties graph = new Properties();
 		graph.setProperty("title", chart.getTitle().getText());
 		graph.setProperty("x.axis", chart.getXYPlot().getDomainAxis().getLabel());
@@ -2871,6 +2870,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			graph.store(store, "Graph Data");
 			store.close();
 			log.addText("Creating graph file:\n" + outDir + separator + graphName + "\n");
+			change = false;
 		} catch (Exception except) {
 			JOptionPane.showMessageDialog(biomodelsim.frame(), "Unable To Save Graph!", "Error",
 					JOptionPane.ERROR_MESSAGE);

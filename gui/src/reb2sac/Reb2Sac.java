@@ -144,6 +144,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 
 	private String sbmlProp;
 
+        private boolean change;
 	/**
 	 * This is the constructor for the GUI. It initializes all the input fields,
 	 * puts them on panels, adds the panels to the frame, and then displays the
@@ -164,6 +165,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		this.simName = simName;
 		this.log = log;
 		this.simTab = simTab;
+		change = false;
 
 		// Creates the input fields for the changes in abstraction
 		String[] odeSimulators = new String[6];
@@ -711,6 +713,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 	 */
 	public void actionPerformed(ActionEvent e) {
 		// if the none Radio Button is selected
+	        change = true;
 		if (e.getSource() == none) {
 			Button_Enabling.enableNoneOrAbs(ODE, monteCarlo, markov, seed, seedLabel, runs,
 					runsLabel, stepLabel, step, errorLabel, absErr, limitLabel, limit,
@@ -2132,6 +2135,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					JOptionPane.ERROR_MESSAGE);
 		}
 		biomodelsim.refreshTree();
+                change = false;
 	}
 
 	/**
@@ -2596,6 +2600,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			if (load.containsKey("selected.simulator")) {
 				simulators.setSelectedItem(load.getProperty("selected.simulator"));
 			}
+			change = false;
 		} catch (Exception e1) {
 			JOptionPane.showMessageDialog(biomodelsim.frame(), "Unable to load properties file!",
 					"Error Loading Properties", JOptionPane.ERROR_MESSAGE);
@@ -2665,5 +2670,9 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		sbmlProp = root + separator + newSimName + separator
 				+ sbmlFile.split(separator)[sbmlFile.split(separator).length - 1];
 		simName = newSimName;
+	}
+
+	public boolean hasChanged() {		
+		return change;
 	}
 }
