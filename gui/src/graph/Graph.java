@@ -104,6 +104,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 	private String separator;
 
+        private boolean change;
 	/**
 	 * Creates a Graph Object from the data given and calls the private graph
 	 * helper method.
@@ -161,6 +162,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		edit.setHorizontalAlignment(SwingConstants.CENTER);
 		graph.add(edit);
 		graph.addMouseListener(this);
+		change = false;
 
 		// creates text fields for changing the graph's dimensions
 		resize = new JCheckBox("Auto Resize");
@@ -1023,6 +1025,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						double minX;
 						double maxX;
 						double scaleX;
+						change = true;
 						try {
 							minY = Double.parseDouble(YMin.getText().trim());
 							maxY = Double.parseDouble(YMax.getText().trim());
@@ -2838,6 +2841,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	}
 
 	public void save() {
+	        change = false;
 		Properties graph = new Properties();
 		graph.setProperty("title", chart.getTitle().getText());
 		graph.setProperty("x.axis", chart.getXYPlot().getDomainAxis().getLabel());
@@ -3435,5 +3439,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 	public void setGraphName(String graphName) {
 		this.graphName = graphName;
+	}
+
+	public boolean hasChanged() {
+		return change;
 	}
 }
