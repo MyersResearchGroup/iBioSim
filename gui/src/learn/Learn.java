@@ -22,7 +22,7 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 
 	// private JButton browseInit; // the browse initial network button
 
-        private JButton save,run,viewCkt,saveCkt,viewLog; // the run button
+	private JButton save, run, viewCkt, saveCkt, viewLog; // the run button
 
 	private JComboBox debug; // debug combo box
 
@@ -51,7 +51,7 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 
 	private JButton suggest;
 
-        private String directory,lrnFile;
+	private String directory, lrnFile;
 
 	private JLabel numBinsLabel;
 
@@ -61,9 +61,10 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 
 	private BioSim biosim;
 
-        private String learnFile;
+	private String learnFile;
 
-        private boolean change;
+	private boolean change;
+
 	/**
 	 * This is the constructor for the Learn class. It initializes all the input
 	 * fields, puts them on panels, adds the panels to the frame, and then
@@ -248,72 +249,72 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 
 		// load parameters
 		Properties load = new Properties();
-		learnFile="";
+		learnFile = "";
 		try {
-		  FileInputStream in = new FileInputStream(new File(directory + separator + lrnFile));
-		  load.load(in);
-		  in.close();
-		  if (load.containsKey("genenet.file")) {
-		    learnFile = load.getProperty("genenet.file");
-		  }
-		  if (load.containsKey("genenet.Tn")) {
-		    letNThrough = new JTextField(load.getProperty("genenet.Tn"));
-		  }
-		  if (load.containsKey("genenet.Tj")) {
-		    maxVectorSize = new JTextField(load.getProperty("genenet.Tj"));
-		  }
-		  if (load.containsKey("genenet.Ti")) {
-		    parent = new JTextField(load.getProperty("genenet.Ti"));
-		  }
-		  if (load.containsKey("genenet.Ta")) {
-		    activation = new JTextField(load.getProperty("genenet.Ta"));
-		  }
-		  if (load.containsKey("genenet.Tr")) {
-		    repression = new JTextField(load.getProperty("genenet.Tr"));
-		  }
-		  if (load.containsKey("genenet.Tm")) {
-		    influenceLevel = new JTextField(load.getProperty("genenet.Tm"));
-		  }
-		  if (load.containsKey("genenet.Tt")) {
-		    relaxIPDelta = new JTextField(load.getProperty("genenet.Tt"));
-		  }
-		  if (load.containsKey("genenet.bins")) {
-		    numBins.setSelectedItem(load.getProperty("genenet.bins"));
-		  }
-		  if (load.containsKey("genenet.debug")) {
-		    debug.setSelectedItem(load.getProperty("genenet.debug"));
-		  }
-		  if (load.containsKey("genenet.equal")) {
-		    if (load.getProperty("genenet.equal").equals("data")) {
-		      data.setSelected(true);
-		    } else {
-		      spacing.setSelected(true);
-		    }
-		  }
-		  if (load.containsKey("genenet.use")) {
-		    if (load.getProperty("genenet.use").equals("auto")) {
-		      auto.setSelected(true);
-		    } else {
-		      user.setSelected(true);
-		    }
-		  }
-		  if (load.containsKey("genenet.find.base.prob")) {
-		    if (load.getProperty("genenet.find.base.prob").equals("true")) {
-		      basicFBP.setSelected(true);
-		    }
-		  }
-		  if (load.containsKey("genenet.data.type")) {
-		    if (load.getProperty("genenet.data.type").equals("succ")) {
-		      succ.setSelected(true);
-		    } else if (load.getProperty("genenet.data.type").equals("pred")) {
-		      pred.setSelected(true);
-		    } else {
-		      both.setSelected(true);
-		    }
-		  }
+			FileInputStream in = new FileInputStream(new File(directory + separator + lrnFile));
+			load.load(in);
+			in.close();
+			if (load.containsKey("genenet.file")) {
+				learnFile = load.getProperty("genenet.file");
+			}
+			if (load.containsKey("genenet.Tn")) {
+				letNThrough = new JTextField(load.getProperty("genenet.Tn"));
+			}
+			if (load.containsKey("genenet.Tj")) {
+				maxVectorSize = new JTextField(load.getProperty("genenet.Tj"));
+			}
+			if (load.containsKey("genenet.Ti")) {
+				parent = new JTextField(load.getProperty("genenet.Ti"));
+			}
+			if (load.containsKey("genenet.Ta")) {
+				activation = new JTextField(load.getProperty("genenet.Ta"));
+			}
+			if (load.containsKey("genenet.Tr")) {
+				repression = new JTextField(load.getProperty("genenet.Tr"));
+			}
+			if (load.containsKey("genenet.Tm")) {
+				influenceLevel = new JTextField(load.getProperty("genenet.Tm"));
+			}
+			if (load.containsKey("genenet.Tt")) {
+				relaxIPDelta = new JTextField(load.getProperty("genenet.Tt"));
+			}
+			if (load.containsKey("genenet.bins")) {
+				numBins.setSelectedItem(load.getProperty("genenet.bins"));
+			}
+			if (load.containsKey("genenet.debug")) {
+				debug.setSelectedItem(load.getProperty("genenet.debug"));
+			}
+			if (load.containsKey("genenet.equal")) {
+				if (load.getProperty("genenet.equal").equals("data")) {
+					data.setSelected(true);
+				} else {
+					spacing.setSelected(true);
+				}
+			}
+			if (load.containsKey("genenet.use")) {
+				if (load.getProperty("genenet.use").equals("auto")) {
+					auto.setSelected(true);
+				} else {
+					user.setSelected(true);
+				}
+			}
+			if (load.containsKey("genenet.find.base.prob")) {
+				if (load.getProperty("genenet.find.base.prob").equals("true")) {
+					basicFBP.setSelected(true);
+				}
+			}
+			if (load.containsKey("genenet.data.type")) {
+				if (load.getProperty("genenet.data.type").equals("succ")) {
+					succ.setSelected(true);
+				} else if (load.getProperty("genenet.data.type").equals("pred")) {
+					pred.setSelected(true);
+				} else {
+					both.setSelected(true);
+				}
+			}
 		} catch (Exception e) {
-		  JOptionPane.showMessageDialog(biosim.frame(), "Unable to load properties file!",
-						"Error Loading Properties", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(biosim.frame(), "Unable to load properties file!",
+					"Error Loading Properties", JOptionPane.ERROR_MESSAGE);
 		}
 
 		// Creates the run button
@@ -347,11 +348,11 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 		viewLog.addActionListener(this);
 		viewLog.setMnemonic(KeyEvent.VK_R);
 		if (!(new File(directory + separator + "method.ckt").exists())) {
-		  viewCkt.setEnabled(false);
-		  saveCkt.setEnabled(false);
+			viewCkt.setEnabled(false);
+			saveCkt.setEnabled(false);
 		}
 		if (!(new File(directory + separator + "run.log").exists())) {
-		  viewLog.setEnabled(false);
+			viewLog.setEnabled(false);
 		}
 
 		// Creates the main panel
@@ -375,12 +376,12 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 		this.add(tab, "Center");
 		this.add(runHolder, "South");
 		if (user.isSelected()) {
-		  auto.doClick();
-		  user.doClick();
-		  levels(true);
+			auto.doClick();
+			user.doClick();
+			levels(true);
 		} else {
-		  user.doClick();
-		  auto.doClick();
+			user.doClick();
+			auto.doClick();
 		}
 		change = false;
 	}
@@ -402,8 +403,8 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 		 * for (int i = 2; i < this.species.get(num).size(); i++) {
 		 * this.species.get(num).get(i).setEnabled(true); } } } } else
 		 */
-   	        change = true;
-	        if (e.getActionCommand().contains("text")) {
+		change = true;
+		if (e.getActionCommand().contains("text")) {
 			int num = Integer.parseInt(e.getActionCommand().substring(4)) - 1;
 			editText(num);
 			speciesPanel.revalidate();
@@ -437,80 +438,77 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 		// }
 		// if the run button is selected
 		else if (e.getSource() == run) {
-		        save();
+			save();
 			new Thread(this).start();
-		}
-		else if (e.getSource() == save) {
-		        save();
-		}
-		else if (e.getSource() == viewCkt) {
-		        viewCkt();
-		}
-		else if (e.getSource() == viewLog) {
-		        viewLog();
-		}
-		else if (e.getSource() == saveCkt) {
-		        saveCkt();
+		} else if (e.getSource() == save) {
+			save();
+		} else if (e.getSource() == viewCkt) {
+			viewCkt();
+		} else if (e.getSource() == viewLog) {
+			viewLog();
+		} else if (e.getSource() == saveCkt) {
+			saveCkt();
 		}
 	}
 
 	private void levels(boolean readfile) {
 		ArrayList<String> str = null;
-	        try {
-		  if (!readfile) {
-			FileWriter write = new FileWriter(new File(directory + separator + "levels.lvl"));
-			write.write("time, 0\n");
-			for (int i = 0; i < species.size(); i++) {
-				if (((JTextField) species.get(i).get(0)).getText().trim().equals("")) {
-					write.write("-1");
-				} else {
-					write.write(((JTextField) species.get(i).get(0)).getText().trim());
-				}
-				write.write(", " + ((JComboBox) species.get(i).get(1)).getSelectedItem());
-				for (int j = 2; j < species.get(i).size(); j++) {
-					if (((JTextField) species.get(i).get(j)).getText().trim().equals("")) {
-						write.write(", -1");
+		try {
+			if (!readfile) {
+				FileWriter write = new FileWriter(new File(directory + separator + "levels.lvl"));
+				write.write("time, 0\n");
+				for (int i = 0; i < species.size(); i++) {
+					if (((JTextField) species.get(i).get(0)).getText().trim().equals("")) {
+						write.write("-1");
 					} else {
-						write.write(", " + ((JTextField) species.get(i).get(j)).getText().trim());
+						write.write(((JTextField) species.get(i).get(0)).getText().trim());
 					}
+					write.write(", " + ((JComboBox) species.get(i).get(1)).getSelectedItem());
+					for (int j = 2; j < species.get(i).size(); j++) {
+						if (((JTextField) species.get(i).get(j)).getText().trim().equals("")) {
+							write.write(", -1");
+						} else {
+							write.write(", "
+									+ ((JTextField) species.get(i).get(j)).getText().trim());
+						}
+					}
+					write.write("\n");
 				}
-				write.write("\n");
-			}
-			write.close();
-			String geneNet = "";
-			if (spacing.isSelected()) {
-				geneNet = "GeneNet --readLevels --lvl -binN .";
-			} else {
-				geneNet = "GeneNet --readLevels --lvl .";
-			}
-			log.addText("Executing:\n" + geneNet + " " + directory + "\n");
-			Runtime exec = Runtime.getRuntime();
-			File work = new File(directory);
-			Process learn = exec.exec(geneNet, null, work);
-			try {
-				String output = "";
-				InputStream reb = learn.getInputStream();
-				InputStreamReader isr = new InputStreamReader(reb);
-				BufferedReader br = new BufferedReader(isr);
-				FileWriter out = new FileWriter(new File(directory + separator + "run.log"));
-				while ((output = br.readLine()) != null) {
-					out.write(output);
-					out.write("\n");
+				write.close();
+				String geneNet = "";
+				if (spacing.isSelected()) {
+					geneNet = "GeneNet --readLevels --lvl -binN .";
+				} else {
+					geneNet = "GeneNet --readLevels --lvl .";
 				}
-				out.close();
-				br.close();
-				isr.close();
-				reb.close();
-			} catch (Exception e) {
+				log.addText("Executing:\n" + geneNet + " " + directory + "\n");
+				Runtime exec = Runtime.getRuntime();
+				File work = new File(directory);
+				Process learn = exec.exec(geneNet, null, work);
+				try {
+					String output = "";
+					InputStream reb = learn.getInputStream();
+					InputStreamReader isr = new InputStreamReader(reb);
+					BufferedReader br = new BufferedReader(isr);
+					FileWriter out = new FileWriter(new File(directory + separator + "run.log"));
+					while ((output = br.readLine()) != null) {
+						out.write(output);
+						out.write("\n");
+					}
+					out.close();
+					br.close();
+					isr.close();
+					reb.close();
+				} catch (Exception e) {
+				}
+				learn.waitFor();
 			}
-			learn.waitFor();
-		  }
-		  Scanner f = new Scanner(new File(directory + separator + "levels.lvl"));
-		  str = new ArrayList<String>();
-		  while (f.hasNextLine()) {
-		    str.add(f.nextLine());
-		  } 
-		}catch (Exception e1) {
+			Scanner f = new Scanner(new File(directory + separator + "levels.lvl"));
+			str = new ArrayList<String>();
+			while (f.hasNextLine()) {
+				str.add(f.nextLine());
+			}
+		} catch (Exception e1) {
 		}
 		if (!directory.equals("")) {
 			File n = null;
@@ -787,124 +785,122 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 	}
 
 	public void saveCkt() {
-	  try {
-	    File work = new File(directory);
-	    if (new File(directory + separator + "method.ckt").exists()) {
-	      String copy = JOptionPane.showInputDialog(biosim.frame(), "Enter Circuit Name:", "Save Circuit",
-							JOptionPane.PLAIN_MESSAGE);
-	      if (copy != null) {
-		copy = copy.trim();
-	      } else {
-		return;
-	      }
-	      if (!copy.equals("")) {
-		if (copy.length() > 3) {
-		  if (!copy.substring(copy.length() - 4).equals(".ckt")) {
-		    copy += ".ckt";
-		  }
-		} else {
-		  copy += ".ckt";
+		try {
+			if (new File(directory + separator + "method.ckt").exists()) {
+				String copy = JOptionPane.showInputDialog(biosim.frame(), "Enter Circuit Name:",
+						"Save Circuit", JOptionPane.PLAIN_MESSAGE);
+				if (copy != null) {
+					copy = copy.trim();
+				} else {
+					return;
+				}
+				if (!copy.equals("")) {
+					if (copy.length() > 3) {
+						if (!copy.substring(copy.length() - 4).equals(".ckt")) {
+							copy += ".ckt";
+						}
+					} else {
+						copy += ".ckt";
+					}
+				}
+				biosim.saveCkt(copy, directory + separator + "method.ckt");
+			} else {
+				JOptionPane.showMessageDialog(biosim.frame(), "No circuit has been generated yet.",
+						"Error", JOptionPane.ERROR_MESSAGE);
+			}
+		} catch (Exception e1) {
+			JOptionPane.showMessageDialog(biosim.frame(), "Unable to save circuit.", "Error",
+					JOptionPane.ERROR_MESSAGE);
 		}
-	      }
-	      biosim.saveCkt(copy,directory + separator + "method.ckt");
-	    } else {
-	      JOptionPane.showMessageDialog(biosim.frame(), "No circuit has been generated yet.",
-					    "Error", JOptionPane.ERROR_MESSAGE);
-	    }
-	  } catch (Exception e1) {
-	    JOptionPane.showMessageDialog(biosim.frame(), "Unable to save circuit.", "Error",
-					  JOptionPane.ERROR_MESSAGE);
-	  }
 	}
 
 	public void viewCkt() {
-	  try {
-	    File work = new File(directory);
-	    if (new File(directory + separator + "method.ckt").exists()) {
-	      String command = "dotty method.ckt";
-	      log.addText("Executing:\n" + "dotty " + directory + separator + "method.ckt\n");
-	      Runtime exec = Runtime.getRuntime();
-	      exec.exec(command, null, work);
-	    } else {
-	      JOptionPane.showMessageDialog(biosim.frame(), "No circuit has been generated yet.",
-					    "Error", JOptionPane.ERROR_MESSAGE);
-	    }
-	  } catch (Exception e1) {
-	    JOptionPane.showMessageDialog(biosim.frame(), "Unable to view circuit.", "Error",
-					  JOptionPane.ERROR_MESSAGE);
-	  }
+		try {
+			File work = new File(directory);
+			if (new File(directory + separator + "method.ckt").exists()) {
+				String command = "dotty method.ckt";
+				log.addText("Executing:\n" + "dotty " + directory + separator + "method.ckt\n");
+				Runtime exec = Runtime.getRuntime();
+				exec.exec(command, null, work);
+			} else {
+				JOptionPane.showMessageDialog(biosim.frame(), "No circuit has been generated yet.",
+						"Error", JOptionPane.ERROR_MESSAGE);
+			}
+		} catch (Exception e1) {
+			JOptionPane.showMessageDialog(biosim.frame(), "Unable to view circuit.", "Error",
+					JOptionPane.ERROR_MESSAGE);
+		}
 	}
 
 	public void viewLog() {
-	  try {
-	    String message="";
-	    File work = new File(directory);
-	    if (new File(directory + separator + "run.log").exists()) {
-	      File log = new File(directory+separator+"run.log");
-	      BufferedReader input = new BufferedReader(new FileReader(log));
-	      String line = null;
-	      while (( line = input.readLine()) != null){
-		message += line;
-		message += System.getProperty("line.separator");
-	      }
-	      input.close();
-	      JTextArea messageArea = new JTextArea(message);
-	      messageArea.setLineWrap(true);
-	      messageArea.setWrapStyleWord(true);
-	      messageArea.setEditable(false);
-	      JScrollPane scrolls = new JScrollPane();
-	      scrolls.setMinimumSize(new Dimension(500, 500));
-	      scrolls.setPreferredSize(new Dimension(500, 500));
-	      scrolls.setViewportView(messageArea);
-	      JOptionPane.showMessageDialog(biosim.frame(), scrolls,
-					    "Run Log", JOptionPane.INFORMATION_MESSAGE);
-	    } else {
-	      JOptionPane.showMessageDialog(biosim.frame(), "No run log exists.",
-					    "Error", JOptionPane.ERROR_MESSAGE);
-	    }
-	  } catch (Exception e1) {
-	    JOptionPane.showMessageDialog(biosim.frame(), "Unable to view run log.", "Error",
-					  JOptionPane.ERROR_MESSAGE);
-	  }
+		try {
+			String message = "";
+			if (new File(directory + separator + "run.log").exists()) {
+				File log = new File(directory + separator + "run.log");
+				BufferedReader input = new BufferedReader(new FileReader(log));
+				String line = null;
+				while ((line = input.readLine()) != null) {
+					message += line;
+					message += System.getProperty("line.separator");
+				}
+				input.close();
+				JTextArea messageArea = new JTextArea(message);
+				messageArea.setLineWrap(true);
+				messageArea.setWrapStyleWord(true);
+				messageArea.setEditable(false);
+				JScrollPane scrolls = new JScrollPane();
+				scrolls.setMinimumSize(new Dimension(500, 500));
+				scrolls.setPreferredSize(new Dimension(500, 500));
+				scrolls.setViewportView(messageArea);
+				JOptionPane.showMessageDialog(biosim.frame(), scrolls, "Run Log",
+						JOptionPane.INFORMATION_MESSAGE);
+			} else {
+				JOptionPane.showMessageDialog(biosim.frame(), "No run log exists.", "Error",
+						JOptionPane.ERROR_MESSAGE);
+			}
+		} catch (Exception e1) {
+			JOptionPane.showMessageDialog(biosim.frame(), "Unable to view run log.", "Error",
+					JOptionPane.ERROR_MESSAGE);
+		}
 	}
 
 	public void save() {
 		try {
-		        Properties prop = new Properties();
-			prop.setProperty("genenet.file",learnFile);
-			prop.setProperty("genenet.Tn",this.letNThrough.getText().trim());
-			prop.setProperty("genenet.Tj",this.maxVectorSize.getText().trim());
-			prop.setProperty("genenet.Ti",this.parent.getText().trim());
-			prop.setProperty("genenet.Ta",this.activation.getText().trim());
-			prop.setProperty("genenet.Tr",this.repression.getText().trim());
-			prop.setProperty("genenet.Tm",this.influenceLevel.getText().trim());
-			prop.setProperty("genenet.Tt",this.relaxIPDelta.getText().trim());
-			prop.setProperty("genenet.bins",(String)this.numBins.getSelectedItem());
-			prop.setProperty("genenet.debug",(String)this.debug.getSelectedItem());
+			Properties prop = new Properties();
+			prop.setProperty("genenet.file", learnFile);
+			prop.setProperty("genenet.Tn", this.letNThrough.getText().trim());
+			prop.setProperty("genenet.Tj", this.maxVectorSize.getText().trim());
+			prop.setProperty("genenet.Ti", this.parent.getText().trim());
+			prop.setProperty("genenet.Ta", this.activation.getText().trim());
+			prop.setProperty("genenet.Tr", this.repression.getText().trim());
+			prop.setProperty("genenet.Tm", this.influenceLevel.getText().trim());
+			prop.setProperty("genenet.Tt", this.relaxIPDelta.getText().trim());
+			prop.setProperty("genenet.bins", (String) this.numBins.getSelectedItem());
+			prop.setProperty("genenet.debug", (String) this.debug.getSelectedItem());
 			if (spacing.isSelected()) {
-			  prop.setProperty("genenet.equal","spacing");
+				prop.setProperty("genenet.equal", "spacing");
 			} else {
-			  prop.setProperty("genenet.equal","data");
+				prop.setProperty("genenet.equal", "data");
 			}
 			if (auto.isSelected()) {
-			  prop.setProperty("genenet.use","auto");
+				prop.setProperty("genenet.use", "auto");
 			} else {
-			  prop.setProperty("genenet.use","user");
+				prop.setProperty("genenet.use", "user");
 			}
 			if (succ.isSelected()) {
-			  prop.setProperty("genenet.data.type","succ");
+				prop.setProperty("genenet.data.type", "succ");
 			} else if (pred.isSelected()) {
-			  prop.setProperty("genenet.data.type","pred");
+				prop.setProperty("genenet.data.type", "pred");
 			} else {
-			  prop.setProperty("genenet.data.type","both");
+				prop.setProperty("genenet.data.type", "both");
 			}
 			if (basicFBP.isSelected()) {
-			  prop.setProperty("genenet.find.base.prob","true");
+				prop.setProperty("genenet.find.base.prob", "true");
 			} else {
-			  prop.setProperty("genenet.find.base.prob","false");
+				prop.setProperty("genenet.find.base.prob", "false");
 			}
 			FileOutputStream out = new FileOutputStream(new File(directory + separator + lrnFile));
-			prop.store(out,learnFile);
+			prop.store(out, learnFile);
 			out.close();
 			FileWriter write = new FileWriter(new File(directory + separator + "levels.lvl"));
 			write.write("time, 0\n");
@@ -925,7 +921,7 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 				write.write("\n");
 			}
 			write.close();
-   		        change = false;
+			change = false;
 		} catch (Exception e1) {
 			JOptionPane.showMessageDialog(biosim.frame(), "Unable to save parameter file!",
 					"Error Saving File", JOptionPane.ERROR_MESSAGE);
@@ -1137,11 +1133,11 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 				running.setCursor(null);
 				running.dispose();
 				if (new File(directory + separator + "method.ckt").exists()) {
-				  viewCkt.setEnabled(true);
-				  saveCkt.setEnabled(true);
+					viewCkt.setEnabled(true);
+					saveCkt.setEnabled(true);
 				}
 				if (new File(directory + separator + "run.log").exists()) {
-				  viewLog.setEnabled(true);
+					viewLog.setEnabled(true);
 				}
 			}
 		} catch (Exception e1) {
@@ -1150,7 +1146,7 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 		}
 	}
 
-	public boolean hasChanged() {		
+	public boolean hasChanged() {
 		return change;
 	}
 }

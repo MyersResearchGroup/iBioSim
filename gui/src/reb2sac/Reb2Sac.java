@@ -144,7 +144,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 
 	private String sbmlProp;
 
-        private boolean change;
+	private boolean change;
+
 	/**
 	 * This is the constructor for the GUI. It initializes all the input fields,
 	 * puts them on panels, adds the panels to the frame, and then displays the
@@ -713,7 +714,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 	 */
 	public void actionPerformed(ActionEvent e) {
 		// if the none Radio Button is selected
-	        change = true;
+		change = true;
 		if (e.getSource() == none) {
 			Button_Enabling.enableNoneOrAbs(ODE, monteCarlo, markov, seed, seedLabel, runs,
 					runsLabel, stepLabel, step, errorLabel, absErr, limitLabel, limit,
@@ -934,6 +935,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 						+ " distributed waiting time");
 			} else if (simulators.getSelectedItem().equals("ctmc-transient")) {
 				description.setText("Transient Distribution Analysis");
+			} else if (simulators.getSelectedItem().equals("atacs")) {
+				description.setText("ATACS Analysis Tool");
 			}
 		}
 		// if the Run button is clicked
@@ -2135,7 +2138,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					JOptionPane.ERROR_MESSAGE);
 		}
 		biomodelsim.refreshTree();
-                change = false;
+		change = false;
 	}
 
 	/**
@@ -2672,7 +2675,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		simName = newSimName;
 	}
 
-	public boolean hasChanged() {		
+	public boolean hasChanged() {
 		return change;
 	}
 }
