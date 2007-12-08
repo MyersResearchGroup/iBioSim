@@ -468,7 +468,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		this.add(mainPanelCenter, "Center");
 		change = false;
 		if (paramsOnly) {
-			saveNoRun = new JButton("Save");
+			saveNoRun = new JButton("Save Parameters");
 			run = new JButton("Save And Run");
 			saveNoRun.setMnemonic(KeyEvent.VK_S);
 			run.setMnemonic(KeyEvent.VK_R);
@@ -481,7 +481,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			splitPane.setDividerSize(0);
 			this.add(splitPane, "South");
 		} else {
-			saveNoRun = new JButton("Save");
+			saveNoRun = new JButton("Save SBML");
 			saveAs = new JButton("Save As");
 			saveNoRun.setMnemonic(KeyEvent.VK_S);
 			saveAs.setMnemonic(KeyEvent.VK_A);
@@ -572,7 +572,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		else if (e.getSource() == addCompart) {
 			compartEditor("Add");
 		} else if (e.getSource() == editCompart) {
-			compartEditor("Save");
+			compartEditor("OK");
 		}
 		// if the remove compartment button is clicked
 		else if (e.getSource() == removeCompart) {
@@ -643,7 +643,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		}
 		// if the edit species button is clicked
 		else if (e.getSource() == editSpec) {
-			speciesEditor("Save");
+			speciesEditor("OK");
 		}
 		// if the remove species button is clicked
 		else if (e.getSource() == removeSpec) {
@@ -739,7 +739,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		}
 		// if the edit reactions button is clicked
 		else if (e.getSource() == editReac) {
-			reactionsEditor("Save");
+			reactionsEditor("OK");
 		}
 		// if the copy reactions button is clicked
 		else if (e.getSource() == copyReac) {
@@ -817,7 +817,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		}
 		// if the edit parameters button is clicked
 		else if (e.getSource() == editParam) {
-			parametersEditor("Save");
+			parametersEditor("OK");
 		}
 		// if the remove parameters button is clicked
 		else if (e.getSource() == removeParam) {
@@ -844,7 +844,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		}
 		// if the edit reactions parameters button is clicked
 		else if (e.getSource() == reacEditParam) {
-			reacParametersEditor("Save");
+			reacParametersEditor("OK");
 		}
 		// if the remove reactions parameters button is clicked
 		else if (e.getSource() == reacRemoveParam) {
@@ -869,7 +869,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		}
 		// if the edit reactants button is clicked
 		else if (e.getSource() == editReactant) {
-			reactantsEditor("Save");
+			reactantsEditor("OK");
 		}
 		// if the remove reactants button is clicked
 		else if (e.getSource() == removeReactant) {
@@ -893,7 +893,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		}
 		// if the edit products button is clicked
 		else if (e.getSource() == editProduct) {
-			productsEditor("Save");
+			productsEditor("OK");
 		}
 		// if the remove products button is clicked
 		else if (e.getSource() == removeProduct) {
@@ -957,7 +957,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 * Creates a frame used to edit compartments or create new ones.
 	 */
 	private void compartEditor(String option) {
-		if (option.equals("Save") && compartments.getSelectedIndex() == -1) {
+		if (option.equals("OK") && compartments.getSelectedIndex() == -1) {
 			JOptionPane.showMessageDialog(biosim.frame(), "No compartments selected!",
 					"Must Select A Compartment", JOptionPane.ERROR_MESSAGE);
 		} else {
@@ -965,7 +965,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			JPanel compPanel = new JPanel(new GridLayout(1, 2));
 			JLabel idLabel = new JLabel("ID:");
 			compID = new JTextField(12);
-			if (option.equals("Save")) {
+			if (option.equals("OK")) {
 				try {
 					Compartment compartment = document.getModel().getCompartment(
 							((String) compartments.getSelectedValue()));
@@ -996,7 +996,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						String addComp = "";
 						addComp = compID.getText().trim();
 						if (usedIDs.contains(addComp)) {
-							if (option.equals("Save")
+							if (option.equals("OK")
 									&& !addComp.equals((String) compartments.getSelectedValue())) {
 								JOptionPane.showMessageDialog(biosim.frame(),
 										"You must enter a unique id into the id field!",
@@ -1010,7 +1010,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 							}
 						}
 						if (!error) {
-							if (option.equals("Save")) {
+							if (option.equals("OK")) {
 								int index = compartments.getSelectedIndex();
 								String val = (String) compartments.getSelectedValue();
 								compartments
@@ -1094,7 +1094,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 * Creates a frame used to edit species or create new ones.
 	 */
 	private void speciesEditor(String option) {
-		if (option.equals("Save") && species.getSelectedIndex() == -1) {
+		if (option.equals("OK") && species.getSelectedIndex() == -1) {
 			JOptionPane.showMessageDialog(biosim.frame(), "No species selected!",
 					"Must Select A Species", JOptionPane.ERROR_MESSAGE);
 		} else {
@@ -1133,7 +1133,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				comp.setEnabled(false);
 				init.setEditable(false);
 			}
-			if (option.equals("Save")) {
+			if (option.equals("OK")) {
 				try {
 					Species specie = document.getModel().getSpecies(
 							((String) species.getSelectedValue()).split(" ")[0]);
@@ -1201,7 +1201,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 										+ initial;
 							}
 							if (usedIDs.contains(ID.getText().trim())) {
-								if (option.equals("Save")
+								if (option.equals("OK")
 										&& !ID.getText().trim()
 												.equals(
 														((String) species.getSelectedValue())
@@ -1225,7 +1225,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 								error = true;
 							}
 							if (!error) {
-								if (option.equals("Save")) {
+								if (option.equals("OK")) {
 									int index1 = species.getSelectedIndex();
 									String val = ((String) species.getSelectedValue()).split(" ")[0];
 									species
@@ -1367,7 +1367,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 * Creates a frame used to edit reactions or create new ones.
 	 */
 	private void reactionsEditor(String option) {
-		if (option.equals("Save") && reactions.getSelectedIndex() == -1) {
+		if (option.equals("OK") && reactions.getSelectedIndex() == -1) {
 			JOptionPane.showMessageDialog(biosim.frame(), "No reaction selected!",
 					"Must Select A Reaction", JOptionPane.ERROR_MESSAGE);
 		} else {
@@ -1382,7 +1382,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			String[] options = { "true", "false" };
 			reacReverse = new JComboBox(options);
 			reacReverse.setSelectedItem("false");
-			if (option.equals("Save")) {
+			if (option.equals("OK")) {
 				Reaction reac = document.getModel().getReaction(
 						((String) reactions.getSelectedValue()));
 				reacID.setText(reac.getId());
@@ -1414,7 +1414,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			reacParams = new String[0];
 			changedParameters = new ArrayList<Parameter>();
 			thisReactionParams = new ArrayList<String>();
-			if (option.equals("Save")) {
+			if (option.equals("OK")) {
 				ListOf listOfParameters = document.getModel().getReaction(
 						((String) reactions.getSelectedValue())).getKineticLaw()
 						.getListOfParameters();
@@ -1478,7 +1478,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			reacta = new String[0];
 			changedReactants = new ArrayList<SpeciesReference>();
 			kineticL = "";
-			if (option.equals("Save")) {
+			if (option.equals("OK")) {
 				ListOf listOfReactants = document.getModel().getReaction(
 						((String) reactions.getSelectedValue())).getListOfReactants();
 				reacta = new String[(int) listOfReactants.getNumItems()];
@@ -1517,7 +1517,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			scroll3.setViewportView(products);
 			product = new String[0];
 			changedProducts = new ArrayList<SpeciesReference>();
-			if (option.equals("Save")) {
+			if (option.equals("OK")) {
 				ListOf listOfProducts = document.getModel().getReaction(
 						((String) reactions.getSelectedValue())).getListOfProducts();
 				product = new String[(int) listOfProducts.getNumItems()];
@@ -1549,7 +1549,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			scroll4.setMinimumSize(new Dimension(100, 100));
 			scroll4.setPreferredSize(new Dimension(100, 100));
 			scroll4.setViewportView(kineticLaw);
-			if (option.equals("Save")) {
+			if (option.equals("OK")) {
 				kineticLaw.setText(document.getModel().getReaction(
 						((String) reactions.getSelectedValue())).getKineticLaw().getFormula());
 			}
@@ -1601,7 +1601,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						String reac;
 						reac = reacID.getText().trim();
 						if (usedIDs.contains(reacID.getText().trim())) {
-							if (option.equals("Save")
+							if (option.equals("OK")
 									&& !reacID.getText().trim().equals(
 											(String) reactions.getSelectedValue())) {
 								JOptionPane.showMessageDialog(biosim.frame(),
@@ -1623,7 +1623,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						}
 						String kineticCheck;
 						if (!error) {
-							if (option.equals("Save")) {
+							if (option.equals("OK")) {
 								int index = reactions.getSelectedIndex();
 								String val = (String) reactions.getSelectedValue();
 								kineticCheck = reacID.getText().trim();
@@ -1756,7 +1756,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 								if (!docu.getModel().getReaction(0).getKineticLaw().isSetFormula()) {
 									document.getModel().getReaction(kineticCheck).getKineticLaw()
 											.setFormula(kineticL);
-									if (option.equals("Save")) {
+									if (option.equals("OK")) {
 										JOptionPane.showMessageDialog(biosim.frame(),
 												"Unable to parse kinetic law!",
 												"Kinetic Law Error", JOptionPane.ERROR_MESSAGE);
@@ -1821,7 +1821,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 											}
 										}
 										String message;
-										if (!option.equals("Save")) {
+										if (!option.equals("OK")) {
 											message = "Kinetic law contains unknown variables.\n\n"
 													+ "Unkown variables:\n" + invalid;
 										} else {
@@ -1861,7 +1861,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 * Creates a frame used to edit parameters or create new ones.
 	 */
 	private void parametersEditor(String option) {
-		if (option.equals("Save") && parameters.getSelectedIndex() == -1) {
+		if (option.equals("OK") && parameters.getSelectedIndex() == -1) {
 			JOptionPane.showMessageDialog(biosim.frame(), "No parameter selected!",
 					"Must Select A Parameter", JOptionPane.ERROR_MESSAGE);
 		} else {
@@ -1881,7 +1881,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			}
 			String[] list = { "Original", "Custom", "Sweep" };
 			final JComboBox type = new JComboBox(list);
-			if (option.equals("Save")) {
+			if (option.equals("OK")) {
 				try {
 					Parameter paramet = document.getModel().getParameter(
 							((String) parameters.getSelectedValue()).split(" ")[0]);
@@ -1946,7 +1946,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 								param = paramID.getText().trim() + " " + val;
 							}
 							if (usedIDs.contains(paramID.getText().trim())) {
-								if (option.equals("Save")
+								if (option.equals("OK")
 										&& !paramID.getText().trim()
 												.equals(
 														((String) parameters.getSelectedValue())
@@ -1963,7 +1963,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 								}
 							}
 							if (!error) {
-								if (option.equals("Save")) {
+								if (option.equals("OK")) {
 									int index = parameters.getSelectedIndex();
 									String v = ((String) parameters.getSelectedValue()).split(" ")[0];
 									Parameter paramet = document.getModel().getParameter(v);
@@ -2052,7 +2052,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 * Creates a frame used to edit reactions parameters or create new ones.
 	 */
 	private void reacParametersEditor(String option) {
-		if (option.equals("Save") && reacParameters.getSelectedIndex() == -1) {
+		if (option.equals("OK") && reacParameters.getSelectedIndex() == -1) {
 			JOptionPane.showMessageDialog(biosim.frame(), "No parameter selected!",
 					"Must Select A Parameter", JOptionPane.ERROR_MESSAGE);
 		} else {
@@ -2072,7 +2072,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			}
 			String[] list = { "Original", "Custom", "Sweep" };
 			final JComboBox type = new JComboBox(list);
-			if (option.equals("Save")) {
+			if (option.equals("OK")) {
 				String v = ((String) reacParameters.getSelectedValue()).split(" ")[0];
 				Parameter paramet = null;
 				for (Parameter p : changedParameters) {
@@ -2148,7 +2148,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 								param = reacParamID.getText().trim() + " " + val;
 							}
 							if (thisReactionParams.contains(reacParamID.getText().trim())) {
-								if (option.equals("Save")
+								if (option.equals("OK")
 										&& !reacParamID.getText().trim().equals(
 												((String) reacParameters.getSelectedValue())
 														.split(" ")[0])) {
@@ -2169,7 +2169,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 								error = true;
 							}
 							if (!error) {
-								if (option.equals("Save")) {
+								if (option.equals("OK")) {
 									int index = reacParameters.getSelectedIndex();
 									String v = ((String) reacParameters.getSelectedValue())
 											.split(" ")[0];
@@ -2273,7 +2273,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 * Creates a frame used to edit products or create new ones.
 	 */
 	public void productsEditor(String option) {
-		if (option.equals("Save") && products.getSelectedIndex() == -1) {
+		if (option.equals("OK") && products.getSelectedIndex() == -1) {
 			JOptionPane.showMessageDialog(biosim.frame(), "No product selected!",
 					"Must Select A Product", JOptionPane.ERROR_MESSAGE);
 		} else {
@@ -2290,7 +2290,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			Object[] choices = speciesList;
 			productSpecies = new JComboBox(choices);
 			productStoiciometry = new JTextField("1");
-			if (option.equals("Save")) {
+			if (option.equals("OK")) {
 				String v = ((String) products.getSelectedValue()).split(" ")[0];
 				SpeciesReference product = null;
 				for (SpeciesReference p : changedProducts) {
@@ -2323,7 +2323,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					try {
 						double val = Double.parseDouble(productStoiciometry.getText().trim());
 						String prod = productSpecies.getSelectedItem() + " " + val;
-						if (option.equals("Save")) {
+						if (option.equals("OK")) {
 							int index = products.getSelectedIndex();
 							products
 									.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
@@ -2441,7 +2441,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 * Creates a frame used to edit reactants or create new ones.
 	 */
 	public void reactantsEditor(String option) {
-		if (option.equals("Save") && reactants.getSelectedIndex() == -1) {
+		if (option.equals("OK") && reactants.getSelectedIndex() == -1) {
 			JOptionPane.showMessageDialog(biosim.frame(), "No reactant selected!",
 					"Must Select A Reactant", JOptionPane.ERROR_MESSAGE);
 		} else {
@@ -2458,7 +2458,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			Object[] choices = speciesList;
 			reactantSpecies = new JComboBox(choices);
 			reactantStoiciometry = new JTextField("1");
-			if (option.equals("Save")) {
+			if (option.equals("OK")) {
 				String v = ((String) reactants.getSelectedValue()).split(" ")[0];
 				SpeciesReference reactant = null;
 				for (SpeciesReference r : changedReactants) {
@@ -2491,7 +2491,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					try {
 						double val = Double.parseDouble(reactantStoiciometry.getText().trim());
 						String react = reactantSpecies.getSelectedItem() + " " + val;
-						if (option.equals("Save")) {
+						if (option.equals("OK")) {
 							int index = reactants.getSelectedIndex();
 							reactants
 									.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
@@ -2613,23 +2613,23 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		if (e.getClickCount() == 2) {
 			if (e.getSource() == compartments) {
 				if (!paramsOnly) {
-					compartEditor("Save");
+					compartEditor("OK");
 				}
 			} else if (e.getSource() == species) {
-				speciesEditor("Save");
+				speciesEditor("OK");
 			} else if (e.getSource() == reactions) {
-				reactionsEditor("Save");
+				reactionsEditor("OK");
 			} else if (e.getSource() == parameters) {
-				parametersEditor("Save");
+				parametersEditor("OK");
 			} else if (e.getSource() == reacParameters) {
-				reacParametersEditor("Save");
+				reacParametersEditor("OK");
 			} else if (e.getSource() == reactants) {
 				if (!paramsOnly) {
-					reactantsEditor("Save");
+					reactantsEditor("OK");
 				}
 			} else if (e.getSource() == products) {
 				if (!paramsOnly) {
-					productsEditor("Save");
+					productsEditor("OK");
 				}
 			}
 		}
