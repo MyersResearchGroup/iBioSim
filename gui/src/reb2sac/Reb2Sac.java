@@ -359,7 +359,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 
 		// Creates the run button
 		run = new JButton("Save And Run");
-		save = new JButton("Save");
+		save = new JButton("Save Parameters");
 		JPanel runHolder = new JPanel();
 		runHolder.add(save);
 		save.addActionListener(this);

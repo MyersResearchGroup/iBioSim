@@ -318,7 +318,7 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 		}
 
 		// Creates the run button
-		save = new JButton("Save");
+		save = new JButton("Save Parameters");
 		JPanel runHolder = new JPanel();
 		runHolder.add(save);
 		save.addActionListener(this);
