@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.util.*;
+import java.util.prefs.Preferences;
 import javax.swing.*;
 import javax.swing.plaf.basic.*;
 import org.sbml.libsbml.*;
@@ -24,6 +25,8 @@ import buttons.core.gui.*;
 public class BioSim implements MouseListener, ActionListener {
 
 	private JFrame frame; // Frame where components of the GUI are displayed
+
+	private JMenu file;  // The file menu
 
 	private JMenuItem newProj; // The new menu item
 
@@ -61,6 +64,11 @@ public class BioSim implements MouseListener, ActionListener {
 
 	private KeyEventDispatcher dispatcher;
 
+        private JMenuItem recentProjects[];
+
+        private String recentProjectPaths[];
+
+        private int numberRecentProj;
 	/**
 	 * This is the constructor for the Proj class. It initializes all the input
 	 * fields, puts them on panels, adds the panels to the frame, and then
@@ -108,7 +116,7 @@ public class BioSim implements MouseListener, ActionListener {
 
 		// Creates a menu for the frame
 		JMenuBar menuBar = new JMenuBar();
-		JMenu file = new JMenu("File");
+		file = new JMenu("File");
 		file.setMnemonic(KeyEvent.VK_F);
 		JMenu help = new JMenu("Help");
 		help.setMnemonic(KeyEvent.VK_H);
@@ -170,9 +178,34 @@ public class BioSim implements MouseListener, ActionListener {
 		importMenu.add(importSbml);
 		file.addSeparator();
 		file.add(exit);
+		file.addSeparator();
 		help.add(manual);
 		help.add(about);
 		root = null;
+
+		// Create empty recent project menu items
+	        numberRecentProj = 0;
+		recentProjects = new JMenuItem[5];
+		recentProjectPaths = new String[5];
+		for (int i=0;i<5;i++) {
+		  recentProjects[i] = new JMenuItem();
+		  recentProjects[i].addActionListener(this);
+		  recentProjectPaths[i] = "";
+		}
+		Preferences biosimrc = Preferences.userRoot();
+		for (int i=0;i<5;i++) {
+		  recentProjects[i].setText(biosimrc.get("biosim.recent.project."+i,""));
+		  recentProjectPaths[i]=biosimrc.get("biosim.recent.project.path."+i,"");
+		  if (!recentProjectPaths[i].equals("")) {
+		    file.add(recentProjects[i]);
+		    numberRecentProj=i+1;
+		    if (numberRecentProj == 5) {
+		      numberRecentProj = 0;
+		    }
+		  }
+		}
+
+		// Open .biosimrc here
 
 		// Packs the frame and displays it
 		mainPanel = new JPanel(new BorderLayout());
@@ -312,6 +345,27 @@ public class BioSim implements MouseListener, ActionListener {
 				if (save(i) == 0) {
 					return;
 				}
+			}
+			/*
+			Properties biosimrc = new Properties();
+			for (int i=0;i<5;i++) {
+			  biosimrc.setProperty("biosim.recent.project."+i,recentProjects[i].getText());
+			  biosimrc.setProperty("biosim.recent.project.path."+i,recentProjectPaths[i]);
+			}
+			try {
+			  FileOutputStream out = new FileOutputStream(new File(".biosimrc"));
+			  biosimrc.store(out, "biosimrc");
+			  out.close();
+			} catch (Exception e1) {
+				JOptionPane.showMessageDialog(frame,
+						"Unable to save .biosimrc file.", "Error",
+						JOptionPane.ERROR_MESSAGE);
+			}
+			*/
+			Preferences biosimrc = Preferences.userRoot();
+			for (int i=0;i<5;i++) {
+			  biosimrc.put("biosim.recent.project."+i,recentProjects[i].getText());
+			  biosimrc.put("biosim.recent.project.path."+i,recentProjectPaths[i]);
 			}
 			System.exit(1);
 		}
@@ -744,10 +798,16 @@ public class BioSim implements MouseListener, ActionListener {
 				root = filename;
 				refresh();
 				tab.removeAll();
+				addRecentProject(filename);
 			}
 		}
 		// if the open project menu item is selected
-		else if (e.getSource() == openProj) {
+		else if ((e.getSource() == openProj)||
+		         (e.getSource() == recentProjects[0])||
+		         (e.getSource() == recentProjects[1])||
+		         (e.getSource() == recentProjects[2])||
+		         (e.getSource() == recentProjects[3])||
+		         (e.getSource() == recentProjects[4])) {
 			for (int i = 0; i < tab.getTabCount(); i++) {
 				if (save(i) == 0) {
 					return;
@@ -759,7 +819,20 @@ public class BioSim implements MouseListener, ActionListener {
 			} else {
 				f = new File(root);
 			}
-			String projDir = Buttons.browse(frame, f, null, JFileChooser.DIRECTORIES_ONLY, "Open");
+			String projDir = "";
+			if (e.getSource() == openProj) {
+			  projDir = Buttons.browse(frame, f, null, JFileChooser.DIRECTORIES_ONLY, "Open");
+			} else if (e.getSource() == recentProjects[0]) {
+			  projDir = recentProjectPaths[0];
+			} else if (e.getSource() == recentProjects[1]) {
+			  projDir = recentProjectPaths[1];
+			} else if (e.getSource() == recentProjects[2]) {
+			  projDir = recentProjectPaths[2];
+			} else if (e.getSource() == recentProjects[3]) {
+			  projDir = recentProjectPaths[3];
+			} else if (e.getSource() == recentProjects[4]) {
+			  projDir = recentProjectPaths[4];
+			}
 			if (!projDir.equals("")) {
 				if (new File(projDir).isDirectory()) {
 					boolean isProject = false;
@@ -772,6 +845,7 @@ public class BioSim implements MouseListener, ActionListener {
 						root = projDir;
 						refresh();
 						tab.removeAll();
+						addRecentProject(projDir);
 					} else {
 						JOptionPane.showMessageDialog(frame, "You must select a valid project.",
 								"Error", JOptionPane.ERROR_MESSAGE);
@@ -1532,6 +1606,28 @@ public class BioSim implements MouseListener, ActionListener {
 	}
 
 	/**
+	 * This method adds a new project to recent list
+	 */
+	public void addRecentProject(String projDir) {
+	  boolean newOne = true;
+	  for (int i=0;i<5;i++) {
+	    if (recentProjectPaths[i].equals(projDir)) {
+	      newOne = false;
+	      break;
+	    }
+	  }
+	  if (newOne) {
+	    recentProjects[numberRecentProj].setText(projDir.split(separator)[projDir.split(separator).length-1]);
+	    file.add(recentProjects[numberRecentProj]);
+	    recentProjectPaths[numberRecentProj]=projDir;
+	    numberRecentProj++;
+	    if (numberRecentProj == 5) {
+	      numberRecentProj = 0;
+	    }
+	  }
+	}
+
+	/**
 	 * This method refreshes the menu.
 	 */
 	public void refresh() {
@@ -2199,7 +2295,7 @@ public class BioSim implements MouseListener, ActionListener {
 						+ simName.trim(), root + separator + simName.trim() + separator
 						+ simName.trim() + ".pms");
 				reb2sac.setSbml(sbml);
-				simTab.addTab("SBML Editor", sbml);
+				simTab.addTab("Parameter Editor", sbml);
 				simTab.getComponentAt(simTab.getComponents().length - 1).setName("SBML Editor");
 				JLabel noData = new JLabel("No data available");
 				Font font = noData.getFont();
@@ -2286,7 +2382,7 @@ public class BioSim implements MouseListener, ActionListener {
 						+ simName.trim(), root + separator + simName.trim() + separator
 						+ simName.trim() + ".pms");
 				reb2sac.setSbml(sbml);
-				simTab.addTab("SBML Editor", sbml);
+				simTab.addTab("Parameter Editor", sbml);
 				simTab.getComponentAt(simTab.getComponents().length - 1).setName("SBML Editor");
 				JLabel noData = new JLabel("No data available");
 				Font font = noData.getFont();
@@ -2502,7 +2598,7 @@ public class BioSim implements MouseListener, ActionListener {
 								+ split[split.length - 1].trim() + separator
 								+ split[split.length - 1].trim() + ".pms");
 						reb2sac.setSbml(sbml);
-						simTab.addTab("SBML Editor", sbml);
+						simTab.addTab("Parameter Editor", sbml);
 						simTab.getComponentAt(simTab.getComponents().length - 1).setName(
 								"SBML Editor");
 						if (!graphFile.equals("")) {
@@ -2684,7 +2780,7 @@ public class BioSim implements MouseListener, ActionListener {
 			SBML_Editor sbml = new SBML_Editor(sbmlLoadFile, reb2sac, log, this, root + separator
 					+ newSim, root + separator + newSim + separator + newSim + ".pms");
 			reb2sac.setSbml(sbml);
-			simTab.addTab("SBML Editor", sbml);
+			simTab.addTab("Parameter Editor", sbml);
 			simTab.getComponentAt(simTab.getComponents().length - 1).setName("SBML Editor");
 			JLabel noData = new JLabel("No data available");
 			Font font = noData.getFont();
