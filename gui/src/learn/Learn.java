@@ -73,7 +73,8 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 	public Learn(String directory, Log log, BioSim biosim) {
 		if (File.separator.equals("\\")) {
 			separator = "\\\\";
-		} else {
+		}
+		else {
 			separator = File.separator;
 		}
 
@@ -145,27 +146,27 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 		JLabel activationLabel = new JLabel("Ratio For Activation (Ta):");
 		thresholdPanel2.add(activationLabel);
 		activation = new JTextField("1.15");
-		//activation.addActionListener(this);
+		// activation.addActionListener(this);
 		thresholdPanel2.add(activation);
 		JLabel repressionLabel = new JLabel("Ratio For Repression (Tr):");
 		thresholdPanel2.add(repressionLabel);
 		repression = new JTextField("0.75");
-		//repression.addActionListener(this);
+		// repression.addActionListener(this);
 		thresholdPanel2.add(repression);
 		JLabel influenceLevelLabel = new JLabel("Merge Influence Vectors Delta (Tm):");
 		thresholdPanel2.add(influenceLevelLabel);
 		influenceLevel = new JTextField("0.0");
-		//influenceLevel.addActionListener(this);
+		// influenceLevel.addActionListener(this);
 		thresholdPanel2.add(influenceLevel);
 		JLabel letNThroughLabel = new JLabel("Minimum Number of Initial Vectors (Tn):  ");
 		thresholdPanel1.add(letNThroughLabel);
 		letNThrough = new JTextField("2");
-		//letNThrough.addActionListener(this);
+		// letNThrough.addActionListener(this);
 		thresholdPanel1.add(letNThrough);
 		JLabel maxVectorSizeLabel = new JLabel("Maximum Influence Vector Size (Tj):");
 		thresholdPanel1.add(maxVectorSizeLabel);
 		maxVectorSize = new JTextField("2");
-		//maxVectorSize.addActionListener(this);
+		// maxVectorSize.addActionListener(this);
 		thresholdPanel1.add(maxVectorSize);
 		JLabel parentLabel = new JLabel("Score for Empty Influence Vector (Ti):");
 		thresholdPanel1.add(parentLabel);
@@ -175,7 +176,7 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 		JLabel relaxIPDeltaLabel = new JLabel("Relax Thresholds Delta (Tt):");
 		thresholdPanel2.add(relaxIPDeltaLabel);
 		relaxIPDelta = new JTextField("0.025");
-		//relaxIPDelta.addActionListener(this);
+		// relaxIPDelta.addActionListener(this);
 		thresholdPanel2.add(relaxIPDelta);
 		numBinsLabel = new JLabel("Number Of Bins:");
 		String[] bins = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
@@ -226,19 +227,17 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 		 * thresholdPanel2.add(windowRisingLabel);
 		 * thresholdPanel2.add(windowRising); JLabel windowSizeLabel = new
 		 * JLabel("Window Size:"); windowSize = new JTextField("1");
-		 * thresholdPanel2.add(windowSizeLabel);
-		 * thresholdPanel2.add(windowSize); harshenBoundsOnTie = new
-		 * JCheckBox("Harshen Bounds On Tie");
+		 * thresholdPanel2.add(windowSizeLabel); thresholdPanel2.add(windowSize);
+		 * harshenBoundsOnTie = new JCheckBox("Harshen Bounds On Tie");
 		 * harshenBoundsOnTie.setSelected(true); donotInvertSortOrder = new
 		 * JCheckBox("Do Not Invert Sort Order");
 		 * donotInvertSortOrder.setSelected(true); seedParents = new
 		 * JCheckBox("Parents Should Be Ranked By Score");
-		 * seedParents.setSelected(true); mustNotWinMajority = new
-		 * JCheckBox("Must Not Win Majority");
-		 * mustNotWinMajority.setSelected(true); donotTossSingleRatioParents =
-		 * new JCheckBox("Single Ratio Parents Should Be Kept");
-		 * donotTossChangedInfluenceSingleParents = new JCheckBox( "Parents That
-		 * Change Influence Should Not Be Tossed");
+		 * seedParents.setSelected(true); mustNotWinMajority = new JCheckBox("Must
+		 * Not Win Majority"); mustNotWinMajority.setSelected(true);
+		 * donotTossSingleRatioParents = new JCheckBox("Single Ratio Parents Should
+		 * Be Kept"); donotTossChangedInfluenceSingleParents = new JCheckBox(
+		 * "Parents That Change Influence Should Not Be Tossed");
 		 * thresholdPanel2.add(harshenBoundsOnTie);
 		 * thresholdPanel2.add(donotInvertSortOrder);
 		 * thresholdPanel2.add(seedParents);
@@ -258,7 +257,7 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 				learnFile = load.getProperty("genenet.file");
 			}
 			if (load.containsKey("genenet.Tn")) {
-				letNThrough .setText(load.getProperty("genenet.Tn"));
+				letNThrough.setText(load.getProperty("genenet.Tn"));
 			}
 			if (load.containsKey("genenet.Tj")) {
 				maxVectorSize.setText(load.getProperty("genenet.Tj"));
@@ -287,14 +286,16 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 			if (load.containsKey("genenet.equal")) {
 				if (load.getProperty("genenet.equal").equals("data")) {
 					data.setSelected(true);
-				} else {
+				}
+				else {
 					spacing.setSelected(true);
 				}
 			}
 			if (load.containsKey("genenet.use")) {
 				if (load.getProperty("genenet.use").equals("auto")) {
 					auto.setSelected(true);
-				} else {
+				}
+				else {
 					user.setSelected(true);
 				}
 			}
@@ -306,13 +307,16 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 			if (load.containsKey("genenet.data.type")) {
 				if (load.getProperty("genenet.data.type").equals("succ")) {
 					succ.setSelected(true);
-				} else if (load.getProperty("genenet.data.type").equals("pred")) {
+				}
+				else if (load.getProperty("genenet.data.type").equals("pred")) {
 					pred.setSelected(true);
-				} else {
+				}
+				else {
 					both.setSelected(true);
 				}
 			}
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			JOptionPane.showMessageDialog(biosim.frame(), "Unable to load properties file!",
 					"Error Loading Properties", JOptionPane.ERROR_MESSAGE);
 		}
@@ -379,7 +383,8 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 			auto.doClick();
 			user.doClick();
 			levels(true);
-		} else {
+		}
+		else {
 			user.doClick();
 			auto.doClick();
 		}
@@ -394,10 +399,10 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 		/*
 		 * if (e.getActionCommand().contains("box")) { int num =
 		 * Integer.parseInt(e.getActionCommand().substring(3)) - 1; if
-		 * (!((JCheckBox) this.species.get(num).get(0)).isSelected()) {
-		 * ((JComboBox) this.species.get(num).get(2)).setSelectedItem("0");
-		 * editText(num); speciesPanel.revalidate(); speciesPanel.repaint(); for
-		 * (int i = 1; i < this.species.get(num).size(); i++) {
+		 * (!((JCheckBox) this.species.get(num).get(0)).isSelected()) { ((JComboBox)
+		 * this.species.get(num).get(2)).setSelectedItem("0"); editText(num);
+		 * speciesPanel.revalidate(); speciesPanel.repaint(); for (int i = 1; i <
+		 * this.species.get(num).size(); i++) {
 		 * this.species.get(num).get(i).setEnabled(false); } } else {
 		 * this.species.get(num).get(1).setEnabled(true); if (user.isSelected()) {
 		 * for (int i = 2; i < this.species.get(num).size(); i++) {
@@ -409,14 +414,16 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 			editText(num);
 			speciesPanel.revalidate();
 			speciesPanel.repaint();
-		} else if (e.getSource() == user) {
+		}
+		else if (e.getSource() == user) {
 			numBinsLabel.setEnabled(false);
 			numBins.setEnabled(false);
 			suggest.setEnabled(true);
 			levelsBin();
 			speciesPanel.revalidate();
 			speciesPanel.repaint();
-		} else if (e.getSource() == auto) {
+		}
+		else if (e.getSource() == auto) {
 			numBinsLabel.setEnabled(true);
 			numBins.setEnabled(true);
 			suggest.setEnabled(false);
@@ -425,7 +432,8 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 					((JPanel) c).getComponent(i).setEnabled(false);
 				}
 			}
-		} else if (e.getSource() == suggest) {
+		}
+		else if (e.getSource() == suggest) {
 			levels(false);
 			speciesPanel.revalidate();
 			speciesPanel.repaint();
@@ -440,13 +448,17 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 		else if (e.getSource() == run) {
 			save();
 			new Thread(this).start();
-		} else if (e.getSource() == save) {
+		}
+		else if (e.getSource() == save) {
 			save();
-		} else if (e.getSource() == viewCkt) {
+		}
+		else if (e.getSource() == viewCkt) {
 			viewCkt();
-		} else if (e.getSource() == viewLog) {
+		}
+		else if (e.getSource() == viewLog) {
 			viewLog();
-		} else if (e.getSource() == saveCkt) {
+		}
+		else if (e.getSource() == saveCkt) {
 			saveCkt();
 		}
 	}
@@ -460,16 +472,17 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 				for (int i = 0; i < species.size(); i++) {
 					if (((JTextField) species.get(i).get(0)).getText().trim().equals("")) {
 						write.write("-1");
-					} else {
+					}
+					else {
 						write.write(((JTextField) species.get(i).get(0)).getText().trim());
 					}
 					write.write(", " + ((JComboBox) species.get(i).get(1)).getSelectedItem());
 					for (int j = 2; j < species.get(i).size(); j++) {
 						if (((JTextField) species.get(i).get(j)).getText().trim().equals("")) {
 							write.write(", -1");
-						} else {
-							write.write(", "
-									+ ((JTextField) species.get(i).get(j)).getText().trim());
+						}
+						else {
+							write.write(", " + ((JTextField) species.get(i).get(j)).getText().trim());
 						}
 					}
 					write.write("\n");
@@ -478,7 +491,8 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 				String geneNet = "";
 				if (spacing.isSelected()) {
 					geneNet = "GeneNet --readLevels --lvl -binN .";
-				} else {
+				}
+				else {
 					geneNet = "GeneNet --readLevels --lvl .";
 				}
 				log.addText("Executing:\n" + geneNet + " " + directory + "\n");
@@ -500,7 +514,8 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 					isr.close();
 					reb.close();
 					viewLog.setEnabled(true);
-				} catch (Exception e) {
+				}
+				catch (Exception e) {
 				}
 				learn.waitFor();
 			}
@@ -509,7 +524,8 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 			while (f.hasNextLine()) {
 				str.add(f.nextLine());
 			}
-		} catch (Exception e1) {
+		}
+		catch (Exception e1) {
 		}
 		if (!directory.equals("")) {
 			File n = null;
@@ -536,24 +552,27 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 							cha = (char) read;
 							if (Character.isWhitespace(cha)) {
 								word += cha;
-							} else if (cha == ',' || cha == ':' || cha == ';' || cha == '\"'
-									|| cha == '\'' || cha == '(' || cha == ')' || cha == '['
-									|| cha == ']') {
+							}
+							else if (cha == ',' || cha == ':' || cha == ';' || cha == '\"' || cha == '\''
+									|| cha == '(' || cha == ')' || cha == '[' || cha == ']') {
 								if (!word.equals("") && !word.equals("time")) {
 									try {
 										Double.parseDouble(word);
-									} catch (Exception e2) {
+									}
+									catch (Exception e2) {
 										species.add(word);
 									}
 								}
 								word = "";
-							} else if (read != -1) {
+							}
+							else if (read != -1) {
 								word += cha;
 							}
 						}
 					}
 					input.close();
-				} catch (Exception e1) {
+				}
+				catch (Exception e1) {
 				}
 				speciesPanel.removeAll();
 				this.species = new ArrayList<ArrayList<Component>>();
@@ -599,14 +618,13 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 							if (getString[0].trim().equals(s)) {
 								if (getString.length >= 2) {
 									((JComboBox) specs.get(1)).setSelectedItem(getString[1].trim());
-									for (int i = 0; i < Integer
-											.parseInt((String) ((JComboBox) specs.get(1))
-													.getSelectedItem()) - 1; i++) {
+									for (int i = 0; i < Integer.parseInt((String) ((JComboBox) specs.get(1))
+											.getSelectedItem()) - 1; i++) {
 										specs.add(new JTextField(getString[i + 2].trim()));
 										sp.add(specs.get(i + 2));
 									}
-									for (int i = Integer.parseInt((String) ((JComboBox) specs
-											.get(1)).getSelectedItem()) - 1; i < max - 3; i++) {
+									for (int i = Integer.parseInt((String) ((JComboBox) specs.get(1))
+											.getSelectedItem()) - 1; i < max - 3; i++) {
 										sp.add(new JLabel());
 									}
 								}
@@ -646,24 +664,27 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 							cha = (char) read;
 							if (Character.isWhitespace(cha)) {
 								word += cha;
-							} else if (cha == ',' || cha == ':' || cha == ';' || cha == '\"'
-									|| cha == '\'' || cha == '(' || cha == ')' || cha == '['
-									|| cha == ']') {
+							}
+							else if (cha == ',' || cha == ':' || cha == ';' || cha == '\"' || cha == '\''
+									|| cha == '(' || cha == ')' || cha == '[' || cha == ']') {
 								if (!word.equals("") && !word.equals("time")) {
 									try {
 										Double.parseDouble(word);
-									} catch (Exception e2) {
+									}
+									catch (Exception e2) {
 										species.add(word);
 									}
 								}
 								word = "";
-							} else if (read != -1) {
+							}
+							else if (read != -1) {
 								word += cha;
 							}
 						}
 					}
 					input.close();
-				} catch (Exception e1) {
+				}
+				catch (Exception e1) {
 				}
 				speciesPanel.removeAll();
 				this.species = new ArrayList<ArrayList<Component>>();
@@ -718,26 +739,30 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 				for (int i = 0; i < boxes - 1; i++) {
 					try {
 						specs.get(i + 2);
-					} catch (Exception e1) {
+					}
+					catch (Exception e1) {
 						JTextField temp = new JTextField("");
 						((JPanel) panels[num + 1]).add(temp);
 						specs.add(temp);
 					}
 				}
-			} else {
+			}
+			else {
 				try {
 					if (boxes > 0) {
 						while (true) {
 							specs.remove(boxes + 1);
 							((JPanel) panels[num + 1]).remove(boxes + 1);
 						}
-					} else if (boxes == 0) {
+					}
+					else if (boxes == 0) {
 						while (true) {
 							specs.remove(2);
 							((JPanel) panels[num + 1]).remove(2);
 						}
 					}
-				} catch (Exception e1) {
+				}
+				catch (Exception e1) {
 				}
 			}
 			int max = 0;
@@ -748,16 +773,19 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 				for (int i = 0; i < max - 2; i++) {
 					try {
 						((JPanel) panels[0]).getComponent(i + 2);
-					} catch (Exception e) {
+					}
+					catch (Exception e) {
 						((JPanel) panels[0]).add(new JLabel("Level " + (i + 1)));
 					}
 				}
-			} else {
+			}
+			else {
 				try {
 					while (true) {
 						((JPanel) panels[0]).remove(max);
 					}
-				} catch (Exception e) {
+				}
+				catch (Exception e) {
 				}
 			}
 			for (int i = 1; i < panels.length; i++) {
@@ -771,13 +799,15 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 					for (int j = sp.getComponentCount(); j < max; j++) {
 						sp.add(new JLabel());
 					}
-				} else {
+				}
+				else {
 					for (int j = sp.getComponentCount() - 2; j >= max; j--) {
 						sp.remove(j);
 					}
 				}
 			}
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 		}
 	}
 
@@ -792,7 +822,8 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 						"Save Circuit", JOptionPane.PLAIN_MESSAGE);
 				if (copy != null) {
 					copy = copy.trim();
-				} else {
+				}
+				else {
 					return;
 				}
 				if (!copy.equals("")) {
@@ -800,16 +831,19 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 						if (!copy.substring(copy.length() - 4).equals(".ckt")) {
 							copy += ".ckt";
 						}
-					} else {
+					}
+					else {
 						copy += ".ckt";
 					}
 				}
 				biosim.saveCkt(copy, directory + separator + "method.ckt");
-			} else {
+			}
+			else {
 				JOptionPane.showMessageDialog(biosim.frame(), "No circuit has been generated yet.",
 						"Error", JOptionPane.ERROR_MESSAGE);
 			}
-		} catch (Exception e1) {
+		}
+		catch (Exception e1) {
 			JOptionPane.showMessageDialog(biosim.frame(), "Unable to save circuit.", "Error",
 					JOptionPane.ERROR_MESSAGE);
 		}
@@ -823,11 +857,13 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 				log.addText("Executing:\n" + "dotty " + directory + separator + "method.ckt\n");
 				Runtime exec = Runtime.getRuntime();
 				exec.exec(command, null, work);
-			} else {
+			}
+			else {
 				JOptionPane.showMessageDialog(biosim.frame(), "No circuit has been generated yet.",
 						"Error", JOptionPane.ERROR_MESSAGE);
 			}
-		} catch (Exception e1) {
+		}
+		catch (Exception e1) {
 			JOptionPane.showMessageDialog(biosim.frame(), "Unable to view circuit.", "Error",
 					JOptionPane.ERROR_MESSAGE);
 		}
@@ -841,8 +877,8 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 				String line = null;
 				JTextArea messageArea = new JTextArea();
 				while ((line = input.readLine()) != null) {
-				  messageArea.append(line);
-				  messageArea.append(System.getProperty("line.separator"));
+					messageArea.append(line);
+					messageArea.append(System.getProperty("line.separator"));
 				}
 				input.close();
 				messageArea.setLineWrap(true);
@@ -854,11 +890,13 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 				scrolls.setViewportView(messageArea);
 				JOptionPane.showMessageDialog(biosim.frame(), scrolls, "Run Log",
 						JOptionPane.INFORMATION_MESSAGE);
-			} else {
+			}
+			else {
 				JOptionPane.showMessageDialog(biosim.frame(), "No run log exists.", "Error",
 						JOptionPane.ERROR_MESSAGE);
 			}
-		} catch (Exception e1) {
+		}
+		catch (Exception e1) {
 			JOptionPane.showMessageDialog(biosim.frame(), "Unable to view run log.", "Error",
 					JOptionPane.ERROR_MESSAGE);
 		}
@@ -879,24 +917,29 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 			prop.setProperty("genenet.debug", (String) this.debug.getSelectedItem());
 			if (spacing.isSelected()) {
 				prop.setProperty("genenet.equal", "spacing");
-			} else {
+			}
+			else {
 				prop.setProperty("genenet.equal", "data");
 			}
 			if (auto.isSelected()) {
 				prop.setProperty("genenet.use", "auto");
-			} else {
+			}
+			else {
 				prop.setProperty("genenet.use", "user");
 			}
 			if (succ.isSelected()) {
 				prop.setProperty("genenet.data.type", "succ");
-			} else if (pred.isSelected()) {
+			}
+			else if (pred.isSelected()) {
 				prop.setProperty("genenet.data.type", "pred");
-			} else {
+			}
+			else {
 				prop.setProperty("genenet.data.type", "both");
 			}
 			if (basicFBP.isSelected()) {
 				prop.setProperty("genenet.find.base.prob", "true");
-			} else {
+			}
+			else {
 				prop.setProperty("genenet.find.base.prob", "false");
 			}
 			FileOutputStream out = new FileOutputStream(new File(directory + separator + lrnFile));
@@ -907,14 +950,16 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 			for (int i = 0; i < species.size(); i++) {
 				if (((JTextField) species.get(i).get(0)).getText().trim().equals("")) {
 					write.write("-1");
-				} else {
+				}
+				else {
 					write.write(((JTextField) species.get(i).get(0)).getText().trim());
 				}
 				write.write(", " + ((JComboBox) species.get(i).get(1)).getSelectedItem());
 				for (int j = 2; j < species.get(i).size(); j++) {
 					if (((JTextField) species.get(i).get(j)).getText().trim().equals("")) {
 						write.write(", -1");
-					} else {
+					}
+					else {
 						write.write(", " + ((JTextField) species.get(i).get(j)).getText().trim());
 					}
 				}
@@ -922,7 +967,8 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 			}
 			write.close();
 			change = false;
-		} catch (Exception e1) {
+		}
+		catch (Exception e1) {
 			JOptionPane.showMessageDialog(biosim.frame(), "Unable to save parameter file!",
 					"Error Saving File", JOptionPane.ERROR_MESSAGE);
 		}
@@ -966,9 +1012,10 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 				if (basicFBP.isSelected()) {
 					geneNet += " -basicFBP";
 				}
-			} catch (Exception e2) {
-				JOptionPane.showMessageDialog(this, "Must enter numbers into input fields.",
-						"Error", JOptionPane.ERROR_MESSAGE);
+			}
+			catch (Exception e2) {
+				JOptionPane.showMessageDialog(this, "Must enter numbers into input fields.", "Error",
+						JOptionPane.ERROR_MESSAGE);
 			}
 			if (user.isSelected()) {
 				FileWriter write = new FileWriter(new File(directory + separator + "levels.lvl"));
@@ -976,16 +1023,17 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 				for (int i = 0; i < species.size(); i++) {
 					if (((JTextField) species.get(i).get(0)).getText().trim().equals("")) {
 						write.write("-1");
-					} else {
+					}
+					else {
 						write.write(((JTextField) species.get(i).get(0)).getText().trim());
 					}
 					write.write(", " + ((JComboBox) species.get(i).get(1)).getSelectedItem());
 					for (int j = 2; j < species.get(i).size(); j++) {
 						if (((JTextField) species.get(i).get(j)).getText().trim().equals("")) {
 							write.write(", -1");
-						} else {
-							write.write(", "
-									+ ((JTextField) species.get(i).get(j)).getText().trim());
+						}
+						else {
+							write.write(", " + ((JTextField) species.get(i).get(j)).getText().trim());
 						}
 					}
 					write.write("\n");
@@ -996,11 +1044,10 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 			geneNet += " --cpp_harshenBoundsOnTie --cpp_cmp_output_donotInvertSortOrder --cpp_seedParents --cmp_score_mustNotWinMajority";
 			/*
 			 * if (harshenBoundsOnTie.isSelected()) { geneNet += "
-			 * --cpp_harshenBoundsOnTie"; } if
-			 * (donotInvertSortOrder.isSelected()) { geneNet += "
-			 * --cpp_cmp_output_donotInvertSortOrder"; } if
-			 * (seedParents.isSelected()) { geneNet += " --cpp_seedParents"; }
-			 * if (mustNotWinMajority.isSelected()) { geneNet += "
+			 * --cpp_harshenBoundsOnTie"; } if (donotInvertSortOrder.isSelected()) {
+			 * geneNet += " --cpp_cmp_output_donotInvertSortOrder"; } if
+			 * (seedParents.isSelected()) { geneNet += " --cpp_seedParents"; } if
+			 * (mustNotWinMajority.isSelected()) { geneNet += "
 			 * --cmp_score_mustNotWinMajority"; } if
 			 * (donotTossSingleRatioParents.isSelected()) { geneNet += "
 			 * --score_donotTossSingleRatioParents"; } if
@@ -1058,7 +1105,8 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 			try {
 				Toolkit tk = Toolkit.getDefaultToolkit();
 				screenSize = tk.getScreenSize();
-			} catch (AWTError awe) {
+			}
+			catch (AWTError awe) {
 				screenSize = new Dimension(640, 480);
 			}
 			Dimension frameSize = running.getSize();
@@ -1116,18 +1164,21 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 				reb.close();
 				out.close();
 				viewLog.setEnabled(true);
-			} catch (Exception e) {
+			}
+			catch (Exception e) {
 			}
 			int exitValue = learn.waitFor();
 			if (exitValue == 143) {
-				JOptionPane.showMessageDialog(biosim.frame(), "Learning was"
-						+ " canceled by the user.", "Canceled Learning", JOptionPane.ERROR_MESSAGE);
-			} else {
+				JOptionPane.showMessageDialog(biosim.frame(), "Learning was" + " canceled by the user.",
+						"Canceled Learning", JOptionPane.ERROR_MESSAGE);
+			}
+			else {
 				if (new File(directory + separator + "method.ckt").exists()) {
 					String command = "dotty method.ckt";
 					log.addText("Executing:\n" + "dotty " + directory + separator + "method.ckt\n");
 					exec.exec(command, null, work);
-				} else {
+				}
+				else {
 					JOptionPane.showMessageDialog(biosim.frame(), "A dot file was not generated."
 							+ "\nPlease see the run.log file.", "Error", JOptionPane.ERROR_MESSAGE);
 				}
@@ -1141,7 +1192,8 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 					viewLog.setEnabled(true);
 				}
 			}
-		} catch (Exception e1) {
+		}
+		catch (Exception e1) {
 			JOptionPane.showMessageDialog(biosim.frame(), "Unable to learn from data.", "Error",
 					JOptionPane.ERROR_MESSAGE);
 		}

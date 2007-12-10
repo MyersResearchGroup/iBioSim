@@ -72,8 +72,8 @@ public class ExampleFileFilter extends FileFilter {
 	}
 
 	/**
-	 * Creates a file filter that accepts files with the given extension.
-	 * Example: new ExampleFileFilter("jpg");
+	 * Creates a file filter that accepts files with the given extension. Example:
+	 * new ExampleFileFilter("jpg");
 	 * 
 	 * @see #addExtension
 	 */
@@ -85,8 +85,8 @@ public class ExampleFileFilter extends FileFilter {
 	 * Creates a file filter that accepts the given file type. Example: new
 	 * ExampleFileFilter("jpg", "JPEG Image Images");
 	 * 
-	 * Note that the "." before the extension is not needed. If provided, it
-	 * will be ignored.
+	 * Note that the "." before the extension is not needed. If provided, it will
+	 * be ignored.
 	 * 
 	 * @see #addExtension
 	 */
@@ -111,9 +111,8 @@ public class ExampleFileFilter extends FileFilter {
 	}
 
 	/**
-	 * Creates a file filter from the given string array and description.
-	 * Example: new ExampleFileFilter(String {"gif", "jpg"}, "Gif and JPG
-	 * Images");
+	 * Creates a file filter from the given string array and description. Example:
+	 * new ExampleFileFilter(String {"gif", "jpg"}, "Gif and JPG Images");
 	 * 
 	 * Note that the "." before the extension is not needed and will be ignored.
 	 * 
@@ -130,8 +129,8 @@ public class ExampleFileFilter extends FileFilter {
 	}
 
 	/**
-	 * Return true if this file should be shown in the directory pane, false if
-	 * it shouldn't.
+	 * Return true if this file should be shown in the directory pane, false if it
+	 * shouldn't.
 	 * 
 	 * Files that begin with "." are ignored.
 	 * 
@@ -210,7 +209,8 @@ public class ExampleFileFilter extends FileFilter {
 						fullDescription += ", " + (String) extensions.nextElement();
 					}
 				}
-			} else {
+			}
+			else {
 				fullDescription = description;
 			}
 		}
@@ -247,8 +247,8 @@ public class ExampleFileFilter extends FileFilter {
 	}
 
 	/**
-	 * Returns whether the extension list (.jpg, .gif, etc) should show up in
-	 * the human readable description.
+	 * Returns whether the extension list (.jpg, .gif, etc) should show up in the
+	 * human readable description.
 	 * 
 	 * Only relevent if a description was provided in the constructor or using
 	 * setDescription();

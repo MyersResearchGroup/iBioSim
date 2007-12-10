@@ -114,7 +114,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			String time, BioSim biomodelsim, String open, Log log, String graphName) {
 		if (File.separator.equals("\\")) {
 			separator = "\\\\";
-		} else {
+		}
+		else {
 			separator = File.separator;
 		}
 
@@ -122,7 +123,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		this.log = log;
 		if (graphName != null) {
 			this.graphName = graphName;
-		} else {
+		}
+		else {
 			this.graphName = outDir.split(separator)[outDir.split(separator).length - 1] + ".grf";
 		}
 		this.outDir = outDir;
@@ -244,14 +246,17 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						String check = "" + next + after;
 						if (word.equals("") || word.equals("0") || check.equals("0,")) {
 							readWord = false;
-						} else {
+						}
+						else {
 							word += cha;
 						}
 						input.reset();
-					} else if (cha == ',' || cha == ':' || cha == ';' || cha == '\"' || cha == '\''
+					}
+					else if (cha == ',' || cha == ':' || cha == ';' || cha == '\"' || cha == '\''
 							|| cha == '(' || cha == ')' || cha == '[' || cha == ']') {
 						readWord = false;
-					} else if (read != -1) {
+					}
+					else if (read != -1) {
 						word += cha;
 					}
 				}
@@ -264,9 +269,11 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							read = input.read();
 						}
 					}
-				} catch (Exception e1) {
+				}
+				catch (Exception e1) {
 					if (word.equals("")) {
-					} else {
+					}
+					else {
 						graphSpecies.add(word);
 					}
 				}
@@ -274,17 +281,18 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			input.close();
 			prog.close();
 			fileInput.close();
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			JOptionPane.showMessageDialog(component, "Error Reading Data!"
-					+ "\nThere was an error reading the simulation output data.",
-					"Error Reading Data", JOptionPane.ERROR_MESSAGE);
+					+ "\nThere was an error reading the simulation output data.", "Error Reading Data",
+					JOptionPane.ERROR_MESSAGE);
 		}
 		component.setCursor(null);
 	}
 
 	/**
-	 * This private helper method parses the output file of ODE, monte carlo,
-	 * and markov abstractions.
+	 * This private helper method parses the output file of ODE, monte carlo, and
+	 * markov abstractions.
 	 */
 	private ArrayList<ArrayList<Double>> readData(String file, Component component,
 			String printer_track_quantity, String label, String directory) {
@@ -297,15 +305,19 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				stem += getLast.charAt(t);
 				t++;
 			}
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 		}
 		if (label.contains("variance")) {
 			return calculateAverageVarianceDeviation(file, stem, 1, directory);
-		} else if (label.contains("deviation")) {
+		}
+		else if (label.contains("deviation")) {
 			return calculateAverageVarianceDeviation(file, stem, 2, directory);
-		} else if (label.contains("average")) {
+		}
+		else if (label.contains("average")) {
 			return calculateAverageVarianceDeviation(file, stem, 0, directory);
-		} else {
+		}
+		else {
 			ArrayList<ArrayList<Double>> data = new ArrayList<ArrayList<Double>>();
 			component.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 			try {
@@ -334,17 +346,19 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							String check = "" + next + after;
 							if (word.equals("") || word.equals("0") || check.equals("0,")) {
 								readWord = false;
-							} else {
+							}
+							else {
 								word += cha;
 							}
 							input.reset();
-						} else if (cha == ',' || cha == ':' || cha == ';' || cha == '!'
-								|| cha == '?' || cha == '\"' || cha == '\'' || cha == '('
-								|| cha == ')' || cha == '{' || cha == '}' || cha == '['
-								|| cha == ']' || cha == '<' || cha == '>' || cha == '*'
+						}
+						else if (cha == ',' || cha == ':' || cha == ';' || cha == '!' || cha == '?'
+								|| cha == '\"' || cha == '\'' || cha == '(' || cha == ')' || cha == '{'
+								|| cha == '}' || cha == '[' || cha == ']' || cha == '<' || cha == '>' || cha == '*'
 								|| cha == '=' || cha == '#') {
 							readWord = false;
-						} else if (read != -1) {
+						}
+						else if (read != -1) {
 							word += cha;
 						}
 					}
@@ -365,12 +379,11 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								while (readWord) {
 									read = input.read();
 									cha = (char) read;
-									while (!Character.isWhitespace(cha) && cha != ',' && cha != ':'
-											&& cha != ';' && cha != '!' && cha != '?'
-											&& cha != '\"' && cha != '\'' && cha != '('
-											&& cha != ')' && cha != '{' && cha != '}' && cha != '['
-											&& cha != ']' && cha != '<' && cha != '>' && cha != '_'
-											&& cha != '*' && cha != '=' && read != -1) {
+									while (!Character.isWhitespace(cha) && cha != ',' && cha != ':' && cha != ';'
+											&& cha != '!' && cha != '?' && cha != '\"' && cha != '\'' && cha != '('
+											&& cha != ')' && cha != '{' && cha != '}' && cha != '[' && cha != ']'
+											&& cha != '<' && cha != '>' && cha != '_' && cha != '*' && cha != '='
+											&& read != -1) {
 										word += cha;
 										read = input.read();
 										cha = (char) read;
@@ -384,7 +397,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								if (!word.equals("")) {
 									if (counter < graphSpecies.size()) {
 										insert = counter;
-									} else {
+									}
+									else {
 										insert = counter % graphSpecies.size();
 									}
 									(data.get(insert)).add(Double.parseDouble(word));
@@ -392,16 +406,18 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								}
 							}
 						}
-					} catch (Exception e1) {
+					}
+					catch (Exception e1) {
 					}
 				}
 				input.close();
 				prog.close();
 				fileInput.close();
-			} catch (Exception e) {
+			}
+			catch (Exception e) {
 				JOptionPane.showMessageDialog(component, "Error Reading Data!"
-						+ "\nThere was an error reading the simulation output data.",
-						"Error Reading Data", JOptionPane.ERROR_MESSAGE);
+						+ "\nThere was an error reading the simulation output data.", "Error Reading Data",
+						JOptionPane.ERROR_MESSAGE);
 			}
 			component.setCursor(null);
 			return data;
@@ -473,9 +489,11 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		NumberAxis axis = (NumberAxis) plot.getRangeAxis();
 		if (minY == Double.MAX_VALUE || maxY == Double.MIN_VALUE) {
 			axis.setRange(-1, 1);
-		} else if ((maxY - minY) < .001) {
+		}
+		else if ((maxY - minY) < .001) {
 			axis.setRange(minY - 1, maxY + 1);
-		} else {
+		}
+		else {
 			axis.setRange(Double.parseDouble(num.format(minY - (Math.abs(minY) * .1))), Double
 					.parseDouble(num.format(maxY + (Math.abs(maxY) * .1))));
 		}
@@ -483,11 +501,12 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		axis = (NumberAxis) plot.getDomainAxis();
 		if (minX == Double.MAX_VALUE || maxX == Double.MIN_VALUE) {
 			axis.setRange(-1, 1);
-		} else if ((maxX - minX) < .001) {
+		}
+		else if ((maxX - minX) < .001) {
 			axis.setRange(minX - 1, maxX + 1);
-		} else {
-			axis.setRange(Double.parseDouble(num.format(minX)), Double
-					.parseDouble(num.format(maxX)));
+		}
+		else {
+			axis.setRange(Double.parseDouble(num.format(minX)), Double.parseDouble(num.format(maxX)));
 		}
 		axis.setAutoTickUnitSelection(true);
 	}
@@ -518,8 +537,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	}
 
 	/**
-	 * Invoked when the mouse is clicked on the chart. Allows the user to edit
-	 * the title and labels of the chart.
+	 * Invoked when the mouse is clicked on the chart. Allows the user to edit the
+	 * title and labels of the chart.
 	 */
 	public void mouseClicked(MouseEvent e) {
 		editGraph();
@@ -633,7 +652,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						YMax.setEnabled(false);
 						yScale.setEnabled(false);
 						YScale.setEnabled(false);
-					} else {
+					}
+					else {
 						xMin.setEnabled(true);
 						XMin.setEnabled(true);
 						xMax.setEnabled(true);
@@ -662,7 +682,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				YMax.setEnabled(false);
 				yScale.setEnabled(false);
 				YScale.setEnabled(false);
-			} else {
+			}
+			else {
 				xMin.setEnabled(true);
 				XMin.setEnabled(true);
 				xMax.setEnabled(true);
@@ -720,12 +741,12 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								"." + printer_id.substring(0, printer_id.length() - 8))) {
 					if (file.contains("run-")) {
 						add = true;
-					} else {
-						simDir
-								.add(new DefaultMutableTreeNode(file
-										.substring(0, file.length() - 4)));
 					}
-				} else if (new File(outDir + separator + file).isDirectory()) {
+					else {
+						simDir.add(new DefaultMutableTreeNode(file.substring(0, file.length() - 4)));
+					}
+				}
+				else if (new File(outDir + separator + file).isDirectory()) {
 					boolean addIt = false;
 					for (String getFile : new File(outDir + separator + file).list()) {
 						if (getFile.length() > 3
@@ -742,10 +763,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							if (f.contains(printer_id.substring(0, printer_id.length() - 8))) {
 								if (f.contains("run-")) {
 									add2 = true;
-								} else {
-									d
-											.add(new DefaultMutableTreeNode(f.substring(0, f
-													.length() - 4)));
+								}
+								else {
+									d.add(new DefaultMutableTreeNode(f.substring(0, f.length() - 4)));
 								}
 							}
 						}
@@ -763,17 +783,15 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								}
 								if (end.equals(".tsd") || end.equals(".dat") || end.equals(".csv")) {
 									if (s.contains("run-")) {
-										run = Math.max(run, Integer.parseInt(s.substring(4, s
-												.length()
-												- end.length())));
+										run = Math
+												.max(run, Integer.parseInt(s.substring(4, s.length() - end.length())));
 									}
 								}
 							}
 						}
 						for (int i = 0; i < run; i++) {
-							if (new File(outDir + separator + file + separator + "run-" + (i + 1)
-									+ "." + printer_id.substring(0, printer_id.length() - 8))
-									.exists()) {
+							if (new File(outDir + separator + file + separator + "run-" + (i + 1) + "."
+									+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
 								d.add(new DefaultMutableTreeNode("run-" + (i + 1)));
 							}
 						}
@@ -795,8 +813,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					}
 					if (end.equals(".tsd") || end.equals(".dat") || end.equals(".csv")) {
 						if (s.contains("run-")) {
-							run = Math.max(run, Integer.parseInt(s.substring(4, s.length()
-									- end.length())));
+							run = Math.max(run, Integer.parseInt(s.substring(4, s.length() - end.length())));
 						}
 					}
 				}
@@ -811,7 +828,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				JOptionPane.showMessageDialog(biomodelsim.frame(), "No data to graph."
 						+ "\nPerform some simutations to create some data first.", "No Data",
 						JOptionPane.PLAIN_MESSAGE);
-			} else {
+			}
+			else {
 				final JTree tree = new JTree(simDir);
 				for (int i = 0; i < tree.getRowCount(); i++) {
 					tree.expandRow(i);
@@ -839,20 +857,26 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							int select;
 							if (selected.equals("Average")) {
 								select = 0;
-							} else if (selected.equals("Variance")) {
+							}
+							else if (selected.equals("Variance")) {
 								select = 1;
-							} else if (selected.equals("Standard Deviation")) {
+							}
+							else if (selected.equals("Standard Deviation")) {
 								select = 2;
-							} else if (selected.contains("-run")) {
+							}
+							else if (selected.contains("-run")) {
 								select = 0;
-							} else {
+							}
+							else {
 								try {
 									if (selected.contains("run-")) {
 										select = Integer.parseInt(selected.substring(4)) + 2;
-									} else {
+									}
+									else {
 										select = -1;
 									}
-								} catch (Exception e1) {
+								}
+								catch (Exception e1) {
 									select = -1;
 								}
 							}
@@ -860,7 +884,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								specPanel.removeAll();
 								if (directories.contains(node.getParent().toString())) {
 									specPanel.add(fixGraphCoices(node.getParent().toString()));
-								} else {
+								}
+								else {
 									specPanel.add(fixGraphCoices(""));
 								}
 								specPanel.revalidate();
@@ -874,32 +899,29 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								if (directories.contains(node.getParent().toString())) {
 									for (GraphSpecies g : graphed) {
 										if (g.getRunNumber().equals(selected)
-												&& g.getDirectory().equals(
-														node.getParent().toString())) {
+												&& g.getDirectory().equals(node.getParent().toString())) {
 											boxes.get(g.getNumber()).setSelected(true);
 											series.get(g.getNumber()).setText(g.getSpecies());
 											colorsCombo.get(g.getNumber()).setSelectedItem(
 													g.getShapeAndPaint().getPaintName());
 											shapesCombo.get(g.getNumber()).setSelectedItem(
 													g.getShapeAndPaint().getShapeName());
-											connected.get(g.getNumber()).setSelected(
-													g.getConnected());
+											connected.get(g.getNumber()).setSelected(g.getConnected());
 											visible.get(g.getNumber()).setSelected(g.getVisible());
 											filled.get(g.getNumber()).setSelected(g.getFilled());
 										}
 									}
-								} else {
+								}
+								else {
 									for (GraphSpecies g : graphed) {
-										if (g.getRunNumber().equals(selected)
-												&& g.getDirectory().equals("")) {
+										if (g.getRunNumber().equals(selected) && g.getDirectory().equals("")) {
 											boxes.get(g.getNumber()).setSelected(true);
 											series.get(g.getNumber()).setText(g.getSpecies());
 											colorsCombo.get(g.getNumber()).setSelectedItem(
 													g.getShapeAndPaint().getPaintName());
 											shapesCombo.get(g.getNumber()).setSelectedItem(
 													g.getShapeAndPaint().getShapeName());
-											connected.get(g.getNumber()).setSelected(
-													g.getConnected());
+											connected.get(g.getNumber()).setSelected(g.getConnected());
 											visible.get(g.getNumber()).setSelected(g.getVisible());
 											filled.get(g.getNumber()).setSelected(g.getFilled());
 										}
@@ -916,34 +938,40 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 										s = e.getPath().getLastPathComponent().toString();
 										if (directories.contains(node.getParent().toString())) {
 											if (s.equals("Average")) {
-												s = "(" + node.getParent().toString() + ", "
-														+ (char) 967 + ")";
-											} else if (s.equals("Variance")) {
-												s = "(" + node.getParent().toString() + ", "
-														+ (char) 948 + (char) 178 + ")";
-											} else if (s.equals("Standard Deviation")) {
-												s = "(" + node.getParent().toString() + ", "
-														+ (char) 948 + ")";
-											} else {
-												if (s.contains("-run")) {
-													s = s.substring(0, s.length() - 4);
-												} else if (s.contains("run-")) {
-													s = s.substring(4);
-												}
-												s = "(" + node.getParent().toString() + ", " + s
+												s = "(" + node.getParent().toString() + ", " + (char) 967 + ")";
+											}
+											else if (s.equals("Variance")) {
+												s = "(" + node.getParent().toString() + ", " + (char) 948 + (char) 178
 														+ ")";
 											}
-										} else {
-											if (s.equals("Average")) {
-												s = "(" + (char) 967 + ")";
-											} else if (s.equals("Variance")) {
-												s = "(" + (char) 948 + (char) 178 + ")";
-											} else if (s.equals("Standard Deviation")) {
-												s = "(" + (char) 948 + ")";
-											} else {
+											else if (s.equals("Standard Deviation")) {
+												s = "(" + node.getParent().toString() + ", " + (char) 948 + ")";
+											}
+											else {
 												if (s.contains("-run")) {
 													s = s.substring(0, s.length() - 4);
-												} else if (s.contains("run-")) {
+												}
+												else if (s.contains("run-")) {
+													s = s.substring(4);
+												}
+												s = "(" + node.getParent().toString() + ", " + s + ")";
+											}
+										}
+										else {
+											if (s.equals("Average")) {
+												s = "(" + (char) 967 + ")";
+											}
+											else if (s.equals("Variance")) {
+												s = "(" + (char) 948 + (char) 178 + ")";
+											}
+											else if (s.equals("Standard Deviation")) {
+												s = "(" + (char) 948 + ")";
+											}
+											else {
+												if (s.contains("-run")) {
+													s = s.substring(0, s.length() - 4);
+												}
+												else if (s.contains("run-")) {
 													s = s.substring(4);
 												}
 												s = "(" + s + ")";
@@ -958,7 +986,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 											if (!s.equals(end)) {
 												text += " " + s;
 											}
-										} else {
+										}
+										else {
 											text += " " + s;
 										}
 										series.get(i).setText(text);
@@ -977,26 +1006,31 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								}
 								if (allChecked) {
 									use.setSelected(true);
-								} else {
+								}
+								else {
 									use.setSelected(false);
 								}
 								if (allCheckedVisible) {
 									visibleLabel.setSelected(true);
-								} else {
+								}
+								else {
 									visibleLabel.setSelected(false);
 								}
 								if (allCheckedFilled) {
 									filledLabel.setSelected(true);
-								} else {
+								}
+								else {
 									filledLabel.setSelected(false);
 								}
 								if (allCheckedConnected) {
 									connectedLabel.setSelected(true);
-								} else {
+								}
+								else {
 									connectedLabel.setSelected(false);
 								}
 							}
-						} else {
+						}
+						else {
 							specPanel.removeAll();
 							specPanel.revalidate();
 							specPanel.repaint();
@@ -1006,7 +1040,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				if (!stop) {
 					tree.setSelectionRow(0);
 					tree.setSelectionRow(1);
-				} else {
+				}
+				else {
 					tree.setSelectionRow(0);
 					tree.setSelectionRow(selectionRow);
 				}
@@ -1043,25 +1078,23 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							minX = Double.parseDouble(num.format(minX));
 							maxX = Double.parseDouble(num.format(maxX));
 							scaleX = Double.parseDouble(num.format(scaleX));
-						} catch (Exception e1) {
+						}
+						catch (Exception e1) {
 							JOptionPane.showMessageDialog(biomodelsim.frame(),
-									"Must enter doubles into the inputs "
-											+ "to change the graph's dimensions!", "Error",
-									JOptionPane.ERROR_MESSAGE);
+									"Must enter doubles into the inputs " + "to change the graph's dimensions!",
+									"Error", JOptionPane.ERROR_MESSAGE);
 							return;
 						}
 						lastSelected = selected;
 						selected = "";
 						ArrayList<XYSeries> graphData = new ArrayList<XYSeries>();
-						XYLineAndShapeRenderer rend = (XYLineAndShapeRenderer) chart.getXYPlot()
-								.getRenderer();
+						XYLineAndShapeRenderer rend = (XYLineAndShapeRenderer) chart.getXYPlot().getRenderer();
 						int thisOne = -1;
 						for (int i = 1; i < graphed.size(); i++) {
 							GraphSpecies index = graphed.get(i);
 							int j = i;
 							while ((j > 0)
-									&& (graphed.get(j - 1).getSpecies().compareToIgnoreCase(
-											index.getSpecies()) > 0)) {
+									&& (graphed.get(j - 1).getSpecies().compareToIgnoreCase(index.getSpecies()) > 0)) {
 								graphed.set(j, graphed.get(j - 1));
 								j = j - 1;
 							}
@@ -1078,37 +1111,25 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								rend.setSeriesShapesVisible(thisOne, g.getVisible());
 								rend.setSeriesPaint(thisOne, g.getShapeAndPaint().getPaint());
 								rend.setSeriesShape(thisOne, g.getShapeAndPaint().getShape());
-								if (!g.getRunNumber().equals("Average")
-										&& !g.getRunNumber().equals("Variance")
+								if (!g.getRunNumber().equals("Average") && !g.getRunNumber().equals("Variance")
 										&& !g.getRunNumber().equals("Standard Deviation")) {
 									if (new File(outDir + separator + g.getRunNumber() + "."
-											+ printer_id.substring(0, printer_id.length() - 8))
-											.exists()) {
-										readGraphSpecies(outDir + separator + g.getRunNumber()
-												+ "."
-												+ printer_id.substring(0, printer_id.length() - 8),
-												biomodelsim.frame());
+											+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
+										readGraphSpecies(outDir + separator + g.getRunNumber() + "."
+												+ printer_id.substring(0, printer_id.length() - 8), biomodelsim.frame());
 										ArrayList<ArrayList<Double>> data;
-										if (allData.containsKey(g.getRunNumber() + " "
-												+ g.getDirectory())) {
-											data = allData.get(g.getRunNumber() + " "
-													+ g.getDirectory());
-										} else {
-											data = readData(outDir
-													+ separator
-													+ g.getRunNumber()
-													+ "."
-													+ printer_id.substring(0,
-															printer_id.length() - 8), biomodelsim
-													.frame(), y.getText().trim(), g.getRunNumber(),
-													null);
+										if (allData.containsKey(g.getRunNumber() + " " + g.getDirectory())) {
+											data = allData.get(g.getRunNumber() + " " + g.getDirectory());
+										}
+										else {
+											data = readData(outDir + separator + g.getRunNumber() + "."
+													+ printer_id.substring(0, printer_id.length() - 8), biomodelsim.frame(),
+													y.getText().trim(), g.getRunNumber(), null);
 											for (int i = 2; i < graphSpecies.size(); i++) {
 												String index = graphSpecies.get(i);
 												ArrayList<Double> index2 = data.get(i);
 												int j = i;
-												while ((j > 1)
-														&& graphSpecies.get(j - 1)
-																.compareToIgnoreCase(index) > 0) {
+												while ((j > 1) && graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
 													graphSpecies.set(j, graphSpecies.get(j - 1));
 													data.set(j, data.get(j - 1));
 													j = j - 1;
@@ -1116,22 +1137,22 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 												graphSpecies.set(j, index);
 												data.set(j, index2);
 											}
-											allData.put(g.getRunNumber() + " " + g.getDirectory(),
-													data);
+											allData.put(g.getRunNumber() + " " + g.getDirectory(), data);
 										}
 										graphData.add(new XYSeries(g.getSpecies()));
 										if (data.size() != 0) {
 											for (int i = 0; i < (data.get(0)).size(); i++) {
-												graphData.get(graphData.size() - 1).add(
-														(data.get(0)).get(i),
+												graphData.get(graphData.size() - 1).add((data.get(0)).get(i),
 														(data.get(g.getNumber() + 1)).get(i));
 											}
 										}
-									} else {
+									}
+									else {
 										unableToGraph.add(g);
 										thisOne--;
 									}
-								} else {
+								}
+								else {
 									boolean ableToGraph = false;
 									try {
 										for (String s : new File(outDir).list()) {
@@ -1139,39 +1160,31 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 												ableToGraph = true;
 											}
 										}
-									} catch (Exception e1) {
+									}
+									catch (Exception e1) {
 										ableToGraph = false;
 									}
 									if (ableToGraph) {
 										int next = 1;
 										while (!new File(outDir + separator + "run-" + next + "."
-												+ printer_id.substring(0, printer_id.length() - 8))
-												.exists()) {
+												+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
 											next++;
 										}
 										readGraphSpecies(outDir + separator + "run-" + next + "."
-												+ printer_id.substring(0, printer_id.length() - 8),
-												biomodelsim.frame());
+												+ printer_id.substring(0, printer_id.length() - 8), biomodelsim.frame());
 										ArrayList<ArrayList<Double>> data;
-										if (allData.containsKey(g.getRunNumber() + " "
-												+ g.getDirectory())) {
-											data = allData.get(g.getRunNumber() + " "
-													+ g.getDirectory());
-										} else {
-											data = readData(outDir
-													+ separator
-													+ "run-1."
-													+ printer_id.substring(0,
-															printer_id.length() - 8), biomodelsim
-													.frame(), y.getText().trim(), g.getRunNumber()
-													.toLowerCase(), null);
+										if (allData.containsKey(g.getRunNumber() + " " + g.getDirectory())) {
+											data = allData.get(g.getRunNumber() + " " + g.getDirectory());
+										}
+										else {
+											data = readData(outDir + separator + "run-1."
+													+ printer_id.substring(0, printer_id.length() - 8), biomodelsim.frame(),
+													y.getText().trim(), g.getRunNumber().toLowerCase(), null);
 											for (int i = 2; i < graphSpecies.size(); i++) {
 												String index = graphSpecies.get(i);
 												ArrayList<Double> index2 = data.get(i);
 												int j = i;
-												while ((j > 1)
-														&& graphSpecies.get(j - 1)
-																.compareToIgnoreCase(index) > 0) {
+												while ((j > 1) && graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
 													graphSpecies.set(j, graphSpecies.get(j - 1));
 													data.set(j, data.get(j - 1));
 													j = j - 1;
@@ -1179,23 +1192,23 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 												graphSpecies.set(j, index);
 												data.set(j, index2);
 											}
-											allData.put(g.getRunNumber() + " " + g.getDirectory(),
-													data);
+											allData.put(g.getRunNumber() + " " + g.getDirectory(), data);
 										}
 										graphData.add(new XYSeries(g.getSpecies()));
 										if (data.size() != 0) {
 											for (int i = 0; i < (data.get(0)).size(); i++) {
-												graphData.get(graphData.size() - 1).add(
-														(data.get(0)).get(i),
+												graphData.get(graphData.size() - 1).add((data.get(0)).get(i),
 														(data.get(g.getNumber() + 1)).get(i));
 											}
 										}
-									} else {
+									}
+									else {
 										unableToGraph.add(g);
 										thisOne--;
 									}
 								}
-							} else {
+							}
+							else {
 								thisOne++;
 								rend.setSeriesVisible(thisOne, true);
 								rend.setSeriesLinesVisible(thisOne, g.getConnected());
@@ -1203,40 +1216,27 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								rend.setSeriesShapesVisible(thisOne, g.getVisible());
 								rend.setSeriesPaint(thisOne, g.getShapeAndPaint().getPaint());
 								rend.setSeriesShape(thisOne, g.getShapeAndPaint().getShape());
-								if (!g.getRunNumber().equals("Average")
-										&& !g.getRunNumber().equals("Variance")
+								if (!g.getRunNumber().equals("Average") && !g.getRunNumber().equals("Variance")
 										&& !g.getRunNumber().equals("Standard Deviation")) {
-									if (new File(outDir + separator + g.getDirectory() + separator
-											+ g.getRunNumber() + "."
-											+ printer_id.substring(0, printer_id.length() - 8))
-											.exists()) {
-										readGraphSpecies(outDir + separator + g.getDirectory()
-												+ separator + g.getRunNumber() + "."
-												+ printer_id.substring(0, printer_id.length() - 8),
-												biomodelsim.frame());
+									if (new File(outDir + separator + g.getDirectory() + separator + g.getRunNumber()
+											+ "." + printer_id.substring(0, printer_id.length() - 8)).exists()) {
+										readGraphSpecies(
+												outDir + separator + g.getDirectory() + separator + g.getRunNumber() + "."
+														+ printer_id.substring(0, printer_id.length() - 8), biomodelsim.frame());
 										ArrayList<ArrayList<Double>> data;
-										if (allData.containsKey(g.getRunNumber() + " "
-												+ g.getDirectory())) {
-											data = allData.get(g.getRunNumber() + " "
-													+ g.getDirectory());
-										} else {
-											data = readData(outDir
-													+ separator
-													+ g.getDirectory()
-													+ separator
-													+ g.getRunNumber()
-													+ "."
-													+ printer_id.substring(0,
-															printer_id.length() - 8), biomodelsim
-													.frame(), y.getText().trim(), g.getRunNumber(),
-													g.getDirectory());
+										if (allData.containsKey(g.getRunNumber() + " " + g.getDirectory())) {
+											data = allData.get(g.getRunNumber() + " " + g.getDirectory());
+										}
+										else {
+											data = readData(outDir + separator + g.getDirectory() + separator
+													+ g.getRunNumber() + "."
+													+ printer_id.substring(0, printer_id.length() - 8), biomodelsim.frame(),
+													y.getText().trim(), g.getRunNumber(), g.getDirectory());
 											for (int i = 2; i < graphSpecies.size(); i++) {
 												String index = graphSpecies.get(i);
 												ArrayList<Double> index2 = data.get(i);
 												int j = i;
-												while ((j > 1)
-														&& graphSpecies.get(j - 1)
-																.compareToIgnoreCase(index) > 0) {
+												while ((j > 1) && graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
 													graphSpecies.set(j, graphSpecies.get(j - 1));
 													data.set(j, data.get(j - 1));
 													j = j - 1;
@@ -1244,67 +1244,55 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 												graphSpecies.set(j, index);
 												data.set(j, index2);
 											}
-											allData.put(g.getRunNumber() + " " + g.getDirectory(),
-													data);
+											allData.put(g.getRunNumber() + " " + g.getDirectory(), data);
 										}
 										graphData.add(new XYSeries(g.getSpecies()));
 										if (data.size() != 0) {
 											for (int i = 0; i < (data.get(0)).size(); i++) {
-												graphData.get(graphData.size() - 1).add(
-														(data.get(0)).get(i),
+												graphData.get(graphData.size() - 1).add((data.get(0)).get(i),
 														(data.get(g.getNumber() + 1)).get(i));
 											}
 										}
-									} else {
+									}
+									else {
 										unableToGraph.add(g);
 										thisOne--;
 									}
-								} else {
+								}
+								else {
 									boolean ableToGraph = false;
 									try {
-										for (String s : new File(outDir + separator
-												+ g.getDirectory()).list()) {
+										for (String s : new File(outDir + separator + g.getDirectory()).list()) {
 											if (s.length() > 3 && s.substring(0, 4).equals("run-")) {
 												ableToGraph = true;
 											}
 										}
-									} catch (Exception e1) {
+									}
+									catch (Exception e1) {
 										ableToGraph = false;
 									}
 									if (ableToGraph) {
 										int next = 1;
-										while (!new File(outDir + separator + g.getDirectory()
-												+ separator + "run-" + next + "."
-												+ printer_id.substring(0, printer_id.length() - 8))
-												.exists()) {
+										while (!new File(outDir + separator + g.getDirectory() + separator + "run-"
+												+ next + "." + printer_id.substring(0, printer_id.length() - 8)).exists()) {
 											next++;
 										}
-										readGraphSpecies(outDir + separator + g.getDirectory()
-												+ separator + "run-" + next + "."
-												+ printer_id.substring(0, printer_id.length() - 8),
+										readGraphSpecies(outDir + separator + g.getDirectory() + separator + "run-"
+												+ next + "." + printer_id.substring(0, printer_id.length() - 8),
 												biomodelsim.frame());
 										ArrayList<ArrayList<Double>> data;
-										if (allData.containsKey(g.getRunNumber() + " "
-												+ g.getDirectory())) {
-											data = allData.get(g.getRunNumber() + " "
-													+ g.getDirectory());
-										} else {
-											data = readData(outDir
-													+ separator
-													+ g.getDirectory()
-													+ separator
-													+ "run-1."
-													+ printer_id.substring(0,
-															printer_id.length() - 8), biomodelsim
-													.frame(), y.getText().trim(), g.getRunNumber()
-													.toLowerCase(), g.getDirectory());
+										if (allData.containsKey(g.getRunNumber() + " " + g.getDirectory())) {
+											data = allData.get(g.getRunNumber() + " " + g.getDirectory());
+										}
+										else {
+											data = readData(outDir + separator + g.getDirectory() + separator + "run-1."
+													+ printer_id.substring(0, printer_id.length() - 8), biomodelsim.frame(),
+													y.getText().trim(), g.getRunNumber().toLowerCase(), g.getDirectory());
 											for (int i = 2; i < graphSpecies.size(); i++) {
 												String index = graphSpecies.get(i);
 												ArrayList<Double> index2 = data.get(i);
 												int j = i;
-												while ((j > 1)
-														&& graphSpecies.get(j - 1)
-																.compareToIgnoreCase(index) > 0) {
+												while ((j > 1) && graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
 													graphSpecies.set(j, graphSpecies.get(j - 1));
 													data.set(j, data.get(j - 1));
 													j = j - 1;
@@ -1312,18 +1300,17 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 												graphSpecies.set(j, index);
 												data.set(j, index2);
 											}
-											allData.put(g.getRunNumber() + " " + g.getDirectory(),
-													data);
+											allData.put(g.getRunNumber() + " " + g.getDirectory(), data);
 										}
 										graphData.add(new XYSeries(g.getSpecies()));
 										if (data.size() != 0) {
 											for (int i = 0; i < (data.get(0)).size(); i++) {
-												graphData.get(graphData.size() - 1).add(
-														(data.get(0)).get(i),
+												graphData.get(graphData.size() - 1).add((data.get(0)).get(i),
 														(data.get(g.getNumber() + 1)).get(i));
 											}
 										}
-									} else {
+									}
+									else {
 										unableToGraph.add(g);
 										thisOne--;
 									}
@@ -1337,13 +1324,13 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						for (int i = 0; i < graphData.size(); i++) {
 							dataset.addSeries(graphData.get(i));
 						}
-						fixGraph(title.getText().trim(), x.getText().trim(), y.getText().trim(),
-								dataset);
+						fixGraph(title.getText().trim(), x.getText().trim(), y.getText().trim(), dataset);
 						chart.getXYPlot().setRenderer(rend);
 						XYPlot plot = chart.getXYPlot();
 						if (resize.isSelected()) {
 							resize(dataset);
-						} else {
+						}
+						else {
 							NumberAxis axis = (NumberAxis) plot.getRangeAxis();
 							axis.setAutoTickUnitSelection(false);
 							axis.setRange(minY, maxY);
@@ -1408,7 +1395,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				try {
 					Toolkit tk = Toolkit.getDefaultToolkit();
 					screenSize = tk.getScreenSize();
-				} catch (AWTError awe) {
+				}
+				catch (AWTError awe) {
 					screenSize = new Dimension(640, 480);
 				}
 				Dimension frameSize = f.getSize();
@@ -1439,22 +1427,24 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				}
 				readGraphSpecies(outDir + separator + "run-" + nextOne + "."
 						+ printer_id.substring(0, printer_id.length() - 8), biomodelsim.frame());
-			} else {
+			}
+			else {
 				readGraphSpecies(outDir + separator + selected + "."
 						+ printer_id.substring(0, printer_id.length() - 8), biomodelsim.frame());
 			}
-		} else {
+		}
+		else {
 			if (selected.equals("Average") || selected.equals("Variance")
 					|| selected.equals("Standard Deviation")) {
 				int nextOne = 1;
-				while (!new File(outDir + separator + directory + separator + "run-" + nextOne
-						+ "." + printer_id.substring(0, printer_id.length() - 8)).exists()) {
+				while (!new File(outDir + separator + directory + separator + "run-" + nextOne + "."
+						+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
 					nextOne++;
 				}
-				readGraphSpecies(outDir + separator + directory + separator + "run-" + nextOne
-						+ "." + printer_id.substring(0, printer_id.length() - 8), biomodelsim
-						.frame());
-			} else {
+				readGraphSpecies(outDir + separator + directory + separator + "run-" + nextOne + "."
+						+ printer_id.substring(0, printer_id.length() - 8), biomodelsim.frame());
+			}
+			else {
 				readGraphSpecies(outDir + separator + directory + separator + selected + "."
 						+ printer_id.substring(0, printer_id.length() - 8), biomodelsim.frame());
 			}
@@ -1496,7 +1486,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							box.doClick();
 						}
 					}
-				} else {
+				}
+				else {
 					for (JCheckBox box : boxes) {
 						if (box.isSelected()) {
 							box.doClick();
@@ -1513,7 +1504,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							box.doClick();
 						}
 					}
-				} else {
+				}
+				else {
 					for (JCheckBox box : connected) {
 						if (box.isSelected()) {
 							box.doClick();
@@ -1530,7 +1522,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							box.doClick();
 						}
 					}
-				} else {
+				}
+				else {
 					for (JCheckBox box : visible) {
 						if (box.isSelected()) {
 							box.doClick();
@@ -1547,7 +1540,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							box.doClick();
 						}
 					}
-				} else {
+				}
+				else {
 					for (JCheckBox box : filled) {
 						if (box.isSelected()) {
 							box.doClick();
@@ -1580,117 +1574,134 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							if (boxes.get(k).isSelected()) {
 								if (colorsCombo.get(k).getSelectedItem().equals("Red")) {
 									cols[0]++;
-								} else if (colorsCombo.get(k).getSelectedItem().equals("Blue")) {
+								}
+								else if (colorsCombo.get(k).getSelectedItem().equals("Blue")) {
 									cols[1]++;
-								} else if (colorsCombo.get(k).getSelectedItem().equals("Green")) {
+								}
+								else if (colorsCombo.get(k).getSelectedItem().equals("Green")) {
 									cols[2]++;
-								} else if (colorsCombo.get(k).getSelectedItem().equals("Yellow")) {
+								}
+								else if (colorsCombo.get(k).getSelectedItem().equals("Yellow")) {
 									cols[3]++;
-								} else if (colorsCombo.get(k).getSelectedItem().equals("Magenta")) {
+								}
+								else if (colorsCombo.get(k).getSelectedItem().equals("Magenta")) {
 									cols[4]++;
-								} else if (colorsCombo.get(k).getSelectedItem().equals("Cyan")) {
+								}
+								else if (colorsCombo.get(k).getSelectedItem().equals("Cyan")) {
 									cols[5]++;
-								} else if (colorsCombo.get(k).getSelectedItem().equals("Tan")) {
+								}
+								else if (colorsCombo.get(k).getSelectedItem().equals("Tan")) {
 									cols[6]++;
-								} else if (colorsCombo.get(k).getSelectedItem().equals(
-										"Gray (Dark)")) {
+								}
+								else if (colorsCombo.get(k).getSelectedItem().equals("Gray (Dark)")) {
 									cols[7]++;
-								} else if (colorsCombo.get(k).getSelectedItem()
-										.equals("Red (Dark)")) {
+								}
+								else if (colorsCombo.get(k).getSelectedItem().equals("Red (Dark)")) {
 									cols[8]++;
-								} else if (colorsCombo.get(k).getSelectedItem().equals(
-										"Blue (Dark)")) {
+								}
+								else if (colorsCombo.get(k).getSelectedItem().equals("Blue (Dark)")) {
 									cols[9]++;
-								} else if (colorsCombo.get(k).getSelectedItem().equals(
-										"Green (Dark)")) {
+								}
+								else if (colorsCombo.get(k).getSelectedItem().equals("Green (Dark)")) {
 									cols[10]++;
-								} else if (colorsCombo.get(k).getSelectedItem().equals(
-										"Yellow (Dark)")) {
+								}
+								else if (colorsCombo.get(k).getSelectedItem().equals("Yellow (Dark)")) {
 									cols[11]++;
-								} else if (colorsCombo.get(k).getSelectedItem().equals(
-										"Magenta (Dark)")) {
+								}
+								else if (colorsCombo.get(k).getSelectedItem().equals("Magenta (Dark)")) {
 									cols[12]++;
-								} else if (colorsCombo.get(k).getSelectedItem().equals(
-										"Cyan (Dark)")) {
+								}
+								else if (colorsCombo.get(k).getSelectedItem().equals("Cyan (Dark)")) {
 									cols[13]++;
-								} else if (colorsCombo.get(k).getSelectedItem().equals("Black")) {
+								}
+								else if (colorsCombo.get(k).getSelectedItem().equals("Black")) {
 									cols[14]++;
-								} else if (colorsCombo.get(k).getSelectedItem().equals("Red ")) {
+								}
+								else if (colorsCombo.get(k).getSelectedItem().equals("Red ")) {
 									cols[15]++;
-								} else if (colorsCombo.get(k).getSelectedItem().equals("Blue ")) {
+								}
+								else if (colorsCombo.get(k).getSelectedItem().equals("Blue ")) {
 									cols[16]++;
-								} else if (colorsCombo.get(k).getSelectedItem().equals("Green ")) {
+								}
+								else if (colorsCombo.get(k).getSelectedItem().equals("Green ")) {
 									cols[17]++;
-								} else if (colorsCombo.get(k).getSelectedItem().equals("Yellow ")) {
+								}
+								else if (colorsCombo.get(k).getSelectedItem().equals("Yellow ")) {
 									cols[18]++;
-								} else if (colorsCombo.get(k).getSelectedItem().equals("Magenta ")) {
+								}
+								else if (colorsCombo.get(k).getSelectedItem().equals("Magenta ")) {
 									cols[19]++;
-								} else if (colorsCombo.get(k).getSelectedItem().equals("Cyan ")) {
+								}
+								else if (colorsCombo.get(k).getSelectedItem().equals("Cyan ")) {
 									cols[20]++;
-								} else if (colorsCombo.get(k).getSelectedItem().equals(
-										"Gray (Light)")) {
+								}
+								else if (colorsCombo.get(k).getSelectedItem().equals("Gray (Light)")) {
 									cols[21]++;
-								} else if (colorsCombo.get(k).getSelectedItem().equals(
-										"Red (Extra Dark)")) {
+								}
+								else if (colorsCombo.get(k).getSelectedItem().equals("Red (Extra Dark)")) {
 									cols[22]++;
-								} else if (colorsCombo.get(k).getSelectedItem().equals(
-										"Blue (Extra Dark)")) {
+								}
+								else if (colorsCombo.get(k).getSelectedItem().equals("Blue (Extra Dark)")) {
 									cols[23]++;
-								} else if (colorsCombo.get(k).getSelectedItem().equals(
-										"Green (Extra Dark)")) {
+								}
+								else if (colorsCombo.get(k).getSelectedItem().equals("Green (Extra Dark)")) {
 									cols[24]++;
-								} else if (colorsCombo.get(k).getSelectedItem().equals(
-										"Yellow (Extra Dark)")) {
+								}
+								else if (colorsCombo.get(k).getSelectedItem().equals("Yellow (Extra Dark)")) {
 									cols[25]++;
-								} else if (colorsCombo.get(k).getSelectedItem().equals(
-										"Magenta (Extra Dark)")) {
+								}
+								else if (colorsCombo.get(k).getSelectedItem().equals("Magenta (Extra Dark)")) {
 									cols[26]++;
-								} else if (colorsCombo.get(k).getSelectedItem().equals(
-										"Cyan (Extra Dark)")) {
+								}
+								else if (colorsCombo.get(k).getSelectedItem().equals("Cyan (Extra Dark)")) {
 									cols[27]++;
-								} else if (colorsCombo.get(k).getSelectedItem().equals(
-										"Red (Light)")) {
+								}
+								else if (colorsCombo.get(k).getSelectedItem().equals("Red (Light)")) {
 									cols[28]++;
-								} else if (colorsCombo.get(k).getSelectedItem().equals(
-										"Blue (Light)")) {
+								}
+								else if (colorsCombo.get(k).getSelectedItem().equals("Blue (Light)")) {
 									cols[29]++;
-								} else if (colorsCombo.get(k).getSelectedItem().equals(
-										"Green (Light)")) {
+								}
+								else if (colorsCombo.get(k).getSelectedItem().equals("Green (Light)")) {
 									cols[30]++;
-								} else if (colorsCombo.get(k).getSelectedItem().equals(
-										"Yellow (Light)")) {
+								}
+								else if (colorsCombo.get(k).getSelectedItem().equals("Yellow (Light)")) {
 									cols[31]++;
-								} else if (colorsCombo.get(k).getSelectedItem().equals(
-										"Magenta (Light)")) {
+								}
+								else if (colorsCombo.get(k).getSelectedItem().equals("Magenta (Light)")) {
 									cols[32]++;
-								} else if (colorsCombo.get(k).getSelectedItem().equals(
-										"Cyan (Light)")) {
+								}
+								else if (colorsCombo.get(k).getSelectedItem().equals("Cyan (Light)")) {
 									cols[33]++;
 								}
 								if (shapesCombo.get(k).getSelectedItem().equals("Square")) {
 									shaps[0]++;
-								} else if (shapesCombo.get(k).getSelectedItem().equals("Circle")) {
+								}
+								else if (shapesCombo.get(k).getSelectedItem().equals("Circle")) {
 									shaps[1]++;
-								} else if (shapesCombo.get(k).getSelectedItem().equals("Triangle")) {
+								}
+								else if (shapesCombo.get(k).getSelectedItem().equals("Triangle")) {
 									shaps[2]++;
-								} else if (shapesCombo.get(k).getSelectedItem().equals("Diamond")) {
+								}
+								else if (shapesCombo.get(k).getSelectedItem().equals("Diamond")) {
 									shaps[3]++;
-								} else if (shapesCombo.get(k).getSelectedItem().equals(
-										"Rectangle (Horizontal)")) {
+								}
+								else if (shapesCombo.get(k).getSelectedItem().equals("Rectangle (Horizontal)")) {
 									shaps[4]++;
-								} else if (shapesCombo.get(k).getSelectedItem().equals(
-										"Triangle (Upside Down)")) {
+								}
+								else if (shapesCombo.get(k).getSelectedItem().equals("Triangle (Upside Down)")) {
 									shaps[5]++;
-								} else if (shapesCombo.get(k).getSelectedItem().equals(
-										"Circle (Half)")) {
+								}
+								else if (shapesCombo.get(k).getSelectedItem().equals("Circle (Half)")) {
 									shaps[6]++;
-								} else if (shapesCombo.get(k).getSelectedItem().equals("Arrow")) {
+								}
+								else if (shapesCombo.get(k).getSelectedItem().equals("Arrow")) {
 									shaps[7]++;
-								} else if (shapesCombo.get(k).getSelectedItem().equals(
-										"Rectangle (Vertical)")) {
+								}
+								else if (shapesCombo.get(k).getSelectedItem().equals("Rectangle (Vertical)")) {
 									shaps[8]++;
-								} else if (shapesCombo.get(k).getSelectedItem().equals(
-										"Arrow (Backwards)")) {
+								}
+								else if (shapesCombo.get(k).getSelectedItem().equals("Arrow (Backwards)")) {
 									shaps[9]++;
 								}
 							}
@@ -1698,116 +1709,134 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						for (GraphSpecies graph : graphed) {
 							if (graph.getShapeAndPaint().getPaintName().equals("Red")) {
 								cols[0]++;
-							} else if (graph.getShapeAndPaint().getPaintName().equals("Blue")) {
+							}
+							else if (graph.getShapeAndPaint().getPaintName().equals("Blue")) {
 								cols[1]++;
-							} else if (graph.getShapeAndPaint().getPaintName().equals("Green")) {
+							}
+							else if (graph.getShapeAndPaint().getPaintName().equals("Green")) {
 								cols[2]++;
-							} else if (graph.getShapeAndPaint().getPaintName().equals("Yellow")) {
+							}
+							else if (graph.getShapeAndPaint().getPaintName().equals("Yellow")) {
 								cols[3]++;
-							} else if (graph.getShapeAndPaint().getPaintName().equals("Magenta")) {
+							}
+							else if (graph.getShapeAndPaint().getPaintName().equals("Magenta")) {
 								cols[4]++;
-							} else if (graph.getShapeAndPaint().getPaintName().equals("Cyan")) {
+							}
+							else if (graph.getShapeAndPaint().getPaintName().equals("Cyan")) {
 								cols[5]++;
-							} else if (graph.getShapeAndPaint().getPaintName().equals("Tan")) {
+							}
+							else if (graph.getShapeAndPaint().getPaintName().equals("Tan")) {
 								cols[6]++;
-							} else if (graph.getShapeAndPaint().getPaintName()
-									.equals("Gray (Dark)")) {
+							}
+							else if (graph.getShapeAndPaint().getPaintName().equals("Gray (Dark)")) {
 								cols[7]++;
-							} else if (graph.getShapeAndPaint().getPaintName().equals("Red (Dark)")) {
+							}
+							else if (graph.getShapeAndPaint().getPaintName().equals("Red (Dark)")) {
 								cols[8]++;
-							} else if (graph.getShapeAndPaint().getPaintName()
-									.equals("Blue (Dark)")) {
+							}
+							else if (graph.getShapeAndPaint().getPaintName().equals("Blue (Dark)")) {
 								cols[9]++;
-							} else if (graph.getShapeAndPaint().getPaintName().equals(
-									"Green (Dark)")) {
+							}
+							else if (graph.getShapeAndPaint().getPaintName().equals("Green (Dark)")) {
 								cols[10]++;
-							} else if (graph.getShapeAndPaint().getPaintName().equals(
-									"Yellow (Dark)")) {
+							}
+							else if (graph.getShapeAndPaint().getPaintName().equals("Yellow (Dark)")) {
 								cols[11]++;
-							} else if (graph.getShapeAndPaint().getPaintName().equals(
-									"Magenta (Dark)")) {
+							}
+							else if (graph.getShapeAndPaint().getPaintName().equals("Magenta (Dark)")) {
 								cols[12]++;
-							} else if (graph.getShapeAndPaint().getPaintName()
-									.equals("Cyan (Dark)")) {
+							}
+							else if (graph.getShapeAndPaint().getPaintName().equals("Cyan (Dark)")) {
 								cols[13]++;
-							} else if (graph.getShapeAndPaint().getPaintName().equals("Black")) {
+							}
+							else if (graph.getShapeAndPaint().getPaintName().equals("Black")) {
 								cols[14]++;
-							} else if (graph.getShapeAndPaint().getPaintName().equals("Red ")) {
+							}
+							else if (graph.getShapeAndPaint().getPaintName().equals("Red ")) {
 								cols[15]++;
-							} else if (graph.getShapeAndPaint().getPaintName().equals("Blue ")) {
+							}
+							else if (graph.getShapeAndPaint().getPaintName().equals("Blue ")) {
 								cols[16]++;
-							} else if (graph.getShapeAndPaint().getPaintName().equals("Green ")) {
+							}
+							else if (graph.getShapeAndPaint().getPaintName().equals("Green ")) {
 								cols[17]++;
-							} else if (graph.getShapeAndPaint().getPaintName().equals("Yellow ")) {
+							}
+							else if (graph.getShapeAndPaint().getPaintName().equals("Yellow ")) {
 								cols[18]++;
-							} else if (graph.getShapeAndPaint().getPaintName().equals("Magenta ")) {
+							}
+							else if (graph.getShapeAndPaint().getPaintName().equals("Magenta ")) {
 								cols[19]++;
-							} else if (graph.getShapeAndPaint().getPaintName().equals("Cyan ")) {
+							}
+							else if (graph.getShapeAndPaint().getPaintName().equals("Cyan ")) {
 								cols[20]++;
-							} else if (graph.getShapeAndPaint().getPaintName().equals(
-									"Gray (Light)")) {
+							}
+							else if (graph.getShapeAndPaint().getPaintName().equals("Gray (Light)")) {
 								cols[21]++;
-							} else if (graph.getShapeAndPaint().getPaintName().equals(
-									"Red (Extra Dark)")) {
+							}
+							else if (graph.getShapeAndPaint().getPaintName().equals("Red (Extra Dark)")) {
 								cols[22]++;
-							} else if (graph.getShapeAndPaint().getPaintName().equals(
-									"Blue (Extra Dark)")) {
+							}
+							else if (graph.getShapeAndPaint().getPaintName().equals("Blue (Extra Dark)")) {
 								cols[23]++;
-							} else if (graph.getShapeAndPaint().getPaintName().equals(
-									"Green (Extra Dark)")) {
+							}
+							else if (graph.getShapeAndPaint().getPaintName().equals("Green (Extra Dark)")) {
 								cols[24]++;
-							} else if (graph.getShapeAndPaint().getPaintName().equals(
-									"Yellow (Extra Dark)")) {
+							}
+							else if (graph.getShapeAndPaint().getPaintName().equals("Yellow (Extra Dark)")) {
 								cols[25]++;
-							} else if (graph.getShapeAndPaint().getPaintName().equals(
-									"Magenta (Extra Dark)")) {
+							}
+							else if (graph.getShapeAndPaint().getPaintName().equals("Magenta (Extra Dark)")) {
 								cols[26]++;
-							} else if (graph.getShapeAndPaint().getPaintName().equals(
-									"Cyan (Extra Dark)")) {
+							}
+							else if (graph.getShapeAndPaint().getPaintName().equals("Cyan (Extra Dark)")) {
 								cols[27]++;
-							} else if (graph.getShapeAndPaint().getPaintName()
-									.equals("Red (Light)")) {
+							}
+							else if (graph.getShapeAndPaint().getPaintName().equals("Red (Light)")) {
 								cols[28]++;
-							} else if (graph.getShapeAndPaint().getPaintName().equals(
-									"Blue (Light)")) {
+							}
+							else if (graph.getShapeAndPaint().getPaintName().equals("Blue (Light)")) {
 								cols[29]++;
-							} else if (graph.getShapeAndPaint().getPaintName().equals(
-									"Green (Light)")) {
+							}
+							else if (graph.getShapeAndPaint().getPaintName().equals("Green (Light)")) {
 								cols[30]++;
-							} else if (graph.getShapeAndPaint().getPaintName().equals(
-									"Yellow (Light)")) {
+							}
+							else if (graph.getShapeAndPaint().getPaintName().equals("Yellow (Light)")) {
 								cols[31]++;
-							} else if (graph.getShapeAndPaint().getPaintName().equals(
-									"Magenta (Light)")) {
+							}
+							else if (graph.getShapeAndPaint().getPaintName().equals("Magenta (Light)")) {
 								cols[32]++;
-							} else if (graph.getShapeAndPaint().getPaintName().equals(
-									"Cyan (Light)")) {
+							}
+							else if (graph.getShapeAndPaint().getPaintName().equals("Cyan (Light)")) {
 								cols[33]++;
 							}
 							if (graph.getShapeAndPaint().getShapeName().equals("Square")) {
 								shaps[0]++;
-							} else if (graph.getShapeAndPaint().getShapeName().equals("Circle")) {
+							}
+							else if (graph.getShapeAndPaint().getShapeName().equals("Circle")) {
 								shaps[1]++;
-							} else if (graph.getShapeAndPaint().getShapeName().equals("Triangle")) {
+							}
+							else if (graph.getShapeAndPaint().getShapeName().equals("Triangle")) {
 								shaps[2]++;
-							} else if (graph.getShapeAndPaint().getShapeName().equals("Diamond")) {
+							}
+							else if (graph.getShapeAndPaint().getShapeName().equals("Diamond")) {
 								shaps[3]++;
-							} else if (graph.getShapeAndPaint().getShapeName().equals(
-									"Rectangle (Horizontal)")) {
+							}
+							else if (graph.getShapeAndPaint().getShapeName().equals("Rectangle (Horizontal)")) {
 								shaps[4]++;
-							} else if (graph.getShapeAndPaint().getShapeName().equals(
-									"Triangle (Upside Down)")) {
+							}
+							else if (graph.getShapeAndPaint().getShapeName().equals("Triangle (Upside Down)")) {
 								shaps[5]++;
-							} else if (graph.getShapeAndPaint().getShapeName().equals(
-									"Circle (Half)")) {
+							}
+							else if (graph.getShapeAndPaint().getShapeName().equals("Circle (Half)")) {
 								shaps[6]++;
-							} else if (graph.getShapeAndPaint().getShapeName().equals("Arrow")) {
+							}
+							else if (graph.getShapeAndPaint().getShapeName().equals("Arrow")) {
 								shaps[7]++;
-							} else if (graph.getShapeAndPaint().getShapeName().equals(
-									"Rectangle (Vertical)")) {
+							}
+							else if (graph.getShapeAndPaint().getShapeName().equals("Rectangle (Vertical)")) {
 								shaps[8]++;
-							} else if (graph.getShapeAndPaint().getShapeName().equals(
-									"Arrow (Backwards)")) {
+							}
+							else if (graph.getShapeAndPaint().getShapeName().equals("Arrow (Backwards)")) {
 								shaps[9]++;
 							}
 						}
@@ -1855,12 +1884,12 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						if (allChecked) {
 							use.setSelected(true);
 						}
-						graphed.add(new GraphSpecies(shapey.get(shapesCombo.get(i)
-								.getSelectedItem()), colory.get(colorsCombo.get(i)
-								.getSelectedItem()), filled.get(i).isSelected(), visible.get(i)
-								.isSelected(), connected.get(i).isSelected(), selected, series.get(
-								i).getText().trim(), i, directory));
-					} else {
+						graphed.add(new GraphSpecies(shapey.get(shapesCombo.get(i).getSelectedItem()), colory
+								.get(colorsCombo.get(i).getSelectedItem()), filled.get(i).isSelected(), visible
+								.get(i).isSelected(), connected.get(i).isSelected(), selected, series.get(i)
+								.getText().trim(), i, directory));
+					}
+					else {
 						use.setSelected(false);
 						colorsCombo.get(i).setSelectedIndex(0);
 						shapesCombo.get(i).setSelectedIndex(0);
@@ -1899,7 +1928,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								g.setVisible(true);
 							}
 						}
-					} else {
+					}
+					else {
 						visibleLabel.setSelected(false);
 						for (GraphSpecies g : graphed) {
 							if (g.getRunNumber().equals(selected) && g.getNumber() == i
@@ -1933,7 +1963,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								g.setFilled(true);
 							}
 						}
-					} else {
+					}
+					else {
 						filledLabel.setSelected(false);
 						for (GraphSpecies g : graphed) {
 							if (g.getRunNumber().equals(selected) && g.getNumber() == i
@@ -1967,7 +1998,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								g.setConnected(true);
 							}
 						}
-					} else {
+					}
+					else {
 						connectedLabel.setSelected(false);
 						for (GraphSpecies g : graphed) {
 							if (g.getRunNumber().equals(selected) && g.getNumber() == i
@@ -2063,8 +2095,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 	private void fixGraph(String title, String x, String y, XYSeriesCollection dataset) {
 		curData = dataset;
-		chart = ChartFactory.createXYLineChart(title, x, y, dataset, PlotOrientation.VERTICAL,
-				true, true, false);
+		chart = ChartFactory.createXYLineChart(title, x, y, dataset, PlotOrientation.VERTICAL, true,
+				true, false);
 		chart.addProgressListener(this);
 		ChartPanel graph = new ChartPanel(chart);
 		if (graphed.isEmpty()) {
@@ -2133,48 +2165,47 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			File file;
 			if (savedPics != null) {
 				file = new File(savedPics);
-			} else {
+			}
+			else {
 				file = null;
 			}
-			String filename = Buttons.browse(biomodelsim.frame(), file, null,
-					JFileChooser.FILES_ONLY, "Export");
+			String filename = Buttons.browse(biomodelsim.frame(), file, null, JFileChooser.FILES_ONLY,
+					"Export");
 			if ((filename.length() > 4)
-					&& (filename.substring((filename.length() - 4), filename.length())
-							.equals(".jpg"))) {
+					&& (filename.substring((filename.length() - 4), filename.length()).equals(".jpg"))) {
 				output = 0;
-			} else if ((filename.length() > 4)
-					&& (filename.substring((filename.length() - 4), filename.length())
-							.equals(".png"))) {
+			}
+			else if ((filename.length() > 4)
+					&& (filename.substring((filename.length() - 4), filename.length()).equals(".png"))) {
 				output = 1;
-			} else if ((filename.length() > 4)
-					&& (filename.substring((filename.length() - 4), filename.length())
-							.equals(".pdf"))) {
+			}
+			else if ((filename.length() > 4)
+					&& (filename.substring((filename.length() - 4), filename.length()).equals(".pdf"))) {
 				output = 2;
-			} else if ((filename.length() > 4)
-					&& (filename.substring((filename.length() - 4), filename.length())
-							.equals(".eps"))) {
+			}
+			else if ((filename.length() > 4)
+					&& (filename.substring((filename.length() - 4), filename.length()).equals(".eps"))) {
 				output = 3;
-			} else if ((filename.length() > 4)
-					&& (filename.substring((filename.length() - 4), filename.length())
-							.equals(".svg"))) {
+			}
+			else if ((filename.length() > 4)
+					&& (filename.substring((filename.length() - 4), filename.length()).equals(".svg"))) {
 				output = 4;
-			} else if ((filename.length() > 4)
-					&& (filename.substring((filename.length() - 4), filename.length())
-							.equals(".csv"))) {
+			}
+			else if ((filename.length() > 4)
+					&& (filename.substring((filename.length() - 4), filename.length()).equals(".csv"))) {
 				output = 5;
-			} else if ((filename.length() > 4)
-					&& (filename.substring((filename.length() - 4), filename.length())
-							.equals(".dat"))) {
+			}
+			else if ((filename.length() > 4)
+					&& (filename.substring((filename.length() - 4), filename.length()).equals(".dat"))) {
 				output = 6;
-			} else if ((filename.length() > 4)
-					&& (filename.substring((filename.length() - 4), filename.length())
-							.equals(".tsd"))) {
+			}
+			else if ((filename.length() > 4)
+					&& (filename.substring((filename.length() - 4), filename.length()).equals(".tsd"))) {
 				output = 7;
 			}
 			if ((!filename.equals("")) && (output != 5) && (output != 6) && (output != 7)) {
-				value = JOptionPane.showOptionDialog(biomodelsim.frame(), sizePanel,
-						"Enter Size Of File", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
-						null, options2, options2[0]);
+				value = JOptionPane.showOptionDialog(biomodelsim.frame(), sizePanel, "Enter Size Of File",
+						JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options2, options2[0]);
 				if (value == JOptionPane.YES_OPTION) {
 					while (value == JOptionPane.YES_OPTION && (width == -1 || height == -1))
 						try {
@@ -2186,19 +2217,21 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 										JOptionPane.ERROR_MESSAGE);
 								width = -1;
 								height = -1;
-								value = JOptionPane.showOptionDialog(biomodelsim.frame(),
-										sizePanel, "Enter Size Of File", JOptionPane.YES_NO_OPTION,
-										JOptionPane.PLAIN_MESSAGE, null, options2, options2[0]);
+								value = JOptionPane.showOptionDialog(biomodelsim.frame(), sizePanel,
+										"Enter Size Of File", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
+										null, options2, options2[0]);
 							}
-						} catch (Exception e2) {
-							JOptionPane.showMessageDialog(biomodelsim.frame(),
-									"Width and height must be positive integers!", "Error",
-									JOptionPane.ERROR_MESSAGE);
+						}
+						catch (Exception e2) {
+							JOptionPane
+									.showMessageDialog(biomodelsim.frame(),
+											"Width and height must be positive integers!", "Error",
+											JOptionPane.ERROR_MESSAGE);
 							width = -1;
 							height = -1;
 							value = JOptionPane.showOptionDialog(biomodelsim.frame(), sizePanel,
-									"Enter Size Of File", JOptionPane.YES_NO_OPTION,
-									JOptionPane.PLAIN_MESSAGE, null, options2, options2[0]);
+									"Enter Size Of File", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
+									options2, options2[0]);
 						}
 				}
 				if (value == JOptionPane.NO_OPTION) {
@@ -2284,16 +2317,17 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				file = new File(filename);
 				if (file.exists()) {
 					Object[] options = { "Overwrite", "Cancel" };
-					value = JOptionPane.showOptionDialog(biomodelsim.frame(),
-							"File already exists." + " Overwrite?", "File Already Exists",
-							JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
-							options[0]);
+					value = JOptionPane.showOptionDialog(biomodelsim.frame(), "File already exists."
+							+ " Overwrite?", "File Already Exists", JOptionPane.YES_NO_OPTION,
+							JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 					if (value == JOptionPane.YES_OPTION) {
 						if (output == 0) {
 							ChartUtilities.saveChartAsJPEG(file, chart, width, height);
-						} else if (output == 1) {
+						}
+						else if (output == 1) {
 							ChartUtilities.saveChartAsPNG(file, chart, width, height);
-						} else if (output == 2) {
+						}
+						else if (output == 2) {
 							Rectangle pagesize = new Rectangle(width, height);
 							Document document = new Document(pagesize, 50, 50, 50, 50);
 							FileOutputStream out = new FileOutputStream(file);
@@ -2301,24 +2335,23 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							document.open();
 							PdfContentByte cb = writer.getDirectContent();
 							PdfTemplate tp = cb.createTemplate(width, height);
-							Graphics2D g2 = tp.createGraphics(width, height,
-									new DefaultFontMapper());
+							Graphics2D g2 = tp.createGraphics(width, height, new DefaultFontMapper());
 							chart.draw(g2, new java.awt.Rectangle(width, height));
 							g2.dispose();
 							cb.addTemplate(tp, 0, 0);
 							document.close();
 							out.close();
-						} else if (output == 3) {
+						}
+						else if (output == 3) {
 							Graphics2D g = new EpsGraphics2D();
 							chart.draw(g, new java.awt.Rectangle(width, height));
 							Writer out = new FileWriter(file);
 							out.write(g.toString());
 							out.close();
-						} else if (output == 4) {
-							DOMImplementation domImpl = GenericDOMImplementation
-									.getDOMImplementation();
-							org.w3c.dom.Document document = domImpl.createDocument(null, "svg",
-									null);
+						}
+						else if (output == 4) {
+							DOMImplementation domImpl = GenericDOMImplementation.getDOMImplementation();
+							org.w3c.dom.Document document = domImpl.createDocument(null, "svg", null);
 							SVGGraphics2D svgGenerator = new SVGGraphics2D(document);
 							svgGenerator.setSVGCanvasSize(new Dimension(width, height));
 							chart.draw(svgGenerator, new java.awt.Rectangle(width, height));
@@ -2328,12 +2361,14 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							svgGenerator.stream(out, useCSS);
 							out.close();
 							outStream.close();
-						} else if ((output == 5) || (output == 6) || (output == 7)) {
+						}
+						else if ((output == 5) || (output == 6) || (output == 7)) {
 							FileOutputStream csvFile = new FileOutputStream(file);
 							PrintWriter csvWriter = new PrintWriter(csvFile);
 							if (output == 7) {
 								csvWriter.print("((");
-							} else if (output == 6) {
+							}
+							else if (output == 6) {
 								csvWriter.print("#");
 							}
 							csvWriter.print("\"Time\"");
@@ -2342,7 +2377,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							for (int i = 0; i < curData.getSeriesCount(); i++) {
 								if (output == 6) {
 									csvWriter.print(" ");
-								} else {
+								}
+								else {
 									csvWriter.print(",");
 								}
 								csvWriter.print("\"" + curData.getSeriesKey(i) + "\"");
@@ -2353,7 +2389,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							}
 							if (output == 7) {
 								csvWriter.print(")");
-							} else {
+							}
+							else {
 								csvWriter.println("");
 							}
 							for (int j = 0; j < count; j++) {
@@ -2365,29 +2402,32 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 										if (output == 7) {
 											csvWriter.print("(");
 										}
-										csvWriter.print(curData.getSeries(pos).getDataItem(j)
-												.getX());
+										csvWriter.print(curData.getSeries(pos).getDataItem(j).getX());
 									}
 									XYSeries data = curData.getSeries(i);
 									if (j < data.getItemCount()) {
 										XYDataItem item = data.getDataItem(j);
 										if (output == 6) {
 											csvWriter.print(" ");
-										} else {
+										}
+										else {
 											csvWriter.print(",");
 										}
 										csvWriter.print(item.getY());
-									} else {
+									}
+									else {
 										if (output == 6) {
 											csvWriter.print(" ");
-										} else {
+										}
+										else {
 											csvWriter.print(",");
 										}
 									}
 								}
 								if (output == 7) {
 									csvWriter.print(")");
-								} else {
+								}
+								else {
 									csvWriter.println("");
 								}
 							}
@@ -2399,12 +2439,15 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						}
 						savedPics = filename;
 					}
-				} else {
+				}
+				else {
 					if (output == 0) {
 						ChartUtilities.saveChartAsJPEG(file, chart, width, height);
-					} else if (output == 1) {
+					}
+					else if (output == 1) {
 						ChartUtilities.saveChartAsPNG(file, chart, width, height);
-					} else if (output == 2) {
+					}
+					else if (output == 2) {
 						Rectangle pagesize = new Rectangle(width, height);
 						Document document = new Document(pagesize, 50, 50, 50, 50);
 						FileOutputStream out = new FileOutputStream(file);
@@ -2418,13 +2461,15 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						cb.addTemplate(tp, 0, 0);
 						document.close();
 						out.close();
-					} else if (output == 3) {
+					}
+					else if (output == 3) {
 						Graphics2D g = new EpsGraphics2D();
 						chart.draw(g, new java.awt.Rectangle(width, height));
 						Writer out = new FileWriter(file);
 						out.write(g.toString());
 						out.close();
-					} else if (output == 4) {
+					}
+					else if (output == 4) {
 						DOMImplementation domImpl = GenericDOMImplementation.getDOMImplementation();
 						org.w3c.dom.Document document = domImpl.createDocument(null, "svg", null);
 						SVGGraphics2D svgGenerator = new SVGGraphics2D(document);
@@ -2435,12 +2480,14 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						svgGenerator.stream(out, useCSS);
 						out.close();
 						outStream.close();
-					} else if ((output == 5) || (output == 6) || (output == 7)) {
+					}
+					else if ((output == 5) || (output == 6) || (output == 7)) {
 						FileOutputStream csvFile = new FileOutputStream(file);
 						PrintWriter csvWriter = new PrintWriter(csvFile);
 						if (output == 7) {
 							csvWriter.print("((");
-						} else if (output == 6) {
+						}
+						else if (output == 6) {
 							csvWriter.print("#");
 						}
 						csvWriter.print("Time");
@@ -2449,7 +2496,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						for (int i = 0; i < curData.getSeriesCount(); i++) {
 							if (output == 6) {
 								csvWriter.print(" ");
-							} else {
+							}
+							else {
 								csvWriter.print(",");
 							}
 							csvWriter.print(curData.getSeriesKey(i));
@@ -2460,7 +2508,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						}
 						if (output == 7) {
 							csvWriter.print(")");
-						} else {
+						}
+						else {
 							csvWriter.println("");
 						}
 						for (int j = 0; j < count; j++) {
@@ -2479,21 +2528,25 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 									XYDataItem item = data.getDataItem(j);
 									if (output == 6) {
 										csvWriter.print(" ");
-									} else {
+									}
+									else {
 										csvWriter.print(",");
 									}
 									csvWriter.print(item.getY());
-								} else {
+								}
+								else {
 									if (output == 6) {
 										csvWriter.print(" ");
-									} else {
+									}
+									else {
 										csvWriter.print(",");
 									}
 								}
 							}
 							if (output == 7) {
 								csvWriter.print(")");
-							} else {
+							}
+							else {
 								csvWriter.println("");
 							}
 						}
@@ -2506,7 +2559,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					savedPics = filename;
 				}
 			}
-		} catch (Exception e1) {
+		}
+		catch (Exception e1) {
 			JOptionPane.showMessageDialog(biomodelsim.frame(), "Unable To Export File!", "Error",
 					JOptionPane.ERROR_MESSAGE);
 		}
@@ -2543,16 +2597,19 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						String check = "" + next + after;
 						if (word.equals("") || word.equals("0") || check.equals("0,")) {
 							readWord = false;
-						} else {
+						}
+						else {
 							word += cha;
 						}
 						input.reset();
-					} else if (cha == ',' || cha == ':' || cha == ';' || cha == '!' || cha == '?'
-							|| cha == '\"' || cha == '\'' || cha == '(' || cha == ')' || cha == '{'
-							|| cha == '}' || cha == '[' || cha == ']' || cha == '<' || cha == '>'
-							|| cha == '*' || cha == '=' || cha == '#') {
+					}
+					else if (cha == ',' || cha == ':' || cha == ';' || cha == '!' || cha == '?'
+							|| cha == '\"' || cha == '\'' || cha == '(' || cha == ')' || cha == '{' || cha == '}'
+							|| cha == '[' || cha == ']' || cha == '<' || cha == '>' || cha == '*' || cha == '='
+							|| cha == '#') {
 						readWord = false;
-					} else if (read != -1) {
+					}
+					else if (read != -1) {
 						word += cha;
 					}
 				}
@@ -2568,18 +2625,17 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						if (directory == null) {
 							for (String f : new File(outDir).list()) {
 								if (f.contains(fileStem)) {
-									int tempNum = Integer.parseInt(f.substring(fileStem.length(), f
-											.length() - 4));
+									int tempNum = Integer.parseInt(f.substring(fileStem.length(), f.length() - 4));
 									if (tempNum > runsToMake) {
 										runsToMake = tempNum;
 									}
 								}
 							}
-						} else {
+						}
+						else {
 							for (String f : new File(outDir + separator + directory).list()) {
 								if (f.contains(fileStem)) {
-									int tempNum = Integer.parseInt(f.substring(fileStem.length(), f
-											.length() - 4));
+									int tempNum = Integer.parseInt(f.substring(fileStem.length(), f.length() - 4));
 									if (tempNum > runsToMake) {
 										runsToMake = tempNum;
 									}
@@ -2605,27 +2661,16 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								while (loop && j < runsToMake && (j + 1) != skip) {
 									if (directory == null) {
 										if (new File(outDir + separator + fileStem + (j + 1) + "."
-												+ printer_id.substring(0, printer_id.length() - 8))
-												.exists()) {
+												+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
 											input.close();
 											prog.close();
 											fileInput.close();
-											fileInput = new FileInputStream(new File(outDir
-													+ separator
-													+ fileStem
-													+ (j + 1)
-													+ "."
-													+ printer_id.substring(0,
-															printer_id.length() - 8)));
-											prog = new ProgressMonitorInputStream(biomodelsim
-													.frame(), "Reading Reb2sac Output Data From "
-													+ new File(outDir
-															+ separator
-															+ fileStem
-															+ (j + 1)
-															+ "."
-															+ printer_id.substring(0, printer_id
-																	.length() - 8)).getName(),
+											fileInput = new FileInputStream(new File(outDir + separator + fileStem
+													+ (j + 1) + "." + printer_id.substring(0, printer_id.length() - 8)));
+											prog = new ProgressMonitorInputStream(biomodelsim.frame(),
+													"Reading Reb2sac Output Data From "
+															+ new File(outDir + separator + fileStem + (j + 1) + "."
+																	+ printer_id.substring(0, printer_id.length() - 8)).getName(),
 													fileInput);
 											input = new BufferedInputStream(prog);
 											for (int i = 0; i < readCount; i++) {
@@ -2633,37 +2678,25 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 											}
 											loop = false;
 											count++;
-										} else {
+										}
+										else {
 											j++;
 										}
-									} else {
-										if (new File(outDir + separator + directory + separator
-												+ fileStem + (j + 1) + "."
-												+ printer_id.substring(0, printer_id.length() - 8))
-												.exists()) {
+									}
+									else {
+										if (new File(outDir + separator + directory + separator + fileStem + (j + 1)
+												+ "." + printer_id.substring(0, printer_id.length() - 8)).exists()) {
 											input.close();
 											prog.close();
 											fileInput.close();
-											fileInput = new FileInputStream(new File(outDir
-													+ separator
-													+ directory
-													+ separator
-													+ fileStem
-													+ (j + 1)
-													+ "."
-													+ printer_id.substring(0,
-															printer_id.length() - 8)));
-											prog = new ProgressMonitorInputStream(biomodelsim
-													.frame(), "Reading Reb2sac Output Data From "
-													+ new File(outDir
-															+ separator
-															+ directory
-															+ separator
-															+ fileStem
-															+ (j + 1)
-															+ "."
-															+ printer_id.substring(0, printer_id
-																	.length() - 8)).getName(),
+											fileInput = new FileInputStream(new File(outDir + separator + directory
+													+ separator + fileStem + (j + 1) + "."
+													+ printer_id.substring(0, printer_id.length() - 8)));
+											prog = new ProgressMonitorInputStream(biomodelsim.frame(),
+													"Reading Reb2sac Output Data From "
+															+ new File(outDir + separator + directory + separator + fileStem
+																	+ (j + 1) + "."
+																	+ printer_id.substring(0, printer_id.length() - 8)).getName(),
 													fileInput);
 											input = new BufferedInputStream(prog);
 											for (int i = 0; i < readCount; i++) {
@@ -2671,7 +2704,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 											}
 											loop = false;
 											count++;
-										} else {
+										}
+										else {
 											j++;
 										}
 									}
@@ -2685,12 +2719,11 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								while (readWord) {
 									read = input.read();
 									cha = (char) read;
-									while (!Character.isWhitespace(cha) && cha != ',' && cha != ':'
-											&& cha != ';' && cha != '!' && cha != '?'
-											&& cha != '\"' && cha != '\'' && cha != '('
-											&& cha != ')' && cha != '{' && cha != '}' && cha != '['
-											&& cha != ']' && cha != '<' && cha != '>' && cha != '_'
-											&& cha != '*' && cha != '=' && read != -1) {
+									while (!Character.isWhitespace(cha) && cha != ',' && cha != ':' && cha != ';'
+											&& cha != '!' && cha != '?' && cha != '\"' && cha != '\'' && cha != '('
+											&& cha != ')' && cha != '{' && cha != '}' && cha != '[' && cha != ']'
+											&& cha != '<' && cha != '>' && cha != '_' && cha != '*' && cha != '='
+											&& read != -1) {
 										word += cha;
 										read = input.read();
 										cha = (char) read;
@@ -2708,97 +2741,78 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 											insert = counter;
 											(average.get(insert)).add(Double.parseDouble(word));
 											if (insert == 0) {
-												(variance.get(insert))
-														.add(Double.parseDouble(word));
-											} else {
-												(variance.get(insert)).add(0.0);
+												(variance.get(insert)).add(Double.parseDouble(word));
 											}
-										} else {
-											insert = counter % graphSpecies.size();
-											(average.get(insert)).add(Double.parseDouble(word));
-											if (insert == 0) {
-												(variance.get(insert))
-														.add(Double.parseDouble(word));
-											} else {
+											else {
 												(variance.get(insert)).add(0.0);
 											}
 										}
-									} else {
+										else {
+											insert = counter % graphSpecies.size();
+											(average.get(insert)).add(Double.parseDouble(word));
+											if (insert == 0) {
+												(variance.get(insert)).add(Double.parseDouble(word));
+											}
+											else {
+												(variance.get(insert)).add(0.0);
+											}
+										}
+									}
+									else {
 										if (counter < graphSpecies.size()) {
 											insert = counter;
 											try {
-												double old = (average.get(insert)).get(insert
-														/ graphSpecies.size());
-												(average.get(insert))
-														.set(
-																insert / graphSpecies.size(),
-																old
-																		+ ((Double
-																				.parseDouble(word) - old) / (count + 1)));
-												double newMean = (average.get(insert)).get(insert
-														/ graphSpecies.size());
+												double old = (average.get(insert)).get(insert / graphSpecies.size());
+												(average.get(insert)).set(insert / graphSpecies.size(), old
+														+ ((Double.parseDouble(word) - old) / (count + 1)));
+												double newMean = (average.get(insert)).get(insert / graphSpecies.size());
 												if (insert == 0) {
-													(variance.get(insert))
-															.set(
-																	insert / graphSpecies.size(),
-																	old
-																			+ ((Double
-																					.parseDouble(word) - old) / (count + 1)));
-												} else {
-													double vary = (((count - 1) * (variance
-															.get(insert)).get(insert
-															/ graphSpecies.size())) + (Double
-															.parseDouble(word) - newMean)
+													(variance.get(insert)).set(insert / graphSpecies.size(), old
+															+ ((Double.parseDouble(word) - old) / (count + 1)));
+												}
+												else {
+													double vary = (((count - 1) * (variance.get(insert)).get(insert
+															/ graphSpecies.size())) + (Double.parseDouble(word) - newMean)
 															* (Double.parseDouble(word) - old))
 															/ count;
-													(variance.get(insert)).set(insert
-															/ graphSpecies.size(), vary);
+													(variance.get(insert)).set(insert / graphSpecies.size(), vary);
 												}
-											} catch (Exception e2) {
+											}
+											catch (Exception e2) {
 												(average.get(insert)).add(Double.parseDouble(word));
 												if (insert == 0) {
-													(variance.get(insert)).add(Double
-															.parseDouble(word));
-												} else {
+													(variance.get(insert)).add(Double.parseDouble(word));
+												}
+												else {
 													(variance.get(insert)).add(0.0);
 												}
 											}
-										} else {
+										}
+										else {
 											insert = counter % graphSpecies.size();
 											try {
-												double old = (average.get(insert)).get(counter
-														/ graphSpecies.size());
-												(average.get(insert))
-														.set(
-																counter / graphSpecies.size(),
-																old
-																		+ ((Double
-																				.parseDouble(word) - old) / (count + 1)));
-												double newMean = (average.get(insert)).get(counter
-														/ graphSpecies.size());
+												double old = (average.get(insert)).get(counter / graphSpecies.size());
+												(average.get(insert)).set(counter / graphSpecies.size(), old
+														+ ((Double.parseDouble(word) - old) / (count + 1)));
+												double newMean = (average.get(insert)).get(counter / graphSpecies.size());
 												if (insert == 0) {
-													(variance.get(insert))
-															.set(
-																	counter / graphSpecies.size(),
-																	old
-																			+ ((Double
-																					.parseDouble(word) - old) / (count + 1)));
-												} else {
-													double vary = (((count - 1) * (variance
-															.get(insert)).get(counter
-															/ graphSpecies.size())) + (Double
-															.parseDouble(word) - newMean)
+													(variance.get(insert)).set(counter / graphSpecies.size(), old
+															+ ((Double.parseDouble(word) - old) / (count + 1)));
+												}
+												else {
+													double vary = (((count - 1) * (variance.get(insert)).get(counter
+															/ graphSpecies.size())) + (Double.parseDouble(word) - newMean)
 															* (Double.parseDouble(word) - old))
 															/ count;
-													(variance.get(insert)).set(counter
-															/ graphSpecies.size(), vary);
+													(variance.get(insert)).set(counter / graphSpecies.size(), vary);
 												}
-											} catch (Exception e2) {
+											}
+											catch (Exception e2) {
 												(average.get(insert)).add(Double.parseDouble(word));
 												if (insert == 0) {
-													(variance.get(insert)).add(Double
-															.parseDouble(word));
-												} else {
+													(variance.get(insert)).add(Double.parseDouble(word));
+												}
+												else {
 													(variance.get(insert)).add(0.0);
 												}
 											}
@@ -2809,7 +2823,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							}
 						}
 					}
-				} catch (Exception e1) {
+				}
+				catch (Exception e1) {
 				}
 			}
 			deviation = new ArrayList<ArrayList<Double>>();
@@ -2827,16 +2842,19 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			input.close();
 			prog.close();
 			fileInput.close();
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			JOptionPane.showMessageDialog(biomodelsim.frame(), "Error Reading Data!"
-					+ "\nThere was an error reading the simulation output data.",
-					"Error Reading Data", JOptionPane.ERROR_MESSAGE);
+					+ "\nThere was an error reading the simulation output data.", "Error Reading Data",
+					JOptionPane.ERROR_MESSAGE);
 		}
 		if (choice == 0) {
 			return average;
-		} else if (choice == 1) {
+		}
+		else if (choice == 1) {
 			return variance;
-		} else {
+		}
+		else {
 			return deviation;
 		}
 	}
@@ -2860,10 +2878,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			graph.setProperty("species.run.number." + i, graphed.get(i).getRunNumber());
 			graph.setProperty("species.name." + i, graphed.get(i).getSpecies());
 			graph.setProperty("species.visible." + i, "" + graphed.get(i).getVisible());
-			graph.setProperty("species.paint." + i, graphed.get(i).getShapeAndPaint()
-					.getPaintName());
-			graph.setProperty("species.shape." + i, graphed.get(i).getShapeAndPaint()
-					.getShapeName());
+			graph.setProperty("species.paint." + i, graphed.get(i).getShapeAndPaint().getPaintName());
+			graph.setProperty("species.shape." + i, graphed.get(i).getShapeAndPaint().getShapeName());
 			graph.setProperty("species.directory." + i, graphed.get(i).getDirectory());
 		}
 		try {
@@ -2872,7 +2888,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			store.close();
 			log.addText("Creating graph file:\n" + outDir + separator + graphName + "\n");
 			change = false;
-		} catch (Exception except) {
+		}
+		catch (Exception except) {
 			JOptionPane.showMessageDialog(biomodelsim.frame(), "Unable To Save Graph!", "Error",
 					JOptionPane.ERROR_MESSAGE);
 		}
@@ -2895,7 +2912,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			chart.getXYPlot().getRangeAxis().setLabel(graph.getProperty("y.axis"));
 			if (graph.getProperty("auto.resize").equals("true")) {
 				resize.setSelected(true);
-			} else {
+			}
+			else {
 				resize.setSelected(false);
 			}
 			int next = 0;
@@ -2903,30 +2921,32 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				boolean connected, filled, visible;
 				if (graph.getProperty("species.connected." + next).equals("true")) {
 					connected = true;
-				} else {
+				}
+				else {
 					connected = false;
 				}
 				if (graph.getProperty("species.filled." + next).equals("true")) {
 					filled = true;
-				} else {
+				}
+				else {
 					filled = false;
 				}
 				if (graph.getProperty("species.visible." + next).equals("true")) {
 					visible = true;
-				} else {
+				}
+				else {
 					visible = false;
 				}
-				graphed.add(new GraphSpecies(
-						shapes.get(graph.getProperty("species.shape." + next)), colors.get(graph
-								.getProperty("species.paint." + next)), filled, visible, connected,
-						graph.getProperty("species.run.number." + next), graph
-								.getProperty("species.name." + next), Integer.parseInt(graph
-								.getProperty("species.number." + next)), graph
+				graphed.add(new GraphSpecies(shapes.get(graph.getProperty("species.shape." + next)), colors
+						.get(graph.getProperty("species.paint." + next)), filled, visible, connected, graph
+						.getProperty("species.run.number." + next), graph.getProperty("species.name." + next),
+						Integer.parseInt(graph.getProperty("species.number." + next)), graph
 								.getProperty("species.directory." + next)));
 				next++;
 			}
 			refresh();
-		} catch (Exception except) {
+		}
+		catch (Exception except) {
 			JOptionPane.showMessageDialog(biomodelsim.frame(), "Unable To Load Graph!", "Error",
 					JOptionPane.ERROR_MESSAGE);
 		}
@@ -2955,7 +2975,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			minX = Double.parseDouble(num.format(minX));
 			maxX = Double.parseDouble(num.format(maxX));
 			scaleX = Double.parseDouble(num.format(scaleX));
-		} catch (Exception e1) {
+		}
+		catch (Exception e1) {
 		}
 		ArrayList<XYSeries> graphData = new ArrayList<XYSeries>();
 		XYLineAndShapeRenderer rend = (XYLineAndShapeRenderer) chart.getXYPlot().getRenderer();
@@ -2986,32 +3007,29 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					if (new File(outDir + separator + g.getRunNumber() + "."
 							+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
 						readGraphSpecies(outDir + separator + g.getRunNumber() + "."
-								+ printer_id.substring(0, printer_id.length() - 8), biomodelsim
-								.frame());
+								+ printer_id.substring(0, printer_id.length() - 8), biomodelsim.frame());
 						ArrayList<ArrayList<Double>> data;
 						if (allData.containsKey(g.getRunNumber() + " " + g.getDirectory())) {
 							data = allData.get(g.getRunNumber() + " " + g.getDirectory());
 							for (int i = 2; i < graphSpecies.size(); i++) {
 								String index = graphSpecies.get(i);
 								int j = i;
-								while ((j > 1)
-										&& graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
+								while ((j > 1) && graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
 									graphSpecies.set(j, graphSpecies.get(j - 1));
 									j = j - 1;
 								}
 								graphSpecies.set(j, index);
 							}
-						} else {
+						}
+						else {
 							data = readData(outDir + separator + g.getRunNumber() + "."
-									+ printer_id.substring(0, printer_id.length() - 8), biomodelsim
-									.frame(), chart.getXYPlot().getRangeAxis().getLabel(), g
-									.getRunNumber(), null);
+									+ printer_id.substring(0, printer_id.length() - 8), biomodelsim.frame(), chart
+									.getXYPlot().getRangeAxis().getLabel(), g.getRunNumber(), null);
 							for (int i = 2; i < graphSpecies.size(); i++) {
 								String index = graphSpecies.get(i);
 								ArrayList<Double> index2 = data.get(i);
 								int j = i;
-								while ((j > 1)
-										&& graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
+								while ((j > 1) && graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
 									graphSpecies.set(j, graphSpecies.get(j - 1));
 									data.set(j, data.get(j - 1));
 									j = j - 1;
@@ -3037,15 +3055,18 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 											(data.get(g.getNumber() + 1)).get(i));
 								}
 							}
-						} else {
+						}
+						else {
 							unableToGraph.add(g);
 							thisOne--;
 						}
-					} else {
+					}
+					else {
 						unableToGraph.add(g);
 						thisOne--;
 					}
-				} else {
+				}
+				else {
 					boolean ableToGraph = false;
 					try {
 						for (String s : new File(outDir).list()) {
@@ -3053,7 +3074,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								ableToGraph = true;
 							}
 						}
-					} catch (Exception e) {
+					}
+					catch (Exception e) {
 						ableToGraph = false;
 					}
 					if (ableToGraph) {
@@ -3063,32 +3085,29 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							nextOne++;
 						}
 						readGraphSpecies(outDir + separator + "run-" + nextOne + "."
-								+ printer_id.substring(0, printer_id.length() - 8), biomodelsim
-								.frame());
+								+ printer_id.substring(0, printer_id.length() - 8), biomodelsim.frame());
 						ArrayList<ArrayList<Double>> data;
 						if (allData.containsKey(g.getRunNumber() + " " + g.getDirectory())) {
 							data = allData.get(g.getRunNumber() + " " + g.getDirectory());
 							for (int i = 2; i < graphSpecies.size(); i++) {
 								String index = graphSpecies.get(i);
 								int j = i;
-								while ((j > 1)
-										&& graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
+								while ((j > 1) && graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
 									graphSpecies.set(j, graphSpecies.get(j - 1));
 									j = j - 1;
 								}
 								graphSpecies.set(j, index);
 							}
-						} else {
+						}
+						else {
 							data = readData(outDir + separator + "run-1."
-									+ printer_id.substring(0, printer_id.length() - 8), biomodelsim
-									.frame(), chart.getXYPlot().getRangeAxis().getLabel(), g
-									.getRunNumber().toLowerCase(), null);
+									+ printer_id.substring(0, printer_id.length() - 8), biomodelsim.frame(), chart
+									.getXYPlot().getRangeAxis().getLabel(), g.getRunNumber().toLowerCase(), null);
 							for (int i = 2; i < graphSpecies.size(); i++) {
 								String index = graphSpecies.get(i);
 								ArrayList<Double> index2 = data.get(i);
 								int j = i;
-								while ((j > 1)
-										&& graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
+								while ((j > 1) && graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
 									graphSpecies.set(j, graphSpecies.get(j - 1));
 									data.set(j, data.get(j - 1));
 									j = j - 1;
@@ -3114,16 +3133,19 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 											(data.get(g.getNumber() + 1)).get(i));
 								}
 							}
-						} else {
+						}
+						else {
 							unableToGraph.add(g);
 							thisOne--;
 						}
-					} else {
+					}
+					else {
 						unableToGraph.add(g);
 						thisOne--;
 					}
 				}
-			} else {
+			}
+			else {
 				thisOne++;
 				rend.setSeriesVisible(thisOne, true);
 				rend.setSeriesLinesVisible(thisOne, g.getConnected());
@@ -3133,38 +3155,32 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				rend.setSeriesShape(thisOne, g.getShapeAndPaint().getShape());
 				if (!g.getRunNumber().equals("Average") && !g.getRunNumber().equals("Variance")
 						&& !g.getRunNumber().equals("Standard Deviation")) {
-					if (new File(outDir + separator + g.getDirectory() + separator
-							+ g.getRunNumber() + "."
+					if (new File(outDir + separator + g.getDirectory() + separator + g.getRunNumber() + "."
 							+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
-						readGraphSpecies(outDir + separator + g.getDirectory() + separator
-								+ g.getRunNumber() + "."
-								+ printer_id.substring(0, printer_id.length() - 8), biomodelsim
-								.frame());
+						readGraphSpecies(outDir + separator + g.getDirectory() + separator + g.getRunNumber()
+								+ "." + printer_id.substring(0, printer_id.length() - 8), biomodelsim.frame());
 						ArrayList<ArrayList<Double>> data;
 						if (allData.containsKey(g.getRunNumber() + " " + g.getDirectory())) {
 							data = allData.get(g.getRunNumber() + " " + g.getDirectory());
 							for (int i = 2; i < graphSpecies.size(); i++) {
 								String index = graphSpecies.get(i);
 								int j = i;
-								while ((j > 1)
-										&& graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
+								while ((j > 1) && graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
 									graphSpecies.set(j, graphSpecies.get(j - 1));
 									j = j - 1;
 								}
 								graphSpecies.set(j, index);
 							}
-						} else {
-							data = readData(outDir + separator + g.getDirectory() + separator
-									+ g.getRunNumber() + "."
-									+ printer_id.substring(0, printer_id.length() - 8), biomodelsim
-									.frame(), chart.getXYPlot().getRangeAxis().getLabel(), g
-									.getRunNumber(), g.getDirectory());
+						}
+						else {
+							data = readData(outDir + separator + g.getDirectory() + separator + g.getRunNumber()
+									+ "." + printer_id.substring(0, printer_id.length() - 8), biomodelsim.frame(),
+									chart.getXYPlot().getRangeAxis().getLabel(), g.getRunNumber(), g.getDirectory());
 							for (int i = 2; i < graphSpecies.size(); i++) {
 								String index = graphSpecies.get(i);
 								ArrayList<Double> index2 = data.get(i);
 								int j = i;
-								while ((j > 1)
-										&& graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
+								while ((j > 1) && graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
 									graphSpecies.set(j, graphSpecies.get(j - 1));
 									data.set(j, data.get(j - 1));
 									j = j - 1;
@@ -3190,15 +3206,18 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 											(data.get(g.getNumber() + 1)).get(i));
 								}
 							}
-						} else {
+						}
+						else {
 							unableToGraph.add(g);
 							thisOne--;
 						}
-					} else {
+					}
+					else {
 						unableToGraph.add(g);
 						thisOne--;
 					}
-				} else {
+				}
+				else {
 					boolean ableToGraph = false;
 					try {
 						for (String s : new File(outDir + separator + g.getDirectory()).list()) {
@@ -3206,44 +3225,41 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								ableToGraph = true;
 							}
 						}
-					} catch (Exception e) {
+					}
+					catch (Exception e) {
 						ableToGraph = false;
 					}
 					if (ableToGraph) {
 						int nextOne = 1;
-						while (!new File(outDir + separator + g.getDirectory() + separator + "run-"
-								+ nextOne + "." + printer_id.substring(0, printer_id.length() - 8))
-								.exists()) {
+						while (!new File(outDir + separator + g.getDirectory() + separator + "run-" + nextOne
+								+ "." + printer_id.substring(0, printer_id.length() - 8)).exists()) {
 							nextOne++;
 						}
-						readGraphSpecies(outDir + separator + g.getDirectory() + separator + "run-"
-								+ nextOne + "." + printer_id.substring(0, printer_id.length() - 8),
-								biomodelsim.frame());
+						readGraphSpecies(outDir + separator + g.getDirectory() + separator + "run-" + nextOne
+								+ "." + printer_id.substring(0, printer_id.length() - 8), biomodelsim.frame());
 						ArrayList<ArrayList<Double>> data;
 						if (allData.containsKey(g.getRunNumber() + " " + g.getDirectory())) {
 							data = allData.get(g.getRunNumber() + " " + g.getDirectory());
 							for (int i = 2; i < graphSpecies.size(); i++) {
 								String index = graphSpecies.get(i);
 								int j = i;
-								while ((j > 1)
-										&& graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
+								while ((j > 1) && graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
 									graphSpecies.set(j, graphSpecies.get(j - 1));
 									j = j - 1;
 								}
 								graphSpecies.set(j, index);
 							}
-						} else {
-							data = readData(outDir + separator + g.getDirectory() + separator
-									+ "run-1." + printer_id.substring(0, printer_id.length() - 8),
-									biomodelsim.frame(), chart.getXYPlot().getRangeAxis()
-											.getLabel(), g.getRunNumber().toLowerCase(), g
-											.getDirectory());
+						}
+						else {
+							data = readData(outDir + separator + g.getDirectory() + separator + "run-1."
+									+ printer_id.substring(0, printer_id.length() - 8), biomodelsim.frame(), chart
+									.getXYPlot().getRangeAxis().getLabel(), g.getRunNumber().toLowerCase(), g
+									.getDirectory());
 							for (int i = 2; i < graphSpecies.size(); i++) {
 								String index = graphSpecies.get(i);
 								ArrayList<Double> index2 = data.get(i);
 								int j = i;
-								while ((j > 1)
-										&& graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
+								while ((j > 1) && graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
 									graphSpecies.set(j, graphSpecies.get(j - 1));
 									data.set(j, data.get(j - 1));
 									j = j - 1;
@@ -3269,11 +3285,13 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 											(data.get(g.getNumber() + 1)).get(i));
 								}
 							}
-						} else {
+						}
+						else {
 							unableToGraph.add(g);
 							thisOne--;
 						}
-					} else {
+					}
+					else {
 						unableToGraph.add(g);
 						thisOne--;
 					}
@@ -3293,7 +3311,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		XYPlot plot = chart.getXYPlot();
 		if (resize.isSelected()) {
 			resize(dataset);
-		} else {
+		}
+		else {
 			NumberAxis axis = (NumberAxis) plot.getRangeAxis();
 			axis.setAutoTickUnitSelection(false);
 			axis.setRange(minY, maxY);
