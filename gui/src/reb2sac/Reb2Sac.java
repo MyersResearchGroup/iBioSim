@@ -92,13 +92,19 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 	 */
 	private JLabel rapidLabel1, rapidLabel2, qssaLabel, maxConLabel;
 
-	private JCheckBox usingSSA; // check box for using ssa
+        private JCheckBox usingSSA,usingSAD; // check box for using ssa
 
 	private JComboBox availSpecies; // species for SSA
 
-	private JList ssa; // list of ssa
+        private JList ssa,sad; // list of ssa
 
 	private JTextField time; // time for ssa
+
+	private JTextField TCid; // id for sad
+
+	private JTextField desc; // description for sad
+
+	private JTextField cond; // condition for sad
 
 	private JTextField ssaModNum; // number that the ssa is changed by
 
@@ -106,17 +112,27 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 
 	private JButton addSSA, editSSA, removeSSA; // Buttons for editing SSA
 
+	private JButton addSAD, editSAD, removeSAD; // Buttons for editing SAD
+
 	private JButton newSSA; // Buttons for SSA file
+
+	private JButton newSAD; // Buttons for SAD file
 
 	private JLabel timeLabel; // Label for SSA
 
-	private Object[] ssaList; // array for ssa JList
+	private JLabel idLabel;   // ID label for SAD
+
+	private JLabel descLabel; // Description label for SAD
+
+	private JLabel condLabel; // Condition label for SAD
+
+	private Object[] ssaList,sadList; // array for ssa/sad JList
 
 	private JList properties; // JList for properties
 
 	private JTextField prop, value; // text areas for properties
 
-	private JButton addProp, removeProp; // buttons for properties
+        private JButton addProp, editProp, removeProp, newProp; // buttons for properties
 
 	private Object[] props; // array for properties JList
 
@@ -131,8 +147,6 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 	private JTabbedPane simTab; // the simulation tab
 
 	private SBML_Editor sbmlEditor; // sbml editor
-
-	private JTextArea sadFile;
 
 	private JRadioButton overwrite, append;
 
@@ -269,6 +283,54 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		removeIntSpecies.addActionListener(this);
 		clearIntSpecies.setEnabled(false);
 		clearIntSpecies.addActionListener(this);
+
+		// Creates some abstraction options
+		JPanel advancedGrid = new JPanel(new GridLayout(8, 2));
+		JPanel advanced = new JPanel(new GridLayout(2, 1));
+		JPanel rapidSpace1 = new JPanel();
+		JPanel rapidSpace2 = new JPanel();
+		JPanel rapidSpace3 = new JPanel();
+		JPanel rapidSpace4 = new JPanel();
+		JPanel qssaSpace1 = new JPanel();
+		JPanel qssaSpace2 = new JPanel();
+		JPanel maxConSpace1 = new JPanel();
+		JPanel maxConSpace2 = new JPanel();
+		rapidLabel1 = new JLabel("Rapid Equilibrium Condition 1:");
+		rapid1 = new JTextField("0.1", 15);
+		rapidLabel2 = new JLabel("Rapid Equilibrium Condition 2:");
+		rapid2 = new JTextField("0.1", 15);
+		qssaLabel = new JLabel("QSSA Condition:");
+		qssa = new JTextField("0.1", 15);
+		maxConLabel = new JLabel("Max Concentration Threshold:");
+		maxCon = new JTextField("15", 15);
+		maxConLabel.setEnabled(false);
+		maxCon.setEnabled(false);
+		qssaLabel.setEnabled(false);
+		qssa.setEnabled(false);
+		rapidLabel1.setEnabled(false);
+		rapid1.setEnabled(false);
+		rapidLabel2.setEnabled(false);
+		rapid2.setEnabled(false);
+		advancedGrid.add(rapidLabel1);
+		advancedGrid.add(rapid1);
+		advancedGrid.add(rapidSpace1);
+		advancedGrid.add(rapidSpace2);
+		advancedGrid.add(rapidLabel2);
+		advancedGrid.add(rapid2);
+		advancedGrid.add(rapidSpace3);
+		advancedGrid.add(rapidSpace4);
+		advancedGrid.add(qssaLabel);
+		advancedGrid.add(qssa);
+		advancedGrid.add(qssaSpace1);
+		advancedGrid.add(qssaSpace2);
+		advancedGrid.add(maxConLabel);
+		advancedGrid.add(maxCon);
+		advancedGrid.add(maxConSpace1);
+		advancedGrid.add(maxConSpace2);
+		advanced.add(advancedGrid);
+		//JPanel space = new JPanel();
+		//advanced.add(space);
+		advanced.add(speciesHolder);
 
 		// Sets up the radio buttons for Abstraction and Nary
 		JLabel choose = new JLabel("Choose One:");
@@ -428,64 +490,99 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		mainTermCond.add(termOptionsPanel, "South");
 
 		JPanel sadTermCondPanel = new JPanel(new BorderLayout());
-		sadFile = new JTextArea();
+		//sadFile = new JTextArea();
+		//JScrollPane scroll9 = new JScrollPane();
+		//scroll9.setViewportView(sadFile);
+		//sadTermCondPanel.add(scroll9, "Center");
+		newSAD = new JButton("Clear Conditions");
+		newSAD.setEnabled(false);
+		newSAD.addActionListener(this);
+		usingSAD = new JCheckBox("Use Termination Conditions");
+		usingSAD.setSelected(false);
+		usingSAD.addActionListener(this);
+		sad = new JList();
+		sad.setEnabled(false);
+		sad.addMouseListener(this);
+		sadList = new Object[0];
 		JScrollPane scroll9 = new JScrollPane();
-		scroll9.setViewportView(sadFile);
+		scroll9.setMinimumSize(new Dimension(260, 200));
+		scroll9.setPreferredSize(new Dimension(276, 132));
+		scroll9.setViewportView(sad);
+		JPanel sadAddPanel = new JPanel(new BorderLayout());
+		JPanel sadAddPanel1 = new JPanel();
+		JPanel sadAddPanel3 = new JPanel();
+		idLabel = new JLabel("ID: ");
+		idLabel.setEnabled(false);
+		TCid = new JTextField(10);
+		TCid.setEnabled(false);
+		descLabel = new JLabel("Description: ");
+		descLabel.setEnabled(false);
+		desc = new JTextField(20);
+		desc.setEnabled(false);
+		condLabel = new JLabel("Condition: ");
+		condLabel.setEnabled(false);
+		cond = new JTextField(35);
+		cond.setEnabled(false);
+		sadAddPanel1.add(idLabel);
+		sadAddPanel1.add(TCid);
+		sadAddPanel1.add(descLabel);
+		sadAddPanel1.add(desc);
+		sadAddPanel1.add(condLabel);
+		sadAddPanel1.add(cond);
+		addSAD= new JButton("Add Condition");
+		addSAD.setEnabled(false);
+		addSAD.addActionListener(this);
+		editSAD = new JButton("Edit Condition");
+		editSAD.setEnabled(false);
+		editSAD.addActionListener(this);
+		removeSAD = new JButton("Remove Condition");
+		removeSAD.setEnabled(false);
+		removeSAD.addActionListener(this);
+		sadAddPanel3.add(addSAD);
+		sadAddPanel3.add(editSAD);
+		sadAddPanel3.add(removeSAD);
+		sadAddPanel3.add(newSAD);
+		sadAddPanel.add(sadAddPanel1, "North");
+		//sadAddPanel.add(sadAddPanel2, "Center");
+		sadAddPanel.add(sadAddPanel3, "South");
+		sadTermCondPanel.add(usingSAD, "North");
 		sadTermCondPanel.add(scroll9, "Center");
-
-		// Creates some advanced options
-		JPanel advancedGrid = new JPanel(new GridLayout(8, 2));
-		JPanel advanced = new JPanel(new GridLayout(2, 1));
-		JPanel rapidSpace1 = new JPanel();
-		JPanel rapidSpace2 = new JPanel();
-		JPanel rapidSpace3 = new JPanel();
-		JPanel rapidSpace4 = new JPanel();
-		JPanel qssaSpace1 = new JPanel();
-		JPanel qssaSpace2 = new JPanel();
-		JPanel maxConSpace1 = new JPanel();
-		JPanel maxConSpace2 = new JPanel();
-		rapidLabel1 = new JLabel("Rapid Equilibrium Condition 1:");
-		rapid1 = new JTextField("0.1", 15);
-		rapidLabel2 = new JLabel("Rapid Equilibrium Condition 2:");
-		rapid2 = new JTextField("0.1", 15);
-		qssaLabel = new JLabel("QSSA Condition:");
-		qssa = new JTextField("0.1", 15);
-		maxConLabel = new JLabel("Max Concentration Threshold:");
-		maxCon = new JTextField("15", 15);
-		maxConLabel.setEnabled(false);
-		maxCon.setEnabled(false);
-		qssaLabel.setEnabled(false);
-		qssa.setEnabled(false);
-		rapidLabel1.setEnabled(false);
-		rapid1.setEnabled(false);
-		rapidLabel2.setEnabled(false);
-		rapid2.setEnabled(false);
-		advancedGrid.add(rapidLabel1);
-		advancedGrid.add(rapid1);
-		advancedGrid.add(rapidSpace1);
-		advancedGrid.add(rapidSpace2);
-		advancedGrid.add(rapidLabel2);
-		advancedGrid.add(rapid2);
-		advancedGrid.add(rapidSpace3);
-		advancedGrid.add(rapidSpace4);
-		advancedGrid.add(qssaLabel);
-		advancedGrid.add(qssa);
-		advancedGrid.add(qssaSpace1);
-		advancedGrid.add(qssaSpace2);
-		advancedGrid.add(maxConLabel);
-		advancedGrid.add(maxCon);
-		advancedGrid.add(maxConSpace1);
-		advancedGrid.add(maxConSpace2);
-		advanced.add(advancedGrid);
-		JPanel space = new JPanel();
-		advanced.add(space);
+		sadTermCondPanel.add(sadAddPanel, "South");
+		if (new File(root + separator + simName + separator + "termCond.sad").exists()) {
+		  try {
+		    BufferedReader input = 
+		      new BufferedReader(new FileReader(root + separator + simName + separator + "termCond.sad"));
+		    // + load.getProperty("computation.analysis.sad.path")));
+		    String read = input.readLine();
+		    while (read != null) {
+		      String[] TCid = read.split(" ");
+		      String desc = input.readLine();
+		      String cond = input.readLine();
+		      String add = TCid[1] + "; " + desc.substring(8,desc.length()-2) + "; " + cond.substring(7);
+		      JList addSAD = new JList();
+		      Object[] adding = { add };
+		      addSAD.setListData(adding);
+		      addSAD.setSelectedIndex(0);
+		      sadList = Buttons.add(sadList, sad, addSAD, false, null, null, null, null, null, null, this);
+		      //sadFile.append("" + (char) read);
+		      read = input.readLine();
+		      read = input.readLine();
+		    }
+		    sad.setListData(sadList);
+		    input.close();
+		  } catch (Exception e1) {
+		    JOptionPane.showMessageDialog(biomodelsim.frame(),
+						  "Unable to load termination condition file!", "Error Loading File",
+						  JOptionPane.ERROR_MESSAGE);
+		  }
+		}
 
 		// Creates the ssa with user defined species level update feature tab
 		JPanel ssaPanel = new JPanel(new BorderLayout());
-		newSSA = new JButton("Clear");
+		newSSA = new JButton("Clear Data Points");
 		newSSA.setEnabled(false);
 		newSSA.addActionListener(this);
-		usingSSA = new JCheckBox("Use User Defined Data File");
+		usingSSA = new JCheckBox("Use User Defined Data");
 		usingSSA.setSelected(false);
 		usingSSA.addActionListener(this);
 		ssa = new JList();
@@ -521,13 +618,13 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		ssaAddPanel1.add(availSpecies);
 		ssaAddPanel2.add(ssaMod);
 		ssaAddPanel2.add(ssaModNum);
-		addSSA = new JButton("Add");
+		addSSA = new JButton("Add Data Point");
 		addSSA.setEnabled(false);
 		addSSA.addActionListener(this);
-		editSSA = new JButton("Edit");
+		editSSA = new JButton("Edit Data Point");
 		editSSA.setEnabled(false);
 		editSSA.addActionListener(this);
-		removeSSA = new JButton("Remove");
+		removeSSA = new JButton("Remove Data Point");
 		removeSSA.setEnabled(false);
 		removeSSA.addActionListener(this);
 		ssaAddPanel3.add(addSSA);
@@ -621,9 +718,9 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		JPanel propertiesPanel2 = new JPanel(new BorderLayout());
 		JPanel propertiesInput = new JPanel();
 		JPanel propertiesButtons = new JPanel();
-		JLabel propertiesLabel = new JLabel("Properties To Add:");
-		JLabel propLabel = new JLabel("Property");
-		JLabel valueLabel = new JLabel("Value");
+		//JLabel propertiesLabel = new JLabel("Properties To Add:");
+		JLabel propLabel = new JLabel("Option:");
+		JLabel valueLabel = new JLabel("Value:");
 		properties = new JList();
 		properties.addMouseListener(this);
 		JScrollPane scroll6 = new JScrollPane();
@@ -633,19 +730,25 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		props = new Object[0];
 		prop = new JTextField(20);
 		value = new JTextField(20);
-		addProp = new JButton("Add");
+		addProp = new JButton("Add Option");
 		addProp.addActionListener(this);
-		removeProp = new JButton("Remove");
+		editProp = new JButton("Edit Option");
+		editProp.addActionListener(this);
+		removeProp = new JButton("Remove Option");
 		removeProp.addActionListener(this);
+		newProp = new JButton("Clear Options");
+		newProp.addActionListener(this);
 		propertiesInput.add(propLabel);
 		propertiesInput.add(prop);
 		propertiesInput.add(valueLabel);
 		propertiesInput.add(value);
 		propertiesButtons.add(addProp);
+		propertiesButtons.add(editProp);
 		propertiesButtons.add(removeProp);
+		propertiesButtons.add(newProp);
 		propertiesPanel2.add(propertiesInput, "Center");
 		propertiesPanel2.add(propertiesButtons, "South");
-		propertiesPanel1.add(propertiesLabel, "North");
+		//propertiesPanel1.add(propertiesLabel, "North");
 		propertiesPanel1.add(scroll6, "Center");
 		propertiesPanel.add(propertiesPanel1, "Center");
 		propertiesPanel.add(propertiesPanel2, "South");
@@ -653,12 +756,12 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		// Creates the tabs and adds them to the main panel
 		JTabbedPane tab = new JTabbedPane();
 		tab.addTab("Options", mainTabbedPanel);
-		tab.addTab("Termination Conditions", mainTermCond);
-		tab.addTab("Advanced Termination Conditions", sadTermCondPanel);
-		tab.addTab("Interesting Species", speciesHolder);
-		tab.addTab("User Defined Data File", ssaPanel);
-		tab.addTab("Properties", propertiesPanel);
-		tab.addTab("Advanced Options", advanced);
+		//tab.addTab("Interesting Species", speciesHolder);
+		tab.addTab("User Defined Data", ssaPanel);
+		tab.addTab("Abstraction Options", advanced);
+		//tab.addTab("Termination Conditions", mainTermCond);
+		tab.addTab("Termination Conditions", sadTermCondPanel);
+		tab.addTab("Advanced Options", propertiesPanel);
 		this.setLayout(new BorderLayout());
 		this.add(tab, "Center");
 		this.add(runHolder, "South");
@@ -1032,6 +1135,36 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				}
 			}
 		}
+		// if the using sad check box is clicked
+		else if (e.getSource() == usingSAD) {
+			if (usingSAD.isSelected()) {
+				sad.setEnabled(true);
+				newSAD.setEnabled(true);
+				usingSAD.setSelected(true);
+				idLabel.setEnabled(true);
+				TCid.setEnabled(true);
+				descLabel.setEnabled(true);
+				desc.setEnabled(true);
+				condLabel.setEnabled(true);
+				cond.setEnabled(true);
+				addSAD.setEnabled(true);
+				editSAD.setEnabled(true);
+				removeSAD.setEnabled(true);
+			} else {
+				sad.setEnabled(false);
+				newSAD.setEnabled(false);
+				usingSAD.setSelected(false);
+				idLabel.setEnabled(false);
+				TCid.setEnabled(false);
+				descLabel.setEnabled(false);
+				desc.setEnabled(false);
+				condLabel.setEnabled(false);
+				cond.setEnabled(false);
+				addSAD.setEnabled(false);
+				editSAD.setEnabled(false);
+				removeSAD.setEnabled(false);
+			}
+		}
 		// if the add ssa button is clicked
 		else if (e.getSource() == addSSA) {
 			double time = 0;
@@ -1126,6 +1259,19 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				}
 			}
 			ssa.setListData(ssaList);
+		}
+		// if the add sad button is clicked
+		else if (e.getSource() == addSAD) {
+		        String add = TCid.getText().trim() + "; " + desc.getText().trim() + "; " + cond.getText().trim();
+			JList addSAD = new JList();
+			Object[] adding = { add };
+			addSAD.setListData(adding);
+			addSAD.setSelectedIndex(0);
+			TCid.setText("");
+			desc.setText("");
+			cond.setText("");
+			sadList = Buttons.add(sadList, sad, addSAD, false, null, null, null, null, null, null, this);
+			sad.setListData(sadList);
 		}
 		// if the edit ssa button is clicked
 		else if (e.getSource() == editSSA) {
@@ -1308,9 +1454,88 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				}
 			}
 		}
+		// if the edit sad button is clicked
+		else if (e.getSource() == editSAD) {
+			if (sad.getSelectedIndex() != -1) {
+				String[] get = ((String) sadList[sad.getSelectedIndex()]).split(";");
+				JPanel sadAddPanel = new JPanel(new BorderLayout());
+				JPanel sadAddPanel0 = new JPanel();
+				JPanel sadAddPanel1 = new JPanel();
+				JPanel sadAddPanel2 = new JPanel();
+				JLabel idLabel = new JLabel("ID: ");
+				JTextField TCid = new JTextField(10);
+				TCid.setText(get[0].trim());
+				JLabel descLabel = new JLabel("Description: ");
+				JTextField desc = new JTextField(20);
+				desc.setText(get[1].trim());
+				JLabel condLabel = new JLabel("Condition: ");
+				JTextField cond = new JTextField(35);
+				cond.setText(get[2].trim());
+				sadAddPanel0.add(idLabel);
+				sadAddPanel0.add(TCid);
+				sadAddPanel1.add(descLabel);
+				sadAddPanel1.add(desc);
+				sadAddPanel2.add(condLabel);
+				sadAddPanel2.add(cond);
+				sadAddPanel.add(sadAddPanel0, "North");
+				sadAddPanel.add(sadAddPanel1, "Center");
+				sadAddPanel.add(sadAddPanel2, "South");
+				String[] options = { "Save", "Cancel" };
+				int value = JOptionPane.showOptionDialog(biomodelsim.frame(), sadAddPanel,
+						"Edit Termination Condition", JOptionPane.YES_NO_OPTION,
+						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+				if (value == JOptionPane.YES_OPTION) {
+				        sadList[sad.getSelectedIndex()] = TCid.getText().trim() + "; " + 
+					  desc.getText().trim() + "; " + cond.getText().trim();
+					int[] index = sad.getSelectedIndices();
+					sad.setListData(sadList);
+					sadList = Buttons.getList(sadList, sad);
+					sad.setSelectedIndices(index);
+					sad.setListData(sadList);
+				}
+			}
+		}
+		// if the edit option button is clicked
+		else if (e.getSource() == editProp) {
+			if (properties.getSelectedIndex() != -1) {
+				String[] get = ((String) props[properties.getSelectedIndex()]).split("=");
+				JPanel OptAddPanel = new JPanel(new BorderLayout());
+				JPanel OptAddPanel0 = new JPanel();
+				JPanel OptAddPanel1 = new JPanel();
+				JLabel OptionLabel = new JLabel("Option: ");
+				JTextField Option = new JTextField(20);
+				Option.setText(get[0].trim());
+				JLabel ValueLabel = new JLabel("Value: ");
+				JTextField Value = new JTextField(20);
+				Value.setText(get[1].trim());
+				OptAddPanel0.add(OptionLabel);
+				OptAddPanel0.add(Option);
+				OptAddPanel1.add(ValueLabel);
+				OptAddPanel1.add(Value);
+				OptAddPanel.add(OptAddPanel0, "North");
+				OptAddPanel.add(OptAddPanel1, "Center");
+				String[] options = { "Save", "Cancel" };
+				int value = JOptionPane.showOptionDialog(biomodelsim.frame(), OptAddPanel,
+						"Edit Option", JOptionPane.YES_NO_OPTION,
+						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+				if (value == JOptionPane.YES_OPTION) {
+				        props[properties.getSelectedIndex()] = Option.getText().trim() + "=" + 
+					  Value.getText().trim();
+					int[] index = properties.getSelectedIndices();
+					properties.setListData(props);
+					props = Buttons.getList(props, properties);
+					properties.setSelectedIndices(index);
+					properties.setListData(props);
+				}
+			}
+		}
 		// if the remove ssa button is clicked
 		else if (e.getSource() == removeSSA) {
 			Buttons.remove(ssa, ssaList);
+		}
+		// if the remove sad button is clicked
+		else if (e.getSource() == removeSAD) {
+			Buttons.remove(sad, sadList);
 		}
 		// if the new ssa button is clicked
 		else if (e.getSource() == newSSA) {
@@ -1326,6 +1551,21 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			editSSA.setEnabled(true);
 			removeSSA.setEnabled(true);
 		}
+		// if the new sad button is clicked
+		else if (e.getSource() == newSAD) {
+			sadList = new Object[0];
+			sad.setListData(sadList);
+			TCid.setText("");
+			desc.setText("");
+			cond.setText("");
+		}
+		// if the new sad button is clicked
+		else if (e.getSource() == newProp) {
+			props = new Object[0];
+			properties.setListData(props);
+			prop.setText("");
+			value.setText("");
+		}
 		// if the remove properties button is clicked
 		else if (e.getSource() == removeProp) {
 			Buttons.remove(properties, props);
@@ -1334,13 +1574,13 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		else if (e.getSource() == addProp) {
 			if (prop.getText().trim().equals("")) {
 				JOptionPane.showMessageDialog(biomodelsim.frame(),
-						"Enter a property into the property field!", "Must Enter A Property",
+						"Enter a option into the option field!", "Must Enter an Option",
 						JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 			if (value.getText().trim().equals("")) {
 				JOptionPane.showMessageDialog(biomodelsim.frame(),
-						"Enter a value into the value field!", "Must Enter A Value",
+						"Enter a value into the value field!", "Must Enter a Value",
 						JOptionPane.ERROR_MESSAGE);
 				return;
 			}
@@ -1699,24 +1939,15 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		Run runProgram = new Run();
 		cancel.addActionListener(runProgram);
 		biomodelsim.getExitButton().addActionListener(runProgram);
-		if (sadFile.getText().trim().length() != 0) {
-			try {
-				FileOutputStream out = new FileOutputStream(new File(root + separator + outDir
-						+ separator + outDir + ".sad"));
-				byte[] output = sadFile.getText().trim().getBytes();
-				out.write(output);
-				out.close();
-			} catch (Exception e) {
-			}
-		}
+		saveSAD();
 		runProgram.createProperties(timeLimit, printInterval, timeStep, absError, ".",
 				// root + separator + outDir,
 				rndSeed, run, termCond, intSpecies, printer_id, printer_track_quantity, sbmlProp
 						.split(separator), selectedButtons, this, sbmlProp, rap1, rap2, qss, con,
 				usingSSA,
 				// root + separator + simName + separator +
-				"user-defined.dat", sadFile.getText().trim(), new File(root + separator + outDir
-						+ separator + outDir + ".sad"));
+				"user-defined.dat", usingSAD, new File(root + separator + outDir
+						+ separator + "termCond.sad"));
 		int[] indecies = properties.getSelectedIndices();
 		props = Buttons.getList(props, properties);
 		properties.setSelectedIndices(indecies);
@@ -2081,24 +2312,15 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					JOptionPane.ERROR_MESSAGE);
 		}
 		log.addText("Creating properties file:\n" + propName + "\n");
-		if (sadFile.getText().trim().length() != 0) {
-			try {
-				FileOutputStream out = new FileOutputStream(new File(root + separator + outDir
-						+ separator + outDir + ".sad"));
-				byte[] output = sadFile.getText().trim().getBytes();
-				out.write(output);
-				out.close();
-			} catch (Exception e) {
-			}
-		}
+		saveSAD();
 		runProgram.createProperties(timeLimit, printInterval, timeStep, absError, ".",
 				// outDir,
 				rndSeed, run, termCond, intSpecies, printer_id, printer_track_quantity, sbmlProp
 						.split(separator), selectedButtons, this, sbmlProp, rap1, rap2, qss, con,
 				usingSSA,
 				// root + separator + simName + separator +
-				"user-defined.dat", sadFile.getText().trim(), new File(root + separator + outDir
-						+ separator + outDir + ".sad"));
+				"user-defined.dat", usingSAD, new File(root + separator + outDir
+						+ separator + "termCond.sad"));
 		int[] indecies = properties.getSelectedIndices();
 		props = Buttons.getList(props, properties);
 		properties.setSelectedIndices(indecies);
@@ -2129,6 +2351,32 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		}
 		biomodelsim.refreshTree();
 		change = false;
+	}
+
+	public void saveSAD() {
+		try {
+			int[] indecies = sad.getSelectedIndices();
+			sadList = Buttons.getList(sadList, sad);
+			if (sadList.length==0) return;
+			FileOutputStream out = new FileOutputStream(new File(root + separator + simName
+					+ separator + "termCond.sad"));
+			sad.setSelectedIndices(indecies);
+			String save = "";
+			for (int i = 0; i < sadList.length; i++) {
+				String[] get = ((String) sadList[i]).split(";");
+				save += "term " + get[0].trim() + " {\n";
+				save += "  desc \"" + get[1].trim() + "\";\n";
+				save += "  cond " + get[2].trim() + ";\n";
+				save += "}\n";
+			}
+			byte[] output = save.getBytes();
+			out.write(output);
+			out.close();
+		} catch (Exception e1) {
+			JOptionPane.showMessageDialog(biomodelsim.frame(), "Unable to save termination conditions!",
+					"Error Saving File", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
 	}
 
 	/**
@@ -2317,10 +2565,22 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					} else if (key.equals("monte.carlo.simulation.runs")) {
 					} else if (key.equals("monte.carlo.simulation.out.dir")) {
 					} else if (key.equals("simulation.run.termination.decider")) {
-						if (!load.getProperty("simulation.run.termination.decider").equals("sad")) {
-							loadProperties.add("simulation.run.termination.decider="
-									+ load.getProperty("simulation.run.termination.decider"));
-						}
+					  if (!load.getProperty("simulation.run.termination.decider").equals("sad")) {
+					    sad.setEnabled(true);
+					    newSAD.setEnabled(true);
+					    usingSAD.setSelected(true);
+					    idLabel.setEnabled(true);
+					    TCid.setEnabled(true);
+					    descLabel.setEnabled(true);
+					    desc.setEnabled(true);
+					    condLabel.setEnabled(true);
+					    cond.setEnabled(true);
+					    addSAD.setEnabled(true);
+					    editSAD.setEnabled(true);
+					    removeSAD.setEnabled(true);
+// 							loadProperties.add("simulation.run.termination.decider="
+// 									+ load.getProperty("simulation.run.termination.decider"));
+					  }
 					} else if (key.equals("computation.analysis.sad.path")) {
 					} else if (key.equals("simulation.time.series.species.level.file")) {
 					} else if (key.equals("reb2sac.simulation.method")) {
@@ -2467,14 +2727,18 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				}
 				if (load.containsKey("simulation.run.termination.decider")
 						&& load.getProperty("simulation.run.termination.decider").equals("sad")) {
-					FileInputStream input = new FileInputStream(new File(root + separator + simName
-							+ separator + load.getProperty("computation.analysis.sad.path")));
-					int read = input.read();
-					while (read != -1) {
-						sadFile.append("" + (char) read);
-						read = input.read();
-					}
-					input.close();
+					sad.setEnabled(true);
+					newSAD.setEnabled(true);
+					usingSAD.setSelected(true);
+					idLabel.setEnabled(true);
+					TCid.setEnabled(true);
+					descLabel.setEnabled(true);
+					desc.setEnabled(true);
+					condLabel.setEnabled(true);
+					cond.setEnabled(true);
+					addSAD.setEnabled(true);
+					editSAD.setEnabled(true);
+					removeSAD.setEnabled(true);
 				}
 				if (load.containsKey("reb2sac.simulation.method")) {
 					if (load.getProperty("reb2sac.simulation.method").equals("ODE")) {
@@ -2599,6 +2863,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					"Error Loading Properties", JOptionPane.ERROR_MESSAGE);
 		}
 	}
+
+
 
 	public Graph createGraph(String open) {
 		String outDir = root + separator + simName;
