@@ -2573,7 +2573,8 @@ public class BioSim implements MouseListener, ActionListener {
 									&& !(list[i].equals("species.properties"))) {
 								openFile = filename + separator + list[i];
 							}
-							else if (end.equals(".tsd") || end.equals(".dat") || end.equals(".csv")) {
+							else if (end.equals(".tsd") || end.equals(".dat") || end.equals(".csv")
+									|| end.contains("=")) {
 								if (list[i].contains("run-")) {
 									int tempNum = Integer.parseInt(list[i].substring(4, list[i].length()
 											- end.length()));
@@ -2585,6 +2586,9 @@ public class BioSim implements MouseListener, ActionListener {
 								else if (list[i].contains("euler-run.") || list[i].contains("gear1-run.")
 										|| list[i].contains("gear2-run.") || list[i].contains("rk4imp-run.")
 										|| list[i].contains("rk8pd-run.") || list[i].contains("rkf45-run.")) {
+									graphFile = filename + separator + list[i];
+								}
+								else if (end.contains("=")) {
 									graphFile = filename + separator + list[i];
 								}
 							}

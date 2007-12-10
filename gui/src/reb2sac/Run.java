@@ -288,8 +288,8 @@ public class Run implements ActionListener {
 			BioSim biomodelsim, JTabbedPane simTab, String root, JProgressBar progress, int steps) {
 		Runtime exec = Runtime.getRuntime();
 		int exitValue = 255;
-		if (outDir.split(separator)[outDir.split(separator).length - 1].equals(".")) {
-			outDir.substring(0, outDir.length() - 1
+		while (outDir.split(separator)[outDir.split(separator).length - 1].equals(".")) {
+			outDir = outDir.substring(0, outDir.length() - 1
 					- outDir.split(separator)[outDir.split(separator).length - 1].length());
 		}
 		try {
