@@ -15,15 +15,14 @@ public class Button_Enabling {
 	 * abstraction.
 	 */
 	public static void enableNoneOrAbs(JRadioButton ODE, JRadioButton monteCarlo,
-			JRadioButton markov, JTextField seed, JLabel seedLabel, JTextField runs,
-			JLabel runsLabel, JLabel stepLabel, JTextField step, JLabel errorLabel,
-			JTextField absErr, JLabel limitLabel, JTextField limit, JLabel intervalLabel,
-			JTextField interval, JComboBox simulators, JLabel simulatorsLabel, JLabel explanation,
-			JLabel description, JRadioButton none, JList intSpecies, JList species, JLabel spLabel,
-			JLabel speciesLabel, JButton addIntSpecies, JButton removeIntSpecies,
-			JTextField rapid1, JTextField rapid2, JTextField qssa, JTextField maxCon,
-			JLabel rapidLabel1, JLabel rapidLabel2, JLabel qssaLabel, JLabel maxConLabel,
-			JCheckBox usingSSA, JButton clearIntSpecies) {
+			JRadioButton markov, JTextField seed, JLabel seedLabel, JTextField runs, JLabel runsLabel,
+			JLabel stepLabel, JTextField step, JLabel errorLabel, JTextField absErr, JLabel limitLabel,
+			JTextField limit, JLabel intervalLabel, JTextField interval, JComboBox simulators,
+			JLabel simulatorsLabel, JLabel explanation, JLabel description, JRadioButton none,
+			JList intSpecies, JList species, JLabel spLabel, JLabel speciesLabel, JButton addIntSpecies,
+			JButton removeIntSpecies, JTextField rapid1, JTextField rapid2, JTextField qssa,
+			JTextField maxCon, JLabel rapidLabel1, JLabel rapidLabel2, JLabel qssaLabel,
+			JLabel maxConLabel, JCheckBox usingSSA, JButton clearIntSpecies) {
 		if (!usingSSA.isSelected()) {
 			ODE.setEnabled(true);
 		}
@@ -45,7 +44,8 @@ public class Button_Enabling {
 			rapid1.setEnabled(false);
 			rapidLabel2.setEnabled(false);
 			rapid2.setEnabled(false);
-		} else {
+		}
+		else {
 			intSpecies.setEnabled(true);
 			species.setEnabled(true);
 			spLabel.setEnabled(true);
@@ -65,7 +65,8 @@ public class Button_Enabling {
 		if (markov.isSelected()) {
 			if (!usingSSA.isSelected()) {
 				ODE.setSelected(true);
-			} else {
+			}
+			else {
 				monteCarlo.setSelected(true);
 			}
 			monteCarlo.setSelected(false);
@@ -104,13 +105,13 @@ public class Button_Enabling {
 	 */
 	public static void enableNary(JRadioButton ODE, JRadioButton monteCarlo, JRadioButton markov,
 			JTextField seed, JLabel seedLabel, JTextField runs, JLabel runsLabel, JLabel stepLabel,
-			JTextField step, JLabel errorLabel, JTextField absErr, JLabel limitLabel,
-			JTextField limit, JLabel intervalLabel, JTextField interval, JComboBox simulators,
-			JLabel simulatorsLabel, JLabel explanation, JLabel description, JList intSpecies,
-			JList species, JLabel spLabel, JLabel speciesLabel, JButton addIntSpecies,
-			JButton removeIntSpecies, JTextField rapid1, JTextField rapid2, JTextField qssa,
-			JTextField maxCon, JLabel rapidLabel1, JLabel rapidLabel2, JLabel qssaLabel,
-			JLabel maxConLabel, JCheckBox usingSSA, JButton clearIntSpecies) {
+			JTextField step, JLabel errorLabel, JTextField absErr, JLabel limitLabel, JTextField limit,
+			JLabel intervalLabel, JTextField interval, JComboBox simulators, JLabel simulatorsLabel,
+			JLabel explanation, JLabel description, JList intSpecies, JList species, JLabel spLabel,
+			JLabel speciesLabel, JButton addIntSpecies, JButton removeIntSpecies, JTextField rapid1,
+			JTextField rapid2, JTextField qssa, JTextField maxCon, JLabel rapidLabel1,
+			JLabel rapidLabel2, JLabel qssaLabel, JLabel maxConLabel, JCheckBox usingSSA,
+			JButton clearIntSpecies) {
 		ODE.setEnabled(false);
 		monteCarlo.setEnabled(true);
 		if (!usingSSA.isSelected()) {
@@ -165,10 +166,10 @@ public class Button_Enabling {
 	 * This static method enables and disables the required fields for ODE.
 	 */
 	public static void enableODE(JTextField seed, JLabel seedLabel, JTextField runs,
-			JLabel runsLabel, JLabel stepLabel, JTextField step, JLabel errorLabel,
-			JTextField absErr, JLabel limitLabel, JTextField limit, JLabel intervalLabel,
-			JTextField interval, JComboBox simulators, JLabel simulatorsLabel, JLabel explanation,
-			JLabel description, JCheckBox usingSSA) {
+			JLabel runsLabel, JLabel stepLabel, JTextField step, JLabel errorLabel, JTextField absErr,
+			JLabel limitLabel, JTextField limit, JLabel intervalLabel, JTextField interval,
+			JComboBox simulators, JLabel simulatorsLabel, JLabel explanation, JLabel description,
+			JCheckBox usingSSA) {
 		seed.setEnabled(false);
 		seedLabel.setEnabled(false);
 		runs.setEnabled(false);
@@ -202,10 +203,10 @@ public class Button_Enabling {
 	 * Carlo.
 	 */
 	public static void enableMonteCarlo(JTextField seed, JLabel seedLabel, JTextField runs,
-			JLabel runsLabel, JLabel stepLabel, JTextField step, JLabel errorLabel,
-			JTextField absErr, JLabel limitLabel, JTextField limit, JLabel intervalLabel,
-			JTextField interval, JComboBox simulators, JLabel simulatorsLabel, JLabel explanation,
-			JLabel description, JCheckBox usingSSA) {
+			JLabel runsLabel, JLabel stepLabel, JTextField step, JLabel errorLabel, JTextField absErr,
+			JLabel limitLabel, JTextField limit, JLabel intervalLabel, JTextField interval,
+			JComboBox simulators, JLabel simulatorsLabel, JLabel explanation, JLabel description,
+			JCheckBox usingSSA) {
 		seed.setEnabled(true);
 		seedLabel.setEnabled(true);
 		runs.setEnabled(true);
@@ -235,10 +236,10 @@ public class Button_Enabling {
 	 * This static method enables and disables the required fields for Markov.
 	 */
 	public static void enableMarkov(JTextField seed, JLabel seedLabel, JTextField runs,
-			JLabel runsLabel, JLabel stepLabel, JTextField step, JLabel errorLabel,
-			JTextField absErr, JLabel limitLabel, JTextField limit, JLabel intervalLabel,
-			JTextField interval, JComboBox simulators, JLabel simulatorsLabel, JLabel explanation,
-			JLabel description, JCheckBox usingSSA) {
+			JLabel runsLabel, JLabel stepLabel, JTextField step, JLabel errorLabel, JTextField absErr,
+			JLabel limitLabel, JTextField limit, JLabel intervalLabel, JTextField interval,
+			JComboBox simulators, JLabel simulatorsLabel, JLabel explanation, JLabel description,
+			JCheckBox usingSSA) {
 		seed.setEnabled(false);
 		seedLabel.setEnabled(false);
 		runs.setEnabled(false);
@@ -263,14 +264,13 @@ public class Button_Enabling {
 	}
 
 	/**
-	 * This static method enables and disables the required fields for sbml,
-	 * dot, and xhtml.
+	 * This static method enables and disables the required fields for sbml, dot,
+	 * and xhtml.
 	 */
 	public static void enableSbmlDotAndXhtml(JTextField seed, JLabel seedLabel, JTextField runs,
-			JLabel runsLabel, JLabel stepLabel, JTextField step, JLabel errorLabel,
-			JTextField absErr, JLabel limitLabel, JTextField limit, JLabel intervalLabel,
-			JTextField interval, JComboBox simulators, JLabel simulatorsLabel, JLabel explanation,
-			JLabel description) {
+			JLabel runsLabel, JLabel stepLabel, JTextField step, JLabel errorLabel, JTextField absErr,
+			JLabel limitLabel, JTextField limit, JLabel intervalLabel, JTextField interval,
+			JComboBox simulators, JLabel simulatorsLabel, JLabel explanation, JLabel description) {
 		seed.setEnabled(false);
 		seedLabel.setEnabled(false);
 		runs.setEnabled(false);
