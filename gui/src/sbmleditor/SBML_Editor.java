@@ -2769,13 +2769,16 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		}
 		try {
 			if (!direct.equals(".")) {
-				if (amount) {
-					document.getModel().getSpecies(direct.split("=")[0]).setInitialAmount(
-							Double.parseDouble(direct.split("=")[1]));
-				}
-				else {
-					document.getModel().getSpecies(direct.split("=")[0]).setInitialConcentration(
-							Double.parseDouble(direct.split("=")[1]));
+				String[] d = direct.split("_");
+				for (String di : d) {
+					if (amount) {
+						document.getModel().getSpecies(di.split("=")[0]).setInitialAmount(
+								Double.parseDouble(di.split("=")[1]));
+					}
+					else {
+						document.getModel().getSpecies(di.split("=")[0]).setInitialConcentration(
+								Double.parseDouble(di.split("=")[1]));
+					}
 				}
 			}
 			FileOutputStream out = new FileOutputStream(new File(simDir + separator + direct + separator
@@ -2798,30 +2801,93 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	public void save(boolean run) {
 		if (paramsOnly) {
 			if (run) {
-				ArrayList<String> sweepThese = new ArrayList<String>();
-				ArrayList<ArrayList<Double>> sweep = new ArrayList<ArrayList<Double>>();
+				ArrayList<String> sweepThese1 = new ArrayList<String>();
+				ArrayList<ArrayList<Double>> sweep1 = new ArrayList<ArrayList<Double>>();
+				ArrayList<String> sweepThese2 = new ArrayList<String>();
+				ArrayList<ArrayList<Double>> sweep2 = new ArrayList<ArrayList<Double>>();
 				for (String s : parameterChanges) {
 					if (s.split(" ").length > 3 && s.split(" ")[3].equals("Sweep")) {
-						sweepThese.add(s.split(" ")[0]);
-						double start = Double.parseDouble((((String) species.getSelectedValue()).split(" ")[2])
-								.split(",")[0].substring(1).trim());
-						double stop = Double.parseDouble((((String) species.getSelectedValue()).split(" ")[2])
-								.split(",")[1].trim());
-						double step = Double.parseDouble((((String) species.getSelectedValue()).split(" ")[2])
-								.split(",")[2].trim());
-						ArrayList<Double> add = new ArrayList<Double>();
-						for (double i = start; i <= stop; i += step) {
-							add.add(i);
+						if ((s.split(" ")[2]).split(",")[3].replace(")", "").trim().equals("1")) {
+							sweepThese1.add(s.split(" ")[0]);
+							double start = Double
+									.parseDouble((s.split(" ")[2]).split(",")[0].substring(1).trim());
+							double stop = Double.parseDouble((s.split(" ")[2]).split(",")[1].trim());
+							double step = Double.parseDouble((s.split(" ")[2]).split(",")[2].trim());
+							ArrayList<Double> add = new ArrayList<Double>();
+							for (double i = start; i <= stop; i += step) {
+								add.add(i);
+							}
+							sweep1.add(add);
 						}
-						sweep.add(add);
+						else {
+							sweepThese2.add(s.split(" ")[0]);
+							double start = Double
+									.parseDouble((s.split(" ")[2]).split(",")[0].substring(1).trim());
+							double stop = Double.parseDouble((s.split(" ")[2]).split(",")[1].trim());
+							double step = Double.parseDouble((s.split(" ")[2]).split(",")[2].trim());
+							ArrayList<Double> add = new ArrayList<Double>();
+							for (double i = start; i <= stop; i += step) {
+								add.add(i);
+							}
+							sweep2.add(add);
+						}
 					}
 				}
-				if (sweepThese.size() > 0) {
-					for (int i = 0; i < sweepThese.size(); i++) {
-						for (int j = 0; j < sweep.get(i).size(); j++) {
-							new File(simDir + separator + sweepThese.get(i) + "=" + sweep.get(i).get(j)).mkdir();
-							createSBML(sweepThese.get(i) + "=" + sweep.get(i).get(j));
-							reb2sac.setDir(sweepThese.get(i) + "=" + sweep.get(i).get(j));
+				if (sweepThese1.size() > 0) {
+					int max = 0;
+					for (ArrayList<Double> d : sweep1) {
+						max = Math.max(max, d.size());
+					}
+					for (int j = 0; j < max; j++) {
+						String sweep = "";
+						for (int i = 0; i < sweepThese1.size(); i++) {
+							int k = j;
+							if (k >= sweep1.get(i).size()) {
+								k = sweep1.get(i).size() - 1;
+							}
+							if (sweep.equals("")) {
+								sweep += sweepThese1.get(i) + "=" + sweep1.get(i).get(k);
+							}
+							else {
+								sweep += "_" + sweepThese1.get(i) + "=" + sweep1.get(i).get(k);
+							}
+						}
+						if (sweepThese2.size() > 0) {
+							int max2 = 0;
+							for (ArrayList<Double> d : sweep2) {
+								max2 = Math.max(max2, d.size());
+							}
+							for (int l = 0; l < max2; l++) {
+								String sweepTwo = sweep;
+								for (int i = 0; i < sweepThese2.size(); i++) {
+									int k = l;
+									if (k >= sweep2.get(i).size()) {
+										k = sweep2.get(i).size() - 1;
+									}
+									if (sweepTwo.equals("")) {
+										sweepTwo += sweepThese2.get(i) + "=" + sweep2.get(i).get(k);
+									}
+									else {
+										sweepTwo += "_" + sweepThese2.get(i) + "=" + sweep2.get(i).get(k);
+									}
+								}
+								new File(simDir + separator + sweepTwo).mkdir();
+								createSBML(sweepTwo);
+								reb2sac.setDir(sweepTwo);
+								Thread t = new Thread(reb2sac);
+								t.start();
+								try {
+									t.join();
+								}
+								catch (Exception e) {
+								}
+								reb2sac.emptyFrames();
+							}
+						}
+						else {
+							new File(simDir + separator + sweep).mkdir();
+							createSBML(sweep);
+							reb2sac.setDir(sweep);
 							Thread t = new Thread(reb2sac);
 							t.start();
 							try {

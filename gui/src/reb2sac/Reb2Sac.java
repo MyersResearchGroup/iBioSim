@@ -1760,7 +1760,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			return;
 		}
 		if (!runs.isEnabled()) {
-			for (String runs : new File(root + separator + simName).list()) {
+			for (String runs : new File(root + separator + outDir).list()) {
 				if (runs.length() >= 4) {
 					String end = "";
 					for (int j = 1; j < 5; j++) {
@@ -1876,7 +1876,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			selectedButtons = "nary_xhtml";
 		}
 		try {
-			FileOutputStream out = new FileOutputStream(new File(root + separator + simName + separator
+			FileOutputStream out = new FileOutputStream(new File(root + separator + outDir + separator
 					+ "user-defined.dat"));
 			int[] indecies = ssa.getSelectedIndices();
 			ssaList = Buttons.getList(ssaList, ssa);
@@ -1894,7 +1894,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			out.write(output);
 			out.close();
 			if (!usingSSA.isSelected() && save.trim().equals("")) {
-				new File(root + separator + simName + separator + "user-defined.dat").delete();
+				new File(root + separator + outDir + separator + "user-defined.dat").delete();
 			}
 		}
 		catch (Exception e1) {
@@ -1903,6 +1903,13 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			return;
 		}
 		int cut = 0;
+		String simProp = sbmlProp;
+		sbmlProp = sbmlProp.substring(0, sbmlProp.length()
+				- sbmlProp.split(separator)[sbmlProp.split(separator).length - 1].length())
+				+ direct
+				+ separator
+				+ sbmlProp.substring(sbmlProp.length()
+						- sbmlProp.split(separator)[sbmlProp.split(separator).length - 1].length());
 		String[] getFilename = sbmlProp.split(separator);
 		for (int i = 0; i < getFilename[getFilename.length - 1].length(); i++) {
 			if (getFilename[getFilename.length - 1].charAt(i) == '.') {
@@ -2008,13 +2015,6 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		cancel.addActionListener(runProgram);
 		biomodelsim.getExitButton().addActionListener(runProgram);
 		saveSAD();
-		String simProp = sbmlProp;
-		sbmlProp = sbmlProp.substring(0, sbmlProp.length()
-				- sbmlProp.split(separator)[sbmlProp.split(separator).length - 1].length())
-				+ direct
-				+ separator
-				+ sbmlProp.substring(sbmlProp.length()
-						- sbmlProp.split(separator)[sbmlProp.split(separator).length - 1].length());
 		runProgram.createProperties(timeLimit, printInterval, timeStep, absError, ".",
 		// root + separator + outDir,
 				rndSeed, run, termCond, intSpecies, printer_id, printer_track_quantity, sbmlProp
@@ -2037,7 +2037,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			getProps.setProperty("selected.simulator", sim);
 			if (monteCarlo.isSelected()) {
 				if (append.isSelected()) {
-					String[] searchForRunFiles = new File(root + separator + simName).list();
+					String[] searchForRunFiles = new File(root + separator + outDir).list();
 					int start = 1;
 					for (String s : searchForRunFiles) {
 						if (s.length() > 3 && s.substring(0, 4).equals("run-")) {
@@ -2073,21 +2073,26 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			}
 		}
 		int exit = runProgram.execute(sbmlProp, sbml, dot, xhtml, biomodelsim.frame(), ODE, monteCarlo,
-				sim, printer_id, printer_track_quantity, root + separator + outDir, nary, 1, intSpecies,
-				log, usingSSA, root + separator + simName + separator + "user-defined.dat", biomodelsim,
+				sim, printer_id, printer_track_quantity, root + separator + simName, nary, 1, intSpecies,
+				log, usingSSA, root + separator + outDir + separator + "user-defined.dat", biomodelsim,
 				simTab, root, progress, steps);
 		if (nary.isSelected() && exit == 0) {
 			new Nary_Run(this, amountTerm, ge, gt, eq, lt, le, simulators, sbmlProp.split(separator),
 					sbmlProp, sbml, dot, xhtml, nary, ODE, monteCarlo, timeLimit, printInterval, root
-							+ separator + outDir, rndSeed, run, printer_id, printer_track_quantity, termCond,
-					intSpecies, rap1, rap2, qss, con, log, usingSSA, root + separator + simName + separator
+							+ separator + simName, rndSeed, run, printer_id, printer_track_quantity, termCond,
+					intSpecies, rap1, rap2, qss, con, log, usingSSA, root + separator + outDir + separator
 							+ "user-defined.dat", biomodelsim, simTab, root);
 		}
 		sbmlProp = simProp;
 		running.setCursor(null);
-		frames.add(running);
+		if (direct.equals(".")) {
+			running.dispose();
+		}
+		else {
+			frames.add(running);
+		}
 		biomodelsim.getExitButton().removeActionListener(runProgram);
-		String[] searchForRunFiles = new File(root + separator + simName).list();
+		String[] searchForRunFiles = new File(root + separator + outDir).list();
 		for (String s : searchForRunFiles) {
 			if (s.length() > 3 && s.substring(0, 4).equals("run-")) {
 				runFiles = true;
