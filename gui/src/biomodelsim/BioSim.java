@@ -567,7 +567,7 @@ public class BioSim implements MouseListener, ActionListener {
 												separator).length - 1].length())), 314159, 1,
 						new String[0], new String[0], "tsd.printer", "amount", tree.getFile()
 								.split(separator), "none", frame, tree.getFile(), 0.1, 0.1, 0.1,
-						15, dummy, "", "", null);
+						15, dummy, "", dummy, null);
 				String filename = tree.getFile();
 				String directory = "";
 				String theFile = "";
@@ -659,7 +659,7 @@ public class BioSim implements MouseListener, ActionListener {
 												separator).length - 1].length())), 314159, 1,
 						new String[0], new String[0], "tsd.printer", "amount", tree.getFile()
 								.split(separator), "none", frame, tree.getFile(), 0.1, 0.1, 0.1,
-						15, dummy, "", "", null);
+						15, dummy, "", dummy, null);
 				String filename = tree.getFile();
 				String directory = "";
 				String theFile = "";

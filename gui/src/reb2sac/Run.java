@@ -39,7 +39,7 @@ public class Run implements ActionListener {
 			String[] intSpecies, String printer_id, String printer_track_quantity,
 			String[] getFilename, String selectedButtons, Component component, String filename,
 			double rap1, double rap2, double qss, int con, JCheckBox usingSSA, String ssaFile,
-			String sad, File sadFile) {
+			JCheckBox usingSad, File sadFile) {
 		Properties abs = new Properties();
 		if (selectedButtons.contains("abs") || selectedButtons.contains("nary")) {
 			abs.setProperty("reb2sac.abstraction.method.0.1", "enzyme-kinetic-qssa-1");
@@ -126,7 +126,7 @@ public class Run implements ActionListener {
 			abs.setProperty("monte.carlo.simulation.random.seed", "" + rndSeed);
 			abs.setProperty("monte.carlo.simulation.runs", "" + run);
 			abs.setProperty("monte.carlo.simulation.out.dir", outDir);
-			if (sad.length() != 0) {
+			if (usingSad.isSelected()) {
 				abs.setProperty("simulation.run.termination.decider", "sad");
 				abs.setProperty("computation.analysis.sad.path", sadFile.getName());
 			}
