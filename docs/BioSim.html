@@ -43,13 +43,11 @@
 </UL>
 <LI><A HREF="#ANALYSIS"><FONT SIZE=4>Analysis View</FONT></A>
 <UL>
-<LI><A HREF="#SIMOPTIONS">Basic Simulation Options</A>
-<LI><A HREF="#ADVSIMOPTIONS">Advanced Simulation Options</A>
-<LI><A HREF="#INTERESTING">Interesting Species</A>
+<LI><A HREF="#SIMOPTIONS">Options</A>
 <LI><A HREF="#USERDEFN">User Defined Data File</A>
+<LI><A HREF="#ABSOPTIONS">Abstraction Options</A>
 <LI><A HREF="#TERMCOND">Termination Conditions</A>
-<LI><A HREF="#ADVTERMCOND">Advanced Termination Conditions</A>
-<LI><A HREF="#PROPERTIES">Properties</A>
+<LI><A HREF="#ADVSIMOPTIONS">Advanced Options</A>
 </UL>
 <LI><A HREF="#LEARN"><FONT SIZE=4>Learn View</FONT></A>
 <UL>
@@ -322,7 +320,7 @@ models.  The analysis view includes tabs for a
 <A HREF="#SBMLEDIT">SBML editor</A>, and a 
 <A HREF="#GRAPH">graph editor</A>.
 
-<H2><A NAME="SIMOPTIONS"></A>Basic Simulation Options</H2>
+<H2><A NAME="SIMOPTIONS"></A>Options</H2>
 BioSim comes with a number of simulation methods, ranging from
 continuous-deterministic simulation methods to discrete-stochastic
 simulation methods.  In order to perform efficient temporal
@@ -538,7 +536,12 @@ Below is the table specifies such simulation properties.</P>
 </TR>
 </TABLE>
 
-<H2><A NAME="ADVSIMOPTIONS"></A>Advanced Simulation Options</H2>
+<H2><A NAME="USERDEFN"></A>User Defined Data File</H2>
+This can deterministically specify how the state of each
+species can  change at some specified time point in Gillespie’s
+SSA. 
+
+<H2><A NAME="ABSOPTIONS"></A>Abstraction Options</H2>
 This allows the user to set the properties of rapid equilibrium, QSSA,
 and operator site abstraction methods.&nbsp;&nbsp;
 <p>
@@ -557,16 +560,11 @@ The <i>Max concentration threshold</i> specifies the maximum number of
 molecules that a species can have initially and still be considered an 
 operator site by the operator site reduction.
 
-<H2><A NAME="INTERESTING"></A>Interesting Species</H2>
 Interesting species are the ones that are used in the analysis,
 and hence are those which should not be abstracted. 
 
-<H2><A NAME="USERDEFN"></A>User Defined Data File</H2>
-This can deterministically specify how the state of each
-species can  change at some specified time point in Gillespie’s
-SSA. 
-
 <H2><A NAME="TERMCOND"></A>Termination Conditions</H2>
+<!--
 The termination conditions can specify a set of simple
 conditions to terminate each simulation run (either ODE or Monte
 Carlo) before the time limit when at least one of them is
@@ -574,6 +572,7 @@ satisfied.   This option can, for example, be very useful for
 computational analysis of phenotype variations. 
 
 <H2><A NAME="ADVTERMCOND"></A>Advanced Termination Conditions</H2>
+-->
 The advanced termination conditions specify a condition upon which a
 simulation should terminate.  A record is kept of the proportion of 
 simulations that are terminated by each condition.  These conditions are
@@ -657,22 +656,20 @@ hold to terminate a simulation/analysis procedure.</FONT></FONT></P>
 <P>    <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>| t             
                // variable representing time  </FONT></FONT>
 </P>
-<P>    <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>| #$&lt;species-id&gt;</FONT></FONT></P>
-<P>    <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>| %$&lt;species-id&gt;</FONT></FONT></P>
+<P>    <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>| &lt;species-id&gt;</FONT></FONT></P>
+<P>    <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>| %&lt;species-id&gt;</FONT></FONT></P>
 <P>    <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>|
-#@&lt;reaction-id&gt;</FONT></FONT></P>
+@&lt;reaction-id&gt;</FONT></FONT></P>
 <P> 
 </P>
 <P><FONT FACE="Nimbus Roman No9 L, serif"><FONT SIZE=3><FONT FACE="Nimbus Roman No9 L, serif"><FONT SIZE=3>where
-$&lt;species-id&gt; represent species, #$&lt;species-id&gt; is the
-variable for the molecular count of &lt;species-id&gt;,
-%$&lt;species-id&gt; is the variable for concentration of
-&lt;species-id&gt;, @&lt;reaction-id&gt; represent reaction,
-</FONT></FONT>#@&lt;reaction-id&gt; is the variable for the number
-of firings of &lt;reaction-id&gt;, and t is the variable
+&lt;species-id&gt; is the variable for the molecular count of 
+&lt;species-id&gt;, %&lt;species-id&gt; is the variable for the 
+concentration of &lt;species-id&gt;, @&lt;reaction-id&gt; is the variable 
+for the number of firings of &lt;reaction-id&gt;, and t is the variable
 representing time.</FONT></FONT></P>
 
-<H2><A NAME="PROPERTIES"></A>Properties</H2> 
+<H2><A NAME="ADVSIMOPTIONS"></A>Advanced Options</H2> 
 Here, you can specify additional properties for your analysis.&nbsp; 
 Each property consists of property ID and its value.&nbsp; For 
 example, property <i>reb2sac.abstraction.method.1.x</i>&nbsp; 
