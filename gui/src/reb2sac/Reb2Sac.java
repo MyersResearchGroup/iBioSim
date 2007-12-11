@@ -209,7 +209,6 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		step = new JTextField("1.0", 15);
 		step.setEnabled(false);
 		absErr = new JTextField("1.0E-9", 15);
-		absErr.setEnabled(true);
 		int next = 1;
 		String filename = "sim" + next;
 		while (new File(root + separator + filename).exists()) {
@@ -373,6 +372,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		runsLabel.setEnabled(false);
 		stepLabel.setEnabled(false);
 		errorLabel.setEnabled(true);
+		//absErr.setEnabled(true);
 		JPanel odeMonteAndMarkovPanel = new JPanel();
 		odeMonteAndMarkovPanel.add(choose2);
 		odeMonteAndMarkovPanel.add(ODE);
