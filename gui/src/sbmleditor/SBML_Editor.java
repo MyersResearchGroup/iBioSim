@@ -219,6 +219,10 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			SBMLReader reader = new SBMLReader();
 			document = reader.readSBML(file);
 			model = document.getModel();
+			if (model.getId().equals("")) {
+			  model.setId(file.split(separator)[file.split(separator).length - 1]);
+			  save(false);
+			}
 		}
 		else {
 			document = new SBMLDocument();
