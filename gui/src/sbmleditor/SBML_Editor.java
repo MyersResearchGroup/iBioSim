@@ -220,8 +220,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			document = reader.readSBML(file);
 			model = document.getModel();
 			if (model.getId().equals("")) {
-			  model.setId(file.split(separator)[file.split(separator).length - 1]);
-			  save(false);
+				model.setId(file.split(separator)[file.split(separator).length - 1]);
+				save(false);
 			}
 		}
 		else {
@@ -399,7 +399,11 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					for (int k = 0; k < parameterChanges.size(); k++) {
 						if (parameterChanges.get(k).split(" ")[0].equals(reaction.getId() + "/"
 								+ paramet.getId())) {
-							paramet.setValue(Double.parseDouble(parameterChanges.get(k).split(" ")[1]));
+							try {
+								paramet.setValue(Double.parseDouble(parameterChanges.get(k).split(" ")[1]));
+							}
+							catch (Exception e) {
+							}
 							reacts[i] = reaction.getId() + " Custom";
 						}
 					}
@@ -1171,6 +1175,9 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				ID.setEditable(false);
 				comp.setEnabled(false);
 				init.setEnabled(false);
+				start.setEnabled(false);
+				stop.setEnabled(false);
+				step.setEnabled(false);
 				level.setEnabled(false);
 			}
 			if (option.equals("OK")) {
@@ -1252,14 +1259,16 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			}
 			speciesPanel.add(initLabel);
 			speciesPanel.add(init);
-			speciesPanel.add(startLabel);
-			speciesPanel.add(start);
-			speciesPanel.add(stopLabel);
-			speciesPanel.add(stop);
-			speciesPanel.add(stepLabel);
-			speciesPanel.add(step);
-			speciesPanel.add(levelLabel);
-			speciesPanel.add(level);
+			if (paramsOnly) {
+				speciesPanel.add(startLabel);
+				speciesPanel.add(start);
+				speciesPanel.add(stopLabel);
+				speciesPanel.add(stop);
+				speciesPanel.add(stepLabel);
+				speciesPanel.add(step);
+				speciesPanel.add(levelLabel);
+				speciesPanel.add(level);
+			}
 			Object[] options = { option, "Cancel" };
 			int value = JOptionPane.showOptionDialog(biosim.frame(), speciesPanel, "Species Editor",
 					JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
@@ -1950,21 +1959,34 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		else {
 			JPanel parametersPanel;
 			if (paramsOnly) {
-				parametersPanel = new JPanel(new GridLayout(3, 2));
+				parametersPanel = new JPanel(new GridLayout(7, 2));
 			}
 			else {
 				parametersPanel = new JPanel(new GridLayout(2, 2));
 			}
 			JLabel idLabel = new JLabel("ID:");
 			JLabel valueLabel = new JLabel("Value:");
+			JLabel startLabel = new JLabel("Start:");
+			JLabel stopLabel = new JLabel("Stop:");
+			JLabel stepLabel = new JLabel("Step:");
+			JLabel levelLabel = new JLabel("Level:");
 			paramID = new JTextField();
 			paramValue = new JTextField();
+			String[] list = { "Original", "Custom", "Sweep" };
+			String[] list1 = { "1", "2" };
+			final JComboBox type = new JComboBox(list);
+			final JTextField start = new JTextField();
+			final JTextField stop = new JTextField();
+			final JTextField step = new JTextField();
+			final JComboBox level = new JComboBox(list1);
 			if (paramsOnly) {
 				paramID.setEditable(false);
-				paramValue.setEditable(false);
+				paramValue.setEnabled(false);
+				start.setEnabled(false);
+				stop.setEnabled(false);
+				step.setEnabled(false);
+				level.setEnabled(false);
 			}
-			String[] list = { "Original", "Custom", "Sweep" };
-			final JComboBox type = new JComboBox(list);
 			if (option.equals("OK")) {
 				try {
 					Parameter paramet = document.getModel().getParameter(
@@ -1973,11 +1995,31 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					paramValue.setText("" + paramet.getValue());
 					if (((String) parameters.getSelectedValue()).split(" ").length > 2 && paramsOnly) {
 						type.setSelectedItem(((String) parameters.getSelectedValue()).split(" ")[2]);
-						paramValue.setEditable(true);
+						if (((String) type.getSelectedItem()).equals("Sweep")) {
+							start.setText((((String) parameters.getSelectedValue()).split(" ")[1]).split(",")[0]
+									.substring(1).trim());
+							stop.setText((((String) parameters.getSelectedValue()).split(" ")[1]).split(",")[1]
+									.trim());
+							step.setText((((String) parameters.getSelectedValue()).split(" ")[1]).split(",")[2]
+									.trim());
+							level.setSelectedItem((((String) parameters.getSelectedValue()).split(" ")[1])
+									.split(",")[3].replace(")", "").trim());
+							start.setEnabled(true);
+							stop.setEnabled(true);
+							step.setEnabled(true);
+							level.setEnabled(true);
+							paramValue.setEnabled(false);
+						}
+						else {
+							start.setEnabled(false);
+							stop.setEnabled(false);
+							step.setEnabled(false);
+							level.setEnabled(false);
+							paramValue.setEnabled(true);
+						}
 					}
 				}
 				catch (Exception e) {
-
 				}
 			}
 			parametersPanel.add(idLabel);
@@ -1987,10 +2029,27 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				type.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						if (!((String) type.getSelectedItem()).equals("Original")) {
-							paramValue.setEditable(true);
+							if (((String) type.getSelectedItem()).equals("Sweep")) {
+								start.setEnabled(true);
+								stop.setEnabled(true);
+								step.setEnabled(true);
+								level.setEnabled(true);
+								paramValue.setEnabled(false);
+							}
+							else {
+								start.setEnabled(false);
+								stop.setEnabled(false);
+								step.setEnabled(false);
+								level.setEnabled(false);
+								paramValue.setEnabled(true);
+							}
 						}
 						else {
-							paramValue.setEditable(false);
+							start.setEnabled(false);
+							stop.setEnabled(false);
+							step.setEnabled(false);
+							level.setEnabled(false);
+							paramValue.setEnabled(false);
 							SBMLReader reader = new SBMLReader();
 							SBMLDocument d = reader.readSBML(file);
 							paramValue.setText(d.getModel().getParameter(
@@ -2004,6 +2063,16 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			}
 			parametersPanel.add(valueLabel);
 			parametersPanel.add(paramValue);
+			if (paramsOnly) {
+				parametersPanel.add(startLabel);
+				parametersPanel.add(start);
+				parametersPanel.add(stopLabel);
+				parametersPanel.add(stop);
+				parametersPanel.add(stepLabel);
+				parametersPanel.add(step);
+				parametersPanel.add(levelLabel);
+				parametersPanel.add(level);
+			}
 			Object[] options = { option, "Cancel" };
 			int value = JOptionPane.showOptionDialog(biosim.frame(), parametersPanel, "Parameter Editor",
 					JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
@@ -2022,7 +2091,16 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 							double val = Double.parseDouble(paramValue.getText().trim());
 							String param;
 							if (paramsOnly && !((String) type.getSelectedItem()).equals("Original")) {
-								param = paramID.getText().trim() + " " + val + " " + type.getSelectedItem();
+								if (((String) type.getSelectedItem()).equals("Sweep")) {
+									double startVal = Double.parseDouble(start.getText().trim());
+									double stopVal = Double.parseDouble(stop.getText().trim());
+									double stepVal = Double.parseDouble(step.getText().trim());
+									param = paramID.getText().trim() + " (" + startVal + "," + stopVal + ","
+											+ stepVal + "," + level.getSelectedItem() + ") " + type.getSelectedItem();
+								}
+								else {
+									param = paramID.getText().trim() + " " + val + " " + type.getSelectedItem();
+								}
 							}
 							else {
 								param = paramID.getText().trim() + " " + val;
@@ -2138,21 +2216,34 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		else {
 			JPanel parametersPanel;
 			if (paramsOnly) {
-				parametersPanel = new JPanel(new GridLayout(3, 2));
+				parametersPanel = new JPanel(new GridLayout(7, 2));
 			}
 			else {
 				parametersPanel = new JPanel(new GridLayout(2, 2));
 			}
 			JLabel idLabel = new JLabel("ID:");
 			JLabel valueLabel = new JLabel("Value:");
+			JLabel startLabel = new JLabel("Start:");
+			JLabel stopLabel = new JLabel("Stop:");
+			JLabel stepLabel = new JLabel("Step:");
+			JLabel levelLabel = new JLabel("Level:");
 			reacParamID = new JTextField();
 			reacParamValue = new JTextField();
+			String[] list = { "Original", "Custom", "Sweep" };
+			String[] list1 = { "1", "2" };
+			final JComboBox type = new JComboBox(list);
+			final JTextField start = new JTextField();
+			final JTextField stop = new JTextField();
+			final JTextField step = new JTextField();
+			final JComboBox level = new JComboBox(list1);
 			if (paramsOnly) {
 				reacParamID.setEditable(false);
-				reacParamValue.setEditable(false);
+				reacParamValue.setEnabled(false);
+				start.setEnabled(false);
+				stop.setEnabled(false);
+				step.setEnabled(false);
+				level.setEnabled(false);
 			}
-			String[] list = { "Original", "Custom", "Sweep" };
-			final JComboBox type = new JComboBox(list);
 			if (option.equals("OK")) {
 				String v = ((String) reacParameters.getSelectedValue()).split(" ")[0];
 				Parameter paramet = null;
@@ -2165,7 +2256,29 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				reacParamValue.setText("" + paramet.getValue());
 				if (((String) reacParameters.getSelectedValue()).split(" ").length > 2 && paramsOnly) {
 					type.setSelectedItem(((String) reacParameters.getSelectedValue()).split(" ")[2]);
-					reacParamValue.setEditable(true);
+					if (((String) type.getSelectedItem()).equals("Sweep")) {
+						start
+								.setText((((String) reacParameters.getSelectedValue()).split(" ")[1]).split(",")[0]
+										.substring(1).trim());
+						stop.setText((((String) reacParameters.getSelectedValue()).split(" ")[1]).split(",")[1]
+								.trim());
+						step.setText((((String) reacParameters.getSelectedValue()).split(" ")[1]).split(",")[2]
+								.trim());
+						level.setSelectedItem((((String) reacParameters.getSelectedValue()).split(" ")[1])
+								.split(",")[3].replace(")", "").trim());
+						start.setEnabled(true);
+						stop.setEnabled(true);
+						step.setEnabled(true);
+						level.setEnabled(true);
+						reacParamValue.setEnabled(false);
+					}
+					else {
+						start.setEnabled(false);
+						stop.setEnabled(false);
+						step.setEnabled(false);
+						level.setEnabled(false);
+						reacParamValue.setEnabled(true);
+					}
 				}
 			}
 			parametersPanel.add(idLabel);
@@ -2175,10 +2288,27 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				type.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						if (!((String) type.getSelectedItem()).equals("Original")) {
-							reacParamValue.setEditable(true);
+							if (((String) type.getSelectedItem()).equals("Sweep")) {
+								start.setEnabled(true);
+								stop.setEnabled(true);
+								step.setEnabled(true);
+								level.setEnabled(true);
+								reacParamValue.setEnabled(false);
+							}
+							else {
+								start.setEnabled(false);
+								stop.setEnabled(false);
+								step.setEnabled(false);
+								level.setEnabled(false);
+								reacParamValue.setEnabled(true);
+							}
 						}
 						else {
-							reacParamValue.setEditable(false);
+							start.setEnabled(false);
+							stop.setEnabled(false);
+							step.setEnabled(false);
+							level.setEnabled(false);
+							reacParamValue.setEnabled(false);
 							SBMLReader reader = new SBMLReader();
 							SBMLDocument d = reader.readSBML(file);
 							ListOf list = d.getModel().getReaction(
@@ -2203,6 +2333,16 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			}
 			parametersPanel.add(valueLabel);
 			parametersPanel.add(reacParamValue);
+			if (paramsOnly) {
+				parametersPanel.add(startLabel);
+				parametersPanel.add(start);
+				parametersPanel.add(stopLabel);
+				parametersPanel.add(stop);
+				parametersPanel.add(stepLabel);
+				parametersPanel.add(step);
+				parametersPanel.add(levelLabel);
+				parametersPanel.add(level);
+			}
 			Object[] options = { option, "Cancel" };
 			int value = JOptionPane.showOptionDialog(biosim.frame(), parametersPanel, "Parameter Editor",
 					JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
@@ -2221,7 +2361,16 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 							double val = Double.parseDouble(reacParamValue.getText().trim());
 							String param;
 							if (paramsOnly && !((String) type.getSelectedItem()).equals("Original")) {
-								param = reacParamID.getText().trim() + " " + val + " " + type.getSelectedItem();
+								if (((String) type.getSelectedItem()).equals("Sweep")) {
+									double startVal = Double.parseDouble(start.getText().trim());
+									double stopVal = Double.parseDouble(stop.getText().trim());
+									double stepVal = Double.parseDouble(step.getText().trim());
+									param = reacParamID.getText().trim() + " (" + startVal + "," + stopVal + ","
+											+ stepVal + "," + level.getSelectedItem() + ") " + type.getSelectedItem();
+								}
+								else {
+									param = reacParamID.getText().trim() + " " + val + " " + type.getSelectedItem();
+								}
 							}
 							else {
 								param = reacParamID.getText().trim() + " " + val;
@@ -2774,17 +2923,50 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		try {
 			if (!direct.equals(".")) {
 				String[] d = direct.split("_");
-				for (String di : d) {
-					if (amount) {
-						document.getModel().getSpecies(di.split("=")[0]).setInitialAmount(
-								Double.parseDouble(di.split("=")[1]));
+				ArrayList<String> dd = new ArrayList<String>();
+				for (int i = 0; i < d.length; i++) {
+					if (!d[i].contains("=")) {
+						String di = d[i];
+						while (!d[i].contains("=")) {
+							i++;
+							di += "_" + d[i];
+						}
+						dd.add(di);
 					}
 					else {
-						document.getModel().getSpecies(di.split("=")[0]).setInitialConcentration(
-								Double.parseDouble(di.split("=")[1]));
+						dd.add(d[i]);
+					}
+				}
+				for (String di : dd) {
+					if (di.contains("/")) {
+						ListOf p = document.getModel().getReaction(di.split("=")[0].split("/")[0])
+								.getKineticLaw().getListOfParameters();
+						for (int i = 0; i < p.getNumItems(); i++) {
+							Parameter param = ((Parameter) p.get(i));
+							if (param.getId().equals(di.split("=")[0].split("/")[1])) {
+								param.setValue(Double.parseDouble(di.split("=")[1]));
+							}
+						}
+					}
+					else {
+						if (document.getModel().getParameter(di.split("=")[0]) != null) {
+							document.getModel().getParameter(di.split("=")[0]).setValue(
+									Double.parseDouble(di.split("=")[1]));
+						}
+						else {
+							if (amount) {
+								document.getModel().getSpecies(di.split("=")[0]).setInitialAmount(
+										Double.parseDouble(di.split("=")[1]));
+							}
+							else {
+								document.getModel().getSpecies(di.split("=")[0]).setInitialConcentration(
+										Double.parseDouble(di.split("=")[1]));
+							}
+						}
 					}
 				}
 			}
+			direct = direct.replace("/", "-");
 			FileOutputStream out = new FileOutputStream(new File(simDir + separator + direct + separator
 					+ file.split(separator)[file.split(separator).length - 1]));
 			SBMLWriter writer = new SBMLWriter();
@@ -2810,13 +2992,17 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				ArrayList<String> sweepThese2 = new ArrayList<String>();
 				ArrayList<ArrayList<Double>> sweep2 = new ArrayList<ArrayList<Double>>();
 				for (String s : parameterChanges) {
-					if (s.split(" ").length > 3 && s.split(" ")[3].equals("Sweep")) {
-						if ((s.split(" ")[2]).split(",")[3].replace(")", "").trim().equals("1")) {
+					if (s.split(" ")[s.split(" ").length - 1].equals("Sweep")) {
+						if ((s.split(" ")[s.split(" ").length - 2]).split(",")[3].replace(")", "").trim()
+								.equals("1")) {
 							sweepThese1.add(s.split(" ")[0]);
 							double start = Double
-									.parseDouble((s.split(" ")[2]).split(",")[0].substring(1).trim());
-							double stop = Double.parseDouble((s.split(" ")[2]).split(",")[1].trim());
-							double step = Double.parseDouble((s.split(" ")[2]).split(",")[2].trim());
+									.parseDouble((s.split(" ")[s.split(" ").length - 2]).split(",")[0].substring(1)
+											.trim());
+							double stop = Double
+									.parseDouble((s.split(" ")[s.split(" ").length - 2]).split(",")[1].trim());
+							double step = Double
+									.parseDouble((s.split(" ")[s.split(" ").length - 2]).split(",")[2].trim());
 							ArrayList<Double> add = new ArrayList<Double>();
 							for (double i = start; i <= stop; i += step) {
 								add.add(i);
@@ -2826,9 +3012,12 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						else {
 							sweepThese2.add(s.split(" ")[0]);
 							double start = Double
-									.parseDouble((s.split(" ")[2]).split(",")[0].substring(1).trim());
-							double stop = Double.parseDouble((s.split(" ")[2]).split(",")[1].trim());
-							double step = Double.parseDouble((s.split(" ")[2]).split(",")[2].trim());
+									.parseDouble((s.split(" ")[s.split(" ").length - 2]).split(",")[0].substring(1)
+											.trim());
+							double stop = Double
+									.parseDouble((s.split(" ")[s.split(" ").length - 2]).split(",")[1].trim());
+							double step = Double
+									.parseDouble((s.split(" ")[s.split(" ").length - 2]).split(",")[2].trim());
 							ArrayList<Double> add = new ArrayList<Double>();
 							for (double i = start; i <= stop; i += step) {
 								add.add(i);
@@ -2889,9 +3078,9 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 							}
 						}
 						else {
-							new File(simDir + separator + sweep).mkdir();
+							new File(simDir + separator + sweep.replace("/", "-")).mkdir();
 							createSBML(sweep);
-							reb2sac.setDir(sweep);
+							reb2sac.setDir(sweep.replace("/", "-"));
 							Thread t = new Thread(reb2sac);
 							t.start();
 							try {

@@ -2213,89 +2213,89 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 					exportIt = false;
 					if (value == JOptionPane.YES_OPTION) {
-					  exportIt = true;
+						exportIt = true;
 					}
 				}
 				if (exportIt) {
-				  if ((output != 5) && (output != 6) && (output != 7)) {
-				    value = JOptionPane.showOptionDialog(biomodelsim.frame(), sizePanel, "Enter Size Of File",
-									 JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options2, options2[0]);
-				    if (value == JOptionPane.YES_OPTION) {
-				      while (value == JOptionPane.YES_OPTION && (width == -1 || height == -1))
-					try {
-					  width = Integer.parseInt(widthField.getText().trim());
-					  height = Integer.parseInt(heightField.getText().trim());
-					  if (width < 1 || height < 1) {
-					    JOptionPane.showMessageDialog(biomodelsim.frame(),
-									  "Width and height must be positive integers!", "Error",
-									  JOptionPane.ERROR_MESSAGE);
-					    width = -1;
-					    height = -1;
-					    value = JOptionPane.showOptionDialog(biomodelsim.frame(), sizePanel,
-										 "Enter Size Of File", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
-										 null, options2, options2[0]);
-					  }
+					if ((output != 5) && (output != 6) && (output != 7)) {
+						value = JOptionPane.showOptionDialog(biomodelsim.frame(), sizePanel,
+								"Enter Size Of File", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
+								options2, options2[0]);
+						if (value == JOptionPane.YES_OPTION) {
+							while (value == JOptionPane.YES_OPTION && (width == -1 || height == -1))
+								try {
+									width = Integer.parseInt(widthField.getText().trim());
+									height = Integer.parseInt(heightField.getText().trim());
+									if (width < 1 || height < 1) {
+										JOptionPane.showMessageDialog(biomodelsim.frame(),
+												"Width and height must be positive integers!", "Error",
+												JOptionPane.ERROR_MESSAGE);
+										width = -1;
+										height = -1;
+										value = JOptionPane.showOptionDialog(biomodelsim.frame(), sizePanel,
+												"Enter Size Of File", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
+												null, options2, options2[0]);
+									}
+								}
+								catch (Exception e2) {
+									JOptionPane.showMessageDialog(biomodelsim.frame(),
+											"Width and height must be positive integers!", "Error",
+											JOptionPane.ERROR_MESSAGE);
+									width = -1;
+									height = -1;
+									value = JOptionPane.showOptionDialog(biomodelsim.frame(), sizePanel,
+											"Enter Size Of File", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
+											null, options2, options2[0]);
+								}
+						}
+						if (value == JOptionPane.NO_OPTION) {
+							return;
+						}
 					}
-					catch (Exception e2) {
-					  JOptionPane
-					    .showMessageDialog(biomodelsim.frame(),
-							       "Width and height must be positive integers!", "Error",
-							       JOptionPane.ERROR_MESSAGE);
-					  width = -1;
-					  height = -1;
-					  value = JOptionPane.showOptionDialog(biomodelsim.frame(), sizePanel,
-									       "Enter Size Of File", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
-									       options2, options2[0]);
+					if (output == 0) {
+						ChartUtilities.saveChartAsJPEG(file, chart, width, height);
 					}
-				    }
-				    if (value == JOptionPane.NO_OPTION) {
-				      return;
-				    }
-				  }
-				  if (output == 0) {
-				    ChartUtilities.saveChartAsJPEG(file, chart, width, height);
-				  }
-				  else if (output == 1) {
-				    ChartUtilities.saveChartAsPNG(file, chart, width, height);
-				  }
-				  else if (output == 2) {
-				    Rectangle pagesize = new Rectangle(width, height);
-				    Document document = new Document(pagesize, 50, 50, 50, 50);
-				    FileOutputStream out = new FileOutputStream(file);
-				    PdfWriter writer = PdfWriter.getInstance(document, out);
-				    document.open();
-				    PdfContentByte cb = writer.getDirectContent();
-				    PdfTemplate tp = cb.createTemplate(width, height);
-				    Graphics2D g2 = tp.createGraphics(width, height, new DefaultFontMapper());
-				    chart.draw(g2, new java.awt.Rectangle(width, height));
-				    g2.dispose();
-				    cb.addTemplate(tp, 0, 0);
-				    document.close();
-				    out.close();
-				  }
-				  else if (output == 3) {
-				    Graphics2D g = new EpsGraphics2D();
-				    chart.draw(g, new java.awt.Rectangle(width, height));
-				    Writer out = new FileWriter(file);
-				    out.write(g.toString());
-				    out.close();
-				  }
-				  else if (output == 4) {
-				    DOMImplementation domImpl = GenericDOMImplementation.getDOMImplementation();
-				    org.w3c.dom.Document document = domImpl.createDocument(null, "svg", null);
-				    SVGGraphics2D svgGenerator = new SVGGraphics2D(document);
-				    chart.draw(svgGenerator, new java.awt.Rectangle(width, height));
-				    boolean useCSS = true;
-				    FileOutputStream outStream = new FileOutputStream(file);
-				    Writer out = new OutputStreamWriter(outStream, "UTF-8");
-				    svgGenerator.stream(out, useCSS);
-				    out.close();
-				    outStream.close();
-				  }
-				  else if ((output == 5) || (output == 6) || (output == 7)) {
-				    exportDataFile(file,output);
-				  }
-				  savedPics = filename;
+					else if (output == 1) {
+						ChartUtilities.saveChartAsPNG(file, chart, width, height);
+					}
+					else if (output == 2) {
+						Rectangle pagesize = new Rectangle(width, height);
+						Document document = new Document(pagesize, 50, 50, 50, 50);
+						FileOutputStream out = new FileOutputStream(file);
+						PdfWriter writer = PdfWriter.getInstance(document, out);
+						document.open();
+						PdfContentByte cb = writer.getDirectContent();
+						PdfTemplate tp = cb.createTemplate(width, height);
+						Graphics2D g2 = tp.createGraphics(width, height, new DefaultFontMapper());
+						chart.draw(g2, new java.awt.Rectangle(width, height));
+						g2.dispose();
+						cb.addTemplate(tp, 0, 0);
+						document.close();
+						out.close();
+					}
+					else if (output == 3) {
+						Graphics2D g = new EpsGraphics2D();
+						chart.draw(g, new java.awt.Rectangle(width, height));
+						Writer out = new FileWriter(file);
+						out.write(g.toString());
+						out.close();
+					}
+					else if (output == 4) {
+						DOMImplementation domImpl = GenericDOMImplementation.getDOMImplementation();
+						org.w3c.dom.Document document = domImpl.createDocument(null, "svg", null);
+						SVGGraphics2D svgGenerator = new SVGGraphics2D(document);
+						chart.draw(svgGenerator, new java.awt.Rectangle(width, height));
+						boolean useCSS = true;
+						FileOutputStream outStream = new FileOutputStream(file);
+						Writer out = new OutputStreamWriter(outStream, "UTF-8");
+						svgGenerator.stream(out, useCSS);
+						out.close();
+						outStream.close();
+					}
+					else if ((output == 5) || (output == 6) || (output == 7)) {
+						exportDataFile(file, output);
+					}
+					savedPics = filename;
 				}
 			}
 		}
@@ -2305,104 +2305,106 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		}
 	}
 
-        public void exportDataFile(File file,int output) {
-	  try {
-	    int count = curData.getSeries(0).getItemCount();
-	    for (int i = 1; i < curData.getSeriesCount(); i++) {
-	      if (curData.getSeries(i).getItemCount() != count) {
-		JOptionPane.showMessageDialog(biomodelsim.frame(), "Data series do not have the same number of points!", "Unable to Export Data File",
-					      JOptionPane.ERROR_MESSAGE);
-		return;
-	      }
-	    }
-	    for (int j = 0; j < count; j++) {
-	      Number Xval = curData.getSeries(0).getDataItem(j).getX();
-	      for (int i = 1; i < curData.getSeriesCount(); i++) {
-		if (curData.getSeries(i).getDataItem(j).getX() != Xval) {
-		  JOptionPane.showMessageDialog(biomodelsim.frame(), "Data series time points are not the same!", "Unable to Export Data File",
-						JOptionPane.ERROR_MESSAGE);
-		  return;
+	public void exportDataFile(File file, int output) {
+		try {
+			int count = curData.getSeries(0).getItemCount();
+			for (int i = 1; i < curData.getSeriesCount(); i++) {
+				if (curData.getSeries(i).getItemCount() != count) {
+					JOptionPane.showMessageDialog(biomodelsim.frame(),
+							"Data series do not have the same number of points!", "Unable to Export Data File",
+							JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+			}
+			for (int j = 0; j < count; j++) {
+				Number Xval = curData.getSeries(0).getDataItem(j).getX();
+				for (int i = 1; i < curData.getSeriesCount(); i++) {
+					if (curData.getSeries(i).getDataItem(j).getX() != Xval) {
+						JOptionPane.showMessageDialog(biomodelsim.frame(),
+								"Data series time points are not the same!", "Unable to Export Data File",
+								JOptionPane.ERROR_MESSAGE);
+						return;
+					}
+				}
+			}
+			FileOutputStream csvFile = new FileOutputStream(file);
+			PrintWriter csvWriter = new PrintWriter(csvFile);
+			if (output == 7) {
+				csvWriter.print("((");
+			}
+			else if (output == 6) {
+				csvWriter.print("#");
+			}
+			csvWriter.print("\"Time\"");
+			count = curData.getSeries(0).getItemCount();
+			int pos = 0;
+			for (int i = 0; i < curData.getSeriesCount(); i++) {
+				if (output == 6) {
+					csvWriter.print(" ");
+				}
+				else {
+					csvWriter.print(",");
+				}
+				csvWriter.print("\"" + curData.getSeriesKey(i) + "\"");
+				if (curData.getSeries(i).getItemCount() > count) {
+					count = curData.getSeries(i).getItemCount();
+					pos = i;
+				}
+			}
+			if (output == 7) {
+				csvWriter.print(")");
+			}
+			else {
+				csvWriter.println("");
+			}
+			for (int j = 0; j < count; j++) {
+				if (output == 7) {
+					csvWriter.print(",");
+				}
+				for (int i = 0; i < curData.getSeriesCount(); i++) {
+					if (i == 0) {
+						if (output == 7) {
+							csvWriter.print("(");
+						}
+						csvWriter.print(curData.getSeries(pos).getDataItem(j).getX());
+					}
+					XYSeries data = curData.getSeries(i);
+					if (j < data.getItemCount()) {
+						XYDataItem item = data.getDataItem(j);
+						if (output == 6) {
+							csvWriter.print(" ");
+						}
+						else {
+							csvWriter.print(",");
+						}
+						csvWriter.print(item.getY());
+					}
+					else {
+						if (output == 6) {
+							csvWriter.print(" ");
+						}
+						else {
+							csvWriter.print(",");
+						}
+					}
+				}
+				if (output == 7) {
+					csvWriter.print(")");
+				}
+				else {
+					csvWriter.println("");
+				}
+			}
+			if (output == 7) {
+				csvWriter.println(")");
+			}
+			csvWriter.close();
+			csvFile.close();
 		}
-	      }
-	    }
-	    FileOutputStream csvFile = new FileOutputStream(file);
-	    PrintWriter csvWriter = new PrintWriter(csvFile);
-	    if (output == 7) {
-	      csvWriter.print("((");
-	    }
-	    else if (output == 6) {
-	      csvWriter.print("#");
-	    }
-	    csvWriter.print("\"Time\"");
-	    count = curData.getSeries(0).getItemCount();
-	    int pos = 0;
-	    for (int i = 0; i < curData.getSeriesCount(); i++) {
-	      if (output == 6) {
-		csvWriter.print(" ");
-	      }
-	      else {
-		csvWriter.print(",");
-	      }
-	      csvWriter.print("\"" + curData.getSeriesKey(i) + "\"");
-	      if (curData.getSeries(i).getItemCount() > count) {
-		count = curData.getSeries(i).getItemCount();
-		pos = i;
-	      }
-	    }
-	    if (output == 7) {
-	      csvWriter.print(")");
-	    }
-	    else {
-	      csvWriter.println("");
-	    }
-	    for (int j = 0; j < count; j++) {
-	      if (output == 7) {
-		csvWriter.print(",");
-	      }
-	      for (int i = 0; i < curData.getSeriesCount(); i++) {
-		if (i == 0) {
-		  if (output == 7) {
-		    csvWriter.print("(");
-		  }
-		  csvWriter.print(curData.getSeries(pos).getDataItem(j).getX());
+		catch (Exception e1) {
+			JOptionPane.showMessageDialog(biomodelsim.frame(), "Unable To Export File!", "Error",
+					JOptionPane.ERROR_MESSAGE);
 		}
-		XYSeries data = curData.getSeries(i);
-		if (j < data.getItemCount()) {
-		  XYDataItem item = data.getDataItem(j);
-		  if (output == 6) {
-		    csvWriter.print(" ");
-		  }
-		  else {
-		    csvWriter.print(",");
-		  }
-		  csvWriter.print(item.getY());
-		}
-		else {
-		  if (output == 6) {
-		    csvWriter.print(" ");
-		  }
-		  else {
-		    csvWriter.print(",");
-		  }
-		}
-	      }
-	      if (output == 7) {
-		csvWriter.print(")");
-	      }
-	      else {
-		csvWriter.println("");
-	      }
-	    }
-	    if (output == 7) {
-	      csvWriter.println(")");
-	    }
-	    csvWriter.close();
-	    csvFile.close();
-	  }
-	  catch (Exception e1) {
-	    JOptionPane.showMessageDialog(biomodelsim.frame(), "Unable To Export File!", "Error",
-					  JOptionPane.ERROR_MESSAGE);
-	  }
 	}
 
 	private ArrayList<ArrayList<Double>> calculateAverageVarianceDeviation(String startFile,
