@@ -319,8 +319,8 @@ public class Run implements ActionListener {
 				reb2sac = exec.exec("reb2sac --target.encoding=nary-level " + theFile, null, work);
 			}
 			else if (sbml.isSelected()) {
-				sbmlName = JOptionPane.showInputDialog(component, "Enter SBML Model ID:",
-								       "Model ID", JOptionPane.PLAIN_MESSAGE);
+				sbmlName = JOptionPane.showInputDialog(component, "Enter SBML Model ID:", "Model ID",
+						JOptionPane.PLAIN_MESSAGE);
 				if (sbmlName != null && !sbmlName.trim().equals("")) {
 					sbmlName = sbmlName.trim();
 					if (sbmlName.length() > 4) {

@@ -372,7 +372,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		runsLabel.setEnabled(false);
 		stepLabel.setEnabled(false);
 		errorLabel.setEnabled(true);
-		//absErr.setEnabled(true);
+		// absErr.setEnabled(true);
 		JPanel odeMonteAndMarkovPanel = new JPanel();
 		odeMonteAndMarkovPanel.add(choose2);
 		odeMonteAndMarkovPanel.add(ODE);
@@ -1299,41 +1299,45 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		}
 		// if the add sad button is clicked
 		else if (e.getSource() == addSAD) {
-		  SBMLReader reader = new SBMLReader();
-		  SBMLDocument document = reader.readSBML(sbmlFile);
-		  Model model = document.getModel();
-		  ArrayList<String> listOfSpecs = new ArrayList<String>();
-		  ArrayList<String> listOfReacs = new ArrayList<String>();
-		  if (model != null) {
-		    ListOf listOfSpecies = model.getListOfSpecies();
-		    for (int i = 0; i < model.getNumSpecies(); i++) {
-		      Species species = (Species) listOfSpecies.get(i);
-		      listOfSpecs.add(species.getId());
-		    }
-		    ListOf listOfReactions = model.getListOfReactions();
-		    for (int i = 0; i < model.getNumReactions(); i++) {
-		      Reaction reaction = (Reaction) listOfReactions.get(i);
-		      listOfReacs.add(reaction.getId());
-		    }
-		  }
-		  TermCond TCparser = new TermCond(false);
-		  int result = TCparser.ParseTermCond(biomodelsim,listOfSpecs,listOfReacs,cond.getText().trim());
-		  if (result == 0) {
-		    String add = TCid.getText().trim() + "; " + desc.getText().trim() + "; "
-		      + cond.getText().trim();
-		    JList addSAD = new JList();
-		    Object[] adding = { add };
-		    addSAD.setListData(adding);
-		    addSAD.setSelectedIndex(0);
-		    TCid.setText("");
-		    desc.setText("");
-		    cond.setText("");
-		    sadList = Buttons.add(sadList, sad, addSAD, false, null, null, null, null, null, null, this);
-		    sad.setListData(sadList);
-		  } else if (result == 1) {
-		    JOptionPane.showMessageDialog(biomodelsim.frame(), "Syntax error in the termination condition!",
-						  "Syntax Error", JOptionPane.ERROR_MESSAGE);
-		  }
+			SBMLReader reader = new SBMLReader();
+			SBMLDocument document = reader.readSBML(sbmlFile);
+			Model model = document.getModel();
+			ArrayList<String> listOfSpecs = new ArrayList<String>();
+			ArrayList<String> listOfReacs = new ArrayList<String>();
+			if (model != null) {
+				ListOf listOfSpecies = model.getListOfSpecies();
+				for (int i = 0; i < model.getNumSpecies(); i++) {
+					Species species = (Species) listOfSpecies.get(i);
+					listOfSpecs.add(species.getId());
+				}
+				ListOf listOfReactions = model.getListOfReactions();
+				for (int i = 0; i < model.getNumReactions(); i++) {
+					Reaction reaction = (Reaction) listOfReactions.get(i);
+					listOfReacs.add(reaction.getId());
+				}
+			}
+			TermCond TCparser = new TermCond(false);
+			int result = TCparser.ParseTermCond(biomodelsim, listOfSpecs, listOfReacs, cond.getText()
+					.trim());
+			if (result == 0) {
+				String add = TCid.getText().trim() + "; " + desc.getText().trim() + "; "
+						+ cond.getText().trim();
+				JList addSAD = new JList();
+				Object[] adding = { add };
+				addSAD.setListData(adding);
+				addSAD.setSelectedIndex(0);
+				TCid.setText("");
+				desc.setText("");
+				cond.setText("");
+				sadList = Buttons
+						.add(sadList, sad, addSAD, false, null, null, null, null, null, null, this);
+				sad.setListData(sadList);
+			}
+			else if (result == 1) {
+				JOptionPane
+						.showMessageDialog(biomodelsim.frame(), "Syntax error in the termination condition!",
+								"Syntax Error", JOptionPane.ERROR_MESSAGE);
+			}
 		}
 		// if the edit ssa button is clicked
 		else if (e.getSource() == editSSA) {
@@ -1554,37 +1558,40 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 						"Edit Termination Condition", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
 						null, options, options[0]);
 				if (value == JOptionPane.YES_OPTION) {
-				  SBMLReader reader = new SBMLReader();
-				  SBMLDocument document = reader.readSBML(sbmlFile);
-				  Model model = document.getModel();
-				  ArrayList<String> listOfSpecs = new ArrayList<String>();
-				  ArrayList<String> listOfReacs = new ArrayList<String>();
-				  if (model != null) {
-				    ListOf listOfSpecies = model.getListOfSpecies();
-				    for (int i = 0; i < model.getNumSpecies(); i++) {
-				      Species species = (Species) listOfSpecies.get(i);
-				      listOfSpecs.add(species.getId());
-				    }
-				    ListOf listOfReactions = model.getListOfReactions();
-				    for (int i = 0; i < model.getNumReactions(); i++) {
-				      Reaction reaction = (Reaction) listOfReactions.get(i);
-				      listOfReacs.add(reaction.getId());
-				    }
-				  }
-				  TermCond TCparser = new TermCond(false);
-				  int result = TCparser.ParseTermCond(biomodelsim,listOfSpecs,listOfReacs,cond.getText().trim());
-				  if (result == 0) {
-					sadList[sad.getSelectedIndex()] = TCid.getText().trim() + "; " + desc.getText().trim()
-							+ "; " + cond.getText().trim();
-					int[] index = sad.getSelectedIndices();
-					sad.setListData(sadList);
-					sadList = Buttons.getList(sadList, sad);
-					sad.setSelectedIndices(index);
-					sad.setListData(sadList);
-				  } else if (result == 1) {
-				    JOptionPane.showMessageDialog(biomodelsim.frame(), "Syntax error in the termination condition!",
-								  "Syntax Error", JOptionPane.ERROR_MESSAGE);
-				  }
+					SBMLReader reader = new SBMLReader();
+					SBMLDocument document = reader.readSBML(sbmlFile);
+					Model model = document.getModel();
+					ArrayList<String> listOfSpecs = new ArrayList<String>();
+					ArrayList<String> listOfReacs = new ArrayList<String>();
+					if (model != null) {
+						ListOf listOfSpecies = model.getListOfSpecies();
+						for (int i = 0; i < model.getNumSpecies(); i++) {
+							Species species = (Species) listOfSpecies.get(i);
+							listOfSpecs.add(species.getId());
+						}
+						ListOf listOfReactions = model.getListOfReactions();
+						for (int i = 0; i < model.getNumReactions(); i++) {
+							Reaction reaction = (Reaction) listOfReactions.get(i);
+							listOfReacs.add(reaction.getId());
+						}
+					}
+					TermCond TCparser = new TermCond(false);
+					int result = TCparser.ParseTermCond(biomodelsim, listOfSpecs, listOfReacs, cond.getText()
+							.trim());
+					if (result == 0) {
+						sadList[sad.getSelectedIndex()] = TCid.getText().trim() + "; " + desc.getText().trim()
+								+ "; " + cond.getText().trim();
+						int[] index = sad.getSelectedIndices();
+						sad.setListData(sadList);
+						sadList = Buttons.getList(sadList, sad);
+						sad.setSelectedIndices(index);
+						sad.setListData(sadList);
+					}
+					else if (result == 1) {
+						JOptionPane.showMessageDialog(biomodelsim.frame(),
+								"Syntax error in the termination condition!", "Syntax Error",
+								JOptionPane.ERROR_MESSAGE);
+					}
 				}
 			}
 		}
