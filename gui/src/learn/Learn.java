@@ -22,7 +22,7 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 
 	// private JButton browseInit; // the browse initial network button
 
-	private JButton save, run, viewCkt, saveCkt, viewLog; // the run button
+	private JButton save, run, viewGcm, saveGcm, viewLog; // the run button
 
 	private JComboBox debug; // debug combo box
 
@@ -335,25 +335,25 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 		run.setMnemonic(KeyEvent.VK_L);
 
 		// Creates the view circuit button
-		viewCkt = new JButton("View Circuit");
-		runHolder.add(viewCkt);
-		viewCkt.addActionListener(this);
-		viewCkt.setMnemonic(KeyEvent.VK_V);
+		viewGcm = new JButton("View Circuit");
+		runHolder.add(viewGcm);
+		viewGcm.addActionListener(this);
+		viewGcm.setMnemonic(KeyEvent.VK_V);
 
 		// Creates the save circuit button
-		saveCkt = new JButton("Save Circuit");
-		runHolder.add(saveCkt);
-		saveCkt.addActionListener(this);
-		saveCkt.setMnemonic(KeyEvent.VK_C);
+		saveGcm = new JButton("Save Circuit");
+		runHolder.add(saveGcm);
+		saveGcm.addActionListener(this);
+		saveGcm.setMnemonic(KeyEvent.VK_C);
 
 		// Creates the view circuit button
 		viewLog = new JButton("View Run Log");
 		runHolder.add(viewLog);
 		viewLog.addActionListener(this);
 		viewLog.setMnemonic(KeyEvent.VK_R);
-		if (!(new File(directory + separator + "method.ckt").exists())) {
-			viewCkt.setEnabled(false);
-			saveCkt.setEnabled(false);
+		if (!(new File(directory + separator + "method.gcm").exists())) {
+			viewGcm.setEnabled(false);
+			saveGcm.setEnabled(false);
 		}
 		if (!(new File(directory + separator + "run.log").exists())) {
 			viewLog.setEnabled(false);
@@ -452,14 +452,14 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 		else if (e.getSource() == save) {
 			save();
 		}
-		else if (e.getSource() == viewCkt) {
-			viewCkt();
+		else if (e.getSource() == viewGcm) {
+			viewGcm();
 		}
 		else if (e.getSource() == viewLog) {
 			viewLog();
 		}
-		else if (e.getSource() == saveCkt) {
-			saveCkt();
+		else if (e.getSource() == saveGcm) {
+			saveGcm();
 		}
 	}
 
@@ -815,9 +815,9 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 		directory = newDirectory;
 	}
 
-	public void saveCkt() {
+	public void saveGcm() {
 		try {
-			if (new File(directory + separator + "method.ckt").exists()) {
+			if (new File(directory + separator + "method.gcm").exists()) {
 				String copy = JOptionPane.showInputDialog(biosim.frame(), "Enter Circuit Name:",
 						"Save Circuit", JOptionPane.PLAIN_MESSAGE);
 				if (copy != null) {
@@ -828,15 +828,15 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 				}
 				if (!copy.equals("")) {
 					if (copy.length() > 3) {
-						if (!copy.substring(copy.length() - 4).equals(".ckt")) {
-							copy += ".ckt";
+						if (!copy.substring(copy.length() - 4).equals(".gcm")) {
+							copy += ".gcm";
 						}
 					}
 					else {
-						copy += ".ckt";
+						copy += ".gcm";
 					}
 				}
-				biosim.saveCkt(copy, directory + separator + "method.ckt");
+				biosim.saveGcm(copy, directory + separator + "method.gcm");
 			}
 			else {
 				JOptionPane.showMessageDialog(biosim.frame(), "No circuit has been generated yet.",
@@ -849,12 +849,12 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 		}
 	}
 
-	public void viewCkt() {
+	public void viewGcm() {
 		try {
 			File work = new File(directory);
-			if (new File(directory + separator + "method.ckt").exists()) {
-				String command = "dotty method.ckt";
-				log.addText("Executing:\n" + "dotty " + directory + separator + "method.ckt\n");
+			if (new File(directory + separator + "method.gcm").exists()) {
+				String command = "dotty method.gcm";
+				log.addText("Executing:\n" + "dotty " + directory + separator + "method.gcm\n");
 				Runtime exec = Runtime.getRuntime();
 				exec.exec(command, null, work);
 			}
@@ -1173,20 +1173,20 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 						"Canceled Learning", JOptionPane.ERROR_MESSAGE);
 			}
 			else {
-				if (new File(directory + separator + "method.ckt").exists()) {
-					String command = "dotty method.ckt";
-					log.addText("Executing:\n" + "dotty " + directory + separator + "method.ckt\n");
+				if (new File(directory + separator + "method.gcm").exists()) {
+					String command = "dotty method.gcm";
+					log.addText("Executing:\n" + "dotty " + directory + separator + "method.gcm\n");
 					exec.exec(command, null, work);
 				}
 				else {
-					JOptionPane.showMessageDialog(biosim.frame(), "A dot file was not generated."
+					JOptionPane.showMessageDialog(biosim.frame(), "A gcm file was not generated."
 							+ "\nPlease see the run.log file.", "Error", JOptionPane.ERROR_MESSAGE);
 				}
 				running.setCursor(null);
 				running.dispose();
-				if (new File(directory + separator + "method.ckt").exists()) {
-					viewCkt.setEnabled(true);
-					saveCkt.setEnabled(true);
+				if (new File(directory + separator + "method.gcm").exists()) {
+					viewGcm.setEnabled(true);
+					saveGcm.setEnabled(true);
 				}
 				if (new File(directory + separator + "run.log").exists()) {
 					viewLog.setEnabled(true);
