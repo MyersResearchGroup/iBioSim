@@ -36,9 +36,6 @@
 <LI><A HREF="#COMPARTMENTS">Compartments</A>
 <LI><A HREF="#SPECIES">Species</A>
 <LI><A HREF="#REACTIONS">Reactions</A>
-<UL>
-<LI><A HREF="#KINETIC">Kinetic Law Formula Syntax</A>
-</UL>
 <LI><A HREF="#PARAMETERS">Parameters</A>
 </UL>
 <LI><A HREF="#ANALYSIS"><FONT SIZE=4>Analysis View</FONT></A>
@@ -48,6 +45,7 @@
 <LI><A HREF="#ABSOPTIONS">Abstraction Options</A>
 <LI><A HREF="#TERMCOND">Termination Conditions</A>
 <LI><A HREF="#ADVSIMOPTIONS">Advanced Options</A>
+<LI><A HREF="#PARAMEDIT">Parameter Editor</A>
 </UL>
 <LI><A HREF="#LEARN"><FONT SIZE=4>Learn View</FONT></A>
 <UL>
@@ -107,9 +105,16 @@ created.
 <p>
 To create a new SBML model, you must first have a project open.
 Once this is done, select the File drop down menu from the toolbar
-and select &quot;New Model&quot; under the New option. You will
+and select &quot;New SBML Model&quot; under the New option. You will
 then be prompted to give a model id. Once an id is entered, an
 <A HREF="#SBMLEDIT">SBML editor</A> will open in a new tab.</p>
+<p>
+To create a new circuit model, you must first have a project open.
+Once this is done, select the File drop down menu from the toolbar
+and select &quot;New Circuit Model&quot; under the New option. You will
+then be prompted to give a model id. Once an id is entered, emacs or notepad
+will be opened to allow you to create a model using the 
+<A HREF="#CIRCUIT">Circuit Model Format</A>.</p>
 <p>
 To create a new graph, you must first have a project open.
 Once this is done, select the File drop down menu from the toolbar
@@ -122,7 +127,9 @@ To open a project, select the File drop down menu from the
 toolbar and select &quot;Open Project&quot; under the Open option.
 You will then be prompted to browse to a project directory that
 you want to open. After you select the project directory, click
-open and the project will open. 
+open and the project will open.  You may also open a project by selecting
+one of your five most recently opened projects by selecting the project
+name shown in the File drop down menu.
 
 <H2><A NAME="IMPORT"></A>Importing Models</H2>
 The import option can be used to bring 
@@ -134,7 +141,8 @@ Once this is done, select the File drop down menu from the toolbar
 and select &quot;SBML&quot; under the Import option. You will then
 be prompted to select a model to import. Select a desired model
 and click the open button to import the SBML model into the
-project.  To import a circuit model, the procedure is the same.
+project.  To import a circuit model, the procedure is the same 
+except select "Circuit" under the Import option.
 
 <H2><A NAME="CREATEVIEW"></A>Creating and Opening Views</H2>
 To perform analysis or learning, right click on a model and select &quot;Create
@@ -148,7 +156,14 @@ Once a view is created, it can be opened again later by right
 clicking on an analysis directory and selecting &quot;Open
 Analysis View&quot; or alternatively double-clicking on the view.
 </p>
-
+<p>
+When you create an analysis view from a circuit model, an SBML model is 
+automatically created for simulation and analysis.  Within the analysis view,
+you can edit the initial concentrations and parameters.  However, if you wish
+to be able to edit the structure, you should first create an SBML model
+using Create SBML Model option in the right click menu.  You can then
+open and edit this model using an <A HREF="#SBMLEDIT">SBML editor</A> and
+create an analysis view from this edited model. 
 <!--
 <LI><P>Background Knowledge Network 
 </P>
@@ -165,7 +180,8 @@ There are two ways to view an SBML model. You can either select the
 The &quot;View Network&quot; option converts the model to a 
 <A HREF="http://www.graphviz.org">GraphViz</A> file and then will open 
 that file with GraphViz's dotty program.  The &quot;View in Browser&quot; 
-option coverts the model to an xhtml file and opens that file with firefox.
+option coverts the model to an xhtml file and opens that file with your
+defualt browser.
 To view a circuit model, right click on the model you want to view, and 
 select the &quot;View Circuit&quot; option.  This opens the circuit using
 <A HREF="http://www.graphviz.org">GraphViz's</A> dotty program.  
@@ -247,19 +263,19 @@ or manually entered using the syntax described below.  The Use Mass Action
 button creates a rate law using the law of mass action.  It assumes that
 the first parameter in the list is the forward reaction rate and the second
 parameter in the list is the reverse reaction rate.  
-
-<H3><A NAME="KINETIC"></A>Kinetic Law Formula Syntax</H3>
+<p>
 Kinetic law formulas are expressed as text strings using a
 simple C-like syntax. Here are some syntax rules when dealing with
 kinetic law formulas: 
 <UL>
 <LI><P STYLE="margin-bottom: 0in">Acceptable operators include:
-add (+), subtract (-), multiply (*), and divide (/) 
+add (+), subtract (-), multiply (*), divide (/), and the power 
+function, pow(x,y), which is equal to x^y.  
 </P>
+<!--
 <LI><P STYLE="margin-bottom: 0in">Supported functions include: 
 </P>
 <UL>
-<!--
 <LI><P STYLE="margin-bottom: 0in">abs(x) - Absolute Value 
 </P>
 <LI><P STYLE="margin-bottom: 0in">acos(x) - Arc Cosine 
@@ -282,10 +298,8 @@ add (+), subtract (-), multiply (*), and divide (/)
 </P>
 <LI><P STYLE="margin-bottom: 0in">sqr(x) - Squared 
 </P>
--->
 <LI><P STYLE="margin-bottom: 0in">pow(x, y) - x^y 
 </P>
-<!--
 <LI><P STYLE="margin-bottom: 0in">sqrt(x) - Square Root 
 </P>
 <LI><P STYLE="margin-bottom: 0in">root(#, x) - x to the # root 
@@ -294,8 +308,8 @@ add (+), subtract (-), multiply (*), and divide (/)
 </P>
 <LI><P STYLE="margin-bottom: 0in">tan(x) - Tangent 
 </P>
--->
 </UL>
+-->
 <LI><P STYLE="margin-bottom: 0in">Acceptable variables include
 anything listed in the products, reactants, or parameter fields. 
 </P>
@@ -317,7 +331,7 @@ parameter includes an ID and a value.
 The analysis view is used to analyze biochemcial reaction network
 models.  The analysis view includes tabs for a
 <A HREF="#SIMOPTIONS">simulation tool</A>, a 
-<A HREF="#SBMLEDIT">SBML editor</A>, and a 
+<A HREF="#PARAMEDIT">parameter editor</A>, and a 
 <A HREF="#GRAPH">graph editor</A>.
 
 <H2><A NAME="SIMOPTIONS"></A>Options</H2>
@@ -537,9 +551,18 @@ Below is the table specifies such simulation properties.</P>
 </TABLE>
 
 <H2><A NAME="USERDEFN"></A>User Defined Data File</H2>
-This can deterministically specify how the state of each
-species can  change at some specified time point in Gillespie’s
-SSA. 
+This can deterministically specify how the state of a species should 
+change at some specified time point during a simulation using Gillespie’s SSA. 
+When "Use User Defined Data" is selected, you may add a new data point,
+edit a data point, remove a data point, or clear all data points.
+Each data point is composed of a time to make the change, the species to
+change, how it should change, and the value for the change.  The change
+type can be "goes to" which sets the species to the value at the specified
+time point, "is added by" which adds the specified value to the species,
+"is subtracted by" which subtracts the specified value from the species,
+"is multiplied by" which multiplies the species value by the specified
+value, and "is divided by" which divides the species value by the specified
+value.
 
 <H2><A NAME="ABSOPTIONS"></A>Abstraction Options</H2>
 This allows the user to set the properties of rapid equilibrium, QSSA,
@@ -559,7 +582,7 @@ abstraction method where T &gt; E0 / (S0 + KM).
 The <i>Max concentration threshold</i> specifies the maximum number of 
 molecules that a species can have initially and still be considered an 
 operator site by the operator site reduction.
-
+<p>
 Interesting species are the ones that are used in the analysis,
 and hence are those which should not be abstracted. 
 
@@ -573,106 +596,27 @@ computational analysis of phenotype variations.
 
 <H2><A NAME="ADVTERMCOND"></A>Advanced Termination Conditions</H2>
 -->
-The advanced termination conditions specify a condition upon which a
+The termination conditions specify a condition upon which a
 simulation should terminate.  A record is kept of the proportion of 
-simulations that are terminated by each condition.  These conditions are
-specified using the language described below:
-<P><FONT FACE="Courier 10 Pitch"><FONT SIZE=2><FONT FACE="Courier 10 Pitch"><FONT SIZE=2>term
-&lt;id&gt; {</FONT></FONT></FONT></FONT></P>
-<P>  <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>desc &lt;string&gt;;</FONT></FONT></P>
-<P>  <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>cond &lt;bool-exp&gt;;</FONT></FONT></P>
-<P><FONT FACE="Courier 10 Pitch"><FONT SIZE=2>}</FONT></FONT></P>
-<P><FONT FACE="Nimbus Roman No9 L, serif"><FONT SIZE=3>where &lt;id&gt;
-is the ID for this termination condition, desc is the description
-of this termination condition,and cond is the predicate which must
-hold to terminate a simulation/analysis procedure.</FONT></FONT></P>
-<P><FONT FACE="Courier 10 Pitch"><FONT SIZE=2><FONT FACE="Courier 10 Pitch"><FONT SIZE=2>bool-exp
-:= </FONT></FONT></FONT></FONT>
-</P>
-<P>      <FONT FACE="Courier 10 Pitch"><FONT SIZE=2><FONT FACE="Courier 10 Pitch"><FONT SIZE=2>&lt;logical_exp&gt;</FONT></FONT></FONT></FONT></P>
-<P>    <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>|  &lt;comp_exp&gt;</FONT></FONT></P>
-<BR>
-<P><FONT FACE="Courier 10 Pitch"><FONT SIZE=2>logical_exp :=</FONT></FONT></P>
-<P>      <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>&lt;bool_exp&gt;
-&amp;&amp; &lt;bool_exp&gt;   // and </FONT></FONT>
-</P>
-<P>    <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>| &lt;bool_exp&gt;
-|| &lt;bool_exp&gt;   // or </FONT></FONT>
-</P>
-<P>    <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>| !&lt;bool_exp&gt;
-               // not</FONT></FONT></P>
-<P>    <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>| (
-&lt;logical_exp&gt; )            </FONT></FONT>
-</P>
-<P><BR></P>
-<P> <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>comp_exp :=</FONT></FONT></P>
-<P>      <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>&lt;num_exp&gt;
-&lt;= &lt;num_exp&gt;     // less than or equal to</FONT></FONT></P>
-<P>    <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>| &lt;num_exp&gt;
-&lt; &lt;num_exp&gt;      // less than</FONT></FONT></P>
-<P>    <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>| &lt;num_exp&gt;
-&gt;= &lt;num_exp&gt;     // greater than or equal to</FONT></FONT></P>
-<P>    <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>| &lt;num_exp&gt;
-&gt; &lt;num_exp&gt;      // greater than</FONT></FONT></P>
-<P>    <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>| &lt;num_exp&gt;
-= &lt;num_exp&gt;      // equal to</FONT></FONT></P>
-<P>    <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>| ( &lt;comp_exp&gt;
-)                         </FONT></FONT>
-</P>
-<P><BR></P>
-<P> <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>num_exp := </FONT></FONT>
-</P>
-<P>      <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>&lt;num_exp&gt;
-+ &lt;num_exp&gt;       </FONT></FONT>
-</P>
-<P>    <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>| &lt;num_exp&gt;
-- &lt;num_exp&gt; </FONT></FONT>
-</P>
-<P>    <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>| &lt;num_exp&gt;
-* &lt;num_exp&gt; </FONT></FONT>
-</P>
-<P>    <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>| &lt;num_exp&gt;
-/ &lt;num_exp&gt;         // floating point division </FONT></FONT>
-</P>
-<P>    <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>| - &lt;num_exp&gt;
-                  // unary minus </FONT></FONT>
-</P>
-<P>    <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>| ( &lt;num_exp&gt;
-)            </FONT></FONT>
-</P>
-<P>    <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>| exp( &lt;num_exp&gt;
-)              // e^x            </FONT></FONT>
-</P>
-<P>    <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>| pow(
-&lt;num_exp&gt;, &lt;num_exp&gt; )   // x^y         </FONT></FONT>
-</P>
-<P>    <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>| log( &lt;num_exp&gt;
-)              // ln(x)  </FONT></FONT>
-</P>
-<P>    <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>| &lt;constant&gt;
-                   // constant e.g., 1, 3.14159265, 1.0e-103, etc 
-    </FONT></FONT>
-</P>
-<P>    <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>| t             
-               // variable representing time  </FONT></FONT>
-</P>
-<P>    <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>| &lt;species-id&gt;</FONT></FONT></P>
-<P>    <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>| %&lt;species-id&gt;</FONT></FONT></P>
-<P>    <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>|
-@&lt;reaction-id&gt;</FONT></FONT></P>
-<P> 
-</P>
-<P><FONT FACE="Nimbus Roman No9 L, serif"><FONT SIZE=3><FONT FACE="Nimbus Roman No9 L, serif"><FONT SIZE=3>where
-&lt;species-id&gt; is the variable for the molecular count of 
-&lt;species-id&gt;, %&lt;species-id&gt; is the variable for the 
-concentration of &lt;species-id&gt;, @&lt;reaction-id&gt; is the variable 
-for the number of firings of &lt;reaction-id&gt;, and t is the variable
-representing time.</FONT></FONT></P>
+simulations that are terminated by each condition.  
+These conditions are specified using an ID, description, and the logical
+condition which when it holds results in termination of the 
+simulation/analysis procedure.  The logical condition is composed of 
+comparative expressions joined by Boolean connectives AND (&&), OR (||), and
+NOT (!).  Each comparative expression compares two numerical expressions using
+the comparison operators, "<=", "<", ">=", ">", and "=".  Each numerical expression
+can be composed of variables and real valued constants which are combined with
+the arithmetic operators for addition (+), subtraction (-), multiplication (*), and
+division (/).  There is also function support for exponentiation (exp(num_exp)),
+raising to a power (pow(num_exp,num_exp)), and natural logarithm (log(num_exp)).
+The variables can represent time (t), the molecular count of a species
+(&lt;species-id&gt; or #&lt;species-id&gt;), the concentration of a species
+(%&lt;species-id&gt;), or the number of firings of a reaction (@&lt;reaction-id&gt;).
 
 <H2><A NAME="ADVSIMOPTIONS"></A>Advanced Options</H2> 
-Here, you can specify additional properties for your analysis.&nbsp; 
-Each property consists of property ID and its value.&nbsp; For 
-example, property <i>reb2sac.abstraction.method.1.x</i>&nbsp; 
+Here, you can specify additional options for your analysis.&nbsp; 
+For each option, you must provide the name of the option and its value.&nbsp; 
+For example, property <i>reb2sac.abstraction.method.1.x</i>&nbsp; 
 specifies a list of abstraction methods used for pre-processing, 
 property <i>reb2sac.abstraction.method.2.x </i>specifies a list of 
 abstraction methods used in the main abstraction loop, and&nbsp; 
@@ -704,6 +648,24 @@ properties can take the following values:
 <li>max-concentration-reaction-adder</li>
 <li>dummy-abstraction-method</li>
 </ul>
+On this tab, there are buttons to add a new option, edit an existing
+option, remove an existing option, or clear all options.
+
+<H2><A NAME="PARAMEDIT"></A>Parameter Editor</H2>
+The parameter editor is similar in form to the SBML editor, but it only
+allows initial concentrations and parameters to be adjusted.  Each of these
+parameters starts with the original value specified in the SBML or
+circuit model associated with this analysis view.  By changing the type
+to "Custom", a new value can be entered.  Changing the type back to
+"Original", restores the original value.  These values can also be swept
+by selecting the "Sweep" type.  In this case, you should provide a start
+value, a stop value, a step amount, and a level (1 or 2).  When analyzing
+using sweep parameters, one analysis run is produced for each value stepped
+through from start to stop.  The parameters at level 2 are changed first.
+When they have all reached their stop value, the parameters at level 1 
+are stepped once, and the parameters at level 2 are stepped through again.
+This process repeats until all parameters at level 1 have stepped to their
+stop value.
 
 <H1><A NAME="LEARN"></A>Learn View</H1>
 The learn view is used to discover the genetic circuit connectivity
@@ -737,9 +699,12 @@ The learn tool uses the GeneNet algorithm described in
 <A HREF="http://www.async.ece.utah.edu/publications">
 Barker's PhD dissertation (UofUtah 2007)</A>.  To use this learn tool,
 adjust any options described below, if desired, then press the
-Learn button.  The resulting genetic circuit in specified using our
+Save and Learn button.  The resulting genetic circuit in specified using our
 <A HREF="#CIRCUIT">circuit model format</A> and shown
 graphically using <A HREF="http://www.graphviz.org">GraphViz's Dotty tool</A>.
+On this tab, there are also buttons to save the parameters without learning,
+view the last learned circuit, save the generated circuit into the project,
+and view the last run log.
 
 <H3><A NAME="LEARNOPTIONS"></A>Basic Learning Options</H3>
 <UL>
@@ -800,53 +765,71 @@ predecessor data point pairs, or both are used.</P>
 
 <H1><A NAME="GRAPH"></A>Graph Editor</H1>
 
-To graph data, perform a simulation to create some data or
-right click on an analysis directory that has data in it and
-select &quot;Open Analysis View&quot;. You will see a &quot;Graph&quot;
-tab. Select this tab and you will have some graphing options. By
-clicking on the graph, you will be able to change what is graphed
-and how the graph looks. Here are your options: 
+The graph editor appears as a tab in both analysis or learn views.  Graphs
+can also be created at the top-level of the project to allow you to integrate
+results from several analysis or learn views.  These graphs can be created
+using the "New Graph" menu option.  Once created, they can be viewed and
+edited by clicking on the graph in the project window.  In the graph editor,
+a graph is created by clicking on the graph.  You can then set various
+parameters and select what you would like to have graphed.
+The parameters that you can select for a graph include: 
 <UL>
-<LI><P STYLE="margin-bottom: 0in">Title - The Title Of The Graph </P>
-<LI><P STYLE="margin-bottom: 0in">X-Axis Label - The Label Displayed For The X-Axis </P>
-<LI><P STYLE="margin-bottom: 0in">Y-Axis Label - The Label Displayed For The Y-Axis </P>
-<LI><P STYLE="margin-bottom: 0in">X-Min - The Starting Value For The X-Axis </P>
-<LI><P STYLE="margin-bottom: 0in">X-Max - The Ending Value For The X-Axis </P>
-<LI><P STYLE="margin-bottom: 0in">X-Step - The Increment Of The X-Axis </P>
-<LI><P STYLE="margin-bottom: 0in">Y-Min - The Starting Value For The Y-Axis </P>
-<LI><P STYLE="margin-bottom: 0in">Y-Max - The Ending Value For The Y-Axis </P>
-<LI><P STYLE="margin-bottom: 0in">Y-Step - The Increment Of The Y-Axis </P>
-<LI><P STYLE="margin-bottom: 0in">Auto Resize Check Box - 
-Determines Whether Or Not To Automatically Resize The Graph To The Best Fit </P>
-<LI><P STYLE="margin-bottom: 0in">Data Selection Menu - This Menu
-Displays All Of The Available Sets Off Data You Can Graph. Select
-A Set Of Data And Then You Can Select Which Species To Display </P>
+<LI><P STYLE="margin-bottom: 0in">Title - The title of the graph </P>
+<LI><P STYLE="margin-bottom: 0in">X-Axis Label - The label displayed for the x-axis </P>
+<LI><P STYLE="margin-bottom: 0in">Y-Axis Label - The label displayed for the y-axis </P>
+<LI><P STYLE="margin-bottom: 0in">X-Min - The starting value for the x-axis </P>
+<LI><P STYLE="margin-bottom: 0in">X-Max - The ending value for the x-axis </P>
+<LI><P STYLE="margin-bottom: 0in">X-Step - The increment for the x-axis </P>
+<LI><P STYLE="margin-bottom: 0in">Y-Min - The starting value for the y-axis </P>
+<LI><P STYLE="margin-bottom: 0in">Y-Max - The ending value for the y-axis </P>
+<LI><P STYLE="margin-bottom: 0in">Y-Step - The increment for the y-Axis </P>
+<LI><P STYLE="margin-bottom: 0in">Auto Resize Check Box - Determines whether 
+to automatically resize the graph for best fit </P>
+</ul>
+The data selection menu on the left displays all of the available sets 
+of data that can be graphed.  For a top-level graph or after performing
+a analysis with sweeping parameters, these data sets will be organized
+hierarchically.  After selecting a data set, you can select individual
+species to graph and how you wish it to be displayed.  In other words,
+for each species, you are given the following options:
+<ul>
 <LI><P STYLE="margin-bottom: 0in">Use Check Box - Determines
-Whether Or Not This Species Is Displayed On The Graph </P>
-<LI><P STYLE="margin-bottom: 0in">Species Label - The Name
-Displayed On The Graph For This Species </P>
+whether or not this species is displayed on the graph </P>
+<LI><P STYLE="margin-bottom: 0in">Species Label - The name
+displayed in the legend </P>
 <LI><P STYLE="margin-bottom: 0in">Drop Down Menu Of Colors - The
-Color That Will Be Used To Draw The Line For This Species </P>
+color that is used for this species </P>
 <LI><P STYLE="margin-bottom: 0in">Drop Down Menu Of Shapes - The
-Shape That Will Be Used To Mark The Points On The Line For This Species </P>
+shape that is used to mark the data points </P>
 <LI><P STYLE="margin-bottom: 0in">Connected Check Box -
-Determines Whether Or Not A Line Will Be Drawn That Connects The
-Shapes For This Species </P>
+Determines whether to connect the points with a line </P>
 <LI><P STYLE="margin-bottom: 0in">Visible Check Box - Determines
-Whether Or Not Shapes Will Be Visible On The Line For This Species </P>
-<LI><P>Filled Check Box - Determines Whether Or Not Shapes Will
-Be Filled In On The Line For This Species </P>
+whether shapes are visible on the line</P>
+<LI><P>Filled Check Box - Determines whether shapes are filled 
+on the line</P>
 </UL>
 <P>To save the graph, click the &quot;Save&quot; button. This will
 save the data of the graph to a file so when you re-open the
 analysis view, it will reload this data and display what was
 graphed.</P>
-<P>To export the graph, click one of the &quot;Export&quot;
-buttons. You will then be prompted to give a desired pixel height
-and width for the file. Once this is done, you will be prompted to
-select a location and a name for the file you are saving. After
-you make these selections, click the &quot;Export&quot; button and
-the graph will be exported. <BR>&nbsp; </P>
+<P>To export the graph, click one the &quot;Export&quot;
+button. You will be prompted to enter a file name.  The extension provided
+will be used to determine how the graph is exported.  The supported file
+types are:
+<ul>
+<li>csv - comma separated value data file
+<li>dat - column separated data file
+<li>eps - encapsulated postscript
+<li>jpg - JPEG (Joint Photographic Experts Group)
+<li>pdf - portable document format
+<li>png - portable network graphics
+<li>svg - scalable vector graphics
+<li>tsd - <A HREF="#TSD">time series data format</a>
+</ul>
+If no extension is given, then the file type will be the one specified in
+the file filter (default is pdf).
+For image (i.e., not data) file types, you will be prompted to give a desired 
+pixel height and width for the file before the file is exported. 
 
 <H1><A NAME="CIRCUIT"></A>Circuit Model Format</H1>
 Our circuit model format species a genetic circuit using the same
@@ -964,6 +947,101 @@ time points separated by 100 seconds.
 ),(1200,81,21),(1300,79,15),(1400,78,4),(1500,76,0),(1600,76,5),(1700,76,0),(180
 0,76,0),(1900,76,0),(2000,75,0),(2100,72,0))
 </p>
+
+<!--
+These conditions are specified using the language described below:
+<P><FONT FACE="Courier 10 Pitch"><FONT SIZE=2><FONT FACE="Courier 10 Pitch"><FONT SIZE=2>term
+&lt;id&gt; {</FONT></FONT></FONT></FONT></P>
+<P>  <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>desc &lt;string&gt;;</FONT></FONT></P>
+<P>  <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>cond &lt;bool-exp&gt;;</FONT></FONT></P>
+<P><FONT FACE="Courier 10 Pitch"><FONT SIZE=2>}</FONT></FONT></P>
+<P><FONT FACE="Nimbus Roman No9 L, serif"><FONT SIZE=3>where &lt;id&gt;
+is the ID for this termination condition, desc is the description
+of this termination condition,and cond is the predicate which must
+hold to terminate a simulation/analysis procedure.</FONT></FONT></P>
+<P><FONT FACE="Courier 10 Pitch"><FONT SIZE=2><FONT FACE="Courier 10 Pitch"><FONT SIZE=2>bool-exp
+:= </FONT></FONT></FONT></FONT>
+</P>
+<P>      <FONT FACE="Courier 10 Pitch"><FONT SIZE=2><FONT FACE="Courier 10 Pitch"><FONT SIZE=2>&lt;logical_exp&gt;</FONT></FONT></FONT></FONT></P>
+<P>    <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>|  &lt;comp_exp&gt;</FONT></FONT></P>
+<BR>
+<P><FONT FACE="Courier 10 Pitch"><FONT SIZE=2>logical_exp :=</FONT></FONT></P>
+<P>      <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>&lt;bool_exp&gt;
+&amp;&amp; &lt;bool_exp&gt;   // and </FONT></FONT>
+</P>
+<P>    <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>| &lt;bool_exp&gt;
+|| &lt;bool_exp&gt;   // or </FONT></FONT>
+</P>
+<P>    <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>| !&lt;bool_exp&gt;
+               // not</FONT></FONT></P>
+<P>    <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>| (
+&lt;logical_exp&gt; )            </FONT></FONT>
+</P>
+<P><BR></P>
+<P> <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>comp_exp :=</FONT></FONT></P>
+<P>      <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>&lt;num_exp&gt;
+&lt;= &lt;num_exp&gt;     // less than or equal to</FONT></FONT></P>
+<P>    <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>| &lt;num_exp&gt;
+&lt; &lt;num_exp&gt;      // less than</FONT></FONT></P>
+<P>    <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>| &lt;num_exp&gt;
+&gt;= &lt;num_exp&gt;     // greater than or equal to</FONT></FONT></P>
+<P>    <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>| &lt;num_exp&gt;
+&gt; &lt;num_exp&gt;      // greater than</FONT></FONT></P>
+<P>    <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>| &lt;num_exp&gt;
+= &lt;num_exp&gt;      // equal to</FONT></FONT></P>
+<P>    <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>| ( &lt;comp_exp&gt;
+)                         </FONT></FONT>
+</P>
+<P><BR></P>
+<P> <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>num_exp := </FONT></FONT>
+</P>
+<P>      <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>&lt;num_exp&gt;
++ &lt;num_exp&gt;       </FONT></FONT>
+</P>
+<P>    <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>| &lt;num_exp&gt;
+- &lt;num_exp&gt; </FONT></FONT>
+</P>
+<P>    <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>| &lt;num_exp&gt;
+* &lt;num_exp&gt; </FONT></FONT>
+</P>
+<P>    <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>| &lt;num_exp&gt;
+/ &lt;num_exp&gt;         // floating point division </FONT></FONT>
+</P>
+<P>    <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>| - &lt;num_exp&gt;
+                  // unary minus </FONT></FONT>
+</P>
+<P>    <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>| ( &lt;num_exp&gt;
+)            </FONT></FONT>
+</P>
+<P>    <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>| exp( &lt;num_exp&gt;
+)              // e^x            </FONT></FONT>
+</P>
+<P>    <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>| pow(
+&lt;num_exp&gt;, &lt;num_exp&gt; )   // x^y         </FONT></FONT>
+</P>
+<P>    <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>| log( &lt;num_exp&gt;
+)              // ln(x)  </FONT></FONT>
+</P>
+<P>    <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>| &lt;constant&gt;
+                   // constant e.g., 1, 3.14159265, 1.0e-103, etc 
+    </FONT></FONT>
+</P>
+<P>    <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>| t             
+               // variable representing time  </FONT></FONT>
+</P>
+<P>    <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>| &lt;species-id&gt;</FONT></FONT></P>
+<P>    <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>| %&lt;species-id&gt;</FONT></FONT></P>
+<P>    <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>|
+@&lt;reaction-id&gt;</FONT></FONT></P>
+<P> 
+</P>
+<P><FONT FACE="Nimbus Roman No9 L, serif"><FONT SIZE=3><FONT FACE="Nimbus Roman No9 L, serif"><FONT SIZE=3>where
+&lt;species-id&gt; is the variable for the molecular count of 
+&lt;species-id&gt;, %&lt;species-id&gt; is the variable for the 
+concentration of &lt;species-id&gt;, @&lt;reaction-id&gt; is the variable 
+for the number of firings of &lt;reaction-id&gt;, and t is the variable
+representing time.</FONT></FONT></P>
+-->
 
 <H1><A NAME="CREDITS"></A>Credits</H1>
 The BioSim tool is being developed at the Univesity of Utah by
