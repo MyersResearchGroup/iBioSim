@@ -159,7 +159,7 @@ create an analysis view from this edited model.
 <LI><P>Background Knowledge Network 
 </P>
 <P>The Background Knowledge Network field allows the user to
-input known information reguarding the network of interest. The
+input known information regarding the network of interest. The
 names of these species must match the names used in the
 simulation directory.</P>
 -->
@@ -240,10 +240,10 @@ start with an alphabetic character.
 
 <H2><A NAME="REACTIONS"></A>Reactions</H2>
 Reactions are used to create or destroy molecular species in a biochemical 
-reaction network.  A reaction is composed of an ID, a reversable Boolean
+reaction network.  A reaction is composed of an ID, a reversible Boolean
 flag, a list of reactants, a list of products, a list of parameters, and
 a kinetic law.  A reaction is required to have an ID and a 
-syntatically correct kinetic law as described below.
+syntactically correct kinetic law as described below.
 The reversible Boolean flag indicates whether or not this reaction is
 reversible.  When adding a reactant or product, the user must specify 
 a species ID and the stoichiometry (i.e., the number of molecules produced
@@ -317,7 +317,7 @@ be used in the kinetic law for any reaction in the model.  A
 parameter includes an ID and a value.
 
 <H1><A NAME="ANALYSIS"></A>Analysis View</H2>
-The analysis view is used to analyze biochemcial reaction network
+The analysis view is used to analyze biochemical reaction network
 models.  The analysis view includes tabs for a
 <A HREF="#SIMOPTIONS">simulation tool</A>, a 
 <A HREF="#PARAMEDIT">parameter editor</A>, and a 
@@ -351,7 +351,7 @@ the <A HREF="http://www.graphviz.org">GraphViz</A> format,
 "xhtml" outputs the model in xhtml format with MathML presentation 
 entries for kinetic laws.</p>
 <p>
-The last set of redio buttons asks if you want to "Overwrite" the
+The last set of radio buttons asks if you want to "Overwrite" the
 simulation runs or if you want to "Append" more simulation runs. 
 Choose "overwrite" to overwrite simulation runs and "append"
 to append simulation runs.  This is only valid for stochastic simulation.
@@ -379,7 +379,7 @@ available are:</p>
 </TR>
 <TR VALIGN=TOP>
 <TD WIDTH=192>
-	<P ALIGN=CENTER>euler</P>
+	<P ALIGN=CENTER>Euler</P>
 </TD>
 <TD WIDTH=392>
 	<P ALIGN=LEFT>The forward Euler Method</P>
@@ -448,7 +448,7 @@ available are:</p>
 </TR>
 <TR VALIGN=TOP>
 <TD WIDTH=194>
-	<P ALIGN=CENTER>gillespie</P>
+	<P ALIGN=CENTER>Gillespie</P>
 </TD>
 <TD WIDTH=393>
 	<P ALIGN=LEFT>Gillespie's SSA in Direct method</P>
@@ -830,15 +830,22 @@ For image (i.e., not data) file types, you will be prompted to give a desired
 pixel height and width for the file before the file is exported. 
 
 <H1><A NAME="CIRCUIT"></A>Genetic Circuit Model Format</H1>
-Our genetic circuit model format species a genetic circuit using the same
-format as the <A HREF="http://www.graphviz.org">GraphViz</A> graph
+Our genetic circuit model (gcm) format specifies a genetic circuit using the 
+same format as the <A HREF="http://www.graphviz.org">GraphViz</A> graph
 drawing tool.  The vertices in the graph are the species in the genetic 
 circuit, and the edges in the graph represent the activation and repression 
 relationships between the species.  An activation relationship
 is shown with a blue (blue4) arrow (vee) and a repression relationship is 
-shown with a red (firebrick4) tee.  An example is shown below for a simple 
-genetic circuit in which the species CI dimer represses CII while CII activates CI
-production.  
+shown with a red (firebrick4) tee.  The label field in the species 
+declaration is the name of the species.  The arrowhead field in the 
+relationship declaration represents the type of relationship between
+the species.  Repression is labeled with a tee and activation is labeled 
+with a vee.  The label field in the relationship declaration represents how 
+many molecules are necessary to activate or repress the production of the 
+species.  An example is shown below for a simple genetic circuit in which 
+the species CI represses CII while CII activates CI production.  
+The s1->s2 edge has a label field of "2" which means two molecules of CI 
+are required to form a dimer to repress CII.  
 
 <p>
 digraph G {<BR>
@@ -849,18 +856,11 @@ s1 -> s2 [color="firebrick4",label="2",arrowhead=tee]<BR>
 }
 </p>
 
-The label field in the species declaration is the name of the species.  The
-arrowhead field in the relationship declaration represents the type of relationship between
-the species.  Repression is labeled with a tee and activation is labeled with a vee.
-The label field in the relationship declaration represents how many molecules are necessary
-to activate or repress the production of the species.  In the case of s1->s2,
-the label field is "2", which means two molecules of CI are required to form a dimer
-to repress CII.  
-
 More advanced behavior can be modeled by using extra fields.  The promoter field
 groups a set of species together.  The examples below shows how the promoter field works.
 In the genetic circuit model below, species A represses the production of species B and C, independently.  If there
-was exactly 1 molecule of species A, it would only be able to represses production of species B or C, but not both.
+was exactly 1 molecule of species A, it would only be able to repress 
+production of species B or C, but not both.
 <p>
 digraph G {<BR>
 s1 [shape=ellipse,color=black,label="A"];<BR>
@@ -885,7 +885,7 @@ s1 -> s3 [color="blue4",arrowhead=tee,promoter="P1"]<BR>
 
 The promoter field can also be used to separate production reactions.  In the example
 below, both species A and B can repress the production of species C.  If either is present,
-then very little C will be produced.  This behavior is an NOR gate.  
+then very little C will be produced.  This behavior is like a NOR gate.  
 <p>
 digraph G {<BR>
 s1 [shape=ellipse,color=black,label="A"];<BR>
@@ -899,9 +899,9 @@ s2 -> s3 [color="blue4",arrowhead=tee]<BR>
 However, if there needs to be two different sources of production for species C, the 
 promoter field can be used to accomplish this.  In the example below, A represses
 the production of C by binding to the P1 promoter, and B represses the production of
-C by binding to the P2 promoter.  Both A and B needs to be present to fully repress
+C by binding to the P2 promoter.  Both A and B need to be present to fully repress
 the level of C.  If either is at a low level, then the level of C will be high.  This
-behavior is a NAND gate.
+behavior is like a NAND gate.
 
 <p>
 digraph G {<BR>
@@ -931,9 +931,9 @@ s2 -> s3 [color="blue4",arrowhead=vee,promoter="P1",type=biochemical]<BR>
 </p>
 
 <H1><A NAME="TSD"></A>Time Series Data Format</H1>
-The time series data format is composed of a parenthesized and 
+The time series data (tsd) format is composed of a parenthesized and 
 comma-separated set of time points.  Each time point is composed of a
-paranthesized and comma-separated set of data for that time point. 
+parenthesized and comma-separated set of data for that time point. 
 This first time point is composed of a set of strings that are the 
 labels for the data entries.  The first entry in each time point is 
 by convention the time for that time point.  Below is an example 
@@ -1042,13 +1042,15 @@ representing time.</FONT></FONT></P>
 -->
 
 <H1><A NAME="CREDITS"></A>Credits</H1>
-The BioSim tool is being developed at the Univesity of Utah by
+The BioSim tool is being developed at the University of Utah by
 <A HREF="http://www.cs.utah.edu/~barkern">Nathan Barker</A>, 
 <A HREF="http://www.cs.utah.edu/~kuwahara">Hiroyuki Kuwahara</A>, 
 <A HREF="http://www.async.ece.utah.edu/~cmadsen">Curtis Madsen</A>, 
 <A HREF="http://www.async.ece.utah.edu/~myers">Chris Myers</A>, and 
 <A HREF="http://www.cs.utah.edu/~namphuon">Nam Nguyen</A>.
-
+Nathan Barker is now with Southern Utah University, and Hiroyuki 
+Kuwahara is now with the Centre for Computational and System Biology in
+Trento, Italy.
 </TD>
 </TR>
 </TABLE>
