@@ -158,7 +158,7 @@ public class FileTree extends JPanel implements MouseListener {
 				}
 				else if (files.get(fnum).toString().length() > 3
 						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4)
-								.equals(".ckt")) {
+								.equals(".gcm")) {
 					curDir.add(new DefaultMutableTreeNode(new IconData(ICON_DOT, null, files.get(fnum))));
 				}
 				else if (files.get(fnum).toString().length() > 3
@@ -178,7 +178,7 @@ public class FileTree extends JPanel implements MouseListener {
 				}
 				else if (files.get(fnum).toString().length() > 3
 						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4)
-								.equals(".ckt")) {
+								.equals(".gcm")) {
 					curDir.add(new DefaultMutableTreeNode(new IconData(ICON_DOT, null, files.get(fnum))));
 				}
 				else if (files.get(fnum).toString().length() > 3
@@ -216,7 +216,7 @@ public class FileTree extends JPanel implements MouseListener {
 					}
 					if (parent.getChildAt(i).toString().contains(".sbml")
 							|| parent.getChildAt(i).toString().contains(".xml")
-							|| parent.getChildAt(i).toString().contains(".ckt")
+							|| parent.getChildAt(i).toString().contains(".gcm")
 							|| parent.getChildAt(i).toString().contains(".grf")) {
 						break;
 					}
@@ -327,7 +327,7 @@ public class FileTree extends JPanel implements MouseListener {
 					for (int i = 0; i < current.getChildCount(); i++) {
 						if (!current.getChildAt(i).toString().contains(".sbml")
 								&& !current.getChildAt(i).toString().contains(".xml")
-								&& !current.getChildAt(i).toString().contains(".ckt")
+								&& !current.getChildAt(i).toString().contains(".gcm")
 								&& !current.getChildAt(i).toString().contains(".grf")) {
 						}
 						else if (current.getChildAt(i).toString().compareToIgnoreCase(
@@ -347,7 +347,7 @@ public class FileTree extends JPanel implements MouseListener {
 					}
 					else if (files.get(fnum).toString().length() > 3
 							&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4)
-									.equals(".ckt")) {
+									.equals(".gcm")) {
 						current.insert(
 								new DefaultMutableTreeNode(new IconData(ICON_DOT, null, files.get(fnum))), insert);
 					}
@@ -363,7 +363,7 @@ public class FileTree extends JPanel implements MouseListener {
 					for (int i = 0; i < current.getChildCount(); i++) {
 						if (!current.getChildAt(i).toString().contains(".sbml")
 								&& !current.getChildAt(i).toString().contains(".xml")
-								&& !current.getChildAt(i).toString().contains(".ckt")
+								&& !current.getChildAt(i).toString().contains(".gcm")
 								&& !current.getChildAt(i).toString().contains(".grf")) {
 						}
 						else if (current.getChildAt(i).toString().compareToIgnoreCase(
@@ -383,7 +383,7 @@ public class FileTree extends JPanel implements MouseListener {
 					}
 					else if (files.get(fnum).toString().length() > 3
 							&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4)
-									.equals(".ckt")) {
+									.equals(".gcm")) {
 						current.insert(
 								new DefaultMutableTreeNode(new IconData(ICON_DOT, null, files.get(fnum))), insert);
 					}

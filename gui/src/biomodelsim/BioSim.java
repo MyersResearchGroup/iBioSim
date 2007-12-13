@@ -123,20 +123,20 @@ public class BioSim implements MouseListener, ActionListener {
 		JMenu help = new JMenu("Help");
 		help.setMnemonic(KeyEvent.VK_H);
 		JMenu importMenu = new JMenu("Import");
-		JMenu openMenu = new JMenu("Open");
+		//JMenu openMenu = new JMenu("Open");
 		JMenu newMenu = new JMenu("New");
 		menuBar.add(file);
 		menuBar.add(help);
 		manual = new JMenuItem("Manual");
 		about = new JMenuItem("About");
 		openProj = new JMenuItem("Open Project");
-		newProj = new JMenuItem("New Project");
-		newCircuit = new JMenuItem("New Circuit Model");
-		newModel = new JMenuItem("New SBML Model");
-		importSbml = new JMenuItem("SBML");
-		importDot = new JMenuItem("Circuit");
+		newProj = new JMenuItem("Project");
+		newCircuit = new JMenuItem("Genetic Circuit Model");
+		newModel = new JMenuItem("SBML Model");
+		graph = new JMenuItem("Graph");
+		importSbml = new JMenuItem("SBML Model");
+		importDot = new JMenuItem("Genetic Circuit Model");
 		exit = new JMenuItem("Exit");
-		graph = new JMenuItem("New Graph");
 		openProj.addActionListener(this);
 		manual.addActionListener(this);
 		newProj.addActionListener(this);
@@ -148,32 +148,39 @@ public class BioSim implements MouseListener, ActionListener {
 		importDot.addActionListener(this);
 		graph.addActionListener(this);
 		exit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, ActionEvent.ALT_MASK));
-		newProj.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.ALT_MASK));
+		newProj.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, ActionEvent.ALT_MASK));
 		openProj.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.ALT_MASK));
 		newCircuit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.ALT_MASK));
 		newModel.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.ALT_MASK));
 		about.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ActionEvent.ALT_MASK));
-		manual.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_U, ActionEvent.ALT_MASK));
+		manual.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, ActionEvent.ALT_MASK));
 		graph.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, ActionEvent.ALT_MASK));
 		importDot.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, ActionEvent.ALT_MASK));
 		importSbml.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, ActionEvent.ALT_MASK));
 		exit.setMnemonic(KeyEvent.VK_X);
-		newProj.setMnemonic(KeyEvent.VK_N);
+		newProj.setMnemonic(KeyEvent.VK_P);
 		openProj.setMnemonic(KeyEvent.VK_O);
 		newCircuit.setMnemonic(KeyEvent.VK_C);
+		newCircuit.setDisplayedMnemonicIndex(8);
 		newModel.setMnemonic(KeyEvent.VK_S);
 		about.setMnemonic(KeyEvent.VK_A);
-		manual.setMnemonic(KeyEvent.VK_U);
+		manual.setMnemonic(KeyEvent.VK_M);
 		graph.setMnemonic(KeyEvent.VK_G);
 		importDot.setMnemonic(KeyEvent.VK_T);
+		importDot.setDisplayedMnemonicIndex(14);
 		importSbml.setMnemonic(KeyEvent.VK_L);
+		importDot.setEnabled(false);
+		importSbml.setEnabled(false);
+		newCircuit.setEnabled(false);
+		newModel.setEnabled(false);
+		graph.setEnabled(false);
 		file.add(newMenu);
 		newMenu.add(newProj);
 		newMenu.add(newCircuit);
 		newMenu.add(newModel);
 		newMenu.add(graph);
-		file.add(openMenu);
-		openMenu.add(openProj);
+		file.add(openProj);
+		//openMenu.add(openProj);
 		file.addSeparator();
 		file.add(importMenu);
 		importMenu.add(importDot);
@@ -194,6 +201,16 @@ public class BioSim implements MouseListener, ActionListener {
 			recentProjects[i].addActionListener(this);
 			recentProjectPaths[i] = "";
 		}
+		recentProjects[0].setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
+		recentProjects[0].setMnemonic(KeyEvent.VK_1);
+		recentProjects[1].setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_2, ActionEvent.ALT_MASK));
+		recentProjects[1].setMnemonic(KeyEvent.VK_2);
+		recentProjects[2].setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_3, ActionEvent.ALT_MASK));
+		recentProjects[2].setMnemonic(KeyEvent.VK_3);
+		recentProjects[3].setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_4, ActionEvent.ALT_MASK));
+		recentProjects[3].setMnemonic(KeyEvent.VK_4);
+		recentProjects[4].setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_5, ActionEvent.ALT_MASK));
+		recentProjects[4].setMnemonic(KeyEvent.VK_5);
 		Preferences biosimrc = Preferences.userRoot();
 		for (int i = 0; i < 5; i++) {
 			recentProjects[i].setText(biosimrc.get("biosim.recent.project." + i, ""));
@@ -381,7 +398,7 @@ public class BioSim implements MouseListener, ActionListener {
 				simulate(true);
 			}
 			catch (Exception e1) {
-				JOptionPane.showMessageDialog(frame, "You must select a valid ckt file for simulation.",
+				JOptionPane.showMessageDialog(frame, "You must select a valid gcm file for simulation.",
 						"Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
@@ -432,7 +449,7 @@ public class BioSim implements MouseListener, ActionListener {
 				String[] dot = tree.getFile().split(separator);
 				String sbmlFile = dot[dot.length - 1].substring(0, dot[dot.length - 1].length() - 3)
 						+ "sbml";
-				log.addText("Executing:\ndot2sbml.pl " + tree.getFile() + " " + root + separator + sbmlFile
+				log.addText("Executing:\ngcm2sbml.pl " + tree.getFile() + " " + root + separator + sbmlFile
 						+ "\n");
 				Runtime exec = Runtime.getRuntime();
 				String filename = tree.getFile();
@@ -450,23 +467,23 @@ public class BioSim implements MouseListener, ActionListener {
 
 				String command;
 				if (System.getProperty("os.name").contentEquals("Linux")) {
-					command = "dot2sbml.pl " + theFile + " " + sbmlFile;
+					command = "gcm2sbml.pl " + theFile + " " + sbmlFile;
 				}
 				else {
-					command = "C:\\Perl\\bin\\perl.exe " + System.getenv("BIOSIM") + "\\bin\\dot2sbml.pl "
+					command = "C:\\Perl\\bin\\perl.exe " + System.getenv("BIOSIM") + "\\bin\\gcm2sbml.pl "
 							+ theFile + " " + sbmlFile;
 				}
-				Process dot2sbml = exec.exec(command, null, work);
+				Process gcm2sbml = exec.exec(command, null, work);
 				String error = "";
 				String output = "";
-				InputStream reb = dot2sbml.getErrorStream();
+				InputStream reb = gcm2sbml.getErrorStream();
 				int read = reb.read();
 				while (read != -1) {
 					error += (char) read;
 					read = reb.read();
 				}
 				reb.close();
-				reb = dot2sbml.getInputStream();
+				reb = gcm2sbml.getInputStream();
 				read = reb.read();
 				while (read != -1) {
 					output += (char) read;
@@ -479,7 +496,7 @@ public class BioSim implements MouseListener, ActionListener {
 				if (!error.equals("")) {
 					log.addText("Errors:\n" + error + "\n");
 				}
-				dot2sbml.waitFor();
+				gcm2sbml.waitFor();
 				refreshTree();
 				addTab(sbmlFile, new SBML_Editor(root + separator + sbmlFile, null, log, this, null, null),
 						"SBML Editor");
@@ -516,7 +533,7 @@ public class BioSim implements MouseListener, ActionListener {
 				exec.exec(command + theFile, null, work);
 			}
 			catch (Exception e1) {
-				JOptionPane.showMessageDialog(frame, "Unable to open ckt file editor.", "Error",
+				JOptionPane.showMessageDialog(frame, "Unable to open gcm file editor.", "Error",
 						JOptionPane.ERROR_MESSAGE);
 			}
 		}
@@ -748,7 +765,7 @@ public class BioSim implements MouseListener, ActionListener {
 				exec.exec("dotty " + theFile, null, work);
 			}
 			catch (Exception e1) {
-				JOptionPane.showMessageDialog(frame, "Unable to view this ckt file.", "Error",
+				JOptionPane.showMessageDialog(frame, "Unable to view this gcm file.", "Error",
 						JOptionPane.ERROR_MESSAGE);
 			}
 		}
@@ -795,6 +812,11 @@ public class BioSim implements MouseListener, ActionListener {
 				refresh();
 				tab.removeAll();
 				addRecentProject(filename);
+				importDot.setEnabled(true);
+				importSbml.setEnabled(true);
+				newCircuit.setEnabled(true);
+				newModel.setEnabled(true);
+				graph.setEnabled(true);
 			}
 		}
 		// if the open project menu item is selected
@@ -845,6 +867,11 @@ public class BioSim implements MouseListener, ActionListener {
 						refresh();
 						tab.removeAll();
 						addRecentProject(projDir);
+						importDot.setEnabled(true);
+						importSbml.setEnabled(true);
+						newCircuit.setEnabled(true);
+						newModel.setEnabled(true);
+						graph.setEnabled(true);
 					}
 					else {
 						JOptionPane.showMessageDialog(frame, "You must select a valid project.", "Error",
@@ -861,21 +888,21 @@ public class BioSim implements MouseListener, ActionListener {
 		else if (e.getSource() == newCircuit) {
 			if (root != null) {
 				try {
-					String simName = JOptionPane.showInputDialog(frame, "Enter Circuit Model ID:",
+					String simName = JOptionPane.showInputDialog(frame, "Enter Genetic Circuit Model ID:",
 							"Model ID", JOptionPane.PLAIN_MESSAGE);
 					if (simName != null && !simName.trim().equals("")) {
 						simName = simName.trim();
 						if (simName.length() > 4) {
-							if (!simName.substring(simName.length() - 4).equals(".ckt")) {
-								simName += ".ckt";
+							if (!simName.substring(simName.length() - 4).equals(".gcm")) {
+								simName += ".gcm";
 							}
 						}
 						else {
-							simName += ".ckt";
+							simName += ".gcm";
 						}
 						String modelID = "";
 						if (simName.length() > 4) {
-							if (simName.substring(simName.length() - 4).equals(".ckt")) {
+							if (simName.substring(simName.length() - 4).equals(".gcm")) {
 								modelID = simName.substring(0, simName.length() - 4);
 							}
 						}
@@ -1053,10 +1080,10 @@ public class BioSim implements MouseListener, ActionListener {
 		else if (e.getSource() == importDot) {
 			if (root != null) {
 				String filename = Buttons.browse(frame, new File(root), null, JFileChooser.FILES_ONLY,
-						"Import Circuit");
+						"Import Genetic Circuit");
 				if (filename.length() > 3
-						&& !filename.substring(filename.length() - 4, filename.length()).equals(".ckt")) {
-					JOptionPane.showMessageDialog(frame, "You must select a valid ckt file to import.",
+						&& !filename.substring(filename.length() - 4, filename.length()).equals(".gcm")) {
+					JOptionPane.showMessageDialog(frame, "You must select a valid gcm file to import.",
 							"Error", JOptionPane.ERROR_MESSAGE);
 					return;
 				}
@@ -1272,14 +1299,14 @@ public class BioSim implements MouseListener, ActionListener {
 						}
 					}
 					else if (tree.getFile().length() >= 4
-							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".ckt")) {
+							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".gcm")) {
 						if (copy.length() > 3) {
-							if (!copy.substring(copy.length() - 4).equals(".ckt")) {
-								copy += ".ckt";
+							if (!copy.substring(copy.length() - 4).equals(".gcm")) {
+								copy += ".gcm";
 							}
 						}
 						else {
-							copy += ".ckt";
+							copy += ".gcm";
 						}
 					}
 					else if (tree.getFile().length() >= 4
@@ -1341,7 +1368,7 @@ public class BioSim implements MouseListener, ActionListener {
 						out.close();
 					}
 					else if (tree.getFile().length() >= 4
-							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".ckt")
+							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".gcm")
 							|| tree.getFile().substring(tree.getFile().length() - 4).equals(".grf")) {
 						FileOutputStream out = new FileOutputStream(new File(root + separator + copy));
 						FileInputStream in = new FileInputStream(new File(tree.getFile()));
@@ -1483,14 +1510,14 @@ public class BioSim implements MouseListener, ActionListener {
 						}
 					}
 					else if (tree.getFile().length() >= 4
-							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".ckt")) {
+							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".gcm")) {
 						if (rename.length() > 3) {
-							if (!rename.substring(rename.length() - 4).equals(".ckt")) {
-								rename += ".ckt";
+							if (!rename.substring(rename.length() - 4).equals(".gcm")) {
+								rename += ".gcm";
 							}
 						}
 						else {
-							rename += ".ckt";
+							rename += ".gcm";
 						}
 					}
 					else if (tree.getFile().length() >= 4
@@ -1830,7 +1857,7 @@ public class BioSim implements MouseListener, ActionListener {
 	/**
 	 * Saves a circuit from a learn view to the project view
 	 */
-	public void saveCkt(String filename, String path) {
+	public void saveGcm(String filename, String path) {
 		try {
 			boolean write = true;
 			if (new File(root + separator + filename).exists()) {
@@ -1872,7 +1899,7 @@ public class BioSim implements MouseListener, ActionListener {
 			}
 		}
 		catch (Exception e1) {
-			JOptionPane.showMessageDialog(frame, "Unable to save circuit.", "Error",
+			JOptionPane.showMessageDialog(frame, "Unable to save genetic circuit.", "Error",
 					JOptionPane.ERROR_MESSAGE);
 		}
 	}
@@ -1927,7 +1954,7 @@ public class BioSim implements MouseListener, ActionListener {
 				popup.add(delete);
 			}
 			else if (tree.getFile().length() > 3
-					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".ckt")) {
+					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".gcm")) {
 				JMenuItem create = new JMenuItem("Create Analysis View");
 				create.addActionListener(this);
 				create.setActionCommand("createSim");
@@ -1940,7 +1967,7 @@ public class BioSim implements MouseListener, ActionListener {
 				JMenuItem edit = new JMenuItem("Edit");
 				edit.addActionListener(this);
 				edit.setActionCommand("dotEditor");
-				JMenuItem graph = new JMenuItem("View Circuit");
+				JMenuItem graph = new JMenuItem("View Genetic Circuit");
 				graph.addActionListener(this);
 				graph.setActionCommand("graphDot");
 				JMenuItem delete = new JMenuItem("Delete");
@@ -2045,7 +2072,7 @@ public class BioSim implements MouseListener, ActionListener {
 					}
 				}
 				else if (tree.getFile().length() >= 4
-						&& tree.getFile().substring(tree.getFile().length() - 4).equals(".ckt")) {
+						&& tree.getFile().substring(tree.getFile().length() - 4).equals(".gcm")) {
 					try {
 						String filename = tree.getFile();
 						String directory = "";
@@ -2064,7 +2091,7 @@ public class BioSim implements MouseListener, ActionListener {
 						exec.exec("dotty " + theFile, null, work);
 					}
 					catch (Exception e1) {
-						JOptionPane.showMessageDialog(frame, "Unable to view this ckt file.", "Error",
+						JOptionPane.showMessageDialog(frame, "Unable to view this gcm file.", "Error",
 								JOptionPane.ERROR_MESSAGE);
 					}
 				}
@@ -2147,7 +2174,7 @@ public class BioSim implements MouseListener, ActionListener {
 				popup.add(delete);
 			}
 			else if (tree.getFile().length() > 3
-					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".ckt")) {
+					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".gcm")) {
 				JMenuItem create = new JMenuItem("Create Analysis View");
 				create.addActionListener(this);
 				create.setActionCommand("createSim");
@@ -2160,7 +2187,7 @@ public class BioSim implements MouseListener, ActionListener {
 				JMenuItem edit = new JMenuItem("Edit");
 				edit.addActionListener(this);
 				edit.setActionCommand("dotEditor");
-				JMenuItem graph = new JMenuItem("View Circuit");
+				JMenuItem graph = new JMenuItem("View Genetic Circuit");
 				graph.addActionListener(this);
 				graph.setActionCommand("graphDot");
 				JMenuItem delete = new JMenuItem("Delete");
@@ -2278,7 +2305,7 @@ public class BioSim implements MouseListener, ActionListener {
 				String sbmlFile = /*
 													 * root + separator + simName + separator +
 													 */(dot[dot.length - 1].substring(0, dot[dot.length - 1].length() - 3) + "sbml");
-				log.addText("Executing:\ndot2sbml.pl " + tree.getFile() + " " + root + separator + simName
+				log.addText("Executing:\ngcm2sbml.pl " + tree.getFile() + " " + root + separator + simName
 						+ separator + sbmlFile + "\n");
 				Runtime exec = Runtime.getRuntime();
 				String filename = tree.getFile();
@@ -2296,23 +2323,23 @@ public class BioSim implements MouseListener, ActionListener {
 
 				String command;
 				if (System.getProperty("os.name").contentEquals("Linux")) {
-					command = "dot2sbml.pl " + theFile + " " + simName + separator + sbmlFile;
+					command = "gcm2sbml.pl " + theFile + " " + simName + separator + sbmlFile;
 				}
 				else {
-					command = "C:\\Perl\\bin\\perl.exe " + System.getenv("BIOSIM") + "\\bin\\dot2sbml.pl "
+					command = "C:\\Perl\\bin\\perl.exe " + System.getenv("BIOSIM") + "\\bin\\gcm2sbml.pl "
 							+ theFile + " " + simName + separator + sbmlFile;
 				}
-				Process dot2sbml = exec.exec(command, null, work);
+				Process gcm2sbml = exec.exec(command, null, work);
 				String error = "";
 				String output = "";
-				InputStream reb = dot2sbml.getErrorStream();
+				InputStream reb = gcm2sbml.getErrorStream();
 				int read = reb.read();
 				while (read != -1) {
 					error += (char) read;
 					read = reb.read();
 				}
 				reb.close();
-				reb = dot2sbml.getInputStream();
+				reb = gcm2sbml.getInputStream();
 				read = reb.read();
 				while (read != -1) {
 					output += (char) read;
@@ -2325,7 +2352,7 @@ public class BioSim implements MouseListener, ActionListener {
 				if (!error.equals("")) {
 					log.addText("Errors:\n" + error + "\n");
 				}
-				dot2sbml.waitFor();
+				gcm2sbml.waitFor();
 				refreshTree();
 				sbmlFile = root + separator + simName + separator
 						+ (dot[dot.length - 1].substring(0, dot[dot.length - 1].length() - 3) + "sbml");
