@@ -296,6 +296,7 @@ public class Run implements ActionListener {
 			long time1;
 			String directory = "";
 			String theFile = "";
+			String sbmlName = "";
 			if (filename.lastIndexOf('/') >= 0) {
 				directory = filename.substring(0, filename.lastIndexOf('/') + 1);
 				theFile = filename.substring(filename.lastIndexOf('/') + 1);
@@ -318,8 +319,8 @@ public class Run implements ActionListener {
 				reb2sac = exec.exec("reb2sac --target.encoding=nary-level " + theFile, null, work);
 			}
 			else if (sbml.isSelected()) {
-				String sbmlName = JOptionPane.showInputDialog(component, "Enter SBML Model ID:",
-						"Model ID", JOptionPane.PLAIN_MESSAGE);
+				sbmlName = JOptionPane.showInputDialog(component, "Enter SBML Model ID:",
+								       "Model ID", JOptionPane.PLAIN_MESSAGE);
 				if (sbmlName != null && !sbmlName.trim().equals("")) {
 					sbmlName = sbmlName.trim();
 					if (sbmlName.length() > 4) {
@@ -499,8 +500,8 @@ public class Run implements ActionListener {
 				if (nary.isSelected() && naryRun == 1) {
 				}
 				else if (sbml.isSelected()) {
-					biomodelsim.addTab("SBML Editor", new SBML_Editor(directory + out + ".xml", null, log,
-							biomodelsim, null, null), null);
+					biomodelsim.addTab(sbmlName, new SBML_Editor(root + separator + sbmlName, null, log,
+							biomodelsim, null, null), "SBML Editor");
 					biomodelsim.refreshTree();
 				}
 				else if (dot.isSelected()) {
