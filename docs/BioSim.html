@@ -24,8 +24,8 @@
 <LI><A HREF="#INTRO"><FONT SIZE=4>Introduction</FONT></A>
 <LI><A HREF="#PROJECTS"><FONT SIZE=4>Project Management</FONT></A>
 <UL>
-<LI><A HREF="#NEW">Creating Projects, Models, and Graphs</A>
-<LI><A HREF="#OPEN">Opening Projects</A>
+<LI><A HREF="#NEWOPENPROJ">Creating and Opening Projects</A>
+<LI><A HREF="#NEW">Creating Models and Graphs</A>
 <LI><A HREF="#IMPORT">Importing Models</A>
 <LI><A HREF="#CREATEVIEW">Creating Views</A>
 <LI><A HREF="#VIEW">Viewing Models</A>
@@ -57,7 +57,7 @@
 </UL>
 </UL>
 <LI><A HREF="#GRAPH"><FONT SIZE=4>Graph Editor</FONT></A>
-<LI><A HREF="#CIRCUIT"><FONT SIZE=4>Circuit Model Format</FONT></A>
+<LI><A HREF="#CIRCUIT"><FONT SIZE=4>Genetic Circuit Model Format</FONT></A>
 <LI><A HREF="#TSD"><FONT SIZE=4>Time Series Data Format</FONT></A>
 <LI><A HREF="#CREDITS"><FONT SIZE=4>Credits</FONT></A>
 </UL>
@@ -85,7 +85,7 @@ also be analyzed.  BioSim includes the following tools:
 </UL>
 BioSim can analyze models provided in either the 
 <A HREF="http://www.sbml.org">Systems Biology Markup Language (SBML)</A>
-or in our <A HREF="#CIRCUIT">circuit model format</A>.  The time series
+or in our <A HREF="#CIRCUIT">genetic circuit model format</A>.  The time series
 data files used by our learning method can be in 
 <A HREF="#TSD">time series data format</A>, comma separated value format, 
 or tab delimited format.
@@ -95,69 +95,60 @@ A project is a collection of models, analysis views, learn views, and
 graphs.
 <p>
 
-<H2><A NAME="NEW"></A>Creating Projects, Models, and Graphs</H2>
-To create a new project, select the File drop down menu from
-the toolbar and select &quot;New Project&quot; under the New
-option. You will then be prompted to browse to a desired location
-and to give a name to the project directory. After you do
+<H2><A NAME="NEWOPENPROJ"></A>Creating and Opening Projects</H2>
+To create a new project, select New &rarr; Project from the File menu. 
+You will then be prompted to browse to a desired location
+and to give a name to the project directory.  After you do
 this, click the new button and a new project directory will be
 created. 
-<p>
-To create a new SBML model, you must first have a project open.
-Once this is done, select the File drop down menu from the toolbar
-and select &quot;New SBML Model&quot; under the New option. You will
-then be prompted to give a model id. Once an id is entered, an
-<A HREF="#SBMLEDIT">SBML editor</A> will open in a new tab.</p>
-<p>
-To create a new circuit model, you must first have a project open.
-Once this is done, select the File drop down menu from the toolbar
-and select &quot;New Circuit Model&quot; under the New option. You will
-then be prompted to give a model id. Once an id is entered, emacs or notepad
-will be opened to allow you to create a model using the 
-<A HREF="#CIRCUIT">Circuit Model Format</A>.</p>
-<p>
-To create a new graph, you must first have a project open.
-Once this is done, select the File drop down menu from the toolbar
-and select &quot;New Graph&quot; under the New option. You will
-then be prompted to give a name to the graph. Once a name is entered, a
-<A HREF="#GRAPH">graph editor</A> will open in a new tab.</p>
-
-<H2><A NAME="OPEN"></A>Opening Projects</H2>
-To open a project, select the File drop down menu from the
-toolbar and select &quot;Open Project&quot; under the Open option.
-You will then be prompted to browse to a project directory that
-you want to open. After you select the project directory, click
-open and the project will open.  You may also open a project by selecting
+To open a project, select Open &rarr; Project from the File menu.
+You will then be prompted to browse to a project directory to open, and 
+clicking open will open the project.  You may also open a project by selecting
 one of your five most recently opened projects by selecting the project
 name shown in the File drop down menu.
 
+<H2><A NAME="NEW"></A>Creating Models and Graphs</H2>
+After you have created or opened a project, you can create a new 
+model or graph to add to the project.  To create a new SBML model, 
+select the New &rarr; SBML Model from the File menu.
+You will then be prompted to give a model id.  At this point, an
+<A HREF="#SBMLEDIT">SBML editor</A> will open in a new tab.
+To create a new genetic circuit model, select the New &rarr; Genetic Circuit 
+Model 
+from the File menu.  You will then be prompted to give a model id. At this 
+point, a text editor will be opened to allow you to create a model using the 
+<A HREF="#CIRCUIT">Genetic Circuit Model Format</A>.
+To create a new graph, select the New &rarr; Graph from the File menu.
+You will then be prompted to give a name to the graph.  At this point,
+a <A HREF="#GRAPH">graph editor</A> will open in a new tab.  
+Once a model or graph is created, it can be opened again later by right
+clicking on the object in the project window and selecting "Edit", or
+alternatively double-clicking on the view.
+</p>
+
 <H2><A NAME="IMPORT"></A>Importing Models</H2>
-The import option can be used to bring 
+You can import into the current working project 
 <A HREF="http://www.sbml.org">SBML</A> or 
-<A HREF="#CIRCUIT">circuit models</A> created by other programs or 
-stored in other projects into the current working project.
-To import an SBML model, you must first have a project open.
-Once this is done, select the File drop down menu from the toolbar
-and select &quot;SBML&quot; under the Import option. You will then
-be prompted to select a model to import. Select a desired model
-and click the open button to import the SBML model into the
-project.  To import a circuit model, the procedure is the same 
-except select "Circuit" under the Import option.
+<A HREF="#CIRCUIT">Genetic Circuit Models</A> created by other programs or 
+stored in other projects.  To import an SBML model, select 
+Import &rarr; SBML Model from the File menu. You will then
+be able to browse to find a model to import. After selecting the 
+desired model, click the import button to bring the SBML model into the
+project.  To import a genetic circuit model, the procedure is the same 
+except use the Import &rarr; Genetic Circuit Model option.
 
 <H2><A NAME="CREATEVIEW"></A>Creating and Opening Views</H2>
-To perform analysis or learning, right click on a model and select &quot;Create
-<A HREF="#ANALYSIS">Analysis View</A>&quot; to perform analysis or
-&quot;Create
-<A HREF="#LEARN">Learn View</A>&quot; to perform learning. 
+To perform analysis or learning, right click on a model and select 
+&quot;<A HREF="#ANALYSIS">Create Analysis View</A>&quot; to perform analysis or
+&quot;<A HREF="#LEARN">Create Learn View</A>&quot; to perform learning. 
 You will then be prompted to give a name to your analysis or learn view. 
 After a name is entered, a tab with the newly created view will open.
-<p>
 Once a view is created, it can be opened again later by right
 clicking on an analysis directory and selecting &quot;Open
 Analysis View&quot; or alternatively double-clicking on the view.
 </p>
 <p>
-When you create an analysis view from a circuit model, an SBML model is 
+When you create an analysis view from a genetic circuit model, an SBML model is 
 automatically created for simulation and analysis.  Within the analysis view,
 you can edit the initial concentrations and parameters.  However, if you wish
 to be able to edit the structure, you should first create an SBML model
@@ -181,8 +172,8 @@ The &quot;View Network&quot; option converts the model to a
 <A HREF="http://www.graphviz.org">GraphViz</A> file and then will open 
 that file with GraphViz's dotty program.  The &quot;View in Browser&quot; 
 option coverts the model to an xhtml file and opens that file with your
-defualt browser.
-To view a circuit model, right click on the model you want to view, and 
+default browser.
+To view a genetic circuit model, right click on the model you want to view, and 
 select the &quot;View Circuit&quot; option.  This opens the circuit using
 <A HREF="http://www.graphviz.org">GraphViz's</A> dotty program.  
 
@@ -192,8 +183,9 @@ a right mouse click to open a menu of options.  Using this menu, every
 type of object can be copied, renamed, or deleted.  For an SBML model,
 the &quot;Edit&quot; option opens the model in an 
 <A HREF="#SBMLEDIT">SBML editor</A>.  
-For a circuit model, the &quot;Edit&quot; option opens the model in the 
-<A HREF="http://www.gnu.org/software/emacs">Emacs</A> text editor.
+For a genetic circuit model, the &quot;Edit&quot; option opens the model in the 
+<A HREF="http://www.gnu.org/software/emacs">Emacs</A> or other default
+text editor.
 For a graph, the &quot;View/Edit&quot; option opens the graph in a
 <A HREF="#GRAPH">graph editor</A>.  
 For an analysis view, the &quot;Open Analysis View&quot; option opens the 
@@ -251,7 +243,7 @@ Reactions are used to create or destroy molecular species in a biochemical
 reaction network.  A reaction is composed of an ID, a reversable Boolean
 flag, a list of reactants, a list of products, a list of parameters, and
 a kinetic law.  A reaction is required to have an ID and a 
-<A HREF="#KINETIC">syntatically correct kinetic law</A>.
+syntatically correct kinetic law as described below.
 The reversible Boolean flag indicates whether or not this reaction is
 reversible.  When adding a reactant or product, the user must specify 
 a species ID and the stoichiometry (i.e., the number of molecules produced
@@ -259,10 +251,11 @@ or consumed by the reaction).  The list of parameters begins with a
 default forward reaction rate (kf) and reverse reaction rate (kr).  
 These names and their values should likely be edited.  The kinetic law
 can either be automatically generated using the Use Mass Action button 
-or manually entered using the syntax described below.  The Use Mass Action
+or manually entered using the syntax described below.  The "Use Mass Action"
 button creates a rate law using the law of mass action.  It assumes that
 the first parameter in the list is the forward reaction rate and the second
 parameter in the list is the reverse reaction rate.  
+The &quot;Clear&quot; button clears the kinetic law editor.
 <p>
 Kinetic law formulas are expressed as text strings using a
 simple C-like syntax. Here are some syntax rules when dealing with
@@ -317,10 +310,6 @@ anything listed in the products, reactants, or parameter fields.
 formula. 
 </P>
 </UL>
-The kinetic law editor also includes two buttons. The &quot;Use
-Mass Action&quot; button will compute a mass action formula for
-you and enter it into the kinetic law editor. The &quot;Clear&quot;
-button will clear the kinetic law editor.
 
 <H2><A NAME="PARAMETERS"></A>Parameters</H2>
 Parameters are used to specify global parameters that can then
@@ -345,32 +334,33 @@ of the REB2SAC modeling and analysis tool described in
 <A HREF="http://www.async.ece.utah.edu/publications">
 Kuwahara's PhD Dissertation (UofUtah 2007)</A>.
 <p>
-The radio button on the top of this tab specifies the levels of
-abstraction.   Choose ‘None’ if you don’t want to abstract
-your model, ‘Abstraction’ if you want to perform the default
-reaction-based abstraction, and ‘Abstraction &amp; Nary’ if
+The first set of radio buttons in this tab specifies the levels of
+abstraction.   Choose "None" if you don’t want to abstract
+your model, "Abstraction" if you want to perform the default
+reaction-based abstraction, and "Abstraction &amp; Nary" if
 you want to further abstract your model by generating its
-finite-state Markov chain model (note this option may not work
-with the current version of BioSim).</p> 
+finite-state Markov chain model.</p> 
 <p>
-The radio button below of that  specifies the simulation type. 
-‘ODE’ is the continuous-deterministic simulation method, ‘
-Monte Carlo’ is the discrete-stochastic simulation method,
-‘Markov’ performs temporal probability distribution analysis
-on finite-state Markov chain model (note this option may not work
-with the current version of BioSim), ‘sbml’ outputs the model
-in SBML format, ‘dot’ outputs the structure of the model in
-the dot format, ‘xhtml’ outputs the information on the model
-in xhtml format with MathML presentation entries for kinetic laws.</p>
+The second set of radio buttons specify the type of analysis. 
+"ODE" is for continuous-deterministic simulation, 
+"Monte Carlo" is for discrete-stochastic simulation,
+"Markov" performs temporal probability distribution analysis
+on finite-state Markov chain models, "sbml" outputs the model
+in SBML format, "Network" outputs the structure of the model in
+the <A HREF="http://www.graphviz.org">GraphViz</A> format, 
+"xhtml" outputs the model in xhtml format with MathML presentation 
+entries for kinetic laws.</p>
 <p>
-The next redio button asks if you want to overwrite the
-simulation runs or if you want to append more simulation runs. 
-Choose `overwrite’ to overwrite simulation runs and ‘append’
-to append simulation runs.  Initially, if you don’t have not
-performed any simulation, this option is disabled.</p> 
+The last set of redio buttons asks if you want to "Overwrite" the
+simulation runs or if you want to "Append" more simulation runs. 
+Choose "overwrite" to overwrite simulation runs and "append"
+to append simulation runs.  This is only valid for stochastic simulation.
+Also, initially, if you have not performed any simulation, this option 
+is disabled.</p> 
 <p>
 The next field specifies the simulation method you want to use
-based on the simulation type you specified.</p>
+based on the simulation type you specified.  The methods
+available are:</p>
 <UL>
 <LI>ODE
 </UL>
@@ -520,7 +510,7 @@ Below is the table specifies such simulation properties.</P>
 	<P ALIGN=CENTER>Print Interval</P>
 </TD>
 <TD WIDTH=405>
-	<P>The print time interval of each simulation run</P>
+	<P>The print time interval for each simulation run</P>
 </TD>
 </TR>
 <TR VALIGN=TOP>
@@ -529,6 +519,14 @@ Below is the table specifies such simulation properties.</P>
 </TD>
 <TD WIDTH=405>
 	<P>The time step for the Euler method</P>
+</TD>
+</TR>
+<TR VALIGN=TOP>
+<TD WIDTH=235>
+	<P ALIGN=CENTER>Absolute Error</P>
+</TD>
+<TD WIDTH=405>
+	<P>Used by the adaptive time step ODE methods</P>
 </TD>
 </TR>
 <TR VALIGN=TOP>
@@ -654,7 +652,7 @@ option, remove an existing option, or clear all options.
 <H2><A NAME="PARAMEDIT"></A>Parameter Editor</H2>
 The parameter editor is similar in form to the SBML editor, but it only
 allows initial concentrations and parameters to be adjusted.  Each of these
-parameters starts with the original value specified in the SBML or
+parameters starts with the original value specified in the SBML or genetic
 circuit model associated with this analysis view.  By changing the type
 to "Custom", a new value can be entered.  Changing the type back to
 "Original", restores the original value.  These values can also be swept
@@ -700,7 +698,7 @@ The learn tool uses the GeneNet algorithm described in
 Barker's PhD dissertation (UofUtah 2007)</A>.  To use this learn tool,
 adjust any options described below, if desired, then press the
 Save and Learn button.  The resulting genetic circuit in specified using our
-<A HREF="#CIRCUIT">circuit model format</A> and shown
+<A HREF="#CIRCUIT">Genetic Circuit Model Format</A> and shown
 graphically using <A HREF="http://www.graphviz.org">GraphViz's Dotty tool</A>.
 On this tab, there are also buttons to save the parameters without learning,
 view the last learned circuit, save the generated circuit into the project,
@@ -831,8 +829,8 @@ the file filter (default is pdf).
 For image (i.e., not data) file types, you will be prompted to give a desired 
 pixel height and width for the file before the file is exported. 
 
-<H1><A NAME="CIRCUIT"></A>Circuit Model Format</H1>
-Our circuit model format species a genetic circuit using the same
+<H1><A NAME="CIRCUIT"></A>Genetic Circuit Model Format</H1>
+Our genetic circuit model format species a genetic circuit using the same
 format as the <A HREF="http://www.graphviz.org">GraphViz</A> graph
 drawing tool.  The vertices in the graph are the species in the genetic 
 circuit, and the edges in the graph represent the activation and repression 
@@ -861,7 +859,7 @@ to repress CII.
 
 More advanced behavior can be modeled by using extra fields.  The promoter field
 groups a set of species together.  The examples below shows how the promoter field works.
-In the circuit model below, species A represses the production of species B and C, independently.  If there
+In the genetic circuit model below, species A represses the production of species B and C, independently.  If there
 was exactly 1 molecule of species A, it would only be able to represses production of species B or C, but not both.
 <p>
 digraph G {<BR>
