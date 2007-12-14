@@ -1358,9 +1358,25 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						displayed = false;
 						f.dispose();
 					}
-				});
+				  });
+				final JButton deselect = new JButton("Deselect All");
+				deselect.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+					  //selected = "";
+						int size = graphed.size();
+						for (int i = 0; i < size; i++) {
+							graphed.remove();
+						}
+						if (tree.getSelectionCount() > 0) {
+						  int selectedRow = tree.getSelectionRows()[0];
+						  tree.setSelectionRow(0);
+						  tree.setSelectionRow(selectedRow);
+						}
+					}
+				  });
 				JPanel buttonPanel = new JPanel();
 				buttonPanel.add(ok);
+				buttonPanel.add(deselect);
 				buttonPanel.add(cancel);
 				JPanel all = new JPanel(new BorderLayout());
 				all.add(scroll, "Center");
