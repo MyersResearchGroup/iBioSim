@@ -1787,7 +1787,12 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			// }
 			return;
 		}
-		outDir = simName + separator + direct;
+		if (direct.equals(".")) {
+			outDir = simName;
+		}
+		else {
+			outDir = simName + separator + direct;
+		}
 		try {
 			// if (seed.isEnabled()) {
 			rndSeed = Long.parseLong(seed.getText().trim());
@@ -1959,12 +1964,14 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		}
 		int cut = 0;
 		String simProp = sbmlProp;
-		sbmlProp = sbmlProp.substring(0, sbmlProp.length()
-				- sbmlProp.split(separator)[sbmlProp.split(separator).length - 1].length())
-				+ direct
-				+ separator
-				+ sbmlProp.substring(sbmlProp.length()
-						- sbmlProp.split(separator)[sbmlProp.split(separator).length - 1].length());
+		if (!direct.equals(".")) {
+			sbmlProp = sbmlProp.substring(0, sbmlProp.length()
+					- sbmlProp.split(separator)[sbmlProp.split(separator).length - 1].length())
+					+ direct
+					+ separator
+					+ sbmlProp.substring(sbmlProp.length()
+							- sbmlProp.split(separator)[sbmlProp.split(separator).length - 1].length());
+		}
 		String[] getFilename = sbmlProp.split(separator);
 		for (int i = 0; i < getFilename[getFilename.length - 1].length(); i++) {
 			if (getFilename[getFilename.length - 1].charAt(i) == '.') {
@@ -3088,7 +3095,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		int[] index = species.getSelectedIndices();
 		species.setSelectedIndices(index);
 		return new Graph(printer_track_quantity, simName + " simulation results", printer_id, outDir,
-				"time", biomodelsim, open, log, null);
+				"time", biomodelsim, open, log, null, true);
 	}
 
 	public JButton getRunButton() {

@@ -123,7 +123,7 @@ public class BioSim implements MouseListener, ActionListener {
 		JMenu help = new JMenu("Help");
 		help.setMnemonic(KeyEvent.VK_H);
 		JMenu importMenu = new JMenu("Import");
-		//JMenu openMenu = new JMenu("Open");
+		// JMenu openMenu = new JMenu("Open");
 		JMenu newMenu = new JMenu("New");
 		menuBar.add(file);
 		menuBar.add(help);
@@ -180,7 +180,7 @@ public class BioSim implements MouseListener, ActionListener {
 		newMenu.add(newModel);
 		newMenu.add(graph);
 		file.add(openProj);
-		//openMenu.add(openProj);
+		// openMenu.add(openProj);
 		file.addSeparator();
 		file.add(importMenu);
 		importMenu.add(importDot);
@@ -1154,7 +1154,7 @@ public class BioSim implements MouseListener, ActionListener {
 						}
 					}
 					Graph g = new Graph("amount", graphName.trim().substring(0, graphName.length() - 4),
-							"tsd.printer", root, "time", this, null, log, graphName.trim());
+							"tsd.printer", root, "time", this, null, log, graphName.trim(), true);
 					addTab(graphName.trim(), g, "Graph");
 					g.save();
 					refreshTree();
@@ -1634,7 +1634,7 @@ public class BioSim implements MouseListener, ActionListener {
 			if (!done) {
 				addTab(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],
 						new Graph("amount", "title", "tsd.printer", root, "time", this, tree.getFile(), log,
-								tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]),
+								tree.getFile().split(separator)[tree.getFile().split(separator).length - 1], true),
 						"Graph");
 			}
 		}
@@ -2109,8 +2109,8 @@ public class BioSim implements MouseListener, ActionListener {
 						addTab(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],
 								new Graph("amount", "title", "tsd.printer", root, "time", this, tree.getFile(),
 										log,
-										tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]),
-								"Graph");
+										tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],
+										true), "Graph");
 					}
 				}
 				else if (new File(tree.getFile()).isDirectory() && !tree.getFile().equals(root)) {
@@ -2540,7 +2540,7 @@ public class BioSim implements MouseListener, ActionListener {
 				lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Learn");
 				lrnTab.addTab("Graph", new Graph("amount", tree.getFile().split(separator)[tree.getFile()
 						.split(separator).length - 1]
-						+ " data", "tsd.printer", tree.getFile(), "time", this, open, log, null));
+						+ " data", "tsd.printer", tree.getFile(), "time", this, open, log, null, true));
 				lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Graph");
 			}
 			else {
@@ -2888,7 +2888,7 @@ public class BioSim implements MouseListener, ActionListener {
 							else {
 								((JTabbedPane) tab.getComponentAt(i)).setComponentAt(j, new Graph("amount",
 										learnName + " data", "tsd.printer", root + separator + learnName, "time", this,
-										null, log, null));
+										null, log, null, true));
 								((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j).setName("Graph");
 							}
 						}
