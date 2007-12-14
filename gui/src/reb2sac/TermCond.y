@@ -87,6 +87,7 @@ num_exp :
 	boolean found = false;
 	for (int i=0;i<listOfSpecies.size();i++) {
 	  if ($1.sval.equals(listOfSpecies.get(i))) {
+	    reb2sac.addToIntSpecies(listOfSpecies.get(i));
 	    found = true;
 	    break;
 	  }
@@ -103,6 +104,7 @@ num_exp :
       boolean found = false;
       for (int i=0;i<listOfSpecies.size();i++) {
 	if ($2.sval.equals(listOfSpecies.get(i))) {
+	  reb2sac.addToIntSpecies(listOfSpecies.get(i));
 	  found = true;
 	  break;
 	}
@@ -118,6 +120,7 @@ num_exp :
       boolean found = false;
       for (int i=0;i<listOfSpecies.size();i++) {
 	if ($2.sval.equals(listOfSpecies.get(i))) {
+	  reb2sac.addToIntSpecies(listOfSpecies.get(i));
 	  found = true;
 	  break;
 	}
@@ -149,6 +152,7 @@ num_exp :
 
 private String expr;
 private BioSim biosim;
+private Reb2Sac reb2sac;
 private ArrayList<String> listOfSpecies;
 private ArrayList<String> listOfReactions;
 
@@ -289,9 +293,11 @@ int yylex()
   return -1;
 }
 
-public int ParseTermCond(BioSim biosim, ArrayList<String>listOfSpecies, ArrayList<String>listOfReactions, String termCond)
+public int ParseTermCond(BioSim biosim, Reb2Sac reb2sac, ArrayList<String>listOfSpecies, 
+			 ArrayList<String>listOfReactions, String termCond)
 { 
   (this).biosim = biosim;
+  (this).reb2sac = reb2sac;
   (this).listOfSpecies = listOfSpecies;
   (this).listOfReactions = listOfReactions;
   expr = termCond;

@@ -404,7 +404,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 							}
 							catch (Exception e) {
 							}
-							reacts[i] = reaction.getId() + " Custom";
+							reacts[i] = reaction.getId() + " " + parameterChanges.get(k).split(" ")[2];
 						}
 					}
 				}
@@ -2448,8 +2448,13 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 											reactions.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 											reacts = Buttons.getList(reacts, reactions);
 											reactions.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-											reacts[index1] = ((String) reactions.getSelectedValue()).split(" ")[0]
-													+ " Custom";
+											if (((String) type.getSelectedItem()).equals("Custom")) {
+											  reacts[index1] = ((String) reactions.getSelectedValue()).split(" ")[0]
+											    + " Custom"; 
+											} else {
+											  reacts[index1] = ((String) reactions.getSelectedValue()).split(" ")[0]
+											    + " Sweep"; 
+											}
 											sort(reacts);
 											reactions.setListData(reacts);
 											reactions.setSelectedIndex(index1);
@@ -3064,16 +3069,11 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 										sweepTwo += "_" + sweepThese2.get(i) + "=" + sweep2.get(i).get(k);
 									}
 								}
-								new File(simDir + separator + sweepTwo).mkdir();
+								new File(simDir + separator + sweepTwo.replace("/", "-")).mkdir();
 								createSBML(sweepTwo);
-								reb2sac.setDir(sweepTwo);
+								reb2sac.setDir(sweepTwo.replace("/", "-"));
 								Thread t = new Thread(reb2sac);
 								t.start();
-								try {
-									t.join();
-								}
-								catch (Exception e) {
-								}
 								reb2sac.emptyFrames();
 							}
 						}
@@ -3083,11 +3083,6 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 							reb2sac.setDir(sweep.replace("/", "-"));
 							Thread t = new Thread(reb2sac);
 							t.start();
-							try {
-								t.join();
-							}
-							catch (Exception e) {
-							}
 							reb2sac.emptyFrames();
 						}
 					}

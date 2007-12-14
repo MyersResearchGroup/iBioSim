@@ -1058,7 +1058,7 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 				geneNet += " -binN";
 			}
 			final JButton cancel = new JButton("Cancel");
-			final JFrame running = new JFrame("Running...");
+			final JFrame running = new JFrame("Progress");
 			WindowListener w = new WindowListener() {
 				public void windowClosing(WindowEvent arg0) {
 					cancel.doClick();
@@ -1088,7 +1088,7 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 			JPanel progBar = new JPanel();
 			JPanel button = new JPanel();
 			JPanel all = new JPanel(new BorderLayout());
-			JLabel label = new JLabel("Progress");
+			JLabel label = new JLabel("Running...");
 			JProgressBar progress = new JProgressBar(0, species.size());
 			progress.setStringPainted(true);
 			// progress.setString("");

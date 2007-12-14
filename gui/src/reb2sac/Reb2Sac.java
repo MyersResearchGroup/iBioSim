@@ -1241,7 +1241,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 								JOptionPane.ERROR_MESSAGE);
 				return;
 			}
-
+			addToIntSpecies((String)availSpecies.getSelectedItem());
 			String add = time + " " + availSpecies.getSelectedItem() + " " + modify + mod;
 			boolean done = false;
 			for (int i = 0; i < ssaList.length; i++) {
@@ -1317,7 +1317,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				}
 			}
 			TermCond TCparser = new TermCond(false);
-			int result = TCparser.ParseTermCond(biomodelsim, listOfSpecs, listOfReacs, cond.getText()
+			int result = TCparser.ParseTermCond(biomodelsim, (this), listOfSpecs, listOfReacs, cond.getText()
 					.trim());
 			if (result == 0) {
 				String add = TCid.getText().trim() + "; " + desc.getText().trim() + "; "
@@ -1455,6 +1455,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 								JOptionPane.ERROR_MESSAGE);
 						return;
 					}
+					addToIntSpecies((String)availSpecies.getSelectedItem());
 					ssaList[ssa.getSelectedIndex()] = time1 + " " + availSpecies.getSelectedItem() + " "
 							+ modify + mod1;
 					int[] index = ssa.getSelectedIndices();
@@ -1576,7 +1577,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 						}
 					}
 					TermCond TCparser = new TermCond(false);
-					int result = TCparser.ParseTermCond(biomodelsim, listOfSpecs, listOfReacs, cond.getText()
+					int result = TCparser.ParseTermCond(biomodelsim, (this), listOfSpecs, listOfReacs, cond.getText()
 							.trim());
 					if (result == 0) {
 						sadList[sad.getSelectedIndex()] = TCid.getText().trim() + "; " + desc.getText().trim()
@@ -1736,6 +1737,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 	 * simulation.
 	 */
 	public void run() {
+	        String localDirect = direct;
 		double timeLimit = 100.0;
 		double printInterval = 1.0;
 		double timeStep = 1.0;
@@ -1787,11 +1789,11 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			// }
 			return;
 		}
-		if (direct.equals(".")) {
+		if (localDirect.equals(".")) {
 			outDir = simName;
 		}
 		else {
-			outDir = simName + separator + direct;
+			outDir = simName + separator + localDirect;
 		}
 		try {
 			// if (seed.isEnabled()) {
@@ -1828,8 +1830,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					}
 					if (end.equals(".tsd") || end.equals(".dat") || end.equals(".csv")) {
 						if (runs.contains("run-")) {
-							run = Math
-									.max(run, Integer.parseInt(runs.substring(4, runs.length() - end.length())));
+							run = Math.max(run, Integer.parseInt(runs.substring(4, runs.length() - end.length())));
 						}
 					}
 				}
@@ -1936,8 +1937,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			selectedButtons = "nary_xhtml";
 		}
 		try {
-			FileOutputStream out = new FileOutputStream(new File(root + separator + outDir + separator
-					+ "user-defined.dat"));
+			FileOutputStream out = new FileOutputStream(new File(root + separator + outDir + "user-defined.dat"));
 			int[] indecies = ssa.getSelectedIndices();
 			ssaList = Buttons.getList(ssaList, ssa);
 			ssa.setSelectedIndices(indecies);
@@ -1964,21 +1964,21 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		}
 		int cut = 0;
 		String simProp = sbmlProp;
-		if (!direct.equals(".")) {
-			sbmlProp = sbmlProp.substring(0, sbmlProp.length()
-					- sbmlProp.split(separator)[sbmlProp.split(separator).length - 1].length())
-					+ direct
+		if (!localDirect.equals(".")) {
+			simProp = simProp.substring(0, simProp.length()
+					- simProp.split(separator)[simProp.split(separator).length - 1].length())
+					+ localDirect
 					+ separator
-					+ sbmlProp.substring(sbmlProp.length()
-							- sbmlProp.split(separator)[sbmlProp.split(separator).length - 1].length());
+					+ simProp.substring(simProp.length()
+							- simProp.split(separator)[simProp.split(separator).length - 1].length());
 		}
-		String[] getFilename = sbmlProp.split(separator);
+		String[] getFilename = simProp.split(separator);
 		for (int i = 0; i < getFilename[getFilename.length - 1].length(); i++) {
 			if (getFilename[getFilename.length - 1].charAt(i) == '.') {
 				cut = i;
 			}
 		}
-		String propName = sbmlProp.substring(0, sbmlProp.length()
+		String propName = simProp.substring(0, simProp.length()
 				- getFilename[getFilename.length - 1].length())
 				+ getFilename[getFilename.length - 1].substring(0, cut) + ".properties";
 		String monteLimit = "";
@@ -2001,7 +2001,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		}
 		log.addText("Creating properties file:\n" + propName + "\n");
 		final JButton cancel = new JButton("Cancel");
-		final JFrame running = new JFrame("Running...");
+		final JFrame running = new JFrame("Progress");
 		WindowListener w = new WindowListener() {
 			public void windowClosing(WindowEvent arg0) {
 				cancel.doClick();
@@ -2031,7 +2031,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		JPanel progBar = new JPanel();
 		JPanel button = new JPanel();
 		JPanel all = new JPanel(new BorderLayout());
-		JLabel label = new JLabel("Progress");
+		JLabel label = new JLabel("Running.." + localDirect);
 		int steps;
 		if (ODE.isSelected()) {
 			steps = (int) (timeLimit / printInterval);
@@ -2079,8 +2079,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		saveSAD();
 		runProgram.createProperties(timeLimit, printInterval, timeStep, absError, ".",
 		// root + separator + outDir,
-				rndSeed, run, termCond, intSpecies, printer_id, printer_track_quantity, sbmlProp
-						.split(separator), selectedButtons, this, sbmlProp, rap1, rap2, qss, con, usingSSA,
+				rndSeed, run, termCond, intSpecies, printer_id, printer_track_quantity, simProp
+						.split(separator), selectedButtons, this, simProp, rap1, rap2, qss, con, usingSSA,
 				// root + separator + simName + separator +
 				"user-defined.dat", usingSAD, new File(root + separator + outDir + separator
 						+ "termCond.sad"));
@@ -2134,25 +2134,19 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				}
 			}
 		}
-		int exit = runProgram.execute(sbmlProp, sbml, dot, xhtml, biomodelsim.frame(), ODE, monteCarlo,
+		int exit = runProgram.execute(simProp, sbml, dot, xhtml, biomodelsim.frame(), ODE, monteCarlo,
 				sim, printer_id, printer_track_quantity, root + separator + simName, nary, 1, intSpecies,
 				log, usingSSA, root + separator + outDir + separator + "user-defined.dat", biomodelsim,
 				simTab, root, progress, steps);
 		if (nary.isSelected() && exit == 0) {
-			new Nary_Run(this, amountTerm, ge, gt, eq, lt, le, simulators, sbmlProp.split(separator),
-					sbmlProp, sbml, dot, xhtml, nary, ODE, monteCarlo, timeLimit, printInterval, root
+			new Nary_Run(this, amountTerm, ge, gt, eq, lt, le, simulators, simProp.split(separator),
+					simProp, sbml, dot, xhtml, nary, ODE, monteCarlo, timeLimit, printInterval, root
 							+ separator + simName, rndSeed, run, printer_id, printer_track_quantity, termCond,
 					intSpecies, rap1, rap2, qss, con, log, usingSSA, root + separator + outDir + separator
 							+ "user-defined.dat", biomodelsim, simTab, root);
 		}
-		sbmlProp = simProp;
 		running.setCursor(null);
-		if (direct.equals(".")) {
-			running.dispose();
-		}
-		else {
-			frames.add(running);
-		}
+		running.dispose();
 		biomodelsim.getExitButton().removeActionListener(runProgram);
 		String[] searchForRunFiles = new File(root + separator + outDir).list();
 		for (String s : searchForRunFiles) {
@@ -3156,4 +3150,14 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 	public void setDir(String direct) {
 		this.direct = direct;
 	}
+
+	public void addToIntSpecies(String newSpecies) {
+	  JList addIntSpecies = new JList();
+	  Object[] addObj = { newSpecies };
+	  addIntSpecies.setListData(addObj);
+	  addIntSpecies.setSelectedIndex(0);
+	  interestingSpecies = Buttons.add(interestingSpecies, species, addIntSpecies, false, amountTerm,
+					   ge, gt, eq, lt, le, this);
+	}
+
 }
