@@ -192,7 +192,7 @@ public class BioSim implements MouseListener, ActionListener {
 		help.add(about);
 		root = null;
 
-		// Create empty recent project menu items
+		// Create recent project menu items
 		numberRecentProj = 0;
 		recentProjects = new JMenuItem[5];
 		recentProjectPaths = new String[5];
@@ -218,9 +218,6 @@ public class BioSim implements MouseListener, ActionListener {
 			if (!recentProjectPaths[i].equals("")) {
 				file.add(recentProjects[i]);
 				numberRecentProj = i + 1;
-				if (numberRecentProj == 5) {
-					numberRecentProj = 0;
-				}
 			}
 		}
 
@@ -369,17 +366,8 @@ public class BioSim implements MouseListener, ActionListener {
 					return;
 				}
 			}
-			/*
-			 * Properties biosimrc = new Properties(); for (int i=0;i<5;i++) {
-			 * biosimrc.setProperty("biosim.recent.project."+i,recentProjects[i].getText());
-			 * biosimrc.setProperty("biosim.recent.project.path."+i,recentProjectPaths[i]); }
-			 * try { FileOutputStream out = new FileOutputStream(new
-			 * File(".biosimrc")); biosimrc.store(out, "biosimrc"); out.close(); }
-			 * catch (Exception e1) { JOptionPane.showMessageDialog(frame, "Unable to
-			 * save .biosimrc file.", "Error", JOptionPane.ERROR_MESSAGE); }
-			 */
 			Preferences biosimrc = Preferences.userRoot();
-			for (int i = 0; i < 5; i++) {
+			for (int i = 0; i < numberRecentProj; i++) {
 				biosimrc.put("biosim.recent.project." + i, recentProjects[i].getText());
 				biosimrc.put("biosim.recent.project.path." + i, recentProjectPaths[i]);
 			}
@@ -1666,21 +1654,26 @@ public class BioSim implements MouseListener, ActionListener {
 	 */
 	public void addRecentProject(String projDir) {
 		boolean newOne = true;
-		for (int i = 0; i < 5; i++) {
+		for (int i = 0; i < numberRecentProj-1; i++) {
 			if (recentProjectPaths[i].equals(projDir)) {
-				newOne = false;
-				break;
+			  for (int j=i; j < numberRecentProj-1; j++) {
+			    String next = recentProjectPaths[j+1];
+			    recentProjects[j].setText(next.split(separator)[next.split(separator).length - 1]);
+			    file.add(recentProjects[j]);
+			    recentProjectPaths[j] = next;
+			  }
+			  break;
 			}
 		}
-		if (newOne) {
-			recentProjects[numberRecentProj]
-					.setText(projDir.split(separator)[projDir.split(separator).length - 1]);
-			file.add(recentProjects[numberRecentProj]);
-			recentProjectPaths[numberRecentProj] = projDir;
-			numberRecentProj++;
-			if (numberRecentProj == 5) {
-				numberRecentProj = 0;
-			}
+		if (numberRecentProj < 5) {
+		  numberRecentProj++;
+		}
+		for (int i = 0; i < numberRecentProj; i++) {
+		  String save = recentProjectPaths[i];
+		  recentProjects[i].setText(projDir.split(separator)[projDir.split(separator).length - 1]);
+		  file.add(recentProjects[i]);
+		  recentProjectPaths[i] = projDir;
+		  projDir = save;
 		}
 	}
 

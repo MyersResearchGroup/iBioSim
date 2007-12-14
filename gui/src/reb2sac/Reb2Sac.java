@@ -1329,14 +1329,14 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				TCid.setText("");
 				desc.setText("");
 				cond.setText("");
-				sadList = Buttons
-						.add(sadList, sad, addSAD, false, null, null, null, null, null, null, this);
+				sadList = Buttons.add(sadList, sad, addSAD, false, 
+						      null, null, null, null, null, null, this);
 				sad.setListData(sadList);
 			}
 			else if (result == 1) {
-				JOptionPane
-						.showMessageDialog(biomodelsim.frame(), "Syntax error in the termination condition!",
-								"Syntax Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(biomodelsim.frame(), 
+							      "Syntax error in the termination condition!",
+							      "Syntax Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 		// if the edit ssa button is clicked
