@@ -16,6 +16,7 @@ import org.jfree.chart.axis.*;
 import org.jfree.chart.event.*;
 import org.jfree.chart.plot.*;
 import org.jfree.chart.renderer.xy.*;
+import org.jfree.data.category.*;
 import org.jfree.data.xy.*;
 import org.jibble.epsgraphics.EpsGraphics2D;
 import org.w3c.dom.*;
@@ -111,7 +112,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	 * helper method.
 	 */
 	public Graph(String printer_track_quantity, String label, String printer_id, String outDir,
-			String time, BioSim biomodelsim, String open, Log log, String graphName) {
+			String time, BioSim biomodelsim, String open, Log log, String graphName, boolean timeSeries) {
 		if (File.separator.equals("\\")) {
 			separator = "\\\\";
 		}
@@ -134,13 +135,18 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		displayed = false;
 
 		// graph the output data
-		setUpShapesAndColors();
-		graphed = new LinkedList<GraphSpecies>();
-		selected = "";
-		lastSelected = "";
-		graph(printer_track_quantity, label, data, time);
-		if (open != null) {
-			open(open);
+		if (timeSeries) {
+			setUpShapesAndColors();
+			graphed = new LinkedList<GraphSpecies>();
+			selected = "";
+			lastSelected = "";
+			graph(printer_track_quantity, label, data, time);
+			if (open != null) {
+				open(open);
+			}
+		}
+		else {
+			probGraph(label);
 		}
 	}
 
@@ -1358,22 +1364,22 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						displayed = false;
 						f.dispose();
 					}
-				  });
+				});
 				final JButton deselect = new JButton("Deselect All");
 				deselect.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-					  //selected = "";
+						// selected = "";
 						int size = graphed.size();
 						for (int i = 0; i < size; i++) {
 							graphed.remove();
 						}
 						if (tree.getSelectionCount() > 0) {
-						  int selectedRow = tree.getSelectionRows()[0];
-						  tree.setSelectionRow(0);
-						  tree.setSelectionRow(selectedRow);
+							int selectedRow = tree.getSelectionRows()[0];
+							tree.setSelectionRow(0);
+							tree.setSelectionRow(selectedRow);
 						}
 					}
-				  });
+				});
 				JPanel buttonPanel = new JPanel();
 				buttonPanel.add(ok);
 				buttonPanel.add(deselect);
@@ -3320,5 +3326,76 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 	public boolean hasChanged() {
 		return change;
+	}
+
+	private void probGraph(String label) {
+		DefaultCategoryDataset histDataset = new DefaultCategoryDataset();
+		ArrayList<String> data = new ArrayList<String>();
+		try {
+			Scanner s = new Scanner(new File(outDir + separator + "sim-rep.txt"));
+			while (s.hasNextLine()) {
+				String[] ss = s.nextLine().split(" ");
+				if (data.size() == 0) {
+					for (String add : ss) {
+						data.add(add);
+					}
+				}
+				else {
+					for (int i = 0; i < ss.length; i++) {
+						data.set(i, data.get(i) + " " + ss[i]);
+					}
+				}
+			}
+		}
+		catch (Exception e) {
+		}
+		for (String s : data) {
+			double[] dataSet = new double[s.split(" ").length - 1];
+			for (int i = 1; i < s.split(" ").length; i++) {
+				dataSet[i - 1] = Double.parseDouble(s.split(" ")[i]);
+			}
+			for (double d : dataSet) {
+				histDataset.setValue(d, s.split(" ")[0], "");
+			}
+		}
+		chart = ChartFactory.createBarChart(label, "", "Percent", histDataset,
+				PlotOrientation.VERTICAL, true, true, false);
+		ChartPanel graph = new ChartPanel(chart);
+
+		// creates the buttons for the graph frame
+		JPanel ButtonHolder = new JPanel();
+		save = new JButton("Save Graph");
+		save.setEnabled(false);
+		export = new JButton("Export");
+		// exportJPeg = new JButton("Export As JPEG");
+		// exportPng = new JButton("Export As PNG");
+		// exportPdf = new JButton("Export As PDF");
+		// exportEps = new JButton("Export As EPS");
+		// exportSvg = new JButton("Export As SVG");
+		// exportCsv = new JButton("Export As CSV");
+		save.addActionListener(this);
+		export.addActionListener(this);
+		// exportJPeg.addActionListener(this);
+		// exportPng.addActionListener(this);
+		// exportPdf.addActionListener(this);
+		// exportEps.addActionListener(this);
+		// exportSvg.addActionListener(this);
+		// exportCsv.addActionListener(this);
+		ButtonHolder.add(save);
+		ButtonHolder.add(export);
+		// ButtonHolder.add(exportJPeg);
+		// ButtonHolder.add(exportPng);
+		// ButtonHolder.add(exportPdf);
+		// ButtonHolder.add(exportEps);
+		// ButtonHolder.add(exportSvg);
+		// ButtonHolder.add(exportCsv);
+
+		// puts all the components of the graph gui into a display panel
+		JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, ButtonHolder, null);
+		splitPane.setDividerSize(0);
+		this.removeAll();
+		this.setLayout(new BorderLayout());
+		this.add(graph, "Center");
+		this.add(splitPane, "South");
 	}
 }

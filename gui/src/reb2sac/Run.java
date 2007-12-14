@@ -529,7 +529,7 @@ public class Run implements ActionListener {
 									simTab.setComponentAt(i, new Graph(printer_track_quantity, outDir
 											.split(separator)[outDir.split(separator).length - 1]
 											+ " simulation results", printer_id, outDir, "time", biomodelsim, null, log,
-											null));
+											null, true));
 									simTab.getComponentAt(i).setName("Graph");
 								}
 							}
@@ -542,6 +542,10 @@ public class Run implements ActionListener {
 									- filename.split(separator)[filename.split(separator).length - 1].length())
 							+ "out.hse\n");
 					exec.exec("atacs -T0.000001 -oqoflhsgllvA out.hse", null, work);
+					simTab.add("Probability Graph", new Graph(printer_track_quantity,
+							outDir.split(separator)[outDir.split(separator).length - 1] + " simulation results",
+							printer_id, outDir, "time", biomodelsim, null, log, null, false));
+					simTab.getComponentAt(simTab.getComponentCount() - 1).setName("ProbGraph");
 				}
 				else {
 					if (!printer_id.equals("null.printer")) {
@@ -555,7 +559,7 @@ public class Run implements ActionListener {
 										simTab.setComponentAt(i, new Graph(printer_track_quantity, outDir
 												.split(separator)[outDir.split(separator).length - 1]
 												+ " simulation results", printer_id, outDir, "time", biomodelsim, null,
-												log, null));
+												log, null, true));
 										simTab.getComponentAt(i).setName("Graph");
 									}
 								}
@@ -571,7 +575,7 @@ public class Run implements ActionListener {
 										simTab.setComponentAt(i, new Graph(printer_track_quantity, outDir
 												.split(separator)[outDir.split(separator).length - 1]
 												+ " simulation results", printer_id, outDir, "time", biomodelsim, null,
-												log, null));
+												log, null, true));
 										simTab.getComponentAt(i).setName("Graph");
 									}
 								}
