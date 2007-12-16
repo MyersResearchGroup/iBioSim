@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/perl -w
 
 use Getopt::Std;
 
@@ -6,7 +6,6 @@ use Getopt::Std;
 $STATE = 0;
 $PROTEIN = 1;
 $CONST = 2;
-$NUM_SOURCES = 3;
 
 $PROMOTER = 0;
 $INPUT = 1;
@@ -38,6 +37,7 @@ $ocr = 0.1;
 $unactived_production = 0.01;
 $activated_production = 0.1;
 $num_promo = 1.0;
+$stochiometry = 1.;
 $num_RNAP = 30.0;
 
 $spastic = 0.9;
@@ -168,6 +168,10 @@ sub load_parameters{
             print "Changing dimer unbinding rate: $1\n";
             $kr_bind_dimer = $1;
         }
+        if ($parameter_file =~ m/stochiometry[\s]*=[\s]*([0-9]*\.?[0-9]*)/) {
+            print "Stochiometry: $1\n";
+            $stochiometry = $1;
+        }         
         if ($parameter_file =~ m/promoters[\s]*=[\s]*([0-9]*\.?[0-9]*)/) {
             print "Changing number of promoters: $1\n";
             $num_promo = $1;
@@ -179,17 +183,7 @@ sub load_parameters{
 }
 
 sub fill_hashes{
-    undef @genes;
-    undef %mapping;
-    undef @gene_symbols;
-    undef %gwp;
-    undef %gwa;
-    undef %gwr;
-    undef %rep;
-    undef %act;
-    undef %dimers;
-     
-
+    undef %dimers;     
     undef %proteins;  #list of proteins in the soup
     undef %promoters; #list of promoters
     undef %biochem; #list of biochem reactions
@@ -213,7 +207,7 @@ sub fill_hashes{
                 $spastics{$protein} =$protein;
             }
         } else {
-            print "Error, must have label for $gene\n";
+            print "Error, must have label for $state\n";
 	    exit(0);
         } 
 #        print "$temp\n";
@@ -257,33 +251,14 @@ sub fill_hashes{
 #	    print "Found a dimer for $start in '$total_info'\n";
 	    $stoc = $1;
 	    if (exists($dimers{$start}) and $dimers{$start} != $stoc){
-		print "ERROR: unhandled dimerization.  Unable to create different dimerizations, '$dimers{$start}' and '$d'";
+		print "ERROR: unhandled dimerization.  Unable to create different dimerizations, '$dimers{$start}' and '$start'";
 		exit(0);
 	    }
 	    else{
 		$dimers{$start} = $stoc;
 	    }
-            $g1 = "$g1\_$stoc";
         }
 
-	#fill in that the gene has a promoter
-	$gwp{$g2}++;
-
-	if ($arrowhead eq "vee"){
-	    #print "ACT Found '$2' -> '$3' with arrowhead '$arrowhead'\n";
-	    $gwa{$g2}++;
-	    $act{"$g2:$gwa{$g2}"} = "$g1,$g2,$total_info";
-	}
-	elsif($arrowhead eq "tee"){
-	    #print "REP Found '$2' -> '$3' with arrowhead '$arrowhead'\n";
-	    $gwr{$g2}++;
-	    $rep{"$g2:$gwr{$g2}"} = "$g1,$g2,$total_info";
-	}
-	else{
-	    print "Found '$2' -> '$3' with arrowhead '$arrowhead'\n";
-	    print "Unhandled arrowhead case $arrowhead: exiting\n";
-	}        
-        
         if ($total_info =~ m/promoter="(.*)"/){
 #            print "Found promoter $1 in '$total_info'\n";
             $promoter = $1;
@@ -309,10 +284,10 @@ sub build_interaction {
 #    print "Printing params\n@params\n";
     #TODO: Check for problems if species used in more than 1 reaction
     #Check to see if the promoter exists yet, if not, add it
-    if (not exists($promoters{@params[$PROMOTER]})) {
-        my @input = [[{@params[$INPUT]=>@params[$STOC]}, @params[$TYPE], @params[$ARROWHEAD]]];
+    if (not exists($promoters{$params[$PROMOTER]})) {
+        my @input = [[{$params[$INPUT]=>$params[$STOC]}, $params[$TYPE], $params[$ARROWHEAD]]];
 #        print "First promo addr: @input\n";
-        $promoters{@params[$PROMOTER]} = [@params[$PROMOTER], @input, {@params[$OUTPUT]=>@params[$OUTPUT]}];
+        $promoters{$params[$PROMOTER]} = [$params[$PROMOTER], @input, {$params[$OUTPUT]=>$params[$OUTPUT]}];
     }
     #If it does exist, check to see if it is a biochem reaction, and if so, see if it can be combined
     #with an existing input
@@ -321,24 +296,24 @@ sub build_interaction {
         #Check to see if it can be added to any reactions
         #by cycling through each promoter and checking the input arrays
         #and checking to see if the arrowhead matches
-        for (my $i = 0; $i <= $#{$promoters{@params[$PROMOTER]}[$INPUT]}; $i++) {
-            @aref = $promoters{@params[$PROMOTER]}[$INPUT][$i];            
-            if ($aref[0][2] eq @params[$ARROWHEAD] and $aref[0][1] eq "biochemical") {
-                $aref[0][0]{@params[$INPUT]} = @params[$STOC];
+        for (my $i = 0; $i <= $#{$promoters{$params[$PROMOTER]}[$INPUT]}; $i++) {
+            @aref = $promoters{$params[$PROMOTER]}[$INPUT][$i];            
+            if ($aref[0][2] eq $params[$ARROWHEAD] and $aref[0][1] eq "biochemical") {
+                $aref[0][0]{$params[$INPUT]} = $params[$STOC];
                 $found = 1;                      
-                break;
-            } elsif ($aref[0][2] eq @params[$ARROWHEAD]){
-                $aref[0][0]{@params[$INPUT]} = @params[$STOC];
+                last;
+            } elsif ($aref[0][2] eq $params[$ARROWHEAD]){
+                $aref[0][0]{$params[$INPUT]} = $params[$STOC];
                 $found = 1;                      
-                break;
+                last;
             }
         }
 
         if ($found == 0) {
-            my @input = [{@params[$INPUT]=>@params[$STOC]}, @params[$TYPE], @params[$ARROWHEAD]];
-            push(@{$promoters{@params[$PROMOTER]}[1]}, @input);
+            my @input = [{$params[$INPUT]=>$params[$STOC]}, $params[$TYPE], $params[$ARROWHEAD]];
+            push(@{$promoters{$params[$PROMOTER]}[1]}, @input);
         }
-        $promoters{@params[$PROMOTER]}[$OUTPUT]{@params[$OUTPUT]}=@params[$OUTPUT];
+        $promoters{$params[$PROMOTER]}[$OUTPUT]{$params[$OUTPUT]}=$params[$OUTPUT];
     }
 }
 
@@ -352,7 +327,7 @@ sub build_reactions {
             my @temp = $promoters{$key}[$INPUT][$i];
             if ($temp[0][1] eq "biochemical") {
                 my @reactants;
-                foreach $t (keys %{@{@temp[0]}[0]}) {push(@reactants, $t);}
+                foreach $t (keys %{@{$temp[0]}[0]}) {push(@reactants, $t);}
                 $complex = get_complex(@reactants);
                 if ($complex eq "") {
                     $complex = "";
@@ -367,7 +342,7 @@ sub build_reactions {
 }
 
 sub get_num_act {
-  my $key = @_[0];
+  my $key = $_[0];
   my $num = 0;
   for ($i = 0; $i <= $#{$promoters{$key}[$INPUT]}; $i++) {            
       my @temp = $promoters{$key}[$INPUT][$i];
@@ -377,7 +352,7 @@ sub get_num_act {
 }
 
 sub get_num_rep {
-  my $key = @_[0];
+  my $key = $_[0];
   my $num = 0;
   for ($i = 0; $i <= $#{$promoters{$key}[$INPUT]}; $i++) {            
       my @temp = $promoters{$key}[$INPUT][$i];
@@ -396,13 +371,13 @@ sub get_complex {
             if (not ($key =~ m/$ref/)){
                 print "Couldn't find $ref in $key\n";
                 $all_found = 0;
-                break;
+                last;
             }
         }
         if ($all_found == 1) {
             print "Found $key\n";
             return $key;
-            break;
+            last;
         }                            
     }
     print "Couldn't find @params\n";
@@ -410,6 +385,7 @@ sub get_complex {
 }
 
 sub print_all_info {
+   print "State index: $STATE";
    print "Printing Protein Structure\n";
     foreach $key  (keys %proteins) {
         print "\nProteins{$key}: @{$proteins{$key}}\n";
@@ -443,11 +419,11 @@ sub print_all_info {
 sub make_input{
     my @params = @_;
         
-    my $binds;
+    my $binds = "";
     
     if ($params[0][1] eq "biochemical") {
         my @reactants;
-        foreach my $t (keys %{@{@params[0]}[0]}) {push(@reactants, $t);}
+        foreach my $t (keys %{@{$params[0]}[0]}) {push(@reactants, $t);}
 #        print "LOOKING: @reactants\n";
         $binds = get_complex(@reactants);
 #        print "FOUND: $binds\n";
@@ -693,7 +669,7 @@ foreach $name (keys %spastics) {
 print OUT <<END;
 <reaction id = "creation_$name" reversible="false">
   <listOfProducts>
-    <speciesReference species = "$name" stoichiometry = "1"/>
+    <speciesReference species = "$name" stoichiometry = "$stochiometry"/>
   </listOfProducts>
   <kineticLaw>
     <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -752,7 +728,7 @@ print OUT <<END;
 END
 foreach $output (keys %{$promoters{$promoter}[2]}) {
 print OUT<<END;
-    <speciesReference species = "$output" stoichiometry = "1"/>
+    <speciesReference species = "$output" stoichiometry = "$stochiometry"/>
 END
 }
 
@@ -789,7 +765,7 @@ END
           #Check for biochemical reaction
           if ($temp[0][1] eq "biochemical") {
               my @reactants;
-              foreach my $t (keys %{@{@temp[0]}[0]}) {push(@reactants, $t);}
+              foreach my $t (keys %{@{$temp[0]}[0]}) {push(@reactants, $t);}
               $binds = get_complex(@reactants);
 if (!$opt_c) {
 print OUT<<END;
@@ -827,7 +803,7 @@ print OUT<<END;
 END
 } else {
 print OUT<<END;
-<reaction id = "Repress_$binds_$promoter" reversible="true">
+<reaction id = "Repress_$binds\_$promoter" reversible="true">
   <listOfReactants>
 END;
 foreach my $t (@reactants) {
@@ -878,7 +854,7 @@ END
           }          
           else {
 #Regular repression
-  foreach $binds (keys %{@{@temp[0]}[0]}) {
+  foreach $binds (keys %{@{$temp[0]}[0]}) {
     my $kf = $kf_rep;
     my $kr = $kr_rep;
     if ($temp[0][0]{$binds} > 1) {
@@ -927,7 +903,7 @@ END
           #Check for biochemical reaction
           if ($temp[0][1] eq "biochemical") {
               my @reactants;
-              foreach my $t (keys %{@{@temp[0]}[0]}) {push(@reactants, $t);}
+              foreach my $t (keys %{@{$temp[0]}[0]}) {push(@reactants, $t);}
               $binds = get_complex(@reactants);
 if (!$opt_c) {              
 print OUT<<END;
@@ -974,7 +950,7 @@ print OUT<<END;
 END
 foreach $output (keys %{$promoters{$promoter}[2]}) {
 print OUT<<END;
-    <speciesReference species = "$output" stoichiometry = "1"/>
+    <speciesReference species = "$output" stoichiometry = "$stochiometry"/>
 END
 }
 print OUT<<END;
@@ -1053,7 +1029,7 @@ print OUT<<END;
 END
 foreach $output (keys %{$promoters{$promoter}[2]}) {
 print OUT<<END;
-    <speciesReference species = "$output" stoichiometry = "1"/>
+    <speciesReference species = "$output" stoichiometry = "$stochiometry"/>
 END
 }
 print OUT<<END;
@@ -1128,7 +1104,7 @@ print OUT<<END;
 END
 foreach $output (keys %{$promoters{$promoter}[2]}) {
 print OUT<<END;
-    <speciesReference species = "$output" stoichiometry = "1"/>
+    <speciesReference species = "$output" stoichiometry = "$stochiometry"/>
 END
 }
 print OUT<<END;
