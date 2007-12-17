@@ -5,6 +5,7 @@ import java.awt.event.*;
 import java.io.*;
 import java.util.*;
 import javax.swing.*;
+import org.sbml.libsbml.*;
 import biomodelsim.core.gui.*;
 
 /**
@@ -64,6 +65,8 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 	private String learnFile;
 
 	private boolean change;
+
+        private ArrayList<String> speciesList;
 
 	/**
 	 * This is the constructor for the Learn class. It initializes all the input
@@ -321,6 +324,52 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 					"Error Loading Properties", JOptionPane.ERROR_MESSAGE);
 		}
 
+
+
+
+		SBMLDocument document;
+		Model model;
+		speciesList = new ArrayList<String>();
+		if (learnFile.contains(".sbml")) {
+			SBMLReader reader = new SBMLReader();
+			document = reader.readSBML(learnFile);
+			model = document.getModel();
+			ListOf ids = model.getListOfSpecies();
+			try { 
+			  FileWriter write = new FileWriter(new File(directory + separator + "background.gcm"));
+			  write.write("digraph G {\n");
+			  for (int i = 0; i < ids.getNumItems(); i++) {
+			    speciesList.add(((Species) ids.get(i)).getId());
+			    write.write("s" + i + " [shape=ellipse,color=black,label=\"" + 
+					((Species) ids.get(i)).getId() + "\"" + "];\n");
+			  }
+			  write.write("}\n");
+			  write.close();
+			} catch (Exception e) {
+			  JOptionPane.showMessageDialog(biosim.frame(), "Unable to create background file!",
+							"Error Writing Background", JOptionPane.ERROR_MESSAGE);
+			}
+		} else {
+			try { 
+			  File gcmFile = new File(learnFile);
+			  BufferedReader input = new BufferedReader(new FileReader(gcmFile));
+			  FileWriter write = new FileWriter(new File(directory + separator + "background.gcm"));
+			  String line = null;
+			  while ((line = input.readLine()) != null) {
+			    if (line.contains("shape")) {
+			      String specie = line.substring(line.indexOf("label")+7,line.lastIndexOf('\"'));
+			      speciesList.add(specie);
+			    }
+			    write.write(line+"\n");
+			  }
+			  write.close();
+			  input.close();
+			} catch (Exception e) {
+			  JOptionPane.showMessageDialog(biosim.frame(), "Unable to create background file!",
+							"Error Writing Background", JOptionPane.ERROR_MESSAGE);
+			}
+		}
+
 		// Creates the run button
 		save = new JButton("Save Parameters");
 		JPanel runHolder = new JPanel();
@@ -528,55 +577,56 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 		catch (Exception e1) {
 		}
 		if (!directory.equals("")) {
-			File n = null;
-			for (File f : new File(directory).listFiles()) {
-				if (f.getAbsolutePath().contains(".tsd")) {
-					n = f;
-				}
-			}
-			if (n != null) {
-				ArrayList<String> species = new ArrayList<String>();
-				try {
-					InputStream input = new FileInputStream(n);
-					boolean reading = true;
-					char cha;
-					while (reading) {
-						String word = "";
-						boolean readWord = true;
-						while (readWord) {
-							int read = input.read();
-							if (read == -1) {
-								reading = false;
-								readWord = false;
-							}
-							cha = (char) read;
-							if (Character.isWhitespace(cha)) {
-								word += cha;
-							}
-							else if (cha == ',' || cha == ':' || cha == ';' || cha == '\"' || cha == '\''
-									|| cha == '(' || cha == ')' || cha == '[' || cha == ']') {
-								if (!word.equals("") && !word.equals("time")) {
-									try {
-										Double.parseDouble(word);
-									}
-									catch (Exception e2) {
-										species.add(word);
-									}
-								}
-								word = "";
-							}
-							else if (read != -1) {
-								word += cha;
-							}
-						}
-					}
-					input.close();
-				}
-				catch (Exception e1) {
-				}
+// 			File n = null;
+// 			for (File f : new File(directory).listFiles()) {
+// 				if (f.getAbsolutePath().contains(".tsd")) {
+// 					n = f;
+// 				}
+// 			}
+ 			if (true) {
+// 			if (n != null) {
+//				ArrayList<String> species = new ArrayList<String>();
+// 				try {
+// 					InputStream input = new FileInputStream(n);
+// 					boolean reading = true;
+// 					char cha;
+// 					while (reading) {
+// 						String word = "";
+// 						boolean readWord = true;
+// 						while (readWord) {
+// 							int read = input.read();
+// 							if (read == -1) {
+// 								reading = false;
+// 								readWord = false;
+// 							}
+// 							cha = (char) read;
+// 							if (Character.isWhitespace(cha)) {
+// 								word += cha;
+// 							}
+// 							else if (cha == ',' || cha == ':' || cha == ';' || cha == '\"' || cha == '\''
+// 									|| cha == '(' || cha == ')' || cha == '[' || cha == ']') {
+// 								if (!word.equals("") && !word.equals("time")) {
+// 									try {
+// 										Double.parseDouble(word);
+// 									}
+// 									catch (Exception e2) {
+// 										species.add(word);
+// 									}
+// 								}
+// 								word = "";
+// 							}
+// 							else if (read != -1) {
+// 								word += cha;
+// 							}
+// 						}
+// 					}
+// 					input.close();
+// 				}
+// 				catch (Exception e1) {
+// 				}
 				speciesPanel.removeAll();
 				this.species = new ArrayList<ArrayList<Component>>();
-				speciesPanel.setLayout(new GridLayout(species.size() + 1, 1));
+				speciesPanel.setLayout(new GridLayout(speciesList.size() + 1, 1));
 				int max = 0;
 				if (str != null) {
 					for (String st : str) {
@@ -593,7 +643,7 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 				}
 				speciesPanel.add(label);
 				int j = 0;
-				for (String s : species) {
+				for (String s : speciesList) {
 					j++;
 					JPanel sp = new JPanel(new GridLayout());
 					ArrayList<Component> specs = new ArrayList<Component>();
@@ -640,55 +690,56 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 
 	private void levelsBin() {
 		if (!directory.equals("")) {
-			File n = null;
-			for (File f : new File(directory).listFiles()) {
-				if (f.getAbsolutePath().contains(".tsd")) {
-					n = f;
-				}
-			}
-			if (n != null) {
-				ArrayList<String> species = new ArrayList<String>();
-				try {
-					InputStream input = new FileInputStream(n);
-					boolean reading = true;
-					char cha;
-					while (reading) {
-						String word = "";
-						boolean readWord = true;
-						while (readWord) {
-							int read = input.read();
-							if (read == -1) {
-								reading = false;
-								readWord = false;
-							}
-							cha = (char) read;
-							if (Character.isWhitespace(cha)) {
-								word += cha;
-							}
-							else if (cha == ',' || cha == ':' || cha == ';' || cha == '\"' || cha == '\''
-									|| cha == '(' || cha == ')' || cha == '[' || cha == ']') {
-								if (!word.equals("") && !word.equals("time")) {
-									try {
-										Double.parseDouble(word);
-									}
-									catch (Exception e2) {
-										species.add(word);
-									}
-								}
-								word = "";
-							}
-							else if (read != -1) {
-								word += cha;
-							}
-						}
-					}
-					input.close();
-				}
-				catch (Exception e1) {
-				}
+// 			File n = null;
+// 			for (File f : new File(directory).listFiles()) {
+// 				if (f.getAbsolutePath().contains(".tsd")) {
+// 					n = f;
+// 				}
+// 			}
+ 			if (true) {
+// 			if (n != null) {
+// 				ArrayList<String> species = new ArrayList<String>();
+// 				try {
+// 					InputStream input = new FileInputStream(n);
+// 					boolean reading = true;
+// 					char cha;
+// 					while (reading) {
+// 						String word = "";
+// 						boolean readWord = true;
+// 						while (readWord) {
+// 							int read = input.read();
+// 							if (read == -1) {
+// 								reading = false;
+// 								readWord = false;
+// 							}
+// 							cha = (char) read;
+// 							if (Character.isWhitespace(cha)) {
+// 								word += cha;
+// 							}
+// 							else if (cha == ',' || cha == ':' || cha == ';' || cha == '\"' || cha == '\''
+// 									|| cha == '(' || cha == ')' || cha == '[' || cha == ']') {
+// 								if (!word.equals("") && !word.equals("time")) {
+// 									try {
+// 										Double.parseDouble(word);
+// 									}
+// 									catch (Exception e2) {
+// 										species.add(word);
+// 									}
+// 								}
+// 								word = "";
+// 							}
+// 							else if (read != -1) {
+// 								word += cha;
+// 							}
+// 						}
+// 					}
+// 					input.close();
+// 				}
+// 				catch (Exception e1) {
+// 				}
 				speciesPanel.removeAll();
 				this.species = new ArrayList<ArrayList<Component>>();
-				speciesPanel.setLayout(new GridLayout(species.size() + 1, 1));
+				speciesPanel.setLayout(new GridLayout(speciesList.size() + 1, 1));
 				JPanel label = new JPanel(new GridLayout());
 				// label.add(new JLabel("Use"));
 				label.add(new JLabel("Species"));
@@ -698,7 +749,7 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 				}
 				speciesPanel.add(label);
 				int j = 0;
-				for (String s : species) {
+				for (String s : speciesList) {
 					j++;
 					JPanel sp = new JPanel(new GridLayout());
 					ArrayList<Component> specs = new ArrayList<Component>();
