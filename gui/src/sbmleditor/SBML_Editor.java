@@ -404,7 +404,12 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 							}
 							catch (Exception e) {
 							}
-							reacts[i] = reaction.getId() + " " + parameterChanges.get(k).split(" ")[2];
+							if ((reacts[i].contains("Custom") && parameterChanges.get(k).split(" ")[2].equals("Sweep"))||
+							    (reacts[i].contains("Sweep") && parameterChanges.get(k).split(" ")[2].equals("Custom"))) {
+							  reacts[i] = reaction.getId() + " Custom/Sweep";
+							} else {
+							  reacts[i] = reaction.getId() + " " + parameterChanges.get(k).split(" ")[2];
+							}
 						}
 					}
 				}

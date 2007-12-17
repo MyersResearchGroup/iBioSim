@@ -1204,7 +1204,7 @@ public class BioSim implements MouseListener, ActionListener {
 						try {
 							FileOutputStream out = new FileOutputStream(new File(root + separator
 									+ lrnName.trim() + separator + lrnName.trim() + ".lrn"));
-							out.write(("genenet.file=" + sbmlFileNoPath + "\n").getBytes());
+							out.write(("genenet.file=" + sbmlFile + "\n").getBytes());
 							out.close();
 						}
 						catch (Exception e1) {
