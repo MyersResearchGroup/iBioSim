@@ -282,10 +282,11 @@ public class Run implements ActionListener {
 	 * this method creates a Graph object.
 	 */
 	public int execute(String filename, JRadioButton sbml, JRadioButton dot, JRadioButton xhtml,
-			Component component, JRadioButton ode, JRadioButton monteCarlo, String sim,
-			String printer_id, String printer_track_quantity, String outDir, JRadioButton nary,
-			int naryRun, String[] intSpecies, Log log, JCheckBox usingSSA, String ssaFile,
-			BioSim biomodelsim, JTabbedPane simTab, String root, JProgressBar progress, int steps) {
+			   Component component, JRadioButton ode, JRadioButton monteCarlo, String sim,
+			   String printer_id, String printer_track_quantity, String outDir, JRadioButton nary,
+			   int naryRun, String[] intSpecies, Log log, JCheckBox usingSSA, String ssaFile,
+			   BioSim biomodelsim, JTabbedPane simTab, String root, JProgressBar progress, int steps,
+			   String simName) {
 		Runtime exec = Runtime.getRuntime();
 		int exitValue = 255;
 		while (outDir.split(separator)[outDir.split(separator).length - 1].equals(".")) {
@@ -441,28 +442,28 @@ public class Run implements ActionListener {
 			String minuteLabel;
 			String secondLabel;
 			if (days == 1) {
-				dayLabel = " Day ";
+				dayLabel = " day ";
 			}
 			else {
-				dayLabel = " Days ";
+				dayLabel = " days ";
 			}
 			if (hours == 1) {
-				hourLabel = " Hour ";
+				hourLabel = " hour ";
 			}
 			else {
-				hourLabel = " Hours ";
+				hourLabel = " hours ";
 			}
 			if (minutes == 1) {
-				minuteLabel = " Minute ";
+				minuteLabel = " minute ";
 			}
 			else {
-				minuteLabel = " Minutes ";
+				minuteLabel = " minutes ";
 			}
 			if (seconds == 1) {
-				secondLabel = " Second";
+				secondLabel = " second";
 			}
 			else {
-				secondLabel = " Seconds";
+				secondLabel = " seconds";
 			}
 			if (days != 0) {
 				time = days + dayLabel + hours + hourLabel + minutes + minuteLabel + secs + secondLabel;
@@ -479,7 +480,7 @@ public class Run implements ActionListener {
 			if (!error.equals("")) {
 				log.addText("Errors:\n" + error + "\n");
 			}
-			log.addText("Total Simulation Time: " + time + "\n\n");
+			log.addText("Total Simulation Time: " + time + " for " + simName + "\n\n");
 			if (exitValue != 0) {
 				if (exitValue == 143) {
 					JOptionPane.showMessageDialog(biomodelsim.frame(), "The simulation was"

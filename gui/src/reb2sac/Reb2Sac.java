@@ -2031,7 +2031,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		JPanel progBar = new JPanel();
 		JPanel button = new JPanel();
 		JPanel all = new JPanel(new BorderLayout());
-		JLabel label = new JLabel("Running.." + localDirect);
+		JLabel label = new JLabel("Running " + simName + " " + localDirect);
 		int steps;
 		if (ODE.isSelected()) {
 			steps = (int) (timeLimit / printInterval);
@@ -2137,7 +2137,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		int exit = runProgram.execute(simProp, sbml, dot, xhtml, biomodelsim.frame(), ODE, monteCarlo,
 				sim, printer_id, printer_track_quantity, root + separator + simName, nary, 1, intSpecies,
 				log, usingSSA, root + separator + outDir + separator + "user-defined.dat", biomodelsim,
-				simTab, root, progress, steps);
+					      simTab, root, progress, steps, simName + " " + localDirect);
 		if (nary.isSelected() && exit == 0) {
 			new Nary_Run(this, amountTerm, ge, gt, eq, lt, le, simulators, simProp.split(separator),
 					simProp, sbml, dot, xhtml, nary, ODE, monteCarlo, timeLimit, printInterval, root
