@@ -357,6 +357,8 @@ int yylex()
     case '=':
     case '&':
     case '|':
+    case '*':
+    case '/':
     case '!':
     case ')':
     case ',':
@@ -467,7 +469,7 @@ public int ParseTermCond(BioSim biosim, Reb2Sac reb2sac, ArrayList<String>listOf
   return yyparse();
 }
 
-//#line 407 "TermCond.java"
+//#line 409 "TermCond.java"
 //###############################################################
 // method: yylexdebug : check lexer state
 //###############################################################
@@ -714,7 +716,7 @@ case 26:
       }
     }
 break;
-//#line 649 "TermCond.java"
+//#line 651 "TermCond.java"
 //########## END OF USER-SUPPLIED ACTIONS ##########
     }//switch
     //#### Now let's reduce... ####

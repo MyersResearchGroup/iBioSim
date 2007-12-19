@@ -568,7 +568,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					String desc = input.readLine();
 					String cond = input.readLine();
 					String add = TCid[1] + "; " + desc.substring(8, desc.length() - 2) + "; "
-							+ cond.substring(7);
+					  + cond.substring(7,cond.indexOf(';'));
 					JList addSAD = new JList();
 					Object[] adding = { add };
 					addSAD.setListData(adding);
@@ -977,12 +977,16 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		}
 		// if the remove interesting species button is clicked
 		else if (e.getSource() == removeIntSpecies) {
-			Buttons.remove(species, interestingSpecies);
+		  removeIntSpecies();
 		}
 		// if the clear interesting species button is clicked
 		else if (e.getSource() == clearIntSpecies) {
-			interestingSpecies = new Object[0];
-			species.setListData(interestingSpecies);
+		  int[] select = new int[interestingSpecies.length];
+		  for (int i = 0; i < interestingSpecies.length; i++) {
+		    select[i] = i;
+		  }
+		  species.setSelectedIndices(select);
+		  removeIntSpecies();
 		}
 		// if the add termination conditions button is clicked
 		else if (e.getSource() == addTermCond) {
@@ -991,7 +995,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		}
 		// if the remove termination conditions button is clicked
 		else if (e.getSource() == removeTermCond) {
-			Buttons.remove(terminations, termConditions);
+			termConditions = Buttons.remove(terminations, termConditions);
 		}
 		// if the clear termination conditions button is clicked
 		else if (e.getSource() == clearTermCond) {
@@ -1140,6 +1144,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				addSSA.setEnabled(true);
 				editSSA.setEnabled(true);
 				removeSSA.setEnabled(true);
+				for (int i=0;i<ssaList.length;i++) 
+				  addToIntSpecies(((String) ssaList[i]).split(" ")[1]);
 			}
 			else {
 				description.setEnabled(true);
@@ -1180,6 +1186,36 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				addSAD.setEnabled(true);
 				editSAD.setEnabled(true);
 				removeSAD.setEnabled(true);
+
+				for (int i=0;i<sadList.length;i++) {
+				  String[] get = ((String) sadList[i]).split(";");
+				  String cond = get[2];
+				  cond = cond.replace('>',' ');
+				  cond = cond.replace('<',' ');
+				  cond = cond.replace('=',' ');
+				  cond = cond.replace('&',' ');
+				  cond = cond.replace('|',' ');
+				  cond = cond.replace('+',' ');
+				  cond = cond.replace('-',' ');
+				  cond = cond.replace('*',' ');
+				  cond = cond.replace('/',' ');
+				  cond = cond.replace('#',' ');
+				  cond = cond.replace('%',' ');
+				  cond = cond.replace('@',' ');
+				  cond = cond.replace('(',' ');
+				  cond = cond.replace(')',' ');
+				  cond = cond.replace('!',' ');
+				  get = cond.split(" ");
+				  for (int j=0;j<get.length;j++)
+				    if (get[j].length() > 0) 
+				      if ((get[j].charAt(0)!='0') && (get[j].charAt(0)!='1') &&
+					  (get[j].charAt(0)!='2') && (get[j].charAt(0)!='3') && 
+					  (get[j].charAt(0)!='4') && (get[j].charAt(0)!='5') && 
+					  (get[j].charAt(0)!='6') && (get[j].charAt(0)!='7') &&
+					  (get[j].charAt(0)!='8') && (get[j].charAt(0)!='9')) {
+					addToIntSpecies(get[j]);
+				      }
+				}
 			}
 			else {
 				sad.setEnabled(false);
@@ -1235,10 +1271,9 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				modify = "/";
 			}
 			if (availSpecies.getSelectedItem() == null) {
-				JOptionPane
-						.showMessageDialog(biomodelsim.frame(), "You must select a model for simulation "
-								+ "in order to add a user defined condition.", "Select A Model For Simulation",
-								JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(biomodelsim.frame(), "You must select a model for simulation "
+							      + "in order to add a user defined condition.", "Select A Model For Simulation",
+							      JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 			addToIntSpecies((String)availSpecies.getSelectedItem());
@@ -1256,8 +1291,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				Object[] adding = { add };
 				addSSA.setListData(adding);
 				addSSA.setSelectedIndex(0);
-				ssaList = Buttons
-						.add(ssaList, ssa, addSSA, false, null, null, null, null, null, null, this);
+				ssaList = Buttons.add(ssaList, ssa, addSSA, false, null, null, null, null, null, null, this);
 				int[] index = ssa.getSelectedIndices();
 				ssaList = Buttons.getList(ssaList, ssa);
 				ssa.setSelectedIndices(index);
@@ -1510,18 +1544,18 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 							String[] remove = ((String) ssaList[i]).split(" ");
 							if (!remove[2].equals(modify + mod1) && !done) {
 								ssa.setSelectedIndex(i);
-								Buttons.remove(ssa, ssaList);
+								ssaList = Buttons.remove(ssa, ssaList);
 								index = ssa.getSelectedIndices();
-								ssaList = Buttons.getList(ssaList, ssa);
+								//ssaList = Buttons.getList(ssaList, ssa);
 								ssa.setSelectedIndices(index);
 								done = true;
 							}
 						}
 						if (!done) {
 							ssa.setSelectedIndex(count.get(0));
-							Buttons.remove(ssa, ssaList);
+							ssaList = Buttons.remove(ssa, ssaList);
 							index = ssa.getSelectedIndices();
-							ssaList = Buttons.getList(ssaList, ssa);
+							//ssaList = Buttons.getList(ssaList, ssa);
 							ssa.setSelectedIndices(index);
 						}
 					}
@@ -1631,11 +1665,11 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		}
 		// if the remove ssa button is clicked
 		else if (e.getSource() == removeSSA) {
-			Buttons.remove(ssa, ssaList);
+			ssaList = Buttons.remove(ssa, ssaList);
 		}
 		// if the remove sad button is clicked
 		else if (e.getSource() == removeSAD) {
-			Buttons.remove(sad, sadList);
+			sadList = Buttons.remove(sad, sadList);
 		}
 		// if the new ssa button is clicked
 		else if (e.getSource() == newSSA) {
@@ -1668,7 +1702,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		}
 		// if the remove properties button is clicked
 		else if (e.getSource() == removeProp) {
-			Buttons.remove(properties, props);
+			props = Buttons.remove(properties, props);
 		}
 		// if the add properties button is clicked
 		else if (e.getSource() == addProp) {
@@ -2200,20 +2234,20 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 						amountTerm, ge, gt, eq, lt, le, this);
 			}
 			else if (e.getSource() == species) {
-				Buttons.remove(species, interestingSpecies);
+			        removeIntSpecies();
 			}
 			else if (e.getSource() == termCond) {
 				termConditions = Buttons.add(termConditions, terminations, termCond, true, amountTerm, ge,
 						gt, eq, lt, le, this);
 			}
 			else if (e.getSource() == terminations) {
-				Buttons.remove(terminations, termConditions);
+				termConditions = Buttons.remove(terminations, termConditions);
 			}
 			else if (e.getSource() == ssa) {
 				editSSA.doClick();
 			}
 			else if (e.getSource() == properties) {
-				Buttons.remove(properties, props);
+				props = Buttons.remove(properties, props);
 			}
 		}
 	}
@@ -3158,6 +3192,90 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 	  addIntSpecies.setSelectedIndex(0);
 	  interestingSpecies = Buttons.add(interestingSpecies, species, addIntSpecies, false, amountTerm,
 					   ge, gt, eq, lt, le, this);
+	}
+
+	public void removeIntSpecies() {
+	  String message = "These species cannot be removed.\n";
+	  boolean displayMessage1 = false;
+	  if (usingSSA.isSelected()) {
+	    ArrayList<String> keepers = new ArrayList<String>();
+	    for (int i=0;i<ssaList.length;i++) {
+	      String[] get = ((String) ssaList[i]).split(" ");
+	      keepers.add(get[1]);
+	    }
+	    int [] selected = species.getSelectedIndices();
+	    for (int i=0;i<selected.length;i++) {
+	      for (int j=0;j<keepers.size();j++) {
+		if ((keepers.get(j)).equals(interestingSpecies[selected[i]])) {
+		  species.removeSelectionInterval(selected[i],selected[i]);
+		  if (!displayMessage1) {
+		    message += "These species are used in user-defined data.\n";
+		    displayMessage1 = true;
+		  }
+		  message += interestingSpecies[selected[i]] + "\n";
+		  break;
+		}
+	      }
+	    }
+	  }
+	  boolean displayMessage2 = false;
+	  if (usingSAD.isSelected()) {
+	    ArrayList<String> keepers = new ArrayList<String>();
+	    for (int i=0;i<sadList.length;i++) {
+	      String[] get = ((String) sadList[i]).split(";");
+	      String cond = get[2];
+	      cond = cond.replace('>',' ');
+	      cond = cond.replace('<',' ');
+	      cond = cond.replace('=',' ');
+	      cond = cond.replace('&',' ');
+	      cond = cond.replace('|',' ');
+	      cond = cond.replace('+',' ');
+	      cond = cond.replace('-',' ');
+	      cond = cond.replace('*',' ');
+	      cond = cond.replace('/',' ');
+	      cond = cond.replace('#',' ');
+	      cond = cond.replace('%',' ');
+	      cond = cond.replace('@',' ');
+	      cond = cond.replace('(',' ');
+	      cond = cond.replace(')',' ');
+	      cond = cond.replace('!',' ');
+	      get = cond.split(" ");
+	      for (int j=0;j<get.length;j++)
+		if (get[j].length() > 0) 
+		  if ((get[j].charAt(0)!='0') && (get[j].charAt(0)!='1') &&
+		      (get[j].charAt(0)!='2') && (get[j].charAt(0)!='3') && 
+		      (get[j].charAt(0)!='4') && (get[j].charAt(0)!='5') && 
+		      (get[j].charAt(0)!='6') && (get[j].charAt(0)!='7') &&
+		      (get[j].charAt(0)!='8') && (get[j].charAt(0)!='9')) {
+		    keepers.add(get[j]);
+		  }
+	    }
+	    int [] selected = species.getSelectedIndices();
+	    for (int i=0;i<selected.length;i++) {
+	      for (int j=0;j<keepers.size();j++) {
+		if ((keepers.get(j)).equals(interestingSpecies[selected[i]])) {
+		  species.removeSelectionInterval(selected[i],selected[i]);
+		  if (!displayMessage2) {
+		    message += "These species are used in termination conditions.\n";
+		    displayMessage2 = true;
+		  }
+		  message += interestingSpecies[selected[i]] + "\n";
+		  break;
+		}
+	      }
+	    }
+	  }
+	  if (displayMessage1 || displayMessage2) {
+	    JTextArea messageArea = new JTextArea(message);
+	    messageArea.setEditable(false);
+	    JScrollPane scroll = new JScrollPane();
+	    scroll.setMinimumSize(new Dimension(300, 300));
+	    scroll.setPreferredSize(new Dimension(300, 300));
+	    scroll.setViewportView(messageArea);
+	    JOptionPane.showMessageDialog(biomodelsim.frame(), scroll, "Unable To Remove Species",
+					  JOptionPane.ERROR_MESSAGE);
+	  }
+	  interestingSpecies = Buttons.remove(species, interestingSpecies);
 	}
 
 }
