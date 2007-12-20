@@ -4,6 +4,7 @@ import java.io.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
+import java.util.regex.*;
 
 import javax.swing.*;
 import org.sbml.libsbml.*;
@@ -164,6 +165,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	private String paramFile;
 
 	private ArrayList<String> parameterChanges;
+
+	private Pattern IDpat = Pattern.compile("([a-zA-Z]|_)([a-zA-Z]|[0-9]|_)*");
 
 	/**
 	 * Creates a new SBML_Editor and sets up the frame where the user can edit a
@@ -1021,7 +1024,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					error = false;
 					if (compID.getText().trim().equals("")) {
 						JOptionPane
-								.showMessageDialog(biosim.frame(), "You must enter an id into the id field!",
+								.showMessageDialog(biosim.frame(), "You must enter an ID into the ID field!",
 										"Enter An ID", JOptionPane.ERROR_MESSAGE);
 						error = true;
 						value = JOptionPane.showOptionDialog(biosim.frame(), compartPanel,
@@ -1031,16 +1034,22 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					else {
 						String addComp = "";
 						addComp = compID.getText().trim();
-						if (usedIDs.contains(addComp)) {
+						if (!(IDpat.matcher(addComp).matches())) {
+						  JOptionPane.showMessageDialog(biosim.frame(),
+										"A compartment ID can only contain letters, numbers, and underscores.", 
+										"Invalid ID",JOptionPane.ERROR_MESSAGE);
+						  error = true;
+						} 
+						else if (usedIDs.contains(addComp)) {
 							if (option.equals("OK") && !addComp.equals((String) compartments.getSelectedValue())) {
 								JOptionPane.showMessageDialog(biosim.frame(),
-										"You must enter a unique id into the id field!", "Enter A Unique ID",
+										"You must enter a unique ID into the ID field!", "Enter A Unique ID",
 										JOptionPane.ERROR_MESSAGE);
 								error = true;
 							}
 							else if (option.equals("Add")) {
 								JOptionPane.showMessageDialog(biosim.frame(),
-										"You must enter a unique id into the id field!", "Enter A Unique ID",
+										"You must enter a unique ID into the ID field!", "Enter A Unique ID",
 										JOptionPane.ERROR_MESSAGE);
 								error = true;
 							}
@@ -1310,7 +1319,13 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 							else {
 								addSpec = ID.getText().trim() + " " + comp.getSelectedItem() + " " + initial;
 							}
-							if (usedIDs.contains(ID.getText().trim())) {
+							if (!((IDpat.matcher(ID.getText().trim())).matches())) {
+								JOptionPane.showMessageDialog(biosim.frame(),
+										"A species ID can only contain letters, numbers, and underscores.", "Invalid ID",
+										JOptionPane.ERROR_MESSAGE);
+								error = true;
+							}
+							else if (usedIDs.contains(ID.getText().trim())) {
 								if (option.equals("OK")
 										&& !ID.getText().trim().equals(
 												((String) species.getSelectedValue()).split(" ")[0])) {
@@ -1325,12 +1340,6 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 											JOptionPane.ERROR_MESSAGE);
 									error = true;
 								}
-							}
-							if (ID.getText().trim().contains("-") || ID.getText().trim().contains(" ")) {
-								JOptionPane.showMessageDialog(biosim.frame(),
-										"The id field cannot contain any '-'s or ' 's!", "Invalid ID",
-										JOptionPane.ERROR_MESSAGE);
-								error = true;
 							}
 							if (!error) {
 								if (option.equals("OK")) {
@@ -1702,18 +1711,24 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					else {
 						String reac;
 						reac = reacID.getText().trim();
-						if (usedIDs.contains(reacID.getText().trim())) {
+						if (!((IDpat.matcher(reac).matches()))) {
+						  JOptionPane.showMessageDialog(biosim.frame(),
+										"A reaction ID can only contain letters, numbers, and underscores.", 
+										"Invalid ID",JOptionPane.ERROR_MESSAGE);
+						  error = true;
+						}
+						else if (usedIDs.contains(reacID.getText().trim())) {
 							if (option.equals("OK")
 									&& !reacID.getText().trim().equals(
 											((String) reactions.getSelectedValue()).split(" ")[0])) {
 								JOptionPane.showMessageDialog(biosim.frame(),
-										"You must enter a unique id into the id field!", "Enter A Unique ID",
+										"You must enter a unique ID into the ID field!", "ID Not Unique",
 										JOptionPane.ERROR_MESSAGE);
 								error = true;
 							}
 							else if (option.equals("Add")) {
 								JOptionPane.showMessageDialog(biosim.frame(),
-										"You must enter a unique id into the id field!", "Enter A Unique ID",
+										"You must enter a unique ID into the ID field!", "ID Not Unique",
 										JOptionPane.ERROR_MESSAGE);
 								error = true;
 							}
@@ -2110,18 +2125,24 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 							else {
 								param = paramID.getText().trim() + " " + val;
 							}
-							if (usedIDs.contains(paramID.getText().trim())) {
+							if (!((IDpat.matcher(paramID.getText().trim()).matches()))) {
+							  JOptionPane.showMessageDialog(biosim.frame(),
+											"A parameter ID can only contain letters, numbers, and underscores.", 
+											"Invalid ID",JOptionPane.ERROR_MESSAGE);
+							  error = true;
+							}
+							else if (usedIDs.contains(paramID.getText().trim())) {
 								if (option.equals("OK")
 										&& !paramID.getText().trim().equals(
 												((String) parameters.getSelectedValue()).split(" ")[0])) {
 									JOptionPane.showMessageDialog(biosim.frame(),
-											"You must enter a unique id into the id field!", "Enter A Unique ID",
+											"You must enter a unique ID into the ID field!", "ID Not Unique",
 											JOptionPane.ERROR_MESSAGE);
 									error = true;
 								}
 								else if (option.equals("Add")) {
 									JOptionPane.showMessageDialog(biosim.frame(),
-											"You must enter a unique id into the id field!", "Enter A Unique ID",
+											"You must enter a unique ID into the ID field!", "ID Not Unique",
 											JOptionPane.ERROR_MESSAGE);
 									error = true;
 								}
@@ -2380,25 +2401,31 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 							else {
 								param = reacParamID.getText().trim() + " " + val;
 							}
-							if (thisReactionParams.contains(reacParamID.getText().trim())) {
+							if (!((IDpat.matcher(reacParamID.getText().trim()).matches()))) {
+							  JOptionPane.showMessageDialog(biosim.frame(),
+											"A parameter ID can only contain letters, numbers, and underscores.", 
+											"Invalid ID",JOptionPane.ERROR_MESSAGE);
+							  error = true;
+							} 
+							else if (thisReactionParams.contains(reacParamID.getText().trim())) {
 								if (option.equals("OK")
 										&& !reacParamID.getText().trim().equals(
 												((String) reacParameters.getSelectedValue()).split(" ")[0])) {
 									JOptionPane.showMessageDialog(biosim.frame(),
-											"You must enter a unique id into the id field!", "Enter A Unique ID",
+											"You must enter a unique ID into the ID field!", "ID Not Unique",
 											JOptionPane.ERROR_MESSAGE);
 									error = true;
 								}
 								else if (option.equals("Add")) {
 									JOptionPane.showMessageDialog(biosim.frame(),
-											"You must enter a unique id into the id field!", "Enter A Unique ID",
+											"You must enter a unique ID into the ID field!", "ID Not Unique",
 											JOptionPane.ERROR_MESSAGE);
 									error = true;
 								}
 							}
 							else if (usedIDs.contains(reacParamID.getText().trim())) {
 								JOptionPane.showMessageDialog(biosim.frame(),
-										"You must enter a unique id into the id field!", "Enter A Unique ID",
+										"You must enter a unique ID into the ID field!", "ID Not Unique",
 										JOptionPane.ERROR_MESSAGE);
 								error = true;
 							}
