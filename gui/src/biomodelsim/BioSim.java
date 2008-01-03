@@ -2367,6 +2367,13 @@ public class BioSim implements MouseListener, ActionListener {
 				noData.setHorizontalAlignment(SwingConstants.CENTER);
 				simTab.addTab("Graph", noData);
 				simTab.getComponentAt(simTab.getComponents().length - 1).setName("Graph");
+				JLabel noData1 = new JLabel("No data available");
+				Font font1 = noData1.getFont();
+				font1 = font1.deriveFont(Font.BOLD, 42.0f);
+				noData1.setFont(font1);
+				noData1.setHorizontalAlignment(SwingConstants.CENTER);
+				simTab.addTab("Probability Graph", noData1);
+				simTab.getComponentAt(simTab.getComponents().length - 1).setName("ProbGraph");
 				addTab(simName, simTab, null);
 			}
 		}
@@ -2456,6 +2463,13 @@ public class BioSim implements MouseListener, ActionListener {
 				noData.setHorizontalAlignment(SwingConstants.CENTER);
 				simTab.addTab("Graph", noData);
 				simTab.getComponentAt(simTab.getComponents().length - 1).setName("Graph");
+				JLabel noData1 = new JLabel("No data available");
+				Font font1 = noData1.getFont();
+				font1 = font1.deriveFont(Font.BOLD, 42.0f);
+				noData1.setFont(font1);
+				noData1.setHorizontalAlignment(SwingConstants.CENTER);
+				simTab.addTab("Probability Graph", noData1);
+				simTab.getComponentAt(simTab.getComponents().length - 1).setName("ProbGraph");
 				addTab(simName, simTab, null);
 			}
 		}
@@ -2573,6 +2587,7 @@ public class BioSim implements MouseListener, ActionListener {
 				if (new File(filename).isDirectory()) {
 					String[] list = new File(filename).list();
 					String getAFile = "";
+					String probFile = "";
 					String openFile = "";
 					String graphFile = "";
 					String open = null;
@@ -2588,6 +2603,9 @@ public class BioSim implements MouseListener, ActionListener {
 							}
 							else if (end.equals(".xml") && getAFile.equals("")) {
 								getAFile = filename + separator + list[i];
+							}
+							else if (end.equals(".txt") && list[i].contains("sim-rep")) {
+								probFile = filename + separator + list[i];
 							}
 							else if (end.equals("ties") && list[i].contains("properties")
 									&& !(list[i].equals("species.properties"))) {
@@ -2683,6 +2701,19 @@ public class BioSim implements MouseListener, ActionListener {
 							noData.setHorizontalAlignment(SwingConstants.CENTER);
 							simTab.addTab("Graph", noData);
 							simTab.getComponentAt(simTab.getComponents().length - 1).setName("Graph");
+						}
+						if (!probFile.equals("")) {
+							simTab.addTab("Probability Graph", reb2sac.createProbGraph());
+							simTab.getComponentAt(simTab.getComponents().length - 1).setName("ProbGraph");
+						}
+						else {
+							JLabel noData1 = new JLabel("No data available");
+							Font font1 = noData1.getFont();
+							font1 = font1.deriveFont(Font.BOLD, 42.0f);
+							noData1.setFont(font1);
+							noData1.setHorizontalAlignment(SwingConstants.CENTER);
+							simTab.addTab("Probability Graph", noData1);
+							simTab.getComponentAt(simTab.getComponents().length - 1).setName("ProbGraph");
 						}
 						addTab(split[split.length - 1], simTab, null);
 					}
@@ -2859,6 +2890,13 @@ public class BioSim implements MouseListener, ActionListener {
 			noData.setHorizontalAlignment(SwingConstants.CENTER);
 			simTab.addTab("Graph", noData);
 			simTab.getComponentAt(simTab.getComponents().length - 1).setName("Graph");
+			JLabel noData1 = new JLabel("No data available");
+			Font font1 = noData1.getFont();
+			font1 = font1.deriveFont(Font.BOLD, 42.0f);
+			noData1.setFont(font1);
+			noData1.setHorizontalAlignment(SwingConstants.CENTER);
+			simTab.addTab("Probability Graph", noData1);
+			simTab.getComponentAt(simTab.getComponents().length - 1).setName("ProbGraph");
 			tab.setComponentAt(tab.getSelectedIndex(), simTab);
 			tab.setTitleAt(tab.getSelectedIndex(), newSim);
 			tab.getComponentAt(tab.getSelectedIndex()).setName(newSim);
