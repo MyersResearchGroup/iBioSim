@@ -3281,4 +3281,12 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		}
 		interestingSpecies = Buttons.remove(species, interestingSpecies);
 	}
+
+	public Graph createProbGraph() {
+		String outDir = root + separator + simName;
+		String printer_id = "tsd.printer";
+		String printer_track_quantity = "amount";
+		return new Graph(printer_track_quantity, simName + " simulation results", printer_id, outDir,
+				"time", biomodelsim, null, log, null, false);
+	}
 }
