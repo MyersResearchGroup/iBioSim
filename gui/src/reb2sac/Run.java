@@ -282,11 +282,11 @@ public class Run implements ActionListener {
 	 * this method creates a Graph object.
 	 */
 	public int execute(String filename, JRadioButton sbml, JRadioButton dot, JRadioButton xhtml,
-			   Component component, JRadioButton ode, JRadioButton monteCarlo, String sim,
-			   String printer_id, String printer_track_quantity, String outDir, JRadioButton nary,
-			   int naryRun, String[] intSpecies, Log log, JCheckBox usingSSA, String ssaFile,
-			   BioSim biomodelsim, JTabbedPane simTab, String root, JProgressBar progress, int steps,
-			   String simName) {
+			Component component, JRadioButton ode, JRadioButton monteCarlo, String sim,
+			String printer_id, String printer_track_quantity, String outDir, JRadioButton nary,
+			int naryRun, String[] intSpecies, Log log, JCheckBox usingSSA, String ssaFile,
+			BioSim biomodelsim, JTabbedPane simTab, String root, JProgressBar progress, int steps,
+			String simName) {
 		Runtime exec = Runtime.getRuntime();
 		int exitValue = 255;
 		while (outDir.split(separator)[outDir.split(separator).length - 1].equals(".")) {
