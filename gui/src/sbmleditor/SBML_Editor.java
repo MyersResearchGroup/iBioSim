@@ -407,11 +407,14 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 							}
 							catch (Exception e) {
 							}
-							if ((reacts[i].contains("Custom") && parameterChanges.get(k).split(" ")[2].equals("Sweep"))||
-							    (reacts[i].contains("Sweep") && parameterChanges.get(k).split(" ")[2].equals("Custom"))) {
-							  reacts[i] = reaction.getId() + " Custom/Sweep";
-							} else {
-							  reacts[i] = reaction.getId() + " " + parameterChanges.get(k).split(" ")[2];
+							if ((reacts[i].contains("Custom") && parameterChanges.get(k).split(" ")[2]
+									.equals("Sweep"))
+									|| (reacts[i].contains("Sweep") && parameterChanges.get(k).split(" ")[2]
+											.equals("Custom"))) {
+								reacts[i] = reaction.getId() + " Custom/Sweep";
+							}
+							else {
+								reacts[i] = reaction.getId() + " " + parameterChanges.get(k).split(" ")[2];
 							}
 						}
 					}
@@ -630,7 +633,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						}
 						usedIDs.remove(compartments.getSelectedValue());
 						compartments.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-						comps = (String[])Buttons.remove(compartments, comps);
+						comps = (String[]) Buttons.remove(compartments, comps);
 						compartments.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 						compartments.setSelectedIndex(0);
 						change = true;
@@ -717,7 +720,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					}
 					usedIDs.remove(tempSpecies.getId());
 					species.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-					specs = (String[])Buttons.remove(species, specs);
+					specs = (String[]) Buttons.remove(species, specs);
 					species.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 					species.setSelectedIndex(0);
 					change = true;
@@ -838,7 +841,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				}
 				usedIDs.remove(((String) reactions.getSelectedValue()).split(" ")[0]);
 				reactions.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-				reacts = (String[])Buttons.remove(reactions, reacts);
+				reacts = (String[]) Buttons.remove(reactions, reacts);
 				reactions.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 				reactions.setSelectedIndex(0);
 				change = true;
@@ -865,7 +868,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				}
 				usedIDs.remove(tempParameter.getId());
 				parameters.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-				params = (String[])Buttons.remove(parameters, params);
+				params = (String[]) Buttons.remove(parameters, params);
 				parameters.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 				parameters.setSelectedIndex(0);
 				change = true;
@@ -890,7 +893,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				}
 				thisReactionParams.remove(v);
 				reacParameters.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-				reacParams = (String[])Buttons.remove(reacParameters, reacParams);
+				reacParams = (String[]) Buttons.remove(reacParameters, reacParams);
 				reacParameters.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 				reacParameters.setSelectedIndex(0);
 				change = true;
@@ -914,7 +917,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					}
 				}
 				reactants.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-				reacta = (String[])Buttons.remove(reactants, reacta);
+				reacta = (String[]) Buttons.remove(reactants, reacta);
 				reactants.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 				reactants.setSelectedIndex(0);
 				change = true;
@@ -938,7 +941,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					}
 				}
 				products.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-				product = (String[])Buttons.remove(products, product);
+				product = (String[]) Buttons.remove(products, product);
 				products.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 				products.setSelectedIndex(0);
 				change = true;
@@ -1035,11 +1038,11 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						String addComp = "";
 						addComp = compID.getText().trim();
 						if (!(IDpat.matcher(addComp).matches())) {
-						  JOptionPane.showMessageDialog(biosim.frame(),
-										"A compartment ID can only contain letters, numbers, and underscores.", 
-										"Invalid ID",JOptionPane.ERROR_MESSAGE);
-						  error = true;
-						} 
+							JOptionPane.showMessageDialog(biosim.frame(),
+									"A compartment ID can only contain letters, numbers, and underscores.",
+									"Invalid ID", JOptionPane.ERROR_MESSAGE);
+							error = true;
+						}
 						else if (usedIDs.contains(addComp)) {
 							if (option.equals("OK") && !addComp.equals((String) compartments.getSelectedValue())) {
 								JOptionPane.showMessageDialog(biosim.frame(),
@@ -1321,8 +1324,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 							}
 							if (!((IDpat.matcher(ID.getText().trim())).matches())) {
 								JOptionPane.showMessageDialog(biosim.frame(),
-										"A species ID can only contain letters, numbers, and underscores.", "Invalid ID",
-										JOptionPane.ERROR_MESSAGE);
+										"A species ID can only contain letters, numbers, and underscores.",
+										"Invalid ID", JOptionPane.ERROR_MESSAGE);
 								error = true;
 							}
 							else if (usedIDs.contains(ID.getText().trim())) {
@@ -1712,10 +1715,10 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						String reac;
 						reac = reacID.getText().trim();
 						if (!((IDpat.matcher(reac).matches()))) {
-						  JOptionPane.showMessageDialog(biosim.frame(),
-										"A reaction ID can only contain letters, numbers, and underscores.", 
-										"Invalid ID",JOptionPane.ERROR_MESSAGE);
-						  error = true;
+							JOptionPane.showMessageDialog(biosim.frame(),
+									"A reaction ID can only contain letters, numbers, and underscores.",
+									"Invalid ID", JOptionPane.ERROR_MESSAGE);
+							error = true;
 						}
 						else if (usedIDs.contains(reacID.getText().trim())) {
 							if (option.equals("OK")
@@ -2126,10 +2129,10 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 								param = paramID.getText().trim() + " " + val;
 							}
 							if (!((IDpat.matcher(paramID.getText().trim()).matches()))) {
-							  JOptionPane.showMessageDialog(biosim.frame(),
-											"A parameter ID can only contain letters, numbers, and underscores.", 
-											"Invalid ID",JOptionPane.ERROR_MESSAGE);
-							  error = true;
+								JOptionPane.showMessageDialog(biosim.frame(),
+										"A parameter ID can only contain letters, numbers, and underscores.",
+										"Invalid ID", JOptionPane.ERROR_MESSAGE);
+								error = true;
 							}
 							else if (usedIDs.contains(paramID.getText().trim())) {
 								if (option.equals("OK")
@@ -2402,11 +2405,11 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 								param = reacParamID.getText().trim() + " " + val;
 							}
 							if (!((IDpat.matcher(reacParamID.getText().trim()).matches()))) {
-							  JOptionPane.showMessageDialog(biosim.frame(),
-											"A parameter ID can only contain letters, numbers, and underscores.", 
-											"Invalid ID",JOptionPane.ERROR_MESSAGE);
-							  error = true;
-							} 
+								JOptionPane.showMessageDialog(biosim.frame(),
+										"A parameter ID can only contain letters, numbers, and underscores.",
+										"Invalid ID", JOptionPane.ERROR_MESSAGE);
+								error = true;
+							}
 							else if (thisReactionParams.contains(reacParamID.getText().trim())) {
 								if (option.equals("OK")
 										&& !reacParamID.getText().trim().equals(
@@ -2481,11 +2484,12 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 											reacts = Buttons.getList(reacts, reactions);
 											reactions.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 											if (((String) type.getSelectedItem()).equals("Custom")) {
-											  reacts[index1] = ((String) reactions.getSelectedValue()).split(" ")[0]
-											    + " Custom"; 
-											} else {
-											  reacts[index1] = ((String) reactions.getSelectedValue()).split(" ")[0]
-											    + " Sweep"; 
+												reacts[index1] = ((String) reactions.getSelectedValue()).split(" ")[0]
+														+ " Custom";
+											}
+											else {
+												reacts[index1] = ((String) reactions.getSelectedValue()).split(" ")[0]
+														+ " Sweep";
 											}
 											sort(reacts);
 											reactions.setListData(reacts);

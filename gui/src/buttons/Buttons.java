@@ -144,7 +144,7 @@ public class Buttons {
 		}
 		currentList.setSelectedIndices(select);
 		Object[] getAll = currentList.getSelectedValues();
-		currentList.removeSelectionInterval(0,list.length-1);
+		currentList.removeSelectionInterval(0, list.length - 1);
 		ArrayList<Object> remove = new ArrayList<Object>();
 		for (int i = 0; i < getAll.length; i++) {
 			remove.add(getAll[i]);
@@ -208,27 +208,29 @@ public class Buttons {
 		Object[] temp = currentList;
 		int newLength = temp.length;
 		for (int i = 0; i < newSelected.length; i++) {
-		  int j = 0;
-		  for (j = 0; j < temp.length; j++) {
-		    if (temp[j].equals(newSelected[i])) {
-		      break;
-		    }
-		  }
-		  if (j==temp.length) newLength++;
+			int j = 0;
+			for (j = 0; j < temp.length; j++) {
+				if (temp[j].equals(newSelected[i])) {
+					break;
+				}
+			}
+			if (j == temp.length)
+				newLength++;
 		}
 		currentList = new Object[newLength];
 		for (int i = 0; i < temp.length; i++) {
 			currentList[i] = temp[i];
 		}
-		int num=temp.length;
+		int num = temp.length;
 		for (int i = 0; i < newSelected.length; i++) {
-		  int j = 0;
-		  for (j = 0; j < temp.length; j++) 
-		    if (temp[j].equals(newSelected[i])) break;
-		  if (j==temp.length) { 
-		    currentList[num] = newSelected[i];
-		    num++;
-		  }
+			int j = 0;
+			for (j = 0; j < temp.length; j++)
+				if (temp[j].equals(newSelected[i]))
+					break;
+			if (j == temp.length) {
+				currentList[num] = newSelected[i];
+				num++;
+			}
 		}
 		list.setListData(currentList);
 		return currentList;

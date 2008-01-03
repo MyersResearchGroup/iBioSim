@@ -1199,8 +1199,8 @@ public class BioSim implements MouseListener, ActionListener {
 						new FileWriter(new File(root + separator + lrnName + separator + ".lrn")).close();
 
 						String sbmlFile = tree.getFile();
-						String[] getFilename = sbmlFile.split(separator);
-						String sbmlFileNoPath = getFilename[getFilename.length - 1];
+						// String[] getFilename = sbmlFile.split(separator);
+						// String sbmlFileNoPath = getFilename[getFilename.length - 1];
 						try {
 							FileOutputStream out = new FileOutputStream(new File(root + separator
 									+ lrnName.trim() + separator + lrnName.trim() + ".lrn"));
@@ -1653,27 +1653,27 @@ public class BioSim implements MouseListener, ActionListener {
 	 * This method adds a new project to recent list
 	 */
 	public void addRecentProject(String projDir) {
-		boolean newOne = true;
-		for (int i = 0; i < numberRecentProj-1; i++) {
+		// boolean newOne = true;
+		for (int i = 0; i < numberRecentProj - 1; i++) {
 			if (recentProjectPaths[i].equals(projDir)) {
-			  for (int j=i; j < numberRecentProj-1; j++) {
-			    String next = recentProjectPaths[j+1];
-			    recentProjects[j].setText(next.split(separator)[next.split(separator).length - 1]);
-			    file.add(recentProjects[j]);
-			    recentProjectPaths[j] = next;
-			  }
-			  break;
+				for (int j = i; j < numberRecentProj - 1; j++) {
+					String next = recentProjectPaths[j + 1];
+					recentProjects[j].setText(next.split(separator)[next.split(separator).length - 1]);
+					file.add(recentProjects[j]);
+					recentProjectPaths[j] = next;
+				}
+				break;
 			}
 		}
 		if (numberRecentProj < 5) {
-		  numberRecentProj++;
+			numberRecentProj++;
 		}
 		for (int i = 0; i < numberRecentProj; i++) {
-		  String save = recentProjectPaths[i];
-		  recentProjects[i].setText(projDir.split(separator)[projDir.split(separator).length - 1]);
-		  file.add(recentProjects[i]);
-		  recentProjectPaths[i] = projDir;
-		  projDir = save;
+			String save = recentProjectPaths[i];
+			recentProjects[i].setText(projDir.split(separator)[projDir.split(separator).length - 1]);
+			file.add(recentProjects[i]);
+			recentProjectPaths[i] = projDir;
+			projDir = save;
 		}
 	}
 
