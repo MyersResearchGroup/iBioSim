@@ -51,7 +51,7 @@
             <include name="xml-apis.jar"/>
             <include name="xml-apis-ext.jar"/>
 	    <include name="epsgraphics.jar"/>
-            <include name="libsbml/lib/libsbmlj.jar"/>
+            <include name="libsbmlj.jar"/>
          </fileset>
          <pathelement path="${build_dir}"/>
      </path>
