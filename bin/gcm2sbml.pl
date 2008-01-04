@@ -39,6 +39,7 @@ $activated_production = 0.1;
 $num_promo = 1.0;
 $stochiometry = 1.;
 $num_RNAP = 30.0;
+$dimer_deg = .0003;
 
 $spastic = 0.9;
 
@@ -65,10 +66,13 @@ sub main{
 	
 	create_real_network($file);
     } elsif ($#ARGV >= 2) {
-        getopts ('cf:');
+        getopts ('dcf:');
         if ($opt_c) {
             print "Applying biochemical abstraction\n";
         }
+        if ($opt_d) {
+            print "Applying dimer degradation\n";
+        }        
         #open up the dotfile and store it to an array
         $abv_name = $ARGV[$#ARGV-1];
 	my $file = $ARGV[$#ARGV-1];
@@ -108,6 +112,10 @@ sub load_parameters{
             print "Changing degradation to: $1\n";
             $deg = $1;
         } 
+        if ($parameter_file =~ m/dimer_deg[\s]*=[\s]*([0-9]*\.?[0-9]*)/) {
+            print "Changing dimer degradation to: $1\n";
+            $dimer_deg = $1;
+        }         
         if ($parameter_file =~ m/kf_dimer[\s]*=[\s]*([0-9]*\.?[0-9]*)/) {
             print "Changing dimer formation to: $1\n";
             $kf_dimer = $1;
@@ -528,6 +536,32 @@ END
 END
         }
     }
+#  If dimers are allowed to degrade, then degrade them
+    if ($opt_d) {
+        foreach $key (keys %dimers) {
+        if ($proteins{$key} [$CONST] != 1) {
+            print OUT <<END;
+<reaction id = "degradation_$proteins{$key}[1]\_$dimers{$key}" reversible="false">
+  <listOfReactants>
+    <speciesReference species = "$proteins{$key}[1]\_$dimers{$key}" stoichiometry = "1"/>
+  </listOfReactants>
+  <kineticLaw>
+    <math xmlns="http://www.w3.org/1998/Math/MathML">
+      <apply>
+        <times/>
+        <ci>k_deg</ci>
+        <ci>$proteins{$key}[1]\_$dimers{$key}</ci>
+      </apply>
+    </math>
+    <listOfParameters>
+      <parameter id = "k_deg" name = "k_deg" value = "$dimer_deg"/>
+    </listOfParameters>
+  </kineticLaw>
+</reaction>
+END
+      }
+  }
+}
 
 #     #set up degradations for dimers    
 #     foreach $key (keys %dimers) {
