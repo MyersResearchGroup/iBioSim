@@ -965,6 +965,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 									else {
 										text += " " + s;
 									}
+									boxes.get(i).setName(text);
 									series.get(i).setText(text);
 									colorsCombo.get(i).setSelectedIndex(0);
 									shapesCombo.get(i).setSelectedIndex(0);
@@ -2053,8 +2054,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						}
 						graphed.add(new GraphSpecies(shapey.get(shapesCombo.get(i).getSelectedItem()), colory
 								.get(colorsCombo.get(i).getSelectedItem()), filled.get(i).isSelected(), visible
-								.get(i).isSelected(), connected.get(i).isSelected(), selected, series.get(i)
-								.getText().trim(), i, directory));
+								.get(i).isSelected(), connected.get(i).isSelected(), selected, boxes.get(i)
+								.getName(), series.get(i).getText().trim(), i, directory));
 					}
 					else {
 						ArrayList<GraphSpecies> remove = new ArrayList<GraphSpecies>();
@@ -2885,6 +2886,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			graph.setProperty("species.number." + i, "" + graphed.get(i).getNumber());
 			graph.setProperty("species.run.number." + i, graphed.get(i).getRunNumber());
 			graph.setProperty("species.name." + i, graphed.get(i).getSpecies());
+			graph.setProperty("species.id." + i, graphed.get(i).getID());
 			graph.setProperty("species.visible." + i, "" + graphed.get(i).getVisible());
 			graph.setProperty("species.paint." + i, graphed.get(i).getShapeAndPaint().getPaintName());
 			graph.setProperty("species.shape." + i, graphed.get(i).getShapeAndPaint().getShapeName());
@@ -2947,9 +2949,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				}
 				graphed.add(new GraphSpecies(shapes.get(graph.getProperty("species.shape." + next)), colors
 						.get(graph.getProperty("species.paint." + next)), filled, visible, connected, graph
-						.getProperty("species.run.number." + next), graph.getProperty("species.name." + next),
-						Integer.parseInt(graph.getProperty("species.number." + next)), graph
-								.getProperty("species.directory." + next)));
+						.getProperty("species.run.number." + next), graph.getProperty("species.id." + next),
+						graph.getProperty("species.name." + next), Integer.parseInt(graph
+								.getProperty("species.number." + next)), graph.getProperty("species.directory."
+								+ next)));
 				next++;
 			}
 			refresh();
@@ -3049,7 +3052,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						}
 						boolean set = false;
 						for (int i = 1; i < graphSpecies.size(); i++) {
-							String compare = g.getSpecies().replace('(', '~');
+							String compare = g.getID().replace('(', '~');
 							if (graphSpecies.get(i).equals(compare.split("~")[0].trim())) {
 								g.setNumber(i - 1);
 								set = true;
@@ -3127,7 +3130,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						}
 						boolean set = false;
 						for (int i = 1; i < graphSpecies.size(); i++) {
-							String compare = g.getSpecies().replace('(', '~');
+							String compare = g.getID().replace('(', '~');
 							if (graphSpecies.get(i).equals(compare.split("~")[0].trim())) {
 								g.setNumber(i - 1);
 								set = true;
@@ -3200,7 +3203,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						}
 						boolean set = false;
 						for (int i = 1; i < graphSpecies.size(); i++) {
-							String compare = g.getSpecies().replace('(', '~');
+							String compare = g.getID().replace('(', '~');
 							if (graphSpecies.get(i).equals(compare.split("~")[0].trim())) {
 								g.setNumber(i - 1);
 								set = true;
@@ -3279,7 +3282,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						}
 						boolean set = false;
 						for (int i = 1; i < graphSpecies.size(); i++) {
-							String compare = g.getSpecies().replace('(', '~');
+							String compare = g.getID().replace('(', '~');
 							if (graphSpecies.get(i).equals(compare.split("~")[0].trim())) {
 								g.setNumber(i - 1);
 								set = true;
@@ -3384,12 +3387,12 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 		private boolean filled, visible, connected;
 
-		private String runNumber, species, directory;
+		private String runNumber, species, directory, id;
 
 		private int number;
 
 		private GraphSpecies(Shape s, Paint p, boolean filled, boolean visible, boolean connected,
-				String runNumber, String species, int number, String directory) {
+				String runNumber, String id, String species, int number, String directory) {
 			sP = new ShapeAndPaint(s, p);
 			this.filled = filled;
 			this.visible = visible;
@@ -3398,6 +3401,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			this.species = species;
 			this.number = number;
 			this.directory = directory;
+			this.id = id;
 		}
 
 		public void setNumber(int number) {
@@ -3458,6 +3462,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 		private String getDirectory() {
 			return directory;
+		}
+
+		private String getID() {
+			return id;
 		}
 	}
 
