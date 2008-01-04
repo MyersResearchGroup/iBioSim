@@ -332,41 +332,38 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 			document = reader.readSBML(learnFile);
 			model = document.getModel();
 			ListOf ids = model.getListOfSpecies();
-			try {
-				FileWriter write = new FileWriter(new File(directory + separator + "background.gcm"));
-				write.write("digraph G {\n");
-				for (int i = 0; i < ids.getNumItems(); i++) {
-					speciesList.add(((Species) ids.get(i)).getId());
-					write.write("s" + i + " [shape=ellipse,color=black,label=\""
-							+ ((Species) ids.get(i)).getId() + "\"" + "];\n");
-				}
-				write.write("}\n");
-				write.close();
+			try { 
+			  FileWriter write = new FileWriter(new File(directory + separator + "background.gcm"));
+			  write.write("digraph G {\n");
+			  for (int i = 0; i < model.getNumSpecies(); i++) {
+			    speciesList.add(((Species) ids.get(i)).getId());
+			    write.write("s" + i + " [shape=ellipse,color=black,label=\"" + 
+					((Species) ids.get(i)).getId() + "\"" + "];\n");
+			  }
+			  write.write("}\n");
+			  write.close();
+			} catch (Exception e) {
+			  JOptionPane.showMessageDialog(biosim.frame(), "Unable to create background file!",
+							"Error Writing Background", JOptionPane.ERROR_MESSAGE);
 			}
-			catch (Exception e) {
-				JOptionPane.showMessageDialog(biosim.frame(), "Unable to create background file!",
-						"Error Writing Background", JOptionPane.ERROR_MESSAGE);
-			}
-		}
-		else {
-			try {
-				File gcmFile = new File(learnFile);
-				BufferedReader input = new BufferedReader(new FileReader(gcmFile));
-				FileWriter write = new FileWriter(new File(directory + separator + "background.gcm"));
-				String line = null;
-				while ((line = input.readLine()) != null) {
-					if (line.contains("shape")) {
-						String specie = line.substring(line.indexOf("label") + 7, line.lastIndexOf('\"'));
-						speciesList.add(specie);
-					}
-					write.write(line + "\n");
-				}
-				write.close();
-				input.close();
-			}
-			catch (Exception e) {
-				JOptionPane.showMessageDialog(biosim.frame(), "Unable to create background file!",
-						"Error Writing Background", JOptionPane.ERROR_MESSAGE);
+		} else {
+			try { 
+			  File gcmFile = new File(learnFile);
+			  BufferedReader input = new BufferedReader(new FileReader(gcmFile));
+			  FileWriter write = new FileWriter(new File(directory + separator + "background.gcm"));
+			  String line = null;
+			  while ((line = input.readLine()) != null) {
+			    if (line.contains("shape")) {
+			      String specie = line.substring(line.indexOf("label")+7,line.lastIndexOf('\"'));
+			      speciesList.add(specie);
+			    }
+			    write.write(line+"\n");
+			  }
+			  write.close();
+			  input.close();
+			} catch (Exception e) {
+			  JOptionPane.showMessageDialog(biosim.frame(), "Unable to create background file!",
+							"Error Writing Background", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 
