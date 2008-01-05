@@ -1976,6 +1976,10 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					"Must Select a Unit Definition", JOptionPane.ERROR_MESSAGE);
 		}
 		else {
+			String[] kinds = { "ampere", "becquerel", "candela", "celsius", "coulomb", "dimensionless",
+					"farad", "gram", "gray", "henry", "hertz", "item", "joule", "katal", "kelvin",
+					"kilogram", "litre", "lumen", "lux", "metre", "mole", "newton", "ohm", "pascal",
+					"radian", "second", "siemens", "sievert", "steradian", "tesla", "volt", "watt", "weber" };
 			JPanel unitDefPanel = new JPanel(new BorderLayout());
 			JPanel unitPanel = new JPanel(new GridLayout(2, 2));
 			JLabel idLabel = new JLabel("ID:");
@@ -2065,22 +2069,94 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 									"Invalid ID", JOptionPane.ERROR_MESSAGE);
 							error = true;
 						}
-						else if (usedIDs.contains(addUnit)) {
-							if (option.equals("OK")
-									&& !addUnit.equals(((String) unitDefs.getSelectedValue()).split(" ")[0])) {
+						else {
+						  for (int i=0;i < kinds.length; i++) {
+						    if (kinds[i].equals(addUnit)) {
 								JOptionPane.showMessageDialog(biosim.frame(),
-										"You must enter a unique ID into the ID field.", "Enter a Unique ID",
+										"Unit ID matches a predefined unit.", "Enter a Unique ID",
 										JOptionPane.ERROR_MESSAGE);
 								error = true;
-							}
-							else if (option.equals("Add")) {
-								JOptionPane.showMessageDialog(biosim.frame(),
-										"You must enter a unique ID into the ID field.", "Enter a Unique ID",
-										JOptionPane.ERROR_MESSAGE);
-								error = true;
-							}
+								break;
+						    }
+						  }
 						}
-						// check valid eqn
+						if (!error) {
+						  for (int i=0;i < units.length; i++) {
+						    if (option.equals("OK")) {
+						      if (units[i].equals((String) unitDefs.getSelectedValue())) continue;
+						    }
+						    if (units[i].equals(addUnit)) {
+ 								JOptionPane.showMessageDialog(biosim.frame(),
+ 										"Unit ID is not unique.", "Enter a Unique ID",
+ 										JOptionPane.ERROR_MESSAGE);
+ 								error = true;
+						    }
+						  }
+						}
+						if ((!error) && (uList.length == 0)) {
+						  JOptionPane.showMessageDialog(biosim.frame(),
+										"Unit definition must have at least one unit.", "Unit Needed",
+										JOptionPane.ERROR_MESSAGE);
+						  error = true;
+						}
+						if ((!error) && ((addUnit.equals("substance"))||(addUnit.equals("length"))||(addUnit.equals("area"))
+								 ||(addUnit.equals("volume"))||(addUnit.equals("time")))) {
+						  if (uList.length > 1) {
+						    JOptionPane.showMessageDialog(biosim.frame(),
+										  "Redefinition of built-in unit must have a single unit.", "Single Unit Required",
+										  JOptionPane.ERROR_MESSAGE);
+						    error = true;
+						  }
+						  if (!error) {
+						    if (addUnit.equals("substance")) {
+						      if (!(extractUnitKind(uList[0]).equals("dimensionless")||
+							    (extractUnitKind(uList[0]).equals("mole") && Integer.valueOf(extractUnitExp(uList[0]))==1)||
+							    (extractUnitKind(uList[0]).equals("item") && Integer.valueOf(extractUnitExp(uList[0]))==1)||
+							    (extractUnitKind(uList[0]).equals("gram") && Integer.valueOf(extractUnitExp(uList[0]))==1)||
+							    (extractUnitKind(uList[0]).equals("kilogram") && Integer.valueOf(extractUnitExp(uList[0]))==1))) {
+							JOptionPane.showMessageDialog(biosim.frame(),
+										      "Redefinition of substance must be dimensionless or\n in terms of moles, items, grams, or kilograms.", 
+										      "Incorrect Redefinition",
+										      JOptionPane.ERROR_MESSAGE);
+							error = true;
+						      }
+						    } else if (addUnit.equals("time")) {
+						      if (!(extractUnitKind(uList[0]).equals("dimensionless")||
+							    (extractUnitKind(uList[0]).equals("second") && Integer.valueOf(extractUnitExp(uList[0]))==1))) {
+							JOptionPane.showMessageDialog(biosim.frame(),
+										      "Redefinition of length must be dimensionless or in terms of seconds.", "Incorrect Redefinition",
+										      JOptionPane.ERROR_MESSAGE);
+							error = true;
+						      }
+						    } else if (addUnit.equals("length")) {
+						      if (!(extractUnitKind(uList[0]).equals("dimensionless")||
+							    (extractUnitKind(uList[0]).equals("metre") && Integer.valueOf(extractUnitExp(uList[0]))==1))) {
+							JOptionPane.showMessageDialog(biosim.frame(),
+										      "Redefinition of length must be dimensionless or in terms of metres.", "Incorrect Redefinition",
+										      JOptionPane.ERROR_MESSAGE);
+							error = true;
+						      }
+						    } else if (addUnit.equals("area")) {
+						      if (!(extractUnitKind(uList[0]).equals("dimensionless")||
+							    (extractUnitKind(uList[0]).equals("metre") && Integer.valueOf(extractUnitExp(uList[0]))==2))) {
+							JOptionPane.showMessageDialog(biosim.frame(),
+										      "Redefinition of area must be dimensionless or in terms of metres^2.", "Incorrect Redefinition",
+										      JOptionPane.ERROR_MESSAGE);
+							error = true;
+						      }
+						    } else if (addUnit.equals("volume")) {
+						      if (!(extractUnitKind(uList[0]).equals("dimensionless")||
+							    (extractUnitKind(uList[0]).equals("litre") && Integer.valueOf(extractUnitExp(uList[0]))==1)||
+							    (extractUnitKind(uList[0]).equals("metre") && Integer.valueOf(extractUnitExp(uList[0]))==3))) {
+							JOptionPane.showMessageDialog(biosim.frame(),
+										      "Redefinition of volume must be dimensionless or in terms of litres or metres^3.", 
+										      "Incorrect Redefinition",
+										      JOptionPane.ERROR_MESSAGE);
+							error = true;
+						      }
+						    }	
+						  }
+						}
 						if (!error) {
 							if (option.equals("OK")) {
 								int index = unitDefs.getSelectedIndex();
@@ -2211,6 +2287,34 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				boolean error = true;
 				while (error && value == JOptionPane.YES_OPTION) {
 					error = false;
+					try {
+					  Integer.valueOf(exp.getText().trim()).intValue();
+					} catch (Exception e) {
+					  JOptionPane.showMessageDialog(biosim.frame(),
+									"Exponent must be an integer.", "Integer Expected",
+									JOptionPane.ERROR_MESSAGE);
+					  error = true;
+					}
+					if (!error) {
+					  try {
+					    Integer.valueOf(scale.getText().trim()).intValue();
+					  } catch (Exception e) {
+					    JOptionPane.showMessageDialog(biosim.frame(),
+									  "Scale must be an integer.", "Integer Expected",
+									  JOptionPane.ERROR_MESSAGE);
+					    error = true;
+					  }
+					}
+					if (!error) {
+					  try {
+					    Double.valueOf(mult.getText().trim()).doubleValue();
+					  } catch (Exception e) {
+					    JOptionPane.showMessageDialog(biosim.frame(),
+									  "Multiplier must be a double.", "Double Expected",
+									  JOptionPane.ERROR_MESSAGE);
+					    error = true;
+					  }
+					}
 					if (!error) {
 						if (option.equals("OK")) {
 							int index = unitList.getSelectedIndex();
