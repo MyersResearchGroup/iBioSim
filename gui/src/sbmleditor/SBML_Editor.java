@@ -230,6 +230,19 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 */
 	private ArrayList<SpeciesReference> changedProducts;
 
+	/*
+	 * modifier buttons
+	 */
+	private JButton addModifier, removeModifier, editModifier;
+
+	private JList modifiers; // JList for products
+
+	private String[] modifier; // array for products
+	/*
+	 * ArrayList of products
+	 */
+        private ArrayList<SpeciesReference> changedModifiers;
+
 	private JComboBox productSpecies; // ComboBox for product editing
 
 	private JTextField productStoiciometry; // text field for editing products
@@ -4608,7 +4621,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			JPanel addParams = new JPanel();
 			reacAddParam = new JButton("Add Parameter");
 			reacRemoveParam = new JButton("Remove Parameter");
-			reacEditParam = new JButton("Edit Selected Parameter");
+			reacEditParam = new JButton("Edit Parameter");
 			addParams.add(reacAddParam);
 			addParams.add(reacRemoveParam);
 			addParams.add(reacEditParam);
@@ -4675,11 +4688,12 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			param.add(parametersLabel, "North");
 			param.add(scroll, "Center");
 			param.add(addParams, "South");
+
 			JPanel reactantsPanel = new JPanel(new BorderLayout());
 			JPanel addReactants = new JPanel();
 			addReactant = new JButton("Add Reactant");
 			removeReactant = new JButton("Remove Reactant");
-			editReactant = new JButton("Edit Selected Reactant");
+			editReactant = new JButton("Edit Reactant");
 			addReactants.add(addReactant);
 			addReactants.add(removeReactant);
 			addReactants.add(editReactant);
@@ -4716,11 +4730,12 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			reactantsPanel.add(reactantsLabel, "North");
 			reactantsPanel.add(scroll2, "Center");
 			reactantsPanel.add(addReactants, "South");
+
 			JPanel productsPanel = new JPanel(new BorderLayout());
 			JPanel addProducts = new JPanel();
 			addProduct = new JButton("Add Product");
 			removeProduct = new JButton("Remove Product");
-			editProduct = new JButton("Edit Selected Product");
+			editProduct = new JButton("Edit Product");
 			addProducts.add(addProduct);
 			addProducts.add(removeProduct);
 			addProducts.add(editProduct);
@@ -4754,6 +4769,46 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			productsPanel.add(productsLabel, "North");
 			productsPanel.add(scroll3, "Center");
 			productsPanel.add(addProducts, "South");
+
+			JPanel modifierPanel = new JPanel(new BorderLayout());
+			JPanel addModifiers = new JPanel();
+			addModifier = new JButton("Add Modifier");
+			removeModifier = new JButton("Remove Modifier");
+			editModifier = new JButton("Edit Modifier");
+			addModifiers.add(addModifier);
+			addModifiers.add(removeModifier);
+			addModifiers.add(editModifier);
+			addModifier.addActionListener(this);
+			removeModifier.addActionListener(this);
+			editModifier.addActionListener(this);
+			JLabel modifiersLabel = new JLabel("List Of Modifiers:");
+			modifiers = new JList();
+			modifiers.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			JScrollPane scroll5 = new JScrollPane();
+			scroll5.setMinimumSize(new Dimension(260, 220));
+			scroll5.setPreferredSize(new Dimension(276, 152));
+			scroll5.setViewportView(modifiers);
+			modifier = new String[0];
+			changedModifiers = new ArrayList<SpeciesReference>();
+			if (option.equals("OK")) {
+				Reaction reac = document.getModel().getReaction(
+						((String) reactions.getSelectedValue()).split(" ")[0]);
+				ListOf listOfModifiers = reac.getListOfModifiers();
+				modifier = new String[(int) reac.getNumModifiers()];
+				for (int i = 0; i < reac.getNumModifiers(); i++) {
+					SpeciesReference modifier = (SpeciesReference) listOfModifiers.get(i);
+					changedModifiers.add(modifier);
+					this.modifier[i] = modifier.getSpecies(); // + " " + modifier.getStoichiometry();
+				}
+			}
+			sort(modifier);
+			modifiers.setListData(modifier);
+			modifiers.setSelectedIndex(0);
+			modifiers.addMouseListener(this);
+			modifierPanel.add(modifiersLabel, "North");
+			modifierPanel.add(scroll5, "Center");
+			modifierPanel.add(addModifiers, "South");
+
 			JLabel kineticLabel = new JLabel("Kinetic Law:");
 			kineticLaw = new JTextArea();
 			kineticLaw.setLineWrap(true);
