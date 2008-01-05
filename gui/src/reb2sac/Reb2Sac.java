@@ -1,4 +1,4 @@
-package reb2sac.core.gui;
+package reb2sac;
 
 import java.io.*;
 import java.util.*;
@@ -6,10 +6,10 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import org.sbml.libsbml.*;
-import sbmleditor.core.gui.*;
-import graph.core.gui.*;
-import biomodelsim.core.gui.*;
-import buttons.core.gui.*;
+import sbmleditor.*;
+import graph.*;
+import biomodelsim.*;
+import buttons.*;
 
 /**
  * This class creates a GUI for the reb2sac program. It implements the
@@ -3282,11 +3282,11 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		interestingSpecies = Buttons.remove(species, interestingSpecies);
 	}
 
-	public Graph createProbGraph() {
+	public Graph createProbGraph(String open) {
 		String outDir = root + separator + simName;
 		String printer_id = "tsd.printer";
 		String printer_track_quantity = "amount";
 		return new Graph(printer_track_quantity, simName + " simulation results", printer_id, outDir,
-				"time", biomodelsim, null, log, null, false);
+				"time", biomodelsim, open, log, null, false);
 	}
 }

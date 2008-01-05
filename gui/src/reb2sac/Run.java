@@ -1,14 +1,14 @@
-package reb2sac.core.gui;
+package reb2sac;
 
 import java.io.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
-import biomodelsim.core.gui.*;
-import graph.core.gui.*;
-import buttons.core.gui.*;
-import sbmleditor.core.gui.*;
+import biomodelsim.*;
+import graph.*;
+import buttons.*;
+import sbmleditor.*;
 
 /**
  * This class creates the properties file that is given to the reb2sac program.

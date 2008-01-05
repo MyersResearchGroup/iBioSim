@@ -1,12 +1,12 @@
-package datamanager.core.gui;
+package datamanager;
 
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.util.*;
 import javax.swing.*;
-import biomodelsim.core.gui.*;
-import buttons.core.gui.*;
+import biomodelsim.*;
+import buttons.*;
 
 public class DataManager extends JPanel implements ActionListener, MouseListener {
 

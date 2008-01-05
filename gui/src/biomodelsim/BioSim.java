@@ -1,4 +1,4 @@
-package biomodelsim.core.gui;
+package biomodelsim;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -9,12 +9,12 @@ import java.util.prefs.Preferences;
 import javax.swing.*;
 import javax.swing.plaf.basic.*;
 import org.sbml.libsbml.*;
-import datamanager.core.gui.*;
-import reb2sac.core.gui.*;
-import learn.core.gui.*;
-import sbmleditor.core.gui.*;
-import graph.core.gui.*;
-import buttons.core.gui.*;
+import datamanager.*;
+import reb2sac.*;
+import learn.*;
+import sbmleditor.*;
+import graph.*;
+import buttons.*;
 
 /**
  * This class creates a GUI for the Tstubd program. It implements the
@@ -906,56 +906,56 @@ public class BioSim implements MouseListener, ActionListener {
 										"A model ID can only contain letters, numbers, and underscores.", 
 										"Invalid ID",JOptionPane.ERROR_MESSAGE);
 						} else { 
-						  File f = new File(root + separator + simName);
-						  if (f.exists()) {
-						    Object[] options = { "Overwrite", "Cancel" };
-						    int value = JOptionPane.showOptionDialog(frame, "File already exists."
-											     + "\nDo you want to overwrite?", "Overwrite", JOptionPane.YES_NO_OPTION,
-											     JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-						    if (value == JOptionPane.YES_OPTION) {
-						      File dir = new File(root + separator + simName);
-						      if (dir.isDirectory()) {
-							deleteDir(dir);
-						      }
-						      else {
-							System.gc();
-							dir.delete();
-						      }
-						      for (int i = 0; i < tab.getTabCount(); i++) {
-							if (tab.getTitleAt(i).equals(simName)) {
-							  tab.remove(i);
+						File f = new File(root + separator + simName);
+						if (f.exists()) {
+							Object[] options = { "Overwrite", "Cancel" };
+							int value = JOptionPane.showOptionDialog(frame, "File already exists."
+									+ "\nDo you want to overwrite?", "Overwrite", JOptionPane.YES_NO_OPTION,
+									JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+							if (value == JOptionPane.YES_OPTION) {
+								File dir = new File(root + separator + simName);
+								if (dir.isDirectory()) {
+									deleteDir(dir);
+								}
+								else {
+									System.gc();
+									dir.delete();
+								}
+								for (int i = 0; i < tab.getTabCount(); i++) {
+									if (tab.getTitleAt(i).equals(simName)) {
+										tab.remove(i);
+									}
+								}
 							}
-						      }
-						    }
-						    else {
-						      return;
-						    }
-						  }
-						  f.createNewFile();
-						  FileOutputStream out = new FileOutputStream(f);
-						  String doc = "digraph " + modelID + " {\n";
-						  doc += "s1 [shape=ellipse,color=black,label=\"CI\"];\n";
-						  doc += "s2 [shape=ellipse,color=black,label=\"CII\"];\n";
-						  doc += "s2 -> s1 [color=\"blue4\",arrowhead=vee];\n";
-						  doc += "s1 -> s2 [color=\"firebrick4\",label=\"2\",arrowhead=tee];\n";
-						  doc += "}\n";
-						  byte[] output = doc.getBytes();
-						  out.write(output);
-						  out.close();
-						  File work = new File(root);
-						  String command = "";
-						  if (System.getProperty("os.name").contentEquals("Linux")) {
-						    command = "emacs ";
-						  }
-						  else {
-						    command = "cmd /c start ";
-						  }
-						  log.addText("Executing:\n" + command + root + simName + "\n");
-						  Runtime exec = Runtime.getRuntime();
-						  exec.exec(command + simName, null, work);
-						  refreshTree();
+							else {
+								return;
+							}
 						}
+						f.createNewFile();
+						FileOutputStream out = new FileOutputStream(f);
+						String doc = "digraph " + modelID + " {\n";
+						doc += "s1 [shape=ellipse,color=black,label=\"CI\"];\n";
+						doc += "s2 [shape=ellipse,color=black,label=\"CII\"];\n";
+						doc += "s2 -> s1 [color=\"blue4\",arrowhead=vee];\n";
+						doc += "s1 -> s2 [color=\"firebrick4\",label=\"2\",arrowhead=tee];\n";
+						doc += "}\n";
+						byte[] output = doc.getBytes();
+						out.write(output);
+						out.close();
+						File work = new File(root);
+						String command = "";
+						if (System.getProperty("os.name").contentEquals("Linux")) {
+							command = "emacs ";
+						}
+						else {
+							command = "cmd /c start ";
+						}
+						log.addText("Executing:\n" + command + root + simName + "\n");
+						Runtime exec = Runtime.getRuntime();
+						exec.exec(command + simName, null, work);
+						refreshTree();
 					}
+				}
 				}
 				catch (Exception e1) {
 					JOptionPane.showMessageDialog(frame, "Unable to create new model.", "Error",
@@ -998,50 +998,50 @@ public class BioSim implements MouseListener, ActionListener {
 										"A model ID can only contain letters, numbers, and underscores.", 
 										"Invalid ID",JOptionPane.ERROR_MESSAGE);
 						} else { 
-						  File f = new File(root + separator + simName);
-						  if (f.exists()) {
-						    Object[] options = { "Overwrite", "Cancel" };
-						    int value = JOptionPane.showOptionDialog(frame, "File already exists."
-											     + "\nDo you want to overwrite?", "Overwrite", JOptionPane.YES_NO_OPTION,
-											     JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-						    if (value == JOptionPane.YES_OPTION) {
-						      File dir = new File(root + separator + simName);
-						      if (dir.isDirectory()) {
-							deleteDir(dir);
-						      }
-						      else {
-							System.gc();
-							dir.delete();
-						      }
-						      for (int i = 0; i < tab.getTabCount(); i++) {
-							if (tab.getTitleAt(i).equals(simName)) {
-							  tab.remove(i);
+						File f = new File(root + separator + simName);
+						if (f.exists()) {
+							Object[] options = { "Overwrite", "Cancel" };
+							int value = JOptionPane.showOptionDialog(frame, "File already exists."
+									+ "\nDo you want to overwrite?", "Overwrite", JOptionPane.YES_NO_OPTION,
+									JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+							if (value == JOptionPane.YES_OPTION) {
+								File dir = new File(root + separator + simName);
+								if (dir.isDirectory()) {
+									deleteDir(dir);
+								}
+								else {
+									System.gc();
+									dir.delete();
+								}
+								for (int i = 0; i < tab.getTabCount(); i++) {
+									if (tab.getTitleAt(i).equals(simName)) {
+										tab.remove(i);
+									}
+								}
 							}
-						      }
-						    }
-						    else {
-						      return;
-						    }
-						  }
-						  f.createNewFile();
-						  SBMLDocument document = new SBMLDocument();
-						  document.createModel();
+							else {
+								return;
+							}
+						}
+						f.createNewFile();
+						SBMLDocument document = new SBMLDocument();
+						document.createModel();
 						  //document.setLevel(2);
 						  document.setLevelAndVersion(2,3);
-						  Compartment c = document.getModel().createCompartment();
-						  c.setId("default");
-						  document.getModel().setId(modelID);
-						  FileOutputStream out = new FileOutputStream(f);
-						  SBMLWriter writer = new SBMLWriter();
-						  String doc = writer.writeToString(document);
-						  byte[] output = doc.getBytes();
-						  out.write(output);
-						  out.close();
+						Compartment c = document.getModel().createCompartment();
+						c.setId("default");
+						document.getModel().setId(modelID);
+						FileOutputStream out = new FileOutputStream(f);
+						SBMLWriter writer = new SBMLWriter();
+						String doc = writer.writeToString(document);
+						byte[] output = doc.getBytes();
+						out.write(output);
+						out.close();
 						  addTab(f.getAbsolutePath().split(separator)[f.getAbsolutePath().split(separator).length - 1],
-							 new SBML_Editor(f.getAbsolutePath(), null, log, this, null, null), "SBML Editor");
-						  refreshTree();
-						}
+								new SBML_Editor(f.getAbsolutePath(), null, log, this, null, null), "SBML Editor");
+						refreshTree();
 					}
+				}
 				}
 				catch (Exception e1) {
 					JOptionPane.showMessageDialog(frame, "Unable to create new model.", "Error",
@@ -2611,6 +2611,7 @@ public class BioSim implements MouseListener, ActionListener {
 					String openFile = "";
 					String graphFile = "";
 					String open = null;
+					String openProb = null;
 					int run = 0;
 					for (int i = 0; i < list.length; i++) {
 						if (!(new File(list[i]).isDirectory()) && list[i].length() > 4) {
@@ -2652,6 +2653,9 @@ public class BioSim implements MouseListener, ActionListener {
 							}
 							else if (end.equals(".grf")) {
 								open = filename + separator + list[i];
+							}
+							else if (end.equals(".prb")) {
+								openProb = filename + separator + list[i];
 							}
 						}
 					}
@@ -2723,7 +2727,7 @@ public class BioSim implements MouseListener, ActionListener {
 							simTab.getComponentAt(simTab.getComponents().length - 1).setName("Graph");
 						}
 						if (!probFile.equals("")) {
-							simTab.addTab("Probability Graph", reb2sac.createProbGraph());
+							simTab.addTab("Probability Graph", reb2sac.createProbGraph(openProb));
 							simTab.getComponentAt(simTab.getComponents().length - 1).setName("ProbGraph");
 						}
 						else {

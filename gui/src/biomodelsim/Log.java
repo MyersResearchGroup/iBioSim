@@ -1,4 +1,4 @@
-package biomodelsim.core.gui;
+package biomodelsim;
 
 import java.awt.*;
 import javax.swing.*;
