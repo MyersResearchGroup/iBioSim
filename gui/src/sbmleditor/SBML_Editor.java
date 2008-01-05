@@ -142,7 +142,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 
 	// boxes
 
-	private JComboBox specUnits, initLabel;
+        private JComboBox specUnits, initLabel, stoiciLabel;
 
 	private JComboBox comp; // compartment combo box
 
@@ -235,15 +235,18 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 */
 	private JButton addModifier, removeModifier, editModifier;
 
-	private JList modifiers; // JList for products
+	private JList modifiers; // JList for modifiers
 
-	private String[] modifier; // array for products
+	private String[] modifier; // array for modifiers
+
 	/*
-	 * ArrayList of products
+	 * ArrayList of modifiers
 	 */
-        private ArrayList<SpeciesReference> changedModifiers;
+        private ArrayList<ModifierSpeciesReference> changedModifiers;
 
 	private JComboBox productSpecies; // ComboBox for product editing
+
+	private JComboBox modifierSpecies; // ComboBox for modifier editing
 
 	private JTextField productStoiciometry; // text field for editing products
 
@@ -1429,6 +1432,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				boolean remove = true;
 				ArrayList<String> reactantsUsing = new ArrayList<String>();
 				ArrayList<String> productsUsing = new ArrayList<String>();
+				ArrayList<String> modifiersUsing = new ArrayList<String>();
 				for (int i = 0; i < model.getNumReactions(); i++) {
 					Reaction reaction = (Reaction) document.getModel().getListOfReactions().get(i);
 					for (int j = 0; j < reaction.getNumProducts(); j++) {
@@ -1438,6 +1442,16 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 									.equals(specRef)) {
 								remove = false;
 								productsUsing.add(reaction.getId());
+							}
+						}
+					}
+					for (int j = 0; j < reaction.getNumModifiers(); j++) {
+						if (reaction.getModifier(j).isSetSpecies()) {
+							String specRef = reaction.getModifier(j).getSpecies();
+							if (model.getSpecies(((String) species.getSelectedValue()).split(" ")[0]).getId()
+									.equals(specRef)) {
+								remove = false;
+								modifiersUsing.add(reaction.getId());
 							}
 						}
 					}
@@ -1471,10 +1485,13 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				else {
 					String reactants = "";
 					String products = "";
+					String modifiers = "";
 					String[] reacts = reactantsUsing.toArray(new String[0]);
 					sort(reacts);
 					String[] prods = productsUsing.toArray(new String[0]);
 					sort(prods);
+					String[] mods = modifiersUsing.toArray(new String[0]);
+					sort(mods);
 					for (int i = 0; i < reacts.length; i++) {
 						if (i == reacts.length - 1) {
 							reactants += reacts[i];
@@ -1491,12 +1508,23 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 							products += prods[i] + "\n";
 						}
 					}
+					for (int i = 0; i < mods.length; i++) {
+						if (i == mods.length - 1) {
+							modifiers += mods[i];
+						}
+						else {
+							modifiers += mods[i] + "\n";
+						}
+					}
 					String message = "Unable to remove the selected species.";
 					if (reactantsUsing.size() != 0) {
 						message += "\n\nIt is used as a reactant in the following reactions:\n" + reactants;
 					}
 					if (productsUsing.size() != 0) {
 						message += "\n\nIt is used as a product in the following reactions:\n" + products;
+					}
+					if (modifiersUsing.size() != 0) {
+						message += "\n\nIt is used as a modifier in the following reactions:\n" + modifiers;
 					}
 					JTextArea messageArea = new JTextArea(message);
 					messageArea.setEditable(false);
@@ -1536,6 +1564,9 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				}
 				for (int i = 0; i < r.getNumProducts(); i++) {
 					react.addProduct(r.getProduct(i));
+				}
+				for (int i = 0; i < r.getNumModifiers(); i++) {
+					react.addModifier(r.getModifier(i));
 				}
 				for (int i = 0; i < r.getNumReactants(); i++) {
 					react.addReactant(r.getReactant(i));
@@ -1690,6 +1721,30 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				change = true;
 			}
 		}
+		// if the add modifiers button is clicked
+		else if (e.getSource() == addModifier) {
+			modifiersEditor("Add");
+		}
+		// if the edit modifiers button is clicked
+		else if (e.getSource() == editModifier) {
+			modifiersEditor("OK");
+		}
+		// if the remove modifiers button is clicked
+		else if (e.getSource() == removeModifier) {
+			if (modifiers.getSelectedIndex() != -1) {
+				String v = ((String) modifiers.getSelectedValue()).split(" ")[0];
+				for (int i = 0; i < changedModifiers.size(); i++) {
+					if (changedModifiers.get(i).getSpecies().equals(v)) {
+						changedModifiers.remove(i);
+					}
+				}
+				modifiers.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+				modifier = (String[]) Buttons.remove(modifiers, modifier);
+				modifiers.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+				modifiers.setSelectedIndex(0);
+				change = true;
+			}
+		}
 		// if the clear button is clicked
 		else if (e.getSource() == clearKineticLaw) {
 			kineticLaw.setText("");
@@ -1720,6 +1775,9 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					kinetic += " * pow(" + s.getSpecies() + ", " + s.getStoichiometry() + ")";
 				}
 			}
+			for (ModifierSpeciesReference s : changedModifiers) {
+			        kinetic += " * " + s.getSpecies();
+			}
 			if (reacReverse.getSelectedItem().equals("true")) {
 				kinetic += " - " + kr;
 				for (SpeciesReference s : changedProducts) {
@@ -1729,6 +1787,9 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					else {
 						kinetic += " * pow(" + s.getSpecies() + ", " + s.getStoichiometry() + ")";
 					}
+				}
+				for (ModifierSpeciesReference s : changedModifiers) {
+				  kinetic += " * " + s.getSpecies();
 				}
 			}
 			kineticLaw.setText(kinetic);
@@ -4442,6 +4503,14 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 												}
 											}
 										}
+										for (int j = 0; j < reaction.getNumModifiers(); j++) {
+											if (reaction.getModifier(j).isSetSpecies()) {
+												ModifierSpeciesReference specRef = reaction.getModifier(j);
+												if (speciesName.equals(specRef.getSpecies())) {
+													specRef.setSpecies(specie.getId());
+												}
+											}
+										}
 										for (int j = 0; j < reaction.getNumReactants(); j++) {
 											if (reaction.getReactant(j).isSetSpecies()) {
 												SpeciesReference specRef = reaction.getReactant(j);
@@ -4577,6 +4646,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 * Creates a frame used to edit reactions or create new ones.
 	 */
 	private void reactionsEditor(String option) {
+		libsbml sbmlLib = new libsbml();
 		if (option.equals("OK") && reactions.getSelectedIndex() == -1) {
 			JOptionPane.showMessageDialog(biosim.frame(), "No reaction selected.",
 					"Must Select A Reaction", JOptionPane.ERROR_MESSAGE);
@@ -4586,7 +4656,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			JPanel reactionPanelNorth1 = new JPanel();
 			JPanel reactionPanelNorth1b = new JPanel();
 			JPanel reactionPanelNorth2 = new JPanel();
-			JPanel reactionPanelCentral = new JPanel(new GridLayout(2, 2));
+			JPanel reactionPanelCentral = new JPanel(new GridLayout(1, 3));
+			JPanel reactionPanelSouth = new JPanel(new GridLayout(1, 2));
 			JPanel reactionPanel = new JPanel(new BorderLayout());
 			JLabel id = new JLabel("ID:");
 			reacID = new JTextField(15);
@@ -4718,7 +4789,11 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				for (int i = 0; i < reac.getNumReactants(); i++) {
 					SpeciesReference reactant = (SpeciesReference) listOfReactants.get(i);
 					changedReactants.add(reactant);
-					reacta[i] = reactant.getSpecies() + " " + reactant.getStoichiometry();
+					if (reactant.isSetStoichiometryMath()) {
+					  reacta[i] = reactant.getSpecies() + " " + sbmlLib.formulaToString(reactant.getStoichiometryMath().getMath());
+					} else {
+					  reacta[i] = reactant.getSpecies() + " " + reactant.getStoichiometry();
+					}
 				}
 				kineticL = document.getModel().getReaction(
 						((String) reactions.getSelectedValue()).split(" ")[0]).getKineticLaw().getFormula();
@@ -4759,7 +4834,11 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				for (int i = 0; i < reac.getNumProducts(); i++) {
 					SpeciesReference product = (SpeciesReference) listOfProducts.get(i);
 					changedProducts.add(product);
-					this.product[i] = product.getSpecies() + " " + product.getStoichiometry();
+					if (product.isSetStoichiometryMath()) {
+					  this.product[i] = product.getSpecies() + " " + sbmlLib.formulaToString(product.getStoichiometryMath().getMath());
+					} else {
+					  this.product[i] = product.getSpecies() + " " + product.getStoichiometry();
+					}
 				}
 			}
 			sort(product);
@@ -4789,16 +4868,16 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			scroll5.setPreferredSize(new Dimension(276, 152));
 			scroll5.setViewportView(modifiers);
 			modifier = new String[0];
-			changedModifiers = new ArrayList<SpeciesReference>();
+			changedModifiers = new ArrayList<ModifierSpeciesReference>();
 			if (option.equals("OK")) {
 				Reaction reac = document.getModel().getReaction(
 						((String) reactions.getSelectedValue()).split(" ")[0]);
 				ListOf listOfModifiers = reac.getListOfModifiers();
 				modifier = new String[(int) reac.getNumModifiers()];
 				for (int i = 0; i < reac.getNumModifiers(); i++) {
-					SpeciesReference modifier = (SpeciesReference) listOfModifiers.get(i);
+					ModifierSpeciesReference modifier = (ModifierSpeciesReference) listOfModifiers.get(i);
 					changedModifiers.add(modifier);
-					this.modifier[i] = modifier.getSpecies(); // + " " + modifier.getStoichiometry();
+					this.modifier[i] = modifier.getSpecies();
 				}
 			}
 			sort(modifier);
@@ -4845,10 +4924,12 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			reactionPanelNorth.add(reactionPanelNorth2);
 			reactionPanelCentral.add(reactantsPanel);
 			reactionPanelCentral.add(productsPanel);
-			reactionPanelCentral.add(param);
-			reactionPanelCentral.add(kineticPanel);
+			reactionPanelCentral.add(modifierPanel);
+			reactionPanelSouth.add(param);
+			reactionPanelSouth.add(kineticPanel);
 			reactionPanel.add(reactionPanelNorth, "North");
 			reactionPanel.add(reactionPanelCentral, "Center");
+			reactionPanel.add(reactionPanelSouth, "South");
 			if (paramsOnly) {
 				reacID.setEditable(false);
 				reacName.setEditable(false);
@@ -4862,6 +4943,9 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				addProduct.setEnabled(false);
 				removeProduct.setEnabled(false);
 				editProduct.setEnabled(false);
+				addModifier.setEnabled(false);
+				removeModifier.setEnabled(false);
+				editModifier.setEnabled(false);
 				kineticLaw.setEditable(false);
 				useMassAction.setEnabled(false);
 				clearKineticLaw.setEnabled(false);
@@ -4948,6 +5032,14 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 								for (int i = 0; i < changedProducts.size(); i++) {
 									react.addProduct(changedProducts.get(i));
 								}
+								remove = react.getListOfModifiers();
+								size = react.getNumModifiers();
+								for (int i = 0; i < size; i++) {
+									remove.remove(0);
+								}
+								for (int i = 0; i < changedModifiers.size(); i++) {
+									react.addModifier(changedModifiers.get(i));
+								}
 								remove = react.getListOfReactants();
 								size = react.getNumReactants();
 								for (int i = 0; i < size; i++) {
@@ -4993,6 +5085,9 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 								}
 								for (int i = 0; i < changedProducts.size(); i++) {
 									react.addProduct(changedProducts.get(i));
+								}
+								for (int i = 0; i < changedModifiers.size(); i++) {
+									react.addModifier(changedModifiers.get(i));
 								}
 								for (int i = 0; i < changedReactants.size(); i++) {
 									react.addReactant(changedReactants.get(i));
@@ -5060,6 +5155,18 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 								sbml = r.getListOfProducts();
 								for (int i = 0; i < r.getNumProducts(); i++) {
 									validKineticVars.add(((SpeciesReference) sbml.get(i)).getSpecies());
+								}
+								sbml = r.getListOfModifiers();
+								for (int i = 0; i < r.getNumModifiers(); i++) {
+									validKineticVars.add(((ModifierSpeciesReference) sbml.get(i)).getSpecies());
+								}
+								sbml = document.getModel().getListOfFunctionDefinitions();
+								for (int i = 0; i < document.getModel().getNumFunctionDefinitions(); i++) {
+									validKineticVars.add(((FunctionDefinition) sbml.get(i)).getId());
+								}
+								sbml = document.getModel().getListOfCompartments();
+								for (int i = 0; i < document.getModel().getNumCompartments(); i++) {
+									validKineticVars.add(((Compartment) sbml.get(i)).getId());
 								}
 								sbml = document.getModel().getListOfParameters();
 								for (int i = 0; i < document.getModel().getNumParameters(); i++) {
@@ -5921,6 +6028,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 * Creates a frame used to edit products or create new ones.
 	 */
 	public void productsEditor(String option) {
+		libsbml sbmlLib = new libsbml();
 		if (option.equals("OK") && products.getSelectedIndex() == -1) {
 			JOptionPane.showMessageDialog(biosim.frame(), "No product selected.",
 					"Must Select A Product", JOptionPane.ERROR_MESSAGE);
@@ -5928,7 +6036,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		else {
 			JPanel productsPanel = new JPanel(new GridLayout(2, 2));
 			JLabel speciesLabel = new JLabel("Species:");
-			JLabel stoiciLabel = new JLabel("Stoichiometry:");
+			Object [] stoiciOptions = { "Stoichiometry", "Stoichiometry Math" };
+			stoiciLabel = new JComboBox(stoiciOptions);
 			ListOf listOfSpecies = document.getModel().getListOfSpecies();
 			String[] speciesList = new String[(int) document.getModel().getNumSpecies()];
 			for (int i = 0; i < document.getModel().getNumSpecies(); i++) {
@@ -5947,7 +6056,12 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					}
 				}
 				productSpecies.setSelectedItem(product.getSpecies());
-				productStoiciometry.setText("" + product.getStoichiometry());
+				if (product.isSetStoichiometryMath()) {
+				  stoiciLabel.setSelectedItem("Stoichiometry Math");
+				  productStoiciometry.setText("" + sbmlLib.formulaToString(product.getStoichiometryMath().getMath()));
+				} else {
+				  productStoiciometry.setText("" + product.getStoichiometry());
+				}
 			}
 			productsPanel.add(speciesLabel);
 			productsPanel.add(productSpecies);
@@ -5967,8 +6081,14 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				while (error && value == JOptionPane.YES_OPTION) {
 					error = false;
 					try {
-						double val = Double.parseDouble(productStoiciometry.getText().trim());
-						String prod = productSpecies.getSelectedItem() + " " + val;
+					        String prod;
+						double val = 1.0;
+					        if (stoiciLabel.getSelectedItem().equals("Stoichiometry")) {
+						  val = Double.parseDouble(productStoiciometry.getText().trim());
+						  prod = productSpecies.getSelectedItem() + " " + val;
+						} else {
+						  prod = productSpecies.getSelectedItem() + " " + productStoiciometry.getText().trim();
+						}
 						if (option.equals("OK")) {
 							int index = products.getSelectedIndex();
 							products.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
@@ -5986,6 +6106,18 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 									}
 								}
 							}
+							if (stoiciLabel.getSelectedItem().equals("Stoichiometry Math")) {
+							  if (productStoiciometry.getText().trim().equals("")) {
+							    JOptionPane.showMessageDialog(biosim.frame(), "Stoichiometry math must have formula.",
+											  "Enter Stoichiometry Formula", JOptionPane.ERROR_MESSAGE);
+							    error = true;
+							  }
+							  else if (sbmlLib.parseFormula(productStoiciometry.getText().trim()) == null) {
+							    JOptionPane.showMessageDialog(biosim.frame(), "Stoichiometry formula is not valid.",
+											  "Enter Valid Formula", JOptionPane.ERROR_MESSAGE);
+							    error = true;
+							  }
+							}
 							if (!error) {
 								String v = ((String) products.getSelectedValue()).split(" ")[0];
 								SpeciesReference produ = null;
@@ -5998,7 +6130,13 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 								product = Buttons.getList(product, products);
 								products.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 								produ.setSpecies((String) productSpecies.getSelectedItem());
-								produ.setStoichiometry(val);
+								if (stoiciLabel.getSelectedItem().equals("Stoichiometry")) {
+								  produ.setStoichiometry(val);
+								  produ.unsetStoichiometryMath();
+								} else {
+								  StoichiometryMath sm = new StoichiometryMath(sbmlLib.parseFormula(productStoiciometry.getText().trim()));
+								  produ.setStoichiometryMath(sm);
+								}
 								product[index] = prod;
 								sort(product);
 								products.setListData(product);
@@ -6020,11 +6158,29 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 											"Species Can Only Be Used Once", JOptionPane.ERROR_MESSAGE);
 								}
 							}
+							if (stoiciLabel.getSelectedItem().equals("Stoichiometry Math")) {
+							  if (productStoiciometry.getText().trim().equals("")) {
+							    JOptionPane.showMessageDialog(biosim.frame(), "Stoichiometry math must have formula.",
+											  "Enter Stoichiometry Formula", JOptionPane.ERROR_MESSAGE);
+							    error = true;
+							  }
+							  else if (sbmlLib.parseFormula(productStoiciometry.getText().trim()) == null) {
+							    JOptionPane.showMessageDialog(biosim.frame(), "Stoichiometry formula is not valid.",
+											  "Enter Valid Formula", JOptionPane.ERROR_MESSAGE);
+							    error = true;
+							  }
+							}
 							if (!error) {
 								SpeciesReference produ = new SpeciesReference();
 								changedProducts.add(produ);
 								produ.setSpecies((String) productSpecies.getSelectedItem());
-								produ.setStoichiometry(val);
+								if (stoiciLabel.getSelectedItem().equals("Stoichiometry")) {
+								  produ.setStoichiometry(val);
+								  produ.unsetStoichiometryMath();
+								} else {
+								  StoichiometryMath sm = new StoichiometryMath(sbmlLib.parseFormula(productStoiciometry.getText().trim()));
+								  produ.setStoichiometryMath(sm);
+								}
 								JList add = new JList();
 								Object[] adding = { prod };
 								add.setListData(adding);
@@ -6074,9 +6230,150 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	}
 
 	/**
+	 * Creates a frame used to edit modifiers or create new ones.
+	 */
+	public void modifiersEditor(String option) {
+		if (option.equals("OK") && modifiers.getSelectedIndex() == -1) {
+			JOptionPane.showMessageDialog(biosim.frame(), "No modifier selected.",
+					"Must Select A Modifier", JOptionPane.ERROR_MESSAGE);
+		}
+		else {
+			JPanel modifiersPanel = new JPanel(new GridLayout(1, 2));
+			JLabel speciesLabel = new JLabel("Species:");
+			ListOf listOfSpecies = document.getModel().getListOfSpecies();
+			String[] speciesList = new String[(int) document.getModel().getNumSpecies()];
+			for (int i = 0; i < document.getModel().getNumSpecies(); i++) {
+				speciesList[i] = ((Species) listOfSpecies.get(i)).getId();
+			}
+			sort(speciesList);
+			Object[] choices = speciesList;
+			modifierSpecies = new JComboBox(choices);
+			if (option.equals("OK")) {
+				String v = ((String) modifiers.getSelectedValue()).split(" ")[0];
+				ModifierSpeciesReference modifier = null;
+				for (ModifierSpeciesReference p : changedModifiers) {
+					if (p.getSpecies().equals(v)) {
+						modifier = p;
+					}
+				}
+				modifierSpecies.setSelectedItem(modifier.getSpecies());
+			}
+			modifiersPanel.add(speciesLabel);
+			modifiersPanel.add(modifierSpecies);
+			if (choices.length == 0) {
+				JOptionPane
+						.showMessageDialog(biosim.frame(), "There are no species availiable to be modifiers."
+								+ "\nAdd species to this sbml file first.", "No Species", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			Object[] options = { option, "Cancel" };
+			int value = JOptionPane.showOptionDialog(biosim.frame(), modifiersPanel, "Modifiers Editor",
+					JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+			if (value == JOptionPane.YES_OPTION) {
+				boolean error = true;
+				while (error && value == JOptionPane.YES_OPTION) {
+					error = false;
+					String mod = (String)modifierSpecies.getSelectedItem();
+					if (option.equals("OK")) {
+					  int index = modifiers.getSelectedIndex();
+					  modifiers.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+					  modifier = Buttons.getList(modifier, modifiers);
+					  modifiers.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+					  modifiers.setSelectedIndex(index);
+					  for (int i = 0; i < modifier.length; i++) {
+					    if (i != index) {
+					      if (modifier[i].equals(modifierSpecies.getSelectedItem())) {
+						error = true;
+						JOptionPane.showMessageDialog(biosim.frame(),
+									      "Unable to add species as a modifier.\n"
+									      + "Each species can only be used as a modifier once.",
+									      "Species Can Only Be Used Once", JOptionPane.ERROR_MESSAGE);
+					      }
+					    }
+					  }
+					  if (!error) {
+					    String v = ((String) modifiers.getSelectedValue());
+					    ModifierSpeciesReference modi = null;
+					    for (ModifierSpeciesReference p : changedModifiers) {
+					      if (p.getSpecies().equals(v)) {
+						modi = p;
+					      }
+					    }
+					    modifiers.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+					    modifier = Buttons.getList(modifier, modifiers);
+					    modifiers.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+					    modi.setSpecies((String) modifierSpecies.getSelectedItem());
+					    modifier[index] = mod;
+					    sort(modifier);
+					    modifiers.setListData(modifier);
+					    modifiers.setSelectedIndex(index);
+					  }
+					}
+					else {
+					  int index = modifiers.getSelectedIndex();
+					  modifiers.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+					  modifier = Buttons.getList(modifier, modifiers);
+					  modifiers.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+					  modifiers.setSelectedIndex(index);
+					  for (int i = 0; i < modifier.length; i++) {
+					    if (modifier[i].equals(modifierSpecies.getSelectedItem())) {
+					      error = true;
+					      JOptionPane.showMessageDialog(biosim.frame(),
+									    "Unable to add species as a modifier.\n"
+									    + "Each species can only be used as a modifier once.",
+									    "Species Can Only Be Used Once", JOptionPane.ERROR_MESSAGE);
+					    }
+					  }
+					  if (!error) {
+					    ModifierSpeciesReference modi = new ModifierSpeciesReference();
+					    changedModifiers.add(modi);
+					    modi.setSpecies((String) modifierSpecies.getSelectedItem());
+					    JList add = new JList();
+					    Object[] adding = { mod };
+					    add.setListData(adding);
+					    add.setSelectedIndex(0);
+					    modifiers.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+					    adding = Buttons.add(modifier, modifiers, add, false, null, null, null, null, null,
+								 null, biosim.frame());
+					    modifier = new String[adding.length];
+					    for (int i = 0; i < adding.length; i++) {
+					      modifier[i] = (String) adding[i];
+					    }
+					    sort(modifier);
+					    modifiers.setListData(modifier);
+					    modifiers.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+					    try {
+					      if (document.getModel().getReaction(
+										  ((String) reactions.getSelectedValue()).split(" ")[0]).getNumModifiers() == 1) {
+						modifiers.setSelectedIndex(0);
+					      }
+					      else {
+						modifiers.setSelectedIndex(index);
+					      }
+					    }
+					    catch (Exception e2) {
+					      modifiers.setSelectedIndex(0);
+					    }
+					  }
+					}
+					change = true;
+					if (error) {
+						value = JOptionPane.showOptionDialog(biosim.frame(), modifiersPanel, "Modifiers Editor",
+								JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+					}
+				}
+			}
+			if (value == JOptionPane.NO_OPTION) {
+				return;
+			}
+		}
+	}
+
+	/**
 	 * Creates a frame used to edit reactants or create new ones.
 	 */
 	public void reactantsEditor(String option) {
+		libsbml sbmlLib = new libsbml();
 		if (option.equals("OK") && reactants.getSelectedIndex() == -1) {
 			JOptionPane.showMessageDialog(biosim.frame(), "No reactant selected.",
 					"Must Select A Reactant", JOptionPane.ERROR_MESSAGE);
@@ -6084,7 +6381,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		else {
 			JPanel reactantsPanel = new JPanel(new GridLayout(2, 2));
 			JLabel speciesLabel = new JLabel("Species:");
-			JLabel stoiciLabel = new JLabel("Stoichiometry:");
+			Object [] stoiciOptions = { "Stoichiometry", "Stoichiometry Math" };
+			stoiciLabel = new JComboBox(stoiciOptions);
 			ListOf listOfSpecies = document.getModel().getListOfSpecies();
 			String[] speciesList = new String[(int) document.getModel().getNumSpecies()];
 			for (int i = 0; i < document.getModel().getNumSpecies(); i++) {
@@ -6103,7 +6401,12 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					}
 				}
 				reactantSpecies.setSelectedItem(reactant.getSpecies());
-				reactantStoiciometry.setText("" + reactant.getStoichiometry());
+				if (reactant.isSetStoichiometryMath()) {
+				  stoiciLabel.setSelectedItem("Stoichiometry Math");
+				  reactantStoiciometry.setText("" + sbmlLib.formulaToString(reactant.getStoichiometryMath().getMath()));
+				} else {
+				  reactantStoiciometry.setText("" + reactant.getStoichiometry());
+				}
 			}
 			reactantsPanel.add(speciesLabel);
 			reactantsPanel.add(reactantSpecies);
@@ -6123,8 +6426,14 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				while (error && value == JOptionPane.YES_OPTION) {
 					error = false;
 					try {
-						double val = Double.parseDouble(reactantStoiciometry.getText().trim());
-						String react = reactantSpecies.getSelectedItem() + " " + val;
+					        String react;
+						double val = 1.0;
+					        if (stoiciLabel.getSelectedItem().equals("Stoichiometry")) {
+						  val = Double.parseDouble(reactantStoiciometry.getText().trim());
+						  react = reactantSpecies.getSelectedItem() + " " + val;
+						} else {
+						  react = reactantSpecies.getSelectedItem() + " " + reactantStoiciometry.getText().trim();
+						}
 						if (option.equals("OK")) {
 							int index = reactants.getSelectedIndex();
 							reactants.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
@@ -6142,6 +6451,18 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 									}
 								}
 							}
+							if (stoiciLabel.getSelectedItem().equals("Stoichiometry Math")) {
+							  if (reactantStoiciometry.getText().trim().equals("")) {
+							    JOptionPane.showMessageDialog(biosim.frame(), "Stoichiometry math must have formula.",
+											  "Enter Stoichiometry Formula", JOptionPane.ERROR_MESSAGE);
+							    error = true;
+							  }
+							  else if (sbmlLib.parseFormula(reactantStoiciometry.getText().trim()) == null) {
+							    JOptionPane.showMessageDialog(biosim.frame(), "Stoichiometry formula is not valid.",
+											  "Enter Valid Formula", JOptionPane.ERROR_MESSAGE);
+							    error = true;
+							  }
+							}
 							if (!error) {
 								String v = ((String) reactants.getSelectedValue()).split(" ")[0];
 								SpeciesReference reactan = null;
@@ -6154,7 +6475,13 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 								reacta = Buttons.getList(reacta, reactants);
 								reactants.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 								reactan.setSpecies((String) reactantSpecies.getSelectedItem());
-								reactan.setStoichiometry(val);
+								if (stoiciLabel.getSelectedItem().equals("Stoichiometry")) {
+								  reactan.setStoichiometry(val);
+								  reactan.unsetStoichiometryMath();
+								} else {
+								  StoichiometryMath sm = new StoichiometryMath(sbmlLib.parseFormula(reactantStoiciometry.getText().trim()));
+								  reactan.setStoichiometryMath(sm);
+								}
 								reacta[index] = react;
 								sort(reacta);
 								reactants.setListData(reacta);
@@ -6176,11 +6503,29 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 											"Species Can Only Be Used Once", JOptionPane.ERROR_MESSAGE);
 								}
 							}
+							if (stoiciLabel.getSelectedItem().equals("Stoichiometry Math")) {
+							  if (reactantStoiciometry.getText().trim().equals("")) {
+							    JOptionPane.showMessageDialog(biosim.frame(), "Stoichiometry math must have formula.",
+											  "Enter Stoichiometry Formula", JOptionPane.ERROR_MESSAGE);
+							    error = true;
+							  }
+							  else if (sbmlLib.parseFormula(reactantStoiciometry.getText().trim()) == null) {
+							    JOptionPane.showMessageDialog(biosim.frame(), "Stoichiometry formula is not valid.",
+											  "Enter Valid Formula", JOptionPane.ERROR_MESSAGE);
+							    error = true;
+							  }
+							}
 							if (!error) {
 								SpeciesReference reactan = new SpeciesReference();
 								changedReactants.add(reactan);
 								reactan.setSpecies((String) reactantSpecies.getSelectedItem());
-								reactan.setStoichiometry(val);
+								if (stoiciLabel.getSelectedItem().equals("Stoichiometry")) {
+								  reactan.setStoichiometry(val);
+								  reactan.unsetStoichiometryMath();
+								} else {
+								  StoichiometryMath sm = new StoichiometryMath(sbmlLib.parseFormula(reactantStoiciometry.getText().trim()));
+								  reactan.setStoichiometryMath(sm);
+								}
 								JList add = new JList();
 								Object[] adding = { react };
 								add.setListData(adding);
@@ -6285,6 +6630,11 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			else if (e.getSource() == products) {
 				if (!paramsOnly) {
 					productsEditor("OK");
+				}
+			}
+			else if (e.getSource() == modifiers) {
+				if (!paramsOnly) {
+					modifiersEditor("OK");
 				}
 			}
 		}
