@@ -92,7 +92,7 @@
 	  </javac>	
         <jar jarfile="${build.lib}/gui.jar" basedir="${build.classes}">
 	    <manifest>
-		<attribute name="Main-Class" value="biomodelsim.core.gui.BioSim"/>
+		<attribute name="Main-Class" value="biomodelsim.BioSim"/>
 		<attribute name="Class-Path" value="../../lib/jcommon-1.0.10.jar ../../lib/jfreechart-1.0.6.jar ../../lib/itext-2.0.3.jar ../../lib/batik-anim.jar ../../lib/batik-awt-util.jar ../../lib/batik-bridge.jar ../../lib/batik-codec.jar ../../lib/batik-css.jar ../../lib/batik-dom.jar ../../lib/batik-ext.jar ../../lib/batik-extension.jar ../../lib/batik-gui-util.jar ../../lib/batik-gvt.jar ../../lib/batik-parser.jar ../../lib/batik-script.jar ../../lib/batik-svg-dom.jar ../../lib/batik-svggen.jar ../../lib/batik-swing.jar ../../lib/batik-transcoder.jar ../../lib/batik-util.jar ../../lib/batik-xml.jar ../../lib/js.jar ../../lib/pdf-transcoder.jar ../../lib/xalan-2.6.0.jar ../../lib/xerces_2_5_0.jar ../../lib/xml-apis.jar ../../lib/xml-apis-ext.jar ../../lib/epsgraphics.jar ../../lib/libsbml/lib/libsbmlj.jar"/>
       	    </manifest>
 	</jar>
