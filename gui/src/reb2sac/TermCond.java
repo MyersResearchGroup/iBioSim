@@ -11,12 +11,12 @@
 //### Please send bug reports to tom@hukatronic.cz
 //### static char yysccsid[] = "@(#)yaccpar	1.8 (Berkeley) 01/20/90";
 
-package reb2sac.core.gui;
+package reb2sac;
 
 //#line 2 "TermCond.y"
 import java.util.*;
 import javax.swing.*;
-import biomodelsim.core.gui.*;
+import biomodelsim.*;
 
 //#line 25 "TermCond.java"
 

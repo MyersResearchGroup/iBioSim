@@ -1,12 +1,12 @@
-package reb2sac.core.gui;
+package reb2sac;
 
 import java.io.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
-import biomodelsim.core.gui.*;
-import buttons.core.gui.*;
+import biomodelsim.*;
+import buttons.*;
 
 /**
  * This is the Nary_Run class. It creates a GUI for input in the nary

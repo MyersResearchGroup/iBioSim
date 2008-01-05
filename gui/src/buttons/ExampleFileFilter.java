@@ -1,4 +1,4 @@
-package buttons.core.gui;
+package buttons;
 
 /*
  * @(#)ExampleFileFilter.java	1.9 99/04/23

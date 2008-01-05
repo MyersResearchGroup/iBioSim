@@ -1,4 +1,4 @@
-package graph.core.gui;
+package graph;
 
 import java.io.*;
 import java.awt.*;
@@ -15,6 +15,7 @@ import org.jfree.chart.*;
 import org.jfree.chart.axis.*;
 import org.jfree.chart.event.*;
 import org.jfree.chart.plot.*;
+import org.jfree.chart.renderer.category.*;
 import org.jfree.chart.renderer.xy.*;
 import org.jfree.data.category.*;
 import org.jfree.data.xy.*;
@@ -23,8 +24,8 @@ import org.w3c.dom.*;
 import com.lowagie.text.Document;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.*;
-import biomodelsim.core.gui.*;
-import buttons.core.gui.*;
+import biomodelsim.*;
+import buttons.*;
 
 /**
  * This is the Graph class. It takes in data and draws a graph of that data. The
@@ -73,6 +74,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 	private LinkedList<GraphSpecies> graphed;
 
+	private LinkedList<GraphProbs> probGraphed;
+
 	private JCheckBox resize;
 
 	private Log log;
@@ -105,6 +108,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 	private boolean change;
 
+	private boolean timeSeries;
+
+	private ArrayList<String> graphProbs;
+
 	/**
 	 * Creates a Graph Object from the data given and calls the private graph
 	 * helper method.
@@ -120,11 +127,22 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 		// initializes member variables
 		this.log = log;
-		if (graphName != null) {
-			this.graphName = graphName;
+		this.timeSeries = timeSeries;
+		if (timeSeries) {
+			if (graphName != null) {
+				this.graphName = graphName;
+			}
+			else {
+				this.graphName = outDir.split(separator)[outDir.split(separator).length - 1] + ".grf";
+			}
 		}
 		else {
-			this.graphName = outDir.split(separator)[outDir.split(separator).length - 1] + ".grf";
+			if (graphName != null) {
+				this.graphName = graphName;
+			}
+			else {
+				this.graphName = outDir.split(separator)[outDir.split(separator).length - 1] + ".prb";
+			}
 		}
 		this.outDir = outDir;
 		this.printer_id = printer_id;
@@ -143,7 +161,14 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			}
 		}
 		else {
+			setUpShapesAndColors();
+			probGraphed = new LinkedList<GraphProbs>();
+			selected = "";
+			lastSelected = "";
 			probGraph(label);
+			if (open != null) {
+				open(open);
+			}
 		}
 	}
 
@@ -544,7 +569,12 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	 * title and labels of the chart.
 	 */
 	public void mouseClicked(MouseEvent e) {
-		editGraph();
+		if (timeSeries) {
+			editGraph();
+		}
+		else {
+			editProbGraph();
+		}
 	}
 
 	/**
@@ -859,10 +889,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						if (select != -1) {
 							specPanel.removeAll();
 							if (directories.contains(node.getParent().toString())) {
-								specPanel.add(fixGraphCoices(node.getParent().toString()));
+								specPanel.add(fixGraphChoices(node.getParent().toString()));
 							}
 							else {
-								specPanel.add(fixGraphCoices(""));
+								specPanel.add(fixGraphChoices(""));
 							}
 							specPanel.revalidate();
 							specPanel.repaint();
@@ -910,6 +940,64 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							for (int i = 0; i < boxes.size(); i++) {
 								if (!boxes.get(i).isSelected()) {
 									allChecked = false;
+									String s = "";
+									s = e.getPath().getLastPathComponent().toString();
+									if (directories.contains(node.getParent().toString())) {
+										if (s.equals("Average")) {
+											s = "(" + node.getParent().toString() + ", " + (char) 967 + ")";
+										}
+										else if (s.equals("Variance")) {
+											s = "(" + node.getParent().toString() + ", " + (char) 948 + (char) 178 + ")";
+										}
+										else if (s.equals("Standard Deviation")) {
+											s = "(" + node.getParent().toString() + ", " + (char) 948 + ")";
+										}
+										else {
+											if (s.contains("-run")) {
+												s = s.substring(0, s.length() - 4);
+											}
+											else if (s.contains("run-")) {
+												s = s.substring(4);
+											}
+											s = "(" + node.getParent().toString() + ", " + s + ")";
+										}
+									}
+									else {
+										if (s.equals("Average")) {
+											s = "(" + (char) 967 + ")";
+										}
+										else if (s.equals("Variance")) {
+											s = "(" + (char) 948 + (char) 178 + ")";
+										}
+										else if (s.equals("Standard Deviation")) {
+											s = "(" + (char) 948 + ")";
+										}
+										else {
+											if (s.contains("-run")) {
+												s = s.substring(0, s.length() - 4);
+											}
+											else if (s.contains("run-")) {
+												s = s.substring(4);
+											}
+											s = "(" + s + ")";
+										}
+									}
+									String text = graphSpecies.get(i + 1);
+									String end = "";
+									if (text.length() >= s.length()) {
+										for (int j = 0; j < s.length(); j++) {
+											end = text.charAt(text.length() - 1 - j) + end;
+										}
+										if (!s.equals(end)) {
+											text += " " + s;
+										}
+									}
+									else {
+										text += " " + s;
+									}
+									boxes.get(i).setName(text);
+								}
+								else {
 									String s = "";
 									s = e.getPath().getLastPathComponent().toString();
 									if (directories.contains(node.getParent().toString())) {
@@ -1584,7 +1672,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		}
 	}
 
-	private JPanel fixGraphCoices(final String directory) {
+	private JPanel fixGraphChoices(final String directory) {
 		if (directory.equals("")) {
 			if (selected.equals("Average") || selected.equals("Variance")
 					|| selected.equals("Standard Deviation")) {
@@ -2869,97 +2957,150 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	}
 
 	public void save() {
-		Properties graph = new Properties();
-		graph.setProperty("title", chart.getTitle().getText());
-		graph.setProperty("x.axis", chart.getXYPlot().getDomainAxis().getLabel());
-		graph.setProperty("y.axis", chart.getXYPlot().getRangeAxis().getLabel());
-		graph.setProperty("x.min", XMin.getText());
-		graph.setProperty("x.max", XMax.getText());
-		graph.setProperty("x.scale", XScale.getText());
-		graph.setProperty("y.min", YMin.getText());
-		graph.setProperty("y.max", YMax.getText());
-		graph.setProperty("y.scale", YScale.getText());
-		graph.setProperty("auto.resize", "" + resize.isSelected());
-		for (int i = 0; i < graphed.size(); i++) {
-			graph.setProperty("species.connected." + i, "" + graphed.get(i).getConnected());
-			graph.setProperty("species.filled." + i, "" + graphed.get(i).getFilled());
-			graph.setProperty("species.number." + i, "" + graphed.get(i).getNumber());
-			graph.setProperty("species.run.number." + i, graphed.get(i).getRunNumber());
-			graph.setProperty("species.name." + i, graphed.get(i).getSpecies());
-			graph.setProperty("species.id." + i, graphed.get(i).getID());
-			graph.setProperty("species.visible." + i, "" + graphed.get(i).getVisible());
-			graph.setProperty("species.paint." + i, graphed.get(i).getShapeAndPaint().getPaintName());
-			graph.setProperty("species.shape." + i, graphed.get(i).getShapeAndPaint().getShapeName());
-			graph.setProperty("species.directory." + i, graphed.get(i).getDirectory());
+		if (timeSeries) {
+			Properties graph = new Properties();
+			graph.setProperty("title", chart.getTitle().getText());
+			graph.setProperty("x.axis", chart.getXYPlot().getDomainAxis().getLabel());
+			graph.setProperty("y.axis", chart.getXYPlot().getRangeAxis().getLabel());
+			graph.setProperty("x.min", XMin.getText());
+			graph.setProperty("x.max", XMax.getText());
+			graph.setProperty("x.scale", XScale.getText());
+			graph.setProperty("y.min", YMin.getText());
+			graph.setProperty("y.max", YMax.getText());
+			graph.setProperty("y.scale", YScale.getText());
+			graph.setProperty("auto.resize", "" + resize.isSelected());
+			for (int i = 0; i < graphed.size(); i++) {
+				graph.setProperty("species.connected." + i, "" + graphed.get(i).getConnected());
+				graph.setProperty("species.filled." + i, "" + graphed.get(i).getFilled());
+				graph.setProperty("species.number." + i, "" + graphed.get(i).getNumber());
+				graph.setProperty("species.run.number." + i, graphed.get(i).getRunNumber());
+				graph.setProperty("species.name." + i, graphed.get(i).getSpecies());
+				graph.setProperty("species.id." + i, graphed.get(i).getID());
+				graph.setProperty("species.visible." + i, "" + graphed.get(i).getVisible());
+				graph.setProperty("species.paint." + i, graphed.get(i).getShapeAndPaint().getPaintName());
+				graph.setProperty("species.shape." + i, graphed.get(i).getShapeAndPaint().getShapeName());
+				graph.setProperty("species.directory." + i, graphed.get(i).getDirectory());
+			}
+			try {
+				FileOutputStream store = new FileOutputStream(new File(outDir + separator + graphName));
+				graph.store(store, "Graph Data");
+				store.close();
+				log.addText("Creating graph file:\n" + outDir + separator + graphName + "\n");
+				change = false;
+			}
+			catch (Exception except) {
+				JOptionPane.showMessageDialog(biomodelsim.frame(), "Unable To Save Graph!", "Error",
+						JOptionPane.ERROR_MESSAGE);
+			}
 		}
-		try {
-			FileOutputStream store = new FileOutputStream(new File(outDir + separator + graphName));
-			graph.store(store, "Graph Data");
-			store.close();
-			log.addText("Creating graph file:\n" + outDir + separator + graphName + "\n");
-			change = false;
-		}
-		catch (Exception except) {
-			JOptionPane.showMessageDialog(biomodelsim.frame(), "Unable To Save Graph!", "Error",
-					JOptionPane.ERROR_MESSAGE);
+		else {
+			Properties graph = new Properties();
+			graph.setProperty("title", chart.getTitle().getText());
+			graph.setProperty("x.axis", chart.getCategoryPlot().getDomainAxis().getLabel());
+			graph.setProperty("y.axis", chart.getCategoryPlot().getRangeAxis().getLabel());
+			for (int i = 0; i < probGraphed.size(); i++) {
+				graph.setProperty("species.number." + i, "" + probGraphed.get(i).getNumber());
+				graph.setProperty("species.name." + i, probGraphed.get(i).getSpecies());
+				graph.setProperty("species.id." + i, probGraphed.get(i).getID());
+				graph.setProperty("species.paint." + i, probGraphed.get(i).getPaintName());
+				graph.setProperty("species.directory." + i, probGraphed.get(i).getDirectory());
+			}
+			try {
+				FileOutputStream store = new FileOutputStream(new File(outDir + separator + graphName));
+				graph.store(store, "Probability Data");
+				store.close();
+				log.addText("Creating graph file:\n" + outDir + separator + graphName + "\n");
+				change = false;
+			}
+			catch (Exception except) {
+				JOptionPane.showMessageDialog(biomodelsim.frame(), "Unable To Save Graph!", "Error",
+						JOptionPane.ERROR_MESSAGE);
+			}
 		}
 	}
 
 	private void open(String filename) {
-		Properties graph = new Properties();
-		try {
-			FileInputStream load = new FileInputStream(new File(filename));
-			graph.load(load);
-			load.close();
-			XMin.setText(graph.getProperty("x.min"));
-			XMax.setText(graph.getProperty("x.max"));
-			XScale.setText(graph.getProperty("x.scale"));
-			YMin.setText(graph.getProperty("y.min"));
-			YMax.setText(graph.getProperty("y.max"));
-			YScale.setText(graph.getProperty("y.scale"));
-			chart.setTitle(graph.getProperty("title"));
-			chart.getXYPlot().getDomainAxis().setLabel(graph.getProperty("x.axis"));
-			chart.getXYPlot().getRangeAxis().setLabel(graph.getProperty("y.axis"));
-			if (graph.getProperty("auto.resize").equals("true")) {
-				resize.setSelected(true);
-			}
-			else {
-				resize.setSelected(false);
-			}
-			int next = 0;
-			while (graph.containsKey("species.name." + next)) {
-				boolean connected, filled, visible;
-				if (graph.getProperty("species.connected." + next).equals("true")) {
-					connected = true;
+		if (timeSeries) {
+			Properties graph = new Properties();
+			try {
+				FileInputStream load = new FileInputStream(new File(filename));
+				graph.load(load);
+				load.close();
+				XMin.setText(graph.getProperty("x.min"));
+				XMax.setText(graph.getProperty("x.max"));
+				XScale.setText(graph.getProperty("x.scale"));
+				YMin.setText(graph.getProperty("y.min"));
+				YMax.setText(graph.getProperty("y.max"));
+				YScale.setText(graph.getProperty("y.scale"));
+				chart.setTitle(graph.getProperty("title"));
+				chart.getXYPlot().getDomainAxis().setLabel(graph.getProperty("x.axis"));
+				chart.getXYPlot().getRangeAxis().setLabel(graph.getProperty("y.axis"));
+				if (graph.getProperty("auto.resize").equals("true")) {
+					resize.setSelected(true);
 				}
 				else {
-					connected = false;
+					resize.setSelected(false);
 				}
-				if (graph.getProperty("species.filled." + next).equals("true")) {
-					filled = true;
+				int next = 0;
+				while (graph.containsKey("species.name." + next)) {
+					boolean connected, filled, visible;
+					if (graph.getProperty("species.connected." + next).equals("true")) {
+						connected = true;
+					}
+					else {
+						connected = false;
+					}
+					if (graph.getProperty("species.filled." + next).equals("true")) {
+						filled = true;
+					}
+					else {
+						filled = false;
+					}
+					if (graph.getProperty("species.visible." + next).equals("true")) {
+						visible = true;
+					}
+					else {
+						visible = false;
+					}
+					graphed.add(new GraphSpecies(shapes.get(graph.getProperty("species.shape." + next)),
+							colors.get(graph.getProperty("species.paint." + next)), filled, visible, connected,
+							graph.getProperty("species.run.number." + next), graph.getProperty("species.id."
+									+ next), graph.getProperty("species.name." + next), Integer.parseInt(graph
+									.getProperty("species.number." + next)), graph.getProperty("species.directory."
+									+ next)));
+					next++;
 				}
-				else {
-					filled = false;
-				}
-				if (graph.getProperty("species.visible." + next).equals("true")) {
-					visible = true;
-				}
-				else {
-					visible = false;
-				}
-				graphed.add(new GraphSpecies(shapes.get(graph.getProperty("species.shape." + next)), colors
-						.get(graph.getProperty("species.paint." + next)), filled, visible, connected, graph
-						.getProperty("species.run.number." + next), graph.getProperty("species.id." + next),
-						graph.getProperty("species.name." + next), Integer.parseInt(graph
-								.getProperty("species.number." + next)), graph.getProperty("species.directory."
-								+ next)));
-				next++;
+				refresh();
 			}
-			refresh();
+			catch (Exception except) {
+				JOptionPane.showMessageDialog(biomodelsim.frame(), "Unable To Load Graph!", "Error",
+						JOptionPane.ERROR_MESSAGE);
+			}
 		}
-		catch (Exception except) {
-			JOptionPane.showMessageDialog(biomodelsim.frame(), "Unable To Load Graph!", "Error",
-					JOptionPane.ERROR_MESSAGE);
+		else {
+			Properties graph = new Properties();
+			try {
+				FileInputStream load = new FileInputStream(new File(filename));
+				graph.load(load);
+				load.close();
+				chart.setTitle(graph.getProperty("title"));
+				chart.getCategoryPlot().getDomainAxis().setLabel(graph.getProperty("x.axis"));
+				chart.getCategoryPlot().getRangeAxis().setLabel(graph.getProperty("y.axis"));
+				int next = 0;
+				while (graph.containsKey("species.name." + next)) {
+					probGraphed.add(new GraphProbs(colors.get(graph.getProperty("species.paint." + next)),
+							graph.getProperty("species.paint." + next), graph.getProperty("species.id." + next),
+							graph.getProperty("species.name." + next), Integer.parseInt(graph
+									.getProperty("species.number." + next)), graph.getProperty("species.directory."
+									+ next)));
+					next++;
+				}
+				refreshProb();
+			}
+			catch (Exception except) {
+				JOptionPane.showMessageDialog(biomodelsim.frame(), "Unable To Load Graph!", "Error",
+						JOptionPane.ERROR_MESSAGE);
+			}
 		}
 	}
 
@@ -3482,10 +3623,748 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	}
 
 	private void probGraph(String label) {
-		DefaultCategoryDataset histDataset = new DefaultCategoryDataset();
+		chart = ChartFactory.createBarChart(label, "", "Percent", new DefaultCategoryDataset(),
+				PlotOrientation.VERTICAL, true, true, false);
+		ChartPanel graph = new ChartPanel(chart);
+		graph.setLayout(new GridLayout(1, 1));
+		JLabel edit = new JLabel("Click here to create graph");
+		Font font = edit.getFont();
+		font = font.deriveFont(Font.BOLD, 42.0f);
+		edit.setFont(font);
+		edit.setHorizontalAlignment(SwingConstants.CENTER);
+		graph.add(edit);
+		graph.addMouseListener(this);
+		change = false;
+
+		// creates the buttons for the graph frame
+		JPanel ButtonHolder = new JPanel();
+		save = new JButton("Save Graph");
+		export = new JButton("Export");
+		save.addActionListener(this);
+		export.addActionListener(this);
+		ButtonHolder.add(save);
+		ButtonHolder.add(export);
+
+		// puts all the components of the graph gui into a display panel
+		JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, ButtonHolder, null);
+		splitPane.setDividerSize(0);
+		this.removeAll();
+		this.setLayout(new BorderLayout());
+		this.add(graph, "Center");
+		this.add(splitPane, "South");
+	}
+
+	private void editProbGraph() {
+		final ArrayList<GraphProbs> old = new ArrayList<GraphProbs>();
+		for (GraphProbs g : probGraphed) {
+			old.add(g);
+		}
+		JPanel titlePanel = new JPanel(new GridLayout(2, 6));
+		JLabel titleLabel = new JLabel("Title:");
+		JLabel xLabel = new JLabel("X-Axis Label:");
+		JLabel yLabel = new JLabel("Y-Axis Label:");
+		final JTextField title = new JTextField(chart.getTitle().getText(), 5);
+		final JTextField x = new JTextField(chart.getCategoryPlot().getDomainAxis().getLabel(), 5);
+		final JTextField y = new JTextField(chart.getCategoryPlot().getRangeAxis().getLabel(), 5);
+		String simDirString = outDir.split(separator)[outDir.split(separator).length - 1];
+		final DefaultMutableTreeNode simDir = new DefaultMutableTreeNode(simDirString);
+		String[] files = new File(outDir).list();
+		for (int i = 1; i < files.length; i++) {
+			String index = files[i];
+			int j = i;
+			while ((j > 0) && files[j - 1].compareToIgnoreCase(index) > 0) {
+				files[j] = files[j - 1];
+				j = j - 1;
+			}
+			files[j] = index;
+		}
+		final ArrayList<String> directories = new ArrayList<String>();
+		for (String file : files) {
+			if (file.length() > 3 && file.substring(file.length() - 4).equals(".txt")) {
+				if (file.contains("sim-rep")) {
+					simDir.add(new DefaultMutableTreeNode(file.substring(0, file.length() - 4)));
+				}
+			}
+			else if (new File(outDir + separator + file).isDirectory()) {
+				boolean addIt = false;
+				for (String getFile : new File(outDir + separator + file).list()) {
+					if (getFile.length() > 3 && getFile.substring(getFile.length() - 4).equals(".txt")
+							&& getFile.contains("sim-rep")) {
+						addIt = true;
+					}
+				}
+				if (addIt) {
+					directories.add(file);
+					DefaultMutableTreeNode d = new DefaultMutableTreeNode(file);
+					for (String f : new File(outDir + separator + file).list()) {
+						if (f.contains(".txt") && f.contains("sim-rep")) {
+							d.add(new DefaultMutableTreeNode(f.substring(0, f.length() - 4)));
+						}
+					}
+				}
+			}
+		}
+		if (simDir.getChildCount() == 0) {
+			JOptionPane.showMessageDialog(biomodelsim.frame(), "No data to graph."
+					+ "\nPerform some simutations to create some data first.", "No Data",
+					JOptionPane.PLAIN_MESSAGE);
+		}
+		else {
+			final JTree tree = new JTree(simDir);
+			for (int i = 0; i < tree.getRowCount(); i++) {
+				tree.expandRow(i);
+			}
+			JScrollPane scrollpane = new JScrollPane();
+			scrollpane.getViewport().add(tree);
+			final JPanel specPanel = new JPanel();
+			boolean stop = false;
+			int selectionRow = 1;
+			for (int i = 1; i < tree.getRowCount(); i++) {
+				tree.setSelectionRow(i);
+				if (selected.equals(lastSelected)) {
+					stop = true;
+					selectionRow = i;
+					break;
+				}
+			}
+			tree.addTreeSelectionListener(new TreeSelectionListener() {
+				public void valueChanged(TreeSelectionEvent e) {
+					DefaultMutableTreeNode node = (DefaultMutableTreeNode) e.getPath().getLastPathComponent();
+					if (!directories.contains(node.toString())) {
+						selected = node.toString();
+						int select;
+						if (selected.equals("sim-rep")) {
+							select = 0;
+						}
+						else {
+							select = -1;
+						}
+						if (select != -1) {
+							specPanel.removeAll();
+							if (directories.contains(node.getParent().toString())) {
+								specPanel.add(fixProbChoices(node.getParent().toString()));
+							}
+							else {
+								specPanel.add(fixProbChoices(""));
+							}
+							specPanel.revalidate();
+							specPanel.repaint();
+							for (int i = 0; i < series.size(); i++) {
+								series.get(i).setText(graphProbs.get(i));
+							}
+							for (int i = 0; i < boxes.size(); i++) {
+								boxes.get(i).setSelected(false);
+							}
+							if (directories.contains(node.getParent().toString())) {
+								for (GraphProbs g : probGraphed) {
+									if (g.getDirectory().equals(node.getParent().toString())) {
+										boxes.get(g.getNumber()).setSelected(true);
+										series.get(g.getNumber()).setText(g.getSpecies());
+										colorsCombo.get(g.getNumber()).setSelectedItem(g.getPaintName());
+									}
+								}
+							}
+							else {
+								for (GraphProbs g : probGraphed) {
+									if (g.getDirectory().equals("")) {
+										boxes.get(g.getNumber()).setSelected(true);
+										series.get(g.getNumber()).setText(g.getSpecies());
+										colorsCombo.get(g.getNumber()).setSelectedItem(g.getPaintName());
+									}
+								}
+							}
+							boolean allChecked = true;
+							for (int i = 0; i < boxes.size(); i++) {
+								if (!boxes.get(i).isSelected()) {
+									allChecked = false;
+									String s = "";
+									if (directories.contains(node.getParent().toString())) {
+										s = "(" + node.getParent().toString() + ")";
+									}
+									String text = series.get(i).getText();
+									String end = "";
+									if (!s.equals("")) {
+										if (text.length() >= s.length()) {
+											for (int j = 0; j < s.length(); j++) {
+												end = text.charAt(text.length() - 1 - j) + end;
+											}
+											if (!s.equals(end)) {
+												text += " " + s;
+											}
+										}
+										else {
+											text += " " + s;
+										}
+									}
+									boxes.get(i).setName(text);
+									series.get(i).setText(text);
+									colorsCombo.get(i).setSelectedIndex(0);
+								}
+								else {
+									String s = "";
+									if (directories.contains(node.getParent().toString())) {
+										s = "(" + node.getParent().toString() + ")";
+									}
+									String text = graphProbs.get(i);
+									String end = "";
+									if (!s.equals("")) {
+										if (text.length() >= s.length()) {
+											for (int j = 0; j < s.length(); j++) {
+												end = text.charAt(text.length() - 1 - j) + end;
+											}
+											if (!s.equals(end)) {
+												text += " " + s;
+											}
+										}
+										else {
+											text += " " + s;
+										}
+									}
+									boxes.get(i).setName(text);
+								}
+							}
+							if (allChecked) {
+								use.setSelected(true);
+							}
+							else {
+								use.setSelected(false);
+							}
+						}
+					}
+					else {
+						specPanel.removeAll();
+						specPanel.revalidate();
+						specPanel.repaint();
+					}
+				}
+			});
+			if (!stop) {
+				tree.setSelectionRow(0);
+				tree.setSelectionRow(1);
+			}
+			else {
+				tree.setSelectionRow(0);
+				tree.setSelectionRow(selectionRow);
+			}
+			JScrollPane scroll = new JScrollPane();
+			scroll.setPreferredSize(new Dimension(1050, 500));
+			JPanel editPanel = new JPanel(new BorderLayout());
+			editPanel.add(titlePanel, "North");
+			editPanel.add(specPanel, "Center");
+			editPanel.add(scrollpane, "West");
+			scroll.setViewportView(editPanel);
+			final JButton deselect = new JButton("Deselect All");
+			deselect.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					int size = probGraphed.size();
+					for (int i = 0; i < size; i++) {
+						probGraphed.remove();
+					}
+					if (tree.getSelectionCount() > 0) {
+						int selectedRow = tree.getSelectionRows()[0];
+						tree.setSelectionRow(0);
+						tree.setSelectionRow(selectedRow);
+					}
+				}
+			});
+			titlePanel.add(titleLabel);
+			titlePanel.add(title);
+			titlePanel.add(xLabel);
+			titlePanel.add(x);
+			titlePanel.add(yLabel);
+			titlePanel.add(y);
+			titlePanel.add(new JPanel());
+			JPanel deselectPanel = new JPanel();
+			deselectPanel.add(deselect);
+			titlePanel.add(deselectPanel);
+			titlePanel.add(new JPanel());
+			titlePanel.add(new JPanel());
+			titlePanel.add(new JPanel());
+			titlePanel.add(new JPanel());
+			JPanel all = new JPanel(new BorderLayout());
+			all.add(scroll, "Center");
+			Object[] options = { "Ok", "Cancel" };
+			int value = JOptionPane.showOptionDialog(biomodelsim.frame(), all, "Edit Probability Graph",
+					JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+			if (value == JOptionPane.YES_OPTION) {
+				change = true;
+				lastSelected = selected;
+				selected = "";
+				BarRenderer rend = (BarRenderer) chart.getCategoryPlot().getRenderer();
+				int thisOne = -1;
+				for (int i = 1; i < probGraphed.size(); i++) {
+					GraphProbs index = probGraphed.get(i);
+					int j = i;
+					while ((j > 0)
+							&& (probGraphed.get(j - 1).getSpecies().compareToIgnoreCase(index.getSpecies()) > 0)) {
+						probGraphed.set(j, probGraphed.get(j - 1));
+						j = j - 1;
+					}
+					probGraphed.set(j, index);
+				}
+				ArrayList<GraphProbs> unableToGraph = new ArrayList<GraphProbs>();
+				DefaultCategoryDataset histDataset = new DefaultCategoryDataset();
+				for (GraphProbs g : probGraphed) {
+					if (g.getDirectory().equals("")) {
+						thisOne++;
+						rend.setSeriesPaint(thisOne, g.getPaint());
+						if (new File(outDir + separator + "sim-rep.txt").exists()) {
+							readProbSpecies(outDir + separator + "sim-rep.txt");
+							double[] data = readProbs(outDir + separator + "sim-rep.txt");
+							for (int i = 1; i < graphProbs.size(); i++) {
+								String index = graphProbs.get(i);
+								double index2 = data[i];
+								int j = i;
+								while ((j > 0) && graphProbs.get(j - 1).compareToIgnoreCase(index) > 0) {
+									graphProbs.set(j, graphProbs.get(j - 1));
+									data[j] = data[j - 1];
+									j = j - 1;
+								}
+								graphProbs.set(j, index);
+								data[j] = index2;
+							}
+							if (graphProbs.size() != 0) {
+								for (int i = 0; i < graphProbs.size(); i++) {
+									if (g.getID().equals(graphProbs.get(i))) {
+										histDataset.setValue(data[i], g.getSpecies(), "");
+									}
+								}
+							}
+						}
+						else {
+							unableToGraph.add(g);
+							thisOne--;
+						}
+					}
+					else {
+						thisOne++;
+						rend.setSeriesPaint(thisOne, g.getPaint());
+						if (new File(outDir + separator + g.getDirectory() + separator + "sim-rep.txt")
+								.exists()) {
+							readProbSpecies(outDir + separator + g.getDirectory() + separator + "sim-rep.txt");
+							double[] data = readProbs(outDir + separator + g.getDirectory() + separator
+									+ "sim-rep.txt");
+							for (int i = 1; i < graphProbs.size(); i++) {
+								String index = graphProbs.get(i);
+								double index2 = data[i];
+								int j = i;
+								while ((j > 0) && graphProbs.get(j - 1).compareToIgnoreCase(index) > 0) {
+									graphProbs.set(j, graphProbs.get(j - 1));
+									data[j] = data[j - 1];
+									j = j - 1;
+								}
+								graphProbs.set(j, index);
+								data[j] = index2;
+							}
+							if (graphProbs.size() != 0) {
+								for (int i = 0; i < graphProbs.size(); i++) {
+									if (g.getID().equals(graphProbs.get(i))) {
+										histDataset.setValue(data[i], g.getSpecies(), "");
+									}
+								}
+							}
+						}
+						else {
+							unableToGraph.add(g);
+							thisOne--;
+						}
+					}
+				}
+				for (GraphProbs g : unableToGraph) {
+					probGraphed.remove(g);
+				}
+				fixProbGraph(title.getText().trim(), x.getText().trim(), y.getText().trim(), histDataset,
+						rend);
+			}
+			else {
+				selected = "";
+				int size = probGraphed.size();
+				for (int i = 0; i < size; i++) {
+					probGraphed.remove();
+				}
+				for (GraphProbs g : old) {
+					probGraphed.add(g);
+				}
+			}
+		}
+	}
+
+	private JPanel fixProbChoices(final String directory) {
+		if (directory.equals("")) {
+			readProbSpecies(outDir + separator + "sim-rep.txt");
+		}
+		else {
+			readProbSpecies(outDir + separator + directory + separator + "sim-rep.txt");
+		}
+		for (int i = 1; i < graphProbs.size(); i++) {
+			String index = graphProbs.get(i);
+			int j = i;
+			while ((j > 0) && graphProbs.get(j - 1).compareToIgnoreCase(index) > 0) {
+				graphProbs.set(j, graphProbs.get(j - 1));
+				j = j - 1;
+			}
+			graphProbs.set(j, index);
+		}
+		JPanel speciesPanel1 = new JPanel(new GridLayout(graphProbs.size() + 1, 1));
+		JPanel speciesPanel2 = new JPanel(new GridLayout(graphProbs.size() + 1, 2));
+		use = new JCheckBox("Use");
+		JLabel specs = new JLabel("Species");
+		JLabel color = new JLabel("Color");
+		boxes = new ArrayList<JCheckBox>();
+		series = new ArrayList<JTextField>();
+		colorsCombo = new ArrayList<JComboBox>();
+		use.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (use.isSelected()) {
+					for (JCheckBox box : boxes) {
+						if (!box.isSelected()) {
+							box.doClick();
+						}
+					}
+				}
+				else {
+					for (JCheckBox box : boxes) {
+						if (box.isSelected()) {
+							box.doClick();
+						}
+					}
+				}
+			}
+		});
+		speciesPanel1.add(use);
+		speciesPanel2.add(specs);
+		speciesPanel2.add(color);
+		final HashMap<String, Paint> colory = this.colors;
+		for (int i = 0; i < graphProbs.size(); i++) {
+			JCheckBox temp = new JCheckBox();
+			temp.setActionCommand("" + i);
+			temp.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					int i = Integer.parseInt(e.getActionCommand());
+					if (((JCheckBox) e.getSource()).isSelected()) {
+						String s = series.get(i).getText();
+						((JCheckBox) e.getSource()).setSelected(false);
+						int[] cols = new int[34];
+						for (int k = 0; k < boxes.size(); k++) {
+							if (boxes.get(k).isSelected()) {
+								if (colorsCombo.get(k).getSelectedItem().equals("Red")) {
+									cols[0]++;
+								}
+								else if (colorsCombo.get(k).getSelectedItem().equals("Blue")) {
+									cols[1]++;
+								}
+								else if (colorsCombo.get(k).getSelectedItem().equals("Green")) {
+									cols[2]++;
+								}
+								else if (colorsCombo.get(k).getSelectedItem().equals("Yellow")) {
+									cols[3]++;
+								}
+								else if (colorsCombo.get(k).getSelectedItem().equals("Magenta")) {
+									cols[4]++;
+								}
+								else if (colorsCombo.get(k).getSelectedItem().equals("Cyan")) {
+									cols[5]++;
+								}
+								else if (colorsCombo.get(k).getSelectedItem().equals("Tan")) {
+									cols[6]++;
+								}
+								else if (colorsCombo.get(k).getSelectedItem().equals("Gray (Dark)")) {
+									cols[7]++;
+								}
+								else if (colorsCombo.get(k).getSelectedItem().equals("Red (Dark)")) {
+									cols[8]++;
+								}
+								else if (colorsCombo.get(k).getSelectedItem().equals("Blue (Dark)")) {
+									cols[9]++;
+								}
+								else if (colorsCombo.get(k).getSelectedItem().equals("Green (Dark)")) {
+									cols[10]++;
+								}
+								else if (colorsCombo.get(k).getSelectedItem().equals("Yellow (Dark)")) {
+									cols[11]++;
+								}
+								else if (colorsCombo.get(k).getSelectedItem().equals("Magenta (Dark)")) {
+									cols[12]++;
+								}
+								else if (colorsCombo.get(k).getSelectedItem().equals("Cyan (Dark)")) {
+									cols[13]++;
+								}
+								else if (colorsCombo.get(k).getSelectedItem().equals("Black")) {
+									cols[14]++;
+								}
+								else if (colorsCombo.get(k).getSelectedItem().equals("Red ")) {
+									cols[15]++;
+								}
+								else if (colorsCombo.get(k).getSelectedItem().equals("Blue ")) {
+									cols[16]++;
+								}
+								else if (colorsCombo.get(k).getSelectedItem().equals("Green ")) {
+									cols[17]++;
+								}
+								else if (colorsCombo.get(k).getSelectedItem().equals("Yellow ")) {
+									cols[18]++;
+								}
+								else if (colorsCombo.get(k).getSelectedItem().equals("Magenta ")) {
+									cols[19]++;
+								}
+								else if (colorsCombo.get(k).getSelectedItem().equals("Cyan ")) {
+									cols[20]++;
+								}
+								else if (colorsCombo.get(k).getSelectedItem().equals("Gray (Light)")) {
+									cols[21]++;
+								}
+								else if (colorsCombo.get(k).getSelectedItem().equals("Red (Extra Dark)")) {
+									cols[22]++;
+								}
+								else if (colorsCombo.get(k).getSelectedItem().equals("Blue (Extra Dark)")) {
+									cols[23]++;
+								}
+								else if (colorsCombo.get(k).getSelectedItem().equals("Green (Extra Dark)")) {
+									cols[24]++;
+								}
+								else if (colorsCombo.get(k).getSelectedItem().equals("Yellow (Extra Dark)")) {
+									cols[25]++;
+								}
+								else if (colorsCombo.get(k).getSelectedItem().equals("Magenta (Extra Dark)")) {
+									cols[26]++;
+								}
+								else if (colorsCombo.get(k).getSelectedItem().equals("Cyan (Extra Dark)")) {
+									cols[27]++;
+								}
+								else if (colorsCombo.get(k).getSelectedItem().equals("Red (Light)")) {
+									cols[28]++;
+								}
+								else if (colorsCombo.get(k).getSelectedItem().equals("Blue (Light)")) {
+									cols[29]++;
+								}
+								else if (colorsCombo.get(k).getSelectedItem().equals("Green (Light)")) {
+									cols[30]++;
+								}
+								else if (colorsCombo.get(k).getSelectedItem().equals("Yellow (Light)")) {
+									cols[31]++;
+								}
+								else if (colorsCombo.get(k).getSelectedItem().equals("Magenta (Light)")) {
+									cols[32]++;
+								}
+								else if (colorsCombo.get(k).getSelectedItem().equals("Cyan (Light)")) {
+									cols[33]++;
+								}
+							}
+						}
+						for (GraphProbs graph : probGraphed) {
+							if (graph.getPaintName().equals("Red")) {
+								cols[0]++;
+							}
+							else if (graph.getPaintName().equals("Blue")) {
+								cols[1]++;
+							}
+							else if (graph.getPaintName().equals("Green")) {
+								cols[2]++;
+							}
+							else if (graph.getPaintName().equals("Yellow")) {
+								cols[3]++;
+							}
+							else if (graph.getPaintName().equals("Magenta")) {
+								cols[4]++;
+							}
+							else if (graph.getPaintName().equals("Cyan")) {
+								cols[5]++;
+							}
+							else if (graph.getPaintName().equals("Tan")) {
+								cols[6]++;
+							}
+							else if (graph.getPaintName().equals("Gray (Dark)")) {
+								cols[7]++;
+							}
+							else if (graph.getPaintName().equals("Red (Dark)")) {
+								cols[8]++;
+							}
+							else if (graph.getPaintName().equals("Blue (Dark)")) {
+								cols[9]++;
+							}
+							else if (graph.getPaintName().equals("Green (Dark)")) {
+								cols[10]++;
+							}
+							else if (graph.getPaintName().equals("Yellow (Dark)")) {
+								cols[11]++;
+							}
+							else if (graph.getPaintName().equals("Magenta (Dark)")) {
+								cols[12]++;
+							}
+							else if (graph.getPaintName().equals("Cyan (Dark)")) {
+								cols[13]++;
+							}
+							else if (graph.getPaintName().equals("Black")) {
+								cols[14]++;
+							}
+							else if (graph.getPaintName().equals("Red ")) {
+								cols[15]++;
+							}
+							else if (graph.getPaintName().equals("Blue ")) {
+								cols[16]++;
+							}
+							else if (graph.getPaintName().equals("Green ")) {
+								cols[17]++;
+							}
+							else if (graph.getPaintName().equals("Yellow ")) {
+								cols[18]++;
+							}
+							else if (graph.getPaintName().equals("Magenta ")) {
+								cols[19]++;
+							}
+							else if (graph.getPaintName().equals("Cyan ")) {
+								cols[20]++;
+							}
+							else if (graph.getPaintName().equals("Gray (Light)")) {
+								cols[21]++;
+							}
+							else if (graph.getPaintName().equals("Red (Extra Dark)")) {
+								cols[22]++;
+							}
+							else if (graph.getPaintName().equals("Blue (Extra Dark)")) {
+								cols[23]++;
+							}
+							else if (graph.getPaintName().equals("Green (Extra Dark)")) {
+								cols[24]++;
+							}
+							else if (graph.getPaintName().equals("Yellow (Extra Dark)")) {
+								cols[25]++;
+							}
+							else if (graph.getPaintName().equals("Magenta (Extra Dark)")) {
+								cols[26]++;
+							}
+							else if (graph.getPaintName().equals("Cyan (Extra Dark)")) {
+								cols[27]++;
+							}
+							else if (graph.getPaintName().equals("Red (Light)")) {
+								cols[28]++;
+							}
+							else if (graph.getPaintName().equals("Blue (Light)")) {
+								cols[29]++;
+							}
+							else if (graph.getPaintName().equals("Green (Light)")) {
+								cols[30]++;
+							}
+							else if (graph.getPaintName().equals("Yellow (Light)")) {
+								cols[31]++;
+							}
+							else if (graph.getPaintName().equals("Magenta (Light)")) {
+								cols[32]++;
+							}
+							else if (graph.getPaintName().equals("Cyan (Light)")) {
+								cols[33]++;
+							}
+						}
+						((JCheckBox) e.getSource()).setSelected(true);
+						series.get(i).setText(s);
+						int colorSet = 0;
+						for (int j = 1; j < cols.length; j++) {
+							if (cols[j] < cols[colorSet]) {
+								colorSet = j;
+							}
+						}
+						DefaultDrawingSupplier draw = new DefaultDrawingSupplier();
+						for (int j = 0; j < colorSet; j++) {
+							draw.getNextPaint();
+						}
+						Paint paint = draw.getNextPaint();
+						Object[] set = colory.keySet().toArray();
+						for (int j = 0; j < set.length; j++) {
+							if (paint == colory.get(set[j])) {
+								colorsCombo.get(i).setSelectedItem(set[j]);
+							}
+						}
+						boolean allChecked = true;
+						for (JCheckBox temp : boxes) {
+							if (!temp.isSelected()) {
+								allChecked = false;
+							}
+						}
+						if (allChecked) {
+							use.setSelected(true);
+						}
+						probGraphed.add(new GraphProbs(colory.get(colorsCombo.get(i).getSelectedItem()),
+								(String) colorsCombo.get(i).getSelectedItem(), boxes.get(i).getName(), series
+										.get(i).getText().trim(), i, directory));
+					}
+					else {
+						ArrayList<GraphProbs> remove = new ArrayList<GraphProbs>();
+						for (GraphProbs g : probGraphed) {
+							if (g.getNumber() == i && g.getDirectory().equals(directory)) {
+								remove.add(g);
+							}
+						}
+						for (GraphProbs g : remove) {
+							probGraphed.remove(g);
+						}
+						use.setSelected(false);
+						colorsCombo.get(i).setSelectedIndex(0);
+					}
+				}
+			});
+			boxes.add(temp);
+			JTextField seriesName = new JTextField(graphProbs.get(i));
+			seriesName.setName("" + i);
+			seriesName.addKeyListener(new KeyListener() {
+				public void keyPressed(KeyEvent e) {
+					int i = Integer.parseInt(((JTextField) e.getSource()).getName());
+					for (GraphProbs g : probGraphed) {
+						if (g.getNumber() == i && g.getDirectory().equals(directory)) {
+							g.setSpecies(((JTextField) e.getSource()).getText());
+						}
+					}
+				}
+
+				public void keyReleased(KeyEvent e) {
+					int i = Integer.parseInt(((JTextField) e.getSource()).getName());
+					for (GraphProbs g : probGraphed) {
+						if (g.getNumber() == i && g.getDirectory().equals(directory)) {
+							g.setSpecies(((JTextField) e.getSource()).getText());
+						}
+					}
+				}
+
+				public void keyTyped(KeyEvent e) {
+					int i = Integer.parseInt(((JTextField) e.getSource()).getName());
+					for (GraphProbs g : probGraphed) {
+						if (g.getNumber() == i && g.getDirectory().equals(directory)) {
+							g.setSpecies(((JTextField) e.getSource()).getText());
+						}
+					}
+				}
+			});
+			series.add(seriesName);
+			Object[] col = this.colors.keySet().toArray();
+			Arrays.sort(col);
+			JComboBox colBox = new JComboBox(col);
+			colBox.setActionCommand("" + i);
+			colBox.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					int i = Integer.parseInt(e.getActionCommand());
+					for (GraphProbs g : probGraphed) {
+						if (g.getNumber() == i && g.getDirectory().equals(directory)) {
+							g.setPaintName((String) ((JComboBox) e.getSource()).getSelectedItem());
+							g.setPaint(colory.get(((JComboBox) e.getSource()).getSelectedItem()));
+						}
+					}
+				}
+			});
+			colorsCombo.add(colBox);
+			speciesPanel1.add(boxes.get(i));
+			speciesPanel2.add(series.get(i));
+			speciesPanel2.add(colorsCombo.get(i));
+		}
+		JPanel speciesPanel = new JPanel(new BorderLayout());
+		speciesPanel.add(speciesPanel1, "West");
+		speciesPanel.add(speciesPanel2, "Center");
+		return speciesPanel;
+	}
+
+	private void readProbSpecies(String file) {
+		graphProbs = new ArrayList<String>();
 		ArrayList<String> data = new ArrayList<String>();
 		try {
-			Scanner s = new Scanner(new File(outDir + separator + "sim-rep.txt"));
+			Scanner s = new Scanner(new File(file));
 			while (s.hasNextLine()) {
 				String[] ss = s.nextLine().split(" ");
 				if (data.size() == 0) {
@@ -3503,52 +4382,207 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		catch (Exception e) {
 		}
 		for (String s : data) {
-			double[] dataSet = new double[s.split(" ").length - 1];
-			for (int i = 1; i < s.split(" ").length; i++) {
-				dataSet[i - 1] = Double.parseDouble(s.split(" ")[i]);
-			}
-			for (double d : dataSet) {
-				histDataset.setValue(d, s.split(" ")[0], "");
+			graphProbs.add(s.split(" ")[0]);
+		}
+	}
+
+	private double[] readProbs(String file) {
+		ArrayList<String> data = new ArrayList<String>();
+		try {
+			Scanner s = new Scanner(new File(file));
+			while (s.hasNextLine()) {
+				String[] ss = s.nextLine().split(" ");
+				if (data.size() == 0) {
+					for (String add : ss) {
+						data.add(add);
+					}
+				}
+				else {
+					for (int i = 0; i < ss.length; i++) {
+						data.set(i, data.get(i) + " " + ss[i]);
+					}
+				}
 			}
 		}
-		chart = ChartFactory.createBarChart(label, "", "Percent", histDataset,
-				PlotOrientation.VERTICAL, true, true, false);
-		ChartPanel graph = new ChartPanel(chart);
+		catch (Exception e) {
+		}
+		double[] dataSet = new double[data.size()];
+		for (int i = 0; i < data.size(); i++) {
+			dataSet[i] = Double.parseDouble(data.get(i).split(" ")[1]);
+		}
+		return dataSet;
+	}
 
-		// creates the buttons for the graph frame
+	private void fixProbGraph(String label, String xLabel, String yLabel,
+			DefaultCategoryDataset dataset, BarRenderer rend) {
+		chart = ChartFactory.createBarChart(label, xLabel, yLabel, dataset, PlotOrientation.VERTICAL,
+				true, true, false);
+		chart.getCategoryPlot().setRenderer(rend);
+		ChartPanel graph = new ChartPanel(chart);
+		if (probGraphed.isEmpty()) {
+			graph.setLayout(new GridLayout(1, 1));
+			JLabel edit = new JLabel("Click here to create graph");
+			Font font = edit.getFont();
+			font = font.deriveFont(Font.BOLD, 42.0f);
+			edit.setFont(font);
+			edit.setHorizontalAlignment(SwingConstants.CENTER);
+			graph.add(edit);
+		}
+		graph.addMouseListener(this);
 		JPanel ButtonHolder = new JPanel();
 		save = new JButton("Save Graph");
-		save.setEnabled(false);
 		export = new JButton("Export");
-		// exportJPeg = new JButton("Export As JPEG");
-		// exportPng = new JButton("Export As PNG");
-		// exportPdf = new JButton("Export As PDF");
-		// exportEps = new JButton("Export As EPS");
-		// exportSvg = new JButton("Export As SVG");
-		// exportCsv = new JButton("Export As CSV");
 		save.addActionListener(this);
 		export.addActionListener(this);
-		// exportJPeg.addActionListener(this);
-		// exportPng.addActionListener(this);
-		// exportPdf.addActionListener(this);
-		// exportEps.addActionListener(this);
-		// exportSvg.addActionListener(this);
-		// exportCsv.addActionListener(this);
 		ButtonHolder.add(save);
 		ButtonHolder.add(export);
-		// ButtonHolder.add(exportJPeg);
-		// ButtonHolder.add(exportPng);
-		// ButtonHolder.add(exportPdf);
-		// ButtonHolder.add(exportEps);
-		// ButtonHolder.add(exportSvg);
-		// ButtonHolder.add(exportCsv);
-
-		// puts all the components of the graph gui into a display panel
 		JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, ButtonHolder, null);
 		splitPane.setDividerSize(0);
 		this.removeAll();
 		this.setLayout(new BorderLayout());
 		this.add(graph, "Center");
 		this.add(splitPane, "South");
+		this.revalidate();
+	}
+
+	public void refreshProb() {
+		BarRenderer rend = (BarRenderer) chart.getCategoryPlot().getRenderer();
+		int thisOne = -1;
+		for (int i = 1; i < probGraphed.size(); i++) {
+			GraphProbs index = probGraphed.get(i);
+			int j = i;
+			while ((j > 0)
+					&& (probGraphed.get(j - 1).getSpecies().compareToIgnoreCase(index.getSpecies()) > 0)) {
+				probGraphed.set(j, probGraphed.get(j - 1));
+				j = j - 1;
+			}
+			probGraphed.set(j, index);
+		}
+		ArrayList<GraphProbs> unableToGraph = new ArrayList<GraphProbs>();
+		DefaultCategoryDataset histDataset = new DefaultCategoryDataset();
+		for (GraphProbs g : probGraphed) {
+			if (g.getDirectory().equals("")) {
+				thisOne++;
+				rend.setSeriesPaint(thisOne, g.getPaint());
+				if (new File(outDir + separator + "sim-rep.txt").exists()) {
+					readProbSpecies(outDir + separator + "sim-rep.txt");
+					double[] data = readProbs(outDir + separator + "sim-rep.txt");
+					for (int i = 1; i < graphProbs.size(); i++) {
+						String index = graphProbs.get(i);
+						double index2 = data[i];
+						int j = i;
+						while ((j > 0) && graphProbs.get(j - 1).compareToIgnoreCase(index) > 0) {
+							graphProbs.set(j, graphProbs.get(j - 1));
+							data[j] = data[j - 1];
+							j = j - 1;
+						}
+						graphProbs.set(j, index);
+						data[j] = index2;
+					}
+					if (graphProbs.size() != 0) {
+						for (int i = 0; i < graphProbs.size(); i++) {
+							if (g.getID().equals(graphProbs.get(i))) {
+								histDataset.setValue(data[i], g.getSpecies(), "");
+							}
+						}
+					}
+				}
+				else {
+					unableToGraph.add(g);
+					thisOne--;
+				}
+			}
+			else {
+				thisOne++;
+				rend.setSeriesPaint(thisOne, g.getPaint());
+				if (new File(outDir + separator + g.getDirectory() + separator + "sim-rep.txt").exists()) {
+					readProbSpecies(outDir + separator + g.getDirectory() + separator + "sim-rep.txt");
+					double[] data = readProbs(outDir + separator + g.getDirectory() + separator
+							+ "sim-rep.txt");
+					for (int i = 1; i < graphProbs.size(); i++) {
+						String index = graphProbs.get(i);
+						double index2 = data[i];
+						int j = i;
+						while ((j > 0) && graphProbs.get(j - 1).compareToIgnoreCase(index) > 0) {
+							graphProbs.set(j, graphProbs.get(j - 1));
+							data[j] = data[j - 1];
+							j = j - 1;
+						}
+						graphProbs.set(j, index);
+						data[j] = index2;
+					}
+					if (graphProbs.size() != 0) {
+						for (int i = 0; i < graphProbs.size(); i++) {
+							if (g.getID().equals(graphProbs.get(i))) {
+								histDataset.setValue(data[i], g.getSpecies(), "");
+							}
+						}
+					}
+				}
+				else {
+					unableToGraph.add(g);
+					thisOne--;
+				}
+			}
+		}
+		for (GraphProbs g : unableToGraph) {
+			probGraphed.remove(g);
+		}
+		fixProbGraph(chart.getTitle().getText(), chart.getCategoryPlot().getDomainAxis().getLabel(),
+				chart.getCategoryPlot().getRangeAxis().getLabel(), histDataset, rend);
+	}
+
+	private class GraphProbs {
+		private Paint paint;
+
+		private String species, directory, id, paintName;
+
+		private int number;
+
+		private GraphProbs(Paint paint, String paintName, String id, String species, int number,
+				String directory) {
+			this.paint = paint;
+			this.paintName = paintName;
+			this.species = species;
+			this.number = number;
+			this.directory = directory;
+			this.id = id;
+		}
+
+		private Paint getPaint() {
+			return paint;
+		}
+
+		private void setPaint(Paint p) {
+			paint = p;
+		}
+
+		private String getPaintName() {
+			return paintName;
+		}
+
+		private void setPaintName(String p) {
+			paintName = p;
+		}
+
+		private String getSpecies() {
+			return species;
+		}
+
+		private void setSpecies(String s) {
+			species = s;
+		}
+
+		private String getDirectory() {
+			return directory;
+		}
+
+		private String getID() {
+			return id;
+		}
+
+		private int getNumber() {
+			return number;
+		}
 	}
 }

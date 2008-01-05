@@ -1,4 +1,4 @@
-package learn.core.gui;
+package learn;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -6,7 +6,7 @@ import java.io.*;
 import java.util.*;
 import javax.swing.*;
 import org.sbml.libsbml.*;
-import biomodelsim.core.gui.*;
+import biomodelsim.*;
 
 /**
  * This class creates a GUI for the Learn program. It implements the
@@ -332,38 +332,38 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 			document = reader.readSBML(learnFile);
 			model = document.getModel();
 			ListOf ids = model.getListOfSpecies();
-			try { 
-			  FileWriter write = new FileWriter(new File(directory + separator + "background.gcm"));
-			  write.write("digraph G {\n");
+			try {
+				FileWriter write = new FileWriter(new File(directory + separator + "background.gcm"));
+				write.write("digraph G {\n");
 			  for (int i = 0; i < model.getNumSpecies(); i++) {
-			    speciesList.add(((Species) ids.get(i)).getId());
+					speciesList.add(((Species) ids.get(i)).getId());
 			    write.write("s" + i + " [shape=ellipse,color=black,label=\"" + 
 					((Species) ids.get(i)).getId() + "\"" + "];\n");
-			  }
-			  write.write("}\n");
-			  write.close();
+				}
+				write.write("}\n");
+				write.close();
 			} catch (Exception e) {
-			  JOptionPane.showMessageDialog(biosim.frame(), "Unable to create background file!",
-							"Error Writing Background", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(biosim.frame(), "Unable to create background file!",
+						"Error Writing Background", JOptionPane.ERROR_MESSAGE);
 			}
 		} else {
-			try { 
-			  File gcmFile = new File(learnFile);
-			  BufferedReader input = new BufferedReader(new FileReader(gcmFile));
-			  FileWriter write = new FileWriter(new File(directory + separator + "background.gcm"));
-			  String line = null;
-			  while ((line = input.readLine()) != null) {
-			    if (line.contains("shape")) {
-			      String specie = line.substring(line.indexOf("label")+7,line.lastIndexOf('\"'));
-			      speciesList.add(specie);
-			    }
-			    write.write(line+"\n");
-			  }
-			  write.close();
-			  input.close();
+			try {
+				File gcmFile = new File(learnFile);
+				BufferedReader input = new BufferedReader(new FileReader(gcmFile));
+				FileWriter write = new FileWriter(new File(directory + separator + "background.gcm"));
+				String line = null;
+				while ((line = input.readLine()) != null) {
+					if (line.contains("shape")) {
+						String specie = line.substring(line.indexOf("label") + 7, line.lastIndexOf('\"'));
+						speciesList.add(specie);
+					}
+					write.write(line + "\n");
+				}
+				write.close();
+				input.close();
 			} catch (Exception e) {
-			  JOptionPane.showMessageDialog(biosim.frame(), "Unable to create background file!",
-							"Error Writing Background", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(biosim.frame(), "Unable to create background file!",
+						"Error Writing Background", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 

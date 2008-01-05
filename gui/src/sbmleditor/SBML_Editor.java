@@ -1,17 +1,15 @@
-package sbmleditor.core.gui;
+package sbmleditor;
 
 import java.io.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 import java.util.regex.*;
-
 import javax.swing.*;
 import org.sbml.libsbml.*;
-import org.sbml.libsbml.*;
-import biomodelsim.core.gui.*;
-import reb2sac.core.gui.*;
-import buttons.core.gui.*;
+import biomodelsim.*;
+import reb2sac.*;
+import buttons.*;
 
 /**
  * This is the SBML_Editor class. It takes in an sbml file and allows the user
@@ -36,25 +34,25 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 */
 	private JButton addCompart, removeCompart, editCompart;
 
-        private JButton addFunction, removeFunction, editFunction;
+	private JButton addFunction, removeFunction, editFunction;
 
-        private JButton addUnit, removeUnit, editUnit;
+	private JButton addUnit, removeUnit, editUnit;
 
-        private JButton addList, removeList, editList;
+	private JButton addList, removeList, editList;
 
-        private JButton addCompType, removeCompType, editCompType;
+	private JButton addCompType, removeCompType, editCompType;
 
-        private JButton addSpecType, removeSpecType, editSpecType;
+	private JButton addSpecType, removeSpecType, editSpecType;
 
-        private JButton addInit, removeInit, editInit;
+	private JButton addInit, removeInit, editInit;
 
-        private JButton addRule, removeRule, editRule;
+	private JButton addRule, removeRule, editRule;
 
-        private JButton addEvent, removeEvent, editEvent;
+	private JButton addEvent, removeEvent, editEvent;
 
-        private JButton addAssignment, removeAssignment, editAssignment;
+	private JButton addAssignment, removeAssignment, editAssignment;
 
-        private JButton addConstraint, removeConstraint, editConstraint;
+	private JButton addConstraint, removeConstraint, editConstraint;
 
 	private String[] comps; // array of compartments
 
@@ -70,13 +68,13 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 
 	private String[] inits; // array of initial assignments
 
-	private String[] rul;   // array of rules
+	private String[] rul; // array of rules
 
-	private String[] ev;    // array of events
+	private String[] ev; // array of events
 
 	private String[] assign; // array of event assignments
 
-	private String[] cons;  // array of constraints
+	private String[] cons; // array of constraints
 
 	private JList compartments; // JList of compartments
 
@@ -92,39 +90,39 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 
 	private JList initAssigns; // JList of initial assignments
 
-	private JList rules;     // JList of rules
+	private JList rules; // JList of rules
 
-	private JList events;    // JList of events
+	private JList events; // JList of events
 
 	private JList eventAssign; // JList of event assignments
 
 	private JList constraints; // JList of constraints
 
-        private JTextField compID, compSize, compName; // compartment fields;
+	private JTextField compID, compSize, compName; // compartment fields;
 
-        private JTextField funcID, funcName, eqn, args; // function fields;
+	private JTextField funcID, funcName, eqn, args; // function fields;
 
-        private JTextField unitID, unitName; // unit defn fields;
+	private JTextField unitID, unitName; // unit defn fields;
 
 	private JTextField exp, scale, mult; // unit list fields;
 
-        private JTextField compTypeID, compTypeName; // compartment type fields;
+	private JTextField compTypeID, compTypeName; // compartment type fields;
 
-        private JTextField specTypeID, specTypeName; // species type fields;
+	private JTextField specTypeID, specTypeName; // species type fields;
 
-        private JComboBox initVar; // init fields;
+	private JComboBox initVar; // init fields;
 
-        private JTextField initMath; // init fields;
+	private JTextField initMath; // init fields;
 
-        private JComboBox ruleVar; // rule fields;
+	private JComboBox ruleVar; // rule fields;
 
-        private JTextField ruleMath; // rule fields;
+	private JTextField ruleMath; // rule fields;
 
-        private JTextField eventID, eventTrigger, eventDelay; // event fields;
+	private JTextField eventID, eventTrigger, eventDelay; // event fields;
 
-        private JComboBox eaID; // event assignment fields;
+	private JComboBox eaID; // event assignment fields;
 
-        private JTextField consMath, consMessage; // constraints fields;
+	private JTextField consMath, consMessage; // constraints fields;
 
 	private JButton addSpec, removeSpec, editSpec; // species buttons
 
@@ -134,13 +132,17 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 
 	private JTextField ID, init, Name; // species text fields
 
-        private JComboBox compUnits, compOutside, compConstant; // compartment units combo box
+	private JComboBox compUnits, compOutside, compConstant; // compartment units
 
-        private JComboBox compTypeBox,dimBox; // compartment type combo box
+	// combo box
 
-        private JComboBox specTypeBox, specBoundary, specConstant; // species combo boxes
+	private JComboBox compTypeBox, dimBox; // compartment type combo box
 
-        private JComboBox specUnits, initLabel; 
+	private JComboBox specTypeBox, specBoundary, specConstant; // species combo
+
+	// boxes
+
+	private JComboBox specUnits, initLabel;
 
 	private JComboBox comp; // compartment combo box
 
@@ -168,7 +170,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	/*
 	 * parameters text fields
 	 */
-        private JTextField paramID, paramName, paramValue;
+	private JTextField paramID, paramName, paramValue;
 
 	private JComboBox paramUnits;
 
@@ -192,11 +194,13 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 
 	private ArrayList<Parameter> changedParameters; // ArrayList of parameters
 
-        private JTextField reacID, reacName; // reaction name and id text
+	private JTextField reacID, reacName; // reaction name and id text
 
 	// fields
 
-        private JComboBox reacReverse, reacFast; // reaction reversible, fast combo boxes
+	private JComboBox reacReverse, reacFast; // reaction reversible, fast combo
+
+	// boxes
 
 	/*
 	 * reactant buttons
@@ -409,15 +413,16 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		for (int i = 0; i < model.getNumCompartments(); i++) {
 			Compartment compartment = (Compartment) listOfCompartments.get(i);
 			if (compartment.isSetCompartmentType()) {
-			  comps[i] = compartment.getId() + " " + compartment.getCompartmentType();
-			} else {
-			  comps[i] = compartment.getId();
+				comps[i] = compartment.getId() + " " + compartment.getCompartmentType();
+			}
+			else {
+				comps[i] = compartment.getId();
 			}
 			if (compartment.isSetSize()) {
-			  comps[i] += " " + compartment.getSize();
+				comps[i] += " " + compartment.getSize();
 			}
 			if (compartment.isSetUnits()) {
-			  comps[i] += " " + compartment.getUnits();
+				comps[i] += " " + compartment.getUnits();
 			}
 		}
 		sort(comps);
@@ -456,18 +461,20 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			Species species = (Species) listOfSpecies.get(i);
 			String s;
 			if (species.isSetSpeciesType()) {
-			  s = species.getId() + " " + species.getSpeciesType() + " " + species.getCompartment();
-			} else {
-			  s = species.getId() + " " + species.getCompartment();
+				s = species.getId() + " " + species.getSpeciesType() + " " + species.getCompartment();
+			}
+			else {
+				s = species.getId() + " " + species.getCompartment();
 			}
 			if (species.isSetInitialAmount()) {
-			  s +=  " " + species.getInitialAmount();
-			} else {
-			  s +=  " " + species.getInitialConcentration();
+				s += " " + species.getInitialAmount();
+			}
+			else {
+				s += " " + species.getInitialConcentration();
 			}
 			if (species.isSetUnits()) {
-			  s +=  " " + species.getUnits();
-			} 
+				s += " " + species.getUnits();
+			}
 			if (paramsOnly) {
 				for (int j = 0; j < parameterChanges.size(); j++) {
 					if (parameterChanges.get(j).split(" ")[0].equals(species.getId())) {
@@ -593,9 +600,10 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			Parameter parameter = (Parameter) listOfParameters.get(i);
 			String p;
 			if (parameter.isSetUnits()) {
-			  p = parameter.getId() + " " + parameter.getValue() + " " + parameter.getUnits();
-			} else {
-			  p = parameter.getId() + " " + parameter.getValue();
+				p = parameter.getId() + " " + parameter.getValue() + " " + parameter.getUnits();
+			}
+			else {
+				p = parameter.getId() + " " + parameter.getValue();
 			}
 			if (paramsOnly) {
 				for (int j = 0; j < parameterChanges.size(); j++) {
@@ -644,13 +652,14 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		JPanel defnPanel = createDefnFrame(model);
 		JPanel rulesPanel = createRuleFrame(model);
 		if (!paramsOnly) {
-		  JTabbedPane tab = new JTabbedPane();
-		  tab.addTab("Main Elements", mainPanel);
-		  tab.addTab("Definitions/Types", defnPanel);
-		  tab.addTab("Initial Assignments/Rules/Constraints/Events", rulesPanel);
-		  this.add(tab, "Center");
-		} else {
-		  this.add(mainPanel, "Center");
+			JTabbedPane tab = new JTabbedPane();
+			tab.addTab("Main Elements", mainPanel);
+			tab.addTab("Definitions/Types", defnPanel);
+			tab.addTab("Initial Assignments/Rules/Constraints/Events", rulesPanel);
+			this.add(tab, "Center");
+		}
+		else {
+			this.add(mainPanel, "Center");
 		}
 
 		change = false;
@@ -688,189 +697,189 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 * Private helper method to create definitions/types frame.
 	 */
 	private JPanel createDefnFrame(Model model) {
-	  libsbml sbmlLib = new libsbml();
-	  
-	  /* Create function definition panel */
-	  addFunction = new JButton("Add Function");
-	  removeFunction = new JButton("Remove Function");
-	  editFunction = new JButton("Edit Function");
-	  functions = new JList();
-	  ListOf listOfFunctions = model.getListOfFunctionDefinitions();
-	  funcs = new String[(int) model.getNumFunctionDefinitions()];
-	  for (int i = 0; i < model.getNumFunctionDefinitions(); i++) {
-	    FunctionDefinition function = (FunctionDefinition) listOfFunctions.get(i);
-	    funcs[i] = function.getId() + " ( ";
-	    for (long j = 0; j < function.getNumArguments(); j++) {
-	      if (j != 0) {
-		funcs[i] += ", ";
-	      }
-	      funcs[i] += sbmlLib.formulaToString(function.getArgument(j));
-	    }
-	    if (function.isSetMath()) {
-	      funcs[i] += " ) = " + sbmlLib.formulaToString(function.getBody());
-	    } 
-	  }
-	  JPanel funcdefnPanel = createPanel(model,"Function Definitions",functions,funcs,
-					     addFunction,removeFunction,editFunction);
+		libsbml sbmlLib = new libsbml();
 
-	  /* Create unit definition panel */
-	  addUnit = new JButton("Add Unit");
-	  removeUnit = new JButton("Remove Unit");
-	  editUnit = new JButton("Edit Unit");
-	  unitDefs = new JList();
-	  ListOf listOfUnits = model.getListOfUnitDefinitions();
-	  units = new String[(int) model.getNumUnitDefinitions()];
-	  for (int i = 0; i < model.getNumUnitDefinitions(); i++) {
-	    UnitDefinition unit = (UnitDefinition) listOfUnits.get(i);
-	    units[i] = unit.getId();
-	    // GET OTHER THINGS
-	  }
-	  JPanel unitdefnPanel = createPanel(model,"Unit Definitions",unitDefs,units,
-					     addUnit,removeUnit,editUnit);
+		/* Create function definition panel */
+		addFunction = new JButton("Add Function");
+		removeFunction = new JButton("Remove Function");
+		editFunction = new JButton("Edit Function");
+		functions = new JList();
+		ListOf listOfFunctions = model.getListOfFunctionDefinitions();
+		funcs = new String[(int) model.getNumFunctionDefinitions()];
+		for (int i = 0; i < model.getNumFunctionDefinitions(); i++) {
+			FunctionDefinition function = (FunctionDefinition) listOfFunctions.get(i);
+			funcs[i] = function.getId() + " ( ";
+			for (long j = 0; j < function.getNumArguments(); j++) {
+				if (j != 0) {
+					funcs[i] += ", ";
+				}
+				funcs[i] += sbmlLib.formulaToString(function.getArgument(j));
+			}
+			if (function.isSetMath()) {
+				funcs[i] += " ) = " + sbmlLib.formulaToString(function.getBody());
+			}
+		}
+		JPanel funcdefnPanel = createPanel(model, "Function Definitions", functions, funcs,
+				addFunction, removeFunction, editFunction);
 
-	  /* Create compartment type panel */
-	  addCompType = new JButton("Add Type");
-	  removeCompType = new JButton("Remove Type");
-	  editCompType = new JButton("Edit Type");
-	  compTypes = new JList();
-	  ListOf listOfCompartmentTypes = model.getListOfCompartmentTypes();
-	  cpTyp = new String[(int) model.getNumCompartmentTypes()];
-	  for (int i = 0; i < model.getNumCompartmentTypes(); i++) {
-	    CompartmentType compType = (CompartmentType) listOfCompartmentTypes.get(i);
-	    cpTyp[i] = compType.getId();
-	  }
-	  JPanel compTypePanel = createPanel(model,"Compartment Types",compTypes,cpTyp,
-					     addCompType,removeCompType,editCompType);
+		/* Create unit definition panel */
+		addUnit = new JButton("Add Unit");
+		removeUnit = new JButton("Remove Unit");
+		editUnit = new JButton("Edit Unit");
+		unitDefs = new JList();
+		ListOf listOfUnits = model.getListOfUnitDefinitions();
+		units = new String[(int) model.getNumUnitDefinitions()];
+		for (int i = 0; i < model.getNumUnitDefinitions(); i++) {
+			UnitDefinition unit = (UnitDefinition) listOfUnits.get(i);
+			units[i] = unit.getId();
+			// GET OTHER THINGS
+		}
+		JPanel unitdefnPanel = createPanel(model, "Unit Definitions", unitDefs, units, addUnit,
+				removeUnit, editUnit);
 
-	  /* Create species type panel */
-	  addSpecType = new JButton("Add Type");
-	  removeSpecType = new JButton("Remove Type");
-	  editSpecType = new JButton("Edit Type");
-	  specTypes = new JList();
-	  ListOf listOfSpeciesTypes = model.getListOfSpeciesTypes();
-	  spTyp = new String[(int) model.getNumSpeciesTypes()];
-	  for (int i = 0; i < model.getNumSpeciesTypes(); i++) {
-	    SpeciesType specType = (SpeciesType) listOfSpeciesTypes.get(i);
-	    spTyp[i] = specType.getId();
-	  }
-	  JPanel specTypePanel = createPanel(model,"Species Types",specTypes,spTyp,
-					     addSpecType,removeSpecType,editSpecType);
+		/* Create compartment type panel */
+		addCompType = new JButton("Add Type");
+		removeCompType = new JButton("Remove Type");
+		editCompType = new JButton("Edit Type");
+		compTypes = new JList();
+		ListOf listOfCompartmentTypes = model.getListOfCompartmentTypes();
+		cpTyp = new String[(int) model.getNumCompartmentTypes()];
+		for (int i = 0; i < model.getNumCompartmentTypes(); i++) {
+			CompartmentType compType = (CompartmentType) listOfCompartmentTypes.get(i);
+			cpTyp[i] = compType.getId();
+		}
+		JPanel compTypePanel = createPanel(model, "Compartment Types", compTypes, cpTyp, addCompType,
+				removeCompType, editCompType);
 
-	  JPanel defnPanelNorth = new JPanel();
-	  JPanel defnPanelSouth = new JPanel();
-	  JPanel defnPanel = new JPanel(new BorderLayout());
-	  defnPanelNorth.add(funcdefnPanel);
-	  defnPanelNorth.add(unitdefnPanel);
-	  defnPanelSouth.add(compTypePanel);
-	  defnPanelSouth.add(specTypePanel);
-	  defnPanel.add(defnPanelNorth,"North");
-	  defnPanel.add(defnPanelSouth,"South");
-	  return defnPanel;
+		/* Create species type panel */
+		addSpecType = new JButton("Add Type");
+		removeSpecType = new JButton("Remove Type");
+		editSpecType = new JButton("Edit Type");
+		specTypes = new JList();
+		ListOf listOfSpeciesTypes = model.getListOfSpeciesTypes();
+		spTyp = new String[(int) model.getNumSpeciesTypes()];
+		for (int i = 0; i < model.getNumSpeciesTypes(); i++) {
+			SpeciesType specType = (SpeciesType) listOfSpeciesTypes.get(i);
+			spTyp[i] = specType.getId();
+		}
+		JPanel specTypePanel = createPanel(model, "Species Types", specTypes, spTyp, addSpecType,
+				removeSpecType, editSpecType);
+
+		JPanel defnPanelNorth = new JPanel();
+		JPanel defnPanelSouth = new JPanel();
+		JPanel defnPanel = new JPanel(new BorderLayout());
+		defnPanelNorth.add(funcdefnPanel);
+		defnPanelNorth.add(unitdefnPanel);
+		defnPanelSouth.add(compTypePanel);
+		defnPanelSouth.add(specTypePanel);
+		defnPanel.add(defnPanelNorth, "North");
+		defnPanel.add(defnPanelSouth, "South");
+		return defnPanel;
 	}
 
 	/**
 	 * Private helper method to create rules/events/constraints frame.
 	 */
 	private JPanel createRuleFrame(Model model) {
-	  libsbml sbmlLib = new libsbml();
-	  
-	  /* Create initial assignment panel */
-	  addInit = new JButton("Add Initial");
-	  removeInit = new JButton("Remove Initial");
-	  editInit = new JButton("Edit Initial");
-	  initAssigns = new JList();
-	  ListOf listOfInits = model.getListOfInitialAssignments();
-	  inits = new String[(int) model.getNumInitialAssignments()];
-	  for (int i = 0; i < model.getNumInitialAssignments(); i++) {
-	    InitialAssignment init = (InitialAssignment) listOfInits.get(i);
-	    inits[i] = init.getSymbol() + " = " + sbmlLib.formulaToString(init.getMath());
-	  }
-	  JPanel initPanel = createPanel(model,"Initial Assignments",initAssigns,inits,
-					 addInit,removeInit,editInit);
+		libsbml sbmlLib = new libsbml();
 
-	  /* Create rule panel */
-	  addRule = new JButton("Add Rule");
-	  removeRule = new JButton("Remove Rule");
-	  editRule = new JButton("Edit Rule");
-	  rules = new JList();
-	  ListOf listOfRules = model.getListOfRules();
-	  rul = new String[(int) model.getNumRules()];
-	  for (int i = 0; i < model.getNumRules(); i++) {
-	    Rule rule = (Rule) listOfRules.get(i);
-	    if (rule.isAlgebraic()) {
-	      rul[i] = "0 = " + sbmlLib.formulaToString(rule.getMath());
-	    } else if (rule.isAssignment()) {
-	     rul[i] = rule.getVariable() + " = " + sbmlLib.formulaToString(rule.getMath());
-	    } else {
-	     rul[i] = "d( " + rule.getVariable() + " )/dt = " + sbmlLib.formulaToString(rule.getMath());
-	    }
-	  }
-	  JPanel rulePanel = createPanel(model,"Rules",rules,rul,
-					     addRule,removeRule,editRule);
+		/* Create initial assignment panel */
+		addInit = new JButton("Add Initial");
+		removeInit = new JButton("Remove Initial");
+		editInit = new JButton("Edit Initial");
+		initAssigns = new JList();
+		ListOf listOfInits = model.getListOfInitialAssignments();
+		inits = new String[(int) model.getNumInitialAssignments()];
+		for (int i = 0; i < model.getNumInitialAssignments(); i++) {
+			InitialAssignment init = (InitialAssignment) listOfInits.get(i);
+			inits[i] = init.getSymbol() + " = " + sbmlLib.formulaToString(init.getMath());
+		}
+		JPanel initPanel = createPanel(model, "Initial Assignments", initAssigns, inits, addInit,
+				removeInit, editInit);
 
-	  /* Create constraint panel */
-	  addConstraint = new JButton("Add Constraint");
-	  removeConstraint = new JButton("Remove Constraint");
-	  editConstraint = new JButton("Edit Constraint");
-	  constraints = new JList();
-	  ListOf listOfConstraints = model.getListOfConstraints();
-	  cons = new String[(int) model.getNumConstraints()];
-	  for (int i = 0; i < model.getNumConstraints(); i++) {
-	    Constraint constraint = (Constraint) listOfConstraints.get(i);
-	    cons[i] = sbmlLib.formulaToString(constraint.getMath());
-	  }
-	  JPanel constraintPanel = createPanel(model,"Constraints",constraints,cons,
-					       addConstraint,removeConstraint,editConstraint);
+		/* Create rule panel */
+		addRule = new JButton("Add Rule");
+		removeRule = new JButton("Remove Rule");
+		editRule = new JButton("Edit Rule");
+		rules = new JList();
+		ListOf listOfRules = model.getListOfRules();
+		rul = new String[(int) model.getNumRules()];
+		for (int i = 0; i < model.getNumRules(); i++) {
+			Rule rule = (Rule) listOfRules.get(i);
+			if (rule.isAlgebraic()) {
+				rul[i] = "0 = " + sbmlLib.formulaToString(rule.getMath());
+			}
+			else if (rule.isAssignment()) {
+				rul[i] = rule.getVariable() + " = " + sbmlLib.formulaToString(rule.getMath());
+			}
+			else {
+				rul[i] = "d( " + rule.getVariable() + " )/dt = " + sbmlLib.formulaToString(rule.getMath());
+			}
+		}
+		JPanel rulePanel = createPanel(model, "Rules", rules, rul, addRule, removeRule, editRule);
 
-	  /* Create event panel */
-	  addEvent = new JButton("Add Event");
-	  removeEvent = new JButton("Remove Event");
-	  editEvent = new JButton("Edit Event");
-	  events = new JList();
-	  ListOf listOfEvents = model.getListOfEvents();
-	  ev = new String[(int) model.getNumEvents()];
-	  for (int i = 0; i < model.getNumEvents(); i++) {
-	    org.sbml.libsbml.Event event = (org.sbml.libsbml.Event) listOfEvents.get(i);
-	    ev[i] = sbmlLib.formulaToString(event.getTrigger().getMath());
-	  }
-	  JPanel eventPanel = createPanel(model,"Events",events,ev,
-					  addEvent,removeEvent,editEvent);
+		/* Create constraint panel */
+		addConstraint = new JButton("Add Constraint");
+		removeConstraint = new JButton("Remove Constraint");
+		editConstraint = new JButton("Edit Constraint");
+		constraints = new JList();
+		ListOf listOfConstraints = model.getListOfConstraints();
+		cons = new String[(int) model.getNumConstraints()];
+		for (int i = 0; i < model.getNumConstraints(); i++) {
+			Constraint constraint = (Constraint) listOfConstraints.get(i);
+			cons[i] = sbmlLib.formulaToString(constraint.getMath());
+		}
+		JPanel constraintPanel = createPanel(model, "Constraints", constraints, cons, addConstraint,
+				removeConstraint, editConstraint);
 
-	  JPanel recPanelNorth = new JPanel();
-	  JPanel recPanelSouth = new JPanel();
-	  JPanel recPanel = new JPanel(new BorderLayout());
-	  recPanelNorth.add(initPanel);
-	  recPanelNorth.add(rulePanel);
-	  recPanelSouth.add(constraintPanel);
-	  recPanelSouth.add(eventPanel);
-	  recPanel.add(recPanelNorth,"North");
-	  recPanel.add(recPanelSouth,"South");
-	  return recPanel;
+		/* Create event panel */
+		addEvent = new JButton("Add Event");
+		removeEvent = new JButton("Remove Event");
+		editEvent = new JButton("Edit Event");
+		events = new JList();
+		ListOf listOfEvents = model.getListOfEvents();
+		ev = new String[(int) model.getNumEvents()];
+		for (int i = 0; i < model.getNumEvents(); i++) {
+			org.sbml.libsbml.Event event = (org.sbml.libsbml.Event) listOfEvents.get(i);
+			ev[i] = sbmlLib.formulaToString(event.getTrigger().getMath());
+		}
+		JPanel eventPanel = createPanel(model, "Events", events, ev, addEvent, removeEvent, editEvent);
+
+		JPanel recPanelNorth = new JPanel();
+		JPanel recPanelSouth = new JPanel();
+		JPanel recPanel = new JPanel(new BorderLayout());
+		recPanelNorth.add(initPanel);
+		recPanelNorth.add(rulePanel);
+		recPanelSouth.add(constraintPanel);
+		recPanelSouth.add(eventPanel);
+		recPanel.add(recPanelNorth, "North");
+		recPanel.add(recPanelSouth, "South");
+		return recPanel;
 	}
 
 	/* Create add/remove/edit panel */
-	private JPanel createPanel(Model model,String panelName,JList panelJList,String [] panelList,
-				   JButton addButton,JButton removeButton,JButton editButton) {
-	  JPanel Panel = new JPanel(new BorderLayout());
-	  JPanel addRem = new JPanel();
-	  addRem.add(addButton);
-	  addRem.add(removeButton);
-	  addRem.add(editButton);
-	  addButton.addActionListener(this);
-	  removeButton.addActionListener(this);
-	  editButton.addActionListener(this);
-	  JLabel panelLabel = new JLabel("List of " + panelName + ":");
-	  JScrollPane scroll = new JScrollPane();
-	  scroll.setMinimumSize(new Dimension(260, 220));
-	  scroll.setPreferredSize(new Dimension(276, 152));
-	  scroll.setViewportView(panelJList);
-	  sort(panelList);
-	  panelJList.setListData(panelList);
-	  panelJList.addMouseListener(this);
-	  Panel.add(panelLabel, "North");
-	  Panel.add(scroll, "Center");
-	  Panel.add(addRem, "South");
-	  return Panel;
+	private JPanel createPanel(Model model, String panelName, JList panelJList, String[] panelList,
+			JButton addButton, JButton removeButton, JButton editButton) {
+		JPanel Panel = new JPanel(new BorderLayout());
+		JPanel addRem = new JPanel();
+		addRem.add(addButton);
+		addRem.add(removeButton);
+		addRem.add(editButton);
+		addButton.addActionListener(this);
+		removeButton.addActionListener(this);
+		editButton.addActionListener(this);
+		JLabel panelLabel = new JLabel("List of " + panelName + ":");
+		JScrollPane scroll = new JScrollPane();
+		scroll.setMinimumSize(new Dimension(260, 220));
+		scroll.setPreferredSize(new Dimension(276, 152));
+		scroll.setViewportView(panelJList);
+		sort(panelList);
+		panelJList.setListData(panelList);
+		panelJList.addMouseListener(this);
+		Panel.add(panelLabel, "North");
+		Panel.add(scroll, "Center");
+		Panel.add(addRem, "South");
+		return Panel;
 	}
 
 	/**
@@ -878,7 +887,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 * pushed and what input fields contain data.
 	 */
 	public void actionPerformed(ActionEvent e) {
-	        libsbml sbmlLib = new libsbml();
+		libsbml sbmlLib = new libsbml();
 
 		// if the run button is clicked
 		if (e.getSource() == run) {
@@ -961,22 +970,22 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		}
 		// if the remove function button is clicked
 		else if (e.getSource() == removeFunction) {
-		  if (functions.getSelectedIndex() != -1) {
-		    FunctionDefinition tempFunc = document.getModel().
-		      getFunctionDefinition(((String) functions.getSelectedValue()).split(" ")[0]);
-		    ListOf f = document.getModel().getListOfFunctionDefinitions();
-		    for (int i = 0; i < document.getModel().getNumFunctionDefinitions(); i++) {
-		      if (((FunctionDefinition) f.get(i)).getId().equals(tempFunc.getId())) {
-			f.remove(i);
-		      }
-		    }
-		    usedIDs.remove(((String)functions.getSelectedValue()).split(" ")[0]);
-		    functions.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-		    funcs = (String[])Buttons.remove(functions, funcs);
-		    functions.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		    functions.setSelectedIndex(0);
-		    change = true;
-		  }
+			if (functions.getSelectedIndex() != -1) {
+				FunctionDefinition tempFunc = document.getModel().getFunctionDefinition(
+						((String) functions.getSelectedValue()).split(" ")[0]);
+				ListOf f = document.getModel().getListOfFunctionDefinitions();
+				for (int i = 0; i < document.getModel().getNumFunctionDefinitions(); i++) {
+					if (((FunctionDefinition) f.get(i)).getId().equals(tempFunc.getId())) {
+						f.remove(i);
+					}
+				}
+				usedIDs.remove(((String) functions.getSelectedValue()).split(" ")[0]);
+				functions.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+				funcs = (String[]) Buttons.remove(functions, funcs);
+				functions.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+				functions.setSelectedIndex(0);
+				change = true;
+			}
 		}
 		// if the add unit button is clicked
 		else if (e.getSource() == addUnit) {
@@ -988,51 +997,51 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		}
 		// if the remove unit button is clicked
 		else if (e.getSource() == removeUnit) {
-		  if (unitDefs.getSelectedIndex() != -1) {
-		    UnitDefinition tempUnit = document.getModel().
-		      getUnitDefinition(((String) unitDefs.getSelectedValue()).split(" ")[0]);
-		    ListOf u = document.getModel().getListOfUnitDefinitions();
-		    for (int i = 0; i < document.getModel().getNumUnitDefinitions(); i++) {
-		      if (((UnitDefinition) u.get(i)).getId().equals(tempUnit.getId())) {
-			u.remove(i);
-		      }
-		    }
-		    usedIDs.remove(((String)unitDefs.getSelectedValue()).split(" ")[0]);
-		    unitDefs.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-		    units = (String[])Buttons.remove(unitDefs, units);
-		    unitDefs.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		    unitDefs.setSelectedIndex(0);
-		    change = true;
-		  }
+			if (unitDefs.getSelectedIndex() != -1) {
+				UnitDefinition tempUnit = document.getModel().getUnitDefinition(
+						((String) unitDefs.getSelectedValue()).split(" ")[0]);
+				ListOf u = document.getModel().getListOfUnitDefinitions();
+				for (int i = 0; i < document.getModel().getNumUnitDefinitions(); i++) {
+					if (((UnitDefinition) u.get(i)).getId().equals(tempUnit.getId())) {
+						u.remove(i);
+					}
+				}
+				usedIDs.remove(((String) unitDefs.getSelectedValue()).split(" ")[0]);
+				unitDefs.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+				units = (String[]) Buttons.remove(unitDefs, units);
+				unitDefs.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+				unitDefs.setSelectedIndex(0);
+				change = true;
+			}
 		}
 		// if the add to unit list button is clicked
 		else if (e.getSource() == addList) {
-		  unitListEditor("Add");
+			unitListEditor("Add");
 		}
 		// if the edit unit list button is clicked
 		else if (e.getSource() == editList) {
-		  unitListEditor("OK");
+			unitListEditor("OK");
 		}
 		// if the remove from unit list button is clicked
 		else if (e.getSource() == removeList) {
-		  if (unitDefs.getSelectedIndex() != -1) {
-		    UnitDefinition tempUnit = document.getModel().
-		      getUnitDefinition(((String) unitDefs.getSelectedValue()).split(" ")[0]);
-		    if (unitList.getSelectedIndex() != -1) {
-		      String selected = (String)unitList.getSelectedValue();
-		      ListOf u = tempUnit.getListOfUnits();
-		      for (int i = 0; i < tempUnit.getNumUnits(); i++) {
-			if (selected.contains(unitToString(tempUnit.getUnit(i)))) {
-			  u.remove(i);
+			if (unitDefs.getSelectedIndex() != -1) {
+				UnitDefinition tempUnit = document.getModel().getUnitDefinition(
+						((String) unitDefs.getSelectedValue()).split(" ")[0]);
+				if (unitList.getSelectedIndex() != -1) {
+					String selected = (String) unitList.getSelectedValue();
+					ListOf u = tempUnit.getListOfUnits();
+					for (int i = 0; i < tempUnit.getNumUnits(); i++) {
+						if (selected.contains(unitToString(tempUnit.getUnit(i)))) {
+							u.remove(i);
+						}
+					}
+				}
+				unitList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+				uList = (String[]) Buttons.remove(unitList, uList);
+				unitList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+				unitList.setSelectedIndex(0);
+				change = true;
 			}
-		      }
-		    }
-		    unitList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-		    uList = (String[])Buttons.remove(unitList, uList);
-		    unitList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		    unitList.setSelectedIndex(0);
-		    change = true;
-		  }
 		}
 		// if the add compartment type button is clicked
 		else if (e.getSource() == addCompType) {
@@ -1044,59 +1053,62 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		}
 		// if the remove compartment type button is clicked
 		else if (e.getSource() == removeCompType) {
-		  if (compTypes.getSelectedIndex() != -1) {
-		    boolean remove = true;
-		    ArrayList<String> compartmentUsing = new ArrayList<String>();
-		    for (int i = 0; i < document.getModel().getNumCompartments(); i++) {
-		      Compartment compartment = (Compartment) document.getModel().getListOfCompartments().get(i);
-		      if (compartment.isSetCompartmentType()) {
-			if (compartment.getCompartmentType().equals(((String)compTypes.getSelectedValue()).split(" ")[0])) {
-			  remove = false;
-			  compartmentUsing.add(compartment.getId());
+			if (compTypes.getSelectedIndex() != -1) {
+				boolean remove = true;
+				ArrayList<String> compartmentUsing = new ArrayList<String>();
+				for (int i = 0; i < document.getModel().getNumCompartments(); i++) {
+					Compartment compartment = (Compartment) document.getModel().getListOfCompartments()
+							.get(i);
+					if (compartment.isSetCompartmentType()) {
+						if (compartment.getCompartmentType().equals(
+								((String) compTypes.getSelectedValue()).split(" ")[0])) {
+							remove = false;
+							compartmentUsing.add(compartment.getId());
+						}
+					}
+				}
+				if (remove) {
+					CompartmentType tempCompType = document.getModel().getCompartmentType(
+							((String) compTypes.getSelectedValue()).split(" ")[0]);
+					ListOf c = document.getModel().getListOfCompartmentTypes();
+					for (int i = 0; i < document.getModel().getNumCompartmentTypes(); i++) {
+						if (((CompartmentType) c.get(i)).getId().equals(tempCompType.getId())) {
+							c.remove(i);
+						}
+					}
+					usedIDs.remove(((String) compTypes.getSelectedValue()).split(" ")[0]);
+					compTypes.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+					cpTyp = (String[]) Buttons.remove(compTypes, cpTyp);
+					compTypes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+					compTypes.setSelectedIndex(0);
+					change = true;
+				}
+				else {
+					String compartment = "";
+					String[] comps = compartmentUsing.toArray(new String[0]);
+					sort(comps);
+					for (int i = 0; i < comps.length; i++) {
+						if (i == comps.length - 1) {
+							compartment += comps[i];
+						}
+						else {
+							compartment += comps[i] + "\n";
+						}
+					}
+					String message = "Unable to remove the selected compartment type.";
+					if (compartmentUsing.size() != 0) {
+						message += "\n\nIt is used by the following compartments:\n" + compartment;
+					}
+					JTextArea messageArea = new JTextArea(message);
+					messageArea.setEditable(false);
+					JScrollPane scroll = new JScrollPane();
+					scroll.setMinimumSize(new Dimension(300, 300));
+					scroll.setPreferredSize(new Dimension(300, 300));
+					scroll.setViewportView(messageArea);
+					JOptionPane.showMessageDialog(biosim.frame(), scroll,
+							"Unable To Remove Compartment Type", JOptionPane.ERROR_MESSAGE);
+				}
 			}
-		      }
-		    }
-		    if (remove) {
-		      CompartmentType tempCompType = document.getModel().
-			getCompartmentType(((String) compTypes.getSelectedValue()).split(" ")[0]);
-		      ListOf c = document.getModel().getListOfCompartmentTypes();
-		      for (int i = 0; i < document.getModel().getNumCompartmentTypes(); i++) {
-			if (((CompartmentType) c.get(i)).getId().equals(tempCompType.getId())) {
-			  c.remove(i);
-			}
-		      }
-		      usedIDs.remove(((String)compTypes.getSelectedValue()).split(" ")[0]);
-		      compTypes.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-		      cpTyp = (String[])Buttons.remove(compTypes, cpTyp);
-		      compTypes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		      compTypes.setSelectedIndex(0);
-		      change = true;
-		    } else {
-		      String compartment = "";
-		      String[] comps = compartmentUsing.toArray(new String[0]);
-		      sort(comps);
-		      for (int i = 0; i < comps.length; i++) {
-			if (i == comps.length - 1) {
-			  compartment += comps[i];
-			}
-			else {
-			  compartment += comps[i] + "\n";
-			}
-		      }
-		      String message = "Unable to remove the selected compartment type.";
-		      if (compartmentUsing.size() != 0) {
-			message += "\n\nIt is used by the following compartments:\n" + compartment;
-		      }
-		      JTextArea messageArea = new JTextArea(message);
-		      messageArea.setEditable(false);
-		      JScrollPane scroll = new JScrollPane();
-		      scroll.setMinimumSize(new Dimension(300, 300));
-		      scroll.setPreferredSize(new Dimension(300, 300));
-		      scroll.setViewportView(messageArea);
-		      JOptionPane.showMessageDialog(biosim.frame(), scroll, "Unable To Remove Compartment Type",
-						    JOptionPane.ERROR_MESSAGE);
-		    }
-		  }
 		}
 		// if the add species type button is clicked
 		else if (e.getSource() == addSpecType) {
@@ -1108,87 +1120,89 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		}
 		// if the remove species type button is clicked
 		else if (e.getSource() == removeSpecType) {
-		  if (specTypes.getSelectedIndex() != -1) {
-		    boolean remove = true;
-		    ArrayList<String> speciesUsing = new ArrayList<String>();
-		    for (int i = 0; i < document.getModel().getNumSpecies(); i++) {
-		      Species species = (Species) document.getModel().getListOfSpecies().get(i);
-		      if (species.isSetSpeciesType()) {
-			if (species.getSpeciesType().equals(((String)specTypes.getSelectedValue()).split(" ")[0])) {
-			  remove = false;
-			  speciesUsing.add(species.getId());
+			if (specTypes.getSelectedIndex() != -1) {
+				boolean remove = true;
+				ArrayList<String> speciesUsing = new ArrayList<String>();
+				for (int i = 0; i < document.getModel().getNumSpecies(); i++) {
+					Species species = (Species) document.getModel().getListOfSpecies().get(i);
+					if (species.isSetSpeciesType()) {
+						if (species.getSpeciesType().equals(
+								((String) specTypes.getSelectedValue()).split(" ")[0])) {
+							remove = false;
+							speciesUsing.add(species.getId());
+						}
+					}
+				}
+				if (remove) {
+					SpeciesType tempSpecType = document.getModel().getSpeciesType(
+							((String) specTypes.getSelectedValue()).split(" ")[0]);
+					ListOf s = document.getModel().getListOfSpeciesTypes();
+					for (int i = 0; i < document.getModel().getNumSpeciesTypes(); i++) {
+						if (((SpeciesType) s.get(i)).getId().equals(tempSpecType.getId())) {
+							s.remove(i);
+						}
+					}
+					usedIDs.remove(((String) specTypes.getSelectedValue()).split(" ")[0]);
+					specTypes.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+					spTyp = (String[]) Buttons.remove(specTypes, spTyp);
+					specTypes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+					specTypes.setSelectedIndex(0);
+					change = true;
+				}
+				else {
+					String species = "";
+					String[] specs = speciesUsing.toArray(new String[0]);
+					sort(specs);
+					for (int i = 0; i < specs.length; i++) {
+						if (i == specs.length - 1) {
+							species += specs[i];
+						}
+						else {
+							species += specs[i] + "\n";
+						}
+					}
+					String message = "Unable to remove the selected species type.";
+					if (speciesUsing.size() != 0) {
+						message += "\n\nIt is used by the following species:\n" + species;
+					}
+					JTextArea messageArea = new JTextArea(message);
+					messageArea.setEditable(false);
+					JScrollPane scroll = new JScrollPane();
+					scroll.setMinimumSize(new Dimension(300, 300));
+					scroll.setPreferredSize(new Dimension(300, 300));
+					scroll.setViewportView(messageArea);
+					JOptionPane.showMessageDialog(biosim.frame(), scroll, "Unable To Remove Species Type",
+							JOptionPane.ERROR_MESSAGE);
+				}
 			}
-		      }
-		    }
-		    if (remove) {
-		      SpeciesType tempSpecType = document.getModel().
-			getSpeciesType(((String) specTypes.getSelectedValue()).split(" ")[0]);
-		      ListOf s = document.getModel().getListOfSpeciesTypes();
-		      for (int i = 0; i < document.getModel().getNumSpeciesTypes(); i++) {
-			if (((SpeciesType) s.get(i)).getId().equals(tempSpecType.getId())) {
-			  s.remove(i);
-			}
-		      }
-		      usedIDs.remove(((String)specTypes.getSelectedValue()).split(" ")[0]);
-		      specTypes.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-		      spTyp = (String[])Buttons.remove(specTypes, spTyp);
-		      specTypes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		      specTypes.setSelectedIndex(0);
-		      change = true;
-		    } else {
-		      String species = "";
-		      String[] specs = speciesUsing.toArray(new String[0]);
-		      sort(specs);
-		      for (int i = 0; i < specs.length; i++) {
-			if (i == specs.length - 1) {
-			  species += specs[i];
-			}
-			else {
-			  species += specs[i] + "\n";
-			}
-		      }
-		      String message = "Unable to remove the selected species type.";
-		      if (speciesUsing.size() != 0) {
-			message += "\n\nIt is used by the following species:\n" + species;
-		      }
-		      JTextArea messageArea = new JTextArea(message);
-		      messageArea.setEditable(false);
-		      JScrollPane scroll = new JScrollPane();
-		      scroll.setMinimumSize(new Dimension(300, 300));
-		      scroll.setPreferredSize(new Dimension(300, 300));
-		      scroll.setViewportView(messageArea);
-		      JOptionPane.showMessageDialog(biosim.frame(), scroll, "Unable To Remove Species Type",
-						    JOptionPane.ERROR_MESSAGE);
-		    }
-		  }
 		}
 		// if the add init button is clicked
 		else if (e.getSource() == addInit) {
-		  initEditor("Add");
+			initEditor("Add");
 		}
 		// if the edit init button is clicked
 		else if (e.getSource() == editInit) {
-		  initEditor("OK");
+			initEditor("OK");
 		}
 		// if the remove rule button is clicked
 		else if (e.getSource() == removeInit) {
-		  if (initAssigns.getSelectedIndex() != -1) {
-		    String selected = ((String) initAssigns.getSelectedValue());
-		    String tempVar = selected.split(" ")[0];
-		    String tempMath = selected.substring(selected.indexOf('=')+2);
-		    ListOf r = document.getModel().getListOfInitialAssignments();
-		    for (int i = 0; i < document.getModel().getNumInitialAssignments(); i++) {
-		      if (sbmlLib.formulaToString(((InitialAssignment) r.get(i)).getMath()).equals(tempMath) &&
-			  ((InitialAssignment) r.get(i)).getSymbol().equals(tempVar)) {
-			r.remove(i);
-		      }
-		    }
-		    initAssigns.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-		    inits = (String[])Buttons.remove(initAssigns, inits);
-		    initAssigns.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		    initAssigns.setSelectedIndex(0);
-		    change = true;
-		  }
+			if (initAssigns.getSelectedIndex() != -1) {
+				String selected = ((String) initAssigns.getSelectedValue());
+				String tempVar = selected.split(" ")[0];
+				String tempMath = selected.substring(selected.indexOf('=') + 2);
+				ListOf r = document.getModel().getListOfInitialAssignments();
+				for (int i = 0; i < document.getModel().getNumInitialAssignments(); i++) {
+					if (sbmlLib.formulaToString(((InitialAssignment) r.get(i)).getMath()).equals(tempMath)
+							&& ((InitialAssignment) r.get(i)).getSymbol().equals(tempVar)) {
+						r.remove(i);
+					}
+				}
+				initAssigns.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+				inits = (String[]) Buttons.remove(initAssigns, inits);
+				initAssigns.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+				initAssigns.setSelectedIndex(0);
+				change = true;
+			}
 		}
 		// if the add rule button is clicked
 		else if (e.getSource() == addRule) {
@@ -1200,95 +1214,94 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		}
 		// if the remove rule button is clicked
 		else if (e.getSource() == removeRule) {
-		  if (rules.getSelectedIndex() != -1) {
-		    String selected = ((String) rules.getSelectedValue());
-		    // algebraic rule
-		    if ((selected.split(" ")[0]).equals("0")) {
-		      String tempMath = selected.substring(4);
-		      ListOf r = document.getModel().getListOfRules();
-		      for (int i = 0; i < document.getModel().getNumRules(); i++) {
-			if ((((Rule) r.get(i)).isAlgebraic()) &&
-			    ((Rule) r.get(i)).getFormula().equals(tempMath)) {
-			  r.remove(i);
+			if (rules.getSelectedIndex() != -1) {
+				String selected = ((String) rules.getSelectedValue());
+				// algebraic rule
+				if ((selected.split(" ")[0]).equals("0")) {
+					String tempMath = selected.substring(4);
+					ListOf r = document.getModel().getListOfRules();
+					for (int i = 0; i < document.getModel().getNumRules(); i++) {
+						if ((((Rule) r.get(i)).isAlgebraic())
+								&& ((Rule) r.get(i)).getFormula().equals(tempMath)) {
+							r.remove(i);
+						}
+					}
+				}
+				// rate rule
+				else if ((selected.split(" ")[0]).equals("d(")) {
+					String tempVar = selected.split(" ")[1];
+					String tempMath = selected.substring(selected.indexOf('=') + 2);
+					ListOf r = document.getModel().getListOfRules();
+					for (int i = 0; i < document.getModel().getNumRules(); i++) {
+						if ((((Rule) r.get(i)).isRate()) && ((Rule) r.get(i)).getFormula().equals(tempMath)
+								&& ((Rule) r.get(i)).getVariable().equals(tempVar)) {
+							r.remove(i);
+						}
+					}
+				}
+				// assignment rule
+				else {
+					String tempVar = selected.split(" ")[0];
+					String tempMath = selected.substring(selected.indexOf('=') + 2);
+					ListOf r = document.getModel().getListOfRules();
+					for (int i = 0; i < document.getModel().getNumRules(); i++) {
+						if ((((Rule) r.get(i)).isAssignment())
+								&& ((Rule) r.get(i)).getFormula().equals(tempMath)
+								&& ((Rule) r.get(i)).getVariable().equals(tempVar)) {
+							r.remove(i);
+						}
+					}
+				}
+				rules.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+				rul = (String[]) Buttons.remove(rules, rul);
+				rules.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+				rules.setSelectedIndex(0);
+				change = true;
 			}
-		      }
-		    }
-		    // rate rule
-		    else if ((selected.split(" ")[0]).equals("d(")) {
-		      String tempVar = selected.split(" ")[1];
-		      String tempMath = selected.substring(selected.indexOf('=')+2);
-		      ListOf r = document.getModel().getListOfRules();
-		      for (int i = 0; i < document.getModel().getNumRules(); i++) {
-			if ((((Rule) r.get(i)).isRate()) &&
-			    ((Rule) r.get(i)).getFormula().equals(tempMath) &&
-			    ((Rule) r.get(i)).getVariable().equals(tempVar)) {
-			  r.remove(i);
-			}
-		      }
-		    }
-		    // assignment rule
-		    else {
-		      String tempVar = selected.split(" ")[0];
-		      String tempMath = selected.substring(selected.indexOf('=')+2);
-		      ListOf r = document.getModel().getListOfRules();
-		      for (int i = 0; i < document.getModel().getNumRules(); i++) {
-			if ((((Rule) r.get(i)).isAssignment()) &&
-			    ((Rule) r.get(i)).getFormula().equals(tempMath) &&
-			    ((Rule) r.get(i)).getVariable().equals(tempVar)) {
-			  r.remove(i);
-			}
-		      }
-		    }
-		    rules.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-		    rul = (String[])Buttons.remove(rules, rul);
-		    rules.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		    rules.setSelectedIndex(0);
-		    change = true;
-		  }
 		}
 		// if the add event button is clicked
 		else if (e.getSource() == addEvent) {
-		  eventEditor("Add");
+			eventEditor("Add");
 		}
 		// if the edit event button is clicked
 		else if (e.getSource() == editEvent) {
-		  eventEditor("OK");
+			eventEditor("OK");
 		}
 		// if the remove event button is clicked
 		else if (e.getSource() == removeEvent) {
-		  if (events.getSelectedIndex() != -1) {
-		    String selected = ((String) events.getSelectedValue());
-		    ListOf EL = document.getModel().getListOfEvents();
-		    for (int i = 0; i < document.getModel().getNumEvents(); i++) {
-		      org.sbml.libsbml.Event E = (org.sbml.libsbml.Event) EL.get(i);
-		      if (sbmlLib.formulaToString(E.getTrigger().getMath()).equals(selected)) {
-			EL.remove(i);
-		      }
-		    }
-		    events.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-		    ev = (String[])Buttons.remove(events, ev);
-		    events.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		    events.setSelectedIndex(0);
-		    change = true;
-		  }
+			if (events.getSelectedIndex() != -1) {
+				String selected = ((String) events.getSelectedValue());
+				ListOf EL = document.getModel().getListOfEvents();
+				for (int i = 0; i < document.getModel().getNumEvents(); i++) {
+					org.sbml.libsbml.Event E = (org.sbml.libsbml.Event) EL.get(i);
+					if (sbmlLib.formulaToString(E.getTrigger().getMath()).equals(selected)) {
+						EL.remove(i);
+					}
+				}
+				events.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+				ev = (String[]) Buttons.remove(events, ev);
+				events.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+				events.setSelectedIndex(0);
+				change = true;
+			}
 		}
 		// if the add event assignment button is clicked
 		else if (e.getSource() == addAssignment) {
-		  eventAssignEditor("Add");
+			eventAssignEditor("Add");
 		}
 		// if the edit event assignment button is clicked
 		else if (e.getSource() == editAssignment) {
-		  eventAssignEditor("OK");
+			eventAssignEditor("OK");
 		}
 		// if the remove event assignment button is clicked
 		else if (e.getSource() == removeAssignment) {
- 		  if (eventAssign.getSelectedIndex() != -1) {
-		    eventAssign.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-		    assign = (String[])Buttons.remove(eventAssign, assign);
-		    eventAssign.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		    eventAssign.setSelectedIndex(0);
-		    change = true;
-		  }
+			if (eventAssign.getSelectedIndex() != -1) {
+				eventAssign.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+				assign = (String[]) Buttons.remove(eventAssign, assign);
+				eventAssign.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+				eventAssign.setSelectedIndex(0);
+				change = true;
+			}
 		}
 		// if the add constraint button is clicked
 		else if (e.getSource() == addConstraint) {
@@ -1300,20 +1313,20 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		}
 		// if the remove constraint button is clicked
 		else if (e.getSource() == removeConstraint) {
-		  if (constraints.getSelectedIndex() != -1) {
-		    String selected = ((String) constraints.getSelectedValue());
-		    ListOf c = document.getModel().getListOfConstraints();
-		    for (int i = 0; i < document.getModel().getNumConstraints(); i++) {
-		      if (sbmlLib.formulaToString(((Constraint) c.get(i)).getMath()).equals(selected)) {
-			c.remove(i);
-		      }
-		    }
-		    constraints.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-		    cons = (String[])Buttons.remove(constraints, cons);
-		    constraints.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		    constraints.setSelectedIndex(0);
-		    change = true;
-		  }
+			if (constraints.getSelectedIndex() != -1) {
+				String selected = ((String) constraints.getSelectedValue());
+				ListOf c = document.getModel().getListOfConstraints();
+				for (int i = 0; i < document.getModel().getNumConstraints(); i++) {
+					if (sbmlLib.formulaToString(((Constraint) c.get(i)).getMath()).equals(selected)) {
+						c.remove(i);
+					}
+				}
+				constraints.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+				cons = (String[]) Buttons.remove(constraints, cons);
+				constraints.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+				constraints.setSelectedIndex(0);
+				change = true;
+			}
 		}
 		// if the add comparment button is clicked
 		else if (e.getSource() == addCompart) {
@@ -1332,7 +1345,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					for (int i = 0; i < document.getModel().getNumSpecies(); i++) {
 						Species species = (Species) document.getModel().getListOfSpecies().get(i);
 						if (species.isSetCompartment()) {
-						  if (species.getCompartment().equals(((String) compartments.getSelectedValue()).split(" ")[0])) {
+							if (species.getCompartment().equals(
+									((String) compartments.getSelectedValue()).split(" ")[0])) {
 								remove = false;
 								speciesUsing.add(species.getId());
 							}
@@ -1340,14 +1354,14 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					}
 					if (remove) {
 						Compartment tempComp = document.getModel().getCompartment(
-							  ((String) compartments.getSelectedValue()).split(" ")[0]);
+								((String) compartments.getSelectedValue()).split(" ")[0]);
 						ListOf c = document.getModel().getListOfCompartments();
 						for (int i = 0; i < document.getModel().getNumCompartments(); i++) {
 							if (((Compartment) c.get(i)).getId().equals(tempComp.getId())) {
 								c.remove(i);
 							}
 						}
-						usedIDs.remove(((String)compartments.getSelectedValue()).split(" ")[0]);
+						usedIDs.remove(((String) compartments.getSelectedValue()).split(" ")[0]);
 						compartments.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 						comps = (String[]) Buttons.remove(compartments, comps);
 						compartments.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -1609,7 +1623,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				}
 				thisReactionParams.remove(v);
 				reacParameters.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-				reacParams = (String[])Buttons.remove(reacParameters, reacParams);
+				reacParams = (String[]) Buttons.remove(reacParameters, reacParams);
 				reacParameters.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 				reacParameters.setSelectedIndex(0);
 				change = true;
@@ -1633,7 +1647,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					}
 				}
 				reactants.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-				reacta = (String[])Buttons.remove(reactants, reacta);
+				reacta = (String[]) Buttons.remove(reactants, reacta);
 				reactants.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 				reactants.setSelectedIndex(0);
 				change = true;
@@ -1657,7 +1671,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					}
 				}
 				products.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-				product = (String[])Buttons.remove(products, product);
+				product = (String[]) Buttons.remove(products, product);
 				products.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 				products.setSelectedIndex(0);
 				change = true;
@@ -1713,7 +1727,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 * Creates a frame used to edit functions or create new ones.
 	 */
 	private void functionEditor(String option) {
-	        libsbml sbmlLib = new libsbml();
+		libsbml sbmlLib = new libsbml();
 		if (option.equals("OK") && functions.getSelectedIndex() == -1) {
 			JOptionPane.showMessageDialog(biosim.frame(), "No function selected.",
 					"Must Select a Function", JOptionPane.ERROR_MESSAGE);
@@ -1729,25 +1743,26 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			funcName = new JTextField(12);
 			args = new JTextField(12);
 			eqn = new JTextField(12);
-			//eqn.setText("1.0");
+			// eqn.setText("1.0");
 			if (option.equals("OK")) {
 				try {
 					FunctionDefinition function = document.getModel().getFunctionDefinition(
-					     (((String) functions.getSelectedValue()).split(" ")[0]));
+							(((String) functions.getSelectedValue()).split(" ")[0]));
 					funcID.setText(function.getId());
 					funcName.setText(function.getName());
 					String argStr = "";
 					for (long j = 0; j < function.getNumArguments(); j++) {
-					  if (j != 0) {
-					    argStr += ", ";
-					  }
-					  argStr += sbmlLib.formulaToString(function.getArgument(j));
+						if (j != 0) {
+							argStr += ", ";
+						}
+						argStr += sbmlLib.formulaToString(function.getArgument(j));
 					}
 					args.setText(argStr);
 					if (function.isSetMath()) {
-					  eqn.setText("" + sbmlLib.formulaToString(function.getBody()));
-					} else {
-					  eqn.setText("");
+						eqn.setText("" + sbmlLib.formulaToString(function.getBody()));
+					}
+					else {
+						eqn.setText("");
 					}
 				}
 				catch (Exception e) {
@@ -1764,30 +1779,31 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			functionPanel.add(funcPanel);
 			Object[] options = { option, "Cancel" };
 			int value = JOptionPane.showOptionDialog(biosim.frame(), functionPanel, "Function Editor",
-								 JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+					JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 			if (value == JOptionPane.YES_OPTION) {
 				boolean error = true;
 				while (error && value == JOptionPane.YES_OPTION) {
 					error = false;
 					if (funcID.getText().trim().equals("")) {
-						JOptionPane.showMessageDialog(biosim.frame(), "You must enter an ID into the ID field.",
-									      "Enter an ID", JOptionPane.ERROR_MESSAGE);
+						JOptionPane
+								.showMessageDialog(biosim.frame(), "You must enter an ID into the ID field.",
+										"Enter an ID", JOptionPane.ERROR_MESSAGE);
 						error = true;
-						value = JOptionPane.showOptionDialog(biosim.frame(), functionPanel,
-								"Function Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
-								options, options[0]);
+						value = JOptionPane.showOptionDialog(biosim.frame(), functionPanel, "Function Editor",
+								JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 					}
 					else {
 						String addFunc = "";
 						addFunc = funcID.getText().trim();
 						if (!(IDpat.matcher(addFunc).matches())) {
-						  JOptionPane.showMessageDialog(biosim.frame(),
-										"A function ID can only contain letters, numbers, and underscores.", 
-										"Invalid ID",JOptionPane.ERROR_MESSAGE);
-						  error = true;
-						} 
+							JOptionPane.showMessageDialog(biosim.frame(),
+									"A function ID can only contain letters, numbers, and underscores.",
+									"Invalid ID", JOptionPane.ERROR_MESSAGE);
+							error = true;
+						}
 						else if (usedIDs.contains(addFunc)) {
-						  if (option.equals("OK") && !addFunc.equals(((String) functions.getSelectedValue()).split(" ")[0])) {
+							if (option.equals("OK")
+									&& !addFunc.equals(((String) functions.getSelectedValue()).split(" ")[0])) {
 								JOptionPane.showMessageDialog(biosim.frame(),
 										"You must enter a unique ID into the ID field.", "Enter a Unique ID",
 										JOptionPane.ERROR_MESSAGE);
@@ -1800,11 +1816,12 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 								error = true;
 							}
 						}
-						if (eqn.getText().trim().equals("") || 
-						    sbmlLib.parseFormula("lambda(" + args.getText().trim() + "," + eqn.getText().trim() + ")")==null) {
-						  JOptionPane.showMessageDialog(biosim.frame(), "You must enter a valid formula.",
-										"Enter Valid Formula", JOptionPane.ERROR_MESSAGE);
-						  error = true;
+						if (eqn.getText().trim().equals("")
+								|| sbmlLib.parseFormula("lambda(" + args.getText().trim() + ","
+										+ eqn.getText().trim() + ")") == null) {
+							JOptionPane.showMessageDialog(biosim.frame(), "You must enter a valid formula.",
+									"Enter Valid Formula", JOptionPane.ERROR_MESSAGE);
+							error = true;
 						}
 						if (!error) {
 							if (option.equals("OK")) {
@@ -1816,13 +1833,15 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 								FunctionDefinition f = document.getModel().getFunctionDefinition(val);
 								f.setId(funcID.getText().trim());
 								f.setName(funcName.getText().trim());
-								f.setMath(sbmlLib.parseFormula("lambda(" + args.getText().trim() + "," + eqn.getText().trim() + ")"));
+								f.setMath(sbmlLib.parseFormula("lambda(" + args.getText().trim() + ","
+										+ eqn.getText().trim() + ")"));
 								for (int i = 0; i < usedIDs.size(); i++) {
 									if (usedIDs.get(i).equals(val)) {
 										usedIDs.set(i, addFunc);
 									}
 								}
-								funcs[index] = addFunc + " ( " + args.getText().trim() + " ) = " + eqn.getText().trim();
+								funcs[index] = addFunc + " ( " + args.getText().trim() + " ) = "
+										+ eqn.getText().trim();
 								sort(funcs);
 								functions.setListData(funcs);
 								functions.setSelectedIndex(index);
@@ -1832,7 +1851,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 								FunctionDefinition f = document.getModel().createFunctionDefinition();
 								f.setId(funcID.getText().trim());
 								f.setName(funcName.getText().trim());
-								f.setMath(sbmlLib.parseFormula("lambda(" + args.getText().trim() + "," + eqn.getText().trim() + ")"));
+								f.setMath(sbmlLib.parseFormula("lambda(" + args.getText().trim() + ","
+										+ eqn.getText().trim() + ")"));
 								usedIDs.add(addFunc);
 								JList add = new JList();
 								String addStr;
@@ -1910,22 +1930,22 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			if (option.equals("OK")) {
 				try {
 					UnitDefinition unit = document.getModel().getUnitDefinition(
-					     (((String) unitDefs.getSelectedValue()).split(" ")[0]));
+							(((String) unitDefs.getSelectedValue()).split(" ")[0]));
 					unitID.setText(unit.getId());
 					unitName.setText(unit.getName());
-					uList = new String[(int)unit.getNumUnits()];
-					for (int i=0; i<unit.getNumUnits(); i++) {
-					  uList[i] = "";
-					  if (unit.getUnit(i).getMultiplier() != 1.0) {
-					    uList[i] = unit.getUnit(i).getMultiplier() + " * ";
-					  }
-					  if (unit.getUnit(i).getScale() != 0) {
-					    uList[i] = uList[i] + "10^" + unit.getUnit(i).getScale() + " * ";
-					  }
-					  uList[i] = uList[i] + unitToString(unit.getUnit(i));
-					  if (unit.getUnit(i).getExponent() != 1) {
-					    uList[i] = "( " + uList[i] + " )^" + unit.getUnit(i).getExponent();
-					  }
+					uList = new String[(int) unit.getNumUnits()];
+					for (int i = 0; i < unit.getNumUnits(); i++) {
+						uList[i] = "";
+						if (unit.getUnit(i).getMultiplier() != 1.0) {
+							uList[i] = unit.getUnit(i).getMultiplier() + " * ";
+						}
+						if (unit.getUnit(i).getScale() != 0) {
+							uList[i] = uList[i] + "10^" + unit.getUnit(i).getScale() + " * ";
+						}
+						uList[i] = uList[i] + unitToString(unit.getUnit(i));
+						if (unit.getUnit(i).getExponent() != 1) {
+							uList[i] = "( " + uList[i] + " )^" + unit.getUnit(i).getExponent();
+						}
 					}
 				}
 				catch (Exception e) {
@@ -1943,34 +1963,37 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			unitPanel.add(unitID);
 			unitPanel.add(nameLabel);
 			unitPanel.add(unitName);
-			unitDefPanel.add(unitPanel,"North");
-			unitDefPanel.add(unitListPanel,"South");
+			unitDefPanel.add(unitPanel, "North");
+			unitDefPanel.add(unitListPanel, "South");
 			Object[] options = { option, "Cancel" };
-			int value = JOptionPane.showOptionDialog(biosim.frame(), unitDefPanel, "Unit Definition Editor",
-								 JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+			int value = JOptionPane.showOptionDialog(biosim.frame(), unitDefPanel,
+					"Unit Definition Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
+					options, options[0]);
 			if (value == JOptionPane.YES_OPTION) {
 				boolean error = true;
 				while (error && value == JOptionPane.YES_OPTION) {
 					error = false;
 					if (unitID.getText().trim().equals("")) {
-						JOptionPane.showMessageDialog(biosim.frame(), "You must enter an ID into the ID field.",
-									      "Enter an ID", JOptionPane.ERROR_MESSAGE);
+						JOptionPane
+								.showMessageDialog(biosim.frame(), "You must enter an ID into the ID field.",
+										"Enter an ID", JOptionPane.ERROR_MESSAGE);
 						error = true;
 						value = JOptionPane.showOptionDialog(biosim.frame(), unitDefPanel,
-								"Unit Definition Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
-								options, options[0]);
+								"Unit Definition Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
+								null, options, options[0]);
 					}
 					else {
 						String addUnit = "";
 						addUnit = unitID.getText().trim();
 						if (!(IDpat.matcher(addUnit).matches())) {
-						  JOptionPane.showMessageDialog(biosim.frame(),
-										"A unit definition ID can only contain letters, numbers, and underscores.", 
-										"Invalid ID",JOptionPane.ERROR_MESSAGE);
-						  error = true;
-						} 
+							JOptionPane.showMessageDialog(biosim.frame(),
+									"A unit definition ID can only contain letters, numbers, and underscores.",
+									"Invalid ID", JOptionPane.ERROR_MESSAGE);
+							error = true;
+						}
 						else if (usedIDs.contains(addUnit)) {
-						  if (option.equals("OK") && !addUnit.equals(((String) unitDefs.getSelectedValue()).split(" ")[0])) {
+							if (option.equals("OK")
+									&& !addUnit.equals(((String) unitDefs.getSelectedValue()).split(" ")[0])) {
 								JOptionPane.showMessageDialog(biosim.frame(),
 										"You must enter a unique ID into the ID field.", "Enter a Unique ID",
 										JOptionPane.ERROR_MESSAGE);
@@ -2000,16 +2023,16 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 									}
 								}
 								while (u.getNumUnits() > 0) {
-								  u.getListOfUnits().remove(0);
+									u.getListOfUnits().remove(0);
 								}
 								for (int i = 0; i < uList.length; i++) {
-								  Unit unit = new Unit(extractUnitKind(uList[i]),
-										       Integer.valueOf(extractUnitExp(uList[i])).intValue(),
-										       Integer.valueOf(extractUnitScale(uList[i])).intValue(),
-										       Double.valueOf(extractUnitMult(uList[i])).doubleValue());
-								  u.addUnit(unit);
-								} 
-								units[index] = addUnit; 
+									Unit unit = new Unit(extractUnitKind(uList[i]), Integer.valueOf(
+											extractUnitExp(uList[i])).intValue(), Integer.valueOf(
+											extractUnitScale(uList[i])).intValue(), Double.valueOf(
+											extractUnitMult(uList[i])).doubleValue());
+									u.addUnit(unit);
+								}
+								units[index] = addUnit;
 								sort(units);
 								unitDefs.setListData(units);
 								unitDefs.setSelectedIndex(index);
@@ -2021,19 +2044,19 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 								u.setName(unitName.getText().trim());
 								usedIDs.add(addUnit);
 								for (int i = 0; i < uList.length; i++) {
-								  Unit unit = new Unit(extractUnitKind(uList[i]),
-										       Integer.valueOf(extractUnitExp(uList[i])).intValue(),
-										       Integer.valueOf(extractUnitScale(uList[i])).intValue(),
-										       Double.valueOf(extractUnitMult(uList[i])).doubleValue());
-								  u.addUnit(unit);
-								} 
+									Unit unit = new Unit(extractUnitKind(uList[i]), Integer.valueOf(
+											extractUnitExp(uList[i])).intValue(), Integer.valueOf(
+											extractUnitScale(uList[i])).intValue(), Double.valueOf(
+											extractUnitMult(uList[i])).doubleValue());
+									u.addUnit(unit);
+								}
 								JList add = new JList();
-								Object[] adding = { addUnit }; 
+								Object[] adding = { addUnit };
 								add.setListData(adding);
 								add.setSelectedIndex(0);
 								unitDefs.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 								adding = Buttons.add(units, unitDefs, add, false, null, null, null, null, null,
-										     null, biosim.frame());
+										null, biosim.frame());
 								units = new String[adding.length];
 								for (int i = 0; i < adding.length; i++) {
 									units[i] = (String) adding[i];
@@ -2052,8 +2075,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						}
 						if (error) {
 							value = JOptionPane.showOptionDialog(biosim.frame(), unitDefPanel,
-									"Unit Definition Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
-									options, options[0]);
+									"Unit Definition Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
+									null, options, options[0]);
 						}
 					}
 				}
@@ -2068,10 +2091,10 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 * Creates a frame used to edit unit list elements or create new ones.
 	 */
 	private void unitListEditor(String option) {
-	        libsbml sbmlLib = new libsbml();
+		libsbml sbmlLib = new libsbml();
 		if (option.equals("OK") && unitList.getSelectedIndex() == -1) {
-			JOptionPane.showMessageDialog(biosim.frame(), "No unit selected.",
-					"Must Select an Unit", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(biosim.frame(), "No unit selected.", "Must Select an Unit",
+					JOptionPane.ERROR_MESSAGE);
 		}
 		else {
 			JPanel unitListPanel = new JPanel();
@@ -2080,14 +2103,10 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			JLabel expLabel = new JLabel("Exponent:");
 			JLabel scaleLabel = new JLabel("Scale:");
 			JLabel multLabel = new JLabel("Multiplier:");
-			String[] kinds = { "ampere", "becquerel", "candela", "celsius",
-					   "coulomb", "dimensionless", "farad", "gram",
-					   "gray", "henry", "hertz", "item", "joule",
-					   "katal", "kelvin", "kilogram", "litre",
-					   "lumen", "lux", "metre", "mole", "newton",
-					   "ohm", "pascal", "radian", "second", "siemens",
-					   "sievert", "steradian", "tesla", "volt", "watt",
-					   "weber" };
+			String[] kinds = { "ampere", "becquerel", "candela", "celsius", "coulomb", "dimensionless",
+					"farad", "gram", "gray", "henry", "hertz", "item", "joule", "katal", "kelvin",
+					"kilogram", "litre", "lumen", "lux", "metre", "mole", "newton", "ohm", "pascal",
+					"radian", "second", "siemens", "sievert", "steradian", "tesla", "volt", "watt", "weber" };
 			final JComboBox kindBox = new JComboBox(kinds);
 			exp = new JTextField(12);
 			exp.setText("1");
@@ -2095,12 +2114,12 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			scale.setText("0");
 			mult = new JTextField(12);
 			mult.setText("1.0");
- 			if (option.equals("OK")) {
-			  String selected = (String)unitList.getSelectedValue();
-			  kindBox.setSelectedItem(extractUnitKind(selected));
-			  exp.setText(extractUnitExp(selected));
-			  scale.setText(extractUnitScale(selected));
-			  mult.setText(extractUnitMult(selected));
+			if (option.equals("OK")) {
+				String selected = (String) unitList.getSelectedValue();
+				kindBox.setSelectedItem(extractUnitKind(selected));
+				exp.setText(extractUnitExp(selected));
+				scale.setText(extractUnitScale(selected));
+				mult.setText(extractUnitMult(selected));
 			}
 			ULPanel.add(kindLabel);
 			ULPanel.add(kindBox);
@@ -2113,231 +2132,264 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			unitListPanel.add(ULPanel);
 			Object[] options = { option, "Cancel" };
 			int value = JOptionPane.showOptionDialog(biosim.frame(), unitListPanel, "Unit List Editor",
-								 JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+					JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 			if (value == JOptionPane.YES_OPTION) {
 				boolean error = true;
 				while (error && value == JOptionPane.YES_OPTION) {
 					error = false;
 					if (!error) {
-					  if (option.equals("OK")) {
-					    int index = unitList.getSelectedIndex();
-					    unitList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-					    uList = Buttons.getList(uList, unitList);
-					    unitList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-					    uList[index] = "";
-					    if (!mult.getText().trim().equals("1.0")) {
-					      uList[index] = mult.getText().trim() + " * ";
-					    }
-					    if (!scale.getText().trim().equals("0")) {
-					      uList[index] = uList[index] + "10^" + scale.getText().trim() + " * ";
-					    }
-					    uList[index] = uList[index] + kindBox.getSelectedItem();
-					    if (!exp.getText().trim().equals("1")) {
-					      uList[index] = "( " + uList[index] + " )^" + exp.getText().trim();
-					    }
-					    sort(uList);
-					    unitList.setListData(uList);
-					    unitList.setSelectedIndex(index);
-					  }
-					  else {
- 					    JList add = new JList();
-					    int index = unitList.getSelectedIndex();
-					    String addStr;
-					    addStr = "";
-					    if (!mult.getText().trim().equals("1.0")) {
-					      addStr = mult.getText().trim() + " * ";
-					    }
-					    if (!scale.getText().trim().equals("0")) {
-					      addStr = addStr + "10^" + scale.getText().trim() + " * ";
-					    }
-					    addStr = addStr + kindBox.getSelectedItem();
-					    if (!exp.getText().trim().equals("1")) {
-					      addStr = "( " + addStr + " )^" + exp.getText().trim();
-					    }
-					    Object[] adding = { addStr };
-					    add.setListData(adding);
-					    add.setSelectedIndex(0);
-					    unitList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-					    adding = Buttons.add(uList, unitList, add, false, null, null, null, null, null,
-								 null, biosim.frame());
-					    uList = new String[adding.length];
-					    for (int i = 0; i < adding.length; i++) {
-					      uList[i] = (String) adding[i];
-					    }
-					    sort(uList);
-					    unitList.setListData(uList);
-					    unitList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-					    if (adding.length == 1) {
-					      unitList.setSelectedIndex(0);
-					    }
-					    else {
-					      unitList.setSelectedIndex(index);
-					    }
-					  }
-					  change = true;
+						if (option.equals("OK")) {
+							int index = unitList.getSelectedIndex();
+							unitList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+							uList = Buttons.getList(uList, unitList);
+							unitList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+							uList[index] = "";
+							if (!mult.getText().trim().equals("1.0")) {
+								uList[index] = mult.getText().trim() + " * ";
+							}
+							if (!scale.getText().trim().equals("0")) {
+								uList[index] = uList[index] + "10^" + scale.getText().trim() + " * ";
+							}
+							uList[index] = uList[index] + kindBox.getSelectedItem();
+							if (!exp.getText().trim().equals("1")) {
+								uList[index] = "( " + uList[index] + " )^" + exp.getText().trim();
+							}
+							sort(uList);
+							unitList.setListData(uList);
+							unitList.setSelectedIndex(index);
+						}
+						else {
+							JList add = new JList();
+							int index = unitList.getSelectedIndex();
+							String addStr;
+							addStr = "";
+							if (!mult.getText().trim().equals("1.0")) {
+								addStr = mult.getText().trim() + " * ";
+							}
+							if (!scale.getText().trim().equals("0")) {
+								addStr = addStr + "10^" + scale.getText().trim() + " * ";
+							}
+							addStr = addStr + kindBox.getSelectedItem();
+							if (!exp.getText().trim().equals("1")) {
+								addStr = "( " + addStr + " )^" + exp.getText().trim();
+							}
+							Object[] adding = { addStr };
+							add.setListData(adding);
+							add.setSelectedIndex(0);
+							unitList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+							adding = Buttons.add(uList, unitList, add, false, null, null, null, null, null, null,
+									biosim.frame());
+							uList = new String[adding.length];
+							for (int i = 0; i < adding.length; i++) {
+								uList[i] = (String) adding[i];
+							}
+							sort(uList);
+							unitList.setListData(uList);
+							unitList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+							if (adding.length == 1) {
+								unitList.setSelectedIndex(0);
+							}
+							else {
+								unitList.setSelectedIndex(index);
+							}
+						}
+						change = true;
 					}
 					if (error) {
-					  value = JOptionPane.showOptionDialog(biosim.frame(), unitListPanel,
-									       "Unit List Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
-									       options, options[0]);
+						value = JOptionPane.showOptionDialog(biosim.frame(), unitListPanel, "Unit List Editor",
+								JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 					}
 				}
 				if (value == JOptionPane.NO_OPTION) {
 					return;
 				}
 			}
- 		}
+		}
 	}
 
 	/**
 	 * Convert unit kind to string
 	 */
 	private String unitToString(Unit unit) {
-	  if (unit.isAmpere()) {
-	    return "ampere";
-	  } else if (unit.isBecquerel()) {
-	    return "becquerel";
-	  } else if (unit.isCandela()) {
-	    return "candela";
-	  } else if (unit.isCelsius()) {
-	    return "celsius";
-	  } else if (unit.isCoulomb()) {
-	    return "coulomb";
-	  } else if (unit.isDimensionless()) {
-	    return "dimensionless";
-	  } else if (unit.isFarad()) {
-	    return "farad";
-	  } else if (unit.isGram()) {
-	    return "gram";
-	  } else if (unit.isGray()) {
-	    return "gray";
-	  } else if (unit.isHenry()) {
-	    return "henry";
-	  } else if (unit.isHertz()) {
-	    return "hertz";
-	  } else if (unit.isItem()) {
-	    return "item";
-	  } else if (unit.isJoule()) {
-	    return "joule";
-	  } else if (unit.isKatal()) {
-	    return "katal";
-	  } else if (unit.isKelvin()) {
-	    return "kelvin";
-	  } else if (unit.isKilogram()) {
-	    return "kilogram";
-	  } else if (unit.isLitre()) {
-	    return "litre";
-	  } else if (unit.isLumen()) {
-	    return "lumen";
-	  } else if (unit.isLux()) {
-	    return "lux";
-	  } else if (unit.isMetre()) {
-	    return "metre";
-	  } else if (unit.isMole()) {
-	    return "mole";
-	  } else if (unit.isNewton()) {
-	    return "newton";
-	  } else if (unit.isOhm()) {
-	    return "ohm";
-	  } else if (unit.isPascal()) {
-	    return "pascal";
-	  } else if (unit.isRadian()) {
-	    return "radian";
-	  } else if (unit.isSecond()) {
-	    return "second";
-	  } else if (unit.isSiemens()) {
-	    return "siemens";
-	  } else if (unit.isSievert()) {
-	    return "sievert";
-	  } else if (unit.isSteradian()) {
-	    return "steradian";
-	  } else if (unit.isTesla()) {
-	    return "tesla";
-	  } else if (unit.isVolt()) {
-	    return "volt";
-	  } else if (unit.isWatt()) {
-	    return "watt";
-	  } else if (unit.isWeber()) { 
-	    return "weber";
-	  }
-	  return "Unknown";
+		if (unit.isAmpere()) {
+			return "ampere";
+		}
+		else if (unit.isBecquerel()) {
+			return "becquerel";
+		}
+		else if (unit.isCandela()) {
+			return "candela";
+		}
+		else if (unit.isCelsius()) {
+			return "celsius";
+		}
+		else if (unit.isCoulomb()) {
+			return "coulomb";
+		}
+		else if (unit.isDimensionless()) {
+			return "dimensionless";
+		}
+		else if (unit.isFarad()) {
+			return "farad";
+		}
+		else if (unit.isGram()) {
+			return "gram";
+		}
+		else if (unit.isGray()) {
+			return "gray";
+		}
+		else if (unit.isHenry()) {
+			return "henry";
+		}
+		else if (unit.isHertz()) {
+			return "hertz";
+		}
+		else if (unit.isItem()) {
+			return "item";
+		}
+		else if (unit.isJoule()) {
+			return "joule";
+		}
+		else if (unit.isKatal()) {
+			return "katal";
+		}
+		else if (unit.isKelvin()) {
+			return "kelvin";
+		}
+		else if (unit.isKilogram()) {
+			return "kilogram";
+		}
+		else if (unit.isLitre()) {
+			return "litre";
+		}
+		else if (unit.isLumen()) {
+			return "lumen";
+		}
+		else if (unit.isLux()) {
+			return "lux";
+		}
+		else if (unit.isMetre()) {
+			return "metre";
+		}
+		else if (unit.isMole()) {
+			return "mole";
+		}
+		else if (unit.isNewton()) {
+			return "newton";
+		}
+		else if (unit.isOhm()) {
+			return "ohm";
+		}
+		else if (unit.isPascal()) {
+			return "pascal";
+		}
+		else if (unit.isRadian()) {
+			return "radian";
+		}
+		else if (unit.isSecond()) {
+			return "second";
+		}
+		else if (unit.isSiemens()) {
+			return "siemens";
+		}
+		else if (unit.isSievert()) {
+			return "sievert";
+		}
+		else if (unit.isSteradian()) {
+			return "steradian";
+		}
+		else if (unit.isTesla()) {
+			return "tesla";
+		}
+		else if (unit.isVolt()) {
+			return "volt";
+		}
+		else if (unit.isWatt()) {
+			return "watt";
+		}
+		else if (unit.isWeber()) {
+			return "weber";
+		}
+		return "Unknown";
 	}
 
 	/**
 	 * Extract unit kind from string
 	 */
 	private String extractUnitKind(String selected) {
-	  if (selected.contains(")^")) {
-	    if (selected.contains("10^")) {
-	      return selected.substring(selected.lastIndexOf("*")+2,selected.indexOf(")")-1);
-	    } else if (selected.contains("*")) {
-	      return selected.substring(selected.lastIndexOf("*")+2,selected.indexOf(")")-1);
-	    } else {
-	      return selected.substring(2,selected.indexOf(")")-1);
-	    }
-	  }
-	  else if (selected.contains("10^")) {
-	    return selected.substring(selected.lastIndexOf("*")+2);
-	  } 
-	  else if (selected.contains("*")) {
-	    mult.setText(selected.substring(0,selected.indexOf("*")-1));
-	    return selected.substring(selected.indexOf("*")+2);
-	  } else {
-	    return selected;
-	  }
+		if (selected.contains(")^")) {
+			if (selected.contains("10^")) {
+				return selected.substring(selected.lastIndexOf("*") + 2, selected.indexOf(")") - 1);
+			}
+			else if (selected.contains("*")) {
+				return selected.substring(selected.lastIndexOf("*") + 2, selected.indexOf(")") - 1);
+			}
+			else {
+				return selected.substring(2, selected.indexOf(")") - 1);
+			}
+		}
+		else if (selected.contains("10^")) {
+			return selected.substring(selected.lastIndexOf("*") + 2);
+		}
+		else if (selected.contains("*")) {
+			mult.setText(selected.substring(0, selected.indexOf("*") - 1));
+			return selected.substring(selected.indexOf("*") + 2);
+		}
+		else {
+			return selected;
+		}
 	}
 
 	/**
 	 * Extract unit exponent from string
 	 */
 	private String extractUnitExp(String selected) {
-	  if (selected.contains(")^")) {
-	    return selected.substring(selected.indexOf(")^")+2);
-	  }
-	  return "1";
+		if (selected.contains(")^")) {
+			return selected.substring(selected.indexOf(")^") + 2);
+		}
+		return "1";
 	}
 
 	/**
 	 * Extract unit scale from string
 	 */
 	private String extractUnitScale(String selected) {
-	  if (selected.contains(")^")) {
-	    if (selected.contains("10^")) {
-	      return selected.substring(selected.indexOf("10^")+3,
-					selected.lastIndexOf("*")-1);
-	    } 
-	  }
-	  else if (selected.contains("10^")) {
-	    return selected.substring(selected.indexOf("10^")+3,
-				      selected.lastIndexOf("*")-1);
-	  }
-	  return "0";
+		if (selected.contains(")^")) {
+			if (selected.contains("10^")) {
+				return selected.substring(selected.indexOf("10^") + 3, selected.lastIndexOf("*") - 1);
+			}
+		}
+		else if (selected.contains("10^")) {
+			return selected.substring(selected.indexOf("10^") + 3, selected.lastIndexOf("*") - 1);
+		}
+		return "0";
 	}
 
 	/**
 	 * Extract unit multiplier from string
 	 */
 	private String extractUnitMult(String selected) {
-	  if (selected.contains(")^")) {
-	    if (selected.contains("10^")) {
-	      String multStr = selected.substring(2,selected.indexOf("*")-1);
-	      if (!multStr.contains("10^")) {
-		return multStr;
-	      }
-	    } else if (selected.contains("*")) {
-	      return selected.substring(2,selected.indexOf("*")-1);
-	    }
-	    else if (selected.contains("10^")) {
-	      String multStr = selected.substring(0,selected.indexOf("*")-1);
-	      if (!multStr.contains("10^")) {
-		return multStr;
-	      }
-	    } 
-	    else if (selected.contains("*")) {
-	      return selected.substring(0,selected.indexOf("*")-1);
-	    }
-	  }
-	  return "1.0";
+		if (selected.contains(")^")) {
+			if (selected.contains("10^")) {
+				String multStr = selected.substring(2, selected.indexOf("*") - 1);
+				if (!multStr.contains("10^")) {
+					return multStr;
+				}
+			}
+			else if (selected.contains("*")) {
+				return selected.substring(2, selected.indexOf("*") - 1);
+			}
+			else if (selected.contains("10^")) {
+				String multStr = selected.substring(0, selected.indexOf("*") - 1);
+				if (!multStr.contains("10^")) {
+					return multStr;
+				}
+			}
+			else if (selected.contains("*")) {
+				return selected.substring(0, selected.indexOf("*") - 1);
+			}
+		}
+		return "1.0";
 	}
 
 	/**
@@ -2358,7 +2410,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			if (option.equals("OK")) {
 				try {
 					CompartmentType compType = document.getModel().getCompartmentType(
-					     (((String) compTypes.getSelectedValue()).split(" ")[0]));
+							(((String) compTypes.getSelectedValue()).split(" ")[0]));
 					compTypeID.setText(compType.getId());
 					compTypeName.setText(compType.getName());
 				}
@@ -2371,42 +2423,45 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			cpTypPanel.add(compTypeName);
 			compTypePanel.add(cpTypPanel);
 			Object[] options = { option, "Cancel" };
-			int value = JOptionPane.showOptionDialog(biosim.frame(), compTypePanel, "Compartment Type Editor",
-								 JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+			int value = JOptionPane.showOptionDialog(biosim.frame(), compTypePanel,
+					"Compartment Type Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
+					options, options[0]);
 			if (value == JOptionPane.YES_OPTION) {
 				boolean error = true;
 				while (error && value == JOptionPane.YES_OPTION) {
 					error = false;
 					if (compTypeID.getText().trim().equals("")) {
-						JOptionPane.showMessageDialog(biosim.frame(), "You must enter an ID into the ID field.",
-									      "Enter an ID", JOptionPane.ERROR_MESSAGE);
+						JOptionPane
+								.showMessageDialog(biosim.frame(), "You must enter an ID into the ID field.",
+										"Enter an ID", JOptionPane.ERROR_MESSAGE);
 						error = true;
 						value = JOptionPane.showOptionDialog(biosim.frame(), compTypePanel,
-								"Compartment Type Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
-								options, options[0]);
+								"Compartment Type Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
+								null, options, options[0]);
 					}
 					else {
 						String addCompType = "";
 						addCompType = compTypeID.getText().trim();
 						if (!(IDpat.matcher(addCompType).matches())) {
-						  JOptionPane.showMessageDialog(biosim.frame(),
-										"A compartment type ID can only contain letters, numbers, and underscores.", 
-										"Invalid ID",JOptionPane.ERROR_MESSAGE);
-						  error = true;
-						} 
+							JOptionPane.showMessageDialog(biosim.frame(),
+									"A compartment type ID can only contain letters, numbers, and underscores.",
+									"Invalid ID", JOptionPane.ERROR_MESSAGE);
+							error = true;
+						}
 						else if (usedIDs.contains(addCompType)) {
-						  if (option.equals("OK") && !addCompType.equals(((String) compTypes.getSelectedValue()).split(" ")[0])) {
+							if (option.equals("OK")
+									&& !addCompType.equals(((String) compTypes.getSelectedValue()).split(" ")[0])) {
 								JOptionPane.showMessageDialog(biosim.frame(),
 										"You must enter a unique ID into the ID field.", "Enter a Unique ID",
 										JOptionPane.ERROR_MESSAGE);
 								error = true;
-						  }
-						  else if (option.equals("Add")) {
-						    JOptionPane.showMessageDialog(biosim.frame(),
-										  "You must enter a unique ID into the ID field.", "Enter a Unique ID",
-										  JOptionPane.ERROR_MESSAGE);
-						    error = true;
-						  }
+							}
+							else if (option.equals("Add")) {
+								JOptionPane.showMessageDialog(biosim.frame(),
+										"You must enter a unique ID into the ID field.", "Enter a Unique ID",
+										JOptionPane.ERROR_MESSAGE);
+								error = true;
+							}
 						}
 						// check valid eqn
 						if (!error) {
@@ -2440,7 +2495,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 								compartments.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 								for (int i = 0; i < comps.length; i++) {
 									if (comps[i].split(" ")[1].equals(val)) {
-									  comps[i] = comps[i].split(" ")[0] + " " + addCompType + " " + comps[i].split(" ")[2];
+										comps[i] = comps[i].split(" ")[0] + " " + addCompType + " "
+												+ comps[i].split(" ")[2];
 									}
 								}
 								sort(comps);
@@ -2459,7 +2515,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 								add.setSelectedIndex(0);
 								compTypes.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 								adding = Buttons.add(cpTyp, compTypes, add, false, null, null, null, null, null,
-										     null, biosim.frame());
+										null, biosim.frame());
 								cpTyp = new String[adding.length];
 								for (int i = 0; i < adding.length; i++) {
 									cpTyp[i] = (String) adding[i];
@@ -2478,8 +2534,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						}
 						if (error) {
 							value = JOptionPane.showOptionDialog(biosim.frame(), compTypePanel,
-									"Compartment Type Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
-									options, options[0]);
+									"Compartment Type Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
+									null, options, options[0]);
 						}
 					}
 				}
@@ -2508,7 +2564,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			if (option.equals("OK")) {
 				try {
 					SpeciesType specType = document.getModel().getSpeciesType(
-					     (((String) specTypes.getSelectedValue()).split(" ")[0]));
+							(((String) specTypes.getSelectedValue()).split(" ")[0]));
 					specTypeID.setText(specType.getId());
 					specTypeName.setText(specType.getName());
 				}
@@ -2521,15 +2577,17 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			spTypPanel.add(specTypeName);
 			specTypePanel.add(spTypPanel);
 			Object[] options = { option, "Cancel" };
-			int value = JOptionPane.showOptionDialog(biosim.frame(), specTypePanel, "Species Type Editor",
-								 JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+			int value = JOptionPane.showOptionDialog(biosim.frame(), specTypePanel,
+					"Species Type Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
+					options, options[0]);
 			if (value == JOptionPane.YES_OPTION) {
 				boolean error = true;
 				while (error && value == JOptionPane.YES_OPTION) {
 					error = false;
 					if (specTypeID.getText().trim().equals("")) {
-						JOptionPane.showMessageDialog(biosim.frame(), "You must enter an ID into the ID field.",
-									      "Enter an ID", JOptionPane.ERROR_MESSAGE);
+						JOptionPane
+								.showMessageDialog(biosim.frame(), "You must enter an ID into the ID field.",
+										"Enter an ID", JOptionPane.ERROR_MESSAGE);
 						error = true;
 						value = JOptionPane.showOptionDialog(biosim.frame(), specTypePanel,
 								"Species Type Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
@@ -2539,24 +2597,25 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						String addSpecType = "";
 						addSpecType = specTypeID.getText().trim();
 						if (!(IDpat.matcher(addSpecType).matches())) {
-						  JOptionPane.showMessageDialog(biosim.frame(),
-										"A species type ID can only contain letters, numbers, and underscores.", 
-										"Invalid ID",JOptionPane.ERROR_MESSAGE);
-						  error = true;
-						} 
+							JOptionPane.showMessageDialog(biosim.frame(),
+									"A species type ID can only contain letters, numbers, and underscores.",
+									"Invalid ID", JOptionPane.ERROR_MESSAGE);
+							error = true;
+						}
 						else if (usedIDs.contains(addSpecType)) {
-						  if (option.equals("OK") && !addSpecType.equals(((String) specTypes.getSelectedValue()).split(" ")[0])) {
+							if (option.equals("OK")
+									&& !addSpecType.equals(((String) specTypes.getSelectedValue()).split(" ")[0])) {
 								JOptionPane.showMessageDialog(biosim.frame(),
 										"You must enter a unique ID into the ID field.", "Enter a Unique ID",
 										JOptionPane.ERROR_MESSAGE);
 								error = true;
-						  }
-						  else if (option.equals("Add")) {
-						    JOptionPane.showMessageDialog(biosim.frame(),
-										  "You must enter a unique ID into the ID field.", "Enter a Unique ID",
-										  JOptionPane.ERROR_MESSAGE);
-						    error = true;
-						  }
+							}
+							else if (option.equals("Add")) {
+								JOptionPane.showMessageDialog(biosim.frame(),
+										"You must enter a unique ID into the ID field.", "Enter a Unique ID",
+										JOptionPane.ERROR_MESSAGE);
+								error = true;
+							}
 						}
 						// check valid eqn
 						if (!error) {
@@ -2590,8 +2649,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 								species.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 								for (int i = 0; i < specs.length; i++) {
 									if (specs[i].split(" ")[1].equals(val)) {
-										specs[i] = specs[i].split(" ")[0] + " " + addSpecType + " " + specs[i].split(" ")[2] + " "
-										  + specs[i].split(" ")[3];
+										specs[i] = specs[i].split(" ")[0] + " " + addSpecType + " "
+												+ specs[i].split(" ")[2] + " " + specs[i].split(" ")[3];
 									}
 								}
 								sort(specs);
@@ -2610,7 +2669,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 								add.setSelectedIndex(0);
 								specTypes.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 								adding = Buttons.add(spTyp, specTypes, add, false, null, null, null, null, null,
-										     null, biosim.frame());
+										null, biosim.frame());
 								spTyp = new String[adding.length];
 								for (int i = 0; i < adding.length; i++) {
 									spTyp[i] = (String) adding[i];
@@ -2629,8 +2688,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						}
 						if (error) {
 							value = JOptionPane.showOptionDialog(biosim.frame(), specTypePanel,
-									"Species Type Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
-									options, options[0]);
+									"Species Type Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
+									null, options, options[0]);
 						}
 					}
 				}
@@ -2645,7 +2704,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 * Creates a frame used to edit initial assignments or create new ones.
 	 */
 	private void initEditor(String option) {
-	        libsbml sbmlLib = new libsbml();
+		libsbml sbmlLib = new libsbml();
 		if (option.equals("OK") && initAssigns.getSelectedIndex() == -1) {
 			JOptionPane.showMessageDialog(biosim.frame(), "No initial assignment selected.",
 					"Must Select an Initial Assignment", JOptionPane.ERROR_MESSAGE);
@@ -2658,45 +2717,47 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			initVar = new JComboBox();
 			String selected;
 			if (option.equals("OK")) {
-			  selected = ((String) initAssigns.getSelectedValue());
-			} else {
-			  selected = new String("");
+				selected = ((String) initAssigns.getSelectedValue());
+			}
+			else {
+				selected = new String("");
 			}
 			Model model = document.getModel();
 			ListOf ids = model.getListOfCompartments();
 			for (int i = 0; i < model.getNumCompartments(); i++) {
-			  String id = ((Compartment) ids.get(i)).getId();
-			  if (keepVar(selected.split(" ")[0],id,true,false,false,false) &&
-			      ((Compartment) ids.get(i)).getSpatialDimensions()!=0) {
-			    initVar.addItem(id);
-			  }
+				String id = ((Compartment) ids.get(i)).getId();
+				if (keepVar(selected.split(" ")[0], id, true, false, false, false)
+						&& ((Compartment) ids.get(i)).getSpatialDimensions() != 0) {
+					initVar.addItem(id);
+				}
 			}
 			ids = model.getListOfParameters();
 			for (int i = 0; i < model.getNumParameters(); i++) {
-			  String id = ((Parameter) ids.get(i)).getId();
-			  if (keepVar(selected.split(" ")[0],id,true,false,false,false)) {
-			    initVar.addItem(id);
-			  }
+				String id = ((Parameter) ids.get(i)).getId();
+				if (keepVar(selected.split(" ")[0], id, true, false, false, false)) {
+					initVar.addItem(id);
+				}
 			}
 			ids = model.getListOfSpecies();
 			for (int i = 0; i < model.getNumSpecies(); i++) {
-			  String id = ((Species) ids.get(i)).getId();
-			  if (keepVar(selected.split(" ")[0],id,true,false,false,false)) {
-			    initVar.addItem(id);
-			  }
+				String id = ((Species) ids.get(i)).getId();
+				if (keepVar(selected.split(" ")[0], id, true, false, false, false)) {
+					initVar.addItem(id);
+				}
 			}
 			initMath = new JTextField(12);
 			int Rindex = -1;
 			if (option.equals("OK")) {
-			  initVar.setSelectedItem(selected.split(" ")[0]);
-			  initMath.setText(selected.substring(selected.indexOf('=')+2));
-			  ListOf r = document.getModel().getListOfInitialAssignments();
-			  for (int i = 0; i < document.getModel().getNumInitialAssignments(); i++) {
-			    if (sbmlLib.formulaToString(((InitialAssignment) r.get(i)).getMath()).equals(initMath.getText()) &&
-				((InitialAssignment) r.get(i)).getSymbol().equals(initVar.getSelectedItem())) {
-				Rindex = i;
-			    }
-			  }
+				initVar.setSelectedItem(selected.split(" ")[0]);
+				initMath.setText(selected.substring(selected.indexOf('=') + 2));
+				ListOf r = document.getModel().getListOfInitialAssignments();
+				for (int i = 0; i < document.getModel().getNumInitialAssignments(); i++) {
+					if (sbmlLib.formulaToString(((InitialAssignment) r.get(i)).getMath()).equals(
+							initMath.getText())
+							&& ((InitialAssignment) r.get(i)).getSymbol().equals(initVar.getSelectedItem())) {
+						Rindex = i;
+					}
+				}
 			}
 			initPanel.add(varLabel);
 			initPanel.add(initVar);
@@ -2704,77 +2765,80 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			initPanel.add(initMath);
 			initAssignPanel.add(initPanel);
 			Object[] options = { option, "Cancel" };
-			int value = JOptionPane.showOptionDialog(biosim.frame(), initAssignPanel, "Initial Assignment Editor",
-								 JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+			int value = JOptionPane.showOptionDialog(biosim.frame(), initAssignPanel,
+					"Initial Assignment Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
+					options, options[0]);
 			if (value == JOptionPane.YES_OPTION) {
 				boolean error = true;
 				while (error && value == JOptionPane.YES_OPTION) {
 					error = false;
 					String addVar = "";
-					addVar = (String)initVar.getSelectedItem();
+					addVar = (String) initVar.getSelectedItem();
 					if (initMath.getText().trim().equals("")) {
-					  JOptionPane.showMessageDialog(biosim.frame(), "Initial assignment is missing.",
-									"Enter Assignment", JOptionPane.ERROR_MESSAGE);
-					  error = true;
-					} else if (sbmlLib.parseFormula(initMath.getText().trim())==null) {
-					  JOptionPane.showMessageDialog(biosim.frame(), "Initial assignment is not valid.",
-									"Enter Valid Assignment", JOptionPane.ERROR_MESSAGE);
-					  error = true;
-					} 
+						JOptionPane.showMessageDialog(biosim.frame(), "Initial assignment is missing.",
+								"Enter Assignment", JOptionPane.ERROR_MESSAGE);
+						error = true;
+					}
+					else if (sbmlLib.parseFormula(initMath.getText().trim()) == null) {
+						JOptionPane.showMessageDialog(biosim.frame(), "Initial assignment is not valid.",
+								"Enter Valid Assignment", JOptionPane.ERROR_MESSAGE);
+						error = true;
+					}
 					if (!error) {
-					  if (option.equals("OK")) {
-					    int index = initAssigns.getSelectedIndex();
-					    initAssigns.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-					    inits = Buttons.getList(inits, initAssigns);
-					    initAssigns.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-					    InitialAssignment r = (InitialAssignment)(document.getModel().getListOfInitialAssignments()).get(Rindex);
-					    String addStr;
-					    r.setSymbol(addVar);
-					    r.setMath(sbmlLib.parseFormula(initMath.getText().trim()));
-					    inits[index] = addVar + " = " + sbmlLib.formulaToString(r.getMath());
-					    sort(inits);
-					    initAssigns.setListData(inits);
-					    initAssigns.setSelectedIndex(index);
-					  }
-					  else {
-					    JList add = new JList();
-					    int index = rules.getSelectedIndex();
-					    String addStr;
-					    InitialAssignment r = document.getModel().createInitialAssignment();
-					    r.setSymbol(addVar);
-					    r.setMath(sbmlLib.parseFormula(initMath.getText().trim()));
-					    addStr = addVar + " = " + sbmlLib.formulaToString(r.getMath());
-					    Object[] adding = { addStr };
-					    add.setListData(adding);
-					    add.setSelectedIndex(0);
-					    initAssigns.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-					    adding = Buttons.add(inits, initAssigns, add, false, null, null, null, null, null,
-								 null, biosim.frame());
-					    inits = new String[adding.length];
-					    for (int i = 0; i < adding.length; i++) {
-					      inits[i] = (String) adding[i];
-					    }
-					    sort(inits);
-					    initAssigns.setListData(inits);
-					    initAssigns.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-					    if (document.getModel().getNumInitialAssignments() == 1) {
-					      initAssigns.setSelectedIndex(0);
-					    }
-					    else {
-					      initAssigns.setSelectedIndex(index);
-					    }
-					  }
-					  change = true;
+						if (option.equals("OK")) {
+							int index = initAssigns.getSelectedIndex();
+							initAssigns.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+							inits = Buttons.getList(inits, initAssigns);
+							initAssigns.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+							InitialAssignment r = (InitialAssignment) (document.getModel()
+									.getListOfInitialAssignments()).get(Rindex);
+							String addStr;
+							r.setSymbol(addVar);
+							r.setMath(sbmlLib.parseFormula(initMath.getText().trim()));
+							inits[index] = addVar + " = " + sbmlLib.formulaToString(r.getMath());
+							sort(inits);
+							initAssigns.setListData(inits);
+							initAssigns.setSelectedIndex(index);
+						}
+						else {
+							JList add = new JList();
+							int index = rules.getSelectedIndex();
+							String addStr;
+							InitialAssignment r = document.getModel().createInitialAssignment();
+							r.setSymbol(addVar);
+							r.setMath(sbmlLib.parseFormula(initMath.getText().trim()));
+							addStr = addVar + " = " + sbmlLib.formulaToString(r.getMath());
+							Object[] adding = { addStr };
+							add.setListData(adding);
+							add.setSelectedIndex(0);
+							initAssigns.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+							adding = Buttons.add(inits, initAssigns, add, false, null, null, null, null, null,
+									null, biosim.frame());
+							inits = new String[adding.length];
+							for (int i = 0; i < adding.length; i++) {
+								inits[i] = (String) adding[i];
+							}
+							sort(inits);
+							initAssigns.setListData(inits);
+							initAssigns.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+							if (document.getModel().getNumInitialAssignments() == 1) {
+								initAssigns.setSelectedIndex(0);
+							}
+							else {
+								initAssigns.setSelectedIndex(index);
+							}
+						}
+						change = true;
 					}
 					if (error) {
-					  value = JOptionPane.showOptionDialog(biosim.frame(), initAssignPanel,
-									       "Initial Assignment Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
-									       options, options[0]);
+						value = JOptionPane.showOptionDialog(biosim.frame(), initAssignPanel,
+								"Initial Assignment Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
+								null, options, options[0]);
 					}
 				}
 			}
 			if (value == JOptionPane.NO_OPTION) {
-			  return;
+				return;
 			}
 		}
 	}
@@ -2782,55 +2846,55 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	/**
 	 * Determines if a variable is already in an initial or assignment rule
 	 */
-	private boolean keepVar(String selected,String id,boolean checkInit,boolean checkRate,boolean checkEventAssign,
-				boolean checkOnlyCurEvent) {
-	  libsbml sbmlLib = new libsbml();
-	  if (!selected.equals(id)) {
-	    if (checkInit) {
-	      for (int j = 0; j < inits.length; j++) {
-		if (id.equals(inits[j].split(" ")[0])) {
-		  return false;
+	private boolean keepVar(String selected, String id, boolean checkInit, boolean checkRate,
+			boolean checkEventAssign, boolean checkOnlyCurEvent) {
+		libsbml sbmlLib = new libsbml();
+		if (!selected.equals(id)) {
+			if (checkInit) {
+				for (int j = 0; j < inits.length; j++) {
+					if (id.equals(inits[j].split(" ")[0])) {
+						return false;
+					}
+				}
+			}
+			if (checkOnlyCurEvent) {
+				for (int j = 0; j < assign.length; j++) {
+					if (id.equals(assign[j].split(" ")[0])) {
+						return false;
+					}
+				}
+			}
+			if (checkEventAssign) {
+				ListOf e = document.getModel().getListOfEvents();
+				for (int i = 0; i < document.getModel().getNumEvents(); i++) {
+					org.sbml.libsbml.Event event = (org.sbml.libsbml.Event) e.get(i);
+					for (int j = 0; j < event.getNumEventAssignments(); j++) {
+						if (id.equals(event.getEventAssignment(j).getVariable())) {
+							return false;
+						}
+					}
+				}
+			}
+			for (int j = 0; j < rul.length; j++) {
+				if (id.equals(rul[j].split(" ")[0])) {
+					return false;
+				}
+				if (checkRate && id.equals(rul[j].split(" ")[1])) {
+					return false;
+				}
+			}
 		}
-	      }
-	    }
-	    if (checkOnlyCurEvent) {
-	      for (int j = 0; j < assign.length; j++) {
-		if (id.equals(assign[j].split(" ")[0])) {
-		  return false;
-		}
-	      }
-	    }
-	    if (checkEventAssign) {
-	      ListOf e = document.getModel().getListOfEvents();
-	      for (int i = 0; i < document.getModel().getNumEvents(); i++) {
-		org.sbml.libsbml.Event event = (org.sbml.libsbml.Event) e.get(i);
-		for (int j=0; j < event.getNumEventAssignments(); j++) {
-		  if (id.equals(event.getEventAssignment(j).getVariable())) {
-		    return false;
-		  }
-		}
-	      }
-	    }
-	    for (int j = 0; j < rul.length; j++) {
-	      if (id.equals(rul[j].split(" ")[0])) {
-		return false;
-	      }
-	      if (checkRate && id.equals(rul[j].split(" ")[1])) {
-		return false;
-	      }
-	    }
-	  }
-	  return true;
+		return true;
 	}
 
 	/**
 	 * Creates a frame used to edit rules or create new ones.
 	 */
 	private void ruleEditor(String option) {
-	        libsbml sbmlLib = new libsbml();
+		libsbml sbmlLib = new libsbml();
 		if (option.equals("OK") && rules.getSelectedIndex() == -1) {
-			JOptionPane.showMessageDialog(biosim.frame(), "No rule selected.",
-					"Must Select a Rule", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(biosim.frame(), "No rule selected.", "Must Select a Rule",
+					JOptionPane.ERROR_MESSAGE);
 		}
 		else {
 			JPanel rulePanel = new JPanel();
@@ -2844,65 +2908,68 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			ruleMath = new JTextField(12);
 			ruleVar.setEnabled(false);
 			ruleType.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						if (((String) ruleType.getSelectedItem()).equals("Assignment")) {
-						  assignRuleVar("");
-						  ruleVar.setEnabled(true);
-						} else if (((String) ruleType.getSelectedItem()).equals("Rate")) {
-						  rateRuleVar("");
-						  ruleVar.setEnabled(true);
-						}
-						else {
-						  ruleVar.removeAllItems();
-						  ruleVar.setEnabled(false);
-						}
+				public void actionPerformed(ActionEvent e) {
+					if (((String) ruleType.getSelectedItem()).equals("Assignment")) {
+						assignRuleVar("");
+						ruleVar.setEnabled(true);
 					}
-			  });
+					else if (((String) ruleType.getSelectedItem()).equals("Rate")) {
+						rateRuleVar("");
+						ruleVar.setEnabled(true);
+					}
+					else {
+						ruleVar.removeAllItems();
+						ruleVar.setEnabled(false);
+					}
+				}
+			});
 			int Rindex = -1;
 			if (option.equals("OK")) {
-			  ruleType.setEnabled(false);
-			  String selected = ((String) rules.getSelectedValue());
-			  // algebraic rule
-			  if ((selected.split(" ")[0]).equals("0")) {
-			    ruleType.setSelectedItem("Algebraic");
-			    ruleVar.setEnabled(false);
-			    ruleMath.setText(selected.substring(4));
-			    ListOf r = document.getModel().getListOfRules();
-			    for (int i = 0; i < document.getModel().getNumRules(); i++) {
-			      if ((((Rule) r.get(i)).isAlgebraic()) &&
-				  ((Rule) r.get(i)).getFormula().equals(ruleMath.getText())) {
-				Rindex = i;
-			      }
-			    }
-			  } else if ((selected.split(" ")[0]).equals("d(")) {
-			    ruleType.setSelectedItem("Rate");
-			    rateRuleVar(selected.split(" ")[1]);
-			    ruleVar.setEnabled(true);
-			    ruleVar.setSelectedItem(selected.split(" ")[1]);
-			    ruleMath.setText(selected.substring(selected.indexOf('=')+2));
-			    ListOf r = document.getModel().getListOfRules();
-			    for (int i = 0; i < document.getModel().getNumRules(); i++) {
-			      if ((((Rule) r.get(i)).isRate()) &&
-				  ((Rule) r.get(i)).getFormula().equals(ruleMath.getText()) &&
-				  ((Rule) r.get(i)).getVariable().equals(ruleVar.getSelectedItem())) {
-				Rindex = i;
-			      }
-			    }
-			  } else {
-			    ruleType.setSelectedItem("Assignment");
-			    assignRuleVar(selected.split(" ")[0]);
-			    ruleVar.setEnabled(true);
-			    ruleVar.setSelectedItem(selected.split(" ")[0]);
-			    ruleMath.setText(selected.substring(selected.indexOf('=')+2));
-			    ListOf r = document.getModel().getListOfRules();
-			    for (int i = 0; i < document.getModel().getNumRules(); i++) {
-			      if ((((Rule) r.get(i)).isAssignment()) &&
-				  ((Rule) r.get(i)).getFormula().equals(ruleMath.getText()) &&
-				  ((Rule) r.get(i)).getVariable().equals(ruleVar.getSelectedItem())) {
-				Rindex = i;
-			      }
-			    }
-			  }
+				ruleType.setEnabled(false);
+				String selected = ((String) rules.getSelectedValue());
+				// algebraic rule
+				if ((selected.split(" ")[0]).equals("0")) {
+					ruleType.setSelectedItem("Algebraic");
+					ruleVar.setEnabled(false);
+					ruleMath.setText(selected.substring(4));
+					ListOf r = document.getModel().getListOfRules();
+					for (int i = 0; i < document.getModel().getNumRules(); i++) {
+						if ((((Rule) r.get(i)).isAlgebraic())
+								&& ((Rule) r.get(i)).getFormula().equals(ruleMath.getText())) {
+							Rindex = i;
+						}
+					}
+				}
+				else if ((selected.split(" ")[0]).equals("d(")) {
+					ruleType.setSelectedItem("Rate");
+					rateRuleVar(selected.split(" ")[1]);
+					ruleVar.setEnabled(true);
+					ruleVar.setSelectedItem(selected.split(" ")[1]);
+					ruleMath.setText(selected.substring(selected.indexOf('=') + 2));
+					ListOf r = document.getModel().getListOfRules();
+					for (int i = 0; i < document.getModel().getNumRules(); i++) {
+						if ((((Rule) r.get(i)).isRate())
+								&& ((Rule) r.get(i)).getFormula().equals(ruleMath.getText())
+								&& ((Rule) r.get(i)).getVariable().equals(ruleVar.getSelectedItem())) {
+							Rindex = i;
+						}
+					}
+				}
+				else {
+					ruleType.setSelectedItem("Assignment");
+					assignRuleVar(selected.split(" ")[0]);
+					ruleVar.setEnabled(true);
+					ruleVar.setSelectedItem(selected.split(" ")[0]);
+					ruleMath.setText(selected.substring(selected.indexOf('=') + 2));
+					ListOf r = document.getModel().getListOfRules();
+					for (int i = 0; i < document.getModel().getNumRules(); i++) {
+						if ((((Rule) r.get(i)).isAssignment())
+								&& ((Rule) r.get(i)).getFormula().equals(ruleMath.getText())
+								&& ((Rule) r.get(i)).getVariable().equals(ruleVar.getSelectedItem())) {
+							Rindex = i;
+						}
+					}
+				}
 			}
 			rulPanel.add(typeLabel);
 			rulPanel.add(ruleType);
@@ -2913,91 +2980,95 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			rulePanel.add(rulPanel);
 			Object[] options = { option, "Cancel" };
 			int value = JOptionPane.showOptionDialog(biosim.frame(), rulePanel, "Rule Editor",
-								 JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+					JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 			if (value == JOptionPane.YES_OPTION) {
 				boolean error = true;
 				while (error && value == JOptionPane.YES_OPTION) {
 					error = false;
 					String addVar = "";
-					addVar = (String)ruleVar.getSelectedItem();
+					addVar = (String) ruleVar.getSelectedItem();
 					if (ruleMath.getText().trim().equals("")) {
-					  JOptionPane.showMessageDialog(biosim.frame(), "Rule must have formula.",
-									"Enter Rule Formula", JOptionPane.ERROR_MESSAGE);
-					  error = true;
-					} else if (sbmlLib.parseFormula(ruleMath.getText().trim())==null) {
-					  JOptionPane.showMessageDialog(biosim.frame(), "Rule formula is not valid.",
-									"Enter Valid Formula", JOptionPane.ERROR_MESSAGE);
-					  error = true;
-					} 
+						JOptionPane.showMessageDialog(biosim.frame(), "Rule must have formula.",
+								"Enter Rule Formula", JOptionPane.ERROR_MESSAGE);
+						error = true;
+					}
+					else if (sbmlLib.parseFormula(ruleMath.getText().trim()) == null) {
+						JOptionPane.showMessageDialog(biosim.frame(), "Rule formula is not valid.",
+								"Enter Valid Formula", JOptionPane.ERROR_MESSAGE);
+						error = true;
+					}
 					if (!error) {
-					  if (option.equals("OK")) {
-					    int index = rules.getSelectedIndex();
-					    rules.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-					    rul = Buttons.getList(rul, rules);
-					    rules.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-					    Rule r = (Rule)(document.getModel().getListOfRules()).get(Rindex);
-					    String addStr;
-					    if (ruleType.getSelectedItem().equals("Algebraic")) {
-					      r.setMath(sbmlLib.parseFormula(ruleMath.getText().trim()));
-					      rul[index] = "0 = " + sbmlLib.formulaToString(r.getMath());
-					    } else if (ruleType.getSelectedItem().equals("Rate")) {
-					      r.setVariable(addVar);
-					      r.setMath(sbmlLib.parseFormula(ruleMath.getText().trim()));
-					      rul[index] = "d( " + addVar + " )/dt = " + sbmlLib.formulaToString(r.getMath());
-					    } else {
-					      r.setVariable(addVar);
-					      r.setMath(sbmlLib.parseFormula(ruleMath.getText().trim()));
-					      rul[index] = addVar + " = " + sbmlLib.formulaToString(r.getMath());
-					    }
-					    sort(rul);
-					    rules.setListData(rul);
-					    rules.setSelectedIndex(index);
-					  }
-					  else {
-					    JList add = new JList();
-					    int index = rules.getSelectedIndex();
-					    String addStr;
-					    if (ruleType.getSelectedItem().equals("Algebraic")) {
-					      AlgebraicRule r = document.getModel().createAlgebraicRule();
-					      r.setMath(sbmlLib.parseFormula(ruleMath.getText().trim()));
-					      addStr = "0 = " + sbmlLib.formulaToString(r.getMath());
-					    } else if (ruleType.getSelectedItem().equals("Rate")) {
-					      RateRule r = document.getModel().createRateRule();
-					      r.setVariable(addVar);
-					      r.setMath(sbmlLib.parseFormula(ruleMath.getText().trim()));
-					      addStr = "d( " + addVar + " )/dt = " + sbmlLib.formulaToString(r.getMath());
-					    } else {
-					      AssignmentRule r = document.getModel().createAssignmentRule();
-					      r.setVariable(addVar);
-					      r.setMath(sbmlLib.parseFormula(ruleMath.getText().trim()));
-					      addStr = addVar + " = " + sbmlLib.formulaToString(r.getMath());
-					    }
-					    Object[] adding = { addStr };
-					    add.setListData(adding);
-					    add.setSelectedIndex(0);
-					    rules.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-					    adding = Buttons.add(rul, rules, add, false, null, null, null, null, null,
-								 null, biosim.frame());
-					    rul = new String[adding.length];
-					    for (int i = 0; i < adding.length; i++) {
-					      rul[i] = (String) adding[i];
-					    }
-					    sort(rul);
-					    rules.setListData(rul);
-					    rules.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-					    if (document.getModel().getNumRules() == 1) {
-					      rules.setSelectedIndex(0);
-					    }
-					    else {
-					      rules.setSelectedIndex(index);
-					    }
-					  }
-					  change = true;
+						if (option.equals("OK")) {
+							int index = rules.getSelectedIndex();
+							rules.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+							rul = Buttons.getList(rul, rules);
+							rules.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+							Rule r = (Rule) (document.getModel().getListOfRules()).get(Rindex);
+							String addStr;
+							if (ruleType.getSelectedItem().equals("Algebraic")) {
+								r.setMath(sbmlLib.parseFormula(ruleMath.getText().trim()));
+								rul[index] = "0 = " + sbmlLib.formulaToString(r.getMath());
+							}
+							else if (ruleType.getSelectedItem().equals("Rate")) {
+								r.setVariable(addVar);
+								r.setMath(sbmlLib.parseFormula(ruleMath.getText().trim()));
+								rul[index] = "d( " + addVar + " )/dt = " + sbmlLib.formulaToString(r.getMath());
+							}
+							else {
+								r.setVariable(addVar);
+								r.setMath(sbmlLib.parseFormula(ruleMath.getText().trim()));
+								rul[index] = addVar + " = " + sbmlLib.formulaToString(r.getMath());
+							}
+							sort(rul);
+							rules.setListData(rul);
+							rules.setSelectedIndex(index);
+						}
+						else {
+							JList add = new JList();
+							int index = rules.getSelectedIndex();
+							String addStr;
+							if (ruleType.getSelectedItem().equals("Algebraic")) {
+								AlgebraicRule r = document.getModel().createAlgebraicRule();
+								r.setMath(sbmlLib.parseFormula(ruleMath.getText().trim()));
+								addStr = "0 = " + sbmlLib.formulaToString(r.getMath());
+							}
+							else if (ruleType.getSelectedItem().equals("Rate")) {
+								RateRule r = document.getModel().createRateRule();
+								r.setVariable(addVar);
+								r.setMath(sbmlLib.parseFormula(ruleMath.getText().trim()));
+								addStr = "d( " + addVar + " )/dt = " + sbmlLib.formulaToString(r.getMath());
+							}
+							else {
+								AssignmentRule r = document.getModel().createAssignmentRule();
+								r.setVariable(addVar);
+								r.setMath(sbmlLib.parseFormula(ruleMath.getText().trim()));
+								addStr = addVar + " = " + sbmlLib.formulaToString(r.getMath());
+							}
+							Object[] adding = { addStr };
+							add.setListData(adding);
+							add.setSelectedIndex(0);
+							rules.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+							adding = Buttons.add(rul, rules, add, false, null, null, null, null, null, null,
+									biosim.frame());
+							rul = new String[adding.length];
+							for (int i = 0; i < adding.length; i++) {
+								rul[i] = (String) adding[i];
+							}
+							sort(rul);
+							rules.setListData(rul);
+							rules.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+							if (document.getModel().getNumRules() == 1) {
+								rules.setSelectedIndex(0);
+							}
+							else {
+								rules.setSelectedIndex(index);
+							}
+						}
+						change = true;
 					}
 					if (error) {
-					  value = JOptionPane.showOptionDialog(biosim.frame(), rulePanel,
-									       "Rule Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
-									       options, options[0]);
+						value = JOptionPane.showOptionDialog(biosim.frame(), rulePanel, "Rule Editor",
+								JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 					}
 				}
 				if (value == JOptionPane.NO_OPTION) {
@@ -3011,83 +3082,83 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 * Create comboBox for assignments rules
 	 */
 	private void assignRuleVar(String selected) {
-	  ruleVar.removeAllItems();
-	  Model model = document.getModel();
-	  ListOf ids = model.getListOfCompartments();
-	  for (int i = 0; i < model.getNumCompartments(); i++) {
-	    String id = ((Compartment) ids.get(i)).getId();
-	    if (!((Compartment) ids.get(i)).getConstant()) {
-	      if (keepVar(selected,id,true,true,true,false)) 
-		ruleVar.addItem(((Compartment) ids.get(i)).getId());
-	    }
-	  }
-	  ids = model.getListOfParameters();
-	  for (int i = 0; i < model.getNumParameters(); i++) {
-	    String id = ((Parameter) ids.get(i)).getId();
-	    if (!((Parameter) ids.get(i)).getConstant()) {
-	      if (keepVar(selected,id,true,true,true,false)) 
-		ruleVar.addItem(((Parameter) ids.get(i)).getId());
-	    }
-	  }
-	  ids = model.getListOfSpecies();
-	  for (int i = 0; i < model.getNumSpecies(); i++) {
-	    String id = ((Species) ids.get(i)).getId();
-	    if (!((Species) ids.get(i)).getConstant()) {
-	      if (keepVar(selected,id,true,true,true,false)) 
-		ruleVar.addItem(((Species) ids.get(i)).getId());
-	    }
-	  }
+		ruleVar.removeAllItems();
+		Model model = document.getModel();
+		ListOf ids = model.getListOfCompartments();
+		for (int i = 0; i < model.getNumCompartments(); i++) {
+			String id = ((Compartment) ids.get(i)).getId();
+			if (!((Compartment) ids.get(i)).getConstant()) {
+				if (keepVar(selected, id, true, true, true, false))
+					ruleVar.addItem(((Compartment) ids.get(i)).getId());
+			}
+		}
+		ids = model.getListOfParameters();
+		for (int i = 0; i < model.getNumParameters(); i++) {
+			String id = ((Parameter) ids.get(i)).getId();
+			if (!((Parameter) ids.get(i)).getConstant()) {
+				if (keepVar(selected, id, true, true, true, false))
+					ruleVar.addItem(((Parameter) ids.get(i)).getId());
+			}
+		}
+		ids = model.getListOfSpecies();
+		for (int i = 0; i < model.getNumSpecies(); i++) {
+			String id = ((Species) ids.get(i)).getId();
+			if (!((Species) ids.get(i)).getConstant()) {
+				if (keepVar(selected, id, true, true, true, false))
+					ruleVar.addItem(((Species) ids.get(i)).getId());
+			}
+		}
 	}
 
 	/**
 	 * Create comboBox for rate rules
 	 */
 	private void rateRuleVar(String selected) {
-	  ruleVar.removeAllItems();
-	  Model model = document.getModel();
-	  ListOf ids = model.getListOfCompartments();
-	  for (int i = 0; i < model.getNumCompartments(); i++) {
-	    String id = ((Compartment) ids.get(i)).getId();
-	    if (!((Compartment) ids.get(i)).getConstant()) {
-	      if (keepVar(selected,id,false,true,false,false)) 
-		ruleVar.addItem(((Compartment) ids.get(i)).getId());
-	    }
-	  }
-	  ids = model.getListOfParameters();
-	  for (int i = 0; i < model.getNumParameters(); i++) {
-	    String id = ((Parameter) ids.get(i)).getId();
-	    if (!((Parameter) ids.get(i)).getConstant()) {
-	      if (keepVar(selected,id,false,true,false,false)) 
-		ruleVar.addItem(((Parameter) ids.get(i)).getId());
-	    }
-	  }
-	  ids = model.getListOfSpecies();
-	  for (int i = 0; i < model.getNumSpecies(); i++) {
-	    String id = ((Species) ids.get(i)).getId();
-	    if (!((Species) ids.get(i)).getConstant()) {
-	      if (keepVar(selected,id,false,true,false,false)) 
-		ruleVar.addItem(((Species) ids.get(i)).getId());
-	    }
-	  }
+		ruleVar.removeAllItems();
+		Model model = document.getModel();
+		ListOf ids = model.getListOfCompartments();
+		for (int i = 0; i < model.getNumCompartments(); i++) {
+			String id = ((Compartment) ids.get(i)).getId();
+			if (!((Compartment) ids.get(i)).getConstant()) {
+				if (keepVar(selected, id, false, true, false, false))
+					ruleVar.addItem(((Compartment) ids.get(i)).getId());
+			}
+		}
+		ids = model.getListOfParameters();
+		for (int i = 0; i < model.getNumParameters(); i++) {
+			String id = ((Parameter) ids.get(i)).getId();
+			if (!((Parameter) ids.get(i)).getConstant()) {
+				if (keepVar(selected, id, false, true, false, false))
+					ruleVar.addItem(((Parameter) ids.get(i)).getId());
+			}
+		}
+		ids = model.getListOfSpecies();
+		for (int i = 0; i < model.getNumSpecies(); i++) {
+			String id = ((Species) ids.get(i)).getId();
+			if (!((Species) ids.get(i)).getConstant()) {
+				if (keepVar(selected, id, false, true, false, false))
+					ruleVar.addItem(((Species) ids.get(i)).getId());
+			}
+		}
 	}
 
 	/**
 	 * Creates a frame used to edit events or create new ones.
 	 */
 	private void eventEditor(String option) {
-	        libsbml sbmlLib = new libsbml();
+		libsbml sbmlLib = new libsbml();
 		if (option.equals("OK") && events.getSelectedIndex() == -1) {
-			JOptionPane.showMessageDialog(biosim.frame(), "No event selected.",
-					"Must Select an Event", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(biosim.frame(), "No event selected.", "Must Select an Event",
+					JOptionPane.ERROR_MESSAGE);
 		}
 		else {
 			JPanel eventPanel = new JPanel(new BorderLayout());
 			JPanel evPanel = new JPanel(new GridLayout(2, 2));
-			//JPanel evPanel = new JPanel(new GridLayout(3, 2));
-			//JLabel IDLabel = new JLabel("ID:");
+			// JPanel evPanel = new JPanel(new GridLayout(3, 2));
+			// JLabel IDLabel = new JLabel("ID:");
 			JLabel triggerLabel = new JLabel("Trigger:");
 			JLabel delayLabel = new JLabel("Delay:");
-			//eventID = new JTextField(12);
+			// eventID = new JTextField(12);
 			eventTrigger = new JTextField(12);
 			eventDelay = new JTextField(12);
 			JPanel eventAssignPanel = new JPanel(new BorderLayout());
@@ -3111,24 +3182,24 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			assign = new String[0];
 			int Eindex = -1;
 			if (option.equals("OK")) {
-			  String selected = ((String) events.getSelectedValue());
-			  eventTrigger.setText(selected);
-			  ListOf e = document.getModel().getListOfEvents();
-			  for (int i = 0; i < document.getModel().getNumEvents(); i++) {
-			    org.sbml.libsbml.Event event = (org.sbml.libsbml.Event) e.get(i);
-			    if (sbmlLib.formulaToString(event.getTrigger().getMath()).equals(selected)) {
-			      Eindex = i;
-			      //eventID.setText(e.getId());
-			      if (event.isSetDelay()) {
-				eventDelay.setText(sbmlLib.formulaToString(event.getDelay().getMath()));
-			      } 
-			      assign = new String[(int)event.getNumEventAssignments()];
-			      for (int j=0; j < event.getNumEventAssignments(); j++) {
-				assign[j] = event.getEventAssignment(j).getVariable() + " = " +
-				  sbmlLib.formulaToString(event.getEventAssignment(j).getMath());
-			      }
-			    }
-			  }
+				String selected = ((String) events.getSelectedValue());
+				eventTrigger.setText(selected);
+				ListOf e = document.getModel().getListOfEvents();
+				for (int i = 0; i < document.getModel().getNumEvents(); i++) {
+					org.sbml.libsbml.Event event = (org.sbml.libsbml.Event) e.get(i);
+					if (sbmlLib.formulaToString(event.getTrigger().getMath()).equals(selected)) {
+						Eindex = i;
+						// eventID.setText(e.getId());
+						if (event.isSetDelay()) {
+							eventDelay.setText(sbmlLib.formulaToString(event.getDelay().getMath()));
+						}
+						assign = new String[(int) event.getNumEventAssignments()];
+						for (int j = 0; j < event.getNumEventAssignments(); j++) {
+							assign[j] = event.getEventAssignment(j).getVariable() + " = "
+									+ sbmlLib.formulaToString(event.getEventAssignment(j).getMath());
+						}
+					}
+				}
 			}
 			sort(assign);
 			eventAssign.setListData(assign);
@@ -3137,8 +3208,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			eventAssignPanel.add(eventAssignLabel, "North");
 			eventAssignPanel.add(scroll, "Center");
 			eventAssignPanel.add(addEventAssign, "South");
-			//evPanel.add(IDLabel);
-			//evPanel.add(eventID);
+			// evPanel.add(IDLabel);
+			// evPanel.add(eventID);
 			evPanel.add(triggerLabel);
 			evPanel.add(eventTrigger);
 			evPanel.add(delayLabel);
@@ -3147,123 +3218,130 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			eventPanel.add(eventAssignPanel, "South");
 			Object[] options = { option, "Cancel" };
 			int value = JOptionPane.showOptionDialog(biosim.frame(), eventPanel, "Event Editor",
-								 JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+					JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 			if (value == JOptionPane.YES_OPTION) {
 				boolean error = true;
 				while (error && value == JOptionPane.YES_OPTION) {
 					error = false;
 					if (eventTrigger.getText().trim().equals("")) {
-					  JOptionPane.showMessageDialog(biosim.frame(), "Event must have a trigger formula.",
-									"Enter Trigger Formula", JOptionPane.ERROR_MESSAGE);
-					  error = true;
-					} else if (sbmlLib.parseFormula(eventTrigger.getText().trim())==null) {
-					  JOptionPane.showMessageDialog(biosim.frame(), "Trigger formula is not valid.",
-									"Enter Valid Formula", JOptionPane.ERROR_MESSAGE);
-					  error = true;
-					} else if (!eventDelay.getText().trim().equals("") && sbmlLib.parseFormula(eventDelay.getText().trim())==null) {
-					  JOptionPane.showMessageDialog(biosim.frame(), "Delay formula is not valid.",
-									"Enter Valid Formula", JOptionPane.ERROR_MESSAGE);
-					  error = true;
-					} else if (assign.length==0) {
-					  JOptionPane.showMessageDialog(biosim.frame(), "Event must have at least one event assignment.",
-									"Event Assignment Needed", JOptionPane.ERROR_MESSAGE);
-					  error = true;
+						JOptionPane.showMessageDialog(biosim.frame(), "Event must have a trigger formula.",
+								"Enter Trigger Formula", JOptionPane.ERROR_MESSAGE);
+						error = true;
+					}
+					else if (sbmlLib.parseFormula(eventTrigger.getText().trim()) == null) {
+						JOptionPane.showMessageDialog(biosim.frame(), "Trigger formula is not valid.",
+								"Enter Valid Formula", JOptionPane.ERROR_MESSAGE);
+						error = true;
+					}
+					else if (!eventDelay.getText().trim().equals("")
+							&& sbmlLib.parseFormula(eventDelay.getText().trim()) == null) {
+						JOptionPane.showMessageDialog(biosim.frame(), "Delay formula is not valid.",
+								"Enter Valid Formula", JOptionPane.ERROR_MESSAGE);
+						error = true;
+					}
+					else if (assign.length == 0) {
+						JOptionPane.showMessageDialog(biosim.frame(),
+								"Event must have at least one event assignment.", "Event Assignment Needed",
+								JOptionPane.ERROR_MESSAGE);
+						error = true;
 					}
 					if (!error) {
-					  if (option.equals("OK")) {
-					    int index = events.getSelectedIndex();
-					    events.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-					    ev = Buttons.getList(ev, events);
-					    events.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-					    org.sbml.libsbml.Event e = (org.sbml.libsbml.Event)(document.getModel().getListOfEvents()).get(Eindex);
-					    Trigger trigger = new Trigger(sbmlLib.parseFormula(eventTrigger.getText().trim()));
-					    e.setTrigger(trigger);
-					    if (eventDelay.getText().trim().equals("")) {
-					      e.unsetDelay();
-					    } else {
-					      Delay delay = new Delay(sbmlLib.parseFormula(eventDelay.getText().trim()));
-					      e.setDelay(delay);
-					    }
-					    while (e.getNumEventAssignments() > 0) {
-					      e.getListOfEventAssignments().remove(0);
-					    }
-					    for (int i = 0; i < assign.length; i++) {
-					      EventAssignment ea = e.createEventAssignment();
-					      ea.setVariable(assign[i].split(" ")[0]);
-					      ea.setMath(sbmlLib.parseFormula(assign[i].split(" ")[2]));
-					    } 
-					    //if (eventID.getText().trim().equals("")) {
-					    //  e.unsetId();
-					    //} else {
-					    //  e.setId(eventID.getText().trim());
-					    //}
-					    ev[index] = sbmlLib.formulaToString(e.getTrigger().getMath());
-					    sort(ev);
-					    events.setListData(ev);
-					    events.setSelectedIndex(index);
-					  }
-					  else {
- 					    JList add = new JList();
-					    int index = events.getSelectedIndex();
-					    org.sbml.libsbml.Event e = document.getModel().createEvent();
-					    Trigger trigger = new Trigger(sbmlLib.parseFormula(eventTrigger.getText().trim()));
-					    e.setTrigger(trigger);
-					    if (eventDelay.getText().trim().equals("")) {
-					      e.unsetDelay();
-					    } else {
-					      Delay delay = new Delay(sbmlLib.parseFormula(eventDelay.getText().trim()));
-					      e.setDelay(delay);
-					    }
-					    for (int i = 0; i < assign.length; i++) {
-					      EventAssignment ea = e.createEventAssignment();
-					      ea.setVariable(assign[i].split(" ")[0]);
-					      ea.setMath(sbmlLib.parseFormula(assign[i].split(" ")[2]));
-					    } 
-					    //if (eventID.getText().trim().equals("")) {
-					    //  e.unsetId();
-					    //} else {
-					    //  e.setId(eventID.getText().trim());
-					    //}
-					    Object[] adding = { sbmlLib.formulaToString(e.getTrigger().getMath()) };
-					    add.setListData(adding);
-					    add.setSelectedIndex(0);
-					    events.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-					    adding = Buttons.add(ev, events, add, false, null, null, null, null, null,
-								 null, biosim.frame());
-					    ev = new String[adding.length];
-					    for (int i = 0; i < adding.length; i++) {
-					      ev[i] = (String) adding[i];
-					    }
-					    sort(ev);
-					    events.setListData(ev);
-					    events.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-					    if (document.getModel().getNumEvents() == 1) {
-					      events.setSelectedIndex(0);
-					    }
-					    else {
-					      events.setSelectedIndex(index);
-					    }
-					  }
-					  change = true;
+						if (option.equals("OK")) {
+							int index = events.getSelectedIndex();
+							events.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+							ev = Buttons.getList(ev, events);
+							events.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+							org.sbml.libsbml.Event e = (org.sbml.libsbml.Event) (document.getModel()
+									.getListOfEvents()).get(Eindex);
+							Trigger trigger = new Trigger(sbmlLib.parseFormula(eventTrigger.getText().trim()));
+							e.setTrigger(trigger);
+							if (eventDelay.getText().trim().equals("")) {
+								e.unsetDelay();
+							}
+							else {
+								Delay delay = new Delay(sbmlLib.parseFormula(eventDelay.getText().trim()));
+								e.setDelay(delay);
+							}
+							while (e.getNumEventAssignments() > 0) {
+								e.getListOfEventAssignments().remove(0);
+							}
+							for (int i = 0; i < assign.length; i++) {
+								EventAssignment ea = e.createEventAssignment();
+								ea.setVariable(assign[i].split(" ")[0]);
+								ea.setMath(sbmlLib.parseFormula(assign[i].split(" ")[2]));
+							}
+							// if (eventID.getText().trim().equals("")) {
+							// e.unsetId();
+							// } else {
+							// e.setId(eventID.getText().trim());
+							// }
+							ev[index] = sbmlLib.formulaToString(e.getTrigger().getMath());
+							sort(ev);
+							events.setListData(ev);
+							events.setSelectedIndex(index);
+						}
+						else {
+							JList add = new JList();
+							int index = events.getSelectedIndex();
+							org.sbml.libsbml.Event e = document.getModel().createEvent();
+							Trigger trigger = new Trigger(sbmlLib.parseFormula(eventTrigger.getText().trim()));
+							e.setTrigger(trigger);
+							if (eventDelay.getText().trim().equals("")) {
+								e.unsetDelay();
+							}
+							else {
+								Delay delay = new Delay(sbmlLib.parseFormula(eventDelay.getText().trim()));
+								e.setDelay(delay);
+							}
+							for (int i = 0; i < assign.length; i++) {
+								EventAssignment ea = e.createEventAssignment();
+								ea.setVariable(assign[i].split(" ")[0]);
+								ea.setMath(sbmlLib.parseFormula(assign[i].split(" ")[2]));
+							}
+							// if (eventID.getText().trim().equals("")) {
+							// e.unsetId();
+							// } else {
+							// e.setId(eventID.getText().trim());
+							// }
+							Object[] adding = { sbmlLib.formulaToString(e.getTrigger().getMath()) };
+							add.setListData(adding);
+							add.setSelectedIndex(0);
+							events.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+							adding = Buttons.add(ev, events, add, false, null, null, null, null, null, null,
+									biosim.frame());
+							ev = new String[adding.length];
+							for (int i = 0; i < adding.length; i++) {
+								ev[i] = (String) adding[i];
+							}
+							sort(ev);
+							events.setListData(ev);
+							events.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+							if (document.getModel().getNumEvents() == 1) {
+								events.setSelectedIndex(0);
+							}
+							else {
+								events.setSelectedIndex(index);
+							}
+						}
+						change = true;
 					}
 					if (error) {
-					  value = JOptionPane.showOptionDialog(biosim.frame(), eventPanel,
-									       "Event Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
-									       options, options[0]);
+						value = JOptionPane.showOptionDialog(biosim.frame(), eventPanel, "Event Editor",
+								JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 					}
 				}
 				if (value == JOptionPane.NO_OPTION) {
 					return;
 				}
 			}
- 		}
+		}
 	}
 
 	/**
 	 * Creates a frame used to edit event assignments or create new ones.
 	 */
 	private void eventAssignEditor(String option) {
-	        libsbml sbmlLib = new libsbml();
+		libsbml sbmlLib = new libsbml();
 		if (option.equals("OK") && eventAssign.getSelectedIndex() == -1) {
 			JOptionPane.showMessageDialog(biosim.frame(), "No event assignment selected.",
 					"Must Select an Event Assignment", JOptionPane.ERROR_MESSAGE);
@@ -3276,43 +3354,44 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			eaID = new JComboBox();
 			String selected;
 			if (option.equals("OK")) {
-			  selected = ((String) eventAssign.getSelectedValue()).split(" ")[0];
-			} else {
-			  selected = "";
+				selected = ((String) eventAssign.getSelectedValue()).split(" ")[0];
+			}
+			else {
+				selected = "";
 			}
 			Model model = document.getModel();
 			ListOf ids = model.getListOfCompartments();
 			for (int i = 0; i < model.getNumCompartments(); i++) {
-			  String id = ((Compartment) ids.get(i)).getId();
-			  if (!((Compartment) ids.get(i)).getConstant()) {
-			    if (keepVar(selected,id,false,false,false,true)) {
-			      eaID.addItem(id);
-			    }
-			  }
+				String id = ((Compartment) ids.get(i)).getId();
+				if (!((Compartment) ids.get(i)).getConstant()) {
+					if (keepVar(selected, id, false, false, false, true)) {
+						eaID.addItem(id);
+					}
+				}
 			}
 			ids = model.getListOfParameters();
 			for (int i = 0; i < model.getNumParameters(); i++) {
-			  String id = ((Parameter) ids.get(i)).getId();
-			  if (!((Parameter) ids.get(i)).getConstant()) {
-			    if (keepVar(selected,id,false,false,false,true)) {
-			      eaID.addItem(id);
-			    }
-			  }
+				String id = ((Parameter) ids.get(i)).getId();
+				if (!((Parameter) ids.get(i)).getConstant()) {
+					if (keepVar(selected, id, false, false, false, true)) {
+						eaID.addItem(id);
+					}
+				}
 			}
 			ids = model.getListOfSpecies();
 			for (int i = 0; i < model.getNumSpecies(); i++) {
-			  String id = ((Species) ids.get(i)).getId();
-			  if (!((Species) ids.get(i)).getConstant()) {
-			    if (keepVar(selected,id,false,false,false,true)) {
-			      eaID.addItem(id);
-			    }
-			  }
+				String id = ((Species) ids.get(i)).getId();
+				if (!((Species) ids.get(i)).getConstant()) {
+					if (keepVar(selected, id, false, false, false, true)) {
+						eaID.addItem(id);
+					}
+				}
 			}
 			eqn = new JTextField(12);
 			if (option.equals("OK")) {
-			  String selectAssign = ((String) eventAssign.getSelectedValue());
-			  eaID.setSelectedItem(selectAssign.split(" ")[0]);
-			  eqn.setText(selectAssign.split(" ")[2]);
+				String selectAssign = ((String) eventAssign.getSelectedValue());
+				eaID.setSelectedItem(selectAssign.split(" ")[0]);
+				eqn.setText(selectAssign.split(" ")[2]);
 			}
 			EAPanel.add(idLabel);
 			EAPanel.add(eaID);
@@ -3320,75 +3399,77 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			EAPanel.add(eqn);
 			eventAssignPanel.add(EAPanel);
 			Object[] options = { option, "Cancel" };
-			int value = JOptionPane.showOptionDialog(biosim.frame(), eventAssignPanel, "Event Asssignment Editor",
-								 JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+			int value = JOptionPane.showOptionDialog(biosim.frame(), eventAssignPanel,
+					"Event Asssignment Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
+					options, options[0]);
 			if (value == JOptionPane.YES_OPTION) {
 				boolean error = true;
 				while (error && value == JOptionPane.YES_OPTION) {
 					error = false;
 					if (eqn.getText().trim().equals("")) {
-					  JOptionPane.showMessageDialog(biosim.frame(), "Event assignment is missing.",
-									"Enter Assignment", JOptionPane.ERROR_MESSAGE);
-					  error = true;
-					} else if (sbmlLib.parseFormula(eqn.getText().trim())==null) {
-					  JOptionPane.showMessageDialog(biosim.frame(), "Event assignment is not valid.",
-									"Enter Valid Assignment", JOptionPane.ERROR_MESSAGE);
-					  error = true;
+						JOptionPane.showMessageDialog(biosim.frame(), "Event assignment is missing.",
+								"Enter Assignment", JOptionPane.ERROR_MESSAGE);
+						error = true;
+					}
+					else if (sbmlLib.parseFormula(eqn.getText().trim()) == null) {
+						JOptionPane.showMessageDialog(biosim.frame(), "Event assignment is not valid.",
+								"Enter Valid Assignment", JOptionPane.ERROR_MESSAGE);
+						error = true;
 					}
 					if (!error) {
-					  if (option.equals("OK")) {
-					    int index = eventAssign.getSelectedIndex();
-					    eventAssign.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-					    assign = Buttons.getList(assign, eventAssign);
-					    eventAssign.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-					    assign[index] = eaID.getSelectedItem() + " = " + eqn.getText().trim();
-					    sort(assign);
-					    eventAssign.setListData(assign);
-					    eventAssign.setSelectedIndex(index);
-					  }
-					  else {
- 					    JList add = new JList();
-					    int index = eventAssign.getSelectedIndex();
-					    Object[] adding = { eaID.getSelectedItem() + " = " + eqn.getText().trim() };
-					    add.setListData(adding);
-					    add.setSelectedIndex(0);
-					    eventAssign.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-					    adding = Buttons.add(assign, eventAssign, add, false, null, null, null, null, null,
-								 null, biosim.frame());
-					    assign = new String[adding.length];
-					    for (int i = 0; i < adding.length; i++) {
-					      assign[i] = (String) adding[i];
-					    }
-					    sort(assign);
-					    eventAssign.setListData(assign);
-					    eventAssign.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-					    if (adding.length == 1) {
-					      eventAssign.setSelectedIndex(0);
-					    }
-					    else {
-					      eventAssign.setSelectedIndex(index);
-					    }
-					  }
-					  change = true;
+						if (option.equals("OK")) {
+							int index = eventAssign.getSelectedIndex();
+							eventAssign.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+							assign = Buttons.getList(assign, eventAssign);
+							eventAssign.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+							assign[index] = eaID.getSelectedItem() + " = " + eqn.getText().trim();
+							sort(assign);
+							eventAssign.setListData(assign);
+							eventAssign.setSelectedIndex(index);
+						}
+						else {
+							JList add = new JList();
+							int index = eventAssign.getSelectedIndex();
+							Object[] adding = { eaID.getSelectedItem() + " = " + eqn.getText().trim() };
+							add.setListData(adding);
+							add.setSelectedIndex(0);
+							eventAssign.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+							adding = Buttons.add(assign, eventAssign, add, false, null, null, null, null, null,
+									null, biosim.frame());
+							assign = new String[adding.length];
+							for (int i = 0; i < adding.length; i++) {
+								assign[i] = (String) adding[i];
+							}
+							sort(assign);
+							eventAssign.setListData(assign);
+							eventAssign.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+							if (adding.length == 1) {
+								eventAssign.setSelectedIndex(0);
+							}
+							else {
+								eventAssign.setSelectedIndex(index);
+							}
+						}
+						change = true;
 					}
 					if (error) {
-					  value = JOptionPane.showOptionDialog(biosim.frame(), eventAssignPanel,
-									       "Event Assignment Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
-									       options, options[0]);
+						value = JOptionPane.showOptionDialog(biosim.frame(), eventAssignPanel,
+								"Event Assignment Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
+								null, options, options[0]);
 					}
 				}
 				if (value == JOptionPane.NO_OPTION) {
 					return;
 				}
 			}
- 		}
+		}
 	}
 
 	/**
 	 * Creates a frame used to edit constraints or create new ones.
 	 */
 	private void constraintEditor(String option) {
-	        libsbml sbmlLib = new libsbml();
+		libsbml sbmlLib = new libsbml();
 		if (option.equals("OK") && constraints.getSelectedIndex() == -1) {
 			JOptionPane.showMessageDialog(biosim.frame(), "No constraint selected.",
 					"Must Select a Constraint", JOptionPane.ERROR_MESSAGE);
@@ -3402,17 +3483,17 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			consMessage = new JTextField(20);
 			int Cindex = -1;
 			if (option.equals("OK")) {
-			  String selected = ((String) constraints.getSelectedValue());
-			  consMath.setText(selected);
-			  ListOf c = document.getModel().getListOfConstraints();
-			  for (int i = 0; i < document.getModel().getNumConstraints(); i++) {
-			    if (sbmlLib.formulaToString(((Constraint) c.get(i)).getMath()).equals(selected)) {
-			      Cindex = i;
-			      if (((Constraint) c.get(i)).isSetMessage()) {
-				consMessage.setText((((Constraint) c.get(i)).getMessage()).getCharacters());
-			      } 
-			    }
-			  }
+				String selected = ((String) constraints.getSelectedValue());
+				consMath.setText(selected);
+				ListOf c = document.getModel().getListOfConstraints();
+				for (int i = 0; i < document.getModel().getNumConstraints(); i++) {
+					if (sbmlLib.formulaToString(((Constraint) c.get(i)).getMath()).equals(selected)) {
+						Cindex = i;
+						if (((Constraint) c.get(i)).isSetMessage()) {
+							consMessage.setText((((Constraint) c.get(i)).getMessage()).getCharacters());
+						}
+					}
+				}
 			}
 			consPanel.add(mathLabel);
 			consPanel.add(consMath);
@@ -3420,82 +3501,86 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			consPanel.add(consMessage);
 			constraintPanel.add(consPanel);
 			Object[] options = { option, "Cancel" };
-			int value = JOptionPane.showOptionDialog(biosim.frame(), constraintPanel, "Constraint Editor",
-								 JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+			int value = JOptionPane.showOptionDialog(biosim.frame(), constraintPanel,
+					"Constraint Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
+					options[0]);
 			if (value == JOptionPane.YES_OPTION) {
 				boolean error = true;
 				while (error && value == JOptionPane.YES_OPTION) {
 					error = false;
-					if (consMath.getText().trim().equals("") || sbmlLib.parseFormula(consMath.getText().trim())==null) {
-					  JOptionPane.showMessageDialog(biosim.frame(), "You must enter a valid formula.",
-									"Enter Valid Formula", JOptionPane.ERROR_MESSAGE);
-					  error = true;
+					if (consMath.getText().trim().equals("")
+							|| sbmlLib.parseFormula(consMath.getText().trim()) == null) {
+						JOptionPane.showMessageDialog(biosim.frame(), "You must enter a valid formula.",
+								"Enter Valid Formula", JOptionPane.ERROR_MESSAGE);
+						error = true;
 					}
 					if (!error) {
-					  if (option.equals("OK")) {
-					    int index = constraints.getSelectedIndex();
-					    constraints.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-					    cons = Buttons.getList(cons, constraints);
-					    constraints.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-					    Constraint c = (Constraint)(document.getModel().getListOfConstraints()).get(Cindex);
-					    c.setMath(sbmlLib.parseFormula(consMath.getText().trim()));
-					    if (!consMessage.getText().trim().equals("")) {
-					      XMLNode xmlNode = new XMLNode();
-					      xmlNode.append(consMessage.getText().trim());
-					      c.setMessage(xmlNode);
-					    } else {
-					      c.unsetMessage();
-					    }
-					    cons[index] = sbmlLib.formulaToString(c.getMath());
-					    sort(cons);
-					    constraints.setListData(cons);
-					    constraints.setSelectedIndex(index);
-					  }
-					  else {
-					    JList add = new JList();
-					    int index = rules.getSelectedIndex();
-					    Constraint c = document.getModel().createConstraint();
-					    c.setMath(sbmlLib.parseFormula(consMath.getText().trim()));
-					    if (!consMessage.getText().trim().equals("")) {
-					      XMLNode xmlNode = new XMLNode();
-					      xmlNode.append(consMessage.getText().trim());
-					      c.setMessage(xmlNode);
-					    } else {
-					      c.unsetMessage();
-					    }
-					    Object[] adding = { sbmlLib.formulaToString(c.getMath()) };
-					    add.setListData(adding);
-					    add.setSelectedIndex(0);
-					    constraints.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-					    adding = Buttons.add(cons, constraints, add, false, null, null, null, null, null,
-								 null, biosim.frame());
-					    cons = new String[adding.length];
-					    for (int i = 0; i < adding.length; i++) {
-					      cons[i] = (String) adding[i];
-					    }
-					    sort(cons);
-					    constraints.setListData(cons);
-					    constraints.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-					    if (document.getModel().getNumConstraints() == 1) {
-					      constraints.setSelectedIndex(0);
-					    }
-					    else {
-					      constraints.setSelectedIndex(index);
-					    }
-					  }
-					  change = true;
+						if (option.equals("OK")) {
+							int index = constraints.getSelectedIndex();
+							constraints.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+							cons = Buttons.getList(cons, constraints);
+							constraints.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+							Constraint c = (Constraint) (document.getModel().getListOfConstraints()).get(Cindex);
+							c.setMath(sbmlLib.parseFormula(consMath.getText().trim()));
+							if (!consMessage.getText().trim().equals("")) {
+								XMLNode xmlNode = new XMLNode();
+								xmlNode.append(consMessage.getText().trim());
+								c.setMessage(xmlNode);
+							}
+							else {
+								c.unsetMessage();
+							}
+							cons[index] = sbmlLib.formulaToString(c.getMath());
+							sort(cons);
+							constraints.setListData(cons);
+							constraints.setSelectedIndex(index);
+						}
+						else {
+							JList add = new JList();
+							int index = rules.getSelectedIndex();
+							Constraint c = document.getModel().createConstraint();
+							c.setMath(sbmlLib.parseFormula(consMath.getText().trim()));
+							if (!consMessage.getText().trim().equals("")) {
+								XMLNode xmlNode = new XMLNode();
+								xmlNode.append(consMessage.getText().trim());
+								c.setMessage(xmlNode);
+							}
+							else {
+								c.unsetMessage();
+							}
+							Object[] adding = { sbmlLib.formulaToString(c.getMath()) };
+							add.setListData(adding);
+							add.setSelectedIndex(0);
+							constraints.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+							adding = Buttons.add(cons, constraints, add, false, null, null, null, null, null,
+									null, biosim.frame());
+							cons = new String[adding.length];
+							for (int i = 0; i < adding.length; i++) {
+								cons[i] = (String) adding[i];
+							}
+							sort(cons);
+							constraints.setListData(cons);
+							constraints.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+							if (document.getModel().getNumConstraints() == 1) {
+								constraints.setSelectedIndex(0);
+							}
+							else {
+								constraints.setSelectedIndex(index);
+							}
+						}
+						change = true;
 					}
 					if (error) {
-					  value = JOptionPane.showOptionDialog(biosim.frame(), constraintPanel,
-									       "Constraint Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
-									       options, options[0]);
+						value = JOptionPane.showOptionDialog(biosim.frame(), constraintPanel,
+								"Constraint Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
+								options, options[0]);
 					}
 				}
 				if (value == JOptionPane.NO_OPTION) {
 					return;
 				}
 			}
- 		}
+		}
 	}
 
 	/**
@@ -3520,10 +3605,10 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			compID = new JTextField(12);
 			compName = new JTextField(12);
 			ListOf listOfCompTypes = document.getModel().getListOfCompartmentTypes();
-			String[] compTypeList = new String[(int) document.getModel().getNumCompartmentTypes()+1];
+			String[] compTypeList = new String[(int) document.getModel().getNumCompartmentTypes() + 1];
 			compTypeList[0] = "( none )";
 			for (int i = 0; i < document.getModel().getNumCompartmentTypes(); i++) {
-				compTypeList[i+1] = ((CompartmentType) listOfCompTypes.get(i)).getId();
+				compTypeList[i + 1] = ((CompartmentType) listOfCompTypes.get(i)).getId();
 			}
 			sort(compTypeList);
 			Object[] choices = compTypeList;
@@ -3539,44 +3624,47 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			compConstant.setSelectedItem("true");
 			String selected = "";
 			if (option.equals("OK")) {
-			  selected = ((String) compartments.getSelectedValue()).split(" ")[0];
+				selected = ((String) compartments.getSelectedValue()).split(" ")[0];
 			}
-			setCompartOptions(selected,"3");
+			setCompartOptions(selected, "3");
 			dimBox.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-					  setCompartOptions(((String) compartments.getSelectedValue()).split(" ")[0],
-					    (String)dimBox.getSelectedItem());
-					}
-			  });
+				public void actionPerformed(ActionEvent e) {
+					setCompartOptions(((String) compartments.getSelectedValue()).split(" ")[0],
+							(String) dimBox.getSelectedItem());
+				}
+			});
 			if (option.equals("OK")) {
 				try {
 					Compartment compartment = document.getModel().getCompartment(
-					     (((String) compartments.getSelectedValue()).split(" ")[0]));
+							(((String) compartments.getSelectedValue()).split(" ")[0]));
 					compID.setText(compartment.getId());
 					compName.setText(compartment.getName());
 					if (compartment.isSetCompartmentType()) {
-					  compTypeBox.setSelectedItem(compartment.getCompartmentType());
+						compTypeBox.setSelectedItem(compartment.getCompartmentType());
 					}
 					dimBox.setSelectedItem(String.valueOf(compartment.getSpatialDimensions()));
-					setCompartOptions(((String) compartments.getSelectedValue()).split(" ")[0],
-					  String.valueOf(compartment.getSpatialDimensions()));
+					setCompartOptions(((String) compartments.getSelectedValue()).split(" ")[0], String
+							.valueOf(compartment.getSpatialDimensions()));
 					if (compartment.isSetSize()) {
-					  compSize.setText("" + compartment.getSize());
+						compSize.setText("" + compartment.getSize());
 					}
 					if (compartment.isSetUnits()) {
-					  compUnits.setSelectedItem(compartment.getUnits());
-					} else {
-					  compUnits.setSelectedItem("( none )");
+						compUnits.setSelectedItem(compartment.getUnits());
+					}
+					else {
+						compUnits.setSelectedItem("( none )");
 					}
 					if (compartment.isSetOutside()) {
-					  compOutside.setSelectedItem(compartment.getOutside());
-					} else {
-					  compOutside.setSelectedItem("( none )");
+						compOutside.setSelectedItem(compartment.getOutside());
+					}
+					else {
+						compOutside.setSelectedItem("( none )");
 					}
 					if (compartment.getConstant()) {
-					  compConstant.setSelectedItem("true");
-					} else {
-					  compConstant.setSelectedItem("false");
+						compConstant.setSelectedItem("true");
+					}
+					else {
+						compConstant.setSelectedItem("false");
 					}
 				}
 				catch (Exception e) {
@@ -3625,7 +3713,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 							error = true;
 						}
 						else if (usedIDs.contains(addComp)) {
-						  if (option.equals("OK") && !addComp.equals(((String) compartments.getSelectedValue()).split(" ")[0])) {
+							if (option.equals("OK")
+									&& !addComp.equals(((String) compartments.getSelectedValue()).split(" ")[0])) {
 								JOptionPane.showMessageDialog(biosim.frame(),
 										"You must enter a unique ID into the ID field.", "Enter A Unique ID",
 										JOptionPane.ERROR_MESSAGE);
@@ -3638,16 +3727,17 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 								error = true;
 							}
 						}
-						String selCompType = (String)compTypeBox.getSelectedItem();
+						String selCompType = (String) compTypeBox.getSelectedItem();
 						if (!compSize.getText().trim().equals("")) {
-						  try {
-						    Double addCompSize = Double.parseDouble(compSize.getText().trim());
-						  } catch (Exception e1) {
-						    error = true;
-						    JOptionPane.showMessageDialog(biosim.frame(),
-										  "You must enter a real number into the size field.",
-										  "Enter a Valid Size", JOptionPane.ERROR_MESSAGE);
-						  }
+							try {
+								Double addCompSize = Double.parseDouble(compSize.getText().trim());
+							}
+							catch (Exception e1) {
+								error = true;
+								JOptionPane.showMessageDialog(biosim.frame(),
+										"You must enter a real number into the size field.", "Enter a Valid Size",
+										JOptionPane.ERROR_MESSAGE);
+							}
 						}
 						if (!error) {
 							if (option.equals("OK")) {
@@ -3660,30 +3750,35 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 								c.setId(compID.getText().trim());
 								c.setName(compName.getText().trim());
 								if (!selCompType.equals("( none )")) {
-								  c.setCompartmentType(selCompType);
-								} else {
-								  c.unsetCompartmentType();
+									c.setCompartmentType(selCompType);
 								}
-								c.setSpatialDimensions(Integer.parseInt((String)dimBox.getSelectedItem()));
+								else {
+									c.unsetCompartmentType();
+								}
+								c.setSpatialDimensions(Integer.parseInt((String) dimBox.getSelectedItem()));
 								if (compSize.getText().trim().equals("")) {
-								  c.unsetSize();
-								} else {
-								  c.setSize(Double.parseDouble(compSize.getText().trim()));
+									c.unsetSize();
+								}
+								else {
+									c.setSize(Double.parseDouble(compSize.getText().trim()));
 								}
 								if (compUnits.getSelectedItem().equals("( none )")) {
-								  c.unsetUnits();
-								} else {
-								  c.setUnits((String)compUnits.getSelectedItem());
+									c.unsetUnits();
+								}
+								else {
+									c.setUnits((String) compUnits.getSelectedItem());
 								}
 								if (compOutside.getSelectedItem().equals("( none )")) {
-								  c.unsetOutside();
-								} else {
-								  c.setOutside((String)compOutside.getSelectedItem());
+									c.unsetOutside();
+								}
+								else {
+									c.setOutside((String) compOutside.getSelectedItem());
 								}
 								if (compConstant.getSelectedItem().equals("true")) {
-								  c.setConstant(true);
-								} else {
-								  c.setConstant(false);
+									c.setConstant(true);
+								}
+								else {
+									c.setConstant(false);
 								}
 								for (int i = 0; i < usedIDs.size(); i++) {
 									if (usedIDs.get(i).equals(val)) {
@@ -3691,12 +3786,13 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 									}
 								}
 								if (!selCompType.equals("( none )")) {
-								  comps[index] = addComp + " " + selCompType + " " + compSize.getText().trim();
-								} else {
-								  comps[index] = addComp + " " + compSize.getText().trim();
+									comps[index] = addComp + " " + selCompType + " " + compSize.getText().trim();
+								}
+								else {
+									comps[index] = addComp + " " + compSize.getText().trim();
 								}
 								if (!compUnits.getSelectedItem().equals("( none )")) {
-								  comps[index] += " " + compUnits.getSelectedItem();
+									comps[index] += " " + compUnits.getSelectedItem();
 								}
 								sort(comps);
 								compartments.setListData(comps);
@@ -3715,9 +3811,10 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 									if (specs[i].split(" ")[1].equals(val)) {
 										specs[i] = specs[i].split(" ")[0] + " " + addComp + " "
 												+ specs[i].split(" ")[2];
-									} else 	if (specs[i].split(" ")[2].equals(val)) {
-										specs[i] = specs[i].split(" ")[0] + " " + specs[i].split(" ")[1] + " " + addComp + " "
-												+ specs[i].split(" ")[3];
+									}
+									else if (specs[i].split(" ")[2].equals(val)) {
+										specs[i] = specs[i].split(" ")[0] + " " + specs[i].split(" ")[1] + " "
+												+ addComp + " " + specs[i].split(" ")[3];
 									}
 								}
 								sort(specs);
@@ -3730,41 +3827,47 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 								c.setId(compID.getText().trim());
 								c.setName(compName.getText().trim());
 								if (!selCompType.equals("( none )")) {
-								  c.setCompartmentType(selCompType);
-								} else {
-								  c.unsetCompartmentType();
+									c.setCompartmentType(selCompType);
 								}
-								c.setSpatialDimensions(Integer.parseInt((String)dimBox.getSelectedItem()));
+								else {
+									c.unsetCompartmentType();
+								}
+								c.setSpatialDimensions(Integer.parseInt((String) dimBox.getSelectedItem()));
 								if (compSize.getText().trim().equals("")) {
-								  c.unsetSize();
-								} else {
-								  c.setSize(Double.parseDouble(compSize.getText().trim()));
+									c.unsetSize();
+								}
+								else {
+									c.setSize(Double.parseDouble(compSize.getText().trim()));
 								}
 								if (compUnits.getSelectedItem().equals("( none )")) {
-								  c.unsetUnits();
-								} else {
-								  c.setUnits((String)compUnits.getSelectedItem());
+									c.unsetUnits();
+								}
+								else {
+									c.setUnits((String) compUnits.getSelectedItem());
 								}
 								if (compOutside.getSelectedItem().equals("( none )")) {
-								  c.unsetOutside();
-								} else {
-								  c.setOutside((String)compOutside.getSelectedItem());
+									c.unsetOutside();
+								}
+								else {
+									c.setOutside((String) compOutside.getSelectedItem());
 								}
 								if (compConstant.getSelectedItem().equals("true")) {
-								  c.setConstant(true);
-								} else {
-								  c.setConstant(false);
+									c.setConstant(true);
+								}
+								else {
+									c.setConstant(false);
 								}
 								usedIDs.add(addComp);
 								JList add = new JList();
 								String addStr;
 								if (!selCompType.equals("( none )")) {
-								  addStr = addComp + " " + selCompType + " " + compSize.getText().trim();
-								} else {
-								  addStr = addComp + " " + compSize.getText().trim();
+									addStr = addComp + " " + selCompType + " " + compSize.getText().trim();
+								}
+								else {
+									addStr = addComp + " " + compSize.getText().trim();
 								}
 								if (!compUnits.getSelectedItem().equals("( none )")) {
-								  addStr += " " + compUnits.getSelectedItem();
+									addStr += " " + compUnits.getSelectedItem();
 								}
 								Object[] adding = { addStr };
 								add.setListData(adding);
@@ -3805,111 +3908,114 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	/**
 	 * Set compartment options based on number of dimensions
 	 */
-	private void setCompartOptions(String selected,String dim) {
-	  if (dim.equals("3")) {
-	    compSize.setEnabled(true);
-	    compUnits.removeAllItems();
-	    compUnits.addItem("( none )");
-	    ListOf listOfUnits = document.getModel().getListOfUnitDefinitions();
-	    for (int i = 0; i < document.getModel().getNumUnitDefinitions(); i++) {
-	      UnitDefinition unit = (UnitDefinition) listOfUnits.get(i);
-	      if ((unit.getNumUnits()==1) && 
-		  (unit.getUnit(0).isLitre() && unit.getUnit(0).getExponent()==1)|| 
-		  (unit.getUnit(0).isMetre() && unit.getUnit(0).getExponent()==3)) {
-		compUnits.addItem(unit.getId());
-	      }
-	    }
-	    String[] unitIds = { "volume", "litre", "dimensionless" };
-	    for (int i = 0; i < unitIds.length; i++) {
-	      compUnits.addItem(unitIds[i]);
-	    }
-	    compOutside.removeAllItems();
-	    compOutside.addItem("( none )");
-	    ListOf listOfComps = document.getModel().getListOfCompartments();
-	    for (int i = 0; i < document.getModel().getNumCompartments(); i++) {
-	      Compartment compartment = (Compartment) listOfComps.get(i);
-	      if (!compartment.getId().equals(selected) && compartment.getSpatialDimensions()!=0) {
-		compOutside.addItem(compartment.getId());
-	      }
-	    }
-	    compConstant.setEnabled(true);
-	  } else if (dim.equals("2")) {
-	    compSize.setEnabled(true);
-	    compUnits.removeAllItems();
-	    compUnits.addItem("( none )");
-	    ListOf listOfUnits = document.getModel().getListOfUnitDefinitions();
-	    for (int i = 0; i < document.getModel().getNumUnitDefinitions(); i++) {
-	      UnitDefinition unit = (UnitDefinition) listOfUnits.get(i);
-	      if ((unit.getNumUnits()==1) && 
-		  (unit.getUnit(0).isMetre() && unit.getUnit(0).getExponent()==2)) {
-		compUnits.addItem(unit.getId());
-	      }
-	    }
-	    String[] unitIds = { "area", "dimensionless" };
-	    for (int i = 0; i < unitIds.length; i++) {
-	      compUnits.addItem(unitIds[i]);
-	    }
-	    compOutside.removeAllItems();
-	    compOutside.addItem("( none )");
-	    ListOf listOfComps = document.getModel().getListOfCompartments();
-	    for (int i = 0; i < document.getModel().getNumCompartments(); i++) {
-	      Compartment compartment = (Compartment) listOfComps.get(i);
-	      if (!compartment.getId().equals(selected) && compartment.getSpatialDimensions()!=0) {
-		compOutside.addItem(compartment.getId());
-	      }
-	    }
-	    compConstant.setEnabled(true);
-	  } else if (dim.equals("1")) {
-	    compSize.setEnabled(true);
-	    compUnits.removeAllItems();
-	    compUnits.addItem("( none )");
-	    ListOf listOfUnits = document.getModel().getListOfUnitDefinitions();
-	    for (int i = 0; i < document.getModel().getNumUnitDefinitions(); i++) {
-	      UnitDefinition unit = (UnitDefinition) listOfUnits.get(i);
-	      if ((unit.getNumUnits()==1) && 
-		  (unit.getUnit(0).isMetre() && unit.getUnit(0).getExponent()==1)) {
-		compUnits.addItem(unit.getId());
-	      }
-	    }
-	    String[] unitIds = { "length", "metre", "dimensionless" };
-	    for (int i = 0; i < unitIds.length; i++) {
-	      compUnits.addItem(unitIds[i]);
-	    }
-	    compOutside.removeAllItems();
-	    compOutside.addItem("( none )");
-	    ListOf listOfComps = document.getModel().getListOfCompartments();
-	    for (int i = 0; i < document.getModel().getNumCompartments(); i++) {
-	      Compartment compartment = (Compartment) listOfComps.get(i);
-	      if (!compartment.getId().equals(selected) && compartment.getSpatialDimensions()!=0) {
-		compOutside.addItem(compartment.getId());
-	      }
-	    }
-	    compConstant.setEnabled(true);
-	  } else if (dim.equals("0")) {
-	    compSize.setText("");
-	    compSize.setEnabled(false);
-	    compUnits.removeAllItems();
-	    compUnits.addItem("( none )");
-	    compOutside.removeAllItems();
-	    compOutside.addItem("( none )");
-	    ListOf listOfComps = document.getModel().getListOfCompartments();
-	    for (int i = 0; i < document.getModel().getNumCompartments(); i++) {
-	      Compartment compartment = (Compartment) listOfComps.get(i);
-	      if (!compartment.getId().equals(selected)) {
-		compOutside.addItem(compartment.getId());
-	      }
-	    }
-	    compConstant.setEnabled(false);
-	  }
-	  if (!selected.equals("")) {
-	    Compartment compartment = document.getModel().getCompartment(selected);
-	    if (compartment.isSetOutside()) {
-	      compOutside.setSelectedItem(compartment.getOutside());
-	    }
-	    if (compartment.isSetUnits()) {
-	      compUnits.setSelectedItem(compartment.getUnits());
-	    }
-	  }
+	private void setCompartOptions(String selected, String dim) {
+		if (dim.equals("3")) {
+			compSize.setEnabled(true);
+			compUnits.removeAllItems();
+			compUnits.addItem("( none )");
+			ListOf listOfUnits = document.getModel().getListOfUnitDefinitions();
+			for (int i = 0; i < document.getModel().getNumUnitDefinitions(); i++) {
+				UnitDefinition unit = (UnitDefinition) listOfUnits.get(i);
+				if ((unit.getNumUnits() == 1)
+						&& (unit.getUnit(0).isLitre() && unit.getUnit(0).getExponent() == 1)
+						|| (unit.getUnit(0).isMetre() && unit.getUnit(0).getExponent() == 3)) {
+					compUnits.addItem(unit.getId());
+				}
+			}
+			String[] unitIds = { "volume", "litre", "dimensionless" };
+			for (int i = 0; i < unitIds.length; i++) {
+				compUnits.addItem(unitIds[i]);
+			}
+			compOutside.removeAllItems();
+			compOutside.addItem("( none )");
+			ListOf listOfComps = document.getModel().getListOfCompartments();
+			for (int i = 0; i < document.getModel().getNumCompartments(); i++) {
+				Compartment compartment = (Compartment) listOfComps.get(i);
+				if (!compartment.getId().equals(selected) && compartment.getSpatialDimensions() != 0) {
+					compOutside.addItem(compartment.getId());
+				}
+			}
+			compConstant.setEnabled(true);
+		}
+		else if (dim.equals("2")) {
+			compSize.setEnabled(true);
+			compUnits.removeAllItems();
+			compUnits.addItem("( none )");
+			ListOf listOfUnits = document.getModel().getListOfUnitDefinitions();
+			for (int i = 0; i < document.getModel().getNumUnitDefinitions(); i++) {
+				UnitDefinition unit = (UnitDefinition) listOfUnits.get(i);
+				if ((unit.getNumUnits() == 1)
+						&& (unit.getUnit(0).isMetre() && unit.getUnit(0).getExponent() == 2)) {
+					compUnits.addItem(unit.getId());
+				}
+			}
+			String[] unitIds = { "area", "dimensionless" };
+			for (int i = 0; i < unitIds.length; i++) {
+				compUnits.addItem(unitIds[i]);
+			}
+			compOutside.removeAllItems();
+			compOutside.addItem("( none )");
+			ListOf listOfComps = document.getModel().getListOfCompartments();
+			for (int i = 0; i < document.getModel().getNumCompartments(); i++) {
+				Compartment compartment = (Compartment) listOfComps.get(i);
+				if (!compartment.getId().equals(selected) && compartment.getSpatialDimensions() != 0) {
+					compOutside.addItem(compartment.getId());
+				}
+			}
+			compConstant.setEnabled(true);
+		}
+		else if (dim.equals("1")) {
+			compSize.setEnabled(true);
+			compUnits.removeAllItems();
+			compUnits.addItem("( none )");
+			ListOf listOfUnits = document.getModel().getListOfUnitDefinitions();
+			for (int i = 0; i < document.getModel().getNumUnitDefinitions(); i++) {
+				UnitDefinition unit = (UnitDefinition) listOfUnits.get(i);
+				if ((unit.getNumUnits() == 1)
+						&& (unit.getUnit(0).isMetre() && unit.getUnit(0).getExponent() == 1)) {
+					compUnits.addItem(unit.getId());
+				}
+			}
+			String[] unitIds = { "length", "metre", "dimensionless" };
+			for (int i = 0; i < unitIds.length; i++) {
+				compUnits.addItem(unitIds[i]);
+			}
+			compOutside.removeAllItems();
+			compOutside.addItem("( none )");
+			ListOf listOfComps = document.getModel().getListOfCompartments();
+			for (int i = 0; i < document.getModel().getNumCompartments(); i++) {
+				Compartment compartment = (Compartment) listOfComps.get(i);
+				if (!compartment.getId().equals(selected) && compartment.getSpatialDimensions() != 0) {
+					compOutside.addItem(compartment.getId());
+				}
+			}
+			compConstant.setEnabled(true);
+		}
+		else if (dim.equals("0")) {
+			compSize.setText("");
+			compSize.setEnabled(false);
+			compUnits.removeAllItems();
+			compUnits.addItem("( none )");
+			compOutside.removeAllItems();
+			compOutside.addItem("( none )");
+			ListOf listOfComps = document.getModel().getListOfCompartments();
+			for (int i = 0; i < document.getModel().getNumCompartments(); i++) {
+				Compartment compartment = (Compartment) listOfComps.get(i);
+				if (!compartment.getId().equals(selected)) {
+					compOutside.addItem(compartment.getId());
+				}
+			}
+			compConstant.setEnabled(false);
+		}
+		if (!selected.equals("")) {
+			Compartment compartment = document.getModel().getCompartment(selected);
+			if (compartment.isSetOutside()) {
+				compOutside.setSelectedItem(compartment.getOutside());
+			}
+			if (compartment.isSetUnits()) {
+				compUnits.setSelectedItem(compartment.getUnits());
+			}
+		}
 	}
 
 	/**
@@ -3932,18 +4038,18 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			JLabel nameLabel = new JLabel("Name:");
 			JLabel specTypeLabel = new JLabel("Type:");
 			JLabel compLabel = new JLabel("Compartment:");
-			//JLabel initLabel;
-			//if (amount) {
-			//	initLabel = new JLabel("Initial Amount:");
-			//}
-			//else {
-			//	initLabel = new JLabel("Initial Concentration:");
-			//}
+			// JLabel initLabel;
+			// if (amount) {
+			// initLabel = new JLabel("Initial Amount:");
+			// }
+			// else {
+			// initLabel = new JLabel("Initial Concentration:");
+			// }
 			String[] initLabels = { "Initial Amount", "Initial Concentration" };
 			initLabel = new JComboBox(initLabels);
-			JLabel  unitLabel = new JLabel("Units:");
-			JLabel  boundLabel = new JLabel("Boundary Condition:");
-			JLabel  constLabel = new JLabel("Constant:");
+			JLabel unitLabel = new JLabel("Units:");
+			JLabel boundLabel = new JLabel("Boundary Condition:");
+			JLabel constLabel = new JLabel("Constant:");
 			ID = new JTextField();
 			Name = new JTextField();
 			init = new JTextField("0.0");
@@ -3951,17 +4057,16 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			specUnits.addItem("( none )");
 			ListOf listOfUnits = document.getModel().getListOfUnitDefinitions();
 			for (int i = 0; i < document.getModel().getNumUnitDefinitions(); i++) {
-			  UnitDefinition unit = (UnitDefinition) listOfUnits.get(i);
-			  if ((unit.getNumUnits()==1) && 
-			      (unit.getUnit(0).isMole()||unit.getUnit(0).isItem()|| 
-			       unit.getUnit(0).isGram()||unit.getUnit(0).isKilogram()) &&
-			      (unit.getUnit(0).getExponent()==1)) {
-			    specUnits.addItem(unit.getId());
-			  }
+				UnitDefinition unit = (UnitDefinition) listOfUnits.get(i);
+				if ((unit.getNumUnits() == 1)
+						&& (unit.getUnit(0).isMole() || unit.getUnit(0).isItem() || unit.getUnit(0).isGram() || unit
+								.getUnit(0).isKilogram()) && (unit.getUnit(0).getExponent() == 1)) {
+					specUnits.addItem(unit.getId());
+				}
 			}
 			String[] unitIds = { "substance", "dimensionless", "gram", "item", "kilogram", "mole" };
 			for (int i = 0; i < unitIds.length; i++) {
-			  specUnits.addItem(unitIds[i]);
+				specUnits.addItem(unitIds[i]);
 			}
 			String[] optionsTF = { "true", "false" };
 			specBoundary = new JComboBox(optionsTF);
@@ -3973,19 +4078,19 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			JLabel stepLabel = new JLabel("Step:");
 			JLabel levelLabel = new JLabel("Level:");
 			ListOf listOfSpecTypes = document.getModel().getListOfSpeciesTypes();
-			String[] specTypeList = new String[(int) document.getModel().getNumSpeciesTypes()+1];
+			String[] specTypeList = new String[(int) document.getModel().getNumSpeciesTypes() + 1];
 			specTypeList[0] = "( none )";
 			for (int i = 0; i < document.getModel().getNumSpeciesTypes(); i++) {
-				specTypeList[i+1] = ((SpeciesType) listOfSpecTypes.get(i)).getId();
+				specTypeList[i + 1] = ((SpeciesType) listOfSpecTypes.get(i)).getId();
 			}
 			sort(specTypeList);
 			Object[] choices = specTypeList;
 			specTypeBox = new JComboBox(choices);
-// 			int[] index = compartments.getSelectedIndices();
-// 			compartments.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-// 			String[] add = Buttons.getList(comps, compartments);
-// 			compartments.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-// 			compartments.setSelectedIndices(index);
+			// int[] index = compartments.getSelectedIndices();
+			// compartments.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+			// String[] add = Buttons.getList(comps, compartments);
+			// compartments.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			// compartments.setSelectedIndices(index);
 			ListOf listOfCompartments = document.getModel().getListOfCompartments();
 			String[] add = new String[(int) document.getModel().getNumCompartments()];
 			for (int i = 0; i < document.getModel().getNumCompartments(); i++) {
@@ -4029,31 +4134,35 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					Name.setText(specie.getName());
 					specTypeBox.setSelectedItem(specie.getSpeciesType());
 					if (specie.getBoundaryCondition()) {
-					  specBoundary.setSelectedItem("true");
-					} else {
-					  specBoundary.setSelectedItem("false");
+						specBoundary.setSelectedItem("true");
+					}
+					else {
+						specBoundary.setSelectedItem("false");
 					}
 					if (specie.getConstant()) {
-					  specConstant.setSelectedItem("true");
-					} else {
-					  specConstant.setSelectedItem("false");
+						specConstant.setSelectedItem("true");
+					}
+					else {
+						specConstant.setSelectedItem("false");
 					}
 					if (specie.isSetInitialAmount()) {
-					  init.setText("" + specie.getInitialAmount());
-					  initLabel.setSelectedItem("Initial Amount");
-					} else {
-					  init.setText("" + specie.getInitialConcentration());
-					  initLabel.setSelectedItem("Initial Concentration");
+						init.setText("" + specie.getInitialAmount());
+						initLabel.setSelectedItem("Initial Amount");
+					}
+					else {
+						init.setText("" + specie.getInitialConcentration());
+						initLabel.setSelectedItem("Initial Concentration");
 					}
 					specUnits.setSelectedItem(specie.getUnits());
 					comp.setSelectedItem(specie.getCompartment());
-					if (paramsOnly &&
-					    (((String) species.getSelectedValue()).contains("Custom") ||
-					     ((String) species.getSelectedValue()).contains("Sweep"))) {
-					        if (((String) species.getSelectedValue()).contains("Custom")) {
-						  type.setSelectedItem("Custom");
-						} else {
-						  type.setSelectedItem("Sweep");
+					if (paramsOnly
+							&& (((String) species.getSelectedValue()).contains("Custom") || ((String) species
+									.getSelectedValue()).contains("Sweep"))) {
+						if (((String) species.getSelectedValue()).contains("Custom")) {
+							type.setSelectedItem("Custom");
+						}
+						else {
+							type.setSelectedItem("Sweep");
 						}
 						if (((String) type.getSelectedItem()).equals("Sweep")) {
 							start.setText((((String) species.getSelectedValue()).split(" ")[2]).split(",")[0]
@@ -4132,15 +4241,23 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 							specUnits.setEnabled(false);
 							SBMLReader reader = new SBMLReader();
 							SBMLDocument d = reader.readSBML(file);
-							if (d.getModel().getSpecies(((String) species.getSelectedValue()).split(" ")[0]).isSetInitialAmount()) {
-							  init.setText(d.getModel().getSpecies(((String) species.getSelectedValue()).split(" ")[0]).getInitialAmount() + "");
-							  initLabel.setSelectedItem("Initial Amount");
-							} else {
-							  init.setText(d.getModel().getSpecies(((String) species.getSelectedValue()).split(" ")[0]).getInitialConcentration() + "");
-							  initLabel.setSelectedItem("Initial Concentration");
+							if (d.getModel().getSpecies(((String) species.getSelectedValue()).split(" ")[0])
+									.isSetInitialAmount()) {
+								init.setText(d.getModel().getSpecies(
+										((String) species.getSelectedValue()).split(" ")[0]).getInitialAmount()
+										+ "");
+								initLabel.setSelectedItem("Initial Amount");
 							}
-							if (d.getModel().getSpecies(((String) species.getSelectedValue()).split(" ")[0]).isSetUnits()) {
-							  specUnits.setSelectedItem(d.getModel().getSpecies(((String) species.getSelectedValue()).split(" ")[0]).getUnits());
+							else {
+								init.setText(d.getModel().getSpecies(
+										((String) species.getSelectedValue()).split(" ")[0]).getInitialConcentration()
+										+ "");
+								initLabel.setSelectedItem("Initial Concentration");
+							}
+							if (d.getModel().getSpecies(((String) species.getSelectedValue()).split(" ")[0])
+									.isSetUnits()) {
+								specUnits.setSelectedItem(d.getModel().getSpecies(
+										((String) species.getSelectedValue()).split(" ")[0]).getUnits());
 							}
 						}
 					}
@@ -4180,60 +4297,69 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					else {
 						try {
 							double initial = Double.parseDouble(init.getText().trim());
-							String unit = (String)specUnits.getSelectedItem();
+							String unit = (String) specUnits.getSelectedItem();
 							String addSpec;
-							String selSpecType = (String)specTypeBox.getSelectedItem();
+							String selSpecType = (String) specTypeBox.getSelectedItem();
 							if (paramsOnly && !((String) type.getSelectedItem()).equals("Original")) {
 								if (((String) type.getSelectedItem()).equals("Sweep")) {
 									double startVal = Double.parseDouble(start.getText().trim());
 									double stopVal = Double.parseDouble(stop.getText().trim());
 									double stepVal = Double.parseDouble(step.getText().trim());
 									if (!selSpecType.equals("( none )")) {
-									  addSpec = ID.getText().trim() + " " + selSpecType + " " + comp.getSelectedItem() + " (" + startVal
-											+ "," + stopVal + "," + stepVal + "," + level.getSelectedItem() + ") "
-											+ type.getSelectedItem();
-									} else {
-									  addSpec = ID.getText().trim() + " " + comp.getSelectedItem() + " (" + startVal
-											+ "," + stopVal + "," + stepVal + "," + level.getSelectedItem() + ") "
-											+ type.getSelectedItem();
+										addSpec = ID.getText().trim() + " " + selSpecType + " "
+												+ comp.getSelectedItem() + " (" + startVal + "," + stopVal + "," + stepVal
+												+ "," + level.getSelectedItem() + ") " + type.getSelectedItem();
+									}
+									else {
+										addSpec = ID.getText().trim() + " " + comp.getSelectedItem() + " (" + startVal
+												+ "," + stopVal + "," + stepVal + "," + level.getSelectedItem() + ") "
+												+ type.getSelectedItem();
 									}
 								}
 								else {
 									if (!selSpecType.equals("( none )")) {
-									  if (!unit.equals("( none )")) {
-									    addSpec = ID.getText().trim() + " " + selSpecType + " " + comp.getSelectedItem() + " " + initial
-									      + " " + unit + " " + type.getSelectedItem();
-									  } else {
-									    addSpec = ID.getText().trim() + " " + selSpecType + " " + comp.getSelectedItem() + " " + initial
-									      + " " + type.getSelectedItem();
-									  }
-									} else {
-									  if (!unit.equals("( none )")) {
-									    addSpec = ID.getText().trim() + " " + comp.getSelectedItem() + " " + initial
-									      + " " + unit + " " + type.getSelectedItem();
-									  } else {
-									    addSpec = ID.getText().trim() + " " + comp.getSelectedItem() + " " + initial
-									      + " " + type.getSelectedItem();
-									  }
+										if (!unit.equals("( none )")) {
+											addSpec = ID.getText().trim() + " " + selSpecType + " "
+													+ comp.getSelectedItem() + " " + initial + " " + unit + " "
+													+ type.getSelectedItem();
+										}
+										else {
+											addSpec = ID.getText().trim() + " " + selSpecType + " "
+													+ comp.getSelectedItem() + " " + initial + " " + type.getSelectedItem();
+										}
+									}
+									else {
+										if (!unit.equals("( none )")) {
+											addSpec = ID.getText().trim() + " " + comp.getSelectedItem() + " " + initial
+													+ " " + unit + " " + type.getSelectedItem();
+										}
+										else {
+											addSpec = ID.getText().trim() + " " + comp.getSelectedItem() + " " + initial
+													+ " " + type.getSelectedItem();
+										}
 									}
 								}
 							}
 							else {
-							  if (!selSpecType.equals("( none )")) {
-							    if (!unit.equals("( none )")) {
-							      addSpec = ID.getText().trim() + " " + selSpecType + " " + comp.getSelectedItem() + " " + initial 
-								+ " " + unit;
-							    } else {
-							      addSpec = ID.getText().trim() + " " + selSpecType + " " + comp.getSelectedItem() + " " + initial;
-							    }
-							  } else {
-							    if (!unit.equals("( none )")) {
-							      addSpec = ID.getText().trim() + " " + comp.getSelectedItem() + " " + initial
-								+ " " + unit;
-							    } else {
-							      addSpec = ID.getText().trim() + " " + comp.getSelectedItem() + " " + initial;
-							    }
-							  }
+								if (!selSpecType.equals("( none )")) {
+									if (!unit.equals("( none )")) {
+										addSpec = ID.getText().trim() + " " + selSpecType + " "
+												+ comp.getSelectedItem() + " " + initial + " " + unit;
+									}
+									else {
+										addSpec = ID.getText().trim() + " " + selSpecType + " "
+												+ comp.getSelectedItem() + " " + initial;
+									}
+								}
+								else {
+									if (!unit.equals("( none )")) {
+										addSpec = ID.getText().trim() + " " + comp.getSelectedItem() + " " + initial
+												+ " " + unit;
+									}
+									else {
+										addSpec = ID.getText().trim() + " " + comp.getSelectedItem() + " " + initial;
+									}
+								}
 							}
 							if (!((IDpat.matcher(ID.getText().trim())).matches())) {
 								JOptionPane.showMessageDialog(biosim.frame(),
@@ -4270,14 +4396,16 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 									specie.setId(ID.getText().trim());
 									specie.setName(Name.getText().trim());
 									if (specBoundary.getSelectedItem().equals("true")) {
-									  specie.setBoundaryCondition(true);
-									} else {
-									  specie.setBoundaryCondition(false);
+										specie.setBoundaryCondition(true);
+									}
+									else {
+										specie.setBoundaryCondition(false);
 									}
 									if (specConstant.getSelectedItem().equals("true")) {
-									  specie.setConstant(true);
-									} else {
-									  specie.setConstant(false);
+										specie.setConstant(true);
+									}
+									else {
+										specie.setConstant(false);
 									}
 									for (int i = 0; i < usedIDs.size(); i++) {
 										if (usedIDs.get(i).equals(val)) {
@@ -4285,9 +4413,10 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 										}
 									}
 									if (!selSpecType.equals("( none )")) {
-									  specie.setSpeciesType(selSpecType);
-									} else {
-									  specie.unsetSpeciesType();
+										specie.setSpeciesType(selSpecType);
+									}
+									else {
+										specie.unsetSpeciesType();
 									}
 									Model model = document.getModel();
 									for (int i = 0; i < model.getNumReactions(); i++) {
@@ -4321,13 +4450,14 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 										specie.unsetInitialConcentration();
 									}
 									else {
-									        specie.unsetInitialAmount();
+										specie.unsetInitialAmount();
 										specie.setInitialConcentration(initial);
 									}
 									if (unit.equals("( none )")) {
-									  specie.unsetUnits(); 
-									} else {
-									  specie.setUnits(unit);
+										specie.unsetUnits();
+									}
+									else {
+										specie.setUnits(unit);
 									}
 									specs[index1] = addSpec;
 									sort(specs);
@@ -4355,33 +4485,37 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 									specie.setId(ID.getText().trim());
 									specie.setName(Name.getText().trim());
 									if (specBoundary.getSelectedItem().equals("true")) {
-									  specie.setBoundaryCondition(true);
-									} else {
-									  specie.setBoundaryCondition(false);
+										specie.setBoundaryCondition(true);
+									}
+									else {
+										specie.setBoundaryCondition(false);
 									}
 									if (specConstant.getSelectedItem().equals("true")) {
-									  specie.setConstant(true);
-									} else {
-									  specie.setConstant(false);
+										specie.setConstant(true);
+									}
+									else {
+										specie.setConstant(false);
 									}
 									usedIDs.add(ID.getText().trim());
 									if (!selSpecType.equals("( none )")) {
-									  specie.setSpeciesType(selSpecType);
-									} else {
-									  specie.unsetSpeciesType();
+										specie.setSpeciesType(selSpecType);
+									}
+									else {
+										specie.unsetSpeciesType();
 									}
 									if (initLabel.getSelectedItem().equals("Initial Amount")) {
 										specie.setInitialAmount(initial);
 										specie.unsetInitialConcentration();
 									}
 									else {
-									        specie.unsetInitialAmount();
+										specie.unsetInitialAmount();
 										specie.setInitialConcentration(initial);
 									}
 									if (unit.equals("( none )")) {
-									  specie.unsetUnits(); 
-									} else {
-									  specie.setUnits(unit);
+										specie.unsetUnits();
+									}
+									else {
+										specie.setUnits(unit);
 									}
 									JList addIt = new JList();
 									Object[] adding = { addSpec };
@@ -4410,8 +4544,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						catch (Exception e1) {
 							error = true;
 							JOptionPane.showMessageDialog(biosim.frame(),
-										      "You must enter a real number into the initial value field.",
-										      "Enter a Valid Initial Value", JOptionPane.ERROR_MESSAGE);
+									"You must enter a real number into the initial value field.",
+									"Enter a Valid Initial Value", JOptionPane.ERROR_MESSAGE);
 						}
 						if (error) {
 							value = JOptionPane.showOptionDialog(biosim.frame(), speciesPanel, "Species Editor",
@@ -4481,8 +4615,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			reacAddParam.addActionListener(this);
 			reacRemoveParam.addActionListener(this);
 			reacEditParam.addActionListener(this);
-			JLabel parametersLabel = new JLabel(
-					"List Of Local Parameters:");
+			JLabel parametersLabel = new JLabel("List Of Local Parameters:");
 			reacParameters = new JList();
 			reacParameters.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			JScrollPane scroll = new JScrollPane();
@@ -4503,9 +4636,10 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					thisReactionParams.add(parameter.getId());
 					String p;
 					if (parameter.isSetUnits()) {
-					  p = parameter.getId() + " " + parameter.getValue() + " " + parameter.getUnits();
-					} else {
-					  p = parameter.getId() + " " + parameter.getValue();
+						p = parameter.getId() + " " + parameter.getValue() + " " + parameter.getUnits();
+					}
+					else {
+						p = parameter.getId() + " " + parameter.getValue();
 					}
 					if (paramsOnly) {
 						for (int j = 0; j < parameterChanges.size(); j++) {
@@ -4703,30 +4837,29 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 							if (option.equals("OK")
 									&& !reacID.getText().trim().equals(
 											((String) reactions.getSelectedValue()).split(" ")[0])) {
-								JOptionPane.showMessageDialog(biosim.frame(),
-										"A reaction ID must be unique.", "ID Not Unique",
-										JOptionPane.ERROR_MESSAGE);
+								JOptionPane.showMessageDialog(biosim.frame(), "A reaction ID must be unique.",
+										"ID Not Unique", JOptionPane.ERROR_MESSAGE);
 								error = true;
 							}
 							else if (option.equals("Add")) {
-								JOptionPane.showMessageDialog(biosim.frame(),
-										"A reaction ID must be unique.", "ID Not Unique",
-										JOptionPane.ERROR_MESSAGE);
+								JOptionPane.showMessageDialog(biosim.frame(), "A reaction ID must be unique.",
+										"ID Not Unique", JOptionPane.ERROR_MESSAGE);
 								error = true;
 							}
 						}
 						if (!error) {
-						  if (kineticLaw.getText().trim().equals("")) {
-						    JOptionPane.showMessageDialog(biosim.frame(),
-										  "A reaction must have a kinetic law.", "Enter A Kinetic Law",
-										  JOptionPane.ERROR_MESSAGE);
-						    error = true;
-						  } else  if ((changedReactants.size()==0)&&(changedProducts.size()==0)) {
-						    JOptionPane.showMessageDialog(biosim.frame(),
-										  "A reaction must have at least one reactant or product.", "No Reactants or Products",
-										  JOptionPane.ERROR_MESSAGE);
-						    error = true;
-						  }
+							if (kineticLaw.getText().trim().equals("")) {
+								JOptionPane.showMessageDialog(biosim.frame(),
+										"A reaction must have a kinetic law.", "Enter A Kinetic Law",
+										JOptionPane.ERROR_MESSAGE);
+								error = true;
+							}
+							else if ((changedReactants.size() == 0) && (changedProducts.size() == 0)) {
+								JOptionPane.showMessageDialog(biosim.frame(),
+										"A reaction must have at least one reactant or product.",
+										"No Reactants or Products", JOptionPane.ERROR_MESSAGE);
+								error = true;
+							}
 						}
 						String kineticCheck;
 						if (!error) {
@@ -5002,19 +5135,15 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			paramUnits = new JComboBox();
 			paramUnits.addItem("( none )");
 			for (int i = 0; i < units.length; i++) {
-			  paramUnits.addItem(units[i]);
+				paramUnits.addItem(units[i]);
 			}
-			String[] unitIds = { "substance", "volume", "area", "length", "time", 
-					   "ampere", "becquerel", "candela", "celsius",
-					   "coulomb", "dimensionless", "farad", "gram",
-					   "gray", "henry", "hertz", "item", "joule",
-					   "katal", "kelvin", "kilogram", "litre",
-					   "lumen", "lux", "metre", "mole", "newton",
-					   "ohm", "pascal", "radian", "second", "siemens",
-					   "sievert", "steradian", "tesla", "volt", "watt",
-					   "weber" };
+			String[] unitIds = { "substance", "volume", "area", "length", "time", "ampere", "becquerel",
+					"candela", "celsius", "coulomb", "dimensionless", "farad", "gram", "gray", "henry",
+					"hertz", "item", "joule", "katal", "kelvin", "kilogram", "litre", "lumen", "lux",
+					"metre", "mole", "newton", "ohm", "pascal", "radian", "second", "siemens", "sievert",
+					"steradian", "tesla", "volt", "watt", "weber" };
 			for (int i = 0; i < unitIds.length; i++) {
-			  paramUnits.addItem(unitIds[i]);
+				paramUnits.addItem(unitIds[i]);
 			}
 			paramConst = new JComboBox();
 			paramConst.addItem("true");
@@ -5044,24 +5173,25 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					paramID.setText(paramet.getId());
 					paramName.setText(paramet.getName());
 					if (paramet.getConstant()) {
-					  paramConst.setSelectedItem("true");
-					} else {
-					  paramConst.setSelectedItem("false");
+						paramConst.setSelectedItem("true");
+					}
+					else {
+						paramConst.setSelectedItem("false");
 					}
 					if (paramet.isSetValue()) {
-					  paramValue.setText("" + paramet.getValue());
-					} 
-					if (paramet.isSetUnits()) {
-					  paramUnits.setSelectedItem(paramet.getUnits());
+						paramValue.setText("" + paramet.getValue());
 					}
-					if (paramsOnly && 
-					    (((String) parameters.getSelectedValue()).contains("Custom"))||
-					    (((String) parameters.getSelectedValue()).contains("Sweep"))) {
-					        if (((String) parameters.getSelectedValue()).contains("Custom")) {
-						  type.setSelectedItem("Custom");
-					        } else {
-						  type.setSelectedItem("Sweep");
-					        } 
+					if (paramet.isSetUnits()) {
+						paramUnits.setSelectedItem(paramet.getUnits());
+					}
+					if (paramsOnly && (((String) parameters.getSelectedValue()).contains("Custom"))
+							|| (((String) parameters.getSelectedValue()).contains("Sweep"))) {
+						if (((String) parameters.getSelectedValue()).contains("Custom")) {
+							type.setSelectedItem("Custom");
+						}
+						else {
+							type.setSelectedItem("Sweep");
+						}
 						if (((String) type.getSelectedItem()).equals("Sweep")) {
 							start.setText((((String) parameters.getSelectedValue()).split(" ")[1]).split(",")[0]
 									.substring(1).trim());
@@ -5126,14 +5256,20 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 							paramUnits.setEnabled(false);
 							SBMLReader reader = new SBMLReader();
 							SBMLDocument d = reader.readSBML(file);
-							if (d.getModel().getParameter(((String) parameters.getSelectedValue()).split(" ")[0]).isSetValue()) {
-							  paramValue.setText(d.getModel().getParameter(((String) parameters.getSelectedValue()).split(" ")[0]).getValue() + "");
-							} else {
-							  paramValue.setText("");
+							if (d.getModel().getParameter(((String) parameters.getSelectedValue()).split(" ")[0])
+									.isSetValue()) {
+								paramValue.setText(d.getModel().getParameter(
+										((String) parameters.getSelectedValue()).split(" ")[0]).getValue()
+										+ "");
 							}
-							if (d.getModel().getParameter(((String) parameters.getSelectedValue()).split(" ")[0]).isSetUnits()) {
-							  paramUnits.setSelectedItem(d.getModel().getParameter(((String) parameters.getSelectedValue()).split(" ")[0]).getUnits()
-										     + "");
+							else {
+								paramValue.setText("");
+							}
+							if (d.getModel().getParameter(((String) parameters.getSelectedValue()).split(" ")[0])
+									.isSetUnits()) {
+								paramUnits.setSelectedItem(d.getModel().getParameter(
+										((String) parameters.getSelectedValue()).split(" ")[0]).getUnits()
+										+ "");
 							}
 						}
 					}
@@ -5172,8 +5308,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					}
 					else {
 						try {
-						        double val = Double.parseDouble(paramValue.getText().trim());
-							String unit = (String)paramUnits.getSelectedItem();
+							double val = Double.parseDouble(paramValue.getText().trim());
+							String unit = (String) paramUnits.getSelectedItem();
 							String param;
 							if (paramsOnly && !((String) type.getSelectedItem()).equals("Original")) {
 								if (((String) type.getSelectedItem()).equals("Sweep")) {
@@ -5184,19 +5320,22 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 											+ stepVal + "," + level.getSelectedItem() + ") " + type.getSelectedItem();
 								}
 								else {
-								  if (unit.equals("( none )")) {
-								    param = paramID.getText().trim() + " " + val + " " + type.getSelectedItem();
-								  } else {
-								    param = paramID.getText().trim() + " " + val + " " + unit + " " + type.getSelectedItem();
-								  }
+									if (unit.equals("( none )")) {
+										param = paramID.getText().trim() + " " + val + " " + type.getSelectedItem();
+									}
+									else {
+										param = paramID.getText().trim() + " " + val + " " + unit + " "
+												+ type.getSelectedItem();
+									}
 								}
 							}
 							else {
-							  if (unit.equals("( none )")) {
-							    param = paramID.getText().trim() + " " + val;
-							  } else {
-							    param = paramID.getText().trim() + " " + val + " " + unit;
-							  }
+								if (unit.equals("( none )")) {
+									param = paramID.getText().trim() + " " + val;
+								}
+								else {
+									param = paramID.getText().trim() + " " + val + " " + unit;
+								}
 							}
 							if (!((IDpat.matcher(paramID.getText().trim()).matches()))) {
 								JOptionPane.showMessageDialog(biosim.frame(),
@@ -5231,9 +5370,10 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 									paramet.setId(paramID.getText().trim());
 									paramet.setName(paramName.getText().trim());
 									if (paramConst.getSelectedItem().equals("true")) {
-									    paramet.setConstant(true);
-									} else {
-									    paramet.setConstant(false);
+										paramet.setConstant(true);
+									}
+									else {
+										paramet.setConstant(false);
 									}
 									for (int i = 0; i < usedIDs.size(); i++) {
 										if (usedIDs.get(i).equals(v)) {
@@ -5242,9 +5382,10 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 									}
 									paramet.setValue(val);
 									if (unit.equals("( none )")) {
-									  paramet.unsetUnits();
-									} else {
-									  paramet.setUnits(unit);
+										paramet.unsetUnits();
+									}
+									else {
+										paramet.setUnits(unit);
 									}
 									params[index] = param;
 									sort(params);
@@ -5272,15 +5413,17 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 									paramet.setName(paramName.getText().trim());
 									usedIDs.add(paramID.getText().trim());
 									if (paramConst.getSelectedItem().equals("true")) {
-									    paramet.setConstant(true);
-									} else {
-									    paramet.setConstant(false);
+										paramet.setConstant(true);
+									}
+									else {
+										paramet.setConstant(false);
 									}
 									paramet.setValue(val);
 									if (unit.equals("( none )")) {
-									  paramet.unsetUnits();
-									} else {
-									  paramet.setUnits(unit);
+										paramet.unsetUnits();
+									}
+									else {
+										paramet.setUnits(unit);
 									}
 									JList add = new JList();
 									Object[] adding = { param };
@@ -5356,19 +5499,15 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			reacParamUnits = new JComboBox();
 			reacParamUnits.addItem("( none )");
 			for (int i = 0; i < units.length; i++) {
-			  reacParamUnits.addItem(units[i]);
+				reacParamUnits.addItem(units[i]);
 			}
-			String[] unitIds = { "substance", "volume", "area", "length", "time", 
-                                           "ampere", "becquerel", "candela", "celsius",
-					   "coulomb", "dimensionless", "farad", "gram",
-					   "gray", "henry", "hertz", "item", "joule",
-					   "katal", "kelvin", "kilogram", "litre",
-					   "lumen", "lux", "metre", "mole", "newton",
-					   "ohm", "pascal", "radian", "second", "siemens",
-					   "sievert", "steradian", "tesla", "volt", "watt",
-					   "weber" };
+			String[] unitIds = { "substance", "volume", "area", "length", "time", "ampere", "becquerel",
+					"candela", "celsius", "coulomb", "dimensionless", "farad", "gram", "gray", "henry",
+					"hertz", "item", "joule", "katal", "kelvin", "kilogram", "litre", "lumen", "lux",
+					"metre", "mole", "newton", "ohm", "pascal", "radian", "second", "siemens", "sievert",
+					"steradian", "tesla", "volt", "watt", "weber" };
 			for (int i = 0; i < unitIds.length; i++) {
-			  reacParamUnits.addItem(unitIds[i]);
+				reacParamUnits.addItem(unitIds[i]);
 			}
 			String[] list = { "Original", "Custom", "Sweep" };
 			String[] list1 = { "1", "2" };
@@ -5399,14 +5538,15 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				reacParamName.setText(paramet.getName());
 				reacParamValue.setText("" + paramet.getValue());
 				if (paramet.isSetUnits()) {
-				  reacParamUnits.setSelectedItem(paramet.getUnits());
+					reacParamUnits.setSelectedItem(paramet.getUnits());
 				}
 				if (paramsOnly && !((String) type.getSelectedItem()).equals("Original")) {
-				        if (((String) type.getSelectedItem()).equals("Sweep")) {
-					  type.setSelectedItem("Custom");
-					} else {
-					  type.setSelectedItem("Sweep");
-					} 
+					if (((String) type.getSelectedItem()).equals("Sweep")) {
+						type.setSelectedItem("Custom");
+					}
+					else {
+						type.setSelectedItem("Sweep");
+					}
 					if (((String) type.getSelectedItem()).equals("Sweep")) {
 						start
 								.setText((((String) reacParameters.getSelectedValue()).split(" ")[1]).split(",")[0]
@@ -5469,7 +5609,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 							reacParamUnits.setEnabled(false);
 							SBMLReader reader = new SBMLReader();
 							SBMLDocument d = reader.readSBML(file);
-							KineticLaw KL = d.getModel().getReaction(((String) reactions.getSelectedValue()).split(" ")[0]).getKineticLaw();
+							KineticLaw KL = d.getModel().getReaction(
+									((String) reactions.getSelectedValue()).split(" ")[0]).getKineticLaw();
 							ListOf list = KL.getListOfParameters();
 							int number = -1;
 							for (int i = 0; i < KL.getNumParameters(); i++) {
@@ -5482,11 +5623,11 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 									((String) reactions.getSelectedValue()).split(" ")[0]).getKineticLaw()
 									.getParameter(number).getValue()
 									+ "");
-							if (d.getModel().getReaction(((String) reactions.getSelectedValue()).split(" ")[0]).getKineticLaw()
-							    .getParameter(number).isSetUnits()) {
-							  reacParamUnits.setSelectedItem(d.getModel().getReaction(
-									((String) reactions.getSelectedValue()).split(" ")[0]).getKineticLaw()
-									.getParameter(number).getUnits());
+							if (d.getModel().getReaction(((String) reactions.getSelectedValue()).split(" ")[0])
+									.getKineticLaw().getParameter(number).isSetUnits()) {
+								reacParamUnits.setSelectedItem(d.getModel().getReaction(
+										((String) reactions.getSelectedValue()).split(" ")[0]).getKineticLaw()
+										.getParameter(number).getUnits());
 							}
 							reacParamValue.setText(d.getModel().getReaction(
 									((String) reactions.getSelectedValue()).split(" ")[0]).getKineticLaw()
@@ -5528,7 +5669,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					else {
 						try {
 							double val = Double.parseDouble(reacParamValue.getText().trim());
-							String unit = (String)reacParamUnits.getSelectedItem();
+							String unit = (String) reacParamUnits.getSelectedItem();
 							String param;
 							if (paramsOnly && !((String) type.getSelectedItem()).equals("Original")) {
 								if (((String) type.getSelectedItem()).equals("Sweep")) {
@@ -5539,19 +5680,22 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 											+ stepVal + "," + level.getSelectedItem() + ") " + type.getSelectedItem();
 								}
 								else {
-								  if (unit.equals("( none )")) {
-									param = reacParamID.getText().trim() + " " + val + " " + type.getSelectedItem();
-								  } else {
-									param = reacParamID.getText().trim() + " " + val + " " + unit + " " + type.getSelectedItem();
-								  }
+									if (unit.equals("( none )")) {
+										param = reacParamID.getText().trim() + " " + val + " " + type.getSelectedItem();
+									}
+									else {
+										param = reacParamID.getText().trim() + " " + val + " " + unit + " "
+												+ type.getSelectedItem();
+									}
 								}
 							}
 							else {
-							  if (unit.equals("( none )")) {
-							    param = reacParamID.getText().trim() + " " + val;
-							  } else {
-							    param = reacParamID.getText().trim() + " " + val + " " + unit;
-							  }
+								if (unit.equals("( none )")) {
+									param = reacParamID.getText().trim() + " " + val;
+								}
+								else {
+									param = reacParamID.getText().trim() + " " + val + " " + unit;
+								}
 							}
 							if (!((IDpat.matcher(reacParamID.getText().trim()).matches()))) {
 								JOptionPane.showMessageDialog(biosim.frame(),
@@ -5603,9 +5747,10 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 									}
 									paramet.setValue(val);
 									if (unit.equals("( none )")) {
-									  paramet.unsetUnits();
-									} else {
-									  paramet.setUnits(unit);
+										paramet.unsetUnits();
+									}
+									else {
+										paramet.setUnits(unit);
 									}
 									reacParams[index] = param;
 									sort(reacParams);
@@ -5661,9 +5806,10 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 									thisReactionParams.add(reacParamID.getText().trim());
 									paramet.setValue(val);
 									if (unit.equals("( none )")) {
-									  paramet.unsetUnits();
-									} else {
-									  paramet.setUnits(unit);
+										paramet.unsetUnits();
+									}
+									else {
+										paramet.setUnits(unit);
 									}
 									JList add = new JList();
 									Object[] adding = { param };
@@ -6163,8 +6309,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				}
 				for (String di : dd) {
 					if (di.contains("/")) {
-					        KineticLaw KL = document.getModel().getReaction(di.split("=")[0].split("/")[0])
-						  .getKineticLaw();
+						KineticLaw KL = document.getModel().getReaction(di.split("=")[0].split("/")[0])
+								.getKineticLaw();
 						ListOf p = KL.getListOfParameters();
 						for (int i = 0; i < KL.getNumParameters(); i++) {
 							Parameter param = ((Parameter) p.get(i));
@@ -6179,12 +6325,14 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 									Double.parseDouble(di.split("=")[1]));
 						}
 						else {
-						  if (document.getModel().getSpecies(di.split("=")[0]).isSetInitialAmount()) {
-						    document.getModel().getSpecies(di.split("=")[0]).setInitialAmount(Double.parseDouble(di.split("=")[1]));
-						  }
-						  else {
-						    document.getModel().getSpecies(di.split("=")[0]).setInitialConcentration(Double.parseDouble(di.split("=")[1]));
-						  }
+							if (document.getModel().getSpecies(di.split("=")[0]).isSetInitialAmount()) {
+								document.getModel().getSpecies(di.split("=")[0]).setInitialAmount(
+										Double.parseDouble(di.split("=")[1]));
+							}
+							else {
+								document.getModel().getSpecies(di.split("=")[0]).setInitialConcentration(
+										Double.parseDouble(di.split("=")[1]));
+							}
 						}
 					}
 				}

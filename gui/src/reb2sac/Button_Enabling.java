@@ -1,4 +1,4 @@
-package reb2sac.core.gui;
+package reb2sac;
 
 import javax.swing.*;
 

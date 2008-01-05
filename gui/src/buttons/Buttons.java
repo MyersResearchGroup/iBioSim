@@ -1,4 +1,4 @@
-package buttons.core.gui;
+package buttons;
 
 import java.io.*;
 import java.awt.*;
