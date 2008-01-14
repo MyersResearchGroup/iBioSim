@@ -263,7 +263,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 
 	private Reb2Sac reb2sac; // reb2sac options
 
-	private JButton saveNoRun, run, saveAs; // save and run buttons
+        private JButton saveNoRun, run, saveAs, check; // save and run buttons
 
 	private Log log;
 
@@ -719,6 +719,9 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			this.add(splitPane, "South");
 		}
 		else {
+		        check = new JButton("Save and Check SBML");
+			check.setMnemonic(KeyEvent.VK_C);
+			check.addActionListener(this);
 			saveNoRun = new JButton("Save SBML");
 			saveAs = new JButton("Save As");
 			saveNoRun.setMnemonic(KeyEvent.VK_S);
@@ -727,6 +730,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			saveAs.addActionListener(this);
 			JPanel saveRun = new JPanel();
 			saveRun.add(saveNoRun);
+			saveRun.add(check);
 			saveRun.add(saveAs);
 			JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, saveRun, null);
 			splitPane.setDividerSize(0);
@@ -933,6 +937,11 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		// if the run button is clicked
 		if (e.getSource() == run) {
 			reb2sac.getRunButton().doClick();
+		}
+		// if the check button is clicked
+		else if (e.getSource() == check) {
+		  save(false);
+		  check();
 		}
 		// if the save button is clicked
 		else if (e.getSource() == saveNoRun) {
@@ -7789,6 +7798,34 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	}
 
 	/**
+	 * Checks consistency of the sbml file.
+	 */
+	public void check() {
+	  // TODO: Hack to avoid wierd bug.
+	  // By reloading the file before consistency checks, it seems to avoid a 
+	  // crash when attempting to save a newly added parameter with no units
+	  SBMLReader reader = new SBMLReader();
+	  document = reader.readSBML(file);
+	  long numErrors = document.checkConsistency();
+	  String message = "";
+	  for (long i = 0; i < numErrors; i++) {
+	    String error = document.getError(i).getMessage(); //.replace(".  ",".\n");
+	    message += i + ":" + error + "\n";
+	  }
+	  if (numErrors > 0) {
+	    JTextArea messageArea = new JTextArea(message);
+	    messageArea.setLineWrap(true);
+	    messageArea.setEditable(false);
+	    JScrollPane scroll = new JScrollPane();
+	    scroll.setMinimumSize(new Dimension(600, 600));
+	    scroll.setPreferredSize(new Dimension(600, 600));
+	    scroll.setViewportView(messageArea);
+	    JOptionPane.showMessageDialog(biosim.frame(), scroll,
+					  "SBML Errors and Warnings", JOptionPane.ERROR_MESSAGE);
+	  }
+	}
+
+	/**
 	 * Saves the sbml file.
 	 */
 	public void save(boolean run) {
@@ -7919,28 +7956,6 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			  catch (Exception e1) {
 			    JOptionPane.showMessageDialog(biosim.frame(), "Unable to save sbml file.",
 							  "Error Saving File", JOptionPane.ERROR_MESSAGE);
-			  }
-			  // TODO: Hack to avoid wierd bug.
-                          // By reloading the file before consistency checks, it seems to avoid a 
-                          // crash when attempting to save a newly added parameter with no units
-			  SBMLReader reader = new SBMLReader();
-			  document = reader.readSBML(file);
-			  long numErrors = document.checkConsistency();
-			  String message = "";
-			  for (long i = 0; i < numErrors; i++) {
-			    String error = document.getError(i).getMessage(); //.replace(".  ",".\n");
-			    message += i + ":" + error + "\n";
-			  }
-			  if (numErrors > 0) {
-			    JTextArea messageArea = new JTextArea(message);
-			    messageArea.setLineWrap(true);
-			    messageArea.setEditable(false);
-			    JScrollPane scroll = new JScrollPane();
-			    scroll.setMinimumSize(new Dimension(600, 600));
-			    scroll.setPreferredSize(new Dimension(600, 600));
-			    scroll.setViewportView(messageArea);
-			    JOptionPane.showMessageDialog(biosim.frame(), scroll,
-							  "SBML Errors and Warnings", JOptionPane.ERROR_MESSAGE);
 			  }
 		}
 	}
