@@ -114,7 +114,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 
 	private JTextField initMath; // init fields;
 
-	private JComboBox ruleVar; // rule fields;
+        private JComboBox ruleType,ruleVar; // rule fields;
 
 	private JTextField ruleMath; // rule fields;
 
@@ -2291,6 +2291,34 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 									"Enter Valid Formula", JOptionPane.ERROR_MESSAGE);
 							error = true;
 						}
+						else {
+						  ArrayList<String> invalidVars = getInvalidVariables(eqn.getText().trim(),false,args.getText().trim(),true);
+						  if (invalidVars.size() > 0) {
+						    String invalid = "";
+						    for (int i = 0; i < invalidVars.size(); i++) {
+						      if (i == invalidVars.size() - 1) {
+							invalid += invalidVars.get(i);
+						      }
+						      else {
+							invalid += invalidVars.get(i) + "\n";
+						      }
+						    }
+						    String message;
+						    message = "Function can only contain the arguments or other function calls.\n\n"
+						      + "Illegal variables:\n" + invalid;
+						    JTextArea messageArea = new JTextArea(message);
+						    messageArea.setLineWrap(true);
+						    messageArea.setWrapStyleWord(true);
+						    messageArea.setEditable(false);
+						    JScrollPane scrolls = new JScrollPane();
+						    scrolls.setMinimumSize(new Dimension(300, 300));
+						    scrolls.setPreferredSize(new Dimension(300, 300));
+						    scrolls.setViewportView(messageArea);
+						    JOptionPane.showMessageDialog(biosim.frame(), scrolls, "Illegal Variables",
+										  JOptionPane.ERROR_MESSAGE);
+						    error = true;
+						  }
+						}
 						if (!error) {
 							if (option.equals("OK")) {
 								int index = functions.getSelectedIndex();
@@ -3357,6 +3385,33 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						JOptionPane.showMessageDialog(biosim.frame(), "Initial assignment is not valid.",
 								"Enter Valid Assignment", JOptionPane.ERROR_MESSAGE);
 						error = true;
+					} else {
+					  ArrayList<String> invalidVars = getInvalidVariables(initMath.getText().trim(),false,"",false);
+					  if (invalidVars.size() > 0) {
+					    String invalid = "";
+					    for (int i = 0; i < invalidVars.size(); i++) {
+					      if (i == invalidVars.size() - 1) {
+						invalid += invalidVars.get(i);
+					      }
+					      else {
+						invalid += invalidVars.get(i) + "\n";
+					      }
+					    }
+					    String message;
+					    message = "Rule contains unknown variables.\n\n"
+					      + "Unknown variables:\n" + invalid;
+					    JTextArea messageArea = new JTextArea(message);
+					    messageArea.setLineWrap(true);
+					    messageArea.setWrapStyleWord(true);
+					    messageArea.setEditable(false);
+					    JScrollPane scrolls = new JScrollPane();
+					    scrolls.setMinimumSize(new Dimension(300, 300));
+					    scrolls.setPreferredSize(new Dimension(300, 300));
+					    scrolls.setViewportView(messageArea);
+					    JOptionPane.showMessageDialog(biosim.frame(), scrolls, "Unknown Variables",
+									  JOptionPane.ERROR_MESSAGE);
+					    error = true;
+					  }
 					}
 					if (!error) {
 						if (option.equals("OK")) {
@@ -3477,7 +3532,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			JLabel varLabel = new JLabel("Variable:");
 			JLabel ruleLabel = new JLabel("Rule:");
 			String[] list = { "Algebraic", "Assignment", "Rate" };
-			final JComboBox ruleType = new JComboBox(list);
+			ruleType = new JComboBox(list);
 			ruleVar = new JComboBox();
 			ruleMath = new JTextField(12);
 			ruleVar.setEnabled(false);
@@ -3544,6 +3599,17 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						}
 					}
 				}
+			} else {
+			  if (!assignRuleVar("") && !rateRuleVar("")) {
+			    String [] list1 = { "Algebraic" };
+			    ruleType = new JComboBox(list1);
+			  } else if (!assignRuleVar("")) {
+			    String [] list1 = { "Algebraic", "Rate" };
+			    ruleType = new JComboBox(list1);
+			  } else if (!rateRuleVar("")) {
+			    String [] list1 = { "Algebraic", "Assignment" };
+			    ruleType = new JComboBox(list1);
+			  }
 			}
 			rulPanel.add(typeLabel);
 			rulPanel.add(ruleType);
@@ -3571,13 +3637,32 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 								"Enter Valid Formula", JOptionPane.ERROR_MESSAGE);
 						error = true;
 					} else {
-					  document.setConsistencyChecks(libsbmlConstants.LIBSBML_CAT_GENERAL_CONSISTENCY,false);
-					  document.setConsistencyChecks(libsbmlConstants.LIBSBML_CAT_IDENTIFIER_CONSISTENCY,false);
-					  document.setConsistencyChecks(libsbmlConstants.LIBSBML_CAT_UNITS_CONSISTENCY,false);
-					  document.setConsistencyChecks(libsbmlConstants.LIBSBML_CAT_MATHML_CONSISTENCY,false);
-					  document.setConsistencyChecks(libsbmlConstants.LIBSBML_CAT_SBO_CONSISTENCY,false);
-					  document.setConsistencyChecks(libsbmlConstants.LIBSBML_CAT_OVERDETERMINED_MODEL,true);
-					  document.setConsistencyChecks(libsbmlConstants.LIBSBML_CAT_MODELING_PRACTICE,false);
+					  ArrayList<String> invalidVars = getInvalidVariables(ruleMath.getText().trim(),false,"",false);
+					  if (invalidVars.size() > 0) {
+					    String invalid = "";
+					    for (int i = 0; i < invalidVars.size(); i++) {
+					      if (i == invalidVars.size() - 1) {
+						invalid += invalidVars.get(i);
+					      }
+					      else {
+						invalid += invalidVars.get(i) + "\n";
+					      }
+					    }
+					    String message;
+					    message = "Rule contains unknown variables.\n\n"
+					      + "Unknown variables:\n" + invalid;
+					    JTextArea messageArea = new JTextArea(message);
+					    messageArea.setLineWrap(true);
+					    messageArea.setWrapStyleWord(true);
+					    messageArea.setEditable(false);
+					    JScrollPane scrolls = new JScrollPane();
+					    scrolls.setMinimumSize(new Dimension(300, 300));
+					    scrolls.setPreferredSize(new Dimension(300, 300));
+					    scrolls.setViewportView(messageArea);
+					    JOptionPane.showMessageDialog(biosim.frame(), scrolls, "Unknown Variables",
+									  JOptionPane.ERROR_MESSAGE);
+					    error = true;
+					  }
 					}
 					if (!error) {
 						if (option.equals("OK")) {
@@ -3601,6 +3686,13 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 								r.setMath(sbmlLib.parseFormula(ruleMath.getText().trim()));
 								addStr = addVar + " = " + sbmlLib.formulaToString(r.getMath());
 							}
+// 					  document.setConsistencyChecks(libsbmlConstants.LIBSBML_CAT_GENERAL_CONSISTENCY,false);
+// 					  document.setConsistencyChecks(libsbmlConstants.LIBSBML_CAT_IDENTIFIER_CONSISTENCY,false);
+// 					  document.setConsistencyChecks(libsbmlConstants.LIBSBML_CAT_UNITS_CONSISTENCY,false);
+// 					  document.setConsistencyChecks(libsbmlConstants.LIBSBML_CAT_MATHML_CONSISTENCY,false);
+// 					  document.setConsistencyChecks(libsbmlConstants.LIBSBML_CAT_SBO_CONSISTENCY,false);
+// 					  document.setConsistencyChecks(libsbmlConstants.LIBSBML_CAT_OVERDETERMINED_MODEL,true);
+// 					  document.setConsistencyChecks(libsbmlConstants.LIBSBML_CAT_MODELING_PRACTICE,false);
 // 							if (document.checkConsistency() > 0) {
 // 							  // ListOf rr = document.getModel().getListOfRules();
 // // 							  for (int i = 0; i < document.getModel().getNumRules(); i++) {
@@ -3614,8 +3706,16 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 // 											"Model is Overdetermined", JOptionPane.ERROR_MESSAGE);
 // 							  error = true;
 // 							}
+							String oldVal = rul[index];
 							rul[index] = addStr;
-							sort(rul);
+							try {
+							  rul = sortRules(rul);
+							} catch (Exception e) {
+							  JOptionPane.showMessageDialog(biosim.frame(), "Cycle detected in assignments.",
+											"Cycle Detected", JOptionPane.ERROR_MESSAGE);
+							  error = true;
+							  rul[index] = oldVal;
+							}
 							rules.setListData(rul);
 							rules.setSelectedIndex(index);
 						}
@@ -3660,11 +3760,19 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 							  rules.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 							  adding = Buttons.add(rul, rules, add, false, null, null, null, null, null, null,
 									       biosim.frame());
+							  String [] oldRul = rul;
 							  rul = new String[adding.length];
 							  for (int i = 0; i < adding.length; i++) {
 							    rul[i] = (String) adding[i];
 							  }
-							  sort(rul);
+							  try {
+							    rul = sortRules(rul);
+							  } catch (Exception e) {
+							    JOptionPane.showMessageDialog(biosim.frame(), "Cycle detected in assignments.",
+											  "Cycle Detected", JOptionPane.ERROR_MESSAGE);
+							    error = true;
+							    rul = oldRul;
+							  }
 							  rules.setListData(rul);
 							  rules.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 							  if (document.getModel().getNumRules() == 1) {
@@ -3690,6 +3798,79 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	}
 
 	/**
+	 * Sort rules in order to be evaluated
+	 */
+	private String [] sortRules(String [] rules) {
+	  String [] result = new String[rules.length];
+	  String temp;
+	  String temp2;
+	  int j = 0;
+	  int start = 0;
+	  int end = 0;
+	  int eAlg = 0;
+
+	  for (int i = 0; i < rules.length; i++) {
+	    if (rules[i].split(" ")[0].equals("0")) {
+	      result[j] = rules[i];
+	      j++;
+	    }
+	  }
+	  eAlg = j;
+	  for (int i = 0; i < rules.length; i++) {
+	    if ((!rules[i].split(" ")[0].equals("0")) && (!rules[i].split(" ")[0].equals("d("))) {
+	      String [] rule = rules[i].split(" ");
+	      start = -1;
+	      end = -1;
+	      for (int k = eAlg; k < j; k++) {
+		String [] r = result[k].split(" ");
+		for (int l = 1; l < r.length; l++) {
+		  if (r[l].equals(rule[0])) {
+		    end = k;
+		  }
+		}
+		for (int l = 1; l < rule.length; l++) {
+		  if (rule[l].equals(r[0])) {
+		    start = k;
+		  }
+		}
+	      }
+	      if (end == -1) {
+		result[j] = rules[i];
+	      } else if (start == -1) {
+		temp = result[eAlg];
+		result[eAlg] = rules[i];
+		for (int k = eAlg+1; k < j; k++) {
+		  temp2 = result[k];
+		  result[k] = temp;
+		  temp = temp2;
+		}
+		result[j] = temp;
+	      } else if (start >= end) {
+		result[j] = rules[i];
+		throw new RuntimeException();
+	      } else {
+		temp = result[start+1];
+		result[start+1] = rules[i];
+		for (int k = start+2; k < j; k++) {
+		  temp2 = result[k];
+		  result[k] = temp;
+		  temp = temp2;
+		}
+		result[j] = temp;
+	      }
+	      j++;
+	    }
+	  }
+	  for (int i = 0; i < rules.length; i++) {
+	    if (rules[i].split(" ")[0].equals("d(")) {
+	      result[j] = rules[i];
+	      j++;
+	    }
+	  }
+	  return result;
+	}
+
+	/**
 	 * Create check if species used in reaction
 	 */
 	private boolean usedInReaction(String id) {
@@ -3711,23 +3892,28 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	/**
 	 * Create comboBox for assignments rules
 	 */
-	private void assignRuleVar(String selected) {
+	private boolean assignRuleVar(String selected) {
+	        boolean assignOK = false;
 		ruleVar.removeAllItems();
 		Model model = document.getModel();
 		ListOf ids = model.getListOfCompartments();
 		for (int i = 0; i < model.getNumCompartments(); i++) {
 			String id = ((Compartment) ids.get(i)).getId();
 			if (!((Compartment) ids.get(i)).getConstant()) {
-				if (keepVar(selected, id, true, true, true, false))
-					ruleVar.addItem(((Compartment) ids.get(i)).getId());
+			  if (keepVar(selected, id, true, true, true, false)) {
+			    ruleVar.addItem(((Compartment) ids.get(i)).getId());
+			    assignOK = true;
+			  }
 			}
 		}
 		ids = model.getListOfParameters();
 		for (int i = 0; i < model.getNumParameters(); i++) {
 			String id = ((Parameter) ids.get(i)).getId();
 			if (!((Parameter) ids.get(i)).getConstant()) {
-				if (keepVar(selected, id, true, true, true, false))
-					ruleVar.addItem(((Parameter) ids.get(i)).getId());
+			  if (keepVar(selected, id, true, true, true, false)) {
+			    ruleVar.addItem(((Parameter) ids.get(i)).getId());
+			    assignOK = true;
+			  }
 			}
 		}
 		ids = model.getListOfSpecies();
@@ -3736,32 +3922,40 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			if (!((Species) ids.get(i)).getConstant()) {
 				if (keepVar(selected, id, true, true, true, false))
 				  if (((Species) ids.get(i)).getBoundaryCondition() ||
-				      !usedInReaction(id))
+				      !usedInReaction(id)) {
 				    ruleVar.addItem(((Species) ids.get(i)).getId());
+				    assignOK = true;
+				  }
 			}
 		}
+		return assignOK;
 	}
 
 	/**
 	 * Create comboBox for rate rules
 	 */
-	private void rateRuleVar(String selected) {
+	private boolean rateRuleVar(String selected) {
+	        boolean rateOK = false;
 		ruleVar.removeAllItems();
 		Model model = document.getModel();
 		ListOf ids = model.getListOfCompartments();
 		for (int i = 0; i < model.getNumCompartments(); i++) {
 			String id = ((Compartment) ids.get(i)).getId();
 			if (!((Compartment) ids.get(i)).getConstant()) {
-				if (keepVar(selected, id, false, true, false, false))
+			  if (keepVar(selected, id, false, true, false, false)) {
 					ruleVar.addItem(((Compartment) ids.get(i)).getId());
+					rateOK = true;
+			  }
 			}
 		}
 		ids = model.getListOfParameters();
 		for (int i = 0; i < model.getNumParameters(); i++) {
 			String id = ((Parameter) ids.get(i)).getId();
 			if (!((Parameter) ids.get(i)).getConstant()) {
-				if (keepVar(selected, id, false, true, false, false))
-					ruleVar.addItem(((Parameter) ids.get(i)).getId());
+			  if (keepVar(selected, id, false, true, false, false)) {
+			    ruleVar.addItem(((Parameter) ids.get(i)).getId());
+			    rateOK = true;
+			  }
 			}
 		}
 		ids = model.getListOfSpecies();
@@ -3770,10 +3964,13 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			if (!((Species) ids.get(i)).getConstant()) {
 				if (keepVar(selected, id, false, true, false, false))
 				  if (((Species) ids.get(i)).getBoundaryCondition() ||
-				      !usedInReaction(id))
+				      !usedInReaction(id)) {
 				    ruleVar.addItem(((Species) ids.get(i)).getId());
+				    rateOK = true;
+				  }
 			}
 		}
+		return rateOK;
 	}
 
 	/**
@@ -3888,6 +4085,60 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 								"Event must have at least one event assignment.", "Event Assignment Needed",
 								JOptionPane.ERROR_MESSAGE);
 						error = true;
+					} else {
+					  ArrayList<String> invalidVars = getInvalidVariables(eventTrigger.getText().trim(),false,"",false);
+					  if (invalidVars.size() > 0) {
+					    String invalid = "";
+					    for (int i = 0; i < invalidVars.size(); i++) {
+					      if (i == invalidVars.size() - 1) {
+						invalid += invalidVars.get(i);
+					      }
+					      else {
+						invalid += invalidVars.get(i) + "\n";
+					      }
+					    }
+					    String message;
+					    message = "Event trigger contains unknown variables.\n\n"
+					      + "Unknown variables:\n" + invalid;
+					    JTextArea messageArea = new JTextArea(message);
+					    messageArea.setLineWrap(true);
+					    messageArea.setWrapStyleWord(true);
+					    messageArea.setEditable(false);
+					    JScrollPane scrolls = new JScrollPane();
+					    scrolls.setMinimumSize(new Dimension(300, 300));
+					    scrolls.setPreferredSize(new Dimension(300, 300));
+					    scrolls.setViewportView(messageArea);
+					    JOptionPane.showMessageDialog(biosim.frame(), scrolls, "Unknown Variables",
+									  JOptionPane.ERROR_MESSAGE);
+					    error = true;
+					  } else {
+					    invalidVars = getInvalidVariables(eventDelay.getText().trim(),false,"",false);
+					    if (invalidVars.size() > 0) {
+					      String invalid = "";
+					      for (int i = 0; i < invalidVars.size(); i++) {
+						if (i == invalidVars.size() - 1) {
+						  invalid += invalidVars.get(i);
+						}
+						else {
+						  invalid += invalidVars.get(i) + "\n";
+						}
+					      }
+					      String message;
+					      message = "Event delay contains unknown variables.\n\n"
+						+ "Unknown variables:\n" + invalid;
+					      JTextArea messageArea = new JTextArea(message);
+					      messageArea.setLineWrap(true);
+					      messageArea.setWrapStyleWord(true);
+					      messageArea.setEditable(false);
+					      JScrollPane scrolls = new JScrollPane();
+					      scrolls.setMinimumSize(new Dimension(300, 300));
+					      scrolls.setPreferredSize(new Dimension(300, 300));
+					      scrolls.setViewportView(messageArea);
+					      JOptionPane.showMessageDialog(biosim.frame(), scrolls, "Unknown Variables",
+									    JOptionPane.ERROR_MESSAGE);
+					      error = true;
+					    }
+					  }
 					}
 					if (!error) {
 						if (option.equals("OK")) {
@@ -4062,6 +4313,33 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						JOptionPane.showMessageDialog(biosim.frame(), "Event assignment is not valid.",
 								"Enter Valid Assignment", JOptionPane.ERROR_MESSAGE);
 						error = true;
+					} else {
+					  ArrayList<String> invalidVars = getInvalidVariables(eqn.getText().trim(),false,"",false);
+					  if (invalidVars.size() > 0) {
+					    String invalid = "";
+					    for (int i = 0; i < invalidVars.size(); i++) {
+					      if (i == invalidVars.size() - 1) {
+						invalid += invalidVars.get(i);
+					      }
+					      else {
+						invalid += invalidVars.get(i) + "\n";
+					      }
+					    }
+					    String message;
+					    message = "Event assignment contains unknown variables.\n\n"
+					      + "Unknown variables:\n" + invalid;
+					    JTextArea messageArea = new JTextArea(message);
+					    messageArea.setLineWrap(true);
+					    messageArea.setWrapStyleWord(true);
+					    messageArea.setEditable(false);
+					    JScrollPane scrolls = new JScrollPane();
+					    scrolls.setMinimumSize(new Dimension(300, 300));
+					    scrolls.setPreferredSize(new Dimension(300, 300));
+					    scrolls.setViewportView(messageArea);
+					    JOptionPane.showMessageDialog(biosim.frame(), scrolls, "Unknown Variables",
+									  JOptionPane.ERROR_MESSAGE);
+					    error = true;
+					  }
 					}
 					if (!error) {
 						if (option.equals("OK")) {
@@ -4165,6 +4443,34 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						JOptionPane.showMessageDialog(biosim.frame(), "Constraint formula must be of type Boolean.",
 								"Enter Valid Formula", JOptionPane.ERROR_MESSAGE);
 						error = true;
+					}
+					else {
+					  ArrayList<String> invalidVars = getInvalidVariables(consMath.getText().trim(),false,"",false);
+					  if (invalidVars.size() > 0) {
+					    String invalid = "";
+					    for (int i = 0; i < invalidVars.size(); i++) {
+					      if (i == invalidVars.size() - 1) {
+						invalid += invalidVars.get(i);
+					      }
+					      else {
+						invalid += invalidVars.get(i) + "\n";
+					      }
+					    }
+					    String message;
+					    message = "Constraint contains unknown variables.\n\n"
+					      + "Unknown variables:\n" + invalid;
+					    JTextArea messageArea = new JTextArea(message);
+					    messageArea.setLineWrap(true);
+					    messageArea.setWrapStyleWord(true);
+					    messageArea.setEditable(false);
+					    JScrollPane scrolls = new JScrollPane();
+					    scrolls.setMinimumSize(new Dimension(300, 300));
+					    scrolls.setPreferredSize(new Dimension(300, 300));
+					    scrolls.setViewportView(messageArea);
+					    JOptionPane.showMessageDialog(biosim.frame(), scrolls, "Unknown Variables",
+									  JOptionPane.ERROR_MESSAGE);
+					    error = true;
+					  }
 					}
 					if (!error) {
 						if (option.equals("OK")) {
@@ -5497,7 +5803,12 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		rul[i] = "d( " + rule.getVariable() + " )/dt = " + sbmlLib.formulaToString(rule.getMath());
 	      }
 	    }
-	    sort(rul);
+	    try {
+	      rul = sortRules(rul);
+	    } catch (Exception e) {
+	      JOptionPane.showMessageDialog(biosim.frame(), "Cycle detected in assignments.",
+					    "Cycle Detected", JOptionPane.ERROR_MESSAGE);
+	    }
 	    rules.setListData(rul);
 	    rules.setSelectedIndex(0);
 	  }
@@ -6006,7 +6317,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 							  error = true;
 							}
 							else {
-							  ArrayList<String> invalidKineticVars = getInvalidReactionVariables(kineticLaw.getText().trim());
+							  ArrayList<String> invalidKineticVars = getInvalidVariables(kineticLaw.getText().trim(),true,"",false);
 							  if (invalidKineticVars.size() > 0) {
 							    String invalid = "";
 							    for (int i = 0; i < invalidKineticVars.size(); i++) {
@@ -6019,7 +6330,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 							    }
 							    String message;
 							    message = "Kinetic law contains unknown variables.\n\n"
-							      + "Unkown variables:\n" + invalid;
+							      + "Unknown variables:\n" + invalid;
 							    JTextArea messageArea = new JTextArea(message);
 							    messageArea.setLineWrap(true);
 							    messageArea.setWrapStyleWord(true);
@@ -6178,38 +6489,50 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	/**
 	 * Find invalid reaction variables in a formula
 	 */
-	private ArrayList<String> getInvalidReactionVariables(String formula) {
+	private ArrayList<String> getInvalidVariables(String formula,boolean isReaction,String arguments,boolean isFunction) {
 	  ArrayList<String> validVars = new ArrayList<String>();
 	  ArrayList<String> invalidVars = new ArrayList<String>();
-	  for (int i = 0; i < changedParameters.size(); i++) {
-	    validVars.add(((Parameter) changedParameters.get(i)).getId());
-	  }
-	  for (int i = 0; i < changedReactants.size(); i++) {
-	    validVars.add(((SpeciesReference) changedReactants.get(i)).getSpecies());
-	  }
-	  for (int i = 0; i < changedProducts.size(); i++) {
-	    validVars.add(((SpeciesReference) changedProducts.get(i)).getSpecies());
-	  }
-	  for (int i = 0; i < changedModifiers.size(); i++) {
-	    validVars.add(((ModifierSpeciesReference) changedModifiers.get(i)).getSpecies());
-	  }
 	  ListOf sbml = document.getModel().getListOfFunctionDefinitions();
 	  for (int i = 0; i < document.getModel().getNumFunctionDefinitions(); i++) {
 	    validVars.add(((FunctionDefinition) sbml.get(i)).getId());
 	  }
-	  sbml = document.getModel().getListOfCompartments();
-	  for (int i = 0; i < document.getModel().getNumCompartments(); i++) {
-	    validVars.add(((Compartment) sbml.get(i)).getId());
+	  if (isReaction) {
+	    for (int i = 0; i < changedParameters.size(); i++) {
+	      validVars.add(((Parameter) changedParameters.get(i)).getId());
+	    }
+	    for (int i = 0; i < changedReactants.size(); i++) {
+	      validVars.add(((SpeciesReference) changedReactants.get(i)).getSpecies());
+	    }
+	    for (int i = 0; i < changedProducts.size(); i++) {
+	      validVars.add(((SpeciesReference) changedProducts.get(i)).getSpecies());
+	    }
+	    for (int i = 0; i < changedModifiers.size(); i++) {
+	      validVars.add(((ModifierSpeciesReference) changedModifiers.get(i)).getSpecies());
+	    }
+	  } else if (!isFunction) {
+	    sbml = document.getModel().getListOfSpecies();
+	    for (int i = 0; i < document.getModel().getNumSpecies(); i++) {
+	      validVars.add(((Species) sbml.get(i)).getId());
+	    }
 	  }
-	  sbml = document.getModel().getListOfParameters();
-	  for (int i = 0; i < document.getModel().getNumParameters(); i++) {
-	    validVars.add(((Parameter) sbml.get(i)).getId());
+	  if (isFunction) {
+	    String[] args = arguments.split(" |\\,");
+	    for (int i = 0; i < args.length; i++) {
+	      validVars.add(args[i]);
+	    }
+	  } else {
+	    sbml = document.getModel().getListOfCompartments();
+	    for (int i = 0; i < document.getModel().getNumCompartments(); i++) {
+	      validVars.add(((Compartment) sbml.get(i)).getId());
+	    }
+	    sbml = document.getModel().getListOfParameters();
+	    for (int i = 0; i < document.getModel().getNumParameters(); i++) {
+	      validVars.add(((Parameter) sbml.get(i)).getId());
+	    }
 	  }
-	  String[] splitLaw = formula.split(" |\\(|\\)|\\,");
+	  String[] splitLaw = formula.split(" |\\(|\\)|\\,|\\*|\\+|\\/|\\-");
 	  for (int i = 0; i < splitLaw.length; i++) {
-	    if (splitLaw[i].equals("+") || splitLaw[i].equals("-")
-		|| splitLaw[i].equals("*") || splitLaw[i].equals("/")
-		|| splitLaw[i].equals("abs") || splitLaw[i].equals("acos")
+	    if (splitLaw[i].equals("abs") || splitLaw[i].equals("acos")
 		|| splitLaw[i].equals("asin") || splitLaw[i].equals("atan")
 		|| splitLaw[i].equals("ceil") || splitLaw[i].equals("cos")
 		|| splitLaw[i].equals("exp") || splitLaw[i].equals("floor")
@@ -7097,7 +7420,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 							    error = true;
 							  } 
 							  else {
-							    ArrayList<String> invalidVars = getInvalidReactionVariables(productStoiciometry.getText().trim());
+							    ArrayList<String> invalidVars = getInvalidVariables(productStoiciometry.getText().trim(),true,"",false);
 							    if (invalidVars.size() > 0) {
 							      String invalid = "";
 							      for (int i = 0; i < invalidVars.size(); i++) {
@@ -7110,7 +7433,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 							      }
 							      String message;
 							      message = "Stoiciometry math contains unknown variables.\n\n"
-								+ "Unkown variables:\n" + invalid;
+								+ "Unknown variables:\n" + invalid;
 							      JTextArea messageArea = new JTextArea(message);
 							      messageArea.setLineWrap(true);
 							      messageArea.setWrapStyleWord(true);
@@ -7475,7 +7798,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 							    error = true;
 							  }
 							  else {
-							    ArrayList<String> invalidVars = getInvalidReactionVariables(reactantStoiciometry.getText().trim());
+							    ArrayList<String> invalidVars = getInvalidVariables(reactantStoiciometry.getText().trim(),true,"",false);
 							    if (invalidVars.size() > 0) {
 							      String invalid = "";
 							      for (int i = 0; i < invalidVars.size(); i++) {
@@ -7488,7 +7811,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 							      }
 							      String message;
 							      message = "Stoiciometry math contains unknown variables.\n\n"
-								+ "Unkown variables:\n" + invalid;
+								+ "Unknown variables:\n" + invalid;
 							      JTextArea messageArea = new JTextArea(message);
 							      messageArea.setLineWrap(true);
 							      messageArea.setWrapStyleWord(true);

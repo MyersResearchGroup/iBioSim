@@ -2823,8 +2823,34 @@ public class BioSim implements MouseListener, ActionListener {
 	 * This is the main method. It excecutes the BioSim GUI FrontEnd program.
 	 */
 	public static void main(String args[]) {
-		System.loadLibrary("sbmlj");
-		new BioSim();
+	  String varname;
+	  
+	  if (System.getProperty("mrj.version") != null)
+	    varname = "DYLD_LIBRARY_PATH";    // We're on a Mac.
+	  else
+	    varname = "LD_LIBRARY_PATH";      // We're not on a Mac.
+	  try {
+	    System.loadLibrary("sbmlj");
+	    // For extra safety, check that the jar file is in the classpath.
+	    Class.forName("org.sbml.libsbml.libsbml");
+	  } catch (UnsatisfiedLinkError e) {
+	    System.err.println("Error: could not link with the libSBML library."+
+			       "  It is likely\nyour " + varname +
+			       " environment variable does not include\nthe"+
+			       " directory containing the libsbml library file.");
+	    System.exit(1);
+	  } catch (ClassNotFoundException e) {
+	    System.err.println("Error: unable to load the file libsbmlj.jar."+
+			       "  It is likely\nyour " + varname + " environment"+
+			       " variable or CLASSPATH variable\ndoes not include"+
+			       " the directory containing the libsbmlj.jar file.");
+	    System.exit(1);
+	  } catch (SecurityException e) {
+	    System.err.println("Could not load the libSBML library files due to a"+
+			       " security exception.");
+	    System.exit(1);
+	  }
+	  new BioSim();
 	}
 
 	public void copySim(String newSim) {
