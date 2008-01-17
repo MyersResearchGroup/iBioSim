@@ -861,6 +861,14 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				rul[i] = "d( " + rule.getVariable() + " )/dt = " + sbmlLib.formulaToString(rule.getMath());
 			}
 		}
+		String [] oldRul = rul;
+		try {
+		  rul = sortRules(rul);
+		} catch (Exception e) {
+		  JOptionPane.showMessageDialog(biosim.frame(), "Cycle detected in assignments.",
+						"Cycle Detected", JOptionPane.ERROR_MESSAGE);
+		  rul = oldRul;
+		}
 		JPanel rulePanel = createPanel(model, "Rules", rules, rul, addRule, removeRule, editRule);
 
 		/* Create constraint panel */
@@ -918,7 +926,9 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		scroll.setMinimumSize(new Dimension(260, 220));
 		scroll.setPreferredSize(new Dimension(276, 152));
 		scroll.setViewportView(panelJList);
-		sort(panelList);
+		if (!panelName.equals("Rules")) {
+		  sort(panelList);
+		}
 		panelJList.setListData(panelList);
 		panelJList.addMouseListener(this);
 		Panel.add(panelLabel, "North");
@@ -3686,26 +3696,6 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 								r.setMath(sbmlLib.parseFormula(ruleMath.getText().trim()));
 								addStr = addVar + " = " + sbmlLib.formulaToString(r.getMath());
 							}
-// 					  document.setConsistencyChecks(libsbmlConstants.LIBSBML_CAT_GENERAL_CONSISTENCY,false);
-// 					  document.setConsistencyChecks(libsbmlConstants.LIBSBML_CAT_IDENTIFIER_CONSISTENCY,false);
-// 					  document.setConsistencyChecks(libsbmlConstants.LIBSBML_CAT_UNITS_CONSISTENCY,false);
-// 					  document.setConsistencyChecks(libsbmlConstants.LIBSBML_CAT_MATHML_CONSISTENCY,false);
-// 					  document.setConsistencyChecks(libsbmlConstants.LIBSBML_CAT_SBO_CONSISTENCY,false);
-// 					  document.setConsistencyChecks(libsbmlConstants.LIBSBML_CAT_OVERDETERMINED_MODEL,true);
-// 					  document.setConsistencyChecks(libsbmlConstants.LIBSBML_CAT_MODELING_PRACTICE,false);
-// 							if (document.checkConsistency() > 0) {
-// 							  // ListOf rr = document.getModel().getListOfRules();
-// // 							  for (int i = 0; i < document.getModel().getNumRules(); i++) {
-// // 							    if ((((Rule) rr.get(i)).isAlgebraic())
-// // 								&& ((Rule) rr.get(i)).getFormula().equals(ruleMath.getText().trim())) {
-// // 							      rr.remove(i);
-// // 							    }
-// //							  }
-// 							  JOptionPane.showMessageDialog(biosim.frame(), "System of Algebraic Equations is Overdetermined.\n"
-// 											+ "There are more equations than unknowns.",
-// 											"Model is Overdetermined", JOptionPane.ERROR_MESSAGE);
-// 							  error = true;
-// 							}
 							String oldVal = rul[index];
 							rul[index] = addStr;
 							try {
@@ -3716,6 +3706,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 							  error = true;
 							  rul[index] = oldVal;
 							}
+							updateRules();
 							rules.setListData(rul);
 							rules.setSelectedIndex(index);
 						}
@@ -3724,63 +3715,57 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 							int index = rules.getSelectedIndex();
 							String addStr;
 							if (ruleType.getSelectedItem().equals("Algebraic")) {
-								AlgebraicRule r = document.getModel().createAlgebraicRule();
-								r.setMath(sbmlLib.parseFormula(ruleMath.getText().trim()));
-								addStr = "0 = " + sbmlLib.formulaToString(r.getMath());
+							  addStr = "0 = " + sbmlLib.formulaToString(sbmlLib.parseFormula(ruleMath.getText().trim()));
 							}
 							else if (ruleType.getSelectedItem().equals("Rate")) {
-								RateRule r = document.getModel().createRateRule();
-								r.setVariable(addVar);
-								r.setMath(sbmlLib.parseFormula(ruleMath.getText().trim()));
-								addStr = "d( " + addVar + " )/dt = " + sbmlLib.formulaToString(r.getMath());
+							  addStr = "d( " + addVar + " )/dt = " + sbmlLib.formulaToString(sbmlLib.parseFormula(ruleMath.getText().trim()));
 							}
 							else {
-								AssignmentRule r = document.getModel().createAssignmentRule();
-								r.setVariable(addVar);
-								r.setMath(sbmlLib.parseFormula(ruleMath.getText().trim()));
-								addStr = addVar + " = " + sbmlLib.formulaToString(r.getMath());
+							  addStr = addVar + " = " + sbmlLib.formulaToString(sbmlLib.parseFormula(ruleMath.getText().trim()));
 							}
-// 							if (document.checkConsistency() > 0) {
-// 							  ListOf rr = document.getModel().getListOfRules();
-// 							  for (int i = 0; i < document.getModel().getNumRules(); i++) {
-// 							    if ((((Rule) rr.get(i)).isAlgebraic())
-// 								&& ((Rule) rr.get(i)).getFormula().equals(ruleMath.getText().trim())) {
-// 							      rr.remove(i);
-// 							    }
-// 							  }
-// 							  JOptionPane.showMessageDialog(biosim.frame(), "System of Algebraic Equations is Overdetermined.\n"
-// 											+ "There are more equations than unknowns.",
-// 											"Model is Overdetermined", JOptionPane.ERROR_MESSAGE);
-// 							  error = true;
-// 							}
+							Object[] adding = { addStr };
+							add.setListData(adding);
+							add.setSelectedIndex(0);
+							rules.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+							adding = Buttons.add(rul, rules, add, false, null, null, null, null, null, null,
+									     biosim.frame());
+							String [] oldRul = rul;
+							rul = new String[adding.length];
+							for (int i = 0; i < adding.length; i++) {
+							  rul[i] = (String) adding[i];
+							}
+							try {
+							  rul = sortRules(rul);
+							} catch (Exception e) {
+							  JOptionPane.showMessageDialog(biosim.frame(), "Cycle detected in assignments.",
+											"Cycle Detected", JOptionPane.ERROR_MESSAGE);
+							  error = true;
+							  rul = oldRul;
+							}
 							if (!error) {
-							  Object[] adding = { addStr };
-							  add.setListData(adding);
-							  add.setSelectedIndex(0);
-							  rules.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-							  adding = Buttons.add(rul, rules, add, false, null, null, null, null, null, null,
-									       biosim.frame());
-							  String [] oldRul = rul;
-							  rul = new String[adding.length];
-							  for (int i = 0; i < adding.length; i++) {
-							    rul[i] = (String) adding[i];
+							  if (ruleType.getSelectedItem().equals("Algebraic")) {
+							    AlgebraicRule r = document.getModel().createAlgebraicRule();
+							    r.setMath(sbmlLib.parseFormula(ruleMath.getText().trim()));
 							  }
-							  try {
-							    rul = sortRules(rul);
-							  } catch (Exception e) {
-							    JOptionPane.showMessageDialog(biosim.frame(), "Cycle detected in assignments.",
-											  "Cycle Detected", JOptionPane.ERROR_MESSAGE);
-							    error = true;
-							    rul = oldRul;
-							  }
-							  rules.setListData(rul);
-							  rules.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-							  if (document.getModel().getNumRules() == 1) {
-							    rules.setSelectedIndex(0);
+							  else if (ruleType.getSelectedItem().equals("Rate")) {
+							    RateRule r = document.getModel().createRateRule();
+							    r.setVariable(addVar);
+							    r.setMath(sbmlLib.parseFormula(ruleMath.getText().trim()));
 							  }
 							  else {
-							    rules.setSelectedIndex(index);
+							    AssignmentRule r = document.getModel().createAssignmentRule();
+							    r.setVariable(addVar);
+							    r.setMath(sbmlLib.parseFormula(ruleMath.getText().trim()));
 							  }
+							}
+							updateRules();
+							rules.setListData(rul);
+							rules.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+							if (document.getModel().getNumRules() == 1) {
+							  rules.setSelectedIndex(0);
+							}
+							else {
+							  rules.setSelectedIndex(index);
 							}
 						}
 						change = true;
@@ -3795,6 +3780,34 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				}
 			}
 		}
+	}
+
+	/**
+	 * Update rules 
+	 */
+	private void updateRules() {
+	  libsbml sbmlLib = new libsbml();
+	  ListOf r = document.getModel().getListOfRules();
+	  while (document.getModel().getNumRules() > 0) {
+	    r.remove(0);
+	  }
+	  for (int i = 0; i < rul.length; i++) {
+	    if (rul[i].split(" ")[0].equals("0")) {
+	      System.out.println(i + " : " + rul[i]);
+	      AlgebraicRule rule = document.getModel().createAlgebraicRule();
+	      rule.setMath(sbmlLib.parseFormula(rul[i].substring(rul[i].indexOf("=")+1)));
+	    } else if (rul[i].split(" ")[0].equals("d(")) {
+	      System.out.println(i + " : " + rul[i]);
+	      RateRule rule = document.getModel().createRateRule();
+	      rule.setVariable(rul[i].split(" ")[1]);
+	      rule.setMath(sbmlLib.parseFormula(rul[i].substring(rul[i].indexOf("=")+1)));
+	    } else {
+	      System.out.println(i + " : " + rul[i]);
+	      AssignmentRule rule = document.getModel().createAssignmentRule();
+	      rule.setVariable(rul[i].split(" ")[0]);
+	      rule.setMath(sbmlLib.parseFormula(rul[i].substring(rul[i].indexOf("=")+1)));
+	    }
+	  }
 	}
 
 	/**
@@ -5803,11 +5816,13 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		rul[i] = "d( " + rule.getVariable() + " )/dt = " + sbmlLib.formulaToString(rule.getMath());
 	      }
 	    }
+	    String [] oldRul = rul;
 	    try {
 	      rul = sortRules(rul);
 	    } catch (Exception e) {
 	      JOptionPane.showMessageDialog(biosim.frame(), "Cycle detected in assignments.",
 					    "Cycle Detected", JOptionPane.ERROR_MESSAGE);
+	      rul = oldRul;
 	    }
 	    rules.setListData(rul);
 	    rules.setSelectedIndex(0);
@@ -8159,17 +8174,17 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				ArrayList<String> sweepThese2 = new ArrayList<String>();
 				ArrayList<ArrayList<Double>> sweep2 = new ArrayList<ArrayList<Double>>();
 				for (String s : parameterChanges) {
-					if (s.split(" ")[s.split(" ").length - 1].equals("Sweep")) {
-						if ((s.split(" ")[s.split(" ").length - 2]).split(",")[3].replace(")", "").trim()
+					if (s.split(" ")[s.split(" ").length - 2].equals("Sweep")) {
+						if ((s.split(" ")[s.split(" ").length - 1]).split(",")[3].replace(")", "").trim()
 								.equals("1")) {
 							sweepThese1.add(s.split(" ")[0]);
 							double start = Double
-									.parseDouble((s.split(" ")[s.split(" ").length - 2]).split(",")[0].substring(1)
+									.parseDouble((s.split(" ")[s.split(" ").length - 1]).split(",")[0].substring(1)
 											.trim());
 							double stop = Double
-									.parseDouble((s.split(" ")[s.split(" ").length - 2]).split(",")[1].trim());
+									.parseDouble((s.split(" ")[s.split(" ").length - 1]).split(",")[1].trim());
 							double step = Double
-									.parseDouble((s.split(" ")[s.split(" ").length - 2]).split(",")[2].trim());
+									.parseDouble((s.split(" ")[s.split(" ").length - 1]).split(",")[2].trim());
 							ArrayList<Double> add = new ArrayList<Double>();
 							for (double i = start; i <= stop; i += step) {
 								add.add(i);
@@ -8179,12 +8194,12 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						else {
 							sweepThese2.add(s.split(" ")[0]);
 							double start = Double
-									.parseDouble((s.split(" ")[s.split(" ").length - 2]).split(",")[0].substring(1)
+									.parseDouble((s.split(" ")[s.split(" ").length - 1]).split(",")[0].substring(1)
 											.trim());
 							double stop = Double
-									.parseDouble((s.split(" ")[s.split(" ").length - 2]).split(",")[1].trim());
+									.parseDouble((s.split(" ")[s.split(" ").length - 1]).split(",")[1].trim());
 							double step = Double
-									.parseDouble((s.split(" ")[s.split(" ").length - 2]).split(",")[2].trim());
+									.parseDouble((s.split(" ")[s.split(" ").length - 1]).split(",")[2].trim());
 							ArrayList<Double> add = new ArrayList<Double>();
 							for (double i = start; i <= stop; i += step) {
 								add.add(i);
