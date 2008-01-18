@@ -996,6 +996,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 										text += " " + s;
 									}
 									boxes.get(i).setName(text);
+									series.get(i).setText(text);
+									colorsCombo.get(i).setSelectedIndex(0);
+									shapesCombo.get(i).setSelectedIndex(0);
 								}
 								else {
 									String s = "";
@@ -1054,9 +1057,6 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 										text += " " + s;
 									}
 									boxes.get(i).setName(text);
-									series.get(i).setText(text);
-									colorsCombo.get(i).setSelectedIndex(0);
-									shapesCombo.get(i).setSelectedIndex(0);
 								}
 								if (!visible.get(i).isSelected()) {
 									allCheckedVisible = false;
