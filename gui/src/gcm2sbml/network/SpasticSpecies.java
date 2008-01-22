@@ -1,0 +1,22 @@
+package gcm2sbml.network;
+
+import gcm2sbml.visitor.SpeciesVisitor;
+
+/**
+ * This represents a spastic species.
+ * @author Nam
+ *
+ */
+public class SpasticSpecies extends AbstractSpecies {
+	public SpasticSpecies(String name, String stateName) {
+		this.name = name;
+		this.stateName = stateName;
+	}
+	
+	public SpasticSpecies() {
+	}
+	
+	public void accept(SpeciesVisitor visitor) {
+		visitor.visitSpasticSpecies(this);
+	}
+}
