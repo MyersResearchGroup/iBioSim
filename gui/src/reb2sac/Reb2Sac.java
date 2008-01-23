@@ -1051,21 +1051,33 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			}
 			else if (simulators.getSelectedItem().equals("gillespie")) {
 				description.setText("Gillespie's direct method");
+				errorLabel.setEnabled(false);
+				absErr.setEnabled(false);
 			}
 			else if (simulators.getSelectedItem().equals("emc-sim")) {
 				description.setText("Monte Carlo sim with jump count as" + " independent variable");
+				errorLabel.setEnabled(false);
+				absErr.setEnabled(false);
 			}
 			else if (simulators.getSelectedItem().equals("bunker")) {
 				description.setText("Bunker's method");
+				errorLabel.setEnabled(false);
+				absErr.setEnabled(false);
 			}
 			else if (simulators.getSelectedItem().equals("nmc")) {
 				description.setText("Monte Carlo simulation with normally" + " distributed waiting time");
+				errorLabel.setEnabled(false);
+				absErr.setEnabled(false);
 			}
 			else if (simulators.getSelectedItem().equals("ctmc-transient")) {
 				description.setText("Transient Distribution Analysis");
+				errorLabel.setEnabled(false);
+				absErr.setEnabled(false);
 			}
 			else if (simulators.getSelectedItem().equals("atacs")) {
 				description.setText("ATACS Analysis Tool");
+				errorLabel.setEnabled(false);
+				absErr.setEnabled(false);
 			}
 		}
 		// if the Run button is clicked
@@ -2952,12 +2964,6 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 										clearIntSpecies);
 					}
 				}
-				if (load.containsKey("ode.simulation.time.limit")) {
-					limit.setText(load.getProperty("ode.simulation.time.limit"));
-				}
-				if (load.containsKey("ode.simulation.print.interval")) {
-					interval.setText(load.getProperty("ode.simulation.print.interval"));
-				}
 				if (load.containsKey("ode.simulation.time.step")) {
 					step.setText(load.getProperty("ode.simulation.time.step"));
 				}
@@ -2997,6 +3003,12 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				if (load.containsKey("reb2sac.simulation.method")) {
 					if (load.getProperty("reb2sac.simulation.method").equals("ODE")) {
 						ODE.setSelected(true);
+						if (load.containsKey("ode.simulation.time.limit")) {
+						  limit.setText(load.getProperty("ode.simulation.time.limit"));
+						}
+						if (load.containsKey("ode.simulation.print.interval")) {
+						  interval.setText(load.getProperty("ode.simulation.print.interval"));
+						}
 						Button_Enabling.enableODE(seed, seedLabel, runs, runsLabel, stepLabel, step,
 								errorLabel, absErr, limitLabel, limit, intervalLabel, interval, simulators,
 								simulatorsLabel, explanation, description, usingSSA);

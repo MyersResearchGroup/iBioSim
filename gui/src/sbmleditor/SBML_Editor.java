@@ -764,6 +764,14 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				funcs[i] += " ) = " + sbmlLib.formulaToString(function.getBody());
 			}
 		}
+		String [] oldFuncs = funcs;
+		try {
+		  funcs = sortFunctions(funcs);
+		} catch (Exception e) {
+		  JOptionPane.showMessageDialog(biosim.frame(), "Cycle detected in function definitions.",
+						"Cycle Detected", JOptionPane.ERROR_MESSAGE);
+		  funcs = oldFuncs;
+		}
 		JPanel funcdefnPanel = createPanel(model, "Function Definitions", functions, funcs,
 				addFunction, removeFunction, editFunction);
 
@@ -926,7 +934,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		scroll.setMinimumSize(new Dimension(260, 220));
 		scroll.setPreferredSize(new Dimension(276, 152));
 		scroll.setViewportView(panelJList);
-		if (!panelName.equals("Rules")) {
+		if (!panelName.equals("Rules") && !panelName.equals("Function Definitions")) {
 		  sort(panelList);
 		}
 		panelJList.setListData(panelList);
@@ -2294,39 +2302,53 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 								error = true;
 							}
 						}
-						if (eqn.getText().trim().equals("")
-								|| sbmlLib.parseFormula("lambda(" + args.getText().trim() + ","
-										+ eqn.getText().trim() + ")") == null) {
-							JOptionPane.showMessageDialog(biosim.frame(), "Formula is not valid.",
-									"Enter Valid Formula", JOptionPane.ERROR_MESSAGE);
-							error = true;
-						}
-						else {
-						  ArrayList<String> invalidVars = getInvalidVariables(eqn.getText().trim(),false,args.getText().trim(),true);
-						  if (invalidVars.size() > 0) {
-						    String invalid = "";
-						    for (int i = 0; i < invalidVars.size(); i++) {
-						      if (i == invalidVars.size() - 1) {
-							invalid += invalidVars.get(i);
-						      }
-						      else {
-							invalid += invalidVars.get(i) + "\n";
-						      }
+						if (!error) {
+						  String [] vars = eqn.getText().trim().split(" |\\(|\\)|\\,|\\*|\\+|\\/|\\-");
+						  for (int i = 0; i < vars.length; i++) {
+						    if (vars[i].equals(funcID.getText().trim())) {
+						      JOptionPane.showMessageDialog(biosim.frame(),
+										    "Recursive functions are not allowed.", "Recursion Illegal",
+										    JOptionPane.ERROR_MESSAGE);
+						      error = true;
+						      break;
 						    }
-						    String message;
-						    message = "Function can only contain the arguments or other function calls.\n\n"
-						      + "Illegal variables:\n" + invalid;
-						    JTextArea messageArea = new JTextArea(message);
-						    messageArea.setLineWrap(true);
-						    messageArea.setWrapStyleWord(true);
-						    messageArea.setEditable(false);
-						    JScrollPane scrolls = new JScrollPane();
-						    scrolls.setMinimumSize(new Dimension(300, 300));
-						    scrolls.setPreferredSize(new Dimension(300, 300));
-						    scrolls.setViewportView(messageArea);
-						    JOptionPane.showMessageDialog(biosim.frame(), scrolls, "Illegal Variables",
-										  JOptionPane.ERROR_MESSAGE);
+						  }
+						}
+						if (!error) {
+						  if (eqn.getText().trim().equals("")
+						      || sbmlLib.parseFormula("lambda(" + args.getText().trim() + ","
+									      + eqn.getText().trim() + ")") == null) {
+						    JOptionPane.showMessageDialog(biosim.frame(), "Formula is not valid.",
+										  "Enter Valid Formula", JOptionPane.ERROR_MESSAGE);
 						    error = true;
+						  }
+						  else {
+						    ArrayList<String> invalidVars = getInvalidVariables(eqn.getText().trim(),false,args.getText().trim(),true);
+						    if (invalidVars.size() > 0) {
+						      String invalid = "";
+						      for (int i = 0; i < invalidVars.size(); i++) {
+							if (i == invalidVars.size() - 1) {
+							  invalid += invalidVars.get(i);
+							}
+							else {
+							  invalid += invalidVars.get(i) + "\n";
+							}
+						      }
+						      String message;
+						      message = "Function can only contain the arguments or other function calls.\n\n"
+							+ "Illegal variables:\n" + invalid;
+						      JTextArea messageArea = new JTextArea(message);
+						      messageArea.setLineWrap(true);
+						      messageArea.setWrapStyleWord(true);
+						      messageArea.setEditable(false);
+						      JScrollPane scrolls = new JScrollPane();
+						      scrolls.setMinimumSize(new Dimension(300, 300));
+						      scrolls.setPreferredSize(new Dimension(300, 300));
+						      scrolls.setViewportView(messageArea);
+						      JOptionPane.showMessageDialog(biosim.frame(), scrolls, "Illegal Variables",
+										    JOptionPane.ERROR_MESSAGE);
+						      error = true;
+						    }
 						  }
 						}
 						if (!error) {
@@ -2346,21 +2368,23 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 										usedIDs.set(i, addFunc);
 									}
 								}
+								String oldVal = funcs[index];
 								funcs[index] = addFunc + " ( " + args.getText().trim() + " ) = "
 										+ eqn.getText().trim();
-								sort(funcs);
+								try {
+								  funcs = sortFunctions(funcs);
+								} catch (Exception e) {
+								  JOptionPane.showMessageDialog(biosim.frame(), "Cycle detected in functions.",
+												"Cycle Detected", JOptionPane.ERROR_MESSAGE);
+								  error = true;
+								  funcs[index] = oldVal;
+								}
 								functions.setListData(funcs);
 								functions.setSelectedIndex(index);
 								updateVarId(false,val,funcID.getText().trim());
 							}
 							else {
 								int index = functions.getSelectedIndex();
-								FunctionDefinition f = document.getModel().createFunctionDefinition();
-								f.setId(funcID.getText().trim());
-								f.setName(funcName.getText().trim());
-								f.setMath(sbmlLib.parseFormula("lambda(" + args.getText().trim() + ","
-										+ eqn.getText().trim() + ")"));
-								usedIDs.add(addFunc);
 								JList add = new JList();
 								String addStr;
 								addStr = addFunc + " ( " + args.getText().trim() + " ) = " + eqn.getText().trim();
@@ -2370,11 +2394,28 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 								functions.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 								adding = Buttons.add(funcs, functions, add, false, null, null, null, null, null,
 										null, biosim.frame());
+								String [] oldVal = funcs;
 								funcs = new String[adding.length];
 								for (int i = 0; i < adding.length; i++) {
 									funcs[i] = (String) adding[i];
 								}
-								sort(funcs);
+								try {
+
+								  funcs = sortFunctions(funcs);
+								} catch (Exception e) {
+								  JOptionPane.showMessageDialog(biosim.frame(), "Cycle detected in functions.",
+												"Cycle Detected", JOptionPane.ERROR_MESSAGE);
+								  error = true;
+								  funcs = oldVal;
+								}
+								if (!error) {
+								  FunctionDefinition f = document.getModel().createFunctionDefinition();
+								  f.setId(funcID.getText().trim());
+								  f.setName(funcName.getText().trim());
+								  f.setMath(sbmlLib.parseFormula("lambda(" + args.getText().trim() + ","
+												 + eqn.getText().trim() + ")"));
+								  usedIDs.add(addFunc);
+								}
 								functions.setListData(funcs);
 								functions.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 								if (document.getModel().getNumFunctionDefinitions() == 1) {
@@ -2398,6 +2439,54 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				}
 			}
 		}
+	}
+
+	/**
+	 * Sort functions in order to be evaluated
+	 */
+	private String [] sortFunctions(String [] funcs) {
+	  String [] result = new String[funcs.length];
+	  String temp;
+	  String temp2;
+	  int j = 0;
+	  int start = 0;
+	  int end = 0;
+
+	  for (int i = 0; i < funcs.length; i++) {
+	    String [] func = funcs[i].split(" |\\(|\\)|\\,|\\*|\\+|\\/|\\-");
+	    start = -1;
+	    end = -1;
+	    for (int k = 0; k < j; k++) {
+	      String [] f = result[k].split(" |\\(|\\)|\\,|\\*|\\+|\\/|\\-");
+	      for (int l = 1; l < f.length; l++) {
+		if (f[l].equals(func[0])) {
+		  end = k;
+		}
+	      }
+	      for (int l = 1; l < func.length; l++) {
+		if (func[l].equals(f[0])) {
+		  start = k;
+		}
+	      }
+	    }
+	    if (end == -1) {
+	      result[j] = funcs[i];
+	    } else if (start < end) {
+	      temp = result[end];
+	      result[end] = funcs[i];
+	      for (int k = end+1; k < j; k++) {
+		temp2 = result[k];
+		result[k] = temp;
+		temp = temp2;
+	      }
+	      result[j] = temp;
+	    } else {
+	      result[j] = funcs[i];
+	      throw new RuntimeException();
+	    } 
+	    j++;
+	  }
+	  return result;
 	}
 
 	/**
@@ -3574,8 +3663,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					ListOf r = document.getModel().getListOfRules();
 					for (int i = 0; i < document.getModel().getNumRules(); i++) {
 						if ((((Rule) r.get(i)).isAlgebraic())
-								&& ((Rule) r.get(i)).getFormula().equals(ruleMath.getText())) {
-							Rindex = i;
+						    && (sbmlLib.formulaToString(((Rule) r.get(i)).getMath()).equals(ruleMath.getText()))) {
+						    Rindex = i;
 						}
 					}
 				}
@@ -3588,8 +3677,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					ListOf r = document.getModel().getListOfRules();
 					for (int i = 0; i < document.getModel().getNumRules(); i++) {
 						if ((((Rule) r.get(i)).isRate())
-								&& ((Rule) r.get(i)).getFormula().equals(ruleMath.getText())
-								&& ((Rule) r.get(i)).getVariable().equals(ruleVar.getSelectedItem())) {
+						    && ((Rule) r.get(i)).getVariable().equals(ruleVar.getSelectedItem())) {
 							Rindex = i;
 						}
 					}
@@ -3603,9 +3691,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					ListOf r = document.getModel().getListOfRules();
 					for (int i = 0; i < document.getModel().getNumRules(); i++) {
 						if ((((Rule) r.get(i)).isAssignment())
-								&& ((Rule) r.get(i)).getFormula().equals(ruleMath.getText())
-								&& ((Rule) r.get(i)).getVariable().equals(ruleVar.getSelectedItem())) {
-							Rindex = i;
+						    && ((Rule) r.get(i)).getVariable().equals(ruleVar.getSelectedItem())) {
+						  Rindex = i;
 						}
 					}
 				}
@@ -3793,16 +3880,13 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	  }
 	  for (int i = 0; i < rul.length; i++) {
 	    if (rul[i].split(" ")[0].equals("0")) {
-	      System.out.println(i + " : " + rul[i]);
 	      AlgebraicRule rule = document.getModel().createAlgebraicRule();
 	      rule.setMath(sbmlLib.parseFormula(rul[i].substring(rul[i].indexOf("=")+1)));
 	    } else if (rul[i].split(" ")[0].equals("d(")) {
-	      System.out.println(i + " : " + rul[i]);
 	      RateRule rule = document.getModel().createRateRule();
 	      rule.setVariable(rul[i].split(" ")[1]);
 	      rule.setMath(sbmlLib.parseFormula(rul[i].substring(rul[i].indexOf("=")+1)));
 	    } else {
-	      System.out.println(i + " : " + rul[i]);
 	      AssignmentRule rule = document.getModel().createAssignmentRule();
 	      rule.setVariable(rul[i].split(" ")[0]);
 	      rule.setMath(sbmlLib.parseFormula(rul[i].substring(rul[i].indexOf("=")+1)));
@@ -3849,28 +3933,19 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	      }
 	      if (end == -1) {
 		result[j] = rules[i];
-	      } else if (start == -1) {
-		temp = result[eAlg];
-		result[eAlg] = rules[i];
-		for (int k = eAlg+1; k < j; k++) {
+	      } else if (start < end) {
+		temp = result[end];
+		result[end] = rules[i];
+		for (int k = end+1; k < j; k++) {
 		  temp2 = result[k];
 		  result[k] = temp;
 		  temp = temp2;
 		}
 		result[j] = temp;
-	      } else if (start >= end) {
+	      } else {
 		result[j] = rules[i];
 		throw new RuntimeException();
-	      } else {
-		temp = result[start+1];
-		result[start+1] = rules[i];
-		for (int k = start+2; k < j; k++) {
-		  temp2 = result[k];
-		  result[k] = temp;
-		  temp = temp2;
-		}
-		result[j] = temp;
-	      }
+	      } 
 	      j++;
 	    }
 	  }
@@ -5089,18 +5164,39 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	/**
 	 * Species that is a reactant or product cannot be constant unless it is a boundary condition
 	 */
-	private boolean checkBoundary(String val) {
+	private boolean checkBoundary(String val,boolean checkRule) {
 	  Model model = document.getModel();
+	  boolean inRule = false;
+	  if (checkRule) {
+	    if (model.getNumRules() > 0) {
+	      for (int i = 0; i < model.getNumRules(); i++) {
+		Rule rule = (Rule) model.getListOfRules().get(i);
+		if (rule.isSetVariable() && val.equals(rule.getVariable())) {
+		  inRule = true;
+		  break;
+		}
+	      }
+	    }
+	    if (!inRule) return false;
+	  }
 	  for (int i = 0; i < model.getNumReactions(); i++) {
 	    Reaction reaction = (Reaction) model.getListOfReactions().get(i);
 	    for (int j = 0; j < reaction.getNumProducts(); j++) {
 	      if (reaction.getProduct(j).isSetSpecies()) {
 		SpeciesReference specRef = reaction.getProduct(j);
 		if (val.equals(specRef.getSpecies())) {
-		  JOptionPane.showMessageDialog(biosim.frame(),
-						"Species cannot be reactant if constant and not a boundary condition.", 
-						"Invalid Species Attributes",
-						JOptionPane.ERROR_MESSAGE);
+		  if (checkRule) {
+		    JOptionPane.showMessageDialog(biosim.frame(),
+						  "Boundary condition cannot be false if a species is used\n" +
+						  "in a rule and as a reactant or product in a reaction.", 
+						  "Boundary Condition Cannot be False",
+						  JOptionPane.ERROR_MESSAGE);
+		  } else {
+		    JOptionPane.showMessageDialog(biosim.frame(),
+						  "Species cannot be reactant if constant and not a boundary condition.", 
+						  "Invalid Species Attributes",
+						  JOptionPane.ERROR_MESSAGE);
+		  }
 		  return true;
 		}
 	      }
@@ -5109,10 +5205,18 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	      if (reaction.getReactant(j).isSetSpecies()) {
 		SpeciesReference specRef = reaction.getReactant(j);
 		if (val.equals(specRef.getSpecies())) {
-		  JOptionPane.showMessageDialog(biosim.frame(),
-						"Species cannot be product if constant and not a boundary condition.", 
-						"Invalid Species Attributes",
-						JOptionPane.ERROR_MESSAGE);
+		  if (checkRule) {
+		    JOptionPane.showMessageDialog(biosim.frame(),
+						  "Boundary condition cannot be false if a species is used\n" +
+						  "in a rule and as a reactant or product in a reaction.", 
+						  "Boundary Condition Cannot be False",
+						  JOptionPane.ERROR_MESSAGE);
+		  } else {
+		    JOptionPane.showMessageDialog(biosim.frame(),
+						  "Species cannot be product if constant and not a boundary condition.", 
+						  "Invalid Species Attributes",
+						  JOptionPane.ERROR_MESSAGE);
+		  }
 		  return true;
 		}
 	      }
@@ -5590,10 +5694,9 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 							  String val = ((String) species.getSelectedValue()).split(" ")[0];
 							  error = checkConstant("Species",val);
 							}
-							if (!error && option.equals("OK") && specConstant.getSelectedItem().equals("true") &&
-							    specBoundary.getSelectedItem().equals("false")) {
+							if (!error && option.equals("OK") && specBoundary.getSelectedItem().equals("false")) {
 							  String val = ((String) species.getSelectedValue()).split(" ")[0];
-							  error = checkBoundary(val);
+							  error = checkBoundary(val,specConstant.getSelectedItem().equals("false"));
 							}
 							if (!error) {
 								if (option.equals("OK")) {
@@ -6547,27 +6650,51 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	  }
 	  String[] splitLaw = formula.split(" |\\(|\\)|\\,|\\*|\\+|\\/|\\-");
 	  for (int i = 0; i < splitLaw.length; i++) {
-	    if (splitLaw[i].equals("abs") || splitLaw[i].equals("acos")
-		|| splitLaw[i].equals("asin") || splitLaw[i].equals("atan")
-		|| splitLaw[i].equals("ceil") || splitLaw[i].equals("cos")
+	    if (splitLaw[i].equals("abs") 
+		|| splitLaw[i].equals("arccos") || splitLaw[i].equals("arccosh")
+		|| splitLaw[i].equals("arcsin") || splitLaw[i].equals("arcsinh") 
+		|| splitLaw[i].equals("arctan") || splitLaw[i].equals("arctanh")
+		|| splitLaw[i].equals("arccot") || splitLaw[i].equals("arccoth")
+		|| splitLaw[i].equals("arccsc") || splitLaw[i].equals("arccsch")
+		|| splitLaw[i].equals("arcsec") || splitLaw[i].equals("arcsech")
+		|| splitLaw[i].equals("acos") || splitLaw[i].equals("acosh")
+		|| splitLaw[i].equals("asin") || splitLaw[i].equals("asinh") 
+		|| splitLaw[i].equals("atan") || splitLaw[i].equals("atanh")
+		|| splitLaw[i].equals("acot") || splitLaw[i].equals("acoth")
+		|| splitLaw[i].equals("acsc") || splitLaw[i].equals("acsch")
+		|| splitLaw[i].equals("asec") || splitLaw[i].equals("asech")
+		|| splitLaw[i].equals("ceil") 
+		|| splitLaw[i].equals("cos") || splitLaw[i].equals("cosh") 
+		|| splitLaw[i].equals("cot") || splitLaw[i].equals("coth")
+		|| splitLaw[i].equals("csc") || splitLaw[i].equals("csch")
 		|| splitLaw[i].equals("exp") || splitLaw[i].equals("floor")
-		|| splitLaw[i].equals("log") || splitLaw[i].equals("sqr")
+		|| splitLaw[i].equals("ln") || splitLaw[i].equals("log") 
+		|| splitLaw[i].equals("sqr")
 		|| splitLaw[i].equals("pow") || splitLaw[i].equals("sqrt")
-		|| splitLaw[i].equals("root") || splitLaw[i].equals("sin")
-		|| splitLaw[i].equals("tan") || splitLaw[i].equals("")
-		|| splitLaw[i].equals("INF")) {
+		|| splitLaw[i].equals("root") || splitLaw[i].equals("piecewise") 
+		|| splitLaw[i].equals("sec") || splitLaw[i].equals("sech")
+		|| splitLaw[i].equals("sin") || splitLaw[i].equals("sinh")
+		|| splitLaw[i].equals("tan") || splitLaw[i].equals("tanh") 
+		|| splitLaw[i].equals("")
+		|| splitLaw[i].equals("and") || splitLaw[i].equals("or")
+		|| splitLaw[i].equals("xor") || splitLaw[i].equals("not")
+		|| splitLaw[i].equals("eq") || splitLaw[i].equals("geq")
+		|| splitLaw[i].equals("leq") || splitLaw[i].equals("gt")
+		|| splitLaw[i].equals("neq") || splitLaw[i].equals("lt")
+		|| splitLaw[i].equals("delay") || splitLaw[i].equals("t")
+		|| splitLaw[i].equals("true") || splitLaw[i].equals("false")
+		|| splitLaw[i].equals("pi") || splitLaw[i].equals("exponentiale")) {
 	    }
 	    else {
+	      if (splitLaw[i].substring(splitLaw[i].length()-1,splitLaw[i].length()).equals("e")) {
+		splitLaw[i] = splitLaw[i].substring(0,splitLaw[i].length()-2);
+	      }
 	      try {
 		Double.parseDouble(splitLaw[i]);
 	      }
 	      catch (Exception e1) {
-		invalidVars.add(splitLaw[i]);
-		for (int j = 0; j < validVars.size(); j++) {
-		  if (splitLaw[i].equals(validVars.get(j))) {
-		    invalidVars.remove(splitLaw[i]);
-		    break;
-		  }
+		if (!validVars.contains(splitLaw[i])) {
+		  invalidVars.add(splitLaw[i]);
 		}
 	      }
 	    }
