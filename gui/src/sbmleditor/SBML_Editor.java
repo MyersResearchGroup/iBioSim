@@ -8455,26 +8455,21 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 								}
 								new File(simDir + separator + sweepTwo.replace("/", "-")).mkdir();
 								createSBML(sweepTwo);
-								reb2sac.setDir(sweepTwo.replace("/", "-"));
-								Thread t = new Thread(reb2sac);
-								t.start();
+								new Reb2SacThread(reb2sac).start(sweepTwo.replace("/", "-"));
 								reb2sac.emptyFrames();
 							}
 						}
 						else {
 							new File(simDir + separator + sweep.replace("/", "-")).mkdir();
 							createSBML(sweep);
-							reb2sac.setDir(sweep.replace("/", "-"));
-							Thread t = new Thread(reb2sac);
-							t.start();
+							new Reb2SacThread(reb2sac).start(sweep.replace("/", "-"));
 							reb2sac.emptyFrames();
 						}
 					}
 				}
 				else {
 					createSBML(".");
-					reb2sac.setDir(".");
-					new Thread(reb2sac).start();
+					new Reb2SacThread(reb2sac).start(".");
 					reb2sac.emptyFrames();
 				}
 			}

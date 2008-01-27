@@ -162,8 +162,6 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 
 	private boolean change;
 
-	private String direct;
-
 	private ArrayList<JFrame> frames;
 
 	/**
@@ -188,7 +186,6 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		this.log = log;
 		this.simTab = simTab;
 		change = false;
-		direct = ".";
 		frames = new ArrayList<JFrame>();
 
 		// Creates the input fields for the changes in abstraction
@@ -1784,8 +1781,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 	 * If the run button is pressed, this method starts a new thread for the
 	 * simulation.
 	 */
-	public void run() {
-		String localDirect = direct;
+	public void run(String direct) {
 		double timeLimit = 100.0;
 		double printInterval = 1.0;
 		double timeStep = 1.0;
@@ -1837,11 +1833,11 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			// }
 			return;
 		}
-		if (localDirect.equals(".")) {
+		if (direct.equals(".")) {
 			outDir = simName;
 		}
 		else {
-			outDir = simName + separator + localDirect;
+			outDir = simName + separator + direct;
 		}
 		try {
 			// if (seed.isEnabled()) {
@@ -2014,10 +2010,10 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		}
 		int cut = 0;
 		String simProp = sbmlProp;
-		if (!localDirect.equals(".")) {
+		if (!direct.equals(".")) {
 			simProp = simProp.substring(0, simProp.length()
 					- simProp.split(separator)[simProp.split(separator).length - 1].length())
-					+ localDirect
+					+ direct
 					+ separator
 					+ simProp.substring(simProp.length()
 							- simProp.split(separator)[simProp.split(separator).length - 1].length());
@@ -2081,7 +2077,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		JPanel progBar = new JPanel();
 		JPanel button = new JPanel();
 		JPanel all = new JPanel(new BorderLayout());
-		JLabel label = new JLabel("Running " + simName + " " + localDirect);
+		JLabel label = new JLabel("Running " + simName + " " + direct);
 		int steps;
 		if (ODE.isSelected()) {
 			steps = (int) (timeLimit / printInterval);
@@ -2187,7 +2183,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		int exit = runProgram.execute(simProp, sbml, dot, xhtml, biomodelsim.frame(), ODE, monteCarlo,
 				sim, printer_id, printer_track_quantity, root + separator + simName, nary, 1, intSpecies,
 				log, usingSSA, root + separator + outDir + separator + "user-defined.dat", biomodelsim,
-				simTab, root, progress, steps, simName + " " + localDirect);
+				simTab, root, progress, steps, simName + " " + direct);
 		if (nary.isSelected() && exit == 0) {
 			new Nary_Run(this, amountTerm, ge, gt, eq, lt, le, simulators, simProp.split(separator),
 					simProp, sbml, dot, xhtml, nary, ODE, monteCarlo, timeLimit, printInterval, root
@@ -3004,10 +3000,10 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					if (load.getProperty("reb2sac.simulation.method").equals("ODE")) {
 						ODE.setSelected(true);
 						if (load.containsKey("ode.simulation.time.limit")) {
-						  limit.setText(load.getProperty("ode.simulation.time.limit"));
+							limit.setText(load.getProperty("ode.simulation.time.limit"));
 						}
 						if (load.containsKey("ode.simulation.print.interval")) {
-						  interval.setText(load.getProperty("ode.simulation.print.interval"));
+							interval.setText(load.getProperty("ode.simulation.print.interval"));
 						}
 						Button_Enabling.enableODE(seed, seedLabel, runs, runsLabel, stepLabel, step,
 								errorLabel, absErr, limitLabel, limit, intervalLabel, interval, simulators,
@@ -3197,10 +3193,6 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		return change;
 	}
 
-	public void setDir(String direct) {
-		this.direct = direct;
-	}
-
 	public void addToIntSpecies(String newSpecies) {
 		JList addIntSpecies = new JList();
 		Object[] addObj = { newSpecies };
@@ -3300,5 +3292,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		String printer_track_quantity = "amount";
 		return new Graph(printer_track_quantity, simName + " simulation results", printer_id, outDir,
 				"time", biomodelsim, open, log, null, false);
+	}
+
+	public void run() {
 	}
 }
