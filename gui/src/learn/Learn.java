@@ -335,18 +335,20 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 			try {
 				FileWriter write = new FileWriter(new File(directory + separator + "background.gcm"));
 				write.write("digraph G {\n");
-			  for (int i = 0; i < model.getNumSpecies(); i++) {
+				for (int i = 0; i < model.getNumSpecies(); i++) {
 					speciesList.add(((Species) ids.get(i)).getId());
-			    write.write("s" + i + " [shape=ellipse,color=black,label=\"" + 
-					((Species) ids.get(i)).getId() + "\"" + "];\n");
+					write.write("s" + i + " [shape=ellipse,color=black,label=\""
+							+ ((Species) ids.get(i)).getId() + "\"" + "];\n");
 				}
 				write.write("}\n");
 				write.close();
-			} catch (Exception e) {
+			}
+			catch (Exception e) {
 				JOptionPane.showMessageDialog(biosim.frame(), "Unable to create background file!",
 						"Error Writing Background", JOptionPane.ERROR_MESSAGE);
 			}
-		} else {
+		}
+		else {
 			try {
 				File gcmFile = new File(learnFile);
 				BufferedReader input = new BufferedReader(new FileReader(gcmFile));
@@ -361,7 +363,8 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 				}
 				write.close();
 				input.close();
-			} catch (Exception e) {
+			}
+			catch (Exception e) {
 				JOptionPane.showMessageDialog(biosim.frame(), "Unable to create background file!",
 						"Error Writing Background", JOptionPane.ERROR_MESSAGE);
 			}

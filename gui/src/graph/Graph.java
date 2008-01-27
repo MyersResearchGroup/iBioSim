@@ -4367,6 +4367,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			Scanner s = new Scanner(new File(file));
 			while (s.hasNextLine()) {
 				String[] ss = s.nextLine().split(" ");
+				if (ss[0].equals("The") && ss[1].equals("total") && ss[2].equals("termination")
+						&& ss[3].equals("count:") && ss[4].equals("0")) {
+					return;
+				}
 				if (data.size() == 0) {
 					for (String add : ss) {
 						data.add(add);
@@ -4382,7 +4386,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		catch (Exception e) {
 		}
 		for (String s : data) {
-			graphProbs.add(s.split(" ")[0]);
+			if (!s.split(" ")[0].equals("#total")) {
+				graphProbs.add(s.split(" ")[0]);
+			}
 		}
 	}
 
@@ -4392,6 +4398,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			Scanner s = new Scanner(new File(file));
 			while (s.hasNextLine()) {
 				String[] ss = s.nextLine().split(" ");
+				if (ss[0].equals("The") && ss[1].equals("total") && ss[2].equals("termination")
+						&& ss[3].equals("count:") && ss[4].equals("0")) {
+					return new double[0];
+				}
 				if (data.size() == 0) {
 					for (String add : ss) {
 						data.add(add);
@@ -4407,8 +4417,19 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		catch (Exception e) {
 		}
 		double[] dataSet = new double[data.size()];
-		for (int i = 0; i < data.size(); i++) {
-			dataSet[i] = Double.parseDouble(data.get(i).split(" ")[1]);
+		double total = 0;
+		int i = 0;
+		if (data.get(0).split(" ")[0].equals("#total")) {
+			total = Double.parseDouble(data.get(0).split(" ")[1]);
+			i = 1;
+		}
+		for (; i < data.size(); i++) {
+			if (total == 0) {
+				dataSet[i] = Double.parseDouble(data.get(i).split(" ")[1]);
+			}
+			else {
+				dataSet[i - 1] = 100 * ((Double.parseDouble(data.get(i).split(" ")[1])) / total);
+			}
 		}
 		return dataSet;
 	}

@@ -49,6 +49,7 @@ public class TermCond {
 	int stateptrmax; // highest index of stackptr
 
 	int statemax; // state when highest index reached
+
 	// ###############################################################
 	// methods: state stack push,pop,drop,peek
 	// ###############################################################
@@ -499,7 +500,7 @@ public class TermCond {
 
 				yyn = yyrindex[yystate]; // reduce
 				if ((yyn != 0) && (yyn += yychar) >= 0 && yyn <= YYTABLESIZE && yycheck[yyn] == yychar) { // we
-																																																	// reduced!
+					// reduced!
 					// if (yydebug) debug("reduce");
 					yyn = yytable[yyn];
 					doaction = true; // get ready to execute

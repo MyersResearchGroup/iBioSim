@@ -534,6 +534,22 @@ public class Run implements ActionListener {
 									simTab.getComponentAt(i).setName("Graph");
 								}
 							}
+							if (simTab.getComponentAt(i).getName().equals("ProbGraph")) {
+								if (simTab.getComponentAt(i) instanceof Graph) {
+									// ((Graph) simTab.getComponentAt(i)).refresh();
+								}
+								else {
+									if (new File(filename.substring(0, filename.length()
+											- filename.split(separator)[filename.split(separator).length - 1].length())
+											+ "sim-rep.txt").exists()) {
+										simTab.setComponentAt(i, new Graph(printer_track_quantity, outDir
+												.split(separator)[outDir.split(separator).length - 1]
+												+ " simulation results", printer_id, outDir, "time", biomodelsim, null,
+												log, null, false));
+										simTab.getComponentAt(i).setName("ProbGraph");
+									}
+								}
+							}
 						}
 					}
 				}
@@ -580,6 +596,22 @@ public class Run implements ActionListener {
 										simTab.getComponentAt(i).setName("Graph");
 									}
 								}
+								if (simTab.getComponentAt(i).getName().equals("ProbGraph")) {
+									if (simTab.getComponentAt(i) instanceof Graph) {
+										// ((Graph) simTab.getComponentAt(i)).refresh();
+									}
+									else {
+										if (new File(filename.substring(0, filename.length()
+												- filename.split(separator)[filename.split(separator).length - 1].length())
+												+ "sim-rep.txt").exists()) {
+											simTab.setComponentAt(i, new Graph(printer_track_quantity, outDir
+													.split(separator)[outDir.split(separator).length - 1]
+													+ " simulation results", printer_id, outDir, "time", biomodelsim, null,
+													log, null, false));
+											simTab.getComponentAt(i).setName("ProbGraph");
+										}
+									}
+								}
 							}
 						}
 						else if (monteCarlo.isSelected()) {
@@ -594,6 +626,22 @@ public class Run implements ActionListener {
 												+ " simulation results", printer_id, outDir, "time", biomodelsim, null,
 												log, null, true));
 										simTab.getComponentAt(i).setName("Graph");
+									}
+								}
+								if (simTab.getComponentAt(i).getName().equals("ProbGraph")) {
+									if (simTab.getComponentAt(i) instanceof Graph) {
+										// ((Graph) simTab.getComponentAt(i)).refresh();
+									}
+									else {
+										if (new File(filename.substring(0, filename.length()
+												- filename.split(separator)[filename.split(separator).length - 1].length())
+												+ "sim-rep.txt").exists()) {
+											simTab.setComponentAt(i, new Graph(printer_track_quantity, outDir
+													.split(separator)[outDir.split(separator).length - 1]
+													+ " simulation results", printer_id, outDir, "time", biomodelsim, null,
+													log, null, false));
+											simTab.getComponentAt(i).setName("ProbGraph");
+										}
 									}
 								}
 							}

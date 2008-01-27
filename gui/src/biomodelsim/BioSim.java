@@ -895,67 +895,70 @@ public class BioSim implements MouseListener, ActionListener {
 						if (simName.length() > 4) {
 							if (simName.substring(simName.length() - 4).equals(".gcm")) {
 								modelID = simName.substring(0, simName.length() - 4);
-							} else {
-							        modelID = simName;
-							}
-						} else {
-						  modelID = simName;
-						}
-						if (!(IDpat.matcher(modelID).matches())) {
-						  JOptionPane.showMessageDialog(frame,
-										"A model ID can only contain letters, numbers, and underscores.", 
-										"Invalid ID",JOptionPane.ERROR_MESSAGE);
-						} else { 
-						File f = new File(root + separator + simName);
-						if (f.exists()) {
-							Object[] options = { "Overwrite", "Cancel" };
-							int value = JOptionPane.showOptionDialog(frame, "File already exists."
-									+ "\nDo you want to overwrite?", "Overwrite", JOptionPane.YES_NO_OPTION,
-									JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-							if (value == JOptionPane.YES_OPTION) {
-								File dir = new File(root + separator + simName);
-								if (dir.isDirectory()) {
-									deleteDir(dir);
-								}
-								else {
-									System.gc();
-									dir.delete();
-								}
-								for (int i = 0; i < tab.getTabCount(); i++) {
-									if (tab.getTitleAt(i).equals(simName)) {
-										tab.remove(i);
-									}
-								}
 							}
 							else {
-								return;
+								modelID = simName;
 							}
 						}
-						f.createNewFile();
-						FileOutputStream out = new FileOutputStream(f);
-						String doc = "digraph " + modelID + " {\n";
-						doc += "s1 [shape=ellipse,color=black,label=\"CI\"];\n";
-						doc += "s2 [shape=ellipse,color=black,label=\"CII\"];\n";
-						doc += "s2 -> s1 [color=\"blue4\",arrowhead=vee];\n";
-						doc += "s1 -> s2 [color=\"firebrick4\",label=\"2\",arrowhead=tee];\n";
-						doc += "}\n";
-						byte[] output = doc.getBytes();
-						out.write(output);
-						out.close();
-						File work = new File(root);
-						String command = "";
-						if (System.getProperty("os.name").contentEquals("Linux")) {
-							command = "emacs ";
+						else {
+							modelID = simName;
+						}
+						if (!(IDpat.matcher(modelID).matches())) {
+							JOptionPane.showMessageDialog(frame,
+									"A model ID can only contain letters, numbers, and underscores.", "Invalid ID",
+									JOptionPane.ERROR_MESSAGE);
 						}
 						else {
-							command = "cmd /c start ";
+							File f = new File(root + separator + simName);
+							if (f.exists()) {
+								Object[] options = { "Overwrite", "Cancel" };
+								int value = JOptionPane.showOptionDialog(frame, "File already exists."
+										+ "\nDo you want to overwrite?", "Overwrite", JOptionPane.YES_NO_OPTION,
+										JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+								if (value == JOptionPane.YES_OPTION) {
+									File dir = new File(root + separator + simName);
+									if (dir.isDirectory()) {
+										deleteDir(dir);
+									}
+									else {
+										System.gc();
+										dir.delete();
+									}
+									for (int i = 0; i < tab.getTabCount(); i++) {
+										if (tab.getTitleAt(i).equals(simName)) {
+											tab.remove(i);
+										}
+									}
+								}
+								else {
+									return;
+								}
+							}
+							f.createNewFile();
+							FileOutputStream out = new FileOutputStream(f);
+							String doc = "digraph " + modelID + " {\n";
+							doc += "s1 [shape=ellipse,color=black,label=\"CI\"];\n";
+							doc += "s2 [shape=ellipse,color=black,label=\"CII\"];\n";
+							doc += "s2 -> s1 [color=\"blue4\",arrowhead=vee];\n";
+							doc += "s1 -> s2 [color=\"firebrick4\",label=\"2\",arrowhead=tee];\n";
+							doc += "}\n";
+							byte[] output = doc.getBytes();
+							out.write(output);
+							out.close();
+							File work = new File(root);
+							String command = "";
+							if (System.getProperty("os.name").contentEquals("Linux")) {
+								command = "emacs ";
+							}
+							else {
+								command = "cmd /c start ";
+							}
+							log.addText("Executing:\n" + command + root + simName + "\n");
+							Runtime exec = Runtime.getRuntime();
+							exec.exec(command + simName, null, work);
+							refreshTree();
 						}
-						log.addText("Executing:\n" + command + root + simName + "\n");
-						Runtime exec = Runtime.getRuntime();
-						exec.exec(command + simName, null, work);
-						refreshTree();
 					}
-				}
 				}
 				catch (Exception e1) {
 					JOptionPane.showMessageDialog(frame, "Unable to create new model.", "Error",
@@ -994,54 +997,56 @@ public class BioSim implements MouseListener, ActionListener {
 							}
 						}
 						if (!(IDpat.matcher(modelID).matches())) {
-						  JOptionPane.showMessageDialog(frame,
-										"A model ID can only contain letters, numbers, and underscores.", 
-										"Invalid ID",JOptionPane.ERROR_MESSAGE);
-						} else { 
-						File f = new File(root + separator + simName);
-						if (f.exists()) {
-							Object[] options = { "Overwrite", "Cancel" };
-							int value = JOptionPane.showOptionDialog(frame, "File already exists."
-									+ "\nDo you want to overwrite?", "Overwrite", JOptionPane.YES_NO_OPTION,
-									JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-							if (value == JOptionPane.YES_OPTION) {
-								File dir = new File(root + separator + simName);
-								if (dir.isDirectory()) {
-									deleteDir(dir);
-								}
-								else {
-									System.gc();
-									dir.delete();
-								}
-								for (int i = 0; i < tab.getTabCount(); i++) {
-									if (tab.getTitleAt(i).equals(simName)) {
-										tab.remove(i);
+							JOptionPane.showMessageDialog(frame,
+									"A model ID can only contain letters, numbers, and underscores.", "Invalid ID",
+									JOptionPane.ERROR_MESSAGE);
+						}
+						else {
+							File f = new File(root + separator + simName);
+							if (f.exists()) {
+								Object[] options = { "Overwrite", "Cancel" };
+								int value = JOptionPane.showOptionDialog(frame, "File already exists."
+										+ "\nDo you want to overwrite?", "Overwrite", JOptionPane.YES_NO_OPTION,
+										JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+								if (value == JOptionPane.YES_OPTION) {
+									File dir = new File(root + separator + simName);
+									if (dir.isDirectory()) {
+										deleteDir(dir);
+									}
+									else {
+										System.gc();
+										dir.delete();
+									}
+									for (int i = 0; i < tab.getTabCount(); i++) {
+										if (tab.getTitleAt(i).equals(simName)) {
+											tab.remove(i);
+										}
 									}
 								}
+								else {
+									return;
+								}
 							}
-							else {
-								return;
-							}
+							f.createNewFile();
+							SBMLDocument document = new SBMLDocument();
+							document.createModel();
+							// document.setLevel(2);
+							document.setLevelAndVersion(2, 3);
+							Compartment c = document.getModel().createCompartment();
+							c.setId("default");
+							document.getModel().setId(modelID);
+							FileOutputStream out = new FileOutputStream(f);
+							SBMLWriter writer = new SBMLWriter();
+							String doc = writer.writeToString(document);
+							byte[] output = doc.getBytes();
+							out.write(output);
+							out.close();
+							addTab(
+									f.getAbsolutePath().split(separator)[f.getAbsolutePath().split(separator).length - 1],
+									new SBML_Editor(f.getAbsolutePath(), null, log, this, null, null), "SBML Editor");
+							refreshTree();
 						}
-						f.createNewFile();
-						SBMLDocument document = new SBMLDocument();
-						document.createModel();
-						  //document.setLevel(2);
-						  document.setLevelAndVersion(2,3);
-						Compartment c = document.getModel().createCompartment();
-						c.setId("default");
-						document.getModel().setId(modelID);
-						FileOutputStream out = new FileOutputStream(f);
-						SBMLWriter writer = new SBMLWriter();
-						String doc = writer.writeToString(document);
-						byte[] output = doc.getBytes();
-						out.write(output);
-						out.close();
-						  addTab(f.getAbsolutePath().split(separator)[f.getAbsolutePath().split(separator).length - 1],
-								new SBML_Editor(f.getAbsolutePath(), null, log, this, null, null), "SBML Editor");
-						refreshTree();
 					}
-				}
 				}
 				catch (Exception e1) {
 					JOptionPane.showMessageDialog(frame, "Unable to create new model.", "Error",
@@ -2409,8 +2414,8 @@ public class BioSim implements MouseListener, ActionListener {
 			}
 			SBMLReader reader = new SBMLReader();
 			SBMLDocument document = reader.readSBML(tree.getFile());
-			//document.setLevel(2);
-			document.setLevelAndVersion(2,3);
+			// document.setLevel(2);
+			document.setLevelAndVersion(2, 3);
 			String simName = JOptionPane.showInputDialog(frame, "Enter analysis id:", "Analysis ID",
 					JOptionPane.PLAIN_MESSAGE);
 			if (simName != null && !simName.trim().equals("")) {
@@ -2823,34 +2828,35 @@ public class BioSim implements MouseListener, ActionListener {
 	 * This is the main method. It excecutes the BioSim GUI FrontEnd program.
 	 */
 	public static void main(String args[]) {
-	  String varname;
-	  
-	  if (System.getProperty("mrj.version") != null)
-	    varname = "DYLD_LIBRARY_PATH";    // We're on a Mac.
-	  else
-	    varname = "LD_LIBRARY_PATH";      // We're not on a Mac.
-	  try {
-	    System.loadLibrary("sbmlj");
-	    // For extra safety, check that the jar file is in the classpath.
-	    Class.forName("org.sbml.libsbml.libsbml");
-	  } catch (UnsatisfiedLinkError e) {
-	    System.err.println("Error: could not link with the libSBML library."+
-			       "  It is likely\nyour " + varname +
-			       " environment variable does not include\nthe"+
-			       " directory containing the libsbml library file.");
-	    System.exit(1);
-	  } catch (ClassNotFoundException e) {
-	    System.err.println("Error: unable to load the file libsbmlj.jar."+
-			       "  It is likely\nyour " + varname + " environment"+
-			       " variable or CLASSPATH variable\ndoes not include"+
-			       " the directory containing the libsbmlj.jar file.");
-	    System.exit(1);
-	  } catch (SecurityException e) {
-	    System.err.println("Could not load the libSBML library files due to a"+
-			       " security exception.");
-	    System.exit(1);
-	  }
-	  new BioSim();
+		String varname;
+
+		if (System.getProperty("mrj.version") != null)
+			varname = "DYLD_LIBRARY_PATH"; // We're on a Mac.
+		else
+			varname = "LD_LIBRARY_PATH"; // We're not on a Mac.
+		try {
+			System.loadLibrary("sbmlj");
+			// For extra safety, check that the jar file is in the classpath.
+			Class.forName("org.sbml.libsbml.libsbml");
+		}
+		catch (UnsatisfiedLinkError e) {
+			System.err.println("Error: could not link with the libSBML library."
+					+ "  It is likely\nyour " + varname + " environment variable does not include\nthe"
+					+ " directory containing the libsbml library file.");
+			System.exit(1);
+		}
+		catch (ClassNotFoundException e) {
+			System.err.println("Error: unable to load the file libsbmlj.jar." + "  It is likely\nyour "
+					+ varname + " environment" + " variable or CLASSPATH variable\ndoes not include"
+					+ " the directory containing the libsbmlj.jar file.");
+			System.exit(1);
+		}
+		catch (SecurityException e) {
+			System.err.println("Could not load the libSBML library files due to a"
+					+ " security exception.");
+			System.exit(1);
+		}
+		new BioSim();
 	}
 
 	public void copySim(String newSim) {
