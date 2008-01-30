@@ -131,7 +131,10 @@ public class Run implements ActionListener {
 			if (usingSad.isSelected()) {
 				abs.setProperty("simulation.run.termination.decider", "sad");
 				abs.setProperty("computation.analysis.sad.path", sadFile.getName());
-			}
+			} 
+		}
+		if (!usingSad.isSelected()) {
+		  abs.setProperty("simulation.run.termination.decider", "constraint");
 		}
 		if (usingSSA.isSelected() && selectedButtons.contains("monteCarlo")) {
 			abs.setProperty("simulation.time.series.species.level.file", ssaFile);

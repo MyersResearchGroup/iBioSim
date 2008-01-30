@@ -2815,7 +2815,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					else if (key.equals("monte.carlo.simulation.out.dir")) {
 					}
 					else if (key.equals("simulation.run.termination.decider")) {
-						if (!load.getProperty("simulation.run.termination.decider").equals("sad")) {
+						if (load.getProperty("simulation.run.termination.decider").equals("sad")) {
 							sad.setEnabled(true);
 							newSAD.setEnabled(true);
 							usingSAD.setSelected(true);
