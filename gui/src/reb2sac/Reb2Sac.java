@@ -76,6 +76,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 	 */
 	private Object[] interestingSpecies = new Object[0];
 
+	private Object[] allSpecies = new Object[0];
+
 	/*
 	 * List of species with termination conditions
 	 */
@@ -787,24 +789,24 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				listOfSpecs.add(species.getId());
 			}
 		}
-		Object[] list = listOfSpecs.toArray();
-		for (int i = 1; i < list.length; i++) {
-			String index = (String) list[i];
+		allSpecies = listOfSpecs.toArray();
+		for (int i = 1; i < allSpecies.length; i++) {
+			String index = (String) allSpecies[i];
 			int j = i;
-			while ((j > 0) && ((String) list[j - 1]).compareToIgnoreCase(index) > 0) {
-				list[j] = list[j - 1];
+			while ((j > 0) && ((String) allSpecies[j - 1]).compareToIgnoreCase(index) > 0) {
+				allSpecies[j] = allSpecies[j - 1];
 				j = j - 1;
 			}
-			list[j] = index;
+			allSpecies[j] = index;
 		}
-		intSpecies.setListData(list);
-		termCond.setListData(list);
+		intSpecies.setListData(allSpecies);
+		termCond.setListData(allSpecies);
 		int rem = availSpecies.getItemCount();
 		for (int i = 0; i < rem; i++) {
 			availSpecies.removeItemAt(0);
 		}
-		for (int i = 0; i < list.length; i++) {
-			availSpecies.addItem(((String) list[i]).replace(" ", "_"));
+		for (int i = 0; i < allSpecies.length; i++) {
+			availSpecies.addItem(((String) allSpecies[i]).replace(" ", "_"));
 		}
 		runFiles = false;
 		String[] searchForRunFiles = new File(root + separator + simName).list();
@@ -1888,7 +1890,15 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		String[] termCond = Buttons.getList(termConditions, terminations);
 		terminations.setSelectedIndices(index);
 		index = species.getSelectedIndices();
-		String[] intSpecies = Buttons.getList(interestingSpecies, species);
+		String[] intSpecies;
+		if (none.isSelected()) {
+		  intSpecies = new String[allSpecies.length];
+		  for (int j = 0; j < allSpecies.length; j++) {
+		    intSpecies[j] = (String)allSpecies[j];
+		  }
+		} else {
+		  intSpecies = Buttons.getList(interestingSpecies, species);
+		}
 		species.setSelectedIndices(index);
 		String selectedButtons = "";
 		double rap1 = 0.1;
@@ -2378,7 +2388,15 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		String[] termCond = Buttons.getList(termConditions, terminations);
 		terminations.setSelectedIndices(index);
 		index = species.getSelectedIndices();
-		String[] intSpecies = Buttons.getList(interestingSpecies, species);
+		String[] intSpecies;
+		if (none.isSelected()) {
+		  intSpecies = new String[allSpecies.length];
+		  for (int j = 0; j < allSpecies.length; j++) {
+		    intSpecies[j] = (String)allSpecies[j];
+		  }
+		} else {
+		  intSpecies = Buttons.getList(interestingSpecies, species);
+		}
 		species.setSelectedIndices(index);
 		String selectedButtons = "";
 		double rap1 = 0.1;
