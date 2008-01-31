@@ -656,7 +656,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		for (GraphSpecies g : graphed) {
 			old.add(g);
 		}
-		JPanel titlePanel = new JPanel(new GridLayout(4, 6));
+		JPanel titlePanel = new JPanel(new BorderLayout());
 		JLabel titleLabel = new JLabel("Title:");
 		JLabel xLabel = new JLabel("X-Axis Label:");
 		JLabel yLabel = new JLabel("Y-Axis Label:");
@@ -1112,7 +1112,6 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			JScrollPane scroll = new JScrollPane();
 			scroll.setPreferredSize(new Dimension(1050, 500));
 			JPanel editPanel = new JPanel(new BorderLayout());
-			editPanel.add(titlePanel, "North");
 			editPanel.add(specPanel, "Center");
 			editPanel.add(scrollpane, "West");
 			scroll.setViewportView(editPanel);
@@ -1300,37 +1299,42 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					}
 				}
 			});
-			titlePanel.add(titleLabel);
-			titlePanel.add(title);
-			titlePanel.add(xMin);
-			titlePanel.add(XMin);
-			titlePanel.add(yMin);
-			titlePanel.add(YMin);
-			titlePanel.add(xLabel);
-			titlePanel.add(x);
-			titlePanel.add(xMax);
-			titlePanel.add(XMax);
-			titlePanel.add(yMax);
-			titlePanel.add(YMax);
-			titlePanel.add(yLabel);
-			titlePanel.add(y);
-			titlePanel.add(xScale);
-			titlePanel.add(XScale);
-			titlePanel.add(yScale);
-			titlePanel.add(YScale);
-			titlePanel.add(new JPanel());
+			JPanel titlePanel1 = new JPanel(new GridLayout(3, 6));
+			JPanel titlePanel2 = new JPanel(new GridLayout(1, 6));
+			titlePanel1.add(titleLabel);
+			titlePanel1.add(title);
+			titlePanel1.add(xMin);
+			titlePanel1.add(XMin);
+			titlePanel1.add(yMin);
+			titlePanel1.add(YMin);
+			titlePanel1.add(xLabel);
+			titlePanel1.add(x);
+			titlePanel1.add(xMax);
+			titlePanel1.add(XMax);
+			titlePanel1.add(yMax);
+			titlePanel1.add(YMax);
+			titlePanel1.add(yLabel);
+			titlePanel1.add(y);
+			titlePanel1.add(xScale);
+			titlePanel1.add(XScale);
+			titlePanel1.add(yScale);
+			titlePanel1.add(YScale);
+			titlePanel2.add(new JPanel());
 			JPanel deselectPanel = new JPanel();
 			deselectPanel.add(deselect);
-			titlePanel.add(deselectPanel);
-			titlePanel.add(new JPanel());
-			titlePanel.add(new JPanel());
-			titlePanel.add(new JPanel());
-			titlePanel.add(resize);
+			titlePanel2.add(deselectPanel);
+			titlePanel2.add(new JPanel());
+			titlePanel2.add(new JPanel());
+			titlePanel2.add(new JPanel());
+			titlePanel2.add(resize);
+			titlePanel.add(titlePanel1, "Center");
+			titlePanel.add(titlePanel2, "South");
 			// JPanel buttonPanel = new JPanel();
 			// buttonPanel.add(ok);
 			// buttonPanel.add(deselect);
 			// buttonPanel.add(cancel);
 			JPanel all = new JPanel(new BorderLayout());
+			all.add(titlePanel, "North");
 			all.add(scroll, "Center");
 			// all.add(buttonPanel, "South");
 			Object[] options = { "Ok", "Cancel" };
@@ -3659,7 +3663,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		for (GraphProbs g : probGraphed) {
 			old.add(g);
 		}
-		JPanel titlePanel = new JPanel(new GridLayout(2, 6));
+		JPanel titlePanel = new JPanel(new BorderLayout());
 		JLabel titleLabel = new JLabel("Title:");
 		JLabel xLabel = new JLabel("X-Axis Label:");
 		JLabel yLabel = new JLabel("Y-Axis Label:");
@@ -3697,10 +3701,11 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					directories.add(file);
 					DefaultMutableTreeNode d = new DefaultMutableTreeNode(file);
 					for (String f : new File(outDir + separator + file).list()) {
-						if (f.contains(".txt") && f.contains("sim-rep")) {
+						if (f.equals("sim-rep.txt")) {
 							d.add(new DefaultMutableTreeNode(f.substring(0, f.length() - 4)));
 						}
 					}
+					simDir.add(d);
 				}
 			}
 		}
@@ -3849,7 +3854,6 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			JScrollPane scroll = new JScrollPane();
 			scroll.setPreferredSize(new Dimension(1050, 500));
 			JPanel editPanel = new JPanel(new BorderLayout());
-			editPanel.add(titlePanel, "North");
 			editPanel.add(specPanel, "Center");
 			editPanel.add(scrollpane, "West");
 			scroll.setViewportView(editPanel);
@@ -3867,21 +3871,26 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					}
 				}
 			});
-			titlePanel.add(titleLabel);
-			titlePanel.add(title);
-			titlePanel.add(xLabel);
-			titlePanel.add(x);
-			titlePanel.add(yLabel);
-			titlePanel.add(y);
-			titlePanel.add(new JPanel());
+			JPanel titlePanel1 = new JPanel(new GridLayout(1, 6));
+			JPanel titlePanel2 = new JPanel(new GridLayout(1, 6));
+			titlePanel1.add(titleLabel);
+			titlePanel1.add(title);
+			titlePanel1.add(xLabel);
+			titlePanel1.add(x);
+			titlePanel1.add(yLabel);
+			titlePanel1.add(y);
+			titlePanel2.add(new JPanel());
 			JPanel deselectPanel = new JPanel();
 			deselectPanel.add(deselect);
-			titlePanel.add(deselectPanel);
-			titlePanel.add(new JPanel());
-			titlePanel.add(new JPanel());
-			titlePanel.add(new JPanel());
-			titlePanel.add(new JPanel());
+			titlePanel2.add(deselectPanel);
+			titlePanel2.add(new JPanel());
+			titlePanel2.add(new JPanel());
+			titlePanel2.add(new JPanel());
+			titlePanel2.add(new JPanel());
+			titlePanel.add(titlePanel1, "Center");
+			titlePanel.add(titlePanel2, "South");
 			JPanel all = new JPanel(new BorderLayout());
+			all.add(titlePanel, "North");
 			all.add(scroll, "Center");
 			Object[] options = { "Ok", "Cancel" };
 			int value = JOptionPane.showOptionDialog(biomodelsim.frame(), all, "Edit Probability Graph",
