@@ -214,7 +214,6 @@ public class Button_Enabling {
 		stepLabel.setEnabled(false);
 		step.setEnabled(false);
 		errorLabel.setEnabled(false);
-		absErr.setEnabled(false);
 		limitLabel.setEnabled(true);
 		limit.setEnabled(true);
 		intervalLabel.setEnabled(true);
@@ -230,6 +229,7 @@ public class Button_Enabling {
 		simulators.addItem("emc-sim");
 		simulators.addItem("bunker");
 		simulators.addItem("nmc");
+		absErr.setEnabled(false);
 	}
 
 	/**
