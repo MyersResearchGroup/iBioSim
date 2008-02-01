@@ -371,7 +371,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		runsLabel.setEnabled(false);
 		stepLabel.setEnabled(false);
 		errorLabel.setEnabled(true);
-		// absErr.setEnabled(true);
+		absErr.setEnabled(false);
 		JPanel odeMonteAndMarkovPanel = new JPanel();
 		odeMonteAndMarkovPanel.add(choose2);
 		odeMonteAndMarkovPanel.add(ODE);
@@ -950,6 +950,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			overwrite.setEnabled(false);
 			append.setEnabled(false);
 			choose3.setEnabled(false);
+			absErr.setEnabled(false);
 		}
 		// if the dot Radio Button is selected
 		else if (e.getSource() == dot) {
@@ -959,6 +960,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			overwrite.setEnabled(false);
 			append.setEnabled(false);
 			choose3.setEnabled(false);
+			absErr.setEnabled(false);
 		}
 		// if the xhtml Radio Button is selected
 		else if (e.getSource() == xhtml) {
@@ -968,6 +970,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			overwrite.setEnabled(false);
 			append.setEnabled(false);
 			choose3.setEnabled(false);
+			absErr.setEnabled(false);
 		}
 		// if the add interesting species button is clicked
 		else if (e.getSource() == addIntSpecies) {
@@ -3014,6 +3017,32 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					editSAD.setEnabled(true);
 					removeSAD.setEnabled(true);
 				}
+				if (load.containsKey("simulation.time.series.species.level.file")) {
+					usingSSA.doClick();
+				}
+				else {
+					description.setEnabled(true);
+					explanation.setEnabled(true);
+					simulators.setEnabled(true);
+					simulatorsLabel.setEnabled(true);
+					newSSA.setEnabled(false);
+					usingSSA.setSelected(false);
+					ssa.setEnabled(false);
+					timeLabel.setEnabled(false);
+					time.setEnabled(false);
+					availSpecies.setEnabled(false);
+					ssaMod.setEnabled(false);
+					ssaModNum.setEnabled(false);
+					addSSA.setEnabled(false);
+					editSSA.setEnabled(false);
+					removeSSA.setEnabled(false);
+					if (!nary.isSelected()) {
+						ODE.setEnabled(true);
+					}
+					else {
+						markov.setEnabled(true);
+					}
+				}
 				if (load.containsKey("reb2sac.simulation.method")) {
 					if (load.getProperty("reb2sac.simulation.method").equals("ODE")) {
 						ODE.setSelected(true);
@@ -3026,6 +3055,9 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 						Button_Enabling.enableODE(seed, seedLabel, runs, runsLabel, stepLabel, step,
 								errorLabel, absErr, limitLabel, limit, intervalLabel, interval, simulators,
 								simulatorsLabel, explanation, description, usingSSA);
+						if (load.containsKey("selected.simulator")) {
+						  simulators.setSelectedItem(load.getProperty("selected.simulator"));
+						}
 					}
 					else if (load.getProperty("reb2sac.simulation.method").equals("monteCarlo")) {
 						monteCarlo.setSelected(true);
@@ -3037,30 +3069,38 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 						Button_Enabling.enableMonteCarlo(seed, seedLabel, runs, runsLabel, stepLabel, step,
 								errorLabel, absErr, limitLabel, limit, intervalLabel, interval, simulators,
 								simulatorsLabel, explanation, description, usingSSA);
+						if (load.containsKey("selected.simulator")) {
+						  simulators.setSelectedItem(load.getProperty("selected.simulator"));
+						}
+						absErr.setEnabled(false);
 					}
 					else if (load.getProperty("reb2sac.simulation.method").equals("markov")) {
 						markov.setSelected(true);
 						Button_Enabling.enableMarkov(seed, seedLabel, runs, runsLabel, stepLabel, step,
 								errorLabel, absErr, limitLabel, limit, intervalLabel, interval, simulators,
 								simulatorsLabel, explanation, description, usingSSA);
+						absErr.setEnabled(false);
 					}
 					else if (load.getProperty("reb2sac.simulation.method").equals("SBML")) {
 						sbml.setSelected(true);
 						Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel, stepLabel,
 								step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval, simulators,
 								simulatorsLabel, explanation, description);
+						absErr.setEnabled(false);
 					}
 					else if (load.getProperty("reb2sac.simulation.method").equals("Network")) {
 						dot.setSelected(true);
 						Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel, stepLabel,
 								step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval, simulators,
 								simulatorsLabel, explanation, description);
+						absErr.setEnabled(false);
 					}
 					else if (load.getProperty("reb2sac.simulation.method").equals("Browser")) {
 						xhtml.setSelected(true);
 						Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel, stepLabel,
 								step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval, simulators,
 								simulatorsLabel, explanation, description);
+						absErr.setEnabled(false);
 					}
 				}
 				if (load.containsKey("reb2sac.abstraction.method")) {
@@ -3108,35 +3148,10 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				if (load.containsKey("reb2sac.operator.max.concentration.threshold")) {
 					maxCon.setText(load.getProperty("reb2sac.operator.max.concentration.threshold"));
 				}
-				if (load.containsKey("simulation.time.series.species.level.file")) {
-					usingSSA.doClick();
-				}
-				else {
-					description.setEnabled(true);
-					explanation.setEnabled(true);
-					simulators.setEnabled(true);
-					simulatorsLabel.setEnabled(true);
-					newSSA.setEnabled(false);
-					usingSSA.setSelected(false);
-					ssa.setEnabled(false);
-					timeLabel.setEnabled(false);
-					time.setEnabled(false);
-					availSpecies.setEnabled(false);
-					ssaMod.setEnabled(false);
-					ssaModNum.setEnabled(false);
-					addSSA.setEnabled(false);
-					editSSA.setEnabled(false);
-					removeSSA.setEnabled(false);
-					if (!nary.isSelected()) {
-						ODE.setEnabled(true);
-					}
-					else {
-						markov.setEnabled(true);
-					}
-				}
-			}
-			if (load.containsKey("selected.simulator")) {
-				simulators.setSelectedItem(load.getProperty("selected.simulator"));
+			} else {
+			  if (load.containsKey("selected.simulator")) {
+			    simulators.setSelectedItem(load.getProperty("selected.simulator"));
+			  }
 			}
 			change = false;
 		}
