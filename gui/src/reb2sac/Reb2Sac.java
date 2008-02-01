@@ -1895,12 +1895,13 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		index = species.getSelectedIndices();
 		String[] intSpecies;
 		if (none.isSelected()) {
-		  intSpecies = new String[allSpecies.length];
-		  for (int j = 0; j < allSpecies.length; j++) {
-		    intSpecies[j] = (String)allSpecies[j];
-		  }
-		} else {
-		  intSpecies = Buttons.getList(interestingSpecies, species);
+			intSpecies = new String[allSpecies.length];
+			for (int j = 0; j < allSpecies.length; j++) {
+				intSpecies[j] = (String) allSpecies[j];
+			}
+		}
+		else {
+			intSpecies = Buttons.getList(interestingSpecies, species);
 		}
 		species.setSelectedIndices(index);
 		String selectedButtons = "";
@@ -2393,12 +2394,13 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		index = species.getSelectedIndices();
 		String[] intSpecies;
 		if (none.isSelected()) {
-		  intSpecies = new String[allSpecies.length];
-		  for (int j = 0; j < allSpecies.length; j++) {
-		    intSpecies[j] = (String)allSpecies[j];
-		  }
-		} else {
-		  intSpecies = Buttons.getList(interestingSpecies, species);
+			intSpecies = new String[allSpecies.length];
+			for (int j = 0; j < allSpecies.length; j++) {
+				intSpecies[j] = (String) allSpecies[j];
+			}
+		}
+		else {
+			intSpecies = Buttons.getList(interestingSpecies, species);
 		}
 		species.setSelectedIndices(index);
 		String selectedButtons = "";
@@ -3056,7 +3058,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 								errorLabel, absErr, limitLabel, limit, intervalLabel, interval, simulators,
 								simulatorsLabel, explanation, description, usingSSA);
 						if (load.containsKey("selected.simulator")) {
-						  simulators.setSelectedItem(load.getProperty("selected.simulator"));
+							simulators.setSelectedItem(load.getProperty("selected.simulator"));
 						}
 					}
 					else if (load.getProperty("reb2sac.simulation.method").equals("monteCarlo")) {
@@ -3070,7 +3072,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 								errorLabel, absErr, limitLabel, limit, intervalLabel, interval, simulators,
 								simulatorsLabel, explanation, description, usingSSA);
 						if (load.containsKey("selected.simulator")) {
-						  simulators.setSelectedItem(load.getProperty("selected.simulator"));
+							simulators.setSelectedItem(load.getProperty("selected.simulator"));
 						}
 						absErr.setEnabled(false);
 					}
@@ -3148,10 +3150,11 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				if (load.containsKey("reb2sac.operator.max.concentration.threshold")) {
 					maxCon.setText(load.getProperty("reb2sac.operator.max.concentration.threshold"));
 				}
-			} else {
-			  if (load.containsKey("selected.simulator")) {
-			    simulators.setSelectedItem(load.getProperty("selected.simulator"));
-			  }
+			}
+			else {
+				if (load.containsKey("selected.simulator")) {
+					simulators.setSelectedItem(load.getProperty("selected.simulator"));
+				}
 			}
 			change = false;
 		}
