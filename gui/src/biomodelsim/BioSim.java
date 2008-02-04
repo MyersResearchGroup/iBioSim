@@ -530,7 +530,7 @@ public class BioSim implements MouseListener, ActionListener {
 
 				GCMParser parser = new GCMParser(tree.getFile());
 				GeneticNetwork network = parser.buildNetwork();
-				network.outputSBML(root+separator+sbmlFile);
+				network.outputSBML(root + separator + sbmlFile);
 				refreshTree();
 				addTab(sbmlFile, new SBML_Editor(root + separator + sbmlFile,
 						null, log, this, null, null), "SBML Editor");
@@ -558,9 +558,9 @@ public class BioSim implements MouseListener, ActionListener {
 							.substring(filename.lastIndexOf('\\') + 1);
 				}
 				File work = new File(directory);
-				addTab(theFile, new GCM2SBMLEditor(work.getAbsolutePath(), theFile, this), "GCM Editor");
-				
-				
+				addTab(theFile, new GCM2SBMLEditor(work.getAbsolutePath(),
+						theFile, this), "GCM Editor");
+
 			} catch (Exception e1) {
 				JOptionPane.showMessageDialog(frame,
 						"Unable to open gcm file editor.", "Error",
@@ -962,17 +962,80 @@ public class BioSim implements MouseListener, ActionListener {
 		else if (e.getSource() == newCircuit) {
 			if (root != null) {
 				try {
-					addTab("GCM Editor", new GCM2SBMLEditor(root+separator, null, this), "GCM Editor");
-					refreshTree();
+					String simName = JOptionPane.showInputDialog(frame,
+							"Enter GCM Model ID:", "Model ID",
+							JOptionPane.PLAIN_MESSAGE);
+					if (simName != null && !simName.trim().equals("")) {
+						simName = simName.trim();
+						if (simName.length() > 4) {
+							if (!simName.substring(simName.length() - 4)
+									.equals(".gcm")) {
+								simName += ".gcm";
+							}
+						} else {
+							simName += ".gcm";
+						}
+						String modelID = "";
+						if (simName.length() > 3) {
+							if (simName.substring(simName.length() - 4).equals(
+									".gcm")) {
+								modelID = simName.substring(0,
+										simName.length() - 4);
+							} else {
+								modelID = simName.substring(0,
+										simName.length() - 3);
+							}
+						}
+						if (!(IDpat.matcher(modelID).matches())) {
+							JOptionPane
+									.showMessageDialog(
+											frame,
+											"A model ID can only contain letters, numbers, and underscores.",
+											"Invalid ID",
+											JOptionPane.ERROR_MESSAGE);
+						} else {
+							File f = new File(root + separator + simName);
+							if (f.exists()) {
+								Object[] options = { "Overwrite", "Cancel" };
+								int value = JOptionPane
+										.showOptionDialog(
+												frame,
+												"File already exists."
+														+ "\nDo you want to overwrite?",
+												"Overwrite",
+												JOptionPane.YES_NO_OPTION,
+												JOptionPane.PLAIN_MESSAGE,
+												null, options, options[0]);
+								if (value == JOptionPane.YES_OPTION) {
+									File dir = new File(root + separator
+											+ simName);
+									if (dir.isDirectory()) {
+										deleteDir(dir);
+									} else {
+										System.gc();
+										dir.delete();
+									}
+									for (int i = 0; i < tab.getTabCount(); i++) {
+										if (tab.getTitleAt(i).equals(simName)) {
+											tab.remove(i);
+										}
+									}
+								} else {
+									return;
+								}
+							}
+							f.createNewFile();
+
+							addTab(f.getName(), new GCM2SBMLEditor(root
+									+ separator, f.getName(), this), "GCM Editor");
+							refreshTree();
+						}
+					}
 				} catch (Exception e1) {
 					JOptionPane.showMessageDialog(frame,
 							"Unable to create new model.", "Error",
 							JOptionPane.ERROR_MESSAGE);
 				}
-			} else {
-				JOptionPane.showMessageDialog(frame,
-						"You must open or create a project first.", "Error",
-						JOptionPane.ERROR_MESSAGE);
 			}
 		}
 		// if the new SBML model menu item is selected
@@ -1857,10 +1920,9 @@ public class BioSim implements MouseListener, ActionListener {
 	 */
 	public int save(int index) {
 		if (tab.getComponentAt(index).getName().contains(("GCM"))) {
-			//TODO:  Need a dirty bit
+			// TODO: Need a dirty bit
 			return 1;
-		}
-		else if (tab.getComponentAt(index).getName().equals("SBML Editor")) {
+		} else if (tab.getComponentAt(index).getName().equals("SBML Editor")) {
 			if (((SBML_Editor) tab.getComponentAt(index)).hasChanged()) {
 				Object[] options = { "Yes", "No", "Cancel" };
 				int value = JOptionPane.showOptionDialog(frame,
@@ -2476,8 +2538,9 @@ public class BioSim implements MouseListener, ActionListener {
 
 				GCMParser parser = new GCMParser(tree.getFile());
 				GeneticNetwork network = parser.buildNetwork();
-				network.outputSBML(root+separator+simName+separator+sbmlFile);
-				network.outputSBML(root+separator+sbmlFile);
+				network.outputSBML(root + separator + simName + separator
+						+ sbmlFile);
+				network.outputSBML(root + separator + sbmlFile);
 				refreshTree();
 
 				sbmlFile = root
