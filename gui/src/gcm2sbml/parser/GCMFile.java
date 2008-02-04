@@ -1,7 +1,8 @@
 package gcm2sbml.parser;
 
+import gcm2sbml.network.GeneticNetwork;
+import gcm2sbml.network.Reaction;
 import gcm2sbml.network.SpeciesInterface;
-import gcm2sbml.util.Utility;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -14,8 +15,6 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.swing.event.ListDataListener;
-
 /**
  * This class describes a GCM file
  * 
@@ -24,10 +23,14 @@ import javax.swing.event.ListDataListener;
  * @email namphuon@cs.utah.edu
  */
 public class GCMFile {
-	
+
 	public GCMFile() {
 		species = new HashMap<String, Properties>();
 		influences = new HashMap<String, Properties>();
+		promoters = new HashMap<String, Properties>();
+		globalParameters = new HashMap<String, String>();
+		promoters.put("none", null);
+		loadDefaultParameters();
 	}
 
 	public void save(String filename) {
@@ -56,7 +59,15 @@ public class GCMFile {
 				buffer.deleteCharAt(buffer.length() - 1);
 				buffer.append("]\n");
 			}
-			buffer.append("}");
+			buffer.append("}\nGlobal {\n");			
+			for (String s : defaultParameters.keySet()) {
+				String value = defaultParameters.get(s);
+				if (globalParameters.containsKey(s)) {
+					value = globalParameters.get(s);
+				}
+				buffer.append(s + "=" + value + "\n");
+			}
+			buffer.append("}\n");
 			p.print(buffer);
 			p.close();
 		} catch (FileNotFoundException e) {
@@ -66,6 +77,11 @@ public class GCMFile {
 	}
 
 	public void load(String filename) {
+		species = new HashMap<String, Properties>();
+		influences = new HashMap<String, Properties>();
+		promoters = new HashMap<String, Properties>();
+		globalParameters = new HashMap<String, String>();
+		promoters.put("none", null);
 		StringBuffer data = new StringBuffer();
 		try {
 			BufferedReader in = new BufferedReader(new FileReader(filename));
@@ -81,10 +97,22 @@ public class GCMFile {
 
 		parseStates(data);
 		parseInfluences(data);
+		parseGlobal(data);
+	}
+
+	public void changePromoterName(String oldName, String newName) {
+		for (Properties p : influences.values()) {
+			if (p.containsKey(Reaction.PROMOTER)
+					&& p.getProperty(Reaction.PROMOTER).equals(oldName)) {
+				p.setProperty(Reaction.PROMOTER, newName);
+			}
+		}
+		promoters.put(newName, promoters.get(oldName));
+		promoters.remove(oldName);
 	}
 
 	public void changeSpeciesName(String oldName, String newName) {
-		String[] sArray = new String[influences.keySet().size()]; 
+		String[] sArray = new String[influences.keySet().size()];
 		sArray = influences.keySet().toArray(sArray);
 		for (int i = 0; i < sArray.length; i++) {
 			String s = sArray[i];
@@ -104,21 +132,30 @@ public class GCMFile {
 				} else {
 					newInfluenceName = newInfluenceName + " -> " + output;
 				}
-				species.put(newName, species.get(oldName));
-				species.remove(oldName);
-				influences.put(newInfluenceName, influences.get(input + " -> " + output));
+				influences.put(newInfluenceName, influences.get(input + " -> "
+						+ output));
 				influences.remove(input + " -> " + output);
 			}
-
 		}
+		species.put(newName, species.get(oldName));
+		species.remove(oldName);
 	}
 
 	public void addSpecies(String name, Properties property) {
 		species.put(name, property);
 	}
 
+	public void addPromoter(String name, Properties properties) {
+		promoters.put(name, properties);
+	}
+
 	public void addInfluences(String name, Properties property) {
 		influences.put(name, property);
+		// Now check to see if a promoter exists in the property
+		if (property.containsKey("promoter")) {
+			promoters.put(property.getProperty("promoter"), null);
+		}
+
 	}
 
 	public void removeSpecies(String name) {
@@ -162,6 +199,29 @@ public class GCMFile {
 		return true;
 	}
 
+	/**
+	 * Checks to see if removing promoter is okay
+	 * 
+	 * @param name
+	 *            promoter to remove
+	 * @return true if promoter is in no influences
+	 */
+	public boolean removePromoterCheck(String name) {
+		for (Properties p : influences.values()) {
+			if (p.containsKey(Reaction.PROMOTER)
+					&& p.getProperty(Reaction.PROMOTER).equals(name)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	public void removePromoter(String name) {
+		if (name != null && promoters.containsKey(name)) {
+			promoters.remove(name);
+		}
+	}
+
 	public void removeInfluence(String name) {
 		if (name != null && influences.containsKey(name)) {
 			influences.remove(name);
@@ -182,6 +242,36 @@ public class GCMFile {
 		return matcher.group(3);
 	}
 
+	public String[] getPromotersAsArray() {
+		String[] s = new String[promoters.size()];
+		s = promoters.keySet().toArray(s);
+		return s;
+	}
+
+	public HashMap<String, Properties> getPromoters() {
+		return promoters;
+	}
+
+	public HashMap<String, String> getGlobalParameters() {
+		return globalParameters;
+	}
+
+	public HashMap<String, String> getDefaultParameters() {
+		return defaultParameters;
+	}
+
+	public String getParameter(String parameter) {
+		if (globalParameters.containsKey(parameter)) {
+			return globalParameters.get(parameter);
+		} else {
+			return defaultParameters.get(parameter);
+		}
+	}
+
+	public void setParameter(String parameter, String value) {
+		globalParameters.put(parameter, value);
+	}
+
 	private void parseStates(StringBuffer data) {
 		Pattern pattern = Pattern.compile(STATE);
 		Pattern propPattern = Pattern.compile(PROPERTY);
@@ -194,6 +284,19 @@ public class GCMFile {
 				properties.put(propMatcher.group(1), propMatcher.group(2));
 			}
 			species.put(name, properties);
+		}
+	}
+
+	private void parseGlobal(StringBuffer data) {
+		Pattern pattern = Pattern.compile(GLOBAL);
+		Pattern propPattern = Pattern.compile(PROPERTY);
+		Matcher matcher = pattern.matcher(data.toString());
+		if (matcher.find()) {
+			String s = matcher.group(1);
+			matcher = propPattern.matcher(s);
+			while (matcher.find()) {
+				globalParameters.put(matcher.group(1), matcher.group(2));
+			}
 		}
 	}
 
@@ -212,11 +315,46 @@ public class GCMFile {
 		}
 	}
 
+	private void loadDefaultParameters() {
+		defaultParameters = new HashMap<String, String>();
+		defaultParameters.put(SpeciesInterface.DECAY, DEG);
+		defaultParameters.put(SpeciesInterface.DIMER_CONST, KDIMER);
+		defaultParameters.put(GeneticNetwork.KBIO, KBIO);
+		defaultParameters.put(GeneticNetwork.KCOOP, KCOOP);
+		defaultParameters.put(GeneticNetwork.KREP, KREP);
+		defaultParameters.put(GeneticNetwork.KACT, KACT);
+		defaultParameters.put(GeneticNetwork.KRNAP, KRNAP);
+		defaultParameters.put(GeneticNetwork.RNAP, RNAP);
+		defaultParameters.put(GeneticNetwork.OCR, OCR);
+		defaultParameters.put(GeneticNetwork.BASAL, BASAL);
+		defaultParameters.put(GeneticNetwork.PROMOTERS, PROMOTERS);
+		defaultParameters.put(GeneticNetwork.STOC, STOC);
+		defaultParameters.put(GeneticNetwork.ACTIVATED, ACTIVATED);
+	}
+
 	private static final String STATE = "(^|\\n) *([^- \\n]*) *\\[(.*)\\]";
 	private static final String REACTION = "(^|\\n) *([^ \\n]*) *\\-\\> *([^ \n]*) *\\[([^\\]]*)]";
 	private static final String PARSE = "(^|\\n) *([^ \\n]*) *\\-\\> *([^ \n]*)";
 	private static final String PROPERTY = "([a-zA-Z]+)=([^\\s,]+)";
+	private static final String GLOBAL = "Global\\s\\{([^}]*)\\s\\}";
 
 	private HashMap<String, Properties> species;
 	private HashMap<String, Properties> influences;
+	private HashMap<String, Properties> promoters;
+	private HashMap<String, String> defaultParameters;
+	private HashMap<String, String> globalParameters;
+
+	private static final String DEG = ".0075";
+	private static final String KDIMER = ".05";
+	private static final String KBIO = ".05";
+	private static final String KCOOP = ".05";	
+	private static final String KREP = "2.2";
+	private static final String KACT = ".0033";
+	private static final String KRNAP = ".033";
+	private static final String OCR = ".25";
+	private static final String ACTIVATED = ".25";
+	private static final String PROMOTERS = "1";
+	private static final String STOC = "1";
+	private static final String RNAP = "30";
+	private static final String BASAL = ".0001";
 }

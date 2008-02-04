@@ -35,7 +35,7 @@ public class GCM2SBMLEditorTest extends TestCase {
 	
 	public void testView() {
 		System.loadLibrary("sbmlj");
-		GCM2SBMLEditor editor = new GCM2SBMLEditor("nand.dot");
+		GCM2SBMLEditor editor = new GCM2SBMLEditor("", "nand.dot", null);
 		editor.setVisible(true);
 		JFrame frame = new JFrame();
 		frame.add(editor);

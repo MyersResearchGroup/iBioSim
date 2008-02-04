@@ -299,8 +299,8 @@ public class GCMParser {
 
 	private static final String PROPERTY_STATE = "([a-zA-Z]+)=([^\\s,.\"]+)";
 
-	private static final String PROPERTY_QUOTE = "([a-zA-Z]+)=\"([^\\s,.\"]+)\"";
+	private static final String PROPERTY_QUOTE = "([a-zA-Z]+)=\"([^\\s,.\"]+)\"";	
 
 	// Debug level
-	private boolean debug = false;
+	private boolean debug = true;
 }
