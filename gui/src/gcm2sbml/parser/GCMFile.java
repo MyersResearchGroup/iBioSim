@@ -310,9 +310,12 @@ public class GCMFile {
 			Properties properties = new Properties();
 			while (propMatcher.find()) {
 				properties.put(propMatcher.group(1), propMatcher.group(2));
+				if (propMatcher.group(1).equals(PROMOTER) && !promoters.containsKey(propMatcher.group(1))) {
+					promoters.put(propMatcher.group(2).replaceAll("\"", ""), new Properties());
+				}
 			}
 			influences.put(name, properties);
-		}
+		}		
 	}
 
 	private void loadDefaultParameters() {
@@ -357,4 +360,5 @@ public class GCMFile {
 	private static final String STOC = "1";
 	private static final String RNAP = "30";
 	private static final String BASAL = ".0001";
+	private static final String PROMOTER = "promoter";
 }

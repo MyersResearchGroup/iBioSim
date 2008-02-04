@@ -147,7 +147,7 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 		KineticLaw kl = new KineticLaw();
 		kl.addParameter(new Parameter("kr", 1, GeneticNetwork
 				.getMoleTimeParameter(1)));
-		kl.addParameter(new Parameter("act", act, GeneticNetwork.getMoleParameter(2+(int)coop)));
+		kl.addParameter(new Parameter("act", act, GeneticNetwork.getMoleTimeParameter(2+(int)coop)));
 		kl.setFormula("act*" + "RNAP*" + specie.getName() + "^" + coop + "*"
 				+ promoter.getName() + "-kr*" + "RNAP_" + promoter.getName() + "_"
 				+ specie.getName());
