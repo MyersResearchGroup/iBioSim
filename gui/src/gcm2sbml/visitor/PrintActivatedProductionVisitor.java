@@ -13,6 +13,7 @@ import gcm2sbml.network.BaseSpecies;
 import gcm2sbml.network.BiochemicalSpecies;
 import gcm2sbml.network.ConstantSpecies;
 import gcm2sbml.network.DimerSpecies;
+import gcm2sbml.network.GeneticNetwork;
 import gcm2sbml.network.Promoter;
 import gcm2sbml.network.SpasticSpecies;
 import gcm2sbml.network.SpeciesInterface;
@@ -53,8 +54,8 @@ public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 		r.setReversible(false);
 		r.setFast(false);
 		KineticLaw kl = new KineticLaw();
-		kl.addParameter(new Parameter("koc", act));
-		kl.setFormula("act*" + "RNAP_" + promoter.getName()+ "_" + specie.getName());
+		kl.addParameter(new Parameter("koc", act, GeneticNetwork.getMoleTimeParameter(1)));
+		kl.setFormula("koc*" + "RNAP_" + promoter.getName()+ "_" + specie.getName());
 		r.setKineticLaw(kl);
 		document.getModel().addReaction(r);
 		
@@ -70,8 +71,8 @@ public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 		r.setReversible(false);
 		r.setFast(false);
 		KineticLaw kl = new KineticLaw();
-		kl.addParameter(new Parameter("koc", act));
-		kl.setFormula("act*" + "RNAP_" + promoter.getName()+ "_" + specie.getName());
+		kl.addParameter(new Parameter("koc", act, GeneticNetwork.getMoleTimeParameter(1)));
+		kl.setFormula("koc*" + "RNAP_" + promoter.getName()+ "_" + specie.getName());
 		r.setKineticLaw(kl);
 		document.getModel().addReaction(r);		
 	}
@@ -82,12 +83,12 @@ public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 		for (SpeciesInterface species : promoter.getOutputs()) {
 			r.addProduct(new SpeciesReference(species.getName(), stoc));
 		}
-		r.addProduct(new SpeciesReference("RNAP_"+ specie.getName() + "_" + promoter.getName(), 1));
+		r.addProduct(new SpeciesReference("RNAP_" + promoter.getName()+ "_" + specie.getName(), 1));
 		r.setReversible(false);
 		r.setFast(false);
 		KineticLaw kl = new KineticLaw();
-		kl.addParameter(new Parameter("koc", act));
-		kl.setFormula("act*" + "RNAP_" + promoter.getName()+ "_" + specie.getName());
+		kl.addParameter(new Parameter("koc", act, GeneticNetwork.getMoleTimeParameter(1)));
+		kl.setFormula("koc*" + "RNAP_" + promoter.getName()+ "_" + specie.getName());
 		r.setKineticLaw(kl);
 		document.getModel().addReaction(r);
 	}
@@ -102,8 +103,8 @@ public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 		r.setReversible(false);
 		r.setFast(false);
 		KineticLaw kl = new KineticLaw();
-		kl.addParameter(new Parameter("koc", act));
-		kl.setFormula("act*" + "RNAP_" + promoter.getName()+ "_" + specie.getName());
+		kl.addParameter(new Parameter("koc", act, GeneticNetwork.getMoleTimeParameter(1)));
+		kl.setFormula("koc*" + "RNAP_" + promoter.getName()+ "_" + specie.getName());
 		r.setKineticLaw(kl);
 		document.getModel().addReaction(r);
 	}
@@ -119,7 +120,7 @@ public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 		r.setFast(false);
 		KineticLaw kl = new KineticLaw();
 		kl.addParameter(new Parameter("koc", act));
-		kl.setFormula("act*" + "RNAP_" + promoter.getName()+ "_" + specie.getName());
+		kl.setFormula("koc*" + "RNAP_" + promoter.getName()+ "_" + specie.getName());
 		r.setKineticLaw(kl);
 		document.getModel().addReaction(r);
 	}

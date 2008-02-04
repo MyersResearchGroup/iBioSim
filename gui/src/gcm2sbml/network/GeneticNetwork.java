@@ -10,6 +10,7 @@ import gcm2sbml.visitor.PrintDimerizationVisitor;
 import gcm2sbml.visitor.PrintRepressionBindingVisitor;
 import gcm2sbml.visitor.PrintSpeciesVisitor;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
@@ -77,8 +78,6 @@ public class GeneticNetwork {
 			SBMLDocument document = new SBMLDocument(2, 3);
 			currentDocument = document;
 			Model m = document.createModel();
-			m.setName(filename);
-			m.setId(filename.replace(".", "_"));
 			document.setModel(m);
 
 			document.getModel().addCompartment(new Compartment(compartment));
@@ -105,6 +104,11 @@ public class GeneticNetwork {
 			System.out.println(counter++);
 			checkConsistancy(document);
 			PrintStream p = new PrintStream(new FileOutputStream(filename));
+			
+			m.setName(new File(filename).getName().replace(".gcm", ".sbml"));
+			m.setId(m.getName().replace(".sbml", ""));
+
+			
 			p.print(writer.writeToString(document));
 
 			p.close();

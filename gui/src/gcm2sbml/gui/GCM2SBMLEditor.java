@@ -155,9 +155,18 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 		removeInit = new RemoveButton("Remove Promoter", promoters);
 		editInit = new EditButton("Edit Promoter", promoters);
 		promoters.addAllItem(gcm.getPromoters().keySet());
-
+		
 		initPanel = Utility.createPanel(this, "Promoters", promoters, addInit,
 				removeInit, editInit);
+		mainPanelCenterCenter.add(initPanel);
+		
+		parameters = new PropertyList("Parameter List");
+		editInit = new EditButton("Edit Parameter", parameters);
+		parameters.addAllItem(gcm.getDefaultParameters().keySet());
+		initPanel = Utility.createPanel(this, "Parameters", parameters, null,
+				null, editInit);
+		
+				
 		mainPanelCenterCenter.add(initPanel);
 	}
 
@@ -226,6 +235,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 				GCMParser parser = new GCMParser(path + File.separator
 						+ fieldNameField.getText() + ".gcm");
 				GeneticNetwork network = parser.buildNetwork();
+				network.loadProperties(gcm);
 				// Finally, output to a file
 				network.outputSBML(path + File.separator
 						+ fieldNameField.getText() + ".sbml");
@@ -268,8 +278,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 												+ " because it is currently in other reactions");
 					}
 				}
-			}
-			else if (getName().contains("Promoter")) {
+			} else if (getName().contains("Promoter")) {
 				String name = null;
 				if (list.getSelectedValue() != null) {
 					name = list.getSelectedValue().toString();
@@ -333,6 +342,14 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 				}
 				PromoterPanel panel = new PromoterPanel(selected, list);
 			}
+			else if (getName().contains("Parameter")) {
+				String selected = null;
+				if (list.getSelectedValue() != null
+						&& getName().contains("Edit")) {
+					selected = list.getSelectedValue().toString();
+				}
+				ParameterPanel panel = new ParameterPanel(selected, list);
+			}
 		}
 
 		public String getName() {
@@ -342,99 +359,86 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 		private String name = null;
 		private PropertyList list = null;
 	}
-	
+
 	private class ParameterPanel extends JPanel {
-		public ParameterPanel(String selected, PropertyList speciesList) {
-			super(new GridLayout(2, 2));
-//			this.selected = selected;
-//			this.speciesList = speciesList;
-//
-//			JLabel idLabel = new JLabel("Name:");
-//			JLabel valueLabel = new JLabel("Value:");
-//
-//			JTextField idInput = new JTextField(40);
-//			idInput.setEditable(false);
-//			JTextField valueInput = new JTextField(40);
-//
-//			this.add(idLabel);
-//			this.add(idInput);
-//			this.add(valueLabel);
-//			this.add(valueInput);
-//
-//			String oldName = null;
-//			if (selected != null) {
-//				oldName = selected;
-//				Properties prop = gcm.getSpecies().get(selected);
-//				idInput.setText(selected);
-//				if (prop.containsKey("type")
-//						&& prop.getProperty("type").equals("spastic")) {
-//					typeInput.setSelectedItem("spastic");
-//				} else if (prop.containsKey("const")
-//						&& prop.getProperty("const").equals("true")) {
-//					typeInput.setSelectedItem("constant");
-//				}
-//				if (prop.containsKey("label")) {
-//					nameInput.setText(prop.getProperty("label").replace("\"",
-//							""));
-//				}
-//				if (prop.containsKey(SpeciesInterface.MAX_DIMER)) {
-//					dimerizationInput.setText(prop.getProperty(
-//							SpeciesInterface.MAX_DIMER).replace("\"", ""));
-//				} else {
-//					dimerizationInput.setText(Utility.DIMER);
-//				}
-//				if (prop.containsKey(SpeciesInterface.DECAY)) {
-//					decayInput.setText(prop.getProperty(SpeciesInterface.DECAY)
-//							.replace("\"", ""));
-//				} else {
-//					decayInput.setText(Utility.DECAY);
-//				}
-//				if (prop.containsKey(SpeciesInterface.DIMER_CONST)) {
-//					rateInput.setText(prop.getProperty(
-//							SpeciesInterface.DIMER_CONST).replace("\"", ""));
-//				} else {
-//					rateInput.setText(Utility.KDIMER);
-//				}
-//			}
-//
-//			int value = JOptionPane.showOptionDialog(new JFrame(), this,
-//					"Species Editor", JOptionPane.YES_NO_OPTION,
-//					JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-//			if (value == JOptionPane.YES_OPTION) {
-//				String id = idInput.getText();
-//				String name = nameInput.getText();
-//
-//				// Check to see if we need to add or edit
-//				Properties property = new Properties();
-//				String string = "";
-//				if (typeInput.getSelectedItem().equals("constant")) {
-//					property.put("const", "true");
-//				} else if (typeInput.getSelectedItem().equals("spastic")) {
-//					name = "spastic_" + name;
-//				}
-//				property.put("label", "\"" + name + "\"");
-//				property.put(SpeciesInterface.MAX_DIMER, "\""
-//						+ dimerizationInput.getText() + "\"");
-//				property.put(SpeciesInterface.DIMER_CONST, "\""
-//						+ rateInput.getText() + "\"");
-//				property.put(SpeciesInterface.DECAY, "\""
-//						+ decayInput.getText() + "\"");
-//				if (selected != null && !oldName.equals(id)) {
-//					gcm.changeSpeciesName(oldName, id);
-//					influences.changed();
-//				}
-//				gcm.addSpecies(id, property);
-//				speciesList.removeItem(oldName);
-//				speciesList.addItem(id);
-//
-//			} else if (value == JOptionPane.NO_OPTION) {
-//				System.out.println();
-//			}
+		public ParameterPanel(String selected, PropertyList parameterList) {
+			super(new GridLayout(1, 2));
+			this.selected = selected;
+			this.parameterList = parameterList;
+			JLabel nameLabel = new JLabel(selected);
+			JTextField valueInput = new JTextField(40);
+			this.add(nameLabel);
+			this.add(valueInput);
+
+			// JLabel kcoopLabel = new JLabel("kcoop:");
+			// JTextField kcoopInput = new JTextField(40);
+			// JLabel kbioLabel = new JLabel("kbio:");
+			// JTextField kbioInput = new JTextField(40);
+			// JLabel kdimerLabel = new JLabel("kdimer:");
+			// JTextField kdimerInput = new JTextField(40);
+			// JLabel krepLabel = new JLabel("krep:");
+			// JTextField krepInput = new JTextField(40);
+			// JLabel promotersLabel = new JLabel("promoters:");
+			// JTextField promotersInput = new JTextField(40);
+			// JLabel kactLabel = new JLabel("kact:");
+			// JTextField kactInput = new JTextField(40);
+			// JLabel ocrLabel = new JLabel("ocr:");
+			// JTextField ocrInput = new JTextField(40);
+			// JLabel stocLabel = new JLabel("stoc:");
+			// JTextField stocInput = new JTextField(40);
+			// JLabel activatedLabel = new JLabel("activated:");
+			// JTextField activatedInput = new JTextField(40);
+			// JLabel basalLabel = new JLabel("basal:");
+			// JTextField basalInput = new JTextField(40);
+			// JLabel RNAPLabel = new JLabel("RNAP:");
+			// JTextField RNAPInput = new JTextField(40);
+			// JLabel decayLabel = new JLabel("decay:");
+			// JTextField decayInput = new JTextField(40);
+			// JLabel rnap_bindingLabel = new JLabel("rnap_binding:");
+			// JTextField rnap_bindingInput = new JTextField(40);
+			//									
+			// this.add(kcoopLabel);
+			// this.add(kcoopInput);
+			// this.add(kbioLabel);
+			// this.add(kbioInput);
+			// this.add(kdimerLabel);
+			// this.add(kdimerInput);
+			// this.add(krepLabel);
+			// this.add(krepInput);
+			// this.add(promotersLabel);
+			// this.add(promotersInput);
+			// this.add(kactLabel);
+			// this.add(kactInput);
+			// this.add(ocrLabel);
+			// this.add(ocrInput);
+			// this.add(stocLabel);
+			// this.add(stocInput);
+			// this.add(activatedLabel);
+			// this.add(activatedInput);
+			// this.add(basalLabel);
+			// this.add(basalInput);
+			// this.add(RNAPLabel);
+			// this.add(RNAPInput);
+			// this.add(decayLabel);
+			// this.add(decayInput);
+			// this.add(rnap_bindingLabel);
+			// this.add(rnap_bindingInput);
+
+			valueInput.setText(gcm.getParameter(nameLabel.getText()) + "");
+
+			int value = JOptionPane.showOptionDialog(new JFrame(), this,
+					"Parameter Editor", JOptionPane.YES_NO_OPTION,
+					JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+			if (value == JOptionPane.YES_OPTION) {
+				gcm.setParameter(nameLabel.getText(), valueInput.getText());
+			} else if (value == JOptionPane.NO_OPTION) {
+				System.out.println();
+			}
 		}
 
 		private String selected = "";
-		private PropertyList speciesList = null;
-	}	
+		private PropertyList parameterList = null;
+	}
 
 	private class SpeciesPanel extends JPanel {
 		public SpeciesPanel(String selected, PropertyList speciesList) {

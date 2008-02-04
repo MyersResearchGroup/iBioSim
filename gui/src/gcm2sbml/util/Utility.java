@@ -57,32 +57,41 @@ public class Utility {
 			ArrayList<String> reactants, ArrayList<String> products) {
 		return "";
 	}
-	
+
 	public static Compartment makeCompartment(String id) {
 		Compartment c = new Compartment("default");
 		c.setConstant(true);
 		c.setSpatialDimensions(3);
 		return c;
 	}
-	
-	public static Species makeSpecies(String id, String compartment, double amount) {
+
+	public static Species makeSpecies(String id, String compartment,
+			double amount) {
 		Species specie = new Species(id, id);
 		specie.setCompartment(compartment);
 		specie.setInitialAmount(amount);
 		return specie;
 	}
-	
-	public static 	/* Create add/remove/edit panel */
-	JPanel createPanel(ActionListener listener, String panelName, JList panelJList,
-			JButton addButton, JButton removeButton, JButton editButton) {
+
+	public static/* Create add/remove/edit panel */
+	JPanel createPanel(ActionListener listener, String panelName,
+			JList panelJList, JButton addButton, JButton removeButton,
+			JButton editButton) {
 		JPanel Panel = new JPanel(new BorderLayout());
 		JPanel addRem = new JPanel();
-		addRem.add(addButton);
-		addRem.add(removeButton);
-		addRem.add(editButton);
-		addButton.addActionListener(listener);
-		removeButton.addActionListener(listener);
-		editButton.addActionListener(listener);
+		if (addButton != null) {
+			addButton.addActionListener(listener);
+			addRem.add(addButton);
+		}
+		if (removeButton != null) {
+			removeButton.addActionListener(listener);
+			addRem.add(removeButton);
+		}
+		if (editButton != null) {
+			addRem.add(editButton);
+			editButton.addActionListener(listener);
+		}
+						
 		JLabel panelLabel = new JLabel("List of " + panelName + ":");
 		JScrollPane scroll = new JScrollPane();
 		scroll.setMinimumSize(new Dimension(260, 220));
@@ -90,18 +99,20 @@ public class Utility {
 		scroll.setViewportView(panelJList);
 
 		if (listener instanceof MouseListener) {
-			panelJList.addMouseListener((MouseListener)listener);
-		}		
+			panelJList.addMouseListener((MouseListener) listener);
+		}
 		Panel.add(panelLabel, "North");
 		Panel.add(scroll, "Center");
 		Panel.add(addRem, "South");
 		return Panel;
 	}
 
-	public static final Pattern IDpat = Pattern.compile("([a-zA-Z]|_)([a-zA-Z]|[0-9]|_)*");
-	public static final Pattern NUMpat = Pattern.compile("([\\d]*[\\.\\d]?\\d+)");
+	public static final Pattern IDpat = Pattern
+			.compile("([a-zA-Z]|_)([a-zA-Z]|[0-9]|_)*");
+	public static final Pattern NUMpat = Pattern
+			.compile("([\\d]*[\\.\\d]?\\d+)");
 	private static Utility instance = null;
-	
+
 	public static final String DECAY = ".0075";
 	public static final String KDIMER = ".5";
 	public static final String DIMER = "1";
