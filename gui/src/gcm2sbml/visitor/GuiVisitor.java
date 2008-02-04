@@ -1,5 +1,7 @@
 package gcm2sbml.visitor;
 
+import gcm2sbml.gui.PropertyList;
+
 import javax.swing.JButton;
 
 public interface GuiVisitor {
@@ -9,4 +11,10 @@ public interface GuiVisitor {
 	 * @param button the button to visit
 	 */
 	public void visitButton(JButton button);
+	
+	/**
+	 * Visits a PropertyList
+	 * @param list the list to visit
+	 */
+	public void visitPropertyList(PropertyList list);
 }

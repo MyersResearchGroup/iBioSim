@@ -11,3 +11,4 @@ public interface VisitableGui {
 	 */
 	public void accept(GuiVisitor visitor);
 }
+

@@ -3,7 +3,7 @@ package gcm2sbml.gui;
 import javax.swing.JButton;
 
 public abstract class AbstractRunnableNamedButton extends JButton implements NamedObject,
-		RunnableGui {		
+		Runnable {		
 	
 	public AbstractRunnableNamedButton(String name) {
 		super(name);

@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -13,7 +14,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import org.sbml.libsbml.Compartment;
-import org.sbml.libsbml.Model;
 import org.sbml.libsbml.Species;
 
 /**
@@ -98,6 +98,12 @@ public class Utility {
 		return Panel;
 	}
 
-	
+	public static final Pattern IDpat = Pattern.compile("([a-zA-Z]|_)([a-zA-Z]|[0-9]|_)*");
+	public static final Pattern NUMpat = Pattern.compile("([\\d]*[\\.\\d]?\\d+)");
 	private static Utility instance = null;
+	
+	public static final String DECAY = ".0075";
+	public static final String KDIMER = ".5";
+	public static final String DIMER = "1";
+
 }

@@ -2,6 +2,7 @@ package gcm2sbml;
 
 
 import gcm2sbml.network.GeneticNetwork;
+import gcm2sbml.parser.GCMFile;
 import gcm2sbml.parser.GCMParser;
 
 import java.io.FileOutputStream;
@@ -53,15 +54,31 @@ public class GCMParserTest extends TestCase {
 	public void testConstructor() {
 		GCMParser parser = new GCMParser("nand.dot", true);
 		GeneticNetwork network = parser.buildNetwork();
-		network.loadProperties("celem.param");
+		network.loadProperties(new GCMFile());
 		SBMLDocument doc = network.outputSBML("nand.sbml");
 //		if (doc.checkConsistency() > 0) {
 //			for (int i = 0; i < doc.getNumErrors(); i++) {
 //				System.out.println(doc.getError(i).getMessage());
 //			}			
 //		}
-
 	}
+	
+	// Tests that parser can be constructed
+	public void testGCM() {
+		GCMFile file = new GCMFile();
+		file.load("nand.dot");
+		file.save("nand3.dot");
+		
+		GCMParser parser = new GCMParser("nand3.dot", true);
+		GeneticNetwork network = parser.buildNetwork();
+		network.loadProperties(new GCMFile());
+		SBMLDocument doc = network.outputSBML("nand3.sbml");
+//		if (doc.checkConsistency() > 0) {
+//			for (int i = 0; i < doc.getNumErrors(); i++) {
+//				System.out.println(doc.getError(i).getMessage());
+//			}			
+//		}
+	}	
 	
 	public void testRead() {
 		SBMLReader reader = new SBMLReader();

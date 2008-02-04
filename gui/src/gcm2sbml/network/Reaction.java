@@ -193,6 +193,12 @@ public class Reaction {
 	public static final String PROMOTER = "promoter";
 	public static final String COOP = "coop";
 	public static final String DIMER = "label";
+	public static final String KBINDING = "binding";
+	public static final String KRNAP = "rnap_binding";
+	public static final String KBIO = "kbio";
+	public static final String OCR = "ocr";
+	public static final String BASAL = "basal";
+	public static final String ACTIVATED = "activated";
 	
 	//State properties, only have a finite set of values
 	private Properties stateProperties = null;
