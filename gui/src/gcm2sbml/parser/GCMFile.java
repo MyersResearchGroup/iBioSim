@@ -153,7 +153,7 @@ public class GCMFile {
 		influences.put(name, property);
 		// Now check to see if a promoter exists in the property
 		if (property.containsKey("promoter")) {
-			promoters.put(property.getProperty("promoter"), null);
+			promoters.put(property.getProperty("promoter").replaceAll("\"", ""), new Properties());
 		}
 
 	}
