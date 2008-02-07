@@ -539,7 +539,7 @@ public class Run implements ActionListener {
 							}
 							if (simTab.getComponentAt(i).getName().equals("ProbGraph")) {
 								if (simTab.getComponentAt(i) instanceof Graph) {
-									// ((Graph) simTab.getComponentAt(i)).refresh();
+									((Graph) simTab.getComponentAt(i)).refresh();
 								}
 								else {
 									if (new File(filename.substring(0, filename.length()
@@ -565,7 +565,7 @@ public class Run implements ActionListener {
 					for (int i = 0; i < simTab.getComponentCount(); i++) {
 						if (simTab.getComponentAt(i).getName().equals("ProbGraph")) {
 							if (simTab.getComponentAt(i) instanceof Graph) {
-								// ((Graph) simTab.getComponentAt(i)).refresh();
+								((Graph) simTab.getComponentAt(i)).refresh();
 							}
 							else {
 								simTab.setComponentAt(i, new Graph(printer_track_quantity,
@@ -601,7 +601,7 @@ public class Run implements ActionListener {
 								}
 								if (simTab.getComponentAt(i).getName().equals("ProbGraph")) {
 									if (simTab.getComponentAt(i) instanceof Graph) {
-										// ((Graph) simTab.getComponentAt(i)).refresh();
+										((Graph) simTab.getComponentAt(i)).refresh();
 									}
 									else {
 										if (new File(filename.substring(0, filename.length()
@@ -633,7 +633,7 @@ public class Run implements ActionListener {
 								}
 								if (simTab.getComponentAt(i).getName().equals("ProbGraph")) {
 									if (simTab.getComponentAt(i) instanceof Graph) {
-										// ((Graph) simTab.getComponentAt(i)).refresh();
+										((Graph) simTab.getComponentAt(i)).refresh();
 									}
 									else {
 										if (new File(filename.substring(0, filename.length()
