@@ -146,7 +146,7 @@ public class GCMFile {
 	}
 
 	public void addPromoter(String name, Properties properties) {
-		promoters.put(name, properties);
+		promoters.put(name.replace("\"", ""), properties);
 	}
 
 	public void addInfluences(String name, Properties property) {
