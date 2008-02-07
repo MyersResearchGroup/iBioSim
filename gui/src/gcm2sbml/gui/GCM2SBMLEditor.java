@@ -509,6 +509,11 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 				} else {
 					rateInput.setText(Utility.KDIMER);
 				}
+			} else {
+				decayInput.setText(gcm.getParameter(SpeciesInterface.DECAY)
+						.replace("\"", ""));
+				dimerizationInput.setText("0");
+				rateInput.setText(gcm.getParameter(GeneticNetwork.KCOOP));
 			}
 
 			int value = JOptionPane.showOptionDialog(new JFrame(), this,
