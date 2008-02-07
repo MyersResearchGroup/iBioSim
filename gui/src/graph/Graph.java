@@ -1113,7 +1113,6 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			scroll.setPreferredSize(new Dimension(1050, 500));
 			JPanel editPanel = new JPanel(new BorderLayout());
 			editPanel.add(specPanel, "Center");
-			editPanel.add(scrollpane, "West");
 			scroll.setViewportView(editPanel);
 			// JButton ok = new JButton("Ok");
 			/*
@@ -1336,6 +1335,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			JPanel all = new JPanel(new BorderLayout());
 			all.add(titlePanel, "North");
 			all.add(scroll, "Center");
+			all.add(scrollpane, "West");
 			// all.add(buttonPanel, "South");
 			Object[] options = { "Ok", "Cancel" };
 			int value = JOptionPane.showOptionDialog(biomodelsim.frame(), all, "Edit Graph",
@@ -3109,107 +3109,113 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	}
 
 	public void refresh() {
-		double minY = 0;
-		double maxY = 0;
-		double scaleY = 0;
-		double minX = 0;
-		double maxX = 0;
-		double scaleX = 0;
-		try {
-			minY = Double.parseDouble(YMin.getText().trim());
-			maxY = Double.parseDouble(YMax.getText().trim());
-			scaleY = Double.parseDouble(YScale.getText().trim());
-			minX = Double.parseDouble(XMin.getText().trim());
-			maxX = Double.parseDouble(XMax.getText().trim());
-			scaleX = Double.parseDouble(XScale.getText().trim());
-			NumberFormat num = NumberFormat.getInstance();
-			num.setMaximumFractionDigits(4);
-			num.setGroupingUsed(false);
-			minY = Double.parseDouble(num.format(minY));
-			maxY = Double.parseDouble(num.format(maxY));
-			scaleY = Double.parseDouble(num.format(scaleY));
-			minX = Double.parseDouble(num.format(minX));
-			maxX = Double.parseDouble(num.format(maxX));
-			scaleX = Double.parseDouble(num.format(scaleX));
-		}
-		catch (Exception e1) {
-		}
-		ArrayList<XYSeries> graphData = new ArrayList<XYSeries>();
-		XYLineAndShapeRenderer rend = (XYLineAndShapeRenderer) chart.getXYPlot().getRenderer();
-		int thisOne = -1;
-		for (int i = 1; i < graphed.size(); i++) {
-			GraphSpecies index = graphed.get(i);
-			int j = i;
-			while ((j > 0)
-					&& (graphed.get(j - 1).getSpecies().compareToIgnoreCase(index.getSpecies()) > 0)) {
-				graphed.set(j, graphed.get(j - 1));
-				j = j - 1;
+		if (timeSeries) {
+			double minY = 0;
+			double maxY = 0;
+			double scaleY = 0;
+			double minX = 0;
+			double maxX = 0;
+			double scaleX = 0;
+			try {
+				minY = Double.parseDouble(YMin.getText().trim());
+				maxY = Double.parseDouble(YMax.getText().trim());
+				scaleY = Double.parseDouble(YScale.getText().trim());
+				minX = Double.parseDouble(XMin.getText().trim());
+				maxX = Double.parseDouble(XMax.getText().trim());
+				scaleX = Double.parseDouble(XScale.getText().trim());
+				NumberFormat num = NumberFormat.getInstance();
+				num.setMaximumFractionDigits(4);
+				num.setGroupingUsed(false);
+				minY = Double.parseDouble(num.format(minY));
+				maxY = Double.parseDouble(num.format(maxY));
+				scaleY = Double.parseDouble(num.format(scaleY));
+				minX = Double.parseDouble(num.format(minX));
+				maxX = Double.parseDouble(num.format(maxX));
+				scaleX = Double.parseDouble(num.format(scaleX));
 			}
-			graphed.set(j, index);
-		}
-		ArrayList<GraphSpecies> unableToGraph = new ArrayList<GraphSpecies>();
-		HashMap<String, ArrayList<ArrayList<Double>>> allData = new HashMap<String, ArrayList<ArrayList<Double>>>();
-		for (GraphSpecies g : graphed) {
-			if (g.getDirectory().equals("")) {
-				thisOne++;
-				rend.setSeriesVisible(thisOne, true);
-				rend.setSeriesLinesVisible(thisOne, g.getConnected());
-				rend.setSeriesShapesFilled(thisOne, g.getFilled());
-				rend.setSeriesShapesVisible(thisOne, g.getVisible());
-				rend.setSeriesPaint(thisOne, g.getShapeAndPaint().getPaint());
-				rend.setSeriesShape(thisOne, g.getShapeAndPaint().getShape());
-				if (!g.getRunNumber().equals("Average") && !g.getRunNumber().equals("Variance")
-						&& !g.getRunNumber().equals("Standard Deviation")) {
-					if (new File(outDir + separator + g.getRunNumber() + "."
-							+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
-						readGraphSpecies(outDir + separator + g.getRunNumber() + "."
-								+ printer_id.substring(0, printer_id.length() - 8), biomodelsim.frame());
-						ArrayList<ArrayList<Double>> data;
-						if (allData.containsKey(g.getRunNumber() + " " + g.getDirectory())) {
-							data = allData.get(g.getRunNumber() + " " + g.getDirectory());
-							for (int i = 2; i < graphSpecies.size(); i++) {
-								String index = graphSpecies.get(i);
-								int j = i;
-								while ((j > 1) && graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
-									graphSpecies.set(j, graphSpecies.get(j - 1));
-									j = j - 1;
+			catch (Exception e1) {
+			}
+			ArrayList<XYSeries> graphData = new ArrayList<XYSeries>();
+			XYLineAndShapeRenderer rend = (XYLineAndShapeRenderer) chart.getXYPlot().getRenderer();
+			int thisOne = -1;
+			for (int i = 1; i < graphed.size(); i++) {
+				GraphSpecies index = graphed.get(i);
+				int j = i;
+				while ((j > 0)
+						&& (graphed.get(j - 1).getSpecies().compareToIgnoreCase(index.getSpecies()) > 0)) {
+					graphed.set(j, graphed.get(j - 1));
+					j = j - 1;
+				}
+				graphed.set(j, index);
+			}
+			ArrayList<GraphSpecies> unableToGraph = new ArrayList<GraphSpecies>();
+			HashMap<String, ArrayList<ArrayList<Double>>> allData = new HashMap<String, ArrayList<ArrayList<Double>>>();
+			for (GraphSpecies g : graphed) {
+				if (g.getDirectory().equals("")) {
+					thisOne++;
+					rend.setSeriesVisible(thisOne, true);
+					rend.setSeriesLinesVisible(thisOne, g.getConnected());
+					rend.setSeriesShapesFilled(thisOne, g.getFilled());
+					rend.setSeriesShapesVisible(thisOne, g.getVisible());
+					rend.setSeriesPaint(thisOne, g.getShapeAndPaint().getPaint());
+					rend.setSeriesShape(thisOne, g.getShapeAndPaint().getShape());
+					if (!g.getRunNumber().equals("Average") && !g.getRunNumber().equals("Variance")
+							&& !g.getRunNumber().equals("Standard Deviation")) {
+						if (new File(outDir + separator + g.getRunNumber() + "."
+								+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
+							readGraphSpecies(outDir + separator + g.getRunNumber() + "."
+									+ printer_id.substring(0, printer_id.length() - 8), biomodelsim.frame());
+							ArrayList<ArrayList<Double>> data;
+							if (allData.containsKey(g.getRunNumber() + " " + g.getDirectory())) {
+								data = allData.get(g.getRunNumber() + " " + g.getDirectory());
+								for (int i = 2; i < graphSpecies.size(); i++) {
+									String index = graphSpecies.get(i);
+									int j = i;
+									while ((j > 1) && graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
+										graphSpecies.set(j, graphSpecies.get(j - 1));
+										j = j - 1;
+									}
+									graphSpecies.set(j, index);
 								}
-								graphSpecies.set(j, index);
 							}
-						}
-						else {
-							data = readData(outDir + separator + g.getRunNumber() + "."
-									+ printer_id.substring(0, printer_id.length() - 8), biomodelsim.frame(), chart
-									.getXYPlot().getRangeAxis().getLabel(), g.getRunNumber(), null);
-							for (int i = 2; i < graphSpecies.size(); i++) {
-								String index = graphSpecies.get(i);
-								ArrayList<Double> index2 = data.get(i);
-								int j = i;
-								while ((j > 1) && graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
-									graphSpecies.set(j, graphSpecies.get(j - 1));
-									data.set(j, data.get(j - 1));
-									j = j - 1;
+							else {
+								data = readData(outDir + separator + g.getRunNumber() + "."
+										+ printer_id.substring(0, printer_id.length() - 8), biomodelsim.frame(), chart
+										.getXYPlot().getRangeAxis().getLabel(), g.getRunNumber(), null);
+								for (int i = 2; i < graphSpecies.size(); i++) {
+									String index = graphSpecies.get(i);
+									ArrayList<Double> index2 = data.get(i);
+									int j = i;
+									while ((j > 1) && graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
+										graphSpecies.set(j, graphSpecies.get(j - 1));
+										data.set(j, data.get(j - 1));
+										j = j - 1;
+									}
+									graphSpecies.set(j, index);
+									data.set(j, index2);
 								}
-								graphSpecies.set(j, index);
-								data.set(j, index2);
+								allData.put(g.getRunNumber() + " " + g.getDirectory(), data);
 							}
-							allData.put(g.getRunNumber() + " " + g.getDirectory(), data);
-						}
-						boolean set = false;
-						for (int i = 1; i < graphSpecies.size(); i++) {
-							String compare = g.getID().replace('(', '~');
-							if (graphSpecies.get(i).equals(compare.split("~")[0].trim())) {
-								g.setNumber(i - 1);
-								set = true;
-							}
-						}
-						if (g.getNumber() + 1 < graphSpecies.size() && set) {
-							graphData.add(new XYSeries(g.getSpecies()));
-							if (data.size() != 0) {
-								for (int i = 0; i < (data.get(0)).size(); i++) {
-									graphData.get(graphData.size() - 1).add((data.get(0)).get(i),
-											(data.get(g.getNumber() + 1)).get(i));
+							boolean set = false;
+							for (int i = 1; i < graphSpecies.size(); i++) {
+								String compare = g.getID().replace(" (", "~");
+								if (graphSpecies.get(i).equals(compare.split("~")[0].trim())) {
+									g.setNumber(i - 1);
+									set = true;
 								}
+							}
+							if (g.getNumber() + 1 < graphSpecies.size() && set) {
+								graphData.add(new XYSeries(g.getSpecies()));
+								if (data.size() != 0) {
+									for (int i = 0; i < (data.get(0)).size(); i++) {
+										graphData.get(graphData.size() - 1).add((data.get(0)).get(i),
+												(data.get(g.getNumber() + 1)).get(i));
+									}
+								}
+							}
+							else {
+								unableToGraph.add(g);
+								thisOne--;
 							}
 						}
 						else {
@@ -3218,76 +3224,150 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						}
 					}
 					else {
-						unableToGraph.add(g);
-						thisOne--;
+						boolean ableToGraph = false;
+						try {
+							for (String s : new File(outDir).list()) {
+								if (s.length() > 3 && s.substring(0, 4).equals("run-")) {
+									ableToGraph = true;
+								}
+							}
+						}
+						catch (Exception e) {
+							ableToGraph = false;
+						}
+						if (ableToGraph) {
+							int nextOne = 1;
+							while (!new File(outDir + separator + "run-" + nextOne + "."
+									+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
+								nextOne++;
+							}
+							readGraphSpecies(outDir + separator + "run-" + nextOne + "."
+									+ printer_id.substring(0, printer_id.length() - 8), biomodelsim.frame());
+							ArrayList<ArrayList<Double>> data;
+							if (allData.containsKey(g.getRunNumber() + " " + g.getDirectory())) {
+								data = allData.get(g.getRunNumber() + " " + g.getDirectory());
+								for (int i = 2; i < graphSpecies.size(); i++) {
+									String index = graphSpecies.get(i);
+									int j = i;
+									while ((j > 1) && graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
+										graphSpecies.set(j, graphSpecies.get(j - 1));
+										j = j - 1;
+									}
+									graphSpecies.set(j, index);
+								}
+							}
+							else {
+								data = readData(outDir + separator + "run-1."
+										+ printer_id.substring(0, printer_id.length() - 8), biomodelsim.frame(), chart
+										.getXYPlot().getRangeAxis().getLabel(), g.getRunNumber().toLowerCase(), null);
+								for (int i = 2; i < graphSpecies.size(); i++) {
+									String index = graphSpecies.get(i);
+									ArrayList<Double> index2 = data.get(i);
+									int j = i;
+									while ((j > 1) && graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
+										graphSpecies.set(j, graphSpecies.get(j - 1));
+										data.set(j, data.get(j - 1));
+										j = j - 1;
+									}
+									graphSpecies.set(j, index);
+									data.set(j, index2);
+								}
+								allData.put(g.getRunNumber() + " " + g.getDirectory(), data);
+							}
+							boolean set = false;
+							for (int i = 1; i < graphSpecies.size(); i++) {
+								String compare = g.getID().replace(" (", "~");
+								if (graphSpecies.get(i).equals(compare.split("~")[0].trim())) {
+									g.setNumber(i - 1);
+									set = true;
+								}
+							}
+							if (g.getNumber() + 1 < graphSpecies.size() && set) {
+								graphData.add(new XYSeries(g.getSpecies()));
+								if (data.size() != 0) {
+									for (int i = 0; i < (data.get(0)).size(); i++) {
+										graphData.get(graphData.size() - 1).add((data.get(0)).get(i),
+												(data.get(g.getNumber() + 1)).get(i));
+									}
+								}
+							}
+							else {
+								unableToGraph.add(g);
+								thisOne--;
+							}
+						}
+						else {
+							unableToGraph.add(g);
+							thisOne--;
+						}
 					}
 				}
 				else {
-					boolean ableToGraph = false;
-					try {
-						for (String s : new File(outDir).list()) {
-							if (s.length() > 3 && s.substring(0, 4).equals("run-")) {
-								ableToGraph = true;
-							}
-						}
-					}
-					catch (Exception e) {
-						ableToGraph = false;
-					}
-					if (ableToGraph) {
-						int nextOne = 1;
-						while (!new File(outDir + separator + "run-" + nextOne + "."
+					thisOne++;
+					rend.setSeriesVisible(thisOne, true);
+					rend.setSeriesLinesVisible(thisOne, g.getConnected());
+					rend.setSeriesShapesFilled(thisOne, g.getFilled());
+					rend.setSeriesShapesVisible(thisOne, g.getVisible());
+					rend.setSeriesPaint(thisOne, g.getShapeAndPaint().getPaint());
+					rend.setSeriesShape(thisOne, g.getShapeAndPaint().getShape());
+					if (!g.getRunNumber().equals("Average") && !g.getRunNumber().equals("Variance")
+							&& !g.getRunNumber().equals("Standard Deviation")) {
+						if (new File(outDir + separator + g.getDirectory() + separator + g.getRunNumber() + "."
 								+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
-							nextOne++;
-						}
-						readGraphSpecies(outDir + separator + "run-" + nextOne + "."
-								+ printer_id.substring(0, printer_id.length() - 8), biomodelsim.frame());
-						ArrayList<ArrayList<Double>> data;
-						if (allData.containsKey(g.getRunNumber() + " " + g.getDirectory())) {
-							data = allData.get(g.getRunNumber() + " " + g.getDirectory());
-							for (int i = 2; i < graphSpecies.size(); i++) {
-								String index = graphSpecies.get(i);
-								int j = i;
-								while ((j > 1) && graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
-									graphSpecies.set(j, graphSpecies.get(j - 1));
-									j = j - 1;
+							readGraphSpecies(outDir + separator + g.getDirectory() + separator + g.getRunNumber()
+									+ "." + printer_id.substring(0, printer_id.length() - 8), biomodelsim.frame());
+							ArrayList<ArrayList<Double>> data;
+							if (allData.containsKey(g.getRunNumber() + " " + g.getDirectory())) {
+								data = allData.get(g.getRunNumber() + " " + g.getDirectory());
+								for (int i = 2; i < graphSpecies.size(); i++) {
+									String index = graphSpecies.get(i);
+									int j = i;
+									while ((j > 1) && graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
+										graphSpecies.set(j, graphSpecies.get(j - 1));
+										j = j - 1;
+									}
+									graphSpecies.set(j, index);
 								}
-								graphSpecies.set(j, index);
 							}
-						}
-						else {
-							data = readData(outDir + separator + "run-1."
-									+ printer_id.substring(0, printer_id.length() - 8), biomodelsim.frame(), chart
-									.getXYPlot().getRangeAxis().getLabel(), g.getRunNumber().toLowerCase(), null);
-							for (int i = 2; i < graphSpecies.size(); i++) {
-								String index = graphSpecies.get(i);
-								ArrayList<Double> index2 = data.get(i);
-								int j = i;
-								while ((j > 1) && graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
-									graphSpecies.set(j, graphSpecies.get(j - 1));
-									data.set(j, data.get(j - 1));
-									j = j - 1;
+							else {
+								data = readData(outDir + separator + g.getDirectory() + separator
+										+ g.getRunNumber() + "." + printer_id.substring(0, printer_id.length() - 8),
+										biomodelsim.frame(), chart.getXYPlot().getRangeAxis().getLabel(), g
+												.getRunNumber(), g.getDirectory());
+								for (int i = 2; i < graphSpecies.size(); i++) {
+									String index = graphSpecies.get(i);
+									ArrayList<Double> index2 = data.get(i);
+									int j = i;
+									while ((j > 1) && graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
+										graphSpecies.set(j, graphSpecies.get(j - 1));
+										data.set(j, data.get(j - 1));
+										j = j - 1;
+									}
+									graphSpecies.set(j, index);
+									data.set(j, index2);
 								}
-								graphSpecies.set(j, index);
-								data.set(j, index2);
+								allData.put(g.getRunNumber() + " " + g.getDirectory(), data);
 							}
-							allData.put(g.getRunNumber() + " " + g.getDirectory(), data);
-						}
-						boolean set = false;
-						for (int i = 1; i < graphSpecies.size(); i++) {
-							String compare = g.getID().replace('(', '~');
-							if (graphSpecies.get(i).equals(compare.split("~")[0].trim())) {
-								g.setNumber(i - 1);
-								set = true;
-							}
-						}
-						if (g.getNumber() + 1 < graphSpecies.size() && set) {
-							graphData.add(new XYSeries(g.getSpecies()));
-							if (data.size() != 0) {
-								for (int i = 0; i < (data.get(0)).size(); i++) {
-									graphData.get(graphData.size() - 1).add((data.get(0)).get(i),
-											(data.get(g.getNumber() + 1)).get(i));
+							boolean set = false;
+							for (int i = 1; i < graphSpecies.size(); i++) {
+								String compare = g.getID().replace(" (", "~");
+								if (graphSpecies.get(i).equals(compare.split("~")[0].trim())) {
+									g.setNumber(i - 1);
+									set = true;
 								}
+							}
+							if (g.getNumber() + 1 < graphSpecies.size() && set) {
+								graphData.add(new XYSeries(g.getSpecies()));
+								if (data.size() != 0) {
+									for (int i = 0; i < (data.get(0)).size(); i++) {
+										graphData.get(graphData.size() - 1).add((data.get(0)).get(i),
+												(data.get(g.getNumber() + 1)).get(i));
+									}
+								}
+							}
+							else {
+								unableToGraph.add(g);
+								thisOne--;
 							}
 						}
 						else {
@@ -3296,76 +3376,157 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						}
 					}
 					else {
-						unableToGraph.add(g);
-						thisOne--;
+						boolean ableToGraph = false;
+						try {
+							for (String s : new File(outDir + separator + g.getDirectory()).list()) {
+								if (s.length() > 3 && s.substring(0, 4).equals("run-")) {
+									ableToGraph = true;
+								}
+							}
+						}
+						catch (Exception e) {
+							ableToGraph = false;
+						}
+						if (ableToGraph) {
+							int nextOne = 1;
+							while (!new File(outDir + separator + g.getDirectory() + separator + "run-" + nextOne
+									+ "." + printer_id.substring(0, printer_id.length() - 8)).exists()) {
+								nextOne++;
+							}
+							readGraphSpecies(outDir + separator + g.getDirectory() + separator + "run-" + nextOne
+									+ "." + printer_id.substring(0, printer_id.length() - 8), biomodelsim.frame());
+							ArrayList<ArrayList<Double>> data;
+							if (allData.containsKey(g.getRunNumber() + " " + g.getDirectory())) {
+								data = allData.get(g.getRunNumber() + " " + g.getDirectory());
+								for (int i = 2; i < graphSpecies.size(); i++) {
+									String index = graphSpecies.get(i);
+									int j = i;
+									while ((j > 1) && graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
+										graphSpecies.set(j, graphSpecies.get(j - 1));
+										j = j - 1;
+									}
+									graphSpecies.set(j, index);
+								}
+							}
+							else {
+								data = readData(outDir + separator + g.getDirectory() + separator + "run-1."
+										+ printer_id.substring(0, printer_id.length() - 8), biomodelsim.frame(), chart
+										.getXYPlot().getRangeAxis().getLabel(), g.getRunNumber().toLowerCase(), g
+										.getDirectory());
+								for (int i = 2; i < graphSpecies.size(); i++) {
+									String index = graphSpecies.get(i);
+									ArrayList<Double> index2 = data.get(i);
+									int j = i;
+									while ((j > 1) && graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
+										graphSpecies.set(j, graphSpecies.get(j - 1));
+										data.set(j, data.get(j - 1));
+										j = j - 1;
+									}
+									graphSpecies.set(j, index);
+									data.set(j, index2);
+								}
+								allData.put(g.getRunNumber() + " " + g.getDirectory(), data);
+							}
+							boolean set = false;
+							for (int i = 1; i < graphSpecies.size(); i++) {
+								String compare = g.getID().replace(" (", "~");
+								if (graphSpecies.get(i).equals(compare.split("~")[0].trim())) {
+									g.setNumber(i - 1);
+									set = true;
+								}
+							}
+							if (g.getNumber() + 1 < graphSpecies.size() && set) {
+								graphData.add(new XYSeries(g.getSpecies()));
+								if (data.size() != 0) {
+									for (int i = 0; i < (data.get(0)).size(); i++) {
+										graphData.get(graphData.size() - 1).add((data.get(0)).get(i),
+												(data.get(g.getNumber() + 1)).get(i));
+									}
+								}
+							}
+							else {
+								unableToGraph.add(g);
+								thisOne--;
+							}
+						}
+						else {
+							unableToGraph.add(g);
+							thisOne--;
+						}
 					}
 				}
+			}
+			for (GraphSpecies g : unableToGraph) {
+				graphed.remove(g);
+			}
+			XYSeriesCollection dataset = new XYSeriesCollection();
+			for (int i = 0; i < graphData.size(); i++) {
+				dataset.addSeries(graphData.get(i));
+			}
+			fixGraph(chart.getTitle().getText(), chart.getXYPlot().getDomainAxis().getLabel(), chart
+					.getXYPlot().getRangeAxis().getLabel(), dataset);
+			chart.getXYPlot().setRenderer(rend);
+			XYPlot plot = chart.getXYPlot();
+			if (resize.isSelected()) {
+				resize(dataset);
 			}
 			else {
-				thisOne++;
-				rend.setSeriesVisible(thisOne, true);
-				rend.setSeriesLinesVisible(thisOne, g.getConnected());
-				rend.setSeriesShapesFilled(thisOne, g.getFilled());
-				rend.setSeriesShapesVisible(thisOne, g.getVisible());
-				rend.setSeriesPaint(thisOne, g.getShapeAndPaint().getPaint());
-				rend.setSeriesShape(thisOne, g.getShapeAndPaint().getShape());
-				if (!g.getRunNumber().equals("Average") && !g.getRunNumber().equals("Variance")
-						&& !g.getRunNumber().equals("Standard Deviation")) {
-					if (new File(outDir + separator + g.getDirectory() + separator + g.getRunNumber() + "."
-							+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
-						readGraphSpecies(outDir + separator + g.getDirectory() + separator + g.getRunNumber()
-								+ "." + printer_id.substring(0, printer_id.length() - 8), biomodelsim.frame());
-						ArrayList<ArrayList<Double>> data;
-						if (allData.containsKey(g.getRunNumber() + " " + g.getDirectory())) {
-							data = allData.get(g.getRunNumber() + " " + g.getDirectory());
-							for (int i = 2; i < graphSpecies.size(); i++) {
-								String index = graphSpecies.get(i);
-								int j = i;
-								while ((j > 1) && graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
-									graphSpecies.set(j, graphSpecies.get(j - 1));
-									j = j - 1;
-								}
-								graphSpecies.set(j, index);
+				NumberAxis axis = (NumberAxis) plot.getRangeAxis();
+				axis.setAutoTickUnitSelection(false);
+				axis.setRange(minY, maxY);
+				axis.setTickUnit(new NumberTickUnit(scaleY));
+				axis = (NumberAxis) plot.getDomainAxis();
+				axis.setAutoTickUnitSelection(false);
+				axis.setRange(minX, maxX);
+				axis.setTickUnit(new NumberTickUnit(scaleX));
+			}
+		}
+		else {
+			BarRenderer rend = (BarRenderer) chart.getCategoryPlot().getRenderer();
+			int thisOne = -1;
+			for (int i = 1; i < probGraphed.size(); i++) {
+				GraphProbs index = probGraphed.get(i);
+				int j = i;
+				while ((j > 0)
+						&& (probGraphed.get(j - 1).getSpecies().compareToIgnoreCase(index.getSpecies()) > 0)) {
+					probGraphed.set(j, probGraphed.get(j - 1));
+					j = j - 1;
+				}
+				probGraphed.set(j, index);
+			}
+			ArrayList<GraphProbs> unableToGraph = new ArrayList<GraphProbs>();
+			DefaultCategoryDataset histDataset = new DefaultCategoryDataset();
+			for (GraphProbs g : probGraphed) {
+				if (g.getDirectory().equals("")) {
+					thisOne++;
+					rend.setSeriesPaint(thisOne, g.getPaint());
+					if (new File(outDir + separator + "sim-rep.txt").exists()) {
+						readProbSpecies(outDir + separator + "sim-rep.txt");
+						double[] data = readProbs(outDir + separator + "sim-rep.txt");
+						for (int i = 1; i < graphProbs.size(); i++) {
+							String index = graphProbs.get(i);
+							double index2 = data[i];
+							int j = i;
+							while ((j > 0) && graphProbs.get(j - 1).compareToIgnoreCase(index) > 0) {
+								graphProbs.set(j, graphProbs.get(j - 1));
+								data[j] = data[j - 1];
+								j = j - 1;
 							}
+							graphProbs.set(j, index);
+							data[j] = index2;
 						}
-						else {
-							data = readData(outDir + separator + g.getDirectory() + separator + g.getRunNumber()
-									+ "." + printer_id.substring(0, printer_id.length() - 8), biomodelsim.frame(),
-									chart.getXYPlot().getRangeAxis().getLabel(), g.getRunNumber(), g.getDirectory());
-							for (int i = 2; i < graphSpecies.size(); i++) {
-								String index = graphSpecies.get(i);
-								ArrayList<Double> index2 = data.get(i);
-								int j = i;
-								while ((j > 1) && graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
-									graphSpecies.set(j, graphSpecies.get(j - 1));
-									data.set(j, data.get(j - 1));
-									j = j - 1;
-								}
-								graphSpecies.set(j, index);
-								data.set(j, index2);
-							}
-							allData.put(g.getRunNumber() + " " + g.getDirectory(), data);
-						}
-						boolean set = false;
-						for (int i = 1; i < graphSpecies.size(); i++) {
-							String compare = g.getID().replace('(', '~');
-							if (graphSpecies.get(i).equals(compare.split("~")[0].trim())) {
-								g.setNumber(i - 1);
-								set = true;
-							}
-						}
-						if (g.getNumber() + 1 < graphSpecies.size() && set) {
-							graphData.add(new XYSeries(g.getSpecies()));
-							if (data.size() != 0) {
-								for (int i = 0; i < (data.get(0)).size(); i++) {
-									graphData.get(graphData.size() - 1).add((data.get(0)).get(i),
-											(data.get(g.getNumber() + 1)).get(i));
+						if (graphProbs.size() != 0) {
+							if (graphProbs.contains(g.getID())) {
+								for (int i = 0; i < graphProbs.size(); i++) {
+									if (g.getID().equals(graphProbs.get(i))) {
+										histDataset.setValue(data[i], g.getSpecies(), "");
+									}
 								}
 							}
-						}
-						else {
-							unableToGraph.add(g);
-							thisOne--;
+							else {
+								unableToGraph.add(g);
+								thisOne--;
+							}
 						}
 					}
 					else {
@@ -3374,77 +3535,37 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					}
 				}
 				else {
-					boolean ableToGraph = false;
-					try {
-						for (String s : new File(outDir + separator + g.getDirectory()).list()) {
-							if (s.length() > 3 && s.substring(0, 4).equals("run-")) {
-								ableToGraph = true;
+					thisOne++;
+					rend.setSeriesPaint(thisOne, g.getPaint());
+					if (new File(outDir + separator + g.getDirectory() + separator + "sim-rep.txt").exists()) {
+						readProbSpecies(outDir + separator + g.getDirectory() + separator + "sim-rep.txt");
+						double[] data = readProbs(outDir + separator + g.getDirectory() + separator
+								+ "sim-rep.txt");
+						for (int i = 1; i < graphProbs.size(); i++) {
+							String index = graphProbs.get(i);
+							double index2 = data[i];
+							int j = i;
+							while ((j > 0) && graphProbs.get(j - 1).compareToIgnoreCase(index) > 0) {
+								graphProbs.set(j, graphProbs.get(j - 1));
+								data[j] = data[j - 1];
+								j = j - 1;
 							}
+							graphProbs.set(j, index);
+							data[j] = index2;
 						}
-					}
-					catch (Exception e) {
-						ableToGraph = false;
-					}
-					if (ableToGraph) {
-						int nextOne = 1;
-						while (!new File(outDir + separator + g.getDirectory() + separator + "run-" + nextOne
-								+ "." + printer_id.substring(0, printer_id.length() - 8)).exists()) {
-							nextOne++;
-						}
-						readGraphSpecies(outDir + separator + g.getDirectory() + separator + "run-" + nextOne
-								+ "." + printer_id.substring(0, printer_id.length() - 8), biomodelsim.frame());
-						ArrayList<ArrayList<Double>> data;
-						if (allData.containsKey(g.getRunNumber() + " " + g.getDirectory())) {
-							data = allData.get(g.getRunNumber() + " " + g.getDirectory());
-							for (int i = 2; i < graphSpecies.size(); i++) {
-								String index = graphSpecies.get(i);
-								int j = i;
-								while ((j > 1) && graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
-									graphSpecies.set(j, graphSpecies.get(j - 1));
-									j = j - 1;
-								}
-								graphSpecies.set(j, index);
-							}
-						}
-						else {
-							data = readData(outDir + separator + g.getDirectory() + separator + "run-1."
-									+ printer_id.substring(0, printer_id.length() - 8), biomodelsim.frame(), chart
-									.getXYPlot().getRangeAxis().getLabel(), g.getRunNumber().toLowerCase(), g
-									.getDirectory());
-							for (int i = 2; i < graphSpecies.size(); i++) {
-								String index = graphSpecies.get(i);
-								ArrayList<Double> index2 = data.get(i);
-								int j = i;
-								while ((j > 1) && graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
-									graphSpecies.set(j, graphSpecies.get(j - 1));
-									data.set(j, data.get(j - 1));
-									j = j - 1;
-								}
-								graphSpecies.set(j, index);
-								data.set(j, index2);
-							}
-							allData.put(g.getRunNumber() + " " + g.getDirectory(), data);
-						}
-						boolean set = false;
-						for (int i = 1; i < graphSpecies.size(); i++) {
-							String compare = g.getID().replace('(', '~');
-							if (graphSpecies.get(i).equals(compare.split("~")[0].trim())) {
-								g.setNumber(i - 1);
-								set = true;
-							}
-						}
-						if (g.getNumber() + 1 < graphSpecies.size() && set) {
-							graphData.add(new XYSeries(g.getSpecies()));
-							if (data.size() != 0) {
-								for (int i = 0; i < (data.get(0)).size(); i++) {
-									graphData.get(graphData.size() - 1).add((data.get(0)).get(i),
-											(data.get(g.getNumber() + 1)).get(i));
+						if (graphProbs.size() != 0) {
+							String compare = g.getID().replace(" (", "~");
+							if (graphProbs.contains(compare.split("~")[0].trim())) {
+								for (int i = 0; i < graphProbs.size(); i++) {
+									if (compare.split("~")[0].trim().equals(graphProbs.get(i))) {
+										histDataset.setValue(data[i], g.getSpecies(), "");
+									}
 								}
 							}
-						}
-						else {
-							unableToGraph.add(g);
-							thisOne--;
+							else {
+								unableToGraph.add(g);
+								thisOne--;
+							}
 						}
 					}
 					else {
@@ -3453,30 +3574,11 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					}
 				}
 			}
-		}
-		for (GraphSpecies g : unableToGraph) {
-			graphed.remove(g);
-		}
-		XYSeriesCollection dataset = new XYSeriesCollection();
-		for (int i = 0; i < graphData.size(); i++) {
-			dataset.addSeries(graphData.get(i));
-		}
-		fixGraph(chart.getTitle().getText(), chart.getXYPlot().getDomainAxis().getLabel(), chart
-				.getXYPlot().getRangeAxis().getLabel(), dataset);
-		chart.getXYPlot().setRenderer(rend);
-		XYPlot plot = chart.getXYPlot();
-		if (resize.isSelected()) {
-			resize(dataset);
-		}
-		else {
-			NumberAxis axis = (NumberAxis) plot.getRangeAxis();
-			axis.setAutoTickUnitSelection(false);
-			axis.setRange(minY, maxY);
-			axis.setTickUnit(new NumberTickUnit(scaleY));
-			axis = (NumberAxis) plot.getDomainAxis();
-			axis.setAutoTickUnitSelection(false);
-			axis.setRange(minX, maxX);
-			axis.setTickUnit(new NumberTickUnit(scaleX));
+			for (GraphProbs g : unableToGraph) {
+				probGraphed.remove(g);
+			}
+			fixProbGraph(chart.getTitle().getText(), chart.getCategoryPlot().getDomainAxis().getLabel(),
+					chart.getCategoryPlot().getRangeAxis().getLabel(), histDataset, rend);
 		}
 	}
 
@@ -3855,7 +3957,6 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			scroll.setPreferredSize(new Dimension(1050, 500));
 			JPanel editPanel = new JPanel(new BorderLayout());
 			editPanel.add(specPanel, "Center");
-			editPanel.add(scrollpane, "West");
 			scroll.setViewportView(editPanel);
 			final JButton deselect = new JButton("Deselect All");
 			deselect.addActionListener(new ActionListener() {
@@ -3892,6 +3993,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			JPanel all = new JPanel(new BorderLayout());
 			all.add(titlePanel, "North");
 			all.add(scroll, "Center");
+			all.add(scrollpane, "West");
 			Object[] options = { "Ok", "Cancel" };
 			int value = JOptionPane.showOptionDialog(biomodelsim.frame(), all, "Edit Probability Graph",
 					JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
@@ -3967,7 +4069,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							}
 							if (graphProbs.size() != 0) {
 								for (int i = 0; i < graphProbs.size(); i++) {
-									String compare = g.getID().replace("(", "~");
+									String compare = g.getID().replace(" (", "~");
 									if (compare.split("~")[0].trim().equals(graphProbs.get(i))) {
 										histDataset.setValue(data[i], g.getSpecies(), "");
 									}
