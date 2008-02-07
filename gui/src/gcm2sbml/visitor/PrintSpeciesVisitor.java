@@ -65,7 +65,7 @@ public class PrintSpeciesVisitor extends AbstractPrintVisitor {
 		Species s = Utility.makeSpecies(specie.getName(), compartment, specie.getInitial());
 		s.setHasOnlySubstanceUnits(true);
 		s.setBoundaryCondition(true);
-		s.setConstant(true);
+		//s.setConstant(true);
 		document.getModel().addSpecies(s);
 	}
 
