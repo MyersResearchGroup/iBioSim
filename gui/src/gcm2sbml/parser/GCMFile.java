@@ -273,9 +273,11 @@ public class GCMFile {
 	}
 
 	private void parseStates(StringBuffer data) {
+		Pattern network = Pattern.compile(NETWORK);
+		Matcher matcher = network.matcher(data.toString());		
 		Pattern pattern = Pattern.compile(STATE);
 		Pattern propPattern = Pattern.compile(PROPERTY);
-		Matcher matcher = pattern.matcher(data.toString());
+		matcher = pattern.matcher(matcher.group(1));
 		while (matcher.find()) {
 			String name = matcher.group(2);
 			Matcher propMatcher = propPattern.matcher(matcher.group(3));
@@ -297,6 +299,23 @@ public class GCMFile {
 			while (matcher.find()) {
 				globalParameters.put(matcher.group(1), matcher.group(2));
 			}
+		}
+	}
+	
+	private void parsePromoters(StringBuffer data) {
+		Pattern network = Pattern.compile(NETWORK);
+		Matcher matcher = network.matcher(data.toString());		
+		Pattern pattern = Pattern.compile(STATE);
+		Pattern propPattern = Pattern.compile(PROPERTY);
+		matcher = pattern.matcher(matcher.group(1));
+		while (matcher.find()) {
+			String name = matcher.group(2);
+			Matcher propMatcher = propPattern.matcher(matcher.group(3));
+			Properties properties = new Properties();
+			while (propMatcher.find()) {
+				properties.put(propMatcher.group(1), propMatcher.group(2));
+			}
+			species.put(name, properties);
 		}
 	}
 
@@ -335,11 +354,13 @@ public class GCMFile {
 		defaultParameters.put(GeneticNetwork.ACTIVATED, ACTIVATED);
 	}
 
+	private static final String NETWORK = "diagraph\\sG\\s\\{([^}]*)\\s\\}";
 	private static final String STATE = "(^|\\n) *([^- \\n]*) *\\[(.*)\\]";
 	private static final String REACTION = "(^|\\n) *([^ \\n]*) *\\-\\> *([^ \n]*) *\\[([^\\]]*)]";
 	private static final String PARSE = "(^|\\n) *([^ \\n]*) *\\-\\> *([^ \n]*)";
 	private static final String PROPERTY = "([a-zA-Z]+)=([^\\s,]+)";
 	private static final String GLOBAL = "Global\\s\\{([^}]*)\\s\\}";
+	private static final String PROMOTERS_LIST = "Promoters\\s\\{([^}]*)\\s\\}";
 
 	private HashMap<String, Properties> species;
 	private HashMap<String, Properties> influences;
