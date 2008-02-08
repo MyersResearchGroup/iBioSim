@@ -302,5 +302,5 @@ public class GCMParser {
 	private static final String PROPERTY_QUOTE = "([a-zA-Z]+)=\"([^\\s,.\"]+)\"";	
 
 	// Debug level
-	private boolean debug = true;
+	private boolean debug = false;
 }
