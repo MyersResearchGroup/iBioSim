@@ -15,6 +15,8 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.JOptionPane;
+
 /**
  * This class describes a GCM file
  * 
@@ -59,7 +61,7 @@ public class GCMFile {
 				buffer.deleteCharAt(buffer.length() - 1);
 				buffer.append("]\n");
 			}
-			buffer.append("}\nGlobal {\n");			
+			buffer.append("}\nGlobal {\n");
 			for (String s : defaultParameters.keySet()) {
 				String value = defaultParameters.get(s);
 				if (globalParameters.containsKey(s)) {
@@ -94,10 +96,19 @@ public class GCMFile {
 			e.printStackTrace();
 			throw new IllegalStateException("Error opening file");
 		}
-
-		parseStates(data);
-		parseInfluences(data);
-		parseGlobal(data);
+		try {
+			parseStates(data);
+			parseInfluences(data);
+			parseGlobal(data);
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(null, "Unable to parse model, creating a blank model.", "Error",
+					JOptionPane.ERROR_MESSAGE);
+			species = new HashMap<String, Properties>();
+			influences = new HashMap<String, Properties>();
+			promoters = new HashMap<String, Properties>();
+			globalParameters = new HashMap<String, String>();
+			promoters.put("none", null);			
+		}
 	}
 
 	public void changePromoterName(String oldName, String newName) {
@@ -153,7 +164,9 @@ public class GCMFile {
 		influences.put(name, property);
 		// Now check to see if a promoter exists in the property
 		if (property.containsKey("promoter")) {
-			promoters.put(property.getProperty("promoter").replaceAll("\"", ""), new Properties());
+			promoters.put(
+					property.getProperty("promoter").replaceAll("\"", ""),
+					new Properties());
 		}
 
 	}
@@ -274,7 +287,7 @@ public class GCMFile {
 
 	private void parseStates(StringBuffer data) {
 		Pattern network = Pattern.compile(NETWORK);
-		Matcher matcher = network.matcher(data.toString());		
+		Matcher matcher = network.matcher(data.toString());
 		Pattern pattern = Pattern.compile(STATE);
 		Pattern propPattern = Pattern.compile(PROPERTY);
 		matcher = pattern.matcher(matcher.group(1));
@@ -301,10 +314,10 @@ public class GCMFile {
 			}
 		}
 	}
-	
+
 	private void parsePromoters(StringBuffer data) {
 		Pattern network = Pattern.compile(NETWORK);
-		Matcher matcher = network.matcher(data.toString());		
+		Matcher matcher = network.matcher(data.toString());
 		Pattern pattern = Pattern.compile(STATE);
 		Pattern propPattern = Pattern.compile(PROPERTY);
 		matcher = pattern.matcher(matcher.group(1));
@@ -329,12 +342,14 @@ public class GCMFile {
 			Properties properties = new Properties();
 			while (propMatcher.find()) {
 				properties.put(propMatcher.group(1), propMatcher.group(2));
-				if (propMatcher.group(1).equals(PROMOTER) && !promoters.containsKey(propMatcher.group(1))) {
-					promoters.put(propMatcher.group(2).replaceAll("\"", ""), new Properties());
+				if (propMatcher.group(1).equals(PROMOTER)
+						&& !promoters.containsKey(propMatcher.group(1))) {
+					promoters.put(propMatcher.group(2).replaceAll("\"", ""),
+							new Properties());
 				}
 			}
 			influences.put(name, properties);
-		}		
+		}
 	}
 
 	private void loadDefaultParameters() {
@@ -355,31 +370,54 @@ public class GCMFile {
 	}
 
 	private static final String NETWORK = "diagraph\\sG\\s\\{([^}]*)\\s\\}";
+
 	private static final String STATE = "(^|\\n) *([^- \\n]*) *\\[(.*)\\]";
+
 	private static final String REACTION = "(^|\\n) *([^ \\n]*) *\\-\\> *([^ \n]*) *\\[([^\\]]*)]";
+
 	private static final String PARSE = "(^|\\n) *([^ \\n]*) *\\-\\> *([^ \n]*)";
+
 	private static final String PROPERTY = "([a-zA-Z]+)=([^\\s,]+)";
+
 	private static final String GLOBAL = "Global\\s\\{([^}]*)\\s\\}";
+
 	private static final String PROMOTERS_LIST = "Promoters\\s\\{([^}]*)\\s\\}";
 
 	private HashMap<String, Properties> species;
+
 	private HashMap<String, Properties> influences;
+
 	private HashMap<String, Properties> promoters;
+
 	private HashMap<String, String> defaultParameters;
+
 	private HashMap<String, String> globalParameters;
 
 	private static final String DEG = ".0075";
+
 	private static final String KDIMER = ".05";
+
 	private static final String KBIO = ".05";
-	private static final String KCOOP = ".05";	
+
+	private static final String KCOOP = ".05";
+
 	private static final String KREP = "2.2";
+
 	private static final String KACT = ".0033";
+
 	private static final String KRNAP = ".033";
+
 	private static final String OCR = ".25";
+
 	private static final String ACTIVATED = ".25";
+
 	private static final String PROMOTERS = "1";
+
 	private static final String STOC = "1";
+
 	private static final String RNAP = "30";
+
 	private static final String BASAL = ".0001";
+
 	private static final String PROMOTER = "promoter";
 }
