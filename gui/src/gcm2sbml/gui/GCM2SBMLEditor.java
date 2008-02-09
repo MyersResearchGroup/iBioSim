@@ -98,7 +98,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 		if (o instanceof Runnable) {
 			((Runnable) o).run();
 		}
-		System.out.println(o);
+		//System.out.println(o);
 	}
 
 	private void buildGui(String filename) {
@@ -432,7 +432,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 			if (value == JOptionPane.YES_OPTION) {
 				gcm.setParameter(nameLabel.getText(), valueInput.getText());
 			} else if (value == JOptionPane.NO_OPTION) {
-				System.out.println();
+				//System.out.println();
 			}
 		}
 
@@ -547,7 +547,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 				speciesList.addItem(id);
 
 			} else if (value == JOptionPane.NO_OPTION) {
-				System.out.println();
+				//System.out.println();
 			}
 		}
 
@@ -681,7 +681,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 				list.addItem(name);
 
 			} else if (value == JOptionPane.NO_OPTION) {
-				System.out.println();
+				//System.out.println();
 			}
 		}
 
@@ -750,7 +750,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 					gcm.addPromoter(name, property);
 				}
 			} else if (value == JOptionPane.NO_OPTION) {
-				System.out.println();
+				//System.out.println();
 			}
 		}
 

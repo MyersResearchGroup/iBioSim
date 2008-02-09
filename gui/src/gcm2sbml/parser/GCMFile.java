@@ -290,6 +290,7 @@ public class GCMFile {
 		Matcher matcher = network.matcher(data.toString());
 		Pattern pattern = Pattern.compile(STATE);
 		Pattern propPattern = Pattern.compile(PROPERTY);
+		matcher.find();
 		matcher = pattern.matcher(matcher.group(1));
 		while (matcher.find()) {
 			String name = matcher.group(2);
@@ -320,6 +321,7 @@ public class GCMFile {
 		Matcher matcher = network.matcher(data.toString());
 		Pattern pattern = Pattern.compile(STATE);
 		Pattern propPattern = Pattern.compile(PROPERTY);
+		matcher.find();
 		matcher = pattern.matcher(matcher.group(1));
 		while (matcher.find()) {
 			String name = matcher.group(2);
@@ -369,7 +371,7 @@ public class GCMFile {
 		defaultParameters.put(GeneticNetwork.ACTIVATED, ACTIVATED);
 	}
 
-	private static final String NETWORK = "diagraph\\sG\\s\\{([^}]*)\\s\\}";
+	private static final String NETWORK = "digraph\\sG\\s\\{([^}]*)\\s\\}";
 
 	private static final String STATE = "(^|\\n) *([^- \\n]*) *\\[(.*)\\]";
 

@@ -2,6 +2,7 @@ package biomodelsim;
 
 import gcm2sbml.gui.GCM2SBMLEditor;
 import gcm2sbml.network.GeneticNetwork;
+import gcm2sbml.parser.GCMFile;
 import gcm2sbml.parser.GCMParser;
 import graph.Graph;
 
@@ -946,7 +947,7 @@ public class BioSim implements MouseListener, ActionListener {
 								}
 							}
 							f.createNewFile();
-
+							new GCMFile().save(f.getAbsolutePath());
 							addTab(f.getName(), new GCM2SBMLEditor(root + separator, f.getName(), this),
 									"GCM Editor");
 							refreshTree();
