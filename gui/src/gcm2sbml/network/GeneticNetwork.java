@@ -87,7 +87,7 @@ public class GeneticNetwork {
 			printPromoters(document);
 			printRNAP(document);
 			printDecay(document);
-			System.out.println(counter++);
+			//			System.out.println(counter++);
 			checkConsistancy(document);
 			if (!dimerizationAbstraction) {
 				printDimerization(document);
@@ -95,13 +95,13 @@ public class GeneticNetwork {
 			if (!biochemicalAbstraction) {
 				printBiochemical(document);
 			}
-			System.out.println(counter++);
+			//			System.out.println(counter++);
 			checkConsistancy(document);
 			printPromoterProduction(document);
-			System.out.println(counter++);
+			//			System.out.println(counter++);
 			checkConsistancy(document);
 			printPromoterBinding(document);
-			System.out.println(counter++);
+			//			System.out.println(counter++);
 			checkConsistancy(document);
 			PrintStream p = new PrintStream(new FileOutputStream(filename));
 			
