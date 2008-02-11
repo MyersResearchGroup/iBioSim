@@ -11,13 +11,10 @@ import gcm2sbml.visitor.PrintRepressionBindingVisitor;
 import gcm2sbml.visitor.PrintSpeciesVisitor;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Properties;
 
 import org.sbml.libsbml.Compartment;
 import org.sbml.libsbml.KineticLaw;
