@@ -324,6 +324,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	 */
 	private ArrayList<ArrayList<Double>> readData(String file, Component component,
 			String printer_track_quantity, String label, String directory) {
+		boolean warning = false;
 		String[] s = file.split(separator);
 		String getLast = s[s.length - 1];
 		String stem = "";
@@ -423,6 +424,14 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								}
 								int insert;
 								if (!word.equals("")) {
+									if (word.equals("nan")) {
+										if (!warning) {
+											JOptionPane.showMessageDialog(component, "Found NAN in data."
+													+ "\nReplacing with 0s.", "NAN In Data", JOptionPane.WARNING_MESSAGE);
+											warning = true;
+										}
+										word = "0";
+									}
 									if (counter < graphSpecies.size()) {
 										insert = counter;
 									}
@@ -756,24 +765,105 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			}
 			else if (new File(outDir + separator + file).isDirectory()) {
 				boolean addIt = false;
-				for (String getFile : new File(outDir + separator + file).list()) {
+				String[] files3 = new File(outDir + separator + file).list();
+				for (int i = 1; i < files3.length; i++) {
+					String index = files3[i];
+					int j = i;
+					while ((j > 0) && files3[j - 1].compareToIgnoreCase(index) > 0) {
+						files3[j] = files3[j - 1];
+						j = j - 1;
+					}
+					files3[j] = index;
+				}
+				for (String getFile : files3) {
 					if (getFile.length() > 3
 							&& getFile.substring(getFile.length() - 4).equals(
 									"." + printer_id.substring(0, printer_id.length() - 8))) {
 						addIt = true;
+					}
+					else if (new File(outDir + separator + file + separator + getFile).isDirectory()) {
+						for (String getFile2 : new File(outDir + separator + file + separator + getFile).list()) {
+							if (getFile2.length() > 3
+									&& getFile2.substring(getFile2.length() - 4).equals(
+											"." + printer_id.substring(0, printer_id.length() - 8))) {
+								addIt = true;
+							}
+						}
 					}
 				}
 				if (addIt) {
 					directories.add(file);
 					DefaultMutableTreeNode d = new DefaultMutableTreeNode(file);
 					boolean add2 = false;
-					for (String f : new File(outDir + separator + file).list()) {
+					for (String f : files3) {
 						if (f.contains(printer_id.substring(0, printer_id.length() - 8))) {
 							if (f.contains("run-")) {
 								add2 = true;
 							}
 							else {
 								d.add(new DefaultMutableTreeNode(f.substring(0, f.length() - 4)));
+							}
+						}
+						else if (new File(outDir + separator + file + separator + f).isDirectory()) {
+							boolean addIt2 = false;
+							String[] files2 = new File(outDir + separator + file + separator + f).list();
+							for (int i = 1; i < files2.length; i++) {
+								String index = files2[i];
+								int j = i;
+								while ((j > 0) && files2[j - 1].compareToIgnoreCase(index) > 0) {
+									files2[j] = files2[j - 1];
+									j = j - 1;
+								}
+								files2[j] = index;
+							}
+							for (String getFile2 : files2) {
+								if (getFile2.length() > 3
+										&& getFile2.substring(getFile2.length() - 4).equals(
+												"." + printer_id.substring(0, printer_id.length() - 8))) {
+									addIt2 = true;
+								}
+							}
+							if (addIt2) {
+								directories.add(file + separator + f);
+								DefaultMutableTreeNode d2 = new DefaultMutableTreeNode(f);
+								boolean add3 = false;
+								for (String f2 : files2) {
+									if (f2.contains(printer_id.substring(0, printer_id.length() - 8))) {
+										if (f2.contains("run-")) {
+											add3 = true;
+										}
+										else {
+											d2.add(new DefaultMutableTreeNode(f2.substring(0, f2.length() - 4)));
+										}
+									}
+								}
+								if (add3) {
+									d2.add(new DefaultMutableTreeNode("Average"));
+									d2.add(new DefaultMutableTreeNode("Variance"));
+									d2.add(new DefaultMutableTreeNode("Standard Deviation"));
+								}
+								int run = 1;
+								for (String s : files2) {
+									if (s.length() > 4) {
+										String end = "";
+										for (int j = 1; j < 5; j++) {
+											end = s.charAt(s.length() - j) + end;
+										}
+										if (end.equals(".tsd") || end.equals(".dat") || end.equals(".csv")) {
+											if (s.contains("run-")) {
+												run = Math.max(run, Integer.parseInt(s.substring(4, s.length()
+														- end.length())));
+											}
+										}
+									}
+								}
+								for (int i = 0; i < run; i++) {
+									if (new File(outDir + separator + file + separator + f + separator + "run-"
+											+ (i + 1) + "." + printer_id.substring(0, printer_id.length() - 8)).exists()) {
+										d2.add(new DefaultMutableTreeNode("run-" + (i + 1)));
+									}
+								}
+								d.add(d2);
 							}
 						}
 					}
@@ -783,7 +873,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						d.add(new DefaultMutableTreeNode("Standard Deviation"));
 					}
 					int run = 1;
-					for (String s : new File(outDir + separator + file).list()) {
+					for (String s : files3) {
 						if (s.length() > 4) {
 							String end = "";
 							for (int j = 1; j < 5; j++) {
@@ -858,7 +948,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			tree.addTreeSelectionListener(new TreeSelectionListener() {
 				public void valueChanged(TreeSelectionEvent e) {
 					DefaultMutableTreeNode node = (DefaultMutableTreeNode) e.getPath().getLastPathComponent();
-					if (!directories.contains(node.toString())) {
+					if (!directories.contains(node.toString()) && node.getParent() != null
+							&& !directories.contains(node.getParent().toString() + separator + node.toString())) {
 						selected = node.toString();
 						int select;
 						if (selected.equals("Average")) {
@@ -891,6 +982,12 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							if (directories.contains(node.getParent().toString())) {
 								specPanel.add(fixGraphChoices(node.getParent().toString()));
 							}
+							else if (node.getParent().getParent() != null
+									&& directories.contains(node.getParent().getParent().toString() + separator
+											+ node.getParent().toString())) {
+								specPanel.add(fixGraphChoices(node.getParent().getParent().toString() + separator
+										+ node.getParent().toString()));
+							}
 							else {
 								specPanel.add(fixGraphChoices(""));
 							}
@@ -906,6 +1003,26 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								for (GraphSpecies g : graphed) {
 									if (g.getRunNumber().equals(selected)
 											&& g.getDirectory().equals(node.getParent().toString())) {
+										boxes.get(g.getNumber()).setSelected(true);
+										series.get(g.getNumber()).setText(g.getSpecies());
+										colorsCombo.get(g.getNumber()).setSelectedItem(
+												g.getShapeAndPaint().getPaintName());
+										shapesCombo.get(g.getNumber()).setSelectedItem(
+												g.getShapeAndPaint().getShapeName());
+										connected.get(g.getNumber()).setSelected(g.getConnected());
+										visible.get(g.getNumber()).setSelected(g.getVisible());
+										filled.get(g.getNumber()).setSelected(g.getFilled());
+									}
+								}
+							}
+							else if (node.getParent().getParent() != null
+									&& directories.contains(node.getParent().getParent().toString() + separator
+											+ node.getParent().toString())) {
+								for (GraphSpecies g : graphed) {
+									if (g.getRunNumber().equals(selected)
+											&& g.getDirectory().equals(
+													node.getParent().getParent().toString() + separator
+															+ node.getParent().toString())) {
 										boxes.get(g.getNumber()).setSelected(true);
 										series.get(g.getNumber()).setText(g.getSpecies());
 										colorsCombo.get(g.getNumber()).setSelectedItem(
@@ -960,6 +1077,32 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 												s = s.substring(4);
 											}
 											s = "(" + node.getParent().toString() + ", " + s + ")";
+										}
+									}
+									else if (node.getParent().getParent() != null
+											&& directories.contains(node.getParent().getParent().toString() + separator
+													+ node.getParent().toString())) {
+										if (s.equals("Average")) {
+											s = "(" + node.getParent().getParent().toString() + separator
+													+ node.getParent().toString() + ", " + (char) 967 + ")";
+										}
+										else if (s.equals("Variance")) {
+											s = "(" + node.getParent().getParent().toString() + separator
+													+ node.getParent().toString() + ", " + (char) 948 + (char) 178 + ")";
+										}
+										else if (s.equals("Standard Deviation")) {
+											s = "(" + node.getParent().getParent().toString() + separator
+													+ node.getParent().toString() + ", " + (char) 948 + ")";
+										}
+										else {
+											if (s.contains("-run")) {
+												s = s.substring(0, s.length() - 4);
+											}
+											else if (s.contains("run-")) {
+												s = s.substring(4);
+											}
+											s = "(" + node.getParent().getParent().toString() + separator
+													+ node.getParent().toString() + ", " + s + ")";
 										}
 									}
 									else {
@@ -1021,6 +1164,32 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 												s = s.substring(4);
 											}
 											s = "(" + node.getParent().toString() + ", " + s + ")";
+										}
+									}
+									else if (node.getParent().getParent() != null
+											&& directories.contains(node.getParent().getParent().toString() + separator
+													+ node.getParent().toString())) {
+										if (s.equals("Average")) {
+											s = "(" + node.getParent().getParent().toString() + separator
+													+ node.getParent().toString() + ", " + (char) 967 + ")";
+										}
+										else if (s.equals("Variance")) {
+											s = "(" + node.getParent().getParent().toString() + separator
+													+ node.getParent().toString() + ", " + (char) 948 + (char) 178 + ")";
+										}
+										else if (s.equals("Standard Deviation")) {
+											s = "(" + node.getParent().getParent().toString() + separator
+													+ node.getParent().toString() + ", " + (char) 948 + ")";
+										}
+										else {
+											if (s.contains("-run")) {
+												s = s.substring(0, s.length() - 4);
+											}
+											else if (s.contains("run-")) {
+												s = s.substring(4);
+											}
+											s = "(" + node.getParent().getParent().toString() + separator
+													+ node.getParent().toString() + ", " + s + ")";
 										}
 									}
 									else {
@@ -2669,6 +2838,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 	private ArrayList<ArrayList<Double>> calculateAverageVarianceDeviation(String startFile,
 			String fileStem, int choice, String directory) {
+		boolean warning = false;
 		ArrayList<ArrayList<Double>> average = new ArrayList<ArrayList<Double>>();
 		ArrayList<ArrayList<Double>> variance = new ArrayList<ArrayList<Double>>();
 		ArrayList<ArrayList<Double>> deviation = new ArrayList<ArrayList<Double>>();
@@ -2837,6 +3007,14 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								}
 								int insert;
 								if (!word.equals("")) {
+									if (word.equals("nan")) {
+										if (!warning) {
+											JOptionPane.showMessageDialog(biomodelsim.frame(), "Found NAN in data."
+													+ "\nReplacing with 0s.", "NAN In Data", JOptionPane.WARNING_MESSAGE);
+											warning = true;
+										}
+										word = "0";
+									}
 									if (first) {
 										if (counter < graphSpecies.size()) {
 											insert = counter;
