@@ -1996,8 +1996,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			selectedButtons = "nary_xhtml";
 		}
 		try {
-			FileOutputStream out = new FileOutputStream(new File(root + separator + outDir
-					+ separator + "user-defined.dat"));
+			FileOutputStream out = new FileOutputStream(new File(root + separator + outDir + separator
+					+ "user-defined.dat"));
 			int[] indecies = ssa.getSelectedIndices();
 			ssaList = Buttons.getList(ssaList, ssa);
 			ssa.setSelectedIndices(indecies);
