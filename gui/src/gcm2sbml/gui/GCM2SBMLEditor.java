@@ -5,6 +5,7 @@ import gcm2sbml.network.Reaction;
 import gcm2sbml.network.SpeciesInterface;
 import gcm2sbml.parser.GCMFile;
 import gcm2sbml.parser.GCMParser;
+import gcm2sbml.util.GlobalConstants;
 import gcm2sbml.util.Utility;
 
 import java.awt.BorderLayout;
@@ -491,26 +492,26 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 					nameInput.setText(prop.getProperty("label").replace("\"",
 							""));
 				}
-				if (prop.containsKey(SpeciesInterface.MAX_DIMER)) {
+				if (prop.containsKey(GlobalConstants.MAX_DIMER)) {
 					dimerizationInput.setText(prop.getProperty(
-							SpeciesInterface.MAX_DIMER).replace("\"", ""));
+							GlobalConstants.MAX_DIMER).replace("\"", ""));
 				} else {
 					dimerizationInput.setText(Utility.DIMER);
 				}
-				if (prop.containsKey(SpeciesInterface.DECAY)) {
-					decayInput.setText(prop.getProperty(SpeciesInterface.DECAY)
+				if (prop.containsKey(GlobalConstants.DECAY)) {
+					decayInput.setText(prop.getProperty(GlobalConstants.DECAY)
 							.replace("\"", ""));
 				} else {
 					decayInput.setText(Utility.DECAY);
 				}
-				if (prop.containsKey(SpeciesInterface.DIMER_CONST)) {
+				if (prop.containsKey(GlobalConstants.DIMER_CONST)) {
 					rateInput.setText(prop.getProperty(
-							SpeciesInterface.DIMER_CONST).replace("\"", ""));
+							GlobalConstants.DIMER_CONST).replace("\"", ""));
 				} else {
 					rateInput.setText(Utility.KDIMER);
 				}
 			} else {
-				decayInput.setText(gcm.getParameter(SpeciesInterface.DECAY)
+				decayInput.setText(gcm.getParameter(GlobalConstants.DECAY)
 						.replace("\"", ""));
 				dimerizationInput.setText("0");
 				rateInput.setText(gcm.getParameter(GeneticNetwork.KCOOP));
@@ -532,11 +533,11 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 					name = "spastic_" + name;
 				}
 				property.put("label", "\"" + name + "\"");
-				property.put(SpeciesInterface.MAX_DIMER, "\""
+				property.put(GlobalConstants.MAX_DIMER, "\""
 						+ dimerizationInput.getText() + "\"");
-				property.put(SpeciesInterface.DIMER_CONST, "\""
+				property.put(GlobalConstants.DIMER_CONST, "\""
 						+ rateInput.getText() + "\"");
-				property.put(SpeciesInterface.DECAY, "\""
+				property.put(GlobalConstants.DECAY, "\""
 						+ decayInput.getText() + "\"");
 				if (selected != null && !oldName.equals(id)) {
 					gcm.changeSpeciesName(oldName, id);

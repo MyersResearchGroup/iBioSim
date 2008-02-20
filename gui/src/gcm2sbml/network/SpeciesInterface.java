@@ -127,13 +127,4 @@ public interface SpeciesInterface extends VisitableSpecies {
 	 *            the numberProperties to set
 	 */
 	public void setNumberProperties(Properties numberProperties);	
-	//Properties that can be accessed
-	public static final String SPECIES_ID = "label";
-	public static final String CONSTANT = "const";
-	public static final String MAX_DIMER = "dimer";
-	public static final String DIMER_CONST = "kdimer";
-	public static final String DECAY = "decay";
-	public static final String TYPE = "type";
-	public static final String INITIAL = "initial";	
-	
 }

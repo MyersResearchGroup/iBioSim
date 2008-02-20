@@ -3,6 +3,7 @@ package gcm2sbml.parser;
 import gcm2sbml.network.GeneticNetwork;
 import gcm2sbml.network.Reaction;
 import gcm2sbml.network.SpeciesInterface;
+import gcm2sbml.util.GlobalConstants;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -101,13 +102,14 @@ public class GCMFile {
 			parseInfluences(data);
 			parseGlobal(data);
 		} catch (Exception e) {
-			JOptionPane.showMessageDialog(null, "Unable to parse model, creating a blank model.", "Error",
+			JOptionPane.showMessageDialog(null,
+					"Unable to parse model, creating a blank model.", "Error",
 					JOptionPane.ERROR_MESSAGE);
 			species = new HashMap<String, Properties>();
 			influences = new HashMap<String, Properties>();
 			promoters = new HashMap<String, Properties>();
 			globalParameters = new HashMap<String, String>();
-			promoters.put("none", null);			
+			promoters.put("none", null);
 		}
 	}
 
@@ -344,8 +346,8 @@ public class GCMFile {
 			Properties properties = new Properties();
 			while (propMatcher.find()) {
 				properties.put(propMatcher.group(1), propMatcher.group(2));
-				if (propMatcher.group(1).equals(PROMOTER)
-						&& !promoters.containsKey(propMatcher.group(1))) {
+				if (propMatcher.group(1).equals(GlobalConstants.PROMOTERS)
+						&& !promoters.containsKey(propMatcher.group(2))) {
 					promoters.put(propMatcher.group(2).replaceAll("\"", ""),
 							new Properties());
 				}
@@ -356,19 +358,32 @@ public class GCMFile {
 
 	private void loadDefaultParameters() {
 		defaultParameters = new HashMap<String, String>();
-		defaultParameters.put(SpeciesInterface.DECAY, DEG);
-		defaultParameters.put(SpeciesInterface.DIMER_CONST, KDIMER);
-		defaultParameters.put(GeneticNetwork.KBIO, KBIO);
-		defaultParameters.put(GeneticNetwork.KCOOP, KCOOP);
-		defaultParameters.put(GeneticNetwork.KREP, KREP);
-		defaultParameters.put(GeneticNetwork.KACT, KACT);
-		defaultParameters.put(GeneticNetwork.KRNAP, KRNAP);
-		defaultParameters.put(GeneticNetwork.RNAP, RNAP);
-		defaultParameters.put(GeneticNetwork.OCR, OCR);
-		defaultParameters.put(GeneticNetwork.BASAL, BASAL);
-		defaultParameters.put(GeneticNetwork.PROMOTERS, PROMOTERS);
-		defaultParameters.put(GeneticNetwork.STOC, STOC);
-		defaultParameters.put(GeneticNetwork.ACTIVATED, ACTIVATED);
+		defaultParameters.put(GlobalConstants.DECAY,
+				GlobalConstants.KDECAY_VALUE);
+		defaultParameters.put(GlobalConstants.KASSOCIATION_STRING,
+				GlobalConstants.KASSOCIATION_VALUE);
+		defaultParameters.put(GlobalConstants.KBIO_STRING,
+				GlobalConstants.KBIO_VALUE);
+		defaultParameters.put(GlobalConstants.COOPERATIVITY_STRING,
+				GlobalConstants.COOPERATIVITY_VALUE);
+		defaultParameters.put(GlobalConstants.KREP_STRING,
+				GlobalConstants.KREP_VALUE);
+		defaultParameters.put(GlobalConstants.KACT_STRING,
+				GlobalConstants.KACT_VALUE);
+		defaultParameters.put(GlobalConstants.RNAP_BINDING_STRING,
+				GlobalConstants.RNAP_BINDING_VALUE);
+		defaultParameters.put(GlobalConstants.RNAP_STRING,
+				GlobalConstants.RNAP_VALUE);
+		defaultParameters.put(GlobalConstants.OCR_STRING,
+				GlobalConstants.OCR_VALUE);
+		defaultParameters.put(GlobalConstants.KBASAL_STRING,
+				GlobalConstants.KBASAL_VALUE);
+		defaultParameters.put(GlobalConstants.GENE_COUNT_STRING,
+				GlobalConstants.GENE_COUNT_VALUE);
+		defaultParameters.put(GlobalConstants.STOICHIOMETRY_STRING,
+				GlobalConstants.STOICHIOMETRY_VALUE);
+		defaultParameters.put(GlobalConstants.ACTIVED_STRING,
+				GlobalConstants.ACTIVED_VALUE);
 	}
 
 	private static final String NETWORK = "digraph\\sG\\s\\{([^}]*)\\s\\}";
@@ -394,32 +409,4 @@ public class GCMFile {
 	private HashMap<String, String> defaultParameters;
 
 	private HashMap<String, String> globalParameters;
-
-	private static final String DEG = ".0075";
-
-	private static final String KDIMER = ".05";
-
-	private static final String KBIO = ".05";
-
-	private static final String KCOOP = ".05";
-
-	private static final String KREP = "2.2";
-
-	private static final String KACT = ".0033";
-
-	private static final String KRNAP = ".033";
-
-	private static final String OCR = ".25";
-
-	private static final String ACTIVATED = ".25";
-
-	private static final String PROMOTERS = "1";
-
-	private static final String STOC = "1";
-
-	private static final String RNAP = "30";
-
-	private static final String BASAL = ".0001";
-
-	private static final String PROMOTER = "promoter";
 }
