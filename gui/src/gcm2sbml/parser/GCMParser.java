@@ -7,6 +7,7 @@ import gcm2sbml.network.Promoter;
 import gcm2sbml.network.Reaction;
 import gcm2sbml.network.SpasticSpecies;
 import gcm2sbml.network.SpeciesInterface;
+import gcm2sbml.util.GlobalConstants;
 import gcm2sbml.util.Utility;
 
 import java.io.BufferedReader;
@@ -151,45 +152,45 @@ public class GCMParser {
 		while (matcher.find()) {
 			label_property.put(matcher.group(1), matcher.group(2));
 		}
-		if (label_property.getProperty(SpeciesInterface.SPECIES_ID).indexOf(
+		if (label_property.getProperty(GlobalConstants.SPECIES_ID).indexOf(
 				"spastic") != -1) {
 			Utility.print(debug, "GCMParser: Found spastic species "
-					+ label_property.getProperty(SpeciesInterface.SPECIES_ID));
+					+ label_property.getProperty(GlobalConstants.SPECIES_ID));
 			species = new SpasticSpecies();
-		} else if (state_property.containsKey(SpeciesInterface.CONSTANT)
-				&& state_property.getProperty(SpeciesInterface.CONSTANT)
+		} else if (state_property.containsKey(GlobalConstants.CONSTANT)
+				&& state_property.getProperty(GlobalConstants.CONSTANT)
 						.equalsIgnoreCase("true")) {
 			Utility.print(debug, "GCMParser: Found constant species "
-					+ label_property.getProperty(SpeciesInterface.SPECIES_ID));
+					+ label_property.getProperty(GlobalConstants.SPECIES_ID));
 			species = new ConstantSpecies();
 		} else {
 			Utility.print(debug, "GCMParser: Found base species "
-					+ label_property.getProperty(SpeciesInterface.SPECIES_ID));
+					+ label_property.getProperty(GlobalConstants.SPECIES_ID));
 			species = new BaseSpecies();
 		}
 
 		species
 				.setName(label_property
-						.getProperty(SpeciesInterface.SPECIES_ID));
+						.getProperty(GlobalConstants.SPECIES_ID));
 		species.setStateName(stateName);
 		species.setNumberProperties(number_property);
 		species.setStateProperties(state_property);
 		species.setLabelProperties(label_property);
-		if (number_property.containsKey(SpeciesInterface.MAX_DIMER)) {
+		if (number_property.containsKey(GlobalConstants.MAX_DIMER)) {
 			species.setMaxDimer(Integer.parseInt(number_property
-					.getProperty(SpeciesInterface.MAX_DIMER)));
+					.getProperty(GlobalConstants.MAX_DIMER)));
 		}
-		if (number_property.containsKey(SpeciesInterface.DIMER_CONST)) {
+		if (number_property.containsKey(GlobalConstants.DIMER_CONST)) {
 			species.setDimerizationConstant(Double.parseDouble(number_property
-					.getProperty(SpeciesInterface.DIMER_CONST)));
+					.getProperty(GlobalConstants.DIMER_CONST)));
 		}
-		if (number_property.containsKey(SpeciesInterface.DECAY)) {
+		if (number_property.containsKey(GlobalConstants.DECAY)) {
 			species.setDimerizationConstant(Double.parseDouble(number_property
-					.getProperty(SpeciesInterface.DECAY)));
+					.getProperty(GlobalConstants.DECAY)));
 		}
-		if (number_property.containsKey(SpeciesInterface.INITIAL)) {
+		if (number_property.containsKey(GlobalConstants.INITIAL)) {
 			species.setInitial(Double.parseDouble(number_property
-					.getProperty(SpeciesInterface.INITIAL)));
+					.getProperty(GlobalConstants.INITIAL)));
 		}		
 		// Pattern dimer = Pattern.compile(MAX_DIMER);
 		// matcher = dimer.matcher(info);
