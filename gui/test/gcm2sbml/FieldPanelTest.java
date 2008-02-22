@@ -1,9 +1,10 @@
 package gcm2sbml;
 
-
 import java.awt.GridLayout;
+import java.util.Properties;
 
 import gcm2sbml.gui.FieldPanel;
+import gcm2sbml.gui.PropertyField;
 import gcm2sbml.util.Utility;
 
 import javax.swing.JButton;
@@ -19,8 +20,8 @@ public class FieldPanelTest extends TestCase {
 	@Before
 	public void setUp() throws Exception {
 	}
-	
-	public void testPanel() {
+
+	public void Panel() {
 		JFrame frame = new JFrame();
 		JPanel panel = new JPanel(new GridLayout(1, 3));
 		panel.add(new FieldPanel("ID", Utility.IDpat, true));
@@ -31,6 +32,20 @@ public class FieldPanelTest extends TestCase {
 		frame.setVisible(true);
 
 		System.out.println();
+	}
+
+	public void testPropertyField() {
+		JFrame frame = new JFrame();
+		Properties p = new Properties();
+		p.setProperty("decay", ".0075");
+		PropertyField field = new PropertyField("decay", ".0075", PropertyField.states[0], p);
+		frame.add(field);
+		frame.pack();
+		frame.setVisible(true);
+
+		System.out.println();
+		field.setEnabled(false);
+		field.setEnabled(true);
 	}
 
 }

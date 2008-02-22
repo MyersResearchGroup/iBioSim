@@ -10,7 +10,7 @@ import java.util.Properties;
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
 
-public class PropertyList extends JList implements ChangeListener, NamedObject,
+public class PropertyList extends JList implements EnableElement, NamedObject,
 		Runnable, VisitableGui {
 
 	public PropertyList(String name) {

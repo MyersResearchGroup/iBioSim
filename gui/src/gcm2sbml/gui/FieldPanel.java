@@ -30,6 +30,7 @@ public class FieldPanel extends JPanel implements NamedObject, FocusListener {
 		this.add(new JLabel(name));
 		this.add(field);
 		field.setEditable(editable);
+		 
 	}
 
 	public String getName() {
