@@ -1,5 +1,9 @@
 package gcm2sbml.gui;
 
+import java.util.ArrayList;
+
+import javax.swing.JComponent;
+
 /**
  * Objects that implement this interface changes state,
  * which affects objects that monitor this element.
@@ -7,9 +11,10 @@ package gcm2sbml.gui;
  * @organization University of Utah
  * @email namphuon@cs.utah.edu
  */
-public interface ChangeElement {
+public interface StateElement {
 	/**
-	 * Adds an object that listens to this element
+	 * Adds a set of enable/disable elements
 	 */
-	public void addChangeListener(ChangeListener listener);
+	public void addStateElements(ArrayList<JComponent> elements);
+		
 }
