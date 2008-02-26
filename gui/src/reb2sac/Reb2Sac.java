@@ -1894,15 +1894,15 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		terminations.setSelectedIndices(index);
 		index = species.getSelectedIndices();
 		String[] intSpecies;
-		if (none.isSelected()) {
-			intSpecies = new String[allSpecies.length];
-			for (int j = 0; j < allSpecies.length; j++) {
-				intSpecies[j] = (String) allSpecies[j];
-			}
-		}
-		else {
-			intSpecies = Buttons.getList(interestingSpecies, species);
-		}
+// 		if (none.isSelected()) {
+// 			intSpecies = new String[allSpecies.length];
+// 			for (int j = 0; j < allSpecies.length; j++) {
+// 				intSpecies[j] = (String) allSpecies[j];
+// 			}
+// 		}
+// 		else {
+		intSpecies = Buttons.getList(interestingSpecies, species);
+		//		}
 		species.setSelectedIndices(index);
 		String selectedButtons = "";
 		double rap1 = 0.1;
@@ -2393,15 +2393,15 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		terminations.setSelectedIndices(index);
 		index = species.getSelectedIndices();
 		String[] intSpecies;
-		if (none.isSelected()) {
-			intSpecies = new String[allSpecies.length];
-			for (int j = 0; j < allSpecies.length; j++) {
-				intSpecies[j] = (String) allSpecies[j];
-			}
-		}
-		else {
-			intSpecies = Buttons.getList(interestingSpecies, species);
-		}
+// 		if (none.isSelected()) {
+// 			intSpecies = new String[allSpecies.length];
+// 			for (int j = 0; j < allSpecies.length; j++) {
+// 				intSpecies[j] = (String) allSpecies[j];
+// 			}
+// 		}
+// 		else {
+		intSpecies = Buttons.getList(interestingSpecies, species);
+			//		}
 		species.setSelectedIndices(index);
 		String selectedButtons = "";
 		double rap1 = 0.1;
