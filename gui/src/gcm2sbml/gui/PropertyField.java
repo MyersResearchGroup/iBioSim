@@ -1,58 +1,156 @@
 package gcm2sbml.gui;
 
+import gcm2sbml.util.Utility;
+
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.util.Properties;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-public class PropertyField extends JPanel implements ActionListener{
+public class PropertyField extends JPanel implements ActionListener, 
+		PropertyProvider {
 
 	public PropertyField(String name, String value, String state,
-			Properties defaultProperties) {
+			String defaultValue, String repExp) {
 		super(new GridLayout(1, 3));
-		this.defaultProperties = defaultProperties;
+		if (state == null) {
+			setLayout(new GridLayout(1, 2));
+		}
+		this.defaultValue = defaultValue;
 		init(name, value, state);
+		setRegExp(repExp);
+	}
+
+	public PropertyField(String name, String value, String state,
+			String defaultValue) {
+		this(name, value, state, defaultValue, null);
 	}
 
 	public void setEnabled(boolean state) {
 		// super.setEnabled(state);
+		isEnabled = state;
 		field.setEnabled(state);
-		box.setEnabled(state);
+		if (box != null) {
+			box.setEnabled(state);
+		}
 		name.setEnabled(state);
-	}	
-
+		if (state) {
+			if (box.getSelectedItem().equals(states[0])) {
+				setDefault();
+			} else {
+				setCustom();
+			}
+		}
+	}
+	
 	private void init(String nameString, String valueString, String stateString) {
 		name = new JLabel(nameString);
+		name.setName(nameString);
+		this.add(name);
 		field = new JTextField(20);
 		field.setText(valueString);
 		box = new JComboBox(new DefaultComboBoxModel(states));
-		box.addActionListener(this);
-		this.add(name);
-		this.add(box);
+		if (stateString != null) {			
+			box.addActionListener(this);
+			this.add(box);
+			if (stateString.equals(states[0])) {
+				setDefault();
+			} else {
+				setCustom();
+			}
+		}
+		field.addActionListener(this);
 		this.add(field);
 	}
-	
+
 	public void actionPerformed(ActionEvent e) {
-		if (box.getSelectedItem().equals(states[0])) {
-			field.setEnabled(false);
-			name.setEnabled(false);
-			field.setText(defaultProperties.getProperty("name").replace("\"",""));
+		// TODO: Need to check source
+		if (e.getActionCommand().equals("comboBoxChanged")) {
+			if (box.getSelectedItem().equals(states[0])) {
+				setDefault();
+			} else {
+				setCustom();
+			}
 		} else {
-			field.setEnabled(true);
-			name.setEnabled(true);			
+			if (Utility.isValid(e.getActionCommand(), regExp)) {
+				//System.out.println();
+			} else {
+				JOptionPane.showMessageDialog(null, "Illegal value entered.",
+						"Illegal value entered", JOptionPane.ERROR_MESSAGE);
+			}
 		}
 	}
 
+	public void setDefault() {
+		field.setEnabled(false);
+		name.setEnabled(false);
+		field.setText(defaultValue);
+		box.setSelectedItem(states[0]);
+	}
+
+	public void setCustom() {
+		if (isEnabled) {
+			field.setEnabled(true);
+			name.setEnabled(true);
+			box.setSelectedItem(states[1]);
+		}
+	}
+
+	public String getState() {
+		if (box == null) {
+			return null;
+		}
+		return box.getSelectedItem().toString();
+	}
+
+	public String getKey() {
+		return name.getName();
+	}
+
+	public String getValue() {
+		return field.getText();
+	}
+
+	public void setKey(String key) {
+		name.setName(key);
+		name.setText(key);
+	}
+
+	public void setValue(String value) {
+		field.setText(value);
+	}
+	
+	public boolean isValid() {
+		if (getValue() == null || getValue().equals("")) {
+			return false;
+		}
+		return Utility.isValid(getValue(), regExp);
+	}
+
+	public void setRegExp(String repExp) {
+		this.regExp = repExp;
+	}
+
+	private boolean isEnabled = true;
+
+	private String regExp = null;
+
 	private JLabel name = null;
+
 	private JComboBox box = null;
+
 	private JTextField field = null;
+
 	public static final String[] states = new String[] { "default", "custom" };
 
-	private Properties defaultProperties = null;
+	private String defaultValue = null;
 }
