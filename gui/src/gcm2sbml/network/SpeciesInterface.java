@@ -101,12 +101,6 @@ public interface SpeciesInterface extends VisitableSpecies {
 	public Properties getStateProperties();
 
 	/**
-	 * @param stateProperties
-	 *            the stateProperties to set
-	 */
-	public void setStateProperties(Properties stateProperties);
-
-	/**
 	 * @return the labelProperties
 	 */
 	public Properties getLabelProperties();

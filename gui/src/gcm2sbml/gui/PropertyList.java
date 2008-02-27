@@ -51,11 +51,11 @@ public class PropertyList extends JList implements EnableElement, NamedObject,
 
 	public void run() {
 	}
-	
+
 	public void accept(GuiVisitor visitor) {
 		visitor.visitPropertyList(this);
 	}
-	
+
 	public void updateState(Properties property) {
 		if (property.containsKey("deletion")) {
 			removeItem(property.getProperty("deletion"));
@@ -65,5 +65,6 @@ public class PropertyList extends JList implements EnableElement, NamedObject,
 	}
 
 	private String name = "";
+
 	private DefaultListModel model = null;
 }

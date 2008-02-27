@@ -59,8 +59,8 @@ public class GCMParser {
 		GeneticNetwork network = new GeneticNetwork(species, stateMap,
 				promoters);
 		return network;
-	}		
-	
+	}
+
 	/**
 	 * Parses the file to build the genetic network
 	 * 
@@ -139,59 +139,47 @@ public class GCMParser {
 			number_property.put(matcher.group(1), matcher.group(2));
 		}
 
-		Pattern state_pattern = Pattern.compile(PROPERTY_STATE);
-		matcher = state_pattern.matcher(info);
-		Properties state_property = new Properties();
-		while (matcher.find()) {
-			state_property.put(matcher.group(1), matcher.group(2));
-		}
-
 		Pattern quote_pattern = Pattern.compile(PROPERTY_QUOTE);
 		matcher = quote_pattern.matcher(info);
 		Properties label_property = new Properties();
 		while (matcher.find()) {
 			label_property.put(matcher.group(1), matcher.group(2));
 		}
-		if (label_property.getProperty(GlobalConstants.SPECIES_ID).indexOf(
-				"spastic") != -1) {
+		if (label_property.getProperty(GlobalConstants.TYPE).indexOf("spastic") != -1) {
 			Utility.print(debug, "GCMParser: Found spastic species "
-					+ label_property.getProperty(GlobalConstants.SPECIES_ID));
+					+ label_property.getProperty(GlobalConstants.NAME));
 			species = new SpasticSpecies();
-		} else if (state_property.containsKey(GlobalConstants.CONSTANT)
-				&& state_property.getProperty(GlobalConstants.CONSTANT)
-						.equalsIgnoreCase("true")) {
+		} else if (label_property.getProperty(GlobalConstants.TYPE).indexOf(
+				"constant") != -1) {
 			Utility.print(debug, "GCMParser: Found constant species "
-					+ label_property.getProperty(GlobalConstants.SPECIES_ID));
+					+ label_property.getProperty(GlobalConstants.NAME));
 			species = new ConstantSpecies();
 		} else {
 			Utility.print(debug, "GCMParser: Found base species "
-					+ label_property.getProperty(GlobalConstants.SPECIES_ID));
+					+ label_property.getProperty(GlobalConstants.NAME));
 			species = new BaseSpecies();
 		}
 
-		species
-				.setName(label_property
-						.getProperty(GlobalConstants.SPECIES_ID));
+		species.setName(label_property.getProperty(GlobalConstants.NAME));
 		species.setStateName(stateName);
 		species.setNumberProperties(number_property);
-		species.setStateProperties(state_property);
 		species.setLabelProperties(label_property);
-		if (number_property.containsKey(GlobalConstants.MAX_DIMER)) {
+		if (number_property.containsKey(GlobalConstants.MAX_DIMER_STRING)) {
 			species.setMaxDimer(Integer.parseInt(number_property
-					.getProperty(GlobalConstants.MAX_DIMER)));
+					.getProperty(GlobalConstants.MAX_DIMER_STRING)));
 		}
-		if (number_property.containsKey(GlobalConstants.DIMER_CONST)) {
+		if (number_property.containsKey(GlobalConstants.KASSOCIATION_STRING)) {
 			species.setDimerizationConstant(Double.parseDouble(number_property
-					.getProperty(GlobalConstants.DIMER_CONST)));
+					.getProperty(GlobalConstants.KASSOCIATION_STRING)));
 		}
-		if (number_property.containsKey(GlobalConstants.DECAY)) {
+		if (number_property.containsKey(GlobalConstants.KDECAY_STRING)) {
 			species.setDimerizationConstant(Double.parseDouble(number_property
-					.getProperty(GlobalConstants.DECAY)));
+					.getProperty(GlobalConstants.KDECAY_STRING)));
 		}
-		if (number_property.containsKey(GlobalConstants.INITIAL)) {
+		if (number_property.containsKey(GlobalConstants.INITIAL_STRING)) {
 			species.setInitial(Double.parseDouble(number_property
-					.getProperty(GlobalConstants.INITIAL)));
-		}		
+					.getProperty(GlobalConstants.INITIAL_STRING)));
+		}
 		// Pattern dimer = Pattern.compile(MAX_DIMER);
 		// matcher = dimer.matcher(info);
 		// if (matcher.find()) {
@@ -220,13 +208,6 @@ public class GCMParser {
 			number_property.put(matcher.group(1), matcher.group(2));
 		}
 
-		Pattern state_pattern = Pattern.compile(PROPERTY_STATE);
-		matcher = state_pattern.matcher(reaction);
-		Properties state_property = new Properties();
-		while (matcher.find()) {
-			state_property.put(matcher.group(1), matcher.group(2));
-		}
-
 		Pattern label_pattern = Pattern.compile(PROPERTY_QUOTE);
 		matcher = label_pattern.matcher(reaction);
 		Properties quote_property = new Properties();
@@ -239,8 +220,8 @@ public class GCMParser {
 		Reaction r = new Reaction();
 		r.generateName();
 
-		if (quote_property.containsKey(Reaction.PROMOTER)) {
-			promoterName = quote_property.getProperty(Reaction.PROMOTER);
+		if (quote_property.containsKey(GlobalConstants.PROMOTER)) {
+			promoterName = quote_property.getProperty(GlobalConstants.PROMOTER);
 		} else {
 			promoterName = "Promoter_" + stateNameOutput;
 		}
@@ -254,23 +235,20 @@ public class GCMParser {
 			promoters.put(promoter.getName(), promoter);
 		}
 
-		if (state_property.containsKey(Reaction.TYPE)) {
-			if (state_property.get(Reaction.TYPE).toString().indexOf(
-					"biochemical") != -1) {
-				Utility.print(debug, "GCMParser: Biochemical");
-				r.setBiochemical(true);
-			}
+		if (quote_property.containsKey(GlobalConstants.BIO)) {
+			Utility.print(debug, "GCMParser: Biochemical");
+			r.setBiochemical(true);
 		}
 
-		if (number_property.containsKey(Reaction.COOP)) {
-			r.setCoop(Double.parseDouble(number_property.get(Reaction.COOP)
-					.toString()));
-			Utility.print(debug, "GCMParser: Coop: " + r.getCoop());
-		}
+		// if (number_property.containsKey(GlobalConstants.COOP)) {
+		// r.setCoop(Double.parseDouble(number_property.get(Reaction.COOP)
+		// .toString()));
+		// Utility.print(debug, "GCMParser: Coop: " + r.getCoop());
+		// }
 
-		if (number_property.containsKey(Reaction.DIMER)) {
-			r.setDimer(Integer.parseInt(number_property.get(Reaction.DIMER)
-					.toString()));
+		if (number_property.containsKey(GlobalConstants.MAX_DIMER_STRING)) {
+			r.setDimer(Integer.parseInt(number_property.get(
+					GlobalConstants.MAX_DIMER_STRING).toString()));
 			Utility.print(debug, "GCMParser: Dimer: " + r.getDimer());
 		}
 
@@ -298,9 +276,12 @@ public class GCMParser {
 
 	private static final String PROPERTY_NUMBER = "([a-zA-Z]+)=\"([\\d]*[\\.\\d]?\\d+)\"";
 
-	private static final String PROPERTY_STATE = "([a-zA-Z]+)=([^\\s,.\"]+)";
+	// private static final String PROPERTY_STATE = "([a-zA-Z]+)=([^\\s,.\"]+)";
 
-	private static final String PROPERTY_QUOTE = "([a-zA-Z]+)=\"([^\\s,.\"]+)\"";	
+	// private static final String PROPERTY_QUOTE =
+	// "([a-zA-Z]+)=\"([^\\s,.\"]+)\"";
+
+	private static final String PROPERTY_QUOTE = "([a-zA-Z]+)=([^\\s,.\"]+)";
 
 	// Debug level
 	private boolean debug = false;

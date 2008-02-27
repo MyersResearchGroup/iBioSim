@@ -5,11 +5,13 @@ import java.awt.Dimension;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
@@ -64,6 +66,11 @@ public class Utility {
 		c.setSpatialDimensions(3);
 		return c;
 	}
+	
+	public static void createErrorMessage(String title, String message) {
+		JOptionPane.showMessageDialog(null, message,
+				title, JOptionPane.ERROR_MESSAGE);
+	}
 
 	public static Species makeSpecies(String id, String compartment,
 			double amount) {
@@ -71,6 +78,16 @@ public class Utility {
 		specie.setCompartment(compartment);
 		specie.setInitialAmount(amount);
 		return specie;
+	}
+	
+	public static boolean isValid(String toValidate, String repExp) {
+		Pattern pattern = Pattern.compile(repExp);
+		Matcher matcher = pattern.matcher(toValidate);
+		boolean state = matcher.find();
+		if (state) {
+			state = matcher.group().equals(toValidate);
+		}
+		return state;
 	}
 
 	public static/* Create add/remove/edit panel */
@@ -112,6 +129,10 @@ public class Utility {
 	public static final Pattern NUMpat = Pattern
 			.compile("([\\d]*[\\.\\d]?\\d+)");
 	private static Utility instance = null;
+	public static final String NUMstring = "([\\d]*[\\.\\d]?\\d+)";
+	public static final String PROPstring = "([a-zA-Z]|_)([a-zA-Z]|[0-9]|_)*";
+	public static final String IDstring = "([a-zA-Z])([a-zA-Z]|[0-9]|_)*";
+
 
 	public static final String DECAY = ".0075";
 	public static final String KDIMER = ".5";

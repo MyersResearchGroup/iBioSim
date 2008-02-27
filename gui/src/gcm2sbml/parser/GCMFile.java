@@ -1,8 +1,6 @@
 package gcm2sbml.parser;
 
-import gcm2sbml.network.GeneticNetwork;
 import gcm2sbml.network.Reaction;
-import gcm2sbml.network.SpeciesInterface;
 import gcm2sbml.util.GlobalConstants;
 
 import java.io.BufferedReader;
@@ -11,12 +9,16 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.JOptionPane;
+
+import sun.misc.Compare;
+import sun.misc.Sort;
 
 /**
  * This class describes a GCM file
@@ -32,7 +34,7 @@ public class GCMFile {
 		influences = new HashMap<String, Properties>();
 		promoters = new HashMap<String, Properties>();
 		globalParameters = new HashMap<String, String>();
-		promoters.put("none", null);
+
 		loadDefaultParameters();
 	}
 
@@ -70,6 +72,20 @@ public class GCMFile {
 				}
 				buffer.append(s + "=" + value + "\n");
 			}
+			buffer.append("}\nPromoters {\n");
+			for (String s : promoters.keySet()) {
+				buffer.append(s + " [");
+				Properties prop = promoters.get(s);
+				for (Object propName : prop.keySet()) {
+					buffer.append(propName + "="
+							+ prop.getProperty(propName.toString()).toString()
+							+ ",");
+				}
+				if (buffer.charAt(buffer.length() - 1) == ',') {
+					buffer.deleteCharAt(buffer.length() - 1);
+				}
+				buffer.append("]\n");
+			}
 			buffer.append("}\n");
 			p.print(buffer);
 			p.close();
@@ -84,7 +100,6 @@ public class GCMFile {
 		influences = new HashMap<String, Properties>();
 		promoters = new HashMap<String, Properties>();
 		globalParameters = new HashMap<String, String>();
-		promoters.put("none", null);
 		StringBuffer data = new StringBuffer();
 		try {
 			BufferedReader in = new BufferedReader(new FileReader(filename));
@@ -101,6 +116,7 @@ public class GCMFile {
 			parseStates(data);
 			parseInfluences(data);
 			parseGlobal(data);
+			parsePromoters(data);
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(null,
 					"Unable to parse model, creating a blank model.", "Error",
@@ -115,9 +131,9 @@ public class GCMFile {
 
 	public void changePromoterName(String oldName, String newName) {
 		for (Properties p : influences.values()) {
-			if (p.containsKey(Reaction.PROMOTER)
-					&& p.getProperty(Reaction.PROMOTER).equals(oldName)) {
-				p.setProperty(Reaction.PROMOTER, newName);
+			if (p.containsKey(GlobalConstants.PROMOTER)
+					&& p.getProperty(GlobalConstants.PROMOTER).equals(oldName)) {
+				p.setProperty(GlobalConstants.PROMOTER, newName);
 			}
 		}
 		promoters.put(newName, promoters.get(oldName));
@@ -223,8 +239,8 @@ public class GCMFile {
 	 */
 	public boolean removePromoterCheck(String name) {
 		for (Properties p : influences.values()) {
-			if (p.containsKey(Reaction.PROMOTER)
-					&& p.getProperty(Reaction.PROMOTER).equals(name)) {
+			if (p.containsKey(GlobalConstants.PROMOTER)
+					&& p.getProperty(GlobalConstants.PROMOTER).equals(name)) {
 				return false;
 			}
 		}
@@ -257,9 +273,17 @@ public class GCMFile {
 		return matcher.group(3);
 	}
 
+	public String[] getSpeciesAsArray() {
+		String[] s = new String[species.size()];
+		s = species.keySet().toArray(s);
+		Arrays.sort(s);
+		return s;
+	}
+
 	public String[] getPromotersAsArray() {
 		String[] s = new String[promoters.size()];
 		s = promoters.keySet().toArray(s);
+		Arrays.sort(s);
 		return s;
 	}
 
@@ -319,7 +343,7 @@ public class GCMFile {
 	}
 
 	private void parsePromoters(StringBuffer data) {
-		Pattern network = Pattern.compile(NETWORK);
+		Pattern network = Pattern.compile(PROMOTERS_LIST);
 		Matcher matcher = network.matcher(data.toString());
 		Pattern pattern = Pattern.compile(STATE);
 		Pattern propPattern = Pattern.compile(PROPERTY);
@@ -332,7 +356,7 @@ public class GCMFile {
 			while (propMatcher.find()) {
 				properties.put(propMatcher.group(1), propMatcher.group(2));
 			}
-			species.put(name, properties);
+			promoters.put(name, properties);
 		}
 	}
 
@@ -346,7 +370,7 @@ public class GCMFile {
 			Properties properties = new Properties();
 			while (propMatcher.find()) {
 				properties.put(propMatcher.group(1), propMatcher.group(2));
-				if (propMatcher.group(1).equals(GlobalConstants.PROMOTERS)
+				if (propMatcher.group(1).equals(GlobalConstants.PROMOTER)
 						&& !promoters.containsKey(propMatcher.group(2))) {
 					promoters.put(propMatcher.group(2).replaceAll("\"", ""),
 							new Properties());
@@ -358,7 +382,7 @@ public class GCMFile {
 
 	private void loadDefaultParameters() {
 		defaultParameters = new HashMap<String, String>();
-		defaultParameters.put(GlobalConstants.DECAY,
+		defaultParameters.put(GlobalConstants.KDECAY_STRING,
 				GlobalConstants.KDECAY_VALUE);
 		defaultParameters.put(GlobalConstants.KASSOCIATION_STRING,
 				GlobalConstants.KASSOCIATION_VALUE);
@@ -378,12 +402,17 @@ public class GCMFile {
 				GlobalConstants.OCR_VALUE);
 		defaultParameters.put(GlobalConstants.KBASAL_STRING,
 				GlobalConstants.KBASAL_VALUE);
-		defaultParameters.put(GlobalConstants.GENE_COUNT_STRING,
+		defaultParameters.put(GlobalConstants.PROMOTER_COUNT_STRING,
 				GlobalConstants.GENE_COUNT_VALUE);
 		defaultParameters.put(GlobalConstants.STOICHIOMETRY_STRING,
 				GlobalConstants.STOICHIOMETRY_VALUE);
 		defaultParameters.put(GlobalConstants.ACTIVED_STRING,
 				GlobalConstants.ACTIVED_VALUE);
+		defaultParameters.put(GlobalConstants.MAX_DIMER_STRING,
+				GlobalConstants.MAX_DIMER_VALUE);
+		defaultParameters.put(GlobalConstants.INITIAL_STRING,
+				GlobalConstants.INITIAL_VALUE);
+
 	}
 
 	private static final String NETWORK = "digraph\\sG\\s\\{([^}]*)\\s\\}";
@@ -394,7 +423,7 @@ public class GCMFile {
 
 	private static final String PARSE = "(^|\\n) *([^ \\n]*) *\\-\\> *([^ \n]*)";
 
-	private static final String PROPERTY = "([a-zA-Z]+)=([^\\s,]+)";
+	private static final String PROPERTY = "([a-zA-Z\\s\\-]+)=([^\\s,]+)";
 
 	private static final String GLOBAL = "Global\\s\\{([^}]*)\\s\\}";
 
