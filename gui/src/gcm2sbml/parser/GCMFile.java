@@ -50,7 +50,8 @@ public class GCMFile {
 							+ prop.getProperty(propName.toString()).toString()
 							+ ",");
 				}
-				buffer.deleteCharAt(buffer.length() - 1);
+				buffer.append("label=\""+ s + "\"");
+				//buffer.deleteCharAt(buffer.length() - 1);
 				buffer.append("]\n");
 			}
 			for (String s : influences.keySet()) {
@@ -61,12 +62,18 @@ public class GCMFile {
 							+ prop.getProperty(propName.toString()).toString()
 							+ ",");
 				}
-				buffer.deleteCharAt(buffer.length() - 1);
+				String type = "";
+				if (prop.getProperty(GlobalConstants.TYPE).equals(GlobalConstants.ACTIVATION)) {
+					type = "vee";
+				} else {
+					type = "tee";
+				}
+				buffer.append("arrowhead="+ type + "");
+				//buffer.deleteCharAt(buffer.length() - 1);
 				buffer.append("]\n");
 			}
 			buffer.append("}\nGlobal {\n");
-			for (String s : defaultParameters.keySet()) {
-				//String value = defaultParameters.get(s);
+			for (String s : defaultParameters.keySet()) {				
 				if (globalParameters.containsKey(s)) {
 					String value = globalParameters.get(s);
 					buffer.append(s + "=" + value + "\n");
@@ -102,6 +109,7 @@ public class GCMFile {
 		globalParameters = new HashMap<String, String>();
 		parameters = new HashMap<String, String>();
 		StringBuffer data = new StringBuffer();
+		loadDefaultParameters();
 		try {
 			BufferedReader in = new BufferedReader(new FileReader(filename));
 			String str;
@@ -126,7 +134,7 @@ public class GCMFile {
 			influences = new HashMap<String, Properties>();
 			promoters = new HashMap<String, Properties>();
 			globalParameters = new HashMap<String, String>();
-			promoters.put("none", null);
+			//promoters.put("none", null);
 		}
 	}
 
@@ -381,6 +389,13 @@ public class GCMFile {
 						&& !promoters.containsKey(propMatcher.group(2))) {
 					promoters.put(propMatcher.group(2).replaceAll("\"", ""),
 							new Properties());
+				}
+			}
+			if (properties.containsKey("arrowhead")) {
+				if (properties.getProperty("arrowhead").indexOf("vee") != -1) {
+					properties.setProperty(GlobalConstants.TYPE, GlobalConstants.ACTIVATION);
+				} else {
+					properties.setProperty(GlobalConstants.TYPE, GlobalConstants.REPRESSION);
 				}
 			}
 			influences.put(name, properties);
