@@ -26,6 +26,7 @@ public class ParameterPanel extends JPanel {
 				.getDefaultParameters().get(selected), Utility.NUMstring);
 		fields.put(selected, field);
 		if (gcm.getGlobalParameters().containsKey(selected)) {
+			field.setValue(gcm.getGlobalParameters().get(selected));
 			field.setCustom();
 		} else {
 			field.setDefault();

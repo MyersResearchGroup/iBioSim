@@ -13,7 +13,6 @@ import gcm2sbml.util.Utility;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Properties;
 import java.util.regex.Matcher;
@@ -139,7 +138,7 @@ public class GCMParser {
 			number_property.put(matcher.group(1), matcher.group(2));
 		}
 
-		Pattern quote_pattern = Pattern.compile(PROPERTY_QUOTE);
+		Pattern quote_pattern = Pattern.compile(PROPERTY_STATE);
 		matcher = quote_pattern.matcher(info);
 		Properties label_property = new Properties();
 		while (matcher.find()) {
@@ -208,7 +207,7 @@ public class GCMParser {
 			number_property.put(matcher.group(1), matcher.group(2));
 		}
 
-		Pattern label_pattern = Pattern.compile(PROPERTY_QUOTE);
+		Pattern label_pattern = Pattern.compile(PROPERTY_STATE);
 		matcher = label_pattern.matcher(reaction);
 		Properties quote_property = new Properties();
 		while (matcher.find()) {
@@ -281,7 +280,7 @@ public class GCMParser {
 	// private static final String PROPERTY_QUOTE =
 	// "([a-zA-Z]+)=\"([^\\s,.\"]+)\"";
 
-	private static final String PROPERTY_QUOTE = "([a-zA-Z]+)=([^\\s,.\"]+)";
+	private static final String PROPERTY_STATE = "([a-zA-Z\\s\\-]+)=([^\\s,]+)";
 
 	// Debug level
 	private boolean debug = false;

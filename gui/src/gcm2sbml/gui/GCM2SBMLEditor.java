@@ -279,6 +279,10 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 		}
 
 		public void run() {
+			if (name == null || name.equals("")) {
+				Utility.createErrorMessage("Error", "Nothing selected to edit");
+				return;
+			}
 			dirty = true;
 			if (getName().contains("Specie")) {
 				String selected = null;
