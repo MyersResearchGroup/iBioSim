@@ -183,7 +183,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 
 		parameters = new PropertyList("Parameter List");
 		editInit = new EditButton("Edit Parameter", parameters);
-		parameters.addAllItem(gcm.getDefaultParameters().keySet());
+		parameters.addAllItem(gcm.getParameters().keySet());
 		initPanel = Utility.createPanel(this, "Parameters", parameters, null,
 				null, editInit);
 
