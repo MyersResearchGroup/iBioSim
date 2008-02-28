@@ -23,7 +23,7 @@ public class ParameterPanel extends JPanel {
 		PropertyField field = new PropertyField(selected, gcm
 				.getParameter(selected),
 				PropertyField.states[0], gcm
-						.getParameter(selected),
+						.getDefaultParameters().get(selected),
 				Utility.NUMstring);
 		fields.put(selected, field);
 		add(field);

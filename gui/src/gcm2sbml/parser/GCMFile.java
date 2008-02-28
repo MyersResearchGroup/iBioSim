@@ -34,7 +34,7 @@ public class GCMFile {
 		influences = new HashMap<String, Properties>();
 		promoters = new HashMap<String, Properties>();
 		globalParameters = new HashMap<String, String>();
-
+		parameters = new HashMap<String, String>();
 		loadDefaultParameters();
 	}
 
@@ -66,11 +66,11 @@ public class GCMFile {
 			}
 			buffer.append("}\nGlobal {\n");
 			for (String s : defaultParameters.keySet()) {
-				String value = defaultParameters.get(s);
+				//String value = defaultParameters.get(s);
 				if (globalParameters.containsKey(s)) {
-					value = globalParameters.get(s);
-				}
-				buffer.append(s + "=" + value + "\n");
+					String value = globalParameters.get(s);
+					buffer.append(s + "=" + value + "\n");
+				}				
 			}
 			buffer.append("}\nPromoters {\n");
 			for (String s : promoters.keySet()) {
@@ -100,6 +100,7 @@ public class GCMFile {
 		influences = new HashMap<String, Properties>();
 		promoters = new HashMap<String, Properties>();
 		globalParameters = new HashMap<String, String>();
+		parameters = new HashMap<String, String>();
 		StringBuffer data = new StringBuffer();
 		try {
 			BufferedReader in = new BufferedReader(new FileReader(filename));
@@ -298,6 +299,10 @@ public class GCMFile {
 	public HashMap<String, String> getDefaultParameters() {
 		return defaultParameters;
 	}
+	
+	public HashMap<String, String> getParameters() {		
+		return parameters;
+	}	
 
 	public String getParameter(String parameter) {
 		if (globalParameters.containsKey(parameter)) {
@@ -434,6 +439,8 @@ public class GCMFile {
 	private HashMap<String, Properties> influences;
 
 	private HashMap<String, Properties> promoters;
+	
+	private HashMap<String, String> parameters;
 
 	private HashMap<String, String> defaultParameters;
 
