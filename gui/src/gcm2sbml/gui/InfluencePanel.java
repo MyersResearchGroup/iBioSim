@@ -60,7 +60,7 @@ public class InfluencePanel extends JPanel implements ActionListener {
 		tempLabel = new JLabel("Promoter");
 		promoterBox = new JComboBox(gcm.getPromotersAsArray());
 		((DefaultComboBoxModel) (promoterBox.getModel())).addElement("default");
-		outputBox.setSelectedItem("default");
+		promoterBox.setSelectedItem("default");
 		// promoterBox.addActionListener(this);
 		tempPanel.setLayout(new GridLayout(1, 2));
 		tempPanel.add(tempLabel);
