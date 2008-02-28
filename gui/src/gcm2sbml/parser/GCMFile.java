@@ -314,6 +314,7 @@ public class GCMFile {
 
 	public void setParameter(String parameter, String value) {
 		globalParameters.put(parameter, value);
+		parameters.put(parameter, value);
 	}
 
 	private void parseStates(StringBuffer data) {
@@ -343,6 +344,7 @@ public class GCMFile {
 			matcher = propPattern.matcher(s);
 			while (matcher.find()) {
 				globalParameters.put(matcher.group(1), matcher.group(2));
+				parameters.put(matcher.group(1), matcher.group(2));
 			}
 		}
 	}
@@ -417,6 +419,10 @@ public class GCMFile {
 				GlobalConstants.MAX_DIMER_VALUE);
 		defaultParameters.put(GlobalConstants.INITIAL_STRING,
 				GlobalConstants.INITIAL_VALUE);
+		
+		for (String s : defaultParameters.keySet()) {
+			parameters.put(s, defaultParameters.get(s));
+		}
 
 	}
 

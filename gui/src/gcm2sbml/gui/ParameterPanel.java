@@ -11,29 +11,33 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 public class ParameterPanel extends JPanel {
-	public ParameterPanel(String selected, PropertyList parameterList, GCMFile gcm) {
+	public ParameterPanel(String selected, PropertyList parameterList,
+			GCMFile gcm) {
 		super(new GridLayout(1, 2));
 		this.selected = selected;
 		this.parameterList = parameterList;
 		this.gcm = gcm;
 
 		fields = new HashMap<String, PropertyField>();
-		
+
 		// Initial field
 		PropertyField field = new PropertyField(selected, gcm
-				.getParameter(selected),
-				PropertyField.states[0], gcm
-						.getDefaultParameters().get(selected),
-				Utility.NUMstring);
+				.getParameter(selected), PropertyField.states[0], gcm
+				.getDefaultParameters().get(selected), Utility.NUMstring);
 		fields.put(selected, field);
+		if (gcm.getGlobalParameters().containsKey(selected)) {
+			field.setCustom();
+		} else {
+			field.setDefault();
+		}
 		add(field);
-				
+
 		boolean display = false;
 		while (!display) {
 			display = openGui(selected);
 		}
 	}
-	
+
 	private boolean checkValues() {
 		for (PropertyField f : fields.values()) {
 			if (!f.isValid()) {
@@ -42,7 +46,7 @@ public class ParameterPanel extends JPanel {
 		}
 		return true;
 	}
-	
+
 	private boolean openGui(String selected) {
 		int value = JOptionPane.showOptionDialog(new JFrame(), this,
 				"Parameter Editor", JOptionPane.YES_NO_OPTION,
@@ -52,15 +56,16 @@ public class ParameterPanel extends JPanel {
 				Utility.createErrorMessage("Error", "Illegal values entered.");
 				return false;
 			}
-			
-			gcm.setParameter(selected, fields.get(selected).getValue());
+			if (fields.get(selected).getState().equals(PropertyField.states[1])) {
+				gcm.setParameter(selected, fields.get(selected).getValue());
+			}
 		} else if (value == JOptionPane.NO_OPTION) {
 			// System.out.println();
 			return true;
 		}
 		return true;
 	}
-	
+
 	private String[] options = { "Okay", "Cancel" };
 
 	private String selected = "";
@@ -68,4 +73,3 @@ public class ParameterPanel extends JPanel {
 	private PropertyList parameterList = null;
 	private HashMap<String, PropertyField> fields = null;
 }
-
