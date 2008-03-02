@@ -32,6 +32,8 @@ public class GCMParser {
 
 	public GCMParser(String filename, boolean debug) {
 		this.debug = debug;
+		gcm = new GCMFile();
+		gcm.load(filename);
 		data = new StringBuffer();
 		try {
 			BufferedReader in = new BufferedReader(new FileReader(filename));
@@ -46,146 +48,36 @@ public class GCMParser {
 		}
 	}
 
-	public void printFile() {
-		System.out.println(data.toString());
-	}
-
 	public GeneticNetwork buildNetwork() {
+		HashMap<String, Properties> speciesMap = gcm.getSpecies();
+		HashMap<String, Properties> reactionMap = gcm.getInfluences();
+		HashMap<String, Properties> promoterMap = gcm.getPromoters();
+
 		species = new HashMap<String, SpeciesInterface>();
 		stateMap = new HashMap<String, SpeciesInterface>();
 		promoters = new HashMap<String, Promoter>();
-		parseFile();
+
+		for (String s : speciesMap.keySet()) {
+			SpeciesInterface specie = parseSpeciesData(s, speciesMap.get(s));
+			species.put(specie.getName(), specie);
+			stateMap.put(specie.getStateName(), specie);
+		}
+		
+		for (String s : reactionMap.keySet()) {
+			Reaction reaction = parseReactionData(s, reactionMap.get(s));			
+		}
+		
+		for (String s : promoterMap.keySet()) {
+			promoters.get(s).addProperties(promoterMap.get(s));
+		}
+		
 		GeneticNetwork network = new GeneticNetwork(species, stateMap,
 				promoters);
 		return network;
 	}
 
-	/**
-	 * Parses the file to build the genetic network
-	 * 
-	 */
-	private void parseFile() {
-		parseStates();
-		parseReactions();
-	}
-
-	/**
-	 * This function parses the states, determining all the base species in the
-	 * network.
-	 * 
-	 */
-	private void parseStates() {
-		Pattern pattern = Pattern.compile(STATE);
-		Matcher matcher = pattern.matcher(data.toString());
-		while (matcher.find()) {
-			Utility
-					.print(debug, "GCMParser: I found the text \""
-							+ matcher.group().trim() + "\" starting at "
-							+ "index " + matcher.start()
-							+ " and ending at index " + matcher.end());
-			Utility.print(debug, "GCMParser: Group 2: " + matcher.group(2));
-			Utility.print(debug, "GCMParser: Group 3: " + matcher.group(3));
-
-			SpeciesInterface specie = parseSpeciesData(matcher.group(3),
-					matcher.group(2));
-			species.put(specie.getName(), specie);
-			stateMap.put(specie.getStateName(), specie);
-		}
-	}
-
-	/**
-	 * Parses reactions.
-	 * 
-	 */
-	private void parseReactions() {
-		Pattern pattern = Pattern.compile(REACTION);
-		Matcher matcher = pattern.matcher(data.toString());
-		while (matcher.find()) {
-			Utility
-					.print(debug, "GCMParser: I found the text \""
-							+ matcher.group().trim() + "\" starting at "
-							+ "index " + matcher.start()
-							+ " and ending at index " + matcher.end());
-			Utility.print(debug, "GCMParser: Group 2: " + matcher.group(2));
-			Utility.print(debug, "GCMParser: Group 3: " + matcher.group(3));
-			Utility.print(debug, "GCMParser: Group 5: " + matcher.group(5));
-			String stateNameInput = matcher.group(2);
-			String stateNameOutput = matcher.group(3);
-			String type = matcher.group(5);
-			String totalInfo = matcher.group(4) + " " + matcher.group(6);
-			Utility.print(debug, "GCMParser: " + totalInfo);
-			Reaction r = parseReactionData(totalInfo, stateNameInput,
-					stateNameOutput, type);
-		}
-
-	}
-
-	/**
-	 * Parses the data and put it into the species
-	 * 
-	 * @param species
-	 *            the species to fill
-	 * @param info
-	 *            the information to parse from
-	 */
-	// TODO: Match decay rates, dimerization rates
-	private SpeciesInterface parseSpeciesData(String info, String stateName) {
-		SpeciesInterface species = null;
-		Pattern number_pattern = Pattern.compile(PROPERTY_NUMBER);
-		Matcher matcher = number_pattern.matcher(info);
-		Properties number_property = new Properties();
-		while (matcher.find()) {
-			number_property.put(matcher.group(1), matcher.group(2));
-		}
-
-		Pattern quote_pattern = Pattern.compile(PROPERTY_STATE);
-		matcher = quote_pattern.matcher(info);
-		Properties label_property = new Properties();
-		while (matcher.find()) {
-			label_property.put(matcher.group(1), matcher.group(2));
-		}
-		if (label_property.getProperty(GlobalConstants.TYPE).indexOf("spastic") != -1) {
-			Utility.print(debug, "GCMParser: Found spastic species "
-					+ label_property.getProperty(GlobalConstants.NAME));
-			species = new SpasticSpecies();
-		} else if (label_property.getProperty(GlobalConstants.TYPE).indexOf(
-				"constant") != -1) {
-			Utility.print(debug, "GCMParser: Found constant species "
-					+ label_property.getProperty(GlobalConstants.NAME));
-			species = new ConstantSpecies();
-		} else {
-			Utility.print(debug, "GCMParser: Found base species "
-					+ label_property.getProperty(GlobalConstants.NAME));
-			species = new BaseSpecies();
-		}
-
-		species.setName(label_property.getProperty(GlobalConstants.NAME));
-		species.setStateName(stateName);
-		species.setNumberProperties(number_property);
-		species.setLabelProperties(label_property);
-		if (number_property.containsKey(GlobalConstants.MAX_DIMER_STRING)) {
-			species.setMaxDimer(Integer.parseInt(number_property
-					.getProperty(GlobalConstants.MAX_DIMER_STRING)));
-		}
-		if (number_property.containsKey(GlobalConstants.KASSOCIATION_STRING)) {
-			species.setDimerizationConstant(Double.parseDouble(number_property
-					.getProperty(GlobalConstants.KASSOCIATION_STRING)));
-		}
-		if (number_property.containsKey(GlobalConstants.KDECAY_STRING)) {
-			species.setDimerizationConstant(Double.parseDouble(number_property
-					.getProperty(GlobalConstants.KDECAY_STRING)));
-		}
-		if (number_property.containsKey(GlobalConstants.INITIAL_STRING)) {
-			species.setInitial(Double.parseDouble(number_property
-					.getProperty(GlobalConstants.INITIAL_STRING)));
-		}
-		// Pattern dimer = Pattern.compile(MAX_DIMER);
-		// matcher = dimer.matcher(info);
-		// if (matcher.find()) {
-		// Utility.print(debug, "GCMParser: Max dimer " + matcher.group(1));
-		// species.setMaxDimer(Integer.parseInt(matcher.group(1)));
-		// }
-		return species;
+	public void printFile() {
+		System.out.println(data.toString());
 	}
 
 	/**
@@ -198,31 +90,17 @@ public class GCMParser {
 	 * 
 	 */
 	// TODO: Match rate constants
-	private Reaction parseReactionData(String reaction, String stateNameInput,
-			String stateNameOutput, String type) {
-		Pattern number_pattern = Pattern.compile(PROPERTY_NUMBER);
-		Matcher matcher = number_pattern.matcher(reaction);
-		Properties number_property = new Properties();
-		while (matcher.find()) {
-			number_property.put(matcher.group(1), matcher.group(2));
-		}
-
-		Pattern label_pattern = Pattern.compile(PROPERTY_STATE);
-		matcher = label_pattern.matcher(reaction);
-		Properties quote_property = new Properties();
-		while (matcher.find()) {
-			quote_property.put(matcher.group(1), matcher.group(2));
-		}
+	private Reaction parseReactionData(String reaction, Properties property) {
 
 		String promoterName = "";
 		Promoter promoter = null;
-		Reaction r = new Reaction();
-		r.generateName();
+		Reaction r = new Reaction();		
+		r.generateName();		
 
-		if (quote_property.containsKey(GlobalConstants.PROMOTER)) {
-			promoterName = quote_property.getProperty(GlobalConstants.PROMOTER);
+		if (property.containsKey(GlobalConstants.PROMOTER)) {
+			promoterName = property.getProperty(GlobalConstants.PROMOTER);
 		} else {
-			promoterName = "Promoter_" + stateNameOutput;
+			promoterName = "Promoter_" + gcm.getOutput(reaction);
 		}
 
 		// Check if promoter exists. If not, create it.
@@ -234,28 +112,54 @@ public class GCMParser {
 			promoters.put(promoter.getName(), promoter);
 		}
 
-		if (quote_property.containsKey(GlobalConstants.BIO)) {
+		if (property.containsKey(GlobalConstants.BIO)) {
 			Utility.print(debug, "GCMParser: Biochemical");
 			r.setBiochemical(true);
 		}
-
-		// if (number_property.containsKey(GlobalConstants.COOP)) {
-		// r.setCoop(Double.parseDouble(number_property.get(Reaction.COOP)
-		// .toString()));
-		// Utility.print(debug, "GCMParser: Coop: " + r.getCoop());
-		// }
-
-		if (number_property.containsKey(GlobalConstants.MAX_DIMER_STRING)) {
-			r.setDimer(Integer.parseInt(number_property.get(
-					GlobalConstants.MAX_DIMER_STRING).toString()));
-			Utility.print(debug, "GCMParser: Dimer: " + r.getDimer());
+		
+		r.setInputState(gcm.getInput(reaction));
+		r.setOutputState(gcm.getOutput(reaction));
+		if (property.getProperty(GlobalConstants.TYPE).equals(GlobalConstants.ACTIVATION)) {
+			r.setType("vee");
+			if (property.containsKey(GlobalConstants.KACT_STRING)) {
+				r.setBindingConstant(Double.parseDouble(property.getProperty(GlobalConstants.KACT_STRING)));
+			}		
+		} else {
+			r.setType("tee");
+			if (property.containsKey(GlobalConstants.KREP_STRING)) {
+				r.setBindingConstant(Double.parseDouble(property.getProperty(GlobalConstants.KREP_STRING)));
+			}					
 		}
-
-		r.setInputState(stateNameInput);
-		r.setOutputState(stateNameOutput);
-		r.setType(type);
 		promoter.addReaction(r);
 		return r;
+	}
+	
+
+	/**
+	 * Parses the data and put it into the species
+	 * 
+	 * @param name
+	 *            the name of the species
+	 * @param properties
+	 *            the properties of the species
+	 */
+	private SpeciesInterface parseSpeciesData(String name, Properties property) {
+		SpeciesInterface species = null;
+
+		if (property.getProperty(GlobalConstants.TYPE).equals(
+				GlobalConstants.CONSTANT)) {
+			species = new ConstantSpecies();
+		} else if (property.getProperty(GlobalConstants.TYPE).equals(
+				GlobalConstants.SPASTIC)) {
+			species = new SpasticSpecies();
+		} else {
+			species = new BaseSpecies();
+		}
+
+		species.setName(property.getProperty(GlobalConstants.NAME));
+		species.setStateName(property.getProperty(GlobalConstants.NAME));
+		species.setProperties(property);
+		return species;
 	}
 
 	// Holds the text of the GCM
@@ -267,6 +171,8 @@ public class GCMParser {
 	private HashMap<String, SpeciesInterface> stateMap = null;
 
 	private HashMap<String, Promoter> promoters = null;
+
+	private GCMFile gcm = null;
 
 	// A regex that matches information
 	private static final String STATE = "(^|\\n) *([^- \\n]*) *\\[(.*)\\]";

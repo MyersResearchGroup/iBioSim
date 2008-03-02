@@ -7,9 +7,11 @@ import gcm2sbml.network.DimerSpecies;
 import gcm2sbml.network.GeneticNetwork;
 import gcm2sbml.network.SpasticSpecies;
 import gcm2sbml.network.SpeciesInterface;
+import gcm2sbml.util.GlobalConstants;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Properties;
 
 import org.sbml.libsbml.ASTNode;
 import org.sbml.libsbml.KineticLaw;
@@ -25,7 +27,7 @@ public class PrintDimerizationVisitor extends AbstractPrintVisitor {
 	public PrintDimerizationVisitor(SBMLDocument document,
 			Collection<SpeciesInterface> species, double kdimer) {
 		super(document);
-		this.kdimer = kdimer;
+		this.defaultkdimer = kdimer;
 		this.species = species;
 	}
 
@@ -45,6 +47,7 @@ public class PrintDimerizationVisitor extends AbstractPrintVisitor {
 	}		
 
 	public void visitDimer(DimerSpecies specie) {
+		loadValues(specie.getProperties());
 		// Check if we are running abstraction, if not, then don't allow decay
 		if (!dimerizationAbstraction) {
 			double newkf = kdimer;
@@ -77,8 +80,13 @@ public class PrintDimerizationVisitor extends AbstractPrintVisitor {
 
 	public void visitSpasticSpecies(SpasticSpecies specie) {
 	}
+	
+	private void loadValues(Properties property) {
+		kdimer = getProperty(GlobalConstants.KASSOCIATION_STRING, property, defaultkdimer);
+	}
 
 	private double kdimer = 1;
+	private double defaultkdimer = 1;
 
 	private Collection<SpeciesInterface> species = null;
 

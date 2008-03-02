@@ -6,6 +6,7 @@ package gcm2sbml.visitor;
 import gcm2sbml.network.GeneticNetwork;
 
 import java.util.ArrayList;
+import java.util.Properties;
 
 import org.sbml.libsbml.SBMLDocument;
 
@@ -43,7 +44,20 @@ public abstract class AbstractPrintVisitor implements SpeciesVisitor {
 	 */
 	public void setDimerizationAbstraction(boolean dimerizationAbstraction) {
 		this.dimerizationAbstraction = dimerizationAbstraction;
-	}	
+	}
+	
+	/**
+	 * Returns the property if it exists, else return the default value
+	 * @param property the property to check
+	 * @return the property if it exists, else return the default value
+	 */
+	public double getProperty(String key, Properties property, double defaultValue) {
+		if (property.get(key) != null) {
+			return Double.parseDouble(property.getProperty(key));
+		} else {
+			return defaultValue;
+		}
+	}
 
 	protected SBMLDocument document = null;
 

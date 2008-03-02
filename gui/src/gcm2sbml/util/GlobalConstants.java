@@ -19,7 +19,7 @@ public class GlobalConstants {
 	public static final String KREP_VALUE = "2.2"; 
 	public static final String KACT_VALUE = ".0033";
 	public static final String KBIO_VALUE = ".05";
-	public static final String GENE_COUNT_VALUE = "1";
+	public static final String PROMOTER_COUNT_VALUE = "1";
 	public static final String KASSOCIATION_VALUE = ".05";
 	public static final String KBASAL_VALUE = ".0001";
 	public static final String OCR_VALUE = ".25";

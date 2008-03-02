@@ -2,6 +2,7 @@ package gcm2sbml.network;
 
 import java.util.Properties;
 
+import gcm2sbml.parser.GCMFile;
 import gcm2sbml.visitor.VisitableSpecies;
 
 
@@ -94,31 +95,31 @@ public interface SpeciesInterface extends VisitableSpecies {
 	 * @param maxDimer The maxDimer to set.
 	 */
 	public void setMaxDimer(int maxDimer);
+
+	/**
+	 * Sets the properties of the specie
+	 * @param properties the property to set
+	 */
+	public void setProperties(Properties properties);
 	
 	/**
-	 * @return the stateProperties
+	 * Returns the property of the specie
+	 * @return the property of the specie
 	 */
-	public Properties getStateProperties();
+	public Properties getProperties();
 
 	/**
-	 * @return the labelProperties
+	 * Adds a new value to the specie
+	 * @param key the key of the value
+	 * @param value the value to add
 	 */
-	public Properties getLabelProperties();
-
+	public void addProperty(String key, String value);
+	
 	/**
-	 * @param labelProperties
-	 *            the labelProperties to set
+	 * Returns the property with the given key
+	 * @param key the key of the property
+	 * @return
 	 */
-	public void setLabelProperties(Properties labelProperties);
-
-	/**
-	 * @return the numberProperties
-	 */
-	public Properties getNumberProperties();
-
-	/**
-	 * @param numberProperties
-	 *            the numberProperties to set
-	 */
-	public void setNumberProperties(Properties numberProperties);	
+	public String getProperty(String key);
+	
 }

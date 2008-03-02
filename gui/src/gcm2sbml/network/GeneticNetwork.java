@@ -1,6 +1,7 @@
 package gcm2sbml.network;
 
 import gcm2sbml.parser.GCMFile;
+import gcm2sbml.util.GlobalConstants;
 import gcm2sbml.util.Utility;
 import gcm2sbml.visitor.PrintActivatedBindingVisitor;
 import gcm2sbml.visitor.PrintActivatedProductionVisitor;
@@ -84,7 +85,7 @@ public class GeneticNetwork {
 			printPromoters(document);
 			printRNAP(document);
 			printDecay(document);
-			//			System.out.println(counter++);
+			// System.out.println(counter++);
 			checkConsistancy(document);
 			if (!dimerizationAbstraction) {
 				printDimerization(document);
@@ -92,20 +93,19 @@ public class GeneticNetwork {
 			if (!biochemicalAbstraction) {
 				printBiochemical(document);
 			}
-			//			System.out.println(counter++);
+			// System.out.println(counter++);
 			checkConsistancy(document);
 			printPromoterProduction(document);
-			//			System.out.println(counter++);
+			// System.out.println(counter++);
 			checkConsistancy(document);
 			printPromoterBinding(document);
-			//			System.out.println(counter++);
+			// System.out.println(counter++);
 			checkConsistancy(document);
 			PrintStream p = new PrintStream(new FileOutputStream(filename));
-			
+
 			m.setName(new File(filename).getName().replace(".gcm", ".sbml"));
 			m.setId(m.getName().replace(".sbml", ""));
 
-			
 			p.print(writer.writeToString(document));
 
 			p.close();
@@ -131,12 +131,18 @@ public class GeneticNetwork {
 		double kcoop = 1;
 
 		if (properties != null) {
-			kbio = Double.parseDouble(properties.getParameter(KBIO));
-			kdimer = Double.parseDouble(properties.getParameter(KDIMER));
-			rnap = Double.parseDouble(properties.getParameter(KRNAP));
-			rep = Double.parseDouble(properties.getParameter(KREP));
-			act = Double.parseDouble(properties.getParameter(KACT));
-			kcoop = Double.parseDouble(properties.getParameter(KCOOP));
+			kbio = Double.parseDouble(properties
+					.getParameter(GlobalConstants.KBIO_STRING));
+			kdimer = Double.parseDouble(properties
+					.getParameter(GlobalConstants.KASSOCIATION_STRING));
+			rnap = Double.parseDouble(properties
+					.getParameter(GlobalConstants.RNAP_BINDING_STRING));
+			rep = Double.parseDouble(properties
+					.getParameter(GlobalConstants.KREP_STRING));
+			act = Double.parseDouble(properties
+					.getParameter(GlobalConstants.KACT_STRING));
+			kcoop = Double.parseDouble(properties
+					.getParameter(GlobalConstants.COOPERATIVITY_STRING));
 		}
 
 		for (Promoter p : promoters.values()) {
@@ -187,12 +193,16 @@ public class GeneticNetwork {
 		int stoc = 1;
 		double act = .25;
 		if (properties != null) {
-			basal = Double.parseDouble(properties.getParameter(BASAL));
-			koc = Double.parseDouble(properties.getParameter(OCR));
-			stoc = Integer.parseInt(properties.getParameter(STOC));
-			act = Double.parseDouble(properties.getParameter(ACTIVATED));
+			basal = Double.parseDouble(properties
+					.getParameter(GlobalConstants.KBASAL_STRING));
+			koc = Double.parseDouble(properties
+					.getParameter(GlobalConstants.OCR_STRING));
+			stoc = Integer.parseInt(properties
+					.getParameter(GlobalConstants.STOICHIOMETRY_STRING));
+			act = Double.parseDouble(properties
+					.getParameter(GlobalConstants.ACTIVED_STRING));
 		}
-		
+
 		for (Promoter p : promoters.values()) {
 			if (p.getActivators().size() > 0 && p.getRepressors().size() == 0) {
 				org.sbml.libsbml.Reaction r = new org.sbml.libsbml.Reaction(
@@ -205,8 +215,14 @@ public class GeneticNetwork {
 				r.setReversible(false);
 				r.setFast(false);
 				KineticLaw kl = new KineticLaw();
-				kl.addParameter(new Parameter("basal", basal,
-						getMoleTimeParameter(1)));
+				if (p.getProperty(GlobalConstants.KBASAL_STRING) != null) {
+					kl.addParameter(new Parameter("basal", Double.parseDouble(p
+							.getProperty(GlobalConstants.KBASAL_STRING)),
+							getMoleTimeParameter(1)));
+				} else {
+					kl.addParameter(new Parameter("basal", basal,
+							getMoleTimeParameter(1)));
+				}
 				kl.setFormula("basal*" + "RNAP_" + p.getName());
 				r.setKineticLaw(kl);
 				document.getModel().addReaction(r);
@@ -226,8 +242,14 @@ public class GeneticNetwork {
 				r.setReversible(false);
 				r.setFast(false);
 				KineticLaw kl = new KineticLaw();
-				kl.addParameter(new Parameter("koc", koc,
-						getMoleTimeParameter(1)));
+				if (p.getProperty(GlobalConstants.OCR_STRING) != null) {
+					kl.addParameter(new Parameter("koc", Double.parseDouble(p
+							.getProperty(GlobalConstants.OCR_STRING)),
+							getMoleTimeParameter(1)));
+				} else {
+					kl.addParameter(new Parameter("koc", koc,
+							getMoleTimeParameter(1)));
+				}
 				kl.setFormula("koc*" + "RNAP_" + p.getName());
 				r.setKineticLaw(kl);
 				document.getModel().addReaction(r);
@@ -244,8 +266,14 @@ public class GeneticNetwork {
 				r.setReversible(false);
 				r.setFast(false);
 				KineticLaw kl = new KineticLaw();
-				kl.addParameter(new Parameter("basal", basal,
-						getMoleTimeParameter(1)));
+				if (p.getProperty(GlobalConstants.KBASAL_STRING) != null) {
+					kl.addParameter(new Parameter("basal", Double.parseDouble(p
+							.getProperty(GlobalConstants.KBASAL_STRING)),
+							getMoleTimeParameter(1)));
+				} else {
+					kl.addParameter(new Parameter("basal", basal,
+							getMoleTimeParameter(1)));
+				}
 				kl.setFormula("basal*" + "RNAP_" + p.getName());
 				r.setKineticLaw(kl);
 				document.getModel().addReaction(r);
@@ -268,7 +296,8 @@ public class GeneticNetwork {
 		// 1
 		double decay = .0075;
 		if (properties != null) {
-			decay = Double.parseDouble(properties.getParameter(DEG));
+			decay = Double.parseDouble(properties
+					.getParameter(GlobalConstants.KDECAY_STRING));
 		}
 
 		PrintDecaySpeciesVisitor visitor = new PrintDecaySpeciesVisitor(
@@ -287,7 +316,8 @@ public class GeneticNetwork {
 	private void printDimerization(SBMLDocument document) {
 		double kdimer = .05;
 		if (properties != null) {
-			kdimer = Double.parseDouble(properties.getParameter(KDIMER));
+			kdimer = Double.parseDouble(properties
+					.getParameter(GlobalConstants.KASSOCIATION_STRING));
 		}
 		PrintDimerizationVisitor visitor = new PrintDimerizationVisitor(
 				document, species.values(), kdimer);
@@ -299,7 +329,8 @@ public class GeneticNetwork {
 	private void printBiochemical(SBMLDocument document) {
 		double kbio = .05;
 		if (properties != null) {
-			kbio = Double.parseDouble(properties.getParameter(KBIO));
+			kbio = Double.parseDouble(properties
+					.getParameter(GlobalConstants.KBIO_STRING));
 		}
 		PrintBiochemicalVisitor visitor = new PrintBiochemicalVisitor(document,
 				species.values(), kbio);
@@ -315,8 +346,12 @@ public class GeneticNetwork {
 	 *            the SBML document
 	 */
 	private void printSpecies(SBMLDocument document) {
+		double init = 1;
+		if (properties != null) {
+			init = Double.parseDouble(properties.getParameter(GlobalConstants.INITIAL_STRING));
+		}
 		PrintSpeciesVisitor visitor = new PrintSpeciesVisitor(document, species
-				.values(), compartment);
+				.values(), compartment, init);
 		visitor.setBiochemicalAbstraction(biochemicalAbstraction);
 		visitor.setDimerizationAbstraction(dimerizationAbstraction);
 		visitor.run();
@@ -333,13 +368,18 @@ public class GeneticNetwork {
 		// 1
 		String numPromoters = "1";
 		if (properties != null) {
-			numPromoters = properties.getParameter(PROMOTERS);
+			numPromoters = properties
+					.getParameter(GlobalConstants.PROMOTER_COUNT_STRING);
 		}
 
 		for (Promoter promoter : promoters.values()) {
 			// First print out the promoter, and promoter bound to RNAP
+			String tempPromoters = numPromoters;
+			if (promoter.getProperty(GlobalConstants.PROMOTER_COUNT_STRING) != null) {
+				tempPromoters = promoter.getProperty(GlobalConstants.PROMOTER_COUNT_STRING); 
+			}
 			Species s = Utility.makeSpecies(promoter.getName(), compartment,
-					Double.parseDouble(numPromoters));
+					Double.parseDouble(tempPromoters));
 			s.setHasOnlySubstanceUnits(true);
 			document.getModel().addSpecies(s);
 			s = Utility.makeSpecies("RNAP_" + promoter.getName(), compartment,
@@ -373,7 +413,8 @@ public class GeneticNetwork {
 	private void printRNAP(SBMLDocument document) {
 		double rnap = 30;
 		if (properties != null) {
-			rnap = Double.parseDouble(properties.getParameter(RNAP));
+			rnap = Double.parseDouble(properties
+					.getParameter(GlobalConstants.RNAP_STRING));
 		}
 		Species s = Utility.makeSpecies("RNAP", compartment, rnap);
 		s.setHasOnlySubstanceUnits(true);
@@ -543,24 +584,6 @@ public class GeneticNetwork {
 	private GCMFile properties = null;
 
 	private String compartment = "default";
-
-	public static final String KACT = "kact";
-	public static final String KREP = "krep";
-	public static final String BASAL = "basal";
-	public static final String STOC = "stoc";
-	public static final String RNAP = "RNAP";
-	public static final String PROMOTERS = "promoters";
-	public static final String DEG = "decay";
-	public static final String KDIMER = "kdimer";
-	public static final String KBIO = "kbio";
-	public static final String KCOOP = "kcoop";
-	
-	public static final String COOP = "coop";
-	public static final String KBINDING = "binding";
-	public static final String KRNAP = "rnap_binding";
-	public static final String OCR = "ocr";
-	public static final String ACTIVATED = "activated";
-
 
 	/**
 	 * Returns the curent SBML document being built

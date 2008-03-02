@@ -3,6 +3,7 @@ package gcm2sbml.network;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Properties;
 
 /**
  * This class describes a promoter
@@ -195,6 +196,39 @@ public class Promoter {
 			reactionMap.put(species, list);
 		}
 	}
+	
+	public void setProperties(Properties properties) {
+		this.properties = properties;
+	}
+	
+	public Properties getProperties() {
+		return properties;
+	}
+	
+	public void addProperties(Properties property) {
+		if (properties == null) {
+			properties = new Properties();			
+		}
+		for (Object s : property.keySet()) {
+			this.properties.put(s.toString(), property.get(s.toString()));
+		}
+	}
+	
+	public void addProperty(String key, String value) {
+		if (properties == null) {
+			properties = new Properties();			
+		}
+		properties.put(key, value);
+	}
+	
+	public String getProperty(String key) {
+		if (properties == null || !properties.contains(key)) {
+			return null;
+		}
+		return properties.get(key).toString();
+	}
+	
+	protected Properties properties = null;
 
 	// Name of promoter
 	protected String name = "";

@@ -8,8 +8,10 @@ import gcm2sbml.network.GeneticNetwork;
 import gcm2sbml.network.Promoter;
 import gcm2sbml.network.SpasticSpecies;
 import gcm2sbml.network.SpeciesInterface;
+import gcm2sbml.util.GlobalConstants;
 
 import java.util.Collection;
+import java.util.Properties;
 
 import org.sbml.libsbml.KineticLaw;
 import org.sbml.libsbml.Parameter;
@@ -23,12 +25,12 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 			Collection<SpeciesInterface> species, double rep, double kdimer,
 			double kcoop, double kbio) {
 		super(document);
-		this.rep = rep;
+		this.defaultrep = rep;
 		this.promoter = p;
 		this.species = species;
-		this.kdimer = kdimer;
-		this.kcoop = kcoop;
-		this.kbio = kbio;
+		this.defaultkdimer = kdimer;
+		this.defaultkcoop = kcoop;
+		this.defaultkbio = kbio;
 	}
 
 	/**
@@ -51,6 +53,7 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 	}
 
 	public void visitDimer(DimerSpecies specie) {
+		loadValues(specie.getProperties());
 		Reaction r = new Reaction(reactionName);
 		gcm2sbml.network.Reaction reaction = promoter.getReactionMap().get(
 				specie).get(0);
@@ -92,6 +95,7 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 	}
 
 	public void visitBiochemical(BiochemicalSpecies specie) {
+		loadValues(specie.getProperties());
 		Reaction r = new Reaction(reactionName);
 		gcm2sbml.network.Reaction reaction = promoter.getReactionMap().get(
 				specie).get(0);
@@ -128,6 +132,7 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 	}
 
 	public void visitBaseSpecies(BaseSpecies specie) {
+		loadValues(specie.getProperties());
 		Reaction r = new Reaction(reactionName);
 		gcm2sbml.network.Reaction reaction = promoter.getReactionMap().get(
 				specie).get(0);
@@ -149,6 +154,7 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 	}
 
 	public void visitConstantSpecies(ConstantSpecies specie) {
+		loadValues(specie.getProperties());
 		Reaction r = new Reaction(reactionName);
 		gcm2sbml.network.Reaction reaction = promoter.getReactionMap().get(
 				specie).get(0);
@@ -170,6 +176,7 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 	}
 
 	public void visitSpasticSpecies(SpasticSpecies specie) {
+		loadValues(specie.getProperties());
 		Reaction r = new Reaction(reactionName);
 		gcm2sbml.network.Reaction reaction = promoter.getReactionMap().get(
 				specie).get(0);
@@ -189,16 +196,26 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 		r.setKineticLaw(kl);
 		document.getModel().addReaction(r);
 	}
+	
+	private void loadValues(Properties property) {
+		kdimer = getProperty(GlobalConstants.KASSOCIATION_STRING, property, defaultkdimer);
+		kbio = getProperty(GlobalConstants.KBIO_STRING, property, defaultkbio);
+		kcoop = getProperty(GlobalConstants.COOPERATIVITY_STRING, property, defaultkcoop);
+		rep = getProperty(GlobalConstants.KREP_STRING, property, defaultrep);
+	}
+
 
 	private Promoter promoter = null;
 
 	private double kdimer = .5;
-
 	private double kbio = .05;
-
 	private double kcoop = 1;
-
 	private double rep = .033;
+	
+	private double defaultkdimer = .5;
+	private double defaultkbio = .05;
+	private double defaultkcoop = 1;
+	private double defaultrep = .033;
 
 	private String speciesName = "";
 

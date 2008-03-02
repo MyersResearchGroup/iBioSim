@@ -1,6 +1,7 @@
 package gcm2sbml.visitor;
 
 import java.util.Collection;
+import java.util.Properties;
 
 import org.sbml.libsbml.SBMLDocument;
 import org.sbml.libsbml.Species;
@@ -11,13 +12,15 @@ import gcm2sbml.network.ConstantSpecies;
 import gcm2sbml.network.DimerSpecies;
 import gcm2sbml.network.SpasticSpecies;
 import gcm2sbml.network.SpeciesInterface;
+import gcm2sbml.util.GlobalConstants;
 import gcm2sbml.util.Utility;
 
 public class PrintSpeciesVisitor extends AbstractPrintVisitor {
 
 	public PrintSpeciesVisitor(SBMLDocument document,
-			Collection<SpeciesInterface> species, String compartment) {
+			Collection<SpeciesInterface> species, String compartment, double init) {
 		super(document);
+		this.defaultinit = init;
 		this.species = species;
 		this.compartment = compartment;
 	}
@@ -38,8 +41,9 @@ public class PrintSpeciesVisitor extends AbstractPrintVisitor {
 	}
 
 	public void visitDimer(DimerSpecies specie) {
+		loadValues(specie.getProperties());
 		if (!dimerizationAbstraction) {
-			Species s = Utility.makeSpecies(specie.getName(), compartment, specie.getInitial());
+			Species s = Utility.makeSpecies(specie.getName(), compartment, init);
 			s.setHasOnlySubstanceUnits(true);
 			document.getModel().addSpecies(s);
 		}
@@ -47,8 +51,9 @@ public class PrintSpeciesVisitor extends AbstractPrintVisitor {
 	}
 
 	public void visitBiochemical(BiochemicalSpecies specie) {
+		loadValues(specie.getProperties());
 		if (!biochemicalAbstraction) {
-			Species s = Utility.makeSpecies(specie.getName(), compartment, specie.getInitial());
+			Species s = Utility.makeSpecies(specie.getName(), compartment, init);
 			s.setHasOnlySubstanceUnits(true);
 			document.getModel().addSpecies(s);
 		}
@@ -56,13 +61,15 @@ public class PrintSpeciesVisitor extends AbstractPrintVisitor {
 	}
 
 	public void visitBaseSpecies(BaseSpecies specie) {
-		Species s = Utility.makeSpecies(specie.getName(), compartment, specie.getInitial());
+		loadValues(specie.getProperties());
+		Species s = Utility.makeSpecies(specie.getName(), compartment, init);
 		s.setHasOnlySubstanceUnits(true);
 		document.getModel().addSpecies(s);
 	}
 
 	public void visitConstantSpecies(ConstantSpecies specie) {
-		Species s = Utility.makeSpecies(specie.getName(), compartment, specie.getInitial());
+		loadValues(specie.getProperties());
+		Species s = Utility.makeSpecies(specie.getName(), compartment, init);
 		s.setHasOnlySubstanceUnits(true);
 		s.setBoundaryCondition(true);
 		//s.setConstant(true);
@@ -70,11 +77,19 @@ public class PrintSpeciesVisitor extends AbstractPrintVisitor {
 	}
 
 	public void visitSpasticSpecies(SpasticSpecies specie) {
-		Species s = Utility.makeSpecies(specie.getName(), compartment, specie.getInitial());
+		loadValues(specie.getProperties());
+		Species s = Utility.makeSpecies(specie.getName(), compartment, init);
 		s.setHasOnlySubstanceUnits(true);
 		document.getModel().addSpecies(s);
 	}
+	
+	private void loadValues(Properties property) {
+		init = getProperty(GlobalConstants.INITIAL_STRING, property, defaultinit);
+	}
 
+
+	private double defaultinit = 0;
+	private double init = 0;
 	private Collection<SpeciesInterface> species = null;
 	private String compartment = null;
 
