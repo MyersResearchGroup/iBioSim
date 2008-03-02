@@ -7,8 +7,10 @@ import gcm2sbml.network.DimerSpecies;
 import gcm2sbml.network.GeneticNetwork;
 import gcm2sbml.network.SpasticSpecies;
 import gcm2sbml.network.SpeciesInterface;
+import gcm2sbml.util.GlobalConstants;
 
 import java.util.Collection;
+import java.util.Properties;
 
 import org.sbml.libsbml.KineticLaw;
 import org.sbml.libsbml.Parameter;
@@ -21,7 +23,7 @@ public class PrintBiochemicalVisitor extends AbstractPrintVisitor {
 	public PrintBiochemicalVisitor(SBMLDocument document,
 			Collection<SpeciesInterface> species, double kbio) {
 		super(document);
-		this.kbio = kbio;
+		this.defaultkbio = kbio;
 		this.species = species;
 	}
 
@@ -44,6 +46,7 @@ public class PrintBiochemicalVisitor extends AbstractPrintVisitor {
 	}
 
 	public void visitBiochemical(BiochemicalSpecies specie) {
+		loadValues(specie.getProperties());
 		// Check if we are running abstraction, if not, then don't allow decay
 		if (!biochemicalAbstraction) {
 			double newkf = kbio;
@@ -79,8 +82,14 @@ public class PrintBiochemicalVisitor extends AbstractPrintVisitor {
 
 	public void visitSpasticSpecies(SpasticSpecies specie) {
 	}
+	
+	private void loadValues(Properties property) {
+		kbio = getProperty(GlobalConstants.KBIO_STRING, property, defaultkbio);
+	}
+	
 
 	private double kbio = 1;
+	private double defaultkbio = 1;
 
 	private Collection<SpeciesInterface> species = null;
 

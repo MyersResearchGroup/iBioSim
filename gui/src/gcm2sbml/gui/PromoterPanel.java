@@ -17,7 +17,7 @@ import javax.swing.JPanel;
 public class PromoterPanel extends JPanel {
 	public PromoterPanel(String selected, PropertyList promoterList,
 			PropertyList influencesList, GCMFile gcm) {
-		super(new GridLayout(7, 1));
+		super(new GridLayout(8, 1));
 		this.selected = selected;
 		this.promoterList = promoterList;
 		this.influenceList = influencesList;
@@ -30,6 +30,14 @@ public class PromoterPanel extends JPanel {
 				null, Utility.IDstring);
 		fields.put(GlobalConstants.NAME, field);
 		add(field);
+		
+		// promoter count
+		field = new PropertyField(GlobalConstants.PROMOTER_COUNT_STRING, gcm
+				.getParameter(GlobalConstants.PROMOTER_COUNT_STRING),
+				PropertyField.states[0], gcm
+				.getParameter(GlobalConstants.PROMOTER_COUNT_STRING), Utility.NUMstring);
+		fields.put(GlobalConstants.PROMOTER_COUNT_STRING, field);
+		add(field);		
 
 		// kbasal
 		field = new PropertyField(GlobalConstants.KBASAL_STRING, gcm

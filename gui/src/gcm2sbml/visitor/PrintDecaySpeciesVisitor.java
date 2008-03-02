@@ -7,9 +7,11 @@ import gcm2sbml.network.DimerSpecies;
 import gcm2sbml.network.GeneticNetwork;
 import gcm2sbml.network.SpasticSpecies;
 import gcm2sbml.network.SpeciesInterface;
+import gcm2sbml.util.GlobalConstants;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Properties;
 
 import org.sbml.libsbml.KineticLaw;
 import org.sbml.libsbml.Parameter;
@@ -22,7 +24,7 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 	public PrintDecaySpeciesVisitor(SBMLDocument document,
 			Collection<SpeciesInterface> species, double decay) {
 		super(document);
-		this.decay = decay;
+		this.defaultdecay = decay;
 		this.species = species;
 		addDecayUnit();
 	}
@@ -47,6 +49,7 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 	}
 
 	public void visitDimer(DimerSpecies specie) {
+		loadValues(specie.getProperties());
 		//Check if they have decay rates, if not, then don't allow decay
 		if (!dimerizationAbstraction && !Double.isNaN(specie.getDecayRate())) {
 			Reaction r = new Reaction("Degradation_"+specie.getName());
@@ -62,6 +65,7 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 	}
 
 	public void visitBiochemical(BiochemicalSpecies specie) {
+		loadValues(specie.getProperties());
 		if (!biochemicalAbstraction && !Double.isNaN(specie.getDecayRate())) {
 			Reaction r = new Reaction("Degradation_"+specie.getName());
 			r.addReactant(new SpeciesReference(specie.getName(), 1));
@@ -76,6 +80,7 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 	}
 
 	public void visitBaseSpecies(BaseSpecies specie) {
+		loadValues(specie.getProperties());
 		double newDecay = decay;
 		if (!Double.isNaN(specie.getDecayRate())) {
 			newDecay = specie.getDecayRate();
@@ -96,6 +101,7 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 	}
 
 	public void visitSpasticSpecies(SpasticSpecies specie) {
+		loadValues(specie.getProperties());
 		double newDecay = decay;
 		if (!Double.isNaN(specie.getDecayRate())) {
 			newDecay = specie.getDecayRate();
@@ -111,6 +117,11 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 		document.getModel().addReaction(r);
 	}
 	
+	private void loadValues(Properties property) {
+		decay = getProperty(GlobalConstants.KDECAY_STRING, property, defaultdecay);
+	}
+	
+	private double defaultdecay = .0075;
 	private double decay = .0075;
 	private String decayString = "";
 	

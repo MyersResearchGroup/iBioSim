@@ -2,6 +2,7 @@ package gcm2sbml.visitor;
 
 import java.io.PrintStream;
 import java.util.Collection;
+import java.util.Properties;
 
 import org.sbml.libsbml.KineticLaw;
 import org.sbml.libsbml.Parameter;
@@ -17,16 +18,17 @@ import gcm2sbml.network.GeneticNetwork;
 import gcm2sbml.network.Promoter;
 import gcm2sbml.network.SpasticSpecies;
 import gcm2sbml.network.SpeciesInterface;
+import gcm2sbml.util.GlobalConstants;
 
 public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 
 	public PrintActivatedProductionVisitor(SBMLDocument document, Promoter p,
 			Collection<SpeciesInterface> species, double act, double stoc) {
 		super(document);
-		this.act = act;
+		this.defaultact = act;
 		this.promoter = p;
 		this.species = species;
-		this.stoc = stoc;
+		this.defaultstoc = stoc;
 	}
 
 	/**
@@ -45,6 +47,7 @@ public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 	}
 
 	public void visitDimer(DimerSpecies specie) {
+		loadValues(specie.getProperties());
 		Reaction r = new Reaction("R_act_production_"+promoter.getName() + "_" + specie.getName());
 		r.addReactant(new SpeciesReference("RNAP_" + promoter.getName()+ "_" + specie.getName(), 1));
 		for (SpeciesInterface species : promoter.getOutputs()) {
@@ -62,6 +65,7 @@ public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 	}
 
 	public void visitBiochemical(BiochemicalSpecies specie) {
+		loadValues(specie.getProperties());
 		Reaction r = new Reaction("R_act_production_"+promoter.getName() + "_" + specie.getName());
 		r.addReactant(new SpeciesReference("RNAP_" + promoter.getName()+ "_" + specie.getName(), 1));
 		for (SpeciesInterface species : promoter.getOutputs()) {
@@ -78,6 +82,7 @@ public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 	}
 
 	public void visitBaseSpecies(BaseSpecies specie) {
+		loadValues(specie.getProperties());
 		Reaction r = new Reaction("R_act_production_"+promoter.getName() + "_" + specie.getName());
 		r.addReactant(new SpeciesReference("RNAP_" + promoter.getName()+ "_" + specie.getName(), 1));
 		for (SpeciesInterface species : promoter.getOutputs()) {
@@ -94,6 +99,7 @@ public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 	}
 
 	public void visitConstantSpecies(ConstantSpecies specie) {
+		loadValues(specie.getProperties());
 		Reaction r = new Reaction("R_act_production_"+promoter.getName() + "_" + specie.getName());
 		r.addReactant(new SpeciesReference("RNAP_" + promoter.getName()+ "_" + specie.getName(), 1));
 		for (SpeciesInterface species : promoter.getOutputs()) {
@@ -110,6 +116,7 @@ public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 	}
 
 	public void visitSpasticSpecies(SpasticSpecies specie) {
+		loadValues(specie.getProperties());
 		Reaction r = new Reaction("R_act_production_"+promoter.getName() + "_" + specie.getName());
 		r.addReactant(new SpeciesReference("RNAP_"+ "_" + promoter.getName()+ "_" + specie.getName(), 1));
 		for (SpeciesInterface species : promoter.getOutputs()) {
@@ -125,11 +132,19 @@ public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 		document.getModel().addReaction(r);
 	}
 	
+	private void loadValues(Properties property) {
+		stoc = getProperty(GlobalConstants.STOICHIOMETRY_STRING, property, defaultstoc);
+		act = getProperty(GlobalConstants.ACTIVED_STRING, property, defaultact);
+	}
+	
 	private Promoter promoter = null;
 	
-	private double act = .25;
-	
+	private double act = .25;	
 	private double stoc = 1;
+	
+	private double defaultact = .25;	
+	private double defaultstoc = 1;
+	
 	
 	private Collection<SpeciesInterface> species = null;
 	

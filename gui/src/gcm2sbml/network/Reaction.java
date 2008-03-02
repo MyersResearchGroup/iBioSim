@@ -1,5 +1,7 @@
 package gcm2sbml.network;
 
+import gcm2sbml.util.GlobalConstants;
+
 import java.util.Properties;
 
 /**
@@ -11,43 +13,6 @@ import java.util.Properties;
 public class Reaction {	
 	
 	
-	
-	/**
-	 * @return the stateProperties
-	 */
-	public Properties getStateProperties() {
-		return stateProperties;
-	}
-	/**
-	 * @param stateProperties the stateProperties to set
-	 */
-	public void setStateProperties(Properties stateProperties) {
-		this.stateProperties = stateProperties;
-	}
-	/**
-	 * @return the labelProperties
-	 */
-	public Properties getLabelProperties() {
-		return labelProperties;
-	}
-	/**
-	 * @param labelProperties the labelProperties to set
-	 */
-	public void setLabelProperties(Properties labelProperties) {
-		this.labelProperties = labelProperties;
-	}
-	/**
-	 * @return the numberProperties
-	 */
-	public Properties getNumberProperties() {
-		return numberProperties;
-	}
-	/**
-	 * @param numberProperties the numberProperties to set
-	 */
-	public void setNumberProperties(Properties numberProperties) {
-		this.numberProperties = numberProperties;
-	}
 	/**
 	 * @return Returns the productionConstant.
 	 */
@@ -64,8 +29,14 @@ public class Reaction {
 	 * @return Returns the bindingConstant.
 	 */
 	public double getBindingConstant() {
+		if (getType().equals("vee") && getProperty(GlobalConstants.KACT_STRING) != null) {
+			return Double.parseDouble(getProperty(GlobalConstants.KACT_STRING));
+		} else if (getType().equals("tee") && getProperty(GlobalConstants.KREP_STRING) != null) {
+			return Double.parseDouble(getProperty(GlobalConstants.KREP_STRING));
+		}
 		return bindingConstant;
 	}
+	
 	/**
 	 * @param bindingConstant The bindingConstant to set.
 	 */
@@ -135,6 +106,9 @@ public class Reaction {
 	 * @return Returns the coop.
 	 */
 	public double getCoop() {
+		if (getProperty(GlobalConstants.COOPERATIVITY_STRING) != null) {
+			return Double.parseDouble(getProperty(GlobalConstants.COOPERATIVITY_STRING));
+		}
 		return coop;
 	}
 	/**
@@ -165,6 +139,29 @@ public class Reaction {
 		this.dimer = dimer;
 	}	
 	
+	
+	public void setProperties(Properties properties) {
+		this.properties = properties;
+	}
+	
+	public Properties getProperties() {
+		return properties;
+	}
+	
+	public void addProperty(String key, String value) {
+		if (properties == null) {
+			properties = new Properties();			
+		}
+		properties.put(key, value);
+	}
+	
+	public String getProperty(String key) {
+		if (properties == null || !properties.contains(key)) {
+			return null;
+		}
+		return properties.get(key).toString();
+	}	
+	
 	private static int uid = 0;
 	
 	//The input state
@@ -186,27 +183,7 @@ public class Reaction {
 	//Biochemical reaction
 	private boolean isBiochemical = false;
 	
-//	public static final String ACTIVATION = "vee";
-//	public static final String REPRESSION = "tee";
-//	public static final String ARROWHEAD = "arrhowhead";
-//	public static final String TYPE = "type";
-//	public static final String PROMOTER = "promoter";
-//	public static final String COOP = "coop";
-//	public static final String DIMER = "label";
-//	public static final String KBINDING = "binding";
-//	public static final String KRNAP = "rnap_binding";
-//	public static final String KBIO = "kbio";
-//	public static final String OCR = "ocr";
-//	public static final String BASAL = "basal";
-//	public static final String ACTIVATED = "activated";
-	
-	//State properties, only have a finite set of values
-	private Properties stateProperties = null;
-	
-	//Arbitrary alphanumeric property
-	private Properties labelProperties = null;
-	
 	//Number property
-	private Properties numberProperties = null;
+	private Properties properties = null;
 
 }

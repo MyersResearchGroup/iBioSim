@@ -2,6 +2,8 @@ package gcm2sbml.network;
 
 import java.util.Properties;
 
+import gcm2sbml.parser.GCMFile;
+import gcm2sbml.util.GlobalConstants;
 import gcm2sbml.util.Utility;
 import gcm2sbml.visitor.SpeciesVisitor;
 import gcm2sbml.visitor.VisitableSpecies;
@@ -27,6 +29,9 @@ public abstract class AbstractSpecies implements SpeciesInterface {
 	 * @return the initial
 	 */
 	public double getInitial() {
+		if (getProperty(GlobalConstants.INITIAL_STRING) != null) {
+			return Double.parseDouble(getProperty(GlobalConstants.INITIAL_STRING));
+		}
 		return initial;
 	}
 
@@ -37,58 +42,15 @@ public abstract class AbstractSpecies implements SpeciesInterface {
 		this.initial = initial;
 	}
 	
-
-	/**
-	 * @return the stateProperties
-	 */
-	public Properties getStateProperties() {
-		return stateProperties;
-	}
-
-	/**
-	 * @param stateProperties
-	 *            the stateProperties to set
-	 */
-	public void setStateProperties(Properties stateProperties) {
-		this.stateProperties = stateProperties;
-	}
-
-	/**
-	 * @return the labelProperties
-	 */
-	public Properties getLabelProperties() {
-		return labelProperties;
-	}
-
-	/**
-	 * @param labelProperties
-	 *            the labelProperties to set
-	 */
-	public void setLabelProperties(Properties labelProperties) {
-		this.labelProperties = labelProperties;
-	}
-
-	/**
-	 * @return the numberProperties
-	 */
-	public Properties getNumberProperties() {
-		return numberProperties;
-	}
-
-	/**
-	 * @param numberProperties
-	 *            the numberProperties to set
-	 */
-	public void setNumberProperties(Properties numberProperties) {
-		this.numberProperties = numberProperties;
-	}
-
 	/**
 	 * Returns the decay rates of the species
 	 * 
 	 * @return the decay rates of the species
 	 */
 	public double getDecayRate() {
+		if (getProperty(GlobalConstants.KDECAY_STRING) != null) {
+			return Double.parseDouble(getProperty(GlobalConstants.KDECAY_STRING));
+		}
 		return decayRate;
 	}
 
@@ -108,6 +70,9 @@ public abstract class AbstractSpecies implements SpeciesInterface {
 	 * @return the dimerization constant.
 	 */
 	public double getDimerizationConstant() {
+		if (getProperty(GlobalConstants.KASSOCIATION_STRING) != null) {
+			return Double.parseDouble(getProperty(GlobalConstants.KASSOCIATION_STRING));
+		}
 		return dimerizationConstant;
 	}
 
@@ -168,9 +133,12 @@ public abstract class AbstractSpecies implements SpeciesInterface {
 	 * @return Returns the maxDimer.
 	 */
 	public int getMaxDimer() {
+		if (getProperty(GlobalConstants.MAX_DIMER_STRING) != null) {
+			return (int)Double.parseDouble(getProperty(GlobalConstants.MAX_DIMER_STRING));
+		}
 		return maxDimer;
 	}
-
+	
 	/**
 	 * @param maxDimer
 	 *            The maxDimer to set.
@@ -179,8 +147,37 @@ public abstract class AbstractSpecies implements SpeciesInterface {
 		this.maxDimer = maxDimer;
 	}
 	
+	public void setProperties(Properties properties) {
+		this.properties = properties;
+	}
 	
-
+	public Properties getProperties() {
+		return properties;
+	}
+	
+	public void addProperty(String key, String value) {
+		if (properties == null) {
+			properties = new Properties();			
+		}
+		properties.put(key, value);
+	}
+	
+	public String getProperty(String key) {
+		if (properties == null || !properties.contains(key)) {
+			return null;
+		}
+		return properties.get(key).toString();
+	}
+	
+	public boolean containsKey(String key) {
+		if (properties == null || !properties.contains(key)) {
+			return false;
+		}
+		return true;
+	}
+		
+	protected Properties properties = null;
+	
 	// The name of the species
 	protected String name = null;
 
@@ -198,14 +195,4 @@ public abstract class AbstractSpecies implements SpeciesInterface {
 
 	// Number of molecules can come together to form dimer
 	protected int maxDimer = 0;
-
-	// State properties, only have a finite set of values
-	private Properties stateProperties = null;
-
-	// Arbitrary alphanumeric property
-	private Properties labelProperties = null;
-
-	// Number property
-	private Properties numberProperties = null;
-
 }

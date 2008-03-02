@@ -57,9 +57,9 @@ public class PropertyField extends JPanel implements ActionListener,
 		name.setName(nameString);
 		this.add(name);
 		field = new JTextField(20);
-		field.setText(valueString);
-		box = new JComboBox(new DefaultComboBoxModel(states));
-		if (stateString != null) {			
+		field.setText(valueString);		
+		if (stateString != null) {	
+			box = new JComboBox(new DefaultComboBoxModel(states));
 			box.addActionListener(this);
 			this.add(box);
 			if (stateString.equals(states[0])) {
@@ -98,7 +98,7 @@ public class PropertyField extends JPanel implements ActionListener,
 	}
 
 	public void setCustom() {
-		if (isEnabled) {
+		if (isEnabled && box != null) {
 			field.setEnabled(true);
 			name.setEnabled(true);
 			box.setSelectedItem(states[1]);

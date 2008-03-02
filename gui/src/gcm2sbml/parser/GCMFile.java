@@ -425,7 +425,7 @@ public class GCMFile {
 		defaultParameters.put(GlobalConstants.KBASAL_STRING,
 				GlobalConstants.KBASAL_VALUE);
 		defaultParameters.put(GlobalConstants.PROMOTER_COUNT_STRING,
-				GlobalConstants.GENE_COUNT_VALUE);
+				GlobalConstants.PROMOTER_COUNT_VALUE);
 		defaultParameters.put(GlobalConstants.STOICHIOMETRY_STRING,
 				GlobalConstants.STOICHIOMETRY_VALUE);
 		defaultParameters.put(GlobalConstants.ACTIVED_STRING,
