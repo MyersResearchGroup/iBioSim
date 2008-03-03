@@ -44,7 +44,7 @@ public class GlobalConstants {
 	public static final String REPRESSION = "repression";
 	
 	
-	public static final String MAX_DIMER_VALUE = "2";
+	public static final String MAX_DIMER_VALUE = "1";
 	public static final String INITIAL_VALUE = "0";
 	
 	

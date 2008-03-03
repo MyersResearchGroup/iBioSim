@@ -68,11 +68,16 @@ public class GCMParser {
 		}
 		
 		for (String s : promoterMap.keySet()) {
+			if (!promoters.containsKey(s)) {
+				Promoter p = new Promoter();
+				p.setName(s);
+				promoters.put(s, p);
+			}
 			promoters.get(s).addProperties(promoterMap.get(s));
 		}
 		
 		GeneticNetwork network = new GeneticNetwork(species, stateMap,
-				promoters);
+				promoters, gcm);
 		return network;
 	}
 
@@ -115,6 +120,22 @@ public class GCMParser {
 		if (property.containsKey(GlobalConstants.BIO)) {
 			Utility.print(debug, "GCMParser: Biochemical");
 			r.setBiochemical(true);
+		}
+		
+		if (property.containsKey(GlobalConstants.MAX_DIMER_STRING)) {
+			r.setDimer(Integer.parseInt(property.getProperty(GlobalConstants.MAX_DIMER_STRING)));
+		} else if (gcm != null) {
+			r.setDimer(Integer.parseInt(gcm.getParameter((GlobalConstants.MAX_DIMER_STRING))));
+		} else {
+			r.setDimer(1);
+		}
+		
+		if (property.containsKey(GlobalConstants.COOPERATIVITY_STRING)) {
+			r.setCoop(Integer.parseInt(property.getProperty(GlobalConstants.COOPERATIVITY_STRING)));
+		} else if (gcm != null) {
+			r.setCoop(Integer.parseInt(gcm.getParameter((GlobalConstants.COOPERATIVITY_STRING))));
+		} else {
+			r.setCoop(1);
 		}
 		
 		r.setInputState(gcm.getInput(reaction));

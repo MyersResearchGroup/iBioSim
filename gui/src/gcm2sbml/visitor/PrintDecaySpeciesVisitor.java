@@ -51,13 +51,13 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 	public void visitDimer(DimerSpecies specie) {
 		loadValues(specie.getProperties());
 		//Check if they have decay rates, if not, then don't allow decay
-		if (!dimerizationAbstraction && !Double.isNaN(specie.getDecayRate())) {
+		if (!dimerizationAbstraction) {
 			Reaction r = new Reaction("Degradation_"+specie.getName());
 			r.addReactant(new SpeciesReference(specie.getName(), 1));
 			r.setReversible(false);
 			r.setFast(false);
 			KineticLaw kl = new KineticLaw();
-			kl.addParameter(new Parameter("decay", specie.getDecayRate(), decayString));
+			kl.addParameter(new Parameter("decay", decay, decayString));
 			kl.setFormula("decay*" + specie.getName());
 			r.setKineticLaw(kl);
 			document.getModel().addReaction(r);
@@ -66,13 +66,13 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 
 	public void visitBiochemical(BiochemicalSpecies specie) {
 		loadValues(specie.getProperties());
-		if (!biochemicalAbstraction && !Double.isNaN(specie.getDecayRate())) {
+		if (!biochemicalAbstraction) {
 			Reaction r = new Reaction("Degradation_"+specie.getName());
 			r.addReactant(new SpeciesReference(specie.getName(), 1));
 			r.setReversible(false);
 			r.setFast(false);
 			KineticLaw kl = new KineticLaw();
-			kl.addParameter(new Parameter("decay", specie.getDecayRate(), decayString));
+			kl.addParameter(new Parameter("decay", decay, decayString));
 			kl.setFormula("decay*" + specie.getName());
 			r.setKineticLaw(kl);
 			document.getModel().addReaction(r);
@@ -81,16 +81,12 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 
 	public void visitBaseSpecies(BaseSpecies specie) {
 		loadValues(specie.getProperties());
-		double newDecay = decay;
-		if (!Double.isNaN(specie.getDecayRate())) {
-			newDecay = specie.getDecayRate();
-		}
 		Reaction r = new Reaction("Degradation_"+specie.getName());
 		r.addReactant(new SpeciesReference(specie.getName(), 1));
 		r.setReversible(false);
 		r.setFast(false);
 		KineticLaw kl = new KineticLaw();
-		kl.addParameter(new Parameter("decay", newDecay, decayString));
+		kl.addParameter(new Parameter("decay", decay, decayString));
 		kl.setFormula("decay*" + specie.getName());
 		r.setKineticLaw(kl);
 		document.getModel().addReaction(r);
@@ -102,16 +98,12 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 
 	public void visitSpasticSpecies(SpasticSpecies specie) {
 		loadValues(specie.getProperties());
-		double newDecay = decay;
-		if (!Double.isNaN(specie.getDecayRate())) {
-			newDecay = specie.getDecayRate();
-		}
 		Reaction r = new Reaction("Degradation_"+specie.getName());
 		r.addReactant(new SpeciesReference(specie.getName(), 1));
 		r.setReversible(false);
 		r.setFast(false);
 		KineticLaw kl = new KineticLaw();
-		kl.addParameter(new Parameter("decay", newDecay, decayString));
+		kl.addParameter(new Parameter("decay", decay, decayString));
 		kl.setFormula("decay*" + specie.getName());
 		r.setKineticLaw(kl);
 		document.getModel().addReaction(r);

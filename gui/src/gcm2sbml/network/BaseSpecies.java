@@ -1,5 +1,7 @@
 package gcm2sbml.network;
 
+import java.util.Properties;
+
 import gcm2sbml.util.Utility;
 import gcm2sbml.visitor.SpeciesVisitor;
 
@@ -23,14 +25,11 @@ public class BaseSpecies extends AbstractSpecies {
 	 * @param maxDimer
 	 * 			  the maximum monomers can combine to form dimer
 	 */
-	public BaseSpecies(String name, String stateName,
-			double dimerizationConstant, double decayRate, int maxDimer) {
+	public BaseSpecies(String name, String stateName, Properties properties) {
 		super();
+		this.properties = properties;
 		this.name = name;
 		this.stateName = stateName;
-		this.dimerizationConstant = dimerizationConstant;
-		this.decayRate = decayRate;
-		this.maxDimer = maxDimer;
 	}
 	
 	/**

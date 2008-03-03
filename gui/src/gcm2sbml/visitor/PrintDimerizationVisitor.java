@@ -25,10 +25,11 @@ import org.sbml.libsbml.libsbml;
 public class PrintDimerizationVisitor extends AbstractPrintVisitor {
 
 	public PrintDimerizationVisitor(SBMLDocument document,
-			Collection<SpeciesInterface> species, double kdimer) {
+			Collection<SpeciesInterface> species, double kdimer, double dimer) {
 		super(document);
 		this.defaultkdimer = kdimer;
 		this.species = species;
+		this.defaultdimer = dimer;
 	}
 
 	/**
@@ -50,19 +51,15 @@ public class PrintDimerizationVisitor extends AbstractPrintVisitor {
 		loadValues(specie.getProperties());
 		// Check if we are running abstraction, if not, then don't allow decay
 		if (!dimerizationAbstraction) {
-			double newkf = kdimer;
-			if (!Double.isNaN(specie.getDimerizationConstant())) {
-				newkf = specie.getDimerizationConstant();
-			}
 			Reaction r = new Reaction("Dimerization_"+specie.getName());
-			r.addReactant(new SpeciesReference(specie.getMonomer().getName(), specie.getDimerizationValue()));
+			r.addReactant(new SpeciesReference(specie.getMonomer().getName(), dimer));
 			r.addProduct(new SpeciesReference(specie.getName(), 1));
 			r.setReversible(true);
 			r.setFast(true);
 			KineticLaw kl = new KineticLaw();
-			kl.addParameter(new Parameter("kdimer", kdimer, GeneticNetwork.getMoleTimeParameter(specie.getDimerizationValue())));
+			kl.addParameter(new Parameter("kdimer", kdimer, GeneticNetwork.getMoleTimeParameter((int)dimer)));
 			kl.addParameter(new Parameter("kr", 1, GeneticNetwork.getMoleTimeParameter(1)));
-			kl.setFormula("kdimer*" + specie.getMonomer().getName() + " ^"+specie.getDimerizationValue()+"-kr*"+specie.getName());
+			kl.setFormula("kdimer*" + specie.getMonomer().getName() + " ^"+dimer+"-kr*"+specie.getName());
 			
 			r.setKineticLaw(kl);
 			document.getModel().addReaction(r);		
@@ -83,10 +80,13 @@ public class PrintDimerizationVisitor extends AbstractPrintVisitor {
 	
 	private void loadValues(Properties property) {
 		kdimer = getProperty(GlobalConstants.KASSOCIATION_STRING, property, defaultkdimer);
+		defaultdimer = getProperty(GlobalConstants.MAX_DIMER_STRING, property, defaultdimer);
 	}
 
 	private double kdimer = 1;
 	private double defaultkdimer = 1;
+	private double dimer = 2;
+	private double defaultdimer = 2;
 
 	private Collection<SpeciesInterface> species = null;
 

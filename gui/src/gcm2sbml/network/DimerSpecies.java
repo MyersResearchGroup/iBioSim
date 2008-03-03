@@ -1,5 +1,6 @@
 package gcm2sbml.network;
 
+import gcm2sbml.util.GlobalConstants;
 import gcm2sbml.util.Utility;
 import gcm2sbml.visitor.SpeciesVisitor;
 
@@ -21,25 +22,9 @@ public class DimerSpecies extends AbstractSpecies {
 	public DimerSpecies(SpeciesInterface monomer, int num) {
 		super();
 		this.monomer = monomer;
-		this.dimerizationValue = num;
 		this.name = monomer.getName() + "_" + num;
-		this.dimerizationConstant = monomer.getDimerizationConstant();
-	}
-
-	/**
-	 * @return Returns the dimerizationValue. or the number
-	 * of monomers necessary to form this dimer.
-	 */
-	public int getDimerizationValue() {
-		return dimerizationValue;
-	}
-
-	/**
-	 * @param dimerizationValue
-	 *            The dimerizationValue to set.
-	 */
-	public void setDimerizationValue(int dimerizationValue) {
-		this.dimerizationValue = dimerizationValue;
+		properties.setProperty(GlobalConstants.MAX_DIMER_STRING, ""+num);
+		properties.setProperty(GlobalConstants.NAME, name);
 	}
 
 	/**
@@ -63,7 +48,4 @@ public class DimerSpecies extends AbstractSpecies {
 
 	// The monomer that makes this species
 	private SpeciesInterface monomer = null;
-
-	// Number of monomers necessary to combine to make this dimer
-	private int dimerizationValue = 0;
 }

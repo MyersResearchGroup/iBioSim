@@ -48,11 +48,30 @@ public class GeneticNetwork {
 	public GeneticNetwork(HashMap<String, SpeciesInterface> species,
 			HashMap<String, SpeciesInterface> stateMap,
 			HashMap<String, Promoter> promoters) {
+		this(species, stateMap, promoters, null);
+	}
+	
+	/**
+	 * Constructor
+	 * 
+	 * @param species
+	 *            a hashmap of species
+	 * @param stateMap
+	 *            a hashmap of statename to species name
+	 * @param promoters
+	 *            a hashmap of promoters
+	 * @param gcm
+	 * 			  a gcm file containing extra information
+	 */
+	public GeneticNetwork(HashMap<String, SpeciesInterface> species,
+			HashMap<String, SpeciesInterface> stateMap,
+			HashMap<String, Promoter> promoters, GCMFile gcm) {
 		this.species = species;
 		this.stateMap = stateMap;
 		this.promoters = promoters;
+		this.properties = gcm;
 		initialize();
-	}
+	}	
 
 	/**
 	 * Loads in a properties file
@@ -129,6 +148,7 @@ public class GeneticNetwork {
 		double kdimer = .05;
 		double kbio = .05;
 		double kcoop = 1;
+		double dimer = 1;
 
 		if (properties != null) {
 			kbio = Double.parseDouble(properties
@@ -143,6 +163,9 @@ public class GeneticNetwork {
 					.getParameter(GlobalConstants.KACT_STRING));
 			kcoop = Double.parseDouble(properties
 					.getParameter(GlobalConstants.COOPERATIVITY_STRING));
+			dimer = Double.parseDouble(properties
+					.getParameter(GlobalConstants.MAX_DIMER_STRING));
+
 		}
 
 		for (Promoter p : promoters.values()) {
@@ -163,7 +186,8 @@ public class GeneticNetwork {
 
 			// Next setup activated binding
 			PrintActivatedBindingVisitor v = new PrintActivatedBindingVisitor(
-					document, p, p.getActivators(), act, kdimer, kcoop, kbio);
+					document, p, p.getActivators(), act, kdimer, kcoop, kbio,
+					dimer);
 			v.setBiochemicalAbstraction(biochemicalAbstraction);
 			v.setDimerizationAbstraction(dimerizationAbstraction);
 			v.setCooperationAbstraction(cooperationAbstraction);
@@ -172,7 +196,8 @@ public class GeneticNetwork {
 			// Next setup repression binding
 			p.getRepressors();
 			PrintRepressionBindingVisitor v2 = new PrintRepressionBindingVisitor(
-					document, p, p.getRepressors(), rep, kdimer, kcoop, kbio);
+					document, p, p.getRepressors(), rep, kdimer, kcoop, kbio,
+					dimer);
 			v2.setBiochemicalAbstraction(biochemicalAbstraction);
 			v2.setDimerizationAbstraction(dimerizationAbstraction);
 			v2.setCooperationAbstraction(cooperationAbstraction);
@@ -315,12 +340,16 @@ public class GeneticNetwork {
 	 */
 	private void printDimerization(SBMLDocument document) {
 		double kdimer = .05;
+		double dimer = 2;
 		if (properties != null) {
 			kdimer = Double.parseDouble(properties
 					.getParameter(GlobalConstants.KASSOCIATION_STRING));
+			dimer = Double.parseDouble(properties
+					.getParameter(GlobalConstants.MAX_DIMER_STRING));
+
 		}
 		PrintDimerizationVisitor visitor = new PrintDimerizationVisitor(
-				document, species.values(), kdimer);
+				document, species.values(), kdimer, dimer);
 		visitor.setBiochemicalAbstraction(biochemicalAbstraction);
 		visitor.setDimerizationAbstraction(dimerizationAbstraction);
 		visitor.run();
@@ -348,7 +377,8 @@ public class GeneticNetwork {
 	private void printSpecies(SBMLDocument document) {
 		double init = 1;
 		if (properties != null) {
-			init = Double.parseDouble(properties.getParameter(GlobalConstants.INITIAL_STRING));
+			init = Double.parseDouble(properties
+					.getParameter(GlobalConstants.INITIAL_STRING));
 		}
 		PrintSpeciesVisitor visitor = new PrintSpeciesVisitor(document, species
 				.values(), compartment, init);
@@ -376,7 +406,8 @@ public class GeneticNetwork {
 			// First print out the promoter, and promoter bound to RNAP
 			String tempPromoters = numPromoters;
 			if (promoter.getProperty(GlobalConstants.PROMOTER_COUNT_STRING) != null) {
-				tempPromoters = promoter.getProperty(GlobalConstants.PROMOTER_COUNT_STRING); 
+				tempPromoters = promoter
+						.getProperty(GlobalConstants.PROMOTER_COUNT_STRING);
 			}
 			Species s = Utility.makeSpecies(promoter.getName(), compartment,
 					Double.parseDouble(tempPromoters));
@@ -466,11 +497,18 @@ public class GeneticNetwork {
 		// First go through all species list and add all dimers found to hashMap
 		HashMap<String, SpeciesInterface> dimers = new HashMap<String, SpeciesInterface>();
 		for (SpeciesInterface specie : species.values()) {
-			if (specie.getMaxDimer() > 1) {
-				for (int i = 2; i < specie.getMaxDimer(); i++) {
-					DimerSpecies dimer = new DimerSpecies(specie, i);
-					dimers.put(dimer.getName(), dimer);
-				}
+			int dimerValue = 1;
+			if (properties != null) {
+				dimerValue = (int) Integer.parseInt((properties
+						.getParameter(GlobalConstants.MAX_DIMER_STRING)));
+			}
+			if (specie.getProperty(GlobalConstants.MAX_DIMER_STRING) != null) {
+				dimerValue = (int) Integer.parseInt(specie
+						.getProperty(GlobalConstants.MAX_DIMER_STRING));
+			}
+			for (int i = 2; i <= dimerValue; i++) {
+				DimerSpecies dimer = new DimerSpecies(specie, i);
+				dimers.put(dimer.getName(), dimer);
 			}
 		}
 		// Now go through reaction list to see if any are missed

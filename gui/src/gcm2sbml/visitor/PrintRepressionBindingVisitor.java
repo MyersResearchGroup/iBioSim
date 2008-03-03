@@ -23,7 +23,7 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 
 	public PrintRepressionBindingVisitor(SBMLDocument document, Promoter p,
 			Collection<SpeciesInterface> species, double rep, double kdimer,
-			double kcoop, double kbio) {
+			double kcoop, double kbio, double dimer) {
 		super(document);
 		this.defaultrep = rep;
 		this.promoter = p;
@@ -31,6 +31,7 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 		this.defaultkdimer = kdimer;
 		this.defaultkcoop = kcoop;
 		this.defaultkbio = kbio;
+		this.defaultdimer = dimer;
 	}
 
 	/**
@@ -64,21 +65,13 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 				.getMoleTimeParameter(1)));
 		if (dimerizationAbstraction) {
 			kl.addParameter(new Parameter("rep", rep, GeneticNetwork
-					.getMoleTimeParameter(specie.getDimerizationValue()
-							* (int) coop + 1)));
+					.getMoleTimeParameter((int) dimer * (int) coop + 1)));
 			r.addReactant(new SpeciesReference(specie.getMonomer().getName(),
-					specie.getDimerizationValue() * coop));
-			if (!Double.isNaN(specie.getDimerizationConstant())) {
-				kl.addParameter(new Parameter("kdimer", specie
-						.getDimerizationConstant(), "dimensionless"));
-			} else {
-				kl
-						.addParameter(new Parameter("kdimer", kdimer,
-								"dimensionless"));
-			}
+					(int) dimer * coop));
+			kl.addParameter(new Parameter("kdimer", kdimer, "dimensionless"));
 			kl.setFormula("kdimer*rep*" + specie.getMonomer().getName() + "^"
-					+ (specie.getDimerizationValue() * coop) + "*"
-					+ promoter.getName() + "-kr*" + speciesName);
+					+ (dimer * coop) + "*" + promoter.getName() + "-kr*"
+					+ speciesName);
 		} else {
 			kl.addParameter(new Parameter("rep", rep, GeneticNetwork
 					.getMoleTimeParameter((int) coop + 1)));
@@ -196,14 +189,17 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 		r.setKineticLaw(kl);
 		document.getModel().addReaction(r);
 	}
-	
-	private void loadValues(Properties property) {
-		kdimer = getProperty(GlobalConstants.KASSOCIATION_STRING, property, defaultkdimer);
-		kbio = getProperty(GlobalConstants.KBIO_STRING, property, defaultkbio);
-		kcoop = getProperty(GlobalConstants.COOPERATIVITY_STRING, property, defaultkcoop);
-		rep = getProperty(GlobalConstants.KREP_STRING, property, defaultrep);
-	}
 
+	private void loadValues(Properties property) {
+		kdimer = getProperty(GlobalConstants.KASSOCIATION_STRING, property,
+				defaultkdimer);
+		kbio = getProperty(GlobalConstants.KBIO_STRING, property, defaultkbio);
+		kcoop = getProperty(GlobalConstants.COOPERATIVITY_STRING, property,
+				defaultkcoop);
+		rep = getProperty(GlobalConstants.KREP_STRING, property, defaultrep);
+		dimer = getProperty(GlobalConstants.MAX_DIMER_STRING, property,
+				defaultdimer);
+	}
 
 	private Promoter promoter = null;
 
@@ -211,11 +207,13 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 	private double kbio = .05;
 	private double kcoop = 1;
 	private double rep = .033;
-	
+	private double dimer = 1;
+
 	private double defaultkdimer = .5;
 	private double defaultkbio = .05;
 	private double defaultkcoop = 1;
 	private double defaultrep = .033;
+	private double defaultdimer = 1;
 
 	private String speciesName = "";
 
