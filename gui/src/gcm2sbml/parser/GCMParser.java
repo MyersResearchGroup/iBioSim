@@ -131,9 +131,9 @@ public class GCMParser {
 		}
 		
 		if (property.containsKey(GlobalConstants.COOPERATIVITY_STRING)) {
-			r.setCoop(Integer.parseInt(property.getProperty(GlobalConstants.COOPERATIVITY_STRING)));
+			r.setCoop(Double.parseDouble(gcm.getParameter((GlobalConstants.COOPERATIVITY_STRING))));
 		} else if (gcm != null) {
-			r.setCoop(Integer.parseInt(gcm.getParameter((GlobalConstants.COOPERATIVITY_STRING))));
+			r.setCoop(Double.parseDouble(gcm.getParameter((GlobalConstants.COOPERATIVITY_STRING))));
 		} else {
 			r.setCoop(1);
 		}

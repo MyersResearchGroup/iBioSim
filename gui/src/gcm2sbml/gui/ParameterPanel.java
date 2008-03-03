@@ -28,7 +28,7 @@ public class ParameterPanel extends JPanel {
 		if (gcm.getGlobalParameters().containsKey(selected)) {
 			field.setValue(gcm.getGlobalParameters().get(selected));
 			field.setCustom();
-		} else {
+		} else {			
 			field.setDefault();
 		}
 		add(field);
@@ -59,6 +59,8 @@ public class ParameterPanel extends JPanel {
 			}
 			if (fields.get(selected).getState().equals(PropertyField.states[1])) {
 				gcm.setParameter(selected, fields.get(selected).getValue());
+			} else if (fields.get(selected).getState().equals(PropertyField.states[0])) {
+				gcm.removeParameter(selected);
 			}
 		} else if (value == JOptionPane.NO_OPTION) {
 			// System.out.println();
