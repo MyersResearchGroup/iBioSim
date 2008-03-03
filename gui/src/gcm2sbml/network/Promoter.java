@@ -206,8 +206,8 @@ public class Promoter {
 	}
 	
 	public void addProperties(Properties property) {
-		if (properties == null) {
-			properties = new Properties();			
+		if (this.properties == null) {
+			this.properties = new Properties();			
 		}
 		for (Object s : property.keySet()) {
 			this.properties.put(s.toString(), property.get(s.toString()));
@@ -222,7 +222,7 @@ public class Promoter {
 	}
 	
 	public String getProperty(String key) {
-		if (properties == null || !properties.contains(key)) {
+		if (properties == null || !properties.containsKey(key)) {
 			return null;
 		}
 		return properties.get(key).toString();

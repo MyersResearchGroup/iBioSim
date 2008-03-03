@@ -23,69 +23,9 @@ public abstract class AbstractSpecies implements SpeciesInterface {
 	 */
 	public AbstractSpecies() {
 		super();
+		properties = new Properties();
 	}
 	
-	/**
-	 * @return the initial
-	 */
-	public double getInitial() {
-		if (getProperty(GlobalConstants.INITIAL_STRING) != null) {
-			return Double.parseDouble(getProperty(GlobalConstants.INITIAL_STRING));
-		}
-		return initial;
-	}
-
-	/**
-	 * @param initial the initial to set
-	 */
-	public void setInitial(double initial) {
-		this.initial = initial;
-	}
-	
-	/**
-	 * Returns the decay rates of the species
-	 * 
-	 * @return the decay rates of the species
-	 */
-	public double getDecayRate() {
-		if (getProperty(GlobalConstants.KDECAY_STRING) != null) {
-			return Double.parseDouble(getProperty(GlobalConstants.KDECAY_STRING));
-		}
-		return decayRate;
-	}
-
-	/**
-	 * Sets the decay rates of the species
-	 * 
-	 * @param decayRate
-	 *            the decay rate of the species
-	 */
-	public void setDecayRate(double decayRate) {
-		this.decayRate = decayRate;
-	}
-
-	/**
-	 * Returns the dimerization constant.
-	 * 
-	 * @return the dimerization constant.
-	 */
-	public double getDimerizationConstant() {
-		if (getProperty(GlobalConstants.KASSOCIATION_STRING) != null) {
-			return Double.parseDouble(getProperty(GlobalConstants.KASSOCIATION_STRING));
-		}
-		return dimerizationConstant;
-	}
-
-	/**
-	 * Sets the dimerization constant.
-	 * 
-	 * @param dimerizationConstant
-	 *            the dimerization constant
-	 */
-	public void setDimerizationConstant(double dimerizationConstant) {
-		this.dimerizationConstant = dimerizationConstant;
-	}
-
 	/**
 	 * Returns the name of the species
 	 * 
@@ -128,24 +68,6 @@ public abstract class AbstractSpecies implements SpeciesInterface {
 	public String toString() {
 		return getName();
 	}
-
-	/**
-	 * @return Returns the maxDimer.
-	 */
-	public int getMaxDimer() {
-		if (getProperty(GlobalConstants.MAX_DIMER_STRING) != null) {
-			return (int)Double.parseDouble(getProperty(GlobalConstants.MAX_DIMER_STRING));
-		}
-		return maxDimer;
-	}
-	
-	/**
-	 * @param maxDimer
-	 *            The maxDimer to set.
-	 */
-	public void setMaxDimer(int maxDimer) {
-		this.maxDimer = maxDimer;
-	}
 	
 	public void setProperties(Properties properties) {
 		this.properties = properties;
@@ -163,14 +85,14 @@ public abstract class AbstractSpecies implements SpeciesInterface {
 	}
 	
 	public String getProperty(String key) {
-		if (properties == null || !properties.contains(key)) {
+		if (properties == null || !properties.containsKey(key)) {
 			return null;
 		}
 		return properties.get(key).toString();
 	}
 	
 	public boolean containsKey(String key) {
-		if (properties == null || !properties.contains(key)) {
+		if (properties == null || !properties.containsKey(key)) {
 			return false;
 		}
 		return true;
@@ -183,16 +105,4 @@ public abstract class AbstractSpecies implements SpeciesInterface {
 
 	// The state associated with the species
 	protected String stateName = null;
-
-	// The dimerization rate associated with species
-	protected double dimerizationConstant = Double.NaN;
-
-	// The decay rate of the species
-	protected double decayRate = Double.NaN;
-	
-	//Initial concentration
-	protected double initial = 0;
-
-	// Number of molecules can come together to form dimer
-	protected int maxDimer = 0;
 }

@@ -23,14 +23,15 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 
 	public PrintActivatedBindingVisitor(SBMLDocument document, Promoter p,
 			Collection<SpeciesInterface> species, double act, double kdimer,
-			double kcoop, double kbio) {
+			double kcoop, double kbio, double dimer) {
 		super(document);
 		this.promoter = p;
 		this.species = species;
-		this.defaultact = act;		
+		this.defaultact = act;
 		this.defaultkdimer = kdimer;
 		this.defaultkcoop = kcoop;
 		this.defaultkbio = kbio;
+		this.defaultdimer = dimer;
 	}
 
 	/**
@@ -63,20 +64,12 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 		if (dimerizationAbstraction) {
 			kl.addParameter(new Parameter("act", act, "dimensionless"));
 			r.addReactant(new SpeciesReference(specie.getMonomer().getName(),
-					specie.getDimerizationValue() * coop));
-			if (!Double.isNaN(specie.getDimerizationConstant())) {
-				kl.addParameter(new Parameter("kdimer", specie
-						.getDimerizationConstant(),
-						GeneticNetwork.getMoleTimeParameter(specie
-								.getDimerizationValue() * 2 + 2)));
-			} else {
-				kl.addParameter(new Parameter("kdimer", kdimer, GeneticNetwork
-						.getMoleTimeParameter(1)));
-			}
-
+					kdimer * coop));
+			kl.addParameter(new Parameter("kdimer", kdimer, GeneticNetwork
+					.getMoleTimeParameter(2+(int)(dimer*coop))));
 			kl.setFormula("kdimer*act*" + "RNAP*"
 					+ specie.getMonomer().getName() + "^"
-					+ (specie.getDimerizationValue() * coop) + "*"
+					+ (dimer * coop) + "*"
 					+ promoter.getName() + "-kr*" + "RNAP_"
 					+ promoter.getName() + "_" + specie.getName());
 		} else {
@@ -121,15 +114,15 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 			}
 			names = names.substring(0, names.length() - 1);
 			kl.setFormula("kbio*act*" + "RNAP*" + names + "*"
-					+ promoter.getName() + "-kr*" + "RNAP_" + promoter.getName()
-					+ "_" + specie.getName());
+					+ promoter.getName() + "-kr*" + "RNAP_"
+					+ promoter.getName() + "_" + specie.getName());
 		} else {
 			kl.addParameter(new Parameter("act", act, GeneticNetwork
 					.getMoleTimeParameter((int) (2 + coop))));
 			r.addReactant(new SpeciesReference(specie.getName(), coop));
 			kl.setFormula("act*RNAP*" + specie.getName() + "^" + coop + "*"
-					+ promoter.getName() + "-kr*" + "RNAP_" + promoter.getName()
-					+ "_" + specie.getName());
+					+ promoter.getName() + "-kr*" + "RNAP_"
+					+ promoter.getName() + "_" + specie.getName());
 		}
 		r.addProduct(new SpeciesReference("RNAP_" + promoter.getName() + "_"
 				+ specie.getName(), 1));
@@ -152,10 +145,11 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 		KineticLaw kl = new KineticLaw();
 		kl.addParameter(new Parameter("kr", 1, GeneticNetwork
 				.getMoleTimeParameter(1)));
-		kl.addParameter(new Parameter("act", act, GeneticNetwork.getMoleTimeParameter(2+(int)coop)));
+		kl.addParameter(new Parameter("act", act, GeneticNetwork
+				.getMoleTimeParameter(2 + (int) coop)));
 		kl.setFormula("act*" + "RNAP*" + specie.getName() + "^" + coop + "*"
-				+ promoter.getName() + "-kr*" + "RNAP_" + promoter.getName() + "_"
-				+ specie.getName());
+				+ promoter.getName() + "-kr*" + "RNAP_" + promoter.getName()
+				+ "_" + specie.getName());
 		r.addProduct(new SpeciesReference("RNAP_" + promoter.getName() + "_"
 				+ specie.getName(), 1));
 		r.setReversible(true);
@@ -177,10 +171,11 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 		KineticLaw kl = new KineticLaw();
 		kl.addParameter(new Parameter("kr", 1, GeneticNetwork
 				.getMoleTimeParameter(1)));
-		kl.addParameter(new Parameter("act", act, GeneticNetwork.getMoleParameter(2+(int)coop)));
+		kl.addParameter(new Parameter("act", act, GeneticNetwork
+				.getMoleParameter(2 + (int) coop)));
 		kl.setFormula("act*" + "RNAP*" + specie.getName() + "^" + coop + "*"
-				+ promoter.getName() + "-kr*" + "RNAP_" + promoter.getName() + "_"
-				+ specie.getName());
+				+ promoter.getName() + "-kr*" + "RNAP_" + promoter.getName()
+				+ "_" + specie.getName());
 		r.addProduct(new SpeciesReference("RNAP_" + promoter.getName() + "_"
 				+ specie.getName(), 1));
 		r.setReversible(true);
@@ -203,10 +198,11 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 		KineticLaw kl = new KineticLaw();
 		kl.addParameter(new Parameter("kr", 1, GeneticNetwork
 				.getMoleTimeParameter(1)));
-		kl.addParameter(new Parameter("act", act, GeneticNetwork.getMoleParameter(2+(int)coop)));
+		kl.addParameter(new Parameter("act", act, GeneticNetwork
+				.getMoleParameter(2 + (int) coop)));
 		kl.setFormula("act*" + "RNAP*" + specie.getName() + "^" + coop + "*"
-				+ promoter.getName() + "-kr*" + "RNAP_" + promoter.getName() + "_"
-				+ specie.getName());
+				+ promoter.getName() + "-kr*" + "RNAP_" + promoter.getName()
+				+ "_" + specie.getName());
 		r.addProduct(new SpeciesReference("RNAP_" + promoter.getName() + "_"
 				+ specie.getName(), 1));
 		r.setReversible(true);
@@ -214,12 +210,16 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 		r.setKineticLaw(kl);
 		document.getModel().addReaction(r);
 	}
-	
+
 	private void loadValues(Properties property) {
-		kdimer = getProperty(GlobalConstants.KASSOCIATION_STRING, property, defaultkdimer);
+		kdimer = getProperty(GlobalConstants.KASSOCIATION_STRING, property,
+				defaultkdimer);
 		kbio = getProperty(GlobalConstants.KBIO_STRING, property, defaultkbio);
-		kcoop = getProperty(GlobalConstants.COOPERATIVITY_STRING, property, defaultkcoop);
+		kcoop = getProperty(GlobalConstants.COOPERATIVITY_STRING, property,
+				defaultkcoop);
 		act = getProperty(GlobalConstants.KACT_STRING, property, defaultact);
+		dimer = getProperty(GlobalConstants.MAX_DIMER_STRING, property,
+				defaultdimer);
 	}
 
 	private Promoter promoter = null;
@@ -228,12 +228,13 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 	private double defaultkbio = .05;
 	private double defaultkcoop = 1;
 	private double defaultact = .033;
-	
+	private double defaultdimer = 1;
+
+	private double dimer = 1;
 	private double kdimer = .5;
 	private double kbio = .05;
 	private double kcoop = 1;
 	private double act = .033;
-
 
 	private Collection<SpeciesInterface> species = null;
 
