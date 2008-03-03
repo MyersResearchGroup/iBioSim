@@ -324,6 +324,10 @@ public class GCMFile {
 		globalParameters.put(parameter, value);
 		parameters.put(parameter, value);
 	}
+	
+	public void removeParameter(String parameter) {
+		globalParameters.remove(parameter);		
+	}
 
 	private void parseStates(StringBuffer data) {
 		Pattern network = Pattern.compile(NETWORK);
@@ -382,7 +386,7 @@ public class GCMFile {
 		while (matcher.find()) {
 			String name = matcher.group(2) + " -> " + matcher.group(3);
 			Matcher propMatcher = propPattern.matcher(matcher.group(4));
-			Properties properties = new Properties();
+			Properties properties = new Properties();			
 			while (propMatcher.find()) {
 				properties.put(propMatcher.group(1), propMatcher.group(2));
 				if (propMatcher.group(1).equals(GlobalConstants.PROMOTER)
@@ -390,7 +394,9 @@ public class GCMFile {
 					promoters.put(propMatcher.group(2).replaceAll("\"", ""),
 							new Properties());
 				}
-			}
+			}		
+			properties.put(GlobalConstants.NAME, name);
+					
 			if (properties.containsKey("arrowhead")) {
 				if (properties.getProperty("arrowhead").indexOf("vee") != -1) {
 					properties.setProperty(GlobalConstants.TYPE, GlobalConstants.ACTIVATION);
@@ -449,7 +455,7 @@ public class GCMFile {
 
 	private static final String PARSE = "(^|\\n) *([^ \\n]*) *\\-\\> *([^ \n]*)";
 
-	private static final String PROPERTY = "([a-zA-Z\\s\\-]+)=([^\\s,]+)";
+	private static final String PROPERTY = "([a-zA-Z\\ \\-]+)=([^\\s,]+)";
 
 	private static final String GLOBAL = "Global\\s\\{([^}]*)\\s\\}";
 
