@@ -105,7 +105,7 @@ public class Reaction {
 	/**
 	 * @return Returns the coop.
 	 */
-	public double getCoop() {
+	public double getCoop() {		
 		if (getProperty(GlobalConstants.COOPERATIVITY_STRING) != null) {
 			return Double.parseDouble(getProperty(GlobalConstants.COOPERATIVITY_STRING));
 		}
