@@ -9,6 +9,7 @@ import java.io.File;
 import gcm2sbml.network.GeneticNetwork;
 import gcm2sbml.parser.GCMFile;
 import gcm2sbml.parser.GCMParser;
+import gcm2sbml.util.GlobalConstants;
 import junit.framework.TestCase;
 
 import org.junit.Before;
@@ -35,35 +36,48 @@ public class GCMScriptTest extends TestCase{
 		GCMFile gcm = null;
 		GeneticNetwork network = null;
 		GCMParser parser = null;
-		for (int i = 2; i <= numPromoters; i++) {
-//			gcm = new GCMFile();
-//			gcm.load(directory + fileSerparator + toggle);
-//			gcm.setParameter(GeneticNetwork.PROMOTERS, ""+i);
-//			gcm.save(saveDirectory + fileSerparator + promoter + i + fileSerparator + "toggle.gcm");
-//			parser = new GCMParser(saveDirectory + fileSerparator + promoter + i + fileSerparator + "toggle.gcm");			
-//			network = parser.buildNetwork();			
-//			network.loadProperties(gcm);
-//			network.outputSBML(saveDirectory + fileSerparator + promoter + i + fileSerparator + "toggle.sbml");
-//						
-//			gcm = new GCMFile();
-//			gcm.load(directory + fileSerparator + si);
-//			gcm.setParameter(GeneticNetwork.PROMOTERS, ""+i);
-//			gcm.save(saveDirectory + fileSerparator + promoter + i + fileSerparator + "si.gcm");
-//			parser = new GCMParser(saveDirectory + fileSerparator + promoter + i + fileSerparator + "si.gcm");			
-//			network = parser.buildNetwork();
-//			network.loadProperties(gcm);
-//			network.outputSBML(saveDirectory + fileSerparator + promoter + i + fileSerparator + "si.sbml");
-//
-//			
-//			gcm = new GCMFile();
-//			gcm.load(directory + fileSerparator + majority);
-//			gcm.setParameter(GeneticNetwork.PROMOTERS, ""+i);
-//			gcm.save(saveDirectory + fileSerparator + promoter + i + fileSerparator + "majority.gcm");
-//			parser = new GCMParser(saveDirectory + fileSerparator + promoter + i + fileSerparator + "majority.gcm");			
-//			network = parser.buildNetwork();
-//			network.loadProperties(gcm);
-//			network.outputSBML(saveDirectory + fileSerparator + promoter + i + fileSerparator + "majority.sbml");
-//
+		for (int i = 1; i <= numPromoters; i++) {
+			gcm = new GCMFile();
+			int k = 0;
+			gcm.load(directory + fileSerparator + toggle);
+			gcm.setParameter(GlobalConstants.PROMOTER_COUNT_STRING, ""+i);
+			gcm.save(saveDirectory + fileSerparator + promoter + i + fileSerparator + "toggle.gcm");
+			parser = new GCMParser(saveDirectory + fileSerparator + promoter + i + fileSerparator + "toggle.gcm");			
+			network = parser.buildNetwork();			
+			network.loadProperties(gcm);
+			network.outputSBML(saveDirectory + fileSerparator + promoter + i + fileSerparator + "toggle.sbml");
+			for (int j = 0; j < 4; j++) {
+				network.outputSBML(saveDirectory + fileSerparator + rep + i + fileSerparator + stupid[k] + idiot[j]+ fileSerparator  + "toggle.sbml");
+			}
+			k++;
+			
+						
+			gcm = new GCMFile();
+			gcm.load(directory + fileSerparator + si);
+			gcm.setParameter(GlobalConstants.PROMOTER_COUNT_STRING, ""+i);
+			gcm.save(saveDirectory + fileSerparator + promoter + i + fileSerparator + "si.gcm");
+			parser = new GCMParser(saveDirectory + fileSerparator + promoter + i + fileSerparator + "si.gcm");			
+			network = parser.buildNetwork();
+			network.loadProperties(gcm);
+			network.outputSBML(saveDirectory + fileSerparator + promoter + i + fileSerparator + "si.sbml");
+			for (int j = 0; j < 4; j++) {
+				network.outputSBML(saveDirectory + fileSerparator + rep + i + fileSerparator + stupid[k] + idiot[j]+ fileSerparator  + "si.sbml");
+			}
+			k++;
+
+			
+			gcm = new GCMFile();
+			gcm.load(directory + fileSerparator + majority);
+			gcm.setParameter(GlobalConstants.PROMOTER_COUNT_STRING, ""+i);
+			gcm.save(saveDirectory + fileSerparator + promoter + i + fileSerparator + "majority.gcm");
+			parser = new GCMParser(saveDirectory + fileSerparator + promoter + i + fileSerparator + "majority.gcm");			
+			network = parser.buildNetwork();
+			network.loadProperties(gcm);
+			network.outputSBML(saveDirectory + fileSerparator + promoter + i + fileSerparator + "majority.sbml");
+			for (int j = 0; j < 4; j++) {
+				network.outputSBML(saveDirectory + fileSerparator + rep + i + fileSerparator + stupid[k] + idiot[j]+ fileSerparator  + "majority.sbml");
+			}
+			k++;
 		}
 	}
 	
@@ -75,46 +89,115 @@ public class GCMScriptTest extends TestCase{
 		GCMFile gcm = null;
 		GeneticNetwork network = null;
 		GCMParser parser = null;
-		for (int i = 1; i <= coop.length; i++) {
-//			gcm = new GCMFile();
-//			gcm.load(directory + fileSerparator + toggle);
-//			gcm.setParameter(GeneticNetwork.KREP, ""+coop[i-1]);
-//			gcm.save(saveDirectory + fileSerparator + rep + i + fileSerparator + "toggle.gcm");
-//			parser = new GCMParser(saveDirectory + fileSerparator + rep + i + fileSerparator + "toggle.gcm");			
-//			network = parser.buildNetwork();			
-//			network.loadProperties(gcm);
-//			network.outputSBML(saveDirectory + fileSerparator + rep + i + fileSerparator + "toggle.sbml");
-//						
-//			gcm = new GCMFile();
-//			gcm.load(directory + fileSerparator + si);
-//			gcm.setParameter(GeneticNetwork.KREP, ""+coop[i-1]);
-//			gcm.save(saveDirectory + fileSerparator + rep + i + fileSerparator + "si.gcm");
-//			parser = new GCMParser(saveDirectory + fileSerparator + rep + i + fileSerparator + "si.gcm");			
-//			network = parser.buildNetwork();
-//			network.loadProperties(gcm);
-//			network.outputSBML(saveDirectory + fileSerparator + rep + i + fileSerparator + "si.sbml");
-//
-//			
-//			gcm = new GCMFile();
-//			gcm.load(directory + fileSerparator + majority);
-//			gcm.setParameter(GeneticNetwork.KREP, ""+coop[i-1]);
-//			gcm.save(saveDirectory + fileSerparator + rep + i + fileSerparator + "majority.gcm");
-//			parser = new GCMParser(saveDirectory + fileSerparator + rep + i + fileSerparator + "majority.gcm");			
-//			network = parser.buildNetwork();
-//			network.loadProperties(gcm);
-//			network.outputSBML(saveDirectory + fileSerparator + rep + i + fileSerparator + "majority.sbml");
+		for (int i = 1; i <= kcoop.length; i++) {
+			int k = 0;
+			gcm = new GCMFile();			
+			gcm.load(directory + fileSerparator + toggle);
+			gcm.setParameter(GlobalConstants.COOPERATIVITY_STRING, ""+kcoop[i-1]);
+			gcm.save(saveDirectory + fileSerparator + coop + i + fileSerparator + "toggle.gcm");
+			parser = new GCMParser(saveDirectory + fileSerparator + coop + i + fileSerparator + "toggle.gcm");			
+			network = parser.buildNetwork();			
+			network.loadProperties(gcm);
+			network.outputSBML(saveDirectory + fileSerparator + coop + i + fileSerparator + "toggle.sbml");
+			for (int j = 0; j < 4; j++) {
+				network.outputSBML(saveDirectory + fileSerparator + rep + i + fileSerparator + stupid[k] + idiot[j]+ fileSerparator  + "toggle.sbml");
+			}
+			k++;
+						
+			gcm = new GCMFile();
+			gcm.load(directory + fileSerparator + si);
+			gcm.setParameter(GlobalConstants.COOPERATIVITY_STRING, ""+kcoop[i-1]);
+			gcm.save(saveDirectory + fileSerparator + coop + i + fileSerparator + "si.gcm");
+			parser = new GCMParser(saveDirectory + fileSerparator + coop + i + fileSerparator + "si.gcm");			
+			network = parser.buildNetwork();
+			network.loadProperties(gcm);
+			network.outputSBML(saveDirectory + fileSerparator + coop + i + fileSerparator + "si.sbml");
+			for (int j = 0; j < 4; j++) {
+				network.outputSBML(saveDirectory + fileSerparator + rep + i + fileSerparator + stupid[k] + idiot[j]+ fileSerparator  + "si.sbml");
+			}
+			k++;
+
+			
+			gcm = new GCMFile();
+			gcm.load(directory + fileSerparator + majority);
+			gcm.setParameter(GlobalConstants.COOPERATIVITY_STRING, ""+kcoop[i-1]);
+			gcm.save(saveDirectory + fileSerparator + coop + i + fileSerparator + "majority.gcm");
+			parser = new GCMParser(saveDirectory + fileSerparator + coop + i + fileSerparator + "majority.gcm");			
+			network = parser.buildNetwork();
+			network.loadProperties(gcm);
+			network.outputSBML(saveDirectory + fileSerparator + coop + i + fileSerparator + "majority.sbml");
+			for (int j = 0; j < 4; j++) {
+				network.outputSBML(saveDirectory + fileSerparator + rep + i + fileSerparator + stupid[k] + idiot[j]+ fileSerparator  + "majority.sbml");
+			}
+			k++;
 		}
 	}
 	
-	private double[] coop = new double[] {.125, .25, .5, 1, 2, 4};
+	/**
+	 * Tests the effects of varying promoter count
+	 */
+	public void testCreateRep() {
+		System.loadLibrary("sbmlj");
+		GCMFile gcm = null;
+		GeneticNetwork network = null;
+		GCMParser parser = null;
+		for (int i = 1; i <= krep.length; i++) {
+			int k = 0;
+			gcm = new GCMFile();
+			gcm.load(directory + fileSerparator + toggle);
+			gcm.setParameter(GlobalConstants.KREP_STRING, ""+krep[i-1]);
+			gcm.save(saveDirectory + fileSerparator + rep + i + fileSerparator + "toggle.gcm");
+			parser = new GCMParser(saveDirectory + fileSerparator + rep + i + fileSerparator + "toggle.gcm");			
+			network = parser.buildNetwork();			
+			network.loadProperties(gcm);
+			network.outputSBML(saveDirectory + fileSerparator + rep + i + fileSerparator + "toggle.sbml");
+			for (int j = 0; j < 4; j++) {
+				network.outputSBML(saveDirectory + fileSerparator + rep + i + fileSerparator + stupid[k] + idiot[j]+ fileSerparator  + "toggle.sbml");
+			}
+			k++;
+
+						
+			gcm = new GCMFile();
+			gcm.load(directory + fileSerparator + si);
+			gcm.setParameter(GlobalConstants.KREP_STRING, ""+krep[i-1]);
+			gcm.save(saveDirectory + fileSerparator + rep + i + fileSerparator + "si.gcm");
+			parser = new GCMParser(saveDirectory + fileSerparator + rep + i + fileSerparator + "si.gcm");			
+			network = parser.buildNetwork();
+			network.loadProperties(gcm);
+			network.outputSBML(saveDirectory + fileSerparator + rep + i + fileSerparator + "si.sbml");
+			for (int j = 0; j < 4; j++) {
+				network.outputSBML(saveDirectory + fileSerparator + rep + i + fileSerparator + stupid[k] + idiot[j]+ fileSerparator  + "si.sbml");
+			}
+			k++;
+			
+			gcm = new GCMFile();
+			gcm.load(directory + fileSerparator + majority);
+			gcm.setParameter(GlobalConstants.KREP_STRING, ""+krep[i-1]);
+			gcm.save(saveDirectory + fileSerparator + rep + i + fileSerparator + "majority.gcm");
+			parser = new GCMParser(saveDirectory + fileSerparator + rep + i + fileSerparator + "majority.gcm");			
+			network = parser.buildNetwork();
+			network.loadProperties(gcm);
+			network.outputSBML(saveDirectory + fileSerparator + rep + i + fileSerparator + "majority.sbml");
+			for (int j = 0; j < 4; j++) {
+				network.outputSBML(saveDirectory + fileSerparator + rep + i + fileSerparator + stupid[k] + idiot[j]+ fileSerparator  + "majority.sbml");
+			}			
+		}
+	}
+	
+	
+	private double[] kcoop = new double[] {1, 2, 3, 4, 5, 6};
+	private double[] krep = new double[] {.001, .01, .1, 1, 10, 100};
 	private int numPromoters = 5;
 	private String directory = "gcm";	
 	private char fileSerparator = File.separatorChar;
-	private String saveDirectory = "/home/shang/namphuon/" + fileSerparator + "muller";
+	private String saveDirectory = "/home/shang/namphuon" + fileSerparator + "muller";
 	private String toggle = "toggle.gcm";
 	private String si = "si.gcm";
 	private String majority = "majority.gcm";
-	private String promoter = "promoter";
-	private String rep = "coop";
+	private String promoter = "promoter";	
+	private String rep = "rep";
+	private String coop = "coop";
+	private String[] stupid = {"tog", "si", "maj"};
+	private String[] idiot = {"-h-high", "-h-low", "-l-high", "-l-low"};
 	
 }

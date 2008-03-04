@@ -22,11 +22,11 @@ public class GlobalConstants {
 	public static final String PROMOTER_COUNT_VALUE = "1";
 	public static final String KASSOCIATION_VALUE = ".05";
 	public static final String KBASAL_VALUE = ".0001";
-	public static final String OCR_VALUE = ".25";
+	public static final String OCR_VALUE = ".0025";
 	public static final String KDECAY_VALUE = ".02";
 	public static final String RNAP_VALUE = "30";
 	public static final String RNAP_BINDING_VALUE = ".033";
-	public static final String STOICHIOMETRY_VALUE = "5";
+	public static final String STOICHIOMETRY_VALUE = "10";
 	public static final String COOPERATIVITY_VALUE = "2";
 	public static final String ACTIVED_VALUE = ".25";
 	
