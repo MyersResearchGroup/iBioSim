@@ -4258,47 +4258,39 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 */
 	private String[] sortInitRules(String[] initRules) {
 		String[] result = new String[initRules.length];
-		String temp;
-		String temp2;
+		boolean[] used = new boolean[initRules.length];
 		int j = 0;
-		int start = 0;
-		int end = 0;
-
 		for (int i = 0; i < initRules.length; i++) {
-			String[] initRule = initRules[i].split(" ");
-			start = -1;
-			end = -1;
-			for (int k = 0; k < j; k++) {
-				String[] r = result[k].split(" ");
-				for (int l = 1; l < r.length; l++) {
-					if (r[l].equals(initRule[0])) {
-						end = k;
-					}
-				}
-				for (int l = 1; l < initRule.length; l++) {
-					if (initRule[l].equals(r[0])) {
-						start = k;
-					}
-				}
+		  used[i] = false;
+		}
+		boolean progress;
+		do {
+		  progress = false;
+		  for (int i = 0; i < initRules.length; i++) {
+		    if (used[i]) continue;
+		    String[] initRule = initRules[i].split(" ");
+		    boolean insert = true;
+		    for (int k = 1; k < initRule.length; k++) {
+		      for (int l = 0; l < initRules.length; l++) {
+			if (used[l]) continue;
+			String[] initRule2 = initRules[l].split(" ");
+			if (initRule[k].equals(initRule2[0])) {
+			  insert = false;
+			  break;
 			}
-			if (end == -1) {
-				result[j] = initRules[i];
-			}
-			else if (start < end) {
-				temp = result[end];
-				result[end] = initRules[i];
-				for (int k = end + 1; k < j; k++) {
-					temp2 = result[k];
-					result[k] = temp;
-					temp = temp2;
-				}
-				result[j] = temp;
-			}
-			else {
-				result[j] = initRules[i];
-				throw new RuntimeException();
-			}
-			j++;
+		      }
+		      if (!insert) break;
+		    }
+		    if (insert) {
+		      result[j] = initRules[i];
+		      j++;
+		      progress = true;
+		      used[i] = true;
+		    }
+		  }
+		} while ((progress) && (j < initRules.length));
+		if (j != initRules.length) {
+		  throw new RuntimeException();
 		}
 		return result;
 	}
