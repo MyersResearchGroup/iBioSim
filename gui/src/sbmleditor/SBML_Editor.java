@@ -4192,63 +4192,52 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 */
 	private String[] sortRules(String[] rules) {
 		String[] result = new String[rules.length];
-		String temp;
-		String temp2;
 		int j = 0;
-		int start = 0;
-		int end = 0;
-		int eAlg = 0;
-
+		boolean[] used = new boolean[rules.length];
+		for (int i = 0; i < rules.length; i++) {
+		  used[i] = false;
+		}
 		for (int i = 0; i < rules.length; i++) {
 			if (rules[i].split(" ")[0].equals("0")) {
 				result[j] = rules[i];
+				used[i] = true;
 				j++;
 			}
 		}
-		eAlg = j;
-		for (int i = 0; i < rules.length; i++) {
-			if ((!rules[i].split(" ")[0].equals("0")) && (!rules[i].split(" ")[0].equals("d("))) {
-				String[] rule = rules[i].split(" ");
-				start = -1;
-				end = -1;
-				for (int k = eAlg; k < j; k++) {
-					String[] r = result[k].split(" ");
-					for (int l = 1; l < r.length; l++) {
-						if (r[l].equals(rule[0])) {
-							end = k;
-						}
-					}
-					for (int l = 1; l < rule.length; l++) {
-						if (rule[l].equals(r[0])) {
-							start = k;
-						}
-					}
-				}
-				if (end == -1) {
-					result[j] = rules[i];
-				}
-				else if (start < end) {
-					temp = result[end];
-					result[end] = rules[i];
-					for (int k = end + 1; k < j; k++) {
-						temp2 = result[k];
-						result[k] = temp;
-						temp = temp2;
-					}
-					result[j] = temp;
-				}
-				else {
-					result[j] = rules[i];
-					throw new RuntimeException();
-				}
-				j++;
+		boolean progress;
+		do {
+		  progress = false;
+		  for (int i = 0; i < rules.length; i++) {
+		    if (used[i] || (rules[i].split(" ")[0].equals("0")) || (rules[i].split(" ")[0].equals("d("))) continue;
+		    String[] rule = rules[i].split(" ");
+		    boolean insert = true;
+		    for (int k = 1; k < rule.length; k++) {
+		      for (int l = 0; l < rules.length; l++) {
+			if (used[l] || (rules[l].split(" ")[0].equals("0")) || (rules[l].split(" ")[0].equals("d("))) continue;
+			String[] rule2 = rules[l].split(" ");
+			if (rule[k].equals(rule2[0])) {
+			  insert = false;
+			  break;
 			}
-		}
+		      }
+		      if (!insert) break;
+		    }
+		    if (insert) {
+		      result[j] = rules[i];
+		      j++;
+		      progress = true;
+		      used[i] = true;
+		    }
+		  }
+		} while ((progress) && (j < rules.length));
 		for (int i = 0; i < rules.length; i++) {
 			if (rules[i].split(" ")[0].equals("d(")) {
 				result[j] = rules[i];
 				j++;
 			}
+		}
+		if (j != rules.length) {
+		  throw new RuntimeException();
 		}
 		return result;
 	}
@@ -4258,8 +4247,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 */
 	private String[] sortInitRules(String[] initRules) {
 		String[] result = new String[initRules.length];
-		boolean[] used = new boolean[initRules.length];
 		int j = 0;
+		boolean[] used = new boolean[initRules.length];
 		for (int i = 0; i < initRules.length; i++) {
 		  used[i] = false;
 		}
@@ -4299,90 +4288,73 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 * Check for cycles in initialAssignments and assignmentRules
 	 */
 	private boolean checkCycles(String[] initRules, String[] rules) {
-		String[] result = new String[initRules.length + rules.length];
-		String temp;
-		String temp2;
+		String[] result = new String[rules.length + initRules.length];
 		int j = 0;
-		int start = 0;
-		int end = 0;
-
-		for (int i = 0; i < initRules.length; i++) {
-			String[] initRule = initRules[i].split(" ");
-			// System.out.println("Working on init " + initRule[0]);
-			start = -1;
-			end = -1;
-			for (int k = 0; k < j; k++) {
-				String[] r = result[k].split(" ");
-				for (int l = 1; l < r.length; l++) {
-					if (r[l].equals(initRule[0])) {
-						end = k;
-					}
-				}
-				for (int l = 1; l < initRule.length; l++) {
-					if (initRule[l].equals(r[0])) {
-						start = k;
-					}
-				}
-			}
-			// System.out.println("start = " + start + " end = " + end);
-			if (end == -1) {
-				result[j] = initRules[i];
-			}
-			else if (start < end) {
-				temp = result[end];
-				result[end] = initRules[i];
-				for (int k = end + 1; k < j; k++) {
-					temp2 = result[k];
-					result[k] = temp;
-					temp = temp2;
-				}
-				result[j] = temp;
-			}
-			else {
-				result[j] = initRules[i];
-				return true;
-			}
-			j++;
+		boolean[] used = new boolean[rules.length + initRules.length];
+		for (int i = 0; i < rules.length + initRules.length; i++) {
+		  used[i] = false;
 		}
 		for (int i = 0; i < rules.length; i++) {
-			if ((!rules[i].split(" ")[0].equals("0")) && (!rules[i].split(" ")[0].equals("d("))) {
-				String[] rule = rules[i].split(" ");
-				// System.out.println("Working on rule " + rule[0]);
-				start = -1;
-				end = -1;
-				for (int k = 0; k < j; k++) {
-					String[] r = result[k].split(" ");
-					for (int l = 1; l < r.length; l++) {
-						if (r[l].equals(rule[0])) {
-							end = k;
-						}
-					}
-					for (int l = 1; l < rule.length; l++) {
-						if (rule[l].equals(r[0])) {
-							start = k;
-						}
-					}
-				}
-				// System.out.println("start = " + start + " end = " + end);
-				if (end == -1) {
-					result[j] = rules[i];
-				}
-				else if (start < end) {
-					temp = result[end];
-					result[end] = rules[i];
-					for (int k = end + 1; k < j; k++) {
-						temp2 = result[k];
-						result[k] = temp;
-						temp = temp2;
-					}
-					result[j] = temp;
-				}
-				else {
-					result[j] = rules[i];
-					return true;
-				}
+			if (rules[i].split(" ")[0].equals("0")) {
+				result[j] = rules[i];
+				used[i] = true;
 				j++;
 			}
+		}
+		boolean progress;
+		do {
+		  progress = false;
+		  for (int i = 0; i < rules.length + initRules.length; i++) {
+		    String[] rule;
+		    if (i < rules.length) {
+		      if (used[i] || 
+			  (rules[i].split(" ")[0].equals("0")) || 
+			  (rules[i].split(" ")[0].equals("d("))) continue;
+		      rule = rules[i].split(" ");
+		    } else {
+		      if (used[i]) continue;
+		      rule = initRules[i-rules.length].split(" ");
+		    }
+		    boolean insert = true;
+		    for (int k = 1; k < rule.length; k++) {
+		      for (int l = 0; l < rules.length + initRules.length; l++) {
+			String rule2;
+			if (l < rules.length) {
+			  if (used[l] || 
+			      (rules[l].split(" ")[0].equals("0")) || 
+			      (rules[l].split(" ")[0].equals("d("))) continue;
+			  rule2 = rules[l].split(" ")[0];
+			} else {
+			  if (used[l]) continue;
+			  rule2 = initRules[l-rules.length].split(" ")[0];
+			}
+			if (rule[k].equals(rule2)) {
+			  insert = false;
+			  break;
+			}
+		      }
+		      if (!insert) break;
+		    }
+		    if (insert) {
+		      if (i < rules.length) {
+			result[j] = rules[i];
+		      } else {
+			result[j] = initRules[i-rules.length];
+		      }
+		      j++;
+		      progress = true;
+		      used[i] = true;
+		    }
+		  }
+		} while ((progress) && (j < rules.length + initRules.length));
+		for (int i = 0; i < rules.length; i++) {
+			if (rules[i].split(" ")[0].equals("d(")) {
+				result[j] = rules[i];
+				j++;
+			}
+		}
+		if (j != rules.length + initRules.length) {
+		  return true;
 		}
 		return false;
 	}

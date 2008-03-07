@@ -2300,7 +2300,7 @@ public class BioSim implements MouseListener, ActionListener {
 						&& tree.getFile()
 								.substring(tree.getFile().length() - 4).equals(
 										".xml")) {
-					try {
+				  try {
 						boolean done = false;
 						for (int i = 0; i < tab.getTabCount(); i++) {
 							if (tab
@@ -2318,11 +2318,11 @@ public class BioSim implements MouseListener, ActionListener {
 									new SBML_Editor(tree.getFile(), null, log,
 											this, null, null), "SBML Editor");
 						}
-					} catch (Exception e1) {
-						JOptionPane.showMessageDialog(frame,
-								"You must select a valid sbml file.", "Error",
-								JOptionPane.ERROR_MESSAGE);
-					}
+				  } catch (Exception e1) {
+ 						JOptionPane.showMessageDialog(frame,
+									      "You must select a valid sbml file.", "Error",
+									      JOptionPane.ERROR_MESSAGE);
+				  }
 				} else if (tree.getFile().length() >= 4
 						&& tree.getFile()
 								.substring(tree.getFile().length() - 4).equals(
