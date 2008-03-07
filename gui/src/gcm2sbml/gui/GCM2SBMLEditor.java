@@ -8,6 +8,7 @@ import gcm2sbml.util.Utility;
 
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
+import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -21,6 +22,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 
 import biomodelsim.BioSim;
@@ -141,15 +143,21 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 		JPanel mainPanel = new JPanel(new BorderLayout());
 		mainPanel.setLayout(new BorderLayout());
 		mainPanel.add(mainPanelNorth, "North");
-		mainPanel.add(mainPanelCenter, "Center");
+		mainPanel.add(mainPanelCenter, "Center");			
 		add(mainPanel);
 
+		JPanel buttons = new JPanel();				
 		SaveButton saveButton = new SaveButton("Save GCM", GCMNameTextField);
+		buttons.add(saveButton);
 		saveButton.addActionListener(this);
-		mainPanelCenterDown.add(saveButton);
+		//mainPanelCenterDown.add(saveButton);
 		saveButton = new SaveButton("Save as SBML", GCMNameTextField);
+		buttons.add(saveButton);
 		saveButton.addActionListener(this);
-		mainPanelCenterDown.add(saveButton);
+		JSplitPane pane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, null, buttons);
+		pane.setDividerSize(2);
+		mainPanelCenterDown.add(pane);
+		
 
 		species = new PropertyList("Species List");
 		EditButton addInit = new EditButton("Add Specie", species);
