@@ -50,8 +50,12 @@ public class GCMFile {
 							+ prop.getProperty(propName.toString()).toString()
 							+ ",");
 				}
-				buffer.append("label=\""+ s + "\"");
-				//buffer.deleteCharAt(buffer.length() - 1);
+				if (!prop.containsKey("label")) {
+					buffer.append("label=\"" + s + "\"");
+				} else {
+					buffer.deleteCharAt(buffer.lastIndexOf(","));
+				}
+				// buffer.deleteCharAt(buffer.length() - 1);
 				buffer.append("]\n");
 			}
 			for (String s : influences.keySet()) {
@@ -63,21 +67,24 @@ public class GCMFile {
 							+ ",");
 				}
 				String type = "";
-				if (prop.getProperty(GlobalConstants.TYPE).equals(GlobalConstants.ACTIVATION)) {
-					type = "vee";
-				} else {
-					type = "tee";
+				if (!prop.containsKey("arrowhead")) {
+					if (prop.getProperty(GlobalConstants.TYPE).equals(
+							GlobalConstants.ACTIVATION)) {
+						type = "vee";
+					} else {
+						type = "tee";
+					}
+					buffer.append("arrowhead=" + type + "");
 				}
-				buffer.append("arrowhead="+ type + "");
-				//buffer.deleteCharAt(buffer.length() - 1);
+				// buffer.deleteCharAt(buffer.length() - 1);
 				buffer.append("]\n");
 			}
 			buffer.append("}\nGlobal {\n");
-			for (String s : defaultParameters.keySet()) {				
+			for (String s : defaultParameters.keySet()) {
 				if (globalParameters.containsKey(s)) {
 					String value = globalParameters.get(s);
 					buffer.append(s + "=" + value + "\n");
-				}				
+				}
 			}
 			buffer.append("}\nPromoters {\n");
 			for (String s : promoters.keySet()) {
@@ -134,7 +141,6 @@ public class GCMFile {
 			influences = new HashMap<String, Properties>();
 			promoters = new HashMap<String, Properties>();
 			globalParameters = new HashMap<String, String>();
-			//promoters.put("none", null);
 		}
 	}
 
@@ -307,10 +313,10 @@ public class GCMFile {
 	public HashMap<String, String> getDefaultParameters() {
 		return defaultParameters;
 	}
-	
-	public HashMap<String, String> getParameters() {		
+
+	public HashMap<String, String> getParameters() {
 		return parameters;
-	}	
+	}
 
 	public String getParameter(String parameter) {
 		if (globalParameters.containsKey(parameter)) {
@@ -324,9 +330,9 @@ public class GCMFile {
 		globalParameters.put(parameter, value);
 		parameters.put(parameter, value);
 	}
-	
+
 	public void removeParameter(String parameter) {
-		globalParameters.remove(parameter);		
+		globalParameters.remove(parameter);
 	}
 
 	private void parseStates(StringBuffer data) {
@@ -386,7 +392,7 @@ public class GCMFile {
 		while (matcher.find()) {
 			String name = matcher.group(2) + " -> " + matcher.group(3);
 			Matcher propMatcher = propPattern.matcher(matcher.group(4));
-			Properties properties = new Properties();			
+			Properties properties = new Properties();
 			while (propMatcher.find()) {
 				properties.put(propMatcher.group(1), propMatcher.group(2));
 				if (propMatcher.group(1).equals(GlobalConstants.PROMOTER)
@@ -394,14 +400,16 @@ public class GCMFile {
 					promoters.put(propMatcher.group(2).replaceAll("\"", ""),
 							new Properties());
 				}
-			}		
+			}
 			properties.put(GlobalConstants.NAME, name);
-					
+
 			if (properties.containsKey("arrowhead")) {
 				if (properties.getProperty("arrowhead").indexOf("vee") != -1) {
-					properties.setProperty(GlobalConstants.TYPE, GlobalConstants.ACTIVATION);
+					properties.setProperty(GlobalConstants.TYPE,
+							GlobalConstants.ACTIVATION);
 				} else {
-					properties.setProperty(GlobalConstants.TYPE, GlobalConstants.REPRESSION);
+					properties.setProperty(GlobalConstants.TYPE,
+							GlobalConstants.REPRESSION);
 				}
 			}
 			influences.put(name, properties);
@@ -440,7 +448,7 @@ public class GCMFile {
 				GlobalConstants.MAX_DIMER_VALUE);
 		defaultParameters.put(GlobalConstants.INITIAL_STRING,
 				GlobalConstants.INITIAL_VALUE);
-		
+
 		for (String s : defaultParameters.keySet()) {
 			parameters.put(s, defaultParameters.get(s));
 		}
@@ -453,7 +461,9 @@ public class GCMFile {
 
 	private static final String REACTION = "(^|\\n) *([^ \\n]*) *\\-\\> *([^ \n]*) *\\[([^\\]]*)]";
 
-	private static final String PARSE = "(^|\\n) *([^ \\n]*) *\\-\\> *([^ \n]*)";
+	private static final String PARSE = "(^|\\n) *([^ \\n,]*) *\\-\\> *([^ \n,]*)";
+	
+	//private static final String PARSE = "(^|\\n) *([^ \\n,]*) *\\-\\> *([^ \n,]*), Promoter ([a-zA-Z\\d_]+)";
 
 	private static final String PROPERTY = "([a-zA-Z\\ \\-]+)=([^\\s,]+)";
 
@@ -466,7 +476,7 @@ public class GCMFile {
 	private HashMap<String, Properties> influences;
 
 	private HashMap<String, Properties> promoters;
-	
+
 	private HashMap<String, String> parameters;
 
 	private HashMap<String, String> defaultParameters;

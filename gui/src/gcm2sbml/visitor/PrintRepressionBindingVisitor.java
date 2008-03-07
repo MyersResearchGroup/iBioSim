@@ -68,7 +68,7 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 					.getMoleParameter(2)));
 			r.addReactant(new SpeciesReference(specie.getMonomer().getName(),
 					(int) dimer * coop));
-			kl.addParameter(new Parameter("temp", rep, GeneticNetwork
+			kl.addParameter(new Parameter("temp", 1, GeneticNetwork
 					.getMoleTimeParameter(1)));			
 			kl.addParameter(new Parameter("kdimer", kdimer, "dimensionless"));
 			kl.setFormula("temp*(kdimer*rep*" + specie.getMonomer().getName() + ")^"
@@ -77,7 +77,7 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 		} else {
 			kl.addParameter(new Parameter("rep", rep, GeneticNetwork
 					.getMoleParameter(2)));
-			kl.addParameter(new Parameter("temp", rep, GeneticNetwork
+			kl.addParameter(new Parameter("temp", 1, GeneticNetwork
 					.getMoleTimeParameter(1)));
 			r.addReactant(new SpeciesReference(specie.getName(), coop));
 			kl.setFormula("temp*(rep*" + specie.getName() + ")^" + coop + "*"
@@ -112,14 +112,14 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 				names = names + specie.getName() + "*";
 			}
 			names = names.substring(0, names.length() - 1);
-			kl.addParameter(new Parameter("temp", rep, GeneticNetwork
+			kl.addParameter(new Parameter("temp", 1, GeneticNetwork
 					.getMoleTimeParameter(1)));
 			kl.setFormula("temp*(kbio*" + names + "rep)^"+coop+"*" + promoter.getName()
 					+ "-kr*" + speciesName);
 		} else {
 			kl.addParameter(new Parameter("rep", rep, GeneticNetwork
 					.getMoleParameter(2)));
-			kl.addParameter(new Parameter("temp", rep, GeneticNetwork
+			kl.addParameter(new Parameter("temp", 1, GeneticNetwork
 					.getMoleTimeParameter(1)));
 			r.addReactant(new SpeciesReference(specie.getName(), coop));
 			kl.setFormula("temp*(rep*" + specie.getName() + ")^" + coop + "*"
@@ -145,7 +145,7 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 				.getMoleTimeParameter(1)));
 		kl.addParameter(new Parameter("rep", rep, GeneticNetwork
 				.getMoleParameter(2)));
-		kl.addParameter(new Parameter("temp", rep, GeneticNetwork
+		kl.addParameter(new Parameter("temp", 1, GeneticNetwork
 				.getMoleTimeParameter(1)));
 		kl.setFormula("temp*(rep*" + specie.getName() + ")^" + coop + "*"
 				+ promoter.getName() + "-kr*" + speciesName);
@@ -169,7 +169,7 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 				.getMoleTimeParameter(1)));
 		kl.addParameter(new Parameter("rep", rep, GeneticNetwork
 				.getMoleParameter(2)));
-		kl.addParameter(new Parameter("temp", rep, GeneticNetwork
+		kl.addParameter(new Parameter("temp", 1, GeneticNetwork
 				.getMoleTimeParameter(1)));		
 		kl.setFormula("temp*(rep*" + specie.getName() + ")^" + coop + "*"
 				+ promoter.getName() + "-kr*" + speciesName);
@@ -193,7 +193,7 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 				.getMoleTimeParameter(1)));
 		kl.addParameter(new Parameter("rep", rep, GeneticNetwork
 				.getMoleParameter(2)));
-		kl.addParameter(new Parameter("temp", rep, GeneticNetwork
+		kl.addParameter(new Parameter("temp", 1, GeneticNetwork
 				.getMoleTimeParameter(1)));
 		kl.setFormula("temp*(rep*" + specie.getName() + ")^" + coop + "*"
 				+ promoter.getName() + "-kr*" + speciesName);
