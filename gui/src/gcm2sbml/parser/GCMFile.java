@@ -59,7 +59,7 @@ public class GCMFile {
 				buffer.append("]\n");
 			}
 			for (String s : influences.keySet()) {
-				buffer.append(s + " [");
+				buffer.append(getInput(s) + " -> " + getOutput(s) + " [");
 				Properties prop = influences.get(s);
 				for (Object propName : prop.keySet()) {
 					buffer.append(propName + "="
@@ -287,6 +287,13 @@ public class GCMFile {
 		matcher.find();
 		return matcher.group(3);
 	}
+	
+	public String getPromoter(String name) {
+		Pattern pattern = Pattern.compile(PARSE);
+		Matcher matcher = pattern.matcher(name);
+		matcher.find();
+		return matcher.group(4);		
+	}
 
 	public String[] getSpeciesAsArray() {
 		String[] s = new String[species.size()];
@@ -412,6 +419,11 @@ public class GCMFile {
 							GlobalConstants.REPRESSION);
 				}
 			}
+			if (properties.getProperty(GlobalConstants.PROMOTER) != null) {
+				name = name + ", Promoter " + properties.getProperty(GlobalConstants.PROMOTER); 
+			} else {
+				name = name + ", Promoter " + "default";
+			}
 			influences.put(name, properties);
 		}
 	}
@@ -461,9 +473,9 @@ public class GCMFile {
 
 	private static final String REACTION = "(^|\\n) *([^ \\n]*) *\\-\\> *([^ \n]*) *\\[([^\\]]*)]";
 
-	private static final String PARSE = "(^|\\n) *([^ \\n,]*) *\\-\\> *([^ \n,]*)";
+	//private static final String PARSE = "(^|\\n) *([^ \\n,]*) *\\-\\> *([^ \n,]*)";
 	
-	//private static final String PARSE = "(^|\\n) *([^ \\n,]*) *\\-\\> *([^ \n,]*), Promoter ([a-zA-Z\\d_]+)";
+	private static final String PARSE = "(^|\\n) *([^ \\n,]*) *\\-\\> *([^ \n,]*), Promoter ([a-zA-Z\\d_]+)";
 
 	private static final String PROPERTY = "([a-zA-Z\\ \\-]+)=([^\\s,]+)";
 
