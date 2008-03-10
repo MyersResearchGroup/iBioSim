@@ -61,6 +61,8 @@ public class GCMFile {
 			for (String s : influences.keySet()) {
 				buffer.append(getInput(s) + " -> " + getOutput(s) + " [");
 				Properties prop = influences.get(s);
+				prop.setProperty(GlobalConstants.NAME, getInput(s) + " -> "
+						+ getOutput(s));
 				for (Object propName : prop.keySet()) {
 					buffer.append(propName + "="
 							+ prop.getProperty(propName.toString()).toString()
@@ -145,12 +147,21 @@ public class GCMFile {
 	}
 
 	public void changePromoterName(String oldName, String newName) {
-		for (Properties p : influences.values()) {
-			if (p.containsKey(GlobalConstants.PROMOTER)
-					&& p.getProperty(GlobalConstants.PROMOTER).equals(oldName)) {
-				p.setProperty(GlobalConstants.PROMOTER, newName);
+		String[] sArray = new String[influences.keySet().size()];
+		sArray = influences.keySet().toArray(sArray);
+		for (int i = 0; i < sArray.length; i++) {
+			String s = sArray[i];
+			String input = getInput(s);
+			String output = getOutput(s);
+			String newInfluenceName = "";
+			if (influences.get(s).containsKey(GlobalConstants.PROMOTER) && influences.get(s).get(GlobalConstants.PROMOTER).equals(oldName)) {
+				newInfluenceName = input + " -> " + output + ", Promoter " + newName;				
+				influences.put(newInfluenceName, influences.get(s));				
+				influences.remove(s);
+				influences.get(newInfluenceName).setProperty(GlobalConstants.PROMOTER, newName);
 			}
 		}
+		
 		promoters.put(newName, promoters.get(oldName));
 		promoters.remove(oldName);
 	}
@@ -176,9 +187,15 @@ public class GCMFile {
 				} else {
 					newInfluenceName = newInfluenceName + " -> " + output;
 				}
-				influences.put(newInfluenceName, influences.get(input + " -> "
-						+ output));
-				influences.remove(input + " -> " + output);
+				String promoterName = "default";
+				if (influences.get(s).containsKey(GlobalConstants.PROMOTER)) {
+					promoterName = influences.get(s).get(
+							GlobalConstants.PROMOTER).toString();
+				}
+				newInfluenceName = newInfluenceName + ", Promoter "
+						+ promoterName;
+				influences.put(newInfluenceName, influences.get(s));
+				influences.remove(s);
 			}
 		}
 		species.put(newName, species.get(oldName));
@@ -287,12 +304,12 @@ public class GCMFile {
 		matcher.find();
 		return matcher.group(3);
 	}
-	
+
 	public String getPromoter(String name) {
 		Pattern pattern = Pattern.compile(PARSE);
 		Matcher matcher = pattern.matcher(name);
 		matcher.find();
-		return matcher.group(4);		
+		return matcher.group(4);
 	}
 
 	public String[] getSpeciesAsArray() {
@@ -408,7 +425,6 @@ public class GCMFile {
 							new Properties());
 				}
 			}
-			properties.put(GlobalConstants.NAME, name);
 
 			if (properties.containsKey("arrowhead")) {
 				if (properties.getProperty("arrowhead").indexOf("vee") != -1) {
@@ -420,10 +436,12 @@ public class GCMFile {
 				}
 			}
 			if (properties.getProperty(GlobalConstants.PROMOTER) != null) {
-				name = name + ", Promoter " + properties.getProperty(GlobalConstants.PROMOTER); 
+				name = name + ", Promoter "
+						+ properties.getProperty(GlobalConstants.PROMOTER);
 			} else {
 				name = name + ", Promoter " + "default";
 			}
+			properties.put(GlobalConstants.NAME, name);
 			influences.put(name, properties);
 		}
 	}
@@ -473,8 +491,9 @@ public class GCMFile {
 
 	private static final String REACTION = "(^|\\n) *([^ \\n]*) *\\-\\> *([^ \n]*) *\\[([^\\]]*)]";
 
-	//private static final String PARSE = "(^|\\n) *([^ \\n,]*) *\\-\\> *([^ \n,]*)";
-	
+	// private static final String PARSE = "(^|\\n) *([^ \\n,]*) *\\-\\> *([^
+	// \n,]*)";
+
 	private static final String PARSE = "(^|\\n) *([^ \\n,]*) *\\-\\> *([^ \n,]*), Promoter ([a-zA-Z\\d_]+)";
 
 	private static final String PROPERTY = "([a-zA-Z\\ \\-]+)=([^\\s,]+)";

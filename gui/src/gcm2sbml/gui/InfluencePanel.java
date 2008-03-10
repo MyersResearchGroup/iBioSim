@@ -61,7 +61,7 @@ public class InfluencePanel extends JPanel implements ActionListener {
 		promoterBox = new JComboBox(gcm.getPromotersAsArray());
 		((DefaultComboBoxModel) (promoterBox.getModel())).addElement("default");
 		promoterBox.setSelectedItem("default");
-		// promoterBox.addActionListener(this);
+		promoterBox.addActionListener(this);
 		tempPanel.setLayout(new GridLayout(1, 2));
 		tempPanel.add(tempLabel);
 		tempPanel.add(promoterBox);
@@ -120,10 +120,9 @@ public class InfluencePanel extends JPanel implements ActionListener {
 		setType(types[0]);
 		String oldName = null;
 		if (selected != null) {
-			oldName = gcm.getInput(selected) + " -> " + gcm.getOutput(selected);
+			oldName = selected;
 			Properties prop = gcm.getInfluences().get(selected);
-			fields.get(GlobalConstants.NAME).setValue(
-					gcm.getInput(selected) + " -> " + gcm.getOutput(selected));
+			fields.get(GlobalConstants.NAME).setValue(selected);
 			inputBox.setSelectedItem(gcm.getInput(selected));
 			outputBox.setSelectedItem(gcm.getOutput(selected));
 			if (prop.get(GlobalConstants.TYPE).equals(
@@ -226,10 +225,10 @@ public class InfluencePanel extends JPanel implements ActionListener {
 			setType(typeBox.getSelectedItem().toString());
 		} else if (e.getActionCommand().equals("comboBoxChanged")
 				&& (e.getSource().equals(inputBox) || e.getSource().equals(
-						outputBox))) {
+						outputBox)) || e.getSource().equals(promoterBox)) {
 			fields.get(GlobalConstants.NAME).setValue(
 					inputBox.getSelectedItem() + " -> "
-							+ outputBox.getSelectedItem());
+							+ outputBox.getSelectedItem() + ", Promoter " + promoterBox.getSelectedItem());
 		}
 	}
 
@@ -240,7 +239,6 @@ public class InfluencePanel extends JPanel implements ActionListener {
 		} else if (type.equals(types[1])) {
 			fields.get(GlobalConstants.KACT_STRING).setEnabled(true);
 			fields.get(GlobalConstants.KREP_STRING).setEnabled(false);
-
 		} else {
 			throw new IllegalStateException("Illegal state");
 		}
