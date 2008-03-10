@@ -11,14 +11,15 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 public class ParameterPanel extends JPanel {
-	public ParameterPanel(String selected, PropertyList parameterList,
+	public ParameterPanel(String totalSelected, PropertyList parameterList,
 			GCMFile gcm) {
 		super(new GridLayout(1, 2));
-		this.selected = selected;
+		this.totalSelected = totalSelected;
 		this.parameterList = parameterList;
 		this.gcm = gcm;
 
 		fields = new HashMap<String, PropertyField>();
+		selected = totalSelected.substring(0, totalSelected.indexOf(","));
 
 		// Initial field
 		PropertyField field = new PropertyField(selected, gcm
@@ -57,11 +58,16 @@ public class ParameterPanel extends JPanel {
 				Utility.createErrorMessage("Error", "Illegal values entered.");
 				return false;
 			}
+			String newItem = selected;
 			if (fields.get(selected).getState().equals(PropertyField.states[1])) {
 				gcm.setParameter(selected, fields.get(selected).getValue());
+				newItem = newItem + ", Custom, " + fields.get(selected).getValue();
 			} else if (fields.get(selected).getState().equals(PropertyField.states[0])) {
 				gcm.removeParameter(selected);
+				newItem = newItem + ", Default, " + gcm.getParameter(selected);
 			}
+			parameterList.removeItem(totalSelected);
+			parameterList.addItem(newItem);			
 		} else if (value == JOptionPane.NO_OPTION) {
 			// System.out.println();
 			return true;
@@ -71,6 +77,7 @@ public class ParameterPanel extends JPanel {
 
 	private String[] options = { "Okay", "Cancel" };
 
+	private String totalSelected = "";
 	private String selected = "";
 	private GCMFile gcm = null;
 	private PropertyList parameterList = null;

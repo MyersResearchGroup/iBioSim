@@ -14,7 +14,10 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Properties;
+import java.util.Set;
 import java.util.Vector;
 
 import javax.swing.JComboBox;
@@ -110,8 +113,21 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 			GeneticNetwork network = parser.buildNetwork();
 			network.loadProperties(gcm);
 			// Finally, output to a file
-			network.outputSBML(path + File.separator + gcmname + ".sbml");
-			biosim.refreshTree();
+			if (new File(path + File.separator + gcmname + ".sbml").exists()) {
+				int value = JOptionPane.showOptionDialog(this, gcmname+".sbml already exists.  Overwrite file?" ,
+						"Save file", JOptionPane.YES_NO_OPTION,
+						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+				if (value == JOptionPane.YES_OPTION) {
+					network.outputSBML(path + File.separator + gcmname + ".sbml");
+					biosim.refreshTree();					
+				} else {
+					//Do nothing
+				}
+			} else {
+				network.outputSBML(path + File.separator + gcmname + ".sbml");
+				biosim.refreshTree();					
+			}
+			
 		}
 	}
 
@@ -191,11 +207,24 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 
 		parameters = new PropertyList("Parameter List");
 		editInit = new EditButton("Edit Parameter", parameters);
-		parameters.addAllItem(gcm.getParameters().keySet());
+		//parameters.addAllItem(gcm.getParameters().keySet());
+		parameters.addAllItem(generateParameters());
 		initPanel = Utility.createPanel(this, "Parameters", parameters, null,
 				null, editInit);
 
 		mainPanelCenterCenter.add(initPanel);
+	}
+	
+	private Set<String> generateParameters() {
+		HashSet<String> results = new HashSet<String>();
+		for (String s : gcm.getParameters().keySet()) {
+			if (gcm.getGlobalParameters().containsKey(s)) {
+				results.add(s + ", Custom, " + gcm.getParameter(s));
+			} else {
+				results.add(s + ", Default, " + gcm.getParameter(s));
+			}
+		}
+		return results;
 	}
 
 	// Internal private classes used only by the gui
