@@ -23,8 +23,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ProgressMonitorInputStream;
-import javax.swing.filechooser.FileFilter;
-import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.filechooser.*;
 
 import org.sbml.libsbml.Compartment;
 import org.sbml.libsbml.Species;
