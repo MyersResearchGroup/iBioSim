@@ -2748,12 +2748,12 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			for (int j = 0; j < count; j++) {
 				Number Xval = curData.getSeries(0).getDataItem(j).getX();
 				for (int i = 1; i < curData.getSeriesCount(); i++) {
-					if (curData.getSeries(i).getDataItem(j).getX() != Xval) {
+				  if (!curData.getSeries(i).getDataItem(j).getX().equals(Xval)) {
 						JOptionPane.showMessageDialog(biomodelsim.frame(),
 								"Data series time points are not the same!", "Unable to Export Data File",
 								JOptionPane.ERROR_MESSAGE);
 						return;
-					}
+				  }
 				}
 			}
 			FileOutputStream csvFile = new FileOutputStream(file);
