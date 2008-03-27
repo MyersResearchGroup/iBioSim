@@ -200,7 +200,7 @@ public class ExampleFileFilter extends FileFilter {
 	public String getDescription() {
 		if (fullDescription == null) {
 			if (description == null || isExtensionListInDescription()) {
-				fullDescription = description == null ? "" : description + " ";
+				fullDescription = description == null ? "" : description + " ( ";
 				// build the description from the extension list
 				Enumeration<String> extensions = filters.keys();
 				if (extensions != null) {
@@ -209,6 +209,7 @@ public class ExampleFileFilter extends FileFilter {
 						fullDescription += ", " + (String) extensions.nextElement();
 					}
 				}
+				fullDescription += " )";
 			}
 			else {
 				fullDescription = description;
