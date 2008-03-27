@@ -28,24 +28,34 @@ public class Buttons {
 
 		ExampleFileFilter csvFilter = new ExampleFileFilter();
 		csvFilter.addExtension("csv");
+		csvFilter.setDescription("Comma Separated Values");
 		ExampleFileFilter datFilter = new ExampleFileFilter();
 		datFilter.addExtension("dat");
+		datFilter.setDescription("Tab Delimited Data");
 		ExampleFileFilter tsdFilter = new ExampleFileFilter();
 		tsdFilter.addExtension("tsd");
+		tsdFilter.setDescription("Time Series Data");
 		ExampleFileFilter epsFilter = new ExampleFileFilter();
 		epsFilter.addExtension("eps");
+		epsFilter.setDescription("Encapsulated Postscript");
 		ExampleFileFilter jpgFilter = new ExampleFileFilter();
 		jpgFilter.addExtension("jpg");
+		jpgFilter.setDescription("JPEG");
 		ExampleFileFilter pdfFilter = new ExampleFileFilter();
 		pdfFilter.addExtension("pdf");
+		pdfFilter.setDescription("Portable Document Format");
 		ExampleFileFilter pngFilter = new ExampleFileFilter();
 		pngFilter.addExtension("png");
+		pngFilter.setDescription("Portable Network Graphics");
 		ExampleFileFilter svgFilter = new ExampleFileFilter();
 		svgFilter.addExtension("svg");
+		svgFilter.setDescription("Scalable Vector Graphics");
 		ExampleFileFilter sbmlFilter = new ExampleFileFilter();
 		sbmlFilter.addExtension("sbml");
+		sbmlFilter.setDescription("Systems Biology Markup Language");
 		ExampleFileFilter gcmFilter = new ExampleFileFilter();
 		gcmFilter.addExtension("gcm");
+		gcmFilter.setDescription("Genetic Circuit Model");
 		if (file != null) {
 			fc.setSelectedFile(file);
 		}
