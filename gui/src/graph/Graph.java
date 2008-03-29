@@ -59,7 +59,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 	private BioSim biomodelsim; // tstubd gui
 
-	private JButton save;
+	private JButton save, saveAs;
 
 	private JButton export; // buttons
 
@@ -110,6 +110,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 	private boolean timeSeries;
 
+	private boolean topLevel;
+
 	private ArrayList<String> graphProbs;
 
 	/**
@@ -131,9 +133,11 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		if (timeSeries) {
 			if (graphName != null) {
 				this.graphName = graphName;
+				topLevel = true;
 			}
 			else {
 				this.graphName = outDir.split(separator)[outDir.split(separator).length - 1] + ".grf";
+				topLevel = false;
 			}
 		}
 		else {
@@ -469,6 +473,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		// if the save button is clicked
 		if (e.getSource() == save) {
 			save();
+		}
+		// if the save as button is clicked
+		if (e.getSource() == saveAs) {
+			saveAs();
 		}
 		// if the export button is clicked
 		else if (e.getSource() == export) {
@@ -2540,6 +2548,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		graph.addMouseListener(this);
 		JPanel ButtonHolder = new JPanel();
 		save = new JButton("Save Graph");
+		if (timeSeries) {
+			saveAs = new JButton("Save As");
+			saveAs.addActionListener(this);
+		}
 		export = new JButton("Export");
 		// exportJPeg = new JButton("Export As JPEG");
 		// exportPng = new JButton("Export As PNG");
@@ -2556,6 +2568,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		// exportSvg.addActionListener(this);
 		// exportCsv.addActionListener(this);
 		ButtonHolder.add(save);
+		if (timeSeries) {
+			ButtonHolder.add(saveAs);
+		}
 		ButtonHolder.add(export);
 		// ButtonHolder.add(exportJPeg);
 		// ButtonHolder.add(exportPng);
@@ -2748,12 +2763,12 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			for (int j = 0; j < count; j++) {
 				Number Xval = curData.getSeries(0).getDataItem(j).getX();
 				for (int i = 1; i < curData.getSeriesCount(); i++) {
-				  if (!curData.getSeries(i).getDataItem(j).getX().equals(Xval)) {
+					if (!curData.getSeries(i).getDataItem(j).getX().equals(Xval)) {
 						JOptionPane.showMessageDialog(biomodelsim.frame(),
 								"Data series time points are not the same!", "Unable to Export Data File",
 								JOptionPane.ERROR_MESSAGE);
 						return;
-				  }
+					}
 				}
 			}
 			FileOutputStream csvFile = new FileOutputStream(file);
@@ -3193,6 +3208,101 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				store.close();
 				log.addText("Creating graph file:\n" + outDir + separator + graphName + "\n");
 				change = false;
+			}
+			catch (Exception except) {
+				JOptionPane.showMessageDialog(biomodelsim.frame(), "Unable To Save Graph!", "Error",
+						JOptionPane.ERROR_MESSAGE);
+			}
+		}
+	}
+
+	public void saveAs() {
+		String graphName = JOptionPane.showInputDialog(biomodelsim.frame(), "Enter Graph Name:",
+				"Graph Name", JOptionPane.PLAIN_MESSAGE);
+		if (graphName != null && !graphName.trim().equals("")) {
+			graphName = graphName.trim();
+			if (graphName.length() > 3) {
+				if (!graphName.substring(graphName.length() - 4).equals(".grf")) {
+					graphName += ".grf";
+				}
+			}
+			else {
+				graphName += ".grf";
+			}
+			File f;
+			if (topLevel) {
+				f = new File(outDir + separator + graphName);
+			}
+			else {
+				f = new File(outDir.substring(0, outDir.length()
+						- outDir.split(separator)[outDir.split(separator).length - 1].length())
+						+ separator + graphName);
+			}
+			if (f.exists()) {
+				Object[] options = { "Overwrite", "Cancel" };
+				int value = JOptionPane.showOptionDialog(biomodelsim.frame(), "File already exists."
+						+ "\nDo you want to overwrite?", "Overwrite", JOptionPane.YES_NO_OPTION,
+						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+				if (value == JOptionPane.YES_OPTION) {
+					File del;
+					if (topLevel) {
+						del = new File(outDir + separator + graphName);
+					}
+					else {
+						del = new File(outDir.substring(0, outDir.length()
+								- outDir.split(separator)[outDir.split(separator).length - 1].length())
+								+ separator + graphName);
+					}
+					System.gc();
+					del.delete();
+				}
+				else {
+					return;
+				}
+			}
+			Properties graph = new Properties();
+			graph.setProperty("title", chart.getTitle().getText());
+			graph.setProperty("x.axis", chart.getXYPlot().getDomainAxis().getLabel());
+			graph.setProperty("y.axis", chart.getXYPlot().getRangeAxis().getLabel());
+			graph.setProperty("x.min", XMin.getText());
+			graph.setProperty("x.max", XMax.getText());
+			graph.setProperty("x.scale", XScale.getText());
+			graph.setProperty("y.min", YMin.getText());
+			graph.setProperty("y.max", YMax.getText());
+			graph.setProperty("y.scale", YScale.getText());
+			graph.setProperty("auto.resize", "" + resize.isSelected());
+			for (int i = 0; i < graphed.size(); i++) {
+				graph.setProperty("species.connected." + i, "" + graphed.get(i).getConnected());
+				graph.setProperty("species.filled." + i, "" + graphed.get(i).getFilled());
+				graph.setProperty("species.number." + i, "" + graphed.get(i).getNumber());
+				graph.setProperty("species.run.number." + i, graphed.get(i).getRunNumber());
+				graph.setProperty("species.name." + i, graphed.get(i).getSpecies());
+				graph.setProperty("species.id." + i, graphed.get(i).getID());
+				graph.setProperty("species.visible." + i, "" + graphed.get(i).getVisible());
+				graph.setProperty("species.paint." + i, graphed.get(i).getShapeAndPaint().getPaintName());
+				graph.setProperty("species.shape." + i, graphed.get(i).getShapeAndPaint().getShapeName());
+				if (topLevel) {
+					graph.setProperty("species.directory." + i, graphed.get(i).getDirectory());
+				}
+				else {
+					if (graphed.get(i).getDirectory().equals("")) {
+						graph.setProperty("species.directory." + i, outDir.split(separator)[outDir
+								.split(separator).length - 1]);
+					}
+					else {
+						graph.setProperty("species.directory." + i, outDir.split(separator)[outDir
+								.split(separator).length - 1]
+								+ "/" + graphed.get(i).getDirectory());
+					}
+				}
+			}
+			try {
+				FileOutputStream store = new FileOutputStream(f);
+				graph.store(store, "Graph Data");
+				store.close();
+				log.addText("Creating graph file:\n" + f.getAbsolutePath() + "\n");
+				change = false;
+				biomodelsim.refreshTree();
 			}
 			catch (Exception except) {
 				JOptionPane.showMessageDialog(biomodelsim.frame(), "Unable To Save Graph!", "Error",
