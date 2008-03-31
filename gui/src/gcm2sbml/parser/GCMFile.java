@@ -379,6 +379,12 @@ public class GCMFile {
 			while (propMatcher.find()) {
 				properties.put(propMatcher.group(1), propMatcher.group(2));
 			}
+			//for backwards compatibility
+			if (properties.containsKey("const")) {
+				properties.setProperty(GlobalConstants.TYPE, GlobalConstants.CONSTANT);				
+			} else if (!properties.containsKey(GlobalConstants.TYPE)) {
+				properties.setProperty(GlobalConstants.TYPE, GlobalConstants.NORMAL);
+			}
 			species.put(name, properties);
 		}
 	}
@@ -402,7 +408,9 @@ public class GCMFile {
 		Matcher matcher = network.matcher(data.toString());
 		Pattern pattern = Pattern.compile(STATE);
 		Pattern propPattern = Pattern.compile(PROPERTY);
-		matcher.find();
+		if (!matcher.find()) {
+			return;
+		}
 		matcher = pattern.matcher(matcher.group(1));
 		while (matcher.find()) {
 			String name = matcher.group(2);
@@ -425,10 +433,11 @@ public class GCMFile {
 			Properties properties = new Properties();
 			while (propMatcher.find()) {
 				properties.put(propMatcher.group(1), propMatcher.group(2));
-				if (propMatcher.group(1).equals(GlobalConstants.PROMOTER)
+				if (propMatcher.group(1).equalsIgnoreCase(GlobalConstants.PROMOTER)
 						&& !promoters.containsKey(propMatcher.group(2))) {
 					promoters.put(propMatcher.group(2).replaceAll("\"", ""),
 							new Properties());
+					properties.setProperty(GlobalConstants.PROMOTER, propMatcher.group(2).replace("\"", "")); //for backwards compatibility
 				}
 			}
 
