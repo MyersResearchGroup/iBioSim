@@ -3253,8 +3253,18 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								- outDir.split(separator)[outDir.split(separator).length - 1].length())
 								+ separator + graphName);
 					}
-					System.gc();
-					del.delete();
+					if (del.isDirectory()) {
+						biomodelsim.deleteDir(del);
+					}
+					else {
+						System.gc();
+						del.delete();
+					}
+					for (int i = 0; i < biomodelsim.getTab().getTabCount(); i++) {
+						if (biomodelsim.getTab().getTitleAt(i).equals(graphName)) {
+							biomodelsim.getTab().remove(i);
+						}
+					}
 				}
 				else {
 					return;

@@ -6,6 +6,7 @@ import java.awt.event.*;
 import java.util.*;
 import java.util.regex.*;
 import javax.swing.*;
+
 import org.sbml.libsbml.*;
 
 import biomodelsim.*;
@@ -292,6 +293,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 
 	private boolean editComp = false;
 
+	private String refFile;
+
 	/**
 	 * Creates a new SBML_Editor and sets up the frame where the user can edit a
 	 * new sbml file.
@@ -303,6 +306,20 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		this.biosim = biosim;
 		this.simDir = simDir;
 		this.paramFile = paramFile;
+		if (paramFile != null) {
+			try {
+				Scanner scan = new Scanner(new File(paramFile));
+				if (scan.hasNextLine()) {
+					refFile = scan.nextLine();
+				}
+				scan.close();
+			}
+			catch (Exception e) {
+				JOptionPane.showMessageDialog(biosim.frame(), "Unable to read parameter file.", "Error",
+						JOptionPane.ERROR_MESSAGE);
+				refFile = "";
+			}
+		}
 		createSbmlFrame("");
 	}
 
@@ -318,6 +335,20 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		this.biosim = biosim;
 		this.simDir = simDir;
 		this.paramFile = paramFile;
+		if (paramFile != null) {
+			try {
+				Scanner scan = new Scanner(new File(paramFile));
+				if (scan.hasNextLine()) {
+					refFile = scan.nextLine();
+				}
+				scan.close();
+			}
+			catch (Exception e) {
+				JOptionPane.showMessageDialog(biosim.frame(), "Unable to read parameter file.", "Error",
+						JOptionPane.ERROR_MESSAGE);
+				refFile = file;
+			}
+		}
 		createSbmlFrame(file);
 	}
 
@@ -4195,7 +4226,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		int j = 0;
 		boolean[] used = new boolean[rules.length];
 		for (int i = 0; i < rules.length; i++) {
-		  used[i] = false;
+			used[i] = false;
 		}
 		for (int i = 0; i < rules.length; i++) {
 			if (rules[i].split(" ")[0].equals("0")) {
@@ -4206,30 +4237,36 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		}
 		boolean progress;
 		do {
-		  progress = false;
-		  for (int i = 0; i < rules.length; i++) {
-		    if (used[i] || (rules[i].split(" ")[0].equals("0")) || (rules[i].split(" ")[0].equals("d("))) continue;
-		    String[] rule = rules[i].split(" ");
-		    boolean insert = true;
-		    for (int k = 1; k < rule.length; k++) {
-		      for (int l = 0; l < rules.length; l++) {
-			if (used[l] || (rules[l].split(" ")[0].equals("0")) || (rules[l].split(" ")[0].equals("d("))) continue;
-			String[] rule2 = rules[l].split(" ");
-			if (rule[k].equals(rule2[0])) {
-			  insert = false;
-			  break;
+			progress = false;
+			for (int i = 0; i < rules.length; i++) {
+				if (used[i] || (rules[i].split(" ")[0].equals("0"))
+						|| (rules[i].split(" ")[0].equals("d(")))
+					continue;
+				String[] rule = rules[i].split(" ");
+				boolean insert = true;
+				for (int k = 1; k < rule.length; k++) {
+					for (int l = 0; l < rules.length; l++) {
+						if (used[l] || (rules[l].split(" ")[0].equals("0"))
+								|| (rules[l].split(" ")[0].equals("d(")))
+							continue;
+						String[] rule2 = rules[l].split(" ");
+						if (rule[k].equals(rule2[0])) {
+							insert = false;
+							break;
+						}
+					}
+					if (!insert)
+						break;
+				}
+				if (insert) {
+					result[j] = rules[i];
+					j++;
+					progress = true;
+					used[i] = true;
+				}
 			}
-		      }
-		      if (!insert) break;
-		    }
-		    if (insert) {
-		      result[j] = rules[i];
-		      j++;
-		      progress = true;
-		      used[i] = true;
-		    }
-		  }
-		} while ((progress) && (j < rules.length));
+		}
+		while ((progress) && (j < rules.length));
 		for (int i = 0; i < rules.length; i++) {
 			if (rules[i].split(" ")[0].equals("d(")) {
 				result[j] = rules[i];
@@ -4237,7 +4274,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			}
 		}
 		if (j != rules.length) {
-		  throw new RuntimeException();
+			throw new RuntimeException();
 		}
 		return result;
 	}
@@ -4250,36 +4287,40 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		int j = 0;
 		boolean[] used = new boolean[initRules.length];
 		for (int i = 0; i < initRules.length; i++) {
-		  used[i] = false;
+			used[i] = false;
 		}
 		boolean progress;
 		do {
-		  progress = false;
-		  for (int i = 0; i < initRules.length; i++) {
-		    if (used[i]) continue;
-		    String[] initRule = initRules[i].split(" ");
-		    boolean insert = true;
-		    for (int k = 1; k < initRule.length; k++) {
-		      for (int l = 0; l < initRules.length; l++) {
-			if (used[l]) continue;
-			String[] initRule2 = initRules[l].split(" ");
-			if (initRule[k].equals(initRule2[0])) {
-			  insert = false;
-			  break;
+			progress = false;
+			for (int i = 0; i < initRules.length; i++) {
+				if (used[i])
+					continue;
+				String[] initRule = initRules[i].split(" ");
+				boolean insert = true;
+				for (int k = 1; k < initRule.length; k++) {
+					for (int l = 0; l < initRules.length; l++) {
+						if (used[l])
+							continue;
+						String[] initRule2 = initRules[l].split(" ");
+						if (initRule[k].equals(initRule2[0])) {
+							insert = false;
+							break;
+						}
+					}
+					if (!insert)
+						break;
+				}
+				if (insert) {
+					result[j] = initRules[i];
+					j++;
+					progress = true;
+					used[i] = true;
+				}
 			}
-		      }
-		      if (!insert) break;
-		    }
-		    if (insert) {
-		      result[j] = initRules[i];
-		      j++;
-		      progress = true;
-		      used[i] = true;
-		    }
-		  }
-		} while ((progress) && (j < initRules.length));
+		}
+		while ((progress) && (j < initRules.length));
 		if (j != initRules.length) {
-		  throw new RuntimeException();
+			throw new RuntimeException();
 		}
 		return result;
 	}
@@ -4292,7 +4333,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		int j = 0;
 		boolean[] used = new boolean[rules.length + initRules.length];
 		for (int i = 0; i < rules.length + initRules.length; i++) {
-		  used[i] = false;
+			used[i] = false;
 		}
 		for (int i = 0; i < rules.length; i++) {
 			if (rules[i].split(" ")[0].equals("0")) {
@@ -4303,50 +4344,57 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		}
 		boolean progress;
 		do {
-		  progress = false;
-		  for (int i = 0; i < rules.length + initRules.length; i++) {
-		    String[] rule;
-		    if (i < rules.length) {
-		      if (used[i] || 
-			  (rules[i].split(" ")[0].equals("0")) || 
-			  (rules[i].split(" ")[0].equals("d("))) continue;
-		      rule = rules[i].split(" ");
-		    } else {
-		      if (used[i]) continue;
-		      rule = initRules[i-rules.length].split(" ");
-		    }
-		    boolean insert = true;
-		    for (int k = 1; k < rule.length; k++) {
-		      for (int l = 0; l < rules.length + initRules.length; l++) {
-			String rule2;
-			if (l < rules.length) {
-			  if (used[l] || 
-			      (rules[l].split(" ")[0].equals("0")) || 
-			      (rules[l].split(" ")[0].equals("d("))) continue;
-			  rule2 = rules[l].split(" ")[0];
-			} else {
-			  if (used[l]) continue;
-			  rule2 = initRules[l-rules.length].split(" ")[0];
+			progress = false;
+			for (int i = 0; i < rules.length + initRules.length; i++) {
+				String[] rule;
+				if (i < rules.length) {
+					if (used[i] || (rules[i].split(" ")[0].equals("0"))
+							|| (rules[i].split(" ")[0].equals("d(")))
+						continue;
+					rule = rules[i].split(" ");
+				}
+				else {
+					if (used[i])
+						continue;
+					rule = initRules[i - rules.length].split(" ");
+				}
+				boolean insert = true;
+				for (int k = 1; k < rule.length; k++) {
+					for (int l = 0; l < rules.length + initRules.length; l++) {
+						String rule2;
+						if (l < rules.length) {
+							if (used[l] || (rules[l].split(" ")[0].equals("0"))
+									|| (rules[l].split(" ")[0].equals("d(")))
+								continue;
+							rule2 = rules[l].split(" ")[0];
+						}
+						else {
+							if (used[l])
+								continue;
+							rule2 = initRules[l - rules.length].split(" ")[0];
+						}
+						if (rule[k].equals(rule2)) {
+							insert = false;
+							break;
+						}
+					}
+					if (!insert)
+						break;
+				}
+				if (insert) {
+					if (i < rules.length) {
+						result[j] = rules[i];
+					}
+					else {
+						result[j] = initRules[i - rules.length];
+					}
+					j++;
+					progress = true;
+					used[i] = true;
+				}
 			}
-			if (rule[k].equals(rule2)) {
-			  insert = false;
-			  break;
-			}
-		      }
-		      if (!insert) break;
-		    }
-		    if (insert) {
-		      if (i < rules.length) {
-			result[j] = rules[i];
-		      } else {
-			result[j] = initRules[i-rules.length];
-		      }
-		      j++;
-		      progress = true;
-		      used[i] = true;
-		    }
-		  }
-		} while ((progress) && (j < rules.length + initRules.length));
+		}
+		while ((progress) && (j < rules.length + initRules.length));
 		for (int i = 0; i < rules.length; i++) {
 			if (rules[i].split(" ")[0].equals("d(")) {
 				result[j] = rules[i];
@@ -4354,7 +4402,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			}
 		}
 		if (j != rules.length + initRules.length) {
-		  return true;
+			return true;
 		}
 		return false;
 	}
@@ -7829,7 +7877,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 								reactions.setSelectedIndex(index1);
 							}
 							if (!((String) type.getSelectedItem()).equals("Original")) {
-							        String reacValue = ((String) reactions.getSelectedValue()).split(" ")[0];
+								String reacValue = ((String) reactions.getSelectedValue()).split(" ")[0];
 								parameterChanges.add(reacValue + "/" + param);
 								int index1 = reactions.getSelectedIndex();
 								reactions.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
@@ -8608,7 +8656,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	public void createSBML(String direct) {
 		try {
 			FileOutputStream out = new FileOutputStream(new File(paramFile));
-			out.write((file + "\n").getBytes());
+			out.write((refFile + "\n").getBytes());
 			for (String s : parameterChanges) {
 				out.write((s + "\n").getBytes());
 			}
@@ -8831,12 +8879,45 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				if (paramsOnly) {
 					reb2sac.updateSpeciesList();
 				}
+				for (int i = 0; i < biosim.getTab().getTabCount(); i++) {
+					String tab = biosim.getTab().getTitleAt(i);
+					String properties = file.substring(0, file.length()
+							- file.split(separator)[file.split(separator).length - 1].length())
+							+ separator + tab + separator + tab + ".pms";
+					if (new File(properties).exists()) {
+						Scanner s = new Scanner(new File(properties));
+						String check = "";
+						if (s.hasNextLine()) {
+							check = s.nextLine();
+						}
+						s.close();
+						if (check.equals(file.split(separator)[file.split(separator).length - 1])) {
+							JTabbedPane sim = ((JTabbedPane) (biosim.getTab().getComponentAt(i)));
+							for (int j = 0; j < sim.getTabCount(); j++) {
+								if (sim.getComponentAt(j).getName().equals("SBML Editor")) {
+									new File(properties).renameTo(new File(properties.replace(".pms", ".temp")));
+									((SBML_Editor) (sim.getComponentAt(j))).save(false);
+									((SBML_Editor) (sim.getComponentAt(j))).updateSBML(i, j);
+									new File(properties).delete();
+									new File(properties.replace(".pms", ".temp")).renameTo(new File(properties));
+								}
+							}
+						}
+					}
+				}
 			}
 			catch (Exception e1) {
 				JOptionPane.showMessageDialog(biosim.frame(), "Unable to save sbml file.",
 						"Error Saving File", JOptionPane.ERROR_MESSAGE);
 			}
 		}
+	}
+
+	private void updateSBML(int tab, int tab2) {
+		((JTabbedPane) (biosim.getTab().getComponentAt(tab))).setComponentAt(tab2, new SBML_Editor(
+				file, reb2sac, log, biosim, simDir, paramFile));
+		((JTabbedPane) (biosim.getTab().getComponentAt(tab))).getComponentAt(tab2).setName(
+				"SBML Editor");
 	}
 
 	/**
