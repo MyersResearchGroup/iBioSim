@@ -30,6 +30,14 @@ public class GCMFileTest extends TestCase{
 //		file.save("nand3.dot");
 	}
 	
+	public void testParseInfluence() {
+		GCMFile file = new GCMFile();
+		String name = "input -> output, Promoter promo";
+		assertEquals("Should get correct input", "input", file.getInput(name));
+		assertEquals("Should get correct output", "output", file.getOutput(name));
+		assertEquals("Should get correct promoter", "promo", file.getPromoter(name));
+	}
+	
 	public void testProperties() {
 		Properties prop = new Properties();
 		prop.put(GlobalConstants.MAX_DIMER_STRING, GlobalConstants.MAX_DIMER_VALUE);
