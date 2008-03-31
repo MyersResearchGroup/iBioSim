@@ -135,7 +135,7 @@ public class GCMFile {
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw new IllegalStateException("Error opening file");
-		}
+		} 
 		try {
 			parseStates(data);
 			parseInfluences(data);
