@@ -59,10 +59,14 @@ public class GCMFile {
 				buffer.append("]\n");
 			}
 			for (String s : influences.keySet()) {
-				buffer.append(getInput(s) + " -> " + getOutput(s) + " [");
+				buffer.append(getInput(s) + " -> " + getOutput(s) + " [");				
 				Properties prop = influences.get(s);
-				prop.setProperty(GlobalConstants.NAME, getInput(s) + " -> "
-						+ getOutput(s));
+				String promo = "default";
+				if (prop.containsKey(GlobalConstants.PROMOTER)) {
+					promo = prop.getProperty(GlobalConstants.PROMOTER);
+				}
+				prop.setProperty(GlobalConstants.NAME, "\""+ getInput(s) + " -> "
+						+ getOutput(s)+ ", Promoter " + promo + "\"");
 				for (Object propName : prop.keySet()) {
 					buffer.append(propName + "="
 							+ prop.getProperty(propName.toString()).toString()
@@ -78,7 +82,9 @@ public class GCMFile {
 					}
 					buffer.append("arrowhead=" + type + "");
 				}
-				// buffer.deleteCharAt(buffer.length() - 1);
+				if (buffer.charAt(buffer.length() - 1) == ',') {
+					buffer.deleteCharAt(buffer.length() - 1);
+				}
 				buffer.append("]\n");
 			}
 			buffer.append("}\nGlobal {\n");

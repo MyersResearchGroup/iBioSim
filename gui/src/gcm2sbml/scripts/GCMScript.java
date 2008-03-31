@@ -21,14 +21,14 @@ public class GCMScript {
 
 			}
 		}
+		System.out.println("\nHigh:");
 		for (int i = 0; i < highs.length; i++) {
 			System.out.print(highs[i] + " ");
 		}
-		System.out.println();
+		System.out.println("\nLow:");
 		for (int i = 0; i < lows.length; i++) {
 			System.out.print(lows[i] + " ");
 		}
-		System.out.println();
 	}
 
 	public double[] generateThreshold(String directory, String type,
