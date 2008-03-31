@@ -27,8 +27,7 @@ public class UtilityTest extends TestCase{
 	}
 	
 	public void testReadFile() {
-		HashMap<String, double[]> values = Utility.calculateAverage("/home/shang/namphuon/workspace/BioSim/gcm");
+		HashMap<String, double[]> values = Utility.readFile("/home/shang/namphuon/workspace/BioSim/gcm/run-1.tsd");
 		System.out.println();		
 	}
-
 }
