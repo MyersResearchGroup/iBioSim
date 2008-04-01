@@ -1075,22 +1075,51 @@ public class BioSim implements MouseListener, ActionListener {
 									      JOptionPane.ERROR_MESSAGE);
 						} else {
 						  long numErrors = document.checkConsistency();
-						  String message = "Imported SBML file contains the errors listed below. ";
-						  message += "It is recommended that you fix them before using this model or you may get unexpected results.\n\n";
-						  for (long i = 0; i < numErrors; i++) {
-						    String error = document.getError(i).getMessage(); // .replace(". ",".\n");
-						    message += i + ":" + error + "\n";
-						  }
 						  if (numErrors > 0) {
-						    JTextArea messageArea = new JTextArea(message);
+						    final JFrame f = new JFrame("SBML Errors and Warnings");
+						    String message = "Imported SBML file contains the errors listed below. ";
+						    message += "It is recommended that you fix them before using this model or you may get unexpected results.\n\n";
+						    for (long i = 0; i < numErrors; i++) {
+						      String error = document.getError(i).getMessage(); // .replace(". ",".\n");
+						      message += i + ":" + error + "\n";
+						    }
+			                            JTextArea messageArea = new JTextArea(message);
 						    messageArea.setLineWrap(true);
 						    messageArea.setEditable(false);
 						    JScrollPane scroll = new JScrollPane();
 						    scroll.setMinimumSize(new Dimension(600, 600));
 						    scroll.setPreferredSize(new Dimension(600, 600));
 						    scroll.setViewportView(messageArea);
-						    JOptionPane.showMessageDialog(frame, scroll, "SBML Errors and Warnings",
-										  JOptionPane.ERROR_MESSAGE);
+						    JButton close = new JButton("Dismiss");
+						    close.addActionListener(new ActionListener() {
+                                                      public void actionPerformed(ActionEvent e) {
+							f.dispose();
+						      }
+						      });
+						    JPanel consistencyPanel = new JPanel(new BorderLayout());
+						    consistencyPanel .add(scroll, "Center");
+						    consistencyPanel .add(close, "South");
+						    f.setContentPane(consistencyPanel);
+						    f.pack();
+						    Dimension screenSize;
+						    try {
+						      Toolkit tk = Toolkit.getDefaultToolkit();
+						      screenSize = tk.getScreenSize();
+						    }
+						    catch (AWTError awe) {
+						      screenSize = new Dimension(640, 480);
+						    }
+						    Dimension frameSize = f.getSize();
+						    if (frameSize.height > screenSize.height) {
+						      frameSize.height = screenSize.height;
+						    }
+						    if (frameSize.width > screenSize.width) {
+						      frameSize.width = screenSize.width;
+						    }
+						    int x = screenSize.width / 2 - frameSize.width / 2;
+						    int y = screenSize.height / 2 - frameSize.height / 2;
+						    f.setLocation(x, y);
+						    f.setVisible(true);
 						  }
 						  FileOutputStream out = new FileOutputStream(new File(root + separator
 												       + file[file.length - 1]));
