@@ -48,6 +48,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTabbedPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 import javax.swing.plaf.basic.BasicTabbedPaneUI;
@@ -1068,14 +1070,37 @@ public class BioSim implements MouseListener, ActionListener {
 					try {
 						SBMLReader reader = new SBMLReader();
 						SBMLDocument document = reader.readSBML(filename);
-						FileOutputStream out = new FileOutputStream(new File(root + separator
-								+ file[file.length - 1]));
-						SBMLWriter writer = new SBMLWriter();
-						String doc = writer.writeToString(document);
-						byte[] output = doc.getBytes();
-						out.write(output);
-						out.close();
-						refreshTree();
+						if (document.getNumErrors() > 0) {
+						  JOptionPane.showMessageDialog(frame, "Invalid SBML file.", "Error",
+									      JOptionPane.ERROR_MESSAGE);
+						} else {
+						  long numErrors = document.checkConsistency();
+						  String message = "Imported SBML file contains the errors listed below. ";
+						  message += "It is recommended that you fix them before using this model or you may get unexpected results.\n\n";
+						  for (long i = 0; i < numErrors; i++) {
+						    String error = document.getError(i).getMessage(); // .replace(". ",".\n");
+						    message += i + ":" + error + "\n";
+						  }
+						  if (numErrors > 0) {
+						    JTextArea messageArea = new JTextArea(message);
+						    messageArea.setLineWrap(true);
+						    messageArea.setEditable(false);
+						    JScrollPane scroll = new JScrollPane();
+						    scroll.setMinimumSize(new Dimension(600, 600));
+						    scroll.setPreferredSize(new Dimension(600, 600));
+						    scroll.setViewportView(messageArea);
+						    JOptionPane.showMessageDialog(frame, scroll, "SBML Errors and Warnings",
+										  JOptionPane.ERROR_MESSAGE);
+						  }
+						  FileOutputStream out = new FileOutputStream(new File(root + separator
+												       + file[file.length - 1]));
+						  SBMLWriter writer = new SBMLWriter();
+						  String doc = writer.writeToString(document);
+						  byte[] output = doc.getBytes();
+						  out.write(output);
+						  out.close();
+						  refreshTree();
+						}
 					}
 					catch (Exception e1) {
 						JOptionPane.showMessageDialog(frame, "Unable to import file.", "Error",
