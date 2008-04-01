@@ -203,80 +203,33 @@ public class Utility {
 
 	public static HashMap<String, double[]> calculateAverage(String folder) {
 		HashMap<String, double[]> result = new HashMap<String, double[]>();
+		HashMap<String, double[]> average = null;
 		HashMap<Integer, String> resultMap = new HashMap<Integer, String>();
-		String allValues = "\\((.*)\\)";
-		String oneValue = "\\(([^\\)\\(]+)\\)";
-		String headerValue = "\"([^,\"]+)\"";
-		Pattern speciesPattern = Pattern.compile(headerValue);
-		String doubleValue = "[\\(,]*([\\d]+)[,\\)]";
-		Pattern doublePattern = Pattern.compile(doubleValue);
 		File allFiles = new File(folder);
 		String[] files = allFiles.list(Utility.getTSDFilter());
-		try {
-			boolean headerFilled = false;
-			for (int i = 0; i < files.length; i++) {
-				String fileName = folder + File.separator + files[i];
-				BufferedReader in = new BufferedReader(new FileReader(fileName));
-				StringBuffer data = new StringBuffer();
-				String str;
-				while ((str = in.readLine()) != null) {
-					data.append(str + "\n");
-				}
-				in.close();
-
-				Pattern pattern = Pattern.compile(allValues);
-				Matcher matcher = pattern.matcher(data.toString());
-				matcher.find();
-				String dataPoints = matcher.group(1);
-				pattern = Pattern.compile(oneValue);
-				matcher = pattern.matcher(dataPoints);
-				// Setup and take care of headers
-				int j = 0;
-				while (matcher.find()) {
-					Matcher speciesMatcher = speciesPattern.matcher(matcher
-							.group(1));
-					if (!headerFilled) {
-						while (speciesMatcher.find()) {
-							String t = speciesMatcher.group();
-							result.put(t.replace("\"", ""), null);
-							resultMap.put(Integer.valueOf(j), t.replace("\"",
-									""));
-							j++;
-						}
-						int index = 0;
-						int numGroups = 0;
-						while (index != -1) {
-							index = dataPoints.indexOf("(", index + 1);
-							numGroups++;
-						}
-						for (String s : result.keySet()) {
-							result.put(s, new double[numGroups - 1]);
-						}
+		for (int i = 0; i < files.length; i++) {
+			result = readFile(folder+File.separator+files[i]);
+			if (average == null) {
+				average = result;
+			} else {
+				for (String s : result.keySet()) {
+					double[] values = result.get(s);
+					double[] averages = average.get(s);
+					for (int j = 0; j < values.length; j++) {
+						averages[j] = averages[j] + values[j];
 					}
-					headerFilled = true;
-					break;
-				}
-				int k = 0;
-				while (matcher.find()) {
-					Matcher valueMatcher = doublePattern.matcher(matcher
-							.group());
-					// Now start reading in values
-					j = 0;
-					while (valueMatcher.find()) {
-						String t = valueMatcher.group(1);
-						result.get(resultMap.get(Integer.valueOf(j)))[k] = result
-								.get(resultMap.get(Integer.valueOf(j)))[k]
-								+ Double.parseDouble(t)
-								/ ((double) files.length);
-						j++;
-					}
-					k++;
 				}
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
-		return result;
+
+		for (String s : average.keySet()) {
+			double[] averages = average.get(s);
+			for (int j = 0; j < averages.length; j++) {
+				averages[j] = averages[j]/files.length;
+			}
+		}
+
+		return average;
 	}
 
 	public static FilenameFilter getTSDFilter() {
