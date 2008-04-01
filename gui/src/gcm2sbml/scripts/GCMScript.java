@@ -57,6 +57,8 @@ public class GCMScript {
 		double range = (high - low) / 3.;
 		return new double[] { low + range, high - range };
 	}
+	
+	//public double[] generateStatistics(String directory, )
 
 	private String[] kind = { "coop", "rep", "promoter" };
 	private String[] gate = { "maj", "tog", "si" };
