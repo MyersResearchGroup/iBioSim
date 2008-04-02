@@ -8633,6 +8633,10 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		return change;
 	}
 
+	public void setChanged(boolean change) {
+		this.change = change;
+	}
+
 	/**
 	 * Sorting function
 	 */
@@ -8879,32 +8883,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				if (paramsOnly) {
 					reb2sac.updateSpeciesList();
 				}
-				for (int i = 0; i < biosim.getTab().getTabCount(); i++) {
-					String tab = biosim.getTab().getTitleAt(i);
-					String properties = file.substring(0, file.length()
-							- file.split(separator)[file.split(separator).length - 1].length())
-							+ separator + tab + separator + tab + ".pms";
-					if (new File(properties).exists()) {
-						Scanner s = new Scanner(new File(properties));
-						String check = "";
-						if (s.hasNextLine()) {
-							check = s.nextLine();
-						}
-						s.close();
-						if (check.equals(file.split(separator)[file.split(separator).length - 1])) {
-							JTabbedPane sim = ((JTabbedPane) (biosim.getTab().getComponentAt(i)));
-							for (int j = 0; j < sim.getTabCount(); j++) {
-								if (sim.getComponentAt(j).getName().equals("SBML Editor")) {
-									new File(properties).renameTo(new File(properties.replace(".pms", ".temp")));
-									((SBML_Editor) (sim.getComponentAt(j))).save(false);
-									((SBML_Editor) (sim.getComponentAt(j))).updateSBML(i, j);
-									new File(properties).delete();
-									new File(properties.replace(".pms", ".temp")).renameTo(new File(properties));
-								}
-							}
-						}
-					}
-				}
+				biosim.updateViews(file.split(separator)[file.split(separator).length - 1]);
 			}
 			catch (Exception e1) {
 				JOptionPane.showMessageDialog(biosim.frame(), "Unable to save sbml file.",
@@ -8913,7 +8892,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		}
 	}
 
-	private void updateSBML(int tab, int tab2) {
+	public void updateSBML(int tab, int tab2) {
 		((JTabbedPane) (biosim.getTab().getComponentAt(tab))).setComponentAt(tab2, new SBML_Editor(
 				file, reb2sac, log, biosim, simDir, paramFile));
 		((JTabbedPane) (biosim.getTab().getComponentAt(tab))).getComponentAt(tab2).setName(
