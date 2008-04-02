@@ -1071,64 +1071,66 @@ public class BioSim implements MouseListener, ActionListener {
 						SBMLReader reader = new SBMLReader();
 						SBMLDocument document = reader.readSBML(filename);
 						if (document.getNumErrors() > 0) {
-						  JOptionPane.showMessageDialog(frame, "Invalid SBML file.", "Error",
-									      JOptionPane.ERROR_MESSAGE);
-						} else {
-						  long numErrors = document.checkConsistency();
-						  if (numErrors > 0) {
-						    final JFrame f = new JFrame("SBML Errors and Warnings");
-						    String message = "Imported SBML file contains the errors listed below. ";
-						    message += "It is recommended that you fix them before using this model or you may get unexpected results.\n\n";
-						    for (long i = 0; i < numErrors; i++) {
-						      String error = document.getError(i).getMessage(); // .replace(". ",".\n");
-						      message += i + ":" + error + "\n";
-						    }
-			                            JTextArea messageArea = new JTextArea(message);
-						    messageArea.setLineWrap(true);
-						    messageArea.setEditable(false);
-						    JScrollPane scroll = new JScrollPane();
-						    scroll.setMinimumSize(new Dimension(600, 600));
-						    scroll.setPreferredSize(new Dimension(600, 600));
-						    scroll.setViewportView(messageArea);
-						    JButton close = new JButton("Dismiss");
-						    close.addActionListener(new ActionListener() {
-                                                      public void actionPerformed(ActionEvent e) {
-							f.dispose();
-						      }
-						      });
-						    JPanel consistencyPanel = new JPanel(new BorderLayout());
-						    consistencyPanel .add(scroll, "Center");
-						    consistencyPanel .add(close, "South");
-						    f.setContentPane(consistencyPanel);
-						    f.pack();
-						    Dimension screenSize;
-						    try {
-						      Toolkit tk = Toolkit.getDefaultToolkit();
-						      screenSize = tk.getScreenSize();
-						    }
-						    catch (AWTError awe) {
-						      screenSize = new Dimension(640, 480);
-						    }
-						    Dimension frameSize = f.getSize();
-						    if (frameSize.height > screenSize.height) {
-						      frameSize.height = screenSize.height;
-						    }
-						    if (frameSize.width > screenSize.width) {
-						      frameSize.width = screenSize.width;
-						    }
-						    int x = screenSize.width / 2 - frameSize.width / 2;
-						    int y = screenSize.height / 2 - frameSize.height / 2;
-						    f.setLocation(x, y);
-						    f.setVisible(true);
-						  }
-						  FileOutputStream out = new FileOutputStream(new File(root + separator
-												       + file[file.length - 1]));
-						  SBMLWriter writer = new SBMLWriter();
-						  String doc = writer.writeToString(document);
-						  byte[] output = doc.getBytes();
-						  out.write(output);
-						  out.close();
-						  refreshTree();
+							JOptionPane.showMessageDialog(frame, "Invalid SBML file.", "Error",
+									JOptionPane.ERROR_MESSAGE);
+						}
+						else {
+							long numErrors = document.checkConsistency();
+							if (numErrors > 0) {
+								final JFrame f = new JFrame("SBML Errors and Warnings");
+								String message = "Imported SBML file contains the errors listed below. ";
+								message += "It is recommended that you fix them before using this model or you may get unexpected results.\n\n";
+								for (long i = 0; i < numErrors; i++) {
+									String error = document.getError(i).getMessage(); // .replace(".
+									// ",".\n");
+									message += i + ":" + error + "\n";
+								}
+								JTextArea messageArea = new JTextArea(message);
+								messageArea.setLineWrap(true);
+								messageArea.setEditable(false);
+								JScrollPane scroll = new JScrollPane();
+								scroll.setMinimumSize(new Dimension(600, 600));
+								scroll.setPreferredSize(new Dimension(600, 600));
+								scroll.setViewportView(messageArea);
+								JButton close = new JButton("Dismiss");
+								close.addActionListener(new ActionListener() {
+									public void actionPerformed(ActionEvent e) {
+										f.dispose();
+									}
+								});
+								JPanel consistencyPanel = new JPanel(new BorderLayout());
+								consistencyPanel.add(scroll, "Center");
+								consistencyPanel.add(close, "South");
+								f.setContentPane(consistencyPanel);
+								f.pack();
+								Dimension screenSize;
+								try {
+									Toolkit tk = Toolkit.getDefaultToolkit();
+									screenSize = tk.getScreenSize();
+								}
+								catch (AWTError awe) {
+									screenSize = new Dimension(640, 480);
+								}
+								Dimension frameSize = f.getSize();
+								if (frameSize.height > screenSize.height) {
+									frameSize.height = screenSize.height;
+								}
+								if (frameSize.width > screenSize.width) {
+									frameSize.width = screenSize.width;
+								}
+								int x = screenSize.width / 2 - frameSize.width / 2;
+								int y = screenSize.height / 2 - frameSize.height / 2;
+								f.setLocation(x, y);
+								f.setVisible(true);
+							}
+							FileOutputStream out = new FileOutputStream(new File(root + separator
+									+ file[file.length - 1]));
+							SBMLWriter writer = new SBMLWriter();
+							String doc = writer.writeToString(document);
+							byte[] output = doc.getBytes();
+							out.write(output);
+							out.close();
+							refreshTree();
 						}
 					}
 					catch (Exception e1) {
@@ -2730,6 +2732,7 @@ public class BioSim implements MouseListener, ActionListener {
 								Scanner s = new Scanner(new File(pmsFile));
 								if (s.hasNextLine()) {
 									sbmlLoadFile = s.nextLine();
+									sbmlLoadFile = sbmlLoadFile.split(separator)[sbmlLoadFile.split(separator).length - 1];
 									if (sbmlLoadFile.contains(".gcm")) {
 										GCMParser parser = new GCMParser(root + separator + sbmlLoadFile);
 										GeneticNetwork network = parser.buildNetwork();
@@ -2985,6 +2988,7 @@ public class BioSim implements MouseListener, ActionListener {
 							Scanner scan = new Scanner(new File(root + separator + newSim + separator + ss));
 							if (scan.hasNextLine()) {
 								sbmlLoadFile = scan.nextLine();
+								sbmlLoadFile = sbmlLoadFile.split(separator)[sbmlLoadFile.split(separator).length - 1];
 								if (sbmlLoadFile.contains(".gcm")) {
 									GCMParser parser = new GCMParser(root + separator + sbmlLoadFile);
 									GeneticNetwork network = parser.buildNetwork();
@@ -3088,6 +3092,46 @@ public class BioSim implements MouseListener, ActionListener {
 							noData.setHorizontalAlignment(SwingConstants.CENTER);
 							((JTabbedPane) tab.getComponentAt(i)).setComponentAt(j, noData);
 							((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j).setName("Learn");
+						}
+					}
+				}
+			}
+		}
+	}
+
+	public void updateViews(String updatedFile) {
+		for (int i = 0; i < tab.getTabCount(); i++) {
+			String tab = this.tab.getTitleAt(i);
+			String properties = root + separator + tab + separator + tab + ".pms";
+			if (new File(properties).exists()) {
+				String check = "";
+				try {
+					Scanner s = new Scanner(new File(properties));
+					if (s.hasNextLine()) {
+						check = s.nextLine();
+						check = check.split(separator)[check.split(separator).length - 1];
+					}
+					s.close();
+				}
+				catch (Exception e) {
+				}
+				if (check.equals(updatedFile)) {
+					if (updatedFile.contains(".gcm")) {
+						GCMParser parser = new GCMParser(root + separator + updatedFile);
+						GeneticNetwork network = parser.buildNetwork();
+						network.outputSBML(root + separator + tab + separator
+								+ updatedFile.replace(".gcm", ".sbml"));
+					}
+					JTabbedPane sim = ((JTabbedPane) (this.tab.getComponentAt(i)));
+					for (int j = 0; j < sim.getTabCount(); j++) {
+						if (sim.getComponentAt(j).getName().equals("SBML Editor")) {
+							new File(properties).renameTo(new File(properties.replace(".pms", ".temp")));
+							boolean dirty = ((SBML_Editor) (sim.getComponentAt(j))).hasChanged();
+							((SBML_Editor) (sim.getComponentAt(j))).save(false);
+							((SBML_Editor) (sim.getComponentAt(j))).updateSBML(i, j);
+							((SBML_Editor) (sim.getComponentAt(j))).setChanged(dirty);
+							new File(properties).delete();
+							new File(properties.replace(".pms", ".temp")).renameTo(new File(properties));
 						}
 					}
 				}
