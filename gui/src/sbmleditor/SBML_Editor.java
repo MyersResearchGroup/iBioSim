@@ -4063,6 +4063,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					if (ruleType.getSelectedItem().equals("Algebraic")) {
 						r.setMath(myParseFormula(ruleMath.getText().trim()));
 						addStr = "0 = " + myFormulaToString(r.getMath());
+						//checkOverDetermined();
 					}
 					else if (ruleType.getSelectedItem().equals("Rate")) {
 						oldVar = r.getVariable();
@@ -4152,6 +4153,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						if (ruleType.getSelectedItem().equals("Algebraic")) {
 							AlgebraicRule r = document.getModel().createAlgebraicRule();
 							r.setMath(myParseFormula(ruleMath.getText().trim()));
+							//checkOverDetermined();
 						}
 						else if (ruleType.getSelectedItem().equals("Rate")) {
 							RateRule r = document.getModel().createRateRule();
@@ -8730,6 +8732,28 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		catch (Exception e1) {
 			JOptionPane.showMessageDialog(biosim.frame(), "Unable to create sbml file.",
 					"Error Creating File", JOptionPane.ERROR_MESSAGE);
+		}
+	}
+
+	/**
+	 * Checks consistency of the sbml file.
+	 */
+	public void checkOverDetermined() {
+  	        document.setConsistencyChecks(libsbml.LIBSBML_CAT_GENERAL_CONSISTENCY,false);
+  	        document.setConsistencyChecks(libsbml.LIBSBML_CAT_IDENTIFIER_CONSISTENCY,false);
+  	        document.setConsistencyChecks(libsbml.LIBSBML_CAT_UNITS_CONSISTENCY,false);
+  	        document.setConsistencyChecks(libsbml.LIBSBML_CAT_MATHML_CONSISTENCY,false);
+  	        document.setConsistencyChecks(libsbml.LIBSBML_CAT_SBO_CONSISTENCY,false);
+  	        document.setConsistencyChecks(libsbml.LIBSBML_CAT_MODELING_PRACTICE,false);
+		long numErrors = document.checkConsistency();
+		String message = "";
+		for (long i = 0; i < numErrors; i++) {
+			String error = document.getError(i).getMessage(); // .replace(". ",".\n");
+			message += i + ":" + error + "\n";
+		}
+		if (numErrors > 0) {
+			JOptionPane.showMessageDialog(biosim.frame(), "Algebraic rules make model overdetermined.",
+					"Model is Overdetermined", JOptionPane.WARNING_MESSAGE);
 		}
 	}
 
