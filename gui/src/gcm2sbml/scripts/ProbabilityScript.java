@@ -1,0 +1,181 @@
+package gcm2sbml.scripts;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.util.ArrayList;
+
+import junit.framework.TestCase;
+
+public class ProbabilityScript extends TestCase {
+
+	@Override
+	protected void setUp() throws Exception {
+		// TODO Auto-generated method stub
+		super.setUp();
+		togHigh = new ArrayList<String>();
+		togHigh.add("Y");
+		togLow = new ArrayList<String>();
+		togLow.add("Z");
+
+		siHigh = new ArrayList<String>();
+		siHigh.add("P3");
+		siLow = new ArrayList<String>();
+		siLow.add("P2");
+
+		majHigh = new ArrayList<String>();
+		majHigh.add("C");
+		majLow = new ArrayList<String>();
+		majLow.add("E");
+
+		highSpecies = new ArrayList<ArrayList<String>>();
+		highSpecies.add(majHigh);
+		highSpecies.add(togHigh);
+		highSpecies.add(siHigh);
+
+		lowSpecies = new ArrayList<ArrayList<String>>();
+		lowSpecies.add(majLow);
+		lowSpecies.add(togLow);
+		lowSpecies.add(siLow);
+
+		script = new GCMScript();
+	}
+
+	public void Promoter() {
+		for (int i = 1; i <= 5; i++) {
+			String currDir = directory + File.separator + "promoter" + i;
+			for (int j = 0; j < 3; j++) {
+				SpeciesThresholdTester highTester = new SpeciesThresholdTester(
+						currDir, gate[j], highSpecies.get(j), lowSpecies.get(j));
+				double[][] results = script.generateStatistics(currDir
+						+ File.separator + gate[j] + experiment[1], highTester);
+				printResults(currDir + File.separator + dataGate[j] + "-"
+						+ dataInput[0] + "-" + dataChange[1] + ".dat", results);
+
+				results = script.generateStatistics(currDir + File.separator
+						+ gate[j] + experiment[3], highTester);
+				printResults(currDir + File.separator + dataGate[j] + "-"
+						+ dataInput[1] + "-" + dataChange[1] + ".dat", results);
+
+				SpeciesThresholdTester lowTester = new SpeciesThresholdTester(
+						currDir, gate[j], lowSpecies.get(j), highSpecies.get(j));
+				results = script.generateStatistics(currDir + File.separator
+						+ gate[j] + experiment[0], lowTester);
+				printResults(currDir + File.separator + dataGate[j] + "-"
+						+ dataInput[0] + "-" + dataChange[0] + ".dat", results);
+
+				results = script.generateStatistics(currDir + File.separator
+						+ gate[j] + experiment[2], highTester);
+				printResults(currDir + File.separator + dataGate[j] + "-"
+						+ dataInput[1] + "-" + dataChange[0] + ".dat", results);
+			}
+		}
+	}
+
+	public void testProbabilities() {
+		try {
+			generateProbabilities("promoter", 5);
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println("Error on promoter");
+		}
+		try {
+			generateProbabilities("coop", 5);
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println("Error on coop");
+		}
+		try {
+			generateProbabilities("rep", 6);
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println("Error on rep");
+		}		
+		try {
+			generateProbabilities("decay", 6);
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println("Error on decay");
+		}		
+		try {
+			generateProbabilities("ratio", 6);
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println("Error on ratio");
+		}
+	}
+
+	public void generateProbabilities(String files, int cases) {
+		for (int i = 1; i <= cases; i++) {
+			String currDir = directory + File.separator + files + i;
+			for (int j = 0; j < 3; j++) {
+				SpeciesThresholdTester highTester = new SpeciesThresholdTester(
+						currDir, gate[j], highSpecies.get(j), lowSpecies.get(j));
+				double[][] results = script.generateStatistics(currDir
+						+ File.separator + gate[j] + experiment[1], highTester);
+				printResults(currDir + File.separator + dataGate[j] + "-"
+						+ dataInput[0] + "-" + dataChange[1] + ".dat", results);
+
+				results = script.generateStatistics(currDir + File.separator
+						+ gate[j] + experiment[3], highTester);
+				printResults(currDir + File.separator + dataGate[j] + "-"
+						+ dataInput[1] + "-" + dataChange[1] + ".dat", results);
+
+				SpeciesThresholdTester lowTester = new SpeciesThresholdTester(
+						currDir, gate[j], lowSpecies.get(j), highSpecies.get(j));
+				results = script.generateStatistics(currDir + File.separator
+						+ gate[j] + experiment[0], lowTester);
+				printResults(currDir + File.separator + dataGate[j] + "-"
+						+ dataInput[0] + "-" + dataChange[0] + ".dat", results);
+
+				results = script.generateStatistics(currDir + File.separator
+						+ gate[j] + experiment[2], lowTester);
+				printResults(currDir + File.separator + dataGate[j] + "-"
+						+ dataInput[1] + "-" + dataChange[0] + ".dat", results);
+			}
+		}
+	}
+
+	private void printResults(String file, double[][] results) {
+		try {
+			// Create file
+			FileWriter fstream = new FileWriter(file);
+			BufferedWriter out = new BufferedWriter(fstream);
+
+			for (int i = 0; i < results[0].length; i++) {
+				out.write(results[0][i] + " " + results[1][i] + " "
+						+ results[2][i] + "\n");
+			}
+			out.flush();
+			// Close the output stream
+			fstream.flush();
+			out.close();
+			fstream.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	private ArrayList<String> togHigh = null;
+	private ArrayList<String> togLow = null;
+
+	private ArrayList<String> majHigh = null;
+	private ArrayList<String> majLow = null;
+
+	private ArrayList<String> siHigh = null;
+	private ArrayList<String> siLow = null;
+
+	private GCMScript script = null;
+
+	private ArrayList<ArrayList<String>> highSpecies = null;
+	private ArrayList<ArrayList<String>> lowSpecies = null;
+
+	private String[] gate = { "maj", "tog", "si" };
+	private String[] experiment = { "-h-high", "-h-low", "-l-high", "-l-low" };
+	private String[] dataGate = { "majority", "toggle", "si" };
+	private String[] dataInput = { "heat", "light" };
+	private String[] dataChange = { "higher", "lower" };
+
+	private static final String directory = "/home/shang/namphuon/muller";
+
+}

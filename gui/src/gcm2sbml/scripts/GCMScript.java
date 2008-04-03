@@ -1,9 +1,13 @@
 package gcm2sbml.scripts;
 
+import gcm2sbml.util.ExperimentResult;
 import gcm2sbml.util.Utility;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
+
+import org.sbml.libsbml.Species;
 
 public class GCMScript {
 
@@ -58,7 +62,50 @@ public class GCMScript {
 		return new double[] { low + range, high - range };
 	}
 	
-	//public double[] generateStatistics(String directory, )
+	public double[][] generateThreshold(String directory, ArrayList<String> species, String type, double bestTime) {
+		ExperimentResult highResults, lowResults = null;
+		double[] timeValues = null;
+		double[] high = new double[species.size()];
+		double[] low = new double[species.size()];
+		int index = -1;
+		highResults = new ExperimentResult(Utility.calculateAverage(directory + File.separator + type
+				+ experiment[0]));
+
+		
+		lowResults = new ExperimentResult(Utility.calculateAverage(directory + File.separator + type
+				+ experiment[1]));
+				
+		for (int i = 0; i < species.size(); i++) {
+			double range = (highResults.getValue(species.get(i), bestTime)-lowResults.getValue(species.get(i), bestTime)) / 3.;
+			high[i] = highResults.getValue(species.get(i), bestTime)-range;
+			low[i] = lowResults.getValue(species.get(i), bestTime)+range;
+		}		
+		return new double[][] {low, high};
+	}
+	
+	public double[][] generateStatistics(String directory, TesterInterface tester) {
+		double[][] passed = null;
+		String[] files = Utility.getTSDFiles(directory);
+		for (int i = 0; i < files.length; i++) {
+			boolean[] results = tester.passedTest(new ExperimentResult(directory+File.separator+files[i]));
+			if (passed == null) {
+				passed = new double[3][results.length];				
+			}
+			for (int j = 0; j < results.length; j++) {
+				if (results[j]) {
+					passed[1][j] = passed[1][j] + 1;
+				}
+			}
+		}
+		double[] times = tester.getTimes();
+		for (int i = 0; i < passed[0].length; i++) {
+			passed[0][i] = times[i];
+			passed[1][i] = 1-passed[1][i]/files.length;
+			passed[2][i] = 1.96*Math.sqrt(passed[1][i]*(1-passed[1][i])/files.length);
+		}
+		
+		return passed;
+	}
 
 	private String[] kind = { "coop", "rep", "promoter" };
 	private String[] gate = { "maj", "tog", "si" };

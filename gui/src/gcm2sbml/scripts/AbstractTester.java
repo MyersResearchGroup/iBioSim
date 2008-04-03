@@ -19,7 +19,7 @@ abstract public class AbstractTester implements TesterInterface {
 	}
 
 	public boolean[] passedTest(ExperimentResult experiment) {
-		boolean[] results = new boolean[(int)((timeEnd-timeStart)/timeSpan)];
+		boolean[] results = new boolean[(int)((timeEnd-timeStart)/timeSpan+1)];
 		for (int i = 0; i < results.length; i++) {
 			results[i] = true;
 		}
@@ -37,14 +37,26 @@ abstract public class AbstractTester implements TesterInterface {
 					numPassed++;
 				}
 			}
-			if (numPassed < totalValues) {
+			if (numPassed == 0) {
+//				if (i == timeStart) {
+//					System.out.println();
+//				}
 				for (int k = index; k < results.length; k++) {
-					results[k] = false;
+					results[k] = false;					
 				}
+				break;
 			}
 			index++;
 		}
 		return results;
+	}
+	
+	public double[] getTimes() {
+		double[] times = new double[(int)((timeEnd-timeStart)/timeSpan+1)];
+		for (double i = timeStart; i <= timeEnd; i=i+timeSpan) {
+			times[(int)((i-timeStart)/timeSpan)] = i-timeStart;
+		}
+		return times;
 	}
 
 	protected double timeSpan = -1;
@@ -53,7 +65,7 @@ abstract public class AbstractTester implements TesterInterface {
 	protected ArrayList<String> highSpecies = null;
 	protected ArrayList<String> lowSpecies = null;
 	protected double[] highThreshold = null;
-	protected double[] lowThreshold = null;
+	protected double[] lowThreshold = null;	
 }
 
 //TODO:  Make test with toggle-heat-lower

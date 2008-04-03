@@ -1,7 +1,8 @@
 package gcm2sbml.scripts;
 
-import java.util.HashMap;
+import gcm2sbml.util.ExperimentResult;
 
 public interface TesterInterface {
-	boolean[] passedTest(HashMap<String, double[]> experiment);
+	boolean[] passedTest(ExperimentResult results);
+	double[] getTimes();
 }
