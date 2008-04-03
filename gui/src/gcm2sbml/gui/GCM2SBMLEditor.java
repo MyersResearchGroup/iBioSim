@@ -128,6 +128,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 				biosim.refreshTree();					
 			}			
 		}
+		biosim.updateViews(gcmname + ".gcm");
 		
 	}
 
