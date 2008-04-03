@@ -126,9 +126,9 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 			} else {
 				network.outputSBML(path + File.separator + gcmname + ".sbml");
 				biosim.refreshTree();					
-			}
-			
+			}			
 		}
+		
 	}
 
 	public void actionPerformed(ActionEvent e) {

@@ -34,7 +34,7 @@ public class ExperimentResult {
 
 	private double interpolateValue(double[] values, double index) {
 		int prev = (int) Math.floor(index);
-		if (Math.abs(prev - index) < 1e-6) {
+		if (Math.abs(prev - index) < 1e-10) {
 			return values[prev];
 		}
 		return (values[prev + 1] - values[prev]) * (index - prev)

@@ -200,13 +200,17 @@ public class Utility {
 		return result;
 
 	}
+	
+	public static String[] getTSDFiles(String folder) {
+		File allFiles = new File(folder);
+		String[] files = allFiles.list(Utility.getTSDFilter());
+		return files;
+	}
 
 	public static HashMap<String, double[]> calculateAverage(String folder) {
 		HashMap<String, double[]> result = new HashMap<String, double[]>();
 		HashMap<String, double[]> average = null;
-		HashMap<Integer, String> resultMap = new HashMap<Integer, String>();
-		File allFiles = new File(folder);
-		String[] files = allFiles.list(Utility.getTSDFilter());
+		String[] files = getTSDFiles(folder);
 		for (int i = 0; i < files.length; i++) {
 			result = readFile(folder+File.separator+files[i]);
 			if (average == null) {

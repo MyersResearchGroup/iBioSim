@@ -1,9 +1,12 @@
 package gcm2sbml;
 
+import gcm2sbml.scripts.GCMScript;
+import gcm2sbml.scripts.SpeciesThresholdTester;
+
 import java.io.File;
+import java.util.ArrayList;
 
 import junit.framework.TestCase;
-import gcm2sbml.scripts.GCMScript;
 
 import org.junit.After;
 import org.junit.Before;
@@ -18,35 +21,35 @@ public class ScriptTest extends TestCase {
 	public void tearDown() throws Exception {
 	}
 
-	public void testThresholdCoop() {
+	public void ThresholdCoop() {
 		System.out.println("\nCoop:");
 		GCMScript script = new GCMScript();
 		script.generateThresholds(directory + File.separator + "coop", "C",
 				3500, "coop", 5);
 	}
-	
-	public void testThresholdRatio() {
+
+	public void ThresholdRatio() {
 		System.out.println("\nRatio:");
 		GCMScript script = new GCMScript();
 		script.generateThresholds(directory + File.separator + "ratio", "C",
 				3500, "ratio", 5);
 	}
 
-	public void ThresholdPromoter() {
+	public void testThresholdPromoter() {
 		System.out.println("\nPromoter:");
 		GCMScript script = new GCMScript();
 		script.generateThresholds(directory + File.separator + "promoter", "C",
 				3500, "promoter", 5);
 	}
 
-	public void testThresholdDecay() {
+	public void ThresholdDecay() {
 		System.out.println("\nDecay:");
 		GCMScript script = new GCMScript();
 		script.generateThresholds(directory + File.separator + "decay", "C",
 				3500, "decay", 5);
 	}
-	
-	public void testThresholdRep() {
+
+	public void ThresholdRep() {
 		System.out.println("\nRep:");
 		GCMScript script = new GCMScript();
 		script.generateThresholds(directory + File.separator + "rep", "C",
