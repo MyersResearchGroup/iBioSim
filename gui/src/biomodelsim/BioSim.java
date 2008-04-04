@@ -338,7 +338,7 @@ public class BioSim implements MouseListener, ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == about) {
 			final JFrame f = new JFrame("About");
-			JLabel bioSim = new JLabel("BioSim 0.78");
+			JLabel bioSim = new JLabel("BioSim 0.8");
 			Font font = bioSim.getFont();
 			font = font.deriveFont(Font.BOLD, 36.0f);
 			bioSim.setFont(font);
@@ -3116,18 +3116,18 @@ public class BioSim implements MouseListener, ActionListener {
 				catch (Exception e) {
 				}
 				if (check.equals(updatedFile)) {
-					if (updatedFile.contains(".gcm")) {
-						GCMParser parser = new GCMParser(root + separator + updatedFile);
-						GeneticNetwork network = parser.buildNetwork();
-						network.outputSBML(root + separator + tab + separator
-								+ updatedFile.replace(".gcm", ".sbml"));
-					}
 					JTabbedPane sim = ((JTabbedPane) (this.tab.getComponentAt(i)));
 					for (int j = 0; j < sim.getTabCount(); j++) {
 						if (sim.getComponentAt(j).getName().equals("SBML Editor")) {
 							new File(properties).renameTo(new File(properties.replace(".pms", ".temp")));
 							boolean dirty = ((SBML_Editor) (sim.getComponentAt(j))).hasChanged();
 							((SBML_Editor) (sim.getComponentAt(j))).save(false);
+							if (updatedFile.contains(".gcm")) {
+								GCMParser parser = new GCMParser(root + separator + updatedFile);
+								GeneticNetwork network = parser.buildNetwork();
+								network.outputSBML(root + separator + tab + separator
+										+ updatedFile.replace(".gcm", ".sbml"));
+							}
 							((SBML_Editor) (sim.getComponentAt(j))).updateSBML(i, j);
 							((SBML_Editor) (sim.getComponentAt(j))).setChanged(dirty);
 							new File(properties).delete();
