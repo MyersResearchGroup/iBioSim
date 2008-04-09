@@ -1,6 +1,5 @@
 package gcm2sbml.parser;
 
-import gcm2sbml.network.Reaction;
 import gcm2sbml.util.GlobalConstants;
 
 import java.io.BufferedReader;
@@ -16,9 +15,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.JOptionPane;
-
-import sun.misc.Compare;
-import sun.misc.Sort;
 
 /**
  * This class describes a GCM file
@@ -46,7 +42,7 @@ public class GCMFile {
 				buffer.append(s + " [");
 				Properties prop = species.get(s);
 				for (Object propName : prop.keySet()) {
-					buffer.append(propName + "="
+					buffer.append(checkCompabilitySave(propName.toString()) + "="
 							+ prop.getProperty(propName.toString()).toString()
 							+ ",");
 				}
@@ -68,7 +64,7 @@ public class GCMFile {
 				prop.setProperty(GlobalConstants.NAME, "\""+ getInput(s) + " -> "
 						+ getOutput(s)+ ", Promoter " + promo + "\"");
 				for (Object propName : prop.keySet()) {
-					buffer.append(propName + "="
+					buffer.append(checkCompabilitySave(propName.toString()) + "="
 							+ prop.getProperty(propName.toString()).toString()
 							+ ",");
 				}
@@ -99,7 +95,7 @@ public class GCMFile {
 				buffer.append(s + " [");
 				Properties prop = promoters.get(s);
 				for (Object propName : prop.keySet()) {
-					buffer.append(propName + "="
+					buffer.append(checkCompabilitySave(propName.toString()) + "="
 							+ prop.getProperty(propName.toString()).toString()
 							+ ",");
 				}
@@ -385,6 +381,11 @@ public class GCMFile {
 			} else if (!properties.containsKey(GlobalConstants.TYPE)) {
 				properties.setProperty(GlobalConstants.TYPE, GlobalConstants.NORMAL);
 			}
+			
+			//for backwards compatibility
+			if (properties.containsKey("label")) {
+				properties.put(GlobalConstants.NAME, properties.getProperty("label").replace("\"", ""));
+			}
 			species.put(name, properties);
 		}
 	}
@@ -432,7 +433,7 @@ public class GCMFile {
 			Matcher propMatcher = propPattern.matcher(matcher.group(4));
 			Properties properties = new Properties();
 			while (propMatcher.find()) {
-				properties.put(propMatcher.group(1), propMatcher.group(2));
+				properties.put(checkCompabilityLoad(propMatcher.group(1)), propMatcher.group(2));
 				if (propMatcher.group(1).equalsIgnoreCase(GlobalConstants.PROMOTER)
 						&& !promoters.containsKey(propMatcher.group(2))) {
 					promoters.put(propMatcher.group(2).replaceAll("\"", ""),
@@ -499,6 +500,21 @@ public class GCMFile {
 		}
 
 	}
+
+	
+	private String checkCompabilitySave(String key) {
+		if (key.equals(GlobalConstants.MAX_DIMER_STRING)) {
+			return "maxDimer";
+		}
+		return key;
+	}
+	
+	private String checkCompabilityLoad(String key) {
+		if (key.equals("maxDimer")) {
+			return GlobalConstants.MAX_DIMER_STRING;
+		}
+		return key;
+	}	
 
 	private static final String NETWORK = "digraph\\sG\\s\\{([^}]*)\\s\\}";
 

@@ -7,8 +7,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.sbml.libsbml.Species;
-
 public class GCMScript {
 
 	public void generateThresholds(String directory, String species,
