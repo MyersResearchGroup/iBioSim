@@ -4709,7 +4709,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					for (int i = 0; i < assign.length; i++) {
 						EventAssignment ea = e.createEventAssignment();
 						ea.setVariable(assign[i].split(" ")[0]);
-						ea.setMath(myParseFormula(assign[i].split(" ")[2]));
+						ea.setMath(myParseFormula(assign[i].split("=")[1].trim()));
 						error = checkEventAssignmentUnits(ea);
 						if (error)
 							break;
@@ -4764,7 +4764,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						for (int i = 0; i < origAssign.length; i++) {
 							EventAssignment ea = e.createEventAssignment();
 							ea.setVariable(origAssign[i].split(" ")[0]);
-							ea.setMath(myParseFormula(origAssign[i].split(" ")[2]));
+							ea.setMath(myParseFormula(origAssign[i].split("=")[1].trim()));
 						}
 					}
 				}
@@ -4783,7 +4783,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						for (int i = 0; i < assign.length; i++) {
 							EventAssignment ea = e.createEventAssignment();
 							ea.setVariable(assign[i].split(" ")[0]);
-							ea.setMath(myParseFormula(assign[i].split(" ")[2]));
+							ea.setMath(myParseFormula(assign[i].split("=")[1].trim()));
 							error = checkEventAssignmentUnits(ea);
 							if (error)
 								break;
@@ -4883,7 +4883,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		if (option.equals("OK")) {
 			String selectAssign = ((String) eventAssign.getSelectedValue());
 			eaID.setSelectedItem(selectAssign.split(" ")[0]);
-			eqn.setText(selectAssign.split(" ")[2]);
+			eqn.setText(selectAssign.split("=")[1].trim());
 		}
 		EAPanel.add(idLabel);
 		EAPanel.add(eaID);
