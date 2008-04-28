@@ -2136,7 +2136,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		Run runProgram = new Run();
 		cancel.addActionListener(runProgram);
 		biomodelsim.getExitButton().addActionListener(runProgram);
-		saveSAD();
+		saveSAD(outDir);
 		runProgram.createProperties(timeLimit, printInterval, timeStep, absError, ".",
 		// root + separator + outDir,
 				rndSeed, run, termCond, intSpecies, printer_id, printer_track_quantity, simProp
@@ -2551,7 +2551,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					"Unable to add properties to property file.", "Error", JOptionPane.ERROR_MESSAGE);
 		}
 		log.addText("Creating properties file:\n" + propName + "\n");
-		saveSAD();
+		saveSAD(simName);
 		runProgram.createProperties(timeLimit, printInterval, timeStep, absError, ".",
 		// outDir,
 				rndSeed, run, termCond, intSpecies, printer_id, printer_track_quantity, sbmlProp
@@ -2590,13 +2590,13 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		change = false;
 	}
 
-	public void saveSAD() {
+	public void saveSAD(String outDir) {
 		try {
 			int[] indecies = sad.getSelectedIndices();
 			sadList = Buttons.getList(sadList, sad);
 			if (sadList.length == 0)
 				return;
-			FileOutputStream out = new FileOutputStream(new File(root + separator + simName + separator
+			FileOutputStream out = new FileOutputStream(new File(root + separator + outDir + separator
 					+ "termCond.sad"));
 			sad.setSelectedIndices(indecies);
 			String save = "";
