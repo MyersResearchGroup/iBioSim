@@ -140,7 +140,7 @@ public class BioSim implements MouseListener, ActionListener {
 		}
 
 		// Creates a new frame
-		frame = new JFrame("BioSim");
+		frame = new JFrame("iBioSim");
 
 		// Makes it so that clicking the x in the corner closes the program
 		WindowListener w = new WindowListener() {
@@ -338,7 +338,7 @@ public class BioSim implements MouseListener, ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == about) {
 			final JFrame f = new JFrame("About");
-			JLabel bioSim = new JLabel("BioSim 0.8");
+			JLabel bioSim = new JLabel("iBioSim 0.8");
 			Font font = bioSim.getFont();
 			font = font.deriveFont(Font.BOLD, 36.0f);
 			bioSim.setFont(font);
