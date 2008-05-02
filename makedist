@@ -1,3 +1,0 @@
-cd ..
-tar zcvf BioSim.tgz BioSim/Readme.txt BioSim/bin BioSim/docs BioSim/gui/bin BioSim/gui/dist BioSim/gui/icons BioSim/gui/lib BioSim/lib 
-
