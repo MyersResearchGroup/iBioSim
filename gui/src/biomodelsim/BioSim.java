@@ -338,7 +338,7 @@ public class BioSim implements MouseListener, ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == about) {
 			final JFrame f = new JFrame("About");
-			JLabel bioSim = new JLabel("iBioSim 0.8");
+			JLabel bioSim = new JLabel("iBioSim 0.81");
 			Font font = bioSim.getFont();
 			font = font.deriveFont(Font.BOLD, 36.0f);
 			bioSim.setFont(font);
@@ -393,7 +393,7 @@ public class BioSim implements MouseListener, ActionListener {
 		else if (e.getSource() == manual) {
 			try {
 				String directory = "";
-				String theFile = "BioSim.html";
+				String theFile = "iBioSim.html";
 				String command = "";
 				if (System.getProperty("os.name").contentEquals("Linux")) {
 					directory = System.getenv("BIOSIM") + "/docs/";
