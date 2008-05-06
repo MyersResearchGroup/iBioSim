@@ -219,6 +219,9 @@ public class Utility {
 				for (String s : result.keySet()) {
 					double[] values = result.get(s);
 					double[] averages = average.get(s);
+					if (values.length != averages.length) {
+						System.out.println(folder+File.separator+files[i]);
+					}
 					for (int j = 0; j < values.length; j++) {
 						averages[j] = averages[j] + values[j];
 					}

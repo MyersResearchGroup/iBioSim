@@ -100,6 +100,7 @@ public class GCMScriptTest extends TestCase{
 			network = parser.buildNetwork();			
 			network.loadProperties(gcm);
 			network.outputSBML(saveDirectory + fileSerparator + promoter + i + fileSerparator + "toggle.sbml");
+			network.outputSBML(saveDirectory + fileSerparator + promoter + i + fileSerparator + "toggle"+ fileSerparator + "toggle.sbml");
 			for (int j = 0; j < 4; j++) {
 				network.outputSBML(saveDirectory + fileSerparator + promoter + i + fileSerparator + type[k] + experiment[j]+ fileSerparator  + "toggle.sbml");
 			}
@@ -114,6 +115,7 @@ public class GCMScriptTest extends TestCase{
 			network = parser.buildNetwork();
 			network.loadProperties(gcm);
 			network.outputSBML(saveDirectory + fileSerparator + promoter + i + fileSerparator + "si.sbml");
+			network.outputSBML(saveDirectory + fileSerparator + promoter + i + fileSerparator + "si"+ fileSerparator + "si.sbml");
 			for (int j = 0; j < 4; j++) {
 				network.outputSBML(saveDirectory + fileSerparator + promoter + i + fileSerparator + type[k] + experiment[j]+ fileSerparator  + "si.sbml");
 			}
@@ -128,6 +130,7 @@ public class GCMScriptTest extends TestCase{
 			network = parser.buildNetwork();
 			network.loadProperties(gcm);
 			network.outputSBML(saveDirectory + fileSerparator + promoter + i + fileSerparator + "majority.sbml");
+			network.outputSBML(saveDirectory + fileSerparator + promoter + i + fileSerparator + "majority"+ fileSerparator + "majority.sbml");
 			for (int j = 0; j < 4; j++) {
 				network.outputSBML(saveDirectory + fileSerparator + promoter + i + fileSerparator + type[k] + experiment[j]+ fileSerparator  + "majority.sbml");
 			}
@@ -153,6 +156,7 @@ public class GCMScriptTest extends TestCase{
 			network = parser.buildNetwork();			
 			network.loadProperties(gcm);
 			network.outputSBML(saveDirectory + fileSerparator + coop + i + fileSerparator + "toggle.sbml");
+			network.outputSBML(saveDirectory + fileSerparator + coop + i + fileSerparator + "toggle"+ fileSerparator + "toggle.sbml");
 			for (int j = 0; j < 4; j++) {
 				network.outputSBML(saveDirectory + fileSerparator + coop + i + fileSerparator + type[k] + experiment[j]+ fileSerparator  + "toggle.sbml");
 			}
@@ -166,6 +170,7 @@ public class GCMScriptTest extends TestCase{
 			network = parser.buildNetwork();
 			network.loadProperties(gcm);
 			network.outputSBML(saveDirectory + fileSerparator + coop + i + fileSerparator + "si.sbml");
+			network.outputSBML(saveDirectory + fileSerparator + coop + i + fileSerparator + "si"+ fileSerparator + "si.sbml");
 			for (int j = 0; j < 4; j++) {
 				network.outputSBML(saveDirectory + fileSerparator + coop + i + fileSerparator + type[k] + experiment[j]+ fileSerparator  + "si.sbml");
 			}
@@ -180,6 +185,7 @@ public class GCMScriptTest extends TestCase{
 			network = parser.buildNetwork();
 			network.loadProperties(gcm);
 			network.outputSBML(saveDirectory + fileSerparator + coop + i + fileSerparator + "majority.sbml");
+			network.outputSBML(saveDirectory + fileSerparator + coop + i + fileSerparator + "majority"+ fileSerparator + "majority.sbml");
 			for (int j = 0; j < 4; j++) {
 				network.outputSBML(saveDirectory + fileSerparator + coop + i + fileSerparator + type[k] + experiment[j]+ fileSerparator  + "majority.sbml");
 			}
@@ -302,8 +308,8 @@ public class GCMScriptTest extends TestCase{
 	
 	private double[] kratio = new double[] {.25/2, .25, .5, 1, 2, 4};
 	private double[] kcoop = new double[] {1, 2, 3, 4, 5, 6};
-	private double[] krep = new double[] {.5/10, .5/5, .5/2.5, .5,  1, 5};
-	private double[] kdecay = new double[] {.0075/8, .0075/4, .0075/2., .0075, .0075*2, .0075*4};
+	private double[] krep = new double[] {.1, .15, .2, .4, .5, .8,  1};
+	private double[] kdecay = new double[] {.0075/2., .0075/1.5, .0075/1.25, .0075, .0075*1.2, .0075*1.125, .0075*1.5, .0075*2};
 	private int numPromoters = 5;
 	private String directory = "gcm";	
 	private char fileSerparator = File.separatorChar;
