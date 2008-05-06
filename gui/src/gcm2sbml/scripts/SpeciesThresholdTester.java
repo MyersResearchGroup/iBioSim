@@ -23,10 +23,10 @@ public class SpeciesThresholdTester extends AbstractTester {
 		lowThreshold = new double[lowSpecies.size()];
 		
 		for (int i = 0; i < highSpecies.size(); i++) {
-			highThreshold[i] = thresholds[1][i];
+			highThreshold[i] = thresholds[0][i];
 		}
 		for (int i = 0; i < lowSpecies.size(); i++) {
-			lowThreshold[i] = thresholds[0][i];
+			lowThreshold[i] = thresholds[1][i+highSpecies.size()];
 		}
 		System.out.print("");
 	}

@@ -75,8 +75,15 @@ public class GCMScript {
 				
 		for (int i = 0; i < species.size(); i++) {
 			double range = (highResults.getValue(species.get(i), bestTime)-lowResults.getValue(species.get(i), bestTime)) / 3.;
-			high[i] = highResults.getValue(species.get(i), bestTime)-range;
-			low[i] = lowResults.getValue(species.get(i), bestTime)+range;
+			double t1 = highResults.getValue(species.get(i), bestTime)-range;
+			double t2 = lowResults.getValue(species.get(i), bestTime)+range;
+			if (t1 > t2) {
+			high[i] = t1;
+			low[i] = t2;
+			} else {
+				high[i] = t2;
+				low[i] = t1;
+			}
 		}		
 		return new double[][] {low, high};
 	}

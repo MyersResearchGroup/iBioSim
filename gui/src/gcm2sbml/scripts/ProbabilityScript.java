@@ -27,16 +27,22 @@ public class ProbabilityScript extends TestCase {
 		majHigh.add("C");
 		majLow = new ArrayList<String>();
 		majLow.add("E");
-
+		
+		specialHigh = new ArrayList<String>();
+		specialHigh.add("D");
+		specialLow = new ArrayList<String>();
+		
 		highSpecies = new ArrayList<ArrayList<String>>();
 		highSpecies.add(majHigh);
 		highSpecies.add(togHigh);
 		highSpecies.add(siHigh);
+		highSpecies.add(specialHigh);
 
 		lowSpecies = new ArrayList<ArrayList<String>>();
 		lowSpecies.add(majLow);
 		lowSpecies.add(togLow);
 		lowSpecies.add(siLow);
+		lowSpecies.add(specialLow);
 
 		script = new GCMScript();
 	}
@@ -92,7 +98,7 @@ public class ProbabilityScript extends TestCase {
 			System.out.println("Error on rep");
 		}		
 		try {
-			generateProbabilities("decay", 6);
+			generateProbabilities("decay", 8);
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.out.println("Error on decay");
@@ -108,7 +114,7 @@ public class ProbabilityScript extends TestCase {
 	public void generateProbabilities(String files, int cases) {
 		for (int i = 1; i <= cases; i++) {
 			String currDir = directory + File.separator + files + i;
-			for (int j = 0; j < 3; j++) {
+			for (int j = 0; j < 4; j++) {
 				SpeciesThresholdTester highTester = new SpeciesThresholdTester(
 						currDir, gate[j], highSpecies.get(j), lowSpecies.get(j));
 				double[][] results = script.generateStatistics(currDir
@@ -164,18 +170,20 @@ public class ProbabilityScript extends TestCase {
 
 	private ArrayList<String> siHigh = null;
 	private ArrayList<String> siLow = null;
+	
+	private ArrayList<String> specialHigh = null;
+	private ArrayList<String> specialLow = null;
 
 	private GCMScript script = null;
 
 	private ArrayList<ArrayList<String>> highSpecies = null;
 	private ArrayList<ArrayList<String>> lowSpecies = null;
 
-	private String[] gate = { "maj", "tog", "si" };
+	private String[] gate = { "maj", "tog", "si" ,"tog"};
 	private String[] experiment = { "-h-high", "-h-low", "-l-high", "-l-low" };
-	private String[] dataGate = { "majority", "toggle", "si" };
+	private String[] dataGate = { "majority", "toggle", "si" , "special"};
 	private String[] dataInput = { "heat", "light" };
 	private String[] dataChange = { "higher", "lower" };
 
 	private static final String directory = "/home/shang/namphuon/muller";
-
 }
