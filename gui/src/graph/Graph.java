@@ -777,7 +777,17 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					add = true;
 				}
 				else {
-					simDir.add(new IconNode(file.substring(0, file.length() - 4)));
+					IconNode n = new IconNode(file.substring(0, file.length() - 4));
+					simDir.add(n);
+					n.setIconName("");
+					for (GraphSpecies g : graphed) {
+						if (g.getRunNumber().equals(file.substring(0, file.length() - 4))
+								&& g.getDirectory().equals("")) {
+							n.setIcon(TextIcons.getIcon("g"));
+							n.setIconName("" + (char) 10003);
+							simDir.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
+						}
+					}
 				}
 			}
 			else if (new File(outDir + separator + file).isDirectory()) {
@@ -818,7 +828,17 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								add2 = true;
 							}
 							else {
-								d.add(new IconNode(f.substring(0, f.length() - 4)));
+								IconNode n = new IconNode(f.substring(0, f.length() - 4));
+								d.add(n);
+								n.setIconName("");
+								for (GraphSpecies g : graphed) {
+									if (g.getRunNumber().equals(f.substring(0, f.length() - 4))
+											&& g.getDirectory().equals(d.toString())) {
+										n.setIcon(TextIcons.getIcon("g"));
+										n.setIconName("" + (char) 10003);
+										d.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
+									}
+								}
 							}
 						}
 						else if (new File(outDir + separator + file + separator + f).isDirectory()) {
@@ -850,14 +870,54 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 											add3 = true;
 										}
 										else {
-											d2.add(new IconNode(f2.substring(0, f2.length() - 4)));
+											IconNode n = new IconNode(f2.substring(0, f2.length() - 4));
+											d2.add(n);
+											n.setIconName("");
+											for (GraphSpecies g : graphed) {
+												if (g.getRunNumber().equals(f2.substring(0, f2.length() - 4))
+														&& g.getDirectory().equals(d.toString() + separator + d2.toString())) {
+													n.setIcon(TextIcons.getIcon("g"));
+													n.setIconName("" + (char) 10003);
+													d2.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
+												}
+											}
 										}
 									}
 								}
 								if (add3) {
-									d2.add(new IconNode("Average"));
-									d2.add(new IconNode("Variance"));
-									d2.add(new IconNode("Standard Deviation"));
+									IconNode n = new IconNode("Average");
+									d2.add(n);
+									n.setIconName("");
+									for (GraphSpecies g : graphed) {
+										if (g.getRunNumber().equals("Average")
+												&& g.getDirectory().equals(d.toString() + separator + d2.toString())) {
+											n.setIcon(TextIcons.getIcon("g"));
+											n.setIconName("" + (char) 10003);
+											d2.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
+										}
+									}
+									n = new IconNode("Variance");
+									d2.add(n);
+									n.setIconName("");
+									for (GraphSpecies g : graphed) {
+										if (g.getRunNumber().equals("Variance")
+												&& g.getDirectory().equals(d.toString() + separator + d2.toString())) {
+											n.setIcon(TextIcons.getIcon("g"));
+											n.setIconName("" + (char) 10003);
+											d2.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
+										}
+									}
+									n = new IconNode("Standard Deviation");
+									d2.add(n);
+									n.setIconName("");
+									for (GraphSpecies g : graphed) {
+										if (g.getRunNumber().equals("Standard Deviation")
+												&& g.getDirectory().equals(d.toString() + separator + d2.toString())) {
+											n.setIcon(TextIcons.getIcon("g"));
+											n.setIconName("" + (char) 10003);
+											d2.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
+										}
+									}
 								}
 								int run = 1;
 								for (String s : files2) {
@@ -877,7 +937,17 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								for (int i = 0; i < run; i++) {
 									if (new File(outDir + separator + file + separator + f + separator + "run-"
 											+ (i + 1) + "." + printer_id.substring(0, printer_id.length() - 8)).exists()) {
-										d2.add(new IconNode("run-" + (i + 1)));
+										IconNode n = new IconNode("run-" + (i + 1));
+										d2.add(n);
+										n.setIconName("");
+										for (GraphSpecies g : graphed) {
+											if (g.getRunNumber().equals("run-" + (i + 1))
+													&& g.getDirectory().equals(d.toString() + separator + d2.toString())) {
+												n.setIcon(TextIcons.getIcon("g"));
+												n.setIconName("" + (char) 10003);
+												d2.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
+											}
+										}
 									}
 								}
 								d.add(d2);
@@ -885,9 +955,37 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						}
 					}
 					if (add2) {
-						d.add(new IconNode("Average"));
-						d.add(new IconNode("Variance"));
-						d.add(new IconNode("Standard Deviation"));
+						IconNode n = new IconNode("Average");
+						d.add(n);
+						n.setIconName("");
+						for (GraphSpecies g : graphed) {
+							if (g.getRunNumber().equals("Average") && g.getDirectory().equals(d.toString())) {
+								n.setIcon(TextIcons.getIcon("g"));
+								n.setIconName("" + (char) 10003);
+								d.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
+							}
+						}
+						n = new IconNode("Variance");
+						d.add(n);
+						n.setIconName("");
+						for (GraphSpecies g : graphed) {
+							if (g.getRunNumber().equals("Variance") && g.getDirectory().equals(d.toString())) {
+								n.setIcon(TextIcons.getIcon("g"));
+								n.setIconName("" + (char) 10003);
+								d.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
+							}
+						}
+						n = new IconNode("Standard Deviation");
+						d.add(n);
+						n.setIconName("");
+						for (GraphSpecies g : graphed) {
+							if (g.getRunNumber().equals("Standard Deviation")
+									&& g.getDirectory().equals(d.toString())) {
+								n.setIcon(TextIcons.getIcon("g"));
+								n.setIconName("" + (char) 10003);
+								d.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
+							}
+						}
 					}
 					int run = 1;
 					for (String s : files3) {
@@ -906,7 +1004,17 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					for (int i = 0; i < run; i++) {
 						if (new File(outDir + separator + file + separator + "run-" + (i + 1) + "."
 								+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
-							d.add(new IconNode("run-" + (i + 1)));
+							IconNode n = new IconNode("run-" + (i + 1));
+							d.add(n);
+							n.setIconName("");
+							for (GraphSpecies g : graphed) {
+								if (g.getRunNumber().equals("run-" + (i + 1))
+										&& g.getDirectory().equals(d.toString())) {
+									n.setIcon(TextIcons.getIcon("g"));
+									n.setIconName("" + (char) 10003);
+									d.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
+								}
+							}
 						}
 					}
 					simDir.add(d);
@@ -914,9 +1022,36 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			}
 		}
 		if (add) {
-			simDir.add(new IconNode("Average"));
-			simDir.add(new IconNode("Variance"));
-			simDir.add(new IconNode("Standard Deviation"));
+			IconNode n = new IconNode("Average");
+			simDir.add(n);
+			n.setIconName("");
+			for (GraphSpecies g : graphed) {
+				if (g.getRunNumber().equals("Average") && g.getDirectory().equals("")) {
+					n.setIcon(TextIcons.getIcon("g"));
+					n.setIconName("" + (char) 10003);
+					simDir.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
+				}
+			}
+			n = new IconNode("Variance");
+			simDir.add(n);
+			n.setIconName("");
+			for (GraphSpecies g : graphed) {
+				if (g.getRunNumber().equals("Variance") && g.getDirectory().equals("")) {
+					n.setIcon(TextIcons.getIcon("g"));
+					n.setIconName("" + (char) 10003);
+					simDir.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
+				}
+			}
+			n = new IconNode("Standard Deviation");
+			simDir.add(n);
+			n.setIconName("");
+			for (GraphSpecies g : graphed) {
+				if (g.getRunNumber().equals("Standard Deviation") && g.getDirectory().equals("")) {
+					n.setIcon(TextIcons.getIcon("g"));
+					n.setIconName("" + (char) 10003);
+					simDir.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
+				}
+			}
 		}
 		int run = 1;
 		for (String s : new File(outDir).list()) {
@@ -935,7 +1070,16 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		for (int i = 0; i < run; i++) {
 			if (new File(outDir + separator + "run-" + (i + 1) + "."
 					+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
-				simDir.add(new IconNode("run-" + (i + 1)));
+				IconNode n = new IconNode("run-" + (i + 1));
+				simDir.add(n);
+				n.setIconName("");
+				for (GraphSpecies g : graphed) {
+					if (g.getRunNumber().equals("run-" + (i + 1)) && g.getDirectory().equals("")) {
+						n.setIcon(TextIcons.getIcon("g"));
+						n.setIconName("" + (char) 10003);
+						simDir.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
+					}
+				}
 			}
 		}
 		if (simDir.getChildCount() == 0) {
@@ -1314,15 +1458,6 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					}
 				}
 			});
-			for (int i = 1; i < tree.getRowCount(); i++) {
-				tree.expandRow(i);
-			}
-			for (int i = 1; i < tree.getRowCount(); i++) {
-				tree.setSelectionRow(i);
-			}
-			for (int i = 1; i < tree.getRowCount(); i++) {
-				tree.collapseRow(i);
-			}
 			tree.addTreeExpansionListener(new TreeExpansionListener() {
 				public void treeCollapsed(TreeExpansionEvent e) {
 					JScrollPane scrollpane = new JScrollPane();
