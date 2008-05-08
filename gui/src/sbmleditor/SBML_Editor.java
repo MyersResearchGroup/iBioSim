@@ -9365,13 +9365,13 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				Unit unit = new Unit("second", -1, 0, 1.0);
 				unitDefVar.addUnit(unit);
 			}
-			if (!libsbml.areEquivalent(unitDef, unitDefVar)) {
+			if (!UnitDefinition.areEquivalent(unitDef, unitDefVar)) {
 				JOptionPane.showMessageDialog(biosim.frame(),
 						"Units on the left and right-hand side of the rate rule do not agree.",
 						"Units Do Not Match", JOptionPane.ERROR_MESSAGE);
 				return true;
 			}
-		}
+			}
 		return false;
 	}
 
@@ -9402,7 +9402,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			else {
 				unitDefVar = parameter.getDerivedUnitDefinition();
 			}
-			if (!libsbml.areEquivalent(unitDef, unitDefVar)) {
+			if (!UnitDefinition.areEquivalent(unitDef, unitDefVar)) {
 				JOptionPane.showMessageDialog(biosim.frame(),
 						"Units on the left and right-hand side of the assignment rule do not agree.",
 						"Units Do Not Match", JOptionPane.ERROR_MESSAGE);
@@ -9439,7 +9439,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			else {
 				unitDefVar = parameter.getDerivedUnitDefinition();
 			}
-			if (!libsbml.areEquivalent(unitDef, unitDefVar)) {
+			if (!UnitDefinition.areEquivalent(unitDef, unitDefVar)) {
 				JOptionPane.showMessageDialog(biosim.frame(),
 						"Units on the left and right-hand side of the initial assignment do not agree.",
 						"Units Do Not Match", JOptionPane.ERROR_MESSAGE);
@@ -9455,7 +9455,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			// System.out.println(unit.getKind() + " Exp = " + unit.getExponent() + "
 			// Mult = " + unit.getMultiplier() + " Scale = " + unit.getScale());
 			// }
-		}
+			}
 		return false;
 	}
 
@@ -9463,7 +9463,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 * Check the units of an event assignment
 	 */
 	public boolean checkEventAssignmentUnits(EventAssignment assign) {
-		document.getModel().populateListFormulaUnitsData();
+	        document.getModel().populateListFormulaUnitsData();
 		if (assign.containsUndeclaredUnits()) {
 			JOptionPane.showMessageDialog(biosim.frame(), "Event assignment to " + assign.getVariable()
 					+ " contains literals numbers or parameters with undeclared units.\n"
@@ -9486,7 +9486,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			else {
 				unitDefVar = parameter.getDerivedUnitDefinition();
 			}
-			if (!libsbml.areEquivalent(unitDef, unitDefVar)) {
+			if (!UnitDefinition.areEquivalent(unitDef, unitDefVar)) {
 				JOptionPane.showMessageDialog(biosim.frame(),
 						"Units on the left and right-hand side for the event assignment "
 								+ assign.getVariable() + " do not agree.", "Units Do Not Match",
@@ -9501,7 +9501,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 * Check the units of an event delay
 	 */
 	public boolean checkEventDelayUnits(Delay delay) {
-		document.getModel().populateListFormulaUnitsData();
+	  document.getModel().populateListFormulaUnitsData(); 
 		// System.out.println(myFormulaToString(delay.getMath()));
 		// if (delay.containsUndeclaredUnits()) {
 		// JOptionPane.showMessageDialog(biosim.frame(), "Event assignment delay
@@ -9533,7 +9533,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 * Check the units of a kinetic law
 	 */
 	public boolean checkKineticLawUnits(KineticLaw law) {
-		document.getModel().populateListFormulaUnitsData();
+	        document.getModel().populateListFormulaUnitsData();
 		if (law.containsUndeclaredUnits()) {
 			JOptionPane.showMessageDialog(biosim.frame(),
 					"Kinetic law contains literals numbers or parameters with undeclared units.\n"
@@ -9568,7 +9568,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				Unit unit = new Unit("second", -1, 0, 1.0);
 				unitDefLaw.addUnit(unit);
 			}
-			if (!libsbml.areEquivalent(unitDef, unitDefLaw)) {
+			if (!UnitDefinition.areEquivalent(unitDef, unitDefLaw)) {
 				JOptionPane.showMessageDialog(biosim.frame(),
 						"Kinetic law units should be substance / time.", "Units Do Not Match",
 						JOptionPane.ERROR_MESSAGE);
