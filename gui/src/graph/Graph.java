@@ -6,9 +6,14 @@ import java.awt.event.*;
 import java.text.*;
 import java.util.*;
 import javax.swing.*;
+import javax.swing.event.TreeExpansionEvent;
+import javax.swing.event.TreeExpansionListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
+import javax.swing.plaf.metal.MetalIconFactory;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellRenderer;
+
 import org.apache.batik.dom.*;
 import org.apache.batik.svggen.*;
 import org.jfree.chart.*;
@@ -113,6 +118,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	private boolean topLevel;
 
 	private ArrayList<String> graphProbs;
+
+	private JTree tree;
+
+	private IconNode node, simDir;
 
 	/**
 	 * Creates a Graph Object from the data given and calls the private graph
@@ -673,7 +682,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		for (GraphSpecies g : graphed) {
 			old.add(g);
 		}
-		JPanel titlePanel = new JPanel(new BorderLayout());
+		final JPanel titlePanel = new JPanel(new BorderLayout());
 		JLabel titleLabel = new JLabel("Title:");
 		JLabel xLabel = new JLabel("X-Axis Label:");
 		JLabel yLabel = new JLabel("Y-Axis Label:");
@@ -747,7 +756,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			YScale.setEnabled(true);
 		}
 		String simDirString = outDir.split(separator)[outDir.split(separator).length - 1];
-		final DefaultMutableTreeNode simDir = new DefaultMutableTreeNode(simDirString);
+		simDir = new IconNode(simDirString);
 		String[] files = new File(outDir).list();
 		for (int i = 1; i < files.length; i++) {
 			String index = files[i];
@@ -768,7 +777,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					add = true;
 				}
 				else {
-					simDir.add(new DefaultMutableTreeNode(file.substring(0, file.length() - 4)));
+					simDir.add(new IconNode(file.substring(0, file.length() - 4)));
 				}
 			}
 			else if (new File(outDir + separator + file).isDirectory()) {
@@ -801,7 +810,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				}
 				if (addIt) {
 					directories.add(file);
-					DefaultMutableTreeNode d = new DefaultMutableTreeNode(file);
+					IconNode d = new IconNode(file);
 					boolean add2 = false;
 					for (String f : files3) {
 						if (f.contains(printer_id.substring(0, printer_id.length() - 8))) {
@@ -809,7 +818,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								add2 = true;
 							}
 							else {
-								d.add(new DefaultMutableTreeNode(f.substring(0, f.length() - 4)));
+								d.add(new IconNode(f.substring(0, f.length() - 4)));
 							}
 						}
 						else if (new File(outDir + separator + file + separator + f).isDirectory()) {
@@ -833,7 +842,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							}
 							if (addIt2) {
 								directories.add(file + separator + f);
-								DefaultMutableTreeNode d2 = new DefaultMutableTreeNode(f);
+								IconNode d2 = new IconNode(f);
 								boolean add3 = false;
 								for (String f2 : files2) {
 									if (f2.contains(printer_id.substring(0, printer_id.length() - 8))) {
@@ -841,14 +850,14 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 											add3 = true;
 										}
 										else {
-											d2.add(new DefaultMutableTreeNode(f2.substring(0, f2.length() - 4)));
+											d2.add(new IconNode(f2.substring(0, f2.length() - 4)));
 										}
 									}
 								}
 								if (add3) {
-									d2.add(new DefaultMutableTreeNode("Average"));
-									d2.add(new DefaultMutableTreeNode("Variance"));
-									d2.add(new DefaultMutableTreeNode("Standard Deviation"));
+									d2.add(new IconNode("Average"));
+									d2.add(new IconNode("Variance"));
+									d2.add(new IconNode("Standard Deviation"));
 								}
 								int run = 1;
 								for (String s : files2) {
@@ -868,7 +877,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								for (int i = 0; i < run; i++) {
 									if (new File(outDir + separator + file + separator + f + separator + "run-"
 											+ (i + 1) + "." + printer_id.substring(0, printer_id.length() - 8)).exists()) {
-										d2.add(new DefaultMutableTreeNode("run-" + (i + 1)));
+										d2.add(new IconNode("run-" + (i + 1)));
 									}
 								}
 								d.add(d2);
@@ -876,9 +885,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						}
 					}
 					if (add2) {
-						d.add(new DefaultMutableTreeNode("Average"));
-						d.add(new DefaultMutableTreeNode("Variance"));
-						d.add(new DefaultMutableTreeNode("Standard Deviation"));
+						d.add(new IconNode("Average"));
+						d.add(new IconNode("Variance"));
+						d.add(new IconNode("Standard Deviation"));
 					}
 					int run = 1;
 					for (String s : files3) {
@@ -897,7 +906,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					for (int i = 0; i < run; i++) {
 						if (new File(outDir + separator + file + separator + "run-" + (i + 1) + "."
 								+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
-							d.add(new DefaultMutableTreeNode("run-" + (i + 1)));
+							d.add(new IconNode("run-" + (i + 1)));
 						}
 					}
 					simDir.add(d);
@@ -905,9 +914,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			}
 		}
 		if (add) {
-			simDir.add(new DefaultMutableTreeNode("Average"));
-			simDir.add(new DefaultMutableTreeNode("Variance"));
-			simDir.add(new DefaultMutableTreeNode("Standard Deviation"));
+			simDir.add(new IconNode("Average"));
+			simDir.add(new IconNode("Variance"));
+			simDir.add(new IconNode("Standard Deviation"));
 		}
 		int run = 1;
 		for (String s : new File(outDir).list()) {
@@ -926,7 +935,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		for (int i = 0; i < run; i++) {
 			if (new File(outDir + separator + "run-" + (i + 1) + "."
 					+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
-				simDir.add(new DefaultMutableTreeNode("run-" + (i + 1)));
+				simDir.add(new IconNode("run-" + (i + 1)));
 			}
 		}
 		if (simDir.getChildCount() == 0) {
@@ -935,12 +944,20 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					JOptionPane.PLAIN_MESSAGE);
 		}
 		else {
-			final JTree tree = new JTree(simDir);
-			for (int i = 0; i < tree.getRowCount(); i++) {
-				tree.expandRow(i);
-			}
+			tree = new JTree(simDir);
+			tree.putClientProperty("JTree.icons", makeIcons());
+			tree.setCellRenderer(new IconNodeRenderer());
+			final JPanel all = new JPanel(new BorderLayout());
 			JScrollPane scrollpane = new JScrollPane();
+			final JScrollPane scroll = new JScrollPane();
 			scrollpane.getViewport().add(tree);
+			DefaultTreeCellRenderer renderer = (DefaultTreeCellRenderer) tree.getCellRenderer();
+			renderer.setLeafIcon(MetalIconFactory.getTreeLeafIcon());
+			renderer.setClosedIcon(MetalIconFactory.getTreeFolderIcon());
+			renderer.setOpenIcon(MetalIconFactory.getTreeFolderIcon());
+			// for (int i = 0; i < tree.getRowCount(); i++) {
+			// tree.expandRow(i);
+			// }
 			final JPanel specPanel = new JPanel();
 			// final JFrame f = new JFrame("Edit Graph");
 			boolean stop = false;
@@ -955,7 +972,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			}
 			tree.addTreeSelectionListener(new TreeSelectionListener() {
 				public void valueChanged(TreeSelectionEvent e) {
-					DefaultMutableTreeNode node = (DefaultMutableTreeNode) e.getPath().getLastPathComponent();
+					node = (IconNode) e.getPath().getLastPathComponent();
 					if (!directories.contains(node.toString()) && node.getParent() != null
 							&& !directories.contains(node.getParent().toString() + separator + node.toString())) {
 						selected = node.toString();
@@ -1270,12 +1287,63 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								connectedLabel.setSelected(false);
 							}
 						}
+						boolean check = false;
+						for (JCheckBox b : boxes) {
+							if (b.isSelected()) {
+								check = true;
+							}
+						}
+						if (check) {
+							node.setIcon(TextIcons.getIcon("g"));
+							node.setIconName("" + (char) 10003);
+							((IconNode) node.getParent()).setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
+							tree.revalidate();
+							tree.repaint();
+						}
+						else {
+							node.setIcon(MetalIconFactory.getTreeLeafIcon());
+							node.setIconName("");
+							tree.revalidate();
+							tree.repaint();
+						}
 					}
 					else {
 						specPanel.removeAll();
 						specPanel.revalidate();
 						specPanel.repaint();
 					}
+				}
+			});
+			for (int i = 1; i < tree.getRowCount(); i++) {
+				tree.expandRow(i);
+			}
+			for (int i = 1; i < tree.getRowCount(); i++) {
+				tree.setSelectionRow(i);
+			}
+			for (int i = 1; i < tree.getRowCount(); i++) {
+				tree.collapseRow(i);
+			}
+			tree.addTreeExpansionListener(new TreeExpansionListener() {
+				public void treeCollapsed(TreeExpansionEvent e) {
+					JScrollPane scrollpane = new JScrollPane();
+					scrollpane.getViewport().add(tree);
+					all.removeAll();
+					all.add(titlePanel, "North");
+					all.add(scroll, "Center");
+					all.add(scrollpane, "West");
+					all.revalidate();
+					all.repaint();
+				}
+
+				public void treeExpanded(TreeExpansionEvent e) {
+					JScrollPane scrollpane = new JScrollPane();
+					scrollpane.getViewport().add(tree);
+					all.removeAll();
+					all.add(titlePanel, "North");
+					all.add(scroll, "Center");
+					all.add(scrollpane, "West");
+					all.revalidate();
+					all.repaint();
 				}
 			});
 			if (!stop) {
@@ -1286,7 +1354,6 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				tree.setSelectionRow(0);
 				tree.setSelectionRow(selectionRow);
 			}
-			JScrollPane scroll = new JScrollPane();
 			scroll.setPreferredSize(new Dimension(1050, 500));
 			JPanel editPanel = new JPanel(new BorderLayout());
 			editPanel.add(specPanel, "Center");
@@ -1468,6 +1535,45 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					for (int i = 0; i < size; i++) {
 						graphed.remove();
 					}
+					IconNode n = simDir;
+					while (n != null) {
+						if (n.isLeaf()) {
+							n.setIcon(MetalIconFactory.getTreeLeafIcon());
+							n.setIconName("");
+							IconNode check = (IconNode) ((DefaultMutableTreeNode) n.getParent()).getChildAfter(n);
+							if (check == null) {
+								n = (IconNode) n.getParent();
+								if (n.getParent() == null) {
+									n = null;
+								}
+								else {
+									IconNode check2 = (IconNode) ((DefaultMutableTreeNode) n.getParent())
+											.getChildAfter(n);
+									if (check2 == null) {
+										n = (IconNode) n.getParent();
+										if (n.getParent() == null) {
+											n = null;
+										}
+										else {
+											n = (IconNode) ((DefaultMutableTreeNode) n.getParent()).getChildAfter(n);
+										}
+									}
+									else {
+										n = check2;
+									}
+								}
+							}
+							else {
+								n = check;
+							}
+						}
+						else {
+							n.setIcon(MetalIconFactory.getTreeFolderIcon());
+							n = (IconNode) n.getChildAt(0);
+						}
+					}
+					tree.revalidate();
+					tree.repaint();
 					if (tree.getSelectionCount() > 0) {
 						int selectedRow = tree.getSelectionRows()[0];
 						tree.setSelectionRow(0);
@@ -1509,7 +1615,6 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			// buttonPanel.add(ok);
 			// buttonPanel.add(deselect);
 			// buttonPanel.add(cancel);
-			JPanel all = new JPanel(new BorderLayout());
 			all.add(titlePanel, "North");
 			all.add(scroll, "Center");
 			all.add(scrollpane, "West");
@@ -2003,6 +2108,11 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				public void actionPerformed(ActionEvent e) {
 					int i = Integer.parseInt(e.getActionCommand());
 					if (((JCheckBox) e.getSource()).isSelected()) {
+						node.setIcon(TextIcons.getIcon("g"));
+						node.setIconName("" + (char) 10003);
+						((IconNode) node.getParent()).setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
+						tree.revalidate();
+						tree.repaint();
 						String s = series.get(i).getText();
 						((JCheckBox) e.getSource()).setSelected(false);
 						int[] cols = new int[34];
@@ -2327,6 +2437,28 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								.getName(), series.get(i).getText().trim(), i, directory));
 					}
 					else {
+						boolean check = false;
+						for (JCheckBox b : boxes) {
+							if (b.isSelected()) {
+								check = true;
+							}
+						}
+						if (!check) {
+							node.setIcon(MetalIconFactory.getTreeLeafIcon());
+							node.setIconName("");
+							boolean check2 = false;
+							IconNode parent = ((IconNode) node.getParent());
+							for (int j = 0; j < parent.getChildCount(); j++) {
+								if (((IconNode) parent.getChildAt(j)).getIconName().equals("" + (char) 10003)) {
+									check2 = true;
+								}
+							}
+							if (!check2) {
+								parent.setIcon(MetalIconFactory.getTreeFolderIcon());
+							}
+							tree.revalidate();
+							tree.repaint();
+						}
 						ArrayList<GraphSpecies> remove = new ArrayList<GraphSpecies>();
 						for (GraphSpecies g : graphed) {
 							if (g.getRunNumber().equals(selected) && g.getNumber() == i
@@ -4063,7 +4195,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		for (GraphProbs g : probGraphed) {
 			old.add(g);
 		}
-		JPanel titlePanel = new JPanel(new BorderLayout());
+		final JPanel titlePanel = new JPanel(new BorderLayout());
 		JLabel titleLabel = new JLabel("Title:");
 		JLabel xLabel = new JLabel("X-Axis Label:");
 		JLabel yLabel = new JLabel("Y-Axis Label:");
@@ -4071,7 +4203,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		final JTextField x = new JTextField(chart.getCategoryPlot().getDomainAxis().getLabel(), 5);
 		final JTextField y = new JTextField(chart.getCategoryPlot().getRangeAxis().getLabel(), 5);
 		String simDirString = outDir.split(separator)[outDir.split(separator).length - 1];
-		final DefaultMutableTreeNode simDir = new DefaultMutableTreeNode(simDirString);
+		final IconNode simDir = new IconNode(simDirString);
 		String[] files = new File(outDir).list();
 		for (int i = 1; i < files.length; i++) {
 			String index = files[i];
@@ -4086,7 +4218,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		for (String file : files) {
 			if (file.length() > 3 && file.substring(file.length() - 4).equals(".txt")) {
 				if (file.contains("sim-rep")) {
-					simDir.add(new DefaultMutableTreeNode(file.substring(0, file.length() - 4)));
+					simDir.add(new IconNode(file.substring(0, file.length() - 4)));
 				}
 			}
 			else if (new File(outDir + separator + file).isDirectory()) {
@@ -4099,10 +4231,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				}
 				if (addIt) {
 					directories.add(file);
-					DefaultMutableTreeNode d = new DefaultMutableTreeNode(file);
+					IconNode d = new IconNode(file);
 					for (String f : new File(outDir + separator + file).list()) {
 						if (f.equals("sim-rep.txt")) {
-							d.add(new DefaultMutableTreeNode(f.substring(0, f.length() - 4)));
+							d.add(new IconNode(f.substring(0, f.length() - 4)));
 						}
 					}
 					simDir.add(d);
@@ -4115,10 +4247,35 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					JOptionPane.PLAIN_MESSAGE);
 		}
 		else {
-			final JTree tree = new JTree(simDir);
-			for (int i = 0; i < tree.getRowCount(); i++) {
-				tree.expandRow(i);
-			}
+			tree = new JTree(simDir);
+			final JPanel all = new JPanel(new BorderLayout());
+			final JScrollPane scroll = new JScrollPane();
+			tree.addTreeExpansionListener(new TreeExpansionListener() {
+				public void treeCollapsed(TreeExpansionEvent e) {
+					JScrollPane scrollpane = new JScrollPane();
+					scrollpane.getViewport().add(tree);
+					all.removeAll();
+					all.add(titlePanel, "North");
+					all.add(scroll, "Center");
+					all.add(scrollpane, "West");
+					all.revalidate();
+					all.repaint();
+				}
+
+				public void treeExpanded(TreeExpansionEvent e) {
+					JScrollPane scrollpane = new JScrollPane();
+					scrollpane.getViewport().add(tree);
+					all.removeAll();
+					all.add(titlePanel, "North");
+					all.add(scroll, "Center");
+					all.add(scrollpane, "West");
+					all.revalidate();
+					all.repaint();
+				}
+			});
+			// for (int i = 0; i < tree.getRowCount(); i++) {
+			// tree.expandRow(i);
+			// }
 			JScrollPane scrollpane = new JScrollPane();
 			scrollpane.getViewport().add(tree);
 			final JPanel specPanel = new JPanel();
@@ -4134,7 +4291,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			}
 			tree.addTreeSelectionListener(new TreeSelectionListener() {
 				public void valueChanged(TreeSelectionEvent e) {
-					DefaultMutableTreeNode node = (DefaultMutableTreeNode) e.getPath().getLastPathComponent();
+					node = (IconNode) e.getPath().getLastPathComponent();
 					if (!directories.contains(node.toString())) {
 						selected = node.toString();
 						int select;
@@ -4251,7 +4408,6 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				tree.setSelectionRow(0);
 				tree.setSelectionRow(selectionRow);
 			}
-			JScrollPane scroll = new JScrollPane();
 			scroll.setPreferredSize(new Dimension(1050, 500));
 			JPanel editPanel = new JPanel(new BorderLayout());
 			editPanel.add(specPanel, "Center");
@@ -4288,7 +4444,6 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			titlePanel2.add(new JPanel());
 			titlePanel.add(titlePanel1, "Center");
 			titlePanel.add(titlePanel2, "South");
-			JPanel all = new JPanel(new BorderLayout());
 			all.add(titlePanel, "North");
 			all.add(scroll, "Center");
 			all.add(scrollpane, "West");
@@ -5015,5 +5170,165 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		private int getNumber() {
 			return number;
 		}
+	}
+
+	private Hashtable makeIcons() {
+		Hashtable<String, Icon> icons = new Hashtable<String, Icon>();
+		icons.put("floppyDrive", MetalIconFactory.getTreeFloppyDriveIcon());
+		icons.put("hardDrive", MetalIconFactory.getTreeHardDriveIcon());
+		icons.put("computer", MetalIconFactory.getTreeComputerIcon());
+		icons.put("c", TextIcons.getIcon("c"));
+		icons.put("java", TextIcons.getIcon("java"));
+		icons.put("html", TextIcons.getIcon("html"));
+		return icons;
+	}
+}
+
+class IconNodeRenderer extends DefaultTreeCellRenderer {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -940588131120912851L;
+
+	public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel,
+			boolean expanded, boolean leaf, int row, boolean hasFocus) {
+
+		super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
+
+		Icon icon = ((IconNode) value).getIcon();
+
+		if (icon == null) {
+			Hashtable icons = (Hashtable) tree.getClientProperty("JTree.icons");
+			String name = ((IconNode) value).getIconName();
+			if ((icons != null) && (name != null)) {
+				icon = (Icon) icons.get(name);
+				if (icon != null) {
+					setIcon(icon);
+				}
+			}
+		}
+		else {
+			setIcon(icon);
+		}
+
+		return this;
+	}
+}
+
+class IconNode extends DefaultMutableTreeNode {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2887169888272379817L;
+
+	protected Icon icon;
+
+	protected String iconName;
+
+	public IconNode() {
+		this(null);
+	}
+
+	public IconNode(Object userObject) {
+		this(userObject, true, null);
+	}
+
+	public IconNode(Object userObject, boolean allowsChildren, Icon icon) {
+		super(userObject, allowsChildren);
+		this.icon = icon;
+	}
+
+	public void setIcon(Icon icon) {
+		this.icon = icon;
+	}
+
+	public Icon getIcon() {
+		return icon;
+	}
+
+	public String getIconName() {
+		if (iconName != null) {
+			return iconName;
+		}
+		else {
+			String str = userObject.toString();
+			int index = str.lastIndexOf(".");
+			if (index != -1) {
+				return str.substring(++index);
+			}
+			else {
+				return null;
+			}
+		}
+	}
+
+	public void setIconName(String name) {
+		iconName = name;
+	}
+
+}
+
+class TextIcons extends MetalIconFactory.TreeLeafIcon {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1623303213056273064L;
+
+	protected String label;
+
+	private static Hashtable<String, String> labels;
+
+	protected TextIcons() {
+	}
+
+	public void paintIcon(Component c, Graphics g, int x, int y) {
+		super.paintIcon(c, g, x, y);
+		if (label != null) {
+			FontMetrics fm = g.getFontMetrics();
+
+			int offsetX = (getIconWidth() - fm.stringWidth(label)) / 2;
+			int offsetY = (getIconHeight() - fm.getHeight()) / 2 - 2;
+
+			g.drawString(label, x + offsetX, y + offsetY + fm.getHeight());
+		}
+	}
+
+	public static Icon getIcon(String str) {
+		if (labels == null) {
+			labels = new Hashtable<String, String>();
+			setDefaultSet();
+		}
+		TextIcons icon = new TextIcons();
+		icon.label = (String) labels.get(str);
+		return icon;
+	}
+
+	public static void setLabelSet(String ext, String label) {
+		if (labels == null) {
+			labels = new Hashtable<String, String>();
+			setDefaultSet();
+		}
+		labels.put(ext, label);
+	}
+
+	private static void setDefaultSet() {
+		labels.put("c", "C");
+		labels.put("java", "J");
+		labels.put("html", "H");
+		labels.put("htm", "H");
+		labels.put("g", "" + (char) 10003);
+
+		// and so on
+		/*
+		 * labels.put("txt" ,"TXT"); labels.put("TXT" ,"TXT"); labels.put("cc"
+		 * ,"C++"); labels.put("C" ,"C++"); labels.put("cpp" ,"C++");
+		 * labels.put("exe" ,"BIN"); labels.put("class" ,"BIN"); labels.put("gif"
+		 * ,"GIF"); labels.put("GIF" ,"GIF");
+		 * 
+		 * labels.put("", "");
+		 */
 	}
 }
