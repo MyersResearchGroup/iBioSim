@@ -338,7 +338,7 @@ public class BioSim implements MouseListener, ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == about) {
 			final JFrame f = new JFrame("About");
-			JLabel bioSim = new JLabel("iBioSim 0.81");
+			JLabel bioSim = new JLabel("iBioSim 0.82");
 			Font font = bioSim.getFont();
 			font = font.deriveFont(Font.BOLD, 36.0f);
 			bioSim.setFont(font);
@@ -1050,7 +1050,7 @@ public class BioSim implements MouseListener, ActionListener {
 						}
 					}
 				}
-				catch (Exception e1) {
+				catch (IOException e1) {
 					JOptionPane.showMessageDialog(frame, "Unable to create new model.", "Error",
 							JOptionPane.ERROR_MESSAGE);
 				}
