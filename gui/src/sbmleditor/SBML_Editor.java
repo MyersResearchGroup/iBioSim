@@ -9502,31 +9502,28 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 */
 	public boolean checkEventDelayUnits(Delay delay) {
 	  document.getModel().populateListFormulaUnitsData(); 
-		// System.out.println(myFormulaToString(delay.getMath()));
-		// if (delay.containsUndeclaredUnits()) {
-		// JOptionPane.showMessageDialog(biosim.frame(), "Event assignment delay
-		// contains literals numbers or parameters with undeclared units.\n" +
-		// "Therefore, it is not possible to completely verify the consistency of
-		// the units.",
-		// "Contains Undeclared Units", JOptionPane.WARNING_MESSAGE);
-		// return false;
-		// } else {
-		// UnitDefinition unitDef = delay.getDerivedUnitDefinition();
-		// /*
-		// if (!unitDef.areEquivalent(unitDefVar)) {
-		// JOptionPane.showMessageDialog(biosim.frame(), "Units on the left and
-		// right-hand side of the initial assignment do not agree.",
-		// "Units Do Not Match", JOptionPane.WARNING_MESSAGE);
-		// return false;
-		// }
-		// */
-		// for (int i = 0; i < unitDef.getNumUnits(); i++) {
-		// Unit unit = unitDef.getUnit(i);
-		// System.out.println(unit.getKind() + " Exp = " + unit.getExponent() + "
-		// Mult = " + unit.getMultiplier() + " Scale = " + unit.getScale());
-		// }
-		// }
-		return false;
+// 	  System.out.println(myFormulaToString(delay.getMath()));
+// 	  if (delay.containsUndeclaredUnits()) {
+// 	    JOptionPane.showMessageDialog(biosim.frame(), "Event assignment delay contains literals numbers or parameters with undeclared units.\n" +
+// 					  "Therefore, it is not possible to completely verify the consistency of the units.",
+// 					  "Contains Undeclared Units", JOptionPane.WARNING_MESSAGE);
+// 	    return false;
+// 	  } else {
+// 	    UnitDefinition unitDef = delay.getDerivedUnitDefinition();
+// 	    /*
+// 	      if (!unitDef.areEquivalent(unitDefVar)) {
+// 	      JOptionPane.showMessageDialog(biosim.frame(), "Units on the left and
+// 	      right-hand side of the initial assignment do not agree.",
+// 	      "Units Do Not Match", JOptionPane.WARNING_MESSAGE);
+// 	      return false;
+// 	      }
+// 	    */
+// 	    for (int i = 0; i < unitDef.getNumUnits(); i++) {
+// 	      Unit unit = unitDef.getUnit(i);
+// 	      System.out.println(unit.getKind() + " Exp = " + unit.getExponent() + "Mult = " + unit.getMultiplier() + " Scale = " + unit.getScale());
+// 	    }
+// 	  }
+	  return false;
 	}
 
 	/**
