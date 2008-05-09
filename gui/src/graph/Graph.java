@@ -301,29 +301,20 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						word += cha;
 					}
 				}
-				int getNum;
-				try {
-					getNum = Integer.parseInt(word);
-					if (getNum == 0) {
-						int read = 0;
-						while (read != -1) {
-							read = input.read();
-						}
-					}
-				}
-				catch (Exception e1) {
-					if (word.equals("")) {
-					}
-					else {
-						graphSpecies.add(word);
-					}
+				if (word.equals("0")||word.equals("0.0")) {
+				  int read = 0;
+				  while (read != -1) {
+				    read = input.read();
+				  }
+				} else if (!word.equals("")) {
+				  graphSpecies.add(word);
 				}
 			}
 			input.close();
 			prog.close();
 			fileInput.close();
 		}
-		catch (Exception e) {
+		catch (IOException e) {
 			JOptionPane.showMessageDialog(component, "Error Reading Data!"
 					+ "\nThere was an error reading the simulation output data.", "Error Reading Data",
 					JOptionPane.ERROR_MESSAGE);
@@ -404,10 +395,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							word += cha;
 						}
 					}
-					int getNum;
-					try {
-						getNum = Integer.parseInt(word);
-						if (getNum == 0) {
+					if (word.equals("0")||word.equals("0.0")) {
 							for (int i = 0; i < graphSpecies.size(); i++) {
 								data.add(new ArrayList<Double>());
 							}
@@ -455,16 +443,13 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 									counter++;
 								}
 							}
-						}
-					}
-					catch (Exception e1) {
 					}
 				}
 				input.close();
 				prog.close();
 				fileInput.close();
 			}
-			catch (Exception e) {
+			catch (IOException e) {
 				JOptionPane.showMessageDialog(component, "Error Reading Data!"
 						+ "\nThere was an error reading the simulation output data.", "Error Reading Data",
 						JOptionPane.ERROR_MESSAGE);
@@ -3166,10 +3151,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						word += cha;
 					}
 				}
-				int getNum;
-				try {
-					getNum = Integer.parseInt(word);
-					if (getNum == 0) {
+				if (word.equals("0")||word.equals("0.0")) {
 						boolean first = true;
 						int runsToMake = 1;
 						String[] findNum = startFile.split(separator);
@@ -3178,20 +3160,26 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						if (directory == null) {
 							for (String f : new File(outDir).list()) {
 								if (f.contains(fileStem)) {
-									int tempNum = Integer.parseInt(f.substring(fileStem.length(), f.length() - 4));
-									if (tempNum > runsToMake) {
-										runsToMake = tempNum;
-									}
+								  try {
+								    int tempNum = Integer.parseInt(f.substring(fileStem.length(), f.length() - 4));
+								    if (tempNum > runsToMake) {
+								      runsToMake = tempNum;
+								    }
+								  } catch (Exception e) {
+								  }
 								}
 							}
 						}
 						else {
 							for (String f : new File(outDir + separator + directory).list()) {
 								if (f.contains(fileStem)) {
-									int tempNum = Integer.parseInt(f.substring(fileStem.length(), f.length() - 4));
-									if (tempNum > runsToMake) {
-										runsToMake = tempNum;
-									}
+								  try {
+								    int tempNum = Integer.parseInt(f.substring(fileStem.length(), f.length() - 4));
+								    if (tempNum > runsToMake) {
+								      runsToMake = tempNum;
+								    } 
+								  } catch (Exception e) {
+								  }
 								}
 							}
 						}
@@ -3384,9 +3372,6 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							}
 						}
 					}
-				}
-				catch (Exception e1) {
-				}
 			}
 			deviation = new ArrayList<ArrayList<Double>>();
 			for (int i = 0; i < variance.size(); i++) {
@@ -3404,7 +3389,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			prog.close();
 			fileInput.close();
 		}
-		catch (Exception e) {
+		catch (IOException e) {
 			JOptionPane.showMessageDialog(biomodelsim.frame(), "Error Reading Data!"
 					+ "\nThere was an error reading the simulation output data.", "Error Reading Data",
 					JOptionPane.ERROR_MESSAGE);

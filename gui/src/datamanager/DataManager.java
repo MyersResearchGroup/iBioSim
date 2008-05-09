@@ -498,15 +498,52 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 				}
 				else {
 					if (importFile.length() > 3
-							&& importFile.substring(importFile.length() - 4, importFile.length()).equals(".tsd")) {
+					    && (importFile.substring(importFile.length() - 4, importFile.length()).equals(".tsd") ||
+						importFile.substring(importFile.length() - 4, importFile.length()).equals(".csv"))) {
 						try {
-							String end = "run-" + (run + 1) + ".tsd";
+						        String end = "run-" + (run + 1) + ".tsd";
 							FileOutputStream out = new FileOutputStream(new File(directory + separator + end));
 							FileInputStream in = new FileInputStream(new File(importFile));
 							int read = in.read();
+							boolean firstLine = true;
+							if (importFile.substring(importFile.length() - 4, importFile.length()).equals(".csv")) {
+							  out.write('(');
+							  out.write('(');
+							  out.write('\"');
+							}
 							while (read != -1) {
-								out.write(read);
+							  if (importFile.substring(importFile.length() - 4, importFile.length()).equals(".csv")) {
+							    if ((firstLine) && (read == ',')) {
+							      out.write('\"');
+							      out.write(',');
+							      out.write('\"');
+							      read = in.read();
+							    } else {
+							      if (read == '\n') {
+								if (firstLine) {
+								  out.write('\"');
+								  firstLine = false;
+								}
+								out.write(')');
 								read = in.read();
+								if (read != -1) {
+								  out.write(',');
+								  out.write('(');
+								}
+							      } else {
+								if (read != '\r') {
+								  out.write(read);
+								}
+								read = in.read();
+							      }
+							    }
+							  } else {
+							    out.write(read);
+							    read = in.read();
+							  }
+							}
+							if (importFile.substring(importFile.length() - 4, importFile.length()).equals(".csv")) {
+							  out.write(')');
 							}
 							in.close();
 							out.close();
