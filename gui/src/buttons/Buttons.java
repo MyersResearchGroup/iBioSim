@@ -53,6 +53,9 @@ public class Buttons {
 		ExampleFileFilter sbmlFilter = new ExampleFileFilter();
 		sbmlFilter.addExtension("sbml");
 		sbmlFilter.setDescription("Systems Biology Markup Language");
+		ExampleFileFilter xmlFilter = new ExampleFileFilter();
+		xmlFilter.addExtension("xml");
+		xmlFilter.setDescription("Extensible Markup Language");
 		ExampleFileFilter gcmFilter = new ExampleFileFilter();
 		gcmFilter.addExtension("gcm");
 		gcmFilter.setDescription("Genetic Circuit Model");
@@ -82,6 +85,7 @@ public class Buttons {
 		}
 		else if (approve.equals("Import SBML")) {
 			fc.addChoosableFileFilter(sbmlFilter);
+			fc.addChoosableFileFilter(xmlFilter);
 			fc.setAcceptAllFileFilterUsed(false);
 			fc.setFileFilter(sbmlFilter);
 			retValue = fc.showDialog(browse, approve);
