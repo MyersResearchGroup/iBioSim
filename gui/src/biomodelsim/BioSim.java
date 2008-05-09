@@ -1037,6 +1037,7 @@ public class BioSim implements MouseListener, ActionListener {
 							document.setLevelAndVersion(2, 3);
 							Compartment c = document.getModel().createCompartment();
 							c.setId("default");
+							c.setSize(1.0);
 							document.getModel().setId(modelID);
 							FileOutputStream out = new FileOutputStream(f);
 							SBMLWriter writer = new SBMLWriter();
