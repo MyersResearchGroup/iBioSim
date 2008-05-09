@@ -9500,8 +9500,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	/**
 	 * Check the units of an event delay
 	 */
-	public boolean checkEventDelayUnits(Delay delay) {
-	  document.getModel().populateListFormulaUnitsData(); 
+// 	public boolean checkEventDelayUnits(Delay delay) {
+// 	  document.getModel().populateListFormulaUnitsData(); 
 // 	  System.out.println(myFormulaToString(delay.getMath()));
 // 	  if (delay.containsUndeclaredUnits()) {
 // 	    JOptionPane.showMessageDialog(biosim.frame(), "Event assignment delay contains literals numbers or parameters with undeclared units.\n" +
@@ -9510,21 +9510,10 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 // 	    return false;
 // 	  } else {
 // 	    UnitDefinition unitDef = delay.getDerivedUnitDefinition();
-// 	    /*
-// 	      if (!unitDef.areEquivalent(unitDefVar)) {
-// 	      JOptionPane.showMessageDialog(biosim.frame(), "Units on the left and
-// 	      right-hand side of the initial assignment do not agree.",
-// 	      "Units Do Not Match", JOptionPane.WARNING_MESSAGE);
-// 	      return false;
-// 	      }
-// 	    */
-// 	    for (int i = 0; i < unitDef.getNumUnits(); i++) {
-// 	      Unit unit = unitDef.getUnit(i);
-// 	      System.out.println(unit.getKind() + " Exp = " + unit.getExponent() + "Mult = " + unit.getMultiplier() + " Scale = " + unit.getScale());
-// 	    }
+// 	    /* NEED TO CHECK IT AGAINST TIME HERE */
 // 	  }
-	  return false;
-	}
+// 	  return false;
+// 	}
 
 	/**
 	 * Check the units of a kinetic law
