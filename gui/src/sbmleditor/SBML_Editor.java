@@ -9500,7 +9500,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	/**
 	 * Check the units of an event delay
 	 */
-// 	public boolean checkEventDelayUnits(Delay delay) {
+ 	public boolean checkEventDelayUnits(Delay delay) {
 // 	  document.getModel().populateListFormulaUnitsData(); 
 // 	  System.out.println(myFormulaToString(delay.getMath()));
 // 	  if (delay.containsUndeclaredUnits()) {
@@ -9512,8 +9512,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 // 	    UnitDefinition unitDef = delay.getDerivedUnitDefinition();
 // 	    /* NEED TO CHECK IT AGAINST TIME HERE */
 // 	  }
-// 	  return false;
-// 	}
+ 	  return false;
+ 	}
 
 	/**
 	 * Check the units of a kinetic law
