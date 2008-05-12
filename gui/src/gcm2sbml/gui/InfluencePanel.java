@@ -254,7 +254,7 @@ public class InfluencePanel extends JPanel implements ActionListener {
 		}
 	}
 
-	private String[] options = { "Okay", "Cancel" };
+	private String[] options = { "Ok", "Cancel" };
 	private String[] types = { "repression", "activation" };
 	private String[] bio = { "no", "yes" };
 	private HashMap<String, PropertyField> fields = null;

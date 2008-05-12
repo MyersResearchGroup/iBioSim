@@ -75,7 +75,7 @@ public class ParameterPanel extends JPanel {
 		return true;
 	}
 
-	private String[] options = { "Okay", "Cancel" };
+	private String[] options = { "Ok", "Cancel" };
 
 	private String totalSelected = "";
 	private String selected = "";
