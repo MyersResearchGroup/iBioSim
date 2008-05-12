@@ -428,15 +428,15 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		mainTabbedPanel.add(radioButtonPanel, "North");
 
 		// Creates the run button
-		run = new JButton("Save And Run");
+		run = new JButton("Save and Run");
 		save = new JButton("Save Parameters");
 		JPanel runHolder = new JPanel();
-		runHolder.add(save);
-		save.addActionListener(this);
-		save.setMnemonic(KeyEvent.VK_S);
 		runHolder.add(run);
 		run.addActionListener(this);
 		run.setMnemonic(KeyEvent.VK_R);
+		runHolder.add(save);
+		save.addActionListener(this);
+		save.setMnemonic(KeyEvent.VK_S);
 
 		// Creates the termination conditions tab
 		termCond = new JList();
@@ -2133,7 +2133,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		running.setLocation(x, y);
 		running.setVisible(true);
 		running.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-		Run runProgram = new Run();
+		Run runProgram = new Run(this);
 		cancel.addActionListener(runProgram);
 		biomodelsim.getExitButton().addActionListener(runProgram);
 		saveSAD(outDir);
@@ -2521,7 +2521,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					"Error Saving File", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-		Run runProgram = new Run();
+		Run runProgram = new Run(this);
 		int cut = 0;
 		String[] getFilename = sbmlProp.split(separator);
 		for (int i = 0; i < getFilename[getFilename.length - 1].length(); i++) {
@@ -3170,7 +3170,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		String printer_track_quantity = "amount";
 		int[] index = species.getSelectedIndices();
 		species.setSelectedIndices(index);
-		return new Graph(printer_track_quantity, simName + " simulation results", printer_id, outDir,
+		return new Graph(this, printer_track_quantity, simName + " simulation results", printer_id, outDir,
 				"time", biomodelsim, open, log, null, true);
 	}
 
@@ -3326,7 +3326,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		String outDir = root + separator + simName;
 		String printer_id = "tsd.printer";
 		String printer_track_quantity = "amount";
-		return new Graph(printer_track_quantity, simName + " simulation results", printer_id, outDir,
+		return new Graph(this, printer_track_quantity, simName + " simulation results", printer_id, outDir,
 				"time", biomodelsim, open, log, null, false);
 	}
 

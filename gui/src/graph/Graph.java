@@ -31,6 +31,7 @@ import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.*;
 import biomodelsim.*;
 import buttons.*;
+import reb2sac.*;
 
 /**
  * This is the Graph class. It takes in data and draws a graph of that data. The
@@ -64,7 +65,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 	private BioSim biomodelsim; // tstubd gui
 
-	private JButton save, saveAs;
+        private JButton save, run, saveAs;
 
 	private JButton export; // buttons
 
@@ -123,12 +124,15 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 	private IconNode node, simDir;
 
+	private Reb2Sac reb2sac; // reb2sac options
+
 	/**
 	 * Creates a Graph Object from the data given and calls the private graph
 	 * helper method.
 	 */
-	public Graph(String printer_track_quantity, String label, String printer_id, String outDir,
-			String time, BioSim biomodelsim, String open, Log log, String graphName, boolean timeSeries) {
+	public Graph(Reb2Sac reb2sac, String printer_track_quantity, String label, String printer_id, String outDir,
+		     String time, BioSim biomodelsim, String open, Log log, String graphName, boolean timeSeries) {
+		this.reb2sac = reb2sac;
 		if (File.separator.equals("\\")) {
 			separator = "\\\\";
 		}
@@ -220,6 +224,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 		// creates the buttons for the graph frame
 		JPanel ButtonHolder = new JPanel();
+		run = new JButton("Save and Run");
 		save = new JButton("Save Graph");
 		export = new JButton("Export");
 		// exportJPeg = new JButton("Export As JPEG");
@@ -228,6 +233,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		// exportEps = new JButton("Export As EPS");
 		// exportSvg = new JButton("Export As SVG");
 		// exportCsv = new JButton("Export As CSV");
+		run.addActionListener(this);
 		save.addActionListener(this);
 		export.addActionListener(this);
 		// exportJPeg.addActionListener(this);
@@ -236,6 +242,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		// exportEps.addActionListener(this);
 		// exportSvg.addActionListener(this);
 		// exportCsv.addActionListener(this);
+		if (reb2sac != null) {
+		  ButtonHolder.add(run);
+		} 
 		ButtonHolder.add(save);
 		ButtonHolder.add(export);
 		// ButtonHolder.add(exportJPeg);
@@ -466,6 +475,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	 */
 	public void actionPerformed(ActionEvent e) {
 		// if the save button is clicked
+		if (e.getSource() == run) {
+			reb2sac.getRunButton().doClick();
+		}
 		if (e.getSource() == save) {
 			save();
 		}
@@ -2781,6 +2793,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		}
 		graph.addMouseListener(this);
 		JPanel ButtonHolder = new JPanel();
+		run = new JButton("Save and Run");
 		save = new JButton("Save Graph");
 		if (timeSeries) {
 			saveAs = new JButton("Save As");
@@ -2793,6 +2806,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		// exportEps = new JButton("Export As EPS");
 		// exportSvg = new JButton("Export As SVG");
 		// exportCsv = new JButton("Export As CSV");
+		run.addActionListener(this);
 		save.addActionListener(this);
 		export.addActionListener(this);
 		// exportJPeg.addActionListener(this);
@@ -2801,6 +2815,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		// exportEps.addActionListener(this);
 		// exportSvg.addActionListener(this);
 		// exportCsv.addActionListener(this);
+		if (reb2sac != null) {
+		  ButtonHolder.add(run);
+		} 
 		ButtonHolder.add(save);
 		if (timeSeries) {
 			ButtonHolder.add(saveAs);
@@ -4277,10 +4294,15 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 		// creates the buttons for the graph frame
 		JPanel ButtonHolder = new JPanel();
+		run = new JButton("Save and Run");
 		save = new JButton("Save Graph");
 		export = new JButton("Export");
+		run.addActionListener(this);
 		save.addActionListener(this);
 		export.addActionListener(this);
+		if (reb2sac != null) {
+		  ButtonHolder.add(run);
+		}
 		ButtonHolder.add(save);
 		ButtonHolder.add(export);
 
@@ -5209,10 +5231,15 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		}
 		graph.addMouseListener(this);
 		JPanel ButtonHolder = new JPanel();
+		run = new JButton("Save and Run");
 		save = new JButton("Save Graph");
 		export = new JButton("Export");
+		run.addActionListener(this);
 		save.addActionListener(this);
 		export.addActionListener(this);
+		if (reb2sac != null) {
+		  ButtonHolder.add(run);
+		}
 		ButtonHolder.add(save);
 		ButtonHolder.add(export);
 		JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, ButtonHolder, null);
