@@ -301,13 +301,14 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						word += cha;
 					}
 				}
-				if (word.equals("0")||word.equals("0.0")) {
-				  int read = 0;
-				  while (read != -1) {
-				    read = input.read();
-				  }
-				} else if (!word.equals("")) {
-				  graphSpecies.add(word);
+				if (word.equals("0") || word.equals("0.0")) {
+					int read = 0;
+					while (read != -1) {
+						read = input.read();
+					}
+				}
+				else if (!word.equals("")) {
+					graphSpecies.add(word);
 				}
 			}
 			input.close();
@@ -395,54 +396,54 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							word += cha;
 						}
 					}
-					if (word.equals("0")||word.equals("0.0")) {
-							for (int i = 0; i < graphSpecies.size(); i++) {
-								data.add(new ArrayList<Double>());
-							}
-							(data.get(0)).add(0.0);
-							int counter = 1;
-							reading = true;
-							while (reading) {
-								word = "";
-								readWord = true;
-								int read;
-								while (readWord) {
+					if (word.equals("0") || word.equals("0.0")) {
+						for (int i = 0; i < graphSpecies.size(); i++) {
+							data.add(new ArrayList<Double>());
+						}
+						(data.get(0)).add(0.0);
+						int counter = 1;
+						reading = true;
+						while (reading) {
+							word = "";
+							readWord = true;
+							int read;
+							while (readWord) {
+								read = input.read();
+								cha = (char) read;
+								while (!Character.isWhitespace(cha) && cha != ',' && cha != ':' && cha != ';'
+										&& cha != '!' && cha != '?' && cha != '\"' && cha != '\'' && cha != '('
+										&& cha != ')' && cha != '{' && cha != '}' && cha != '[' && cha != ']'
+										&& cha != '<' && cha != '>' && cha != '_' && cha != '*' && cha != '='
+										&& read != -1) {
+									word += cha;
 									read = input.read();
 									cha = (char) read;
-									while (!Character.isWhitespace(cha) && cha != ',' && cha != ':' && cha != ';'
-											&& cha != '!' && cha != '?' && cha != '\"' && cha != '\'' && cha != '('
-											&& cha != ')' && cha != '{' && cha != '}' && cha != '[' && cha != ']'
-											&& cha != '<' && cha != '>' && cha != '_' && cha != '*' && cha != '='
-											&& read != -1) {
-										word += cha;
-										read = input.read();
-										cha = (char) read;
-									}
-									if (read == -1) {
-										reading = false;
-									}
-									readWord = false;
 								}
-								int insert;
-								if (!word.equals("")) {
-									if (word.equals("nan")) {
-										if (!warning) {
-											JOptionPane.showMessageDialog(component, "Found NAN in data."
-													+ "\nReplacing with 0s.", "NAN In Data", JOptionPane.WARNING_MESSAGE);
-											warning = true;
-										}
-										word = "0";
-									}
-									if (counter < graphSpecies.size()) {
-										insert = counter;
-									}
-									else {
-										insert = counter % graphSpecies.size();
-									}
-									(data.get(insert)).add(Double.parseDouble(word));
-									counter++;
+								if (read == -1) {
+									reading = false;
 								}
+								readWord = false;
 							}
+							int insert;
+							if (!word.equals("")) {
+								if (word.equals("nan")) {
+									if (!warning) {
+										JOptionPane.showMessageDialog(component, "Found NAN in data."
+												+ "\nReplacing with 0s.", "NAN In Data", JOptionPane.WARNING_MESSAGE);
+										warning = true;
+									}
+									word = "0";
+								}
+								if (counter < graphSpecies.size()) {
+									insert = counter;
+								}
+								else {
+									insert = counter % graphSpecies.size();
+								}
+								(data.get(insert)).add(Double.parseDouble(word));
+								counter++;
+							}
+						}
 					}
 				}
 				input.close();
@@ -1415,25 +1416,6 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							else {
 								connectedLabel.setSelected(false);
 							}
-						}
-						boolean check = false;
-						for (JCheckBox b : boxes) {
-							if (b.isSelected()) {
-								check = true;
-							}
-						}
-						if (check) {
-							node.setIcon(TextIcons.getIcon("g"));
-							node.setIconName("" + (char) 10003);
-							((IconNode) node.getParent()).setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
-							tree.revalidate();
-							tree.repaint();
-						}
-						else {
-							node.setIcon(MetalIconFactory.getTreeLeafIcon());
-							node.setIconName("");
-							tree.revalidate();
-							tree.repaint();
 						}
 					}
 					else {
@@ -3151,227 +3133,228 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						word += cha;
 					}
 				}
-				if (word.equals("0")||word.equals("0.0")) {
-						boolean first = true;
-						int runsToMake = 1;
-						String[] findNum = startFile.split(separator);
-						String search = findNum[findNum.length - 1];
-						int firstOne = Integer.parseInt(search.substring(4, search.length() - 4));
-						if (directory == null) {
-							for (String f : new File(outDir).list()) {
-								if (f.contains(fileStem)) {
-								  try {
-								    int tempNum = Integer.parseInt(f.substring(fileStem.length(), f.length() - 4));
-								    if (tempNum > runsToMake) {
-								      runsToMake = tempNum;
-								    }
-								  } catch (Exception e) {
-								  }
-								}
-							}
-						}
-						else {
-							for (String f : new File(outDir + separator + directory).list()) {
-								if (f.contains(fileStem)) {
-								  try {
-								    int tempNum = Integer.parseInt(f.substring(fileStem.length(), f.length() - 4));
-								    if (tempNum > runsToMake) {
-								      runsToMake = tempNum;
-								    } 
-								  } catch (Exception e) {
-								  }
-								}
-							}
-						}
-						for (int i = 0; i < graphSpecies.size(); i++) {
-							average.add(new ArrayList<Double>());
-							variance.add(new ArrayList<Double>());
-						}
-						(average.get(0)).add(0.0);
-						(variance.get(0)).add(0.0);
-						int count = 0;
-						int skip = firstOne;
-						for (int j = 0; j < runsToMake; j++) {
-							int counter = 1;
-							if (!first) {
-								if (firstOne != 1) {
-									j--;
-									firstOne = 1;
-								}
-								boolean loop = true;
-								while (loop && j < runsToMake && (j + 1) != skip) {
-									if (directory == null) {
-										if (new File(outDir + separator + fileStem + (j + 1) + "."
-												+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
-											input.close();
-											prog.close();
-											fileInput.close();
-											fileInput = new FileInputStream(new File(outDir + separator + fileStem
-													+ (j + 1) + "." + printer_id.substring(0, printer_id.length() - 8)));
-											prog = new ProgressMonitorInputStream(biomodelsim.frame(),
-													"Reading Reb2sac Output Data From "
-															+ new File(outDir + separator + fileStem + (j + 1) + "."
-																	+ printer_id.substring(0, printer_id.length() - 8)).getName(),
-													fileInput);
-											input = new BufferedInputStream(prog);
-											for (int i = 0; i < readCount; i++) {
-												input.read();
-											}
-											loop = false;
-											count++;
-										}
-										else {
-											j++;
-										}
-									}
-									else {
-										if (new File(outDir + separator + directory + separator + fileStem + (j + 1)
-												+ "." + printer_id.substring(0, printer_id.length() - 8)).exists()) {
-											input.close();
-											prog.close();
-											fileInput.close();
-											fileInput = new FileInputStream(new File(outDir + separator + directory
-													+ separator + fileStem + (j + 1) + "."
-													+ printer_id.substring(0, printer_id.length() - 8)));
-											prog = new ProgressMonitorInputStream(biomodelsim.frame(),
-													"Reading Reb2sac Output Data From "
-															+ new File(outDir + separator + directory + separator + fileStem
-																	+ (j + 1) + "."
-																	+ printer_id.substring(0, printer_id.length() - 8)).getName(),
-													fileInput);
-											input = new BufferedInputStream(prog);
-											for (int i = 0; i < readCount; i++) {
-												input.read();
-											}
-											loop = false;
-											count++;
-										}
-										else {
-											j++;
-										}
+				if (word.equals("0") || word.equals("0.0")) {
+					boolean first = true;
+					int runsToMake = 1;
+					String[] findNum = startFile.split(separator);
+					String search = findNum[findNum.length - 1];
+					int firstOne = Integer.parseInt(search.substring(4, search.length() - 4));
+					if (directory == null) {
+						for (String f : new File(outDir).list()) {
+							if (f.contains(fileStem)) {
+								try {
+									int tempNum = Integer.parseInt(f.substring(fileStem.length(), f.length() - 4));
+									if (tempNum > runsToMake) {
+										runsToMake = tempNum;
 									}
 								}
-							}
-							reading = true;
-							while (reading) {
-								word = "";
-								readWord = true;
-								int read;
-								while (readWord) {
-									read = input.read();
-									cha = (char) read;
-									while (!Character.isWhitespace(cha) && cha != ',' && cha != ':' && cha != ';'
-											&& cha != '!' && cha != '?' && cha != '\"' && cha != '\'' && cha != '('
-											&& cha != ')' && cha != '{' && cha != '}' && cha != '[' && cha != ']'
-											&& cha != '<' && cha != '>' && cha != '_' && cha != '*' && cha != '='
-											&& read != -1) {
-										word += cha;
-										read = input.read();
-										cha = (char) read;
-									}
-									if (read == -1) {
-										reading = false;
-										first = false;
-									}
-									readWord = false;
-								}
-								int insert;
-								if (!word.equals("")) {
-									if (word.equals("nan")) {
-										if (!warning) {
-											JOptionPane.showMessageDialog(biomodelsim.frame(), "Found NAN in data."
-													+ "\nReplacing with 0s.", "NAN In Data", JOptionPane.WARNING_MESSAGE);
-											warning = true;
-										}
-										word = "0";
-									}
-									if (first) {
-										if (counter < graphSpecies.size()) {
-											insert = counter;
-											(average.get(insert)).add(Double.parseDouble(word));
-											if (insert == 0) {
-												(variance.get(insert)).add(Double.parseDouble(word));
-											}
-											else {
-												(variance.get(insert)).add(0.0);
-											}
-										}
-										else {
-											insert = counter % graphSpecies.size();
-											(average.get(insert)).add(Double.parseDouble(word));
-											if (insert == 0) {
-												(variance.get(insert)).add(Double.parseDouble(word));
-											}
-											else {
-												(variance.get(insert)).add(0.0);
-											}
-										}
-									}
-									else {
-										if (counter < graphSpecies.size()) {
-											insert = counter;
-											try {
-												double old = (average.get(insert)).get(insert / graphSpecies.size());
-												(average.get(insert)).set(insert / graphSpecies.size(), old
-														+ ((Double.parseDouble(word) - old) / (count + 1)));
-												double newMean = (average.get(insert)).get(insert / graphSpecies.size());
-												if (insert == 0) {
-													(variance.get(insert)).set(insert / graphSpecies.size(), old
-															+ ((Double.parseDouble(word) - old) / (count + 1)));
-												}
-												else {
-													double vary = (((count - 1) * (variance.get(insert)).get(insert
-															/ graphSpecies.size())) + (Double.parseDouble(word) - newMean)
-															* (Double.parseDouble(word) - old))
-															/ count;
-													(variance.get(insert)).set(insert / graphSpecies.size(), vary);
-												}
-											}
-											catch (Exception e2) {
-												(average.get(insert)).add(Double.parseDouble(word));
-												if (insert == 0) {
-													(variance.get(insert)).add(Double.parseDouble(word));
-												}
-												else {
-													(variance.get(insert)).add(0.0);
-												}
-											}
-										}
-										else {
-											insert = counter % graphSpecies.size();
-											try {
-												double old = (average.get(insert)).get(counter / graphSpecies.size());
-												(average.get(insert)).set(counter / graphSpecies.size(), old
-														+ ((Double.parseDouble(word) - old) / (count + 1)));
-												double newMean = (average.get(insert)).get(counter / graphSpecies.size());
-												if (insert == 0) {
-													(variance.get(insert)).set(counter / graphSpecies.size(), old
-															+ ((Double.parseDouble(word) - old) / (count + 1)));
-												}
-												else {
-													double vary = (((count - 1) * (variance.get(insert)).get(counter
-															/ graphSpecies.size())) + (Double.parseDouble(word) - newMean)
-															* (Double.parseDouble(word) - old))
-															/ count;
-													(variance.get(insert)).set(counter / graphSpecies.size(), vary);
-												}
-											}
-											catch (Exception e2) {
-												(average.get(insert)).add(Double.parseDouble(word));
-												if (insert == 0) {
-													(variance.get(insert)).add(Double.parseDouble(word));
-												}
-												else {
-													(variance.get(insert)).add(0.0);
-												}
-											}
-										}
-									}
-									counter++;
+								catch (Exception e) {
 								}
 							}
 						}
 					}
+					else {
+						for (String f : new File(outDir + separator + directory).list()) {
+							if (f.contains(fileStem)) {
+								try {
+									int tempNum = Integer.parseInt(f.substring(fileStem.length(), f.length() - 4));
+									if (tempNum > runsToMake) {
+										runsToMake = tempNum;
+									}
+								}
+								catch (Exception e) {
+								}
+							}
+						}
+					}
+					for (int i = 0; i < graphSpecies.size(); i++) {
+						average.add(new ArrayList<Double>());
+						variance.add(new ArrayList<Double>());
+					}
+					(average.get(0)).add(0.0);
+					(variance.get(0)).add(0.0);
+					int count = 0;
+					int skip = firstOne;
+					for (int j = 0; j < runsToMake; j++) {
+						int counter = 1;
+						if (!first) {
+							if (firstOne != 1) {
+								j--;
+								firstOne = 1;
+							}
+							boolean loop = true;
+							while (loop && j < runsToMake && (j + 1) != skip) {
+								if (directory == null) {
+									if (new File(outDir + separator + fileStem + (j + 1) + "."
+											+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
+										input.close();
+										prog.close();
+										fileInput.close();
+										fileInput = new FileInputStream(new File(outDir + separator + fileStem
+												+ (j + 1) + "." + printer_id.substring(0, printer_id.length() - 8)));
+										prog = new ProgressMonitorInputStream(biomodelsim.frame(),
+												"Reading Reb2sac Output Data From "
+														+ new File(outDir + separator + fileStem + (j + 1) + "."
+																+ printer_id.substring(0, printer_id.length() - 8)).getName(),
+												fileInput);
+										input = new BufferedInputStream(prog);
+										for (int i = 0; i < readCount; i++) {
+											input.read();
+										}
+										loop = false;
+										count++;
+									}
+									else {
+										j++;
+									}
+								}
+								else {
+									if (new File(outDir + separator + directory + separator + fileStem + (j + 1)
+											+ "." + printer_id.substring(0, printer_id.length() - 8)).exists()) {
+										input.close();
+										prog.close();
+										fileInput.close();
+										fileInput = new FileInputStream(new File(outDir + separator + directory
+												+ separator + fileStem + (j + 1) + "."
+												+ printer_id.substring(0, printer_id.length() - 8)));
+										prog = new ProgressMonitorInputStream(biomodelsim.frame(),
+												"Reading Reb2sac Output Data From "
+														+ new File(outDir + separator + directory + separator + fileStem
+																+ (j + 1) + "." + printer_id.substring(0, printer_id.length() - 8))
+																.getName(), fileInput);
+										input = new BufferedInputStream(prog);
+										for (int i = 0; i < readCount; i++) {
+											input.read();
+										}
+										loop = false;
+										count++;
+									}
+									else {
+										j++;
+									}
+								}
+							}
+						}
+						reading = true;
+						while (reading) {
+							word = "";
+							readWord = true;
+							int read;
+							while (readWord) {
+								read = input.read();
+								cha = (char) read;
+								while (!Character.isWhitespace(cha) && cha != ',' && cha != ':' && cha != ';'
+										&& cha != '!' && cha != '?' && cha != '\"' && cha != '\'' && cha != '('
+										&& cha != ')' && cha != '{' && cha != '}' && cha != '[' && cha != ']'
+										&& cha != '<' && cha != '>' && cha != '_' && cha != '*' && cha != '='
+										&& read != -1) {
+									word += cha;
+									read = input.read();
+									cha = (char) read;
+								}
+								if (read == -1) {
+									reading = false;
+									first = false;
+								}
+								readWord = false;
+							}
+							int insert;
+							if (!word.equals("")) {
+								if (word.equals("nan")) {
+									if (!warning) {
+										JOptionPane.showMessageDialog(biomodelsim.frame(), "Found NAN in data."
+												+ "\nReplacing with 0s.", "NAN In Data", JOptionPane.WARNING_MESSAGE);
+										warning = true;
+									}
+									word = "0";
+								}
+								if (first) {
+									if (counter < graphSpecies.size()) {
+										insert = counter;
+										(average.get(insert)).add(Double.parseDouble(word));
+										if (insert == 0) {
+											(variance.get(insert)).add(Double.parseDouble(word));
+										}
+										else {
+											(variance.get(insert)).add(0.0);
+										}
+									}
+									else {
+										insert = counter % graphSpecies.size();
+										(average.get(insert)).add(Double.parseDouble(word));
+										if (insert == 0) {
+											(variance.get(insert)).add(Double.parseDouble(word));
+										}
+										else {
+											(variance.get(insert)).add(0.0);
+										}
+									}
+								}
+								else {
+									if (counter < graphSpecies.size()) {
+										insert = counter;
+										try {
+											double old = (average.get(insert)).get(insert / graphSpecies.size());
+											(average.get(insert)).set(insert / graphSpecies.size(), old
+													+ ((Double.parseDouble(word) - old) / (count + 1)));
+											double newMean = (average.get(insert)).get(insert / graphSpecies.size());
+											if (insert == 0) {
+												(variance.get(insert)).set(insert / graphSpecies.size(), old
+														+ ((Double.parseDouble(word) - old) / (count + 1)));
+											}
+											else {
+												double vary = (((count - 1) * (variance.get(insert)).get(insert
+														/ graphSpecies.size())) + (Double.parseDouble(word) - newMean)
+														* (Double.parseDouble(word) - old))
+														/ count;
+												(variance.get(insert)).set(insert / graphSpecies.size(), vary);
+											}
+										}
+										catch (Exception e2) {
+											(average.get(insert)).add(Double.parseDouble(word));
+											if (insert == 0) {
+												(variance.get(insert)).add(Double.parseDouble(word));
+											}
+											else {
+												(variance.get(insert)).add(0.0);
+											}
+										}
+									}
+									else {
+										insert = counter % graphSpecies.size();
+										try {
+											double old = (average.get(insert)).get(counter / graphSpecies.size());
+											(average.get(insert)).set(counter / graphSpecies.size(), old
+													+ ((Double.parseDouble(word) - old) / (count + 1)));
+											double newMean = (average.get(insert)).get(counter / graphSpecies.size());
+											if (insert == 0) {
+												(variance.get(insert)).set(counter / graphSpecies.size(), old
+														+ ((Double.parseDouble(word) - old) / (count + 1)));
+											}
+											else {
+												double vary = (((count - 1) * (variance.get(insert)).get(counter
+														/ graphSpecies.size())) + (Double.parseDouble(word) - newMean)
+														* (Double.parseDouble(word) - old))
+														/ count;
+												(variance.get(insert)).set(counter / graphSpecies.size(), vary);
+											}
+										}
+										catch (Exception e2) {
+											(average.get(insert)).add(Double.parseDouble(word));
+											if (insert == 0) {
+												(variance.get(insert)).add(Double.parseDouble(word));
+											}
+											else {
+												(variance.get(insert)).add(0.0);
+											}
+										}
+									}
+								}
+								counter++;
+							}
+						}
+					}
+				}
 			}
 			deviation = new ArrayList<ArrayList<Double>>();
 			for (int i = 0; i < variance.size(); i++) {
@@ -4323,7 +4306,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		final JTextField x = new JTextField(chart.getCategoryPlot().getDomainAxis().getLabel(), 5);
 		final JTextField y = new JTextField(chart.getCategoryPlot().getRangeAxis().getLabel(), 5);
 		String simDirString = outDir.split(separator)[outDir.split(separator).length - 1];
-		final IconNode simDir = new IconNode(simDirString);
+		simDir = new IconNode(simDirString);
 		String[] files = new File(outDir).list();
 		for (int i = 1; i < files.length; i++) {
 			String index = files[i];
@@ -4338,7 +4321,16 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		for (String file : files) {
 			if (file.length() > 3 && file.substring(file.length() - 4).equals(".txt")) {
 				if (file.contains("sim-rep")) {
-					simDir.add(new IconNode(file.substring(0, file.length() - 4)));
+					IconNode n = new IconNode(file.substring(0, file.length() - 4));
+					simDir.add(n);
+					n.setIconName("");
+					for (GraphProbs g : probGraphed) {
+						if (g.getDirectory().equals("")) {
+							n.setIcon(TextIcons.getIcon("g"));
+							n.setIconName("" + (char) 10003);
+							simDir.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
+						}
+					}
 				}
 			}
 			else if (new File(outDir + separator + file).isDirectory()) {
@@ -4354,7 +4346,16 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					IconNode d = new IconNode(file);
 					for (String f : new File(outDir + separator + file).list()) {
 						if (f.equals("sim-rep.txt")) {
-							d.add(new IconNode(f.substring(0, f.length() - 4)));
+							IconNode n = new IconNode(new IconNode(f.substring(0, f.length() - 4)));
+							d.add(n);
+							n.setIconName("");
+							for (GraphProbs g : probGraphed) {
+								if (g.getDirectory().equals(d.toString())) {
+									n.setIcon(TextIcons.getIcon("g"));
+									n.setIconName("" + (char) 10003);
+									d.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
+								}
+							}
 						}
 					}
 					simDir.add(d);
@@ -4368,6 +4369,12 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		}
 		else {
 			tree = new JTree(simDir);
+			tree.putClientProperty("JTree.icons", makeIcons());
+			tree.setCellRenderer(new IconNodeRenderer());
+			DefaultTreeCellRenderer renderer = (DefaultTreeCellRenderer) tree.getCellRenderer();
+			renderer.setLeafIcon(MetalIconFactory.getTreeLeafIcon());
+			renderer.setClosedIcon(MetalIconFactory.getTreeFolderIcon());
+			renderer.setOpenIcon(MetalIconFactory.getTreeFolderIcon());
 			final JPanel all = new JPanel(new BorderLayout());
 			final JScrollPane scroll = new JScrollPane();
 			tree.addTreeExpansionListener(new TreeExpansionListener() {
@@ -4539,6 +4546,45 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					for (int i = 0; i < size; i++) {
 						probGraphed.remove();
 					}
+					IconNode n = simDir;
+					while (n != null) {
+						if (n.isLeaf()) {
+							n.setIcon(MetalIconFactory.getTreeLeafIcon());
+							n.setIconName("");
+							IconNode check = (IconNode) ((DefaultMutableTreeNode) n.getParent()).getChildAfter(n);
+							if (check == null) {
+								n = (IconNode) n.getParent();
+								if (n.getParent() == null) {
+									n = null;
+								}
+								else {
+									IconNode check2 = (IconNode) ((DefaultMutableTreeNode) n.getParent())
+											.getChildAfter(n);
+									if (check2 == null) {
+										n = (IconNode) n.getParent();
+										if (n.getParent() == null) {
+											n = null;
+										}
+										else {
+											n = (IconNode) ((DefaultMutableTreeNode) n.getParent()).getChildAfter(n);
+										}
+									}
+									else {
+										n = check2;
+									}
+								}
+							}
+							else {
+								n = check;
+							}
+						}
+						else {
+							n.setIcon(MetalIconFactory.getTreeFolderIcon());
+							n = (IconNode) n.getChildAt(0);
+						}
+					}
+					tree.revalidate();
+					tree.repaint();
 					if (tree.getSelectionCount() > 0) {
 						int selectedRow = tree.getSelectionRows()[0];
 						tree.setSelectionRow(0);
@@ -4727,6 +4773,11 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				public void actionPerformed(ActionEvent e) {
 					int i = Integer.parseInt(e.getActionCommand());
 					if (((JCheckBox) e.getSource()).isSelected()) {
+						node.setIcon(TextIcons.getIcon("g"));
+						node.setIconName("" + (char) 10003);
+						((IconNode) node.getParent()).setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
+						tree.revalidate();
+						tree.repaint();
 						String s = series.get(i).getText();
 						((JCheckBox) e.getSource()).setSelected(false);
 						int[] cols = new int[34];
@@ -4973,6 +5024,28 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 										.get(i).getText().trim(), i, directory));
 					}
 					else {
+						boolean check = false;
+						for (JCheckBox b : boxes) {
+							if (b.isSelected()) {
+								check = true;
+							}
+						}
+						if (!check) {
+							node.setIcon(MetalIconFactory.getTreeLeafIcon());
+							node.setIconName("");
+							boolean check2 = false;
+							IconNode parent = ((IconNode) node.getParent());
+							for (int j = 0; j < parent.getChildCount(); j++) {
+								if (((IconNode) parent.getChildAt(j)).getIconName().equals("" + (char) 10003)) {
+									check2 = true;
+								}
+							}
+							if (!check2) {
+								parent.setIcon(MetalIconFactory.getTreeFolderIcon());
+							}
+							tree.revalidate();
+							tree.repaint();
+						}
 						ArrayList<GraphProbs> remove = new ArrayList<GraphProbs>();
 						for (GraphProbs g : probGraphed) {
 							if (g.getNumber() == i && g.getDirectory().equals(directory)) {

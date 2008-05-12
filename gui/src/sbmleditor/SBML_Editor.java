@@ -446,6 +446,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		addCompart.addActionListener(this);
 		removeCompart.addActionListener(this);
 		editCompart.addActionListener(this);
+		ArrayList<String> getParams = new ArrayList<String>();
 		if (paramsOnly) {
 			parameterChanges = new ArrayList<String>();
 			try {
@@ -454,7 +455,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					scan.nextLine();
 				}
 				while (scan.hasNextLine()) {
-					parameterChanges.add(scan.nextLine());
+					getParams.add(scan.nextLine());
 				}
 				scan.close();
 			}
@@ -486,9 +487,10 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				comps[i] += " " + compartment.getUnits();
 			}
 			if (paramsOnly) {
-				for (int j = 0; j < parameterChanges.size(); j++) {
-					if (parameterChanges.get(j).split(" ")[0].equals(compartment.getId())) {
-						String[] splits = parameterChanges.get(j).split(" ");
+				for (int j = 0; j < getParams.size(); j++) {
+					if (getParams.get(j).split(" ")[0].equals(compartment.getId())) {
+						parameterChanges.add(getParams.get(j));
+						String[] splits = getParams.get(j).split(" ");
 						if (splits[splits.length - 2].equals("Custom")) {
 							String value = splits[splits.length - 1];
 							compartment.setSize(Double.parseDouble(value));
@@ -554,9 +556,10 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				specs[i] += " " + species.getUnits();
 			}
 			if (paramsOnly) {
-				for (int j = 0; j < parameterChanges.size(); j++) {
-					if (parameterChanges.get(j).split(" ")[0].equals(species.getId())) {
-						String[] splits = parameterChanges.get(j).split(" ");
+				for (int j = 0; j < getParams.size(); j++) {
+					if (getParams.get(j).split(" ")[0].equals(species.getId())) {
+						parameterChanges.add(getParams.get(j));
+						String[] splits = getParams.get(j).split(" ");
 						if (splits[splits.length - 2].equals("Custom")) {
 							String value = splits[splits.length - 1];
 							if (species.isSetInitialAmount()) {
@@ -627,10 +630,10 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				ListOf params = reaction.getKineticLaw().getListOfParameters();
 				for (int j = 0; j < reaction.getKineticLaw().getNumParameters(); j++) {
 					Parameter paramet = ((Parameter) (params.get(j)));
-					for (int k = 0; k < parameterChanges.size(); k++) {
-						if (parameterChanges.get(k).split(" ")[0].equals(reaction.getId() + "/"
-								+ paramet.getId())) {
-							String[] splits = parameterChanges.get(k).split(" ");
+					for (int k = 0; k < getParams.size(); k++) {
+						if (getParams.get(k).split(" ")[0].equals(reaction.getId() + "/" + paramet.getId())) {
+							parameterChanges.add(getParams.get(k));
+							String[] splits = getParams.get(k).split(" ");
 							if (splits[splits.length - 2].equals("Custom")) {
 								String value = splits[splits.length - 1];
 								paramet.setValue(Double.parseDouble(value));
@@ -689,9 +692,10 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				params[i] = parameter.getId() + " " + parameter.getValue();
 			}
 			if (paramsOnly) {
-				for (int j = 0; j < parameterChanges.size(); j++) {
-					if (parameterChanges.get(j).split(" ")[0].equals(parameter.getId())) {
-						String[] splits = parameterChanges.get(j).split(" ");
+				for (int j = 0; j < getParams.size(); j++) {
+					if (getParams.get(j).split(" ")[0].equals(parameter.getId())) {
+						parameterChanges.add(getParams.get(j));
+						String[] splits = getParams.get(j).split(" ");
 						if (splits[splits.length - 2].equals("Custom")) {
 							String value = splits[splits.length - 1];
 							parameter.setValue(Double.parseDouble(value));
@@ -9371,7 +9375,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						"Units Do Not Match", JOptionPane.ERROR_MESSAGE);
 				return true;
 			}
-			}
+		}
 		return false;
 	}
 
@@ -9455,7 +9459,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			// System.out.println(unit.getKind() + " Exp = " + unit.getExponent() + "
 			// Mult = " + unit.getMultiplier() + " Scale = " + unit.getScale());
 			// }
-			}
+		}
 		return false;
 	}
 
@@ -9463,7 +9467,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 * Check the units of an event assignment
 	 */
 	public boolean checkEventAssignmentUnits(EventAssignment assign) {
-	        document.getModel().populateListFormulaUnitsData();
+		document.getModel().populateListFormulaUnitsData();
 		if (assign.containsUndeclaredUnits()) {
 			JOptionPane.showMessageDialog(biosim.frame(), "Event assignment to " + assign.getVariable()
 					+ " contains literals numbers or parameters with undeclared units.\n"
@@ -9500,26 +9504,28 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	/**
 	 * Check the units of an event delay
 	 */
- 	public boolean checkEventDelayUnits(Delay delay) {
-// 	  document.getModel().populateListFormulaUnitsData(); 
-// 	  System.out.println(myFormulaToString(delay.getMath()));
-// 	  if (delay.containsUndeclaredUnits()) {
-// 	    JOptionPane.showMessageDialog(biosim.frame(), "Event assignment delay contains literals numbers or parameters with undeclared units.\n" +
-// 					  "Therefore, it is not possible to completely verify the consistency of the units.",
-// 					  "Contains Undeclared Units", JOptionPane.WARNING_MESSAGE);
-// 	    return false;
-// 	  } else {
-// 	    UnitDefinition unitDef = delay.getDerivedUnitDefinition();
-// 	    /* NEED TO CHECK IT AGAINST TIME HERE */
-// 	  }
- 	  return false;
- 	}
+	public boolean checkEventDelayUnits(Delay delay) {
+		// document.getModel().populateListFormulaUnitsData();
+		// System.out.println(myFormulaToString(delay.getMath()));
+		// if (delay.containsUndeclaredUnits()) {
+		// JOptionPane.showMessageDialog(biosim.frame(), "Event assignment delay
+		// contains literals numbers or parameters with undeclared units.\n" +
+		// "Therefore, it is not possible to completely verify the consistency of
+		// the units.",
+		// "Contains Undeclared Units", JOptionPane.WARNING_MESSAGE);
+		// return false;
+		// } else {
+		// UnitDefinition unitDef = delay.getDerivedUnitDefinition();
+		// /* NEED TO CHECK IT AGAINST TIME HERE */
+		// }
+		return false;
+	}
 
 	/**
 	 * Check the units of a kinetic law
 	 */
 	public boolean checkKineticLawUnits(KineticLaw law) {
-	        document.getModel().populateListFormulaUnitsData();
+		document.getModel().populateListFormulaUnitsData();
 		if (law.containsUndeclaredUnits()) {
 			JOptionPane.showMessageDialog(biosim.frame(),
 					"Kinetic law contains literals numbers or parameters with undeclared units.\n"
