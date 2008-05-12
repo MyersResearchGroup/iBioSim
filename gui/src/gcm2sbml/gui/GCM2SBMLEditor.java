@@ -177,9 +177,9 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 		
 
 		species = new PropertyList("Species List");
-		EditButton addInit = new EditButton("Add Specie", species);
-		RemoveButton removeInit = new RemoveButton("Remove Specie", species);
-		EditButton editInit = new EditButton("Edit Specie", species);
+		EditButton addInit = new EditButton("Add Species", species);
+		RemoveButton removeInit = new RemoveButton("Remove Species", species);
+		EditButton editInit = new EditButton("Edit Species", species);
 		species.addAllItem(gcm.getSpecies().keySet());
 
 		JPanel initPanel = Utility.createPanel(this, "Species", species,
@@ -259,7 +259,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 						list.removeItem(name);
 					}
 				}
-			} else if (getName().contains("Specie")) {
+			} else if (getName().contains("Species")) {
 				String name = null;
 				if (list.getSelectedValue() != null) {
 					name = list.getSelectedValue().toString();
@@ -270,7 +270,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 						JOptionPane
 								.showMessageDialog(
 										this,
-										"Cannot remove specie "
+										"Cannot remove species "
 												+ name
 												+ " because it is currently in other reactions");
 					}
@@ -322,7 +322,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 				return;
 			}
 			dirty = true;
-			if (getName().contains("Specie")) {
+			if (getName().contains("Species")) {
 				String selected = null;
 				if (list.getSelectedValue() != null
 						&& getName().contains("Edit")) {
@@ -363,7 +363,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 		private PropertyList list = null;
 	}
 
-	private String[] options = { "Okay", "Cancel" };
+	private String[] options = { "Ok", "Cancel" };
 
 	private PropertyList species = null;
 

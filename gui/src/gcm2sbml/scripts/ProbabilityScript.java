@@ -79,30 +79,30 @@ public class ProbabilityScript extends TestCase {
 	}
 
 	public void testProbabilities() {
-		try {
-			generateProbabilities("promoter", 5);
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.out.println("Error on promoter");
-		}
-		try {
-			generateProbabilities("coop", 5);
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.out.println("Error on coop");
-		}
+//		try {
+//			generateProbabilities("promoter", 5);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			System.out.println("Error on promoter");
+//		}
+//		try {
+//			generateProbabilities("coop", 5);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			System.out.println("Error on coop");
+//		}
 		try {
 			generateProbabilities("rep", 6);
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.out.println("Error on rep");
 		}		
-		try {
-			generateProbabilities("decay", 8);
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.out.println("Error on decay");
-		}		
+//		try {
+//			generateProbabilities("decay", 8);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			System.out.println("Error on decay");
+//		}		
 		try {
 			generateProbabilities("ratio", 6);
 		} catch (Exception e) {

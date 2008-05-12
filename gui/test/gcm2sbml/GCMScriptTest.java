@@ -223,7 +223,7 @@ public class GCMScriptTest extends TestCase{
 			gcm = new GCMFile();
 			gcm.load(directory + fileSerparator + si);
 			gcm.setParameter(GlobalConstants.KDECAY_STRING, ""+newDecay);
-			gcm.setParameter(GlobalConstants.OCR_VALUE, ""+newKoc);
+			gcm.setParameter(GlobalConstants.OCR_STRING, ""+newKoc);
 			gcm.save(saveDirectory + fileSerparator + ratio + i + fileSerparator + "si.gcm");
 			parser = new GCMParser(saveDirectory + fileSerparator + ratio + i + fileSerparator + "si.gcm");			
 			network = parser.buildNetwork();
@@ -238,7 +238,7 @@ public class GCMScriptTest extends TestCase{
 			gcm = new GCMFile();
 			gcm.load(directory + fileSerparator + majority);
 			gcm.setParameter(GlobalConstants.KDECAY_STRING, ""+newDecay);
-			gcm.setParameter(GlobalConstants.OCR_VALUE, ""+newKoc);
+			gcm.setParameter(GlobalConstants.OCR_STRING, ""+newKoc);
 			gcm.save(saveDirectory + fileSerparator + ratio + i + fileSerparator + "majority.gcm");
 			parser = new GCMParser(saveDirectory + fileSerparator + ratio + i + fileSerparator + "majority.gcm");			
 			network = parser.buildNetwork();
@@ -309,7 +309,7 @@ public class GCMScriptTest extends TestCase{
 	private double[] kratio = new double[] {.25/2, .25, .5, 1, 2, 4};
 	private double[] kcoop = new double[] {1, 2, 3, 4, 5, 6};
 	private double[] krep = new double[] {.1, .15, .2, .4, .5, .8,  1};
-	private double[] kdecay = new double[] {.0075/2., .0075/1.5, .0075/1.25, .0075, .0075*1.2, .0075*1.125, .0075*1.5, .0075*2};
+	private double[] kdecay = new double[] {.0075/2., .0075/1.5, .0075/1.25, .0075, .0075*1.125, .0075*1.2, .0075*1.5, .0075*2};
 	private int numPromoters = 5;
 	private String directory = "gcm";	
 	private char fileSerparator = File.separatorChar;

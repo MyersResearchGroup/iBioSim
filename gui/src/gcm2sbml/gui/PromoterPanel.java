@@ -173,7 +173,7 @@ public class PromoterPanel extends JPanel {
 	}
 	
 	
-	private String[] options = { "Okay", "Cancel" };
+	private String[] options = { "Ok", "Cancel" };
 	private HashMap<String, PropertyField> fields = null;
 	private String selected = "";
 	private GCMFile gcm = null;

@@ -35,7 +35,7 @@ public class TimingScript extends TestCase {
 			System.out.println("Error on coop");
 		}
 		try {
-			generateTiming("rep", 6);
+			generateTiming("rep", 7);
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.out.println("Error on rep");
@@ -78,8 +78,14 @@ public class TimingScript extends TestCase {
 								+ dataGate[j]);
 				ExperimentResult expResults = new ExperimentResult(results);
 				double[] times = findTime(expResults);
-				timingResults[j*2][i-1] = times[0];
-				timingResults[j*2+1][i-1] = times[1];
+				timingResults[j*2][i-1] = times[0] - switchHighTime;
+				if (timingResults[j*2][i-1] < 0) {
+					timingResults[j*2][i-1] = 0;
+				}
+				timingResults[j*2+1][i-1] = times[1] - switchLowTime;
+				if (timingResults[j*2+1][i-1] < 0) {
+					timingResults[j*2+1][i-1] = 0;
+				}
 			}
 		}
 		printResults(directory + File.separator + files + ".dat", timingResults);

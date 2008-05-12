@@ -195,7 +195,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 
 	private PropertyList influences = null;
 
-	private String[] options = { "Okay", "Cancel" };
+	private String[] options = { "Ok", "Cancel" };
 
 	private GCMFile gcm = null;
 
