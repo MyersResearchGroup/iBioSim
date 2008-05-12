@@ -547,7 +547,7 @@ public class Nary_Run implements ActionListener, Runnable {
 			return;
 		}
 		String[] finalS = Buttons.getList(finalStates, finalState);
-		Run runProgram = new Run();
+		Run runProgram = new Run(null);
 		naryCancel.addActionListener(runProgram);
 		runProgram.createNaryProperties(timeLimit, printInterval, outDir, rndSeed, run, printer_id,
 				printer_track_quantity, getFilename, naryFrame, filename, monteCarlo, stopE, stopR, finalS,

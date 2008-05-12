@@ -760,14 +760,14 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		change = false;
 		if (paramsOnly) {
 			saveNoRun = new JButton("Save Parameters");
-			run = new JButton("Save And Run");
+			run = new JButton("Save and Run");
 			saveNoRun.setMnemonic(KeyEvent.VK_S);
 			run.setMnemonic(KeyEvent.VK_R);
 			saveNoRun.addActionListener(this);
 			run.addActionListener(this);
 			JPanel saveRun = new JPanel();
-			saveRun.add(saveNoRun);
 			saveRun.add(run);
+			saveRun.add(saveNoRun);
 			JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, saveRun, null);
 			splitPane.setDividerSize(0);
 			this.add(splitPane, "South");
