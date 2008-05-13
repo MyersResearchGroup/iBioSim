@@ -3633,7 +3633,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			return;
 		}
 		JPanel initAssignPanel = new JPanel();
-		JPanel initPanel = new JPanel(new GridLayout(2, 2));
+		JPanel initPanel = new JPanel();
 		JLabel varLabel = new JLabel("Symbol:");
 		JLabel assignLabel = new JLabel("Assignment:");
 		initVar = new JComboBox();
@@ -3667,7 +3667,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				initVar.addItem(id);
 			}
 		}
-		initMath = new JTextField(12);
+		initMath = new JTextField(30);
 		int Rindex = -1;
 		if (option.equals("OK")) {
 			initVar.setSelectedItem(selected.split(" ")[0]);
@@ -3906,14 +3906,14 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			return;
 		}
 		JPanel rulePanel = new JPanel();
-		JPanel rulPanel = new JPanel(new GridLayout(3, 2));
+		JPanel rulPanel = new JPanel();
 		JLabel typeLabel = new JLabel("Type:");
 		JLabel varLabel = new JLabel("Variable:");
 		JLabel ruleLabel = new JLabel("Rule:");
 		String[] list = { "Algebraic", "Assignment", "Rate" };
 		ruleType = new JComboBox(list);
 		ruleVar = new JComboBox();
-		ruleMath = new JTextField(12);
+		ruleMath = new JTextField(30);
 		ruleVar.setEnabled(false);
 		ruleType.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -4844,7 +4844,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			return;
 		}
 		JPanel eventAssignPanel = new JPanel();
-		JPanel EAPanel = new JPanel(new GridLayout(2, 2));
+		JPanel EAPanel = new JPanel();
 		JLabel idLabel = new JLabel("Variable:");
 		JLabel eqnLabel = new JLabel("Assignment:");
 		eaID = new JComboBox();
@@ -4883,7 +4883,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				}
 			}
 		}
-		eqn = new JTextField(12);
+		eqn = new JTextField(30);
 		if (option.equals("OK")) {
 			String selectAssign = ((String) eventAssign.getSelectedValue());
 			eaID.setSelectedItem(selectAssign.split(" ")[0]);
@@ -5007,13 +5007,13 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			return;
 		}
 		JPanel constraintPanel = new JPanel();
-		JPanel consPanel = new JPanel(new GridLayout(3, 2));
+		JPanel consPanel = new JPanel();
 		JLabel IDLabel = new JLabel("ID:");
 		JLabel mathLabel = new JLabel("Constraint:");
 		JLabel messageLabel = new JLabel("Messsage:");
-		consID = new JTextField(20);
-		consMath = new JTextField(20);
-		consMessage = new JTextField(20);
+		consID = new JTextField(12);
+		consMath = new JTextField(30);
+		consMessage = new JTextField(30);
 		String selectedID = "";
 		int Cindex = -1;
 		if (option.equals("OK")) {

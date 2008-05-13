@@ -370,18 +370,19 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 			}
 		}
 
-		// Creates the run button
-		save = new JButton("Save Parameters");
 		JPanel runHolder = new JPanel();
-		runHolder.add(save);
-		save.addActionListener(this);
-		save.setMnemonic(KeyEvent.VK_S);
 
 		// Creates the run button
 		run = new JButton("Save and Learn");
 		runHolder.add(run);
 		run.addActionListener(this);
 		run.setMnemonic(KeyEvent.VK_L);
+
+		// Creates the run button
+		save = new JButton("Save Parameters");
+		runHolder.add(save);
+		save.addActionListener(this);
+		save.setMnemonic(KeyEvent.VK_S);
 
 		// Creates the view circuit button
 		viewGcm = new JButton("View Circuit");
