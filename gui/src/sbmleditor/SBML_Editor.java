@@ -2476,7 +2476,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					JOptionPane.ERROR_MESSAGE);
 			return true;
 		}
-		if (ID.equals("t") || ID.equals("t") || ID.equals("true") || ID.equals("false")
+		if (ID.equals("t") || ID.equals("time") || ID.equals("true") || ID.equals("false")
 				|| ID.equals("notanumber") || ID.equals("pi") || ID.equals("infinity")
 				|| ID.equals("exponentiale") || ID.equals("abs") || ID.equals("arccos")
 				|| ID.equals("arccosh") || ID.equals("arcsin") || ID.equals("arcsinh")
@@ -7225,6 +7225,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					|| splitLaw[i].equals("not") || splitLaw[i].equals("eq") || splitLaw[i].equals("geq")
 					|| splitLaw[i].equals("leq") || splitLaw[i].equals("gt") || splitLaw[i].equals("neq")
 					|| splitLaw[i].equals("lt") || splitLaw[i].equals("delay") || splitLaw[i].equals("t")
+			                || splitLaw[i].equals("time")
 					|| splitLaw[i].equals("true") || splitLaw[i].equals("false") || splitLaw[i].equals("pi")
 					|| splitLaw[i].equals("exponentiale")) {
 			}
@@ -8986,6 +8987,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	public void setTimeAndTrigVar(ASTNode node) {
 		if (node.getType() == libsbml.AST_NAME) {
 			if (node.getName().equals("t")) {
+				node.setType(libsbml.AST_NAME_TIME);
+			} else if (node.getName().equals("time")) {
 				node.setType(libsbml.AST_NAME_TIME);
 			}
 		}
