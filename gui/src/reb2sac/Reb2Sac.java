@@ -206,7 +206,6 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		limit = new JTextField("100.0", 39);
 		interval = new JTextField("1.0", 15);
 		step = new JTextField("1.0", 15);
-		step.setEnabled(false);
 		absErr = new JTextField("1.0E-9", 15);
 		int next = 1;
 		String filename = "sim" + next;
@@ -220,7 +219,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		simulatorsLabel = new JLabel("Possible Simulators/Analyzers:");
 		limitLabel = new JLabel("Time Limit:");
 		intervalLabel = new JLabel("Print Interval:");
-		stepLabel = new JLabel("Time Step:");
+		stepLabel = new JLabel("Maximum Time Step:");
 		errorLabel = new JLabel("Absolute Error:");
 		seedLabel = new JLabel("Random Seed:");
 		runsLabel = new JLabel("Runs:");
@@ -369,9 +368,10 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		seedLabel.setEnabled(false);
 		runs.setEnabled(false);
 		runsLabel.setEnabled(false);
-		stepLabel.setEnabled(false);
+		step.setEnabled(true);
+		stepLabel.setEnabled(true);
+		absErr.setEnabled(true);
 		errorLabel.setEnabled(true);
-		absErr.setEnabled(false);
 		JPanel odeMonteAndMarkovPanel = new JPanel();
 		odeMonteAndMarkovPanel.add(choose2);
 		odeMonteAndMarkovPanel.add(ODE);
@@ -1017,36 +1017,36 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				description.setText("Euler method");
 			}
 			else if (simulators.getSelectedItem().equals("gear1")) {
-				step.setEnabled(false);
-				stepLabel.setEnabled(false);
+				step.setEnabled(true);
+				stepLabel.setEnabled(true);
 				absErr.setEnabled(true);
 				errorLabel.setEnabled(true);
 				description.setText("Gear method, M=1");
 			}
 			else if (simulators.getSelectedItem().equals("gear2")) {
-				step.setEnabled(false);
-				stepLabel.setEnabled(false);
+				step.setEnabled(true);
+				stepLabel.setEnabled(true);
 				absErr.setEnabled(true);
 				errorLabel.setEnabled(true);
 				description.setText("Gear method, M=2");
 			}
 			else if (simulators.getSelectedItem().equals("rk4imp")) {
-				step.setEnabled(false);
-				stepLabel.setEnabled(false);
+				step.setEnabled(true);
+				stepLabel.setEnabled(true);
 				absErr.setEnabled(true);
 				errorLabel.setEnabled(true);
 				description.setText("Implicit 4th order Runge-Kutta at Gaussian points");
 			}
 			else if (simulators.getSelectedItem().equals("rk8pd")) {
-				step.setEnabled(false);
-				stepLabel.setEnabled(false);
+				step.setEnabled(true);
+				stepLabel.setEnabled(true);
 				absErr.setEnabled(true);
 				errorLabel.setEnabled(true);
 				description.setText("Embedded Runge-Kutta Prince-Dormand (8,9) method");
 			}
 			else if (simulators.getSelectedItem().equals("rkf45")) {
-				step.setEnabled(false);
-				stepLabel.setEnabled(false);
+				step.setEnabled(true);
+				stepLabel.setEnabled(true);
 				absErr.setEnabled(true);
 				errorLabel.setEnabled(true);
 				description.setText("Embedded Runge-Kutta-Fehlberg (4, 5) method");
@@ -2990,7 +2990,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					absErr.setText(load.getProperty("ode.simulation.absolute.error"));
 				}
 				else {
-					absErr = new JTextField("1.0E-9", 15);
+				        absErr.setText("1.0E-9");
 				}
 				if (load.containsKey("monte.carlo.simulation.time.limit")) {
 					limit.setText(load.getProperty("monte.carlo.simulation.time.limit"));
