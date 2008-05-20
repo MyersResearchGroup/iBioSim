@@ -205,7 +205,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		simulators.addActionListener(this);
 		limit = new JTextField("100.0", 39);
 		interval = new JTextField("1.0", 15);
-		step = new JTextField("1.0", 15);
+		step = new JTextField("inf", 15);
 		absErr = new JTextField("1.0E-9", 15);
 		int next = 1;
 		String filename = "sim" + next;
@@ -1053,31 +1053,43 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			}
 			else if (simulators.getSelectedItem().equals("gillespie")) {
 				description.setText("Gillespie's direct method");
+				step.setEnabled(true);
+				stepLabel.setEnabled(true);
 				errorLabel.setEnabled(false);
 				absErr.setEnabled(false);
 			}
 			else if (simulators.getSelectedItem().equals("emc-sim")) {
 				description.setText("Monte Carlo sim with jump count as" + " independent variable");
+				step.setEnabled(true);
+				stepLabel.setEnabled(true);
 				errorLabel.setEnabled(false);
 				absErr.setEnabled(false);
 			}
 			else if (simulators.getSelectedItem().equals("bunker")) {
 				description.setText("Bunker's method");
+				step.setEnabled(true);
+				stepLabel.setEnabled(true);
 				errorLabel.setEnabled(false);
 				absErr.setEnabled(false);
 			}
 			else if (simulators.getSelectedItem().equals("nmc")) {
 				description.setText("Monte Carlo simulation with normally" + " distributed waiting time");
+				step.setEnabled(true);
+				stepLabel.setEnabled(true);
 				errorLabel.setEnabled(false);
 				absErr.setEnabled(false);
 			}
 			else if (simulators.getSelectedItem().equals("ctmc-transient")) {
 				description.setText("Transient Distribution Analysis");
+				step.setEnabled(false);
+				stepLabel.setEnabled(false);
 				errorLabel.setEnabled(false);
 				absErr.setEnabled(false);
 			}
 			else if (simulators.getSelectedItem().equals("atacs")) {
 				description.setText("ATACS Analysis Tool");
+				step.setEnabled(false);
+				stepLabel.setEnabled(false);
 				errorLabel.setEnabled(false);
 				absErr.setEnabled(false);
 			}
@@ -1770,6 +1782,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					getProps.load(load);
 					load.close();
 					if (getProps.containsKey("monte.carlo.simulation.time.limit")) {
+						step.setText(getProps.getProperty("monte.carlo.simulation.time.step"));
 						limit.setText(getProps.getProperty("monte.carlo.simulation.time.limit"));
 						interval.setText(getProps.getProperty("monte.carlo.simulation.print.interval"));
 					}
@@ -1813,17 +1826,21 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-		try {
-			// if (step.isEnabled()) {
-			timeStep = Double.parseDouble(step.getText().trim());
-			// }
-		}
-		catch (Exception e1) {
-			// if (step.isEnabled()) {
-			JOptionPane.showMessageDialog(biomodelsim.frame(),
-					"Must Enter A Real Number Into The Time Step Field.", "Error", JOptionPane.ERROR_MESSAGE);
-			// }
-			return;
+		if (step.getText().trim().equals("inf")) {
+		  timeStep = Double.MAX_VALUE;
+		} else {
+		  try {
+		    // if (step.isEnabled()) {
+		    timeStep = Double.parseDouble(step.getText().trim());
+		    // }
+		  }
+		  catch (Exception e1) {
+		    // if (step.isEnabled()) {
+		    JOptionPane.showMessageDialog(biomodelsim.frame(),
+						  "Must Enter A Real Number Into The Time Step Field.", "Error", JOptionPane.ERROR_MESSAGE);
+		    // }
+		    return;
+		  }
 		}
 		try {
 			// if (absErr.isEnabled()) {
@@ -2041,6 +2058,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		String propName = simProp.substring(0, simProp.length()
 				- getFilename[getFilename.length - 1].length())
 				+ getFilename[getFilename.length - 1].substring(0, cut) + ".properties";
+		/*
 		String monteLimit = "";
 		String monteInterval = "";
 		try {
@@ -2059,6 +2077,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			JOptionPane.showMessageDialog(biomodelsim.frame(),
 					"Unable to add properties to property file.", "Error", JOptionPane.ERROR_MESSAGE);
 		}
+		*/
 		log.addText("Creating properties file:\n" + propName + "\n");
 		final JButton cancel = new JButton("Cancel");
 		final JFrame running = new JFrame("Progress");
@@ -2172,12 +2191,12 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					getProps.setProperty("monte.carlo.simulation.start.index", "1");
 				}
 			}
-			if (getProps.containsKey("ode.simulation.time.limit")) {
-				if (!monteLimit.equals("")) {
-					getProps.setProperty("monte.carlo.simulation.time.limit", monteLimit);
-					getProps.setProperty("monte.carlo.simulation.print.interval", monteInterval);
-				}
-			}
+// 			if (getProps.containsKey("ode.simulation.time.limit")) {
+// 				if (!monteLimit.equals("")) {
+// 					getProps.setProperty("monte.carlo.simulation.time.limit", monteLimit);
+// 					getProps.setProperty("monte.carlo.simulation.print.interval", monteInterval);
+// 				}
+// 			}
 			FileOutputStream store = new FileOutputStream(new File(propName));
 			getProps.store(store, getFilename[getFilename.length - 1].substring(0, cut) + " Properties");
 			store.close();
@@ -2200,7 +2219,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				simTab, root, progress, steps, simName + " " + direct);
 		if (nary.isSelected() && exit == 0) {
 			new Nary_Run(this, amountTerm, ge, gt, eq, lt, le, simulators, simProp.split(separator),
-					simProp, sbml, dot, xhtml, nary, ODE, monteCarlo, timeLimit, printInterval, root
+				     simProp, sbml, dot, xhtml, nary, ODE, monteCarlo, timeLimit, printInterval, timeStep, root
 							+ separator + simName, rndSeed, run, printer_id, printer_track_quantity, termCond,
 					intSpecies, rap1, rap2, qss, con, log, usingSSA, root + separator + outDir + separator
 							+ "user-defined.dat", biomodelsim, simTab, root);
@@ -2332,18 +2351,20 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-		try {
-			// if (step.isEnabled()) {
-			timeStep = Double.parseDouble(step.getText().trim());
-			// }
-		}
-		catch (Exception e1) {
-			if (step.isEnabled()) {
+		if (step.getText().trim().equals("inf")) {
+		  timeStep = Double.MAX_VALUE;
+		} else {
+		  try {
+		    timeStep = Double.parseDouble(step.getText().trim());
+		  }
+		  catch (Exception e1) {
+		    if (step.isEnabled()) {
 				JOptionPane.showMessageDialog(biomodelsim.frame(),
-						"Must Enter A Real Number Into The Time Step Field.", "Error",
-						JOptionPane.ERROR_MESSAGE);
-			}
-			return;
+							      "Must Enter A Real Number Into The Time Step Field.", "Error",
+							      JOptionPane.ERROR_MESSAGE);
+		    }
+		    return;
+		  }
 		}
 		try {
 			// if (absErr.isEnabled()) {
@@ -2532,24 +2553,24 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		String propName = sbmlProp.substring(0, sbmlProp.length()
 				- getFilename[getFilename.length - 1].length())
 				+ getFilename[getFilename.length - 1].substring(0, cut) + ".properties";
-		String monteLimit = "";
-		String monteInterval = "";
-		try {
-			if (new File(propName).exists()) {
-				Properties getProps = new Properties();
-				FileInputStream load = new FileInputStream(new File(propName));
-				getProps.load(load);
-				load.close();
-				if (getProps.containsKey("monte.carlo.simulation.time.limit")) {
-					monteLimit = getProps.getProperty("monte.carlo.simulation.time.limit");
-					monteInterval = getProps.getProperty("monte.carlo.simulation.print.interval");
-				}
-			}
-		}
-		catch (Exception e) {
-			JOptionPane.showMessageDialog(biomodelsim.frame(),
-					"Unable to add properties to property file.", "Error", JOptionPane.ERROR_MESSAGE);
-		}
+// 		String monteLimit = "";
+// 		String monteInterval = "";
+// 		try {
+// 			if (new File(propName).exists()) {
+// 				Properties getProps = new Properties();
+// 				FileInputStream load = new FileInputStream(new File(propName));
+// 				getProps.load(load);
+// 				load.close();
+// 				if (getProps.containsKey("monte.carlo.simulation.time.limit")) {
+// 					monteLimit = getProps.getProperty("monte.carlo.simulation.time.limit");
+// 					monteInterval = getProps.getProperty("monte.carlo.simulation.print.interval");
+// 				}
+// 			}
+// 		}
+// 		catch (Exception e) {
+// 			JOptionPane.showMessageDialog(biomodelsim.frame(),
+// 					"Unable to add properties to property file.", "Error", JOptionPane.ERROR_MESSAGE);
+// 		}
 		log.addText("Creating properties file:\n" + propName + "\n");
 		saveSAD(simName);
 		runProgram.createProperties(timeLimit, printInterval, timeStep, absError, ".",
@@ -2572,12 +2593,12 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				getProps.setProperty(split[0], split[1]);
 			}
 			getProps.setProperty("selected.simulator", (String) simulators.getSelectedItem());
-			if (getProps.containsKey("ode.simulation.time.limit")) {
-				if (!monteLimit.equals("")) {
-					getProps.setProperty("monte.carlo.simulation.time.limit", monteLimit);
-					getProps.setProperty("monte.carlo.simulation.print.interval", monteInterval);
-				}
-			}
+// 			if (getProps.containsKey("ode.simulation.time.limit")) {
+// 				if (!monteLimit.equals("")) {
+// 					getProps.setProperty("monte.carlo.simulation.time.limit", monteLimit);
+// 					getProps.setProperty("monte.carlo.simulation.print.interval", monteInterval);
+// 				}
+// 			}
 			FileOutputStream store = new FileOutputStream(new File(propName));
 			getProps.store(store, getFilename[getFilename.length - 1].substring(0, cut) + " Properties");
 			store.close();
@@ -2831,6 +2852,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					}
 					else if (key.equals("monte.carlo.simulation.print.interval")) {
 					}
+					else if (key.equals("monte.carlo.simulation.time.step")) {
+					}
 					else if (key.equals("monte.carlo.simulation.random.seed")) {
 					}
 					else if (key.equals("monte.carlo.simulation.runs")) {
@@ -2983,20 +3006,26 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 										clearIntSpecies);
 					}
 				}
-				if (load.containsKey("ode.simulation.time.step")) {
-					step.setText(load.getProperty("ode.simulation.time.step"));
-				}
 				if (load.containsKey("ode.simulation.absolute.error")) {
 					absErr.setText(load.getProperty("ode.simulation.absolute.error"));
 				}
 				else {
 				        absErr.setText("1.0E-9");
 				}
+				if (load.containsKey("monte.carlo.simulation.time.step")) {
+				  step.setText(load.getProperty("monte.carlo.simulation.time.step"));
+				} else {
+				  step.setText("inf");
+				}
 				if (load.containsKey("monte.carlo.simulation.time.limit")) {
-					limit.setText(load.getProperty("monte.carlo.simulation.time.limit"));
+				  limit.setText(load.getProperty("monte.carlo.simulation.time.limit"));
+				} else {
+				  limit.setText("100.0");
 				}
 				if (load.containsKey("monte.carlo.simulation.print.interval")) {
-					interval.setText(load.getProperty("monte.carlo.simulation.print.interval"));
+				  interval.setText(load.getProperty("monte.carlo.simulation.print.interval"));
+				} else {
+				  interval.setText("1.0");
 				}
 				if (load.containsKey("monte.carlo.simulation.random.seed")) {
 					seed.setText(load.getProperty("monte.carlo.simulation.random.seed"));
@@ -3053,6 +3082,9 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 						}
 						if (load.containsKey("ode.simulation.print.interval")) {
 							interval.setText(load.getProperty("ode.simulation.print.interval"));
+						}
+						if (load.containsKey("ode.simulation.time.step")) {
+							step.setText(load.getProperty("ode.simulation.time.step"));
 						}
 						Button_Enabling.enableODE(seed, seedLabel, runs, runsLabel, stepLabel, step,
 								errorLabel, absErr, limitLabel, limit, intervalLabel, interval, simulators,

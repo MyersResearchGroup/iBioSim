@@ -71,7 +71,7 @@ public class Nary_Run implements ActionListener, Runnable {
 	/*
 	 * Data used for monteCarlo abstraction
 	 */
-	private double timeLimit, printInterval;
+        private double timeLimit, printInterval, timeStep;
 
 	private int run;// Data used for monteCarlo abstraction
 
@@ -116,7 +116,7 @@ public class Nary_Run implements ActionListener, Runnable {
 			JRadioButton eq, JRadioButton lt, JRadioButton le, JComboBox simulators,
 			String[] getFilename, String filename, JRadioButton sbml, JRadioButton dot,
 			JRadioButton xhtml, JRadioButton nary, JRadioButton ODE, JRadioButton monteCarlo,
-			double timeLimit, double printInterval, String outDir, long rndSeed, int run,
+			double timeLimit, double printInterval, double timeStep, String outDir, long rndSeed, int run,
 			String printer_id, String printer_track_quantity, String[] termCond, String[] intSpecies,
 			double rap1, double rap2, double qss, int con, Log log, JCheckBox usingSSA, String ssaFile,
 			BioSim biomodelsim, JTabbedPane simTab, String root) {
@@ -143,6 +143,7 @@ public class Nary_Run implements ActionListener, Runnable {
 		this.lt = lt;
 		this.timeLimit = timeLimit;
 		this.printInterval = printInterval;
+		this.timeStep = timeStep;
 		this.outDir = outDir;
 		this.rndSeed = rndSeed;
 		this.run = run;
@@ -549,7 +550,7 @@ public class Nary_Run implements ActionListener, Runnable {
 		String[] finalS = Buttons.getList(finalStates, finalState);
 		Run runProgram = new Run(null);
 		naryCancel.addActionListener(runProgram);
-		runProgram.createNaryProperties(timeLimit, printInterval, outDir, rndSeed, run, printer_id,
+		runProgram.createNaryProperties(timeLimit, printInterval, timeStep, outDir, rndSeed, run, printer_id,
 				printer_track_quantity, getFilename, naryFrame, filename, monteCarlo, stopE, stopR, finalS,
 				inhib, consLevel, getSpeciesProps, conLevel, termCond, intSpecies, rap1, rap2, qss, con,
 				counts, usingSSA, ssaFile);

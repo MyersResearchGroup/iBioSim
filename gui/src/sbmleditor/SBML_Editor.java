@@ -4067,7 +4067,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					if (ruleType.getSelectedItem().equals("Algebraic")) {
 						r.setMath(myParseFormula(ruleMath.getText().trim()));
 						addStr = "0 = " + myFormulaToString(r.getMath());
-						// checkOverDetermined();
+						checkOverDetermined();
 					}
 					else if (ruleType.getSelectedItem().equals("Rate")) {
 						oldVar = r.getVariable();
@@ -4157,7 +4157,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						if (ruleType.getSelectedItem().equals("Algebraic")) {
 							AlgebraicRule r = document.getModel().createAlgebraicRule();
 							r.setMath(myParseFormula(ruleMath.getText().trim()));
-							// checkOverDetermined();
+							checkOverDetermined();
 						}
 						else if (ruleType.getSelectedItem().equals("Rate")) {
 							RateRule r = document.getModel().createRateRule();
@@ -4705,8 +4705,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					events.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 					ev = Buttons.getList(ev, events);
 					events.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-					org.sbml.libsbml.Event e = (org.sbml.libsbml.Event) (document.getModel()
-							.getListOfEvents()).get(Eindex);
+					org.sbml.libsbml.Event e = (org.sbml.libsbml.Event) (document.getModel().getListOfEvents()).get(Eindex);
 					while (e.getNumEventAssignments() > 0) {
 						e.getListOfEventAssignments().remove(0);
 					}
@@ -4728,14 +4727,16 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 								oldDelayStr = myFormulaToString(e.getDelay().getMath());
 							}
 							Delay delay = new Delay(myParseFormula(eventDelay.getText().trim()));
+							delay.setSBMLDocument( document );
 							e.setDelay(delay);
-							error = checkEventDelayUnits(delay);
+							error = checkEventDelayUnits(e.getDelay());
 							if (error) {
 								if (oldDelayStr.equals("")) {
 									e.unsetDelay();
 								}
 								else {
 									Delay oldDelay = new Delay(myParseFormula(oldDelayStr));
+									oldDelay.setSBMLDocument( document );
 									e.setDelay(oldDelay);
 								}
 							}
@@ -4780,8 +4781,9 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					e.setTrigger(trigger);
 					if (!eventDelay.getText().trim().equals("")) {
 						Delay delay = new Delay(myParseFormula(eventDelay.getText().trim()));
+						delay.setSBMLDocument( document );
 						e.setDelay(delay);
-						error = checkEventDelayUnits(delay);
+						error = checkEventDelayUnits(e.getDelay());
 					}
 					if (!error) {
 						for (int i = 0; i < assign.length; i++) {
@@ -6499,6 +6501,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				}
 				if (event.isSetDelay()) {
 					Delay delay = new Delay(updateMathVar(event.getDelay().getMath(), origId, newId));
+					delay.setSBMLDocument( document );
 					event.setDelay(delay);
 				}
 				ev[i] = myFormulaToString(event.getTrigger().getMath());
@@ -9509,20 +9512,22 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 * Check the units of an event delay
 	 */
 	public boolean checkEventDelayUnits(Delay delay) {
-		// document.getModel().populateListFormulaUnitsData();
-		// System.out.println(myFormulaToString(delay.getMath()));
-		// if (delay.containsUndeclaredUnits()) {
-		// JOptionPane.showMessageDialog(biosim.frame(), "Event assignment delay
-		// contains literals numbers or parameters with undeclared units.\n" +
-		// "Therefore, it is not possible to completely verify the consistency of
-		// the units.",
-		// "Contains Undeclared Units", JOptionPane.WARNING_MESSAGE);
-		// return false;
-		// } else {
-		// UnitDefinition unitDef = delay.getDerivedUnitDefinition();
-		// /* NEED TO CHECK IT AGAINST TIME HERE */
-		// }
-		return false;
+	  document.getModel().populateListFormulaUnitsData();
+	  if (delay.containsUndeclaredUnits()) {
+	    JOptionPane.showMessageDialog(biosim.frame(), "Event assignment delay contains literals numbers or parameters with undeclared units.\n" +
+					  "Therefore, it is not possible to completely verify the consistency of the units.","Contains Undeclared Units", 
+					  JOptionPane.WARNING_MESSAGE);
+	    return false;
+	  } else {
+	    UnitDefinition unitDef = delay.getDerivedUnitDefinition();
+	    if (!(unitDef.isVariantOfTime())) {
+	      JOptionPane.showMessageDialog(biosim.frame(), "Event assignment delay should be units of time.",
+					    "Delay Not Time Units", 
+					    JOptionPane.ERROR_MESSAGE);
+	      return true;
+	    }
+	  }
+	  return false;
 	}
 
 	/**
