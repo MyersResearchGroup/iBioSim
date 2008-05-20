@@ -211,8 +211,8 @@ public class Button_Enabling {
 		seedLabel.setEnabled(true);
 		runs.setEnabled(true);
 		runsLabel.setEnabled(true);
-		stepLabel.setEnabled(false);
-		step.setEnabled(false);
+		stepLabel.setEnabled(true);
+		step.setEnabled(true);
 		errorLabel.setEnabled(false);
 		limitLabel.setEnabled(true);
 		limit.setEnabled(true);

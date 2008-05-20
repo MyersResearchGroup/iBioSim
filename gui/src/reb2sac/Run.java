@@ -119,7 +119,11 @@ public class Run implements ActionListener {
 			// selectedButtons.equals("abs_ODE")) {
 			abs.setProperty("ode.simulation.time.limit", "" + timeLimit);
 			abs.setProperty("ode.simulation.print.interval", "" + printInterval);
-			abs.setProperty("ode.simulation.time.step", "" + timeStep);
+			if (timeStep == Double.MAX_VALUE) {
+			  abs.setProperty("ode.simulation.time.step", "inf");
+			} else {
+			  abs.setProperty("ode.simulation.time.step", "" + timeStep);
+			}
 			abs.setProperty("ode.simulation.absolute.error", "" + absError);
 			abs.setProperty("ode.simulation.out.dir", outDir);
 		}
@@ -128,6 +132,11 @@ public class Run implements ActionListener {
 			// selectedButtons.equals("abs_monteCarlo")) {
 			abs.setProperty("monte.carlo.simulation.time.limit", "" + timeLimit);
 			abs.setProperty("monte.carlo.simulation.print.interval", "" + printInterval);
+			if (timeStep == Double.MAX_VALUE) {
+			  abs.setProperty("monte.carlo.simulation.time.step", "inf");
+			} else {
+			  abs.setProperty("monte.carlo.simulation.time.step", "" + timeStep);
+			}
 			abs.setProperty("monte.carlo.simulation.random.seed", "" + rndSeed);
 			abs.setProperty("monte.carlo.simulation.runs", "" + run);
 			abs.setProperty("monte.carlo.simulation.out.dir", outDir);
@@ -176,7 +185,7 @@ public class Run implements ActionListener {
 	 * This method is given what data is entered into the nary frame and creates
 	 * the nary properties file from that information.
 	 */
-	public void createNaryProperties(double timeLimit, double printInterval, String outDir,
+	public void createNaryProperties(double timeLimit, double printInterval, double timeStep, String outDir,
 			long rndSeed, int run, String printer_id, String printer_track_quantity,
 			String[] getFilename, Component component, String filename, JRadioButton monteCarlo,
 			String stopE, double stopR, String[] finalS, ArrayList<JTextField> inhib,
@@ -239,6 +248,11 @@ public class Run implements ActionListener {
 		if (monteCarlo.isSelected()) {
 			nary.setProperty("monte.carlo.simulation.time.limit", "" + timeLimit);
 			nary.setProperty("monte.carlo.simulation.print.interval", "" + printInterval);
+			if (timeStep == Double.MAX_VALUE) {
+			  nary.setProperty("monte.carlo.simulation.time.step", "inf");
+			} else {
+			  nary.setProperty("monte.carlo.simulation.time.step", "" + timeStep);
+			}
 			nary.setProperty("monte.carlo.simulation.random.seed", "" + rndSeed);
 			nary.setProperty("monte.carlo.simulation.runs", "" + run);
 			nary.setProperty("monte.carlo.simulation.out.dir", ".");
