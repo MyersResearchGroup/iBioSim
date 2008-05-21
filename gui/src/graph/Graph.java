@@ -65,7 +65,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 	private BioSim biomodelsim; // tstubd gui
 
-        private JButton save, run, saveAs;
+	private JButton save, run, saveAs;
 
 	private JButton export; // buttons
 
@@ -130,8 +130,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	 * Creates a Graph Object from the data given and calls the private graph
 	 * helper method.
 	 */
-	public Graph(Reb2Sac reb2sac, String printer_track_quantity, String label, String printer_id, String outDir,
-		     String time, BioSim biomodelsim, String open, Log log, String graphName, boolean timeSeries) {
+	public Graph(Reb2Sac reb2sac, String printer_track_quantity, String label, String printer_id,
+			String outDir, String time, BioSim biomodelsim, String open, Log log, String graphName,
+			boolean timeSeries) {
 		this.reb2sac = reb2sac;
 		if (File.separator.equals("\\")) {
 			separator = "\\\\";
@@ -243,8 +244,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		// exportSvg.addActionListener(this);
 		// exportCsv.addActionListener(this);
 		if (reb2sac != null) {
-		  ButtonHolder.add(run);
-		} 
+			ButtonHolder.add(run);
+		}
 		ButtonHolder.add(save);
 		ButtonHolder.add(export);
 		// ButtonHolder.add(exportJPeg);
@@ -528,13 +529,14 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		double maxX = Double.MIN_VALUE;
 		for (int j = 0; j < dataset.getSeriesCount(); j++) {
 			XYSeries series = dataset.getSeries(j);
+			double[][] seriesArray = series.toArray();
 			Boolean visible = rend.getSeriesVisible(j);
 			if (visible == null || visible.equals(true)) {
 				for (int k = 0; k < series.getItemCount(); k++) {
-					maxY = Math.max(series.getY(k).doubleValue(), maxY);
-					minY = Math.min(series.getY(k).doubleValue(), minY);
-					maxX = Math.max(series.getX(k).doubleValue(), maxX);
-					minX = Math.min(series.getX(k).doubleValue(), minX);
+					maxY = Math.max(seriesArray[1][k], maxY);
+					minY = Math.min(seriesArray[1][k], minY);
+					maxX = Math.max(seriesArray[0][k], maxX);
+					minX = Math.min(seriesArray[0][k], minX);
 				}
 			}
 		}
@@ -542,23 +544,26 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		if (minY == Double.MAX_VALUE || maxY == Double.MIN_VALUE) {
 			axis.setRange(-1, 1);
 		}
-		else if ((maxY - minY) < .001) {
-			axis.setRange(minY - 1, maxY + 1);
-		}
+		/*
+		 * else if ((maxY - minY) < .001) { axis.setRange(minY - 1, maxY + 1); }
+		 */
 		else {
-			axis.setRange(Double.parseDouble(num.format(minY - (Math.abs(minY) * .1))), Double
-					.parseDouble(num.format(maxY + (Math.abs(maxY) * .1))));
+			/*
+			 * axis.setRange(Double.parseDouble(num.format(minY - (Math.abs(minY) *
+			 * .1))), Double .parseDouble(num.format(maxY + (Math.abs(maxY) * .1))));
+			 */
+			axis.setRange(minY - (Math.abs(minY) * .1), maxY + (Math.abs(maxY) * .1));
 		}
 		axis.setAutoTickUnitSelection(true);
 		axis = (NumberAxis) plot.getDomainAxis();
 		if (minX == Double.MAX_VALUE || maxX == Double.MIN_VALUE) {
 			axis.setRange(-1, 1);
 		}
-		else if ((maxX - minX) < .001) {
-			axis.setRange(minX - 1, maxX + 1);
-		}
+		/*
+		 * else if ((maxX - minX) < .001) { axis.setRange(minX - 1, maxX + 1); }
+		 */
 		else {
-			axis.setRange(Double.parseDouble(num.format(minX)), Double.parseDouble(num.format(maxX)));
+			axis.setRange(minX, maxX);
 		}
 		axis.setAutoTickUnitSelection(true);
 	}
@@ -2816,8 +2821,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		// exportSvg.addActionListener(this);
 		// exportCsv.addActionListener(this);
 		if (reb2sac != null) {
-		  ButtonHolder.add(run);
-		} 
+			ButtonHolder.add(run);
+		}
 		ButtonHolder.add(save);
 		if (timeSeries) {
 			ButtonHolder.add(saveAs);
@@ -4301,7 +4306,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		save.addActionListener(this);
 		export.addActionListener(this);
 		if (reb2sac != null) {
-		  ButtonHolder.add(run);
+			ButtonHolder.add(run);
 		}
 		ButtonHolder.add(save);
 		ButtonHolder.add(export);
@@ -5238,7 +5243,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		save.addActionListener(this);
 		export.addActionListener(this);
 		if (reb2sac != null) {
-		  ButtonHolder.add(run);
+			ButtonHolder.add(run);
 		}
 		ButtonHolder.add(save);
 		ButtonHolder.add(export);
