@@ -398,6 +398,10 @@ public class BioSim implements MouseListener, ActionListener {
 				if (System.getProperty("os.name").contentEquals("Linux")) {
 					directory = System.getenv("BIOSIM") + "/docs/";
 					command = "gnome-open ";
+				} 
+				else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
+					directory = System.getenv("BIOSIM") + "/docs/";
+					command = "open ";
 				}
 				else {
 					directory = System.getenv("BIOSIM") + "\\docs\\";
@@ -739,6 +743,9 @@ public class BioSim implements MouseListener, ActionListener {
 					if (System.getProperty("os.name").contentEquals("Linux")) {
 						command = "gnome-open ";
 					}
+					else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
+						command = "open ";
+					}				
 					else {
 						command = "cmd /c start ";
 					}

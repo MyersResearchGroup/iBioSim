@@ -534,6 +534,10 @@ public class Run implements ActionListener {
 						log.addText("Executing:\ngnome-open " + directory + out + ".xhtml" + "\n");
 						exec.exec("gnome-open " + out + ".xhtml", null, work);
 					}
+					else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
+						log.addText("Executing:\nopen " + directory + out + ".xhtml" + "\n");
+						exec.exec("open " + out + ".xhtml", null, work);
+					}
 					else {
 						log.addText("Executing:\ncmd /c start " + directory + out + ".xhtml" + "\n");
 						exec.exec("cmd /c start " + out + ".xhtml", null, work);
