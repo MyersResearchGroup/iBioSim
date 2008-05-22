@@ -431,7 +431,15 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		}
 		ids = model.getListOfConstraints();
 		for (int i = 0; i < model.getNumConstraints(); i++) {
+		  if (((Constraint) ids.get(i)).isSetMetaId()) {
 			usedIDs.add(((Constraint) ids.get(i)).getMetaId());
+		  }
+		}
+		ids = model.getListOfEvents();
+		for (int i = 0; i < model.getNumEvents(); i++) {
+		  if (((org.sbml.libsbml.Event) ids.get(i)).isSetId()) {
+			usedIDs.add(((org.sbml.libsbml.Event) ids.get(i)).getId());
+		  }
 		}
 
 		// sets up the compartments editor
@@ -957,7 +965,17 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		cons = new String[(int) model.getNumConstraints()];
 		for (int i = 0; i < model.getNumConstraints(); i++) {
 			Constraint constraint = (Constraint) listOfConstraints.get(i);
-			cons[i] = myFormulaToString(constraint.getMath());
+			if (!constraint.isSetMetaId()) {
+			  String constraintId = "constraint0";
+			  int cn = 0;
+			  while (usedIDs.contains(constraintId)) {
+			    cn++;
+			    constraintId = "constraint" + cn;
+			  } 
+			  usedIDs.add(constraintId);
+			  constraint.setMetaId(constraintId);
+			}
+			cons[i] = constraint.getMetaId();
 		}
 		JPanel constraintPanel = createPanel(model, "Constraints", constraints, cons, addConstraint,
 				removeConstraint, editConstraint);
@@ -971,7 +989,17 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		ev = new String[(int) model.getNumEvents()];
 		for (int i = 0; i < model.getNumEvents(); i++) {
 			org.sbml.libsbml.Event event = (org.sbml.libsbml.Event) listOfEvents.get(i);
-			ev[i] = myFormulaToString(event.getTrigger().getMath());
+			if (!event.isSetId()) {
+			  String eventId = "event0";
+			  int en = 0;
+			  while (usedIDs.contains(eventId)) {
+			    en++;
+			    eventId = "event" + en;
+			  } 
+			  usedIDs.add(eventId);
+			  event.setId(eventId);
+			}
+			ev[i] = event.getId(); 
 		}
 		JPanel eventPanel = createPanel(model, "Events", events, ev, addEvent, removeEvent, editEvent);
 
@@ -1528,6 +1556,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		if (events.getSelectedIndex() != -1) {
 			String selected = ((String) events.getSelectedValue());
 			removeTheEvent(selected);
+			usedIDs.remove(((String) events.getSelectedValue()).split(" ")[0]);
 			events.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 			ev = (String[]) Buttons.remove(events, ev);
 			events.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -1543,7 +1572,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		ListOf EL = document.getModel().getListOfEvents();
 		for (int i = 0; i < document.getModel().getNumEvents(); i++) {
 			org.sbml.libsbml.Event E = (org.sbml.libsbml.Event) EL.get(i);
-			if (myFormulaToString(E.getTrigger().getMath()).equals(selected)) {
+			if (E.getId().equals(selected)) {
 				EL.remove(i);
 			}
 		}
@@ -1570,10 +1599,11 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			String selected = ((String) constraints.getSelectedValue());
 			ListOf c = document.getModel().getListOfConstraints();
 			for (int i = 0; i < document.getModel().getNumConstraints(); i++) {
-				if (myFormulaToString(((Constraint) c.get(i)).getMath()).equals(selected)) {
-					usedIDs.remove(((Constraint) c.get(i)).getMetaId());
-					c.remove(i);
-				}
+			  if ((((Constraint) c.get(i)).getMetaId()).equals(selected)) {
+			    usedIDs.remove(((Constraint) c.get(i)).getMetaId());
+			    c.remove(i);
+			    break;
+			  }
 			}
 			constraints.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 			cons = (String[]) Buttons.remove(constraints, cons);
@@ -4523,6 +4553,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
+		int index = events.getSelectedIndex();
 		JPanel eventPanel = new JPanel(new BorderLayout());
 		// JPanel evPanel = new JPanel(new GridLayout(2, 2));
 		JPanel evPanel = new JPanel(new GridLayout(4, 2));
@@ -4554,16 +4585,18 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		scroll.setViewportView(eventAssign);
 		assign = new String[0];
 		int Eindex = -1;
+		String selectedID = "";
 		if (option.equals("OK")) {
 			String selected = ((String) events.getSelectedValue());
-			eventTrigger.setText(selected);
 			ListOf e = document.getModel().getListOfEvents();
 			for (int i = 0; i < document.getModel().getNumEvents(); i++) {
 				org.sbml.libsbml.Event event = (org.sbml.libsbml.Event) e.get(i);
-				if (myFormulaToString(event.getTrigger().getMath()).equals(selected)) {
+				if (event.getId().equals(selected)) {
 					Eindex = i;
 					eventID.setText(event.getId());
+					selectedID = event.getId();
 					eventName.setText(event.getName());
+					eventTrigger.setText(myFormulaToString(event.getTrigger().getMath()));
 					if (event.isSetDelay()) {
 						eventDelay.setText(myFormulaToString(event.getDelay().getMath()));
 					}
@@ -4577,6 +4610,14 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					}
 				}
 			}
+		} else {
+		  String eventId = "event0";
+		  int en = 0;
+		  while (usedIDs.contains(eventId)) {
+		    en++;
+		    eventId = "event" + en;
+		  } 
+		  eventID.setText(eventId);
 		}
 		sort(assign);
 		eventAssign.setListData(assign);
@@ -4600,7 +4641,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
-			error = false;
+			error = checkID(eventID.getText().trim(), selectedID, false);
 			if (eventTrigger.getText().trim().equals("")) {
 				JOptionPane.showMessageDialog(biosim.frame(), "Event must have a trigger formula.",
 						"Enter Trigger Formula", JOptionPane.ERROR_MESSAGE);
@@ -4701,7 +4742,6 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			}
 			if (!error) {
 				if (option.equals("OK")) {
-					int index = events.getSelectedIndex();
 					events.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 					ev = Buttons.getList(ev, events);
 					events.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -4757,7 +4797,12 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						else {
 							e.setName(eventName.getText().trim());
 						}
-						ev[index] = myFormulaToString(e.getTrigger().getMath());
+						for (int i = 0; i < usedIDs.size(); i++) {
+							if (usedIDs.get(i).equals(selectedID)) {
+								usedIDs.set(i, eventID.getText().trim());
+							}
+						}
+						ev[index] = e.getId(); 
 						sort(ev);
 						events.setListData(ev);
 						events.setSelectedIndex(index);
@@ -4775,7 +4820,6 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				}
 				else {
 					JList add = new JList();
-					int index = events.getSelectedIndex();
 					org.sbml.libsbml.Event e = document.getModel().createEvent();
 					Trigger trigger = new Trigger(myParseFormula(eventTrigger.getText().trim()));
 					e.setTrigger(trigger);
@@ -4801,12 +4845,14 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					if (!eventName.getText().trim().equals("")) {
 						e.setName(eventName.getText().trim());
 					}
-					Object[] adding = { myFormulaToString(e.getTrigger().getMath()) };
+					Object[] adding = { e.getId() };
+					//Object[] adding = { myFormulaToString(e.getTrigger().getMath()) };
 					add.setListData(adding);
 					add.setSelectedIndex(0);
 					events.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 					adding = Buttons.add(ev, events, add, false, null, null, null, null, null, null, biosim
 							.frame());
+					usedIDs.add(eventID.getText().trim());
 					ev = new String[adding.length];
 					for (int i = 0; i < adding.length; i++) {
 						ev[i] = (String) adding[i];
@@ -5020,22 +5066,30 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		int Cindex = -1;
 		if (option.equals("OK")) {
 			String selected = ((String) constraints.getSelectedValue());
-			consMath.setText(selected);
 			ListOf c = document.getModel().getListOfConstraints();
 			for (int i = 0; i < document.getModel().getNumConstraints(); i++) {
-				if (myFormulaToString(((Constraint) c.get(i)).getMath()).equals(selected)) {
-					Cindex = i;
-					if (((Constraint) c.get(i)).isSetMetaId()) {
-						selectedID = ((Constraint) c.get(i)).getMetaId();
-						consID.setText(selectedID);
-					}
-					if (((Constraint) c.get(i)).isSetMessage()) {
-						String message = XMLNode.convertXMLNodeToString(((Constraint) c.get(i)).getMessage());
-						message = message.substring(message.indexOf("xhtml\">") + 7, message.indexOf("</p>"));
-						consMessage.setText(message);
-					}
-				}
+			  if ((((Constraint) c.get(i)).getMetaId()).equals(selected)) {
+			    Cindex = i;
+			    consMath.setText(myFormulaToString(((Constraint) c.get(i)).getMath()));
+			    if (((Constraint) c.get(i)).isSetMetaId()) {
+			      selectedID = ((Constraint) c.get(i)).getMetaId();
+			      consID.setText(selectedID);
+			    }
+			    if (((Constraint) c.get(i)).isSetMessage()) {
+			      String message = XMLNode.convertXMLNodeToString(((Constraint) c.get(i)).getMessage());
+			      message = message.substring(message.indexOf("xhtml\">") + 7, message.indexOf("</p>"));
+			      consMessage.setText(message);
+			    }
+			  }
 			}
+		} else {
+		  String constraintId = "constraint0";
+		  int cn = 0;
+		  while (usedIDs.contains(constraintId)) {
+		    cn++;
+		    constraintId = "constraint" + cn;
+		  } 
+		  consID.setText(constraintId);
 		}
 		consPanel.add(IDLabel);
 		consPanel.add(consID);
@@ -5115,7 +5169,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 								usedIDs.set(i, consID.getText().trim());
 							}
 						}
-						cons[index] = myFormulaToString(c.getMath());
+						cons[index] = c.getMetaId();
 						sort(cons);
 						constraints.setListData(cons);
 						constraints.setSelectedIndex(index);
@@ -5133,7 +5187,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 							c.setMessage(xmlNode);
 						}
 						usedIDs.add(consID.getText().trim());
-						Object[] adding = { myFormulaToString(c.getMath()) };
+						Object[] adding = { c.getMetaId() };
 						add.setListData(adding);
 						add.setSelectedIndex(0);
 						constraints.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
@@ -6504,7 +6558,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					delay.setSBMLDocument( document );
 					event.setDelay(delay);
 				}
-				ev[i] = myFormulaToString(event.getTrigger().getMath());
+				ev[i] = event.getId();
 				for (int j = 0; j < event.getNumEventAssignments(); j++) {
 					EventAssignment ea = (EventAssignment) event.getListOfEventAssignments().get(j);
 					if (ea.getVariable().equals(origId)) {
@@ -6653,10 +6707,12 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		reacFast = new JComboBox(options);
 		reacFast.setSelectedItem("false");
 		String selectedID = "";
+		Reaction copyReact = null;
 		if (option.equals("OK")) {
 			Reaction reac = document.getModel().getReaction(
 					((String) reactions.getSelectedValue()).split(" ")[0]);
-			reacID.setText(reac.getId());
+			copyReact = (Reaction) reac.cloneObject();
+			reacID.setText(reac.getId()); 
 			selectedID = reac.getId();
 			reacName.setText(reac.getName());
 			if (reac.getReversible()) {
@@ -6671,6 +6727,14 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			else {
 				reacFast.setSelectedItem("false");
 			}
+		} else {
+		  String reactionId = "r0";
+		  int i = 0;
+		  while (usedIDs.contains(reactionId)) {
+		    i++;
+		    reactionId = "r" + i;
+		  } 
+		  reacID.setText(reactionId);
 		}
 		JPanel param = new JPanel(new BorderLayout());
 		JPanel addParams = new JPanel();
@@ -7007,7 +7071,6 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					reacts = Buttons.getList(reacts, reactions);
 					reactions.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 					Reaction react = document.getModel().getReaction(val);
-					Reaction copyReact = (Reaction) react.cloneObject();
 					ListOf remove;
 					long size;
 					remove = react.getKineticLaw().getListOfParameters();
@@ -7072,8 +7135,30 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						reactions.setSelectedIndex(index);
 					}
 					else {
-						removeTheReaction(reac);
-						document.getModel().addReaction(copyReact);
+					  changedParameters = new ArrayList<Parameter>();
+					  ListOf listOfParameters = react.getKineticLaw().getListOfParameters();
+					  for (int i = 0; i < react.getKineticLaw().getNumParameters(); i++) {
+					    Parameter parameter = (Parameter) listOfParameters.get(i);
+					    changedParameters.add(parameter);
+					  }
+					  changedProducts = new ArrayList<SpeciesReference>();
+					  ListOf listOfProducts = react.getListOfProducts();
+					  for (int i = 0; i < react.getNumProducts(); i++) {
+					    SpeciesReference product = (SpeciesReference) listOfProducts.get(i);
+					    changedProducts.add(product);
+					  }
+					  changedReactants = new ArrayList<SpeciesReference>();
+					  ListOf listOfReactants = react.getListOfReactants();
+					  for (int i = 0; i < react.getNumReactants(); i++) {
+					    SpeciesReference reactant = (SpeciesReference) listOfReactants.get(i);
+					    changedReactants.add(reactant);
+					  }
+					  changedModifiers = new ArrayList<ModifierSpeciesReference>();
+					  ListOf listOfModifiers = react.getListOfModifiers();
+					  for (int i = 0; i < react.getNumModifiers(); i++) {
+					    ModifierSpeciesReference modifier = (ModifierSpeciesReference) listOfModifiers.get(i);
+					    changedModifiers.add(modifier);
+					  }
 					}
 				}
 				else {
@@ -7143,7 +7228,12 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			}
 		}
 		if (value == JOptionPane.NO_OPTION) {
-			return;
+		  if (option.equals("OK")) {
+		    String reac = ((String) reactions.getSelectedValue()).split(" ")[0];
+		    removeTheReaction(reac);
+		    document.getModel().addReaction(copyReact);
+		  }
+		  return;
 		}
 	}
 
@@ -9521,8 +9611,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	  } else {
 	    UnitDefinition unitDef = delay.getDerivedUnitDefinition();
 	    if (!(unitDef.isVariantOfTime())) {
-	      JOptionPane.showMessageDialog(biosim.frame(), "Event assignment delay should be units of time.",
-					    "Delay Not Time Units", 
+	      JOptionPane.showMessageDialog(biosim.frame(), "Event delay should be units of time.",
+					    "Event Delay Not Time Units", 
 					    JOptionPane.ERROR_MESSAGE);
 	      return true;
 	    }
