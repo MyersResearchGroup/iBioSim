@@ -22,6 +22,7 @@ import org.sbml.libsbml.KineticLaw;
 import org.sbml.libsbml.Model;
 import org.sbml.libsbml.Parameter;
 import org.sbml.libsbml.SBMLDocument;
+import org.sbml.libsbml.SBMLReader;
 import org.sbml.libsbml.SBMLWriter;
 import org.sbml.libsbml.Species;
 import org.sbml.libsbml.SpeciesReference;
@@ -50,7 +51,7 @@ public class GeneticNetwork {
 			HashMap<String, Promoter> promoters) {
 		this(species, stateMap, promoters, null);
 	}
-	
+
 	/**
 	 * Constructor
 	 * 
@@ -61,7 +62,7 @@ public class GeneticNetwork {
 	 * @param promoters
 	 *            a hashmap of promoters
 	 * @param gcm
-	 * 			  a gcm file containing extra information
+	 *            a gcm file containing extra information
 	 */
 	public GeneticNetwork(HashMap<String, SpeciesInterface> species,
 			HashMap<String, SpeciesInterface> stateMap,
@@ -71,7 +72,7 @@ public class GeneticNetwork {
 		this.promoters = promoters;
 		this.properties = gcm;
 		initialize();
-	}	
+	}
 
 	/**
 	 * Loads in a properties file
@@ -90,15 +91,19 @@ public class GeneticNetwork {
 	 * @return the sbml document
 	 */
 	public SBMLDocument outputSBML(String filename) {
-		try {
-			int counter = 0;
-			SBMLDocument document = new SBMLDocument(2, 3);
-			currentDocument = document;
-			Model m = document.createModel();
-			document.setModel(m);
+		SBMLDocument document = new SBMLDocument(2, 3);
+		currentDocument = document;
+		Model m = document.createModel();
+		document.setModel(m);
+		document.getModel().addCompartment(new Compartment(compartment));
+		document.getModel().getCompartment(compartment).setSize(1);
+		outputSBML(filename, document);
+		return document;
+	}
 
-			document.getModel().addCompartment(new Compartment(compartment));
-			document.getModel().getCompartment(compartment).setSize(1);
+	public void outputSBML(String filename, SBMLDocument document) {
+		try {
+			Model m = document.getModel();
 			SBMLWriter writer = new SBMLWriter();
 			printSpecies(document);
 			printPromoters(document);
@@ -128,6 +133,23 @@ public class GeneticNetwork {
 			p.print(writer.writeToString(document));
 
 			p.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new IllegalStateException("Unable to output to SBML");
+		}
+	}
+
+	/**
+	 * Outputs the network to an SBML file
+	 * 
+	 * @param filename
+	 * @return the sbml document
+	 */
+	public SBMLDocument outputSBML(String filename, String sbmlFile) {
+		try {
+			int counter = 0;
+			SBMLDocument document = new SBMLReader().readSBML(sbmlFile);
+			outputSBML(filename, document);
 			return document;
 		} catch (Exception e) {
 			e.printStackTrace();

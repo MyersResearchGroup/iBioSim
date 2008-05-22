@@ -117,7 +117,7 @@ public class GCMParser {
 			promoters.put(promoter.getName(), promoter);
 		}
 
-		if (property.containsKey(GlobalConstants.BIO)) {
+		if (property.containsKey(GlobalConstants.BIO) && property.get(GlobalConstants.BIO).equals("yes")) {
 			Utility.print(debug, "GCMParser: Biochemical");
 			r.setBiochemical(true);
 		}

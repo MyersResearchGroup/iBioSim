@@ -198,19 +198,23 @@ public class InfluencePanel extends JPanel implements ActionListener {
 			}
 			property.put(GlobalConstants.TYPE, typeBox.getSelectedItem()
 					.toString());
-			if (bioBox.equals(bio[1])) {
-				property.put(GlobalConstants.BIO, bio[1]);
-			}
+			String label = "";
 			if (!promoterBox.getSelectedItem().equals("default")) {
 				property.put(GlobalConstants.PROMOTER, promoterBox.getSelectedItem());
+				label = promoterBox.getSelectedItem().toString();
 			}
+			if (bioBox.getSelectedItem().equals(bio[1])) {
+				property.put(GlobalConstants.BIO, bio[1]);
+				label = label + "+";
+			}
+			property.put("label", "\""+label+"\"");
 
 			if (selected != null && !oldName.equals(id)) {
 				list.removeItem(oldName);
 				gcm.removeInfluence(oldName);
 			}
 			list.removeItem(id);
-			list.addItem(id);
+			list.addItem(id);			
 			gcm.addInfluences(id, property);						
 		} else if (value == JOptionPane.NO_OPTION) {
 			// System.out.println();
