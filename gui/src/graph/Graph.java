@@ -1756,15 +1756,16 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					minX = Double.parseDouble(XMin.getText().trim());
 					maxX = Double.parseDouble(XMax.getText().trim());
 					scaleX = Double.parseDouble(XScale.getText().trim());
-					NumberFormat num = NumberFormat.getInstance();
-					num.setMaximumFractionDigits(4);
-					num.setGroupingUsed(false);
-					minY = Double.parseDouble(num.format(minY));
-					maxY = Double.parseDouble(num.format(maxY));
-					scaleY = Double.parseDouble(num.format(scaleY));
-					minX = Double.parseDouble(num.format(minX));
-					maxX = Double.parseDouble(num.format(maxX));
-					scaleX = Double.parseDouble(num.format(scaleX));
+					/*
+					 * NumberFormat num = NumberFormat.getInstance();
+					 * num.setMaximumFractionDigits(4); num.setGroupingUsed(false); minY =
+					 * Double.parseDouble(num.format(minY)); maxY =
+					 * Double.parseDouble(num.format(maxY)); scaleY =
+					 * Double.parseDouble(num.format(scaleY)); minX =
+					 * Double.parseDouble(num.format(minX)); maxX =
+					 * Double.parseDouble(num.format(maxX)); scaleX =
+					 * Double.parseDouble(num.format(scaleX));
+					 */
 				}
 				catch (Exception e1) {
 					JOptionPane.showMessageDialog(biomodelsim.frame(), "Must enter doubles into the inputs "
@@ -3678,15 +3679,16 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				minX = Double.parseDouble(XMin.getText().trim());
 				maxX = Double.parseDouble(XMax.getText().trim());
 				scaleX = Double.parseDouble(XScale.getText().trim());
-				NumberFormat num = NumberFormat.getInstance();
-				num.setMaximumFractionDigits(4);
-				num.setGroupingUsed(false);
-				minY = Double.parseDouble(num.format(minY));
-				maxY = Double.parseDouble(num.format(maxY));
-				scaleY = Double.parseDouble(num.format(scaleY));
-				minX = Double.parseDouble(num.format(minX));
-				maxX = Double.parseDouble(num.format(maxX));
-				scaleX = Double.parseDouble(num.format(scaleX));
+				/*
+				 * NumberFormat num = NumberFormat.getInstance();
+				 * num.setMaximumFractionDigits(4); num.setGroupingUsed(false); minY =
+				 * Double.parseDouble(num.format(minY)); maxY =
+				 * Double.parseDouble(num.format(maxY)); scaleY =
+				 * Double.parseDouble(num.format(scaleY)); minX =
+				 * Double.parseDouble(num.format(minX)); maxX =
+				 * Double.parseDouble(num.format(maxX)); scaleX =
+				 * Double.parseDouble(num.format(scaleX));
+				 */
 			}
 			catch (Exception e1) {
 			}
