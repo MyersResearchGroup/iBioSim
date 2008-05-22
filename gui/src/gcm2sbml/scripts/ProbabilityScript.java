@@ -1,5 +1,7 @@
 package gcm2sbml.scripts;
 
+import gcm2sbml.util.Utility;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -49,7 +51,7 @@ public class ProbabilityScript extends TestCase {
 
 	public void Promoter() {
 		for (int i = 1; i <= 5; i++) {
-			String currDir = directory + File.separator + "promoter" + i;
+			String currDir = Utility.directory + File.separator + "promoter" + i;
 			for (int j = 0; j < 3; j++) {
 				SpeciesThresholdTester highTester = new SpeciesThresholdTester(
 						currDir, gate[j], highSpecies.get(j), lowSpecies.get(j));
@@ -79,30 +81,30 @@ public class ProbabilityScript extends TestCase {
 	}
 
 	public void testProbabilities() {
-//		try {
-//			generateProbabilities("promoter", 5);
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			System.out.println("Error on promoter");
-//		}
-//		try {
-//			generateProbabilities("coop", 5);
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			System.out.println("Error on coop");
-//		}
+		try {
+			generateProbabilities("promoter", 5);
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println("Error on promoter");
+		}
+		try {
+			generateProbabilities("coop", 5);
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println("Error on coop");
+		}
 		try {
 			generateProbabilities("rep", 6);
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.out.println("Error on rep");
 		}		
-//		try {
-//			generateProbabilities("decay", 8);
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			System.out.println("Error on decay");
-//		}		
+		try {
+			generateProbabilities("decay", 8);
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println("Error on decay");
+		}		
 		try {
 			generateProbabilities("ratio", 6);
 		} catch (Exception e) {
@@ -113,31 +115,33 @@ public class ProbabilityScript extends TestCase {
 
 	public void generateProbabilities(String files, int cases) {
 		for (int i = 1; i <= cases; i++) {
-			String currDir = directory + File.separator + files + i;
+			String currDir = Utility.directory + File.separator + files + i;
 			for (int j = 0; j < 4; j++) {
+				
 				SpeciesThresholdTester highTester = new SpeciesThresholdTester(
 						currDir, gate[j], highSpecies.get(j), lowSpecies.get(j));
 				double[][] results = script.generateStatistics(currDir
 						+ File.separator + gate[j] + experiment[1], highTester);
 				printResults(currDir + File.separator + dataGate[j] + "-"
 						+ dataInput[0] + "-" + dataChange[1] + ".dat", results);
-
+				System.out.println("Finished " + 1);
 				results = script.generateStatistics(currDir + File.separator
 						+ gate[j] + experiment[3], highTester);
 				printResults(currDir + File.separator + dataGate[j] + "-"
 						+ dataInput[1] + "-" + dataChange[1] + ".dat", results);
-
+				System.out.println("Finished " + 2);
 				SpeciesThresholdTester lowTester = new SpeciesThresholdTester(
 						currDir, gate[j], lowSpecies.get(j), highSpecies.get(j));
 				results = script.generateStatistics(currDir + File.separator
 						+ gate[j] + experiment[0], lowTester);
 				printResults(currDir + File.separator + dataGate[j] + "-"
 						+ dataInput[0] + "-" + dataChange[0] + ".dat", results);
-
+				System.out.println("Finished " + 3);
 				results = script.generateStatistics(currDir + File.separator
 						+ gate[j] + experiment[2], lowTester);
 				printResults(currDir + File.separator + dataGate[j] + "-"
 						+ dataInput[1] + "-" + dataChange[0] + ".dat", results);
+				System.out.println("Finished " + 4);
 			}
 		}
 	}
@@ -185,5 +189,4 @@ public class ProbabilityScript extends TestCase {
 	private String[] dataInput = { "heat", "light" };
 	private String[] dataChange = { "higher", "lower" };
 
-	private static final String directory = "/home/shang/namphuon/muller";
 }

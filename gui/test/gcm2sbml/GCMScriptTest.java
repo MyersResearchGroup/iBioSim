@@ -10,6 +10,7 @@ import gcm2sbml.network.GeneticNetwork;
 import gcm2sbml.parser.GCMFile;
 import gcm2sbml.parser.GCMParser;
 import gcm2sbml.util.GlobalConstants;
+import gcm2sbml.util.Utility;
 import junit.framework.TestCase;
 
 import org.junit.Before;
@@ -311,9 +312,9 @@ public class GCMScriptTest extends TestCase{
 	private double[] krep = new double[] {.1, .15, .2, .4, .5, .8,  1};
 	private double[] kdecay = new double[] {.0075/2., .0075/1.5, .0075/1.25, .0075, .0075*1.125, .0075*1.2, .0075*1.5, .0075*2};
 	private int numPromoters = 5;
-	private String directory = "gcm";	
+	private String directory = "gcm";
 	private char fileSerparator = File.separatorChar;
-	private String saveDirectory = "/home/shang/namphuon" + fileSerparator + "muller";
+	private String saveDirectory = Utility.directory;
 	private String toggle = "toggle.gcm";
 	private String si = "si.gcm";
 	private String majority = "majority.gcm";

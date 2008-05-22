@@ -45,6 +45,7 @@ public class ExperimentResult {
 			
 			} else if (index == timeValue.length - 1) {
 				index = -1;
+				break;
 			}
 		}
 		

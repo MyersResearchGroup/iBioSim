@@ -267,4 +267,6 @@ public class Utility {
 	public static final String DECAY = ".0075";
 	public static final String KDIMER = ".5";
 	public static final String DIMER = "1";
+	
+	public static final String directory = "/home/shang/namphuon/nobackup/BiologyProjects/muller";
 }

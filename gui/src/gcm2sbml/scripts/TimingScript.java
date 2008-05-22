@@ -71,7 +71,7 @@ public class TimingScript extends TestCase {
 		double[][] timingResults = new double[6][cases];
 
 		for (int i = 1; i <= cases; i++) {
-			String currDir = directory + File.separator + files + i;
+			String currDir = Utility.directory + File.separator + files + i;
 			for (int j = 0; j < 3; j++) {
 				HashMap<String, double[]> results = Utility
 						.calculateAverage(currDir + File.separator
@@ -87,8 +87,9 @@ public class TimingScript extends TestCase {
 					timingResults[j*2+1][i-1] = 0;
 				}
 			}
+			System.out.println("Done " + i);
 		}
-		printResults(directory + File.separator + files + ".dat", timingResults);
+		printResults(Utility.directory + File.separator + files + ".dat", timingResults);
 	}
 
 	private void printResults(String file, double[][] results) {
@@ -126,6 +127,4 @@ public class TimingScript extends TestCase {
 
 	private final static double switchHighTime = 5000;
 	private final static double switchLowTime = 10000;
-
-	private static final String directory = "/home/shang/namphuon/muller";
 }

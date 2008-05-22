@@ -114,6 +114,5 @@ public class GCMScript {
 
 	private String[] kind = { "coop", "rep", "promoter" };
 	private String[] gate = { "maj", "tog", "si" };
-	private String[] experiment = { "-h-high", "-h-low", "-l-high", "-l-low" };
-	private static final String directory = "/home/shang/namphuon/muller";
+	private String[] experiment = { "-h-high", "-h-low", "-l-high", "-l-low" };	
 }
