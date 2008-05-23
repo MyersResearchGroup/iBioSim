@@ -4076,6 +4076,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							if (graphProbs.contains(g.getID())) {
 								for (int i = 0; i < graphProbs.size(); i++) {
 									if (g.getID().equals(graphProbs.get(i))) {
+										g.setNumber(i);
 										histDataset.setValue(data[i], g.getSpecies(), "");
 									}
 								}
@@ -4115,6 +4116,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							if (graphProbs.contains(compare.split("~")[0].trim())) {
 								for (int i = 0; i < graphProbs.size(); i++) {
 									if (compare.split("~")[0].trim().equals(graphProbs.get(i))) {
+										g.setNumber(i);
 										histDataset.setValue(data[i], g.getSpecies(), "");
 									}
 								}
@@ -5295,6 +5297,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					if (graphProbs.size() != 0) {
 						for (int i = 0; i < graphProbs.size(); i++) {
 							if (g.getID().equals(graphProbs.get(i))) {
+								g.setNumber(i);
 								histDataset.setValue(data[i], g.getSpecies(), "");
 							}
 						}
@@ -5327,6 +5330,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					if (graphProbs.size() != 0) {
 						for (int i = 0; i < graphProbs.size(); i++) {
 							if (g.getID().equals(graphProbs.get(i))) {
+								g.setNumber(i);
 								histDataset.setValue(data[i], g.getSpecies(), "");
 							}
 						}
@@ -5396,6 +5400,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 		private int getNumber() {
 			return number;
+		}
+
+		private void setNumber(int n) {
+			number = n;
 		}
 	}
 
