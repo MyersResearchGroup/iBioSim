@@ -170,8 +170,8 @@ public class Button_Enabling {
 			JLabel limitLabel, JTextField limit, JLabel intervalLabel, JTextField interval,
 			JComboBox simulators, JLabel simulatorsLabel, JLabel explanation, JLabel description,
 			JCheckBox usingSSA) {
-		seed.setEnabled(false);
-		seedLabel.setEnabled(false);
+		seed.setEnabled(true);
+		seedLabel.setEnabled(true);
 		runs.setEnabled(false);
 		runsLabel.setEnabled(false);
 		stepLabel.setEnabled(true);

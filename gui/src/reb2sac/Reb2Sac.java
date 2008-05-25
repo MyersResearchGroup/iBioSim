@@ -364,8 +364,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		markov = new JRadioButton("Markov");
 		ODE.setSelected(true);
 		markov.setEnabled(false);
-		seed.setEnabled(false);
-		seedLabel.setEnabled(false);
+		seed.setEnabled(true);
+		seedLabel.setEnabled(true);
 		runs.setEnabled(false);
 		runsLabel.setEnabled(false);
 		step.setEnabled(true);
