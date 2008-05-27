@@ -139,13 +139,14 @@ public class GCMFile {
 			parseGlobal(data);
 			parsePromoters(data);
 		} catch (Exception e) {
-			JOptionPane.showMessageDialog(null,
-					"Unable to parse model, creating a blank model.", "Error",
-					JOptionPane.ERROR_MESSAGE);
-			species = new HashMap<String, Properties>();
-			influences = new HashMap<String, Properties>();
-			promoters = new HashMap<String, Properties>();
-			globalParameters = new HashMap<String, String>();
+			throw new IllegalArgumentException("Unable to parse GCM");
+//			JOptionPane.showMessageDialog(null,
+//					"Unable to parse model, creating a blank model.", "Error",
+//					JOptionPane.ERROR_MESSAGE);
+//			species = new HashMap<String, Properties>();
+//			influences = new HashMap<String, Properties>();
+//			promoters = new HashMap<String, Properties>();
+//			globalParameters = new HashMap<String, String>();
 		}
 	}
 
