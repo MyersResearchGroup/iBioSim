@@ -12,19 +12,25 @@ public class Log extends JPanel {
 
 	private JTextArea logArea; // log text area
 
+	private JScrollPane scroll;
+
 	public Log() {
 		// sets up the log text area and menu
 		logArea = new JTextArea();
 		logArea.setEditable(false);
-		JScrollPane scroll4 = new JScrollPane();
-		scroll4.setPreferredSize(new Dimension(1150, 150));
-		scroll4.setViewportView(logArea);
-		this.add(scroll4);
+		scroll = new JScrollPane();
+		scroll.setPreferredSize(new Dimension(1150, 150));
+		scroll.setViewportView(logArea);
+		this.add(scroll);
 	}
 
 	public void addText(String text) {
 		logArea.append(text + "\n");
 		logArea.setSelectionStart(logArea.getText().length());
 		logArea.setSelectionEnd(logArea.getText().length());
+	}
+
+	public void resizePanel(int x, int y) {
+		scroll.setPreferredSize(new Dimension(x, y));
 	}
 }
