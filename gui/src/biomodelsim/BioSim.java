@@ -143,7 +143,7 @@ public class BioSim implements MouseListener, ActionListener {
 		// Creates a new frame
 		frame = new JFrame("iBioSim");
 		frame.setIconImage(new ImageIcon(System.getenv("BIOSIM") + File.separator + "gui"
-				+ File.separator + "icons" + File.separator + "iBioSim.jpg").getImage());
+				+ File.separator + "icons" + File.separator + "iBioSim.png").getImage());
 
 		// Makes it so that clicking the x in the corner closes the program
 		WindowListener w = new WindowListener() {
