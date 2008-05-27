@@ -1191,7 +1191,8 @@ public class BioSim implements MouseListener, ActionListener {
 				else if (!filename.equals("")) {
 					String[] file = filename.split(separator);
 					try {
-						GCMParser parser = new GCMParser(filename);
+						// GCMParser parser =
+						new GCMParser(filename);
 						FileOutputStream out = new FileOutputStream(new File(root + separator
 								+ file[file.length - 1]));
 						FileInputStream in = new FileInputStream(new File(filename));

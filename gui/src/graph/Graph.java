@@ -13,7 +13,6 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.plaf.metal.MetalIconFactory;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
-
 import org.apache.batik.dom.*;
 import org.apache.batik.svggen.*;
 import org.jfree.chart.*;
@@ -26,6 +25,7 @@ import org.jfree.data.category.*;
 import org.jfree.data.xy.*;
 import org.jibble.epsgraphics.EpsGraphics2D;
 import org.w3c.dom.*;
+import parser.*;
 import com.lowagie.text.Document;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.*;
@@ -270,66 +270,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 	private void readGraphSpecies(String file, Component component) {
 		component.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-		try {
-			FileInputStream fileInput = new FileInputStream(new File(file));
-			ProgressMonitorInputStream prog = new ProgressMonitorInputStream(component,
-					"Reading Reb2sac Output Data From " + new File(file).getName(), fileInput);
-			InputStream input = new BufferedInputStream(prog);
-			graphSpecies = new ArrayList<String>();
-			boolean reading = true;
-			char cha;
-			int readCount = 0;
-			while (reading) {
-				String word = "";
-				boolean readWord = true;
-				while (readWord) {
-					int read = input.read();
-					readCount++;
-					if (read == -1) {
-						reading = false;
-						readWord = false;
-					}
-					cha = (char) read;
-					if (Character.isWhitespace(cha)) {
-						input.mark(3);
-						char next = (char) input.read();
-						char after = (char) input.read();
-						String check = "" + next + after;
-						if (word.equals("") || word.equals("0") || check.equals("0,")) {
-							readWord = false;
-						}
-						else {
-							word += cha;
-						}
-						input.reset();
-					}
-					else if (cha == ',' || cha == ':' || cha == ';' || cha == '\"' || cha == '\''
-							|| cha == '(' || cha == ')' || cha == '[' || cha == ']') {
-						readWord = false;
-					}
-					else if (read != -1) {
-						word += cha;
-					}
-				}
-				if (word.equals("0") || word.equals("0.0")) {
-					int read = 0;
-					while (read != -1) {
-						read = input.read();
-					}
-				}
-				else if (!word.equals("")) {
-					graphSpecies.add(word);
-				}
-			}
-			input.close();
-			prog.close();
-			fileInput.close();
-		}
-		catch (IOException e) {
-			JOptionPane.showMessageDialog(component, "Error Reading Data!"
-					+ "\nThere was an error reading the simulation output data.", "Error Reading Data",
-					JOptionPane.ERROR_MESSAGE);
-		}
+		graphSpecies = new TSDParser(file, component).getSpecies();
 		component.setCursor(null);
 	}
 
@@ -339,7 +280,6 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	 */
 	private ArrayList<ArrayList<Double>> readData(String file, Component component,
 			String printer_track_quantity, String label, String directory) {
-		boolean warning = false;
 		String[] s = file.split(separator);
 		String getLast = s[s.length - 1];
 		String stem = "";
@@ -362,111 +302,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			return calculateAverageVarianceDeviation(file, stem, 0, directory);
 		}
 		else {
-			ArrayList<ArrayList<Double>> data = new ArrayList<ArrayList<Double>>();
 			component.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-			try {
-				FileInputStream fileInput = new FileInputStream(new File(file));
-				ProgressMonitorInputStream prog = new ProgressMonitorInputStream(component,
-						"Reading Reb2sac Output Data From " + new File(file).getName(), fileInput);
-				InputStream input = new BufferedInputStream(prog);
-				boolean reading = true;
-				char cha;
-				int readCount = 0;
-				while (reading) {
-					String word = "";
-					boolean readWord = true;
-					while (readWord) {
-						int read = input.read();
-						readCount++;
-						if (read == -1) {
-							reading = false;
-							readWord = false;
-						}
-						cha = (char) read;
-						if (Character.isWhitespace(cha)) {
-							input.mark(3);
-							char next = (char) input.read();
-							char after = (char) input.read();
-							String check = "" + next + after;
-							if (word.equals("") || word.equals("0") || check.equals("0,")) {
-								readWord = false;
-							}
-							else {
-								word += cha;
-							}
-							input.reset();
-						}
-						else if (cha == ',' || cha == ':' || cha == ';' || cha == '!' || cha == '?'
-								|| cha == '\"' || cha == '\'' || cha == '(' || cha == ')' || cha == '{'
-								|| cha == '}' || cha == '[' || cha == ']' || cha == '<' || cha == '>' || cha == '*'
-								|| cha == '=' || cha == '#') {
-							readWord = false;
-						}
-						else if (read != -1) {
-							word += cha;
-						}
-					}
-					if (word.equals("0") || word.equals("0.0")) {
-						for (int i = 0; i < graphSpecies.size(); i++) {
-							data.add(new ArrayList<Double>());
-						}
-						(data.get(0)).add(0.0);
-						int counter = 1;
-						reading = true;
-						while (reading) {
-							word = "";
-							readWord = true;
-							int read;
-							while (readWord) {
-								read = input.read();
-								cha = (char) read;
-								while (!Character.isWhitespace(cha) && cha != ',' && cha != ':' && cha != ';'
-										&& cha != '!' && cha != '?' && cha != '\"' && cha != '\'' && cha != '('
-										&& cha != ')' && cha != '{' && cha != '}' && cha != '[' && cha != ']'
-										&& cha != '<' && cha != '>' && cha != '_' && cha != '*' && cha != '='
-										&& read != -1) {
-									word += cha;
-									read = input.read();
-									cha = (char) read;
-								}
-								if (read == -1) {
-									reading = false;
-								}
-								readWord = false;
-							}
-							int insert;
-							if (!word.equals("")) {
-								if (word.equals("nan")) {
-									if (!warning) {
-										JOptionPane.showMessageDialog(component, "Found NAN in data."
-												+ "\nReplacing with 0s.", "NAN In Data", JOptionPane.WARNING_MESSAGE);
-										warning = true;
-									}
-									word = "0";
-								}
-								if (counter < graphSpecies.size()) {
-									insert = counter;
-								}
-								else {
-									insert = counter % graphSpecies.size();
-								}
-								(data.get(insert)).add(Double.parseDouble(word));
-								counter++;
-							}
-						}
-					}
-				}
-				input.close();
-				prog.close();
-				fileInput.close();
-			}
-			catch (IOException e) {
-				JOptionPane.showMessageDialog(component, "Error Reading Data!"
-						+ "\nThere was an error reading the simulation output data.", "Error Reading Data",
-						JOptionPane.ERROR_MESSAGE);
-			}
+			TSDParser p = new TSDParser(file, component);
 			component.setCursor(null);
-			return data;
+			return p.getData();
 		}
 	}
 
