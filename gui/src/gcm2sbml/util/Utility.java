@@ -21,6 +21,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import org.sbml.libsbml.Compartment;
+import org.sbml.libsbml.Reaction;
+import org.sbml.libsbml.SBMLDocument;
 import org.sbml.libsbml.Species;
 
 /**
@@ -252,7 +254,36 @@ public class Utility {
 		}
 		return filter;
 	}
-
+	
+	public static boolean addReaction(SBMLDocument document, Reaction r) {
+		if (document.getModel().getReaction(r.getId()) == null) {
+			document.getModel().addReaction(r);
+		}
+		if (OVERWRITE_WARNING) {
+			//Give warning
+		}		
+		return false;
+	}
+	
+	public static boolean addSpecies() {
+		return false;
+	}
+	
+	public static boolean addUnits() {
+		return false;
+	}
+	
+	public static boolean addCompartments(SBMLDocument document, String compartment) {
+		if (document.getModel().getCompartment(compartment) == null) {
+			document.getModel().addCompartment(new Compartment(compartment));
+			return true;
+		}
+		if (OVERWRITE_WARNING) {
+			//Give warning
+		}
+		return false;
+	}
+	
 	private static FilenameFilter filter = null;
 
 	public static final Pattern IDpat = Pattern
@@ -269,4 +300,6 @@ public class Utility {
 	public static final String DIMER = "1";
 	
 	public static final String directory = "/home/shang/namphuon/nobackup/BiologyProjects/muller";
+	
+	public static final boolean OVERWRITE_WARNING = false;
 }

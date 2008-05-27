@@ -95,7 +95,7 @@ public class GeneticNetwork {
 		currentDocument = document;
 		Model m = document.createModel();
 		document.setModel(m);
-		document.getModel().addCompartment(new Compartment(compartment));
+		Utility.addCompartments(document, compartment);
 		document.getModel().getCompartment(compartment).setSize(1);
 		outputSBML(filename, document);
 		return document;
@@ -204,7 +204,7 @@ public class GeneticNetwork {
 			kl.setFormula("kf*" + "RNAP*" + p.getName() + "-kr*RNAP_"
 					+ p.getName());
 			r.setKineticLaw(kl);
-			document.getModel().addReaction(r);
+			Utility.addReaction(document, r);
 
 			// Next setup activated binding
 			PrintActivatedBindingVisitor v = new PrintActivatedBindingVisitor(
@@ -272,7 +272,7 @@ public class GeneticNetwork {
 				}
 				kl.setFormula("basal*" + "RNAP_" + p.getName());
 				r.setKineticLaw(kl);
-				document.getModel().addReaction(r);
+				Utility.addReaction(document, r);
 
 				PrintActivatedProductionVisitor v = new PrintActivatedProductionVisitor(
 						document, p, p.getActivators(), act, stoc);
@@ -299,7 +299,7 @@ public class GeneticNetwork {
 				}
 				kl.setFormula("koc*" + "RNAP_" + p.getName());
 				r.setKineticLaw(kl);
-				document.getModel().addReaction(r);
+				Utility.addReaction(document, r);
 			} else {
 				// TODO: Should ask Chris how to handle
 				// Both activated and repressed
@@ -323,7 +323,7 @@ public class GeneticNetwork {
 				}
 				kl.setFormula("basal*" + "RNAP_" + p.getName());
 				r.setKineticLaw(kl);
-				document.getModel().addReaction(r);
+				Utility.addReaction(document, r);
 
 				PrintActivatedProductionVisitor v = new PrintActivatedProductionVisitor(
 						document, p, p.getActivators(), act, stoc);
@@ -480,8 +480,8 @@ public class GeneticNetwork {
 	 */
 	private void initialize() {
 		buildDimers();
-		buildBiochemical();
 		buildPromoters();
+		buildBiochemical();		
 	}
 
 	/**
@@ -580,7 +580,7 @@ public class GeneticNetwork {
 			if (biochem.size() == 1) {
 				throw new IllegalStateException(
 						"Must have more than 1 biochemical reaction");
-			} else if (biochem.size() > 2) {
+			} else if (biochem.size() >= 2) {
 				BiochemicalSpecies bio = new BiochemicalSpecies(biochem);
 				promoter.addActivator(bio);
 				for (Reaction reaction : reactions) {
@@ -600,7 +600,7 @@ public class GeneticNetwork {
 			if (biochem.size() == 1) {
 				throw new IllegalStateException(
 						"Must have more than 1 biochemical reaction");
-			} else if (biochem.size() > 2) {
+			} else if (biochem.size() >= 2) {
 				BiochemicalSpecies bio = new BiochemicalSpecies(biochem);
 				for (Reaction reaction : reactions) {
 					promoter.addToReactionMap(bio, reaction);
