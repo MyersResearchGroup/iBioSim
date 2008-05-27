@@ -36,6 +36,7 @@ import java.util.Scanner;
 import java.util.prefs.Preferences;
 import java.util.regex.Pattern;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
@@ -141,6 +142,8 @@ public class BioSim implements MouseListener, ActionListener {
 
 		// Creates a new frame
 		frame = new JFrame("iBioSim");
+		frame.setIconImage(new ImageIcon(System.getenv("BIOSIM") + File.separator + "gui"
+				+ File.separator + "icons" + File.separator + "iBioSim.jpg").getImage());
 
 		// Makes it so that clicking the x in the corner closes the program
 		WindowListener w = new WindowListener() {
@@ -398,7 +401,7 @@ public class BioSim implements MouseListener, ActionListener {
 				if (System.getProperty("os.name").contentEquals("Linux")) {
 					directory = System.getenv("BIOSIM") + "/docs/";
 					command = "gnome-open ";
-				} 
+				}
 				else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
 					directory = System.getenv("BIOSIM") + "/docs/";
 					command = "open ";
@@ -745,7 +748,7 @@ public class BioSim implements MouseListener, ActionListener {
 					}
 					else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
 						command = "open ";
-					}				
+					}
 					else {
 						command = "cmd /c start ";
 					}
@@ -1230,8 +1233,9 @@ public class BioSim implements MouseListener, ActionListener {
 							return;
 						}
 					}
-					Graph g = new Graph(null, "amount", graphName.trim().substring(0, graphName.length() - 4),
-							"tsd.printer", root, "time", this, null, log, graphName.trim(), true);
+					Graph g = new Graph(null, "amount",
+							graphName.trim().substring(0, graphName.length() - 4), "tsd.printer", root, "time",
+							this, null, log, graphName.trim(), true);
 					addTab(graphName.trim(), g, "Graph");
 					g.save();
 					refreshTree();
@@ -1711,9 +1715,9 @@ public class BioSim implements MouseListener, ActionListener {
 			}
 			if (!done) {
 				addTab(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],
-				       new Graph(null, "amount", "title", "tsd.printer", root, "time", this, tree.getFile(), log,
-								tree.getFile().split(separator)[tree.getFile().split(separator).length - 1], true),
-						"Graph");
+						new Graph(null, "amount", "title", "tsd.printer", root, "time", this, tree.getFile(),
+								log, tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],
+								true), "Graph");
 			}
 		}
 	}
@@ -2225,10 +2229,9 @@ public class BioSim implements MouseListener, ActionListener {
 					}
 					if (!done) {
 						addTab(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],
-						       new Graph(null, "amount", "title", "tsd.printer", root, "time", this, tree.getFile(),
-										log,
-										tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],
-										true), "Graph");
+								new Graph(null, "amount", "title", "tsd.printer", root, "time", this, tree
+										.getFile(), log, tree.getFile().split(separator)[tree.getFile()
+										.split(separator).length - 1], true), "Graph");
 					}
 				}
 				else if (new File(tree.getFile()).isDirectory() && !tree.getFile().equals(root)) {
@@ -2637,8 +2640,8 @@ public class BioSim implements MouseListener, ActionListener {
 				lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Data Manager");
 				lrnTab.addTab("Learn", new Learn(tree.getFile(), log, this));
 				lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Learn");
-				lrnTab.addTab("Graph", new Graph(null, "amount", tree.getFile().split(separator)[tree.getFile()
-						.split(separator).length - 1]
+				lrnTab.addTab("Graph", new Graph(null, "amount", tree.getFile().split(separator)[tree
+						.getFile().split(separator).length - 1]
 						+ " data", "tsd.printer", tree.getFile(), "time", this, open, log, null, true));
 				lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Graph");
 			}
@@ -3066,7 +3069,7 @@ public class BioSim implements MouseListener, ActionListener {
 								((Graph) ((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j)).refresh();
 							}
 							else {
-							  ((JTabbedPane) tab.getComponentAt(i)).setComponentAt(j, new Graph(null, "amount",
+								((JTabbedPane) tab.getComponentAt(i)).setComponentAt(j, new Graph(null, "amount",
 										learnName + " data", "tsd.printer", root + separator + learnName, "time", this,
 										null, log, null, true));
 								((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j).setName("Graph");
