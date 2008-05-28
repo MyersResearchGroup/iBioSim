@@ -9,6 +9,7 @@ import gcm2sbml.network.Promoter;
 import gcm2sbml.network.SpasticSpecies;
 import gcm2sbml.network.SpeciesInterface;
 import gcm2sbml.util.GlobalConstants;
+import gcm2sbml.util.Utility;
 
 import java.util.Collection;
 import java.util.Properties;
@@ -87,7 +88,7 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 		r.setReversible(true);
 		r.setFast(false);
 		r.setKineticLaw(kl);
-		document.getModel().addReaction(r);
+		Utility.addReaction(document, r);
 
 	}
 
@@ -129,7 +130,7 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 		r.setReversible(true);
 		r.setFast(false);
 		r.setKineticLaw(kl);
-		document.getModel().addReaction(r);
+		Utility.addReaction(document, r);
 	}
 
 	public void visitBaseSpecies(BaseSpecies specie) {
@@ -153,7 +154,7 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 		r.setReversible(true);
 		r.setFast(false);
 		r.setKineticLaw(kl);
-		document.getModel().addReaction(r);
+		Utility.addReaction(document, r);
 	}
 
 	public void visitConstantSpecies(ConstantSpecies specie) {
@@ -177,7 +178,7 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 		r.setReversible(true);
 		r.setFast(false);
 		r.setKineticLaw(kl);
-		document.getModel().addReaction(r);
+		Utility.addReaction(document, r);
 	}
 
 	public void visitSpasticSpecies(SpasticSpecies specie) {
@@ -201,7 +202,7 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 		r.setReversible(true);
 		r.setFast(false);
 		r.setKineticLaw(kl);
-		document.getModel().addReaction(r);
+		Utility.addReaction(document, r);
 	}
 
 	private void loadValues(Properties property) {

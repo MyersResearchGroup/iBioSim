@@ -8,6 +8,7 @@ import gcm2sbml.network.GeneticNetwork;
 import gcm2sbml.network.SpasticSpecies;
 import gcm2sbml.network.SpeciesInterface;
 import gcm2sbml.util.GlobalConstants;
+import gcm2sbml.util.Utility;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -60,7 +61,7 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 			kl.addParameter(new Parameter("decay", decay, decayString));
 			kl.setFormula("decay*" + specie.getName());
 			r.setKineticLaw(kl);
-			document.getModel().addReaction(r);
+			Utility.addReaction(document, r);
 		}
 	}
 
@@ -75,7 +76,7 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 			kl.addParameter(new Parameter("decay", decay, decayString));
 			kl.setFormula("decay*" + specie.getName());
 			r.setKineticLaw(kl);
-			document.getModel().addReaction(r);
+			Utility.addReaction(document, r);
 		}
 	}
 
@@ -89,7 +90,7 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 		kl.addParameter(new Parameter("decay", decay, decayString));
 		kl.setFormula("decay*" + specie.getName());
 		r.setKineticLaw(kl);
-		document.getModel().addReaction(r);
+		Utility.addReaction(document, r);
 	}
 
 	public void visitConstantSpecies(ConstantSpecies specie) {
@@ -106,7 +107,7 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 		kl.addParameter(new Parameter("decay", decay, decayString));
 		kl.setFormula("decay*" + specie.getName());
 		r.setKineticLaw(kl);
-		document.getModel().addReaction(r);
+		Utility.addReaction(document, r);
 	}
 	
 	private void loadValues(Properties property) {

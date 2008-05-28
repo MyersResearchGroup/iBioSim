@@ -8,6 +8,7 @@ import gcm2sbml.network.GeneticNetwork;
 import gcm2sbml.network.SpasticSpecies;
 import gcm2sbml.network.SpeciesInterface;
 import gcm2sbml.util.GlobalConstants;
+import gcm2sbml.util.Utility;
 
 import java.util.Collection;
 import java.util.Properties;
@@ -70,7 +71,7 @@ public class PrintBiochemicalVisitor extends AbstractPrintVisitor {
 			kl.setFormula(multi + "-kr*" + specie.getName());
 
 			r.setKineticLaw(kl);
-			document.getModel().addReaction(r);
+			Utility.addReaction(document, r);
 		}
 	}
 

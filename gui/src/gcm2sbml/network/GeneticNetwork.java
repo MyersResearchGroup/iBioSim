@@ -71,8 +71,9 @@ public class GeneticNetwork {
 		this.stateMap = stateMap;
 		this.promoters = promoters;
 		this.properties = gcm;
+		
 		initialize();
-	}
+	}		
 
 	/**
 	 * Loads in a properties file
@@ -82,6 +83,10 @@ public class GeneticNetwork {
 	 */
 	public void loadProperties(GCMFile gcm) {
 		properties = gcm;
+	}
+	
+	public void setSBMLFile(String file) {
+		sbmlDocument = file;
 	}
 
 	/**
@@ -140,17 +145,19 @@ public class GeneticNetwork {
 	}
 
 	/**
-	 * Outputs the network to an SBML file
+	 * Merges an SBML file network to an SBML file
 	 * 
 	 * @param filename
 	 * @return the sbml document
 	 */
-	public SBMLDocument outputSBML(String filename, String sbmlFile) {
+	public void mergeSBML(String filename) {
 		try {
-			int counter = 0;
-			SBMLDocument document = new SBMLReader().readSBML(sbmlFile);
+			if (sbmlDocument.equals("")) {
+				outputSBML(filename);
+				return;
+			}
+			SBMLDocument document = new SBMLReader().readSBML(sbmlDocument);
 			outputSBML(filename, document);
-			return document;
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new IllegalStateException("Unable to output to SBML");
@@ -481,7 +488,7 @@ public class GeneticNetwork {
 	private void initialize() {
 		buildDimers();
 		buildPromoters();
-		buildBiochemical();		
+		buildBiochemical();
 	}
 
 	/**
@@ -626,6 +633,8 @@ public class GeneticNetwork {
 		}
 
 	}
+	
+	private String sbmlDocument = "";
 
 	private static SBMLDocument currentDocument = null;
 

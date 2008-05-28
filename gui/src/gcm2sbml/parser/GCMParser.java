@@ -78,6 +78,8 @@ public class GCMParser {
 		
 		GeneticNetwork network = new GeneticNetwork(species, stateMap,
 				promoters, gcm);
+		
+		network.setSBMLFile(gcm.getSBMLFile());
 		return network;
 	}
 

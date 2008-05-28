@@ -33,6 +33,14 @@ public class GCMFile {
 		parameters = new HashMap<String, String>();
 		loadDefaultParameters();
 	}
+	
+	public String getSBMLFile() {
+		return sbmlFile;
+	}
+	
+	public void setSBMLFile(String file) {
+		sbmlFile = file;
+	}
 
 	public void save(String filename) {
 		try {
@@ -106,6 +114,7 @@ public class GCMFile {
 				buffer.append("]\n");
 			}
 			buffer.append("}\n");
+			buffer.append(GlobalConstants.SBMLFILE + "=\"" + sbmlFile + "\"");
 			p.print(buffer);
 			p.close();
 		} catch (FileNotFoundException e) {
@@ -138,6 +147,7 @@ public class GCMFile {
 			parseInfluences(data);
 			parseGlobal(data);
 			parsePromoters(data);
+			parseSBMLFile(data);
 		} catch (Exception e) {
 			throw new IllegalArgumentException("Unable to parse GCM");
 //			JOptionPane.showMessageDialog(null,
@@ -391,6 +401,14 @@ public class GCMFile {
 			species.put(name, properties);
 		}
 	}
+	
+	private void parseSBMLFile(StringBuffer data) {
+		Pattern pattern = Pattern.compile(SBMLFILE);
+		Matcher matcher = pattern.matcher(data.toString());
+		if (matcher.find()) {
+			sbmlFile = matcher.group(1);
+		}
+	}
 
 	private void parseGlobal(StringBuffer data) {
 		Pattern pattern = Pattern.compile(GLOBAL);
@@ -542,8 +560,12 @@ public class GCMFile {
 	private static final String PROPERTY = "([a-zA-Z\\ \\-]+)=([^\\s,]+)";
 
 	private static final String GLOBAL = "Global\\s\\{([^}]*)\\s\\}";
+	
+	private static final String SBMLFILE = GlobalConstants.SBMLFILE + "=\"([^\"]*)\"";
 
 	private static final String PROMOTERS_LIST = "Promoters\\s\\{([^}]*)\\s\\}";
+	
+	private String sbmlFile = "";
 
 	private HashMap<String, Properties> species;
 
