@@ -5,8 +5,8 @@ import java.io.*;
 import java.util.*;
 import javax.swing.*;
 
-public class TSDParser extends Parser {
-	public TSDParser(String filename, Component component) {
+public class DATParser extends Parser {
+	public DATParser(String filename, Component component) {
 		try {
 			this.component = component;
 			boolean warning = false;
@@ -23,6 +23,7 @@ public class TSDParser extends Parser {
 				boolean readWord = true;
 				boolean withinWord = false;
 				boolean moveToData = false;
+				boolean withinParens = false;
 				while (readWord && !moveToData) {
 					int read = input.read();
 					if (read == -1) {
@@ -31,25 +32,32 @@ public class TSDParser extends Parser {
 					}
 					cha = (char) read;
 					if (withinWord) {
-						if (cha == '\"') {
+						if (cha == ')') {
 							withinWord = false;
 							readWord = false;
+							withinParens = false;
+						}
+						else if (cha == ' ' && word.equals("")) {
 						}
 						else {
 							word += cha;
 						}
 					}
 					else {
-						if (Character.isWhitespace(cha) || cha == ',' || cha == '(') {
-						}
-						else if (cha == '\"') {
-							withinWord = true;
-						}
-						else if (cha == ')') {
+						if (cha == '\n') {
 							moveToData = true;
 						}
+						else if (Character.isWhitespace(cha) || cha == '#') {
+						}
+						else if (cha == '(') {
+							withinParens = true;
+						}
+						else if (cha == ',' && withinParens) {
+							withinWord = true;
+						}
+						else if (cha == ',' && !withinParens) {
+						}
 						else {
-							readWord = false;
 						}
 					}
 				}
