@@ -5,11 +5,7 @@ import java.io.*;
 import java.util.*;
 import javax.swing.*;
 
-public class TSDParser {
-
-	private ArrayList<String> species;
-
-	private ArrayList<ArrayList<Double>> data;
+public class TSDParser extends Parser {
 
 	public TSDParser(String filename, Component component) {
 		try {
@@ -61,7 +57,7 @@ public class TSDParser {
 					species.add(word);
 				}
 				if (moveToData) {
-					for (String s : species) {
+					for (int i = 0; i < species.size(); i++) {
 						data.add(new ArrayList<Double>());
 					}
 				}
@@ -117,13 +113,5 @@ public class TSDParser {
 					+ "\nThere was an error reading the simulation output data.", "Error Reading Data",
 					JOptionPane.ERROR_MESSAGE);
 		}
-	}
-
-	public ArrayList<String> getSpecies() {
-		return species;
-	}
-
-	public ArrayList<ArrayList<Double>> getData() {
-		return data;
 	}
 }

@@ -304,6 +304,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		else {
 			component.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 			TSDParser p = new TSDParser(file, component);
+			graphSpecies = p.getSpecies();
 			component.setCursor(null);
 			return p.getData();
 		}
@@ -1641,8 +1642,6 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								&& !g.getRunNumber().equals("Standard Deviation")) {
 							if (new File(outDir + separator + g.getRunNumber() + "."
 									+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
-								readGraphSpecies(outDir + separator + g.getRunNumber() + "."
-										+ printer_id.substring(0, printer_id.length() - 8), biomodelsim.frame());
 								ArrayList<ArrayList<Double>> data;
 								if (allData.containsKey(g.getRunNumber() + " " + g.getDirectory())) {
 									data = allData.get(g.getRunNumber() + " " + g.getDirectory());
@@ -1696,8 +1695,6 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 										+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
 									next++;
 								}
-								readGraphSpecies(outDir + separator + "run-" + next + "."
-										+ printer_id.substring(0, printer_id.length() - 8), biomodelsim.frame());
 								ArrayList<ArrayList<Double>> data;
 								if (allData.containsKey(g.getRunNumber() + " " + g.getDirectory())) {
 									data = allData.get(g.getRunNumber() + " " + g.getDirectory());
@@ -1746,9 +1743,6 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								&& !g.getRunNumber().equals("Standard Deviation")) {
 							if (new File(outDir + separator + g.getDirectory() + separator + g.getRunNumber()
 									+ "." + printer_id.substring(0, printer_id.length() - 8)).exists()) {
-								readGraphSpecies(outDir + separator + g.getDirectory() + separator
-										+ g.getRunNumber() + "." + printer_id.substring(0, printer_id.length() - 8),
-										biomodelsim.frame());
 								ArrayList<ArrayList<Double>> data;
 								if (allData.containsKey(g.getRunNumber() + " " + g.getDirectory())) {
 									data = allData.get(g.getRunNumber() + " " + g.getDirectory());
@@ -1802,8 +1796,6 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 										+ "." + printer_id.substring(0, printer_id.length() - 8)).exists()) {
 									next++;
 								}
-								readGraphSpecies(outDir + separator + g.getDirectory() + separator + "run-" + next
-										+ "." + printer_id.substring(0, printer_id.length() - 8), biomodelsim.frame());
 								ArrayList<ArrayList<Double>> data;
 								if (allData.containsKey(g.getRunNumber() + " " + g.getDirectory())) {
 									data = allData.get(g.getRunNumber() + " " + g.getDirectory());
@@ -2949,295 +2941,138 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 	private ArrayList<ArrayList<Double>> calculateAverageVarianceDeviation(String startFile,
 			String fileStem, int choice, String directory) {
-		boolean warning = false;
 		ArrayList<ArrayList<Double>> average = new ArrayList<ArrayList<Double>>();
 		ArrayList<ArrayList<Double>> variance = new ArrayList<ArrayList<Double>>();
 		ArrayList<ArrayList<Double>> deviation = new ArrayList<ArrayList<Double>>();
-		try {
-			FileInputStream fileInput = new FileInputStream(new File(startFile));
-			ProgressMonitorInputStream prog = new ProgressMonitorInputStream(biomodelsim.frame(),
-					"Reading Reb2sac Output Data From " + new File(startFile).getName(), fileInput);
-			InputStream input = new BufferedInputStream(prog);
-			boolean reading = true;
-			char cha;
-			int readCount = 0;
-			while (reading) {
-				String word = "";
-				boolean readWord = true;
-				while (readWord) {
-					int read = input.read();
-					readCount++;
-					if (read == -1) {
-						reading = false;
-						readWord = false;
-					}
-					cha = (char) read;
-					if (Character.isWhitespace(cha)) {
-						input.mark(3);
-						char next = (char) input.read();
-						char after = (char) input.read();
-						String check = "" + next + after;
-						if (word.equals("") || word.equals("0") || check.equals("0,")) {
-							readWord = false;
+		biomodelsim.frame().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+		TSDParser p = new TSDParser(startFile, biomodelsim.frame());
+		graphSpecies = p.getSpecies();
+		biomodelsim.frame().setCursor(null);
+		boolean first = true;
+		int runsToMake = 1;
+		String[] findNum = startFile.split(separator);
+		String search = findNum[findNum.length - 1];
+		int firstOne = Integer.parseInt(search.substring(4, search.length() - 4));
+		if (directory == null) {
+			for (String f : new File(outDir).list()) {
+				if (f.contains(fileStem)) {
+					try {
+						int tempNum = Integer.parseInt(f.substring(fileStem.length(), f.length() - 4));
+						if (tempNum > runsToMake) {
+							runsToMake = tempNum;
 						}
-						else {
-							word += cha;
-						}
-						input.reset();
 					}
-					else if (cha == ',' || cha == ':' || cha == ';' || cha == '!' || cha == '?'
-							|| cha == '\"' || cha == '\'' || cha == '(' || cha == ')' || cha == '{' || cha == '}'
-							|| cha == '[' || cha == ']' || cha == '<' || cha == '>' || cha == '*' || cha == '='
-							|| cha == '#') {
-						readWord = false;
-					}
-					else if (read != -1) {
-						word += cha;
+					catch (Exception e) {
 					}
 				}
-				if (word.equals("0") || word.equals("0.0")) {
-					boolean first = true;
-					int runsToMake = 1;
-					String[] findNum = startFile.split(separator);
-					String search = findNum[findNum.length - 1];
-					int firstOne = Integer.parseInt(search.substring(4, search.length() - 4));
+			}
+		}
+		else {
+			for (String f : new File(outDir + separator + directory).list()) {
+				if (f.contains(fileStem)) {
+					try {
+						int tempNum = Integer.parseInt(f.substring(fileStem.length(), f.length() - 4));
+						if (tempNum > runsToMake) {
+							runsToMake = tempNum;
+						}
+					}
+					catch (Exception e) {
+					}
+				}
+			}
+		}
+		for (int i = 0; i < graphSpecies.size(); i++) {
+			average.add(new ArrayList<Double>());
+			variance.add(new ArrayList<Double>());
+		}
+		int count = 0;
+		int skip = firstOne;
+		for (int j = 0; j < runsToMake; j++) {
+			if (!first) {
+				if (firstOne != 1) {
+					j--;
+					firstOne = 1;
+				}
+				boolean loop = true;
+				while (loop && j < runsToMake && (j + 1) != skip) {
 					if (directory == null) {
-						for (String f : new File(outDir).list()) {
-							if (f.contains(fileStem)) {
-								try {
-									int tempNum = Integer.parseInt(f.substring(fileStem.length(), f.length() - 4));
-									if (tempNum > runsToMake) {
-										runsToMake = tempNum;
-									}
-								}
-								catch (Exception e) {
-								}
-							}
+						if (new File(outDir + separator + fileStem + (j + 1) + "."
+								+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
+							p = new TSDParser(outDir + separator + fileStem + (j + 1) + "."
+									+ printer_id.substring(0, printer_id.length() - 8), biomodelsim.frame());
+							loop = false;
+							count++;
+						}
+						else {
+							j++;
 						}
 					}
 					else {
-						for (String f : new File(outDir + separator + directory).list()) {
-							if (f.contains(fileStem)) {
-								try {
-									int tempNum = Integer.parseInt(f.substring(fileStem.length(), f.length() - 4));
-									if (tempNum > runsToMake) {
-										runsToMake = tempNum;
-									}
-								}
-								catch (Exception e) {
-								}
-							}
+						if (new File(outDir + separator + directory + separator + fileStem + (j + 1) + "."
+								+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
+							p = new TSDParser(outDir + separator + directory + separator + fileStem + (j + 1)
+									+ "." + printer_id.substring(0, printer_id.length() - 8), biomodelsim.frame());
+							loop = false;
+							count++;
+						}
+						else {
+							j++;
 						}
 					}
-					for (int i = 0; i < graphSpecies.size(); i++) {
-						average.add(new ArrayList<Double>());
-						variance.add(new ArrayList<Double>());
+				}
+			}
+			ArrayList<ArrayList<Double>> data = p.getData();
+			for (int i = 0; i < data.size(); i++) {
+				for (int k = 0; k < data.get(i).size(); k++) {
+					if (first) {
+						average.get(i).add((data.get(i)).get(k));
+						if (i == 0) {
+							variance.get(i).add((data.get(i)).get(k));
+						}
+						else {
+							variance.get(i).add(0.0);
+						}
 					}
-					(average.get(0)).add(0.0);
-					(variance.get(0)).add(0.0);
-					int count = 0;
-					int skip = firstOne;
-					for (int j = 0; j < runsToMake; j++) {
-						int counter = 1;
-						if (!first) {
-							if (firstOne != 1) {
-								j--;
-								firstOne = 1;
+					else {
+						try {
+							double old = (average.get(i)).get(k);
+							(average.get(i)).set(k, old + (((data.get(i)).get(k) - old) / (count + 1)));
+							double newMean = (average.get(i)).get(k);
+							if (i == 0) {
+								(variance.get(i)).set(k, old + (((data.get(i)).get(k) - old) / (count + 1)));
 							}
-							boolean loop = true;
-							while (loop && j < runsToMake && (j + 1) != skip) {
-								if (directory == null) {
-									if (new File(outDir + separator + fileStem + (j + 1) + "."
-											+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
-										input.close();
-										prog.close();
-										fileInput.close();
-										fileInput = new FileInputStream(new File(outDir + separator + fileStem
-												+ (j + 1) + "." + printer_id.substring(0, printer_id.length() - 8)));
-										prog = new ProgressMonitorInputStream(biomodelsim.frame(),
-												"Reading Reb2sac Output Data From "
-														+ new File(outDir + separator + fileStem + (j + 1) + "."
-																+ printer_id.substring(0, printer_id.length() - 8)).getName(),
-												fileInput);
-										input = new BufferedInputStream(prog);
-										for (int i = 0; i < readCount; i++) {
-											input.read();
-										}
-										loop = false;
-										count++;
-									}
-									else {
-										j++;
-									}
-								}
-								else {
-									if (new File(outDir + separator + directory + separator + fileStem + (j + 1)
-											+ "." + printer_id.substring(0, printer_id.length() - 8)).exists()) {
-										input.close();
-										prog.close();
-										fileInput.close();
-										fileInput = new FileInputStream(new File(outDir + separator + directory
-												+ separator + fileStem + (j + 1) + "."
-												+ printer_id.substring(0, printer_id.length() - 8)));
-										prog = new ProgressMonitorInputStream(biomodelsim.frame(),
-												"Reading Reb2sac Output Data From "
-														+ new File(outDir + separator + directory + separator + fileStem
-																+ (j + 1) + "." + printer_id.substring(0, printer_id.length() - 8))
-																.getName(), fileInput);
-										input = new BufferedInputStream(prog);
-										for (int i = 0; i < readCount; i++) {
-											input.read();
-										}
-										loop = false;
-										count++;
-									}
-									else {
-										j++;
-									}
-								}
+							else {
+								double vary = (((count - 1) * (variance.get(i)).get(k)) + ((data.get(i)).get(k) - newMean)
+										* ((data.get(i)).get(k) - old))
+										/ count;
+								(variance.get(i)).set(k, vary);
 							}
 						}
-						reading = true;
-						while (reading) {
-							word = "";
-							readWord = true;
-							int read;
-							while (readWord) {
-								read = input.read();
-								cha = (char) read;
-								while (!Character.isWhitespace(cha) && cha != ',' && cha != ':' && cha != ';'
-										&& cha != '!' && cha != '?' && cha != '\"' && cha != '\'' && cha != '('
-										&& cha != ')' && cha != '{' && cha != '}' && cha != '[' && cha != ']'
-										&& cha != '<' && cha != '>' && cha != '_' && cha != '*' && cha != '='
-										&& read != -1) {
-									word += cha;
-									read = input.read();
-									cha = (char) read;
-								}
-								if (read == -1) {
-									reading = false;
-									first = false;
-								}
-								readWord = false;
+						catch (Exception e2) {
+							(average.get(i)).add((data.get(i)).get(k));
+							if (i == 0) {
+								(variance.get(i)).add((data.get(i)).get(k));
 							}
-							int insert;
-							if (!word.equals("")) {
-								if (word.equals("nan")) {
-									if (!warning) {
-										JOptionPane.showMessageDialog(biomodelsim.frame(), "Found NAN in data."
-												+ "\nReplacing with 0s.", "NAN In Data", JOptionPane.WARNING_MESSAGE);
-										warning = true;
-									}
-									word = "0";
-								}
-								if (first) {
-									if (counter < graphSpecies.size()) {
-										insert = counter;
-										(average.get(insert)).add(Double.parseDouble(word));
-										if (insert == 0) {
-											(variance.get(insert)).add(Double.parseDouble(word));
-										}
-										else {
-											(variance.get(insert)).add(0.0);
-										}
-									}
-									else {
-										insert = counter % graphSpecies.size();
-										(average.get(insert)).add(Double.parseDouble(word));
-										if (insert == 0) {
-											(variance.get(insert)).add(Double.parseDouble(word));
-										}
-										else {
-											(variance.get(insert)).add(0.0);
-										}
-									}
-								}
-								else {
-									if (counter < graphSpecies.size()) {
-										insert = counter;
-										try {
-											double old = (average.get(insert)).get(insert / graphSpecies.size());
-											(average.get(insert)).set(insert / graphSpecies.size(), old
-													+ ((Double.parseDouble(word) - old) / (count + 1)));
-											double newMean = (average.get(insert)).get(insert / graphSpecies.size());
-											if (insert == 0) {
-												(variance.get(insert)).set(insert / graphSpecies.size(), old
-														+ ((Double.parseDouble(word) - old) / (count + 1)));
-											}
-											else {
-												double vary = (((count - 1) * (variance.get(insert)).get(insert
-														/ graphSpecies.size())) + (Double.parseDouble(word) - newMean)
-														* (Double.parseDouble(word) - old))
-														/ count;
-												(variance.get(insert)).set(insert / graphSpecies.size(), vary);
-											}
-										}
-										catch (Exception e2) {
-											(average.get(insert)).add(Double.parseDouble(word));
-											if (insert == 0) {
-												(variance.get(insert)).add(Double.parseDouble(word));
-											}
-											else {
-												(variance.get(insert)).add(0.0);
-											}
-										}
-									}
-									else {
-										insert = counter % graphSpecies.size();
-										try {
-											double old = (average.get(insert)).get(counter / graphSpecies.size());
-											(average.get(insert)).set(counter / graphSpecies.size(), old
-													+ ((Double.parseDouble(word) - old) / (count + 1)));
-											double newMean = (average.get(insert)).get(counter / graphSpecies.size());
-											if (insert == 0) {
-												(variance.get(insert)).set(counter / graphSpecies.size(), old
-														+ ((Double.parseDouble(word) - old) / (count + 1)));
-											}
-											else {
-												double vary = (((count - 1) * (variance.get(insert)).get(counter
-														/ graphSpecies.size())) + (Double.parseDouble(word) - newMean)
-														* (Double.parseDouble(word) - old))
-														/ count;
-												(variance.get(insert)).set(counter / graphSpecies.size(), vary);
-											}
-										}
-										catch (Exception e2) {
-											(average.get(insert)).add(Double.parseDouble(word));
-											if (insert == 0) {
-												(variance.get(insert)).add(Double.parseDouble(word));
-											}
-											else {
-												(variance.get(insert)).add(0.0);
-											}
-										}
-									}
-								}
-								counter++;
+							else {
+								(variance.get(i)).add(0.0);
 							}
 						}
 					}
 				}
 			}
-			deviation = new ArrayList<ArrayList<Double>>();
-			for (int i = 0; i < variance.size(); i++) {
-				deviation.add(new ArrayList<Double>());
-				for (int j = 0; j < variance.get(i).size(); j++) {
-					deviation.get(i).add(variance.get(i).get(j));
-				}
-			}
-			for (int i = 1; i < deviation.size(); i++) {
-				for (int j = 0; j < deviation.get(i).size(); j++) {
-					deviation.get(i).set(j, Math.sqrt(deviation.get(i).get(j)));
-				}
-			}
-			input.close();
-			prog.close();
-			fileInput.close();
+			first = false;
 		}
-		catch (IOException e) {
-			JOptionPane.showMessageDialog(biomodelsim.frame(), "Error Reading Data!"
-					+ "\nThere was an error reading the simulation output data.", "Error Reading Data",
-					JOptionPane.ERROR_MESSAGE);
+		deviation = new ArrayList<ArrayList<Double>>();
+		for (int i = 0; i < variance.size(); i++) {
+			deviation.add(new ArrayList<Double>());
+			for (int j = 0; j < variance.get(i).size(); j++) {
+				deviation.get(i).add(variance.get(i).get(j));
+			}
+		}
+		for (int i = 1; i < deviation.size(); i++) {
+			for (int j = 0; j < deviation.get(i).size(); j++) {
+				deviation.get(i).set(j, Math.sqrt(deviation.get(i).get(j)));
+			}
 		}
 		if (choice == 0) {
 			return average;
@@ -3559,11 +3394,11 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							&& !g.getRunNumber().equals("Standard Deviation")) {
 						if (new File(outDir + separator + g.getRunNumber() + "."
 								+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
-							readGraphSpecies(outDir + separator + g.getRunNumber() + "."
-									+ printer_id.substring(0, printer_id.length() - 8), biomodelsim.frame());
 							ArrayList<ArrayList<Double>> data;
 							if (allData.containsKey(g.getRunNumber() + " " + g.getDirectory())) {
 								data = allData.get(g.getRunNumber() + " " + g.getDirectory());
+								readGraphSpecies(outDir + separator + g.getRunNumber() + "."
+										+ printer_id.substring(0, printer_id.length() - 8), biomodelsim.frame());
 								for (int i = 2; i < graphSpecies.size(); i++) {
 									String index = graphSpecies.get(i);
 									int j = i;
@@ -3637,11 +3472,11 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 									+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
 								nextOne++;
 							}
-							readGraphSpecies(outDir + separator + "run-" + nextOne + "."
-									+ printer_id.substring(0, printer_id.length() - 8), biomodelsim.frame());
 							ArrayList<ArrayList<Double>> data;
 							if (allData.containsKey(g.getRunNumber() + " " + g.getDirectory())) {
 								data = allData.get(g.getRunNumber() + " " + g.getDirectory());
+								readGraphSpecies(outDir + separator + "run-" + nextOne + "."
+										+ printer_id.substring(0, printer_id.length() - 8), biomodelsim.frame());
 								for (int i = 2; i < graphSpecies.size(); i++) {
 									String index = graphSpecies.get(i);
 									int j = i;
@@ -3710,11 +3545,12 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							&& !g.getRunNumber().equals("Standard Deviation")) {
 						if (new File(outDir + separator + g.getDirectory() + separator + g.getRunNumber() + "."
 								+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
-							readGraphSpecies(outDir + separator + g.getDirectory() + separator + g.getRunNumber()
-									+ "." + printer_id.substring(0, printer_id.length() - 8), biomodelsim.frame());
 							ArrayList<ArrayList<Double>> data;
 							if (allData.containsKey(g.getRunNumber() + " " + g.getDirectory())) {
 								data = allData.get(g.getRunNumber() + " " + g.getDirectory());
+								readGraphSpecies(outDir + separator + g.getDirectory() + separator
+										+ g.getRunNumber() + "." + printer_id.substring(0, printer_id.length() - 8),
+										biomodelsim.frame());
 								for (int i = 2; i < graphSpecies.size(); i++) {
 									String index = graphSpecies.get(i);
 									int j = i;
@@ -3789,11 +3625,12 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 									+ "." + printer_id.substring(0, printer_id.length() - 8)).exists()) {
 								nextOne++;
 							}
-							readGraphSpecies(outDir + separator + g.getDirectory() + separator + "run-" + nextOne
-									+ "." + printer_id.substring(0, printer_id.length() - 8), biomodelsim.frame());
 							ArrayList<ArrayList<Double>> data;
 							if (allData.containsKey(g.getRunNumber() + " " + g.getDirectory())) {
 								data = allData.get(g.getRunNumber() + " " + g.getDirectory());
+								readGraphSpecies(outDir + separator + g.getDirectory() + separator + "run-"
+										+ nextOne + "." + printer_id.substring(0, printer_id.length() - 8), biomodelsim
+										.frame());
 								for (int i = 2; i < graphSpecies.size(); i++) {
 									String index = graphSpecies.get(i);
 									int j = i;
