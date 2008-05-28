@@ -61,8 +61,7 @@ public class TSDParser {
 					species.add(word);
 				}
 				if (moveToData) {
-					for (@SuppressWarnings("unused")
-					String s : species) {
+					for (String s : species) {
 						data.add(new ArrayList<Double>());
 					}
 				}

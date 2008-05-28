@@ -73,8 +73,8 @@ public class Button_Enabling {
 			markov.setSelected(false);
 			seed.setEnabled(false);
 			seedLabel.setEnabled(false);
-			runs.setEnabled(false);
-			runsLabel.setEnabled(false);
+			runs.setEnabled(true);
+			runsLabel.setEnabled(true);
 			stepLabel.setEnabled(true);
 			step.setEnabled(true);
 			errorLabel.setEnabled(false);
@@ -172,8 +172,8 @@ public class Button_Enabling {
 			JCheckBox usingSSA) {
 		seed.setEnabled(true);
 		seedLabel.setEnabled(true);
-		runs.setEnabled(false);
-		runsLabel.setEnabled(false);
+		runs.setEnabled(true);
+		runsLabel.setEnabled(true);
 		stepLabel.setEnabled(true);
 		step.setEnabled(true);
 		errorLabel.setEnabled(false);
