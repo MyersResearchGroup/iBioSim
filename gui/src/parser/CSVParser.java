@@ -3,10 +3,11 @@ package parser;
 import java.awt.*;
 import java.io.*;
 import java.util.*;
+
 import javax.swing.*;
 
-public class TSDParser extends Parser {
-	public TSDParser(String filename, Component component) {
+public class CSVParser extends Parser {
+	public CSVParser(String filename, Component component) {
 		try {
 			this.component = component;
 			boolean warning = false;
@@ -21,7 +22,6 @@ public class TSDParser extends Parser {
 			while (reading) {
 				String word = "";
 				boolean readWord = true;
-				boolean withinWord = false;
 				boolean moveToData = false;
 				while (readWord && !moveToData) {
 					int read = input.read();
@@ -30,27 +30,16 @@ public class TSDParser extends Parser {
 						readWord = false;
 					}
 					cha = (char) read;
-					if (withinWord) {
-						if (cha == '\"') {
-							withinWord = false;
-							readWord = false;
-						}
-						else {
-							word += cha;
-						}
+					if (cha == '\n') {
+						moveToData = true;
+					}
+					else if (cha == ',') {
+						readWord = false;
+					}
+					else if (cha == ' ' && word.equals("")) {
 					}
 					else {
-						if (Character.isWhitespace(cha) || cha == ',' || cha == '(') {
-						}
-						else if (cha == '\"') {
-							withinWord = true;
-						}
-						else if (cha == ')') {
-							moveToData = true;
-						}
-						else {
-							readWord = false;
-						}
+						word += cha;
 					}
 				}
 				if (!word.equals("")) {
