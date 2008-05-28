@@ -6,7 +6,7 @@ import java.util.*;
 
 import javax.swing.JOptionPane;
 
-public class Parser {
+public abstract class Parser {
 
 	protected ArrayList<String> species;
 
