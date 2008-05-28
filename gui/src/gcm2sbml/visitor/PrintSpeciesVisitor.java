@@ -45,7 +45,7 @@ public class PrintSpeciesVisitor extends AbstractPrintVisitor {
 		if (!dimerizationAbstraction) {
 			Species s = Utility.makeSpecies(specie.getName(), compartment, init);
 			s.setHasOnlySubstanceUnits(true);
-			document.getModel().addSpecies(s);
+			Utility.addSpecies(document, s);
 		}
 
 	}
@@ -55,7 +55,7 @@ public class PrintSpeciesVisitor extends AbstractPrintVisitor {
 		if (!biochemicalAbstraction) {
 			Species s = Utility.makeSpecies(specie.getName(), compartment, init);
 			s.setHasOnlySubstanceUnits(true);
-			document.getModel().addSpecies(s);
+			Utility.addSpecies(document, s);
 		}
 
 	}
@@ -64,7 +64,7 @@ public class PrintSpeciesVisitor extends AbstractPrintVisitor {
 		loadValues(specie.getProperties());
 		Species s = Utility.makeSpecies(specie.getName(), compartment, init);
 		s.setHasOnlySubstanceUnits(true);
-		document.getModel().addSpecies(s);
+		Utility.addSpecies(document, s);
 	}
 
 	public void visitConstantSpecies(ConstantSpecies specie) {
@@ -73,14 +73,14 @@ public class PrintSpeciesVisitor extends AbstractPrintVisitor {
 		s.setHasOnlySubstanceUnits(true);
 		s.setBoundaryCondition(true);
 		//s.setConstant(true);
-		document.getModel().addSpecies(s);
+		Utility.addSpecies(document, s);
 	}
 
 	public void visitSpasticSpecies(SpasticSpecies specie) {
 		loadValues(specie.getProperties());
 		Species s = Utility.makeSpecies(specie.getName(), compartment, init);
 		s.setHasOnlySubstanceUnits(true);
-		document.getModel().addSpecies(s);
+		Utility.addSpecies(document, s);
 	}
 	
 	private void loadValues(Properties property) {

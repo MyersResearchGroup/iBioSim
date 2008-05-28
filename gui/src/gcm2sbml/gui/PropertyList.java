@@ -1,9 +1,5 @@
 package gcm2sbml.gui;
 
-import gcm2sbml.visitor.GuiVisitor;
-import gcm2sbml.visitor.VisitableGui;
-
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Properties;
 
@@ -11,7 +7,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.JList;
 
 public class PropertyList extends JList implements EnableElement, NamedObject,
-		Runnable, VisitableGui {
+		Runnable {
 
 	public PropertyList(String name) {
 		super();
@@ -50,10 +46,6 @@ public class PropertyList extends JList implements EnableElement, NamedObject,
 	}
 
 	public void run() {
-	}
-
-	public void accept(GuiVisitor visitor) {
-		visitor.visitPropertyList(this);
 	}
 
 	public void updateState(Properties property) {

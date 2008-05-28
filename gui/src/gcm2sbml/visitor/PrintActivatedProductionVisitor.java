@@ -19,6 +19,7 @@ import gcm2sbml.network.Promoter;
 import gcm2sbml.network.SpasticSpecies;
 import gcm2sbml.network.SpeciesInterface;
 import gcm2sbml.util.GlobalConstants;
+import gcm2sbml.util.Utility;
 
 public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 
@@ -60,7 +61,7 @@ public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 		kl.addParameter(new Parameter("koc", act, GeneticNetwork.getMoleTimeParameter(1)));
 		kl.setFormula("koc*" + "RNAP_" + promoter.getName()+ "_" + specie.getName());
 		r.setKineticLaw(kl);
-		document.getModel().addReaction(r);
+		Utility.addReaction(document, r);
 		
 	}
 
@@ -78,7 +79,7 @@ public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 		kl.addParameter(new Parameter("koc", act, GeneticNetwork.getMoleTimeParameter(1)));
 		kl.setFormula("koc*" + "RNAP_" + promoter.getName()+ "_" + specie.getName());
 		r.setKineticLaw(kl);
-		document.getModel().addReaction(r);		
+		Utility.addReaction(document, r);		
 	}
 
 	public void visitBaseSpecies(BaseSpecies specie) {
@@ -95,7 +96,7 @@ public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 		kl.addParameter(new Parameter("koc", act, GeneticNetwork.getMoleTimeParameter(1)));
 		kl.setFormula("koc*" + "RNAP_" + promoter.getName()+ "_" + specie.getName());
 		r.setKineticLaw(kl);
-		document.getModel().addReaction(r);
+		Utility.addReaction(document, r);
 	}
 
 	public void visitConstantSpecies(ConstantSpecies specie) {
@@ -112,7 +113,7 @@ public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 		kl.addParameter(new Parameter("koc", act, GeneticNetwork.getMoleTimeParameter(1)));
 		kl.setFormula("koc*" + "RNAP_" + promoter.getName()+ "_" + specie.getName());
 		r.setKineticLaw(kl);
-		document.getModel().addReaction(r);
+		Utility.addReaction(document, r);
 	}
 
 	public void visitSpasticSpecies(SpasticSpecies specie) {
@@ -129,7 +130,7 @@ public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 		kl.addParameter(new Parameter("koc", act));
 		kl.setFormula("koc*" + "RNAP_" + promoter.getName()+ "_" + specie.getName());
 		r.setKineticLaw(kl);
-		document.getModel().addReaction(r);
+		Utility.addReaction(document, r);
 	}
 	
 	private void loadValues(Properties property) {

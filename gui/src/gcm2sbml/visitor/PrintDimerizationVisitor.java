@@ -8,6 +8,7 @@ import gcm2sbml.network.GeneticNetwork;
 import gcm2sbml.network.SpasticSpecies;
 import gcm2sbml.network.SpeciesInterface;
 import gcm2sbml.util.GlobalConstants;
+import gcm2sbml.util.Utility;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -62,7 +63,7 @@ public class PrintDimerizationVisitor extends AbstractPrintVisitor {
 			kl.setFormula("kdimer*" + specie.getMonomer().getName() + " ^"+dimer+"-kr*"+specie.getName());
 			
 			r.setKineticLaw(kl);
-			document.getModel().addReaction(r);		
+			Utility.addReaction(document, r);		
 		}
 	}
 

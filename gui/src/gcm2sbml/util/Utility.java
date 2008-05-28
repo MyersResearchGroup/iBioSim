@@ -23,6 +23,7 @@ import javax.swing.JScrollPane;
 import org.sbml.libsbml.Compartment;
 import org.sbml.libsbml.Reaction;
 import org.sbml.libsbml.SBMLDocument;
+import org.sbml.libsbml.SBMLReader;
 import org.sbml.libsbml.Species;
 
 /**
@@ -208,6 +209,11 @@ public class Utility {
 		String[] files = allFiles.list(Utility.getTSDFilter());
 		return files;
 	}
+	
+	public static SBMLDocument openDocument(String filename) {
+		SBMLReader reader = new SBMLReader();
+		return reader.readSBML(filename);
+	}
 
 	public static HashMap<String, double[]> calculateAverage(String folder) {
 		HashMap<String, double[]> result = new HashMap<String, double[]>();
@@ -265,7 +271,14 @@ public class Utility {
 		return false;
 	}
 	
-	public static boolean addSpecies() {
+	public static boolean addSpecies(SBMLDocument document, Species species) {
+		if (document.getModel().getSpecies(species.getId()) == null) {
+			document.getModel().addSpecies(species);
+			return true;
+		}
+		if (OVERWRITE_WARNING) {
+			//Give warning
+		}
 		return false;
 	}
 	

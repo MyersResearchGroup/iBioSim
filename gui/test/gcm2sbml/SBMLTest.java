@@ -1,0 +1,70 @@
+package gcm2sbml;
+
+
+import gcm2sbml.util.Utility;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
+
+import junit.framework.TestCase;
+
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.sbml.libsbml.Compartment;
+import org.sbml.libsbml.Model;
+import org.sbml.libsbml.SBMLDocument;
+import org.sbml.libsbml.SBMLWriter;
+import org.sbml.libsbml.Species;
+
+public class SBMLTest extends TestCase {
+	
+	public void testAddDuplicate() {
+		try {
+			System.loadLibrary("sbmlj");
+			String filename = "foo.sbml";
+			
+			SBMLDocument document = new SBMLDocument(2, 3);
+			String compartment = "default";
+			Model m = document.createModel();
+			document.setModel(m);
+			document.getModel().addCompartment(new Compartment(compartment));
+			document.getModel().getCompartment("default").setSize(1);
+			
+			m.addSpecies(Utility.makeSpecies("A", compartment, 0));
+			m.addSpecies(Utility.makeSpecies("A", compartment, 2));
+
+			PrintStream p = new PrintStream(new FileOutputStream(filename));
+
+			m.setName("foo");
+			m.setId("foo");
+			
+			SBMLWriter writer = new SBMLWriter();
+			p.print(writer.writeToString(document));
+
+			p.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@BeforeClass
+	public static void setUpBeforeClass() throws Exception {
+	}
+
+	@AfterClass
+	public static void tearDownAfterClass() throws Exception {
+	}
+
+	@Before
+	public void setUp() throws Exception {
+	}
+
+	@After
+	public void tearDown() throws Exception {
+	}
+
+}
