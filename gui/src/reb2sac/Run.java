@@ -127,6 +127,7 @@ public class Run implements ActionListener {
 			abs.setProperty("ode.simulation.absolute.error", "" + absError);
 			abs.setProperty("ode.simulation.out.dir", outDir);
 			abs.setProperty("monte.carlo.simulation.random.seed", "" + rndSeed);
+			abs.setProperty("monte.carlo.simulation.runs", "" + run);
 		}
 		if (!selectedButtons.contains("ODE")) {
 			// if (selectedButtons.equals("none_monteCarlo") ||

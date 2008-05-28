@@ -366,8 +366,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		markov.setEnabled(false);
 		seed.setEnabled(true);
 		seedLabel.setEnabled(true);
-		runs.setEnabled(false);
-		runsLabel.setEnabled(false);
+		runs.setEnabled(true);
+		runsLabel.setEnabled(true);
 		step.setEnabled(true);
 		stepLabel.setEnabled(true);
 		absErr.setEnabled(true);
@@ -403,9 +403,9 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		overwrite = new JRadioButton("Overwrite");
 		append = new JRadioButton("Append");
 		overwrite.setSelected(true);
-		overwrite.setEnabled(false);
-		append.setEnabled(false);
-		choose3.setEnabled(false);
+		overwrite.setEnabled(true);
+		append.setEnabled(true);
+		choose3.setEnabled(true);
 		JPanel overwritePanel = new JPanel();
 		overwritePanel.add(choose3);
 		overwritePanel.add(overwrite);
@@ -906,9 +906,9 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			Button_Enabling.enableODE(seed, seedLabel, runs, runsLabel, stepLabel, step, errorLabel,
 					absErr, limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel,
 					explanation, description, usingSSA);
-			overwrite.setEnabled(false);
-			append.setEnabled(false);
-			choose3.setEnabled(false);
+			overwrite.setEnabled(true);
+			append.setEnabled(true);
+			choose3.setEnabled(true);
 		}
 		// if the monteCarlo Radio Button is selected
 		else if (e.getSource() == monteCarlo) {
@@ -2112,12 +2112,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		JPanel all = new JPanel(new BorderLayout());
 		JLabel label = new JLabel("Running " + simName + " " + direct);
 		int steps;
-		if (ODE.isSelected()) {
-			steps = (int) (timeLimit / printInterval);
-		}
-		else {
-			steps = run;
-		}
+		steps = (int) ((timeLimit / printInterval) * run);
 		JProgressBar progress = new JProgressBar(0, steps);
 		progress.setStringPainted(true);
 		// progress.setString("");
@@ -2176,7 +2171,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				getProps.setProperty(split[0], split[1]);
 			}
 			getProps.setProperty("selected.simulator", sim);
-			if (monteCarlo.isSelected()) {
+			if (monteCarlo.isSelected()||ODE.isSelected()) {
 				if (append.isSelected()) {
 					String[] searchForRunFiles = new File(root + separator + outDir).list();
 					int start = 1;
@@ -2205,7 +2200,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			JOptionPane.showMessageDialog(biomodelsim.frame(),
 					"Unable to add properties to property file.", "Error", JOptionPane.ERROR_MESSAGE);
 		}
-		if (monteCarlo.isSelected() && overwrite.isSelected()) {
+		if ((monteCarlo.isSelected()||ODE.isSelected()) && overwrite.isSelected()) {
 			File[] files = new File(root + separator + outDir).listFiles();
 			for (File f : files) {
 				if (f.getName().contains("run-")) {
