@@ -1,10 +1,14 @@
 package gcm2sbml;
 
 
+import gcm2sbml.network.GeneticNetwork;
+import gcm2sbml.parser.GCMFile;
+import gcm2sbml.parser.GCMParser;
+import gcm2sbml.util.GlobalConstants;
+
+import java.io.File;
 import java.util.Properties;
 
-import gcm2sbml.parser.GCMFile;
-import gcm2sbml.util.GlobalConstants;
 import junit.framework.TestCase;
 
 import org.junit.Before;
@@ -13,12 +17,20 @@ public class GCMFileTest extends TestCase{
 
 	@Before
 	public void setUp() throws Exception {
+		System.loadLibrary("sbmlj");
 	}
 	
 	public void testLoadandSave() { 
-//		GCMFile file = new GCMFile();
-//		file.load(filename);
-//		file.save("nand2.dot");
+//		GCMFile file = new GCMFile();		
+//		file.load("gcm"+ File.separator +"bar.gcm");
+//		file.setSBMLFile("foo.sbml");
+//		file.save("gcm"+ File.separator +"baz.gcm");
+	}
+	
+	public void testMerge() {
+		GCMParser parser = new GCMParser("gcm"+ File.separator +"baz.gcm");
+		GeneticNetwork network = parser.buildNetwork();				
+		network.mergeSBML("gcm"+ File.separator +"baz.sbml");
 	}
 	
 	public void testAddProperty() {

@@ -210,6 +210,11 @@ public class Utility {
 		return files;
 	}
 	
+	public static String[] getFiles(String folder, String filter) {
+		File allFiles = new File(folder);
+		return allFiles.list(Utility.getFilter(filter));			
+	}
+	
 	public static SBMLDocument openDocument(String filename) {
 		SBMLReader reader = new SBMLReader();
 		return reader.readSBML(filename);
@@ -260,6 +265,21 @@ public class Utility {
 		}
 		return filter;
 	}
+	
+	public static FilenameFilter getFilter(final String ext) {
+		final class Filter implements java.io.FilenameFilter {
+			public boolean accept(File dir, String name) {
+				// TODO Auto-generated method stub
+				return name.contains(ext);
+			}
+		}
+
+		if (filter == null) {
+			filter = new Filter();
+		}
+		return filter;
+	}
+		
 	
 	public static boolean addReaction(SBMLDocument document, Reaction r) {
 		if (document.getModel().getReaction(r.getId()) == null) {

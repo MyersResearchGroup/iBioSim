@@ -14,8 +14,6 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.swing.JOptionPane;
-
 /**
  * This class describes a GCM file
  * 

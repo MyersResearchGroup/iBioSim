@@ -34,6 +34,12 @@ public class PropertyList extends JList implements EnableElement, NamedObject,
 			model.addElement(item);
 		}
 	}
+	
+	public void addAllItem(String[] items) {
+		for (String s : items) {
+			addItem(s);
+		}
+	}
 
 	public void addAllItem(Collection<String> items) {
 		for (String s : items) {
