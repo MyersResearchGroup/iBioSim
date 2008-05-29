@@ -14,6 +14,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Properties;
@@ -28,6 +29,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
+
+import sun.misc.Compare;
+import sun.misc.Sort;
 
 import biomodelsim.BioSim;
 
@@ -232,11 +236,22 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 	public void reloadFiles(JComboBox files) {
 		files.removeAll();
 		String[] sbmlFiles = Utility.getFiles(path, ".sbml");
-		//String[] xmlFiles = Utility.getFiles(path, ".xml");
-		DefaultComboBoxModel model = new DefaultComboBoxModel(sbmlFiles); 
+		String[] xmlFiles = Utility.getFiles(path, ".xml");
+		
+		String[] temp = new String[sbmlFiles.length + xmlFiles.length];
+		System.arraycopy(sbmlFiles, 0, temp, 0, sbmlFiles.length);
+		System.arraycopy(xmlFiles, 0, temp, sbmlFiles.length, xmlFiles.length);
+		
+		Arrays.sort(temp, String.CASE_INSENSITIVE_ORDER);
+		String[] allFiles = new String[temp.length + 1];
+		System.arraycopy(temp, 0, allFiles, 1, temp.length);
+		allFiles[0] = none;
+		
+		
+		DefaultComboBoxModel model = new DefaultComboBoxModel(allFiles);
+		
 		files.setModel(model);
-		model.addElement(none);
-				
+		
 		files.setSelectedItem(none);
 		files.setSelectedItem(gcm.getSBMLFile());		
 	}
