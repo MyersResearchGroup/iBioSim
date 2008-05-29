@@ -1820,6 +1820,7 @@ public class BioSim implements MouseListener, ActionListener {
 	public void refreshTree() {
 		tree.fixTree();
 		mainPanel.validate();
+		updateGCM();
 	}
 
 	/**
@@ -3134,6 +3135,14 @@ public class BioSim implements MouseListener, ActionListener {
 						}
 					}
 				}
+			}
+		}
+	}
+	
+	private void updateGCM() {
+		for (int i = 0; i < tab.getTabCount(); i++) {
+			if (tab.getTitleAt(i).contains(".gcm")) {
+				((GCM2SBMLEditor)tab.getComponentAt(i)).reloadFiles();
 			}
 		}
 	}
