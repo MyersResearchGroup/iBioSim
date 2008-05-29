@@ -133,8 +133,8 @@ public class GeneticNetwork {
 			checkConsistancy(document);
 			PrintStream p = new PrintStream(new FileOutputStream(filename));
 
-			m.setName(new File(filename).getName().replace(".gcm", ".sbml"));
-			m.setId(m.getName().replace(".sbml", ""));
+			m.setName("Created from " + new File(filename).getName().replace("sbml", "gcm"));
+			m.setId(new File(filename).getName().replace(".gcm", ""));			
 
 			p.print(writer.writeToString(document));
 
