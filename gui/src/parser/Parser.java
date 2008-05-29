@@ -3,10 +3,10 @@ package parser;
 import java.awt.*;
 import java.io.*;
 import java.util.*;
+import javax.swing.*;
+import biomodelsim.*;
 
-import javax.swing.JOptionPane;
-
-public abstract class Parser {
+public class Parser {
 
 	protected ArrayList<String> species;
 
@@ -14,12 +14,26 @@ public abstract class Parser {
 
 	protected Component component;
 
+	public Parser(ArrayList<String> species, ArrayList<ArrayList<Double>> data, BioSim biosim) {
+		this.species = species;
+		this.data = data;
+		component = biosim.frame();
+	}
+
 	public ArrayList<String> getSpecies() {
 		return species;
 	}
 
 	public ArrayList<ArrayList<Double>> getData() {
 		return data;
+	}
+
+	public void setSpecies(ArrayList<String> species) {
+		this.species = species;
+	}
+
+	public void getData(ArrayList<ArrayList<Double>> data) {
+		this.data = data;
 	}
 
 	public void outputTSD(String filename) {
