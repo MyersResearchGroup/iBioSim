@@ -170,7 +170,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 		
 		JLabel sbmlFileLabel = new JLabel("SBML File:");
 		sbmlFiles = new JComboBox();
-		reloadFiles(sbmlFiles);
+		reloadFiles();
 		mainPanelNorth.add(sbmlFileLabel);
 		mainPanelNorth.add(sbmlFiles);
 				
@@ -233,27 +233,27 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 		mainPanelCenterCenter.add(initPanel);
 	}
 	
-	public void reloadFiles(JComboBox files) {
-		files.removeAll();
-		String[] sbmlFiles = Utility.getFiles(path, ".sbml");
-		String[] xmlFiles = Utility.getFiles(path, ".xml");
+	public void reloadFiles() {		
+		sbmlFiles.removeAll();
+		String[] sbmlList = Utility.getFiles(path, ".sbml");
+		String[] xmlList = Utility.getFiles(path, ".xml");
 		
-		String[] temp = new String[sbmlFiles.length + xmlFiles.length];
-		System.arraycopy(sbmlFiles, 0, temp, 0, sbmlFiles.length);
-		System.arraycopy(xmlFiles, 0, temp, sbmlFiles.length, xmlFiles.length);
+		String[] temp = new String[sbmlList.length + xmlList.length];
+		System.arraycopy(sbmlList, 0, temp, 0, sbmlList.length);
+		System.arraycopy(xmlList, 0, temp, sbmlList.length, xmlList.length);
 		
 		Arrays.sort(temp, String.CASE_INSENSITIVE_ORDER);
-		String[] allFiles = new String[temp.length + 1];
-		System.arraycopy(temp, 0, allFiles, 1, temp.length);
-		allFiles[0] = none;
+		String[] allList = new String[temp.length + 1];
+		System.arraycopy(temp, 0, allList, 1, temp.length);
+		allList[0] = none;
 		
 		
-		DefaultComboBoxModel model = new DefaultComboBoxModel(allFiles);
+		DefaultComboBoxModel model = new DefaultComboBoxModel(allList);
 		
-		files.setModel(model);
+		sbmlFiles.setModel(model);
 		
-		files.setSelectedItem(none);
-		files.setSelectedItem(gcm.getSBMLFile());		
+		sbmlFiles.setSelectedItem(none);
+		sbmlFiles.setSelectedItem(gcm.getSBMLFile());		
 	}
 	
 	private Set<String> generateParameters() {
