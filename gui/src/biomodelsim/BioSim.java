@@ -540,7 +540,8 @@ public class BioSim implements MouseListener, ActionListener {
 				// File work = new File(directory);
 
 				GCMParser parser = new GCMParser(tree.getFile());
-				GeneticNetwork network = parser.buildNetwork();				
+				GeneticNetwork network = parser.buildNetwork();		
+				GeneticNetwork.setRoot(root + File.separator);
 				network.mergeSBML(root + separator + sbmlFile);
 				refreshTree();
 				addTab(sbmlFile, new SBML_Editor(root + separator + sbmlFile, null, log, this, null, null),
@@ -2451,6 +2452,7 @@ public class BioSim implements MouseListener, ActionListener {
 													 */(dot[dot.length - 1].substring(0, dot[dot.length - 1].length() - 3) + "sbml");
 				GCMParser parser = new GCMParser(tree.getFile());
 				GeneticNetwork network = parser.buildNetwork();
+				GeneticNetwork.setRoot(root + File.separator);
 				network.mergeSBML(root + separator + simName + separator + sbmlFile);
 				try {
 					FileOutputStream out = new FileOutputStream(new File(root + separator + simName.trim()
@@ -2771,6 +2773,7 @@ public class BioSim implements MouseListener, ActionListener {
 									if (sbmlLoadFile.contains(".gcm")) {
 										GCMParser parser = new GCMParser(root + separator + sbmlLoadFile);
 										GeneticNetwork network = parser.buildNetwork();
+										GeneticNetwork.setRoot(root + File.separator);
 										sbmlLoadFile = root + separator + split[split.length - 1].trim() + separator
 												+ sbmlLoadFile.replace(".gcm", ".sbml");
 										network.mergeSBML(sbmlLoadFile);
@@ -3027,6 +3030,7 @@ public class BioSim implements MouseListener, ActionListener {
 								if (sbmlLoadFile.contains(".gcm")) {
 									GCMParser parser = new GCMParser(root + separator + sbmlLoadFile);
 									GeneticNetwork network = parser.buildNetwork();
+									GeneticNetwork.setRoot(root + File.separator);
 									sbmlLoadFile = root + separator + newSim + separator
 											+ sbmlLoadFile.replace(".gcm", ".sbml");
 									network.mergeSBML(sbmlLoadFile);
@@ -3160,6 +3164,7 @@ public class BioSim implements MouseListener, ActionListener {
 							if (updatedFile.contains(".gcm")) {
 								GCMParser parser = new GCMParser(root + separator + updatedFile);
 								GeneticNetwork network = parser.buildNetwork();
+								GeneticNetwork.setRoot(root + File.separator);
 								network.mergeSBML(root + separator + tab + separator
 										+ updatedFile.replace(".gcm", ".sbml"));
 							}
