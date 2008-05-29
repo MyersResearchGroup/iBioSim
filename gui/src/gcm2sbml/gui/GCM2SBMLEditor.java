@@ -20,6 +20,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.Vector;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -103,6 +104,12 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 
 	public void save(String command) {
 		dirty = false;
+		
+		if (!sbmlFiles.getSelectedItem().equals(none)) {
+			gcm.setSBMLFile(sbmlFiles.getSelectedItem().toString());
+		}
+		GeneticNetwork.setRoot(path + File.separator);
+		
 		// Write out species and influences to a gcm file
 		gcm.save(path + File.separator + gcmname + ".gcm");
 
@@ -110,7 +117,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 			// Then read in the file with the GCMParser
 			GCMParser parser = new GCMParser(path + File.separator + gcmname
 					+ ".gcm");
-			GeneticNetwork network = parser.buildNetwork();
+			GeneticNetwork network = parser.buildNetwork();			
 			network.loadProperties(gcm);
 			// Finally, output to a file
 			if (new File(path + File.separator + gcmname + ".sbml").exists()) {
@@ -118,13 +125,13 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 						"Save file", JOptionPane.YES_NO_OPTION,
 						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 				if (value == JOptionPane.YES_OPTION) {
-					network.outputSBML(path + File.separator + gcmname + ".sbml");
+					network.mergeSBML(path + File.separator + gcmname + ".sbml");
 					biosim.refreshTree();					
 				} else {
 					//Do nothing
 				}
 			} else {
-				network.outputSBML(path + File.separator + gcmname + ".sbml");
+				network.mergeSBML(path + File.separator + gcmname + ".sbml");
 				biosim.refreshTree();					
 			}			
 		}
@@ -150,13 +157,19 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 		mainPanelCenter.add(mainPanelCenterCenter, BorderLayout.CENTER);
 		mainPanelCenter.add(mainPanelCenterDown, BorderLayout.SOUTH);
 		JTextField GCMNameTextField = new JTextField(filename.replace(".gcm",
-				""), 50);
+				""), 15);		
 		GCMNameTextField.setEditable(false);
 		GCMNameTextField.addActionListener(this);
-		JLabel GCMNameLabel = new JLabel("GCM Id:");
+		JLabel GCMNameLabel = new JLabel("GCM Id:");		
 		mainPanelNorth.add(GCMNameLabel);
 		mainPanelNorth.add(GCMNameTextField);
-
+		
+		JLabel sbmlFileLabel = new JLabel("SBML File:");
+		sbmlFiles = new JComboBox();
+		reloadFiles(sbmlFiles);
+		mainPanelNorth.add(sbmlFileLabel);
+		mainPanelNorth.add(sbmlFiles);
+				
 		JPanel mainPanel = new JPanel(new BorderLayout());
 		mainPanel.setLayout(new BorderLayout());
 		mainPanel.add(mainPanelNorth, "North");
@@ -214,6 +227,18 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 				null, editInit);
 
 		mainPanelCenterCenter.add(initPanel);
+	}
+	
+	public void reloadFiles(JComboBox files) {
+		files.removeAll();
+		String[] sbmlFiles = Utility.getFiles(path, ".sbml");
+		//String[] xmlFiles = Utility.getFiles(path, ".xml");
+		DefaultComboBoxModel model = new DefaultComboBoxModel(sbmlFiles); 
+		files.setModel(model);
+		model.addElement(none);
+				
+		files.setSelectedItem(none);
+		files.setSelectedItem(gcm.getSBMLFile());		
 	}
 	
 	private Set<String> generateParameters() {
@@ -372,8 +397,12 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 	private PropertyList promoters = null;
 
 	private PropertyList parameters = null;
+	
+	private JComboBox sbmlFiles = null;
 
 	private String path = null;
+	
+	private static final String none = "--none--";
 
 	private BioSim biosim = null;
 

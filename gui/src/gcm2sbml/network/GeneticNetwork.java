@@ -109,6 +109,7 @@ public class GeneticNetwork {
 	public void outputSBML(String filename, SBMLDocument document) {
 		try {
 			Model m = document.getModel();
+			checkConsistancy(document);
 			SBMLWriter writer = new SBMLWriter();
 			printSpecies(document);
 			printPromoters(document);
@@ -151,12 +152,15 @@ public class GeneticNetwork {
 	 * @return the sbml document
 	 */
 	public void mergeSBML(String filename) {
-		try {
+		try {			
 			if (sbmlDocument.equals("")) {
 				outputSBML(filename);
 				return;
 			}
-			SBMLDocument document = new SBMLReader().readSBML(sbmlDocument);
+
+			SBMLDocument document = new SBMLReader().readSBML(currentRoot + sbmlDocument);
+			checkConsistancy(document);
+			currentDocument = document;
 			outputSBML(filename, document);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -441,24 +445,24 @@ public class GeneticNetwork {
 			Species s = Utility.makeSpecies(promoter.getName(), compartment,
 					Double.parseDouble(tempPromoters));
 			s.setHasOnlySubstanceUnits(true);
-			document.getModel().addSpecies(s);
+			Utility.addSpecies(document, s);			
 			s = Utility.makeSpecies("RNAP_" + promoter.getName(), compartment,
 					0);
 			s.setHasOnlySubstanceUnits(true);
-			document.getModel().addSpecies(s);
+			Utility.addSpecies(document, s);
 			// Now cycle through all activators and repressors and add those
 			// bindings
 			for (SpeciesInterface species : promoter.getActivators()) {
 				s = Utility.makeSpecies("RNAP_" + promoter.getName() + "_"
 						+ species.getName(), compartment, 0);
 				s.setHasOnlySubstanceUnits(true);
-				document.getModel().addSpecies(s);
+				Utility.addSpecies(document, s);
 			}
 			for (SpeciesInterface species : promoter.getRepressors()) {
 				s = Utility.makeSpecies("bound_" + promoter.getName() + "_"
 						+ species.getName(), compartment, 0);
 				s.setHasOnlySubstanceUnits(true);
-				document.getModel().addSpecies(s);
+				Utility.addSpecies(document, s);
 			}
 		}
 
@@ -478,7 +482,7 @@ public class GeneticNetwork {
 		}
 		Species s = Utility.makeSpecies("RNAP", compartment, rnap);
 		s.setHasOnlySubstanceUnits(true);
-		document.getModel().addSpecies(s);
+		Utility.addSpecies(document, s);
 	}
 
 	/**
@@ -637,6 +641,8 @@ public class GeneticNetwork {
 	private String sbmlDocument = "";
 
 	private static SBMLDocument currentDocument = null;
+	
+	private static String currentRoot = "";
 
 	private boolean biochemicalAbstraction = false;
 
@@ -662,6 +668,14 @@ public class GeneticNetwork {
 	public static SBMLDocument getCurrentDocument() {
 		return currentDocument;
 	}
+	
+	/**
+	 * Sets the current root
+	 * @param root the root directory
+	 */
+	public static void setRoot(String root) {
+		currentRoot = root;
+	}	
 
 	public static String getUnitString(ArrayList<String> unitNames,
 			ArrayList<Integer> exponents, ArrayList<Integer> multiplier,
