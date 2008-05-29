@@ -1,14 +1,14 @@
 package parser;
 
-import java.awt.*;
 import java.io.*;
 import java.util.*;
 import javax.swing.*;
+import biomodelsim.*;
 
 public class DATParser extends Parser {
-	public DATParser(String filename, Component component) {
+	public DATParser(String filename, BioSim biosim) {
 		try {
-			this.component = component;
+			component = biosim.frame();
 			boolean warning = false;
 			FileInputStream fileInput = new FileInputStream(new File(filename));
 			ProgressMonitorInputStream prog = new ProgressMonitorInputStream(component,
