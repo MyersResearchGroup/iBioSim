@@ -268,18 +268,18 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		this.revalidate();
 	}
 
-	private void readGraphSpecies(String file, Component component) {
-		component.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-		graphSpecies = new TSDParser(file, component).getSpecies();
-		component.setCursor(null);
+	private void readGraphSpecies(String file) {
+		biomodelsim.frame().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+		graphSpecies = new TSDParser(file, biomodelsim).getSpecies();
+		biomodelsim.frame().setCursor(null);
 	}
 
 	/**
 	 * This private helper method parses the output file of ODE, monte carlo, and
 	 * markov abstractions.
 	 */
-	private ArrayList<ArrayList<Double>> readData(String file, Component component,
-			String printer_track_quantity, String label, String directory) {
+	private ArrayList<ArrayList<Double>> readData(String file, String printer_track_quantity,
+			String label, String directory) {
 		String[] s = file.split(separator);
 		String getLast = s[s.length - 1];
 		String stem = "";
@@ -302,10 +302,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			return calculateAverageVarianceDeviation(file, stem, 0, directory);
 		}
 		else {
-			component.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-			TSDParser p = new TSDParser(file, component);
+			biomodelsim.frame().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+			TSDParser p = new TSDParser(file, biomodelsim);
 			graphSpecies = p.getSpecies();
-			component.setCursor(null);
+			biomodelsim.frame().setCursor(null);
 			return p.getData();
 		}
 	}
@@ -1648,8 +1648,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								}
 								else {
 									data = readData(outDir + separator + g.getRunNumber() + "."
-											+ printer_id.substring(0, printer_id.length() - 8), biomodelsim.frame(), y
-											.getText().trim(), g.getRunNumber(), null);
+											+ printer_id.substring(0, printer_id.length() - 8), y.getText().trim(), g
+											.getRunNumber(), null);
 									for (int i = 2; i < graphSpecies.size(); i++) {
 										String index = graphSpecies.get(i);
 										ArrayList<Double> index2 = data.get(i);
@@ -1701,8 +1701,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								}
 								else {
 									data = readData(outDir + separator + "run-1."
-											+ printer_id.substring(0, printer_id.length() - 8), biomodelsim.frame(), y
-											.getText().trim(), g.getRunNumber().toLowerCase(), null);
+											+ printer_id.substring(0, printer_id.length() - 8), y.getText().trim(), g
+											.getRunNumber().toLowerCase(), null);
 									for (int i = 2; i < graphSpecies.size(); i++) {
 										String index = graphSpecies.get(i);
 										ArrayList<Double> index2 = data.get(i);
@@ -1750,7 +1750,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								else {
 									data = readData(outDir + separator + g.getDirectory() + separator
 											+ g.getRunNumber() + "." + printer_id.substring(0, printer_id.length() - 8),
-											biomodelsim.frame(), y.getText().trim(), g.getRunNumber(), g.getDirectory());
+											y.getText().trim(), g.getRunNumber(), g.getDirectory());
 									for (int i = 2; i < graphSpecies.size(); i++) {
 										String index = graphSpecies.get(i);
 										ArrayList<Double> index2 = data.get(i);
@@ -1802,8 +1802,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								}
 								else {
 									data = readData(outDir + separator + g.getDirectory() + separator + "run-1."
-											+ printer_id.substring(0, printer_id.length() - 8), biomodelsim.frame(), y
-											.getText().trim(), g.getRunNumber().toLowerCase(), g.getDirectory());
+											+ printer_id.substring(0, printer_id.length() - 8), y.getText().trim(), g
+											.getRunNumber().toLowerCase(), g.getDirectory());
 									for (int i = 2; i < graphSpecies.size(); i++) {
 										String index = graphSpecies.get(i);
 										ArrayList<Double> index2 = data.get(i);
@@ -1919,11 +1919,11 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					nextOne++;
 				}
 				readGraphSpecies(outDir + separator + "run-" + nextOne + "."
-						+ printer_id.substring(0, printer_id.length() - 8), biomodelsim.frame());
+						+ printer_id.substring(0, printer_id.length() - 8));
 			}
 			else {
 				readGraphSpecies(outDir + separator + selected + "."
-						+ printer_id.substring(0, printer_id.length() - 8), biomodelsim.frame());
+						+ printer_id.substring(0, printer_id.length() - 8));
 			}
 		}
 		else {
@@ -1935,11 +1935,11 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					nextOne++;
 				}
 				readGraphSpecies(outDir + separator + directory + separator + "run-" + nextOne + "."
-						+ printer_id.substring(0, printer_id.length() - 8), biomodelsim.frame());
+						+ printer_id.substring(0, printer_id.length() - 8));
 			}
 			else {
 				readGraphSpecies(outDir + separator + directory + separator + selected + "."
-						+ printer_id.substring(0, printer_id.length() - 8), biomodelsim.frame());
+						+ printer_id.substring(0, printer_id.length() - 8));
 			}
 		}
 		for (int i = 2; i < graphSpecies.size(); i++) {
@@ -2945,7 +2945,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		ArrayList<ArrayList<Double>> variance = new ArrayList<ArrayList<Double>>();
 		ArrayList<ArrayList<Double>> deviation = new ArrayList<ArrayList<Double>>();
 		biomodelsim.frame().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-		TSDParser p = new TSDParser(startFile, biomodelsim.frame());
+		TSDParser p = new TSDParser(startFile, biomodelsim);
 		graphSpecies = p.getSpecies();
 		biomodelsim.frame().setCursor(null);
 		boolean first = true;
@@ -2999,7 +2999,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						if (new File(outDir + separator + fileStem + (j + 1) + "."
 								+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
 							p = new TSDParser(outDir + separator + fileStem + (j + 1) + "."
-									+ printer_id.substring(0, printer_id.length() - 8), biomodelsim.frame());
+									+ printer_id.substring(0, printer_id.length() - 8), biomodelsim);
 							loop = false;
 							count++;
 						}
@@ -3011,7 +3011,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						if (new File(outDir + separator + directory + separator + fileStem + (j + 1) + "."
 								+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
 							p = new TSDParser(outDir + separator + directory + separator + fileStem + (j + 1)
-									+ "." + printer_id.substring(0, printer_id.length() - 8), biomodelsim.frame());
+									+ "." + printer_id.substring(0, printer_id.length() - 8), biomodelsim);
 							loop = false;
 							count++;
 						}
@@ -3398,7 +3398,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							if (allData.containsKey(g.getRunNumber() + " " + g.getDirectory())) {
 								data = allData.get(g.getRunNumber() + " " + g.getDirectory());
 								readGraphSpecies(outDir + separator + g.getRunNumber() + "."
-										+ printer_id.substring(0, printer_id.length() - 8), biomodelsim.frame());
+										+ printer_id.substring(0, printer_id.length() - 8));
 								for (int i = 2; i < graphSpecies.size(); i++) {
 									String index = graphSpecies.get(i);
 									int j = i;
@@ -3411,8 +3411,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							}
 							else {
 								data = readData(outDir + separator + g.getRunNumber() + "."
-										+ printer_id.substring(0, printer_id.length() - 8), biomodelsim.frame(), chart
-										.getXYPlot().getRangeAxis().getLabel(), g.getRunNumber(), null);
+										+ printer_id.substring(0, printer_id.length() - 8), chart.getXYPlot()
+										.getRangeAxis().getLabel(), g.getRunNumber(), null);
 								for (int i = 2; i < graphSpecies.size(); i++) {
 									String index = graphSpecies.get(i);
 									ArrayList<Double> index2 = data.get(i);
@@ -3476,7 +3476,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							if (allData.containsKey(g.getRunNumber() + " " + g.getDirectory())) {
 								data = allData.get(g.getRunNumber() + " " + g.getDirectory());
 								readGraphSpecies(outDir + separator + "run-" + nextOne + "."
-										+ printer_id.substring(0, printer_id.length() - 8), biomodelsim.frame());
+										+ printer_id.substring(0, printer_id.length() - 8));
 								for (int i = 2; i < graphSpecies.size(); i++) {
 									String index = graphSpecies.get(i);
 									int j = i;
@@ -3489,8 +3489,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							}
 							else {
 								data = readData(outDir + separator + "run-1."
-										+ printer_id.substring(0, printer_id.length() - 8), biomodelsim.frame(), chart
-										.getXYPlot().getRangeAxis().getLabel(), g.getRunNumber().toLowerCase(), null);
+										+ printer_id.substring(0, printer_id.length() - 8), chart.getXYPlot()
+										.getRangeAxis().getLabel(), g.getRunNumber().toLowerCase(), null);
 								for (int i = 2; i < graphSpecies.size(); i++) {
 									String index = graphSpecies.get(i);
 									ArrayList<Double> index2 = data.get(i);
@@ -3549,8 +3549,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							if (allData.containsKey(g.getRunNumber() + " " + g.getDirectory())) {
 								data = allData.get(g.getRunNumber() + " " + g.getDirectory());
 								readGraphSpecies(outDir + separator + g.getDirectory() + separator
-										+ g.getRunNumber() + "." + printer_id.substring(0, printer_id.length() - 8),
-										biomodelsim.frame());
+										+ g.getRunNumber() + "." + printer_id.substring(0, printer_id.length() - 8));
 								for (int i = 2; i < graphSpecies.size(); i++) {
 									String index = graphSpecies.get(i);
 									int j = i;
@@ -3564,8 +3563,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							else {
 								data = readData(outDir + separator + g.getDirectory() + separator
 										+ g.getRunNumber() + "." + printer_id.substring(0, printer_id.length() - 8),
-										biomodelsim.frame(), chart.getXYPlot().getRangeAxis().getLabel(), g
-												.getRunNumber(), g.getDirectory());
+										chart.getXYPlot().getRangeAxis().getLabel(), g.getRunNumber(), g.getDirectory());
 								for (int i = 2; i < graphSpecies.size(); i++) {
 									String index = graphSpecies.get(i);
 									ArrayList<Double> index2 = data.get(i);
@@ -3629,8 +3627,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							if (allData.containsKey(g.getRunNumber() + " " + g.getDirectory())) {
 								data = allData.get(g.getRunNumber() + " " + g.getDirectory());
 								readGraphSpecies(outDir + separator + g.getDirectory() + separator + "run-"
-										+ nextOne + "." + printer_id.substring(0, printer_id.length() - 8), biomodelsim
-										.frame());
+										+ nextOne + "." + printer_id.substring(0, printer_id.length() - 8));
 								for (int i = 2; i < graphSpecies.size(); i++) {
 									String index = graphSpecies.get(i);
 									int j = i;
@@ -3643,9 +3640,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							}
 							else {
 								data = readData(outDir + separator + g.getDirectory() + separator + "run-1."
-										+ printer_id.substring(0, printer_id.length() - 8), biomodelsim.frame(), chart
-										.getXYPlot().getRangeAxis().getLabel(), g.getRunNumber().toLowerCase(), g
-										.getDirectory());
+										+ printer_id.substring(0, printer_id.length() - 8), chart.getXYPlot()
+										.getRangeAxis().getLabel(), g.getRunNumber().toLowerCase(), g.getDirectory());
 								for (int i = 2; i < graphSpecies.size(); i++) {
 									String index = graphSpecies.get(i);
 									ArrayList<Double> index2 = data.get(i);
