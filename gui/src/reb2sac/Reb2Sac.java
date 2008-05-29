@@ -1096,6 +1096,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		}
 		// if the Run button is clicked
 		else if (e.getSource() == run) {
+			
 			sbmlEditor.save(true);
 		}
 		else if (e.getSource() == save) {

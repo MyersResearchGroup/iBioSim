@@ -2,20 +2,19 @@ package parser;
 
 import java.io.*;
 import java.util.*;
+
 import javax.swing.*;
 import biomodelsim.*;
 
 public class TSDParser extends Parser {
 	public TSDParser(String filename, BioSim biosim) {
+		super(new ArrayList<String>(), new ArrayList<ArrayList<Double>>(), biosim);
 		try {
-			component = biosim.frame();
 			boolean warning = false;
 			FileInputStream fileInput = new FileInputStream(new File(filename));
 			ProgressMonitorInputStream prog = new ProgressMonitorInputStream(component,
 					"Reading Reb2sac Output Data From " + new File(filename).getName(), fileInput);
 			InputStream input = new BufferedInputStream(prog);
-			species = new ArrayList<String>();
-			data = new ArrayList<ArrayList<Double>>();
 			boolean reading = true;
 			char cha;
 			while (reading) {
