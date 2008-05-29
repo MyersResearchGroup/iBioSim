@@ -260,9 +260,7 @@ public class Utility {
 			}
 		}
 
-		if (filter == null) {
-			filter = new TSDFilter();
-		}
+		filter = new TSDFilter();		
 		return filter;
 	}
 	
@@ -273,10 +271,8 @@ public class Utility {
 				return name.contains(ext);
 			}
 		}
-
-		if (filter == null) {
-			filter = new Filter();
-		}
+				
+		filter = new Filter();		
 		return filter;
 	}
 		
