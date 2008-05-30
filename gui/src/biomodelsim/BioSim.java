@@ -540,7 +540,7 @@ public class BioSim implements MouseListener, ActionListener {
 				// File work = new File(directory);
 
 				GCMParser parser = new GCMParser(tree.getFile());
-				GeneticNetwork network = parser.buildNetwork();		
+				GeneticNetwork network = parser.buildNetwork();
 				GeneticNetwork.setRoot(root + File.separator);
 				network.mergeSBML(root + separator + sbmlFile);
 				refreshTree();
@@ -1879,7 +1879,7 @@ public class BioSim implements MouseListener, ActionListener {
 						+ tab.getTitleAt(index) + "?", "Save Changes", JOptionPane.YES_NO_CANCEL_OPTION,
 						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 				if (value == JOptionPane.YES_OPTION) {
-					((SBML_Editor) tab.getComponentAt(index)).save(false);
+					((SBML_Editor) tab.getComponentAt(index)).save(false, "");
 					return 1;
 				}
 				else if (value == JOptionPane.NO_OPTION) {
@@ -1942,7 +1942,8 @@ public class BioSim implements MouseListener, ActionListener {
 								"Save Changes", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null,
 								options, options[0]);
 						if (value == JOptionPane.YES_OPTION) {
-							((SBML_Editor) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).save(false);
+							((SBML_Editor) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).save(false,
+									"");
 						}
 						else if (value == JOptionPane.CANCEL_OPTION) {
 							return 0;
@@ -3138,11 +3139,11 @@ public class BioSim implements MouseListener, ActionListener {
 			}
 		}
 	}
-	
+
 	private void updateGCM() {
 		for (int i = 0; i < tab.getTabCount(); i++) {
 			if (tab.getTitleAt(i).contains(".gcm")) {
-				((GCM2SBMLEditor)tab.getComponentAt(i)).reloadFiles();
+				((GCM2SBMLEditor) tab.getComponentAt(i)).reloadFiles();
 			}
 		}
 	}
@@ -3169,7 +3170,7 @@ public class BioSim implements MouseListener, ActionListener {
 						if (sim.getComponentAt(j).getName().equals("SBML Editor")) {
 							new File(properties).renameTo(new File(properties.replace(".pms", ".temp")));
 							boolean dirty = ((SBML_Editor) (sim.getComponentAt(j))).hasChanged();
-							((SBML_Editor) (sim.getComponentAt(j))).save(false);
+							((SBML_Editor) (sim.getComponentAt(j))).save(false, "");
 							if (updatedFile.contains(".gcm")) {
 								GCMParser parser = new GCMParser(root + separator + updatedFile);
 								GeneticNetwork network = parser.buildNetwork();

@@ -383,7 +383,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					modelID = modelID.substring(0, modelID.indexOf('.'));
 				}
 				model.setId(modelID);
-				save(false);
+				save(false, "");
 			}
 		}
 		else {
@@ -1052,7 +1052,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		}
 		// if the check button is clicked
 		else if (e.getSource() == check) {
-			save(false);
+			save(false, "");
 			check();
 		}
 		// if the save button is clicked
@@ -1061,7 +1061,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				reb2sac.getSaveButton().doClick();
 			}
 			else {
-				save(false);
+				save(false, "");
 			}
 		}
 		// if the save as button is clicked
@@ -8759,7 +8759,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	/**
 	 * Create the SBML file
 	 */
-	public void createSBML(String direct) {
+	public void createSBML(String stem, String direct) {
 		try {
 			FileOutputStream out = new FileOutputStream(new File(paramFile));
 			out.write((refFile + "\n").getBytes());
@@ -8820,8 +8820,11 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				}
 			}
 			direct = direct.replace("/", "-");
-			FileOutputStream out = new FileOutputStream(new File(simDir + separator + direct + separator
-					+ file.split(separator)[file.split(separator).length - 1]));
+			if (direct.equals(".") && !stem.equals("")) {
+				direct = "";
+			}
+			FileOutputStream out = new FileOutputStream(new File(simDir + separator + stem + direct
+					+ separator + file.split(separator)[file.split(separator).length - 1]));
 			document.getModel().setName(modelName.getText().trim());
 			SBMLWriter writer = new SBMLWriter();
 			String doc = writer.writeToString(document);
@@ -8887,8 +8890,10 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 
 	/**
 	 * Saves the sbml file.
+	 * 
+	 * @param stem
 	 */
-	public void save(boolean run) {
+	public void save(boolean run, String stem) {
 		if (paramsOnly) {
 			if (run) {
 				for (int i = 0; i < biosim.getTab().getTabCount(); i++) {
@@ -8901,7 +8906,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 									"Save Changes", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
 									options, options[0]);
 							if (value == JOptionPane.YES_OPTION) {
-								sbml.save(run);
+								sbml.save(run, stem);
 								SBMLReader reader = new SBMLReader();
 								document = reader.readSBML(file);
 							}
@@ -8985,28 +8990,39 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 										sweepTwo += "_" + sweepThese2.get(i) + "=" + sweep2.get(i).get(k);
 									}
 								}
-								new File(simDir + separator + sweepTwo.replace("/", "-")).mkdir();
-								createSBML(sweepTwo);
-								new Reb2SacThread(reb2sac).start(sweepTwo.replace("/", "-"));
+								new File(simDir + separator + stem + sweepTwo.replace("/", "-")).mkdir();
+								createSBML(stem, sweepTwo);
+								new Reb2SacThread(reb2sac).start(stem + sweepTwo.replace("/", "-"));
 								reb2sac.emptyFrames();
 							}
 						}
 						else {
-							new File(simDir + separator + sweep.replace("/", "-")).mkdir();
-							createSBML(sweep);
-							new Reb2SacThread(reb2sac).start(sweep.replace("/", "-"));
+							new File(simDir + separator + stem + sweep.replace("/", "-")).mkdir();
+							createSBML(stem, sweep);
+							new Reb2SacThread(reb2sac).start(stem + sweep.replace("/", "-"));
 							reb2sac.emptyFrames();
 						}
 					}
 				}
 				else {
-					createSBML(".");
-					new Reb2SacThread(reb2sac).start(".");
+					if (!stem.equals("")) {
+						new File(simDir + separator + stem).mkdir();
+					}
+					createSBML(stem, ".");
+					if (!stem.equals("")) {
+						new Reb2SacThread(reb2sac).start(stem);
+					}
+					else {
+						new Reb2SacThread(reb2sac).start(".");
+					}
 					reb2sac.emptyFrames();
 				}
 			}
 			else {
-				createSBML(".");
+				if (!stem.equals("")) {
+					new File(simDir + separator + stem).mkdir();
+				}
+				createSBML(stem, ".");
 			}
 			change = false;
 		}

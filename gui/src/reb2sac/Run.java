@@ -21,11 +21,11 @@ public class Run implements ActionListener {
 	private Process reb2sac;
 
 	private String separator;
-				
-        private Reb2Sac r2s;
+
+	private Reb2Sac r2s;
 
 	public Run(Reb2Sac reb2sac) {
-	        r2s = reb2sac;
+		r2s = reb2sac;
 		if (File.separator.equals("\\")) {
 			separator = "\\\\";
 		}
@@ -37,6 +37,8 @@ public class Run implements ActionListener {
 	/**
 	 * This method is given which buttons are selected and creates the properties
 	 * file from all the other information given.
+	 * 
+	 * @param stem
 	 */
 	public void createProperties(double timeLimit, double printInterval, double timeStep,
 			double absError, String outDir, long rndSeed, int run, String[] termCond,
@@ -120,9 +122,10 @@ public class Run implements ActionListener {
 			abs.setProperty("ode.simulation.time.limit", "" + timeLimit);
 			abs.setProperty("ode.simulation.print.interval", "" + printInterval);
 			if (timeStep == Double.MAX_VALUE) {
-			  abs.setProperty("ode.simulation.time.step", "inf");
-			} else {
-			  abs.setProperty("ode.simulation.time.step", "" + timeStep);
+				abs.setProperty("ode.simulation.time.step", "inf");
+			}
+			else {
+				abs.setProperty("ode.simulation.time.step", "" + timeStep);
 			}
 			abs.setProperty("ode.simulation.absolute.error", "" + absError);
 			abs.setProperty("ode.simulation.out.dir", outDir);
@@ -135,9 +138,10 @@ public class Run implements ActionListener {
 			abs.setProperty("monte.carlo.simulation.time.limit", "" + timeLimit);
 			abs.setProperty("monte.carlo.simulation.print.interval", "" + printInterval);
 			if (timeStep == Double.MAX_VALUE) {
-			  abs.setProperty("monte.carlo.simulation.time.step", "inf");
-			} else {
-			  abs.setProperty("monte.carlo.simulation.time.step", "" + timeStep);
+				abs.setProperty("monte.carlo.simulation.time.step", "inf");
+			}
+			else {
+				abs.setProperty("monte.carlo.simulation.time.step", "" + timeStep);
 			}
 			abs.setProperty("monte.carlo.simulation.random.seed", "" + rndSeed);
 			abs.setProperty("monte.carlo.simulation.runs", "" + run);
@@ -187,8 +191,8 @@ public class Run implements ActionListener {
 	 * This method is given what data is entered into the nary frame and creates
 	 * the nary properties file from that information.
 	 */
-	public void createNaryProperties(double timeLimit, double printInterval, double timeStep, String outDir,
-			long rndSeed, int run, String printer_id, String printer_track_quantity,
+	public void createNaryProperties(double timeLimit, double printInterval, double timeStep,
+			String outDir, long rndSeed, int run, String printer_id, String printer_track_quantity,
 			String[] getFilename, Component component, String filename, JRadioButton monteCarlo,
 			String stopE, double stopR, String[] finalS, ArrayList<JTextField> inhib,
 			ArrayList<JList> consLevel, ArrayList<String> getSpeciesProps, ArrayList<Object[]> conLevel,
@@ -251,9 +255,10 @@ public class Run implements ActionListener {
 			nary.setProperty("monte.carlo.simulation.time.limit", "" + timeLimit);
 			nary.setProperty("monte.carlo.simulation.print.interval", "" + printInterval);
 			if (timeStep == Double.MAX_VALUE) {
-			  nary.setProperty("monte.carlo.simulation.time.step", "inf");
-			} else {
-			  nary.setProperty("monte.carlo.simulation.time.step", "" + timeStep);
+				nary.setProperty("monte.carlo.simulation.time.step", "inf");
+			}
+			else {
+				nary.setProperty("monte.carlo.simulation.time.step", "" + timeStep);
 			}
 			nary.setProperty("monte.carlo.simulation.random.seed", "" + rndSeed);
 			nary.setProperty("monte.carlo.simulation.runs", "" + run);
@@ -553,7 +558,7 @@ public class Run implements ActionListener {
 									((Graph) simTab.getComponentAt(i)).refresh();
 								}
 								else {
-								  simTab.setComponentAt(i, new Graph(r2s, printer_track_quantity, outDir
+									simTab.setComponentAt(i, new Graph(r2s, printer_track_quantity, outDir
 											.split(separator)[outDir.split(separator).length - 1]
 											+ " simulation results", printer_id, outDir, "time", biomodelsim, null, log,
 											null, true));
@@ -568,7 +573,7 @@ public class Run implements ActionListener {
 									if (new File(filename.substring(0, filename.length()
 											- filename.split(separator)[filename.split(separator).length - 1].length())
 											+ "sim-rep.txt").exists()) {
-									  simTab.setComponentAt(i, new Graph(r2s, printer_track_quantity, outDir
+										simTab.setComponentAt(i, new Graph(r2s, printer_track_quantity, outDir
 												.split(separator)[outDir.split(separator).length - 1]
 												+ " simulation results", printer_id, outDir, "time", biomodelsim, null,
 												log, null, false));
@@ -591,10 +596,10 @@ public class Run implements ActionListener {
 								((Graph) simTab.getComponentAt(i)).refresh();
 							}
 							else {
-							  simTab.setComponentAt(i, new Graph(r2s, printer_track_quantity,
-										outDir.split(separator)[outDir.split(separator).length - 1]
-												+ " simulation results", printer_id, outDir, "time", biomodelsim, null,
-										log, null, false));
+								simTab.setComponentAt(i, new Graph(r2s, printer_track_quantity, outDir
+										.split(separator)[outDir.split(separator).length - 1]
+										+ " simulation results", printer_id, outDir, "time", biomodelsim, null, log,
+										null, false));
 								simTab.getComponentAt(i).setName("ProbGraph");
 							}
 						}
@@ -615,7 +620,7 @@ public class Run implements ActionListener {
 										((Graph) simTab.getComponentAt(i)).refresh();
 									}
 									else {
-									  simTab.setComponentAt(i, new Graph(r2s, printer_track_quantity, outDir
+										simTab.setComponentAt(i, new Graph(r2s, printer_track_quantity, outDir
 												.split(separator)[outDir.split(separator).length - 1]
 												+ " simulation results", printer_id, outDir, "time", biomodelsim, null,
 												log, null, true));
@@ -630,7 +635,7 @@ public class Run implements ActionListener {
 										if (new File(filename.substring(0, filename.length()
 												- filename.split(separator)[filename.split(separator).length - 1].length())
 												+ "sim-rep.txt").exists()) {
-										  simTab.setComponentAt(i, new Graph(r2s, printer_track_quantity, outDir
+											simTab.setComponentAt(i, new Graph(r2s, printer_track_quantity, outDir
 													.split(separator)[outDir.split(separator).length - 1]
 													+ " simulation results", printer_id, outDir, "time", biomodelsim, null,
 													log, null, false));
@@ -647,7 +652,7 @@ public class Run implements ActionListener {
 										((Graph) simTab.getComponentAt(i)).refresh();
 									}
 									else {
-									  simTab.setComponentAt(i, new Graph(r2s, printer_track_quantity, outDir
+										simTab.setComponentAt(i, new Graph(r2s, printer_track_quantity, outDir
 												.split(separator)[outDir.split(separator).length - 1]
 												+ " simulation results", printer_id, outDir, "time", biomodelsim, null,
 												log, null, true));
@@ -662,7 +667,7 @@ public class Run implements ActionListener {
 										if (new File(filename.substring(0, filename.length()
 												- filename.split(separator)[filename.split(separator).length - 1].length())
 												+ "sim-rep.txt").exists()) {
-										  simTab.setComponentAt(i, new Graph(r2s, printer_track_quantity, outDir
+											simTab.setComponentAt(i, new Graph(r2s, printer_track_quantity, outDir
 													.split(separator)[outDir.split(separator).length - 1]
 													+ " simulation results", printer_id, outDir, "time", biomodelsim, null,
 													log, null, false));
