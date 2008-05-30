@@ -8902,6 +8902,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 									options, options[0]);
 							if (value == JOptionPane.YES_OPTION) {
 								sbml.save(run);
+								SBMLReader reader = new SBMLReader();
+								document = reader.readSBML(file);
 							}
 						}
 					}
