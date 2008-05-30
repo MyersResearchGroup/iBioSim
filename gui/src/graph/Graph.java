@@ -3079,9 +3079,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				}
 			}
 			ArrayList<ArrayList<Double>> data = p.getData();
-			for (int i = 0; i < data.size(); i++) {
-				for (int k = 0; k < data.get(i).size(); k++) {
-					if (first) {
+			for (int k = 0; k < data.get(0).size(); k++) {
+				if (first) {
+					for (int i = 0; i < data.size(); i++) {
 						average.get(i).add((data.get(i)).get(k));
 						if (i == 0) {
 							variance.get(i).add((data.get(i)).get(k));
@@ -3090,30 +3090,54 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							variance.get(i).add(0.0);
 						}
 					}
+				}
+				else {
+					int index = -1;
+					if (average.get(0).contains(data.get(0).get(k))) {
+						index = average.get(0).indexOf(data.get(0).get(k));
+					}
 					else {
-						try {
-							double old = (average.get(i)).get(k);
-							(average.get(i)).set(k, old + (((data.get(i)).get(k) - old) / (count + 1)));
-							double newMean = (average.get(i)).get(k);
-							if (i == 0) {
-								(variance.get(i)).set(k, old + (((data.get(i)).get(k) - old) / (count + 1)));
-							}
-							else {
-								double vary = (((count - 1) * (variance.get(i)).get(k)) + ((data.get(i)).get(k) - newMean)
-										* ((data.get(i)).get(k) - old))
-										/ count;
-								(variance.get(i)).set(k, vary);
+						for (int a = 0; a < average.get(0).size(); a++) {
+							if (average.get(0).get(a) > data.get(0).get(k)) {
+								index = a;
+								break;
 							}
 						}
-						catch (Exception e2) {
-							(average.get(i)).add((data.get(i)).get(k));
-							if (i == 0) {
-								(variance.get(i)).add((data.get(i)).get(k));
-							}
-							else {
-								(variance.get(i)).add(0.0);
+						if (index == -1) {
+							index = average.get(0).size() - 1;
+						}
+						average.get(0).add(data.get(0).get(k));
+						variance.get(0).add(data.get(0).get(k));
+						for (int a = 1; a < average.size(); a++) {
+							average.get(a).add(data.get(a).get(k));
+							variance.get(a).add(0.0);
+						}
+						if (index != average.get(0).size() - 1) {
+							for (int a = average.get(0).size() - 2; a >= 0; a--) {
+								if (average.get(0).get(a) > average.get(0).get(a + 1)) {
+									for (int b = 0; b < average.size(); b++) {
+										double temp = average.get(b).get(a);
+										average.get(b).set(a, average.get(b).get(a + 1));
+										average.get(b).set(a + 1, temp);
+										temp = variance.get(b).get(a);
+										variance.get(b).set(a, variance.get(b).get(a + 1));
+										variance.get(b).set(a + 1, temp);
+									}
+								}
+								else {
+									break;
+								}
 							}
 						}
+					}
+					for (int i = 1; i < data.size(); i++) {
+						double old = (average.get(i)).get(index);
+						(average.get(i)).set(index, old + (((data.get(i)).get(k) - old) / (count + 1)));
+						double newMean = (average.get(i)).get(index);
+						double vary = (((count - 1) * (variance.get(i)).get(index)) + ((data.get(i)).get(k) - newMean)
+								* ((data.get(i)).get(k) - old))
+								/ count;
+						(variance.get(i)).set(index, vary);
 					}
 				}
 			}
