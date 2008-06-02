@@ -318,7 +318,26 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 			for (String s : new File(root).list()) {
 				if (new File(root + separator + s).isDirectory()
 						&& !s.equals(directory.split(separator)[directory.split(separator).length - 1])) {
-					list.add(s);
+					boolean add = false;
+					for (String ss : new File(root + separator + s).list()) {
+						if (new File(root + separator + s + separator + ss).isDirectory()) {
+							boolean add2 = false;
+							for (String sss : new File(root + separator + s + separator + ss).list()) {
+								if (sss.contains(".tsd")) {
+									add2 = true;
+								}
+							}
+							if (add2) {
+								list.add(s + separator + ss);
+							}
+						}
+						else if (ss.contains(".tsd")) {
+							add = true;
+						}
+					}
+					if (add) {
+						list.add(s);
+					}
 				}
 			}
 			if (list.size() > 0) {
