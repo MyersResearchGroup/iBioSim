@@ -229,7 +229,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		seedLabel = new JLabel("Random Seed:");
 		runsLabel = new JLabel("Runs:");
 		fileStem = new JTextField("", 15);
-		fileStemLabel = new JLabel("File Stem:");
+		fileStemLabel = new JLabel("Simulation ID:");
 		JPanel inputHolder = new JPanel(new BorderLayout());
 		JPanel inputHolderLeft = new JPanel(new GridLayout(9, 1));
 		JPanel inputHolderRight = new JPanel(new GridLayout(9, 1));
@@ -2067,6 +2067,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		}
 		int cut = 0;
 		String simProp = sbmlProp;
+		boolean saveTopLevel = false;
 		if (!direct.equals(".")) {
 			simProp = simProp.substring(0, simProp.length()
 					- simProp.split(separator)[simProp.split(separator).length - 1].length())
@@ -2074,6 +2075,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					+ separator
 					+ simProp.substring(simProp.length()
 							- simProp.split(separator)[simProp.split(separator).length - 1].length());
+			saveTopLevel = true;
 		}
 		String[] getFilename = simProp.split(separator);
 		for (int i = 0; i < getFilename[getFilename.length - 1].length(); i++) {
@@ -2084,6 +2086,12 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		String propName = simProp.substring(0, simProp.length()
 				- getFilename[getFilename.length - 1].length())
 				+ getFilename[getFilename.length - 1].substring(0, cut) + ".properties";
+		String topLevelProps = null;
+		if (saveTopLevel) {
+			topLevelProps = sbmlProp.substring(0, sbmlProp.length()
+					- getFilename[getFilename.length - 1].length())
+					+ getFilename[getFilename.length - 1].substring(0, cut) + ".properties";
+		}
 		/*
 		 * String monteLimit = ""; String monteInterval = ""; try { if (new
 		 * File(propName).exists()) { Properties getProps = new Properties();
@@ -2223,6 +2231,12 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			FileOutputStream store = new FileOutputStream(new File(propName));
 			getProps.store(store, getFilename[getFilename.length - 1].substring(0, cut) + " Properties");
 			store.close();
+			if (saveTopLevel) {
+				store = new FileOutputStream(new File(topLevelProps));
+				getProps
+						.store(store, getFilename[getFilename.length - 1].substring(0, cut) + " Properties");
+				store.close();
+			}
 		}
 		catch (Exception e) {
 			JOptionPane.showMessageDialog(biomodelsim.frame(),
