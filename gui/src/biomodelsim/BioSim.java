@@ -3188,4 +3188,8 @@ public class BioSim implements MouseListener, ActionListener {
 			}
 		}
 	}
+
+	public String getRoot() {
+		return root;
+	}
 }

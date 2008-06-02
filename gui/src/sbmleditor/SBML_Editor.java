@@ -1,5 +1,9 @@
 package sbmleditor;
 
+import gcm2sbml.gui.GCM2SBMLEditor;
+import gcm2sbml.network.GeneticNetwork;
+import gcm2sbml.parser.GCMParser;
+
 import java.io.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -8898,17 +8902,39 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			if (run) {
 				for (int i = 0; i < biosim.getTab().getTabCount(); i++) {
 					if (biosim.getTab().getTitleAt(i).equals(refFile)) {
-						SBML_Editor sbml = ((SBML_Editor) (biosim.getTab().getComponentAt(i)));
-						if (sbml.hasChanged()) {
-							Object[] options = { "Yes", "No" };
-							int value = JOptionPane.showOptionDialog(biosim.frame(),
-									"Do you want to save changes to " + refFile + " before running the simulation?",
-									"Save Changes", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
-									options, options[0]);
-							if (value == JOptionPane.YES_OPTION) {
-								sbml.save(run, stem);
-								SBMLReader reader = new SBMLReader();
-								document = reader.readSBML(file);
+						if (biosim.getTab().getComponentAt(i) instanceof SBML_Editor) {
+							SBML_Editor sbml = ((SBML_Editor) (biosim.getTab().getComponentAt(i)));
+							if (sbml.hasChanged()) {
+								Object[] options = { "Yes", "No" };
+								int value = JOptionPane
+										.showOptionDialog(biosim.frame(), "Do you want to save changes to " + refFile
+												+ " before running the simulation?", "Save Changes",
+												JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
+												options[0]);
+								if (value == JOptionPane.YES_OPTION) {
+									sbml.save(run, stem);
+									SBMLReader reader = new SBMLReader();
+									document = reader.readSBML(file);
+								}
+							}
+						}
+						else if (biosim.getTab().getComponentAt(i) instanceof GCM2SBMLEditor) {
+							GCM2SBMLEditor gcm = ((GCM2SBMLEditor) (biosim.getTab().getComponentAt(i)));
+							if (gcm.isDirty()) {
+								Object[] options = { "Yes", "No" };
+								int value = JOptionPane
+										.showOptionDialog(biosim.frame(), "Do you want to save changes to " + refFile
+												+ " before running the simulation?", "Save Changes",
+												JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
+												options[0]);
+								if (value == JOptionPane.YES_OPTION) {
+									gcm.save("gcm");
+									GCMParser parser = new GCMParser(biosim.getRoot() + separator + refFile);
+									GeneticNetwork network = parser.buildNetwork();
+									network.outputSBML(file);
+									SBMLReader reader = new SBMLReader();
+									document = reader.readSBML(file);
+								}
 							}
 						}
 					}

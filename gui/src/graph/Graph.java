@@ -62,6 +62,7 @@ import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.NumberTickUnit;
+import org.jfree.chart.axis.StandardTickUnitSource;
 import org.jfree.chart.event.ChartProgressEvent;
 import org.jfree.chart.event.ChartProgressListener;
 import org.jfree.chart.plot.DefaultDrawingSupplier;
@@ -441,14 +442,17 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		if (minY == Double.MAX_VALUE || maxY == Double.MIN_VALUE) {
 			axis.setRange(-1, 1);
 		}
-		/*
-		 * else if ((maxY - minY) < .001) { axis.setRange(minY - 1, maxY + 1); }
-		 */
+		// else if ((maxY - minY) < .001) {
+		// axis.setRange(minY - 1, maxY + 1);
+		// }
 		else {
 			/*
 			 * axis.setRange(Double.parseDouble(num.format(minY - (Math.abs(minY) *
 			 * .1))), Double .parseDouble(num.format(maxY + (Math.abs(maxY) * .1))));
 			 */
+			if ((maxY - minY) < .001) {
+				axis.setStandardTickUnits(new StandardTickUnitSource());
+			}
 			axis.setRange(minY - (Math.abs(minY) * .1), maxY + (Math.abs(maxY) * .1));
 		}
 		axis.setAutoTickUnitSelection(true);
@@ -456,10 +460,13 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		if (minX == Double.MAX_VALUE || maxX == Double.MIN_VALUE) {
 			axis.setRange(-1, 1);
 		}
-		/*
-		 * else if ((maxX - minX) < .001) { axis.setRange(minX - 1, maxX + 1); }
-		 */
+		// else if ((maxX - minX) < .001) {
+		// axis.setRange(minX - 1, maxX + 1);
+		// }
 		else {
+			if ((maxX - minX) < .001) {
+				axis.setStandardTickUnits(new StandardTickUnitSource());
+			}
 			axis.setRange(minX, maxX);
 		}
 		axis.setAutoTickUnitSelection(true);

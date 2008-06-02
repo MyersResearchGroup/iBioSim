@@ -2195,7 +2195,9 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				getProps.setProperty(split[0], split[1]);
 			}
 			getProps.setProperty("selected.simulator", sim);
-			getProps.setProperty("file.stem", fileStem.getText().trim());
+			if (!fileStem.getText().trim().equals("")) {
+				getProps.setProperty("file.stem", fileStem.getText().trim());
+			}
 			if (monteCarlo.isSelected() || ODE.isSelected()) {
 				if (append.isSelected()) {
 					String[] searchForRunFiles = new File(root + separator + outDir).list();
@@ -2626,7 +2628,9 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				getProps.setProperty(split[0], split[1]);
 			}
 			getProps.setProperty("selected.simulator", (String) simulators.getSelectedItem());
-			getProps.setProperty("file.stem", fileStem.getText().trim());
+			if (!fileStem.getText().trim().equals("")) {
+				getProps.setProperty("file.stem", fileStem.getText().trim());
+			}
 			// if (getProps.containsKey("ode.simulation.time.limit")) {
 			// if (!monteLimit.equals("")) {
 			// getProps.setProperty("monte.carlo.simulation.time.limit", monteLimit);
