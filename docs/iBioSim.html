@@ -23,7 +23,7 @@
 <LI><A HREF="#NEWOPENPROJ">Creating and Opening Projects</A>
 <LI><A HREF="#NEW">Creating Models and Graphs</A>
 <LI><A HREF="#IMPORT">Importing Models</A>
-<LI><A HREF="#CREATEVIEW">Creating Views</A>
+<LI><A HREF="#CREATEVIEW">Creating and Opening Views</A>
 <LI><A HREF="#VIEW">Viewing Models</A>
 <LI><A HREF="#MODIFY">Modifying Project Objects</A>
 </UL>
@@ -32,7 +32,7 @@
 <LI><A HREF="#GCMSPECIES">GCM Species</A>
 <LI><A HREF="#INFLUENCES">Influences</A>
 <LI><A HREF="#PROMOTERS">Promoters</A>
-<LI><A HREF="#PARAMETERS">GCM Parameters</A>
+<LI><A HREF="#GCMPARAMETERS">GCM Parameters</A>
 </UL>
 <LI><A HREF="#SBMLEDIT"><FONT SIZE=4>SBML Editor</FONT></A>
 <UL>
@@ -90,6 +90,8 @@ of genetic circuits, models representing metabolic networks,
 cell-signaling pathways, and other biological and chemical systems can
 also be analyzed.  iBioSim includes the following tools:
 <UL>
+<LI><A HREF="#GCMEDIT">GCM Editor</A> - a tool to enter a genetic circuit
+    model.
 <LI><A HREF="#SBMLEDIT">SBML Editor</A> - a tool to enter a biochemical 
     reaction network.
 <LI><A HREF="#ANALYSIS">REB2SAC</A> - an analysis tool that utilizes various 
@@ -105,11 +107,11 @@ also be analyzed.  iBioSim includes the following tools:
     data.
 </UL>
 iBioSim can analyze models provided in either the 
-<A HREF="http://www.sbml.org">Systems Biology Markup Language (SBML)</A>
-or in our <A HREF="#CIRCUIT">genetic circuit model format</A>.  The time series
-data files used by our learning method can be in 
-<A HREF="#TSD">time series data format</A>, comma separated value format, 
-or tab delimited format.
+<A HREF="http://www.sbml.org">Systems Biology Markup Language</A> (SBML)
+or in our <A HREF="#CIRCUIT">Genetic Circuit Model</A> (GCM) format.  
+The time series data files used by our learning method can be in 
+<A HREF="#TSD">Time Series Data</A> (TSD) format, 
+Comma Separated Value (CSV) format, or tab delimited data (DAT) format.
 
 <H1><A NAME="PROJECTS"></A>Project Management</H1>
 A project is a collection of models, analysis views, learn views, and 
@@ -130,15 +132,14 @@ name shown in the File drop down menu.
 
 <H2><A NAME="NEW"></A>Creating Models and Graphs</H2>
 After you have created or opened a project, you can create a new 
-model or graph to add to the project.  To create a new SBML model, 
+model or graph to add to the project.  
+To create a new Genetic Circuit Model, select the New &rarr; Genetic Circuit 
+Model from the File menu.  You will then be prompted to give a model id. At 
+this point, a <A HREF="#GCMEDIT">GCM editor</A> will be open in a new tab.
+To create a new SBML model, 
 select the New &rarr; SBML Model from the File menu.
 You will then be prompted to give a model id.  At this point, an
 <A HREF="#SBMLEDIT">SBML editor</A> will open in a new tab.
-To create a new genetic circuit model, select the New &rarr; Genetic Circuit 
-Model 
-from the File menu.  You will then be prompted to give a model id. At this 
-point, a text editor will be opened to allow you to create a model using the 
-<A HREF="#CIRCUIT">Genetic Circuit Model Format</A>.
 To create a new graph, select the New &rarr; Graph from the File menu.
 You will then be prompted to give a name to the graph.  At this point,
 a <A HREF="#GRAPH">graph editor</A> will open in a new tab.  
@@ -149,14 +150,13 @@ alternatively double-clicking on the view.
 
 <H2><A NAME="IMPORT"></A>Importing Models</H2>
 You can import into the current working project 
-<A HREF="http://www.sbml.org">SBML</A> or 
-<A HREF="#CIRCUIT">Genetic Circuit Models</A> created by other programs or 
-stored in other projects.  To import an SBML model, select 
-Import &rarr; SBML Model from the File menu. You will then
-be able to browse to find a model to import. After selecting the 
-desired model, click the import button to bring the SBML model into the
-project.  To import a genetic circuit model, the procedure is the same 
-except use the Import &rarr; Genetic Circuit Model option.
+<A HREF="#CIRCUIT">GCMs</A> or <A HREF="http://www.sbml.org">SBML Models</A>
+created by other programs or stored in other projects.  
+To import a GCM, select Import &rarr; Genetic Circuit Model from the File menu.
+You will then be able to browse to find a model to import. After selecting the 
+desired model, click the import button to bring the GCM into the project.  
+To import an SBML model, the procedure is the same except use the 
+Import &rarr; SBML Model option.
 
 <H2><A NAME="CREATEVIEW"></A>Creating and Opening Views</H2>
 To perform analysis or learning, right click on a model and select 
@@ -169,7 +169,7 @@ clicking on an analysis directory and selecting &quot;Open
 Analysis View&quot; or alternatively double-clicking on the view.
 </p>
 <p>
-When you create an analysis view from a genetic circuit model, an SBML model is 
+When you create an analysis view from a GCM, an SBML model is 
 automatically created for simulation and analysis.  Within the analysis view,
 you can edit the initial concentrations and parameters.  However, if you wish
 to be able to edit the structure, you should first create an SBML model
@@ -186,6 +186,9 @@ simulation directory.</P>
 -->
 
 <H2><A NAME="VIEW"></A>Viewing Models</H2>
+To view a GCM, right click on the model you want to view, and 
+select the &quot;View Circuit&quot; option.  This opens the circuit using
+<A HREF="http://www.graphviz.org">GraphViz's</A> dotty program.  
 To view an SBML model, right click on the model you want to view. 
 There are two ways to view an SBML model. You can either select the 
 &quot;View Network&quot; option or the &quot;View in Browser&quot; option. 
@@ -194,25 +197,32 @@ The &quot;View Network&quot; option converts the model to a
 that file with GraphViz's dotty program.  The &quot;View in Browser&quot; 
 option coverts the model to an xhtml file and opens that file with your
 default browser.
-To view a genetic circuit model, right click on the model you want to view, and 
-select the &quot;View Circuit&quot; option.  This opens the circuit using
-<A HREF="http://www.graphviz.org">GraphViz's</A> dotty program.  
 
 <H2><A NAME="MODIFY"></A>Modifying Project Objects</H2>
 All project objects can be modified by highlighting the object and using
 a right mouse click to open a menu of options.  Using this menu, every
-type of object can be copied, renamed, or deleted.  For an SBML model,
-the &quot;Edit&quot; option opens the model in an 
+type of object can be copied, renamed, or deleted.  
+For a GCM, the &quot;View/Edit&quot; option opens the model in an
+<A HREF="#GCMEDIT">GCM editor</A>.
+For an SBML model, the &quot;View/Edit&quot; option opens the model in an 
 <A HREF="#SBMLEDIT">SBML editor</A>.  
-For a genetic circuit model, the &quot;Edit&quot; option opens the model in the 
-<A HREF="http://www.gnu.org/software/emacs">Emacs</A> or other default
-text editor.
 For a graph, the &quot;View/Edit&quot; option opens the graph in a
 <A HREF="#GRAPH">graph editor</A>.  
 For an analysis view, the &quot;Open Analysis View&quot; option opens the 
 <A HREF="#ANALYSIS">analysis view</A>.  
 For a learn view, the &quot;Open Learn View&quot; option opens the 
 <A HREF="#LEARN">learn view</A>.  
+
+<H1><A NAME="GCMEDIT"></A>GCM Editor</H1>
+
+<H2><A NAME="GCMSPECIES"></A>GCM Species</H2>
+
+<H2><A NAME="INFLUENCES"></A>Influences</H2>
+
+<H2><A NAME="PROMOTERS"></A>Promoters</H2>
+
+<H2><A NAME="GCMPARAMETERS"></A>GCM Parameters</H2>
+
 
 <H1><A NAME="SBMLEDIT"></A>SBML Editor</H1>
 The SBML editor allows the user to create or modify an SBML model of
