@@ -30,7 +30,7 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 
 	private JTable table;
 
-	private JButton saveData, addData, removeData, editData, copyData;
+	private JButton saveData, addData, removeData, copyData;
 
 	private JButton add, remove, rename, copy, copyFromView, importFile;
 
@@ -163,15 +163,12 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 		addData.addActionListener(this);
 		removeData = new JButton("Remove Data Point");
 		removeData.addActionListener(this);
-		editData = new JButton("Edit Data Point");
-		editData.addActionListener(this);
 		copyData = new JButton("Copy Data Point");
 		copyData.addActionListener(this);
 		dataButtons = new JPanel();
 		dataButtons.add(saveData);
 		dataButtons.add(addData);
 		dataButtons.add(removeData);
-		dataButtons.add(editData);
 		dataButtons.add(copyData);
 		filesPanel = new JPanel(new BorderLayout());
 		filesPanel.add(scroll, "Center");
@@ -709,10 +706,11 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 		}
 		else if (e.getSource() == addData) {
 			TableModel m = table.getModel();
+			String[][] sort = sortData(m);
 			String[][] dat = new String[m.getRowCount() + 1][m.getColumnCount()];
 			for (int i = 0; i < m.getColumnCount(); i++) {
 				for (int j = 0; j < m.getRowCount(); j++) {
-					dat[j + 1][i] = (String) m.getValueAt(j, i);
+					dat[j + 1][i] = sort[j][i];
 				}
 			}
 			for (int i = 0; i < m.getColumnCount(); i++) {
@@ -725,10 +723,52 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 			createTable(dat, spec);
 		}
 		else if (e.getSource() == removeData) {
-		}
-		else if (e.getSource() == editData) {
+			int removeRow = table.getSelectedRow();
+			if (removeRow != -1) {
+				boolean removed = false;
+				TableModel m = table.getModel();
+				String[][] sort = sortData(m);
+				String[][] dat = new String[m.getRowCount() - 1][m.getColumnCount()];
+				for (int j = 0; j < m.getRowCount() - 1; j++) {
+					for (int i = 0; i < m.getColumnCount(); i++) {
+						if (j == removeRow) {
+							removed = true;
+						}
+						if (removed) {
+							dat[j][i] = sort[j + 1][i];
+						}
+						else {
+							dat[j][i] = sort[j][i];
+						}
+					}
+				}
+				String[] spec = new String[m.getColumnCount()];
+				for (int i = 0; i < m.getColumnCount(); i++) {
+					spec[i] = m.getColumnName(i);
+				}
+				createTable(dat, spec);
+			}
 		}
 		else if (e.getSource() == copyData) {
+			int copyRow = table.getSelectedRow();
+			if (copyRow != -1) {
+				TableModel m = table.getModel();
+				String[][] sort = sortData(m);
+				String[][] dat = new String[m.getRowCount() + 1][m.getColumnCount()];
+				for (int i = 0; i < m.getColumnCount(); i++) {
+					for (int j = 0; j < m.getRowCount(); j++) {
+						dat[j + 1][i] = sort[j][i];
+					}
+				}
+				for (int i = 0; i < m.getColumnCount(); i++) {
+					dat[0][i] = sort[copyRow][i];
+				}
+				String[] spec = new String[m.getColumnCount()];
+				for (int i = 0; i < m.getColumnCount(); i++) {
+					spec[i] = m.getColumnName(i);
+				}
+				createTable(dat, spec);
+			}
 		}
 	}
 
@@ -831,5 +871,34 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 		this.add(dataPanel, "Center");
 		this.revalidate();
 		this.repaint();
+	}
+
+	private String[][] sortData(TableModel m) {
+		String[][] dat = new String[m.getRowCount()][m.getColumnCount()];
+		for (int i = 0; i < m.getColumnCount(); i++) {
+			for (int j = 0; j < m.getRowCount(); j++) {
+				dat[j][i] = (String) m.getValueAt(j, i);
+			}
+		}
+		double[] d = new double[m.getRowCount()];
+		for (int i = 0; i < m.getRowCount(); i++) {
+			d[i] = Double.parseDouble(dat[i][0]);
+		}
+		int i, j;
+		double index;
+		String[] index2;
+		for (i = 1; i < d.length; i++) {
+			index = d[i];
+			index2 = dat[i];
+			j = i;
+			while ((j > 0) && d[j - 1] > index) {
+				d[j] = d[j - 1];
+				dat[j] = dat[j - 1];
+				j = j - 1;
+			}
+			d[j] = index;
+			dat[j] = index2;
+		}
+		return dat;
 	}
 }
