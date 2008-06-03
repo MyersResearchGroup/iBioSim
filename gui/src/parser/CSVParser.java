@@ -4,6 +4,7 @@ import java.io.*;
 import java.util.*;
 
 import javax.swing.*;
+
 import biomodelsim.*;
 
 public class CSVParser extends Parser {
@@ -11,6 +12,7 @@ public class CSVParser extends Parser {
 		super(new ArrayList<String>(), new ArrayList<ArrayList<Double>>(), biosim);
 		try {
 			boolean warning = false;
+			boolean warning2 = false;
 			FileInputStream fileInput = new FileInputStream(new File(filename));
 			ProgressMonitorInputStream prog = new ProgressMonitorInputStream(component,
 					"Reading Reb2sac Output Data From " + new File(filename).getName(), fileInput);
@@ -79,6 +81,14 @@ public class CSVParser extends Parser {
 								warning = true;
 							}
 							word = "0";
+						}
+						if (word.equals("inf")) {
+							if (!warning2) {
+								JOptionPane.showMessageDialog(component, "Found INF in data." + "\nReplacing with "
+										+ Double.MAX_VALUE + ".", "INF In Data", JOptionPane.WARNING_MESSAGE);
+								warning2 = true;
+							}
+							word = "" + Double.MAX_VALUE;
 						}
 						if (counter < species.size()) {
 							insert = counter;

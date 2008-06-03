@@ -257,7 +257,10 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 			load.load(in);
 			in.close();
 			if (load.containsKey("genenet.file")) {
-				learnFile = load.getProperty("genenet.file");
+				String[] getProp = load.getProperty("genenet.file").split(separator);
+				learnFile = directory.substring(0, directory.length()
+						- getFilename[getFilename.length - 1].length())
+						+ separator + getProp[getProp.length - 1];
 			}
 			if (load.containsKey("genenet.Tn")) {
 				letNThrough.setText(load.getProperty("genenet.Tn"));
@@ -863,10 +866,6 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 		}
 		catch (Exception e) {
 		}
-	}
-
-	public void setDirectory(String newDirectory) {
-		directory = newDirectory;
 	}
 
 	public void saveGcm() {
