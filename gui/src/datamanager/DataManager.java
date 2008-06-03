@@ -1,10 +1,21 @@
 package datamanager;
 
+import gcm2sbml.network.GeneticNetwork;
+import gcm2sbml.parser.GCMParser;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.util.*;
 import javax.swing.*;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
+
+import org.sbml.libsbml.ListOf;
+import org.sbml.libsbml.Model;
+import org.sbml.libsbml.SBMLDocument;
+import org.sbml.libsbml.SBMLReader;
+
 import parser.*;
 import biomodelsim.*;
 import buttons.*;
@@ -27,6 +38,16 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 
 	private String separator;
 
+	private String[] species;
+
+	private JScrollPane scroll1;
+
+	private JPanel dataButtons;
+
+	private JPanel dataPanel;
+
+	private JPanel filesPanel;
+
 	public DataManager(String directory, BioSim biosim) {
 		if (File.separator.equals("\\")) {
 			separator = "\\\\";
@@ -48,6 +69,60 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 		}
 		catch (Exception e) {
 			files = new JList();
+		}
+		String background;
+		try {
+			Properties p = new Properties();
+			String[] split = directory.split(separator);
+			FileInputStream load = new FileInputStream(new File(directory + separator
+					+ split[split.length - 1] + ".lrn"));
+			p.load(load);
+			load.close();
+			if (p.containsKey("genenet.file")) {
+				String[] getProp = p.getProperty("genenet.file").split(separator);
+				background = directory.substring(0, directory.length() - split[split.length - 1].length())
+						+ separator + getProp[getProp.length - 1];
+			}
+			else {
+				background = null;
+			}
+		}
+		catch (Exception e) {
+			JOptionPane.showMessageDialog(biosim.frame(), "Unable to load background file.", "Error",
+					JOptionPane.ERROR_MESSAGE);
+			background = null;
+		}
+		species = null;
+		if (background != null) {
+			if (background.contains(".gcm")) {
+				GCMParser parser = new GCMParser(background);
+				GeneticNetwork network = parser.buildNetwork();
+				network.outputSBML(directory + separator + "temp.sbml");
+				SBMLReader reader = new SBMLReader();
+				SBMLDocument document = reader.readSBML(directory + separator + "temp.sbml");
+				Model model = document.getModel();
+				ListOf ids = model.getListOfSpecies();
+				ArrayList<String> getSpecies = new ArrayList<String>();
+				for (int i = 0; i < model.getNumSpecies(); i++) {
+					getSpecies.add(ids.get(i).getId());
+				}
+				species = getSpecies.toArray(new String[0]);
+				new File(directory + separator + "temp.sbml").delete();
+			}
+			else {
+				SBMLReader reader = new SBMLReader();
+				SBMLDocument document = reader.readSBML(background);
+				Model model = document.getModel();
+				ListOf ids = model.getListOfSpecies();
+				ArrayList<String> getSpecies = new ArrayList<String>();
+				for (int i = 0; i < model.getNumSpecies(); i++) {
+					getSpecies.add(ids.get(i).getId());
+				}
+				species = getSpecies.toArray(new String[0]);
+			}
+		}
+		if (species != null) {
+			sort(species);
 		}
 		JScrollPane scroll = new JScrollPane();
 		scroll.setMinimumSize(new Dimension(260, 200));
@@ -78,8 +153,7 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 		buttons.add(topButtons, "North");
 		buttons.add(bottomButtons, "South");
 		table = new JTable();
-		table.addMouseListener(this);
-		JScrollPane scroll1 = new JScrollPane();
+		scroll1 = new JScrollPane();
 		scroll1.setMinimumSize(new Dimension(260, 200));
 		scroll1.setPreferredSize(new Dimension(276, 132));
 		scroll1.setViewportView(table);
@@ -93,21 +167,21 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 		editData.addActionListener(this);
 		copyData = new JButton("Copy Data Point");
 		copyData.addActionListener(this);
-		JPanel dataButtons = new JPanel();
+		dataButtons = new JPanel();
 		dataButtons.add(saveData);
 		dataButtons.add(addData);
 		dataButtons.add(removeData);
 		dataButtons.add(editData);
 		dataButtons.add(copyData);
-		JPanel files = new JPanel(new BorderLayout());
-		files.add(scroll, "Center");
-		files.add(buttons, "South");
-		JPanel data = new JPanel(new BorderLayout());
-		data.add(scroll1, "Center");
-		data.add(dataButtons, "South");
+		filesPanel = new JPanel(new BorderLayout());
+		filesPanel.add(scroll, "Center");
+		filesPanel.add(buttons, "South");
+		dataPanel = new JPanel(new BorderLayout());
+		dataPanel.add(scroll1, "Center");
+		dataPanel.add(dataButtons, "South");
 		this.setLayout(new BorderLayout());
-		this.add(files, "West");
-		this.add(data, "Center");
+		this.add(filesPanel, "West");
+		this.add(dataPanel, "Center");
 	}
 
 	public void actionPerformed(ActionEvent e) {
@@ -165,10 +239,8 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 					String[] s = p.values().toArray(new String[0]);
 					sort(s);
 					files.setListData(s);
-					if (s.length == 0) {
-						biosim.refreshLearn(directory.split(separator)[directory.split(separator).length - 1],
-								false);
-					}
+					biosim.refreshLearn(directory.split(separator)[directory.split(separator).length - 1],
+							true);
 				}
 				catch (Exception e1) {
 					JOptionPane.showMessageDialog(biosim.frame(), "Unable to remove selected files.",
@@ -394,17 +466,40 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 							if (end.equals(".tsd")) {
 								try {
 									String last = "run-" + (run + 1) + ".tsd";
-									FileOutputStream out = new FileOutputStream(
-											new File(directory + separator + last));
-									FileInputStream in = new FileInputStream(new File(root + separator
-											+ sims.getSelectedValue() + separator + list1[i]));
-									int read = in.read();
-									while (read != -1) {
-										out.write(read);
-										read = in.read();
+									TSDParser tsd = new TSDParser(root + separator + sims.getSelectedValue()
+											+ separator + list1[i], biosim);
+									ArrayList<String> specs = tsd.getSpecies();
+									ArrayList<ArrayList<Double>> data = tsd.getData();
+									ArrayList<String> newSpecs = new ArrayList<String>();
+									ArrayList<ArrayList<Double>> newData = new ArrayList<ArrayList<Double>>();
+									newSpecs.add(specs.get(0));
+									newData.add(data.get(0));
+									for (int j = 0; j < species.length; j++) {
+										if (specs.contains(species[j])) {
+											int index = specs.indexOf(species[j]);
+											newSpecs.add(specs.get(index));
+											newData.add(data.get(index));
+										}
+										else {
+											newSpecs.add(species[j]);
+											ArrayList<Double> dat = new ArrayList<Double>();
+											for (int k = 0; k < newData.get(0).size(); k++) {
+												dat.add(0.0);
+											}
+											newData.add(dat);
+										}
 									}
-									in.close();
-									out.close();
+									tsd.setSpecies(newSpecs);
+									tsd.setData(newData);
+									tsd.outputTSD(directory + separator + last);
+									/*
+									 * FileOutputStream out = new FileOutputStream( new
+									 * File(directory + separator + last)); FileInputStream in =
+									 * new FileInputStream(new File(root + separator +
+									 * sims.getSelectedValue() + separator + list1[i])); int read =
+									 * in.read(); while (read != -1) { out.write(read); read =
+									 * in.read(); } in.close(); out.close();
+									 */
 									p.setProperty(last, sims.getSelectedValue() + separator + list1[i]);
 									run++;
 								}
@@ -480,17 +575,39 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 							if (end.equals(".tsd")) {
 								try {
 									String last = "run-" + (run + 1) + ".tsd";
-									FileOutputStream out = new FileOutputStream(
-											new File(directory + separator + last));
-									FileInputStream in = new FileInputStream(new File(importFile + separator
-											+ list1[i]));
-									int read = in.read();
-									while (read != -1) {
-										out.write(read);
-										read = in.read();
+									TSDParser tsd = new TSDParser(importFile + separator + list1[i], biosim);
+									ArrayList<String> specs = tsd.getSpecies();
+									ArrayList<ArrayList<Double>> data = tsd.getData();
+									ArrayList<String> newSpecs = new ArrayList<String>();
+									ArrayList<ArrayList<Double>> newData = new ArrayList<ArrayList<Double>>();
+									newSpecs.add(specs.get(0));
+									newData.add(data.get(0));
+									for (int j = 0; j < species.length; j++) {
+										if (specs.contains(species[j])) {
+											int index = specs.indexOf(species[j]);
+											newSpecs.add(specs.get(index));
+											newData.add(data.get(index));
+										}
+										else {
+											newSpecs.add(species[j]);
+											ArrayList<Double> dat = new ArrayList<Double>();
+											for (int k = 0; k < newData.get(0).size(); k++) {
+												dat.add(0.0);
+											}
+											newData.add(dat);
+										}
 									}
-									in.close();
-									out.close();
+									tsd.setSpecies(newSpecs);
+									tsd.setData(newData);
+									tsd.outputTSD(directory + separator + last);
+									/*
+									 * FileOutputStream out = new FileOutputStream( new
+									 * File(directory + separator + last)); FileInputStream in =
+									 * new FileInputStream(new File(importFile + separator +
+									 * list1[i])); int read = in.read(); while (read != -1) {
+									 * out.write(read); read = in.read(); } in.close();
+									 * out.close();
+									 */
 									p.setProperty(last, importFile + separator + list1[i]);
 									run++;
 								}
@@ -524,16 +641,41 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 									.equals(".dat"))) {
 						try {
 							String end = "run-" + (run + 1) + ".tsd";
+							Parser parse;
 							if (importFile.substring(importFile.length() - 4, importFile.length()).equals(".csv")) {
-								new CSVParser(importFile, biosim).outputTSD(directory + separator + end);
+								parse = new CSVParser(importFile, biosim);
 							}
 							else if (importFile.substring(importFile.length() - 4, importFile.length()).equals(
 									".dat")) {
-								new DATParser(importFile, biosim).outputTSD(directory + separator + end);
+								parse = new DATParser(importFile, biosim);
 							}
 							else {
-								new TSDParser(importFile, biosim).outputTSD(directory + separator + end);
+								parse = new TSDParser(importFile, biosim);
 							}
+							ArrayList<String> specs = parse.getSpecies();
+							ArrayList<ArrayList<Double>> data = parse.getData();
+							ArrayList<String> newSpecs = new ArrayList<String>();
+							ArrayList<ArrayList<Double>> newData = new ArrayList<ArrayList<Double>>();
+							newSpecs.add(specs.get(0));
+							newData.add(data.get(0));
+							for (int j = 0; j < species.length; j++) {
+								if (specs.contains(species[j])) {
+									int index = specs.indexOf(species[j]);
+									newSpecs.add(specs.get(index));
+									newData.add(data.get(index));
+								}
+								else {
+									newSpecs.add(species[j]);
+									ArrayList<Double> dat = new ArrayList<Double>();
+									for (int k = 0; k < newData.get(0).size(); k++) {
+										dat.add(0.0);
+									}
+									newData.add(dat);
+								}
+							}
+							parse.setSpecies(newSpecs);
+							parse.setData(newData);
+							parse.outputTSD(directory + separator + end);
 							Properties p = new Properties();
 							FileInputStream load = new FileInputStream(new File(directory + separator + ".lrn"));
 							p.load(load);
@@ -566,6 +708,21 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 		else if (e.getSource() == saveData) {
 		}
 		else if (e.getSource() == addData) {
+			TableModel m = table.getModel();
+			String[][] dat = new String[m.getRowCount() + 1][m.getColumnCount()];
+			for (int i = 0; i < m.getColumnCount(); i++) {
+				for (int j = 0; j < m.getRowCount(); j++) {
+					dat[j + 1][i] = (String) m.getValueAt(j, i);
+				}
+			}
+			for (int i = 0; i < m.getColumnCount(); i++) {
+				dat[0][i] = "0.0";
+			}
+			String[] spec = new String[m.getColumnCount()];
+			for (int i = 0; i < m.getColumnCount(); i++) {
+				spec[i] = m.getColumnName(i);
+			}
+			createTable(dat, spec);
 		}
 		else if (e.getSource() == removeData) {
 		}
@@ -576,6 +733,34 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 	}
 
 	public void mouseClicked(MouseEvent e) {
+		if (files.getSelectedValue() != null) {
+			try {
+				String file = (String) files.getSelectedValue();
+				Properties p = new Properties();
+				FileInputStream load = new FileInputStream(new File(directory + separator + ".lrn"));
+				p.load(load);
+				load.close();
+				for (String s : p.keySet().toArray(new String[0])) {
+					if (p.getProperty(s).equals(file)) {
+						TSDParser tsd = new TSDParser(directory + separator + s, biosim);
+						ArrayList<String> specs = tsd.getSpecies();
+						ArrayList<ArrayList<Double>> data = tsd.getData();
+						String[] spec = specs.toArray(new String[0]);
+						String[][] dat = new String[data.get(0).size()][data.size()];
+						for (int i = 0; i < data.size(); i++) {
+							for (int j = 0; j < data.get(i).size(); j++) {
+								dat[j][i] = "" + data.get(i).get(j);
+							}
+						}
+						createTable(dat, spec);
+					}
+				}
+			}
+			catch (Exception e1) {
+				JOptionPane.showMessageDialog(biosim.frame(), "Unable to display file.", "Error",
+						JOptionPane.ERROR_MESSAGE);
+			}
+		}
 	}
 
 	public void mouseEntered(MouseEvent e) {
@@ -602,5 +787,49 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 			}
 			sort[j] = index;
 		}
+	}
+
+	private void createTable(String[][] dat, String[] spec) {
+		this.removeAll();
+		table = new JTable(dat, spec);
+		TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(table.getModel());
+		Comparator<String> comparator = new Comparator<String>() {
+			public int compare(String s1, String s2) {
+				double d1 = Double.parseDouble(s1);
+				double d2 = Double.parseDouble(s2);
+				if (d1 > d2) {
+					return 1;
+				}
+				else if (d2 > d1) {
+					return -1;
+				}
+				else {
+					return 0;
+				}
+			}
+		};
+		sorter.setComparator(0, comparator);
+		sorter.setSortsOnUpdates(true);
+		for (int i = 0; i < spec.length; i++) {
+			sorter.setSortable(i, false);
+		}
+		ArrayList<RowSorter.SortKey> sortKeys = new ArrayList<RowSorter.SortKey>();
+		sortKeys.add(new RowSorter.SortKey(0, SortOrder.ASCENDING));
+		sorter.setSortKeys(sortKeys);
+		table.setRowSorter(sorter);
+		scroll1 = new JScrollPane();
+		scroll1.setMinimumSize(new Dimension(260, 200));
+		scroll1.setPreferredSize(new Dimension(276, 132));
+		scroll1.setViewportView(table);
+		scroll1.revalidate();
+		scroll1.repaint();
+		dataPanel = new JPanel(new BorderLayout());
+		dataPanel.add(scroll1, "Center");
+		dataPanel.add(dataButtons, "South");
+		this.setLayout(new BorderLayout());
+		this.add(filesPanel, "West");
+		this.add(dataPanel, "Center");
+		this.revalidate();
+		this.repaint();
 	}
 }

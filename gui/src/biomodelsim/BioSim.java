@@ -1314,15 +1314,13 @@ public class BioSim implements MouseListener, ActionListener {
 						}
 						new File(root + separator + lrnName).mkdir();
 						new FileWriter(new File(root + separator + lrnName + separator + ".lrn")).close();
-
 						String sbmlFile = tree.getFile();
-						// String[] getFilename = sbmlFile.split(separator);
-						// String sbmlFileNoPath =
-						// getFilename[getFilename.length - 1];
+						String[] getFilename = sbmlFile.split(separator);
+						String sbmlFileNoPath = getFilename[getFilename.length - 1];
 						try {
 							FileOutputStream out = new FileOutputStream(new File(root + separator
 									+ lrnName.trim() + separator + lrnName.trim() + ".lrn"));
-							out.write(("genenet.file=" + sbmlFile + "\n").getBytes());
+							out.write(("genenet.file=" + sbmlFileNoPath + "\n").getBytes());
 							out.close();
 						}
 						catch (Exception e1) {

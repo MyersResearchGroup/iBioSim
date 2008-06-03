@@ -32,7 +32,7 @@ public class Parser {
 		this.species = species;
 	}
 
-	public void getData(ArrayList<ArrayList<Double>> data) {
+	public void setData(ArrayList<ArrayList<Double>> data) {
 		this.data = data;
 	}
 
