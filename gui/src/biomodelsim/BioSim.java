@@ -2060,7 +2060,7 @@ public class BioSim implements MouseListener, ActionListener {
 					&& tree.getFile().substring(tree.getFile().length() - 5).equals(".sbml")
 					|| tree.getFile().length() > 3
 					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".xml")) {
-				JMenuItem edit = new JMenuItem("Edit");
+				JMenuItem edit = new JMenuItem("View/Edit");
 				edit.addActionListener(this);
 				edit.setActionCommand("sbmlEditor");
 				JMenuItem graph = new JMenuItem("View Network");
@@ -2106,7 +2106,7 @@ public class BioSim implements MouseListener, ActionListener {
 				JMenuItem createSBML = new JMenuItem("Create SBML File");
 				createSBML.addActionListener(this);
 				createSBML.setActionCommand("createSBML");
-				JMenuItem edit = new JMenuItem("Edit");
+				JMenuItem edit = new JMenuItem("View/Edit");
 				edit.addActionListener(this);
 				edit.setActionCommand("dotEditor");
 				JMenuItem graph = new JMenuItem("View Genetic Circuit");
@@ -2285,7 +2285,7 @@ public class BioSim implements MouseListener, ActionListener {
 					&& tree.getFile().substring(tree.getFile().length() - 5).equals(".sbml")
 					|| tree.getFile().length() > 3
 					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".xml")) {
-				JMenuItem edit = new JMenuItem("Edit");
+				JMenuItem edit = new JMenuItem("View/Edit");
 				edit.addActionListener(this);
 				edit.setActionCommand("sbmlEditor");
 				JMenuItem graph = new JMenuItem("View Network");
@@ -2331,7 +2331,7 @@ public class BioSim implements MouseListener, ActionListener {
 				JMenuItem createSBML = new JMenuItem("Create SBML File");
 				createSBML.addActionListener(this);
 				createSBML.setActionCommand("createSBML");
-				JMenuItem edit = new JMenuItem("Edit");
+				JMenuItem edit = new JMenuItem("View/Edit");
 				edit.addActionListener(this);
 				edit.setActionCommand("dotEditor");
 				JMenuItem graph = new JMenuItem("View Genetic Circuit");
