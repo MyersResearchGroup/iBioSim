@@ -705,22 +705,24 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 		else if (e.getSource() == saveData) {
 		}
 		else if (e.getSource() == addData) {
-			TableModel m = table.getModel();
-			String[][] sort = sortData(m);
-			String[][] dat = new String[m.getRowCount() + 1][m.getColumnCount()];
-			for (int i = 0; i < m.getColumnCount(); i++) {
-				for (int j = 0; j < m.getRowCount(); j++) {
-					dat[j + 1][i] = sort[j][i];
+			if (files.getSelectedIndex() != -1) {
+				TableModel m = table.getModel();
+				String[][] sort = sortData(m);
+				String[][] dat = new String[m.getRowCount() + 1][m.getColumnCount()];
+				for (int i = 0; i < m.getColumnCount(); i++) {
+					for (int j = 0; j < m.getRowCount(); j++) {
+						dat[j + 1][i] = sort[j][i];
+					}
 				}
+				for (int i = 0; i < m.getColumnCount(); i++) {
+					dat[0][i] = "0.0";
+				}
+				String[] spec = new String[m.getColumnCount()];
+				for (int i = 0; i < m.getColumnCount(); i++) {
+					spec[i] = m.getColumnName(i);
+				}
+				createTable(dat, spec);
 			}
-			for (int i = 0; i < m.getColumnCount(); i++) {
-				dat[0][i] = "0.0";
-			}
-			String[] spec = new String[m.getColumnCount()];
-			for (int i = 0; i < m.getColumnCount(); i++) {
-				spec[i] = m.getColumnName(i);
-			}
-			createTable(dat, spec);
 		}
 		else if (e.getSource() == removeData) {
 			int removeRow = table.getSelectedRow();
