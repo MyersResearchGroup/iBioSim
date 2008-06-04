@@ -109,14 +109,14 @@ public class GeneticNetwork {
 	public void outputSBML(String filename, SBMLDocument document) {
 		try {
 			Model m = document.getModel();
-			checkConsistancy(document);
+			//checkConsistancy(document);
 			SBMLWriter writer = new SBMLWriter();
 			printSpecies(document);
 			printPromoters(document);
 			printRNAP(document);
 			printDecay(document);
 			// System.out.println(counter++);
-			checkConsistancy(document);
+			//checkConsistancy(document);
 			if (!dimerizationAbstraction) {
 				printDimerization(document);
 			}
@@ -124,13 +124,13 @@ public class GeneticNetwork {
 				printBiochemical(document);
 			}
 			// System.out.println(counter++);
-			checkConsistancy(document);
+			//checkConsistancy(document);
 			printPromoterProduction(document);
 			// System.out.println(counter++);
-			checkConsistancy(document);
+			//checkConsistancy(document);
 			printPromoterBinding(document);
 			// System.out.println(counter++);
-			checkConsistancy(document);
+			//checkConsistancy(document);
 			PrintStream p = new PrintStream(new FileOutputStream(filename));
 
 			m.setName("Created from " + new File(filename).getName().replace("sbml", "gcm"));
