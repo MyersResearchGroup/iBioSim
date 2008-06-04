@@ -12,6 +12,7 @@ import gcm2sbml.visitor.PrintRepressionBindingVisitor;
 import gcm2sbml.visitor.PrintSpeciesVisitor;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -51,6 +52,12 @@ public class GeneticNetwork {
 			HashMap<String, Promoter> promoters) {
 		this(species, stateMap, promoters, null);
 	}
+	
+	/**
+	 * Constructor 
+	 */
+	public GeneticNetwork() {		
+	}
 
 	/**
 	 * Constructor
@@ -73,7 +80,37 @@ public class GeneticNetwork {
 		this.properties = gcm;
 		
 		initialize();
-	}		
+	}
+	
+	public void buildTemplate(HashMap<String, SpeciesInterface> species,			
+			HashMap<String, Promoter> promoters, String gcm, String filename) {
+		
+		setSpecies(species);
+		setPromoters(promoters);
+		
+		SBMLDocument document = new SBMLDocument(2, 3);
+		currentDocument = document;
+		Model m = document.createModel();
+		document.setModel(m);
+		Utility.addCompartments(document, compartment);
+		document.getModel().getCompartment(compartment).setSize(1);
+		
+		SBMLWriter writer = new SBMLWriter();
+		printSpecies(document);
+		printPromoters(document);
+		
+		try {
+			PrintStream p = new PrintStream(new FileOutputStream(filename));
+			m.setName("Created from " + gcm);
+			m.setId(filename.replace(".sbml", ""));			
+			p.print(writer.writeToString(document));
+			p.close();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
 
 	/**
 	 * Loads in a properties file
@@ -623,6 +660,38 @@ public class GeneticNetwork {
 
 	}
 
+	public HashMap<String, SpeciesInterface> getSpecies() {
+		return species;
+	}
+
+	public void setSpecies(HashMap<String, SpeciesInterface> species) {
+		this.species = species;
+	}
+
+	public HashMap<String, SpeciesInterface> getStateMap() {
+		return stateMap;
+	}
+
+	public void setStateMap(HashMap<String, SpeciesInterface> stateMap) {
+		this.stateMap = stateMap;
+	}
+
+	public HashMap<String, Promoter> getPromoters() {
+		return promoters;
+	}
+
+	public void setPromoters(HashMap<String, Promoter> promoters) {
+		this.promoters = promoters;
+	}
+
+	public GCMFile getProperties() {
+		return properties;
+	}
+
+	public void setProperties(GCMFile properties) {
+		this.properties = properties;
+	}
+
 	/**
 	 * Checks the consistancy of the document
 	 * 
@@ -635,7 +704,6 @@ public class GeneticNetwork {
 				System.out.println(doc.getError(i).getMessage());
 			}
 		}
-
 	}
 	
 	private String sbmlDocument = "";

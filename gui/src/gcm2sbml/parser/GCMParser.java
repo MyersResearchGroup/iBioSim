@@ -86,6 +86,31 @@ public class GCMParser {
 	public void printFile() {
 		System.out.println(data.toString());
 	}
+	
+
+	public HashMap<String, SpeciesInterface> getSpecies() {
+		return species;
+	}
+
+	public void setSpecies(HashMap<String, SpeciesInterface> species) {
+		this.species = species;
+	}
+
+	public HashMap<String, SpeciesInterface> getStateMap() {
+		return stateMap;
+	}
+
+	public void setStateMap(HashMap<String, SpeciesInterface> stateMap) {
+		this.stateMap = stateMap;
+	}
+
+	public HashMap<String, Promoter> getPromoters() {
+		return promoters;
+	}
+
+	public void setPromoters(HashMap<String, Promoter> promoters) {
+		this.promoters = promoters;
+	}
 
 	/**
 	 * Parses the reactions in the network

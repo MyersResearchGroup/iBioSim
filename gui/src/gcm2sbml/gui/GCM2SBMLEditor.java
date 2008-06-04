@@ -107,8 +107,31 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 
 		// Write out species and influences to a gcm file
 		gcm.save(path + File.separator + gcmname + ".gcm");
-
-		if (command.contains("SBML")) {
+		if (command.contains("GCM as")) {
+			String newName = JOptionPane.showInputDialog(biosim.frame(), "Enter GCM name:", "GCM Name",
+					JOptionPane.PLAIN_MESSAGE);
+			if (newName.contains(".gcm")) {
+				newName.replace(".gcm", "");
+			}
+			gcm.save(path + File.separator + newName + ".gcm");
+			biosim.refreshTree();
+		}
+		
+		if (command.contains("template")) {
+			GCMParser parser = new GCMParser(path + File.separator + gcmname
+					+ ".gcm");
+			parser.buildNetwork();
+			GeneticNetwork network = new GeneticNetwork();
+			
+			String templateName = JOptionPane.showInputDialog(biosim.frame(), "Enter SBML template name:", "SBML Template Name",
+					JOptionPane.PLAIN_MESSAGE);
+			if (!templateName.contains(".sbml") || !templateName.contains(".xml")) {
+				templateName = templateName + ".sbml";
+			}
+			network.buildTemplate(parser.getSpecies(), parser.getPromoters(), gcmname + ".gcm", path + File.separator + templateName);
+			biosim.refreshTree();
+		}
+		else if (command.contains("SBML")) {
 			// Then read in the file with the GCMParser
 			GCMParser parser = new GCMParser(path + File.separator + gcmname
 					+ ".gcm");
@@ -142,6 +165,9 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 		if (o instanceof Runnable) {
 			((Runnable) o).run();
 		}
+		else if (o instanceof JComboBox) {			
+			dirty = true;
+		}
 		// System.out.println(o);
 	}
 
@@ -164,6 +190,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 
 		JLabel sbmlFileLabel = new JLabel("SBML File:");
 		sbmlFiles = new JComboBox();
+		sbmlFiles.addActionListener(this);
 		reloadFiles();
 		mainPanelNorth.add(sbmlFileLabel);
 		mainPanelNorth.add(sbmlFiles);
@@ -178,10 +205,16 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 		SaveButton saveButton = new SaveButton("Save GCM", GCMNameTextField);
 		buttons.add(saveButton);
 		saveButton.addActionListener(this);
+		saveButton = new SaveButton("Save GCM as", GCMNameTextField);
+		buttons.add(saveButton);
+		saveButton.addActionListener(this);
 		// mainPanelCenterDown.add(saveButton);
 		saveButton = new SaveButton("Save as SBML", GCMNameTextField);
 		buttons.add(saveButton);
 		saveButton.addActionListener(this);
+		saveButton = new SaveButton("Save as SBML template", GCMNameTextField);
+		buttons.add(saveButton);
+		saveButton.addActionListener(this);		
 		JSplitPane pane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, null,
 				buttons);
 		pane.setDividerSize(2);
