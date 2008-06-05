@@ -8,8 +8,13 @@ import java.awt.event.*;
 import java.io.*;
 import java.util.*;
 import javax.swing.*;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
+//import javax.swing.table.TableRowSorter;
 
 import org.sbml.libsbml.ListOf;
 import org.sbml.libsbml.Model;
@@ -834,31 +839,20 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 	private void createTable(String[][] dat, String[] spec) {
 		this.removeAll();
 		table = new JTable(dat, spec);
-		TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(table.getModel());
-		Comparator<String> comparator = new Comparator<String>() {
-			public int compare(String s1, String s2) {
-				double d1 = Double.parseDouble(s1);
-				double d2 = Double.parseDouble(s2);
-				if (d1 > d2) {
-					return 1;
-				}
-				else if (d2 > d1) {
-					return -1;
-				}
-				else {
-					return 0;
-				}
-			}
-		};
-		sorter.setComparator(0, comparator);
-		sorter.setSortsOnUpdates(true);
-		for (int i = 0; i < spec.length; i++) {
-			sorter.setSortable(i, false);
-		}
-		ArrayList<RowSorter.SortKey> sortKeys = new ArrayList<RowSorter.SortKey>();
-		sortKeys.add(new RowSorter.SortKey(0, SortOrder.ASCENDING));
-		sorter.setSortKeys(sortKeys);
-		table.setRowSorter(sorter);
+		TableSorter sorter = new TableSorter(table.getModel());
+		/*
+		 * TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(table.getModel());
+		 * Comparator<String> comparator = new Comparator<String>() { public int
+		 * compare(String s1, String s2) { double d1 = Double.parseDouble(s1);
+		 * double d2 = Double.parseDouble(s2); if (d1 > d2) { return 1; } else if
+		 * (d2 > d1) { return -1; } else { return 0; } } }; sorter.setComparator(0,
+		 * comparator); sorter.setSortsOnUpdates(true); for (int i = 0; i <
+		 * spec.length; i++) { sorter.setSortable(i, false); } ArrayList<RowSorter.SortKey>
+		 * sortKeys = new ArrayList<RowSorter.SortKey>(); sortKeys.add(new
+		 * RowSorter.SortKey(0, SortOrder.ASCENDING)); sorter.setSortKeys(sortKeys);
+		 * table.setRowSorter(sorter);
+		 */
+		table = new JTable(sorter);
 		scroll1 = new JScrollPane();
 		scroll1.setMinimumSize(new Dimension(260, 200));
 		scroll1.setPreferredSize(new Dimension(276, 132));
@@ -884,7 +878,12 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 		}
 		double[] d = new double[m.getRowCount()];
 		for (int i = 0; i < m.getRowCount(); i++) {
-			d[i] = Double.parseDouble(dat[i][0]);
+			try {
+				d[i] = Double.parseDouble(dat[i][0]);
+			}
+			catch (Exception e) {
+				d[i] = 0;
+			}
 		}
 		int i, j;
 		double index;
@@ -902,5 +901,307 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 			dat[j] = index2;
 		}
 		return dat;
+	}
+}
+
+class TableSorter extends TableMap implements TableModelListener {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6557335239755106286L;
+
+	int indexes[] = new int[0];
+
+	Vector<Integer> sortingColumns = new Vector<Integer>();
+
+	boolean ascending = true;
+
+	public TableSorter() {
+	}
+
+	public TableSorter(TableModel model) {
+		setModel(model);
+	}
+
+	public void setModel(TableModel model) {
+		super.setModel(model);
+		reallocateIndexes();
+		sortByColumn(0);
+		fireTableDataChanged();
+	}
+
+	public int compareRowsByColumn(int row1, int row2, int column) {
+		Class type = model.getColumnClass(column);
+		TableModel data = model;
+
+		// Check for nulls
+
+		Object o1 = data.getValueAt(row1, column);
+		Object o2 = data.getValueAt(row2, column);
+
+		// If both values are null return 0
+		if (o1 == null && o2 == null) {
+			return 0;
+		}
+		else if (o1 == null) { // Define null less than everything.
+			return -1;
+		}
+		else if (o2 == null) {
+			return 1;
+		}
+
+		if (type.getSuperclass() == Number.class) {
+			Number n1 = (Number) data.getValueAt(row1, column);
+			double d1 = n1.doubleValue();
+			Number n2 = (Number) data.getValueAt(row2, column);
+			double d2 = n2.doubleValue();
+
+			if (d1 < d2)
+				return -1;
+			else if (d1 > d2)
+				return 1;
+			else
+				return 0;
+		}
+		else if (type == String.class) {
+			String s1 = (String) data.getValueAt(row1, column);
+			String s2 = (String) data.getValueAt(row2, column);
+			int result = s1.compareTo(s2);
+
+			if (result < 0)
+				return -1;
+			else if (result > 0)
+				return 1;
+			else
+				return 0;
+		}
+		else if (type == java.util.Date.class) {
+			Date d1 = (Date) data.getValueAt(row1, column);
+			long n1 = d1.getTime();
+			Date d2 = (Date) data.getValueAt(row2, column);
+			long n2 = d2.getTime();
+
+			if (n1 < n2)
+				return -1;
+			else if (n1 > n2)
+				return 1;
+			else
+				return 0;
+		}
+		else if (type == Boolean.class) {
+			Boolean bool1 = (Boolean) data.getValueAt(row1, column);
+			boolean b1 = bool1.booleanValue();
+			Boolean bool2 = (Boolean) data.getValueAt(row2, column);
+			boolean b2 = bool2.booleanValue();
+
+			if (b1 == b2)
+				return 0;
+			else if (b1) // Define false < true
+				return 1;
+			else
+				return -1;
+		}
+		else {
+			Object v1 = data.getValueAt(row1, column);
+			String s1 = v1.toString();
+			Object v2 = data.getValueAt(row2, column);
+			String s2 = v2.toString();
+			double d1 = 0;
+			double d2 = 0;
+			try {
+				d1 = Double.parseDouble(s1);
+			}
+			catch (Exception e) {
+				d1 = 0;
+			}
+			try {
+				d2 = Double.parseDouble(s2);
+			}
+			catch (Exception e) {
+				d2 = 0;
+			}
+			if (d1 > d2) {
+				return 1;
+			}
+			else if (d2 > d1) {
+				return -1;
+			}
+			else {
+				return 0;
+			}
+			/*
+			 * int result = s1.compareTo(s2);
+			 * 
+			 * if (result < 0) return -1; else if (result > 0) return 1; else return
+			 * 0;
+			 */
+		}
+	}
+
+	public int compare(int row1, int row2) {
+		for (int level = 0, n = sortingColumns.size(); level < n; level++) {
+			Integer column = (Integer) sortingColumns.elementAt(level);
+			int result = compareRowsByColumn(row1, row2, column.intValue());
+			if (result != 0) {
+				return (ascending ? result : -result);
+			}
+		}
+		return 0;
+	}
+
+	public void reallocateIndexes() {
+		int rowCount = model.getRowCount();
+		indexes = new int[rowCount];
+		for (int row = 0; row < rowCount; row++) {
+			indexes[row] = row;
+		}
+	}
+
+	public void tableChanged(TableModelEvent tableModelEvent) {
+		super.tableChanged(tableModelEvent);
+		reallocateIndexes();
+		sortByColumn(0);
+		fireTableStructureChanged();
+	}
+
+	public void checkModel() {
+		if (indexes.length != model.getRowCount()) {
+			System.err.println("Sorter not informed of a change in model.");
+		}
+	}
+
+	public void sort() {
+		checkModel();
+		shuttlesort((int[]) indexes.clone(), indexes, 0, indexes.length);
+		fireTableDataChanged();
+	}
+
+	public void shuttlesort(int from[], int to[], int low, int high) {
+		if (high - low < 2) {
+			return;
+		}
+		int middle = (low + high) / 2;
+		shuttlesort(to, from, low, middle);
+		shuttlesort(to, from, middle, high);
+
+		int p = low;
+		int q = middle;
+
+		for (int i = low; i < high; i++) {
+			if (q >= high || (p < middle && compare(from[p], from[q]) <= 0)) {
+				to[i] = from[p++];
+			}
+			else {
+				to[i] = from[q++];
+			}
+		}
+	}
+
+	public Object getValueAt(int row, int column) {
+		checkModel();
+		return model.getValueAt(indexes[row], column);
+	}
+
+	public void setValueAt(Object aValue, int row, int column) {
+		checkModel();
+		model.setValueAt(aValue, indexes[row], column);
+	}
+
+	public void sortByColumn(int column) {
+		sortByColumn(column, true);
+	}
+
+	public void sortByColumn(int column, boolean ascending) {
+		this.ascending = ascending;
+		sortingColumns.removeAllElements();
+		sortingColumns.addElement(new Integer(column));
+		sort();
+		super.tableChanged(new TableModelEvent(this));
+	}
+}
+
+class TableHeaderSorter extends MouseAdapter {
+
+	private TableSorter sorter;
+
+	private JTable table;
+
+	private TableHeaderSorter() {
+	}
+
+	public static void install(TableSorter sorter, JTable table) {
+		TableHeaderSorter tableHeaderSorter = new TableHeaderSorter();
+		tableHeaderSorter.sorter = sorter;
+		tableHeaderSorter.table = table;
+		JTableHeader tableHeader = table.getTableHeader();
+		tableHeader.addMouseListener(tableHeaderSorter);
+	}
+
+	public void mouseClicked(MouseEvent mouseEvent) {
+		TableColumnModel columnModel = table.getColumnModel();
+		int viewColumn = columnModel.getColumnIndexAtX(mouseEvent.getX());
+		int column = table.convertColumnIndexToModel(viewColumn);
+		if (mouseEvent.getClickCount() == 1 && column != -1) {
+			System.out.println("Sorting ...");
+			int shiftPressed = (mouseEvent.getModifiers() & InputEvent.SHIFT_MASK);
+			boolean ascending = (shiftPressed == 0);
+			sorter.sortByColumn(column, ascending);
+		}
+	}
+}
+
+class TableMap extends AbstractTableModel implements TableModelListener {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5121573144973091171L;
+
+	TableModel model;
+
+	public TableModel getModel() {
+		return model;
+	}
+
+	public void setModel(TableModel model) {
+		if (this.model != null) {
+			this.model.removeTableModelListener(this);
+		}
+		this.model = model;
+		if (this.model != null) {
+			this.model.addTableModelListener(this);
+		}
+	}
+
+	public Class<?> getColumnClass(int column) {
+		return model.getColumnClass(column);
+	}
+
+	public int getColumnCount() {
+		return ((model == null) ? 0 : model.getColumnCount());
+	}
+
+	public String getColumnName(int column) {
+		return model.getColumnName(column);
+	}
+
+	public int getRowCount() {
+		return ((model == null) ? 0 : model.getRowCount());
+	}
+
+	public Object getValueAt(int row, int column) {
+		return model.getValueAt(row, column);
+	}
+
+	public void setValueAt(Object value, int row, int column) {
+		model.setValueAt(value, row, column);
+	}
+
+	public boolean isCellEditable(int row, int column) {
+		return model.isCellEditable(row, column);
+	}
+
+	public void tableChanged(TableModelEvent tableModelEvent) {
+		fireTableChanged(tableModelEvent);
 	}
 }
