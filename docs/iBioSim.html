@@ -2,7 +2,7 @@
 <HTML>
 <HEAD>
 	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
-	<TITLE>Myers Circuit Research Group</TITLE>
+	<TITLE>iBioSim Manual</TITLE>
 	<META NAME="GENERATOR" CONTENT="OpenOffice.org 2.2  (Linux)">
 	<META NAME="CREATED" CONTENT="20080604;11242100">
 	<META NAME="CHANGED" CONTENT="20080604;13371900">
@@ -13,499 +13,473 @@
 	</STYLE>
 </HEAD>
 <BODY LANG="en-US" LINK="#0000aa" BGCOLOR="#dddddd" DIR="LTR">
-<TABLE WIDTH=848 BORDER=1 CELLPADDING=4 CELLSPACING=3 FRAME=VOID RULES=COLS STYLE="page-break-before: always">
-	<COL WIDTH=27>
-	<COL WIDTH=193>
-	<COL WIDTH=0>
-	<COL WIDTH=0>
-	<COL WIDTH=391>
-	<COL WIDTH=0>
-	<COL WIDTH=4>
-	<COL WIDTH=167>
-	<TBODY>
-		<TR>
-			<TD COLSPAN=8 WIDTH=834>
-				<P STYLE="margin-bottom: 0in"><BR>
-				</P>
-				<HR>
-				<H1 ALIGN=CENTER>iBioSim Manual</H1>
-				<HR>
-				<UL>
-					<LI><P STYLE="margin-bottom: 0in"><A HREF="#INTRO"><FONT SIZE=4>Introduction</FONT></A>
-										</P>
-					<LI><P STYLE="margin-bottom: 0in"><A HREF="#PROJECTS"><FONT SIZE=4>Project
-					Management</FONT></A> 
-					</P>
-					<UL>
-						<LI><P STYLE="margin-bottom: 0in"><A HREF="#NEWOPENPROJ">Creating
-						and Opening Projects</A> 
-						</P>
-						<LI><P STYLE="margin-bottom: 0in"><A HREF="#NEW">Creating
-						Models and Graphs</A> 
-						</P>
-						<LI><P STYLE="margin-bottom: 0in"><A HREF="#IMPORT">Importing
-						Models</A> 
-						</P>
-						<LI><P STYLE="margin-bottom: 0in"><A HREF="#CREATEVIEW">Creating
-						and Opening Views</A> 
-						</P>
-						<LI><P STYLE="margin-bottom: 0in"><A HREF="#VIEW">Viewing
-						Models</A> 
-						</P>
-						<LI><P STYLE="margin-bottom: 0in"><A HREF="#MODIFY">Modifying
-						Project Objects</A> 
-						</P>
-					</UL>
-					<LI><P STYLE="margin-bottom: 0in"><A HREF="#GCMEDIT"><FONT SIZE=4>GCM
-					Editor</FONT></A> 
-					</P>
-					<UL>
-						<LI><P STYLE="margin-bottom: 0in"><A HREF="#GCMSPECIES">GCM
-						Species</A> 
-						</P>
-						<LI><P STYLE="margin-bottom: 0in"><A HREF="#INFLUENCES">Influences</A>
-												</P>
-						<LI><P STYLE="margin-bottom: 0in"><A HREF="#PROMOTERS">Promoters</A>
-												</P>
-						<LI><P STYLE="margin-bottom: 0in"><A HREF="#GCMPARAMETERS">GCM
-						Parameters</A> 
-						</P>
-						<LI><P STYLE="margin-bottom: 0in"><A HREF="#SBMLFILE">SBML File</A></P>
-					</UL>
-					<LI><P STYLE="margin-bottom: 0in"><A HREF="#SBMLEDIT"><FONT SIZE=4>SBML
-					Editor</FONT></A> 
-					</P>
-					<UL>
-						<LI><P STYLE="margin-bottom: 0in"><A HREF="#SBMLMATH">SBML Math</A>
-												</P>
-						<LI><P STYLE="margin-bottom: 0in"><A HREF="#MAINSBML">Main
-						Elements</A> 
-						</P>
-						<UL>
-							<LI><P STYLE="margin-bottom: 0in"><A HREF="#COMPARTMENTS">Compartments</A>
-														</P>
-							<LI><P STYLE="margin-bottom: 0in"><A HREF="#SPECIES">Species</A>
-														</P>
-							<LI><P STYLE="margin-bottom: 0in"><A HREF="#REACTIONS">Reactions</A>
-														</P>
-							<LI><P STYLE="margin-bottom: 0in"><A HREF="#PARAMETERS">Parameters</A>
-														</P>
-						</UL>
-						<LI><P STYLE="margin-bottom: 0in"><A HREF="#DEFTYPES">Definitions/Types</A>
-												</P>
-						<UL>
-							<LI><P STYLE="margin-bottom: 0in"><A HREF="#FUNCTIONS">Function
-							Definitions</A> 
-							</P>
-							<LI><P STYLE="margin-bottom: 0in"><A HREF="#UNITS">Unit
-							Definitions</A> 
-							</P>
-							<LI><P STYLE="margin-bottom: 0in"><A HREF="#COMPTYPES">Compartment
-							Types</A> 
-							</P>
-							<LI><P STYLE="margin-bottom: 0in"><A HREF="#SPECTYPES">Species
-							Types</A> 
-							</P>
-						</UL>
-						<LI><P STYLE="margin-bottom: 0in"><A HREF="#RULESEVENTS">Initial
-						Assignments/Rules/Constraints/Events</A> 
-						</P>
-						<UL>
-							<LI><P STYLE="margin-bottom: 0in"><A HREF="#INITIALS">Initial
-							Assignments</A> 
-							</P>
-							<LI><P STYLE="margin-bottom: 0in"><A HREF="#RULES">Rules</A> 
-							</P>
-							<LI><P STYLE="margin-bottom: 0in"><A HREF="#CONSTRAINTS">Constraints</A>
-														</P>
-							<LI><P STYLE="margin-bottom: 0in"><A HREF="#EVENTS">Events</A>
-														</P>
-						</UL>
-					</UL>
-					<LI><P STYLE="margin-bottom: 0in"><A HREF="#ANALYSIS"><FONT SIZE=4>Analysis
-					View</FONT></A> 
-					</P>
-					<UL>
-						<LI><P STYLE="margin-bottom: 0in"><A HREF="#SIMOPTIONS">Options</A>
-												</P>
-						<LI><P STYLE="margin-bottom: 0in"><A HREF="#USERDEFN">User
-						Defined Data File</A> 
-						</P>
-						<LI><P STYLE="margin-bottom: 0in"><A HREF="#ABSOPTIONS">Abstraction
-						Options</A> 
-						</P>
-						<LI><P STYLE="margin-bottom: 0in"><A HREF="#TERMCOND">Termination
-						Conditions</A> 
-						</P>
-						<LI><P STYLE="margin-bottom: 0in"><A HREF="#ADVSIMOPTIONS">Advanced
-						Options</A> 
-						</P>
-						<LI><P STYLE="margin-bottom: 0in"><A HREF="#PARAMEDIT">Parameter
-						Editor</A> 
-						</P>
-					</UL>
-					<LI><P STYLE="margin-bottom: 0in"><A HREF="#LEARN"><FONT SIZE=4>Learn
-					View</FONT></A> 
-					</P>
-					<UL>
-						<LI><P STYLE="margin-bottom: 0in"><A HREF="#DATA">Data Manager</A>
-												</P>
-						<LI><P STYLE="margin-bottom: 0in"><A HREF="#LEARNTOOL">Learn
-						Tool</A> 
-						</P>
-						<UL>
-							<LI><P STYLE="margin-bottom: 0in"><A HREF="#LEARNOPTIONS">Basic
-							Learning Options</A> 
-							</P>
-							<LI><P STYLE="margin-bottom: 0in"><A HREF="#ADVLEARN">Advanced
-							Learning Options</A> 
-							</P>
-						</UL>
-					</UL>
-					<LI><P STYLE="margin-bottom: 0in"><A HREF="#GRAPH"><FONT SIZE=4>Graph
-					Editors</FONT></A> 
-					</P>
-					<LI><P STYLE="margin-bottom: 0in"><A HREF="#CIRCUIT"><FONT SIZE=4>Genetic
-					Circuit Model Format</FONT></A> 
-					</P>
-					<LI><P STYLE="margin-bottom: 0in"><A HREF="#TSD"><FONT SIZE=4>Time
-					Series Data Format</FONT></A> 
-					</P>
-					<LI><P><A HREF="#CREDITS"><FONT SIZE=4>Credits</FONT></A> 
-					</P>
-				</UL>
-				<H1><A NAME="INTRO"></A>Introduction</H1>
-				<P>iBioSim has been developed for the analysis of biochemical
-				reaction network models. While the primary target of iBioSim is
-				models of genetic circuits, models representing metabolic
-				networks, cell-signaling pathways, and other biological and
-				chemical systems can also be analyzed. iBioSim includes the
-				following tools: 
-				</P>
-				<UL>
-					<LI><P STYLE="margin-bottom: 0in"><A HREF="#GCMEDIT">GCM Editor</A>
-					- a tool to enter a genetic circuit model. 
-					</P>
-					<LI><P STYLE="margin-bottom: 0in"><A HREF="#SBMLEDIT">SBML
-					Editor</A> - a tool to enter a biochemical reaction network. 
-					</P>
-					<LI><P STYLE="margin-bottom: 0in"><A HREF="#ANALYSIS">REB2SAC</A>
-					- an analysis tool that utilizes various abstraction methods to
-					perform efficient ODE and Monte Carlo simulation as well as
-					Markov analysis. The algorithms used in this tool are described
-					in <A HREF="http://www.async.ece.utah.edu/publications">Kuwahara's
-					PhD Dissertation (UofUtah 2007)</A>. 
-					</P>
-					<LI><P STYLE="margin-bottom: 0in"><A HREF="#LEARN">GeneNet</A> -
-					a tool to learn a genetic circuit model from time series
-					experimental data. The algorithms used in this tool are
-					described in <A HREF="http://www.async.ece.utah.edu/publications">Barker's
-					PhD Dissertation (UofUtah 2007)</A>. 
-					</P>
-					<LI><P><A HREF="#GRAPH">Graph Editor</A> - this tool can be used
-					to visualize data. 
-					</P>
-				</UL>
-				<P>iBioSim can analyze models provided in either the <A HREF="http://www.sbml.org/">Systems
-				Biology Markup Language</A> (SBML) or in our <A HREF="#CIRCUIT">Genetic
-				Circuit Model</A> (GCM) format. The time series data files used
-				by our learning method can be in <A HREF="#TSD">Time Series Data</A>
-				(TSD) format, Comma Separated Value (CSV) format, or tab
-				delimited data (DAT) format. 
-				</P>
-				<H1><A NAME="PROJECTS"></A>Project Management</H1>
-				<P>A project is a collection of models, analysis views, learn
-				views, and graphs. 
-				</P>
-				<H2><A NAME="NEWOPENPROJ"></A>Creating and Opening Projects</H2>
-				<P>To create a new project, select New → Project from the File
-				menu. You will then be prompted to browse to a desired location
-				and to give a name to the project directory. After you do this,
-				click the new button and a new project directory will be created.
-				To open a project, select Open → Project from the File menu.
-				You will then be prompted to browse to a project directory to
-				open, and clicking open will open the project. You may also open
-				a project by selecting one of your five most recently opened
-				projects by selecting the project name shown in the File drop
-				down menu. 
-				</P>
-				<H2><A NAME="NEW"></A>Creating Models and Graphs</H2>
-				<P>After you have created or opened a project, you can create a
-				new model or graph to add to the project. To create a new Genetic
-				Circuit Model, select the New → Genetic Circuit Model from the
-				File menu. You will then be prompted to give a model id. At this
-				point, a <A HREF="#GCMEDIT">GCM editor</A> will be open in a new
-				tab. To create a new SBML model, select the New → SBML Model
-				from the File menu. You will then be prompted to give a model id.
-				At this point, an <A HREF="#SBMLEDIT">SBML editor</A> will open
-				in a new tab. To create a new graph, select the New → Graph
-				from the File menu. You will then be prompted to give a name to
-				the graph. At this point, a <A HREF="#GRAPH">graph editor</A>
-				will open in a new tab. Once a model or graph is created, it can
-				be opened again later by right clicking on the object in the
-				project window and selecting &quot;Edit&quot;, or alternatively
-				double-clicking on the view. 
-				</P>
-				<H2><A NAME="IMPORT"></A>Importing Models</H2>
-				<P>You can import into the current working project <A HREF="#CIRCUIT">GCMs</A>
-				or <A HREF="http://www.sbml.org/">SBML Models</A> created by
-				other programs or stored in other projects. To import a GCM,
-				select Import → Genetic Circuit Model from the File menu. You
-				will then be able to browse to find a model to import. After
-				selecting the desired model, click the import button to bring the
-				GCM into the project. To import an SBML model, the procedure is
-				the same except use the Import → SBML Model option. 
-				</P>
-				<H2><A NAME="CREATEVIEW"></A>Creating and Opening Views</H2>
-				<P>To perform analysis or learning, right click on a model and
-				select &quot;<A HREF="#ANALYSIS">Create Analysis View</A>&quot;
-				to perform analysis or &quot;<A HREF="#LEARN">Create Learn View</A>&quot;
-				to perform learning. You will then be prompted to give a name to
-				your analysis or learn view. After a name is entered, a tab with
-				the newly created view will open. Once a view is created, it can
-				be opened again later by right clicking on an analysis directory
-				and selecting &quot;Open Analysis View&quot; or alternatively
-				double-clicking on the view. 
-				</P>
-				<P>When you create an analysis view from a GCM, an SBML model is
-				automatically created for simulation and analysis. Within the
-				analysis view, you can edit the initial concentrations and
-				parameters. However, if you wish to be able to edit the
-				structure, you should first create an SBML model using Create
-				SBML Model option in the right click menu. You can then open and
-				edit this model using an <A HREF="#SBMLEDIT">SBML editor</A> and
-				create an analysis view from this edited model.<!-- <LI><P>Background Knowledge Network 
+<P STYLE="margin-bottom: 0in"><BR></P>
+<HR><H1 ALIGN=CENTER>iBioSim Manual</H1><HR>
+<UL>
+<LI><A HREF="#INTRO"><FONT SIZE=4>Introduction</FONT></A>
+<LI><A HREF="#PROJECTS"><FONT SIZE=4>Project Management</FONT></A> 
+<UL>
+<LI><A HREF="#NEWOPENPROJ">Creating and Opening Projects</A> 
+<LI><A HREF="#NEW">Creating Models and Graphs</A> 
+<LI><A HREF="#IMPORT">Importing	Models</A> 
+<LI><A HREF="#CREATEVIEW">Creating and Opening Views</A> 
+<LI><A HREF="#VIEW">Viewing Models</A> 
+<LI><A HREF="#MODIFY">Modifying	Project Objects</A> 
+</UL>
+<LI><A HREF="#GCMEDIT"><FONT SIZE=4>GCM	Editor</FONT></A> 
+<UL>
+<LI><A HREF="#GCMSPECIES">GCM Species</A> 
+<LI><A HREF="#INFLUENCES">Influences</A>
+<LI><A HREF="#PROMOTERS">Promoters</A>
+<LI><A HREF="#GCMPARAMETERS">GCM Parameters</A> 
+<LI><A HREF="#SBMLFILE">SBML File</A>
+</UL>
+<LI><A HREF="#SBMLEDIT"><FONT SIZE=4>SBML Editor</FONT></A> 
+<UL>
+<LI><A HREF="#SBMLMATH">SBML Math Formulas</A>
+<LI><A HREF="#MAINSBML">Main Elements</A> 
+<UL>
+<LI><A HREF="#COMPARTMENTS">Compartments</A>
+<LI><A HREF="#SPECIES">Species</A>
+<LI><A HREF="#REACTIONS">Reactions</A>
+<LI><A HREF="#PARAMETERS">Parameters</A>
+</UL>
+<LI><A HREF="#DEFTYPES">Definitions/Types</A>
+<UL>
+<LI><A HREF="#FUNCTIONS">Function Definitions</A> 
+<LI><A HREF="#UNITS">Unit Definitions</A> 
+<LI><A HREF="#COMPTYPES">Compartment Types</A> 
+<LI><A HREF="#SPECTYPES">Species Types</A> 
+</UL>
+<LI><A HREF="#RULESEVENTS">Initial Assignments/Rules/Constraints/Events</A> 
+<UL>
+<LI><A HREF="#INITIALS">Initial	Assignments</A>
+<LI><A HREF="#RULES">Rules</A>
+<LI><A HREF="#CONSTRAINTS">Constraints</A>
+<LI><A HREF="#EVENTS">Events</A>
+</UL>
+</UL>
+<LI><A HREF="#ANALYSIS"><FONT SIZE=4>Analysis View</FONT></A> 
+<UL>
+<LI><A HREF="#SIMOPTIONS">Options</A>
+<LI><A HREF="#USERDEFN">User Defined Data File</A> 
+<LI><A HREF="#ABSOPTIONS">Abstraction Options</A> 
+<LI><A HREF="#TERMCOND">Termination Conditions</A> 
+<LI><A HREF="#ADVSIMOPTIONS">Advanced Options</A> 
+<LI><A HREF="#PARAMEDIT">Parameter Editor</A>	
+</UL>
+<LI><A HREF="#LEARN"><FONT SIZE=4>Learn	View</FONT></A> 
+<UL>
+<LI><A HREF="#DATA">Data Manager</A>
+<LI><A HREF="#LEARNTOOL">Learn Tool</A> 
+<UL>
+<LI><A HREF="#LEARNOPTIONS">Basic Learning Options</A>
+<LI><A HREF="#ADVLEARN">Advanced Learning Options</A>
+</UL>
+</UL>
+<LI><A HREF="#GRAPH"><FONT SIZE=4>Graph	Editors</FONT></A> 
+<LI><A HREF="#CIRCUIT"><FONT SIZE=4>Genetic Circuit Model Format</FONT></A> 
+<LI><A HREF="#TSD"><FONT SIZE=4>Time Series Data Format</FONT></A> 
+<LI><A HREF="#CREDITS"><FONT SIZE=4>Credits</FONT></A> 
+</UL>
+
+<H1><A NAME="INTRO"></A>Introduction</H1>
+
+<P>iBioSim has been developed for the analysis of biochemical
+reaction network models. While the primary target of iBioSim is
+models of genetic circuits, models representing metabolic
+networks, cell-signaling pathways, and other biological and
+chemical systems can also be analyzed. iBioSim includes the
+following tools: 
+</P>
+<UL>
+<LI><P STYLE="margin-bottom: 0in"><A HREF="#GCMEDIT">GCM Editor</A>
+- a tool to enter a genetic circuit model. 
+</P>
+<LI><P STYLE="margin-bottom: 0in"><A HREF="#SBMLEDIT">SBML
+Editor</A> - a tool to enter a biochemical reaction network. 
+</P>
+<LI><P STYLE="margin-bottom: 0in"><A HREF="#ANALYSIS">REB2SAC</A>
+- an analysis tool that utilizes various abstraction methods to
+perform efficient ODE and Monte Carlo simulation as well as
+Markov analysis. The algorithms used in this tool are described
+in <A HREF="http://www.async.ece.utah.edu/publications">Kuwahara's
+PhD Dissertation (UofUtah 2007)</A>. 
+</P>
+<LI><P STYLE="margin-bottom: 0in"><A HREF="#LEARN">GeneNet</A> -
+a tool to learn a genetic circuit model from time series
+experimental data. The algorithms used in this tool are
+described in <A HREF="http://www.async.ece.utah.edu/publications">Barker's
+PhD Dissertation (UofUtah 2007)</A>. 
+</P>
+<LI><P><A HREF="#GRAPH">Graph Editor</A> - this tool can be used
+to visualize data. 
+</P>
+</UL>
+<P>iBioSim can analyze models provided in either the <A HREF="http://www.sbml.org/">Systems
+Biology Markup Language</A> (SBML) or in our <A HREF="#CIRCUIT">Genetic
+Circuit Model</A> (GCM) format. The time series data files used
+by our learning method can be in <A HREF="#TSD">Time Series Data</A>
+(TSD) format, Comma Separated Value (CSV) format, or tab
+delimited data (DAT) format. 
+</P>
+<H1><A NAME="PROJECTS"></A>Project Management</H1>
+<P>A project is a collection of models, analysis views, learn
+views, and graphs. 
+</P>
+<H2><A NAME="NEWOPENPROJ"></A>Creating and Opening Projects</H2>
+<P>To create a new project, select New → Project from the File
+menu. You will then be prompted to browse to a desired location
+and to give a name to the project directory. After you do this,
+click the new button and a new project directory will be created.
+To open a project, select Open → Project from the File menu.
+You will then be prompted to browse to a project directory to
+open, and clicking open will open the project. You may also open
+a project by selecting one of your five most recently opened
+projects by selecting the project name shown in the File drop
+down menu. 
+</P>
+<H2><A NAME="NEW"></A>Creating Models and Graphs</H2>
+<P>After you have created or opened a project, you can create a
+new model or graph to add to the project. To create a new Genetic
+Circuit Model, select the New → Genetic Circuit Model from the
+File menu. You will then be prompted to give a model id. At this
+point, a <A HREF="#GCMEDIT">GCM editor</A> will be open in a new
+tab. To create a new SBML model, select the New → SBML Model
+from the File menu. You will then be prompted to give a model id.
+At this point, an <A HREF="#SBMLEDIT">SBML editor</A> will open
+in a new tab. To create a new graph, select the New → Graph
+from the File menu. You will then be prompted to give a name to
+the graph. At this point, a <A HREF="#GRAPH">graph editor</A>
+will open in a new tab. Once a model or graph is created, it can
+be opened again later by right clicking on the object in the
+project window and selecting &quot;Edit&quot;, or alternatively
+double-clicking on the view. 
+</P>
+<H2><A NAME="IMPORT"></A>Importing Models</H2>
+<P>You can import into the current working project <A HREF="#CIRCUIT">GCMs</A>
+or <A HREF="http://www.sbml.org/">SBML Models</A> created by
+other programs or stored in other projects. To import a GCM,
+select Import → Genetic Circuit Model from the File menu. You
+will then be able to browse to find a model to import. After
+selecting the desired model, click the import button to bring the
+GCM into the project. To import an SBML model, the procedure is
+the same except use the Import → SBML Model option. 
+</P>
+<H2><A NAME="CREATEVIEW"></A>Creating and Opening Views</H2>
+<P>To perform analysis or learning, right click on a model and
+select &quot;<A HREF="#ANALYSIS">Create Analysis View</A>&quot;
+to perform analysis or &quot;<A HREF="#LEARN">Create Learn View</A>&quot;
+to perform learning. You will then be prompted to give a name to
+your analysis or learn view. After a name is entered, a tab with
+the newly created view will open. Once a view is created, it can
+be opened again later by right clicking on an analysis directory
+and selecting &quot;Open Analysis View&quot; or alternatively
+double-clicking on the view. 
+</P>
+<P>When you create an analysis view from a GCM, an SBML model is
+automatically created for simulation and analysis. Within the
+analysis view, you can edit the initial concentrations and
+parameters. However, if you wish to be able to edit the
+structure, you should first create an SBML model using Create
+SBML Model option in the right click menu. You can then open and
+edit this model using an <A HREF="#SBMLEDIT">SBML editor</A> and
+create an analysis view from this edited model.
+<!-- <LI><P>Background Knowledge Network 
 </P>
 <P>The Background Knowledge Network field allows the user to
 input known information regarding the network of interest. The
 names of these species must match the names used in the
 simulation directory.</P>
 -->
-								</P>
-				<H2><A NAME="VIEW"></A>Viewing Models</H2>
-				<P>To view a GCM, right click on the model you want to view, and
-				select the &quot;View Circuit&quot; option. This opens the
-				circuit using <A HREF="http://www.graphviz.org/">GraphViz's</A>
-				dotty program. To view an SBML model, right click on the model
-				you want to view. There are two ways to view an SBML model. You
-				can either select the &quot;View Network&quot; option or the
-				&quot;View in Browser&quot; option. The &quot;View Network&quot;
-				option converts the model to a <A HREF="http://www.graphviz.org/">GraphViz</A>
-				file and then will open that file with GraphViz's dotty program.
-				The &quot;View in Browser&quot; option coverts the model to an
-				xhtml file and opens that file with your default browser. 
-				</P>
-				<H2><A NAME="MODIFY"></A>Modifying Project Objects</H2>
-				<P>All project objects can be modified by highlighting the object
-				and using a right mouse click to open a menu of options. Using
-				this menu, every type of object can be copied, renamed, or
-				deleted. For a GCM, the &quot;View/Edit&quot; option opens the
-				model in an <A HREF="#GCMEDIT">GCM editor</A>. For an SBML model,
-				the &quot;View/Edit&quot; option opens the model in an <A HREF="#SBMLEDIT">SBML
-				editor</A>. For a graph, the &quot;View/Edit&quot; option opens
-				the graph in a <A HREF="#GRAPH">graph editor</A>. For an analysis
-				view, the &quot;Open Analysis View&quot; option opens the
-				<A HREF="#ANALYSIS">analysis view</A>. For a learn view, the
-				&quot;Open Learn View&quot; option opens the <A HREF="#LEARN">learn
-				view</A>. 
-				</P>
-				<H1><A NAME="GCMEDIT"></A>GCM Editor</H1>
-				<P>The GCM editor allows the user to create or modify a genetic
-				circuit model (GCM) of a biochemical reaction network. A GCM is a
-				compact graphical representation of a genetic circuit. The GCM
-				can be saved as an SBML model. This model includes <A HREF="#GCMSPECIES">GCM
-				species</A>, <A HREF="#INFLUENCES">influences</A>, <A HREF="#PROMOTERS">promoters</A>,
-				<A HREF="#GCMPARAMETERS">parameters</A>, and an <A HREF="#SBMLFILE">SBML
-				file</A>. GCM species, influences, and promoters can be added,
-				removed, or edited. Parameters can be edited. An SBML file can be
-				selected for merging.</P>
-				<P>To add a new item, click on the appropriate add button. You
-				will then be prompted to input information regarding the new
-				item. After you have filled out the required fields, click on ok
-				and the new item will be added into the GCM.</P>
-				<P>To remove an item from the GCM, select that item and click the
-				remove button. The item will then be removed from the GCM.
-				However, if you try to remove species or promoter that is used in
-				an influence, you will first have to remove the influence in
-				order to remove the species or promoter from the model.</P>
-				<P>To edit an existing item, select that item from the list and
-				click the edit button. An editing window will open and you will
-				be able to change the properties of that item. When you are done
-				editing this item, click save to save the changes to the item. 
-				</P>
-				<P>To merge an existing SBML file with the GCM output, click on
-				the SBML file and select the SBML file to use. This will merge
-				the contents of selected SBML with the resulting SBML from the
-				GCM.</P>
-				<P>Once a GCM is completed, the user can save the GCM as SBML. 
-				This will create an SBML file of the GCM.</P>
-				<H2><A NAME="GCMSPECIES"></A>GCM Species</H2>
-				<P>GCM species are the molecules produced by genes. When adding
-				or editing a species, the user must provide a unique name. The
-				user can also select the type to be normal, constant, or spastic.
-				A normal species will generate a gene production reaction and
-				degradation reaction. A constant species will not generate any
-				production or degradation reaction. A spastic species will
-				produce a constant production and degradation reaction.</P>
-				<P>The user can also specify a initial concentration, a N-mer as
-				transcription factor, an association constant, an a degradation
-				parameter value. The N-mer as transcription factor specifies how
-				many monomers can bind together to form a transcription factor.
-				The association constant parameter is the ratio of N-mer
-				molecules to monomers.</P>
-				<H2><A NAME="INFLUENCES"></A>Influences</H2>
-				<P>Influences describe the relationships between the GCM species.
-				When adding or editing an influence, the user must select an
-				input and output species, as well as the type of influence. If
-				the type is repression, then the input species represses the
-				production of the output species. If the type is activation, then
-				the input species activates the production of the output species.
-				The user can also specify whether the influence has a promoter.
-				If a promoter is selected, then this groups all influences using
-				the same promoter together. 
-				</P>
-				<P>For example, if there are two influences:</P>
-				<P>A -&gt; C, Promoter P1</P>
-				<P>B -&gt; C, Promoter P2</P>
-				<P>this will create two reactions, where in the presence of A and
-				B, C will be repressed. This is a NAND gate. If, on the other
-				hand, there are two influences:</P>
-				<P>A -&gt; C, Promoter P1</P>
-				<P>B -&gt; C, Promoter P1</P>
-				<P>this will create one reaction, where in the presence of A or
-				B, C will be repressed. This is a NOR gate.</P>
-				<P>Users can also specify if the influence is a biochemical
-				influence. Biochemical influence requires all input species
-				belonging to the same promoter to be present in order to affect
-				transcription. 
-				</P>
-				<P>For example, if there are two biochemical influences:</P>
-				<P>A -&gt; C, Promoter P1, Biochemical</P>
-				<P>B -&gt; C, Promoter P1, Biochemical</P>
-				<P>this will create two reactions, A and B combines into a
-				complex, and the complex represses the production of C. This is a
-				NAND gate. If, on the other hand, if biochemical is not selected,
-				this behaves as a NOR gate.</P>
-				<P>The user can also set the value for N-mer as transcription
-				factor. This determines how many monomers of the input species
-				must be bound together in order to affect transcription. The user
-				can also set the value of the repression or activation constant
-				for the influence.</P>
-				<H2><A NAME="PROMOTERS"></A>Promoters</H2>
-				<P>Promoters are used to group GCM species together.  For
-				example, if there are two influences</P>
-				<P>A -&gt; C, Promoter P1</P>
-				<P>B -&gt; D, Promoter P1</P>
-				<P>then this will create one promoter P1 that produces both C and
-				D at the same time.  This means that in the presence of A or B, C
-				and D is repressed.  On the other hand, if there are two
-				influences, 
-				</P>
-				<P>A -&gt; C, Promoter P1</P>
-				<P>B -&gt; D, Promoter P2</P>
-				<P>then this will create two promoters, P1 and P2, that produce C
-				and D respectively.  The presence of A or B will repress C or D,
-				respectively.</P>
-				<P>When adding or editing promoters, the user must supply a
-				unique name.  The user can set the initial promoter count
-				(Promoter count), the basal production rate (kbasal), the binding
-				rate of RNAP (KRNAP), the number of transcripts per mRNA
-				(Stoichiometry of production), the open complex formation rate
-				(koc), the activated open complex formation rate (Activated koc),
-				and the cooperativity constant (binding sites per transcription
-				factors).  
-				</P>
-				<H2><A NAME="GCMPARAMETERS"></A>GCM Parameters</H2>
-				<P>The GCM parameters is a list of global parameters that is used
-				in each GCM species, influence, and promoter.  The parameter list
-				allows the user an easy way to change all the parameter values in
-				a convenient location.  If a parameter in the GCM is set to
-				default, it will use the value found in the GCM parameter. 
-				</P>
-				<H2><A NAME="SBMLFILE"></A>SBML File</H2>
-				<P>The SBML file allows the user to merge an existing SBML file
-				with the generated SBML.  This allows the user to incorporate
-				SBML features such as rules, events, constraints, and initial
-				assignments into the GCM model.  
-				</P>
-				<H1><A NAME="SBMLEDIT"></A>SBML Editor</H1>
-				<P>The SBML editor allows the user to create or modify an SBML
-				model of a biochemical reaction network. This model includes
-				<A HREF="#COMPARTMENTS">compartments</A>, <A HREF="#SPECIES">species</A>,
-				<A HREF="#REACTIONS">reactions</A>, and <A HREF="#PARAMETERS">parameters</A>.
-				Each of these items can be added, removed, or edited. 
-				</P>
-				<P>To add a new item, click on the appropriate add button. You
-				will then be prompted to provide a unique id and some properties
-				for this new item (as described below). After you have filled out
-				all of the required fields, click add and the new item will be
-				added to the SBML model.</P>
-				<P>To remove an item from the model, select that item and click
-				the remove button. The item will then be removed from the model.
-				However, if you try to remove a species that is used in a
-				reaction, you will first have to remove the reaction or remove
-				the species from the reaction in order to remove the species from
-				the model. Likewise, if you try to remove a compartment that
-				contains species, you will have to remove the species before you
-				will be able to remove the compartment.</P>
-				<P>To edit an existing item, select that item from the list and
-				click the edit button. An editing window will open and you will
-				be able to change the properties of that item. When you are done
-				editing this item, click save to save the changes to the item. 
-				</P>
-				<P>After the model is complete, press the Save button to store
-				the model. The Save As button can also be used to store the
-				model, but in this case, a new model ID will be requested and the
-				model will be saved using that ID. 
-				</P>
-				<H2><A NAME="COMPARTMENTS"></A>Compartments</H2>
-				<P>Compartments are used to specify locations where species are
-				found. Every model must include at least one compartment. A new
-				model includes a compartment named &quot;default&quot; that
-				cannot be removed unless a new compartment is provided. When
-				adding or editing a compartment, the only field is the ID for the
-				compartment. 
-				</P>
-				<H2><A NAME="SPECIES"></A>Species</H2>
-				<P>Species are the molecules that appear as reactants or products
-				in the reactions in the biochemical reaction network. When adding
-				or editing a species, the user must provide an ID, a compartment
-				assignment, and an initial concentration (or amount) of the
-				species. A species ID must be a string composed only of
-				alphanumeric characters and underscores and start with an
-				alphabetic character. 
-				</P>
-				<H2><A NAME="REACTIONS"></A>Reactions</H2>
-				<P>Reactions are used to create or destroy molecular species in a
-				biochemical reaction network. A reaction is composed of an ID, a
-				reversible Boolean flag, a list of reactants, a list of products,
-				a list of parameters, and a kinetic law. A reaction is required
-				to have an ID and a syntactically correct kinetic law as
-				described below. The reversible Boolean flag indicates whether or
-				not this reaction is reversible. When adding a reactant or
-				product, the user must specify a species ID and the stoichiometry
-				(i.e., the number of molecules produced or consumed by the
-				reaction). The list of parameters begins with a default forward
-				reaction rate (kf) and reverse reaction rate (kr). These names
-				and their values should likely be edited. The kinetic law can
-				either be automatically generated using the Use Mass Action
-				button or manually entered using the syntax described below. The
-				&quot;Use Mass Action&quot; button creates a rate law using the
-				law of mass action. It assumes that the first parameter in the
-				list is the forward reaction rate and the second parameter in the
-				list is the reverse reaction rate. The &quot;Clear&quot; button
-				clears the kinetic law editor. 
-				</P>
-				<P>Kinetic law formulas are expressed as text strings using a
-				simple C-like syntax. Here are some syntax rules when dealing
-				with kinetic law formulas: 
-				</P>
-				<UL>
-					<LI><P STYLE="margin-bottom: 0in">Acceptable operators include:
-					add (+), subtract (-), multiply (*), divide (/), and the power
-					function, pow(x,y), which is equal to x^y. 
-					</P>
-					<LI><P STYLE="margin-bottom: 0in"><!-- <LI><P STYLE="margin-bottom: 0in">Supported functions include: 
+</P>
+<H2><A NAME="VIEW"></A>Viewing Models</H2>
+<P>To view a GCM, right click on the model you want to view, and
+select the &quot;View Circuit&quot; option. This opens the
+circuit using <A HREF="http://www.graphviz.org/">GraphViz's</A>
+dotty program. To view an SBML model, right click on the model
+you want to view. There are two ways to view an SBML model. You
+can either select the &quot;View Network&quot; option or the
+&quot;View in Browser&quot; option. The &quot;View Network&quot;
+option converts the model to a <A HREF="http://www.graphviz.org/">GraphViz</A>
+file and then will open that file with GraphViz's dotty program.
+The &quot;View in Browser&quot; option coverts the model to an
+xhtml file and opens that file with your default browser. 
+</P>
+<H2><A NAME="MODIFY"></A>Modifying Project Objects</H2>
+<P>All project objects can be modified by highlighting the object
+and using a right mouse click to open a menu of options. Using
+this menu, every type of object can be copied, renamed, or
+deleted. For a GCM, the &quot;View/Edit&quot; option opens the
+model in an <A HREF="#GCMEDIT">GCM editor</A>. For an SBML model,
+the &quot;View/Edit&quot; option opens the model in an <A HREF="#SBMLEDIT">SBML
+editor</A>. For a graph, the &quot;View/Edit&quot; option opens
+the graph in a <A HREF="#GRAPH">graph editor</A>. For an analysis
+view, the &quot;Open Analysis View&quot; option opens the
+<A HREF="#ANALYSIS">analysis view</A>. For a learn view, the
+&quot;Open Learn View&quot; option opens the <A HREF="#LEARN">learn
+view</A>. 
+</P>
+<H1><A NAME="GCMEDIT"></A>GCM Editor</H1>
+<P>The GCM editor allows the user to create or modify a genetic
+circuit model (GCM) of a biochemical reaction network. A GCM is a
+compact graphical representation of a genetic circuit. The GCM
+can be saved as an SBML model. This model includes <A HREF="#GCMSPECIES">GCM
+species</A>, <A HREF="#INFLUENCES">influences</A>, <A HREF="#PROMOTERS">promoters</A>,
+<A HREF="#GCMPARAMETERS">parameters</A>, and an <A HREF="#SBMLFILE">SBML
+file</A>. GCM species, influences, and promoters can be added,
+removed, or edited. Parameters can be edited. An SBML file can be
+selected for merging.</P>
+<P>To add a new item, click on the appropriate add button. You
+will then be prompted to input information regarding the new
+item. After you have filled out the required fields, click on ok
+and the new item will be added into the GCM.</P>
+<P>To remove an item from the GCM, select that item and click the
+remove button. The item will then be removed from the GCM.
+However, if you try to remove species or promoter that is used in
+an influence, you will first have to remove the influence in
+order to remove the species or promoter from the model.</P>
+<P>To edit an existing item, select that item from the list and
+click the edit button. An editing window will open and you will
+be able to change the properties of that item. When you are done
+editing this item, click save to save the changes to the item. 
+</P>
+<P>To merge an existing SBML file with the GCM output, click on
+the SBML file and select the SBML file to use. This will merge
+the contents of selected SBML with the resulting SBML from the
+GCM.</P>
+<P>Once a GCM is completed, the user can save the GCM as SBML. 
+This will create an SBML file of the GCM.</P>
+<H2><A NAME="GCMSPECIES"></A>GCM Species</H2>
+<P>GCM species are the molecules produced by genes. When adding
+or editing a species, the user must provide a unique name. The
+user can also select the type to be normal, constant, or spastic.
+A normal species will generate a gene production reaction and
+degradation reaction. A constant species will not generate any
+production or degradation reaction. A spastic species will
+produce a constant production and degradation reaction.</P>
+<P>The user can also specify a initial concentration, a N-mer as
+transcription factor, an association constant, an a degradation
+parameter value. The N-mer as transcription factor specifies how
+many monomers can bind together to form a transcription factor.
+The association constant parameter is the ratio of N-mer
+molecules to monomers.</P>
+<H2><A NAME="INFLUENCES"></A>Influences</H2>
+<P>Influences describe the relationships between the GCM species.
+When adding or editing an influence, the user must select an
+input and output species, as well as the type of influence. If
+the type is repression, then the input species represses the
+production of the output species. If the type is activation, then
+the input species activates the production of the output species.
+The user can also specify whether the influence has a promoter.
+If a promoter is selected, then this groups all influences using
+the same promoter together. 
+</P>
+<P>For example, if there are two influences:</P>
+<P>A -&gt; C, Promoter P1</P>
+<P>B -&gt; C, Promoter P2</P>
+<P>this will create two reactions, where in the presence of A and
+B, C will be repressed. This is a NAND gate. If, on the other
+hand, there are two influences:</P>
+<P>A -&gt; C, Promoter P1</P>
+<P>B -&gt; C, Promoter P1</P>
+<P>this will create one reaction, where in the presence of A or
+B, C will be repressed. This is a NOR gate.</P>
+<P>Users can also specify if the influence is a biochemical
+influence. Biochemical influence requires all input species
+belonging to the same promoter to be present in order to affect
+transcription. 
+</P>
+<P>For example, if there are two biochemical influences:</P>
+<P>A -&gt; C, Promoter P1, Biochemical</P>
+<P>B -&gt; C, Promoter P1, Biochemical</P>
+<P>this will create two reactions, A and B combines into a
+complex, and the complex represses the production of C. This is a
+NAND gate. If, on the other hand, if biochemical is not selected,
+this behaves as a NOR gate.</P>
+<P>The user can also set the value for N-mer as transcription
+factor. This determines how many monomers of the input species
+must be bound together in order to affect transcription. The user
+can also set the value of the repression or activation constant
+for the influence.</P>
+<H2><A NAME="PROMOTERS"></A>Promoters</H2>
+<P>Promoters are used to group GCM species together.  For
+example, if there are two influences</P>
+<P>A -&gt; C, Promoter P1</P>
+<P>B -&gt; D, Promoter P1</P>
+<P>then this will create one promoter P1 that produces both C and
+D at the same time.  This means that in the presence of A or B, C
+and D is repressed.  On the other hand, if there are two
+influences, 
+</P>
+<P>A -&gt; C, Promoter P1</P>
+<P>B -&gt; D, Promoter P2</P>
+<P>then this will create two promoters, P1 and P2, that produce C
+and D respectively.  The presence of A or B will repress C or D,
+respectively.</P>
+<P>When adding or editing promoters, the user must supply a
+unique name.  The user can set the initial promoter count
+(Promoter count), the basal production rate (kbasal), the binding
+rate of RNAP (KRNAP), the number of transcripts per mRNA
+(Stoichiometry of production), the open complex formation rate
+(koc), the activated open complex formation rate (Activated koc),
+and the cooperativity constant (binding sites per transcription
+factors).  
+</P>
+<H2><A NAME="GCMPARAMETERS"></A>GCM Parameters</H2>
+<P>The GCM parameters is a list of global parameters that is used
+in each GCM species, influence, and promoter.  The parameter list
+allows the user an easy way to change all the parameter values in
+a convenient location.  If a parameter in the GCM is set to
+default, it will use the value found in the GCM parameter. 
+</P>
+<H2><A NAME="SBMLFILE"></A>SBML File</H2>
+<P>The SBML file allows the user to merge an existing SBML file
+with the generated SBML.  This allows the user to incorporate
+SBML features such as rules, events, constraints, and initial
+assignments into the GCM model.  
+</P>
+<H1><A NAME="SBMLEDIT"></A>SBML Editor</H1>
+<P>The SBML editor allows the user to create or modify an SBML
+model of a biochemical reaction network. This model includes
+<A HREF="#COMPARTMENTS">compartments</A>, <A HREF="#SPECIES">species</A>,
+<A HREF="#REACTIONS">reactions</A>, and <A HREF="#PARAMETERS">parameters</A>.
+Each of these items can be added, removed, or edited. 
+</P>
+<P>To add a new item, click on the appropriate add button. You
+will then be prompted to provide a unique id and some properties
+for this new item (as described below). After you have filled out
+all of the required fields, click add and the new item will be
+added to the SBML model.</P>
+<P>To remove an item from the model, select that item and click
+the remove button. The item will then be removed from the model.
+However, if you try to remove a species that is used in a
+reaction, you will first have to remove the reaction or remove
+the species from the reaction in order to remove the species from
+the model. Likewise, if you try to remove a compartment that
+contains species, you will have to remove the species before you
+will be able to remove the compartment.</P>
+<P>To edit an existing item, select that item from the list and
+click the edit button. An editing window will open and you will
+be able to change the properties of that item. When you are done
+editing this item, click save to save the changes to the item. 
+</P>
+<P>After the model is complete, press the Save button to store
+the model. The Save As button can also be used to store the
+model, but in this case, a new model ID will be requested and the
+model will be saved using that ID. 
+</P>
+<H2><A NAME="SBMLMATH"></A>SBML Math Formulas</H2>
+<P>Math formulas appear in many SBML constructs.  Thes formulas are expressed as text strings using a
+   simple C-like syntax. SBML math formulas can include: 
+</P>
+<UL>
+<LI><P>Variables (compartment, species, and parameter IDs)</P>
+<LI><P>Real Numbers<P>
+<LI><P>Built-in constants: exponentiale, pi, true, and false.<P>
+<LI><P>Special variable time or t which returns the current simulation time.</P>
+<LI><P>Mathematical operators including add (+), subtract (-), multiply (*), divide (/), 
+       and power (x^y) which is equivalent to pow(x,y).</P>
+<LI><P>A function defined in the list of function definitions.</P>
+<LI><P>Logical functions: and, or, xor, not.</P>
+<LI><P>Relational functions: eq, neq, geq, gt, leq, and lt.</P>
+<LI><P>Unary functions: abs, ceiling, exp, factorial, floor, ln, log, sqr, and sqrt.</P>
+<LI><P>Trigonometric functions: cos, cosh, sin, sinh, tan, tanh, cot, coth, csc, csch,
+       sec, sech, arccos, arccosh, arcsin, arcsinh, arctan, arctanh, arccot, arccoth,
+       arccsc, arccsch, arcsec, and arcsech.</P>
+<LI><P>The delay(expr1,expr2) function which returns the value of expr1 at a time
+       expr2 time units earlier (NOT SUPPORTED BY ANALYSIS YET).
+<LI><P>The piecewise(value1, case1, value2, case2, ..., otherwise) function returns
+       value1 if case1 is true, value2 if case2 is true, etc.  If no cases are true, 
+       it returns otherwise value.</P>
+<LI><P>Continuous random functions: uniform(a,b), normal(m,s), exponential(mu), 
+       gamma(a,b), lognormal(z,s), chisq(nu), laplace(a), cauchy(a), and rayleigh(s).</P> 
+<LI><P>Discrete random functions: poisson(mu), binomial(p,n), and bernoulli(p).</P>
+<!--
+<UL>
+<LI><P STYLE="margin-bottom: 0in">abs(x) - Absolute Value 
+</P>
+<LI><P STYLE="margin-bottom: 0in">acos(x) - Arc Cosine 
+</P>
+<LI><P STYLE="margin-bottom: 0in">asin(x) - Arc Sine 
+</P>
+<LI><P STYLE="margin-bottom: 0in">atan(x) - Arc Tangent 
+</P>
+<LI><P STYLE="margin-bottom: 0in">ceil(x) - Ceiling 
+</P>
+<LI><P STYLE="margin-bottom: 0in">cos(x) - Cosine 
+</P>
+<LI><P STYLE="margin-bottom: 0in">exp(x) - e^x 
+</P>
+<LI><P STYLE="margin-bottom: 0in">floor(x) - Floor 
+</P>
+<LI><P STYLE="margin-bottom: 0in">log(x) - Natural Log 
+</P>
+<LI><P STYLE="margin-bottom: 0in">log(#, x) - Log Base # 
+</P>
+<LI><P STYLE="margin-bottom: 0in">sqr(x) - Squared 
+</P>
+<LI><P STYLE="margin-bottom: 0in">pow(x, y) - x^y 
+</P>
+<LI><P STYLE="margin-bottom: 0in">sqrt(x) - Square Root 
+</P>
+<LI><P STYLE="margin-bottom: 0in">root(#, x) - x to the # root 
+</P>
+<LI><P STYLE="margin-bottom: 0in">sin(x) - Sine 
+</P>
+<LI><P STYLE="margin-bottom: 0in">tan(x) - Tangent 
+</P>
+</UL>-->
+</UL>
+<H2><A NAME="MAINSBML"></A>Main Elements</H2>
+<H3><A NAME="COMPARTMENTS"></A>Compartments</H3>
+<P>Compartments are used to specify locations where species are
+found. Every model must include at least one compartment. A new
+model includes a compartment named &quot;default&quot; that
+cannot be removed unless a new compartment is provided. When
+adding or editing a compartment, the only field is the ID for the
+compartment. 
+</P>
+<H3><A NAME="SPECIES"></A>Species</H3>
+<P>Species are the molecules that appear as reactants or products
+in the reactions in the biochemical reaction network. When adding
+or editing a species, the user must provide an ID, a compartment
+assignment, and an initial concentration (or amount) of the
+species. A species ID must be a string composed only of
+alphanumeric characters and underscores and start with an
+alphabetic character. 
+</P>
+<H3><A NAME="REACTIONS"></A>Reactions</H3>
+<P>Reactions are used to create or destroy molecular species in a
+biochemical reaction network. A reaction is composed of an ID, a
+reversible Boolean flag, a list of reactants, a list of products,
+a list of parameters, and a kinetic law. A reaction is required
+to have an ID and a syntactically correct kinetic law as
+described below. The reversible Boolean flag indicates whether or
+not this reaction is reversible. When adding a reactant or
+product, the user must specify a species ID and the stoichiometry
+(i.e., the number of molecules produced or consumed by the
+reaction). The list of parameters begins with a default forward
+reaction rate (kf) and reverse reaction rate (kr). These names
+and their values should likely be edited. The kinetic law can
+either be automatically generated using the Use Mass Action
+button or manually entered using the syntax described below. The
+&quot;Use Mass Action&quot; button creates a rate law using the
+law of mass action. It assumes that the first parameter in the
+list is the forward reaction rate and the second parameter in the
+list is the reverse reaction rate. The &quot;Clear&quot; button
+clears the kinetic law editor. 
+</P>
+<P>Kinetic law formulas are expressed as text strings using a
+simple C-like syntax. Here are some syntax rules when dealing
+with kinetic law formulas: 
+</P>
+<UL>
+<LI><P STYLE="margin-bottom: 0in">Acceptable operators include:
+add (+), subtract (-), multiply (*), divide (/), and the power
+function, pow(x,y), which is equal to x^y. 
+</P>
+<LI><P STYLE="margin-bottom: 0in"><!-- <LI><P STYLE="margin-bottom: 0in">Supported functions include: 
 </P>
 <UL>
 <LI><P STYLE="margin-bottom: 0in">abs(x) - Absolute Value 
@@ -542,316 +516,366 @@ simulation directory.</P>
 </P>
 </UL>
 -->Acceptable
-					variables include anything listed in the products, reactants, or
-					parameter fields. 
-					</P>
-					<LI><P>Real Numbers can also be entered into a kinetic law
-					formula. 
-					</P>
-				</UL>
-				<H2><A NAME="PARAMETERS"></A>Parameters</H2>
-				<P>Parameters are used to specify global parameters that can then
-				be used in the kinetic law for any reaction in the model. A
-				parameter includes an ID and a value. 
-				</P>
-				<H1><A NAME="ANALYSIS"></A>Analysis View</H1>
-				<P>The analysis view is used to analyze biochemical reaction
-				network models. The analysis view includes tabs for a <A HREF="#SIMOPTIONS">simulation
-				tool</A>, a <A HREF="#PARAMEDIT">parameter editor</A>, and a
-				<A HREF="#GRAPH">graph editor</A>. 
-				</P>
-				<H2><A NAME="SIMOPTIONS"></A>Options</H2>
-				<P>iBioSim comes with a number of simulation methods, ranging
-				from continuous-deterministic simulation methods to
-				discrete-stochastic simulation methods. In order to perform
-				efficient temporal behavior analysis, various model abstraction
-				can be automatically applied. This section and the following ones
-				describe each sub-tab of the simulation tab. These options
-				support a limited functionality of the REB2SAC modeling and
-				analysis tool described in <A HREF="http://www.async.ece.utah.edu/publications">Kuwahara's
-				PhD Dissertation (UofUtah 2007)</A>. 
-				</P>
-				<P>The first set of radio buttons in this tab specifies the
-				levels of abstraction. Choose &quot;None&quot; if you don’t
-				want to abstract your model, &quot;Abstraction&quot; if you want
-				to perform the default reaction-based abstraction, and
-				&quot;Abstraction &amp; Nary&quot; if you want to further
-				abstract your model by generating its finite-state Markov chain
-				model.</P>
-				<P>The second set of radio buttons specify the type of analysis.
-				&quot;ODE&quot; is for continuous-deterministic simulation,
-				&quot;Monte Carlo&quot; is for discrete-stochastic simulation,
-				&quot;Markov&quot; performs temporal probability distribution
-				analysis on finite-state Markov chain models, &quot;sbml&quot;
-				outputs the model in SBML format, &quot;Network&quot; outputs the
-				structure of the model in the <A HREF="http://www.graphviz.org/">GraphViz</A>
-				format, &quot;xhtml&quot; outputs the model in xhtml format with
-				MathML presentation entries for kinetic laws.</P>
-				<P>The last set of radio buttons asks if you want to &quot;Overwrite&quot;
-				the simulation runs or if you want to &quot;Append&quot; more
-				simulation runs. Choose &quot;overwrite&quot; to overwrite
-				simulation runs and &quot;append&quot; to append simulation runs.
-				This is only valid for stochastic simulation. Also, initially, if
-				you have not performed any simulation, this option is disabled.</P>
-				<P>The next field specifies the simulation method you want to use
-				based on the simulation type you specified. The methods available
-				are:</P>
-				<UL>
-					<LI><P>ODE 
-					</P>
-				</UL>
-			</TD>
-		</TR>
-		<TR VALIGN=TOP>
-			<TD ROWSPAN=7 WIDTH=27></TD>
-			<TD WIDTH=193>
-				<P ALIGN=CENTER>Method ID</P>
-			</TD>
-			<TD COLSPAN=3 WIDTH=396>
-				<P ALIGN=LEFT>Description</P>
-			</TD>
-			<TD ROWSPAN=7 COLSPAN=3 WIDTH=185></TD>
-		</TR>
-	</TBODY>
-	<TBODY>
-		<TR VALIGN=TOP>
-			<TD WIDTH=193>
-				<P ALIGN=CENTER>Euler</P>
-			</TD>
-			<TD COLSPAN=3 WIDTH=396>
-				<P ALIGN=LEFT>The forward Euler Method</P>
-			</TD>
-		</TR>
-	</TBODY>
-	<TBODY>
-		<TR VALIGN=TOP>
-			<TD WIDTH=193>
-				<P ALIGN=CENTER>gear1</P>
-			</TD>
-			<TD COLSPAN=3 WIDTH=396>
-				<P ALIGN=LEFT>Gear Method M=1 (see GSL manual for more info)</P>
-			</TD>
-		</TR>
-	</TBODY>
-	<TBODY>
-		<TR VALIGN=TOP>
-			<TD WIDTH=193>
-				<P ALIGN=CENTER>gear2</P>
-			</TD>
-			<TD COLSPAN=3 WIDTH=396>
-				<P ALIGN=LEFT>Gear Method M=2 (see GSL manual for more info)</P>
-			</TD>
-		</TR>
-	</TBODY>
-	<TBODY>
-		<TR VALIGN=TOP>
-			<TD WIDTH=193>
-				<P ALIGN=CENTER>rk4imp</P>
-			</TD>
-			<TD COLSPAN=3 WIDTH=396>
-				<P ALIGN=LEFT>Implicit 4th order Runge-Kutta at Gaussian points
-				(see GSL manual for more info)</P>
-			</TD>
-		</TR>
-	</TBODY>
-	<TBODY>
-		<TR VALIGN=TOP>
-			<TD WIDTH=193>
-				<P ALIGN=CENTER>rk8pd</P>
-			</TD>
-			<TD COLSPAN=3 WIDTH=396>
-				<P ALIGN=LEFT>Embedded Runge-Kutta Prince-Dormand (8,9) method
-				(see GSL manual for more info)</P>
-			</TD>
-		</TR>
-	</TBODY>
-	<TBODY>
-		<TR VALIGN=TOP>
-			<TD WIDTH=193>
-				<P ALIGN=CENTER>rkf45</P>
-			</TD>
-			<TD COLSPAN=3 WIDTH=396>
-				<P ALIGN=LEFT>Embedded Runge-Kutta-Fehlberg (4, 5) method (see
-				GSL manual for more info)</P>
-			</TD>
-		</TR>
-		<TR>
-			<TD COLSPAN=8 WIDTH=834>
-				<UL>
-					<LI><P>Monte Carlo</P>
-				</UL>
-			</TD>
-		</TR>
-		<TR VALIGN=TOP>
-			<TD ROWSPAN=5 WIDTH=27></TD>
-			<TD COLSPAN=2 WIDTH=195>
-				<P ALIGN=CENTER>Method ID</P>
-			</TD>
-			<TD COLSPAN=3 WIDTH=397>
-				<P ALIGN=LEFT>Description</P>
-			</TD>
-			<TD ROWSPAN=5 COLSPAN=2 WIDTH=182></TD>
-		</TR>
-	</TBODY>
-	<TBODY>
-		<TR VALIGN=TOP>
-			<TD COLSPAN=2 WIDTH=195>
-				<P ALIGN=CENTER>Gillespie</P>
-			</TD>
-			<TD COLSPAN=3 WIDTH=397>
-				<P ALIGN=LEFT>Gillespie's SSA in Direct method</P>
-			</TD>
-		</TR>
-	</TBODY>
-	<TBODY>
-		<TR VALIGN=TOP>
-			<TD COLSPAN=2 WIDTH=195>
-				<P ALIGN=CENTER>emc-sim</P>
-			</TD>
-			<TD COLSPAN=3 WIDTH=397>
-				<P ALIGN=LEFT>Monte Carlo simulation with jump count as
-				independent variable</P>
-			</TD>
-		</TR>
-	</TBODY>
-	<TBODY>
-		<TR VALIGN=TOP>
-			<TD COLSPAN=2 WIDTH=195>
-				<P ALIGN=CENTER>bunker</P>
-			</TD>
-			<TD COLSPAN=3 WIDTH=397>
-				<P ALIGN=LEFT>Bunker's method: Next reaction time step is
-				calculated using the average. 
-				</P>
-			</TD>
-		</TR>
-	</TBODY>
-	<TBODY>
-		<TR VALIGN=TOP>
-			<TD COLSPAN=2 WIDTH=195>
-				<P ALIGN=CENTER>nmc</P>
-			</TD>
-			<TD COLSPAN=3 WIDTH=397>
-				<P ALIGN=LEFT>Monte Carlo simulation with normally distributed
-				next reaction time</P>
-			</TD>
-		</TR>
-		<TR>
-			<TD COLSPAN=8 WIDTH=834>
-				<P>There are some properties that needs to be set for simulation.
-				Below is the table specifies such simulation properties.</P>
-			</TD>
-		</TR>
-		<TR VALIGN=TOP>
-			<TD COLSPAN=4 WIDTH=236>
-				<P ALIGN=CENTER>Field</P>
-			</TD>
-			<TD COLSPAN=3 WIDTH=409>
-				<P>Description</P>
-			</TD>
-			<TD ROWSPAN=7 WIDTH=167></TD>
-		</TR>
-	</TBODY>
-	<TBODY>
-		<TR VALIGN=TOP>
-			<TD COLSPAN=4 WIDTH=236>
-				<P ALIGN=CENTER>Time Limit</P>
-			</TD>
-			<TD COLSPAN=3 WIDTH=409>
-				<P>The simulation time limit</P>
-			</TD>
-		</TR>
-	</TBODY>
-	<TBODY>
-		<TR VALIGN=TOP>
-			<TD COLSPAN=4 WIDTH=236>
-				<P ALIGN=CENTER>Print Interval</P>
-			</TD>
-			<TD COLSPAN=3 WIDTH=409>
-				<P>The print time interval for each simulation run</P>
-			</TD>
-		</TR>
-	</TBODY>
-	<TBODY>
-		<TR VALIGN=TOP>
-			<TD COLSPAN=4 WIDTH=236>
-				<P ALIGN=CENTER>Time Step</P>
-			</TD>
-			<TD COLSPAN=3 WIDTH=409>
-				<P>The time step for the Euler method</P>
-			</TD>
-		</TR>
-	</TBODY>
-	<TBODY>
-		<TR VALIGN=TOP>
-			<TD COLSPAN=4 WIDTH=236>
-				<P ALIGN=CENTER>Absolute Error</P>
-			</TD>
-			<TD COLSPAN=3 WIDTH=409>
-				<P>Used by the adaptive time step ODE methods</P>
-			</TD>
-		</TR>
-	</TBODY>
-	<TBODY>
-		<TR VALIGN=TOP>
-			<TD COLSPAN=4 WIDTH=236>
-				<P ALIGN=CENTER>Random Seed</P>
-			</TD>
-			<TD COLSPAN=3 WIDTH=409>
-				<P>An integer number as a seed to generate random numbers for the
-				Monte Carlo simulation methods</P>
-			</TD>
-		</TR>
-	</TBODY>
-	<TBODY>
-		<TR VALIGN=TOP>
-			<TD COLSPAN=4 WIDTH=236>
-				<P ALIGN=CENTER>Runs</P>
-			</TD>
-			<TD COLSPAN=3 WIDTH=409>
-				<P>A number of Monte Carlo simulation runs to perform</P>
-			</TD>
-		</TR>
-		<TR>
-			<TD COLSPAN=8 WIDTH=834>
-				<H2><A NAME="USERDEFN"></A>User Defined Data File</H2>
-				<P>This can deterministically specify how the state of a species
-				should change at some specified time point during a simulation
-				using Gillespie’s SSA. When &quot;Use User Defined Data&quot;
-				is selected, you may add a new data point, edit a data point,
-				remove a data point, or clear all data points. Each data point is
-				composed of a time to make the change, the species to change, how
-				it should change, and the value for the change. The change type
-				can be &quot;goes to&quot; which sets the species to the value at
-				the specified time point, &quot;is added by&quot; which adds the
-				specified value to the species, &quot;is subtracted by&quot;
-				which subtracts the specified value from the species, &quot;is
-				multiplied by&quot; which multiplies the species value by the
-				specified value, and &quot;is divided by&quot; which divides the
-				species value by the specified value. 
-				</P>
-				<H2><A NAME="ABSOPTIONS"></A>Abstraction Options</H2>
-				<P>This allows the user to set the properties of rapid
-				equilibrium, QSSA, and operator site abstraction methods.&nbsp;&nbsp;
-								</P>
-				<P>The <I>reb2sac.rapid.equilibrium.condition.1</I> specifies the
-				threshold T1 such that the rapid equilibrium condition fails when
-				T1 &gt; E0 / (S0 + k-1/k1).</P>
-				<P>The <I>reb2sac.rapid.equilibrium.condition.2</I> specifies the
-				threshold T2 such that the rapid equilibrium condition fails when
-				T1 &gt; k2 /k-1.</P>
-				<P>The <I>QSSA condition</I> specifies the threshold T used by
-				the QSSA abstraction method where T &gt; E0 / (S0 + KM). 
-				</P>
-				<P>The <I>Max concentration threshold</I> specifies the maximum
-				number of molecules that a species can have initially and still
-				be considered an operator site by the operator site reduction. 
-				</P>
-				<P>Interesting species are the ones that are used in the
-				analysis, and hence are those which should not be abstracted. 
-				</P>
-				<H2><A NAME="TERMCOND"></A>Termination Conditions</H2>
-				<P><!-- The termination conditions can specify a set of simple
+variables include anything listed in the products, reactants, or
+parameter fields. 
+</P>
+<LI><P>Real Numbers can also be entered into a kinetic law
+formula. 
+</P>
+</UL>
+<H3><A NAME="PARAMETERS"></A>Parameters</H3>
+<P>Parameters are used to specify global parameters that can then
+be used in the kinetic law for any reaction in the model. A
+parameter includes an ID and a value. 
+</P>
+<H2><A NAME="DEFTYPES"></A>Definitions/Types</H2>
+This tab allows users to provide <A HREF="#FUNCTIONS">Function Definitions</A>, 
+<A HREF="#UNITS">Unit Definitions</A>, <A HREF="#COMPTYPES">Compartment Types</A>, and
+<A HREF="#SPECTYPES">Species Types</A>.
+<H3><A NAME="FUNCTIONS"></A>Function Definitions</H3>
+Function definitions are used to create user defined functions that can then be used
+in <A HREF="#SBMLMATH">SBML math formulas</A>.  Function definitions include an ID,
+an optional name field, a comma-separated list of arguments, and its definition.
+The defintion is an <A HREF="#SBMLMATH">SBML math formulas</A> though it is restricted
+to only use variable names which are arguments to the function.  While functions can
+call other functions, they cannot be recursive (i.e., call themselves) either directly 
+or indirectly (i.e., through a cycle of function calls).
+<H3><A NAME="UNITS"></A>Unit Definitions</H3>
+Unit definitions are used to construct user-defined units which are derived from the
+set of base units.  A unit definition includes an ID, an optional name, and a list of
+units that define it.  There are buttons to add, remove, and edit elements in the list
+of units.  Each unit is composed of a kind, exponent,scale, and multiplier.  The kind 
+is selected from the list of base units in the table below:
+<p>
+<TABLE WIDTH=848 BORDER=1 CELLPADDING=4 CELLSPACING=3 RULES=ROWSCOLS STYLE="page-break-before: always">
+<TBODY><TR VALIGN=TOP>
+<TD COLSPAN=4 WIDTH=100><P ALIGN=LEFT>ampere</P></TD>
+<TD COLSPAN=4 WIDTH=100><P ALIGN=LEFT>gram</P></TD>
+<TD COLSPAN=4 WIDTH=100><P ALIGN=LEFT>katal</P></TD>
+<TD COLSPAN=4 WIDTH=100><P ALIGN=LEFT>metre</P></TD>
+<TD COLSPAN=4 WIDTH=100><P ALIGN=LEFT>second</P></TD>
+<TD COLSPAN=4 WIDTH=100><P ALIGN=LEFT>watt</P></TD>
+</TR></TBODY>
+<TBODY><TR VALIGN=TOP>
+<TD COLSPAN=4 WIDTH=100><P ALIGN=LEFT>bacquerel</P></TD>
+<TD COLSPAN=4 WIDTH=100><P ALIGN=LEFT>gray</P></TD>
+<TD COLSPAN=4 WIDTH=100><P ALIGN=LEFT>kelvin</P></TD>
+<TD COLSPAN=4 WIDTH=100><P ALIGN=LEFT>mole</P></TD>
+<TD COLSPAN=4 WIDTH=100><P ALIGN=LEFT>siemens</P></TD>
+<TD COLSPAN=4 WIDTH=100><P ALIGN=LEFT>weber</P></TD>
+</TR></TBODY>
+<TBODY><TR VALIGN=TOP>
+<TD COLSPAN=4 WIDTH=100><P ALIGN=LEFT>candela</P></TD>
+<TD COLSPAN=4 WIDTH=100><P ALIGN=LEFT>henry</P></TD>
+<TD COLSPAN=4 WIDTH=100><P ALIGN=LEFT>kilogram</P></TD>
+<TD COLSPAN=4 WIDTH=100><P ALIGN=LEFT>newton</P></TD>
+<TD COLSPAN=4 WIDTH=100><P ALIGN=LEFT>sievert</P></TD>
+<TD COLSPAN=4 WIDTH=100><P ALIGN=LEFT></P></TD>
+</TR></TBODY>
+<TBODY><TR VALIGN=TOP>
+<TD COLSPAN=4 WIDTH=100><P ALIGN=LEFT>coulomb</P></TD>
+<TD COLSPAN=4 WIDTH=100><P ALIGN=LEFT>hertz</P></TD>
+<TD COLSPAN=4 WIDTH=100><P ALIGN=LEFT>litre</P></TD>
+<TD COLSPAN=4 WIDTH=100><P ALIGN=LEFT>ohm</P></TD>
+<TD COLSPAN=4 WIDTH=100><P ALIGN=LEFT>steradian</P></TD>
+<TD COLSPAN=4 WIDTH=100><P ALIGN=LEFT></P></TD>
+</TR></TBODY>
+<TBODY><TR VALIGN=TOP>
+<TD COLSPAN=4 WIDTH=100><P ALIGN=LEFT>dimensionless</P></TD>
+<TD COLSPAN=4 WIDTH=100><P ALIGN=LEFT>item</P></TD>
+<TD COLSPAN=4 WIDTH=100><P ALIGN=LEFT>lumen</P></TD>
+<TD COLSPAN=4 WIDTH=100><P ALIGN=LEFT>pascal</P></TD>
+<TD COLSPAN=4 WIDTH=100><P ALIGN=LEFT>tesla</P></TD>
+<TD COLSPAN=4 WIDTH=100><P ALIGN=LEFT></P></TD>
+</TR></TBODY>
+<TBODY><TR VALIGN=TOP>
+<TD COLSPAN=4 WIDTH=100><P ALIGN=LEFT>farad</P></TD>
+<TD COLSPAN=4 WIDTH=100><P ALIGN=LEFT>joule</P></TD>
+<TD COLSPAN=4 WIDTH=100><P ALIGN=LEFT>lux</P></TD>
+<TD COLSPAN=4 WIDTH=100><P ALIGN=LEFT>radian</P></TD>
+<TD COLSPAN=4 WIDTH=100><P ALIGN=LEFT>volt</P></TD>
+<TD COLSPAN=4 WIDTH=100><P ALIGN=LEFT></P></TD>
+</TR></TBODY>
+</TABLE>
+</p>
+<p>
+The exponent and scale are integers, and the multiplier is a real number that specify
+the relationship between the derived unit and the base unit using the relation below:</p>
+<p>
+unit = (multiplier * 10^scale * baseUnit)^exponent
+</p> 
+<H3><A NAME="COMPTYPES"></A>Compartment Types</H3>
+Compartment types are used to relate multiple compartments.  A compartment type includes
+an ID and an optional name field.
+<H3><A NAME="SPECTYPES"></A>Species Types</H3>
+Species types are used to relate multiple species.  A species type includes
+an ID and an optional name field.
+
+<H2><A NAME="RULESEVENTS"></A>Initial Assignments/Rules/Constraints/Events</H2>
+This tab allows users to provide <A HREF="#INITIALS">Initial Assignments</A>, 
+<A HREF="#RULES">Rules</A>, <A HREF="#CONSTRAINTS">constraints</A>, and
+<A HREF="#EVENTS">Events</A>.
+
+<H3><A NAME="INITIALS"></A>Initial Assignments</H3>
+Initial assignments are used to provide a <A HREF="#SBMLMATH">SBML math formula</A> that
+is evaluated at time 0 to determine the initial value of a compartment size, species 
+amount or concentration, or parameter.  The value of this formula takes precedence over
+the initial value specified in the object.  
+
+<H3><A NAME="RULES"></A>Rules</H3>
+There are three types of rules: algebraic, assignment, and rate rules which are in 
+the following form:
+<TABLE WIDTH=600 BORDER=1 CELLPADDING=4 CELLSPACING=3 RULES=NONE STYLE="page-break-before: always">
+<TBODY><TR VALIGN=TOP>
+<TD COLSPAN=4 WIDTH=50><P ALIGN=RIGHT>Algebraic</P></TD>
+<TD COLSPAN=4 WIDTH=200><P ALIGN=CENTER>left-hand side is zero</P></TD>
+<TD COLSPAN=4 WIDTH=75><P ALIGN=LEFT>0 = f(W)</P></TD>
+</TR></TBODY>
+<TBODY><TR VALIGN=TOP>
+<TD COLSPAN=4 WIDTH=50><P ALIGN=RIGHT>Assignment</P></TD>
+<TD COLSPAN=4 WIDTH=200><P ALIGN=CENTER>left-hand side is a scalar</P></TD>
+<TD COLSPAN=4 WIDTH=75><P ALIGN=LEFT>x = f(W)</P></TD>
+</TR></TBODY>
+<TBODY><TR VALIGN=TOP>
+<TD COLSPAN=4 WIDTH=50><P ALIGN=RIGHT>Rate</P></TD>
+<TD COLSPAN=4 WIDTH=200><P ALIGN=CENTER>left-hand side is a rate-of-change</P></TD>
+<TD COLSPAN=4 WIDTH=75><P ALIGN=LEFT>dx/dt = f(W)</P></TD>
+</TR></TBODY>
+</TABLE>
+Algebraic rules specify relationships which must be maintained (NOTE: analysis currently ignores
+these).  Assignment rules specify the value of a compartment size, species amount or concentration, or
+parameter in terms of a <A HREF="#SBMLMATH">SBML math formula</A>.  A variable cannot be determined by
+both an assignment rule and initial assignment.  Rate rules specify the rate of change of a 
+compartment size, species amount or concentration, or parameter in terms of a 
+<A HREF="#SBMLMATH">SBML math formula</A>.  A variable cannot be determined by both an assignment rule
+and a rate rule.  A species that is reactant or product of any reaction cannot be updated by either
+an assignment rule or rate rule.
+<p>
+When adding a rule, the user first selects the type of rule.  This will automatically restrict the
+set of variables available for the left-hand side to those that are valid.  The user should then select
+a variable, and enter a <A HREF="#SBMLMATH">SBML math formula</A> for the rule.  When editing a rule,
+the user cannot modify the rule type. 
+</p>
+
+<H3><A NAME="CONSTRAINTS"></A>Constraints</H3>
+Constraints are used to specify properties that should cause simulation to terminate.  Our analysis 
+method can provide histograms that show the proportion of simulations that are terminated due to each
+possible constraint.  Each constraint is composed of an ID which is used to identify it in these
+histograms, a constraint given as an <A HREF="#SBMLMATH">SBML math formula</A>, and a message 
+describing the constraint.  A default id is automatically generated when a new constraint is created.
+
+<H3><A NAME="EVENTS"></A>Events</H3>
+Events are used to specify discrete changes of compartment sizes, species amounts or concentrations, 
+and parameter values.  Each event is composed of an ID, an optional name, a trigger formula, an optional
+delay formula, and a list of event assignments.  When adding a new event, a default ID is provided.
+The behavior of an event is during each simulation cycle, the trigger formula is evaluated.  If was false
+in the previous simulation cycle, and it is now evaluating to true, the event is scheduled to occur at 
+a time in the future specified by the delay formula or immediately if no delay formula is provided.  
+It should be noted that since the trigger value must change from false to true, no event is scheduled if the
+trigger evaluates to true at the start of simulation.  When an event occurs, it executes all the event 
+assignments.  Each event assignment sets a compartment size, species amount or concentration, or parameter
+value to the value specified by the <A HREF="#SBMLMATH">SBML math formula</A> provided with the event
+assignment.  
+
+<H1><A NAME="ANALYSIS"></A>Analysis View</H1>
+<P>The analysis view is used to analyze biochemical reaction
+network models. The analysis view includes tabs for a <A HREF="#SIMOPTIONS">simulation
+tool</A>, a <A HREF="#PARAMEDIT">parameter editor</A>, and a
+<A HREF="#GRAPH">graph editor</A>. 
+</P>
+<H2><A NAME="SIMOPTIONS"></A>Options</H2>
+<P>iBioSim comes with a number of simulation methods, ranging
+from continuous-deterministic simulation methods to
+discrete-stochastic simulation methods. In order to perform
+efficient temporal behavior analysis, various model abstraction
+can be automatically applied. This section and the following ones
+describe each sub-tab of the simulation tab. These options
+support a limited functionality of the REB2SAC modeling and
+analysis tool described in <A HREF="http://www.async.ece.utah.edu/publications">Kuwahara's
+PhD Dissertation (UofUtah 2007)</A>. 
+</P>
+<P>The first set of radio buttons in this tab specifies the
+levels of abstraction. Choose &quot;None&quot; if you don’t
+want to abstract your model, &quot;Abstraction&quot; if you want
+to perform the default reaction-based abstraction, and
+&quot;Abstraction &amp; Nary&quot; if you want to further
+abstract your model by generating its finite-state Markov chain
+model.</P>
+<P>The second set of radio buttons specify the type of analysis.
+&quot;ODE&quot; is for continuous-deterministic simulation,
+&quot;Monte Carlo&quot; is for discrete-stochastic simulation,
+&quot;Markov&quot; performs temporal probability distribution
+analysis on finite-state Markov chain models, &quot;sbml&quot;
+outputs the model in SBML format, &quot;Network&quot; outputs the
+structure of the model in the <A HREF="http://www.graphviz.org/">GraphViz</A>
+format, &quot;xhtml&quot; outputs the model in xhtml format with
+MathML presentation entries for kinetic laws.</P>
+<P>The last set of radio buttons asks if you want to &quot;Overwrite&quot;
+the simulation runs or if you want to &quot;Append&quot; more
+simulation runs. Choose &quot;overwrite&quot; to overwrite
+simulation runs and &quot;append&quot; to append simulation runs.
+This is only valid for stochastic simulation. Also, initially, if
+you have not performed any simulation, this option is disabled.</P>
+<P>The next field specifies the simulation method you want to use
+based on the simulation type you specified. The methods available
+are:</P>
+
+<UL>
+<LI><P>ODE</P>
+</UL>
+
+<TABLE WIDTH=848 BORDER=1 CELLPADDING=4 CELLSPACING=3 RULES=ROWSCOLS STYLE="page-break-before: always">
+<TBODY>
+<TR VALIGN=TOP>
+<TH WIDTH=193><P ALIGN=CENTER>Method ID</P></TH>
+<TH COLSPAN=3 WIDTH=1500><P ALIGN=LEFT>Description</P></TH></TR>
+</TBODY>
+<TBODY>
+<TR VALIGN=TOP>
+<TD WIDTH=193><P ALIGN=CENTER>Euler</P></TD>
+<TD COLSPAN=3 WIDTH=1500><P ALIGN=LEFT>The forward Euler Method</P></TD>
+</TR>
+</TBODY>
+<TBODY>
+<TR VALIGN=TOP>
+<TD WIDTH=193><P ALIGN=CENTER>gear1</P></TD>
+<TD COLSPAN=3 WIDTH=1500><P ALIGN=LEFT>Gear Method M=1</P></TD>
+</TR>
+</TBODY>
+<TBODY>
+<TR VALIGN=TOP>
+<TD WIDTH=193><P ALIGN=CENTER>gear2</P></TD>
+<TD COLSPAN=3 WIDTH=1500><P ALIGN=LEFT>Gear Method M=2</P></TD>
+</TR>
+</TBODY>
+<TBODY>
+<TR VALIGN=TOP>
+<TD WIDTH=193><P ALIGN=CENTER>rk4imp</P></TD>
+<TD COLSPAN=3 WIDTH=1500><P ALIGN=LEFT>Implicit 4th order Runge-Kutta at Gaussian points</P></TD>
+</TR>
+</TBODY>
+<TBODY>
+<TR VALIGN=TOP>
+<TD WIDTH=193><P ALIGN=CENTER>rk8pd</P></TD>
+<TD COLSPAN=3 WIDTH=1500><P ALIGN=LEFT>Embedded Runge-Kutta Prince-Dormand (8,9) method</P></TD>
+</TR>
+</TBODY>
+<TBODY>
+<TR VALIGN=TOP>
+<TD WIDTH=193><P ALIGN=CENTER>rkf45</P></TD>
+<TD COLSPAN=3 WIDTH=1500><P ALIGN=LEFT>Embedded Runge-Kutta-Fehlberg (4, 5) method</P></TD>
+</TR>
+</TBODY>
+</TABLE>
+
+<UL>
+<LI><P>Monte Carlo</P>
+</UL>
+
+<TABLE WIDTH=848 BORDER=1 CELLPADDING=4 CELLSPACING=3 RULES=ROWSCOLS STYLE="page-break-before: always">
+<TBODY><TR VALIGN=TOP>
+<TH COLSPAN=2 WIDTH=195><P ALIGN=CENTER>Method ID</P></TH>
+<TH COLSPAN=3 WIDTH=1500><P ALIGN=LEFT>Description</P></TH>
+</TR></TBODY>
+<TBODY><TR VALIGN=TOP>
+<TD COLSPAN=2 WIDTH=195><P ALIGN=CENTER>Gillespie</P></TD>
+<TD COLSPAN=3 WIDTH=1500><P ALIGN=LEFT>Gillespie's SSA in Direct method</P></TD>
+</TR></TBODY>
+<TBODY><TR VALIGN=TOP>
+<TD COLSPAN=2 WIDTH=195><P ALIGN=CENTER>emc-sim</P></TD>
+<TD COLSPAN=3 WIDTH=1500><P ALIGN=LEFT>Monte Carlo simulation with jump count as 
+independent variable</P></TD>
+</TR></TBODY>
+<TBODY><TR VALIGN=TOP>
+<TD COLSPAN=2 WIDTH=195><P ALIGN=CENTER>bunker</P></TD>
+<TD COLSPAN=3 WIDTH=1500><P ALIGN=LEFT>Bunker's method: Next reaction time step is
+calculated using the average</P></TD>
+</TR></TBODY>
+<TBODY><TR VALIGN=TOP>
+<TD COLSPAN=2 WIDTH=195><P ALIGN=CENTER>nmc</P></TD>
+<TD COLSPAN=3 WIDTH=1500><P ALIGN=LEFT>Monte Carlo simulation with normally distributed
+next reaction time</P></TD>
+</TR></TBODY>
+</TABLE>
+
+<P>There are some properties that needs to be set for simulation.
+Below is the table specifies such simulation properties.</P>
+
+<TABLE WIDTH=848 BORDER=1 CELLPADDING=4 CELLSPACING=3 RULES=ROWSCOLS STYLE="page-break-before: always">
+<TBODY><TR VALIGN=TOP>
+<TH COLSPAN=4 WIDTH=200><P ALIGN=CENTER>Field</P></TH>
+<TH COLSPAN=3 WIDTH=600><P ALIGN=LEFT>Description</P></TH>
+</TR></TBODY>
+<TBODY><TR VALIGN=TOP>
+<TD COLSPAN=4 WIDTH=200><P ALIGN=CENTER>Time Limit</P></TD>
+<TD COLSPAN=3 WIDTH=600><P>The simulation time limit</P></TD>
+</TR></TBODY>
+<TBODY><TR VALIGN=TOP>
+<TD COLSPAN=4 WIDTH=200><P ALIGN=CENTER>Print Interval</P></TD>
+<TD COLSPAN=3 WIDTH=600><P>The print time interval for each simulation run</P></TD>
+</TR></TBODY>
+<TBODY><TR VALIGN=TOP>
+<TD COLSPAN=4 WIDTH=200><P ALIGN=CENTER>Maximum Time Step</P></TD>
+<TD COLSPAN=3 WIDTH=600><P>The maximum time step allowed (also minimum time step for Euler method)
+</P></TD>
+</TR></TBODY>
+<TBODY><TR VALIGN=TOP>
+<TD COLSPAN=4 WIDTH=200><P ALIGN=CENTER>Absolute Error</P></TD>
+<TD COLSPAN=3 WIDTH=600><P>Used by the adaptive time step ODE methods</P></TD>
+</TR></TBODY>
+<TBODY><TR VALIGN=TOP>
+<TD COLSPAN=4 WIDTH=200><P ALIGN=CENTER>Random Seed</P></TD>
+<TD COLSPAN=3 WIDTH=600><P>An integer number as a seed to generate random numbers</P></TD>
+</TR></TBODY>
+<TBODY><TR VALIGN=TOP>
+<TD COLSPAN=4 WIDTH=200><P ALIGN=CENTER>Runs</P></TD>
+<TD COLSPAN=3 WIDTH=600><P>A number of Monte Carlo simulation runs to perform</P></TD>
+</TR></TBODY>
+<TBODY><TR VALIGN=TOP>
+<TD COLSPAN=4 WIDTH=200><P ALIGN=CENTER>Simulation ID</P></TD>
+<TD COLSPAN=3 WIDTH=600><P>Creates a simulation directory with the ID name</P></TD>
+</TR></TBODY>
+<TR></TR>
+</TABLE>
+
+<H2><A NAME="USERDEFN"></A>User Defined Data File</H2>
+<P>This can deterministically specify how the state of a species
+should change at some specified time point during a simulation
+using Gillespie’s SSA. When &quot;Use User Defined Data&quot;
+is selected, you may add a new data point, edit a data point,
+remove a data point, or clear all data points. Each data point is
+composed of a time to make the change, the species to change, how
+it should change, and the value for the change. The change type
+can be &quot;goes to&quot; which sets the species to the value at
+the specified time point, &quot;is added by&quot; which adds the
+specified value to the species, &quot;is subtracted by&quot;
+which subtracts the specified value from the species, &quot;is
+multiplied by&quot; which multiplies the species value by the
+specified value, and &quot;is divided by&quot; which divides the
+species value by the specified value. 
+</P>
+<H2><A NAME="ABSOPTIONS"></A>Abstraction Options</H2>
+<P>This allows the user to set the properties of rapid
+equilibrium, QSSA, and operator site abstraction methods.&nbsp;&nbsp;
+</P>
+<P>The <I>reb2sac.rapid.equilibrium.condition.1</I> specifies the
+threshold T1 such that the rapid equilibrium condition fails when
+T1 &gt; E0 / (S0 + k-1/k1).</P>
+<P>The <I>reb2sac.rapid.equilibrium.condition.2</I> specifies the
+threshold T2 such that the rapid equilibrium condition fails when
+T1 &gt; k2 /k-1.</P>
+<P>The <I>QSSA condition</I> specifies the threshold T used by
+the QSSA abstraction method where T &gt; E0 / (S0 + KM). 
+</P>
+<P>The <I>Max concentration threshold</I> specifies the maximum
+number of molecules that a species can have initially and still
+be considered an operator site by the operator site reduction. 
+</P>
+<P>Interesting species are the ones that are used in the
+analysis, and hence are those which should not be abstracted. 
+</P>
+<H2><A NAME="TERMCOND"></A>Termination Conditions</H2>
+<P><!-- The termination conditions can specify a set of simple
 conditions to terminate each simulation run (either ODE or Monte
 Carlo) before the time limit when at least one of them is
 satisfied.   This option can, for example, be very useful for 
@@ -859,433 +883,433 @@ computational analysis of phenotype variations.
 
 <H2><A NAME="ADVTERMCOND"></A>Advanced Termination Conditions</H2>
 -->The
-				termination conditions specify a condition upon which a
-				simulation should terminate. A record is kept of the proportion
-				of simulations that are terminated by each condition. These
-				conditions are specified using an ID, description, and the
-				logical condition which when it holds results in termination of
-				the simulation/analysis procedure. The logical condition is
-				composed of comparative expressions joined by Boolean connectives
-				AND (&amp;&amp;), OR (||), and NOT (!). Each comparative
-				expression compares two numerical expressions using the
-				comparison operators, &quot;&lt;=&quot;, &quot;&lt;&quot;, &quot;&gt;=&quot;,
-				&quot;&gt;&quot;, and &quot;=&quot;. Each numerical expression
-				can be composed of variables and real valued constants which are
-				combined with the arithmetic operators for addition (+),
-				subtraction (-), multiplication (*), and division (/). There is
-				also function support for exponentiation (exp(num_exp)), raising
-				to a power (pow(num_exp,num_exp)), and natural logarithm
-				(log(num_exp)). The variables can represent time (t), the
-				molecular count of a species (&lt;species-id&gt; or
-				#&lt;species-id&gt;), the concentration of a species
-				(%&lt;species-id&gt;), or the number of firings of a reaction
-				(@&lt;reaction-id&gt;). 
-				</P>
-				<H2><A NAME="ADVSIMOPTIONS"></A>Advanced Options</H2>
-				<P>Here, you can specify additional options for your analysis.&nbsp;
-				For each option, you must provide the name of the option and its
-				value.&nbsp; For example, property
-				<I>reb2sac.abstraction.method.1.x</I>&nbsp; specifies a list of
-				abstraction methods used for pre-processing, property
-				<I>reb2sac.abstraction.method.2.x </I>specifies a list of
-				abstraction methods used in the main abstraction loop, and&nbsp;
-				property <I>abstraction.method.3.x</I> is a list of abstraction
-				methods used for post-processing.&nbsp; These abstraction method
-				properties can take the following values: 
-				</P>
-				<UL>
-					<LI><P STYLE="margin-bottom: 0in">modifier-structure-transformer
-										</P>
-					<LI><P STYLE="margin-bottom: 0in">modifier-constant-propagation 
-					</P>
-					<LI><P STYLE="margin-bottom: 0in">operator-site-forward-binding-remover
-										</P>
-					<LI><P STYLE="margin-bottom: 0in">nary-order-unary-transformer2 
-					</P>
-					<LI><P STYLE="margin-bottom: 0in">kinetic-law-constants-simplifier
-										</P>
-					<LI><P STYLE="margin-bottom: 0in">enzyme-kinetic-rapid-equilibrium-1
-										</P>
-					<LI><P STYLE="margin-bottom: 0in">dimer-to-monomer-substitutor 
-					</P>
-					<LI><P STYLE="margin-bottom: 0in">dimerization-reduction 
-					</P>
-					<LI><P STYLE="margin-bottom: 0in">kinetic-law-constants-simplifier
-										</P>
-					<LI><P STYLE="margin-bottom: 0in">irrelevant-species-remover 
-					</P>
-					<LI><P STYLE="margin-bottom: 0in">inducer-structure-transformer 
-					</P>
-					<LI><P STYLE="margin-bottom: 0in">final-state-generator 
-					</P>
-					<LI><P STYLE="margin-bottom: 0in">similar-reaction-combiner 
-					</P>
-					<LI><P STYLE="margin-bottom: 0in">absolute-inhibition-generator 
-					</P>
-					<LI><P STYLE="margin-bottom: 0in">reversible-to-irreversible-transformer
-										</P>
-					<LI><P STYLE="margin-bottom: 0in">multiple-products-reaction-eliminator
-										</P>
-					<LI><P STYLE="margin-bottom: 0in">multiple-reactants-reaction-eliminator
-										</P>
-					<LI><P STYLE="margin-bottom: 0in">single-reactant-product-reaction-eliminator
-										</P>
-					<LI><P STYLE="margin-bottom: 0in">stop-flag-generator 
-					</P>
-					<LI><P STYLE="margin-bottom: 0in">enzyme-kinetic-qssa-1 
-					</P>
-					<LI><P STYLE="margin-bottom: 0in">birth-death-generator4 
-					</P>
-					<LI><P STYLE="margin-bottom: 0in">max-concentration-reaction-adder
-										</P>
-					<LI><P>dummy-abstraction-method 
-					</P>
-				</UL>
-				<P>On this tab, there are buttons to add a new option, edit an
-				existing option, remove an existing option, or clear all options.
-								</P>
-				<H2><A NAME="PARAMEDIT"></A>Parameter Editor</H2>
-				<P>The parameter editor is similar in form to the SBML editor,
-				but it only allows initial concentrations and parameters to be
-				adjusted. Each of these parameters starts with the original value
-				specified in the SBML or genetic circuit model associated with
-				this analysis view. By changing the type to &quot;Custom&quot;, a
-				new value can be entered. Changing the type back to &quot;Original&quot;,
-				restores the original value. These values can also be swept by
-				selecting the &quot;Sweep&quot; type. In this case, you should
-				provide a start value, a stop value, a step amount, and a level
-				(1 or 2). When analyzing using sweep parameters, one analysis run
-				is produced for each value stepped through from start to stop.
-				The parameters at level 2 are changed first. When they have all
-				reached their stop value, the parameters at level 1 are stepped
-				once, and the parameters at level 2 are stepped through again.
-				This process repeats until all parameters at level 1 have stepped
-				to their stop value. 
-				</P>
-				<H1><A NAME="LEARN"></A>Learn View</H1>
-				<P>The learn view is used to discover the genetic circuit
-				connectivity from time series data. The learn view includes tabs
-				for a <A HREF="#DATA">data manager</A>, a <A HREF="#LEARNTOOL">learn
-				tool</A>, and a <A HREF="#GRAPH">graph editor</A>.<!-- NEED TO ADD DESCRIPTION OF DATA ENTRY TOOL -->
-								</P>
-				<H2><A NAME="DATA"></A>Data Manager</H2>
-				<P>The data manager is used to both enter time series
-				experimental data (not yet implemented) as well as bring data
-				into the learn view. The Add button is used to create a new data
-				file. After pressing this button, enter the name of the new data
-				file, and then enter the data for this file using the data editor
-				to the right. The Remove button deletes all highlighted files.
-				Note that after highlighting one file, you can use the ctrl key
-				to highlight additional files or the shift key to highlight a
-				range of files. The Rename button is used to change the name of a
-				data file. The Copy button copies a data file. The Copy From View
-				button brings up a list of all analysis and learn views in the
-				current project, and data from the selected view will be copied
-				into this learn view. Finally, the Import button brings up a file
-				browser, and it allows you to import a data file from outside
-				this project into this learn view. These files can be in <A HREF="#TSD">time
-				series data</A> format, comma separated value format, or tab
-				delimited format. 
-				</P>
-				<H2><A NAME="LEARNTOOL"></A>Learn Tool</H2>
-				<P>The learn tool uses the GeneNet algorithm described in
-				<A HREF="http://www.async.ece.utah.edu/publications">Barker's PhD
-				dissertation (UofUtah 2007)</A>. To use this learn tool, adjust
-				any options described below, if desired, then press the Save and
-				Learn button. The resulting genetic circuit in specified using
-				our <A HREF="#CIRCUIT">Genetic Circuit Model Format</A> and shown
-				graphically using <A HREF="http://www.graphviz.org/">GraphViz's
-				Dotty tool</A>. On this tab, there are also buttons to save the
-				parameters without learning, view the last learned circuit, save
-				the generated circuit into the project, and view the last run
-				log. 
-				</P>
-				<H3><A NAME="LEARNOPTIONS"></A>Basic Learning Options</H3>
-				<UL>
-					<LI><P>Minimum Initial Number of Vectors (Tn) (default=2): 
-					</P>
-					<P>Tn is a threshold value used in the CreateInfluenceVectorSet
-					algorithm and represents the minimum number of influence vectors
-					constructed in this algorithm</P>
-					<LI><P>Maximum Influence Vector Size (Tj) (default=2): 
-					</P>
-					<P>Tj is a threshold value used in the CombineInfluenceVectors
-					algorithm to determine the maximal size of merged influence
-					vectors</P>
-					<LI><P>Score for an Empty Influence Vector (Ti) (default=0.5): 
-					</P>
-					<P>The score for an influence vector with no influences in it.</P>
-					<LI><P>Number of Bins (default=4): 
-					</P>
-					<P>The Number of Bins value specifies how many values the
-					encoded time series data can assume</P>
-					<LI><P>Equal Data Per Bins / Equal Spacing of Bins: 
-					</P>
-					<P>This radio button selects whether the auto generated levels
-					should be determined by equaling dividing the data between the
-					bins or by equally dividing the range of the data. 
-					</P>
-					<LI><P>Use Auto Generated Levels / Use User Generated Levels: 
-					</P>
-					<P>This radio button allows the user to select whether they want
-					the levels separating the bins to be auto generated or the user
-					would like to provide them. 
-					</P>
-					<LI><P>When using user provided levels, the Suggest Levels
-					button will provide the levels that would have been auto
-					generated as a suggestion. These levels can then edited by the
-					user. The number of bins for each species can also be
-					individually adjusted. 
-					</P>
-				</UL>
-				<H3><A NAME="ADVLEARN"></A>Advanced Learning Options</H3>
-				<UL>
-					<LI><P>Ratio for Activation (Ta) (default=1.15): 
-					</P>
-					<P>A probability ratio above this value results in a vote for an
-					influence vector that has a majority of activation influences.</P>
-					<LI><P>Ratio for Repression (Tr) (default=0.75): 
-					</P>
-					<P>A probability ratio above this value results in a vote for an
-					influence vector that has a majority of repression influences.</P>
-					<LI><P>Merge Influence Vectors Delta (Tm) (default=0.0): 
-					</P>
-					<P>Two influence vectors cannot be merged unless the difference
-					in their scores is less than this value.</P>
-					<LI><P>Relax Thresholds Delta (Tt) (default=0.025): 
-					</P>
-					<P>The values of Ta and Tr are modified by this amount when
-					these thresholds are relaxed.</P>
-					<LI><P>Debug Level (default=0): 
-					</P>
-					<P>This controls how much information is displayed by the
-					GeneNet algorithm when it runs.</P>
-					<LI><P>Successors / Predecessors / Both (default=Successors): 
-					</P>
-					<P>This radio button selects whether successor data point pairs,
-					predecessor data point pairs, or both are used.</P>
-					<LI><P>Basic FindBaseProb (default=unchecked): 
-					</P>
-					<P>When selected, the basic FindBaseProb function is used.</P>
-				</UL>
-				<H1><A NAME="GRAPH"></A>Graph Editor</H1>
-				<P>The graph editor appears as a tab in both analysis or learn
-				views. Graphs can also be created at the top-level of the project
-				to allow you to integrate results from several analysis or learn
-				views. These graphs can be created using the &quot;New Graph&quot;
-				menu option. Once created, they can be viewed and edited by
-				clicking on the graph in the project window. In the graph editor,
-				a graph is created by clicking on the graph. You can then set
-				various parameters and select what you would like to have
-				graphed. The parameters that you can select for a graph include: 
-				</P>
-				<UL>
-					<LI><P STYLE="margin-bottom: 0in">Title - The title of the graph
-										</P>
-					<LI><P STYLE="margin-bottom: 0in">X-Axis Label - The label
-					displayed for the x-axis 
-					</P>
-					<LI><P STYLE="margin-bottom: 0in">Y-Axis Label - The label
-					displayed for the y-axis 
-					</P>
-					<LI><P STYLE="margin-bottom: 0in">X-Min - The starting value for
-					the x-axis 
-					</P>
-					<LI><P STYLE="margin-bottom: 0in">X-Max - The ending value for
-					the x-axis 
-					</P>
-					<LI><P STYLE="margin-bottom: 0in">X-Step - The increment for the
-					x-axis 
-					</P>
-					<LI><P STYLE="margin-bottom: 0in">Y-Min - The starting value for
-					the y-axis 
-					</P>
-					<LI><P STYLE="margin-bottom: 0in">Y-Max - The ending value for
-					the y-axis 
-					</P>
-					<LI><P STYLE="margin-bottom: 0in">Y-Step - The increment for the
-					y-Axis 
-					</P>
-					<LI><P STYLE="margin-bottom: 0in">Auto Resize Check Box -
-					Determines whether to automatically resize the graph for best
-					fit 
-					</P>
-				</UL>
-				<P>The data selection menu on the left displays all of the
-				available sets of data that can be graphed. For a top-level graph
-				or after performing a analysis with sweeping parameters, these
-				data sets will be organized hierarchically. After selecting a
-				data set, you can select individual species to graph and how you
-				wish it to be displayed. In other words, for each species, you
-				are given the following options: 
-				</P>
-				<UL>
-					<LI><P STYLE="margin-bottom: 0in">Use Check Box - Determines
-					whether or not this species is displayed on the graph 
-					</P>
-					<LI><P STYLE="margin-bottom: 0in">Species Label - The name
-					displayed in the legend 
-					</P>
-					<LI><P STYLE="margin-bottom: 0in">Drop Down Menu Of Colors - The
-					color that is used for this species 
-					</P>
-					<LI><P STYLE="margin-bottom: 0in">Drop Down Menu Of Shapes - The
-					shape that is used to mark the data points 
-					</P>
-					<LI><P STYLE="margin-bottom: 0in">Connected Check Box -
-					Determines whether to connect the points with a line 
-					</P>
-					<LI><P STYLE="margin-bottom: 0in">Visible Check Box - Determines
-					whether shapes are visible on the line</P>
-					<LI><P>Filled Check Box - Determines whether shapes are filled
-					on the line</P>
-				</UL>
-				<P>To save the graph, click the &quot;Save&quot; button. This
-				will save the data of the graph to a file so when you re-open the
-				analysis view, it will reload this data and display what was
-				graphed.</P>
-				<P>To export the graph, click one the &quot;Export&quot; button.
-				You will be prompted to enter a file name. The extension provided
-				will be used to determine how the graph is exported. The
-				supported file types are: 
-				</P>
-				<UL>
-					<LI><P STYLE="margin-bottom: 0in">csv - comma separated value
-					data file 
-					</P>
-					<LI><P STYLE="margin-bottom: 0in">dat - column separated data
-					file 
-					</P>
-					<LI><P STYLE="margin-bottom: 0in">eps - encapsulated postscript 
-					</P>
-					<LI><P STYLE="margin-bottom: 0in">jpg - JPEG (Joint Photographic
-					Experts Group) 
-					</P>
-					<LI><P STYLE="margin-bottom: 0in">pdf - portable document format
-										</P>
-					<LI><P STYLE="margin-bottom: 0in">png - portable network
-					graphics 
-					</P>
-					<LI><P STYLE="margin-bottom: 0in">svg - scalable vector graphics
-										</P>
-					<LI><P>tsd - <A HREF="#TSD">time series data format</A> 
-					</P>
-				</UL>
-				<P>If no extension is given, then the file type will be the one
-				specified in the file filter (default is pdf). For image (i.e.,
-				not data) file types, you will be prompted to give a desired
-				pixel height and width for the file before the file is exported. 
-				</P>
-				<H1><A NAME="CIRCUIT"></A>Genetic Circuit Model Format</H1>
-				<P>Our genetic circuit model (gcm) format specifies a genetic
-				circuit using the same format as the <A HREF="http://www.graphviz.org/">GraphViz</A>
-				graph drawing tool. The vertices in the graph are the species in
-				the genetic circuit, and the edges in the graph represent the
-				activation and repression relationships between the species. An
-				activation relationship is shown with a blue (blue4) arrow (vee)
-				and a repression relationship is shown with a red (firebrick4)
-				tee. The label field in the species declaration is the name of
-				the species. The arrowhead field in the relationship declaration
-				represents the type of relationship between the species.
-				Repression is labeled with a tee and activation is labeled with a
-				vee. The label field in the relationship declaration represents
-				how many molecules are necessary to activate or repress the
-				production of the species. An example is shown below for a simple
-				genetic circuit in which the species CI represses CII while CII
-				activates CI production. The s1-&gt;s2 edge has a label field of
-				&quot;2&quot; which means two molecules of CI are required to
-				form a dimer to repress CII. 
-				</P>
-				<P>digraph G {<BR>s1 [shape=ellipse,color=black,label=&quot;CI&quot;];<BR>s2
-				[shape=ellipse,color=black,label=&quot;CII&quot;];<BR>s2 -&gt; s1
-				[color=&quot;blue4&quot;,arrowhead=vee]<BR>s1 -&gt; s2
-				[color=&quot;firebrick4&quot;,label=&quot;2&quot;,arrowhead=tee]<BR>}
-								</P>
-				<P>More advanced behavior can be modeled by using extra fields.
-				The promoter field groups a set of species together. The examples
-				below shows how the promoter field works. In the genetic circuit
-				model below, species A represses the production of species B and
-				C, independently. If there was exactly 1 molecule of species A,
-				it would only be able to repress production of species B or C,
-				but not both. 
-				</P>
-				<P>digraph G {<BR>s1 [shape=ellipse,color=black,label=&quot;A&quot;];<BR>s2
-				[shape=ellipse,color=black,label=&quot;B&quot;];<BR>s3
-				[shape=ellipse,color=black,label=&quot;C&quot;];<BR>s1 -&gt; s2
-				[color=&quot;blue4&quot;,arrowhead=tee]<BR>s1 -&gt; s3
-				[color=&quot;blue4&quot;,arrowhead=tee]<BR>} 
-				</P>
-				<P>With the promoter field, one species A now represses the
-				promoter &quot;P1&quot;, which produces both species B and C.
-				This means that one molecule of species A will repress the
-				production of both species B and C. 
-				</P>
-				<P>digraph G {<BR>s1 [shape=ellipse,color=black,label=&quot;A&quot;];<BR>s2
-				[shape=ellipse,color=black,label=&quot;B&quot;];<BR>s3
-				[shape=ellipse,color=black,label=&quot;C&quot;];<BR>s1 -&gt; s2
-				[color=&quot;blue4&quot;,arrowhead=tee,promoter=&quot;P1&quot;]<BR>s1
-				-&gt; s3 [color=&quot;blue4&quot;,arrowhead=tee,promoter=&quot;P1&quot;]<BR>}
-								</P>
-				<P>The promoter field can also be used to separate production
-				reactions. In the example below, both species A and B can repress
-				the production of species C. If either is present, then very
-				little C will be produced. This behavior is like a NOR gate. 
-				</P>
-				<P>digraph G {<BR>s1 [shape=ellipse,color=black,label=&quot;A&quot;];<BR>s2
-				[shape=ellipse,color=black,label=&quot;B&quot;];<BR>s3
-				[shape=ellipse,color=black,label=&quot;C&quot;];<BR>s1 -&gt; s3
-				[color=&quot;blue4&quot;,arrowhead=tee]<BR>s2 -&gt; s3
-				[color=&quot;blue4&quot;,arrowhead=tee]<BR>} 
-				</P>
-				<P>However, if there needs to be two different sources of
-				production for species C, the promoter field can be used to
-				accomplish this. In the example below, A represses the production
-				of C by binding to the P1 promoter, and B represses the
-				production of C by binding to the P2 promoter. Both A and B need
-				to be present to fully repress the level of C. If either is at a
-				low level, then the level of C will be high. This behavior is
-				like a NAND gate. 
-				</P>
-				<P>digraph G {<BR>s1 [shape=ellipse,color=black,label=&quot;A&quot;];<BR>s2
-				[shape=ellipse,color=black,label=&quot;B&quot;];<BR>s3
-				[shape=ellipse,color=black,label=&quot;C&quot;];<BR>s1 -&gt; s3
-				[color=&quot;blue4&quot;,arrowhead=tee,promoter=&quot;P1&quot;]<BR>s2
-				-&gt; s3 [color=&quot;blue4&quot;,arrowhead=tee,promoter=&quot;P2&quot;]<BR>}
-								</P>
-				<P>The example below shows how to model an AND gate. The species
-				A and B have the constant flag set to true. This means that A and
-				B have no production and degradation reactions. The reactions
-				contain a promoter label &quot;P1&quot;. This means that the
-				species C can be activated by both s1 and s2. Combined with the
-				type flag of biochemical, this creates a biochemical reaction
-				where species A and B combine together to form a complex to
-				activate production of species C. 
-				</P>
-				<P>digraph G {<BR>s1
-				[shape=ellipse,color=black,label=&quot;A&quot;,const=true];<BR>s2
-				[shape=ellipse,color=black,label=&quot;B&quot;,const=true];<BR>s3
-				[shape=ellipse,color=black,label=&quot;C&quot;];<BR>s1 -&gt; s3
-				[color=&quot;blue4&quot;,arrowhead=vee,promoter=&quot;P1&quot;,type=biochemical]<BR>s2
-				-&gt; s3
-				[color=&quot;blue4&quot;,arrowhead=vee,promoter=&quot;P1&quot;,type=biochemical]<BR>}
-								</P>
-				<H1><A NAME="TSD"></A>Time Series Data Format</H1>
-				<P>The time series data (tsd) format is composed of a
-				parenthesized and comma-separated set of time points. Each time
-				point is composed of a parenthesized and comma-separated set of
-				data for that time point. This first time point is composed of a
-				set of strings that are the labels for the data entries. The
-				first entry in each time point is by convention the time for that
-				time point. Below is an example simulation of the species CI and
-				CII from 0 to 2100 seconds with time points separated by 100
-				seconds. 
-				</P>
-				<P>((&quot;time&quot;,&quot;CI&quot;,&quot;CII&quot;),(0,0,0),(100,0,19),(200,20,25),(300,19,18),(400,17,20),(500
-				,17,46),(600,26,40),(700,43,43),(800,63,28),(900,72,34),(1000,72,28),(1100,71,23
-				),(1200,81,21),(1300,79,15),(1400,78,4),(1500,76,0),(1600,76,5),(1700,76,0),(180
-				0,76,0),(1900,76,0),(2000,75,0),(2100,72,0)) 
-				</P>
-				<H1><A NAME="CREDITS"></A><!-- These conditions are specified using the language described below:
+termination conditions specify a condition upon which a
+simulation should terminate. A record is kept of the proportion
+of simulations that are terminated by each condition. These
+conditions are specified using an ID, description, and the
+logical condition which when it holds results in termination of
+the simulation/analysis procedure. The logical condition is
+composed of comparative expressions joined by Boolean connectives
+AND (&amp;&amp;), OR (||), and NOT (!). Each comparative
+expression compares two numerical expressions using the
+comparison operators, &quot;&lt;=&quot;, &quot;&lt;&quot;, &quot;&gt;=&quot;,
+&quot;&gt;&quot;, and &quot;=&quot;. Each numerical expression
+can be composed of variables and real valued constants which are
+combined with the arithmetic operators for addition (+),
+subtraction (-), multiplication (*), and division (/). There is
+also function support for exponentiation (exp(num_exp)), raising
+to a power (pow(num_exp,num_exp)), and natural logarithm
+(log(num_exp)). The variables can represent time (t), the
+molecular count of a species (&lt;species-id&gt; or
+#&lt;species-id&gt;), the concentration of a species
+(%&lt;species-id&gt;), or the number of firings of a reaction
+(@&lt;reaction-id&gt;). 
+</P>
+<H2><A NAME="ADVSIMOPTIONS"></A>Advanced Options</H2>
+<P>Here, you can specify additional options for your analysis.&nbsp;
+For each option, you must provide the name of the option and its
+value.&nbsp; For example, property
+<I>reb2sac.abstraction.method.1.x</I>&nbsp; specifies a list of
+abstraction methods used for pre-processing, property
+<I>reb2sac.abstraction.method.2.x </I>specifies a list of
+abstraction methods used in the main abstraction loop, and&nbsp;
+property <I>abstraction.method.3.x</I> is a list of abstraction
+methods used for post-processing.&nbsp; These abstraction method
+properties can take the following values: 
+</P>
+<UL>
+<LI><P STYLE="margin-bottom: 0in">modifier-structure-transformer
+</P>
+<LI><P STYLE="margin-bottom: 0in">modifier-constant-propagation 
+</P>
+<LI><P STYLE="margin-bottom: 0in">operator-site-forward-binding-remover
+</P>
+<LI><P STYLE="margin-bottom: 0in">nary-order-unary-transformer2 
+</P>
+<LI><P STYLE="margin-bottom: 0in">kinetic-law-constants-simplifier
+</P>
+<LI><P STYLE="margin-bottom: 0in">enzyme-kinetic-rapid-equilibrium-1
+</P>
+<LI><P STYLE="margin-bottom: 0in">dimer-to-monomer-substitutor 
+</P>
+<LI><P STYLE="margin-bottom: 0in">dimerization-reduction 
+</P>
+<LI><P STYLE="margin-bottom: 0in">kinetic-law-constants-simplifier
+</P>
+<LI><P STYLE="margin-bottom: 0in">irrelevant-species-remover 
+</P>
+<LI><P STYLE="margin-bottom: 0in">inducer-structure-transformer 
+</P>
+<LI><P STYLE="margin-bottom: 0in">final-state-generator 
+</P>
+<LI><P STYLE="margin-bottom: 0in">similar-reaction-combiner 
+</P>
+<LI><P STYLE="margin-bottom: 0in">absolute-inhibition-generator 
+</P>
+<LI><P STYLE="margin-bottom: 0in">reversible-to-irreversible-transformer
+</P>
+<LI><P STYLE="margin-bottom: 0in">multiple-products-reaction-eliminator
+</P>
+<LI><P STYLE="margin-bottom: 0in">multiple-reactants-reaction-eliminator
+</P>
+<LI><P STYLE="margin-bottom: 0in">single-reactant-product-reaction-eliminator
+</P>
+<LI><P STYLE="margin-bottom: 0in">stop-flag-generator 
+</P>
+<LI><P STYLE="margin-bottom: 0in">enzyme-kinetic-qssa-1 
+</P>
+<LI><P STYLE="margin-bottom: 0in">birth-death-generator4 
+</P>
+<LI><P STYLE="margin-bottom: 0in">max-concentration-reaction-adder
+</P>
+<LI><P>dummy-abstraction-method 
+</P>
+</UL>
+<P>On this tab, there are buttons to add a new option, edit an
+existing option, remove an existing option, or clear all options.
+</P>
+<H2><A NAME="PARAMEDIT"></A>Parameter Editor</H2>
+<P>The parameter editor is similar in form to the SBML editor,
+but it only allows initial concentrations and parameters to be
+adjusted. Each of these parameters starts with the original value
+specified in the SBML or genetic circuit model associated with
+this analysis view. By changing the type to &quot;Custom&quot;, a
+new value can be entered. Changing the type back to &quot;Original&quot;,
+restores the original value. These values can also be swept by
+selecting the &quot;Sweep&quot; type. In this case, you should
+provide a start value, a stop value, a step amount, and a level
+(1 or 2). When analyzing using sweep parameters, one analysis run
+is produced for each value stepped through from start to stop.
+The parameters at level 2 are changed first. When they have all
+reached their stop value, the parameters at level 1 are stepped
+once, and the parameters at level 2 are stepped through again.
+This process repeats until all parameters at level 1 have stepped
+to their stop value. 
+</P>
+<H1><A NAME="LEARN"></A>Learn View</H1>
+<P>The learn view is used to discover the genetic circuit
+connectivity from time series data. The learn view includes tabs
+for a <A HREF="#DATA">data manager</A>, a <A HREF="#LEARNTOOL">learn
+tool</A>, and a <A HREF="#GRAPH">graph editor</A>.<!-- NEED TO ADD DESCRIPTION OF DATA ENTRY TOOL -->
+</P>
+<H2><A NAME="DATA"></A>Data Manager</H2>
+<P>The data manager is used to both enter time series
+experimental data (not yet implemented) as well as bring data
+into the learn view. The Add button is used to create a new data
+file. After pressing this button, enter the name of the new data
+file, and then enter the data for this file using the data editor
+to the right. The Remove button deletes all highlighted files.
+Note that after highlighting one file, you can use the ctrl key
+to highlight additional files or the shift key to highlight a
+range of files. The Rename button is used to change the name of a
+data file. The Copy button copies a data file. The Copy From View
+button brings up a list of all analysis and learn views in the
+current project, and data from the selected view will be copied
+into this learn view. Finally, the Import button brings up a file
+browser, and it allows you to import a data file from outside
+this project into this learn view. These files can be in <A HREF="#TSD">time
+series data</A> format, comma separated value format, or tab
+delimited format. 
+</P>
+<H2><A NAME="LEARNTOOL"></A>Learn Tool</H2>
+<P>The learn tool uses the GeneNet algorithm described in
+<A HREF="http://www.async.ece.utah.edu/publications">Barker's PhD
+dissertation (UofUtah 2007)</A>. To use this learn tool, adjust
+any options described below, if desired, then press the Save and
+Learn button. The resulting genetic circuit in specified using
+our <A HREF="#CIRCUIT">Genetic Circuit Model Format</A> and shown
+graphically using <A HREF="http://www.graphviz.org/">GraphViz's
+Dotty tool</A>. On this tab, there are also buttons to save the
+parameters without learning, view the last learned circuit, save
+the generated circuit into the project, and view the last run
+log. 
+</P>
+<H3><A NAME="LEARNOPTIONS"></A>Basic Learning Options</H3>
+<UL>
+<LI><P>Minimum Initial Number of Vectors (Tn) (default=2): 
+</P>
+<P>Tn is a threshold value used in the CreateInfluenceVectorSet
+algorithm and represents the minimum number of influence vectors
+constructed in this algorithm</P>
+<LI><P>Maximum Influence Vector Size (Tj) (default=2): 
+</P>
+<P>Tj is a threshold value used in the CombineInfluenceVectors
+algorithm to determine the maximal size of merged influence
+vectors</P>
+<LI><P>Score for an Empty Influence Vector (Ti) (default=0.5): 
+</P>
+<P>The score for an influence vector with no influences in it.</P>
+<LI><P>Number of Bins (default=4): 
+</P>
+<P>The Number of Bins value specifies how many values the
+encoded time series data can assume</P>
+<LI><P>Equal Data Per Bins / Equal Spacing of Bins: 
+</P>
+<P>This radio button selects whether the auto generated levels
+should be determined by equaling dividing the data between the
+bins or by equally dividing the range of the data. 
+</P>
+<LI><P>Use Auto Generated Levels / Use User Generated Levels: 
+</P>
+<P>This radio button allows the user to select whether they want
+the levels separating the bins to be auto generated or the user
+would like to provide them. 
+</P>
+<LI><P>When using user provided levels, the Suggest Levels
+button will provide the levels that would have been auto
+generated as a suggestion. These levels can then edited by the
+user. The number of bins for each species can also be
+individually adjusted. 
+</P>
+</UL>
+<H3><A NAME="ADVLEARN"></A>Advanced Learning Options</H3>
+<UL>
+<LI><P>Ratio for Activation (Ta) (default=1.15): 
+</P>
+<P>A probability ratio above this value results in a vote for an
+influence vector that has a majority of activation influences.</P>
+<LI><P>Ratio for Repression (Tr) (default=0.75): 
+</P>
+<P>A probability ratio above this value results in a vote for an
+influence vector that has a majority of repression influences.</P>
+<LI><P>Merge Influence Vectors Delta (Tm) (default=0.0): 
+</P>
+<P>Two influence vectors cannot be merged unless the difference
+in their scores is less than this value.</P>
+<LI><P>Relax Thresholds Delta (Tt) (default=0.025): 
+</P>
+<P>The values of Ta and Tr are modified by this amount when
+these thresholds are relaxed.</P>
+<LI><P>Debug Level (default=0): 
+</P>
+<P>This controls how much information is displayed by the
+GeneNet algorithm when it runs.</P>
+<LI><P>Successors / Predecessors / Both (default=Successors): 
+</P>
+<P>This radio button selects whether successor data point pairs,
+predecessor data point pairs, or both are used.</P>
+<LI><P>Basic FindBaseProb (default=unchecked): 
+</P>
+<P>When selected, the basic FindBaseProb function is used.</P>
+</UL>
+<H1><A NAME="GRAPH"></A>Graph Editors</H1>
+<P>The graph editor appears as a tab in both analysis or learn
+views. Graphs can also be created at the top-level of the project
+to allow you to integrate results from several analysis or learn
+views. These graphs can be created using the &quot;New Graph&quot;
+menu option. Once created, they can be viewed and edited by
+clicking on the graph in the project window. In the graph editor,
+a graph is created by clicking on the graph. You can then set
+various parameters and select what you would like to have
+graphed. The parameters that you can select for a graph include: 
+</P>
+<UL>
+<LI><P STYLE="margin-bottom: 0in">Title - The title of the graph
+</P>
+<LI><P STYLE="margin-bottom: 0in">X-Axis Label - The label
+displayed for the x-axis 
+</P>
+<LI><P STYLE="margin-bottom: 0in">Y-Axis Label - The label
+displayed for the y-axis 
+</P>
+<LI><P STYLE="margin-bottom: 0in">X-Min - The starting value for
+the x-axis 
+</P>
+<LI><P STYLE="margin-bottom: 0in">X-Max - The ending value for
+the x-axis 
+</P>
+<LI><P STYLE="margin-bottom: 0in">X-Step - The increment for the
+x-axis 
+</P>
+<LI><P STYLE="margin-bottom: 0in">Y-Min - The starting value for
+the y-axis 
+</P>
+<LI><P STYLE="margin-bottom: 0in">Y-Max - The ending value for
+the y-axis 
+</P>
+<LI><P STYLE="margin-bottom: 0in">Y-Step - The increment for the
+y-Axis 
+</P>
+<LI><P STYLE="margin-bottom: 0in">Auto Resize Check Box -
+Determines whether to automatically resize the graph for best
+fit 
+</P>
+</UL>
+<P>The data selection menu on the left displays all of the
+available sets of data that can be graphed. For a top-level graph
+or after performing a analysis with sweeping parameters, these
+data sets will be organized hierarchically. After selecting a
+data set, you can select individual species to graph and how you
+wish it to be displayed. In other words, for each species, you
+are given the following options: 
+</P>
+<UL>
+<LI><P STYLE="margin-bottom: 0in">Use Check Box - Determines
+whether or not this species is displayed on the graph 
+</P>
+<LI><P STYLE="margin-bottom: 0in">Species Label - The name
+displayed in the legend 
+</P>
+<LI><P STYLE="margin-bottom: 0in">Drop Down Menu Of Colors - The
+color that is used for this species 
+</P>
+<LI><P STYLE="margin-bottom: 0in">Drop Down Menu Of Shapes - The
+shape that is used to mark the data points 
+</P>
+<LI><P STYLE="margin-bottom: 0in">Connected Check Box -
+Determines whether to connect the points with a line 
+</P>
+<LI><P STYLE="margin-bottom: 0in">Visible Check Box - Determines
+whether shapes are visible on the line</P>
+<LI><P>Filled Check Box - Determines whether shapes are filled
+on the line</P>
+</UL>
+<P>To save the graph, click the &quot;Save&quot; button. This
+will save the data of the graph to a file so when you re-open the
+analysis view, it will reload this data and display what was
+graphed.</P>
+<P>To export the graph, click one the &quot;Export&quot; button.
+You will be prompted to enter a file name. The extension provided
+will be used to determine how the graph is exported. The
+supported file types are: 
+</P>
+<UL>
+<LI><P STYLE="margin-bottom: 0in">csv - comma separated value
+data file 
+</P>
+<LI><P STYLE="margin-bottom: 0in">dat - column separated data
+file 
+</P>
+<LI><P STYLE="margin-bottom: 0in">eps - encapsulated postscript 
+</P>
+<LI><P STYLE="margin-bottom: 0in">jpg - JPEG (Joint Photographic
+Experts Group) 
+</P>
+<LI><P STYLE="margin-bottom: 0in">pdf - portable document format
+</P>
+<LI><P STYLE="margin-bottom: 0in">png - portable network
+graphics 
+</P>
+<LI><P STYLE="margin-bottom: 0in">svg - scalable vector graphics
+</P>
+<LI><P>tsd - <A HREF="#TSD">time series data format</A> 
+</P>
+</UL>
+<P>If no extension is given, then the file type will be the one
+specified in the file filter (default is pdf). For image (i.e.,
+not data) file types, you will be prompted to give a desired
+pixel height and width for the file before the file is exported. 
+</P>
+<H1><A NAME="CIRCUIT"></A>Genetic Circuit Model Format</H1>
+<P>Our genetic circuit model (gcm) format specifies a genetic
+circuit using the same format as the <A HREF="http://www.graphviz.org/">GraphViz</A>
+graph drawing tool. The vertices in the graph are the species in
+the genetic circuit, and the edges in the graph represent the
+activation and repression relationships between the species. An
+activation relationship is shown with a blue (blue4) arrow (vee)
+and a repression relationship is shown with a red (firebrick4)
+tee. The label field in the species declaration is the name of
+the species. The arrowhead field in the relationship declaration
+represents the type of relationship between the species.
+Repression is labeled with a tee and activation is labeled with a
+vee. The label field in the relationship declaration represents
+how many molecules are necessary to activate or repress the
+production of the species. An example is shown below for a simple
+genetic circuit in which the species CI represses CII while CII
+activates CI production. The s1-&gt;s2 edge has a label field of
+&quot;2&quot; which means two molecules of CI are required to
+form a dimer to repress CII. 
+</P>
+<P>digraph G {<BR>s1 [shape=ellipse,color=black,label=&quot;CI&quot;];<BR>s2
+[shape=ellipse,color=black,label=&quot;CII&quot;];<BR>s2 -&gt; s1
+[color=&quot;blue4&quot;,arrowhead=vee]<BR>s1 -&gt; s2
+[color=&quot;firebrick4&quot;,label=&quot;2&quot;,arrowhead=tee]<BR>}
+</P>
+<P>More advanced behavior can be modeled by using extra fields.
+The promoter field groups a set of species together. The examples
+below shows how the promoter field works. In the genetic circuit
+model below, species A represses the production of species B and
+C, independently. If there was exactly 1 molecule of species A,
+it would only be able to repress production of species B or C,
+but not both. 
+</P>
+<P>digraph G {<BR>s1 [shape=ellipse,color=black,label=&quot;A&quot;];<BR>s2
+[shape=ellipse,color=black,label=&quot;B&quot;];<BR>s3
+[shape=ellipse,color=black,label=&quot;C&quot;];<BR>s1 -&gt; s2
+[color=&quot;blue4&quot;,arrowhead=tee]<BR>s1 -&gt; s3
+[color=&quot;blue4&quot;,arrowhead=tee]<BR>} 
+</P>
+<P>With the promoter field, one species A now represses the
+promoter &quot;P1&quot;, which produces both species B and C.
+This means that one molecule of species A will repress the
+production of both species B and C. 
+</P>
+<P>digraph G {<BR>s1 [shape=ellipse,color=black,label=&quot;A&quot;];<BR>s2
+[shape=ellipse,color=black,label=&quot;B&quot;];<BR>s3
+[shape=ellipse,color=black,label=&quot;C&quot;];<BR>s1 -&gt; s2
+[color=&quot;blue4&quot;,arrowhead=tee,promoter=&quot;P1&quot;]<BR>s1
+-&gt; s3 [color=&quot;blue4&quot;,arrowhead=tee,promoter=&quot;P1&quot;]<BR>}
+</P>
+<P>The promoter field can also be used to separate production
+reactions. In the example below, both species A and B can repress
+the production of species C. If either is present, then very
+little C will be produced. This behavior is like a NOR gate. 
+</P>
+<P>digraph G {<BR>s1 [shape=ellipse,color=black,label=&quot;A&quot;];<BR>s2
+[shape=ellipse,color=black,label=&quot;B&quot;];<BR>s3
+[shape=ellipse,color=black,label=&quot;C&quot;];<BR>s1 -&gt; s3
+[color=&quot;blue4&quot;,arrowhead=tee]<BR>s2 -&gt; s3
+[color=&quot;blue4&quot;,arrowhead=tee]<BR>} 
+</P>
+<P>However, if there needs to be two different sources of
+production for species C, the promoter field can be used to
+accomplish this. In the example below, A represses the production
+of C by binding to the P1 promoter, and B represses the
+production of C by binding to the P2 promoter. Both A and B need
+to be present to fully repress the level of C. If either is at a
+low level, then the level of C will be high. This behavior is
+like a NAND gate. 
+</P>
+<P>digraph G {<BR>s1 [shape=ellipse,color=black,label=&quot;A&quot;];<BR>s2
+[shape=ellipse,color=black,label=&quot;B&quot;];<BR>s3
+[shape=ellipse,color=black,label=&quot;C&quot;];<BR>s1 -&gt; s3
+[color=&quot;blue4&quot;,arrowhead=tee,promoter=&quot;P1&quot;]<BR>s2
+-&gt; s3 [color=&quot;blue4&quot;,arrowhead=tee,promoter=&quot;P2&quot;]<BR>}
+</P>
+<P>The example below shows how to model an AND gate. The species
+A and B have the constant flag set to true. This means that A and
+B have no production and degradation reactions. The reactions
+contain a promoter label &quot;P1&quot;. This means that the
+species C can be activated by both s1 and s2. Combined with the
+type flag of biochemical, this creates a biochemical reaction
+where species A and B combine together to form a complex to
+activate production of species C. 
+</P>
+<P>digraph G {<BR>s1
+[shape=ellipse,color=black,label=&quot;A&quot;,const=true];<BR>s2
+[shape=ellipse,color=black,label=&quot;B&quot;,const=true];<BR>s3
+[shape=ellipse,color=black,label=&quot;C&quot;];<BR>s1 -&gt; s3
+[color=&quot;blue4&quot;,arrowhead=vee,promoter=&quot;P1&quot;,type=biochemical]<BR>s2
+-&gt; s3
+[color=&quot;blue4&quot;,arrowhead=vee,promoter=&quot;P1&quot;,type=biochemical]<BR>}
+</P>
+<H1><A NAME="TSD"></A>Time Series Data Format</H1>
+<P>The time series data (tsd) format is composed of a
+parenthesized and comma-separated set of time points. Each time
+point is composed of a parenthesized and comma-separated set of
+data for that time point. This first time point is composed of a
+set of strings that are the labels for the data entries. The
+first entry in each time point is by convention the time for that
+time point. Below is an example simulation of the species CI and
+CII from 0 to 2100 seconds with time points separated by 100
+seconds. 
+</P>
+<P>((&quot;time&quot;,&quot;CI&quot;,&quot;CII&quot;),(0,0,0),(100,0,19),(200,20,25),(300,19,18),(400,17,20),(500
+,17,46),(600,26,40),(700,43,43),(800,63,28),(900,72,34),(1000,72,28),(1100,71,23
+),(1200,81,21),(1300,79,15),(1400,78,4),(1500,76,0),(1600,76,5),(1700,76,0),(180
+0,76,0),(1900,76,0),(2000,75,0),(2100,72,0)) 
+</P>
+<H1><A NAME="CREDITS"></A><!-- These conditions are specified using the language described below:
 <P><FONT FACE="Courier 10 Pitch"><FONT SIZE=2><FONT FACE="Courier 10 Pitch"><FONT SIZE=2>term
 &lt;id&gt; {</FONT></FONT></FONT></FONT></P>
 <P>  <FONT FACE="Courier 10 Pitch"><FONT SIZE=2>desc &lt;string&gt;;</FONT></FONT></P>
@@ -1378,19 +1402,19 @@ concentration of &lt;species-id&gt;, @&lt;reaction-id&gt; is the variable
 for the number of firings of &lt;reaction-id&gt;, and t is the variable
 representing time.</FONT></FONT></P>
 -->Credits</H1>
-				<P>The iBioSim tool is being developed at the University of Utah
-				by <A HREF="http://www.cs.utah.edu/~barkern">Nathan Barker</A>,
-				<A HREF="http://www.cs.utah.edu/~kuwahara">Hiroyuki Kuwahara</A>,
-				<A HREF="http://www.async.ece.utah.edu/~cmadsen">Curtis Madsen</A>,
-				<A HREF="http://www.async.ece.utah.edu/~myers">Chris Myers</A>,
-				and <A HREF="http://www.cs.utah.edu/~namphuon">Nam Nguyen</A>.
-				Nathan Barker is now with Southern Utah University, and Hiroyuki
-				Kuwahara is now with the Centre for Computational and System
-				Biology in Trento, Italy. 
-				</P>
-			</TD>
-		</TR>
-	</TBODY>
+<P>The iBioSim tool is being developed at the University of Utah
+by <A HREF="http://www.cs.utah.edu/~barkern">Nathan Barker</A>,
+<A HREF="http://www.cs.utah.edu/~kuwahara">Hiroyuki Kuwahara</A>,
+<A HREF="http://www.async.ece.utah.edu/~cmadsen">Curtis Madsen</A>,
+<A HREF="http://www.async.ece.utah.edu/~myers">Chris Myers</A>,
+and <A HREF="http://www.cs.utah.edu/~namphuon">Nam Nguyen</A>.
+Nathan Barker is now with Southern Utah University, and Hiroyuki
+Kuwahara is now with the Centre for Computational and System
+Biology in Trento, Italy. 
+</P>
+</TD>
+</TR>
+</TBODY>
 </TABLE>
 <P><BR><BR>
 </P>
