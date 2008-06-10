@@ -8,11 +8,11 @@ import javax.swing.*;
 import biomodelsim.*;
 
 public class CSVParser extends Parser {
-	public CSVParser(String filename, BioSim biosim) {
+	public CSVParser(String filename, BioSim biosim, boolean warn) {
 		super(new ArrayList<String>(), new ArrayList<ArrayList<Double>>(), biosim);
 		try {
-			boolean warning = false;
-			boolean warning2 = false;
+			warning = warn;
+			boolean warning2 = warning;
 			FileInputStream fileInput = new FileInputStream(new File(filename));
 			ProgressMonitorInputStream prog = new ProgressMonitorInputStream(component,
 					"Reading Reb2sac Output Data From " + new File(filename).getName(), fileInput);

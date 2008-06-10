@@ -14,6 +14,8 @@ public class Parser {
 
 	protected Component component;
 
+	protected boolean warning;
+
 	public Parser(ArrayList<String> species, ArrayList<ArrayList<Double>> data, BioSim biosim) {
 		this.species = species;
 		this.data = data;
@@ -34,6 +36,10 @@ public class Parser {
 
 	public void setData(ArrayList<ArrayList<Double>> data) {
 		this.data = data;
+	}
+
+	public boolean getWarning() {
+		return warning;
 	}
 
 	public void outputTSD(String filename) {

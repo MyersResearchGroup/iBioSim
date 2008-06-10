@@ -328,7 +328,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 	private void readGraphSpecies(String file) {
 		biomodelsim.frame().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-		graphSpecies = new TSDParser(file, biomodelsim).getSpecies();
+		graphSpecies = new TSDParser(file, biomodelsim, true).getSpecies();
 		biomodelsim.frame().setCursor(null);
 	}
 
@@ -361,7 +361,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		}
 		else {
 			biomodelsim.frame().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-			TSDParser p = new TSDParser(file, biomodelsim);
+			TSDParser p = new TSDParser(file, biomodelsim, false);
 			graphSpecies = p.getSpecies();
 			biomodelsim.frame().setCursor(null);
 			return p.getData();
@@ -3009,7 +3009,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		ArrayList<ArrayList<Double>> variance = new ArrayList<ArrayList<Double>>();
 		ArrayList<ArrayList<Double>> deviation = new ArrayList<ArrayList<Double>>();
 		biomodelsim.frame().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-		TSDParser p = new TSDParser(startFile, biomodelsim);
+		TSDParser p = new TSDParser(startFile, biomodelsim, false);
 		graphSpecies = p.getSpecies();
 		biomodelsim.frame().setCursor(null);
 		boolean first = true;
@@ -3063,7 +3063,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						if (new File(outDir + separator + fileStem + (j + 1) + "."
 								+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
 							p = new TSDParser(outDir + separator + fileStem + (j + 1) + "."
-									+ printer_id.substring(0, printer_id.length() - 8), biomodelsim);
+									+ printer_id.substring(0, printer_id.length() - 8), biomodelsim, p.getWarning());
 							loop = false;
 							count++;
 						}
@@ -3075,7 +3075,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						if (new File(outDir + separator + directory + separator + fileStem + (j + 1) + "."
 								+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
 							p = new TSDParser(outDir + separator + directory + separator + fileStem + (j + 1)
-									+ "." + printer_id.substring(0, printer_id.length() - 8), biomodelsim);
+									+ "." + printer_id.substring(0, printer_id.length() - 8), biomodelsim, p
+									.getWarning());
 							loop = false;
 							count++;
 						}
