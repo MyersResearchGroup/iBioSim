@@ -3103,6 +3103,15 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					int index = -1;
 					if (average.get(0).contains(data.get(0).get(k))) {
 						index = average.get(0).indexOf(data.get(0).get(k));
+						for (int i = 1; i < data.size(); i++) {
+							double old = (average.get(i)).get(index);
+							(average.get(i)).set(index, old + (((data.get(i)).get(k) - old) / (count + 1)));
+							double newMean = (average.get(i)).get(index);
+							double vary = (((count - 1) * (variance.get(i)).get(index)) + ((data.get(i)).get(k) - newMean)
+									* ((data.get(i)).get(k) - old))
+									/ count;
+							(variance.get(i)).set(index, vary);
+						}
 					}
 					else {
 						for (int a = 0; a < average.get(0).size(); a++) {
@@ -3137,15 +3146,6 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								}
 							}
 						}
-					}
-					for (int i = 1; i < data.size(); i++) {
-						double old = (average.get(i)).get(index);
-						(average.get(i)).set(index, old + (((data.get(i)).get(k) - old) / (count + 1)));
-						double newMean = (average.get(i)).get(index);
-						double vary = (((count - 1) * (variance.get(i)).get(index)) + ((data.get(i)).get(k) - newMean)
-								* ((data.get(i)).get(k) - old))
-								/ count;
-						(variance.get(i)).set(index, vary);
 					}
 				}
 			}
