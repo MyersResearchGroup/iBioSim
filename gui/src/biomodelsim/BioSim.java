@@ -103,6 +103,8 @@ public class BioSim implements MouseListener, ActionListener {
 
 	private JMenuItem graph; // The graph menu item
 
+	private JMenuItem probGraph;
+
 	private String root; // The root directory
 
 	private FileTree tree; // FileTree
@@ -193,6 +195,7 @@ public class BioSim implements MouseListener, ActionListener {
 		newCircuit = new JMenuItem("Genetic Circuit Model");
 		newModel = new JMenuItem("SBML Model");
 		graph = new JMenuItem("Graph");
+		probGraph = new JMenuItem("Probability Graph");
 		importSbml = new JMenuItem("SBML Model");
 		importDot = new JMenuItem("Genetic Circuit Model");
 		exit = new JMenuItem("Exit");
@@ -206,6 +209,7 @@ public class BioSim implements MouseListener, ActionListener {
 		importSbml.addActionListener(this);
 		importDot.addActionListener(this);
 		graph.addActionListener(this);
+		probGraph.addActionListener(this);
 		exit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, ActionEvent.ALT_MASK));
 		newProj.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, ActionEvent.ALT_MASK));
 		openProj.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.ALT_MASK));
@@ -214,6 +218,7 @@ public class BioSim implements MouseListener, ActionListener {
 		about.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ActionEvent.ALT_MASK));
 		manual.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, ActionEvent.ALT_MASK));
 		graph.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, ActionEvent.ALT_MASK));
+		probGraph.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_B, ActionEvent.ALT_MASK));
 		importDot.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, ActionEvent.ALT_MASK));
 		importSbml.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, ActionEvent.ALT_MASK));
 		exit.setMnemonic(KeyEvent.VK_X);
@@ -225,6 +230,7 @@ public class BioSim implements MouseListener, ActionListener {
 		about.setMnemonic(KeyEvent.VK_A);
 		manual.setMnemonic(KeyEvent.VK_M);
 		graph.setMnemonic(KeyEvent.VK_G);
+		probGraph.setMnemonic(KeyEvent.VK_B);
 		importDot.setMnemonic(KeyEvent.VK_T);
 		importDot.setDisplayedMnemonicIndex(14);
 		importSbml.setMnemonic(KeyEvent.VK_L);
@@ -233,11 +239,13 @@ public class BioSim implements MouseListener, ActionListener {
 		newCircuit.setEnabled(false);
 		newModel.setEnabled(false);
 		graph.setEnabled(false);
+		probGraph.setEnabled(false);
 		file.add(newMenu);
 		newMenu.add(newProj);
 		newMenu.add(newCircuit);
 		newMenu.add(newModel);
 		newMenu.add(graph);
+		newMenu.add(probGraph);
 		file.add(openProj);
 		// openMenu.add(openProj);
 		file.addSeparator();
@@ -864,6 +872,7 @@ public class BioSim implements MouseListener, ActionListener {
 				newCircuit.setEnabled(true);
 				newModel.setEnabled(true);
 				graph.setEnabled(true);
+				probGraph.setEnabled(true);
 			}
 		}
 		// if the open project menu item is selected
@@ -919,6 +928,7 @@ public class BioSim implements MouseListener, ActionListener {
 						newCircuit.setEnabled(true);
 						newModel.setEnabled(true);
 						graph.setEnabled(true);
+						probGraph.setEnabled(true);
 					}
 					else {
 						JOptionPane.showMessageDialog(frame, "You must select a valid project.", "Error",
@@ -1261,6 +1271,59 @@ public class BioSim implements MouseListener, ActionListener {
 							graphName.trim().substring(0, graphName.length() - 4), "tsd.printer", root, "time",
 							this, null, log, graphName.trim(), true);
 					addTab(graphName.trim(), g, "Graph");
+					g.save();
+					refreshTree();
+				}
+			}
+			else {
+				JOptionPane.showMessageDialog(frame, "You must open or create a project first.", "Error",
+						JOptionPane.ERROR_MESSAGE);
+			}
+		}
+		else if (e.getSource() == probGraph) {
+			if (root != null) {
+				String graphName = JOptionPane.showInputDialog(frame,
+						"Enter A Name For The Probability Graph:", "Probability Graph Name",
+						JOptionPane.PLAIN_MESSAGE);
+				if (graphName != null && !graphName.trim().equals("")) {
+					graphName = graphName.trim();
+					if (graphName.length() > 3) {
+						if (!graphName.substring(graphName.length() - 4).equals(".prb")) {
+							graphName += ".prb";
+						}
+					}
+					else {
+						graphName += ".prb";
+					}
+					File f = new File(root + separator + graphName);
+					if (f.exists()) {
+						Object[] options = { "Overwrite", "Cancel" };
+						int value = JOptionPane.showOptionDialog(frame, "File already exists."
+								+ "\nDo you want to overwrite?", "Overwrite", JOptionPane.YES_NO_OPTION,
+								JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+						if (value == JOptionPane.YES_OPTION) {
+							File dir = new File(root + separator + graphName);
+							if (dir.isDirectory()) {
+								deleteDir(dir);
+							}
+							else {
+								System.gc();
+								dir.delete();
+							}
+							for (int i = 0; i < tab.getTabCount(); i++) {
+								if (tab.getTitleAt(i).equals(graphName)) {
+									tab.remove(i);
+								}
+							}
+						}
+						else {
+							return;
+						}
+					}
+					Graph g = new Graph(null, "amount",
+							graphName.trim().substring(0, graphName.length() - 4), "tsd.printer", root, "time",
+							this, null, log, graphName.trim(), false);
+					addTab(graphName.trim(), g, "Probability Graph");
 					g.save();
 					refreshTree();
 				}
@@ -2758,6 +2821,17 @@ public class BioSim implements MouseListener, ActionListener {
 								openProb = filename + separator + list[i];
 							}
 						}
+						else if (new File(filename + separator + list[i]).isDirectory()) {
+							String[] s = new File(filename + separator + list[i]).list();
+							for (int j = 0; j < s.length; j++) {
+								if (s[j].contains("sim-rep")) {
+									probFile = filename + separator + list[i] + separator + s[j];
+								}
+								else if (s[j].contains(".tsd")) {
+									graphFile = filename + separator + list[i] + separator + s[j];
+								}
+							}
+						}
 					}
 					if (!getAFile.equals("")) {
 						String[] split = filename.split(separator);
@@ -2829,7 +2903,11 @@ public class BioSim implements MouseListener, ActionListener {
 						reb2sac.setSbml(sbml);
 						simTab.addTab("Parameter Editor", sbml);
 						simTab.getComponentAt(simTab.getComponents().length - 1).setName("SBML Editor");
-						if (!graphFile.equals("")) {
+						if (open != null) {
+							simTab.addTab("Graph", reb2sac.createGraph(open));
+							simTab.getComponentAt(simTab.getComponents().length - 1).setName("Graph");
+						}
+						else if (!graphFile.equals("")) {
 							simTab.addTab("Graph", reb2sac.createGraph(open));
 							simTab.getComponentAt(simTab.getComponents().length - 1).setName("Graph");
 						}
@@ -2842,7 +2920,11 @@ public class BioSim implements MouseListener, ActionListener {
 							simTab.addTab("Graph", noData);
 							simTab.getComponentAt(simTab.getComponents().length - 1).setName("Graph");
 						}
-						if (!probFile.equals("")) {
+						if (openProb != null) {
+							simTab.addTab("Probability Graph", reb2sac.createProbGraph(openProb));
+							simTab.getComponentAt(simTab.getComponents().length - 1).setName("ProbGraph");
+						}
+						else if (!probFile.equals("")) {
 							simTab.addTab("Probability Graph", reb2sac.createProbGraph(openProb));
 							simTab.getComponentAt(simTab.getComponents().length - 1).setName("ProbGraph");
 						}
