@@ -104,7 +104,15 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 			background = null;
 		}
 		species = null;
-		if (background != null) {
+		if (new File(directory + separator + "run-1.tsd").exists()) {
+			TSDParser parser = new TSDParser(directory + separator + "run-1.tsd", biosim, true);
+			ArrayList<String> specs = parser.getSpecies();
+			species = new String[specs.size() - 1];
+			for (int i = 1; i < specs.size(); i++) {
+				species[i - 1] = specs.get(i);
+			}
+		}
+		else if (background != null) {
 			if (background.contains(".gcm")) {
 				GCMParser parser = new GCMParser(background);
 				GeneticNetwork network = parser.buildNetwork();
@@ -344,6 +352,60 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 					this.revalidate();
 					this.repaint();
 					dirty = false;
+					String background;
+					try {
+						p = new Properties();
+						String[] split = directory.split(separator);
+						load = new FileInputStream(new File(directory + separator + split[split.length - 1]
+								+ ".lrn"));
+						p.load(load);
+						load.close();
+						if (p.containsKey("genenet.file")) {
+							String[] getProp = p.getProperty("genenet.file").split(separator);
+							background = directory.substring(0, directory.length()
+									- split[split.length - 1].length())
+									+ separator + getProp[getProp.length - 1];
+						}
+						else {
+							background = null;
+						}
+					}
+					catch (Exception e1) {
+						JOptionPane.showMessageDialog(biosim.frame(), "Unable to load background file.",
+								"Error", JOptionPane.ERROR_MESSAGE);
+						background = null;
+					}
+					if (background != null) {
+						if (background.contains(".gcm")) {
+							GCMParser parser = new GCMParser(background);
+							GeneticNetwork network = parser.buildNetwork();
+							network.outputSBML(directory + separator + "temp.sbml");
+							SBMLReader reader = new SBMLReader();
+							SBMLDocument document = reader.readSBML(directory + separator + "temp.sbml");
+							Model model = document.getModel();
+							ListOf ids = model.getListOfSpecies();
+							ArrayList<String> getSpecies = new ArrayList<String>();
+							for (int i = 0; i < model.getNumSpecies(); i++) {
+								getSpecies.add(ids.get(i).getId());
+							}
+							species = getSpecies.toArray(new String[0]);
+							new File(directory + separator + "temp.sbml").delete();
+						}
+						else {
+							SBMLReader reader = new SBMLReader();
+							SBMLDocument document = reader.readSBML(background);
+							Model model = document.getModel();
+							ListOf ids = model.getListOfSpecies();
+							ArrayList<String> getSpecies = new ArrayList<String>();
+							for (int i = 0; i < model.getNumSpecies(); i++) {
+								getSpecies.add(ids.get(i).getId());
+							}
+							species = getSpecies.toArray(new String[0]);
+						}
+					}
+					if (species != null) {
+						sort(species);
+					}
 				}
 				catch (Exception e1) {
 					JOptionPane.showMessageDialog(biosim.frame(), "Unable to remove selected files.",
@@ -929,6 +991,7 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 					spec[i] = m.getColumnName(i);
 				}
 				createTable(dat, spec);
+				table.addRowSelectionInterval(0, 0);
 			}
 			dirty = true;
 		}

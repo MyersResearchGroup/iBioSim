@@ -5090,8 +5090,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					}
 					if (graphProbs.size() != 0) {
 						for (int i = 0; i < graphProbs.size(); i++) {
-							if (g.getID().equals(graphProbs.get(i))) {
-								g.setNumber(i);
+							String compare = g.getID().replace(" (", "~");
+							if (compare.split("~")[0].trim().equals(graphProbs.get(i))) {
 								histDataset.setValue(data[i], g.getSpecies(), "");
 							}
 						}

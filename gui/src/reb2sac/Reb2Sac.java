@@ -169,7 +169,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 
 	private ArrayList<JFrame> frames;
 
-	private Pattern stemPat = Pattern.compile("([a-zA-Z]|_)([a-zA-Z]|[0-9]|_)*");
+	private Pattern stemPat = Pattern.compile("([a-zA-Z]|[0-9]|_)*");
 
 	/**
 	 * This is the constructor for the GUI. It initializes all the input fields,
