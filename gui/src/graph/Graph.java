@@ -4109,20 +4109,12 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			}
 			files[j] = index;
 		}
+		boolean add = false;
 		final ArrayList<String> directories = new ArrayList<String>();
 		for (String file : files) {
 			if (file.length() > 3 && file.substring(file.length() - 4).equals(".txt")) {
 				if (file.contains("sim-rep")) {
-					IconNode n = new IconNode(file.substring(0, file.length() - 4));
-					simDir.add(n);
-					n.setIconName("");
-					for (GraphProbs g : probGraphed) {
-						if (g.getDirectory().equals("")) {
-							n.setIcon(TextIcons.getIcon("g"));
-							n.setIconName("" + (char) 10003);
-							simDir.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
-						}
-					}
+					add = true;
 				}
 			}
 			else if (new File(outDir + separator + file).isDirectory()) {
@@ -4136,21 +4128,75 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				if (addIt) {
 					directories.add(file);
 					IconNode d = new IconNode(file);
-					for (String f : new File(outDir + separator + file).list()) {
+					String[] files2 = new File(outDir + separator + file).list();
+					for (int i = 1; i < files2.length; i++) {
+						String index = files2[i];
+						int j = i;
+						while ((j > 0) && files2[j - 1].compareToIgnoreCase(index) > 0) {
+							files2[j] = files2[j - 1];
+							j = j - 1;
+						}
+						files2[j] = index;
+					}
+					boolean add2 = false;
+					for (String f : files2) {
 						if (f.equals("sim-rep.txt")) {
-							IconNode n = new IconNode(new IconNode(f.substring(0, f.length() - 4)));
-							d.add(n);
-							n.setIconName("");
-							for (GraphProbs g : probGraphed) {
-								if (g.getDirectory().equals(d.toString())) {
-									n.setIcon(TextIcons.getIcon("g"));
-									n.setIconName("" + (char) 10003);
-									d.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
+							add2 = true;
+						}
+						else if (new File(outDir + separator + file + separator + f).isDirectory()) {
+							boolean addIt2 = false;
+							for (String getFile : new File(outDir + separator + file + separator + f).list()) {
+								if (getFile.length() > 3 && getFile.substring(getFile.length() - 4).equals(".txt")
+										&& getFile.contains("sim-rep")) {
+									addIt2 = true;
 								}
+							}
+							if (addIt2) {
+								directories.add(file + separator + f);
+								IconNode d2 = new IconNode(f);
+								for (String f2 : new File(outDir + separator + file + separator + f).list()) {
+									if (f2.equals("sim-rep.txt")) {
+										IconNode n = new IconNode(f2.substring(0, f2.length() - 4));
+										d2.add(n);
+										n.setIconName("");
+										for (GraphProbs g : probGraphed) {
+											if (g.getDirectory().equals(d.toString() + separator + d2.toString())) {
+												n.setIcon(TextIcons.getIcon("g"));
+												n.setIconName("" + (char) 10003);
+												d2.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
+											}
+										}
+									}
+								}
+								d.add(d2);
+							}
+						}
+					}
+					if (add2) {
+						IconNode n = new IconNode("sim-rep");
+						d.add(n);
+						n.setIconName("");
+						for (GraphProbs g : probGraphed) {
+							if (g.getDirectory().equals(d.toString())) {
+								n.setIcon(TextIcons.getIcon("g"));
+								n.setIconName("" + (char) 10003);
+								d.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
 							}
 						}
 					}
 					simDir.add(d);
+				}
+			}
+		}
+		if (add) {
+			IconNode n = new IconNode("sim-rep");
+			simDir.add(n);
+			n.setIconName("");
+			for (GraphProbs g : probGraphed) {
+				if (g.getDirectory().equals("")) {
+					n.setIcon(TextIcons.getIcon("g"));
+					n.setIconName("" + (char) 10003);
+					simDir.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
 				}
 			}
 		}
@@ -4225,6 +4271,12 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							if (directories.contains(node.getParent().toString())) {
 								specPanel.add(fixProbChoices(node.getParent().toString()));
 							}
+							else if (node.getParent().getParent() != null
+									&& directories.contains(node.getParent().getParent().toString() + separator
+											+ node.getParent().toString())) {
+								specPanel.add(fixProbChoices(node.getParent().getParent().toString() + separator
+										+ node.getParent().toString()));
+							}
 							else {
 								specPanel.add(fixProbChoices(""));
 							}
@@ -4239,6 +4291,19 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							if (directories.contains(node.getParent().toString())) {
 								for (GraphProbs g : probGraphed) {
 									if (g.getDirectory().equals(node.getParent().toString())) {
+										boxes.get(g.getNumber()).setSelected(true);
+										series.get(g.getNumber()).setText(g.getSpecies());
+										colorsCombo.get(g.getNumber()).setSelectedItem(g.getPaintName());
+									}
+								}
+							}
+							else if (node.getParent().getParent() != null
+									&& directories.contains(node.getParent().getParent().toString() + separator
+											+ node.getParent().toString())) {
+								for (GraphProbs g : probGraphed) {
+									if (g.getDirectory().equals(
+											node.getParent().getParent().toString() + separator
+													+ node.getParent().toString())) {
 										boxes.get(g.getNumber()).setSelected(true);
 										series.get(g.getNumber()).setText(g.getSpecies());
 										colorsCombo.get(g.getNumber()).setSelectedItem(g.getPaintName());
@@ -4261,6 +4326,12 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 									String s = "";
 									if (directories.contains(node.getParent().toString())) {
 										s = "(" + node.getParent().toString() + ")";
+									}
+									else if (node.getParent().getParent() != null
+											&& directories.contains(node.getParent().getParent().toString() + separator
+													+ node.getParent().toString())) {
+										s = "(" + node.getParent().getParent().toString() + separator
+												+ node.getParent().toString() + ")";
 									}
 									String text = series.get(i).getText();
 									String end = "";
@@ -4285,6 +4356,12 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 									String s = "";
 									if (directories.contains(node.getParent().toString())) {
 										s = "(" + node.getParent().toString() + ")";
+									}
+									else if (node.getParent().getParent() != null
+											&& directories.contains(node.getParent().getParent().toString() + separator
+													+ node.getParent().toString())) {
+										s = "(" + node.getParent().getParent().toString() + separator
+												+ node.getParent().toString() + ")";
 									}
 									String text = graphProbs.get(i);
 									String end = "";
