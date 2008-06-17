@@ -553,7 +553,7 @@ public class Run implements ActionListener {
 				else if (usingSSA.isSelected()) {
 					if (!printer_id.equals("null.printer")) {
 						for (int i = 0; i < simTab.getComponentCount(); i++) {
-							if (simTab.getComponentAt(i).getName().equals("Graph")) {
+							if (simTab.getComponentAt(i).getName().equals("TSD Graph")) {
 								if (simTab.getComponentAt(i) instanceof Graph) {
 									((Graph) simTab.getComponentAt(i)).refresh();
 								}
@@ -562,7 +562,7 @@ public class Run implements ActionListener {
 											.split(separator)[outDir.split(separator).length - 1]
 											+ " simulation results", printer_id, outDir, "time", biomodelsim, null, log,
 											null, true));
-									simTab.getComponentAt(i).setName("Graph");
+									simTab.getComponentAt(i).setName("TSD Graph");
 								}
 							}
 							if (simTab.getComponentAt(i).getName().equals("ProbGraph")) {
@@ -615,7 +615,7 @@ public class Run implements ActionListener {
 					if (!printer_id.equals("null.printer")) {
 						if (ode.isSelected()) {
 							for (int i = 0; i < simTab.getComponentCount(); i++) {
-								if (simTab.getComponentAt(i).getName().equals("Graph")) {
+								if (simTab.getComponentAt(i).getName().equals("TSD Graph")) {
 									if (simTab.getComponentAt(i) instanceof Graph) {
 										((Graph) simTab.getComponentAt(i)).refresh();
 									}
@@ -624,7 +624,7 @@ public class Run implements ActionListener {
 												.split(separator)[outDir.split(separator).length - 1]
 												+ " simulation results", printer_id, outDir, "time", biomodelsim, null,
 												log, null, true));
-										simTab.getComponentAt(i).setName("Graph");
+										simTab.getComponentAt(i).setName("TSD Graph");
 									}
 								}
 								if (simTab.getComponentAt(i).getName().equals("ProbGraph")) {
@@ -647,7 +647,7 @@ public class Run implements ActionListener {
 						}
 						else if (monteCarlo.isSelected()) {
 							for (int i = 0; i < simTab.getComponentCount(); i++) {
-								if (simTab.getComponentAt(i).getName().equals("Graph")) {
+								if (simTab.getComponentAt(i).getName().equals("TSD Graph")) {
 									if (simTab.getComponentAt(i) instanceof Graph) {
 										((Graph) simTab.getComponentAt(i)).refresh();
 									}
@@ -656,7 +656,7 @@ public class Run implements ActionListener {
 												.split(separator)[outDir.split(separator).length - 1]
 												+ " simulation results", printer_id, outDir, "time", biomodelsim, null,
 												log, null, true));
-										simTab.getComponentAt(i).setName("Graph");
+										simTab.getComponentAt(i).setName("TSD Graph");
 									}
 								}
 								if (simTab.getComponentAt(i).getName().equals("ProbGraph")) {
