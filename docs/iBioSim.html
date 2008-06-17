@@ -28,9 +28,9 @@
 </UL>
 <LI><A HREF="#GCMEDIT"><FONT SIZE=4>GCM	Editor</FONT></A> 
 <UL>
+<LI><A HREF="#PROMOTERS">Promoters</A>
 <LI><A HREF="#GCMSPECIES">GCM Species</A> 
 <LI><A HREF="#INFLUENCES">Influences</A>
-<LI><A HREF="#PROMOTERS">Promoters</A>
 <LI><A HREF="#GCMPARAMETERS">GCM Parameters</A> 
 <LI><A HREF="#SBMLFILE">SBML File</A>
 </UL>
@@ -77,7 +77,8 @@
 <LI><A HREF="#ADVLEARN">Advanced Learning Options</A>
 </UL>
 </UL>
-<LI><A HREF="#GRAPH"><FONT SIZE=4>Graph	Editors</FONT></A> 
+<LI><A HREF="#TSDGRAPH"><FONT SIZE=4>TSD Graph Editor</FONT></A> 
+<LI><A HREF="#PROBGRAPH"><FONT SIZE=4>Probability Graph	Editor</FONT></A> 
 <LI><A HREF="#CIRCUIT"><FONT SIZE=4>Genetic Circuit Model Format</FONT></A> 
 <LI><A HREF="#TSD"><FONT SIZE=4>Time Series Data Format</FONT></A> 
 <LI><A HREF="#CREDITS"><FONT SIZE=4>Credits</FONT></A> 
@@ -86,48 +87,49 @@
 <H1><A NAME="INTRO"></A>Introduction</H1>
 
 <P>iBioSim has been developed for the analysis of biochemical
-reaction network models. While the primary target of iBioSim is
+reaction network models.  While the primary target of iBioSim is
 models of genetic circuits, models representing metabolic
 networks, cell-signaling pathways, and other biological and
-chemical systems can also be analyzed. iBioSim includes the
+chemical systems can also be analyzed.  iBioSim includes the
 following tools: 
 </P>
 <UL>
 <LI><P STYLE="margin-bottom: 0in"><A HREF="#GCMEDIT">GCM Editor</A>
-- a tool to enter a genetic circuit model. 
+- a tool to enter a <A HREF="#CIRCUIT">Genetic Circuit Model</A> (GCM). 
+<BR>The GCM is described in
+<A HREF="http://www.async.ece.utah.edu/publications">Nguyen's MS Thesis
+(UofUtah 2008)</A>.
 </P>
 <LI><P STYLE="margin-bottom: 0in"><A HREF="#SBMLEDIT">SBML
-Editor</A> - a tool to enter a biochemical reaction network. 
+Editor</A> - a tool to enter a model using the 
+<A HREF="http://www.sbml.org/">Systems Biology Markup Language</A> (SBML). 
 </P>
 <LI><P STYLE="margin-bottom: 0in"><A HREF="#ANALYSIS">REB2SAC</A>
-- an analysis tool that utilizes various abstraction methods to
-perform efficient ODE and Monte Carlo simulation as well as
-Markov analysis. The algorithms used in this tool are described
+- an abstraction-based ODE, Monte Carlo, and Markov analysis tool.
+<BR>This tool is described
 in <A HREF="http://www.async.ece.utah.edu/publications">Kuwahara's
 PhD Dissertation (UofUtah 2007)</A>. 
 </P>
 <LI><P STYLE="margin-bottom: 0in"><A HREF="#LEARN">GeneNet</A> -
-a tool to learn a genetic circuit model from time series
-experimental data. The algorithms used in this tool are
-described in <A HREF="http://www.async.ece.utah.edu/publications">Barker's
+a tool to learn a GCM from <A HREF="#TSD">Time Series Data</A> (TSD).
+<BR>This tool is described in 
+<A HREF="http://www.async.ece.utah.edu/publications">Barker's
 PhD Dissertation (UofUtah 2007)</A>. 
 </P>
-<LI><P><A HREF="#GRAPH">Graph Editor</A> - this tool can be used
-to visualize data. 
+<LI><P><A HREF="#TSDGRAPH">TSD Graph Editor</A> - a tool to visualize TSD 
+files. 
+<LI><P><A HREF="#PROBGRAPH">Probability Graph Editor</A> - a tool to 
+visualize probability data. 
 </P>
 </UL>
-<P>iBioSim can analyze models provided in either the <A HREF="http://www.sbml.org/">Systems
-Biology Markup Language</A> (SBML) or in our <A HREF="#CIRCUIT">Genetic
-Circuit Model</A> (GCM) format. The time series data files used
-by our learning method can be in <A HREF="#TSD">Time Series Data</A>
-(TSD) format, Comma Separated Value (CSV) format, or tab
-delimited data (DAT) format. 
-</P>
+
 <H1><A NAME="PROJECTS"></A>Project Management</H1>
+
 <P>A project is a collection of models, analysis views, learn
-views, and graphs. 
-</P>
+views, and graphs.</P>
+
 <H2><A NAME="NEWOPENPROJ"></A>Creating and Opening Projects</H2>
+
 <P>To create a new project, select New → Project from the File
 menu. You will then be prompted to browse to a desired location
 and to give a name to the project directory. After you do this,
@@ -137,36 +139,46 @@ You will then be prompted to browse to a project directory to
 open, and clicking open will open the project. You may also open
 a project by selecting one of your five most recently opened
 projects by selecting the project name shown in the File drop
-down menu. 
-</P>
+down menu.</P>
+
 <H2><A NAME="NEW"></A>Creating Models and Graphs</H2>
+
 <P>After you have created or opened a project, you can create a
-new model or graph to add to the project. To create a new Genetic
-Circuit Model, select the New → Genetic Circuit Model from the
+new model or graph to add to the project. To create a new 
+<A HREF="#CIRCUIT">Genetic Circuit Model</A>, select the 
+New → Genetic Circuit Model from the
 File menu. You will then be prompted to give a model id. At this
-point, a <A HREF="#GCMEDIT">GCM editor</A> will be open in a new
+point, a <A HREF="#GCMEDIT">GCM editor</A> will open in a new
 tab. To create a new SBML model, select the New → SBML Model
 from the File menu. You will then be prompted to give a model id.
 At this point, an <A HREF="#SBMLEDIT">SBML editor</A> will open
-in a new tab. To create a new graph, select the New → Graph
+in a new tab. To create a new graph, select the New → TSD Graph
 from the File menu. You will then be prompted to give a name to
-the graph. At this point, a <A HREF="#GRAPH">graph editor</A>
+the TSD graph. At this point, a <A HREF="#TSDGRAPH">TSD graph editor</A>
 will open in a new tab. Once a model or graph is created, it can
 be opened again later by right clicking on the object in the
 project window and selecting &quot;Edit&quot;, or alternatively
-double-clicking on the view. 
-</P>
+double-clicking on the object.</P>
+
 <H2><A NAME="IMPORT"></A>Importing Models</H2>
+
 <P>You can import into the current working project <A HREF="#CIRCUIT">GCMs</A>
 or <A HREF="http://www.sbml.org/">SBML Models</A> created by
 other programs or stored in other projects. To import a GCM,
 select Import → Genetic Circuit Model from the File menu. You
 will then be able to browse to find a model to import. After
 selecting the desired model, click the import button to bring the
-GCM into the project. To import an SBML model, the procedure is
-the same except use the Import → SBML Model option. 
+GCM into the project.  Before bringing the model into the project, it will
+be checked to see if it is a valid GCM file.
+To import an SBML model, the procedure is the same except use the 
+Import → SBML Model option.  Before bringing the model into the project, it
+will be checked to see if it a valid SBML file.  The model will also be
+checked for consistency, and any errors or warnings will be reported.
+These should be corrected before analysis of the model is performed.
 </P>
+
 <H2><A NAME="CREATEVIEW"></A>Creating and Opening Views</H2>
+
 <P>To perform analysis or learning, right click on a model and
 select &quot;<A HREF="#ANALYSIS">Create Analysis View</A>&quot;
 to perform analysis or &quot;<A HREF="#LEARN">Create Learn View</A>&quot;
@@ -174,28 +186,23 @@ to perform learning. You will then be prompted to give a name to
 your analysis or learn view. After a name is entered, a tab with
 the newly created view will open. Once a view is created, it can
 be opened again later by right clicking on an analysis directory
-and selecting &quot;Open Analysis View&quot; or alternatively
-double-clicking on the view. 
-</P>
+and selecting &quot;Open Analysis/Learn View&quot; or alternatively
+double-clicking on the view.</P>
+
 <P>When you create an analysis view from a GCM, an SBML model is
 automatically created for simulation and analysis. Within the
 analysis view, you can edit the initial concentrations and
 parameters. However, if you wish to be able to edit the
 structure, you should first create an SBML model using Create
-SBML Model option in the right click menu. You can then open and
+SBML Model option in the right click menu or the Save as SBML button in
+the <A HREF="#GCMEDIT">GCM Editor</A>.  You can then open and
 edit this model using an <A HREF="#SBMLEDIT">SBML editor</A> and
-create an analysis view from this edited model.
-<!-- <LI><P>Background Knowledge Network 
-</P>
-<P>The Background Knowledge Network field allows the user to
-input known information regarding the network of interest. The
-names of these species must match the names used in the
-simulation directory.</P>
--->
-</P>
+create an analysis view from this edited model.</P>
+
 <H2><A NAME="VIEW"></A>Viewing Models</H2>
+
 <P>To view a GCM, right click on the model you want to view, and
-select the &quot;View Circuit&quot; option. This opens the
+select the &quot;View Genetic Circuit&quot; option. This opens the
 circuit using <A HREF="http://www.graphviz.org/">GraphViz's</A>
 dotty program. To view an SBML model, right click on the model
 you want to view. There are two ways to view an SBML model. You
@@ -204,67 +211,96 @@ can either select the &quot;View Network&quot; option or the
 option converts the model to a <A HREF="http://www.graphviz.org/">GraphViz</A>
 file and then will open that file with GraphViz's dotty program.
 The &quot;View in Browser&quot; option coverts the model to an
-xhtml file and opens that file with your default browser. 
-</P>
+xhtml file and opens that file with your default browser.</P>
+
 <H2><A NAME="MODIFY"></A>Modifying Project Objects</H2>
+
 <P>All project objects can be modified by highlighting the object
 and using a right mouse click to open a menu of options. Using
 this menu, every type of object can be copied, renamed, or
 deleted. For a GCM, the &quot;View/Edit&quot; option opens the
 model in an <A HREF="#GCMEDIT">GCM editor</A>. For an SBML model,
 the &quot;View/Edit&quot; option opens the model in an <A HREF="#SBMLEDIT">SBML
-editor</A>. For a graph, the &quot;View/Edit&quot; option opens
-the graph in a <A HREF="#GRAPH">graph editor</A>. For an analysis
+editor</A>. For a TSD graph, the &quot;View/Edit&quot; option opens
+the TSD graph in a <A HREF="#TSDGRAPH">TSD graph editor</A>. For an analysis
 view, the &quot;Open Analysis View&quot; option opens the
 <A HREF="#ANALYSIS">analysis view</A>. For a learn view, the
 &quot;Open Learn View&quot; option opens the <A HREF="#LEARN">learn
-view</A>. 
-</P>
+view</A>.</P>
+
 <H1><A NAME="GCMEDIT"></A>GCM Editor</H1>
-<P>The GCM editor allows the user to create or modify a genetic
-circuit model (GCM) of a biochemical reaction network. A GCM is a
-compact graphical representation of a genetic circuit. The GCM
-can be saved as an SBML model. This model includes <A HREF="#GCMSPECIES">GCM
-species</A>, <A HREF="#INFLUENCES">influences</A>, <A HREF="#PROMOTERS">promoters</A>,
-<A HREF="#GCMPARAMETERS">parameters</A>, and an <A HREF="#SBMLFILE">SBML
-file</A>. GCM species, influences, and promoters can be added,
-removed, or edited. Parameters can be edited. An SBML file can be
-selected for merging.</P>
-<P>To add a new item, click on the appropriate add button. You
+
+<P>The GCM editor allows the user to create or modify a 
+<A HREF="#CIRCUIT">GCM</A>.  A GCM is a compact graphical representation 
+of a genetic circuit which can later be synthesized into an SBML model. 
+A GCM includes <A HREF="#GCMSPECIES">GCM species</A>, 
+<A HREF="#INFLUENCES">influences</A>, <A HREF="#PROMOTERS">promoters</A>,
+<A HREF="#GCMPARAMETERS">parameters</A>, and an optional
+<A HREF="#SBMLFILE">SBML file</A> name.. GCM species, influences, 
+and promoters can be added, removed, or edited. Parameters can only be edited. 
+An SBML file can also be selected to merge with the SBML generated from a GCM.
+This allows either customization of the SBML model or the addition of SBML
+constructs such as <A HREF="#INITIALS">Initial Assignments</A>, 
+<A HREF="#RULES">Rules</A>, <A HREF="#CONSTRAINTS">Constraints</A>, 
+and <A HREF="#EVENTS">Events</A>.</P>
+
+<P>To add a new item to the GCM, click on the appropriate add button. You
 will then be prompted to input information regarding the new
 item. After you have filled out the required fields, click on ok
-and the new item will be added into the GCM.</P>
-<P>To remove an item from the GCM, select that item and click the
+and the new item will be added into the GCM.
+To remove an item from the GCM, select that item and click the
 remove button. The item will then be removed from the GCM.
-However, if you try to remove species or promoter that is used in
+However, if you try to remove species or promoters that are used in
 an influence, you will first have to remove the influence in
-order to remove the species or promoter from the model.</P>
-<P>To edit an existing item, select that item from the list and
+order to remove the species or promoter from the model.
+To edit an existing item, select that item from the list and
 click the edit button. An editing window will open and you will
 be able to change the properties of that item. When you are done
 editing this item, click save to save the changes to the item. 
-</P>
-<P>To merge an existing SBML file with the GCM output, click on
+To merge an existing SBML file with the GCM output, click on
 the SBML file and select the SBML file to use. This will merge
-the contents of selected SBML with the resulting SBML from the
-GCM.</P>
-<P>Once a GCM is completed, the user can save the GCM as SBML. 
-This will create an SBML file of the GCM.</P>
+the contents of the selected SBML file with the SBML file that is 
+generated from the GCM.</P>
+
+<P>Once a GCM is completed, the user can save the GCM or save the GCM 
+using a new name.  The user can also save the GCM as SBML which creates
+an SBML file of the same name from the GCM.  Finally, the user can save
+an SBML template which creates a blank SBML file with the same species 
+as the GCM.  This is useful for creating an SBML file which will be 
+attached to the GCM, and includes rules, constraints, or events.</P>
+
+<H2><A NAME="PROMOTERS"></A>Promoters</H2>
+
+<P>Promoters are special species which represent the region of the DNA
+from which transcription is initiated.  
+When adding or editing promoters, the user must supply a unique ID.  
+If desired, the user can then modify the initial promoter count, 
+cooperativity constant (i.e., the number of binding sites for 
+transcription factors), the binding rate of RNAP (KRNAP), 
+the nominal production rate (koc), the basal production rate (kbasal),
+the activated production rate (Activated koc), and the number of transcripts 
+per mRNA (i.e., the stoichiometry of production).
+</P>
+
 <H2><A NAME="GCMSPECIES"></A>GCM Species</H2>
-<P>GCM species are the molecules produced by genes. When adding
-or editing a species, the user must provide a unique name. The
-user can also select the type to be normal, constant, or spastic.
-A normal species will generate a gene production reaction and
-degradation reaction. A constant species will not generate any
-production or degradation reaction. A spastic species will
-produce a constant production and degradation reaction.</P>
-<P>The user can also specify a initial concentration, a N-mer as
-transcription factor, an association constant, an a degradation
-parameter value. The N-mer as transcription factor specifies how
-many monomers can bind together to form a transcription factor.
+
+<P>GCM species are the molecules (usually proteins) produced by genes. 
+When adding or editing a species, the user must provide a unique ID. 
+The user can also select the type of the species to be normal, constant, 
+or unconstrained.
+A normal species will result in gene production and degradation reactions
+being produced.  A constant species will not generate any
+production or degradation reactions.  An unconstrained species will
+produce a constant production and degradation reaction.
+The user can also specify a initial amount, a N-mer as
+transcription factor parameter, an association constant, and a degradation
+rate. The N-mer as transcription factor specifies how
+many monomers bind together before this species acts as a transcription factor.
 The association constant parameter is the ratio of N-mer
 molecules to monomers.</P>
+
 <H2><A NAME="INFLUENCES"></A>Influences</H2>
+
 <P>Influences describe the relationships between the GCM species.
 When adding or editing an influence, the user must select an
 input and output species, as well as the type of influence. If
@@ -279,14 +315,14 @@ the same promoter together.
 <P>A -&gt; C, Promoter P1</P>
 <P>B -&gt; C, Promoter P2</P>
 <P>this will create two reactions, where in the presence of A and
-B, C will be repressed. This is a NAND gate. If, on the other
-hand, there are two influences:</P>
+B, C is repressed.  This would behave roughly like a NAND gate. 
+If, on the other hand, there are two influences:</P>
 <P>A -&gt; C, Promoter P1</P>
 <P>B -&gt; C, Promoter P1</P>
-<P>this will create one reaction, where in the presence of A or
-B, C will be repressed. This is a NOR gate.</P>
+<P>this creates one reaction, where in the presence of A or
+B, C is repressed.  This would behave roughly like a NOR gate.</P>
 <P>Users can also specify if the influence is a biochemical
-influence. Biochemical influence requires all input species
+influence.  A biochemical influence requires all input species
 belonging to the same promoter to be present in order to affect
 transcription. 
 </P>
@@ -298,41 +334,166 @@ complex, and the complex represses the production of C. This is a
 NAND gate. If, on the other hand, if biochemical is not selected,
 this behaves as a NOR gate.</P>
 <P>The user can also set the value for N-mer as transcription
-factor. This determines how many monomers of the input species
-must be bound together in order to affect transcription. The user
-can also set the value of the repression or activation constant
-for the influence.</P>
-<H2><A NAME="PROMOTERS"></A>Promoters</H2>
-<P>Promoters are used to group GCM species together.  For
-example, if there are two influences</P>
-<P>A -&gt; C, Promoter P1</P>
-<P>B -&gt; D, Promoter P1</P>
-<P>then this will create one promoter P1 that produces both C and
-D at the same time.  This means that in the presence of A or B, C
-and D is repressed.  On the other hand, if there are two
-influences, 
-</P>
-<P>A -&gt; C, Promoter P1</P>
-<P>B -&gt; D, Promoter P2</P>
-<P>then this will create two promoters, P1 and P2, that produce C
-and D respectively.  The presence of A or B will repress C or D,
-respectively.</P>
-<P>When adding or editing promoters, the user must supply a
-unique name.  The user can set the initial promoter count
-(Promoter count), the basal production rate (kbasal), the binding
-rate of RNAP (KRNAP), the number of transcripts per mRNA
-(Stoichiometry of production), the open complex formation rate
-(koc), the activated open complex formation rate (Activated koc),
-and the cooperativity constant (binding sites per transcription
-factors).  
-</P>
+factor.  This determines how many monomers of the input species
+must be bound together in order to affect transcription.  The user
+can also set the value of the repression or activation binding rate 
+constant for the influence.</P>
+
 <H2><A NAME="GCMPARAMETERS"></A>GCM Parameters</H2>
-<P>The GCM parameters is a list of global parameters that is used
-in each GCM species, influence, and promoter.  The parameter list
+<P>GCM parameters are a list of global parameters that are used
+when generating the SBML model for the GCM.  The parameter list
 allows the user an easy way to change all the parameter values in
 a convenient location.  If a parameter in the GCM is set to
-default, it will use the value found in the GCM parameter. 
+default, it will use the value found in the GCM parameter.  The 
+GCM parameters are listed below:
+</P><p>
+<TABLE WIDTH=900 BORDER=1 CELLPADDING=4 CELLSPACING=3 RULES=ROWSCOLS STYLE="page-break-before: always">
+<TBODY>
+<TR VALIGN=TOP>
+<TH WIDTH=100><P ALIGN=CENTER>ID</P></TH>
+<TH WIDTH=150><P ALIGN=CENTER>Default Value</P></TH>
+<TH WIDTH=175><P ALIGN=CENTER>Units</P></TH>
+<TH WIDTH=125><P ALIGN=CENTER>Structure</P></TH>
+<TH COLSPAN=2 WIDTH=750><P ALIGN=LEFT>Description</P></TH></TR>
+</TBODY>
+<TBODY>
+<TR VALIGN=TOP>
+<TD WIDTH=100><P ALIGN=CENTER>ns</P></TD>
+<TD WIDTH=150><P ALIGN=CENTER>0</P></TD>
+<TD WIDTH=175><P ALIGN=CENTER>molecule</P></TD>
+<TH WIDTH=125><P ALIGN=CENTER>species</P></TH>
+<TD COLSPAN=2 WIDTH=750><P ALIGN=LEFT>Initial species count</P></TD>
+</TR>
+</TBODY>
+<TBODY>
+<TR VALIGN=TOP>
+<TD WIDTH=100><P ALIGN=CENTER>Kb</P></TD>
+<TD WIDTH=150><P ALIGN=CENTER>0.05</P></TD>
+<TD WIDTH=175><P ALIGN=CENTER>1 / molecule</P></TD>
+<TH WIDTH=125><P ALIGN=CENTER>???</P></TH>
+<TD COLSPAN=2 WIDTH=750><P ALIGN=LEFT>Biochemical equilibrium</P></TD>
+</TR>
+</TBODY>
+<TBODY>
+<TR VALIGN=TOP>
+<TD WIDTH=100><P ALIGN=CENTER>nd</P></TD>
+<TD WIDTH=150><P ALIGN=CENTER>1</P></TD>
+<TD WIDTH=175><P ALIGN=CENTER>molecule</P></TD>
+<TH WIDTH=125><P ALIGN=CENTER>species</P></TH>
+<TD COLSPAN=2 WIDTH=750><P ALIGN=LEFT>N-mer as transcription factor</P></TD>
+</TR>
+</TBODY>
+<TBODY>
+<TR VALIGN=TOP>
+<TD WIDTH=100><P ALIGN=CENTER>Kd</P></TD>
+<TD WIDTH=150><P ALIGN=CENTER>0.05</P></TD>
+<TD WIDTH=175><P ALIGN=CENTER>1 / molecule</P></TD>
+<TH WIDTH=125><P ALIGN=CENTER>species</P></TH>
+<TD COLSPAN=2 WIDTH=750><P ALIGN=LEFT>Dimerization equilibrium</P></TD>
+</TR>
+</TBODY>
+<TBODY>
+<TR VALIGN=TOP>
+<TD WIDTH=100><P ALIGN=CENTER>kd</P></TD>
+<TD WIDTH=150><P ALIGN=CENTER>0.0075</P></TD>
+<TD WIDTH=175><P ALIGN=CENTER>1 / sec</P></TD>
+<TH WIDTH=125><P ALIGN=CENTER>species</P></TH>
+<TD COLSPAN=2 WIDTH=750><P ALIGN=LEFT>Degradation rate</P></TD>
+</TR>
+</TBODY>
+<TBODY>
+<TR VALIGN=TOP>
+<TD WIDTH=100><P ALIGN=CENTER>ng</P></TD>
+<TD WIDTH=150><P ALIGN=CENTER>2</P></TD>
+<TD WIDTH=175><P ALIGN=CENTER>molecule</P></TD>
+<TH WIDTH=125><P ALIGN=CENTER>promoter</P></TH>
+<TD COLSPAN=2 WIDTH=750><P ALIGN=LEFT>Initial promoter count</P></TD>
+</TR>
+</TBODY>
+<TBODY>
+<TR VALIGN=TOP>
+<TD WIDTH=100><P ALIGN=CENTER>nr</P></TD>
+<TD WIDTH=150><P ALIGN=CENTER>30</P></TD>
+<TD WIDTH=175><P ALIGN=CENTER>molecule</P></TD>
+<TH WIDTH=125><P ALIGN=CENTER>???</P></TH>
+<TD COLSPAN=2 WIDTH=750><P ALIGN=LEFT>Initial RNAP count</P></TD>
+</TR>
+</TBODY>
+<TBODY>
+<TR VALIGN=TOP>
+<TD WIDTH=100><P ALIGN=CENTER>np</P></TD>
+<TD WIDTH=150><P ALIGN=CENTER>10</P></TD>
+<TD WIDTH=175><P ALIGN=CENTER>molecule</P></TD>
+<TH WIDTH=125><P ALIGN=CENTER>promoter</P></TH>
+<TD COLSPAN=2 WIDTH=750><P ALIGN=LEFT>Stoichiometry of production</P></TD>
+</TR>
+</TBODY>
+<TBODY>
+<TR VALIGN=TOP>
+<TD WIDTH=100><P ALIGN=CENTER>nc</P></TD>
+<TD WIDTH=150><P ALIGN=CENTER>2</P></TD>
+<TD WIDTH=175><P ALIGN=CENTER>molecule</P></TD>
+<TH WIDTH=125><P ALIGN=CENTER>promoter</P></TH>
+<TD COLSPAN=2 WIDTH=750><P ALIGN=LEFT>Degree of cooperativity</P></TD>
+</TR>
+</TBODY>
+<TBODY>
+<TR VALIGN=TOP>
+<TD WIDTH=100><P ALIGN=CENTER>Ko</P></TD>
+<TD WIDTH=150><P ALIGN=CENTER>0.033</P></TD>
+<TD WIDTH=175><P ALIGN=CENTER>1 / molecule</P></TD>
+<TH WIDTH=125><P ALIGN=CENTER>promoter</P></TH>
+<TD COLSPAN=2 WIDTH=750><P ALIGN=LEFT>RNAP binding equilibrium</P></TD>
+</TR>
+</TBODY>
+<TBODY>
+<TR VALIGN=TOP>
+<TD WIDTH=100><P ALIGN=CENTER>ko</P></TD>
+<TD WIDTH=150><P ALIGN=CENTER>0.05</P></TD>
+<TD WIDTH=175><P ALIGN=CENTER>1 / sec</P></TD>
+<TH WIDTH=125><P ALIGN=CENTER>promoter</P></TH>
+<TD COLSPAN=2 WIDTH=750><P ALIGN=LEFT>Open complex production rate</P></TD>
+</TR>
+</TBODY>
+<TBODY>
+<TR VALIGN=TOP>
+<TD WIDTH=100><P ALIGN=CENTER>kb</P></TD>
+<TD WIDTH=150><P ALIGN=CENTER>0.0001</P></TD>
+<TD WIDTH=175><P ALIGN=CENTER>1 / sec</P></TD>
+<TH WIDTH=125><P ALIGN=CENTER>promoter</P></TH>
+<TD COLSPAN=2 WIDTH=750><P ALIGN=LEFT>Basal production rate</P></TD>
+</TR>
+</TBODY>
+<TBODY>
+<TR VALIGN=TOP>
+<TD WIDTH=100><P ALIGN=CENTER>ka</P></TD>
+<TD WIDTH=150><P ALIGN=CENTER>0.25</P></TD>
+<TD WIDTH=175><P ALIGN=CENTER>1 / sec</P></TD>
+<TH WIDTH=125><P ALIGN=CENTER>promoter</P></TH>
+<TD COLSPAN=2 WIDTH=750><P ALIGN=LEFT>Activated production rate</P></TD>
+</TR>
+</TBODY>
+<TBODY>
+<TR VALIGN=TOP>
+<TD WIDTH=100><P ALIGN=CENTER>Kr</P></TD>
+<TD WIDTH=150><P ALIGN=CENTER>0.5</P></TD>
+<TD WIDTH=175><P ALIGN=CENTER>1 / molecule^nc</P></TD>
+<TH WIDTH=125><P ALIGN=CENTER>influence</P></TH>
+<TD COLSPAN=2 WIDTH=750><P ALIGN=LEFT>Repression binding equilibrium</P></TD>
+</TR>
+</TBODY>
+<TBODY>
+<TR VALIGN=TOP>
+<TD WIDTH=100><P ALIGN=CENTER>Ka</P></TD>
+<TD WIDTH=150><P ALIGN=CENTER>0.0033</P></TD>
+<TD WIDTH=175><P ALIGN=CENTER>1 / molecule^(nc+1)</P></TD>
+<TH WIDTH=125><P ALIGN=CENTER>influence</P></TH>
+<TD COLSPAN=2 WIDTH=750><P ALIGN=LEFT>Activation binding equilibrium</P></TD>
+</TR>
+</TBODY>
+</TABLE>
 </P>
+
 <H2><A NAME="SBMLFILE"></A>SBML File</H2>
 <P>The SBML file allows the user to merge an existing SBML file
 with the generated SBML.  This allows the user to incorporate
@@ -681,7 +842,7 @@ assignment.
 <P>The analysis view is used to analyze biochemical reaction
 network models. The analysis view includes tabs for a <A HREF="#SIMOPTIONS">simulation
 tool</A>, a <A HREF="#PARAMEDIT">parameter editor</A>, and a
-<A HREF="#GRAPH">graph editor</A>. 
+<A HREF="#TSDGRAPH">graph editor</A>. 
 </P>
 <H2><A NAME="SIMOPTIONS"></A>Options</H2>
 <P>iBioSim comes with a number of simulation methods, ranging
@@ -990,7 +1151,7 @@ to their stop value.
 <P>The learn view is used to discover the genetic circuit
 connectivity from time series data. The learn view includes tabs
 for a <A HREF="#DATA">data manager</A>, a <A HREF="#LEARNTOOL">learn
-tool</A>, and a <A HREF="#GRAPH">graph editor</A>.<!-- NEED TO ADD DESCRIPTION OF DATA ENTRY TOOL -->
+tool</A>, and a <A HREF="#TSDGRAPH">graph editor</A>.<!-- NEED TO ADD DESCRIPTION OF DATA ENTRY TOOL -->
 </P>
 <H2><A NAME="DATA"></A>Data Manager</H2>
 <P>The data manager is used to both enter time series
@@ -1092,7 +1253,7 @@ predecessor data point pairs, or both are used.</P>
 </P>
 <P>When selected, the basic FindBaseProb function is used.</P>
 </UL>
-<H1><A NAME="GRAPH"></A>Graph Editors</H1>
+<H1><A NAME="TSDGRAPH"></A>TSD Graph Editor</H1>
 <P>The graph editor appears as a tab in both analysis or learn
 views. Graphs can also be created at the top-level of the project
 to allow you to integrate results from several analysis or learn
@@ -1200,6 +1361,7 @@ specified in the file filter (default is pdf). For image (i.e.,
 not data) file types, you will be prompted to give a desired
 pixel height and width for the file before the file is exported. 
 </P>
+<H1><A NAME="PROBGRAPH"></A>Probability Graph Editor</H1>
 <H1><A NAME="CIRCUIT"></A>Genetic Circuit Model Format</H1>
 <P>Our genetic circuit model (gcm) format specifies a genetic
 circuit using the same format as the <A HREF="http://www.graphviz.org/">GraphViz</A>
