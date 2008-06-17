@@ -478,8 +478,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		JLabel compartmentsLabel = new JLabel("List of Compartments:");
 		compartments = new JList();
 		JScrollPane scroll = new JScrollPane();
-		scroll.setMinimumSize(new Dimension(260, 220));
-		scroll.setPreferredSize(new Dimension(276, 152));
+		scroll.setMinimumSize(new Dimension(260, 130));
+		scroll.setPreferredSize(new Dimension(276, 130));
 		scroll.setViewportView(compartments);
 		ListOf listOfCompartments = model.getListOfCompartments();
 		comps = new String[(int) model.getNumCompartments()];
@@ -543,8 +543,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		species = new JList();
 		species.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		JScrollPane scroll1 = new JScrollPane();
-		scroll1.setMinimumSize(new Dimension(260, 220));
-		scroll1.setPreferredSize(new Dimension(276, 152));
+		scroll1.setMinimumSize(new Dimension(260, 130));
+		scroll1.setPreferredSize(new Dimension(276, 130));
 		scroll1.setViewportView(species);
 		ListOf listOfSpecies = model.getListOfSpecies();
 		specs = new String[(int) model.getNumSpecies()];
@@ -615,22 +615,22 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		addReacs.add(addReac);
 		addReacs.add(removeReac);
 		addReacs.add(editReac);
-		addReacs.add(copyReac);
+		//addReacs.add(copyReac);
 		addReac.addActionListener(this);
 		removeReac.addActionListener(this);
 		editReac.addActionListener(this);
-		copyReac.addActionListener(this);
+		//copyReac.addActionListener(this);
 		if (paramsOnly) {
 			addReac.setEnabled(false);
 			removeReac.setEnabled(false);
-			copyReac.setEnabled(false);
+			//copyReac.setEnabled(false);
 		}
 		JLabel reactionsLabel = new JLabel("List of Reactions:");
 		reactions = new JList();
 		reactions.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		JScrollPane scroll2 = new JScrollPane();
-		scroll2.setMinimumSize(new Dimension(400, 220));
-		scroll2.setPreferredSize(new Dimension(436, 152));
+		scroll2.setMinimumSize(new Dimension(400, 130));
+		scroll2.setPreferredSize(new Dimension(436, 130));
 		scroll2.setViewportView(reactions);
 		ListOf listOfReactions = model.getListOfReactions();
 		reacts = new String[(int) model.getNumReactions()];
@@ -689,8 +689,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		parameters = new JList();
 		parameters.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		JScrollPane scroll3 = new JScrollPane();
-		scroll3.setMinimumSize(new Dimension(260, 220));
-		scroll3.setPreferredSize(new Dimension(276, 152));
+		scroll3.setMinimumSize(new Dimension(260, 130));
+		scroll3.setPreferredSize(new Dimension(276, 130));
 		scroll3.setViewportView(parameters);
 		ListOf listOfParameters = model.getListOfParameters();
 		params = new String[(int) model.getNumParameters()];
