@@ -657,6 +657,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		}
 		String simDirString = outDir.split(separator)[outDir.split(separator).length - 1];
 		simDir = new IconNode(simDirString);
+		simDir.setIconName("");
 		String[] files = new File(outDir).list();
 		for (int i = 1; i < files.length; i++) {
 			String index = files[i];
@@ -686,6 +687,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							n.setIcon(TextIcons.getIcon("g"));
 							n.setIconName("" + (char) 10003);
 							simDir.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
+							simDir.setIconName("" + (char) 10003);
 						}
 					}
 				}
@@ -721,6 +723,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				if (addIt) {
 					directories.add(file);
 					IconNode d = new IconNode(file);
+					d.setIconName("");
 					boolean add2 = false;
 					for (String f : files3) {
 						if (f.contains(printer_id.substring(0, printer_id.length() - 8))) {
@@ -737,6 +740,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 										n.setIcon(TextIcons.getIcon("g"));
 										n.setIconName("" + (char) 10003);
 										d.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
+										d.setIconName("" + (char) 10003);
+										simDir.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
+										simDir.setIconName("" + (char) 10003);
 									}
 								}
 							}
@@ -763,6 +769,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							if (addIt2) {
 								directories.add(file + separator + f);
 								IconNode d2 = new IconNode(f);
+								d2.setIconName("");
 								boolean add3 = false;
 								for (String f2 : files2) {
 									if (f2.contains(printer_id.substring(0, printer_id.length() - 8))) {
@@ -779,6 +786,11 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 													n.setIcon(TextIcons.getIcon("g"));
 													n.setIconName("" + (char) 10003);
 													d2.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
+													d2.setIconName("" + (char) 10003);
+													d.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
+													d.setIconName("" + (char) 10003);
+													simDir.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
+													simDir.setIconName("" + (char) 10003);
 												}
 											}
 										}
@@ -794,6 +806,11 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 											n.setIcon(TextIcons.getIcon("g"));
 											n.setIconName("" + (char) 10003);
 											d2.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
+											d2.setIconName("" + (char) 10003);
+											d.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
+											d.setIconName("" + (char) 10003);
+											simDir.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
+											simDir.setIconName("" + (char) 10003);
 										}
 									}
 									n = new IconNode("Variance");
@@ -805,6 +822,11 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 											n.setIcon(TextIcons.getIcon("g"));
 											n.setIconName("" + (char) 10003);
 											d2.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
+											d2.setIconName("" + (char) 10003);
+											d.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
+											d.setIconName("" + (char) 10003);
+											simDir.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
+											simDir.setIconName("" + (char) 10003);
 										}
 									}
 									n = new IconNode("Standard Deviation");
@@ -816,6 +838,11 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 											n.setIcon(TextIcons.getIcon("g"));
 											n.setIconName("" + (char) 10003);
 											d2.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
+											d2.setIconName("" + (char) 10003);
+											d.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
+											d.setIconName("" + (char) 10003);
+											simDir.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
+											simDir.setIconName("" + (char) 10003);
 										}
 									}
 								}
@@ -846,6 +873,11 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 												n.setIcon(TextIcons.getIcon("g"));
 												n.setIconName("" + (char) 10003);
 												d2.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
+												d2.setIconName("" + (char) 10003);
+												d.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
+												d.setIconName("" + (char) 10003);
+												simDir.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
+												simDir.setIconName("" + (char) 10003);
 											}
 										}
 									}
@@ -863,6 +895,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								n.setIcon(TextIcons.getIcon("g"));
 								n.setIconName("" + (char) 10003);
 								d.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
+								d.setIconName("" + (char) 10003);
+								simDir.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
+								simDir.setIconName("" + (char) 10003);
 							}
 						}
 						n = new IconNode("Variance");
@@ -873,6 +908,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								n.setIcon(TextIcons.getIcon("g"));
 								n.setIconName("" + (char) 10003);
 								d.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
+								d.setIconName("" + (char) 10003);
+								simDir.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
+								simDir.setIconName("" + (char) 10003);
 							}
 						}
 						n = new IconNode("Standard Deviation");
@@ -884,6 +922,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								n.setIcon(TextIcons.getIcon("g"));
 								n.setIconName("" + (char) 10003);
 								d.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
+								d.setIconName("" + (char) 10003);
+								simDir.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
+								simDir.setIconName("" + (char) 10003);
 							}
 						}
 					}
@@ -913,6 +954,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 									n.setIcon(TextIcons.getIcon("g"));
 									n.setIconName("" + (char) 10003);
 									d.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
+									d.setIconName("" + (char) 10003);
+									simDir.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
+									simDir.setIconName("" + (char) 10003);
 								}
 							}
 						}
@@ -930,6 +974,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					n.setIcon(TextIcons.getIcon("g"));
 					n.setIconName("" + (char) 10003);
 					simDir.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
+					simDir.setIconName("" + (char) 10003);
 				}
 			}
 			n = new IconNode("Variance");
@@ -940,6 +985,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					n.setIcon(TextIcons.getIcon("g"));
 					n.setIconName("" + (char) 10003);
 					simDir.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
+					simDir.setIconName("" + (char) 10003);
 				}
 			}
 			n = new IconNode("Standard Deviation");
@@ -950,6 +996,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					n.setIcon(TextIcons.getIcon("g"));
 					n.setIconName("" + (char) 10003);
 					simDir.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
+					simDir.setIconName("" + (char) 10003);
 				}
 			}
 		}
@@ -978,6 +1025,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						n.setIcon(TextIcons.getIcon("g"));
 						n.setIconName("" + (char) 10003);
 						simDir.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
+						simDir.setIconName("" + (char) 10003);
 					}
 				}
 			}
@@ -1585,6 +1633,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						}
 						else {
 							n.setIcon(MetalIconFactory.getTreeFolderIcon());
+							n.setIconName("");
 							n = (IconNode) n.getChildAt(0);
 						}
 					}
@@ -2118,7 +2167,17 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					if (((JCheckBox) e.getSource()).isSelected()) {
 						node.setIcon(TextIcons.getIcon("g"));
 						node.setIconName("" + (char) 10003);
-						((IconNode) node.getParent()).setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
+						IconNode n = ((IconNode) node.getParent());
+						while (n != null) {
+							n.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
+							n.setIconName("" + (char) 10003);
+							if (n.getParent() == null) {
+								n = null;
+							}
+							else {
+								n = ((IconNode) n.getParent());
+							}
+						}
 						tree.revalidate();
 						tree.repaint();
 						String s = series.get(i).getText();
@@ -2456,13 +2515,23 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							node.setIconName("");
 							boolean check2 = false;
 							IconNode parent = ((IconNode) node.getParent());
-							for (int j = 0; j < parent.getChildCount(); j++) {
-								if (((IconNode) parent.getChildAt(j)).getIconName().equals("" + (char) 10003)) {
-									check2 = true;
+							while (parent != null) {
+								for (int j = 0; j < parent.getChildCount(); j++) {
+									if (((IconNode) parent.getChildAt(j)).getIconName().equals("" + (char) 10003)) {
+										check2 = true;
+									}
 								}
-							}
-							if (!check2) {
-								parent.setIcon(MetalIconFactory.getTreeFolderIcon());
+								if (!check2) {
+									parent.setIcon(MetalIconFactory.getTreeFolderIcon());
+									parent.setIconName("");
+								}
+								check2 = false;
+								if (parent.getParent() == null) {
+									parent = null;
+								}
+								else {
+									parent = ((IconNode) parent.getParent());
+								}
 							}
 							tree.revalidate();
 							tree.repaint();
@@ -4185,6 +4254,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		final JTextField y = new JTextField(chart.getCategoryPlot().getRangeAxis().getLabel(), 5);
 		String simDirString = outDir.split(separator)[outDir.split(separator).length - 1];
 		simDir = new IconNode(simDirString);
+		simDir.setIconName("");
 		String[] files = new File(outDir).list();
 		for (int i = 1; i < files.length; i++) {
 			String index = files[i];
@@ -4214,6 +4284,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				if (addIt) {
 					directories.add(file);
 					IconNode d = new IconNode(file);
+					d.setIconName("");
 					String[] files2 = new File(outDir + separator + file).list();
 					for (int i = 1; i < files2.length; i++) {
 						String index = files2[i];
@@ -4240,6 +4311,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							if (addIt2) {
 								directories.add(file + separator + f);
 								IconNode d2 = new IconNode(f);
+								d2.setIconName("");
 								for (String f2 : new File(outDir + separator + file + separator + f).list()) {
 									if (f2.equals("sim-rep.txt")) {
 										IconNode n = new IconNode(f2.substring(0, f2.length() - 4));
@@ -4250,6 +4322,11 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 												n.setIcon(TextIcons.getIcon("g"));
 												n.setIconName("" + (char) 10003);
 												d2.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
+												d2.setIconName("" + (char) 10003);
+												d.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
+												d.setIconName("" + (char) 10003);
+												simDir.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
+												simDir.setIconName("" + (char) 10003);
 											}
 										}
 									}
@@ -4267,6 +4344,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								n.setIcon(TextIcons.getIcon("g"));
 								n.setIconName("" + (char) 10003);
 								d.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
+								d.setIconName("" + (char) 10003);
+								simDir.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
+								simDir.setIconName("" + (char) 10003);
 							}
 						}
 					}
@@ -4283,6 +4363,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					n.setIcon(TextIcons.getIcon("g"));
 					n.setIconName("" + (char) 10003);
 					simDir.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
+					simDir.setIconName("" + (char) 10003);
 				}
 			}
 		}
@@ -4535,6 +4616,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						}
 						else {
 							n.setIcon(MetalIconFactory.getTreeFolderIcon());
+							n.setIconName("");
 							n = (IconNode) n.getChildAt(0);
 						}
 					}
@@ -4730,7 +4812,17 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					if (((JCheckBox) e.getSource()).isSelected()) {
 						node.setIcon(TextIcons.getIcon("g"));
 						node.setIconName("" + (char) 10003);
-						((IconNode) node.getParent()).setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
+						IconNode n = ((IconNode) node.getParent());
+						while (n != null) {
+							n.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
+							n.setIconName("" + (char) 10003);
+							if (n.getParent() == null) {
+								n = null;
+							}
+							else {
+								n = ((IconNode) n.getParent());
+							}
+						}
 						tree.revalidate();
 						tree.repaint();
 						String s = series.get(i).getText();
@@ -4990,13 +5082,23 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							node.setIconName("");
 							boolean check2 = false;
 							IconNode parent = ((IconNode) node.getParent());
-							for (int j = 0; j < parent.getChildCount(); j++) {
-								if (((IconNode) parent.getChildAt(j)).getIconName().equals("" + (char) 10003)) {
-									check2 = true;
+							while (parent != null) {
+								for (int j = 0; j < parent.getChildCount(); j++) {
+									if (((IconNode) parent.getChildAt(j)).getIconName().equals("" + (char) 10003)) {
+										check2 = true;
+									}
 								}
-							}
-							if (!check2) {
-								parent.setIcon(MetalIconFactory.getTreeFolderIcon());
+								if (!check2) {
+									parent.setIcon(MetalIconFactory.getTreeFolderIcon());
+									parent.setIconName("");
+								}
+								check2 = false;
+								if (parent.getParent() == null) {
+									parent = null;
+								}
+								else {
+									parent = ((IconNode) parent.getParent());
+								}
 							}
 							tree.revalidate();
 							tree.repaint();
