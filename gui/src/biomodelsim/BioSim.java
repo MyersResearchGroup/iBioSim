@@ -1799,10 +1799,19 @@ public class BioSim implements MouseListener, ActionListener {
 				}
 			}
 			if (!done) {
-				addTab(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],
-						new Graph(null, "amount", "title", "tsd.printer", root, "time", this, tree.getFile(),
-								log, tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],
-								true), "TSD Graph");
+				if (tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]
+						.contains(".grf")) {
+					addTab(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],
+							new Graph(null, "amount", "title", "tsd.printer", root, "time", this, tree.getFile(),
+									log, tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],
+									true), "TSD Graph");
+				}
+				else {
+					addTab(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],
+							new Graph(null, "amount", "title", "tsd.printer", root, "time", this, tree.getFile(),
+									log, tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],
+									false), "Probability Graph");
+				}
 			}
 		}
 	}
@@ -1954,7 +1963,7 @@ public class BioSim implements MouseListener, ActionListener {
 				return 1;
 			}
 		}
-		else if (tab.getComponentAt(index).getName().contains("TSD Graph")) {
+		else if (tab.getComponentAt(index).getName().contains("Graph")) {
 			if (((Graph) tab.getComponentAt(index)).hasChanged()) {
 				Object[] options = { "Yes", "No", "Cancel" };
 				int value = JOptionPane.showOptionDialog(frame, "Do you want to save changes to "
@@ -2212,6 +2221,25 @@ public class BioSim implements MouseListener, ActionListener {
 				popup.add(rename);
 				popup.add(delete);
 			}
+			else if (tree.getFile().length() > 3
+					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".prb")) {
+				JMenuItem edit = new JMenuItem("View/Edit");
+				edit.addActionListener(this);
+				edit.setActionCommand("openGraph");
+				JMenuItem delete = new JMenuItem("Delete");
+				delete.addActionListener(this);
+				delete.setActionCommand("delete");
+				JMenuItem copy = new JMenuItem("Copy");
+				copy.addActionListener(this);
+				copy.setActionCommand("copy");
+				JMenuItem rename = new JMenuItem("Rename");
+				rename.addActionListener(this);
+				rename.setActionCommand("rename");
+				popup.add(edit);
+				popup.add(copy);
+				popup.add(rename);
+				popup.add(delete);
+			}
 			else if (new File(tree.getFile()).isDirectory() && !tree.getFile().equals(root)) {
 				boolean sim = false;
 				for (String s : new File(tree.getFile()).list()) {
@@ -2319,6 +2347,23 @@ public class BioSim implements MouseListener, ActionListener {
 								new Graph(null, "amount", "title", "tsd.printer", root, "time", this, tree
 										.getFile(), log, tree.getFile().split(separator)[tree.getFile()
 										.split(separator).length - 1], true), "TSD Graph");
+					}
+				}
+				else if (tree.getFile().length() >= 4
+						&& tree.getFile().substring(tree.getFile().length() - 4).equals(".prb")) {
+					boolean done = false;
+					for (int i = 0; i < tab.getTabCount(); i++) {
+						if (tab.getTitleAt(i).equals(
+								tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
+							tab.setSelectedIndex(i);
+							done = true;
+						}
+					}
+					if (!done) {
+						addTab(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],
+								new Graph(null, "amount", "title", "tsd.printer", root, "time", this, tree
+										.getFile(), log, tree.getFile().split(separator)[tree.getFile()
+										.split(separator).length - 1], false), "Probability Graph");
 					}
 				}
 				else if (new File(tree.getFile()).isDirectory() && !tree.getFile().equals(root)) {

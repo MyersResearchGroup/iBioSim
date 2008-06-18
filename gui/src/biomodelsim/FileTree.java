@@ -40,6 +40,9 @@ public class FileTree extends JPanel implements MouseListener {
 	public static final ImageIcon ICON_GRAPH = new ImageIcon(System.getenv("BIOSIM") + File.separator
 			+ "gui" + File.separator + "icons" + File.separator + "graph.jpg");
 
+	public static final ImageIcon ICON_PROBGRAPH = new ImageIcon(System.getenv("BIOSIM")
+			+ File.separator + "gui" + File.separator + "icons" + File.separator + "probability.jpg");
+
 	public static final ImageIcon ICON_LEARN = new ImageIcon(System.getenv("BIOSIM") + File.separator
 			+ "gui" + File.separator + "icons" + File.separator + "learn.jpg");
 
@@ -166,6 +169,12 @@ public class FileTree extends JPanel implements MouseListener {
 								.equals(".grf")) {
 					curDir.add(new DefaultMutableTreeNode(new IconData(ICON_GRAPH, null, files.get(fnum))));
 				}
+				else if (files.get(fnum).toString().length() > 3
+						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4)
+								.equals(".prb")) {
+					curDir
+							.add(new DefaultMutableTreeNode(new IconData(ICON_PROBGRAPH, null, files.get(fnum))));
+				}
 			}
 			else if (!(curDir.getParent().toString().equals(root.toString()))) {
 				if (files.get(fnum).toString().length() > 4
@@ -185,6 +194,12 @@ public class FileTree extends JPanel implements MouseListener {
 						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4)
 								.equals(".grf")) {
 					curDir.add(new DefaultMutableTreeNode(new IconData(ICON_GRAPH, null, files.get(fnum))));
+				}
+				else if (files.get(fnum).toString().length() > 3
+						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4)
+								.equals(".prb")) {
+					curDir
+							.add(new DefaultMutableTreeNode(new IconData(ICON_PROBGRAPH, null, files.get(fnum))));
 				}
 			}
 		}
@@ -357,6 +372,12 @@ public class FileTree extends JPanel implements MouseListener {
 						current.insert(new DefaultMutableTreeNode(new IconData(ICON_GRAPH, null, files
 								.get(fnum))), insert);
 					}
+					else if (files.get(fnum).toString().length() > 3
+							&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4)
+									.equals(".prb")) {
+						current.insert(new DefaultMutableTreeNode(new IconData(ICON_PROBGRAPH, null, files
+								.get(fnum))), insert);
+					}
 				}
 				else if (!(parent.toString().equals(root.toString()))) {
 					int insert = 0;
@@ -391,6 +412,12 @@ public class FileTree extends JPanel implements MouseListener {
 							&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4)
 									.equals(".grf")) {
 						current.insert(new DefaultMutableTreeNode(new IconData(ICON_GRAPH, null, files
+								.get(fnum))), insert);
+					}
+					else if (files.get(fnum).toString().length() > 3
+							&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4)
+									.equals(".prb")) {
+						current.insert(new DefaultMutableTreeNode(new IconData(ICON_PROBGRAPH, null, files
 								.get(fnum))), insert);
 					}
 				}
