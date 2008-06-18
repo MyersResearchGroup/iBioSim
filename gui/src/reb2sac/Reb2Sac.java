@@ -5,6 +5,7 @@ import java.util.*;
 import java.util.regex.Pattern;
 import java.awt.*;
 import java.awt.event.*;
+
 import javax.swing.*;
 
 import org.sbml.libsbml.*;
@@ -171,6 +172,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 
 	private Pattern stemPat = Pattern.compile("([a-zA-Z]|[0-9]|_)*");
 
+	private JPanel propertiesPanel, advanced;
+
 	/**
 	 * This is the constructor for the GUI. It initializes all the input fields,
 	 * puts them on panels, adds the panels to the frame, and then displays the
@@ -301,7 +304,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 
 		// Creates some abstraction options
 		JPanel advancedGrid = new JPanel(new GridLayout(8, 2));
-		JPanel advanced = new JPanel(new GridLayout(2, 1));
+		advanced = new JPanel(new GridLayout(2, 1));
 		JPanel rapidSpace1 = new JPanel();
 		JPanel rapidSpace2 = new JPanel();
 		JPanel rapidSpace3 = new JPanel();
@@ -737,7 +740,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		}
 
 		// Creates tab for adding properties
-		JPanel propertiesPanel = new JPanel(new BorderLayout());
+		propertiesPanel = new JPanel(new BorderLayout());
 		JPanel propertiesPanel1 = new JPanel(new BorderLayout());
 		JPanel propertiesPanel2 = new JPanel(new BorderLayout());
 		JPanel propertiesInput = new JPanel();
@@ -778,17 +781,19 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		propertiesPanel.add(propertiesPanel2, "South");
 
 		// Creates the tabs and adds them to the main panel
-		JTabbedPane tab = new JTabbedPane();
-		tab.addTab("Options", mainTabbedPanel);
+		// JTabbedPane tab = new JTabbedPane();
+		// tab.addTab("Simulation Options", mainTabbedPanel);
 		// tab.addTab("Interesting Species", speciesHolder);
-		tab.addTab("User Defined Data", ssaPanel);
-		tab.addTab("Abstraction Options", advanced);
+		// tab.addTab("User Defined Data", ssaPanel);
+		// tab.addTab("Abstraction Options", advanced);
 		// tab.addTab("Termination Conditions", mainTermCond);
-		tab.addTab("Termination Conditions", sadTermCondPanel);
-		tab.addTab("Advanced Options", propertiesPanel);
+		// tab.addTab("Termination Conditions", sadTermCondPanel);
+		// tab.addTab("Advanced Options", propertiesPanel);
 		this.setLayout(new BorderLayout());
-		this.add(tab, "Center");
-		this.add(runHolder, "South");
+		this.add(mainTabbedPanel, "Center");
+		JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, runHolder, null);
+		splitPane.setDividerSize(0);
+		this.add(splitPane, "South");
 		SBMLReader reader = new SBMLReader();
 		SBMLDocument document = reader.readSBML(sbmlFile);
 		Model model = document.getModel();
@@ -3429,5 +3434,57 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 	}
 
 	public void run() {
+	}
+
+	public JPanel getAdvanced() {
+		JPanel constructPanel = new JPanel(new BorderLayout());
+		constructPanel.add(advanced, "Center");
+		JButton runButton = new JButton("Save and Run");
+		JButton saveButton = new JButton("Save Parameters");
+		JPanel runHolder = new JPanel();
+		runHolder.add(runButton);
+		runButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				run.doClick();
+			}
+		});
+		runButton.setMnemonic(KeyEvent.VK_R);
+		runHolder.add(saveButton);
+		saveButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				save.doClick();
+			}
+		});
+		saveButton.setMnemonic(KeyEvent.VK_S);
+		JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, runHolder, null);
+		splitPane.setDividerSize(0);
+		constructPanel.add(splitPane, "South");
+		return constructPanel;
+	}
+
+	public JPanel getProperties() {
+		JPanel constructPanel = new JPanel(new BorderLayout());
+		constructPanel.add(propertiesPanel, "Center");
+		JButton runButton = new JButton("Save and Run");
+		JButton saveButton = new JButton("Save Parameters");
+		JPanel runHolder = new JPanel();
+		runHolder.add(runButton);
+		runButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				run.doClick();
+			}
+		});
+		runButton.setMnemonic(KeyEvent.VK_R);
+		runHolder.add(saveButton);
+		saveButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				save.doClick();
+			}
+		});
+		saveButton.setMnemonic(KeyEvent.VK_S);
+		JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, runHolder, null);
+		splitPane.setDividerSize(0);
+		constructPanel.add(splitPane, "South");
+		return constructPanel;
 	}
 }
