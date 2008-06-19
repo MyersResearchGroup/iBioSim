@@ -50,8 +50,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.JTabbedPane;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
@@ -194,7 +194,7 @@ public class BioSim implements MouseListener, ActionListener {
 		newProj = new JMenuItem("Project");
 		newCircuit = new JMenuItem("Genetic Circuit Model");
 		newModel = new JMenuItem("SBML Model");
-		graph = new JMenuItem("TSD Graph");
+		graph = new JMenuItem("Graph");
 		probGraph = new JMenuItem("Probability Graph");
 		importSbml = new JMenuItem("SBML Model");
 		importDot = new JMenuItem("Genetic Circuit Model");
@@ -1230,8 +1230,8 @@ public class BioSim implements MouseListener, ActionListener {
 		// if the Graph data menu item is clicked
 		else if (e.getSource() == graph) {
 			if (root != null) {
-				String graphName = JOptionPane.showInputDialog(frame, "Enter A Name For The TSD Graph:",
-						"TSD Graph Name", JOptionPane.PLAIN_MESSAGE);
+				String graphName = JOptionPane.showInputDialog(frame, "Enter A Name For The Graph:",
+						"Graph Name", JOptionPane.PLAIN_MESSAGE);
 				if (graphName != null && !graphName.trim().equals("")) {
 					graphName = graphName.trim();
 					if (graphName.length() > 3) {
@@ -1270,7 +1270,7 @@ public class BioSim implements MouseListener, ActionListener {
 					Graph g = new Graph(null, "amount",
 							graphName.trim().substring(0, graphName.length() - 4), "tsd.printer", root, "time",
 							this, null, log, graphName.trim(), true);
-					addTab(graphName.trim(), g, "TSD Graph");
+					addTab(graphName.trim(), g, "Graph");
 					g.save();
 					refreshTree();
 				}
@@ -1406,8 +1406,8 @@ public class BioSim implements MouseListener, ActionListener {
 						font = font.deriveFont(Font.BOLD, 42.0f);
 						noData1.setFont(font);
 						noData1.setHorizontalAlignment(SwingConstants.CENTER);
-						lrnTab.addTab("TSD Graph", noData1);
-						lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("TSD Graph");
+						lrnTab.addTab("Graph", noData1);
+						lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Graph");
 						addTab(lrnName, lrnTab, null);
 					}
 					catch (Exception e1) {
@@ -1769,7 +1769,7 @@ public class BioSim implements MouseListener, ActionListener {
 													.setSim(rename);
 										}
 										else if (((JTabbedPane) tab.getComponentAt(i)).getComponent(j).getName()
-												.contains("TSD Graph")) {
+												.contains("Graph")) {
 											if (((JTabbedPane) tab.getComponentAt(i)).getComponent(j) instanceof Graph) {
 												Graph g = ((Graph) ((JTabbedPane) tab.getComponentAt(i)).getComponent(j));
 												g.setDirectory(root + separator + rename);
@@ -1799,19 +1799,10 @@ public class BioSim implements MouseListener, ActionListener {
 				}
 			}
 			if (!done) {
-				if (tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]
-						.contains(".grf")) {
-					addTab(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],
-							new Graph(null, "amount", "title", "tsd.printer", root, "time", this, tree.getFile(),
-									log, tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],
-									true), "TSD Graph");
-				}
-				else {
-					addTab(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],
-							new Graph(null, "amount", "title", "tsd.printer", root, "time", this, tree.getFile(),
-									log, tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],
-									false), "Probability Graph");
-				}
+				addTab(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],
+						new Graph(null, "amount", "title", "tsd.printer", root, "time", this, tree.getFile(),
+								log, tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],
+								true), "Graph");
 			}
 		}
 	}
@@ -1851,15 +1842,14 @@ public class BioSim implements MouseListener, ActionListener {
 	 */
 	public void addRecentProject(String projDir) {
 		// boolean newOne = true;
-		for (int i = 0; i < numberRecentProj - 1; i++) {
+		for (int i = 0; i < numberRecentProj; i++) {
 			if (recentProjectPaths[i].equals(projDir)) {
-				for (int j = i; j < numberRecentProj - 1; j++) {
-					String next = recentProjectPaths[j + 1];
-					recentProjects[j].setText(next.split(separator)[next.split(separator).length - 1]);
-					file.add(recentProjects[j]);
-					recentProjectPaths[j] = next;
+				for (int j = 0; j < i; j++) {
+					String next = recentProjectPaths[j];
+					recentProjects[j+1].setText(next.split(separator)[next.split(separator).length - 1]);
 				}
-				break;
+				recentProjects[0].setText(projDir.split(separator)[projDir.split(separator).length - 1]);
+				return;
 			}
 		}
 		if (numberRecentProj < 5) {
@@ -2041,7 +2031,7 @@ public class BioSim implements MouseListener, ActionListener {
 					}
 				}
 				else if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i).getName().contains(
-						"TSD Graph")) {
+						"Graph")) {
 					if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof Graph) {
 						if (((Graph) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).hasChanged()) {
 							Object[] options = { "Yes", "No", "Cancel" };
@@ -2124,7 +2114,7 @@ public class BioSim implements MouseListener, ActionListener {
 	}
 
 	public void mousePressed(MouseEvent e) {
-		if (e.isPopupTrigger()) {
+		if (e.getButton() == MouseEvent.BUTTON3 && e.isPopupTrigger()) {
 			popup.removeAll();
 			if (tree.getFile().length() > 4
 					&& tree.getFile().substring(tree.getFile().length() - 5).equals(".sbml")
@@ -2204,25 +2194,6 @@ public class BioSim implements MouseListener, ActionListener {
 			}
 			else if (tree.getFile().length() > 3
 					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".grf")) {
-				JMenuItem edit = new JMenuItem("View/Edit");
-				edit.addActionListener(this);
-				edit.setActionCommand("openGraph");
-				JMenuItem delete = new JMenuItem("Delete");
-				delete.addActionListener(this);
-				delete.setActionCommand("delete");
-				JMenuItem copy = new JMenuItem("Copy");
-				copy.addActionListener(this);
-				copy.setActionCommand("copy");
-				JMenuItem rename = new JMenuItem("Rename");
-				rename.addActionListener(this);
-				rename.setActionCommand("rename");
-				popup.add(edit);
-				popup.add(copy);
-				popup.add(rename);
-				popup.add(delete);
-			}
-			else if (tree.getFile().length() > 3
-					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".prb")) {
 				JMenuItem edit = new JMenuItem("View/Edit");
 				edit.addActionListener(this);
 				edit.setActionCommand("openGraph");
@@ -2346,24 +2317,7 @@ public class BioSim implements MouseListener, ActionListener {
 						addTab(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],
 								new Graph(null, "amount", "title", "tsd.printer", root, "time", this, tree
 										.getFile(), log, tree.getFile().split(separator)[tree.getFile()
-										.split(separator).length - 1], true), "TSD Graph");
-					}
-				}
-				else if (tree.getFile().length() >= 4
-						&& tree.getFile().substring(tree.getFile().length() - 4).equals(".prb")) {
-					boolean done = false;
-					for (int i = 0; i < tab.getTabCount(); i++) {
-						if (tab.getTitleAt(i).equals(
-								tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
-							tab.setSelectedIndex(i);
-							done = true;
-						}
-					}
-					if (!done) {
-						addTab(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],
-								new Graph(null, "amount", "title", "tsd.printer", root, "time", this, tree
-										.getFile(), log, tree.getFile().split(separator)[tree.getFile()
-										.split(separator).length - 1], false), "Probability Graph");
+										.split(separator).length - 1], true), "Graph");
 					}
 				}
 				else if (new File(tree.getFile()).isDirectory() && !tree.getFile().equals(root)) {
@@ -2385,7 +2339,7 @@ public class BioSim implements MouseListener, ActionListener {
 	}
 
 	public void mouseReleased(MouseEvent e) {
-		if (e.isPopupTrigger()) {
+		if (e.getButton() == MouseEvent.BUTTON3 && e.isPopupTrigger()) {
 			popup.removeAll();
 			if (tree.getFile().length() > 4
 					&& tree.getFile().substring(tree.getFile().length() - 5).equals(".sbml")
@@ -2579,12 +2533,8 @@ public class BioSim implements MouseListener, ActionListener {
 				JTabbedPane simTab = new JTabbedPane();
 				Reb2Sac reb2sac = new Reb2Sac(sbmlFile, sbmlFile, root, this, simName.trim(), log, simTab,
 						null);
-				simTab.addTab("Simulation Options", reb2sac);
+				simTab.addTab("Simulation", reb2sac);
 				simTab.getComponentAt(simTab.getComponents().length - 1).setName("Simulate");
-				simTab.addTab("Abstraction Options", reb2sac.getAdvanced());
-				simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
-				simTab.addTab("Advanced Options", reb2sac.getProperties());
-				simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
 				SBML_Editor sbml = new SBML_Editor(sbmlFile, reb2sac, log, this, root + separator
 						+ simName.trim(), root + separator + simName.trim() + separator + simName.trim()
 						+ ".pms");
@@ -2596,8 +2546,8 @@ public class BioSim implements MouseListener, ActionListener {
 				font = font.deriveFont(Font.BOLD, 42.0f);
 				noData.setFont(font);
 				noData.setHorizontalAlignment(SwingConstants.CENTER);
-				simTab.addTab("TSD Graph", noData);
-				simTab.getComponentAt(simTab.getComponents().length - 1).setName("TSD Graph");
+				simTab.addTab("Graph", noData);
+				simTab.getComponentAt(simTab.getComponents().length - 1).setName("Graph");
 				JLabel noData1 = new JLabel("No data available");
 				Font font1 = noData1.getFont();
 				font1 = font1.deriveFont(Font.BOLD, 42.0f);
@@ -2680,12 +2630,8 @@ public class BioSim implements MouseListener, ActionListener {
 				JTabbedPane simTab = new JTabbedPane();
 				Reb2Sac reb2sac = new Reb2Sac(sbmlFile, sbmlFileProp, root, this, simName.trim(), log,
 						simTab, null);
-				simTab.addTab("Simulation Options", reb2sac);
+				simTab.addTab("Simulation", reb2sac);
 				simTab.getComponentAt(simTab.getComponents().length - 1).setName("Simulate");
-				simTab.addTab("Abstraction Options", reb2sac.getAdvanced());
-				simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
-				simTab.addTab("Advanced Options", reb2sac.getProperties());
-				simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
 				SBML_Editor sbml = new SBML_Editor(sbmlFile, reb2sac, log, this, root + separator
 						+ simName.trim(), root + separator + simName.trim() + separator + simName.trim()
 						+ ".pms");
@@ -2697,8 +2643,8 @@ public class BioSim implements MouseListener, ActionListener {
 				font = font.deriveFont(Font.BOLD, 42.0f);
 				noData.setFont(font);
 				noData.setHorizontalAlignment(SwingConstants.CENTER);
-				simTab.addTab("TSD Graph", noData);
-				simTab.getComponentAt(simTab.getComponents().length - 1).setName("TSD Graph");
+				simTab.addTab("Graph", noData);
+				simTab.getComponentAt(simTab.getComponents().length - 1).setName("Graph");
 				JLabel noData1 = new JLabel("No data available");
 				Font font1 = noData1.getFont();
 				font1 = font1.deriveFont(Font.BOLD, 42.0f);
@@ -2781,10 +2727,10 @@ public class BioSim implements MouseListener, ActionListener {
 				lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Data Manager");
 				lrnTab.addTab("Learn", new Learn(tree.getFile(), log, this));
 				lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Learn");
-				lrnTab.addTab("TSD Graph", new Graph(null, "amount", tree.getFile().split(separator)[tree
+				lrnTab.addTab("Graph", new Graph(null, "amount", tree.getFile().split(separator)[tree
 						.getFile().split(separator).length - 1]
 						+ " data", "tsd.printer", tree.getFile(), "time", this, open, log, null, true));
-				lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("TSD Graph");
+				lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Graph");
 			}
 			else {
 				lrnTab.addTab("Data Manager", new DataManager(tree.getFile(), this));
@@ -2801,8 +2747,8 @@ public class BioSim implements MouseListener, ActionListener {
 				font = font.deriveFont(Font.BOLD, 42.0f);
 				noData1.setFont(font);
 				noData1.setHorizontalAlignment(SwingConstants.CENTER);
-				lrnTab.addTab("TSD Graph", noData1);
-				lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("TSD Graph");
+				lrnTab.addTab("Graph", noData1);
+				lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Graph");
 			}
 			addTab(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1], lrnTab,
 					null);
@@ -2948,12 +2894,8 @@ public class BioSim implements MouseListener, ActionListener {
 						JTabbedPane simTab = new JTabbedPane();
 						Reb2Sac reb2sac = new Reb2Sac(sbmlLoadFile, getAFile, root, this,
 								split[split.length - 1].trim(), log, simTab, openFile);
-						simTab.addTab("Simulation Options", reb2sac);
+						simTab.addTab("Simulation", reb2sac);
 						simTab.getComponentAt(simTab.getComponents().length - 1).setName("Simulate");
-						simTab.addTab("Abstraction Options", reb2sac.getAdvanced());
-						simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
-						simTab.addTab("Advanced Options", reb2sac.getProperties());
-						simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
 						SBML_Editor sbml = new SBML_Editor(sbmlLoadFile, reb2sac, log, this, root + separator
 								+ split[split.length - 1].trim(), root + separator + split[split.length - 1].trim()
 								+ separator + split[split.length - 1].trim() + ".pms");
@@ -2961,12 +2903,12 @@ public class BioSim implements MouseListener, ActionListener {
 						simTab.addTab("Parameter Editor", sbml);
 						simTab.getComponentAt(simTab.getComponents().length - 1).setName("SBML Editor");
 						if (open != null) {
-							simTab.addTab("TSD Graph", reb2sac.createGraph(open));
-							simTab.getComponentAt(simTab.getComponents().length - 1).setName("TSD Graph");
+							simTab.addTab("Graph", reb2sac.createGraph(open));
+							simTab.getComponentAt(simTab.getComponents().length - 1).setName("Graph");
 						}
 						else if (!graphFile.equals("")) {
-							simTab.addTab("TSD Graph", reb2sac.createGraph(open));
-							simTab.getComponentAt(simTab.getComponents().length - 1).setName("TSD Graph");
+							simTab.addTab("Graph", reb2sac.createGraph(open));
+							simTab.getComponentAt(simTab.getComponents().length - 1).setName("Graph");
 						}
 						else {
 							JLabel noData = new JLabel("No data available");
@@ -2974,8 +2916,8 @@ public class BioSim implements MouseListener, ActionListener {
 							font = font.deriveFont(Font.BOLD, 42.0f);
 							noData.setFont(font);
 							noData.setHorizontalAlignment(SwingConstants.CENTER);
-							simTab.addTab("TSD Graph", noData);
-							simTab.getComponentAt(simTab.getComponents().length - 1).setName("TSD Graph");
+							simTab.addTab("Graph", noData);
+							simTab.getComponentAt(simTab.getComponents().length - 1).setName("Graph");
 						}
 						if (openProb != null) {
 							simTab.addTab("Probability Graph", reb2sac.createProbGraph(openProb));
@@ -3194,12 +3136,8 @@ public class BioSim implements MouseListener, ActionListener {
 			JTabbedPane simTab = new JTabbedPane();
 			Reb2Sac reb2sac = new Reb2Sac(sbmlLoadFile, sbmlFile, root, this, newSim, log, simTab,
 					propertiesFile);
-			simTab.addTab("Simulation Options", reb2sac);
+			simTab.addTab("Simulation", reb2sac);
 			simTab.getComponentAt(simTab.getComponents().length - 1).setName("Simulate");
-			simTab.addTab("Abstraction Options", reb2sac.getAdvanced());
-			simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
-			simTab.addTab("Advanced Options", reb2sac.getProperties());
-			simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
 			SBML_Editor sbml = new SBML_Editor(sbmlLoadFile, reb2sac, log, this, root + separator
 					+ newSim, root + separator + newSim + separator + newSim + ".pms");
 			reb2sac.setSbml(sbml);
@@ -3210,8 +3148,8 @@ public class BioSim implements MouseListener, ActionListener {
 			font = font.deriveFont(Font.BOLD, 42.0f);
 			noData.setFont(font);
 			noData.setHorizontalAlignment(SwingConstants.CENTER);
-			simTab.addTab("TSD Graph", noData);
-			simTab.getComponentAt(simTab.getComponents().length - 1).setName("TSD Graph");
+			simTab.addTab("Graph", noData);
+			simTab.getComponentAt(simTab.getComponents().length - 1).setName("Graph");
 			JLabel noData1 = new JLabel("No data available");
 			Font font1 = noData1.getFont();
 			font1 = font1.deriveFont(Font.BOLD, 42.0f);
@@ -3233,7 +3171,7 @@ public class BioSim implements MouseListener, ActionListener {
 		for (int i = 0; i < tab.getComponentCount(); i++) {
 			if (tab.getTitleAt(i).equals(learnName)) {
 				for (int j = 0; j < ((JTabbedPane) tab.getComponentAt(i)).getComponentCount(); j++) {
-					if (((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j).getName().equals("TSD Graph")) {
+					if (((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j).getName().equals("Graph")) {
 						if (data) {
 							if (((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j) instanceof Graph) {
 								((Graph) ((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j)).refresh();
@@ -3242,7 +3180,7 @@ public class BioSim implements MouseListener, ActionListener {
 								((JTabbedPane) tab.getComponentAt(i)).setComponentAt(j, new Graph(null, "amount",
 										learnName + " data", "tsd.printer", root + separator + learnName, "time", this,
 										null, log, null, true));
-								((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j).setName("TSD Graph");
+								((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j).setName("Graph");
 							}
 						}
 						else {
@@ -3252,7 +3190,7 @@ public class BioSim implements MouseListener, ActionListener {
 							noData1.setFont(font);
 							noData1.setHorizontalAlignment(SwingConstants.CENTER);
 							((JTabbedPane) tab.getComponentAt(i)).setComponentAt(j, noData1);
-							((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j).setName("TSD Graph");
+							((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j).setName("Graph");
 						}
 					}
 					else if (((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j).getName()
