@@ -741,7 +741,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		mainPanelCenter.add(mainPanelCenterUp, "North");
 		mainPanelCenter.add(mainPanelCenterDown, "South");
 		modelID = new JTextField(model.getId(), 16);
-		modelName = new JTextField(model.getName(), 50);
+		modelName = new JTextField(model.getName(), 40);
 		JLabel modelIDLabel = new JLabel("Model ID:");
 		JLabel modelNameLabel = new JLabel("Model Name:");
 		modelID.setEditable(false);
