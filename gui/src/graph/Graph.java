@@ -252,7 +252,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		chart.addProgressListener(this);
 		ChartPanel graph = new ChartPanel(chart);
 		graph.setLayout(new GridLayout(1, 1));
-		JLabel edit = new JLabel("Click here to create graph");
+		JLabel edit = new JLabel("Double click here to create graph");
 		Font font = edit.getFont();
 		font = font.deriveFont(Font.BOLD, 42.0f);
 		edit.setFont(font);
@@ -495,12 +495,14 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	 * title and labels of the chart.
 	 */
 	public void mouseClicked(MouseEvent e) {
+	    if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2) {
 		if (timeSeries) {
 			editGraph();
 		}
 		else {
 			editProbGraph();
 		}
+	    }
 	}
 
 	/**
@@ -2747,7 +2749,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		ChartPanel graph = new ChartPanel(chart);
 		if (graphed.isEmpty()) {
 			graph.setLayout(new GridLayout(1, 1));
-			JLabel edit = new JLabel("Click here to create graph");
+			JLabel edit = new JLabel("Double click here to create graph");
 			Font font = edit.getFont();
 			font = font.deriveFont(Font.BOLD, 42.0f);
 			edit.setFont(font);
@@ -4205,7 +4207,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				PlotOrientation.VERTICAL, true, true, false);
 		ChartPanel graph = new ChartPanel(chart);
 		graph.setLayout(new GridLayout(1, 1));
-		JLabel edit = new JLabel("Click here to create graph");
+		JLabel edit = new JLabel("Double click here to create graph");
 		Font font = edit.getFont();
 		font = font.deriveFont(Font.BOLD, 42.0f);
 		edit.setFont(font);
@@ -5257,7 +5259,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		ChartPanel graph = new ChartPanel(chart);
 		if (probGraphed.isEmpty()) {
 			graph.setLayout(new GridLayout(1, 1));
-			JLabel edit = new JLabel("Click here to create graph");
+			JLabel edit = new JLabel("Double click here to create graph");
 			Font font = edit.getFont();
 			font = font.deriveFont(Font.BOLD, 42.0f);
 			edit.setFont(font);
