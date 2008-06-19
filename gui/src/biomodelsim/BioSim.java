@@ -1844,12 +1844,17 @@ public class BioSim implements MouseListener, ActionListener {
 		// boolean newOne = true;
 		for (int i = 0; i < numberRecentProj; i++) {
 			if (recentProjectPaths[i].equals(projDir)) {
-				for (int j = 0; j < i; j++) {
-					String next = recentProjectPaths[j];
-					recentProjects[j+1].setText(next.split(separator)[next.split(separator).length - 1]);
-				}
-				recentProjects[0].setText(projDir.split(separator)[projDir.split(separator).length - 1]);
-				return;
+			    for (int j = 0; j <= i; j++) {
+				String save = recentProjectPaths[j];
+				recentProjects[j].setText(projDir.split(separator)[projDir.split(separator).length - 1]);
+				file.add(recentProjects[j]);
+				recentProjectPaths[j] = projDir;
+				projDir = save;
+			    }
+			    for (int j = i + 1; j < numberRecentProj; j++) {
+				file.add(recentProjects[j]);
+			    }
+			    return;
 			}
 		}
 		if (numberRecentProj < 5) {
