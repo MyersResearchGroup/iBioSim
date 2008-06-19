@@ -1859,8 +1859,6 @@ public class BioSim implements MouseListener, ActionListener {
 					file.add(recentProjects[j]);
 					recentProjectPaths[j] = next;
 				}
-				file.remove(recentProjects[numberRecentProj - 1]);
-				numberRecentProj--;
 				break;
 			}
 		}
