@@ -1851,20 +1851,20 @@ public class BioSim implements MouseListener, ActionListener {
 	 */
 	public void addRecentProject(String projDir) {
 		// boolean newOne = true;
-                for (int i = 0; i < numberRecentProj; i++) {
-                        if (recentProjectPaths[i].equals(projDir)) {
-                            for (int j = 0; j <= i; j++) {
-                                String save = recentProjectPaths[j];
-                                recentProjects[j].setText(projDir.split(separator)[projDir.split(separator).length - 1]);
-                                file.add(recentProjects[j]);
-                                recentProjectPaths[j] = projDir;
-                                projDir = save; 
-			    }
-                            for (int j = i + 1; j < numberRecentProj; j++) {                                
-				file.add(recentProjects[j]);
-                            }
-                            return;
-                        }          
+		for (int i = 0; i < numberRecentProj; i++) {
+			if (recentProjectPaths[i].equals(projDir)) {
+				for (int j = 0; j <= i; j++) {
+					String save = recentProjectPaths[j];
+					recentProjects[j].setText(projDir.split(separator)[projDir.split(separator).length - 1]);
+					file.add(recentProjects[j]);
+					recentProjectPaths[j] = projDir;
+					projDir = save;
+				}
+				for (int j = i + 1; j < numberRecentProj; j++) {
+					file.add(recentProjects[j]);
+				}
+				return;
+			}
 		}
 		if (numberRecentProj < 5) {
 			numberRecentProj++;
@@ -3297,6 +3297,7 @@ public class BioSim implements MouseListener, ActionListener {
 		for (int i = 0; i < tab.getTabCount(); i++) {
 			String tab = this.tab.getTitleAt(i);
 			String properties = root + separator + tab + separator + tab + ".pms";
+			String properties2 = root + separator + tab + separator + tab + ".lrn";
 			if (new File(properties).exists()) {
 				String check = "";
 				try {
@@ -3327,6 +3328,35 @@ public class BioSim implements MouseListener, ActionListener {
 							((SBML_Editor) (sim.getComponentAt(j))).setChanged(dirty);
 							new File(properties).delete();
 							new File(properties.replace(".pms", ".temp")).renameTo(new File(properties));
+						}
+					}
+				}
+			}
+			if (new File(properties2).exists()) {
+				String check = "";
+				try {
+					Properties p = new Properties();
+					FileInputStream load = new FileInputStream(new File(properties2));
+					p.load(load);
+					load.close();
+					if (p.containsKey("genenet.file")) {
+						String[] getProp = p.getProperty("genenet.file").split(separator);
+						check = getProp[getProp.length - 1];
+					}
+					else {
+						check = null;
+					}
+				}
+				catch (Exception e) {
+					JOptionPane.showMessageDialog(frame, "Unable to load background file.", "Error",
+							JOptionPane.ERROR_MESSAGE);
+					check = null;
+				}
+				if (check.equals(updatedFile)) {
+					JTabbedPane learn = ((JTabbedPane) (this.tab.getComponentAt(i)));
+					for (int j = 0; j < learn.getTabCount(); j++) {
+						if (learn.getComponentAt(j).getName().equals("Data Manager")) {
+							((DataManager) (learn.getComponentAt(j))).updateSpecies();
 						}
 					}
 				}
