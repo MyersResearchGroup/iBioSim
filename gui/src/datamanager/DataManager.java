@@ -213,6 +213,8 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 					this.revalidate();
 					this.repaint();
 					dirty = false;
+					biosim.refreshLearn(directory.split(separator)[directory.split(separator).length - 1],
+							true);
 				}
 				catch (Exception e1) {
 					JOptionPane.showMessageDialog(biosim.frame(), "Unable to add new file.", "Error",
@@ -291,6 +293,8 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 					this.revalidate();
 					this.repaint();
 					dirty = false;
+					biosim.refreshLearn(directory.split(separator)[directory.split(separator).length - 1],
+							false);
 					/*
 					 * String background; try { p = new Properties(); String[] split =
 					 * directory.split(separator); load = new FileInputStream(new
@@ -595,7 +599,7 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 										index = specs.get(a);
 										index2 = data.get(a);
 										b = a;
-										while ((b > 0) && specs.get(b - 1).compareToIgnoreCase(index) > 0) {
+										while ((b > 1) && specs.get(b - 1).compareToIgnoreCase(index) > 0) {
 											specs.set(b, specs.get(b - 1));
 											data.set(b, data.get(b - 1));
 											b = b - 1;
@@ -730,7 +734,7 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 										index = specs.get(a);
 										index2 = data.get(a);
 										b = a;
-										while ((b > 0) && specs.get(b - 1).compareToIgnoreCase(index) > 0) {
+										while ((b > 1) && specs.get(b - 1).compareToIgnoreCase(index) > 0) {
 											specs.set(b, specs.get(b - 1));
 											data.set(b, data.get(b - 1));
 											b = b - 1;
@@ -815,7 +819,7 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 								index = specs.get(a);
 								index2 = data.get(a);
 								b = a;
-								while ((b > 0) && specs.get(b - 1).compareToIgnoreCase(index) > 0) {
+								while ((b > 1) && specs.get(b - 1).compareToIgnoreCase(index) > 0) {
 									specs.set(b, specs.get(b - 1));
 									data.set(b, data.get(b - 1));
 									b = b - 1;
@@ -1012,6 +1016,31 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 						TSDParser tsd = new TSDParser(directory + separator + s, biosim, false);
 						ArrayList<String> specs = tsd.getSpecies();
 						ArrayList<ArrayList<Double>> data = tsd.getData();
+						for (String sp : species) {
+							if (!specs.contains(sp)) {
+								specs.add(sp);
+								ArrayList<Double> dat = new ArrayList<Double>();
+								for (int i = 0; i < data.get(0).size(); i++) {
+									dat.add(0.0);
+								}
+								data.add(dat);
+							}
+						}
+						int a, b;
+						String index;
+						ArrayList<Double> index2;
+						for (a = 2; a < specs.size(); a++) {
+							index = specs.get(a);
+							index2 = data.get(a);
+							b = a;
+							while ((b > 1) && specs.get(b - 1).compareToIgnoreCase(index) > 0) {
+								specs.set(b, specs.get(b - 1));
+								data.set(b, data.get(b - 1));
+								b = b - 1;
+							}
+							specs.set(b, index);
+							data.set(b, index2);
+						}
 						String[] spec = specs.toArray(new String[0]);
 						String[][] dat = new String[data.get(0).size()][data.size()];
 						for (int i = 0; i < data.size(); i++) {
@@ -1061,7 +1090,7 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 	private void createTable(String[][] dat, String[] spec) {
 		this.removeAll();
 		table = new JTable(dat, spec);
-		TableSorter sorter = new TableSorter(table.getModel());
+		TableSorter sorter = new TableSorter(table.getModel(), species);
 		/*
 		 * TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(table.getModel());
 		 * Comparator<String> comparator = new Comparator<String>() { public int
@@ -1075,6 +1104,16 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 		 * table.setRowSorter(sorter);
 		 */
 		table = new JTable(sorter);
+		sorter.setTable(table);
+		ArrayList<String> specs = new ArrayList<String>();
+		for (String s : species) {
+			specs.add(s);
+		}
+		for (int i = table.getModel().getColumnCount() - 1; i > 0; i--) {
+			if (!specs.contains(table.getModel().getColumnName(i))) {
+				table.removeColumn(table.getColumnModel().getColumn(i));
+			}
+		}
 		table.getModel().addTableModelListener(this);
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		scroll1 = new JScrollPane();
@@ -1255,6 +1294,50 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 		if (species != null) {
 			sort(species);
 		}
+		try {
+			TableModel m = table.getModel();
+			String[][] sort = sortData(m);
+			ArrayList<String> specs = new ArrayList<String>();
+			ArrayList<ArrayList<Double>> data = convertData(sort);
+			for (int i = 0; i < m.getColumnCount(); i++) {
+				specs.add(m.getColumnName(i));
+			}
+			for (String sp : species) {
+				if (!specs.contains(sp)) {
+					specs.add(sp);
+					ArrayList<Double> dat = new ArrayList<Double>();
+					for (int i = 0; i < data.get(0).size(); i++) {
+						dat.add(0.0);
+					}
+					data.add(dat);
+				}
+			}
+			int a, b;
+			String index;
+			ArrayList<Double> index2;
+			for (a = 2; a < specs.size(); a++) {
+				index = specs.get(a);
+				index2 = data.get(a);
+				b = a;
+				while ((b > 1) && specs.get(b - 1).compareToIgnoreCase(index) > 0) {
+					specs.set(b, specs.get(b - 1));
+					data.set(b, data.get(b - 1));
+					b = b - 1;
+				}
+				specs.set(b, index);
+				data.set(b, index2);
+			}
+			String[] spec = specs.toArray(new String[0]);
+			String[][] dat = new String[data.get(0).size()][data.size()];
+			for (int i = 0; i < data.size(); i++) {
+				for (int j = 0; j < data.get(i).size(); j++) {
+					dat[j][i] = "" + data.get(i).get(j);
+				}
+			}
+			createTable(dat, spec);
+		}
+		catch (Exception e) {
+		}
 	}
 }
 
@@ -1270,11 +1353,20 @@ class TableSorter extends TableMap implements TableModelListener {
 
 	boolean ascending = true;
 
+	String[] species;
+
+	JTable table;
+
 	public TableSorter() {
 	}
 
-	public TableSorter(TableModel model) {
+	public TableSorter(TableModel model, String[] species) {
 		setModel(model);
+		this.species = species;
+	}
+
+	public void setTable(JTable table) {
+		this.table = table;
 	}
 
 	public void setModel(TableModel model) {
@@ -1426,6 +1518,15 @@ class TableSorter extends TableMap implements TableModelListener {
 		reallocateIndexes();
 		sortByColumn(0);
 		fireTableStructureChanged();
+		ArrayList<String> specs = new ArrayList<String>();
+		for (String s : species) {
+			specs.add(s);
+		}
+		for (int i = model.getColumnCount() - 1; i > 0; i--) {
+			if (!specs.contains(model.getColumnName(i))) {
+				table.removeColumn(table.getColumnModel().getColumn(i));
+			}
+		}
 	}
 
 	public void checkModel() {
