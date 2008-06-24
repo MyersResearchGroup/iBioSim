@@ -3358,6 +3358,9 @@ public class BioSim implements MouseListener, ActionListener {
 						if (learn.getComponentAt(j).getName().equals("Data Manager")) {
 							((DataManager) (learn.getComponentAt(j))).updateSpecies();
 						}
+						else if (learn.getComponentAt(j).getName().equals("Learn")) {
+							((Learn) (learn.getComponentAt(j))).updateSpecies();
+						}
 					}
 				}
 			}

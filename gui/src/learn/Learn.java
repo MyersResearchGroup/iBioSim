@@ -1,9 +1,12 @@
 package learn;
 
+import gcm2sbml.parser.GCMFile;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.util.*;
+
 import javax.swing.*;
 import org.sbml.libsbml.*;
 import biomodelsim.*;
@@ -67,6 +70,8 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 	private boolean change;
 
 	private ArrayList<String> speciesList;
+
+	private boolean firstRead;
 
 	/**
 	 * This is the constructor for the Learn class. It initializes all the input
@@ -327,13 +332,11 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 					"Error Loading Properties", JOptionPane.ERROR_MESSAGE);
 		}
 
-		SBMLDocument document;
-		Model model;
 		speciesList = new ArrayList<String>();
 		if (learnFile.contains(".sbml")) {
 			SBMLReader reader = new SBMLReader();
-			document = reader.readSBML(learnFile);
-			model = document.getModel();
+			SBMLDocument document = reader.readSBML(learnFile);
+			Model model = document.getModel();
 			ListOf ids = model.getListOfSpecies();
 			try {
 				FileWriter write = new FileWriter(new File(directory + separator + "background.gcm"));
@@ -352,16 +355,17 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 			}
 		}
 		else {
+			GCMFile gcm = new GCMFile();
+			gcm.load(learnFile);
+			HashMap<String, Properties> speciesMap = gcm.getSpecies();
+			for (String s : speciesMap.keySet()) {
+				speciesList.add(s);
+			}
 			try {
-				File gcmFile = new File(learnFile);
-				BufferedReader input = new BufferedReader(new FileReader(gcmFile));
 				FileWriter write = new FileWriter(new File(directory + separator + "background.gcm"));
+				BufferedReader input = new BufferedReader(new FileReader(new File(learnFile)));
 				String line = null;
 				while ((line = input.readLine()) != null) {
-					if (line.contains("shape")) {
-						String specie = line.substring(line.indexOf("label") + 7, line.lastIndexOf('\"'));
-						speciesList.add(specie);
-					}
 					write.write(line + "\n");
 				}
 				write.close();
@@ -372,7 +376,7 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 						"Error Writing Background", JOptionPane.ERROR_MESSAGE);
 			}
 		}
-
+		sortSpecies();
 		JPanel runHolder = new JPanel();
 
 		// Creates the run button
@@ -432,15 +436,16 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 		tab.addTab("Advanced Options", secondTab);
 		this.add(tab, "Center");
 		this.add(runHolder, "South");
+		firstRead = true;
 		if (user.isSelected()) {
 			auto.doClick();
 			user.doClick();
-			levels(true);
 		}
 		else {
 			user.doClick();
 			auto.doClick();
 		}
+		firstRead = false;
 		change = false;
 	}
 
@@ -469,12 +474,40 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 			speciesPanel.repaint();
 		}
 		else if (e.getSource() == user) {
+			if (!firstRead) {
+				try {
+					FileWriter write = new FileWriter(new File(directory + separator + "levels.lvl"));
+					write.write("time, 0\n");
+					for (int i = 0; i < species.size(); i++) {
+						if (((JTextField) species.get(i).get(0)).getText().trim().equals("")) {
+							write.write("-1");
+						}
+						else {
+							write.write(((JTextField) species.get(i).get(0)).getText().trim());
+						}
+						write.write(", " + ((JComboBox) species.get(i).get(1)).getSelectedItem());
+						for (int j = 2; j < species.get(i).size(); j++) {
+							if (((JTextField) species.get(i).get(j)).getText().trim().equals("")) {
+								write.write(", -1");
+							}
+							else {
+								write.write(", " + ((JTextField) species.get(i).get(j)).getText().trim());
+							}
+						}
+						write.write("\n");
+					}
+					write.close();
+				}
+				catch (Exception e1) {
+				}
+			}
 			numBinsLabel.setEnabled(false);
 			numBins.setEnabled(false);
 			suggest.setEnabled(true);
 			levelsBin();
 			speciesPanel.revalidate();
 			speciesPanel.repaint();
+			levels(true);
 		}
 		else if (e.getSource() == auto) {
 			numBinsLabel.setEnabled(true);
@@ -1254,5 +1287,75 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 
 	public boolean hasChanged() {
 		return change;
+	}
+
+	public void updateSpecies() {
+		speciesList = new ArrayList<String>();
+		if (learnFile.contains(".sbml")) {
+			SBMLReader reader = new SBMLReader();
+			SBMLDocument document = reader.readSBML(learnFile);
+			Model model = document.getModel();
+			ListOf ids = model.getListOfSpecies();
+			try {
+				FileWriter write = new FileWriter(new File(directory + separator + "background.gcm"));
+				write.write("digraph G {\n");
+				for (int i = 0; i < model.getNumSpecies(); i++) {
+					speciesList.add(((Species) ids.get(i)).getId());
+					write.write("s" + i + " [shape=ellipse,color=black,label=\""
+							+ ((Species) ids.get(i)).getId() + "\"" + "];\n");
+				}
+				write.write("}\n");
+				write.close();
+			}
+			catch (Exception e) {
+				JOptionPane.showMessageDialog(biosim.frame(), "Unable to create background file!",
+						"Error Writing Background", JOptionPane.ERROR_MESSAGE);
+			}
+		}
+		else {
+			GCMFile gcm = new GCMFile();
+			gcm.load(learnFile);
+			HashMap<String, Properties> speciesMap = gcm.getSpecies();
+			for (String s : speciesMap.keySet()) {
+				speciesList.add(s);
+			}
+			try {
+				FileWriter write = new FileWriter(new File(directory + separator + "background.gcm"));
+				BufferedReader input = new BufferedReader(new FileReader(new File(learnFile)));
+				String line = null;
+				while ((line = input.readLine()) != null) {
+					write.write(line + "\n");
+				}
+				write.close();
+				input.close();
+			}
+			catch (Exception e) {
+				JOptionPane.showMessageDialog(biosim.frame(), "Unable to create background file!",
+						"Error Writing Background", JOptionPane.ERROR_MESSAGE);
+			}
+		}
+		sortSpecies();
+		if (user.isSelected()) {
+			auto.doClick();
+			user.doClick();
+		}
+		else {
+			user.doClick();
+			auto.doClick();
+		}
+	}
+
+	private void sortSpecies() {
+		int i, j;
+		String index;
+		for (i = 1; i < speciesList.size(); i++) {
+			index = speciesList.get(i);
+			j = i;
+			while ((j > 0) && speciesList.get(j - 1).compareToIgnoreCase(index) > 0) {
+				speciesList.set(j, speciesList.get(j - 1));
+				j = j - 1;
+			}
+			speciesList.set(j, index);
+		}
 	}
 }
