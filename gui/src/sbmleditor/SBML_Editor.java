@@ -379,6 +379,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		if (!file.equals("")) {
 			SBMLReader reader = new SBMLReader();
 			document = reader.readSBML(file);
+			document.setLevelAndVersion(2, 3);
 			model = document.getModel();
 			modelName = new JTextField(model.getName(), 50);
 			if (model.getId().equals("")) {
@@ -389,13 +390,25 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				model.setId(modelID);
 				save(false, "");
 			}
+			createFunction(model,"uniform","Uniform distribution","lambda(a,b,(a+b)/2)");
+			createFunction(model,"normal","Normal distribution","lambda(m,s,m)");
+			createFunction(model,"exponential","Exponential distribution","lambda(mu,mu)");
+			createFunction(model,"gamma","Gamma distribution","lambda(a,b,a*b)");
+			createFunction(model,"lognormal","Lognormal distribution","lambda(z,s,exp(z+s^2/2))");
+			createFunction(model,"chisq","Chi-squared distribution","lambda(nu,nu)");
+			createFunction(model,"laplace","Laplace distribution","lambda(a,a)");
+			createFunction(model,"cauchy","Cauchy distribution","lambda(a,a)");
+			createFunction(model,"rayleigh","Rayleigh distribution","lambda(s,s*sqrt(pi/2))");
+			createFunction(model,"poisson","Poisson distribution","lambda(mu,mu)");
+			createFunction(model,"binomial","Binomial distribution","binomial(p,n,p*n)");
+			createFunction(model,"bernoulli","Bernoulli distribution","bernoulli(p,p)");
 		}
 		else {
 			document = new SBMLDocument();
+			document.setLevelAndVersion(2, 3);
 			model = document.createModel();
 		}
 
-		document.setLevelAndVersion(2, 3);
 		usedIDs = new ArrayList<String>();
 		if (model.isSetId()) {
 			usedIDs.add(model.getId());
@@ -2543,6 +2556,19 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			}
 		}
 		return false;
+	}
+
+
+	/**
+	 * Add a new function
+	 */
+        private void createFunction(Model model, String id, String name, String formula) {
+	    if (document.getModel().getFunctionDefinition(id)==null) {
+		FunctionDefinition f = model.createFunctionDefinition();
+		f.setId(id);
+		f.setName(name);
+		f.setMath(libsbml.parseFormula(formula));
+	    }
 	}
 
 	/**
