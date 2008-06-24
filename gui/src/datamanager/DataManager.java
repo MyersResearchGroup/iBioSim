@@ -588,27 +588,36 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 											+ separator + list1[i], biosim, false);
 									ArrayList<String> specs = tsd.getSpecies();
 									ArrayList<ArrayList<Double>> data = tsd.getData();
-									ArrayList<String> newSpecs = new ArrayList<String>();
-									ArrayList<ArrayList<Double>> newData = new ArrayList<ArrayList<Double>>();
-									newSpecs.add(specs.get(0));
-									newData.add(data.get(0));
-									for (int j = 0; j < species.length; j++) {
-										if (specs.contains(species[j])) {
-											int index = specs.indexOf(species[j]);
-											newSpecs.add(specs.get(index));
-											newData.add(data.get(index));
+									int a, b;
+									String index;
+									ArrayList<Double> index2;
+									for (a = 2; a < specs.size(); a++) {
+										index = specs.get(a);
+										index2 = data.get(a);
+										b = a;
+										while ((b > 0) && specs.get(b - 1).compareToIgnoreCase(index) > 0) {
+											specs.set(b, specs.get(b - 1));
+											data.set(b, data.get(b - 1));
+											b = b - 1;
 										}
-										else {
-											newSpecs.add(species[j]);
-											ArrayList<Double> dat = new ArrayList<Double>();
-											for (int k = 0; k < newData.get(0).size(); k++) {
-												dat.add(0.0);
-											}
-											newData.add(dat);
-										}
+										specs.set(b, index);
+										data.set(b, index2);
 									}
-									tsd.setSpecies(newSpecs);
-									tsd.setData(newData);
+									/*
+									 * ArrayList<String> newSpecs = new ArrayList<String>();
+									 * ArrayList<ArrayList<Double>> newData = new ArrayList<ArrayList<Double>>();
+									 * newSpecs.add(specs.get(0)); newData.add(data.get(0)); for
+									 * (int j = 0; j < species.length; j++) { if
+									 * (specs.contains(species[j])) { int index =
+									 * specs.indexOf(species[j]); newSpecs.add(specs.get(index));
+									 * newData.add(data.get(index)); } else {
+									 * newSpecs.add(species[j]); ArrayList<Double> dat = new
+									 * ArrayList<Double>(); for (int k = 0; k <
+									 * newData.get(0).size(); k++) { dat.add(0.0); }
+									 * newData.add(dat); } }
+									 */
+									tsd.setSpecies(specs);
+									tsd.setData(data);
 									tsd.outputTSD(directory + separator + last);
 									/*
 									 * FileOutputStream out = new FileOutputStream( new
@@ -714,27 +723,36 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 									TSDParser tsd = new TSDParser(importFile + separator + list1[i], biosim, false);
 									ArrayList<String> specs = tsd.getSpecies();
 									ArrayList<ArrayList<Double>> data = tsd.getData();
-									ArrayList<String> newSpecs = new ArrayList<String>();
-									ArrayList<ArrayList<Double>> newData = new ArrayList<ArrayList<Double>>();
-									newSpecs.add(specs.get(0));
-									newData.add(data.get(0));
-									for (int j = 0; j < species.length; j++) {
-										if (specs.contains(species[j])) {
-											int index = specs.indexOf(species[j]);
-											newSpecs.add(specs.get(index));
-											newData.add(data.get(index));
+									int a, b;
+									String index;
+									ArrayList<Double> index2;
+									for (a = 2; a < specs.size(); a++) {
+										index = specs.get(a);
+										index2 = data.get(a);
+										b = a;
+										while ((b > 0) && specs.get(b - 1).compareToIgnoreCase(index) > 0) {
+											specs.set(b, specs.get(b - 1));
+											data.set(b, data.get(b - 1));
+											b = b - 1;
 										}
-										else {
-											newSpecs.add(species[j]);
-											ArrayList<Double> dat = new ArrayList<Double>();
-											for (int k = 0; k < newData.get(0).size(); k++) {
-												dat.add(0.0);
-											}
-											newData.add(dat);
-										}
+										specs.set(b, index);
+										data.set(b, index2);
 									}
-									tsd.setSpecies(newSpecs);
-									tsd.setData(newData);
+									/*
+									 * ArrayList<String> newSpecs = new ArrayList<String>();
+									 * ArrayList<ArrayList<Double>> newData = new ArrayList<ArrayList<Double>>();
+									 * newSpecs.add(specs.get(0)); newData.add(data.get(0)); for
+									 * (int j = 0; j < species.length; j++) { if
+									 * (specs.contains(species[j])) { int index =
+									 * specs.indexOf(species[j]); newSpecs.add(specs.get(index));
+									 * newData.add(data.get(index)); } else {
+									 * newSpecs.add(species[j]); ArrayList<Double> dat = new
+									 * ArrayList<Double>(); for (int k = 0; k <
+									 * newData.get(0).size(); k++) { dat.add(0.0); }
+									 * newData.add(dat); } }
+									 */
+									tsd.setSpecies(specs);
+									tsd.setData(data);
 									tsd.outputTSD(directory + separator + last);
 									/*
 									 * FileOutputStream out = new FileOutputStream( new
@@ -790,27 +808,35 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 							}
 							ArrayList<String> specs = parse.getSpecies();
 							ArrayList<ArrayList<Double>> data = parse.getData();
-							ArrayList<String> newSpecs = new ArrayList<String>();
-							ArrayList<ArrayList<Double>> newData = new ArrayList<ArrayList<Double>>();
-							newSpecs.add(specs.get(0));
-							newData.add(data.get(0));
-							for (int j = 0; j < species.length; j++) {
-								if (specs.contains(species[j])) {
-									int index = specs.indexOf(species[j]);
-									newSpecs.add(specs.get(index));
-									newData.add(data.get(index));
+							int a, b;
+							String index;
+							ArrayList<Double> index2;
+							for (a = 2; a < specs.size(); a++) {
+								index = specs.get(a);
+								index2 = data.get(a);
+								b = a;
+								while ((b > 0) && specs.get(b - 1).compareToIgnoreCase(index) > 0) {
+									specs.set(b, specs.get(b - 1));
+									data.set(b, data.get(b - 1));
+									b = b - 1;
 								}
-								else {
-									newSpecs.add(species[j]);
-									ArrayList<Double> dat = new ArrayList<Double>();
-									for (int k = 0; k < newData.get(0).size(); k++) {
-										dat.add(0.0);
-									}
-									newData.add(dat);
-								}
+								specs.set(b, index);
+								data.set(b, index2);
 							}
-							parse.setSpecies(newSpecs);
-							parse.setData(newData);
+							/*
+							 * ArrayList<String> newSpecs = new ArrayList<String>();
+							 * ArrayList<ArrayList<Double>> newData = new ArrayList<ArrayList<Double>>();
+							 * newSpecs.add(specs.get(0)); newData.add(data.get(0)); for (int
+							 * j = 0; j < species.length; j++) { if
+							 * (specs.contains(species[j])) { int index =
+							 * specs.indexOf(species[j]); newSpecs.add(specs.get(index));
+							 * newData.add(data.get(index)); } else {
+							 * newSpecs.add(species[j]); ArrayList<Double> dat = new
+							 * ArrayList<Double>(); for (int k = 0; k <
+							 * newData.get(0).size(); k++) { dat.add(0.0); } newData.add(dat); } }
+							 */
+							parse.setSpecies(specs);
+							parse.setData(data);
 							parse.outputTSD(directory + separator + end);
 							Properties p = new Properties();
 							FileInputStream load = new FileInputStream(new File(directory + separator + ".lrn"));
