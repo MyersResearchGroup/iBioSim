@@ -13,8 +13,7 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumnModel;
-import javax.swing.table.TableModel;
-//import javax.swing.table.TableRowSorter;
+import javax.swing.table.TableModel; //import javax.swing.table.TableRowSorter;
 
 import org.sbml.libsbml.ListOf;
 import org.sbml.libsbml.Model;
@@ -144,7 +143,7 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 			String dataFile = JOptionPane.showInputDialog(biosim.frame(), "Enter Data File ID:",
 					"Data File ID", JOptionPane.PLAIN_MESSAGE);
 			if (dataFile != null && !dataFile.trim().equals("")) {
-				saveChanges();
+				saveChanges(null);
 				dataFile = dataFile.trim();
 				try {
 					Properties p = new Properties();
@@ -354,7 +353,7 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 				else {
 					return;
 				}
-				saveChanges();
+				saveChanges(null);
 				Properties p = new Properties();
 				FileInputStream load = new FileInputStream(new File(directory + separator + ".lrn"));
 				p.load(load);
@@ -425,7 +424,7 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 				else {
 					return;
 				}
-				saveChanges();
+				saveChanges(null);
 				int run = 0;
 				String[] list = new File(directory).list();
 				for (int i = 0; i < list.length; i++) {
@@ -547,7 +546,7 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 				int value = JOptionPane.showOptionDialog(biosim.frame(), scroll, "Select View",
 						JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 				if (value == JOptionPane.YES_OPTION) {
-					saveChanges();
+					saveChanges(null);
 					int run = 0;
 					String[] lists = new File(directory).list();
 					for (int i = 0; i < lists.length; i++) {
@@ -683,7 +682,7 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 			String importFile = Buttons.browse(biosim.frame(), null, null,
 					JFileChooser.FILES_AND_DIRECTORIES, "Import");
 			if (importFile != null && !importFile.trim().equals("")) {
-				saveChanges();
+				saveChanges(null);
 				importFile = importFile.trim();
 				int run = 0;
 				String[] list = new File(directory).list();
@@ -1005,7 +1004,7 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 	public void mouseClicked(MouseEvent e) {
 		if (files.getSelectedValue() != null) {
 			try {
-				saveChanges();
+				saveChanges(null);
 				String file = (String) files.getSelectedValue();
 				Properties p = new Properties();
 				FileInputStream load = new FileInputStream(new File(directory + separator + ".lrn"));
@@ -1206,13 +1205,21 @@ public class DataManager extends JPanel implements ActionListener, MouseListener
 		dirty = true;
 	}
 
-	private void saveChanges() {
+	public void saveChanges(String descriptor) {
 		if (previous != null) {
 			if (dirty) {
 				Object[] options = { "Yes", "No" };
-				int value = JOptionPane.showOptionDialog(biosim.frame(), "Do you want to save"
-						+ " changes to the current file?", "Save", JOptionPane.YES_NO_OPTION,
-						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+				int value;
+				if (descriptor == null) {
+					value = JOptionPane.showOptionDialog(biosim.frame(), "Do you want to save"
+							+ " changes to the current file?", "Save", JOptionPane.YES_NO_OPTION,
+							JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+				}
+				else {
+					value = JOptionPane.showOptionDialog(biosim.frame(), "Do you want to save"
+							+ " changes to the current file for " + descriptor + "?", "Save",
+							JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+				}
 				if (value == JOptionPane.YES_OPTION) {
 					TableModel m = table.getModel();
 					String[][] sort = sortData(m);

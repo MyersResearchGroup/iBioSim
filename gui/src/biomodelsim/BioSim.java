@@ -1927,140 +1927,151 @@ public class BioSim implements MouseListener, ActionListener {
 	 */
 	public int save(int index) {
 		if (tab.getComponentAt(index).getName().contains(("GCM"))) {
-			GCM2SBMLEditor editor = (GCM2SBMLEditor) tab.getComponentAt(index);
-			if (editor.isDirty()) {
-				Object[] options = { "Yes", "No", "Cancel" };
-				int value = JOptionPane.showOptionDialog(frame, "Do you want to save changes to "
-						+ tab.getTitleAt(index) + "?", "Save Changes", JOptionPane.YES_NO_CANCEL_OPTION,
-						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-				if (value == JOptionPane.YES_OPTION) {
-					editor.save("gcm");
-					return 1;
-				}
-				else if (value == JOptionPane.NO_OPTION) {
-					return 1;
-				}
-				else {
-					return 0;
+			if (tab.getComponentAt(index) instanceof GCM2SBMLEditor) {
+				GCM2SBMLEditor editor = (GCM2SBMLEditor) tab.getComponentAt(index);
+				if (editor.isDirty()) {
+					Object[] options = { "Yes", "No", "Cancel" };
+					int value = JOptionPane.showOptionDialog(frame, "Do you want to save changes to "
+							+ tab.getTitleAt(index) + "?", "Save Changes", JOptionPane.YES_NO_CANCEL_OPTION,
+							JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+					if (value == JOptionPane.YES_OPTION) {
+						editor.save("gcm");
+						return 1;
+					}
+					else if (value == JOptionPane.NO_OPTION) {
+						return 1;
+					}
+					else {
+						return 0;
+					}
 				}
 			}
 			return 1;
 		}
 		else if (tab.getComponentAt(index).getName().equals("SBML Editor")) {
-			if (((SBML_Editor) tab.getComponentAt(index)).hasChanged()) {
-				Object[] options = { "Yes", "No", "Cancel" };
-				int value = JOptionPane.showOptionDialog(frame, "Do you want to save changes to "
-						+ tab.getTitleAt(index) + "?", "Save Changes", JOptionPane.YES_NO_CANCEL_OPTION,
-						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-				if (value == JOptionPane.YES_OPTION) {
-					((SBML_Editor) tab.getComponentAt(index)).save(false, "");
-					return 1;
-				}
-				else if (value == JOptionPane.NO_OPTION) {
-					return 1;
-				}
-				else {
-					return 0;
+			if (tab.getComponentAt(index) instanceof SBML_Editor) {
+				if (((SBML_Editor) tab.getComponentAt(index)).hasChanged()) {
+					Object[] options = { "Yes", "No", "Cancel" };
+					int value = JOptionPane.showOptionDialog(frame, "Do you want to save changes to "
+							+ tab.getTitleAt(index) + "?", "Save Changes", JOptionPane.YES_NO_CANCEL_OPTION,
+							JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+					if (value == JOptionPane.YES_OPTION) {
+						((SBML_Editor) tab.getComponentAt(index)).save(false, "");
+						return 1;
+					}
+					else if (value == JOptionPane.NO_OPTION) {
+						return 1;
+					}
+					else {
+						return 0;
+					}
 				}
 			}
-			else {
-				return 1;
-			}
+			return 1;
 		}
 		else if (tab.getComponentAt(index).getName().contains("Graph")) {
-			if (((Graph) tab.getComponentAt(index)).hasChanged()) {
-				Object[] options = { "Yes", "No", "Cancel" };
-				int value = JOptionPane.showOptionDialog(frame, "Do you want to save changes to "
-						+ tab.getTitleAt(index) + "?", "Save Changes", JOptionPane.YES_NO_CANCEL_OPTION,
-						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-				if (value == JOptionPane.YES_OPTION) {
-					((Graph) tab.getComponentAt(index)).save();
-					return 1;
-				}
-				else if (value == JOptionPane.NO_OPTION) {
-					return 1;
-				}
-				else {
-					return 0;
+			if (tab.getComponentAt(index) instanceof Graph) {
+				if (((Graph) tab.getComponentAt(index)).hasChanged()) {
+					Object[] options = { "Yes", "No", "Cancel" };
+					int value = JOptionPane.showOptionDialog(frame, "Do you want to save changes to "
+							+ tab.getTitleAt(index) + "?", "Save Changes", JOptionPane.YES_NO_CANCEL_OPTION,
+							JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+					if (value == JOptionPane.YES_OPTION) {
+						((Graph) tab.getComponentAt(index)).save();
+						return 1;
+					}
+					else if (value == JOptionPane.NO_OPTION) {
+						return 1;
+					}
+					else {
+						return 0;
+					}
 				}
 			}
-			else {
-				return 1;
-			}
+			return 1;
 		}
 		else {
-			for (int i = 0; i < ((JTabbedPane) tab.getComponentAt(index)).getTabCount(); i++) {
-				if (((JTabbedPane) tab.getComponentAt(index)).getComponentAt(i).getName()
-						.equals("Simulate")) {
-					if (((Reb2Sac) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).hasChanged()) {
-						Object[] options = { "Yes", "No", "Cancel" };
-						int value = JOptionPane.showOptionDialog(frame,
-								"Do you want to save simulation option changes for " + tab.getTitleAt(index) + "?",
-								"Save Changes", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null,
-								options, options[0]);
-						if (value == JOptionPane.YES_OPTION) {
-							((Reb2Sac) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).save();
-						}
-						else if (value == JOptionPane.CANCEL_OPTION) {
-							return 0;
-						}
-					}
-				}
-				else if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i).getName().equals(
-						"SBML Editor")) {
-					if (((SBML_Editor) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i))
-							.hasChanged()) {
-						Object[] options = { "Yes", "No", "Cancel" };
-						int value = JOptionPane.showOptionDialog(frame,
-								"Do you want to save parameter changes for " + tab.getTitleAt(index) + "?",
-								"Save Changes", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null,
-								options, options[0]);
-						if (value == JOptionPane.YES_OPTION) {
-							((SBML_Editor) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).save(false,
-									"");
-						}
-						else if (value == JOptionPane.CANCEL_OPTION) {
-							return 0;
-						}
-					}
-				}
-				else if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i).getName()
-						.equals("Learn")) {
-					if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof Learn) {
-						if (((Learn) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).hasChanged()) {
+			if (tab.getComponentAt(index) instanceof JTabbedPane) {
+				for (int i = 0; i < ((JTabbedPane) tab.getComponentAt(index)).getTabCount(); i++) {
+					if (((JTabbedPane) tab.getComponentAt(index)).getComponentAt(i).getName().equals(
+							"Simulate")) {
+						if (((Reb2Sac) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).hasChanged()) {
 							Object[] options = { "Yes", "No", "Cancel" };
 							int value = JOptionPane.showOptionDialog(frame,
-									"Do you want to save learn option changes for " + tab.getTitleAt(index) + "?",
-									"Save Changes", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE,
-									null, options, options[0]);
+									"Do you want to save simulation option changes for " + tab.getTitleAt(index)
+											+ "?", "Save Changes", JOptionPane.YES_NO_CANCEL_OPTION,
+									JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 							if (value == JOptionPane.YES_OPTION) {
-								if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof Learn) {
-									((Learn) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).save();
-								}
+								((Reb2Sac) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).save();
 							}
 							else if (value == JOptionPane.CANCEL_OPTION) {
 								return 0;
 							}
 						}
 					}
-				}
-				else if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i).getName().contains(
-						"TSD Graph")) {
-					if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof Graph) {
-						if (((Graph) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).hasChanged()) {
+					else if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i).getName().equals(
+							"SBML Editor")) {
+						if (((SBML_Editor) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i))
+								.hasChanged()) {
 							Object[] options = { "Yes", "No", "Cancel" };
 							int value = JOptionPane.showOptionDialog(frame,
-									"Do you want to save graph changes for " + tab.getTitleAt(index) + "?",
+									"Do you want to save parameter changes for " + tab.getTitleAt(index) + "?",
 									"Save Changes", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE,
 									null, options, options[0]);
 							if (value == JOptionPane.YES_OPTION) {
-								if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof Graph) {
-									Graph g = ((Graph) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i));
-									g.save();
-								}
+								((SBML_Editor) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).save(
+										false, "");
 							}
 							else if (value == JOptionPane.CANCEL_OPTION) {
 								return 0;
+							}
+						}
+					}
+					else if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i).getName().equals(
+							"Learn")) {
+						if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof Learn) {
+							if (((Learn) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).hasChanged()) {
+								Object[] options = { "Yes", "No", "Cancel" };
+								int value = JOptionPane.showOptionDialog(frame,
+										"Do you want to save learn option changes for " + tab.getTitleAt(index) + "?",
+										"Save Changes", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE,
+										null, options, options[0]);
+								if (value == JOptionPane.YES_OPTION) {
+									if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof Learn) {
+										((Learn) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).save();
+									}
+								}
+								else if (value == JOptionPane.CANCEL_OPTION) {
+									return 0;
+								}
+							}
+						}
+					}
+					else if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i).getName().equals(
+							"Data Manager")) {
+						if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof DataManager) {
+							((DataManager) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i))
+									.saveChanges(tab.getTitleAt(index));
+						}
+					}
+					else if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i).getName().contains(
+							"Graph")) {
+						if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof Graph) {
+							if (((Graph) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).hasChanged()) {
+								Object[] options = { "Yes", "No", "Cancel" };
+								int value = JOptionPane.showOptionDialog(frame,
+										"Do you want to save graph changes for " + tab.getTitleAt(index) + "?",
+										"Save Changes", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE,
+										null, options, options[0]);
+								if (value == JOptionPane.YES_OPTION) {
+									if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof Graph) {
+										Graph g = ((Graph) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i));
+										g.save();
+									}
+								}
+								else if (value == JOptionPane.CANCEL_OPTION) {
+									return 0;
+								}
 							}
 						}
 					}
