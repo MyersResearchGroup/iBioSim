@@ -165,10 +165,18 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 		if (o instanceof Runnable) {
 			((Runnable) o).run();
 		}
-		else if (o instanceof JComboBox) {			
+		else if (o instanceof JComboBox && !lock) {			
 			dirty = true;
 		}
 		// System.out.println(o);
+	}
+	
+	public synchronized void lock() { 
+		lock = true;
+	}
+	
+	public synchronized void unlock() {
+		lock = false;
 	}
 
 	private void buildGui(String filename) {
@@ -261,6 +269,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 	}
 
 	public void reloadFiles() {
+		lock();
 		sbmlFiles.removeAll();
 		String[] sbmlList = Utility.getFiles(path, ".sbml");
 		String[] xmlList = Utility.getFiles(path, ".xml");
@@ -288,6 +297,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 							+ ".  Setting default SBML file to none");
 			gcm.setSBMLFile("");
 		}
+		unlock();
 	}
 
 	private Set<String> generateParameters() {
@@ -437,6 +447,8 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 
 		private PropertyList list = null;
 	}
+	
+	private boolean lock = false;
 
 	private String[] options = { "Ok", "Cancel" };
 
