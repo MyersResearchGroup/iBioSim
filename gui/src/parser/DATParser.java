@@ -18,6 +18,8 @@ public class DATParser extends Parser {
 			InputStream input = new BufferedInputStream(prog);
 			boolean reading = true;
 			char cha;
+			boolean rightAfterPound = false;
+			boolean usingQuotes = false;
 			while (reading) {
 				String word = "";
 				boolean readWord = true;
@@ -32,35 +34,55 @@ public class DATParser extends Parser {
 					}
 					cha = (char) read;
 					if (withinWord) {
-						if (cha == ')') {
-							withinWord = false;
-							readWord = false;
-							withinParens = false;
-						}
-						else if (cha == ' ' && word.equals("")) {
-						}
-						else if (cha == '\"') {
-							withinWord = false;
-							readWord = false;
+						if (usingQuotes) {
+							if (cha == '\"') {
+								withinWord = false;
+								readWord = false;
+							}
+							else {
+								word += cha;
+							}
 						}
 						else {
-							word += cha;
+							if (cha == ')') {
+								withinWord = false;
+								readWord = false;
+								withinParens = false;
+							}
+							else if (cha == ' ' && word.equals("")) {
+							}
+							else {
+								word += cha;
+							}
 						}
 					}
 					else {
 						if (cha == '\n') {
 							moveToData = true;
 						}
-						else if (Character.isWhitespace(cha) || cha == '#') {
+						else if (Character.isWhitespace(cha)) {
+						}
+						else if (cha == '#') {
+							rightAfterPound = true;
 						}
 						else if (cha == '\"') {
 							withinWord = true;
+							if (rightAfterPound) {
+								usingQuotes = true;
+								rightAfterPound = false;
+							}
 						}
 						else if (cha == '(') {
 							withinParens = true;
+							if (rightAfterPound) {
+								usingQuotes = false;
+								rightAfterPound = false;
+							}
 						}
 						else if (cha == ',' && withinParens) {
-							withinWord = true;
+							if (!usingQuotes) {
+								withinWord = true;
+							}
 						}
 						else if (cha == ',' && !withinParens) {
 						}

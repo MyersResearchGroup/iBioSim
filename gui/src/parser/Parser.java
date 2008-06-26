@@ -104,10 +104,10 @@ public class Parser {
 			BufferedWriter out = new BufferedWriter(new FileWriter(filename));
 			out.write("#");
 			if (species.size() > 0) {
-				out.write("(1, " + species.get(0) + ")");
+				out.write("\"" + species.get(0) + "\"");
 			}
 			for (int i = 1; i < species.size(); i++) {
-				out.write(", (" + (i + 1) + ", " + species.get(i) + ")");
+				out.write(" \"" + species.get(i) + "\"");
 			}
 			for (int i = 0; i < data.get(0).size(); i++) {
 				out.write("\n");
