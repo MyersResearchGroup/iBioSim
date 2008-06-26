@@ -180,7 +180,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 		if (o instanceof Runnable) {
 			((Runnable) o).run();
 		}
-		else if (o instanceof JComboBox && !lock) {			
+		else if (o instanceof JComboBox && !lock && !gcm.getSBMLFile().equals(sbmlFiles.getSelectedItem())) {			
 			dirty = true;
 		}
 		// System.out.println(o);
@@ -212,7 +212,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 		mainPanelNorth.add(GCMNameTextField);
 
 		JLabel sbmlFileLabel = new JLabel("SBML File:");
-		sbmlFiles = new JComboBox(new String[] {"Hi"});
+		sbmlFiles = new JComboBox();
 		sbmlFiles.addActionListener(this);
 		reloadFiles();
 		mainPanelNorth.add(sbmlFileLabel);
@@ -285,7 +285,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 
 	public void reloadFiles() {
 		lock();
-		sbmlFiles.removeAll();
+		//sbmlFiles.removeAll();
 		String[] sbmlList = Utility.getFiles(path, ".sbml");
 		String[] xmlList = Utility.getFiles(path, ".xml");
 
