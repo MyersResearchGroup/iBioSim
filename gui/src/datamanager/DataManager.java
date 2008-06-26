@@ -1104,49 +1104,51 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 		if (species != null) {
 			sort(species);
 		}
-		try {
-			TableModel m = table.getModel();
-			String[][] sort = sortData(m);
-			ArrayList<String> specs = new ArrayList<String>();
-			ArrayList<ArrayList<Double>> data = convertData(sort);
-			for (int i = 0; i < m.getColumnCount(); i++) {
-				specs.add(m.getColumnName(i));
-			}
-			for (String sp : species) {
-				if (!specs.contains(sp)) {
-					specs.add(sp);
-					ArrayList<Double> dat = new ArrayList<Double>();
-					for (int i = 0; i < data.get(0).size(); i++) {
-						dat.add(0.0);
+		if (files.getSelectedValue() != null) {
+			try {
+				TableModel m = table.getModel();
+				String[][] sort = sortData(m);
+				ArrayList<String> specs = new ArrayList<String>();
+				ArrayList<ArrayList<Double>> data = convertData(sort);
+				for (int i = 0; i < m.getColumnCount(); i++) {
+					specs.add(m.getColumnName(i));
+				}
+				for (String sp : species) {
+					if (!specs.contains(sp)) {
+						specs.add(sp);
+						ArrayList<Double> dat = new ArrayList<Double>();
+						for (int i = 0; i < data.get(0).size(); i++) {
+							dat.add(0.0);
+						}
+						data.add(dat);
 					}
-					data.add(dat);
 				}
-			}
-			int a, b;
-			String index;
-			ArrayList<Double> index2;
-			for (a = 2; a < specs.size(); a++) {
-				index = specs.get(a);
-				index2 = data.get(a);
-				b = a;
-				while ((b > 1) && specs.get(b - 1).compareToIgnoreCase(index) > 0) {
-					specs.set(b, specs.get(b - 1));
-					data.set(b, data.get(b - 1));
-					b = b - 1;
+				int a, b;
+				String index;
+				ArrayList<Double> index2;
+				for (a = 2; a < specs.size(); a++) {
+					index = specs.get(a);
+					index2 = data.get(a);
+					b = a;
+					while ((b > 1) && specs.get(b - 1).compareToIgnoreCase(index) > 0) {
+						specs.set(b, specs.get(b - 1));
+						data.set(b, data.get(b - 1));
+						b = b - 1;
+					}
+					specs.set(b, index);
+					data.set(b, index2);
 				}
-				specs.set(b, index);
-				data.set(b, index2);
-			}
-			String[] spec = specs.toArray(new String[0]);
-			String[][] dat = new String[data.get(0).size()][data.size()];
-			for (int i = 0; i < data.size(); i++) {
-				for (int j = 0; j < data.get(i).size(); j++) {
-					dat[j][i] = "" + data.get(i).get(j);
+				String[] spec = specs.toArray(new String[0]);
+				String[][] dat = new String[data.get(0).size()][data.size()];
+				for (int i = 0; i < data.size(); i++) {
+					for (int j = 0; j < data.get(i).size(); j++) {
+						dat[j][i] = "" + data.get(i).get(j);
+					}
 				}
+				createTable(dat, spec);
 			}
-			createTable(dat, spec);
-		}
-		catch (Exception e) {
+			catch (Exception e) {
+			}
 		}
 	}
 
