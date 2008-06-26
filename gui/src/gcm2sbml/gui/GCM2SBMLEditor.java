@@ -113,8 +113,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 			if (newName.contains(".gcm")) {
 				newName.replace(".gcm", "");
 			}
-			gcm.save(path + File.separator + newName + ".gcm");
-			biosim.refreshTree();
+			saveAs(newName);
 		}
 		
 		if (command.contains("template")) {
@@ -159,6 +158,22 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 		biosim.updateViews(gcmname + ".gcm");
 
 	}
+	
+	public void saveAs(String newName) {
+		if (new File(path + File.separator + newName + ".gcm").exists()) {
+			int value = JOptionPane.showOptionDialog(this, newName
+					+ "already exists.  Overwrite file?",
+					"Save file", JOptionPane.YES_NO_OPTION,
+					JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+			if (value == JOptionPane.YES_OPTION) {
+				gcm.save(path + File.separator + newName + ".gcm");
+				biosim.refreshTree();
+				
+			} else {
+				// Do nothing
+			}
+		}
+	}
 
 	public void actionPerformed(ActionEvent e) {
 		Object o = e.getSource();
@@ -197,7 +212,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 		mainPanelNorth.add(GCMNameTextField);
 
 		JLabel sbmlFileLabel = new JLabel("SBML File:");
-		sbmlFiles = new JComboBox();
+		sbmlFiles = new JComboBox(new String[] {"Hi"});
 		sbmlFiles.addActionListener(this);
 		reloadFiles();
 		mainPanelNorth.add(sbmlFileLabel);
