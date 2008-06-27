@@ -52,6 +52,9 @@ public class GCMFile {
 							+ prop.getProperty(propName.toString()).toString()
 							+ ",");
 				}
+				if (!prop.containsKey("shape")) {
+					buffer.append("shape=ellipse,");
+				}
 				if (!prop.containsKey("label")) {
 					buffer.append("label=\"" + s + "\"");
 				} else {
