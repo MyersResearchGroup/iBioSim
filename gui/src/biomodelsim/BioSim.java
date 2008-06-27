@@ -20,8 +20,6 @@ import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -323,25 +321,6 @@ public class BioSim implements MouseListener, ActionListener {
 		int y = screenSize.height / 2 - frameSize.height / 2;
 		frame.setLocation(x, y);
 		frame.setVisible(true);
-		frame.addComponentListener(new ComponentListener() {
-			public void componentHidden(ComponentEvent e) {
-			}
-
-			public void componentMoved(ComponentEvent e) {
-			}
-
-			public void componentResized(ComponentEvent e) {
-				if (mainPanel.getHeight() < 150) {
-					log.resizePanel(mainPanel.getWidth(), mainPanel.getHeight());
-				}
-				else {
-					log.resizePanel(mainPanel.getWidth(), 150);
-				}
-			}
-
-			public void componentShown(ComponentEvent e) {
-			}
-		});
 		dispatcher = new KeyEventDispatcher() {
 			public boolean dispatchKeyEvent(KeyEvent e) {
 				if (e.getID() == KeyEvent.KEY_TYPED) {
