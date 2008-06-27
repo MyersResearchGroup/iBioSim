@@ -97,7 +97,7 @@ public class GeneticNetwork {
 		
 		SBMLWriter writer = new SBMLWriter();
 		printSpecies(document);
-		printPromoters(document);
+		printOnlyPromoters(document);
 		
 		try {
 			PrintStream p = new PrintStream(new FileOutputStream(filename));
@@ -202,6 +202,16 @@ public class GeneticNetwork {
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new IllegalStateException("Unable to output to SBML");
+		}
+	}
+	
+	/**
+	 * Prints the parameters to the SBMLDocument
+	 * @param document the document to print to
+	 */
+	private void printParameters(SBMLDocument document) {
+		if (properties != null) {
+			
 		}
 	}
 
@@ -504,6 +514,37 @@ public class GeneticNetwork {
 		}
 
 	}
+	
+	/**
+	 * Prints the promoters in the network
+	 * 
+	 * @param document
+	 *            the SBML document
+	 */
+	private void printOnlyPromoters(SBMLDocument document) {
+		// Check to see if number of promoters is a property, if not, default to
+		// 1
+		String numPromoters = "1";
+		if (properties != null) {
+			numPromoters = properties
+					.getParameter(GlobalConstants.PROMOTER_COUNT_STRING);
+		}
+
+		for (Promoter promoter : promoters.values()) {
+			// First print out the promoter, and promoter bound to RNAP
+			String tempPromoters = numPromoters;
+			if (promoter.getProperty(GlobalConstants.PROMOTER_COUNT_STRING) != null) {
+				tempPromoters = promoter
+						.getProperty(GlobalConstants.PROMOTER_COUNT_STRING);
+			}
+			Species s = Utility.makeSpecies(promoter.getName(), compartment,
+					Double.parseDouble(tempPromoters));
+			s.setHasOnlySubstanceUnits(true);
+			Utility.addSpecies(document, s);			
+		}
+	}
+	
+	
 
 	/**
 	 * Prints the RNAP molecule to the document

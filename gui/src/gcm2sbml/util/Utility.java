@@ -21,6 +21,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import org.sbml.libsbml.Compartment;
+import org.sbml.libsbml.Parameter;
 import org.sbml.libsbml.Reaction;
 import org.sbml.libsbml.SBMLDocument;
 import org.sbml.libsbml.SBMLReader;
@@ -275,13 +276,21 @@ public class Utility {
 		filter = new Filter();		
 		return filter;
 	}
-		
+	
+	public static boolean addGlobalParameter(SBMLDocument document, Parameter p) {
+		if (document.getModel().getParameter(p.getId()) == null) {
+			document.getModel().addParameter(p);
+			return true;
+		}
+		return false;
+	}
 	
 	public static boolean addReaction(SBMLDocument document, Reaction r) {
 		if (document.getModel().getReaction(r.getId()) == null) {
 			document.getModel().addReaction(r);
+			return true;
 		}
-		if (OVERWRITE_WARNING) {
+		else if (OVERWRITE_WARNING) {
 			//Give warning
 		}		
 		return false;
@@ -292,7 +301,7 @@ public class Utility {
 			document.getModel().addSpecies(species);
 			return true;
 		}
-		if (OVERWRITE_WARNING) {
+		else if (OVERWRITE_WARNING) {
 			//Give warning
 		}
 		return false;
@@ -307,7 +316,7 @@ public class Utility {
 			document.getModel().addCompartment(new Compartment(compartment));
 			return true;
 		}
-		if (OVERWRITE_WARNING) {
+		else if (OVERWRITE_WARNING) {
 			//Give warning
 		}
 		return false;

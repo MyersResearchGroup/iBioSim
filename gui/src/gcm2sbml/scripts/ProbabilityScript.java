@@ -15,21 +15,33 @@ public class ProbabilityScript extends TestCase {
 	protected void setUp() throws Exception {
 		// TODO Auto-generated method stub
 		super.setUp();
+//		togHigh = new ArrayList<String>();
+//		togHigh.add("Y");
+//		togLow = new ArrayList<String>();
+//		togLow.add("Z");
+//
+//		siHigh = new ArrayList<String>();
+//		siHigh.add("P3");
+//		siLow = new ArrayList<String>();
+//		siLow.add("P2");
+//
+//		majHigh = new ArrayList<String>();
+//		majHigh.add("C");
+//		majLow = new ArrayList<String>();
+//		majLow.add("E");
+		
 		togHigh = new ArrayList<String>();
-		togHigh.add("Y");
+		togHigh.add("C");
 		togLow = new ArrayList<String>();
-		togLow.add("Z");
 
 		siHigh = new ArrayList<String>();
-		siHigh.add("P3");
+		siHigh.add("C");
 		siLow = new ArrayList<String>();
-		siLow.add("P2");
 
 		majHigh = new ArrayList<String>();
 		majHigh.add("C");
 		majLow = new ArrayList<String>();
-		majLow.add("E");
-		
+				
 		specialHigh = new ArrayList<String>();
 		specialHigh.add("D");
 		specialLow = new ArrayList<String>();
@@ -82,35 +94,35 @@ public class ProbabilityScript extends TestCase {
 
 	public void testProbabilities() {
 		try {
-			generateProbabilities("promoter", 5);
+			generateProbabilities("promoter", 2);
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.out.println("Error on promoter");
 		}
-		try {
-			generateProbabilities("coop", 5);
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.out.println("Error on coop");
-		}
-		try {
-			generateProbabilities("rep", 6);
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.out.println("Error on rep");
-		}		
-		try {
-			generateProbabilities("decay", 8);
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.out.println("Error on decay");
-		}		
-		try {
-			generateProbabilities("ratio", 6);
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.out.println("Error on ratio");
-		}
+//		try {
+//			generateProbabilities("coop", 5);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			System.out.println("Error on coop");
+//		}
+//		try {
+//			generateProbabilities("rep", 6);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			System.out.println("Error on rep");
+//		}		
+//		try {
+//			generateProbabilities("decay", 8);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			System.out.println("Error on decay");
+//		}		
+//		try {
+//			generateProbabilities("ratio", 6);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			System.out.println("Error on ratio");
+//		}
 	}
 
 	public void generateProbabilities(String files, int cases) {
