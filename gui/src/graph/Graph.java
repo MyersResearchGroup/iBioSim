@@ -184,6 +184,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 	private Reb2Sac reb2sac; // reb2sac options
 
+	private ArrayList<String> learnSpecs;
+
 	/**
 	 * Creates a Graph Object from the data given and calls the private graph
 	 * helper method.
@@ -192,6 +194,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			String outDir, String time, BioSim biomodelsim, String open, Log log, String graphName,
 			boolean timeSeries) {
 		this.reb2sac = reb2sac;
+		learnSpecs = null;
 		if (File.separator.equals("\\")) {
 			separator = "\\\\";
 		}
@@ -343,14 +346,32 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		}
 		catch (Exception e) {
 		}
-		if (label.contains("variance")) {
-			return calculateAverageVarianceDeviation(file, stem, 1, directory);
+		if (label.contains("average")) {
+			if (learnSpecs == null) {
+				return calculateAverageVarianceDeviation(file, stem, 0, directory, new TSDParser(file,
+						biomodelsim, false).getSpecies());
+			}
+			else {
+				return calculateAverageVarianceDeviation(file, stem, 0, directory, learnSpecs);
+			}
+		}
+		else if (label.contains("variance")) {
+			if (learnSpecs == null) {
+				return calculateAverageVarianceDeviation(file, stem, 1, directory, new TSDParser(file,
+						biomodelsim, false).getSpecies());
+			}
+			else {
+				return calculateAverageVarianceDeviation(file, stem, 1, directory, learnSpecs);
+			}
 		}
 		else if (label.contains("deviation")) {
-			return calculateAverageVarianceDeviation(file, stem, 2, directory);
-		}
-		else if (label.contains("average")) {
-			return calculateAverageVarianceDeviation(file, stem, 0, directory);
+			if (learnSpecs == null) {
+				return calculateAverageVarianceDeviation(file, stem, 2, directory, new TSDParser(file,
+						biomodelsim, false).getSpecies());
+			}
+			else {
+				return calculateAverageVarianceDeviation(file, stem, 2, directory, learnSpecs);
+			}
 		}
 		else {
 			biomodelsim.frame().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
@@ -495,14 +516,14 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	 * title and labels of the chart.
 	 */
 	public void mouseClicked(MouseEvent e) {
-	    if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2) {
-		if (timeSeries) {
-			editGraph();
+		if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2) {
+			if (timeSeries) {
+				editGraph();
+			}
+			else {
+				editProbGraph();
+			}
 		}
-		else {
-			editProbGraph();
-		}
-	    }
 	}
 
 	/**
@@ -3064,13 +3085,13 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	}
 
 	private ArrayList<ArrayList<Double>> calculateAverageVarianceDeviation(String startFile,
-			String fileStem, int choice, String directory) {
+			String fileStem, int choice, String directory, ArrayList<String> specsToGraph) {
 		ArrayList<ArrayList<Double>> average = new ArrayList<ArrayList<Double>>();
 		ArrayList<ArrayList<Double>> variance = new ArrayList<ArrayList<Double>>();
 		ArrayList<ArrayList<Double>> deviation = new ArrayList<ArrayList<Double>>();
 		biomodelsim.frame().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 		TSDParser p = new TSDParser(startFile, biomodelsim, false);
-		graphSpecies = p.getSpecies();
+		graphSpecies = specsToGraph;
 		biomodelsim.frame().setCursor(null);
 		boolean first = true;
 		int runsToMake = 1;
@@ -3105,11 +3126,12 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				}
 			}
 		}
-		for (int i = 0; i < graphSpecies.size(); i++) {
+		for (int i = 0; i < specsToGraph.size(); i++) {
 			average.add(new ArrayList<Double>());
 			variance.add(new ArrayList<Double>());
 		}
-		int count = 0;
+		HashMap<Double, Integer> dataCounts = new HashMap<Double, Integer>();
+		// int count = 0;
 		int skip = firstOne;
 		for (int j = 0; j < runsToMake; j++) {
 			if (!first) {
@@ -3125,7 +3147,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							p = new TSDParser(outDir + separator + fileStem + (j + 1) + "."
 									+ printer_id.substring(0, printer_id.length() - 8), biomodelsim, p.getWarning());
 							loop = false;
-							count++;
+							// count++;
 						}
 						else {
 							j++;
@@ -3138,7 +3160,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 									+ "." + printer_id.substring(0, printer_id.length() - 8), biomodelsim, p
 									.getWarning());
 							loop = false;
-							count++;
+							// count++;
 						}
 						else {
 							j++;
@@ -3149,6 +3171,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			ArrayList<ArrayList<Double>> data = p.getData();
 			for (int k = 0; k < data.get(0).size(); k++) {
 				if (first) {
+					dataCounts.put((data.get(0)).get(k), 1);
 					for (int i = 0; i < data.size(); i++) {
 						average.get(i).add((data.get(i)).get(k));
 						if (i == 0) {
@@ -3163,6 +3186,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					int index = -1;
 					if (average.get(0).contains(data.get(0).get(k))) {
 						index = average.get(0).indexOf(data.get(0).get(k));
+						int count = dataCounts.get(data.get(0).get(k));
+						dataCounts.put(data.get(0).get(k), count + 1);
 						for (int i = 1; i < data.size(); i++) {
 							double old = (average.get(i)).get(index);
 							(average.get(i)).set(index, old + (((data.get(i)).get(k) - old) / (count + 1)));
@@ -3174,6 +3199,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						}
 					}
 					else {
+						dataCounts.put(data.get(0).get(k), 1);
 						for (int a = 0; a < average.get(0).size(); a++) {
 							if (average.get(0).get(a) > data.get(0).get(k)) {
 								index = a;
@@ -5378,6 +5404,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		}
 		fixProbGraph(chart.getTitle().getText(), chart.getCategoryPlot().getDomainAxis().getLabel(),
 				chart.getCategoryPlot().getRangeAxis().getLabel(), histDataset, rend);
+	}
+
+	public void updateLearn(ArrayList<String> learnSpecs) {
+		this.learnSpecs = learnSpecs;
 	}
 
 	private class GraphProbs {
