@@ -20,7 +20,7 @@ import javax.swing.JPanel;
 public class SpeciesPanel extends JPanel implements ActionListener {
 	public SpeciesPanel(String selected, PropertyList speciesList,
 			PropertyList influencesList, GCMFile gcm) {
-		super(new GridLayout(6, 1));
+		super(new GridLayout(5, 1));
 		this.selected = selected;
 		this.speciesList = speciesList;
 		this.influences = influencesList;
@@ -55,13 +55,13 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		add(field);
 
 		// Max dimer field
-		field = new PropertyField(GlobalConstants.MAX_DIMER_STRING, gcm
-				.getParameter(GlobalConstants.MAX_DIMER_STRING),
-				PropertyField.states[0], gcm
-						.getParameter(GlobalConstants.MAX_DIMER_STRING),
-				Utility.NUMstring);
-		fields.put(GlobalConstants.MAX_DIMER_STRING, field);
-		add(field);
+//		field = new PropertyField(GlobalConstants.MAX_DIMER_STRING, gcm
+//				.getParameter(GlobalConstants.MAX_DIMER_STRING),
+//			PropertyField.states[0], gcm
+//						.getParameter(GlobalConstants.MAX_DIMER_STRING),
+//				Utility.NUMstring);
+//		fields.put(GlobalConstants.MAX_DIMER_STRING, field);
+//		add(field);
 
 		// Dimerization field
 		field = new PropertyField(GlobalConstants.KASSOCIATION_STRING, gcm
@@ -165,15 +165,15 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 
 	private void setType(String type) {
 		if (type.equals(types[0])) {
-			fields.get(GlobalConstants.MAX_DIMER_STRING).setEnabled(true);
+			//fields.get(GlobalConstants.MAX_DIMER_STRING).setEnabled(true);
 			fields.get(GlobalConstants.KASSOCIATION_STRING).setEnabled(true);
 			fields.get(GlobalConstants.KDECAY_STRING).setEnabled(true);
 		} else if (type.equals(types[1])) {
-			fields.get(GlobalConstants.MAX_DIMER_STRING).setEnabled(true);
+			//fields.get(GlobalConstants.MAX_DIMER_STRING).setEnabled(true);
 			fields.get(GlobalConstants.KASSOCIATION_STRING).setEnabled(true);
 			fields.get(GlobalConstants.KDECAY_STRING).setEnabled(false);
 		} else {
-			fields.get(GlobalConstants.MAX_DIMER_STRING).setEnabled(true);
+			//fields.get(GlobalConstants.MAX_DIMER_STRING).setEnabled(true);
 			fields.get(GlobalConstants.KASSOCIATION_STRING).setEnabled(true);
 			fields.get(GlobalConstants.KDECAY_STRING).setEnabled(true);
 		}
