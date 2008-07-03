@@ -29,6 +29,11 @@ public class PromoterPanel extends JPanel {
 		PropertyField field = new PropertyField(GlobalConstants.NAME, "", null,
 				null, Utility.IDstring);
 		fields.put(GlobalConstants.NAME, field);
+		
+		field = new PropertyField("ID", "", null,
+				null, Utility.IDstring);
+		
+		fields.put("ID", field);
 		add(field);
 		
 		// promoter count
@@ -38,30 +43,21 @@ public class PromoterPanel extends JPanel {
 				.getParameter(GlobalConstants.PROMOTER_COUNT_STRING), Utility.NUMstring);
 		fields.put(GlobalConstants.PROMOTER_COUNT_STRING, field);
 		add(field);		
-
-		// kbasal
-		field = new PropertyField(GlobalConstants.KBASAL_STRING, gcm
-				.getParameter(GlobalConstants.KBASAL_STRING),
-				PropertyField.states[0], gcm
-						.getParameter(GlobalConstants.KBASAL_STRING),
-				Utility.NUMstring);
-		fields.put(GlobalConstants.KBASAL_STRING, field);
-		add(field);
 		
+		// cooperativity
+		field = new PropertyField(GlobalConstants.COOPERATIVITY_STRING, gcm
+				.getParameter(GlobalConstants.COOPERATIVITY_STRING),
+				PropertyField.states[0], gcm
+				.getParameter(GlobalConstants.COOPERATIVITY_STRING), Utility.NUMstring);
+		fields.put(GlobalConstants.COOPERATIVITY_STRING, field);
+		add(field);		
+
 		// RNAP binding
 		field = new PropertyField(GlobalConstants.RNAP_BINDING_STRING, gcm
 				.getParameter(GlobalConstants.RNAP_BINDING_STRING),
 				PropertyField.states[0], gcm
 				.getParameter(GlobalConstants.RNAP_BINDING_STRING), Utility.NUMstring);
 		fields.put(GlobalConstants.RNAP_BINDING_STRING, field);
-		add(field);
-		
-		// stoichiometry 
-		field = new PropertyField(GlobalConstants.STOICHIOMETRY_STRING, gcm
-				.getParameter(GlobalConstants.STOICHIOMETRY_STRING),
-				PropertyField.states[0], gcm
-				.getParameter(GlobalConstants.STOICHIOMETRY_STRING), Utility.NUMstring);
-		fields.put(GlobalConstants.STOICHIOMETRY_STRING, field);
 		add(field);
 		
 		// kocr
@@ -72,6 +68,23 @@ public class PromoterPanel extends JPanel {
 		fields.put(GlobalConstants.OCR_STRING, field);
 		add(field);
 		
+		// stoichiometry 
+		field = new PropertyField(GlobalConstants.STOICHIOMETRY_STRING, gcm
+				.getParameter(GlobalConstants.STOICHIOMETRY_STRING),
+				PropertyField.states[0], gcm
+				.getParameter(GlobalConstants.STOICHIOMETRY_STRING), Utility.NUMstring);
+		fields.put(GlobalConstants.STOICHIOMETRY_STRING, field);
+		add(field);		
+		
+		// kbasal
+		field = new PropertyField(GlobalConstants.KBASAL_STRING, gcm
+				.getParameter(GlobalConstants.KBASAL_STRING),
+				PropertyField.states[0], gcm
+						.getParameter(GlobalConstants.KBASAL_STRING),
+				Utility.NUMstring);
+		fields.put(GlobalConstants.KBASAL_STRING, field);
+		add(field);
+		
 		// kactived production
 		field = new PropertyField(GlobalConstants.ACTIVED_STRING, gcm
 				.getParameter(GlobalConstants.ACTIVED_STRING),
@@ -79,15 +92,7 @@ public class PromoterPanel extends JPanel {
 				.getParameter(GlobalConstants.ACTIVED_STRING), Utility.NUMstring);
 		fields.put(GlobalConstants.ACTIVED_STRING, field);
 		add(field);
-		
-		// cooperativity
-		field = new PropertyField(GlobalConstants.COOPERATIVITY_STRING, gcm
-				.getParameter(GlobalConstants.COOPERATIVITY_STRING),
-				PropertyField.states[0], gcm
-				.getParameter(GlobalConstants.COOPERATIVITY_STRING), Utility.NUMstring);
-		fields.put(GlobalConstants.COOPERATIVITY_STRING, field);
-		add(field);
-		
+
 		String oldName = null;
 		if (selected != null) {
 			oldName = selected;
@@ -140,6 +145,9 @@ public class PromoterPanel extends JPanel {
 				if (f.getState() == null
 						|| f.getState().equals(PropertyField.states[1])) {
 					property.put(f.getKey(), f.getValue());
+					if (f.getKey().equals("ID")) {
+						property.put(GlobalConstants.NAME, f.getValue());
+					}
 				}
 			}
 
@@ -168,6 +176,10 @@ public class PromoterPanel extends JPanel {
 				fields.get(o.toString()).setValue(
 						property.getProperty(o.toString()));
 				fields.get(o.toString()).setCustom();
+			}
+			if (o.equals(GlobalConstants.NAME)) {
+				fields.get("ID").setValue(
+						property.getProperty(o.toString()));
 			}
 		}
 	}
