@@ -29,12 +29,12 @@ public class PromoterPanel extends JPanel {
 		PropertyField field = new PropertyField(GlobalConstants.NAME, "", null,
 				null, Utility.IDstring);
 		fields.put(GlobalConstants.NAME, field);
-		
+		add(field);		
 		field = new PropertyField("ID", "", null,
 				null, Utility.IDstring);
 		
-		fields.put("ID", field);
-		add(field);
+//		fields.put("ID", field);
+//		add(field);
 		
 		// promoter count
 		field = new PropertyField(GlobalConstants.PROMOTER_COUNT_STRING, gcm
@@ -145,9 +145,9 @@ public class PromoterPanel extends JPanel {
 				if (f.getState() == null
 						|| f.getState().equals(PropertyField.states[1])) {
 					property.put(f.getKey(), f.getValue());
-					if (f.getKey().equals("ID")) {
-						property.put(GlobalConstants.NAME, f.getValue());
-					}
+//					if (f.getKey().equals("ID")) {
+//						property.put(GlobalConstants.NAME, f.getValue());
+//					}
 				}
 			}
 
@@ -177,10 +177,10 @@ public class PromoterPanel extends JPanel {
 						property.getProperty(o.toString()));
 				fields.get(o.toString()).setCustom();
 			}
-			if (o.equals(GlobalConstants.NAME)) {
-				fields.get("ID").setValue(
-						property.getProperty(o.toString()));
-			}
+//			if (o.equals(GlobalConstants.NAME)) {
+//				fields.get("ID").setValue(
+//						property.getProperty(o.toString()));
+//			}
 		}
 	}
 	
