@@ -3,6 +3,7 @@ package gcm2sbml.network;
 import gcm2sbml.parser.GCMFile;
 import gcm2sbml.util.GlobalConstants;
 import gcm2sbml.util.Utility;
+import gcm2sbml.visitor.AbstractPrintVisitor;
 import gcm2sbml.visitor.PrintActivatedBindingVisitor;
 import gcm2sbml.visitor.PrintActivatedProductionVisitor;
 import gcm2sbml.visitor.PrintBiochemicalVisitor;
@@ -79,12 +80,17 @@ public class GeneticNetwork {
 		this.promoters = promoters;
 		this.properties = gcm;
 		
+		AbstractPrintVisitor.setGCMFile(gcm);
+		
 		initialize();
 	}
 	
 	public void buildTemplate(HashMap<String, SpeciesInterface> species,			
 			HashMap<String, Promoter> promoters, String gcm, String filename) {
 		
+		GCMFile file = new GCMFile();
+		file.load(gcm);
+		AbstractPrintVisitor.setGCMFile(file);
 		setSpecies(species);
 		setPromoters(promoters);
 		

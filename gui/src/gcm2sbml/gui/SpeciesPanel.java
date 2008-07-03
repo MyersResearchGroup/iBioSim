@@ -202,7 +202,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 	private JComboBox typeBox = null;
 
 	private static final String[] types = new String[] { "normal", "constant",
-			"spastic" };
+			"unconstrained" };
 
 	private HashMap<String, PropertyField> fields = null;
 }

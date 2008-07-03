@@ -46,7 +46,7 @@ public class GlobalConstants {
 	
 	public static final String NAME = "Name";
 	public static final String CONSTANT = "constant";
-	public static final String SPASTIC = "spastic";
+	public static final String SPASTIC = "unconstrained";
 	public static final String NORMAL = "normal";
 	public static final String TYPE = "Type";
 	public static final String MAX_DIMER_STRING = "N-mer as trascription factor";

@@ -3,8 +3,11 @@ package gcm2sbml.visitor;
 import java.util.Collection;
 import java.util.Properties;
 
+import org.sbml.libsbml.KineticLaw;
+import org.sbml.libsbml.Parameter;
 import org.sbml.libsbml.SBMLDocument;
 import org.sbml.libsbml.Species;
+import org.sbml.libsbml.SpeciesReference;
 
 import gcm2sbml.network.BaseSpecies;
 import gcm2sbml.network.BiochemicalSpecies;
@@ -81,6 +84,20 @@ public class PrintSpeciesVisitor extends AbstractPrintVisitor {
 		Species s = Utility.makeSpecies(specie.getName(), compartment, init);
 		s.setHasOnlySubstanceUnits(true);
 		Utility.addSpecies(document, s);
+		
+		org.sbml.libsbml.Reaction r = new org.sbml.libsbml.Reaction(
+				"Spastic_production_" + s.getName());
+		
+		r.addProduct(new SpeciesReference(s.getName(), Double.parseDouble(parameters.getParameter(GlobalConstants.STOICHIOMETRY_STRING))));
+		
+		r.setReversible(false);
+		r.setFast(false);
+		KineticLaw kl = new KineticLaw();
+		kl.addParameter(new Parameter("kp", Double.parseDouble(parameters
+					.getParameter((GlobalConstants.OCR_STRING)))));	
+		kl.setFormula("kp");
+		r.setKineticLaw(kl);
+		Utility.addReaction(document, r);		
 	}
 	
 	private void loadValues(Properties property) {

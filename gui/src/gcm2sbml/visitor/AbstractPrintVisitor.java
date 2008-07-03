@@ -4,6 +4,7 @@
 package gcm2sbml.visitor;
 
 import gcm2sbml.network.GeneticNetwork;
+import gcm2sbml.parser.GCMFile;
 
 import java.util.ArrayList;
 import java.util.Properties;
@@ -58,6 +59,12 @@ public abstract class AbstractPrintVisitor implements SpeciesVisitor {
 			return defaultValue;
 		}
 	}
+	
+	public static void setGCMFile(GCMFile file) {
+		parameters = file;
+	}
+	
+	protected static GCMFile parameters = null;
 
 	protected SBMLDocument document = null;
 

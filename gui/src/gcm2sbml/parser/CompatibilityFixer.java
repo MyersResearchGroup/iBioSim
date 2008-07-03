@@ -17,6 +17,9 @@ public class CompatibilityFixer {
 	private static HashMap<String, String> guiName = null;
 	private static HashMap<String, String> sbmlName = null;
 	
+	public final static String GUI_NAME_STRING = "ID";
+	public final static String SBML_NAME_STRING = "";
+		
 	public final static String GUI_INITIAL_STRING = "Initial species count";
 	public final static String SBML_INITIAL_STRING = "ns";
 	
@@ -66,6 +69,9 @@ public class CompatibilityFixer {
 	static {		
 		guiName = new HashMap<String, String>();
 		sbmlName = new HashMap<String, String>();
+		
+		//guiName.put(GlobalConstants.NAME, GUI_NAME_STRING);
+		//sbmlName.put(GlobalConstants.NAME, SBML_NAME_STRING);
 		
 		guiName.put(GlobalConstants.INITIAL_STRING, GUI_INITIAL_STRING);
 		sbmlName.put(GlobalConstants.INITIAL_STRING, SBML_INITIAL_STRING);

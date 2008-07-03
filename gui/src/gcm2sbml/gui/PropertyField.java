@@ -19,7 +19,7 @@ public class PropertyField extends JPanel implements ActionListener,
 
 	public PropertyField(String name, String value, String state,
 			String defaultValue, String repExp) {
-		super(new GridLayout(1, 4));
+		super(new GridLayout(1, 3));
 		if (state == null) {
 			setLayout(new GridLayout(1, 2));
 		}
@@ -56,13 +56,13 @@ public class PropertyField extends JPanel implements ActionListener,
 		name.setText(nameString);
 		this.add(name);
 		if (!(valueString == null) && !(stateString == null)) {
-			name.setText(CompatibilityFixer.getGuiName(nameString) + ", ID: " + CompatibilityFixer.getSBMLName(nameString) + "   ");
-			idLabel = new JLabel("ID");
-			idLabel.setEnabled(false);
-			this.add(idLabel);
-			idField = new JTextField(CompatibilityFixer.getSBMLName(nameString));
-			idField.setEditable(false);
-			this.add(idField);
+			name.setText(CompatibilityFixer.getGuiName(nameString) + " (" + CompatibilityFixer.getSBMLName(nameString) + ") ");
+//			idLabel = new JLabel("ID");
+//			idLabel.setEnabled(false);
+//			this.add(idLabel);
+//			idField = new JTextField(CompatibilityFixer.getSBMLName(nameString));
+//			idField.setEditable(false);
+//			this.add(idField);
 		}
 		field = new JTextField(20);
 		field.setText(valueString);

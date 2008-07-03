@@ -242,14 +242,25 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 				buttons);
 		pane.setDividerSize(2);
 		mainPanelCenterDown.add(pane);
+		
+		promoters = new PropertyList("Promoter List");
+		EditButton addInit = new EditButton("Add Promoter", promoters);
+		RemoveButton removeInit = new RemoveButton("Remove Promoter", promoters);
+		EditButton editInit = new EditButton("Edit Promoter", promoters);
+		promoters.addAllItem(gcm.getPromoters().keySet());
+
+		JPanel initPanel = Utility.createPanel(this, "Promoters", promoters, addInit,
+				removeInit, editInit);
+		mainPanelCenterCenter.add(initPanel);
+
 
 		species = new PropertyList("Species List");
-		EditButton addInit = new EditButton("Add Species", species);
-		RemoveButton removeInit = new RemoveButton("Remove Species", species);
-		EditButton editInit = new EditButton("Edit Species", species);
+		addInit = new EditButton("Add Species", species);
+		removeInit = new RemoveButton("Remove Species", species);
+		editInit = new EditButton("Edit Species", species);
 		species.addAllItem(gcm.getSpecies().keySet());
 
-		JPanel initPanel = Utility.createPanel(this, "Species", species,
+		initPanel = Utility.createPanel(this, "Species", species,
 				addInit, removeInit, editInit);
 		mainPanelCenterCenter.add(initPanel);
 
@@ -261,16 +272,6 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 
 		initPanel = Utility.createPanel(this, "Influences", influences,
 				addInit, removeInit, editInit);
-		mainPanelCenterCenter.add(initPanel);
-
-		promoters = new PropertyList("Promoter List");
-		addInit = new EditButton("Add Promoter", promoters);
-		removeInit = new RemoveButton("Remove Promoter", promoters);
-		editInit = new EditButton("Edit Promoter", promoters);
-		promoters.addAllItem(gcm.getPromoters().keySet());
-
-		initPanel = Utility.createPanel(this, "Promoters", promoters, addInit,
-				removeInit, editInit);
 		mainPanelCenterCenter.add(initPanel);
 
 		parameters = new PropertyList("Parameter List");
