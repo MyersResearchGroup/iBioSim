@@ -561,7 +561,7 @@ public class Run implements ActionListener {
 									simTab.setComponentAt(i, new Graph(r2s, printer_track_quantity, outDir
 											.split(separator)[outDir.split(separator).length - 1]
 											+ " simulation results", printer_id, outDir, "time", biomodelsim, null, log,
-											null, true));
+											null, true, false));
 									simTab.getComponentAt(i).setName("TSD Graph");
 								}
 							}
@@ -576,7 +576,7 @@ public class Run implements ActionListener {
 										simTab.setComponentAt(i, new Graph(r2s, printer_track_quantity, outDir
 												.split(separator)[outDir.split(separator).length - 1]
 												+ " simulation results", printer_id, outDir, "time", biomodelsim, null,
-												log, null, false));
+												log, null, false, false));
 										simTab.getComponentAt(i).setName("ProbGraph");
 									}
 								}
@@ -599,7 +599,7 @@ public class Run implements ActionListener {
 								simTab.setComponentAt(i, new Graph(r2s, printer_track_quantity, outDir
 										.split(separator)[outDir.split(separator).length - 1]
 										+ " simulation results", printer_id, outDir, "time", biomodelsim, null, log,
-										null, false));
+										null, false, false));
 								simTab.getComponentAt(i).setName("ProbGraph");
 							}
 						}
@@ -623,7 +623,7 @@ public class Run implements ActionListener {
 										simTab.setComponentAt(i, new Graph(r2s, printer_track_quantity, outDir
 												.split(separator)[outDir.split(separator).length - 1]
 												+ " simulation results", printer_id, outDir, "time", biomodelsim, null,
-												log, null, true));
+												log, null, true, false));
 										simTab.getComponentAt(i).setName("TSD Graph");
 									}
 								}
@@ -638,7 +638,7 @@ public class Run implements ActionListener {
 											simTab.setComponentAt(i, new Graph(r2s, printer_track_quantity, outDir
 													.split(separator)[outDir.split(separator).length - 1]
 													+ " simulation results", printer_id, outDir, "time", biomodelsim, null,
-													log, null, false));
+													log, null, false, false));
 											simTab.getComponentAt(i).setName("ProbGraph");
 										}
 									}
@@ -655,7 +655,7 @@ public class Run implements ActionListener {
 										simTab.setComponentAt(i, new Graph(r2s, printer_track_quantity, outDir
 												.split(separator)[outDir.split(separator).length - 1]
 												+ " simulation results", printer_id, outDir, "time", biomodelsim, null,
-												log, null, true));
+												log, null, true, false));
 										simTab.getComponentAt(i).setName("TSD Graph");
 									}
 								}
@@ -670,7 +670,7 @@ public class Run implements ActionListener {
 											simTab.setComponentAt(i, new Graph(r2s, printer_track_quantity, outDir
 													.split(separator)[outDir.split(separator).length - 1]
 													+ " simulation results", printer_id, outDir, "time", biomodelsim, null,
-													log, null, false));
+													log, null, false, false));
 											simTab.getComponentAt(i).setName("ProbGraph");
 										}
 									}

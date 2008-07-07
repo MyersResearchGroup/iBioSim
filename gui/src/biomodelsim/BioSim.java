@@ -1248,7 +1248,7 @@ public class BioSim implements MouseListener, ActionListener {
 					}
 					Graph g = new Graph(null, "amount",
 							graphName.trim().substring(0, graphName.length() - 4), "tsd.printer", root, "time",
-							this, null, log, graphName.trim(), true);
+							this, null, log, graphName.trim(), true, false);
 					addTab(graphName.trim(), g, "TSD Graph");
 					g.save();
 					refreshTree();
@@ -1301,7 +1301,7 @@ public class BioSim implements MouseListener, ActionListener {
 					}
 					Graph g = new Graph(null, "amount",
 							graphName.trim().substring(0, graphName.length() - 4), "tsd.printer", root, "time",
-							this, null, log, graphName.trim(), false);
+							this, null, log, graphName.trim(), false, false);
 					addTab(graphName.trim(), g, "Probability Graph");
 					g.save();
 					refreshTree();
@@ -1783,13 +1783,13 @@ public class BioSim implements MouseListener, ActionListener {
 					addTab(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],
 							new Graph(null, "amount", "title", "tsd.printer", root, "time", this, tree.getFile(),
 									log, tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],
-									true), "TSD Graph");
+									true, false), "TSD Graph");
 				}
 				else {
 					addTab(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],
 							new Graph(null, "amount", "title", "tsd.printer", root, "time", this, tree.getFile(),
 									log, tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],
-									false), "Probability Graph");
+									false, false), "Probability Graph");
 				}
 			}
 		}
@@ -2340,7 +2340,7 @@ public class BioSim implements MouseListener, ActionListener {
 						addTab(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],
 								new Graph(null, "amount", "title", "tsd.printer", root, "time", this, tree
 										.getFile(), log, tree.getFile().split(separator)[tree.getFile()
-										.split(separator).length - 1], true), "TSD Graph");
+										.split(separator).length - 1], true, false), "TSD Graph");
 					}
 				}
 				else if (tree.getFile().length() >= 4
@@ -2357,7 +2357,7 @@ public class BioSim implements MouseListener, ActionListener {
 						addTab(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],
 								new Graph(null, "amount", "title", "tsd.printer", root, "time", this, tree
 										.getFile(), log, tree.getFile().split(separator)[tree.getFile()
-										.split(separator).length - 1], false), "Probability Graph");
+										.split(separator).length - 1], false, false), "Probability Graph");
 					}
 				}
 				else if (new File(tree.getFile()).isDirectory() && !tree.getFile().equals(root)) {
@@ -2777,7 +2777,7 @@ public class BioSim implements MouseListener, ActionListener {
 				lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Learn");
 				lrnTab.addTab("TSD Graph", new Graph(null, "amount", tree.getFile().split(separator)[tree
 						.getFile().split(separator).length - 1]
-						+ " data", "tsd.printer", tree.getFile(), "time", this, open, log, null, true));
+						+ " data", "tsd.printer", tree.getFile(), "time", this, open, log, null, true, true));
 				lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("TSD Graph");
 			}
 			else {
@@ -3235,7 +3235,7 @@ public class BioSim implements MouseListener, ActionListener {
 							else {
 								((JTabbedPane) tab.getComponentAt(i)).setComponentAt(j, new Graph(null, "amount",
 										learnName + " data", "tsd.printer", root + separator + learnName, "time", this,
-										null, log, null, true));
+										null, log, null, true, true));
 								((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j).setName("TSD Graph");
 							}
 						}
