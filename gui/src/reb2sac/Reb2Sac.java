@@ -3274,7 +3274,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		int[] index = species.getSelectedIndices();
 		species.setSelectedIndices(index);
 		return new Graph(this, printer_track_quantity, simName + " simulation results", printer_id,
-				outDir, "time", biomodelsim, open, log, null, true);
+				outDir, "time", biomodelsim, open, log, null, true, false);
 	}
 
 	public JButton getRunButton() {
@@ -3430,7 +3430,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		String printer_id = "tsd.printer";
 		String printer_track_quantity = "amount";
 		return new Graph(this, printer_track_quantity, simName + " simulation results", printer_id,
-				outDir, "time", biomodelsim, open, log, null, false);
+				outDir, "time", biomodelsim, open, log, null, false, false);
 	}
 
 	public void run() {
