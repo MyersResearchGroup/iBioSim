@@ -41,8 +41,10 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
@@ -55,6 +57,7 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.plaf.metal.MetalIconFactory;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
+import javax.swing.tree.TreePath;
 
 import org.apache.batik.dom.GenericDOMImplementation;
 import org.apache.batik.svggen.SVGGraphics2D;
@@ -196,6 +199,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 	private ArrayList<String> averageOrder;
 
+	private JPopupMenu popup; // popup menu
+
+	private ArrayList<String> directories;
+
 	/**
 	 * Creates a Graph Object from the data given and calls the private graph
 	 * helper method.
@@ -205,6 +212,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			boolean timeSeries, boolean learnGraph) {
 		this.reb2sac = reb2sac;
 		averageOrder = null;
+		popup = new JPopupMenu();
 		warn = false;
 		if (File.separator.equals("\\")) {
 			separator = "\\\\";
@@ -455,6 +463,71 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		else if (e.getSource() == export) {
 			export();
 		}
+		else if (e.getActionCommand().equals("rename")) {
+			String rename = JOptionPane.showInputDialog(biomodelsim.frame(), "Enter A New Filename:",
+					"Rename", JOptionPane.PLAIN_MESSAGE);
+			if (rename != null) {
+				rename = rename.trim();
+			}
+			else {
+				return;
+			}
+			if (!rename.equals("")) {
+				boolean write = true;
+				if (new File(outDir + separator + rename).exists()) {
+					Object[] options = { "Overwrite", "Cancel" };
+					int value = JOptionPane.showOptionDialog(biomodelsim.frame(), "File already exists."
+							+ "\nDo you want to overwrite?", "Overwrite", JOptionPane.YES_NO_OPTION,
+							JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+					if (value == JOptionPane.YES_OPTION) {
+						write = true;
+						File dir = new File(outDir + separator + rename);
+						if (dir.isDirectory()) {
+							biomodelsim.deleteDir(dir);
+						}
+						else {
+							System.gc();
+							dir.delete();
+						}
+					}
+					else {
+						write = false;
+					}
+				}
+				if (write) {
+					String getFile = node.getName();
+					IconNode s = node;
+					while (s.getParent().getParent() != null) {
+						getFile = s.getName() + separator + getFile;
+						s = (IconNode) s.getParent();
+					}
+					getFile = outDir + separator + getFile;
+					new File(getFile).renameTo(new File(outDir + separator + rename));
+					for (GraphSpecies spec : graphed) {
+						if (spec.getDirectory().equals(node.getName())) {
+							spec.setDirectory(rename);
+						}
+					}
+					directories.remove(node.getName());
+					directories.add(rename);
+					node.setUserObject(rename);
+					node.setName(rename);
+					int[] rows = tree.getSelectionRows();
+					for (int i : rows) {
+						if (tree.isExpanded(i)) {
+							tree.collapseRow(i);
+							tree.expandRow(i);
+						}
+						else {
+							tree.expandRow(i);
+							tree.collapseRow(i);
+						}
+					}
+				}
+			}
+		}
+		else if (e.getActionCommand().equals("delete")) {
+		}
 		// // if the export as jpeg button is clicked
 		// else if (e.getSource() == exportJPeg) {
 		// export(0);
@@ -569,26 +642,74 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	 * title and labels of the chart.
 	 */
 	public void mouseClicked(MouseEvent e) {
-		if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2) {
-			if (timeSeries) {
-				editGraph();
-			}
-			else {
-				editProbGraph();
+		if (e.getSource() != tree) {
+			if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2) {
+				if (timeSeries) {
+					editGraph();
+				}
+				else {
+					editProbGraph();
+				}
 			}
 		}
 	}
 
-	/**
-	 * This method currently does nothing.
-	 */
 	public void mousePressed(MouseEvent e) {
+		if (e.getSource() == tree) {
+			int selRow = tree.getRowForLocation(e.getX(), e.getY());
+			if (selRow < 0)
+				return;
+			TreePath selPath = tree.getPathForLocation(e.getX(), e.getY());
+			tree.setSelectionPath(selPath);
+			if (e.isPopupTrigger()) {
+				popup.removeAll();
+				if (node.getChildCount() != 0 && node.getParent() != null) {
+					JMenuItem rename = new JMenuItem("Rename");
+					rename.addActionListener(this);
+					rename.setActionCommand("rename");
+					popup.add(rename);
+				}
+				if (!node.getName().equals("Average") && !node.getName().equals("Variance")
+						&& !node.getName().equals("Standard Deviation") && node.getParent() != null) {
+					JMenuItem delete = new JMenuItem("Delete");
+					delete.addActionListener(this);
+					delete.setActionCommand("delete");
+					popup.add(delete);
+				}
+				if (popup.getComponentCount() != 0) {
+					popup.show(e.getComponent(), e.getX(), e.getY());
+				}
+			}
+		}
 	}
 
-	/**
-	 * This method currently does nothing.
-	 */
 	public void mouseReleased(MouseEvent e) {
+		if (e.getSource() == tree) {
+			int selRow = tree.getRowForLocation(e.getX(), e.getY());
+			if (selRow < 0)
+				return;
+			TreePath selPath = tree.getPathForLocation(e.getX(), e.getY());
+			tree.setSelectionPath(selPath);
+			if (e.isPopupTrigger()) {
+				popup.removeAll();
+				if (node.getChildCount() != 0 && node.getParent() != null) {
+					JMenuItem rename = new JMenuItem("Rename");
+					rename.addActionListener(this);
+					rename.setActionCommand("rename");
+					popup.add(rename);
+				}
+				if (!node.getName().equals("Average") && !node.getName().equals("Variance")
+						&& !node.getName().equals("Standard Deviation") && node.getParent() != null) {
+					JMenuItem delete = new JMenuItem("Delete");
+					delete.addActionListener(this);
+					delete.setActionCommand("delete");
+					popup.add(delete);
+				}
+				if (popup.getComponentCount() != 0) {
+					popup.show(e.getComponent(), e.getX(), e.getY());
+				}
+			}
+		}
 	}
 
 	/**
@@ -756,7 +877,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			files[j] = index;
 		}
 		boolean add = false;
-		final ArrayList<String> directories = new ArrayList<String>();
+		directories = new ArrayList<String>();
 		for (String file : files) {
 			if (file.length() > 3
 					&& file.substring(file.length() - 4).equals(
@@ -1202,6 +1323,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		}
 		else {
 			tree = new JTree(simDir);
+			if (!topLevel && learnSpecs == null) {
+				tree.addMouseListener(this);
+			}
 			tree.putClientProperty("JTree.icons", makeIcons());
 			tree.setCellRenderer(new IconNodeRenderer());
 			final JPanel all = new JPanel(new BorderLayout());
@@ -4336,7 +4460,11 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			this.id = id;
 		}
 
-		public void setNumber(int number) {
+		private void setDirectory(String directory) {
+			this.directory = directory;
+		}
+
+		private void setNumber(int number) {
 			this.number = number;
 		}
 
@@ -5790,6 +5918,10 @@ class IconNode extends DefaultMutableTreeNode {
 
 	public String getName() {
 		return hiddenName;
+	}
+
+	public void setName(String name) {
+		hiddenName = name;
 	}
 
 	public void setIcon(Icon icon) {
