@@ -203,6 +203,16 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 	private ArrayList<String> directories;
 
+	private JPanel specPanel;
+
+	private JScrollPane scrollpane;
+
+	private JPanel all;
+
+	private JPanel titlePanel;
+
+	private JScrollPane scroll;
+
 	/**
 	 * Creates a Graph Object from the data given and calls the private graph
 	 * helper method.
@@ -474,13 +484,15 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			}
 			if (!rename.equals("")) {
 				boolean write = true;
-				if (new File(outDir + separator + rename).exists()) {
+				if (rename.equals(node.getName())) {
+					write = false;
+				}
+				else if (new File(outDir + separator + rename).exists()) {
 					Object[] options = { "Overwrite", "Cancel" };
 					int value = JOptionPane.showOptionDialog(biomodelsim.frame(), "File already exists."
 							+ "\nDo you want to overwrite?", "Overwrite", JOptionPane.YES_NO_OPTION,
 							JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 					if (value == JOptionPane.YES_OPTION) {
-						write = true;
 						File dir = new File(outDir + separator + rename);
 						if (dir.isDirectory()) {
 							biomodelsim.deleteDir(dir);
@@ -488,6 +500,28 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						else {
 							System.gc();
 							dir.delete();
+						}
+						for (int i = 0; i < simDir.getChildCount(); i++) {
+							if (((IconNode) simDir.getChildAt(i)).getChildCount() > 0
+									&& ((IconNode) simDir.getChildAt(i)).getName().equals(rename)) {
+								simDir.remove(i);
+							}
+						}
+						boolean checked = false;
+						for (int i = 0; i < simDir.getChildCount(); i++) {
+							if (((IconNode) simDir.getChildAt(i)).getIconName().equals("" + (char) 10003)) {
+								checked = true;
+							}
+						}
+						if (!checked) {
+							simDir.setIcon(MetalIconFactory.getTreeFolderIcon());
+							simDir.setIconName("");
+						}
+						for (int i = 0; i < graphed.size(); i++) {
+							if (graphed.get(i).getDirectory().equals(rename)) {
+								graphed.remove(i);
+								i--;
+							}
 						}
 					}
 					else {
@@ -512,17 +546,61 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					directories.add(rename);
 					node.setUserObject(rename);
 					node.setName(rename);
-					int[] rows = tree.getSelectionRows();
-					for (int i : rows) {
-						if (tree.isExpanded(i)) {
-							tree.collapseRow(i);
-							tree.expandRow(i);
+					simDir.remove(node);
+					int i;
+					for (i = 0; i < simDir.getChildCount(); i++) {
+						if (((IconNode) simDir.getChildAt(i)).getChildCount() != 0) {
+							if (((IconNode) simDir.getChildAt(i)).getName().compareToIgnoreCase(rename) > 0) {
+								simDir.insert(node, i);
+								break;
+							}
 						}
 						else {
-							tree.expandRow(i);
-							tree.collapseRow(i);
+							break;
 						}
 					}
+					simDir.insert(node, i);
+					ArrayList<String> rows = new ArrayList<String>();
+					for (i = 0; i < tree.getRowCount(); i++) {
+						if (tree.isExpanded(i)) {
+							tree.setSelectionRow(i);
+							rows.add(node.getName());
+						}
+					}
+					scrollpane = new JScrollPane();
+					refreshTree();
+					scrollpane.getViewport().add(tree);
+					scrollpane.setPreferredSize(new Dimension(175, 100));
+					all.removeAll();
+					all.add(titlePanel, "North");
+					all.add(scroll, "Center");
+					all.add(scrollpane, "West");
+					all.revalidate();
+					all.repaint();
+					TreeSelectionListener t = new TreeSelectionListener() {
+						public void valueChanged(TreeSelectionEvent e) {
+							node = (IconNode) e.getPath().getLastPathComponent();
+						}
+					};
+					tree.addTreeSelectionListener(t);
+					int select = 0;
+					for (i = 0; i < tree.getRowCount(); i++) {
+						tree.setSelectionRow(i);
+						if (rows.contains(node.getName())) {
+							tree.expandRow(i);
+						}
+						if (rename.equals(node.getName())) {
+							select = i;
+						}
+					}
+					tree.removeTreeSelectionListener(t);
+					addTreeListener();
+					tree.setSelectionRow(select);
+					/*
+					 * int[] rows = tree.getSelectionRows(); for (int i : rows) { if
+					 * (tree.isExpanded(i)) { tree.collapseRow(i); tree.expandRow(i); }
+					 * else { tree.expandRow(i); tree.collapseRow(i); } }
+					 */
 				}
 			}
 		}
@@ -779,7 +857,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		for (GraphSpecies g : graphed) {
 			old.add(g);
 		}
-		final JPanel titlePanel = new JPanel(new BorderLayout());
+		titlePanel = new JPanel(new BorderLayout());
 		JLabel titleLabel = new JLabel("Title:");
 		JLabel xLabel = new JLabel("X-Axis Label:");
 		JLabel yLabel = new JLabel("Y-Axis Label:");
@@ -1322,410 +1400,14 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					JOptionPane.PLAIN_MESSAGE);
 		}
 		else {
-			tree = new JTree(simDir);
-			if (!topLevel && learnSpecs == null) {
-				tree.addMouseListener(this);
-			}
-			tree.putClientProperty("JTree.icons", makeIcons());
-			tree.setCellRenderer(new IconNodeRenderer());
-			final JPanel all = new JPanel(new BorderLayout());
-			JScrollPane scrollpane = new JScrollPane();
-			final JScrollPane scroll = new JScrollPane();
+			all = new JPanel(new BorderLayout());
+			specPanel = new JPanel();
+			scrollpane = new JScrollPane();
+			refreshTree();
+			addTreeListener();
 			scrollpane.getViewport().add(tree);
 			scrollpane.setPreferredSize(new Dimension(175, 100));
-			DefaultTreeCellRenderer renderer = (DefaultTreeCellRenderer) tree.getCellRenderer();
-			renderer.setLeafIcon(MetalIconFactory.getTreeLeafIcon());
-			renderer.setClosedIcon(MetalIconFactory.getTreeFolderIcon());
-			renderer.setOpenIcon(MetalIconFactory.getTreeFolderIcon());
-			// for (int i = 0; i < tree.getRowCount(); i++) {
-			// tree.expandRow(i);
-			// }
-			final JPanel specPanel = new JPanel();
-			// final JFrame f = new JFrame("Edit Graph");
-			boolean stop = false;
-			int selectionRow = 1;
-			for (int i = 1; i < tree.getRowCount(); i++) {
-				tree.setSelectionRow(i);
-				if (selected.equals(lastSelected)) {
-					stop = true;
-					selectionRow = i;
-					break;
-				}
-			}
-			tree.addTreeSelectionListener(new TreeSelectionListener() {
-				public void valueChanged(TreeSelectionEvent e) {
-					node = (IconNode) e.getPath().getLastPathComponent();
-					if (!directories.contains(node.getName())
-							&& node.getParent() != null
-							&& !directories.contains(((IconNode) node.getParent()).getName() + separator
-									+ node.getName())) {
-						selected = node.getName();
-						int select;
-						if (selected.equals("Average")) {
-							select = 0;
-						}
-						else if (selected.equals("Variance")) {
-							select = 1;
-						}
-						else if (selected.equals("Standard Deviation")) {
-							select = 2;
-						}
-						else if (selected.contains("-run")) {
-							select = 0;
-						}
-						else {
-							try {
-								if (selected.contains("run-")) {
-									select = Integer.parseInt(selected.substring(4)) + 2;
-								}
-								else {
-									select = -1;
-								}
-							}
-							catch (Exception e1) {
-								select = -1;
-							}
-						}
-						if (select != -1) {
-							specPanel.removeAll();
-							if (directories.contains(((IconNode) node.getParent()).getName())) {
-								specPanel.add(fixGraphChoices(((IconNode) node.getParent()).getName()));
-							}
-							else if (node.getParent().getParent() != null
-									&& directories.contains(((IconNode) node.getParent().getParent()).getName()
-											+ separator + ((IconNode) node.getParent()).getName())) {
-								specPanel.add(fixGraphChoices(((IconNode) node.getParent().getParent()).getName()
-										+ separator + ((IconNode) node.getParent()).getName()));
-							}
-							else {
-								specPanel.add(fixGraphChoices(""));
-							}
-							specPanel.revalidate();
-							specPanel.repaint();
-							for (int i = 0; i < series.size(); i++) {
-								series.get(i).setText(graphSpecies.get(i + 1));
-								series.get(i).setSelectionStart(0);
-								series.get(i).setSelectionEnd(0);
-							}
-							for (int i = 0; i < boxes.size(); i++) {
-								boxes.get(i).setSelected(false);
-							}
-							if (directories.contains(((IconNode) node.getParent()).getName())) {
-								for (GraphSpecies g : graphed) {
-									if (g.getRunNumber().equals(selected)
-											&& g.getDirectory().equals(((IconNode) node.getParent()).getName())) {
-										boxes.get(g.getNumber()).setSelected(true);
-										series.get(g.getNumber()).setText(g.getSpecies());
-										series.get(g.getNumber()).setSelectionStart(0);
-										series.get(g.getNumber()).setSelectionEnd(0);
-										colorsCombo.get(g.getNumber()).setSelectedItem(
-												g.getShapeAndPaint().getPaintName());
-										shapesCombo.get(g.getNumber()).setSelectedItem(
-												g.getShapeAndPaint().getShapeName());
-										connected.get(g.getNumber()).setSelected(g.getConnected());
-										visible.get(g.getNumber()).setSelected(g.getVisible());
-										filled.get(g.getNumber()).setSelected(g.getFilled());
-									}
-								}
-							}
-							else if (node.getParent().getParent() != null
-									&& directories.contains(((IconNode) node.getParent().getParent()).getName()
-											+ separator + ((IconNode) node.getParent()).getName())) {
-								for (GraphSpecies g : graphed) {
-									if (g.getRunNumber().equals(selected)
-											&& g.getDirectory().equals(
-													((IconNode) node.getParent().getParent()).getName() + separator
-															+ ((IconNode) node.getParent()).getName())) {
-										boxes.get(g.getNumber()).setSelected(true);
-										series.get(g.getNumber()).setText(g.getSpecies());
-										series.get(g.getNumber()).setSelectionStart(0);
-										series.get(g.getNumber()).setSelectionEnd(0);
-										colorsCombo.get(g.getNumber()).setSelectedItem(
-												g.getShapeAndPaint().getPaintName());
-										shapesCombo.get(g.getNumber()).setSelectedItem(
-												g.getShapeAndPaint().getShapeName());
-										connected.get(g.getNumber()).setSelected(g.getConnected());
-										visible.get(g.getNumber()).setSelected(g.getVisible());
-										filled.get(g.getNumber()).setSelected(g.getFilled());
-									}
-								}
-							}
-							else {
-								for (GraphSpecies g : graphed) {
-									if (g.getRunNumber().equals(selected) && g.getDirectory().equals("")) {
-										boxes.get(g.getNumber()).setSelected(true);
-										series.get(g.getNumber()).setText(g.getSpecies());
-										series.get(g.getNumber()).setSelectionStart(0);
-										series.get(g.getNumber()).setSelectionEnd(0);
-										colorsCombo.get(g.getNumber()).setSelectedItem(
-												g.getShapeAndPaint().getPaintName());
-										shapesCombo.get(g.getNumber()).setSelectedItem(
-												g.getShapeAndPaint().getShapeName());
-										connected.get(g.getNumber()).setSelected(g.getConnected());
-										visible.get(g.getNumber()).setSelected(g.getVisible());
-										filled.get(g.getNumber()).setSelected(g.getFilled());
-									}
-								}
-							}
-							boolean allChecked = true;
-							boolean allCheckedVisible = true;
-							boolean allCheckedFilled = true;
-							boolean allCheckedConnected = true;
-							for (int i = 0; i < boxes.size(); i++) {
-								if (!boxes.get(i).isSelected()) {
-									allChecked = false;
-									String s = "";
-									s = ((IconNode) e.getPath().getLastPathComponent()).toString();
-									if (directories.contains(((IconNode) node.getParent()).getName())) {
-										if (s.equals("Average")) {
-											s = "(" + ((IconNode) node.getParent()).getName() + ", " + (char) 967 + ")";
-										}
-										else if (s.equals("Variance")) {
-											s = "(" + ((IconNode) node.getParent()).getName() + ", " + (char) 948
-													+ (char) 178 + ")";
-										}
-										else if (s.equals("Standard Deviation")) {
-											s = "(" + ((IconNode) node.getParent()).getName() + ", " + (char) 948 + ")";
-										}
-										else {
-											if (s.endsWith("-run")) {
-												s = s.substring(0, s.length() - 4);
-											}
-											else if (s.startsWith("run-")) {
-												s = s.substring(4);
-											}
-											s = "(" + ((IconNode) node.getParent()).getName() + ", " + s + ")";
-										}
-									}
-									else if (node.getParent().getParent() != null
-											&& directories.contains(((IconNode) node.getParent().getParent()).getName()
-													+ separator + ((IconNode) node.getParent()).getName())) {
-										if (s.equals("Average")) {
-											s = "(" + ((IconNode) node.getParent().getParent()).getName() + separator
-													+ ((IconNode) node.getParent()).getName() + ", " + (char) 967 + ")";
-										}
-										else if (s.equals("Variance")) {
-											s = "(" + ((IconNode) node.getParent().getParent()).getName() + separator
-													+ ((IconNode) node.getParent()).getName() + ", " + (char) 948
-													+ (char) 178 + ")";
-										}
-										else if (s.equals("Standard Deviation")) {
-											s = "(" + ((IconNode) node.getParent().getParent()).getName() + separator
-													+ ((IconNode) node.getParent()).getName() + ", " + (char) 948 + ")";
-										}
-										else {
-											if (s.endsWith("-run")) {
-												s = s.substring(0, s.length() - 4);
-											}
-											else if (s.startsWith("run-")) {
-												s = s.substring(4);
-											}
-											s = "(" + ((IconNode) node.getParent().getParent()).getName() + separator
-													+ ((IconNode) node.getParent()).getName() + ", " + s + ")";
-										}
-									}
-									else {
-										if (s.equals("Average")) {
-											s = "(" + (char) 967 + ")";
-										}
-										else if (s.equals("Variance")) {
-											s = "(" + (char) 948 + (char) 178 + ")";
-										}
-										else if (s.equals("Standard Deviation")) {
-											s = "(" + (char) 948 + ")";
-										}
-										else {
-											if (s.endsWith("-run")) {
-												s = s.substring(0, s.length() - 4);
-											}
-											else if (s.startsWith("run-")) {
-												s = s.substring(4);
-											}
-											s = "(" + s + ")";
-										}
-									}
-									String text = graphSpecies.get(i + 1);
-									String end = "";
-									if (text.length() >= s.length()) {
-										for (int j = 0; j < s.length(); j++) {
-											end = text.charAt(text.length() - 1 - j) + end;
-										}
-										if (!s.equals(end)) {
-											text += " " + s;
-										}
-									}
-									else {
-										text += " " + s;
-									}
-									boxes.get(i).setName(text);
-									series.get(i).setText(text);
-									series.get(i).setSelectionStart(0);
-									series.get(i).setSelectionEnd(0);
-									colorsCombo.get(i).setSelectedIndex(0);
-									shapesCombo.get(i).setSelectedIndex(0);
-								}
-								else {
-									String s = "";
-									s = ((IconNode) e.getPath().getLastPathComponent()).toString();
-									if (directories.contains(((IconNode) node.getParent()).getName())) {
-										if (s.equals("Average")) {
-											s = "(" + ((IconNode) node.getParent()).getName() + ", " + (char) 967 + ")";
-										}
-										else if (s.equals("Variance")) {
-											s = "(" + ((IconNode) node.getParent()).getName() + ", " + (char) 948
-													+ (char) 178 + ")";
-										}
-										else if (s.equals("Standard Deviation")) {
-											s = "(" + ((IconNode) node.getParent()).getName() + ", " + (char) 948 + ")";
-										}
-										else {
-											if (s.endsWith("-run")) {
-												s = s.substring(0, s.length() - 4);
-											}
-											else if (s.startsWith("run-")) {
-												s = s.substring(4);
-											}
-											s = "(" + ((IconNode) node.getParent()).getName() + ", " + s + ")";
-										}
-									}
-									else if (node.getParent().getParent() != null
-											&& directories.contains(((IconNode) node.getParent().getParent()).getName()
-													+ separator + ((IconNode) node.getParent()).getName())) {
-										if (s.equals("Average")) {
-											s = "(" + ((IconNode) node.getParent().getParent()).getName() + separator
-													+ ((IconNode) node.getParent()).getName() + ", " + (char) 967 + ")";
-										}
-										else if (s.equals("Variance")) {
-											s = "(" + ((IconNode) node.getParent().getParent()).getName() + separator
-													+ ((IconNode) node.getParent()).getName() + ", " + (char) 948
-													+ (char) 178 + ")";
-										}
-										else if (s.equals("Standard Deviation")) {
-											s = "(" + ((IconNode) node.getParent().getParent()).getName() + separator
-													+ ((IconNode) node.getParent()).getName() + ", " + (char) 948 + ")";
-										}
-										else {
-											if (s.endsWith("-run")) {
-												s = s.substring(0, s.length() - 4);
-											}
-											else if (s.startsWith("run-")) {
-												s = s.substring(4);
-											}
-											s = "(" + ((IconNode) node.getParent().getParent()).getName() + separator
-													+ ((IconNode) node.getParent()).getName() + ", " + s + ")";
-										}
-									}
-									else {
-										if (s.equals("Average")) {
-											s = "(" + (char) 967 + ")";
-										}
-										else if (s.equals("Variance")) {
-											s = "(" + (char) 948 + (char) 178 + ")";
-										}
-										else if (s.equals("Standard Deviation")) {
-											s = "(" + (char) 948 + ")";
-										}
-										else {
-											if (s.endsWith("-run")) {
-												s = s.substring(0, s.length() - 4);
-											}
-											else if (s.startsWith("run-")) {
-												s = s.substring(4);
-											}
-											s = "(" + s + ")";
-										}
-									}
-									String text = series.get(i).getText();
-									String end = "";
-									if (text.length() >= s.length()) {
-										for (int j = 0; j < s.length(); j++) {
-											end = text.charAt(text.length() - 1 - j) + end;
-										}
-										if (!s.equals(end)) {
-											text += " " + s;
-										}
-									}
-									else {
-										text += " " + s;
-									}
-									boxes.get(i).setName(text);
-								}
-								if (!visible.get(i).isSelected()) {
-									allCheckedVisible = false;
-								}
-								if (!connected.get(i).isSelected()) {
-									allCheckedConnected = false;
-								}
-								if (!filled.get(i).isSelected()) {
-									allCheckedFilled = false;
-								}
-							}
-							if (allChecked) {
-								use.setSelected(true);
-							}
-							else {
-								use.setSelected(false);
-							}
-							if (allCheckedVisible) {
-								visibleLabel.setSelected(true);
-							}
-							else {
-								visibleLabel.setSelected(false);
-							}
-							if (allCheckedFilled) {
-								filledLabel.setSelected(true);
-							}
-							else {
-								filledLabel.setSelected(false);
-							}
-							if (allCheckedConnected) {
-								connectedLabel.setSelected(true);
-							}
-							else {
-								connectedLabel.setSelected(false);
-							}
-						}
-					}
-					else {
-						specPanel.removeAll();
-						specPanel.revalidate();
-						specPanel.repaint();
-					}
-				}
-			});
-			tree.addTreeExpansionListener(new TreeExpansionListener() {
-				public void treeCollapsed(TreeExpansionEvent e) {
-					JScrollPane scrollpane = new JScrollPane();
-					scrollpane.getViewport().add(tree);
-					scrollpane.setPreferredSize(new Dimension(175, 100));
-					all.removeAll();
-					all.add(titlePanel, "North");
-					all.add(scroll, "Center");
-					all.add(scrollpane, "West");
-					all.revalidate();
-					all.repaint();
-				}
-
-				public void treeExpanded(TreeExpansionEvent e) {
-					JScrollPane scrollpane = new JScrollPane();
-					scrollpane.getViewport().add(tree);
-					scrollpane.setPreferredSize(new Dimension(175, 100));
-					all.removeAll();
-					all.add(titlePanel, "North");
-					all.add(scroll, "Center");
-					all.add(scrollpane, "West");
-					all.revalidate();
-					all.repaint();
-				}
-			});
-			if (!stop) {
-				tree.setSelectionRow(0);
-				tree.setSelectionRow(1);
-			}
-			else {
-				tree.setSelectionRow(0);
-				tree.setSelectionRow(selectionRow);
-			}
+			scroll = new JScrollPane();
 			scroll.setPreferredSize(new Dimension(1050, 500));
 			JPanel editPanel = new JPanel(new BorderLayout());
 			editPanel.add(specPanel, "Center");
@@ -2320,6 +2002,381 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			// int yy = screenSize.height / 2 - frameSize.height / 2;
 			// f.setLocation(xx, yy);
 			// f.setVisible(true);
+		}
+	}
+
+	private void refreshTree() {
+		tree = new JTree(simDir);
+		if (!topLevel && learnSpecs == null) {
+			tree.addMouseListener(this);
+		}
+		tree.putClientProperty("JTree.icons", makeIcons());
+		tree.setCellRenderer(new IconNodeRenderer());
+		DefaultTreeCellRenderer renderer = (DefaultTreeCellRenderer) tree.getCellRenderer();
+		renderer.setLeafIcon(MetalIconFactory.getTreeLeafIcon());
+		renderer.setClosedIcon(MetalIconFactory.getTreeFolderIcon());
+		renderer.setOpenIcon(MetalIconFactory.getTreeFolderIcon());
+	}
+
+	private void addTreeListener() {
+		boolean stop = false;
+		int selectionRow = 1;
+		for (int i = 1; i < tree.getRowCount(); i++) {
+			tree.setSelectionRow(i);
+			if (selected.equals(lastSelected)) {
+				stop = true;
+				selectionRow = i;
+				break;
+			}
+		}
+		tree.addTreeSelectionListener(new TreeSelectionListener() {
+			public void valueChanged(TreeSelectionEvent e) {
+				node = (IconNode) e.getPath().getLastPathComponent();
+				if (!directories.contains(node.getName())
+						&& node.getParent() != null
+						&& !directories.contains(((IconNode) node.getParent()).getName() + separator
+								+ node.getName())) {
+					selected = node.getName();
+					int select;
+					if (selected.equals("Average")) {
+						select = 0;
+					}
+					else if (selected.equals("Variance")) {
+						select = 1;
+					}
+					else if (selected.equals("Standard Deviation")) {
+						select = 2;
+					}
+					else if (selected.contains("-run")) {
+						select = 0;
+					}
+					else {
+						try {
+							if (selected.contains("run-")) {
+								select = Integer.parseInt(selected.substring(4)) + 2;
+							}
+							else {
+								select = -1;
+							}
+						}
+						catch (Exception e1) {
+							select = -1;
+						}
+					}
+					if (select != -1) {
+						specPanel.removeAll();
+						if (directories.contains(((IconNode) node.getParent()).getName())) {
+							specPanel.add(fixGraphChoices(((IconNode) node.getParent()).getName()));
+						}
+						else if (node.getParent().getParent() != null
+								&& directories.contains(((IconNode) node.getParent().getParent()).getName()
+										+ separator + ((IconNode) node.getParent()).getName())) {
+							specPanel.add(fixGraphChoices(((IconNode) node.getParent().getParent()).getName()
+									+ separator + ((IconNode) node.getParent()).getName()));
+						}
+						else {
+							specPanel.add(fixGraphChoices(""));
+						}
+						specPanel.revalidate();
+						specPanel.repaint();
+						for (int i = 0; i < series.size(); i++) {
+							series.get(i).setText(graphSpecies.get(i + 1));
+							series.get(i).setSelectionStart(0);
+							series.get(i).setSelectionEnd(0);
+						}
+						for (int i = 0; i < boxes.size(); i++) {
+							boxes.get(i).setSelected(false);
+						}
+						if (directories.contains(((IconNode) node.getParent()).getName())) {
+							for (GraphSpecies g : graphed) {
+								if (g.getRunNumber().equals(selected)
+										&& g.getDirectory().equals(((IconNode) node.getParent()).getName())) {
+									boxes.get(g.getNumber()).setSelected(true);
+									series.get(g.getNumber()).setText(g.getSpecies());
+									series.get(g.getNumber()).setSelectionStart(0);
+									series.get(g.getNumber()).setSelectionEnd(0);
+									colorsCombo.get(g.getNumber()).setSelectedItem(
+											g.getShapeAndPaint().getPaintName());
+									shapesCombo.get(g.getNumber()).setSelectedItem(
+											g.getShapeAndPaint().getShapeName());
+									connected.get(g.getNumber()).setSelected(g.getConnected());
+									visible.get(g.getNumber()).setSelected(g.getVisible());
+									filled.get(g.getNumber()).setSelected(g.getFilled());
+								}
+							}
+						}
+						else if (node.getParent().getParent() != null
+								&& directories.contains(((IconNode) node.getParent().getParent()).getName()
+										+ separator + ((IconNode) node.getParent()).getName())) {
+							for (GraphSpecies g : graphed) {
+								if (g.getRunNumber().equals(selected)
+										&& g.getDirectory().equals(
+												((IconNode) node.getParent().getParent()).getName() + separator
+														+ ((IconNode) node.getParent()).getName())) {
+									boxes.get(g.getNumber()).setSelected(true);
+									series.get(g.getNumber()).setText(g.getSpecies());
+									series.get(g.getNumber()).setSelectionStart(0);
+									series.get(g.getNumber()).setSelectionEnd(0);
+									colorsCombo.get(g.getNumber()).setSelectedItem(
+											g.getShapeAndPaint().getPaintName());
+									shapesCombo.get(g.getNumber()).setSelectedItem(
+											g.getShapeAndPaint().getShapeName());
+									connected.get(g.getNumber()).setSelected(g.getConnected());
+									visible.get(g.getNumber()).setSelected(g.getVisible());
+									filled.get(g.getNumber()).setSelected(g.getFilled());
+								}
+							}
+						}
+						else {
+							for (GraphSpecies g : graphed) {
+								if (g.getRunNumber().equals(selected) && g.getDirectory().equals("")) {
+									boxes.get(g.getNumber()).setSelected(true);
+									series.get(g.getNumber()).setText(g.getSpecies());
+									series.get(g.getNumber()).setSelectionStart(0);
+									series.get(g.getNumber()).setSelectionEnd(0);
+									colorsCombo.get(g.getNumber()).setSelectedItem(
+											g.getShapeAndPaint().getPaintName());
+									shapesCombo.get(g.getNumber()).setSelectedItem(
+											g.getShapeAndPaint().getShapeName());
+									connected.get(g.getNumber()).setSelected(g.getConnected());
+									visible.get(g.getNumber()).setSelected(g.getVisible());
+									filled.get(g.getNumber()).setSelected(g.getFilled());
+								}
+							}
+						}
+						boolean allChecked = true;
+						boolean allCheckedVisible = true;
+						boolean allCheckedFilled = true;
+						boolean allCheckedConnected = true;
+						for (int i = 0; i < boxes.size(); i++) {
+							if (!boxes.get(i).isSelected()) {
+								allChecked = false;
+								String s = "";
+								s = ((IconNode) e.getPath().getLastPathComponent()).toString();
+								if (directories.contains(((IconNode) node.getParent()).getName())) {
+									if (s.equals("Average")) {
+										s = "(" + ((IconNode) node.getParent()).getName() + ", " + (char) 967 + ")";
+									}
+									else if (s.equals("Variance")) {
+										s = "(" + ((IconNode) node.getParent()).getName() + ", " + (char) 948
+												+ (char) 178 + ")";
+									}
+									else if (s.equals("Standard Deviation")) {
+										s = "(" + ((IconNode) node.getParent()).getName() + ", " + (char) 948 + ")";
+									}
+									else {
+										if (s.endsWith("-run")) {
+											s = s.substring(0, s.length() - 4);
+										}
+										else if (s.startsWith("run-")) {
+											s = s.substring(4);
+										}
+										s = "(" + ((IconNode) node.getParent()).getName() + ", " + s + ")";
+									}
+								}
+								else if (node.getParent().getParent() != null
+										&& directories.contains(((IconNode) node.getParent().getParent()).getName()
+												+ separator + ((IconNode) node.getParent()).getName())) {
+									if (s.equals("Average")) {
+										s = "(" + ((IconNode) node.getParent().getParent()).getName() + separator
+												+ ((IconNode) node.getParent()).getName() + ", " + (char) 967 + ")";
+									}
+									else if (s.equals("Variance")) {
+										s = "(" + ((IconNode) node.getParent().getParent()).getName() + separator
+												+ ((IconNode) node.getParent()).getName() + ", " + (char) 948 + (char) 178
+												+ ")";
+									}
+									else if (s.equals("Standard Deviation")) {
+										s = "(" + ((IconNode) node.getParent().getParent()).getName() + separator
+												+ ((IconNode) node.getParent()).getName() + ", " + (char) 948 + ")";
+									}
+									else {
+										if (s.endsWith("-run")) {
+											s = s.substring(0, s.length() - 4);
+										}
+										else if (s.startsWith("run-")) {
+											s = s.substring(4);
+										}
+										s = "(" + ((IconNode) node.getParent().getParent()).getName() + separator
+												+ ((IconNode) node.getParent()).getName() + ", " + s + ")";
+									}
+								}
+								else {
+									if (s.equals("Average")) {
+										s = "(" + (char) 967 + ")";
+									}
+									else if (s.equals("Variance")) {
+										s = "(" + (char) 948 + (char) 178 + ")";
+									}
+									else if (s.equals("Standard Deviation")) {
+										s = "(" + (char) 948 + ")";
+									}
+									else {
+										if (s.endsWith("-run")) {
+											s = s.substring(0, s.length() - 4);
+										}
+										else if (s.startsWith("run-")) {
+											s = s.substring(4);
+										}
+										s = "(" + s + ")";
+									}
+								}
+								String text = graphSpecies.get(i + 1);
+								String end = "";
+								if (text.length() >= s.length()) {
+									for (int j = 0; j < s.length(); j++) {
+										end = text.charAt(text.length() - 1 - j) + end;
+									}
+									if (!s.equals(end)) {
+										text += " " + s;
+									}
+								}
+								else {
+									text += " " + s;
+								}
+								boxes.get(i).setName(text);
+								series.get(i).setText(text);
+								series.get(i).setSelectionStart(0);
+								series.get(i).setSelectionEnd(0);
+								colorsCombo.get(i).setSelectedIndex(0);
+								shapesCombo.get(i).setSelectedIndex(0);
+							}
+							else {
+								String s = "";
+								s = ((IconNode) e.getPath().getLastPathComponent()).toString();
+								if (directories.contains(((IconNode) node.getParent()).getName())) {
+									if (s.equals("Average")) {
+										s = "(" + ((IconNode) node.getParent()).getName() + ", " + (char) 967 + ")";
+									}
+									else if (s.equals("Variance")) {
+										s = "(" + ((IconNode) node.getParent()).getName() + ", " + (char) 948
+												+ (char) 178 + ")";
+									}
+									else if (s.equals("Standard Deviation")) {
+										s = "(" + ((IconNode) node.getParent()).getName() + ", " + (char) 948 + ")";
+									}
+									else {
+										if (s.endsWith("-run")) {
+											s = s.substring(0, s.length() - 4);
+										}
+										else if (s.startsWith("run-")) {
+											s = s.substring(4);
+										}
+										s = "(" + ((IconNode) node.getParent()).getName() + ", " + s + ")";
+									}
+								}
+								else if (node.getParent().getParent() != null
+										&& directories.contains(((IconNode) node.getParent().getParent()).getName()
+												+ separator + ((IconNode) node.getParent()).getName())) {
+									if (s.equals("Average")) {
+										s = "(" + ((IconNode) node.getParent().getParent()).getName() + separator
+												+ ((IconNode) node.getParent()).getName() + ", " + (char) 967 + ")";
+									}
+									else if (s.equals("Variance")) {
+										s = "(" + ((IconNode) node.getParent().getParent()).getName() + separator
+												+ ((IconNode) node.getParent()).getName() + ", " + (char) 948 + (char) 178
+												+ ")";
+									}
+									else if (s.equals("Standard Deviation")) {
+										s = "(" + ((IconNode) node.getParent().getParent()).getName() + separator
+												+ ((IconNode) node.getParent()).getName() + ", " + (char) 948 + ")";
+									}
+									else {
+										if (s.endsWith("-run")) {
+											s = s.substring(0, s.length() - 4);
+										}
+										else if (s.startsWith("run-")) {
+											s = s.substring(4);
+										}
+										s = "(" + ((IconNode) node.getParent().getParent()).getName() + separator
+												+ ((IconNode) node.getParent()).getName() + ", " + s + ")";
+									}
+								}
+								else {
+									if (s.equals("Average")) {
+										s = "(" + (char) 967 + ")";
+									}
+									else if (s.equals("Variance")) {
+										s = "(" + (char) 948 + (char) 178 + ")";
+									}
+									else if (s.equals("Standard Deviation")) {
+										s = "(" + (char) 948 + ")";
+									}
+									else {
+										if (s.endsWith("-run")) {
+											s = s.substring(0, s.length() - 4);
+										}
+										else if (s.startsWith("run-")) {
+											s = s.substring(4);
+										}
+										s = "(" + s + ")";
+									}
+								}
+								String text = series.get(i).getText();
+								String end = "";
+								if (text.length() >= s.length()) {
+									for (int j = 0; j < s.length(); j++) {
+										end = text.charAt(text.length() - 1 - j) + end;
+									}
+									if (!s.equals(end)) {
+										text += " " + s;
+									}
+								}
+								else {
+									text += " " + s;
+								}
+								boxes.get(i).setName(text);
+							}
+							if (!visible.get(i).isSelected()) {
+								allCheckedVisible = false;
+							}
+							if (!connected.get(i).isSelected()) {
+								allCheckedConnected = false;
+							}
+							if (!filled.get(i).isSelected()) {
+								allCheckedFilled = false;
+							}
+						}
+						if (allChecked) {
+							use.setSelected(true);
+						}
+						else {
+							use.setSelected(false);
+						}
+						if (allCheckedVisible) {
+							visibleLabel.setSelected(true);
+						}
+						else {
+							visibleLabel.setSelected(false);
+						}
+						if (allCheckedFilled) {
+							filledLabel.setSelected(true);
+						}
+						else {
+							filledLabel.setSelected(false);
+						}
+						if (allCheckedConnected) {
+							connectedLabel.setSelected(true);
+						}
+						else {
+							connectedLabel.setSelected(false);
+						}
+					}
+				}
+				else {
+					specPanel.removeAll();
+					specPanel.revalidate();
+					specPanel.repaint();
+				}
+			}
+		});
+		if (!stop) {
+			tree.setSelectionRow(0);
+			tree.setSelectionRow(1);
+		}
+		else {
+			tree.setSelectionRow(0);
+			tree.setSelectionRow(selectionRow);
 		}
 	}
 
