@@ -966,7 +966,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		}
 		if (!cycle && checkCycles(inits, rul)) {
 			JOptionPane.showMessageDialog(biosim.frame(),
-					"Cycle detected within initial assignments and assignment rules.", "Cycle Detected",
+					"Cycle detected within initial assignments, assignment rules, and rate laws.", "Cycle Detected",
 					JOptionPane.ERROR_MESSAGE);
 		}
 		JPanel rulePanel = createPanel(model, "Rules", rules, rul, addRule, removeRule, editRule);
@@ -3829,7 +3829,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					}
 					if (!error && checkCycles(inits, rul)) {
 						JOptionPane.showMessageDialog(biosim.frame(),
-								"Cycle detected within initial assignments and assignment rules.",
+					      "Cycle detected within initial assignments, assignment rules, and rate laws.",
 								"Cycle Detected", JOptionPane.ERROR_MESSAGE);
 						error = true;
 					}
@@ -3874,7 +3874,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					}
 					if (!error && checkCycles(inits, rul)) {
 						JOptionPane.showMessageDialog(biosim.frame(),
-								"Cycle detected within initial assignments and assignment rules.",
+							"Cycle detected within initial assignments, assignment rules, and rate laws.",
 								"Cycle Detected", JOptionPane.ERROR_MESSAGE);
 						error = true;
 					}
@@ -4155,7 +4155,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					}
 					if (!error && checkCycles(inits, rul)) {
 						JOptionPane.showMessageDialog(biosim.frame(),
-								"Cycle detected within initial assignments and assignment rules.",
+							"Cycle detected within initial assignments, assignment rules, and rate laws.",
 								"Cycle Detected", JOptionPane.ERROR_MESSAGE);
 						error = true;
 					}
@@ -4206,7 +4206,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					}
 					if (!error && checkCycles(inits, rul)) {
 						JOptionPane.showMessageDialog(biosim.frame(),
-								"Cycle detected within initial assignments and assignment rules.",
+							"Cycle detected within initial assignments, assignment rules, and rate laws.",
 								"Cycle Detected", JOptionPane.ERROR_MESSAGE);
 						error = true;
 						rul = oldRul;
@@ -4393,10 +4393,17 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 * Check for cycles in initialAssignments and assignmentRules
 	 */
 	private boolean checkCycles(String[] initRules, String[] rules) {
-		String[] result = new String[rules.length + initRules.length];
+		Model model = document.getModel();
+		ListOf listOfReactions = model.getListOfReactions();
+		String[] rateLaws = new String[(int)model.getNumReactions()];
+		for (int i = 0; i < model.getNumReactions(); i++) {
+		    Reaction reaction = (Reaction) listOfReactions.get(i);
+		    rateLaws[i] = reaction.getId() + " = " + reaction.getKineticLaw().getFormula();
+		}
+		String[] result = new String[rules.length + initRules.length + rateLaws.length];
 		int j = 0;
-		boolean[] used = new boolean[rules.length + initRules.length];
-		for (int i = 0; i < rules.length + initRules.length; i++) {
+		boolean[] used = new boolean[rules.length + initRules.length + rateLaws.length];
+		for (int i = 0; i < rules.length + initRules.length + rateLaws.length; i++) {
 			used[i] = false;
 		}
 		for (int i = 0; i < rules.length; i++) {
@@ -4409,33 +4416,39 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		boolean progress;
 		do {
 			progress = false;
-			for (int i = 0; i < rules.length + initRules.length; i++) {
+			for (int i = 0; i < rules.length + initRules.length + rateLaws.length; i++) {
 				String[] rule;
 				if (i < rules.length) {
 					if (used[i] || (rules[i].split(" ")[0].equals("0"))
-							|| (rules[i].split(" ")[0].equals("d(")))
-						continue;
+					    || (rules[i].split(" ")[0].equals("d(")))
+					    continue;
 					rule = rules[i].split(" ");
 				}
-				else {
-					if (used[i])
-						continue;
+				else if (i < rules.length + initRules.length) {
+					if (used[i]) continue;
 					rule = initRules[i - rules.length].split(" ");
+				} 
+				else {
+					if (used[i]) continue;
+					rule = rateLaws[i - (rules.length + initRules.length)].split(" ");
 				}
 				boolean insert = true;
 				for (int k = 1; k < rule.length; k++) {
-					for (int l = 0; l < rules.length + initRules.length; l++) {
-						String rule2;
+					for (int l = 0; l < rules.length + initRules.length + rateLaws.length; l++) {
+					        String rule2;
 						if (l < rules.length) {
 							if (used[l] || (rules[l].split(" ")[0].equals("0"))
-									|| (rules[l].split(" ")[0].equals("d(")))
-								continue;
+							    || (rules[l].split(" ")[0].equals("d(")))
+							    continue;
 							rule2 = rules[l].split(" ")[0];
 						}
-						else {
-							if (used[l])
-								continue;
+						else if (l < rules.length + initRules.length) {
+							if (used[l]) continue;
 							rule2 = initRules[l - rules.length].split(" ")[0];
+						}
+						else {
+							if (used[l]) continue;
+							rule2 = rateLaws[l - (rules.length + initRules.length)].split(" ")[0];
 						}
 						if (rule[k].equals(rule2)) {
 							insert = false;
@@ -4449,8 +4462,11 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					if (i < rules.length) {
 						result[j] = rules[i];
 					}
-					else {
+					else if (i < rules.length + initRules.length) {
 						result[j] = initRules[i - rules.length];
+					}
+					else {
+					    result[j] = rateLaws[i - (rules.length + initRules.length)];
 					}
 					j++;
 					progress = true;
@@ -4458,14 +4474,14 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				}
 			}
 		}
-		while ((progress) && (j < rules.length + initRules.length));
+		while ((progress) && (j < rules.length + initRules.length + rateLaws.length));
 		for (int i = 0; i < rules.length; i++) {
 			if (rules[i].split(" ")[0].equals("d(")) {
 				result[j] = rules[i];
 				j++;
 			}
 		}
-		if (j != rules.length + initRules.length) {
+		if (j != rules.length + initRules.length + rateLaws.length) {
 			return true;
 		}
 		return false;
@@ -6519,7 +6535,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				inits = sortInitRules(inits);
 				if (checkCycles(inits, rul)) {
 					JOptionPane.showMessageDialog(biosim.frame(),
-							"Cycle detected within initial assignments and assignment rules.", "Cycle Detected",
+							"Cycle detected within initial assignments, assignment rules, and rate laws.", 
+								      "Cycle Detected",
 							JOptionPane.ERROR_MESSAGE);
 					inits = oldInits;
 				}
@@ -6554,7 +6571,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				rul = sortRules(rul);
 				if (checkCycles(inits, rul)) {
 					JOptionPane.showMessageDialog(biosim.frame(),
-							"Cycle detected within initial assignments and assignment rules.", "Cycle Detected",
+							"Cycle detected within initial assignments, assignment rules, and rate laws.", 
+								      "Cycle Detected",
 							JOptionPane.ERROR_MESSAGE);
 					rul = oldRul;
 				}
@@ -7154,6 +7172,15 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					react.getKineticLaw().setFormula(kineticLaw.getText().trim());
 					error = checkKineticLawUnits(react.getKineticLaw());
 					if (!error) {
+					    error = checkCycles(inits, rul);
+					    if (error) {
+						JOptionPane.showMessageDialog(biosim.frame(),
+						      "Cycle detected within initial assignments, assignment rules, and rate laws.", 
+									      "Cycle Detected",
+									      JOptionPane.ERROR_MESSAGE);
+					    }
+					}
+					if (!error) {
 						for (int i = 0; i < usedIDs.size(); i++) {
 							if (usedIDs.get(i).equals(val)) {
 								usedIDs.set(i, reacID.getText().trim());
@@ -7225,6 +7252,15 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					react.setName(reacName.getText().trim());
 					react.getKineticLaw().setFormula(kineticLaw.getText().trim());
 					error = checkKineticLawUnits(react.getKineticLaw());
+					if (!error) {
+					    error = checkCycles(inits, rul);
+					    if (error) {
+						JOptionPane.showMessageDialog(biosim.frame(),
+						      "Cycle detected within initial assignments, assignment rules, and rate laws.", 
+									      "Cycle Detected",
+									      JOptionPane.ERROR_MESSAGE);
+					    }
+					}
 					if (!error) {
 						usedIDs.add(reacID.getText().trim());
 						JList add = new JList();
