@@ -9555,14 +9555,14 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 */
 	public boolean checkRateRuleUnits(Rule rule) {
 		document.getModel().populateListFormulaUnitsData();
-		if (rule.containsUndeclaredUnits()) {
+		if (biosim.checkUndeclared && rule.containsUndeclaredUnits()) {
 			JOptionPane.showMessageDialog(biosim.frame(),
 					"Rate rule contains literals numbers or parameters with undeclared units.\n"
 							+ "Therefore, it is not possible to completely verify the consistency of the units.",
 					"Contains Undeclared Units", JOptionPane.WARNING_MESSAGE);
 			return false;
 		}
-		else {
+		else if (biosim.checkUnits) {
 			UnitDefinition unitDef = rule.getDerivedUnitDefinition();
 			UnitDefinition unitDefVar;
 			Species species = document.getModel().getSpecies(rule.getVariable());
@@ -9605,14 +9605,14 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 */
 	public boolean checkAssignmentRuleUnits(Rule rule) {
 		document.getModel().populateListFormulaUnitsData();
-		if (rule.containsUndeclaredUnits()) {
+		if (biosim.checkUndeclared && rule.containsUndeclaredUnits()) {
 			JOptionPane.showMessageDialog(biosim.frame(),
 					"Assignment rule contains literals numbers or parameters with undeclared units.\n"
 							+ "Therefore, it is not possible to completely verify the consistency of the units.",
 					"Contains Undeclared Units", JOptionPane.WARNING_MESSAGE);
 			return false;
 		}
-		else {
+		else if (biosim.checkUnits) {
 			UnitDefinition unitDef = rule.getDerivedUnitDefinition();
 			UnitDefinition unitDefVar;
 			Species species = document.getModel().getSpecies(rule.getVariable());
@@ -9642,14 +9642,14 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 */
 	public boolean checkInitialAssignmentUnits(InitialAssignment init) {
 		document.getModel().populateListFormulaUnitsData();
-		if (init.containsUndeclaredUnits()) {
+		if (biosim.checkUndeclared && init.containsUndeclaredUnits()) {
 			JOptionPane.showMessageDialog(biosim.frame(),
 					"Initial assignment contains literals numbers or parameters with undeclared units.\n"
 							+ "Therefore, it is not possible to completely verify the consistency of the units.",
 					"Contains Undeclared Units", JOptionPane.WARNING_MESSAGE);
 			return false;
 		}
-		else {
+		else if (biosim.checkUnits) {
 			UnitDefinition unitDef = init.getDerivedUnitDefinition();
 			UnitDefinition unitDefVar;
 			Species species = document.getModel().getSpecies(init.getSymbol());
@@ -9689,14 +9689,14 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 */
 	public boolean checkEventAssignmentUnits(EventAssignment assign) {
 		document.getModel().populateListFormulaUnitsData();
-		if (assign.containsUndeclaredUnits()) {
+		if (biosim.checkUndeclared && assign.containsUndeclaredUnits()) {
 			JOptionPane.showMessageDialog(biosim.frame(), "Event assignment to " + assign.getVariable()
 					+ " contains literals numbers or parameters with undeclared units.\n"
 					+ "Therefore, it is not possible to completely verify the consistency of the units.",
 					"Contains Undeclared Units", JOptionPane.WARNING_MESSAGE);
 			return false;
 		}
-		else {
+		else if (biosim.checkUnits) {
 			UnitDefinition unitDef = assign.getDerivedUnitDefinition();
 			UnitDefinition unitDefVar;
 			Species species = document.getModel().getSpecies(assign.getVariable());
@@ -9727,14 +9727,14 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 */
 	public boolean checkEventDelayUnits(Delay delay) {
 		document.getModel().populateListFormulaUnitsData();
-		if (delay.containsUndeclaredUnits()) {
+		if (biosim.checkUndeclared && delay.containsUndeclaredUnits()) {
 			JOptionPane.showMessageDialog(biosim.frame(),
 					"Event assignment delay contains literals numbers or parameters with undeclared units.\n"
 							+ "Therefore, it is not possible to completely verify the consistency of the units.",
 					"Contains Undeclared Units", JOptionPane.WARNING_MESSAGE);
 			return false;
 		}
-		else {
+		else if (biosim.checkUnits) {
 			UnitDefinition unitDef = delay.getDerivedUnitDefinition();
 			if (!(unitDef.isVariantOfTime())) {
 				JOptionPane.showMessageDialog(biosim.frame(), "Event delay should be units of time.",
@@ -9750,14 +9750,14 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 */
 	public boolean checkKineticLawUnits(KineticLaw law) {
 		document.getModel().populateListFormulaUnitsData();
-		if (law.containsUndeclaredUnits()) {
+		if (biosim.checkUndeclared && law.containsUndeclaredUnits()) {
 			JOptionPane.showMessageDialog(biosim.frame(),
 					"Kinetic law contains literals numbers or parameters with undeclared units.\n"
 							+ "Therefore, it is not possible to completely verify the consistency of the units.",
 					"Contains Undeclared Units", JOptionPane.WARNING_MESSAGE);
 			return false;
 		}
-		else {
+		else if (biosim.checkUnits) {
 			UnitDefinition unitDef = law.getDerivedUnitDefinition();
 			UnitDefinition unitDefLaw = new UnitDefinition();
 			if (document.getModel().getUnitDefinition("substance") != null) {

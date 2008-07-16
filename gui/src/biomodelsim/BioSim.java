@@ -55,6 +55,10 @@ import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 import javax.swing.plaf.basic.BasicTabbedPaneUI;
 
+import com.apple.eawt.ApplicationAdapter;
+import com.apple.eawt.ApplicationEvent;
+import com.apple.eawt.Application;
+
 import learn.Learn;
 
 import org.sbml.libsbml.Compartment;
@@ -99,6 +103,8 @@ public class BioSim implements MouseListener, ActionListener {
 
 	private JMenuItem openProj; // The open menu item
 
+	private JMenuItem pref; // The preferences menu item
+
 	private JMenuItem graph; // The graph menu item
 
 	private JMenuItem probGraph;
@@ -124,8 +130,57 @@ public class BioSim implements MouseListener, ActionListener {
 	private String recentProjectPaths[];
 
 	private int numberRecentProj;
+    
+        private int ShortCutKey;
 
-	private Pattern IDpat = Pattern.compile("([a-zA-Z]|_)([a-zA-Z]|[0-9]|_)*");
+        public boolean checkUndeclared,checkUnits;
+
+        private JCheckBox Undeclared, Units;
+       
+        private Pattern IDpat = Pattern.compile("([a-zA-Z]|_)([a-zA-Z]|[0-9]|_)*");
+
+        public class MacOSAboutHandler extends Application {
+	
+	    public MacOSAboutHandler() {
+		addApplicationListener(new AboutBoxHandler());
+	    }
+	    
+	    class AboutBoxHandler extends ApplicationAdapter {
+		public void handleAbout(ApplicationEvent event) {
+		    about();
+		    event.setHandled(true);
+		}
+	    }
+	}
+
+        public class MacOSPreferencesHandler extends Application {
+	
+	    public MacOSPreferencesHandler() {
+		addApplicationListener(new PreferencesHandler());
+	    }
+	    
+	    class PreferencesHandler extends ApplicationAdapter {
+		public void handlePreferences(ApplicationEvent event) {
+		    preferences();
+		    event.setHandled(true);
+		}
+	    }
+	}
+
+        public class MacOSQuitHandler extends Application {
+	
+	    public MacOSQuitHandler() {
+		addApplicationListener(new QuitHandler());
+	    }
+	    
+	    class QuitHandler extends ApplicationAdapter {
+		public void handleQuit(ApplicationEvent event) {
+		    exit();
+		    event.setHandled(true);
+		}
+	    }
+
+	}
 
 	/**
 	 * This is the constructor for the Proj class. It initializes all the input
@@ -182,13 +237,13 @@ public class BioSim implements MouseListener, ActionListener {
 		JMenu help = new JMenu("Help");
 		help.setMnemonic(KeyEvent.VK_H);
 		JMenu importMenu = new JMenu("Import");
-		// JMenu openMenu = new JMenu("Open");
 		JMenu newMenu = new JMenu("New");
 		menuBar.add(file);
 		menuBar.add(help);
 		manual = new JMenuItem("Manual");
 		about = new JMenuItem("About");
 		openProj = new JMenuItem("Open Project");
+		pref = new JMenuItem("Preferences");
 		newProj = new JMenuItem("Project");
 		newCircuit = new JMenuItem("Genetic Circuit Model");
 		newModel = new JMenuItem("SBML Model");
@@ -198,6 +253,7 @@ public class BioSim implements MouseListener, ActionListener {
 		importDot = new JMenuItem("Genetic Circuit Model");
 		exit = new JMenuItem("Exit");
 		openProj.addActionListener(this);
+		pref.addActionListener(this);
 		manual.addActionListener(this);
 		newProj.addActionListener(this);
 		newCircuit.addActionListener(this);
@@ -208,17 +264,18 @@ public class BioSim implements MouseListener, ActionListener {
 		importDot.addActionListener(this);
 		graph.addActionListener(this);
 		probGraph.addActionListener(this);
-		exit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, ActionEvent.ALT_MASK));
-		newProj.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, ActionEvent.ALT_MASK));
-		openProj.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.ALT_MASK));
-		newCircuit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.ALT_MASK));
-		newModel.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.ALT_MASK));
-		about.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ActionEvent.ALT_MASK));
-		manual.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, ActionEvent.ALT_MASK));
-		graph.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, ActionEvent.ALT_MASK));
-		probGraph.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_B, ActionEvent.ALT_MASK));
-		importDot.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, ActionEvent.ALT_MASK));
-		importSbml.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, ActionEvent.ALT_MASK));
+		ShortCutKey = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
+		exit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, ShortCutKey));
+		newProj.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, ShortCutKey));
+		openProj.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ShortCutKey));
+		newCircuit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, ShortCutKey));
+		newModel.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ShortCutKey));
+		about.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ShortCutKey));
+		manual.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, ShortCutKey));
+		graph.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, ShortCutKey));
+		probGraph.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_B, ShortCutKey));
+		importDot.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, ShortCutKey));
+		importSbml.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, ShortCutKey));
 		exit.setMnemonic(KeyEvent.VK_X);
 		newProj.setMnemonic(KeyEvent.VK_P);
 		openProj.setMnemonic(KeyEvent.VK_O);
@@ -251,10 +308,21 @@ public class BioSim implements MouseListener, ActionListener {
 		importMenu.add(importDot);
 		importMenu.add(importSbml);
 		file.addSeparator();
-		file.add(exit);
-		file.addSeparator();
 		help.add(manual);
-		help.add(about);
+		if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
+		    new MacOSAboutHandler();  
+		    new MacOSPreferencesHandler();  
+		    new MacOSQuitHandler();  
+		    Application application = new Application();
+		    application.addPreferencesMenuItem();
+		    application.setEnabledPreferencesMenu(true);
+		} else {
+		    file.addSeparator();
+		    file.add(pref);
+		    file.add(exit);
+		    file.addSeparator();
+		    help.add(about);
+		}
 		root = null;
 
 		// Create recent project menu items
@@ -266,15 +334,15 @@ public class BioSim implements MouseListener, ActionListener {
 			recentProjects[i].addActionListener(this);
 			recentProjectPaths[i] = "";
 		}
-		recentProjects[0].setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
+		recentProjects[0].setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ShortCutKey));
 		recentProjects[0].setMnemonic(KeyEvent.VK_1);
-		recentProjects[1].setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_2, ActionEvent.ALT_MASK));
+		recentProjects[1].setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_2, ShortCutKey));
 		recentProjects[1].setMnemonic(KeyEvent.VK_2);
-		recentProjects[2].setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_3, ActionEvent.ALT_MASK));
+		recentProjects[2].setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_3, ShortCutKey));
 		recentProjects[2].setMnemonic(KeyEvent.VK_3);
-		recentProjects[3].setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_4, ActionEvent.ALT_MASK));
+		recentProjects[3].setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_4, ShortCutKey));
 		recentProjects[3].setMnemonic(KeyEvent.VK_4);
-		recentProjects[4].setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_5, ActionEvent.ALT_MASK));
+		recentProjects[4].setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_5, ShortCutKey));
 		recentProjects[4].setMnemonic(KeyEvent.VK_5);
 		Preferences biosimrc = Preferences.userRoot();
 		for (int i = 0; i < 5; i++) {
@@ -284,6 +352,16 @@ public class BioSim implements MouseListener, ActionListener {
 				file.add(recentProjects[i]);
 				numberRecentProj = i + 1;
 			}
+		}
+		if (biosimrc.get("biosim.check.undeclared", "").equals("false")) {
+		    checkUndeclared = false;
+		} else {
+		    checkUndeclared = true;
+		}
+		if (biosimrc.get("biosim.check.units", "").equals("false")) {
+		    checkUnits = false;
+		} else {
+		    checkUnits = true;
 		}
 
 		// Open .biosimrc here
@@ -342,64 +420,162 @@ public class BioSim implements MouseListener, ActionListener {
 		KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(dispatcher);
 	}
 
+	public void preferences() {
+	    final JFrame f = new JFrame("Preferences");
+	    Undeclared = new JCheckBox("Check for undeclared units in SBML");
+	    if (checkUndeclared) {
+		Undeclared.setSelected(true);
+	    } else {
+		Undeclared.setSelected(false);
+	    }
+	    Units = new JCheckBox("Check units in SBML");
+	    if (checkUnits) {
+		Units.setSelected(true);
+	    } else {
+		Units.setSelected(false);
+	    }
+	    JButton savePref = new JButton("Save");
+	    savePref.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+			Preferences biosimrc = Preferences.userRoot();
+			if (Undeclared.isSelected()) {
+			    checkUndeclared = true;
+			    biosimrc.put("biosim.check.undeclared","true");
+			} else {
+			    checkUndeclared = false;
+			    biosimrc.put("biosim.check.undeclared","false");
+			}
+			if (Units.isSelected()) {
+			    checkUnits = true;
+			    biosimrc.put("biosim.check.units","true");
+			} else {
+			    checkUnits = false;
+			    biosimrc.put("biosim.check.units","false");
+			}
+			f.dispose();
+		    }
+		});
+	    JButton cancelPref = new JButton("Cancel");
+	    cancelPref.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+			f.dispose();
+		    }
+		});
+	    JPanel buttons = new JPanel();
+	    buttons.add(cancelPref);
+	    buttons.add(savePref);
+	    JPanel aboutPanel = new JPanel(new BorderLayout());
+	    aboutPanel.add(Undeclared, "North");
+	    aboutPanel.add(Units, "Center");
+	    aboutPanel.add(buttons, "South");
+	    f.setContentPane(aboutPanel);
+	    f.pack();
+	    Dimension screenSize;
+	    try {
+		Toolkit tk = Toolkit.getDefaultToolkit();
+		screenSize = tk.getScreenSize();
+	    }
+	    catch (AWTError awe) {
+		screenSize = new Dimension(640, 480);
+	    }
+	    Dimension frameSize = f.getSize();
+
+	    if (frameSize.height > screenSize.height) {
+		frameSize.height = screenSize.height;
+	    }
+	    if (frameSize.width > screenSize.width) {
+		frameSize.width = screenSize.width;
+	    }
+	    int x = screenSize.width / 2 - frameSize.width / 2;
+	    int y = screenSize.height / 2 - frameSize.height / 2;
+	    f.setLocation(x, y);
+	    f.setVisible(true);
+	}
+
+	public void about() {
+	    final JFrame f = new JFrame("About");
+	    //frame.setIconImage(new ImageIcon(System.getenv("BIOSIM") + File.separator + "gui"
+	    //			+ File.separator + "icons" + File.separator + "iBioSim.png").getImage());
+	    JLabel bioSim = new JLabel("iBioSim",JLabel.CENTER);
+	    Font font = bioSim.getFont();
+	    font = font.deriveFont(Font.BOLD, 36.0f);
+	    bioSim.setFont(font);
+	    JLabel version = new JLabel("Version 0.95",JLabel.CENTER);
+	    JLabel uOfU = new JLabel("University of Utah",JLabel.CENTER);
+	    JButton credits = new JButton("Credits");
+	    credits.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+			Object[] options = { "Close" };
+			JOptionPane.showOptionDialog(f, "Nathan Barker\nHiroyuki Kuwahara\n"
+						     + "Curtis Madsen\nChris Myers\nNam Nguyen", "Credits", JOptionPane.YES_OPTION,
+						     JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+		    }
+		});
+	    JButton close = new JButton("Close");
+	    close.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+			f.dispose();
+		    }
+		});
+	    JPanel buttons = new JPanel();
+	    buttons.add(credits);
+	    buttons.add(close);
+	    JPanel aboutPanel = new JPanel(new BorderLayout());
+	    JPanel uOfUPanel = new JPanel(new BorderLayout());
+	    uOfUPanel.add(bioSim, "North");
+	    uOfUPanel.add(version, "Center");
+	    uOfUPanel.add(uOfU, "South");
+	    aboutPanel.add(new javax.swing.JLabel(new javax.swing.ImageIcon(System.getenv("BIOSIM") + File.separator + "gui"
+									    + File.separator + "icons" + 
+									    File.separator + "iBioSim.png")), "North");
+	    //aboutPanel.add(bioSim, "North");
+	    aboutPanel.add(uOfUPanel, "Center");
+	    aboutPanel.add(buttons, "South");
+	    f.setContentPane(aboutPanel);
+	    f.pack();
+	    Dimension screenSize;
+	    try {
+		Toolkit tk = Toolkit.getDefaultToolkit();
+		screenSize = tk.getScreenSize();
+	    }
+	    catch (AWTError awe) {
+		screenSize = new Dimension(640, 480);
+	    }
+	    Dimension frameSize = f.getSize();
+
+	    if (frameSize.height > screenSize.height) {
+		frameSize.height = screenSize.height;
+	    }
+	    if (frameSize.width > screenSize.width) {
+		frameSize.width = screenSize.width;
+	    }
+	    int x = screenSize.width / 2 - frameSize.width / 2;
+	    int y = screenSize.height / 2 - frameSize.height / 2;
+	    f.setLocation(x, y);
+	    f.setVisible(true);
+	}
+
+        public void exit() {
+	    for (int i = 0; i < tab.getTabCount(); i++) {
+		if (save(i) == 0) {
+		    return;
+		}
+	    }
+	    Preferences biosimrc = Preferences.userRoot();
+	    for (int i = 0; i < numberRecentProj; i++) {
+		biosimrc.put("biosim.recent.project." + i, recentProjects[i].getText());
+		biosimrc.put("biosim.recent.project.path." + i, recentProjectPaths[i]);
+	    }
+	    System.exit(1);
+	}
+
 	/**
 	 * This method performs different functions depending on what menu items are
 	 * selected.
 	 */
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == about) {
-			final JFrame f = new JFrame("About");
-			JLabel bioSim = new JLabel("iBioSim 0.90");
-			Font font = bioSim.getFont();
-			font = font.deriveFont(Font.BOLD, 36.0f);
-			bioSim.setFont(font);
-			JLabel uOfU = new JLabel("University of Utah");
-			JButton credits = new JButton("Credits");
-			credits.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					Object[] options = { "Close" };
-					JOptionPane.showOptionDialog(f, "Nathan Barker\nHiroyuki Kuwahara\n"
-							+ "Curtis Madsen\nChris Myers\nNam Nguyen", "Credits", JOptionPane.YES_OPTION,
-							JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-				}
-			});
-			JButton close = new JButton("Close");
-			close.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					f.dispose();
-				}
-			});
-			JPanel buttons = new JPanel();
-			buttons.add(credits);
-			buttons.add(close);
-			JPanel aboutPanel = new JPanel(new BorderLayout());
-			JPanel uOfUPanel = new JPanel();
-			uOfUPanel.add(uOfU);
-			aboutPanel.add(bioSim, "North");
-			aboutPanel.add(uOfUPanel, "Center");
-			aboutPanel.add(buttons, "South");
-			f.setContentPane(aboutPanel);
-			f.pack();
-			Dimension screenSize;
-			try {
-				Toolkit tk = Toolkit.getDefaultToolkit();
-				screenSize = tk.getScreenSize();
-			}
-			catch (AWTError awe) {
-				screenSize = new Dimension(640, 480);
-			}
-			Dimension frameSize = f.getSize();
-
-			if (frameSize.height > screenSize.height) {
-				frameSize.height = screenSize.height;
-			}
-			if (frameSize.width > screenSize.width) {
-				frameSize.width = screenSize.width;
-			}
-			int x = screenSize.width / 2 - frameSize.width / 2;
-			int y = screenSize.height / 2 - frameSize.height / 2;
-			f.setLocation(x, y);
-			f.setVisible(true);
+		    about();
 		}
 		else if (e.getSource() == manual) {
 			try {
@@ -430,17 +606,7 @@ public class BioSim implements MouseListener, ActionListener {
 		}
 		// if the exit menu item is selected
 		else if (e.getSource() == exit) {
-			for (int i = 0; i < tab.getTabCount(); i++) {
-				if (save(i) == 0) {
-					return;
-				}
-			}
-			Preferences biosimrc = Preferences.userRoot();
-			for (int i = 0; i < numberRecentProj; i++) {
-				biosimrc.put("biosim.recent.project." + i, recentProjects[i].getText());
-				biosimrc.put("biosim.recent.project.path." + i, recentProjectPaths[i]);
-			}
-			System.exit(1);
+		    exit();
 		}
 		// if the open popup menu is selected on a sim directory
 		else if (e.getActionCommand().equals("openSim")) {
@@ -855,6 +1021,9 @@ public class BioSim implements MouseListener, ActionListener {
 			}
 		}
 		// if the open project menu item is selected
+		else if (e.getSource() == pref) {
+		    preferences();
+		}
 		else if ((e.getSource() == openProj) || (e.getSource() == recentProjects[0])
 				|| (e.getSource() == recentProjects[1]) || (e.getSource() == recentProjects[2])
 				|| (e.getSource() == recentProjects[3]) || (e.getSource() == recentProjects[4])) {
