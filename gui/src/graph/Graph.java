@@ -2577,9 +2577,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		JLabel specs = new JLabel("Species");
 		JLabel color = new JLabel("Color");
 		JLabel shape = new JLabel("Shape");
-		connectedLabel = new JCheckBox("Connected");
+		connectedLabel = new JCheckBox("Connect");
 		visibleLabel = new JCheckBox("Visible");
-		filledLabel = new JCheckBox("Filled");
+		filledLabel = new JCheckBox("Fill");
 		connectedLabel.setSelected(true);
 		visibleLabel.setSelected(true);
 		filledLabel.setSelected(true);

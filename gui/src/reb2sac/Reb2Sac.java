@@ -354,7 +354,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		JLabel choose = new JLabel("Choose One:");
 		none = new JRadioButton("None");
 		abstraction = new JRadioButton("Abstraction");
-		nary = new JRadioButton("Abstraction & Nary");
+		nary = new JRadioButton("Logical Abstraction");
 		ButtonGroup abs = new ButtonGroup();
 		abs.add(none);
 		abs.add(abstraction);

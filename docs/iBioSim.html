@@ -61,10 +61,10 @@
 </UL>
 <LI><A HREF="#ANALYSIS"><FONT SIZE=4>Analysis View</FONT></A> 
 <UL>
-<LI><A HREF="#SIMOPTIONS">Options</A>
-<LI><A HREF="#USERDEFN">User Defined Data File</A> 
+<LI><A HREF="#SIMOPTIONS">Simulation Options</A>
+<!-- <LI><A HREF="#USERDEFN">User Defined Data File</A>
+<LI><A HREF="#TERMCOND">Termination Conditions</A> -->
 <LI><A HREF="#ABSOPTIONS">Abstraction Options</A> 
-<LI><A HREF="#TERMCOND">Termination Conditions</A> 
 <LI><A HREF="#ADVSIMOPTIONS">Advanced Options</A> 
 <LI><A HREF="#PARAMEDIT">Parameter Editor</A>	
 </UL>
@@ -145,16 +145,20 @@ down menu.</P>
 
 <P>After you have created or opened a project, you can create a
 new model or graph to add to the project. To create a new 
-<A HREF="#CIRCUIT">Genetic Circuit Model</A>, select the 
+<A HREF="#CIRCUIT">Genetic Circuit Model</A>, select 
 New → Genetic Circuit Model from the
 File menu. You will then be prompted to give a model id. At this
 point, a <A HREF="#GCMEDIT">GCM editor</A> will open in a new
-tab. To create a new SBML model, select the New → SBML Model
+tab. To create a new SBML model, select New → SBML Model
 from the File menu. You will then be prompted to give a model id.
 At this point, an <A HREF="#SBMLEDIT">SBML editor</A> will open
-in a new tab. To create a new graph, select the New → TSD Graph
+in a new tab. To create a new TSD graph, select New → TSD Graph
 from the File menu. You will then be prompted to give a name to
 the TSD graph. At this point, a <A HREF="#TSDGRAPH">TSD graph editor</A>
+will open in a new tab. To create a new probability graph, select 
+New → Probability Graph from the File menu. You will then be prompted to 
+give a name to the probability graph. At this point, a 
+<A HREF="#PROBGRAPH">Probability graph editor</A>
 will open in a new tab. Once a model or graph is created, it can
 be opened again later by right clicking on the object in the
 project window and selecting &quot;Edit&quot;, or alternatively
@@ -222,7 +226,10 @@ deleted. For a GCM, the &quot;View/Edit&quot; option opens the
 model in an <A HREF="#GCMEDIT">GCM editor</A>. For an SBML model,
 the &quot;View/Edit&quot; option opens the model in an <A HREF="#SBMLEDIT">SBML
 editor</A>. For a TSD graph, the &quot;View/Edit&quot; option opens
-the TSD graph in a <A HREF="#TSDGRAPH">TSD graph editor</A>. For an analysis
+the TSD graph in a <A HREF="#TSDGRAPH">TSD graph editor</A>. 
+For a probability graph, the &quot;View/Edit&quot; option opens
+the probability graph in a <A HREF="#PROBGRAPH">probability graph editor</A>. 
+For an analysis
 view, the &quot;Open Analysis View&quot; option opens the
 <A HREF="#ANALYSIS">analysis view</A>. For a learn view, the
 &quot;Open Learn View&quot; option opens the <A HREF="#LEARN">learn
@@ -233,10 +240,11 @@ view</A>.</P>
 <P>The GCM editor allows the user to create or modify a 
 <A HREF="#CIRCUIT">GCM</A>.  A GCM is a compact graphical representation 
 of a genetic circuit which can later be synthesized into an SBML model. 
-A GCM includes <A HREF="#GCMSPECIES">GCM species</A>, 
-<A HREF="#INFLUENCES">influences</A>, <A HREF="#PROMOTERS">promoters</A>,
+A GCM includes <A HREF="#PROMOTERS">promoters</A>,
+<A HREF="#GCMSPECIES">GCM species</A>, 
+<A HREF="#INFLUENCES">influences</A>, 
 <A HREF="#GCMPARAMETERS">parameters</A>, and an optional
-<A HREF="#SBMLFILE">SBML file</A> name.. GCM species, influences, 
+<A HREF="#SBMLFILE">SBML file</A>.  GCM species, influences, 
 and promoters can be added, removed, or edited. Parameters can only be edited. 
 An SBML file can also be selected to merge with the SBML generated from a GCM.
 This allows either customization of the SBML model or the addition of SBML
@@ -275,11 +283,12 @@ attached to the GCM, and includes rules, constraints, or events.</P>
 from which transcription is initiated.  
 When adding or editing promoters, the user must supply a unique ID.  
 If desired, the user can then modify the initial promoter count, 
-cooperativity constant (i.e., the number of binding sites for 
-transcription factors), the binding rate of RNAP (KRNAP), 
-the nominal production rate (koc), the basal production rate (kbasal),
-the activated production rate (Activated koc), and the number of transcripts 
-per mRNA (i.e., the stoichiometry of production).
+degree of cooperativity (i.e., the number of binding sites for 
+transcription factors), the RNAP binding equilibrium (Ko), 
+the open complex production rate (ko), 
+the stoichiometry of production (i.e., the number of transcripts 
+per mRNA), the basal production rate (kb), or
+the activated production rate (ka). 
 </P>
 
 <H2><A NAME="GCMSPECIES"></A>GCM Species</H2>
@@ -292,12 +301,9 @@ A normal species will result in gene production and degradation reactions
 being produced.  A constant species will not generate any
 production or degradation reactions.  An unconstrained species will
 produce a constant production and degradation reaction.
-The user can also specify a initial amount, a N-mer as
-transcription factor parameter, an association constant, and a degradation
-rate. The N-mer as transcription factor specifies how
-many monomers bind together before this species acts as a transcription factor.
-The association constant parameter is the ratio of N-mer
-molecules to monomers.</P>
+The user can also specify an initial species count (ns), a 
+Dimerization equilibrium (Kd), and a degradation rate (kd).
+</P>
 
 <H2><A NAME="INFLUENCES"></A>Influences</H2>
 
@@ -334,10 +340,12 @@ complex, and the complex represses the production of C. This is a
 NAND gate. If, on the other hand, if biochemical is not selected,
 this behaves as a NOR gate.</P>
 <P>The user can also set the value for N-mer as transcription
-factor.  This determines how many monomers of the input species
+factor (nd).  This determines how many monomers of the input species
 must be bound together in order to affect transcription.  The user
-can also set the value of the repression or activation binding rate 
-constant for the influence.</P>
+can also set the value of the repression or activation binding equilibrium
+(Kr and Ka).  Finally, the user can specify the biochemical equilibrium
+(Kb).
+</P>
 
 <H2><A NAME="GCMPARAMETERS"></A>GCM Parameters</H2>
 <P>GCM parameters are a list of global parameters that are used
@@ -500,42 +508,48 @@ with the generated SBML.  This allows the user to incorporate
 SBML features such as rules, events, constraints, and initial
 assignments into the GCM model.  
 </P>
+
 <H1><A NAME="SBMLEDIT"></A>SBML Editor</H1>
 <P>The SBML editor allows the user to create or modify an SBML
-model of a biochemical reaction network. This model includes
+model of a biochemical reaction network.  An SBML model includes
 <A HREF="#COMPARTMENTS">compartments</A>, <A HREF="#SPECIES">species</A>,
-<A HREF="#REACTIONS">reactions</A>, and <A HREF="#PARAMETERS">parameters</A>.
+<A HREF="#REACTIONS">reactions</A>, <A HREF="#PARAMETERS">parameters</A>,
+<A HREF="#FUNCTIONS">function definitions</A>, 
+<A HREF="#UNITS">unit definitions</A>, 
+<A HREF="#COMPTYPES">compartment types</A>, 
+<A HREF="#SPECTYPES">species types</A>,
+<A HREF="#INITIALS">initial assignments</A>, 
+<A HREF="#RULES">rules</A>, <A HREF="#CONSTRAINTS">constraints</A>, and
+<A HREF="#EVENTS">events</A>.
 Each of these items can be added, removed, or edited. 
-</P>
-<P>To add a new item, click on the appropriate add button. You
+To add a new item, click on the appropriate add button. You
 will then be prompted to provide a unique id and some properties
 for this new item (as described below). After you have filled out
 all of the required fields, click add and the new item will be
-added to the SBML model.</P>
-<P>To remove an item from the model, select that item and click
+added to the SBML model.
+To remove an item from the model, select that item and click
 the remove button. The item will then be removed from the model.
-However, if you try to remove a species that is used in a
-reaction, you will first have to remove the reaction or remove
-the species from the reaction in order to remove the species from
-the model. Likewise, if you try to remove a compartment that
-contains species, you will have to remove the species before you
-will be able to remove the compartment.</P>
-<P>To edit an existing item, select that item from the list and
+However, if you try to remove a item that is being used 
+(for example, a species that is used in a reaction), you will first have 
+to remove its use.
+To edit an existing item, select that item from the list and
 click the edit button. An editing window will open and you will
 be able to change the properties of that item. When you are done
 editing this item, click save to save the changes to the item. 
-</P>
-<P>After the model is complete, press the Save button to store
-the model. The Save As button can also be used to store the
+After the model is complete, press the Save SBML button to store
+the model.  The Save and Check SBML button also saves the model, but
+in this case it also checks the models consistency.
+Finally, the Save As button can also be used to store the
 model, but in this case, a new model ID will be requested and the
 model will be saved using that ID. 
 </P>
 <H2><A NAME="SBMLMATH"></A>SBML Math Formulas</H2>
-<P>Math formulas appear in many SBML constructs.  Thes formulas are expressed as text strings using a
-   simple C-like syntax. SBML math formulas can include: 
+<P>Math formulas appear in many SBML constructs.  These formulas are 
+expressed as text strings using a simple C-like syntax. 
+SBML math formulas can include: 
 </P>
 <UL>
-<LI><P>Variables (compartment, species, and parameter IDs)</P>
+<LI><P>Variables (compartment, species, parameter IDs, and reaction IDs)</P>
 <LI><P>Real Numbers<P>
 <LI><P>Built-in constants: exponentiale, pi, true, and false.<P>
 <LI><P>Special variable time or t which returns the current simulation time.</P>
@@ -556,143 +570,116 @@ model will be saved using that ID.
 <LI><P>Continuous random functions: uniform(a,b), normal(m,s), exponential(mu), 
        gamma(a,b), lognormal(z,s), chisq(nu), laplace(a), cauchy(a), and rayleigh(s).</P> 
 <LI><P>Discrete random functions: poisson(mu), binomial(p,n), and bernoulli(p).</P>
-<!--
-<UL>
-<LI><P STYLE="margin-bottom: 0in">abs(x) - Absolute Value 
-</P>
-<LI><P STYLE="margin-bottom: 0in">acos(x) - Arc Cosine 
-</P>
-<LI><P STYLE="margin-bottom: 0in">asin(x) - Arc Sine 
-</P>
-<LI><P STYLE="margin-bottom: 0in">atan(x) - Arc Tangent 
-</P>
-<LI><P STYLE="margin-bottom: 0in">ceil(x) - Ceiling 
-</P>
-<LI><P STYLE="margin-bottom: 0in">cos(x) - Cosine 
-</P>
-<LI><P STYLE="margin-bottom: 0in">exp(x) - e^x 
-</P>
-<LI><P STYLE="margin-bottom: 0in">floor(x) - Floor 
-</P>
-<LI><P STYLE="margin-bottom: 0in">log(x) - Natural Log 
-</P>
-<LI><P STYLE="margin-bottom: 0in">log(#, x) - Log Base # 
-</P>
-<LI><P STYLE="margin-bottom: 0in">sqr(x) - Squared 
-</P>
-<LI><P STYLE="margin-bottom: 0in">pow(x, y) - x^y 
-</P>
-<LI><P STYLE="margin-bottom: 0in">sqrt(x) - Square Root 
-</P>
-<LI><P STYLE="margin-bottom: 0in">root(#, x) - x to the # root 
-</P>
-<LI><P STYLE="margin-bottom: 0in">sin(x) - Sine 
-</P>
-<LI><P STYLE="margin-bottom: 0in">tan(x) - Tangent 
-</P>
-</UL>-->
 </UL>
+
 <H2><A NAME="MAINSBML"></A>Main Elements</H2>
+This tab is used to specify <A HREF="#COMPARTMENTS">compartments</A>, 
+<A HREF="#SPECIES">species</A>, <A HREF="#REACTIONS">reactions</A>, and
+<A HREF="#PARAMETERS">parameters</A>.
+
 <H3><A NAME="COMPARTMENTS"></A>Compartments</H3>
 <P>Compartments are used to specify locations where species are
 found. Every model must include at least one compartment. A new
 model includes a compartment named &quot;default&quot; that
-cannot be removed unless a new compartment is provided. When
-adding or editing a compartment, the only field is the ID for the
-compartment. 
+cannot be removed unless a new compartment is provided.
+A compartment to which species have been assigned also cannot be removed.  
+A compartment has the following fields:
+<UL>
+<LI><P>ID: a unique ID composed only of alphanumeric characters and 
+       underscores.</P>
+<LI><P>Name: an arbitrary string description (optional).</P>
+<LI><P>Type: selected from the list of 
+    <A HREF="#COMPTYPES">compartment types</A> (default=none).</P>
+<LI><P>Dimensions: number of spatial dimensions (default=3).</P>
+<LI><P>Outside: the compartment that is outside this compartment 
+       (default=none).</P>
+<LI><P>Constant: Boolean indicating if the size is constant
+       (default=true).</P>
+<LI><P>Size: initial size of the compartment (default=1.0).</P>
+<LI><P>Units: the units for the size (default=none).</P>
+</UL>
 </P>
+
 <H3><A NAME="SPECIES"></A>Species</H3>
 <P>Species are the molecules that appear as reactants or products
-in the reactions in the biochemical reaction network. When adding
-or editing a species, the user must provide an ID, a compartment
-assignment, and an initial concentration (or amount) of the
-species. A species ID must be a string composed only of
-alphanumeric characters and underscores and start with an
-alphabetic character. 
+in the reactions in the biochemical reaction network. 
+A species has the following fields:
+<UL>
+<LI><P>ID: a unique ID composed only of alphanumeric characters and 
+       underscores.</P>
+<LI><P>Name: an arbitrary string description (optional).</P>
+<LI><P>Type: selected from the list of 
+    <A HREF="#SPECTYPES">species types</A> (default=none).</P>
+<LI><P>Compartment: location of the species (default=default).</P>
+<LI><P>Boundary Condition: Boolean indicating if the species 
+       amount/concentration
+       cannot be changed by reactions (default=false).</P>
+<LI><P>Constant: Boolean indicating if the species amount/concentration 
+       is constant (default=false).</P>
+<LI><P>Initial Amount/Concentration: initial value of the amount or 
+       concentration of the species whether it is an amount or concentration
+       can also be selected (default=amount/0.0).</P>
+<LI><P>Units: the units for the amount/concentration (default=none).</P>
+</UL>
 </P>
+
 <H3><A NAME="REACTIONS"></A>Reactions</H3>
 <P>Reactions are used to create or destroy molecular species in a
-biochemical reaction network. A reaction is composed of an ID, a
-reversible Boolean flag, a list of reactants, a list of products,
-a list of parameters, and a kinetic law. A reaction is required
-to have an ID and a syntactically correct kinetic law as
-described below. The reversible Boolean flag indicates whether or
-not this reaction is reversible. When adding a reactant or
-product, the user must specify a species ID and the stoichiometry
-(i.e., the number of molecules produced or consumed by the
-reaction). The list of parameters begins with a default forward
+biochemical reaction network.  A reaction is composed of the following:
+<UL>
+<LI><P>ID: a unique ID composed only of alphanumeric characters and 
+       underscores.</P>
+<LI><P>Name: an arbitrary string description (optional).</P>
+<LI><P>Reversible: a Boolean indicating if the reaction is reversible
+       (default=false).</P>
+<LI><P>Fast: a Boolean indicating if the reaction is fast (default=false).</P>
+<LI><P>List of Reactants: species that are consumed by this reaction.</P>
+<LI><P>List of Products: species that are produced by this reaction.</P>
+<LI><P>List of Modifiers: species that are neither produced or consumed 
+       by this reaction.</P>
+<LI><P>List of Local Parameters: symbolic values that can be used in
+       the kinetic law or stoichiometry math equations for this reaction.</P>
+<LI><P>Kinetic law: an <A HREF="#SBMLMATH">SBML math formula</A>
+       describing the rate or probability for this reaction.
+       This equation can include only those species that appear as
+       reactants, products, or modifiers for the reaction.</P>
+</UL>
+When adding a reactant or product, the user must specify a species ID and 
+the stoichiometry (i.e., the number of molecules produced or consumed by the
+reaction).  The stoichiometry can also be expressed as a stoiciometry math
+equation.  Each parameter is composed of an ID, Name, Value, and Units.
+The list of parameters begins with a default forward
 reaction rate (kf) and reverse reaction rate (kr). These names
 and their values should likely be edited. The kinetic law can
 either be automatically generated using the Use Mass Action
-button or manually entered using the syntax described below. The
+button or manually entered.  The
 &quot;Use Mass Action&quot; button creates a rate law using the
 law of mass action. It assumes that the first parameter in the
 list is the forward reaction rate and the second parameter in the
-list is the reverse reaction rate. The &quot;Clear&quot; button
-clears the kinetic law editor. 
+list is the reverse reaction rate.  
+The &quot;Clear&quot; button clears the kinetic law editor. 
 </P>
-<P>Kinetic law formulas are expressed as text strings using a
-simple C-like syntax. Here are some syntax rules when dealing
-with kinetic law formulas: 
-</P>
-<UL>
-<LI><P STYLE="margin-bottom: 0in">Acceptable operators include:
-add (+), subtract (-), multiply (*), divide (/), and the power
-function, pow(x,y), which is equal to x^y. 
-</P>
-<LI><P STYLE="margin-bottom: 0in"><!-- <LI><P STYLE="margin-bottom: 0in">Supported functions include: 
-</P>
-<UL>
-<LI><P STYLE="margin-bottom: 0in">abs(x) - Absolute Value 
-</P>
-<LI><P STYLE="margin-bottom: 0in">acos(x) - Arc Cosine 
-</P>
-<LI><P STYLE="margin-bottom: 0in">asin(x) - Arc Sine 
-</P>
-<LI><P STYLE="margin-bottom: 0in">atan(x) - Arc Tangent 
-</P>
-<LI><P STYLE="margin-bottom: 0in">ceil(x) - Ceiling 
-</P>
-<LI><P STYLE="margin-bottom: 0in">cos(x) - Cosine 
-</P>
-<LI><P STYLE="margin-bottom: 0in">exp(x) - e^x 
-</P>
-<LI><P STYLE="margin-bottom: 0in">floor(x) - Floor 
-</P>
-<LI><P STYLE="margin-bottom: 0in">log(x) - Natural Log 
-</P>
-<LI><P STYLE="margin-bottom: 0in">log(#, x) - Log Base # 
-</P>
-<LI><P STYLE="margin-bottom: 0in">sqr(x) - Squared 
-</P>
-<LI><P STYLE="margin-bottom: 0in">pow(x, y) - x^y 
-</P>
-<LI><P STYLE="margin-bottom: 0in">sqrt(x) - Square Root 
-</P>
-<LI><P STYLE="margin-bottom: 0in">root(#, x) - x to the # root 
-</P>
-<LI><P STYLE="margin-bottom: 0in">sin(x) - Sine 
-</P>
-<LI><P STYLE="margin-bottom: 0in">tan(x) - Tangent 
-</P>
-</UL>
--->Acceptable
-variables include anything listed in the products, reactants, or
-parameter fields. 
-</P>
-<LI><P>Real Numbers can also be entered into a kinetic law
-formula. 
-</P>
-</UL>
+
 <H3><A NAME="PARAMETERS"></A>Parameters</H3>
 <P>Parameters are used to specify global parameters that can then
-be used in the kinetic law for any reaction in the model. A
-parameter includes an ID and a value. 
+be used in <A HREF="#SBMLMATH">SBML math formulas</A>.  A
+parameter includes the following:
+<UL>
+<LI><P>ID: a unique ID composed only of alphanumeric characters and 
+       underscores.</P>
+<LI><P>Name: an arbitrary string description (optional).</P>
+<LI><P>Value: initial value for the parameter.</P>
+<LI><P>Units: the units for the parameter value (default=none).</P>
+<LI><P>Constant: Boolean indicating if the parameter value 
+       is constant (default=true).</P>
+</UL>
 </P>
+
 <H2><A NAME="DEFTYPES"></A>Definitions/Types</H2>
 This tab allows users to provide <A HREF="#FUNCTIONS">Function Definitions</A>, 
 <A HREF="#UNITS">Unit Definitions</A>, <A HREF="#COMPTYPES">Compartment Types</A>, and
 <A HREF="#SPECTYPES">Species Types</A>.
+
 <H3><A NAME="FUNCTIONS"></A>Function Definitions</H3>
 Function definitions are used to create user defined functions that can then be used
 in <A HREF="#SBMLMATH">SBML math formulas</A>.  Function definitions include an ID,
@@ -701,11 +688,12 @@ The defintion is an <A HREF="#SBMLMATH">SBML math formulas</A> though it is rest
 to only use variable names which are arguments to the function.  While functions can
 call other functions, they cannot be recursive (i.e., call themselves) either directly 
 or indirectly (i.e., through a cycle of function calls).
+
 <H3><A NAME="UNITS"></A>Unit Definitions</H3>
 Unit definitions are used to construct user-defined units which are derived from the
 set of base units.  A unit definition includes an ID, an optional name, and a list of
 units that define it.  There are buttons to add, remove, and edit elements in the list
-of units.  Each unit is composed of a kind, exponent,scale, and multiplier.  The kind 
+of units.  Each unit is composed of a kind, exponent, scale, and multiplier.  The kind 
 is selected from the list of base units in the table below:
 <p>
 <TABLE WIDTH=848 BORDER=1 CELLPADDING=4 CELLSPACING=3 RULES=ROWSCOLS STYLE="page-break-before: always">
@@ -786,7 +774,7 @@ the initial value specified in the object.
 <H3><A NAME="RULES"></A>Rules</H3>
 There are three types of rules: algebraic, assignment, and rate rules which are in 
 the following form:
-<TABLE WIDTH=600 BORDER=1 CELLPADDING=4 CELLSPACING=3 RULES=NONE STYLE="page-break-before: always">
+<TABLE WIDTH=848 BORDER=1 CELLPADDING=4 CELLSPACING=3 RULES=ROWSCOLS STYLE="page-break-before: always">
 <TBODY><TR VALIGN=TOP>
 <TD COLSPAN=4 WIDTH=50><P ALIGN=RIGHT>Algebraic</P></TD>
 <TD COLSPAN=4 WIDTH=200><P ALIGN=CENTER>left-hand side is zero</P></TD>
@@ -840,43 +828,43 @@ assignment.
 
 <H1><A NAME="ANALYSIS"></A>Analysis View</H1>
 <P>The analysis view is used to analyze biochemical reaction
-network models. The analysis view includes tabs for a <A HREF="#SIMOPTIONS">simulation
-tool</A>, a <A HREF="#PARAMEDIT">parameter editor</A>, and a
-<A HREF="#TSDGRAPH">graph editor</A>. 
+network models. The analysis view includes tabs for 
+<A HREF="#SIMOPTIONS">simulation options</A>, 
+<A HREF="#ABSOPTIONS">abstraction options</A>, 
+<A HREF="#ADVSIMOPTIONS">advanced options</A>, 
+a <A HREF="#PARAMEDIT">parameter editor</A>, 
+a <A HREF="#TSDGRAPH">TSD graph editor</A>, and a 
+<A HREF="#PROBGRAPH">probability graph editor</A>.
 </P>
-<H2><A NAME="SIMOPTIONS"></A>Options</H2>
+
+<H2><A NAME="SIMOPTIONS"></A>Simulation Options</H2>
 <P>iBioSim comes with a number of simulation methods, ranging
 from continuous-deterministic simulation methods to
 discrete-stochastic simulation methods. In order to perform
 efficient temporal behavior analysis, various model abstraction
-can be automatically applied. This section and the following ones
-describe each sub-tab of the simulation tab. These options
-support a limited functionality of the REB2SAC modeling and
-analysis tool described in <A HREF="http://www.async.ece.utah.edu/publications">Kuwahara's
+can also be automatically applied.  These routines are implemented
+within the reb2sac tool
+described in <A HREF="http://www.async.ece.utah.edu/publications">Kuwahara's
 PhD Dissertation (UofUtah 2007)</A>. 
 </P>
 <P>The first set of radio buttons in this tab specifies the
-levels of abstraction. Choose &quot;None&quot; if you don’t
-want to abstract your model, &quot;Abstraction&quot; if you want
-to perform the default reaction-based abstraction, and
-&quot;Abstraction &amp; Nary&quot; if you want to further
-abstract your model by generating its finite-state Markov chain
-model.</P>
-<P>The second set of radio buttons specify the type of analysis.
+levels of abstraction. &quot;None&quot; means to use no abstraction,
+&quot;Abstraction&quot; means to perform reaction-based abstraction, and
+&quot;Logical Abstraction&quot; means to perform both reaction-based and
+logical abstractions.
+The second set of radio buttons specify the type of analysis.
 &quot;ODE&quot; is for continuous-deterministic simulation,
 &quot;Monte Carlo&quot; is for discrete-stochastic simulation,
 &quot;Markov&quot; performs temporal probability distribution
 analysis on finite-state Markov chain models, &quot;sbml&quot;
 outputs the model in SBML format, &quot;Network&quot; outputs the
 structure of the model in the <A HREF="http://www.graphviz.org/">GraphViz</A>
-format, &quot;xhtml&quot; outputs the model in xhtml format with
-MathML presentation entries for kinetic laws.</P>
-<P>The last set of radio buttons asks if you want to &quot;Overwrite&quot;
+format, &quot;Browser&quot; outputs the model in xhtml format for display
+in a web browswer.
+The last set of radio buttons asks if you want to &quot;Overwrite&quot;
 the simulation runs or if you want to &quot;Append&quot; more
-simulation runs. Choose &quot;overwrite&quot; to overwrite
-simulation runs and &quot;append&quot; to append simulation runs.
-This is only valid for stochastic simulation. Also, initially, if
-you have not performed any simulation, this option is disabled.</P>
+simulation runs. 
+If you have not yet performed any simulation, this option is disabled.</P>
 <P>The next field specifies the simulation method you want to use
 based on the simulation type you specified. The methods available
 are:</P>
@@ -959,8 +947,8 @@ next reaction time</P></TD>
 </TR></TBODY>
 </TABLE>
 
-<P>There are some properties that needs to be set for simulation.
-Below is the table specifies such simulation properties.</P>
+<P>There are some properties that need to be set for simulation.
+The table below specifies these:</P>
 
 <TABLE WIDTH=848 BORDER=1 CELLPADDING=4 CELLSPACING=3 RULES=ROWSCOLS STYLE="page-break-before: always">
 <TBODY><TR VALIGN=TOP>
@@ -977,7 +965,7 @@ Below is the table specifies such simulation properties.</P>
 </TR></TBODY>
 <TBODY><TR VALIGN=TOP>
 <TD COLSPAN=4 WIDTH=200><P ALIGN=CENTER>Maximum Time Step</P></TD>
-<TD COLSPAN=3 WIDTH=600><P>The maximum time step allowed (also minimum time step for Euler method)
+<TD COLSPAN=3 WIDTH=600><P>The maximum time step allowed (also minimum time step for the Euler method)
 </P></TD>
 </TR></TBODY>
 <TBODY><TR VALIGN=TOP>
@@ -990,7 +978,7 @@ Below is the table specifies such simulation properties.</P>
 </TR></TBODY>
 <TBODY><TR VALIGN=TOP>
 <TD COLSPAN=4 WIDTH=200><P ALIGN=CENTER>Runs</P></TD>
-<TD COLSPAN=3 WIDTH=600><P>A number of Monte Carlo simulation runs to perform</P></TD>
+<TD COLSPAN=3 WIDTH=600><P>The number of Monte Carlo simulation runs to perform</P></TD>
 </TR></TBODY>
 <TBODY><TR VALIGN=TOP>
 <TD COLSPAN=4 WIDTH=200><P ALIGN=CENTER>Simulation ID</P></TD>
@@ -999,6 +987,7 @@ Below is the table specifies such simulation properties.</P>
 <TR></TR>
 </TABLE>
 
+<!--
 <H2><A NAME="USERDEFN"></A>User Defined Data File</H2>
 <P>This can deterministically specify how the state of a species
 should change at some specified time point during a simulation
@@ -1015,35 +1004,35 @@ multiplied by&quot; which multiplies the species value by the
 specified value, and &quot;is divided by&quot; which divides the
 species value by the specified value. 
 </P>
+-->
+
 <H2><A NAME="ABSOPTIONS"></A>Abstraction Options</H2>
 <P>This allows the user to set the properties of rapid
 equilibrium, QSSA, and operator site abstraction methods.&nbsp;&nbsp;
 </P>
-<P>The <I>reb2sac.rapid.equilibrium.condition.1</I> specifies the
-threshold T1 such that the rapid equilibrium condition fails when
-T1 &gt; E0 / (S0 + k-1/k1).</P>
-<P>The <I>reb2sac.rapid.equilibrium.condition.2</I> specifies the
-threshold T2 such that the rapid equilibrium condition fails when
-T1 &gt; k2 /k-1.</P>
-<P>The <I>QSSA condition</I> specifies the threshold T used by
-the QSSA abstraction method where T &gt; E0 / (S0 + KM). 
-</P>
-<P>The <I>Max concentration threshold</I> specifies the maximum
+<P>Rapid Equilibrium Condition 1 specifies threshold T1 such that the rapid 
+equilibrium condition fails when T1 &gt; E0 / (S0 + k-1/k1).</P>
+<P>Rapid Equilibrium Condition 2 specifies threshold T2 such that the rapid 
+equilibrium condition fails when T1 &gt; k2 /k-1.</P>
+<P>The QSSA condition specifies threshold T used by
+the QSSA abstraction method where T &gt; E0 / (S0 + KM).</P>
+<P>The Max concentration threshold specifies the maximum
 number of molecules that a species can have initially and still
 be considered an operator site by the operator site reduction. 
 </P>
-<P>Interesting species are the ones that are used in the
-analysis, and hence are those which should not be abstracted. 
+<P>
+This tab also allows the user to select the interesting species.
+Interesting species are the ones that are used in the
+analysis, and hence are those which should never be abstracted away.
+This tab shows all available species, and to make a species (or set of
+species) interesting, highlight the species and press the Add Species
+button.  There is also a button to remove interesting species and to clear
+all interesting species. 
 </P>
-<H2><A NAME="TERMCOND"></A>Termination Conditions</H2>
-<P><!-- The termination conditions can specify a set of simple
-conditions to terminate each simulation run (either ODE or Monte
-Carlo) before the time limit when at least one of them is
-satisfied.   This option can, for example, be very useful for 
-computational analysis of phenotype variations. 
 
-<H2><A NAME="ADVTERMCOND"></A>Advanced Termination Conditions</H2>
--->The
+<!--
+<H2><A NAME="TERMCOND"></A>Termination Conditions</H2>
+<P>The
 termination conditions specify a condition upon which a
 simulation should terminate. A record is kept of the proportion
 of simulations that are terminated by each condition. These
@@ -1066,10 +1055,13 @@ molecular count of a species (&lt;species-id&gt; or
 (%&lt;species-id&gt;), or the number of firings of a reaction
 (@&lt;reaction-id&gt;). 
 </P>
+-->
+
 <H2><A NAME="ADVSIMOPTIONS"></A>Advanced Options</H2>
-<P>Here, you can specify additional options for your analysis.&nbsp;
+<P>Here, you can specify additional options for your analysis.
 For each option, you must provide the name of the option and its
-value.&nbsp; For example, property
+value. 
+<!-- For example, property
 <I>reb2sac.abstraction.method.1.x</I>&nbsp; specifies a list of
 abstraction methods used for pre-processing, property
 <I>reb2sac.abstraction.method.2.x </I>specifies a list of
@@ -1126,9 +1118,12 @@ properties can take the following values:
 <LI><P>dummy-abstraction-method 
 </P>
 </UL>
-<P>On this tab, there are buttons to add a new option, edit an
+<P>
+-->
+On this tab, there are buttons to add a new option, edit an
 existing option, remove an existing option, or clear all options.
 </P>
+
 <H2><A NAME="PARAMEDIT"></A>Parameter Editor</H2>
 <P>The parameter editor is similar in form to the SBML editor,
 but it only allows initial concentrations and parameters to be
@@ -1148,30 +1143,39 @@ This process repeats until all parameters at level 1 have stepped
 to their stop value. 
 </P>
 <H1><A NAME="LEARN"></A>Learn View</H1>
-<P>The learn view is used to discover the genetic circuit
+<P>The learn view is used to discover genetic circuit
 connectivity from time series data. The learn view includes tabs
 for a <A HREF="#DATA">data manager</A>, a <A HREF="#LEARNTOOL">learn
-tool</A>, and a <A HREF="#TSDGRAPH">graph editor</A>.<!-- NEED TO ADD DESCRIPTION OF DATA ENTRY TOOL -->
+tool</A>, and a <A HREF="#TSDGRAPH">TSD graph editor</A>.
 </P>
 <H2><A NAME="DATA"></A>Data Manager</H2>
 <P>The data manager is used to both enter time series
-experimental data (not yet implemented) as well as bring data
-into the learn view. The Add button is used to create a new data
+experimental data as well as bring data
+into the learn view.  The Add button is used to create a new data
 file. After pressing this button, enter the name of the new data
 file, and then enter the data for this file using the data editor
-to the right. The Remove button deletes all highlighted files.
+to the right.  The Remove button deletes all highlighted files.
 Note that after highlighting one file, you can use the ctrl key
 to highlight additional files or the shift key to highlight a
-range of files. The Rename button is used to change the name of a
+range of files.  The Rename button is used to change the name of a
 data file. The Copy button copies a data file. The Copy From View
 button brings up a list of all analysis and learn views in the
 current project, and data from the selected view will be copied
-into this learn view. Finally, the Import button brings up a file
+into this learn view.  Finally, the Import button brings up a file
 browser, and it allows you to import a data file from outside
-this project into this learn view. These files can be in <A HREF="#TSD">time
+this project.  These files can be in <A HREF="#TSD">time
 series data</A> format, comma separated value format, or tab
 delimited format. 
 </P>
+<p>
+The contents of the data file highlighted on the left appear in the
+data editor on the right.  Individual data entries can be modified,
+new data points can be added using the Add Data Point button, data 
+points can be removed using the Remove Data Point button, and data
+points can be copied using the Copy Data Point button.  When you are
+satisfied with all your changes, you should press the Save button
+to record your changes.
+</p>
 <H2><A NAME="LEARNTOOL"></A>Learn Tool</H2>
 <P>The learn tool uses the GeneNet algorithm described in
 <A HREF="http://www.async.ece.utah.edu/publications">Barker's PhD
@@ -1187,23 +1191,23 @@ log.
 </P>
 <H3><A NAME="LEARNOPTIONS"></A>Basic Learning Options</H3>
 <UL>
-<LI><P>Minimum Initial Number of Vectors (Tn) (default=2): 
+<LI><P>Minimum Number of Initial Vectors (Tn) (default=2): 
 </P>
 <P>Tn is a threshold value used in the CreateInfluenceVectorSet
 algorithm and represents the minimum number of influence vectors
-constructed in this algorithm</P>
+constructed in this algorithm.</P>
 <LI><P>Maximum Influence Vector Size (Tj) (default=2): 
 </P>
 <P>Tj is a threshold value used in the CombineInfluenceVectors
 algorithm to determine the maximal size of merged influence
-vectors</P>
-<LI><P>Score for an Empty Influence Vector (Ti) (default=0.5): 
+vectors.</P>
+<LI><P>Score for Empty Influence Vector (Ti) (default=0.5): 
 </P>
 <P>The score for an influence vector with no influences in it.</P>
 <LI><P>Number of Bins (default=4): 
 </P>
-<P>The Number of Bins value specifies how many values the
-encoded time series data can assume</P>
+<P>The number of bins value specifies how many values the
+encoded time series data can assume.</P>
 <LI><P>Equal Data Per Bins / Equal Spacing of Bins: 
 </P>
 <P>This radio button selects whether the auto generated levels
@@ -1219,8 +1223,7 @@ would like to provide them.
 <LI><P>When using user provided levels, the Suggest Levels
 button will provide the levels that would have been auto
 generated as a suggestion. These levels can then edited by the
-user. The number of bins for each species can also be
-individually adjusted. 
+user.  The number of bins for each species can also be individually adjusted.  
 </P>
 </UL>
 <H3><A NAME="ADVLEARN"></A>Advanced Learning Options</H3>
@@ -1254,114 +1257,210 @@ predecessor data point pairs, or both are used.</P>
 <P>When selected, the basic FindBaseProb function is used.</P>
 </UL>
 <H1><A NAME="TSDGRAPH"></A>TSD Graph Editor</H1>
-<P>The graph editor appears as a tab in both analysis or learn
-views. Graphs can also be created at the top-level of the project
+<P>The TSD graph editor appears as a tab in both analysis and learn
+views.  TSD graphs can also be created at the top-level of the project
 to allow you to integrate results from several analysis or learn
-views. These graphs can be created using the &quot;New Graph&quot;
+views. These graphs can be created using the &quot;New → TSD Graph&quot;
 menu option. Once created, they can be viewed and edited by
-clicking on the graph in the project window. In the graph editor,
-a graph is created by clicking on the graph. You can then set
-various parameters and select what you would like to have
+clicking on the graph in the project window. In the TSD graph editor,
+a graph is created by double clicking on the graph. You can then set
+various parameters and select what values you would like to have
 graphed. The parameters that you can select for a graph include: 
 </P>
 <UL>
-<LI><P STYLE="margin-bottom: 0in">Title - The title of the graph
+<LI><P STYLE="margin-bottom: 0in">Title - The title of the graph.
 </P>
 <LI><P STYLE="margin-bottom: 0in">X-Axis Label - The label
-displayed for the x-axis 
+displayed for the x-axis. 
 </P>
 <LI><P STYLE="margin-bottom: 0in">Y-Axis Label - The label
-displayed for the y-axis 
+displayed for the y-axis. 
 </P>
 <LI><P STYLE="margin-bottom: 0in">X-Min - The starting value for
-the x-axis 
+the x-axis. 
 </P>
 <LI><P STYLE="margin-bottom: 0in">X-Max - The ending value for
-the x-axis 
+the x-axis. 
 </P>
 <LI><P STYLE="margin-bottom: 0in">X-Step - The increment for the
-x-axis 
+x-axis. 
 </P>
 <LI><P STYLE="margin-bottom: 0in">Y-Min - The starting value for
-the y-axis 
+the y-axis. 
 </P>
 <LI><P STYLE="margin-bottom: 0in">Y-Max - The ending value for
-the y-axis 
+the y-axis. 
 </P>
 <LI><P STYLE="margin-bottom: 0in">Y-Step - The increment for the
-y-Axis 
+y-Axis. 
 </P>
 <LI><P STYLE="margin-bottom: 0in">Auto Resize Check Box -
 Determines whether to automatically resize the graph for best
-fit 
+fit. 
 </P>
 </UL>
 <P>The data selection menu on the left displays all of the
-available sets of data that can be graphed. For a top-level graph
-or after performing a analysis with sweeping parameters, these
-data sets will be organized hierarchically. After selecting a
-data set, you can select individual species to graph and how you
-wish it to be displayed. In other words, for each species, you
-are given the following options: 
+available sets of data that can be graphed.  In particular, one can
+graph the average, variance, standard deviation, or results from 
+individual simulation runs.  For a top-level graph, these
+data sets will be organized hierarchically.  Hierarchy is also 
+introduced when simulations in an analysis view are given
+simulation IDs or after performing an analysis while sweeping parameter
+values.  After selecting a data set, one can select individual species to 
+graph and how they are to be displayed.  In other words, for each 
+species, there are the following options: 
 </P>
 <UL>
 <LI><P STYLE="margin-bottom: 0in">Use Check Box - Determines
-whether or not this species is displayed on the graph 
+whether or not this species is displayed on the graph.  Checking or 
+unchecking the box at the top changes the state for all species in
+the data set. 
 </P>
 <LI><P STYLE="margin-bottom: 0in">Species Label - The name
-displayed in the legend 
+displayed in the legend. 
 </P>
 <LI><P STYLE="margin-bottom: 0in">Drop Down Menu Of Colors - The
-color that is used for this species 
+color that is used for this species. 
 </P>
 <LI><P STYLE="margin-bottom: 0in">Drop Down Menu Of Shapes - The
-shape that is used to mark the data points 
+shape that is used to mark the data points. 
 </P>
-<LI><P STYLE="margin-bottom: 0in">Connected Check Box -
-Determines whether to connect the points with a line 
+<LI><P STYLE="margin-bottom: 0in">Connect Check Box -
+Determines whether to connect the points with a line. Checking or 
+unchecking the box at the top changes the state for all species in
+the data set. 
 </P>
 <LI><P STYLE="margin-bottom: 0in">Visible Check Box - Determines
-whether shapes are visible on the line</P>
-<LI><P>Filled Check Box - Determines whether shapes are filled
-on the line</P>
+whether shapes are visible on the line.  Checking or 
+unchecking the box at the top changes the state for all species in
+the data set.
+</P>
+<LI><P>Fill Check Box - Determines whether shapes are filled
+on the line.  Checking or 
+unchecking the box at the top changes the state for all species in
+the data set.
+</P>
 </UL>
-<P>To save the graph, click the &quot;Save&quot; button. This
-will save the data of the graph to a file so when you re-open the
-analysis view, it will reload this data and display what was
-graphed.</P>
-<P>To export the graph, click one the &quot;Export&quot; button.
-You will be prompted to enter a file name. The extension provided
-will be used to determine how the graph is exported. The
+Note that a check mark appears on a data set to indicate that some
+species have been selected in that data set.  Also, all species can
+be deselected by pressing the Deselect All button.
+<P>The &quot;Save Graph&quot; button save the settings for the graph to 
+a file, so when you re-open the graph, it will reload this data and display 
+in the same way as before.  The &quot;Save As&quot; button prompts for a 
+filename and creates a new top-level graph with that name.  
+Finally, the &quot;Export&quot; button prompts for a filename and exports
+the data to the given name.  The extension provided for the filename 
+is used to determine how the graph is to be exported. The
 supported file types are: 
 </P>
 <UL>
-<LI><P STYLE="margin-bottom: 0in">csv - comma separated value
-data file 
+<LI><P STYLE="margin-bottom: 0in">csv - comma separated value data file. 
 </P>
-<LI><P STYLE="margin-bottom: 0in">dat - column separated data
-file 
+<LI><P STYLE="margin-bottom: 0in">dat - column separated data file. 
 </P>
-<LI><P STYLE="margin-bottom: 0in">eps - encapsulated postscript 
+<LI><P STYLE="margin-bottom: 0in">eps - encapsulated postscript. 
 </P>
-<LI><P STYLE="margin-bottom: 0in">jpg - JPEG (Joint Photographic
-Experts Group) 
+<LI><P STYLE="margin-bottom: 0in">jpg - JPEG (Joint Photographic Experts 
+Group). 
 </P>
-<LI><P STYLE="margin-bottom: 0in">pdf - portable document format
+<LI><P STYLE="margin-bottom: 0in">pdf - portable document format.
 </P>
-<LI><P STYLE="margin-bottom: 0in">png - portable network
-graphics 
+<LI><P STYLE="margin-bottom: 0in">png - portable network graphics. 
 </P>
-<LI><P STYLE="margin-bottom: 0in">svg - scalable vector graphics
+<LI><P STYLE="margin-bottom: 0in">svg - scalable vector graphics.
 </P>
-<LI><P>tsd - <A HREF="#TSD">time series data format</A> 
+<LI><P>tsd - <A HREF="#TSD">time series data format.</A> 
 </P>
 </UL>
-<P>If no extension is given, then the file type will be the one
-specified in the file filter (default is pdf). For image (i.e.,
+<P>If no extension is given, then the file type is the one
+specified in the file filter (default is pdf).  For image (i.e.,
 not data) file types, you will be prompted to give a desired
 pixel height and width for the file before the file is exported. 
 </P>
+
 <H1><A NAME="PROBGRAPH"></A>Probability Graph Editor</H1>
+<P>Probability graphs are used to display histograms for reasons that
+simulations terminated.  This are used in conjunction with SBML constraints
+to determine the likelihood of various conditions. 
+The probability graph editor appears as a tab in analysis
+views.  Probability graphs can also be created at the top-level of the project
+to allow you to integrate results from several analysis views. 
+These graphs can be created using the &quot;New → Probability Graph&quot;
+menu option. Once created, they can be viewed and edited by
+clicking on the graph in the project window. In the probability graph editor,
+a graph is created by double clicking on the graph. You can then set
+various parameters and select what values you would like to have
+graphed. The parameters that you can select for a graph include: 
+</P>
+<UL>
+<LI><P STYLE="margin-bottom: 0in">Title - The title of the graph.
+</P>
+<LI><P STYLE="margin-bottom: 0in">X-Axis Label - The label
+displayed for the x-axis. 
+</P>
+<LI><P STYLE="margin-bottom: 0in">Y-Axis Label - The label
+displayed for the y-axis. 
+</P>
+</UL>
+<P>The data selection menu on the left displays all of the
+available sets of data that can be graphed.  
+For a top-level graph, these
+data sets will be organized hierarchically.  Hierarchy is also 
+introduced when simulations in an analysis view are given
+simulation IDs or after performing an analysis while sweeping parameter
+values.  After selecting a data set, one can select individual species to 
+graph and how they are to be displayed.  In other words, for each 
+species, there are the following options: 
+</P>
+<UL>
+<LI><P STYLE="margin-bottom: 0in">Use Check Box - Determines
+whether or not this species is displayed on the graph.  Checking or 
+unchecking the box at the top changes the state for all species in
+the data set. 
+</P>
+<LI><P STYLE="margin-bottom: 0in">Species Label - The name
+displayed in the legend. 
+</P>
+<LI><P STYLE="margin-bottom: 0in">Drop Down Menu Of Colors - The
+color that is used for this species. 
+</P>
+</UL>
+Note that a check mark appears on a data set to indicate that some
+species have been selected in that data set.  Also, all species can
+be deselected by pressing the Deselect All button.
+<P>The &quot;Save Graph&quot; button save the settings for the graph to 
+a file, so when you re-open the graph, it will reload this data and display 
+in the same way as before.  The &quot;Save As&quot; button prompts for a 
+filename and creates a new top-level graph with that name.  
+Finally, the &quot;Export&quot; button prompts for a filename and exports
+the data to the given name.  The extension provided for the filename 
+is used to determine how the graph is to be exported. The
+supported file types are: 
+</P>
+<UL>
+<LI><P STYLE="margin-bottom: 0in">csv - comma separated value data file. 
+</P>
+<LI><P STYLE="margin-bottom: 0in">dat - column separated data file. 
+</P>
+<LI><P STYLE="margin-bottom: 0in">eps - encapsulated postscript. 
+</P>
+<LI><P STYLE="margin-bottom: 0in">jpg - JPEG (Joint Photographic Experts 
+Group). 
+</P>
+<LI><P STYLE="margin-bottom: 0in">pdf - portable document format.
+</P>
+<LI><P STYLE="margin-bottom: 0in">png - portable network graphics. 
+</P>
+<LI><P STYLE="margin-bottom: 0in">svg - scalable vector graphics.
+</P>
+<LI><P>tsd - <A HREF="#TSD">time series data format.</A> 
+</P>
+</UL>
+<P>If no extension is given, then the file type is the one
+specified in the file filter (default is pdf).  For image (i.e.,
+not data) file types, you will be prompted to give a desired
+pixel height and width for the file before the file is exported. 
+</P>
 <H1><A NAME="CIRCUIT"></A>Genetic Circuit Model Format</H1>
 <P>Our genetic circuit model (gcm) format specifies a genetic
 circuit using the same format as the <A HREF="http://www.graphviz.org/">GraphViz</A>
@@ -1466,10 +1565,7 @@ time point. Below is an example simulation of the species CI and
 CII from 0 to 2100 seconds with time points separated by 100
 seconds. 
 </P>
-<P>((&quot;time&quot;,&quot;CI&quot;,&quot;CII&quot;),(0,0,0),(100,0,19),(200,20,25),(300,19,18),(400,17,20),(500
-,17,46),(600,26,40),(700,43,43),(800,63,28),(900,72,34),(1000,72,28),(1100,71,23
-),(1200,81,21),(1300,79,15),(1400,78,4),(1500,76,0),(1600,76,5),(1700,76,0),(180
-0,76,0),(1900,76,0),(2000,75,0),(2100,72,0)) 
+<P>((&quot;time&quot;,&quot;CI&quot;,&quot;CII&quot;),(0,0,0),(100,0,19),(200,20,25),(300,19,18),(400,17,20),(500,17,46),(600,26,40),(700,43,43),(800,63,28),(900,72,34),(1000,72,28))
 </P>
 <H1><A NAME="CREDITS"></A><!-- These conditions are specified using the language described below:
 <P><FONT FACE="Courier 10 Pitch"><FONT SIZE=2><FONT FACE="Courier 10 Pitch"><FONT SIZE=2>term
