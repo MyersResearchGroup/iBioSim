@@ -317,7 +317,6 @@ public class BioSim implements MouseListener, ActionListener {
 		    application.addPreferencesMenuItem();
 		    application.setEnabledPreferencesMenu(true);
 		} else {
-		    file.addSeparator();
 		    file.add(pref);
 		    file.add(exit);
 		    file.addSeparator();
