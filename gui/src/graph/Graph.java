@@ -134,7 +134,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 	private JButton save, run, saveAs;
 
-	private JButton export; // buttons
+	private JButton export, refresh; // buttons
 
 	// private JButton exportJPeg, exportPng, exportPdf, exportEps, exportSvg,
 	// exportCsv; // buttons
@@ -316,6 +316,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		saveAs = new JButton("Save As");
 		saveAs.addActionListener(this);
 		export = new JButton("Export");
+		refresh = new JButton("Refresh");
 		// exportJPeg = new JButton("Export As JPEG");
 		// exportPng = new JButton("Export As PNG");
 		// exportPdf = new JButton("Export As PDF");
@@ -325,6 +326,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		run.addActionListener(this);
 		save.addActionListener(this);
 		export.addActionListener(this);
+		refresh.addActionListener(this);
 		// exportJPeg.addActionListener(this);
 		// exportPng.addActionListener(this);
 		// exportPdf.addActionListener(this);
@@ -337,6 +339,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		ButtonHolder.add(save);
 		ButtonHolder.add(saveAs);
 		ButtonHolder.add(export);
+		ButtonHolder.add(refresh);
 		// ButtonHolder.add(exportJPeg);
 		// ButtonHolder.add(exportPng);
 		// ButtonHolder.add(exportPdf);
@@ -482,6 +485,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		// if the export button is clicked
 		else if (e.getSource() == export) {
 			export();
+		}
+		else if (e.getSource() == refresh) {
+			refresh();
 		}
 		else if (e.getActionCommand().equals("rename")) {
 			String rename = JOptionPane.showInputDialog(biomodelsim.frame(), "Enter A New Filename:",
@@ -3276,6 +3282,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		saveAs = new JButton("Save As");
 		saveAs.addActionListener(this);
 		export = new JButton("Export");
+		refresh = new JButton("Refresh");
 		// exportJPeg = new JButton("Export As JPEG");
 		// exportPng = new JButton("Export As PNG");
 		// exportPdf = new JButton("Export As PDF");
@@ -3285,6 +3292,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		run.addActionListener(this);
 		save.addActionListener(this);
 		export.addActionListener(this);
+		refresh.addActionListener(this);
 		// exportJPeg.addActionListener(this);
 		// exportPng.addActionListener(this);
 		// exportPdf.addActionListener(this);
@@ -3297,6 +3305,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		ButtonHolder.add(save);
 		ButtonHolder.add(saveAs);
 		ButtonHolder.add(export);
+		ButtonHolder.add(refresh);
 		// ButtonHolder.add(exportJPeg);
 		// ButtonHolder.add(exportPng);
 		// ButtonHolder.add(exportPdf);
@@ -4766,16 +4775,19 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		save = new JButton("Save Graph");
 		saveAs = new JButton("Save As");
 		export = new JButton("Export");
+		refresh = new JButton("Refresh");
 		run.addActionListener(this);
 		save.addActionListener(this);
 		saveAs.addActionListener(this);
 		export.addActionListener(this);
+		refresh.addActionListener(this);
 		if (reb2sac != null) {
 			ButtonHolder.add(run);
 		}
 		ButtonHolder.add(save);
 		ButtonHolder.add(saveAs);
 		ButtonHolder.add(export);
+		ButtonHolder.add(refresh);
 
 		// puts all the components of the graph gui into a display panel
 		JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, ButtonHolder, null);
@@ -5830,16 +5842,19 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		save = new JButton("Save Graph");
 		saveAs = new JButton("Save As");
 		export = new JButton("Export");
+		refresh = new JButton("Refresh");
 		run.addActionListener(this);
 		save.addActionListener(this);
 		saveAs.addActionListener(this);
 		export.addActionListener(this);
+		refresh.addActionListener(this);
 		if (reb2sac != null) {
 			ButtonHolder.add(run);
 		}
 		ButtonHolder.add(save);
 		ButtonHolder.add(saveAs);
 		ButtonHolder.add(export);
+		ButtonHolder.add(refresh);
 		JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, ButtonHolder, null);
 		splitPane.setDividerSize(0);
 		this.removeAll();
