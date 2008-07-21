@@ -533,8 +533,18 @@ public class Run implements ActionListener {
 					biomodelsim.refreshTree();
 				}
 				else if (dot.isSelected()) {
-					log.addText("Executing:\ndotty " + directory + out + ".dot" + "\n");
-					exec.exec("dotty " + out + ".dot", null, work);
+					if (System.getProperty("os.name").contentEquals("Linux")) {
+					    log.addText("Executing:\ndotty " + directory + out + ".dot" + "\n");
+					    exec.exec("dotty " + out + ".dot", null, work);
+					}
+					else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
+					    log.addText("Executing:\nopen " + directory + out + ".dot\n");
+					    exec.exec("open " + out + ".dot", null, work);
+					}
+					else {
+					    log.addText("Executing:\ndotty " + directory + out + ".dot" + "\n");
+					    exec.exec("dotty " + out + ".dot", null, work);
+					}
 				}
 				else if (xhtml.isSelected()) {
 					if (System.getProperty("os.name").contentEquals("Linux")) {

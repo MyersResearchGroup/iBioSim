@@ -910,10 +910,26 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 		try {
 			File work = new File(directory);
 			if (new File(directory + separator + "method.gcm").exists()) {
-				String command = "dotty method.gcm";
-				log.addText("Executing:\n" + "dotty " + directory + separator + "method.gcm\n");
-				Runtime exec = Runtime.getRuntime();
-				exec.exec(command, null, work);
+				if (System.getProperty("os.name").contentEquals("Linux")) {
+				    String command = "dotty method.gcm";
+				    log.addText("Executing:\n" + "dotty " + directory + separator + "method.gcm\n");
+				    Runtime exec = Runtime.getRuntime();
+				    exec.exec(command, null, work);
+				}
+				else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
+				    String command = "open method.dot";
+				    log.addText("Executing:\n" + "open " + directory + separator + "method.dot\n");
+				    Runtime exec = Runtime.getRuntime();
+				    exec.exec("cp method.gcm method.dot", null, work);
+				    exec = Runtime.getRuntime();
+				    exec.exec(command, null, work);
+				}
+				else {
+				    String command = "dotty method.gcm";
+				    log.addText("Executing:\n" + "dotty " + directory + separator + "method.gcm\n");
+				    Runtime exec = Runtime.getRuntime();
+				    exec.exec(command, null, work);
+				}
 			}
 			else {
 				JOptionPane.showMessageDialog(biosim.frame(), "No circuit has been generated yet.",
@@ -1231,9 +1247,26 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 			}
 			else {
 				if (new File(directory + separator + "method.gcm").exists()) {
+				    if (System.getProperty("os.name").contentEquals("Linux")) {
 					String command = "dotty method.gcm";
 					log.addText("Executing:\n" + "dotty " + directory + separator + "method.gcm\n");
+					exec = Runtime.getRuntime();
 					exec.exec(command, null, work);
+				    }
+				    else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
+					String command = "open method.dot";
+					log.addText("Executing:\n" + "open " + directory + separator + "method.dot\n");
+					exec = Runtime.getRuntime();
+					exec.exec("cp method.gcm method.dot", null, work);
+					exec = Runtime.getRuntime();
+					exec.exec(command, null, work);
+				    }
+				    else {
+					String command = "dotty method.gcm";
+					log.addText("Executing:\n" + "dotty " + directory + separator + "method.gcm\n");
+					exec = Runtime.getRuntime();
+					exec.exec(command, null, work);
+				    }
 				}
 				else {
 					JOptionPane.showMessageDialog(biosim.frame(), "A gcm file was not generated."
