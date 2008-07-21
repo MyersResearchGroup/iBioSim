@@ -8033,21 +8033,20 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 									remove = i;
 								}
 							}
+							String reacValue = ((String) reactions.getSelectedValue()).split(" ")[0];
+							int index1 = reactions.getSelectedIndex();
 							if (remove != -1) {
 								parameterChanges.remove(remove);
-								int index1 = reactions.getSelectedIndex();
 								reactions.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 								reacts = Buttons.getList(reacts, reactions);
 								reactions.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-								reacts[index1] = ((String) reactions.getSelectedValue()).split(" ")[0];
+								reacts[index1] = reacValue.split(" ")[0];
 								sort(reacts);
 								reactions.setListData(reacts);
 								reactions.setSelectedIndex(index1);
 							}
 							if (!((String) type.getSelectedItem()).equals("Original")) {
-								String reacValue = ((String) reactions.getSelectedValue()).split(" ")[0];
 								parameterChanges.add(reacValue + "/" + param);
-								int index1 = reactions.getSelectedIndex();
 								reactions.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 								reacts = Buttons.getList(reacts, reactions);
 								reactions.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
