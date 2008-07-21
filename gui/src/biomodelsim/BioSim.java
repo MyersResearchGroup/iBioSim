@@ -796,10 +796,10 @@ public class BioSim implements MouseListener, ActionListener {
 				else if (out.length() > 3 && out.substring(out.length() - 4, out.length()).equals(".xml")) {
 					out = out.substring(0, out.length() - 4);
 				}
-				log.addText("Executing:\nreb2sac --target.encoding=dot --out=" + directory + out + ".viz "
+				log.addText("Executing:\nreb2sac --target.encoding=dot --out=" + directory + out + ".dot "
 						+ directory + theFile + "\n");
 				Runtime exec = Runtime.getRuntime();
-				Process graph = exec.exec("reb2sac --target.encoding=dot --out=" + out + ".viz " + theFile,
+				Process graph = exec.exec("reb2sac --target.encoding=dot --out=" + out + ".dot " + theFile,
 						null, work);
 				String error = "";
 				String output = "";
@@ -825,8 +825,18 @@ public class BioSim implements MouseListener, ActionListener {
 				}
 				graph.waitFor();
 				if (error.equals("")) {
-					log.addText("Executing:\ndotty " + directory + out + ".viz\n");
-					exec.exec("dotty " + out + ".viz", null, work);
+					if (System.getProperty("os.name").contentEquals("Linux")) {
+					    log.addText("Executing:\ndotty " + directory + out + ".dot\n");
+					    exec.exec("dotty " + out + ".dot", null, work);
+					}
+					else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
+					    log.addText("Executing:\nopen " + directory + out + ".dot\n");
+					    exec.exec("open " + out + ".dot", null, work);
+					}
+					else {
+					    log.addText("Executing:\ndotty " + directory + out + ".dot\n");
+					    exec.exec("dotty " + out + ".dot", null, work);
+					}
 				}
 				String remove;
 				if (tree.getFile().substring(tree.getFile().length() - 4).equals("sbml")) {
@@ -959,9 +969,23 @@ public class BioSim implements MouseListener, ActionListener {
 					theFile = filename.substring(filename.lastIndexOf('\\') + 1);
 				}
 				File work = new File(directory);
-				log.addText("Executing:\ndotty " + directory + theFile + "\n");
-				Runtime exec = Runtime.getRuntime();
-				exec.exec("dotty " + theFile, null, work);
+				if (System.getProperty("os.name").contentEquals("Linux")) {
+				    log.addText("Executing:\ndotty " + directory + theFile + "\n");
+				    Runtime exec = Runtime.getRuntime();
+				    exec.exec("dotty " + theFile, null, work);
+				}
+				else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
+				    log.addText("Executing:\nopen " + directory + theFile + "\n");
+				    Runtime exec = Runtime.getRuntime();
+				    exec.exec("cp " + theFile + " " + theFile + ".dot", null, work);
+				    exec = Runtime.getRuntime();
+				    exec.exec("open " + theFile + ".dot", null, work);
+				}
+				else {
+				    log.addText("Executing:\ndotty " + directory + theFile + "\n");
+				    Runtime exec = Runtime.getRuntime();
+				    exec.exec("dotty " + theFile, null, work);
+				}
 			}
 			catch (Exception e1) {
 				JOptionPane.showMessageDialog(frame, "Unable to view this gcm file.", "Error",
