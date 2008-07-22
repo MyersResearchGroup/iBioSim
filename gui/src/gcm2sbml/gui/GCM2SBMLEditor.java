@@ -96,6 +96,10 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 	public boolean isDirty() {
 		return dirty;
 	}
+	
+	public GCMFile getGCM() {
+		return gcm;
+	}
 
 	public void save(String command) {
 		dirty = false;
