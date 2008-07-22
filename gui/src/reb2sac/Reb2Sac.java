@@ -2216,13 +2216,21 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					String[] searchForRunFiles = new File(root + separator + outDir).list();
 					int start = 1;
 					for (String s : searchForRunFiles) {
-						if (s.length() > 3 && s.substring(0, 4).equals("run-")) {
+						if (s.length() > 3 && s.substring(0, 4).equals("run-")
+								&& new File(root + separator + outDir + separator + s).isFile()) {
 							start = Math.max(Integer.parseInt(s.substring(4, s.length() - 4)), start);
 						}
 					}
 					getProps.setProperty("monte.carlo.simulation.start.index", (start + 1) + "");
 				}
 				else {
+					String[] searchForRunFiles = new File(root + separator + outDir).list();
+					for (String s : searchForRunFiles) {
+						if (s.length() > 3 && s.substring(0, 4).equals("run-")
+								&& new File(root + separator + outDir + separator + s).isFile()) {
+							new File(root + separator + outDir + separator + s).delete();
+						}
+					}
 					getProps.setProperty("monte.carlo.simulation.start.index", "1");
 				}
 			}
