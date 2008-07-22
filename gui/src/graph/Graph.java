@@ -514,7 +514,6 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							biomodelsim.deleteDir(dir);
 						}
 						else {
-							System.gc();
 							dir.delete();
 						}
 						for (int i = 0; i < simDir.getChildCount(); i++) {
@@ -616,117 +615,136 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			}
 		}
 		else if (e.getActionCommand().equals("delete")) {
-			for (int i = 0; i < simDir.getChildCount(); i++) {
-				if (((IconNode) simDir.getChildAt(i)) == node) {
-					if (((IconNode) simDir.getChildAt(i)).getChildCount() != 0) {
-						simDir.remove(i);
-						File dir = new File(outDir + separator + node.getName());
-						if (dir.isDirectory()) {
-							biomodelsim.deleteDir(dir);
-						}
-						else {
-							System.gc();
-							dir.delete();
-						}
-						directories.remove(node.getName());
-						for (int j = 0; j < graphed.size(); j++) {
-							if (graphed.get(j).getDirectory().equals(node.getName())) {
-								graphed.remove(j);
-								j--;
-							}
-						}
-					}
-					else {
-						simDir.remove(i);
-						File dir = new File(outDir + separator + node.getName() + "."
-								+ printer_id.substring(0, printer_id.length() - 8));
-						if (dir.isDirectory()) {
-							biomodelsim.deleteDir(dir);
-						}
-						else {
-							System.gc();
-							dir.delete();
-						}
-						int count = 0;
-						for (int j = 0; j < simDir.getChildCount(); j++) {
-							if (((IconNode) simDir.getChildAt(j)).getChildCount() == 0) {
-								count++;
-							}
-						}
-						if (count == 3) {
-							for (int j = 0; j < simDir.getChildCount(); j++) {
-								if (((IconNode) simDir.getChildAt(j)).getChildCount() == 0) {
-									simDir.remove(j);
-									j--;
-								}
-							}
-						}
-					}
+			TreePath[] selected = tree.getSelectionPaths();
+			TreeSelectionListener t = new TreeSelectionListener() {
+				public void valueChanged(TreeSelectionEvent e) {
+					node = (IconNode) e.getPath().getLastPathComponent();
 				}
-				else if (((IconNode) simDir.getChildAt(i)).getChildCount() != 0) {
-					for (int j = 0; j < simDir.getChildAt(i).getChildCount(); j++) {
-						if (((IconNode) ((IconNode) simDir.getChildAt(i)).getChildAt(j)) == node) {
-							((IconNode) simDir.getChildAt(i)).remove(j);
-							File dir = new File(outDir + separator + ((IconNode) simDir.getChildAt(i)).getName()
-									+ separator + node.getName() + "."
-									+ printer_id.substring(0, printer_id.length() - 8));
-							if (dir.isDirectory()) {
-								biomodelsim.deleteDir(dir);
-							}
-							else {
-								System.gc();
-								dir.delete();
-							}
-							boolean checked = false;
-							for (int k = 0; k < simDir.getChildAt(i).getChildCount(); k++) {
-								if (((IconNode) simDir.getChildAt(i).getChildAt(k)).getIconName().equals(
-										"" + (char) 10003)) {
-									checked = true;
-								}
-							}
-							if (!checked) {
-								((IconNode) simDir.getChildAt(i)).setIcon(MetalIconFactory.getTreeFolderIcon());
-								((IconNode) simDir.getChildAt(i)).setIconName("");
-							}
-							int count = 0;
-							for (int k = 0; k < simDir.getChildAt(i).getChildCount(); k++) {
-								if (((IconNode) simDir.getChildAt(i).getChildAt(k)).getChildCount() == 0) {
-									count++;
-								}
-							}
-							if (count == 3) {
+			};
+			for (TreeSelectionListener listen : tree.getTreeSelectionListeners()) {
+				tree.removeTreeSelectionListener(listen);
+			}
+			tree.addTreeSelectionListener(t);
+			for (TreePath select : selected) {
+				tree.setSelectionPath(select);
+				if (!((IconNode) select.getLastPathComponent()).getName().equals("Average")
+						&& !((IconNode) select.getLastPathComponent()).getName().equals("Variance")
+						&& !((IconNode) select.getLastPathComponent()).getName().equals("Standard Deviation")
+						&& ((IconNode) select.getLastPathComponent()).getParent() != null) {
+					for (int i = 0; i < simDir.getChildCount(); i++) {
+						if (((IconNode) simDir.getChildAt(i)) == ((IconNode) select.getLastPathComponent())) {
+							if (((IconNode) simDir.getChildAt(i)).getChildCount() != 0) {
 								simDir.remove(i);
-								File dir2 = new File(outDir + separator
-										+ ((IconNode) simDir.getChildAt(i)).getName());
-								if (dir2.isDirectory()) {
-									biomodelsim.deleteDir(dir2);
+								File dir = new File(outDir + separator
+										+ ((IconNode) select.getLastPathComponent()).getName());
+								if (dir.isDirectory()) {
+									biomodelsim.deleteDir(dir);
 								}
 								else {
-									System.gc();
-									dir2.delete();
+									dir.delete();
 								}
-								directories.remove(((IconNode) simDir.getChildAt(i)).getName());
-								for (int k = 0; k < graphed.size(); k++) {
-									if (graphed.get(k).getDirectory().equals(
-											((IconNode) simDir.getChildAt(i)).getName())) {
-										graphed.remove(k);
-										k--;
+								directories.remove(((IconNode) select.getLastPathComponent()).getName());
+								for (int j = 0; j < graphed.size(); j++) {
+									if (graphed.get(j).getDirectory().equals(
+											((IconNode) select.getLastPathComponent()).getName())) {
+										graphed.remove(j);
+										j--;
+									}
+								}
+							}
+							else {
+								simDir.remove(i);
+								File dir = new File(outDir + separator
+										+ ((IconNode) select.getLastPathComponent()).getName() + "."
+										+ printer_id.substring(0, printer_id.length() - 8));
+								if (dir.isDirectory()) {
+									biomodelsim.deleteDir(dir);
+								}
+								else {
+									dir.delete();
+								}
+								int count = 0;
+								for (int j = 0; j < simDir.getChildCount(); j++) {
+									if (((IconNode) simDir.getChildAt(j)).getChildCount() == 0) {
+										count++;
+									}
+								}
+								if (count == 3) {
+									for (int j = 0; j < simDir.getChildCount(); j++) {
+										if (((IconNode) simDir.getChildAt(j)).getChildCount() == 0) {
+											simDir.remove(j);
+											j--;
+										}
+									}
+								}
+							}
+						}
+						else if (((IconNode) simDir.getChildAt(i)).getChildCount() != 0) {
+							for (int j = 0; j < simDir.getChildAt(i).getChildCount(); j++) {
+								if (((IconNode) ((IconNode) simDir.getChildAt(i)).getChildAt(j)) == ((IconNode) select
+										.getLastPathComponent())) {
+									((IconNode) simDir.getChildAt(i)).remove(j);
+									File dir = new File(outDir + separator
+											+ ((IconNode) simDir.getChildAt(i)).getName() + separator
+											+ ((IconNode) select.getLastPathComponent()).getName() + "."
+											+ printer_id.substring(0, printer_id.length() - 8));
+									if (dir.isDirectory()) {
+										biomodelsim.deleteDir(dir);
+									}
+									else {
+										dir.delete();
+									}
+									boolean checked = false;
+									for (int k = 0; k < simDir.getChildAt(i).getChildCount(); k++) {
+										if (((IconNode) simDir.getChildAt(i).getChildAt(k)).getIconName().equals(
+												"" + (char) 10003)) {
+											checked = true;
+										}
+									}
+									if (!checked) {
+										((IconNode) simDir.getChildAt(i)).setIcon(MetalIconFactory.getTreeFolderIcon());
+										((IconNode) simDir.getChildAt(i)).setIconName("");
+									}
+									int count = 0;
+									for (int k = 0; k < simDir.getChildAt(i).getChildCount(); k++) {
+										if (((IconNode) simDir.getChildAt(i).getChildAt(k)).getChildCount() == 0) {
+											count++;
+										}
+									}
+									if (count == 3) {
+										simDir.remove(i);
+										File dir2 = new File(outDir + separator
+												+ ((IconNode) simDir.getChildAt(i)).getName());
+										if (dir2.isDirectory()) {
+											biomodelsim.deleteDir(dir2);
+										}
+										else {
+											dir2.delete();
+										}
+										directories.remove(((IconNode) simDir.getChildAt(i)).getName());
+										for (int k = 0; k < graphed.size(); k++) {
+											if (graphed.get(k).getDirectory().equals(
+													((IconNode) simDir.getChildAt(i)).getName())) {
+												graphed.remove(k);
+												k--;
+											}
+										}
 									}
 								}
 							}
 						}
 					}
+					boolean checked = false;
+					for (int i = 0; i < simDir.getChildCount(); i++) {
+						if (((IconNode) simDir.getChildAt(i)).getIconName().equals("" + (char) 10003)) {
+							checked = true;
+						}
+					}
+					if (!checked) {
+						simDir.setIcon(MetalIconFactory.getTreeFolderIcon());
+						simDir.setIconName("");
+					}
 				}
-			}
-			boolean checked = false;
-			for (int i = 0; i < simDir.getChildCount(); i++) {
-				if (((IconNode) simDir.getChildAt(i)).getIconName().equals("" + (char) 10003)) {
-					checked = true;
-				}
-			}
-			if (!checked) {
-				simDir.setIcon(MetalIconFactory.getTreeFolderIcon());
-				simDir.setIconName("");
 			}
 			ArrayList<String> rows = new ArrayList<String>();
 			for (int i = 0; i < tree.getRowCount(); i++) {
@@ -745,7 +763,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			all.add(scrollpane, "West");
 			all.revalidate();
 			all.repaint();
-			TreeSelectionListener t = new TreeSelectionListener() {
+			t = new TreeSelectionListener() {
 				public void valueChanged(TreeSelectionEvent e) {
 					node = (IconNode) e.getPath().getLastPathComponent();
 				}
@@ -892,7 +910,16 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			if (selRow < 0)
 				return;
 			TreePath selPath = tree.getPathForLocation(e.getX(), e.getY());
-			tree.setSelectionPath(selPath);
+			boolean set = true;
+			for (TreePath p : tree.getSelectionPaths()) {
+				if (p.equals(selPath)) {
+					tree.addSelectionPath(selPath);
+					set = false;
+				}
+			}
+			if (set) {
+				tree.setSelectionPath(selPath);
+			}
 			if (e.isPopupTrigger()) {
 				popup.removeAll();
 				if (node.getChildCount() != 0 && node.getParent() != null) {
@@ -921,7 +948,16 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			if (selRow < 0)
 				return;
 			TreePath selPath = tree.getPathForLocation(e.getX(), e.getY());
-			tree.setSelectionPath(selPath);
+			boolean set = true;
+			for (TreePath p : tree.getSelectionPaths()) {
+				if (p.equals(selPath)) {
+					tree.addSelectionPath(selPath);
+					set = false;
+				}
+			}
+			if (set) {
+				tree.setSelectionPath(selPath);
+			}
 			if (e.isPopupTrigger()) {
 				popup.removeAll();
 				if (node.getChildCount() != 0 && node.getParent() != null) {
@@ -3885,7 +3921,6 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							biomodelsim.deleteDir(del);
 						}
 						else {
-							System.gc();
 							del.delete();
 						}
 						for (int i = 0; i < biomodelsim.getTab().getTabCount(); i++) {
@@ -3989,7 +4024,6 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							biomodelsim.deleteDir(del);
 						}
 						else {
-							System.gc();
 							del.delete();
 						}
 						for (int i = 0; i < biomodelsim.getTab().getTabCount(); i++) {
