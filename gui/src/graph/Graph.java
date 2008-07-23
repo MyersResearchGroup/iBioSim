@@ -1065,7 +1065,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					popup.add(delete);
 				}
 				else {
-					JMenuItem delete = new JMenuItem("Delete Runs");
+					JMenuItem delete = new JMenuItem("Delete All Runs");
 					delete.addActionListener(this);
 					delete.setActionCommand("delete runs");
 					popup.add(delete);
@@ -1112,7 +1112,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					popup.add(delete);
 				}
 				else {
-					JMenuItem delete = new JMenuItem("Delete Runs");
+					JMenuItem delete = new JMenuItem("Delete All Runs");
 					delete.addActionListener(this);
 					delete.setActionCommand("delete runs");
 					popup.add(delete);
