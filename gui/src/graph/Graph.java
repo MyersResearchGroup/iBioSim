@@ -712,7 +712,6 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 										}
 									}
 									if (count == 3) {
-										simDir.remove(i);
 										File dir2 = new File(outDir + separator
 												+ ((IconNode) simDir.getChildAt(i)).getName());
 										if (dir2.isDirectory()) {
@@ -729,22 +728,23 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 												k--;
 											}
 										}
+										simDir.remove(i);
 									}
 								}
 							}
 						}
 					}
-					boolean checked = false;
-					for (int i = 0; i < simDir.getChildCount(); i++) {
-						if (((IconNode) simDir.getChildAt(i)).getIconName().equals("" + (char) 10003)) {
-							checked = true;
-						}
-					}
-					if (!checked) {
-						simDir.setIcon(MetalIconFactory.getTreeFolderIcon());
-						simDir.setIconName("");
-					}
 				}
+			}
+			boolean checked = false;
+			for (int i = 0; i < simDir.getChildCount(); i++) {
+				if (((IconNode) simDir.getChildAt(i)).getIconName().equals("" + (char) 10003)) {
+					checked = true;
+				}
+			}
+			if (!checked) {
+				simDir.setIcon(MetalIconFactory.getTreeFolderIcon());
+				simDir.setIconName("");
 			}
 			ArrayList<String> rows = new ArrayList<String>();
 			for (int i = 0; i < tree.getRowCount(); i++) {
@@ -764,6 +764,136 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			all.revalidate();
 			all.repaint();
 			t = new TreeSelectionListener() {
+				public void valueChanged(TreeSelectionEvent e) {
+					node = (IconNode) e.getPath().getLastPathComponent();
+				}
+			};
+			tree.addTreeSelectionListener(t);
+			for (int i = 0; i < tree.getRowCount(); i++) {
+				tree.setSelectionRow(i);
+				if (rows.contains(node.getName())) {
+					tree.expandRow(i);
+				}
+			}
+			tree.removeTreeSelectionListener(t);
+			addTreeListener();
+		}
+		else if (e.getActionCommand().equals("delete runs")) {
+			for (int i = simDir.getChildCount() - 1; i >= 0; i--) {
+				if (((IconNode) simDir.getChildAt(i)).getChildCount() == 0) {
+					if (!((IconNode) simDir.getChildAt(i)).getName().equals("Average")
+							&& !((IconNode) simDir.getChildAt(i)).getName().equals("Variance")
+							&& !((IconNode) simDir.getChildAt(i)).getName().equals("Standard Deviation")) {
+						File dir = new File(outDir + separator + ((IconNode) simDir.getChildAt(i)).getName()
+								+ "." + printer_id.substring(0, printer_id.length() - 8));
+						if (dir.isDirectory()) {
+							biomodelsim.deleteDir(dir);
+						}
+						else {
+							dir.delete();
+						}
+					}
+					simDir.remove(i);
+				}
+			}
+			boolean checked = false;
+			for (int i = 0; i < simDir.getChildCount(); i++) {
+				if (((IconNode) simDir.getChildAt(i)).getIconName().equals("" + (char) 10003)) {
+					checked = true;
+				}
+			}
+			if (!checked) {
+				simDir.setIcon(MetalIconFactory.getTreeFolderIcon());
+				simDir.setIconName("");
+			}
+			ArrayList<String> rows = new ArrayList<String>();
+			for (int i = 0; i < tree.getRowCount(); i++) {
+				if (tree.isExpanded(i)) {
+					tree.setSelectionRow(i);
+					rows.add(node.getName());
+				}
+			}
+			scrollpane = new JScrollPane();
+			refreshTree();
+			scrollpane.getViewport().add(tree);
+			scrollpane.setPreferredSize(new Dimension(175, 100));
+			all.removeAll();
+			all.add(titlePanel, "North");
+			all.add(scroll, "Center");
+			all.add(scrollpane, "West");
+			all.revalidate();
+			all.repaint();
+			TreeSelectionListener t = new TreeSelectionListener() {
+				public void valueChanged(TreeSelectionEvent e) {
+					node = (IconNode) e.getPath().getLastPathComponent();
+				}
+			};
+			tree.addTreeSelectionListener(t);
+			for (int i = 0; i < tree.getRowCount(); i++) {
+				tree.setSelectionRow(i);
+				if (rows.contains(node.getName())) {
+					tree.expandRow(i);
+				}
+			}
+			tree.removeTreeSelectionListener(t);
+			addTreeListener();
+		}
+		else if (e.getActionCommand().equals("delete all")) {
+			for (int i = simDir.getChildCount() - 1; i >= 0; i--) {
+				if (((IconNode) simDir.getChildAt(i)).getChildCount() == 0) {
+					if (!((IconNode) simDir.getChildAt(i)).getName().equals("Average")
+							&& !((IconNode) simDir.getChildAt(i)).getName().equals("Variance")
+							&& !((IconNode) simDir.getChildAt(i)).getName().equals("Standard Deviation")) {
+						File dir = new File(outDir + separator + ((IconNode) simDir.getChildAt(i)).getName()
+								+ "." + printer_id.substring(0, printer_id.length() - 8));
+						if (dir.isDirectory()) {
+							biomodelsim.deleteDir(dir);
+						}
+						else {
+							dir.delete();
+						}
+					}
+					simDir.remove(i);
+				}
+				else {
+					File dir = new File(outDir + separator + ((IconNode) simDir.getChildAt(i)).getName());
+					if (dir.isDirectory()) {
+						biomodelsim.deleteDir(dir);
+					}
+					else {
+						dir.delete();
+					}
+					simDir.remove(i);
+				}
+			}
+			boolean checked = false;
+			for (int i = 0; i < simDir.getChildCount(); i++) {
+				if (((IconNode) simDir.getChildAt(i)).getIconName().equals("" + (char) 10003)) {
+					checked = true;
+				}
+			}
+			if (!checked) {
+				simDir.setIcon(MetalIconFactory.getTreeFolderIcon());
+				simDir.setIconName("");
+			}
+			ArrayList<String> rows = new ArrayList<String>();
+			for (int i = 0; i < tree.getRowCount(); i++) {
+				if (tree.isExpanded(i)) {
+					tree.setSelectionRow(i);
+					rows.add(node.getName());
+				}
+			}
+			scrollpane = new JScrollPane();
+			refreshTree();
+			scrollpane.getViewport().add(tree);
+			scrollpane.setPreferredSize(new Dimension(175, 100));
+			all.removeAll();
+			all.add(titlePanel, "North");
+			all.add(scroll, "Center");
+			all.add(scrollpane, "West");
+			all.revalidate();
+			all.repaint();
+			TreeSelectionListener t = new TreeSelectionListener() {
 				public void valueChanged(TreeSelectionEvent e) {
 					node = (IconNode) e.getPath().getLastPathComponent();
 				}
@@ -928,12 +1058,21 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					rename.setActionCommand("rename");
 					popup.add(rename);
 				}
-				if (!node.getName().equals("Average") && !node.getName().equals("Variance")
-						&& !node.getName().equals("Standard Deviation") && node.getParent() != null) {
+				if (node.getParent() != null) {
 					JMenuItem delete = new JMenuItem("Delete");
 					delete.addActionListener(this);
 					delete.setActionCommand("delete");
 					popup.add(delete);
+				}
+				else {
+					JMenuItem delete = new JMenuItem("Delete Runs");
+					delete.addActionListener(this);
+					delete.setActionCommand("delete runs");
+					popup.add(delete);
+					JMenuItem deleteAll = new JMenuItem("Delete Recursive");
+					deleteAll.addActionListener(this);
+					deleteAll.setActionCommand("delete all");
+					popup.add(deleteAll);
 				}
 				if (popup.getComponentCount() != 0) {
 					popup.show(e.getComponent(), e.getX(), e.getY());
@@ -966,12 +1105,21 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					rename.setActionCommand("rename");
 					popup.add(rename);
 				}
-				if (!node.getName().equals("Average") && !node.getName().equals("Variance")
-						&& !node.getName().equals("Standard Deviation") && node.getParent() != null) {
+				if (node.getParent() != null) {
 					JMenuItem delete = new JMenuItem("Delete");
 					delete.addActionListener(this);
 					delete.setActionCommand("delete");
 					popup.add(delete);
+				}
+				else {
+					JMenuItem delete = new JMenuItem("Delete Runs");
+					delete.addActionListener(this);
+					delete.setActionCommand("delete runs");
+					popup.add(delete);
+					JMenuItem deleteAll = new JMenuItem("Delete Recursive");
+					deleteAll.addActionListener(this);
+					deleteAll.setActionCommand("delete all");
+					popup.add(deleteAll);
 				}
 				if (popup.getComponentCount() != 0) {
 					popup.show(e.getComponent(), e.getX(), e.getY());
