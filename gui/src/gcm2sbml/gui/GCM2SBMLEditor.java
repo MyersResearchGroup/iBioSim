@@ -425,6 +425,11 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 				Utility.createErrorMessage("Error", "Nothing selected to edit");
 				return;
 			}
+			if (list.getSelectedValue() == null
+			    && getName().contains("Edit")) {
+				Utility.createErrorMessage("Error", "Nothing selected to edit");
+				return;
+			}
 			dirty = true;
 			if (getName().contains("Species")) {
 				String selected = null;
