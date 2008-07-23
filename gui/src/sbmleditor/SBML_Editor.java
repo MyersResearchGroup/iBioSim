@@ -400,8 +400,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			createFunction(model,"cauchy","Cauchy distribution","lambda(a,a)");
 			createFunction(model,"rayleigh","Rayleigh distribution","lambda(s,s*sqrt(pi/2))");
 			createFunction(model,"poisson","Poisson distribution","lambda(mu,mu)");
-			createFunction(model,"binomial","Binomial distribution","binomial(p,n,p*n)");
-			createFunction(model,"bernoulli","Bernoulli distribution","bernoulli(p,p)");
+			createFunction(model,"binomial","Binomial distribution","lambda(p,n,p*n)");
+			createFunction(model,"bernoulli","Bernoulli distribution","lambda(p,p)");
 		}
 		else {
 			document = new SBMLDocument();
