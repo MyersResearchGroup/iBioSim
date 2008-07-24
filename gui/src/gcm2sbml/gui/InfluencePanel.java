@@ -89,6 +89,9 @@ public class InfluencePanel extends JPanel implements ActionListener {
 		tempPanel.add(tempLabel);
 		tempPanel.add(bioBox);
 		add(tempPanel);
+		fields.get(GlobalConstants.NAME).setValue(inputBox.getSelectedItem() + " -> " 
+							  + outputBox.getSelectedItem() + ", Promoter "
+							  + promoterBox.getSelectedItem());
 
 		fields.get(GlobalConstants.NAME).setValue(inputBox.getSelectedItem() + " -> "
 				+ outputBox.getSelectedItem() + ", Promoter "
