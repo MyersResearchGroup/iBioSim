@@ -3874,23 +3874,60 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			// ArrayList<ArrayList<Double>> data = p.getData();
 			for (int k = 0; k < data.get(0).size(); k++) {
 				if (first) {
-					dataCounts.put((data.get(0)).get(k), 1);
+					double put;
+					if (k == data.get(0).size() - 1 && k >= 2) {
+						if (data.get(0).get(k) - data.get(0).get(k - 1) != data.get(0).get(k - 1)
+								- data.get(0).get(k - 2)) {
+							put = data.get(0).get(k - 1) + (data.get(0).get(k - 1) - data.get(0).get(k - 2));
+							dataCounts.put(put, 1);
+						}
+						else {
+							put = (data.get(0)).get(k);
+							dataCounts.put(put, 1);
+						}
+					}
+					else {
+						put = (data.get(0)).get(k);
+						dataCounts.put(put, 1);
+					}
 					for (int i = 0; i < data.size(); i++) {
-						average.get(i).add((data.get(i)).get(k));
 						if (i == 0) {
 							variance.get(i).add((data.get(i)).get(k));
+							average.get(i).add(put);
 						}
 						else {
 							variance.get(i).add(0.0);
+							average.get(i).add((data.get(i)).get(k));
 						}
 					}
 				}
 				else {
 					int index = -1;
-					if (average.get(0).contains(data.get(0).get(k))) {
-						index = average.get(0).indexOf(data.get(0).get(k));
-						int count = dataCounts.get(data.get(0).get(k));
-						dataCounts.put(data.get(0).get(k), count + 1);
+					double put;
+					if (k == data.get(0).size() - 1 && k >= 2) {
+						if (data.get(0).get(k) - data.get(0).get(k - 1) != data.get(0).get(k - 1)
+								- data.get(0).get(k - 2)) {
+							put = data.get(0).get(k - 1) + (data.get(0).get(k - 1) - data.get(0).get(k - 2));
+						}
+						else {
+							put = (data.get(0)).get(k);
+						}
+					}
+					else if (k == data.get(0).size() - 1 && k == 1) {
+						if (average.get(0).size() > 1) {
+							put = (average.get(0)).get(k);
+						}
+						else {
+							put = (data.get(0)).get(k);
+						}
+					}
+					else {
+						put = (data.get(0)).get(k);
+					}
+					if (average.get(0).contains(put)) {
+						index = average.get(0).indexOf(put);
+						int count = dataCounts.get(put);
+						dataCounts.put(put, count + 1);
 						for (int i = 1; i < data.size(); i++) {
 							double old = (average.get(i)).get(index);
 							(average.get(i)).set(index, old + (((data.get(i)).get(k) - old) / (count + 1)));
@@ -3902,9 +3939,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						}
 					}
 					else {
-						dataCounts.put(data.get(0).get(k), 1);
+						dataCounts.put(put, 1);
 						for (int a = 0; a < average.get(0).size(); a++) {
-							if (average.get(0).get(a) > data.get(0).get(k)) {
+							if (average.get(0).get(a) > put) {
 								index = a;
 								break;
 							}
@@ -3912,8 +3949,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						if (index == -1) {
 							index = average.get(0).size() - 1;
 						}
-						average.get(0).add(data.get(0).get(k));
-						variance.get(0).add(data.get(0).get(k));
+						average.get(0).add(put);
+						variance.get(0).add(put);
 						for (int a = 1; a < average.size(); a++) {
 							average.get(a).add(data.get(a).get(k));
 							variance.get(a).add(0.0);

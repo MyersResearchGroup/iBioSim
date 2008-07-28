@@ -1554,7 +1554,8 @@ public class BioSim implements MouseListener, ActionListener {
 							}
 						}
 						new File(root + separator + lrnName).mkdir();
-						new FileWriter(new File(root + separator + lrnName + separator + ".lrn")).close();
+						// new FileWriter(new File(root + separator + lrnName + separator +
+						// ".lrn")).close();
 						String sbmlFile = tree.getFile();
 						String[] getFilename = sbmlFile.split(separator);
 						String sbmlFileNoPath = getFilename[getFilename.length - 1];
@@ -1734,13 +1735,14 @@ public class BioSim implements MouseListener, ActionListener {
 					else {
 						boolean sim = false;
 						for (String s : new File(tree.getFile()).list()) {
-							if (s.equals(".sim")) {
+							if (s.length() > 3 && s.substring(s.length() - 4).equals(".sim")) {
 								sim = true;
 							}
 						}
 						if (sim) {
 							new File(root + separator + copy).mkdir();
-							new FileWriter(new File(root + separator + copy + separator + ".sim")).close();
+							// new FileWriter(new File(root + separator + copy + separator +
+							// ".sim")).close();
 							String[] s = new File(tree.getFile()).list();
 							for (String ss : s) {
 								if (ss.length() > 4 && ss.substring(ss.length() - 5).equals(".sbml")) {
@@ -1770,10 +1772,17 @@ public class BioSim implements MouseListener, ActionListener {
 								else if (ss.length() > 3
 										&& (ss.substring(ss.length() - 4).equals(".tsd")
 												|| ss.substring(ss.length() - 4).equals(".dat")
-												|| ss.substring(ss.length() - 4).equals(".sad") || ss.substring(
-												ss.length() - 4).equals(".pms"))) {
-									FileOutputStream out = new FileOutputStream(new File(root + separator + copy
-											+ separator + ss));
+												|| ss.substring(ss.length() - 4).equals(".sad")
+												|| ss.substring(ss.length() - 4).equals(".pms") || ss.substring(
+												ss.length() - 4).equals(".sim")) && !ss.equals(".sim")) {
+									FileOutputStream out;
+									if (ss.substring(ss.length() - 4).equals(".pms")) {
+										out = new FileOutputStream(new File(root + separator + copy + separator
+												+ ss.substring(0, ss.length() - 4) + ".sim"));
+									}
+									else {
+										out = new FileOutputStream(new File(root + separator + copy + separator + ss));
+									}
 									FileInputStream in = new FileInputStream(
 											new File(tree.getFile() + separator + ss));
 									int read = in.read();
@@ -2442,7 +2451,7 @@ public class BioSim implements MouseListener, ActionListener {
 			else if (new File(tree.getFile()).isDirectory() && !tree.getFile().equals(root)) {
 				boolean sim = false;
 				for (String s : new File(tree.getFile()).list()) {
-					if (s.equals(".sim")) {
+					if (s.length() > 3 && s.substring(s.length() - 4).equals(".sim")) {
 						sim = true;
 					}
 				}
@@ -2568,7 +2577,7 @@ public class BioSim implements MouseListener, ActionListener {
 				else if (new File(tree.getFile()).isDirectory() && !tree.getFile().equals(root)) {
 					boolean sim = false;
 					for (String s : new File(tree.getFile()).list()) {
-						if (s.equals(".sim")) {
+						if (s.length() > 3 && s.substring(s.length() - 4).equals(".sim")) {
 							sim = true;
 						}
 					}
@@ -2684,7 +2693,7 @@ public class BioSim implements MouseListener, ActionListener {
 			else if (new File(tree.getFile()).isDirectory() && !tree.getFile().equals(root)) {
 				boolean sim = false;
 				for (String s : new File(tree.getFile()).list()) {
-					if (s.equals(".sim")) {
+					if (s.length() > 3 && s.substring(s.length() - 4).equals(".sim")) {
 						sim = true;
 					}
 				}
@@ -2752,7 +2761,8 @@ public class BioSim implements MouseListener, ActionListener {
 					}
 				}
 				new File(root + separator + simName).mkdir();
-				new FileWriter(new File(root + separator + simName + separator + ".sim")).close();
+				// new FileWriter(new File(root + separator + simName + separator +
+				// ".sim")).close();
 				String[] dot = tree.getFile().split(separator);
 				String sbmlFile = /*
 													 * root + separator + simName + separator +
@@ -2763,7 +2773,7 @@ public class BioSim implements MouseListener, ActionListener {
 				network.mergeSBML(root + separator + simName + separator + sbmlFile);
 				try {
 					FileOutputStream out = new FileOutputStream(new File(root + separator + simName.trim()
-							+ separator + simName.trim() + ".pms"));
+							+ separator + simName.trim() + ".sim"));
 					out.write((dot[dot.length - 1] + "\n").getBytes());
 					out.close();
 				}
@@ -2786,7 +2796,7 @@ public class BioSim implements MouseListener, ActionListener {
 				simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
 				SBML_Editor sbml = new SBML_Editor(sbmlFile, reb2sac, log, this, root + separator
 						+ simName.trim(), root + separator + simName.trim() + separator + simName.trim()
-						+ ".pms");
+						+ ".sim");
 				reb2sac.setSbml(sbml);
 				simTab.addTab("Parameter Editor", sbml);
 				simTab.getComponentAt(simTab.getComponents().length - 1).setName("SBML Editor");
@@ -2857,13 +2867,14 @@ public class BioSim implements MouseListener, ActionListener {
 					}
 				}
 				new File(root + separator + simName).mkdir();
-				new FileWriter(new File(root + separator + simName + separator + ".sim")).close();
+				// new FileWriter(new File(root + separator + simName + separator +
+				// ".sim")).close();
 				String sbmlFile = tree.getFile();
 				String[] sbml1 = tree.getFile().split(separator);
 				String sbmlFileProp = root + separator + simName + separator + sbml1[sbml1.length - 1];
 				try {
 					FileOutputStream out = new FileOutputStream(new File(root + separator + simName.trim()
-							+ separator + simName.trim() + ".pms"));
+							+ separator + simName.trim() + ".sim"));
 					out.write((sbml1[sbml1.length - 1] + "\n").getBytes());
 					out.close();
 				}
@@ -2892,7 +2903,7 @@ public class BioSim implements MouseListener, ActionListener {
 				simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
 				SBML_Editor sbml = new SBML_Editor(sbmlFile, reb2sac, log, this, root + separator
 						+ simName.trim(), root + separator + simName.trim() + separator + simName.trim()
-						+ ".pms");
+						+ ".sim");
 				reb2sac.setSbml(sbml);
 				simTab.addTab("Parameter Editor", sbml);
 				simTab.getComponentAt(simTab.getComponents().length - 1).setName("SBML Editor");
@@ -2961,15 +2972,28 @@ public class BioSim implements MouseListener, ActionListener {
 
 			String lrnFile = tree.getFile() + separator
 					+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1] + ".lrn";
+			String lrnFile2 = tree.getFile() + separator + ".lrn";
 			Properties load = new Properties();
 			String learnFile = "";
 			try {
-				FileInputStream in = new FileInputStream(new File(lrnFile));
-				load.load(in);
-				in.close();
-				if (load.containsKey("genenet.file")) {
-					learnFile = load.getProperty("genenet.file");
+				if (new File(lrnFile2).exists()) {
+					FileInputStream in = new FileInputStream(new File(lrnFile2));
+					load.load(in);
+					in.close();
+					new File(lrnFile2).delete();
 				}
+				if (new File(lrnFile).exists()) {
+					FileInputStream in = new FileInputStream(new File(lrnFile));
+					load.load(in);
+					in.close();
+					if (load.containsKey("genenet.file")) {
+						learnFile = load.getProperty("genenet.file");
+					}
+				}
+				FileOutputStream out = new FileOutputStream(new File(lrnFile));
+				load.store(out, learnFile);
+				out.close();
+
 			}
 			catch (Exception e) {
 				JOptionPane.showMessageDialog(frame(), "Unable to load properties file!",
@@ -3029,6 +3053,9 @@ public class BioSim implements MouseListener, ActionListener {
 		if (!done) {
 			if (filename != null && !filename.equals("")) {
 				if (new File(filename).isDirectory()) {
+					if (new File(filename + separator + ".sim").exists()) {
+						new File(filename + separator + ".sim").delete();
+					}
 					String[] list = new File(filename).list();
 					String getAFile = "";
 					// String probFile = "";
@@ -3098,12 +3125,22 @@ public class BioSim implements MouseListener, ActionListener {
 					}
 					if (!getAFile.equals("")) {
 						String[] split = filename.split(separator);
+						String simFile = root + separator + split[split.length - 1].trim() + separator
+								+ split[split.length - 1].trim() + ".sim";
 						String pmsFile = root + separator + split[split.length - 1].trim() + separator
 								+ split[split.length - 1].trim() + ".pms";
-						String sbmlLoadFile = null;
 						if (new File(pmsFile).exists()) {
+							if (new File(simFile).exists()) {
+								new File(pmsFile).delete();
+							}
+							else {
+								new File(pmsFile).renameTo(new File(simFile));
+							}
+						}
+						String sbmlLoadFile = null;
+						if (new File(simFile).exists()) {
 							try {
-								Scanner s = new Scanner(new File(pmsFile));
+								Scanner s = new Scanner(new File(simFile));
 								if (s.hasNextLine()) {
 									sbmlLoadFile = s.nextLine();
 									sbmlLoadFile = sbmlLoadFile.split(separator)[sbmlLoadFile.split(separator).length - 1];
@@ -3166,7 +3203,7 @@ public class BioSim implements MouseListener, ActionListener {
 						simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
 						SBML_Editor sbml = new SBML_Editor(sbmlLoadFile, reb2sac, log, this, root + separator
 								+ split[split.length - 1].trim(), root + separator + split[split.length - 1].trim()
-								+ separator + split[split.length - 1].trim() + ".pms");
+								+ separator + split[split.length - 1].trim() + ".sim");
 						reb2sac.setSbml(sbml);
 						simTab.addTab("Parameter Editor", sbml);
 						simTab.getComponentAt(simTab.getComponents().length - 1).setName("SBML Editor");
@@ -3318,7 +3355,8 @@ public class BioSim implements MouseListener, ActionListener {
 	public void copySim(String newSim) {
 		try {
 			new File(root + separator + newSim).mkdir();
-			new FileWriter(new File(root + separator + newSim + separator + ".sim")).close();
+			// new FileWriter(new File(root + separator + newSim + separator +
+			// ".sim")).close();
 			String oldSim = tab.getTitleAt(tab.getSelectedIndex());
 			String[] s = new File(root + separator + oldSim).list();
 			String sbmlFile = "";
@@ -3353,10 +3391,17 @@ public class BioSim implements MouseListener, ActionListener {
 				}
 				else if (ss.length() > 3
 						&& (ss.substring(ss.length() - 4).equals(".dat")
-								|| ss.substring(ss.length() - 4).equals(".sad") || ss.substring(ss.length() - 4)
-								.equals(".pms"))) {
-					FileOutputStream out = new FileOutputStream(new File(root + separator + newSim
-							+ separator + ss));
+								|| ss.substring(ss.length() - 4).equals(".sad")
+								|| ss.substring(ss.length() - 4).equals(".pms") || ss.substring(ss.length() - 4)
+								.equals(".sim")) && !ss.equals(".sim")) {
+					FileOutputStream out;
+					if (ss.substring(ss.length() - 4).equals(".pms")) {
+						out = new FileOutputStream(new File(root + separator + newSim + separator
+								+ ss.substring(0, ss.length() - 4) + ".sim"));
+					}
+					else {
+						out = new FileOutputStream(new File(root + separator + newSim + separator + ss));
+					}
 					FileInputStream in = new FileInputStream(new File(root + separator + oldSim + separator
 							+ ss));
 					int read = in.read();
@@ -3367,6 +3412,17 @@ public class BioSim implements MouseListener, ActionListener {
 					in.close();
 					out.close();
 					if (ss.substring(ss.length() - 4).equals(".pms")) {
+						if (new File(root + separator + newSim + separator + ss.substring(0, ss.length() - 4)
+								+ ".sim").exists()) {
+							new File(root + separator + newSim + separator + ss).delete();
+						}
+						else {
+							new File(root + separator + newSim + separator + ss).renameTo(new File(root
+									+ separator + newSim + separator + ss.substring(0, ss.length() - 4) + ".sim"));
+						}
+						ss = ss.substring(0, ss.length() - 4) + ".sim";
+					}
+					if (ss.substring(ss.length() - 4).equals(".sim")) {
 						try {
 							Scanner scan = new Scanner(new File(root + separator + newSim + separator + ss));
 							if (scan.hasNextLine()) {
@@ -3407,7 +3463,7 @@ public class BioSim implements MouseListener, ActionListener {
 			simTab.addTab("Advanced Options", reb2sac.getProperties());
 			simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
 			SBML_Editor sbml = new SBML_Editor(sbmlLoadFile, reb2sac, log, this, root + separator
-					+ newSim, root + separator + newSim + separator + newSim + ".pms");
+					+ newSim, root + separator + newSim + separator + newSim + ".sim");
 			reb2sac.setSbml(sbml);
 			simTab.addTab("Parameter Editor", sbml);
 			simTab.getComponentAt(simTab.getComponents().length - 1).setName("SBML Editor");
@@ -3501,7 +3557,7 @@ public class BioSim implements MouseListener, ActionListener {
 	public void updateViews(String updatedFile) {
 		for (int i = 0; i < tab.getTabCount(); i++) {
 			String tab = this.tab.getTitleAt(i);
-			String properties = root + separator + tab + separator + tab + ".pms";
+			String properties = root + separator + tab + separator + tab + ".sim";
 			String properties2 = root + separator + tab + separator + tab + ".lrn";
 			if (new File(properties).exists()) {
 				String check = "";
@@ -3519,7 +3575,7 @@ public class BioSim implements MouseListener, ActionListener {
 					JTabbedPane sim = ((JTabbedPane) (this.tab.getComponentAt(i)));
 					for (int j = 0; j < sim.getTabCount(); j++) {
 						if (sim.getComponentAt(j).getName().equals("SBML Editor")) {
-							new File(properties).renameTo(new File(properties.replace(".pms", ".temp")));
+							new File(properties).renameTo(new File(properties.replace(".sim", ".temp")));
 							boolean dirty = ((SBML_Editor) (sim.getComponentAt(j))).hasChanged();
 							((SBML_Editor) (sim.getComponentAt(j))).save(false, "");
 							if (updatedFile.contains(".gcm")) {
@@ -3532,7 +3588,7 @@ public class BioSim implements MouseListener, ActionListener {
 							((SBML_Editor) (sim.getComponentAt(j))).updateSBML(i, j);
 							((SBML_Editor) (sim.getComponentAt(j))).setChanged(dirty);
 							new File(properties).delete();
-							new File(properties.replace(".pms", ".temp")).renameTo(new File(properties));
+							new File(properties.replace(".sim", ".temp")).renameTo(new File(properties));
 						}
 					}
 				}
