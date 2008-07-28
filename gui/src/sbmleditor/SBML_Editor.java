@@ -390,18 +390,18 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				model.setId(modelID);
 				save(false, "");
 			}
-			createFunction(model,"uniform","Uniform distribution","lambda(a,b,(a+b)/2)");
-			createFunction(model,"normal","Normal distribution","lambda(m,s,m)");
-			createFunction(model,"exponential","Exponential distribution","lambda(mu,mu)");
-			createFunction(model,"gamma","Gamma distribution","lambda(a,b,a*b)");
-			createFunction(model,"lognormal","Lognormal distribution","lambda(z,s,exp(z+s^2/2))");
-			createFunction(model,"chisq","Chi-squared distribution","lambda(nu,nu)");
-			createFunction(model,"laplace","Laplace distribution","lambda(a,a)");
-			createFunction(model,"cauchy","Cauchy distribution","lambda(a,a)");
-			createFunction(model,"rayleigh","Rayleigh distribution","lambda(s,s*sqrt(pi/2))");
-			createFunction(model,"poisson","Poisson distribution","lambda(mu,mu)");
-			createFunction(model,"binomial","Binomial distribution","lambda(p,n,p*n)");
-			createFunction(model,"bernoulli","Bernoulli distribution","lambda(p,p)");
+			createFunction(model, "uniform", "Uniform distribution", "lambda(a,b,(a+b)/2)");
+			createFunction(model, "normal", "Normal distribution", "lambda(m,s,m)");
+			createFunction(model, "exponential", "Exponential distribution", "lambda(mu,mu)");
+			createFunction(model, "gamma", "Gamma distribution", "lambda(a,b,a*b)");
+			createFunction(model, "lognormal", "Lognormal distribution", "lambda(z,s,exp(z+s^2/2))");
+			createFunction(model, "chisq", "Chi-squared distribution", "lambda(nu,nu)");
+			createFunction(model, "laplace", "Laplace distribution", "lambda(a,a)");
+			createFunction(model, "cauchy", "Cauchy distribution", "lambda(a,a)");
+			createFunction(model, "rayleigh", "Rayleigh distribution", "lambda(s,s*sqrt(pi/2))");
+			createFunction(model, "poisson", "Poisson distribution", "lambda(mu,mu)");
+			createFunction(model, "binomial", "Binomial distribution", "lambda(p,n,p*n)");
+			createFunction(model, "bernoulli", "Bernoulli distribution", "lambda(p,p)");
 		}
 		else {
 			document = new SBMLDocument();
@@ -628,15 +628,15 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		addReacs.add(addReac);
 		addReacs.add(removeReac);
 		addReacs.add(editReac);
-		//addReacs.add(copyReac);
+		// addReacs.add(copyReac);
 		addReac.addActionListener(this);
 		removeReac.addActionListener(this);
 		editReac.addActionListener(this);
-		//copyReac.addActionListener(this);
+		// copyReac.addActionListener(this);
 		if (paramsOnly) {
 			addReac.setEnabled(false);
 			removeReac.setEnabled(false);
-			//copyReac.setEnabled(false);
+			// copyReac.setEnabled(false);
 		}
 		JLabel reactionsLabel = new JLabel("List of Reactions:");
 		reactions = new JList();
@@ -966,8 +966,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		}
 		if (!cycle && checkCycles(inits, rul)) {
 			JOptionPane.showMessageDialog(biosim.frame(),
-					"Cycle detected within initial assignments, assignment rules, and rate laws.", "Cycle Detected",
-					JOptionPane.ERROR_MESSAGE);
+					"Cycle detected within initial assignments, assignment rules, and rate laws.",
+					"Cycle Detected", JOptionPane.ERROR_MESSAGE);
 		}
 		JPanel rulePanel = createPanel(model, "Rules", rules, rul, addRule, removeRule, editRule);
 
@@ -2558,17 +2558,16 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		return false;
 	}
 
-
 	/**
 	 * Add a new function
 	 */
-        private void createFunction(Model model, String id, String name, String formula) {
-	    if (document.getModel().getFunctionDefinition(id)==null) {
-		FunctionDefinition f = model.createFunctionDefinition();
-		f.setId(id);
-		f.setName(name);
-		f.setMath(libsbml.parseFormula(formula));
-	    }
+	private void createFunction(Model model, String id, String name, String formula) {
+		if (document.getModel().getFunctionDefinition(id) == null) {
+			FunctionDefinition f = model.createFunctionDefinition();
+			f.setId(id);
+			f.setName(name);
+			f.setMath(libsbml.parseFormula(formula));
+		}
 	}
 
 	/**
@@ -3829,7 +3828,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					}
 					if (!error && checkCycles(inits, rul)) {
 						JOptionPane.showMessageDialog(biosim.frame(),
-					      "Cycle detected within initial assignments, assignment rules, and rate laws.",
+								"Cycle detected within initial assignments, assignment rules, and rate laws.",
 								"Cycle Detected", JOptionPane.ERROR_MESSAGE);
 						error = true;
 					}
@@ -3874,7 +3873,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					}
 					if (!error && checkCycles(inits, rul)) {
 						JOptionPane.showMessageDialog(biosim.frame(),
-							"Cycle detected within initial assignments, assignment rules, and rate laws.",
+								"Cycle detected within initial assignments, assignment rules, and rate laws.",
 								"Cycle Detected", JOptionPane.ERROR_MESSAGE);
 						error = true;
 					}
@@ -4155,7 +4154,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					}
 					if (!error && checkCycles(inits, rul)) {
 						JOptionPane.showMessageDialog(biosim.frame(),
-							"Cycle detected within initial assignments, assignment rules, and rate laws.",
+								"Cycle detected within initial assignments, assignment rules, and rate laws.",
 								"Cycle Detected", JOptionPane.ERROR_MESSAGE);
 						error = true;
 					}
@@ -4206,7 +4205,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					}
 					if (!error && checkCycles(inits, rul)) {
 						JOptionPane.showMessageDialog(biosim.frame(),
-							"Cycle detected within initial assignments, assignment rules, and rate laws.",
+								"Cycle detected within initial assignments, assignment rules, and rate laws.",
 								"Cycle Detected", JOptionPane.ERROR_MESSAGE);
 						error = true;
 						rul = oldRul;
@@ -4395,10 +4394,10 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	private boolean checkCycles(String[] initRules, String[] rules) {
 		Model model = document.getModel();
 		ListOf listOfReactions = model.getListOfReactions();
-		String[] rateLaws = new String[(int)model.getNumReactions()];
+		String[] rateLaws = new String[(int) model.getNumReactions()];
 		for (int i = 0; i < model.getNumReactions(); i++) {
-		    Reaction reaction = (Reaction) listOfReactions.get(i);
-		    rateLaws[i] = reaction.getId() + " = " + reaction.getKineticLaw().getFormula();
+			Reaction reaction = (Reaction) listOfReactions.get(i);
+			rateLaws[i] = reaction.getId() + " = " + reaction.getKineticLaw().getFormula();
 		}
 		String[] result = new String[rules.length + initRules.length + rateLaws.length];
 		int j = 0;
@@ -4420,34 +4419,38 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				String[] rule;
 				if (i < rules.length) {
 					if (used[i] || (rules[i].split(" ")[0].equals("0"))
-					    || (rules[i].split(" ")[0].equals("d(")))
-					    continue;
+							|| (rules[i].split(" ")[0].equals("d(")))
+						continue;
 					rule = rules[i].split(" ");
 				}
 				else if (i < rules.length + initRules.length) {
-					if (used[i]) continue;
+					if (used[i])
+						continue;
 					rule = initRules[i - rules.length].split(" ");
-				} 
+				}
 				else {
-					if (used[i]) continue;
+					if (used[i])
+						continue;
 					rule = rateLaws[i - (rules.length + initRules.length)].split(" ");
 				}
 				boolean insert = true;
 				for (int k = 1; k < rule.length; k++) {
 					for (int l = 0; l < rules.length + initRules.length + rateLaws.length; l++) {
-					        String rule2;
+						String rule2;
 						if (l < rules.length) {
 							if (used[l] || (rules[l].split(" ")[0].equals("0"))
-							    || (rules[l].split(" ")[0].equals("d(")))
-							    continue;
+									|| (rules[l].split(" ")[0].equals("d(")))
+								continue;
 							rule2 = rules[l].split(" ")[0];
 						}
 						else if (l < rules.length + initRules.length) {
-							if (used[l]) continue;
+							if (used[l])
+								continue;
 							rule2 = initRules[l - rules.length].split(" ")[0];
 						}
 						else {
-							if (used[l]) continue;
+							if (used[l])
+								continue;
 							rule2 = rateLaws[l - (rules.length + initRules.length)].split(" ")[0];
 						}
 						if (rule[k].equals(rule2)) {
@@ -4466,7 +4469,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						result[j] = initRules[i - rules.length];
 					}
 					else {
-					    result[j] = rateLaws[i - (rules.length + initRules.length)];
+						result[j] = rateLaws[i - (rules.length + initRules.length)];
 					}
 					j++;
 					progress = true;
@@ -6142,7 +6145,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						type.setSelectedItem("Sweep");
 					}
 					if (((String) type.getSelectedItem()).equals("Sweep")) {
-						String[] splits = ((String) compartments.getSelectedValue()).split(" ");
+						String[] splits = ((String) species.getSelectedValue()).split(" ");
 						String sweepVal = splits[splits.length - 1];
 						start.setText((sweepVal).split(",")[0].substring(1).trim());
 						stop.setText((sweepVal).split(",")[1].trim());
@@ -6275,9 +6278,27 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						addSpec += splits[splits.length - 2] + " " + splits[splits.length - 1] + " ";
 					}
 					if (((String) type.getSelectedItem()).equals("Sweep")) {
-						double startVal = Double.parseDouble(start.getText().trim());
-						double stopVal = Double.parseDouble(stop.getText().trim());
-						double stepVal = Double.parseDouble(step.getText().trim());
+						double startVal;
+						try {
+							startVal = Double.parseDouble(start.getText().trim());
+						}
+						catch (Exception e) {
+							startVal = 0;
+						}
+						double stopVal;
+						try {
+							stopVal = Double.parseDouble(stop.getText().trim());
+						}
+						catch (Exception e) {
+							stopVal = 0;
+						}
+						double stepVal;
+						try {
+							stepVal = Double.parseDouble(step.getText().trim());
+						}
+						catch (Exception e) {
+							stepVal = 1;
+						}
 						addSpec += "Sweep (" + startVal + "," + stopVal + "," + stepVal + ","
 								+ level.getSelectedItem() + ")";
 					}
@@ -6535,9 +6556,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				inits = sortInitRules(inits);
 				if (checkCycles(inits, rul)) {
 					JOptionPane.showMessageDialog(biosim.frame(),
-							"Cycle detected within initial assignments, assignment rules, and rate laws.", 
-								      "Cycle Detected",
-							JOptionPane.ERROR_MESSAGE);
+							"Cycle detected within initial assignments, assignment rules, and rate laws.",
+							"Cycle Detected", JOptionPane.ERROR_MESSAGE);
 					inits = oldInits;
 				}
 			}
@@ -6571,9 +6591,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				rul = sortRules(rul);
 				if (checkCycles(inits, rul)) {
 					JOptionPane.showMessageDialog(biosim.frame(),
-							"Cycle detected within initial assignments, assignment rules, and rate laws.", 
-								      "Cycle Detected",
-							JOptionPane.ERROR_MESSAGE);
+							"Cycle detected within initial assignments, assignment rules, and rate laws.",
+							"Cycle Detected", JOptionPane.ERROR_MESSAGE);
 					rul = oldRul;
 				}
 			}
@@ -7172,13 +7191,12 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					react.getKineticLaw().setFormula(kineticLaw.getText().trim());
 					error = checkKineticLawUnits(react.getKineticLaw());
 					if (!error) {
-					    error = checkCycles(inits, rul);
-					    if (error) {
-						JOptionPane.showMessageDialog(biosim.frame(),
-						      "Cycle detected within initial assignments, assignment rules, and rate laws.", 
-									      "Cycle Detected",
-									      JOptionPane.ERROR_MESSAGE);
-					    }
+						error = checkCycles(inits, rul);
+						if (error) {
+							JOptionPane.showMessageDialog(biosim.frame(),
+									"Cycle detected within initial assignments, assignment rules, and rate laws.",
+									"Cycle Detected", JOptionPane.ERROR_MESSAGE);
+						}
 					}
 					if (!error) {
 						for (int i = 0; i < usedIDs.size(); i++) {
@@ -7253,13 +7271,12 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					react.getKineticLaw().setFormula(kineticLaw.getText().trim());
 					error = checkKineticLawUnits(react.getKineticLaw());
 					if (!error) {
-					    error = checkCycles(inits, rul);
-					    if (error) {
-						JOptionPane.showMessageDialog(biosim.frame(),
-						      "Cycle detected within initial assignments, assignment rules, and rate laws.", 
-									      "Cycle Detected",
-									      JOptionPane.ERROR_MESSAGE);
-					    }
+						error = checkCycles(inits, rul);
+						if (error) {
+							JOptionPane.showMessageDialog(biosim.frame(),
+									"Cycle detected within initial assignments, assignment rules, and rate laws.",
+									"Cycle Detected", JOptionPane.ERROR_MESSAGE);
+						}
 					}
 					if (!error) {
 						usedIDs.add(reacID.getText().trim());
@@ -9555,13 +9572,15 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	public boolean checkRateRuleUnits(Rule rule) {
 		document.getModel().populateListFormulaUnitsData();
 		if (rule.containsUndeclaredUnits()) {
-		    if (biosim.checkUndeclared) {
-			JOptionPane.showMessageDialog(biosim.frame(),
-					"Rate rule contains literals numbers or parameters with undeclared units.\n"
-							+ "Therefore, it is not possible to completely verify the consistency of the units.",
-					"Contains Undeclared Units", JOptionPane.WARNING_MESSAGE);
-		    }
-		    return false;
+			if (biosim.checkUndeclared) {
+				JOptionPane
+						.showMessageDialog(
+								biosim.frame(),
+								"Rate rule contains literals numbers or parameters with undeclared units.\n"
+										+ "Therefore, it is not possible to completely verify the consistency of the units.",
+								"Contains Undeclared Units", JOptionPane.WARNING_MESSAGE);
+			}
+			return false;
 		}
 		else if (biosim.checkUnits) {
 			UnitDefinition unitDef = rule.getDerivedUnitDefinition();
@@ -9607,13 +9626,15 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	public boolean checkAssignmentRuleUnits(Rule rule) {
 		document.getModel().populateListFormulaUnitsData();
 		if (rule.containsUndeclaredUnits()) {
-		    if (biosim.checkUndeclared) {
-			JOptionPane.showMessageDialog(biosim.frame(),
-					"Assignment rule contains literals numbers or parameters with undeclared units.\n"
-							+ "Therefore, it is not possible to completely verify the consistency of the units.",
-					"Contains Undeclared Units", JOptionPane.WARNING_MESSAGE);
-		    }
-		    return false;
+			if (biosim.checkUndeclared) {
+				JOptionPane
+						.showMessageDialog(
+								biosim.frame(),
+								"Assignment rule contains literals numbers or parameters with undeclared units.\n"
+										+ "Therefore, it is not possible to completely verify the consistency of the units.",
+								"Contains Undeclared Units", JOptionPane.WARNING_MESSAGE);
+			}
+			return false;
 		}
 		else if (biosim.checkUnits) {
 			UnitDefinition unitDef = rule.getDerivedUnitDefinition();
@@ -9646,13 +9667,15 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	public boolean checkInitialAssignmentUnits(InitialAssignment init) {
 		document.getModel().populateListFormulaUnitsData();
 		if (init.containsUndeclaredUnits()) {
-		    if (biosim.checkUndeclared) {
-			JOptionPane.showMessageDialog(biosim.frame(),
-					"Initial assignment contains literals numbers or parameters with undeclared units.\n"
-							+ "Therefore, it is not possible to completely verify the consistency of the units.",
-					"Contains Undeclared Units", JOptionPane.WARNING_MESSAGE);
-		    }
-		    return false;
+			if (biosim.checkUndeclared) {
+				JOptionPane
+						.showMessageDialog(
+								biosim.frame(),
+								"Initial assignment contains literals numbers or parameters with undeclared units.\n"
+										+ "Therefore, it is not possible to completely verify the consistency of the units.",
+								"Contains Undeclared Units", JOptionPane.WARNING_MESSAGE);
+			}
+			return false;
 		}
 		else if (biosim.checkUnits) {
 			UnitDefinition unitDef = init.getDerivedUnitDefinition();
@@ -9695,13 +9718,13 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	public boolean checkEventAssignmentUnits(EventAssignment assign) {
 		document.getModel().populateListFormulaUnitsData();
 		if (assign.containsUndeclaredUnits()) {
-		    if (biosim.checkUndeclared) {
-			JOptionPane.showMessageDialog(biosim.frame(), "Event assignment to " + assign.getVariable()
-					+ " contains literals numbers or parameters with undeclared units.\n"
-					+ "Therefore, it is not possible to completely verify the consistency of the units.",
-					"Contains Undeclared Units", JOptionPane.WARNING_MESSAGE);
-		    }
-		    return false;
+			if (biosim.checkUndeclared) {
+				JOptionPane.showMessageDialog(biosim.frame(), "Event assignment to " + assign.getVariable()
+						+ " contains literals numbers or parameters with undeclared units.\n"
+						+ "Therefore, it is not possible to completely verify the consistency of the units.",
+						"Contains Undeclared Units", JOptionPane.WARNING_MESSAGE);
+			}
+			return false;
 		}
 		else if (biosim.checkUnits) {
 			UnitDefinition unitDef = assign.getDerivedUnitDefinition();
@@ -9735,13 +9758,15 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	public boolean checkEventDelayUnits(Delay delay) {
 		document.getModel().populateListFormulaUnitsData();
 		if (delay.containsUndeclaredUnits()) {
-		    if (biosim.checkUndeclared) {
-			JOptionPane.showMessageDialog(biosim.frame(),
-					"Event assignment delay contains literals numbers or parameters with undeclared units.\n"
-							+ "Therefore, it is not possible to completely verify the consistency of the units.",
-					"Contains Undeclared Units", JOptionPane.WARNING_MESSAGE);
-		    }
-		    return false;
+			if (biosim.checkUndeclared) {
+				JOptionPane
+						.showMessageDialog(
+								biosim.frame(),
+								"Event assignment delay contains literals numbers or parameters with undeclared units.\n"
+										+ "Therefore, it is not possible to completely verify the consistency of the units.",
+								"Contains Undeclared Units", JOptionPane.WARNING_MESSAGE);
+			}
+			return false;
 		}
 		else if (biosim.checkUnits) {
 			UnitDefinition unitDef = delay.getDerivedUnitDefinition();
@@ -9760,13 +9785,15 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	public boolean checkKineticLawUnits(KineticLaw law) {
 		document.getModel().populateListFormulaUnitsData();
 		if (law.containsUndeclaredUnits()) {
-		    if (biosim.checkUndeclared) {
-			JOptionPane.showMessageDialog(biosim.frame(),
-					"Kinetic law contains literals numbers or parameters with undeclared units.\n"
-							+ "Therefore, it is not possible to completely verify the consistency of the units.",
-					"Contains Undeclared Units", JOptionPane.WARNING_MESSAGE);
-		    }
-		    return false;
+			if (biosim.checkUndeclared) {
+				JOptionPane
+						.showMessageDialog(
+								biosim.frame(),
+								"Kinetic law contains literals numbers or parameters with undeclared units.\n"
+										+ "Therefore, it is not possible to completely verify the consistency of the units.",
+								"Contains Undeclared Units", JOptionPane.WARNING_MESSAGE);
+			}
+			return false;
 		}
 		else if (biosim.checkUnits) {
 			UnitDefinition unitDef = law.getDerivedUnitDefinition();
