@@ -27,7 +27,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 
 	private static final long serialVersionUID = -2669704247953218544L;
 
-	private String directory;
+	private String directory, lrnName;
 
 	private JList files;
 
@@ -67,14 +67,21 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 
 		this.biosim = biosim;
 		this.directory = directory;
+		this.lrnName = directory.split(separator)[directory.split(separator).length - 1];
 		list = new String[0];
 		previous = null;
 		try {
 			Properties p = new Properties();
-			FileInputStream load = new FileInputStream(new File(directory + separator + ".lrn"));
+			FileInputStream load = new FileInputStream(new File(directory + separator + lrnName + ".lrn"));
 			p.load(load);
 			load.close();
-			String[] s = p.values().toArray(new String[0]);
+			ArrayList<String> getValues = new ArrayList<String>();
+			for (String key : p.keySet().toArray(new String[0])) {
+				if (key.contains(".tsd")) {
+					getValues.add(p.getProperty(key));
+				}
+			}
+			String[] s = getValues.toArray(new String[0]);
 			sort(s);
 			files = new JList(s);
 			list = s;
@@ -148,7 +155,8 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 				dataFile = dataFile.trim();
 				try {
 					Properties p = new Properties();
-					FileInputStream load = new FileInputStream(new File(directory + separator + ".lrn"));
+					FileInputStream load = new FileInputStream(new File(directory + separator + lrnName
+							+ ".lrn"));
 					p.load(load);
 					load.close();
 					for (String s : p.keySet().toArray(new String[0])) {
@@ -190,10 +198,17 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 					Parser parser = new Parser(specs, data, biosim);
 					parser.outputTSD(directory + separator + end);
 					p.setProperty(end, dataFile);
-					FileOutputStream store = new FileOutputStream(new File(directory + separator + ".lrn"));
+					FileOutputStream store = new FileOutputStream(new File(directory + separator + lrnName
+							+ ".lrn"));
 					p.store(store, "Learn File Data");
 					store.close();
-					String[] s = p.values().toArray(new String[0]);
+					ArrayList<String> getValues = new ArrayList<String>();
+					for (String key : p.keySet().toArray(new String[0])) {
+						if (key.contains(".tsd")) {
+							getValues.add(p.getProperty(key));
+						}
+					}
+					String[] s = getValues.toArray(new String[0]);
 					sort(s);
 					files.setListData(s);
 					this.list = s;
@@ -211,7 +226,8 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 			if (files.getSelectedIndices().length > 0) {
 				try {
 					Properties p = new Properties();
-					FileInputStream load = new FileInputStream(new File(directory + separator + ".lrn"));
+					FileInputStream load = new FileInputStream(new File(directory + separator + lrnName
+							+ ".lrn"));
 					p.load(load);
 					load.close();
 					Object[] delete = files.getSelectedValues();
@@ -253,10 +269,17 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 							}
 						}
 					}
-					FileOutputStream store = new FileOutputStream(new File(directory + separator + ".lrn"));
+					FileOutputStream store = new FileOutputStream(new File(directory + separator + lrnName
+							+ ".lrn"));
 					p.store(store, "Learn File Data");
 					store.close();
-					String[] s = p.values().toArray(new String[0]);
+					ArrayList<String> getValues = new ArrayList<String>();
+					for (String key : p.keySet().toArray(new String[0])) {
+						if (key.contains(".tsd")) {
+							getValues.add(p.getProperty(key));
+						}
+					}
+					String[] s = getValues.toArray(new String[0]);
 					sort(s);
 					files.setListData(s);
 					list = s;
@@ -310,7 +333,8 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 					return;
 				}
 				Properties p = new Properties();
-				FileInputStream load = new FileInputStream(new File(directory + separator + ".lrn"));
+				FileInputStream load = new FileInputStream(new File(directory + separator + lrnName
+						+ ".lrn"));
 				p.load(load);
 				load.close();
 				for (String s : list) {
@@ -326,10 +350,17 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 						p.setProperty(s, rename);
 					}
 				}
-				FileOutputStream store = new FileOutputStream(new File(directory + separator + ".lrn"));
+				FileOutputStream store = new FileOutputStream(new File(directory + separator + lrnName
+						+ ".lrn"));
 				p.store(store, "Learn File Data");
 				store.close();
-				String[] s = p.values().toArray(new String[0]);
+				ArrayList<String> getValues = new ArrayList<String>();
+				for (String key : p.keySet().toArray(new String[0])) {
+					if (key.contains(".tsd")) {
+						getValues.add(p.getProperty(key));
+					}
+				}
+				String[] s = getValues.toArray(new String[0]);
 				sort(s);
 				files.setListData(s);
 				list = s;
@@ -382,7 +413,8 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 					}
 				}
 				Properties p = new Properties();
-				FileInputStream load = new FileInputStream(new File(directory + separator + ".lrn"));
+				FileInputStream load = new FileInputStream(new File(directory + separator + lrnName
+						+ ".lrn"));
 				p.load(load);
 				load.close();
 				for (String s : this.list) {
@@ -408,10 +440,17 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 						p.setProperty(end, copy);
 					}
 				}
-				FileOutputStream store = new FileOutputStream(new File(directory + separator + ".lrn"));
+				FileOutputStream store = new FileOutputStream(new File(directory + separator + lrnName
+						+ ".lrn"));
 				p.store(store, "Learn File Data");
 				store.close();
-				String[] s = p.values().toArray(new String[0]);
+				ArrayList<String> getValues = new ArrayList<String>();
+				for (String key : p.keySet().toArray(new String[0])) {
+					if (key.contains(".tsd")) {
+						getValues.add(p.getProperty(key));
+					}
+				}
+				String[] s = getValues.toArray(new String[0]);
 				sort(s);
 				files.setListData(s);
 				this.list = s;
@@ -490,7 +529,8 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 					String[] list1 = new File(root + separator + sims.getSelectedValue()).list();
 					Properties p = new Properties();
 					try {
-						FileInputStream load = new FileInputStream(new File(directory + separator + ".lrn"));
+						FileInputStream load = new FileInputStream(new File(directory + separator + lrnName
+								+ ".lrn"));
 						p.load(load);
 						load.close();
 					}
@@ -540,7 +580,13 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 						}
 					}
 					try {
-						String[] ss = p.values().toArray(new String[0]);
+						ArrayList<String> getValues = new ArrayList<String>();
+						for (String key : p.keySet().toArray(new String[0])) {
+							if (key.contains(".tsd")) {
+								getValues.add(p.getProperty(key));
+							}
+						}
+						String[] ss = getValues.toArray(new String[0]);
 						sort(ss);
 						files.setListData(ss);
 						this.list = ss;
@@ -561,7 +607,8 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 						this.revalidate();
 						this.repaint();
 						dirty = false;
-						FileOutputStream store = new FileOutputStream(new File(directory + separator + ".lrn"));
+						FileOutputStream store = new FileOutputStream(new File(directory + separator + lrnName
+								+ ".lrn"));
 						p.store(store, "Learn File Data");
 						store.close();
 						if (ss.length > 0) {
@@ -607,7 +654,8 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 					String[] list1 = new File(importFile).list();
 					Properties p = new Properties();
 					try {
-						FileInputStream load = new FileInputStream(new File(directory + separator + ".lrn"));
+						FileInputStream load = new FileInputStream(new File(directory + separator + lrnName
+								+ ".lrn"));
 						p.load(load);
 						load.close();
 					}
@@ -655,7 +703,13 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 						}
 					}
 					try {
-						String[] s = p.values().toArray(new String[0]);
+						ArrayList<String> getValues = new ArrayList<String>();
+						for (String key : p.keySet().toArray(new String[0])) {
+							if (key.contains(".tsd")) {
+								getValues.add(p.getProperty(key));
+							}
+						}
+						String[] s = getValues.toArray(new String[0]);
 						sort(s);
 						files.setListData(s);
 						this.list = s;
@@ -676,7 +730,8 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 						this.revalidate();
 						this.repaint();
 						dirty = false;
-						FileOutputStream store = new FileOutputStream(new File(directory + separator + ".lrn"));
+						FileOutputStream store = new FileOutputStream(new File(directory + separator + lrnName
+								+ ".lrn"));
 						p.store(store, "Learn File Data");
 						store.close();
 						if (s.length > 0) {
@@ -727,15 +782,22 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 							parse.setData(data);
 							parse.outputTSD(directory + separator + end);
 							Properties p = new Properties();
-							FileInputStream load = new FileInputStream(new File(directory + separator + ".lrn"));
+							FileInputStream load = new FileInputStream(new File(directory + separator + lrnName
+									+ ".lrn"));
 							p.load(load);
 							load.close();
 							p.setProperty(end, importFile);
-							FileOutputStream store = new FileOutputStream(
-									new File(directory + separator + ".lrn"));
+							FileOutputStream store = new FileOutputStream(new File(directory + separator
+									+ lrnName + ".lrn"));
 							p.store(store, "Learn File Data");
 							store.close();
-							String[] s = p.values().toArray(new String[0]);
+							ArrayList<String> getValues = new ArrayList<String>();
+							for (String key : p.keySet().toArray(new String[0])) {
+								if (key.contains(".tsd")) {
+									getValues.add(p.getProperty(key));
+								}
+							}
+							String[] s = getValues.toArray(new String[0]);
 							sort(s);
 							files.setListData(s);
 							this.list = s;
@@ -770,7 +832,8 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 				try {
 					String file = (String) files.getSelectedValue();
 					Properties p = new Properties();
-					FileInputStream load = new FileInputStream(new File(directory + separator + ".lrn"));
+					FileInputStream load = new FileInputStream(new File(directory + separator + lrnName
+							+ ".lrn"));
 					p.load(load);
 					load.close();
 					for (String s : p.keySet().toArray(new String[0])) {
@@ -1033,7 +1096,8 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 					Parser parser = new Parser(species, data, biosim);
 					try {
 						Properties p = new Properties();
-						FileInputStream load = new FileInputStream(new File(directory + separator + ".lrn"));
+						FileInputStream load = new FileInputStream(new File(directory + separator + lrnName
+								+ ".lrn"));
 						p.load(load);
 						load.close();
 						for (String s : p.keySet().toArray(new String[0])) {
@@ -1058,15 +1122,13 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 		String background;
 		try {
 			Properties p = new Properties();
-			String[] split = directory.split(separator);
-			FileInputStream load = new FileInputStream(new File(directory + separator
-					+ split[split.length - 1] + ".lrn"));
+			FileInputStream load = new FileInputStream(new File(directory + separator + lrnName + ".lrn"));
 			p.load(load);
 			load.close();
 			if (p.containsKey("genenet.file")) {
 				String[] getProp = p.getProperty("genenet.file").split(separator);
-				background = directory.substring(0, directory.length() - split[split.length - 1].length())
-						+ separator + getProp[getProp.length - 1];
+				background = directory.substring(0, directory.length() - lrnName.length()) + separator
+						+ getProp[getProp.length - 1];
 			}
 			else {
 				background = null;
@@ -1166,7 +1228,8 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 				try {
 					saveChanges(null);
 					Properties p = new Properties();
-					FileInputStream load = new FileInputStream(new File(directory + separator + ".lrn"));
+					FileInputStream load = new FileInputStream(new File(directory + separator + lrnName
+							+ ".lrn"));
 					p.load(load);
 					load.close();
 					for (String s : p.keySet().toArray(new String[0])) {

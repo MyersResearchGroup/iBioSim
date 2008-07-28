@@ -137,10 +137,10 @@ public class FileTree extends JPanel implements MouseListener {
 				newPath = curPath + separator + thisObject;
 			if ((f = new File(newPath)).isDirectory() && !f.getName().equals("CVS")) {
 				for (String s : f.list()) {
-					if (s.equals(".sim")) {
+					if (s.length() > 3 && s.substring(s.length() - 4).equals(".sim")) {
 						addNodes(curDir, f, true);
 					}
-					else if (s.equals(".lrn")) {
+					else if (s.length() > 3 && s.substring(s.length() - 4).equals(".lrn")) {
 						addNodes(curDir, f, false);
 					}
 				}
@@ -277,7 +277,7 @@ public class FileTree extends JPanel implements MouseListener {
 				newPath = curPath + separator + thisObject;
 			if ((f = new File(newPath)).isDirectory() && !f.getName().equals("CVS")) {
 				for (String s : f.list()) {
-					if (s.equals(".sim")) {
+					if (s.length() > 3 && s.substring(s.length() - 4).equals(".sim")) {
 						String get = "";
 						boolean doAdd = true;
 						int getChild = 0;
@@ -299,7 +299,7 @@ public class FileTree extends JPanel implements MouseListener {
 									.getName())), f, doAdd);
 						}
 					}
-					else if (s.equals(".lrn")) {
+					else if (s.length() > 3 && s.substring(s.length() - 4).equals(".lrn")) {
 						String get = "";
 						boolean doAdd = true;
 						int getChild = 0;
