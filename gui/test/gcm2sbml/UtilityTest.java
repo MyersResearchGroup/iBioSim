@@ -1,7 +1,14 @@
 package gcm2sbml;
 
 
-import gui.src.gcm2sbml.util.Utility;
+import gcm2sbml.util.Utility;
+
+import java.util.HashMap;
+
+import junit.framework.TestCase;
+
+import org.junit.After;
+import org.junit.Before;
 
 public class UtilityTest extends TestCase{
 
