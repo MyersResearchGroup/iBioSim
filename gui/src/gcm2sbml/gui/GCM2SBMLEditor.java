@@ -177,6 +177,10 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 				// Do nothing
 			}
 		}
+		else {
+			gcm.save(path + File.separator + newName + ".gcm");
+			biosim.refreshTree();
+		}
 	}
 
 	public void actionPerformed(ActionEvent e) {
@@ -203,7 +207,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 		JPanel mainPanelCenter = new JPanel(new BorderLayout());
 		JPanel mainPanelCenterUp = new JPanel();
 		JPanel mainPanelCenterCenter = new JPanel(new GridLayout(2, 2));
-		JPanel mainPanelCenterDown = new JPanel();
+		JPanel mainPanelCenterDown = new JPanel(new BorderLayout());
 		mainPanelCenter.add(mainPanelCenterUp, BorderLayout.NORTH);
 		mainPanelCenter.add(mainPanelCenterCenter, BorderLayout.CENTER);
 		mainPanelCenter.add(mainPanelCenterDown, BorderLayout.SOUTH);
@@ -226,7 +230,8 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 		mainPanel.setLayout(new BorderLayout());
 		mainPanel.add(mainPanelNorth, "North");
 		mainPanel.add(mainPanelCenter, "Center");
-		add(mainPanel);
+		setLayout(new BorderLayout());
+		add(mainPanel, BorderLayout.CENTER);
 
 		JPanel buttons = new JPanel();
 		SaveButton saveButton = new SaveButton("Save GCM", GCMNameTextField);
@@ -245,7 +250,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 		JSplitPane pane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, null,
 				buttons);
 		pane.setDividerSize(2);
-		mainPanelCenterDown.add(pane);
+		mainPanelCenterDown.add(pane, BorderLayout.CENTER);
 		
 		promoters = new PropertyList("Promoter List");
 		EditButton addInit = new EditButton("Add Promoter", promoters);

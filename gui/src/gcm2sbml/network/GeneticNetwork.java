@@ -89,7 +89,7 @@ public class GeneticNetwork {
 			HashMap<String, Promoter> promoters, String gcm, String filename) {
 		
 		GCMFile file = new GCMFile();
-		file.load(gcm);
+		file.load(currentRoot+gcm);
 		AbstractPrintVisitor.setGCMFile(file);
 		setSpecies(species);
 		setPromoters(promoters);
