@@ -202,7 +202,7 @@ public class GeneticNetwork {
 			}
 
 			SBMLDocument document = new SBMLReader().readSBML(currentRoot + sbmlDocument);
-			checkConsistancy(document);
+			//checkConsistancy(document);
 			currentDocument = document;
 			outputSBML(filename, document);
 		} catch (Exception e) {
