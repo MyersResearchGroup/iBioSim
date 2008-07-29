@@ -316,7 +316,10 @@ public class InfluencePanel extends JPanel implements ActionListener {
 
 	private void loadProperties(Properties property) {
 		for (Object o : property.keySet()) {
-			if (fields.containsKey(o.toString())) {
+			if (o.equals(GlobalConstants.NAME)) {
+				//do nothing
+			}
+			else if (fields.containsKey(o.toString())) {
 				fields.get(o.toString()).setValue(
 						property.getProperty(o.toString()));
 				fields.get(o.toString()).setCustom();
