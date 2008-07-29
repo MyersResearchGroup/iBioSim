@@ -110,6 +110,10 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 		return gcm;
 	}
 
+	public String getSBMLFile() {
+		return (String) sbmlFiles.getSelectedItem();
+	}
+
 	public void save(String command) {
 		dirty = false;
 
