@@ -1,6 +1,7 @@
 package gcm2sbml.gui;
 
 import gcm2sbml.network.GeneticNetwork;
+import gcm2sbml.parser.CompatibilityFixer;
 import gcm2sbml.parser.GCMFile;
 import gcm2sbml.parser.GCMParser;
 import gcm2sbml.util.Utility;
@@ -346,9 +347,9 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 		HashSet<String> results = new HashSet<String>();
 		for (String s : gcm.getParameters().keySet()) {
 			if (gcm.getGlobalParameters().containsKey(s)) {
-				results.add(s + ", Custom, " + gcm.getParameter(s));
+				results.add(CompatibilityFixer.getGuiName(s) + ", Custom, " + gcm.getParameter(s));
 			} else {
-				results.add(s + ", Default, " + gcm.getParameter(s));
+				results.add(CompatibilityFixer.getGuiName(s) + ", Default, " + gcm.getParameter(s));
 			}
 		}
 		return results;

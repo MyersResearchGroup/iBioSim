@@ -14,8 +14,13 @@ public class CompatibilityFixer {
 		return sbmlName.get(id);
 	}
 	
+	public static String getGCMName(String guiid) {
+		return gcmName.get(guiid);
+	}
+	
 	private static HashMap<String, String> guiName = null;
 	private static HashMap<String, String> sbmlName = null;
+	private static HashMap<String, String> gcmName = null;
 	
 	public final static String GUI_NAME_STRING = "ID";
 	public final static String SBML_NAME_STRING = "";
@@ -69,6 +74,7 @@ public class CompatibilityFixer {
 	static {		
 		guiName = new HashMap<String, String>();
 		sbmlName = new HashMap<String, String>();
+		gcmName = new HashMap<String, String>();
 		
 		//guiName.put(GlobalConstants.NAME, GUI_NAME_STRING);
 		//sbmlName.put(GlobalConstants.NAME, SBML_NAME_STRING);
@@ -117,5 +123,9 @@ public class CompatibilityFixer {
 		
 		guiName.put(GlobalConstants.KACT_STRING, GUI_KACT_STRING);
 		sbmlName.put(GlobalConstants.KACT_STRING, SBML_KACT_STRING);
+		
+		for (String i : guiName.keySet()) {
+			gcmName.put(guiName.get(i), i);
+		}
 	}
 }
