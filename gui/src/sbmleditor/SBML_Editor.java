@@ -491,8 +491,6 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		JLabel compartmentsLabel = new JLabel("List of Compartments:");
 		compartments = new JList();
 		JScrollPane scroll = new JScrollPane();
-		scroll.setMinimumSize(new Dimension(260, 130));
-		scroll.setPreferredSize(new Dimension(276, 130));
 		scroll.setViewportView(compartments);
 		ListOf listOfCompartments = model.getListOfCompartments();
 		comps = new String[(int) model.getNumCompartments()];
@@ -556,8 +554,6 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		species = new JList();
 		species.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		JScrollPane scroll1 = new JScrollPane();
-		scroll1.setMinimumSize(new Dimension(260, 130));
-		scroll1.setPreferredSize(new Dimension(276, 130));
 		scroll1.setViewportView(species);
 		ListOf listOfSpecies = model.getListOfSpecies();
 		specs = new String[(int) model.getNumSpecies()];
@@ -642,8 +638,6 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		reactions = new JList();
 		reactions.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		JScrollPane scroll2 = new JScrollPane();
-		scroll2.setMinimumSize(new Dimension(400, 130));
-		scroll2.setPreferredSize(new Dimension(436, 130));
 		scroll2.setViewportView(reactions);
 		ListOf listOfReactions = model.getListOfReactions();
 		reacts = new String[(int) model.getNumReactions()];
@@ -702,8 +696,6 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		parameters = new JList();
 		parameters.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		JScrollPane scroll3 = new JScrollPane();
-		scroll3.setMinimumSize(new Dimension(260, 130));
-		scroll3.setPreferredSize(new Dimension(276, 130));
 		scroll3.setViewportView(parameters);
 		ListOf listOfParameters = model.getListOfParameters();
 		params = new String[(int) model.getNumParameters()];
@@ -744,15 +736,11 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 
 		// adds the main panel to the frame and displays it
 		JPanel mainPanelNorth = new JPanel();
-		JPanel mainPanelCenter = new JPanel(new BorderLayout());
-		JPanel mainPanelCenterUp = new JPanel();
-		JPanel mainPanelCenterDown = new JPanel();
-		mainPanelCenterUp.add(comp);
-		mainPanelCenterUp.add(spec);
-		mainPanelCenterDown.add(reac);
-		mainPanelCenterDown.add(param);
-		mainPanelCenter.add(mainPanelCenterUp, "North");
-		mainPanelCenter.add(mainPanelCenterDown, "South");
+		JPanel mainPanelCenter = new JPanel(new GridLayout(2, 2));
+		mainPanelCenter.add(comp);
+		mainPanelCenter.add(spec);
+		mainPanelCenter.add(reac);
+		mainPanelCenter.add(param);
 		modelID = new JTextField(model.getId(), 16);
 		modelName = new JTextField(model.getName(), 40);
 		JLabel modelIDLabel = new JLabel("Model ID:");
@@ -894,15 +882,11 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		JPanel specTypePanel = createPanel(model, "Species Types", specTypes, spTyp, addSpecType,
 				removeSpecType, editSpecType);
 
-		JPanel defnPanelNorth = new JPanel();
-		JPanel defnPanelSouth = new JPanel();
-		JPanel defnPanel = new JPanel(new BorderLayout());
-		defnPanelNorth.add(funcdefnPanel);
-		defnPanelNorth.add(unitdefnPanel);
-		defnPanelSouth.add(compTypePanel);
-		defnPanelSouth.add(specTypePanel);
-		defnPanel.add(defnPanelNorth, "North");
-		defnPanel.add(defnPanelSouth, "South");
+		JPanel defnPanel = new JPanel(new GridLayout(2, 2));
+		defnPanel.add(funcdefnPanel);
+		defnPanel.add(unitdefnPanel);
+		defnPanel.add(compTypePanel);
+		defnPanel.add(specTypePanel);
 		return defnPanel;
 	}
 
@@ -1018,15 +1002,11 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		}
 		JPanel eventPanel = createPanel(model, "Events", events, ev, addEvent, removeEvent, editEvent);
 
-		JPanel recPanelNorth = new JPanel();
-		JPanel recPanelSouth = new JPanel();
-		JPanel recPanel = new JPanel(new BorderLayout());
-		recPanelNorth.add(initPanel);
-		recPanelNorth.add(rulePanel);
-		recPanelSouth.add(constraintPanel);
-		recPanelSouth.add(eventPanel);
-		recPanel.add(recPanelNorth, "North");
-		recPanel.add(recPanelSouth, "South");
+		JPanel recPanel = new JPanel(new GridLayout(2, 2));
+		recPanel.add(initPanel);
+		recPanel.add(rulePanel);
+		recPanel.add(constraintPanel);
+		recPanel.add(eventPanel);
 		return recPanel;
 	}
 
