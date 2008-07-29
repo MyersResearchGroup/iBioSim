@@ -1,5 +1,6 @@
 package gcm2sbml.gui;
 
+import gcm2sbml.parser.CompatibilityFixer;
 import gcm2sbml.parser.GCMFile;
 import gcm2sbml.util.Utility;
 
@@ -20,6 +21,7 @@ public class ParameterPanel extends JPanel {
 
 		fields = new HashMap<String, PropertyField>();
 		selected = totalSelected.substring(0, totalSelected.indexOf(","));
+		selected = CompatibilityFixer.getGCMName(selected);
 
 		// Initial field
 		PropertyField field = new PropertyField(selected, gcm
