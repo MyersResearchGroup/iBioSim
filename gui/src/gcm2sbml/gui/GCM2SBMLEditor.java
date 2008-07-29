@@ -62,6 +62,14 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 		}
 		buildGui(this.filename);
 	}
+	
+	public String getFilename() {
+		return filename;
+	}
+	
+	public String getGCMName() {
+		return gcmname;
+	}
 
 	public void mouseClicked(MouseEvent e) {
 		if (e.getClickCount() == 2) {
@@ -109,17 +117,22 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 		}
 		GeneticNetwork.setRoot(path + File.separator);
 
-		// Write out species and influences to a gcm file
-		gcm.save(path + File.separator + gcmname + ".gcm");
 		if (command.contains("GCM as")) {
 			String newName = JOptionPane.showInputDialog(biosim.frame(), "Enter GCM name:", "GCM Name",
 					JOptionPane.PLAIN_MESSAGE);
+			if (newName == null) {
+				return;
+			}
 			if (newName.contains(".gcm")) {
 				newName.replace(".gcm", "");
 			}
 			saveAs(newName);
+			return;
 		}
 		
+		// Write out species and influences to a gcm file
+		gcm.save(path + File.separator + gcmname + ".gcm");
+
 		if (command.contains("template")) {
 			GCMParser parser = new GCMParser(path + File.separator + gcmname
 					+ ".gcm");
@@ -166,21 +179,25 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 	public void saveAs(String newName) {
 		if (new File(path + File.separator + newName + ".gcm").exists()) {
 			int value = JOptionPane.showOptionDialog(this, newName
-					+ "already exists.  Overwrite file?",
+					+ " already exists.  Overwrite file?",
 					"Save file", JOptionPane.YES_NO_OPTION,
 					JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 			if (value == JOptionPane.YES_OPTION) {
-				gcm.save(path + File.separator + newName + ".gcm");
-				biosim.refreshTree();
+				gcm.save(path + File.separator + newName + ".gcm");				
 				
 			} else {
-				// Do nothing
-			}
+				// Do nothing				
+				return;
+			}			
 		}
 		else {
 			gcm.save(path + File.separator + newName + ".gcm");
-			biosim.refreshTree();
 		}
+		filename = newName+".gcm";
+		gcmname = newName;
+		gcm.load(path + File.separator + newName + ".gcm");
+		GCMNameTextField.setText(newName);
+		biosim.refreshTree();
 	}
 
 	public void actionPerformed(ActionEvent e) {
@@ -211,7 +228,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 		mainPanelCenter.add(mainPanelCenterUp, BorderLayout.NORTH);
 		mainPanelCenter.add(mainPanelCenterCenter, BorderLayout.CENTER);
 		mainPanelCenter.add(mainPanelCenterDown, BorderLayout.SOUTH);
-		JTextField GCMNameTextField = new JTextField(filename.replace(".gcm",
+		GCMNameTextField = new JTextField(filename.replace(".gcm",
 				""), 15);
 		GCMNameTextField.setEditable(false);
 		GCMNameTextField.addActionListener(this);
@@ -479,6 +496,8 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 	}
 	
 	private boolean lock = false;
+	
+	private JTextField GCMNameTextField = null;
 
 	private String[] options = { "Ok", "Cancel" };
 
