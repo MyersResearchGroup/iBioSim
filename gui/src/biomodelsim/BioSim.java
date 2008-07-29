@@ -3631,8 +3631,7 @@ public class BioSim implements MouseListener, ActionListener {
 			}
 			if (this.tab.getComponentAt(i) instanceof GCM2SBMLEditor) {
 				GCM2SBMLEditor gcm = (GCM2SBMLEditor) this.tab.getComponentAt(i);
-				GCMFile gcmFile = gcm.getGCM();
-				if (gcmFile.getSBMLFile().equals(updatedFile)) {
+				if (gcm.getSBMLFile().equals(updatedFile)) {
 					gcm.save("save");
 				}
 			}
