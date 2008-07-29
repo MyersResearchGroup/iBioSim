@@ -3550,6 +3550,7 @@ public class BioSim implements MouseListener, ActionListener {
 		for (int i = 0; i < tab.getTabCount(); i++) {
 			if (tab.getTitleAt(i).contains(".gcm")) {
 				((GCM2SBMLEditor) tab.getComponentAt(i)).reloadFiles();
+				tab.setTitleAt(i, ((GCM2SBMLEditor) tab.getComponentAt(i)).getFilename());
 			}
 		}
 	}
