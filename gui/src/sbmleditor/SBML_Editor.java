@@ -2011,7 +2011,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					- newFile.split(separator)[newFile.split(separator).length - 1].length())
 					+ simName;
 			try {
-				log.addText("Saving sbml file as:\n" + newFile + "\n");
+				log.addText("Saving SBML file as:\n" + newFile + "\n");
 				FileOutputStream out = new FileOutputStream(new File(newFile));
 				SBMLWriter writer = new SBMLWriter();
 				String doc = writer.writeToString(document);
@@ -9112,7 +9112,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		}
 		else {
 			try {
-				log.addText("Saving sbml file:\n" + file + "\n");
+				log.addText("Saving SBML file:\n" + file + "\n");
 				FileOutputStream out = new FileOutputStream(new File(file));
 				document.getModel().setName(modelName.getText().trim());
 				SBMLWriter writer = new SBMLWriter();

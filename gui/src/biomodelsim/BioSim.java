@@ -731,7 +731,8 @@ public class BioSim implements MouseListener, ActionListener {
 				}
 				else {
 					File work = new File(directory);
-					addTab(theFile, new GCM2SBMLEditor(work.getAbsolutePath(), theFile, this), "GCM Editor");
+					addTab(theFile, new GCM2SBMLEditor(work.getAbsolutePath(), theFile, this, log),
+							"GCM Editor");
 				}
 			}
 			catch (Exception e1) {
@@ -1181,7 +1182,7 @@ public class BioSim implements MouseListener, ActionListener {
 							if (i != -1) {
 								tab.remove(i);
 							}
-							addTab(f.getName(), new GCM2SBMLEditor(root + separator, f.getName(), this),
+							addTab(f.getName(), new GCM2SBMLEditor(root + separator, f.getName(), this, log),
 									"GCM Editor");
 							refreshTree();
 						}
@@ -2531,7 +2532,7 @@ public class BioSim implements MouseListener, ActionListener {
 							tab.setSelectedIndex(i);
 						}
 						else {
-							addTab(theFile, new GCM2SBMLEditor(work.getAbsolutePath(), theFile, this),
+							addTab(theFile, new GCM2SBMLEditor(work.getAbsolutePath(), theFile, this, log),
 									"GCM Editor");
 						}
 					}
