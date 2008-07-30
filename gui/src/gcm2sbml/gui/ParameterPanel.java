@@ -20,7 +20,7 @@ public class ParameterPanel extends JPanel {
 		this.gcm = gcm;
 
 		fields = new HashMap<String, PropertyField>();
-		selected = totalSelected.substring(0, totalSelected.indexOf(","));
+		selected = totalSelected.substring(0, totalSelected.indexOf(" ("));
 		selected = CompatibilityFixer.getGCMName(selected);
 
 		// Initial field

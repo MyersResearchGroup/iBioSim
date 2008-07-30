@@ -351,9 +351,9 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 		HashSet<String> results = new HashSet<String>();
 		for (String s : gcm.getParameters().keySet()) {
 			if (gcm.getGlobalParameters().containsKey(s)) {
-				results.add(CompatibilityFixer.getGuiName(s) + ", Custom, " + gcm.getParameter(s));
+				results.add(CompatibilityFixer.getGuiName(s) + " ("+CompatibilityFixer.getSBMLName(s)+"), Custom, " + gcm.getParameter(s));
 			} else {
-				results.add(CompatibilityFixer.getGuiName(s) + ", Default, " + gcm.getParameter(s));
+				results.add(CompatibilityFixer.getGuiName(s) + " ("+CompatibilityFixer.getSBMLName(s)+"), Default, " + gcm.getParameter(s));
 			}
 		}
 		return results;
