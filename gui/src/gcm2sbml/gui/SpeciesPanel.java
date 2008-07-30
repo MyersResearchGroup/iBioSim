@@ -149,6 +149,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			gcm.addSpecies(id, property);
 			speciesList.removeItem(oldName);
 			speciesList.addItem(id);
+			speciesList.setSelectedValue(id, true);
 
 		} else if (value == JOptionPane.NO_OPTION) {
 			// System.out.println();

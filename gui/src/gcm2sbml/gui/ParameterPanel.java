@@ -60,16 +60,17 @@ public class ParameterPanel extends JPanel {
 				Utility.createErrorMessage("Error", "Illegal values entered.");
 				return false;
 			}
-			String newItem = selected;
+			String newItem = CompatibilityFixer.getGuiName(selected);
 			if (fields.get(selected).getState().equals(PropertyField.states[1])) {
 				gcm.setParameter(selected, fields.get(selected).getValue());
-				newItem = newItem + ", Custom, " + fields.get(selected).getValue();
+				newItem = newItem +  " ("+CompatibilityFixer.getSBMLName(selected)+"), Custom, " + fields.get(selected).getValue();
 			} else if (fields.get(selected).getState().equals(PropertyField.states[0])) {
 				gcm.removeParameter(selected);
-				newItem = newItem + ", Default, " + gcm.getParameter(selected);
+				newItem = newItem + " ("+CompatibilityFixer.getSBMLName(selected)+"), Default, " + gcm.getParameter(selected);
 			}
 			parameterList.removeItem(totalSelected);
-			parameterList.addItem(newItem);			
+			parameterList.addItem(newItem);
+			parameterList.setSelectedValue(newItem, true);
 		} else if (value == JOptionPane.NO_OPTION) {
 			// System.out.println();
 			return true;
