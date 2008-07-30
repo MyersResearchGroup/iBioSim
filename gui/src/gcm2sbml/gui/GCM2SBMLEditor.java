@@ -26,6 +26,7 @@ import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 
 import biomodelsim.BioSim;
+import biomodelsim.Log;
 
 /**
  * This is the GCM2SBMLEditor class. It takes in a gcm file and allows the user
@@ -46,12 +47,13 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 	private GCMFile gcm = null;
 
 	public GCM2SBMLEditor(String path) {
-		this(path, null, null);
+		this(path, null, null, null);
 	}
 
-	public GCM2SBMLEditor(String path, String filename, BioSim biosim) {
+	public GCM2SBMLEditor(String path, String filename, BioSim biosim, Log log) {
 		super();
 		this.biosim = biosim;
+		this.log = log;
 		this.path = path;
 		gcm = new GCMFile();
 		if (filename != null) {
@@ -129,13 +131,14 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 				return;
 			}
 			if (newName.contains(".gcm")) {
-				newName.replace(".gcm", "");
+				newName = newName.replace(".gcm", "");
 			}
 			saveAs(newName);
 			return;
 		}
 		
 		// Write out species and influences to a gcm file
+		log.addText("Saving GCM file:\n" + path + File.separator + gcmname + ".gcm\n");
 		gcm.save(path + File.separator + gcmname + ".gcm");
 
 		if (command.contains("template")) {
@@ -150,6 +153,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 				templateName = templateName + ".sbml";
 			}
 			network.buildTemplate(parser.getSpecies(), parser.getPromoters(), gcmname + ".gcm", path + File.separator + templateName);
+			log.addText("Saving GCM file as SBML template:\n" + path + File.separator + templateName + "\n");
 			biosim.refreshTree();
 		}
 		else if (command.contains("SBML")) {
@@ -165,6 +169,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 						"Save file", JOptionPane.YES_NO_OPTION,
 						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 				if (value == JOptionPane.YES_OPTION) {
+					log.addText("Saving GCM file as SBML file:\n" + path + File.separator + gcmname + ".sbml\n");
 					network
 							.mergeSBML(path + File.separator + gcmname
 									+ ".sbml");
@@ -173,6 +178,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 					// Do nothing
 				}
 			} else {
+				log.addText("Saving GCM file as SBML file:\n" + path + File.separator + gcmname + ".sbml\n");
 				network.mergeSBML(path + File.separator + gcmname + ".sbml");
 				biosim.refreshTree();
 			}
@@ -188,7 +194,8 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 					"Save file", JOptionPane.YES_NO_OPTION,
 					JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 			if (value == JOptionPane.YES_OPTION) {
-				gcm.save(path + File.separator + newName + ".gcm");				
+				log.addText("Saving GCM file as:\n" + path + File.separator + newName + ".gcm\n");
+				gcm.save(path + File.separator + newName + ".gcm");
 				
 			} else {
 				// Do nothing				
@@ -196,6 +203,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 			}			
 		}
 		else {
+			log.addText("Saving GCM file as:\n" + path + File.separator + newName + ".gcm\n");
 			gcm.save(path + File.separator + newName + ".gcm");
 		}
 		filename = newName+".gcm";
@@ -521,6 +529,8 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 	private static final String none = "--none--";
 
 	private BioSim biosim = null;
+	
+	private Log log = null;
 
 	private boolean dirty = false;
 }
