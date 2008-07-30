@@ -159,6 +159,7 @@ public class PromoterPanel extends JPanel {
 			gcm.addPromoter(id, property);
 			promoterList.removeItem(oldName);
 			promoterList.addItem(id);
+			promoterList.setSelectedValue(id, true);
 
 		} else if (value == JOptionPane.NO_OPTION) {
 			// System.out.println();

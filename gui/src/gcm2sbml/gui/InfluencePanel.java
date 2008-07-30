@@ -236,6 +236,7 @@ public class InfluencePanel extends JPanel implements ActionListener {
 			}
 			list.removeItem(id);
 			list.addItem(id);
+			list.setSelectedValue(id, true);
 			gcm.addInfluences(id, property);
 		} else if (value == JOptionPane.NO_OPTION) {
 			// System.out.println();
