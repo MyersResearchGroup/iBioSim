@@ -52,7 +52,7 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 	public void visitDimer(DimerSpecies specie) {
 		loadValues(specie.getProperties());
 		//Check if they have decay rates, if not, then don't allow decay
-		if (!dimerizationAbstraction) {
+		if (!dimerizationAbstraction && decay > 0) {
 			Reaction r = new Reaction("Degradation_"+specie.getName());
 			r.addReactant(new SpeciesReference(specie.getName(), 1));
 			r.setReversible(false);
@@ -67,7 +67,7 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 
 	public void visitBiochemical(BiochemicalSpecies specie) {
 		loadValues(specie.getProperties());
-		if (!biochemicalAbstraction) {
+		if (!biochemicalAbstraction && decay > 0) {
 			Reaction r = new Reaction("Degradation_"+specie.getName());
 			r.addReactant(new SpeciesReference(specie.getName(), 1));
 			r.setReversible(false);

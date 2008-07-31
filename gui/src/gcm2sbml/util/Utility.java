@@ -85,7 +85,7 @@ public class Utility {
 			double amount) {
 		Species specie = new Species(id, id);
 		specie.setCompartment(compartment);
-		specie.setInitialAmount(amount);
+		specie.setInitialAmount(amount);		
 		return specie;
 	}
 

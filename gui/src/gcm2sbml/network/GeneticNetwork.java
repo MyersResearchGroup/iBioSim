@@ -154,6 +154,7 @@ public class GeneticNetwork {
 			Model m = document.getModel();
 			//checkConsistancy(document);
 			SBMLWriter writer = new SBMLWriter();
+			//printParameters(document);
 			printSpecies(document);
 			printPromoters(document);
 			printRNAP(document);
@@ -217,7 +218,10 @@ public class GeneticNetwork {
 	 */
 	private void printParameters(SBMLDocument document) {
 		if (properties != null) {
-			
+			for (String s : properties.getGlobalParameters().keySet()) {
+				String param = properties.getParameter(s);
+				//Utility.addGlobalParameter(document, new Parameter())
+			}
 		}
 	}
 
@@ -461,7 +465,7 @@ public class GeneticNetwork {
 	 *            the SBML document
 	 */
 	private void printSpecies(SBMLDocument document) {
-		double init = 1;
+		double init = 0;
 		if (properties != null) {
 			init = Double.parseDouble(properties
 					.getParameter(GlobalConstants.INITIAL_STRING));
@@ -564,7 +568,7 @@ public class GeneticNetwork {
 			rnap = Double.parseDouble(properties
 					.getParameter(GlobalConstants.RNAP_STRING));
 		}
-		Species s = Utility.makeSpecies("RNAP", compartment, rnap);
+		Species s = Utility.makeSpecies("RNAP", compartment, rnap);		
 		s.setHasOnlySubstanceUnits(true);
 		Utility.addSpecies(document, s);
 	}
@@ -625,6 +629,7 @@ public class GeneticNetwork {
 			}
 			for (int i = 2; i <= dimerValue; i++) {
 				DimerSpecies dimer = new DimerSpecies(specie, i);
+				dimer.addProperty(GlobalConstants.KDECAY_STRING, "0");
 				dimers.put(dimer.getName(), dimer);
 			}
 		}
@@ -681,6 +686,7 @@ public class GeneticNetwork {
 				for (Reaction reaction : reactions) {
 					promoter.addToReactionMap(bio, reaction);
 				}
+				bio.addProperty(GlobalConstants.KDECAY_STRING, "0");
 				species.put(bio.getName(), bio);
 			}
 
@@ -701,6 +707,7 @@ public class GeneticNetwork {
 					promoter.addToReactionMap(bio, reaction);
 				}
 				promoter.addRepressor(bio);
+				bio.addProperty(GlobalConstants.KDECAY_STRING, "0");
 				species.put(bio.getName(), bio);
 			}
 		}
