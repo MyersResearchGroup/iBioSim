@@ -1151,40 +1151,18 @@ public class BioSim implements MouseListener, ActionListener {
 									JOptionPane.ERROR_MESSAGE);
 						}
 						else {
-							File f = new File(root + separator + simName);
-							if (f.exists()) {
-								Object[] options = { "Overwrite", "Cancel" };
-								int value = JOptionPane.showOptionDialog(frame, "File already exists."
-										+ "\nDo you want to overwrite?", "Overwrite", JOptionPane.YES_NO_OPTION,
-										JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-								if (value == JOptionPane.YES_OPTION) {
-									File dir = new File(root + separator + simName);
-									if (dir.isDirectory()) {
-										deleteDir(dir);
-									}
-									else {
-										System.gc();
-										dir.delete();
-									}
-									for (int i = 0; i < tab.getTabCount(); i++) {
-										if (tab.getTitleAt(i).equals(simName)) {
-											tab.remove(i);
-										}
-									}
+							if (overwrite(root + separator + simName, simName)) {
+								File f = new File(root + separator + simName);
+								f.createNewFile();
+								new GCMFile().save(f.getAbsolutePath());
+								int i = getTab(f.getName());
+								if (i != -1) {
+									tab.remove(i);
 								}
-								else {
-									return;
-								}
+								addTab(f.getName(), new GCM2SBMLEditor(root + separator, f.getName(), this, log),
+										"GCM Editor");
+								refreshTree();
 							}
-							f.createNewFile();
-							new GCMFile().save(f.getAbsolutePath());
-							int i = getTab(f.getName());
-							if (i != -1) {
-								tab.remove(i);
-							}
-							addTab(f.getName(), new GCM2SBMLEditor(root + separator, f.getName(), this, log),
-									"GCM Editor");
-							refreshTree();
 						}
 					}
 				}
@@ -1226,50 +1204,29 @@ public class BioSim implements MouseListener, ActionListener {
 									JOptionPane.ERROR_MESSAGE);
 						}
 						else {
-							File f = new File(root + separator + simName);
-							if (f.exists()) {
-								Object[] options = { "Overwrite", "Cancel" };
-								int value = JOptionPane.showOptionDialog(frame, "File already exists."
-										+ "\nDo you want to overwrite?", "Overwrite", JOptionPane.YES_NO_OPTION,
-										JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-								if (value == JOptionPane.YES_OPTION) {
-									File dir = new File(root + separator + simName);
-									if (dir.isDirectory()) {
-										deleteDir(dir);
-									}
-									else {
-										System.gc();
-										dir.delete();
-									}
-									for (int i = 0; i < tab.getTabCount(); i++) {
-										if (tab.getTitleAt(i).equals(simName)) {
-											tab.remove(i);
-										}
-									}
-								}
-								else {
-									return;
-								}
+							if (overwrite(root + separator + simName, simName)) {
+								File f = new File(root + separator + simName);
+								f.createNewFile();
+								SBMLDocument document = new SBMLDocument();
+								document.createModel();
+								// document.setLevel(2);
+								document.setLevelAndVersion(2, 3);
+								Compartment c = document.getModel().createCompartment();
+								c.setId("default");
+								c.setSize(1.0);
+								document.getModel().setId(modelID);
+								FileOutputStream out = new FileOutputStream(f);
+								SBMLWriter writer = new SBMLWriter();
+								String doc = writer.writeToString(document);
+								byte[] output = doc.getBytes();
+								out.write(output);
+								out.close();
+								addTab(
+										f.getAbsolutePath().split(separator)[f.getAbsolutePath().split(separator).length - 1],
+										new SBML_Editor(f.getAbsolutePath(), null, log, this, null, null),
+										"SBML Editor");
+								refreshTree();
 							}
-							f.createNewFile();
-							SBMLDocument document = new SBMLDocument();
-							document.createModel();
-							// document.setLevel(2);
-							document.setLevelAndVersion(2, 3);
-							Compartment c = document.getModel().createCompartment();
-							c.setId("default");
-							c.setSize(1.0);
-							document.getModel().setId(modelID);
-							FileOutputStream out = new FileOutputStream(f);
-							SBMLWriter writer = new SBMLWriter();
-							String doc = writer.writeToString(document);
-							byte[] output = doc.getBytes();
-							out.write(output);
-							out.close();
-							addTab(
-									f.getAbsolutePath().split(separator)[f.getAbsolutePath().split(separator).length - 1],
-									new SBML_Editor(f.getAbsolutePath(), null, log, this, null, null), "SBML Editor");
-							refreshTree();
 						}
 					}
 				}
@@ -1421,37 +1378,14 @@ public class BioSim implements MouseListener, ActionListener {
 					else {
 						graphName += ".grf";
 					}
-					File f = new File(root + separator + graphName);
-					if (f.exists()) {
-						Object[] options = { "Overwrite", "Cancel" };
-						int value = JOptionPane.showOptionDialog(frame, "File already exists."
-								+ "\nDo you want to overwrite?", "Overwrite", JOptionPane.YES_NO_OPTION,
-								JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-						if (value == JOptionPane.YES_OPTION) {
-							File dir = new File(root + separator + graphName);
-							if (dir.isDirectory()) {
-								deleteDir(dir);
-							}
-							else {
-								System.gc();
-								dir.delete();
-							}
-							for (int i = 0; i < tab.getTabCount(); i++) {
-								if (tab.getTitleAt(i).equals(graphName)) {
-									tab.remove(i);
-								}
-							}
-						}
-						else {
-							return;
-						}
+					if (overwrite(root + separator + graphName, graphName)) {
+						Graph g = new Graph(null, "amount", graphName.trim().substring(0,
+								graphName.length() - 4), "tsd.printer", root, "time", this, null, log, graphName
+								.trim(), true, false);
+						addTab(graphName.trim(), g, "TSD Graph");
+						g.save();
+						refreshTree();
 					}
-					Graph g = new Graph(null, "amount",
-							graphName.trim().substring(0, graphName.length() - 4), "tsd.printer", root, "time",
-							this, null, log, graphName.trim(), true, false);
-					addTab(graphName.trim(), g, "TSD Graph");
-					g.save();
-					refreshTree();
 				}
 			}
 			else {
@@ -1474,37 +1408,14 @@ public class BioSim implements MouseListener, ActionListener {
 					else {
 						graphName += ".prb";
 					}
-					File f = new File(root + separator + graphName);
-					if (f.exists()) {
-						Object[] options = { "Overwrite", "Cancel" };
-						int value = JOptionPane.showOptionDialog(frame, "File already exists."
-								+ "\nDo you want to overwrite?", "Overwrite", JOptionPane.YES_NO_OPTION,
-								JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-						if (value == JOptionPane.YES_OPTION) {
-							File dir = new File(root + separator + graphName);
-							if (dir.isDirectory()) {
-								deleteDir(dir);
-							}
-							else {
-								System.gc();
-								dir.delete();
-							}
-							for (int i = 0; i < tab.getTabCount(); i++) {
-								if (tab.getTitleAt(i).equals(graphName)) {
-									tab.remove(i);
-								}
-							}
-						}
-						else {
-							return;
-						}
+					if (overwrite(root + separator + graphName, graphName)) {
+						Graph g = new Graph(null, "amount", graphName.trim().substring(0,
+								graphName.length() - 4), "tsd.printer", root, "time", this, null, log, graphName
+								.trim(), false, false);
+						addTab(graphName.trim(), g, "Probability Graph");
+						g.save();
+						refreshTree();
 					}
-					Graph g = new Graph(null, "amount",
-							graphName.trim().substring(0, graphName.length() - 4), "tsd.printer", root, "time",
-							this, null, log, graphName.trim(), false, false);
-					addTab(graphName.trim(), g, "Probability Graph");
-					g.save();
-					refreshTree();
 				}
 			}
 			else {
@@ -1529,72 +1440,51 @@ public class BioSim implements MouseListener, ActionListener {
 				if (lrnName != null && !lrnName.trim().equals("")) {
 					lrnName = lrnName.trim();
 					try {
-						File f = new File(root + separator + lrnName);
-						if (f.exists()) {
-							Object[] options = { "Overwrite", "Cancel" };
-							int value = JOptionPane.showOptionDialog(frame, "File already exists."
-									+ "\nDo you want to overwrite?", "Overwrite", JOptionPane.YES_NO_OPTION,
-									JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-							if (value == JOptionPane.YES_OPTION) {
-								File dir = new File(root + separator + lrnName);
-								if (dir.isDirectory()) {
-									deleteDir(dir);
-								}
-								else {
-									System.gc();
-									dir.delete();
-								}
-								for (int i = 0; i < tab.getTabCount(); i++) {
-									if (tab.getTitleAt(i).equals(lrnName)) {
-										tab.remove(i);
-									}
-								}
+						if (overwrite(root + separator + lrnName, lrnName)) {
+							new File(root + separator + lrnName).mkdir();
+							// new FileWriter(new File(root + separator + lrnName + separator
+							// +
+							// ".lrn")).close();
+							String sbmlFile = tree.getFile();
+							String[] getFilename = sbmlFile.split(separator);
+							String sbmlFileNoPath = getFilename[getFilename.length - 1];
+							try {
+								FileOutputStream out = new FileOutputStream(new File(root + separator
+										+ lrnName.trim() + separator + lrnName.trim() + ".lrn"));
+								out.write(("genenet.file=" + sbmlFileNoPath + "\n").getBytes());
+								out.close();
 							}
-							else {
-								return;
+							catch (Exception e1) {
+								JOptionPane.showMessageDialog(frame, "Unable to save parameter file!",
+										"Error Saving File", JOptionPane.ERROR_MESSAGE);
 							}
+							refreshTree();
+							JTabbedPane lrnTab = new JTabbedPane();
+							lrnTab.addTab("Data Manager", new DataManager(root + separator + lrnName, this));
+							lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Data Manager");
+							lrnTab.addTab("Learn", new Learn(root + separator + lrnName, log, this));
+							lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Learn");
+							lrnTab.addTab("TSD Graph", new Graph(null, "amount", lrnName + " data",
+									"tsd.printer", root + separator + lrnName, "time", this, null, log, null, true,
+									true));
+							lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("TSD Graph");
+							/*
+							 * JLabel noData = new JLabel("No data available"); Font font =
+							 * noData.getFont(); font = font.deriveFont(Font.BOLD, 42.0f);
+							 * noData.setFont(font);
+							 * noData.setHorizontalAlignment(SwingConstants.CENTER);
+							 * lrnTab.addTab("Learn", noData);
+							 * lrnTab.getComponentAt(lrnTab.getComponents().length -
+							 * 1).setName("Learn"); JLabel noData1 = new JLabel("No data
+							 * available"); font = noData1.getFont(); font =
+							 * font.deriveFont(Font.BOLD, 42.0f); noData1.setFont(font);
+							 * noData1.setHorizontalAlignment(SwingConstants.CENTER);
+							 * lrnTab.addTab("TSD Graph", noData1);
+							 * lrnTab.getComponentAt(lrnTab.getComponents().length -
+							 * 1).setName("TSD Graph");
+							 */
+							addTab(lrnName, lrnTab, null);
 						}
-						new File(root + separator + lrnName).mkdir();
-						// new FileWriter(new File(root + separator + lrnName + separator +
-						// ".lrn")).close();
-						String sbmlFile = tree.getFile();
-						String[] getFilename = sbmlFile.split(separator);
-						String sbmlFileNoPath = getFilename[getFilename.length - 1];
-						try {
-							FileOutputStream out = new FileOutputStream(new File(root + separator
-									+ lrnName.trim() + separator + lrnName.trim() + ".lrn"));
-							out.write(("genenet.file=" + sbmlFileNoPath + "\n").getBytes());
-							out.close();
-						}
-						catch (Exception e1) {
-							JOptionPane.showMessageDialog(frame, "Unable to save parameter file!",
-									"Error Saving File", JOptionPane.ERROR_MESSAGE);
-						}
-						refreshTree();
-						JTabbedPane lrnTab = new JTabbedPane();
-						lrnTab.addTab("Data Manager", new DataManager(root + separator + lrnName, this));
-						lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Data Manager");
-						lrnTab.addTab("Learn", new Learn(root + separator + lrnName, log, this));
-						lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Learn");
-						lrnTab.addTab("TSD Graph", new Graph(null, "amount", lrnName + " data", "tsd.printer",
-								root + separator + lrnName, "time", this, null, log, null, true, true));
-						lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("TSD Graph");
-						/*
-						 * JLabel noData = new JLabel("No data available"); Font font =
-						 * noData.getFont(); font = font.deriveFont(Font.BOLD, 42.0f);
-						 * noData.setFont(font);
-						 * noData.setHorizontalAlignment(SwingConstants.CENTER);
-						 * lrnTab.addTab("Learn", noData);
-						 * lrnTab.getComponentAt(lrnTab.getComponents().length -
-						 * 1).setName("Learn"); JLabel noData1 = new JLabel("No data
-						 * available"); font = noData1.getFont(); font =
-						 * font.deriveFont(Font.BOLD, 42.0f); noData1.setFont(font);
-						 * noData1.setHorizontalAlignment(SwingConstants.CENTER);
-						 * lrnTab.addTab("TSD Graph", noData1);
-						 * lrnTab.getComponentAt(lrnTab.getComponents().length -
-						 * 1).setName("TSD Graph");
-						 */
-						addTab(lrnName, lrnTab, null);
 					}
 					catch (Exception e1) {
 						JOptionPane.showMessageDialog(frame, "Unable to create Learn View directory.", "Error",
@@ -1673,6 +1563,17 @@ public class BioSim implements MouseListener, ActionListener {
 							copy += ".grf";
 						}
 					}
+					else if (tree.getFile().length() >= 4
+							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".prb")) {
+						if (copy.length() > 3) {
+							if (!copy.substring(copy.length() - 4).equals(".prb")) {
+								copy += ".prb";
+							}
+						}
+						else {
+							copy += ".prb";
+						}
+					}
 				}
 				if (copy
 						.equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
@@ -1681,33 +1582,7 @@ public class BioSim implements MouseListener, ActionListener {
 							JOptionPane.ERROR_MESSAGE);
 					return;
 				}
-				boolean write = true;
-				if (new File(root + separator + copy).exists()) {
-					Object[] options = { "Overwrite", "Cancel" };
-					int value = JOptionPane.showOptionDialog(frame, "File already exists."
-							+ "\nDo you want to overwrite?", "Overwrite", JOptionPane.YES_NO_OPTION,
-							JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-					if (value == JOptionPane.YES_OPTION) {
-						write = true;
-						File dir = new File(root + separator + copy);
-						if (dir.isDirectory()) {
-							deleteDir(dir);
-						}
-						else {
-							System.gc();
-							dir.delete();
-						}
-						for (int i = 0; i < tab.getTabCount(); i++) {
-							if (tab.getTitleAt(i).equals(copy)) {
-								tab.remove(i);
-							}
-						}
-					}
-					else {
-						write = false;
-					}
-				}
-				if (write) {
+				if (overwrite(root + separator + copy, copy)) {
 					if (modelID != null) {
 						SBMLReader reader = new SBMLReader();
 						SBMLDocument document = new SBMLDocument();
@@ -1778,8 +1653,12 @@ public class BioSim implements MouseListener, ActionListener {
 												ss.length() - 4).equals(".sim")) && !ss.equals(".sim")) {
 									FileOutputStream out;
 									if (ss.substring(ss.length() - 4).equals(".pms")) {
-										out = new FileOutputStream(new File(root + separator + copy + separator
-												+ ss.substring(0, ss.length() - 4) + ".sim"));
+										out = new FileOutputStream(new File(root + separator + copy + separator + copy
+												+ ".sim"));
+									}
+									else if (ss.substring(ss.length() - 4).equals(".sim")) {
+										out = new FileOutputStream(new File(root + separator + copy + separator + copy
+												+ ".sim"));
 									}
 									else {
 										out = new FileOutputStream(new File(root + separator + copy + separator + ss));
@@ -1803,8 +1682,14 @@ public class BioSim implements MouseListener, ActionListener {
 								if (ss.length() > 3
 										&& (ss.substring(ss.length() - 4).equals(".tsd") || ss.substring(
 												ss.length() - 4).equals(".lrn"))) {
-									FileOutputStream out = new FileOutputStream(new File(root + separator + copy
-											+ separator + ss));
+									FileOutputStream out;
+									if (ss.substring(ss.length() - 4).equals(".lrn")) {
+										out = new FileOutputStream(new File(root + separator + copy + separator + copy
+												+ ".lrn"));
+									}
+									else {
+										out = new FileOutputStream(new File(root + separator + copy + separator + ss));
+									}
 									FileInputStream in = new FileInputStream(
 											new File(tree.getFile() + separator + ss));
 									int read = in.read();
@@ -1892,6 +1777,17 @@ public class BioSim implements MouseListener, ActionListener {
 							rename += ".grf";
 						}
 					}
+					else if (tree.getFile().length() >= 4
+							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".prb")) {
+						if (rename.length() > 3) {
+							if (!rename.substring(rename.length() - 4).equals(".prb")) {
+								rename += ".prb";
+							}
+						}
+						else {
+							rename += ".prb";
+						}
+					}
 					if (rename
 							.equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
 						JOptionPane.showMessageDialog(frame, "Unable to rename file."
@@ -1899,33 +1795,7 @@ public class BioSim implements MouseListener, ActionListener {
 								JOptionPane.ERROR_MESSAGE);
 						return;
 					}
-					boolean write = true;
-					if (new File(root + separator + rename).exists()) {
-						Object[] options = { "Overwrite", "Cancel" };
-						int value = JOptionPane.showOptionDialog(frame, "File already exists."
-								+ "\nDo you want to overwrite?", "Overwrite", JOptionPane.YES_NO_OPTION,
-								JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-						if (value == JOptionPane.YES_OPTION) {
-							write = true;
-							File dir = new File(root + separator + rename);
-							if (dir.isDirectory()) {
-								deleteDir(dir);
-							}
-							else {
-								System.gc();
-								dir.delete();
-							}
-							for (int i = 0; i < tab.getTabCount(); i++) {
-								if (tab.getTitleAt(i).equals(rename)) {
-									tab.remove(i);
-								}
-							}
-						}
-						else {
-							write = false;
-						}
-					}
-					if (write) {
+					if (overwrite(root + separator + rename, rename)) {
 						new File(tree.getFile()).renameTo(new File(root + separator + rename));
 						if (modelID != null) {
 							SBMLReader reader = new SBMLReader();
@@ -1938,6 +1808,32 @@ public class BioSim implements MouseListener, ActionListener {
 							byte[] output = doc.getBytes();
 							out.write(output);
 							out.close();
+						}
+						if (new File(root + separator + rename).isDirectory()) {
+							if (new File(root + separator + rename + separator
+									+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]
+									+ ".sim").exists()) {
+								new File(root + separator + rename + separator
+										+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]
+										+ ".sim").renameTo(new File(root + separator + rename + separator + rename
+										+ ".sim"));
+							}
+							else if (new File(root + separator + rename + separator
+									+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]
+									+ ".pms").exists()) {
+								new File(root + separator + rename + separator
+										+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]
+										+ ".pms").renameTo(new File(root + separator + rename + separator + rename
+										+ ".sim"));
+							}
+							else if (new File(root + separator + rename + separator
+									+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]
+									+ ".lrn").exists()) {
+								new File(root + separator + rename + separator
+										+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]
+										+ ".lrn").renameTo(new File(root + separator + rename + separator + rename
+										+ ".lrn"));
+							}
 						}
 						for (int i = 0; i < tab.getTabCount(); i++) {
 							if (tab.getTitleAt(i).equals(
@@ -2280,33 +2176,7 @@ public class BioSim implements MouseListener, ActionListener {
 	 */
 	public void saveGcm(String filename, String path) {
 		try {
-			boolean write = true;
-			if (new File(root + separator + filename).exists()) {
-				Object[] options = { "Overwrite", "Cancel" };
-				int value = JOptionPane.showOptionDialog(frame, "File already exists."
-						+ "\nDo you want to overwrite?", "Overwrite", JOptionPane.YES_NO_OPTION,
-						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-				if (value == JOptionPane.YES_OPTION) {
-					write = true;
-					File dir = new File(root + separator + filename);
-					if (dir.isDirectory()) {
-						deleteDir(dir);
-					}
-					else {
-						System.gc();
-						dir.delete();
-					}
-					for (int i = 0; i < tab.getTabCount(); i++) {
-						if (tab.getTitleAt(i).equals(filename)) {
-							tab.remove(i);
-						}
-					}
-				}
-				else {
-					write = false;
-				}
-			}
-			if (write) {
+			if (overwrite(root + separator + filename, filename)) {
 				FileOutputStream out = new FileOutputStream(new File(root + separator + filename));
 				FileInputStream in = new FileInputStream(new File(path));
 				int read = in.read();
@@ -2736,91 +2606,68 @@ public class BioSim implements MouseListener, ActionListener {
 					JOptionPane.PLAIN_MESSAGE);
 			if (simName != null && !simName.trim().equals("")) {
 				simName = simName.trim();
-				File f = new File(root + separator + simName);
-				if (f.exists()) {
-					Object[] options = { "Overwrite", "Cancel" };
-					int value = JOptionPane.showOptionDialog(frame, "File already exists."
-							+ "\nDo you want to overwrite?", "Overwrite", JOptionPane.YES_NO_OPTION,
-							JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-					if (value == JOptionPane.YES_OPTION) {
-						File dir = new File(root + separator + simName);
-						if (dir.isDirectory()) {
-							deleteDir(dir);
-						}
-						else {
-							System.gc();
-							dir.delete();
-						}
-						for (int i = 0; i < tab.getTabCount(); i++) {
-							if (tab.getTitleAt(i).equals(simName)) {
-								tab.remove(i);
-							}
-						}
+				if (overwrite(root + separator + simName, simName)) {
+					new File(root + separator + simName).mkdir();
+					// new FileWriter(new File(root + separator + simName + separator +
+					// ".sim")).close();
+					String[] dot = tree.getFile().split(separator);
+					String sbmlFile = /*
+														 * root + separator + simName + separator +
+														 */(dot[dot.length - 1].substring(0, dot[dot.length - 1].length() - 3) + "sbml");
+					GCMParser parser = new GCMParser(tree.getFile());
+					GeneticNetwork network = parser.buildNetwork();
+					GeneticNetwork.setRoot(root + File.separator);
+					network.mergeSBML(root + separator + simName + separator + sbmlFile);
+					try {
+						FileOutputStream out = new FileOutputStream(new File(root + separator + simName.trim()
+								+ separator + simName.trim() + ".sim"));
+						out.write((dot[dot.length - 1] + "\n").getBytes());
+						out.close();
 					}
-					else {
-						return;
+					catch (Exception e1) {
+						JOptionPane.showMessageDialog(frame, "Unable to save parameter file!",
+								"Error Saving File", JOptionPane.ERROR_MESSAGE);
 					}
+					// network.outputSBML(root + separator + sbmlFile);
+					refreshTree();
+					sbmlFile = root + separator + simName + separator
+							+ (dot[dot.length - 1].substring(0, dot[dot.length - 1].length() - 3) + "sbml");
+					JTabbedPane simTab = new JTabbedPane();
+					Reb2Sac reb2sac = new Reb2Sac(sbmlFile, sbmlFile, root, this, simName.trim(), log,
+							simTab, null);
+					simTab.addTab("Simulation Options", reb2sac);
+					simTab.getComponentAt(simTab.getComponents().length - 1).setName("Simulate");
+					simTab.addTab("Abstraction Options", reb2sac.getAdvanced());
+					simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
+					simTab.addTab("Advanced Options", reb2sac.getProperties());
+					simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
+					SBML_Editor sbml = new SBML_Editor(sbmlFile, reb2sac, log, this, root + separator
+							+ simName.trim(), root + separator + simName.trim() + separator + simName.trim()
+							+ ".sim");
+					reb2sac.setSbml(sbml);
+					simTab.addTab("Parameter Editor", sbml);
+					simTab.getComponentAt(simTab.getComponents().length - 1).setName("SBML Editor");
+					simTab.addTab("TSD Graph", reb2sac.createGraph(null));
+					simTab.getComponentAt(simTab.getComponents().length - 1).setName("TSD Graph");
+					simTab.addTab("Probability Graph", reb2sac.createProbGraph(null));
+					simTab.getComponentAt(simTab.getComponents().length - 1).setName("ProbGraph");
+					/*
+					 * JLabel noData = new JLabel("No data available"); Font font =
+					 * noData.getFont(); font = font.deriveFont(Font.BOLD, 42.0f);
+					 * noData.setFont(font);
+					 * noData.setHorizontalAlignment(SwingConstants.CENTER);
+					 * simTab.addTab("TSD Graph", noData);
+					 * simTab.getComponentAt(simTab.getComponents().length -
+					 * 1).setName("TSD Graph"); JLabel noData1 = new JLabel("No data
+					 * available"); Font font1 = noData1.getFont(); font1 =
+					 * font1.deriveFont(Font.BOLD, 42.0f); noData1.setFont(font1);
+					 * noData1.setHorizontalAlignment(SwingConstants.CENTER);
+					 * simTab.addTab("Probability Graph", noData1);
+					 * simTab.getComponentAt(simTab.getComponents().length -
+					 * 1).setName("ProbGraph");
+					 */
+					addTab(simName, simTab, null);
 				}
-				new File(root + separator + simName).mkdir();
-				// new FileWriter(new File(root + separator + simName + separator +
-				// ".sim")).close();
-				String[] dot = tree.getFile().split(separator);
-				String sbmlFile = /*
-													 * root + separator + simName + separator +
-													 */(dot[dot.length - 1].substring(0, dot[dot.length - 1].length() - 3) + "sbml");
-				GCMParser parser = new GCMParser(tree.getFile());
-				GeneticNetwork network = parser.buildNetwork();
-				GeneticNetwork.setRoot(root + File.separator);
-				network.mergeSBML(root + separator + simName + separator + sbmlFile);
-				try {
-					FileOutputStream out = new FileOutputStream(new File(root + separator + simName.trim()
-							+ separator + simName.trim() + ".sim"));
-					out.write((dot[dot.length - 1] + "\n").getBytes());
-					out.close();
-				}
-				catch (Exception e1) {
-					JOptionPane.showMessageDialog(frame, "Unable to save parameter file!",
-							"Error Saving File", JOptionPane.ERROR_MESSAGE);
-				}
-				// network.outputSBML(root + separator + sbmlFile);
-				refreshTree();
-				sbmlFile = root + separator + simName + separator
-						+ (dot[dot.length - 1].substring(0, dot[dot.length - 1].length() - 3) + "sbml");
-				JTabbedPane simTab = new JTabbedPane();
-				Reb2Sac reb2sac = new Reb2Sac(sbmlFile, sbmlFile, root, this, simName.trim(), log, simTab,
-						null);
-				simTab.addTab("Simulation Options", reb2sac);
-				simTab.getComponentAt(simTab.getComponents().length - 1).setName("Simulate");
-				simTab.addTab("Abstraction Options", reb2sac.getAdvanced());
-				simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
-				simTab.addTab("Advanced Options", reb2sac.getProperties());
-				simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
-				SBML_Editor sbml = new SBML_Editor(sbmlFile, reb2sac, log, this, root + separator
-						+ simName.trim(), root + separator + simName.trim() + separator + simName.trim()
-						+ ".sim");
-				reb2sac.setSbml(sbml);
-				simTab.addTab("Parameter Editor", sbml);
-				simTab.getComponentAt(simTab.getComponents().length - 1).setName("SBML Editor");
-				simTab.addTab("TSD Graph", reb2sac.createGraph(null));
-				simTab.getComponentAt(simTab.getComponents().length - 1).setName("TSD Graph");
-				simTab.addTab("Probability Graph", reb2sac.createProbGraph(null));
-				simTab.getComponentAt(simTab.getComponents().length - 1).setName("ProbGraph");
-				/*
-				 * JLabel noData = new JLabel("No data available"); Font font =
-				 * noData.getFont(); font = font.deriveFont(Font.BOLD, 42.0f);
-				 * noData.setFont(font);
-				 * noData.setHorizontalAlignment(SwingConstants.CENTER);
-				 * simTab.addTab("TSD Graph", noData);
-				 * simTab.getComponentAt(simTab.getComponents().length - 1).setName("TSD
-				 * Graph"); JLabel noData1 = new JLabel("No data available"); Font font1 =
-				 * noData1.getFont(); font1 = font1.deriveFont(Font.BOLD, 42.0f);
-				 * noData1.setFont(font1);
-				 * noData1.setHorizontalAlignment(SwingConstants.CENTER);
-				 * simTab.addTab("Probability Graph", noData1);
-				 * simTab.getComponentAt(simTab.getComponents().length -
-				 * 1).setName("ProbGraph");
-				 */
-				addTab(simName, simTab, null);
 			}
 		}
 		else {
@@ -2842,92 +2689,69 @@ public class BioSim implements MouseListener, ActionListener {
 					JOptionPane.PLAIN_MESSAGE);
 			if (simName != null && !simName.trim().equals("")) {
 				simName = simName.trim();
-				File f = new File(root + separator + simName);
-				if (f.exists()) {
-					Object[] options = { "Overwrite", "Cancel" };
-					int value = JOptionPane.showOptionDialog(frame, "File already exists."
-							+ "\nDo you want to overwrite?", "Overwrite", JOptionPane.YES_NO_OPTION,
-							JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-					if (value == JOptionPane.YES_OPTION) {
-						File dir = new File(root + separator + simName);
-						if (dir.isDirectory()) {
-							deleteDir(dir);
-						}
-						else {
-							System.gc();
-							dir.delete();
-						}
-						for (int i = 0; i < tab.getTabCount(); i++) {
-							if (tab.getTitleAt(i).equals(simName)) {
-								tab.remove(i);
-							}
-						}
+				if (overwrite(root + separator + simName, simName)) {
+					new File(root + separator + simName).mkdir();
+					// new FileWriter(new File(root + separator + simName + separator +
+					// ".sim")).close();
+					String sbmlFile = tree.getFile();
+					String[] sbml1 = tree.getFile().split(separator);
+					String sbmlFileProp = root + separator + simName + separator + sbml1[sbml1.length - 1];
+					try {
+						FileOutputStream out = new FileOutputStream(new File(root + separator + simName.trim()
+								+ separator + simName.trim() + ".sim"));
+						out.write((sbml1[sbml1.length - 1] + "\n").getBytes());
+						out.close();
 					}
-					else {
-						return;
+					catch (Exception e1) {
+						JOptionPane.showMessageDialog(frame, "Unable to save parameter file!",
+								"Error Saving File", JOptionPane.ERROR_MESSAGE);
 					}
+					new FileOutputStream(new File(sbmlFileProp)).close();
+					/*
+					 * try { FileOutputStream out = new FileOutputStream(new
+					 * File(sbmlFile)); SBMLWriter writer = new SBMLWriter(); String doc =
+					 * writer.writeToString(document); byte[] output = doc.getBytes();
+					 * out.write(output); out.close(); } catch (Exception e1) {
+					 * JOptionPane.showMessageDialog(frame, "Unable to copy sbml file to
+					 * output location.", "Error", JOptionPane.ERROR_MESSAGE); }
+					 */
+					refreshTree();
+					JTabbedPane simTab = new JTabbedPane();
+					Reb2Sac reb2sac = new Reb2Sac(sbmlFile, sbmlFileProp, root, this, simName.trim(), log,
+							simTab, null);
+					simTab.addTab("Simulation Options", reb2sac);
+					simTab.getComponentAt(simTab.getComponents().length - 1).setName("Simulate");
+					simTab.addTab("Abstraction Options", reb2sac.getAdvanced());
+					simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
+					simTab.addTab("Advanced Options", reb2sac.getProperties());
+					simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
+					SBML_Editor sbml = new SBML_Editor(sbmlFile, reb2sac, log, this, root + separator
+							+ simName.trim(), root + separator + simName.trim() + separator + simName.trim()
+							+ ".sim");
+					reb2sac.setSbml(sbml);
+					simTab.addTab("Parameter Editor", sbml);
+					simTab.getComponentAt(simTab.getComponents().length - 1).setName("SBML Editor");
+					simTab.addTab("TSD Graph", reb2sac.createGraph(null));
+					simTab.getComponentAt(simTab.getComponents().length - 1).setName("TSD Graph");
+					simTab.addTab("Probability Graph", reb2sac.createProbGraph(null));
+					simTab.getComponentAt(simTab.getComponents().length - 1).setName("ProbGraph");
+					/*
+					 * JLabel noData = new JLabel("No data available"); Font font =
+					 * noData.getFont(); font = font.deriveFont(Font.BOLD, 42.0f);
+					 * noData.setFont(font);
+					 * noData.setHorizontalAlignment(SwingConstants.CENTER);
+					 * simTab.addTab("TSD Graph", noData);
+					 * simTab.getComponentAt(simTab.getComponents().length -
+					 * 1).setName("TSD Graph"); JLabel noData1 = new JLabel("No data
+					 * available"); Font font1 = noData1.getFont(); font1 =
+					 * font1.deriveFont(Font.BOLD, 42.0f); noData1.setFont(font1);
+					 * noData1.setHorizontalAlignment(SwingConstants.CENTER);
+					 * simTab.addTab("Probability Graph", noData1);
+					 * simTab.getComponentAt(simTab.getComponents().length -
+					 * 1).setName("ProbGraph");
+					 */
+					addTab(simName, simTab, null);
 				}
-				new File(root + separator + simName).mkdir();
-				// new FileWriter(new File(root + separator + simName + separator +
-				// ".sim")).close();
-				String sbmlFile = tree.getFile();
-				String[] sbml1 = tree.getFile().split(separator);
-				String sbmlFileProp = root + separator + simName + separator + sbml1[sbml1.length - 1];
-				try {
-					FileOutputStream out = new FileOutputStream(new File(root + separator + simName.trim()
-							+ separator + simName.trim() + ".sim"));
-					out.write((sbml1[sbml1.length - 1] + "\n").getBytes());
-					out.close();
-				}
-				catch (Exception e1) {
-					JOptionPane.showMessageDialog(frame, "Unable to save parameter file!",
-							"Error Saving File", JOptionPane.ERROR_MESSAGE);
-				}
-				new FileOutputStream(new File(sbmlFileProp)).close();
-				/*
-				 * try { FileOutputStream out = new FileOutputStream(new
-				 * File(sbmlFile)); SBMLWriter writer = new SBMLWriter(); String doc =
-				 * writer.writeToString(document); byte[] output = doc.getBytes();
-				 * out.write(output); out.close(); } catch (Exception e1) {
-				 * JOptionPane.showMessageDialog(frame, "Unable to copy sbml file to
-				 * output location.", "Error", JOptionPane.ERROR_MESSAGE); }
-				 */
-				refreshTree();
-				JTabbedPane simTab = new JTabbedPane();
-				Reb2Sac reb2sac = new Reb2Sac(sbmlFile, sbmlFileProp, root, this, simName.trim(), log,
-						simTab, null);
-				simTab.addTab("Simulation Options", reb2sac);
-				simTab.getComponentAt(simTab.getComponents().length - 1).setName("Simulate");
-				simTab.addTab("Abstraction Options", reb2sac.getAdvanced());
-				simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
-				simTab.addTab("Advanced Options", reb2sac.getProperties());
-				simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
-				SBML_Editor sbml = new SBML_Editor(sbmlFile, reb2sac, log, this, root + separator
-						+ simName.trim(), root + separator + simName.trim() + separator + simName.trim()
-						+ ".sim");
-				reb2sac.setSbml(sbml);
-				simTab.addTab("Parameter Editor", sbml);
-				simTab.getComponentAt(simTab.getComponents().length - 1).setName("SBML Editor");
-				simTab.addTab("TSD Graph", reb2sac.createGraph(null));
-				simTab.getComponentAt(simTab.getComponents().length - 1).setName("TSD Graph");
-				simTab.addTab("Probability Graph", reb2sac.createProbGraph(null));
-				simTab.getComponentAt(simTab.getComponents().length - 1).setName("ProbGraph");
-				/*
-				 * JLabel noData = new JLabel("No data available"); Font font =
-				 * noData.getFont(); font = font.deriveFont(Font.BOLD, 42.0f);
-				 * noData.setFont(font);
-				 * noData.setHorizontalAlignment(SwingConstants.CENTER);
-				 * simTab.addTab("TSD Graph", noData);
-				 * simTab.getComponentAt(simTab.getComponents().length - 1).setName("TSD
-				 * Graph"); JLabel noData1 = new JLabel("No data available"); Font font1 =
-				 * noData1.getFont(); font1 = font1.deriveFont(Font.BOLD, 42.0f);
-				 * noData1.setFont(font1);
-				 * noData1.setHorizontalAlignment(SwingConstants.CENTER);
-				 * simTab.addTab("Probability Graph", noData1);
-				 * simTab.getComponentAt(simTab.getComponents().length -
-				 * 1).setName("ProbGraph");
-				 */
-				addTab(simName, simTab, null);
 			}
 		}
 	}
@@ -3397,8 +3221,12 @@ public class BioSim implements MouseListener, ActionListener {
 								.equals(".sim")) && !ss.equals(".sim")) {
 					FileOutputStream out;
 					if (ss.substring(ss.length() - 4).equals(".pms")) {
-						out = new FileOutputStream(new File(root + separator + newSim + separator
-								+ ss.substring(0, ss.length() - 4) + ".sim"));
+						out = new FileOutputStream(new File(root + separator + newSim + separator + newSim
+								+ ".sim"));
+					}
+					else if (ss.substring(ss.length() - 4).equals(".sim")) {
+						out = new FileOutputStream(new File(root + separator + newSim + separator + newSim
+								+ ".sim"));
 					}
 					else {
 						out = new FileOutputStream(new File(root + separator + newSim + separator + ss));
@@ -3641,5 +3469,36 @@ public class BioSim implements MouseListener, ActionListener {
 
 	public String getRoot() {
 		return root;
+	}
+
+	public boolean overwrite(String fullPath, String name) {
+		if (new File(fullPath).exists()) {
+			Object[] options = { "Overwrite", "Cancel" };
+			int value = JOptionPane.showOptionDialog(frame, "File already exists."
+					+ "\nDo you want to overwrite?", "Overwrite", JOptionPane.YES_NO_OPTION,
+					JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+			if (value == JOptionPane.YES_OPTION) {
+				for (int i = 0; i < tab.getTabCount(); i++) {
+					if (tab.getTitleAt(i).equals(name)) {
+						tab.remove(i);
+					}
+				}
+				File dir = new File(fullPath);
+				if (dir.isDirectory()) {
+					deleteDir(dir);
+				}
+				else {
+					System.gc();
+					dir.delete();
+				}
+				return true;
+			}
+			else {
+				return false;
+			}
+		}
+		else {
+			return true;
+		}
 	}
 }
