@@ -152,9 +152,24 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 			if (!templateName.contains(".sbml") || !templateName.contains(".xml")) {
 				templateName = templateName + ".sbml";
 			}
-			network.buildTemplate(parser.getSpecies(), parser.getPromoters(), gcmname + ".gcm", path + File.separator + templateName);
-			log.addText("Saving GCM file as SBML template:\n" + path + File.separator + templateName + "\n");
-			biosim.refreshTree();
+			if (new File(path + File.separator + templateName).exists()) {
+				int value = JOptionPane.showOptionDialog(this, templateName
+						+ " already exists.  Overwrite file?",
+						"Save file", JOptionPane.YES_NO_OPTION,
+						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+				if (value == JOptionPane.YES_OPTION) {
+					log.addText("Saving GCM file as SBML template:\n" + path + File.separator + templateName + "\n");
+					network.buildTemplate(parser.getSpecies(), parser.getPromoters(), gcmname + ".gcm", path + File.separator + templateName);
+					biosim.refreshTree();
+					biosim.updateOpenSBML(templateName);
+				} else {
+					// Do nothing
+				}
+			} else {
+				log.addText("Saving GCM file as SBML template:\n" + path + File.separator + templateName + "\n");
+				network.buildTemplate(parser.getSpecies(), parser.getPromoters(), gcmname + ".gcm", path + File.separator + templateName);
+				biosim.refreshTree();
+			}
 		}
 		else if (command.contains("SBML")) {
 			// Then read in the file with the GCMParser
@@ -170,10 +185,9 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 				if (value == JOptionPane.YES_OPTION) {
 					log.addText("Saving GCM file as SBML file:\n" + path + File.separator + gcmname + ".sbml\n");
-					network
-							.mergeSBML(path + File.separator + gcmname
-									+ ".sbml");
+					network.mergeSBML(path + File.separator + gcmname	+ ".sbml");
 					biosim.refreshTree();
+					biosim.updateOpenSBML(gcmname	+ ".sbml");
 				} else {
 					// Do nothing
 				}

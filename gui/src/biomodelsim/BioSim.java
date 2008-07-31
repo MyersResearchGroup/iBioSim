@@ -3501,4 +3501,19 @@ public class BioSim implements MouseListener, ActionListener {
 			return true;
 		}
 	}
+
+	public void updateOpenSBML(String sbmlName) {
+		for (int i = 0; i < tab.getTabCount(); i++) {
+			String tab = this.tab.getTitleAt(i);
+			if (sbmlName.equals(tab)) {
+				if (this.tab.getComponentAt(i) instanceof SBML_Editor) {
+					SBML_Editor newSBML = new SBML_Editor(root + separator + sbmlName, null, log, this, null,
+							null);
+					this.tab.setComponentAt(i, newSBML);
+					this.tab.getComponentAt(i).setName("SBML Editor");
+					newSBML.save(false, "");
+				}
+			}
+		}
+	}
 }
