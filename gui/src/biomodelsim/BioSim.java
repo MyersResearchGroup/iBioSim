@@ -2203,7 +2203,7 @@ public class BioSim implements MouseListener, ActionListener {
 	}
 
 	public void mousePressed(MouseEvent e) {
-		if (e.isPopupTrigger()) {
+		if (e.isPopupTrigger() && tree.getFile() != null) {
 			popup.removeAll();
 			if (tree.getFile().length() > 4
 					&& tree.getFile().substring(tree.getFile().length() - 5).equals(".sbml")
@@ -2464,7 +2464,7 @@ public class BioSim implements MouseListener, ActionListener {
 	}
 
 	public void mouseReleased(MouseEvent e) {
-		if (e.isPopupTrigger()) {
+		if (e.isPopupTrigger() && tree.getFile() != null) {
 			popup.removeAll();
 			if (tree.getFile().length() > 4
 					&& tree.getFile().substring(tree.getFile().length() - 5).equals(".sbml")
