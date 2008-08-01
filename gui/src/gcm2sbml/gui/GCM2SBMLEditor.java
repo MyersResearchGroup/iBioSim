@@ -153,7 +153,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 				templateName = templateName + ".sbml";
 			}
 			if (new File(path + File.separator + templateName).exists()) {
-				int value = JOptionPane.showOptionDialog(this, templateName
+				int value = JOptionPane.showOptionDialog(biosim.frame(), templateName
 						+ " already exists.  Overwrite file?",
 						"Save file", JOptionPane.YES_NO_OPTION,
 						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
@@ -179,7 +179,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 			network.loadProperties(gcm);
 			// Finally, output to a file
 			if (new File(path + File.separator + gcmname + ".sbml").exists()) {
-				int value = JOptionPane.showOptionDialog(this, gcmname
+				int value = JOptionPane.showOptionDialog(biosim.frame(), gcmname
 						+ ".sbml already exists.  Overwrite file?",
 						"Save file", JOptionPane.YES_NO_OPTION,
 						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
@@ -203,7 +203,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 	
 	public void saveAs(String newName) {
 		if (new File(path + File.separator + newName + ".gcm").exists()) {
-			int value = JOptionPane.showOptionDialog(this, newName
+			int value = JOptionPane.showOptionDialog(biosim.frame(), newName
 					+ " already exists.  Overwrite file?",
 					"Save file", JOptionPane.YES_NO_OPTION,
 					JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
@@ -422,7 +422,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 					} else {
 						JOptionPane
 								.showMessageDialog(
-										this,
+										biosim.frame(),
 										"Cannot remove species "
 												+ name
 												+ " because it is currently in other reactions");
@@ -438,7 +438,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 					} else {
 						JOptionPane
 								.showMessageDialog(
-										this,
+										biosim.frame(),
 										"Cannot remove promoter "
 												+ name
 												+ " because it is currently in other reactions");
