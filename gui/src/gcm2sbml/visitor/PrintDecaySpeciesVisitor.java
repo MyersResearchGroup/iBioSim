@@ -7,6 +7,7 @@ import gcm2sbml.network.DimerSpecies;
 import gcm2sbml.network.GeneticNetwork;
 import gcm2sbml.network.SpasticSpecies;
 import gcm2sbml.network.SpeciesInterface;
+import gcm2sbml.parser.CompatibilityFixer;
 import gcm2sbml.util.GlobalConstants;
 import gcm2sbml.util.Utility;
 
@@ -31,7 +32,7 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 	}
 	
 	private void addDecayUnit() {
-		decayString = GeneticNetwork.getMoleTimeParameter(1);
+		decayUnitString = GeneticNetwork.getMoleTimeParameter(1);
 	}
 
 	/**
@@ -58,8 +59,8 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 			r.setReversible(false);
 			r.setFast(false);
 			KineticLaw kl = new KineticLaw();
-			kl.addParameter(new Parameter("decay", decay, decayString));
-			kl.setFormula("decay*" + specie.getName());
+			kl.addParameter(new Parameter(decayString, decay, decayUnitString));
+			kl.setFormula(decayString + "*" + specie.getName());
 			r.setKineticLaw(kl);
 			Utility.addReaction(document, r);
 		}
@@ -73,8 +74,8 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 			r.setReversible(false);
 			r.setFast(false);
 			KineticLaw kl = new KineticLaw();
-			kl.addParameter(new Parameter("decay", decay, decayString));
-			kl.setFormula("decay*" + specie.getName());
+			kl.addParameter(new Parameter(decayString, decay, decayUnitString));
+			kl.setFormula(decayString + "*" + specie.getName());
 			r.setKineticLaw(kl);
 			Utility.addReaction(document, r);
 		}
@@ -87,8 +88,8 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 		r.setReversible(false);
 		r.setFast(false);
 		KineticLaw kl = new KineticLaw();
-		kl.addParameter(new Parameter("decay", decay, decayString));
-		kl.setFormula("decay*" + specie.getName());
+		kl.addParameter(new Parameter(decayString, decay, decayUnitString));
+		kl.setFormula(decayString + "*" + specie.getName());
 		r.setKineticLaw(kl);
 		Utility.addReaction(document, r);
 	}
@@ -104,8 +105,8 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 		r.setReversible(false);
 		r.setFast(false);
 		KineticLaw kl = new KineticLaw();
-		kl.addParameter(new Parameter("decay", decay, decayString));
-		kl.setFormula("decay*" + specie.getName());
+		kl.addParameter(new Parameter(decayString, decay, decayUnitString));
+		kl.setFormula(decayString + "*" + specie.getName());
 		r.setKineticLaw(kl);
 		Utility.addReaction(document, r);
 	}
@@ -116,7 +117,8 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 	
 	private double defaultdecay = .0075;
 	private double decay = .0075;
-	private String decayString = "";
+	private String decayUnitString = "";
+	private String decayString = CompatibilityFixer.getSBMLName(GlobalConstants.KDECAY_STRING);
 	
 	private Collection<SpeciesInterface> species = null;
 	

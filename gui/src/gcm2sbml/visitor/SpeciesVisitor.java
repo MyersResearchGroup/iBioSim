@@ -4,6 +4,7 @@ import gcm2sbml.network.BaseSpecies;
 import gcm2sbml.network.BiochemicalSpecies;
 import gcm2sbml.network.ConstantSpecies;
 import gcm2sbml.network.DimerSpecies;
+import gcm2sbml.network.NullSpecies;
 import gcm2sbml.network.SpasticSpecies;
 import gcm2sbml.network.SpeciesInterface;
 
@@ -42,5 +43,12 @@ public interface SpeciesVisitor {
 	 * Visits a spastic specie
 	 * @param specie specie to visit
 	 */
-	public void visitSpasticSpecies(SpasticSpecies specie);	
+	public void visitSpasticSpecies(SpasticSpecies specie);
+	
+	/**
+	 * Visits a null species
+	 * @param specie specie to visit
+	 * @param specie
+	 */
+	public void visitNullSpecies(NullSpecies specie);
 }

@@ -5,6 +5,7 @@ import gcm2sbml.util.GlobalConstants;
 import gcm2sbml.util.Utility;
 import gcm2sbml.visitor.AbstractPrintVisitor;
 import gcm2sbml.visitor.PrintActivatedBindingVisitor;
+import gcm2sbml.visitor.PrintActivatedBindingVisitor;
 import gcm2sbml.visitor.PrintActivatedProductionVisitor;
 import gcm2sbml.visitor.PrintBiochemicalVisitor;
 import gcm2sbml.visitor.PrintDecaySpeciesVisitor;
@@ -276,8 +277,9 @@ public class GeneticNetwork {
 
 			// Next setup activated binding
 			PrintActivatedBindingVisitor v = new PrintActivatedBindingVisitor(
-					document, p, p.getActivators(), act, kdimer, kcoop, kbio,
+					document, p, act, kdimer, kcoop, kbio,
 					dimer);
+			
 			v.setBiochemicalAbstraction(biochemicalAbstraction);
 			v.setDimerizationAbstraction(dimerizationAbstraction);
 			v.setCooperationAbstraction(cooperationAbstraction);
@@ -888,5 +890,9 @@ public class GeneticNetwork {
 
 		return GeneticNetwork.getUnitString(unitS, unitE, unitM,
 				currentDocument.getModel());
+	}
+	
+	public static String getMoleParameter(String numMolecules) {
+		return getMoleParameter(Integer.parseInt(numMolecules));
 	}
 }

@@ -7,6 +7,7 @@ import gcm2sbml.network.DimerSpecies;
 import gcm2sbml.network.GeneticNetwork;
 import gcm2sbml.network.SpasticSpecies;
 import gcm2sbml.network.SpeciesInterface;
+import gcm2sbml.parser.CompatibilityFixer;
 import gcm2sbml.util.GlobalConstants;
 import gcm2sbml.util.Utility;
 
@@ -55,7 +56,7 @@ public class PrintBiochemicalVisitor extends AbstractPrintVisitor {
 				newkf = specie.getRateConstant();
 			}
 			Reaction r = new Reaction("Biochemical_" + specie.getName());
-			String multi = "kbio*";
+			String multi = kbioString+"*";
 			for (SpeciesInterface s : specie.getInputs()) {
 				r.addReactant(new SpeciesReference(s.getName(), 1));
 				multi = multi + s.getName() + "*";
@@ -66,7 +67,7 @@ public class PrintBiochemicalVisitor extends AbstractPrintVisitor {
 			r.setReversible(true);
 			r.setFast(true);
 			KineticLaw kl = new KineticLaw();
-			kl.addParameter(new Parameter("kbio", newkf, GeneticNetwork.getMoleTimeParameter(specie.getInputs().size())));
+			kl.addParameter(new Parameter(kbioString, newkf, GeneticNetwork.getMoleTimeParameter(specie.getInputs().size())));
 			kl.addParameter(new Parameter("kr", 1, GeneticNetwork.getMoleTimeParameter(1)));
 			kl.setFormula(multi + "-kr*" + specie.getName());
 
@@ -91,6 +92,7 @@ public class PrintBiochemicalVisitor extends AbstractPrintVisitor {
 
 	private double kbio = 1;
 	private double defaultkbio = 1;
+	private String kbioString = CompatibilityFixer.getSBMLName(GlobalConstants.KBIO_STRING);
 
 	private Collection<SpeciesInterface> species = null;
 
