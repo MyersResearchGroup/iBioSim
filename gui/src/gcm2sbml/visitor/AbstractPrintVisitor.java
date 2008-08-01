@@ -3,10 +3,15 @@
  */
 package gcm2sbml.visitor;
 
-import gcm2sbml.network.GeneticNetwork;
+import gcm2sbml.network.BaseSpecies;
+import gcm2sbml.network.BiochemicalSpecies;
+import gcm2sbml.network.ConstantSpecies;
+import gcm2sbml.network.DimerSpecies;
+import gcm2sbml.network.NullSpecies;
+import gcm2sbml.network.SpasticSpecies;
+import gcm2sbml.network.SpeciesInterface;
 import gcm2sbml.parser.GCMFile;
 
-import java.util.ArrayList;
 import java.util.Properties;
 
 import org.sbml.libsbml.SBMLDocument;
@@ -64,6 +69,22 @@ public abstract class AbstractPrintVisitor implements SpeciesVisitor {
 		parameters = file;
 	}
 	
+	
+	
+	public void visitBaseSpecies(BaseSpecies specie) {}
+
+	public void visitBiochemical(BiochemicalSpecies specie) {}
+
+	public void visitConstantSpecies(ConstantSpecies specie) {}
+
+	public void visitDimer(DimerSpecies specie) {}
+
+	public void visitNullSpecies(NullSpecies specie) {}
+
+	public void visitSpasticSpecies(SpasticSpecies specie) {}
+
+	public void visitSpecies(SpeciesInterface specie) {}
+
 	protected static GCMFile parameters = null;
 
 	protected SBMLDocument document = null;
