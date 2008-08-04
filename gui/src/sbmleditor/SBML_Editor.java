@@ -388,7 +388,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					modelID = modelID.substring(0, modelID.indexOf('.'));
 				}
 				model.setId(modelID);
-				save(false, "");
+				save(false, "", true);
 			}
 			createFunction(model, "uniform", "Uniform distribution", "lambda(a,b,(a+b)/2)");
 			createFunction(model, "normal", "Normal distribution", "lambda(m,s,m)");
@@ -1049,7 +1049,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		}
 		// if the check button is clicked
 		else if (e.getSource() == check) {
-			save(false, "");
+			save(false, "", true);
 			check();
 		}
 		// if the save button is clicked
@@ -1058,7 +1058,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				reb2sac.getSaveButton().doClick();
 			}
 			else {
-				save(false, "");
+				save(false, "", true);
 			}
 		}
 		// if the save as button is clicked
@@ -8955,7 +8955,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 * 
 	 * @param stem
 	 */
-	public void save(boolean run, String stem) {
+	public void save(boolean run, String stem, boolean outputMessage) {
 		if (paramsOnly) {
 			if (run) {
 				for (int i = 0; i < biosim.getTab().getTabCount(); i++) {
@@ -8970,7 +8970,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 												JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
 												options[0]);
 								if (value == JOptionPane.YES_OPTION) {
-									sbml.save(run, stem);
+									sbml.save(run, stem, outputMessage);
 									SBMLReader reader = new SBMLReader();
 									document = reader.readSBML(file);
 								}
@@ -9112,7 +9112,9 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		}
 		else {
 			try {
-				log.addText("Saving SBML file:\n" + file + "\n");
+				if (outputMessage) {
+					log.addText("Saving SBML file:\n" + file + "\n");
+				}
 				FileOutputStream out = new FileOutputStream(new File(file));
 				document.getModel().setName(modelName.getText().trim());
 				SBMLWriter writer = new SBMLWriter();
