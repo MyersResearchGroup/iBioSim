@@ -138,13 +138,19 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 		}
 		
 		// Write out species and influences to a gcm file
-		log.addText("Saving GCM file:\n" + path + File.separator + gcmname + ".gcm\n");
 		gcm.save(path + File.separator + gcmname + ".gcm");
+		log.addText("Saving GCM file:\n" + path + File.separator + gcmname + ".gcm\n");
 
 		if (command.contains("template")) {
 			GCMParser parser = new GCMParser(path + File.separator + gcmname
 					+ ".gcm");
-			parser.buildNetwork();
+			try {
+				parser.buildNetwork();
+			} catch (IllegalStateException e) {
+				JOptionPane.showMessageDialog(biosim.frame(), e.getMessage(), "Error",
+						JOptionPane.ERROR_MESSAGE);
+				return;
+			}
 			GeneticNetwork network = new GeneticNetwork();
 			
 			String templateName = JOptionPane.showInputDialog(biosim.frame(), "Enter SBML template name:", "SBML Template Name",
@@ -158,16 +164,16 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 						"Save file", JOptionPane.YES_NO_OPTION,
 						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 				if (value == JOptionPane.YES_OPTION) {
-					log.addText("Saving GCM file as SBML template:\n" + path + File.separator + templateName + "\n");
 					network.buildTemplate(parser.getSpecies(), parser.getPromoters(), gcmname + ".gcm", path + File.separator + templateName);
+					log.addText("Saving GCM file as SBML template:\n" + path + File.separator + templateName + "\n");
 					biosim.refreshTree();
 					biosim.updateOpenSBML(templateName);
 				} else {
 					// Do nothing
 				}
 			} else {
-				log.addText("Saving GCM file as SBML template:\n" + path + File.separator + templateName + "\n");
 				network.buildTemplate(parser.getSpecies(), parser.getPromoters(), gcmname + ".gcm", path + File.separator + templateName);
+				log.addText("Saving GCM file as SBML template:\n" + path + File.separator + templateName + "\n");
 				biosim.refreshTree();
 			}
 		}
@@ -175,7 +181,14 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 			// Then read in the file with the GCMParser
 			GCMParser parser = new GCMParser(path + File.separator + gcmname
 					+ ".gcm");
-			GeneticNetwork network = parser.buildNetwork();
+			GeneticNetwork network = null;
+			try {
+				network = parser.buildNetwork();
+			} catch (IllegalStateException e) {
+				JOptionPane.showMessageDialog(biosim.frame(), e.getMessage(), "Error",
+						JOptionPane.ERROR_MESSAGE);
+				return;
+			}
 			network.loadProperties(gcm);
 			// Finally, output to a file
 			if (new File(path + File.separator + gcmname + ".sbml").exists()) {
@@ -184,16 +197,16 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 						"Save file", JOptionPane.YES_NO_OPTION,
 						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 				if (value == JOptionPane.YES_OPTION) {
-					log.addText("Saving GCM file as SBML file:\n" + path + File.separator + gcmname + ".sbml\n");
 					network.mergeSBML(path + File.separator + gcmname	+ ".sbml");
+					log.addText("Saving GCM file as SBML file:\n" + path + File.separator + gcmname + ".sbml\n");
 					biosim.refreshTree();
 					biosim.updateOpenSBML(gcmname	+ ".sbml");
 				} else {
 					// Do nothing
 				}
 			} else {
-				log.addText("Saving GCM file as SBML file:\n" + path + File.separator + gcmname + ".sbml\n");
 				network.mergeSBML(path + File.separator + gcmname + ".sbml");
+				log.addText("Saving GCM file as SBML file:\n" + path + File.separator + gcmname + ".sbml\n");
 				biosim.refreshTree();
 			}
 		}
@@ -208,17 +221,16 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 					"Save file", JOptionPane.YES_NO_OPTION,
 					JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 			if (value == JOptionPane.YES_OPTION) {
-				log.addText("Saving GCM file as:\n" + path + File.separator + newName + ".gcm\n");
 				gcm.save(path + File.separator + newName + ".gcm");
-				
+				log.addText("Saving GCM file as:\n" + path + File.separator + newName + ".gcm\n");
 			} else {
 				// Do nothing				
 				return;
 			}			
 		}
 		else {
-			log.addText("Saving GCM file as:\n" + path + File.separator + newName + ".gcm\n");
 			gcm.save(path + File.separator + newName + ".gcm");
+			log.addText("Saving GCM file as:\n" + path + File.separator + newName + ".gcm\n");
 		}
 		filename = newName+".gcm";
 		gcmname = newName;

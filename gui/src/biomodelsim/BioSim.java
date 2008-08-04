@@ -2046,7 +2046,7 @@ public class BioSim implements MouseListener, ActionListener {
 							+ tab.getTitleAt(index) + "?", "Save Changes", JOptionPane.YES_NO_CANCEL_OPTION,
 							JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 					if (value == JOptionPane.YES_OPTION) {
-						((SBML_Editor) tab.getComponentAt(index)).save(false, "");
+						((SBML_Editor) tab.getComponentAt(index)).save(false, "", true);
 						return 1;
 					}
 					else if (value == JOptionPane.NO_OPTION) {
@@ -2110,7 +2110,7 @@ public class BioSim implements MouseListener, ActionListener {
 									null, options, options[0]);
 							if (value == JOptionPane.YES_OPTION) {
 								((SBML_Editor) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).save(
-										false, "");
+										false, "", true);
 							}
 							else if (value == JOptionPane.CANCEL_OPTION) {
 								return 0;
@@ -3407,7 +3407,7 @@ public class BioSim implements MouseListener, ActionListener {
 						if (sim.getComponentAt(j).getName().equals("SBML Editor")) {
 							new File(properties).renameTo(new File(properties.replace(".sim", ".temp")));
 							boolean dirty = ((SBML_Editor) (sim.getComponentAt(j))).hasChanged();
-							((SBML_Editor) (sim.getComponentAt(j))).save(false, "");
+							((SBML_Editor) (sim.getComponentAt(j))).save(false, "", true);
 							if (updatedFile.contains(".gcm")) {
 								GCMParser parser = new GCMParser(root + separator + updatedFile);
 								GeneticNetwork network = parser.buildNetwork();
@@ -3511,7 +3511,7 @@ public class BioSim implements MouseListener, ActionListener {
 							null);
 					this.tab.setComponentAt(i, newSBML);
 					this.tab.getComponentAt(i).setName("SBML Editor");
-					newSBML.save(false, "");
+					newSBML.save(false, "", false);
 				}
 			}
 		}

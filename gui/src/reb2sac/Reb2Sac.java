@@ -1121,14 +1121,14 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 							"Invalid File Stem", JOptionPane.ERROR_MESSAGE);
 					return;
 				}
-				sbmlEditor.save(true, fileStem.getText().trim());
+				sbmlEditor.save(true, fileStem.getText().trim(), true);
 			}
 			else {
-				sbmlEditor.save(true, "");
+				sbmlEditor.save(true, "", true);
 			}
 		}
 		else if (e.getSource() == save) {
-			sbmlEditor.save(false, "");
+			sbmlEditor.save(false, "", true);
 			save();
 		}
 		// if the using ssa check box is clicked
