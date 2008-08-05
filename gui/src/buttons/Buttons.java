@@ -70,7 +70,7 @@ public class Buttons {
 		else if (approve.equals("Open")) {
 			retValue = fc.showOpenDialog(browse);
 		}
-		else if (approve.equals("Export")) {
+		else if (approve.equals("Export TSD")) {
 			fc.addChoosableFileFilter(csvFilter);
 			fc.addChoosableFileFilter(datFilter);
 			fc.addChoosableFileFilter(epsFilter);
@@ -79,6 +79,16 @@ public class Buttons {
 			fc.addChoosableFileFilter(pngFilter);
 			fc.addChoosableFileFilter(svgFilter);
 			fc.addChoosableFileFilter(tsdFilter);
+			fc.setAcceptAllFileFilterUsed(false);
+			fc.setFileFilter(pdfFilter);
+			retValue = fc.showDialog(browse, approve);
+		}
+		else if (approve.equals("Export Probability")) {
+			fc.addChoosableFileFilter(epsFilter);
+			fc.addChoosableFileFilter(jpgFilter);
+			fc.addChoosableFileFilter(pdfFilter);
+			fc.addChoosableFileFilter(pngFilter);
+			fc.addChoosableFileFilter(svgFilter);
 			fc.setAcceptAllFileFilterUsed(false);
 			fc.setFileFilter(pdfFilter);
 			retValue = fc.showDialog(browse, approve);
@@ -105,7 +115,7 @@ public class Buttons {
 				text.setText(file.getPath());
 			}
 			filename = file.getPath();
-			if (approve.equals("Export")) {
+			if (approve.equals("Export TSD")) {
 				if ((filename.length() < 4)
 						|| (!(filename.substring((filename.length() - 4), filename.length()).equals(".jpg"))
 								&& !(filename.substring((filename.length() - 4), filename.length()).equals(".png"))
@@ -139,6 +149,31 @@ public class Buttons {
 					}
 					else if (selectedFilter == csvFilter) {
 						filename += ".csv";
+					}
+				}
+			}
+			else if (approve.equals("Export Probability")) {
+				if ((filename.length() < 4)
+						|| (!(filename.substring((filename.length() - 4), filename.length()).equals(".jpg"))
+								&& !(filename.substring((filename.length() - 4), filename.length()).equals(".png"))
+								&& !(filename.substring((filename.length() - 4), filename.length()).equals(".pdf"))
+								&& !(filename.substring((filename.length() - 4), filename.length()).equals(".eps")) && !(filename
+								.substring((filename.length() - 4), filename.length()).equals(".svg")))) {
+					ExampleFileFilter selectedFilter = (ExampleFileFilter) fc.getFileFilter();
+					if (selectedFilter == jpgFilter) {
+						filename += ".jpg";
+					}
+					else if (selectedFilter == pngFilter) {
+						filename += ".png";
+					}
+					else if (selectedFilter == pdfFilter) {
+						filename += ".pdf";
+					}
+					else if (selectedFilter == epsFilter) {
+						filename += ".eps";
+					}
+					else if (selectedFilter == svgFilter) {
+						filename += ".svg";
 					}
 				}
 			}
