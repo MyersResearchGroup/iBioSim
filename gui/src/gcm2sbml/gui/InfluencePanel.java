@@ -89,11 +89,8 @@ public class InfluencePanel extends JPanel implements ActionListener {
 		tempPanel.add(tempLabel);
 		tempPanel.add(bioBox);
 		add(tempPanel);
-		fields.get(GlobalConstants.NAME).setValue(inputBox.getSelectedItem() + " -> " 
-							  + outputBox.getSelectedItem() + ", Promoter "
-							  + promoterBox.getSelectedItem());
 
-		fields.get(GlobalConstants.NAME).setValue(inputBox.getSelectedItem() + " -> "
+		fields.get(GlobalConstants.NAME).setValue(inputBox.getSelectedItem() + " -| "
 				+ outputBox.getSelectedItem() + ", Promoter "
 				+ promoterBox.getSelectedItem());
 
@@ -249,34 +246,33 @@ public class InfluencePanel extends JPanel implements ActionListener {
 		if (e.getActionCommand().equals("comboBoxChanged")
 				&& e.getSource().equals(typeBox)) {
 			setType(typeBox.getSelectedItem().toString());
-		        String arrow = " -> ";
-		        /*
-		        if ((typeBox.getSelectedItem()==types[0]) && (bioBox.getSelectedItem().equals(bio[0]))) {
-			    arrow = " -| ";
-		        } else if ((typeBox.getSelectedItem()==types[0]) && (bioBox.getSelectedItem().equals(bio[1]))) {
-			    arrow = " +| ";
-		        } else if ((typeBox.getSelectedItem()==types[1]) && (bioBox.getSelectedItem().equals(bio[1]))) {
-			    arrow = " +> ";
-			}*/
-				fields.get(GlobalConstants.NAME).setValue(
-						inputBox.getSelectedItem() + arrow
-								+ outputBox.getSelectedItem() + ", Promoter "
-								+ promoterBox.getSelectedItem());
+			String arrow = " -> ";
+			if ((typeBox.getSelectedItem()==types[0]) && (bioBox.getSelectedItem().equals(bio[0]))) {
+				arrow = " -| ";
+			} else if ((typeBox.getSelectedItem()==types[0]) && (bioBox.getSelectedItem().equals(bio[1]))) {
+				arrow = " +| ";
+			} else if ((typeBox.getSelectedItem()==types[1]) && (bioBox.getSelectedItem().equals(bio[1]))) {
+				arrow = " +> ";
+			}	
+			fields.get(GlobalConstants.NAME).setValue(
+					inputBox.getSelectedItem() + arrow
+					+ outputBox.getSelectedItem() + ", Promoter "
+					+ promoterBox.getSelectedItem());
 		} else if (e.getActionCommand().equals("comboBoxChanged")
 				&& (e.getSource().equals(inputBox) || e.getSource().equals(
 						outputBox)) || e.getSource().equals(promoterBox)) {
-		        String arrow = " -> ";
-		        /* if ((typeBox.getSelectedItem()==types[0]) && (bioBox.getSelectedItem().equals(bio[0]))) {
-		        arrow = " -| ";
-		        } else if ((typeBox.getSelectedItem()==types[0]) && (bioBox.getSelectedItem().equals(bio[1]))) {
-			    arrow = " +| ";
-		        } else if ((typeBox.getSelectedItem()==types[1]) && (bioBox.getSelectedItem().equals(bio[1]))) {
-			    arrow = " +> ";
-			}*/
+			String arrow = " -> ";
+			if ((typeBox.getSelectedItem()==types[0]) && (bioBox.getSelectedItem().equals(bio[0]))) {
+				arrow = " -| ";
+			} else if ((typeBox.getSelectedItem()==types[0]) && (bioBox.getSelectedItem().equals(bio[1]))) {
+				arrow = " +| ";
+			} else if ((typeBox.getSelectedItem()==types[1]) && (bioBox.getSelectedItem().equals(bio[1]))) {
+				arrow = " +> ";
+			}
 			fields.get(GlobalConstants.NAME).setValue(
 					inputBox.getSelectedItem() + arrow
-							+ outputBox.getSelectedItem() + ", Promoter "
-							+ promoterBox.getSelectedItem());
+					+ outputBox.getSelectedItem() + ", Promoter "
+					+ promoterBox.getSelectedItem());
 		}
 		if (e.getActionCommand().equals("comboBoxChanged")
 				&& (e.getSource().equals(bioBox))) {
@@ -287,19 +283,18 @@ public class InfluencePanel extends JPanel implements ActionListener {
 				state = true;
 			}
 			fields.get(GlobalConstants.KBIO_STRING).setEnabled(state);
-		        String arrow = " -> ";
-		        /*
-		        if ((typeBox.getSelectedItem()==types[0]) && (bioBox.getSelectedItem().equals(bio[0]))) {
-			    arrow = " -| ";
-		        } else if ((typeBox.getSelectedItem()==types[0]) && (bioBox.getSelectedItem().equals(bio[1]))) {
-			    arrow = " +| ";
-		        } else if ((typeBox.getSelectedItem()==types[1]) && (bioBox.getSelectedItem().equals(bio[1]))) {
-			    arrow = " +> ";
-			}*/
+			String arrow = " -> ";
+			if ((typeBox.getSelectedItem()==types[0]) && (bioBox.getSelectedItem().equals(bio[0]))) {
+				arrow = " -| ";
+			} else if ((typeBox.getSelectedItem()==types[0]) && (bioBox.getSelectedItem().equals(bio[1]))) {
+				arrow = " +| ";
+			} else if ((typeBox.getSelectedItem()==types[1]) && (bioBox.getSelectedItem().equals(bio[1]))) {
+				arrow = " +> ";
+			}
 			fields.get(GlobalConstants.NAME).setValue(
 					inputBox.getSelectedItem() + arrow
-							+ outputBox.getSelectedItem() + ", Promoter "
-							+ promoterBox.getSelectedItem());
+					+ outputBox.getSelectedItem() + ", Promoter "
+					+ promoterBox.getSelectedItem());
 		}
 	}
 

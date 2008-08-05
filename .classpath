@@ -34,5 +34,5 @@
 	<classpathentry kind="lib" path="gui/lib/xerces_2_5_0.jar"/>
 	<classpathentry kind="lib" path="gui/lib/xml-apis-ext.jar"/>
 	<classpathentry kind="lib" path="gui/lib/xml-apis.jar"/>
-	<classpathentry kind="output" path="bin"/>
+	<classpathentry kind="output" path="gui/dist/classes"/>
 </classpath>
