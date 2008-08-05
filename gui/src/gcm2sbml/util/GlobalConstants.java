@@ -31,7 +31,7 @@ public class GlobalConstants {
 	public static final String ACTIVED_VALUE = ".25";
 	
 	public static final String NAME = "Name";
-	public static final String CONSTANT = "constant";
+	public static final String CONSTANT = "boundary";
 	public static final String SPASTIC = "unconstrained";
 	public static final String NORMAL = "normal";
 	public static final String TYPE = "Type";

@@ -403,6 +403,9 @@ public class GCMFile {
 			} else if (!properties.containsKey(GlobalConstants.TYPE)) {
 				properties.setProperty(GlobalConstants.TYPE, GlobalConstants.NORMAL);
 			}
+			if (properties.getProperty(GlobalConstants.TYPE).equals("constant")) {
+				properties.setProperty(GlobalConstants.TYPE, GlobalConstants.CONSTANT);					
+			}
 			
 			//for backwards compatibility
 			if (properties.containsKey("label")) {
