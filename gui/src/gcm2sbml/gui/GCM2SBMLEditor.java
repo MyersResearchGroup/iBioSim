@@ -121,6 +121,8 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 
 		if (!sbmlFiles.getSelectedItem().equals(none)) {
 			gcm.setSBMLFile(sbmlFiles.getSelectedItem().toString());
+		} else {
+			gcm.setSBMLFile("");
 		}
 		GeneticNetwork.setRoot(path + File.separator);
 

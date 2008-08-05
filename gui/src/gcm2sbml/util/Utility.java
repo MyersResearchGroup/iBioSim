@@ -21,6 +21,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import org.sbml.libsbml.Compartment;
+import org.sbml.libsbml.ListOf;
 import org.sbml.libsbml.Parameter;
 import org.sbml.libsbml.Reaction;
 import org.sbml.libsbml.SBMLDocument;
@@ -290,10 +291,18 @@ public class Utility {
 			document.getModel().addReaction(r);
 			return true;
 		}
-		else if (OVERWRITE_WARNING) {
+		else {
+			ListOf rr = document.getModel().getListOfReactions();
+			for (int i = 0; i < document.getModel().getNumReactions(); i++) {
+				if (((Reaction) rr.get(i)).getId().equals(r.getId())) {
+					rr.remove(i);
+				}
+			}
+			document.getModel().addReaction(r);
+			return true;
 			//Give warning
 		}		
-		return false;
+//		return false;
 	}
 	
 	public static boolean addSpecies(SBMLDocument document, Species species) {
@@ -301,10 +310,18 @@ public class Utility {
 			document.getModel().addSpecies(species);
 			return true;
 		}
-		else if (OVERWRITE_WARNING) {
+		else {
+			ListOf s = document.getModel().getListOfSpecies();
+			for (int i = 0; i < document.getModel().getNumSpecies(); i++) {
+				if (((Species) s.get(i)).getId().equals(species.getId())) {
+					s.remove(i);
+				}
+			}
+			document.getModel().addSpecies(species);
+			return true;
 			//Give warning
 		}
-		return false;
+//		return false;
 	}
 	
 	public static boolean addUnits() {
@@ -316,10 +333,18 @@ public class Utility {
 			document.getModel().addCompartment(new Compartment(compartment));
 			return true;
 		}
-		else if (OVERWRITE_WARNING) {
+		else {
+			ListOf c = document.getModel().getListOfCompartments();
+			for (int i = 0; i < document.getModel().getNumCompartments(); i++) {
+				if (((Compartment) c.get(i)).getId().equals(compartment)) {
+					c.remove(i);
+				}
+			}
+			document.getModel().addCompartment(new Compartment(compartment));
+			return true;
 			//Give warning
 		}
-		return false;
+//		return false;
 	}
 	
 	private static FilenameFilter filter = null;
