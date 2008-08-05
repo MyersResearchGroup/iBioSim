@@ -3531,8 +3531,15 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			else {
 				file = null;
 			}
+			String export = "Export";
+			if (timeSeries) {
+				export += " TSD";
+			}
+			else {
+				export += " Probability";
+			}
 			String filename = Buttons.browse(biomodelsim.frame(), file, null, JFileChooser.FILES_ONLY,
-					"Export");
+					export);
 			if ((filename.length() > 4)
 					&& (filename.substring((filename.length() - 4), filename.length()).equals(".jpg"))) {
 				output = 0;
