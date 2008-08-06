@@ -17,7 +17,7 @@ import javax.swing.JPanel;
 public class PromoterPanel extends JPanel {
 	public PromoterPanel(String selected, PropertyList promoterList,
 			PropertyList influencesList, GCMFile gcm) {
-		super(new GridLayout(8, 1));
+		super(new GridLayout(7, 1));
 		this.selected = selected;
 		this.promoterList = promoterList;
 		this.influenceList = influencesList;
@@ -45,12 +45,12 @@ public class PromoterPanel extends JPanel {
 		add(field);		
 		
 		// cooperativity
-		field = new PropertyField(GlobalConstants.COOPERATIVITY_STRING, gcm
-				.getParameter(GlobalConstants.COOPERATIVITY_STRING),
-				PropertyField.states[0], gcm
-				.getParameter(GlobalConstants.COOPERATIVITY_STRING), Utility.NUMstring);
-		fields.put(GlobalConstants.COOPERATIVITY_STRING, field);
-		add(field);		
+//		field = new PropertyField(GlobalConstants.COOPERATIVITY_STRING, gcm
+//				.getParameter(GlobalConstants.COOPERATIVITY_STRING),
+//				PropertyField.states[0], gcm
+//				.getParameter(GlobalConstants.COOPERATIVITY_STRING), Utility.NUMstring);
+//		fields.put(GlobalConstants.COOPERATIVITY_STRING, field);
+//		add(field);		
 
 		// RNAP binding
 		field = new PropertyField(GlobalConstants.RNAP_BINDING_STRING, gcm
