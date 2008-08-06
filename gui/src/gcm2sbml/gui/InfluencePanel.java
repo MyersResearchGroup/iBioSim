@@ -27,10 +27,10 @@ public class InfluencePanel extends JPanel implements ActionListener {
 		fields = new HashMap<String, PropertyField>();
 
 		// Name field
-		PropertyField field = new PropertyField(GlobalConstants.NAME, "", null,
+		PropertyField field = new PropertyField(GlobalConstants.ID, "", null,
 				null, "(.*)");
 		field.setEnabled(false);
-		fields.put(GlobalConstants.NAME, field);
+		fields.put(GlobalConstants.ID, field);
 		add(field);
 
 		// Input field
@@ -90,7 +90,7 @@ public class InfluencePanel extends JPanel implements ActionListener {
 		tempPanel.add(bioBox);
 		add(tempPanel);
 
-		fields.get(GlobalConstants.NAME).setValue(inputBox.getSelectedItem() + " -| "
+		fields.get(GlobalConstants.ID).setValue(inputBox.getSelectedItem() + " -| "
 				+ outputBox.getSelectedItem() + ", Promoter "
 				+ promoterBox.getSelectedItem());
 
@@ -137,7 +137,7 @@ public class InfluencePanel extends JPanel implements ActionListener {
 		if (selected != null) {
 			oldName = selected;
 			Properties prop = gcm.getInfluences().get(selected);
-			fields.get(GlobalConstants.NAME).setValue(selected);
+			fields.get(GlobalConstants.ID).setValue(selected);
 			inputBox.setSelectedItem(gcm.getInput(selected));
 			outputBox.setSelectedItem(gcm.getOutput(selected));
 			if (prop.get(GlobalConstants.TYPE).equals(
@@ -189,21 +189,21 @@ public class InfluencePanel extends JPanel implements ActionListener {
 			}
 			if (oldName == null) {
 				if (gcm.getInfluences().containsKey(
-						fields.get(GlobalConstants.NAME).getValue())) {
+						fields.get(GlobalConstants.ID).getValue())) {
 					Utility.createErrorMessage("Error",
 							"Influence already exists.");
 					return false;
 				}
-			} else if (!oldName.equals(fields.get(GlobalConstants.NAME)
+			} else if (!oldName.equals(fields.get(GlobalConstants.ID)
 					.getValue())) {
 				if (gcm.getInfluences().containsKey(
-						fields.get(GlobalConstants.NAME).getValue())) {
+						fields.get(GlobalConstants.ID).getValue())) {
 					Utility.createErrorMessage("Error",
 							"Influence already exists.");
 					return false;
 				}
 			}
-			String id = fields.get(GlobalConstants.NAME).getValue();
+			String id = fields.get(GlobalConstants.ID).getValue();
 
 			// Check to see if we need to add or edit
 			Properties property = new Properties();
@@ -254,7 +254,7 @@ public class InfluencePanel extends JPanel implements ActionListener {
 			} else if ((typeBox.getSelectedItem()==types[1]) && (bioBox.getSelectedItem().equals(bio[1]))) {
 				arrow = " +> ";
 			}	
-			fields.get(GlobalConstants.NAME).setValue(
+			fields.get(GlobalConstants.ID).setValue(
 					inputBox.getSelectedItem() + arrow
 					+ outputBox.getSelectedItem() + ", Promoter "
 					+ promoterBox.getSelectedItem());
@@ -269,7 +269,7 @@ public class InfluencePanel extends JPanel implements ActionListener {
 			} else if ((typeBox.getSelectedItem()==types[1]) && (bioBox.getSelectedItem().equals(bio[1]))) {
 				arrow = " +> ";
 			}
-			fields.get(GlobalConstants.NAME).setValue(
+			fields.get(GlobalConstants.ID).setValue(
 					inputBox.getSelectedItem() + arrow
 					+ outputBox.getSelectedItem() + ", Promoter "
 					+ promoterBox.getSelectedItem());
@@ -291,7 +291,7 @@ public class InfluencePanel extends JPanel implements ActionListener {
 			} else if ((typeBox.getSelectedItem()==types[1]) && (bioBox.getSelectedItem().equals(bio[1]))) {
 				arrow = " +> ";
 			}
-			fields.get(GlobalConstants.NAME).setValue(
+			fields.get(GlobalConstants.ID).setValue(
 					inputBox.getSelectedItem() + arrow
 					+ outputBox.getSelectedItem() + ", Promoter "
 					+ promoterBox.getSelectedItem());
@@ -312,7 +312,7 @@ public class InfluencePanel extends JPanel implements ActionListener {
 
 	private void loadProperties(Properties property) {
 		for (Object o : property.keySet()) {
-			if (o.equals(GlobalConstants.NAME)) {
+			if (o.equals(GlobalConstants.ID)) {
 				//do nothing
 			}
 			else if (fields.containsKey(o.toString())) {

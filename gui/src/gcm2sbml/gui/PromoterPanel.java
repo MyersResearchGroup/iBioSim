@@ -26,9 +26,9 @@ public class PromoterPanel extends JPanel {
 		fields = new HashMap<String, PropertyField>();
 
 		// Name field
-		PropertyField field = new PropertyField(GlobalConstants.NAME, "", null,
+		PropertyField field = new PropertyField(GlobalConstants.ID, "", null,
 				null, Utility.IDstring);
-		fields.put(GlobalConstants.NAME, field);
+		fields.put(GlobalConstants.ID, field);
 		add(field);		
 		field = new PropertyField("ID", "", null,
 				null, Utility.IDstring);
@@ -97,7 +97,7 @@ public class PromoterPanel extends JPanel {
 		if (selected != null) {
 			oldName = selected;
 			Properties prop = gcm.getPromoters().get(selected);
-			fields.get(GlobalConstants.NAME).setValue(selected);
+			fields.get(GlobalConstants.ID).setValue(selected);
 			loadProperties(prop);
 		}
 
@@ -126,18 +126,18 @@ public class PromoterPanel extends JPanel {
 				return false;
 			}
 			if (oldName == null) {
-				if (gcm.getPromoters().containsKey(fields.get(GlobalConstants.NAME).getValue())) {
-					Utility.createErrorMessage("Error", "Promoter name already exists.");
+				if (gcm.getPromoters().containsKey(fields.get(GlobalConstants.ID).getValue())) {
+					Utility.createErrorMessage("Error", "Promoter id already exists.");
 					return false;
 				}
 			}
-			else if (!oldName.equals(fields.get(GlobalConstants.NAME).getValue())) {
-				if (gcm.getPromoters().containsKey(fields.get(GlobalConstants.NAME).getValue())) {
-					Utility.createErrorMessage("Error","Promoter name already exists.");
+			else if (!oldName.equals(fields.get(GlobalConstants.ID).getValue())) {
+				if (gcm.getPromoters().containsKey(fields.get(GlobalConstants.ID).getValue())) {
+					Utility.createErrorMessage("Error","Promoter id already exists.");
 					return false;
 				}
 			}
-			String id = fields.get(GlobalConstants.NAME).getValue();
+			String id = fields.get(GlobalConstants.ID).getValue();
 
 			// Check to see if we need to add or edit
 			Properties property = new Properties();

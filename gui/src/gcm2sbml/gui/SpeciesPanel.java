@@ -28,10 +28,10 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 
 		fields = new HashMap<String, PropertyField>();
 
-		// Name field
-		PropertyField field = new PropertyField(GlobalConstants.NAME,
+		// ID field
+		PropertyField field = new PropertyField(GlobalConstants.ID,
 				"", null, null, Utility.IDstring);
-		fields.put(GlobalConstants.NAME, field);
+		fields.put(GlobalConstants.ID, field);
 		add(field);
 		
 		// Type field
@@ -85,7 +85,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		if (selected != null) {
 			oldName = selected;
 			Properties prop = gcm.getSpecies().get(selected);
-			fields.get(GlobalConstants.NAME).setValue(selected);
+			fields.get(GlobalConstants.ID).setValue(selected);
 			typeBox.setSelectedItem(prop.getProperty(GlobalConstants.TYPE));
 			setType(prop.getProperty(GlobalConstants.TYPE));
 			loadProperties(prop);
@@ -117,18 +117,18 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 				return false;
 			}
 			if (oldName == null) {
-				if (gcm.getSpecies().containsKey(fields.get(GlobalConstants.NAME).getValue())) {
-					Utility.createErrorMessage("Error", "Species name already exists.");
+				if (gcm.getSpecies().containsKey(fields.get(GlobalConstants.ID).getValue())) {
+					Utility.createErrorMessage("Error", "Species id already exists.");
 					return false;
 				}
 			}
-			else if (!oldName.equals(fields.get(GlobalConstants.NAME).getValue())) {
-				if (gcm.getSpecies().containsKey(fields.get(GlobalConstants.NAME).getValue())) {
-					Utility.createErrorMessage("Error","Species name already exists.");
+			else if (!oldName.equals(fields.get(GlobalConstants.ID).getValue())) {
+				if (gcm.getSpecies().containsKey(fields.get(GlobalConstants.ID).getValue())) {
+					Utility.createErrorMessage("Error","Species id already exists.");
 					return false;
 				}
 			}
-			String id = fields.get(GlobalConstants.NAME).getValue();
+			String id = fields.get(GlobalConstants.ID).getValue();
 
 			// Check to see if we need to add or edit
 			Properties property = new Properties();

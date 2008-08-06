@@ -202,8 +202,8 @@ public class GCMParser {
 			species = new BaseSpecies();
 		}
 
-		species.setName(property.getProperty(GlobalConstants.NAME));
-		species.setStateName(property.getProperty(GlobalConstants.NAME));
+		species.setName(property.getProperty(GlobalConstants.ID));
+		species.setStateName(property.getProperty(GlobalConstants.ID));
 		species.setProperties(property);
 		return species;
 	}
