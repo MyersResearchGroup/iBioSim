@@ -31,6 +31,7 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Properties;
 import java.util.Scanner;
 import java.util.prefs.Preferences;
@@ -662,15 +663,39 @@ public class BioSim implements MouseListener, ActionListener {
 		}
 		// if the delete popup menu is selected
 		else if (e.getActionCommand().equals("delete")) {
-			for (int i = 0; i < tab.getTabCount(); i++) {
-				if (tab.getTitleAt(i).equals(
-						tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
-					tab.remove(i);
+			String[] views = canDelete(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]);
+			if (views.length == 0) {
+				for (int i = 0; i < tab.getTabCount(); i++) {
+					if (tab.getTitleAt(i).equals(
+							tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
+						tab.remove(i);
+					}
 				}
+				System.gc();
+				new File(tree.getFile()).delete();
+				refreshTree();
 			}
-			System.gc();
-			new File(tree.getFile()).delete();
-			refreshTree();
+			else {
+				String view = "";
+				for (int i = 0; i < views.length; i++) {
+					if (i == views.length - 1) {
+						view += views[i];
+					}
+					else {
+						view += views[i] + "\n";
+					}
+				}
+				String message = "Unable to delete the selected file."
+						+ "\nIt is linked to the following views:\n" + view + "\nDelete these views first.";
+				JTextArea messageArea = new JTextArea(message);
+				messageArea.setEditable(false);
+				JScrollPane scroll = new JScrollPane();
+				scroll.setMinimumSize(new Dimension(300, 300));
+				scroll.setPreferredSize(new Dimension(300, 300));
+				scroll.setViewportView(messageArea);
+				JOptionPane.showMessageDialog(frame, scroll, "Unable To Delete File",
+						JOptionPane.ERROR_MESSAGE);
+			}
 		}
 		// if the edit popup menu is selected on a dot file
 		else if (e.getActionCommand().equals("createSBML")) {
@@ -3435,13 +3460,13 @@ public class BioSim implements MouseListener, ActionListener {
 						check = getProp[getProp.length - 1];
 					}
 					else {
-						check = null;
+						check = "";
 					}
 				}
 				catch (Exception e) {
 					JOptionPane.showMessageDialog(frame, "Unable to load background file.", "Error",
 							JOptionPane.ERROR_MESSAGE);
-					check = null;
+					check = "";
 				}
 				if (check.equals(updatedFile)) {
 					JTabbedPane learn = ((JTabbedPane) (this.tab.getComponentAt(i)));
@@ -3478,20 +3503,45 @@ public class BioSim implements MouseListener, ActionListener {
 					+ "\nDo you want to overwrite?", "Overwrite", JOptionPane.YES_NO_OPTION,
 					JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 			if (value == JOptionPane.YES_OPTION) {
-				for (int i = 0; i < tab.getTabCount(); i++) {
-					if (tab.getTitleAt(i).equals(name)) {
-						tab.remove(i);
+				String[] views = canDelete(name);
+				if (views.length == 0) {
+					for (int i = 0; i < tab.getTabCount(); i++) {
+						if (tab.getTitleAt(i).equals(name)) {
+							tab.remove(i);
+						}
 					}
-				}
-				File dir = new File(fullPath);
-				if (dir.isDirectory()) {
-					deleteDir(dir);
+					File dir = new File(fullPath);
+					if (dir.isDirectory()) {
+						deleteDir(dir);
+					}
+					else {
+						System.gc();
+						dir.delete();
+					}
+					return true;
 				}
 				else {
-					System.gc();
-					dir.delete();
+					String view = "";
+					for (int i = 0; i < views.length; i++) {
+						if (i == views.length - 1) {
+							view += views[i];
+						}
+						else {
+							view += views[i] + "\n";
+						}
+					}
+					String message = "Unable to overwrite file." + "\nIt is linked to the following views:\n"
+							+ view + "\nDelete these views first.";
+					JTextArea messageArea = new JTextArea(message);
+					messageArea.setEditable(false);
+					JScrollPane scroll = new JScrollPane();
+					scroll.setMinimumSize(new Dimension(300, 300));
+					scroll.setPreferredSize(new Dimension(300, 300));
+					scroll.setViewportView(messageArea);
+					JOptionPane.showMessageDialog(frame, scroll, "Unable To Overwrite File",
+							JOptionPane.ERROR_MESSAGE);
+					return false;
 				}
-				return true;
 			}
 			else {
 				return false;
@@ -3514,6 +3564,67 @@ public class BioSim implements MouseListener, ActionListener {
 					newSBML.save(false, "", false);
 				}
 			}
+		}
+	}
+
+	private String[] canDelete(String filename) {
+		ArrayList<String> views = new ArrayList<String>();
+		String[] files = new File(root).list();
+		for (String s : files) {
+			if (new File(root + separator + s).isDirectory()) {
+				String check = "";
+				if (new File(root + separator + s + separator + s + ".sim").exists()) {
+					try {
+						Scanner scan = new Scanner(new File(root + separator + s + separator + s + ".sim"));
+						if (scan.hasNextLine()) {
+							check = scan.nextLine();
+							check = check.split(separator)[check.split(separator).length - 1];
+						}
+						scan.close();
+					}
+					catch (Exception e) {
+					}
+				}
+				else if (new File(root + separator + s + separator + s + ".lrn").exists()) {
+					try {
+						Properties p = new Properties();
+						FileInputStream load = new FileInputStream(new File(root + separator + s + separator
+								+ s + ".lrn"));
+						p.load(load);
+						load.close();
+						if (p.containsKey("genenet.file")) {
+							String[] getProp = p.getProperty("genenet.file").split(separator);
+							check = getProp[getProp.length - 1];
+						}
+						else {
+							check = "";
+						}
+					}
+					catch (Exception e) {
+						check = "";
+					}
+				}
+				if (check.equals(filename)) {
+					views.add(s);
+				}
+			}
+		}
+		String[] usingViews = views.toArray(new String[0]);
+		sort(usingViews);
+		return usingViews;
+	}
+
+	private void sort(String[] sort) {
+		int i, j;
+		String index;
+		for (i = 1; i < sort.length; i++) {
+			index = sort[i];
+			j = i;
+			while ((j > 0) && sort[j - 1].compareToIgnoreCase(index) > 0) {
+				sort[j] = sort[j - 1];
+				j = j - 1;
+			}
+			sort[j] = index;
 		}
 	}
 }
