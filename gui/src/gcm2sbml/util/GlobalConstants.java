@@ -30,7 +30,7 @@ public class GlobalConstants {
 	public static final String COOPERATIVITY_VALUE = "2";
 	public static final String ACTIVED_VALUE = ".25";
 	
-	public static final String NAME = "Name";
+	public static final String ID = "ID";
 	public static final String CONSTANT = "boundary";
 	public static final String SPASTIC = "unconstrained";
 	public static final String NORMAL = "normal";

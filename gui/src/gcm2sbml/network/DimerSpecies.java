@@ -24,7 +24,7 @@ public class DimerSpecies extends AbstractSpecies {
 		this.monomer = monomer;
 		this.name = monomer.getName() + "_" + num;
 		properties.setProperty(GlobalConstants.MAX_DIMER_STRING, ""+num);
-		properties.setProperty(GlobalConstants.NAME, name);
+		properties.setProperty(GlobalConstants.ID, name);
 	}
 
 	/**

@@ -64,13 +64,14 @@ public class GCMFile {
 				buffer.append("]\n");
 			}
 			for (String s : influences.keySet()) {
-				buffer.append(getInput(s) + " " + getArrow(s) + " " + getOutput(s) + " [");				
+				buffer.append(getInput(s) + " -> "// + getArrow(s) + " "
+						+ getOutput(s) + " [");				
 				Properties prop = influences.get(s);
 				String promo = "default";
 				if (prop.containsKey(GlobalConstants.PROMOTER)) {
 					promo = prop.getProperty(GlobalConstants.PROMOTER);
 				}
-				prop.setProperty(GlobalConstants.NAME, "\""+ getInput(s) + " " + getArrow(s) + " "
+				prop.setProperty(GlobalConstants.ID, "\""+ getInput(s) + " " + getArrow(s) + " "
 						+ getOutput(s)+ ", Promoter " + promo + "\"");
 				for (Object propName : prop.keySet()) {
 					buffer.append(checkCompabilitySave(propName.toString()) + "="
@@ -409,7 +410,7 @@ public class GCMFile {
 			
 			//for backwards compatibility
 			if (properties.containsKey("label")) {
-				properties.put(GlobalConstants.NAME, properties.getProperty("label").replace("\"", ""));
+				properties.put(GlobalConstants.ID, properties.getProperty("label").replace("\"", ""));
 			}
 			species.put(name, properties);
 		}
@@ -510,7 +511,7 @@ public class GCMFile {
 				}
 				properties.put("label", "\""+label+"\"");
 			}
-			properties.put(GlobalConstants.NAME, name);
+			properties.put(GlobalConstants.ID, name);
 			influences.put(name, properties);
 		}
 	}
