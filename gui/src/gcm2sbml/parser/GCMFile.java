@@ -35,7 +35,7 @@ public class GCMFile {
 	public String getSBMLFile() {
 		return sbmlFile;
 	}
-	
+
 	public void setSBMLFile(String file) {
 		sbmlFile = file;
 	}
