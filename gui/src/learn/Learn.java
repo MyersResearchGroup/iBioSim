@@ -792,8 +792,8 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 	 */
 
 	private void editText(int num) {
-		ArrayList<Component> specs = species.get(num);
 		try {
+			ArrayList<Component> specs = species.get(num);
 			Component[] panels = speciesPanel.getComponents();
 			int boxes = Integer.parseInt((String) ((JComboBox) specs.get(1)).getSelectedItem());
 			if ((specs.size() - 2) < boxes) {
@@ -1296,7 +1296,8 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 		return change;
 	}
 
-	public void updateSpecies() {
+	public void updateSpecies(String newLearnFile) {
+		learnFile = newLearnFile;
 		speciesList = new ArrayList<String>();
 		if (learnFile.contains(".sbml")) {
 			SBMLReader reader = new SBMLReader();

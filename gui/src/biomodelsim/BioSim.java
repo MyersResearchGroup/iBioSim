@@ -1821,6 +1821,15 @@ public class BioSim implements MouseListener, ActionListener {
 						return;
 					}
 					if (overwrite(root + separator + rename, rename)) {
+						if (tree.getFile().length() >= 5
+								&& tree.getFile().substring(tree.getFile().length() - 5).equals(".sbml")
+								|| tree.getFile().length() >= 4
+								&& tree.getFile().substring(tree.getFile().length() - 4).equals(".xml")
+								|| tree.getFile().length() >= 4
+								&& tree.getFile().substring(tree.getFile().length() - 4).equals(".gcm")) {
+							String oldName = tree.getFile().split(separator)[tree.getFile().split(separator).length - 1];
+							reassignViews(oldName, rename);
+						}
 						new File(tree.getFile()).renameTo(new File(root + separator + rename));
 						if (modelID != null) {
 							SBMLReader reader = new SBMLReader();
@@ -1833,6 +1842,11 @@ public class BioSim implements MouseListener, ActionListener {
 							byte[] output = doc.getBytes();
 							out.write(output);
 							out.close();
+						}
+						if (rename.length() >= 5 && rename.substring(rename.length() - 5).equals(".sbml")
+								|| rename.length() >= 4 && rename.substring(rename.length() - 4).equals(".xml")
+								|| rename.length() >= 4 && rename.substring(rename.length() - 4).equals(".gcm")) {
+							updateViews(rename);
 						}
 						if (new File(root + separator + rename).isDirectory()) {
 							if (new File(root + separator + rename + separator
@@ -2838,6 +2852,7 @@ public class BioSim implements MouseListener, ActionListener {
 					in.close();
 					if (load.containsKey("genenet.file")) {
 						learnFile = load.getProperty("genenet.file");
+						learnFile = learnFile.split(separator)[learnFile.split(separator).length - 1];
 					}
 				}
 				FileOutputStream out = new FileOutputStream(new File(lrnFile));
@@ -2850,14 +2865,18 @@ public class BioSim implements MouseListener, ActionListener {
 						"Error Loading Properties", JOptionPane.ERROR_MESSAGE);
 			}
 			for (int i = 0; i < tab.getTabCount(); i++) {
-				if (tab.getTitleAt(i).equals(
-						learnFile.split(separator)[learnFile.split(separator).length - 1])) {
+				if (tab.getTitleAt(i).equals(learnFile)) {
 					tab.setSelectedIndex(i);
 					if (save(i) != 1) {
 						return;
 					}
 					break;
 				}
+			}
+			if (!(new File(root + separator + learnFile).exists())) {
+				JOptionPane.showMessageDialog(frame, "Unable to open view because " + learnFile
+						+ " is missing.", "Error", JOptionPane.ERROR_MESSAGE);
+				return;
 			}
 			// if (!graphFile.equals("")) {
 			lrnTab.addTab("Data Manager", new DataManager(tree.getFile(), this));
@@ -2988,12 +3007,14 @@ public class BioSim implements MouseListener, ActionListener {
 							}
 						}
 						String sbmlLoadFile = null;
+						String failure = "";
 						if (new File(simFile).exists()) {
 							try {
 								Scanner s = new Scanner(new File(simFile));
 								if (s.hasNextLine()) {
 									sbmlLoadFile = s.nextLine();
 									sbmlLoadFile = sbmlLoadFile.split(separator)[sbmlLoadFile.split(separator).length - 1];
+									failure += sbmlLoadFile;
 									if (sbmlLoadFile.contains(".gcm")) {
 										GCMParser parser = new GCMParser(root + separator + sbmlLoadFile);
 										GeneticNetwork network = parser.buildNetwork();
@@ -3031,6 +3052,11 @@ public class BioSim implements MouseListener, ActionListener {
 								 * file.", "Error", JOptionPane.ERROR_MESSAGE); return;
 								 */
 							}
+						}
+						if (sbmlLoadFile == null || !(new File(sbmlLoadFile).exists())) {
+							JOptionPane.showMessageDialog(frame, "Unable to open view because " + failure
+									+ " is missing.", "Error", JOptionPane.ERROR_MESSAGE);
+							return;
 						}
 						for (int i = 0; i < tab.getTabCount(); i++) {
 							if (tab.getTitleAt(i).equals(
@@ -3440,7 +3466,8 @@ public class BioSim implements MouseListener, ActionListener {
 								network.mergeSBML(root + separator + tab + separator
 										+ updatedFile.replace(".gcm", ".sbml"));
 							}
-							((SBML_Editor) (sim.getComponentAt(j))).updateSBML(i, j);
+							((SBML_Editor) (sim.getComponentAt(j))).updateSBML(i, j, root + separator
+									+ updatedFile);
 							((SBML_Editor) (sim.getComponentAt(j))).setChanged(dirty);
 							new File(properties).delete();
 							new File(properties.replace(".sim", ".temp")).renameTo(new File(properties));
@@ -3475,7 +3502,7 @@ public class BioSim implements MouseListener, ActionListener {
 							((DataManager) (learn.getComponentAt(j))).updateSpecies();
 						}
 						else if (learn.getComponentAt(j).getName().equals("Learn")) {
-							((Learn) (learn.getComponentAt(j))).updateSpecies();
+							((Learn) (learn.getComponentAt(j))).updateSpecies(root + separator + updatedFile);
 						}
 						else if (learn.getComponentAt(j).getName().contains("Graph")) {
 							((Graph) (learn.getComponentAt(j))).refresh();
@@ -3625,6 +3652,65 @@ public class BioSim implements MouseListener, ActionListener {
 				j = j - 1;
 			}
 			sort[j] = index;
+		}
+	}
+
+	private void reassignViews(String oldName, String newName) {
+		String[] files = new File(root).list();
+		for (String s : files) {
+			if (new File(root + separator + s).isDirectory()) {
+				String check = "";
+				if (new File(root + separator + s + separator + s + ".sim").exists()) {
+					try {
+						ArrayList<String> copy = new ArrayList<String>();
+						Scanner scan = new Scanner(new File(root + separator + s + separator + s + ".sim"));
+						if (scan.hasNextLine()) {
+							check = scan.nextLine();
+							check = check.split(separator)[check.split(separator).length - 1];
+							if (check.equals(oldName)) {
+								while (scan.hasNextLine()) {
+									copy.add(scan.nextLine());
+								}
+								scan.close();
+								FileOutputStream out = new FileOutputStream(new File(root + separator + s
+										+ separator + s + ".sim"));
+								out.write((newName + "\n").getBytes());
+								for (String cop : copy) {
+									out.write((cop + "\n").getBytes());
+								}
+								out.close();
+							}
+							else {
+								scan.close();
+							}
+						}
+					}
+					catch (Exception e) {
+					}
+				}
+				else if (new File(root + separator + s + separator + s + ".lrn").exists()) {
+					try {
+						Properties p = new Properties();
+						FileInputStream load = new FileInputStream(new File(root + separator + s + separator
+								+ s + ".lrn"));
+						p.load(load);
+						load.close();
+						if (p.containsKey("genenet.file")) {
+							String[] getProp = p.getProperty("genenet.file").split(separator);
+							check = getProp[getProp.length - 1];
+							if (check.equals(oldName)) {
+								p.setProperty("genenet.file", newName);
+								FileOutputStream store = new FileOutputStream(new File(root + separator + s
+										+ separator + s + ".lrn"));
+								p.store(store, "Learn File Data");
+								store.close();
+							}
+						}
+					}
+					catch (Exception e) {
+					}
+				}
+			}
 		}
 	}
 }

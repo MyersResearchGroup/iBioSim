@@ -9135,8 +9135,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		}
 	}
 
-	public void updateSBML(int tab, int tab2) {
-		SBML_Editor sbml = new SBML_Editor(file, reb2sac, log, biosim, simDir, paramFile);
+	public void updateSBML(int tab, int tab2, String newFile) {
+		SBML_Editor sbml = new SBML_Editor(newFile, reb2sac, log, biosim, simDir, paramFile);
 		((JTabbedPane) (biosim.getTab().getComponentAt(tab))).setComponentAt(tab2, sbml);
 		reb2sac.setSbml(sbml);
 		reb2sac.updateSpeciesList();
