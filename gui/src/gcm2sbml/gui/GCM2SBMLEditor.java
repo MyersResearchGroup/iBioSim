@@ -18,6 +18,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -284,6 +285,20 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 		mainPanelNorth.add(sbmlFileLabel);
 		mainPanelNorth.add(sbmlFiles);
 
+		/*
+		JLabel bioAbsLabel = new JLabel("Biochemical abstraction:");
+		bioAbs = new JCheckBox();
+		bioAbs.addActionListener(this);
+		mainPanelNorth.add(bioAbsLabel);
+		mainPanelNorth.add(bioAbs);
+
+		JLabel dimAbsLabel = new JLabel("Dimerization abstraction:");
+		dimAbs = new JCheckBox();
+		dimAbs.addActionListener(this);
+		mainPanelNorth.add(dimAbsLabel);
+		mainPanelNorth.add(dimAbs);
+		*/
+		
 		JPanel mainPanel = new JPanel(new BorderLayout());
 		mainPanel.setLayout(new BorderLayout());
 		mainPanel.add(mainPanelNorth, "North");
@@ -551,6 +566,10 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 	private PropertyList parameters = null;
 
 	private JComboBox sbmlFiles = null;
+	
+	private JCheckBox bioAbs = null;
+
+	private JCheckBox dimAbs = null;
 
 	private String path = null;
 
