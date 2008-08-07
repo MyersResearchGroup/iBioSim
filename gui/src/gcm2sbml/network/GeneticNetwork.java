@@ -127,6 +127,8 @@ public class GeneticNetwork {
 	 */
 	public void loadProperties(GCMFile gcm) {
 		properties = gcm;
+		dimerizationAbstraction = gcm.getDimAbs();
+		biochemicalAbstraction = gcm.getBioAbs();
 	}
 	
 	public void setSBMLFile(String file) {

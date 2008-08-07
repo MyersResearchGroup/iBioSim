@@ -107,8 +107,8 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 		if (biochemicalAbstraction) {
 			String names = "";
 			for (SpeciesInterface s : specie.getInputs()) {
-				r.addReactant(new SpeciesReference(specie.getId(), coop));
-				names = names + "*" + specie.getId();
+				r.addReactant(new SpeciesReference(s.getId(), coop));
+				names = names + "*" + s.getId();
 			}
 
 			kl.addParameter(new Parameter(kbioString, kbio, GeneticNetwork
