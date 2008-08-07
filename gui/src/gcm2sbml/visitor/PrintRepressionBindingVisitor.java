@@ -109,13 +109,13 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 			kl.addParameter(new Parameter("kbio", kbio, "dimensionless"));
 			String names = "";
 			for (SpeciesInterface s : specie.getInputs()) {
-				r.addReactant(new SpeciesReference(specie.getId(), coop));
-				names = names + specie.getId() + "*";
+				r.addReactant(new SpeciesReference(s.getId(), coop));
+				names = names + s.getId() + "*";
 			}
 			names = names.substring(0, names.length() - 1);
 			kl.addParameter(new Parameter("temp", 1, GeneticNetwork
 					.getMoleTimeParameter(1)));
-			kl.setFormula("temp*(kbio*" + names + "rep)^"+coop+"*" + promoter.getId()
+			kl.setFormula("temp*(kbio*" + names + "*rep)^"+coop+"*" + promoter.getId()
 					+ "-kr*" + speciesName);
 		} else {
 			kl.addParameter(new Parameter("rep", rep, GeneticNetwork

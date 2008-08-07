@@ -39,6 +39,22 @@ public class GCMFile {
 	public void setSBMLFile(String file) {
 		sbmlFile = file;
 	}
+	
+	public boolean getDimAbs() {
+		return dimAbs;
+	}
+
+	public void setDimAbs(boolean dimAbs) {
+		this.dimAbs = dimAbs;
+	}
+	
+	public boolean getBioAbs() {
+		return bioAbs;
+	}
+
+	public void setBioAbs(boolean bioAbs) {
+		this.bioAbs = bioAbs;
+	}
 
 	public void save(String filename) {
 		try {
@@ -128,7 +144,13 @@ public class GCMFile {
 				buffer.append("]\n");
 			}
 			buffer.append("}\n");
-			buffer.append(GlobalConstants.SBMLFILE + "=\"" + sbmlFile + "\"");
+			buffer.append(GlobalConstants.SBMLFILE + "=\"" + sbmlFile + "\"\n");
+			if (bioAbs) {
+				buffer.append(GlobalConstants.BIOABS + "=true\n");
+			}
+			if (dimAbs) {
+				buffer.append(GlobalConstants.DIMABS + "=true\n");
+			} 
 			p.print(buffer);
 			p.close();
 		} catch (FileNotFoundException e) {
@@ -162,6 +184,8 @@ public class GCMFile {
 			parseGlobal(data);
 			parsePromoters(data);
 			parseSBMLFile(data);
+			parseBioAbs(data);
+			parseDimAbs(data);
 		} catch (Exception e) {
 			throw new IllegalArgumentException("Unable to parse GCM");
 //			JOptionPane.showMessageDialog(null,
@@ -440,6 +464,26 @@ public class GCMFile {
 		}
 	}
 
+	private void parseDimAbs(StringBuffer data) {
+		Pattern pattern = Pattern.compile(DIMABS);
+		Matcher matcher = pattern.matcher(data.toString());
+		if (matcher.find()) {
+			if (matcher.group(1).equals("true")) {
+				dimAbs = true;
+			}
+		}
+	}
+
+	private void parseBioAbs(StringBuffer data) {
+		Pattern pattern = Pattern.compile(BIOABS);
+		Matcher matcher = pattern.matcher(data.toString());
+		if (matcher.find()) {
+			if (matcher.group(1).equals("true")) {
+				bioAbs = true;
+			}
+		}
+	}
+
 	private void parseGlobal(StringBuffer data) {
 		Pattern pattern = Pattern.compile(GLOBAL);
 		Pattern propPattern = Pattern.compile(PROPERTY);
@@ -621,10 +665,18 @@ public class GCMFile {
 	private static final String GLOBAL = "Global\\s\\{([^}]*)\\s\\}";
 	
 	private static final String SBMLFILE = GlobalConstants.SBMLFILE + "=\"([^\"]*)\"";
+	
+	private static final String DIMABS = GlobalConstants.DIMABS + "=(true|false)";
+
+	private static final String BIOABS = GlobalConstants.BIOABS + "=(true|false)";
 
 	private static final String PROMOTERS_LIST = "Promoters\\s\\{([^}]*)\\s\\}";
 	
 	private String sbmlFile = "";
+	
+	private boolean dimAbs = false;
+
+	private boolean bioAbs = false;
 
 	private HashMap<String, Properties> species;
 

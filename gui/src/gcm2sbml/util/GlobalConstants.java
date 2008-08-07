@@ -40,6 +40,8 @@ public class GlobalConstants {
 	public static final String INITIAL_STRING = "Initial amount";	
 	public static final String PROMOTER = "Promoter";
 	public static final String SBMLFILE = "SBML file";
+	public static final String BIOABS = "Biochemical abstraction";
+	public static final String DIMABS = "Dimerization abstraction";
 	
 	public static final String BIO = "biochem";
 	public static final String ACTIVATION = "activation";
