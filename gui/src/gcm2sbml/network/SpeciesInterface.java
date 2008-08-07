@@ -15,6 +15,20 @@ import gcm2sbml.visitor.VisitableSpecies;
 public interface SpeciesInterface extends VisitableSpecies {
 
 	/**
+	 * Returns the id of the species
+	 * 
+	 * @return the id of the species
+	 */
+	public String getId();
+	/**
+	 * Sets the id of the species
+	 * 
+	 * @param id
+	 *            the id of the species
+	 */
+	public void setId(String name);
+
+	/**
 	 * Returns the name of the species
 	 * 
 	 * @return the name of the species

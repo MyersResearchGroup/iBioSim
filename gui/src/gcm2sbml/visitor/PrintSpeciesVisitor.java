@@ -46,7 +46,7 @@ public class PrintSpeciesVisitor extends AbstractPrintVisitor {
 	public void visitDimer(DimerSpecies specie) {
 		loadValues(specie.getProperties());
 		if (!dimerizationAbstraction) {
-			Species s = Utility.makeSpecies(specie.getName(), compartment, init);
+			Species s = Utility.makeSpecies(specie.getId(), compartment, init);
 			s.setHasOnlySubstanceUnits(true);
 			Utility.addSpecies(document, s);
 		}
@@ -56,7 +56,7 @@ public class PrintSpeciesVisitor extends AbstractPrintVisitor {
 	public void visitBiochemical(BiochemicalSpecies specie) {
 		loadValues(specie.getProperties());
 		if (!biochemicalAbstraction) {
-			Species s = Utility.makeSpecies(specie.getName(), compartment, init);
+			Species s = Utility.makeSpecies(specie.getId(), compartment, init);
 			s.setHasOnlySubstanceUnits(true);
 			Utility.addSpecies(document, s);
 		}
@@ -65,14 +65,16 @@ public class PrintSpeciesVisitor extends AbstractPrintVisitor {
 
 	public void visitBaseSpecies(BaseSpecies specie) {
 		loadValues(specie.getProperties());
-		Species s = Utility.makeSpecies(specie.getName(), compartment, init);
+		Species s = Utility.makeSpecies(specie.getId(), compartment, init);
+		s.setName(specie.getName());
 		s.setHasOnlySubstanceUnits(true);
 		Utility.addSpecies(document, s);
 	}
 
 	public void visitConstantSpecies(ConstantSpecies specie) {
 		loadValues(specie.getProperties());
-		Species s = Utility.makeSpecies(specie.getName(), compartment, init);
+		Species s = Utility.makeSpecies(specie.getId(), compartment, init);
+		s.setName(specie.getName());
 		s.setHasOnlySubstanceUnits(true);
 		s.setBoundaryCondition(true);
 		//s.setConstant(true);
@@ -81,7 +83,8 @@ public class PrintSpeciesVisitor extends AbstractPrintVisitor {
 
 	public void visitSpasticSpecies(SpasticSpecies specie) {
 		loadValues(specie.getProperties());
-		Species s = Utility.makeSpecies(specie.getName(), compartment, init);
+		Species s = Utility.makeSpecies(specie.getId(), compartment, init);
+		s.setName(specie.getName());
 		s.setHasOnlySubstanceUnits(true);
 		Utility.addSpecies(document, s);
 		

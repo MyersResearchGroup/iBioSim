@@ -20,7 +20,7 @@ import javax.swing.JPanel;
 public class SpeciesPanel extends JPanel implements ActionListener {
 	public SpeciesPanel(String selected, PropertyList speciesList,
 			PropertyList influencesList, GCMFile gcm) {
-		super(new GridLayout(5, 1));
+		super(new GridLayout(6, 1));
 		this.selected = selected;
 		this.speciesList = speciesList;
 		this.influences = influencesList;
@@ -32,6 +32,12 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		PropertyField field = new PropertyField(GlobalConstants.ID,
 				"", null, null, Utility.IDstring);
 		fields.put(GlobalConstants.ID, field);
+		add(field);
+
+		// Name field
+		field = new PropertyField(GlobalConstants.NAME,
+				"", null, null, Utility.NAMEstring);
+		fields.put(GlobalConstants.NAME, field);
 		add(field);
 		
 		// Type field

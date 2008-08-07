@@ -22,9 +22,9 @@ public class DimerSpecies extends AbstractSpecies {
 	public DimerSpecies(SpeciesInterface monomer, int num) {
 		super();
 		this.monomer = monomer;
-		this.name = monomer.getName() + "_" + num;
+		this.id = monomer.getId() + "_" + num;
 		properties.setProperty(GlobalConstants.MAX_DIMER_STRING, ""+num);
-		properties.setProperty(GlobalConstants.ID, name);
+		properties.setProperty(GlobalConstants.ID, id);
 	}
 
 	/**

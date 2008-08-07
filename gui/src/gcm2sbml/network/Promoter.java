@@ -79,18 +79,18 @@ public class Promoter {
 	}
 
 	/**
-	 * @return Returns the name.
+	 * @return Returns the id.
 	 */
-	public String getName() {
-		return name;
+	public String getId() {
+		return id;
 	}
 
 	/**
-	 * @param name
-	 *            The name to set.
+	 * @param id
+	 *            The id to set.
 	 */
-	public void setName(String name) {
-		this.name = name;
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	/**
@@ -136,8 +136,8 @@ public class Promoter {
 	 * 
 	 */
 	public void generatorUID() {
-		name = "Promoter_" + id;
-		id++;
+		id = "Promoter_" + uniqueID;
+		uniqueID++;
 	}
 
 	/**
@@ -230,8 +230,8 @@ public class Promoter {
 	
 	protected Properties properties = null;
 
-	// Name of promoter
-	protected String name = "";
+	// id of promoter
+	protected String id = "";
 
 	// Activators of promoter
 	protected HashSet<SpeciesInterface> activators = null;
@@ -247,7 +247,7 @@ public class Promoter {
 
 	protected ArrayList<Reaction> repressingReactions = null;
 
-	protected static int id = 0;
+	protected static int uniqueID = 0;
 
 	protected HashMap<SpeciesInterface, ArrayList<Reaction>> reactionMap = null;
 }

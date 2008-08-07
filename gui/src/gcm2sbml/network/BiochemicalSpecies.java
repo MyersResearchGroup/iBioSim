@@ -36,11 +36,11 @@ public class BiochemicalSpecies extends AbstractSpecies {
 	 * 
 	 */
 	private void makeName() {
-		name = "Biochemical_";
+		id = "Biochemical_";
 		for (int i = 0; i < inputs.size(); i++) {
-			name = name + inputs.get(i);
+			id = id + inputs.get(i);
 			if (i != inputs.size() - 1) {
-				name = name + "_";
+				id = id + "_";
 			}
 		}
 		return;

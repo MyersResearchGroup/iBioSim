@@ -14,7 +14,7 @@ public class NullSpecies extends AbstractSpecies implements SpeciesInterface {
 
 	public NullSpecies() {
 		super();
-		setName("Null");
+		setId("Null");
 		setStateName("Null");
 	}
 	

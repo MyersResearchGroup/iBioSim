@@ -357,6 +357,7 @@ public class Utility {
 	public static final String NUMstring = "([\\d]*[\\.\\d]?\\d+)";
 	public static final String PROPstring = "([a-zA-Z]|_)([a-zA-Z]|[0-9]|_)*";
 	public static final String IDstring = "([a-zA-Z])([a-zA-Z]|[0-9]|_)*";
+	public static final String NAMEstring = "(.)*";
 
 	public static final String DECAY = ".0075";
 	public static final String KDIMER = ".5";

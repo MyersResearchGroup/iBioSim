@@ -48,9 +48,15 @@ public class GCMFile {
 				buffer.append(s + " [");
 				Properties prop = species.get(s);
 				for (Object propName : prop.keySet()) {
-					buffer.append(checkCompabilitySave(propName.toString()) + "="
-							+ prop.getProperty(propName.toString()).toString()
-							+ ",");
+					if (propName.toString().equals(GlobalConstants.NAME)) {
+						buffer.append(checkCompabilitySave(propName.toString()) + "="
+								+ "\"" + prop.getProperty(propName.toString()).toString()
+								+ "\"" + ",");
+					} else {
+						buffer.append(checkCompabilitySave(propName.toString()) + "="
+								+ prop.getProperty(propName.toString()).toString()
+								+ ",");
+					}
 				}
 				if (!prop.containsKey("shape")) {
 					buffer.append("shape=ellipse,");
@@ -71,7 +77,7 @@ public class GCMFile {
 				if (prop.containsKey(GlobalConstants.PROMOTER)) {
 					promo = prop.getProperty(GlobalConstants.PROMOTER);
 				}
-				prop.setProperty(GlobalConstants.ID, "\""+ getInput(s) + " " + getArrow(s) + " "
+				prop.setProperty(GlobalConstants.NAME, "\""+ getInput(s) + " " + getArrow(s) + " "
 						+ getOutput(s)+ ", Promoter " + promo + "\"");
 				for (Object propName : prop.keySet()) {
 					buffer.append(checkCompabilitySave(propName.toString()) + "="
@@ -106,9 +112,15 @@ public class GCMFile {
 				buffer.append(s + " [");
 				Properties prop = promoters.get(s);
 				for (Object propName : prop.keySet()) {
-					buffer.append(checkCompabilitySave(propName.toString()) + "="
-							+ prop.getProperty(propName.toString()).toString()
-							+ ",");
+					if (propName.toString().equals(GlobalConstants.NAME)) {
+						buffer.append(checkCompabilitySave(propName.toString()) + "="
+								+ "\"" + prop.getProperty(propName.toString()).toString()
+								+ "\"" + ",");
+					} else {
+						buffer.append(checkCompabilitySave(propName.toString()) + "="
+								+ prop.getProperty(propName.toString()).toString()
+								+ ",");
+					}
 				}
 				if (buffer.charAt(buffer.length() - 1) == ',') {
 					buffer.deleteCharAt(buffer.length() - 1);
@@ -396,7 +408,11 @@ public class GCMFile {
 			Matcher propMatcher = propPattern.matcher(matcher.group(3));
 			Properties properties = new Properties();
 			while (propMatcher.find()) {
-				properties.put(propMatcher.group(1), propMatcher.group(2));
+				if (propMatcher.group(3)!=null) {
+					properties.put(propMatcher.group(1), propMatcher.group(3));
+				} else {
+					properties.put(propMatcher.group(1), propMatcher.group(4));
+				}
 			}
 			//for backwards compatibility
 			if (properties.containsKey("const")) {
@@ -432,8 +448,13 @@ public class GCMFile {
 			String s = matcher.group(1);
 			matcher = propPattern.matcher(s);
 			while (matcher.find()) {
-				globalParameters.put(matcher.group(1), matcher.group(2));
-				parameters.put(matcher.group(1), matcher.group(2));
+				if (matcher.group(3)!=null) {
+					globalParameters.put(matcher.group(1), matcher.group(3));
+					parameters.put(matcher.group(1), matcher.group(3));
+				} else {
+					globalParameters.put(matcher.group(1), matcher.group(4));
+					parameters.put(matcher.group(1), matcher.group(4));
+				}
 			}
 		}
 	}
@@ -452,7 +473,11 @@ public class GCMFile {
 			Matcher propMatcher = propPattern.matcher(matcher.group(3));
 			Properties properties = new Properties();
 			while (propMatcher.find()) {
-				properties.put(propMatcher.group(1), propMatcher.group(2));
+				if (propMatcher.group(3)!=null) {
+					properties.put(propMatcher.group(1), propMatcher.group(3));
+				} else {
+					properties.put(propMatcher.group(1), propMatcher.group(4));
+				}
 			}
 			promoters.put(name, properties);
 		}
@@ -466,12 +491,22 @@ public class GCMFile {
 			Matcher propMatcher = propPattern.matcher(matcher.group(6));
 			Properties properties = new Properties();
 			while (propMatcher.find()) {
-				properties.put(checkCompabilityLoad(propMatcher.group(1)), propMatcher.group(2));
-				if (propMatcher.group(1).equalsIgnoreCase(GlobalConstants.PROMOTER)
-						&& !promoters.containsKey(propMatcher.group(2))) {
-					promoters.put(propMatcher.group(2).replaceAll("\"", ""),
-							new Properties());
-					properties.setProperty(GlobalConstants.PROMOTER, propMatcher.group(2).replace("\"", "")); //for backwards compatibility
+				if (propMatcher.group(3)!=null) {
+					properties.put(checkCompabilityLoad(propMatcher.group(1)), propMatcher.group(3));
+					if (propMatcher.group(1).equalsIgnoreCase(GlobalConstants.PROMOTER)
+							&& !promoters.containsKey(propMatcher.group(3))) {
+						promoters.put(propMatcher.group(3).replaceAll("\"", ""),
+								new Properties());
+						properties.setProperty(GlobalConstants.PROMOTER, propMatcher.group(3).replace("\"", "")); //for backwards compatibility
+					}
+				} else {
+					properties.put(checkCompabilityLoad(propMatcher.group(1)), propMatcher.group(4));
+					if (propMatcher.group(1).equalsIgnoreCase(GlobalConstants.PROMOTER)
+							&& !promoters.containsKey(propMatcher.group(4))) {
+						promoters.put(propMatcher.group(4).replaceAll("\"", ""),
+								new Properties());
+						properties.setProperty(GlobalConstants.PROMOTER, propMatcher.group(4).replace("\"", "")); //for backwards compatibility
+					}
 				}
 			}
 
@@ -511,7 +546,7 @@ public class GCMFile {
 				}
 				properties.put("label", "\""+label+"\"");
 			}
-			properties.put(GlobalConstants.ID, name);
+			properties.put(GlobalConstants.NAME, name);
 			influences.put(name, properties);
 		}
 	}
@@ -581,7 +616,7 @@ public class GCMFile {
 
 	private static final String PARSE = "(^|\\n) *([^ \\n,]*) (\\-|\\+)(\\>|\\|) *([^ \n,]*), Promoter ([a-zA-Z\\d_]+)";
 
-	private static final String PROPERTY = "([a-zA-Z\\ \\-]+)=([^\\s,]+)";
+	private static final String PROPERTY = "([a-zA-Z\\ \\-]+)=(\"([^\"]*)\"|([^\\s,]+))";
 
 	private static final String GLOBAL = "Global\\s\\{([^}]*)\\s\\}";
 	
