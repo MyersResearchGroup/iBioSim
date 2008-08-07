@@ -138,7 +138,7 @@ public class PropertyField extends JPanel implements ActionListener,
 	}
 
 	public boolean isValid() {
-		if (getValue() == null || getValue().equals("")) {
+		if (getValue() == null) {
 			return false;
 		}
 		return Utility.isValid(getValue(), regExp);

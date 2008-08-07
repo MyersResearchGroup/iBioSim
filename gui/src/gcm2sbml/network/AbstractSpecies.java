@@ -27,6 +27,25 @@ public abstract class AbstractSpecies implements SpeciesInterface {
 	}
 	
 	/**
+	 * Returns the id of the species
+	 * 
+	 * @return the id of the species
+	 */
+	public String getId() {
+		return id;
+	}
+
+	/**
+	 * Sets the id of the species
+	 * 
+	 * @param id
+	 *            the id of the species
+	 */
+	public void setId(String id) {
+		this.id = id;
+	}
+	
+	/**
 	 * Returns the name of the species
 	 * 
 	 * @return the name of the species
@@ -66,7 +85,7 @@ public abstract class AbstractSpecies implements SpeciesInterface {
 
 	@Override
 	public String toString() {
-		return getName();
+		return getId();
 	}
 	
 	public void setProperties(Properties properties) {
@@ -100,6 +119,9 @@ public abstract class AbstractSpecies implements SpeciesInterface {
 		
 	protected Properties properties = null;
 	
+	// The id of the species
+	protected String id = null;
+
 	// The name of the species
 	protected String name = null;
 

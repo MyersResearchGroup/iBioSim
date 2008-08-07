@@ -59,7 +59,7 @@ public class GCMParser {
 
 		for (String s : speciesMap.keySet()) {
 			SpeciesInterface specie = parseSpeciesData(s, speciesMap.get(s));
-			species.put(specie.getName(), specie);
+			species.put(specie.getId(), specie);
 			stateMap.put(specie.getStateName(), specie);
 		}
 		
@@ -70,7 +70,7 @@ public class GCMParser {
 		for (String s : promoterMap.keySet()) {
 			if (!promoters.containsKey(s)) {
 				Promoter p = new Promoter();
-				p.setName(s);
+				p.setId(s);
 				promoters.put(s, p);
 			}
 			promoters.get(s).addProperties(promoterMap.get(s));
@@ -140,8 +140,8 @@ public class GCMParser {
 			promoter = promoters.get(promoterName);
 		} else {
 			promoter = new Promoter();
-			promoter.setName(promoterName);
-			promoters.put(promoter.getName(), promoter);
+			promoter.setId(promoterName);
+			promoters.put(promoter.getId(), promoter);
 		}
 
 		if (property.containsKey(GlobalConstants.BIO) && property.get(GlobalConstants.BIO).equals("yes")) {
@@ -158,7 +158,7 @@ public class GCMParser {
 		}
 		
 		if (property.containsKey(GlobalConstants.COOPERATIVITY_STRING)) {
-			r.setCoop(Double.parseDouble(gcm.getParameter((GlobalConstants.COOPERATIVITY_STRING))));
+			r.setCoop(Double.parseDouble(property.getProperty(GlobalConstants.COOPERATIVITY_STRING)));
 		} else if (gcm != null) {
 			r.setCoop(Double.parseDouble(gcm.getParameter((GlobalConstants.COOPERATIVITY_STRING))));
 		} else {
@@ -202,7 +202,9 @@ public class GCMParser {
 			species = new BaseSpecies();
 		}
 
-		species.setName(property.getProperty(GlobalConstants.ID));
+		species.setId(property.getProperty(GlobalConstants.ID));
+		species.setName(property.getProperty(GlobalConstants.NAME,
+				property.getProperty(GlobalConstants.ID)));
 		species.setStateName(property.getProperty(GlobalConstants.ID));
 		species.setProperties(property);
 		return species;

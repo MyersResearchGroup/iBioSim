@@ -262,16 +262,16 @@ public class GeneticNetwork {
 		for (Promoter p : promoters.values()) {
 			// First setup RNAP binding
 			org.sbml.libsbml.Reaction r = new org.sbml.libsbml.Reaction(
-					"R_RNAP_" + p.getName());
+					"R_RNAP_" + p.getId());
 			r.addReactant(new SpeciesReference("RNAP", 1));
-			r.addReactant(new SpeciesReference(p.getName(), 1));
-			r.addProduct(new SpeciesReference("RNAP_" + p.getName()));
+			r.addReactant(new SpeciesReference(p.getId(), 1));
+			r.addProduct(new SpeciesReference("RNAP_" + p.getId()));
 			r.setReversible(true);
 			KineticLaw kl = new KineticLaw();
 			kl.addParameter(new Parameter("kf", rnap, getMoleTimeParameter(2)));
 			kl.addParameter(new Parameter("kr", 1, getMoleTimeParameter(1)));
-			kl.setFormula("kf*" + "RNAP*" + p.getName() + "-kr*RNAP_"
-					+ p.getName());
+			kl.setFormula("kf*" + "RNAP*" + p.getId() + "-kr*RNAP_"
+					+ p.getId());
 			r.setKineticLaw(kl);
 			Utility.addReaction(document, r);
 
@@ -323,12 +323,12 @@ public class GeneticNetwork {
 		for (Promoter p : promoters.values()) {
 			if (p.getActivators().size() > 0 && p.getRepressors().size() == 0) {
 				org.sbml.libsbml.Reaction r = new org.sbml.libsbml.Reaction(
-						"R_basal_production_" + p.getName());
-				r.addReactant(new SpeciesReference("RNAP_" + p.getName(), 1));
+						"R_basal_production_" + p.getId());
+				r.addReactant(new SpeciesReference("RNAP_" + p.getId(), 1));
 				for (SpeciesInterface species : p.getOutputs()) {
-					r.addProduct(new SpeciesReference(species.getName(), stoc));
+					r.addProduct(new SpeciesReference(species.getId(), stoc));
 				}
-				r.addProduct(new SpeciesReference("RNAP_" + p.getName(), 1));
+				r.addProduct(new SpeciesReference("RNAP_" + p.getId(), 1));
 				r.setReversible(false);
 				r.setFast(false);
 				KineticLaw kl = new KineticLaw();
@@ -340,7 +340,7 @@ public class GeneticNetwork {
 					kl.addParameter(new Parameter("basal", basal,
 							getMoleTimeParameter(1)));
 				}
-				kl.setFormula("basal*" + "RNAP_" + p.getName());
+				kl.setFormula("basal*" + "RNAP_" + p.getId());
 				r.setKineticLaw(kl);
 				Utility.addReaction(document, r);
 
@@ -350,12 +350,12 @@ public class GeneticNetwork {
 			} else if (p.getActivators().size() == 0
 					&& p.getRepressors().size() > 0) {
 				org.sbml.libsbml.Reaction r = new org.sbml.libsbml.Reaction(
-						"R_production_" + p.getName());
-				r.addReactant(new SpeciesReference("RNAP_" + p.getName(), 1));
+						"R_production_" + p.getId());
+				r.addReactant(new SpeciesReference("RNAP_" + p.getId(), 1));
 				for (SpeciesInterface species : p.getOutputs()) {
-					r.addProduct(new SpeciesReference(species.getName(), stoc));
+					r.addProduct(new SpeciesReference(species.getId(), stoc));
 				}
-				r.addProduct(new SpeciesReference("RNAP_" + p.getName(), 1));
+				r.addProduct(new SpeciesReference("RNAP_" + p.getId(), 1));
 				r.setReversible(false);
 				r.setFast(false);
 				KineticLaw kl = new KineticLaw();
@@ -367,19 +367,19 @@ public class GeneticNetwork {
 					kl.addParameter(new Parameter("koc", koc,
 							getMoleTimeParameter(1)));
 				}
-				kl.setFormula("koc*" + "RNAP_" + p.getName());
+				kl.setFormula("koc*" + "RNAP_" + p.getId());
 				r.setKineticLaw(kl);
 				Utility.addReaction(document, r);
 			} else {
 				// TODO: Should ask Chris how to handle
 				// Both activated and repressed
 				org.sbml.libsbml.Reaction r = new org.sbml.libsbml.Reaction(
-						"R_basal_production_" + p.getName());
-				r.addReactant(new SpeciesReference("RNAP_" + p.getName(), 1));
+						"R_basal_production_" + p.getId());
+				r.addReactant(new SpeciesReference("RNAP_" + p.getId(), 1));
 				for (SpeciesInterface species : p.getOutputs()) {
-					r.addProduct(new SpeciesReference(species.getName(), stoc));
+					r.addProduct(new SpeciesReference(species.getId(), stoc));
 				}
-				r.addProduct(new SpeciesReference("RNAP_" + p.getName(), 1));
+				r.addProduct(new SpeciesReference("RNAP_" + p.getId(), 1));
 				r.setReversible(false);
 				r.setFast(false);
 				KineticLaw kl = new KineticLaw();
@@ -391,7 +391,7 @@ public class GeneticNetwork {
 					kl.addParameter(new Parameter("basal", basal,
 							getMoleTimeParameter(1)));
 				}
-				kl.setFormula("basal*" + "RNAP_" + p.getName());
+				kl.setFormula("basal*" + "RNAP_" + p.getId());
 				r.setKineticLaw(kl);
 				Utility.addReaction(document, r);
 
@@ -501,25 +501,29 @@ public class GeneticNetwork {
 				tempPromoters = promoter
 						.getProperty(GlobalConstants.PROMOTER_COUNT_STRING);
 			}
-			Species s = Utility.makeSpecies(promoter.getName(), compartment,
+			Species s = Utility.makeSpecies(promoter.getId(), compartment,
 					Double.parseDouble(tempPromoters));
+		    if ((promoter.getProperties() != null) &&
+		    	(promoter.getProperties().containsKey(GlobalConstants.NAME))) {
+		    	s.setName(promoter.getProperty(GlobalConstants.NAME));
+		    }
 			s.setHasOnlySubstanceUnits(true);
 			Utility.addSpecies(document, s);			
-			s = Utility.makeSpecies("RNAP_" + promoter.getName(), compartment,
+			s = Utility.makeSpecies("RNAP_" + promoter.getId(), compartment,
 					0);
 			s.setHasOnlySubstanceUnits(true);
 			Utility.addSpecies(document, s);
 			// Now cycle through all activators and repressors and add those
 			// bindings
 			for (SpeciesInterface species : promoter.getActivators()) {
-				s = Utility.makeSpecies("RNAP_" + promoter.getName() + "_"
-						+ species.getName(), compartment, 0);
+				s = Utility.makeSpecies("RNAP_" + promoter.getId() + "_"
+						+ species.getId(), compartment, 0);
 				s.setHasOnlySubstanceUnits(true);
 				Utility.addSpecies(document, s);
 			}
 			for (SpeciesInterface species : promoter.getRepressors()) {
-				s = Utility.makeSpecies("bound_" + promoter.getName() + "_"
-						+ species.getName(), compartment, 0);
+				s = Utility.makeSpecies("bound_" + promoter.getId() + "_"
+						+ species.getId(), compartment, 0);
 				s.setHasOnlySubstanceUnits(true);
 				Utility.addSpecies(document, s);
 			}
@@ -549,7 +553,7 @@ public class GeneticNetwork {
 				tempPromoters = promoter
 						.getProperty(GlobalConstants.PROMOTER_COUNT_STRING);
 			}
-			Species s = Utility.makeSpecies(promoter.getName(), compartment,
+			Species s = Utility.makeSpecies(promoter.getId(), compartment,
 					Double.parseDouble(tempPromoters));
 			s.setHasOnlySubstanceUnits(true);
 			Utility.addSpecies(document, s);			
@@ -632,7 +636,7 @@ public class GeneticNetwork {
 			for (int i = 2; i <= dimerValue; i++) {
 				DimerSpecies dimer = new DimerSpecies(specie, i);
 				dimer.addProperty(GlobalConstants.KDECAY_STRING, "0");
-				dimers.put(dimer.getName(), dimer);
+				dimers.put(dimer.getId(), dimer);
 			}
 		}
 		// Now go through reaction list to see if any are missed
@@ -641,7 +645,7 @@ public class GeneticNetwork {
 				if (reaction.getDimer() > 1) {
 					DimerSpecies dimer = new DimerSpecies(stateMap.get(reaction
 							.getInputState()), reaction.getDimer());
-					dimers.put(dimer.getName(), dimer);
+					dimers.put(dimer.getId(), dimer);
 					promoter.addToReactionMap(dimer, reaction);
 					promoter.getActivators().add(dimer);
 				}
@@ -650,7 +654,7 @@ public class GeneticNetwork {
 				if (reaction.getDimer() > 1) {
 					DimerSpecies dimer = new DimerSpecies(stateMap.get(reaction
 							.getInputState()), reaction.getDimer());
-					dimers.put(dimer.getName(), dimer);
+					dimers.put(dimer.getId(), dimer);
 					promoter.addToReactionMap(dimer, reaction);
 					promoter.getRepressors().add(dimer);
 				}
@@ -659,7 +663,7 @@ public class GeneticNetwork {
 		}
 		// Now put dimers back into network
 		for (SpeciesInterface specie : dimers.values()) {
-			species.put(specie.getName(), specie);
+			species.put(specie.getId(), specie);
 		}
 	}
 
@@ -689,7 +693,7 @@ public class GeneticNetwork {
 					promoter.addToReactionMap(bio, reaction);
 				}
 				bio.addProperty(GlobalConstants.KDECAY_STRING, "0");
-				species.put(bio.getName(), bio);
+				species.put(bio.getId(), bio);
 			}
 
 			biochem = new ArrayList<SpeciesInterface>();
@@ -710,7 +714,7 @@ public class GeneticNetwork {
 				}
 				promoter.addRepressor(bio);
 				bio.addProperty(GlobalConstants.KDECAY_STRING, "0");
-				species.put(bio.getName(), bio);
+				species.put(bio.getId(), bio);
 			}
 		}
 

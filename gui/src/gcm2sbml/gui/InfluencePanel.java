@@ -19,7 +19,7 @@ import javax.swing.JPanel;
 
 public class InfluencePanel extends JPanel implements ActionListener {
 	public InfluencePanel(String selected, PropertyList list, GCMFile gcm) {
-		super(new GridLayout(10, 1));
+		super(new GridLayout(11, 1));
 		this.selected = selected;
 		this.list = list;
 		this.gcm = gcm;
@@ -27,10 +27,10 @@ public class InfluencePanel extends JPanel implements ActionListener {
 		fields = new HashMap<String, PropertyField>();
 
 		// Name field
-		PropertyField field = new PropertyField(GlobalConstants.ID, "", null,
+		PropertyField field = new PropertyField(GlobalConstants.NAME, "", null,
 				null, "(.*)");
 		field.setEnabled(false);
-		fields.put(GlobalConstants.ID, field);
+		fields.put(GlobalConstants.NAME, field);
 		add(field);
 
 		// Input field
@@ -90,9 +90,18 @@ public class InfluencePanel extends JPanel implements ActionListener {
 		tempPanel.add(bioBox);
 		add(tempPanel);
 
-		fields.get(GlobalConstants.ID).setValue(inputBox.getSelectedItem() + " -| "
+		fields.get(GlobalConstants.NAME).setValue(inputBox.getSelectedItem() + " -| "
 				+ outputBox.getSelectedItem() + ", Promoter "
 				+ promoterBox.getSelectedItem());
+
+		// coop
+		field = new PropertyField(GlobalConstants.COOPERATIVITY_STRING, gcm
+				.getParameter(GlobalConstants.COOPERATIVITY_STRING),
+				PropertyField.states[0], gcm
+						.getParameter(GlobalConstants.COOPERATIVITY_STRING),
+				Utility.NUMstring);
+		fields.put(GlobalConstants.COOPERATIVITY_STRING, field);
+		add(field);
 
 		// dimer
 		field = new PropertyField(GlobalConstants.MAX_DIMER_STRING, gcm
@@ -137,7 +146,7 @@ public class InfluencePanel extends JPanel implements ActionListener {
 		if (selected != null) {
 			oldName = selected;
 			Properties prop = gcm.getInfluences().get(selected);
-			fields.get(GlobalConstants.ID).setValue(selected);
+			fields.get(GlobalConstants.NAME).setValue(selected);
 			inputBox.setSelectedItem(gcm.getInput(selected));
 			outputBox.setSelectedItem(gcm.getOutput(selected));
 			if (prop.get(GlobalConstants.TYPE).equals(
@@ -189,21 +198,21 @@ public class InfluencePanel extends JPanel implements ActionListener {
 			}
 			if (oldName == null) {
 				if (gcm.getInfluences().containsKey(
-						fields.get(GlobalConstants.ID).getValue())) {
+						fields.get(GlobalConstants.NAME).getValue())) {
 					Utility.createErrorMessage("Error",
 							"Influence already exists.");
 					return false;
 				}
-			} else if (!oldName.equals(fields.get(GlobalConstants.ID)
+			} else if (!oldName.equals(fields.get(GlobalConstants.NAME)
 					.getValue())) {
 				if (gcm.getInfluences().containsKey(
-						fields.get(GlobalConstants.ID).getValue())) {
+						fields.get(GlobalConstants.NAME).getValue())) {
 					Utility.createErrorMessage("Error",
 							"Influence already exists.");
 					return false;
 				}
 			}
-			String id = fields.get(GlobalConstants.ID).getValue();
+			String id = fields.get(GlobalConstants.NAME).getValue();
 
 			// Check to see if we need to add or edit
 			Properties property = new Properties();
@@ -254,7 +263,7 @@ public class InfluencePanel extends JPanel implements ActionListener {
 			} else if ((typeBox.getSelectedItem()==types[1]) && (bioBox.getSelectedItem().equals(bio[1]))) {
 				arrow = " +> ";
 			}	
-			fields.get(GlobalConstants.ID).setValue(
+			fields.get(GlobalConstants.NAME).setValue(
 					inputBox.getSelectedItem() + arrow
 					+ outputBox.getSelectedItem() + ", Promoter "
 					+ promoterBox.getSelectedItem());
@@ -269,7 +278,7 @@ public class InfluencePanel extends JPanel implements ActionListener {
 			} else if ((typeBox.getSelectedItem()==types[1]) && (bioBox.getSelectedItem().equals(bio[1]))) {
 				arrow = " +> ";
 			}
-			fields.get(GlobalConstants.ID).setValue(
+			fields.get(GlobalConstants.NAME).setValue(
 					inputBox.getSelectedItem() + arrow
 					+ outputBox.getSelectedItem() + ", Promoter "
 					+ promoterBox.getSelectedItem());
@@ -291,7 +300,7 @@ public class InfluencePanel extends JPanel implements ActionListener {
 			} else if ((typeBox.getSelectedItem()==types[1]) && (bioBox.getSelectedItem().equals(bio[1]))) {
 				arrow = " +> ";
 			}
-			fields.get(GlobalConstants.ID).setValue(
+			fields.get(GlobalConstants.NAME).setValue(
 					inputBox.getSelectedItem() + arrow
 					+ outputBox.getSelectedItem() + ", Promoter "
 					+ promoterBox.getSelectedItem());
@@ -312,7 +321,7 @@ public class InfluencePanel extends JPanel implements ActionListener {
 
 	private void loadProperties(Properties property) {
 		for (Object o : property.keySet()) {
-			if (o.equals(GlobalConstants.ID)) {
+			if (o.equals(GlobalConstants.NAME)) {
 				//do nothing
 			}
 			else if (fields.containsKey(o.toString())) {

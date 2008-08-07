@@ -9,7 +9,7 @@ import gcm2sbml.visitor.SpeciesVisitor;
  */
 public class SpasticSpecies extends AbstractSpecies {
 	public SpasticSpecies(String name, String stateName) {
-		this.name = name;
+		this.id = name;
 		this.stateName = stateName;
 	}
 	
