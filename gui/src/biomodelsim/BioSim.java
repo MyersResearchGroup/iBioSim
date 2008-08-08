@@ -1886,23 +1886,37 @@ public class BioSim implements MouseListener, ActionListener {
 									tab.setTitleAt(i, rename);
 								}
 								else if (tree.getFile().length() > 3
-										&& tree.getFile().substring(tree.getFile().length() - 4).equals(".grf")) {
+										&& (tree.getFile().substring(tree.getFile().length() - 4).equals(".grf") || tree
+												.getFile().substring(tree.getFile().length() - 4).equals(".prb"))) {
 									((Graph) tab.getComponentAt(i)).setGraphName(rename);
 									tab.setTitleAt(i, rename);
 								}
+								else if (tree.getFile().length() > 3
+										&& tree.getFile().substring(tree.getFile().length() - 4).equals(".gcm")) {
+									((GCM2SBMLEditor) tab.getComponentAt(i)).reload(rename.substring(0, rename
+											.length() - 4));
+								}
 								else {
-									for (int j = 0; j < ((JTabbedPane) tab.getComponentAt(i)).getTabCount(); j++) {
-										if (((JTabbedPane) tab.getComponentAt(i)).getComponent(j).getName().equals(
-												"Simulate")) {
-											((Reb2Sac) ((JTabbedPane) tab.getComponentAt(i)).getComponent(j))
-													.setSim(rename);
+									for (int j = ((JTabbedPane) tab.getComponentAt(i)).getTabCount() - 1; j >= 0; j--) {
+										Component c = ((JTabbedPane) tab.getComponentAt(i)).getComponent(j);
+										if (c instanceof Reb2Sac) {
+											((Reb2Sac) c).setSim(rename);
 										}
-										else if (((JTabbedPane) tab.getComponentAt(i)).getComponent(j).getName()
-												.contains("TSD Graph")) {
-											if (((JTabbedPane) tab.getComponentAt(i)).getComponent(j) instanceof Graph) {
-												Graph g = ((Graph) ((JTabbedPane) tab.getComponentAt(i)).getComponent(j));
-												g.setDirectory(root + separator + rename);
-											}
+										else if (c instanceof SBML_Editor) {
+											String properties = root + separator + rename + separator + rename + ".sim";
+											new File(properties).renameTo(new File(properties.replace(".sim", ".temp")));
+											boolean dirty = ((SBML_Editor) c).hasChanged();
+											((SBML_Editor) c)
+													.setParamFileAndSimDir(properties, root + separator + rename);
+											((SBML_Editor) c).save(false, "", true);
+											((SBML_Editor) c).updateSBML(i, j);
+											((SBML_Editor) c).setChanged(dirty);
+											new File(properties).delete();
+											new File(properties.replace(".sim", ".temp")).renameTo(new File(properties));
+										}
+										else if (c instanceof Graph) {
+											Graph g = ((Graph) c);
+											g.setDirectory(root + separator + rename);
 										}
 									}
 									tab.setTitleAt(i, rename);
@@ -3469,9 +3483,13 @@ public class BioSim implements MouseListener, ActionListener {
 								GeneticNetwork.setRoot(root + File.separator);
 								network.mergeSBML(root + separator + tab + separator
 										+ updatedFile.replace(".gcm", ".sbml"));
+								((SBML_Editor) (sim.getComponentAt(j))).updateSBML(i, j, root + separator + tab
+										+ separator + updatedFile.replace(".gcm", ".sbml"));
 							}
-							((SBML_Editor) (sim.getComponentAt(j))).updateSBML(i, j, root + separator
-									+ updatedFile);
+							else {
+								((SBML_Editor) (sim.getComponentAt(j))).updateSBML(i, j, root + separator
+										+ updatedFile);
+							}
 							((SBML_Editor) (sim.getComponentAt(j))).setChanged(dirty);
 							new File(properties).delete();
 							new File(properties.replace(".sim", ".temp")).renameTo(new File(properties));

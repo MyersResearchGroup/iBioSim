@@ -71,6 +71,13 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 		return filename;
 	}
 	
+	public void reload(String newName) {
+		filename = newName+".gcm";
+		gcmname = newName;
+		gcm.load(path + File.separator + newName + ".gcm");
+		GCMNameTextField.setText(newName);
+	}
+	
 	public String getGCMName() {
 		return gcmname;
 	}
@@ -245,10 +252,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 			gcm.save(path + File.separator + newName + ".gcm");
 			log.addText("Saving GCM file as:\n" + path + File.separator + newName + ".gcm\n");
 		}
-		filename = newName+".gcm";
-		gcmname = newName;
-		gcm.load(path + File.separator + newName + ".gcm");
-		GCMNameTextField.setText(newName);
+		reload(newName);
 		biosim.refreshTree();
 	}
 
