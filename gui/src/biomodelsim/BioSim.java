@@ -3007,14 +3007,17 @@ public class BioSim implements MouseListener, ActionListener {
 							}
 						}
 						String sbmlLoadFile = null;
-						String failure = "";
 						if (new File(simFile).exists()) {
 							try {
 								Scanner s = new Scanner(new File(simFile));
 								if (s.hasNextLine()) {
 									sbmlLoadFile = s.nextLine();
 									sbmlLoadFile = sbmlLoadFile.split(separator)[sbmlLoadFile.split(separator).length - 1];
-									failure += sbmlLoadFile;
+									if (sbmlLoadFile == null || !(new File(root + separator + sbmlLoadFile).exists())) {
+										JOptionPane.showMessageDialog(frame, "Unable to open view because "
+												+ sbmlLoadFile + " is missing.", "Error", JOptionPane.ERROR_MESSAGE);
+										return;
+									}
 									if (sbmlLoadFile.contains(".gcm")) {
 										GCMParser parser = new GCMParser(root + separator + sbmlLoadFile);
 										GeneticNetwork network = parser.buildNetwork();
@@ -3053,8 +3056,9 @@ public class BioSim implements MouseListener, ActionListener {
 								 */
 							}
 						}
-						if (sbmlLoadFile == null || !(new File(sbmlLoadFile).exists())) {
-							JOptionPane.showMessageDialog(frame, "Unable to open view because " + failure
+						if (sbmlLoadFile == null) {
+							JOptionPane.showMessageDialog(frame, "Unable to open view because "
+									+ sbmlLoadFile.split(separator)[sbmlLoadFile.split(separator).length - 1]
 									+ " is missing.", "Error", JOptionPane.ERROR_MESSAGE);
 							return;
 						}
