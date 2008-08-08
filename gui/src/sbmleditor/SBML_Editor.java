@@ -8818,6 +8818,12 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		}
 	}
 
+	public void setParamFileAndSimDir(String newParamFile, String newSimDir) {
+		paramFile = newParamFile;
+		simDir = newSimDir;
+		file = newSimDir + separator + file.split(separator)[file.split(separator).length - 1];
+	}
+
 	/**
 	 * Create the SBML file
 	 */
@@ -9140,8 +9146,16 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		((JTabbedPane) (biosim.getTab().getComponentAt(tab))).setComponentAt(tab2, sbml);
 		reb2sac.setSbml(sbml);
 		reb2sac.updateSpeciesList();
-		((JTabbedPane) (biosim.getTab().getComponentAt(tab))).getComponentAt(tab2).setName(
-				"SBML Editor");
+		for (int i = 0; i < ((JTabbedPane) biosim.getTab().getComponentAt(tab)).getTabCount(); i++) {
+			Component c = ((JTabbedPane) (biosim.getTab().getComponentAt(tab))).getComponentAt(i);
+			if (c instanceof SBML_Editor) {
+				c.setName("SBML Editor");
+			}
+		}
+	}
+
+	public void updateSBML(int tab, int tab2) {
+		updateSBML(tab, tab2, file);
 	}
 
 	/**
