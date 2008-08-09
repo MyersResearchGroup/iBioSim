@@ -64,7 +64,8 @@ public class GCMFile {
 				buffer.append(s + " [");
 				Properties prop = species.get(s);
 				for (Object propName : prop.keySet()) {
-					if (propName.toString().equals(GlobalConstants.NAME)) {
+					if ((propName.toString().equals(GlobalConstants.NAME)) ||
+						(propName.toString().equals("label"))) {
 						buffer.append(checkCompabilitySave(propName.toString()) + "="
 								+ "\"" + prop.getProperty(propName.toString()).toString()
 								+ "\"" + ",");
