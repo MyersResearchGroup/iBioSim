@@ -2692,8 +2692,8 @@ public class BioSim implements MouseListener, ActionListener {
 					simTab.getComponentAt(simTab.getComponents().length - 1).setName("Simulate");
 					simTab.addTab("Abstraction Options", reb2sac.getAdvanced());
 					simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
-					simTab.addTab("Advanced Options", reb2sac.getProperties());
-					simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
+					//simTab.addTab("Advanced Options", reb2sac.getProperties());
+					//simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
 					SBML_Editor sbml = new SBML_Editor(sbmlFile, reb2sac, log, this, root + separator
 							+ simName.trim(), root + separator + simName.trim() + separator + simName.trim()
 							+ ".sim");
@@ -2776,8 +2776,8 @@ public class BioSim implements MouseListener, ActionListener {
 					simTab.getComponentAt(simTab.getComponents().length - 1).setName("Simulate");
 					simTab.addTab("Abstraction Options", reb2sac.getAdvanced());
 					simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
-					simTab.addTab("Advanced Options", reb2sac.getProperties());
-					simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
+					//simTab.addTab("Advanced Options", reb2sac.getProperties());
+					//simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
 					SBML_Editor sbml = new SBML_Editor(sbmlFile, reb2sac, log, this, root + separator
 							+ simName.trim(), root + separator + simName.trim() + separator + simName.trim()
 							+ ".sim");
@@ -3093,8 +3093,8 @@ public class BioSim implements MouseListener, ActionListener {
 						simTab.getComponentAt(simTab.getComponents().length - 1).setName("Simulate");
 						simTab.addTab("Abstraction Options", reb2sac.getAdvanced());
 						simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
-						simTab.addTab("Advanced Options", reb2sac.getProperties());
-						simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
+						//simTab.addTab("Advanced Options", reb2sac.getProperties());
+						//simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
 						SBML_Editor sbml = new SBML_Editor(sbmlLoadFile, reb2sac, log, this, root + separator
 								+ split[split.length - 1].trim(), root + separator + split[split.length - 1].trim()
 								+ separator + split[split.length - 1].trim() + ".sim");
@@ -3358,8 +3358,8 @@ public class BioSim implements MouseListener, ActionListener {
 			simTab.getComponentAt(simTab.getComponents().length - 1).setName("Simulate");
 			simTab.addTab("Abstraction Options", reb2sac.getAdvanced());
 			simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
-			simTab.addTab("Advanced Options", reb2sac.getProperties());
-			simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
+			//simTab.addTab("Advanced Options", reb2sac.getProperties());
+			//simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
 			SBML_Editor sbml = new SBML_Editor(sbmlLoadFile, reb2sac, log, this, root + separator
 					+ newSim, root + separator + newSim + separator + newSim + ".sim");
 			reb2sac.setSbml(sbml);
