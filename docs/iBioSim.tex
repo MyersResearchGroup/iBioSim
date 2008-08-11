@@ -7,13 +7,13 @@
 
 \usepackage{indentfirst,graphics,alltt,epsfig,color}
 
-\title{The iBioSim User's Manual}
+\title{iBioSim: User's Manual}
 
 \author{Chris J. Myers, Nathan Barker, Hiroyuki Kuwahara, Curtis
   Madsen, Nam Nguyen} 
 
 \date{Created: August 6th, 2008\\
-  Last Revised: August 6th, 2008
+  Last Revised: August 10th, 2008
 }
 
 \begin{document}
@@ -71,41 +71,6 @@ Barker's PhD Dissertation
 \item Probability Graph Editor - a tool to visualize probability data. 
 \end{itemize}
 
-\section{Installation Instructions}
-
-\noindent
-There are versions of {\tt iBioSim} available for Windows, Linux, and
-MacOS.  You can download the appropriate installation file from:\\
-{\tt http://www.async.ece.utah.edu/iBioSim}
-To install follow the instuctions for your operating system below.
-
-DESCRIBE Java, Graphviz requirements
-
-\subsection{Installation on Windows}
-
-\noindent
-Download and execute {\tt iBioSim-$\langle$version$\rangle$-Setup.exe}.
-MORE HERE
-
-EXPLAIN UNINSTALL
-
-\subsection{Installation on Linux}
-
-\noindent
-Download {\tt iBioSim-$\langle$version$\rangle$-Linux-x86-Install}.
-Change permissions on this file to allow it to be executed:\\
-{\tt chmod u+x iBioSim-$\langle$version$\rangle$-Linux-x86-Install}.
-Executing this file will now start the install shield.
-
-EXPLAIN UNINSTALL
-
-\subsection{Installation on MacOS}
-
-\noindent
-EXPLAIN IT HERE
-
-EXPLAIN UNINSTALL
-
 \section{Project Management}
 
 \noindent
@@ -116,7 +81,7 @@ right, and a log of all external commands are displayed on the bottom.
 The menu bar is located on the top of the window in the Windows and
 Linux versions.  It is located on the top of the screen in the MacOS version.
 \begin{center}
-\includegraphics[height=70mm]{screenshots/iBioSim}
+\includegraphics[height=80mm]{screenshots/iBioSim}
 \end{center}
 
 \subsection{Creating and Opening Projects}
@@ -131,9 +96,9 @@ You will then be prompted to browse to a project directory to
 open, and clicking open will open the project. You may also open
 a project by selecting one of your five most recently opened
 projects by selecting the project name shown in the File drop
-down menu shown below.
+down menu shown below. 
 \begin{center}
-\includegraphics[height=70mm]{screenshots/project}
+\includegraphics[height=50mm]{screenshots/project}
 \end{center}
 
 \subsection{Creating Models and Graphs}
@@ -198,8 +163,8 @@ and selecting ``Open Analysis/Learn View'' or alternatively
 double-clicking on the view.
 \begin{center}
 \begin{tabular}{ccc}
-\includegraphics[height=70mm]{screenshots/createAnalysis} & & 
-\includegraphics[height=70mm]{screenshots/createLearn}
+\includegraphics[height=55mm]{screenshots/createAnalysis} & & 
+\includegraphics[height=55mm]{screenshots/createLearn}
 \end{tabular}
 \end{center}
 
@@ -373,7 +338,7 @@ As shown below, a compartment has the following fields:
 \item Units: the units for the size (default=none).
 \end{itemize}
 \begin{center}
-\includegraphics[height=90mm]{screenshots/compartment}
+\includegraphics[height=80mm]{screenshots/compartment}
 \end{center}
 
 \subsubsection{\label{species}Species}
@@ -399,7 +364,7 @@ As shown below, a species has the following fields:
 \item Units: the units for the amount/concentration (default=none).
 \end{itemize}
 \begin{center}
-\includegraphics[height=90mm]{screenshots/species}
+\includegraphics[height=65mm]{screenshots/species}
 \end{center}
 
 \subsubsection{\label{reactions}Reactions}
@@ -439,7 +404,7 @@ list is the forward reaction rate and the second parameter in the
 list is the reverse reaction rate.  
 The ``Clear'' button clears the kinetic law editor. 
 The stoichiometry math and kinetic law formulas can only include
-those species that appear as reactants, products, or modifiers for the reaction.
+those species that appear as reactants, products, or modifiers.
 \begin{center}
 \includegraphics[height=70mm]{screenshots/reaction}
 \end{center}
@@ -460,7 +425,7 @@ As shown below, a parameter includes the following:
        is constant (default=true).
 \end{itemize}
 \begin{center}
-\includegraphics[height=70mm]{screenshots/parameter}
+\includegraphics[height=60mm]{screenshots/parameter}
 \end{center}
 
 \subsection{\label{DefnTypes}Definitions/Types}
@@ -1503,245 +1468,11 @@ seconds.
 \section{Tutorial}
 
 \noindent
-The example described in this section constructs a simple model for
-the \emph{cI} and \emph{cII} genes and the $P_R$ and $P_{RE}$
-promoters from the phage $\lambda$ decsion circuit.  It illustrates
-many of the features of {\tt iBioSim}.
-% TODO: add figures and more description of the example
-After starting {\tt iBioSim}, complete the following steps to create
-an SBML model for this example:
-\begin{enumerate}
-\item Select {\tt File} $\rightarrow$ {\tt New} $\rightarrow$ {\tt Project}
-\item Browse to desired path and create a project named {\tt lambda}.
-\item Select {\tt File} $\rightarrow$ {\tt New} $\rightarrow$ {\tt SBML Model}
-\item Enter {\tt lambda} which will open the SBML editor.
-\item Select {\tt Definitions/Types} tab.
-\item Select {\tt Add Unit} and enter {\tt per\_second} as the ID.
-\item Select {\tt Add to List}, select {\tt second} as the kind, change
-      the exponent to $-1$, and click {\tt Add}.
-\item Click {\tt Add} in the {\tt Unit Definition Editor}.
-\item Select {\tt Add Unit} and enter {\tt per\_second\_mole} as the ID.
-\item Select {\tt Add to List}, select {\tt second} as the kind, change
-      the exponent to $-1$, and click {\tt Add}.
-\item Select {\tt Add to List}, select {\tt mole} as the kind, change
-      the exponent to $-1$, and click {\tt Add}.
-\item Click {\tt Add} in the {\tt Unit Definition Editor}.
-\item Select {\tt Main Elements} tab.
-\item Select {\tt default} in the list of Compartments, and press the
-      {\tt Edit Compartment} button, and change the compartment ID to 
-      {\tt cell} and size to 1.
-\item Select {\tt Add Species} and enter {\tt CI} as the ID.
-\item Select {\tt Add Species} and enter {\tt CI2} as the ID.
-\item Select {\tt Add Reaction} and enter {\tt Dimerize} as the ID and
-      change reversiable to {\tt true}.
-\item Select {\tt Add Reactant} and select {\tt CI} as the species and change
-      the stoiciometry to 2.
-\item Select {\tt Add Product} and select {\tt CI2} as the species.
-\item Highlight {\tt kf} and select {\tt Edit Selected Parameter}, change
-      {\tt kf} to {\tt k2f}, and change the units to {\tt per\_second\_mole}.
-\item Highlight {\tt kr} and select {\tt Edit Selected Parameter}, change
-      {\tt kr} to {\tt k2r}, change the value to 1.0, and change 
-      the units to {\tt per\_second}.
-\item Select {\tt Use Mass Action}.
-\item Select {\tt Add}.
-\item Select {\tt Save}.
-\item Highlight {\tt lambda.sbml}, using right mouse button, select 
-      {\tt View Network}.
-\item Highlight {\tt lambda.sbml}, using right mouse button, select 
-      {\tt View in Browser}.
-\item Go back to the SBML editor complete the construction of the
-      chemical reaction network shown below:
-\begin{eqnarray*}
-PRE + \mathrm{RNAP} & \stackrel{KPRE2}{\longleftrightarrow} &
-PRE\_\mathrm{RNAP} \\
-PRE + \mathrm{CII} + \mathrm{RNAP} &
-\stackrel{KPRE4}{\longleftrightarrow} &
-PRE\_\mathrm{CII}\_\mathrm{RNAP} \\
-PRE\_\mathrm{RNAP} & \stackrel{kPREb}{\longrightarrow} & 
-PRE\_\mathrm{RNAP} + n\mathrm{CI} \\
-PRE\_\mathrm{CII}\_\mathrm{RNAP} 
-& \stackrel{kPRE}{\longrightarrow} & 
-PRE\_\mathrm{CII}\_\mathrm{RNAP} + n\mathrm{CI} \\
-PR + \mathrm{RNAP} & \stackrel{KOR9}{\longleftrightarrow} &
-PR\_\mathrm{RNAP} \\
-PR + 2 \mathrm{CI2} & \stackrel{KOR10}{\longleftrightarrow} &
-PR\_2 \mathrm{CI2} \\
-PR\_\mathrm{RNAP} & \stackrel{kPR}{\longrightarrow} & 
-PR\_\mathrm{RNAP} + n\mathrm{CII} \\
-2 \mathrm{CI} & \stackrel{K2}{\longleftrightarrow} & \mathrm{CI2} \\
-\mathrm{CI} & \stackrel{k1}{\longrightarrow} & () \\ 
-\mathrm{CII} & \stackrel{k10}{\longrightarrow} & ()
-\end{eqnarray*}
-
-\begin{center}
-\begin{math}
-\begin{array}{|c|c|c|c|c|c|c|c|}
-\hline
-Constant & Value & Constant & Value &
-Constant & Value & Constant & Value \\ \hline \hline
-KPRE2  & 0.01~M^{-1} & KPRE4  & 0.00161~M^{-2} & 
-kPREb  & 0.00004~\mathrm{sec}^{-1} & 
-kPRE   & 0.015~\mathrm{sec}^{-1} \\ \hline
-n         & 10 & KOR9  & 0.69422~M^{-1} & KOR10  & 0.06568~M^{-2} &
-kPR    & 0.014~\mathrm{sec}^{-1} \\ \hline
-K2       & 0.1 M^{-1} & k1       & 0.0007~\mathrm{sec}^{-1} &
-k10    & 0.002~\mathrm{sec}^{-1} & ~ & ~ \\ \hline
-\end{array}
-\end{math}
-Set an initial amount of 1.0 for PRE and OR, 30.0 for RNAP, and 0.0 
-for the rest.
-\end{center}
-\item Highlight {\tt lambda.sbml}, using the right mouse button, select 
-      {\tt Create Analysis View}, and enter the name {\tt sim}.
-\item In the newly opened window, select {\tt Monte Carlo}.
-\item Also, in this window, change the time limit to 2100.0, print interval
-      to 100.0, and runs to 20.
-\item Finally, select {\tt Save and Run} at the bottom of the window.
-\item After the simulation completes (it may take a little while), click on
-      the graph tab.
-\item Click on the graph to bring up the graph editor.  Highlight Average,
-      if not already highlighted, select CI2 and CII, change Title to
-      ``Average'', change X-Axis Label to ``Time (seconds)'', and change
-      Y-Axis Label to ``Number of Molecules''.  Press the OK button.
-      Click on Export and enter file name of {\tt average.jpg}.
-\item Click on the graph to bring up the graph editor.  Press the 
-      ``Deselect All'' button.  Highlight run-1,
-      select CI2 and CII, change Title to ``Run-1'', 
-      change X-Axis Label to ``Time (seconds)'', and change
-      Y-Axis Label to ``Number of Molecules''.  Press the OK button.
-      Click on Export and enter file name of {\tt run1.jpg}.
-\item Click on the graph to bring up the graph editor.  
-      Press the ``Deselect All'' button.  Highlight Standard
-      Deviation, select CI2 and CII, change Title to ``Standard Deviation'', 
-      change X-Axis Label to ``Time (seconds)'', and change
-      Y-Axis Label to ``Number of Molecules''.  Press the OK button.
-      Click on Export and enter file name of {\tt stddev.jpg}.
-\item Click on the SBML editor tab.  Change the initial amounts of OR and
-      PRE to 10.  Press the Save and Run button.
-\item Click on the graph tab and following the steps above, create the 
-      following plots {\tt average\_10.jpg},  {\tt run1\_10.jpg}, and
-      {\tt stddev\_10.jpg}.  How are these different than the first set
-      of plots?  
-\item Simulate your lambda model with BioSim using the ODE method rkf45 with
-      a time limit of 2100 and print interval of 50.
-      Make a note of the simulation time and plot CI2 and CII.  
-      Next, simulate using the Euler method.  Make a note of the simulation time
-      and add CI2 and CII from the euler results to your graph.  
-      How do the simulation times and results compare?
-      Change the time step and rerun the Euler method.  Repeat until the results
-      match up well.  What time step is required for a good match?
-      How do the simulation times compare?
-\item Open the lambda model in an SBML editor, and add a new species
-      ``CIt'' with a 0 initial amount.
-
-\item Click on the ``Initial Assignments/Rules/Constraints/Events'' tab
-      and press the ``Add Rule'' button.
-
-\item Select Assignment Type, select Variable ``CIt'', and enter the following
-      as the Rule:
-\begin{eqnarray*}
-& 2 * CI2 + CI &
-\end{eqnarray*}
-
-\item Press the Save SBML button.
-
-\item Create or open an analysis view on your lambda model.
-
-\item Select ``None'' and ``Network'', and press the Save and Run button. 
-      Count the number of species and reactions in your model.  
-
-\item Select ``Monte Carlo'', set the Time Limit to 2100.0, Print Interval to
-      100.0, and Runs to 20.  Press the Save and Run button and record the
-      simulation time.
-
-\item Create a new analysis view for your lambda model and 
-      select  ``Abstraction'' this time.  
-
-\item In the abstraction tab, change rapid equilibrium conditions 1 and 2 
-      to 1000.0 as well as QSSA condition to 1000.0.  Select ``Network'' then 
-      save and run.  Count the number of species and reactions in your model.
-
-\item Select ``Monte Carlo'', set the Time Limit to 2100.0, Print Interval to
-      100.0, and Runs to 20.  Press the Save and Run button and record the
-      simulation time.
-
-\item Select File $\rightarrow$ New $\rightarrow$ Graph and enter a name for
-      your new top-level graph.
-
-\item Click on the graph and find the average simulation results from your
-      orginal model and graph CII and CIt.  Also, add to this graph from
-      your abstracted model CII and CI.  How well do they compare?  
-      Send me by email a jpg of your result.
-
-\item Go back to your analysis view in which you did abstraction and change
-      all the conditions back to 0.1.  Regenerate the network and record the
-      number of species and reactions.  Regenerate the simulation results and
-      record the simulation time.  
-
-\item Go back to the top-level graph which should have updated results.  
-      How does it compare now?
-\item Create a new project named ``xor'',
-      select File $\rightarrow$ New $\rightarrow$ Genetic Circuit Model, 
-      and enter the name {\tt xor}.
-
-\item Add species $A$ and $B$ of type constant.  Be sure to fill in both
-      the ID and Name fields.
-
-\item Add species $Abar$, $Bbar$, $X$, $Y$, and $C$ of type normal.  Again,
-      fill in the ID and Name fields.
-
-\item Add an influence of type repression with input $A$ and output $Abar$ and 
-      dimer of 2.  You have just created an inverter.
-      Create another inverter from $B$ to $Bbar$.
-
-\item Add a promoter named PX1 and another promoter named PX2.
-
-\item Add a repression influence from $A$ to $X$ and use the promoter 
-      PX1 with dimer of 2.
-
-\item Add a repression influence from $Bbar$ to $X$ and use the promoter 
-      PX2 with dimer of 2.  You have just created a NAND gate.
-
-\item Create another NAND gate with inputs $Abar$ and $B$ and output $Y$.
-
-\item Finally, create another NAND gate with inputs $X$ and $Y$ and 
-      output $C$.
-
-\item Change the {\tt decay} parameter to 0.01.
-
-\item Press the ``Save GCM'' and ``Save as SBML'' buttons.
-
-\item Create an analysis view for your {\tt xor.sbml} file.
-
-\item Select the User Defined Data tab and click on the 
-      ``Use User Defined Data'' button.
-
-\item Add a data point for A at time step 1000 to go to 20.
-
-\item Add a data point for B at time step 2000 to go to 20.
-
-\item Add a data point for A at time step 3000 to go to 0.
-
-\item Add a data point for B at time step 4000 to go to 0.
-
-\item Select the options tab, select ``abstraction'', and 
-      set a time limit of 5000, a print interval of 200, and 20 runs.  
-
-\item Select the abstraction tab, and add species $C$ to the interesting 
-      species list.
-
-\item Press the ``Save Parameters'' button then ``Save and Run'' button.
-
-\item Create a graph that includes $A$, $B$, and $C$.  Email a jpg
-      of this graph to me.
-
-\item Close your analysis view and edit your {\tt xor.gcm}.  Try adjusting
-      some of the global parameters.  Remember to save both your {\tt gcm}
-      {\tt sbml} files.  Reopen your analysis view and re-run your simulation.
-      Send me a few different graphs.  Change the titles of the graphs 
-      and provide a description in your email of the graphs as to what you
-      changed.
-\end{enumerate}
+A detailed 
+%%tth:\begin{html}<a href="tutorial.html">\end{html}
+tutorial
+%%tth:\begin{html}</a>\end{html}
+is available in the {\tt docs} directory that comes with the distribution.
 
 \section{Reporting Bugs and Feature Requests}
 

@@ -6,7 +6,7 @@ DVI2PDF = dvipdf
 DVIFLAGS = -t letter
 PDFLATEX = pdflatex
 
-all: iBioSim.html
+all: iBioSim.html tutorial.html install.html
 
 iBioSim.pdf: iBioSim.tex
 	latex iBioSim
@@ -18,6 +18,28 @@ iBioSim.pdf: iBioSim.tex
 
 iBioSim.html: iBioSim.pdf
 	tth -u -e2 -LiBioSim < iBioSim.tex > iBioSim.html
+
+tutorial.pdf: tutorial.tex
+	latex tutorial
+#	bibtex main
+#	latex main
+	latex tutorial
+	dvips -Ppdf -o tutorial.ps -t letter tutorial
+	ps2pdf tutorial.ps
+
+tutorial.html: tutorial.pdf
+	tth -u -e2 -Ltutorial < tutorial.tex > tutorial.html
+
+install.pdf: install.tex
+	latex install
+#	bibtex main
+#	latex main
+	latex install
+	dvips -Ppdf -o install.ps -t letter install
+	ps2pdf install.ps
+
+install.html: install.pdf
+	tth -u -e2 -Linstall < install.tex > install.html
 
 clean:
 	rm *.dvi *.ps
