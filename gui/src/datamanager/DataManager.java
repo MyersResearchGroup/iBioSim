@@ -951,6 +951,11 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 		}
 	}
 
+	public void setDirectory(String directory) {
+		this.directory = directory;
+		this.lrnName = directory.split(separator)[directory.split(separator).length - 1];
+	}
+
 	private void createTable(String[][] dat, String[] spec) {
 		this.removeAll();
 		table = new JTable(dat, spec);

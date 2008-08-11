@@ -1271,8 +1271,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		Properties p = null;
 		if (learnSpecs != null) {
 			try {
+				String[] split = outDir.split(separator);
 				p = new Properties();
-				FileInputStream load = new FileInputStream(new File(outDir + separator + ".lrn"));
+				FileInputStream load = new FileInputStream(new File(outDir + separator
+						+ split[split.length - 1] + ".lrn"));
 				p.load(load);
 				load.close();
 			}
@@ -4351,6 +4353,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						JOptionPane.ERROR_MESSAGE);
 			}
 		}
+	}
+
+	public boolean isTSDGraph() {
+		return timeSeries;
 	}
 
 	public void refresh() {
