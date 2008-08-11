@@ -72,15 +72,12 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 					+ coop;
 			r.addReactant(new SpeciesReference(specie.getMonomer().getId(),
 					dimer * coop));
-			kl.addParameter(new Parameter(actString, Math.pow(act, coop),
-					GeneticNetwork
-							.getMoleTimeParameter((int) (coop * dimer) + 2)));
 		} else {
 			actName = specie.getId();
-			r.addReactant(new SpeciesReference(specie.getId(), coop));
-			kl.addParameter(new Parameter(actString, Math.pow(act, coop),
-					GeneticNetwork.getMoleTimeParameter((int) (coop) + 2)));
+			r.addReactant(new SpeciesReference(actName, coop));
 		}
+		kl.addParameter(new Parameter(actString, Math.pow(act, coop),
+				GeneticNetwork.getMoleTimeParameter((int) (coop) + 2)));
 		r.addProduct(new SpeciesReference("RNAP_" + promoter.getId() + "_"
 				+ specie.getId(), 1));
 		r.setReversible(true);
@@ -114,15 +111,12 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 			kl.addParameter(new Parameter(kbioString, kbio, GeneticNetwork
 					.getMoleParameter((int) specie.getInputs().size())));
 			actName = "(" + kbioString + names + ")^" + coop;
-			kl.addParameter(new Parameter(actString, Math.pow(act, coop),
-					GeneticNetwork.getMoleTimeParameter((int) (coop * specie
-							.getInputs().size()) + 2)));
 		} else {
 			actName = specie.getId();
 			r.addReactant(new SpeciesReference(specie.getId(), coop));
-			kl.addParameter(new Parameter(actString, Math.pow(act, coop),
-					GeneticNetwork.getMoleTimeParameter((int) (coop) + 2)));
 		}
+		kl.addParameter(new Parameter(actString, Math.pow(act, coop),
+				GeneticNetwork.getMoleTimeParameter((int) (coop) + 2)));
 		r.addProduct(new SpeciesReference("RNAP_" + promoter.getId() + "_"
 				+ specie.getId(), 1));
 		r.setReversible(true);
@@ -222,7 +216,7 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 	}
 
 	/**
-	 * Generates a kenetic law
+	 * Generates a kinetic law
 	 * 
 	 * @param specieName
 	 *            specie name
@@ -230,8 +224,8 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 	 *            repressor molecule
 	 * @return
 	 */
-	private String generateLaw(String specieName, String repMolecule) {
-		String law = actString + "*" + "RNAP*" + repMolecule + "^"
+	private String generateLaw(String specieName, String actMolecule) {
+		String law = actString + "*" + "RNAP*" + actMolecule + "^"
 				+ kcoopString + "*" + promoter.getId() + "-kr*" + "RNAP_"
 				+ promoter.getId() + "_" + specieName;
 		return law;
