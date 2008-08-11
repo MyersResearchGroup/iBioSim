@@ -37,6 +37,7 @@ public class InfluencePanel extends JPanel implements ActionListener {
 		JPanel tempPanel = new JPanel();
 		JLabel tempLabel = new JLabel("Input");
 		inputBox = new JComboBox(gcm.getSpeciesAsArray());
+		inputBox.addItem("none");
 		// inputBox.setSelectedItem();
 		inputBox.addActionListener(this);
 		tempPanel.setLayout(new GridLayout(1, 2));
@@ -48,6 +49,7 @@ public class InfluencePanel extends JPanel implements ActionListener {
 		tempPanel = new JPanel();
 		tempLabel = new JLabel("Output");
 		outputBox = new JComboBox(gcm.getSpeciesAsArray());
+		outputBox.addItem("none");
 		// outputBox.setSelectedItem(types[0]);
 		outputBox.addActionListener(this);
 		tempPanel.setLayout(new GridLayout(1, 2));
