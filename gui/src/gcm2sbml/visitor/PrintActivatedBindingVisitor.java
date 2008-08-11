@@ -68,8 +68,8 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 		if (dimerizationAbstraction) {
 			kl.addParameter(new Parameter(kdimerString, kdimer, GeneticNetwork
 					.getMoleParameter((int) dimer)));
-			actName = "(" + kdimerString + "*" + specie.getMonomer() + ")^"
-					+ coop;
+			actName = kdimerString + "*" + "(" + specie.getMonomer() + ")^"
+					+ reaction.getDimer();
 			r.addReactant(new SpeciesReference(specie.getMonomer().getId(),
 					dimer * coop));
 		} else {

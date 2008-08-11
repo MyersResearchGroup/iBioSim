@@ -63,8 +63,6 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 		KineticLaw kl = new KineticLaw();
 		kl.addParameter(new Parameter("kr", 1, GeneticNetwork
 				.getMoleTimeParameter(1)));
-		kl.addParameter(new Parameter(repString, Math.pow(rep, coop),
-				GeneticNetwork.getMoleTimeParameter((int) (coop) + 1)));
 		kl.addParameter(new Parameter(kcoopString, coop, "dimensionless"));
 		r.addProduct(new SpeciesReference(speciesName, 1));
 		r.setReversible(true);
@@ -74,8 +72,8 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 		if (dimerizationAbstraction) {
 			kl.addParameter(new Parameter(kdimerString, kdimer, GeneticNetwork
 					.getMoleParameter((int) dimer)));
-			repMolecule = "(" + kdimerString + "*" + specie.getMonomer() + ")^"
-					+ coop;
+			repMolecule = kdimerString + "*" + "(" + specie.getMonomer() + ")^"
+					+ reaction.getDimer();
 			r.addReactant(new SpeciesReference(specie.getMonomer().getId(),
 					dimer * coop));
 		} else {
@@ -84,7 +82,7 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 		}
 		kl.addParameter(new Parameter(repString, Math.pow(rep, coop),
 				GeneticNetwork.getMoleTimeParameter((int) (coop) + 1)));
-		kl.setFormula(generateLaw(speciesName, specie.getId()));
+		kl.setFormula(generateLaw(speciesName, repMolecule));
 		r.setKineticLaw(kl);
 		Utility.addReaction(document, r);
 	}
