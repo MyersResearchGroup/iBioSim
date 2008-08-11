@@ -1929,12 +1929,12 @@ public class BioSim implements MouseListener, ActionListener {
 										else if (c instanceof SBML_Editor) {
 											String properties = root + separator + rename + separator + rename + ".sim";
 											new File(properties).renameTo(new File(properties.replace(".sim", ".temp")));
-											boolean dirty = ((SBML_Editor) c).hasChanged();
+											boolean dirty = ((SBML_Editor) c).isDirty();
 											((SBML_Editor) c)
 													.setParamFileAndSimDir(properties, root + separator + rename);
 											((SBML_Editor) c).save(false, "", true);
 											((SBML_Editor) c).updateSBML(i, 0);
-											((SBML_Editor) c).setChanged(dirty);
+											((SBML_Editor) c).setDirty(dirty);
 											new File(properties).delete();
 											new File(properties.replace(".sim", ".temp")).renameTo(new File(properties));
 										}
@@ -2160,7 +2160,7 @@ public class BioSim implements MouseListener, ActionListener {
 		}
 		else if (tab.getComponentAt(index).getName().equals("SBML Editor")) {
 			if (tab.getComponentAt(index) instanceof SBML_Editor) {
-				if (((SBML_Editor) tab.getComponentAt(index)).hasChanged()) {
+				if (((SBML_Editor) tab.getComponentAt(index)).isDirty()) {
 					Object[] options = { "Yes", "No", "Cancel" };
 					int value = JOptionPane.showOptionDialog(frame, "Do you want to save changes to "
 							+ tab.getTitleAt(index) + "?", "Save Changes", JOptionPane.YES_NO_CANCEL_OPTION,
@@ -2221,8 +2221,7 @@ public class BioSim implements MouseListener, ActionListener {
 					}
 					else if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i).getName().equals(
 							"SBML Editor")) {
-						if (((SBML_Editor) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i))
-								.hasChanged()) {
+						if (((SBML_Editor) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).isDirty()) {
 							Object[] options = { "Yes", "No", "Cancel" };
 							int value = JOptionPane.showOptionDialog(frame,
 									"Do you want to save parameter changes for " + tab.getTitleAt(index) + "?",
@@ -3545,7 +3544,7 @@ public class BioSim implements MouseListener, ActionListener {
 					for (int j = 0; j < sim.getTabCount(); j++) {
 						if (sim.getComponentAt(j).getName().equals("SBML Editor")) {
 							new File(properties).renameTo(new File(properties.replace(".sim", ".temp")));
-							boolean dirty = ((SBML_Editor) (sim.getComponentAt(j))).hasChanged();
+							boolean dirty = ((SBML_Editor) (sim.getComponentAt(j))).isDirty();
 							((SBML_Editor) (sim.getComponentAt(j))).save(false, "", true);
 							if (updatedFile.contains(".gcm")) {
 								GCMParser parser = new GCMParser(root + separator + updatedFile);
@@ -3560,7 +3559,7 @@ public class BioSim implements MouseListener, ActionListener {
 								((SBML_Editor) (sim.getComponentAt(j))).updateSBML(i, j, root + separator
 										+ updatedFile);
 							}
-							((SBML_Editor) (sim.getComponentAt(j))).setChanged(dirty);
+							((SBML_Editor) (sim.getComponentAt(j))).setDirty(dirty);
 							new File(properties).delete();
 							new File(properties.replace(".sim", ".temp")).renameTo(new File(properties));
 						}
