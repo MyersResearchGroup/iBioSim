@@ -155,7 +155,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 
 	private JComboBox comp; // compartment combo box
 
-	private boolean change; // determines if any changes were made
+	private boolean dirty; // determines if any changes were made
 
 	private JTextField modelID; // the model's ID
 
@@ -770,7 +770,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			this.add(mainPanel, "Center");
 		}
 
-		change = false;
+		dirty = false;
 		if (paramsOnly) {
 			saveNoRun = new JButton("Save Parameters");
 			run = new JButton("Save and Run");
@@ -1288,7 +1288,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		// if the clear button is clicked
 		else if (e.getSource() == clearKineticLaw) {
 			kineticLaw.setText("");
-			change = true;
+			dirty = true;
 		}
 		// if the use mass action button is clicked
 		else if (e.getSource() == useMassAction) {
@@ -1316,7 +1316,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			uList = (String[]) Buttons.remove(unitList, uList);
 			unitList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			unitList.setSelectedIndex(0);
-			change = true;
+			dirty = true;
 		}
 	}
 
@@ -1339,7 +1339,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				units = (String[]) Buttons.remove(unitDefs, units);
 				unitDefs.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 				unitDefs.setSelectedIndex(0);
-				change = true;
+				dirty = true;
 			}
 		}
 	}
@@ -1375,7 +1375,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				cpTyp = (String[]) Buttons.remove(compTypes, cpTyp);
 				compTypes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 				compTypes.setSelectedIndex(0);
-				change = true;
+				dirty = true;
 			}
 			else {
 				String compartment = "";
@@ -1424,7 +1424,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			inits = (String[]) Buttons.remove(initAssigns, inits);
 			initAssigns.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			initAssigns.setSelectedIndex(0);
-			change = true;
+			dirty = true;
 		}
 	}
 
@@ -1459,7 +1459,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				spTyp = (String[]) Buttons.remove(specTypes, spTyp);
 				specTypes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 				specTypes.setSelectedIndex(0);
-				change = true;
+				dirty = true;
 			}
 			else {
 				String species = "";
@@ -1500,7 +1500,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			rul = (String[]) Buttons.remove(rules, rul);
 			rules.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			rules.setSelectedIndex(0);
-			change = true;
+			dirty = true;
 		}
 	}
 
@@ -1556,7 +1556,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			ev = (String[]) Buttons.remove(events, ev);
 			events.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			events.setSelectedIndex(0);
-			change = true;
+			dirty = true;
 		}
 	}
 
@@ -1582,7 +1582,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			assign = (String[]) Buttons.remove(eventAssign, assign);
 			eventAssign.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			eventAssign.setSelectedIndex(0);
-			change = true;
+			dirty = true;
 		}
 	}
 
@@ -1604,7 +1604,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			cons = (String[]) Buttons.remove(constraints, cons);
 			constraints.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			constraints.setSelectedIndex(0);
-			change = true;
+			dirty = true;
 		}
 	}
 
@@ -1688,7 +1688,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					comps = (String[]) Buttons.remove(compartments, comps);
 					compartments.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 					compartments.setSelectedIndex(0);
-					change = true;
+					dirty = true;
 				}
 			}
 			else {
@@ -1718,7 +1718,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				specs = (String[]) Buttons.remove(species, specs);
 				species.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 				species.setSelectedIndex(0);
-				change = true;
+				dirty = true;
 			}
 		}
 	}
@@ -1775,7 +1775,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			else {
 				reactions.setSelectedIndex(index);
 			}
-			change = true;
+			dirty = true;
 		}
 		else {
 			JOptionPane.showMessageDialog(biosim.frame(), "ID is not unique.", "Enter A Unique ID",
@@ -1795,7 +1795,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			reacts = (String[]) Buttons.remove(reactions, reacts);
 			reactions.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			reactions.setSelectedIndex(0);
-			change = true;
+			dirty = true;
 		}
 	}
 
@@ -1832,7 +1832,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				params = (String[]) Buttons.remove(parameters, params);
 				parameters.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 				parameters.setSelectedIndex(0);
-				change = true;
+				dirty = true;
 			}
 		}
 	}
@@ -1852,7 +1852,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			reacta = (String[]) Buttons.remove(reactants, reacta);
 			reactants.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			reactants.setSelectedIndex(0);
-			change = true;
+			dirty = true;
 		}
 	}
 
@@ -1871,7 +1871,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			product = (String[]) Buttons.remove(products, product);
 			products.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			products.setSelectedIndex(0);
-			change = true;
+			dirty = true;
 		}
 	}
 
@@ -1890,7 +1890,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			modifier = (String[]) Buttons.remove(modifiers, modifier);
 			modifiers.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			modifiers.setSelectedIndex(0);
-			change = true;
+			dirty = true;
 		}
 	}
 
@@ -1951,7 +1951,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			}
 		}
 		kineticLaw.setText(kinetic);
-		change = true;
+		dirty = true;
 	}
 
 	/**
@@ -1973,7 +1973,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				funcs = (String[]) Buttons.remove(functions, funcs);
 				functions.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 				functions.setSelectedIndex(0);
-				change = true;
+				dirty = true;
 			}
 		}
 	}
@@ -2101,7 +2101,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			reacParams = (String[]) Buttons.remove(reacParameters, reacParams);
 			reacParameters.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			reacParameters.setSelectedIndex(0);
-			change = true;
+			dirty = true;
 		}
 	}
 
@@ -2759,7 +2759,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						functions.setSelectedIndex(index);
 					}
 				}
-				change = true;
+				dirty = true;
 			}
 			if (error) {
 				value = JOptionPane.showOptionDialog(biosim.frame(), functionPanel, "Function Editor",
@@ -3083,7 +3083,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 							unitDefs.setSelectedIndex(index);
 						}
 					}
-					change = true;
+					dirty = true;
 				}
 				if (error) {
 					value = JOptionPane.showOptionDialog(biosim.frame(), unitDefPanel,
@@ -3229,7 +3229,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						unitList.setSelectedIndex(index);
 					}
 				}
-				change = true;
+				dirty = true;
 			}
 			if (error) {
 				value = JOptionPane.showOptionDialog(biosim.frame(), unitListPanel, "Unit List Editor",
@@ -3531,7 +3531,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						compTypes.setSelectedIndex(index);
 					}
 				}
-				change = true;
+				dirty = true;
 			}
 			if (error) {
 				value = JOptionPane.showOptionDialog(biosim.frame(), compTypePanel,
@@ -3648,7 +3648,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						specTypes.setSelectedIndex(index);
 					}
 				}
-				change = true;
+				dirty = true;
 			}
 			if (error) {
 				value = JOptionPane.showOptionDialog(biosim.frame(), specTypePanel, "Species Type Editor",
@@ -3877,7 +3877,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						initAssigns.setSelectedIndex(index);
 					}
 				}
-				change = true;
+				dirty = true;
 			}
 			if (error) {
 				value = JOptionPane.showOptionDialog(biosim.frame(), initAssignPanel,
@@ -4223,7 +4223,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						rules.setSelectedIndex(index);
 					}
 				}
-				change = true;
+				dirty = true;
 			}
 			if (error) {
 				value = JOptionPane.showOptionDialog(biosim.frame(), rulePanel, "Rule Editor",
@@ -4899,7 +4899,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						removeTheEvent(myFormulaToString(e.getTrigger().getMath()));
 					}
 				}
-				change = true;
+				dirty = true;
 			}
 			if (error) {
 				value = JOptionPane.showOptionDialog(biosim.frame(), eventPanel, "Event Editor",
@@ -5061,7 +5061,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						eventAssign.setSelectedIndex(index);
 					}
 				}
-				change = true;
+				dirty = true;
 			}
 			if (error) {
 				value = JOptionPane.showOptionDialog(biosim.frame(), eventAssignPanel,
@@ -5237,7 +5237,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 							constraints.setSelectedIndex(index);
 						}
 					}
-					change = true;
+					dirty = true;
 				}
 			}
 			if (error) {
@@ -5738,7 +5738,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 							compartments.setSelectedIndex(index);
 						}
 					}
-					change = true;
+					dirty = true;
 				}
 			}
 			if (error) {
@@ -6461,7 +6461,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 							species.setSelectedIndex(index1);
 						}
 					}
-					change = true;
+					dirty = true;
 				}
 			}
 			if (error) {
@@ -7285,7 +7285,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						removeTheReaction(reac);
 					}
 				}
-				change = true;
+				dirty = true;
 			}
 			if (error) {
 				value = JOptionPane.showOptionDialog(biosim.frame(), reactionPanel, "Reaction Editor",
@@ -7734,7 +7734,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 								parameters.setSelectedIndex(index);
 							}
 						}
-						change = true;
+						dirty = true;
 					}
 				}
 			}
@@ -8097,7 +8097,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 							reacParameters.setSelectedIndex(0);
 						}
 					}
-					change = true;
+					dirty = true;
 				}
 			}
 			if (error) {
@@ -8326,7 +8326,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					products.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 					products.setSelectedIndex(0);
 				}
-				change = true;
+				dirty = true;
 			}
 			if (error) {
 				value = JOptionPane.showOptionDialog(biosim.frame(), productsPanel, "Products Editor",
@@ -8463,7 +8463,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					}
 				}
 			}
-			change = true;
+			dirty = true;
 			if (error) {
 				value = JOptionPane.showOptionDialog(biosim.frame(), modifiersPanel, "Modifiers Editor",
 						JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
@@ -8692,7 +8692,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					reactants.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 					reactants.setSelectedIndex(0);
 				}
-				change = true;
+				dirty = true;
 			}
 			if (error) {
 				value = JOptionPane.showOptionDialog(biosim.frame(), reactantsPanel, "Reactants Editor",
@@ -8793,12 +8793,12 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	public void mouseExited(MouseEvent e) {
 	}
 
-	public boolean hasChanged() {
-		return change;
+	public boolean isDirty() {
+		return dirty;
 	}
 
-	public void setChanged(boolean change) {
-		this.change = change;
+	public void setDirty(boolean dirty) {
+		this.dirty = dirty;
 	}
 
 	/**
@@ -8968,7 +8968,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					if (biosim.getTab().getTitleAt(i).equals(refFile)) {
 						if (biosim.getTab().getComponentAt(i) instanceof SBML_Editor) {
 							SBML_Editor sbml = ((SBML_Editor) (biosim.getTab().getComponentAt(i)));
-							if (sbml.hasChanged()) {
+							if (sbml.isDirty()) {
 								Object[] options = { "Yes", "No" };
 								int value = JOptionPane
 										.showOptionDialog(biosim.frame(), "Do you want to save changes to " + refFile
@@ -9114,7 +9114,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				}
 				createSBML(stem, ".");
 			}
-			change = false;
+			dirty = false;
 		}
 		else {
 			try {
@@ -9128,7 +9128,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				byte[] output = doc.getBytes();
 				out.write(output);
 				out.close();
-				change = false;
+				dirty = false;
 				if (paramsOnly) {
 					reb2sac.updateSpeciesList();
 				}
