@@ -1865,13 +1865,29 @@ public class BioSim implements MouseListener, ActionListener {
 										+ ".pms").renameTo(new File(root + separator + rename + separator + rename
 										+ ".sim"));
 							}
-							else if (new File(root + separator + rename + separator
+							if (new File(root + separator + rename + separator
 									+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]
 									+ ".lrn").exists()) {
 								new File(root + separator + rename + separator
 										+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]
 										+ ".lrn").renameTo(new File(root + separator + rename + separator + rename
 										+ ".lrn"));
+							}
+							if (new File(root + separator + rename + separator
+									+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]
+									+ ".grf").exists()) {
+								new File(root + separator + rename + separator
+										+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]
+										+ ".grf").renameTo(new File(root + separator + rename + separator + rename
+										+ ".grf"));
+							}
+							if (new File(root + separator + rename + separator
+									+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]
+									+ ".prb").exists()) {
+								new File(root + separator + rename + separator
+										+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]
+										+ ".prb").renameTo(new File(root + separator + rename + separator + rename
+										+ ".prb"));
 							}
 						}
 						for (int i = 0; i < tab.getTabCount(); i++) {
@@ -1897,10 +1913,18 @@ public class BioSim implements MouseListener, ActionListener {
 											.length() - 4));
 								}
 								else {
-									for (int j = ((JTabbedPane) tab.getComponentAt(i)).getTabCount() - 1; j >= 0; j--) {
+									JTabbedPane t = new JTabbedPane();
+									int selected = ((JTabbedPane) tab.getComponentAt(i)).getSelectedIndex();
+									boolean analysis = false;
+									ArrayList<Component> comps = new ArrayList<Component>();
+									for (int j = 0; j < ((JTabbedPane) tab.getComponentAt(i)).getTabCount(); j++) {
 										Component c = ((JTabbedPane) tab.getComponentAt(i)).getComponent(j);
+										comps.add(c);
+									}
+									for (Component c : comps) {
 										if (c instanceof Reb2Sac) {
 											((Reb2Sac) c).setSim(rename);
+											analysis = true;
 										}
 										else if (c instanceof SBML_Editor) {
 											String properties = root + separator + rename + separator + rename + ".sim";
@@ -1909,7 +1933,7 @@ public class BioSim implements MouseListener, ActionListener {
 											((SBML_Editor) c)
 													.setParamFileAndSimDir(properties, root + separator + rename);
 											((SBML_Editor) c).save(false, "", true);
-											((SBML_Editor) c).updateSBML(i, j);
+											((SBML_Editor) c).updateSBML(i, 0);
 											((SBML_Editor) c).setChanged(dirty);
 											new File(properties).delete();
 											new File(properties.replace(".sim", ".temp")).renameTo(new File(properties));
@@ -1917,9 +1941,52 @@ public class BioSim implements MouseListener, ActionListener {
 										else if (c instanceof Graph) {
 											Graph g = ((Graph) c);
 											g.setDirectory(root + separator + rename);
+											if (g.isTSDGraph()) {
+												g.setGraphName(rename + ".grf");
+											}
+											else {
+												g.setGraphName(rename + ".prb");
+											}
+										}
+										else if (c instanceof Learn) {
+											Learn l = ((Learn) c);
+											l.setDirectory(root + separator + rename);
+										}
+										else if (c instanceof DataManager) {
+											DataManager d = ((DataManager) c);
+											d.setDirectory(root + separator + rename);
+										}
+										if (analysis) {
+											if (c instanceof Reb2Sac) {
+												t.addTab("Simulation Options", c);
+												t.getComponentAt(t.getComponents().length - 1).setName("Simulate");
+											}
+											else if (c instanceof SBML_Editor) {
+												t.addTab("Parameter Editor", c);
+												t.getComponentAt(t.getComponents().length - 1).setName("SBML Editor");
+											}
+											else if (c instanceof Graph) {
+												if (((Graph) c).isTSDGraph()) {
+													t.addTab("TSD Graph", c);
+													t.getComponentAt(t.getComponents().length - 1).setName("TSD Graph");
+												}
+												else {
+													t.addTab("Probability Graph", c);
+													t.getComponentAt(t.getComponents().length - 1).setName("ProbGraph");
+												}
+											}
+											else {
+												t.addTab("Abstraction Options", c);
+												t.getComponentAt(t.getComponents().length - 1).setName("");
+											}
 										}
 									}
+									if (analysis) {
+										t.setSelectedIndex(selected);
+										tab.setComponentAt(i, t);
+									}
 									tab.setTitleAt(i, rename);
+									tab.getComponentAt(i).setName(rename);
 								}
 							}
 						}
@@ -2692,8 +2759,9 @@ public class BioSim implements MouseListener, ActionListener {
 					simTab.getComponentAt(simTab.getComponents().length - 1).setName("Simulate");
 					simTab.addTab("Abstraction Options", reb2sac.getAdvanced());
 					simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
-					//simTab.addTab("Advanced Options", reb2sac.getProperties());
-					//simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
+					// simTab.addTab("Advanced Options", reb2sac.getProperties());
+					// simTab.getComponentAt(simTab.getComponents().length -
+					// 1).setName("");
 					SBML_Editor sbml = new SBML_Editor(sbmlFile, reb2sac, log, this, root + separator
 							+ simName.trim(), root + separator + simName.trim() + separator + simName.trim()
 							+ ".sim");
@@ -2776,8 +2844,9 @@ public class BioSim implements MouseListener, ActionListener {
 					simTab.getComponentAt(simTab.getComponents().length - 1).setName("Simulate");
 					simTab.addTab("Abstraction Options", reb2sac.getAdvanced());
 					simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
-					//simTab.addTab("Advanced Options", reb2sac.getProperties());
-					//simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
+					// simTab.addTab("Advanced Options", reb2sac.getProperties());
+					// simTab.getComponentAt(simTab.getComponents().length -
+					// 1).setName("");
 					SBML_Editor sbml = new SBML_Editor(sbmlFile, reb2sac, log, this, root + separator
 							+ simName.trim(), root + separator + simName.trim() + separator + simName.trim()
 							+ ".sim");
@@ -3093,8 +3162,9 @@ public class BioSim implements MouseListener, ActionListener {
 						simTab.getComponentAt(simTab.getComponents().length - 1).setName("Simulate");
 						simTab.addTab("Abstraction Options", reb2sac.getAdvanced());
 						simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
-						//simTab.addTab("Advanced Options", reb2sac.getProperties());
-						//simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
+						// simTab.addTab("Advanced Options", reb2sac.getProperties());
+						// simTab.getComponentAt(simTab.getComponents().length -
+						// 1).setName("");
 						SBML_Editor sbml = new SBML_Editor(sbmlLoadFile, reb2sac, log, this, root + separator
 								+ split[split.length - 1].trim(), root + separator + split[split.length - 1].trim()
 								+ separator + split[split.length - 1].trim() + ".sim");
@@ -3358,8 +3428,8 @@ public class BioSim implements MouseListener, ActionListener {
 			simTab.getComponentAt(simTab.getComponents().length - 1).setName("Simulate");
 			simTab.addTab("Abstraction Options", reb2sac.getAdvanced());
 			simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
-			//simTab.addTab("Advanced Options", reb2sac.getProperties());
-			//simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
+			// simTab.addTab("Advanced Options", reb2sac.getProperties());
+			// simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
 			SBML_Editor sbml = new SBML_Editor(sbmlLoadFile, reb2sac, log, this, root + separator
 					+ newSim, root + separator + newSim + separator + newSim + ".sim");
 			reb2sac.setSbml(sbml);

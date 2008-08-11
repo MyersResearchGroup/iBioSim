@@ -1366,4 +1366,10 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 			speciesList.set(j, index);
 		}
 	}
+
+	public void setDirectory(String directory) {
+		this.directory = directory;
+		String[] getFilename = directory.split(separator);
+		lrnFile = getFilename[getFilename.length - 1] + ".lrn";
+	}
 }
