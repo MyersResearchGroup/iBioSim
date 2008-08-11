@@ -17,7 +17,7 @@ iBioSim.pdf: iBioSim.tex
 	ps2pdf iBioSim.ps
 
 iBioSim.html: iBioSim.pdf
-	tth -u -LiBioSim < iBioSim.tex > iBioSim.html
+	tth -u -e2 -LiBioSim < iBioSim.tex > iBioSim.html
 
 clean:
 	rm *.dvi *.ps
