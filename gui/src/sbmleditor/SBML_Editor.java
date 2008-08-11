@@ -7116,9 +7116,6 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				if (option.equals("OK")) {
 					int index = reactions.getSelectedIndex();
 					String val = ((String) reactions.getSelectedValue()).split(" ")[0];
-					reactions.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-					reacts = Buttons.getList(reacts, reactions);
-					reactions.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 					Reaction react = document.getModel().getReaction(val);
 					ListOf remove;
 					long size;
@@ -7187,6 +7184,9 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						if (!paramsOnly) {
 							reacts[index] = reac;
 						}
+						reactions.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+						reacts = Buttons.getList(reacts, reactions);
+						reactions.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 						sort(reacts);
 						reactions.setListData(reacts);
 						reactions.setSelectedIndex(index);
