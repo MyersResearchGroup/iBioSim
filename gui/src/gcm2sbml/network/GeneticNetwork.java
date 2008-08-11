@@ -263,6 +263,7 @@ public class GeneticNetwork {
 
 		for (Promoter p : promoters.values()) {
 			// First setup RNAP binding
+			if (p.getOutputs().size()==0) continue;
 			org.sbml.libsbml.Reaction r = new org.sbml.libsbml.Reaction(
 					"R_RNAP_" + p.getId());
 			r.addReactant(new SpeciesReference("RNAP", 1));
@@ -323,6 +324,7 @@ public class GeneticNetwork {
 		}
 
 		for (Promoter p : promoters.values()) {
+			if (p.getOutputs().size()==0) continue;
 			if (p.getActivators().size() > 0 && p.getRepressors().size() == 0) {
 				org.sbml.libsbml.Reaction r = new org.sbml.libsbml.Reaction(
 						"R_basal_production_" + p.getId());
@@ -350,7 +352,7 @@ public class GeneticNetwork {
 						document, p, p.getActivators(), act, stoc);
 				v.run();
 			} else if (p.getActivators().size() == 0
-					&& p.getRepressors().size() > 0) {
+					&& p.getRepressors().size() >= 0) {
 				org.sbml.libsbml.Reaction r = new org.sbml.libsbml.Reaction(
 						"R_production_" + p.getId());
 				r.addReactant(new SpeciesReference("RNAP_" + p.getId(), 1));
@@ -497,6 +499,7 @@ public class GeneticNetwork {
 		}
 
 		for (Promoter promoter : promoters.values()) {
+			if (promoter.getOutputs().size()==0) continue;
 			// First print out the promoter, and promoter bound to RNAP
 			String tempPromoters = numPromoters;
 			if (promoter.getProperty(GlobalConstants.PROMOTER_COUNT_STRING) != null) {
@@ -598,22 +601,28 @@ public class GeneticNetwork {
 	private void buildPromoters() {
 		for (Promoter promoter : promoters.values()) {
 			for (Reaction reaction : promoter.getActivatingReactions()) {
-				if (!reaction.isBiochemical() && reaction.getDimer() <= 1) {
+				if (!reaction.isBiochemical() && reaction.getDimer() <= 1 &&
+						!reaction.getInputState().equals("none")) {
 					promoter.addActivator(stateMap
 							.get(reaction.getInputState()));
 					promoter.addToReactionMap(stateMap.get(reaction
 							.getInputState()), reaction);
 				}
-				promoter.addOutput(stateMap.get(reaction.getOutputState()));
+				if (!reaction.getOutputState().equals("none")) {
+					promoter.addOutput(stateMap.get(reaction.getOutputState()));
+				}
 			}
 			for (Reaction reaction : promoter.getRepressingReactions()) {
-				if (!reaction.isBiochemical() && reaction.getDimer() <= 1) {
+				if (!reaction.isBiochemical() && reaction.getDimer() <= 1 &&
+				!reaction.getInputState().equals("none")) {
 					promoter.addRepressor(stateMap
 							.get(reaction.getInputState()));
 					promoter.addToReactionMap(stateMap.get(reaction
 							.getInputState()), reaction);
 				}
-				promoter.addOutput(stateMap.get(reaction.getOutputState()));
+				if (!reaction.getOutputState().equals("none")) {
+					promoter.addOutput(stateMap.get(reaction.getOutputState()));
+				}
 			}
 		}
 	}
