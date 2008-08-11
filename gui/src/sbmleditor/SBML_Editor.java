@@ -6841,11 +6841,11 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			changedParameters.add(p);
 			p = new Parameter();
 			p.setId("kr");
-			p.setValue(0.1);
+			p.setValue(1.0);
 			changedParameters.add(p);
 			reacParams = new String[2];
 			reacParams[0] = "kf 0.1";
-			reacParams[1] = "kr 0.1";
+			reacParams[1] = "kr 1.0";
 			thisReactionParams.add("kf");
 			thisReactionParams.add("kr");
 		}
