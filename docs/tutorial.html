@@ -1,0 +1,642 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"
+           "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<meta name="GENERATOR" content="TtH 3.81">
+ <style type="text/css"> div.p { margin-top: 7pt;}</style>
+ <style type="text/css"><!--
+ td div.comp { margin-top: -0.6ex; margin-bottom: -1ex;}
+ td div.comb { margin-top: -0.6ex; margin-bottom: -.6ex;}
+ td div.hrcomp { line-height: 0.9; margin-top: -0.8ex; margin-bottom: -1ex;}
+ td div.norm {line-height:normal;}
+ span.roman {font-family: serif; font-style: normal; font-weight: normal;} 
+ span.overacc2 {position: relative;  left: .8em; top: -1.2ex;}
+ span.overacc1 {position: relative;  left: .6em; top: -1.2ex;} --></style>
+ 
+
+
+<title> iBioSim: Tutorial</title>
+ 
+<h1 align="center">iBioSim: Tutorial </h1>
+
+<div class="p"><!----></div>
+
+<h3 align="center">Chris J. Myers </h3>
+
+<div class="p"><!----></div>
+
+<h3 align="center">Created: August 11th, 2008<br />
+  Last Revised: August 11th, 2008
+ </h3>
+
+<div class="p"><!----></div>
+ 
+<div class="p"><!----></div>
+
+<h1>Contents </h1><a href="#tth_sEc1"
+>1&nbsp; Introduction</a><br />
+<a href="#tth_sEc2"
+>2&nbsp; SBML Editor</a><br />
+<a href="#tth_sEc3"
+>3&nbsp; Analysis</a><br />
+<a href="#tth_sEc4"
+>4&nbsp; Abstraction</a><br />
+<a href="#tth_sEc5"
+>5&nbsp; GCM Editor</a><br />
+
+
+<div class="p"><!----></div>
+  
+<div class="p"><!----></div>
+ <h2><a name="tth_sEc1">
+1</a>&nbsp;&nbsp;Introduction</h2>
+
+<div class="p"><!----></div>
+The example described in this tutorial constructs a simple model for
+the <em>cI</em> and <em>cII</em> genes and the P<sub>R</sub> and P<sub>RE</sub>
+promoters from the phage &#955; decsion circuit.  This example
+illustrates many of the features of <tt>iBioSim</tt>.
+
+<div class="p"><!----></div>
+
+<div class="p"><!----></div>
+ <h2><a name="tth_sEc2">
+2</a>&nbsp;&nbsp;SBML Editor</h2>
+
+<div class="p"><!----></div>
+After starting <tt>iBioSim</tt>, complete the following steps to create
+an SBML model for this example:
+
+<ol type="1">
+<li> Select <tt>File</tt> &#8594; <tt>New</tt> &#8594; <tt>Project</tt>
+<div class="p"><!----></div>
+</li>
+
+<li> Browse to desired path and create a project named <tt>lambda</tt>.
+<div class="p"><!----></div>
+</li>
+
+<li> Select <tt>File</tt> &#8594; <tt>New</tt> &#8594; <tt>SBML Model</tt>
+<div class="p"><!----></div>
+</li>
+
+<li> Enter <tt>lambda</tt> which will open the SBML editor.
+<div class="p"><!----></div>
+</li>
+
+<li> Select <tt>Definitions/Types</tt> tab.
+<div class="p"><!----></div>
+</li>
+
+<li> Select <tt>Add Unit</tt> and enter <tt>per_second</tt> as the ID.
+<div class="p"><!----></div>
+</li>
+
+<li> Select <tt>Add to List</tt>, select <tt>second</tt> as the kind, change
+      the exponent to &#8722;1, and click <tt>Add</tt>.
+<div class="p"><!----></div>
+</li>
+
+<li> Click <tt>Add</tt> in the <tt>Unit Definition Editor</tt>.
+<div class="p"><!----></div>
+</li>
+
+<li> Select <tt>Add Unit</tt> and enter <tt>per_second_mole</tt> as the ID.
+<div class="p"><!----></div>
+</li>
+
+<li> Select <tt>Add to List</tt>, select <tt>second</tt> as the kind, change
+      the exponent to &#8722;1, and click <tt>Add</tt>.
+<div class="p"><!----></div>
+</li>
+
+<li> Select <tt>Add to List</tt>, select <tt>mole</tt> as the kind, change
+      the exponent to &#8722;1, and click <tt>Add</tt>.
+<div class="p"><!----></div>
+</li>
+
+<li> Click <tt>Add</tt> in the <tt>Unit Definition Editor</tt>.
+<div class="p"><!----></div>
+</li>
+
+<li> Select <tt>Main Elements</tt> tab.
+<div class="p"><!----></div>
+</li>
+
+<li> Select <tt>default</tt> in the list of Compartments, and press the
+      <tt>Edit Compartment</tt> button, and change the compartment ID to 
+      <tt>cell</tt> and size to 1.
+<div class="p"><!----></div>
+</li>
+
+<li> Select <tt>Add Species</tt> and enter <tt>CI</tt> as the ID.
+<div class="p"><!----></div>
+</li>
+
+<li> Select <tt>Add Species</tt> and enter <tt>CI2</tt> as the ID.
+<div class="p"><!----></div>
+</li>
+
+<li> Select <tt>Add Reaction</tt> and enter <tt>Dimerize</tt> as the ID and
+      change reversiable to <tt>true</tt>.
+<div class="p"><!----></div>
+</li>
+
+<li> Select <tt>Add Reactant</tt> and select <tt>CI</tt> as the species and change
+      the stoiciometry to 2.
+<div class="p"><!----></div>
+</li>
+
+<li> Select <tt>Add Product</tt> and select <tt>CI2</tt> as the species.
+<div class="p"><!----></div>
+</li>
+
+<li> Highlight <tt>kf</tt> and select <tt>Edit Selected Parameter</tt>, change
+      <tt>kf</tt> to <tt>k2f</tt>, and change the units to <tt>per_second_mole</tt>.
+<div class="p"><!----></div>
+</li>
+
+<li> Highlight <tt>kr</tt> and select <tt>Edit Selected Parameter</tt>, change
+      <tt>kr</tt> to <tt>k2r</tt>, change the value to 1.0, and change 
+      the units to <tt>per_second</tt>.
+<div class="p"><!----></div>
+</li>
+
+<li> Select <tt>Use Mass Action</tt>.
+<div class="p"><!----></div>
+</li>
+
+<li> Select <tt>Add</tt>.
+<div class="p"><!----></div>
+</li>
+
+<li> Select <tt>Save</tt>.
+<div class="p"><!----></div>
+</li>
+
+<li> Highlight <tt>lambda.sbml</tt>, using right mouse button, select 
+      <tt>View Network</tt>.
+<div class="p"><!----></div>
+</li>
+
+<li> Highlight <tt>lambda.sbml</tt>, using right mouse button, select 
+      <tt>View in Browser</tt>.
+<div class="p"><!----></div>
+</li>
+
+<li> Go back to the SBML editor complete the construction of the
+      chemical reaction network shown below:
+
+<br clear="all" /><table border="0" width="95%"><tr><td>
+<table border="0" cellspacing="0" cellpadding="0">
+ <tr><td width="50%"></td><td nowrap="nowrap" align="right" colspan="1"><table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
+PRE + <span class="roman">RNAP</span> </td></tr></table></td><td nowrap="nowrap" align="left">
+<table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
+</td><td nowrap="nowrap" align="center">
+<small>KPRE2</small><!--sup
+--><br />&#8596; <br />
+<small></small>&nbsp;<br /></td><td nowrap="nowrap" align="center">
+</td></tr></table></td><td nowrap="nowrap" align="left">
+<table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
+PRE_<span class="roman">RNAP</span> </td></tr></table></td><td width="50%"></td></tr>
+ <tr><td width="50%"></td><td nowrap="nowrap" align="right" colspan="1"><table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
+PRE + <span class="roman">CII</span> + <span class="roman">RNAP</span> </td></tr></table></td><td nowrap="nowrap" align="left">
+<table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
+</td><td nowrap="nowrap" align="center">
+<small>KPRE4</small><!--sup
+--><br />&#8596; <br />
+<small></small>&nbsp;<br /></td><td nowrap="nowrap" align="center">
+</td></tr></table></td><td nowrap="nowrap" align="left">
+<table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
+PRE_<span class="roman">CII</span>_<span class="roman">RNAP</span> </td></tr></table></td><td width="50%"></td></tr>
+ <tr><td width="50%"></td><td nowrap="nowrap" align="right" colspan="1"><table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
+PRE_<span class="roman">RNAP</span> </td></tr></table></td><td nowrap="nowrap" align="left">
+<table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
+</td><td nowrap="nowrap" align="center">
+<small>kPREb</small><!--sup
+--><br />&#8594; <br />
+<small></small>&nbsp;<br /></td><td nowrap="nowrap" align="center">
+</td></tr></table></td><td nowrap="nowrap" align="left">
+<table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
+PRE_<span class="roman">RNAP</span> + n<span class="roman">CI</span> </td></tr></table></td><td width="50%"></td></tr>
+ <tr><td width="50%"></td><td nowrap="nowrap" align="right" colspan="1"><table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
+PRE_<span class="roman">CII</span>_<span class="roman">RNAP</span> </td></tr></table></td><td nowrap="nowrap" align="left">
+<table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
+</td><td nowrap="nowrap" align="center">
+<small>kPRE</small><!--sup
+--><br />&#8594; <br />
+<small></small>&nbsp;<br /></td><td nowrap="nowrap" align="center">
+</td></tr></table></td><td nowrap="nowrap" align="left">
+<table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
+PRE_<span class="roman">CII</span>_<span class="roman">RNAP</span> + n<span class="roman">CI</span> </td></tr></table></td><td width="50%"></td></tr>
+ <tr><td width="50%"></td><td nowrap="nowrap" align="right" colspan="1"><table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
+PR + <span class="roman">RNAP</span> </td></tr></table></td><td nowrap="nowrap" align="left">
+<table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
+</td><td nowrap="nowrap" align="center">
+<small>KOR9</small><!--sup
+--><br />&#8596; <br />
+<small></small>&nbsp;<br /></td><td nowrap="nowrap" align="center">
+</td></tr></table></td><td nowrap="nowrap" align="left">
+<table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
+PR_<span class="roman">RNAP</span> </td></tr></table></td><td width="50%"></td></tr>
+ <tr><td width="50%"></td><td nowrap="nowrap" align="right" colspan="1"><table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
+PR + 2 <span class="roman">CI</span><span class="roman">2</span> </td></tr></table></td><td nowrap="nowrap" align="left">
+<table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
+</td><td nowrap="nowrap" align="center">
+<small>KOR10</small><!--sup
+--><br />&#8596; <br />
+<small></small>&nbsp;<br /></td><td nowrap="nowrap" align="center">
+</td></tr></table></td><td nowrap="nowrap" align="left">
+<table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
+PR_2 <span class="roman">CI</span><span class="roman">2</span> </td></tr></table></td><td width="50%"></td></tr>
+ <tr><td width="50%"></td><td nowrap="nowrap" align="right" colspan="1"><table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
+PR_<span class="roman">RNAP</span> </td></tr></table></td><td nowrap="nowrap" align="left">
+<table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
+</td><td nowrap="nowrap" align="center">
+<small>kPR</small><!--sup
+--><br />&#8594; <br />
+<small></small>&nbsp;<br /></td><td nowrap="nowrap" align="center">
+</td></tr></table></td><td nowrap="nowrap" align="left">
+<table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
+PR_<span class="roman">RNAP</span> + n<span class="roman">CII</span> </td></tr></table></td><td width="50%"></td></tr>
+ <tr><td width="50%"></td><td nowrap="nowrap" align="right" colspan="1"><table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
+2 <span class="roman">CI</span> </td></tr></table></td><td nowrap="nowrap" align="left">
+<table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
+</td><td nowrap="nowrap" align="center">
+<small>K2</small><!--sup
+--><br />&#8596; <br />
+<small></small>&nbsp;<br /></td><td nowrap="nowrap" align="center">
+</td></tr></table></td><td nowrap="nowrap" align="left">
+<table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
+<span class="roman">CI</span><span class="roman">2</span> </td></tr></table></td><td width="50%"></td></tr>
+ <tr><td width="50%"></td><td nowrap="nowrap" align="right" colspan="1"><table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
+<span class="roman">CI</span> </td></tr></table></td><td nowrap="nowrap" align="left">
+<table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
+</td><td nowrap="nowrap" align="center">
+<small>k1</small><!--sup
+--><br />&#8594; <br />
+<small></small>&nbsp;<br /></td><td nowrap="nowrap" align="center">
+</td></tr></table></td><td nowrap="nowrap" align="left">
+<table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
+() </td></tr></table></td><td width="50%"></td></tr>
+ <tr><td width="50%"></td><td nowrap="nowrap" align="right" colspan="1"><table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
+<span class="roman">CII</span> </td></tr></table></td><td nowrap="nowrap" align="left">
+<table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
+</td><td nowrap="nowrap" align="center">
+<small>k10</small><!--sup
+--><br />&#8594; <br />
+<small></small>&nbsp;<br /></td><td nowrap="nowrap" align="center">
+</td></tr></table></td><td nowrap="nowrap" align="left">
+<table><tr><td nowrap="nowrap" align="right" colspan="1">()</td></tr></table></td><td width="50%"></td></tr></table>
+</td></tr></table>
+
+
+
+<div class="p"><!----></div>
+
+<center>
+<table border="1">
+<tr><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
+Constant </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
+Value </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
+Constant </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
+Value </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
+Constant </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
+Value </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
+Constant </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
+Value </td></tr></table></td></tr><tr><td></td></tr>
+<tr><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
+KPRE2 </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
+0.01&nbsp;M<sup>&#8722;1</sup> </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
+KPRE4 </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
+0.00161&nbsp;M<sup>&#8722;2</sup> </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
+kPREb </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
+0.00004&nbsp;<span class="roman">sec</span><sup>&#8722;1</sup> </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
+kPRE </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
+0.015&nbsp;<span class="roman">sec</span><sup>&#8722;1</sup> </td></tr></table></td></tr>
+<tr><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
+n </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
+10 </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
+KOR9 </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
+0.69422&nbsp;M<sup>&#8722;1</sup> </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
+KOR10 </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
+0.06568&nbsp;M<sup>&#8722;2</sup> </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
+kPR </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
+0.014&nbsp;<span class="roman">sec</span><sup>&#8722;1</sup> </td></tr></table></td></tr>
+<tr><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
+K2 </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
+0.1 M<sup>&#8722;1</sup> </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
+k1 </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
+0.0007&nbsp;<span class="roman">sec</span><sup>&#8722;1</sup> </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
+k10 </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
+0.002&nbsp;<span class="roman">sec</span><sup>&#8722;1</sup> </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
+&nbsp; </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
+&nbsp; </td></tr></table></td></tr></table>
+
+Set an initial amount of 1.0 for PRE and OR, 30.0 for RNAP, and 0.0 
+for the rest.
+</center>
+<div class="p"><!----></div>
+</li>
+</ol>
+
+<div class="p"><!----></div>
+ <h2><a name="tth_sEc3">
+3</a>&nbsp;&nbsp;Analysis</h2>
+
+<div class="p"><!----></div>
+The following instructions describe how to analyze the SBML file just 
+created.
+
+<ol type="1">
+<li> Highlight <tt>lambda.sbml</tt>, using the right mouse button, select 
+      <tt>Create Analysis View</tt>, and enter the name <tt>sim</tt>.
+<div class="p"><!----></div>
+</li>
+
+<li> In the newly opened window, select <tt>Monte Carlo</tt>.
+<div class="p"><!----></div>
+</li>
+
+<li> Also, in this window, change the time limit to 2100.0, print interval
+      to 100.0, and runs to 20.
+<div class="p"><!----></div>
+</li>
+
+<li> Finally, select <tt>Save and Run</tt> at the bottom of the window.
+<div class="p"><!----></div>
+</li>
+
+<li> After the simulation completes (it may take a little while), click on
+      the graph tab.
+<div class="p"><!----></div>
+</li>
+
+<li> Click on the graph to bring up the graph editor.  Highlight Average,
+      if not already highlighted, select CI2 and CII, change Title to
+      "Average", change X-Axis Label to "Time (seconds)", and change
+      Y-Axis Label to "Number of Molecules".  Press the OK button.
+      Click on Export and enter file name of <tt>average.jpg</tt>.
+<div class="p"><!----></div>
+</li>
+
+<li> Click on the graph to bring up the graph editor.  Press the 
+      "Deselect All" button.  Highlight run-1,
+      select CI2 and CII, change Title to "Run-1", 
+      change X-Axis Label to "Time (seconds)", and change
+      Y-Axis Label to "Number of Molecules".  Press the OK button.
+      Click on Export and enter file name of <tt>run1.jpg</tt>.
+<div class="p"><!----></div>
+</li>
+
+<li> Click on the graph to bring up the graph editor.  
+      Press the "Deselect All" button.  Highlight Standard
+      Deviation, select CI2 and CII, change Title to "Standard Deviation", 
+      change X-Axis Label to "Time (seconds)", and change
+      Y-Axis Label to "Number of Molecules".  Press the OK button.
+      Click on Export and enter file name of <tt>stddev.jpg</tt>.
+<div class="p"><!----></div>
+</li>
+
+<li> Click on the SBML editor tab.  Change the initial amounts of OR and
+      PRE to 10.  Press the Save and Run button.
+<div class="p"><!----></div>
+</li>
+
+<li> Click on the graph tab and following the steps above, create the 
+      following plots <tt>average_10.jpg</tt>,  <tt>run1_10.jpg</tt>, and
+      <tt>stddev_10.jpg</tt>.  How are these different than the first set
+      of plots?
+<div class="p"><!----></div>
+</li>
+
+<li> Simulate your lambda model with BioSim using the ODE method rkf45 with
+      a time limit of 2100 and print interval of 50.
+      Make a note of the simulation time and plot CI2 and CII.  
+      Next, simulate using the Euler method.  Make a note of the simulation time
+      and add CI2 and CII from the euler results to your graph.  
+      How do the simulation times and results compare?
+      Change the time step and rerun the Euler method.  Repeat until the results
+      match up well.  What time step is required for a good match?
+      How do the simulation times compare?
+<div class="p"><!----></div>
+</li>
+</ol>
+
+<div class="p"><!----></div>
+ <h2><a name="tth_sEc4">
+4</a>&nbsp;&nbsp;Abstraction</h2>
+
+<div class="p"><!----></div>
+The example in this section illustrates abstraction-based synthesis. 
+
+<ol type="1">
+<li> Open the lambda model in an SBML editor, and add a new species
+      "CIt" with a 0 initial amount.
+<div class="p"><!----></div>
+</li>
+
+<li> Click on the "Initial Assignments/Rules/Constraints/Events" tab
+      and press the "Add Rule" button.
+<div class="p"><!----></div>
+</li>
+
+<li> Select Assignment Type, select Variable "CIt", and enter the following
+      as the Rule:
+
+<br clear="all" /><table border="0" width="95%"><tr><td>
+<table border="0" cellspacing="0" cellpadding="0">
+ <tr><td width="50%"></td><td nowrap="nowrap" align="right" colspan="1"><table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
+</td></tr></table></td><td nowrap="nowrap" align="left">
+<table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
+2 * CI2 + CI </td></tr></table></td><td nowrap="nowrap" align="left">
+<table><tr><td nowrap="nowrap" align="right" colspan="1"></td></tr></table></td><td width="50%"></td></tr></table>
+</td></tr></table>
+
+
+<div class="p"><!----></div>
+</li>
+
+<li> Press the Save SBML button.
+<div class="p"><!----></div>
+</li>
+
+<li> Create or open an analysis view on your lambda model.
+<div class="p"><!----></div>
+</li>
+
+<li> Select "None" and "Network", and press the Save and Run button. 
+      Count the number of species and reactions in your model.
+<div class="p"><!----></div>
+</li>
+
+<li> Select "Monte Carlo", set the Time Limit to 2100.0, Print Interval to
+      100.0, and Runs to 20.  Press the Save and Run button and record the
+      simulation time.
+<div class="p"><!----></div>
+</li>
+
+<li> Create a new analysis view for your lambda model and 
+      select  "Abstraction" this time.
+<div class="p"><!----></div>
+</li>
+
+<li> In the abstraction tab, change rapid equilibrium conditions 1 and 2 
+      to 1000.0 as well as QSSA condition to 1000.0.  Select "Network" then 
+      save and run.  Count the number of species and reactions in your model.
+<div class="p"><!----></div>
+</li>
+
+<li> Select "Monte Carlo", set the Time Limit to 2100.0, Print Interval to
+      100.0, and Runs to 20.  Press the Save and Run button and record the
+      simulation time.
+<div class="p"><!----></div>
+</li>
+
+<li> Select File &#8594; New &#8594; Graph and enter a name for
+      your new top-level graph.
+<div class="p"><!----></div>
+</li>
+
+<li> Click on the graph and find the average simulation results from your
+      orginal model and graph CII and CIt.  Also, add to this graph from
+      your abstracted model CII and CI.  How well do they compare?  
+      Send me by email a jpg of your result.
+<div class="p"><!----></div>
+</li>
+
+<li> Go back to your analysis view in which you did abstraction and change
+      all the conditions back to 0.1.  Regenerate the network and record the
+      number of species and reactions.  Regenerate the simulation results and
+      record the simulation time.
+<div class="p"><!----></div>
+</li>
+
+<li> Go back to the top-level graph which should have updated results.  
+      How does it compare now?
+<div class="p"><!----></div>
+</li>
+</ol>
+
+<div class="p"><!----></div>
+ <h2><a name="tth_sEc5">
+5</a>&nbsp;&nbsp;GCM Editor</h2>
+
+<div class="p"><!----></div>
+This section gives an example using the GCM editor.
+
+<ol type="1">
+<li> Create a new project named "xor",
+      select File &#8594; New &#8594; Genetic Circuit Model, 
+      and enter the name <tt>xor</tt>.
+<div class="p"><!----></div>
+</li>
+
+<li> Add species A and B of type constant.  Be sure to fill in both
+      the ID and Name fields.
+<div class="p"><!----></div>
+</li>
+
+<li> Add species Abar, Bbar, X, Y, and C of type normal.  Again,
+      fill in the ID and Name fields.
+<div class="p"><!----></div>
+</li>
+
+<li> Add an influence of type repression with input A and output Abar and 
+      dimer of 2.  You have just created an inverter.
+      Create another inverter from B to Bbar.
+<div class="p"><!----></div>
+</li>
+
+<li> Add a promoter named PX1 and another promoter named PX2.
+<div class="p"><!----></div>
+</li>
+
+<li> Add a repression influence from A to X and use the promoter 
+      PX1 with dimer of 2.
+<div class="p"><!----></div>
+</li>
+
+<li> Add a repression influence from Bbar to X and use the promoter 
+      PX2 with dimer of 2.  You have just created a NAND gate.
+<div class="p"><!----></div>
+</li>
+
+<li> Create another NAND gate with inputs Abar and B and output Y.
+<div class="p"><!----></div>
+</li>
+
+<li> Finally, create another NAND gate with inputs X and Y and 
+      output C.
+<div class="p"><!----></div>
+</li>
+
+<li> Change the <tt>decay</tt> parameter to 0.01.
+<div class="p"><!----></div>
+</li>
+
+<li> Press the "Save GCM" and "Save as SBML" buttons.
+<div class="p"><!----></div>
+</li>
+
+<li> Create an analysis view for your <tt>xor.sbml</tt> file.
+<div class="p"><!----></div>
+</li>
+
+<li> Select the User Defined Data tab and click on the 
+      "Use User Defined Data" button.
+<div class="p"><!----></div>
+</li>
+
+<li> Add a data point for A at time step 1000 to go to 20.
+<div class="p"><!----></div>
+</li>
+
+<li> Add a data point for B at time step 2000 to go to 20.
+<div class="p"><!----></div>
+</li>
+
+<li> Add a data point for A at time step 3000 to go to 0.
+<div class="p"><!----></div>
+</li>
+
+<li> Add a data point for B at time step 4000 to go to 0.
+<div class="p"><!----></div>
+</li>
+
+<li> Select the options tab, select "abstraction", and 
+      set a time limit of 5000, a print interval of 200, and 20 runs.
+<div class="p"><!----></div>
+</li>
+
+<li> Select the abstraction tab, and add species C to the interesting 
+      species list.
+<div class="p"><!----></div>
+</li>
+
+<li> Press the "Save Parameters" button then "Save and Run" button.
+<div class="p"><!----></div>
+</li>
+
+<li> Create a graph that includes A, B, and C.  Email a jpg
+      of this graph to me.
+<div class="p"><!----></div>
+</li>
+
+<li> Close your analysis view and edit your <tt>xor.gcm</tt>.  Try adjusting
+      some of the global parameters.  Remember to save both your <tt>gcm</tt>
+      <tt>sbml</tt> files.  Reopen your analysis view and re-run your simulation.
+      Send me a few different graphs.  Change the titles of the graphs 
+      and provide a description in your email of the graphs as to what you
+      changed.
+<div class="p"><!----></div>
+</li>
+</ol>
+
+<div class="p"><!----></div>
+
+<br /><br /><hr /><small>File translated from
+T<sub><font size="-1">E</font></sub>X
+by <a href="http://hutchinson.belmont.ma.us/tth/">
+T<sub><font size="-1">T</font></sub>H</a>,
+version 3.81.<br />On 11 Aug 2008, 10:48.</small>
+</html>
