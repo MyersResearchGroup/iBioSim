@@ -14,9 +14,9 @@
  
 
 
-<title> The iBioSim User's Manual</title>
+<title> iBioSim: User's Manual</title>
  
-<h1 align="center">The iBioSim User's Manual </h1>
+<h1 align="center">iBioSim: User's Manual </h1>
 
 <div class="p"><!----></div>
 
@@ -26,7 +26,7 @@
 <div class="p"><!----></div>
 
 <h3 align="center">Created: August 6th, 2008<br />
-  Last Revised: August 6th, 2008
+  Last Revised: August 10th, 2008
  </h3>
 
 <div class="p"><!----></div>
@@ -36,97 +36,89 @@
 <h1>Contents </h1><a href="#tth_sEc1"
 >1&nbsp; Introduction</a><br />
 <a href="#tth_sEc2"
->2&nbsp; Installation Instructions</a><br />
+>2&nbsp; Project Management</a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc2.1"
->2.1&nbsp; Installation on Windows</a><br />
+>2.1&nbsp; Creating and Opening Projects</a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc2.2"
->2.2&nbsp; Installation on Linux</a><br />
+>2.2&nbsp; Creating Models and Graphs</a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc2.3"
->2.3&nbsp; Installation on MacOS</a><br />
+>2.3&nbsp; Importing Models</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc2.4"
+>2.4&nbsp; Creating and Opening Views</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc2.5"
+>2.5&nbsp; Viewing and Modifying Project Objects</a><br />
 <a href="#tth_sEc3"
->3&nbsp; Project Management</a><br />
+>3&nbsp; SBML Editor</a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc3.1"
->3.1&nbsp; Creating and Opening Projects</a><br />
+>3.1&nbsp; SBML Math Formulas</a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc3.2"
->3.2&nbsp; Creating Models and Graphs</a><br />
+>3.2&nbsp; Main Elements</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc3.2.1"
+>3.2.1&nbsp; Compartments</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc3.2.2"
+>3.2.2&nbsp; Species</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc3.2.3"
+>3.2.3&nbsp; Reactions</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc3.2.4"
+>3.2.4&nbsp; Global Parameters</a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc3.3"
->3.3&nbsp; Importing Models</a><br />
+>3.3&nbsp; Definitions/Types</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc3.3.1"
+>3.3.1&nbsp; Function Definitions</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc3.3.2"
+>3.3.2&nbsp; Unit Definitions</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc3.3.3"
+>3.3.3&nbsp; Compartment Types</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc3.3.4"
+>3.3.4&nbsp; Species Types</a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc3.4"
->3.4&nbsp; Creating and Opening Views</a><br />
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc3.5"
->3.5&nbsp; Viewing and Modifying Project Objects</a><br />
+>3.4&nbsp; Initial Assignments/Rules/Constraints/Events</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc3.4.1"
+>3.4.1&nbsp; Initial Assignments</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc3.4.2"
+>3.4.2&nbsp; Rules</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc3.4.3"
+>3.4.3&nbsp; Constraints</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc3.4.4"
+>3.4.4&nbsp; Events</a><br />
 <a href="#tth_sEc4"
->4&nbsp; SBML Editor</a><br />
+>4&nbsp; GCM Editor</a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc4.1"
->4.1&nbsp; SBML Math Formulas</a><br />
+>4.1&nbsp; Promoters</a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc4.2"
->4.2&nbsp; Main Elements</a><br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc4.2.1"
->4.2.1&nbsp; Compartments</a><br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc4.2.2"
->4.2.2&nbsp; Species</a><br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc4.2.3"
->4.2.3&nbsp; Reactions</a><br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc4.2.4"
->4.2.4&nbsp; Global Parameters</a><br />
+>4.2&nbsp; GCM Species</a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc4.3"
->4.3&nbsp; Definitions/Types</a><br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc4.3.1"
->4.3.1&nbsp; Function Definitions</a><br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc4.3.2"
->4.3.2&nbsp; Unit Definitions</a><br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc4.3.3"
->4.3.3&nbsp; Compartment Types</a><br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc4.3.4"
->4.3.4&nbsp; Species Types</a><br />
+>4.3&nbsp; Influences</a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc4.4"
->4.4&nbsp; Initial Assignments/Rules/Constraints/Events</a><br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc4.4.1"
->4.4.1&nbsp; Initial Assignments</a><br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc4.4.2"
->4.4.2&nbsp; Rules</a><br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc4.4.3"
->4.4.3&nbsp; Constraints</a><br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc4.4.4"
->4.4.4&nbsp; Events</a><br />
+>4.4&nbsp; GCM Parameters</a><br />
 <a href="#tth_sEc5"
->5&nbsp; GCM Editor</a><br />
+>5&nbsp; Analysis View</a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc5.1"
->5.1&nbsp; Promoters</a><br />
+>5.1&nbsp; Simulation Options</a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc5.2"
->5.2&nbsp; GCM Species</a><br />
+>5.2&nbsp; Abstraction Options</a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc5.3"
->5.3&nbsp; Influences</a><br />
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc5.4"
->5.4&nbsp; GCM Parameters</a><br />
+>5.3&nbsp; Parameter Editor</a><br />
 <a href="#tth_sEc6"
->6&nbsp; Analysis View</a><br />
+>6&nbsp; Learn View</a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc6.1"
->6.1&nbsp; Simulation Options</a><br />
+>6.1&nbsp; Data Manager</a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc6.2"
->6.2&nbsp; Abstraction Options</a><br />
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc6.3"
->6.3&nbsp; Parameter Editor</a><br />
+>6.2&nbsp; Learn Tool</a><br />
 <a href="#tth_sEc7"
->7&nbsp; Learn View</a><br />
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc7.1"
->7.1&nbsp; Data Manager</a><br />
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc7.2"
->7.2&nbsp; Learn Tool</a><br />
+>7&nbsp; TSD Graph Editor</a><br />
 <a href="#tth_sEc8"
->8&nbsp; TSD Graph Editor</a><br />
+>8&nbsp; Probability Graph Editor</a><br />
 <a href="#tth_sEc9"
->9&nbsp; Probability Graph Editor</a><br />
+>9&nbsp; Genetic Circuit Model Format</a><br />
 <a href="#tth_sEc10"
->10&nbsp; Genetic Circuit Model Format</a><br />
+>10&nbsp; Time Series Data Format</a><br />
 <a href="#tth_sEc11"
->11&nbsp; Time Series Data Format</a><br />
+>11&nbsp; Tutorial</a><br />
 <a href="#tth_sEc12"
->12&nbsp; Tutorial</a><br />
+>12&nbsp; Reporting Bugs and Feature Requests</a><br />
 <a href="#tth_sEc13"
->13&nbsp; Reporting Bugs and Feature Requests</a><br />
-<a href="#tth_sEc14"
->14&nbsp; Credits</a><br />
+>13&nbsp; Credits</a><br />
 
 
 <div class="p"><!----></div>
@@ -195,54 +187,7 @@ Barker's PhD Dissertation
 
 <div class="p"><!----></div>
  <h2><a name="tth_sEc2">
-2</a>&nbsp;&nbsp;Installation Instructions</h2>
-
-<div class="p"><!----></div>
-There are versions of <tt>iBioSim</tt> available for Windows, Linux, and
-MacOS.  You can download the appropriate installation file from:<br />
-<tt>http://www.async.ece.utah.edu/iBioSim</tt>
-To install follow the instuctions for your operating system below.
-
-<div class="p"><!----></div>
-DESCRIBE Java, Graphviz requirements
-
-<div class="p"><!----></div>
-     <h3><a name="tth_sEc2.1">
-2.1</a>&nbsp;&nbsp;Installation on Windows</h3>
-
-<div class="p"><!----></div>
-Download and execute <tt>iBioSim-&#9001;version&#9002;-Setup.exe</tt>.
-MORE HERE
-
-<div class="p"><!----></div>
-EXPLAIN UNINSTALL
-
-<div class="p"><!----></div>
-     <h3><a name="tth_sEc2.2">
-2.2</a>&nbsp;&nbsp;Installation on Linux</h3>
-
-<div class="p"><!----></div>
-Download <tt>iBioSim-&#9001;version&#9002;-Linux-x86-Install</tt>.
-Change permissions on this file to allow it to be executed:<br />
-<tt>chmod u+x iBioSim-&#9001;version&#9002;-Linux-x86-Install</tt>.
-Executing this file will now start the install shield.
-
-<div class="p"><!----></div>
-EXPLAIN UNINSTALL
-
-<div class="p"><!----></div>
-     <h3><a name="tth_sEc2.3">
-2.3</a>&nbsp;&nbsp;Installation on MacOS</h3>
-
-<div class="p"><!----></div>
-EXPLAIN IT HERE
-
-<div class="p"><!----></div>
-EXPLAIN UNINSTALL
-
-<div class="p"><!----></div>
- <h2><a name="tth_sEc3">
-3</a>&nbsp;&nbsp;Project Management</h2>
+2</a>&nbsp;&nbsp;Project Management</h2>
 
 <div class="p"><!----></div>
 A project is a collection of models, analysis views, learn
@@ -257,8 +202,8 @@ Linux versions.  It is located on the top of the screen in the MacOS version.
 </center>
 
 <div class="p"><!----></div>
-     <h3><a name="tth_sEc3.1">
-3.1</a>&nbsp;&nbsp;Creating and Opening Projects</h3>
+     <h3><a name="tth_sEc2.1">
+2.1</a>&nbsp;&nbsp;Creating and Opening Projects</h3>
 
 <div class="p"><!----></div>
 To create a new project, select New &#8594; Project from the File
@@ -270,33 +215,33 @@ You will then be prompted to browse to a project directory to
 open, and clicking open will open the project. You may also open
 a project by selecting one of your five most recently opened
 projects by selecting the project name shown in the File drop
-down menu shown below.
+down menu shown below. 
 
 <center>
 <img src="screenshots/project.png" alt="screenshots/project.png" />
 </center>
 
 <div class="p"><!----></div>
-     <h3><a name="tth_sEc3.2">
-3.2</a>&nbsp;&nbsp;Creating Models and Graphs</h3>
+     <h3><a name="tth_sEc2.2">
+2.2</a>&nbsp;&nbsp;Creating Models and Graphs</h3>
 
 <div class="p"><!----></div>
 After you have created or opened a project, you can create a
 new model or graph to add to the project.  To create a new 
-Genetic Circuit Model (see Section&nbsp;<a href="#GCM">10</a>), select 
+Genetic Circuit Model (see Section&nbsp;<a href="#GCM">9</a>), select 
 New &#8594; Genetic Circuit Model from the
 File menu as shown below. You will then be prompted to give a model id. At this
-point, a GCM editor (see Section&nbsp;<a href="#GCMEdit">5</a>) will open in a new
+point, a GCM editor (see Section&nbsp;<a href="#GCMEdit">4</a>) will open in a new
 tab. To create a new SBML model, select New &#8594; SBML Model
 from the File menu. You will then be prompted to give a model id.
-At this point, an SBML editor (see Section&nbsp;<a href="#SBMLEdit">4</a>) will open
+At this point, an SBML editor (see Section&nbsp;<a href="#SBMLEdit">3</a>) will open
 in a new tab. To create a new TSD graph, select New &#8594; TSD Graph
 from the File menu. You will then be prompted to give a name to
-the TSD graph.  At this point, a TSD graph editor (see Section&nbsp;<a href="#TSDEdit">8</a>)
+the TSD graph.  At this point, a TSD graph editor (see Section&nbsp;<a href="#TSDEdit">7</a>)
 will open in a new tab. To create a new probability graph, select 
 New &#8594; Probability Graph from the File menu. You will then
 be prompted to give a name to the probability graph. At this point, a 
-probability graph editor (see Section&nbsp;<a href="#ProbEdit">9</a>)
+probability graph editor (see Section&nbsp;<a href="#ProbEdit">8</a>)
 will open in a new tab. Once a model or graph is created, it can
 be opened again later by right clicking on the object in the
 project window and selecting "Edit", or alternatively
@@ -307,8 +252,8 @@ double-clicking on the object.
 </center>
 
 <div class="p"><!----></div>
-     <h3><a name="tth_sEc3.3">
-3.3</a>&nbsp;&nbsp;Importing Models</h3>
+     <h3><a name="tth_sEc2.3">
+2.3</a>&nbsp;&nbsp;Importing Models</h3>
 
 <div class="p"><!----></div>
 You can import into the current working project GCMs
@@ -331,13 +276,13 @@ of the model is performed.
 </center> 
 
 <div class="p"><!----></div>
-     <h3><a name="tth_sEc3.4">
-3.4</a>&nbsp;&nbsp;Creating and Opening Views</h3>
+     <h3><a name="tth_sEc2.4">
+2.4</a>&nbsp;&nbsp;Creating and Opening Views</h3>
 
 <div class="p"><!----></div>
 To perform analysis or learning, right click on a model and
-select "Create Analysis View" (see Section&nbsp;<a href="#Analysis">6</a>)
-to perform analysis or "Create Learn View" (see Section&nbsp;<a href="#Learn">7</a>)
+select "Create Analysis View" (see Section&nbsp;<a href="#Analysis">5</a>)
+to perform analysis or "Create Learn View" (see Section&nbsp;<a href="#Learn">6</a>)
 to perform learning. You will then be prompted to give a name to
 your analysis or learn view. After a name is entered, a tab with
 the newly created view will open. Once a view is created, it can
@@ -360,29 +305,29 @@ analysis view, you can edit the initial concentrations and
 parameters. However, if you wish to be able to edit the
 structure, you should first create an SBML model using Create
 SBML Model option in the right click menu or the Save as SBML button in
-the GCM Editor (see Section&nbsp;<a href="#GCMEdit">5</a>).  You can then open and
-edit this model using an SBML editor (see Section&nbsp;<a href="#SBMLEdit">4</a>) and
+the GCM Editor (see Section&nbsp;<a href="#GCMEdit">4</a>).  You can then open and
+edit this model using an SBML editor (see Section&nbsp;<a href="#SBMLEdit">3</a>) and
 create an analysis view from this edited model.
 
 <div class="p"><!----></div>
-     <h3><a name="tth_sEc3.5">
-3.5</a>&nbsp;&nbsp;Viewing and Modifying Project Objects</h3>
+     <h3><a name="tth_sEc2.5">
+2.5</a>&nbsp;&nbsp;Viewing and Modifying Project Objects</h3>
 
 <div class="p"><!----></div>
 All project objects can be modified by highlighting the object
 and using a right mouse click to open a menu of options as shown
 below. Using this menu, every type of object can be copied, renamed, or
 deleted. For a GCM, the "View/Edit" option opens the
-model in a GCM editor (see Section&nbsp;<a href="#GCMEdit">5</a>). For an SBML model,
+model in a GCM editor (see Section&nbsp;<a href="#GCMEdit">4</a>). For an SBML model,
 the "View/Edit" option opens the model in a SBML editor 
-(see Section&nbsp;<a href="#SBMLEdit">4</a>). For a TSD graph, the "View/Edit" 
-option opens the TSD graph in a TSD graph editor (see Section&nbsp;<a href="#TSDEdit">8</a>). 
+(see Section&nbsp;<a href="#SBMLEdit">3</a>). For a TSD graph, the "View/Edit" 
+option opens the TSD graph in a TSD graph editor (see Section&nbsp;<a href="#TSDEdit">7</a>). 
 For a probability graph, the "View/Edit" option opens
 the probability graph in a probability graph editor 
-(see Section&nbsp;<a href="#ProbEdit">9</a>). 
+(see Section&nbsp;<a href="#ProbEdit">8</a>). 
 For an analysis view, the "Open Analysis View" option opens the
-analysis view (see Section&nbsp;<a href="#Analysis">6</a>). For a learn view, the
-"Open Learn View" option opens the learn view (see Section&nbsp;<a href="#Learn">7</a>).
+analysis view (see Section&nbsp;<a href="#Analysis">5</a>). For a learn view, the
+"Open Learn View" option opens the learn view (see Section&nbsp;<a href="#Learn">6</a>).
 
 <div class="p"><!----></div>
 A GCM can also be viewed using 
@@ -411,25 +356,25 @@ default xhtml browser.
 </center>
 
 <div class="p"><!----></div>
- <h2><a name="tth_sEc4">
-4</a>&nbsp;&nbsp;<a name="SBMLEdit">
+ <h2><a name="tth_sEc3">
+3</a>&nbsp;&nbsp;<a name="SBMLEdit">
 </a>SBML Editor</h2>
 
 <div class="p"><!----></div>
 The SBML editor as shown below allows the user to create or modify an SBML
 model of a biochemical reaction network.  An SBML model includes
-compartments (see Section&nbsp;<a href="#compartments">4.2.1</a>), 
-species (see Section&nbsp;<a href="#species">4.2.2</a>),
-reactions (see Section&nbsp;<a href="#reactions">4.2.3</a>), 
-parameters (see Section&nbsp;<a href="#parameters">4.2.4</a>),
-function definitions (see Section&nbsp;<a href="#funcDefn">4.3.1</a>), 
-unit definitions (see Section&nbsp;<a href="#unitDefn">4.3.2</a>), 
-compartment types (see Section&nbsp;<a href="#compTypes">4.3.3</a>), 
-species types (see Section&nbsp;<a href="#specTypes">4.3.4</a>),
-initial assignments (see Section&nbsp;<a href="#initials">4.4.1</a>), 
-rules (see Section&nbsp;<a href="#rules">4.4.2</a>), 
-constraints (see Section&nbsp;<a href="#constraints">4.4.3</a>), and
-events (see Section&nbsp;<a href="#events">4.4.4</a>).
+compartments (see Section&nbsp;<a href="#compartments">3.2.1</a>), 
+species (see Section&nbsp;<a href="#species">3.2.2</a>),
+reactions (see Section&nbsp;<a href="#reactions">3.2.3</a>), 
+parameters (see Section&nbsp;<a href="#parameters">3.2.4</a>),
+function definitions (see Section&nbsp;<a href="#funcDefn">3.3.1</a>), 
+unit definitions (see Section&nbsp;<a href="#unitDefn">3.3.2</a>), 
+compartment types (see Section&nbsp;<a href="#compTypes">3.3.3</a>), 
+species types (see Section&nbsp;<a href="#specTypes">3.3.4</a>),
+initial assignments (see Section&nbsp;<a href="#initials">3.4.1</a>), 
+rules (see Section&nbsp;<a href="#rules">3.4.2</a>), 
+constraints (see Section&nbsp;<a href="#constraints">3.4.3</a>), and
+events (see Section&nbsp;<a href="#events">3.4.4</a>).
 Each of these items can be added, removed, or edited. 
 To add a new item, click on the appropriate add button. You
 will then be prompted to provide a unique id and some properties
@@ -457,8 +402,8 @@ model will be saved using that ID.
 </center>
 
 <div class="p"><!----></div>
-     <h3><a name="tth_sEc4.1">
-4.1</a>&nbsp;&nbsp;<a name="SBMLMath">
+     <h3><a name="tth_sEc3.1">
+3.1</a>&nbsp;&nbsp;<a name="SBMLMath">
 </a>SBML Math Formulas</h3>
 
 <div class="p"><!----></div>
@@ -542,16 +487,16 @@ math formula:
 </ul>
 
 <div class="p"><!----></div>
-     <h3><a name="tth_sEc4.2">
-4.2</a>&nbsp;&nbsp;<a name="MainElem">
+     <h3><a name="tth_sEc3.2">
+3.2</a>&nbsp;&nbsp;<a name="MainElem">
 </a>Main Elements</h3>
 
 <div class="p"><!----></div>
 This main elements tab shown below is used to specify 
-compartments (see Section&nbsp;<a href="#compartments">4.2.1</a>), 
-species (see Section&nbsp;<a href="#species">4.2.2</a>), 
-reactions (see Section&nbsp;<a href="#reactions">4.2.3</a>), and
-parameters (see Section&nbsp;<a href="#parameters">4.2.4</a>).
+compartments (see Section&nbsp;<a href="#compartments">3.2.1</a>), 
+species (see Section&nbsp;<a href="#species">3.2.2</a>), 
+reactions (see Section&nbsp;<a href="#reactions">3.2.3</a>), and
+parameters (see Section&nbsp;<a href="#parameters">3.2.4</a>).
 This tab also includes the Model ID which is fixed to be the same as
 the filename as well as the Model Name which can be used to provide an
 arbitrary string description of the model.
@@ -561,8 +506,8 @@ arbitrary string description of the model.
 </center>
 
 <div class="p"><!----></div>
-      <h4><a name="tth_sEc4.2.1">
-4.2.1</a>&nbsp;&nbsp;<a name="compartments">
+      <h4><a name="tth_sEc3.2.1">
+3.2.1</a>&nbsp;&nbsp;<a name="compartments">
 </a>Compartments</h4>
 
 <div class="p"><!----></div>
@@ -615,8 +560,8 @@ As shown below, a compartment has the following fields:
 </center>
 
 <div class="p"><!----></div>
-      <h4><a name="tth_sEc4.2.2">
-4.2.2</a>&nbsp;&nbsp;<a name="species">
+      <h4><a name="tth_sEc3.2.2">
+3.2.2</a>&nbsp;&nbsp;<a name="species">
 </a>Species</h4>
 
 <div class="p"><!----></div>
@@ -669,8 +614,8 @@ As shown below, a species has the following fields:
 </center>
 
 <div class="p"><!----></div>
-      <h4><a name="tth_sEc4.2.3">
-4.2.3</a>&nbsp;&nbsp;<a name="reactions">
+      <h4><a name="tth_sEc3.2.3">
+3.2.3</a>&nbsp;&nbsp;<a name="reactions">
 </a>Reactions</h4>
 
 <div class="p"><!----></div>
@@ -715,7 +660,7 @@ reaction is composed of the following:
 <div class="p"><!----></div>
 </li>
 
-<li> Kinetic law: a SBML math formula (see Section&nbsp;<a href="#SBMLMath">4.1</a>)
+<li> Kinetic law: a SBML math formula (see Section&nbsp;<a href="#SBMLMath">3.1</a>)
        describing the rate or probability for this reaction.
 <div class="p"><!----></div>
 </li>
@@ -735,20 +680,20 @@ list is the forward reaction rate and the second parameter in the
 list is the reverse reaction rate.  
 The "Clear" button clears the kinetic law editor. 
 The stoichiometry math and kinetic law formulas can only include
-those species that appear as reactants, products, or modifiers for the reaction.
+those species that appear as reactants, products, or modifiers.
 
 <center>
 <img src="screenshots/reaction.png" alt="screenshots/reaction.png" />
 </center>
 
 <div class="p"><!----></div>
-      <h4><a name="tth_sEc4.2.4">
-4.2.4</a>&nbsp;&nbsp;<a name="parameters">
+      <h4><a name="tth_sEc3.2.4">
+3.2.4</a>&nbsp;&nbsp;<a name="parameters">
 </a>Global Parameters</h4>
 
 <div class="p"><!----></div>
 Global parameters are variables that can 
-be used in SBML math formulas (see Section&nbsp;<a href="#SBMLMath">4.1</a>).  
+be used in SBML math formulas (see Section&nbsp;<a href="#SBMLMath">3.1</a>).  
 As shown below, a parameter includes the following:
 
 <ul>
@@ -780,29 +725,29 @@ As shown below, a parameter includes the following:
 </center>
 
 <div class="p"><!----></div>
-     <h3><a name="tth_sEc4.3">
-4.3</a>&nbsp;&nbsp;<a name="DefnTypes">
+     <h3><a name="tth_sEc3.3">
+3.3</a>&nbsp;&nbsp;<a name="DefnTypes">
 </a>Definitions/Types</h3>
 
 <div class="p"><!----></div>
 The Definitions/Types tab shown below allows users to provide 
-function definitions (see Section&nbsp;<a href="#funcDefn">4.3.1</a>), 
-unit definitions (see Section&nbsp;<a href="#unitDefn">4.3.2</a>), 
-compartment types (see Section&nbsp;<a href="#compTypes">4.3.3</a>), and
-species types (see Section&nbsp;<a href="#specTypes">4.3.4</a>).
+function definitions (see Section&nbsp;<a href="#funcDefn">3.3.1</a>), 
+unit definitions (see Section&nbsp;<a href="#unitDefn">3.3.2</a>), 
+compartment types (see Section&nbsp;<a href="#compTypes">3.3.3</a>), and
+species types (see Section&nbsp;<a href="#specTypes">3.3.4</a>).
 
 <center>
 <img src="screenshots/DefnTypes.png" alt="screenshots/DefnTypes.png" />
 </center>
 
 <div class="p"><!----></div>
-      <h4><a name="tth_sEc4.3.1">
-4.3.1</a>&nbsp;&nbsp;<a name="funcDefn">
+      <h4><a name="tth_sEc3.3.1">
+3.3.1</a>&nbsp;&nbsp;<a name="funcDefn">
 </a>Function Definitions</h4>
 
 <div class="p"><!----></div>
 Function definitions are used to create user defined functions that
-can then be used in SBML math formulas (see Section&nbsp;<a href="#SBMLMath">4.1</a>).  
+can then be used in SBML math formulas (see Section&nbsp;<a href="#SBMLMath">3.1</a>).  
 As shown below, function definitions include an ID, an optional name field, a 
 comma-separated list of arguments, and its definition.  The defintion 
 is a SBML math formula though it is restricted to only use variable 
@@ -817,8 +762,8 @@ As mentioned earlier, several random functions supported by
 </center>
 
 <div class="p"><!----></div>
-      <h4><a name="tth_sEc4.3.2">
-4.3.2</a>&nbsp;&nbsp;<a name="unitDefn">
+      <h4><a name="tth_sEc3.3.2">
+3.3.2</a>&nbsp;&nbsp;<a name="unitDefn">
 </a>Unit Definitions</h4>
 
 <div class="p"><!----></div>
@@ -864,8 +809,8 @@ base unit using the relation below:
 </center>
 
 <div class="p"><!----></div>
-      <h4><a name="tth_sEc4.3.3">
-4.3.3</a>&nbsp;&nbsp;<a name="compTypes">
+      <h4><a name="tth_sEc3.3.3">
+3.3.3</a>&nbsp;&nbsp;<a name="compTypes">
 </a>Compartment Types</h4>
 
 <div class="p"><!----></div>
@@ -877,8 +822,8 @@ below, a compartment type includes an ID and an optional name field.
 </center>
 
 <div class="p"><!----></div>
-      <h4><a name="tth_sEc4.3.4">
-4.3.4</a>&nbsp;&nbsp;<a name="specTypes">
+      <h4><a name="tth_sEc3.3.4">
+3.3.4</a>&nbsp;&nbsp;<a name="specTypes">
 </a>Species Types</h4>
 
 <div class="p"><!----></div>
@@ -890,29 +835,29 @@ species type includes an ID and an optional name field.
 </center>
 
 <div class="p"><!----></div>
-     <h3><a name="tth_sEc4.4">
-4.4</a>&nbsp;&nbsp;<a name="InitRuleConstEvent">
+     <h3><a name="tth_sEc3.4">
+3.4</a>&nbsp;&nbsp;<a name="InitRuleConstEvent">
 </a>Initial Assignments/Rules/Constraints/Events</h3>
 
 <div class="p"><!----></div>
 This tab as shown below allows users to provide initial assignments 
-(see Section&nbsp;<a href="#initials">4.4.1</a>), 
-rules (see Section&nbsp;<a href="#rules">4.4.2</a>), 
-constraints (see Section&nbsp;<a href="#constraints">4.4.3</a>, and
-events (see Section&nbsp;<a href="#events">4.4.4</a>).
+(see Section&nbsp;<a href="#initials">3.4.1</a>), 
+rules (see Section&nbsp;<a href="#rules">3.4.2</a>), 
+constraints (see Section&nbsp;<a href="#constraints">3.4.3</a>, and
+events (see Section&nbsp;<a href="#events">3.4.4</a>).
 
 <center>
 <img src="screenshots/IRCE.png" alt="screenshots/IRCE.png" />
 </center>
 
 <div class="p"><!----></div>
-      <h4><a name="tth_sEc4.4.1">
-4.4.1</a>&nbsp;&nbsp;<a name="initials">
+      <h4><a name="tth_sEc3.4.1">
+3.4.1</a>&nbsp;&nbsp;<a name="initials">
 </a>Initial Assignments</h4>
 
 <div class="p"><!----></div>
 Initial assignments as shown below are used to provide a SBML math formula 
-(see Section&nbsp;<a href="#SBMLMath">4.1</a>) that is evaluated at time 0 to determine 
+(see Section&nbsp;<a href="#SBMLMath">3.1</a>) that is evaluated at time 0 to determine 
 the initial value of a compartment size, species amount or
 concentration, or parameter.  The value of this formula takes precedence over
 the initial value specified in the object.  
@@ -922,8 +867,8 @@ the initial value specified in the object.
 </center>
 
 <div class="p"><!----></div>
-      <h4><a name="tth_sEc4.4.2">
-4.4.2</a>&nbsp;&nbsp;<a name="rules">
+      <h4><a name="tth_sEc3.4.2">
+3.4.2</a>&nbsp;&nbsp;<a name="rules">
 </a>Rules</h4>
 
 <div class="p"><!----></div>
@@ -943,11 +888,11 @@ Algebraic rules specify relationships which must be maintained
 (not currently supported by analysis).  Assignment rules specify 
 the value of a compartment size, species amount or concentration, or
 parameter in terms of a SBML math formula (see
-Section&nbsp;<a href="#SBMLMath">4.1</a>).  A variable cannot be determined by
+Section&nbsp;<a href="#SBMLMath">3.1</a>).  A variable cannot be determined by
 both an assignment rule and initial assignment.  Rate rules specify
 the rate of change of a compartment size, species amount or
 concentration, or parameter in terms of a SBML math formula
-(see Section&nbsp;<a href="#SBMLMath">4.1</a>).  A variable cannot be determined 
+(see Section&nbsp;<a href="#SBMLMath">3.1</a>).  A variable cannot be determined 
 by both an assignment rule and a rate rule.  A species that is 
 reactant or product of any reaction cannot be updated by either
 an assignment rule or rate rule.
@@ -957,7 +902,7 @@ When adding a rule, the user first selects the type of rule as shown
 below.  This
 will automatically restrict the set of variables available for the 
 left-hand side to those that are valid.  The user should then select
-a variable, and enter a SBML math formula (see Section&nbsp;<a href="#SBMLMath">4.1</a>)
+a variable, and enter a SBML math formula (see Section&nbsp;<a href="#SBMLMath">3.1</a>)
 for the rule.  When editing a rule, the user cannot modify the rule type. 
 
 <center>
@@ -965,8 +910,8 @@ for the rule.  When editing a rule, the user cannot modify the rule type.
 </center>
 
 <div class="p"><!----></div>
-      <h4><a name="tth_sEc4.4.3">
-4.4.3</a>&nbsp;&nbsp;<a name="constraints">
+      <h4><a name="tth_sEc3.4.3">
+3.4.3</a>&nbsp;&nbsp;<a name="constraints">
 </a>Constraints</h4>
 
 <div class="p"><!----></div>
@@ -976,7 +921,7 @@ that show the proportion of simulations that are terminated due to each
 possible constraint.  As shown below, 
 each constraint is composed of an ID which is
 used to identify it in these histograms, a constraint given as an 
-SBML math formula (see Section&nbsp;<a href="#SBMLMath">4.1</a>), and a message 
+SBML math formula (see Section&nbsp;<a href="#SBMLMath">3.1</a>), and a message 
 describing the constraint.  A default id is automatically generated 
 when a new constraint is created.
 
@@ -985,8 +930,8 @@ when a new constraint is created.
 </center>
 
 <div class="p"><!----></div>
-      <h4><a name="tth_sEc4.4.4">
-4.4.4</a>&nbsp;&nbsp;<a name="events">
+      <h4><a name="tth_sEc3.4.4">
+3.4.4</a>&nbsp;&nbsp;<a name="events">
 </a>Events</h4>
 
 <div class="p"><!----></div>
@@ -1005,7 +950,7 @@ to true, no event is scheduled if the trigger evaluates to true at the
 start of simulation.  When an event occurs, it executes all the event 
 assignments.  Each event assignment sets a compartment size, species 
 amount or concentration, or parameter value to the value specified by
-the SBML math formula (see Section&nbsp;<a href="#SBMLMath">4.1</a>) provided with the event
+the SBML math formula (see Section&nbsp;<a href="#SBMLMath">3.1</a>) provided with the event
 assignment.  
 
 <center>
@@ -1013,24 +958,24 @@ assignment.
 </center>
 
 <div class="p"><!----></div>
- <h2><a name="tth_sEc5">
-5</a>&nbsp;&nbsp;<a name="GCMEdit">
+ <h2><a name="tth_sEc4">
+4</a>&nbsp;&nbsp;<a name="GCMEdit">
 </a>GCM Editor</h2>
 
 <div class="p"><!----></div>
 The GCM editor shown below allows the user to create or modify a GCM 
-(see Section&nbsp;<a href="#GCM">10</a>).  A GCM is a compact graphical representation 
+(see Section&nbsp;<a href="#GCM">9</a>).  A GCM is a compact graphical representation 
 of a genetic circuit which can later be synthesized into an SBML model. 
-A GCM includes promoters (see Section&nbsp;<a href="#Promoters">5.1</a>),
-GCM species (see Section&nbsp;<a href="#GCMSpecies">5.2</a>), 
-influences (see Section&nbsp;<a href="#Influences">5.3</a>), 
-GCM parameters (see Section&nbsp;<a href="#GCMParameters">5.4</a>), and an optional
+A GCM includes promoters (see Section&nbsp;<a href="#Promoters">4.1</a>),
+GCM species (see Section&nbsp;<a href="#GCMSpecies">4.2</a>), 
+influences (see Section&nbsp;<a href="#Influences">4.3</a>), 
+GCM parameters (see Section&nbsp;<a href="#GCMParameters">4.4</a>), and an optional
 SBML file (see Section&nbsp;).  GCM species, influences, 
 and promoters can be added, removed, or edited. Parameters can only be edited. 
 An SBML file can also be selected to merge with the SBML generated from a GCM.
 This allows either customization of the SBML model or the addition of SBML
 constructs such as Initial Assignments, Rules, Constraints, 
-and Events (see Section&nbsp;<a href="#InitRuleConstEvent">4.4</a>).
+and Events (see Section&nbsp;<a href="#InitRuleConstEvent">3.4</a>).
 
 <center>
 <img src="screenshots/GCMedit.png" alt="screenshots/GCMedit.png" />
@@ -1066,8 +1011,8 @@ as the GCM.  This is useful for creating an SBML file which will be
 attached to the GCM, and includes rules, constraints, or events.
 
 <div class="p"><!----></div>
-     <h3><a name="tth_sEc5.1">
-5.1</a>&nbsp;&nbsp;<a name="Promoters">
+     <h3><a name="tth_sEc4.1">
+4.1</a>&nbsp;&nbsp;<a name="Promoters">
 </a>Promoters</h3>
 
 <div class="p"><!----></div>
@@ -1088,8 +1033,8 @@ the activated production rate (ka).
 </center>
 
 <div class="p"><!----></div>
-     <h3><a name="tth_sEc5.2">
-5.2</a>&nbsp;&nbsp;<a name="GCMSpecies">
+     <h3><a name="tth_sEc4.2">
+4.2</a>&nbsp;&nbsp;<a name="GCMSpecies">
 </a>GCM Species</h3>
 
 <div class="p"><!----></div>
@@ -1109,8 +1054,8 @@ Dimerization equilibrium (Kd), and a degradation rate (kd).
 </center>
 
 <div class="p"><!----></div>
-     <h3><a name="tth_sEc5.3">
-5.3</a>&nbsp;&nbsp;<a name="Influences">
+     <h3><a name="tth_sEc4.3">
+4.3</a>&nbsp;&nbsp;<a name="Influences">
 </a>Influences</h3>
 
 <div class="p"><!----></div>
@@ -1166,8 +1111,8 @@ can also set the value of the repression or activation binding equilibrium
 (Kb).
 
 <div class="p"><!----></div>
-     <h3><a name="tth_sEc5.4">
-5.4</a>&nbsp;&nbsp;<a name="GCMParameters">
+     <h3><a name="tth_sEc4.4">
+4.4</a>&nbsp;&nbsp;<a name="GCMParameters">
 </a>GCM Parameters</h3>
 
 <div class="p"><!----></div>
@@ -1218,26 +1163,26 @@ factor </td></tr>
 </center>
 
 <div class="p"><!----></div>
- <h2><a name="tth_sEc6">
-6</a>&nbsp;&nbsp;<a name="Analysis">
+ <h2><a name="tth_sEc5">
+5</a>&nbsp;&nbsp;<a name="Analysis">
 </a>Analysis View</h2>
 
 <div class="p"><!----></div>
 The analysis view is used to analyze biochemical reaction
 network models. The analysis view as shown below includes tabs for 
-simulation options (see Section&nbsp;<a href="#simOptions">6.1</a>), 
-abstraction options (see Section&nbsp;<a href="#absOptions">6.2</a>), 
-a parameter editor (see Section&nbsp;<a href="#paramEdit">6.3</a>), 
-a TSD graph editor (see Section&nbsp;<a href="#TSDEdit">8</a>), and a 
-probability graph editor (see Section&nbsp;<a href="#ProbEdit">9</a>).
+simulation options (see Section&nbsp;<a href="#simOptions">5.1</a>), 
+abstraction options (see Section&nbsp;<a href="#absOptions">5.2</a>), 
+a parameter editor (see Section&nbsp;<a href="#paramEdit">5.3</a>), 
+a TSD graph editor (see Section&nbsp;<a href="#TSDEdit">7</a>), and a 
+probability graph editor (see Section&nbsp;<a href="#ProbEdit">8</a>).
 
 <center>
 <img src="screenshots/analysisView.png" alt="screenshots/analysisView.png" />
 </center>
 
 <div class="p"><!----></div>
-     <h3><a name="tth_sEc6.1">
-6.1</a>&nbsp;&nbsp;<a name="simOptions">
+     <h3><a name="tth_sEc5.1">
+5.1</a>&nbsp;&nbsp;<a name="simOptions">
 </a>Simulation Options</h3>
 
 <div class="p"><!----></div>
@@ -1327,8 +1272,8 @@ perform </td></tr>
 <div class="p"><!----></div>
 
 <div class="p"><!----></div>
-     <h3><a name="tth_sEc6.2">
-6.2</a>&nbsp;&nbsp;<a name="absOptions">
+     <h3><a name="tth_sEc5.2">
+5.2</a>&nbsp;&nbsp;<a name="absOptions">
 </a>Abstraction Options</h3>
 
 <div class="p"><!----></div>
@@ -1378,8 +1323,8 @@ all interesting species.
 <div class="p"><!----></div>
 
 <div class="p"><!----></div>
-     <h3><a name="tth_sEc6.3">
-6.3</a>&nbsp;&nbsp;<a name="paramEdit">
+     <h3><a name="tth_sEc5.3">
+5.3</a>&nbsp;&nbsp;<a name="paramEdit">
 </a>Parameter Editor</h3>
 
 <div class="p"><!----></div>
@@ -1405,20 +1350,20 @@ to their stop value.
 </center>
 
 <div class="p"><!----></div>
- <h2><a name="tth_sEc7">
-7</a>&nbsp;&nbsp;<a name="Learn">
+ <h2><a name="tth_sEc6">
+6</a>&nbsp;&nbsp;<a name="Learn">
 </a>Learn View</h2>
 
 <div class="p"><!----></div>
 The learn view is used to discover genetic circuit
 connectivity from time series data. The learn view includes tabs
-for a data manager (see Section&nbsp;<a href="#dataManager">7.1</a>), 
-a learn tool (see Section&nbsp;<a href="#learnTool">7.2</a>), and a 
-TSD graph editor (see Section&nbsp;<a href="#TSDEdit">8</a>).
+for a data manager (see Section&nbsp;<a href="#dataManager">6.1</a>), 
+a learn tool (see Section&nbsp;<a href="#learnTool">6.2</a>), and a 
+TSD graph editor (see Section&nbsp;<a href="#TSDEdit">7</a>).
 
 <div class="p"><!----></div>
-     <h3><a name="tth_sEc7.1">
-7.1</a>&nbsp;&nbsp;<a name="dataManager">
+     <h3><a name="tth_sEc6.1">
+6.1</a>&nbsp;&nbsp;<a name="dataManager">
 </a>Data Manager</h3>
 
 <div class="p"><!----></div>
@@ -1437,7 +1382,7 @@ current project, and data from the selected view will be copied
 into this learn view.  Finally, the Import button brings up a file
 browser, and it allows you to import a data file from outside
 this project.  These files can be in time series data (TSD) format
-(see Section&nbsp;<a href="#TSD">11</a>), comma separated value (CSV) format, or tab
+(see Section&nbsp;<a href="#TSD">10</a>), comma separated value (CSV) format, or tab
 delimited format (DAT). 
 
 <div class="p"><!----></div>
@@ -1454,8 +1399,8 @@ to record your changes.
 </center>
 
 <div class="p"><!----></div>
-     <h3><a name="tth_sEc7.2">
-7.2</a>&nbsp;&nbsp;<a name="learnTool">
+     <h3><a name="tth_sEc6.2">
+6.2</a>&nbsp;&nbsp;<a name="learnTool">
 </a>Learn Tool</h3>
 
 <div class="p"><!----></div>
@@ -1466,7 +1411,7 @@ Barker's PhD dissertation (UofUtah 2007)
 . To use this learn tool, adjust
 any options described below, if desired, then press the Save and
 Learn button. The resulting genetic circuit in specified using
-our Genetic Circuit Model (GCM) Format (see Section&nbsp;<a href="#GCM">10</a>) and shown
+our Genetic Circuit Model (GCM) Format (see Section&nbsp;<a href="#GCM">9</a>) and shown
 graphically using GraphViz's Dotty tool. On this tab, there are also 
 buttons to save the parameters without learning, view the last learned 
 circuit, save the generated circuit into the project, and view the last run
@@ -1578,8 +1523,8 @@ When selected, the basic FindBaseProb function is used.
 </center>
 
 <div class="p"><!----></div>
- <h2><a name="tth_sEc8">
-8</a>&nbsp;&nbsp;<a name="TSDEdit">
+ <h2><a name="tth_sEc7">
+7</a>&nbsp;&nbsp;<a name="TSDEdit">
 </a>TSD Graph Editor</h2>
 
 <div class="p"><!----></div>
@@ -1745,7 +1690,7 @@ supported file types are:
 <div class="p"><!----></div>
 </li>
 
-<li> tsd - time series data format (see Section&nbsp;<a href="#TSD">11</a>).
+<li> tsd - time series data format (see Section&nbsp;<a href="#TSD">10</a>).
 <div class="p"><!----></div>
 </li>
 </ul>
@@ -1755,8 +1700,8 @@ not data) file types, you will be prompted to give a desired
 pixel height and width for the file before the file is exported. 
 
 <div class="p"><!----></div>
- <h2><a name="tth_sEc9">
-9</a>&nbsp;&nbsp;<a name="ProbEdit">
+ <h2><a name="tth_sEc8">
+8</a>&nbsp;&nbsp;<a name="ProbEdit">
 </a>Probability Graph Editor</h2>
 
 <div class="p"><!----></div>
@@ -1867,8 +1812,8 @@ not data) file types, you will be prompted to give a desired
 pixel height and width for the file before the file is exported. 
 
 <div class="p"><!----></div>
- <h2><a name="tth_sEc10">
-10</a>&nbsp;&nbsp;<a name="GCM">
+ <h2><a name="tth_sEc9">
+9</a>&nbsp;&nbsp;<a name="GCM">
 </a>Genetic Circuit Model Format</h2>
 
 <div class="p"><!----></div>
@@ -2010,8 +1955,8 @@ digraph&nbsp;G&nbsp;{
 </pre>
 
 <div class="p"><!----></div>
- <h2><a name="tth_sEc11">
-11</a>&nbsp;&nbsp;<a name="TSD">
+ <h2><a name="tth_sEc10">
+10</a>&nbsp;&nbsp;<a name="TSD">
 </a>Time Series Data Format</h2>
 
 <div class="p"><!----></div>
@@ -2031,558 +1976,19 @@ seconds.
 (600,26,40), (700,43,43), (800,63,28), (900,72,34), (1000,72,28))
 
 <div class="p"><!----></div>
+ <h2><a name="tth_sEc11">
+11</a>&nbsp;&nbsp;Tutorial</h2>
+
+<div class="p"><!----></div>
+A detailed 
+<a href="tutorial.html">
+tutorial
+</a>
+is available in the <tt>docs</tt> directory that comes with the distribution.
+
+<div class="p"><!----></div>
  <h2><a name="tth_sEc12">
-12</a>&nbsp;&nbsp;Tutorial</h2>
-
-<div class="p"><!----></div>
-The example described in this section constructs a simple model for
-the <em>cI</em> and <em>cII</em> genes and the P<sub>R</sub> and P<sub>RE</sub>
-promoters from the phage &#955; decsion circuit.  It illustrates
-many of the features of <tt>iBioSim</tt>.
-After starting <tt>iBioSim</tt>, complete the following steps to create
-an SBML model for this example:
-
-<ol type="1">
-<li> Select <tt>File</tt> &#8594; <tt>New</tt> &#8594; <tt>Project</tt>
-<div class="p"><!----></div>
-</li>
-
-<li> Browse to desired path and create a project named <tt>lambda</tt>.
-<div class="p"><!----></div>
-</li>
-
-<li> Select <tt>File</tt> &#8594; <tt>New</tt> &#8594; <tt>SBML Model</tt>
-<div class="p"><!----></div>
-</li>
-
-<li> Enter <tt>lambda</tt> which will open the SBML editor.
-<div class="p"><!----></div>
-</li>
-
-<li> Select <tt>Definitions/Types</tt> tab.
-<div class="p"><!----></div>
-</li>
-
-<li> Select <tt>Add Unit</tt> and enter <tt>per_second</tt> as the ID.
-<div class="p"><!----></div>
-</li>
-
-<li> Select <tt>Add to List</tt>, select <tt>second</tt> as the kind, change
-      the exponent to &#8722;1, and click <tt>Add</tt>.
-<div class="p"><!----></div>
-</li>
-
-<li> Click <tt>Add</tt> in the <tt>Unit Definition Editor</tt>.
-<div class="p"><!----></div>
-</li>
-
-<li> Select <tt>Add Unit</tt> and enter <tt>per_second_mole</tt> as the ID.
-<div class="p"><!----></div>
-</li>
-
-<li> Select <tt>Add to List</tt>, select <tt>second</tt> as the kind, change
-      the exponent to &#8722;1, and click <tt>Add</tt>.
-<div class="p"><!----></div>
-</li>
-
-<li> Select <tt>Add to List</tt>, select <tt>mole</tt> as the kind, change
-      the exponent to &#8722;1, and click <tt>Add</tt>.
-<div class="p"><!----></div>
-</li>
-
-<li> Click <tt>Add</tt> in the <tt>Unit Definition Editor</tt>.
-<div class="p"><!----></div>
-</li>
-
-<li> Select <tt>Main Elements</tt> tab.
-<div class="p"><!----></div>
-</li>
-
-<li> Select <tt>default</tt> in the list of Compartments, and press the
-      <tt>Edit Compartment</tt> button, and change the compartment ID to 
-      <tt>cell</tt> and size to 1.
-<div class="p"><!----></div>
-</li>
-
-<li> Select <tt>Add Species</tt> and enter <tt>CI</tt> as the ID.
-<div class="p"><!----></div>
-</li>
-
-<li> Select <tt>Add Species</tt> and enter <tt>CI2</tt> as the ID.
-<div class="p"><!----></div>
-</li>
-
-<li> Select <tt>Add Reaction</tt> and enter <tt>Dimerize</tt> as the ID and
-      change reversiable to <tt>true</tt>.
-<div class="p"><!----></div>
-</li>
-
-<li> Select <tt>Add Reactant</tt> and select <tt>CI</tt> as the species and change
-      the stoiciometry to 2.
-<div class="p"><!----></div>
-</li>
-
-<li> Select <tt>Add Product</tt> and select <tt>CI2</tt> as the species.
-<div class="p"><!----></div>
-</li>
-
-<li> Highlight <tt>kf</tt> and select <tt>Edit Selected Parameter</tt>, change
-      <tt>kf</tt> to <tt>k2f</tt>, and change the units to <tt>per_second_mole</tt>.
-<div class="p"><!----></div>
-</li>
-
-<li> Highlight <tt>kr</tt> and select <tt>Edit Selected Parameter</tt>, change
-      <tt>kr</tt> to <tt>k2r</tt>, change the value to 1.0, and change 
-      the units to <tt>per_second</tt>.
-<div class="p"><!----></div>
-</li>
-
-<li> Select <tt>Use Mass Action</tt>.
-<div class="p"><!----></div>
-</li>
-
-<li> Select <tt>Add</tt>.
-<div class="p"><!----></div>
-</li>
-
-<li> Select <tt>Save</tt>.
-<div class="p"><!----></div>
-</li>
-
-<li> Highlight <tt>lambda.sbml</tt>, using right mouse button, select 
-      <tt>View Network</tt>.
-<div class="p"><!----></div>
-</li>
-
-<li> Highlight <tt>lambda.sbml</tt>, using right mouse button, select 
-      <tt>View in Browser</tt>.
-<div class="p"><!----></div>
-</li>
-
-<li> Go back to the SBML editor complete the construction of the
-      chemical reaction network shown below:
-
-<br clear="all" /><table border="0" width="95%"><tr><td>
-<table border="0" cellspacing="0" cellpadding="0">
- <tr><td width="50%"></td><td nowrap="nowrap" align="right" colspan="1"><table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
-PRE + <span class="roman">RNAP</span> </td></tr></table></td><td nowrap="nowrap" align="left">
-<table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
-</td><td nowrap="nowrap" align="center">
-<small>KPRE2</small><!--sup
---><br />&#8596; <br />
-<small></small>&nbsp;<br /></td><td nowrap="nowrap" align="center">
-</td></tr></table></td><td nowrap="nowrap" align="left">
-<table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
-PRE_<span class="roman">RNAP</span> </td></tr></table></td><td width="50%"></td></tr>
- <tr><td width="50%"></td><td nowrap="nowrap" align="right" colspan="1"><table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
-PRE + <span class="roman">CII</span> + <span class="roman">RNAP</span> </td></tr></table></td><td nowrap="nowrap" align="left">
-<table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
-</td><td nowrap="nowrap" align="center">
-<small>KPRE4</small><!--sup
---><br />&#8596; <br />
-<small></small>&nbsp;<br /></td><td nowrap="nowrap" align="center">
-</td></tr></table></td><td nowrap="nowrap" align="left">
-<table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
-PRE_<span class="roman">CII</span>_<span class="roman">RNAP</span> </td></tr></table></td><td width="50%"></td></tr>
- <tr><td width="50%"></td><td nowrap="nowrap" align="right" colspan="1"><table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
-PRE_<span class="roman">RNAP</span> </td></tr></table></td><td nowrap="nowrap" align="left">
-<table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
-</td><td nowrap="nowrap" align="center">
-<small>kPREb</small><!--sup
---><br />&#8594; <br />
-<small></small>&nbsp;<br /></td><td nowrap="nowrap" align="center">
-</td></tr></table></td><td nowrap="nowrap" align="left">
-<table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
-PRE_<span class="roman">RNAP</span> + n<span class="roman">CI</span> </td></tr></table></td><td width="50%"></td></tr>
- <tr><td width="50%"></td><td nowrap="nowrap" align="right" colspan="1"><table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
-PRE_<span class="roman">CII</span>_<span class="roman">RNAP</span> </td></tr></table></td><td nowrap="nowrap" align="left">
-<table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
-</td><td nowrap="nowrap" align="center">
-<small>kPRE</small><!--sup
---><br />&#8594; <br />
-<small></small>&nbsp;<br /></td><td nowrap="nowrap" align="center">
-</td></tr></table></td><td nowrap="nowrap" align="left">
-<table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
-PRE_<span class="roman">CII</span>_<span class="roman">RNAP</span> + n<span class="roman">CI</span> </td></tr></table></td><td width="50%"></td></tr>
- <tr><td width="50%"></td><td nowrap="nowrap" align="right" colspan="1"><table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
-PR + <span class="roman">RNAP</span> </td></tr></table></td><td nowrap="nowrap" align="left">
-<table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
-</td><td nowrap="nowrap" align="center">
-<small>KOR9</small><!--sup
---><br />&#8596; <br />
-<small></small>&nbsp;<br /></td><td nowrap="nowrap" align="center">
-</td></tr></table></td><td nowrap="nowrap" align="left">
-<table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
-PR_<span class="roman">RNAP</span> </td></tr></table></td><td width="50%"></td></tr>
- <tr><td width="50%"></td><td nowrap="nowrap" align="right" colspan="1"><table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
-PR + 2 <span class="roman">CI</span><span class="roman">2</span> </td></tr></table></td><td nowrap="nowrap" align="left">
-<table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
-</td><td nowrap="nowrap" align="center">
-<small>KOR10</small><!--sup
---><br />&#8596; <br />
-<small></small>&nbsp;<br /></td><td nowrap="nowrap" align="center">
-</td></tr></table></td><td nowrap="nowrap" align="left">
-<table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
-PR_2 <span class="roman">CI</span><span class="roman">2</span> </td></tr></table></td><td width="50%"></td></tr>
- <tr><td width="50%"></td><td nowrap="nowrap" align="right" colspan="1"><table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
-PR_<span class="roman">RNAP</span> </td></tr></table></td><td nowrap="nowrap" align="left">
-<table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
-</td><td nowrap="nowrap" align="center">
-<small>kPR</small><!--sup
---><br />&#8594; <br />
-<small></small>&nbsp;<br /></td><td nowrap="nowrap" align="center">
-</td></tr></table></td><td nowrap="nowrap" align="left">
-<table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
-PR_<span class="roman">RNAP</span> + n<span class="roman">CII</span> </td></tr></table></td><td width="50%"></td></tr>
- <tr><td width="50%"></td><td nowrap="nowrap" align="right" colspan="1"><table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
-2 <span class="roman">CI</span> </td></tr></table></td><td nowrap="nowrap" align="left">
-<table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
-</td><td nowrap="nowrap" align="center">
-<small>K2</small><!--sup
---><br />&#8596; <br />
-<small></small>&nbsp;<br /></td><td nowrap="nowrap" align="center">
-</td></tr></table></td><td nowrap="nowrap" align="left">
-<table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
-<span class="roman">CI</span><span class="roman">2</span> </td></tr></table></td><td width="50%"></td></tr>
- <tr><td width="50%"></td><td nowrap="nowrap" align="right" colspan="1"><table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
-<span class="roman">CI</span> </td></tr></table></td><td nowrap="nowrap" align="left">
-<table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
-</td><td nowrap="nowrap" align="center">
-<small>k1</small><!--sup
---><br />&#8594; <br />
-<small></small>&nbsp;<br /></td><td nowrap="nowrap" align="center">
-</td></tr></table></td><td nowrap="nowrap" align="left">
-<table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
-() </td></tr></table></td><td width="50%"></td></tr>
- <tr><td width="50%"></td><td nowrap="nowrap" align="right" colspan="1"><table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
-<span class="roman">CII</span> </td></tr></table></td><td nowrap="nowrap" align="left">
-<table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
-</td><td nowrap="nowrap" align="center">
-<small>k10</small><!--sup
---><br />&#8594; <br />
-<small></small>&nbsp;<br /></td><td nowrap="nowrap" align="center">
-</td></tr></table></td><td nowrap="nowrap" align="left">
-<table><tr><td nowrap="nowrap" align="right" colspan="1">()</td></tr></table></td><td width="50%"></td></tr></table>
-</td></tr></table>
-
-
-
-<div class="p"><!----></div>
-
-<center>
-<table border="1">
-<tr><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
-Constant </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
-Value </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
-Constant </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
-Value </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
-Constant </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
-Value </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
-Constant </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
-Value </td></tr></table></td></tr><tr><td></td></tr>
-<tr><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
-KPRE2 </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
-0.01&nbsp;M<sup>&#8722;1</sup> </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
-KPRE4 </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
-0.00161&nbsp;M<sup>&#8722;2</sup> </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
-kPREb </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
-0.00004&nbsp;<span class="roman">sec</span><sup>&#8722;1</sup> </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
-kPRE </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
-0.015&nbsp;<span class="roman">sec</span><sup>&#8722;1</sup> </td></tr></table></td></tr>
-<tr><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
-n </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
-10 </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
-KOR9 </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
-0.69422&nbsp;M<sup>&#8722;1</sup> </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
-KOR10 </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
-0.06568&nbsp;M<sup>&#8722;2</sup> </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
-kPR </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
-0.014&nbsp;<span class="roman">sec</span><sup>&#8722;1</sup> </td></tr></table></td></tr>
-<tr><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
-K2 </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
-0.1 M<sup>&#8722;1</sup> </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
-k1 </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
-0.0007&nbsp;<span class="roman">sec</span><sup>&#8722;1</sup> </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
-k10 </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
-0.002&nbsp;<span class="roman">sec</span><sup>&#8722;1</sup> </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
-&nbsp; </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
-&nbsp; </td></tr></table></td></tr></table>
-
-Set an initial amount of 1.0 for PRE and OR, 30.0 for RNAP, and 0.0 
-for the rest.
-</center>
-<div class="p"><!----></div>
-</li>
-
-<li> Highlight <tt>lambda.sbml</tt>, using the right mouse button, select 
-      <tt>Create Analysis View</tt>, and enter the name <tt>sim</tt>.
-<div class="p"><!----></div>
-</li>
-
-<li> In the newly opened window, select <tt>Monte Carlo</tt>.
-<div class="p"><!----></div>
-</li>
-
-<li> Also, in this window, change the time limit to 2100.0, print interval
-      to 100.0, and runs to 20.
-<div class="p"><!----></div>
-</li>
-
-<li> Finally, select <tt>Save and Run</tt> at the bottom of the window.
-<div class="p"><!----></div>
-</li>
-
-<li> After the simulation completes (it may take a little while), click on
-      the graph tab.
-<div class="p"><!----></div>
-</li>
-
-<li> Click on the graph to bring up the graph editor.  Highlight Average,
-      if not already highlighted, select CI2 and CII, change Title to
-      "Average", change X-Axis Label to "Time (seconds)", and change
-      Y-Axis Label to "Number of Molecules".  Press the OK button.
-      Click on Export and enter file name of <tt>average.jpg</tt>.
-<div class="p"><!----></div>
-</li>
-
-<li> Click on the graph to bring up the graph editor.  Press the 
-      "Deselect All" button.  Highlight run-1,
-      select CI2 and CII, change Title to "Run-1", 
-      change X-Axis Label to "Time (seconds)", and change
-      Y-Axis Label to "Number of Molecules".  Press the OK button.
-      Click on Export and enter file name of <tt>run1.jpg</tt>.
-<div class="p"><!----></div>
-</li>
-
-<li> Click on the graph to bring up the graph editor.  
-      Press the "Deselect All" button.  Highlight Standard
-      Deviation, select CI2 and CII, change Title to "Standard Deviation", 
-      change X-Axis Label to "Time (seconds)", and change
-      Y-Axis Label to "Number of Molecules".  Press the OK button.
-      Click on Export and enter file name of <tt>stddev.jpg</tt>.
-<div class="p"><!----></div>
-</li>
-
-<li> Click on the SBML editor tab.  Change the initial amounts of OR and
-      PRE to 10.  Press the Save and Run button.
-<div class="p"><!----></div>
-</li>
-
-<li> Click on the graph tab and following the steps above, create the 
-      following plots <tt>average_10.jpg</tt>,  <tt>run1_10.jpg</tt>, and
-      <tt>stddev_10.jpg</tt>.  How are these different than the first set
-      of plots?
-<div class="p"><!----></div>
-</li>
-
-<li> Simulate your lambda model with BioSim using the ODE method rkf45 with
-      a time limit of 2100 and print interval of 50.
-      Make a note of the simulation time and plot CI2 and CII.  
-      Next, simulate using the Euler method.  Make a note of the simulation time
-      and add CI2 and CII from the euler results to your graph.  
-      How do the simulation times and results compare?
-      Change the time step and rerun the Euler method.  Repeat until the results
-      match up well.  What time step is required for a good match?
-      How do the simulation times compare?
-<div class="p"><!----></div>
-</li>
-
-<li> Open the lambda model in an SBML editor, and add a new species
-      "CIt" with a 0 initial amount.
-<div class="p"><!----></div>
-</li>
-
-<li> Click on the "Initial Assignments/Rules/Constraints/Events" tab
-      and press the "Add Rule" button.
-<div class="p"><!----></div>
-</li>
-
-<li> Select Assignment Type, select Variable "CIt", and enter the following
-      as the Rule:
-
-<br clear="all" /><table border="0" width="95%"><tr><td>
-<table border="0" cellspacing="0" cellpadding="0">
- <tr><td width="50%"></td><td nowrap="nowrap" align="right" colspan="1"><table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
-</td></tr></table></td><td nowrap="nowrap" align="left">
-<table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
-2 * CI2 + CI </td></tr></table></td><td nowrap="nowrap" align="left">
-<table><tr><td nowrap="nowrap" align="right" colspan="1"></td></tr></table></td><td width="50%"></td></tr></table>
-</td></tr></table>
-
-
-<div class="p"><!----></div>
-</li>
-
-<li> Press the Save SBML button.
-<div class="p"><!----></div>
-</li>
-
-<li> Create or open an analysis view on your lambda model.
-<div class="p"><!----></div>
-</li>
-
-<li> Select "None" and "Network", and press the Save and Run button. 
-      Count the number of species and reactions in your model.
-<div class="p"><!----></div>
-</li>
-
-<li> Select "Monte Carlo", set the Time Limit to 2100.0, Print Interval to
-      100.0, and Runs to 20.  Press the Save and Run button and record the
-      simulation time.
-<div class="p"><!----></div>
-</li>
-
-<li> Create a new analysis view for your lambda model and 
-      select  "Abstraction" this time.
-<div class="p"><!----></div>
-</li>
-
-<li> In the abstraction tab, change rapid equilibrium conditions 1 and 2 
-      to 1000.0 as well as QSSA condition to 1000.0.  Select "Network" then 
-      save and run.  Count the number of species and reactions in your model.
-<div class="p"><!----></div>
-</li>
-
-<li> Select "Monte Carlo", set the Time Limit to 2100.0, Print Interval to
-      100.0, and Runs to 20.  Press the Save and Run button and record the
-      simulation time.
-<div class="p"><!----></div>
-</li>
-
-<li> Select File &#8594; New &#8594; Graph and enter a name for
-      your new top-level graph.
-<div class="p"><!----></div>
-</li>
-
-<li> Click on the graph and find the average simulation results from your
-      orginal model and graph CII and CIt.  Also, add to this graph from
-      your abstracted model CII and CI.  How well do they compare?  
-      Send me by email a jpg of your result.
-<div class="p"><!----></div>
-</li>
-
-<li> Go back to your analysis view in which you did abstraction and change
-      all the conditions back to 0.1.  Regenerate the network and record the
-      number of species and reactions.  Regenerate the simulation results and
-      record the simulation time.
-<div class="p"><!----></div>
-</li>
-
-<li> Go back to the top-level graph which should have updated results.  
-      How does it compare now?
-<div class="p"><!----></div>
-</li>
-
-<li> Create a new project named "xor",
-      select File &#8594; New &#8594; Genetic Circuit Model, 
-      and enter the name <tt>xor</tt>.
-<div class="p"><!----></div>
-</li>
-
-<li> Add species A and B of type constant.  Be sure to fill in both
-      the ID and Name fields.
-<div class="p"><!----></div>
-</li>
-
-<li> Add species Abar, Bbar, X, Y, and C of type normal.  Again,
-      fill in the ID and Name fields.
-<div class="p"><!----></div>
-</li>
-
-<li> Add an influence of type repression with input A and output Abar and 
-      dimer of 2.  You have just created an inverter.
-      Create another inverter from B to Bbar.
-<div class="p"><!----></div>
-</li>
-
-<li> Add a promoter named PX1 and another promoter named PX2.
-<div class="p"><!----></div>
-</li>
-
-<li> Add a repression influence from A to X and use the promoter 
-      PX1 with dimer of 2.
-<div class="p"><!----></div>
-</li>
-
-<li> Add a repression influence from Bbar to X and use the promoter 
-      PX2 with dimer of 2.  You have just created a NAND gate.
-<div class="p"><!----></div>
-</li>
-
-<li> Create another NAND gate with inputs Abar and B and output Y.
-<div class="p"><!----></div>
-</li>
-
-<li> Finally, create another NAND gate with inputs X and Y and 
-      output C.
-<div class="p"><!----></div>
-</li>
-
-<li> Change the <tt>decay</tt> parameter to 0.01.
-<div class="p"><!----></div>
-</li>
-
-<li> Press the "Save GCM" and "Save as SBML" buttons.
-<div class="p"><!----></div>
-</li>
-
-<li> Create an analysis view for your <tt>xor.sbml</tt> file.
-<div class="p"><!----></div>
-</li>
-
-<li> Select the User Defined Data tab and click on the 
-      "Use User Defined Data" button.
-<div class="p"><!----></div>
-</li>
-
-<li> Add a data point for A at time step 1000 to go to 20.
-<div class="p"><!----></div>
-</li>
-
-<li> Add a data point for B at time step 2000 to go to 20.
-<div class="p"><!----></div>
-</li>
-
-<li> Add a data point for A at time step 3000 to go to 0.
-<div class="p"><!----></div>
-</li>
-
-<li> Add a data point for B at time step 4000 to go to 0.
-<div class="p"><!----></div>
-</li>
-
-<li> Select the options tab, select "abstraction", and 
-      set a time limit of 5000, a print interval of 200, and 20 runs.
-<div class="p"><!----></div>
-</li>
-
-<li> Select the abstraction tab, and add species C to the interesting 
-      species list.
-<div class="p"><!----></div>
-</li>
-
-<li> Press the "Save Parameters" button then "Save and Run" button.
-<div class="p"><!----></div>
-</li>
-
-<li> Create a graph that includes A, B, and C.  Email a jpg
-      of this graph to me.
-<div class="p"><!----></div>
-</li>
-
-<li> Close your analysis view and edit your <tt>xor.gcm</tt>.  Try adjusting
-      some of the global parameters.  Remember to save both your <tt>gcm</tt>
-      <tt>sbml</tt> files.  Reopen your analysis view and re-run your simulation.
-      Send me a few different graphs.  Change the titles of the graphs 
-      and provide a description in your email of the graphs as to what you
-      changed.
-<div class="p"><!----></div>
-</li>
-</ol>
-
-<div class="p"><!----></div>
- <h2><a name="tth_sEc13">
-13</a>&nbsp;&nbsp;Reporting Bugs and Feature Requests</h2>
+12</a>&nbsp;&nbsp;Reporting Bugs and Feature Requests</h2>
 
 <div class="p"><!----></div>
 In order to report a bug or to request a change or feature, please
@@ -2608,8 +2014,8 @@ mail will be filtered by our spam filters:
 </ul>
 
 <div class="p"><!----></div>
- <h2><a name="tth_sEc14">
-14</a>&nbsp;&nbsp;Credits</h2>
+ <h2><a name="tth_sEc13">
+13</a>&nbsp;&nbsp;Credits</h2>
 
 <div class="p"><!----></div>
 The iBioSim tool is being developed at the University of Utah
@@ -2643,5 +2049,5 @@ Biology in Trento, Italy.
 T<sub><font size="-1">E</font></sub>X
 by <a href="http://hutchinson.belmont.ma.us/tth/">
 T<sub><font size="-1">T</font></sub>H</a>,
-version 3.81.<br />On 10 Aug 2008, 01:08.</small>
+version 3.81.<br />On 11 Aug 2008, 11:01.</small>
 </html>
