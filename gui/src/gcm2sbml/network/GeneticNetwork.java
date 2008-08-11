@@ -291,7 +291,7 @@ public class GeneticNetwork {
 			// Next setup repression binding
 			p.getRepressors();
 			PrintRepressionBindingVisitor v2 = new PrintRepressionBindingVisitor(
-					document, p, p.getRepressors(), rep, kdimer, kcoop, kbio,
+					document, p, rep, kdimer, kcoop, kbio,
 					dimer);
 			v2.setBiochemicalAbstraction(biochemicalAbstraction);
 			v2.setDimerizationAbstraction(dimerizationAbstraction);

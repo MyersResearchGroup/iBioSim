@@ -7,6 +7,7 @@ import gcm2sbml.network.DimerSpecies;
 import gcm2sbml.network.GeneticNetwork;
 import gcm2sbml.network.SpasticSpecies;
 import gcm2sbml.network.SpeciesInterface;
+import gcm2sbml.parser.CompatibilityFixer;
 import gcm2sbml.util.GlobalConstants;
 import gcm2sbml.util.Utility;
 
@@ -58,9 +59,9 @@ public class PrintDimerizationVisitor extends AbstractPrintVisitor {
 			r.setReversible(true);
 			r.setFast(true);
 			KineticLaw kl = new KineticLaw();
-			kl.addParameter(new Parameter("kdimer", kdimer, GeneticNetwork.getMoleTimeParameter((int)dimer)));
+			kl.addParameter(new Parameter(kdimerString, kdimer, GeneticNetwork.getMoleTimeParameter((int)dimer)));
 			kl.addParameter(new Parameter("kr", 1, GeneticNetwork.getMoleTimeParameter(1)));
-			kl.setFormula("kdimer*" + specie.getMonomer().getId() + " ^"+dimer+"-kr*"+specie.getId());
+			kl.setFormula(kdimerString+"*" + specie.getMonomer().getId() + " ^"+dimer+"-kr*"+specie.getId());
 			
 			r.setKineticLaw(kl);
 			Utility.addReaction(document, r);		
@@ -88,6 +89,10 @@ public class PrintDimerizationVisitor extends AbstractPrintVisitor {
 	private double defaultkdimer = 1;
 	private double dimer = 2;
 	private double defaultdimer = 2;
+	
+	private String kdimerString = CompatibilityFixer
+	.getSBMLName(GlobalConstants.KASSOCIATION_STRING);
+
 
 	private Collection<SpeciesInterface> species = null;
 
