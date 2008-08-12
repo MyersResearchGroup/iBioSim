@@ -50,7 +50,6 @@ public class Promoter {
 	 *            the species to add
 	 */
 	public void addActivator(SpeciesInterface species) {
-		System.out.println(species.getId());
 		activators.add(species);
 	}
 
