@@ -419,6 +419,11 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 		}
 		unlock();
 	}
+	
+	public void reloadParameters() {
+		parameters.removeAllItem();
+		parameters.addAllItem(generateParameters());
+	}
 
 	private Set<String> generateParameters() {
 		HashSet<String> results = new HashSet<String>();
