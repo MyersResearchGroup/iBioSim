@@ -67,119 +67,135 @@ After starting <tt>iBioSim</tt>, complete the following steps to create
 an SBML model for this example:
 
 <ol type="1">
-<li> Select <tt>File</tt> &#8594; <tt>New</tt> &#8594; <tt>Project</tt>
+<li> Select <tt>File</tt> &#8594; <tt>New</tt> &#8594; <tt>Project</tt>.
+      Browse to desired path and create a project named <tt>demo</tt>.
+
+<div class="p"><!----></div>
+<img src="screenshots/project.png" alt="screenshots/project.png" />
 <div class="p"><!----></div>
 </li>
 
-<li> Browse to desired path and create a project named <tt>lambda</tt>.
+<li> Select <tt>File</tt> &#8594; <tt>New</tt> &#8594; <tt>SBML Model</tt>.
+      Enter <tt>lambda</tt> as the SBML model ID at which point an SBML
+      editor will open.
+
+<div class="p"><!----></div>
+<img src="screenshots/newModel.png" alt="screenshots/newModel.png" />
 <div class="p"><!----></div>
 </li>
 
-<li> Select <tt>File</tt> &#8594; <tt>New</tt> &#8594; <tt>SBML Model</tt>
+<li> Select <tt>Edit Compartment</tt> and change ID from <tt>default</tt> 
+to <tt>Cytoplasm</tt>.  Also, change Units to <tt>volume</tt>.
+
+<div class="p"><!----></div>
+<img src="screenshots/compartment.png" alt="screenshots/compartment.png" />
 <div class="p"><!----></div>
 </li>
 
-<li> Enter <tt>lambda</tt> which will open the SBML editor.
+<li> Select <tt>Add Species</tt> and enter <tt>CI</tt> as the ID, 
+<tt>The lambda repressor</tt> as the name, and change the units 
+to <tt>mole</tt>.  Select <tt>Add Species</tt> again and enter <tt>CI2</tt> as the ID,
+<tt>CI dimer</tt> as the name, and change the units to <tt>mole</tt>.
+
+<div class="p"><!----></div>
+<img src="screenshots/species.png" alt="screenshots/species.png" />
 <div class="p"><!----></div>
 </li>
 
-<li> Select <tt>Definitions/Types</tt> tab.
+<li> Select <tt>Add Parameter</tt> and enter <tt>nd</tt> as the ID,
+      <tt>Number of molecules in dimer</tt> as the name, and change the
+      units to <tt>dimensionless</tt>.
+
+<div class="p"><!----></div>
+<img src="screenshots/parameter.png" alt="screenshots/parameter.png" />
 <div class="p"><!----></div>
 </li>
 
-<li> Select <tt>Add Unit</tt> and enter <tt>per_second</tt> as the ID.
+<li> Select <tt>Definitions/Types</tt> tab, and select <tt>Add Unit</tt>
+      and enter <tt>per_second</tt> as the ID.  Select <tt>Add to List</tt>, 
+      select <tt>second</tt> as the kind, change the exponent to &#8722;1, 
+      and click <tt>Add</tt>.  Click <tt>Add</tt> in the <tt>Unit Definition Editor</tt>.
+      Repeat these steps to create a <tt>per_second_mole</tt> unit 
+      (i.e., (second)<sup>&#8722;1</sup>(mole)<sup>&#8722;1</sup>).
+
+<div class="p"><!----></div>
+<img src="screenshots/units.png" alt="screenshots/units.png" />
 <div class="p"><!----></div>
 </li>
 
-<li> Select <tt>Add to List</tt>, select <tt>second</tt> as the kind, change
-      the exponent to &#8722;1, and click <tt>Add</tt>.
+<li> Select <tt>Main Elements</tt> tab.  Select <tt>Add Reaction</tt> and
+  enter <tt>Dimerize_CI</tt> as the ID, <tt>Reaction to dimerize CI</tt> as
+  the name, and change reversible to <tt>true</tt>.
+
+<div class="p"><!----></div>
+<img src="screenshots/reaction.png" alt="screenshots/reaction.png" />
 <div class="p"><!----></div>
 </li>
 
-<li> Click <tt>Add</tt> in the <tt>Unit Definition Editor</tt>.
-<div class="p"><!----></div>
-</li>
+<li> Select <tt>Add Reactant</tt> and select <tt>CI</tt> as the species,
+      <tt>Stoichiometry</tt> to <tt>Stoichiometry math</tt>, and set its
+      value to <tt>nd</tt>.
 
-<li> Select <tt>Add Unit</tt> and enter <tt>per_second_mole</tt> as the ID.
 <div class="p"><!----></div>
-</li>
-
-<li> Select <tt>Add to List</tt>, select <tt>second</tt> as the kind, change
-      the exponent to &#8722;1, and click <tt>Add</tt>.
-<div class="p"><!----></div>
-</li>
-
-<li> Select <tt>Add to List</tt>, select <tt>mole</tt> as the kind, change
-      the exponent to &#8722;1, and click <tt>Add</tt>.
-<div class="p"><!----></div>
-</li>
-
-<li> Click <tt>Add</tt> in the <tt>Unit Definition Editor</tt>.
-<div class="p"><!----></div>
-</li>
-
-<li> Select <tt>Main Elements</tt> tab.
-<div class="p"><!----></div>
-</li>
-
-<li> Select <tt>default</tt> in the list of Compartments, and press the
-      <tt>Edit Compartment</tt> button, and change the compartment ID to 
-      <tt>cell</tt> and size to 1.
-<div class="p"><!----></div>
-</li>
-
-<li> Select <tt>Add Species</tt> and enter <tt>CI</tt> as the ID.
-<div class="p"><!----></div>
-</li>
-
-<li> Select <tt>Add Species</tt> and enter <tt>CI2</tt> as the ID.
-<div class="p"><!----></div>
-</li>
-
-<li> Select <tt>Add Reaction</tt> and enter <tt>Dimerize</tt> as the ID and
-      change reversiable to <tt>true</tt>.
-<div class="p"><!----></div>
-</li>
-
-<li> Select <tt>Add Reactant</tt> and select <tt>CI</tt> as the species and change
-      the stoiciometry to 2.
+<img src="screenshots/reactant.png" alt="screenshots/reactant.png" />
 <div class="p"><!----></div>
 </li>
 
 <li> Select <tt>Add Product</tt> and select <tt>CI2</tt> as the species.
+      Leave the stoichiometry as 1.
+
+<div class="p"><!----></div>
+<img src="screenshots/product.png" alt="screenshots/product.png" />
 <div class="p"><!----></div>
 </li>
 
 <li> Highlight <tt>kf</tt> and select <tt>Edit Selected Parameter</tt>, change
       <tt>kf</tt> to <tt>k2f</tt>, and change the units to <tt>per_second_mole</tt>.
+      Highlight <tt>kr</tt> and select <tt>Edit Selected Parameter</tt>, change
+      <tt>kr</tt> to <tt>k2r</tt>, and change the units to <tt>per_second</tt>.
+
+<div class="p"><!----></div>
+<img src="screenshots/localParam.png" alt="screenshots/localParam.png" />
 <div class="p"><!----></div>
 </li>
 
-<li> Highlight <tt>kr</tt> and select <tt>Edit Selected Parameter</tt>, change
-      <tt>kr</tt> to <tt>k2r</tt>, change the value to 1.0, and change 
-      the units to <tt>per_second</tt>.
+<li> Select <tt>Use Mass Action</tt>, select <tt>Add</tt>, 
+      and select <tt>Save and Check SBML</tt>.  There should be no errors.
+
+<div class="p"><!----></div>
+<img src="screenshots/kineticLaw.png" alt="screenshots/kineticLaw.png" />
 <div class="p"><!----></div>
 </li>
 
-<li> Select <tt>Use Mass Action</tt>.
-<div class="p"><!----></div>
-</li>
+<li> Add a new species "CIt" with units of <tt>mole</tt>.
+      Click on the "Initial Assignments/Rules/Constraints/Events" tab
+      and press the "Add Rule" button.
+      Select Assignment Type, select Variable "CIt", and enter the following
+      as the Rule:
 
-<li> Select <tt>Add</tt>.
-<div class="p"><!----></div>
-</li>
+<br clear="all" /><table border="0" width="95%"><tr><td>
+<table border="0" cellspacing="0" cellpadding="0">
+ <tr><td width="50%"></td><td nowrap="nowrap" align="right" colspan="1"><table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
+</td></tr></table></td><td nowrap="nowrap" align="left">
+<table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
+2 * CI2 + CI </td></tr></table></td><td nowrap="nowrap" align="left">
+<table><tr><td nowrap="nowrap" align="right" colspan="1"></td></tr></table></td><td width="50%"></td></tr></table>
+</td></tr></table>
 
-<li> Select <tt>Save</tt>.
+
+
+<div class="p"><!----></div>
+<img src="screenshots/rule.png" alt="screenshots/rule.png" />
 <div class="p"><!----></div>
 </li>
 
 <li> Highlight <tt>lambda.sbml</tt>, using right mouse button, select 
       <tt>View Network</tt>.
-<div class="p"><!----></div>
-</li>
-
-<li> Highlight <tt>lambda.sbml</tt>, using right mouse button, select 
+      Highlight <tt>lambda.sbml</tt>, using right mouse button, select 
       <tt>View in Browser</tt>.
+
+<div class="p"><!----></div>
+<img src="screenshots/modSBML.png" alt="screenshots/modSBML.png" />
 <div class="p"><!----></div>
 </li>
 
@@ -350,24 +366,27 @@ created.
 <ol type="1">
 <li> Highlight <tt>lambda.sbml</tt>, using the right mouse button, select 
       <tt>Create Analysis View</tt>, and enter the name <tt>sim</tt>.
+
+<div class="p"><!----></div>
+<img src="screenshots/modSBML.png" alt="screenshots/modSBML.png" />
 <div class="p"><!----></div>
 </li>
 
 <li> In the newly opened window, select <tt>Monte Carlo</tt>.
-<div class="p"><!----></div>
-</li>
-
-<li> Also, in this window, change the time limit to 2100.0, print interval
+      Also, in this window, change the time limit to 2100.0, print interval
       to 100.0, and runs to 20.
-<div class="p"><!----></div>
-</li>
+      Finally, select <tt>Save and Run</tt> at the bottom of the window.
 
-<li> Finally, select <tt>Save and Run</tt> at the bottom of the window.
+<div class="p"><!----></div>
+<img src="screenshots/analysisView.png" alt="screenshots/analysisView.png" />
 <div class="p"><!----></div>
 </li>
 
 <li> After the simulation completes (it may take a little while), click on
       the graph tab.
+
+<div class="p"><!----></div>
+<img src="screenshots/emptyGraph.png" alt="screenshots/emptyGraph.png" />
 <div class="p"><!----></div>
 </li>
 
@@ -376,36 +395,24 @@ created.
       "Average", change X-Axis Label to "Time (seconds)", and change
       Y-Axis Label to "Number of Molecules".  Press the OK button.
       Click on Export and enter file name of <tt>average.jpg</tt>.
-<div class="p"><!----></div>
-</li>
+      Repeat these steps to generate graphs for the standard deviation
+      <tt>stddev.jpg</tt> and run-1 <tt>run1.jpg</tt>.  
+      Note that you can use the "Deselect All" button to
+      remove all items from the graph.
 
-<li> Click on the graph to bring up the graph editor.  Press the 
-      "Deselect All" button.  Highlight run-1,
-      select CI2 and CII, change Title to "Run-1", 
-      change X-Axis Label to "Time (seconds)", and change
-      Y-Axis Label to "Number of Molecules".  Press the OK button.
-      Click on Export and enter file name of <tt>run1.jpg</tt>.
 <div class="p"><!----></div>
-</li>
-
-<li> Click on the graph to bring up the graph editor.  
-      Press the "Deselect All" button.  Highlight Standard
-      Deviation, select CI2 and CII, change Title to "Standard Deviation", 
-      change X-Axis Label to "Time (seconds)", and change
-      Y-Axis Label to "Number of Molecules".  Press the OK button.
-      Click on Export and enter file name of <tt>stddev.jpg</tt>.
+<img src="screenshots/editGraph.png" alt="screenshots/editGraph.png" />
 <div class="p"><!----></div>
 </li>
 
 <li> Click on the SBML editor tab.  Change the initial amounts of OR and
       PRE to 10.  Press the Save and Run button.
-<div class="p"><!----></div>
-</li>
-
-<li> Click on the graph tab and following the steps above, create the 
+      Click on the graph tab and following the steps above, create the 
       following plots <tt>average_10.jpg</tt>,  <tt>run1_10.jpg</tt>, and
-      <tt>stddev_10.jpg</tt>.  How are these different than the first set
-      of plots?
+      <tt>stddev_10.jpg</tt>.  
+
+<div class="p"><!----></div>
+<img src="screenshots/paramEdit.png" alt="screenshots/paramEdit.png" />
 <div class="p"><!----></div>
 </li>
 
@@ -430,32 +437,6 @@ created.
 The example in this section illustrates abstraction-based synthesis. 
 
 <ol type="1">
-<li> Open the lambda model in an SBML editor, and add a new species
-      "CIt" with a 0 initial amount.
-<div class="p"><!----></div>
-</li>
-
-<li> Click on the "Initial Assignments/Rules/Constraints/Events" tab
-      and press the "Add Rule" button.
-<div class="p"><!----></div>
-</li>
-
-<li> Select Assignment Type, select Variable "CIt", and enter the following
-      as the Rule:
-
-<br clear="all" /><table border="0" width="95%"><tr><td>
-<table border="0" cellspacing="0" cellpadding="0">
- <tr><td width="50%"></td><td nowrap="nowrap" align="right" colspan="1"><table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
-</td></tr></table></td><td nowrap="nowrap" align="left">
-<table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
-2 * CI2 + CI </td></tr></table></td><td nowrap="nowrap" align="left">
-<table><tr><td nowrap="nowrap" align="right" colspan="1"></td></tr></table></td><td width="50%"></td></tr></table>
-</td></tr></table>
-
-
-<div class="p"><!----></div>
-</li>
-
 <li> Press the Save SBML button.
 <div class="p"><!----></div>
 </li>
@@ -638,5 +619,5 @@ This section gives an example using the GCM editor.
 T<sub><font size="-1">E</font></sub>X
 by <a href="http://hutchinson.belmont.ma.us/tth/">
 T<sub><font size="-1">T</font></sub>H</a>,
-version 3.81.<br />On 11 Aug 2008, 10:48.</small>
+version 3.81.<br />On 11 Aug 2008, 15:18.</small>
 </html>

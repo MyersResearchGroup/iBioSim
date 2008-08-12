@@ -407,6 +407,12 @@ The stoichiometry math and kinetic law formulas can only include
 those species that appear as reactants, products, or modifiers.
 \begin{center}
 \includegraphics[height=70mm]{screenshots/reaction}
+\begin{tabular}{cc}
+\includegraphics[height=35mm]{screenshots/reactant} &
+\includegraphics[height=35mm]{screenshots/product}
+\end{tabular}
+\includegraphics[height=35mm]{screenshots/localParam}\\
+\includegraphics[height=35mm]{screenshots/kineticLaw} 
 \end{center}
 
 \subsubsection{\label{parameters}Global Parameters}
@@ -854,12 +860,10 @@ ODE  & rk4imp    & Implicit 4th order Runge-Kutta at Gaussian points \\ \hline
 ODE  & rk8pd     & Embedded Runge-Kutta Prince-Dormand (8,9) method \\ \hline
 ODE  & rkf45     & Embedded Runge-Kutta-Fehlberg (4, 5) method \\ \hline
 Monte carlo & Gillespie & Gillespie's SSA direct method \\ \hline
-Monte carlo & emc-sim   & Monte Carlo simulation with jump count \\
-~ & ~ & as an independent variable \\ \hline
-Monte carlo & bunker    & Bunker's method: next reaction time step is \\
-~ & ~ & calculated using the average \\ \hline
-Monte carlo & nmc       & Monte Carlo simulation with normally distributed \\
-~ & ~ & next reaction time \\ \hline
+Monte carlo & emc-sim   & Use jump count as next reaction time \\ \hline
+Monte carlo & bunker    & Uses mean for next reaction time \\ \hline
+Monte carlo & nmc       & Uses normally distributed next reaction time
+\\ \hline
 \end{tabular}
 \end{center}
 
