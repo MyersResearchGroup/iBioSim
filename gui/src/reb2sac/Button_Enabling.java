@@ -304,5 +304,6 @@ public class Button_Enabling {
 		simulatorsLabel.setEnabled(false);
 		explanation.setEnabled(false);
 		description.setEnabled(false);
+		fileStem.setText("");
 	}
 }
