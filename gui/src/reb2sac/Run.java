@@ -691,9 +691,14 @@ public class Run implements ActionListener {
 				}
 			}
 		}
-		catch (Exception e1) {
+		catch (InterruptedException e1) {
 			JOptionPane.showMessageDialog(biomodelsim.frame(), "Error In Execution!",
 					"Error In Execution", JOptionPane.ERROR_MESSAGE);
+			e1.printStackTrace();
+		}
+		catch (IOException e1) {
+			JOptionPane.showMessageDialog(biomodelsim.frame(), "File I/O Error!",
+					"File I/O Error", JOptionPane.ERROR_MESSAGE);
 			e1.printStackTrace();
 		}
 		return exitValue;
