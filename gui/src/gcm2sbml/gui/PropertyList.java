@@ -19,6 +19,10 @@ public class PropertyList extends JList implements EnableElement, NamedObject,
 	public void removeItem(String item) {
 		model.removeElement(item);
 	}
+	
+	public void removeAllItem() {
+		model.removeAllElements();
+	}
 
 	public void addItem(String item) {
 		if (model.size() == 0) {
