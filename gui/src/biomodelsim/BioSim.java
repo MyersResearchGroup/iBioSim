@@ -2,8 +2,10 @@ package biomodelsim;
 
 import gcm2sbml.gui.GCM2SBMLEditor;
 import gcm2sbml.network.GeneticNetwork;
+import gcm2sbml.parser.CompatibilityFixer;
 import gcm2sbml.parser.GCMFile;
 import gcm2sbml.parser.GCMParser;
+import gcm2sbml.util.GlobalConstants;
 import graph.Graph;
 
 import java.awt.AWTError;
@@ -14,6 +16,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.awt.GridLayout;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
 import java.awt.Rectangle;
@@ -52,6 +55,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JTabbedPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.plaf.basic.BasicTabbedPaneUI;
 
@@ -365,6 +369,51 @@ public class BioSim implements MouseListener, ActionListener {
 		else {
 			checkUnits = true;
 		}
+		if (biosimrc.get("biosim.gcm.KREP_VALUE", "").equals("")) {
+			biosimrc.put("biosim.gcm.KREP_VALUE", ".5");
+		}
+		if (biosimrc.get("biosim.gcm.KACT_VALUE", "").equals("")) {
+			biosimrc.put("biosim.gcm.KACT_VALUE", ".0033");
+		}
+		if (biosimrc.get("biosim.gcm.KBIO_VALUE", "").equals("")) {
+			biosimrc.put("biosim.gcm.KBIO_VALUE", ".05");
+		}
+		if (biosimrc.get("biosim.gcm.PROMOTER_COUNT_VALUE", "").equals("")) {
+			biosimrc.put("biosim.gcm.PROMOTER_COUNT_VALUE", "2");
+		}
+		if (biosimrc.get("biosim.gcm.KASSOCIATION_VALUE", "").equals("")) {
+			biosimrc.put("biosim.gcm.KASSOCIATION_VALUE", ".05");
+		}
+		if (biosimrc.get("biosim.gcm.KBASAL_VALUE", "").equals("")) {
+			biosimrc.put("biosim.gcm.KBASAL_VALUE", ".0001");
+		}
+		if (biosimrc.get("biosim.gcm.OCR_VALUE", "").equals("")) {
+			biosimrc.put("biosim.gcm.OCR_VALUE", ".05");
+		}
+		if (biosimrc.get("biosim.gcm.KDECAY_VALUE", "").equals("")) {
+			biosimrc.put("biosim.gcm.KDECAY_VALUE", ".0075");
+		}
+		if (biosimrc.get("biosim.gcm.RNAP_VALUE", "").equals("")) {
+			biosimrc.put("biosim.gcm.RNAP_VALUE", "30");
+		}
+		if (biosimrc.get("biosim.gcm.RNAP_BINDING_VALUE", "").equals("")) {
+			biosimrc.put("biosim.gcm.RNAP_BINDING_VALUE", ".033");
+		}
+		if (biosimrc.get("biosim.gcm.STOICHIOMETRY_VALUE", "").equals("")) {
+			biosimrc.put("biosim.gcm.STOICHIOMETRY_VALUE", "10");
+		}
+		if (biosimrc.get("biosim.gcm.COOPERATIVITY_VALUE", "").equals("")) {
+			biosimrc.put("biosim.gcm.COOPERATIVITY_VALUE", "2");
+		}
+		if (biosimrc.get("biosim.gcm.ACTIVED_VALUE", "").equals("")) {
+			biosimrc.put("biosim.gcm.ACTIVED_VALUE", ".25");
+		}
+		if (biosimrc.get("biosim.gcm.MAX_DIMER_VALUE", "").equals("")) {
+			biosimrc.put("biosim.gcm.MAX_DIMER_VALUE", "1");
+		}
+		if (biosimrc.get("biosim.gcm.INITIAL_VALUE", "").equals("")) {
+			biosimrc.put("biosim.gcm.INITIAL_VALUE", "0");
+		}
 
 		// Open .biosimrc here
 
@@ -438,6 +487,86 @@ public class BioSim implements MouseListener, ActionListener {
 		else {
 			Units.setSelected(false);
 		}
+		JButton gcm = new JButton("GCM Defaults");
+		Preferences biosimrc = Preferences.userRoot();
+		final JTextField ACTIVED_VALUE = new JTextField(biosimrc.get("biosim.gcm.ACTIVED_VALUE", ""));
+		final JTextField KACT_VALUE = new JTextField(biosimrc.get("biosim.gcm.KACT_VALUE", ""));
+		final JTextField KBASAL_VALUE = new JTextField(biosimrc.get("biosim.gcm.KBASAL_VALUE", ""));
+		final JTextField KBIO_VALUE = new JTextField(biosimrc.get("biosim.gcm.KBIO_VALUE", ""));
+		final JTextField KDECAY_VALUE = new JTextField(biosimrc.get("biosim.gcm.KDECAY_VALUE", ""));
+		final JTextField COOPERATIVITY_VALUE = new JTextField(biosimrc.get(
+				"biosim.gcm.COOPERATIVITY_VALUE", ""));
+		final JTextField KASSOCIATION_VALUE = new JTextField(biosimrc.get(
+				"biosim.gcm.KASSOCIATION_VALUE", ""));
+		final JTextField RNAP_VALUE = new JTextField(biosimrc.get("biosim.gcm.RNAP_VALUE", ""));
+		final JTextField PROMOTER_COUNT_VALUE = new JTextField(biosimrc.get(
+				"biosim.gcm.PROMOTER_COUNT_VALUE", ""));
+		final JTextField INITIAL_VALUE = new JTextField(biosimrc.get("biosim.gcm.INITIAL_VALUE", ""));
+		final JTextField MAX_DIMER_VALUE = new JTextField(biosimrc
+				.get("biosim.gcm.MAX_DIMER_VALUE", ""));
+		final JTextField OCR_VALUE = new JTextField(biosimrc.get("biosim.gcm.OCR_VALUE", ""));
+		final JTextField RNAP_BINDING_VALUE = new JTextField(biosimrc.get(
+				"biosim.gcm.RNAP_BINDING_VALUE", ""));
+		final JTextField KREP_VALUE = new JTextField(biosimrc.get("biosim.gcm.KREP_VALUE", ""));
+		final JTextField STOICHIOMETRY_VALUE = new JTextField(biosimrc.get(
+				"biosim.gcm.STOICHIOMETRY_VALUE", ""));
+		gcm.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Object[] options = { "Close" };
+				JPanel labels = new JPanel(new GridLayout(15, 1));
+				labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.ACTIVED_STRING) + " ("
+						+ CompatibilityFixer.getSBMLName(GlobalConstants.ACTIVED_STRING) + "):"));
+				labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KACT_STRING) + " ("
+						+ CompatibilityFixer.getSBMLName(GlobalConstants.KACT_STRING) + "):"));
+				labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KBASAL_STRING) + " ("
+						+ CompatibilityFixer.getSBMLName(GlobalConstants.KBASAL_STRING) + "):"));
+				labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KBIO_STRING) + " ("
+						+ CompatibilityFixer.getSBMLName(GlobalConstants.KBIO_STRING) + "):"));
+				labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KDECAY_STRING) + " ("
+						+ CompatibilityFixer.getSBMLName(GlobalConstants.KDECAY_STRING) + "):"));
+				labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.COOPERATIVITY_STRING)
+						+ " (" + CompatibilityFixer.getSBMLName(GlobalConstants.COOPERATIVITY_STRING) + "):"));
+				labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KASSOCIATION_STRING)
+						+ " (" + CompatibilityFixer.getSBMLName(GlobalConstants.KASSOCIATION_STRING) + "):"));
+				labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.RNAP_STRING) + " ("
+						+ CompatibilityFixer.getSBMLName(GlobalConstants.RNAP_STRING) + "):"));
+				labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.PROMOTER_COUNT_STRING)
+						+ " (" + CompatibilityFixer.getSBMLName(GlobalConstants.PROMOTER_COUNT_STRING) + "):"));
+				labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.INITIAL_STRING) + " ("
+						+ CompatibilityFixer.getSBMLName(GlobalConstants.INITIAL_STRING) + "):"));
+				labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.MAX_DIMER_STRING)
+						+ " (" + CompatibilityFixer.getSBMLName(GlobalConstants.MAX_DIMER_STRING) + "):"));
+				labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.OCR_STRING) + " ("
+						+ CompatibilityFixer.getSBMLName(GlobalConstants.OCR_STRING) + "):"));
+				labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.RNAP_BINDING_STRING)
+						+ " (" + CompatibilityFixer.getSBMLName(GlobalConstants.RNAP_BINDING_STRING) + "):"));
+				labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KREP_STRING) + " ("
+						+ CompatibilityFixer.getSBMLName(GlobalConstants.KREP_STRING) + "):"));
+				labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.STOICHIOMETRY_STRING)
+						+ " (" + CompatibilityFixer.getSBMLName(GlobalConstants.STOICHIOMETRY_STRING) + "):"));
+				JPanel fields = new JPanel(new GridLayout(15, 1));
+				fields.add(ACTIVED_VALUE);
+				fields.add(KACT_VALUE);
+				fields.add(KBASAL_VALUE);
+				fields.add(KBIO_VALUE);
+				fields.add(KDECAY_VALUE);
+				fields.add(COOPERATIVITY_VALUE);
+				fields.add(KASSOCIATION_VALUE);
+				fields.add(RNAP_VALUE);
+				fields.add(PROMOTER_COUNT_VALUE);
+				fields.add(INITIAL_VALUE);
+				fields.add(MAX_DIMER_VALUE);
+				fields.add(OCR_VALUE);
+				fields.add(RNAP_BINDING_VALUE);
+				fields.add(KREP_VALUE);
+				fields.add(STOICHIOMETRY_VALUE);
+				JPanel display = new JPanel(new GridLayout(1, 2));
+				display.add(labels);
+				display.add(fields);
+				JOptionPane.showOptionDialog(f, display, "GCM Defaults", JOptionPane.YES_OPTION,
+						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+			}
+		});
 		JButton savePref = new JButton("Save");
 		savePref.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -458,7 +587,102 @@ public class BioSim implements MouseListener, ActionListener {
 					checkUnits = false;
 					biosimrc.put("biosim.check.units", "false");
 				}
+				try {
+					Double.parseDouble(KREP_VALUE.getText().trim());
+					biosimrc.put("biosim.gcm.KREP_VALUE", KREP_VALUE.getText().trim());
+				}
+				catch (Exception e1) {
+				}
+				try {
+					Double.parseDouble(KACT_VALUE.getText().trim());
+					biosimrc.put("biosim.gcm.KACT_VALUE", KACT_VALUE.getText().trim());
+				}
+				catch (Exception e1) {
+				}
+				try {
+					Double.parseDouble(KBIO_VALUE.getText().trim());
+					biosimrc.put("biosim.gcm.KBIO_VALUE", KBIO_VALUE.getText().trim());
+				}
+				catch (Exception e1) {
+				}
+				try {
+					Double.parseDouble(PROMOTER_COUNT_VALUE.getText().trim());
+					biosimrc.put("biosim.gcm.PROMOTER_COUNT_VALUE", PROMOTER_COUNT_VALUE.getText().trim());
+				}
+				catch (Exception e1) {
+				}
+				try {
+					Double.parseDouble(KASSOCIATION_VALUE.getText().trim());
+					biosimrc.put("biosim.gcm.KASSOCIATION_VALUE", KASSOCIATION_VALUE.getText().trim());
+				}
+				catch (Exception e1) {
+				}
+				try {
+					Double.parseDouble(KBASAL_VALUE.getText().trim());
+					biosimrc.put("biosim.gcm.KBASAL_VALUE", KBASAL_VALUE.getText().trim());
+				}
+				catch (Exception e1) {
+				}
+				try {
+					Double.parseDouble(OCR_VALUE.getText().trim());
+					biosimrc.put("biosim.gcm.OCR_VALUE", OCR_VALUE.getText().trim());
+				}
+				catch (Exception e1) {
+				}
+				try {
+					Double.parseDouble(KDECAY_VALUE.getText().trim());
+					biosimrc.put("biosim.gcm.KDECAY_VALUE", KDECAY_VALUE.getText().trim());
+				}
+				catch (Exception e1) {
+				}
+				try {
+					Double.parseDouble(RNAP_VALUE.getText().trim());
+					biosimrc.put("biosim.gcm.RNAP_VALUE", RNAP_VALUE.getText().trim());
+				}
+				catch (Exception e1) {
+				}
+				try {
+					Double.parseDouble(RNAP_BINDING_VALUE.getText().trim());
+					biosimrc.put("biosim.gcm.RNAP_BINDING_VALUE", RNAP_BINDING_VALUE.getText().trim());
+				}
+				catch (Exception e1) {
+				}
+				try {
+					Double.parseDouble(STOICHIOMETRY_VALUE.getText().trim());
+					biosimrc.put("biosim.gcm.STOICHIOMETRY_VALUE", STOICHIOMETRY_VALUE.getText().trim());
+				}
+				catch (Exception e1) {
+				}
+				try {
+					Double.parseDouble(COOPERATIVITY_VALUE.getText().trim());
+					biosimrc.put("biosim.gcm.COOPERATIVITY_VALUE", COOPERATIVITY_VALUE.getText().trim());
+				}
+				catch (Exception e1) {
+				}
+				try {
+					Double.parseDouble(ACTIVED_VALUE.getText().trim());
+					biosimrc.put("biosim.gcm.ACTIVED_VALUE", ACTIVED_VALUE.getText().trim());
+				}
+				catch (Exception e1) {
+				}
+				try {
+					Double.parseDouble(MAX_DIMER_VALUE.getText().trim());
+					biosimrc.put("biosim.gcm.MAX_DIMER_VALUE", MAX_DIMER_VALUE.getText().trim());
+				}
+				catch (Exception e1) {
+				}
+				try {
+					Double.parseDouble(INITIAL_VALUE.getText().trim());
+					biosimrc.put("biosim.gcm.INITIAL_VALUE", INITIAL_VALUE.getText().trim());
+				}
+				catch (Exception e1) {
+				}
 				f.dispose();
+				for (int i = 0; i < tab.getTabCount(); i++) {
+					if (tab.getTitleAt(i).contains(".gcm")) {
+						((GCM2SBMLEditor) tab.getComponentAt(i)).getGCM().loadDefaultParameters();
+					}
+				}
 			}
 		});
 		JButton cancelPref = new JButton("Cancel");
@@ -468,11 +692,16 @@ public class BioSim implements MouseListener, ActionListener {
 			}
 		});
 		JPanel buttons = new JPanel();
-		buttons.add(cancelPref);
 		buttons.add(savePref);
+		buttons.add(cancelPref);
 		JPanel aboutPanel = new JPanel(new BorderLayout());
-		aboutPanel.add(Undeclared, "North");
-		aboutPanel.add(Units, "Center");
+		JPanel aboutPanelNorth = new JPanel(new BorderLayout());
+		JPanel gcmPanel = new JPanel();
+		gcmPanel.add(gcm);
+		aboutPanelNorth.add(Undeclared, "North");
+		aboutPanelNorth.add(Units, "Center");
+		aboutPanel.add(aboutPanelNorth, "North");
+		aboutPanel.add(gcmPanel, "Center");
 		aboutPanel.add(buttons, "South");
 		f.setContentPane(aboutPanel);
 		f.pack();

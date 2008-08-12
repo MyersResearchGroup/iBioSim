@@ -11,6 +11,7 @@ import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Properties;
+import java.util.prefs.Preferences;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -596,38 +597,39 @@ public class GCMFile {
 		}
 	}
 
-	private void loadDefaultParameters() {
+	public void loadDefaultParameters() {
+		Preferences biosimrc = Preferences.userRoot();
 		defaultParameters = new HashMap<String, String>();
 		defaultParameters.put(GlobalConstants.KDECAY_STRING,
-				GlobalConstants.KDECAY_VALUE);
+				biosimrc.get("biosim.gcm.KDECAY_VALUE", ""));
 		defaultParameters.put(GlobalConstants.KASSOCIATION_STRING,
-				GlobalConstants.KASSOCIATION_VALUE);
+				biosimrc.get("biosim.gcm.KASSOCIATION_VALUE", ""));
 		defaultParameters.put(GlobalConstants.KBIO_STRING,
-				GlobalConstants.KBIO_VALUE);
+				biosimrc.get("biosim.gcm.KBIO_VALUE", ""));
 		defaultParameters.put(GlobalConstants.COOPERATIVITY_STRING,
-				GlobalConstants.COOPERATIVITY_VALUE);
+				biosimrc.get("biosim.gcm.COOPERATIVITY_VALUE", ""));
 		defaultParameters.put(GlobalConstants.KREP_STRING,
-				GlobalConstants.KREP_VALUE);
+				biosimrc.get("biosim.gcm.KREP_VALUE", ""));
 		defaultParameters.put(GlobalConstants.KACT_STRING,
-				GlobalConstants.KACT_VALUE);
+				biosimrc.get("biosim.gcm.KACT_VALUE", ""));
 		defaultParameters.put(GlobalConstants.RNAP_BINDING_STRING,
-				GlobalConstants.RNAP_BINDING_VALUE);
+				biosimrc.get("biosim.gcm.RNAP_BINDING_VALUE", ""));
 		defaultParameters.put(GlobalConstants.RNAP_STRING,
-				GlobalConstants.RNAP_VALUE);
+				biosimrc.get("biosim.gcm.RNAP_VALUE", ""));
 		defaultParameters.put(GlobalConstants.OCR_STRING,
-				GlobalConstants.OCR_VALUE);
+				biosimrc.get("biosim.gcm.OCR_VALUE", ""));
 		defaultParameters.put(GlobalConstants.KBASAL_STRING,
-				GlobalConstants.KBASAL_VALUE);
+				biosimrc.get("biosim.gcm.KBASAL_VALUE", ""));
 		defaultParameters.put(GlobalConstants.PROMOTER_COUNT_STRING,
-				GlobalConstants.PROMOTER_COUNT_VALUE);
+				biosimrc.get("biosim.gcm.PROMOTER_COUNT_VALUE", ""));
 		defaultParameters.put(GlobalConstants.STOICHIOMETRY_STRING,
-				GlobalConstants.STOICHIOMETRY_VALUE);
+				biosimrc.get("biosim.gcm.STOICHIOMETRY_VALUE", ""));
 		defaultParameters.put(GlobalConstants.ACTIVED_STRING,
-				GlobalConstants.ACTIVED_VALUE);
+				biosimrc.get("biosim.gcm.ACTIVED_VALUE", ""));
 		defaultParameters.put(GlobalConstants.MAX_DIMER_STRING,
-				GlobalConstants.MAX_DIMER_VALUE);
+				biosimrc.get("biosim.gcm.MAX_DIMER_VALUE", ""));
 		defaultParameters.put(GlobalConstants.INITIAL_STRING,
-				GlobalConstants.INITIAL_VALUE);
+				biosimrc.get("biosim.gcm.INITIAL_VALUE", ""));
 
 		for (String s : defaultParameters.keySet()) {
 			parameters.put(s, defaultParameters.get(s));
