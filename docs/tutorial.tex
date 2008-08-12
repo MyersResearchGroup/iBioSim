@@ -44,44 +44,91 @@ illustrates many of the features of {\tt iBioSim}.
 After starting {\tt iBioSim}, complete the following steps to create
 an SBML model for this example:
 \begin{enumerate}
-\item Select {\tt File} $\rightarrow$ {\tt New} $\rightarrow$ {\tt Project}
-\item Browse to desired path and create a project named {\tt lambda}.
-\item Select {\tt File} $\rightarrow$ {\tt New} $\rightarrow$ {\tt SBML Model}
-\item Enter {\tt lambda} which will open the SBML editor.
-\item Select {\tt Definitions/Types} tab.
-\item Select {\tt Add Unit} and enter {\tt per\_second} as the ID.
-\item Select {\tt Add to List}, select {\tt second} as the kind, change
-      the exponent to $-1$, and click {\tt Add}.
-\item Click {\tt Add} in the {\tt Unit Definition Editor}.
-\item Select {\tt Add Unit} and enter {\tt per\_second\_mole} as the ID.
-\item Select {\tt Add to List}, select {\tt second} as the kind, change
-      the exponent to $-1$, and click {\tt Add}.
-\item Select {\tt Add to List}, select {\tt mole} as the kind, change
-      the exponent to $-1$, and click {\tt Add}.
-\item Click {\tt Add} in the {\tt Unit Definition Editor}.
-\item Select {\tt Main Elements} tab.
-\item Select {\tt default} in the list of Compartments, and press the
-      {\tt Edit Compartment} button, and change the compartment ID to 
-      {\tt cell} and size to 1.
-\item Select {\tt Add Species} and enter {\tt CI} as the ID.
-\item Select {\tt Add Species} and enter {\tt CI2} as the ID.
-\item Select {\tt Add Reaction} and enter {\tt Dimerize} as the ID and
-      change reversiable to {\tt true}.
-\item Select {\tt Add Reactant} and select {\tt CI} as the species and change
-      the stoiciometry to 2.
+\item Select {\tt File} $\rightarrow$ {\tt New} $\rightarrow$ {\tt Project}.
+      Browse to desired path and create a project named {\tt demo}.
+
+\includegraphics[height=50mm]{screenshots/project}
+
+\item Select {\tt File} $\rightarrow$ {\tt New} $\rightarrow$ {\tt SBML Model}.
+      Enter {\tt lambda} as the SBML model ID at which point an SBML
+      editor will open.
+
+\includegraphics[height=45mm]{screenshots/newModel}
+
+\item Select {\tt Edit Compartment} and change ID from {\tt default} 
+to {\tt Cytoplasm}.  Also, change Units to {\tt volume}.
+
+\includegraphics[height=70mm]{screenshots/compartment}
+
+\item Select {\tt Add Species} and enter {\tt CI} as the ID, 
+{\tt The lambda repressor} as the name, and change the units 
+to {\tt mole}.  Select {\tt Add Species} again and enter {\tt CI2} as the ID,
+{\tt CI dimer} as the name, and change the units to {\tt mole}.
+
+\includegraphics[height=70mm]{screenshots/species}
+
+\item Select {\tt Add Parameter} and enter {\tt nd} as the ID,
+      {\tt Number of molecules in dimer} as the name, and change the
+      units to {\tt dimensionless}.
+
+\includegraphics[height=60mm]{screenshots/parameter}
+
+\item Select {\tt Definitions/Types} tab, and select {\tt Add Unit}
+      and enter {\tt per\_second} as the ID.  Select {\tt Add to List}, 
+      select {\tt second} as the kind, change the exponent to $-1$, 
+      and click {\tt Add}.  Click {\tt Add} in the {\tt Unit Definition Editor}.
+      Repeat these steps to create a {\tt per\_second\_mole} unit 
+      (i.e., (second)$^{-1}$(mole)$^{-1}$).
+
+\includegraphics[height=75mm]{screenshots/units}
+
+\item Select {\tt Main Elements} tab.  Select {\tt Add Reaction} and
+  enter {\tt Dimerize\_CI} as the ID, {\tt Reaction to dimerize CI} as
+  the name, and change reversible to {\tt true}.
+
+\includegraphics[height=70mm]{screenshots/reaction}
+
+\item Select {\tt Add Reactant} and select {\tt CI} as the species,
+      {\tt Stoichiometry} to {\tt Stoichiometry math}, and set its
+      value to {\tt nd}.
+
+\includegraphics[height=60mm]{screenshots/reactant}
+
 \item Select {\tt Add Product} and select {\tt CI2} as the species.
+      Leave the stoichiometry as 1.
+
+\includegraphics[height=60mm]{screenshots/product}
+
 \item Highlight {\tt kf} and select {\tt Edit Selected Parameter}, change
       {\tt kf} to {\tt k2f}, and change the units to {\tt per\_second\_mole}.
-\item Highlight {\tt kr} and select {\tt Edit Selected Parameter}, change
-      {\tt kr} to {\tt k2r}, change the value to 1.0, and change 
-      the units to {\tt per\_second}.
-\item Select {\tt Use Mass Action}.
-\item Select {\tt Add}.
-\item Select {\tt Save}.
+      Highlight {\tt kr} and select {\tt Edit Selected Parameter}, change
+      {\tt kr} to {\tt k2r}, and change the units to {\tt per\_second}.
+
+\includegraphics[height=60mm]{screenshots/localParam}
+
+\item Select {\tt Use Mass Action}, select {\tt Add}, 
+      and select {\tt Save and Check SBML}.  There should be no errors.
+
+\includegraphics[height=60mm]{screenshots/kineticLaw}
+
+\item Add a new species ``CI\_total'' with units of {\tt mole}.
+      Click on the ``Initial Assignments/Rules/Constraints/Events'' tab
+      and press the ``Add Rule'' button.
+      Select Assignment Type, select Variable ``CI\_total'', 
+      and enter the following as the Rule:
+\begin{eqnarray*}
+& 2 * CI2 + CI &
+\end{eqnarray*}
+
+\includegraphics[height=60mm]{screenshots/rule}
+
 \item Highlight {\tt lambda.sbml}, using right mouse button, select 
       {\tt View Network}.
-\item Highlight {\tt lambda.sbml}, using right mouse button, select 
+      Highlight {\tt lambda.sbml}, using right mouse button, select 
       {\tt View in Browser}.
+
+\includegraphics[height=74mm]{screenshots/modSBML}
+
 \item Go back to the SBML editor complete the construction of the
       chemical reaction network shown below:
 \begin{eqnarray*}
@@ -133,35 +180,41 @@ created.
 \begin{enumerate}
 \item Highlight {\tt lambda.sbml}, using the right mouse button, select 
       {\tt Create Analysis View}, and enter the name {\tt sim}.
+
+\includegraphics[height=74mm]{screenshots/modSBML}
+
 \item In the newly opened window, select {\tt Monte Carlo}.
-\item Also, in this window, change the time limit to 2100.0, print interval
+      Also, in this window, change the time limit to 2100.0, print interval
       to 100.0, and runs to 20.
-\item Finally, select {\tt Save and Run} at the bottom of the window.
+      Finally, select {\tt Save and Run} at the bottom of the window.
+
+\includegraphics[height=80mm]{screenshots/analysisView}
+
 \item After the simulation completes (it may take a little while), click on
       the graph tab.
+
+\includegraphics[height=60mm]{screenshots/emptyGraph}
+
 \item Click on the graph to bring up the graph editor.  Highlight Average,
       if not already highlighted, select CI2 and CII, change Title to
       ``Average'', change X-Axis Label to ``Time (seconds)'', and change
       Y-Axis Label to ``Number of Molecules''.  Press the OK button.
       Click on Export and enter file name of {\tt average.jpg}.
-\item Click on the graph to bring up the graph editor.  Press the 
-      ``Deselect All'' button.  Highlight run-1,
-      select CI2 and CII, change Title to ``Run-1'', 
-      change X-Axis Label to ``Time (seconds)'', and change
-      Y-Axis Label to ``Number of Molecules''.  Press the OK button.
-      Click on Export and enter file name of {\tt run1.jpg}.
-\item Click on the graph to bring up the graph editor.  
-      Press the ``Deselect All'' button.  Highlight Standard
-      Deviation, select CI2 and CII, change Title to ``Standard Deviation'', 
-      change X-Axis Label to ``Time (seconds)'', and change
-      Y-Axis Label to ``Number of Molecules''.  Press the OK button.
-      Click on Export and enter file name of {\tt stddev.jpg}.
+      Repeat these steps to generate graphs for the standard deviation
+      {\tt stddev.jpg} and run-1 {\tt run1.jpg}.  
+      Note that you can use the ``Deselect All'' button to
+      remove all items from the graph.
+
+\includegraphics[height=70mm]{screenshots/editGraph}
+
 \item Click on the SBML editor tab.  Change the initial amounts of OR and
       PRE to 10.  Press the Save and Run button.
-\item Click on the graph tab and following the steps above, create the 
+      Click on the graph tab and following the steps above, create the 
       following plots {\tt average\_10.jpg},  {\tt run1\_10.jpg}, and
-      {\tt stddev\_10.jpg}.  How are these different than the first set
-      of plots?  
+      {\tt stddev\_10.jpg}.  
+
+\includegraphics[height=70mm]{screenshots/paramEdit}
+
 \item Simulate your lambda model with BioSim using the ODE method rkf45 with
       a time limit of 2100 and print interval of 50.
       Make a note of the simulation time and plot CI2 and CII.  
@@ -177,18 +230,6 @@ created.
 
 The example in this section illustrates abstraction-based synthesis. 
 \begin{enumerate}
-\item Open the lambda model in an SBML editor, and add a new species
-      ``CIt'' with a 0 initial amount.
-
-\item Click on the ``Initial Assignments/Rules/Constraints/Events'' tab
-      and press the ``Add Rule'' button.
-
-\item Select Assignment Type, select Variable ``CIt'', and enter the following
-      as the Rule:
-\begin{eqnarray*}
-& 2 * CI2 + CI &
-\end{eqnarray*}
-
 \item Press the Save SBML button.
 
 \item Create or open an analysis view on your lambda model.
