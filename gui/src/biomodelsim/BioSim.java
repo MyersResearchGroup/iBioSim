@@ -563,169 +563,136 @@ public class BioSim implements MouseListener, ActionListener {
 				JPanel display = new JPanel(new GridLayout(1, 2));
 				display.add(labels);
 				display.add(fields);
-				JOptionPane.showOptionDialog(f, display, "GCM Defaults", JOptionPane.YES_OPTION,
+				JOptionPane.showOptionDialog(frame, display, "GCM Defaults", JOptionPane.YES_OPTION,
 						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 			}
 		});
-		JButton savePref = new JButton("Save");
-		savePref.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				Preferences biosimrc = Preferences.userRoot();
-				if (Undeclared.isSelected()) {
-					checkUndeclared = true;
-					biosimrc.put("biosim.check.undeclared", "true");
-				}
-				else {
-					checkUndeclared = false;
-					biosimrc.put("biosim.check.undeclared", "false");
-				}
-				if (Units.isSelected()) {
-					checkUnits = true;
-					biosimrc.put("biosim.check.units", "true");
-				}
-				else {
-					checkUnits = false;
-					biosimrc.put("biosim.check.units", "false");
-				}
-				try {
-					Double.parseDouble(KREP_VALUE.getText().trim());
-					biosimrc.put("biosim.gcm.KREP_VALUE", KREP_VALUE.getText().trim());
-				}
-				catch (Exception e1) {
-				}
-				try {
-					Double.parseDouble(KACT_VALUE.getText().trim());
-					biosimrc.put("biosim.gcm.KACT_VALUE", KACT_VALUE.getText().trim());
-				}
-				catch (Exception e1) {
-				}
-				try {
-					Double.parseDouble(KBIO_VALUE.getText().trim());
-					biosimrc.put("biosim.gcm.KBIO_VALUE", KBIO_VALUE.getText().trim());
-				}
-				catch (Exception e1) {
-				}
-				try {
-					Double.parseDouble(PROMOTER_COUNT_VALUE.getText().trim());
-					biosimrc.put("biosim.gcm.PROMOTER_COUNT_VALUE", PROMOTER_COUNT_VALUE.getText().trim());
-				}
-				catch (Exception e1) {
-				}
-				try {
-					Double.parseDouble(KASSOCIATION_VALUE.getText().trim());
-					biosimrc.put("biosim.gcm.KASSOCIATION_VALUE", KASSOCIATION_VALUE.getText().trim());
-				}
-				catch (Exception e1) {
-				}
-				try {
-					Double.parseDouble(KBASAL_VALUE.getText().trim());
-					biosimrc.put("biosim.gcm.KBASAL_VALUE", KBASAL_VALUE.getText().trim());
-				}
-				catch (Exception e1) {
-				}
-				try {
-					Double.parseDouble(OCR_VALUE.getText().trim());
-					biosimrc.put("biosim.gcm.OCR_VALUE", OCR_VALUE.getText().trim());
-				}
-				catch (Exception e1) {
-				}
-				try {
-					Double.parseDouble(KDECAY_VALUE.getText().trim());
-					biosimrc.put("biosim.gcm.KDECAY_VALUE", KDECAY_VALUE.getText().trim());
-				}
-				catch (Exception e1) {
-				}
-				try {
-					Double.parseDouble(RNAP_VALUE.getText().trim());
-					biosimrc.put("biosim.gcm.RNAP_VALUE", RNAP_VALUE.getText().trim());
-				}
-				catch (Exception e1) {
-				}
-				try {
-					Double.parseDouble(RNAP_BINDING_VALUE.getText().trim());
-					biosimrc.put("biosim.gcm.RNAP_BINDING_VALUE", RNAP_BINDING_VALUE.getText().trim());
-				}
-				catch (Exception e1) {
-				}
-				try {
-					Double.parseDouble(STOICHIOMETRY_VALUE.getText().trim());
-					biosimrc.put("biosim.gcm.STOICHIOMETRY_VALUE", STOICHIOMETRY_VALUE.getText().trim());
-				}
-				catch (Exception e1) {
-				}
-				try {
-					Double.parseDouble(COOPERATIVITY_VALUE.getText().trim());
-					biosimrc.put("biosim.gcm.COOPERATIVITY_VALUE", COOPERATIVITY_VALUE.getText().trim());
-				}
-				catch (Exception e1) {
-				}
-				try {
-					Double.parseDouble(ACTIVED_VALUE.getText().trim());
-					biosimrc.put("biosim.gcm.ACTIVED_VALUE", ACTIVED_VALUE.getText().trim());
-				}
-				catch (Exception e1) {
-				}
-				try {
-					Double.parseDouble(MAX_DIMER_VALUE.getText().trim());
-					biosimrc.put("biosim.gcm.MAX_DIMER_VALUE", MAX_DIMER_VALUE.getText().trim());
-				}
-				catch (Exception e1) {
-				}
-				try {
-					Double.parseDouble(INITIAL_VALUE.getText().trim());
-					biosimrc.put("biosim.gcm.INITIAL_VALUE", INITIAL_VALUE.getText().trim());
-				}
-				catch (Exception e1) {
-				}
-				f.dispose();
-				for (int i = 0; i < tab.getTabCount(); i++) {
-					if (tab.getTitleAt(i).contains(".gcm")) {
-						((GCM2SBMLEditor) tab.getComponentAt(i)).getGCM().loadDefaultParameters();
-						((GCM2SBMLEditor) tab.getComponentAt(i)).reloadParameters();
-					}
-				}
-			}
-		});
-		JButton cancelPref = new JButton("Cancel");
-		cancelPref.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				f.dispose();
-			}
-		});
-		JPanel buttons = new JPanel();
-		buttons.add(savePref);
-		buttons.add(cancelPref);
 		JPanel aboutPanel = new JPanel(new BorderLayout());
-		JPanel aboutPanelNorth = new JPanel(new BorderLayout());
 		JPanel gcmPanel = new JPanel();
 		gcmPanel.add(gcm);
-		aboutPanelNorth.add(Undeclared, "North");
-		aboutPanelNorth.add(Units, "Center");
-		aboutPanel.add(aboutPanelNorth, "North");
-		aboutPanel.add(gcmPanel, "Center");
-		aboutPanel.add(buttons, "South");
-		f.setContentPane(aboutPanel);
-		f.pack();
-		Dimension screenSize;
-		try {
-			Toolkit tk = Toolkit.getDefaultToolkit();
-			screenSize = tk.getScreenSize();
+		aboutPanel.add(Undeclared, "North");
+		aboutPanel.add(Units, "Center");
+		aboutPanel.add(gcmPanel, "South");
+		Object[] options = { "Save", "Cancel" };
+		int value = JOptionPane.showOptionDialog(frame, aboutPanel, "GCM Defaults",
+				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+		if (value == JOptionPane.YES_OPTION) {
+			if (Undeclared.isSelected()) {
+				checkUndeclared = true;
+				biosimrc.put("biosim.check.undeclared", "true");
+			}
+			else {
+				checkUndeclared = false;
+				biosimrc.put("biosim.check.undeclared", "false");
+			}
+			if (Units.isSelected()) {
+				checkUnits = true;
+				biosimrc.put("biosim.check.units", "true");
+			}
+			else {
+				checkUnits = false;
+				biosimrc.put("biosim.check.units", "false");
+			}
+			try {
+				Double.parseDouble(KREP_VALUE.getText().trim());
+				biosimrc.put("biosim.gcm.KREP_VALUE", KREP_VALUE.getText().trim());
+			}
+			catch (Exception e1) {
+			}
+			try {
+				Double.parseDouble(KACT_VALUE.getText().trim());
+				biosimrc.put("biosim.gcm.KACT_VALUE", KACT_VALUE.getText().trim());
+			}
+			catch (Exception e1) {
+			}
+			try {
+				Double.parseDouble(KBIO_VALUE.getText().trim());
+				biosimrc.put("biosim.gcm.KBIO_VALUE", KBIO_VALUE.getText().trim());
+			}
+			catch (Exception e1) {
+			}
+			try {
+				Double.parseDouble(PROMOTER_COUNT_VALUE.getText().trim());
+				biosimrc.put("biosim.gcm.PROMOTER_COUNT_VALUE", PROMOTER_COUNT_VALUE.getText().trim());
+			}
+			catch (Exception e1) {
+			}
+			try {
+				Double.parseDouble(KASSOCIATION_VALUE.getText().trim());
+				biosimrc.put("biosim.gcm.KASSOCIATION_VALUE", KASSOCIATION_VALUE.getText().trim());
+			}
+			catch (Exception e1) {
+			}
+			try {
+				Double.parseDouble(KBASAL_VALUE.getText().trim());
+				biosimrc.put("biosim.gcm.KBASAL_VALUE", KBASAL_VALUE.getText().trim());
+			}
+			catch (Exception e1) {
+			}
+			try {
+				Double.parseDouble(OCR_VALUE.getText().trim());
+				biosimrc.put("biosim.gcm.OCR_VALUE", OCR_VALUE.getText().trim());
+			}
+			catch (Exception e1) {
+			}
+			try {
+				Double.parseDouble(KDECAY_VALUE.getText().trim());
+				biosimrc.put("biosim.gcm.KDECAY_VALUE", KDECAY_VALUE.getText().trim());
+			}
+			catch (Exception e1) {
+			}
+			try {
+				Double.parseDouble(RNAP_VALUE.getText().trim());
+				biosimrc.put("biosim.gcm.RNAP_VALUE", RNAP_VALUE.getText().trim());
+			}
+			catch (Exception e1) {
+			}
+			try {
+				Double.parseDouble(RNAP_BINDING_VALUE.getText().trim());
+				biosimrc.put("biosim.gcm.RNAP_BINDING_VALUE", RNAP_BINDING_VALUE.getText().trim());
+			}
+			catch (Exception e1) {
+			}
+			try {
+				Double.parseDouble(STOICHIOMETRY_VALUE.getText().trim());
+				biosimrc.put("biosim.gcm.STOICHIOMETRY_VALUE", STOICHIOMETRY_VALUE.getText().trim());
+			}
+			catch (Exception e1) {
+			}
+			try {
+				Double.parseDouble(COOPERATIVITY_VALUE.getText().trim());
+				biosimrc.put("biosim.gcm.COOPERATIVITY_VALUE", COOPERATIVITY_VALUE.getText().trim());
+			}
+			catch (Exception e1) {
+			}
+			try {
+				Double.parseDouble(ACTIVED_VALUE.getText().trim());
+				biosimrc.put("biosim.gcm.ACTIVED_VALUE", ACTIVED_VALUE.getText().trim());
+			}
+			catch (Exception e1) {
+			}
+			try {
+				Double.parseDouble(MAX_DIMER_VALUE.getText().trim());
+				biosimrc.put("biosim.gcm.MAX_DIMER_VALUE", MAX_DIMER_VALUE.getText().trim());
+			}
+			catch (Exception e1) {
+			}
+			try {
+				Double.parseDouble(INITIAL_VALUE.getText().trim());
+				biosimrc.put("biosim.gcm.INITIAL_VALUE", INITIAL_VALUE.getText().trim());
+			}
+			catch (Exception e1) {
+			}
+			f.dispose();
+			for (int i = 0; i < tab.getTabCount(); i++) {
+				if (tab.getTitleAt(i).contains(".gcm")) {
+					((GCM2SBMLEditor) tab.getComponentAt(i)).getGCM().loadDefaultParameters();
+					((GCM2SBMLEditor) tab.getComponentAt(i)).reloadParameters();
+				}
+			}
 		}
-		catch (AWTError awe) {
-			screenSize = new Dimension(640, 480);
+		else {
 		}
-		Dimension frameSize = f.getSize();
-
-		if (frameSize.height > screenSize.height) {
-			frameSize.height = screenSize.height;
-		}
-		if (frameSize.width > screenSize.width) {
-			frameSize.width = screenSize.width;
-		}
-		int x = screenSize.width / 2 - frameSize.width / 2;
-		int y = screenSize.height / 2 - frameSize.height / 2;
-		f.setLocation(x, y);
-		f.setVisible(true);
 	}
 
 	public void about() {
