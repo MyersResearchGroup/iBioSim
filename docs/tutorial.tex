@@ -12,7 +12,7 @@
 \author{Chris J. Myers}
 
 \date{Created: August 11th, 2008\\
-  Last Revised: August 11th, 2008
+  Last Revised: August 13th, 2008
 }
 
 \begin{document}
@@ -55,8 +55,11 @@ an SBML model for this example:
 
 \includegraphics[height=45mm]{screenshots/newModel}
 
-\item Select {\tt Edit Compartment} and change ID from {\tt default} 
-to {\tt Cytoplasm}.  Also, change Units to {\tt volume}.
+\clearpage
+
+\item Highlight the {\tt default} compartment, select {\tt Edit
+    Compartment}, and change its ID to {\tt Cytoplasm}.  Also, change 
+    the units to {\tt volume}.
 
 \includegraphics[height=70mm]{screenshots/compartment}
 
@@ -65,13 +68,13 @@ to {\tt Cytoplasm}.  Also, change Units to {\tt volume}.
 to {\tt mole}.  Select {\tt Add Species} again and enter {\tt CI2} as the ID,
 {\tt CI dimer} as the name, and change the units to {\tt mole}.
 
-\includegraphics[height=70mm]{screenshots/species}
+\includegraphics[height=60mm]{screenshots/species}
 
 \item Select {\tt Add Parameter} and enter {\tt nd} as the ID,
       {\tt Number of molecules in dimer} as the name, and change the
       units to {\tt dimensionless}.
 
-\includegraphics[height=60mm]{screenshots/parameter}
+\includegraphics[height=50mm]{screenshots/parameter}
 
 \item Select {\tt Definitions/Types} tab, and select {\tt Add Unit}
       and enter {\tt per\_second} as the ID.  Select {\tt Add to List}, 
@@ -80,54 +83,45 @@ to {\tt mole}.  Select {\tt Add Species} again and enter {\tt CI2} as the ID,
       Repeat these steps to create a {\tt per\_second\_mole} unit 
       (i.e., (second)$^{-1}$(mole)$^{-1}$).
 
-\includegraphics[height=75mm]{screenshots/units}
+\includegraphics[height=70mm]{screenshots/units}
 
 \item Select {\tt Main Elements} tab.  Select {\tt Add Reaction} and
   enter {\tt Dimerize\_CI} as the ID, {\tt Reaction to dimerize CI} as
   the name, and change reversible to {\tt true}.
 
-\includegraphics[height=70mm]{screenshots/reaction}
+\includegraphics[height=65mm]{screenshots/reaction}
 
 \item Select {\tt Add Reactant} and select {\tt CI} as the species,
-      {\tt Stoichiometry} to {\tt Stoichiometry math}, and set its
+      change {\tt Stoichiometry} to {\tt Stoichiometry math}, and set its
       value to {\tt nd}.
 
-\includegraphics[height=60mm]{screenshots/reactant}
+\includegraphics[height=40mm]{screenshots/reactant}
 
 \item Select {\tt Add Product} and select {\tt CI2} as the species.
       Leave the stoichiometry as 1.
 
-\includegraphics[height=60mm]{screenshots/product}
+\includegraphics[height=50mm]{screenshots/product}
 
 \item Highlight {\tt kf} and select {\tt Edit Selected Parameter}, change
       {\tt kf} to {\tt k2f}, and change the units to {\tt per\_second\_mole}.
       Highlight {\tt kr} and select {\tt Edit Selected Parameter}, change
       {\tt kr} to {\tt k2r}, and change the units to {\tt per\_second}.
 
-\includegraphics[height=60mm]{screenshots/localParam}
+\includegraphics[height=50mm]{screenshots/localParam}
 
 \item Select {\tt Use Mass Action}, select {\tt Add}, 
       and select {\tt Save and Check SBML}.  There should be no errors.
 
 \includegraphics[height=60mm]{screenshots/kineticLaw}
 
-\item Add a new species ``CI\_total'' with units of {\tt mole}.
-      Click on the ``Initial Assignments/Rules/Constraints/Events'' tab
-      and press the ``Add Rule'' button.
-      Select Assignment Type, select Variable ``CI\_total'', 
-      and enter the following as the Rule:
-\begin{eqnarray*}
-& 2 * CI2 + CI &
-\end{eqnarray*}
-
-\includegraphics[height=60mm]{screenshots/rule}
+\clearpage
 
 \item Highlight {\tt lambda.sbml}, using right mouse button, select 
       {\tt View Network}.
       Highlight {\tt lambda.sbml}, using right mouse button, select 
       {\tt View in Browser}.
 
-\includegraphics[height=74mm]{screenshots/modSBML}
+\includegraphics[height=60mm]{screenshots/viewNet}
 
 \item Go back to the SBML editor complete the construction of the
       chemical reaction network shown below:
@@ -155,60 +149,122 @@ PR\_\mathrm{RNAP} + n\mathrm{CII} \\
 
 \begin{center}
 \begin{math}
-\begin{array}{|c|c|c|c|c|c|c|c|}
+\begin{array}{|c|c|c|c|c|c|}
 \hline
-Constant & Value & Constant & Value &
-Constant & Value & Constant & Value \\ \hline \hline
+Constant & Value & Constant & Value & Constant & Value \\ \hline \hline
 KPRE2  & 0.01~M^{-1} & KPRE4  & 0.00161~M^{-2} & 
-kPREb  & 0.00004~\mathrm{sec}^{-1} & 
-kPRE   & 0.015~\mathrm{sec}^{-1} \\ \hline
-n         & 10 & KOR9  & 0.69422~M^{-1} & KOR10  & 0.06568~M^{-2} &
-kPR    & 0.014~\mathrm{sec}^{-1} \\ \hline
-K2       & 0.1 M^{-1} & k1       & 0.0007~\mathrm{sec}^{-1} &
-k10    & 0.002~\mathrm{sec}^{-1} & ~ & ~ \\ \hline
+kPREb  & 0.00004~\mathrm{sec}^{-1} \\ \hline
+kPRE   & 0.015~\mathrm{sec}^{-1} &
+KOR9  & 0.69422~M^{-1} & KOR10  & 0.06568~M^{-2} \\ \hline
+kPR    & 0.014~\mathrm{sec}^{-1} &
+K2       & 0.1 M^{-1} & k1       & 0.0007~\mathrm{sec}^{-1} \\ \hline
+k10    & 0.002~\mathrm{sec}^{-1} & n         & 10 & ~ & ~ \\ \hline
 \end{array}
-\end{math}
+\end{math} \\
 Set an initial amount of 1.0 for PRE and OR, 30.0 for RNAP, and 0.0 
 for the rest.
 \end{center}
 \end{enumerate}
 
+% \item Add a new species ``CI\_total'' with units of {\tt mole}.
+%       Click on the ``Initial Assignments/Rules/Constraints/Events'' tab
+%       and press the ``Add Rule'' button.
+%       Select Assignment Type, select Variable ``CI\_total'', 
+%       and enter the following as the Rule:
+% \begin{eqnarray*}
+% & 2 * CI2 + CI &
+% \end{eqnarray*}
+ 
+% \includegraphics[height=60mm]{screenshots/rule}
+
+\clearpage
+
+\section{GCM Editor}
+
+This section describes how to construct a GCM model for this example:
+\begin{enumerate}
+\item Select {\tt File} $\rightarrow$ {\tt New} $\rightarrow$ 
+      {\tt Genetic Circuit Model}.
+      Enter {\tt CI\_CII} as the GCM model ID at which point a GCM
+      editor will open.
+
+\includegraphics[height=45mm]{screenshots/newModel}
+
+\item Select {\tt Add Promoter}, enter {\tt PR} as the ID, and press
+  {\tt Ok}.  Next, add the {\tt PRE} promoter in the same way.
+
+\includegraphics[height=60mm]{screenshots/promoter}
+
+\item Select {\tt Add Species}, enter {\tt CI} as the ID, and press
+  {\tt Ok}.  Next, add the {\tt CII} species in the same way.
+
+\includegraphics[height=55mm]{screenshots/GCMspecies}
+
+\item Select {\tt Add Influence}, change the input to {\tt CI}, change
+  the output to {\tt CII}, change the promoter to {\tt PR}, and the
+  type to {\tt repression}.  Next, add an activation influence between
+  {\tt CII} and {\tt CI} on promoter {\tt PRE}.
+
+\includegraphics[height=75mm]{screenshots/influence}
+
+\item Select {\tt Save GCM}, highlight {\tt CI\_CII.gcm} file, and
+  right click to select {\tt View Genetic Circuit}.
+
+\includegraphics[height=60mm]{screenshots/viewGenNet}
+\end{enumerate}
+
+\clearpage 
+
 \section{Analysis}
 
-The following instructions describe how to analyze the SBML file just 
-created.
+The following instructions describe how to analyze the GCM file just 
+created.  The SBML file can also be simulated using the following steps.  
 \begin{enumerate}
-\item Highlight {\tt lambda.sbml}, using the right mouse button, select 
-      {\tt Create Analysis View}, and enter the name {\tt sim}.
+\item Select {\tt Save GCM}, highlight {\tt CI\_CII.gcm} file, and
+  right click to select {\tt Create Analysis View}.
 
-\includegraphics[height=74mm]{screenshots/modSBML}
+\includegraphics[height=60mm]{screenshots/GCMAnalysis}
 
-\item In the newly opened window, select {\tt Monte Carlo}.
-      Also, in this window, change the time limit to 2100.0, print interval
-      to 100.0, and runs to 20.
-      Finally, select {\tt Save and Run} at the bottom of the window.
+\item In the newly opened window, select {\tt ODE}.
+      Also, in this window, change the time limit to 2100.0 and print interval
+      to 10.0. Finally, select {\tt Save and Run} at the bottom of the window.
 
 \includegraphics[height=80mm]{screenshots/analysisView}
 
-\item After the simulation completes (it may take a little while), click on
-      the graph tab.
+\clearpage
 
-\includegraphics[height=60mm]{screenshots/emptyGraph}
+\item After the simulation completes, click on the graph tab.
 
-\item Click on the graph to bring up the graph editor.  Highlight Average,
-      if not already highlighted, select CI2 and CII, change Title to
-      ``Average'', change X-Axis Label to ``Time (seconds)'', and change
-      Y-Axis Label to ``Number of Molecules''.  Press the OK button.
-      Click on Export and enter file name of {\tt average.jpg}.
-      Repeat these steps to generate graphs for the standard deviation
-      {\tt stddev.jpg} and run-1 {\tt run1.jpg}.  
-      Note that you can use the ``Deselect All'' button to
-      remove all items from the graph.
+\includegraphics[height=75mm]{screenshots/emptyGraph}
 
-\includegraphics[height=70mm]{screenshots/editGraph}
+\item Double click on the graph to bring up the graph editor.
+  Highlight Average, if not already highlighted, select CI and CII, 
+change the Title to ``ODE Simulation Results'', 
+change the X-Axis Label to ``Time
+(seconds)'', and change the Y-Axis Label to ``Number of Molecules''.  
+Press the OK button.  Click on Export and enter file name of {\tt ode.jpg}.
 
-\item Click on the SBML editor tab.  Change the initial amounts of OR and
-      PRE to 10.  Press the Save and Run button.
+\includegraphics[height=80mm]{screenshots/odeResults}
+
+\item Select the simulation options tab again, select {\tt Monte
+    Carlo}, change the number of runs to 20, and set the simulation ID
+  to {\tt ssa}.  Double click on the graph to bring up the graph editor.
+Open the ssa simulation directory, and highlight {\tt run-1}.
+Select CI and CII, change Title to ``SSA Simulation Results'', 
+change the X-Axis Label to ``Time (seconds)'', and change the Y-Axis
+Label to ``Number of Molecules''.  Press the OK button.  Click on
+Export and enter file name of {\tt ssa-1.jpg}.
+Repeat these steps to generate graphs for the average ({\tt
+  average.jpg}) and standard deviation ({\tt stddev.jpg}).
+Note that you can use the ``Deselect All'' button to
+remove all items from the graph.
+
+\includegraphics[height=80mm]{screenshots/ssaResults}
+
+\item Click on the parameter editor tab.  Highlight the {\tt PR} 
+      species, and select {\tt Edit Species}.  Select {\tt Custom} for
+      the initial amount of {\tt PR} and change it to 5.  Press the 
+      Save and Run button.
       Click on the graph tab and following the steps above, create the 
       following plots {\tt average\_10.jpg},  {\tt run1\_10.jpg}, and
       {\tt stddev\_10.jpg}.  

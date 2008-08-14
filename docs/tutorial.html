@@ -25,7 +25,7 @@
 <div class="p"><!----></div>
 
 <h3 align="center">Created: August 11th, 2008<br />
-  Last Revised: August 11th, 2008
+  Last Revised: August 13th, 2008
  </h3>
 
 <div class="p"><!----></div>
@@ -37,11 +37,13 @@
 <a href="#tth_sEc2"
 >2&nbsp; SBML Editor</a><br />
 <a href="#tth_sEc3"
->3&nbsp; Analysis</a><br />
+>3&nbsp; GCM Editor</a><br />
 <a href="#tth_sEc4"
->4&nbsp; Abstraction</a><br />
+>4&nbsp; Analysis</a><br />
 <a href="#tth_sEc5"
->5&nbsp; GCM Editor</a><br />
+>5&nbsp; Abstraction</a><br />
+<a href="#tth_sEc6"
+>6&nbsp; GCM Editor</a><br />
 
 
 <div class="p"><!----></div>
@@ -81,11 +83,15 @@ an SBML model for this example:
 
 <div class="p"><!----></div>
 <img src="screenshots/newModel.png" alt="screenshots/newModel.png" />
+
+<div class="p"><!----></div>
+
 <div class="p"><!----></div>
 </li>
 
-<li> Select <tt>Edit Compartment</tt> and change ID from <tt>default</tt> 
-to <tt>Cytoplasm</tt>.  Also, change Units to <tt>volume</tt>.
+<li> Highlight the <tt>default</tt> compartment, select <tt>Edit
+    Compartment</tt>, and change its ID to <tt>Cytoplasm</tt>.  Also, change 
+    the units to <tt>volume</tt>.
 
 <div class="p"><!----></div>
 <img src="screenshots/compartment.png" alt="screenshots/compartment.png" />
@@ -133,7 +139,7 @@ to <tt>mole</tt>.  Select <tt>Add Species</tt> again and enter <tt>CI2</tt> as t
 </li>
 
 <li> Select <tt>Add Reactant</tt> and select <tt>CI</tt> as the species,
-      <tt>Stoichiometry</tt> to <tt>Stoichiometry math</tt>, and set its
+      change <tt>Stoichiometry</tt> to <tt>Stoichiometry math</tt>, and set its
       value to <tt>nd</tt>.
 
 <div class="p"><!----></div>
@@ -164,28 +170,9 @@ to <tt>mole</tt>.  Select <tt>Add Species</tt> again and enter <tt>CI2</tt> as t
 
 <div class="p"><!----></div>
 <img src="screenshots/kineticLaw.png" alt="screenshots/kineticLaw.png" />
-<div class="p"><!----></div>
-</li>
-
-<li> Add a new species "CI_total" with units of <tt>mole</tt>.
-      Click on the "Initial Assignments/Rules/Constraints/Events" tab
-      and press the "Add Rule" button.
-      Select Assignment Type, select Variable "CI_total", 
-      and enter the following as the Rule:
-
-<br clear="all" /><table border="0" width="95%"><tr><td>
-<table border="0" cellspacing="0" cellpadding="0">
- <tr><td width="50%"></td><td nowrap="nowrap" align="right" colspan="1"><table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
-</td></tr></table></td><td nowrap="nowrap" align="left">
-<table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
-2 * CI2 + CI </td></tr></table></td><td nowrap="nowrap" align="left">
-<table><tr><td nowrap="nowrap" align="right" colspan="1"></td></tr></table></td><td width="50%"></td></tr></table>
-</td></tr></table>
-
-
 
 <div class="p"><!----></div>
-<img src="screenshots/rule.png" alt="screenshots/rule.png" />
+
 <div class="p"><!----></div>
 </li>
 
@@ -195,7 +182,7 @@ to <tt>mole</tt>.  Select <tt>Add Species</tt> again and enter <tt>CI2</tt> as t
       <tt>View in Browser</tt>.
 
 <div class="p"><!----></div>
-<img src="screenshots/modSBML.png" alt="screenshots/modSBML.png" />
+<img src="screenshots/viewNet.png" alt="screenshots/viewNet.png" />
 <div class="p"><!----></div>
 </li>
 
@@ -317,8 +304,6 @@ Value </td></tr></table></td><td align="center"><table border="0" cellspacing="0
 Constant </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
 Value </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
 Constant </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
-Value </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
-Constant </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
 Value </td></tr></table></td></tr><tr><td></td></tr>
 <tr><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
 KPRE2 </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
@@ -326,28 +311,29 @@ KPRE2 </td></tr></table></td><td align="center"><table border="0" cellspacing="0
 KPRE4 </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
 0.00161&nbsp;M<sup>&#8722;2</sup> </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
 kPREb </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
-0.00004&nbsp;<span class="roman">sec</span><sup>&#8722;1</sup> </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
-kPRE </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
-0.015&nbsp;<span class="roman">sec</span><sup>&#8722;1</sup> </td></tr></table></td></tr>
+0.00004&nbsp;<span class="roman">sec</span><sup>&#8722;1</sup> </td></tr></table></td></tr>
 <tr><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
-n </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
-10 </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
+kPRE </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
+0.015&nbsp;<span class="roman">sec</span><sup>&#8722;1</sup> </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
 KOR9 </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
 0.69422&nbsp;M<sup>&#8722;1</sup> </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
 KOR10 </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
-0.06568&nbsp;M<sup>&#8722;2</sup> </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
-kPR </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
-0.014&nbsp;<span class="roman">sec</span><sup>&#8722;1</sup> </td></tr></table></td></tr>
+0.06568&nbsp;M<sup>&#8722;2</sup> </td></tr></table></td></tr>
 <tr><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
+kPR </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
+0.014&nbsp;<span class="roman">sec</span><sup>&#8722;1</sup> </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
 K2 </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
 0.1 M<sup>&#8722;1</sup> </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
 k1 </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
-0.0007&nbsp;<span class="roman">sec</span><sup>&#8722;1</sup> </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
+0.0007&nbsp;<span class="roman">sec</span><sup>&#8722;1</sup> </td></tr></table></td></tr>
+<tr><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
 k10 </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
 0.002&nbsp;<span class="roman">sec</span><sup>&#8722;1</sup> </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
+n </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
+10 </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
 &nbsp; </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
 &nbsp; </td></tr></table></td></tr></table>
-
+ <br />
 Set an initial amount of 1.0 for PRE and OR, 30.0 for RNAP, and 0.0 
 for the rest.
 </center>
@@ -356,57 +342,132 @@ for the rest.
 </ol>
 
 <div class="p"><!----></div>
- <h2><a name="tth_sEc3">
-3</a>&nbsp;&nbsp;Analysis</h2>
 
 <div class="p"><!----></div>
-The following instructions describe how to analyze the SBML file just 
-created.
+
+<div class="p"><!----></div>
+ <h2><a name="tth_sEc3">
+3</a>&nbsp;&nbsp;GCM Editor</h2>
+
+<div class="p"><!----></div>
+This section describes how to construct a GCM model for this example:
 
 <ol type="1">
-<li> Highlight <tt>lambda.sbml</tt>, using the right mouse button, select 
-      <tt>Create Analysis View</tt>, and enter the name <tt>sim</tt>.
+<li> Select <tt>File</tt> &#8594; <tt>New</tt> &#8594; 
+      <tt>Genetic Circuit Model</tt>.
+      Enter <tt>CI_CII</tt> as the GCM model ID at which point a GCM
+      editor will open.
 
 <div class="p"><!----></div>
-<img src="screenshots/modSBML.png" alt="screenshots/modSBML.png" />
+<img src="screenshots/newModel.png" alt="screenshots/newModel.png" />
 <div class="p"><!----></div>
 </li>
 
-<li> In the newly opened window, select <tt>Monte Carlo</tt>.
-      Also, in this window, change the time limit to 2100.0, print interval
-      to 100.0, and runs to 20.
-      Finally, select <tt>Save and Run</tt> at the bottom of the window.
+<li> Select <tt>Add Promoter</tt>, enter <tt>PR</tt> as the ID, and press
+  <tt>Ok</tt>.  Next, add the <tt>PRE</tt> promoter in the same way.
+
+<div class="p"><!----></div>
+<img src="screenshots/promoter.png" alt="screenshots/promoter.png" />
+<div class="p"><!----></div>
+</li>
+
+<li> Select <tt>Add Species</tt>, enter <tt>CI</tt> as the ID, and press
+  <tt>Ok</tt>.  Next, add the <tt>CII</tt> species in the same way.
+
+<div class="p"><!----></div>
+<img src="screenshots/GCMspecies.png" alt="screenshots/GCMspecies.png" />
+<div class="p"><!----></div>
+</li>
+
+<li> Select <tt>Add Influence</tt>, change the input to <tt>CI</tt>, change
+  the output to <tt>CII</tt>, change the promoter to <tt>PR</tt>, and the
+  type to <tt>repression</tt>.  Next, add an activation influence between
+  <tt>CII</tt> and <tt>CI</tt> on promoter <tt>PRE</tt>.
+
+<div class="p"><!----></div>
+<img src="screenshots/influence.png" alt="screenshots/influence.png" />
+<div class="p"><!----></div>
+</li>
+
+<li> Select <tt>Save GCM</tt>, highlight <tt>CI_CII.gcm</tt> file, and
+  right click to select <tt>View Genetic Circuit</tt>.
+
+<div class="p"><!----></div>
+<img src="screenshots/viewGenNet.png" alt="screenshots/viewGenNet.png" />
+<div class="p"><!----></div>
+</li>
+</ol>
+
+<div class="p"><!----></div>
+  <h2><a name="tth_sEc4">
+4</a>&nbsp;&nbsp;Analysis</h2>
+
+<div class="p"><!----></div>
+The following instructions describe how to analyze the GCM file just 
+created.  The SBML file can also be simulated using the following steps.  
+
+<ol type="1">
+<li> Select <tt>Save GCM</tt>, highlight <tt>CI_CII.gcm</tt> file, and
+  right click to select <tt>Create Analysis View</tt>.
+
+<div class="p"><!----></div>
+<img src="screenshots/GCMAnalysis.png" alt="screenshots/GCMAnalysis.png" />
+<div class="p"><!----></div>
+</li>
+
+<li> In the newly opened window, select <tt>ODE</tt>.
+      Also, in this window, change the time limit to 2100.0 and print interval
+      to 10.0. Finally, select <tt>Save and Run</tt> at the bottom of the window.
 
 <div class="p"><!----></div>
 <img src="screenshots/analysisView.png" alt="screenshots/analysisView.png" />
+
+<div class="p"><!----></div>
+
 <div class="p"><!----></div>
 </li>
 
-<li> After the simulation completes (it may take a little while), click on
-      the graph tab.
+<li> After the simulation completes, click on the graph tab.
 
 <div class="p"><!----></div>
 <img src="screenshots/emptyGraph.png" alt="screenshots/emptyGraph.png" />
 <div class="p"><!----></div>
 </li>
 
-<li> Click on the graph to bring up the graph editor.  Highlight Average,
-      if not already highlighted, select CI2 and CII, change Title to
-      "Average", change X-Axis Label to "Time (seconds)", and change
-      Y-Axis Label to "Number of Molecules".  Press the OK button.
-      Click on Export and enter file name of <tt>average.jpg</tt>.
-      Repeat these steps to generate graphs for the standard deviation
-      <tt>stddev.jpg</tt> and run-1 <tt>run1.jpg</tt>.  
-      Note that you can use the "Deselect All" button to
-      remove all items from the graph.
+<li> Double click on the graph to bring up the graph editor.
+  Highlight Average, if not already highlighted, select CI and CII, 
+change the Title to "ODE Simulation Results", 
+change the X-Axis Label to "Time
+(seconds)", and change the Y-Axis Label to "Number of Molecules".  
+Press the OK button.  Click on Export and enter file name of <tt>ode.jpg</tt>.
 
 <div class="p"><!----></div>
-<img src="screenshots/editGraph.png" alt="screenshots/editGraph.png" />
+<img src="screenshots/odeResults.png" alt="screenshots/odeResults.png" />
 <div class="p"><!----></div>
 </li>
 
-<li> Click on the SBML editor tab.  Change the initial amounts of OR and
-      PRE to 10.  Press the Save and Run button.
+<li> Select the simulation options tab again, select <tt>Monte
+    Carlo</tt>, change the number of runs to 20, and set the simulation ID
+  to <tt>ssa</tt>.  Double click on the graph to bring up the graph editor.
+Open the ssa simulation directory, and highlight <tt>run-1</tt>.
+Select CI and CII, change Title to "SSA Simulation Results", 
+change the X-Axis Label to "Time (seconds)", and change the Y-Axis
+Label to "Number of Molecules".  Press the OK button.  Click on
+Export and enter file name of <tt>ssa-1.jpg</tt>.
+Repeat these steps to generate graphs for the average (<tt>
+  average.jpg</tt>) and standard deviation (<tt>stddev.jpg</tt>).
+Note that you can use the "Deselect All" button to
+remove all items from the graph.
+
+<div class="p"><!----></div>
+<img src="screenshots/ssaResults.png" alt="screenshots/ssaResults.png" />
+<div class="p"><!----></div>
+</li>
+
+<li> Click on the parameter editor tab.  Highlight the <tt>PR</tt> 
+      species, and select <tt>Edit Species</tt>.  Select <tt>Custom</tt> for
+      the initial amount of <tt>PR</tt> and change it to 5.  Press the 
+      Save and Run button.
       Click on the graph tab and following the steps above, create the 
       following plots <tt>average_10.jpg</tt>,  <tt>run1_10.jpg</tt>, and
       <tt>stddev_10.jpg</tt>.  
@@ -430,8 +491,8 @@ created.
 </ol>
 
 <div class="p"><!----></div>
- <h2><a name="tth_sEc4">
-4</a>&nbsp;&nbsp;Abstraction</h2>
+ <h2><a name="tth_sEc5">
+5</a>&nbsp;&nbsp;Abstraction</h2>
 
 <div class="p"><!----></div>
 The example in this section illustrates abstraction-based synthesis. 
@@ -499,8 +560,8 @@ The example in this section illustrates abstraction-based synthesis.
 </ol>
 
 <div class="p"><!----></div>
- <h2><a name="tth_sEc5">
-5</a>&nbsp;&nbsp;GCM Editor</h2>
+ <h2><a name="tth_sEc6">
+6</a>&nbsp;&nbsp;GCM Editor</h2>
 
 <div class="p"><!----></div>
 This section gives an example using the GCM editor.
@@ -619,5 +680,5 @@ This section gives an example using the GCM editor.
 T<sub><font size="-1">E</font></sub>X
 by <a href="http://hutchinson.belmont.ma.us/tth/">
 T<sub><font size="-1">T</font></sub>H</a>,
-version 3.81.<br />On 12 Aug 2008, 14:10.</small>
+version 3.81.<br />On 13 Aug 2008, 22:29.</small>
 </html>
