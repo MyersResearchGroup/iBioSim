@@ -25,7 +25,7 @@
 <div class="p"><!----></div>
 
 <h3 align="center">Created: August 11th, 2008<br />
-  Last Revised: August 13th, 2008
+  Last Revised: August 14th, 2008
  </h3>
 
 <div class="p"><!----></div>
@@ -41,9 +41,11 @@
 <a href="#tth_sEc4"
 >4&nbsp; Analysis</a><br />
 <a href="#tth_sEc5"
->5&nbsp; Abstraction</a><br />
+>5&nbsp; Probabilistic Analysis</a><br />
 <a href="#tth_sEc6"
->6&nbsp; GCM Editor</a><br />
+>6&nbsp; GCM Learning</a><br />
+<a href="#tth_sEc7"
+>7&nbsp; Genetic Circuit Design</a><br />
 
 
 <div class="p"><!----></div>
@@ -109,8 +111,8 @@ to <tt>mole</tt>.  Select <tt>Add Species</tt> again and enter <tt>CI2</tt> as t
 </li>
 
 <li> Select <tt>Add Parameter</tt> and enter <tt>nd</tt> as the ID,
-      <tt>Number of molecules in dimer</tt> as the name, and change the
-      units to <tt>dimensionless</tt>.
+      <tt>Number of molecules in dimer</tt> as the name, the value to be 2,
+      and change the units to <tt>dimensionless</tt>.
 
 <div class="p"><!----></div>
 <img src="screenshots/parameter.png" alt="screenshots/parameter.png" />
@@ -182,7 +184,15 @@ to <tt>mole</tt>.  Select <tt>Add Species</tt> again and enter <tt>CI2</tt> as t
       <tt>View in Browser</tt>.
 
 <div class="p"><!----></div>
-<img src="screenshots/viewNet.png" alt="screenshots/viewNet.png" />
+<img src="screenshots/viewNet.png" alt="screenshots/viewNet.png" /><br />
+
+<table>
+<tr><td align="center"><img src="screenshots/viewNetwork.png" alt="screenshots/viewNetwork.png" /> </td><td align="center"><img src="screenshots/viewBrowser.png" alt="screenshots/viewBrowser.png" />
+</td></tr></table>
+
+
+<div class="p"><!----></div>
+
 <div class="p"><!----></div>
 </li>
 
@@ -376,6 +386,9 @@ This section describes how to construct a GCM model for this example:
 
 <div class="p"><!----></div>
 <img src="screenshots/GCMspecies.png" alt="screenshots/GCMspecies.png" />
+
+<div class="p"><!----></div>
+
 <div class="p"><!----></div>
 </li>
 
@@ -393,7 +406,11 @@ This section describes how to construct a GCM model for this example:
   right click to select <tt>View Genetic Circuit</tt>.
 
 <div class="p"><!----></div>
-<img src="screenshots/viewGenNet.png" alt="screenshots/viewGenNet.png" />
+
+<table>
+<tr><td align="center"><img src="screenshots/viewGenNet.png" alt="screenshots/viewGenNet.png" /></td><td align="center"><img src="screenshots/viewGCM.png" alt="screenshots/viewGCM.png" />
+</td></tr></table>
+
 <div class="p"><!----></div>
 </li>
 </ol>
@@ -407,8 +424,9 @@ The following instructions describe how to analyze the GCM file just
 created.  The SBML file can also be simulated using the following steps.  
 
 <ol type="1">
-<li> Select <tt>Save GCM</tt>, highlight <tt>CI_CII.gcm</tt> file, and
-  right click to select <tt>Create Analysis View</tt>.
+<li> Select <tt>Save GCM</tt>, highlight <tt>CI_CII.gcm</tt> file,
+  right click to select <tt>Create Analysis View</tt>, and set the
+  analysis ID to <tt>sim</tt>.
 
 <div class="p"><!----></div>
 <img src="screenshots/GCMAnalysis.png" alt="screenshots/GCMAnalysis.png" />
@@ -427,14 +445,8 @@ created.  The SBML file can also be simulated using the following steps.
 <div class="p"><!----></div>
 </li>
 
-<li> After the simulation completes, click on the graph tab.
-
-<div class="p"><!----></div>
-<img src="screenshots/emptyGraph.png" alt="screenshots/emptyGraph.png" />
-<div class="p"><!----></div>
-</li>
-
-<li> Double click on the graph to bring up the graph editor.
+<li> After the simulation completes, click on the <tt>TSD Graph</tt> tab.
+Double click on the graph to bring up the graph editor.
   Highlight Average, if not already highlighted, select CI and CII, 
 change the Title to "ODE Simulation Results", 
 change the X-Axis Label to "Time
@@ -442,13 +454,19 @@ change the X-Axis Label to "Time
 Press the OK button.  Click on Export and enter file name of <tt>ode.jpg</tt>.
 
 <div class="p"><!----></div>
-<img src="screenshots/odeResults.png" alt="screenshots/odeResults.png" />
+<img src="screenshots/odeResults.png" alt="screenshots/odeResults.png" /><br />
+<img src="screenshots/odeSimResults.png" alt="screenshots/odeSimResults.png" />
+
+<div class="p"><!----></div>
+
 <div class="p"><!----></div>
 </li>
 
 <li> Select the simulation options tab again, select <tt>Monte
-    Carlo</tt>, change the number of runs to 20, and set the simulation ID
-  to <tt>ssa</tt>.  Double click on the graph to bring up the graph editor.
+    Carlo</tt>, change the number of runs to 100, and set the simulation ID
+  to <tt>ssa</tt>.  Click on <tt>Save and Run</tt>.  Click on the <tt>TSD
+    Graph</tt> tab.
+Double click on the graph to bring up the graph editor.
 Open the ssa simulation directory, and highlight <tt>run-1</tt>.
 Select CI and CII, change Title to "SSA Simulation Results", 
 change the X-Axis Label to "Time (seconds)", and change the Y-Axis
@@ -460,7 +478,11 @@ Note that you can use the "Deselect All" button to
 remove all items from the graph.
 
 <div class="p"><!----></div>
-<img src="screenshots/ssaResults.png" alt="screenshots/ssaResults.png" />
+<img src="screenshots/ssaResults.png" alt="screenshots/ssaResults.png" /><br />
+<img src="screenshots/ssaSimResults.png" alt="screenshots/ssaSimResults.png" />
+
+<div class="p"><!----></div>
+
 <div class="p"><!----></div>
 </li>
 
@@ -468,208 +490,233 @@ remove all items from the graph.
       species, and select <tt>Edit Species</tt>.  Select <tt>Custom</tt> for
       the initial amount of <tt>PR</tt> and change it to 5.  Press the 
       Save and Run button.
-      Click on the graph tab and following the steps above, create the 
-      following plots <tt>average_10.jpg</tt>,  <tt>run1_10.jpg</tt>, and
-      <tt>stddev_10.jpg</tt>.  
+      Click on the <tt>TSD Graph</tt> tab and following the steps above, 
+      create the 
+      following plots <tt>ssa-1_5.jpg</tt>, <tt>average_5.jpg</tt>, and
+      <tt>stddev_5.jpg</tt>.  
 
 <div class="p"><!----></div>
-<img src="screenshots/paramEdit.png" alt="screenshots/paramEdit.png" />
+<img src="screenshots/paramEdit.png" alt="screenshots/paramEdit.png" /><br />
+<img src="screenshots/ssaSimResults5.png" alt="screenshots/ssaSimResults5.png" />
+
+<div class="p"><!----></div>
+
 <div class="p"><!----></div>
 </li>
 
-<li> Simulate your lambda model with BioSim using the ODE method rkf45 with
-      a time limit of 2100 and print interval of 50.
-      Make a note of the simulation time and plot CI2 and CII.  
-      Next, simulate using the Euler method.  Make a note of the simulation time
-      and add CI2 and CII from the euler results to your graph.  
-      How do the simulation times and results compare?
-      Change the time step and rerun the Euler method.  Repeat until the results
-      match up well.  What time step is required for a good match?
-      How do the simulation times compare?
+<li> Now go back to the parameter editor tab, 
+      and change the initial amount for <tt>PR</tt> to <tt>Sweep</tt>, set
+      the start to 2, stop to 8, step to 3.  Press the save and run
+      button.  Click on the <tt>TSD Graph</tt> tab and double click on the graph to
+      open the graph editor.  Notice the new simulations id's
+      generated for each of the run with PR of 2, PR of 5, and PR of
+      8.  Deselect all from the current graph, and go and add the 
+      average value of <tt>CI</tt> from each of these simulation runs. 
+
+<div class="p"><!----></div>
+<img src="screenshots/sweep.png" alt="screenshots/sweep.png" /><br />
+<img src="screenshots/sweepPR.png" alt="screenshots/sweepPR.png" />
+
+<div class="p"><!----></div>
+
+<div class="p"><!----></div>
+
+<div class="p"><!----></div>
+</li>
+
+<li> Go back to the Parameter Editor tab and change <tt>PR</tt> back to 
+<tt>Original</tt> value type.  Go back to the Simulation Options tab,
+select <tt>Abstraction</tt> and change the simulation ID to <tt>abs</tt>.
+Press <tt>Save and Run</tt> and note that the simulation time should be
+substantially faster.
+Go back to the <tt>TSD Graph</tt> tab and double click on the graph to bring up
+the graph editor.  Deselect all and add the average value of <tt>CI</tt>
+from both the <tt>abs</tt> and <tt>ssa</tt> simulations.
 <div class="p"><!----></div>
 </li>
 </ol>
 
 <div class="p"><!----></div>
- <h2><a name="tth_sEc5">
-5</a>&nbsp;&nbsp;Abstraction</h2>
+<img src="screenshots/absResults.png" alt="screenshots/absResults.png" />
 
 <div class="p"><!----></div>
-The example in this section illustrates abstraction-based synthesis. 
+  <h2><a name="tth_sEc5">
+5</a>&nbsp;&nbsp;Probabilistic Analysis</h2>
+
+<div class="p"><!----></div>
+This example illustrates how <tt>iBioSim</tt> can be used for
+probabilistic analysis.
 
 <ol type="1">
-<li> Press the Save SBML button.
+<li> Go back to the GCM editor for <tt>CI_CII</tt>.  
+Select <tt>Save as SBML Template</tt> and give it the name <tt>
+  CI_CIIenv</tt>.  Use the <tt>SBML File</tt> pulldown menu to select
+<tt>CI_CIIenv.sbml</tt> to associate with this GCM.  Press the
+<tt>Save GCM</tt> button.
+
+<div class="p"><!----></div>
+<img src="screenshots/linkSBML.png" alt="screenshots/linkSBML.png" />
 <div class="p"><!----></div>
 </li>
 
-<li> Create or open an analysis view on your lambda model.
+<li> Double click on the <tt>CI_CIIenv.sbml</tt> file to open it in an
+  SBML editor.  Select the <tt>Initial
+    Assignments/Rules/Constraints/Events</tt> tab, and select <tt>Add
+    Constraint</tt>.  Add a constraint with ID <tt>CI20</tt>, constraint
+<tt>geq(CI, 20)</tt>, and message <tt>CI greater than 20 molecules</tt>.
+Repeat these steps to add constraints for CII  &#8805; 30, and t  &#8805; 200. Be sure to press the <tt>Save SBML</tt> button when you are done.
+
+<div class="p"><!----></div>
+<img src="screenshots/constraint.png" alt="screenshots/constraint.png" />
+
+<div class="p"><!----></div>
+
 <div class="p"><!----></div>
 </li>
 
-<li> Select "None" and "Network", and press the Save and Run button. 
-      Count the number of species and reactions in your model.
+<li> Go back to your analysis view by clicking on the <tt>sim</tt> tab.
+Remove the simulation ID and press <tt>Save and Run</tt>.  Click on the 
+<tt>Probability Graph</tt> tab.
+Double click on the graph to bring up the probability graph
+  editor.  Change the title to <tt>Probability Results</tt> and the 
+Y-axis label to <tt>Percent</tt>.  Click on the <tt>sim-rep</tt> file on the 
+left-hand side.  Select <tt>CI20</tt>, <tt>CII30</tt>, and <tt>t200</tt> to
+graph them.  Press <tt>Ok</tt>.
+
+<div class="p"><!----></div>
+<img src="screenshots/editProbGraph.png" alt="screenshots/editProbGraph.png" />
 <div class="p"><!----></div>
 </li>
 
-<li> Select "Monte Carlo", set the Time Limit to 2100.0, Print Interval to
-      100.0, and Runs to 20.  Press the Save and Run button and record the
-      simulation time.
-<div class="p"><!----></div>
-</li>
+<li> Export the graph as a jpg file by selecting the <tt>Export</tt>
+  button and entering the filename <tt>prob.jpg</tt>.
 
-<li> Create a new analysis view for your lambda model and 
-      select  "Abstraction" this time.
 <div class="p"><!----></div>
-</li>
-
-<li> In the abstraction tab, change rapid equilibrium conditions 1 and 2 
-      to 1000.0 as well as QSSA condition to 1000.0.  Select "Network" then 
-      save and run.  Count the number of species and reactions in your model.
-<div class="p"><!----></div>
-</li>
-
-<li> Select "Monte Carlo", set the Time Limit to 2100.0, Print Interval to
-      100.0, and Runs to 20.  Press the Save and Run button and record the
-      simulation time.
-<div class="p"><!----></div>
-</li>
-
-<li> Select File &#8594; New &#8594; Graph and enter a name for
-      your new top-level graph.
-<div class="p"><!----></div>
-</li>
-
-<li> Click on the graph and find the average simulation results from your
-      orginal model and graph CII and CIt.  Also, add to this graph from
-      your abstracted model CII and CI.  How well do they compare?  
-      Send me by email a jpg of your result.
-<div class="p"><!----></div>
-</li>
-
-<li> Go back to your analysis view in which you did abstraction and change
-      all the conditions back to 0.1.  Regenerate the network and record the
-      number of species and reactions.  Regenerate the simulation results and
-      record the simulation time.
-<div class="p"><!----></div>
-</li>
-
-<li> Go back to the top-level graph which should have updated results.  
-      How does it compare now?
+<img src="screenshots/probResults.png" alt="screenshots/probResults.png" />
 <div class="p"><!----></div>
 </li>
 </ol>
 
 <div class="p"><!----></div>
  <h2><a name="tth_sEc6">
-6</a>&nbsp;&nbsp;GCM Editor</h2>
+6</a>&nbsp;&nbsp;GCM Learning</h2>
 
 <div class="p"><!----></div>
-This section gives an example using the GCM editor.
+This section describes how a GCM can be learned from time series data.
 
 <ol type="1">
-<li> Create a new project named "xor",
-      select File &#8594; New &#8594; Genetic Circuit Model, 
-      and enter the name <tt>xor</tt>.
+<li> Highlight <tt>CI_CII.gcm</tt>, right click on it, and select
+<tt>Create Learn View</tt>.  Give the learn view the ID <tt>learn</tt>.
+
+<div class="p"><!----></div>
+<img src="screenshots/createLearn.png" alt="screenshots/createLearn.png" />
 <div class="p"><!----></div>
 </li>
 
-<li> Add species A and B of type constant.  Be sure to fill in both
-      the ID and Name fields.
+<li> At this point a <tt>Learn View</tt> will open, and you could begin
+to add your experimental data.  In this demo, we will just utilize our
+simulation data as synthetic experimental data.  To do this, click
+<tt>Copy From View</tt>, and select <tt>sim/ssa</tt>.  Highlight 
+<tt>sim/ssa/run-1.tsd</tt>, and you should see the simulation data for 
+<tt>CI</tt> and <tt>CII</tt> appear on the right in the data editor. 
+
+<div class="p"><!----></div>
+<img src="screenshots/dataManager.png" alt="screenshots/dataManager.png" />
+
+<div class="p"><!----></div>
+
 <div class="p"><!----></div>
 </li>
 
-<li> Add species Abar, Bbar, X, Y, and C of type normal.  Again,
-      fill in the ID and Name fields.
+<li> Click on the <tt>Learn</tt> tab.  Here you can edit the various
+  learning options.  For example, you can either use auto generated
+  levels or user generated levels for your data encoding.  Select 
+<tt>Use User Generated Levels</tt> which will make the levels below
+editable.  You can also select how many bins to use.  Change the
+number of bins for both <tt>CI</tt> and <tt>CII</tt> to 3.  At this point,
+you can ask the tool to suggest levels by clicking on the <tt>Suggest
+  Levels</tt> button.  Finally, press <tt>Save and Learn</tt> which will
+bring up the GCM that has been learned from this experimental data
+using Graphviz's dotty program.
+
+<div class="p"><!----></div>
+<img src="screenshots/learn.png" alt="screenshots/learn.png" />
+<div class="p"><!----></div>
+</li>
+</ol>
+
+<div class="p"><!----></div>
+ <h2><a name="tth_sEc7">
+7</a>&nbsp;&nbsp;Genetic Circuit Design</h2>
+
+<div class="p"><!----></div>
+This last section describes how <tt>iBioSim</tt> can be used to design
+genetic logic gates.
+
+<ol type="1">
+<li> Select <tt>File &#8594; New &#8594; Genetic Circuit
+    Model</tt> and give it the ID <tt>gate</tt>.
 <div class="p"><!----></div>
 </li>
 
-<li> Add an influence of type repression with input A and output Abar and 
-      dimer of 2.  You have just created an inverter.
-      Create another inverter from B to Bbar.
+<li> Add promoters <tt>P1</tt> and <tt>P2</tt>, species <tt>A</tt>, <tt>B</tt>,
+  and <tt>C</tt> (make <tt>A</tt> and <tt>B</tt> type <tt>boundary</tt> and <tt>
+    C</tt> type normal), and repression influences from <tt>A</tt> to <tt>C</tt> on
+  <tt>P1</tt> and <tt>B</tt> to <tt>C</tt> on <tt>P2</tt>.  Save as an SBML
+  template named <tt>gateEnv</tt>, and associate that SBML file with this
+  GCM.  Finally, save the GCM.
 <div class="p"><!----></div>
 </li>
 
-<li> Add a promoter named PX1 and another promoter named PX2.
+<li> Open <tt>gateEnv.sbml</tt> in an SBML editor.  Click on the<br />
+      <tt>Initial Assignments/Rules/Constraints/Events</tt> tab, and
+      select <tt>Add Event</tt>.
 <div class="p"><!----></div>
 </li>
 
-<li> Add a repression influence from A to X and use the promoter 
-      PX1 with dimer of 2.
+<li> In the event editor, give a trigger of <tt>geq(t,2000)</tt>.   
+      Press <tt>Add Assignment</tt>, select variable <tt>A</tt>, and enter
+      60 in the <tt>Assignment</tt> field.  Press <tt>Add</tt> for the event
+      assignment and <tt>Add</tt> for the event.  Repeat these steps to
+      create an assignment to <tt>B</tt> of 60 at time 4000.  Note that
+      you may ignore the warnings.  These can be suppressed by
+      changing your preferences and deselecting <tt>Check for
+        undeclared units in SBML</tt>.  Be sure to prese <tt>Save SBML</tt>
+      when you are done.
 <div class="p"><!----></div>
 </li>
 
-<li> Add a repression influence from Bbar to X and use the promoter 
-      PX2 with dimer of 2.  You have just created a NAND gate.
+<li> Highlight <tt>gate.gcm</tt>, right-click, and select <tt>Create
+    Analysis View</tt>.  Give it the ID <tt>simGate</tt>.
 <div class="p"><!----></div>
 </li>
 
-<li> Create another NAND gate with inputs Abar and B and output Y.
+<li> In the analysis view, change the options to 
+      <tt>Monte Carlo</tt>, time limit of 6000, print interval of 30,
+      runs of 100.  
+      Press <tt>Save and Run</tt>.
 <div class="p"><!----></div>
 </li>
 
-<li> Finally, create another NAND gate with inputs X and Y and 
-      output C.
+<li> Select the <tt>TSD Graph</tt> tab and graph the averages of <tt>
+    A</tt>,  <tt>B</tt>, and <tt>C</tt>.  The behavior should be that of a Nand
+  gate.
+
+<div class="p"><!----></div>
+<img src="screenshots/nandResults.png" alt="screenshots/nandResults.png" />
+
+<div class="p"><!----></div>
+
 <div class="p"><!----></div>
 </li>
 
-<li> Change the <tt>decay</tt> parameter to 0.01.
-<div class="p"><!----></div>
-</li>
+<li> Go back to the GCM editor for <tt>gate</tt>.  Change the promoter
+  on the influence from <tt>B</tt> to <tt>C</tt> to <tt>P1</tt>, and save the
+  GCM.  Go back to your analysis view and press <tt>Save and Run</tt>.
+  The behavior should now be that of a Nor gate.
 
-<li> Press the "Save GCM" and "Save as SBML" buttons.
 <div class="p"><!----></div>
-</li>
-
-<li> Create an analysis view for your <tt>xor.sbml</tt> file.
-<div class="p"><!----></div>
-</li>
-
-<li> Select the User Defined Data tab and click on the 
-      "Use User Defined Data" button.
-<div class="p"><!----></div>
-</li>
-
-<li> Add a data point for A at time step 1000 to go to 20.
-<div class="p"><!----></div>
-</li>
-
-<li> Add a data point for B at time step 2000 to go to 20.
-<div class="p"><!----></div>
-</li>
-
-<li> Add a data point for A at time step 3000 to go to 0.
-<div class="p"><!----></div>
-</li>
-
-<li> Add a data point for B at time step 4000 to go to 0.
-<div class="p"><!----></div>
-</li>
-
-<li> Select the options tab, select "abstraction", and 
-      set a time limit of 5000, a print interval of 200, and 20 runs.
-<div class="p"><!----></div>
-</li>
-
-<li> Select the abstraction tab, and add species C to the interesting 
-      species list.
-<div class="p"><!----></div>
-</li>
-
-<li> Press the "Save Parameters" button then "Save and Run" button.
-<div class="p"><!----></div>
-</li>
-
-<li> Create a graph that includes A, B, and C.  Email a jpg
-      of this graph to me.
-<div class="p"><!----></div>
-</li>
-
-<li> Close your analysis view and edit your <tt>xor.gcm</tt>.  Try adjusting
-      some of the global parameters.  Remember to save both your <tt>gcm</tt>
-      <tt>sbml</tt> files.  Reopen your analysis view and re-run your simulation.
-      Send me a few different graphs.  Change the titles of the graphs 
-      and provide a description in your email of the graphs as to what you
-      changed.
+<img src="screenshots/norResults.png" alt="screenshots/norResults.png" />
 <div class="p"><!----></div>
 </li>
 </ol>
@@ -680,5 +727,5 @@ This section gives an example using the GCM editor.
 T<sub><font size="-1">E</font></sub>X
 by <a href="http://hutchinson.belmont.ma.us/tth/">
 T<sub><font size="-1">T</font></sub>H</a>,
-version 3.81.<br />On 13 Aug 2008, 22:29.</small>
+version 3.81.<br />On 14 Aug 2008, 14:47.</small>
 </html>

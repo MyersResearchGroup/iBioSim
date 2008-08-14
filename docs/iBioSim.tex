@@ -13,7 +13,7 @@
   Madsen, Nam Nguyen} 
 
 \date{Created: August 6th, 2008\\
-  Last Revised: August 10th, 2008
+  Last Revised: August 14th, 2008
 }
 
 \begin{document}
@@ -212,10 +212,10 @@ default xhtml browser.
 
 \begin{center}
 \begin{tabular}{ccc}
-\includegraphics[height=74mm]{screenshots/modGCM} & &
-\includegraphics[height=74mm]{screenshots/modSBML} \\ \\
-\includegraphics[height=42mm]{screenshots/modAnalysis} & &
-\includegraphics[height=42mm]{screenshots/modLearn}
+\includegraphics[height=65mm]{screenshots/modGCM} & &
+\includegraphics[height=65mm]{screenshots/modSBML} \\ \\
+\includegraphics[height=35mm]{screenshots/modAnalysis} & &
+\includegraphics[height=35mm]{screenshots/modLearn}
 \end{tabular}
 \end{center}
 
@@ -254,6 +254,12 @@ editing this item, click save to save the changes to the item.
 After the model is complete, press the Save SBML button to store
 the model.  The Save and Check SBML button also saves the model, but
 in this case it also checks the models consistency.
+Note that many checks are done on the fly, so it should be difficult
+to create models with consistency problems.  However, if a user does
+not wish to be warned about undeclared units or does not wish to have
+units checked at all can set preferences to turn this off
+(see Section~\ref{Preferences}).  The Save and Check SBML button
+though will still present all the unit warnings and errors.
 Finally, the Save As button can also be used to store the
 model, but in this case, a new model ID will be requested and the
 model will be saved using that ID. 
@@ -502,7 +508,7 @@ base unit using the relation below:
 Compartment types are used to relate multiple compartments.  As shown
 below, a compartment type includes an ID and an optional name field.
 \begin{center}
-\includegraphics[height=40mm]{screenshots/compType}
+\includegraphics[height=50mm]{screenshots/compType}
 \end{center}
 
 \subsubsection{\label{specTypes}Species Types}
@@ -511,7 +517,7 @@ below, a compartment type includes an ID and an optional name field.
 Species types are used to relate multiple species.  As shwon below, a 
 species type includes an ID and an optional name field.
 \begin{center}
-\includegraphics[height=40mm]{screenshots/specType}
+\includegraphics[height=50mm]{screenshots/specType}
 \end{center}
 
 \subsection{\label{InitRuleConstEvent}Initial Assignments/Rules/Constraints/Events}
@@ -535,7 +541,7 @@ the initial value of a compartment size, species amount or
 concentration, or parameter.  The value of this formula takes precedence over
 the initial value specified in the object.  
 \begin{center}
-\includegraphics[height=50mm]{screenshots/initial}
+\includegraphics[height=40mm]{screenshots/initial}
 \end{center}
 
 \subsubsection{\label{rules}Rules}
@@ -572,7 +578,7 @@ left-hand side to those that are valid.  The user should then select
 a variable, and enter a SBML math formula (see Section~\ref{SBMLMath})
 for the rule.  When editing a rule, the user cannot modify the rule type. 
 \begin{center}
-\includegraphics[height=45mm]{screenshots/rule}
+\includegraphics[height=40mm]{screenshots/rule}
 \end{center}
 
 \subsubsection{\label{constraints}Constraints}
@@ -615,6 +621,8 @@ assignment.
 \includegraphics[height=95mm]{screenshots/event}
 \end{center}
 
+\clearpage
+
 \section{\label{GCMEdit}GCM Editor}
 
 \noindent
@@ -625,7 +633,7 @@ A GCM includes promoters (see Section~\ref{Promoters}),
 GCM species (see Section~\ref{GCMSpecies}), 
 influences (see Section~\ref{Influences}), 
 GCM parameters (see Section~\ref{GCMParameters}), and an optional
-SBML file (see Section~\ref{SBMLFile}).  GCM species, influences, 
+SBML file.  GCM species, influences, 
 and promoters can be added, removed, or edited. Parameters can only be edited. 
 An SBML file can also be selected to merge with the SBML generated from a GCM.
 This allows either customization of the SBML model or the addition of SBML
@@ -753,8 +761,9 @@ GCM parameters are a list of global parameters that are used
 when generating the SBML model for the GCM.  The parameter list
 allows the user an easy way to change all the parameter values in
 a convenient location.  If a parameter in the GCM is set to
-default, it will use the value found in the GCM parameter.  The 
-GCM parameters are listed below:
+default, it will use the value found in the GCM parameter.  
+These defaults can be modified in the user preferences
+(see Section~\ref{Preferences}).  The GCM parameters are listed below:
 
 \begin{center}
 \begin{tabular}{|c|c|c|c|c|}
@@ -1334,6 +1343,22 @@ If no extension is given, then the file type is the one
 specified in the file filter (default is pdf).  For image (i.e.,
 not data) file types, you will be prompted to give a desired
 pixel height and width for the file before the file is exported. 
+
+\section{\label{Preferences}Preferences}
+
+\noindent
+User preferences can be set by selecting the {\tt Preferences} option
+under the {\tt File} menu on Linux and Windows or the {\tt iBioSim} 
+menu on MacOS.  As shown below, the user can decided whether they wish
+to see warnings about undeclared units in SBML and whether they wish
+to check units at all.  The user can also change the GCM default
+parameter values by clicking on the {\tt GCM Defaults} button.
+\begin{center}
+\begin{tabular}{cc}
+\includegraphics[height=80mm]{screenshots/SBMLPref} &
+\includegraphics[height=80mm]{screenshots/GCMPref}
+\end{tabular}
+\end{center}
 
 \section{\label{GCM}Genetic Circuit Model Format}
 

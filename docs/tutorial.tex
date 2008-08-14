@@ -12,7 +12,7 @@
 \author{Chris J. Myers}
 
 \date{Created: August 11th, 2008\\
-  Last Revised: August 13th, 2008
+  Last Revised: August 14th, 2008
 }
 
 \begin{document}
@@ -71,8 +71,8 @@ to {\tt mole}.  Select {\tt Add Species} again and enter {\tt CI2} as the ID,
 \includegraphics[height=60mm]{screenshots/species}
 
 \item Select {\tt Add Parameter} and enter {\tt nd} as the ID,
-      {\tt Number of molecules in dimer} as the name, and change the
-      units to {\tt dimensionless}.
+      {\tt Number of molecules in dimer} as the name, the value to be 2,
+      and change the units to {\tt dimensionless}.
 
 \includegraphics[height=50mm]{screenshots/parameter}
 
@@ -121,7 +121,13 @@ to {\tt mole}.  Select {\tt Add Species} again and enter {\tt CI2} as the ID,
       Highlight {\tt lambda.sbml}, using right mouse button, select 
       {\tt View in Browser}.
 
-\includegraphics[height=60mm]{screenshots/viewNet}
+\includegraphics[height=60mm]{screenshots/viewNet}\\
+\begin{tabular}{cc}
+\includegraphics[height=60mm]{screenshots/viewNetwork} &
+\includegraphics[height=100mm]{screenshots/viewBrowser}
+\end{tabular}
+
+\clearpage
 
 \item Go back to the SBML editor complete the construction of the
       chemical reaction network shown below:
@@ -200,6 +206,8 @@ This section describes how to construct a GCM model for this example:
 
 \includegraphics[height=55mm]{screenshots/GCMspecies}
 
+\clearpage
+
 \item Select {\tt Add Influence}, change the input to {\tt CI}, change
   the output to {\tt CII}, change the promoter to {\tt PR}, and the
   type to {\tt repression}.  Next, add an activation influence between
@@ -210,7 +218,10 @@ This section describes how to construct a GCM model for this example:
 \item Select {\tt Save GCM}, highlight {\tt CI\_CII.gcm} file, and
   right click to select {\tt View Genetic Circuit}.
 
-\includegraphics[height=60mm]{screenshots/viewGenNet}
+\begin{tabular}{cc}
+\includegraphics[height=60mm]{screenshots/viewGenNet}&
+\includegraphics[height=60mm]{screenshots/viewGCM}
+\end{tabular}
 \end{enumerate}
 
 \clearpage 
@@ -220,8 +231,9 @@ This section describes how to construct a GCM model for this example:
 The following instructions describe how to analyze the GCM file just 
 created.  The SBML file can also be simulated using the following steps.  
 \begin{enumerate}
-\item Select {\tt Save GCM}, highlight {\tt CI\_CII.gcm} file, and
-  right click to select {\tt Create Analysis View}.
+\item Select {\tt Save GCM}, highlight {\tt CI\_CII.gcm} file,
+  right click to select {\tt Create Analysis View}, and set the
+  analysis ID to {\tt sim}.
 
 \includegraphics[height=60mm]{screenshots/GCMAnalysis}
 
@@ -233,22 +245,26 @@ created.  The SBML file can also be simulated using the following steps.
 
 \clearpage
 
-\item After the simulation completes, click on the graph tab.
-
-\includegraphics[height=75mm]{screenshots/emptyGraph}
-
-\item Double click on the graph to bring up the graph editor.
+\item After the simulation completes, click on the {\tt TSD Graph} tab.
+%% \includegraphics[height=30mm]{screenshots/emptyGraph}
+%% \item 
+Double click on the graph to bring up the graph editor.
   Highlight Average, if not already highlighted, select CI and CII, 
 change the Title to ``ODE Simulation Results'', 
 change the X-Axis Label to ``Time
 (seconds)'', and change the Y-Axis Label to ``Number of Molecules''.  
 Press the OK button.  Click on Export and enter file name of {\tt ode.jpg}.
 
-\includegraphics[height=80mm]{screenshots/odeResults}
+\includegraphics[height=80mm]{screenshots/odeResults}\\
+\includegraphics[height=90mm]{screenshots/odeSimResults}
+
+\clearpage
 
 \item Select the simulation options tab again, select {\tt Monte
-    Carlo}, change the number of runs to 20, and set the simulation ID
-  to {\tt ssa}.  Double click on the graph to bring up the graph editor.
+    Carlo}, change the number of runs to 100, and set the simulation ID
+  to {\tt ssa}.  Click on {\tt Save and Run}.  Click on the {\tt TSD
+    Graph} tab.
+Double click on the graph to bring up the graph editor.
 Open the ssa simulation directory, and highlight {\tt run-1}.
 Select CI and CII, change Title to ``SSA Simulation Results'', 
 change the X-Axis Label to ``Time (seconds)'', and change the Y-Axis
@@ -259,137 +275,195 @@ Repeat these steps to generate graphs for the average ({\tt
 Note that you can use the ``Deselect All'' button to
 remove all items from the graph.
 
-\includegraphics[height=80mm]{screenshots/ssaResults}
+\includegraphics[height=80mm]{screenshots/ssaResults}\\
+\includegraphics[height=90mm]{screenshots/ssaSimResults}
+
+\clearpage
 
 \item Click on the parameter editor tab.  Highlight the {\tt PR} 
       species, and select {\tt Edit Species}.  Select {\tt Custom} for
       the initial amount of {\tt PR} and change it to 5.  Press the 
       Save and Run button.
-      Click on the graph tab and following the steps above, create the 
-      following plots {\tt average\_10.jpg},  {\tt run1\_10.jpg}, and
-      {\tt stddev\_10.jpg}.  
+      Click on the {\tt TSD Graph} tab and following the steps above, 
+      create the 
+      following plots {\tt ssa-1\_5.jpg}, {\tt average\_5.jpg}, and
+      {\tt stddev\_5.jpg}.  
 
-\includegraphics[height=70mm]{screenshots/paramEdit}
+\includegraphics[height=70mm]{screenshots/paramEdit}\\
+\includegraphics[height=90mm]{screenshots/ssaSimResults5}
 
-\item Simulate your lambda model with BioSim using the ODE method rkf45 with
-      a time limit of 2100 and print interval of 50.
-      Make a note of the simulation time and plot CI2 and CII.  
-      Next, simulate using the Euler method.  Make a note of the simulation time
-      and add CI2 and CII from the euler results to your graph.  
-      How do the simulation times and results compare?
-      Change the time step and rerun the Euler method.  Repeat until the results
-      match up well.  What time step is required for a good match?
-      How do the simulation times compare?
+\clearpage
+
+\item Now go back to the parameter editor tab, 
+      and change the initial amount for {\tt PR} to {\tt Sweep}, set
+      the start to 2, stop to 8, step to 3.  Press the save and run
+      button.  Click on the {\tt TSD Graph} tab and double click on the graph to
+      open the graph editor.  Notice the new simulations id's
+      generated for each of the run with PR of 2, PR of 5, and PR of
+      8.  Deselect all from the current graph, and go and add the 
+      average value of {\tt CI} from each of these simulation runs. 
+
+\includegraphics[height=80mm]{screenshots/sweep}\\
+\includegraphics[height=90mm]{screenshots/sweepPR}
+
+% \item Simulate your lambda model with BioSim using the ODE method rkf45 with
+%       a time limit of 2100 and print interval of 50.
+%       Make a note of the simulation time and plot CI2 and CII.  
+%       Next, simulate using the Euler method.  Make a note of the simulation time
+%       and add CI2 and CII from the euler results to your graph.  
+%       How do the simulation times and results compare?
+%       Change the time step and rerun the Euler method.  Repeat until the results
+%       match up well.  What time step is required for a good match?
+%       How do the simulation times compare?
+
+\clearpage
+
+\item Go back to the Parameter Editor tab and change {\tt PR} back to 
+{\tt Original} value type.  Go back to the Simulation Options tab,
+select {\tt Abstraction} and change the simulation ID to {\tt abs}.
+Press {\tt Save and Run} and note that the simulation time should be
+substantially faster.
+Go back to the {\tt TSD Graph} tab and double click on the graph to bring up
+the graph editor.  Deselect all and add the average value of {\tt CI}
+from both the {\tt abs} and {\tt ssa} simulations.  
 \end{enumerate}
 
-\section{Abstraction}
+\includegraphics[height=90mm]{screenshots/absResults}
 
-The example in this section illustrates abstraction-based synthesis. 
+\clearpage 
+
+\section{Probabilistic Analysis}
+
+This example illustrates how {\tt iBioSim} can be used for
+probabilistic analysis.
 \begin{enumerate}
-\item Press the Save SBML button.
+\item Go back to the GCM editor for {\tt CI\_CII}.  
+Select {\tt Save as SBML Template} and give it the name {\tt
+  CI\_CIIenv}.  Use the {\tt SBML File} pulldown menu to select
+{\tt CI\_CIIenv.sbml} to associate with this GCM.  Press the
+{\tt Save GCM} button.
 
-\item Create or open an analysis view on your lambda model.
+\includegraphics[height=80mm]{screenshots/linkSBML}
 
-\item Select ``None'' and ``Network'', and press the Save and Run button. 
-      Count the number of species and reactions in your model.  
+\item Double click on the {\tt CI\_CIIenv.sbml} file to open it in an
+  SBML editor.  Select the {\tt Initial
+    Assignments/Rules/Constraints/Events} tab, and select {\tt Add
+    Constraint}.  Add a constraint with ID {\tt CI20}, constraint
+{\tt geq(CI, 20)}, and message {\tt CI greater than 20 molecules}.
+Repeat these steps to add constraints for $CII \geq 30$, and $t \geq
+200$. Be sure to press the {\tt Save SBML} button when you are done.
 
-\item Select ``Monte Carlo'', set the Time Limit to 2100.0, Print Interval to
-      100.0, and Runs to 20.  Press the Save and Run button and record the
-      simulation time.
+\includegraphics[height=30mm]{screenshots/constraint}
 
-\item Create a new analysis view for your lambda model and 
-      select  ``Abstraction'' this time.  
+\clearpage
 
-\item In the abstraction tab, change rapid equilibrium conditions 1 and 2 
-      to 1000.0 as well as QSSA condition to 1000.0.  Select ``Network'' then 
-      save and run.  Count the number of species and reactions in your model.
+\item Go back to your analysis view by clicking on the {\tt sim} tab.
+Remove the simulation ID and press {\tt Save and Run}.  Click on the 
+{\tt Probability Graph} tab.
+%% \includegraphics[height=80mm]{screenshots/emptyProbGraph}
+%% \item 
+Double click on the graph to bring up the probability graph
+  editor.  Change the title to {\tt Probability Results} and the 
+Y-axis label to {\tt Percent}.  Click on the {\tt sim-rep} file on the 
+left-hand side.  Select {\tt CI20}, {\tt CII30}, and {\tt t200} to
+graph them.  Press {\tt Ok}.
 
-\item Select ``Monte Carlo'', set the Time Limit to 2100.0, Print Interval to
-      100.0, and Runs to 20.  Press the Save and Run button and record the
-      simulation time.
+\includegraphics[height=80mm]{screenshots/editProbGraph}
 
-\item Select File $\rightarrow$ New $\rightarrow$ Graph and enter a name for
-      your new top-level graph.
+\item Export the graph as a jpg file by selecting the {\tt Export}
+  button and entering the filename {\tt prob.jpg}.
 
-\item Click on the graph and find the average simulation results from your
-      orginal model and graph CII and CIt.  Also, add to this graph from
-      your abstracted model CII and CI.  How well do they compare?  
-      Send me by email a jpg of your result.
+\includegraphics[height=90mm]{screenshots/probResults}
 
-\item Go back to your analysis view in which you did abstraction and change
-      all the conditions back to 0.1.  Regenerate the network and record the
-      number of species and reactions.  Regenerate the simulation results and
-      record the simulation time.  
-
-\item Go back to the top-level graph which should have updated results.  
-      How does it compare now?
 \end{enumerate}
 
-\section{GCM Editor}
+\clearpage
 
-This section gives an example using the GCM editor.
+\section{GCM Learning}
+
+This section describes how a GCM can be learned from time series data.
 \begin{enumerate}
-\item Create a new project named ``xor'',
-      select File $\rightarrow$ New $\rightarrow$ Genetic Circuit Model, 
-      and enter the name {\tt xor}.
+\item Highlight {\tt CI\_CII.gcm}, right click on it, and select
+{\tt Create Learn View}.  Give the learn view the ID {\tt learn}.
 
-\item Add species $A$ and $B$ of type constant.  Be sure to fill in both
-      the ID and Name fields.
+\includegraphics[height=60mm]{screenshots/createLearn}
 
-\item Add species $Abar$, $Bbar$, $X$, $Y$, and $C$ of type normal.  Again,
-      fill in the ID and Name fields.
+\item At this point a {\tt Learn View} will open, and you could begin
+to add your experimental data.  In this demo, we will just utilize our
+simulation data as synthetic experimental data.  To do this, click
+{\tt Copy From View}, and select {\tt sim/ssa}.  Highlight 
+{\tt sim/ssa/run-1.tsd}, and you should see the simulation data for 
+{\tt CI} and {\tt CII} appear on the right in the data editor. 
 
-\item Add an influence of type repression with input $A$ and output $Abar$ and 
-      dimer of 2.  You have just created an inverter.
-      Create another inverter from $B$ to $Bbar$.
+\includegraphics[height=80mm]{screenshots/dataManager}
 
-\item Add a promoter named PX1 and another promoter named PX2.
+\clearpage
 
-\item Add a repression influence from $A$ to $X$ and use the promoter 
-      PX1 with dimer of 2.
+\item Click on the {\tt Learn} tab.  Here you can edit the various
+  learning options.  For example, you can either use auto generated
+  levels or user generated levels for your data encoding.  Select 
+{\tt Use User Generated Levels} which will make the levels below
+editable.  You can also select how many bins to use.  Change the
+number of bins for both {\tt CI} and {\tt CII} to 3.  At this point,
+you can ask the tool to suggest levels by clicking on the {\tt Suggest
+  Levels} button.  Finally, press {\tt Save and Learn} which will
+bring up the GCM that has been learned from this experimental data
+using Graphviz's dotty program.
 
-\item Add a repression influence from $Bbar$ to $X$ and use the promoter 
-      PX2 with dimer of 2.  You have just created a NAND gate.
+\includegraphics[height=80mm]{screenshots/learn}
+\end{enumerate}
+ 
+\clearpage
 
-\item Create another NAND gate with inputs $Abar$ and $B$ and output $Y$.
+\section{Genetic Circuit Design}
 
-\item Finally, create another NAND gate with inputs $X$ and $Y$ and 
-      output $C$.
+This last section describes how {\tt iBioSim} can be used to design
+genetic logic gates.
+\begin{enumerate}
+\item Select {\tt File $\rightarrow$ New $\rightarrow$ Genetic Circuit
+    Model} and give it the ID {\tt gate}.
+\item Add promoters {\tt P1} and {\tt P2}, species {\tt A}, {\tt B},
+  and {\tt C} (make {\tt A} and {\tt B} type {\tt boundary} and {\tt
+    C} type normal), and repression influences from {\tt A} to {\tt C} on
+  {\tt P1} and {\tt B} to {\tt C} on {\tt P2}.  Save as an SBML
+  template named {\tt gateEnv}, and associate that SBML file with this
+  GCM.  Finally, save the GCM.
+\item Open {\tt gateEnv.sbml} in an SBML editor.  Click on the\\ 
+      {\tt Initial Assignments/Rules/Constraints/Events} tab, and
+      select {\tt Add Event}.
+\item In the event editor, give a trigger of {\tt geq(t,2000)}.   
+      Press {\tt Add Assignment}, select variable {\tt A}, and enter
+      60 in the {\tt Assignment} field.  Press {\tt Add} for the event
+      assignment and {\tt Add} for the event.  Repeat these steps to
+      create an assignment to {\tt B} of 60 at time 4000.  Note that
+      you may ignore the warnings.  These can be suppressed by
+      changing your preferences and deselecting {\tt Check for
+        undeclared units in SBML}.  Be sure to prese {\tt Save SBML}
+      when you are done.
+\item Highlight {\tt gate.gcm}, right-click, and select {\tt Create
+    Analysis View}.  Give it the ID {\tt simGate}.
+\item In the analysis view, change the options to 
+      {\tt Monte Carlo}, time limit of 6000, print interval of 30,
+      runs of 100.  
+%% Click on the {\tt Abstractions Options} tab.
+%%      Highlight {\tt A} and press {\tt Add Species}.  Repeat for {\tt
+%%        B} and {\tt C} to also make them interesting species.
+      Press {\tt Save and Run}.
+\item Select the {\tt TSD Graph} tab and graph the averages of {\tt
+    A},  {\tt B}, and {\tt C}.  The behavior should be that of a Nand
+  gate.
 
-\item Change the {\tt decay} parameter to 0.01.
+\includegraphics[height=90mm]{screenshots/nandResults}
 
-\item Press the ``Save GCM'' and ``Save as SBML'' buttons.
+\clearpage
 
-\item Create an analysis view for your {\tt xor.sbml} file.
+\item Go back to the GCM editor for {\tt gate}.  Change the promoter
+  on the influence from {\tt B} to {\tt C} to {\tt P1}, and save the
+  GCM.  Go back to your analysis view and press {\tt Save and Run}.
+  The behavior should now be that of a Nor gate.
 
-\item Select the User Defined Data tab and click on the 
-      ``Use User Defined Data'' button.
+\includegraphics[height=90mm]{screenshots/norResults}
 
-\item Add a data point for A at time step 1000 to go to 20.
-
-\item Add a data point for B at time step 2000 to go to 20.
-
-\item Add a data point for A at time step 3000 to go to 0.
-
-\item Add a data point for B at time step 4000 to go to 0.
-
-\item Select the options tab, select ``abstraction'', and 
-      set a time limit of 5000, a print interval of 200, and 20 runs.  
-
-\item Select the abstraction tab, and add species $C$ to the interesting 
-      species list.
-
-\item Press the ``Save Parameters'' button then ``Save and Run'' button.
-
-\item Create a graph that includes $A$, $B$, and $C$.  Email a jpg
-      of this graph to me.
-
-\item Close your analysis view and edit your {\tt xor.gcm}.  Try adjusting
-      some of the global parameters.  Remember to save both your {\tt gcm}
-      {\tt sbml} files.  Reopen your analysis view and re-run your simulation.
-      Send me a few different graphs.  Change the titles of the graphs 
-      and provide a description in your email of the graphs as to what you
-      changed.
 \end{enumerate}
   
 \end{document}

@@ -26,7 +26,7 @@
 <div class="p"><!----></div>
 
 <h3 align="center">Created: August 6th, 2008<br />
-  Last Revised: August 10th, 2008
+  Last Revised: August 14th, 2008
  </h3>
 
 <div class="p"><!----></div>
@@ -110,15 +110,17 @@
 <a href="#tth_sEc8"
 >8&nbsp; Probability Graph Editor</a><br />
 <a href="#tth_sEc9"
->9&nbsp; Genetic Circuit Model Format</a><br />
+>9&nbsp; Preferences</a><br />
 <a href="#tth_sEc10"
->10&nbsp; Time Series Data Format</a><br />
+>10&nbsp; Genetic Circuit Model Format</a><br />
 <a href="#tth_sEc11"
->11&nbsp; Tutorial</a><br />
+>11&nbsp; Time Series Data Format</a><br />
 <a href="#tth_sEc12"
->12&nbsp; Reporting Bugs and Feature Requests</a><br />
+>12&nbsp; Tutorial</a><br />
 <a href="#tth_sEc13"
->13&nbsp; Credits</a><br />
+>13&nbsp; Reporting Bugs and Feature Requests</a><br />
+<a href="#tth_sEc14"
+>14&nbsp; Credits</a><br />
 
 
 <div class="p"><!----></div>
@@ -228,7 +230,7 @@ down menu shown below.
 <div class="p"><!----></div>
 After you have created or opened a project, you can create a
 new model or graph to add to the project.  To create a new 
-Genetic Circuit Model (see Section&nbsp;<a href="#GCM">9</a>), select 
+Genetic Circuit Model (see Section&nbsp;<a href="#GCM">10</a>), select 
 New &#8594; Genetic Circuit Model from the
 File menu as shown below. You will then be prompted to give a model id. At this
 point, a GCM editor (see Section&nbsp;<a href="#GCMEdit">4</a>) will open in a new
@@ -393,6 +395,12 @@ editing this item, click save to save the changes to the item.
 After the model is complete, press the Save SBML button to store
 the model.  The Save and Check SBML button also saves the model, but
 in this case it also checks the models consistency.
+Note that many checks are done on the fly, so it should be difficult
+to create models with consistency problems.  However, if a user does
+not wish to be warned about undeclared units or does not wish to have
+units checked at all can set preferences to turn this off
+(see Section&nbsp;<a href="#Preferences">9</a>).  The Save and Check SBML button
+though will still present all the unit warnings and errors.
 Finally, the Save As button can also be used to store the
 model, but in this case, a new model ID will be requested and the
 model will be saved using that ID. 
@@ -971,13 +979,13 @@ assignment.
 
 <div class="p"><!----></div>
 The GCM editor shown below allows the user to create or modify a GCM 
-(see Section&nbsp;<a href="#GCM">9</a>).  A GCM is a compact graphical representation 
+(see Section&nbsp;<a href="#GCM">10</a>).  A GCM is a compact graphical representation 
 of a genetic circuit which can later be synthesized into an SBML model. 
 A GCM includes promoters (see Section&nbsp;<a href="#Promoters">4.1</a>),
 GCM species (see Section&nbsp;<a href="#GCMSpecies">4.2</a>), 
 influences (see Section&nbsp;<a href="#Influences">4.3</a>), 
 GCM parameters (see Section&nbsp;<a href="#GCMParameters">4.4</a>), and an optional
-SBML file (see Section&nbsp;).  GCM species, influences, 
+SBML file.  GCM species, influences, 
 and promoters can be added, removed, or edited. Parameters can only be edited. 
 An SBML file can also be selected to merge with the SBML generated from a GCM.
 This allows either customization of the SBML model or the addition of SBML
@@ -1127,8 +1135,9 @@ GCM parameters are a list of global parameters that are used
 when generating the SBML model for the GCM.  The parameter list
 allows the user an easy way to change all the parameter values in
 a convenient location.  If a parameter in the GCM is set to
-default, it will use the value found in the GCM parameter.  The 
-GCM parameters are listed below:
+default, it will use the value found in the GCM parameter.  
+These defaults can be modified in the user preferences
+(see Section&nbsp;<a href="#Preferences">9</a>).  The GCM parameters are listed below:
 
 <div class="p"><!----></div>
 
@@ -1387,7 +1396,7 @@ current project, and data from the selected view will be copied
 into this learn view.  Finally, the Import button brings up a file
 browser, and it allows you to import a data file from outside
 this project.  These files can be in time series data (TSD) format
-(see Section&nbsp;<a href="#TSD">10</a>), comma separated value (CSV) format, or tab
+(see Section&nbsp;<a href="#TSD">11</a>), comma separated value (CSV) format, or tab
 delimited format (DAT). 
 
 <div class="p"><!----></div>
@@ -1416,7 +1425,7 @@ Barker's PhD dissertation (UofUtah 2007)
 . To use this learn tool, adjust
 any options described below, if desired, then press the Save and
 Learn button. The resulting genetic circuit in specified using
-our Genetic Circuit Model (GCM) Format (see Section&nbsp;<a href="#GCM">9</a>) and shown
+our Genetic Circuit Model (GCM) Format (see Section&nbsp;<a href="#GCM">10</a>) and shown
 graphically using GraphViz's Dotty tool. On this tab, there are also 
 buttons to save the parameters without learning, view the last learned 
 circuit, save the generated circuit into the project, and view the last run
@@ -1695,7 +1704,7 @@ supported file types are:
 <div class="p"><!----></div>
 </li>
 
-<li> tsd - time series data format (see Section&nbsp;<a href="#TSD">10</a>).
+<li> tsd - time series data format (see Section&nbsp;<a href="#TSD">11</a>).
 <div class="p"><!----></div>
 </li>
 </ul>
@@ -1818,7 +1827,28 @@ pixel height and width for the file before the file is exported.
 
 <div class="p"><!----></div>
  <h2><a name="tth_sEc9">
-9</a>&nbsp;&nbsp;<a name="GCM">
+9</a>&nbsp;&nbsp;<a name="Preferences">
+</a>Preferences</h2>
+
+<div class="p"><!----></div>
+User preferences can be set by selecting the <tt>Preferences</tt> option
+under the <tt>File</tt> menu on Linux and Windows or the <tt>iBioSim</tt> 
+menu on MacOS.  As shown below, the user can decided whether they wish
+to see warnings about undeclared units in SBML and whether they wish
+to check units at all.  The user can also change the GCM default
+parameter values by clicking on the <tt>GCM Defaults</tt> button.
+
+<center>
+
+<table>
+<tr><td align="center"><img src="screenshots/SBMLPref.png" alt="screenshots/SBMLPref.png" /> </td><td align="center"><img src="screenshots/GCMPref.png" alt="screenshots/GCMPref.png" />
+</td></tr></table>
+
+</center>
+
+<div class="p"><!----></div>
+ <h2><a name="tth_sEc10">
+10</a>&nbsp;&nbsp;<a name="GCM">
 </a>Genetic Circuit Model Format</h2>
 
 <div class="p"><!----></div>
@@ -1960,8 +1990,8 @@ digraph&nbsp;G&nbsp;{
 </pre>
 
 <div class="p"><!----></div>
- <h2><a name="tth_sEc10">
-10</a>&nbsp;&nbsp;<a name="TSD">
+ <h2><a name="tth_sEc11">
+11</a>&nbsp;&nbsp;<a name="TSD">
 </a>Time Series Data Format</h2>
 
 <div class="p"><!----></div>
@@ -1981,8 +2011,8 @@ seconds.
 (600,26,40), (700,43,43), (800,63,28), (900,72,34), (1000,72,28))
 
 <div class="p"><!----></div>
- <h2><a name="tth_sEc11">
-11</a>&nbsp;&nbsp;Tutorial</h2>
+ <h2><a name="tth_sEc12">
+12</a>&nbsp;&nbsp;Tutorial</h2>
 
 <div class="p"><!----></div>
 A detailed 
@@ -1992,8 +2022,8 @@ tutorial
 is available in the <tt>docs</tt> directory that comes with the distribution.
 
 <div class="p"><!----></div>
- <h2><a name="tth_sEc12">
-12</a>&nbsp;&nbsp;Reporting Bugs and Feature Requests</h2>
+ <h2><a name="tth_sEc13">
+13</a>&nbsp;&nbsp;Reporting Bugs and Feature Requests</h2>
 
 <div class="p"><!----></div>
 In order to report a bug or to request a change or feature, please
@@ -2019,8 +2049,8 @@ mail will be filtered by our spam filters:
 </ul>
 
 <div class="p"><!----></div>
- <h2><a name="tth_sEc13">
-13</a>&nbsp;&nbsp;Credits</h2>
+ <h2><a name="tth_sEc14">
+14</a>&nbsp;&nbsp;Credits</h2>
 
 <div class="p"><!----></div>
 The iBioSim tool is being developed at the University of Utah
@@ -2054,5 +2084,5 @@ Biology in Trento, Italy.
 T<sub><font size="-1">E</font></sub>X
 by <a href="http://hutchinson.belmont.ma.us/tth/">
 T<sub><font size="-1">T</font></sub>H</a>,
-version 3.81.<br />On 12 Aug 2008, 14:10.</small>
+version 3.81.<br />On 14 Aug 2008, 14:07.</small>
 </html>
