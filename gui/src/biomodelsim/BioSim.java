@@ -13,6 +13,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
@@ -487,7 +488,6 @@ public class BioSim implements MouseListener, ActionListener {
 		else {
 			Units.setSelected(false);
 		}
-		JButton gcm = new JButton("GCM Defaults");
 		Preferences biosimrc = Preferences.userRoot();
 		final JTextField ACTIVED_VALUE = new JTextField(biosimrc.get("biosim.gcm.ACTIVED_VALUE", ""));
 		final JTextField KACT_VALUE = new JTextField(biosimrc.get("biosim.gcm.KACT_VALUE", ""));
@@ -510,71 +510,67 @@ public class BioSim implements MouseListener, ActionListener {
 		final JTextField KREP_VALUE = new JTextField(biosimrc.get("biosim.gcm.KREP_VALUE", ""));
 		final JTextField STOICHIOMETRY_VALUE = new JTextField(biosimrc.get(
 				"biosim.gcm.STOICHIOMETRY_VALUE", ""));
-		gcm.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				Object[] options = { "Close" };
-				JPanel labels = new JPanel(new GridLayout(15, 1));
-				labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.ACTIVED_STRING) + " ("
-						+ CompatibilityFixer.getSBMLName(GlobalConstants.ACTIVED_STRING) + "):"));
-				labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KACT_STRING) + " ("
-						+ CompatibilityFixer.getSBMLName(GlobalConstants.KACT_STRING) + "):"));
-				labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KBASAL_STRING) + " ("
-						+ CompatibilityFixer.getSBMLName(GlobalConstants.KBASAL_STRING) + "):"));
-				labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KBIO_STRING) + " ("
-						+ CompatibilityFixer.getSBMLName(GlobalConstants.KBIO_STRING) + "):"));
-				labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KDECAY_STRING) + " ("
-						+ CompatibilityFixer.getSBMLName(GlobalConstants.KDECAY_STRING) + "):"));
-				labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.COOPERATIVITY_STRING)
-						+ " (" + CompatibilityFixer.getSBMLName(GlobalConstants.COOPERATIVITY_STRING) + "):"));
-				labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KASSOCIATION_STRING)
-						+ " (" + CompatibilityFixer.getSBMLName(GlobalConstants.KASSOCIATION_STRING) + "):"));
-				labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.RNAP_STRING) + " ("
-						+ CompatibilityFixer.getSBMLName(GlobalConstants.RNAP_STRING) + "):"));
-				labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.PROMOTER_COUNT_STRING)
-						+ " (" + CompatibilityFixer.getSBMLName(GlobalConstants.PROMOTER_COUNT_STRING) + "):"));
-				labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.INITIAL_STRING) + " ("
-						+ CompatibilityFixer.getSBMLName(GlobalConstants.INITIAL_STRING) + "):"));
-				labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.MAX_DIMER_STRING)
-						+ " (" + CompatibilityFixer.getSBMLName(GlobalConstants.MAX_DIMER_STRING) + "):"));
-				labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.OCR_STRING) + " ("
-						+ CompatibilityFixer.getSBMLName(GlobalConstants.OCR_STRING) + "):"));
-				labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.RNAP_BINDING_STRING)
-						+ " (" + CompatibilityFixer.getSBMLName(GlobalConstants.RNAP_BINDING_STRING) + "):"));
-				labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KREP_STRING) + " ("
-						+ CompatibilityFixer.getSBMLName(GlobalConstants.KREP_STRING) + "):"));
-				labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.STOICHIOMETRY_STRING)
-						+ " (" + CompatibilityFixer.getSBMLName(GlobalConstants.STOICHIOMETRY_STRING) + "):"));
-				JPanel fields = new JPanel(new GridLayout(15, 1));
-				fields.add(ACTIVED_VALUE);
-				fields.add(KACT_VALUE);
-				fields.add(KBASAL_VALUE);
-				fields.add(KBIO_VALUE);
-				fields.add(KDECAY_VALUE);
-				fields.add(COOPERATIVITY_VALUE);
-				fields.add(KASSOCIATION_VALUE);
-				fields.add(RNAP_VALUE);
-				fields.add(PROMOTER_COUNT_VALUE);
-				fields.add(INITIAL_VALUE);
-				fields.add(MAX_DIMER_VALUE);
-				fields.add(OCR_VALUE);
-				fields.add(RNAP_BINDING_VALUE);
-				fields.add(KREP_VALUE);
-				fields.add(STOICHIOMETRY_VALUE);
-				JPanel display = new JPanel(new GridLayout(1, 2));
-				display.add(labels);
-				display.add(fields);
-				JOptionPane.showOptionDialog(frame, display, "GCM Defaults", JOptionPane.YES_OPTION,
-						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-			}
-		});
-		JPanel aboutPanel = new JPanel(new BorderLayout());
-		JPanel gcmPanel = new JPanel();
-		gcmPanel.add(gcm);
-		aboutPanel.add(Undeclared, "North");
-		aboutPanel.add(Units, "Center");
-		aboutPanel.add(gcmPanel, "South");
+		JPanel labels = new JPanel(new GridLayout(15, 1));
+		labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.ACTIVED_STRING) + " ("
+				+ CompatibilityFixer.getSBMLName(GlobalConstants.ACTIVED_STRING) + "):"));
+		labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KACT_STRING) + " ("
+				+ CompatibilityFixer.getSBMLName(GlobalConstants.KACT_STRING) + "):"));
+		labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KBASAL_STRING) + " ("
+				+ CompatibilityFixer.getSBMLName(GlobalConstants.KBASAL_STRING) + "):"));
+		labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KBIO_STRING) + " ("
+				+ CompatibilityFixer.getSBMLName(GlobalConstants.KBIO_STRING) + "):"));
+		labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KDECAY_STRING) + " ("
+				+ CompatibilityFixer.getSBMLName(GlobalConstants.KDECAY_STRING) + "):"));
+		labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.COOPERATIVITY_STRING)
+				+ " (" + CompatibilityFixer.getSBMLName(GlobalConstants.COOPERATIVITY_STRING) + "):"));
+		labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KASSOCIATION_STRING) + " ("
+				+ CompatibilityFixer.getSBMLName(GlobalConstants.KASSOCIATION_STRING) + "):"));
+		labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.RNAP_STRING) + " ("
+				+ CompatibilityFixer.getSBMLName(GlobalConstants.RNAP_STRING) + "):"));
+		labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.PROMOTER_COUNT_STRING)
+				+ " (" + CompatibilityFixer.getSBMLName(GlobalConstants.PROMOTER_COUNT_STRING) + "):"));
+		labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.INITIAL_STRING) + " ("
+				+ CompatibilityFixer.getSBMLName(GlobalConstants.INITIAL_STRING) + "):"));
+		labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.MAX_DIMER_STRING) + " ("
+				+ CompatibilityFixer.getSBMLName(GlobalConstants.MAX_DIMER_STRING) + "):"));
+		labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.OCR_STRING) + " ("
+				+ CompatibilityFixer.getSBMLName(GlobalConstants.OCR_STRING) + "):"));
+		labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.RNAP_BINDING_STRING) + " ("
+				+ CompatibilityFixer.getSBMLName(GlobalConstants.RNAP_BINDING_STRING) + "):"));
+		labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KREP_STRING) + " ("
+				+ CompatibilityFixer.getSBMLName(GlobalConstants.KREP_STRING) + "):"));
+		labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.STOICHIOMETRY_STRING)
+				+ " (" + CompatibilityFixer.getSBMLName(GlobalConstants.STOICHIOMETRY_STRING) + "):"));
+		JPanel fields = new JPanel(new GridLayout(15, 1));
+		fields.add(ACTIVED_VALUE);
+		fields.add(KACT_VALUE);
+		fields.add(KBASAL_VALUE);
+		fields.add(KBIO_VALUE);
+		fields.add(KDECAY_VALUE);
+		fields.add(COOPERATIVITY_VALUE);
+		fields.add(KASSOCIATION_VALUE);
+		fields.add(RNAP_VALUE);
+		fields.add(PROMOTER_COUNT_VALUE);
+		fields.add(INITIAL_VALUE);
+		fields.add(MAX_DIMER_VALUE);
+		fields.add(OCR_VALUE);
+		fields.add(RNAP_BINDING_VALUE);
+		fields.add(KREP_VALUE);
+		fields.add(STOICHIOMETRY_VALUE);
+		JPanel gcmPrefs = new JPanel(new GridLayout(1, 2));
+		gcmPrefs.add(labels);
+		gcmPrefs.add(fields);
+		JPanel sbmlPrefsBordered = new JPanel(new BorderLayout());
+		JPanel sbmlPrefs = new JPanel();
+		sbmlPrefsBordered.add(Undeclared, "North");
+		sbmlPrefsBordered.add(Units, "Center");
+		sbmlPrefs.add(sbmlPrefsBordered);
+		((FlowLayout) sbmlPrefs.getLayout()).setAlignment(FlowLayout.LEFT);
+		JTabbedPane prefTabs = new JTabbedPane();
+		prefTabs.addTab("SBML Preferences", sbmlPrefs);
+		prefTabs.addTab("GCM Preferences", gcmPrefs);
 		Object[] options = { "Save", "Cancel" };
-		int value = JOptionPane.showOptionDialog(frame, aboutPanel, "GCM Defaults",
+		int value = JOptionPane.showOptionDialog(frame, prefTabs, "Preferences",
 				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		if (value == JOptionPane.YES_OPTION) {
 			if (Undeclared.isSelected()) {
