@@ -239,7 +239,12 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			topLevel = true;
 		}
 		else {
-			this.graphName = outDir.split(separator)[outDir.split(separator).length - 1] + ".grf";
+			if (timeSeries) {
+				this.graphName = outDir.split(separator)[outDir.split(separator).length - 1] + ".grf";
+			}
+			else {
+				this.graphName = outDir.split(separator)[outDir.split(separator).length - 1] + ".prb";
+			}
 			topLevel = false;
 		}
 		this.outDir = outDir;
@@ -5578,7 +5583,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		JPanel speciesPanel1 = new JPanel(new GridLayout(graphProbs.size() + 1, 1));
 		JPanel speciesPanel2 = new JPanel(new GridLayout(graphProbs.size() + 1, 2));
 		use = new JCheckBox("Use");
-		JLabel specs = new JLabel("Species");
+		JLabel specs = new JLabel("Constraint");
 		JLabel color = new JLabel("Color");
 		boxes = new ArrayList<JCheckBox>();
 		series = new ArrayList<JTextField>();
