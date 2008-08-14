@@ -194,8 +194,8 @@ Barker's PhD Dissertation
 <div class="p"><!----></div>
 A project is a collection of models, analysis views, learn
 views, and graphs.  As shown below, <tt>iBioSim</tt> displays all project
-files on the left, the open models, views, and graphs are on the
-right, and a log of all external commands are displayed on the bottom.
+files on the left, the open models, views, and graphs on the
+right, and a log of all external commands on the bottom.
 The menu bar is located on the top of the window in the Windows and
 Linux versions.  It is located on the top of the screen in the MacOS version.
 
@@ -321,7 +321,7 @@ and using a right mouse click to open a menu of options as shown
 below. Using this menu, every type of object can be copied, renamed, or
 deleted. For a GCM, the "View/Edit" option opens the
 model in a GCM editor (see Section&nbsp;<a href="#GCMEdit">4</a>). For an SBML model,
-the "View/Edit" option opens the model in a SBML editor 
+the "View/Edit" option opens the model in an SBML editor 
 (see Section&nbsp;<a href="#SBMLEdit">3</a>). For a TSD graph, the "View/Edit" 
 option opens the TSD graph in a TSD graph editor (see Section&nbsp;<a href="#TSDEdit">7</a>). 
 For a probability graph, the "View/Edit" option opens
@@ -500,7 +500,7 @@ math formula:
 </a>Main Elements</h3>
 
 <div class="p"><!----></div>
-This main elements tab shown below is used to specify 
+This Main Elements tab shown below is used to specify 
 compartments (see Section&nbsp;<a href="#compartments">3.2.1</a>), 
 species (see Section&nbsp;<a href="#species">3.2.2</a>), 
 reactions (see Section&nbsp;<a href="#reactions">3.2.3</a>), and
@@ -607,7 +607,7 @@ As shown below, a species has the following fields:
 </li>
 
 <li> Initial Amount/Concentration: initial value of the amount or 
-       concentration of the species whether it is an amount or concentration
+       concentration of the species. Whether it is an amount or concentration
        can also be selected (default=amount/0.0).
 <div class="p"><!----></div>
 </li>
@@ -668,14 +668,14 @@ reaction is composed of the following:
 <div class="p"><!----></div>
 </li>
 
-<li> Kinetic law: a SBML math formula (see Section&nbsp;<a href="#SBMLMath">3.1</a>)
+<li> Kinetic law: an SBML math formula (see Section&nbsp;<a href="#SBMLMath">3.1</a>)
        describing the rate or probability for this reaction.
 <div class="p"><!----></div>
 </li>
 </ul>
 When adding a reactant or product, the user must specify a species ID and 
 the stoichiometry (i.e., the number of molecules produced or consumed by the
-reaction).  The stoichiometry can also be expressed as a stoiciometry math
+reaction).  The stoichiometry can also be expressed as a stoichiometry math
 formula.  Each parameter is composed of an ID, Name, Value, and Units.
 The list of parameters begins with a default forward
 reaction rate (kf) and reverse reaction rate (kr). These names
@@ -764,8 +764,8 @@ species types (see Section&nbsp;<a href="#specTypes">3.3.4</a>).
 Function definitions are used to create user defined functions that
 can then be used in SBML math formulas (see Section&nbsp;<a href="#SBMLMath">3.1</a>).  
 As shown below, function definitions include an ID, an optional name field, a 
-comma-separated list of arguments, and its definition.  The defintion 
-is a SBML math formula though it is restricted to only use variable 
+comma-separated list of arguments, and its definition.  The definition 
+is an SBML math formula though it is restricted to only use variable 
 names which are arguments to the function.  While functions can
 call other functions, they cannot be recursive (i.e., call themselves) 
 either directly or indirectly (i.e., through a cycle of function calls).
@@ -805,7 +805,7 @@ is selected from the list of base units in the table below:
 
 <div class="p"><!----></div>
 The exponent and scale are integers, and the multiplier is a real
-number that specify the relationship between the derived unit and the
+number that specifies the relationship between the derived unit and the
 base unit using the relation below:
 
 <br clear="all" /><table border="0" width="100%"><tr><td>
@@ -842,7 +842,7 @@ below, a compartment type includes an ID and an optional name field.
 </a>Species Types</h4>
 
 <div class="p"><!----></div>
-Species types are used to relate multiple species.  As shwon below, a 
+Species types are used to relate multiple species.  As shown below, a 
 species type includes an ID and an optional name field.
 
 <center>
@@ -855,10 +855,11 @@ species type includes an ID and an optional name field.
 </a>Initial Assignments/Rules/Constraints/Events</h3>
 
 <div class="p"><!----></div>
-This tab as shown below allows users to provide initial assignments 
+The <tt>Initial Assignments/Rules/Constraints/Events</tt> 
+tab as shown below allows users to provide initial assignments 
 (see Section&nbsp;<a href="#initials">3.4.1</a>), 
 rules (see Section&nbsp;<a href="#rules">3.4.2</a>), 
-constraints (see Section&nbsp;<a href="#constraints">3.4.3</a>, and
+constraints (see Section&nbsp;<a href="#constraints">3.4.3</a>), and
 events (see Section&nbsp;<a href="#events">3.4.4</a>).
 
 <center>
@@ -871,7 +872,7 @@ events (see Section&nbsp;<a href="#events">3.4.4</a>).
 </a>Initial Assignments</h4>
 
 <div class="p"><!----></div>
-Initial assignments as shown below are used to provide a SBML math formula 
+Initial assignments as shown below are used to provide an SBML math formula 
 (see Section&nbsp;<a href="#SBMLMath">3.1</a>) that is evaluated at time 0 to determine 
 the initial value of a compartment size, species amount or
 concentration, or parameter.  The value of this formula takes precedence over
@@ -902,14 +903,14 @@ which are in the following form:
 Algebraic rules specify relationships which must be maintained 
 (not currently supported by analysis).  Assignment rules specify 
 the value of a compartment size, species amount or concentration, or
-parameter in terms of a SBML math formula (see
+parameter in terms of an SBML math formula (see
 Section&nbsp;<a href="#SBMLMath">3.1</a>).  A variable cannot be determined by
 both an assignment rule and initial assignment.  Rate rules specify
 the rate of change of a compartment size, species amount or
-concentration, or parameter in terms of a SBML math formula
+concentration, or parameter in terms of an SBML math formula
 (see Section&nbsp;<a href="#SBMLMath">3.1</a>).  A variable cannot be determined 
 by both an assignment rule and a rate rule.  A species that is 
-reactant or product of any reaction cannot be updated by either
+a reactant or a product of any reaction cannot be updated by either
 an assignment rule or rate rule.
 
 <div class="p"><!----></div>
@@ -917,7 +918,7 @@ When adding a rule, the user first selects the type of rule as shown
 below.  This
 will automatically restrict the set of variables available for the 
 left-hand side to those that are valid.  The user should then select
-a variable, and enter a SBML math formula (see Section&nbsp;<a href="#SBMLMath">3.1</a>)
+a variable, and enter an SBML math formula (see Section&nbsp;<a href="#SBMLMath">3.1</a>)
 for the rule.  When editing a rule, the user cannot modify the rule type. 
 
 <center>
@@ -1135,7 +1136,7 @@ GCM parameters are a list of global parameters that are used
 when generating the SBML model for the GCM.  The parameter list
 allows the user an easy way to change all the parameter values in
 a convenient location.  If a parameter in the GCM is set to
-default, it will use the value found in the GCM parameter.  
+default, it will use the value found in the GCM parameter list.  
 These defaults can be modified in the user preferences
 (see Section&nbsp;<a href="#Preferences">9</a>).  The GCM parameters are listed below:
 
@@ -1424,8 +1425,8 @@ Barker's PhD dissertation (UofUtah 2007)
 </A>
 . To use this learn tool, adjust
 any options described below, if desired, then press the Save and
-Learn button. The resulting genetic circuit in specified using
-our Genetic Circuit Model (GCM) Format (see Section&nbsp;<a href="#GCM">10</a>) and shown
+Learn button. The resulting genetic circuit is specified using
+our Genetic Circuit Model (GCM) Format (see Section&nbsp;<a href="#GCM">10</a>) and is shown
 graphically using GraphViz's Dotty tool. On this tab, there are also 
 buttons to save the parameters without learning, view the last learned 
 circuit, save the generated circuit into the project, and view the last run
@@ -1546,7 +1547,7 @@ The TSD graph editor appears as a tab in both analysis and learn
 views.  TSD graphs can also be created at the top-level of the project
 to allow you to integrate results from several analysis or learn
 views. These graphs can be created using the New &#8594; TSD Graph
-menu option. Once created, they can be viewed and edited by
+menu option. Once created, they can be viewed and edited by double
 clicking on the graph in the project window.  An example graph is
 shown below.
 
@@ -1666,7 +1667,7 @@ species have been selected in that data set.  Also, all species can
 be deselected by pressing the Deselect All button.
 
 <div class="p"><!----></div>
-The "Save Graph" button save the settings for the graph to 
+The "Save Graph" button saves the settings for the graph to 
 a file, so when you re-open the graph, it will reload this data and display 
 in the same way as before.  The "Save As" button prompts for a 
 filename and creates a new top-level graph with that name.  
@@ -1726,7 +1727,7 @@ The probability graph editor appears as a tab in analysis
 views.  Probability graphs can also be created at the top-level of the project
 to allow you to integrate results from several analysis views. 
 These graphs can be created using the New &#8594; Probability Graph
-menu option. Once created, they can be viewed and edited by
+menu option. Once created, they can be viewed and edited by double
 clicking on the graph in the project window.  An example probability
 graph is shown below.
 
@@ -1765,28 +1766,28 @@ For a top-level graph, these
 data sets will be organized hierarchically.  Hierarchy is also 
 introduced when simulations in an analysis view are given
 simulation IDs or after performing an analysis while sweeping parameter
-values.  After selecting a data set, one can select individual species to 
+values.  After selecting a data set, one can select individual constraints to 
 graph and how they are to be displayed.  In other words, for each 
-species, there are the following options: 
+constraint, there are the following options: 
 
 <ul>
 <li> Use Check Box - Determines
-whether or not this species is displayed on the graph.  Checking or 
-unchecking the box at the top changes the state for all species in
+whether or not this constraint is displayed on the graph.  Checking or 
+unchecking the box at the top changes the state for all constraints in
 the data set.
 <div class="p"><!----></div>
 </li>
 
-<li> Species Label - The name displayed in the legend.
+<li> Constraints Label - The name displayed in the legend.
 <div class="p"><!----></div>
 </li>
 
-<li> Drop Down Menu Of Colors - The color that is used for this species.
+<li> Drop Down Menu Of Colors - The color that is used for this constraint.
 <div class="p"><!----></div>
 </li>
 </ul>
 Note that a check mark appears on a data set to indicate that some
-species have been selected in that data set.  Also, all species can
+constraints have been selected in that data set.  Also, all constraints can
 be deselected by pressing the Deselect All button.
 
 <div class="p"><!----></div>
@@ -1875,10 +1876,10 @@ to repress CII.
 
 <pre>
 digraph&nbsp;G&nbsp;{
-&nbsp;&nbsp;s1&nbsp;[shape=ellipse,color=black,label="CI"];
-&nbsp;&nbsp;s2&nbsp;[shape=ellipse,color=black,label="CII"];
-&nbsp;&nbsp;s2&nbsp;-&#62;&nbsp;s1&nbsp;[color="blue4",arrowhead=vee];
-&nbsp;&nbsp;s1&nbsp;-&#62;&nbsp;s2&nbsp;[color="firebrick4",label="2",arrowhead=tee];
+&nbsp;&nbsp;CI&nbsp;[shape=ellipse,color=black,label="CI"];
+&nbsp;&nbsp;CII&nbsp;[shape=ellipse,color=black,label="CII"];
+&nbsp;&nbsp;CII&nbsp;-&#62;&nbsp;CI&nbsp;[color="blue4",arrowhead=vee];
+&nbsp;&nbsp;CI&nbsp;-&#62;&nbsp;CII&nbsp;[color="firebrick4",label="2",arrowhead=tee];
 }
 
 </pre>
@@ -1896,11 +1897,11 @@ but not both.
 
 <pre>
 digraph&nbsp;G&nbsp;{
-&nbsp;&nbsp;s1&nbsp;[shape=ellipse,color=black,label="A"];
-&nbsp;&nbsp;s2&nbsp;[shape=ellipse,color=black,label="B"];
-&nbsp;&nbsp;s3&nbsp;[shape=ellipse,color=black,label="C"];
-&nbsp;&nbsp;s1&nbsp;-&#62;&nbsp;s2&nbsp;[color="blue4",arrowhead=tee];
-&nbsp;&nbsp;s1&nbsp;-&#62;&nbsp;s3&nbsp;[color="blue4",arrowhead=tee];
+&nbsp;&nbsp;A&nbsp;[shape=ellipse,color=black,label="A"];
+&nbsp;&nbsp;B&nbsp;[shape=ellipse,color=black,label="B"];
+&nbsp;&nbsp;C&nbsp;[shape=ellipse,color=black,label="C"];
+&nbsp;&nbsp;A&nbsp;-&#62;&nbsp;B&nbsp;[color="blue4",arrowhead=tee];
+&nbsp;&nbsp;A&nbsp;-&#62;&nbsp;C&nbsp;[color="blue4",arrowhead=tee];
 }&nbsp;
 
 </pre>
@@ -1915,11 +1916,11 @@ production of both species B and C.
 
 <pre>
 digraph&nbsp;G&nbsp;{
-&nbsp;&nbsp;s1&nbsp;[shape=ellipse,color=black,label="A"];
-&nbsp;&nbsp;s2&nbsp;[shape=ellipse,color=black,label="B"];
-&nbsp;&nbsp;s3&nbsp;[shape=ellipse,color=black,label="C"];
-&nbsp;&nbsp;s1&nbsp;-&#62;&nbsp;s2&nbsp;[color="blue4",arrowhead=tee,promoter="P1"];
-&nbsp;&nbsp;s1&nbsp;-&#62;&nbsp;s3&nbsp;[color="blue4",arrowhead=tee,promoter="P1"];
+&nbsp;&nbsp;A&nbsp;[shape=ellipse,color=black,label="A"];
+&nbsp;&nbsp;B&nbsp;[shape=ellipse,color=black,label="B"];
+&nbsp;&nbsp;C&nbsp;[shape=ellipse,color=black,label="C"];
+&nbsp;&nbsp;A&nbsp;-&#62;&nbsp;B&nbsp;[color="blue4",arrowhead=tee,promoter="P1"];
+&nbsp;&nbsp;A&nbsp;-&#62;&nbsp;C&nbsp;[color="blue4",arrowhead=tee,promoter="P1"];
 }
 
 </pre>
@@ -1934,11 +1935,11 @@ little C will be produced. This behavior is like a NOR gate.
 
 <pre>
 digraph&nbsp;G&nbsp;{
-&nbsp;&nbsp;s1&nbsp;[shape=ellipse,color=black,label="A"];
-&nbsp;&nbsp;s2&nbsp;[shape=ellipse,color=black,label="B"];
-&nbsp;&nbsp;s3&nbsp;[shape=ellipse,color=black,label="C"];
-&nbsp;&nbsp;s1&nbsp;-&#62;&nbsp;s3&nbsp;[color="blue4",arrowhead=tee];
-&nbsp;&nbsp;s2&nbsp;-&#62;&nbsp;s3&nbsp;[color="blue4",arrowhead=tee];
+&nbsp;&nbsp;A&nbsp;[shape=ellipse,color=black,label="A"];
+&nbsp;&nbsp;B&nbsp;[shape=ellipse,color=black,label="B"];
+&nbsp;&nbsp;C&nbsp;[shape=ellipse,color=black,label="C"];
+&nbsp;&nbsp;A&nbsp;-&#62;&nbsp;C&nbsp;[color="blue4",arrowhead=tee];
+&nbsp;&nbsp;B&nbsp;-&#62;&nbsp;C&nbsp;[color="blue4",arrowhead=tee];
 }&nbsp;
 
 </pre>
@@ -1957,11 +1958,11 @@ like a NAND gate.
 
 <pre>
 digraph&nbsp;G&nbsp;{
-&nbsp;&nbsp;s1&nbsp;[shape=ellipse,color=black,label="A"];
-&nbsp;&nbsp;s2&nbsp;[shape=ellipse,color=black,label="B"];
-&nbsp;&nbsp;s3&nbsp;[shape=ellipse,color=black,label="C"];
-&nbsp;&nbsp;s1&nbsp;-&#62;&nbsp;s3&nbsp;[color="blue4",arrowhead=tee,promoter="P1"];
-&nbsp;&nbsp;s2&nbsp;-&#62;&nbsp;s3&nbsp;[color="blue4",arrowhead=tee,promoter="P2"];
+&nbsp;&nbsp;A&nbsp;[shape=ellipse,color=black,label="A"];
+&nbsp;&nbsp;B&nbsp;[shape=ellipse,color=black,label="B"];
+&nbsp;&nbsp;C&nbsp;[shape=ellipse,color=black,label="C"];
+&nbsp;&nbsp;A&nbsp;-&#62;&nbsp;C&nbsp;[color="blue4",arrowhead=tee,promoter="P1"];
+&nbsp;&nbsp;B&nbsp;-&#62;&nbsp;C&nbsp;[color="blue4",arrowhead=tee,promoter="P2"];
 }
 
 </pre>
@@ -1971,7 +1972,7 @@ The example below shows how to model an AND gate. The species
 A and B have the constant flag set to true. This means that A and
 B have no production and degradation reactions. The reactions
 contain a promoter label "P1". This means that the
-species C can be activated by both s1 and s2. Combined with the
+species C can be activated by both A and B. Combined with the
 type flag of biochemical, this creates a biochemical reaction
 where species A and B combine together to form a complex to
 activate production of species C. 
@@ -1980,11 +1981,11 @@ activate production of species C.
 
 <pre>
 digraph&nbsp;G&nbsp;{
-&nbsp;&nbsp;s1&nbsp;[shape=ellipse,color=black,label="A",const=true];
-&nbsp;&nbsp;s2&nbsp;[shape=ellipse,color=black,label="B",const=true];
-&nbsp;&nbsp;s3&nbsp;[shape=ellipse,color=black,label="C"];
-&nbsp;&nbsp;s1&nbsp;-&#62;&nbsp;s3&nbsp;[color="blue4",arrowhead=vee,promoter="P1",type=biochemical];
-&nbsp;&nbsp;s2&nbsp;-&#62;&nbsp;s3&nbsp;[color="blue4",arrowhead=vee,promoter="P1",type=biochemical];
+&nbsp;&nbsp;A&nbsp;[shape=ellipse,color=black,label="A",const=true];
+&nbsp;&nbsp;B&nbsp;[shape=ellipse,color=black,label="B",const=true];
+&nbsp;&nbsp;C&nbsp;[shape=ellipse,color=black,label="C"];
+&nbsp;&nbsp;A&nbsp;-&#62;&nbsp;C&nbsp;[color="blue4",arrowhead=vee,promoter="P1",type=biochemical];
+&nbsp;&nbsp;B&nbsp;-&#62;&nbsp;C&nbsp;[color="blue4",arrowhead=vee,promoter="P1",type=biochemical];
 }
 
 </pre>
@@ -2056,24 +2057,24 @@ mail will be filtered by our spam filters:
 The iBioSim tool is being developed at the University of Utah
 by 
 <A HREF="http://www.async.ece.utah.edu/~myers">
-Chris Myers
+Chris Myers,
 </A>
-,
+&nbsp;
 <A HREF="http://www.cs.utah.edu/~barkern">
-Nathan Barker
+Nathan Barker,
 </A>
-,
+&nbsp;
 <A HREF="http://www.cs.utah.edu/~kuwahara">
-Hiroyuki Kuwahara
+Hiroyuki Kuwahara,
 </A>
-,
+&nbsp;
 <A HREF="http://www.async.ece.utah.edu/~cmadsen">
-Curtis Madsen
+Curtis Madsen,
 </A>
-, and
+and
 <A HREF="http://www.cs.utah.edu/~namphuon">
-Nam Nguyen
-</A>.
+Nam Nguyen.
+</A>
 Nathan Barker is now with Southern Utah University, and Hiroyuki
 Kuwahara is now with the Centre for Computational and System
 Biology in Trento, Italy. 
@@ -2084,5 +2085,5 @@ Biology in Trento, Italy.
 T<sub><font size="-1">E</font></sub>X
 by <a href="http://hutchinson.belmont.ma.us/tth/">
 T<sub><font size="-1">T</font></sub>H</a>,
-version 3.81.<br />On 14 Aug 2008, 14:07.</small>
+version 3.81.<br />On 14 Aug 2008, 16:00.</small>
 </html>
