@@ -175,7 +175,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 			
 			String templateName = JOptionPane.showInputDialog(biosim.frame(), "Enter SBML template name:", "SBML Template Name",
 					JOptionPane.PLAIN_MESSAGE);
-			if (!templateName.contains(".sbml") || !templateName.contains(".xml")) {
+			if (!templateName.contains(".sbml") && !templateName.contains(".xml")) {
 				templateName = templateName + ".sbml";
 			}
 			if (new File(path + File.separator + templateName).exists()) {
