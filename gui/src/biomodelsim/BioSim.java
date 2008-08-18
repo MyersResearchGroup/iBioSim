@@ -144,6 +144,8 @@ public class BioSim implements MouseListener, ActionListener {
 
 	private Pattern IDpat = Pattern.compile("([a-zA-Z]|_)([a-zA-Z]|[0-9]|_)*");
 
+	private boolean lema;
+
 	public class MacOSAboutHandler extends Application {
 
 		public MacOSAboutHandler() {
@@ -194,7 +196,8 @@ public class BioSim implements MouseListener, ActionListener {
 	 * 
 	 * @throws Exception
 	 */
-	public BioSim() {
+	public BioSim(boolean lema) {
+		this.lema = lema;
 		if (File.separator.equals("\\")) {
 			separator = "\\\\";
 		}
@@ -3505,7 +3508,12 @@ public class BioSim implements MouseListener, ActionListener {
 					+ " security exception.");
 			System.exit(1);
 		}
-		new BioSim();
+		if (args.length > 0 && args[0].equals("-lema")) {
+			new BioSim(true);
+		}
+		else {
+			new BioSim(false);
+		}
 	}
 
 	public void copySim(String newSim) {
