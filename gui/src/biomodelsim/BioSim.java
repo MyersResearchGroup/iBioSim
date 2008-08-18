@@ -3794,10 +3794,22 @@ public class BioSim implements MouseListener, ActionListener {
 					}
 				}
 			}
+			ArrayList<String> saved = new ArrayList<String>();
 			if (this.tab.getComponentAt(i) instanceof GCM2SBMLEditor) {
+				saved.add(this.tab.getTitleAt(i));
 				GCM2SBMLEditor gcm = (GCM2SBMLEditor) this.tab.getComponentAt(i);
 				if (gcm.getSBMLFile().equals(updatedFile)) {
 					gcm.save("save");
+				}
+			}
+			String[] files = new File(root).list();
+			for (String s : files) {
+				if (s.contains(".gcm") && !saved.contains(s)) {
+					GCMFile gcm = new GCMFile();
+					gcm.load(root + separator + s);
+					if (gcm.getSBMLFile().equals(updatedFile)) {
+						updateViews(s);
+					}
 				}
 			}
 		}
