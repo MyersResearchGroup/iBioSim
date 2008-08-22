@@ -333,7 +333,7 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 		}
 
 		speciesList = new ArrayList<String>();
-		if (learnFile.contains(".sbml")) {
+		if ((learnFile.contains(".sbml"))||(learnFile.contains(".xml"))) {
 			SBMLReader reader = new SBMLReader();
 			SBMLDocument document = reader.readSBML(learnFile);
 			Model model = document.getModel();
@@ -1299,7 +1299,7 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 	public void updateSpecies(String newLearnFile) {
 		learnFile = newLearnFile;
 		speciesList = new ArrayList<String>();
-		if (learnFile.contains(".sbml")) {
+		if ((learnFile.contains(".sbml"))||(learnFile.contains(".xml"))) {
 			SBMLReader reader = new SBMLReader();
 			SBMLDocument document = reader.readSBML(learnFile);
 			Model model = document.getModel();
