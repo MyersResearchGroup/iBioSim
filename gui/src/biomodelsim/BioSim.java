@@ -1519,8 +1519,10 @@ public class BioSim implements MouseListener, ActionListener {
 						JFileChooser.FILES_AND_DIRECTORIES, "Import SBML");
 				if (!filename.trim().equals("")) {
 					if (new File(filename.trim()).isDirectory()) {
-						String message = "Imported SBML files contain the errors listed below. ";
-						message += "It is recommended that you fix them before using these models or you may get unexpected results.\n\n";
+						JTextArea messageArea = new JTextArea();
+						messageArea.append("Imported SBML files contain the errors listed below. ");
+						messageArea
+								.append("It is recommended that you fix them before using these models or you may get unexpected results.\n\n");
 						boolean display = false;
 						for (String s : new File(filename.trim()).list()) {
 							try {
@@ -1532,9 +1534,11 @@ public class BioSim implements MouseListener, ActionListener {
 										long numErrors = document.checkConsistency();
 										if (numErrors > 0) {
 											display = true;
-											message += "------------------------------------------------------------------------------------------------------------------------------\n"
-													+ s
-													+ "\n------------------------------------------------------------------------------------------------------------------------------\n\n";
+											messageArea
+													.append("--------------------------------------------------------------------------------------\n");
+											messageArea.append(s);
+											messageArea
+													.append("\n--------------------------------------------------------------------------------------\n\n");
 											for (long i = 0; i < numErrors; i++) {
 												String error = document.getError(i).getMessage(); // .
 												// replace
@@ -1544,7 +1548,7 @@ public class BioSim implements MouseListener, ActionListener {
 												// ".\n"
 												// )
 												// ;
-												message += i + ":" + error + "\n";
+												messageArea.append(i + ":" + error + "\n");
 											}
 										}
 										FileOutputStream out = new FileOutputStream(new File(root
@@ -1554,7 +1558,6 @@ public class BioSim implements MouseListener, ActionListener {
 										byte[] output = doc.getBytes();
 										out.write(output);
 										out.close();
-										refreshTree();
 									}
 								}
 							}
@@ -1563,11 +1566,13 @@ public class BioSim implements MouseListener, ActionListener {
 										"Error", JOptionPane.ERROR_MESSAGE);
 							}
 						}
+						refreshTree();
 						if (display) {
 							final JFrame f = new JFrame("SBML Errors and Warnings");
-							JTextArea messageArea = new JTextArea(message);
 							messageArea.setLineWrap(true);
 							messageArea.setEditable(false);
+							messageArea.setSelectionStart(0);
+							messageArea.setSelectionEnd(0);
 							JScrollPane scroll = new JScrollPane();
 							scroll.setMinimumSize(new Dimension(600, 600));
 							scroll.setPreferredSize(new Dimension(600, 600));
@@ -1619,8 +1624,11 @@ public class BioSim implements MouseListener, ActionListener {
 									long numErrors = document.checkConsistency();
 									if (numErrors > 0) {
 										final JFrame f = new JFrame("SBML Errors and Warnings");
-										String message = "Imported SBML file contains the errors listed below. ";
-										message += "It is recommended that you fix them before using this model or you may get unexpected results.\n\n";
+										JTextArea messageArea = new JTextArea();
+										messageArea
+												.append("Imported SBML file contains the errors listed below. ");
+										messageArea
+												.append("It is recommended that you fix them before using this model or you may get unexpected results.\n\n");
 										for (long i = 0; i < numErrors; i++) {
 											String error = document.getError(i).getMessage(); // .
 											// replace
@@ -1630,11 +1638,12 @@ public class BioSim implements MouseListener, ActionListener {
 											// ".\n"
 											// )
 											// ;
-											message += i + ":" + error + "\n";
+											messageArea.append(i + ":" + error + "\n");
 										}
-										JTextArea messageArea = new JTextArea(message);
 										messageArea.setLineWrap(true);
 										messageArea.setEditable(false);
+										messageArea.setSelectionStart(0);
+										messageArea.setSelectionEnd(0);
 										JScrollPane scroll = new JScrollPane();
 										scroll.setMinimumSize(new Dimension(600, 600));
 										scroll.setPreferredSize(new Dimension(600, 600));
@@ -3629,7 +3638,7 @@ public class BioSim implements MouseListener, ActionListener {
 								new File(pmsFile).renameTo(new File(simFile));
 							}
 						}
-						String sbmlLoadFile = null;
+						String sbmlLoadFile = "";
 						if (new File(simFile).exists()) {
 							try {
 								Scanner s = new Scanner(new File(simFile));
@@ -3637,8 +3646,16 @@ public class BioSim implements MouseListener, ActionListener {
 									sbmlLoadFile = s.nextLine();
 									sbmlLoadFile = sbmlLoadFile.split(separator)[sbmlLoadFile
 											.split(separator).length - 1];
-									if (sbmlLoadFile == null
-											|| !(new File(root + separator + sbmlLoadFile).exists())) {
+									if (sbmlLoadFile.equals("")) {
+										JOptionPane
+												.showMessageDialog(
+														frame,
+														"Unable to open view because "
+																+ "the sbml linked to this view is missing.",
+														"Error", JOptionPane.ERROR_MESSAGE);
+										return;
+									}
+									else if (!(new File(root + separator + sbmlLoadFile).exists())) {
 										JOptionPane.showMessageDialog(frame,
 												"Unable to open view because " + sbmlLoadFile
 														+ " is missing.", "Error",
@@ -3687,7 +3704,7 @@ public class BioSim implements MouseListener, ActionListener {
 								 */
 							}
 						}
-						if (sbmlLoadFile == null) {
+						if (!new File(sbmlLoadFile).exists()) {
 							JOptionPane.showMessageDialog(frame,
 									"Unable to open view because "
 											+ sbmlLoadFile.split(separator)[sbmlLoadFile
