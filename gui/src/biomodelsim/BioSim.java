@@ -84,6 +84,7 @@ import datamanager.DataManager;
  * 
  * @author Curtis Madsen
  */
+
 public class BioSim implements MouseListener, ActionListener {
 
 	private JFrame frame; // Frame where components of the GUI are displayed
@@ -96,11 +97,19 @@ public class BioSim implements MouseListener, ActionListener {
 
 	private JMenuItem newCircuit; // The new menu item
 
+	private JMenuItem newVhdl; // The new vhdl menu item
+
+	private JMenuItem newLhpn; // The new lhpn menu item
+
 	private JMenuItem exit; // The exit menu item
 
 	private JMenuItem importSbml; // The import sbml menu item
 
 	private JMenuItem importDot; // The import dot menu item
+
+	private JMenuItem importVhdl; // The import vhdl menu item
+
+	private JMenuItem importLhpn; // The import lhpn menu item
 
 	private JMenuItem manual; // The manual menu item
 
@@ -168,7 +177,7 @@ public class BioSim implements MouseListener, ActionListener {
 
 		class PreferencesHandler extends ApplicationAdapter {
 			public void handlePreferences(ApplicationEvent event) {
-				preferences();
+				preferences(lema);
 				event.setHandled(true);
 			}
 		}
@@ -255,10 +264,14 @@ public class BioSim implements MouseListener, ActionListener {
 		newProj = new JMenuItem("Project");
 		newCircuit = new JMenuItem("Genetic Circuit Model");
 		newModel = new JMenuItem("SBML Model");
+		newVhdl = new JMenuItem("VHDL Model");
+		newLhpn = new JMenuItem("Labeled Hybrid Petri Net");
 		graph = new JMenuItem("TSD Graph");
 		probGraph = new JMenuItem("Probability Graph");
 		importSbml = new JMenuItem("SBML Model");
 		importDot = new JMenuItem("Genetic Circuit Model");
+		importVhdl = new JMenuItem("VHDL Model");
+		importLhpn = new JMenuItem("Labeled Hybrid Petri Net");
 		exit = new JMenuItem("Exit");
 		openProj.addActionListener(this);
 		pref.addActionListener(this);
@@ -266,10 +279,14 @@ public class BioSim implements MouseListener, ActionListener {
 		newProj.addActionListener(this);
 		newCircuit.addActionListener(this);
 		newModel.addActionListener(this);
+		newVhdl.addActionListener(this);
+		newLhpn.addActionListener(this);
 		exit.addActionListener(this);
 		about.addActionListener(this);
 		importSbml.addActionListener(this);
 		importDot.addActionListener(this);
+		importVhdl.addActionListener(this);
+		importLhpn.addActionListener(this);
 		graph.addActionListener(this);
 		probGraph.addActionListener(this);
 		ShortCutKey = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
@@ -278,18 +295,24 @@ public class BioSim implements MouseListener, ActionListener {
 		openProj.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ShortCutKey));
 		newCircuit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, ShortCutKey));
 		newModel.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ShortCutKey));
+		newVhdl.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, ShortCutKey));
+		newLhpn.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, ShortCutKey));
 		about.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ShortCutKey));
 		manual.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, ShortCutKey));
 		graph.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, ShortCutKey));
 		probGraph.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, ShortCutKey));
 		importDot.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, ShortCutKey));
 		importSbml.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_B, ShortCutKey));
+		importVhdl.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_H, ShortCutKey));
+		importLhpn.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, ShortCutKey));
 		exit.setMnemonic(KeyEvent.VK_X);
 		newProj.setMnemonic(KeyEvent.VK_P);
 		openProj.setMnemonic(KeyEvent.VK_O);
 		newCircuit.setMnemonic(KeyEvent.VK_G);
 		newCircuit.setDisplayedMnemonicIndex(8);
 		newModel.setMnemonic(KeyEvent.VK_S);
+		newVhdl.setMnemonic(KeyEvent.VK_V);
+		newLhpn.setMnemonic(KeyEvent.VK_L);
 		about.setMnemonic(KeyEvent.VK_A);
 		manual.setMnemonic(KeyEvent.VK_M);
 		graph.setMnemonic(KeyEvent.VK_T);
@@ -297,24 +320,42 @@ public class BioSim implements MouseListener, ActionListener {
 		importDot.setMnemonic(KeyEvent.VK_E);
 		importDot.setDisplayedMnemonicIndex(14);
 		importSbml.setMnemonic(KeyEvent.VK_B);
+		importVhdl.setMnemonic(KeyEvent.VK_H);
+		importLhpn.setMnemonic(KeyEvent.VK_P);
 		importDot.setEnabled(false);
 		importSbml.setEnabled(false);
+		importVhdl.setEnabled(false);
+		importLhpn.setEnabled(false);
 		newCircuit.setEnabled(false);
 		newModel.setEnabled(false);
+		newVhdl.setEnabled(false);
+		newLhpn.setEnabled(false);
 		graph.setEnabled(false);
 		probGraph.setEnabled(false);
 		file.add(newMenu);
 		newMenu.add(newProj);
-		newMenu.add(newCircuit);
-		newMenu.add(newModel);
+		if (!lema) {
+			newMenu.add(newCircuit);
+			newMenu.add(newModel);
+		}
+		else {
+			newMenu.add(newVhdl);
+			newMenu.add(newLhpn);
+		}
 		newMenu.add(graph);
 		newMenu.add(probGraph);
 		file.add(openProj);
 		// openMenu.add(openProj);
 		file.addSeparator();
 		file.add(importMenu);
-		importMenu.add(importDot);
-		importMenu.add(importSbml);
+		if (!lema) {
+			importMenu.add(importDot);
+			importMenu.add(importSbml);
+		}
+		else {
+			importMenu.add(importVhdl);
+			importMenu.add(importLhpn);
+		}
 		file.addSeparator();
 		help.add(manual);
 		if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
@@ -423,7 +464,7 @@ public class BioSim implements MouseListener, ActionListener {
 
 		// Packs the frame and displays it
 		mainPanel = new JPanel(new BorderLayout());
-		tree = new FileTree(null, this);
+		tree = new FileTree(null, this, lema);
 		log = new Log();
 		tab = new JTabbedPane();
 		tab.setPreferredSize(new Dimension(1050, 550));
@@ -475,234 +516,267 @@ public class BioSim implements MouseListener, ActionListener {
 		KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(dispatcher);
 	}
 
-	public void preferences() {
-		Undeclared = new JCheckBox("Check for undeclared units in SBML");
-		if (checkUndeclared) {
-			Undeclared.setSelected(true);
-		}
-		else {
-			Undeclared.setSelected(false);
-		}
-		Units = new JCheckBox("Check units in SBML");
-		if (checkUnits) {
-			Units.setSelected(true);
-		}
-		else {
-			Units.setSelected(false);
-		}
-		Preferences biosimrc = Preferences.userRoot();
-		final JTextField ACTIVED_VALUE = new JTextField(biosimrc
-				.get("biosim.gcm.ACTIVED_VALUE", ""));
-		final JTextField KACT_VALUE = new JTextField(biosimrc.get("biosim.gcm.KACT_VALUE", ""));
-		final JTextField KBASAL_VALUE = new JTextField(biosimrc.get("biosim.gcm.KBASAL_VALUE", ""));
-		final JTextField KBIO_VALUE = new JTextField(biosimrc.get("biosim.gcm.KBIO_VALUE", ""));
-		final JTextField KDECAY_VALUE = new JTextField(biosimrc.get("biosim.gcm.KDECAY_VALUE", ""));
-		final JTextField COOPERATIVITY_VALUE = new JTextField(biosimrc.get(
-				"biosim.gcm.COOPERATIVITY_VALUE", ""));
-		final JTextField KASSOCIATION_VALUE = new JTextField(biosimrc.get(
-				"biosim.gcm.KASSOCIATION_VALUE", ""));
-		final JTextField RNAP_VALUE = new JTextField(biosimrc.get("biosim.gcm.RNAP_VALUE", ""));
-		final JTextField PROMOTER_COUNT_VALUE = new JTextField(biosimrc.get(
-				"biosim.gcm.PROMOTER_COUNT_VALUE", ""));
-		final JTextField INITIAL_VALUE = new JTextField(biosimrc
-				.get("biosim.gcm.INITIAL_VALUE", ""));
-		final JTextField MAX_DIMER_VALUE = new JTextField(biosimrc.get(
-				"biosim.gcm.MAX_DIMER_VALUE", ""));
-		final JTextField OCR_VALUE = new JTextField(biosimrc.get("biosim.gcm.OCR_VALUE", ""));
-		final JTextField RNAP_BINDING_VALUE = new JTextField(biosimrc.get(
-				"biosim.gcm.RNAP_BINDING_VALUE", ""));
-		final JTextField KREP_VALUE = new JTextField(biosimrc.get("biosim.gcm.KREP_VALUE", ""));
-		final JTextField STOICHIOMETRY_VALUE = new JTextField(biosimrc.get(
-				"biosim.gcm.STOICHIOMETRY_VALUE", ""));
-		JPanel labels = new JPanel(new GridLayout(15, 1));
-		labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.ACTIVED_STRING) + " ("
-				+ CompatibilityFixer.getSBMLName(GlobalConstants.ACTIVED_STRING) + "):"));
-		labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KACT_STRING) + " ("
-				+ CompatibilityFixer.getSBMLName(GlobalConstants.KACT_STRING) + "):"));
-		labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KBASAL_STRING) + " ("
-				+ CompatibilityFixer.getSBMLName(GlobalConstants.KBASAL_STRING) + "):"));
-		labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KBIO_STRING) + " ("
-				+ CompatibilityFixer.getSBMLName(GlobalConstants.KBIO_STRING) + "):"));
-		labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KDECAY_STRING) + " ("
-				+ CompatibilityFixer.getSBMLName(GlobalConstants.KDECAY_STRING) + "):"));
-		labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.COOPERATIVITY_STRING)
-				+ " (" + CompatibilityFixer.getSBMLName(GlobalConstants.COOPERATIVITY_STRING)
-				+ "):"));
-		labels
-				.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KASSOCIATION_STRING)
-						+ " ("
-						+ CompatibilityFixer.getSBMLName(GlobalConstants.KASSOCIATION_STRING)
-						+ "):"));
-		labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.RNAP_STRING) + " ("
-				+ CompatibilityFixer.getSBMLName(GlobalConstants.RNAP_STRING) + "):"));
-		labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.PROMOTER_COUNT_STRING)
-				+ " (" + CompatibilityFixer.getSBMLName(GlobalConstants.PROMOTER_COUNT_STRING)
-				+ "):"));
-		labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.INITIAL_STRING) + " ("
-				+ CompatibilityFixer.getSBMLName(GlobalConstants.INITIAL_STRING) + "):"));
-		labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.MAX_DIMER_STRING)
-				+ " (" + CompatibilityFixer.getSBMLName(GlobalConstants.MAX_DIMER_STRING) + "):"));
-		labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.OCR_STRING) + " ("
-				+ CompatibilityFixer.getSBMLName(GlobalConstants.OCR_STRING) + "):"));
-		labels
-				.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.RNAP_BINDING_STRING)
-						+ " ("
-						+ CompatibilityFixer.getSBMLName(GlobalConstants.RNAP_BINDING_STRING)
-						+ "):"));
-		labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KREP_STRING) + " ("
-				+ CompatibilityFixer.getSBMLName(GlobalConstants.KREP_STRING) + "):"));
-		labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.STOICHIOMETRY_STRING)
-				+ " (" + CompatibilityFixer.getSBMLName(GlobalConstants.STOICHIOMETRY_STRING)
-				+ "):"));
-		JPanel fields = new JPanel(new GridLayout(15, 1));
-		fields.add(ACTIVED_VALUE);
-		fields.add(KACT_VALUE);
-		fields.add(KBASAL_VALUE);
-		fields.add(KBIO_VALUE);
-		fields.add(KDECAY_VALUE);
-		fields.add(COOPERATIVITY_VALUE);
-		fields.add(KASSOCIATION_VALUE);
-		fields.add(RNAP_VALUE);
-		fields.add(PROMOTER_COUNT_VALUE);
-		fields.add(INITIAL_VALUE);
-		fields.add(MAX_DIMER_VALUE);
-		fields.add(OCR_VALUE);
-		fields.add(RNAP_BINDING_VALUE);
-		fields.add(KREP_VALUE);
-		fields.add(STOICHIOMETRY_VALUE);
-		JPanel gcmPrefs = new JPanel(new GridLayout(1, 2));
-		gcmPrefs.add(labels);
-		gcmPrefs.add(fields);
-		JPanel sbmlPrefsBordered = new JPanel(new BorderLayout());
-		JPanel sbmlPrefs = new JPanel();
-		sbmlPrefsBordered.add(Undeclared, "North");
-		sbmlPrefsBordered.add(Units, "Center");
-		sbmlPrefs.add(sbmlPrefsBordered);
-		((FlowLayout) sbmlPrefs.getLayout()).setAlignment(FlowLayout.LEFT);
-		JTabbedPane prefTabs = new JTabbedPane();
-		prefTabs.addTab("SBML Preferences", sbmlPrefs);
-		prefTabs.addTab("GCM Preferences", gcmPrefs);
-		Object[] options = { "Save", "Cancel" };
-		int value = JOptionPane.showOptionDialog(frame, prefTabs, "Preferences",
-				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-		if (value == JOptionPane.YES_OPTION) {
-			if (Undeclared.isSelected()) {
-				checkUndeclared = true;
-				biosimrc.put("biosim.check.undeclared", "true");
+	public void preferences(boolean lema) {
+		final JFrame f = new JFrame("Preferences");
+		if (!lema) {
+			Undeclared = new JCheckBox("Check for undeclared units in SBML");
+			if (checkUndeclared) {
+				Undeclared.setSelected(true);
 			}
 			else {
-				checkUndeclared = false;
-				biosimrc.put("biosim.check.undeclared", "false");
+				Undeclared.setSelected(false);
 			}
-			if (Units.isSelected()) {
-				checkUnits = true;
-				biosimrc.put("biosim.check.units", "true");
+			Units = new JCheckBox("Check units in SBML");
+			if (checkUnits) {
+				Units.setSelected(true);
 			}
 			else {
-				checkUnits = false;
-				biosimrc.put("biosim.check.units", "false");
+				Units.setSelected(false);
 			}
-			try {
-				Double.parseDouble(KREP_VALUE.getText().trim());
-				biosimrc.put("biosim.gcm.KREP_VALUE", KREP_VALUE.getText().trim());
-			}
-			catch (Exception e1) {
-			}
-			try {
-				Double.parseDouble(KACT_VALUE.getText().trim());
-				biosimrc.put("biosim.gcm.KACT_VALUE", KACT_VALUE.getText().trim());
-			}
-			catch (Exception e1) {
-			}
-			try {
-				Double.parseDouble(KBIO_VALUE.getText().trim());
-				biosimrc.put("biosim.gcm.KBIO_VALUE", KBIO_VALUE.getText().trim());
-			}
-			catch (Exception e1) {
-			}
-			try {
-				Double.parseDouble(PROMOTER_COUNT_VALUE.getText().trim());
-				biosimrc.put("biosim.gcm.PROMOTER_COUNT_VALUE", PROMOTER_COUNT_VALUE.getText()
-						.trim());
-			}
-			catch (Exception e1) {
-			}
-			try {
-				Double.parseDouble(KASSOCIATION_VALUE.getText().trim());
-				biosimrc.put("biosim.gcm.KASSOCIATION_VALUE", KASSOCIATION_VALUE.getText().trim());
-			}
-			catch (Exception e1) {
-			}
-			try {
-				Double.parseDouble(KBASAL_VALUE.getText().trim());
-				biosimrc.put("biosim.gcm.KBASAL_VALUE", KBASAL_VALUE.getText().trim());
-			}
-			catch (Exception e1) {
-			}
-			try {
-				Double.parseDouble(OCR_VALUE.getText().trim());
-				biosimrc.put("biosim.gcm.OCR_VALUE", OCR_VALUE.getText().trim());
-			}
-			catch (Exception e1) {
-			}
-			try {
-				Double.parseDouble(KDECAY_VALUE.getText().trim());
-				biosimrc.put("biosim.gcm.KDECAY_VALUE", KDECAY_VALUE.getText().trim());
-			}
-			catch (Exception e1) {
-			}
-			try {
-				Double.parseDouble(RNAP_VALUE.getText().trim());
-				biosimrc.put("biosim.gcm.RNAP_VALUE", RNAP_VALUE.getText().trim());
-			}
-			catch (Exception e1) {
-			}
-			try {
-				Double.parseDouble(RNAP_BINDING_VALUE.getText().trim());
-				biosimrc.put("biosim.gcm.RNAP_BINDING_VALUE", RNAP_BINDING_VALUE.getText().trim());
-			}
-			catch (Exception e1) {
-			}
-			try {
-				Double.parseDouble(STOICHIOMETRY_VALUE.getText().trim());
-				biosimrc
-						.put("biosim.gcm.STOICHIOMETRY_VALUE", STOICHIOMETRY_VALUE.getText().trim());
-			}
-			catch (Exception e1) {
-			}
-			try {
-				Double.parseDouble(COOPERATIVITY_VALUE.getText().trim());
-				biosimrc
-						.put("biosim.gcm.COOPERATIVITY_VALUE", COOPERATIVITY_VALUE.getText().trim());
-			}
-			catch (Exception e1) {
-			}
-			try {
-				Double.parseDouble(ACTIVED_VALUE.getText().trim());
-				biosimrc.put("biosim.gcm.ACTIVED_VALUE", ACTIVED_VALUE.getText().trim());
-			}
-			catch (Exception e1) {
-			}
-			try {
-				Double.parseDouble(MAX_DIMER_VALUE.getText().trim());
-				biosimrc.put("biosim.gcm.MAX_DIMER_VALUE", MAX_DIMER_VALUE.getText().trim());
-			}
-			catch (Exception e1) {
-			}
-			try {
-				Double.parseDouble(INITIAL_VALUE.getText().trim());
-				biosimrc.put("biosim.gcm.INITIAL_VALUE", INITIAL_VALUE.getText().trim());
-			}
-			catch (Exception e1) {
-			}
-			for (int i = 0; i < tab.getTabCount(); i++) {
-				if (tab.getTitleAt(i).contains(".gcm")) {
-					((GCM2SBMLEditor) tab.getComponentAt(i)).getGCM().loadDefaultParameters();
-					((GCM2SBMLEditor) tab.getComponentAt(i)).reloadParameters();
+			Preferences biosimrc = Preferences.userRoot();
+			final JTextField ACTIVED_VALUE = new JTextField(biosimrc.get(
+					"biosim.gcm.ACTIVED_VALUE", ""));
+			final JTextField KACT_VALUE = new JTextField(biosimrc.get("biosim.gcm.KACT_VALUE", ""));
+			final JTextField KBASAL_VALUE = new JTextField(biosimrc.get("biosim.gcm.KBASAL_VALUE",
+					""));
+			final JTextField KBIO_VALUE = new JTextField(biosimrc.get("biosim.gcm.KBIO_VALUE", ""));
+			final JTextField KDECAY_VALUE = new JTextField(biosimrc.get("biosim.gcm.KDECAY_VALUE",
+					""));
+			final JTextField COOPERATIVITY_VALUE = new JTextField(biosimrc.get(
+					"biosim.gcm.COOPERATIVITY_VALUE", ""));
+			final JTextField KASSOCIATION_VALUE = new JTextField(biosimrc.get(
+					"biosim.gcm.KASSOCIATION_VALUE", ""));
+			final JTextField RNAP_VALUE = new JTextField(biosimrc.get("biosim.gcm.RNAP_VALUE", ""));
+			final JTextField PROMOTER_COUNT_VALUE = new JTextField(biosimrc.get(
+					"biosim.gcm.PROMOTER_COUNT_VALUE", ""));
+			final JTextField INITIAL_VALUE = new JTextField(biosimrc.get(
+					"biosim.gcm.INITIAL_VALUE", ""));
+			final JTextField MAX_DIMER_VALUE = new JTextField(biosimrc.get(
+					"biosim.gcm.MAX_DIMER_VALUE", ""));
+			final JTextField OCR_VALUE = new JTextField(biosimrc.get("biosim.gcm.OCR_VALUE", ""));
+			final JTextField RNAP_BINDING_VALUE = new JTextField(biosimrc.get(
+					"biosim.gcm.RNAP_BINDING_VALUE", ""));
+			final JTextField KREP_VALUE = new JTextField(biosimrc.get("biosim.gcm.KREP_VALUE", ""));
+			final JTextField STOICHIOMETRY_VALUE = new JTextField(biosimrc.get(
+					"biosim.gcm.STOICHIOMETRY_VALUE", ""));
+			JPanel labels = new JPanel(new GridLayout(15, 1));
+			labels
+					.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.ACTIVED_STRING)
+							+ " (" + CompatibilityFixer.getSBMLName(GlobalConstants.ACTIVED_STRING)
+							+ "):"));
+			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KACT_STRING) + " ("
+					+ CompatibilityFixer.getSBMLName(GlobalConstants.KACT_STRING) + "):"));
+			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KBASAL_STRING)
+					+ " (" + CompatibilityFixer.getSBMLName(GlobalConstants.KBASAL_STRING) + "):"));
+			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KBIO_STRING) + " ("
+					+ CompatibilityFixer.getSBMLName(GlobalConstants.KBIO_STRING) + "):"));
+			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KDECAY_STRING)
+					+ " (" + CompatibilityFixer.getSBMLName(GlobalConstants.KDECAY_STRING) + "):"));
+			labels.add(new JLabel(CompatibilityFixer
+					.getGuiName(GlobalConstants.COOPERATIVITY_STRING)
+					+ " ("
+					+ CompatibilityFixer.getSBMLName(GlobalConstants.COOPERATIVITY_STRING)
+					+ "):"));
+			labels.add(new JLabel(CompatibilityFixer
+					.getGuiName(GlobalConstants.KASSOCIATION_STRING)
+					+ " ("
+					+ CompatibilityFixer.getSBMLName(GlobalConstants.KASSOCIATION_STRING)
+					+ "):"));
+			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.RNAP_STRING) + " ("
+					+ CompatibilityFixer.getSBMLName(GlobalConstants.RNAP_STRING) + "):"));
+			labels.add(new JLabel(CompatibilityFixer
+					.getGuiName(GlobalConstants.PROMOTER_COUNT_STRING)
+					+ " ("
+					+ CompatibilityFixer.getSBMLName(GlobalConstants.PROMOTER_COUNT_STRING)
+					+ "):"));
+			labels
+					.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.INITIAL_STRING)
+							+ " (" + CompatibilityFixer.getSBMLName(GlobalConstants.INITIAL_STRING)
+							+ "):"));
+			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.MAX_DIMER_STRING)
+					+ " (" + CompatibilityFixer.getSBMLName(GlobalConstants.MAX_DIMER_STRING)
+					+ "):"));
+			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.OCR_STRING) + " ("
+					+ CompatibilityFixer.getSBMLName(GlobalConstants.OCR_STRING) + "):"));
+			labels.add(new JLabel(CompatibilityFixer
+					.getGuiName(GlobalConstants.RNAP_BINDING_STRING)
+					+ " ("
+					+ CompatibilityFixer.getSBMLName(GlobalConstants.RNAP_BINDING_STRING)
+					+ "):"));
+			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KREP_STRING) + " ("
+					+ CompatibilityFixer.getSBMLName(GlobalConstants.KREP_STRING) + "):"));
+			labels.add(new JLabel(CompatibilityFixer
+					.getGuiName(GlobalConstants.STOICHIOMETRY_STRING)
+					+ " ("
+					+ CompatibilityFixer.getSBMLName(GlobalConstants.STOICHIOMETRY_STRING)
+					+ "):"));
+			JPanel fields = new JPanel(new GridLayout(15, 1));
+			fields.add(ACTIVED_VALUE);
+			fields.add(KACT_VALUE);
+			fields.add(KBASAL_VALUE);
+			fields.add(KBIO_VALUE);
+			fields.add(KDECAY_VALUE);
+			fields.add(COOPERATIVITY_VALUE);
+			fields.add(KASSOCIATION_VALUE);
+			fields.add(RNAP_VALUE);
+			fields.add(PROMOTER_COUNT_VALUE);
+			fields.add(INITIAL_VALUE);
+			fields.add(MAX_DIMER_VALUE);
+			fields.add(OCR_VALUE);
+			fields.add(RNAP_BINDING_VALUE);
+			fields.add(KREP_VALUE);
+			fields.add(STOICHIOMETRY_VALUE);
+			JPanel gcmPrefs = new JPanel(new GridLayout(1, 2));
+			gcmPrefs.add(labels);
+			gcmPrefs.add(fields);
+			JPanel sbmlPrefsBordered = new JPanel(new BorderLayout());
+			JPanel sbmlPrefs = new JPanel();
+			sbmlPrefsBordered.add(Undeclared, "North");
+			sbmlPrefsBordered.add(Units, "Center");
+			sbmlPrefs.add(sbmlPrefsBordered);
+			((FlowLayout) sbmlPrefs.getLayout()).setAlignment(FlowLayout.LEFT);
+			JTabbedPane prefTabs = new JTabbedPane();
+			prefTabs.addTab("SBML Preferences", sbmlPrefs);
+			prefTabs.addTab("GCM Preferences", gcmPrefs);
+			Object[] options = { "Save", "Cancel" };
+			int value = JOptionPane
+					.showOptionDialog(frame, prefTabs, "Preferences", JOptionPane.YES_NO_OPTION,
+							JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+			if (value == JOptionPane.YES_OPTION) {
+				if (Undeclared.isSelected()) {
+					checkUndeclared = true;
+					biosimrc.put("biosim.check.undeclared", "true");
+				}
+				else {
+					checkUndeclared = false;
+					biosimrc.put("biosim.check.undeclared", "false");
+				}
+				if (Units.isSelected()) {
+					checkUnits = true;
+					biosimrc.put("biosim.check.units", "true");
+				}
+				else {
+					checkUnits = false;
+					biosimrc.put("biosim.check.units", "false");
+				}
+				try {
+					Double.parseDouble(KREP_VALUE.getText().trim());
+					biosimrc.put("biosim.gcm.KREP_VALUE", KREP_VALUE.getText().trim());
+				}
+				catch (Exception e1) {
+				}
+				try {
+					Double.parseDouble(KACT_VALUE.getText().trim());
+					biosimrc.put("biosim.gcm.KACT_VALUE", KACT_VALUE.getText().trim());
+				}
+				catch (Exception e1) {
+				}
+				try {
+					Double.parseDouble(KBIO_VALUE.getText().trim());
+					biosimrc.put("biosim.gcm.KBIO_VALUE", KBIO_VALUE.getText().trim());
+				}
+				catch (Exception e1) {
+				}
+				try {
+					Double.parseDouble(PROMOTER_COUNT_VALUE.getText().trim());
+					biosimrc.put("biosim.gcm.PROMOTER_COUNT_VALUE", PROMOTER_COUNT_VALUE.getText()
+							.trim());
+				}
+				catch (Exception e1) {
+				}
+				try {
+					Double.parseDouble(KASSOCIATION_VALUE.getText().trim());
+					biosimrc.put("biosim.gcm.KASSOCIATION_VALUE", KASSOCIATION_VALUE.getText()
+							.trim());
+				}
+				catch (Exception e1) {
+				}
+				try {
+					Double.parseDouble(KBASAL_VALUE.getText().trim());
+					biosimrc.put("biosim.gcm.KBASAL_VALUE", KBASAL_VALUE.getText().trim());
+				}
+				catch (Exception e1) {
+				}
+				try {
+					Double.parseDouble(OCR_VALUE.getText().trim());
+					biosimrc.put("biosim.gcm.OCR_VALUE", OCR_VALUE.getText().trim());
+				}
+				catch (Exception e1) {
+				}
+				try {
+					Double.parseDouble(KDECAY_VALUE.getText().trim());
+					biosimrc.put("biosim.gcm.KDECAY_VALUE", KDECAY_VALUE.getText().trim());
+				}
+				catch (Exception e1) {
+				}
+				try {
+					Double.parseDouble(RNAP_VALUE.getText().trim());
+					biosimrc.put("biosim.gcm.RNAP_VALUE", RNAP_VALUE.getText().trim());
+				}
+				catch (Exception e1) {
+				}
+				try {
+					Double.parseDouble(RNAP_BINDING_VALUE.getText().trim());
+					biosimrc.put("biosim.gcm.RNAP_BINDING_VALUE", RNAP_BINDING_VALUE.getText()
+							.trim());
+				}
+				catch (Exception e1) {
+				}
+				try {
+					Double.parseDouble(STOICHIOMETRY_VALUE.getText().trim());
+					biosimrc.put("biosim.gcm.STOICHIOMETRY_VALUE", STOICHIOMETRY_VALUE.getText()
+							.trim());
+				}
+				catch (Exception e1) {
+				}
+				try {
+					Double.parseDouble(COOPERATIVITY_VALUE.getText().trim());
+					biosimrc.put("biosim.gcm.COOPERATIVITY_VALUE", COOPERATIVITY_VALUE.getText()
+							.trim());
+				}
+				catch (Exception e1) {
+				}
+				try {
+					Double.parseDouble(ACTIVED_VALUE.getText().trim());
+					biosimrc.put("biosim.gcm.ACTIVED_VALUE", ACTIVED_VALUE.getText().trim());
+				}
+				catch (Exception e1) {
+				}
+				try {
+					Double.parseDouble(MAX_DIMER_VALUE.getText().trim());
+					biosimrc.put("biosim.gcm.MAX_DIMER_VALUE", MAX_DIMER_VALUE.getText().trim());
+				}
+				catch (Exception e1) {
+				}
+				try {
+					Double.parseDouble(INITIAL_VALUE.getText().trim());
+					biosimrc.put("biosim.gcm.INITIAL_VALUE", INITIAL_VALUE.getText().trim());
+				}
+				catch (Exception e1) {
+				}
+				for (int i = 0; i < tab.getTabCount(); i++) {
+					if (tab.getTitleAt(i).contains(".gcm")) {
+						((GCM2SBMLEditor) tab.getComponentAt(i)).getGCM().loadDefaultParameters();
+						((GCM2SBMLEditor) tab.getComponentAt(i)).reloadParameters();
+					}
 				}
 			}
+			else {
+			}
 		}
 		else {
+			// Preferences biosimrc = Preferences.userRoot();
+			JPanel vhdlPrefs = new JPanel();
+			JPanel lhpnPrefs = new JPanel();
+			JTabbedPane prefTabsNoLema = new JTabbedPane();
+			prefTabsNoLema.addTab("VHDL Preferences", vhdlPrefs);
+			prefTabsNoLema.addTab("LHPN Preferences", lhpnPrefs);
+			Object[] options = { "Save", "Cancel" };
+			// int value =
+			JOptionPane
+					.showOptionDialog(frame, prefTabsNoLema, "Preferences",
+							JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
+							options[0]);
 		}
 	}
 
@@ -1313,15 +1387,19 @@ public class BioSim implements MouseListener, ActionListener {
 				addRecentProject(filename);
 				importDot.setEnabled(true);
 				importSbml.setEnabled(true);
+				importVhdl.setEnabled(true);
+				importLhpn.setEnabled(true);
 				newCircuit.setEnabled(true);
 				newModel.setEnabled(true);
+				newVhdl.setEnabled(true);
+				newLhpn.setEnabled(true);
 				graph.setEnabled(true);
 				probGraph.setEnabled(true);
 			}
 		}
 		// if the open project menu item is selected
 		else if (e.getSource() == pref) {
-			preferences();
+			preferences(lema);
 		}
 		else if ((e.getSource() == openProj) || (e.getSource() == recentProjects[0])
 				|| (e.getSource() == recentProjects[1]) || (e.getSource() == recentProjects[2])
@@ -1372,8 +1450,12 @@ public class BioSim implements MouseListener, ActionListener {
 						addRecentProject(projDir);
 						importDot.setEnabled(true);
 						importSbml.setEnabled(true);
+						importVhdl.setEnabled(true);
+						importLhpn.setEnabled(true);
 						newCircuit.setEnabled(true);
 						newModel.setEnabled(true);
+						newVhdl.setEnabled(true);
+						newLhpn.setEnabled(true);
 						graph.setEnabled(true);
 						probGraph.setEnabled(true);
 					}
@@ -1499,6 +1581,105 @@ public class BioSim implements MouseListener, ActionListener {
 										"SBML Editor");
 								refreshTree();
 							}
+						}
+					}
+				}
+				catch (Exception e1) {
+					JOptionPane.showMessageDialog(frame, "Unable to create new model.", "Error",
+							JOptionPane.ERROR_MESSAGE);
+				}
+			}
+			else {
+				JOptionPane.showMessageDialog(frame, "You must open or create a project first.",
+						"Error", JOptionPane.ERROR_MESSAGE);
+			}
+		}
+		// if the new vhdl menu item is selected
+		else if (e.getSource() == newVhdl) {
+			if (root != null) {
+				try {
+					String vhdlName = JOptionPane.showInputDialog(frame, "Enter VHDL Model ID:",
+							"Model ID", JOptionPane.PLAIN_MESSAGE);
+					if (vhdlName != null && !vhdlName.trim().equals("")) {
+						vhdlName = vhdlName.trim();
+						if (vhdlName.length() > 4) {
+							if (!vhdlName.substring(vhdlName.length() - 5).equals(".vhd")) {
+								vhdlName += ".vhd";
+							}
+						}
+						else {
+							vhdlName += ".vhd";
+						}
+						String modelID = "";
+						if (vhdlName.length() > 3) {
+							if (vhdlName.substring(vhdlName.length() - 4).equals(".vhd")) {
+								modelID = vhdlName.substring(0, vhdlName.length() - 4);
+							}
+							else {
+								modelID = vhdlName.substring(0, vhdlName.length() - 3);
+							}
+						}
+						if (!(IDpat.matcher(modelID).matches())) {
+							JOptionPane
+									.showMessageDialog(
+											frame,
+											"A model ID can only contain letters, numbers, and underscores.",
+											"Invalid ID", JOptionPane.ERROR_MESSAGE);
+						}
+						else {
+							File f = new File(root + separator + vhdlName);
+							f.createNewFile();
+							String[] command = { "emacs", f.getName() };
+							Runtime.getRuntime().exec(command);
+							refreshTree();
+						}
+					}
+				}
+				catch (IOException e1) {
+					JOptionPane.showMessageDialog(frame, "Unable to create new model.", "Error",
+							JOptionPane.ERROR_MESSAGE);
+				}
+			}
+
+		}
+		// if the new lhpn menu item is selected
+		else if (e.getSource() == newLhpn) {
+			if (root != null) {
+				try {
+					String lhpnName = JOptionPane.showInputDialog(frame, "Enter LHPN Model ID:",
+							"Model ID", JOptionPane.PLAIN_MESSAGE);
+					if (lhpnName != null && !lhpnName.trim().equals("")) {
+						lhpnName = lhpnName.trim();
+						if (lhpnName.length() > 1) {
+							if (!lhpnName.substring(lhpnName.length() - 2).equals(".g")) {
+								lhpnName += ".g";
+							}
+						}
+						else {
+							lhpnName += ".g";
+						}
+						String modelID = "";
+						if (lhpnName.length() > 1) {
+							if (lhpnName.substring(lhpnName.length() - 2).equals(".g")) {
+								modelID = lhpnName.substring(0, lhpnName.length() - 2);
+							}
+							else {
+								modelID = lhpnName.substring(0, lhpnName.length() - 1);
+							}
+						}
+						if (!(IDpat.matcher(modelID).matches())) {
+							JOptionPane
+									.showMessageDialog(
+											frame,
+											"A model ID can only contain letters, numbers, and underscores.",
+											"Invalid ID", JOptionPane.ERROR_MESSAGE);
+						}
+						else {
+							File f = new File(root + separator + lhpnName);
+							f.createNewFile();
+							String[] command = { "emacs", f.getName() };
+							Runtime.getRuntime().exec(command);
+							refreshTree();
 						}
 					}
 				}
@@ -1781,6 +1962,84 @@ public class BioSim implements MouseListener, ActionListener {
 						"Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
+		// if the import vhdl menu item is selected
+		else if (e.getSource() == importVhdl) {
+			if (root != null) {
+				String filename = Buttons.browse(frame, new File(root), null,
+						JFileChooser.FILES_ONLY, "Import VHDL Model");
+				if (filename.length() > 3
+						&& !filename.substring(filename.length() - 4, filename.length()).equals(
+								".vhd")) {
+					JOptionPane.showMessageDialog(frame,
+							"You must select a valid vhdl file to import.", "Error",
+							JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				else if (!filename.equals("")) {
+					String[] file = filename.split(separator);
+					try {
+						FileOutputStream out = new FileOutputStream(new File(root + separator
+								+ file[file.length - 1]));
+						FileInputStream in = new FileInputStream(new File(filename));
+						int read = in.read();
+						while (read != -1) {
+							out.write(read);
+							read = in.read();
+						}
+						in.close();
+						out.close();
+						refreshTree();
+					}
+					catch (Exception e1) {
+						JOptionPane.showMessageDialog(frame, "Unable to import file.", "Error",
+								JOptionPane.ERROR_MESSAGE);
+					}
+				}
+			}
+			else {
+				JOptionPane.showMessageDialog(frame, "You must open or create a project first.",
+						"Error", JOptionPane.ERROR_MESSAGE);
+			}
+		}
+		// if the import lhpn menu item is selected
+		else if (e.getSource() == importLhpn) {
+			if (root != null) {
+				String filename = Buttons.browse(frame, new File(root), null,
+						JFileChooser.FILES_ONLY, "Import Labeled Hybrid Petri Net");
+				if (filename.length() > 1
+						&& !filename.substring(filename.length() - 2, filename.length()).equals(
+								".g")) {
+					JOptionPane.showMessageDialog(frame,
+							"You must select a valid lhpn file to import.", "Error",
+							JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				else if (!filename.equals("")) {
+					String[] file = filename.split(separator);
+					try {
+						FileOutputStream out = new FileOutputStream(new File(root + separator
+								+ file[file.length - 1]));
+						FileInputStream in = new FileInputStream(new File(filename));
+						int read = in.read();
+						while (read != -1) {
+							out.write(read);
+							read = in.read();
+						}
+						in.close();
+						out.close();
+						refreshTree();
+					}
+					catch (Exception e1) {
+						JOptionPane.showMessageDialog(frame, "Unable to import file.", "Error",
+								JOptionPane.ERROR_MESSAGE);
+					}
+				}
+			}
+			else {
+				JOptionPane.showMessageDialog(frame, "You must open or create a project first.",
+						"Error", JOptionPane.ERROR_MESSAGE);
+			}
+		}
 		// if the Graph data menu item is clicked
 		else if (e.getSource() == graph) {
 			if (root != null) {
@@ -1913,11 +2172,10 @@ public class BioSim implements MouseListener, ActionListener {
 							 * font.deriveFont(Font.BOLD, 42.0f);
 							 * noData1.setFont(font);
 							 * noData1.setHorizontalAlignment
-							 * (SwingConstants.CENTER);
-							 * lrnTab.addTab("TSD Graph", noData1);
-							 * lrnTab.getComponentAt
-							 * (lrnTab.getComponents().length -
-							 * 1).setName("TSD Graph");
+							 * (SwingConstants.CENTER); lrnTab.addTab("TSD
+							 * Graph", noData1); lrnTab.getComponentAt
+							 * (lrnTab.getComponents().length - 1).setName("TSD
+							 * Graph");
 							 */
 							addTab(lrnName, lrnTab, null);
 						}
@@ -1992,6 +2250,28 @@ public class BioSim implements MouseListener, ActionListener {
 						}
 					}
 					else if (tree.getFile().length() >= 4
+							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".vhd")) {
+						if (copy.length() > 3) {
+							if (!copy.substring(copy.length() - 4).equals(".vhd")) {
+								copy += ".vhd";
+							}
+						}
+						else {
+							copy += ".vhd";
+						}
+					}
+					else if (tree.getFile().length() >= 2
+							&& tree.getFile().substring(tree.getFile().length() - 2).equals(".g")) {
+						if (copy.length() > 1) {
+							if (!copy.substring(copy.length() - 2).equals(".g")) {
+								copy += ".g";
+							}
+						}
+						else {
+							copy += ".g";
+						}
+					}
+					else if (tree.getFile().length() >= 4
 							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".grf")) {
 						if (copy.length() > 3) {
 							if (!copy.substring(copy.length() - 4).equals(".grf")) {
@@ -2035,9 +2315,12 @@ public class BioSim implements MouseListener, ActionListener {
 						out.write(output);
 						out.close();
 					}
-					else if (tree.getFile().length() >= 4
+					else if ((tree.getFile().length() >= 4
 							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".gcm")
-							|| tree.getFile().substring(tree.getFile().length() - 4).equals(".grf")) {
+							|| tree.getFile().substring(tree.getFile().length() - 4).equals(".grf") || tree
+							.getFile().substring(tree.getFile().length() - 4).equals(".vhd"))
+							|| (tree.getFile().length() >= 2 && tree.getFile().substring(
+									tree.getFile().length() - 2).equals(".g"))) {
 						FileOutputStream out = new FileOutputStream(new File(root + separator
 								+ copy));
 						FileInputStream in = new FileInputStream(new File(tree.getFile()));
@@ -2220,6 +2503,28 @@ public class BioSim implements MouseListener, ActionListener {
 						}
 					}
 					else if (tree.getFile().length() >= 4
+							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".vhd")) {
+						if (rename.length() > 3) {
+							if (!rename.substring(rename.length() - 4).equals(".vhd")) {
+								rename += ".vhd";
+							}
+						}
+						else {
+							rename += ".vhd";
+						}
+					}
+					else if (tree.getFile().length() >= 2
+							&& tree.getFile().substring(tree.getFile().length() - 2).equals(".g")) {
+						if (rename.length() > 1) {
+							if (!rename.substring(rename.length() - 2).equals(".g")) {
+								rename += ".g";
+							}
+						}
+						else {
+							rename += ".g";
+						}
+					}
+					else if (tree.getFile().length() >= 4
 							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".grf")) {
 						if (rename.length() > 3) {
 							if (!rename.substring(rename.length() - 4).equals(".grf")) {
@@ -2384,6 +2689,18 @@ public class BioSim implements MouseListener, ActionListener {
 												.equals(".gcm")) {
 									((GCM2SBMLEditor) tab.getComponentAt(i)).reload(rename
 											.substring(0, rename.length() - 4));
+								}
+								else if (tree.getFile().length() > 3
+										&& tree.getFile().substring(tree.getFile().length() - 4)
+												.equals(".vhd")) {
+									((GCM2SBMLEditor) tab.getComponentAt(i)).reload(rename
+											.substring(0, rename.length() - 4));
+								}
+								else if (tree.getFile().length() > 1
+										&& tree.getFile().substring(tree.getFile().length() - 2)
+												.equals(".g")) {
+									((GCM2SBMLEditor) tab.getComponentAt(i)).reload(rename
+											.substring(0, rename.length() - 2));
 								}
 								else {
 									JTabbedPane t = new JTabbedPane();
@@ -2586,7 +2903,7 @@ public class BioSim implements MouseListener, ActionListener {
 	 */
 	public void refresh() {
 		mainPanel.remove(tree);
-		tree = new FileTree(new File(root), this);
+		tree = new FileTree(new File(root), this, lema);
 		mainPanel.add(tree, "West");
 		mainPanel.validate();
 	}
@@ -2908,6 +3225,62 @@ public class BioSim implements MouseListener, ActionListener {
 				popup.add(delete);
 			}
 			else if (tree.getFile().length() > 3
+					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".vhd")) {
+				JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
+				createSynthesis.addActionListener(this);
+				createSynthesis.setActionCommand("createSynthesis");
+				JMenuItem createAnalysis = new JMenuItem("Create Analysis View");
+				createAnalysis.addActionListener(this);
+				createAnalysis.setActionCommand("createSim");
+				JMenuItem createLearn = new JMenuItem("Create Learn View");
+				createLearn.addActionListener(this);
+				createLearn.setActionCommand("createLearn");
+				JMenuItem delete = new JMenuItem("Delete");
+				delete.addActionListener(this);
+				delete.setActionCommand("delete");
+				JMenuItem copy = new JMenuItem("Copy");
+				copy.addActionListener(this);
+				copy.setActionCommand("copy");
+				JMenuItem rename = new JMenuItem("Rename");
+				rename.addActionListener(this);
+				rename.setActionCommand("rename");
+				popup.add(createSynthesis);
+				popup.add(createAnalysis);
+				popup.add(createLearn);
+				popup.addSeparator();
+				popup.add(copy);
+				popup.add(rename);
+				popup.add(delete);
+			}
+			else if (tree.getFile().length() > 1
+					&& tree.getFile().substring(tree.getFile().length() - 2).equals(".g")) {
+				JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
+				createSynthesis.addActionListener(this);
+				createSynthesis.setActionCommand("createSynthesis");
+				JMenuItem createAnalysis = new JMenuItem("Create Analysis View");
+				createAnalysis.addActionListener(this);
+				createAnalysis.setActionCommand("createSim");
+				JMenuItem createLearn = new JMenuItem("Create Learn View");
+				createLearn.addActionListener(this);
+				createLearn.setActionCommand("createLearn");
+				JMenuItem delete = new JMenuItem("Delete");
+				delete.addActionListener(this);
+				delete.setActionCommand("delete");
+				JMenuItem copy = new JMenuItem("Copy");
+				copy.addActionListener(this);
+				copy.setActionCommand("copy");
+				JMenuItem rename = new JMenuItem("Rename");
+				rename.addActionListener(this);
+				rename.setActionCommand("rename");
+				popup.add(createSynthesis);
+				popup.add(createAnalysis);
+				popup.add(createLearn);
+				popup.addSeparator();
+				popup.add(copy);
+				popup.add(rename);
+				popup.add(delete);
+			}
+			else if (tree.getFile().length() > 3
 					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".grf")) {
 				JMenuItem edit = new JMenuItem("View/Edit");
 				edit.addActionListener(this);
@@ -3038,6 +3411,50 @@ public class BioSim implements MouseListener, ActionListener {
 					}
 					catch (Exception e1) {
 						JOptionPane.showMessageDialog(frame, "Unable to view this gcm file.",
+								"Error", JOptionPane.ERROR_MESSAGE);
+					}
+				}
+				else if (tree.getFile().length() >= 4
+						&& tree.getFile().substring(tree.getFile().length() - 4).equals(".vhd")) {
+					try {
+						String filename = tree.getFile();
+						String directory = "";
+						String theFile = "";
+						if (filename.lastIndexOf('/') >= 0) {
+							directory = filename.substring(0, filename.lastIndexOf('/') + 1);
+							theFile = filename.substring(filename.lastIndexOf('/') + 1);
+						}
+						if (filename.lastIndexOf('\\') >= 0) {
+							directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
+							theFile = filename.substring(filename.lastIndexOf('\\') + 1);
+						}
+						String[] command = { "emacs", filename };
+						Runtime.getRuntime().exec(command);
+					}
+					catch (Exception e1) {
+						JOptionPane.showMessageDialog(frame, "Unable to view this vhdl file.",
+								"Error", JOptionPane.ERROR_MESSAGE);
+					}
+				}
+				else if (tree.getFile().length() >= 2
+						&& tree.getFile().substring(tree.getFile().length() - 2).equals(".g")) {
+					try {
+						String filename = tree.getFile();
+						String directory = "";
+						String theFile = "";
+						if (filename.lastIndexOf('/') >= 0) {
+							directory = filename.substring(0, filename.lastIndexOf('/') + 1);
+							theFile = filename.substring(filename.lastIndexOf('/') + 1);
+						}
+						if (filename.lastIndexOf('\\') >= 0) {
+							directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
+							theFile = filename.substring(filename.lastIndexOf('\\') + 1);
+						}
+						String[] cmd = { "emacs", filename };
+						Runtime.getRuntime().exec(cmd);
+					}
+					catch (Exception e1) {
+						JOptionPane.showMessageDialog(frame, "Unable to view this lhpn file.",
 								"Error", JOptionPane.ERROR_MESSAGE);
 					}
 				}
@@ -3200,6 +3617,70 @@ public class BioSim implements MouseListener, ActionListener {
 				popup.add(rename);
 				popup.add(delete);
 			}
+			else if (tree.getFile().length() > 3
+					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".vhd")) {
+				JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
+				createSynthesis.addActionListener(this);
+				createSynthesis.setActionCommand("createSynthesis");
+				JMenuItem createAnalysis = new JMenuItem("Create Analysis View");
+				createAnalysis.addActionListener(this);
+				createAnalysis.setActionCommand("createSim");
+				JMenuItem createLearn = new JMenuItem("Create Learn View");
+				createLearn.addActionListener(this);
+				createLearn.setActionCommand("createLearn");
+				JMenuItem edit = new JMenuItem("View/Edit");
+				edit.addActionListener(this);
+				edit.setActionCommand("dotEditor");
+				JMenuItem delete = new JMenuItem("Delete");
+				delete.addActionListener(this);
+				delete.setActionCommand("delete");
+				JMenuItem copy = new JMenuItem("Copy");
+				copy.addActionListener(this);
+				copy.setActionCommand("copy");
+				JMenuItem rename = new JMenuItem("Rename");
+				rename.addActionListener(this);
+				rename.setActionCommand("rename");
+				popup.add(createSynthesis);
+				popup.add(createAnalysis);
+				popup.add(createLearn);
+				popup.addSeparator();
+				popup.add(edit);
+				popup.add(copy);
+				popup.add(rename);
+				popup.add(delete);
+			}
+			else if (tree.getFile().length() > 1
+					&& tree.getFile().substring(tree.getFile().length() - 2).equals(".g")) {
+				JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
+				createSynthesis.addActionListener(this);
+				createSynthesis.setActionCommand("createSynthesis");
+				JMenuItem createAnalysis = new JMenuItem("Create Analysis View");
+				createAnalysis.addActionListener(this);
+				createAnalysis.setActionCommand("createSim");
+				JMenuItem createLearn = new JMenuItem("Create Learn View");
+				createLearn.addActionListener(this);
+				createLearn.setActionCommand("createLearn");
+				JMenuItem edit = new JMenuItem("View/Edit");
+				edit.addActionListener(this);
+				edit.setActionCommand("dotEditor");
+				JMenuItem delete = new JMenuItem("Delete");
+				delete.addActionListener(this);
+				delete.setActionCommand("delete");
+				JMenuItem copy = new JMenuItem("Copy");
+				copy.addActionListener(this);
+				copy.setActionCommand("copy");
+				JMenuItem rename = new JMenuItem("Rename");
+				rename.addActionListener(this);
+				rename.setActionCommand("rename");
+				popup.add(createSynthesis);
+				popup.add(createAnalysis);
+				popup.add(createLearn);
+				popup.addSeparator();
+				popup.add(edit);
+				popup.add(copy);
+				popup.add(rename);
+				popup.add(delete);
+			}
 			else if (new File(tree.getFile()).isDirectory() && !tree.getFile().equals(root)) {
 				boolean sim = false;
 				for (String s : new File(tree.getFile()).list()) {
@@ -3252,9 +3733,9 @@ public class BioSim implements MouseListener, ActionListener {
 					// ".sim")).close();
 					String[] dot = tree.getFile().split(separator);
 					String sbmlFile = /*
-									 * root + separator + simName + separator +
-									 */(dot[dot.length - 1].substring(0, dot[dot.length - 1]
-							.length() - 3) + "sbml");
+										 * root + separator + simName +
+										 * separator +
+										 */(dot[dot.length - 1].substring(0, dot[dot.length - 1].length() - 3) + "sbml");
 					GCMParser parser = new GCMParser(tree.getFile());
 					GeneticNetwork network = parser.buildNetwork();
 					GeneticNetwork.setRoot(root + File.separator);
@@ -3362,8 +3843,8 @@ public class BioSim implements MouseListener, ActionListener {
 					 * try { FileOutputStream out = new FileOutputStream(new
 					 * File(sbmlFile)); SBMLWriter writer = new SBMLWriter();
 					 * String doc = writer.writeToString(document); byte[]
-					 * output = doc.getBytes(); out.write(output); out.close();
-					 * } catch (Exception e1) {
+					 * output = doc.getBytes(); out.write(output); out.close(); }
+					 * catch (Exception e1) {
 					 * JOptionPane.showMessageDialog(frame, "Unable to copy sbml
 					 * file to output location.", "Error",
 					 * JOptionPane.ERROR_MESSAGE); }
@@ -3519,8 +4000,8 @@ public class BioSim implements MouseListener, ActionListener {
 			 * noData.setHorizontalAlignment(SwingConstants.CENTER);
 			 * lrnTab.addTab("Learn", noData);
 			 * lrnTab.getComponentAt(lrnTab.getComponents().length -
-			 * 1).setName("Learn"); JLabel noData1 = new
-			 * JLabel("No data available"); font = noData1.getFont(); font =
+			 * 1).setName("Learn"); JLabel noData1 = new JLabel("No data
+			 * available"); font = noData1.getFont(); font =
 			 * font.deriveFont(Font.BOLD, 42.0f); noData1.setFont(font);
 			 * noData1.setHorizontalAlignment(SwingConstants.CENTER);
 			 * lrnTab.addTab("TSD Graph", noData1);
@@ -3777,8 +4258,8 @@ public class BioSim implements MouseListener, ActionListener {
 						 * font1.deriveFont(Font.BOLD, 42.0f);
 						 * noData1.setFont(font1);
 						 * noData1.setHorizontalAlignment
-						 * (SwingConstants.CENTER);
-						 * simTab.addTab("Probability Graph", noData1);
+						 * (SwingConstants.CENTER); simTab.addTab("Probability
+						 * Graph", noData1);
 						 * simTab.getComponentAt(simTab.getComponents().length -
 						 * 1).setName("ProbGraph"); }
 						 */
@@ -4079,11 +4560,10 @@ public class BioSim implements MouseListener, ActionListener {
 									"TSD Graph");
 						}
 						/*
-						 * } else { JLabel noData1 = new
-						 * JLabel("No data available"); Font font =
-						 * noData1.getFont(); font = font.deriveFont(Font.BOLD,
-						 * 42.0f); noData1.setFont(font);
-						 * noData1.setHorizontalAlignment
+						 * } else { JLabel noData1 = new JLabel("No data
+						 * available"); Font font = noData1.getFont(); font =
+						 * font.deriveFont(Font.BOLD, 42.0f);
+						 * noData1.setFont(font); noData1.setHorizontalAlignment
 						 * (SwingConstants.CENTER); ((JTabbedPane)
 						 * tab.getComponentAt(i)).setComponentAt(j, noData1);
 						 * ((JTabbedPane)
@@ -4103,10 +4583,10 @@ public class BioSim implements MouseListener, ActionListener {
 									.setName("Learn");
 						}
 						/*
-						 * } else { JLabel noData = new
-						 * JLabel("No data available"); Font font =
-						 * noData.getFont(); font = font.deriveFont(Font.BOLD,
-						 * 42.0f); noData.setFont(font);
+						 * } else { JLabel noData = new JLabel("No data
+						 * available"); Font font = noData.getFont(); font =
+						 * font.deriveFont(Font.BOLD, 42.0f);
+						 * noData.setFont(font);
 						 * noData.setHorizontalAlignment(SwingConstants.CENTER);
 						 * ((JTabbedPane)
 						 * tab.getComponentAt(i)).setComponentAt(j, noData);
