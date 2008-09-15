@@ -9541,7 +9541,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						JOptionPane.ERROR_MESSAGE);
 				return true;
 			}
-			if (node.getChild(1).isBoolean()) {
+			if ((node.getNumChildren() > 1) && (node.getChild(1).isBoolean())) {
 				JOptionPane.showMessageDialog(biosim.frame(),
 						"Argument 2 for - operator must evaluate to a number.", "Number Expected",
 						JOptionPane.ERROR_MESSAGE);
