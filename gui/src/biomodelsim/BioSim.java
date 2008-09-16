@@ -67,6 +67,8 @@ import com.apple.eawt.Application;
 
 import learn.Learn;
 
+import synthesis.Synthesis;
+
 import org.sbml.libsbml.Compartment;
 import org.sbml.libsbml.SBMLDocument;
 import org.sbml.libsbml.SBMLReader;
@@ -305,7 +307,7 @@ public class BioSim implements MouseListener, ActionListener {
 		importDot.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, ShortCutKey));
 		importSbml.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_B, ShortCutKey));
 		importVhdl.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_H, ShortCutKey));
-		importLhpn.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, ShortCutKey));
+		importLhpn.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, ShortCutKey));
 		exit.setMnemonic(KeyEvent.VK_X);
 		newProj.setMnemonic(KeyEvent.VK_P);
 		openProj.setMnemonic(KeyEvent.VK_O);
@@ -322,7 +324,7 @@ public class BioSim implements MouseListener, ActionListener {
 		importDot.setDisplayedMnemonicIndex(14);
 		importSbml.setMnemonic(KeyEvent.VK_B);
 		importVhdl.setMnemonic(KeyEvent.VK_H);
-		importLhpn.setMnemonic(KeyEvent.VK_P);
+		importLhpn.setMnemonic(KeyEvent.VK_N);
 		importDot.setEnabled(false);
 		importSbml.setEnabled(false);
 		importVhdl.setEnabled(false);
@@ -1131,6 +1133,9 @@ public class BioSim implements MouseListener, ActionListener {
 		else if (e.getActionCommand().equals("openLearn")) {
 			openLearn();
 		}
+		else if (e.getActionCommand().equals("openSynth")) {
+			openSynth();
+		}
 		// if the create simulation popup menu is selected on a dot file
 		else if (e.getActionCommand().equals("createSim")) {
 			try {
@@ -1149,6 +1154,85 @@ public class BioSim implements MouseListener, ActionListener {
 			catch (Exception e1) {
 				e1.printStackTrace();
 				JOptionPane.showMessageDialog(frame, "You must select a valid sbml file for simulation.",
+						"Error", JOptionPane.ERROR_MESSAGE);
+			}
+		}
+		// if the synthesis popup menu is selected on a vhdl or lhpn file
+		else if (e.getActionCommand().equals("createSynthesis")) {
+			if (root != null) {
+				for (int i = 0; i < tab.getTabCount(); i++) {
+					if (tab
+							.getTitleAt(i)
+							.equals(
+									tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
+						tab.setSelectedIndex(i);
+						if (save(i) != 1) {
+							return;
+						}
+						break;
+					}
+				}
+				String synthName = JOptionPane.showInputDialog(frame, "Enter Synthesis ID:",
+						"Synthesis View ID", JOptionPane.PLAIN_MESSAGE);
+				if (synthName != null && !synthName.trim().equals("")) {
+					synthName = synthName.trim();
+					try {
+						if (overwrite(root + separator + synthName, synthName)) {
+							new File(root + separator + synthName).mkdir();
+							// new FileWriter(new File(root + separator +
+							// synthName + separator
+							// +
+							// ".lrn")).close();
+							String sbmlFile = tree.getFile();
+							String[] getFilename = sbmlFile.split(separator);
+							String sbmlFileNoPath = getFilename[getFilename.length - 1];
+							try {
+								FileOutputStream out = new FileOutputStream(new File(root
+										+ separator + synthName.trim() + separator + synthName.trim()
+										+ ".syn"));
+								out.write(("synthesis.file=" + sbmlFileNoPath + "\n").getBytes());
+								out.close();
+							}
+							catch (Exception e1) {
+								JOptionPane.showMessageDialog(frame,
+										"Unable to save parameter file!", "Error Saving File",
+										JOptionPane.ERROR_MESSAGE);
+							}
+							refreshTree();
+							JPanel synthPane = new JPanel();
+							synthPane.add(new Synthesis(root + separator + synthName, sbmlFile, this));
+							/*
+							 * JLabel noData = new JLabel("No data available");
+							 * Font font = noData.getFont(); font =
+							 * font.deriveFont(Font.BOLD, 42.0f);
+							 * noData.setFont(font);
+							 * noData.setHorizontalAlignment
+							 * (SwingConstants.CENTER); lrnTab.addTab("Learn",
+							 * noData);
+							 * lrnTab.getComponentAt(lrnTab.getComponents
+							 * ().length - 1).setName("Learn"); JLabel noData1 =
+							 * new JLabel("No data available"); font =
+							 * noData1.getFont(); font =
+							 * font.deriveFont(Font.BOLD, 42.0f);
+							 * noData1.setFont(font);
+							 * noData1.setHorizontalAlignment
+							 * (SwingConstants.CENTER); lrnTab.addTab("TSD
+							 * Graph", noData1); lrnTab.getComponentAt
+							 * (lrnTab.getComponents().length - 1).setName("TSD
+							 * Graph");
+							 */
+							addTab(synthName, synthPane, null);
+						}
+					}
+					catch (Exception e1) {
+						JOptionPane.showMessageDialog(frame,
+								"Unable to create Synthesis View directory.", "Error",
+								JOptionPane.ERROR_MESSAGE);
+					}
+				}
+			}
+			else {
+				JOptionPane.showMessageDialog(frame, "You must open or create a project first.",
 						"Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
@@ -3378,9 +3462,13 @@ public class BioSim implements MouseListener, ActionListener {
 			}
 			else if (new File(tree.getFile()).isDirectory() && !tree.getFile().equals(root)) {
 				boolean sim = false;
+				boolean synth = false;
 				for (String s : new File(tree.getFile()).list()) {
 					if (s.length() > 3 && s.substring(s.length() - 4).equals(".sim")) {
 						sim = true;
+					}
+					if (s.length() > 3 && s.substring(s.length() - 4).equals(".syn")) {
+						synth = true;
 					}
 				}
 				JMenuItem open;
@@ -3388,6 +3476,11 @@ public class BioSim implements MouseListener, ActionListener {
 					open = new JMenuItem("Open Analysis View");
 					open.addActionListener(this);
 					open.setActionCommand("openSim");
+				}
+				else if (synth) {
+					open = new JMenuItem("Open Synthesis View");
+					open.addActionListener(this);
+					open.setActionCommand("openSynth");
 				}
 				else {
 					open = new JMenuItem("Open Learn View");
@@ -3548,13 +3641,20 @@ public class BioSim implements MouseListener, ActionListener {
 				}
 				else if (new File(tree.getFile()).isDirectory() && !tree.getFile().equals(root)) {
 					boolean sim = false;
+					boolean synth = false;
 					for (String s : new File(tree.getFile()).list()) {
 						if (s.length() > 3 && s.substring(s.length() - 4).equals(".sim")) {
 							sim = true;
 						}
+						else if (s.length() > 3 && s.substring(s.length() - 4).equals(".syn")) {
+							synth = true;
+						}
 					}
 					if (sim) {
 						openSim();
+					}
+					else if (synth){
+						openSynth();
 					}
 					else {
 						openLearn();
@@ -3728,9 +3828,13 @@ public class BioSim implements MouseListener, ActionListener {
 			}
 			else if (new File(tree.getFile()).isDirectory() && !tree.getFile().equals(root)) {
 				boolean sim = false;
+				boolean synth = false;
 				for (String s : new File(tree.getFile()).list()) {
 					if (s.length() > 3 && s.substring(s.length() - 4).equals(".sim")) {
 						sim = true;
+					}
+					else if (s.length() > 4 && s.substring(s.length() - 4).equals(".syn")) {
+						synth = true;
 					}
 				}
 				JMenuItem open;
@@ -3738,6 +3842,11 @@ public class BioSim implements MouseListener, ActionListener {
 					open = new JMenuItem("Open Analysis View");
 					open.addActionListener(this);
 					open.setActionCommand("openSim");
+				}
+				else if (synth) {
+					open = new JMenuItem("Open Synthesis View");
+					open.addActionListener(this);
+					open.setActionCommand("openSynth");
 				}
 				else {
 					open = new JMenuItem("Open Learn View");
@@ -4040,6 +4149,95 @@ public class BioSim implements MouseListener, ActionListener {
 			 */
 			addTab(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1], lrnTab,
 					null);
+		}
+	}
+	
+	private void openSynth() {
+		boolean done = false;
+		for (int i = 0; i < tab.getTabCount(); i++) {
+			if (tab.getTitleAt(i).equals(
+					tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
+				tab.setSelectedIndex(i);
+				done = true;
+			}
+		}
+		if (!done) {
+			JPanel synthPanel = new JPanel();
+			// String graphFile = "";
+			if (new File(tree.getFile()).isDirectory()) {
+				String[] list = new File(tree.getFile()).list();
+				int run = 0;
+				for (int i = 0; i < list.length; i++) {
+					if (!(new File(list[i]).isDirectory()) && list[i].length() > 4) {
+						String end = "";
+						for (int j = 1; j < 5; j++) {
+							end = list[i].charAt(list[i].length() - j) + end;
+						}
+						if (end.equals(".tsd") || end.equals(".dat") || end.equals(".csv")) {
+							if (list[i].contains("run-")) {
+								int tempNum = Integer.parseInt(list[i].substring(4, list[i]
+										.length()
+										- end.length()));
+								if (tempNum > run) {
+									run = tempNum;
+									// graphFile = tree.getFile() + separator +
+									// list[i];
+								}
+							}
+						}
+					}
+				}
+			}
+
+			String synthFile = tree.getFile() + separator
+					+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]
+					+ ".syn";
+			String synthFile2 = tree.getFile() + separator + ".syn";
+			Properties load = new Properties();
+			String synthesisFile = "";
+			try {
+				if (new File(synthFile2).exists()) {
+					FileInputStream in = new FileInputStream(new File(synthFile2));
+					load.load(in);
+					in.close();
+					new File(synthFile2).delete();
+				}
+				if (new File(synthFile).exists()) {
+					FileInputStream in = new FileInputStream(new File(synthFile));
+					load.load(in);
+					in.close();
+					if (load.containsKey("synthesis.file")) {
+						synthesisFile = load.getProperty("synthesis.file");
+						synthesisFile = synthesisFile.split(separator)[synthesisFile.split(separator).length - 1];
+					}
+				}
+				FileOutputStream out = new FileOutputStream(new File(synthesisFile));
+				load.store(out, synthesisFile);
+				out.close();
+
+			}
+			catch (Exception e) {
+				JOptionPane.showMessageDialog(frame(), "Unable to load properties file!",
+						"Error Loading Properties", JOptionPane.ERROR_MESSAGE);
+			}
+			for (int i = 0; i < tab.getTabCount(); i++) {
+				if (tab.getTitleAt(i).equals(synthesisFile)) {
+					tab.setSelectedIndex(i);
+					if (save(i) != 1) {
+						return;
+					}
+					break;
+				}
+			}
+			if (!(new File(root + separator + synthesisFile).exists())) {
+				JOptionPane.showMessageDialog(frame, "Unable to open view because " + synthesisFile
+						+ " is missing.", "Error", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			// if (!graphFile.equals("")) {
+			synthPanel.add(new Synthesis(tree.getFile(), "flag", this));
+			addTab(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],
+					synthPanel, null);
 		}
 	}
 
