@@ -44,6 +44,7 @@ import java.util.regex.Pattern;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -459,6 +460,15 @@ public class BioSim implements MouseListener, ActionListener {
 		if (biosimrc.get("biosim.gcm.INITIAL_VALUE", "").equals("")) {
 			biosimrc.put("biosim.gcm.INITIAL_VALUE", "0");
 		}
+		if (biosimrc.get("biosim.sim.abs", "").equals("")) {
+			biosimrc.put("biosim.sim.abs", "None");
+		}
+		if (biosimrc.get("biosim.sim.type", "").equals("")) {
+			biosimrc.put("biosim.sim.type", "ODE");
+		}
+		if (biosimrc.get("biosim.sim.sim", "").equals("")) {
+			biosimrc.put("biosim.sim.sim", "rkf45");
+		}
 		if (biosimrc.get("biosim.sim.limit", "").equals("")) {
 			biosimrc.put("biosim.sim.limit", "100.0");
 		}
@@ -634,6 +644,114 @@ public class BioSim implements MouseListener, ActionListener {
 			JPanel gcmPrefs = new JPanel(new GridLayout(1, 2));
 			gcmPrefs.add(labels);
 			gcmPrefs.add(fields);
+			String[] choices = { "None", "Abstraction", "Logical Abstraction" };
+			final JComboBox abs = new JComboBox(choices);
+			abs.setSelectedItem(biosimrc.get("biosim.sim.abs", ""));
+			if (abs.getSelectedItem().equals("None")) {
+				choices = new String[] { "ODE", "Monte Carlo", "SBML", "Network", "Browser" };
+			}
+			else if (abs.getSelectedItem().equals("Abstraction")) {
+				choices = new String[] { "ODE", "Monte Carlo", "SBML", "Network", "Browser" };
+			}
+			else {
+				choices = new String[] { "Monte Carlo", "Markov", "SBML", "Network", "Browser" };
+			}
+			final JComboBox type = new JComboBox(choices);
+			type.setSelectedItem(biosimrc.get("biosim.sim.type", ""));
+			if (type.getSelectedItem().equals("ODE")) {
+				choices = new String[] { "euler", "gear1", "gear2", "rk4imp", "rk8pd", "rkf45" };
+			}
+			else if (type.getSelectedItem().equals("Monte Carlo")) {
+				choices = new String[] { "gillespie", "emc-sim", "bunker", "nmc" };
+			}
+			else if (type.getSelectedItem().equals("Markov")) {
+				choices = new String[] { "atacs", "ctmc-transient" };
+			}
+			else {
+				choices = new String[] { "euler", "gear1", "gear2", "rk4imp", "rk8pd", "rkf45" };
+			}
+			final JComboBox sim = new JComboBox(choices);
+			sim.setSelectedItem(biosimrc.get("biosim.sim.sim", ""));
+			abs.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					if (abs.getSelectedItem().equals("None")) {
+						Object o = type.getSelectedItem();
+						type.removeAllItems();
+						type.addItem("ODE");
+						type.addItem("Monte Carlo");
+						type.addItem("SBML");
+						type.addItem("Network");
+						type.addItem("Browser");
+						type.setSelectedItem(o);
+					}
+					else if (abs.getSelectedItem().equals("Abstraction")) {
+						Object o = type.getSelectedItem();
+						type.removeAllItems();
+						type.addItem("ODE");
+						type.addItem("Monte Carlo");
+						type.addItem("SBML");
+						type.addItem("Network");
+						type.addItem("Browser");
+						type.setSelectedItem(o);
+					}
+					else {
+						Object o = type.getSelectedItem();
+						type.removeAllItems();
+						type.addItem("Monte Carlo");
+						type.addItem("Markov");
+						type.addItem("SBML");
+						type.addItem("Network");
+						type.addItem("Browser");
+						type.setSelectedItem(o);
+					}
+				}
+			});
+			type.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					if (type.getSelectedItem() == null) {
+					}
+					else if (type.getSelectedItem().equals("ODE")) {
+						Object o = sim.getSelectedItem();
+						sim.removeAllItems();
+						sim.addItem("euler");
+						sim.addItem("gear1");
+						sim.addItem("gear2");
+						sim.addItem("rk4imp");
+						sim.addItem("rk8pd");
+						sim.addItem("rkf45");
+						sim.setSelectedIndex(5);
+						sim.setSelectedItem(o);
+					}
+					else if (type.getSelectedItem().equals("Monte Carlo")) {
+						Object o = sim.getSelectedItem();
+						sim.removeAllItems();
+						sim.addItem("gillespie");
+						sim.addItem("emc-sim");
+						sim.addItem("bunker");
+						sim.addItem("nmc");
+						sim.setSelectedItem(o);
+					}
+					else if (type.getSelectedItem().equals("Markov")) {
+						Object o = sim.getSelectedItem();
+						sim.removeAllItems();
+						sim.addItem("atacs");
+						sim.addItem("ctmc-transient");
+						sim.setSelectedItem(o);
+					}
+					else {
+						Object o = sim.getSelectedItem();
+						sim.removeAllItems();
+						sim.addItem("euler");
+						sim.addItem("gear1");
+						sim.addItem("gear2");
+						sim.addItem("rk4imp");
+						sim.addItem("rk8pd");
+						sim.addItem("rkf45");
+						sim.setSelectedIndex(5);
+						sim.setSelectedItem(o);
+					}
+				}
+			});
 			final JTextField limit = new JTextField(biosimrc.get("biosim.sim.limit", ""));
 			final JTextField interval = new JTextField(biosimrc.get("biosim.sim.interval", ""));
 			final JTextField step = new JTextField(biosimrc.get("biosim.sim.step", ""));
@@ -644,7 +762,10 @@ public class BioSim implements MouseListener, ActionListener {
 			final JTextField rapid2 = new JTextField(biosimrc.get("biosim.sim.rapid2", ""));
 			final JTextField qssa = new JTextField(biosimrc.get("biosim.sim.qssa", ""));
 			final JTextField concentration = new JTextField(biosimrc.get("biosim.sim.concentration", ""));
-			JPanel analysisLabels = new JPanel(new GridLayout(10, 1));
+			JPanel analysisLabels = new JPanel(new GridLayout(13, 1));
+			analysisLabels.add(new JLabel("Abstraction:"));
+			analysisLabels.add(new JLabel("Simulation Type:"));
+			analysisLabels.add(new JLabel("Possible Simulators/Analyzers:"));
 			analysisLabels.add(new JLabel("Time Limit:"));
 			analysisLabels.add(new JLabel("Print Interval:"));
 			analysisLabels.add(new JLabel("Maximum Time Step:"));
@@ -655,7 +776,10 @@ public class BioSim implements MouseListener, ActionListener {
 			analysisLabels.add(new JLabel("Rapid Equilibrium Condition 2:"));
 			analysisLabels.add(new JLabel("QSSA Condition:"));
 			analysisLabels.add(new JLabel("Max Concentration Threshold:"));
-			JPanel analysisFields = new JPanel(new GridLayout(10, 1));
+			JPanel analysisFields = new JPanel(new GridLayout(13, 1));
+			analysisFields.add(abs);
+			analysisFields.add(type);
+			analysisFields.add(sim);
 			analysisFields.add(limit);
 			analysisFields.add(interval);
 			analysisFields.add(step);
@@ -854,6 +978,9 @@ public class BioSim implements MouseListener, ActionListener {
 				}
 				catch (Exception e1) {
 				}
+				biosimrc.put("biosim.sim.abs", (String) abs.getSelectedItem());
+				biosimrc.put("biosim.sim.type", (String) type.getSelectedItem());
+				biosimrc.put("biosim.sim.sim", (String) sim.getSelectedItem());
 				for (int i = 0; i < tab.getTabCount(); i++) {
 					if (tab.getTitleAt(i).contains(".gcm")) {
 						((GCM2SBMLEditor) tab.getComponentAt(i)).getGCM().loadDefaultParameters();
