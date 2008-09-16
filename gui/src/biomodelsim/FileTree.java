@@ -65,7 +65,7 @@ public class FileTree extends JPanel implements MouseListener {
 		this.dir = dir;
 		// Make a tree list with all the nodes, and make it a JTree
 		if (dir != null) {
-			tree = new JTree(addNodes(null, dir, true));
+			tree = new JTree(addNodes(null, dir, true, false));
 			TreeCellRenderer renderer = new IconCellRenderer();
 			tree.setCellRenderer(renderer);
 			// Add a listener
@@ -98,7 +98,7 @@ public class FileTree extends JPanel implements MouseListener {
 	/**
 	 * Add nodes from under "dir" into curTop. Highly recursive.
 	 */
-	DefaultMutableTreeNode addNodes(DefaultMutableTreeNode curTop, File dir, boolean sim) {
+	DefaultMutableTreeNode addNodes(DefaultMutableTreeNode curTop, File dir, boolean sim, boolean synth) {
 		String curPath = dir.getPath();
 		DefaultMutableTreeNode curDir;
 		if (curTop == null) {
@@ -106,6 +106,9 @@ public class FileTree extends JPanel implements MouseListener {
 		}
 		else {
 			if (sim) {
+				curDir = new DefaultMutableTreeNode(new IconData(ICON_SIMULATION, null, dir.getName()));
+			}
+			else if (synth) {
 				curDir = new DefaultMutableTreeNode(new IconData(ICON_SIMULATION, null, dir.getName()));
 			}
 			else {
@@ -141,10 +144,13 @@ public class FileTree extends JPanel implements MouseListener {
 			if ((f = new File(newPath)).isDirectory() && !f.getName().equals("CVS")) {
 				for (String s : f.list()) {
 					if (s.length() > 3 && s.substring(s.length() - 4).equals(".sim")) {
-						addNodes(curDir, f, true);
+						addNodes(curDir, f, true, false);
 					}
 					else if (s.length() > 3 && s.substring(s.length() - 4).equals(".lrn")) {
-						addNodes(curDir, f, false);
+						addNodes(curDir, f, false, false);
+					}
+					else if (s.length() > 3 && s.substring(s.length() - 4).equals(".syn")) {
+						addNodes(curDir, f, false, true);
 					}
 				}
 			}
@@ -343,6 +349,28 @@ public class FileTree extends JPanel implements MouseListener {
 							current.remove(getChild);
 							doAdd = true;
 							fixTree(current, new DefaultMutableTreeNode(new IconData(ICON_LEARN, null, f
+									.getName())), f, doAdd);
+						}
+					}					
+					else if (s.length() > 3 && s.substring(s.length() - 4).equals(".syn")) {
+						String get = "";
+						boolean doAdd = true;
+						int getChild = 0;
+						for (int j = 0; j < current.getChildCount(); j++) {
+							get = "" + current.getChildAt(j);
+							if (get.equals(f.getName())) {
+								doAdd = false;
+								getChild = j;
+							}
+						}
+						if (doAdd) {
+							fixTree(current, new DefaultMutableTreeNode(new IconData(ICON_SIMULATION, null, f
+									.getName())), f, doAdd);
+						}
+						else {
+							current.remove(getChild);
+							doAdd = true;
+							fixTree(current, new DefaultMutableTreeNode(new IconData(ICON_SIMULATION, null, f
 									.getName())), f, doAdd);
 						}
 					}
