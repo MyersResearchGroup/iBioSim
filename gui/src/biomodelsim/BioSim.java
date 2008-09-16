@@ -2264,7 +2264,7 @@ public class BioSim implements MouseListener, ActionListener {
 		else if (e.getSource() == importLhpn) {
 			if (root != null) {
 				String filename = Buttons.browse(frame, new File(root), null, JFileChooser.FILES_ONLY,
-						"Import Labeled Hybrid Petri Net");
+						"Import LHPN");
 				if (filename.length() > 1
 						&& !filename.substring(filename.length() - 2, filename.length()).equals(".g")) {
 					JOptionPane.showMessageDialog(frame, "You must select a valid lhpn file to import.",
