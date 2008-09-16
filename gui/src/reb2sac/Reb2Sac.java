@@ -2,18 +2,14 @@ package reb2sac;
 
 import java.io.*;
 import java.util.*;
+import java.util.prefs.Preferences;
 import java.util.regex.Pattern;
 import java.awt.*;
 import java.awt.event.*;
-
 import javax.swing.*;
-
 import org.sbml.libsbml.*;
-
 import sbmleditor.*;
 import gcm2sbml.gui.GCM2SBMLEditor;
-import gcm2sbml.network.GeneticNetwork;
-import gcm2sbml.parser.GCMParser;
 import graph.*;
 import biomodelsim.*;
 import buttons.*;
@@ -183,8 +179,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 	 * puts them on panels, adds the panels to the frame, and then displays the
 	 * GUI.
 	 */
-	public Reb2Sac(String sbmlFile, String sbmlProp, String root, BioSim biomodelsim,
-			String simName, Log log, JTabbedPane simTab, String open) {
+	public Reb2Sac(String sbmlFile, String sbmlProp, String root, BioSim biomodelsim, String simName,
+			Log log, JTabbedPane simTab, String open) {
 		if (File.separator.equals("\\")) {
 			separator = "\\\\";
 		}
@@ -203,6 +199,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		frames = new ArrayList<JFrame>();
 
 		// Creates the input fields for the changes in abstraction
+		Preferences biosimrc = Preferences.userRoot();
 		String[] odeSimulators = new String[6];
 		odeSimulators[0] = "euler";
 		odeSimulators[1] = "gear1";
@@ -215,10 +212,10 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		simulators = new JComboBox(odeSimulators);
 		simulators.setSelectedItem("rkf45");
 		simulators.addActionListener(this);
-		limit = new JTextField("100.0", 39);
-		interval = new JTextField("1.0", 15);
-		step = new JTextField("inf", 15);
-		absErr = new JTextField("1.0E-9", 15);
+		limit = new JTextField(biosimrc.get("biosim.sim.limit", ""), 39);
+		interval = new JTextField(biosimrc.get("biosim.sim.interval", ""), 15);
+		step = new JTextField(biosimrc.get("biosim.sim.step", ""), 15);
+		absErr = new JTextField(biosimrc.get("biosim.sim.error", ""), 15);
 		int next = 1;
 		String filename = "sim" + next;
 		while (new File(root + separator + filename).exists()) {
@@ -226,8 +223,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			filename = "sim" + next;
 		}
 		// dir = new JTextField(filename, 15);
-		seed = new JTextField("314159", 15);
-		runs = new JTextField("1", 15);
+		seed = new JTextField(biosimrc.get("biosim.sim.seed", ""), 15);
+		runs = new JTextField(biosimrc.get("biosim.sim.runs", ""), 15);
 		simulatorsLabel = new JLabel("Possible Simulators/Analyzers:");
 		limitLabel = new JLabel("Time Limit:");
 		intervalLabel = new JLabel("Print Interval:");
@@ -318,13 +315,13 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		JPanel maxConSpace1 = new JPanel();
 		JPanel maxConSpace2 = new JPanel();
 		rapidLabel1 = new JLabel("Rapid Equilibrium Condition 1:");
-		rapid1 = new JTextField("0.1", 15);
+		rapid1 = new JTextField(biosimrc.get("biosim.sim.rapid1", ""), 15);
 		rapidLabel2 = new JLabel("Rapid Equilibrium Condition 2:");
-		rapid2 = new JTextField("0.1", 15);
+		rapid2 = new JTextField(biosimrc.get("biosim.sim.rapid2", ""), 15);
 		qssaLabel = new JLabel("QSSA Condition:");
-		qssa = new JTextField("0.1", 15);
+		qssa = new JTextField(biosimrc.get("biosim.sim.qssa", ""), 15);
 		maxConLabel = new JLabel("Max Concentration Threshold:");
-		maxCon = new JTextField("15", 15);
+		maxCon = new JTextField(biosimrc.get("biosim.sim.concentration", ""), 15);
 		maxConLabel.setEnabled(false);
 		maxCon.setEnabled(false);
 		qssaLabel.setEnabled(false);
@@ -590,8 +587,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					Object[] adding = { add };
 					addSAD.setListData(adding);
 					addSAD.setSelectedIndex(0);
-					sadList = Buttons.add(sadList, sad, addSAD, false, null, null, null, null,
-							null, null, this);
+					sadList = Buttons.add(sadList, sad, addSAD, false, null, null, null, null, null, null,
+							this);
 					// sadFile.append("" + (char) read);
 					read = input.readLine();
 					read = input.readLine();
@@ -682,17 +679,15 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 						}
 					}
 					else {
-						JOptionPane.showMessageDialog(biomodelsim.frame(),
-								"Unable to load user defined file!", "Error Loading File",
-								JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(biomodelsim.frame(), "Unable to load user defined file!",
+								"Error Loading File", JOptionPane.ERROR_MESSAGE);
 						return;
 					}
 				}
 			}
 			catch (Exception e1) {
-				JOptionPane.showMessageDialog(biomodelsim.frame(),
-						"Unable to load user defined file!", "Error Loading File",
-						JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(biomodelsim.frame(), "Unable to load user defined file!",
+						"Error Loading File", JOptionPane.ERROR_MESSAGE);
 			}
 			if (!getData.equals("")) {
 				ssaList = getData.split("\n");
@@ -850,12 +845,12 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		// if the none Radio Button is selected
 		change = true;
 		if (e.getSource() == none) {
-			Button_Enabling.enableNoneOrAbs(ODE, monteCarlo, markov, seed, seedLabel, runs,
-					runsLabel, stepLabel, step, errorLabel, absErr, limitLabel, limit,
-					intervalLabel, interval, simulators, simulatorsLabel, explanation, description,
-					none, intSpecies, species, spLabel, speciesLabel, addIntSpecies,
-					removeIntSpecies, rapid1, rapid2, qssa, maxCon, rapidLabel1, rapidLabel2,
-					qssaLabel, maxConLabel, usingSSA, clearIntSpecies, fileStem, fileStemLabel);
+			Button_Enabling.enableNoneOrAbs(ODE, monteCarlo, markov, seed, seedLabel, runs, runsLabel,
+					stepLabel, step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval,
+					simulators, simulatorsLabel, explanation, description, none, intSpecies, species,
+					spLabel, speciesLabel, addIntSpecies, removeIntSpecies, rapid1, rapid2, qssa, maxCon,
+					rapidLabel1, rapidLabel2, qssaLabel, maxConLabel, usingSSA, clearIntSpecies, fileStem,
+					fileStemLabel);
 			if (!sbml.isSelected() && !xhtml.isSelected() && !dot.isSelected() && runFiles) {
 				overwrite.setEnabled(true);
 				append.setEnabled(true);
@@ -876,12 +871,12 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		}
 		// if the abstraction Radio Button is selected
 		else if (e.getSource() == abstraction) {
-			Button_Enabling.enableNoneOrAbs(ODE, monteCarlo, markov, seed, seedLabel, runs,
-					runsLabel, stepLabel, step, errorLabel, absErr, limitLabel, limit,
-					intervalLabel, interval, simulators, simulatorsLabel, explanation, description,
-					none, intSpecies, species, spLabel, speciesLabel, addIntSpecies,
-					removeIntSpecies, rapid1, rapid2, qssa, maxCon, rapidLabel1, rapidLabel2,
-					qssaLabel, maxConLabel, usingSSA, clearIntSpecies, fileStem, fileStemLabel);
+			Button_Enabling.enableNoneOrAbs(ODE, monteCarlo, markov, seed, seedLabel, runs, runsLabel,
+					stepLabel, step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval,
+					simulators, simulatorsLabel, explanation, description, none, intSpecies, species,
+					spLabel, speciesLabel, addIntSpecies, removeIntSpecies, rapid1, rapid2, qssa, maxCon,
+					rapidLabel1, rapidLabel2, qssaLabel, maxConLabel, usingSSA, clearIntSpecies, fileStem,
+					fileStemLabel);
 			if (!sbml.isSelected() && !xhtml.isSelected() && !dot.isSelected() && runFiles) {
 				overwrite.setEnabled(true);
 				append.setEnabled(true);
@@ -903,11 +898,10 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		// if the nary Radio Button is selected
 		else if (e.getSource() == nary) {
 			Button_Enabling.enableNary(ODE, monteCarlo, markov, seed, seedLabel, runs, runsLabel,
-					stepLabel, step, errorLabel, absErr, limitLabel, limit, intervalLabel,
-					interval, simulators, simulatorsLabel, explanation, description, intSpecies,
-					species, spLabel, speciesLabel, addIntSpecies, removeIntSpecies, rapid1,
-					rapid2, qssa, maxCon, rapidLabel1, rapidLabel2, qssaLabel, maxConLabel,
-					usingSSA, clearIntSpecies, fileStem, fileStemLabel);
+					stepLabel, step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval,
+					simulators, simulatorsLabel, explanation, description, intSpecies, species, spLabel,
+					speciesLabel, addIntSpecies, removeIntSpecies, rapid1, rapid2, qssa, maxCon, rapidLabel1,
+					rapidLabel2, qssaLabel, maxConLabel, usingSSA, clearIntSpecies, fileStem, fileStemLabel);
 			if (!sbml.isSelected() && !xhtml.isSelected() && !dot.isSelected() && runFiles) {
 				overwrite.setEnabled(true);
 				append.setEnabled(true);
@@ -928,9 +922,9 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		}
 		// if the ODE Radio Button is selected
 		else if (e.getSource() == ODE) {
-			Button_Enabling.enableODE(seed, seedLabel, runs, runsLabel, stepLabel, step,
-					errorLabel, absErr, limitLabel, limit, intervalLabel, interval, simulators,
-					simulatorsLabel, explanation, description, usingSSA, fileStem, fileStemLabel);
+			Button_Enabling.enableODE(seed, seedLabel, runs, runsLabel, stepLabel, step, errorLabel,
+					absErr, limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel,
+					explanation, description, usingSSA, fileStem, fileStemLabel);
 			overwrite.setEnabled(true);
 			append.setEnabled(true);
 			choose3.setEnabled(true);
@@ -960,18 +954,18 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		}
 		// if the markov Radio Button is selected
 		else if (e.getSource() == markov) {
-			Button_Enabling.enableMarkov(seed, seedLabel, runs, runsLabel, stepLabel, step,
-					errorLabel, absErr, limitLabel, limit, intervalLabel, interval, simulators,
-					simulatorsLabel, explanation, description, usingSSA, fileStem, fileStemLabel);
+			Button_Enabling.enableMarkov(seed, seedLabel, runs, runsLabel, stepLabel, step, errorLabel,
+					absErr, limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel,
+					explanation, description, usingSSA, fileStem, fileStemLabel);
 			overwrite.setEnabled(false);
 			append.setEnabled(false);
 			choose3.setEnabled(false);
 		}
 		// if the sbml Radio Button is selected
 		else if (e.getSource() == sbml) {
-			Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel, stepLabel,
-					step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval,
-					simulators, simulatorsLabel, explanation, description, fileStem, fileStemLabel);
+			Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel, stepLabel, step,
+					errorLabel, absErr, limitLabel, limit, intervalLabel, interval, simulators,
+					simulatorsLabel, explanation, description, fileStem, fileStemLabel);
 			overwrite.setEnabled(false);
 			append.setEnabled(false);
 			choose3.setEnabled(false);
@@ -979,9 +973,9 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		}
 		// if the dot Radio Button is selected
 		else if (e.getSource() == dot) {
-			Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel, stepLabel,
-					step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval,
-					simulators, simulatorsLabel, explanation, description, fileStem, fileStemLabel);
+			Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel, stepLabel, step,
+					errorLabel, absErr, limitLabel, limit, intervalLabel, interval, simulators,
+					simulatorsLabel, explanation, description, fileStem, fileStemLabel);
 			overwrite.setEnabled(false);
 			append.setEnabled(false);
 			choose3.setEnabled(false);
@@ -989,9 +983,9 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		}
 		// if the xhtml Radio Button is selected
 		else if (e.getSource() == xhtml) {
-			Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel, stepLabel,
-					step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval,
-					simulators, simulatorsLabel, explanation, description, fileStem, fileStemLabel);
+			Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel, stepLabel, step,
+					errorLabel, absErr, limitLabel, limit, intervalLabel, interval, simulators,
+					simulatorsLabel, explanation, description, fileStem, fileStemLabel);
 			overwrite.setEnabled(false);
 			append.setEnabled(false);
 			choose3.setEnabled(false);
@@ -999,8 +993,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		}
 		// if the add interesting species button is clicked
 		else if (e.getSource() == addIntSpecies) {
-			interestingSpecies = Buttons.add(interestingSpecies, species, intSpecies, false,
-					amountTerm, ge, gt, eq, lt, le, this);
+			interestingSpecies = Buttons.add(interestingSpecies, species, intSpecies, false, amountTerm,
+					ge, gt, eq, lt, le, this);
 		}
 		// if the remove interesting species button is clicked
 		else if (e.getSource() == removeIntSpecies) {
@@ -1017,8 +1011,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		}
 		// if the add termination conditions button is clicked
 		else if (e.getSource() == addTermCond) {
-			termConditions = Buttons.add(termConditions, terminations, termCond, true, amountTerm,
-					ge, gt, eq, lt, le, this);
+			termConditions = Buttons.add(termConditions, terminations, termCond, true, amountTerm, ge,
+					gt, eq, lt, le, this);
 		}
 		// if the remove termination conditions button is clicked
 		else if (e.getSource() == removeTermCond) {
@@ -1098,8 +1092,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				absErr.setEnabled(false);
 			}
 			else if (simulators.getSelectedItem().equals("nmc")) {
-				description.setText("Monte Carlo simulation with normally"
-						+ " distributed waiting time");
+				description.setText("Monte Carlo simulation with normally" + " distributed waiting time");
 				step.setEnabled(true);
 				stepLabel.setEnabled(true);
 				errorLabel.setEnabled(false);
@@ -1141,23 +1134,20 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 							int value = JOptionPane.showOptionDialog(biomodelsim.frame(),
 									"Do you want to save changes to " + sbmlEditor.getRefFile()
 											+ " before running the simulation?", "Save Changes",
-									JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
-									options, options[0]);
+									JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 							if (value == JOptionPane.YES_OPTION) {
 								sbml.save(true, stem, true);
 							}
 						}
 					}
 					else if (biomodelsim.getTab().getComponentAt(i) instanceof GCM2SBMLEditor) {
-						GCM2SBMLEditor gcm = ((GCM2SBMLEditor) (biomodelsim.getTab()
-								.getComponentAt(i)));
+						GCM2SBMLEditor gcm = ((GCM2SBMLEditor) (biomodelsim.getTab().getComponentAt(i)));
 						if (gcm.isDirty()) {
 							Object[] options = { "Yes", "No" };
 							int value = JOptionPane.showOptionDialog(biomodelsim.frame(),
 									"Do you want to save changes to " + sbmlEditor.getRefFile()
 											+ " before running the simulation?", "Save Changes",
-									JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
-									options, options[0]);
+									JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 							if (value == JOptionPane.YES_OPTION) {
 								gcm.save("gcm");
 							}
@@ -1184,10 +1174,9 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				if (ODE.isSelected()) {
 					ODE.setSelected(false);
 					monteCarlo.setSelected(true);
-					Button_Enabling.enableMonteCarlo(seed, seedLabel, runs, runsLabel, stepLabel,
-							step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval,
-							simulators, simulatorsLabel, explanation, description, usingSSA,
-							fileStem, fileStemLabel);
+					Button_Enabling.enableMonteCarlo(seed, seedLabel, runs, runsLabel, stepLabel, step,
+							errorLabel, absErr, limitLabel, limit, intervalLabel, interval, simulators,
+							simulatorsLabel, explanation, description, usingSSA, fileStem, fileStemLabel);
 					if (runFiles) {
 						overwrite.setEnabled(true);
 						append.setEnabled(true);
@@ -1210,10 +1199,9 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				if (markov.isSelected()) {
 					markov.setSelected(false);
 					monteCarlo.setSelected(true);
-					Button_Enabling.enableMonteCarlo(seed, seedLabel, runs, runsLabel, stepLabel,
-							step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval,
-							simulators, simulatorsLabel, explanation, description, usingSSA,
-							fileStem, fileStemLabel);
+					Button_Enabling.enableMonteCarlo(seed, seedLabel, runs, runsLabel, stepLabel, step,
+							errorLabel, absErr, limitLabel, limit, intervalLabel, interval, simulators,
+							simulatorsLabel, explanation, description, usingSSA, fileStem, fileStemLabel);
 					if (runFiles) {
 						overwrite.setEnabled(true);
 						append.setEnabled(true);
@@ -1368,10 +1356,10 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				modify = "/";
 			}
 			if (availSpecies.getSelectedItem() == null) {
-				JOptionPane.showMessageDialog(biomodelsim.frame(),
-						"You must select a model for simulation "
-								+ "in order to add a user defined condition.",
-						"Select A Model For Simulation", JOptionPane.ERROR_MESSAGE);
+				JOptionPane
+						.showMessageDialog(biomodelsim.frame(), "You must select a model for simulation "
+								+ "in order to add a user defined condition.", "Select A Model For Simulation",
+								JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 			addToIntSpecies((String) availSpecies.getSelectedItem());
@@ -1389,8 +1377,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				Object[] adding = { add };
 				addSSA.setListData(adding);
 				addSSA.setSelectedIndex(0);
-				ssaList = Buttons.add(ssaList, ssa, addSSA, false, null, null, null, null, null,
-						null, this);
+				ssaList = Buttons
+						.add(ssaList, ssa, addSSA, false, null, null, null, null, null, null, this);
 				int[] index = ssa.getSelectedIndices();
 				ssaList = Buttons.getList(ssaList, ssa);
 				ssa.setSelectedIndices(index);
@@ -1462,14 +1450,14 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				TCid.setText("");
 				desc.setText("");
 				cond.setText("");
-				sadList = Buttons.add(sadList, sad, addSAD, false, null, null, null, null, null,
-						null, this);
+				sadList = Buttons
+						.add(sadList, sad, addSAD, false, null, null, null, null, null, null, this);
 				sad.setListData(sadList);
 			}
 			else if (result == 1) {
-				JOptionPane.showMessageDialog(biomodelsim.frame(),
-						"Syntax error in the termination condition!", "Syntax Error",
-						JOptionPane.ERROR_MESSAGE);
+				JOptionPane
+						.showMessageDialog(biomodelsim.frame(), "Syntax error in the termination condition!",
+								"Syntax Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 		// if the edit ssa button is clicked
@@ -1542,8 +1530,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				ssaAddPanel.add(ssaAddPanel2, "Center");
 				String[] options = { "Save", "Cancel" };
 				int value = JOptionPane.showOptionDialog(biomodelsim.frame(), ssaAddPanel,
-						"Edit User Defined Data", JOptionPane.YES_NO_OPTION,
-						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+						"Edit User Defined Data", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
+						options, options[0]);
 				if (value == JOptionPane.YES_OPTION) {
 					double time1 = 0;
 					int mod1 = 0;
@@ -1551,21 +1539,18 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 						time1 = Double.parseDouble(time.getText().trim());
 					}
 					catch (Exception e1) {
-						JOptionPane.showMessageDialog(biomodelsim.frame(),
-								"You must enter a real number " + "into the time text field!",
-								"Time Must Be A Real Number", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(biomodelsim.frame(), "You must enter a real number "
+								+ "into the time text field!", "Time Must Be A Real Number",
+								JOptionPane.ERROR_MESSAGE);
 						return;
 					}
 					try {
 						mod1 = Integer.parseInt(ssaModNum.getText().trim());
 					}
 					catch (Exception e1) {
-						JOptionPane
-								.showMessageDialog(biomodelsim.frame(),
-										"You must enter an integer "
-												+ "into the amount change text field!",
-										"Amount Change Must Be An Integer",
-										JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(biomodelsim.frame(), "You must enter an integer "
+								+ "into the amount change text field!", "Amount Change Must Be An Integer",
+								JOptionPane.ERROR_MESSAGE);
 						return;
 					}
 					String modify;
@@ -1587,13 +1572,13 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					if (availSpecies.getSelectedItem() == null) {
 						JOptionPane.showMessageDialog(biomodelsim.frame(),
 								"You must select a model for simulation "
-										+ "in order to add a user defined condition.",
-								"Select A Model For Simulation", JOptionPane.ERROR_MESSAGE);
+										+ "in order to add a user defined condition.", "Select A Model For Simulation",
+								JOptionPane.ERROR_MESSAGE);
 						return;
 					}
 					addToIntSpecies((String) availSpecies.getSelectedItem());
-					ssaList[ssa.getSelectedIndex()] = time1 + " " + availSpecies.getSelectedItem()
-							+ " " + modify + mod1;
+					ssaList[ssa.getSelectedIndex()] = time1 + " " + availSpecies.getSelectedItem() + " "
+							+ modify + mod1;
 					int[] index = ssa.getSelectedIndices();
 					ssa.setListData(ssaList);
 					ssaList = Buttons.getList(ssaList, ssa);
@@ -1692,8 +1677,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				sadAddPanel.add(sadAddPanel2, "South");
 				String[] options = { "Save", "Cancel" };
 				int value = JOptionPane.showOptionDialog(biomodelsim.frame(), sadAddPanel,
-						"Edit Termination Condition", JOptionPane.YES_NO_OPTION,
-						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+						"Edit Termination Condition", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
+						null, options, options[0]);
 				if (value == JOptionPane.YES_OPTION) {
 					SBMLReader reader = new SBMLReader();
 					SBMLDocument document = reader.readSBML(sbmlFile);
@@ -1713,11 +1698,11 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 						}
 					}
 					TermCond TCparser = new TermCond(false);
-					int result = TCparser.ParseTermCond(biomodelsim, (this), listOfSpecs,
-							listOfReacs, cond.getText().trim());
+					int result = TCparser.ParseTermCond(biomodelsim, (this), listOfSpecs, listOfReacs, cond
+							.getText().trim());
 					if (result == 0) {
-						sadList[sad.getSelectedIndex()] = TCid.getText().trim() + "; "
-								+ desc.getText().trim() + "; " + cond.getText().trim();
+						sadList[sad.getSelectedIndex()] = TCid.getText().trim() + "; " + desc.getText().trim()
+								+ "; " + cond.getText().trim();
 						int[] index = sad.getSelectedIndices();
 						sad.setListData(sadList);
 						sadList = Buttons.getList(sadList, sad);
@@ -1752,9 +1737,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				OptAddPanel.add(OptAddPanel0, "North");
 				OptAddPanel.add(OptAddPanel1, "Center");
 				String[] options = { "Save", "Cancel" };
-				int value = JOptionPane.showOptionDialog(biomodelsim.frame(), OptAddPanel,
-						"Edit Option", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
-						options, options[0]);
+				int value = JOptionPane.showOptionDialog(biomodelsim.frame(), OptAddPanel, "Edit Option",
+						JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 				if (value == JOptionPane.YES_OPTION) {
 					props[properties.getSelectedIndex()] = Option.getText().trim() + "="
 							+ Value.getText().trim();
@@ -1810,15 +1794,13 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		// if the add properties button is clicked
 		else if (e.getSource() == addProp) {
 			if (prop.getText().trim().equals("")) {
-				JOptionPane.showMessageDialog(biomodelsim.frame(),
-						"Enter a option into the option field!", "Must Enter an Option",
-						JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(biomodelsim.frame(), "Enter a option into the option field!",
+						"Must Enter an Option", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 			if (value.getText().trim().equals("")) {
-				JOptionPane.showMessageDialog(biomodelsim.frame(),
-						"Enter a value into the value field!", "Must Enter a Value",
-						JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(biomodelsim.frame(), "Enter a value into the value field!",
+						"Must Enter a Value", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 			String add = prop.getText().trim() + "=" + value.getText().trim();
@@ -1826,8 +1808,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			Object[] adding = { add };
 			addPropery.setListData(adding);
 			addPropery.setSelectedIndex(0);
-			props = Buttons.add(props, properties, addPropery, false, null, null, null, null, null,
-					null, this);
+			props = Buttons.add(props, properties, addPropery, false, null, null, null, null, null, null,
+					this);
 		}
 		else if (e.getSource() == overwrite) {
 			limit.setEnabled(true);
@@ -1861,15 +1843,13 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					if (getProps.containsKey("monte.carlo.simulation.time.limit")) {
 						step.setText(getProps.getProperty("monte.carlo.simulation.time.step"));
 						limit.setText(getProps.getProperty("monte.carlo.simulation.time.limit"));
-						interval.setText(getProps
-								.getProperty("monte.carlo.simulation.print.interval"));
+						interval.setText(getProps.getProperty("monte.carlo.simulation.print.interval"));
 					}
 				}
 			}
 			catch (Exception e1) {
 				JOptionPane.showMessageDialog(biomodelsim.frame(),
-						"Unable to restore time limit and print interval.", "Error",
-						JOptionPane.ERROR_MESSAGE);
+						"Unable to restore time limit and print interval.", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 	}
@@ -1890,9 +1870,10 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			timeLimit = Double.parseDouble(limit.getText().trim());
 		}
 		catch (Exception e1) {
-			JOptionPane.showMessageDialog(biomodelsim.frame(),
-					"Must Enter A Real Number Into The Time Limit Field.", "Error",
-					JOptionPane.ERROR_MESSAGE);
+			JOptionPane
+					.showMessageDialog(biomodelsim.frame(),
+							"Must Enter A Real Number Into The Time Limit Field.", "Error",
+							JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		try {
@@ -1948,26 +1929,24 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		}
 		catch (Exception e1) {
 			JOptionPane.showMessageDialog(biomodelsim.frame(),
-					"Must Enter An Integer Into The Random Seed Field.", "Error",
-					JOptionPane.ERROR_MESSAGE);
+					"Must Enter An Integer Into The Random Seed Field.", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
+		Preferences biosimrc = Preferences.userRoot();
 		try {
 			// if (runs.isEnabled()) {
 			run = Integer.parseInt(runs.getText().trim());
 			if (run < 0) {
 				JOptionPane.showMessageDialog(biomodelsim.frame(),
-						"Must Enter A Positive Integer Into The Runs Field."
-								+ "\nProceding With Default:  1", "Error",
-						JOptionPane.ERROR_MESSAGE);
-				run = 1;
+						"Must Enter A Positive Integer Into The Runs Field." + "\nProceding With Default:   "
+								+ biosimrc.get("biosim.sim.runs", ""), "Error", JOptionPane.ERROR_MESSAGE);
+				run = Integer.parseInt(biosimrc.get("biosim.sim.runs", ""));
 			}
 			// }
 		}
 		catch (Exception e1) {
 			JOptionPane.showMessageDialog(biomodelsim.frame(),
-					"Must Enter A Positive Integer Into The Runs Field.", "Error",
-					JOptionPane.ERROR_MESSAGE);
+					"Must Enter A Positive Integer Into The Runs Field.", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		if (!runs.isEnabled()) {
@@ -1979,8 +1958,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					}
 					if (end.equals(".tsd") || end.equals(".dat") || end.equals(".csv")) {
 						if (runs.contains("run-")) {
-							run = Math.max(run, Integer.parseInt(runs.substring(4, runs.length()
-									- end.length())));
+							run = Math
+									.max(run, Integer.parseInt(runs.substring(4, runs.length() - end.length())));
 						}
 					}
 				}
@@ -2096,8 +2075,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			selectedButtons = "nary_xhtml";
 		}
 		try {
-			FileOutputStream out = new FileOutputStream(new File(root + separator + outDir
-					+ separator + "user-defined.dat"));
+			FileOutputStream out = new FileOutputStream(new File(root + separator + outDir + separator
+					+ "user-defined.dat"));
 			int[] indecies = ssa.getSelectedIndices();
 			ssaList = Buttons.getList(ssaList, ssa);
 			ssa.setSelectedIndices(indecies);
@@ -2131,8 +2110,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					+ direct
 					+ separator
 					+ simProp.substring(simProp.length()
-							- simProp.split(separator)[simProp.split(separator).length - 1]
-									.length());
+							- simProp.split(separator)[simProp.split(separator).length - 1].length());
 			saveTopLevel = true;
 		}
 		String[] getFilename = simProp.split(separator);
@@ -2155,13 +2133,10 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		 * File(propName).exists()) { Properties getProps = new Properties();
 		 * FileInputStream load = new FileInputStream(new File(propName));
 		 * getProps.load(load); load.close(); if
-		 * (getProps.containsKey("monte.carlo.simulation.time.limit")) {
-		 * monteLimit =
-		 * getProps.getProperty("monte.carlo.simulation.time.limit");
-		 * monteInterval =
+		 * (getProps.containsKey("monte.carlo.simulation.time.limit")) { monteLimit =
+		 * getProps.getProperty("monte.carlo.simulation.time.limit"); monteInterval =
 		 * getProps.getProperty("monte.carlo.simulation.print.interval"); } } }
-		 * catch (Exception e) {
-		 * JOptionPane.showMessageDialog(biomodelsim.frame(),
+		 * catch (Exception e) { JOptionPane.showMessageDialog(biomodelsim.frame(),
 		 * "Unable to add properties to property file.", "Error",
 		 * JOptionPane.ERROR_MESSAGE); }
 		 */
@@ -2245,10 +2220,9 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		biomodelsim.getExitButton().addActionListener(runProgram);
 		saveSAD(outDir);
 		runProgram.createProperties(timeLimit, printInterval, timeStep, absError, ".",
-				// root + separator + outDir,
+		// root + separator + outDir,
 				rndSeed, run, termCond, intSpecies, printer_id, printer_track_quantity, simProp
-						.split(separator), selectedButtons, this, simProp, rap1, rap2, qss, con,
-				usingSSA,
+						.split(separator), selectedButtons, this, simProp, rap1, rap2, qss, con, usingSSA,
 				// root + separator + simName + separator +
 				"user-defined.dat", usingSAD, new File(root + separator + outDir + separator
 						+ "termCond.sad"));
@@ -2275,8 +2249,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					for (String s : searchForRunFiles) {
 						if (s.length() > 3 && s.substring(0, 4).equals("run-")
 								&& new File(root + separator + outDir + separator + s).isFile()) {
-							start = Math.max(Integer.parseInt(s.substring(4, s.length() - 4)),
-									start);
+							start = Math.max(Integer.parseInt(s.substring(4, s.length() - 4)), start);
 						}
 					}
 					getProps.setProperty("monte.carlo.simulation.start.index", (start + 1) + "");
@@ -2301,20 +2274,18 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			// }
 			// }
 			FileOutputStream store = new FileOutputStream(new File(propName));
-			getProps.store(store, getFilename[getFilename.length - 1].substring(0, cut)
-					+ " Properties");
+			getProps.store(store, getFilename[getFilename.length - 1].substring(0, cut) + " Properties");
 			store.close();
 			if (saveTopLevel) {
 				store = new FileOutputStream(new File(topLevelProps));
-				getProps.store(store, getFilename[getFilename.length - 1].substring(0, cut)
-						+ " Properties");
+				getProps
+						.store(store, getFilename[getFilename.length - 1].substring(0, cut) + " Properties");
 				store.close();
 			}
 		}
 		catch (Exception e) {
 			JOptionPane.showMessageDialog(biomodelsim.frame(),
-					"Unable to add properties to property file.", "Error",
-					JOptionPane.ERROR_MESSAGE);
+					"Unable to add properties to property file.", "Error", JOptionPane.ERROR_MESSAGE);
 		}
 		if ((monteCarlo.isSelected() || ODE.isSelected()) && overwrite.isSelected()) {
 			File[] files = new File(root + separator + outDir).listFiles();
@@ -2326,26 +2297,23 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		}
 		int exit;
 		if (!direct.equals(".")) {
-			exit = runProgram.execute(simProp, sbml, dot, xhtml, biomodelsim.frame(), ODE,
-					monteCarlo, sim, printer_id, printer_track_quantity,
-					root + separator + simName, nary, 1, intSpecies, log, usingSSA, root
-							+ separator + outDir + separator + "user-defined.dat", biomodelsim,
+			exit = runProgram.execute(simProp, sbml, dot, xhtml, biomodelsim.frame(), ODE, monteCarlo,
+					sim, printer_id, printer_track_quantity, root + separator + simName, nary, 1, intSpecies,
+					log, usingSSA, root + separator + outDir + separator + "user-defined.dat", biomodelsim,
 					simTab, root, progress, steps, simName + " " + direct);
 		}
 		else {
-			exit = runProgram.execute(simProp, sbml, dot, xhtml, biomodelsim.frame(), ODE,
-					monteCarlo, sim, printer_id, printer_track_quantity,
-					root + separator + simName, nary, 1, intSpecies, log, usingSSA, root
-							+ separator + outDir + separator + "user-defined.dat", biomodelsim,
+			exit = runProgram.execute(simProp, sbml, dot, xhtml, biomodelsim.frame(), ODE, monteCarlo,
+					sim, printer_id, printer_track_quantity, root + separator + simName, nary, 1, intSpecies,
+					log, usingSSA, root + separator + outDir + separator + "user-defined.dat", biomodelsim,
 					simTab, root, progress, steps, simName);
 		}
 		if (nary.isSelected() && exit == 0) {
-			new Nary_Run(this, amountTerm, ge, gt, eq, lt, le, simulators,
-					simProp.split(separator), simProp, sbml, dot, xhtml, nary, ODE, monteCarlo,
-					timeLimit, printInterval, timeStep, root + separator + simName, rndSeed, run,
-					printer_id, printer_track_quantity, termCond, intSpecies, rap1, rap2, qss, con,
-					log, usingSSA, root + separator + outDir + separator + "user-defined.dat",
-					biomodelsim, simTab, root);
+			new Nary_Run(this, amountTerm, ge, gt, eq, lt, le, simulators, simProp.split(separator),
+					simProp, sbml, dot, xhtml, nary, ODE, monteCarlo, timeLimit, printInterval, timeStep,
+					root + separator + simName, rndSeed, run, printer_id, printer_track_quantity, termCond,
+					intSpecies, rap1, rap2, qss, con, log, usingSSA, root + separator + outDir + separator
+							+ "user-defined.dat", biomodelsim, simTab, root);
 		}
 		running.setCursor(null);
 		running.dispose();
@@ -2391,9 +2359,9 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 	}
 
 	/**
-	 * Invoked when the mouse is double clicked in the interesting species
-	 * JLists or termination conditions JLists. Adds or removes the selected
-	 * interesting species or termination conditions.
+	 * Invoked when the mouse is double clicked in the interesting species JLists
+	 * or termination conditions JLists. Adds or removes the selected interesting
+	 * species or termination conditions.
 	 */
 	public void mouseClicked(MouseEvent e) {
 		if (e.getClickCount() == 2) {
@@ -2405,8 +2373,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				removeIntSpecies();
 			}
 			else if (e.getSource() == termCond) {
-				termConditions = Buttons.add(termConditions, terminations, termCond, true,
-						amountTerm, ge, gt, eq, lt, le, this);
+				termConditions = Buttons.add(termConditions, terminations, termCond, true, amountTerm, ge,
+						gt, eq, lt, le, this);
 			}
 			else if (e.getSource() == terminations) {
 				termConditions = Buttons.remove(terminations, termConditions);
@@ -2459,9 +2427,10 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			timeLimit = Double.parseDouble(limit.getText().trim());
 		}
 		catch (Exception e1) {
-			JOptionPane.showMessageDialog(biomodelsim.frame(),
-					"Must Enter A Real Number Into The Time Limit Field.", "Error",
-					JOptionPane.ERROR_MESSAGE);
+			JOptionPane
+					.showMessageDialog(biomodelsim.frame(),
+							"Must Enter A Real Number Into The Time Limit Field.", "Error",
+							JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		try {
@@ -2511,8 +2480,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		}
 		catch (Exception e1) {
 			JOptionPane.showMessageDialog(biomodelsim.frame(),
-					"Must Enter An Integer Into The Random Seed Field.", "Error",
-					JOptionPane.ERROR_MESSAGE);
+					"Must Enter An Integer Into The Random Seed Field.", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		try {
@@ -2520,17 +2488,15 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			run = Integer.parseInt(runs.getText().trim());
 			if (run < 0) {
 				JOptionPane.showMessageDialog(biomodelsim.frame(),
-						"Must Enter A Positive Integer Into The Runs Field."
-								+ "\nProceding With Default:  1", "Error",
-						JOptionPane.ERROR_MESSAGE);
+						"Must Enter A Positive Integer Into The Runs Field." + "\nProceding With Default:  1",
+						"Error", JOptionPane.ERROR_MESSAGE);
 				run = 1;
 			}
 			// }
 		}
 		catch (Exception e1) {
 			JOptionPane.showMessageDialog(biomodelsim.frame(),
-					"Must Enter A Positive Integer Into The Runs Field.", "Error",
-					JOptionPane.ERROR_MESSAGE);
+					"Must Enter A Positive Integer Into The Runs Field.", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		String printer_id = "tsd.printer";
@@ -2642,8 +2608,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			selectedButtons = "nary_xhtml";
 		}
 		try {
-			FileOutputStream out = new FileOutputStream(new File(root + separator + simName
-					+ separator + "user-defined.dat"));
+			FileOutputStream out = new FileOutputStream(new File(root + separator + simName + separator
+					+ "user-defined.dat"));
 			int[] indecies = ssa.getSelectedIndices();
 			ssaList = Buttons.getList(ssaList, ssa);
 			ssa.setSelectedIndices(indecies);
@@ -2703,10 +2669,9 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		log.addText("Creating properties file:\n" + propName + "\n");
 		saveSAD(simName);
 		runProgram.createProperties(timeLimit, printInterval, timeStep, absError, ".",
-				// outDir,
+		// outDir,
 				rndSeed, run, termCond, intSpecies, printer_id, printer_track_quantity, sbmlProp
-						.split(separator), selectedButtons, this, sbmlProp, rap1, rap2, qss, con,
-				usingSSA,
+						.split(separator), selectedButtons, this, sbmlProp, rap1, rap2, qss, con, usingSSA,
 				// root + separator + simName + separator +
 				"user-defined.dat", usingSAD, new File(root + separator + outDir + separator
 						+ "termCond.sad"));
@@ -2735,14 +2700,12 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			// }
 			// }
 			FileOutputStream store = new FileOutputStream(new File(propName));
-			getProps.store(store, getFilename[getFilename.length - 1].substring(0, cut)
-					+ " Properties");
+			getProps.store(store, getFilename[getFilename.length - 1].substring(0, cut) + " Properties");
 			store.close();
 		}
 		catch (Exception e) {
 			JOptionPane.showMessageDialog(biomodelsim.frame(),
-					"Unable to add properties to property file.", "Error",
-					JOptionPane.ERROR_MESSAGE);
+					"Unable to add properties to property file.", "Error", JOptionPane.ERROR_MESSAGE);
 		}
 		biomodelsim.refreshTree();
 		change = false;
@@ -2754,8 +2717,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			sadList = Buttons.getList(sadList, sad);
 			if (sadList.length == 0)
 				return;
-			FileOutputStream out = new FileOutputStream(new File(root + separator + outDir
-					+ separator + "termCond.sad"));
+			FileOutputStream out = new FileOutputStream(new File(root + separator + outDir + separator
+					+ "termCond.sad"));
 			sad.setSelectedIndices(indecies);
 			String save = "";
 			for (int i = 0; i < sadList.length; i++) {
@@ -2770,9 +2733,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			out.close();
 		}
 		catch (Exception e1) {
-			JOptionPane.showMessageDialog(biomodelsim.frame(),
-					"Unable to save termination conditions!", "Error Saving File",
-					JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(biomodelsim.frame(), "Unable to save termination conditions!",
+					"Error Saving File", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 	}
@@ -2790,8 +2752,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				ArrayList<String> loadProperties = new ArrayList<String>();
 				for (Object key : load.keySet()) {
 					if (key.equals("reb2sac.abstraction.method.0.1")) {
-						if (!load.getProperty("reb2sac.abstraction.method.0.1").equals(
-								"enzyme-kinetic-qssa-1")) {
+						if (!load.getProperty("reb2sac.abstraction.method.0.1").equals("enzyme-kinetic-qssa-1")) {
 							loadProperties.add("reb2sac.abstraction.method.0.1="
 									+ load.getProperty("reb2sac.abstraction.method.0.1"));
 						}
@@ -2902,8 +2863,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 						}
 					}
 					else if (key.equals("reb2sac.abstraction.method.2.2")) {
-						if (!load.getProperty("reb2sac.abstraction.method.2.2").equals(
-								"dimerization-reduction")
+						if (!load.getProperty("reb2sac.abstraction.method.2.2")
+								.equals("dimerization-reduction")
 								&& !load.getProperty("reb2sac.abstraction.method.2.2").equals(
 										"dimerization-reduction-level-assignment")) {
 							loadProperties.add("reb2sac.abstraction.method.2.2="
@@ -2938,15 +2899,13 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 						}
 					}
 					else if (key.equals("reb2sac.abstraction.method.3.4")) {
-						if (!load.getProperty("reb2sac.abstraction.method.3.4").equals(
-								"final-state-generator")) {
+						if (!load.getProperty("reb2sac.abstraction.method.3.4").equals("final-state-generator")) {
 							loadProperties.add("reb2sac.abstraction.method.3.4="
 									+ load.getProperty("reb2sac.abstraction.method.3.4"));
 						}
 					}
 					else if (key.equals("reb2sac.abstraction.method.3.5")) {
-						if (!load.getProperty("reb2sac.abstraction.method.3.5").equals(
-								"stop-flag-generator")) {
+						if (!load.getProperty("reb2sac.abstraction.method.3.5").equals("stop-flag-generator")) {
 							loadProperties.add("reb2sac.abstraction.method.3.5="
 									+ load.getProperty("reb2sac.abstraction.method.3.5"));
 						}
@@ -2959,20 +2918,17 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					}
 					else if (key.equals("simulation.printer")) {
 						if (!load.getProperty("simulation.printer").equals("tsd.printer")) {
-							loadProperties.add("simulation.printer="
-									+ load.getProperty("simulation.printer"));
+							loadProperties.add("simulation.printer=" + load.getProperty("simulation.printer"));
 						}
 					}
 					else if (key.equals("simulation.printer.tracking.quantity")) {
-						if (!load.getProperty("simulation.printer.tracking.quantity").equals(
-								"amount")) {
+						if (!load.getProperty("simulation.printer.tracking.quantity").equals("amount")) {
 							loadProperties.add("simulation.printer.tracking.quantity="
 									+ load.getProperty("simulation.printer.tracking.quantity"));
 						}
 					}
 					else if (((String) key).length() > 27
-							&& ((String) key).substring(0, 28).equals(
-									"reb2sac.interesting.species.")) {
+							&& ((String) key).substring(0, 28).equals("reb2sac.interesting.species.")) {
 					}
 					else if (key.equals("reb2sac.rapid.equilibrium.condition.1")) {
 					}
@@ -3037,16 +2993,13 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					else if (key.equals("file.stem")) {
 					}
 					else if (((String) key).length() > 36
-							&& ((String) key).substring(0, 37).equals(
-									"simulation.run.termination.condition.")) {
+							&& ((String) key).substring(0, 37).equals("simulation.run.termination.condition.")) {
 					}
 					else if (((String) key).length() > 37
-							&& ((String) key).substring(0, 38).equals(
-									"reb2sac.absolute.inhibition.threshold.")) {
+							&& ((String) key).substring(0, 38).equals("reb2sac.absolute.inhibition.threshold.")) {
 					}
 					else if (((String) key).length() > 27
-							&& ((String) key).substring(0, 28).equals(
-									"reb2sac.concentration.level.")) {
+							&& ((String) key).substring(0, 28).equals("reb2sac.concentration.level.")) {
 					}
 					else if (((String) key).length() > 19
 							&& ((String) key).substring(0, 20).equals("reb2sac.final.state.")) {
@@ -3127,35 +3080,32 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					check = load.getProperty("reb2sac.abstraction.method.3.1");
 					if (check.equals("kinetic-law-constants-simplifier")) {
 						none.setSelected(true);
-						Button_Enabling.enableNoneOrAbs(ODE, monteCarlo, markov, seed, seedLabel,
-								runs, runsLabel, stepLabel, step, errorLabel, absErr, limitLabel,
-								limit, intervalLabel, interval, simulators, simulatorsLabel,
-								explanation, description, none, intSpecies, species, spLabel,
-								speciesLabel, addIntSpecies, removeIntSpecies, rapid1, rapid2,
-								qssa, maxCon, rapidLabel1, rapidLabel2, qssaLabel, maxConLabel,
-								usingSSA, clearIntSpecies, fileStem, fileStemLabel);
+						Button_Enabling.enableNoneOrAbs(ODE, monteCarlo, markov, seed, seedLabel, runs,
+								runsLabel, stepLabel, step, errorLabel, absErr, limitLabel, limit, intervalLabel,
+								interval, simulators, simulatorsLabel, explanation, description, none, intSpecies,
+								species, spLabel, speciesLabel, addIntSpecies, removeIntSpecies, rapid1, rapid2,
+								qssa, maxCon, rapidLabel1, rapidLabel2, qssaLabel, maxConLabel, usingSSA,
+								clearIntSpecies, fileStem, fileStemLabel);
 					}
 				}
 				if (load.containsKey("reb2sac.abstraction.method.2.2")) {
 					check = load.getProperty("reb2sac.abstraction.method.2.2");
 					if (check.equals("dimerization-reduction")) {
 						abstraction.setSelected(true);
-						Button_Enabling.enableNoneOrAbs(ODE, monteCarlo, markov, seed, seedLabel,
-								runs, runsLabel, stepLabel, step, errorLabel, absErr, limitLabel,
-								limit, intervalLabel, interval, simulators, simulatorsLabel,
-								explanation, description, none, intSpecies, species, spLabel,
-								speciesLabel, addIntSpecies, removeIntSpecies, rapid1, rapid2,
-								qssa, maxCon, rapidLabel1, rapidLabel2, qssaLabel, maxConLabel,
-								usingSSA, clearIntSpecies, fileStem, fileStemLabel);
+						Button_Enabling.enableNoneOrAbs(ODE, monteCarlo, markov, seed, seedLabel, runs,
+								runsLabel, stepLabel, step, errorLabel, absErr, limitLabel, limit, intervalLabel,
+								interval, simulators, simulatorsLabel, explanation, description, none, intSpecies,
+								species, spLabel, speciesLabel, addIntSpecies, removeIntSpecies, rapid1, rapid2,
+								qssa, maxCon, rapidLabel1, rapidLabel2, qssaLabel, maxConLabel, usingSSA,
+								clearIntSpecies, fileStem, fileStemLabel);
 					}
 					else if (check.equals("dimerization-reduction-level-assignment")) {
 						nary.setSelected(true);
-						Button_Enabling.enableNary(ODE, monteCarlo, markov, seed, seedLabel, runs,
-								runsLabel, stepLabel, step, errorLabel, absErr, limitLabel, limit,
-								intervalLabel, interval, simulators, simulatorsLabel, explanation,
-								description, intSpecies, species, spLabel, speciesLabel,
-								addIntSpecies, removeIntSpecies, rapid1, rapid2, qssa, maxCon,
-								rapidLabel1, rapidLabel2, qssaLabel, maxConLabel, usingSSA,
+						Button_Enabling.enableNary(ODE, monteCarlo, markov, seed, seedLabel, runs, runsLabel,
+								stepLabel, step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval,
+								simulators, simulatorsLabel, explanation, description, intSpecies, species,
+								spLabel, speciesLabel, addIntSpecies, removeIntSpecies, rapid1, rapid2, qssa,
+								maxCon, rapidLabel1, rapidLabel2, qssaLabel, maxConLabel, usingSSA,
 								clearIntSpecies, fileStem, fileStemLabel);
 					}
 				}
@@ -3242,10 +3192,9 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 						if (load.containsKey("ode.simulation.time.step")) {
 							step.setText(load.getProperty("ode.simulation.time.step"));
 						}
-						Button_Enabling.enableODE(seed, seedLabel, runs, runsLabel, stepLabel,
-								step, errorLabel, absErr, limitLabel, limit, intervalLabel,
-								interval, simulators, simulatorsLabel, explanation, description,
-								usingSSA, fileStem, fileStemLabel);
+						Button_Enabling.enableODE(seed, seedLabel, runs, runsLabel, stepLabel, step,
+								errorLabel, absErr, limitLabel, limit, intervalLabel, interval, simulators,
+								simulatorsLabel, explanation, description, usingSSA, fileStem, fileStemLabel);
 						if (load.containsKey("selected.simulator")) {
 							simulators.setSelectedItem(load.getProperty("selected.simulator"));
 						}
@@ -3260,10 +3209,9 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 							append.setEnabled(true);
 							choose3.setEnabled(true);
 						}
-						Button_Enabling.enableMonteCarlo(seed, seedLabel, runs, runsLabel,
-								stepLabel, step, errorLabel, absErr, limitLabel, limit,
-								intervalLabel, interval, simulators, simulatorsLabel, explanation,
-								description, usingSSA, fileStem, fileStemLabel);
+						Button_Enabling.enableMonteCarlo(seed, seedLabel, runs, runsLabel, stepLabel, step,
+								errorLabel, absErr, limitLabel, limit, intervalLabel, interval, simulators,
+								simulatorsLabel, explanation, description, usingSSA, fileStem, fileStemLabel);
 						if (load.containsKey("selected.simulator")) {
 							simulators.setSelectedItem(load.getProperty("selected.simulator"));
 						}
@@ -3274,34 +3222,30 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					}
 					else if (load.getProperty("reb2sac.simulation.method").equals("markov")) {
 						markov.setSelected(true);
-						Button_Enabling.enableMarkov(seed, seedLabel, runs, runsLabel, stepLabel,
-								step, errorLabel, absErr, limitLabel, limit, intervalLabel,
-								interval, simulators, simulatorsLabel, explanation, description,
-								usingSSA, fileStem, fileStemLabel);
+						Button_Enabling.enableMarkov(seed, seedLabel, runs, runsLabel, stepLabel, step,
+								errorLabel, absErr, limitLabel, limit, intervalLabel, interval, simulators,
+								simulatorsLabel, explanation, description, usingSSA, fileStem, fileStemLabel);
 						absErr.setEnabled(false);
 					}
 					else if (load.getProperty("reb2sac.simulation.method").equals("SBML")) {
 						sbml.setSelected(true);
-						Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel,
-								stepLabel, step, errorLabel, absErr, limitLabel, limit,
-								intervalLabel, interval, simulators, simulatorsLabel, explanation,
-								description, fileStem, fileStemLabel);
+						Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel, stepLabel,
+								step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval, simulators,
+								simulatorsLabel, explanation, description, fileStem, fileStemLabel);
 						absErr.setEnabled(false);
 					}
 					else if (load.getProperty("reb2sac.simulation.method").equals("Network")) {
 						dot.setSelected(true);
-						Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel,
-								stepLabel, step, errorLabel, absErr, limitLabel, limit,
-								intervalLabel, interval, simulators, simulatorsLabel, explanation,
-								description, fileStem, fileStemLabel);
+						Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel, stepLabel,
+								step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval, simulators,
+								simulatorsLabel, explanation, description, fileStem, fileStemLabel);
 						absErr.setEnabled(false);
 					}
 					else if (load.getProperty("reb2sac.simulation.method").equals("Browser")) {
 						xhtml.setSelected(true);
-						Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel,
-								stepLabel, step, errorLabel, absErr, limitLabel, limit,
-								intervalLabel, interval, simulators, simulatorsLabel, explanation,
-								description, fileStem, fileStemLabel);
+						Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel, stepLabel,
+								step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval, simulators,
+								simulatorsLabel, explanation, description, fileStem, fileStemLabel);
 						absErr.setEnabled(false);
 					}
 				}
@@ -3348,9 +3292,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					qssa.setText(load.getProperty("reb2sac.qssa.condition.1"));
 				}
 				if (load.containsKey("reb2sac.operator.max.concentration.threshold")) {
-					maxCon
-							.setText(load
-									.getProperty("reb2sac.operator.max.concentration.threshold"));
+					maxCon.setText(load.getProperty("reb2sac.operator.max.concentration.threshold"));
 				}
 			}
 			else {
@@ -3439,8 +3381,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		Object[] addObj = { newSpecies };
 		addIntSpecies.setListData(addObj);
 		addIntSpecies.setSelectedIndex(0);
-		interestingSpecies = Buttons.add(interestingSpecies, species, addIntSpecies, false,
-				amountTerm, ge, gt, eq, lt, le, this);
+		interestingSpecies = Buttons.add(interestingSpecies, species, addIntSpecies, false, amountTerm,
+				ge, gt, eq, lt, le, this);
 	}
 
 	public void removeIntSpecies() {
@@ -3491,11 +3433,11 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				get = cond.split(" ");
 				for (int j = 0; j < get.length; j++)
 					if (get[j].length() > 0)
-						if ((get[j].charAt(0) != '0') && (get[j].charAt(0) != '1')
-								&& (get[j].charAt(0) != '2') && (get[j].charAt(0) != '3')
-								&& (get[j].charAt(0) != '4') && (get[j].charAt(0) != '5')
-								&& (get[j].charAt(0) != '6') && (get[j].charAt(0) != '7')
-								&& (get[j].charAt(0) != '8') && (get[j].charAt(0) != '9')) {
+						if ((get[j].charAt(0) != '0') && (get[j].charAt(0) != '1') && (get[j].charAt(0) != '2')
+								&& (get[j].charAt(0) != '3') && (get[j].charAt(0) != '4')
+								&& (get[j].charAt(0) != '5') && (get[j].charAt(0) != '6')
+								&& (get[j].charAt(0) != '7') && (get[j].charAt(0) != '8')
+								&& (get[j].charAt(0) != '9')) {
 							keepers.add(get[j]);
 						}
 			}
