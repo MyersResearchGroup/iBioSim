@@ -352,7 +352,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		advanced.add(speciesHolder);
 
 		// Sets up the radio buttons for Abstraction and Nary
-		JLabel choose = new JLabel("Choose One:");
+		JLabel choose = new JLabel("Abstraction:");
 		none = new JRadioButton("None");
 		abstraction = new JRadioButton("Abstraction");
 		nary = new JRadioButton("Logical Abstraction");
@@ -371,7 +371,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		nary.addActionListener(this);
 
 		// Sets up the radio buttons for ODE, Monte Carlo, and Markov
-		JLabel choose2 = new JLabel("Choose One:");
+		JLabel choose2 = new JLabel("Simulation Type:");
 		ODE = new JRadioButton("ODE");
 		monteCarlo = new JRadioButton("Monte Carlo");
 		markov = new JRadioButton("Markov");
@@ -831,6 +831,42 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			if (s.length() > 3 && s.substring(0, 4).equals("run-")) {
 				runFiles = true;
 			}
+		}
+		if (biosimrc.get("biosim.sim.abs", "").equals("None")) {
+			none.doClick();
+		}
+		else if (biosimrc.get("biosim.sim.abs", "").equals("Abstraction")) {
+			abstraction.doClick();
+		}
+		else {
+			nary.doClick();
+		}
+		if (biosimrc.get("biosim.sim.type", "").equals("ODE")) {
+			ODE.doClick();
+			simulators.setSelectedItem(biosimrc.get("biosim.sim.sim", ""));
+		}
+		else if (biosimrc.get("biosim.sim.type", "").equals("Monte Carlo")) {
+			monteCarlo.doClick();
+			simulators.setSelectedItem(biosimrc.get("biosim.sim.sim", ""));
+		}
+		else if (biosimrc.get("biosim.sim.type", "").equals("Markov")) {
+			markov.doClick();
+			simulators.setSelectedItem(biosimrc.get("biosim.sim.sim", ""));
+		}
+		else if (biosimrc.get("biosim.sim.type", "").equals("SBML")) {
+			sbml.doClick();
+			simulators.setSelectedItem(biosimrc.get("biosim.sim.sim", ""));
+			sbml.doClick();
+		}
+		else if (biosimrc.get("biosim.sim.type", "").equals("Network")) {
+			dot.doClick();
+			simulators.setSelectedItem(biosimrc.get("biosim.sim.sim", ""));
+			dot.doClick();
+		}
+		else {
+			xhtml.doClick();
+			simulators.setSelectedItem(biosimrc.get("biosim.sim.sim", ""));
+			xhtml.doClick();
 		}
 		if (open != null) {
 			open(open);
