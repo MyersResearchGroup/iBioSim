@@ -69,6 +69,8 @@ import learn.Learn;
 
 import synthesis.Synthesis;
 
+import verification.Verification;
+
 import org.sbml.libsbml.Compartment;
 import org.sbml.libsbml.SBMLDocument;
 import org.sbml.libsbml.SBMLReader;
@@ -1136,6 +1138,9 @@ public class BioSim implements MouseListener, ActionListener {
 		else if (e.getActionCommand().equals("openSynth")) {
 			openSynth();
 		}
+		else if (e.getActionCommand().equals("openVerification")) {
+			openVerify();
+		}
 		// if the create simulation popup menu is selected on a dot file
 		else if (e.getActionCommand().equals("createSim")) {
 			try {
@@ -1227,6 +1232,85 @@ public class BioSim implements MouseListener, ActionListener {
 					catch (Exception e1) {
 						JOptionPane.showMessageDialog(frame,
 								"Unable to create Synthesis View directory.", "Error",
+								JOptionPane.ERROR_MESSAGE);
+					}
+				}
+			}
+			else {
+				JOptionPane.showMessageDialog(frame, "You must open or create a project first.",
+						"Error", JOptionPane.ERROR_MESSAGE);
+			}
+		}
+		// if the synthesis popup menu is selected on a vhdl or lhpn file
+		else if (e.getActionCommand().equals("createVerify")) {
+			if (root != null) {
+				for (int i = 0; i < tab.getTabCount(); i++) {
+					if (tab
+							.getTitleAt(i)
+							.equals(
+									tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
+						tab.setSelectedIndex(i);
+						if (save(i) != 1) {
+							return;
+						}
+						break;
+					}
+				}
+				String verName = JOptionPane.showInputDialog(frame, "Enter Verification ID:",
+						"Verification View ID", JOptionPane.PLAIN_MESSAGE);
+				if (verName != null && !verName.trim().equals("")) {
+					verName = verName.trim();
+					try {
+						if (overwrite(root + separator + verName, verName)) {
+							new File(root + separator + verName).mkdir();
+							// new FileWriter(new File(root + separator +
+							// synthName + separator
+							// +
+							// ".lrn")).close();
+							String sbmlFile = tree.getFile();
+							String[] getFilename = sbmlFile.split(separator);
+							String sbmlFileNoPath = getFilename[getFilename.length - 1];
+							try {
+								FileOutputStream out = new FileOutputStream(new File(root
+										+ separator + verName.trim() + separator + verName.trim()
+										+ ".ver"));
+								out.write(("verification.file=" + sbmlFileNoPath + "\n").getBytes());
+								out.close();
+							}
+							catch (Exception e1) {
+								JOptionPane.showMessageDialog(frame,
+										"Unable to save parameter file!", "Error Saving File",
+										JOptionPane.ERROR_MESSAGE);
+							}
+							refreshTree();
+							JPanel verPane = new JPanel();
+							verPane.add(new Verification(root + separator + verName, sbmlFile, this));
+							/*
+							 * JLabel noData = new JLabel("No data available");
+							 * Font font = noData.getFont(); font =
+							 * font.deriveFont(Font.BOLD, 42.0f);
+							 * noData.setFont(font);
+							 * noData.setHorizontalAlignment
+							 * (SwingConstants.CENTER); lrnTab.addTab("Learn",
+							 * noData);
+							 * lrnTab.getComponentAt(lrnTab.getComponents
+							 * ().length - 1).setName("Learn"); JLabel noData1 =
+							 * new JLabel("No data available"); font =
+							 * noData1.getFont(); font =
+							 * font.deriveFont(Font.BOLD, 42.0f);
+							 * noData1.setFont(font);
+							 * noData1.setHorizontalAlignment
+							 * (SwingConstants.CENTER); lrnTab.addTab("TSD
+							 * Graph", noData1); lrnTab.getComponentAt
+							 * (lrnTab.getComponents().length - 1).setName("TSD
+							 * Graph");
+							 */
+							addTab(verName, verPane, null);
+						}
+					}
+					catch (Exception e1) {
+						JOptionPane.showMessageDialog(frame,
+								"Unable to create Verification View directory.", "Error",
 								JOptionPane.ERROR_MESSAGE);
 					}
 				}
@@ -3377,6 +3461,12 @@ public class BioSim implements MouseListener, ActionListener {
 				JMenuItem createLearn = new JMenuItem("Create Learn View");
 				createLearn.addActionListener(this);
 				createLearn.setActionCommand("createLearn");
+				JMenuItem createVerification = new JMenuItem("Create Verification View");
+				createVerification.addActionListener(this);
+				createVerification.setActionCommand("createVerify");
+				JMenuItem viewModel = new JMenuItem("View Model");
+				viewModel.addActionListener(this);
+				viewModel.setActionCommand("viewModel");
 				JMenuItem delete = new JMenuItem("Delete");
 				delete.addActionListener(this);
 				delete.setActionCommand("delete");
@@ -3389,6 +3479,9 @@ public class BioSim implements MouseListener, ActionListener {
 				popup.add(createSynthesis);
 				popup.add(createAnalysis);
 				popup.add(createLearn);
+				popup.add(createVerification);
+				popup.addSeparator();
+				popup.add(viewModel);
 				popup.addSeparator();
 				popup.add(copy);
 				popup.add(rename);
@@ -3405,6 +3498,12 @@ public class BioSim implements MouseListener, ActionListener {
 				JMenuItem createLearn = new JMenuItem("Create Learn View");
 				createLearn.addActionListener(this);
 				createLearn.setActionCommand("createLearn");
+				JMenuItem createVerification = new JMenuItem("Create Verification View");
+				createVerification.addActionListener(this);
+				createVerification.setActionCommand("createVerify");
+				JMenuItem viewModel = new JMenuItem("View Model");
+				viewModel.addActionListener(this);
+				viewModel.setActionCommand("viewModel");
 				JMenuItem delete = new JMenuItem("Delete");
 				delete.addActionListener(this);
 				delete.setActionCommand("delete");
@@ -3417,6 +3516,9 @@ public class BioSim implements MouseListener, ActionListener {
 				popup.add(createSynthesis);
 				popup.add(createAnalysis);
 				popup.add(createLearn);
+				popup.add(createVerification);
+				popup.addSeparator();
+				popup.add(viewModel);
 				popup.addSeparator();
 				popup.add(copy);
 				popup.add(rename);
@@ -3463,12 +3565,16 @@ public class BioSim implements MouseListener, ActionListener {
 			else if (new File(tree.getFile()).isDirectory() && !tree.getFile().equals(root)) {
 				boolean sim = false;
 				boolean synth = false;
+				boolean ver = false;
 				for (String s : new File(tree.getFile()).list()) {
 					if (s.length() > 3 && s.substring(s.length() - 4).equals(".sim")) {
 						sim = true;
 					}
 					if (s.length() > 3 && s.substring(s.length() - 4).equals(".syn")) {
 						synth = true;
+					}
+					if (s.length() > 3 && s.substring(s.length() - 4).equals(".ver")) {
+						ver = true;
 					}
 				}
 				JMenuItem open;
@@ -3481,6 +3587,11 @@ public class BioSim implements MouseListener, ActionListener {
 					open = new JMenuItem("Open Synthesis View");
 					open.addActionListener(this);
 					open.setActionCommand("openSynth");
+				}
+				else if (ver) {
+					open = new JMenuItem("Open Verification View");
+					open.addActionListener(this);
+					open.setActionCommand("openVerification");
 				}
 				else {
 					open = new JMenuItem("Open Learn View");
@@ -3642,6 +3753,7 @@ public class BioSim implements MouseListener, ActionListener {
 				else if (new File(tree.getFile()).isDirectory() && !tree.getFile().equals(root)) {
 					boolean sim = false;
 					boolean synth = false;
+					boolean ver = false;
 					for (String s : new File(tree.getFile()).list()) {
 						if (s.length() > 3 && s.substring(s.length() - 4).equals(".sim")) {
 							sim = true;
@@ -3649,12 +3761,18 @@ public class BioSim implements MouseListener, ActionListener {
 						else if (s.length() > 3 && s.substring(s.length() - 4).equals(".syn")) {
 							synth = true;
 						}
+						else if (s.length() > 3 && s.substring(s.length() - 4).equals(".ver")) {
+							ver = true;
+						}
 					}
 					if (sim) {
 						openSim();
 					}
-					else if (synth){
+					else if (synth) {
 						openSynth();
+					}
+					else if (ver) {
+						openVerify();
 					}
 					else {
 						openLearn();
@@ -3829,12 +3947,16 @@ public class BioSim implements MouseListener, ActionListener {
 			else if (new File(tree.getFile()).isDirectory() && !tree.getFile().equals(root)) {
 				boolean sim = false;
 				boolean synth = false;
+				boolean ver = false;
 				for (String s : new File(tree.getFile()).list()) {
 					if (s.length() > 3 && s.substring(s.length() - 4).equals(".sim")) {
 						sim = true;
 					}
 					else if (s.length() > 4 && s.substring(s.length() - 4).equals(".syn")) {
 						synth = true;
+					}
+					else if (s.length() > 4 && s.substring(s.length() - 4).equals(".ver")) {
+						ver = true;
 					}
 				}
 				JMenuItem open;
@@ -3847,6 +3969,11 @@ public class BioSim implements MouseListener, ActionListener {
 					open = new JMenuItem("Open Synthesis View");
 					open.addActionListener(this);
 					open.setActionCommand("openSynth");
+				}
+				else if (ver) {
+					open = new JMenuItem("Open Verification View");
+					open.addActionListener(this);
+					open.setActionCommand("openVerification");
 				}
 				else {
 					open = new JMenuItem("Open Learn View");
@@ -4238,6 +4365,95 @@ public class BioSim implements MouseListener, ActionListener {
 			synthPanel.add(new Synthesis(tree.getFile(), "flag", this));
 			addTab(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],
 					synthPanel, null);
+		}
+	}
+	
+	private void openVerify() {
+		boolean done = false;
+		for (int i = 0; i < tab.getTabCount(); i++) {
+			if (tab.getTitleAt(i).equals(
+					tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
+				tab.setSelectedIndex(i);
+				done = true;
+			}
+		}
+		if (!done) {
+			JPanel verPanel = new JPanel();
+			// String graphFile = "";
+			if (new File(tree.getFile()).isDirectory()) {
+				String[] list = new File(tree.getFile()).list();
+				int run = 0;
+				for (int i = 0; i < list.length; i++) {
+					if (!(new File(list[i]).isDirectory()) && list[i].length() > 4) {
+						String end = "";
+						for (int j = 1; j < 5; j++) {
+							end = list[i].charAt(list[i].length() - j) + end;
+						}
+						if (end.equals(".tsd") || end.equals(".dat") || end.equals(".csv")) {
+							if (list[i].contains("run-")) {
+								int tempNum = Integer.parseInt(list[i].substring(4, list[i]
+										.length()
+										- end.length()));
+								if (tempNum > run) {
+									run = tempNum;
+									// graphFile = tree.getFile() + separator +
+									// list[i];
+								}
+							}
+						}
+					}
+				}
+			}
+
+			String verFile = tree.getFile() + separator
+					+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]
+					+ ".ver";
+			String verFile2 = tree.getFile() + separator + ".ver";
+			Properties load = new Properties();
+			String verifyFile = "";
+			try {
+				if (new File(verFile2).exists()) {
+					FileInputStream in = new FileInputStream(new File(verFile2));
+					load.load(in);
+					in.close();
+					new File(verFile2).delete();
+				}
+				if (new File(verFile).exists()) {
+					FileInputStream in = new FileInputStream(new File(verFile));
+					load.load(in);
+					in.close();
+					if (load.containsKey("verification.file")) {
+						verifyFile = load.getProperty("verification.file");
+						verifyFile = verifyFile.split(separator)[verifyFile.split(separator).length - 1];
+					}
+				}
+				FileOutputStream out = new FileOutputStream(new File(verifyFile));
+				load.store(out, verifyFile);
+				out.close();
+
+			}
+			catch (Exception e) {
+				JOptionPane.showMessageDialog(frame(), "Unable to load properties file!",
+						"Error Loading Properties", JOptionPane.ERROR_MESSAGE);
+			}
+			for (int i = 0; i < tab.getTabCount(); i++) {
+				if (tab.getTitleAt(i).equals(verifyFile)) {
+					tab.setSelectedIndex(i);
+					if (save(i) != 1) {
+						return;
+					}
+					break;
+				}
+			}
+			if (!(new File(root + separator + verifyFile).exists())) {
+				JOptionPane.showMessageDialog(frame, "Unable to open view because " + verifyFile
+						+ " is missing.", "Error", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			// if (!graphFile.equals("")) {
+			verPanel.add(new Synthesis(tree.getFile(), "flag", this));
+			addTab(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],
+					verPanel, null);
 		}
 	}
 
