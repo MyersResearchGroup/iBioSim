@@ -105,7 +105,10 @@ public class FileTree extends JPanel implements MouseListener {
 			curDir = new DefaultMutableTreeNode(new IconData(ICON_PROJECT, null, dir.getName()));
 		}
 		else {
-			if (sim) {
+			if (sim && synth) {  // Verification node
+				curDir = new DefaultMutableTreeNode(new IconData(ICON_SIMULATION, null, dir.getName()));
+			}
+			else if (sim) {
 				curDir = new DefaultMutableTreeNode(new IconData(ICON_SIMULATION, null, dir.getName()));
 			}
 			else if (synth) {
@@ -151,6 +154,9 @@ public class FileTree extends JPanel implements MouseListener {
 					}
 					else if (s.length() > 3 && s.substring(s.length() - 4).equals(".syn")) {
 						addNodes(curDir, f, false, true);
+					}
+					else if (s.length() > 3 && s.substring(s.length() - 4).equals(".ver")) {
+						addNodes(curDir, f, true, true);
 					}
 				}
 			}
@@ -353,6 +359,28 @@ public class FileTree extends JPanel implements MouseListener {
 						}
 					}					
 					else if (s.length() > 3 && s.substring(s.length() - 4).equals(".syn")) {
+						String get = "";
+						boolean doAdd = true;
+						int getChild = 0;
+						for (int j = 0; j < current.getChildCount(); j++) {
+							get = "" + current.getChildAt(j);
+							if (get.equals(f.getName())) {
+								doAdd = false;
+								getChild = j;
+							}
+						}
+						if (doAdd) {
+							fixTree(current, new DefaultMutableTreeNode(new IconData(ICON_SIMULATION, null, f
+									.getName())), f, doAdd);
+						}
+						else {
+							current.remove(getChild);
+							doAdd = true;
+							fixTree(current, new DefaultMutableTreeNode(new IconData(ICON_SIMULATION, null, f
+									.getName())), f, doAdd);
+						}
+					}
+					else if (s.length() > 3 && s.substring(s.length() - 4).equals(".ver")) {
 						String get = "";
 						boolean doAdd = true;
 						int getChild = 0;
