@@ -2025,7 +2025,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				}
 				biosim.refreshTree();
 			}
-			catch (Exception e1) {
+			catch (IOException e1) {
 				JOptionPane.showMessageDialog(biosim.frame(), "Unable to save sbml file.",
 						"Error Saving File", JOptionPane.ERROR_MESSAGE);
 			}
@@ -9093,7 +9093,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				}
 				biosim.updateViews(file.split(separator)[file.split(separator).length - 1]);
 			}
-			catch (Exception e1) {
+			catch (IOException e1) {
 				JOptionPane.showMessageDialog(biosim.frame(), "Unable to save sbml file.",
 						"Error Saving File", JOptionPane.ERROR_MESSAGE);
 			}
