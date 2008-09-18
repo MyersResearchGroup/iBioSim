@@ -79,7 +79,7 @@ public class Verification extends JPanel implements ActionListener {
 		JPanel advancedPanel = new JPanel();
 		JPanel displayPanel = new JPanel();
 		JPanel printPanel = new JPanel();
-		JPanel synthPanel = new JPanel();
+		JPanel verPanel = new JPanel();
 		JPanel pruningPanel = new JPanel();
 		JPanel advTimingPanel = new JPanel();
 
@@ -559,7 +559,7 @@ public class Verification extends JPanel implements ActionListener {
 		advOptions.add(printPanel);
 		advOptions.add(compilationPanel);
 		advOptions.add(advTimingPanel);
-		advOptions.add(synthPanel);
+		advOptions.add(verPanel);
 		advOptions.add(pruningPanel);
 		advOptions.add(advancedPanel);
 		advOptions.setLayout(new BoxLayout(advOptions, BoxLayout.Y_AXIS));
@@ -590,7 +590,7 @@ public class Verification extends JPanel implements ActionListener {
 			catch (IOException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
-				JOptionPane.showMessageDialog(this, "File cannot be read", "Error",
+				JOptionPane.showMessageDialog(this, "Input file cannot be read", "Error",
 						JOptionPane.ERROR_MESSAGE);
 			}
 		}
@@ -781,10 +781,10 @@ public class Verification extends JPanel implements ActionListener {
 		// Runtime exec = Runtime.getRuntime();
 		File work = new File(directory);
 		Runtime exec = Runtime.getRuntime();
-		Process synth = exec.exec(cmd, null, work);
+		Process ver = exec.exec(cmd, null, work);
 		try {
 			String output = "";
-			InputStream reb = synth.getInputStream();
+			InputStream reb = ver.getInputStream();
 			InputStreamReader isr = new InputStreamReader(reb);
 			BufferedReader br = new BufferedReader(isr);
 			FileWriter out = new FileWriter(new File(directory + separator + "run.log"));
@@ -797,7 +797,7 @@ public class Verification extends JPanel implements ActionListener {
 			isr.close();
 			reb.close();
 			viewLog.setEnabled(true);
-			synth.waitFor();
+			ver.waitFor();
 		}
 		catch (Exception e) {
 		}
