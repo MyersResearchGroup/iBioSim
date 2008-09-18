@@ -32,17 +32,16 @@ public class Synthesis extends JPanel implements ActionListener {
 	private JButton save, run, viewCircuit, viewLog;
 
 	private JLabel algorithm, timingMethod, timingOptions, technology, otherOptions, maxSizeLabel,
-			gateDelayLabel, display, print, compilation, bddSizeLabel, synthesisOptions, pruning, advTiming;
+			gateDelayLabel, compilation, bddSizeLabel, synthesisOptions, pruning, advTiming;
 
 	private JRadioButton untimed, geometric, posets, bag, bap, baptdc, atomicGates, generalizedC,
 			standardC, bmGc, bm2, singleCube, multicube, bdd, direct, newTab, postProc, redCheck,
 			xForm2, expandRate;
 
-	private JCheckBox abst, partialOrder, dot, verbose, quiet, noinsert, dispEr, dispLpn, dispRsg,
-			dispStats, dispNet, printEr, printLpn, printRsg, printStats, printReg, printNet,
-			shareGate, combo, exact, manual, inponly, notFirst, preserve, ordered, subset, unsafe,
-			expensive, conflict, reachable, dumb, genrg, timsubset, superset, infopt, orbmatch,
-			interleav, prune, disabling, nofail, keepgoing, explpn;
+	private JCheckBox abst, partialOrder, dot, verbose, quiet, noinsert, shareGate, combo, exact,
+			manual, inponly, notFirst, preserve, ordered, subset, unsafe, expensive, conflict,
+			reachable, dumb, genrg, timsubset, superset, infopt, orbmatch, interleav, prune,
+			disabling, nofail, keepgoing, explpn, nochecks, reduction, minins;
 
 	private JTextField maxSize, gateDelay, bddSize;
 
@@ -99,8 +98,6 @@ public class Synthesis extends JPanel implements ActionListener {
 		otherOptions = new JLabel("Other Options:");
 		maxSizeLabel = new JLabel("Max Size:");
 		gateDelayLabel = new JLabel("Gate Delay:");
-		display = new JLabel("Display:");
-		print = new JLabel("Print:");
 		compilation = new JLabel("Compilation Options:");
 		bddSizeLabel = new JLabel("BDD Linkspace Size:");
 		synthesisOptions = new JLabel("Synthesis Options:");
@@ -108,7 +105,7 @@ public class Synthesis extends JPanel implements ActionListener {
 		advTiming = new JLabel("Timing Options:");
 
 		// Initializes the radio buttons and check boxes
-		// Timing Options
+		// Timing Methods
 		untimed = new JRadioButton("Untimed");
 		geometric = new JRadioButton("Geometric");
 		posets = new JRadioButton("POSETs");
@@ -140,19 +137,6 @@ public class Synthesis extends JPanel implements ActionListener {
 		redCheck = new JRadioButton("Red Check");
 		xForm2 = new JRadioButton("xForm2");
 		expandRate = new JRadioButton("Expand Rate");
-		// Display Options
-		dispEr = new JCheckBox("ER");
-		dispLpn = new JCheckBox("LPN");
-		dispRsg = new JCheckBox("RSG");
-		dispStats = new JCheckBox("Statistics");
-		dispNet = new JCheckBox("Net");
-		// Print Options
-		printEr = new JCheckBox("ER");
-		printLpn = new JCheckBox("LPN");
-		printRsg = new JCheckBox("RSG");
-		printStats = new JCheckBox("Statistics");
-		printReg = new JCheckBox("REG");
-		printNet = new JCheckBox("Net");
 		// Advanced Synthesis Options
 		shareGate = new JCheckBox("Share Gate");
 		combo = new JCheckBox("Combo");
@@ -181,6 +165,10 @@ public class Synthesis extends JPanel implements ActionListener {
 		nofail = new JCheckBox("No fail");
 		keepgoing = new JCheckBox("Keep going");
 		explpn = new JCheckBox("Exp LPN");
+		// Other Advanced Options
+		nochecks = new JCheckBox("No checks");
+		reduction = new JCheckBox("Reduction");
+		minins = new JCheckBox("Min ins");
 
 		timingMethodGroup = new ButtonGroup();
 		technologyGroup = new ButtonGroup();
@@ -253,28 +241,13 @@ public class Synthesis extends JPanel implements ActionListener {
 		algorithmPanel.add(bdd);
 		algorithmPanel.add(direct);
 
-		displayPanel.add(display);
-		displayPanel.add(dispEr);
-		displayPanel.add(dispLpn);
-		displayPanel.add(dispRsg);
-		displayPanel.add(dispStats);
-		displayPanel.add(dispNet);
-
-		printPanel.add(print);
-		printPanel.add(printEr);
-		printPanel.add(printLpn);
-		printPanel.add(printRsg);
-		printPanel.add(printStats);
-		printPanel.add(printReg);
-		printPanel.add(printNet);
-
 		compilationPanel.add(compilation);
 		compilationPanel.add(newTab);
 		compilationPanel.add(postProc);
 		compilationPanel.add(redCheck);
 		compilationPanel.add(xForm2);
 		compilationPanel.add(expandRate);
-		
+
 		advTimingPanel.add(advTiming);
 		advTimingPanel.add(genrg);
 		advTimingPanel.add(timsubset);
@@ -306,6 +279,10 @@ public class Synthesis extends JPanel implements ActionListener {
 		pruningPanel.add(reachable);
 		pruningPanel.add(dumb);
 
+		advancedPanel.add(otherOptions);
+		advancedPanel.add(nochecks);
+		advancedPanel.add(reduction);
+		advancedPanel.add(minins);
 		advancedPanel.add(bddSizeLabel);
 		advancedPanel.add(bddSize);
 
@@ -420,61 +397,6 @@ public class Synthesis extends JPanel implements ActionListener {
 				}
 				else {
 					direct.setSelected(true);
-				}
-			}
-			if (load.containsKey("synthesis.display.er")) {
-				if (load.getProperty("synthesis.display.er").equals("true")) {
-					dispEr.setSelected(true);
-				}
-			}
-			if (load.containsKey("synthesis.display.lpn")) {
-				if (load.getProperty("synthesis.display.lpn").equals("true")) {
-					dispLpn.setSelected(true);
-				}
-			}
-			if (load.containsKey("synthesis.display.rst")) {
-				if (load.getProperty("synthesis.display.rsg").equals("true")) {
-					dispRsg.setSelected(true);
-				}
-			}
-			if (load.containsKey("synthesis.display.stats")) {
-				if (load.getProperty("synthesis.display.stats").equals("true")) {
-					dispStats.setSelected(true);
-				}
-			}
-			if (load.containsKey("synthesis.display.net")) {
-				if (load.getProperty("synthesis.display.net").equals("true")) {
-					dispNet.setSelected(true);
-				}
-			}
-			if (load.containsKey("synthesis.print.er")) {
-				if (load.getProperty("synthesis.print.er").equals("true")) {
-					printEr.setSelected(true);
-				}
-			}
-			if (load.containsKey("synthesis.print.lpn")) {
-				if (load.getProperty("synthesis.print.lpn").equals("true")) {
-					printLpn.setSelected(true);
-				}
-			}
-			if (load.containsKey("synthesis.print.rsg")) {
-				if (load.getProperty("synthesis.print.rsg").equals("true")) {
-					printRsg.setSelected(true);
-				}
-			}
-			if (load.containsKey("synthesis.print.stats")) {
-				if (load.getProperty("synthesis.print.stats").equals("true")) {
-					printStats.setSelected(true);
-				}
-			}
-			if (load.containsKey("synthesis.print.reg")) {
-				if (load.getProperty("synthesis.print.reg").equals("true")) {
-					printReg.setSelected(true);
-				}
-			}
-			if (load.containsKey("synthesis.print.net")) {
-				if (load.getProperty("synthesis.print.net").equals("true")) {
-					printNet.setSelected(true);
 				}
 			}
 			if (load.containsKey("synthesis.compilation")) {
@@ -612,6 +534,21 @@ public class Synthesis extends JPanel implements ActionListener {
 			if (load.containsKey("synthesis.pruning.dumb")) {
 				if (load.getProperty("synthesis.pruning.dumb").equals("true")) {
 					dumb.setSelected(true);
+				}
+			}
+			if (load.containsKey("synthesis.nochecks")) {
+				if (load.getProperty("synthesis.nochecks").equals("true")) {
+					nochecks.setSelected(true);
+				}
+			}
+			if (load.containsKey("synthesis.reduction")) {
+				if (load.getProperty("synthesis.reduction").equals("true")) {
+					reduction.setSelected(true);
+				}
+			}
+			if (load.containsKey("synthesis.minins")) {
+				if (load.getProperty("synthesis.minins").equals("true")) {
+					minins.setSelected(true);
 				}
 			}
 		}
@@ -795,7 +732,7 @@ public class Synthesis extends JPanel implements ActionListener {
 		if (inponly.isSelected()) {
 			options = options + "oN";
 		}
-		//Advanced Timing Options
+		// Advanced Timing Options
 		if (genrg.isSelected()) {
 			options = options + "oG";
 		}
@@ -857,40 +794,15 @@ public class Synthesis extends JPanel implements ActionListener {
 		if (dumb.isSelected()) {
 			options = options + "PD";
 		}
-		// Display Options
-		if (dispEr.isSelected()) {
-			options = options + "de";
+		// Other Advanced Options
+		if (nochecks.isSelected()) {
+			options = options + "on";
 		}
-		if (dispLpn.isSelected()) {
-			options = options + "dl";
+		if (reduction.isSelected()) {
+			options = options + "oR";
 		}
-		if (dispRsg.isSelected()) {
-			options = options + "ds";
-		}
-		if (dispStats.isSelected()) {
-			options = options + "dz";
-		}
-		if (dispNet.isSelected()) {
-			options = options + "dn";
-		}
-		// Print Options
-		if (printEr.isSelected()) {
-			options = options + "pe";
-		}
-		if (printLpn.isSelected()) {
-			options = options + "pl";
-		}
-		if (printRsg.isSelected()) {
-			options = options + "ps";
-		}
-		if (printStats.isSelected()) {
-			options = options + "pz";
-		}
-		if (printReg.isSelected()) {
-			options = options + "pr";
-		}
-		if (printNet.isSelected()) {
-			options = options + "pn";
+		if (minins.isSelected()) {
+			options = options + "om";
 		}
 		// Compilation Options
 		if (newTab.isSelected()) {
@@ -912,7 +824,7 @@ public class Synthesis extends JPanel implements ActionListener {
 		// String src = temp[temp.length - 1];
 		String cmd = "atacs " + options + " " + sourceFile;
 		// String[] cmd = {"emacs", "temp" };
-		JOptionPane.showMessageDialog(this, cmd);
+		//JOptionPane.showMessageDialog(this, cmd);
 		// Runtime exec = Runtime.getRuntime();
 		File work = new File(directory);
 		Runtime exec = Runtime.getRuntime();
@@ -1028,72 +940,6 @@ public class Synthesis extends JPanel implements ActionListener {
 			}
 			else {
 				prop.setProperty("synthesis.algorithm", "direct");
-			}
-			if (dispEr.isSelected()) {
-				prop.setProperty("synthesis.display.er", "true");
-			}
-			else {
-				prop.setProperty("synthesis.display.er", "false");
-			}
-			if (dispLpn.isSelected()) {
-				prop.setProperty("synthesis.display.lpn", "true");
-			}
-			else {
-				prop.setProperty("synthesis.display.lpn", "false");
-			}
-			if (dispRsg.isSelected()) {
-				prop.setProperty("synthesis.display.rsg", "true");
-			}
-			else {
-				prop.setProperty("synthesis.display.rsg", "false");
-			}
-			if (dispStats.isSelected()) {
-				prop.setProperty("synthesis.display.stats", "true");
-			}
-			else {
-				prop.setProperty("synthesis.display.stats", "false");
-			}
-			if (dispNet.isSelected()) {
-				prop.setProperty("synthesis.display.net", "true");
-			}
-			else {
-				prop.setProperty("synthesis.display.net", "false");
-			}
-			if (printEr.isSelected()) {
-				prop.setProperty("synthesis.print.er", "true");
-			}
-			else {
-				prop.setProperty("synthesis.print.er", "false");
-			}
-			if (printLpn.isSelected()) {
-				prop.setProperty("synthesis.print.lpn", "true");
-			}
-			else {
-				prop.setProperty("synthesis.print.lpn", "false");
-			}
-			if (printRsg.isSelected()) {
-				prop.setProperty("synthesis.print.rsg", "true");
-			}
-			else {
-				prop.setProperty("synthesis.print.rsg", "false");
-			}
-			if (printStats.isSelected()) {
-				prop.setProperty("synthesis.print.stats", "true");
-			}
-			else {
-				prop.setProperty("synthesis.print.stats", "false");
-			}
-			if (printReg.isSelected()) {
-				prop.setProperty("synthesis.print.reg", "true");
-			}
-			else {
-				prop.setProperty("synthesis.print.reg", "false");
-			}
-			if (printNet.isSelected()) {
-				prop.setProperty("synthesis.print.net", "true");
-			}
-			else {
-				prop.setProperty("synthesis.print.net", "false");
 			}
 			if (newTab.isSelected()) {
 				prop.setProperty("synthesis.compilation", "newTab");
@@ -1253,6 +1099,24 @@ public class Synthesis extends JPanel implements ActionListener {
 			}
 			else {
 				prop.setProperty("synthesis.pruning.dumb", "false");
+			}
+			if (nochecks.isSelected()) {
+				prop.setProperty("synthesis.nochecks", "true");
+			}
+			else {
+				prop.setProperty("synthesis.nochecks", "false");
+			}
+			if (reduction.isSelected()) {
+				prop.setProperty("synthesis.reduction", "true");
+			}
+			else {
+				prop.setProperty("synthesis.reduction", "false");
+			}
+			if (minins.isSelected()) {
+				prop.setProperty("synthesis.minins", "true");
+			}
+			else {
+				prop.setProperty("synthesis.minins", "false");
 			}
 			FileOutputStream out = new FileOutputStream(new File(directory + separator + synthFile));
 			prop.store(out, synthesisFile);
