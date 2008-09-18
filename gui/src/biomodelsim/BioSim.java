@@ -1020,13 +1020,13 @@ public class BioSim implements MouseListener, ActionListener {
 		Font font = bioSim.getFont();
 		font = font.deriveFont(Font.BOLD, 36.0f);
 		bioSim.setFont(font);
-		JLabel version = new JLabel("Version 1.0", JLabel.CENTER);
+		JLabel version = new JLabel("Version 1.01", JLabel.CENTER);
 		JLabel uOfU = new JLabel("University of Utah", JLabel.CENTER);
 		JButton credits = new JButton("Credits");
 		credits.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Object[] options = { "Close" };
-				JOptionPane.showOptionDialog(f, "Nathan Barker\nHiroyuki Kuwahara\n"
+				JOptionPane.showOptionDialog(f, "Nathan Barker\nKevin Jones\nHiroyuki Kuwahara\n"
 						+ "Curtis Madsen\nChris Myers\nNam Nguyen", "Credits", JOptionPane.YES_OPTION,
 						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 			}
