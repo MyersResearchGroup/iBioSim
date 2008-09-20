@@ -2007,12 +2007,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					+ simName;
 			try {
 				log.addText("Saving SBML file as:\n" + newFile + "\n");
-				FileOutputStream out = new FileOutputStream(new File(newFile));
 				SBMLWriter writer = new SBMLWriter();
-				String doc = writer.writeToString(document);
-				byte[] output = doc.getBytes();
-				out.write(output);
-				out.close();
+				writer.writeSBML(document, newFile);
 				JTabbedPane tab = biosim.getTab();
 				for (int i = 0; i < tab.getTabCount(); i++) {
 					if (tab.getTitleAt(i).equals(file.split(separator)[file.split(separator).length - 1])) {
@@ -2025,7 +2021,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				}
 				biosim.refreshTree();
 			}
-			catch (IOException e1) {
+			catch (Exception e1) {
 				JOptionPane.showMessageDialog(biosim.frame(), "Unable to save sbml file.",
 						"Error Saving File", JOptionPane.ERROR_MESSAGE);
 			}
@@ -8887,14 +8883,10 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			if (direct.equals(".") && !stem.equals("")) {
 				direct = "";
 			}
-			FileOutputStream out = new FileOutputStream(new File(simDir + separator + stem + direct
-					+ separator + file.split(separator)[file.split(separator).length - 1]));
 			document.getModel().setName(modelName.getText().trim());
 			SBMLWriter writer = new SBMLWriter();
-			String doc = writer.writeToString(document);
-			byte[] output = doc.getBytes();
-			out.write(output);
-			out.close();
+			writer.writeSBML(document, simDir + separator + stem + direct
+					+ separator + file.split(separator)[file.split(separator).length - 1]);
 		}
 		catch (Exception e1) {
 			JOptionPane.showMessageDialog(biosim.frame(), "Unable to create sbml file.",
@@ -9080,20 +9072,16 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				if (outputMessage) {
 					log.addText("Saving SBML file:\n" + file + "\n");
 				}
-				FileOutputStream out = new FileOutputStream(new File(file));
 				document.getModel().setName(modelName.getText().trim());
 				SBMLWriter writer = new SBMLWriter();
-				String doc = writer.writeToString(document);
-				byte[] output = doc.getBytes();
-				out.write(output);
-				out.close();
+				writer.writeSBML(document, file);
 				dirty = false;
 				if (paramsOnly) {
 					reb2sac.updateSpeciesList();
 				}
 				biosim.updateViews(file.split(separator)[file.split(separator).length - 1]);
 			}
-			catch (IOException e1) {
+			catch (Exception e1) {
 				JOptionPane.showMessageDialog(biosim.frame(), "Unable to save sbml file.",
 						"Error Saving File", JOptionPane.ERROR_MESSAGE);
 			}

@@ -20,6 +20,8 @@ public class Buttons {
 		String filename = "";
 		JFileChooser fc = new JFileChooser();
 
+		//FileDialog fd = new FileDialog((JFrame)browse);
+		//fd.setVisible(true);
 		/* This sets the default directory to the one where BioSim is executed */
 		/*
 		 * String startDir = System.getProperty("user.dir"); File curDir = new

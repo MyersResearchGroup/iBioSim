@@ -1916,8 +1916,7 @@ public class BioSim implements MouseListener, ActionListener {
 						}
 						else {
 							if (overwrite(root + separator + simName, simName)) {
-								File f = new File(root + separator + simName);
-								f.createNewFile();
+								String f = new String(root + separator + simName);
 								SBMLDocument document = new SBMLDocument();
 								document.createModel();
 								// document.setLevel(2);
@@ -1926,15 +1925,11 @@ public class BioSim implements MouseListener, ActionListener {
 								c.setId("default");
 								c.setSize(1.0);
 								document.getModel().setId(modelID);
-								FileOutputStream out = new FileOutputStream(f);
 								SBMLWriter writer = new SBMLWriter();
-								String doc = writer.writeToString(document);
-								byte[] output = doc.getBytes();
-								out.write(output);
-								out.close();
+								writer.writeSBML(document, root + separator + simName);
 								addTab(
-										f.getAbsolutePath().split(separator)[f.getAbsolutePath().split(separator).length - 1],
-										new SBML_Editor(f.getAbsolutePath(), null, log, this, null, null),
+										f.split(separator)[f.split(separator).length - 1],
+										new SBML_Editor(f, null, log, this, null, null),
 										"SBML Editor");
 								refreshTree();
 							}
@@ -2084,12 +2079,13 @@ public class BioSim implements MouseListener, ActionListener {
 												messageArea.append(i + ":" + error + "\n");
 											}
 										}
-										FileOutputStream out = new FileOutputStream(new File(root + separator + s));
+										//FileOutputStream out = new FileOutputStream(new File(root + separator + s));
 										SBMLWriter writer = new SBMLWriter();
-										String doc = writer.writeToString(document);
-										byte[] output = doc.getBytes();
-										out.write(output);
-										out.close();
+										writer.writeSBML(document, root + separator + s);
+										//String doc = writer.writeToString(document);
+										//byte[] output = doc.getBytes();
+										//out.write(output);
+										//out.close();
 									}
 								}
 							}
@@ -2209,13 +2205,14 @@ public class BioSim implements MouseListener, ActionListener {
 										f.setLocation(x, y);
 										f.setVisible(true);
 									}
-									FileOutputStream out = new FileOutputStream(new File(root + separator
-											+ file[file.length - 1]));
+//									FileOutputStream out = new FileOutputStream(new File(root + separator
+//											+ file[file.length - 1]));
 									SBMLWriter writer = new SBMLWriter();
-									String doc = writer.writeToString(document);
-									byte[] output = doc.getBytes();
-									out.write(output);
-									out.close();
+									writer.writeSBML(document, root + separator + file[file.length - 1]);
+//									String doc = writer.writeToString(document);
+//									byte[] output = doc.getBytes();
+//									out.write(output);
+//									out.close();
 									refreshTree();
 								}
 							}
@@ -2627,12 +2624,8 @@ public class BioSim implements MouseListener, ActionListener {
 						SBMLDocument document = new SBMLDocument();
 						document = reader.readSBML(tree.getFile());
 						document.getModel().setId(modelID);
-						FileOutputStream out = new FileOutputStream(new File(root + separator + copy));
 						SBMLWriter writer = new SBMLWriter();
-						String doc = writer.writeToString(document);
-						byte[] output = doc.getBytes();
-						out.write(output);
-						out.close();
+						writer.writeSBML(document, root + separator + copy);
 					}
 					else if ((tree.getFile().length() >= 4
 							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".gcm")
@@ -2667,13 +2660,8 @@ public class BioSim implements MouseListener, ActionListener {
 								if (ss.length() > 4 && ss.substring(ss.length() - 5).equals(".sbml")) {
 									SBMLReader reader = new SBMLReader();
 									SBMLDocument document = reader.readSBML(tree.getFile() + separator + ss);
-									FileOutputStream out = new FileOutputStream(new File(root + separator + copy
-											+ separator + ss));
 									SBMLWriter writer = new SBMLWriter();
-									String doc = writer.writeToString(document);
-									byte[] output = doc.getBytes();
-									out.write(output);
-									out.close();
+									writer.writeSBML(document, root + separator + copy + separator + ss);
 								}
 								else if (ss.length() > 10 && ss.substring(ss.length() - 11).equals(".properties")) {
 									FileOutputStream out = new FileOutputStream(new File(root + separator + copy
@@ -2876,12 +2864,8 @@ public class BioSim implements MouseListener, ActionListener {
 							SBMLDocument document = new SBMLDocument();
 							document = reader.readSBML(root + separator + rename);
 							document.getModel().setId(modelID);
-							FileOutputStream out = new FileOutputStream(new File(root + separator + rename));
 							SBMLWriter writer = new SBMLWriter();
-							String doc = writer.writeToString(document);
-							byte[] output = doc.getBytes();
-							out.write(output);
-							out.close();
+							writer.writeSBML(document, root + separator + rename);
 						}
 						if (rename.length() >= 5 && rename.substring(rename.length() - 5).equals(".sbml")
 								|| rename.length() >= 4 && rename.substring(rename.length() - 4).equals(".xml")
@@ -4811,13 +4795,8 @@ public class BioSim implements MouseListener, ActionListener {
 				if (ss.length() > 4 && ss.substring(ss.length() - 5).equals(".sbml")) {
 					SBMLReader reader = new SBMLReader();
 					SBMLDocument document = reader.readSBML(root + separator + oldSim + separator + ss);
-					FileOutputStream out = new FileOutputStream(new File(root + separator + newSim
-							+ separator + ss));
 					SBMLWriter writer = new SBMLWriter();
-					String doc = writer.writeToString(document);
-					byte[] output = doc.getBytes();
-					out.write(output);
-					out.close();
+					writer.writeSBML(document, root + separator + newSim + separator + ss);
 					sbmlFile = root + separator + newSim + separator + ss;
 				}
 				else if (ss.length() > 10 && ss.substring(ss.length() - 11).equals(".properties")) {
