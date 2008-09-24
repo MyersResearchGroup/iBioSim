@@ -6,6 +6,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.util.*;
+import java.util.prefs.Preferences;
 
 import javax.swing.*;
 import org.sbml.libsbml.*;
@@ -91,6 +92,7 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 		this.directory = directory;
 		String[] getFilename = directory.split(separator);
 		lrnFile = getFilename[getFilename.length - 1] + ".lrn";
+		Preferences biosimrc = Preferences.userRoot();
 
 		// Sets up the encodings area
 		JPanel radioPanel = new JPanel(new BorderLayout());
@@ -108,12 +110,22 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 		ButtonGroup select2 = new ButtonGroup();
 		select2.add(spacing);
 		select2.add(data);
-		auto.setSelected(true);
+		if (biosimrc.get("biosim.learn.autolevels", "").equals("Auto")) {
+			auto.setSelected(true);
+		}
+		else {
+			user.setSelected(true);
+		}
 		user.addActionListener(this);
 		spacing.addActionListener(this);
 		auto.addActionListener(this);
 		suggest.addActionListener(this);
-		data.setSelected(true);
+		if (biosimrc.get("biosim.learn.equaldata", "").equals("Equal Data Per Bins")) {
+			data.setSelected(true);
+		}
+		else {
+			spacing.setSelected(true);
+		}
 		data.addActionListener(this);
 		selection1.add(data);
 		selection1.add(spacing);
@@ -153,43 +165,43 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 		JPanel thresholdPanel2 = new JPanel(new GridLayout(8, 2));
 		JLabel activationLabel = new JLabel("Ratio For Activation (Ta):");
 		thresholdPanel2.add(activationLabel);
-		activation = new JTextField("1.15");
+		activation = new JTextField(biosimrc.get("biosim.learn.ta", ""));
 		// activation.addActionListener(this);
 		thresholdPanel2.add(activation);
 		JLabel repressionLabel = new JLabel("Ratio For Repression (Tr):");
 		thresholdPanel2.add(repressionLabel);
-		repression = new JTextField("0.75");
+		repression = new JTextField(biosimrc.get("biosim.learn.tr", ""));
 		// repression.addActionListener(this);
 		thresholdPanel2.add(repression);
 		JLabel influenceLevelLabel = new JLabel("Merge Influence Vectors Delta (Tm):");
 		thresholdPanel2.add(influenceLevelLabel);
-		influenceLevel = new JTextField("0.0");
+		influenceLevel = new JTextField(biosimrc.get("biosim.learn.tm", ""));
 		// influenceLevel.addActionListener(this);
 		thresholdPanel2.add(influenceLevel);
-		JLabel letNThroughLabel = new JLabel("Minimum Number of Initial Vectors (Tn):  ");
+		JLabel letNThroughLabel = new JLabel("Minimum Number Of Initial Vectors (Tn):  ");
 		thresholdPanel1.add(letNThroughLabel);
-		letNThrough = new JTextField("2");
+		letNThrough = new JTextField(biosimrc.get("biosim.learn.tn", ""));
 		// letNThrough.addActionListener(this);
 		thresholdPanel1.add(letNThrough);
 		JLabel maxVectorSizeLabel = new JLabel("Maximum Influence Vector Size (Tj):");
 		thresholdPanel1.add(maxVectorSizeLabel);
-		maxVectorSize = new JTextField("2");
+		maxVectorSize = new JTextField(biosimrc.get("biosim.learn.tj", ""));
 		// maxVectorSize.addActionListener(this);
 		thresholdPanel1.add(maxVectorSize);
-		JLabel parentLabel = new JLabel("Score for Empty Influence Vector (Ti):");
+		JLabel parentLabel = new JLabel("Score For Empty Influence Vector (Ti):");
 		thresholdPanel1.add(parentLabel);
-		parent = new JTextField("0.5");
+		parent = new JTextField(biosimrc.get("biosim.learn.ti", ""));
 		parent.addActionListener(this);
 		thresholdPanel1.add(parent);
 		JLabel relaxIPDeltaLabel = new JLabel("Relax Thresholds Delta (Tt):");
 		thresholdPanel2.add(relaxIPDeltaLabel);
-		relaxIPDelta = new JTextField("0.025");
+		relaxIPDelta = new JTextField(biosimrc.get("biosim.learn.tt", ""));
 		// relaxIPDelta.addActionListener(this);
 		thresholdPanel2.add(relaxIPDelta);
 		numBinsLabel = new JLabel("Number Of Bins:");
 		String[] bins = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
 		numBins = new JComboBox(bins);
-		numBins.setSelectedItem("4");
+		numBins.setSelectedItem(biosimrc.get("biosim.learn.bins", ""));
 		numBins.addActionListener(this);
 		thresholdPanel1.add(numBinsLabel);
 		thresholdPanel1.add(numBins);
@@ -202,17 +214,32 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 		options[2] = "2";
 		options[3] = "3";
 		debug = new JComboBox(options);
+		debug.setSelectedItem(biosimrc.get("biosim.learn.debug", ""));
 		debug.addActionListener(this);
 		thresholdPanel2.add(debugLabel);
 		thresholdPanel2.add(debug);
 		succ = new JRadioButton("Successors");
 		pred = new JRadioButton("Predecessors");
 		both = new JRadioButton("Both");
-		succ.setSelected(true);
+		if (biosimrc.get("biosim.learn.succpred", "").equals("Successors")) {
+			succ.setSelected(true);
+		}
+		else if (biosimrc.get("biosim.learn.succpred", "").equals("Predecessors")) {
+			pred.setSelected(true);
+		}
+		else {
+			both.setSelected(true);
+		}
 		succ.addActionListener(this);
 		pred.addActionListener(this);
 		both.addActionListener(this);
 		basicFBP = new JCheckBox("Basic FindBaseProb");
+		if (biosimrc.get("biosim.learn.findbaseprob", "").equals("True")) {
+			basicFBP.setSelected(true);
+		}
+		else {
+			basicFBP.setSelected(false);
+		}
 		basicFBP.addActionListener(this);
 		ButtonGroup succOrPred = new ButtonGroup();
 		succOrPred.add(succ);
@@ -333,7 +360,7 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 		}
 
 		speciesList = new ArrayList<String>();
-		if ((learnFile.contains(".sbml"))||(learnFile.contains(".xml"))) {
+		if ((learnFile.contains(".sbml")) || (learnFile.contains(".xml"))) {
 			SBMLReader reader = new SBMLReader();
 			SBMLDocument document = reader.readSBML(learnFile);
 			Model model = document.getModel();
@@ -1299,7 +1326,7 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 	public void updateSpecies(String newLearnFile) {
 		learnFile = newLearnFile;
 		speciesList = new ArrayList<String>();
-		if ((learnFile.contains(".sbml"))||(learnFile.contains(".xml"))) {
+		if ((learnFile.contains(".sbml")) || (learnFile.contains(".xml"))) {
 			SBMLReader reader = new SBMLReader();
 			SBMLDocument document = reader.readSBML(learnFile);
 			Model model = document.getModel();
