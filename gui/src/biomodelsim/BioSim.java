@@ -503,6 +503,45 @@ public class BioSim implements MouseListener, ActionListener {
 		if (biosimrc.get("biosim.sim.concentration", "").equals("")) {
 			biosimrc.put("biosim.sim.concentration", "15");
 		}
+		if (biosimrc.get("biosim.learn.tn", "").equals("")) {
+			biosimrc.put("biosim.learn.tn", "2");
+		}
+		if (biosimrc.get("biosim.learn.tj", "").equals("")) {
+			biosimrc.put("biosim.learn.tj", "2");
+		}
+		if (biosimrc.get("biosim.learn.ti", "").equals("")) {
+			biosimrc.put("biosim.learn.ti", "0.5");
+		}
+		if (biosimrc.get("biosim.learn.bins", "").equals("")) {
+			biosimrc.put("biosim.learn.bins", "4");
+		}
+		if (biosimrc.get("biosim.learn.equaldata", "").equals("")) {
+			biosimrc.put("biosim.learn.equaldata", "Equal Data Per Bins");
+		}
+		if (biosimrc.get("biosim.learn.autolevels", "").equals("")) {
+			biosimrc.put("biosim.learn.autolevels", "Auto");
+		}
+		if (biosimrc.get("biosim.learn.ta", "").equals("")) {
+			biosimrc.put("biosim.learn.ta", "1.15");
+		}
+		if (biosimrc.get("biosim.learn.tr", "").equals("")) {
+			biosimrc.put("biosim.learn.tr", "0.75");
+		}
+		if (biosimrc.get("biosim.learn.tm", "").equals("")) {
+			biosimrc.put("biosim.learn.tm", "0.0");
+		}
+		if (biosimrc.get("biosim.learn.tt", "").equals("")) {
+			biosimrc.put("biosim.learn.tt", "0.025");
+		}
+		if (biosimrc.get("biosim.learn.debug", "").equals("")) {
+			biosimrc.put("biosim.learn.debug", "0");
+		}
+		if (biosimrc.get("biosim.learn.succpred", "").equals("")) {
+			biosimrc.put("biosim.learn.succpred", "Successors");
+		}
+		if (biosimrc.get("biosim.learn.findbaseprob", "").equals("")) {
+			biosimrc.put("biosim.learn.findbaseprob", "False");
+		}
 
 		// Open .biosimrc here
 
@@ -797,6 +836,62 @@ public class BioSim implements MouseListener, ActionListener {
 			JPanel analysisPrefs = new JPanel(new GridLayout(1, 2));
 			analysisPrefs.add(analysisLabels);
 			analysisPrefs.add(analysisFields);
+			final JTextField tn = new JTextField(biosimrc.get("biosim.learn.tn", ""));
+			final JTextField tj = new JTextField(biosimrc.get("biosim.learn.tj", ""));
+			final JTextField ti = new JTextField(biosimrc.get("biosim.learn.ti", ""));
+			choices = new String[] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
+			final JComboBox bins = new JComboBox(choices);
+			bins.setSelectedItem(biosimrc.get("biosim.learn.bins", ""));
+			choices = new String[] { "Equal Data Per Bins", "Equal Spacing Of Bins" };
+			final JComboBox equaldata = new JComboBox(choices);
+			equaldata.setSelectedItem(biosimrc.get("biosim.learn.equaldata", ""));
+			choices = new String[] { "Auto", "User" };
+			final JComboBox autolevels = new JComboBox(choices);
+			autolevels.setSelectedItem(biosimrc.get("biosim.learn.autolevels", ""));
+			final JTextField ta = new JTextField(biosimrc.get("biosim.learn.ta", ""));
+			final JTextField tr = new JTextField(biosimrc.get("biosim.learn.tr", ""));
+			final JTextField tm = new JTextField(biosimrc.get("biosim.learn.tm", ""));
+			final JTextField tt = new JTextField(biosimrc.get("biosim.learn.tt", ""));
+			choices = new String[] { "0", "1", "2", "3" };
+			final JComboBox debug = new JComboBox(choices);
+			debug.setSelectedItem(biosimrc.get("biosim.learn.debug", ""));
+			choices = new String[] { "Successors", "Predecessors", "Both" };
+			final JComboBox succpred = new JComboBox(choices);
+			succpred.setSelectedItem(biosimrc.get("biosim.learn.succpred", ""));
+			choices = new String[] { "True", "False" };
+			final JComboBox findbaseprob = new JComboBox(choices);
+			findbaseprob.setSelectedItem(biosimrc.get("biosim.learn.findbaseprob", ""));
+			JPanel learnLabels = new JPanel(new GridLayout(13, 1));
+			learnLabels.add(new JLabel("Minimum Number Of Initial Vectors (Tn):"));
+			learnLabels.add(new JLabel("Maximum Influence Vector Size (Tj):"));
+			learnLabels.add(new JLabel("Score For Empty Influence Vector (Ti):"));
+			learnLabels.add(new JLabel("Number Of Bins:"));
+			learnLabels.add(new JLabel("Divide Bins:"));
+			learnLabels.add(new JLabel("Generate Levels:"));
+			learnLabels.add(new JLabel("Ratio For Activation (Ta):"));
+			learnLabels.add(new JLabel("Ratio For Repression (Tr):"));
+			learnLabels.add(new JLabel("Merge Influence Vectors Delta (Tm):"));
+			learnLabels.add(new JLabel("Relax Thresholds Delta (Tt):"));
+			learnLabels.add(new JLabel("Debug Level:"));
+			learnLabels.add(new JLabel("Successors Or Predecessors:"));
+			learnLabels.add(new JLabel("Basic FindBaseProb:"));
+			JPanel learnFields = new JPanel(new GridLayout(13, 1));
+			learnFields.add(tn);
+			learnFields.add(tj);
+			learnFields.add(ti);
+			learnFields.add(bins);
+			learnFields.add(equaldata);
+			learnFields.add(autolevels);
+			learnFields.add(ta);
+			learnFields.add(tr);
+			learnFields.add(tm);
+			learnFields.add(tt);
+			learnFields.add(debug);
+			learnFields.add(succpred);
+			learnFields.add(findbaseprob);
+			JPanel learnPrefs = new JPanel(new GridLayout(1, 2));
+			learnPrefs.add(learnLabels);
+			learnPrefs.add(learnFields);
 			JPanel sbmlPrefsBordered = new JPanel(new BorderLayout());
 			JPanel sbmlPrefs = new JPanel();
 			sbmlPrefsBordered.add(Undeclared, "North");
@@ -807,6 +902,7 @@ public class BioSim implements MouseListener, ActionListener {
 			prefTabs.addTab("SBML Preferences", sbmlPrefs);
 			prefTabs.addTab("GCM Preferences", gcmPrefs);
 			prefTabs.addTab("Analysis Preferences", analysisPrefs);
+			prefTabs.addTab("Learn Preferences", learnPrefs);
 			Object[] options = { "Save", "Cancel" };
 			int value = JOptionPane.showOptionDialog(frame, prefTabs, "Preferences",
 					JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
@@ -985,6 +1081,54 @@ public class BioSim implements MouseListener, ActionListener {
 				biosimrc.put("biosim.sim.abs", (String) abs.getSelectedItem());
 				biosimrc.put("biosim.sim.type", (String) type.getSelectedItem());
 				biosimrc.put("biosim.sim.sim", (String) sim.getSelectedItem());
+				try {
+					Integer.parseInt(tn.getText().trim());
+					biosimrc.put("biosim.learn.tn", tn.getText().trim());
+				}
+				catch (Exception e1) {
+				}
+				try {
+					Integer.parseInt(tj.getText().trim());
+					biosimrc.put("biosim.learn.tj", tj.getText().trim());
+				}
+				catch (Exception e1) {
+				}
+				try {
+					Double.parseDouble(ti.getText().trim());
+					biosimrc.put("biosim.learn.ti", ti.getText().trim());
+				}
+				catch (Exception e1) {
+				}
+				biosimrc.put("biosim.learn.bins", (String) bins.getSelectedItem());
+				biosimrc.put("biosim.learn.equaldata", (String) equaldata.getSelectedItem());
+				biosimrc.put("biosim.learn.autolevels", (String) autolevels.getSelectedItem());
+				try {
+					Double.parseDouble(ta.getText().trim());
+					biosimrc.put("biosim.learn.ta", ta.getText().trim());
+				}
+				catch (Exception e1) {
+				}
+				try {
+					Double.parseDouble(tr.getText().trim());
+					biosimrc.put("biosim.learn.tr", tr.getText().trim());
+				}
+				catch (Exception e1) {
+				}
+				try {
+					Double.parseDouble(tm.getText().trim());
+					biosimrc.put("biosim.learn.tm", tm.getText().trim());
+				}
+				catch (Exception e1) {
+				}
+				try {
+					Double.parseDouble(tt.getText().trim());
+					biosimrc.put("biosim.learn.tt", tt.getText().trim());
+				}
+				catch (Exception e1) {
+				}
+				biosimrc.put("biosim.learn.debug", (String) debug.getSelectedItem());
+				biosimrc.put("biosim.learn.succpred", (String) succpred.getSelectedItem());
+				biosimrc.put("biosim.learn.findbaseprob", (String) findbaseprob.getSelectedItem());
 				for (int i = 0; i < tab.getTabCount(); i++) {
 					if (tab.getTitleAt(i).contains(".gcm")) {
 						((GCM2SBMLEditor) tab.getComponentAt(i)).getGCM().loadDefaultParameters();
@@ -1166,10 +1310,8 @@ public class BioSim implements MouseListener, ActionListener {
 		else if (e.getActionCommand().equals("createSynthesis")) {
 			if (root != null) {
 				for (int i = 0; i < tab.getTabCount(); i++) {
-					if (tab
-							.getTitleAt(i)
-							.equals(
-									tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
+					if (tab.getTitleAt(i).equals(
+							tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
 						tab.setSelectedIndex(i);
 						if (save(i) != 1) {
 							return;
@@ -1192,63 +1334,51 @@ public class BioSim implements MouseListener, ActionListener {
 							String[] getFilename = sbmlFile.split(separator);
 							String sbmlFileNoPath = getFilename[getFilename.length - 1];
 							try {
-								FileOutputStream out = new FileOutputStream(new File(root
-										+ separator + synthName.trim() + separator + synthName.trim()
-										+ ".syn"));
+								FileOutputStream out = new FileOutputStream(new File(root + separator
+										+ synthName.trim() + separator + synthName.trim() + ".syn"));
 								out.write(("synthesis.file=" + sbmlFileNoPath + "\n").getBytes());
 								out.close();
 							}
 							catch (Exception e1) {
-								JOptionPane.showMessageDialog(frame,
-										"Unable to save parameter file!", "Error Saving File",
-										JOptionPane.ERROR_MESSAGE);
+								JOptionPane.showMessageDialog(frame, "Unable to save parameter file!",
+										"Error Saving File", JOptionPane.ERROR_MESSAGE);
 							}
 							refreshTree();
 							JPanel synthPane = new JPanel();
 							synthPane.add(new Synthesis(root + separator + synthName, sbmlFile, this));
 							/*
-							 * JLabel noData = new JLabel("No data available");
-							 * Font font = noData.getFont(); font =
-							 * font.deriveFont(Font.BOLD, 42.0f);
-							 * noData.setFont(font);
-							 * noData.setHorizontalAlignment
-							 * (SwingConstants.CENTER); lrnTab.addTab("Learn",
-							 * noData);
-							 * lrnTab.getComponentAt(lrnTab.getComponents
-							 * ().length - 1).setName("Learn"); JLabel noData1 =
-							 * new JLabel("No data available"); font =
-							 * noData1.getFont(); font =
-							 * font.deriveFont(Font.BOLD, 42.0f);
-							 * noData1.setFont(font);
-							 * noData1.setHorizontalAlignment
-							 * (SwingConstants.CENTER); lrnTab.addTab("TSD
-							 * Graph", noData1); lrnTab.getComponentAt
-							 * (lrnTab.getComponents().length - 1).setName("TSD
-							 * Graph");
+							 * JLabel noData = new JLabel("No data available"); Font font =
+							 * noData.getFont(); font = font.deriveFont(Font.BOLD, 42.0f);
+							 * noData.setFont(font); noData.setHorizontalAlignment
+							 * (SwingConstants.CENTER); lrnTab.addTab("Learn", noData);
+							 * lrnTab.getComponentAt(lrnTab.getComponents ().length -
+							 * 1).setName("Learn"); JLabel noData1 = new JLabel("No data
+							 * available"); font = noData1.getFont(); font =
+							 * font.deriveFont(Font.BOLD, 42.0f); noData1.setFont(font);
+							 * noData1.setHorizontalAlignment (SwingConstants.CENTER);
+							 * lrnTab.addTab("TSD Graph", noData1); lrnTab.getComponentAt
+							 * (lrnTab.getComponents().length - 1).setName("TSD Graph");
 							 */
 							addTab(synthName, synthPane, null);
 						}
 					}
 					catch (Exception e1) {
-						JOptionPane.showMessageDialog(frame,
-								"Unable to create Synthesis View directory.", "Error",
-								JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(frame, "Unable to create Synthesis View directory.",
+								"Error", JOptionPane.ERROR_MESSAGE);
 					}
 				}
 			}
 			else {
-				JOptionPane.showMessageDialog(frame, "You must open or create a project first.",
-						"Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(frame, "You must open or create a project first.", "Error",
+						JOptionPane.ERROR_MESSAGE);
 			}
 		}
 		// if the synthesis popup menu is selected on a vhdl or lhpn file
 		else if (e.getActionCommand().equals("createVerify")) {
 			if (root != null) {
 				for (int i = 0; i < tab.getTabCount(); i++) {
-					if (tab
-							.getTitleAt(i)
-							.equals(
-									tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
+					if (tab.getTitleAt(i).equals(
+							tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
 						tab.setSelectedIndex(i);
 						if (save(i) != 1) {
 							return;
@@ -1271,53 +1401,43 @@ public class BioSim implements MouseListener, ActionListener {
 							String[] getFilename = sbmlFile.split(separator);
 							String sbmlFileNoPath = getFilename[getFilename.length - 1];
 							try {
-								FileOutputStream out = new FileOutputStream(new File(root
-										+ separator + verName.trim() + separator + verName.trim()
-										+ ".ver"));
+								FileOutputStream out = new FileOutputStream(new File(root + separator
+										+ verName.trim() + separator + verName.trim() + ".ver"));
 								out.write(("verification.file=" + sbmlFileNoPath + "\n").getBytes());
 								out.close();
 							}
 							catch (Exception e1) {
-								JOptionPane.showMessageDialog(frame,
-										"Unable to save parameter file!", "Error Saving File",
-										JOptionPane.ERROR_MESSAGE);
+								JOptionPane.showMessageDialog(frame, "Unable to save parameter file!",
+										"Error Saving File", JOptionPane.ERROR_MESSAGE);
 							}
 							refreshTree();
 							JPanel verPane = new JPanel();
 							verPane.add(new Verification(root + separator + verName, sbmlFile, this));
 							/*
-							 * JLabel noData = new JLabel("No data available");
-							 * Font font = noData.getFont(); font =
-							 * font.deriveFont(Font.BOLD, 42.0f);
-							 * noData.setFont(font);
-							 * noData.setHorizontalAlignment
-							 * (SwingConstants.CENTER); lrnTab.addTab("Learn",
-							 * noData);
-							 * lrnTab.getComponentAt(lrnTab.getComponents
-							 * ().length - 1).setName("Learn"); JLabel noData1 =
-							 * new JLabel("No data available"); font =
-							 * noData1.getFont(); font =
-							 * font.deriveFont(Font.BOLD, 42.0f);
-							 * noData1.setFont(font);
-							 * noData1.setHorizontalAlignment
-							 * (SwingConstants.CENTER); lrnTab.addTab("TSD
-							 * Graph", noData1); lrnTab.getComponentAt
-							 * (lrnTab.getComponents().length - 1).setName("TSD
-							 * Graph");
+							 * JLabel noData = new JLabel("No data available"); Font font =
+							 * noData.getFont(); font = font.deriveFont(Font.BOLD, 42.0f);
+							 * noData.setFont(font); noData.setHorizontalAlignment
+							 * (SwingConstants.CENTER); lrnTab.addTab("Learn", noData);
+							 * lrnTab.getComponentAt(lrnTab.getComponents ().length -
+							 * 1).setName("Learn"); JLabel noData1 = new JLabel("No data
+							 * available"); font = noData1.getFont(); font =
+							 * font.deriveFont(Font.BOLD, 42.0f); noData1.setFont(font);
+							 * noData1.setHorizontalAlignment (SwingConstants.CENTER);
+							 * lrnTab.addTab("TSD Graph", noData1); lrnTab.getComponentAt
+							 * (lrnTab.getComponents().length - 1).setName("TSD Graph");
 							 */
 							addTab(verName, verPane, null);
 						}
 					}
 					catch (Exception e1) {
-						JOptionPane.showMessageDialog(frame,
-								"Unable to create Verification View directory.", "Error",
-								JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(frame, "Unable to create Verification View directory.",
+								"Error", JOptionPane.ERROR_MESSAGE);
 					}
 				}
 			}
 			else {
-				JOptionPane.showMessageDialog(frame, "You must open or create a project first.",
-						"Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(frame, "You must open or create a project first.", "Error",
+						JOptionPane.ERROR_MESSAGE);
 			}
 		}
 		// if the delete popup menu is selected on a sim directory
@@ -1927,10 +2047,8 @@ public class BioSim implements MouseListener, ActionListener {
 								document.getModel().setId(modelID);
 								SBMLWriter writer = new SBMLWriter();
 								writer.writeSBML(document, root + separator + simName);
-								addTab(
-										f.split(separator)[f.split(separator).length - 1],
-										new SBML_Editor(f, null, log, this, null, null),
-										"SBML Editor");
+								addTab(f.split(separator)[f.split(separator).length - 1], new SBML_Editor(f, null,
+										log, this, null, null), "SBML Editor");
 								refreshTree();
 							}
 						}
@@ -2079,13 +2197,14 @@ public class BioSim implements MouseListener, ActionListener {
 												messageArea.append(i + ":" + error + "\n");
 											}
 										}
-										//FileOutputStream out = new FileOutputStream(new File(root + separator + s));
+										// FileOutputStream out = new FileOutputStream(new File(root
+										// + separator + s));
 										SBMLWriter writer = new SBMLWriter();
 										writer.writeSBML(document, root + separator + s);
-										//String doc = writer.writeToString(document);
-										//byte[] output = doc.getBytes();
-										//out.write(output);
-										//out.close();
+										// String doc = writer.writeToString(document);
+										// byte[] output = doc.getBytes();
+										// out.write(output);
+										// out.close();
 									}
 								}
 							}
@@ -2205,14 +2324,15 @@ public class BioSim implements MouseListener, ActionListener {
 										f.setLocation(x, y);
 										f.setVisible(true);
 									}
-//									FileOutputStream out = new FileOutputStream(new File(root + separator
-//											+ file[file.length - 1]));
+									// FileOutputStream out = new FileOutputStream(new File(root +
+									// separator
+									// + file[file.length - 1]));
 									SBMLWriter writer = new SBMLWriter();
 									writer.writeSBML(document, root + separator + file[file.length - 1]);
-//									String doc = writer.writeToString(document);
-//									byte[] output = doc.getBytes();
-//									out.write(output);
-//									out.close();
+									// String doc = writer.writeToString(document);
+									// byte[] output = doc.getBytes();
+									// out.write(output);
+									// out.close();
 									refreshTree();
 								}
 							}
@@ -4262,7 +4382,7 @@ public class BioSim implements MouseListener, ActionListener {
 					null);
 		}
 	}
-	
+
 	private void openSynth() {
 		boolean done = false;
 		for (int i = 0; i < tab.getTabCount(); i++) {
@@ -4286,9 +4406,8 @@ public class BioSim implements MouseListener, ActionListener {
 						}
 						if (end.equals(".tsd") || end.equals(".dat") || end.equals(".csv")) {
 							if (list[i].contains("run-")) {
-								int tempNum = Integer.parseInt(list[i].substring(4, list[i]
-										.length()
-										- end.length()));
+								int tempNum = Integer.parseInt(list[i]
+										.substring(4, list[i].length() - end.length()));
 								if (tempNum > run) {
 									run = tempNum;
 									// graphFile = tree.getFile() + separator +
@@ -4301,8 +4420,7 @@ public class BioSim implements MouseListener, ActionListener {
 			}
 
 			String synthFile = tree.getFile() + separator
-					+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]
-					+ ".syn";
+					+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1] + ".syn";
 			String synthFile2 = tree.getFile() + separator + ".syn";
 			Properties load = new Properties();
 			String synthesisFile = "";
@@ -4351,7 +4469,7 @@ public class BioSim implements MouseListener, ActionListener {
 					synthPanel, null);
 		}
 	}
-	
+
 	private void openVerify() {
 		boolean done = false;
 		for (int i = 0; i < tab.getTabCount(); i++) {
@@ -4375,9 +4493,8 @@ public class BioSim implements MouseListener, ActionListener {
 						}
 						if (end.equals(".tsd") || end.equals(".dat") || end.equals(".csv")) {
 							if (list[i].contains("run-")) {
-								int tempNum = Integer.parseInt(list[i].substring(4, list[i]
-										.length()
-										- end.length()));
+								int tempNum = Integer.parseInt(list[i]
+										.substring(4, list[i].length() - end.length()));
 								if (tempNum > run) {
 									run = tempNum;
 									// graphFile = tree.getFile() + separator +
@@ -4390,8 +4507,7 @@ public class BioSim implements MouseListener, ActionListener {
 			}
 
 			String verFile = tree.getFile() + separator
-					+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]
-					+ ".ver";
+					+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1] + ".ver";
 			String verFile2 = tree.getFile() + separator + ".ver";
 			Properties load = new Properties();
 			String verifyFile = "";
@@ -4436,8 +4552,8 @@ public class BioSim implements MouseListener, ActionListener {
 			}
 			// if (!graphFile.equals("")) {
 			verPanel.add(new Synthesis(tree.getFile(), "flag", this));
-			addTab(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],
-					verPanel, null);
+			addTab(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1], verPanel,
+					null);
 		}
 	}
 
