@@ -31,22 +31,22 @@ public class Verification extends JPanel implements ActionListener {
 
 	private JButton save, run, viewCircuit, viewLog;
 
-	private JLabel algorithm, timingMethod, timingOptions, technology, otherOptions, maxSizeLabel,
-			gateDelayLabel, compilation, bddSizeLabel, pruning, advTiming;
+	private JLabel algorithm, timingMethod, timingOptions, otherOptions, otherOptions2, compilation, bddSizeLabel, pruning, advTiming;
 
-	private JRadioButton untimed, geometric, posets, bag, bap, baptdc, atomicGates, generalizedC,
-			standardC, bmGc, bm2, verify, vergate, orbits, search, trace, newTab, postProc, redCheck,
+	private JRadioButton untimed, geometric, posets, bag, bap, baptdc, verify, vergate, orbits, search, trace, newTab, postProc, redCheck,
 			xForm2, expandRate;
 
-	private JCheckBox abst, partialOrder, dot, verbose, quiet, noinsert, notFirst, preserve, ordered, subset, unsafe, expensive, conflict,
+	private JCheckBox abst, partialOrder, dot, verbose, quiet, notFirst, preserve, ordered, subset, unsafe, expensive, conflict,
 			reachable, dumb, genrg, timsubset, superset, infopt, orbmatch, interleav, prune,
 			disabling, nofail, keepgoing, explpn, nochecks, reduction, minins;
 
-	private JTextField maxSize, gateDelay, bddSize;
+	private JTextField bddSize;
 
-	private ButtonGroup timingMethodGroup, technologyGroup, algorithmGroup, compilationGroup;
+	private ButtonGroup timingMethodGroup, algorithmGroup, compilationGroup;
 
 	private String directory, separator, verFile, verifyFile, sourceFile;
+	
+	private Log log;
 
 	private BioSim biosim;
 
@@ -55,7 +55,7 @@ public class Verification extends JPanel implements ActionListener {
 	 * input fields, puts them on panels, adds the panels to the frame, and then
 	 * displays the frame.
 	 */
-	public Verification(String directory, String filename, BioSim biosim) {
+	public Verification(String directory, String filename, Log log, BioSim biosim) {
 		if (File.separator.equals("\\")) {
 			separator = "\\\\";
 		}
@@ -64,39 +64,43 @@ public class Verification extends JPanel implements ActionListener {
 		}
 
 		this.biosim = biosim;
+		this.log = log;
 		this.directory = directory;
 		this.sourceFile = filename;
 		String[] getFilename = directory.split(separator);
 		verFile = getFilename[getFilename.length - 1] + ".ver";
 
 		JPanel timingRadioPanel = new JPanel();
+		timingRadioPanel.setMaximumSize(new Dimension(1000, 27));
 		JPanel timingCheckBoxPanel = new JPanel();
+		timingCheckBoxPanel.setMaximumSize(new Dimension(1000, 27));
 		JPanel technologyPanel = new JPanel();
+		technologyPanel.setMaximumSize(new Dimension(1000, 27));
 		JPanel otherPanel = new JPanel();
+		otherPanel.setMaximumSize(new Dimension(1000, 27));
 		JPanel algorithmPanel = new JPanel();
+		algorithmPanel.setMaximumSize(new Dimension(1000, 27));
 		JPanel buttonPanel = new JPanel();
 		JPanel compilationPanel = new JPanel();
+		compilationPanel.setMaximumSize(new Dimension(1000, 27));
 		JPanel advancedPanel = new JPanel();
-		JPanel displayPanel = new JPanel();
-		JPanel printPanel = new JPanel();
+		advancedPanel.setMaximumSize(new Dimension(1000, 27));
 		JPanel verPanel = new JPanel();
+		verPanel.setMaximumSize(new Dimension(1000, 27));
 		JPanel pruningPanel = new JPanel();
+		pruningPanel.setMaximumSize(new Dimension(1000, 27));
 		JPanel advTimingPanel = new JPanel();
+		advTimingPanel.setMaximumSize(new Dimension(1000, 54));
+		advTimingPanel.setPreferredSize(new Dimension(1000, 54));
 
-		maxSize = new JTextField("4");
-		gateDelay = new JTextField("0 inf");
 		bddSize = new JTextField("");
-		maxSize.setPreferredSize(new Dimension(30, 18));
-		gateDelay.setPreferredSize(new Dimension(70, 18));
 		bddSize.setPreferredSize(new Dimension(40, 18));
 
 		algorithm = new JLabel("Verification Algorithm:");
 		timingMethod = new JLabel("Timing Method:");
 		timingOptions = new JLabel("Timing Options:");
-		technology = new JLabel("Technology:");
 		otherOptions = new JLabel("Other Options:");
-		maxSizeLabel = new JLabel("Max Size:");
-		gateDelayLabel = new JLabel("Gate Delay:");
+		otherOptions2 = new JLabel("Other Options:");
 		compilation = new JLabel("Compilation Options:");
 		bddSizeLabel = new JLabel("BDD Linkspace Size:");
 		pruning = new JLabel("Pruning Options:");
@@ -113,17 +117,10 @@ public class Verification extends JPanel implements ActionListener {
 		// Basic Timing Options
 		abst = new JCheckBox("Abstract");
 		partialOrder = new JCheckBox("Partial Order");
-		// Technology Options
-		atomicGates = new JRadioButton("Atomic Gates");
-		generalizedC = new JRadioButton("Generalized-C");
-		standardC = new JRadioButton("Standard-C");
-		bmGc = new JRadioButton("BM gC");
-		bm2 = new JRadioButton("BM 2-level");
 		// Other Basic Options
 		dot = new JCheckBox("Dot");
 		verbose = new JCheckBox("Verbose");
 		quiet = new JCheckBox("Quiet");
-		noinsert = new JCheckBox("NoInsert");
 		// Verification Algorithms
 		verify = new JRadioButton("Verify");
 		vergate = new JRadioButton("Verify Gates");
@@ -164,12 +161,10 @@ public class Verification extends JPanel implements ActionListener {
 		minins = new JCheckBox("Min ins");
 
 		timingMethodGroup = new ButtonGroup();
-		technologyGroup = new ButtonGroup();
 		algorithmGroup = new ButtonGroup();
 		compilationGroup = new ButtonGroup();
 
 		untimed.setSelected(true);
-		atomicGates.setSelected(true);
 		verify.setSelected(true);
 		newTab.setSelected(true);
 
@@ -180,11 +175,6 @@ public class Verification extends JPanel implements ActionListener {
 		timingMethodGroup.add(bag);
 		timingMethodGroup.add(bap);
 		timingMethodGroup.add(baptdc);
-		technologyGroup.add(atomicGates);
-		technologyGroup.add(generalizedC);
-		technologyGroup.add(standardC);
-		technologyGroup.add(bmGc);
-		technologyGroup.add(bm2);
 		algorithmGroup.add(verify);
 		algorithmGroup.add(vergate);
 		algorithmGroup.add(orbits);
@@ -212,22 +202,10 @@ public class Verification extends JPanel implements ActionListener {
 		timingCheckBoxPanel.add(abst);
 		timingCheckBoxPanel.add(partialOrder);
 
-		technologyPanel.add(technology);
-		technologyPanel.add(atomicGates);
-		technologyPanel.add(generalizedC);
-		technologyPanel.add(standardC);
-		technologyPanel.add(bmGc);
-		technologyPanel.add(bm2);
-
 		otherPanel.add(otherOptions);
 		otherPanel.add(dot);
 		otherPanel.add(verbose);
 		otherPanel.add(quiet);
-		otherPanel.add(noinsert);
-		otherPanel.add(maxSizeLabel);
-		otherPanel.add(maxSize);
-		otherPanel.add(gateDelayLabel);
-		otherPanel.add(gateDelay);
 
 		algorithmPanel.add(algorithm);
 		algorithmPanel.add(verify);
@@ -267,7 +245,7 @@ public class Verification extends JPanel implements ActionListener {
 		pruningPanel.add(reachable);
 		pruningPanel.add(dumb);
 
-		advancedPanel.add(otherOptions);
+		advancedPanel.add(otherOptions2);
 		advancedPanel.add(nochecks);
 		advancedPanel.add(reduction);
 		advancedPanel.add(minins);
@@ -277,6 +255,7 @@ public class Verification extends JPanel implements ActionListener {
 		// load parameters
 		Properties load = new Properties();
 		verifyFile = "";
+		//JOptionPane.showMessageDialog(this, new File(directory + separator + verFile).getName());
 		try {
 			FileInputStream in = new FileInputStream(new File(directory + separator + verFile));
 			load.load(in);
@@ -285,16 +264,13 @@ public class Verification extends JPanel implements ActionListener {
 				String[] getProp = load.getProperty("verification.file").split(separator);
 				verifyFile = directory.substring(0, directory.length()
 						- getFilename[getFilename.length - 1].length())
-						+ separator + getProp[getProp.length - 1];
+						+ getProp[getProp.length - 1];
 			}
 			if (load.containsKey("verification.source")) {
 				sourceFile = load.getProperty("verification.source");
 			}
-			if (load.containsKey("verification.Max")) {
-				maxSize.setText(load.getProperty("verification.Max"));
-			}
-			if (load.containsKey("verification.Delay")) {
-				gateDelay.setText(load.getProperty("verification.Delay"));
+			if (load.containsKey("verification.bddSize")) {
+				bddSize.setText(load.getProperty("verification .bddSize"));
 			}
 			if (load.containsKey("verification.timing.methods")) {
 				if (load.getProperty("verification.timing.methods").equals("untimed")) {
@@ -326,23 +302,6 @@ public class Verification extends JPanel implements ActionListener {
 					partialOrder.setSelected(true);
 				}
 			}
-			if (load.containsKey("verification.technology")) {
-				if (load.getProperty("verification.technology").equals("atomicGates")) {
-					atomicGates.setSelected(true);
-				}
-				else if (load.getProperty("verification.technology").equals("generalizedC")) {
-					generalizedC.setSelected(true);
-				}
-				else if (load.getProperty("verification.technology").equals("standardC")) {
-					standardC.setSelected(true);
-				}
-				else if (load.getProperty("verification.technology").equals("bmGc")) {
-					bmGc.setSelected(true);
-				}
-				else {
-					bm2.setSelected(true);
-				}
-			}
 			if (load.containsKey("verification.Dot")) {
 				if (load.getProperty("verification.Dot").equals("true")) {
 					dot.setSelected(true);
@@ -356,11 +315,6 @@ public class Verification extends JPanel implements ActionListener {
 			if (load.containsKey("verification.quiet")) {
 				if (load.getProperty("verification.quiet").equals("true")) {
 					quiet.setSelected(true);
-				}
-			}
-			if (load.containsKey("verification.noinsert")) {
-				if (load.getProperty("verification.noinsert").equals("true")) {
-					noinsert.setSelected(true);
 				}
 			}
 			if (load.containsKey("verification.partial.order")) {
@@ -519,7 +473,7 @@ public class Verification extends JPanel implements ActionListener {
 			}
 		}
 		catch (Exception e) {
-			JOptionPane.showMessageDialog(biosim.frame(), "Unable to load properties file!",
+			JOptionPane.showMessageDialog(biosim.frame(), "Unable to load properties file![1]",
 					"Error Loading Properties", JOptionPane.ERROR_MESSAGE);
 		}
 		save();
@@ -554,15 +508,15 @@ public class Verification extends JPanel implements ActionListener {
 		basicOptions.add(otherPanel);
 		basicOptions.add(algorithmPanel);
 		basicOptions.setLayout(new BoxLayout(basicOptions, BoxLayout.Y_AXIS));
+		basicOptions.add(Box.createVerticalGlue());
 
-		advOptions.add(displayPanel);
-		advOptions.add(printPanel);
 		advOptions.add(compilationPanel);
 		advOptions.add(advTimingPanel);
 		advOptions.add(verPanel);
 		advOptions.add(pruningPanel);
 		advOptions.add(advancedPanel);
 		advOptions.setLayout(new BoxLayout(advOptions, BoxLayout.Y_AXIS));
+		advOptions.add(Box.createVerticalGlue());
 
 		JTabbedPane tab = new JTabbedPane();
 		tab.addTab("Basic Options", basicOptions);
@@ -588,7 +542,7 @@ public class Verification extends JPanel implements ActionListener {
 				run();
 			}
 			catch (IOException e1) {
-				// TODO Auto-generated catch block
+				// 
 				e1.printStackTrace();
 				JOptionPane.showMessageDialog(this, "Input file cannot be read", "Error",
 						JOptionPane.ERROR_MESSAGE);
@@ -627,11 +581,9 @@ public class Verification extends JPanel implements ActionListener {
 		else {
 			options = options + "-tt";
 		}
-		// Text field options
-		options = options + "M" + maxSize.getText();
-		String[] temp = gateDelay.getText().split(" ");
-		if (!temp[1].equals("inf")) {
-			options = options + "G" + temp[0] + "/" + temp[1];
+		// BDD Linkspace Size
+		if (!bddSize.equals("")) {
+			options = options + "L" + bddSize.getText();
 		}
 		// Timing Options
 		if (abst.isSelected()) {
@@ -639,22 +591,6 @@ public class Verification extends JPanel implements ActionListener {
 		}
 		if (partialOrder.isSelected()) {
 			options = options + "op";
-		}
-		// Technology Options
-		if (atomicGates.isSelected()) {
-			options = options + "ot";
-		}
-		else if (generalizedC.isSelected()) {
-			options = options + "og";
-		}
-		else if (standardC.isSelected()) {
-			options = options + "os";
-		}
-		else if (bmGc.isSelected()) {
-			options = options + "ob";
-		}
-		else {
-			options = options + "ol";
 		}
 		// Other Options
 		if (dot.isSelected()) {
@@ -665,25 +601,6 @@ public class Verification extends JPanel implements ActionListener {
 		}
 		if (quiet.isSelected()) {
 			options = options + "oq";
-		}
-		if (noinsert.isSelected()) {
-			options = options + "oi";
-		}
-		// Verification Algorithms
-		if (verify.isSelected()) {
-			options = options + "va";
-		}
-		else if (vergate.isSelected()) {
-			options = options + "vg";
-		}
-		else if (orbits.isSelected()) {
-			options = options + "vo";
-		}
-		else if (search.isSelected()) {
-			options = options + "vs";
-		}
-		else {
-			options = options + "vt";
 		}
 		// Advanced Timing Options
 		if (genrg.isSelected()) {
@@ -759,19 +676,35 @@ public class Verification extends JPanel implements ActionListener {
 		}
 		// Compilation Options
 		if (newTab.isSelected()) {
-			options = options + "cN ";
+			options = options + "cN";
 		}
 		else if (postProc.isSelected()) {
-			options = options + "cP ";
+			options = options + "cP";
 		}
 		else if (redCheck.isSelected()) {
-			options = options + "cR ";
+			options = options + "cR";
 		}
 		else if (xForm2.isSelected()) {
-			options = options + "cT ";
+			options = options + "cT";
 		}
 		else {
-			options = options + "cE ";
+			options = options + "cE";
+		}
+//		 Verification Algorithms
+		if (verify.isSelected()) {
+			options = options + "va ";
+		}
+		else if (vergate.isSelected()) {
+			options = options + "vg ";
+		}
+		else if (orbits.isSelected()) {
+			options = options + "vo ";
+		}
+		else if (search.isSelected()) {
+			options = options + "vs ";
+		}
+		else {
+			options = options + "vt ";
 		}
 		// String[] temp = sourceFile.split(separator);
 		// String src = temp[temp.length - 1];
@@ -780,6 +713,7 @@ public class Verification extends JPanel implements ActionListener {
 		//JOptionPane.showMessageDialog(this, cmd);
 		// Runtime exec = Runtime.getRuntime();
 		File work = new File(directory);
+		log.addText("Executing: " + cmd + "\n");
 		Runtime exec = Runtime.getRuntime();
 		Process ver = exec.exec(cmd, null, work);
 		try {
@@ -804,15 +738,18 @@ public class Verification extends JPanel implements ActionListener {
 	}
 
 	public void save() {
+		//JOptionPane.showMessageDialog(this, verifyFile);
 		try {
+			log.addText("Saving: " + verFile);
 			Properties prop = new Properties();
 			FileInputStream in = new FileInputStream(new File(directory + separator + verFile));
 			prop.load(in);
 			in.close();
 			prop.setProperty("verification.file", verifyFile);
 			prop.setProperty("verification.source", sourceFile);
-			prop.setProperty("verification.Max", this.maxSize.getText().trim());
-			prop.setProperty("verification.Delay", this.gateDelay.getText().trim());
+			if (!bddSize.equals("")) {
+				prop.setProperty("verification.bddSize", this.bddSize.getText().trim());
+				}
 			if (untimed.isSelected()) {
 				prop.setProperty("verification.timing.methods", "untimed");
 			}
@@ -843,21 +780,6 @@ public class Verification extends JPanel implements ActionListener {
 			else {
 				prop.setProperty("verification.partial.order", "false");
 			}
-			if (atomicGates.isSelected()) {
-				prop.setProperty("verification.technology", "atomicGates");
-			}
-			else if (generalizedC.isSelected()) {
-				prop.setProperty("verification.technology", "generalizedC");
-			}
-			else if (standardC.isSelected()) {
-				prop.setProperty("verification.technology", "standardC");
-			}
-			else if (bmGc.isSelected()) {
-				prop.setProperty("verification.technology", "bmGc");
-			}
-			else if (bm2.isSelected()) {
-				prop.setProperty("verification.technology", "bm2");
-			}
 			if (dot.isSelected()) {
 				prop.setProperty("verification.Dot", "true");
 			}
@@ -875,12 +797,6 @@ public class Verification extends JPanel implements ActionListener {
 			}
 			else {
 				prop.setProperty("verification.quiet", "false");
-			}
-			if (noinsert.isSelected()) {
-				prop.setProperty("verification.noinsert", "true");
-			}
-			else {
-				prop.setProperty("verification.noinsert", "false");
 			}
 			if (verify.isSelected()) {
 				prop.setProperty("verification.algorithm", "verify");
