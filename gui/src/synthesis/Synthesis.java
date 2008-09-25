@@ -48,6 +48,8 @@ public class Synthesis extends JPanel implements ActionListener {
 	private ButtonGroup timingMethodGroup, technologyGroup, algorithmGroup, compilationGroup;
 
 	private String directory, separator, synthFile, synthesisFile, sourceFile;
+	
+	private Log log;
 
 	private BioSim biosim;
 
@@ -56,7 +58,7 @@ public class Synthesis extends JPanel implements ActionListener {
 	 * input fields, puts them on panels, adds the panels to the frame, and then
 	 * displays the frame.
 	 */
-	public Synthesis(String directory, String filename, BioSim biosim) {
+	public Synthesis(String directory, String filename, Log log, BioSim biosim) {
 		if (File.separator.equals("\\")) {
 			separator = "\\\\";
 		}
@@ -66,23 +68,33 @@ public class Synthesis extends JPanel implements ActionListener {
 
 		this.biosim = biosim;
 		this.directory = directory;
+		this.log = log;
 		this.sourceFile = filename;
 		String[] getFilename = directory.split(separator);
 		synthFile = getFilename[getFilename.length - 1] + ".syn";
 
 		JPanel timingRadioPanel = new JPanel();
+		timingRadioPanel.setMaximumSize(new Dimension(1000, 27));
 		JPanel timingCheckBoxPanel = new JPanel();
+		timingCheckBoxPanel.setMaximumSize(new Dimension(1000, 27));
 		JPanel technologyPanel = new JPanel();
+		technologyPanel.setMaximumSize(new Dimension(1000, 27));
 		JPanel otherPanel = new JPanel();
+		otherPanel.setMaximumSize(new Dimension(1000, 27));
 		JPanel algorithmPanel = new JPanel();
+		algorithmPanel.setMaximumSize(new Dimension(1000, 27));
 		JPanel buttonPanel = new JPanel();
 		JPanel compilationPanel = new JPanel();
+		compilationPanel.setMaximumSize(new Dimension(1000, 27));
 		JPanel advancedPanel = new JPanel();
-		JPanel displayPanel = new JPanel();
-		JPanel printPanel = new JPanel();
+		advancedPanel.setMaximumSize(new Dimension(1000, 27));
 		JPanel synthPanel = new JPanel();
+		synthPanel.setMaximumSize(new Dimension(1000, 27));
 		JPanel pruningPanel = new JPanel();
+		pruningPanel.setMaximumSize(new Dimension(1000, 27));
 		JPanel advTimingPanel = new JPanel();
+		advTimingPanel.setMaximumSize(new Dimension(1000, 54));
+		advTimingPanel.setPreferredSize(new Dimension(1000, 54));
 
 		maxSize = new JTextField("4");
 		gateDelay = new JTextField("0 inf");
@@ -91,7 +103,7 @@ public class Synthesis extends JPanel implements ActionListener {
 		gateDelay.setPreferredSize(new Dimension(70, 18));
 		bddSize.setPreferredSize(new Dimension(40, 18));
 
-		algorithm = new JLabel("Analysis Algorithm:");
+		algorithm = new JLabel("Synthesis Algorithm:");
 		timingMethod = new JLabel("Timing Method:");
 		timingOptions = new JLabel("Timing Options:");
 		technology = new JLabel("Technology:");
@@ -297,7 +309,7 @@ public class Synthesis extends JPanel implements ActionListener {
 				String[] getProp = load.getProperty("synthesis.file").split(separator);
 				synthesisFile = directory.substring(0, directory.length()
 						- getFilename[getFilename.length - 1].length())
-						+ separator + getProp[getProp.length - 1];
+						+ getProp[getProp.length - 1];
 			}
 			if (load.containsKey("synthesis.source")) {
 				sourceFile = load.getProperty("synthesis.source");
@@ -307,6 +319,9 @@ public class Synthesis extends JPanel implements ActionListener {
 			}
 			if (load.containsKey("synthesis.Delay")) {
 				gateDelay.setText(load.getProperty("synthesis.Delay"));
+			}
+			if (load.containsKey("synthesis.bddSize")) {
+				bddSize.setText(load.getProperty("synthesis.bddSize"));
 			}
 			if (load.containsKey("synthesis.timing.methods")) {
 				if (load.getProperty("synthesis.timing.methods").equals("untimed")) {
@@ -589,8 +604,6 @@ public class Synthesis extends JPanel implements ActionListener {
 		basicOptions.add(algorithmPanel);
 		basicOptions.setLayout(new BoxLayout(basicOptions, BoxLayout.Y_AXIS));
 
-		advOptions.add(displayPanel);
-		advOptions.add(printPanel);
 		advOptions.add(compilationPanel);
 		advOptions.add(advTimingPanel);
 		advOptions.add(synthPanel);
@@ -667,6 +680,9 @@ public class Synthesis extends JPanel implements ActionListener {
 		if (!temp[1].equals("inf")) {
 			options = options + "G" + temp[0] + "/" + temp[1];
 		}
+		if (!bddSize.equals("")) {
+			options = options + "L" + bddSize.getText();
+		}
 		// Timing Options
 		if (abst.isSelected()) {
 			options = options + "oa";
@@ -702,19 +718,6 @@ public class Synthesis extends JPanel implements ActionListener {
 		}
 		if (noinsert.isSelected()) {
 			options = options + "oi";
-		}
-		// Synthesis Methods
-		if (singleCube.isSelected()) {
-			options = options + "ys";
-		}
-		else if (multicube.isSelected()) {
-			options = options + "ym";
-		}
-		else if (bdd.isSelected()) {
-			options = options + "yb";
-		}
-		else {
-			options = options + "yd ";
 		}
 		// Synthesis Options
 		if (shareGate.isSelected()) {
@@ -806,19 +809,32 @@ public class Synthesis extends JPanel implements ActionListener {
 		}
 		// Compilation Options
 		if (newTab.isSelected()) {
-			options = options + "cN ";
+			options = options + "cN";
 		}
 		else if (postProc.isSelected()) {
-			options = options + "cP ";
+			options = options + "cP";
 		}
 		else if (redCheck.isSelected()) {
-			options = options + "cR ";
+			options = options + "cR";
 		}
 		else if (xForm2.isSelected()) {
-			options = options + "cT ";
+			options = options + "cT";
 		}
 		else {
-			options = options + "cE ";
+			options = options + "cE";
+		}
+//		 Synthesis Methods
+		if (singleCube.isSelected()) {
+			options = options + "ys ";
+		}
+		else if (multicube.isSelected()) {
+			options = options + "ym ";
+		}
+		else if (bdd.isSelected()) {
+			options = options + "yb ";
+		}
+		else {
+			options = options + "yd ";
 		}
 		// String[] temp = sourceFile.split(separator);
 		// String src = temp[temp.length - 1];
@@ -827,6 +843,7 @@ public class Synthesis extends JPanel implements ActionListener {
 		//JOptionPane.showMessageDialog(this, cmd);
 		// Runtime exec = Runtime.getRuntime();
 		File work = new File(directory);
+		log.addText("Executing: " + cmd + "\n");
 		Runtime exec = Runtime.getRuntime();
 		Process synth = exec.exec(cmd, null, work);
 		try {
@@ -852,6 +869,7 @@ public class Synthesis extends JPanel implements ActionListener {
 
 	public void save() {
 		try {
+			log.addText("Saving: " + synthFile);
 			Properties prop = new Properties();
 			FileInputStream in = new FileInputStream(new File(directory + separator + synthFile));
 			prop.load(in);
@@ -860,6 +878,9 @@ public class Synthesis extends JPanel implements ActionListener {
 			prop.setProperty("synthesis.source", sourceFile);
 			prop.setProperty("synthesis.Max", this.maxSize.getText().trim());
 			prop.setProperty("synthesis.Delay", this.gateDelay.getText().trim());
+			if (!bddSize.equals("")) {
+				prop.setProperty("synthesis.bddSize", this.bddSize.getText().trim());
+			}
 			if (untimed.isSelected()) {
 				prop.setProperty("synthesis.timing.methods", "untimed");
 			}
