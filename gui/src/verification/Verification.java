@@ -71,27 +71,27 @@ public class Verification extends JPanel implements ActionListener {
 		verFile = getFilename[getFilename.length - 1] + ".ver";
 
 		JPanel timingRadioPanel = new JPanel();
-		timingRadioPanel.setMaximumSize(new Dimension(1000, 27));
+		timingRadioPanel.setMaximumSize(new Dimension(1000, 35));
 		JPanel timingCheckBoxPanel = new JPanel();
-		timingCheckBoxPanel.setMaximumSize(new Dimension(1000, 27));
+		timingCheckBoxPanel.setMaximumSize(new Dimension(1000, 30));
 		JPanel technologyPanel = new JPanel();
-		technologyPanel.setMaximumSize(new Dimension(1000, 27));
+		technologyPanel.setMaximumSize(new Dimension(1000, 35));
 		JPanel otherPanel = new JPanel();
-		otherPanel.setMaximumSize(new Dimension(1000, 27));
+		otherPanel.setMaximumSize(new Dimension(1000, 35));
 		JPanel algorithmPanel = new JPanel();
-		algorithmPanel.setMaximumSize(new Dimension(1000, 27));
+		algorithmPanel.setMaximumSize(new Dimension(1000, 35));
 		JPanel buttonPanel = new JPanel();
 		JPanel compilationPanel = new JPanel();
-		compilationPanel.setMaximumSize(new Dimension(1000, 27));
+		compilationPanel.setMaximumSize(new Dimension(1000, 35));
 		JPanel advancedPanel = new JPanel();
-		advancedPanel.setMaximumSize(new Dimension(1000, 27));
+		advancedPanel.setMaximumSize(new Dimension(1000, 35));
 		JPanel verPanel = new JPanel();
-		verPanel.setMaximumSize(new Dimension(1000, 27));
+		verPanel.setMaximumSize(new Dimension(1000, 35));
 		JPanel pruningPanel = new JPanel();
-		pruningPanel.setMaximumSize(new Dimension(1000, 27));
+		pruningPanel.setMaximumSize(new Dimension(1000, 35));
 		JPanel advTimingPanel = new JPanel();
-		advTimingPanel.setMaximumSize(new Dimension(1000, 54));
-		advTimingPanel.setPreferredSize(new Dimension(1000, 54));
+		advTimingPanel.setMaximumSize(new Dimension(1000, 62));
+		advTimingPanel.setPreferredSize(new Dimension(1000, 62));
 
 		bddSize = new JTextField("");
 		bddSize.setPreferredSize(new Dimension(40, 18));
@@ -493,7 +493,7 @@ public class Verification extends JPanel implements ActionListener {
 		// Creates the view circuit button
 		viewCircuit = new JButton("View Circuit");
 		viewCircuit.addActionListener(this);
-		buttonPanel.add(viewCircuit);
+		//buttonPanel.add(viewCircuit);
 		viewCircuit.setMnemonic(KeyEvent.VK_C);
 
 		// Creates the view log button
@@ -549,6 +549,7 @@ public class Verification extends JPanel implements ActionListener {
 			}
 		}
 		else if (e.getSource() == save) {
+			log.addText("Saving:\n" + directory + separator + verFile + "\n");
 			save();
 		}
 		else if (e.getSource() == viewCircuit) {
@@ -713,7 +714,7 @@ public class Verification extends JPanel implements ActionListener {
 		//JOptionPane.showMessageDialog(this, cmd);
 		// Runtime exec = Runtime.getRuntime();
 		File work = new File(directory);
-		log.addText("Executing: " + cmd + "\n");
+		log.addText("Executing:\n" + cmd + "\n");
 		Runtime exec = Runtime.getRuntime();
 		Process ver = exec.exec(cmd, null, work);
 		try {
@@ -740,7 +741,6 @@ public class Verification extends JPanel implements ActionListener {
 	public void save() {
 		//JOptionPane.showMessageDialog(this, verifyFile);
 		try {
-			log.addText("Saving: " + verFile);
 			Properties prop = new Properties();
 			FileInputStream in = new FileInputStream(new File(directory + separator + verFile));
 			prop.load(in);

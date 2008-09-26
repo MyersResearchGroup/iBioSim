@@ -31,7 +31,7 @@ public class Synthesis extends JPanel implements ActionListener {
 
 	private JButton save, run, viewCircuit, viewLog;
 
-	private JLabel algorithm, timingMethod, timingOptions, technology, otherOptions, maxSizeLabel,
+	private JLabel algorithm, timingMethod, timingOptions, technology, otherOptions, otherOptions2, maxSizeLabel,
 			gateDelayLabel, compilation, bddSizeLabel, synthesisOptions, pruning, advTiming;
 
 	private JRadioButton untimed, geometric, posets, bag, bap, baptdc, atomicGates, generalizedC,
@@ -74,27 +74,27 @@ public class Synthesis extends JPanel implements ActionListener {
 		synthFile = getFilename[getFilename.length - 1] + ".syn";
 
 		JPanel timingRadioPanel = new JPanel();
-		timingRadioPanel.setMaximumSize(new Dimension(1000, 27));
+		timingRadioPanel.setMaximumSize(new Dimension(1000, 35));
 		JPanel timingCheckBoxPanel = new JPanel();
-		timingCheckBoxPanel.setMaximumSize(new Dimension(1000, 27));
+		timingCheckBoxPanel.setMaximumSize(new Dimension(1000, 30));
 		JPanel technologyPanel = new JPanel();
-		technologyPanel.setMaximumSize(new Dimension(1000, 27));
+		technologyPanel.setMaximumSize(new Dimension(1000, 35));
 		JPanel otherPanel = new JPanel();
-		otherPanel.setMaximumSize(new Dimension(1000, 27));
+		otherPanel.setMaximumSize(new Dimension(1000, 35));
 		JPanel algorithmPanel = new JPanel();
-		algorithmPanel.setMaximumSize(new Dimension(1000, 27));
+		algorithmPanel.setMaximumSize(new Dimension(1000, 35));
 		JPanel buttonPanel = new JPanel();
 		JPanel compilationPanel = new JPanel();
-		compilationPanel.setMaximumSize(new Dimension(1000, 27));
+		compilationPanel.setMaximumSize(new Dimension(1000, 35));
 		JPanel advancedPanel = new JPanel();
-		advancedPanel.setMaximumSize(new Dimension(1000, 27));
+		advancedPanel.setMaximumSize(new Dimension(1000, 35));
 		JPanel synthPanel = new JPanel();
-		synthPanel.setMaximumSize(new Dimension(1000, 27));
+		synthPanel.setMaximumSize(new Dimension(1000, 35));
 		JPanel pruningPanel = new JPanel();
-		pruningPanel.setMaximumSize(new Dimension(1000, 27));
+		pruningPanel.setMaximumSize(new Dimension(1000, 35));
 		JPanel advTimingPanel = new JPanel();
-		advTimingPanel.setMaximumSize(new Dimension(1000, 54));
-		advTimingPanel.setPreferredSize(new Dimension(1000, 54));
+		advTimingPanel.setMaximumSize(new Dimension(1000, 62));
+		advTimingPanel.setPreferredSize(new Dimension(1000, 62));
 
 		maxSize = new JTextField("4");
 		gateDelay = new JTextField("0 inf");
@@ -108,6 +108,7 @@ public class Synthesis extends JPanel implements ActionListener {
 		timingOptions = new JLabel("Timing Options:");
 		technology = new JLabel("Technology:");
 		otherOptions = new JLabel("Other Options:");
+		otherOptions2 = new JLabel("Other Options:");
 		maxSizeLabel = new JLabel("Max Size:");
 		gateDelayLabel = new JLabel("Gate Delay:");
 		compilation = new JLabel("Compilation Options:");
@@ -291,7 +292,7 @@ public class Synthesis extends JPanel implements ActionListener {
 		pruningPanel.add(reachable);
 		pruningPanel.add(dumb);
 
-		advancedPanel.add(otherOptions);
+		advancedPanel.add(otherOptions2);
 		advancedPanel.add(nochecks);
 		advancedPanel.add(reduction);
 		advancedPanel.add(minins);
@@ -642,6 +643,7 @@ public class Synthesis extends JPanel implements ActionListener {
 			}
 		}
 		else if (e.getSource() == save) {
+			log.addText("Saving:\n" + directory + separator + synthFile + "\n");
 			save();
 		}
 		else if (e.getSource() == viewCircuit) {
@@ -843,7 +845,7 @@ public class Synthesis extends JPanel implements ActionListener {
 		//JOptionPane.showMessageDialog(this, cmd);
 		// Runtime exec = Runtime.getRuntime();
 		File work = new File(directory);
-		log.addText("Executing: " + cmd + "\n");
+		log.addText("Executing:\n" + cmd + "\n");
 		Runtime exec = Runtime.getRuntime();
 		Process synth = exec.exec(cmd, null, work);
 		try {
@@ -869,7 +871,6 @@ public class Synthesis extends JPanel implements ActionListener {
 
 	public void save() {
 		try {
-			log.addText("Saving: " + synthFile);
 			Properties prop = new Properties();
 			FileInputStream in = new FileInputStream(new File(directory + separator + synthFile));
 			prop.load(in);
