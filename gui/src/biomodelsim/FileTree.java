@@ -174,7 +174,7 @@ public class FileTree extends JPanel implements MouseListener {
 				if (!lema && files.get(fnum).toString().length() > 4
 						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 5)
 								.equals(".sbml")
-						|| files.get(fnum).toString().length() > 3
+						|| !lema && files.get(fnum).toString().length() > 3
 						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4)
 								.equals(".xml")) {
 					curDir.add(new DefaultMutableTreeNode(new IconData(ICON_SBML, null, files.get(fnum))));
@@ -210,7 +210,7 @@ public class FileTree extends JPanel implements MouseListener {
 				if (!lema && files.get(fnum).toString().length() > 4
 						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 5)
 								.equals(".sbml")
-						|| files.get(fnum).toString().length() > 3
+						|| !lema && files.get(fnum).toString().length() > 3
 						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4)
 								.equals(".xml")) {
 					curDir.add(new DefaultMutableTreeNode(new IconData(ICON_SBML, null, files.get(fnum))));
@@ -442,7 +442,7 @@ public class FileTree extends JPanel implements MouseListener {
 					if (!lema && files.get(fnum).toString().length() > 4
 							&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 5)
 									.equals(".sbml")
-							|| files.get(fnum).toString().length() > 3
+							|| !lema && files.get(fnum).toString().length() > 3
 							&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4)
 									.equals(".xml")) {
 						current.insert(new DefaultMutableTreeNode(
@@ -498,7 +498,7 @@ public class FileTree extends JPanel implements MouseListener {
 					if (!lema && files.get(fnum).toString().length() > 4
 							&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 5)
 									.equals(".sbml")
-							|| files.get(fnum).toString().length() > 3
+							|| !lema && files.get(fnum).toString().length() > 3
 							&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4)
 									.equals(".xml")) {
 						current.insert(new DefaultMutableTreeNode(
