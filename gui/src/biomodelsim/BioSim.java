@@ -2348,6 +2348,7 @@ public class BioSim implements MouseListener, ActionListener {
 										//FileOutputStream out = new FileOutputStream(new File(root
 										//		+ separator + s));
 										SBMLWriter writer = new SBMLWriter();
+										writer.writeSBML(document, root + separator + s);
 										//String doc = writer.writeToString(document);
 										//byte[] output = doc.getBytes();
 										//out.write(output);
@@ -2476,6 +2477,7 @@ public class BioSim implements MouseListener, ActionListener {
 									//FileOutputStream out = new FileOutputStream(new File(root
 									//		+ separator + file[file.length - 1]));
 									SBMLWriter writer = new SBMLWriter();
+									writer.writeSBML(document, root + separator + file[file.length - 1]);
 									//String doc = writer.writeToString(document);
 									//byte[] output = doc.getBytes();
 									//out.write(output);
