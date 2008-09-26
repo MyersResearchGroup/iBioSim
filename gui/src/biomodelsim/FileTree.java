@@ -157,10 +157,10 @@ public class FileTree extends JPanel implements MouseListener {
 					else if (s.length() > 3 && s.substring(s.length() - 4).equals(".lrn")) {
 						addNodes(curDir, f, false, false);
 					}
-					else if (s.length() > 3 && s.substring(s.length() - 4).equals(".syn")) {
+					else if (lema && s.length() > 3 && s.substring(s.length() - 4).equals(".syn")) {
 						addNodes(curDir, f, false, true);
 					}
-					else if (s.length() > 3 && s.substring(s.length() - 4).equals(".ver")) {
+					else if (lema && s.length() > 3 && s.substring(s.length() - 4).equals(".ver")) {
 						addNodes(curDir, f, true, true);
 					}
 				}
@@ -363,7 +363,7 @@ public class FileTree extends JPanel implements MouseListener {
 									.getName())), f, doAdd);
 						}
 					}					
-					else if (s.length() > 3 && s.substring(s.length() - 4).equals(".syn")) {
+					else if (lema && s.length() > 3 && s.substring(s.length() - 4).equals(".syn")) {
 						String get = "";
 						boolean doAdd = true;
 						int getChild = 0;
@@ -385,7 +385,7 @@ public class FileTree extends JPanel implements MouseListener {
 									.getName())), f, doAdd);
 						}
 					}
-					else if (s.length() > 3 && s.substring(s.length() - 4).equals(".ver")) {
+					else if (lema && s.length() > 3 && s.substring(s.length() - 4).equals(".ver")) {
 						String get = "";
 						boolean doAdd = true;
 						int getChild = 0;
