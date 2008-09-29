@@ -1512,7 +1512,7 @@ public class BioSim implements MouseListener, ActionListener {
 							refreshTree();
 							String work = root + separator + verName;
 							String circuitFile = root + separator + verName.trim() + separator + circuitFileNoPath;
-							log.addText(circuitFile);
+							//log.addText(circuitFile);
 							JPanel verPane = new JPanel();
 							verPane.add(new Verification(work, circuitFile, log, this));
 							/*
@@ -2813,21 +2813,57 @@ public class BioSim implements MouseListener, ActionListener {
 						&& tree.getFile().substring(tree.getFile().length() - 2).equals(".g")) {
 					String filename = tree.getFile().split(separator)[tree.getFile().split(
 							separator).length - 1];
-					String cmd = "atacs -lloddl " + filename;
+					String cmd = "atacs -llodpl " + filename;
 					File work = new File(root);
 					Runtime exec = Runtime.getRuntime();
 					exec.exec(cmd, null, work);
-					log.addText("Executing: " + cmd + "\n");
+					log.addText("Executing:\n" + cmd);
+					String[] findTheFile = filename.split("\\.");
+					//String directory = "";
+					String theFile = findTheFile[0] + ".dot";
+					String command = "";
+					if (System.getProperty("os.name").contentEquals("Linux")) {
+						//directory = System.getenv("BIOSIM") + "/docs/";
+						command = "gnome-open ";
+					}
+					else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
+						//directory = System.getenv("BIOSIM") + "/docs/";
+						command = "open ";
+					}
+					else {
+						//directory = System.getenv("BIOSIM") + "\\docs\\";
+						command = "cmd /c start ";
+					}
+					log.addText(command + root + theFile + "\n");
+					exec.exec(command + theFile, null, work);
 				}
 				else if (tree.getFile().length() >= 4
 						&& tree.getFile().substring(tree.getFile().length() - 4).equals(".vhd")) {
 					String filename = tree.getFile().split(separator)[tree.getFile().split(
 							separator).length - 1];
-					String cmd = "atacs -lvsllloddl " + filename;
+					String cmd = "atacs -lvslllodpl " + filename;
 					File work = new File(root);
 					Runtime exec = Runtime.getRuntime();
 					exec.exec(cmd, null, work);
-					log.addText("Executing: " + cmd + "\n");
+					log.addText("Executing:\n" + cmd);
+					String[] findTheFile = filename.split("\\.");
+					//String directory = "";
+					String theFile = findTheFile[0] + ".dot";
+					String command = "";
+					if (System.getProperty("os.name").contentEquals("Linux")) {
+						//directory = System.getenv("BIOSIM") + "/docs/";
+						command = "gnome-open ";
+					}
+					else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
+						//directory = System.getenv("BIOSIM") + "/docs/";
+						command = "open ";
+					}
+					else {
+						//directory = System.getenv("BIOSIM") + "\\docs\\";
+						command = "cmd /c start ";
+					}
+					log.addText(command + root + theFile + "\n");
+					exec.exec(command + theFile, null, work);
 				}
 			}
 			catch (IOException e1) {
