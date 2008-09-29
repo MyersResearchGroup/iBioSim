@@ -29,20 +29,19 @@ public class Verification extends JPanel implements ActionListener {
 
 	private static final long serialVersionUID = -5806315070287184299L;
 
-	private JButton save, run, viewCircuit, viewLog;
+	private JButton save, run, viewCircuit, viewTrace, viewLog;
 
-	private JLabel algorithm, timingMethod, timingOptions, otherOptions, otherOptions2, compilation, bddSizeLabel, pruning, advTiming;
+	private JLabel algorithm, timingMethod, timingOptions, otherOptions, otherOptions2, compilation, bddSizeLabel, advTiming;
 
-	private JRadioButton untimed, geometric, posets, bag, bap, baptdc, verify, vergate, orbits, search, trace, newTab, postProc, redCheck,
+	private JRadioButton untimed, geometric, posets, bag, bap, baptdc, verify, vergate, orbits, search, trace;
+
+	private JCheckBox abst, partialOrder, dot, verbose, quiet, genrg, timsubset, superset, infopt, orbmatch, interleav, prune,
+			disabling, nofail, keepgoing, explpn, nochecks, reduction, minins, newTab, postProc, redCheck,
 			xForm2, expandRate;
-
-	private JCheckBox abst, partialOrder, dot, verbose, quiet, notFirst, preserve, ordered, subset, unsafe, expensive, conflict,
-			reachable, dumb, genrg, timsubset, superset, infopt, orbmatch, interleav, prune,
-			disabling, nofail, keepgoing, explpn, nochecks, reduction, minins;
 
 	private JTextField bddSize;
 
-	private ButtonGroup timingMethodGroup, algorithmGroup, compilationGroup;
+	private ButtonGroup timingMethodGroup, algorithmGroup;
 
 	private String directory, separator, verFile, verifyFile, sourceFile;
 	
@@ -69,13 +68,14 @@ public class Verification extends JPanel implements ActionListener {
 		this.sourceFile = filename;
 		String[] getFilename = directory.split(separator);
 		verFile = getFilename[getFilename.length - 1] + ".ver";
+		String[] tempArray = sourceFile.split("\\.");
+		String traceFilename = tempArray[0] + ".trace";
+		File traceFile = new File(traceFilename);
 
 		JPanel timingRadioPanel = new JPanel();
 		timingRadioPanel.setMaximumSize(new Dimension(1000, 35));
 		JPanel timingCheckBoxPanel = new JPanel();
 		timingCheckBoxPanel.setMaximumSize(new Dimension(1000, 30));
-		JPanel technologyPanel = new JPanel();
-		technologyPanel.setMaximumSize(new Dimension(1000, 35));
 		JPanel otherPanel = new JPanel();
 		otherPanel.setMaximumSize(new Dimension(1000, 35));
 		JPanel algorithmPanel = new JPanel();
@@ -85,8 +85,6 @@ public class Verification extends JPanel implements ActionListener {
 		compilationPanel.setMaximumSize(new Dimension(1000, 35));
 		JPanel advancedPanel = new JPanel();
 		advancedPanel.setMaximumSize(new Dimension(1000, 35));
-		JPanel verPanel = new JPanel();
-		verPanel.setMaximumSize(new Dimension(1000, 35));
 		JPanel pruningPanel = new JPanel();
 		pruningPanel.setMaximumSize(new Dimension(1000, 35));
 		JPanel advTimingPanel = new JPanel();
@@ -103,7 +101,6 @@ public class Verification extends JPanel implements ActionListener {
 		otherOptions2 = new JLabel("Other Options:");
 		compilation = new JLabel("Compilation Options:");
 		bddSizeLabel = new JLabel("BDD Linkspace Size:");
-		pruning = new JLabel("Pruning Options:");
 		advTiming = new JLabel("Timing Options:");
 
 		// Initializes the radio buttons and check boxes
@@ -128,45 +125,33 @@ public class Verification extends JPanel implements ActionListener {
 		search = new JRadioButton("Search");
 		trace = new JRadioButton("Trace");
 		// Compilations Options
-		newTab = new JRadioButton("New Tab");
-		postProc = new JRadioButton("Post Processing");
-		redCheck = new JRadioButton("Red Check");
-		xForm2 = new JRadioButton("xForm2");
-		expandRate = new JRadioButton("Expand Rate");
-		// Pruning Options
-		notFirst = new JCheckBox("Not First");
-		preserve = new JCheckBox("Preserve");
-		ordered = new JCheckBox("Ordered");
-		subset = new JCheckBox("Subset");
-		unsafe = new JCheckBox("Unsafe");
-		expensive = new JCheckBox("Expensive");
-		conflict = new JCheckBox("Conflict");
-		reachable = new JCheckBox("Reachable");
-		dumb = new JCheckBox("Dumb");
+		newTab = new JCheckBox("New Tab");
+		postProc = new JCheckBox("Post Processing");
+		redCheck = new JCheckBox("Redundancy Check");
+		xForm2 = new JCheckBox("Don't Use Transform 2");
+		expandRate = new JCheckBox("Expand Rate");
 		// Advanced Timing Options
 		genrg = new JCheckBox("Generate RG");
 		timsubset = new JCheckBox("Subsets");
 		superset = new JCheckBox("Supersets");
-		infopt = new JCheckBox("Inf opt");
-		orbmatch = new JCheckBox("Orb match");
-		interleav = new JCheckBox("Interleav");
+		infopt = new JCheckBox("Infinity Optimization");
+		orbmatch = new JCheckBox("Orbits Match");
+		interleav = new JCheckBox("Interleave");
 		prune = new JCheckBox("Prune");
 		disabling = new JCheckBox("Disabling");
 		nofail = new JCheckBox("No fail");
 		keepgoing = new JCheckBox("Keep going");
-		explpn = new JCheckBox("Exp LPN");
+		explpn = new JCheckBox("Expand LHPN");
 		// Other Advanced Options
 		nochecks = new JCheckBox("No checks");
 		reduction = new JCheckBox("Reduction");
-		minins = new JCheckBox("Min ins");
+		minins = new JCheckBox("Minimum Size of BDD Linkspace");
 
 		timingMethodGroup = new ButtonGroup();
 		algorithmGroup = new ButtonGroup();
-		compilationGroup = new ButtonGroup();
 
 		untimed.setSelected(true);
 		verify.setSelected(true);
-		newTab.setSelected(true);
 
 		// Groups the radio buttons
 		timingMethodGroup.add(untimed);
@@ -180,11 +165,6 @@ public class Verification extends JPanel implements ActionListener {
 		algorithmGroup.add(orbits);
 		algorithmGroup.add(search);
 		algorithmGroup.add(trace);
-		compilationGroup.add(newTab);
-		compilationGroup.add(postProc);
-		compilationGroup.add(redCheck);
-		compilationGroup.add(xForm2);
-		compilationGroup.add(expandRate);
 
 		JPanel basicOptions = new JPanel();
 		JPanel advOptions = new JPanel();
@@ -234,17 +214,6 @@ public class Verification extends JPanel implements ActionListener {
 		advTimingPanel.add(keepgoing);
 		advTimingPanel.add(explpn);
 
-		pruningPanel.add(pruning);
-		pruningPanel.add(notFirst);
-		pruningPanel.add(preserve);
-		pruningPanel.add(ordered);
-		pruningPanel.add(subset);
-		pruningPanel.add(unsafe);
-		pruningPanel.add(expensive);
-		pruningPanel.add(conflict);
-		pruningPanel.add(reachable);
-		pruningPanel.add(dumb);
-
 		advancedPanel.add(otherOptions2);
 		advancedPanel.add(nochecks);
 		advancedPanel.add(reduction);
@@ -255,7 +224,7 @@ public class Verification extends JPanel implements ActionListener {
 		// load parameters
 		Properties load = new Properties();
 		verifyFile = "";
-		//JOptionPane.showMessageDialog(this, new File(directory + separator + verFile).getName());
+		log.addText(directory + separator + verFile);
 		try {
 			FileInputStream in = new FileInputStream(new File(directory + separator + verFile));
 			load.load(in);
@@ -344,20 +313,28 @@ public class Verification extends JPanel implements ActionListener {
 					trace.setSelected(true);
 				}
 			}
-			if (load.containsKey("verification.compilation")) {
-				if (load.getProperty("verification.compilation").equals("newTab")) {
+			if (load.containsKey("verification.compilation.newTab")) {
+				if (load.getProperty("verification.compilation").equals("true")) {
 					newTab.setSelected(true);
 				}
-				else if (load.getProperty("verification.compilation").equals("postProc")) {
+			}
+			if (load.containsKey("verification.compilation.postProc")) {
+				if (load.getProperty("verification.compilation.postProc").equals("true")) {
 					postProc.setSelected(true);
 				}
-				else if (load.getProperty("verification.compilation").equals("redCheck")) {
+			}
+			if (load.containsKey("verification.compilation.redCheck")) {
+				if (load.getProperty("verification.compilation.redCheck").equals("true")) {
 					redCheck.setSelected(true);
 				}
-				else if (load.getProperty("verification.compilation").equals("xForm2")) {
+			}
+			if (load.containsKey("verification.compilation.xForm2")) {
+				if (load.getProperty("verification.compilation.xForm2").equals("true")) {
 					xForm2.setSelected(true);
 				}
-				else {
+			}
+			if (load.containsKey("verification.compilation.expandRate")) {
+				if (load.getProperty("verification.compilation.expandRate").equals("true")) {
 					expandRate.setSelected(true);
 				}
 			}
@@ -411,51 +388,6 @@ public class Verification extends JPanel implements ActionListener {
 					explpn.setSelected(true);
 				}
 			}
-			if (load.containsKey("verification.pruning.notFirst")) {
-				if (load.getProperty("verification.pruning.notFirst").equals("true")) {
-					notFirst.setSelected(true);
-				}
-			}
-			if (load.containsKey("verification.pruning.preserve")) {
-				if (load.getProperty("verification.pruning.preserve").equals("true")) {
-					preserve.setSelected(true);
-				}
-			}
-			if (load.containsKey("verification.pruning.ordered")) {
-				if (load.getProperty("verification.pruning.ordered").equals("true")) {
-					ordered.setSelected(true);
-				}
-			}
-			if (load.containsKey("verification.pruning.subset")) {
-				if (load.getProperty("verification.pruning.subset").equals("true")) {
-					subset.setSelected(true);
-				}
-			}
-			if (load.containsKey("verification.pruning.unsafe")) {
-				if (load.getProperty("verification.pruning.unsafe").equals("true")) {
-					unsafe.setSelected(true);
-				}
-			}
-			if (load.containsKey("verification.pruning.expensive")) {
-				if (load.getProperty("verification.pruning.expensive").equals("true")) {
-					expensive.setSelected(true);
-				}
-			}
-			if (load.containsKey("verification.pruning.conflict")) {
-				if (load.getProperty("verification.pruning.conflict").equals("true")) {
-					conflict.setSelected(true);
-				}
-			}
-			if (load.containsKey("verification.pruning.reachable")) {
-				if (load.getProperty("verification.pruning.reachable").equals("true")) {
-					reachable.setSelected(true);
-				}
-			}
-			if (load.containsKey("verification.pruning.dumb")) {
-				if (load.getProperty("verification.pruning.dumb").equals("true")) {
-					dumb.setSelected(true);
-				}
-			}
 			if (load.containsKey("verification.nochecks")) {
 				if (load.getProperty("verification.nochecks").equals("true")) {
 					nochecks.setSelected(true);
@@ -473,13 +405,13 @@ public class Verification extends JPanel implements ActionListener {
 			}
 		}
 		catch (Exception e) {
-			JOptionPane.showMessageDialog(biosim.frame(), "Unable to load properties file![1]",
+			JOptionPane.showMessageDialog(biosim.frame(), "Unable to load properties file!",
 					"Error Loading Properties", JOptionPane.ERROR_MESSAGE);
 		}
 		save();
 
 		// Creates the run button
-		run = new JButton("Save and Synthesize");
+		run = new JButton("Save and Verify");
 		run.addActionListener(this);
 		buttonPanel.add(run);
 		run.setMnemonic(KeyEvent.VK_S);
@@ -495,6 +427,15 @@ public class Verification extends JPanel implements ActionListener {
 		viewCircuit.addActionListener(this);
 		//buttonPanel.add(viewCircuit);
 		viewCircuit.setMnemonic(KeyEvent.VK_C);
+		
+		// Creates the view trace button
+		viewTrace = new JButton("View Trace");
+		viewTrace.addActionListener(this);
+		buttonPanel.add(viewTrace);
+		if (!traceFile.exists()) {
+			viewTrace.setEnabled(false);
+		}
+		viewTrace.setMnemonic(KeyEvent.VK_T);
 
 		// Creates the view log button
 		viewLog = new JButton("View Log");
@@ -504,7 +445,6 @@ public class Verification extends JPanel implements ActionListener {
 
 		basicOptions.add(timingRadioPanel);
 		basicOptions.add(timingCheckBoxPanel);
-		basicOptions.add(technologyPanel);
 		basicOptions.add(otherPanel);
 		basicOptions.add(algorithmPanel);
 		basicOptions.setLayout(new BoxLayout(basicOptions, BoxLayout.Y_AXIS));
@@ -512,8 +452,6 @@ public class Verification extends JPanel implements ActionListener {
 
 		advOptions.add(compilationPanel);
 		advOptions.add(advTimingPanel);
-		advOptions.add(verPanel);
-		advOptions.add(pruningPanel);
 		advOptions.add(advancedPanel);
 		advOptions.setLayout(new BoxLayout(advOptions, BoxLayout.Y_AXIS));
 		advOptions.add(Box.createVerticalGlue());
@@ -555,6 +493,9 @@ public class Verification extends JPanel implements ActionListener {
 		else if (e.getSource() == viewCircuit) {
 			viewCircuit();
 		}
+		else if (e.getSource() == viewTrace) {
+			viewTrace();
+		}
 		else if (e.getSource() == viewLog) {
 			viewLog();
 		}
@@ -562,6 +503,12 @@ public class Verification extends JPanel implements ActionListener {
 
 	public void run() throws IOException {
 		// String command = "/home/shang/kjones/atacs/bin/atacs -";
+		String[] tempArray = sourceFile.split("\\.");
+		String traceFilename = tempArray[0] + ".trace";
+		File traceFile = new File(traceFilename);
+		if (traceFile.exists()) {
+			traceFile.delete();
+		}
 		String options = "";
 		// Timing method
 		if (untimed.isSelected()) {
@@ -583,7 +530,7 @@ public class Verification extends JPanel implements ActionListener {
 			options = options + "-tt";
 		}
 		// BDD Linkspace Size
-		if (!bddSize.equals("")) {
+		if (!bddSize.getText().equals("")) {
 			options = options + "L" + bddSize.getText();
 		}
 		// Timing Options
@@ -637,34 +584,6 @@ public class Verification extends JPanel implements ActionListener {
 		if (explpn.isSelected()) {
 			options = options + "oL";
 		}
-		// Pruning Options
-		if (notFirst.isSelected()) {
-			options = options + "PN";
-		}
-		if (preserve.isSelected()) {
-			options = options + "PP";
-		}
-		if (ordered.isSelected()) {
-			options = options + "PO";
-		}
-		if (subset.isSelected()) {
-			options = options + "PS";
-		}
-		if (unsafe.isSelected()) {
-			options = options + "PU";
-		}
-		if (expensive.isSelected()) {
-			options = options + "PE";
-		}
-		if (conflict.isSelected()) {
-			options = options + "PC";
-		}
-		if (reachable.isSelected()) {
-			options = options + "PR";
-		}
-		if (dumb.isSelected()) {
-			options = options + "PD";
-		}
 		// Other Advanced Options
 		if (nochecks.isSelected()) {
 			options = options + "on";
@@ -679,19 +598,19 @@ public class Verification extends JPanel implements ActionListener {
 		if (newTab.isSelected()) {
 			options = options + "cN";
 		}
-		else if (postProc.isSelected()) {
+		if (postProc.isSelected()) {
 			options = options + "cP";
 		}
-		else if (redCheck.isSelected()) {
+		if (redCheck.isSelected()) {
 			options = options + "cR";
 		}
-		else if (xForm2.isSelected()) {
+		if (xForm2.isSelected()) {
 			options = options + "cT";
 		}
-		else {
+		if (expandRate.isSelected()) {
 			options = options + "cE";
 		}
-//		 Verification Algorithms
+		// Verification Algorithms
 		if (verify.isSelected()) {
 			options = options + "va ";
 		}
@@ -718,6 +637,24 @@ public class Verification extends JPanel implements ActionListener {
 		Runtime exec = Runtime.getRuntime();
 		Process ver = exec.exec(cmd, null, work);
 		try {
+			ver.wait();
+		}
+		catch (Exception e) {
+			JOptionPane.showMessageDialog(biosim.frame(), "Verification Interrupeted!",
+					"Interrupt", JOptionPane.ERROR_MESSAGE);
+		}
+		if (traceFile.exists()) {
+			JOptionPane.showMessageDialog(biosim.frame(), "Verification Failed",
+					"Verification Results", JOptionPane.WARNING_MESSAGE);
+			viewTrace.setEnabled(true);
+			viewTrace();
+		}
+		else {
+			JOptionPane.showMessageDialog(biosim.frame(), "Verification Succeeded",
+					"Verification Results", JOptionPane.INFORMATION_MESSAGE);
+			viewTrace.setEnabled(false);
+		}
+		try {
 			String output = "";
 			InputStream reb = ver.getInputStream();
 			InputStreamReader isr = new InputStreamReader(reb);
@@ -735,6 +672,8 @@ public class Verification extends JPanel implements ActionListener {
 			ver.waitFor();
 		}
 		catch (Exception e) {
+			JOptionPane.showMessageDialog(biosim.frame(), "Unable to write log file!",
+					"Error Saving Log", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
@@ -814,19 +753,34 @@ public class Verification extends JPanel implements ActionListener {
 				prop.setProperty("verification.algorithm", "trace");
 			}
 			if (newTab.isSelected()) {
-				prop.setProperty("verification.compilation", "newTab");
-			}
-			else if (postProc.isSelected()) {
-				prop.setProperty("verification.compilation", "postProc");
-			}
-			else if (redCheck.isSelected()) {
-				prop.setProperty("verification.compilation", "redCheck");
-			}
-			else if (xForm2.isSelected()) {
-				prop.setProperty("verification.compilation", "xForm2");
+				prop.setProperty("verification.compilation.newTab", "true");
 			}
 			else {
-				prop.setProperty("verification.compilation", "expandRate");
+				prop.setProperty("verification.compilation.newTab", "false");
+			}
+			if (postProc.isSelected()) {
+				prop.setProperty("verification.compilation.postProc", "true");
+			}
+			else {
+				prop.setProperty("verification.compilation.postProc", "false");
+			}
+			if (redCheck.isSelected()) {
+				prop.setProperty("verification.compilation.redCheck", "true");
+			}
+			else {
+				prop.setProperty("verification.compilation.redCheck", "false");
+			}
+			if (xForm2.isSelected()) {
+				prop.setProperty("verification.compilation.xForm2", "true");
+			}
+			else {
+				prop.setProperty("verification.compilation.xForm2", "false");
+			}
+			if (expandRate.isSelected()) {
+				prop.setProperty("verification.compilation.expandRate", "true");
+			}
+			else {
+				prop.setProperty("verification.compilation.expandRate", "false");
 			}
 			if (genrg.isSelected()) {
 				prop.setProperty("verification.timing.genrg", "true");
@@ -893,54 +847,6 @@ public class Verification extends JPanel implements ActionListener {
 			}
 			else {
 				prop.setProperty("verification.timing.explpn", "false");
-			}
-			if (notFirst.isSelected()) {
-				prop.setProperty("verification.pruning.notFirst", "true");
-			}
-			else {
-				prop.setProperty("verification.pruning.notFirst", "false");
-			}
-			if (preserve.isSelected()) {
-				prop.setProperty("verification.pruning.preserve", "true");
-			}
-			else {
-				prop.setProperty("verification.pruning.preserve", "false");
-			}
-			if (ordered.isSelected()) {
-				prop.setProperty("verification.pruning.ordered", "true");
-			}
-			else {
-				prop.setProperty("verification.pruning.ordered", "false");
-			}
-			if (subset.isSelected()) {
-				prop.setProperty("verification.pruning.subset", "true");
-			}
-			else {
-				prop.setProperty("verification.pruning.subset", "false");
-			}
-			if (expensive.isSelected()) {
-				prop.setProperty("verification.pruning.expensive", "true");
-			}
-			else {
-				prop.setProperty("verification.pruning.expensive", "false");
-			}
-			if (conflict.isSelected()) {
-				prop.setProperty("verification.pruning.conflict", "true");
-			}
-			else {
-				prop.setProperty("verification.pruning.conflict", "false");
-			}
-			if (reachable.isSelected()) {
-				prop.setProperty("verification.pruning.reachable", "true");
-			}
-			else {
-				prop.setProperty("verification.pruning.reachable", "false");
-			}
-			if (dumb.isSelected()) {
-				prop.setProperty("verification.pruning.dumb", "true");
-			}
-			else {
-				prop.setProperty("verification.pruning.dumb", "false");
 			}
 			if (nochecks.isSelected()) {
 				prop.setProperty("verification.nochecks", "true");
@@ -1010,6 +916,50 @@ public class Verification extends JPanel implements ActionListener {
 		}
 		catch (Exception e1) {
 			JOptionPane.showMessageDialog(biosim.frame(), "Unable to view circuit.", "Error",
+					JOptionPane.ERROR_MESSAGE);
+		}
+	}
+	
+	public void viewTrace() {
+		String[] getFilename = sourceFile.split("\\.");
+		String traceFilename = getFilename[0] + ".trace";
+		// JOptionPane.showMessageDialog(this, circuitFile);
+		// JOptionPane.showMessageDialog(this, directory + separator +
+		// circuitFile);
+		try {
+			// JOptionPane.showMessageDialog(this, directory + separator +
+			// "run.log");
+			// String[] getFilename = sourceFile.split(".");
+			// String circuitFile = getFilename[0] + ".ps";
+			// JOptionPane.showMessageDialog(this, directory + separator +
+			// circuitFile);
+			if (new File(traceFilename).exists()) {
+				File log = new File(traceFilename);
+				BufferedReader input = new BufferedReader(new FileReader(log));
+				String line = null;
+				JTextArea messageArea = new JTextArea();
+				while ((line = input.readLine()) != null) {
+					messageArea.append(line);
+					messageArea.append(System.getProperty("line.separator"));
+				}
+				input.close();
+				messageArea.setLineWrap(true);
+				messageArea.setWrapStyleWord(true);
+				messageArea.setEditable(false);
+				JScrollPane scrolls = new JScrollPane();
+				scrolls.setMinimumSize(new Dimension(500, 500));
+				scrolls.setPreferredSize(new Dimension(500, 500));
+				scrolls.setViewportView(messageArea);
+				JOptionPane.showMessageDialog(biosim.frame(), scrolls, "Trace View",
+						JOptionPane.INFORMATION_MESSAGE);
+			}
+			else {
+				JOptionPane.showMessageDialog(biosim.frame(), "No trace file exists.", "Error",
+						JOptionPane.ERROR_MESSAGE);
+			}
+		}
+		catch (Exception e1) {
+			JOptionPane.showMessageDialog(biosim.frame(), "Unable to view trace.", "Error",
 					JOptionPane.ERROR_MESSAGE);
 		}
 	}
