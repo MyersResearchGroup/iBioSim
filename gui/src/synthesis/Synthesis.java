@@ -29,23 +29,23 @@ public class Synthesis extends JPanel implements ActionListener {
 
 	private static final long serialVersionUID = -5806315070287184299L;
 
-	private JButton save, run, viewCircuit, viewLog;
+	private JButton save, run, viewCircuit, viewRules, viewLog;
 
-	private JLabel algorithm, timingMethod, timingOptions, technology, otherOptions, otherOptions2, maxSizeLabel,
-			gateDelayLabel, compilation, bddSizeLabel, synthesisOptions, pruning, advTiming;
+	private JLabel algorithm, timingMethod, technology, otherOptions, otherOptions2, maxSizeLabel,
+			gateDelayLabel, compilation, bddSizeLabel, advTiming, synthesisOptions, pruning;
 
 	private JRadioButton untimed, geometric, posets, bag, bap, baptdc, atomicGates, generalizedC,
-			standardC, bmGc, bm2, singleCube, multicube, bdd, direct, newTab, postProc, redCheck,
-			xForm2, expandRate;
+			standardC, bmGc, bm2, singleCube, multicube, bdd, direct;
 
 	private JCheckBox abst, partialOrder, dot, verbose, quiet, noinsert, shareGate, combo, exact,
 			manual, inponly, notFirst, preserve, ordered, subset, unsafe, expensive, conflict,
 			reachable, dumb, genrg, timsubset, superset, infopt, orbmatch, interleav, prune,
-			disabling, nofail, keepgoing, explpn, nochecks, reduction, minins;
+			disabling, nofail, keepgoing, explpn, nochecks, reduction, minins, newTab, postProc, redCheck,
+			xForm2, expandRate;
 
 	private JTextField maxSize, gateDelay, bddSize;
 
-	private ButtonGroup timingMethodGroup, technologyGroup, algorithmGroup, compilationGroup;
+	private ButtonGroup timingMethodGroup, technologyGroup, algorithmGroup;
 
 	private String directory, separator, synthFile, synthesisFile, sourceFile;
 	
@@ -75,8 +75,6 @@ public class Synthesis extends JPanel implements ActionListener {
 
 		JPanel timingRadioPanel = new JPanel();
 		timingRadioPanel.setMaximumSize(new Dimension(1000, 35));
-		JPanel timingCheckBoxPanel = new JPanel();
-		timingCheckBoxPanel.setMaximumSize(new Dimension(1000, 30));
 		JPanel technologyPanel = new JPanel();
 		technologyPanel.setMaximumSize(new Dimension(1000, 35));
 		JPanel otherPanel = new JPanel();
@@ -105,7 +103,6 @@ public class Synthesis extends JPanel implements ActionListener {
 
 		algorithm = new JLabel("Synthesis Algorithm:");
 		timingMethod = new JLabel("Timing Method:");
-		timingOptions = new JLabel("Timing Options:");
 		technology = new JLabel("Technology:");
 		otherOptions = new JLabel("Other Options:");
 		otherOptions2 = new JLabel("Other Options:");
@@ -113,9 +110,9 @@ public class Synthesis extends JPanel implements ActionListener {
 		gateDelayLabel = new JLabel("Gate Delay:");
 		compilation = new JLabel("Compilation Options:");
 		bddSizeLabel = new JLabel("BDD Linkspace Size:");
+		advTiming = new JLabel("Timing Options:");
 		synthesisOptions = new JLabel("Synthesis Options:");
 		pruning = new JLabel("Pruning Options:");
-		advTiming = new JLabel("Timing Options:");
 
 		// Initializes the radio buttons and check boxes
 		// Timing Methods
@@ -125,9 +122,6 @@ public class Synthesis extends JPanel implements ActionListener {
 		bag = new JRadioButton("BAG");
 		bap = new JRadioButton("BAP");
 		baptdc = new JRadioButton("BAPTDC");
-		// Basic Timing Options
-		abst = new JCheckBox("Abstract");
-		partialOrder = new JCheckBox("Partial Order");
 		// Technology Options
 		atomicGates = new JRadioButton("Atomic Gates");
 		generalizedC = new JRadioButton("Generalized-C");
@@ -138,24 +132,36 @@ public class Synthesis extends JPanel implements ActionListener {
 		dot = new JCheckBox("Dot");
 		verbose = new JCheckBox("Verbose");
 		quiet = new JCheckBox("Quiet");
-		noinsert = new JCheckBox("NoInsert");
+		noinsert = new JCheckBox("No Insert");
 		// Synthesis Algorithms
 		singleCube = new JRadioButton("Single Cube");
 		multicube = new JRadioButton("Multicube");
 		bdd = new JRadioButton("BDD");
 		direct = new JRadioButton("Direct");
 		// Compilations Options
-		newTab = new JRadioButton("New Tab");
-		postProc = new JRadioButton("Post Processing");
-		redCheck = new JRadioButton("Red Check");
-		xForm2 = new JRadioButton("xForm2");
-		expandRate = new JRadioButton("Expand Rate");
+		newTab = new JCheckBox("New Tab");
+		postProc = new JCheckBox("Post Processing");
+		redCheck = new JCheckBox("Redundancy Check");
+		xForm2 = new JCheckBox("Don't Use Transform 2");
+		expandRate = new JCheckBox("Expand Rate");
+		// Advanced Timing Options
+		genrg = new JCheckBox("Generate RG");
+		timsubset = new JCheckBox("Subsets");
+		superset = new JCheckBox("Supersets");
+		infopt = new JCheckBox("Infinity Optimization");
+		orbmatch = new JCheckBox("Orbits Match");
+		interleav = new JCheckBox("Interleave");
+		prune = new JCheckBox("Prune");
+		disabling = new JCheckBox("Disabling");
+		nofail = new JCheckBox("No fail");
+		keepgoing = new JCheckBox("Keep going");
+		explpn = new JCheckBox("Expand LHPN");
 		// Advanced Synthesis Options
 		shareGate = new JCheckBox("Share Gate");
 		combo = new JCheckBox("Combo");
 		exact = new JCheckBox("Exact");
 		manual = new JCheckBox("Manual");
-		inponly = new JCheckBox("Inponly");
+		inponly = new JCheckBox("Input Only");
 		// Pruning Options
 		notFirst = new JCheckBox("Not First");
 		preserve = new JCheckBox("Preserve");
@@ -166,33 +172,19 @@ public class Synthesis extends JPanel implements ActionListener {
 		conflict = new JCheckBox("Conflict");
 		reachable = new JCheckBox("Reachable");
 		dumb = new JCheckBox("Dumb");
-		// Advanced Timing Options
-		genrg = new JCheckBox("Generate RG");
-		timsubset = new JCheckBox("Subsets");
-		superset = new JCheckBox("Supersets");
-		infopt = new JCheckBox("Inf opt");
-		orbmatch = new JCheckBox("Orb match");
-		interleav = new JCheckBox("Interleav");
-		prune = new JCheckBox("Prune");
-		disabling = new JCheckBox("Disabling");
-		nofail = new JCheckBox("No fail");
-		keepgoing = new JCheckBox("Keep going");
-		explpn = new JCheckBox("Exp LPN");
 		// Other Advanced Options
 		nochecks = new JCheckBox("No checks");
 		reduction = new JCheckBox("Reduction");
-		minins = new JCheckBox("Min ins");
+		minins = new JCheckBox("Minimum BDD Linkspace Size");
 
 		timingMethodGroup = new ButtonGroup();
 		technologyGroup = new ButtonGroup();
 		algorithmGroup = new ButtonGroup();
-		compilationGroup = new ButtonGroup();
 
 		untimed.setSelected(true);
 		atomicGates.setSelected(true);
 		singleCube.setSelected(true);
-		newTab.setSelected(true);
-
+		
 		// Groups the radio buttons
 		timingMethodGroup.add(untimed);
 		timingMethodGroup.add(geometric);
@@ -209,11 +201,6 @@ public class Synthesis extends JPanel implements ActionListener {
 		algorithmGroup.add(multicube);
 		algorithmGroup.add(bdd);
 		algorithmGroup.add(direct);
-		compilationGroup.add(newTab);
-		compilationGroup.add(postProc);
-		compilationGroup.add(redCheck);
-		compilationGroup.add(xForm2);
-		compilationGroup.add(expandRate);
 
 		JPanel basicOptions = new JPanel();
 		JPanel advOptions = new JPanel();
@@ -226,10 +213,6 @@ public class Synthesis extends JPanel implements ActionListener {
 		timingRadioPanel.add(bag);
 		timingRadioPanel.add(bap);
 		timingRadioPanel.add(baptdc);
-
-		timingCheckBoxPanel.add(timingOptions);
-		timingCheckBoxPanel.add(abst);
-		timingCheckBoxPanel.add(partialOrder);
 
 		technologyPanel.add(technology);
 		technologyPanel.add(atomicGates);
@@ -415,23 +398,31 @@ public class Synthesis extends JPanel implements ActionListener {
 					direct.setSelected(true);
 				}
 			}
-			if (load.containsKey("synthesis.compilation")) {
-				if (load.getProperty("synthesis.compilation").equals("newTab")) {
+			if (load.containsKey("synthesis.compilation.newTab")) {
+				if (load.getProperty("synthesis.compilation.newTab").equals("true")) {
 					newTab.setSelected(true);
 				}
-				else if (load.getProperty("synthesis.compilation").equals("postProc")) {
+			}
+			if (load.containsKey("synthesis.compilation.postProc")) {
+				if (load.getProperty("synthesis.compilation.postProc").equals("true")) {
 					postProc.setSelected(true);
 				}
-				else if (load.getProperty("synthesis.compilation").equals("redCheck")) {
+			}
+			if (load.containsKey("synthesis.compilation.redCheck")) {
+				if (load.getProperty("synthesis.compilation.redCheck").equals("true")) {
 					redCheck.setSelected(true);
 				}
-				else if (load.getProperty("synthesis.compilation").equals("xForm2")) {
+			}
+			if (load.containsKey("synthesis.compilation.xForm2")) {
+				if (load.getProperty("synthesis.compilation.xForm2").equals("true")) {
 					xForm2.setSelected(true);
 				}
-				else {
+			}if (load.containsKey("synthesis.compilation.expandRate")) {
+				if (load.getProperty("synthesis.compilation.expandRate").equals("true")) {
 					expandRate.setSelected(true);
 				}
 			}
+
 			if (load.containsKey("synthesis.timing.genrg")) {
 				if (load.getProperty("synthesis.timing.genrg").equals("true")) {
 					genrg.setSelected(true);
@@ -573,7 +564,13 @@ public class Synthesis extends JPanel implements ActionListener {
 					"Error Loading Properties", JOptionPane.ERROR_MESSAGE);
 		}
 		save();
-
+		
+		getFilename = sourceFile.split(separator);
+		getFilename = getFilename[getFilename.length - 1].split("\\.");
+		File graphFile = new File(getFilename[0] + ".dot");
+		File rulesFile = new File(getFilename[0] + ".prs");
+		File logFile = new File(directory + "run.log");
+		
 		// Creates the run button
 		run = new JButton("Save and Synthesize");
 		run.addActionListener(this);
@@ -590,23 +587,36 @@ public class Synthesis extends JPanel implements ActionListener {
 		viewCircuit = new JButton("View Circuit");
 		viewCircuit.addActionListener(this);
 		buttonPanel.add(viewCircuit);
+		if (!graphFile.exists()) {
+			viewCircuit.setEnabled(false);
+		}
 		viewCircuit.setMnemonic(KeyEvent.VK_C);
+		
+		// Creates the view production rules button
+		viewRules = new JButton("View Production Rules");
+		viewRules.addActionListener(this);
+		buttonPanel.add(viewRules);
+		if (!rulesFile.exists()) {
+			viewRules.setEnabled(false);
+		}
+		viewRules.setMnemonic(KeyEvent.VK_R);
 
 		// Creates the view log button
 		viewLog = new JButton("View Log");
 		viewLog.addActionListener(this);
 		buttonPanel.add(viewLog);
+		if (!logFile.exists()) {
+			viewLog.setEnabled(false);
+		}
 		viewLog.setMnemonic(KeyEvent.VK_V);
 
 		basicOptions.add(timingRadioPanel);
-		basicOptions.add(timingCheckBoxPanel);
 		basicOptions.add(technologyPanel);
 		basicOptions.add(otherPanel);
 		basicOptions.add(algorithmPanel);
 		basicOptions.setLayout(new BoxLayout(basicOptions, BoxLayout.Y_AXIS));
 
 		advOptions.add(compilationPanel);
-		advOptions.add(advTimingPanel);
 		advOptions.add(synthPanel);
 		advOptions.add(pruningPanel);
 		advOptions.add(advancedPanel);
@@ -649,6 +659,9 @@ public class Synthesis extends JPanel implements ActionListener {
 		else if (e.getSource() == viewCircuit) {
 			viewCircuit();
 		}
+		else if (e.getSource() == viewRules) {
+			viewRules();
+		}
 		else if (e.getSource() == viewLog) {
 			viewLog();
 		}
@@ -656,6 +669,21 @@ public class Synthesis extends JPanel implements ActionListener {
 
 	public void run() throws IOException {
 		// String command = "/home/shang/kjones/atacs/bin/atacs -";
+		String[] tempArray = sourceFile.split(separator);
+		String circuitFile = tempArray[tempArray.length - 1];
+		tempArray = sourceFile.split("\\.");
+		//String traceFilename = tempArray[0] + ".trace";
+		//File traceFile = new File(traceFilename);
+		String rulesFilename = tempArray[0] + ".prs";
+		File rulesFile = new File(rulesFilename);
+		String graphFilename = tempArray[0] + ".dot";
+		File graphFile = new File(graphFilename);
+		if (rulesFile.exists()) {
+			rulesFile.delete();
+		}
+		if (graphFile.exists()) {
+			graphFile.delete();
+		}
 		String options = "";
 		// Timing method
 		if (untimed.isSelected()) {
@@ -685,29 +713,6 @@ public class Synthesis extends JPanel implements ActionListener {
 		if (!bddSize.equals("")) {
 			options = options + "L" + bddSize.getText();
 		}
-		// Timing Options
-		if (abst.isSelected()) {
-			options = options + "oa";
-		}
-		if (partialOrder.isSelected()) {
-			options = options + "op";
-		}
-		// Technology Options
-		if (atomicGates.isSelected()) {
-			options = options + "ot";
-		}
-		else if (generalizedC.isSelected()) {
-			options = options + "og";
-		}
-		else if (standardC.isSelected()) {
-			options = options + "os";
-		}
-		else if (bmGc.isSelected()) {
-			options = options + "ob";
-		}
-		else {
-			options = options + "ol";
-		}
 		// Other Options
 		if (dot.isSelected()) {
 			options = options + "od";
@@ -720,22 +725,6 @@ public class Synthesis extends JPanel implements ActionListener {
 		}
 		if (noinsert.isSelected()) {
 			options = options + "oi";
-		}
-		// Synthesis Options
-		if (shareGate.isSelected()) {
-			options = options + "oH";
-		}
-		if (combo.isSelected()) {
-			options = options + "oC";
-		}
-		if (exact.isSelected()) {
-			options = options + "oE";
-		}
-		if (manual.isSelected()) {
-			options = options + "oM";
-		}
-		if (inponly.isSelected()) {
-			options = options + "oN";
 		}
 		// Advanced Timing Options
 		if (genrg.isSelected()) {
@@ -770,6 +759,22 @@ public class Synthesis extends JPanel implements ActionListener {
 		}
 		if (explpn.isSelected()) {
 			options = options + "oL";
+		}
+		// Synthesis Options
+		if (shareGate.isSelected()) {
+			options = options + "oH";
+		}
+		if (combo.isSelected()) {
+			options = options + "oC";
+		}
+		if (exact.isSelected()) {
+			options = options + "oE";
+		}
+		if (manual.isSelected()) {
+			options = options + "oM";
+		}
+		if (inponly.isSelected()) {
+			options = options + "oN";
 		}
 		// Pruning Options
 		if (notFirst.isSelected()) {
@@ -813,34 +818,35 @@ public class Synthesis extends JPanel implements ActionListener {
 		if (newTab.isSelected()) {
 			options = options + "cN";
 		}
-		else if (postProc.isSelected()) {
+		if (postProc.isSelected()) {
 			options = options + "cP";
 		}
-		else if (redCheck.isSelected()) {
+		if (redCheck.isSelected()) {
 			options = options + "cR";
 		}
-		else if (xForm2.isSelected()) {
+		if (xForm2.isSelected()) {
 			options = options + "cT";
 		}
-		else {
+		if (expandRate.isSelected()) {
 			options = options + "cE";
 		}
-//		 Synthesis Methods
+		// Synthesis Methods
 		if (singleCube.isSelected()) {
-			options = options + "ys ";
+			options = options + "ys";
 		}
 		else if (multicube.isSelected()) {
-			options = options + "ym ";
+			options = options + "ym";
 		}
 		else if (bdd.isSelected()) {
-			options = options + "yb ";
+			options = options + "yb";
 		}
 		else {
-			options = options + "yd ";
+			options = options + "yd";
 		}
+		options = options + "pn";
 		// String[] temp = sourceFile.split(separator);
 		// String src = temp[temp.length - 1];
-		String cmd = "atacs " + options + " " + sourceFile;
+		String cmd = "atacs " + options + " " + circuitFile;
 		// String[] cmd = {"emacs", "temp" };
 		//JOptionPane.showMessageDialog(this, cmd);
 		// Runtime exec = Runtime.getRuntime();
@@ -848,6 +854,22 @@ public class Synthesis extends JPanel implements ActionListener {
 		log.addText("Executing:\n" + cmd + "\n");
 		Runtime exec = Runtime.getRuntime();
 		Process synth = exec.exec(cmd, null, work);
+		try {
+			synth.waitFor();
+		}
+		catch (Exception e) {
+		}
+		if (rulesFile.exists()) {
+			viewCircuit.setEnabled(true);
+			viewRules.setEnabled(true);
+			viewCircuit();
+		}
+		else {
+			JOptionPane.showMessageDialog(biosim.frame(), "Synthesis Failed!",
+					"Failure", JOptionPane.ERROR_MESSAGE);
+			viewCircuit.setEnabled(false);
+			viewRules.setEnabled(false);
+		}
 		try {
 			String output = "";
 			InputStream reb = synth.getInputStream();
@@ -899,18 +921,6 @@ public class Synthesis extends JPanel implements ActionListener {
 			}
 			else if (baptdc.isSelected()) {
 				prop.setProperty("synthesis.timing.methods", "baptdc");
-			}
-			if (abst.isSelected()) {
-				prop.setProperty("synthesis.Abst", "true");
-			}
-			else {
-				prop.setProperty("synthesis.Abst", "false");
-			}
-			if (partialOrder.isSelected()) {
-				prop.setProperty("synthesis.partial.order", "true");
-			}
-			else {
-				prop.setProperty("synthesis.partial.order", "false");
 			}
 			if (atomicGates.isSelected()) {
 				prop.setProperty("synthesis.technology", "atomicGates");
@@ -964,20 +974,36 @@ public class Synthesis extends JPanel implements ActionListener {
 				prop.setProperty("synthesis.algorithm", "direct");
 			}
 			if (newTab.isSelected()) {
-				prop.setProperty("synthesis.compilation", "newTab");
-			}
-			else if (postProc.isSelected()) {
-				prop.setProperty("synthesis.compilation", "postProc");
-			}
-			else if (redCheck.isSelected()) {
-				prop.setProperty("synthesis.compilation", "redCheck");
-			}
-			else if (xForm2.isSelected()) {
-				prop.setProperty("synthesis.compilation", "xForm2");
+				prop.setProperty("synthesis.compilation.newTab", "true");
 			}
 			else {
-				prop.setProperty("synthesis.compilation", "expandRate");
+				prop.setProperty("synthesis.compilation.newTab", "false");
 			}
+			if (postProc.isSelected()) {
+				prop.setProperty("synthesis.compilation.postProc", "true");
+			}
+			else {
+				prop.setProperty("synthesis.compilation.postProc", "false");
+			}
+			if (redCheck.isSelected()) {
+				prop.setProperty("synthesis.compilation.redCheck", "true");
+			}
+			else {
+				prop.setProperty("synthesis.compilation.redCheck", "false");
+			}
+			if (xForm2.isSelected()) {
+				prop.setProperty("synthesis.compilation.xForm2", "true");
+			}
+			else {
+				prop.setProperty("synthesis.compilation.xForm2", "false");
+			}
+			if (expandRate.isSelected()) {
+				prop.setProperty("synthesis.compilation.expandRate", "true");
+			}
+			else {
+				prop.setProperty("synthesis.compilation.expandRate", "false");
+			}
+
 			if (genrg.isSelected()) {
 				prop.setProperty("synthesis.timing.genrg", "true");
 			}
@@ -1151,6 +1177,78 @@ public class Synthesis extends JPanel implements ActionListener {
 	}
 
 	public void viewCircuit() {
+		String[] getFilename = sourceFile.split(separator);
+		String circuitFile = getFilename[getFilename.length - 1];
+		getFilename = getFilename[getFilename.length - 1].split("\\.");
+		String graphFile = getFilename[0] + ".dot";
+		// JOptionPane.showMessageDialog(this, circuitFile);
+		// JOptionPane.showMessageDialog(this, directory + separator +
+		// circuitFile);
+		try {
+			// JOptionPane.showMessageDialog(this, directory + separator +
+			// "run.log");
+			// String[] getFilename = sourceFile.split(".");
+			// String circuitFile = getFilename[0] + ".ps";
+			// JOptionPane.showMessageDialog(this, directory + separator +
+			// circuitFile);
+			/*if (new File(circuitFile).exists()) {
+				File log = new File(circuitFile);
+				BufferedReader input = new BufferedReader(new FileReader(log));
+				String line = null;
+				JTextArea messageArea = new JTextArea();
+				while ((line = input.readLine()) != null) {
+					messageArea.append(line);
+					messageArea.append(System.getProperty("line.separator"));
+				}
+				input.close();
+				messageArea.setLineWrap(true);
+				messageArea.setWrapStyleWord(true);
+				messageArea.setEditable(false);
+				JScrollPane scrolls = new JScrollPane();
+				scrolls.setMinimumSize(new Dimension(500, 500));
+				scrolls.setPreferredSize(new Dimension(500, 500));
+				scrolls.setViewportView(messageArea);
+				JOptionPane.showMessageDialog(biosim.frame(), scrolls, "Circuit View",
+						JOptionPane.INFORMATION_MESSAGE);
+			}
+			else {
+				JOptionPane.showMessageDialog(biosim.frame(), "No circuit view exists.", "Error",
+						JOptionPane.ERROR_MESSAGE);
+			}*/
+			String cmd = "";
+			if (circuitFile.endsWith(".g")) {
+				cmd = "atacs -llodpl " + circuitFile;
+			}
+			else if (circuitFile.endsWith(".vhd")) {
+				cmd = "atacs -lvslllodpl " + circuitFile;
+			}
+			File work = new File(directory);
+			Runtime exec = Runtime.getRuntime();
+			exec.exec(cmd, null, work);
+			log.addText("Executing:\n" + cmd);
+			String command = "";
+			if (System.getProperty("os.name").contentEquals("Linux")) {
+				//directory = System.getenv("BIOSIM") + "/docs/";
+				command = "gnome-open ";
+			}
+			else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
+				//directory = System.getenv("BIOSIM") + "/docs/";
+				command = "open ";
+			}
+			else {
+				//directory = System.getenv("BIOSIM") + "\\docs\\";
+				command = "cmd /c start ";
+			}
+			exec.exec(command + graphFile, null, work);
+			log.addText(command + directory + separator + graphFile + "\n");
+		}
+		catch (Exception e1) {
+			JOptionPane.showMessageDialog(biosim.frame(), "Unable to view circuit.", "Error",
+					JOptionPane.ERROR_MESSAGE);
+		}
+	}
+	
+	public void viewRules() {
 		String[] getFilename = sourceFile.split("\\.");
 		String circuitFile = getFilename[0] + ".prs";
 		// JOptionPane.showMessageDialog(this, circuitFile);
@@ -1184,12 +1282,12 @@ public class Synthesis extends JPanel implements ActionListener {
 						JOptionPane.INFORMATION_MESSAGE);
 			}
 			else {
-				JOptionPane.showMessageDialog(biosim.frame(), "No circuit view exists.", "Error",
+				JOptionPane.showMessageDialog(biosim.frame(), "No production rules exist.", "Error",
 						JOptionPane.ERROR_MESSAGE);
 			}
 		}
 		catch (Exception e1) {
-			JOptionPane.showMessageDialog(biosim.frame(), "Unable to view circuit.", "Error",
+			JOptionPane.showMessageDialog(biosim.frame(), "Unable to view production rules.", "Error",
 					JOptionPane.ERROR_MESSAGE);
 		}
 	}
