@@ -105,6 +105,14 @@ public class BioSim implements MouseListener, ActionListener {
 	private JMenuItem newVhdl; // The new vhdl menu item
 
 	private JMenuItem newLhpn; // The new lhpn menu item
+	
+	private JMenuItem newCsp; // The new csp menu item
+	
+	private JMenuItem newHse; // The new handshaking extension menu item
+	
+	private JMenuItem newUnc; // The new extended burst mode menu item
+	
+	private JMenuItem newRsg; // The new rsg menu item
 
 	private JMenuItem exit; // The exit menu item
 
@@ -115,6 +123,14 @@ public class BioSim implements MouseListener, ActionListener {
 	private JMenuItem importVhdl; // The import vhdl menu item
 
 	private JMenuItem importLhpn; // The import lhpn menu item
+	
+	private JMenuItem importCsp; // The import csp menu item
+	
+	private JMenuItem importHse; // The import handshaking extension menu item
+	
+	private JMenuItem importUnc; // The import extended burst mode menu item
+	
+	private JMenuItem importRsg; // The import rsg menu item
 
 	private JMenuItem manual; // The manual menu item
 
@@ -278,12 +294,20 @@ public class BioSim implements MouseListener, ActionListener {
 		newModel = new JMenuItem("SBML Model");
 		newVhdl = new JMenuItem("VHDL Model");
 		newLhpn = new JMenuItem("Labeled Hybrid Petri Net");
+		newCsp = new JMenuItem("CSP Model");
+		newHse = new JMenuItem("Handshaking Expansion");
+		newUnc = new JMenuItem("Extended Burst Mode Machine");
+		newRsg = new JMenuItem("Reduced State Graph");
 		graph = new JMenuItem("TSD Graph");
 		probGraph = new JMenuItem("Probability Graph");
 		importSbml = new JMenuItem("SBML Model");
 		importDot = new JMenuItem("Genetic Circuit Model");
 		importVhdl = new JMenuItem("VHDL Model");
 		importLhpn = new JMenuItem("Labeled Hybrid Petri Net");
+		importCsp = new JMenuItem("CSP Model");
+		importHse = new JMenuItem("Handshaking Expansion");
+		importUnc = new JMenuItem("Extended Burst Mode Machine");
+		importRsg = new JMenuItem("Reduced State Graph");
 		exit = new JMenuItem("Exit");
 		openProj.addActionListener(this);
 		pref.addActionListener(this);
@@ -293,12 +317,20 @@ public class BioSim implements MouseListener, ActionListener {
 		newModel.addActionListener(this);
 		newVhdl.addActionListener(this);
 		newLhpn.addActionListener(this);
+		newCsp.addActionListener(this);
+		newHse.addActionListener(this);
+		newUnc.addActionListener(this);
+		newRsg.addActionListener(this);
 		exit.addActionListener(this);
 		about.addActionListener(this);
 		importSbml.addActionListener(this);
 		importDot.addActionListener(this);
 		importVhdl.addActionListener(this);
 		importLhpn.addActionListener(this);
+		importCsp.addActionListener(this);
+		importHse.addActionListener(this);
+		importUnc.addActionListener(this);
+		importRsg.addActionListener(this);
 		graph.addActionListener(this);
 		probGraph.addActionListener(this);
 		ShortCutKey = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
@@ -338,10 +370,18 @@ public class BioSim implements MouseListener, ActionListener {
 		importSbml.setEnabled(false);
 		importVhdl.setEnabled(false);
 		importLhpn.setEnabled(false);
+		importCsp.setEnabled(false);
+		importHse.setEnabled(false);
+		importUnc.setEnabled(false);
+		importRsg.setEnabled(false);
 		newCircuit.setEnabled(false);
 		newModel.setEnabled(false);
 		newVhdl.setEnabled(false);
 		newLhpn.setEnabled(false);
+		newCsp.setEnabled(false);
+		newHse.setEnabled(false);
+		newUnc.setEnabled(false);
+		newRsg.setEnabled(false);
 		graph.setEnabled(false);
 		probGraph.setEnabled(false);
 		file.add(newMenu);
@@ -353,6 +393,10 @@ public class BioSim implements MouseListener, ActionListener {
 		else {
 			newMenu.add(newVhdl);
 			newMenu.add(newLhpn);
+			newMenu.add(newCsp);
+			newMenu.add(newHse);
+			newMenu.add(newUnc);
+			newMenu.add(newRsg);
 		}
 		newMenu.add(graph);
 		newMenu.add(probGraph);
@@ -367,6 +411,10 @@ public class BioSim implements MouseListener, ActionListener {
 		else {
 			importMenu.add(importVhdl);
 			importMenu.add(importLhpn);
+			importMenu.add(importCsp);
+			importMenu.add(importHse);
+			importMenu.add(importUnc);
+			importMenu.add(importRsg);
 		}
 		file.addSeparator();
 		help.add(manual);
@@ -2005,14 +2053,23 @@ public class BioSim implements MouseListener, ActionListener {
 				refresh();
 				tab.removeAll();
 				addRecentProject(filename);
+				
 				importDot.setEnabled(true);
 				importSbml.setEnabled(true);
 				importVhdl.setEnabled(true);
 				importLhpn.setEnabled(true);
+				importCsp.setEnabled(true);
+				importHse.setEnabled(true);
+				importUnc.setEnabled(true);
+				importRsg.setEnabled(true);
 				newCircuit.setEnabled(true);
 				newModel.setEnabled(true);
 				newVhdl.setEnabled(true);
 				newLhpn.setEnabled(true);
+				newCsp.setEnabled(true);
+				newHse.setEnabled(true);
+				newUnc.setEnabled(true);
+				newRsg.setEnabled(true);
 				graph.setEnabled(true);
 				probGraph.setEnabled(true);
 			}
@@ -2072,10 +2129,18 @@ public class BioSim implements MouseListener, ActionListener {
 						importSbml.setEnabled(true);
 						importVhdl.setEnabled(true);
 						importLhpn.setEnabled(true);
+						importCsp.setEnabled(true);
+						importHse.setEnabled(true);
+						importUnc.setEnabled(true);
+						importRsg.setEnabled(true);
 						newCircuit.setEnabled(true);
 						newModel.setEnabled(true);
 						newVhdl.setEnabled(true);
 						newLhpn.setEnabled(true);
+						newCsp.setEnabled(true);
+						newHse.setEnabled(true);
+						newUnc.setEnabled(true);
+						newRsg.setEnabled(true);
 						graph.setEnabled(true);
 						probGraph.setEnabled(true);
 					}
@@ -2289,6 +2354,210 @@ public class BioSim implements MouseListener, ActionListener {
 						}
 						else {
 							File f = new File(root + separator + lhpnName);
+							f.createNewFile();
+							String[] command = { "emacs", f.getName() };
+							Runtime.getRuntime().exec(command);
+							refreshTree();
+						}
+					}
+				}
+				catch (IOException e1) {
+					JOptionPane.showMessageDialog(frame, "Unable to create new model.", "Error",
+							JOptionPane.ERROR_MESSAGE);
+				}
+			}
+			else {
+				JOptionPane.showMessageDialog(frame, "You must open or create a project first.",
+						"Error", JOptionPane.ERROR_MESSAGE);
+			}
+		}
+		// if the new csp menu item is selected
+		else if (e.getSource() == newCsp) {
+			if (root != null) {
+				try {
+					String cspName = JOptionPane.showInputDialog(frame, "Enter CSP Model ID:",
+							"Model ID", JOptionPane.PLAIN_MESSAGE);
+					if (cspName != null && !cspName.trim().equals("")) {
+						cspName = cspName.trim();
+						if (cspName.length() > 3) {
+							if (!cspName.substring(cspName.length() - 4).equals(".csp")) {
+								cspName += ".csp";
+							}
+						}
+						else {
+							cspName += ".csp";
+						}
+						String modelID = "";
+						if (cspName.length() > 3) {
+							if (cspName.substring(cspName.length() - 4).equals(".csp")) {
+								modelID = cspName.substring(0, cspName.length() - 4);
+							}
+							else {
+								modelID = cspName.substring(0, cspName.length() - 3);
+							}
+						}
+						if (!(IDpat.matcher(modelID).matches())) {
+							JOptionPane
+									.showMessageDialog(
+											frame,
+											"A model ID can only contain letters, numbers, and underscores.",
+											"Invalid ID", JOptionPane.ERROR_MESSAGE);
+						}
+						else {
+							File f = new File(root + separator + cspName);
+							f.createNewFile();
+							String[] command = { "emacs", f.getName() };
+							Runtime.getRuntime().exec(command);
+							refreshTree();
+						}
+					}
+				}
+				catch (IOException e1) {
+					JOptionPane.showMessageDialog(frame, "Unable to create new model.", "Error",
+							JOptionPane.ERROR_MESSAGE);
+				}
+			}
+			else {
+				JOptionPane.showMessageDialog(frame, "You must open or create a project first.",
+						"Error", JOptionPane.ERROR_MESSAGE);
+			}
+		}
+		// if the new hse menu item is selected
+		else if (e.getSource() == newHse) {
+			if (root != null) {
+				try {
+					String hseName = JOptionPane.showInputDialog(frame, "Enter Handshaking Expansion Model ID:",
+							"Model ID", JOptionPane.PLAIN_MESSAGE);
+					if (hseName != null && !hseName.trim().equals("")) {
+						hseName = hseName.trim();
+						if (hseName.length() > 3) {
+							if (!hseName.substring(hseName.length() - 4).equals(".hse")) {
+								hseName += ".hse";
+							}
+						}
+						else {
+							hseName += ".hse";
+						}
+						String modelID = "";
+						if (hseName.length() > 3) {
+							if (hseName.substring(hseName.length() - 4).equals(".hse")) {
+								modelID = hseName.substring(0, hseName.length() - 4);
+							}
+							else {
+								modelID = hseName.substring(0, hseName.length() - 3);
+							}
+						}
+						if (!(IDpat.matcher(modelID).matches())) {
+							JOptionPane
+									.showMessageDialog(
+											frame,
+											"A model ID can only contain letters, numbers, and underscores.",
+											"Invalid ID", JOptionPane.ERROR_MESSAGE);
+						}
+						else {
+							File f = new File(root + separator + hseName);
+							f.createNewFile();
+							String[] command = { "emacs", f.getName() };
+							Runtime.getRuntime().exec(command);
+							refreshTree();
+						}
+					}
+				}
+				catch (IOException e1) {
+					JOptionPane.showMessageDialog(frame, "Unable to create new model.", "Error",
+							JOptionPane.ERROR_MESSAGE);
+				}
+			}
+			else {
+				JOptionPane.showMessageDialog(frame, "You must open or create a project first.",
+						"Error", JOptionPane.ERROR_MESSAGE);
+			}
+		}
+		// if the new unc menu item is selected
+		else if (e.getSource() == newUnc) {
+			if (root != null) {
+				try {
+					String uncName = JOptionPane.showInputDialog(frame, "Enter Extended Burst Mode Machine ID:",
+							"Model ID", JOptionPane.PLAIN_MESSAGE);
+					if (uncName != null && !uncName.trim().equals("")) {
+						uncName = uncName.trim();
+						if (uncName.length() > 3) {
+							if (!uncName.substring(uncName.length() - 4).equals(".unc")) {
+								uncName += ".unc";
+							}
+						}
+						else {
+							uncName += ".unc";
+						}
+						String modelID = "";
+						if (uncName.length() > 3) {
+							if (uncName.substring(uncName.length() - 4).equals(".unc")) {
+								modelID = uncName.substring(0, uncName.length() - 4);
+							}
+							else {
+								modelID = uncName.substring(0, uncName.length() - 3);
+							}
+						}
+						if (!(IDpat.matcher(modelID).matches())) {
+							JOptionPane
+									.showMessageDialog(
+											frame,
+											"A model ID can only contain letters, numbers, and underscores.",
+											"Invalid ID", JOptionPane.ERROR_MESSAGE);
+						}
+						else {
+							File f = new File(root + separator + uncName);
+							f.createNewFile();
+							String[] command = { "emacs", f.getName() };
+							Runtime.getRuntime().exec(command);
+							refreshTree();
+						}
+					}
+				}
+				catch (IOException e1) {
+					JOptionPane.showMessageDialog(frame, "Unable to create new model.", "Error",
+							JOptionPane.ERROR_MESSAGE);
+				}
+			}
+			else {
+				JOptionPane.showMessageDialog(frame, "You must open or create a project first.",
+						"Error", JOptionPane.ERROR_MESSAGE);
+			}
+		}
+		// if the new rsg menu item is selected
+		else if (e.getSource() == newRsg) {
+			if (root != null) {
+				try {
+					String rsgName = JOptionPane.showInputDialog(frame, "Enter Reduced State Graph Model ID:",
+							"Model ID", JOptionPane.PLAIN_MESSAGE);
+					if (rsgName != null && !rsgName.trim().equals("")) {
+						rsgName = rsgName.trim();
+						if (rsgName.length() > 3) {
+							if (!rsgName.substring(rsgName.length() - 4).equals(".rsg")) {
+								rsgName += ".rsg";
+							}
+						}
+						else {
+							rsgName += ".rsg";
+						}
+						String modelID = "";
+						if (rsgName.length() > 3) {
+							if (rsgName.substring(rsgName.length() - 4).equals(".rsg")) {
+								modelID = rsgName.substring(0, rsgName.length() - 4);
+							}
+							else {
+								modelID = rsgName.substring(0, rsgName.length() - 3);
+							}
+						}
+						if (!(IDpat.matcher(modelID).matches())) {
+							JOptionPane
+									.showMessageDialog(
+											frame,
+											"A model ID can only contain letters, numbers, and underscores.",
+											"Invalid ID", JOptionPane.ERROR_MESSAGE);
+						}
+						else {
+							File f = new File(root + separator + rsgName);
 							f.createNewFile();
 							String[] command = { "emacs", f.getName() };
 							Runtime.getRuntime().exec(command);
@@ -2655,6 +2924,162 @@ public class BioSim implements MouseListener, ActionListener {
 						"Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
+		// if the import csp menu item is selected
+		else if (e.getSource() == importCsp) {
+			if (root != null) {
+				String filename = Buttons.browse(frame, new File(root), null,
+						JFileChooser.FILES_ONLY, "Import CSP");
+				if (filename.length() > 1
+						&& !filename.substring(filename.length() - 4, filename.length()).equals(
+								".csp")) {
+					JOptionPane.showMessageDialog(frame,
+							"You must select a valid csp file to import.", "Error",
+							JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				else if (!filename.equals("")) {
+					String[] file = filename.split(separator);
+					try {
+						FileOutputStream out = new FileOutputStream(new File(root + separator
+								+ file[file.length - 1]));
+						FileInputStream in = new FileInputStream(new File(filename));
+						int read = in.read();
+						while (read != -1) {
+							out.write(read);
+							read = in.read();
+						}
+						in.close();
+						out.close();
+						refreshTree();
+					}
+					catch (Exception e1) {
+						JOptionPane.showMessageDialog(frame, "Unable to import file.", "Error",
+								JOptionPane.ERROR_MESSAGE);
+					}
+				}
+			}
+			else {
+				JOptionPane.showMessageDialog(frame, "You must open or create a project first.",
+						"Error", JOptionPane.ERROR_MESSAGE);
+			}
+		}
+		// if the import hse menu item is selected
+		else if (e.getSource() == importHse) {
+			if (root != null) {
+				String filename = Buttons.browse(frame, new File(root), null,
+						JFileChooser.FILES_ONLY, "Import HSE");
+				if (filename.length() > 1
+						&& !filename.substring(filename.length() - 4, filename.length()).equals(
+								".hse")) {
+					JOptionPane.showMessageDialog(frame,
+							"You must select a valid handshaking expansion file to import.", "Error",
+							JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				else if (!filename.equals("")) {
+					String[] file = filename.split(separator);
+					try {
+						FileOutputStream out = new FileOutputStream(new File(root + separator
+								+ file[file.length - 1]));
+						FileInputStream in = new FileInputStream(new File(filename));
+						int read = in.read();
+						while (read != -1) {
+							out.write(read);
+							read = in.read();
+						}
+						in.close();
+						out.close();
+						refreshTree();
+					}
+					catch (Exception e1) {
+						JOptionPane.showMessageDialog(frame, "Unable to import file.", "Error",
+								JOptionPane.ERROR_MESSAGE);
+					}
+				}
+			}
+			else {
+				JOptionPane.showMessageDialog(frame, "You must open or create a project first.",
+						"Error", JOptionPane.ERROR_MESSAGE);
+			}
+		}
+		// if the import unc menu item is selected
+		else if (e.getSource() == importUnc) {
+			if (root != null) {
+				String filename = Buttons.browse(frame, new File(root), null,
+						JFileChooser.FILES_ONLY, "Import UNC");
+				if (filename.length() > 1
+						&& !filename.substring(filename.length() - 4, filename.length()).equals(
+								".unc")) {
+					JOptionPane.showMessageDialog(frame,
+							"You must select a valid expanded burst mode machine file to import.", "Error",
+							JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				else if (!filename.equals("")) {
+					String[] file = filename.split(separator);
+					try {
+						FileOutputStream out = new FileOutputStream(new File(root + separator
+								+ file[file.length - 1]));
+						FileInputStream in = new FileInputStream(new File(filename));
+						int read = in.read();
+						while (read != -1) {
+							out.write(read);
+							read = in.read();
+						}
+						in.close();
+						out.close();
+						refreshTree();
+					}
+					catch (Exception e1) {
+						JOptionPane.showMessageDialog(frame, "Unable to import file.", "Error",
+								JOptionPane.ERROR_MESSAGE);
+					}
+				}
+			}
+			else {
+				JOptionPane.showMessageDialog(frame, "You must open or create a project first.",
+						"Error", JOptionPane.ERROR_MESSAGE);
+			}
+		}
+		// if the import rsg menu item is selected
+		else if (e.getSource() == importRsg) {
+			if (root != null) {
+				String filename = Buttons.browse(frame, new File(root), null,
+						JFileChooser.FILES_ONLY, "Import RSG");
+				if (filename.length() > 1
+						&& !filename.substring(filename.length() - 4, filename.length()).equals(
+								".rsg")) {
+					JOptionPane.showMessageDialog(frame,
+							"You must select a valid rsg file to import.", "Error",
+							JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				else if (!filename.equals("")) {
+					String[] file = filename.split(separator);
+					try {
+						FileOutputStream out = new FileOutputStream(new File(root + separator
+								+ file[file.length - 1]));
+						FileInputStream in = new FileInputStream(new File(filename));
+						int read = in.read();
+						while (read != -1) {
+							out.write(read);
+							read = in.read();
+						}
+						in.close();
+						out.close();
+						refreshTree();
+					}
+					catch (Exception e1) {
+						JOptionPane.showMessageDialog(frame, "Unable to import file.", "Error",
+								JOptionPane.ERROR_MESSAGE);
+					}
+				}
+			}
+			else {
+				JOptionPane.showMessageDialog(frame, "You must open or create a project first.",
+						"Error", JOptionPane.ERROR_MESSAGE);
+			}
+		}
 		// if the Graph data menu item is clicked
 		else if (e.getSource() == graph) {
 			if (root != null) {
@@ -2865,6 +3290,118 @@ public class BioSim implements MouseListener, ActionListener {
 					log.addText(command + root + theFile + "\n");
 					exec.exec(command + theFile, null, work);
 				}
+				else if (tree.getFile().length() >= 4
+						&& tree.getFile().substring(tree.getFile().length() - 4).equals(".csp")) {
+					String filename = tree.getFile().split(separator)[tree.getFile().split(
+							separator).length - 1];
+					String cmd = "atacs -lcslllodpl " + filename;
+					File work = new File(root);
+					Runtime exec = Runtime.getRuntime();
+					exec.exec(cmd, null, work);
+					log.addText("Executing:\n" + cmd);
+					String[] findTheFile = filename.split("\\.");
+					//String directory = "";
+					String theFile = findTheFile[0] + ".dot";
+					String command = "";
+					if (System.getProperty("os.name").contentEquals("Linux")) {
+						//directory = System.getenv("BIOSIM") + "/docs/";
+						command = "gnome-open ";
+					}
+					else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
+						//directory = System.getenv("BIOSIM") + "/docs/";
+						command = "open ";
+					}
+					else {
+						//directory = System.getenv("BIOSIM") + "\\docs\\";
+						command = "cmd /c start ";
+					}
+					log.addText(command + root + theFile + "\n");
+					exec.exec(command + theFile, null, work);
+				}
+				else if (tree.getFile().length() >= 4
+						&& tree.getFile().substring(tree.getFile().length() - 4).equals(".hse")) {
+					String filename = tree.getFile().split(separator)[tree.getFile().split(
+							separator).length - 1];
+					String cmd = "atacs -lhslllodpl " + filename;
+					File work = new File(root);
+					Runtime exec = Runtime.getRuntime();
+					exec.exec(cmd, null, work);
+					log.addText("Executing:\n" + cmd);
+					String[] findTheFile = filename.split("\\.");
+					//String directory = "";
+					String theFile = findTheFile[0] + ".dot";
+					String command = "";
+					if (System.getProperty("os.name").contentEquals("Linux")) {
+						//directory = System.getenv("BIOSIM") + "/docs/";
+						command = "gnome-open ";
+					}
+					else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
+						//directory = System.getenv("BIOSIM") + "/docs/";
+						command = "open ";
+					}
+					else {
+						//directory = System.getenv("BIOSIM") + "\\docs\\";
+						command = "cmd /c start ";
+					}
+					log.addText(command + root + theFile + "\n");
+					exec.exec(command + theFile, null, work);
+				}
+				else if (tree.getFile().length() >= 4
+						&& tree.getFile().substring(tree.getFile().length() - 4).equals(".unc")) {
+					String filename = tree.getFile().split(separator)[tree.getFile().split(
+							separator).length - 1];
+					String cmd = "atacs -lxodds " + filename;
+					File work = new File(root);
+					Runtime exec = Runtime.getRuntime();
+					exec.exec(cmd, null, work);
+					log.addText("Executing:\n" + cmd);
+					String[] findTheFile = filename.split("\\.");
+					//String directory = "";
+					String theFile = findTheFile[0] + ".dot";
+					String command = "";
+					if (System.getProperty("os.name").contentEquals("Linux")) {
+						//directory = System.getenv("BIOSIM") + "/docs/";
+						command = "gnome-open ";
+					}
+					else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
+						//directory = System.getenv("BIOSIM") + "/docs/";
+						command = "open ";
+					}
+					else {
+						//directory = System.getenv("BIOSIM") + "\\docs\\";
+						command = "cmd /c start ";
+					}
+					log.addText(command + root + theFile + "\n");
+					exec.exec(command + theFile, null, work);
+				}
+				else if (tree.getFile().length() >= 4
+						&& tree.getFile().substring(tree.getFile().length() - 4).equals(".rsg")) {
+					String filename = tree.getFile().split(separator)[tree.getFile().split(
+							separator).length - 1];
+					String cmd = "atacs -lsodds " + filename;
+					File work = new File(root);
+					Runtime exec = Runtime.getRuntime();
+					exec.exec(cmd, null, work);
+					log.addText("Executing:\n" + cmd);
+					String[] findTheFile = filename.split("\\.");
+					//String directory = "";
+					String theFile = findTheFile[0] + ".dot";
+					String command = "";
+					if (System.getProperty("os.name").contentEquals("Linux")) {
+						//directory = System.getenv("BIOSIM") + "/docs/";
+						command = "gnome-open ";
+					}
+					else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
+						//directory = System.getenv("BIOSIM") + "/docs/";
+						command = "open ";
+					}
+					else {
+						//directory = System.getenv("BIOSIM") + "\\docs\\";
+						command = "cmd /c start ";
+					}
+					log.addText(command + root + theFile + "\n");
+					exec.exec(command + theFile, null, work);
+				}
 			}
 			catch (IOException e1) {
 				// TODO Auto-generated catch block
@@ -2953,6 +3490,50 @@ public class BioSim implements MouseListener, ActionListener {
 						}
 					}
 					else if (tree.getFile().length() >= 4
+							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".csp")) {
+						if (copy.length() > 3) {
+							if (!copy.substring(copy.length() - 4).equals(".csp")) {
+								copy += ".csp";
+							}
+						}
+						else {
+							copy += ".csp";
+						}
+					}
+					else if (tree.getFile().length() >= 4
+							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".hse")) {
+						if (copy.length() > 3) {
+							if (!copy.substring(copy.length() - 4).equals(".hse")) {
+								copy += ".hse";
+							}
+						}
+						else {
+							copy += ".hse";
+						}
+					}
+					else if (tree.getFile().length() >= 4
+							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".unc")) {
+						if (copy.length() > 3) {
+							if (!copy.substring(copy.length() - 4).equals(".unc")) {
+								copy += ".unc";
+							}
+						}
+						else {
+							copy += ".unc";
+						}
+					}
+					else if (tree.getFile().length() >= 4
+							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".rsg")) {
+						if (copy.length() > 3) {
+							if (!copy.substring(copy.length() - 4).equals(".rsg")) {
+								copy += ".rsg";
+							}
+						}
+						else {
+							copy += ".rsg";
+						}
+					}
+					else if (tree.getFile().length() >= 4
 							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".grf")) {
 						if (copy.length() > 3) {
 							if (!copy.substring(copy.length() - 4).equals(".grf")) {
@@ -2994,7 +3575,11 @@ public class BioSim implements MouseListener, ActionListener {
 					else if ((tree.getFile().length() >= 4
 							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".gcm")
 							|| tree.getFile().substring(tree.getFile().length() - 4).equals(".grf") || tree
-							.getFile().substring(tree.getFile().length() - 4).equals(".vhd"))
+							.getFile().substring(tree.getFile().length() - 4).equals(".vhd") || tree
+							.getFile().substring(tree.getFile().length() - 4).equals(".csp") || tree
+							.getFile().substring(tree.getFile().length() - 4).equals(".hse") || tree
+							.getFile().substring(tree.getFile().length() - 4).equals(".unc") || tree
+							.getFile().substring(tree.getFile().length() - 4).equals(".rsg"))
 							|| (tree.getFile().length() >= 2 && tree.getFile().substring(
 									tree.getFile().length() - 2).equals(".g"))) {
 						FileOutputStream out = new FileOutputStream(new File(root + separator
@@ -3196,6 +3781,50 @@ public class BioSim implements MouseListener, ActionListener {
 						}
 					}
 					else if (tree.getFile().length() >= 4
+							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".csp")) {
+						if (rename.length() > 3) {
+							if (!rename.substring(rename.length() - 4).equals(".csp")) {
+								rename += ".csp";
+							}
+						}
+						else {
+							rename += ".csp";
+						}
+					}
+					else if (tree.getFile().length() >= 4
+							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".hse")) {
+						if (rename.length() > 3) {
+							if (!rename.substring(rename.length() - 4).equals(".hse")) {
+								rename += ".hse";
+							}
+						}
+						else {
+							rename += ".hse";
+						}
+					}
+					else if (tree.getFile().length() >= 4
+							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".unc")) {
+						if (rename.length() > 3) {
+							if (!rename.substring(rename.length() - 4).equals(".unc")) {
+								rename += ".unc";
+							}
+						}
+						else {
+							rename += ".unc";
+						}
+					}
+					else if (tree.getFile().length() >= 4
+							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".rsg")) {
+						if (rename.length() > 3) {
+							if (!rename.substring(rename.length() - 4).equals(".rsg")) {
+								rename += ".rsg";
+							}
+						}
+						else {
+							rename += ".rsg";
+						}
+					}
+					else if (tree.getFile().length() >= 4
 							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".grf")) {
 						if (rename.length() > 3) {
 							if (!rename.substring(rename.length() - 4).equals(".grf")) {
@@ -3233,7 +3862,22 @@ public class BioSim implements MouseListener, ActionListener {
 										".xml")
 								|| tree.getFile().length() >= 4
 								&& tree.getFile().substring(tree.getFile().length() - 4).equals(
-										".gcm")) {
+										".gcm")
+								|| tree.getFile().length() >= 4
+								&& tree.getFile().substring(tree.getFile().length() - 4).equals(
+										".vhd")
+								|| tree.getFile().length() >= 4
+								&& tree.getFile().substring(tree.getFile().length() - 4).equals(
+										".csp")
+								|| tree.getFile().length() >= 4
+								&& tree.getFile().substring(tree.getFile().length() - 4).equals(
+										".hse")
+								|| tree.getFile().length() >= 4
+								&& tree.getFile().substring(tree.getFile().length() - 4).equals(
+										".unc")
+								|| tree.getFile().length() >= 4
+								&& tree.getFile().substring(tree.getFile().length() - 4).equals(
+										".rsg")) {
 							String oldName = tree.getFile().split(separator)[tree.getFile().split(
 									separator).length - 1];
 							reassignViews(oldName, rename);
@@ -3252,7 +3896,17 @@ public class BioSim implements MouseListener, ActionListener {
 								|| rename.length() >= 4
 								&& rename.substring(rename.length() - 4).equals(".xml")
 								|| rename.length() >= 4
-								&& rename.substring(rename.length() - 4).equals(".gcm")) {
+								&& rename.substring(rename.length() - 4).equals(".gcm")
+								|| rename.length() >= 4
+								&& rename.substring(rename.length() - 4).equals(".vhd")
+								|| rename.length() >= 4
+								&& rename.substring(rename.length() - 4).equals(".csp")
+								|| rename.length() >= 4
+								&& rename.substring(rename.length() - 4).equals(".hse")
+								|| rename.length() >= 4
+								&& rename.substring(rename.length() - 4).equals(".unc")
+								|| rename.length() >= 4
+								&& rename.substring(rename.length() - 4).equals(".rsg")) {
 							updateViews(rename);
 						}
 						if (new File(root + separator + rename).isDirectory()) {
@@ -3367,6 +4021,30 @@ public class BioSim implements MouseListener, ActionListener {
 												.equals(".g")) {
 									((GCM2SBMLEditor) tab.getComponentAt(i)).reload(rename
 											.substring(0, rename.length() - 2));
+								}
+								else if (tree.getFile().length() > 3
+										&& tree.getFile().substring(tree.getFile().length() - 4)
+												.equals(".csp")) {
+									((GCM2SBMLEditor) tab.getComponentAt(i)).reload(rename
+											.substring(0, rename.length() - 4));
+								}
+								else if (tree.getFile().length() > 3
+										&& tree.getFile().substring(tree.getFile().length() - 4)
+												.equals(".hse")) {
+									((GCM2SBMLEditor) tab.getComponentAt(i)).reload(rename
+											.substring(0, rename.length() - 4));
+								}
+								else if (tree.getFile().length() > 3
+										&& tree.getFile().substring(tree.getFile().length() - 4)
+												.equals(".unc")) {
+									((GCM2SBMLEditor) tab.getComponentAt(i)).reload(rename
+											.substring(0, rename.length() - 4));
+								}
+								else if (tree.getFile().length() > 3
+										&& tree.getFile().substring(tree.getFile().length() - 4)
+												.equals(".rsg")) {
+									((GCM2SBMLEditor) tab.getComponentAt(i)).reload(rename
+											.substring(0, rename.length() - 4));
 								}
 								else {
 									JTabbedPane t = new JTabbedPane();
@@ -3744,6 +4422,52 @@ public class BioSim implements MouseListener, ActionListener {
 						}
 					}
 					else if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i).getName()
+							.equals("Synthesis")) {
+						if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof Synthesis) {
+							if (((Synthesis) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i))
+									.hasChanged()) {
+								Object[] options = { "Yes", "No", "Cancel" };
+								int value = JOptionPane.showOptionDialog(frame,
+										"Do you want to save synthesis option changes for "
+												+ tab.getTitleAt(index) + "?", "Save Changes",
+										JOptionPane.YES_NO_CANCEL_OPTION,
+										JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+								if (value == JOptionPane.YES_OPTION) {
+									if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof Synthesis) {
+										((Synthesis) ((JTabbedPane) tab.getComponentAt(index))
+												.getComponent(i)).save();
+									}
+								}
+								else if (value == JOptionPane.CANCEL_OPTION) {
+									return 0;
+								}
+							}
+						}
+					}
+					else if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i).getName()
+							.equals("Verification")) {
+						if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof Verification) {
+							if (((Verification) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i))
+									.hasChanged()) {
+								Object[] options = { "Yes", "No", "Cancel" };
+								int value = JOptionPane.showOptionDialog(frame,
+										"Do you want to save verification option changes for "
+												+ tab.getTitleAt(index) + "?", "Save Changes",
+										JOptionPane.YES_NO_CANCEL_OPTION,
+										JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+								if (value == JOptionPane.YES_OPTION) {
+									if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof Verification) {
+										((Verification) ((JTabbedPane) tab.getComponentAt(index))
+												.getComponent(i)).save();
+									}
+								}
+								else if (value == JOptionPane.CANCEL_OPTION) {
+									return 0;
+								}
+							}
+						}
+					}
+					else if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i).getName()
 							.equals("Data Manager")) {
 						if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof DataManager) {
 							((DataManager) ((JTabbedPane) tab.getComponentAt(index))
@@ -3965,6 +4689,130 @@ public class BioSim implements MouseListener, ActionListener {
 				popup.add(delete);
 			}
 			else if (tree.getFile().length() > 3
+					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".csp")) {
+				JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
+				createSynthesis.addActionListener(this);
+				createSynthesis.setActionCommand("createSynthesis");
+				JMenuItem createAnalysis = new JMenuItem("Create Analysis View");
+				createAnalysis.addActionListener(this);
+				createAnalysis.setActionCommand("createSim");
+				JMenuItem createLearn = new JMenuItem("Create Learn View");
+				createLearn.addActionListener(this);
+				createLearn.setActionCommand("createLearn");
+				JMenuItem createVerification = new JMenuItem("Create Verification View");
+				createVerification.addActionListener(this);
+				createVerification.setActionCommand("createVerify");
+				JMenuItem viewModel = new JMenuItem("View Model");
+				viewModel.addActionListener(this);
+				viewModel.setActionCommand("viewModel");
+				JMenuItem delete = new JMenuItem("Delete");
+				delete.addActionListener(this);
+				delete.setActionCommand("delete");
+				JMenuItem copy = new JMenuItem("Copy");
+				copy.addActionListener(this);
+				copy.setActionCommand("copy");
+				JMenuItem rename = new JMenuItem("Rename");
+				rename.addActionListener(this);
+				rename.setActionCommand("rename");
+				popup.add(createSynthesis);
+				popup.add(createAnalysis);
+				popup.add(createLearn);
+				popup.add(createVerification);
+				popup.addSeparator();
+				popup.add(viewModel);
+				popup.addSeparator();
+				popup.add(copy);
+				popup.add(rename);
+				popup.add(delete);
+			}
+			else if (tree.getFile().length() > 3
+					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".hse")) {
+				JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
+				createSynthesis.addActionListener(this);
+				createSynthesis.setActionCommand("createSynthesis");
+				JMenuItem createAnalysis = new JMenuItem("Create Analysis View");
+				createAnalysis.addActionListener(this);
+				createAnalysis.setActionCommand("createSim");
+				JMenuItem createLearn = new JMenuItem("Create Learn View");
+				createLearn.addActionListener(this);
+				createLearn.setActionCommand("createLearn");
+				JMenuItem createVerification = new JMenuItem("Create Verification View");
+				createVerification.addActionListener(this);
+				createVerification.setActionCommand("createVerify");
+				JMenuItem viewModel = new JMenuItem("View Model");
+				viewModel.addActionListener(this);
+				viewModel.setActionCommand("viewModel");
+				JMenuItem delete = new JMenuItem("Delete");
+				delete.addActionListener(this);
+				delete.setActionCommand("delete");
+				JMenuItem copy = new JMenuItem("Copy");
+				copy.addActionListener(this);
+				copy.setActionCommand("copy");
+				JMenuItem rename = new JMenuItem("Rename");
+				rename.addActionListener(this);
+				rename.setActionCommand("rename");
+				popup.add(createSynthesis);
+				popup.add(createAnalysis);
+				popup.add(createLearn);
+				popup.add(createVerification);
+				popup.addSeparator();
+				popup.add(viewModel);
+				popup.addSeparator();
+				popup.add(copy);
+				popup.add(rename);
+				popup.add(delete);
+			}
+			else if (tree.getFile().length() > 3
+					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".unc")) {
+				JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
+				createSynthesis.addActionListener(this);
+				createSynthesis.setActionCommand("createSynthesis");
+				JMenuItem viewModel = new JMenuItem("View Model");
+				viewModel.addActionListener(this);
+				viewModel.setActionCommand("viewModel");
+				JMenuItem delete = new JMenuItem("Delete");
+				delete.addActionListener(this);
+				delete.setActionCommand("delete");
+				JMenuItem copy = new JMenuItem("Copy");
+				copy.addActionListener(this);
+				copy.setActionCommand("copy");
+				JMenuItem rename = new JMenuItem("Rename");
+				rename.addActionListener(this);
+				rename.setActionCommand("rename");
+				popup.add(createSynthesis);
+				popup.addSeparator();
+				popup.add(viewModel);
+				popup.addSeparator();
+				popup.add(copy);
+				popup.add(rename);
+				popup.add(delete);
+			}
+			else if (tree.getFile().length() > 3
+					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".rsg")) {
+				JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
+				createSynthesis.addActionListener(this);
+				createSynthesis.setActionCommand("createSynthesis");
+				JMenuItem viewModel = new JMenuItem("View Model");
+				viewModel.addActionListener(this);
+				viewModel.setActionCommand("viewModel");
+				JMenuItem delete = new JMenuItem("Delete");
+				delete.addActionListener(this);
+				delete.setActionCommand("delete");
+				JMenuItem copy = new JMenuItem("Copy");
+				copy.addActionListener(this);
+				copy.setActionCommand("copy");
+				JMenuItem rename = new JMenuItem("Rename");
+				rename.addActionListener(this);
+				rename.setActionCommand("rename");
+				popup.add(createSynthesis);
+				popup.addSeparator();
+				popup.add(viewModel);
+				popup.addSeparator();
+				popup.add(copy);
+				popup.add(rename);
+				popup.add(delete);
+			}
+			else if (tree.getFile().length() > 3
 					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".grf")) {
 				JMenuItem edit = new JMenuItem("View/Edit");
 				edit.addActionListener(this);
@@ -4157,6 +5005,94 @@ public class BioSim implements MouseListener, ActionListener {
 					}
 					catch (Exception e1) {
 						JOptionPane.showMessageDialog(frame, "Unable to view this lhpn file.",
+								"Error", JOptionPane.ERROR_MESSAGE);
+					}
+				}
+				else if (tree.getFile().length() >= 4
+						&& tree.getFile().substring(tree.getFile().length() - 4).equals(".csp")) {
+					try {
+						String filename = tree.getFile();
+						String directory = "";
+						String theFile = "";
+						if (filename.lastIndexOf('/') >= 0) {
+							directory = filename.substring(0, filename.lastIndexOf('/') + 1);
+							theFile = filename.substring(filename.lastIndexOf('/') + 1);
+						}
+						if (filename.lastIndexOf('\\') >= 0) {
+							directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
+							theFile = filename.substring(filename.lastIndexOf('\\') + 1);
+						}
+						String[] command = { "emacs", filename };
+						Runtime.getRuntime().exec(command);
+					}
+					catch (Exception e1) {
+						JOptionPane.showMessageDialog(frame, "Unable to view this csp file.",
+								"Error", JOptionPane.ERROR_MESSAGE);
+					}
+				}
+				else if (tree.getFile().length() >= 4
+						&& tree.getFile().substring(tree.getFile().length() - 4).equals(".hse")) {
+					try {
+						String filename = tree.getFile();
+						String directory = "";
+						String theFile = "";
+						if (filename.lastIndexOf('/') >= 0) {
+							directory = filename.substring(0, filename.lastIndexOf('/') + 1);
+							theFile = filename.substring(filename.lastIndexOf('/') + 1);
+						}
+						if (filename.lastIndexOf('\\') >= 0) {
+							directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
+							theFile = filename.substring(filename.lastIndexOf('\\') + 1);
+						}
+						String[] command = { "emacs", filename };
+						Runtime.getRuntime().exec(command);
+					}
+					catch (Exception e1) {
+						JOptionPane.showMessageDialog(frame, "Unable to view this hse file.",
+								"Error", JOptionPane.ERROR_MESSAGE);
+					}
+				}
+				else if (tree.getFile().length() >= 4
+						&& tree.getFile().substring(tree.getFile().length() - 4).equals(".unc")) {
+					try {
+						String filename = tree.getFile();
+						String directory = "";
+						String theFile = "";
+						if (filename.lastIndexOf('/') >= 0) {
+							directory = filename.substring(0, filename.lastIndexOf('/') + 1);
+							theFile = filename.substring(filename.lastIndexOf('/') + 1);
+						}
+						if (filename.lastIndexOf('\\') >= 0) {
+							directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
+							theFile = filename.substring(filename.lastIndexOf('\\') + 1);
+						}
+						String[] command = { "emacs", filename };
+						Runtime.getRuntime().exec(command);
+					}
+					catch (Exception e1) {
+						JOptionPane.showMessageDialog(frame, "Unable to view this unc file.",
+								"Error", JOptionPane.ERROR_MESSAGE);
+					}
+				}
+				else if (tree.getFile().length() >= 4
+						&& tree.getFile().substring(tree.getFile().length() - 4).equals(".rsg")) {
+					try {
+						String filename = tree.getFile();
+						String directory = "";
+						String theFile = "";
+						if (filename.lastIndexOf('/') >= 0) {
+							directory = filename.substring(0, filename.lastIndexOf('/') + 1);
+							theFile = filename.substring(filename.lastIndexOf('/') + 1);
+						}
+						if (filename.lastIndexOf('\\') >= 0) {
+							directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
+							theFile = filename.substring(filename.lastIndexOf('\\') + 1);
+						}
+						String[] command = { "emacs", filename };
+						Runtime.getRuntime().exec(command);
+					}
+					catch (Exception e1) {
+						JOptionPane.showMessageDialog(frame, "Unable to view this rsg file.",
 								"Error", JOptionPane.ERROR_MESSAGE);
 					}
 				}
@@ -4391,6 +5327,118 @@ public class BioSim implements MouseListener, ActionListener {
 				popup.add(createSynthesis);
 				popup.add(createAnalysis);
 				popup.add(createLearn);
+				popup.addSeparator();
+				popup.add(edit);
+				popup.add(copy);
+				popup.add(rename);
+				popup.add(delete);
+			}
+			else if (tree.getFile().length() > 3
+					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".csp")) {
+				JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
+				createSynthesis.addActionListener(this);
+				createSynthesis.setActionCommand("createSynthesis");
+				JMenuItem createAnalysis = new JMenuItem("Create Analysis View");
+				createAnalysis.addActionListener(this);
+				createAnalysis.setActionCommand("createSim");
+				JMenuItem createLearn = new JMenuItem("Create Learn View");
+				createLearn.addActionListener(this);
+				createLearn.setActionCommand("createLearn");
+				JMenuItem edit = new JMenuItem("View/Edit");
+				edit.addActionListener(this);
+				edit.setActionCommand("dotEditor");
+				JMenuItem delete = new JMenuItem("Delete");
+				delete.addActionListener(this);
+				delete.setActionCommand("delete");
+				JMenuItem copy = new JMenuItem("Copy");
+				copy.addActionListener(this);
+				copy.setActionCommand("copy");
+				JMenuItem rename = new JMenuItem("Rename");
+				rename.addActionListener(this);
+				rename.setActionCommand("rename");
+				popup.add(createSynthesis);
+				popup.add(createAnalysis);
+				popup.add(createLearn);
+				popup.addSeparator();
+				popup.add(edit);
+				popup.add(copy);
+				popup.add(rename);
+				popup.add(delete);
+			}
+			else if (tree.getFile().length() > 3
+					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".hse")) {
+				JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
+				createSynthesis.addActionListener(this);
+				createSynthesis.setActionCommand("createSynthesis");
+				JMenuItem createAnalysis = new JMenuItem("Create Analysis View");
+				createAnalysis.addActionListener(this);
+				createAnalysis.setActionCommand("createSim");
+				JMenuItem createLearn = new JMenuItem("Create Learn View");
+				createLearn.addActionListener(this);
+				createLearn.setActionCommand("createLearn");
+				JMenuItem edit = new JMenuItem("View/Edit");
+				edit.addActionListener(this);
+				edit.setActionCommand("dotEditor");
+				JMenuItem delete = new JMenuItem("Delete");
+				delete.addActionListener(this);
+				delete.setActionCommand("delete");
+				JMenuItem copy = new JMenuItem("Copy");
+				copy.addActionListener(this);
+				copy.setActionCommand("copy");
+				JMenuItem rename = new JMenuItem("Rename");
+				rename.addActionListener(this);
+				rename.setActionCommand("rename");
+				popup.add(createSynthesis);
+				popup.add(createAnalysis);
+				popup.add(createLearn);
+				popup.addSeparator();
+				popup.add(edit);
+				popup.add(copy);
+				popup.add(rename);
+				popup.add(delete);
+			}
+			else if (tree.getFile().length() > 3
+					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".unc")) {
+				JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
+				createSynthesis.addActionListener(this);
+				createSynthesis.setActionCommand("createSynthesis");
+				JMenuItem edit = new JMenuItem("View/Edit");
+				edit.addActionListener(this);
+				edit.setActionCommand("dotEditor");
+				JMenuItem delete = new JMenuItem("Delete");
+				delete.addActionListener(this);
+				delete.setActionCommand("delete");
+				JMenuItem copy = new JMenuItem("Copy");
+				copy.addActionListener(this);
+				copy.setActionCommand("copy");
+				JMenuItem rename = new JMenuItem("Rename");
+				rename.addActionListener(this);
+				rename.setActionCommand("rename");
+				popup.add(createSynthesis);
+				popup.addSeparator();
+				popup.add(edit);
+				popup.add(copy);
+				popup.add(rename);
+				popup.add(delete);
+			}
+			else if (tree.getFile().length() > 3
+					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".rsg")) {
+				JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
+				createSynthesis.addActionListener(this);
+				createSynthesis.setActionCommand("createSynthesis");
+				JMenuItem edit = new JMenuItem("View/Edit");
+				edit.addActionListener(this);
+				edit.setActionCommand("dotEditor");
+				JMenuItem delete = new JMenuItem("Delete");
+				delete.addActionListener(this);
+				delete.setActionCommand("delete");
+				JMenuItem copy = new JMenuItem("Copy");
+				copy.addActionListener(this);
+				copy.setActionCommand("copy");
+				JMenuItem rename = new JMenuItem("Rename");
+				rename.addActionListener(this);
+				rename.setActionCommand("rename");
+				popup.add(createSynthesis);
 				popup.addSeparator();
 				popup.add(edit);
 				popup.add(copy);
