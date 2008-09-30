@@ -31,30 +31,32 @@ public class Verification extends JPanel implements ActionListener {
 
 	private JButton save, run, viewCircuit, viewTrace, viewLog;
 
-	private JLabel algorithm, timingMethod, timingOptions, otherOptions, otherOptions2, compilation, bddSizeLabel, advTiming;
+	private JLabel algorithm, timingMethod, timingOptions, otherOptions, otherOptions2,
+			compilation, bddSizeLabel, advTiming;
 
-	private JRadioButton untimed, geometric, posets, bag, bap, baptdc, verify, vergate, orbits, search, trace;
+	private JRadioButton untimed, geometric, posets, bag, bap, baptdc, verify, vergate, orbits,
+			search, trace;
 
-	private JCheckBox abst, partialOrder, dot, verbose, quiet, genrg, timsubset, superset, infopt, orbmatch, interleav, prune,
-			disabling, nofail, keepgoing, explpn, nochecks, reduction, minins, newTab, postProc, redCheck,
-			xForm2, expandRate;
+	private JCheckBox abst, partialOrder, dot, verbose, quiet, genrg, timsubset, superset, infopt,
+			orbmatch, interleav, prune, disabling, nofail, keepgoing, explpn, nochecks, reduction,
+			minins, newTab, postProc, redCheck, xForm2, expandRate;
 
 	private JTextField bddSize;
 
 	private ButtonGroup timingMethodGroup, algorithmGroup;
 
 	private String directory, separator, verFile, verifyFile, sourceFile;
-	
+
 	private boolean change;
-	
+
 	private Log log;
 
 	private BioSim biosim;
 
 	/**
-	 * This is the constructor for the Verification class. It initializes all the
-	 * input fields, puts them on panels, adds the panels to the frame, and then
-	 * displays the frame.
+	 * This is the constructor for the Verification class. It initializes all
+	 * the input fields, puts them on panels, adds the panels to the frame, and
+	 * then displays the frame.
 	 */
 	public Verification(String directory, String filename, Log log, BioSim biosim) {
 		if (File.separator.equals("\\")) {
@@ -226,7 +228,7 @@ public class Verification extends JPanel implements ActionListener {
 		// load parameters
 		Properties load = new Properties();
 		verifyFile = "";
-		//log.addText(directory + separator + verFile);
+		// log.addText(directory + separator + verFile);
 		try {
 			FileInputStream in = new FileInputStream(new File(directory + separator + verFile));
 			load.load(in);
@@ -427,9 +429,9 @@ public class Verification extends JPanel implements ActionListener {
 		// Creates the view circuit button
 		viewCircuit = new JButton("View Circuit");
 		viewCircuit.addActionListener(this);
-		//buttonPanel.add(viewCircuit);
+		// buttonPanel.add(viewCircuit);
 		viewCircuit.setMnemonic(KeyEvent.VK_C);
-		
+
 		// Creates the view trace button
 		viewTrace = new JButton("View Trace");
 		viewTrace.addActionListener(this);
@@ -634,27 +636,121 @@ public class Verification extends JPanel implements ActionListener {
 		// String src = temp[temp.length - 1];
 		String cmd = "atacs " + options + " " + sourceFile;
 		// String[] cmd = {"emacs", "temp" };
-		//JOptionPane.showMessageDialog(this, cmd);
+		// JOptionPane.showMessageDialog(this, cmd);
 		// Runtime exec = Runtime.getRuntime();
-		File work = new File(directory);
-		log.addText("Executing:\n" + cmd + "\n");
-		Runtime exec = Runtime.getRuntime();
-		Process ver = exec.exec(cmd, null, work);
+		final JButton cancel = new JButton("Cancel");
+		final JFrame running = new JFrame("Progress");
+		WindowListener w = new WindowListener() {
+			public void windowClosing(WindowEvent arg0) {
+				cancel.doClick();
+				running.dispose();
+			}
+
+			public void windowOpened(WindowEvent arg0) {
+			}
+
+			public void windowClosed(WindowEvent arg0) {
+			}
+
+			public void windowIconified(WindowEvent arg0) {
+			}
+
+			public void windowDeiconified(WindowEvent arg0) {
+			}
+
+			public void windowActivated(WindowEvent arg0) {
+			}
+
+			public void windowDeactivated(WindowEvent arg0) {
+			}
+		};
+		running.addWindowListener(w);
+		JPanel text = new JPanel();
+		JPanel progBar = new JPanel();
+		JPanel button = new JPanel();
+		JPanel all = new JPanel(new BorderLayout());
+		JLabel label = new JLabel("Running...");
+		JProgressBar progress = new JProgressBar();
+		progress.setStringPainted(true);
+		progress.setIndeterminate(true);
+		// progress.setString("");
+		progress.setValue(0);
+		text.add(label);
+		progBar.add(progress);
+		button.add(cancel);
+		all.add(text, "North");
+		all.add(progBar, "Center");
+		all.add(button, "South");
+		running.setContentPane(all);
+		running.pack();
+		Dimension screenSize;
 		try {
-			ver.waitFor();
+			Toolkit tk = Toolkit.getDefaultToolkit();
+			screenSize = tk.getScreenSize();
+		}
+		catch (AWTError awe) {
+			screenSize = new Dimension(640, 480);
+		}
+		Dimension frameSize = running.getSize();
+
+		if (frameSize.height > screenSize.height) {
+			frameSize.height = screenSize.height;
+		}
+		if (frameSize.width > screenSize.width) {
+			frameSize.width = screenSize.width;
+		}
+		int x = screenSize.width / 2 - frameSize.width / 2;
+		int y = screenSize.height / 2 - frameSize.height / 2;
+		running.setLocation(x, y);
+		running.setVisible(true);
+		running.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+		File work = new File(directory);
+		Runtime exec = Runtime.getRuntime();
+		final Process ver = exec.exec(cmd, null, work);
+		cancel.setActionCommand("Cancel");
+		cancel.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ver.destroy();
+				running.setCursor(null);
+				running.dispose();
+			}
+		});
+		biosim.getExitButton().setActionCommand("Exit program");
+		biosim.getExitButton().addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ver.destroy();
+				running.setCursor(null);
+				running.dispose();
+			}
+		});
+		log.addText("Executing:\n" + cmd + "\n");
+		// Process synth = exec.exec(cmd, null, work);
+		try {
+			int exitValue = ver.waitFor();
+			if (exitValue == 143) {
+				JOptionPane.showMessageDialog(biosim.frame(), "Verification was"
+						+ " canceled by the user.", "Canceled Verification",
+						JOptionPane.ERROR_MESSAGE);
+			}
+			else {
+				if (traceFile.exists()) {
+					JOptionPane.showMessageDialog(biosim.frame(), "Verification Failed",
+							"Verification Results", JOptionPane.WARNING_MESSAGE);
+					viewTrace.setEnabled(true);
+					viewTrace();
+				}
+				else {
+					JOptionPane.showMessageDialog(biosim.frame(), "Verification Succeeded",
+							"Verification Results", JOptionPane.INFORMATION_MESSAGE);
+					viewTrace.setEnabled(false);
+				}
+			}
+			running.setCursor(null);
+			running.dispose();
 		}
 		catch (Exception e) {
-		}
-		if (traceFile.exists()) {
-			JOptionPane.showMessageDialog(biosim.frame(), "Verification Failed",
-					"Verification Results", JOptionPane.WARNING_MESSAGE);
-			viewTrace.setEnabled(true);
-			viewTrace();
-		}
-		else {
-			JOptionPane.showMessageDialog(biosim.frame(), "Verification Succeeded",
-					"Verification Results", JOptionPane.INFORMATION_MESSAGE);
-			viewTrace.setEnabled(false);
+			JOptionPane.showMessageDialog(biosim.frame(), "Unable to verify model.", "Error",
+					JOptionPane.ERROR_MESSAGE);
 		}
 		try {
 			String output = "";
@@ -680,7 +776,7 @@ public class Verification extends JPanel implements ActionListener {
 	}
 
 	public void save() {
-		//JOptionPane.showMessageDialog(this, verifyFile);
+		// JOptionPane.showMessageDialog(this, verifyFile);
 		try {
 			Properties prop = new Properties();
 			FileInputStream in = new FileInputStream(new File(directory + separator + verFile));
@@ -690,7 +786,7 @@ public class Verification extends JPanel implements ActionListener {
 			prop.setProperty("verification.source", sourceFile);
 			if (!bddSize.equals("")) {
 				prop.setProperty("verification.bddSize", this.bddSize.getText().trim());
-				}
+			}
 			if (untimed.isSelected()) {
 				prop.setProperty("verification.timing.methods", "untimed");
 			}
@@ -922,7 +1018,7 @@ public class Verification extends JPanel implements ActionListener {
 					JOptionPane.ERROR_MESSAGE);
 		}
 	}
-	
+
 	public void viewTrace() {
 		String[] getFilename = sourceFile.split("\\.");
 		String traceFilename = getFilename[0] + ".trace";
@@ -1001,7 +1097,7 @@ public class Verification extends JPanel implements ActionListener {
 					JOptionPane.ERROR_MESSAGE);
 		}
 	}
-	
+
 	public boolean hasChanged() {
 		return change;
 	}

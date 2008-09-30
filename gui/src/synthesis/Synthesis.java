@@ -40,17 +40,17 @@ public class Synthesis extends JPanel implements ActionListener {
 	private JCheckBox abst, partialOrder, dot, verbose, quiet, noinsert, shareGate, combo, exact,
 			manual, inponly, notFirst, preserve, ordered, subset, unsafe, expensive, conflict,
 			reachable, dumb, genrg, timsubset, superset, infopt, orbmatch, interleav, prune,
-			disabling, nofail, keepgoing, explpn, nochecks, reduction, minins, newTab, postProc, redCheck,
-			xForm2, expandRate;
+			disabling, nofail, keepgoing, explpn, nochecks, reduction, minins, newTab, postProc,
+			redCheck, xForm2, expandRate;
 
 	private JTextField maxSize, gateDelay, bddSize;
 
 	private ButtonGroup timingMethodGroup, technologyGroup, algorithmGroup;
 
 	private String directory, separator, synthFile, synthesisFile, sourceFile;
-	
+
 	private boolean change;
-	
+
 	private Log log;
 
 	private BioSim biosim;
@@ -186,7 +186,7 @@ public class Synthesis extends JPanel implements ActionListener {
 		untimed.setSelected(true);
 		atomicGates.setSelected(true);
 		singleCube.setSelected(true);
-		
+
 		// Groups the radio buttons
 		timingMethodGroup.add(untimed);
 		timingMethodGroup.add(geometric);
@@ -419,7 +419,8 @@ public class Synthesis extends JPanel implements ActionListener {
 				if (load.getProperty("synthesis.compilation.xForm2").equals("true")) {
 					xForm2.setSelected(true);
 				}
-			}if (load.containsKey("synthesis.compilation.expandRate")) {
+			}
+			if (load.containsKey("synthesis.compilation.expandRate")) {
 				if (load.getProperty("synthesis.compilation.expandRate").equals("true")) {
 					expandRate.setSelected(true);
 				}
@@ -566,14 +567,14 @@ public class Synthesis extends JPanel implements ActionListener {
 					"Error Loading Properties", JOptionPane.ERROR_MESSAGE);
 		}
 		save();
-		
+
 		getFilename = sourceFile.split(separator);
 		getFilename = getFilename[getFilename.length - 1].split("\\.");
 		File graphFile = new File(getFilename[0] + ".dot");
 		File rulesFile = new File(getFilename[0] + ".prs");
 		File traceFile = new File(getFilename[0] + ".trace");
 		File logFile = new File(directory + "run.log");
-		
+
 		// Creates the run button
 		run = new JButton("Save and Synthesize");
 		run.addActionListener(this);
@@ -594,7 +595,7 @@ public class Synthesis extends JPanel implements ActionListener {
 			viewCircuit.setEnabled(false);
 		}
 		viewCircuit.setMnemonic(KeyEvent.VK_C);
-		
+
 		// Creates the view production rules button
 		viewRules = new JButton("View Production Rules");
 		viewRules.addActionListener(this);
@@ -603,7 +604,7 @@ public class Synthesis extends JPanel implements ActionListener {
 			viewRules.setEnabled(false);
 		}
 		viewRules.setMnemonic(KeyEvent.VK_R);
-		
+
 		// Creates the view trace button
 		viewTrace = new JButton("View Trace");
 		viewTrace.addActionListener(this);
@@ -868,28 +869,123 @@ public class Synthesis extends JPanel implements ActionListener {
 		// String src = temp[temp.length - 1];
 		String cmd = "atacs " + options + " " + circuitFile;
 		// String[] cmd = {"emacs", "temp" };
-		//JOptionPane.showMessageDialog(this, cmd);
+		// JOptionPane.showMessageDialog(this, cmd);
 		// Runtime exec = Runtime.getRuntime();
-		File work = new File(directory);
-		log.addText("Executing:\n" + cmd + "\n");
-		Runtime exec = Runtime.getRuntime();
-		Process synth = exec.exec(cmd, null, work);
+		final JButton cancel = new JButton("Cancel");
+		final JFrame running = new JFrame("Progress");
+		WindowListener w = new WindowListener() {
+			public void windowClosing(WindowEvent arg0) {
+				cancel.doClick();
+				running.dispose();
+			}
+
+			public void windowOpened(WindowEvent arg0) {
+			}
+
+			public void windowClosed(WindowEvent arg0) {
+			}
+
+			public void windowIconified(WindowEvent arg0) {
+			}
+
+			public void windowDeiconified(WindowEvent arg0) {
+			}
+
+			public void windowActivated(WindowEvent arg0) {
+			}
+
+			public void windowDeactivated(WindowEvent arg0) {
+			}
+		};
+		running.addWindowListener(w);
+		JPanel text = new JPanel();
+		JPanel progBar = new JPanel();
+		JPanel button = new JPanel();
+		JPanel all = new JPanel(new BorderLayout());
+		JLabel label = new JLabel("Running...");
+		JProgressBar progress = new JProgressBar();
+		progress.setStringPainted(true);
+		progress.setIndeterminate(true);
+		// progress.setString("");
+		progress.setValue(0);
+		text.add(label);
+		progBar.add(progress);
+		button.add(cancel);
+		all.add(text, "North");
+		all.add(progBar, "Center");
+		all.add(button, "South");
+		running.setContentPane(all);
+		running.pack();
+		Dimension screenSize;
 		try {
-			synth.waitFor();
+			Toolkit tk = Toolkit.getDefaultToolkit();
+			screenSize = tk.getScreenSize();
+		}
+		catch (AWTError awe) {
+			screenSize = new Dimension(640, 480);
+		}
+		Dimension frameSize = running.getSize();
+
+		if (frameSize.height > screenSize.height) {
+			frameSize.height = screenSize.height;
+		}
+		if (frameSize.width > screenSize.width) {
+			frameSize.width = screenSize.width;
+		}
+		int x = screenSize.width / 2 - frameSize.width / 2;
+		int y = screenSize.height / 2 - frameSize.height / 2;
+		running.setLocation(x, y);
+		running.setVisible(true);
+		running.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+		File work = new File(directory);
+		Runtime exec = Runtime.getRuntime();
+		final Process synth = exec.exec(cmd, null, work);
+		cancel.setActionCommand("Cancel");
+		cancel.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				synth.destroy();
+				running.setCursor(null);
+				running.dispose();
+			}
+		});
+		biosim.getExitButton().setActionCommand("Exit program");
+		biosim.getExitButton().addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				synth.destroy();
+				running.setCursor(null);
+				running.dispose();
+			}
+		});
+		log.addText("Executing:\n" + cmd + "\n");
+		// Process synth = exec.exec(cmd, null, work);
+		try {
+			int exitValue = synth.waitFor();
+			if (exitValue == 143) {
+				JOptionPane
+						.showMessageDialog(biosim.frame(), "Synthesis was"
+								+ " canceled by the user.", "Canceled Synthesis",
+								JOptionPane.ERROR_MESSAGE);
+			}
+			else {
+				if (rulesFile.exists()) {
+					viewCircuit.setEnabled(true);
+					viewRules.setEnabled(true);
+					viewTrace.setEnabled(false);
+					viewCircuit();
+				}
+				else {
+					viewCircuit.setEnabled(false);
+					viewRules.setEnabled(false);
+					viewTrace.setEnabled(true);
+					viewTrace();
+				}
+			}
+			running.setCursor(null);
+			running.dispose();
 		}
 		catch (Exception e) {
-		}
-		if (rulesFile.exists()) {
-			viewCircuit.setEnabled(true);
-			viewRules.setEnabled(true);
-			viewTrace.setEnabled(false);
-			viewCircuit();
-		}
-		else {
-			viewCircuit.setEnabled(false);
-			viewRules.setEnabled(false);
-			viewTrace.setEnabled(true);
-			viewTrace();
+			JOptionPane.showMessageDialog(biosim.frame(), "Unable to synthesize model.", "Error",
+					JOptionPane.ERROR_MESSAGE);
 		}
 		try {
 			String output = "";
@@ -1213,30 +1309,24 @@ public class Synthesis extends JPanel implements ActionListener {
 			// String circuitFile = getFilename[0] + ".ps";
 			// JOptionPane.showMessageDialog(this, directory + separator +
 			// circuitFile);
-			/*if (new File(circuitFile).exists()) {
-				File log = new File(circuitFile);
-				BufferedReader input = new BufferedReader(new FileReader(log));
-				String line = null;
-				JTextArea messageArea = new JTextArea();
-				while ((line = input.readLine()) != null) {
-					messageArea.append(line);
-					messageArea.append(System.getProperty("line.separator"));
-				}
-				input.close();
-				messageArea.setLineWrap(true);
-				messageArea.setWrapStyleWord(true);
-				messageArea.setEditable(false);
-				JScrollPane scrolls = new JScrollPane();
-				scrolls.setMinimumSize(new Dimension(500, 500));
-				scrolls.setPreferredSize(new Dimension(500, 500));
-				scrolls.setViewportView(messageArea);
-				JOptionPane.showMessageDialog(biosim.frame(), scrolls, "Circuit View",
-						JOptionPane.INFORMATION_MESSAGE);
-			}
-			else {
-				JOptionPane.showMessageDialog(biosim.frame(), "No circuit view exists.", "Error",
-						JOptionPane.ERROR_MESSAGE);
-			}*/
+			/*
+			 * if (new File(circuitFile).exists()) { File log = new
+			 * File(circuitFile); BufferedReader input = new BufferedReader(new
+			 * FileReader(log)); String line = null; JTextArea messageArea = new
+			 * JTextArea(); while ((line = input.readLine()) != null) {
+			 * messageArea.append(line);
+			 * messageArea.append(System.getProperty("line.separator")); }
+			 * input.close(); messageArea.setLineWrap(true);
+			 * messageArea.setWrapStyleWord(true);
+			 * messageArea.setEditable(false); JScrollPane scrolls = new
+			 * JScrollPane(); scrolls.setMinimumSize(new Dimension(500, 500));
+			 * scrolls.setPreferredSize(new Dimension(500, 500));
+			 * scrolls.setViewportView(messageArea);
+			 * JOptionPane.showMessageDialog(biosim.frame(), scrolls, "Circuit
+			 * View", JOptionPane.INFORMATION_MESSAGE); } else {
+			 * JOptionPane.showMessageDialog(biosim.frame(), "No circuit view
+			 * exists.", "Error", JOptionPane.ERROR_MESSAGE); }
+			 */
 			String cmd = "";
 			if (circuitFile.endsWith(".g")) {
 				cmd = "atacs -llodpl " + circuitFile;
@@ -1250,15 +1340,15 @@ public class Synthesis extends JPanel implements ActionListener {
 			log.addText("Executing:\n" + cmd);
 			String command = "";
 			if (System.getProperty("os.name").contentEquals("Linux")) {
-				//directory = System.getenv("BIOSIM") + "/docs/";
+				// directory = System.getenv("BIOSIM") + "/docs/";
 				command = "gnome-open ";
 			}
 			else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
-				//directory = System.getenv("BIOSIM") + "/docs/";
+				// directory = System.getenv("BIOSIM") + "/docs/";
 				command = "open ";
 			}
 			else {
-				//directory = System.getenv("BIOSIM") + "\\docs\\";
+				// directory = System.getenv("BIOSIM") + "\\docs\\";
 				command = "cmd /c start ";
 			}
 			exec.exec(command + graphFile, null, work);
@@ -1269,7 +1359,7 @@ public class Synthesis extends JPanel implements ActionListener {
 					JOptionPane.ERROR_MESSAGE);
 		}
 	}
-	
+
 	public void viewRules() {
 		String[] getFilename = sourceFile.split("\\.");
 		String circuitFile = getFilename[0] + ".prs";
@@ -1304,16 +1394,16 @@ public class Synthesis extends JPanel implements ActionListener {
 						JOptionPane.INFORMATION_MESSAGE);
 			}
 			else {
-				JOptionPane.showMessageDialog(biosim.frame(), "No production rules exist.", "Error",
-						JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(biosim.frame(), "No production rules exist.",
+						"Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 		catch (Exception e1) {
-			JOptionPane.showMessageDialog(biosim.frame(), "Unable to view production rules.", "Error",
-					JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(biosim.frame(), "Unable to view production rules.",
+					"Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
-	
+
 	public void viewTrace() {
 		String[] getFilename = sourceFile.split("\\.");
 		String traceFilename = getFilename[0] + ".trace";
