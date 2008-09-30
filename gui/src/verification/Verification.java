@@ -224,7 +224,7 @@ public class Verification extends JPanel implements ActionListener {
 		// load parameters
 		Properties load = new Properties();
 		verifyFile = "";
-		log.addText(directory + separator + verFile);
+		//log.addText(directory + separator + verFile);
 		try {
 			FileInputStream in = new FileInputStream(new File(directory + separator + verFile));
 			load.load(in);
@@ -261,8 +261,8 @@ public class Verification extends JPanel implements ActionListener {
 					baptdc.setSelected(true);
 				}
 			}
-			if (load.containsKey("verification.abst")) {
-				if (load.getProperty("verification.abst").equals("true")) {
+			if (load.containsKey("verification.Abst")) {
+				if (load.getProperty("verification.Abst").equals("true")) {
 					abst.setSelected(true);
 				}
 			}
@@ -637,11 +637,9 @@ public class Verification extends JPanel implements ActionListener {
 		Runtime exec = Runtime.getRuntime();
 		Process ver = exec.exec(cmd, null, work);
 		try {
-			ver.wait();
+			ver.waitFor();
 		}
 		catch (Exception e) {
-			JOptionPane.showMessageDialog(biosim.frame(), "Verification Interrupeted!",
-					"Interrupt", JOptionPane.ERROR_MESSAGE);
 		}
 		if (traceFile.exists()) {
 			JOptionPane.showMessageDialog(biosim.frame(), "Verification Failed",
