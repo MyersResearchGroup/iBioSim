@@ -29,7 +29,7 @@ public class Synthesis extends JPanel implements ActionListener {
 
 	private static final long serialVersionUID = -5806315070287184299L;
 
-	private JButton save, run, viewCircuit, viewRules, viewLog;
+	private JButton save, run, viewCircuit, viewRules, viewTrace, viewLog;
 
 	private JLabel algorithm, timingMethod, technology, otherOptions, otherOptions2, maxSizeLabel,
 			gateDelayLabel, compilation, bddSizeLabel, advTiming, synthesisOptions, pruning;
@@ -571,6 +571,7 @@ public class Synthesis extends JPanel implements ActionListener {
 		getFilename = getFilename[getFilename.length - 1].split("\\.");
 		File graphFile = new File(getFilename[0] + ".dot");
 		File rulesFile = new File(getFilename[0] + ".prs");
+		File traceFile = new File(getFilename[0] + ".trace");
 		File logFile = new File(directory + "run.log");
 		
 		// Creates the run button
@@ -602,6 +603,15 @@ public class Synthesis extends JPanel implements ActionListener {
 			viewRules.setEnabled(false);
 		}
 		viewRules.setMnemonic(KeyEvent.VK_R);
+		
+		// Creates the view trace button
+		viewTrace = new JButton("View Trace");
+		viewTrace.addActionListener(this);
+		buttonPanel.add(viewTrace);
+		if (!traceFile.exists()) {
+			viewTrace.setEnabled(false);
+		}
+		viewTrace.setMnemonic(KeyEvent.VK_T);
 
 		// Creates the view log button
 		viewLog = new JButton("View Log");
@@ -666,6 +676,9 @@ public class Synthesis extends JPanel implements ActionListener {
 		else if (e.getSource() == viewRules) {
 			viewRules();
 		}
+		else if (e.getSource() == viewTrace) {
+			viewTrace();
+		}
 		else if (e.getSource() == viewLog) {
 			viewLog();
 		}
@@ -676,8 +689,8 @@ public class Synthesis extends JPanel implements ActionListener {
 		String[] tempArray = sourceFile.split(separator);
 		String circuitFile = tempArray[tempArray.length - 1];
 		tempArray = sourceFile.split("\\.");
-		//String traceFilename = tempArray[0] + ".trace";
-		//File traceFile = new File(traceFilename);
+		String traceFilename = tempArray[0] + ".trace";
+		File traceFile = new File(traceFilename);
 		String rulesFilename = tempArray[0] + ".prs";
 		File rulesFile = new File(rulesFilename);
 		String graphFilename = tempArray[0] + ".dot";
@@ -687,6 +700,9 @@ public class Synthesis extends JPanel implements ActionListener {
 		}
 		if (graphFile.exists()) {
 			graphFile.delete();
+		}
+		if (traceFile.exists()) {
+			traceFile.delete();
 		}
 		String options = "";
 		// Timing method
@@ -866,13 +882,14 @@ public class Synthesis extends JPanel implements ActionListener {
 		if (rulesFile.exists()) {
 			viewCircuit.setEnabled(true);
 			viewRules.setEnabled(true);
+			viewTrace.setEnabled(false);
 			viewCircuit();
 		}
 		else {
-			JOptionPane.showMessageDialog(biosim.frame(), "Synthesis Failed!",
-					"Failure", JOptionPane.ERROR_MESSAGE);
 			viewCircuit.setEnabled(false);
 			viewRules.setEnabled(false);
+			viewTrace.setEnabled(true);
+			viewTrace();
 		}
 		try {
 			String output = "";
@@ -1293,6 +1310,50 @@ public class Synthesis extends JPanel implements ActionListener {
 		}
 		catch (Exception e1) {
 			JOptionPane.showMessageDialog(biosim.frame(), "Unable to view production rules.", "Error",
+					JOptionPane.ERROR_MESSAGE);
+		}
+	}
+	
+	public void viewTrace() {
+		String[] getFilename = sourceFile.split("\\.");
+		String traceFilename = getFilename[0] + ".trace";
+		// JOptionPane.showMessageDialog(this, circuitFile);
+		// JOptionPane.showMessageDialog(this, directory + separator +
+		// circuitFile);
+		try {
+			// JOptionPane.showMessageDialog(this, directory + separator +
+			// "run.log");
+			// String[] getFilename = sourceFile.split(".");
+			// String circuitFile = getFilename[0] + ".ps";
+			// JOptionPane.showMessageDialog(this, directory + separator +
+			// circuitFile);
+			if (new File(traceFilename).exists()) {
+				File log = new File(traceFilename);
+				BufferedReader input = new BufferedReader(new FileReader(log));
+				String line = null;
+				JTextArea messageArea = new JTextArea();
+				while ((line = input.readLine()) != null) {
+					messageArea.append(line);
+					messageArea.append(System.getProperty("line.separator"));
+				}
+				input.close();
+				messageArea.setLineWrap(true);
+				messageArea.setWrapStyleWord(true);
+				messageArea.setEditable(false);
+				JScrollPane scrolls = new JScrollPane();
+				scrolls.setMinimumSize(new Dimension(500, 500));
+				scrolls.setPreferredSize(new Dimension(500, 500));
+				scrolls.setViewportView(messageArea);
+				JOptionPane.showMessageDialog(biosim.frame(), scrolls, "Trace View",
+						JOptionPane.INFORMATION_MESSAGE);
+			}
+			else {
+				JOptionPane.showMessageDialog(biosim.frame(), "No trace file exists.", "Error",
+						JOptionPane.ERROR_MESSAGE);
+			}
+		}
+		catch (Exception e1) {
+			JOptionPane.showMessageDialog(biosim.frame(), "Unable to view trace.", "Error",
 					JOptionPane.ERROR_MESSAGE);
 		}
 	}
