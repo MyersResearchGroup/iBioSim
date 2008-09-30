@@ -45,6 +45,8 @@ public class Verification extends JPanel implements ActionListener {
 
 	private String directory, separator, verFile, verifyFile, sourceFile;
 	
+	private boolean change;
+	
 	private Log log;
 
 	private BioSim biosim;
@@ -464,6 +466,7 @@ public class Verification extends JPanel implements ActionListener {
 		this.setLayout(new BorderLayout());
 		this.add(tab, BorderLayout.PAGE_START);
 		this.add(buttonPanel, BorderLayout.PAGE_END);
+		change = false;
 	}
 
 	/**
@@ -474,6 +477,7 @@ public class Verification extends JPanel implements ActionListener {
 	 * @throws
 	 */
 	public void actionPerformed(ActionEvent e) {
+		change = true;
 		if (e.getSource() == run) {
 			save();
 			try {
@@ -867,6 +871,7 @@ public class Verification extends JPanel implements ActionListener {
 			FileOutputStream out = new FileOutputStream(new File(directory + separator + verFile));
 			prop.store(out, verifyFile);
 			out.close();
+			change = false;
 		}
 		catch (Exception e1) {
 			JOptionPane.showMessageDialog(biosim.frame(), "Unable to save parameter file!",
@@ -995,5 +1000,9 @@ public class Verification extends JPanel implements ActionListener {
 			JOptionPane.showMessageDialog(biosim.frame(), "Unable to view run log.", "Error",
 					JOptionPane.ERROR_MESSAGE);
 		}
+	}
+	
+	public boolean hasChanged() {
+		return change;
 	}
 }
