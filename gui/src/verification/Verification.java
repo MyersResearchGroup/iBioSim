@@ -39,7 +39,7 @@ public class Verification extends JPanel implements ActionListener {
 
 	private JCheckBox abst, partialOrder, dot, verbose, quiet, genrg, timsubset, superset, infopt,
 			orbmatch, interleav, prune, disabling, nofail, keepgoing, explpn, nochecks, reduction,
-			minins, newTab, postProc, redCheck, xForm2, expandRate;
+			newTab, postProc, redCheck, xForm2, expandRate;
 
 	private JTextField bddSize;
 
@@ -89,6 +89,8 @@ public class Verification extends JPanel implements ActionListener {
 		compilationPanel.setMaximumSize(new Dimension(1000, 35));
 		JPanel advancedPanel = new JPanel();
 		advancedPanel.setMaximumSize(new Dimension(1000, 35));
+		JPanel bddPanel = new JPanel();
+		bddPanel.setMaximumSize(new Dimension(1000, 35));
 		JPanel pruningPanel = new JPanel();
 		pruningPanel.setMaximumSize(new Dimension(1000, 35));
 		JPanel advTimingPanel = new JPanel();
@@ -149,7 +151,6 @@ public class Verification extends JPanel implements ActionListener {
 		// Other Advanced Options
 		nochecks = new JCheckBox("No checks");
 		reduction = new JCheckBox("Reduction");
-		minins = new JCheckBox("Minimum Size of BDD Linkspace");
 
 		timingMethodGroup = new ButtonGroup();
 		algorithmGroup = new ButtonGroup();
@@ -221,9 +222,9 @@ public class Verification extends JPanel implements ActionListener {
 		advancedPanel.add(otherOptions2);
 		advancedPanel.add(nochecks);
 		advancedPanel.add(reduction);
-		advancedPanel.add(minins);
-		advancedPanel.add(bddSizeLabel);
-		advancedPanel.add(bddSize);
+		
+		bddPanel.add(bddSizeLabel);
+		bddPanel.add(bddSize);
 
 		// load parameters
 		Properties load = new Properties();
@@ -318,7 +319,7 @@ public class Verification extends JPanel implements ActionListener {
 				}
 			}
 			if (load.containsKey("verification.compilation.newTab")) {
-				if (load.getProperty("verification.compilation").equals("true")) {
+				if (load.getProperty("verification.compilation.newTab").equals("true")) {
 					newTab.setSelected(true);
 				}
 			}
@@ -402,17 +403,12 @@ public class Verification extends JPanel implements ActionListener {
 					reduction.setSelected(true);
 				}
 			}
-			if (load.containsKey("verification.minins")) {
-				if (load.getProperty("verification.minins").equals("true")) {
-					minins.setSelected(true);
-				}
-			}
 		}
 		catch (Exception e) {
 			JOptionPane.showMessageDialog(biosim.frame(), "Unable to load properties file!",
 					"Error Loading Properties", JOptionPane.ERROR_MESSAGE);
 		}
-		save();
+		//save();
 
 		// Creates the run button
 		run = new JButton("Save and Verify");
@@ -457,6 +453,7 @@ public class Verification extends JPanel implements ActionListener {
 		advOptions.add(compilationPanel);
 		advOptions.add(advTimingPanel);
 		advOptions.add(advancedPanel);
+		advOptions.add(bddPanel);
 		advOptions.setLayout(new BoxLayout(advOptions, BoxLayout.Y_AXIS));
 		advOptions.add(Box.createVerticalGlue());
 
@@ -516,6 +513,10 @@ public class Verification extends JPanel implements ActionListener {
 			traceFile.delete();
 		}
 		String options = "";
+		// BDD Linkspace Size
+		if (!bddSize.getText().equals("") && !bddSize.getText().equals("0")) {
+			options = options + "-L" + bddSize.getText() + " ";
+		}
 		// Timing method
 		if (untimed.isSelected()) {
 			options = options + "-tu";
@@ -534,10 +535,6 @@ public class Verification extends JPanel implements ActionListener {
 		}
 		else {
 			options = options + "-tt";
-		}
-		// BDD Linkspace Size
-		if (!bddSize.getText().equals("")) {
-			options = options + "L" + bddSize.getText();
 		}
 		// Timing Options
 		if (abst.isSelected()) {
@@ -596,9 +593,6 @@ public class Verification extends JPanel implements ActionListener {
 		}
 		if (reduction.isSelected()) {
 			options = options + "oR";
-		}
-		if (minins.isSelected()) {
-			options = options + "om";
 		}
 		// Compilation Options
 		if (newTab.isSelected()) {
@@ -802,7 +796,7 @@ public class Verification extends JPanel implements ActionListener {
 			else if (bap.isSelected()) {
 				prop.setProperty("verification.timing.methods", "bap");
 			}
-			else if (baptdc.isSelected()) {
+			else {
 				prop.setProperty("verification.timing.methods", "baptdc");
 			}
 			if (abst.isSelected()) {
@@ -957,12 +951,6 @@ public class Verification extends JPanel implements ActionListener {
 			}
 			else {
 				prop.setProperty("verification.reduction", "false");
-			}
-			if (minins.isSelected()) {
-				prop.setProperty("verification.minins", "true");
-			}
-			else {
-				prop.setProperty("verification.minins", "false");
 			}
 			FileOutputStream out = new FileOutputStream(new File(directory + separator + verFile));
 			prop.store(out, verifyFile);
