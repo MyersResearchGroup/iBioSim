@@ -81,6 +81,8 @@ public class Synthesis extends JPanel implements ActionListener {
 		technologyPanel.setMaximumSize(new Dimension(1000, 35));
 		JPanel otherPanel = new JPanel();
 		otherPanel.setMaximumSize(new Dimension(1000, 35));
+		JPanel valuePanel = new JPanel();
+		valuePanel.setMaximumSize(new Dimension(1000, 35));
 		JPanel algorithmPanel = new JPanel();
 		algorithmPanel.setMaximumSize(new Dimension(1000, 35));
 		JPanel buttonPanel = new JPanel();
@@ -88,6 +90,8 @@ public class Synthesis extends JPanel implements ActionListener {
 		compilationPanel.setMaximumSize(new Dimension(1000, 35));
 		JPanel advancedPanel = new JPanel();
 		advancedPanel.setMaximumSize(new Dimension(1000, 35));
+		JPanel bddPanel = new JPanel();
+		bddPanel.setMaximumSize(new Dimension(1000, 35));
 		JPanel synthPanel = new JPanel();
 		synthPanel.setMaximumSize(new Dimension(1000, 35));
 		JPanel pruningPanel = new JPanel();
@@ -177,7 +181,7 @@ public class Synthesis extends JPanel implements ActionListener {
 		// Other Advanced Options
 		nochecks = new JCheckBox("No checks");
 		reduction = new JCheckBox("Reduction");
-		minins = new JCheckBox("Minimum BDD Linkspace Size");
+		minins = new JCheckBox("Limit Transition Point Size");
 
 		timingMethodGroup = new ButtonGroup();
 		technologyGroup = new ButtonGroup();
@@ -228,10 +232,11 @@ public class Synthesis extends JPanel implements ActionListener {
 		otherPanel.add(verbose);
 		otherPanel.add(quiet);
 		otherPanel.add(noinsert);
-		otherPanel.add(maxSizeLabel);
-		otherPanel.add(maxSize);
-		otherPanel.add(gateDelayLabel);
-		otherPanel.add(gateDelay);
+
+		valuePanel.add(maxSizeLabel);
+		valuePanel.add(maxSize);
+		valuePanel.add(gateDelayLabel);
+		valuePanel.add(gateDelay);
 
 		algorithmPanel.add(algorithm);
 		algorithmPanel.add(singleCube);
@@ -281,8 +286,8 @@ public class Synthesis extends JPanel implements ActionListener {
 		advancedPanel.add(nochecks);
 		advancedPanel.add(reduction);
 		advancedPanel.add(minins);
-		advancedPanel.add(bddSizeLabel);
-		advancedPanel.add(bddSize);
+		bddPanel.add(bddSizeLabel);
+		bddPanel.add(bddSize);
 
 		// load parameters
 		Properties load = new Properties();
@@ -566,7 +571,7 @@ public class Synthesis extends JPanel implements ActionListener {
 			JOptionPane.showMessageDialog(biosim.frame(), "Unable to load properties file!",
 					"Error Loading Properties", JOptionPane.ERROR_MESSAGE);
 		}
-		save();
+		// save();
 
 		getFilename = sourceFile.split(separator);
 		getFilename = getFilename[getFilename.length - 1].split("\\.");
@@ -626,6 +631,7 @@ public class Synthesis extends JPanel implements ActionListener {
 		basicOptions.add(timingRadioPanel);
 		basicOptions.add(technologyPanel);
 		basicOptions.add(otherPanel);
+		basicOptions.add(valuePanel);
 		basicOptions.add(algorithmPanel);
 		basicOptions.setLayout(new BoxLayout(basicOptions, BoxLayout.Y_AXIS));
 
@@ -633,6 +639,7 @@ public class Synthesis extends JPanel implements ActionListener {
 		advOptions.add(synthPanel);
 		advOptions.add(pruningPanel);
 		advOptions.add(advancedPanel);
+		advOptions.add(bddPanel);
 		advOptions.setLayout(new BoxLayout(advOptions, BoxLayout.Y_AXIS));
 
 		JTabbedPane tab = new JTabbedPane();
@@ -706,6 +713,15 @@ public class Synthesis extends JPanel implements ActionListener {
 			traceFile.delete();
 		}
 		String options = "";
+		// Text field options
+		options = options + "-M" + maxSize.getText() + " ";
+		String[] temp = gateDelay.getText().split(" ");
+		if (!temp[1].equals("inf")) {
+			options = options + "-G" + temp[0] + "/" + temp[1] + " ";
+		}
+		if (!bddSize.getText().equals("") && !bddSize.getText().equals("0")) {
+			options = options + "-L" + bddSize.getText() + " ";
+		}
 		// Timing method
 		if (untimed.isSelected()) {
 			options = options + "-tu";
@@ -724,15 +740,6 @@ public class Synthesis extends JPanel implements ActionListener {
 		}
 		else {
 			options = options + "-tt";
-		}
-		// Text field options
-		options = options + "M" + maxSize.getText();
-		String[] temp = gateDelay.getText().split(" ");
-		if (!temp[1].equals("inf")) {
-			options = options + "G" + temp[0] + "/" + temp[1];
-		}
-		if (!bddSize.equals("")) {
-			options = options + "L" + bddSize.getText();
 		}
 		// Other Options
 		if (dot.isSelected()) {
@@ -1303,41 +1310,32 @@ public class Synthesis extends JPanel implements ActionListener {
 		// JOptionPane.showMessageDialog(this, directory + separator +
 		// circuitFile);
 		try {
-			// JOptionPane.showMessageDialog(this, directory + separator +
-			// "run.log");
-			// String[] getFilename = sourceFile.split(".");
-			// String circuitFile = getFilename[0] + ".ps";
-			// JOptionPane.showMessageDialog(this, directory + separator +
-			// circuitFile);
-			/*
-			 * if (new File(circuitFile).exists()) { File log = new
-			 * File(circuitFile); BufferedReader input = new BufferedReader(new
-			 * FileReader(log)); String line = null; JTextArea messageArea = new
-			 * JTextArea(); while ((line = input.readLine()) != null) {
-			 * messageArea.append(line);
-			 * messageArea.append(System.getProperty("line.separator")); }
-			 * input.close(); messageArea.setLineWrap(true);
-			 * messageArea.setWrapStyleWord(true);
-			 * messageArea.setEditable(false); JScrollPane scrolls = new
-			 * JScrollPane(); scrolls.setMinimumSize(new Dimension(500, 500));
-			 * scrolls.setPreferredSize(new Dimension(500, 500));
-			 * scrolls.setViewportView(messageArea);
-			 * JOptionPane.showMessageDialog(biosim.frame(), scrolls, "Circuit
-			 * View", JOptionPane.INFORMATION_MESSAGE); } else {
-			 * JOptionPane.showMessageDialog(biosim.frame(), "No circuit view
-			 * exists.", "Error", JOptionPane.ERROR_MESSAGE); }
-			 */
-			String cmd = "";
-			if (circuitFile.endsWith(".g")) {
-				cmd = "atacs -llodpl " + circuitFile;
-			}
-			else if (circuitFile.endsWith(".vhd")) {
-				cmd = "atacs -lvslllodpl " + circuitFile;
-			}
 			File work = new File(directory);
 			Runtime exec = Runtime.getRuntime();
-			exec.exec(cmd, null, work);
-			log.addText("Executing:\n" + cmd);
+			File circuit = new File(directory + separator + graphFile);
+			if (!circuit.exists()) {
+				String cmd = "";
+				if (circuitFile.endsWith(".g")) {
+					cmd = "atacs -llodpl " + circuitFile;
+				}
+				else if (circuitFile.endsWith(".vhd")) {
+					cmd = "atacs -lvslllodpl " + circuitFile;
+				}
+				else if (circuitFile.endsWith(".csp")) {
+					cmd = "atacs -lcslllodpl " + circuitFile;
+				}
+				else if (circuitFile.endsWith(".hse")) {
+					cmd = "atacs -lhslllodpl " + circuitFile;
+				}
+				else if (circuitFile.endsWith(".unc")) {
+					cmd = "atacs -lxodps " + circuitFile;
+				}
+				else if (circuitFile.endsWith(".rsg")) {
+					cmd = "atacs -lsodps " + circuitFile;
+				}
+				exec.exec(cmd, null, work);
+				log.addText("Executing:\n" + cmd);
+			}
 			String command = "";
 			if (System.getProperty("os.name").contentEquals("Linux")) {
 				// directory = System.getenv("BIOSIM") + "/docs/";
