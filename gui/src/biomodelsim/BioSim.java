@@ -1460,7 +1460,9 @@ public class BioSim implements MouseListener, ActionListener {
 							String work = root + separator + synthName;
 							String circuitFile = root + separator + synthName.trim() + separator + circuitFileNoPath;
 							JPanel synthPane = new JPanel();
-							synthPane.add(new Synthesis(work, circuitFile, log, this));
+							Synthesis synthesis = new Synthesis(work, circuitFile, log, this);
+							synthesis.save();
+							synthPane.add(synthesis);
 							/*
 							 * JLabel noData = new JLabel("No data available");
 							 * Font font = noData.getFont(); font =
@@ -1562,7 +1564,9 @@ public class BioSim implements MouseListener, ActionListener {
 							String circuitFile = root + separator + verName.trim() + separator + circuitFileNoPath;
 							//log.addText(circuitFile);
 							JPanel verPane = new JPanel();
-							verPane.add(new Verification(work, circuitFile, log, this));
+							Verification verify = new Verification(work, circuitFile, log, this);
+							verify.save();
+							verPane.add(verify);
 							/*
 							 * JLabel noData = new JLabel("No data available");
 							 * Font font = noData.getFont(); font =
@@ -3350,7 +3354,7 @@ public class BioSim implements MouseListener, ActionListener {
 						&& tree.getFile().substring(tree.getFile().length() - 4).equals(".unc")) {
 					String filename = tree.getFile().split(separator)[tree.getFile().split(
 							separator).length - 1];
-					String cmd = "atacs -lxodds " + filename;
+					String cmd = "atacs -lxodps " + filename;
 					File work = new File(root);
 					Runtime exec = Runtime.getRuntime();
 					exec.exec(cmd, null, work);
@@ -3378,7 +3382,7 @@ public class BioSim implements MouseListener, ActionListener {
 						&& tree.getFile().substring(tree.getFile().length() - 4).equals(".rsg")) {
 					String filename = tree.getFile().split(separator)[tree.getFile().split(
 							separator).length - 1];
-					String cmd = "atacs -lsodds " + filename;
+					String cmd = "atacs -lsodps " + filename;
 					File work = new File(root);
 					Runtime exec = Runtime.getRuntime();
 					exec.exec(cmd, null, work);
