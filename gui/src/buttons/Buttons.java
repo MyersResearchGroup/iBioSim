@@ -1,9 +1,16 @@
 package buttons;
 
 import java.io.*;
-import java.awt.*;
+import java.awt.Component;
 import java.util.*;
+import java.util.prefs.Preferences;
 import javax.swing.*;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Shell;
 
 /**
  * This class contains static methods that perform tasks based on which buttons
@@ -16,171 +23,283 @@ public class Buttons {
 	/**
 	 * Returns the pathname of the selected file in the file chooser.
 	 */
-	public static String browse(Component browse, File file, JTextField text, int i, String approve) {
-		String filename = "";
-		JFileChooser fc = new JFileChooser();
-
-		//FileDialog fd = new FileDialog((JFrame)browse);
-		//fd.setVisible(true);
-		/* This sets the default directory to the one where BioSim is executed */
-		/*
-		 * String startDir = System.getProperty("user.dir"); File curDir = new
-		 * File(startDir); fc.setCurrentDirectory(curDir);
-		 */
-
-		ExampleFileFilter csvFilter = new ExampleFileFilter();
-		csvFilter.addExtension("csv");
-		csvFilter.setDescription("Comma Separated Values");
-		ExampleFileFilter datFilter = new ExampleFileFilter();
-		datFilter.addExtension("dat");
-		datFilter.setDescription("Tab Delimited Data");
-		ExampleFileFilter tsdFilter = new ExampleFileFilter();
-		tsdFilter.addExtension("tsd");
-		tsdFilter.setDescription("Time Series Data");
-		ExampleFileFilter epsFilter = new ExampleFileFilter();
-		epsFilter.addExtension("eps");
-		epsFilter.setDescription("Encapsulated Postscript");
-		ExampleFileFilter jpgFilter = new ExampleFileFilter();
-		jpgFilter.addExtension("jpg");
-		jpgFilter.setDescription("JPEG");
-		ExampleFileFilter pdfFilter = new ExampleFileFilter();
-		pdfFilter.addExtension("pdf");
-		pdfFilter.setDescription("Portable Document Format");
-		ExampleFileFilter pngFilter = new ExampleFileFilter();
-		pngFilter.addExtension("png");
-		pngFilter.setDescription("Portable Network Graphics");
-		ExampleFileFilter svgFilter = new ExampleFileFilter();
-		svgFilter.addExtension("svg");
-		svgFilter.setDescription("Scalable Vector Graphics");
-		ExampleFileFilter sbmlFilter = new ExampleFileFilter();
-		sbmlFilter.addExtension("sbml");
-		sbmlFilter.setDescription("Systems Biology Markup Language");
-		ExampleFileFilter xmlFilter = new ExampleFileFilter();
-		xmlFilter.addExtension("xml");
-		xmlFilter.setDescription("Extensible Markup Language");
-		ExampleFileFilter gcmFilter = new ExampleFileFilter();
-		gcmFilter.addExtension("gcm");
-		gcmFilter.setDescription("Genetic Circuit Model");
-		if (file != null) {
-			fc.setSelectedFile(file);
-		}
-		fc.setFileSelectionMode(i);
-		int retValue;
-		if (approve.equals("Save")) {
-			retValue = fc.showSaveDialog(browse);
-		}
-		else if (approve.equals("Open")) {
-			retValue = fc.showOpenDialog(browse);
-		}
-		else if (approve.equals("Export TSD")) {
-			fc.addChoosableFileFilter(csvFilter);
-			fc.addChoosableFileFilter(datFilter);
-			fc.addChoosableFileFilter(epsFilter);
-			fc.addChoosableFileFilter(jpgFilter);
-			fc.addChoosableFileFilter(pdfFilter);
-			fc.addChoosableFileFilter(pngFilter);
-			fc.addChoosableFileFilter(svgFilter);
-			fc.addChoosableFileFilter(tsdFilter);
-			fc.setAcceptAllFileFilterUsed(false);
-			fc.setFileFilter(pdfFilter);
-			retValue = fc.showDialog(browse, approve);
-		}
-		else if (approve.equals("Export Probability")) {
-			fc.addChoosableFileFilter(epsFilter);
-			fc.addChoosableFileFilter(jpgFilter);
-			fc.addChoosableFileFilter(pdfFilter);
-			fc.addChoosableFileFilter(pngFilter);
-			fc.addChoosableFileFilter(svgFilter);
-			fc.setAcceptAllFileFilterUsed(false);
-			fc.setFileFilter(pdfFilter);
-			retValue = fc.showDialog(browse, approve);
-		}
-		else if (approve.equals("Import SBML")) {
-			fc.addChoosableFileFilter(sbmlFilter);
-			fc.addChoosableFileFilter(xmlFilter);
-			fc.setAcceptAllFileFilterUsed(false);
-			fc.setFileFilter(sbmlFilter);
-			retValue = fc.showDialog(browse, approve);
-		}
-		else if (approve.equals("Import Circuit")) {
-			fc.addChoosableFileFilter(gcmFilter);
-			fc.setAcceptAllFileFilterUsed(false);
-			fc.setFileFilter(gcmFilter);
-			retValue = fc.showDialog(browse, approve);
+	public static String browse(JFrame frame, File file, JTextField text, int i, String approve) {
+		String separator;
+		if (File.separator.equals("\\")) {
+			separator = "\\\\";
 		}
 		else {
-			retValue = fc.showDialog(browse, approve);
+			separator = File.separator;
 		}
-		if (retValue == JFileChooser.APPROVE_OPTION) {
-			file = fc.getSelectedFile();
-			if (text != null) {
-				text.setText(file.getPath());
-			}
-			filename = file.getPath();
-			if (approve.equals("Export TSD")) {
-				if ((filename.length() < 4)
-						|| (!(filename.substring((filename.length() - 4), filename.length()).equals(".jpg"))
-								&& !(filename.substring((filename.length() - 4), filename.length()).equals(".png"))
-								&& !(filename.substring((filename.length() - 4), filename.length()).equals(".pdf"))
-								&& !(filename.substring((filename.length() - 4), filename.length()).equals(".eps"))
-								&& !(filename.substring((filename.length() - 4), filename.length()).equals(".svg"))
-								&& !(filename.substring((filename.length() - 4), filename.length()).equals(".dat"))
-								&& !(filename.substring((filename.length() - 4), filename.length()).equals(".tsd")) && !(filename
-								.substring((filename.length() - 4), filename.length()).equals(".csv")))) {
-					ExampleFileFilter selectedFilter = (ExampleFileFilter) fc.getFileFilter();
-					if (selectedFilter == jpgFilter) {
-						filename += ".jpg";
-					}
-					else if (selectedFilter == pngFilter) {
-						filename += ".png";
-					}
-					else if (selectedFilter == pdfFilter) {
-						filename += ".pdf";
-					}
-					else if (selectedFilter == epsFilter) {
-						filename += ".eps";
-					}
-					else if (selectedFilter == svgFilter) {
-						filename += ".svg";
-					}
-					else if (selectedFilter == datFilter) {
-						filename += ".dat";
-					}
-					else if (selectedFilter == tsdFilter) {
-						filename += ".tsd";
-					}
-					else if (selectedFilter == csvFilter) {
-						filename += ".csv";
-					}
+		Preferences biosimrc = Preferences.userRoot();
+		if (biosimrc.get("biosim.general.file_browser", "").equals("FileDialog")) {
+			String open;
+			Display display = new Display();
+			Shell shell = new Shell(display);
+			shell.setImage(new Image(display, System.getenv("BIOSIM") + separator + "gui" + separator
+					+ "icons" + separator + "iBioSim.png"));
+			if (i == JFileChooser.DIRECTORIES_ONLY) {
+				DirectoryDialog dd = null;
+				if (approve.equals("Save") || approve.equals("New")) {
+					dd = new DirectoryDialog(shell, SWT.SAVE);
+					dd.setText(approve);
 				}
+				else if (approve.equals("Open")) {
+					dd = new DirectoryDialog(shell, SWT.OPEN);
+					dd.setText(approve);
+				}
+				else {
+					dd = new DirectoryDialog(shell);
+					dd.setText(approve);
+				}
+				if (file != null) {
+					dd.setFilterPath(file.getPath());
+				}
+				open = dd.open();
+			}
+			else {
+				FileDialog fd = null;
+				if (approve.equals("Save") || approve.equals("New")) {
+					fd = new FileDialog(shell, SWT.SAVE);
+					fd.setText(approve);
+				}
+				else if (approve.equals("Open")) {
+					fd = new FileDialog(shell, SWT.OPEN);
+					fd.setText(approve);
+				}
+				else if (approve.equals("Export TSD")) {
+					fd = new FileDialog(shell, SWT.SAVE);
+					fd.setText(approve);
+					fd.setFilterNames(new String[] { "Comma Separated Values (*.csv)",
+							"Tab Delimited Data (*.dat)", "Encapsulated Postscript (*.eps)", "JPEG (*.jpg)",
+							"Portable Document Format (*.pdf)", "Portable Network Graphics (*.png)",
+							"Scalable Vector Graphics (*.svg)", "Time Series Data (*.tsd)" });
+					fd.setFilterExtensions(new String[] { "*.csv", "*.dat", "*.eps", "*.jpg", "*.pdf",
+							"*.png", "*.svg", "*.tsd" });
+					fd.setFilterIndex(4);
+				}
+				else if (approve.equals("Export Probability")) {
+					fd = new FileDialog(shell, SWT.SAVE);
+					fd.setText(approve);
+					fd.setFilterNames(new String[] { "Encapsulated Postscript (*.eps)", "JPEG (*.jpg)",
+							"Portable Document Format (*.pdf)", "Portable Network Graphics (*.png)",
+							"Scalable Vector Graphics (*.svg)" });
+					fd.setFilterExtensions(new String[] { "*.eps", "*.jpg", "*.pdf", "*.png", "*.svg" });
+					fd.setFilterIndex(2);
+				}
+				else if (approve.equals("Import SBML")) {
+					fd = new FileDialog(shell, SWT.OPEN);
+					fd.setText(approve);
+					fd.setFilterNames(new String[] { "Systems Biology Markup Language (*.sbml)",
+							"Extensible Markup Language (*.xml)" });
+					fd.setFilterExtensions(new String[] { "*.sbml", "*.xml" });
+					fd.setFilterIndex(1);
+				}
+				else if (approve.equals("Import Genetic Circuit")) {
+					fd = new FileDialog(shell, SWT.OPEN);
+					fd.setText(approve);
+					fd.setFilterNames(new String[] { "Genetic Circuit Model (*.gcm)" });
+					fd.setFilterExtensions(new String[] { "*.gcm" });
+				}
+				else if (approve.equals("Import")) {
+					fd = new FileDialog(shell, SWT.OPEN);
+					fd.setText(approve);
+					fd.setFilterNames(new String[] { "Comma Separated Values (*.csv)",
+							"Tab Delimited Data (*.dat)", "Time Series Data (*.tsd)" });
+					fd.setFilterExtensions(new String[] { "*.csv", "*.dat", "*.tsd" });
+					fd.setFilterIndex(2);
+				}
+				else {
+					fd = new FileDialog(shell);
+					fd.setText(approve);
+				}
+				if (file != null) {
+					fd.setFilterPath(file.getParentFile().getPath());
+				}
+				open = fd.open();
+			}
+			shell.dispose();
+			display.dispose();
+			if (open != null) {
+				return open;
+			}
+			else {
+				return "";
+			}
+		}
+		else {
+			String filename = "";
+			JFileChooser fc = new JFileChooser();
+
+			/* This sets the default directory to the one where BioSim is executed */
+			/*
+			 * String startDir = System.getProperty("user.dir"); File curDir = new
+			 * File(startDir); fc.setCurrentDirectory(curDir);
+			 */
+
+			ExampleFileFilter csvFilter = new ExampleFileFilter();
+			csvFilter.addExtension("csv");
+			csvFilter.setDescription("Comma Separated Values");
+			ExampleFileFilter datFilter = new ExampleFileFilter();
+			datFilter.addExtension("dat");
+			datFilter.setDescription("Tab Delimited Data");
+			ExampleFileFilter tsdFilter = new ExampleFileFilter();
+			tsdFilter.addExtension("tsd");
+			tsdFilter.setDescription("Time Series Data");
+			ExampleFileFilter epsFilter = new ExampleFileFilter();
+			epsFilter.addExtension("eps");
+			epsFilter.setDescription("Encapsulated Postscript");
+			ExampleFileFilter jpgFilter = new ExampleFileFilter();
+			jpgFilter.addExtension("jpg");
+			jpgFilter.setDescription("JPEG");
+			ExampleFileFilter pdfFilter = new ExampleFileFilter();
+			pdfFilter.addExtension("pdf");
+			pdfFilter.setDescription("Portable Document Format");
+			ExampleFileFilter pngFilter = new ExampleFileFilter();
+			pngFilter.addExtension("png");
+			pngFilter.setDescription("Portable Network Graphics");
+			ExampleFileFilter svgFilter = new ExampleFileFilter();
+			svgFilter.addExtension("svg");
+			svgFilter.setDescription("Scalable Vector Graphics");
+			ExampleFileFilter sbmlFilter = new ExampleFileFilter();
+			sbmlFilter.addExtension("sbml");
+			sbmlFilter.setDescription("Systems Biology Markup Language");
+			ExampleFileFilter xmlFilter = new ExampleFileFilter();
+			xmlFilter.addExtension("xml");
+			xmlFilter.setDescription("Extensible Markup Language");
+			ExampleFileFilter gcmFilter = new ExampleFileFilter();
+			gcmFilter.addExtension("gcm");
+			gcmFilter.setDescription("Genetic Circuit Model");
+			if (file != null) {
+				fc.setSelectedFile(file);
+			}
+			fc.setFileSelectionMode(i);
+			int retValue;
+			if (approve.equals("Save")) {
+				retValue = fc.showSaveDialog(frame);
+			}
+			else if (approve.equals("Open")) {
+				retValue = fc.showOpenDialog(frame);
+			}
+			else if (approve.equals("Export TSD")) {
+				fc.addChoosableFileFilter(csvFilter);
+				fc.addChoosableFileFilter(datFilter);
+				fc.addChoosableFileFilter(epsFilter);
+				fc.addChoosableFileFilter(jpgFilter);
+				fc.addChoosableFileFilter(pdfFilter);
+				fc.addChoosableFileFilter(pngFilter);
+				fc.addChoosableFileFilter(svgFilter);
+				fc.addChoosableFileFilter(tsdFilter);
+				fc.setAcceptAllFileFilterUsed(false);
+				fc.setFileFilter(pdfFilter);
+				retValue = fc.showDialog(frame, approve);
 			}
 			else if (approve.equals("Export Probability")) {
-				if ((filename.length() < 4)
-						|| (!(filename.substring((filename.length() - 4), filename.length()).equals(".jpg"))
-								&& !(filename.substring((filename.length() - 4), filename.length()).equals(".png"))
-								&& !(filename.substring((filename.length() - 4), filename.length()).equals(".pdf"))
-								&& !(filename.substring((filename.length() - 4), filename.length()).equals(".eps")) && !(filename
-								.substring((filename.length() - 4), filename.length()).equals(".svg")))) {
-					ExampleFileFilter selectedFilter = (ExampleFileFilter) fc.getFileFilter();
-					if (selectedFilter == jpgFilter) {
-						filename += ".jpg";
+				fc.addChoosableFileFilter(epsFilter);
+				fc.addChoosableFileFilter(jpgFilter);
+				fc.addChoosableFileFilter(pdfFilter);
+				fc.addChoosableFileFilter(pngFilter);
+				fc.addChoosableFileFilter(svgFilter);
+				fc.setAcceptAllFileFilterUsed(false);
+				fc.setFileFilter(pdfFilter);
+				retValue = fc.showDialog(frame, approve);
+			}
+			else if (approve.equals("Import SBML")) {
+				fc.addChoosableFileFilter(sbmlFilter);
+				fc.addChoosableFileFilter(xmlFilter);
+				fc.setAcceptAllFileFilterUsed(false);
+				fc.setFileFilter(xmlFilter);
+				retValue = fc.showDialog(frame, approve);
+			}
+			else if (approve.equals("Import Genetic Circuit")) {
+				fc.addChoosableFileFilter(gcmFilter);
+				fc.setAcceptAllFileFilterUsed(false);
+				fc.setFileFilter(gcmFilter);
+				retValue = fc.showDialog(frame, approve);
+			}
+			else {
+				retValue = fc.showDialog(frame, approve);
+			}
+			if (retValue == JFileChooser.APPROVE_OPTION) {
+				file = fc.getSelectedFile();
+				if (text != null) {
+					text.setText(file.getPath());
+				}
+				filename = file.getPath();
+				if (approve.equals("Export TSD")) {
+					if ((filename.length() < 4)
+							|| (!(filename.substring((filename.length() - 4), filename.length()).equals(".jpg"))
+									&& !(filename.substring((filename.length() - 4), filename.length())
+											.equals(".png"))
+									&& !(filename.substring((filename.length() - 4), filename.length())
+											.equals(".pdf"))
+									&& !(filename.substring((filename.length() - 4), filename.length())
+											.equals(".eps"))
+									&& !(filename.substring((filename.length() - 4), filename.length())
+											.equals(".svg"))
+									&& !(filename.substring((filename.length() - 4), filename.length())
+											.equals(".dat"))
+									&& !(filename.substring((filename.length() - 4), filename.length())
+											.equals(".tsd")) && !(filename.substring((filename.length() - 4), filename
+									.length()).equals(".csv")))) {
+						ExampleFileFilter selectedFilter = (ExampleFileFilter) fc.getFileFilter();
+						if (selectedFilter == jpgFilter) {
+							filename += ".jpg";
+						}
+						else if (selectedFilter == pngFilter) {
+							filename += ".png";
+						}
+						else if (selectedFilter == pdfFilter) {
+							filename += ".pdf";
+						}
+						else if (selectedFilter == epsFilter) {
+							filename += ".eps";
+						}
+						else if (selectedFilter == svgFilter) {
+							filename += ".svg";
+						}
+						else if (selectedFilter == datFilter) {
+							filename += ".dat";
+						}
+						else if (selectedFilter == tsdFilter) {
+							filename += ".tsd";
+						}
+						else if (selectedFilter == csvFilter) {
+							filename += ".csv";
+						}
 					}
-					else if (selectedFilter == pngFilter) {
-						filename += ".png";
-					}
-					else if (selectedFilter == pdfFilter) {
-						filename += ".pdf";
-					}
-					else if (selectedFilter == epsFilter) {
-						filename += ".eps";
-					}
-					else if (selectedFilter == svgFilter) {
-						filename += ".svg";
+				}
+				else if (approve.equals("Export Probability")) {
+					if ((filename.length() < 4)
+							|| (!(filename.substring((filename.length() - 4), filename.length()).equals(".jpg"))
+									&& !(filename.substring((filename.length() - 4), filename.length())
+											.equals(".png"))
+									&& !(filename.substring((filename.length() - 4), filename.length())
+											.equals(".pdf"))
+									&& !(filename.substring((filename.length() - 4), filename.length())
+											.equals(".eps")) && !(filename.substring((filename.length() - 4), filename
+									.length()).equals(".svg")))) {
+						ExampleFileFilter selectedFilter = (ExampleFileFilter) fc.getFileFilter();
+						if (selectedFilter == jpgFilter) {
+							filename += ".jpg";
+						}
+						else if (selectedFilter == pngFilter) {
+							filename += ".png";
+						}
+						else if (selectedFilter == pdfFilter) {
+							filename += ".pdf";
+						}
+						else if (selectedFilter == epsFilter) {
+							filename += ".eps";
+						}
+						else if (selectedFilter == svgFilter) {
+							filename += ".svg";
+						}
 					}
 				}
 			}
+			return filename;
 		}
-		return filename;
 	}
 
 	/**
