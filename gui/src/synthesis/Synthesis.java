@@ -25,7 +25,7 @@ import biomodelsim.*;
  * @author Kevin Jones
  */
 
-public class Synthesis extends JPanel implements ActionListener {
+public class Synthesis extends JPanel implements ActionListener, Runnable {
 
 	private static final long serialVersionUID = -5806315070287184299L;
 
@@ -664,15 +664,7 @@ public class Synthesis extends JPanel implements ActionListener {
 		change = true;
 		if (e.getSource() == run) {
 			save();
-			try {
-				run();
-			}
-			catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-				JOptionPane.showMessageDialog(this, "File cannot be read", "Error",
-						JOptionPane.ERROR_MESSAGE);
-			}
+			new Thread(this).start();
 		}
 		else if (e.getSource() == save) {
 			log.addText("Saving:\n" + directory + separator + synthFile + "\n");
@@ -692,7 +684,7 @@ public class Synthesis extends JPanel implements ActionListener {
 		}
 	}
 
-	public void run() throws IOException {
+	public void run() {
 		// String command = "/home/shang/kjones/atacs/bin/atacs -";
 		String[] tempArray = sourceFile.split(separator);
 		String circuitFile = tempArray[tempArray.length - 1];
@@ -740,6 +732,22 @@ public class Synthesis extends JPanel implements ActionListener {
 		}
 		else {
 			options = options + "-tt";
+		}
+		// Technology Options
+		if (atomicGates.isSelected()) {
+			options = options + "ot";
+		}
+		else if (generalizedC.isSelected()) {
+			options = options + "og";
+		}
+		else if (standardC.isSelected()) {
+			options = options + "os";
+		}
+		else if (bmGc.isSelected()) {
+			options = options + "ob";
+		}
+		else {
+			options = options + "ol";
 		}
 		// Other Options
 		if (dot.isSelected()) {
@@ -911,10 +919,10 @@ public class Synthesis extends JPanel implements ActionListener {
 		JPanel all = new JPanel(new BorderLayout());
 		JLabel label = new JLabel("Running...");
 		JProgressBar progress = new JProgressBar();
-		progress.setStringPainted(true);
+		// progress.setStringPainted(true);
 		progress.setIndeterminate(true);
 		// progress.setString("");
-		progress.setValue(0);
+		// progress.setValue(0);
 		text.add(label);
 		progBar.add(progress);
 		button.add(cancel);
@@ -946,26 +954,25 @@ public class Synthesis extends JPanel implements ActionListener {
 		running.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 		File work = new File(directory);
 		Runtime exec = Runtime.getRuntime();
-		final Process synth = exec.exec(cmd, null, work);
-		cancel.setActionCommand("Cancel");
-		cancel.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				synth.destroy();
-				running.setCursor(null);
-				running.dispose();
-			}
-		});
-		biosim.getExitButton().setActionCommand("Exit program");
-		biosim.getExitButton().addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				synth.destroy();
-				running.setCursor(null);
-				running.dispose();
-			}
-		});
 		log.addText("Executing:\n" + cmd + "\n");
-		// Process synth = exec.exec(cmd, null, work);
 		try {
+			final Process synth = exec.exec(cmd, null, work);
+			cancel.setActionCommand("Cancel");
+			cancel.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					synth.destroy();
+					running.setCursor(null);
+					running.dispose();
+				}
+			});
+			biosim.getExitButton().setActionCommand("Exit program");
+			biosim.getExitButton().addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					synth.destroy();
+					running.setCursor(null);
+					running.dispose();
+				}
+			});
 			int exitValue = synth.waitFor();
 			if (exitValue == 143) {
 				JOptionPane
@@ -989,12 +996,22 @@ public class Synthesis extends JPanel implements ActionListener {
 			}
 			running.setCursor(null);
 			running.dispose();
-		}
-		catch (Exception e) {
-			JOptionPane.showMessageDialog(biosim.frame(), "Unable to synthesize model.", "Error",
-					JOptionPane.ERROR_MESSAGE);
-		}
-		try {
+			cancel.setActionCommand("Cancel");
+			cancel.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					synth.destroy();
+					running.setCursor(null);
+					running.dispose();
+				}
+			});
+			biosim.getExitButton().setActionCommand("Exit program");
+			biosim.getExitButton().addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					synth.destroy();
+					running.setCursor(null);
+					running.dispose();
+				}
+			});
 			String output = "";
 			InputStream reb = synth.getInputStream();
 			InputStreamReader isr = new InputStreamReader(reb);
@@ -1009,7 +1026,6 @@ public class Synthesis extends JPanel implements ActionListener {
 			isr.close();
 			reb.close();
 			viewLog.setEnabled(true);
-			synth.waitFor();
 		}
 		catch (Exception e) {
 		}
