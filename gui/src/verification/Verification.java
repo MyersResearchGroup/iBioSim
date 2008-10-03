@@ -25,7 +25,7 @@ import biomodelsim.*;
  * @author Kevin Jones
  */
 
-public class Verification extends JPanel implements ActionListener {
+public class Verification extends JPanel implements ActionListener, Runnable {
 
 	private static final long serialVersionUID = -5806315070287184299L;
 
@@ -222,7 +222,7 @@ public class Verification extends JPanel implements ActionListener {
 		advancedPanel.add(otherOptions2);
 		advancedPanel.add(nochecks);
 		advancedPanel.add(reduction);
-		
+
 		bddPanel.add(bddSizeLabel);
 		bddPanel.add(bddSize);
 
@@ -408,7 +408,7 @@ public class Verification extends JPanel implements ActionListener {
 			JOptionPane.showMessageDialog(biosim.frame(), "Unable to load properties file!",
 					"Error Loading Properties", JOptionPane.ERROR_MESSAGE);
 		}
-		//save();
+		// save();
 
 		// Creates the run button
 		run = new JButton("Save and Verify");
@@ -479,15 +479,7 @@ public class Verification extends JPanel implements ActionListener {
 		change = true;
 		if (e.getSource() == run) {
 			save();
-			try {
-				run();
-			}
-			catch (IOException e1) {
-				// 
-				e1.printStackTrace();
-				JOptionPane.showMessageDialog(this, "Input file cannot be read", "Error",
-						JOptionPane.ERROR_MESSAGE);
-			}
+			new Thread(this).start();
 		}
 		else if (e.getSource() == save) {
 			log.addText("Saving:\n" + directory + separator + verFile + "\n");
@@ -504,7 +496,7 @@ public class Verification extends JPanel implements ActionListener {
 		}
 	}
 
-	public void run() throws IOException {
+	public void run() {
 		// String command = "/home/shang/kjones/atacs/bin/atacs -";
 		String[] tempArray = sourceFile.split("\\.");
 		String traceFilename = tempArray[0] + ".trace";
@@ -665,16 +657,17 @@ public class Verification extends JPanel implements ActionListener {
 		JPanel all = new JPanel(new BorderLayout());
 		JLabel label = new JLabel("Running...");
 		JProgressBar progress = new JProgressBar();
-		progress.setStringPainted(true);
+		//progress.setStringPainted(true);
 		progress.setIndeterminate(true);
 		// progress.setString("");
-		progress.setValue(0);
+		//progress.setValue(0);
 		text.add(label);
 		progBar.add(progress);
 		button.add(cancel);
 		all.add(text, "North");
 		all.add(progBar, "Center");
 		all.add(button, "South");
+		all.setOpaque(true);
 		running.setContentPane(all);
 		running.pack();
 		Dimension screenSize;
@@ -700,26 +693,26 @@ public class Verification extends JPanel implements ActionListener {
 		running.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 		File work = new File(directory);
 		Runtime exec = Runtime.getRuntime();
-		final Process ver = exec.exec(cmd, null, work);
-		cancel.setActionCommand("Cancel");
-		cancel.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				ver.destroy();
-				running.setCursor(null);
-				running.dispose();
-			}
-		});
-		biosim.getExitButton().setActionCommand("Exit program");
-		biosim.getExitButton().addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				ver.destroy();
-				running.setCursor(null);
-				running.dispose();
-			}
-		});
-		log.addText("Executing:\n" + cmd + "\n");
-		// Process synth = exec.exec(cmd, null, work);
 		try {
+			final Process ver = exec.exec(cmd, null, work);
+			cancel.setActionCommand("Cancel");
+			cancel.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					ver.destroy();
+					running.setCursor(null);
+					running.dispose();
+				}
+			});
+			biosim.getExitButton().setActionCommand("Exit program");
+			biosim.getExitButton().addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					ver.destroy();
+					running.setCursor(null);
+					running.dispose();
+				}
+			});
+			log.addText("Executing:\n" + cmd + "\n");
+			// Process synth = exec.exec(cmd, null, work);
 			int exitValue = ver.waitFor();
 			if (exitValue == 143) {
 				JOptionPane.showMessageDialog(biosim.frame(), "Verification was"
@@ -741,12 +734,6 @@ public class Verification extends JPanel implements ActionListener {
 			}
 			running.setCursor(null);
 			running.dispose();
-		}
-		catch (Exception e) {
-			JOptionPane.showMessageDialog(biosim.frame(), "Unable to verify model.", "Error",
-					JOptionPane.ERROR_MESSAGE);
-		}
-		try {
 			String output = "";
 			InputStream reb = ver.getInputStream();
 			InputStreamReader isr = new InputStreamReader(reb);
@@ -764,8 +751,8 @@ public class Verification extends JPanel implements ActionListener {
 			ver.waitFor();
 		}
 		catch (Exception e) {
-			JOptionPane.showMessageDialog(biosim.frame(), "Unable to write log file!",
-					"Error Saving Log", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(biosim.frame(), "Unable to verify model.", "Error",
+					JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
