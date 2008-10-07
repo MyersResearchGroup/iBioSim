@@ -38,10 +38,12 @@ public class Run implements ActionListener {
 	 * This method is given which buttons are selected and creates the properties
 	 * file from all the other information given.
 	 * 
+	 * @param useInterval
+	 * 
 	 * @param stem
 	 */
-	public void createProperties(double timeLimit, double printInterval, double timeStep,
-			double absError, String outDir, long rndSeed, int run, String[] termCond,
+	public void createProperties(double timeLimit, String useInterval, double printInterval,
+			double timeStep, double absError, String outDir, long rndSeed, int run, String[] termCond,
 			String[] intSpecies, String printer_id, String printer_track_quantity, String[] getFilename,
 			String selectedButtons, Component component, String filename, double rap1, double rap2,
 			double qss, int con, JCheckBox usingSSA, String ssaFile, JCheckBox usingSad, File sadFile) {
@@ -120,7 +122,12 @@ public class Run implements ActionListener {
 			// if (selectedButtons.equals("none_ODE") ||
 			// selectedButtons.equals("abs_ODE")) {
 			abs.setProperty("ode.simulation.time.limit", "" + timeLimit);
-			abs.setProperty("ode.simulation.print.interval", "" + printInterval);
+			if (useInterval.equals("Print Interval")) {
+				abs.setProperty("ode.simulation.print.interval", "" + printInterval);
+			}
+			else {
+				abs.setProperty("ode.simulation.number.steps", "" + printInterval);
+			}
 			if (timeStep == Double.MAX_VALUE) {
 				abs.setProperty("ode.simulation.time.step", "inf");
 			}
@@ -136,7 +143,12 @@ public class Run implements ActionListener {
 			// if (selectedButtons.equals("none_monteCarlo") ||
 			// selectedButtons.equals("abs_monteCarlo")) {
 			abs.setProperty("monte.carlo.simulation.time.limit", "" + timeLimit);
-			abs.setProperty("monte.carlo.simulation.print.interval", "" + printInterval);
+			if (useInterval.equals("Print Interval")) {
+				abs.setProperty("monte.carlo.simulation.print.interval", "" + printInterval);
+			}
+			else {
+				abs.setProperty("monte.carlo.simulation.number.steps", "" + printInterval);
+			}
 			if (timeStep == Double.MAX_VALUE) {
 				abs.setProperty("monte.carlo.simulation.time.step", "inf");
 			}
@@ -191,13 +203,14 @@ public class Run implements ActionListener {
 	 * This method is given what data is entered into the nary frame and creates
 	 * the nary properties file from that information.
 	 */
-	public void createNaryProperties(double timeLimit, double printInterval, double timeStep,
-			String outDir, long rndSeed, int run, String printer_id, String printer_track_quantity,
-			String[] getFilename, Component component, String filename, JRadioButton monteCarlo,
-			String stopE, double stopR, String[] finalS, ArrayList<JTextField> inhib,
-			ArrayList<JList> consLevel, ArrayList<String> getSpeciesProps, ArrayList<Object[]> conLevel,
-			String[] termCond, String[] intSpecies, double rap1, double rap2, double qss, int con,
-			ArrayList<Integer> counts, JCheckBox usingSSA, String ssaFile) {
+	public void createNaryProperties(double timeLimit, String useInterval, double printInterval,
+			double timeStep, String outDir, long rndSeed, int run, String printer_id,
+			String printer_track_quantity, String[] getFilename, Component component, String filename,
+			JRadioButton monteCarlo, String stopE, double stopR, String[] finalS,
+			ArrayList<JTextField> inhib, ArrayList<JList> consLevel, ArrayList<String> getSpeciesProps,
+			ArrayList<Object[]> conLevel, String[] termCond, String[] intSpecies, double rap1,
+			double rap2, double qss, int con, ArrayList<Integer> counts, JCheckBox usingSSA,
+			String ssaFile) {
 		Properties nary = new Properties();
 		try {
 			FileInputStream load = new FileInputStream(
@@ -253,7 +266,12 @@ public class Run implements ActionListener {
 		}
 		if (monteCarlo.isSelected()) {
 			nary.setProperty("monte.carlo.simulation.time.limit", "" + timeLimit);
-			nary.setProperty("monte.carlo.simulation.print.interval", "" + printInterval);
+			if (useInterval.equals("Print Interval")) {
+				nary.setProperty("monte.carlo.simulation.print.interval", "" + printInterval);
+			}
+			else {
+				nary.setProperty("monte.carlo.simulation.number.steps", "" + printInterval);
+			}
 			if (timeStep == Double.MAX_VALUE) {
 				nary.setProperty("monte.carlo.simulation.time.step", "inf");
 			}
@@ -534,16 +552,16 @@ public class Run implements ActionListener {
 				}
 				else if (dot.isSelected()) {
 					if (System.getProperty("os.name").contentEquals("Linux")) {
-					    log.addText("Executing:\ndotty " + directory + out + ".dot" + "\n");
-					    exec.exec("dotty " + out + ".dot", null, work);
+						log.addText("Executing:\ndotty " + directory + out + ".dot" + "\n");
+						exec.exec("dotty " + out + ".dot", null, work);
 					}
 					else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
-					    log.addText("Executing:\nopen " + directory + out + ".dot\n");
-					    exec.exec("open " + out + ".dot", null, work);
+						log.addText("Executing:\nopen " + directory + out + ".dot\n");
+						exec.exec("open " + out + ".dot", null, work);
 					}
 					else {
-					    log.addText("Executing:\ndotty " + directory + out + ".dot" + "\n");
-					    exec.exec("dotty " + out + ".dot", null, work);
+						log.addText("Executing:\ndotty " + directory + out + ".dot" + "\n");
+						exec.exec("dotty " + out + ".dot", null, work);
 					}
 				}
 				else if (xhtml.isSelected()) {
@@ -697,8 +715,8 @@ public class Run implements ActionListener {
 			e1.printStackTrace();
 		}
 		catch (IOException e1) {
-			JOptionPane.showMessageDialog(biomodelsim.frame(), "File I/O Error!",
-					"File I/O Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(biomodelsim.frame(), "File I/O Error!", "File I/O Error",
+					JOptionPane.ERROR_MESSAGE);
 			e1.printStackTrace();
 		}
 		return exitValue;

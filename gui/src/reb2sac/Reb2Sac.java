@@ -2258,8 +2258,9 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		cancel.addActionListener(runProgram);
 		biomodelsim.getExitButton().addActionListener(runProgram);
 		saveSAD(outDir);
-		runProgram.createProperties(timeLimit, printInterval, timeStep, absError, ".",
-		// root + separator + outDir,
+		runProgram.createProperties(timeLimit, ((String) (intervalLabel.getSelectedItem())),
+				printInterval, timeStep, absError, ".",
+				// root + separator + outDir,
 				rndSeed, run, termCond, intSpecies, printer_id, printer_track_quantity, simProp
 						.split(separator), selectedButtons, this, simProp, rap1, rap2, qss, con, usingSSA,
 				// root + separator + simName + separator +
@@ -2349,10 +2350,11 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		}
 		if (nary.isSelected() && exit == 0) {
 			new Nary_Run(this, amountTerm, ge, gt, eq, lt, le, simulators, simProp.split(separator),
-					simProp, sbml, dot, xhtml, nary, ODE, monteCarlo, timeLimit, printInterval, timeStep,
-					root + separator + simName, rndSeed, run, printer_id, printer_track_quantity, termCond,
-					intSpecies, rap1, rap2, qss, con, log, usingSSA, root + separator + outDir + separator
-							+ "user-defined.dat", biomodelsim, simTab, root);
+					simProp, sbml, dot, xhtml, nary, ODE, monteCarlo, timeLimit, ((String) (intervalLabel
+							.getSelectedItem())), printInterval, timeStep, root + separator + simName, rndSeed,
+					run, printer_id, printer_track_quantity, termCond, intSpecies, rap1, rap2, qss, con, log,
+					usingSSA, root + separator + outDir + separator + "user-defined.dat", biomodelsim,
+					simTab, root);
 		}
 		running.setCursor(null);
 		running.dispose();
@@ -2707,8 +2709,9 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		// }
 		log.addText("Creating properties file:\n" + propName + "\n");
 		saveSAD(simName);
-		runProgram.createProperties(timeLimit, printInterval, timeStep, absError, ".",
-		// outDir,
+		runProgram.createProperties(timeLimit, ((String) (intervalLabel.getSelectedItem())),
+				printInterval, timeStep, absError, ".",
+				// outDir,
 				rndSeed, run, termCond, intSpecies, printer_id, printer_track_quantity, sbmlProp
 						.split(separator), selectedButtons, this, sbmlProp, rap1, rap2, qss, con, usingSSA,
 				// root + separator + simName + separator +
