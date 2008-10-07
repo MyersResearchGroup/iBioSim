@@ -2,15 +2,10 @@ package buttons;
 
 import java.io.*;
 import java.awt.Component;
+import java.awt.FileDialog;
 import java.util.*;
 import java.util.prefs.Preferences;
 import javax.swing.*;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.DirectoryDialog;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.swt.widgets.Shell;
 
 /**
  * This class contains static methods that perform tasks based on which buttons
@@ -24,108 +19,146 @@ public class Buttons {
 	 * Returns the pathname of the selected file in the file chooser.
 	 */
 	public static String browse(JFrame frame, File file, JTextField text, int i, String approve) {
-		String separator;
-		if (File.separator.equals("\\")) {
-			separator = "\\\\";
-		}
-		else {
-			separator = File.separator;
-		}
 		Preferences biosimrc = Preferences.userRoot();
 		if (biosimrc.get("biosim.general.file_browser", "").equals("FileDialog")) {
-			String open;
-			Display display = new Display();
-			Shell shell = new Shell(display);
-			shell.setImage(new Image(display, System.getenv("BIOSIM") + separator + "gui" + separator
-					+ "icons" + separator + "iBioSim.png"));
+			FileDialog fd;
 			if (i == JFileChooser.DIRECTORIES_ONLY) {
-				DirectoryDialog dd = null;
 				if (approve.equals("Save") || approve.equals("New")) {
-					dd = new DirectoryDialog(shell, SWT.SAVE);
-					dd.setText(approve);
+					fd = new FileDialog(frame, approve, FileDialog.SAVE);
 				}
 				else if (approve.equals("Open")) {
-					dd = new DirectoryDialog(shell, SWT.OPEN);
-					dd.setText(approve);
+					fd = new FileDialog(frame, approve, FileDialog.LOAD);
 				}
 				else {
-					dd = new DirectoryDialog(shell);
-					dd.setText(approve);
+					fd = new FileDialog(frame, approve);
 				}
-				if (file != null) {
-					dd.setFilterPath(file.getPath());
-				}
-				open = dd.open();
 			}
 			else {
-				FileDialog fd = null;
 				if (approve.equals("Save") || approve.equals("New")) {
-					fd = new FileDialog(shell, SWT.SAVE);
-					fd.setText(approve);
+					fd = new FileDialog(frame, approve, FileDialog.SAVE);
 				}
 				else if (approve.equals("Open")) {
-					fd = new FileDialog(shell, SWT.OPEN);
-					fd.setText(approve);
+					fd = new FileDialog(frame, approve, FileDialog.LOAD);
 				}
 				else if (approve.equals("Export TSD")) {
-					fd = new FileDialog(shell, SWT.SAVE);
-					fd.setText(approve);
-					fd.setFilterNames(new String[] { "Comma Separated Values (*.csv)",
-							"Tab Delimited Data (*.dat)", "Encapsulated Postscript (*.eps)", "JPEG (*.jpg)",
-							"Portable Document Format (*.pdf)", "Portable Network Graphics (*.png)",
-							"Scalable Vector Graphics (*.svg)", "Time Series Data (*.tsd)" });
-					fd.setFilterExtensions(new String[] { "*.csv", "*.dat", "*.eps", "*.jpg", "*.pdf",
-							"*.png", "*.svg", "*.tsd" });
-					fd.setFilterIndex(4);
+					fd = new FileDialog(frame, approve, FileDialog.SAVE);
+					fd.setFilenameFilter(new FilenameFilter() {
+						public boolean accept(File dir, String name) {
+							return name.contains(".csv") || name.contains(".dat") || name.contains(".eps")
+									|| name.contains(".jpg") || name.contains(".pdf") || name.contains(".png")
+									|| name.contains(".svg") || name.contains(".tsd");
+						}
+					});
 				}
 				else if (approve.equals("Export Probability")) {
-					fd = new FileDialog(shell, SWT.SAVE);
-					fd.setText(approve);
-					fd.setFilterNames(new String[] { "Encapsulated Postscript (*.eps)", "JPEG (*.jpg)",
-							"Portable Document Format (*.pdf)", "Portable Network Graphics (*.png)",
-							"Scalable Vector Graphics (*.svg)" });
-					fd.setFilterExtensions(new String[] { "*.eps", "*.jpg", "*.pdf", "*.png", "*.svg" });
-					fd.setFilterIndex(2);
+					fd = new FileDialog(frame, approve, FileDialog.SAVE);
+					fd.setFilenameFilter(new FilenameFilter() {
+						public boolean accept(File dir, String name) {
+							return name.contains(".eps") || name.contains(".jpg") || name.contains(".pdf")
+									|| name.contains(".png") || name.contains(".svg");
+						}
+					});
 				}
 				else if (approve.equals("Import SBML")) {
-					fd = new FileDialog(shell, SWT.OPEN);
-					fd.setText(approve);
-					fd.setFilterNames(new String[] { "Systems Biology Markup Language (*.sbml)",
-							"Extensible Markup Language (*.xml)" });
-					fd.setFilterExtensions(new String[] { "*.sbml", "*.xml" });
-					fd.setFilterIndex(1);
+					fd = new FileDialog(frame, approve, FileDialog.LOAD);
+					fd.setFilenameFilter(new FilenameFilter() {
+						public boolean accept(File dir, String name) {
+							return name.contains(".sbml") || name.contains(".xml");
+						}
+					});
 				}
 				else if (approve.equals("Import Genetic Circuit")) {
-					fd = new FileDialog(shell, SWT.OPEN);
-					fd.setText(approve);
-					fd.setFilterNames(new String[] { "Genetic Circuit Model (*.gcm)" });
-					fd.setFilterExtensions(new String[] { "*.gcm" });
+					fd = new FileDialog(frame, approve, FileDialog.LOAD);
+					fd.setFilenameFilter(new FilenameFilter() {
+						public boolean accept(File dir, String name) {
+							return name.contains(".gcm");
+						}
+					});
 				}
 				else if (approve.equals("Import")) {
-					fd = new FileDialog(shell, SWT.OPEN);
-					fd.setText(approve);
-					fd.setFilterNames(new String[] { "Comma Separated Values (*.csv)",
-							"Tab Delimited Data (*.dat)", "Time Series Data (*.tsd)" });
-					fd.setFilterExtensions(new String[] { "*.csv", "*.dat", "*.tsd" });
-					fd.setFilterIndex(2);
+					fd = new FileDialog(frame, approve, FileDialog.LOAD);
+					fd.setFilenameFilter(new FilenameFilter() {
+						public boolean accept(File dir, String name) {
+							return name.contains(".csv") || name.contains(".dat") || name.contains(".tsd");
+						}
+					});
 				}
 				else {
-					fd = new FileDialog(shell);
-					fd.setText(approve);
+					fd = new FileDialog(frame, approve);
 				}
-				if (file != null) {
-					fd.setFilterPath(file.getParentFile().getPath());
-				}
-				open = fd.open();
 			}
-			shell.dispose();
-			display.dispose();
-			if (open != null) {
-				return open;
+			if (file != null) {
+				if (file.isDirectory()) {
+					fd.setDirectory(file.getPath());
+				}
+				else {
+					fd.setFile(file.getPath());
+				}
+			}
+			fd.setVisible(true);
+			if (i == JFileChooser.DIRECTORIES_ONLY) {
+				if (fd.getDirectory() != null) {
+					return fd.getDirectory();
+				}
+				else {
+					return "";
+				}
 			}
 			else {
-				return "";
+				if (fd.getFile() != null) {
+					return fd.getFile();
+				}
+				else {
+					return "";
+				}
 			}
+			/*
+			 * String open; Display display = new Display(); Shell shell = new
+			 * Shell(display); shell.setImage(new Image(display,
+			 * System.getenv("BIOSIM") + separator + "gui" + separator + "icons" +
+			 * separator + "iBioSim.png")); if (i == JFileChooser.DIRECTORIES_ONLY) {
+			 * DirectoryDialog dd = null; if (approve.equals("Save") ||
+			 * approve.equals("New")) { dd = new DirectoryDialog(shell, SWT.SAVE);
+			 * dd.setText(approve); } else if (approve.equals("Open")) { dd = new
+			 * DirectoryDialog(shell, SWT.OPEN); dd.setText(approve); } else { dd =
+			 * new DirectoryDialog(shell); dd.setText(approve); } if (file != null) {
+			 * dd.setFilterPath(file.getPath()); } open = dd.open(); } else {
+			 * FileDialog fd = null; if (approve.equals("Save") ||
+			 * approve.equals("New")) { fd = new FileDialog(shell, SWT.SAVE);
+			 * fd.setText(approve); } else if (approve.equals("Open")) { fd = new
+			 * FileDialog(shell, SWT.OPEN); fd.setText(approve); } else if
+			 * (approve.equals("Export TSD")) { fd = new FileDialog(shell, SWT.SAVE);
+			 * fd.setText(approve); fd.setFilterNames(new String[] { "Comma Separated
+			 * Values (*.csv)", "Tab Delimited Data (*.dat)", "Encapsulated Postscript
+			 * (*.eps)", "JPEG (*.jpg)", "Portable Document Format (*.pdf)", "Portable
+			 * Network Graphics (*.png)", "Scalable Vector Graphics (*.svg)", "Time
+			 * Series Data (*.tsd)" }); fd.setFilterExtensions(new String[] { "*.csv",
+			 * "*.dat", "*.eps", "*.jpg", "*.pdf", "*.png", "*.svg", "*.tsd" });
+			 * fd.setFilterIndex(4); } else if (approve.equals("Export Probability")) {
+			 * fd = new FileDialog(shell, SWT.SAVE); fd.setText(approve);
+			 * fd.setFilterNames(new String[] { "Encapsulated Postscript (*.eps)",
+			 * "JPEG (*.jpg)", "Portable Document Format (*.pdf)", "Portable Network
+			 * Graphics (*.png)", "Scalable Vector Graphics (*.svg)" });
+			 * fd.setFilterExtensions(new String[] { "*.eps", "*.jpg", "*.pdf",
+			 * "*.png", "*.svg" }); fd.setFilterIndex(2); } else if
+			 * (approve.equals("Import SBML")) { fd = new FileDialog(shell, SWT.OPEN);
+			 * fd.setText(approve); fd.setFilterNames(new String[] { "Systems Biology
+			 * Markup Language (*.sbml)", "Extensible Markup Language (*.xml)" });
+			 * fd.setFilterExtensions(new String[] { "*.sbml", "*.xml" });
+			 * fd.setFilterIndex(1); } else if (approve.equals("Import Genetic
+			 * Circuit")) { fd = new FileDialog(shell, SWT.OPEN); fd.setText(approve);
+			 * fd.setFilterNames(new String[] { "Genetic Circuit Model (*.gcm)" });
+			 * fd.setFilterExtensions(new String[] { "*.gcm" }); } else if
+			 * (approve.equals("Import")) { fd = new FileDialog(shell, SWT.OPEN);
+			 * fd.setText(approve); fd.setFilterNames(new String[] { "Comma Separated
+			 * Values (*.csv)", "Tab Delimited Data (*.dat)", "Time Series Data
+			 * (*.tsd)" }); fd.setFilterExtensions(new String[] { "*.csv", "*.dat",
+			 * "*.tsd" }); fd.setFilterIndex(2); } else { fd = new FileDialog(shell);
+			 * fd.setText(approve); } if (file != null) {
+			 * fd.setFilterPath(file.getParentFile().getPath()); } open = fd.open(); }
+			 * shell.dispose(); display.dispose(); if (open != null) { return open; }
+			 * else { return ""; }
+			 */
 		}
 		else {
 			String filename = "";
