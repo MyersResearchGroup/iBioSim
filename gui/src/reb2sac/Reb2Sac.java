@@ -64,11 +64,12 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 	 */
 	private JTextField limit, interval, step, absErr, seed, runs, fileStem;
 
+	private JComboBox intervalLabel;
+
 	/*
 	 * Labels for the changes in the abstraction
 	 */
-	private JLabel limitLabel, intervalLabel, stepLabel, errorLabel, seedLabel, runsLabel,
-			fileStemLabel;
+	private JLabel limitLabel, stepLabel, errorLabel, seedLabel, runsLabel, fileStemLabel;
 
 	/*
 	 * Description of selected simulator
@@ -227,7 +228,9 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		runs = new JTextField(biosimrc.get("biosim.sim.runs", ""), 15);
 		simulatorsLabel = new JLabel("Possible Simulators/Analyzers:");
 		limitLabel = new JLabel("Time Limit:");
-		intervalLabel = new JLabel("Print Interval:");
+		String[] intervalChoices = { "Print Interval", "Number Of Steps" };
+		intervalLabel = new JComboBox(intervalChoices);
+		intervalLabel.setSelectedItem(biosimrc.get("biosim.sim.useInterval", ""));
 		stepLabel = new JLabel("Maximum Time Step:");
 		errorLabel = new JLabel("Absolute Error:");
 		seedLabel = new JLabel("Random Seed:");

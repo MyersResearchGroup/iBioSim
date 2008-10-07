@@ -560,6 +560,9 @@ public class BioSim implements MouseListener, ActionListener {
 		if (biosimrc.get("biosim.sim.limit", "").equals("")) {
 			biosimrc.put("biosim.sim.limit", "100.0");
 		}
+		if (biosimrc.get("biosim.sim.useInterval", "").equals("")) {
+			biosimrc.put("biosim.sim.useInterval", "Print Interval");
+		}
 		if (biosimrc.get("biosim.sim.interval", "").equals("")) {
 			biosimrc.put("biosim.sim.interval", "1.0");
 		}
@@ -886,22 +889,25 @@ public class BioSim implements MouseListener, ActionListener {
 					}
 				}
 			});
-			final JTextField limit = new JTextField(biosimrc.get("biosim.sim.limit", ""));
-			final JTextField interval = new JTextField(biosimrc.get("biosim.sim.interval", ""));
-			final JTextField step = new JTextField(biosimrc.get("biosim.sim.step", ""));
-			final JTextField error = new JTextField(biosimrc.get("biosim.sim.error", ""));
-			final JTextField seed = new JTextField(biosimrc.get("biosim.sim.seed", ""));
-			final JTextField runs = new JTextField(biosimrc.get("biosim.sim.runs", ""));
-			final JTextField rapid1 = new JTextField(biosimrc.get("biosim.sim.rapid1", ""));
-			final JTextField rapid2 = new JTextField(biosimrc.get("biosim.sim.rapid2", ""));
-			final JTextField qssa = new JTextField(biosimrc.get("biosim.sim.qssa", ""));
-			final JTextField concentration = new JTextField(biosimrc.get("biosim.sim.concentration", ""));
+			JTextField limit = new JTextField(biosimrc.get("biosim.sim.limit", ""));
+			JTextField interval = new JTextField(biosimrc.get("biosim.sim.interval", ""));
+			JTextField step = new JTextField(biosimrc.get("biosim.sim.step", ""));
+			JTextField error = new JTextField(biosimrc.get("biosim.sim.error", ""));
+			JTextField seed = new JTextField(biosimrc.get("biosim.sim.seed", ""));
+			JTextField runs = new JTextField(biosimrc.get("biosim.sim.runs", ""));
+			JTextField rapid1 = new JTextField(biosimrc.get("biosim.sim.rapid1", ""));
+			JTextField rapid2 = new JTextField(biosimrc.get("biosim.sim.rapid2", ""));
+			JTextField qssa = new JTextField(biosimrc.get("biosim.sim.qssa", ""));
+			JTextField concentration = new JTextField(biosimrc.get("biosim.sim.concentration", ""));
+			choices = new String[] { "Print Interval", "Number Of Steps" };
+			JComboBox useInterval = new JComboBox(choices);
+			useInterval.setSelectedItem(biosimrc.get("biosim.sim.useInterval", ""));
 			JPanel analysisLabels = new JPanel(new GridLayout(13, 1));
 			analysisLabels.add(new JLabel("Abstraction:"));
 			analysisLabels.add(new JLabel("Simulation Type:"));
 			analysisLabels.add(new JLabel("Possible Simulators/Analyzers:"));
 			analysisLabels.add(new JLabel("Time Limit:"));
-			analysisLabels.add(new JLabel("Print Interval:"));
+			analysisLabels.add(useInterval);
 			analysisLabels.add(new JLabel("Maximum Time Step:"));
 			analysisLabels.add(new JLabel("Absolute Error:"));
 			analysisLabels.add(new JLabel("Random Seed:"));
@@ -1178,6 +1184,7 @@ public class BioSim implements MouseListener, ActionListener {
 				}
 				catch (Exception e1) {
 				}
+				biosimrc.put("biosim.sim.useInterval", (String) useInterval.getSelectedItem());
 				biosimrc.put("biosim.sim.abs", (String) abs.getSelectedItem());
 				biosimrc.put("biosim.sim.type", (String) type.getSelectedItem());
 				biosimrc.put("biosim.sim.sim", (String) sim.getSelectedItem());

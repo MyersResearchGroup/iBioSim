@@ -17,7 +17,7 @@ public class Button_Enabling {
 	public static void enableNoneOrAbs(JRadioButton ODE, JRadioButton monteCarlo,
 			JRadioButton markov, JTextField seed, JLabel seedLabel, JTextField runs, JLabel runsLabel,
 			JLabel stepLabel, JTextField step, JLabel errorLabel, JTextField absErr, JLabel limitLabel,
-			JTextField limit, JLabel intervalLabel, JTextField interval, JComboBox simulators,
+			JTextField limit, JComboBox intervalLabel, JTextField interval, JComboBox simulators,
 			JLabel simulatorsLabel, JLabel explanation, JLabel description, JRadioButton none,
 			JList intSpecies, JList species, JLabel spLabel, JLabel speciesLabel, JButton addIntSpecies,
 			JButton removeIntSpecies, JTextField rapid1, JTextField rapid2, JTextField qssa,
@@ -109,7 +109,7 @@ public class Button_Enabling {
 	public static void enableNary(JRadioButton ODE, JRadioButton monteCarlo, JRadioButton markov,
 			JTextField seed, JLabel seedLabel, JTextField runs, JLabel runsLabel, JLabel stepLabel,
 			JTextField step, JLabel errorLabel, JTextField absErr, JLabel limitLabel, JTextField limit,
-			JLabel intervalLabel, JTextField interval, JComboBox simulators, JLabel simulatorsLabel,
+			JComboBox intervalLabel, JTextField interval, JComboBox simulators, JLabel simulatorsLabel,
 			JLabel explanation, JLabel description, JList intSpecies, JList species, JLabel spLabel,
 			JLabel speciesLabel, JButton addIntSpecies, JButton removeIntSpecies, JTextField rapid1,
 			JTextField rapid2, JTextField qssa, JTextField maxCon, JLabel rapidLabel1,
@@ -172,7 +172,7 @@ public class Button_Enabling {
 	 */
 	public static void enableODE(JTextField seed, JLabel seedLabel, JTextField runs,
 			JLabel runsLabel, JLabel stepLabel, JTextField step, JLabel errorLabel, JTextField absErr,
-			JLabel limitLabel, JTextField limit, JLabel intervalLabel, JTextField interval,
+			JLabel limitLabel, JTextField limit, JComboBox intervalLabel, JTextField interval,
 			JComboBox simulators, JLabel simulatorsLabel, JLabel explanation, JLabel description,
 			JCheckBox usingSSA, JTextField fileStem, JLabel fileStemLabel) {
 		seed.setEnabled(true);
@@ -214,7 +214,7 @@ public class Button_Enabling {
 	 */
 	public static void enableMonteCarlo(JTextField seed, JLabel seedLabel, JTextField runs,
 			JLabel runsLabel, JLabel stepLabel, JTextField step, JLabel errorLabel, JTextField absErr,
-			JLabel limitLabel, JTextField limit, JLabel intervalLabel, JTextField interval,
+			JLabel limitLabel, JTextField limit, JComboBox intervalLabel, JTextField interval,
 			JComboBox simulators, JLabel simulatorsLabel, JLabel explanation, JLabel description,
 			JCheckBox usingSSA, JTextField fileStem, JLabel fileStemLabel) {
 		seed.setEnabled(true);
@@ -249,7 +249,7 @@ public class Button_Enabling {
 	 */
 	public static void enableMarkov(JTextField seed, JLabel seedLabel, JTextField runs,
 			JLabel runsLabel, JLabel stepLabel, JTextField step, JLabel errorLabel, JTextField absErr,
-			JLabel limitLabel, JTextField limit, JLabel intervalLabel, JTextField interval,
+			JLabel limitLabel, JTextField limit, JComboBox intervalLabel, JTextField interval,
 			JComboBox simulators, JLabel simulatorsLabel, JLabel explanation, JLabel description,
 			JCheckBox usingSSA, JTextField fileStem, JLabel fileStemLabel) {
 		seed.setEnabled(false);
@@ -283,7 +283,7 @@ public class Button_Enabling {
 	 */
 	public static void enableSbmlDotAndXhtml(JTextField seed, JLabel seedLabel, JTextField runs,
 			JLabel runsLabel, JLabel stepLabel, JTextField step, JLabel errorLabel, JTextField absErr,
-			JLabel limitLabel, JTextField limit, JLabel intervalLabel, JTextField interval,
+			JLabel limitLabel, JTextField limit, JComboBox intervalLabel, JTextField interval,
 			JComboBox simulators, JLabel simulatorsLabel, JLabel explanation, JLabel description,
 			JTextField fileStem, JLabel fileStemLabel) {
 		seed.setEnabled(false);
