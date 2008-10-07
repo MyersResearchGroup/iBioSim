@@ -2178,11 +2178,11 @@ public class BioSim implements MouseListener, ActionListener {
 						if (simName.length() > 4) {
 							if (!simName.substring(simName.length() - 5).equals(".sbml")
 									&& !simName.substring(simName.length() - 4).equals(".xml")) {
-								simName += ".sbml";
+								simName += ".xml";
 							}
 						}
 						else {
-							simName += ".sbml";
+							simName += ".xml";
 						}
 						String modelID = "";
 						if (simName.length() > 4) {
@@ -3341,11 +3341,11 @@ public class BioSim implements MouseListener, ActionListener {
 							if (copy.length() > 4) {
 								if (!copy.substring(copy.length() - 5).equals(".sbml")
 										&& !copy.substring(copy.length() - 4).equals(".xml")) {
-									copy += ".sbml";
+									copy += ".xml";
 								}
 							}
 							else {
-								copy += ".sbml";
+								copy += ".xml";
 							}
 							if (copy.length() > 4) {
 								if (copy.substring(copy.length() - 5).equals(".sbml")) {
@@ -3506,7 +3506,8 @@ public class BioSim implements MouseListener, ActionListener {
 								// ".sim")).close();
 								String[] s = new File(tree.getFile()).list();
 								for (String ss : s) {
-									if (ss.length() > 4 && ss.substring(ss.length() - 5).equals(".sbml")) {
+									if (ss.length() > 4 && ss.substring(ss.length() - 5).equals(".sbml")
+											|| ss.length() > 3 && ss.substring(ss.length() - 4).equals(".xml")) {
 										SBMLReader reader = new SBMLReader();
 										SBMLDocument document = reader.readSBML(tree.getFile() + separator + ss);
 										SBMLWriter writer = new SBMLWriter();
@@ -3622,11 +3623,11 @@ public class BioSim implements MouseListener, ActionListener {
 							if (rename.length() > 4) {
 								if (!rename.substring(rename.length() - 5).equals(".sbml")
 										&& !rename.substring(rename.length() - 4).equals(".xml")) {
-									rename += ".sbml";
+									rename += ".xml";
 								}
 							}
 							else {
-								rename += ".sbml";
+								rename += ".xml";
 							}
 							if (rename.length() > 4) {
 								if (rename.substring(rename.length() - 5).equals(".sbml")) {
@@ -6081,7 +6082,8 @@ public class BioSim implements MouseListener, ActionListener {
 			String propertiesFile = "";
 			String sbmlLoadFile = null;
 			for (String ss : s) {
-				if (ss.length() > 4 && ss.substring(ss.length() - 5).equals(".sbml")) {
+				if (ss.length() > 4 && ss.substring(ss.length() - 5).equals(".sbml") || ss.length() > 3
+						&& ss.substring(ss.length() - 4).equals(".xml")) {
 					SBMLReader reader = new SBMLReader();
 					SBMLDocument document = reader.readSBML(root + separator + oldSim + separator + ss);
 					SBMLWriter writer = new SBMLWriter();
