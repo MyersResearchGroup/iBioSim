@@ -176,6 +176,8 @@ public class BioSim implements MouseListener, ActionListener {
 
 	private boolean lema;
 
+	private JMenuItem copy, rename, delete;
+
 	public class MacOSAboutHandler extends Application {
 
 		public MacOSAboutHandler() {
@@ -281,10 +283,16 @@ public class BioSim implements MouseListener, ActionListener {
 		file.setMnemonic(KeyEvent.VK_F);
 		JMenu help = new JMenu("Help");
 		help.setMnemonic(KeyEvent.VK_H);
+		JMenu edit = new JMenu("Edit");
+		edit.setMnemonic(KeyEvent.VK_E);
 		JMenu importMenu = new JMenu("Import");
 		JMenu newMenu = new JMenu("New");
 		menuBar.add(file);
+		menuBar.add(edit);
 		menuBar.add(help);
+		copy = new JMenuItem("Copy");
+		rename = new JMenuItem("Rename");
+		delete = new JMenuItem("Delete");
 		manual = new JMenuItem("Manual");
 		about = new JMenuItem("About");
 		openProj = new JMenuItem("Open Project");
@@ -309,6 +317,9 @@ public class BioSim implements MouseListener, ActionListener {
 		importUnc = new JMenuItem("Extended Burst Mode Machine");
 		importRsg = new JMenuItem("Reduced State Graph");
 		exit = new JMenuItem("Exit");
+		copy.addActionListener(this);
+		rename.addActionListener(this);
+		delete.addActionListener(this);
 		openProj.addActionListener(this);
 		pref.addActionListener(this);
 		manual.addActionListener(this);
@@ -334,6 +345,9 @@ public class BioSim implements MouseListener, ActionListener {
 		graph.addActionListener(this);
 		probGraph.addActionListener(this);
 		ShortCutKey = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
+		copy.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, ShortCutKey));
+		rename.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, ShortCutKey));
+		delete.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D, ShortCutKey));
 		exit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, ShortCutKey));
 		newProj.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, ShortCutKey));
 		openProj.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ShortCutKey));
@@ -344,28 +358,37 @@ public class BioSim implements MouseListener, ActionListener {
 		about.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ShortCutKey));
 		manual.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, ShortCutKey));
 		graph.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, ShortCutKey));
-		probGraph.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, ShortCutKey));
-		importDot.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, ShortCutKey));
+		probGraph.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Y, ShortCutKey));
+		if (!lema) {
+			importDot.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, ShortCutKey));
+		}
+		else {
+			importLhpn.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, ShortCutKey));
+		}
 		importSbml.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_B, ShortCutKey));
 		importVhdl.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_H, ShortCutKey));
-		importLhpn.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, ShortCutKey));
+		copy.setMnemonic(KeyEvent.VK_C);
+		rename.setMnemonic(KeyEvent.VK_R);
+		delete.setMnemonic(KeyEvent.VK_D);
 		exit.setMnemonic(KeyEvent.VK_X);
 		newProj.setMnemonic(KeyEvent.VK_P);
 		openProj.setMnemonic(KeyEvent.VK_O);
 		newCircuit.setMnemonic(KeyEvent.VK_G);
-		newCircuit.setDisplayedMnemonicIndex(8);
 		newModel.setMnemonic(KeyEvent.VK_S);
 		newVhdl.setMnemonic(KeyEvent.VK_V);
 		newLhpn.setMnemonic(KeyEvent.VK_L);
 		about.setMnemonic(KeyEvent.VK_A);
 		manual.setMnemonic(KeyEvent.VK_M);
 		graph.setMnemonic(KeyEvent.VK_T);
-		probGraph.setMnemonic(KeyEvent.VK_R);
-		importDot.setMnemonic(KeyEvent.VK_E);
-		importDot.setDisplayedMnemonicIndex(14);
+		probGraph.setMnemonic(KeyEvent.VK_Y);
+		if (!lema) {
+			importDot.setMnemonic(KeyEvent.VK_N);
+		}
+		else {
+			importLhpn.setMnemonic(KeyEvent.VK_N);
+		}
 		importSbml.setMnemonic(KeyEvent.VK_B);
 		importVhdl.setMnemonic(KeyEvent.VK_H);
-		importLhpn.setMnemonic(KeyEvent.VK_N);
 		importDot.setEnabled(false);
 		importSbml.setEnabled(false);
 		importVhdl.setEnabled(false);
@@ -384,6 +407,9 @@ public class BioSim implements MouseListener, ActionListener {
 		newRsg.setEnabled(false);
 		graph.setEnabled(false);
 		probGraph.setEnabled(false);
+		edit.add(copy);
+		edit.add(rename);
+		edit.add(delete);
 		file.add(newMenu);
 		newMenu.add(newProj);
 		if (!lema) {
@@ -1557,58 +1583,62 @@ public class BioSim implements MouseListener, ActionListener {
 						JOptionPane.ERROR_MESSAGE);
 			}
 		}
-		// if the delete popup menu is selected on a sim directory
-		else if (e.getActionCommand().equals("deleteSim")) {
-			for (int i = 0; i < tab.getTabCount(); i++) {
-				if (tab.getTitleAt(i).equals(
-						tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
-					tab.remove(i);
-				}
-			}
-			File dir = new File(tree.getFile());
-			if (dir.isDirectory()) {
-				deleteDir(dir);
-			}
-			else {
-				System.gc();
-				dir.delete();
-			}
-			refreshTree();
-		}
 		// if the delete popup menu is selected
-		else if (e.getActionCommand().equals("delete")) {
-			String[] views = canDelete(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]);
-			if (views.length == 0) {
-				for (int i = 0; i < tab.getTabCount(); i++) {
-					if (tab.getTitleAt(i).equals(
-							tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
-						tab.remove(i);
+		else if (e.getActionCommand().contains("delete") || e.getSource() == delete) {
+			if (!tree.getFile().equals(root)) {
+				if (new File(tree.getFile()).isDirectory()) {
+					for (int i = 0; i < tab.getTabCount(); i++) {
+						if (tab.getTitleAt(i).equals(
+								tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
+							tab.remove(i);
+						}
 					}
-				}
-				System.gc();
-				new File(tree.getFile()).delete();
-				refreshTree();
-			}
-			else {
-				String view = "";
-				for (int i = 0; i < views.length; i++) {
-					if (i == views.length - 1) {
-						view += views[i];
+					File dir = new File(tree.getFile());
+					if (dir.isDirectory()) {
+						deleteDir(dir);
 					}
 					else {
-						view += views[i] + "\n";
+						System.gc();
+						dir.delete();
+					}
+					refreshTree();
+				}
+				else {
+					String[] views = canDelete(tree.getFile().split(separator)[tree.getFile()
+							.split(separator).length - 1]);
+					if (views.length == 0) {
+						for (int i = 0; i < tab.getTabCount(); i++) {
+							if (tab.getTitleAt(i).equals(
+									tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
+								tab.remove(i);
+							}
+						}
+						System.gc();
+						new File(tree.getFile()).delete();
+						refreshTree();
+					}
+					else {
+						String view = "";
+						for (int i = 0; i < views.length; i++) {
+							if (i == views.length - 1) {
+								view += views[i];
+							}
+							else {
+								view += views[i] + "\n";
+							}
+						}
+						String message = "Unable to delete the selected file."
+								+ "\nIt is linked to the following views:\n" + view + "\nDelete these views first.";
+						JTextArea messageArea = new JTextArea(message);
+						messageArea.setEditable(false);
+						JScrollPane scroll = new JScrollPane();
+						scroll.setMinimumSize(new Dimension(300, 300));
+						scroll.setPreferredSize(new Dimension(300, 300));
+						scroll.setViewportView(messageArea);
+						JOptionPane.showMessageDialog(frame, scroll, "Unable To Delete File",
+								JOptionPane.ERROR_MESSAGE);
 					}
 				}
-				String message = "Unable to delete the selected file."
-						+ "\nIt is linked to the following views:\n" + view + "\nDelete these views first.";
-				JTextArea messageArea = new JTextArea(message);
-				messageArea.setEditable(false);
-				JScrollPane scroll = new JScrollPane();
-				scroll.setMinimumSize(new Dimension(300, 300));
-				scroll.setPreferredSize(new Dimension(300, 300));
-				scroll.setViewportView(messageArea);
-				JOptionPane.showMessageDialog(frame, scroll, "Unable To Delete File",
-						JOptionPane.ERROR_MESSAGE);
 			}
 		}
 		// if the edit popup menu is selected on a dot file
@@ -3281,287 +3311,8 @@ public class BioSim implements MouseListener, ActionListener {
 						JOptionPane.ERROR_MESSAGE);
 			}
 		}
-		else if (e.getActionCommand().equals("copy")) {
-			for (int i = 0; i < tab.getTabCount(); i++) {
-				if (tab.getTitleAt(i).equals(
-						tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
-					tab.setSelectedIndex(i);
-					if (save(i) != 1) {
-						return;
-					}
-					break;
-				}
-			}
-			String modelID = null;
-			String copy = JOptionPane.showInputDialog(frame, "Enter A New Filename:", "Copy",
-					JOptionPane.PLAIN_MESSAGE);
-			if (copy != null) {
-				copy = copy.trim();
-			}
-			else {
-				return;
-			}
-			try {
-				if (!copy.equals("")) {
-					if (tree.getFile().length() >= 5
-							&& tree.getFile().substring(tree.getFile().length() - 5).equals(".sbml")
-							|| tree.getFile().length() >= 4
-							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".xml")) {
-						if (copy.length() > 4) {
-							if (!copy.substring(copy.length() - 5).equals(".sbml")
-									&& !copy.substring(copy.length() - 4).equals(".xml")) {
-								copy += ".sbml";
-							}
-						}
-						else {
-							copy += ".sbml";
-						}
-						if (copy.length() > 4) {
-							if (copy.substring(copy.length() - 5).equals(".sbml")) {
-								modelID = copy.substring(0, copy.length() - 5);
-							}
-							else {
-								modelID = copy.substring(0, copy.length() - 4);
-							}
-						}
-					}
-					else if (tree.getFile().length() >= 4
-							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".gcm")) {
-						if (copy.length() > 3) {
-							if (!copy.substring(copy.length() - 4).equals(".gcm")) {
-								copy += ".gcm";
-							}
-						}
-						else {
-							copy += ".gcm";
-						}
-					}
-					else if (tree.getFile().length() >= 4
-							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".vhd")) {
-						if (copy.length() > 3) {
-							if (!copy.substring(copy.length() - 4).equals(".vhd")) {
-								copy += ".vhd";
-							}
-						}
-						else {
-							copy += ".vhd";
-						}
-					}
-					else if (tree.getFile().length() >= 2
-							&& tree.getFile().substring(tree.getFile().length() - 2).equals(".g")) {
-						if (copy.length() > 1) {
-							if (!copy.substring(copy.length() - 2).equals(".g")) {
-								copy += ".g";
-							}
-						}
-						else {
-							copy += ".g";
-						}
-					}
-					else if (tree.getFile().length() >= 4
-							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".csp")) {
-						if (copy.length() > 3) {
-							if (!copy.substring(copy.length() - 4).equals(".csp")) {
-								copy += ".csp";
-							}
-						}
-						else {
-							copy += ".csp";
-						}
-					}
-					else if (tree.getFile().length() >= 4
-							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".hse")) {
-						if (copy.length() > 3) {
-							if (!copy.substring(copy.length() - 4).equals(".hse")) {
-								copy += ".hse";
-							}
-						}
-						else {
-							copy += ".hse";
-						}
-					}
-					else if (tree.getFile().length() >= 4
-							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".unc")) {
-						if (copy.length() > 3) {
-							if (!copy.substring(copy.length() - 4).equals(".unc")) {
-								copy += ".unc";
-							}
-						}
-						else {
-							copy += ".unc";
-						}
-					}
-					else if (tree.getFile().length() >= 4
-							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".rsg")) {
-						if (copy.length() > 3) {
-							if (!copy.substring(copy.length() - 4).equals(".rsg")) {
-								copy += ".rsg";
-							}
-						}
-						else {
-							copy += ".rsg";
-						}
-					}
-					else if (tree.getFile().length() >= 4
-							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".grf")) {
-						if (copy.length() > 3) {
-							if (!copy.substring(copy.length() - 4).equals(".grf")) {
-								copy += ".grf";
-							}
-						}
-						else {
-							copy += ".grf";
-						}
-					}
-					else if (tree.getFile().length() >= 4
-							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".prb")) {
-						if (copy.length() > 3) {
-							if (!copy.substring(copy.length() - 4).equals(".prb")) {
-								copy += ".prb";
-							}
-						}
-						else {
-							copy += ".prb";
-						}
-					}
-				}
-				if (copy
-						.equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
-					JOptionPane.showMessageDialog(frame, "Unable to copy file."
-							+ "\nNew filename must be different than old filename.", "Error",
-							JOptionPane.ERROR_MESSAGE);
-					return;
-				}
-				if (overwrite(root + separator + copy, copy)) {
-					if (modelID != null) {
-						SBMLReader reader = new SBMLReader();
-						SBMLDocument document = new SBMLDocument();
-						document = reader.readSBML(tree.getFile());
-						document.getModel().setId(modelID);
-						SBMLWriter writer = new SBMLWriter();
-						writer.writeSBML(document, root + separator + copy);
-					}
-					else if ((tree.getFile().length() >= 4
-							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".gcm")
-							|| tree.getFile().substring(tree.getFile().length() - 4).equals(".grf")
-							|| tree.getFile().substring(tree.getFile().length() - 4).equals(".vhd")
-							|| tree.getFile().substring(tree.getFile().length() - 4).equals(".csp")
-							|| tree.getFile().substring(tree.getFile().length() - 4).equals(".hse")
-							|| tree.getFile().substring(tree.getFile().length() - 4).equals(".unc") || tree
-							.getFile().substring(tree.getFile().length() - 4).equals(".rsg"))
-							|| (tree.getFile().length() >= 2 && tree.getFile().substring(
-									tree.getFile().length() - 2).equals(".g"))) {
-						FileOutputStream out = new FileOutputStream(new File(root + separator + copy));
-						FileInputStream in = new FileInputStream(new File(tree.getFile()));
-						int read = in.read();
-						while (read != -1) {
-							out.write(read);
-							read = in.read();
-						}
-						in.close();
-						out.close();
-					}
-					else {
-						boolean sim = false;
-						for (String s : new File(tree.getFile()).list()) {
-							if (s.length() > 3 && s.substring(s.length() - 4).equals(".sim")) {
-								sim = true;
-							}
-						}
-						if (sim) {
-							new File(root + separator + copy).mkdir();
-							// new FileWriter(new File(root + separator + copy +
-							// separator +
-							// ".sim")).close();
-							String[] s = new File(tree.getFile()).list();
-							for (String ss : s) {
-								if (ss.length() > 4 && ss.substring(ss.length() - 5).equals(".sbml")) {
-									SBMLReader reader = new SBMLReader();
-									SBMLDocument document = reader.readSBML(tree.getFile() + separator + ss);
-									SBMLWriter writer = new SBMLWriter();
-									writer.writeSBML(document, root + separator + copy + separator + ss);
-								}
-								else if (ss.length() > 10 && ss.substring(ss.length() - 11).equals(".properties")) {
-									FileOutputStream out = new FileOutputStream(new File(root + separator + copy
-											+ separator + ss));
-									FileInputStream in = new FileInputStream(
-											new File(tree.getFile() + separator + ss));
-									int read = in.read();
-									while (read != -1) {
-										out.write(read);
-										read = in.read();
-									}
-									in.close();
-									out.close();
-								}
-								else if (ss.length() > 3
-										&& (ss.substring(ss.length() - 4).equals(".tsd")
-												|| ss.substring(ss.length() - 4).equals(".dat")
-												|| ss.substring(ss.length() - 4).equals(".sad")
-												|| ss.substring(ss.length() - 4).equals(".pms") || ss.substring(
-												ss.length() - 4).equals(".sim")) && !ss.equals(".sim")) {
-									FileOutputStream out;
-									if (ss.substring(ss.length() - 4).equals(".pms")) {
-										out = new FileOutputStream(new File(root + separator + copy + separator + copy
-												+ ".sim"));
-									}
-									else if (ss.substring(ss.length() - 4).equals(".sim")) {
-										out = new FileOutputStream(new File(root + separator + copy + separator + copy
-												+ ".sim"));
-									}
-									else {
-										out = new FileOutputStream(new File(root + separator + copy + separator + ss));
-									}
-									FileInputStream in = new FileInputStream(
-											new File(tree.getFile() + separator + ss));
-									int read = in.read();
-									while (read != -1) {
-										out.write(read);
-										read = in.read();
-									}
-									in.close();
-									out.close();
-								}
-							}
-						}
-						else {
-							new File(root + separator + copy).mkdir();
-							String[] s = new File(tree.getFile()).list();
-							for (String ss : s) {
-								if (ss.length() > 3
-										&& (ss.substring(ss.length() - 4).equals(".tsd") || ss.substring(
-												ss.length() - 4).equals(".lrn"))) {
-									FileOutputStream out;
-									if (ss.substring(ss.length() - 4).equals(".lrn")) {
-										out = new FileOutputStream(new File(root + separator + copy + separator + copy
-												+ ".lrn"));
-									}
-									else {
-										out = new FileOutputStream(new File(root + separator + copy + separator + ss));
-									}
-									FileInputStream in = new FileInputStream(
-											new File(tree.getFile() + separator + ss));
-									int read = in.read();
-									while (read != -1) {
-										out.write(read);
-										read = in.read();
-									}
-									in.close();
-									out.close();
-								}
-							}
-						}
-					}
-					refreshTree();
-				}
-			}
-			catch (Exception e1) {
-				JOptionPane.showMessageDialog(frame, "Unable to copy file.", "Error",
-						JOptionPane.ERROR_MESSAGE);
-			}
-		}
-		else if (e.getActionCommand().equals("rename")) {
-			try {
+		else if (e.getActionCommand().equals("copy") || e.getSource() == copy) {
+			if (!tree.getFile().equals(root)) {
 				for (int i = 0; i < tab.getTabCount(); i++) {
 					if (tab.getTitleAt(i).equals(
 							tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
@@ -3573,361 +3324,646 @@ public class BioSim implements MouseListener, ActionListener {
 					}
 				}
 				String modelID = null;
-				String rename = JOptionPane.showInputDialog(frame, "Enter A New Filename:", "Rename",
+				String copy = JOptionPane.showInputDialog(frame, "Enter A New Filename:", "Copy",
 						JOptionPane.PLAIN_MESSAGE);
-				if (rename != null) {
-					rename = rename.trim();
+				if (copy != null) {
+					copy = copy.trim();
 				}
 				else {
 					return;
 				}
-				if (!rename.equals("")) {
-					if (tree.getFile().length() >= 5
-							&& tree.getFile().substring(tree.getFile().length() - 5).equals(".sbml")
-							|| tree.getFile().length() >= 4
-							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".xml")) {
-						if (rename.length() > 4) {
-							if (!rename.substring(rename.length() - 5).equals(".sbml")
-									&& !rename.substring(rename.length() - 4).equals(".xml")) {
-								rename += ".sbml";
-							}
-						}
-						else {
-							rename += ".sbml";
-						}
-						if (rename.length() > 4) {
-							if (rename.substring(rename.length() - 5).equals(".sbml")) {
-								modelID = rename.substring(0, rename.length() - 5);
+				try {
+					if (!copy.equals("")) {
+						if (tree.getFile().length() >= 5
+								&& tree.getFile().substring(tree.getFile().length() - 5).equals(".sbml")
+								|| tree.getFile().length() >= 4
+								&& tree.getFile().substring(tree.getFile().length() - 4).equals(".xml")) {
+							if (copy.length() > 4) {
+								if (!copy.substring(copy.length() - 5).equals(".sbml")
+										&& !copy.substring(copy.length() - 4).equals(".xml")) {
+									copy += ".sbml";
+								}
 							}
 							else {
-								modelID = rename.substring(0, rename.length() - 4);
+								copy += ".sbml";
+							}
+							if (copy.length() > 4) {
+								if (copy.substring(copy.length() - 5).equals(".sbml")) {
+									modelID = copy.substring(0, copy.length() - 5);
+								}
+								else {
+									modelID = copy.substring(0, copy.length() - 4);
+								}
+							}
+						}
+						else if (tree.getFile().length() >= 4
+								&& tree.getFile().substring(tree.getFile().length() - 4).equals(".gcm")) {
+							if (copy.length() > 3) {
+								if (!copy.substring(copy.length() - 4).equals(".gcm")) {
+									copy += ".gcm";
+								}
+							}
+							else {
+								copy += ".gcm";
+							}
+						}
+						else if (tree.getFile().length() >= 4
+								&& tree.getFile().substring(tree.getFile().length() - 4).equals(".vhd")) {
+							if (copy.length() > 3) {
+								if (!copy.substring(copy.length() - 4).equals(".vhd")) {
+									copy += ".vhd";
+								}
+							}
+							else {
+								copy += ".vhd";
+							}
+						}
+						else if (tree.getFile().length() >= 2
+								&& tree.getFile().substring(tree.getFile().length() - 2).equals(".g")) {
+							if (copy.length() > 1) {
+								if (!copy.substring(copy.length() - 2).equals(".g")) {
+									copy += ".g";
+								}
+							}
+							else {
+								copy += ".g";
+							}
+						}
+						else if (tree.getFile().length() >= 4
+								&& tree.getFile().substring(tree.getFile().length() - 4).equals(".csp")) {
+							if (copy.length() > 3) {
+								if (!copy.substring(copy.length() - 4).equals(".csp")) {
+									copy += ".csp";
+								}
+							}
+							else {
+								copy += ".csp";
+							}
+						}
+						else if (tree.getFile().length() >= 4
+								&& tree.getFile().substring(tree.getFile().length() - 4).equals(".hse")) {
+							if (copy.length() > 3) {
+								if (!copy.substring(copy.length() - 4).equals(".hse")) {
+									copy += ".hse";
+								}
+							}
+							else {
+								copy += ".hse";
+							}
+						}
+						else if (tree.getFile().length() >= 4
+								&& tree.getFile().substring(tree.getFile().length() - 4).equals(".unc")) {
+							if (copy.length() > 3) {
+								if (!copy.substring(copy.length() - 4).equals(".unc")) {
+									copy += ".unc";
+								}
+							}
+							else {
+								copy += ".unc";
+							}
+						}
+						else if (tree.getFile().length() >= 4
+								&& tree.getFile().substring(tree.getFile().length() - 4).equals(".rsg")) {
+							if (copy.length() > 3) {
+								if (!copy.substring(copy.length() - 4).equals(".rsg")) {
+									copy += ".rsg";
+								}
+							}
+							else {
+								copy += ".rsg";
+							}
+						}
+						else if (tree.getFile().length() >= 4
+								&& tree.getFile().substring(tree.getFile().length() - 4).equals(".grf")) {
+							if (copy.length() > 3) {
+								if (!copy.substring(copy.length() - 4).equals(".grf")) {
+									copy += ".grf";
+								}
+							}
+							else {
+								copy += ".grf";
+							}
+						}
+						else if (tree.getFile().length() >= 4
+								&& tree.getFile().substring(tree.getFile().length() - 4).equals(".prb")) {
+							if (copy.length() > 3) {
+								if (!copy.substring(copy.length() - 4).equals(".prb")) {
+									copy += ".prb";
+								}
+							}
+							else {
+								copy += ".prb";
 							}
 						}
 					}
-					else if (tree.getFile().length() >= 4
-							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".gcm")) {
-						if (rename.length() > 3) {
-							if (!rename.substring(rename.length() - 4).equals(".gcm")) {
-								rename += ".gcm";
-							}
-						}
-						else {
-							rename += ".gcm";
-						}
-					}
-					else if (tree.getFile().length() >= 4
-							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".vhd")) {
-						if (rename.length() > 3) {
-							if (!rename.substring(rename.length() - 4).equals(".vhd")) {
-								rename += ".vhd";
-							}
-						}
-						else {
-							rename += ".vhd";
-						}
-					}
-					else if (tree.getFile().length() >= 2
-							&& tree.getFile().substring(tree.getFile().length() - 2).equals(".g")) {
-						if (rename.length() > 1) {
-							if (!rename.substring(rename.length() - 2).equals(".g")) {
-								rename += ".g";
-							}
-						}
-						else {
-							rename += ".g";
-						}
-					}
-					else if (tree.getFile().length() >= 4
-							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".csp")) {
-						if (rename.length() > 3) {
-							if (!rename.substring(rename.length() - 4).equals(".csp")) {
-								rename += ".csp";
-							}
-						}
-						else {
-							rename += ".csp";
-						}
-					}
-					else if (tree.getFile().length() >= 4
-							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".hse")) {
-						if (rename.length() > 3) {
-							if (!rename.substring(rename.length() - 4).equals(".hse")) {
-								rename += ".hse";
-							}
-						}
-						else {
-							rename += ".hse";
-						}
-					}
-					else if (tree.getFile().length() >= 4
-							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".unc")) {
-						if (rename.length() > 3) {
-							if (!rename.substring(rename.length() - 4).equals(".unc")) {
-								rename += ".unc";
-							}
-						}
-						else {
-							rename += ".unc";
-						}
-					}
-					else if (tree.getFile().length() >= 4
-							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".rsg")) {
-						if (rename.length() > 3) {
-							if (!rename.substring(rename.length() - 4).equals(".rsg")) {
-								rename += ".rsg";
-							}
-						}
-						else {
-							rename += ".rsg";
-						}
-					}
-					else if (tree.getFile().length() >= 4
-							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".grf")) {
-						if (rename.length() > 3) {
-							if (!rename.substring(rename.length() - 4).equals(".grf")) {
-								rename += ".grf";
-							}
-						}
-						else {
-							rename += ".grf";
-						}
-					}
-					else if (tree.getFile().length() >= 4
-							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".prb")) {
-						if (rename.length() > 3) {
-							if (!rename.substring(rename.length() - 4).equals(".prb")) {
-								rename += ".prb";
-							}
-						}
-						else {
-							rename += ".prb";
-						}
-					}
-					if (rename
+					if (copy
 							.equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
-						JOptionPane.showMessageDialog(frame, "Unable to rename file."
+						JOptionPane.showMessageDialog(frame, "Unable to copy file."
 								+ "\nNew filename must be different than old filename.", "Error",
 								JOptionPane.ERROR_MESSAGE);
 						return;
 					}
-					if (overwrite(root + separator + rename, rename)) {
-						if (tree.getFile().length() >= 5
-								&& tree.getFile().substring(tree.getFile().length() - 5).equals(".sbml")
-								|| tree.getFile().length() >= 4
-								&& tree.getFile().substring(tree.getFile().length() - 4).equals(".xml")
-								|| tree.getFile().length() >= 4
-								&& tree.getFile().substring(tree.getFile().length() - 4).equals(".gcm")
-								|| tree.getFile().length() >= 4
-								&& tree.getFile().substring(tree.getFile().length() - 4).equals(".vhd")
-								|| tree.getFile().length() >= 4
-								&& tree.getFile().substring(tree.getFile().length() - 4).equals(".csp")
-								|| tree.getFile().length() >= 4
-								&& tree.getFile().substring(tree.getFile().length() - 4).equals(".hse")
-								|| tree.getFile().length() >= 4
-								&& tree.getFile().substring(tree.getFile().length() - 4).equals(".unc")
-								|| tree.getFile().length() >= 4
-								&& tree.getFile().substring(tree.getFile().length() - 4).equals(".rsg")) {
-							String oldName = tree.getFile().split(separator)[tree.getFile().split(separator).length - 1];
-							reassignViews(oldName, rename);
-						}
-						new File(tree.getFile()).renameTo(new File(root + separator + rename));
+					if (overwrite(root + separator + copy, copy)) {
 						if (modelID != null) {
 							SBMLReader reader = new SBMLReader();
 							SBMLDocument document = new SBMLDocument();
-							document = reader.readSBML(root + separator + rename);
+							document = reader.readSBML(tree.getFile());
 							document.getModel().setId(modelID);
 							SBMLWriter writer = new SBMLWriter();
-							writer.writeSBML(document, root + separator + rename);
+							writer.writeSBML(document, root + separator + copy);
 						}
-						if (rename.length() >= 5 && rename.substring(rename.length() - 5).equals(".sbml")
-								|| rename.length() >= 4 && rename.substring(rename.length() - 4).equals(".xml")
-								|| rename.length() >= 4 && rename.substring(rename.length() - 4).equals(".gcm")
-								|| rename.length() >= 4 && rename.substring(rename.length() - 4).equals(".vhd")
-								|| rename.length() >= 4 && rename.substring(rename.length() - 4).equals(".csp")
-								|| rename.length() >= 4 && rename.substring(rename.length() - 4).equals(".hse")
-								|| rename.length() >= 4 && rename.substring(rename.length() - 4).equals(".unc")
-								|| rename.length() >= 4 && rename.substring(rename.length() - 4).equals(".rsg")) {
-							updateViews(rename);
+						else if ((tree.getFile().length() >= 4
+								&& tree.getFile().substring(tree.getFile().length() - 4).equals(".gcm")
+								|| tree.getFile().substring(tree.getFile().length() - 4).equals(".grf")
+								|| tree.getFile().substring(tree.getFile().length() - 4).equals(".vhd")
+								|| tree.getFile().substring(tree.getFile().length() - 4).equals(".csp")
+								|| tree.getFile().substring(tree.getFile().length() - 4).equals(".hse")
+								|| tree.getFile().substring(tree.getFile().length() - 4).equals(".unc") || tree
+								.getFile().substring(tree.getFile().length() - 4).equals(".rsg"))
+								|| (tree.getFile().length() >= 2 && tree.getFile().substring(
+										tree.getFile().length() - 2).equals(".g"))) {
+							FileOutputStream out = new FileOutputStream(new File(root + separator + copy));
+							FileInputStream in = new FileInputStream(new File(tree.getFile()));
+							int read = in.read();
+							while (read != -1) {
+								out.write(read);
+								read = in.read();
+							}
+							in.close();
+							out.close();
 						}
-						if (new File(root + separator + rename).isDirectory()) {
-							if (new File(root + separator + rename + separator
-									+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]
-									+ ".sim").exists()) {
-								new File(root + separator + rename + separator
-										+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]
-										+ ".sim").renameTo(new File(root + separator + rename + separator + rename
-										+ ".sim"));
+						else {
+							boolean sim = false;
+							for (String s : new File(tree.getFile()).list()) {
+								if (s.length() > 3 && s.substring(s.length() - 4).equals(".sim")) {
+									sim = true;
+								}
 							}
-							else if (new File(root + separator + rename + separator
-									+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]
-									+ ".pms").exists()) {
-								new File(root + separator + rename + separator
-										+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]
-										+ ".pms").renameTo(new File(root + separator + rename + separator + rename
-										+ ".sim"));
-							}
-							if (new File(root + separator + rename + separator
-									+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]
-									+ ".lrn").exists()) {
-								new File(root + separator + rename + separator
-										+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]
-										+ ".lrn").renameTo(new File(root + separator + rename + separator + rename
-										+ ".lrn"));
-							}
-							if (new File(root + separator + rename + separator
-									+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]
-									+ ".grf").exists()) {
-								new File(root + separator + rename + separator
-										+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]
-										+ ".grf").renameTo(new File(root + separator + rename + separator + rename
-										+ ".grf"));
-							}
-							if (new File(root + separator + rename + separator
-									+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]
-									+ ".prb").exists()) {
-								new File(root + separator + rename + separator
-										+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]
-										+ ".prb").renameTo(new File(root + separator + rename + separator + rename
-										+ ".prb"));
-							}
-						}
-						for (int i = 0; i < tab.getTabCount(); i++) {
-							if (tab.getTitleAt(i).equals(
-									tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
-								if (tree.getFile().length() > 4
-										&& tree.getFile().substring(tree.getFile().length() - 5).equals(".sbml")
-										|| tree.getFile().length() > 3
-										&& tree.getFile().substring(tree.getFile().length() - 4).equals(".xml")) {
-									((SBML_Editor) tab.getComponentAt(i)).setModelID(modelID);
-									((SBML_Editor) tab.getComponentAt(i)).setFile(root + separator + rename);
-									tab.setTitleAt(i, rename);
-								}
-								else if (tree.getFile().length() > 3
-										&& (tree.getFile().substring(tree.getFile().length() - 4).equals(".grf") || tree
-												.getFile().substring(tree.getFile().length() - 4).equals(".prb"))) {
-									((Graph) tab.getComponentAt(i)).setGraphName(rename);
-									tab.setTitleAt(i, rename);
-								}
-								else if (tree.getFile().length() > 3
-										&& tree.getFile().substring(tree.getFile().length() - 4).equals(".gcm")) {
-									((GCM2SBMLEditor) tab.getComponentAt(i)).reload(rename.substring(0, rename
-											.length() - 4));
-								}
-								else if (tree.getFile().length() > 3
-										&& tree.getFile().substring(tree.getFile().length() - 4).equals(".vhd")) {
-									((GCM2SBMLEditor) tab.getComponentAt(i)).reload(rename.substring(0, rename
-											.length() - 4));
-								}
-								else if (tree.getFile().length() > 1
-										&& tree.getFile().substring(tree.getFile().length() - 2).equals(".g")) {
-									((GCM2SBMLEditor) tab.getComponentAt(i)).reload(rename.substring(0, rename
-											.length() - 2));
-								}
-								else if (tree.getFile().length() > 3
-										&& tree.getFile().substring(tree.getFile().length() - 4).equals(".csp")) {
-									((GCM2SBMLEditor) tab.getComponentAt(i)).reload(rename.substring(0, rename
-											.length() - 4));
-								}
-								else if (tree.getFile().length() > 3
-										&& tree.getFile().substring(tree.getFile().length() - 4).equals(".hse")) {
-									((GCM2SBMLEditor) tab.getComponentAt(i)).reload(rename.substring(0, rename
-											.length() - 4));
-								}
-								else if (tree.getFile().length() > 3
-										&& tree.getFile().substring(tree.getFile().length() - 4).equals(".unc")) {
-									((GCM2SBMLEditor) tab.getComponentAt(i)).reload(rename.substring(0, rename
-											.length() - 4));
-								}
-								else if (tree.getFile().length() > 3
-										&& tree.getFile().substring(tree.getFile().length() - 4).equals(".rsg")) {
-									((GCM2SBMLEditor) tab.getComponentAt(i)).reload(rename.substring(0, rename
-											.length() - 4));
-								}
-								else {
-									JTabbedPane t = new JTabbedPane();
-									int selected = ((JTabbedPane) tab.getComponentAt(i)).getSelectedIndex();
-									boolean analysis = false;
-									ArrayList<Component> comps = new ArrayList<Component>();
-									for (int j = 0; j < ((JTabbedPane) tab.getComponentAt(i)).getTabCount(); j++) {
-										Component c = ((JTabbedPane) tab.getComponentAt(i)).getComponent(j);
-										comps.add(c);
+							if (sim) {
+								new File(root + separator + copy).mkdir();
+								// new FileWriter(new File(root + separator + copy +
+								// separator +
+								// ".sim")).close();
+								String[] s = new File(tree.getFile()).list();
+								for (String ss : s) {
+									if (ss.length() > 4 && ss.substring(ss.length() - 5).equals(".sbml")) {
+										SBMLReader reader = new SBMLReader();
+										SBMLDocument document = reader.readSBML(tree.getFile() + separator + ss);
+										SBMLWriter writer = new SBMLWriter();
+										writer.writeSBML(document, root + separator + copy + separator + ss);
 									}
-									for (Component c : comps) {
-										if (c instanceof Reb2Sac) {
-											((Reb2Sac) c).setSim(rename);
-											analysis = true;
+									else if (ss.length() > 10 && ss.substring(ss.length() - 11).equals(".properties")) {
+										FileOutputStream out = new FileOutputStream(new File(root + separator + copy
+												+ separator + ss));
+										FileInputStream in = new FileInputStream(new File(tree.getFile() + separator
+												+ ss));
+										int read = in.read();
+										while (read != -1) {
+											out.write(read);
+											read = in.read();
 										}
-										else if (c instanceof SBML_Editor) {
-											String properties = root + separator + rename + separator + rename + ".sim";
-											new File(properties).renameTo(new File(properties.replace(".sim", ".temp")));
-											boolean dirty = ((SBML_Editor) c).isDirty();
-											((SBML_Editor) c)
-													.setParamFileAndSimDir(properties, root + separator + rename);
-											((SBML_Editor) c).save(false, "", true);
-											((SBML_Editor) c).updateSBML(i, 0);
-											((SBML_Editor) c).setDirty(dirty);
-											new File(properties).delete();
-											new File(properties.replace(".sim", ".temp")).renameTo(new File(properties));
-										}
-										else if (c instanceof Graph) {
-											Graph g = ((Graph) c);
-											g.setDirectory(root + separator + rename);
-											if (g.isTSDGraph()) {
-												g.setGraphName(rename + ".grf");
-											}
-											else {
-												g.setGraphName(rename + ".prb");
-											}
-										}
-										else if (c instanceof Learn) {
-											Learn l = ((Learn) c);
-											l.setDirectory(root + separator + rename);
-										}
-										else if (c instanceof DataManager) {
-											DataManager d = ((DataManager) c);
-											d.setDirectory(root + separator + rename);
-										}
-										if (analysis) {
-											if (c instanceof Reb2Sac) {
-												t.addTab("Simulation Options", c);
-												t.getComponentAt(t.getComponents().length - 1).setName("Simulate");
-											}
-											else if (c instanceof SBML_Editor) {
-												t.addTab("Parameter Editor", c);
-												t.getComponentAt(t.getComponents().length - 1).setName("SBML Editor");
-											}
-											else if (c instanceof Graph) {
-												if (((Graph) c).isTSDGraph()) {
-													t.addTab("TSD Graph", c);
-													t.getComponentAt(t.getComponents().length - 1).setName("TSD Graph");
-												}
-												else {
-													t.addTab("Probability Graph", c);
-													t.getComponentAt(t.getComponents().length - 1).setName("ProbGraph");
-												}
-											}
-											else {
-												t.addTab("Abstraction Options", c);
-												t.getComponentAt(t.getComponents().length - 1).setName("");
-											}
-										}
+										in.close();
+										out.close();
 									}
-									if (analysis) {
-										t.setSelectedIndex(selected);
-										tab.setComponentAt(i, t);
+									else if (ss.length() > 3
+											&& (ss.substring(ss.length() - 4).equals(".tsd")
+													|| ss.substring(ss.length() - 4).equals(".dat")
+													|| ss.substring(ss.length() - 4).equals(".sad")
+													|| ss.substring(ss.length() - 4).equals(".pms") || ss.substring(
+													ss.length() - 4).equals(".sim")) && !ss.equals(".sim")) {
+										FileOutputStream out;
+										if (ss.substring(ss.length() - 4).equals(".pms")) {
+											out = new FileOutputStream(new File(root + separator + copy + separator
+													+ copy + ".sim"));
+										}
+										else if (ss.substring(ss.length() - 4).equals(".sim")) {
+											out = new FileOutputStream(new File(root + separator + copy + separator
+													+ copy + ".sim"));
+										}
+										else {
+											out = new FileOutputStream(new File(root + separator + copy + separator + ss));
+										}
+										FileInputStream in = new FileInputStream(new File(tree.getFile() + separator
+												+ ss));
+										int read = in.read();
+										while (read != -1) {
+											out.write(read);
+											read = in.read();
+										}
+										in.close();
+										out.close();
 									}
-									tab.setTitleAt(i, rename);
-									tab.getComponentAt(i).setName(rename);
+								}
+							}
+							else {
+								new File(root + separator + copy).mkdir();
+								String[] s = new File(tree.getFile()).list();
+								for (String ss : s) {
+									if (ss.length() > 3
+											&& (ss.substring(ss.length() - 4).equals(".tsd") || ss.substring(
+													ss.length() - 4).equals(".lrn"))) {
+										FileOutputStream out;
+										if (ss.substring(ss.length() - 4).equals(".lrn")) {
+											out = new FileOutputStream(new File(root + separator + copy + separator
+													+ copy + ".lrn"));
+										}
+										else {
+											out = new FileOutputStream(new File(root + separator + copy + separator + ss));
+										}
+										FileInputStream in = new FileInputStream(new File(tree.getFile() + separator
+												+ ss));
+										int read = in.read();
+										while (read != -1) {
+											out.write(read);
+											read = in.read();
+										}
+										in.close();
+										out.close();
+									}
 								}
 							}
 						}
 						refreshTree();
 					}
 				}
+				catch (Exception e1) {
+					JOptionPane.showMessageDialog(frame, "Unable to copy file.", "Error",
+							JOptionPane.ERROR_MESSAGE);
+				}
 			}
-			catch (Exception e1) {
-				JOptionPane.showMessageDialog(frame, "Unable to rename selected file.", "Error",
-						JOptionPane.ERROR_MESSAGE);
+		}
+		else if (e.getActionCommand().equals("rename") || e.getSource() == rename) {
+			if (!tree.getFile().equals(root)) {
+				try {
+					for (int i = 0; i < tab.getTabCount(); i++) {
+						if (tab.getTitleAt(i).equals(
+								tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
+							tab.setSelectedIndex(i);
+							if (save(i) != 1) {
+								return;
+							}
+							break;
+						}
+					}
+					String modelID = null;
+					String rename = JOptionPane.showInputDialog(frame, "Enter A New Filename:", "Rename",
+							JOptionPane.PLAIN_MESSAGE);
+					if (rename != null) {
+						rename = rename.trim();
+					}
+					else {
+						return;
+					}
+					if (!rename.equals("")) {
+						if (tree.getFile().length() >= 5
+								&& tree.getFile().substring(tree.getFile().length() - 5).equals(".sbml")
+								|| tree.getFile().length() >= 4
+								&& tree.getFile().substring(tree.getFile().length() - 4).equals(".xml")) {
+							if (rename.length() > 4) {
+								if (!rename.substring(rename.length() - 5).equals(".sbml")
+										&& !rename.substring(rename.length() - 4).equals(".xml")) {
+									rename += ".sbml";
+								}
+							}
+							else {
+								rename += ".sbml";
+							}
+							if (rename.length() > 4) {
+								if (rename.substring(rename.length() - 5).equals(".sbml")) {
+									modelID = rename.substring(0, rename.length() - 5);
+								}
+								else {
+									modelID = rename.substring(0, rename.length() - 4);
+								}
+							}
+						}
+						else if (tree.getFile().length() >= 4
+								&& tree.getFile().substring(tree.getFile().length() - 4).equals(".gcm")) {
+							if (rename.length() > 3) {
+								if (!rename.substring(rename.length() - 4).equals(".gcm")) {
+									rename += ".gcm";
+								}
+							}
+							else {
+								rename += ".gcm";
+							}
+						}
+						else if (tree.getFile().length() >= 4
+								&& tree.getFile().substring(tree.getFile().length() - 4).equals(".vhd")) {
+							if (rename.length() > 3) {
+								if (!rename.substring(rename.length() - 4).equals(".vhd")) {
+									rename += ".vhd";
+								}
+							}
+							else {
+								rename += ".vhd";
+							}
+						}
+						else if (tree.getFile().length() >= 2
+								&& tree.getFile().substring(tree.getFile().length() - 2).equals(".g")) {
+							if (rename.length() > 1) {
+								if (!rename.substring(rename.length() - 2).equals(".g")) {
+									rename += ".g";
+								}
+							}
+							else {
+								rename += ".g";
+							}
+						}
+						else if (tree.getFile().length() >= 4
+								&& tree.getFile().substring(tree.getFile().length() - 4).equals(".csp")) {
+							if (rename.length() > 3) {
+								if (!rename.substring(rename.length() - 4).equals(".csp")) {
+									rename += ".csp";
+								}
+							}
+							else {
+								rename += ".csp";
+							}
+						}
+						else if (tree.getFile().length() >= 4
+								&& tree.getFile().substring(tree.getFile().length() - 4).equals(".hse")) {
+							if (rename.length() > 3) {
+								if (!rename.substring(rename.length() - 4).equals(".hse")) {
+									rename += ".hse";
+								}
+							}
+							else {
+								rename += ".hse";
+							}
+						}
+						else if (tree.getFile().length() >= 4
+								&& tree.getFile().substring(tree.getFile().length() - 4).equals(".unc")) {
+							if (rename.length() > 3) {
+								if (!rename.substring(rename.length() - 4).equals(".unc")) {
+									rename += ".unc";
+								}
+							}
+							else {
+								rename += ".unc";
+							}
+						}
+						else if (tree.getFile().length() >= 4
+								&& tree.getFile().substring(tree.getFile().length() - 4).equals(".rsg")) {
+							if (rename.length() > 3) {
+								if (!rename.substring(rename.length() - 4).equals(".rsg")) {
+									rename += ".rsg";
+								}
+							}
+							else {
+								rename += ".rsg";
+							}
+						}
+						else if (tree.getFile().length() >= 4
+								&& tree.getFile().substring(tree.getFile().length() - 4).equals(".grf")) {
+							if (rename.length() > 3) {
+								if (!rename.substring(rename.length() - 4).equals(".grf")) {
+									rename += ".grf";
+								}
+							}
+							else {
+								rename += ".grf";
+							}
+						}
+						else if (tree.getFile().length() >= 4
+								&& tree.getFile().substring(tree.getFile().length() - 4).equals(".prb")) {
+							if (rename.length() > 3) {
+								if (!rename.substring(rename.length() - 4).equals(".prb")) {
+									rename += ".prb";
+								}
+							}
+							else {
+								rename += ".prb";
+							}
+						}
+						if (rename
+								.equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
+							JOptionPane.showMessageDialog(frame, "Unable to rename file."
+									+ "\nNew filename must be different than old filename.", "Error",
+									JOptionPane.ERROR_MESSAGE);
+							return;
+						}
+						if (overwrite(root + separator + rename, rename)) {
+							if (tree.getFile().length() >= 5
+									&& tree.getFile().substring(tree.getFile().length() - 5).equals(".sbml")
+									|| tree.getFile().length() >= 4
+									&& tree.getFile().substring(tree.getFile().length() - 4).equals(".xml")
+									|| tree.getFile().length() >= 4
+									&& tree.getFile().substring(tree.getFile().length() - 4).equals(".gcm")
+									|| tree.getFile().length() >= 4
+									&& tree.getFile().substring(tree.getFile().length() - 4).equals(".vhd")
+									|| tree.getFile().length() >= 4
+									&& tree.getFile().substring(tree.getFile().length() - 4).equals(".csp")
+									|| tree.getFile().length() >= 4
+									&& tree.getFile().substring(tree.getFile().length() - 4).equals(".hse")
+									|| tree.getFile().length() >= 4
+									&& tree.getFile().substring(tree.getFile().length() - 4).equals(".unc")
+									|| tree.getFile().length() >= 4
+									&& tree.getFile().substring(tree.getFile().length() - 4).equals(".rsg")) {
+								String oldName = tree.getFile().split(separator)[tree.getFile().split(separator).length - 1];
+								reassignViews(oldName, rename);
+							}
+							new File(tree.getFile()).renameTo(new File(root + separator + rename));
+							if (modelID != null) {
+								SBMLReader reader = new SBMLReader();
+								SBMLDocument document = new SBMLDocument();
+								document = reader.readSBML(root + separator + rename);
+								document.getModel().setId(modelID);
+								SBMLWriter writer = new SBMLWriter();
+								writer.writeSBML(document, root + separator + rename);
+							}
+							if (rename.length() >= 5 && rename.substring(rename.length() - 5).equals(".sbml")
+									|| rename.length() >= 4 && rename.substring(rename.length() - 4).equals(".xml")
+									|| rename.length() >= 4 && rename.substring(rename.length() - 4).equals(".gcm")
+									|| rename.length() >= 4 && rename.substring(rename.length() - 4).equals(".vhd")
+									|| rename.length() >= 4 && rename.substring(rename.length() - 4).equals(".csp")
+									|| rename.length() >= 4 && rename.substring(rename.length() - 4).equals(".hse")
+									|| rename.length() >= 4 && rename.substring(rename.length() - 4).equals(".unc")
+									|| rename.length() >= 4 && rename.substring(rename.length() - 4).equals(".rsg")) {
+								updateViews(rename);
+							}
+							if (new File(root + separator + rename).isDirectory()) {
+								if (new File(root + separator + rename + separator
+										+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]
+										+ ".sim").exists()) {
+									new File(root + separator + rename + separator
+											+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]
+											+ ".sim").renameTo(new File(root + separator + rename + separator + rename
+											+ ".sim"));
+								}
+								else if (new File(root + separator + rename + separator
+										+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]
+										+ ".pms").exists()) {
+									new File(root + separator + rename + separator
+											+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]
+											+ ".pms").renameTo(new File(root + separator + rename + separator + rename
+											+ ".sim"));
+								}
+								if (new File(root + separator + rename + separator
+										+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]
+										+ ".lrn").exists()) {
+									new File(root + separator + rename + separator
+											+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]
+											+ ".lrn").renameTo(new File(root + separator + rename + separator + rename
+											+ ".lrn"));
+								}
+								if (new File(root + separator + rename + separator
+										+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]
+										+ ".grf").exists()) {
+									new File(root + separator + rename + separator
+											+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]
+											+ ".grf").renameTo(new File(root + separator + rename + separator + rename
+											+ ".grf"));
+								}
+								if (new File(root + separator + rename + separator
+										+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]
+										+ ".prb").exists()) {
+									new File(root + separator + rename + separator
+											+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]
+											+ ".prb").renameTo(new File(root + separator + rename + separator + rename
+											+ ".prb"));
+								}
+							}
+							for (int i = 0; i < tab.getTabCount(); i++) {
+								if (tab.getTitleAt(i).equals(
+										tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
+									if (tree.getFile().length() > 4
+											&& tree.getFile().substring(tree.getFile().length() - 5).equals(".sbml")
+											|| tree.getFile().length() > 3
+											&& tree.getFile().substring(tree.getFile().length() - 4).equals(".xml")) {
+										((SBML_Editor) tab.getComponentAt(i)).setModelID(modelID);
+										((SBML_Editor) tab.getComponentAt(i)).setFile(root + separator + rename);
+										tab.setTitleAt(i, rename);
+									}
+									else if (tree.getFile().length() > 3
+											&& (tree.getFile().substring(tree.getFile().length() - 4).equals(".grf") || tree
+													.getFile().substring(tree.getFile().length() - 4).equals(".prb"))) {
+										((Graph) tab.getComponentAt(i)).setGraphName(rename);
+										tab.setTitleAt(i, rename);
+									}
+									else if (tree.getFile().length() > 3
+											&& tree.getFile().substring(tree.getFile().length() - 4).equals(".gcm")) {
+										((GCM2SBMLEditor) tab.getComponentAt(i)).reload(rename.substring(0, rename
+												.length() - 4));
+									}
+									else if (tree.getFile().length() > 3
+											&& tree.getFile().substring(tree.getFile().length() - 4).equals(".vhd")) {
+										((GCM2SBMLEditor) tab.getComponentAt(i)).reload(rename.substring(0, rename
+												.length() - 4));
+									}
+									else if (tree.getFile().length() > 1
+											&& tree.getFile().substring(tree.getFile().length() - 2).equals(".g")) {
+										((GCM2SBMLEditor) tab.getComponentAt(i)).reload(rename.substring(0, rename
+												.length() - 2));
+									}
+									else if (tree.getFile().length() > 3
+											&& tree.getFile().substring(tree.getFile().length() - 4).equals(".csp")) {
+										((GCM2SBMLEditor) tab.getComponentAt(i)).reload(rename.substring(0, rename
+												.length() - 4));
+									}
+									else if (tree.getFile().length() > 3
+											&& tree.getFile().substring(tree.getFile().length() - 4).equals(".hse")) {
+										((GCM2SBMLEditor) tab.getComponentAt(i)).reload(rename.substring(0, rename
+												.length() - 4));
+									}
+									else if (tree.getFile().length() > 3
+											&& tree.getFile().substring(tree.getFile().length() - 4).equals(".unc")) {
+										((GCM2SBMLEditor) tab.getComponentAt(i)).reload(rename.substring(0, rename
+												.length() - 4));
+									}
+									else if (tree.getFile().length() > 3
+											&& tree.getFile().substring(tree.getFile().length() - 4).equals(".rsg")) {
+										((GCM2SBMLEditor) tab.getComponentAt(i)).reload(rename.substring(0, rename
+												.length() - 4));
+									}
+									else {
+										JTabbedPane t = new JTabbedPane();
+										int selected = ((JTabbedPane) tab.getComponentAt(i)).getSelectedIndex();
+										boolean analysis = false;
+										ArrayList<Component> comps = new ArrayList<Component>();
+										for (int j = 0; j < ((JTabbedPane) tab.getComponentAt(i)).getTabCount(); j++) {
+											Component c = ((JTabbedPane) tab.getComponentAt(i)).getComponent(j);
+											comps.add(c);
+										}
+										for (Component c : comps) {
+											if (c instanceof Reb2Sac) {
+												((Reb2Sac) c).setSim(rename);
+												analysis = true;
+											}
+											else if (c instanceof SBML_Editor) {
+												String properties = root + separator + rename + separator + rename + ".sim";
+												new File(properties)
+														.renameTo(new File(properties.replace(".sim", ".temp")));
+												boolean dirty = ((SBML_Editor) c).isDirty();
+												((SBML_Editor) c).setParamFileAndSimDir(properties, root + separator
+														+ rename);
+												((SBML_Editor) c).save(false, "", true);
+												((SBML_Editor) c).updateSBML(i, 0);
+												((SBML_Editor) c).setDirty(dirty);
+												new File(properties).delete();
+												new File(properties.replace(".sim", ".temp"))
+														.renameTo(new File(properties));
+											}
+											else if (c instanceof Graph) {
+												Graph g = ((Graph) c);
+												g.setDirectory(root + separator + rename);
+												if (g.isTSDGraph()) {
+													g.setGraphName(rename + ".grf");
+												}
+												else {
+													g.setGraphName(rename + ".prb");
+												}
+											}
+											else if (c instanceof Learn) {
+												Learn l = ((Learn) c);
+												l.setDirectory(root + separator + rename);
+											}
+											else if (c instanceof DataManager) {
+												DataManager d = ((DataManager) c);
+												d.setDirectory(root + separator + rename);
+											}
+											if (analysis) {
+												if (c instanceof Reb2Sac) {
+													t.addTab("Simulation Options", c);
+													t.getComponentAt(t.getComponents().length - 1).setName("Simulate");
+												}
+												else if (c instanceof SBML_Editor) {
+													t.addTab("Parameter Editor", c);
+													t.getComponentAt(t.getComponents().length - 1).setName("SBML Editor");
+												}
+												else if (c instanceof Graph) {
+													if (((Graph) c).isTSDGraph()) {
+														t.addTab("TSD Graph", c);
+														t.getComponentAt(t.getComponents().length - 1).setName("TSD Graph");
+													}
+													else {
+														t.addTab("Probability Graph", c);
+														t.getComponentAt(t.getComponents().length - 1).setName("ProbGraph");
+													}
+												}
+												else {
+													t.addTab("Abstraction Options", c);
+													t.getComponentAt(t.getComponents().length - 1).setName("");
+												}
+											}
+										}
+										if (analysis) {
+											t.setSelectedIndex(selected);
+											tab.setComponentAt(i, t);
+										}
+										tab.setTitleAt(i, rename);
+										tab.getComponentAt(i).setName(rename);
+									}
+								}
+							}
+							refreshTree();
+						}
+					}
+				}
+				catch (Exception e1) {
+					JOptionPane.showMessageDialog(frame, "Unable to rename selected file.", "Error",
+							JOptionPane.ERROR_MESSAGE);
+				}
 			}
 		}
 		else if (e.getActionCommand().equals("openGraph")) {
@@ -4724,16 +4760,15 @@ public class BioSim implements MouseListener, ActionListener {
 						&& tree.getFile().substring(tree.getFile().length() - 4).equals(".vhd")) {
 					try {
 						String filename = tree.getFile();
-						String directory = "";
-						String theFile = "";
-						if (filename.lastIndexOf('/') >= 0) {
-							directory = filename.substring(0, filename.lastIndexOf('/') + 1);
-							theFile = filename.substring(filename.lastIndexOf('/') + 1);
-						}
-						if (filename.lastIndexOf('\\') >= 0) {
-							directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
-							theFile = filename.substring(filename.lastIndexOf('\\') + 1);
-						}
+						/*
+						 * String directory = ""; String theFile = ""; if
+						 * (filename.lastIndexOf('/') >= 0) { directory =
+						 * filename.substring(0, filename.lastIndexOf('/') + 1); theFile =
+						 * filename.substring(filename.lastIndexOf('/') + 1); } if
+						 * (filename.lastIndexOf('\\') >= 0) { directory =
+						 * filename.substring(0, filename.lastIndexOf('\\') + 1); theFile =
+						 * filename.substring(filename.lastIndexOf('\\') + 1); }
+						 */
 						String[] command = { "emacs", filename };
 						Runtime.getRuntime().exec(command);
 					}
@@ -4746,16 +4781,15 @@ public class BioSim implements MouseListener, ActionListener {
 						&& tree.getFile().substring(tree.getFile().length() - 2).equals(".g")) {
 					try {
 						String filename = tree.getFile();
-						String directory = "";
-						String theFile = "";
-						if (filename.lastIndexOf('/') >= 0) {
-							directory = filename.substring(0, filename.lastIndexOf('/') + 1);
-							theFile = filename.substring(filename.lastIndexOf('/') + 1);
-						}
-						if (filename.lastIndexOf('\\') >= 0) {
-							directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
-							theFile = filename.substring(filename.lastIndexOf('\\') + 1);
-						}
+						/*
+						 * String directory = ""; String theFile = ""; if
+						 * (filename.lastIndexOf('/') >= 0) { directory =
+						 * filename.substring(0, filename.lastIndexOf('/') + 1); theFile =
+						 * filename.substring(filename.lastIndexOf('/') + 1); } if
+						 * (filename.lastIndexOf('\\') >= 0) { directory =
+						 * filename.substring(0, filename.lastIndexOf('\\') + 1); theFile =
+						 * filename.substring(filename.lastIndexOf('\\') + 1); }
+						 */
 						String[] cmd = { "emacs", filename };
 						Runtime.getRuntime().exec(cmd);
 					}
@@ -4768,16 +4802,15 @@ public class BioSim implements MouseListener, ActionListener {
 						&& tree.getFile().substring(tree.getFile().length() - 4).equals(".csp")) {
 					try {
 						String filename = tree.getFile();
-						String directory = "";
-						String theFile = "";
-						if (filename.lastIndexOf('/') >= 0) {
-							directory = filename.substring(0, filename.lastIndexOf('/') + 1);
-							theFile = filename.substring(filename.lastIndexOf('/') + 1);
-						}
-						if (filename.lastIndexOf('\\') >= 0) {
-							directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
-							theFile = filename.substring(filename.lastIndexOf('\\') + 1);
-						}
+						/*
+						 * String directory = ""; String theFile = ""; if
+						 * (filename.lastIndexOf('/') >= 0) { directory =
+						 * filename.substring(0, filename.lastIndexOf('/') + 1); theFile =
+						 * filename.substring(filename.lastIndexOf('/') + 1); } if
+						 * (filename.lastIndexOf('\\') >= 0) { directory =
+						 * filename.substring(0, filename.lastIndexOf('\\') + 1); theFile =
+						 * filename.substring(filename.lastIndexOf('\\') + 1); }
+						 */
 						String[] command = { "emacs", filename };
 						Runtime.getRuntime().exec(command);
 					}
@@ -4790,16 +4823,15 @@ public class BioSim implements MouseListener, ActionListener {
 						&& tree.getFile().substring(tree.getFile().length() - 4).equals(".hse")) {
 					try {
 						String filename = tree.getFile();
-						String directory = "";
-						String theFile = "";
-						if (filename.lastIndexOf('/') >= 0) {
-							directory = filename.substring(0, filename.lastIndexOf('/') + 1);
-							theFile = filename.substring(filename.lastIndexOf('/') + 1);
-						}
-						if (filename.lastIndexOf('\\') >= 0) {
-							directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
-							theFile = filename.substring(filename.lastIndexOf('\\') + 1);
-						}
+						/*
+						 * String directory = ""; String theFile = ""; if
+						 * (filename.lastIndexOf('/') >= 0) { directory =
+						 * filename.substring(0, filename.lastIndexOf('/') + 1); theFile =
+						 * filename.substring(filename.lastIndexOf('/') + 1); } if
+						 * (filename.lastIndexOf('\\') >= 0) { directory =
+						 * filename.substring(0, filename.lastIndexOf('\\') + 1); theFile =
+						 * filename.substring(filename.lastIndexOf('\\') + 1); }
+						 */
 						String[] command = { "emacs", filename };
 						Runtime.getRuntime().exec(command);
 					}
@@ -4812,16 +4844,15 @@ public class BioSim implements MouseListener, ActionListener {
 						&& tree.getFile().substring(tree.getFile().length() - 4).equals(".unc")) {
 					try {
 						String filename = tree.getFile();
-						String directory = "";
-						String theFile = "";
-						if (filename.lastIndexOf('/') >= 0) {
-							directory = filename.substring(0, filename.lastIndexOf('/') + 1);
-							theFile = filename.substring(filename.lastIndexOf('/') + 1);
-						}
-						if (filename.lastIndexOf('\\') >= 0) {
-							directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
-							theFile = filename.substring(filename.lastIndexOf('\\') + 1);
-						}
+						/*
+						 * String directory = ""; String theFile = ""; if
+						 * (filename.lastIndexOf('/') >= 0) { directory =
+						 * filename.substring(0, filename.lastIndexOf('/') + 1); theFile =
+						 * filename.substring(filename.lastIndexOf('/') + 1); } if
+						 * (filename.lastIndexOf('\\') >= 0) { directory =
+						 * filename.substring(0, filename.lastIndexOf('\\') + 1); theFile =
+						 * filename.substring(filename.lastIndexOf('\\') + 1); }
+						 */
 						String[] command = { "emacs", filename };
 						Runtime.getRuntime().exec(command);
 					}
@@ -4834,16 +4865,15 @@ public class BioSim implements MouseListener, ActionListener {
 						&& tree.getFile().substring(tree.getFile().length() - 4).equals(".rsg")) {
 					try {
 						String filename = tree.getFile();
-						String directory = "";
-						String theFile = "";
-						if (filename.lastIndexOf('/') >= 0) {
-							directory = filename.substring(0, filename.lastIndexOf('/') + 1);
-							theFile = filename.substring(filename.lastIndexOf('/') + 1);
-						}
-						if (filename.lastIndexOf('\\') >= 0) {
-							directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
-							theFile = filename.substring(filename.lastIndexOf('\\') + 1);
-						}
+						/*
+						 * String directory = ""; String theFile = ""; if
+						 * (filename.lastIndexOf('/') >= 0) { directory =
+						 * filename.substring(0, filename.lastIndexOf('/') + 1); theFile =
+						 * filename.substring(filename.lastIndexOf('/') + 1); } if
+						 * (filename.lastIndexOf('\\') >= 0) { directory =
+						 * filename.substring(0, filename.lastIndexOf('\\') + 1); theFile =
+						 * filename.substring(filename.lastIndexOf('\\') + 1); }
+						 */
 						String[] command = { "emacs", filename };
 						Runtime.getRuntime().exec(command);
 					}
