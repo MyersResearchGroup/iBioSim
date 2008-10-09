@@ -126,7 +126,7 @@ public class Run implements ActionListener {
 				abs.setProperty("ode.simulation.print.interval", "" + printInterval);
 			}
 			else {
-				abs.setProperty("ode.simulation.number.steps", "" + printInterval);
+				abs.setProperty("ode.simulation.number.steps", "" + ((int) printInterval));
 			}
 			if (timeStep == Double.MAX_VALUE) {
 				abs.setProperty("ode.simulation.time.step", "inf");
@@ -147,7 +147,7 @@ public class Run implements ActionListener {
 				abs.setProperty("monte.carlo.simulation.print.interval", "" + printInterval);
 			}
 			else {
-				abs.setProperty("monte.carlo.simulation.number.steps", "" + printInterval);
+				abs.setProperty("monte.carlo.simulation.number.steps", "" + ((int) printInterval));
 			}
 			if (timeStep == Double.MAX_VALUE) {
 				abs.setProperty("monte.carlo.simulation.time.step", "inf");
@@ -270,7 +270,7 @@ public class Run implements ActionListener {
 				nary.setProperty("monte.carlo.simulation.print.interval", "" + printInterval);
 			}
 			else {
-				nary.setProperty("monte.carlo.simulation.number.steps", "" + printInterval);
+				nary.setProperty("monte.carlo.simulation.number.steps", "" + ((int) printInterval));
 			}
 			if (timeStep == Double.MAX_VALUE) {
 				nary.setProperty("monte.carlo.simulation.time.step", "inf");
