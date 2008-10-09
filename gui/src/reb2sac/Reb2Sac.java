@@ -1916,13 +1916,26 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			return;
 		}
 		try {
-			printInterval = Double.parseDouble(interval.getText().trim());
+			if (intervalLabel.getSelectedItem().equals("Print Interval")) {
+				printInterval = Double.parseDouble(interval.getText().trim());
+			}
+			else {
+				printInterval = Integer.parseInt(interval.getText().trim());
+			}
 		}
 		catch (Exception e1) {
-			JOptionPane.showMessageDialog(biomodelsim.frame(),
-					"Must Enter A Real Number Into The Print Interval Field.", "Error",
-					JOptionPane.ERROR_MESSAGE);
-			return;
+			if (intervalLabel.getSelectedItem().equals("Print Interval")) {
+				JOptionPane.showMessageDialog(biomodelsim.frame(),
+						"Must Enter A Real Number Into The Print Interval Field.", "Error",
+						JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			else {
+				JOptionPane.showMessageDialog(biomodelsim.frame(),
+						"Must Enter An Integer Into The Number Of Steps Field.", "Error",
+						JOptionPane.ERROR_MESSAGE);
+				return;
+			}
 		}
 		if (step.getText().trim().equals("inf")) {
 			timeStep = Double.MAX_VALUE;
@@ -2219,7 +2232,12 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			label = new JLabel("Running " + simName);
 		}
 		int steps;
-		steps = (int) ((timeLimit / printInterval) * run);
+		if (intervalLabel.getSelectedItem().equals("Print Interval")) {
+			steps = (int) ((timeLimit / printInterval) * run);
+		}
+		else {
+			steps = (int) (printInterval * run);
+		}
 		JProgressBar progress = new JProgressBar(0, steps);
 		progress.setStringPainted(true);
 		// progress.setString("");
@@ -2475,13 +2493,26 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			return;
 		}
 		try {
-			printInterval = Double.parseDouble(interval.getText().trim());
+			if (intervalLabel.getSelectedItem().equals("Print Interval")) {
+				printInterval = Double.parseDouble(interval.getText().trim());
+			}
+			else {
+				printInterval = Integer.parseInt(interval.getText().trim());
+			}
 		}
 		catch (Exception e1) {
-			JOptionPane.showMessageDialog(biomodelsim.frame(),
-					"Must Enter A Real Number Into The Print Interval Field.", "Error",
-					JOptionPane.ERROR_MESSAGE);
-			return;
+			if (intervalLabel.getSelectedItem().equals("Print Interval")) {
+				JOptionPane.showMessageDialog(biomodelsim.frame(),
+						"Must Enter A Real Number Into The Print Interval Field.", "Error",
+						JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			else {
+				JOptionPane.showMessageDialog(biomodelsim.frame(),
+						"Must Enter An Integer Into The Number Of Steps Field.", "Error",
+						JOptionPane.ERROR_MESSAGE);
+				return;
+			}
 		}
 		if (step.getText().trim().equals("inf")) {
 			timeStep = Double.MAX_VALUE;
@@ -2984,6 +3015,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					}
 					else if (key.equals("ode.simulation.print.interval")) {
 					}
+					else if (key.equals("ode.simulation.number.steps")) {
+					}
 					else if (key.equals("ode.simulation.time.step")) {
 					}
 					else if (key.equals("ode.simulation.absolute.error")) {
@@ -2993,6 +3026,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					else if (key.equals("monte.carlo.simulation.time.limit")) {
 					}
 					else if (key.equals("monte.carlo.simulation.print.interval")) {
+					}
+					else if (key.equals("monte.carlo.simulation.number.steps")) {
 					}
 					else if (key.equals("monte.carlo.simulation.time.step")) {
 					}
@@ -3170,7 +3205,12 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					limit.setText("100.0");
 				}
 				if (load.containsKey("monte.carlo.simulation.print.interval")) {
+					intervalLabel.setSelectedItem("Print Interval");
 					interval.setText(load.getProperty("monte.carlo.simulation.print.interval"));
+				}
+				else if (load.containsKey("monte.carlo.simulation.number.steps")) {
+					intervalLabel.setSelectedItem("Number Of Steps");
+					interval.setText(load.getProperty("monte.carlo.simulation.number.steps"));
 				}
 				else {
 					interval.setText("1.0");
@@ -3229,7 +3269,12 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 							limit.setText(load.getProperty("ode.simulation.time.limit"));
 						}
 						if (load.containsKey("ode.simulation.print.interval")) {
+							intervalLabel.setSelectedItem("Print Interval");
 							interval.setText(load.getProperty("ode.simulation.print.interval"));
+						}
+						else if (load.containsKey("ode.simulation.number.steps")) {
+							intervalLabel.setSelectedItem("Number Of Steps");
+							interval.setText(load.getProperty("ode.simulation.number.steps"));
 						}
 						if (load.containsKey("ode.simulation.time.step")) {
 							step.setText(load.getProperty("ode.simulation.time.step"));

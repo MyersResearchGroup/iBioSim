@@ -95,7 +95,13 @@ public class Buttons {
 					fd.setFile(file.getPath());
 				}
 			}
+			if (i == JFileChooser.DIRECTORIES_ONLY) {
+				System.setProperty("apple.awt.fileDialogForDirectories", "true");
+			}
 			fd.setVisible(true);
+			if (i == JFileChooser.DIRECTORIES_ONLY) {
+				System.setProperty("apple.awt.fileDialogForDirectories", "false");
+			}
 			if (i == JFileChooser.DIRECTORIES_ONLY) {
 				if (fd.getDirectory() != null) {
 					return fd.getDirectory();
@@ -106,7 +112,17 @@ public class Buttons {
 			}
 			else {
 				if (fd.getFile() != null) {
-					return fd.getFile();
+					if (fd.getDirectory() != null) {
+						if (File.separator.equals("\\")) {
+							return fd.getDirectory() + "\\\\" + fd.getFile();
+						}
+						else {
+							return fd.getDirectory() + File.separator + fd.getFile();
+						}
+					}
+					else {
+						return "";
+					}
 				}
 				else {
 					return "";
