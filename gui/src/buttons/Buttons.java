@@ -44,9 +44,9 @@ public class Buttons {
 					fd = new FileDialog(frame, approve, FileDialog.SAVE);
 					fd.setFilenameFilter(new FilenameFilter() {
 						public boolean accept(File dir, String name) {
-							return name.contains(".csv") || name.contains(".dat") || name.contains(".eps")
-									|| name.contains(".jpg") || name.contains(".pdf") || name.contains(".png")
-									|| name.contains(".svg") || name.contains(".tsd");
+							return name.endsWith(".csv") || name.endsWith(".dat") || name.endsWith(".eps")
+									|| name.endsWith(".jpg") || name.endsWith(".pdf") || name.endsWith(".png")
+									|| name.endsWith(".svg") || name.endsWith(".tsd");
 						}
 					});
 				}
@@ -54,8 +54,8 @@ public class Buttons {
 					fd = new FileDialog(frame, approve, FileDialog.SAVE);
 					fd.setFilenameFilter(new FilenameFilter() {
 						public boolean accept(File dir, String name) {
-							return name.contains(".eps") || name.contains(".jpg") || name.contains(".pdf")
-									|| name.contains(".png") || name.contains(".svg");
+							return name.endsWith(".eps") || name.endsWith(".jpg") || name.endsWith(".pdf")
+									|| name.endsWith(".png") || name.endsWith(".svg");
 						}
 					});
 				}
@@ -63,7 +63,7 @@ public class Buttons {
 					fd = new FileDialog(frame, approve, FileDialog.LOAD);
 					fd.setFilenameFilter(new FilenameFilter() {
 						public boolean accept(File dir, String name) {
-							return name.contains(".sbml") || name.contains(".xml");
+							return name.endsWith(".sbml") || name.endsWith(".xml");
 						}
 					});
 				}
@@ -71,7 +71,7 @@ public class Buttons {
 					fd = new FileDialog(frame, approve, FileDialog.LOAD);
 					fd.setFilenameFilter(new FilenameFilter() {
 						public boolean accept(File dir, String name) {
-							return name.contains(".gcm");
+							return name.endsWith(".gcm");
 						}
 					});
 				}
@@ -79,7 +79,7 @@ public class Buttons {
 					fd = new FileDialog(frame, approve, FileDialog.LOAD);
 					fd.setFilenameFilter(new FilenameFilter() {
 						public boolean accept(File dir, String name) {
-							return name.contains(".csv") || name.contains(".dat") || name.contains(".tsd");
+							return name.endsWith(".csv") || name.endsWith(".dat") || name.endsWith(".tsd");
 						}
 					});
 				}
@@ -113,11 +113,43 @@ public class Buttons {
 			else {
 				if (fd.getFile() != null) {
 					if (fd.getDirectory() != null) {
+						String selectedFile = fd.getFile();
+						if (approve.equals("Export TSD")) {
+							if (!selectedFile.endsWith(".csv") && !selectedFile.endsWith(".dat")
+									&& !selectedFile.endsWith(".eps") && !selectedFile.endsWith(".jpg")
+									&& !selectedFile.endsWith(".pdf") && !selectedFile.endsWith(".png")
+									&& !selectedFile.endsWith(".svg") && !selectedFile.endsWith(".tsd")) {
+								selectedFile += ".pdf";
+							}
+						}
+						else if (approve.equals("Export Probability")) {
+							if (!selectedFile.endsWith(".eps") && !selectedFile.endsWith(".jpg")
+									&& !selectedFile.endsWith(".pdf") && !selectedFile.endsWith(".png")
+									&& !selectedFile.endsWith(".svg")) {
+								selectedFile += ".pdf";
+							}
+						}
+						else if (approve.equals("Import SBML")) {
+							if (!selectedFile.endsWith(".sbml") && !selectedFile.endsWith(".xml")) {
+								selectedFile += ".xml";
+							}
+						}
+						else if (approve.equals("Import Genetic Circuit")) {
+							if (!selectedFile.endsWith(".gcm")) {
+								selectedFile += ".gcm";
+							}
+						}
+						else if (approve.equals("Import")) {
+							if (!selectedFile.endsWith(".csv") && !selectedFile.endsWith(".dat")
+									&& !selectedFile.endsWith(".tsd")) {
+								selectedFile += ".tsd";
+							}
+						}
 						if (File.separator.equals("\\")) {
-							return fd.getDirectory() + "\\\\" + fd.getFile();
+							return fd.getDirectory() + "\\\\" + selectedFile;
 						}
 						else {
-							return fd.getDirectory() + File.separator + fd.getFile();
+							return fd.getDirectory() + File.separator + selectedFile;
 						}
 					}
 					else {
