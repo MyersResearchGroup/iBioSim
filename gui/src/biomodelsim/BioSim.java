@@ -6,6 +6,8 @@ import gcm2sbml.parser.CompatibilityFixer;
 import gcm2sbml.parser.GCMFile;
 import gcm2sbml.parser.GCMParser;
 import gcm2sbml.util.GlobalConstants;
+import lhpn2sbml.parser.LHPNFile;
+import lhpn2sbml.gui.*;
 import graph.Graph;
 
 import java.awt.AWTError;
@@ -2312,11 +2314,35 @@ public class BioSim implements MouseListener, ActionListener {
 									JOptionPane.ERROR_MESSAGE);
 						}
 						else {
-							File f = new File(root + separator + lhpnName);
-							f.createNewFile();
-							String[] command = { "emacs", f.getName() };
-							Runtime.getRuntime().exec(command);
-							refreshTree();
+							if (overwrite(root + separator + lhpnName, lhpnName)) {
+								File f = new File(root + separator + lhpnName);
+								f.createNewFile();
+								new LHPNFile().save(f.getAbsolutePath());
+								int i = getTab(f.getName());
+								if (i != -1) {
+									tab.remove(i);
+								}
+								addTab(f.getName(), new LHPNEditor(root + separator, f
+										.getName(), null, this, log), "LHPN Editor");
+								refreshTree();
+							}
+							if (overwrite(root + separator + lhpnName, lhpnName)) {
+								File f = new File(root + separator + lhpnName);
+								f.createNewFile();
+								new LHPNFile().save(f.getAbsolutePath());
+								int i = getTab(f.getName());
+								if (i != -1) {
+									tab.remove(i);
+								}
+								addTab(f.getName(), new LHPNEditor(root + separator, f
+										.getName(), null, this, log), "LHPN Editor");
+								refreshTree();
+							}
+							//File f = new File(root + separator + lhpnName);
+							//f.createNewFile();
+							//String[] command = { "emacs", f.getName() };
+							//Runtime.getRuntime().exec(command);
+							//refreshTree();
 						}
 					}
 				}
@@ -4789,17 +4815,31 @@ public class BioSim implements MouseListener, ActionListener {
 						&& tree.getFile().substring(tree.getFile().length() - 2).equals(".g")) {
 					try {
 						String filename = tree.getFile();
-						/*
-						 * String directory = ""; String theFile = ""; if
-						 * (filename.lastIndexOf('/') >= 0) { directory =
-						 * filename.substring(0, filename.lastIndexOf('/') + 1); theFile =
-						 * filename.substring(filename.lastIndexOf('/') + 1); } if
-						 * (filename.lastIndexOf('\\') >= 0) { directory =
-						 * filename.substring(0, filename.lastIndexOf('\\') + 1); theFile =
-						 * filename.substring(filename.lastIndexOf('\\') + 1); }
-						 */
-						String[] cmd = { "emacs", filename };
-						Runtime.getRuntime().exec(cmd);
+						String directory = "";
+						String theFile = "";
+						if (filename.lastIndexOf('/') >= 0) {
+							directory = filename.substring(0, filename.lastIndexOf('/') + 1);
+							theFile = filename.substring(filename.lastIndexOf('/') + 1);
+						}
+						if (filename.lastIndexOf('\\') >= 0) {
+							directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
+							theFile = filename.substring(filename.lastIndexOf('\\') + 1);
+						}
+						LHPNFile lhpn = new LHPNFile();
+						if (new File(directory + theFile).length() > 0) {
+							lhpn.load(directory + theFile);
+						}
+						File work = new File(directory);
+						int i = getTab(theFile);
+						if (i != -1) {
+							tab.setSelectedIndex(i);
+						}
+						else {
+							addTab(theFile, new LHPNEditor(work.getAbsolutePath(), theFile, lhpn,
+									this, log), "LHPN Editor");
+						}
+						//String[] cmd = { "emacs", filename };
+						//Runtime.getRuntime().exec(cmd);
 					}
 					catch (Exception e1) {
 						JOptionPane.showMessageDialog(frame, "Unable to view this lhpn file.", "Error",
