@@ -32,6 +32,11 @@ public class Buttons {
 				else {
 					fd = new FileDialog(frame, approve);
 				}
+				fd.setFilenameFilter(new FilenameFilter() {
+					public boolean accept(File dir, String name) {
+						return false;
+					}
+				});
 			}
 			else {
 				if (approve.equals("Save") || approve.equals("New")) {
@@ -102,63 +107,56 @@ public class Buttons {
 			if (i == JFileChooser.DIRECTORIES_ONLY) {
 				System.setProperty("apple.awt.fileDialogForDirectories", "false");
 			}
-			if (i == JFileChooser.DIRECTORIES_ONLY) {
+			if (fd.getFile() != null) {
 				if (fd.getDirectory() != null) {
-					return fd.getDirectory();
+					String selectedFile = fd.getFile();
+					if (approve.equals("Export TSD")) {
+						if (!selectedFile.endsWith(".csv") && !selectedFile.endsWith(".dat")
+								&& !selectedFile.endsWith(".eps") && !selectedFile.endsWith(".jpg")
+								&& !selectedFile.endsWith(".pdf") && !selectedFile.endsWith(".png")
+								&& !selectedFile.endsWith(".svg") && !selectedFile.endsWith(".tsd")) {
+							selectedFile += ".pdf";
+						}
+					}
+					else if (approve.equals("Export Probability")) {
+						if (!selectedFile.endsWith(".eps") && !selectedFile.endsWith(".jpg")
+								&& !selectedFile.endsWith(".pdf") && !selectedFile.endsWith(".png")
+								&& !selectedFile.endsWith(".svg")) {
+							selectedFile += ".pdf";
+						}
+					}
+					else if (approve.equals("Import SBML")) {
+						if (!selectedFile.endsWith(".sbml") && !selectedFile.endsWith(".xml")) {
+							selectedFile += ".xml";
+						}
+					}
+					else if (approve.equals("Import Genetic Circuit")) {
+						if (!selectedFile.endsWith(".gcm")) {
+							selectedFile += ".gcm";
+						}
+					}
+					else if (approve.equals("Import")) {
+						if (!selectedFile.endsWith(".csv") && !selectedFile.endsWith(".dat")
+								&& !selectedFile.endsWith(".tsd")) {
+							selectedFile += ".tsd";
+						}
+					}
+					if (File.separator.equals("\\")) {
+						return fd.getDirectory() + "\\\\" + selectedFile;
+					}
+					else {
+						return fd.getDirectory() + File.separator + selectedFile;
+					}
 				}
 				else {
 					return "";
 				}
 			}
+			else if (fd.getDirectory() != null) {
+				return fd.getDirectory();
+			}
 			else {
-				if (fd.getFile() != null) {
-					if (fd.getDirectory() != null) {
-						String selectedFile = fd.getFile();
-						if (approve.equals("Export TSD")) {
-							if (!selectedFile.endsWith(".csv") && !selectedFile.endsWith(".dat")
-									&& !selectedFile.endsWith(".eps") && !selectedFile.endsWith(".jpg")
-									&& !selectedFile.endsWith(".pdf") && !selectedFile.endsWith(".png")
-									&& !selectedFile.endsWith(".svg") && !selectedFile.endsWith(".tsd")) {
-								selectedFile += ".pdf";
-							}
-						}
-						else if (approve.equals("Export Probability")) {
-							if (!selectedFile.endsWith(".eps") && !selectedFile.endsWith(".jpg")
-									&& !selectedFile.endsWith(".pdf") && !selectedFile.endsWith(".png")
-									&& !selectedFile.endsWith(".svg")) {
-								selectedFile += ".pdf";
-							}
-						}
-						else if (approve.equals("Import SBML")) {
-							if (!selectedFile.endsWith(".sbml") && !selectedFile.endsWith(".xml")) {
-								selectedFile += ".xml";
-							}
-						}
-						else if (approve.equals("Import Genetic Circuit")) {
-							if (!selectedFile.endsWith(".gcm")) {
-								selectedFile += ".gcm";
-							}
-						}
-						else if (approve.equals("Import")) {
-							if (!selectedFile.endsWith(".csv") && !selectedFile.endsWith(".dat")
-									&& !selectedFile.endsWith(".tsd")) {
-								selectedFile += ".tsd";
-							}
-						}
-						if (File.separator.equals("\\")) {
-							return fd.getDirectory() + "\\\\" + selectedFile;
-						}
-						else {
-							return fd.getDirectory() + File.separator + selectedFile;
-						}
-					}
-					else {
-						return "";
-					}
-				}
-				else {
-					return "";
-				}
+				return "";
 			}
 			/*
 			 * String open; Display display = new Display(); Shell shell = new
