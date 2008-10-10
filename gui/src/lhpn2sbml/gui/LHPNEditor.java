@@ -1,0 +1,267 @@
+package lhpn2sbml.gui;
+
+import lhpn2sbml.parser.LHPNFile;
+
+import gcm2sbml.gui.AbstractRunnableNamedButton;
+import gcm2sbml.gui.InfluencePanel;
+import gcm2sbml.gui.ParameterPanel;
+import gcm2sbml.gui.PromoterPanel;
+import gcm2sbml.gui.PropertyList;
+import gcm2sbml.gui.Runnable;
+import gcm2sbml.gui.SpeciesPanel;
+import gcm2sbml.util.Utility;
+
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
+import java.awt.event.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Properties;
+import java.util.Set;
+
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JSplitPane;
+import javax.swing.JTextField;
+
+import biomodelsim.BioSim;
+import biomodelsim.Log;
+
+/**
+ * This is the LHPNEditor class.  This allows the user to create and edit a
+ * Labeled Hybrid Petri Net, which can later be saved and run through the ATACS
+ * tool.
+ * 
+ * @author Kevin Jones
+ */
+public class LHPNEditor extends JPanel implements ActionListener {
+	//, MouseListener {
+	private JTextField lhpnNameTextField;
+	
+	private PropertyList variables, places, transitions, controlFlow;
+	
+	//private BioSim biosim;
+	//private Log log;
+	//private String directory;
+	
+	private String filename = "";
+	//private String lhpnName = "";
+
+	private LHPNFile lhpnFile = null;
+	
+	public LHPNEditor() {
+		super();
+	}
+	
+	public LHPNEditor(String directory, String filename, LHPNFile lhpn, BioSim biosim, Log log) {
+		super();
+		//this.biosim = biosim;
+		//this.log = log;
+		//this.directory = directory;
+		lhpnFile = new LHPNFile();
+		if (filename != null) {
+			File f = new File(directory + File.separator + filename);
+			if (!(f.length() == 0)) {
+				lhpnFile.load(directory + File.separator + filename);
+			}
+			this.filename = filename;
+			//this.lhpnName = filename.replace(".g", "");
+		} else {
+			this.filename = "";
+		}
+		buildGui(this.filename);
+	}
+	
+	private void buildGui(String filename) {
+		JPanel mainPanelNorth = new JPanel();
+		JPanel mainPanelCenter = new JPanel(new BorderLayout());
+		JPanel mainPanelCenterUp = new JPanel();
+		JPanel mainPanelCenterCenter = new JPanel(new GridLayout(2, 2));
+		JPanel mainPanelCenterDown = new JPanel(new BorderLayout());
+		mainPanelCenter.add(mainPanelCenterUp, BorderLayout.NORTH);
+		mainPanelCenter.add(mainPanelCenterCenter, BorderLayout.CENTER);
+		mainPanelCenter.add(mainPanelCenterDown, BorderLayout.SOUTH);
+		lhpnNameTextField = new JTextField(filename, 15);
+		lhpnNameTextField.setEditable(false);
+		lhpnNameTextField.addActionListener(this);
+		JLabel lhpnNameLabel = new JLabel("LHPN Id:");
+		mainPanelNorth.add(lhpnNameLabel);
+		mainPanelNorth.add(lhpnNameTextField);
+		
+		JPanel mainPanel = new JPanel(new BorderLayout());
+		mainPanel.setLayout(new BorderLayout());
+		mainPanel.add(mainPanelNorth, "North");
+		mainPanel.add(mainPanelCenter, "Center");
+		setLayout(new BorderLayout());
+		add(mainPanel, BorderLayout.CENTER);
+		
+		JPanel buttons = new JPanel();
+		SaveButton saveButton = new SaveButton("Save LHPN", lhpnNameTextField);
+		buttons.add(saveButton);
+		saveButton.addActionListener(this);
+		saveButton = new SaveButton("Save LHPN as", lhpnNameTextField);
+		buttons.add(saveButton);
+		saveButton.addActionListener(this);
+		
+		variables = new PropertyList("Variable List");
+		EditButton addVar = new EditButton("Add Variable", variables);
+		RemoveButton removeVar = new RemoveButton("Remove Variable", variables);
+		EditButton editVar = new EditButton("Edit Variable", variables);
+		if (!lhpnFile.getVariables().equals(null)) {
+		variables.addAllItem(lhpnFile.getVariables().keySet());
+		}
+		if (!lhpnFile.getInputs().equals(null)) {
+		variables.addAllItem(lhpnFile.getInputs().keySet());
+		}
+		if (!lhpnFile.getOutputs().equals(null)) {
+		variables.addAllItem(lhpnFile.getOutputs().keySet());
+		}
+		
+		JPanel varPanel = Utility.createPanel(this, "Variables", variables, addVar,
+				removeVar, editVar);
+		mainPanelCenterCenter.add(varPanel);
+		
+		places = new PropertyList("Place List");
+		EditButton addPlace = new EditButton("Add Place", places);
+		RemoveButton removePlace = new RemoveButton("Remove Place", places);
+		EditButton editPlace = new EditButton("Edit Place", places);
+		places.addAllItem(lhpnFile.getPlaces().keySet());
+		
+		JPanel placePanel = Utility.createPanel(this, "Places", places, addPlace,
+				removePlace, editPlace);
+		mainPanelCenterCenter.add(placePanel);
+		
+		transitions = new PropertyList("Transition List");
+		EditButton addTrans = new EditButton("Add Transition", transitions);
+		RemoveButton removeTrans = new RemoveButton("Remove Transition", transitions);
+		EditButton editTrans = new EditButton("Edit Transition", transitions);
+		transitions.addAllItem(lhpnFile.getDelays().keySet());
+		
+		JPanel transPanel = Utility.createPanel(this, "Transitions", transitions, addTrans,
+				removeTrans, editTrans);
+		mainPanelCenterCenter.add(transPanel);
+		
+		controlFlow = new PropertyList("Control Flow");
+		EditButton addFlow = new EditButton("Add Movement", controlFlow);
+		RemoveButton removeFlow = new RemoveButton("Remove Movement", controlFlow);
+		EditButton editFlow = new EditButton("Edit Movement", controlFlow);
+		transitions.addAllItem(lhpnFile.getControlFlow().keySet());
+		
+		JPanel flowPanel = Utility.createPanel(this, "Control Flow", controlFlow, addFlow,
+				removeFlow, editFlow);
+		mainPanelCenterCenter.add(flowPanel);
+		
+	}
+	
+	public class SaveButton extends AbstractRunnableNamedButton {
+		public SaveButton(String name, JTextField fieldNameField) {
+			super(name);
+			this.fieldNameField = fieldNameField;
+		}
+
+		public void run() {
+			lhpnFile.save(getName());
+		}
+
+		private JTextField fieldNameField = null;
+	}
+	
+	public class EditButton extends AbstractRunnableNamedButton {
+		public EditButton(String name, PropertyList list) {
+			super(name);
+			this.list = list;
+		}
+
+		public void run() {
+			new EditCommand(getName(), list).run();
+		}
+
+		private PropertyList list = null;
+	}
+	
+	public class RemoveButton extends AbstractRunnableNamedButton {
+		public RemoveButton(String name, PropertyList list) {
+			super(name);
+			this.list = list;
+		}
+
+		public void run() {
+			
+		}
+
+		private PropertyList list = null;
+	}
+	
+	public void actionPerformed(ActionEvent e) {
+		Object o = e.getSource();
+		if (o instanceof Runnable) {
+			((Runnable) o).run();
+		}
+	}
+	
+	private class EditCommand implements Runnable {
+		public EditCommand(String name, PropertyList list) {
+			this.name = name;
+			this.list = list;
+		}
+
+		public void run() {
+			if (name == null || name.equals("")) {
+				Utility.createErrorMessage("Error", "Nothing selected to edit");
+				return;
+			}
+			if (list.getSelectedValue() == null
+			    && getName().contains("Edit")) {
+				Utility.createErrorMessage("Error", "Nothing selected to edit");
+				return;
+			}
+			if (getName().contains("Variable")) {
+				String selected = null;
+				if (list.getSelectedValue() != null
+						&& getName().contains("Edit")) {
+					selected = list.getSelectedValue().toString();
+				}
+				VariablesPanel panel = new VariablesPanel(selected, list, lhpnFile);
+			} else if (getName().contains("Place")) {
+				String selected = null;
+				if (list.getSelectedValue() != null
+						&& getName().contains("Edit")) {
+					selected = list.getSelectedValue().toString();
+				}
+				PlacePanel panel = new PlacePanel(selected, list, lhpnFile);
+			} else if (getName().contains("Transition")) {
+				String selected = null;
+				if (list.getSelectedValue() != null
+						&& getName().contains("Edit")) {
+					selected = list.getSelectedValue().toString();
+				}
+				//TransitionPanel panel = new TransitionPanel(selected, list, lhpnFile);
+			} else if (getName().contains("Movement")) {
+				String selected = null;
+				if (list.getSelectedValue() != null
+						&& getName().contains("Edit")) {
+					selected = list.getSelectedValue().toString();
+				}
+				ControlFlowPanel panel = new ControlFlowPanel(selected, list, lhpnFile);
+			} 
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		private String name = null;
+
+		private PropertyList list = null;
+	}
+	
+}
