@@ -32,6 +32,9 @@ public class FileTree extends JPanel implements MouseListener {
 	public static final ImageIcon ICON_LHPN = new ImageIcon(System.getenv("BIOSIM") + File.separator
 			+ "gui" + File.separator + "icons" + File.separator + "icon_pnlogo.gif");
 
+	public static final ImageIcon ICON_MODEL = new ImageIcon(System.getenv("BIOSIM") + File.separator
+			+ "gui" + File.separator + "icons" + File.separator + "model.png");
+
 	public static final ImageIcon ICON_DOT = new ImageIcon(System.getenv("BIOSIM") + File.separator
 			+ "gui" + File.separator + "icons" + File.separator + "dot.jpg");
 
@@ -197,22 +200,22 @@ public class FileTree extends JPanel implements MouseListener {
 				else if (lema && files.get(fnum).toString().length() > 3
 						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4)
 								.equals("csp")) {
-					curDir.add(new DefaultMutableTreeNode(new IconData(ICON_LHPN, null, files.get(fnum))));
+					curDir.add(new DefaultMutableTreeNode(new IconData(ICON_MODEL, null, files.get(fnum))));
 				}
 				else if (lema && files.get(fnum).toString().length() > 3
 						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4)
 								.equals(".hse")) {
-					curDir.add(new DefaultMutableTreeNode(new IconData(ICON_LHPN, null, files.get(fnum))));
+					curDir.add(new DefaultMutableTreeNode(new IconData(ICON_VHDL, null, files.get(fnum))));
 				}
 				else if (lema && files.get(fnum).toString().length() > 3
 						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4)
 								.equals(".unc")) {
-					curDir.add(new DefaultMutableTreeNode(new IconData(ICON_LHPN, null, files.get(fnum))));
+					curDir.add(new DefaultMutableTreeNode(new IconData(ICON_MODEL, null, files.get(fnum))));
 				}
 				else if (lema && files.get(fnum).toString().length() > 3
 						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4)
 								.equals(".rsg")) {
-					curDir.add(new DefaultMutableTreeNode(new IconData(ICON_LHPN, null, files.get(fnum))));
+					curDir.add(new DefaultMutableTreeNode(new IconData(ICON_MODEL, null, files.get(fnum))));
 				}
 				else if (files.get(fnum).toString().length() > 3
 						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4)
