@@ -150,7 +150,8 @@ public class LHPNFile {
 				for (String s : contAssignments.keySet()) {
 					Properties prop = contAssignments.get(s);
 					buffer.append("<" + s + "=");
-					for (String t : prop.stringPropertyNames()) {
+					for (Object key : prop.keySet()) {
+						String t = (String) key;
 						buffer.append("[" + t + ":=" + prop.getProperty(t) + "]");
 					}
 					buffer.append(">");
@@ -162,7 +163,8 @@ public class LHPNFile {
 				for (String s : rateAssignments.keySet()) {
 					Properties prop = rateAssignments.get(s);
 					buffer.append("<" + s + "=");
-					for (String t : prop.stringPropertyNames()) {
+					for (Object key : prop.keySet()) {
+						String t = (String) key;
 						buffer.append("[" + t + ":=" + prop.getProperty(t) + "]");
 					}
 					buffer.append(">");
@@ -193,7 +195,7 @@ public class LHPNFile {
 					buffer.append(s + " ");
 				}
 			}
-			if (!buffer.toString().isEmpty()) {
+			if (buffer.toString().length() > 0) {
 				buffer.append("\n.end\n");
 			}
 			p.print(buffer);
@@ -497,7 +499,7 @@ public class LHPNFile {
 		return assignArray;
 	}
 
-	public String[] getVariableVars(String var) {
+	public String[] getContVars(String var) {
 		String[] assignArray = new String[contAssignments.size()];
 		int i = 0;
 		for (String s : contAssignments.keySet()) {
