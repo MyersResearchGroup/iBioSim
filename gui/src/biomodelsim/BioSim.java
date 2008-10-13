@@ -4825,7 +4825,7 @@ public class BioSim implements MouseListener, ActionListener {
 							directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
 							theFile = filename.substring(filename.lastIndexOf('\\') + 1);
 						}
-						LHPNFile lhpn = new LHPNFile();
+						LHPNFile lhpn = new LHPNFile(log);
 						if (new File(directory + theFile).length() > 0) {
 							lhpn.load(directory + theFile);
 						}
