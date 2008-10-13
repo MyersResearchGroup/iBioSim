@@ -50,7 +50,7 @@ public class LHPNEditor extends JPanel implements ActionListener {
 	private PropertyList variables, places, transitions, controlFlow;
 	
 	//private BioSim biosim;
-	//private Log log;
+	private Log log;
 	//private String directory;
 	
 	private String filename = "";
@@ -65,7 +65,7 @@ public class LHPNEditor extends JPanel implements ActionListener {
 	public LHPNEditor(String directory, String filename, LHPNFile lhpn, BioSim biosim, Log log) {
 		super();
 		//this.biosim = biosim;
-		//this.log = log;
+		this.log = log;
 		//this.directory = directory;
 		lhpnFile = new LHPNFile();
 		if (filename != null) {
@@ -195,7 +195,20 @@ public class LHPNEditor extends JPanel implements ActionListener {
 		}
 
 		public void run() {
-			
+			if (getName().contains("Variable")) {
+				String name = list.getSelectedValue().toString();
+				if (lhpnFile.removeVar(name) != 0){
+					JOptionPane.showMessageDialog(this, "Must deleted assignments to variable " + name, "Cannot remove variable" + name , JOptionPane.ERROR_MESSAGE);
+				}
+			} else if (getName().contains("Place")) {
+				lhpnFile.removePlace(list.getSelectedValue().toString());
+			} else if (getName().contains("Transition")) {
+				lhpnFile.removeTransition(list.getSelectedValue().toString());
+			} else if (getName().contains("Movement")) {
+				String tempString = list.getSelectedValue().toString();
+				String[] tempArray = tempString.split("\\s");
+				lhpnFile.removeFlow(tempArray[0], tempArray[1]);
+			} 
 		}
 
 		private PropertyList list = null;
@@ -244,7 +257,7 @@ public class LHPNEditor extends JPanel implements ActionListener {
 						&& getName().contains("Edit")) {
 					selected = list.getSelectedValue().toString();
 				}
-				//TransitionPanel panel = new TransitionPanel(selected, list, lhpnFile);
+				TransitionsPanel panel = new TransitionsPanel(selected, list, lhpnFile);
 			} else if (getName().contains("Movement")) {
 				String selected = null;
 				if (list.getSelectedValue() != null

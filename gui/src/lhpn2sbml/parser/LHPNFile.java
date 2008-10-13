@@ -182,9 +182,9 @@ public class LHPNFile {
 				buffer.append("#@.boolean_assignments {");
 				for (String s : booleanAssignments.keySet()) {
 					buffer.append("<" + s + "=");
-					 for (String key : booleanAssignments.keySet()) {
-					 buffer.append("[" + key + ":=" + booleanAssignments.get(key) + "]");
-					 }
+					for (String key : booleanAssignments.keySet()) {
+						buffer.append("[" + key + ":=" + booleanAssignments.get(key) + "]");
+					}
 					buffer.append(">");
 				}
 				buffer.append("}");
@@ -252,7 +252,7 @@ public class LHPNFile {
 		places.put(name, ic);
 	}
 
-	private void removePlace(String name) {
+	public void removePlace(String name) {
 		if (name != null && places.containsKey(name)) {
 			places.remove(name);
 		}
@@ -278,7 +278,7 @@ public class LHPNFile {
 		}
 	}
 
-	private void addFlow(String from, String to) {
+	public void addFlow(String from, String to) {
 		String name = "";
 		Properties flow = new Properties();
 		if (controlFlow.containsKey(from)) {
@@ -294,7 +294,7 @@ public class LHPNFile {
 		controlFlow.put(name, flow);
 	}
 
-	private void removeFlow(String from, String to) {
+	public void removeFlow(String from, String to) {
 		String name = "";
 		Properties flow = new Properties();
 		if (controlFlow.containsKey(from)) {
@@ -380,7 +380,7 @@ public class LHPNFile {
 		enablings.remove(name);
 	}
 
-	private void addEnabling(String name, String cond) {
+	public void addEnabling(String name, String cond) {
 		enablings.put(name, cond);
 	}
 
@@ -394,19 +394,84 @@ public class LHPNFile {
 		variables.put(name, initCond);
 	}
 
-	private void removeVar(String name) {
-		if (name != null && variables.containsKey(name)) {
+	public int removeVar(String name) {
+		int flag = 0;
+		for (String s : booleanAssignments.keySet()) {
+			Properties prop = booleanAssignments.get(s);
+			for (Object object : prop.keySet()) {
+				String propName = object.toString();
+				if (propName.equals(name)) {
+					flag = 1;
+				}
+			}
+		}
+		for (String s : contAssignments.keySet()) {
+			Properties prop = contAssignments.get(s);
+			for (Object object : prop.keySet()) {
+				String propName = object.toString();
+				if (propName.equals(name)) {
+					flag = 1;
+				}
+			}
+		}
+		for (String s : rateAssignments.keySet()) {
+			Properties prop = rateAssignments.get(s);
+			for (Object object : prop.keySet()) {
+				String propName = object.toString();
+				if (propName.equals(name)) {
+					flag = 1;
+				}
+			}
+		}
+		if (flag == 0 && name != null && variables.containsKey(name)) {
 			variables.remove(name);
+		}
+		return flag;
+	}
+
+	public void addRateAssign(String transition, String name, String value) {
+		Properties prop = rateAssignments.get(transition);
+		prop.setProperty(name, value);
+		rateAssignments.put(transition, prop);
+	}
+
+	public void removeRateAssign(String transition, String name) {
+		if (rateAssignments.containsKey(transition)) {
+			Properties prop = rateAssignments.get(transition);
+			if (name != null && prop.containsKey(name)) {
+				prop.remove(name);
+			}
+			rateAssignments.put(transition, prop);
 		}
 	}
 
-	private void addRateAssign(String name, Properties assign) {
-		rateAssignments.put(name, assign);
+	public void addBoolAssign(String transition, String name, String value) {
+		Properties prop = booleanAssignments.get(transition);
+		prop.setProperty(name, value);
+		booleanAssignments.put(transition, prop);
 	}
 
-	private void removeRateAssign(String name) {
-		if (name != null && rateAssignments.containsKey(name)) {
-			rateAssignments.remove(name);
+	public void removeBoolAssign(String transition, String name) {
+		Properties prop = booleanAssignments.get(transition);
+		if (name != null && prop.containsKey(name)) {
+			prop.remove(name);
+		}
+		booleanAssignments.put(transition, prop);
+	}
+
+	public void addContAssign(String transition, String name, String value) {
+		Properties prop = contAssignments.get(transition);
+		prop.setProperty(name, value);
+		contAssignments.put(transition, prop);
+	}
+
+	public void removeContAssign(String transition, String name) {
+		if (contAssignments.containsKey(transition)) {
+			Properties prop = contAssignments.get(transition);
+			if (name != null && prop.containsKey(name)) {
+				prop.remove(name);
+			}
+			contAssignments.put(transition, prop);
 		}
 	}
 
@@ -466,7 +531,7 @@ public class LHPNFile {
 				return "false";
 			}
 		}
-		else if (isOutput(var)){
+		else if (isOutput(var)) {
 			if (outputs.get(var)) {
 				return "true";
 			}
@@ -487,38 +552,94 @@ public class LHPNFile {
 		Properties prop = variables.get(var);
 		return prop.getProperty("rate");
 	}
-	
-	public String[] getBooleanVars(String var) {
-		String[] assignArray = new String[booleanAssignments.size()];
-		int i = 0;
-		for (String s : booleanAssignments.keySet()) {
-			assignArray[i] = s;
+
+	public String getEnabling(String var) {
+		return enablings.get(var);
+	}
+
+	public String[] getBooleanVars(String trans) {
+		if (booleanAssignments.containsKey(trans)) {
+			Properties prop = booleanAssignments.get(trans);
+			String[] assignArray = new String[prop.size()];
+			int i = 0;
+			for (Object s : prop.keySet()) {
+				assignArray[i] = s.toString();
+			}
+			// Properties prop = booleanAssignments.get(var);
+			// prop.setProperty("type", "boolean");
+			return assignArray;
 		}
-		//Properties prop = booleanAssignments.get(var);
-		//prop.setProperty("type", "boolean");
+		else {
+			return null;
+		}
+	}
+
+	public String[] getBooleanVars() {
+		Object[] inArray = inputs.keySet().toArray();
+		Object[] outArray = variables.keySet().toArray();
+		String[] vars = new String[inArray.length + outArray.length];
+		int i;
+		for (i = 0; i < inArray.length; i++) {
+			vars[i] = inArray[i].toString();
+		}
+		for (int j = 0; j < outArray.length; j++) {
+			vars[i] = outArray[j].toString();
+			i++;
+		}
+		return vars;
+	}
+
+	public String[] getContVars() {
+		Object[] objArray = variables.keySet().toArray();
+		String[] vars = new String[objArray.length];
+		for (int i = 0; i < objArray.length; i++) {
+			vars[i] = objArray[i].toString();
+		}
+		return vars;
+	}
+
+	public String[] getContVars(String trans) {
+		if (contAssignments.containsKey(trans)) {
+			Properties prop = contAssignments.get(trans);
+			String[] assignArray = new String[prop.size()];
+			int i = 0;
+			for (Object s : prop.keySet()) {
+				assignArray[i] = s.toString();
+			}
+			// Properties prop = booleanAssignments.get(var);
+			// prop.setProperty("type", "boolean");
+			return assignArray;
+		}
+		else {
+			return null;
+		}
+	}
+
+	public String[] getRateVars(String trans) {
+		Properties prop = rateAssignments.get(trans);
+		String[] assignArray = new String[prop.size()];
+		int i = 0;
+		for (Object s : prop.keySet()) {
+			assignArray[i] = s.toString();
+		}
+		// Properties prop = booleanAssignments.get(var);
+		// prop.setProperty("type", "boolean");
 		return assignArray;
 	}
 
-	public String[] getContVars(String var) {
-		String[] assignArray = new String[contAssignments.size()];
-		int i = 0;
-		for (String s : contAssignments.keySet()) {
-			assignArray[i] = s;
-		}
-		//Properties prop = contAssignments.get(var);
-		//prop.setProperty("type", "continuous");
-		return assignArray;
+	public boolean getBoolAssign(String trans, String var) {
+		Properties prop = booleanAssignments.get(trans);
+		return prop.getProperty(var).equals("true");
 	}
 
-	public String[] getRateVars(String var) {
-		String[] assignArray = new String[rateAssignments.size()];
-		int i = 0;
-		for (String s : rateAssignments.keySet()) {
-			assignArray[i] = s;
-		}
-		//Properties prop = rateAssignments.get(var);
-		//prop.setProperty("type", "rate");
-		return assignArray;
+	public String getContAssign(String transition, String var) {
+		Properties prop = contAssignments.get(transition);
+		return prop.getProperty(var);
+	}
+
+	public String getRateAssign(String transition, String var) {
+		Properties prop = rateAssignments.get(transition);
+		return prop.getProperty(var);
 	}
 
 	public String[] getPlaceList() {
