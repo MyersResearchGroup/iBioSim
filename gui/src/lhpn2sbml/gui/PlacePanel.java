@@ -51,11 +51,6 @@ public class PlacePanel extends JPanel implements ActionListener {
 		fields.put(GlobalConstants.ID, field);
 		add(field);
 
-		// Name field
-		field = new PropertyField(GlobalConstants.NAME, "", null, null, Utility.NAMEstring);
-		fields.put(GlobalConstants.NAME, field);
-		add(field);
-
 		// Initial field
 		JPanel tempPanel = new JPanel();
 		JLabel tempLabel = new JLabel("Initial Conditions");
