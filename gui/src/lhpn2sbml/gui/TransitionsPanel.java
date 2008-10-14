@@ -130,11 +130,11 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 		String oldName = null;
 		if (selected != null) {
 			oldName = selected;
-			Properties prop = lhpn.getVariables().get(selected);
+			//Properties prop = lhpn.getVariables().get(selected);
 			fields.get(GlobalConstants.ID).setValue(selected);
 			fields.get("Delay").setValue(lhpn.getDelay(selected));
 			fields.get("Enabling Condition").setValue(lhpn.getEnabling(selected));
-			loadProperties(prop);
+			//loadProperties(prop);
 		}
 
 	//	setType(types[0]);

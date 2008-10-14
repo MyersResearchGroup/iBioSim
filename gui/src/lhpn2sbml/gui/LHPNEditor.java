@@ -50,7 +50,7 @@ public class LHPNEditor extends JPanel implements ActionListener {
 	private PropertyList variables, places, transitions, controlFlow;
 	
 	//private BioSim biosim;
-	private Log log;
+	//private Log log;
 	//private String directory;
 	
 	private String filename = "";
@@ -65,7 +65,7 @@ public class LHPNEditor extends JPanel implements ActionListener {
 	public LHPNEditor(String directory, String filename, LHPNFile lhpn, BioSim biosim, Log log) {
 		super();
 		//this.biosim = biosim;
-		this.log = log;
+		//this.log = log;
 		//this.directory = directory;
 		lhpnFile = new LHPNFile();
 		if (filename != null) {
@@ -154,7 +154,7 @@ public class LHPNEditor extends JPanel implements ActionListener {
 		EditButton addFlow = new EditButton("Add Movement", controlFlow);
 		RemoveButton removeFlow = new RemoveButton("Remove Movement", controlFlow);
 		EditButton editFlow = new EditButton("Edit Movement", controlFlow);
-		transitions.addAllItem(lhpnFile.getControlFlow().keySet());
+		controlFlow.addAllItem(lhpnFile.getControlFlow());
 		
 		JPanel flowPanel = Utility.createPanel(this, "Control Flow", controlFlow, addFlow,
 				removeFlow, editFlow);
@@ -198,7 +198,7 @@ public class LHPNEditor extends JPanel implements ActionListener {
 			if (getName().contains("Variable")) {
 				String name = list.getSelectedValue().toString();
 				if (lhpnFile.removeVar(name) != 0){
-					JOptionPane.showMessageDialog(this, "Must deleted assignments to variable " + name, "Cannot remove variable" + name , JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(this, "Must delete assignments to variable " + name, "Cannot remove variable" + name , JOptionPane.ERROR_MESSAGE);
 				}
 			} else if (getName().contains("Place")) {
 				lhpnFile.removePlace(list.getSelectedValue().toString());
