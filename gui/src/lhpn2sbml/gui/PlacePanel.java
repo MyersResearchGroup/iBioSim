@@ -65,7 +65,7 @@ public class PlacePanel extends JPanel implements ActionListener {
 		String oldName = null;
 		if (selected != null) {
 			oldName = selected;
-			Properties prop = lhpn.getVariables().get(selected);
+			//Properties prop = lhpn.getVariables().get(selected);
 			fields.get(GlobalConstants.ID).setValue(selected);
 			if (lhpn.getPlaceInitial(selected)) {
 				initBox.setSelectedItem(initCond[0]);

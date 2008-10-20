@@ -28,22 +28,31 @@ public class VariablesPanel extends JPanel implements ActionListener {
 
 	private String[] options = { "Ok", "Cancel" };
 
+	private Boolean boolCont;
+	
 	private LHPNFile lhpn;
+	
+	private JPanel initPanel = null;
+	
+	private PropertyField initField = null, rateField;
 
-	private JComboBox typeBox, modeBox;
+	private JComboBox modeBox, initBox;
+	//private JComboBox typeBox, modeBox, initBox;
 
 	private static final String[] types = new String[] { "boolean", "continuous" };
 
 	private static final String[] modes = new String[] { "input", "output" };
 
+	private static final String[] booleans = new String[] { "true", "false" };
+
 	private HashMap<String, PropertyField> fields = null;
 
-	public VariablesPanel(String selected, PropertyList variablesList,
-			LHPNFile lhpn) {
+	public VariablesPanel(String selected, PropertyList variablesList, Boolean boolCont, LHPNFile lhpn) {
 		super(new GridLayout(6, 1));
 		this.selected = selected;
 		this.variablesList = variablesList;
 		this.lhpn = lhpn;
+		this.boolCont = boolCont;
 
 		fields = new HashMap<String, PropertyField>();
 
@@ -55,24 +64,53 @@ public class VariablesPanel extends JPanel implements ActionListener {
 
 		// Type field
 		JPanel tempPanel = new JPanel();
+		String type = "";
+		if (boolCont) {
+			type = types[1];
+		}
+		else {
+			type = types[0];
+		}
 		JLabel tempLabel = new JLabel("Type");
-		typeBox = new JComboBox(types);
-		typeBox.setSelectedItem(types[0]);
-		typeBox.addActionListener(this);
+		JLabel typeLabel = new JLabel(type);
+		//typeBox = new JComboBox(types);
+		//typeBox.setSelectedItem(types[0]);
+		//typeBox.addActionListener(this);
 		tempPanel.setLayout(new GridLayout(1, 2));
 		tempPanel.add(tempLabel);
-		tempPanel.add(typeBox);
+		tempPanel.add(typeLabel);
 		add(tempPanel);
 
 		// Initial field
-		field = new PropertyField("Initial Value", lhpn.getInitialVal(selected), null, null,
-				Utility.NUMstring);
-		fields.put("Initial value", field);
-		add(field);
+		if (boolCont) {
+			//JOptionPane.showMessageDialog(this, lhpn.isContinuous(selected));
+			if (selected != null) {
+			initField = new PropertyField("Initial Value", lhpn.getInitialVal(selected), null, null,
+					Utility.NUMstring);
+			}
+			else {
+				initField = new PropertyField("Initial Value", "0", null, null,
+						Utility.NUMstring);
+			}
+			fields.put("Initial value", initField);
+			add(initField);
+		}
+		else {
+			//JOptionPane.showMessageDialog(this, lhpn.isContinuous(selected));
+			initPanel = new JPanel();
+			JLabel initLabel = new JLabel("Initial Value");
+			initBox = new JComboBox(booleans);
+			initBox.setSelectedItem(booleans[1]);
+			//initBox.addActionListener(this);
+			initPanel.setLayout(new GridLayout(1, 2));
+			initPanel.add(initLabel);
+			initPanel.add(initBox);
+			add(initPanel);
+		}
 
 		// Mode field
 		tempPanel = new JPanel();
-		JLabel modeLabel  = new JLabel("Mode");
+		JLabel modeLabel = new JLabel("Mode");
 		modeBox = new JComboBox(modes);
 		modeBox.setSelectedItem(modes[0]);
 		modeBox.addActionListener(this);
@@ -82,38 +120,66 @@ public class VariablesPanel extends JPanel implements ActionListener {
 		add(tempPanel);
 
 		// Initial rate field
-		if (lhpn.isContinuous(selected)) {
-			field = new PropertyField("Initial Rate", lhpn.getInitialRate(selected), null, null,
+		if (boolCont) {
+			if (selected != null)	{
+			rateField = new PropertyField("Initial Rate", lhpn.getInitialRate(selected), null, null,
 					Utility.NUMstring);
+			}
+			else {
+			rateField = new PropertyField("Initial Rate", "0", null, null,
+					Utility.NUMstring);
+			}
 			fields.put("Initial rate", field);
-			add(field);
+			add(rateField);
 		}
 
 		String oldName = null;
 		if (selected != null) {
 			oldName = selected;
-			Properties prop = lhpn.getVariables().get(selected);
+			// Properties prop = lhpn.getVariables().get(selected);
 			fields.get(GlobalConstants.ID).setValue(selected);
+			//if (lhpn.isContinuous(selected)) {
+			//	typeBox.setSelectedItem(types[1]);
+				//setType(types[1]);
+			//}
+			//else {
+			//	typeBox.setSelectedItem(types[0]);
+				//setType(types[0]);
+			//}
 			if (lhpn.isContinuous(selected)) {
-				typeBox.setSelectedItem(types[1]);
-				setType(types[1]);
+				fields.get("Initial value").setValue(lhpn.getInitialVal(selected));
 			}
 			else {
-				typeBox.setSelectedItem(types[0]);
-				setType(types[0]);
+				HashMap<String, Boolean> inits;
+				if (lhpn.isInput(selected)) {
+					inits = lhpn.getInputs();
+					//JOptionPane.showMessageDialog(this, modeBox.getSelectedItem());
+				}
+				else {
+					inits = lhpn.getOutputs();
+					//JOptionPane.showMessageDialog(this, inits.toString());
+				}
+				//JOptionPane.showMessageDialog(this, inits.toString());
+				if (inits.get(selected)) {
+					initBox.setSelectedItem(booleans[0]);
+				}
+				else {
+					initBox.setSelectedItem(booleans[1]);
+				}
 			}
-			fields.get("Initial value").setValue(lhpn.getInitialVal(selected));
 			if (lhpn.isInput(selected)) {
 				modeBox.setSelectedItem(modes[0]);
 			}
 			else {
 				modeBox.setSelectedItem(modes[1]);
 			}
-			fields.get("Initial rate").setValue(lhpn.getInitialRate(selected));
-			loadProperties(prop);
+			if (lhpn.isContinuous(selected)) {
+				fields.get("Initial rate").setValue(lhpn.getInitialRate(selected));
+			}
+			// loadProperties(prop);
 		}
 
-		setType(types[0]);
+		//setType(types[0]);
 		boolean display = false;
 		while (!display) {
 			display = openGui(oldName);
@@ -139,13 +205,13 @@ public class VariablesPanel extends JPanel implements ActionListener {
 			}
 			if (oldName == null) {
 				if (lhpn.getVariables().containsKey(fields.get(GlobalConstants.ID).getValue())) {
-					Utility.createErrorMessage("Error", "Species id already exists.");
+					Utility.createErrorMessage("Error", "Variable id already exists.");
 					return false;
 				}
 			}
 			else if (!oldName.equals(fields.get(GlobalConstants.ID).getValue())) {
 				if (lhpn.getVariables().containsKey(fields.get(GlobalConstants.ID).getValue())) {
-					Utility.createErrorMessage("Error", "Species id already exists.");
+					Utility.createErrorMessage("Error", "Variable id already exists.");
 					return false;
 				}
 			}
@@ -158,24 +224,27 @@ public class VariablesPanel extends JPanel implements ActionListener {
 					property.put(f.getKey(), f.getValue());
 				}
 			}
-			property.put(GlobalConstants.TYPE, typeBox.getSelectedItem().toString());
+			//property.put(GlobalConstants.TYPE, typeBox.getSelectedItem().toString());
 
 			if (selected != null && !oldName.equals(id)) {
 				lhpn.changeVariableName(oldName, id);
+			}
+			if (id.equals(oldName)) {
+				lhpn.removeVar(id);
 			}
 			if (lhpn.isContinuous(id)) {
 				lhpn.addVar(id, property);
 			}
 			else if (lhpn.isInput(id)) {
 				Boolean temp = false;
-				if (property.get("Initial Value").equals("true")) {
+				if (initBox.getSelectedItem().equals("true")) {
 					temp = true;
 				}
 				lhpn.addInput(id, temp);
 			}
 			else {
 				Boolean temp = false;
-				if (property.get("Initial Value").equals("true")) {
+				if (initBox.getSelectedItem().equals("true")) {
 					temp = true;
 				}
 				lhpn.addOutput(id, temp);
@@ -194,27 +263,62 @@ public class VariablesPanel extends JPanel implements ActionListener {
 
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("comboBoxChanged")) {
-			setType(typeBox.getSelectedItem().toString());
+			//setType(typeBox.getSelectedItem().toString());
 		}
 	}
 
 	private void setType(String type) {
-		/*if (type.equals(types[0])) {
-			// fields.get(GlobalConstants.MAX_DIMER_STRING).setEnabled(true);
-			fields.get(GlobalConstants.KASSOCIATION_STRING).setEnabled(true);
-			fields.get(GlobalConstants.KDECAY_STRING).setEnabled(true);
+		//JOptionPane.showMessageDialog(this, type + types[0] + type.equals(types[0]));
+		if (type.equals(types[0]) && initField != null) {
+			//JOptionPane.showMessageDialog(this, type + types[0] + type.equals(types[0]));
+			remove(initField);
+			remove(rateField);
+			initField = null;
+			fields.remove("Initial value");
+			initPanel = new JPanel();
+			JLabel initLabel = new JLabel("Initial Value");
+			initBox = new JComboBox(booleans);
+			initBox.setSelectedItem(booleans[0]);
+			initBox.addActionListener(this);
+			initPanel.setLayout(new GridLayout(1, 2));
+			initPanel.add(initLabel);
+			initPanel.add(initBox);
+			add(initPanel);
+			HashMap <String, Boolean> inits;
+			if (modeBox.getSelectedIndex() == 0) {
+				inits = lhpn.getInputs();
+			}
+			else {
+				inits = lhpn.getOutputs();
+			}
+			if (inits.get(selected)) {
+				initBox.setSelectedItem(booleans[1]);
+			}
+			else {
+				initBox.setSelectedItem(booleans[0]);
+			}
+			lhpn.removeVar(selected);
+			
 		}
-		else if (type.equals(types[1])) {
-			// fields.get(GlobalConstants.MAX_DIMER_STRING).setEnabled(true);
-			fields.get(GlobalConstants.KASSOCIATION_STRING).setEnabled(true);
-			fields.get(GlobalConstants.KDECAY_STRING).setEnabled(false);
+		else if (type.equals(types[1]) && initPanel != null){
+			//JOptionPane.showMessageDialog(this, "here");
+			remove(initPanel);
+			initPanel = null;
+			initField = new PropertyField("Initial Value", lhpn.getInitialVal(selected), null, null,
+					Utility.NUMstring);
+			fields.put("Initial value", initField);
+			add(initField);
+			if (lhpn.isInput(selected)) {
+				lhpn.removeInput(selected);
+			}
+			else if (lhpn.isOutput(selected)) {
+				lhpn.removeOutput(selected);
+			}
+			Properties prop = new Properties();
+			prop.setProperty("value", "0");
+			prop.setProperty("rate", "0");
+			lhpn.addVar(selected, prop);
 		}
-		else {
-			// fields.get(GlobalConstants.MAX_DIMER_STRING).setEnabled(true);
-			fields.get(GlobalConstants.KASSOCIATION_STRING).setEnabled(true);
-			fields.get(GlobalConstants.KDECAY_STRING).setEnabled(true);
-		}
-		*/
 	}
 
 	private void loadProperties(Properties property) {

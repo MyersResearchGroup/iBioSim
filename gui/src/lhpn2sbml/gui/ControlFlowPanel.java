@@ -3,7 +3,7 @@ package lhpn2sbml.gui;
 import lhpn2sbml.parser.*;
 
 import gcm2sbml.gui.*;
-import gcm2sbml.parser.GCMFile;
+//import gcm2sbml.parser.GCMFile;
 import gcm2sbml.util.GlobalConstants;
 import gcm2sbml.util.Utility;
 
@@ -11,9 +11,9 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
-import java.util.Properties;
+//import java.util.Properties;
 
-import javax.swing.DefaultListModel;
+//import javax.swing.DefaultListModel;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -44,16 +44,18 @@ public class ControlFlowPanel extends JPanel implements ActionListener {
 
 		placeList = lhpn.getPlaceList();
 		transitionList = lhpn.getTransitionList();
-		flowStringList = new String[1];
+		flowStringList = new String[0];
 		if (!placeList.equals(null) && !transitionList.equals(null)) {
 			flowStringList = new String[placeList.length + transitionList.length];
+			// JOptionPane.showMessageDialog(this, flowStringList.length);
 		}
-		placeList = lhpn.getPlaceList();
-		transitionList = lhpn.getTransitionList();
+		// placeList = lhpn.getPlaceList();
+		// transitionList = lhpn.getTransitionList();
 		if (!placeList.equals(null) && !transitionList.equals(null)) {
 			System.arraycopy(placeList, 0, flowStringList, 0, placeList.length);
 			System.arraycopy(transitionList, 0, flowStringList, placeList.length,
 					transitionList.length);
+			// JOptionPane.showMessageDialog(this, flowStringList.length);
 		}
 		else if (placeList.length > 0) {
 			System.arraycopy(placeList, 0, flowStringList, 0, placeList.length);
@@ -61,6 +63,7 @@ public class ControlFlowPanel extends JPanel implements ActionListener {
 		else if (transitionList.length > 0) {
 			System.arraycopy(transitionList, 0, flowStringList, 0, transitionList.length);
 		}
+		// JOptionPane.showMessageDialog(this, flowStringList.length);
 
 		fields = new HashMap<String, PropertyField>();
 
@@ -68,7 +71,7 @@ public class ControlFlowPanel extends JPanel implements ActionListener {
 		PropertyField field = new PropertyField(GlobalConstants.ID, "", null, null,
 				Utility.NAMEstring);
 		fields.put(GlobalConstants.ID, field);
-		add(field);
+		// add(field);
 
 		JPanel tempPanel;
 		JLabel tempLabel;
@@ -90,7 +93,7 @@ public class ControlFlowPanel extends JPanel implements ActionListener {
 			tempPanel = new JPanel();
 			tempLabel = new JLabel("To");
 			toBox = new JComboBox(flowStringList);
-			toBox.setSelectedItem(flowStringList[0]);
+			// toBox.setSelectedItem(flowStringList[0]);
 			toBox.addActionListener(this);
 			tempPanel.setLayout(new GridLayout(1, 2));
 			tempPanel.add(tempLabel);
@@ -100,26 +103,43 @@ public class ControlFlowPanel extends JPanel implements ActionListener {
 
 		String oldName = null;
 		if (selected != null) {
+			// JOptionPane.showMessageDialog(this, "here");
 			oldName = selected;
-			fields.get(GlobalConstants.ID).setValue(selected);
+			//fields.get(GlobalConstants.ID).setValue(selected);
+			String[] flowArray = selected.split("\\s");
+			fromBox.setSelectedItem(flowArray[0]);
+			toBox.setSelectedItem(flowArray[1]);
 			if (isPlace(fromBox)) {
-				fromBox.removeAll();
-				for (int i = 0; i < placeList.length; i++) {
-					fromBox.addItem(placeList[i]);
+				String to = "";
+				Boolean flag = false;
+				if (toBox.getSelectedItem() != null) {
+					to = toBox.getSelectedItem().toString();
+					flag = true;
 				}
-				toBox.removeAll();
+				toBox.removeAllItems();
 				for (int i = 0; i < transitionList.length; i++) {
+					toBox.removeItem(transitionList[i]);
 					toBox.addItem(transitionList[i]);
 				}
-			}
-			else {
-				fromBox.removeAll();
-				for (int i = 0; i < transitionList.length; i++) {
-					fromBox.addItem(transitionList[i]);
+
+				if (flag) {
+					toBox.setSelectedItem(to);
 				}
-				toBox.removeAll();
+			}
+			else if (isTransition(fromBox)) {
+				String to = "";
+				Boolean flag = false;
+				if (toBox.getSelectedItem() != null) {
+					to = toBox.getSelectedItem().toString();
+					flag = true;
+				}
+				toBox.removeAllItems();
 				for (int i = 0; i < placeList.length; i++) {
+					toBox.removeItem(placeList[i]);
 					toBox.addItem(placeList[i]);
+				}
+				if (flag) {
+					toBox.setSelectedItem(to);
 				}
 			}
 		}
@@ -135,43 +155,48 @@ public class ControlFlowPanel extends JPanel implements ActionListener {
 					"There must be places and transitions to create control flow.",
 					"Control Flow Error", JOptionPane.ERROR_MESSAGE);
 		}
+		fields.get(GlobalConstants.ID).setValue(fromBox.getSelectedItem().toString() + " "
+				+ toBox.getSelectedItem().toString());
 	}
 
-	private boolean checkValues() {
-		for (PropertyField f : fields.values()) {
-			if (!f.isValid()) {
-				return false;
-			}
-		}
-		return true;
-	}
+	//private boolean checkValues() {
+	//	for (PropertyField f : fields.values()) {
+	//		if (!f.isValid()) {
+	//			return false;
+	//		}
+	//	}
+	//	return true;
+	//}
 
 	private boolean openGui(String oldName) {
+		String id = fields.get(GlobalConstants.ID).getValue();
+		//JOptionPane.showMessageDialog(this, id);
+		String[] oldFlow = oldName.split("\\s");
+		String[] newFlow = id.split("\\s");
 		int value = JOptionPane.showOptionDialog(new JFrame(), this, "Control Flow Editor",
 				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		if (value == JOptionPane.YES_OPTION) {
-			if (!checkValues()) {
-				Utility.createErrorMessage("Error", "Illegal values entered.");
-				return false;
-			}
+			//if (!checkValues()) {
+			//	Utility.createErrorMessage("Error", "Illegal values entered.");
+			//	return false;
+			//}
 			if (oldName == null) {
-				if (lhpn.getVariables().containsKey(fields.get(GlobalConstants.ID).getValue())) {
-					Utility.createErrorMessage("Error", "Movement id already exists.");
+				if (lhpn.containsFlow(newFlow[0], newFlow[1])) {
+					Utility.createErrorMessage("Error", "Movement already exists.");
 					return false;
 				}
 			}
-			else if (!oldName.equals(fields.get(GlobalConstants.ID).getValue())) {
-				if (lhpn.getVariables().containsKey(fields.get(GlobalConstants.ID).getValue())) {
-					Utility.createErrorMessage("Error", "Movement id already exists.");
+			else if (!oldName.equals(id)) {
+					if (lhpn.containsFlow(newFlow[0], newFlow[1])) {
+					Utility.createErrorMessage("Error", "Movement already exists.");
 					return false;
 				}
 			}
-			String id = fields.get(GlobalConstants.ID).getValue();
 
 			// Check to see if we need to add or edit
 
 			if (selected != null && !oldName.equals(id)) {
-				lhpn.changeVariableName(oldName, id);
+				lhpn.removeControlFlow(oldFlow[0], oldFlow[1]);
 			}
 			lhpn.addControlFlow(fromBox.getSelectedItem().toString(), toBox.getSelectedItem()
 					.toString());
@@ -187,10 +212,24 @@ public class ControlFlowPanel extends JPanel implements ActionListener {
 	}
 
 	private boolean isPlace(JComboBox box) {
-		String test = box.getSelectedItem().toString();
-		for (int i = 0; i < placeList.length; i++) {
-			if (placeList[i].equals(test)) {
-				return true;
+		if (box.getSelectedItem() != null) {
+			String test = box.getSelectedItem().toString();
+			for (int i = 0; i < placeList.length; i++) {
+				if (placeList[i].equals(test)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	private boolean isTransition(JComboBox box) {
+		if (box.getSelectedItem() != null) {
+			String test = box.getSelectedItem().toString();
+			for (int i = 0; i < transitionList.length; i++) {
+				if (transitionList[i].equals(test)) {
+					return true;
+				}
 			}
 		}
 		return false;
@@ -199,35 +238,58 @@ public class ControlFlowPanel extends JPanel implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("comboBoxChanged")) {
 			if (isPlace(fromBox)) {
-				fromBox.removeAll();
-				for (int i = 0; i < placeList.length; i++) {
-					fromBox.addItem(placeList[i]);
+				String to = "";
+				Boolean flag = false;
+				if (toBox.getSelectedItem() != null) {
+					to = toBox.getSelectedItem().toString();
+					flag = true;
 				}
-				toBox.removeAll();
+				toBox.removeAllItems();
+				// JOptionPane.showMessageDialog(this, toBox.getItemCount());
 				for (int i = 0; i < transitionList.length; i++) {
+					// JOptionPane.showMessageDialog(this, "transition " + i + "
+					// " + transitionList[i]);
+					toBox.removeItem(transitionList[i]);
 					toBox.addItem(transitionList[i]);
 				}
+					if (flag) {
+						toBox.setSelectedItem(to);
+					}
 			}
-			else {
-				fromBox.removeAll();
-				for (int i = 0; i < transitionList.length; i++) {
-					fromBox.addItem(transitionList[i]);
+			else if (isTransition(fromBox)) {
+				String to = "";
+				Boolean flag = false;
+				if (toBox.getSelectedItem() != null) {
+					to = toBox.getSelectedItem().toString();
+					flag = true;
+					//JOptionPane.showMessageDialog(this, "to: " + to);
 				}
-				toBox.removeAll();
+				toBox.removeAllItems();
+				// JOptionPane.showMessageDialog(this, toBox.getItemCount());
 				for (int i = 0; i < placeList.length; i++) {
+					toBox.removeItem(placeList[i]);
 					toBox.addItem(placeList[i]);
 				}
+				if (flag) {
+					toBox.setSelectedItem(to);
+				}
+				// JOptionPane.showMessageDialog(this, toBox.getItemCount());
 			}
+			//JOptionPane.showMessageDialog(this, fromBox.getSelectedItem().toString() + " "
+			//		+ toBox.getSelectedItem().toString());
+			
 		}
+		fields.get(GlobalConstants.ID).setValue(fromBox.getSelectedItem().toString() + " "
+				+ toBox.getSelectedItem().toString());
 	}
 
-	private void loadProperties(Properties property) {
-		for (Object o : property.keySet()) {
-			if (fields.containsKey(o.toString())) {
-				fields.get(o.toString()).setValue(property.getProperty(o.toString()));
-				fields.get(o.toString()).setCustom();
-			}
-		}
-	}
+	// private void loadProperties(Properties property) {
+	// for (Object o : property.keySet()) {
+	// if (fields.containsKey(o.toString())) {
+	// fields.get(o.toString()).setValue(property.getProperty(o.toString()));
+	// fields.get(o.toString()).setCustom();
+	// }
+	// }
+	// }
 
 }

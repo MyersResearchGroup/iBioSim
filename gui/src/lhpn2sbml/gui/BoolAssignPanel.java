@@ -20,6 +20,8 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import biomodelsim.Log;
+
 public class BoolAssignPanel extends JPanel implements ActionListener {
 
 	private String selected = "";
@@ -33,6 +35,7 @@ public class BoolAssignPanel extends JPanel implements ActionListener {
 	private String[] options = { "Ok", "Cancel" };
 
 	private LHPNFile lhpn;
+	private Log log;
 
 	//private JComboBox typeBox, varBox;
 	private JComboBox varBox, valueBox;
@@ -42,15 +45,17 @@ public class BoolAssignPanel extends JPanel implements ActionListener {
 	private HashMap<String, PropertyField> fields = null;
 
 	public BoolAssignPanel(String transition, String selected, PropertyList assignmentList,
-			LHPNFile lhpn) {
+			LHPNFile lhpn, Log log) {
 		super(new GridLayout(6, 1));
 		this.selected = selected;
 		this.assignmentList = assignmentList;
 		this.lhpn = lhpn;
+		this.log = log;
 
 		fields = new HashMap<String, PropertyField>();
 		
-		boolList = lhpn.getBooleanVars(selected);
+		//log.addText(selected);
+		boolList = lhpn.getBooleanVars();
 		//contList = lhpn.getContVars(selected);
 		//if (boolList.length > 0 && contList.length > 0) {
 		//	System.arraycopy(boolList, 0, varList, 0, boolList.length);
@@ -65,10 +70,10 @@ public class BoolAssignPanel extends JPanel implements ActionListener {
 		//}
 
 		// ID field
-		PropertyField field = new PropertyField(GlobalConstants.ID, "", null, null,
-				Utility.NAMEstring);
-		fields.put(GlobalConstants.ID, field);
-		add(field);
+		//PropertyField field = new PropertyField(GlobalConstants.ID, "", null, null,
+		//		Utility.NAMEstring);
+		//fields.put(GlobalConstants.ID, field);
+		//add(field);
 
 		// Type field
 		//JPanel tempPanel = new JPanel();
@@ -100,21 +105,21 @@ public class BoolAssignPanel extends JPanel implements ActionListener {
 		valueBox.addActionListener(this);
 		tempPanel.setLayout(new GridLayout(1, 2));
 		tempPanel.add(valueLabel);
-		tempPanel.add(varBox);
+		tempPanel.add(valueBox);
 		add(tempPanel);
 		
 		String oldName = null;
 		if (selected != null) {
 			oldName = selected;
-			Properties prop = lhpn.getVariables().get(selected);
-			fields.get(GlobalConstants.ID).setValue(selected);
+			//Properties prop = lhpn.getVariables().get(selected);
+			//fields.get(GlobalConstants.ID).setValue(selected);
 			if (lhpn.getBoolAssign(transition, selected)) {
-				varBox.setSelectedItem(values[0]);
+				valueBox.setSelectedItem(values[0]);
 			}
 			else {
-				varBox.setSelectedItem(values[1]);
+				valueBox.setSelectedItem(values[1]);
 			}
-			loadProperties(prop);
+			//loadProperties(prop);
 		}
 
 		//setType(types[0]);
@@ -137,31 +142,31 @@ public class BoolAssignPanel extends JPanel implements ActionListener {
 		int value = JOptionPane.showOptionDialog(new JFrame(), this, "Boolean Assignment Editor",
 				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		if (value == JOptionPane.YES_OPTION) {
-			if (!checkValues()) {
-				Utility.createErrorMessage("Error", "Illegal values entered.");
-				return false;
-			}
-			if (oldName == null) {
-				if (lhpn.getVariables().containsKey(fields.get(GlobalConstants.ID).getValue())) {
-					Utility.createErrorMessage("Error", "Assignment id already exists.");
-					return false;
-				}
-			}
-			else if (!oldName.equals(fields.get(GlobalConstants.ID).getValue())) {
-				if (lhpn.getVariables().containsKey(fields.get(GlobalConstants.ID).getValue())) {
-					Utility.createErrorMessage("Error", "Assignment id already exists.");
-					return false;
-				}
-			}
-			String id = fields.get(GlobalConstants.ID).getValue();
+			//if (!checkValues()) {
+			//	Utility.createErrorMessage("Error", "Illegal values entered.");
+			//	return false;
+			//}
+			//if (oldName == null) {
+			//	if (lhpn.getVariables().containsKey(varBox.getSelectedItem())) {
+			//		Utility.createErrorMessage("Error", "Assignment id already exists.");
+			//		return false;
+			//	}
+			//}
+			//else if (!oldName.equals(varBox.getSelectedItem())) {
+			//	if (lhpn.getVariables().containsKey(varBox.getSelectedItem())) {
+			//		Utility.createErrorMessage("Error", "Assignment id already exists.");
+			//		return false;
+			//	}
+			//}
+			String id = varBox.getSelectedItem().toString();
 
 			// Check to see if we need to add or edit
 			Properties property = new Properties();
-			for (PropertyField f : fields.values()) {
-				if (f.getState() == null || f.getState().equals(PropertyField.states[1])) {
-					property.put(f.getKey(), f.getValue());
-				}
-			}
+			//for (PropertyField f : fields.values()) {
+			//	if (f.getState() == null || f.getState().equals(PropertyField.states[1])) {
+			//		property.put(f.getKey(), f.getValue());
+			//	}
+			//}
 			property.put("Variable", varBox.getSelectedItem().toString());
 			property.put("Value", valueBox.getSelectedItem().toString());
 

@@ -49,7 +49,7 @@ public class VarAssignPanel extends JPanel implements ActionListener {
 
 		fields = new HashMap<String, PropertyField>();
 		
-		contList = lhpn.getContVars(selected);
+		contList = lhpn.getContVars();
 		//if (boolList.length > 0 && contList.length > 0) {
 		//	System.arraycopy(boolList, 0, varList, 0, boolList.length);
 		//	System.arraycopy(contList, 0, varList, boolList.length,
