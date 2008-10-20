@@ -4,7 +4,7 @@ import lhpn2sbml.parser.*;
 
 import gcm2sbml.gui.*;
 import gcm2sbml.gui.Runnable;
-//import gcm2sbml.parser.GCMFile;
+import biomodelsim.Log;
 import gcm2sbml.util.GlobalConstants;
 import gcm2sbml.util.Utility;
 
@@ -36,16 +36,18 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 	private String[] options = { "Ok", "Cancel" };
 
 	private LHPNFile lhpn;
+	private Log log;
 
 	private HashMap<String, PropertyField> fields = null;
 
 	public TransitionsPanel(String selected, PropertyList transitionsList,
-			LHPNFile lhpn) {
+			LHPNFile lhpn, Log log) {
 		super(new GridBagLayout());
 		GridBagConstraints constraints = new GridBagConstraints();
 		this.selected = selected;
 		this.transitionsList = transitionsList;
 		this.lhpn = lhpn;
+		this.log = log;
 
 		fields = new HashMap<String, PropertyField>();
 		JPanel fieldPanel = new JPanel(new GridLayout(3,2));
@@ -98,8 +100,10 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 		RemoveButton removeVarAssign = new RemoveButton("Remove Variable Assignment", varAssignments);
 		EditButton editVarAssign = new EditButton("Edit Variable Assignment", varAssignments);
 		if (selected != null) {
-			if (lhpn.getContVars(selected) != null) {
-				varAssignments.addAllItem(lhpn.getContVars(selected));
+			if (lhpn.getContAssignVars(selected) != null) {
+				for (String s : lhpn.getContAssignVars(selected)) {
+					varAssignments.addItem(s + ":=" + lhpn.getContAssign(selected, s));
+				}
 			}
 		}
 		
@@ -116,7 +120,9 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 		EditButton editRateAssign = new EditButton("Edit Rate Assignment", rateAssignments);
 		if (selected != null) {
 			if (lhpn.getRateVars(selected) != null) {
-				rateAssignments.addAllItem(lhpn.getRateVars(selected));
+				for (String s : lhpn.getRateVars(selected)) {
+					rateAssignments.addItem(s + ":=" + lhpn.getRateAssign(selected, s));
+				}
 			}
 		}
 		
@@ -154,7 +160,7 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 	}
 
 	private boolean openGui(String oldName) {
-		int value = JOptionPane.showOptionDialog(new JFrame(), this, "Variable Editor",
+		int value = JOptionPane.showOptionDialog(new JFrame(), this, "Transition Editor",
 				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		if (value == JOptionPane.YES_OPTION) {
 			if (!checkValues()) {
@@ -163,13 +169,13 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 			}
 			if (oldName == null) {
 				if (lhpn.getVariables().containsKey(fields.get(GlobalConstants.ID).getValue())) {
-					Utility.createErrorMessage("Error", "Species id already exists.");
+					Utility.createErrorMessage("Error", "Transition already exists.");
 					return false;
 				}
 			}
 			else if (!oldName.equals(fields.get(GlobalConstants.ID).getValue())) {
 				if (lhpn.getVariables().containsKey(fields.get(GlobalConstants.ID).getValue())) {
-					Utility.createErrorMessage("Error", "Species id already exists.");
+					Utility.createErrorMessage("Error", "Transition already exists.");
 					return false;
 				}
 			}
@@ -267,7 +273,7 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 					Utility.createErrorMessage("Error", "Add boolean variables first");
 				}
 				else{
-					BoolAssignPanel panel = new BoolAssignPanel(selected, variable, list, lhpn);
+					BoolAssignPanel panel = new BoolAssignPanel(selected, variable, list, lhpn, log);
 				}
 			} else if (getName().contains("Variable")) {
 				String variable = null;
@@ -291,7 +297,7 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 					Utility.createErrorMessage("Error", "Add continuous variables first");
 				}
 				else{
-					RateAssignPanel panel = new RateAssignPanel(selected, variable, list, lhpn);
+					RateAssignPanel panel = new RateAssignPanel(selected, variable, list, lhpn, log);
 				}
 			}
 		}
