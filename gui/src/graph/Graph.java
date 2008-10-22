@@ -4014,6 +4014,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			return deviation;
 		}
 	}
+	
+	public void run() {
+		reb2sac.getRunButton().doClick();
+	}
 
 	public void save() {
 		if (timeSeries) {

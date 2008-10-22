@@ -140,6 +140,7 @@ public class ControlFlowPanel extends JPanel implements ActionListener {
 				}
 				if (flag) {
 					toBox.setSelectedItem(to);
+					//JOptionPane.showMessageDialog(this, to);
 				}
 			}
 		}
