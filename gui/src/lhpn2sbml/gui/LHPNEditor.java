@@ -3,36 +3,37 @@ package lhpn2sbml.gui;
 import lhpn2sbml.parser.LHPNFile;
 
 import gcm2sbml.gui.AbstractRunnableNamedButton;
-import gcm2sbml.gui.InfluencePanel;
-import gcm2sbml.gui.ParameterPanel;
-import gcm2sbml.gui.PromoterPanel;
+//import gcm2sbml.gui.InfluencePanel;
+//import gcm2sbml.gui.ParameterPanel;
+//import gcm2sbml.gui.PromoterPanel;
 import gcm2sbml.gui.PropertyList;
 import gcm2sbml.gui.Runnable;
-import gcm2sbml.gui.SpeciesPanel;
+//import gcm2sbml.gui.SpeciesPanel;
 import gcm2sbml.util.Utility;
 
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.*;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.PrintStream;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Properties;
-import java.util.Set;
+//import java.io.FileNotFoundException;
+//import java.io.FileOutputStream;
+//import java.io.PrintStream;
+//import java.util.Arrays;
+//import java.util.HashMap;
+//import java.util.HashSet;
+//import java.util.Properties;
+//import java.util.Set;
 
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JFrame;
+//import javax.swing.DefaultComboBoxModel;
+//import javax.swing.JCheckBox;
+//import javax.swing.JComboBox;
+//import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JSplitPane;
+//import javax.swing.JSplitPane;
 import javax.swing.JTextField;
+//import javax.swing.JButton;
 
 import biomodelsim.BioSim;
 import biomodelsim.Log;
@@ -63,7 +64,7 @@ public class LHPNEditor extends JPanel implements ActionListener {
 
 	private LHPNFile lhpnFile = null;
 
-	private JPanel mainPanel;
+	private JPanel mainPanel, buttonPanel;
 
 	public LHPNEditor() {
 		super();
@@ -105,6 +106,12 @@ public class LHPNEditor extends JPanel implements ActionListener {
 		mainPanelNorth.add(lhpnNameLabel);
 		mainPanelNorth.add(lhpnNameTextField);
 
+		//buttonPanel = new JPanel();
+		//JButton save = new JButton("Save");
+		//save.addActionListener(this);
+		//buttonPanel.add(save);
+		//add(buttonPanel, BorderLayout.SOUTH);
+		
 		mainPanel = new JPanel(new BorderLayout());
 		mainPanel.setLayout(new BorderLayout());
 		mainPanel.add(mainPanelNorth, "North");
@@ -169,6 +176,10 @@ public class LHPNEditor extends JPanel implements ActionListener {
 				removeFlow, editFlow);
 		mainPanelCenterCenter.add(flowPanel);
 
+	}
+
+	public void save() {
+		lhpnFile.save(filename);
 	}
 
 	public class SaveButton extends AbstractRunnableNamedButton {
