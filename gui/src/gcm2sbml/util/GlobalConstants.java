@@ -31,6 +31,8 @@ public class GlobalConstants {
 //	public static final String ACTIVED_VALUE = ".25";
 	
 	public static final String ID = "ID";
+	public static final String COMPONENT = "Component";
+	public static final String PORTMAP = "Port Map";
 	public static final String NAME = "Name";
 	public static final String CONSTANT = "boundary";
 	public static final String SPASTIC = "unconstrained";
