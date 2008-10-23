@@ -304,6 +304,9 @@ public class BioSim implements MouseListener, ActionListener {
 		refreshButton = makeToolButton(imgName, "refresh", "Refresh", "Refresh");
 		// toolButton = new JButton("Refresh");
 		toolbar.add(refreshButton);
+		saveButton.setEnabled(false);
+		runButton.setEnabled(false);
+		refreshButton.setEnabled(false);
 
 		// Creates a menu for the frame
 		JMenuBar menuBar = new JMenuBar();
@@ -4486,71 +4489,6 @@ public class BioSim implements MouseListener, ActionListener {
 	}
 
 	public void mousePressed(MouseEvent e) {
-		Component comp = tab.getSelectedComponent();
-		if (comp instanceof GCM2SBMLEditor) {
-			saveButton.setEnabled(true);
-			runButton.setEnabled(false);
-			refreshButton.setEnabled(false);
-		}
-		if (comp instanceof LHPNEditor) {
-			saveButton.setEnabled(true);
-			runButton.setEnabled(false);
-			refreshButton.setEnabled(false);
-		}
-		else if (comp instanceof GCM2SBMLEditor) {
-			saveButton.setEnabled(true);
-			runButton.setEnabled(false);
-			refreshButton.setEnabled(false);
-		}
-		else if (comp instanceof SBML_Editor) {
-			saveButton.setEnabled(true);
-			runButton.setEnabled(false);
-			refreshButton.setEnabled(false);
-		}
-		else if (comp instanceof JTabbedPane) {
-			Component component = ((JTabbedPane) comp).getSelectedComponent();
-			// int index = tab.getSelectedIndex();
-			if (component instanceof Graph) {
-				saveButton.setEnabled(true);
-				runButton.setEnabled(false);
-				refreshButton.setEnabled(true);
-			}
-			else if (component instanceof Reb2Sac) {
-				saveButton.setEnabled(true);
-				runButton.setEnabled(true);
-				refreshButton.setEnabled(false);
-			}
-			else if (component instanceof SBML_Editor) {
-				saveButton.setEnabled(true);
-				runButton.setEnabled(true);
-				refreshButton.setEnabled(false);
-			}
-			else if (component instanceof Learn) {
-				saveButton.setEnabled(true);
-				runButton.setEnabled(true);
-				refreshButton.setEnabled(false);
-			}
-			else if (component instanceof DataManager) {
-				saveButton.setEnabled(true);
-				runButton.setEnabled(false);
-				refreshButton.setEnabled(false);
-			}
-		}
-		else if (comp instanceof Verification) {
-			saveButton.setEnabled(true);
-			runButton.setEnabled(true);
-			refreshButton.setEnabled(false);
-		}
-		else if (comp instanceof Synthesis) {
-			saveButton.setEnabled(true);
-			runButton.setEnabled(true);
-			refreshButton.setEnabled(false);
-		}
-		else {
-			saveButton.setEnabled(false);
-			runButton.setEnabled(false);
-			refreshButton.setEnabled(false);
-		}
 		if (e.isPopupTrigger() && tree.getFile() != null) {
 			popup.removeAll();
 			if (tree.getFile().length() > 4
@@ -5182,6 +5120,71 @@ public class BioSim implements MouseListener, ActionListener {
 	}
 
 	public void mouseReleased(MouseEvent e) {
+		Component comp = tab.getSelectedComponent();
+		if (comp instanceof GCM2SBMLEditor) {
+			saveButton.setEnabled(true);
+			runButton.setEnabled(false);
+			refreshButton.setEnabled(false);
+		}
+		if (comp instanceof LHPNEditor) {
+			saveButton.setEnabled(true);
+			runButton.setEnabled(false);
+			refreshButton.setEnabled(false);
+		}
+		else if (comp instanceof GCM2SBMLEditor) {
+			saveButton.setEnabled(true);
+			runButton.setEnabled(false);
+			refreshButton.setEnabled(false);
+		}
+		else if (comp instanceof SBML_Editor) {
+			saveButton.setEnabled(true);
+			runButton.setEnabled(false);
+			refreshButton.setEnabled(false);
+		}
+		else if (comp instanceof JTabbedPane) {
+			Component component = ((JTabbedPane) comp).getSelectedComponent();
+			// int index = tab.getSelectedIndex();
+			if (component instanceof Graph) {
+				saveButton.setEnabled(true);
+				runButton.setEnabled(true);
+				refreshButton.setEnabled(true);
+			}
+			else if (component instanceof Reb2Sac) {
+				saveButton.setEnabled(true);
+				runButton.setEnabled(true);
+				refreshButton.setEnabled(false);
+			}
+			else if (component instanceof SBML_Editor) {
+				saveButton.setEnabled(true);
+				runButton.setEnabled(true);
+				refreshButton.setEnabled(false);
+			}
+			else if (component instanceof Learn) {
+				saveButton.setEnabled(true);
+				runButton.setEnabled(true);
+				refreshButton.setEnabled(false);
+			}
+			else if (component instanceof DataManager) {
+				saveButton.setEnabled(true);
+				runButton.setEnabled(false);
+				refreshButton.setEnabled(false);
+			}
+		}
+		else if (comp instanceof Verification) {
+			saveButton.setEnabled(true);
+			runButton.setEnabled(true);
+			refreshButton.setEnabled(false);
+		}
+		else if (comp instanceof Synthesis) {
+			saveButton.setEnabled(true);
+			runButton.setEnabled(true);
+			refreshButton.setEnabled(false);
+		}
+		else {
+			saveButton.setEnabled(false);
+			runButton.setEnabled(false);
+			refreshButton.setEnabled(false);
+		}
 		if (e.isPopupTrigger() && tree.getFile() != null) {
 			popup.removeAll();
 			if (tree.getFile().length() > 4
