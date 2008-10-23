@@ -65,7 +65,7 @@ public class ButtonTabComponent extends JPanel {
 			private static final long serialVersionUID = -4264913100003987764L;
 
 			public String getText() {
-				int i = pane.indexOfTabComponent(ButtonTabComponent.this);
+			        int i = -1; //pane.indexOfTabComponent(ButtonTabComponent.this);
 				if (i != -1) {
 					return pane.getTitleAt(i);
 				}
@@ -111,7 +111,7 @@ public class ButtonTabComponent extends JPanel {
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			int i = pane.indexOfTabComponent(ButtonTabComponent.this);
+		        int i = -1; //pane.indexOfTabComponent(ButtonTabComponent.this);
 			if (i != -1) {
 				pane.remove(i);
 			}

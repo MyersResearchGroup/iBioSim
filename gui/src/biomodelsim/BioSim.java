@@ -4227,7 +4227,7 @@ public class BioSim implements MouseListener, ActionListener {
 	 */
 	public void addTab(String name, Component panel, String tabName) {
 		tab.add(name, panel);
-		tab.setTabComponentAt(tab.getTabCount() - 1, new ButtonTabComponent(tab));
+		//tab.setTabComponentAt(tab.getTabCount() - 1, new ButtonTabComponent(tab));
 		panel.addMouseListener(this);
 		if (tabName != null) {
 			tab.getComponentAt(tab.getTabCount() - 1).setName(tabName);
