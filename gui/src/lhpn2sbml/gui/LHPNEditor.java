@@ -160,7 +160,7 @@ public class LHPNEditor extends JPanel implements ActionListener {
 		EditButton addTrans = new EditButton("Add Transition", transitions);
 		RemoveButton removeTrans = new RemoveButton("Remove Transition", transitions);
 		EditButton editTrans = new EditButton("Edit Transition", transitions);
-		transitions.addAllItem(lhpnFile.getDelays().keySet());
+		transitions.addAllItem(lhpnFile.getTransitionList());
 
 		JPanel transPanel = Utility.createPanel(this, "Transitions", transitions, addTrans,
 				removeTrans, editTrans);
