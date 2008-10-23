@@ -28,6 +28,7 @@ public class GCMFile {
 		species = new HashMap<String, Properties>();
 		influences = new HashMap<String, Properties>();
 		promoters = new HashMap<String, Properties>();
+		components = new HashMap<String, Properties>();
 		globalParameters = new HashMap<String, String>();
 		parameters = new HashMap<String, String>();
 		loadDefaultParameters();
@@ -165,6 +166,7 @@ public class GCMFile {
 		species = new HashMap<String, Properties>();
 		influences = new HashMap<String, Properties>();
 		promoters = new HashMap<String, Properties>();
+		components = new HashMap<String, Properties>();
 		globalParameters = new HashMap<String, String>();
 		parameters = new HashMap<String, String>();
 		StringBuffer data = new StringBuffer();
@@ -265,6 +267,10 @@ public class GCMFile {
 	public void addPromoter(String name, Properties properties) {
 		promoters.put(name.replace("\"", ""), properties);
 	}
+	
+	public void addComponent(String name, Properties properties) {
+		components.put(name, properties);
+	}
 
 	public void addInfluences(String name, Properties property) {
 		influences.put(name, property);
@@ -317,6 +323,15 @@ public class GCMFile {
 		}
 		return true;
 	}
+	
+	public boolean removeComponentCheck(String name) {
+		for (String s : influences.keySet()) {
+			if (s.contains(name)) {
+				return false;
+			}
+		}
+		return true;
+	}
 
 	/**
 	 * Checks to see if removing promoter is okay
@@ -338,6 +353,12 @@ public class GCMFile {
 	public void removePromoter(String name) {
 		if (name != null && promoters.containsKey(name)) {
 			promoters.remove(name);
+		}
+	}
+	
+	public void removeComponent(String name) {
+		if (name != null && components.containsKey(name)) {
+			components.remove(name);
 		}
 	}
 
@@ -686,6 +707,8 @@ public class GCMFile {
 	private HashMap<String, Properties> influences;
 
 	private HashMap<String, Properties> promoters;
+	
+	private HashMap<String, Properties> components;
 
 	private HashMap<String, String> parameters;
 

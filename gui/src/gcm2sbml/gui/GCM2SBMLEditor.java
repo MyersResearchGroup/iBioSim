@@ -24,6 +24,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 
 import biomodelsim.BioSim;
@@ -285,9 +286,10 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 		JPanel mainPanelCenterUp = new JPanel();
 		JPanel mainPanelCenterCenter = new JPanel(new GridLayout(2, 2));
 		JPanel mainPanelCenterDown = new JPanel(new BorderLayout());
+		JPanel tabPanel = new JPanel(new BorderLayout());
 		mainPanelCenter.add(mainPanelCenterUp, BorderLayout.NORTH);
 		mainPanelCenter.add(mainPanelCenterCenter, BorderLayout.CENTER);
-		mainPanelCenter.add(mainPanelCenterDown, BorderLayout.SOUTH);
+		//mainPanelCenter.add(mainPanelCenterDown, BorderLayout.SOUTH);
 		GCMNameTextField = new JTextField(filename.replace(".gcm",
 				""), 15);
 		GCMNameTextField.setEditable(false);
@@ -325,8 +327,12 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 		mainPanel.setLayout(new BorderLayout());
 		mainPanel.add(mainPanelNorth, "North");
 		mainPanel.add(mainPanelCenter, "Center");
+		JTabbedPane tab  = new JTabbedPane();
+		tab.addTab("Main Elements", mainPanel);
+		tab.addTab("Components", tabPanel);
 		setLayout(new BorderLayout());
-		add(mainPanel, BorderLayout.CENTER);
+		add(tab, BorderLayout.CENTER);
+		add(mainPanelCenterDown, BorderLayout.SOUTH);
 
 		JPanel buttons = new JPanel();
 		SaveButton saveButton = new SaveButton("Save GCM", GCMNameTextField);
@@ -342,10 +348,10 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 		saveButton = new SaveButton("Save as SBML template", GCMNameTextField);
 		buttons.add(saveButton);
 		saveButton.addActionListener(this);		
-		JSplitPane pane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, null,
-				buttons);
-		pane.setDividerSize(2);
-		mainPanelCenterDown.add(pane, BorderLayout.CENTER);
+		//JSplitPane pane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, null,
+		//		buttons);
+		//pane.setDividerSize(2);
+		mainPanelCenterDown.add(buttons, BorderLayout.CENTER);
 		
 		promoters = new PropertyList("Promoter List");
 		EditButton addInit = new EditButton("Add Promoter", promoters);
@@ -386,6 +392,14 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 				null, editInit);
 
 		mainPanelCenterCenter.add(initPanel);
+		
+		components = new PropertyList("Component List");
+		addInit = new EditButton("Add Component", components);
+		removeInit = new RemoveButton("Remove Component", components);
+		editInit = new EditButton("Edit Component", components);
+		initPanel = Utility.createPanel(this, "Components", components,
+				addInit, removeInit, editInit);
+		tabPanel.add(initPanel, "Center");
 	}
 
 	public void reloadFiles() {
@@ -500,6 +514,22 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 												+ " because it is currently in other reactions");
 					}
 				}
+			}else if (getName().contains("Component")) {
+				String name = null;
+				if (list.getSelectedValue() != null) {
+					name = list.getSelectedValue().toString();
+					if (gcm.removeComponentCheck(name)) {
+						gcm.removeComponent(name);
+						list.removeItem(name);
+					} else {
+						JOptionPane
+								.showMessageDialog(
+										biosim.frame(),
+										"Cannot remove component "
+												+ name
+												+ " because it is currently in other reactions");
+					}
+				}
 			}
 		}
 
@@ -591,6 +621,8 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 	private PropertyList promoters = null;
 
 	private PropertyList parameters = null;
+	
+	private PropertyList components = null;
 
 	private JComboBox sbmlFiles = null;
 	
