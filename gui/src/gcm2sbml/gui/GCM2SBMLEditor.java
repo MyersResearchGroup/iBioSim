@@ -514,7 +514,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 												+ " because it is currently in other reactions");
 					}
 				}
-			}else if (getName().contains("Component")) {
+			} else if (getName().contains("Component")) {
 				String name = null;
 				if (list.getSelectedValue() != null) {
 					name = list.getSelectedValue().toString();
@@ -589,6 +589,14 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 				}
 				PromoterPanel panel = new PromoterPanel(selected, list,
 						influences, gcm);
+			} else if (getName().contains("Component")) {
+				String selected = null;
+				if (list.getSelectedValue() != null
+						&& getName().contains("Edit")) {
+					selected = list.getSelectedValue().toString();
+				}
+				ComponentsPanel panel = new ComponentsPanel(selected, list,
+						influences, gcm, path);
 			} else if (getName().contains("Parameter")) {
 				String selected = null;
 				if (list.getSelectedValue() != null
