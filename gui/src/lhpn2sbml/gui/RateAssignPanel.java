@@ -56,6 +56,9 @@ public class RateAssignPanel extends JPanel implements ActionListener {
 		fields = new HashMap<String, PropertyField>();
 
 		rateList = lhpn.getContVars();
+		//for (int i=0; i<rateList.length; i++) {
+		//log.addText(rateList[i]);
+		//}
 		// if (boolList.length > 0 && contList.length > 0) {
 		// System.arraycopy(boolList, 0, varList, 0, boolList.length);
 		// System.arraycopy(contList, 0, varList, boolList.length,

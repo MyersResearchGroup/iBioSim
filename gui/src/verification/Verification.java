@@ -478,12 +478,12 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 	public void actionPerformed(ActionEvent e) {
 		change = true;
 		if (e.getSource() == run) {
-			save();
+			save(verFile);
 			new Thread(this).start();
 		}
 		else if (e.getSource() == save) {
 			log.addText("Saving:\n" + directory + separator + verFile + "\n");
-			save();
+			save(verFile);
 		}
 		else if (e.getSource() == viewCircuit) {
 			viewCircuit();
@@ -755,12 +755,28 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					JOptionPane.ERROR_MESSAGE);
 		}
 	}
-
+	
+	public void saveAs() {
+		String newName = JOptionPane.showInputDialog(biosim.frame(), "Enter Verification name:", "Verification Name",
+				JOptionPane.PLAIN_MESSAGE);
+		if (newName == null) {
+			return;
+		}
+		if (!newName.endsWith(".ver")) {
+			newName = newName + ".ver";
+		}
+		save(newName);
+	}
+	
 	public void save() {
+		save(verFile);
+	}
+
+	public void save(String filename) {
 		// JOptionPane.showMessageDialog(this, verifyFile);
 		try {
 			Properties prop = new Properties();
-			FileInputStream in = new FileInputStream(new File(directory + separator + verFile));
+			FileInputStream in = new FileInputStream(new File(directory + separator + filename));
 			prop.load(in);
 			in.close();
 			prop.setProperty("verification.file", verifyFile);

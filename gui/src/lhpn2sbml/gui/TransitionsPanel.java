@@ -121,6 +121,7 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 		if (selected != null) {
 			if (lhpn.getRateVars(selected) != null) {
 				for (String s : lhpn.getRateVars(selected)) {
+					//log.addText(selected + " " + s);
 					rateAssignments.addItem(s + ":=" + lhpn.getRateAssign(selected, s));
 				}
 			}
