@@ -1976,7 +1976,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	/**
 	 * Save SBML file with a new name
 	 */
-	private void saveAs() {
+	public void saveAs() {
 		String simName = JOptionPane.showInputDialog(biosim.frame(), "Enter Model ID:", "Model ID",
 				JOptionPane.PLAIN_MESSAGE);
 		if (simName != null && !simName.equals("")) {

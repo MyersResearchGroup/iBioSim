@@ -158,7 +158,7 @@ public class BioSim implements MouseListener, ActionListener {
 
 	private JToolBar toolbar; // Tool bar for common options
 
-	private JButton saveButton, runButton, refreshButton; // Tool Bar options
+	private JButton saveButton, runButton, refreshButton, saveasButton, checkButton, exportButton; // Tool Bar options
 
 	private JPanel mainPanel; // the main panel
 
@@ -186,7 +186,7 @@ public class BioSim implements MouseListener, ActionListener {
 
 	private boolean lema;
 
-	private JMenuItem copy, rename, delete;
+	private JMenuItem copy, rename, delete, save, saveAs, check, run, export, refresh, viewCircuit, viewLog, saveParam, saveSbml, saveTemp, viewModGraph, viewModBrowser, createAnal, createLearn, createSbml, createSynth, createVer, move;
 
 	public class MacOSAboutHandler extends Application {
 
@@ -295,6 +295,10 @@ public class BioSim implements MouseListener, ActionListener {
 		// toolButton = new JButton("Save");
 		toolbar.add(saveButton);
 		imgName = System.getenv("BIOSIM") + File.separator + "gui" + File.separator + "icons"
+		+ File.separator + "saveas.png";
+		saveasButton = makeToolButton(imgName, "saveas", "Save As", "Save As");
+		toolbar.add(saveasButton);
+		imgName = System.getenv("BIOSIM") + File.separator + "gui" + File.separator + "icons"
 				+ File.separator + "run-icon.jpg";
 		runButton = makeToolButton(imgName, "run", "Save and Run", "Run");
 		// toolButton = new JButton("Run");
@@ -302,11 +306,21 @@ public class BioSim implements MouseListener, ActionListener {
 		imgName = System.getenv("BIOSIM") + File.separator + "gui" + File.separator + "icons"
 				+ File.separator + "refresh.jpg";
 		refreshButton = makeToolButton(imgName, "refresh", "Refresh", "Refresh");
-		// toolButton = new JButton("Refresh");
 		toolbar.add(refreshButton);
+		imgName = System.getenv("BIOSIM") + File.separator + "gui" + File.separator + "icons"
+		+ File.separator + "savecheck.png";
+		checkButton = makeToolButton(imgName, "check", "Save and Check", "Save and Check");
+		toolbar.add(checkButton);
+		imgName = System.getenv("BIOSIM") + File.separator + "gui" + File.separator + "icons"
+		+ File.separator + "export.jpg";
+		exportButton = makeToolButton(imgName, "export", "Export", "Export");
+		toolbar.add(exportButton);
 		saveButton.setEnabled(false);
 		runButton.setEnabled(false);
 		refreshButton.setEnabled(false);
+		saveasButton.setEnabled(false);
+		checkButton.setEnabled(false);
+		exportButton.setEnabled(false);
 
 		// Creates a menu for the frame
 		JMenuBar menuBar = new JMenuBar();
@@ -318,8 +332,12 @@ public class BioSim implements MouseListener, ActionListener {
 		edit.setMnemonic(KeyEvent.VK_E);
 		JMenu importMenu = new JMenu("Import");
 		JMenu newMenu = new JMenu("New");
+		JMenu view = new JMenu("View");
+		JMenu tools = new JMenu("Tools");
 		menuBar.add(file);
 		menuBar.add(edit);
+		menuBar.add(view);
+		menuBar.add(tools);
 		menuBar.add(help);
 		copy = new JMenuItem("Copy");
 		rename = new JMenuItem("Rename");
@@ -347,6 +365,24 @@ public class BioSim implements MouseListener, ActionListener {
 		importHse = new JMenuItem("Handshaking Expansion");
 		importUnc = new JMenuItem("Extended Burst Mode Machine");
 		importRsg = new JMenuItem("Reduced State Graph");
+		save = new JMenuItem("Save");
+		saveAs = new JMenuItem("Save As");
+		run = new JMenuItem("Save and Run");
+		check = new JMenuItem("Save and Check");
+		saveSbml = new JMenuItem("Save as SBML");
+		saveTemp = new JMenuItem("Save as SBML Template");
+		saveParam = new JMenuItem("Save Parameters");
+		refresh = new JMenuItem("Refresh");
+		export = new JMenuItem("Export");
+		viewCircuit = new JMenuItem("View Circuit");
+		viewLog = new JMenuItem("View Log");
+		viewModGraph = new JMenuItem("View Model in GraphViz");
+		viewModBrowser = new JMenuItem("View Model in Browser");
+		createAnal = new JMenuItem("Create Analysis View");
+		createLearn = new JMenuItem("Create Learn View");
+		createSbml = new JMenuItem("Create SBML File");
+		createSynth = new JMenuItem("Create Synthesis View");
+		createVer = new JMenuItem("Create Verification View");
 		exit = new JMenuItem("Exit");
 		copy.addActionListener(this);
 		rename.addActionListener(this);
@@ -375,6 +411,29 @@ public class BioSim implements MouseListener, ActionListener {
 		importRsg.addActionListener(this);
 		graph.addActionListener(this);
 		probGraph.addActionListener(this);
+		save.addActionListener(this);
+		saveAs.addActionListener(this);
+		run.addActionListener(this);
+		check.addActionListener(this);
+		saveSbml.addActionListener(this);
+		saveTemp.addActionListener(this);
+		saveParam.addActionListener(this);
+		export.addActionListener(this);
+		viewCircuit.addActionListener(this);
+		viewLog.addActionListener(this);
+		viewModGraph.addActionListener(this);
+		viewModBrowser.addActionListener(this);
+		createAnal.addActionListener(this);
+		createLearn.addActionListener(this);
+		createSbml.addActionListener(this);
+		createSynth.addActionListener(this);
+		createVer.addActionListener(this);
+		save.setActionCommand("save");
+		saveAs.setActionCommand("saveas");
+		run.setActionCommand("run");
+		check.setActionCommand("check");
+		refresh.setActionCommand("refresh");
+		export.setActionCommand("export");
 		ShortCutKey = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
 		copy.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, ShortCutKey));
 		rename.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, ShortCutKey));
@@ -438,8 +497,27 @@ public class BioSim implements MouseListener, ActionListener {
 		newRsg.setEnabled(false);
 		graph.setEnabled(false);
 		probGraph.setEnabled(false);
+		save.setEnabled(false);
+		saveAs.setEnabled(false);
+		run.setEnabled(false);
+		check.setEnabled(false);
+		saveSbml.setEnabled(false);
+		saveTemp.setEnabled(false);
+		saveParam.setEnabled(false);
+		refresh.setEnabled(false);
+		export.setEnabled(false);
+		viewCircuit.setEnabled(false);
+		viewLog.setEnabled(false);
+		viewModGraph.setEnabled(false);
+		viewModBrowser.setEnabled(false);
+		createAnal.setEnabled(false);
+		createLearn.setEnabled(false);
+		createSbml.setEnabled(false);
+		createSynth.setEnabled(false);
+		createVer.setEnabled(false);
 		edit.add(copy);
 		edit.add(rename);
+		edit.add(refresh);
 		edit.add(delete);
 		file.add(newMenu);
 		newMenu.add(newProj);
@@ -474,6 +552,16 @@ public class BioSim implements MouseListener, ActionListener {
 			importMenu.add(importRsg);
 		}
 		file.addSeparator();
+		file.add(save);
+		file.add(saveAs);
+		file.add(run);
+		file.add(check);
+		file.add(saveParam);
+		file.addSeparator();
+		file.add(export);
+		file.add(saveSbml);
+		file.add(saveTemp);
+		file.addSeparator();
 		help.add(manual);
 		if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
 			new MacOSAboutHandler();
@@ -488,6 +576,20 @@ public class BioSim implements MouseListener, ActionListener {
 			file.add(exit);
 			file.addSeparator();
 			help.add(about);
+		}
+		view.add(viewCircuit);
+		view.add(viewLog);
+		view.addSeparator();
+		view.add(viewModGraph);
+		view.add(viewModBrowser);
+		tools.add(createAnal);
+		tools.add(createLearn);
+		if (lema) {
+			tools.add(createSynth);
+			tools.add(createVer);
+		}
+		else {
+			tools.add(createSbml);
 		}
 		root = null;
 
@@ -2050,6 +2152,48 @@ public class BioSim implements MouseListener, ActionListener {
 				((Synthesis) comp).save();
 			}
 		}
+		// if the save as button is pressed on the Tool Bar
+		else if (e.getActionCommand().equals("saveas")) {
+			Component comp = tab.getSelectedComponent();
+			// int index = tab.getSelectedIndex();
+			if (comp instanceof LHPNEditor) {
+				String newName = JOptionPane.showInputDialog(frame(), "Enter LHPN name:", "LHPN Name",
+						JOptionPane.PLAIN_MESSAGE);
+				if (newName == null) {
+					return;
+				}
+				if (!newName.endsWith(".g")) { 
+					newName = newName + ".g";
+				}
+				((LHPNEditor) comp).saveAs(newName);
+			}
+			else if (comp instanceof GCM2SBMLEditor) {
+				String newName = JOptionPane.showInputDialog(frame(), "Enter GCM name:", "GCM Name",
+						JOptionPane.PLAIN_MESSAGE);
+				if (newName == null) {
+					return;
+				}
+				if (newName.contains(".gcm")) {
+					newName = newName.replace(".gcm", "");
+				}
+				((GCM2SBMLEditor) comp).saveAs(newName);
+			}
+			else if (comp instanceof SBML_Editor) {
+				((SBML_Editor) comp).saveAs();
+			}
+			else if (comp instanceof JTabbedPane) {
+				Component component = ((JTabbedPane) comp).getSelectedComponent();
+				if (component instanceof Graph) {
+					((Graph) component).saveAs();
+				}
+			}
+			else if (comp instanceof Verification) {
+				((Verification) comp).saveAs();
+			}
+			else if (comp instanceof Synthesis) {
+				((Synthesis) comp).saveAs();
+			}
+		}
 		// if the run button is selected on the tool bar
 		else if (e.getActionCommand().equals("run")) {
 			Component comp = tab.getSelectedComponent();
@@ -2087,6 +2231,22 @@ public class BioSim implements MouseListener, ActionListener {
 				Component component = ((JTabbedPane) comp).getSelectedComponent();
 				if (component instanceof Graph) {
 					((Graph) component).refresh();
+				}
+			}
+		}
+		else if (e.getActionCommand().equals("check")) {
+			Component comp = tab.getSelectedComponent();
+			if (comp instanceof SBML_Editor) {
+				((SBML_Editor) comp).save(true, "", true);
+				((SBML_Editor) comp).check();
+			}
+		}
+		else if (e.getActionCommand().equals("export")) {
+			Component comp = tab.getSelectedComponent();
+			if (comp instanceof JTabbedPane) {
+				Component component = ((JTabbedPane) comp).getSelectedComponent();
+				if (component instanceof Graph) {
+					((Graph) component).export();
 				}
 			}
 		}
@@ -4950,16 +5110,21 @@ public class BioSim implements MouseListener, ActionListener {
 						}
 						LHPNFile lhpn = new LHPNFile(log);
 						if (new File(directory + theFile).length() > 0) {
+							//log.addText("here");
 							lhpn.load(directory + theFile);
+							//log.addText("there");
 						}
+						//log.addText("load completed");
 						File work = new File(directory);
 						int i = getTab(theFile);
 						if (i != -1) {
 							tab.setSelectedIndex(i);
 						}
 						else {
+							//log.addText("make Editor");
 							addTab(theFile, new LHPNEditor(work.getAbsolutePath(), theFile, lhpn, this, log),
 									"LHPN Editor");
+							//log.addText("Editor made");
 						}
 						// String[] cmd = { "emacs", filename };
 						// Runtime.getRuntime().exec(cmd);
@@ -5123,67 +5288,103 @@ public class BioSim implements MouseListener, ActionListener {
 		Component comp = tab.getSelectedComponent();
 		if (comp instanceof GCM2SBMLEditor) {
 			saveButton.setEnabled(true);
+			saveasButton.setEnabled(true);
 			runButton.setEnabled(false);
 			refreshButton.setEnabled(false);
+			checkButton.setEnabled(false);
+			exportButton.setEnabled(false);
 		}
 		if (comp instanceof LHPNEditor) {
 			saveButton.setEnabled(true);
+			saveasButton.setEnabled(true);
 			runButton.setEnabled(false);
 			refreshButton.setEnabled(false);
+			checkButton.setEnabled(false);
+			exportButton.setEnabled(false);
 		}
 		else if (comp instanceof GCM2SBMLEditor) {
 			saveButton.setEnabled(true);
+			saveasButton.setEnabled(true);
 			runButton.setEnabled(false);
 			refreshButton.setEnabled(false);
+			checkButton.setEnabled(false);
+			exportButton.setEnabled(false);
 		}
 		else if (comp instanceof SBML_Editor) {
 			saveButton.setEnabled(true);
+			saveasButton.setEnabled(true);
 			runButton.setEnabled(false);
 			refreshButton.setEnabled(false);
+			checkButton.setEnabled(true);
+			exportButton.setEnabled(false);
 		}
 		else if (comp instanceof JTabbedPane) {
 			Component component = ((JTabbedPane) comp).getSelectedComponent();
 			// int index = tab.getSelectedIndex();
 			if (component instanceof Graph) {
 				saveButton.setEnabled(true);
+				saveasButton.setEnabled(true);
 				runButton.setEnabled(true);
 				refreshButton.setEnabled(true);
+				checkButton.setEnabled(false);
+				exportButton.setEnabled(true);
 			}
 			else if (component instanceof Reb2Sac) {
 				saveButton.setEnabled(true);
+				saveasButton.setEnabled(false);
 				runButton.setEnabled(true);
 				refreshButton.setEnabled(false);
+				checkButton.setEnabled(false);
+				exportButton.setEnabled(false);
 			}
 			else if (component instanceof SBML_Editor) {
 				saveButton.setEnabled(true);
+				saveasButton.setEnabled(false);
 				runButton.setEnabled(true);
 				refreshButton.setEnabled(false);
+				checkButton.setEnabled(false);
+				exportButton.setEnabled(false);
 			}
 			else if (component instanceof Learn) {
 				saveButton.setEnabled(true);
+				saveasButton.setEnabled(false);
 				runButton.setEnabled(true);
 				refreshButton.setEnabled(false);
+				checkButton.setEnabled(false);
+				exportButton.setEnabled(false);
 			}
 			else if (component instanceof DataManager) {
 				saveButton.setEnabled(true);
+				saveasButton.setEnabled(false);
 				runButton.setEnabled(false);
 				refreshButton.setEnabled(false);
+				checkButton.setEnabled(false);
+				exportButton.setEnabled(false);
 			}
 		}
 		else if (comp instanceof Verification) {
 			saveButton.setEnabled(true);
+			saveasButton.setEnabled(true);
 			runButton.setEnabled(true);
 			refreshButton.setEnabled(false);
+			checkButton.setEnabled(false);
+			exportButton.setEnabled(false);
 		}
 		else if (comp instanceof Synthesis) {
 			saveButton.setEnabled(true);
+			saveasButton.setEnabled(true);
 			runButton.setEnabled(true);
 			refreshButton.setEnabled(false);
+			checkButton.setEnabled(false);
+			exportButton.setEnabled(false);
 		}
 		else {
 			saveButton.setEnabled(false);
+			saveasButton.setEnabled(false);
 			runButton.setEnabled(false);
 			refreshButton.setEnabled(false);
+			checkButton.setEnabled(false);
+			exportButton.setEnabled(false);
 		}
 		if (e.isPopupTrigger() && tree.getFile() != null) {
 			popup.removeAll();

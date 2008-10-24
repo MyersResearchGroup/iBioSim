@@ -1030,11 +1030,27 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 		catch (Exception e) {
 		}
 	}
-
+	
+	public void saveAs() {
+		String newName = JOptionPane.showInputDialog(biosim.frame(), "Enter Synthesis name:", "Synthesis Name",
+				JOptionPane.PLAIN_MESSAGE);
+		if (newName == null) {
+			return;
+		}
+		if (!newName.endsWith(".syn")) {
+			newName = newName + ".syn";
+		}
+		save(newName);
+	}
+	
 	public void save() {
+		save(synthFile);
+	}
+
+	public void save(String filename) {
 		try {
 			Properties prop = new Properties();
-			FileInputStream in = new FileInputStream(new File(directory + separator + synthFile));
+			FileInputStream in = new FileInputStream(new File(directory + separator + filename));
 			prop.load(in);
 			in.close();
 			prop.setProperty("synthesis.file", synthesisFile);

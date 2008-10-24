@@ -87,7 +87,9 @@ public class LHPNEditor extends JPanel implements ActionListener {
 		else {
 			this.filename = "";
 		}
+		//log.addText("build Gui");
 		buildGui(this.filename);
+		//log.addText("Gui built");
 	}
 
 	private void buildGui(String filename) {
@@ -127,6 +129,7 @@ public class LHPNEditor extends JPanel implements ActionListener {
 		buttons.add(saveButton);
 		saveButton.addActionListener(this);
 
+		//log.addText("build panels");
 		variables = new PropertyList("Variable List");
 		EditButton addVar = new EditButton("Add Variable", variables);
 		RemoveButton removeVar = new RemoveButton("Remove Variable", variables);
@@ -146,6 +149,7 @@ public class LHPNEditor extends JPanel implements ActionListener {
 				editVar);
 		mainPanelCenterCenter.add(varPanel);
 
+		//log.addText("build place panel");
 		places = new PropertyList("Place List");
 		EditButton addPlace = new EditButton("Add Place", places);
 		RemoveButton removePlace = new RemoveButton("Remove Place", places);
@@ -156,6 +160,7 @@ public class LHPNEditor extends JPanel implements ActionListener {
 				editPlace);
 		mainPanelCenterCenter.add(placePanel);
 
+		//log.addText("build transition panel");
 		transitions = new PropertyList("Transition List");
 		EditButton addTrans = new EditButton("Add Transition", transitions);
 		RemoveButton removeTrans = new RemoveButton("Remove Transition", transitions);
@@ -166,11 +171,14 @@ public class LHPNEditor extends JPanel implements ActionListener {
 				removeTrans, editTrans);
 		mainPanelCenterCenter.add(transPanel);
 
+		//log.addText("build control panel");
 		controlFlow = new PropertyList("Control Flow");
 		EditButton addFlow = new EditButton("Add Movement", controlFlow);
 		RemoveButton removeFlow = new RemoveButton("Remove Movement", controlFlow);
 		EditButton editFlow = new EditButton("Edit Movement", controlFlow);
+		//log.addText("get control panel");
 		controlFlow.addAllItem(lhpnFile.getControlFlow());
+		//log.addText("got control panel");
 
 		JPanel flowPanel = Utility.createPanel(this, "Control Flow", controlFlow, addFlow,
 				removeFlow, editFlow);
@@ -180,6 +188,10 @@ public class LHPNEditor extends JPanel implements ActionListener {
 
 	public void save() {
 		lhpnFile.save(filename);
+	}
+	
+	public void saveAs(String newName) {
+		lhpnFile.save(newName);
 	}
 
 	public class SaveButton extends AbstractRunnableNamedButton {
