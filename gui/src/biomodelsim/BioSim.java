@@ -12,17 +12,13 @@ import graph.Graph;
 
 import java.awt.AWTError;
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
-import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -56,14 +52,15 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
 import javax.swing.JPopupMenu;
-import javax.swing.JTabbedPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
-import javax.swing.plaf.basic.BasicTabbedPaneUI;
+
+import tabs.CloseAndMaxTabbedPane;
 
 import com.apple.eawt.ApplicationAdapter;
 import com.apple.eawt.ApplicationEvent;
@@ -154,7 +151,7 @@ public class BioSim implements MouseListener, ActionListener {
 
 	private FileTree tree; // FileTree
 
-	private JTabbedPane tab; // JTabbedPane for different tools
+	private CloseAndMaxTabbedPane tab; // JTabbedPane for different tools
 
 	private JToolBar toolbar; // Tool bar for common options
 
@@ -800,9 +797,8 @@ public class BioSim implements MouseListener, ActionListener {
 		mainPanel = new JPanel(new BorderLayout());
 		tree = new FileTree(null, this, lema);
 		log = new Log();
-		tab = new JTabbedPane();
+		tab = new CloseAndMaxTabbedPane(false, this);
 		tab.setPreferredSize(new Dimension(1050, 550));
-		tab.setUI(new TabbedPaneCloseButtonUI());
 		tab.addMouseListener(this);
 		mainPanel.add(tree, "West");
 		mainPanel.add(tab, "Center");
@@ -4477,12 +4473,12 @@ public class BioSim implements MouseListener, ActionListener {
 		tab.addTab(name, panel);
 		panel.addMouseListener(this);
 		if (tabName != null) {
-			tab.getComponentAt(tab.getComponents().length - 1).setName(tabName);
+			tab.getComponentAt(tab.getTabCount() - 1).setName(tabName);
 		}
 		else {
-			tab.getComponentAt(tab.getComponents().length - 1).setName(name);
+			tab.getComponentAt(tab.getTabCount() - 1).setName(name);
 		}
-		tab.setSelectedIndex(tab.getComponents().length - 1);
+		tab.setSelectedIndex(tab.getTabCount() - 1);
 	}
 
 	/**
@@ -6689,66 +6685,6 @@ public class BioSim implements MouseListener, ActionListener {
 						 * 1).setName("ProbGraph"); }
 						 */
 						addTab(split[split.length - 1], simTab, null);
-					}
-				}
-			}
-		}
-	}
-
-	/**
-	 * Embedded class that allows tabs to be closed.
-	 */
-	class TabbedPaneCloseButtonUI extends BasicTabbedPaneUI {
-		public TabbedPaneCloseButtonUI() {
-			super();
-		}
-
-		protected void paintTab(Graphics g, int tabPlacement, Rectangle[] rects, int tabIndex,
-				Rectangle iconRect, Rectangle textRect) {
-
-			super.paintTab(g, tabPlacement, rects, tabIndex, iconRect, textRect);
-
-			Rectangle rect = rects[tabIndex];
-			g.setColor(Color.black);
-			g.drawRect(rect.x + rect.width - 19, rect.y + 4, 13, 12);
-			g.drawLine(rect.x + rect.width - 16, rect.y + 7, rect.x + rect.width - 10, rect.y + 13);
-			g.drawLine(rect.x + rect.width - 10, rect.y + 7, rect.x + rect.width - 16, rect.y + 13);
-			g.drawLine(rect.x + rect.width - 15, rect.y + 7, rect.x + rect.width - 9, rect.y + 13);
-			g.drawLine(rect.x + rect.width - 9, rect.y + 7, rect.x + rect.width - 15, rect.y + 13);
-		}
-
-		protected int calculateTabWidth(int tabPlacement, int tabIndex, FontMetrics metrics) {
-			return super.calculateTabWidth(tabPlacement, tabIndex, metrics) + 24;
-		}
-
-		protected MouseListener createMouseListener() {
-			return new MyMouseHandler();
-		}
-
-		class MyMouseHandler extends MouseHandler {
-			public MyMouseHandler() {
-				super();
-			}
-
-			public void mouseReleased(MouseEvent e) {
-				int x = e.getX();
-				int y = e.getY();
-				int tabIndex = -1;
-				int tabCount = tabPane.getTabCount();
-				for (int i = 0; i < tabCount; i++) {
-					if (rects[i].contains(x, y)) {
-						tabIndex = i;
-						break;
-					}
-				}
-				if (tabIndex >= 0 && !e.isPopupTrigger()) {
-					Rectangle tabRect = rects[tabIndex];
-					y = y - tabRect.y;
-					if ((x >= tabRect.x + tabRect.width - 18) && (x <= tabRect.x + tabRect.width - 8)
-							&& (y >= 5) && (y <= 15)) {
-						if (save(tabIndex) == 1) {
-							tabPane.remove(tabIndex);
-						}
 					}
 				}
 			}
