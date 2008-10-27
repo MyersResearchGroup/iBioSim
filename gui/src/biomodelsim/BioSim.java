@@ -186,7 +186,7 @@ public class BioSim implements MouseListener, ActionListener {
 
 	private boolean lema;
 
-	private JMenuItem copy, rename, delete, save, saveAs, check, run, export, refresh, viewCircuit, viewLog, saveParam, saveSbml, saveTemp, viewModGraph, viewModBrowser, createAnal, createLearn, createSbml, createSynth, createVer, move;
+	private JMenuItem copy, rename, delete, save, saveAs, check, run, export, refresh, viewCircuit, viewRules, viewTrace, viewLog, saveParam, saveSbml, saveTemp, viewModGraph, viewModBrowser, createAnal, createLearn, createSbml, createSynth, createVer, move;
 
 	public class MacOSAboutHandler extends Application {
 
@@ -375,6 +375,8 @@ public class BioSim implements MouseListener, ActionListener {
 		refresh = new JMenuItem("Refresh");
 		export = new JMenuItem("Export");
 		viewCircuit = new JMenuItem("View Circuit");
+		viewRules = new JMenuItem("View Rules");
+		viewTrace = new JMenuItem("View Trace");
 		viewLog = new JMenuItem("View Log");
 		viewModGraph = new JMenuItem("View Model in GraphViz");
 		viewModBrowser = new JMenuItem("View Model in Browser");
@@ -420,6 +422,8 @@ public class BioSim implements MouseListener, ActionListener {
 		saveParam.addActionListener(this);
 		export.addActionListener(this);
 		viewCircuit.addActionListener(this);
+		viewRules.addActionListener(this);
+		viewTrace.addActionListener(this);
 		viewLog.addActionListener(this);
 		viewModGraph.addActionListener(this);
 		viewModBrowser.addActionListener(this);
@@ -434,6 +438,17 @@ public class BioSim implements MouseListener, ActionListener {
 		check.setActionCommand("check");
 		refresh.setActionCommand("refresh");
 		export.setActionCommand("export");
+		if (lema) {
+			viewModGraph.setActionCommand("viewModel");
+		}
+		else {
+			viewModGraph.setActionCommand("graph");
+		}
+		viewModBrowser.setActionCommand("browser");
+		createLearn.setActionCommand("openLearn");
+		createSbml.setActionCommand("createSBML");
+		createSynth.setActionCommand("openSynth");
+		createVer.setActionCommand("openVerify");
 		ShortCutKey = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
 		copy.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, ShortCutKey));
 		rename.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, ShortCutKey));
@@ -507,6 +522,8 @@ public class BioSim implements MouseListener, ActionListener {
 		refresh.setEnabled(false);
 		export.setEnabled(false);
 		viewCircuit.setEnabled(false);
+		viewRules.setEnabled(false);
+		viewTrace.setEnabled(false);
 		viewLog.setEnabled(false);
 		viewModGraph.setEnabled(false);
 		viewModBrowser.setEnabled(false);
@@ -556,11 +573,15 @@ public class BioSim implements MouseListener, ActionListener {
 		file.add(saveAs);
 		file.add(run);
 		file.add(check);
+		if (!lema) {
 		file.add(saveParam);
+		}
 		file.addSeparator();
 		file.add(export);
+		if (!lema) {
 		file.add(saveSbml);
 		file.add(saveTemp);
+		}
 		file.addSeparator();
 		help.add(manual);
 		if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
@@ -579,6 +600,11 @@ public class BioSim implements MouseListener, ActionListener {
 		}
 		view.add(viewCircuit);
 		view.add(viewLog);
+		if (lema) {
+			view.addSeparator();
+			view.add(viewRules);
+			view.add(viewTrace);
+		}
 		view.addSeparator();
 		view.add(viewModGraph);
 		view.add(viewModBrowser);
@@ -1481,7 +1507,56 @@ public class BioSim implements MouseListener, ActionListener {
 	 * selected.
 	 */
 	public void actionPerformed(ActionEvent e) {
-		if (e.getSource() == about) {
+		if (e.getSource() == viewCircuit) {
+			
+		}
+		else if (e.getSource() == viewLog) {
+			
+		}
+		else if (e.getSource() == saveParam) {
+			
+		}
+		else if (e.getSource() == saveSbml) {
+			
+		}
+		else if (e.getSource() ==  saveTemp) {
+			
+		}
+		else if (e.getSource() == viewModGraph) {
+			
+		}
+		else if (e.getSource() == viewModBrowser) {
+			
+		}
+		else if (e.getSource() == viewRules) {
+			Component comp = tab.getSelectedComponent();
+			((Synthesis) comp).viewRules();
+		}
+		else if (e.getSource() == viewTrace) {
+			Component comp = tab.getSelectedComponent();
+			if (comp instanceof Synthesis) {
+				((Synthesis) comp).viewTrace();
+			}
+			else {
+				((Verification) comp).viewTrace();
+			}
+		}
+		else if (e.getSource() == createAnal) {
+			
+		}
+		else if (e.getSource() == createLearn) {
+			
+		}
+		else if (e.getSource() == createSbml) {
+			
+		}
+		else if (e.getSource() == createSynth) {
+			
+		}
+		else if (e.getSource() == createVer) {
+			
+		}
+		else if (e.getSource() == about) {
 			about();
 		}
 		else if (e.getSource() == manual) {
@@ -5293,6 +5368,17 @@ public class BioSim implements MouseListener, ActionListener {
 			refreshButton.setEnabled(false);
 			checkButton.setEnabled(false);
 			exportButton.setEnabled(false);
+			save.setEnabled(true);
+			run.setEnabled(false);
+			saveAs.setEnabled(true);
+			refresh.setEnabled(false);
+			check.setEnabled(false);
+			export.setEnabled(false);
+			viewCircuit.setEnabled(false);
+			viewLog.setEnabled(false);
+			saveParam.setEnabled(false);
+			saveSbml.setEnabled(true);
+			saveTemp.setEnabled(true);
 		}
 		if (comp instanceof LHPNEditor) {
 			saveButton.setEnabled(true);
@@ -5301,14 +5387,16 @@ public class BioSim implements MouseListener, ActionListener {
 			refreshButton.setEnabled(false);
 			checkButton.setEnabled(false);
 			exportButton.setEnabled(false);
-		}
-		else if (comp instanceof GCM2SBMLEditor) {
-			saveButton.setEnabled(true);
-			saveasButton.setEnabled(true);
-			runButton.setEnabled(false);
-			refreshButton.setEnabled(false);
-			checkButton.setEnabled(false);
-			exportButton.setEnabled(false);
+			save.setEnabled(true);
+			run.setEnabled(false);
+			saveAs.setEnabled(true);
+			refresh.setEnabled(false);
+			check.setEnabled(false);
+			export.setEnabled(false);
+			viewRules.setEnabled(false);
+			viewTrace.setEnabled(false);
+			viewCircuit.setEnabled(false);
+			viewLog.setEnabled(false);
 		}
 		else if (comp instanceof SBML_Editor) {
 			saveButton.setEnabled(true);
@@ -5317,6 +5405,36 @@ public class BioSim implements MouseListener, ActionListener {
 			refreshButton.setEnabled(false);
 			checkButton.setEnabled(true);
 			exportButton.setEnabled(false);
+			save.setEnabled(true);
+			run.setEnabled(false);
+			saveAs.setEnabled(true);
+			refresh.setEnabled(false);
+			check.setEnabled(false);
+			export.setEnabled(false);
+			viewCircuit.setEnabled(false);
+			viewLog.setEnabled(false);
+			saveParam.setEnabled(false);
+			saveSbml.setEnabled(true);
+			saveTemp.setEnabled(true);
+		}
+		if (comp instanceof GCM2SBMLEditor) {
+			saveButton.setEnabled(true);
+			saveasButton.setEnabled(true);
+			runButton.setEnabled(false);
+			refreshButton.setEnabled(false);
+			checkButton.setEnabled(false);
+			exportButton.setEnabled(false);
+			save.setEnabled(true);
+			run.setEnabled(false);
+			saveAs.setEnabled(true);
+			refresh.setEnabled(false);
+			check.setEnabled(false);
+			export.setEnabled(false);
+			viewCircuit.setEnabled(false);
+			viewLog.setEnabled(false);
+			saveParam.setEnabled(false);
+			saveSbml.setEnabled(true);
+			saveTemp.setEnabled(true);
 		}
 		else if (comp instanceof JTabbedPane) {
 			Component component = ((JTabbedPane) comp).getSelectedComponent();
@@ -5328,6 +5446,19 @@ public class BioSim implements MouseListener, ActionListener {
 				refreshButton.setEnabled(true);
 				checkButton.setEnabled(false);
 				exportButton.setEnabled(true);
+				save.setEnabled(true);
+				run.setEnabled(true);
+				saveAs.setEnabled(true);
+				refresh.setEnabled(true);
+				check.setEnabled(false);
+				export.setEnabled(true);
+				viewRules.setEnabled(false);
+				viewTrace.setEnabled(false);
+				viewCircuit.setEnabled(false);
+				viewLog.setEnabled(false);
+				saveParam.setEnabled(false);
+				saveSbml.setEnabled(false);
+				saveTemp.setEnabled(false);
 			}
 			else if (component instanceof Reb2Sac) {
 				saveButton.setEnabled(true);
@@ -5336,6 +5467,19 @@ public class BioSim implements MouseListener, ActionListener {
 				refreshButton.setEnabled(false);
 				checkButton.setEnabled(false);
 				exportButton.setEnabled(false);
+				save.setEnabled(false);
+				run.setEnabled(true);
+				saveAs.setEnabled(false);
+				refresh.setEnabled(false);
+				check.setEnabled(false);
+				export.setEnabled(false);
+				viewRules.setEnabled(false);
+				viewTrace.setEnabled(false);
+				viewCircuit.setEnabled(false);
+				viewLog.setEnabled(false);
+				saveParam.setEnabled(true);
+				saveSbml.setEnabled(false);
+				saveTemp.setEnabled(false);
 			}
 			else if (component instanceof SBML_Editor) {
 				saveButton.setEnabled(true);
@@ -5344,6 +5488,19 @@ public class BioSim implements MouseListener, ActionListener {
 				refreshButton.setEnabled(false);
 				checkButton.setEnabled(false);
 				exportButton.setEnabled(false);
+				save.setEnabled(false);
+				run.setEnabled(true);
+				saveAs.setEnabled(false);
+				refresh.setEnabled(false);
+				check.setEnabled(false);
+				export.setEnabled(false);
+				viewRules.setEnabled(false);
+				viewTrace.setEnabled(false);
+				viewCircuit.setEnabled(false);
+				viewLog.setEnabled(false);
+				saveParam.setEnabled(true);
+				saveSbml.setEnabled(false);
+				saveTemp.setEnabled(false);
 			}
 			else if (component instanceof Learn) {
 				saveButton.setEnabled(true);
@@ -5352,6 +5509,19 @@ public class BioSim implements MouseListener, ActionListener {
 				refreshButton.setEnabled(false);
 				checkButton.setEnabled(false);
 				exportButton.setEnabled(false);
+				save.setEnabled(((Learn) component).getSaveGcmEnabled());
+				run.setEnabled(true);
+				saveAs.setEnabled(false);
+				refresh.setEnabled(false);
+				check.setEnabled(false);
+				export.setEnabled(false);
+				viewCircuit.setEnabled(((Learn) component).getViewGcmEnabled());
+				viewRules.setEnabled(false);
+				viewTrace.setEnabled(false);
+				viewLog.setEnabled(((Learn) component).getViewLogEnabled());
+				saveParam.setEnabled(true);
+				saveSbml.setEnabled(false);
+				saveTemp.setEnabled(false);
 			}
 			else if (component instanceof DataManager) {
 				saveButton.setEnabled(true);
@@ -5360,6 +5530,19 @@ public class BioSim implements MouseListener, ActionListener {
 				refreshButton.setEnabled(false);
 				checkButton.setEnabled(false);
 				exportButton.setEnabled(false);
+				save.setEnabled(true);
+				run.setEnabled(false);
+				saveAs.setEnabled(true);
+				refresh.setEnabled(false);
+				check.setEnabled(false);
+				export.setEnabled(false);
+				viewCircuit.setEnabled(false);
+				viewRules.setEnabled(false);
+				viewTrace.setEnabled(false);
+				viewLog.setEnabled(false);
+				saveParam.setEnabled(false);
+				saveSbml.setEnabled(false);
+				saveTemp.setEnabled(false);
 			}
 		}
 		else if (comp instanceof Verification) {
@@ -5369,6 +5552,17 @@ public class BioSim implements MouseListener, ActionListener {
 			refreshButton.setEnabled(false);
 			checkButton.setEnabled(false);
 			exportButton.setEnabled(false);
+			save.setEnabled(true);
+			run.setEnabled(true);
+			saveAs.setEnabled(true);
+			refresh.setEnabled(false);
+			check.setEnabled(false);
+			export.setEnabled(false);
+			viewRules.setEnabled(false);
+			viewTrace.setEnabled(((Verification) comp).getViewTraceEnabled());
+			viewCircuit.setEnabled(true);
+			viewLog.setEnabled(((Verification) comp).getViewLogEnabled());
+			saveParam.setEnabled(true);
 		}
 		else if (comp instanceof Synthesis) {
 			saveButton.setEnabled(true);
@@ -5377,6 +5571,17 @@ public class BioSim implements MouseListener, ActionListener {
 			refreshButton.setEnabled(false);
 			checkButton.setEnabled(false);
 			exportButton.setEnabled(false);
+			save.setEnabled(true);
+			run.setEnabled(true);
+			saveAs.setEnabled(true);
+			refresh.setEnabled(false);
+			check.setEnabled(false);
+			export.setEnabled(false);
+			viewRules.setEnabled(((Synthesis) comp).getViewRulesEnabled());
+			viewTrace.setEnabled(((Synthesis) comp).getViewTraceEnabled());
+			viewCircuit.setEnabled(((Synthesis) comp).getViewCircuitEnabled());
+			viewLog.setEnabled(((Synthesis) comp).getViewLogEnabled());
+			saveParam.setEnabled(false);
 		}
 		else {
 			saveButton.setEnabled(false);
@@ -5385,6 +5590,70 @@ public class BioSim implements MouseListener, ActionListener {
 			refreshButton.setEnabled(false);
 			checkButton.setEnabled(false);
 			exportButton.setEnabled(false);
+			save.setEnabled(false);
+			run.setEnabled(false);
+			saveAs.setEnabled(false);
+			refresh.setEnabled(false);
+			check.setEnabled(false);
+			export.setEnabled(false);
+			viewCircuit.setEnabled(false);
+			viewRules.setEnabled(false);
+			viewTrace.setEnabled(false);
+			viewLog.setEnabled(false);
+			saveParam.setEnabled(false);
+			saveSbml.setEnabled(false);
+			saveTemp.setEnabled(false);
+		}
+		if (tree.getFile().length() > 4
+				&& tree.getFile().substring(tree.getFile().length() - 5).equals(".sbml")
+				|| tree.getFile().length() > 3
+				&& tree.getFile().substring(tree.getFile().length() - 4).equals(".xml")) {
+			viewModGraph.setEnabled(true);
+			viewModGraph.setActionCommand("graph");
+			viewModBrowser.setEnabled(true);
+			createAnal.setEnabled(true);
+			createAnal.setActionCommand("simulate");
+			createLearn.setEnabled(true);
+			createSbml.setEnabled(false);
+		}
+		else if (tree.getFile().length() > 3
+				&& tree.getFile().substring(tree.getFile().length() - 4).equals(".gcm")) {
+			viewModGraph.setEnabled(true);
+			viewModGraph.setActionCommand("graphDot");
+			viewModBrowser.setEnabled(false);
+			createAnal.setEnabled(true);
+			createAnal.setActionCommand("createSim");
+			createLearn.setEnabled(true);
+			createSbml.setEnabled(true);
+		}
+		else if (tree.getFile().length() > 3
+				&& tree.getFile().substring(tree.getFile().length() - 4).equals(".vhd")) {
+			viewModGraph.setEnabled(true);
+			viewModBrowser.setEnabled(false);
+			createAnal.setEnabled(true);
+			createAnal.setActionCommand("createSim");
+			createLearn.setEnabled(true);
+			createSynth.setEnabled(true);
+			createVer.setEnabled(true);
+		}
+		else if (tree.getFile().length() > 1
+				&& tree.getFile().substring(tree.getFile().length() - 2).equals(".g")) {
+			viewModGraph.setEnabled(true);
+			viewModBrowser.setEnabled(false);
+			createAnal.setEnabled(true);
+			createAnal.setActionCommand("createSim");
+			createLearn.setEnabled(true);
+			createSynth.setEnabled(true);
+			createVer.setEnabled(true);
+		}
+		else {
+			viewModGraph.setEnabled(false);
+			viewModBrowser.setEnabled(false);
+			createAnal.setEnabled(false);
+			createLearn.setEnabled(false);
+			createSbml.setEnabled(false);
+			createSynth.setEnabled(false);
+			createVer.setEnabled(false);
 		}
 		if (e.isPopupTrigger() && tree.getFile() != null) {
 			popup.removeAll();

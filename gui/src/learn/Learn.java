@@ -1322,6 +1322,18 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 	public boolean hasChanged() {
 		return change;
 	}
+	
+	public boolean getViewGcmEnabled() {
+		return viewGcm.isEnabled();
+	}
+	
+	public boolean getSaveGcmEnabled() {
+		return saveGcm.isEnabled();
+	}
+	
+	public boolean getViewLogEnabled() {
+		return viewLog.isEnabled();
+	}
 
 	public void updateSpecies(String newLearnFile) {
 		learnFile = newLearnFile;
