@@ -158,7 +158,10 @@ public class BioSim implements MouseListener, ActionListener {
 
 	private JToolBar toolbar; // Tool bar for common options
 
-	private JButton saveButton, runButton, refreshButton, saveasButton, checkButton, exportButton; // Tool Bar options
+	private JButton saveButton, runButton, refreshButton, saveasButton, checkButton, exportButton; // Tool
+
+	// Bar
+	// options
 
 	private JPanel mainPanel; // the main panel
 
@@ -186,7 +189,9 @@ public class BioSim implements MouseListener, ActionListener {
 
 	private boolean lema;
 
-	private JMenuItem copy, rename, delete, save, saveAs, check, run, export, refresh, viewCircuit, viewRules, viewTrace, viewLog, saveParam, saveSbml, saveTemp, viewModGraph, viewModBrowser, createAnal, createLearn, createSbml, createSynth, createVer, move;
+	private JMenuItem copy, rename, delete, save, saveAs, check, run, export, refresh, viewCircuit,
+			viewRules, viewTrace, viewLog, saveParam, saveSbml, saveTemp, viewModGraph, viewModBrowser,
+			createAnal, createLearn, createSbml, createSynth, createVer, move;
 
 	public class MacOSAboutHandler extends Application {
 
@@ -295,7 +300,7 @@ public class BioSim implements MouseListener, ActionListener {
 		// toolButton = new JButton("Save");
 		toolbar.add(saveButton);
 		imgName = System.getenv("BIOSIM") + File.separator + "gui" + File.separator + "icons"
-		+ File.separator + "saveas.png";
+				+ File.separator + "saveas.png";
 		saveasButton = makeToolButton(imgName, "saveas", "Save As", "Save As");
 		toolbar.add(saveasButton);
 		imgName = System.getenv("BIOSIM") + File.separator + "gui" + File.separator + "icons"
@@ -308,11 +313,11 @@ public class BioSim implements MouseListener, ActionListener {
 		refreshButton = makeToolButton(imgName, "refresh", "Refresh", "Refresh");
 		toolbar.add(refreshButton);
 		imgName = System.getenv("BIOSIM") + File.separator + "gui" + File.separator + "icons"
-		+ File.separator + "savecheck.png";
+				+ File.separator + "savecheck.png";
 		checkButton = makeToolButton(imgName, "check", "Save and Check", "Save and Check");
 		toolbar.add(checkButton);
 		imgName = System.getenv("BIOSIM") + File.separator + "gui" + File.separator + "icons"
-		+ File.separator + "export.jpg";
+				+ File.separator + "export.jpg";
 		exportButton = makeToolButton(imgName, "export", "Export", "Export");
 		toolbar.add(exportButton);
 		saveButton.setEnabled(false);
@@ -574,13 +579,13 @@ public class BioSim implements MouseListener, ActionListener {
 		file.add(run);
 		file.add(check);
 		if (!lema) {
-		file.add(saveParam);
+			file.add(saveParam);
 		}
 		file.addSeparator();
 		file.add(export);
 		if (!lema) {
-		file.add(saveSbml);
-		file.add(saveTemp);
+			file.add(saveSbml);
+			file.add(saveTemp);
 		}
 		file.addSeparator();
 		help.add(manual);
@@ -1508,25 +1513,25 @@ public class BioSim implements MouseListener, ActionListener {
 	 */
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == viewCircuit) {
-			
+
 		}
 		else if (e.getSource() == viewLog) {
-			
+
 		}
 		else if (e.getSource() == saveParam) {
-			
+
 		}
 		else if (e.getSource() == saveSbml) {
-			
+
 		}
-		else if (e.getSource() ==  saveTemp) {
-			
+		else if (e.getSource() == saveTemp) {
+
 		}
 		else if (e.getSource() == viewModGraph) {
-			
+
 		}
 		else if (e.getSource() == viewModBrowser) {
-			
+
 		}
 		else if (e.getSource() == viewRules) {
 			Component comp = tab.getSelectedComponent();
@@ -1542,19 +1547,19 @@ public class BioSim implements MouseListener, ActionListener {
 			}
 		}
 		else if (e.getSource() == createAnal) {
-			
+
 		}
 		else if (e.getSource() == createLearn) {
-			
+
 		}
 		else if (e.getSource() == createSbml) {
-			
+
 		}
 		else if (e.getSource() == createSynth) {
-			
+
 		}
 		else if (e.getSource() == createVer) {
-			
+
 		}
 		else if (e.getSource() == about) {
 			about();
@@ -2237,7 +2242,7 @@ public class BioSim implements MouseListener, ActionListener {
 				if (newName == null) {
 					return;
 				}
-				if (!newName.endsWith(".g")) { 
+				if (!newName.endsWith(".g")) {
 					newName = newName + ".g";
 				}
 				((LHPNEditor) comp).saveAs(newName);
@@ -5185,21 +5190,21 @@ public class BioSim implements MouseListener, ActionListener {
 						}
 						LHPNFile lhpn = new LHPNFile(log);
 						if (new File(directory + theFile).length() > 0) {
-							//log.addText("here");
+							// log.addText("here");
 							lhpn.load(directory + theFile);
-							//log.addText("there");
+							// log.addText("there");
 						}
-						//log.addText("load completed");
+						// log.addText("load completed");
 						File work = new File(directory);
 						int i = getTab(theFile);
 						if (i != -1) {
 							tab.setSelectedIndex(i);
 						}
 						else {
-							//log.addText("make Editor");
+							// log.addText("make Editor");
 							addTab(theFile, new LHPNEditor(work.getAbsolutePath(), theFile, lhpn, this, log),
 									"LHPN Editor");
-							//log.addText("Editor made");
+							// log.addText("Editor made");
 						}
 						// String[] cmd = { "emacs", filename };
 						// Runtime.getRuntime().exec(cmd);
