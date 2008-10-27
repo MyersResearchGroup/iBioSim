@@ -1010,6 +1010,14 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		}
 	}
 
+	public boolean getViewTraceEnabled() {
+		return viewTrace.isEnabled();
+	}
+	
+	public boolean getViewLogEnabled() {
+		return viewLog.isEnabled();
+	}
+	
 	public void viewTrace() {
 		String[] getFilename = sourceFile.split("\\.");
 		String traceFilename = getFilename[0] + ".trace";

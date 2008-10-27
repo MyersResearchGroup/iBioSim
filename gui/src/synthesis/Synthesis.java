@@ -1332,6 +1332,22 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 					"Error Saving File", JOptionPane.ERROR_MESSAGE);
 		}
 	}
+	
+	public boolean getViewCircuitEnabled() {
+		return viewCircuit.isEnabled();
+	}
+	
+	public boolean getViewRulesEnabled() {
+		return viewRules.isEnabled();
+	}
+
+	public boolean getViewLogEnabled() {
+		return viewLog.isEnabled();
+	}
+
+	public boolean getViewTraceEnabled() {
+		return viewTrace.isEnabled();
+	}
 
 	public void viewCircuit() {
 		String[] getFilename = sourceFile.split(separator);
