@@ -135,11 +135,6 @@ public class CloseTabPaneEnhancedUI extends CloseTabPaneUI {
 				delta2 += BUTTONSIZE;
 			}
 
-			if (isMaxEnabled()) {
-				delta += BUTTONSIZE + WIDTHDELTA;
-				delta2 += BUTTONSIZE;
-			}
-
 			if (tabPane.isEnabledAt(tabIndex)) {
 				leftGradient = new GradientPaint(x, y, selectedColor, x + w / 2, y, lightBlue);
 

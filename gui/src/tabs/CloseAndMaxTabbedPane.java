@@ -75,13 +75,6 @@ public class CloseAndMaxTabbedPane extends JTabbedPane {
 	}
 
 	/**
-	 * Returns <code>true</code> if the max/detach icon is enabled.
-	 */
-	public boolean isMaxEnabled() {
-		return paneUI.isMaxEnabled();
-	}
-
-	/**
 	 * Override JTabbedPane method. Does nothing.
 	 */
 	public void setTabLayoutPolicy(int tabLayoutPolicy) {
@@ -107,16 +100,6 @@ public class CloseAndMaxTabbedPane extends JTabbedPane {
 	 */
 	public void setCloseIcon(boolean b) {
 		paneUI.setCloseIcon(b);
-	}
-
-	/**
-	 * Sets whether the tabbedPane should have a max/detach icon or not.
-	 * 
-	 * @param b
-	 *          whether the tabbedPane should have a max/detach icon or not
-	 */
-	public void setMaxIcon(boolean b) {
-		paneUI.setMaxIcon(b);
 	}
 
 	/**

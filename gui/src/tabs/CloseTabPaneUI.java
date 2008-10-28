@@ -24,6 +24,7 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Insets;
+import java.awt.KeyboardFocusManager;
 import java.awt.LayoutManager;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -38,11 +39,9 @@ import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.util.Hashtable;
 import java.util.Vector;
-
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.InputMap;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -122,11 +121,7 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 
 	private BufferedImage closeImgB;
 
-	private BufferedImage maxImgB;
-
 	private BufferedImage closeImgI;
-
-	private BufferedImage maxImgI;
 
 	private JButton closeB;
 
@@ -140,11 +135,7 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 
 	private boolean isCloseButtonEnabled = true;
 
-	private boolean isMaxButtonEnabled = true;
-
 	protected JPopupMenu actionPopupMenu;
-
-	protected JMenuItem maxItem;
 
 	protected JMenuItem closeItem;
 
@@ -154,11 +145,7 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 
 		closeImgB = new BufferedImage(BUTTONSIZE, BUTTONSIZE, BufferedImage.TYPE_4BYTE_ABGR);
 
-		maxImgB = new BufferedImage(BUTTONSIZE, BUTTONSIZE, BufferedImage.TYPE_4BYTE_ABGR);
-
 		closeImgI = new BufferedImage(BUTTONSIZE, BUTTONSIZE, BufferedImage.TYPE_4BYTE_ABGR);
-
-		maxImgI = new BufferedImage(BUTTONSIZE, BUTTONSIZE, BufferedImage.TYPE_4BYTE_ABGR);
 
 		closeB = new JButton();
 		closeB.setIcon(UIManager.getIcon("InternalFrame.closeIcon"));
@@ -168,14 +155,7 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 
 		actionPopupMenu = new JPopupMenu();
 
-		maxItem = new JMenuItem("Detach");
 		closeItem = new JMenuItem("Close");
-
-		maxItem.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				((CloseAndMaxTabbedPane) tabPane).fireMaxTabEvent(null, tabPane.getSelectedIndex());
-			}
-		});
 
 		closeItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -188,15 +168,11 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 	}
 
 	protected boolean isOneActionButtonEnabled() {
-		return isCloseButtonEnabled || isMaxButtonEnabled;
+		return isCloseButtonEnabled;
 	}
 
 	public boolean isCloseEnabled() {
 		return isCloseButtonEnabled;
-	}
-
-	public boolean isMaxEnabled() {
-		return isMaxButtonEnabled;
 	}
 
 	public void setCloseIcon(boolean b) {
@@ -204,17 +180,8 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 		setPopupMenu();
 	}
 
-	public void setMaxIcon(boolean b) {
-		isMaxButtonEnabled = b;
-		setPopupMenu();
-	}
-
 	private void setPopupMenu() {
 		actionPopupMenu.removeAll();
-		if (isMaxButtonEnabled)
-			actionPopupMenu.add(maxItem);
-		if (isMaxButtonEnabled && isCloseButtonEnabled)
-			actionPopupMenu.addSeparator();
 		if (isCloseButtonEnabled)
 			actionPopupMenu.add(closeItem);
 	}
@@ -225,8 +192,6 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 			delta += 6;
 		else {
 			if (isCloseButtonEnabled)
-				delta += BUTTONSIZE + WIDTHDELTA;
-			if (isMaxButtonEnabled)
 				delta += BUTTONSIZE + WIDTHDELTA;
 		}
 
@@ -322,8 +287,6 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 
 		if (isCloseButtonEnabled)
 			updateCloseIcon(x, y);
-		if (isMaxButtonEnabled)
-			updateMaxIcon(x, y);
 	}
 
 	public static ComponentUI createUI(JComponent c) {
@@ -637,8 +600,6 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 
 			if (isCloseButtonEnabled)
 				paintCloseIcon(g2, dx, dy, isOver);
-			if (isMaxButtonEnabled)
-				paintMaxIcon(g2, dx, dy, isOver);
 		}
 
 	}
@@ -646,14 +607,6 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 	protected void paintCloseIcon(Graphics g, int dx, int dy, boolean isOver) {
 		paintActionButton(g, dx, dy, closeIndexStatus, isOver, closeB, closeImgB);
 		g.drawImage(closeImgI, dx, dy + 1, null);
-	}
-
-	protected void paintMaxIcon(Graphics g, int dx, int dy, boolean isOver) {
-		if (isCloseButtonEnabled)
-			dx -= BUTTONSIZE;
-
-		paintActionButton(g, dx, dy, maxIndexStatus, isOver, new JButton(), maxImgB);
-		g.drawImage(maxImgI, dx, dy + 1, null);
 	}
 
 	protected void paintActionButton(Graphics g, int dx, int dy, int status, boolean isOver,
@@ -836,12 +789,12 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 	//
 	boolean requestMyFocusForVisibleComponent() {
 		Component visibleComponent = getVisibleComponent();
-		if (visibleComponent.isFocusTraversable()) {
+		if (visibleComponent.isFocusable()) {
 			visibleComponent.requestFocus();
 			return true;
 		}
 		else if (visibleComponent instanceof JComponent) {
-			if (((JComponent) visibleComponent).requestDefaultFocus()) {
+			if (((JComponent) visibleComponent).requestFocusInWindow()) {
 				return true;
 			}
 		}
@@ -1050,7 +1003,7 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 				//
 				if (selectedComponent != null) {
 					if (selectedComponent != visibleComponent && visibleComponent != null) {
-						if (SwingUtilities.findFocusOwner(visibleComponent) != null) {
+						if (KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner() != null) {
 							shouldChangeFocus = true;
 						}
 					}
