@@ -86,9 +86,9 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 
 	private ContainerListener containerListener;
 
-	private Vector htmlViews;
+	private Vector<View> htmlViews;
 
-	private Hashtable mnemonicToIndexMap;
+	private Hashtable<Integer, Integer> mnemonicToIndexMap;
 
 	/**
 	 * InputMap used for mnemonics. Only non-null if the JTabbedPane has mnemonics
@@ -506,7 +506,7 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 	 * Installs the state needed for mnemonics.
 	 */
 	private void initMnemonics() {
-		mnemonicToIndexMap = new Hashtable();
+		mnemonicToIndexMap = new Hashtable<Integer, Integer>();
 		mnemonicInputMap = new InputMapUIResource();
 		mnemonicInputMap.setParent(SwingUtilities.getUIInputMap(tabPane,
 				JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT));
@@ -646,8 +646,6 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 	 * (tab.y + tab.height) and adding yCropLen[i] to (tab.x).
 	 */
 
-	private static final int CROP_SEGMENT = 12;
-
 	private void paintCroppedTabEdge(Graphics g, int tabPlacement, int tabIndex, boolean isSelected,
 			int x, int y) {
 
@@ -766,19 +764,6 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 		return min;
 	}
 
-	/**
-	 * Returns a point which is translated from the specified point in the
-	 * JTabbedPane's coordinate space to the coordinate space of the
-	 * ScrollableTabPanel. This is used for SCROLL_TAB_LAYOUT ONLY.
-	 */
-	private Point translatePointToTabPanel(int srcx, int srcy, Point dest) {
-		Point vpp = tabScroller.viewport.getLocation();
-		Point viewp = tabScroller.viewport.getViewPosition();
-		dest.x = srcx + vpp.x + viewp.x;
-		dest.y = srcy + vpp.y + viewp.y;
-		return dest;
-	}
-
 	// BasicTabbedPaneUI methods
 
 	// Tab Navigation methods
@@ -802,6 +787,11 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 	}
 
 	private static class RightAction extends AbstractAction {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1372089458264627655L;
+
 		public void actionPerformed(ActionEvent e) {
 			JTabbedPane pane = (JTabbedPane) e.getSource();
 			CloseTabPaneUI ui = (CloseTabPaneUI) pane.getUI();
@@ -810,6 +800,11 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 	};
 
 	private static class LeftAction extends AbstractAction {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -2840127075487509680L;
+
 		public void actionPerformed(ActionEvent e) {
 			JTabbedPane pane = (JTabbedPane) e.getSource();
 			CloseTabPaneUI ui = (CloseTabPaneUI) pane.getUI();
@@ -818,6 +813,11 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 	};
 
 	private static class UpAction extends AbstractAction {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -5022434551873267653L;
+
 		public void actionPerformed(ActionEvent e) {
 			JTabbedPane pane = (JTabbedPane) e.getSource();
 			CloseTabPaneUI ui = (CloseTabPaneUI) pane.getUI();
@@ -826,6 +826,11 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 	};
 
 	private static class DownAction extends AbstractAction {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 3095536365104725070L;
+
 		public void actionPerformed(ActionEvent e) {
 			JTabbedPane pane = (JTabbedPane) e.getSource();
 			CloseTabPaneUI ui = (CloseTabPaneUI) pane.getUI();
@@ -834,6 +839,11 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 	};
 
 	private static class NextAction extends AbstractAction {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 5492119175649068664L;
+
 		public void actionPerformed(ActionEvent e) {
 			JTabbedPane pane = (JTabbedPane) e.getSource();
 			CloseTabPaneUI ui = (CloseTabPaneUI) pane.getUI();
@@ -842,6 +852,11 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 	};
 
 	private static class PreviousAction extends AbstractAction {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -5721846316112045696L;
+
 		public void actionPerformed(ActionEvent e) {
 			JTabbedPane pane = (JTabbedPane) e.getSource();
 			CloseTabPaneUI ui = (CloseTabPaneUI) pane.getUI();
@@ -850,6 +865,11 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 	};
 
 	private static class PageUpAction extends AbstractAction {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 3901523699837556597L;
+
 		public void actionPerformed(ActionEvent e) {
 			JTabbedPane pane = (JTabbedPane) e.getSource();
 			CloseTabPaneUI ui = (CloseTabPaneUI) pane.getUI();
@@ -864,6 +884,11 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 	};
 
 	private static class PageDownAction extends AbstractAction {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -8234056647814092293L;
+
 		public void actionPerformed(ActionEvent e) {
 			JTabbedPane pane = (JTabbedPane) e.getSource();
 			CloseTabPaneUI ui = (CloseTabPaneUI) pane.getUI();
@@ -878,6 +903,11 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 	};
 
 	private static class RequestFocusAction extends AbstractAction {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -5155228427948248055L;
+
 		public void actionPerformed(ActionEvent e) {
 			JTabbedPane pane = (JTabbedPane) e.getSource();
 			pane.requestFocus();
@@ -885,6 +915,11 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 	};
 
 	private static class RequestFocusForVisibleAction extends AbstractAction {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 7735773325665374956L;
+
 		public void actionPerformed(ActionEvent e) {
 			JTabbedPane pane = (JTabbedPane) e.getSource();
 			CloseTabPaneUI ui = (CloseTabPaneUI) pane.getUI();
@@ -898,6 +933,11 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 	 * first character of the action command.
 	 */
 	private static class SetSelectedIndexAction extends AbstractAction {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 8262059252993642009L;
+
 		public void actionPerformed(ActionEvent e) {
 			JTabbedPane pane = (JTabbedPane) e.getSource();
 
@@ -920,6 +960,11 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 	};
 
 	private static class ScrollTabsForwardAction extends AbstractAction {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 4722476981006125635L;
+
 		public void actionPerformed(ActionEvent e) {
 			JTabbedPane pane = null;
 			Object src = e.getSource();
@@ -940,6 +985,11 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 	}
 
 	private static class ScrollTabsBackwardAction extends AbstractAction {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 5913237628993582792L;
+
 		public void actionPerformed(ActionEvent e) {
 			JTabbedPane pane = null;
 			Object src = e.getSource();
@@ -1098,12 +1148,8 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 
 		protected void calculateTabRects(int tabPlacement, int tabCount) {
 			FontMetrics metrics = getFontMetrics();
-			Dimension size = tabPane.getSize();
-			Insets insets = tabPane.getInsets();
 			Insets tabAreaInsets = getTabAreaInsets(tabPlacement);
-			int fontHeight = metrics.getHeight();
-			int selectedIndex = tabPane.getSelectedIndex();
-			int i, j;
+			int i;
 
 			int x = tabAreaInsets.left - 2;
 			int y = tabAreaInsets.top;
@@ -1256,6 +1302,11 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 	}
 
 	private class ScrollableTabViewport extends JViewport implements UIResource {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 9089757009472342660L;
+
 		public ScrollableTabViewport() {
 			super();
 			setScrollMode(SIMPLE_SCROLL_MODE);
@@ -1263,6 +1314,11 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 	}
 
 	private class ScrollableTabPanel extends JPanel implements UIResource {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -3666901839718883744L;
+
 		public ScrollableTabPanel() {
 			setLayout(null);
 		}
@@ -1276,6 +1332,11 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 
 	protected class ScrollableTabButton extends BasicArrowButton implements UIResource,
 			SwingConstants {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -9177973352642315639L;
+
 		public ScrollableTabButton(int direction) {
 			super(direction, UIManager.getColor("TabbedPane.selected"), UIManager
 					.getColor("TabbedPane.shadow"), UIManager.getColor("TabbedPane.darkShadow"), UIManager
@@ -1392,8 +1453,8 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 		}
 	}
 
-	private Vector createHTMLVector() {
-		Vector htmlViews = new Vector();
+	private Vector<View> createHTMLVector() {
+		Vector<View> htmlViews = new Vector<View>();
 		int count = tabPane.getTabCount();
 		if (count > 0) {
 			for (int i = 0; i < count; i++) {
