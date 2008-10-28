@@ -2206,7 +2206,7 @@ public class BioSim implements MouseListener, ActionListener {
 			}
 			else if (comp instanceof JTabbedPane) {
 				Component component = ((JTabbedPane) comp).getSelectedComponent();
-				int index = tab.getSelectedIndex();
+				int index = ((JTabbedPane) comp).getSelectedIndex();
 				if (component instanceof Graph) {
 					((Graph) component).save();
 				}
