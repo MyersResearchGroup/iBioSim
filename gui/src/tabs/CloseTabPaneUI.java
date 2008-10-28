@@ -37,11 +37,13 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.Hashtable;
 import java.util.Vector;
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.InputMap;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -148,7 +150,8 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 		closeImgI = new BufferedImage(BUTTONSIZE, BUTTONSIZE, BufferedImage.TYPE_4BYTE_ABGR);
 
 		closeB = new JButton();
-		closeB.setIcon(UIManager.getIcon("InternalFrame.closeIcon"));
+		closeB.setIcon(new ImageIcon(System.getenv("BIOSIM") + File.separator + "gui" + File.separator
+				+ "icons" + File.separator + "close.gif"));
 		closeB.setSize(BUTTONSIZE, BUTTONSIZE);
 
 		WindowsIconFactory.createFrameCloseIcon().paintIcon(closeB, closeImgI.createGraphics(), 0, 0);
@@ -593,7 +596,7 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 			g2.setClip(save);
 
 		}
-		else if (isOver || isSelected) {
+		else { // if (isOver || isSelected) {
 
 			int dx = tabRect.x + tabRect.width - BUTTONSIZE - WIDTHDELTA;
 			int dy = (tabRect.y + tabRect.height) / 2 - 6;
@@ -606,7 +609,7 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 
 	protected void paintCloseIcon(Graphics g, int dx, int dy, boolean isOver) {
 		paintActionButton(g, dx, dy, closeIndexStatus, isOver, closeB, closeImgB);
-		g.drawImage(closeImgI, dx, dy + 1, null);
+		// g.drawImage(closeImgI, dx, dy + 1, null);
 	}
 
 	protected void paintActionButton(Graphics g, int dx, int dy, int status, boolean isOver,
