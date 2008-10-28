@@ -13,6 +13,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -23,7 +24,6 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 
@@ -40,10 +40,10 @@ import biomodelsim.Log;
  * 
  * @author Nam Nguyen
  */
-public class GCM2SBMLEditor extends JPanel implements ActionListener,
-		MouseListener {
+public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListener {
 
 	private String filename = "";
+
 	private String gcmname = "";
 
 	private GCMFile gcm = null;
@@ -62,23 +62,24 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 			gcm.load(path + File.separator + filename);
 			this.filename = filename;
 			this.gcmname = filename.replace(".gcm", "");
-		} else {
+		}
+		else {
 			this.filename = "";
 		}
 		buildGui(this.filename);
 	}
-	
+
 	public String getFilename() {
 		return filename;
 	}
-	
+
 	public void reload(String newName) {
-		filename = newName+".gcm";
+		filename = newName + ".gcm";
 		gcmname = newName;
 		gcm.load(path + File.separator + newName + ".gcm");
 		GCMNameTextField.setText(newName);
 	}
-	
+
 	public String getGCMName() {
 		return gcmname;
 	}
@@ -116,7 +117,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 	public boolean isDirty() {
 		return dirty;
 	}
-	
+
 	public GCMFile getGCM() {
 		return gcm;
 	}
@@ -130,17 +131,20 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 
 		if (!sbmlFiles.getSelectedItem().equals(none)) {
 			gcm.setSBMLFile(sbmlFiles.getSelectedItem().toString());
-		} else {
+		}
+		else {
 			gcm.setSBMLFile("");
 		}
 		if (dimAbs.isSelected()) {
 			gcm.setDimAbs(true);
-		} else {
+		}
+		else {
 			gcm.setDimAbs(false);
 		}
 		if (bioAbs.isSelected()) {
 			gcm.setBioAbs(true);
-		} else {
+		}
+		else {
 			gcm.setBioAbs(false);
 		}
 		GeneticNetwork.setRoot(path + File.separator);
@@ -157,55 +161,60 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 			saveAs(newName);
 			return;
 		}
-		
+
 		// Write out species and influences to a gcm file
 		gcm.save(path + File.separator + gcmname + ".gcm");
 		log.addText("Saving GCM file:\n" + path + File.separator + gcmname + ".gcm\n");
 
 		if (command.contains("template")) {
-			GCMParser parser = new GCMParser(path + File.separator + gcmname
-					+ ".gcm");
+			GCMParser parser = new GCMParser(path + File.separator + gcmname + ".gcm");
 			try {
 				parser.buildNetwork();
-			} catch (IllegalStateException e) {
+			}
+			catch (IllegalStateException e) {
 				JOptionPane.showMessageDialog(biosim.frame(), e.getMessage(), "Error",
 						JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 			GeneticNetwork network = new GeneticNetwork();
-			
-			String templateName = JOptionPane.showInputDialog(biosim.frame(), "Enter SBML template name:", "SBML Template Name",
-					JOptionPane.PLAIN_MESSAGE);
+
+			String templateName = JOptionPane.showInputDialog(biosim.frame(),
+					"Enter SBML template name:", "SBML Template Name", JOptionPane.PLAIN_MESSAGE);
 			if (!templateName.contains(".sbml") && !templateName.contains(".xml")) {
 				templateName = templateName + ".sbml";
 			}
 			if (new File(path + File.separator + templateName).exists()) {
 				int value = JOptionPane.showOptionDialog(biosim.frame(), templateName
-						+ " already exists.  Overwrite file?",
-						"Save file", JOptionPane.YES_NO_OPTION,
+						+ " already exists.  Overwrite file?", "Save file", JOptionPane.YES_NO_OPTION,
 						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 				if (value == JOptionPane.YES_OPTION) {
-					network.buildTemplate(parser.getSpecies(), parser.getPromoters(), gcmname + ".gcm", path + File.separator + templateName);
-					log.addText("Saving GCM file as SBML template:\n" + path + File.separator + templateName + "\n");
+					network.buildTemplate(parser.getSpecies(), parser.getPromoters(), gcmname + ".gcm", path
+							+ File.separator + templateName);
+					log.addText("Saving GCM file as SBML template:\n" + path + File.separator + templateName
+							+ "\n");
 					biosim.refreshTree();
 					biosim.updateOpenSBML(templateName);
-				} else {
+				}
+				else {
 					// Do nothing
 				}
-			} else {
-				network.buildTemplate(parser.getSpecies(), parser.getPromoters(), gcmname + ".gcm", path + File.separator + templateName);
-				log.addText("Saving GCM file as SBML template:\n" + path + File.separator + templateName + "\n");
+			}
+			else {
+				network.buildTemplate(parser.getSpecies(), parser.getPromoters(), gcmname + ".gcm", path
+						+ File.separator + templateName);
+				log.addText("Saving GCM file as SBML template:\n" + path + File.separator + templateName
+						+ "\n");
 				biosim.refreshTree();
 			}
 		}
 		else if (command.contains("SBML")) {
 			// Then read in the file with the GCMParser
-			GCMParser parser = new GCMParser(path + File.separator + gcmname
-					+ ".gcm");
+			GCMParser parser = new GCMParser(path + File.separator + gcmname + ".gcm");
 			GeneticNetwork network = null;
 			try {
 				network = parser.buildNetwork();
-			} catch (IllegalStateException e) {
+			}
+			catch (IllegalStateException e) {
 				JOptionPane.showMessageDialog(biosim.frame(), e.getMessage(), "Error",
 						JOptionPane.ERROR_MESSAGE);
 				return;
@@ -214,40 +223,44 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 			// Finally, output to a file
 			if (new File(path + File.separator + gcmname + ".sbml").exists()) {
 				int value = JOptionPane.showOptionDialog(biosim.frame(), gcmname
-						+ ".sbml already exists.  Overwrite file?",
-						"Save file", JOptionPane.YES_NO_OPTION,
+						+ ".sbml already exists.  Overwrite file?", "Save file", JOptionPane.YES_NO_OPTION,
 						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 				if (value == JOptionPane.YES_OPTION) {
-					network.mergeSBML(path + File.separator + gcmname	+ ".sbml");
-					log.addText("Saving GCM file as SBML file:\n" + path + File.separator + gcmname + ".sbml\n");
+					network.mergeSBML(path + File.separator + gcmname + ".sbml");
+					log.addText("Saving GCM file as SBML file:\n" + path + File.separator + gcmname
+							+ ".sbml\n");
 					biosim.refreshTree();
-					biosim.updateOpenSBML(gcmname	+ ".sbml");
-				} else {
+					biosim.updateOpenSBML(gcmname + ".sbml");
+				}
+				else {
 					// Do nothing
 				}
-			} else {
+			}
+			else {
 				network.mergeSBML(path + File.separator + gcmname + ".sbml");
-				log.addText("Saving GCM file as SBML file:\n" + path + File.separator + gcmname + ".sbml\n");
+				log
+						.addText("Saving GCM file as SBML file:\n" + path + File.separator + gcmname
+								+ ".sbml\n");
 				biosim.refreshTree();
 			}
 		}
 		biosim.updateViews(gcmname + ".gcm");
 
 	}
-	
+
 	public void saveAs(String newName) {
 		if (new File(path + File.separator + newName + ".gcm").exists()) {
 			int value = JOptionPane.showOptionDialog(biosim.frame(), newName
-					+ " already exists.  Overwrite file?",
-					"Save file", JOptionPane.YES_NO_OPTION,
+					+ " already exists.  Overwrite file?", "Save file", JOptionPane.YES_NO_OPTION,
 					JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 			if (value == JOptionPane.YES_OPTION) {
 				gcm.save(path + File.separator + newName + ".gcm");
 				log.addText("Saving GCM file as:\n" + path + File.separator + newName + ".gcm\n");
-			} else {
-				// Do nothing				
+			}
+			else {
+				// Do nothing
 				return;
-			}			
+			}
 		}
 		else {
 			gcm.save(path + File.separator + newName + ".gcm");
@@ -262,20 +275,21 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 		if (o instanceof Runnable) {
 			((Runnable) o).run();
 		}
-		else if (o instanceof JComboBox && !lock && !gcm.getSBMLFile().equals(sbmlFiles.getSelectedItem())) {			
+		else if (o instanceof JComboBox && !lock
+				&& !gcm.getSBMLFile().equals(sbmlFiles.getSelectedItem())) {
 			dirty = true;
 		}
-		else if (o instanceof JCheckBox && !lock && ((gcm.getDimAbs() != dimAbs.isSelected())||
-				(gcm.getBioAbs() != bioAbs.isSelected()))) {
+		else if (o instanceof JCheckBox && !lock
+				&& ((gcm.getDimAbs() != dimAbs.isSelected()) || (gcm.getBioAbs() != bioAbs.isSelected()))) {
 			dirty = true;
 		}
 		// System.out.println(o);
 	}
-	
-	public synchronized void lock() { 
+
+	public synchronized void lock() {
 		lock = true;
 	}
-	
+
 	public synchronized void unlock() {
 		lock = false;
 	}
@@ -289,9 +303,8 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 		JPanel tabPanel = new JPanel(new BorderLayout());
 		mainPanelCenter.add(mainPanelCenterUp, BorderLayout.NORTH);
 		mainPanelCenter.add(mainPanelCenterCenter, BorderLayout.CENTER);
-		//mainPanelCenter.add(mainPanelCenterDown, BorderLayout.SOUTH);
-		GCMNameTextField = new JTextField(filename.replace(".gcm",
-				""), 15);
+		// mainPanelCenter.add(mainPanelCenterDown, BorderLayout.SOUTH);
+		GCMNameTextField = new JTextField(filename.replace(".gcm", ""), 15);
 		GCMNameTextField.setEditable(false);
 		GCMNameTextField.addActionListener(this);
 		JLabel GCMNameLabel = new JLabel("GCM Id:");
@@ -322,12 +335,12 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 		if (gcm.getDimAbs()) {
 			dimAbs.setSelected(true);
 		}
-			
+
 		JPanel mainPanel = new JPanel(new BorderLayout());
 		mainPanel.setLayout(new BorderLayout());
 		mainPanel.add(mainPanelNorth, "North");
 		mainPanel.add(mainPanelCenter, "Center");
-		JTabbedPane tab  = new JTabbedPane();
+		JTabbedPane tab = new JTabbedPane();
 		tab.addTab("Main Elements", mainPanel);
 		tab.addTab("Components", tabPanel);
 		setLayout(new BorderLayout());
@@ -347,22 +360,21 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 		saveButton.addActionListener(this);
 		saveButton = new SaveButton("Save as SBML template", GCMNameTextField);
 		buttons.add(saveButton);
-		saveButton.addActionListener(this);		
-		//JSplitPane pane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, null,
-		//		buttons);
-		//pane.setDividerSize(2);
+		saveButton.addActionListener(this);
+		// JSplitPane pane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, null,
+		// buttons);
+		// pane.setDividerSize(2);
 		mainPanelCenterDown.add(buttons, BorderLayout.CENTER);
-		
+
 		promoters = new PropertyList("Promoter List");
 		EditButton addInit = new EditButton("Add Promoter", promoters);
 		RemoveButton removeInit = new RemoveButton("Remove Promoter", promoters);
 		EditButton editInit = new EditButton("Edit Promoter", promoters);
 		promoters.addAllItem(gcm.getPromoters().keySet());
 
-		JPanel initPanel = Utility.createPanel(this, "Promoters", promoters, addInit,
-				removeInit, editInit);
+		JPanel initPanel = Utility.createPanel(this, "Promoters", promoters, addInit, removeInit,
+				editInit);
 		mainPanelCenterCenter.add(initPanel);
-
 
 		species = new PropertyList("Species List");
 		addInit = new EditButton("Add Species", species);
@@ -370,8 +382,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 		editInit = new EditButton("Edit Species", species);
 		species.addAllItem(gcm.getSpecies().keySet());
 
-		initPanel = Utility.createPanel(this, "Species", species,
-				addInit, removeInit, editInit);
+		initPanel = Utility.createPanel(this, "Species", species, addInit, removeInit, editInit);
 		mainPanelCenterCenter.add(initPanel);
 
 		influences = new PropertyList("Influence List");
@@ -380,31 +391,28 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 		editInit = new EditButton("Edit Influence", influences);
 		influences.addAllItem(gcm.getInfluences().keySet());
 
-		initPanel = Utility.createPanel(this, "Influences", influences,
-				addInit, removeInit, editInit);
+		initPanel = Utility.createPanel(this, "Influences", influences, addInit, removeInit, editInit);
 		mainPanelCenterCenter.add(initPanel);
 
 		parameters = new PropertyList("Parameter List");
 		editInit = new EditButton("Edit Parameter", parameters);
 		// parameters.addAllItem(gcm.getParameters().keySet());
 		parameters.addAllItem(generateParameters());
-		initPanel = Utility.createPanel(this, "Parameters", parameters, null,
-				null, editInit);
+		initPanel = Utility.createPanel(this, "Parameters", parameters, null, null, editInit);
 
 		mainPanelCenterCenter.add(initPanel);
-		
+
 		components = new PropertyList("Component List");
 		addInit = new EditButton("Add Component", components);
 		removeInit = new RemoveButton("Remove Component", components);
 		editInit = new EditButton("Edit Component", components);
-		initPanel = Utility.createPanel(this, "Components", components,
-				addInit, removeInit, editInit);
+		initPanel = Utility.createPanel(this, "Components", components, addInit, removeInit, editInit);
 		tabPanel.add(initPanel, "Center");
 	}
 
 	public void reloadFiles() {
 		lock();
-		//sbmlFiles.removeAll();
+		// sbmlFiles.removeAll();
 		String[] sbmlList = Utility.getFiles(path, ".sbml");
 		String[] xmlList = Utility.getFiles(path, ".xml");
 
@@ -424,16 +432,14 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 		sbmlFiles.setSelectedItem(none);
 
 		sbmlFiles.setSelectedItem(gcm.getSBMLFile());
-		if (!gcm.getSBMLFile().equals("")
-				&& sbmlFiles.getSelectedItem().equals(none)) {
-			Utility.createErrorMessage("Warning: Missing File",
-					"Unable to find SBML file " + gcm.getSBMLFile()
-							+ ".  Setting default SBML file to none");
+		if (!gcm.getSBMLFile().equals("") && sbmlFiles.getSelectedItem().equals(none)) {
+			Utility.createErrorMessage("Warning: Missing File", "Unable to find SBML file "
+					+ gcm.getSBMLFile() + ".  Setting default SBML file to none");
 			gcm.setSBMLFile("");
 		}
 		unlock();
 	}
-	
+
 	public void reloadParameters() {
 		parameters.removeAllItem();
 		parameters.addAllItem(generateParameters());
@@ -443,9 +449,12 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 		HashSet<String> results = new HashSet<String>();
 		for (String s : gcm.getParameters().keySet()) {
 			if (gcm.getGlobalParameters().containsKey(s)) {
-				results.add(CompatibilityFixer.getGuiName(s) + " ("+CompatibilityFixer.getSBMLName(s)+"), Custom, " + gcm.getParameter(s));
-			} else {
-				results.add(CompatibilityFixer.getGuiName(s) + " ("+CompatibilityFixer.getSBMLName(s)+"), Default, " + gcm.getParameter(s));
+				results.add(CompatibilityFixer.getGuiName(s) + " (" + CompatibilityFixer.getSBMLName(s)
+						+ "), Custom, " + gcm.getParameter(s));
+			}
+			else {
+				results.add(CompatibilityFixer.getGuiName(s) + " (" + CompatibilityFixer.getSBMLName(s)
+						+ "), Default, " + gcm.getParameter(s));
 			}
 		}
 		return results;
@@ -482,52 +491,46 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 						list.removeItem(name);
 					}
 				}
-			} else if (getName().contains("Species")) {
+			}
+			else if (getName().contains("Species")) {
 				String name = null;
 				if (list.getSelectedValue() != null) {
 					name = list.getSelectedValue().toString();
 					if (gcm.removeSpeciesCheck(name)) {
 						gcm.removeSpecies(name);
 						list.removeItem(name);
-					} else {
-						JOptionPane
-								.showMessageDialog(
-										biosim.frame(),
-										"Cannot remove species "
-												+ name
-												+ " because it is currently in other reactions");
+					}
+					else {
+						JOptionPane.showMessageDialog(biosim.frame(), "Cannot remove species " + name
+								+ " because it is currently in other reactions");
 					}
 				}
-			} else if (getName().contains("Promoter")) {
+			}
+			else if (getName().contains("Promoter")) {
 				String name = null;
 				if (list.getSelectedValue() != null) {
 					name = list.getSelectedValue().toString();
 					if (gcm.removePromoterCheck(name)) {
 						gcm.removePromoter(name);
 						list.removeItem(name);
-					} else {
-						JOptionPane
-								.showMessageDialog(
-										biosim.frame(),
-										"Cannot remove promoter "
-												+ name
-												+ " because it is currently in other reactions");
+					}
+					else {
+						JOptionPane.showMessageDialog(biosim.frame(), "Cannot remove promoter " + name
+								+ " because it is currently in other reactions");
 					}
 				}
-			} else if (getName().contains("Component")) {
+			}
+			else if (getName().contains("Component")) {
 				String name = null;
 				if (list.getSelectedValue() != null) {
 					name = list.getSelectedValue().toString();
 					if (gcm.removeComponentCheck(name)) {
 						gcm.removeComponent(name);
 						list.removeItem(name);
-					} else {
-						JOptionPane
-								.showMessageDialog(
-										biosim.frame(),
-										"Cannot remove component "
-												+ name
-												+ " because it is currently in other reactions");
+					}
+					else {
+						JOptionPane.showMessageDialog(biosim.frame(), "Cannot remove component " + name
+								+ " because it is currently in other reactions");
 					}
 				}
 			}
@@ -560,47 +563,59 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 				Utility.createErrorMessage("Error", "Nothing selected to edit");
 				return;
 			}
-			if (list.getSelectedValue() == null
-			    && getName().contains("Edit")) {
+			if (list.getSelectedValue() == null && getName().contains("Edit")) {
 				Utility.createErrorMessage("Error", "Nothing selected to edit");
 				return;
 			}
 			dirty = true;
 			if (getName().contains("Species")) {
 				String selected = null;
-				if (list.getSelectedValue() != null
-						&& getName().contains("Edit")) {
+				if (list.getSelectedValue() != null && getName().contains("Edit")) {
 					selected = list.getSelectedValue().toString();
 				}
-				SpeciesPanel panel = new SpeciesPanel(selected, list,
-						influences, gcm);
-			} else if (getName().contains("Influence")) {
+				SpeciesPanel panel = new SpeciesPanel(selected, list, influences, gcm);
+			}
+			else if (getName().contains("Influence")) {
 				String selected = null;
-				if (list.getSelectedValue() != null
-						&& getName().contains("Edit")) {
+				if (list.getSelectedValue() != null && getName().contains("Edit")) {
 					selected = list.getSelectedValue().toString();
 				}
 				InfluencePanel panel = new InfluencePanel(selected, list, gcm);
-			} else if (getName().contains("Promoter")) {
+			}
+			else if (getName().contains("Promoter")) {
 				String selected = null;
-				if (list.getSelectedValue() != null
-						&& getName().contains("Edit")) {
+				if (list.getSelectedValue() != null && getName().contains("Edit")) {
 					selected = list.getSelectedValue().toString();
 				}
-				PromoterPanel panel = new PromoterPanel(selected, list,
-						influences, gcm);
-			} else if (getName().contains("Component")) {
+				PromoterPanel panel = new PromoterPanel(selected, list, influences, gcm);
+			}
+			else if (getName().contains("Component")) {
 				String selected = null;
-				if (list.getSelectedValue() != null
-						&& getName().contains("Edit")) {
+				String comp = null;
+				if (list.getSelectedValue() != null && getName().contains("Edit")) {
 					selected = list.getSelectedValue().toString();
+					comp = selected.split(" ")[1];
 				}
-				ComponentsPanel panel = new ComponentsPanel(selected, list,
-						influences, gcm, path);
-			} else if (getName().contains("Parameter")) {
+				else {
+					ArrayList<String> components = new ArrayList<String>();
+					for (String s : new File(path).list()) {
+						if (s.endsWith(".gcm")) {
+							components.add(s);
+						}
+					}
+					comp = (String) JOptionPane.showInputDialog(biosim.frame(), "Choose a gcm to use as a component:",
+							"Component Editor", JOptionPane.PLAIN_MESSAGE, null, components
+									.toArray(new String[0]), null);
+				}
+				if (comp != null && !comp.equals("")) {
+					GCMFile getSpecs = new GCMFile();
+					getSpecs.load(path + File.separator + comp);
+					ComponentsPanel panel = new ComponentsPanel(selected, list, influences, gcm, getSpecs.getSpecies().keySet());
+				}
+			}
+			else if (getName().contains("Parameter")) {
 				String selected = null;
-				if (list.getSelectedValue() != null
-						&& getName().contains("Edit")) {
+				if (list.getSelectedValue() != null && getName().contains("Edit")) {
 					selected = list.getSelectedValue().toString();
 				}
 				ParameterPanel panel = new ParameterPanel(selected, list, gcm);
@@ -615,9 +630,9 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 
 		private PropertyList list = null;
 	}
-	
+
 	private boolean lock = false;
-	
+
 	private JTextField GCMNameTextField = null;
 
 	private String[] options = { "Ok", "Cancel" };
@@ -629,11 +644,11 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 	private PropertyList promoters = null;
 
 	private PropertyList parameters = null;
-	
+
 	private PropertyList components = null;
 
 	private JComboBox sbmlFiles = null;
-	
+
 	private JCheckBox bioAbs = null;
 
 	private JCheckBox dimAbs = null;
@@ -643,7 +658,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener,
 	private static final String none = "--none--";
 
 	private BioSim biosim = null;
-	
+
 	private Log log = null;
 
 	private boolean dirty = false;

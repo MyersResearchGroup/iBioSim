@@ -7,10 +7,9 @@ import gcm2sbml.util.Utility;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Properties;
+import java.util.Set;
 
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -34,18 +33,12 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 	private HashMap<String, PropertyField> fields = null;
 
 	public ComponentsPanel(String selected, PropertyList componentsList, PropertyList portmapList,
-			GCMFile gcm, String root) {
-		super(new GridLayout(3, 1));
+			GCMFile gcm, Set<String> species) {
+		super(new GridLayout(species.size() + 2, 1));
 		this.selected = selected;
 		this.componentsList = componentsList;
 		this.portmapList = portmapList;
 		this.gcm = gcm;
-		ArrayList<String> components = new ArrayList<String>();
-		for (String s : new File(root).list()) {
-			if (s.endsWith(".gcm")) {
-				components.add(s);
-			}
-		}
 
 		fields = new HashMap<String, PropertyField>();
 
@@ -54,20 +47,22 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 		fields.put(GlobalConstants.ID, field);
 		add(field);
 
-		// Component field
-		JPanel tempPanel = new JPanel();
-		JLabel tempLabel = new JLabel(GlobalConstants.COMPONENT);
-		componentBox = new JComboBox(components.toArray(new String[0]));
-		componentBox.addActionListener(this);
-		tempPanel.setLayout(new GridLayout(1, 2));
-		tempPanel.add(tempLabel);
-		tempPanel.add(componentBox);
-		add(tempPanel);
+		/*
+		 * // Component field JPanel tempPanel = new JPanel(); JLabel tempLabel =
+		 * new JLabel(GlobalConstants.COMPONENT); componentBox = new
+		 * JComboBox(components.toArray(new String[0]));
+		 * componentBox.addActionListener(this); tempPanel.setLayout(new
+		 * GridLayout(1, 2)); tempPanel.add(tempLabel); tempPanel.add(componentBox);
+		 * add(tempPanel);
+		 */
 
 		// Port Map field
-		field = new PropertyField(GlobalConstants.PORTMAP, "", null, null, Utility.NAMEstring);
-		fields.put(GlobalConstants.PORTMAP, field);
-		add(field);
+		add(new JLabel(GlobalConstants.PORTMAP));
+		for (String s : species) {
+			field = new PropertyField(s, "", null, null, Utility.NAMEstring);
+			fields.put(s, field);
+			add(field);
+		}
 
 		String oldName = null;
 		if (selected != null) {
@@ -96,7 +91,7 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 	}
 
 	private boolean openGui(String oldName) {
-		int value = JOptionPane.showOptionDialog(new JFrame(), this, "Species Editor",
+		int value = JOptionPane.showOptionDialog(new JFrame(), this, "Component Editor",
 				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		if (value == JOptionPane.YES_OPTION) {
 			if (!checkValues()) {
