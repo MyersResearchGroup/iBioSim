@@ -171,12 +171,15 @@ public class ControlFlowPanel extends JPanel implements ActionListener {
 
 	private boolean openGui(String oldName) {
 		String id = (String) fromBox.getSelectedItem() + " " + (String) toBox.getSelectedItem();
-		//JOptionPane.showMessageDialog(this, id);
+		//JOptionPane.showMessageDialog(this, toBox.getSelectedItem());
 		String[] oldFlow = oldName.split("\\s");
 		String[] newFlow = {(String) fromBox.getSelectedItem(), (String) toBox.getSelectedItem()};
 		int value = JOptionPane.showOptionDialog(new JFrame(), this, "Control Flow Editor",
 				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		if (value == JOptionPane.YES_OPTION) {
+			id = (String) fromBox.getSelectedItem() + " " + (String) toBox.getSelectedItem();
+			newFlow[0] = (String) fromBox.getSelectedItem();
+			newFlow[1] = (String) toBox.getSelectedItem();
 			//if (!checkValues()) {
 			//	Utility.createErrorMessage("Error", "Illegal values entered.");
 			//	return false;
@@ -202,7 +205,7 @@ public class ControlFlowPanel extends JPanel implements ActionListener {
 			lhpn.addControlFlow(fromBox.getSelectedItem().toString(), toBox.getSelectedItem()
 					.toString());
 			flowList.removeItem(oldName);
-			JOptionPane.showMessageDialog(this, id);
+			//JOptionPane.showMessageDialog(this, id);
 			flowList.addItem(id);
 			flowList.setSelectedValue(id, true);
 		}
