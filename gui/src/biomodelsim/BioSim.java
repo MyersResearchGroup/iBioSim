@@ -855,7 +855,7 @@ public class BioSim implements MouseListener, ActionListener {
 		tree = new FileTree(null, this, lema);
 		log = new Log();
 		tab = new CloseAndMaxTabbedPane(false, this);
-		tab.setPreferredSize(new Dimension(1050, 550));
+		tab.setPreferredSize(new Dimension(1100, 550));
 		tab.addMouseListener(this);
 		mainPanel.add(tree, "West");
 		mainPanel.add(tab, "Center");
