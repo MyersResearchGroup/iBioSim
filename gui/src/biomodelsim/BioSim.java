@@ -5426,7 +5426,7 @@ public class BioSim implements MouseListener, ActionListener {
 			viewLog.setEnabled(false);
 			saveParam.setEnabled(false);
 		}
-		if (comp instanceof SBML_Editor) {
+		else if (comp instanceof SBML_Editor) {
 			saveButton.setEnabled(true);
 			saveasButton.setEnabled(true);
 			runButton.setEnabled(false);
@@ -5445,26 +5445,7 @@ public class BioSim implements MouseListener, ActionListener {
 			saveSbml.setEnabled(true);
 			saveTemp.setEnabled(true);
 		}
-		else if (comp instanceof GCM2SBMLEditor) {
-			saveButton.setEnabled(true);
-			saveasButton.setEnabled(true);
-			runButton.setEnabled(false);
-			refreshButton.setEnabled(false);
-			checkButton.setEnabled(false);
-			exportButton.setEnabled(false);
-			save.setEnabled(true);
-			run.setEnabled(false);
-			saveAs.setEnabled(true);
-			refresh.setEnabled(false);
-			check.setEnabled(false);
-			export.setEnabled(false);
-			viewCircuit.setEnabled(false);
-			viewLog.setEnabled(false);
-			saveParam.setEnabled(false);
-			saveSbml.setEnabled(true);
-			saveTemp.setEnabled(true);
-		}
-		if (comp instanceof Graph) {
+		else if (comp instanceof Graph) {
 			saveButton.setEnabled(true);
 			saveasButton.setEnabled(true);
 			runButton.setEnabled(false);
