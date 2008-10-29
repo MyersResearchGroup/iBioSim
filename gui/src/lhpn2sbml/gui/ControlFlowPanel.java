@@ -170,10 +170,10 @@ public class ControlFlowPanel extends JPanel implements ActionListener {
 	//}
 
 	private boolean openGui(String oldName) {
-		String id = fields.get(GlobalConstants.ID).getValue();
+		String id = (String) fromBox.getSelectedItem() + " " + (String) toBox.getSelectedItem();
 		//JOptionPane.showMessageDialog(this, id);
 		String[] oldFlow = oldName.split("\\s");
-		String[] newFlow = id.split("\\s");
+		String[] newFlow = {(String) fromBox.getSelectedItem(), (String) toBox.getSelectedItem()};
 		int value = JOptionPane.showOptionDialog(new JFrame(), this, "Control Flow Editor",
 				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		if (value == JOptionPane.YES_OPTION) {
@@ -202,6 +202,7 @@ public class ControlFlowPanel extends JPanel implements ActionListener {
 			lhpn.addControlFlow(fromBox.getSelectedItem().toString(), toBox.getSelectedItem()
 					.toString());
 			flowList.removeItem(oldName);
+			JOptionPane.showMessageDialog(this, id);
 			flowList.addItem(id);
 			flowList.setSelectedValue(id, true);
 		}
