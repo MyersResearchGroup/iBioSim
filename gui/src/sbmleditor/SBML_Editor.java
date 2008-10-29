@@ -9079,12 +9079,12 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				if (paramsOnly) {
 					reb2sac.updateSpeciesList();
 				}
-				biosim.updateViews(file.split(separator)[file.split(separator).length - 1]);
 			}
 			catch (Exception e1) {
 				JOptionPane.showMessageDialog(biosim.frame(), "Unable to save sbml file.",
 						"Error Saving File", JOptionPane.ERROR_MESSAGE);
 			}
+			biosim.updateViews(file.split(separator)[file.split(separator).length - 1]);
 		}
 	}
 
