@@ -123,13 +123,15 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 				return false;
 			}
 			if (oldName == null) {
-				if (gcm.getSpecies().containsKey(fields.get(GlobalConstants.ID).getValue())) {
+				if (gcm.getComponents().containsKey(fields.get(GlobalConstants.ID).getValue()) ||
+						gcm.getSpecies().containsKey(fields.get(GlobalConstants.ID).getValue())) {
 					Utility.createErrorMessage("Error", "Species id already exists.");
 					return false;
 				}
 			}
 			else if (!oldName.equals(fields.get(GlobalConstants.ID).getValue())) {
-				if (gcm.getSpecies().containsKey(fields.get(GlobalConstants.ID).getValue())) {
+				if (gcm.getComponents().containsKey(fields.get(GlobalConstants.ID).getValue()) ||
+						gcm.getSpecies().containsKey(fields.get(GlobalConstants.ID).getValue())) {
 					Utility.createErrorMessage("Error","Species id already exists.");
 					return false;
 				}

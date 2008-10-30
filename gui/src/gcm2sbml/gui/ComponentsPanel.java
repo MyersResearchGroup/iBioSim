@@ -113,13 +113,15 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 				return false;
 			}
 			if (oldName == null) {
-				if (gcm.getComponents().containsKey(fields.get(GlobalConstants.ID).getValue())) {
+				if (gcm.getComponents().containsKey(fields.get(GlobalConstants.ID).getValue())
+						|| gcm.getSpecies().containsKey(fields.get(GlobalConstants.ID).getValue())) {
 					Utility.createErrorMessage("Error", "Components id already exists.");
 					return false;
 				}
 			}
 			else if (!oldName.equals(fields.get(GlobalConstants.ID).getValue())) {
-				if (gcm.getComponents().containsKey(fields.get(GlobalConstants.ID).getValue())) {
+				if (gcm.getComponents().containsKey(fields.get(GlobalConstants.ID).getValue())
+						|| gcm.getSpecies().containsKey(fields.get(GlobalConstants.ID).getValue())) {
 					Utility.createErrorMessage("Error", "Components id already exists.");
 					return false;
 				}
@@ -138,7 +140,7 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 				property.put(s, portmapBox.get(i).getSelectedItem().toString());
 				i++;
 			}
-			property.put("Component_File", selectedComponent);
+			property.put("ComponentFile", selectedComponent);
 
 			if (selected != null && !oldName.equals(id)) {
 				gcm.changeComponentName(oldName, id);
@@ -146,9 +148,9 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 				influences.addAllItem(gcm.getInfluences().keySet());
 			}
 			gcm.addComponent(id, property);
-			componentsList.removeItem(oldName + " " + selectedComponent);
-			componentsList.addItem(id + " " + selectedComponent);
-			componentsList.setSelectedValue(id + " " + selectedComponent, true);
+			componentsList.removeItem(oldName + " " + selectedComponent.replace(".gcm", ""));
+			componentsList.addItem(id + " " + selectedComponent.replace(".gcm", ""));
+			componentsList.setSelectedValue(id + " " + selectedComponent.replace(".gcm", ""), true);
 
 		}
 		else if (value == JOptionPane.NO_OPTION) {

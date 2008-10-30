@@ -204,6 +204,7 @@ public class GCMFile {
 			parseInfluences(data);
 			parseGlobal(data);
 			parsePromoters(data);
+			parseComponents(data);
 			parseSBMLFile(data);
 			parseBioAbs(data);
 			parseDimAbs(data);
@@ -607,6 +608,30 @@ public class GCMFile {
 			promoters.put(name, properties);
 		}
 	}
+	
+	private void parseComponents(StringBuffer data) {
+		Pattern network = Pattern.compile(COMPONENTS_LIST);
+		Matcher matcher = network.matcher(data.toString());
+		Pattern pattern = Pattern.compile(STATE);
+		Pattern propPattern = Pattern.compile(PROPERTY);
+		if (!matcher.find()) {
+			return;
+		}
+		matcher = pattern.matcher(matcher.group(1));
+		while (matcher.find()) {
+			String name = matcher.group(2);
+			Matcher propMatcher = propPattern.matcher(matcher.group(3));
+			Properties properties = new Properties();
+			while (propMatcher.find()) {
+				if (propMatcher.group(3)!=null) {
+					properties.put(propMatcher.group(1), propMatcher.group(3));
+				} else {
+					properties.put(propMatcher.group(1), propMatcher.group(4));
+				}
+			}
+			components.put(name, properties);
+		}
+	}
 
 	private void parseInfluences(StringBuffer data) {
 		Pattern pattern = Pattern.compile(REACTION);
@@ -753,6 +778,8 @@ public class GCMFile {
 	private static final String BIOABS = GlobalConstants.BIOABS + "=(true|false)";
 
 	private static final String PROMOTERS_LIST = "Promoters\\s\\{([^}]*)\\s\\}";
+	
+	private static final String COMPONENTS_LIST = "Components\\s\\{([^}]*)\\s\\}";
 	
 	private String sbmlFile = "";
 	
