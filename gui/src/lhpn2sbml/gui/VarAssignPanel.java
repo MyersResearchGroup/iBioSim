@@ -130,17 +130,18 @@ public class VarAssignPanel extends JPanel implements ActionListener {
 				return false;
 			}
 			if (oldName == null) {
-				if (lhpn.getVariables().containsKey(fields.get(GlobalConstants.ID).getValue())) {
-					Utility.createErrorMessage("Error", "Assignment id already exists.");
+				System.out.println((String) varBox.getSelectedItem());
+				if (lhpn.getContVars(selected).containsKey((String) varBox.getSelectedItem())) {
+					Utility.createErrorMessage("Error", "Assignment id already exists.[1]");
 					return false;
 				}
 			}
-			else if (!oldName.equals(fields.get(GlobalConstants.ID).getValue())) {
-				if (lhpn.getVariables().containsKey(fields.get(GlobalConstants.ID).getValue())) {
-					Utility.createErrorMessage("Error", "Assignment id already exists.");
-					return false;
-				}
-			}
+			//else if (!oldName.equals(fields.get(GlobalConstants.ID).getValue())) {
+			//	if (lhpn.getVariables().containsKey(fields.get(GlobalConstants.ID).getValue())) {
+			//		Utility.createErrorMessage("Error", "Assignment id already exists.");
+			//		return false;
+			//	}
+			//}
 			String id = varBox.getSelectedItem().toString();
 
 			// Check to see if we need to add or edit
@@ -153,12 +154,13 @@ public class VarAssignPanel extends JPanel implements ActionListener {
 			property.put("Variable", varBox.getSelectedItem().toString());
 
 			if (selected != null && !oldName.equals(id)) {
-				lhpn.changeVariableName(oldName, id);
+				lhpn.removeContAssign(selected, oldName);
 			}
 			else {
 				lhpn.addContAssign(transition, id, property.getProperty("Value"));
 			}
 			assignmentList.removeItem(oldName);
+			System.out.println(id);
 			assignmentList.addItem(id);
 			assignmentList.setSelectedValue(id, true);
 

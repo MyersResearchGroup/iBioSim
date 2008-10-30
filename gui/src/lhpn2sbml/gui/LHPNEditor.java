@@ -233,17 +233,21 @@ public class LHPNEditor extends JPanel implements ActionListener {
 					JOptionPane.showMessageDialog(this, "Must delete assignments to variable "
 							+ name, "Cannot remove variable" + name, JOptionPane.ERROR_MESSAGE);
 				}
+				variables.removeItem(name);
 			}
 			else if (getName().contains("Place")) {
 				lhpnFile.removePlace(list.getSelectedValue().toString());
+				places.removeItem(list.getSelectedValue().toString());
 			}
 			else if (getName().contains("Transition")) {
 				lhpnFile.removeTransition(list.getSelectedValue().toString());
+				transitions.removeItem(list.getSelectedValue().toString());
 			}
 			else if (getName().contains("Movement")) {
 				String tempString = list.getSelectedValue().toString();
 				String[] tempArray = tempString.split("\\s");
 				lhpnFile.removeFlow(tempArray[0], tempArray[1]);
+				controlFlow.removeItem(tempString);
 			}
 		}
 
@@ -289,6 +293,7 @@ public class LHPNEditor extends JPanel implements ActionListener {
 						boolCont = true;
 					}
 				}
+				//log.addText(selected);
 				VariablesPanel panel = new VariablesPanel(selected, list, boolCont, lhpnFile);
 			}
 			else if (getName().contains("Place")) {
