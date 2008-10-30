@@ -7,10 +7,12 @@ import gcm2sbml.util.Utility;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Properties;
 import java.util.Set;
 
+import javax.swing.DefaultListModel;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -20,57 +22,69 @@ import javax.swing.JPanel;
 public class ComponentsPanel extends JPanel implements ActionListener {
 	private String selected = "";
 
-	private PropertyList componentsList = null;
-
-	private PropertyList portmapList = null;
-
 	private String[] options = { "Ok", "Cancel" };
 
-	private JComboBox componentBox = null;
+	private ArrayList<JComboBox> portmapBox = null;
 
 	private GCMFile gcm = null;
 
+	private PropertyList componentsList = null;
+
+	private PropertyList influences = null;
+
 	private HashMap<String, PropertyField> fields = null;
 
-	public ComponentsPanel(String selected, PropertyList componentsList, PropertyList portmapList,
-			GCMFile gcm, Set<String> species) {
+	private Set<String> species;
+
+	private String selectedComponent;
+
+	public ComponentsPanel(String selected, PropertyList componentsList, PropertyList influences,
+			GCMFile gcm, Set<String> species, String selectedComponent) {
 		super(new GridLayout(species.size() + 2, 1));
 		this.selected = selected;
 		this.componentsList = componentsList;
-		this.portmapList = portmapList;
+		this.influences = influences;
 		this.gcm = gcm;
+		this.species = species;
+		this.selectedComponent = selectedComponent;
 
 		fields = new HashMap<String, PropertyField>();
+		portmapBox = new ArrayList<JComboBox>();
+		for (int i = 0; i < species.size(); i++) {
+			JComboBox port = new JComboBox(gcm.getSpecies().keySet().toArray(new String[0]));
+			port.addActionListener(this);
+			portmapBox.add(port);
+		}
 
 		// ID field
 		PropertyField field = new PropertyField(GlobalConstants.ID, "", null, null, Utility.IDstring);
 		fields.put(GlobalConstants.ID, field);
 		add(field);
 
-		/*
-		 * // Component field JPanel tempPanel = new JPanel(); JLabel tempLabel =
-		 * new JLabel(GlobalConstants.COMPONENT); componentBox = new
-		 * JComboBox(components.toArray(new String[0]));
-		 * componentBox.addActionListener(this); tempPanel.setLayout(new
-		 * GridLayout(1, 2)); tempPanel.add(tempLabel); tempPanel.add(componentBox);
-		 * add(tempPanel);
-		 */
-
 		// Port Map field
 		add(new JLabel(GlobalConstants.PORTMAP));
+		int i = 0;
 		for (String s : species) {
-			field = new PropertyField(s, "", null, null, Utility.NAMEstring);
-			fields.put(s, field);
-			add(field);
+			JPanel tempPanel = new JPanel();
+			JLabel tempLabel = new JLabel(s);
+			tempPanel.setLayout(new GridLayout(1, 2));
+			tempPanel.add(tempLabel);
+			tempPanel.add(portmapBox.get(i));
+			add(tempPanel);
+			i++;
 		}
 
 		String oldName = null;
 		if (selected != null) {
 			oldName = selected;
-			Properties prop = gcm.getSpecies().get(selected);
+			Properties prop = gcm.getComponents().get(selected);
 			fields.get(GlobalConstants.ID).setValue(selected);
+			i = 0;
+			for (String s : species) {
+				portmapBox.get(i).setSelectedItem(prop.getProperty(s));
+				i++;
+			}
 			// typeBox.setSelectedItem(prop.getProperty(GlobalConstants.TYPE));
-			setType(prop.getProperty(GlobalConstants.TYPE));
 			loadProperties(prop);
 		}
 
@@ -99,14 +113,14 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 				return false;
 			}
 			if (oldName == null) {
-				if (gcm.getSpecies().containsKey(fields.get(GlobalConstants.ID).getValue())) {
-					Utility.createErrorMessage("Error", "Species id already exists.");
+				if (gcm.getComponents().containsKey(fields.get(GlobalConstants.ID).getValue())) {
+					Utility.createErrorMessage("Error", "Components id already exists.");
 					return false;
 				}
 			}
 			else if (!oldName.equals(fields.get(GlobalConstants.ID).getValue())) {
-				if (gcm.getSpecies().containsKey(fields.get(GlobalConstants.ID).getValue())) {
-					Utility.createErrorMessage("Error", "Species id already exists.");
+				if (gcm.getComponents().containsKey(fields.get(GlobalConstants.ID).getValue())) {
+					Utility.createErrorMessage("Error", "Components id already exists.");
 					return false;
 				}
 			}
@@ -119,18 +133,22 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 					property.put(f.getKey(), f.getValue());
 				}
 			}
-			// property.put(GlobalConstants.TYPE, typeBox.getSelectedItem()
-			// .toString());
+			int i = 0;
+			for (String s : species) {
+				property.put(s, portmapBox.get(i).getSelectedItem().toString());
+				i++;
+			}
+			property.put("Component_File", selectedComponent);
 
 			if (selected != null && !oldName.equals(id)) {
-				gcm.changeSpeciesName(oldName, id);
-				// ((DefaultListModel) influences.getModel()).clear();
-				// influences.addAllItem(gcm.getInfluences().keySet());
+				gcm.changeComponentName(oldName, id);
+				((DefaultListModel) influences.getModel()).clear();
+				influences.addAllItem(gcm.getInfluences().keySet());
 			}
-			gcm.addSpecies(id, property);
-			// speciesList.removeItem(oldName);
-			// speciesList.addItem(id);
-			// speciesList.setSelectedValue(id, true);
+			gcm.addComponent(id, property);
+			componentsList.removeItem(oldName + " " + selectedComponent);
+			componentsList.addItem(id + " " + selectedComponent);
+			componentsList.setSelectedValue(id + " " + selectedComponent, true);
 
 		}
 		else if (value == JOptionPane.NO_OPTION) {
@@ -144,22 +162,6 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 		if (e.getActionCommand().equals("comboBoxChanged")) {
 			// setType(typeBox.getSelectedItem().toString());
 		}
-	}
-
-	private void setType(String type) {
-		// if (type.equals(types[0])) {
-		// fields.get(GlobalConstants.MAX_DIMER_STRING).setEnabled(true);
-		fields.get(GlobalConstants.KASSOCIATION_STRING).setEnabled(true);
-		fields.get(GlobalConstants.KDECAY_STRING).setEnabled(true);
-		// } else if (type.equals(types[1])) {
-		// fields.get(GlobalConstants.MAX_DIMER_STRING).setEnabled(true);
-		fields.get(GlobalConstants.KASSOCIATION_STRING).setEnabled(true);
-		fields.get(GlobalConstants.KDECAY_STRING).setEnabled(false);
-		// } else {
-		// fields.get(GlobalConstants.MAX_DIMER_STRING).setEnabled(true);
-		fields.get(GlobalConstants.KASSOCIATION_STRING).setEnabled(true);
-		fields.get(GlobalConstants.KDECAY_STRING).setEnabled(true);
-		// }
 	}
 
 	private void loadProperties(Properties property) {

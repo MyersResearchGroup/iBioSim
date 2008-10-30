@@ -610,7 +610,10 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 				if (comp != null && !comp.equals("")) {
 					GCMFile getSpecs = new GCMFile();
 					getSpecs.load(path + File.separator + comp);
-					ComponentsPanel panel = new ComponentsPanel(selected, list, influences, gcm, getSpecs.getSpecies().keySet());
+					if (selected != null) {
+						selected = selected.split(" ")[0];
+					}
+					ComponentsPanel panel = new ComponentsPanel(selected, list, influences, gcm, getSpecs.getSpecies().keySet(), comp);
 				}
 			}
 			else if (getName().contains("Parameter")) {
