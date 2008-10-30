@@ -406,6 +406,11 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		addInit = new EditButton("Add Component", components);
 		removeInit = new RemoveButton("Remove Component", components);
 		editInit = new EditButton("Edit Component", components);
+		for (String s :gcm.getComponents().keySet() ) {
+			if ( gcm.getComponents().get(s).getProperty("ComponentFile") != null) {
+				components.addItem(s + " " + gcm.getComponents().get(s).getProperty("ComponentFile").replace(".gcm", ""));
+			}
+		}
 		initPanel = Utility.createPanel(this, "Components", components, addInit, removeInit, editInit);
 		tabPanel.add(initPanel, "Center");
 	}
@@ -524,8 +529,9 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 				String name = null;
 				if (list.getSelectedValue() != null) {
 					name = list.getSelectedValue().toString();
-					if (gcm.removeComponentCheck(name)) {
-						gcm.removeComponent(name);
+					String comp = name.split(" ")[0];
+					if (gcm.removeComponentCheck(comp)) {
+						gcm.removeComponent(comp);
 						list.removeItem(name);
 					}
 					else {
@@ -594,7 +600,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 				String comp = null;
 				if (list.getSelectedValue() != null && getName().contains("Edit")) {
 					selected = list.getSelectedValue().toString();
-					comp = selected.split(" ")[1];
+					comp = selected.split(" ")[1] + ".gcm";
 				}
 				else {
 					ArrayList<String> components = new ArrayList<String>();
