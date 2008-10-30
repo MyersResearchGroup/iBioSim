@@ -725,19 +725,11 @@ public class LHPNFile {
 		}
 	}
 
-	public String[] getContVars(String trans) {
+	public Properties getContVars(String trans) {
 		// log.addText(trans);
-		if (!variables.isEmpty()) {
-			Object[] objArray = variables.keySet().toArray();
-			String[] vars = new String[objArray.length];
-			for (int i = 0; i < objArray.length; i++) {
-				vars[i] = objArray[i].toString();
-			}
-			return vars;
-		}
-		else {
-			return null;
-		}
+		Properties contVars = new Properties();
+		contVars = contAssignments.get(trans);
+		return contVars;
 	}
 
 	public String[] getContAssignVars(String trans) {
