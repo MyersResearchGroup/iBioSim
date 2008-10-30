@@ -170,6 +170,10 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 		setPopupMenu();
 	}
 
+	public void addMouseListener(MouseListener l) {
+		tabScroller.tabPanel.addMouseListener(l);
+	}
+
 	protected boolean isOneActionButtonEnabled() {
 		return isCloseButtonEnabled;
 	}
