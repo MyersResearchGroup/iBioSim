@@ -142,8 +142,10 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 			oldName = selected;
 			// Properties prop = lhpn.getVariables().get(selected);
 			fields.get(GlobalConstants.ID).setValue(selected);
+			//log.addText(lhpn.getDelay(selected));
 			fields.get("Delay").setValue(lhpn.getDelay(selected));
 			fields.get("Enabling Condition").setValue(lhpn.getEnabling(selected));
+			log.addText(selected + lhpn.getEnabling(selected));
 			// loadProperties(prop);
 		}
 
@@ -200,7 +202,7 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 			if (selected != null && !oldName.equals(id)) {
 				lhpn.changeVariableName(oldName, id);
 			}
-			save();
+			save(id);
 			lhpn.addTransition(id);
 			transitionsList.removeItem(oldName);
 			transitionsList.addItem(id);
@@ -214,29 +216,30 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 		return true;
 	}
 
-	public void save() {
-		lhpn.removeAllAssign(selected);
+	public void save(String transition) {
+		//log.addText("saving...");
+		lhpn.removeAllAssign(transition);
 		if (boolAssignments.getItems() != null) {
 			for (String s : boolAssignments.getItems()) {
 				String[] tempArray = s.split(":=");
-				lhpn.addBoolAssign(selected, tempArray[0], tempArray[1]);
+				lhpn.addBoolAssign(transition, tempArray[0], tempArray[1]);
 			}
 		}
 		if (varAssignments.getItems() != null) {
 			for (String s : varAssignments.getItems()) {
 				String[] tempArray = s.split(":=");
 				//System.out.println(selected + " " + tempArray[0] + " " + tempArray[1]);
-				lhpn.addContAssign(selected, tempArray[0], tempArray[1]);
+				lhpn.addContAssign(transition, tempArray[0], tempArray[1]);
 			}
 		}
 		if (rateAssignments.getItems() != null) {
 			for (String s : rateAssignments.getItems()) {
 				String[] tempArray = s.split(":=");
-				lhpn.addRateAssign(selected, tempArray[0], tempArray[1]);
+				lhpn.addRateAssign(transition, tempArray[0], tempArray[1]);
 			}
 		}
-		lhpn.changeDelay(selected, fields.get("Delay").getValue());
-		lhpn.changeEnabling(selected, fields.get("Enabling Condition").getValue());
+		lhpn.changeDelay(transition, fields.get("Delay").getValue());
+		lhpn.changeEnabling(transition, fields.get("Enabling Condition").getValue());
 	}
 
 	public void actionPerformed(ActionEvent e) {
