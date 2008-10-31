@@ -131,7 +131,7 @@ public class VariablesPanel extends JPanel implements ActionListener {
 			else {
 				rateField = new PropertyField("Initial Rate", "0", null, null, Utility.NUMstring);
 			}
-			fields.put("Initial rate", field);
+			fields.put("Initial rate", rateField);
 			add(rateField);
 		}
 
@@ -182,8 +182,8 @@ public class VariablesPanel extends JPanel implements ActionListener {
 			if (lhpn.isContinuous(selected)) {
 				fields.get("Initial rate").setValue(lhpn.getInitialRate(selected));
 				fields.get(GlobalConstants.ID).setValue(selected);
-				System.out.print(" " + fields.get(GlobalConstants.ID).getValue());
-				System.out.print(" " + fields.get("Initial rate").getValue());
+				//System.out.print(" " + fields.get(GlobalConstants.ID).getValue());
+				//System.out.print(" " + fields.get("Initial rate").getValue());
 			}
 			// loadProperties(prop);
 		}
@@ -234,6 +234,18 @@ public class VariablesPanel extends JPanel implements ActionListener {
 					property.put(f.getKey(), f.getValue());
 				}
 			}
+			String tempVal = "";
+			if (property.containsKey("Initial Value")) {
+			tempVal = property.getProperty("Initial Value");
+			property.setProperty("value", tempVal);
+			property.remove("Initial Value");
+			}
+			if (property.containsKey("Initial Rate")) {
+			tempVal = property.getProperty("Initial Rate");
+			property.setProperty("rate", tempVal);
+			property.remove("Initial Rate");
+			}
+			
 			// property.put(GlobalConstants.TYPE,
 			// typeBox.getSelectedItem().toString());
 
@@ -244,6 +256,7 @@ public class VariablesPanel extends JPanel implements ActionListener {
 				lhpn.removeVar(id);
 			}
 			if (lhpn.isContinuous(id) || boolCont) {
+				//System.out.println("add var " + property);
 				lhpn.addVar(id, property);
 			}
 			else if (lhpn.isInput(id) || (!boolCont && modeBox.getSelectedItem().equals("input"))) {

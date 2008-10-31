@@ -171,8 +171,11 @@ public class ControlFlowPanel extends JPanel implements ActionListener {
 
 	private boolean openGui(String oldName) {
 		String id = (String) fromBox.getSelectedItem() + " " + (String) toBox.getSelectedItem();
-		//JOptionPane.showMessageDialog(this, toBox.getSelectedItem());
-		String[] oldFlow = oldName.split("\\s");
+		//JOptionPane.showMessageDialog(this, oldName);
+		String[] oldFlow = new String[2];
+		if (oldName != null) {
+			oldFlow = oldName.split("\\s");
+		}
 		String[] newFlow = {(String) fromBox.getSelectedItem(), (String) toBox.getSelectedItem()};
 		int value = JOptionPane.showOptionDialog(new JFrame(), this, "Control Flow Editor",
 				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
@@ -199,7 +202,7 @@ public class ControlFlowPanel extends JPanel implements ActionListener {
 
 			// Check to see if we need to add or edit
 
-			if (selected != null && !oldName.equals(id)) {
+			if (selected != null && !oldName.equals(id) && oldName != null) {
 				lhpn.removeControlFlow(oldFlow[0], oldFlow[1]);
 			}
 			lhpn.addControlFlow(fromBox.getSelectedItem().toString(), toBox.getSelectedItem()

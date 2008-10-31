@@ -140,10 +140,10 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 		int value = JOptionPane.showOptionDialog(new JFrame(), this, "Variable Editor",
 				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		if (value == JOptionPane.YES_OPTION) {
-			if (!checkValues()) {
-				Utility.createErrorMessage("Error", "Illegal values entered.");
-				return false;
-			}
+			//if (!checkValues()) {
+			//	Utility.createErrorMessage("Error", "Illegal values entered.");
+			//	return false;
+			//}
 			if (oldName == null) {
 				if (lhpn.getVariables().containsKey(fields.get(GlobalConstants.ID).getValue())) {
 					Utility.createErrorMessage("Error", "Species id already exists.");

@@ -5716,6 +5716,7 @@ public class BioSim implements MouseListener, ActionListener {
 			saveSbml.setEnabled(false);
 			saveTemp.setEnabled(false);
 		}
+		if (tree.getFile() != null) {
 		if (tree.getFile().length() > 4
 				&& tree.getFile().substring(tree.getFile().length() - 5).equals(".sbml")
 				|| tree.getFile().length() > 3
@@ -6094,6 +6095,7 @@ public class BioSim implements MouseListener, ActionListener {
 			if (popup.getComponentCount() != 0) {
 				popup.show(e.getComponent(), e.getX(), e.getY());
 			}
+		}
 		}
 	}
 

@@ -15,6 +15,17 @@ public class PropertyList extends JList implements EnableElement, NamedObject,
 		setModel(model);
 		this.name = name;
 	}
+	
+	public String[] getItems() {
+		Object[] tempArray = model.toArray();
+		String[] stringArray = new String[tempArray.length];
+		for (int i=0; i<tempArray.length; i++) {
+			if (tempArray[i] instanceof String) {
+				stringArray[i] = (String) tempArray[i];
+			}
+		}
+		return stringArray;
+	}
 
 	public void removeItem(String item) {
 		model.removeElement(item);

@@ -24,7 +24,7 @@ import biomodelsim.Log;
 
 public class RateAssignPanel extends JPanel implements ActionListener {
 
-	private String selected = "";
+	private String selected = "", transition, id, oldVar = null, variable;
 
 	private PropertyList assignmentList;
 
@@ -49,6 +49,7 @@ public class RateAssignPanel extends JPanel implements ActionListener {
 			LHPNFile lhpn, Log log) {
 		super(new GridLayout(6, 1));
 		this.selected = selected;
+		this.transition = transition;
 		this.assignmentList = assignmentList;
 		this.lhpn = lhpn;
 		this.log = log;
@@ -56,9 +57,9 @@ public class RateAssignPanel extends JPanel implements ActionListener {
 		fields = new HashMap<String, PropertyField>();
 
 		rateList = lhpn.getContVars();
-		//for (int i=0; i<rateList.length; i++) {
-		//log.addText(rateList[i]);
-		//}
+		// for (int i=0; i<rateList.length; i++) {
+		// log.addText(rateList[i]);
+		// }
 		// if (boolList.length > 0 && contList.length > 0) {
 		// System.arraycopy(boolList, 0, varList, 0, boolList.length);
 		// System.arraycopy(contList, 0, varList, boolList.length,
@@ -89,14 +90,21 @@ public class RateAssignPanel extends JPanel implements ActionListener {
 		// tempPanel.add(typeBox);
 		// add(tempPanel);
 
-		String[] idArray = selected.split(":=");
-		String variable = idArray[0];
-		
+		if (selected != null) {
+			String[] idArray = selected.split(":=");
+			variable = idArray[0];
+		}
+
 		// Variable field
 		JPanel tempPanel = new JPanel();
 		JLabel varLabel = new JLabel("Variable");
 		varBox = new JComboBox(rateList);
-		varBox.setSelectedItem(variable);
+		if (variable != null) {
+			varBox.setSelectedItem(variable);
+		}
+		else {
+			varBox.setSelectedItem(rateList[0]);
+		}
 		varBox.addActionListener(this);
 		tempPanel.setLayout(new GridLayout(1, 2));
 		tempPanel.add(varLabel);
@@ -109,7 +117,6 @@ public class RateAssignPanel extends JPanel implements ActionListener {
 		fields.put("Assignment value", field);
 		add(field);
 
-		String oldVar = null;
 		String oldName = null;
 		if (selected != null) {
 			oldVar = variable;
@@ -124,7 +131,7 @@ public class RateAssignPanel extends JPanel implements ActionListener {
 		// setType(types[0]);
 		boolean display = false;
 		while (!display) {
-			display = openGui(oldName, oldVar, transition);
+			display = openGui(oldName, oldVar);
 		}
 	}
 
@@ -137,48 +144,33 @@ public class RateAssignPanel extends JPanel implements ActionListener {
 		return true;
 	}
 
-	private boolean openGui(String oldName, String oldVar, String transition) {
+	private boolean openGui(String oldName, String oldVar) {
 		int value = JOptionPane.showOptionDialog(new JFrame(), this, "Rate Assignment Editor",
 				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		if (value == JOptionPane.YES_OPTION) {
-			if (!checkValues()) {
-				Utility.createErrorMessage("Error", "Illegal values entered.");
-				return false;
-			}
-			/*if (oldName == null) {
-				String variable = varBox.getSelectedItem().toString();
-				String[] varArray = lhpn.getRateVars(transition);
-				Boolean flag = false;
-				for (int i = 0; i < varArray.length; i++) {
-					if (varArray[i].equals(variable)) {
-						flag = true;
-						break;
-					}
-				}
-				if (flag) {
-					Utility.createErrorMessage("Error", "Assignment already exists.[0]");
-					return false;
-				}
-			}
-			else if (!oldName.equals(varBox.getSelectedItem().toString() + ":="
-					+ fields.get("Assignment Value"))) {
-				String variable = varBox.getSelectedItem().toString();
-				String[] varArray = lhpn.getRateVars(transition);
-				Boolean flag = false;
-				for (int i = 0; i < varArray.length; i++) {
-					if (varArray[i].equals(variable)) {
-						flag = true;
-						break;
-					}
-				}
-				if (flag) {
-					Utility.createErrorMessage("Error", "Assignment already exists.[1]");
-					return false;
-				}
-			}
-			*/
-			String id = varBox.getSelectedItem().toString() + ":=" + fields.get("Assignment Value");
-			String variable = varBox.getSelectedItem().toString();
+			//if (!checkValues()) {
+			//	Utility.createErrorMessage("Error", "Illegal values entered.");
+			//	return false;
+			//}
+			/*
+			 * if (oldName == null) { String variable =
+			 * varBox.getSelectedItem().toString(); String[] varArray =
+			 * lhpn.getRateVars(transition); Boolean flag = false; for (int i =
+			 * 0; i < varArray.length; i++) { if (varArray[i].equals(variable)) {
+			 * flag = true; break; } } if (flag) {
+			 * Utility.createErrorMessage("Error", "Assignment already
+			 * exists.[0]"); return false; } } else if
+			 * (!oldName.equals(varBox.getSelectedItem().toString() + ":=" +
+			 * fields.get("Assignment Value"))) { String variable =
+			 * varBox.getSelectedItem().toString(); String[] varArray =
+			 * lhpn.getRateVars(transition); Boolean flag = false; for (int i =
+			 * 0; i < varArray.length; i++) { if (varArray[i].equals(variable)) {
+			 * flag = true; break; } } if (flag) {
+			 * Utility.createErrorMessage("Error", "Assignment already
+			 * exists.[1]"); return false; } }
+			 */
+			id = varBox.getSelectedItem().toString() + ":=" + fields.get("Assignment value").getValue();
+			variable = varBox.getSelectedItem().toString();
 
 			// Check to see if we need to add or edit
 			Properties property = new Properties();
@@ -189,12 +181,14 @@ public class RateAssignPanel extends JPanel implements ActionListener {
 			}
 			property.put("Variable", varBox.getSelectedItem().toString());
 
-			if (selected != null && !oldVar.equals(variable)) {
-				lhpn.changeVariableName(oldVar, variable);
-			}
-			else {
-				lhpn.addRateAssign(transition, varBox.getSelectedItem().toString(), property.getProperty("Assignment Value"));
-			}
+			// if (selected != null && !oldVar.equals(variable)) {
+			// lhpn.changeVariableName(oldVar, variable);
+			// }
+			// else {
+			// lhpn.addRateAssign(transition,
+			// varBox.getSelectedItem().toString(),
+			// property.getProperty("Assignment Value"));
+			// }
 			assignmentList.removeItem(oldName);
 			assignmentList.addItem(id);
 			assignmentList.setSelectedValue(id, true);
@@ -211,6 +205,24 @@ public class RateAssignPanel extends JPanel implements ActionListener {
 		if (e.getActionCommand().equals("comboBoxChanged")) {
 			setID(varBox.getSelectedItem().toString() + ":=" + fields.get("Assignment Value"));
 			// setType(typeBox.getSelectedItem().toString());
+		}
+	}
+
+	public void save() {
+		Properties property = new Properties();
+		for (PropertyField f : fields.values()) {
+			if (f.getState() == null || f.getState().equals(PropertyField.states[1])) {
+				property.put(f.getKey(), f.getValue());
+			}
+		}
+		property.put("Variable", varBox.getSelectedItem().toString());
+
+		if (selected != null && !oldVar.equals(variable)) {
+			lhpn.changeVariableName(oldVar, variable);
+		}
+		else {
+			lhpn.addRateAssign(transition, varBox.getSelectedItem().toString(), property
+					.getProperty("Assignment Value"));
 		}
 	}
 
