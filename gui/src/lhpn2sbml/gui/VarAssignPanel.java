@@ -22,7 +22,7 @@ import javax.swing.JPanel;
 
 public class VarAssignPanel extends JPanel implements ActionListener {
 
-	private String selected = "";
+	private String selected = "", transition, id, oldName = null;
 
 	private PropertyList assignmentList;
 
@@ -44,6 +44,7 @@ public class VarAssignPanel extends JPanel implements ActionListener {
 			LHPNFile lhpn) {
 		super(new GridLayout(6, 1));
 		this.selected = selected;
+		this.transition = transition;
 		this.assignmentList = assignmentList;
 		this.lhpn = lhpn;
 
@@ -63,9 +64,9 @@ public class VarAssignPanel extends JPanel implements ActionListener {
 		//}
 
 		// ID field
-		//PropertyField field = new PropertyField(GlobalConstants.ID, "", null, null,
-		//		Utility.NAMEstring);
-		//fields.put(GlobalConstants.ID, field);
+		PropertyField field = new PropertyField(GlobalConstants.ID, "", null, null,
+				Utility.NAMEstring);
+		fields.put(GlobalConstants.ID, field);
 		//add(field);
 
 		// Type field
@@ -91,24 +92,29 @@ public class VarAssignPanel extends JPanel implements ActionListener {
 		add(tempPanel);
 
 		// Initial field
-		PropertyField field = new PropertyField("Assignment Value", lhpn.getContAssign(transition, selected), null, null,
+		field = new PropertyField("Assignment Value", lhpn.getContAssign(transition, selected), null, null,
 				Utility.NUMstring);
 		fields.put("Assignment value", field);
 		add(field);
 		
-		String oldName = null;
 		if (selected != null) {
 			oldName = selected;
 			Properties prop = lhpn.getVariables().get(selected);
-			fields.get(GlobalConstants.ID).setValue(selected);
-			fields.get("Assignment value").setValue(lhpn.getContAssign(transition, selected));
-			loadProperties(prop);
+			PropertyField idField = fields.get(GlobalConstants.ID);
+			PropertyField assignField = fields.get("Assignment value");
+			//System.out.println(selected);
+			idField.setValue(selected);
+			String[] tempArray = oldName.split(":=");
+			assignField.setValue(tempArray[1]);
+			fields.put(GlobalConstants.ID, idField);
+			fields.put("Assignment value", assignField);
+			//loadProperties(prop);
 		}
 
 		//setType(types[0]);
 		boolean display = false;
 		while (!display) {
-			display = openGui(oldName, transition);
+			display = openGui(oldName);
 		}
 	}
 
@@ -121,7 +127,7 @@ public class VarAssignPanel extends JPanel implements ActionListener {
 		return true;
 	}
 
-	private boolean openGui(String oldName, String transition) {
+	private boolean openGui(String oldName) {
 		int value = JOptionPane.showOptionDialog(new JFrame(), this, "Variable Assignment Editor",
 				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		if (value == JOptionPane.YES_OPTION) {
@@ -130,10 +136,12 @@ public class VarAssignPanel extends JPanel implements ActionListener {
 				return false;
 			}
 			if (oldName == null) {
-				System.out.println((String) varBox.getSelectedItem());
-				if (lhpn.getContVars(selected).containsKey((String) varBox.getSelectedItem())) {
+				Properties prop = lhpn.getContVars(selected);
+				if (prop != null) {
+				if (prop.containsKey((String) varBox.getSelectedItem())) {
 					Utility.createErrorMessage("Error", "Assignment id already exists.[1]");
 					return false;
+				}
 				}
 			}
 			//else if (!oldName.equals(fields.get(GlobalConstants.ID).getValue())) {
@@ -142,25 +150,27 @@ public class VarAssignPanel extends JPanel implements ActionListener {
 			//		return false;
 			//	}
 			//}
-			String id = varBox.getSelectedItem().toString();
+			id = varBox.getSelectedItem().toString() + ":=" + fields.get("Assignment value").getValue();
 
 			// Check to see if we need to add or edit
 			Properties property = new Properties();
 			for (PropertyField f : fields.values()) {
+				//System.out.println(f.getKey());
 				if (f.getState() == null || f.getState().equals(PropertyField.states[1])) {
 					property.put(f.getKey(), f.getValue());
 				}
 			}
 			property.put("Variable", varBox.getSelectedItem().toString());
 
-			if (selected != null && !oldName.equals(id)) {
-				lhpn.removeContAssign(selected, oldName);
-			}
-			else {
-				lhpn.addContAssign(transition, id, property.getProperty("Value"));
-			}
+			//if (selected != null && !oldName.equals(id)) {
+			//	lhpn.removeContAssign(selected, oldName);
+			//}
+			//else {
+			//	System.out.println(transition + " " + id + " " + property.getProperty("Assignment value"));
+			//	lhpn.addContAssign(transition, id, property.getProperty("Value"));
+			//}
 			assignmentList.removeItem(oldName);
-			System.out.println(id);
+			//System.out.println(id);
 			assignmentList.addItem(id);
 			assignmentList.setSelectedValue(id, true);
 
@@ -180,7 +190,29 @@ public class VarAssignPanel extends JPanel implements ActionListener {
 	}
 	
 	private void setID(String var) {
-		fields.get(GlobalConstants.ID).setValue(var);
+		PropertyField idField = fields.get(GlobalConstants.ID);
+		idField.setValue(var);
+		fields.put(GlobalConstants.ID, idField);
+	}
+	
+	public void save() {
+		Properties property = new Properties();
+		for (PropertyField f : fields.values()) {
+			if (f.getState() == null || f.getState().equals(PropertyField.states[1])) {
+				property.put(f.getKey(), f.getValue());
+			}
+		}
+		property.put("Variable", varBox.getSelectedItem().toString());
+
+		if (selected != null && !oldName.equals(id)) {
+			String[] selectArray = selected.split(":=");
+			String[] oldArray = oldName.split(":=");
+			lhpn.removeContAssign(selectArray[0], oldArray[0]);
+		}
+		else {
+			System.out.println(transition + " " + id + " " + property.getProperty("Assignment value"));
+			lhpn.addContAssign(transition, id, property.getProperty("Value"));
+		}
 	}
 	
 	//private void setType(String type) {

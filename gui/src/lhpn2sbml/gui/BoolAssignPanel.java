@@ -24,7 +24,7 @@ import biomodelsim.Log;
 
 public class BoolAssignPanel extends JPanel implements ActionListener {
 
-	private String selected = "";
+	private String selected = "", oldName = null, transition, id;
 
 	private PropertyList assignmentList;
 
@@ -48,6 +48,7 @@ public class BoolAssignPanel extends JPanel implements ActionListener {
 			LHPNFile lhpn, Log log) {
 		super(new GridLayout(6, 1));
 		this.selected = selected;
+		this.transition = transition;
 		this.assignmentList = assignmentList;
 		this.lhpn = lhpn;
 		this.log = log;
@@ -108,7 +109,6 @@ public class BoolAssignPanel extends JPanel implements ActionListener {
 		tempPanel.add(valueBox);
 		add(tempPanel);
 		
-		String oldName = null;
 		if (selected != null) {
 			oldName = selected;
 			//Properties prop = lhpn.getVariables().get(selected);
@@ -125,7 +125,7 @@ public class BoolAssignPanel extends JPanel implements ActionListener {
 		//setType(types[0]);
 		boolean display = false;
 		while (!display) {
-			display = openGui(oldName, transition);
+			display = openGui(oldName);
 		}
 	}
 
@@ -138,7 +138,7 @@ public class BoolAssignPanel extends JPanel implements ActionListener {
 		return true;
 	}
 
-	private boolean openGui(String oldName, String transition) {
+	private boolean openGui(String oldName) {
 		int value = JOptionPane.showOptionDialog(new JFrame(), this, "Boolean Assignment Editor",
 				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		if (value == JOptionPane.YES_OPTION) {
@@ -158,7 +158,7 @@ public class BoolAssignPanel extends JPanel implements ActionListener {
 			//		return false;
 			//	}
 			//}
-			String id = varBox.getSelectedItem().toString();
+			id = varBox.getSelectedItem().toString() + ":=" + valueBox.getSelectedItem().toString();
 
 			// Check to see if we need to add or edit
 			Properties property = new Properties();
@@ -170,12 +170,12 @@ public class BoolAssignPanel extends JPanel implements ActionListener {
 			property.put("Variable", varBox.getSelectedItem().toString());
 			property.put("Value", valueBox.getSelectedItem().toString());
 
-			if (selected != null && !oldName.equals(id)) {
-				lhpn.changeVariableName(oldName, id);
-			}
-			else {
-				lhpn.addBoolAssign(transition, id, property.getProperty("Value"));
-			}
+			//if (selected != null && !oldName.equals(id)) {
+			//	lhpn.changeVariableName(oldName, id);
+			//}
+			//else {
+			//	lhpn.addBoolAssign(transition, id, property.getProperty("Value"));
+			//}
 			assignmentList.removeItem(oldName);
 			assignmentList.addItem(id);
 			assignmentList.setSelectedValue(id, true);
@@ -191,6 +191,24 @@ public class BoolAssignPanel extends JPanel implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("comboBoxChanged")) {
 			//setType(typeBox.getSelectedItem().toString());
+		}
+	}
+	
+	public void save() {
+		Properties property = new Properties();
+		//for (PropertyField f : fields.values()) {
+		//	if (f.getState() == null || f.getState().equals(PropertyField.states[1])) {
+		//		property.put(f.getKey(), f.getValue());
+		//	}
+		//}
+		property.put("Variable", varBox.getSelectedItem().toString());
+		property.put("Value", valueBox.getSelectedItem().toString());
+
+		if (selected != null && !oldName.equals(id)) {
+			lhpn.changeVariableName(oldName, id);
+		}
+		else {
+			lhpn.addBoolAssign(transition, id, property.getProperty("Value"));
 		}
 	}
 
