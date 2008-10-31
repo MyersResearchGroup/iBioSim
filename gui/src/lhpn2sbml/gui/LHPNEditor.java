@@ -56,7 +56,7 @@ public class LHPNEditor extends JPanel implements ActionListener {
 
 	// private String directory;
 
-	private String filename = "";
+	private String filename = "", directory = "";
 
 	private String[] varOptions = new String[] { "Boolean", "Continuous" };
 
@@ -76,6 +76,7 @@ public class LHPNEditor extends JPanel implements ActionListener {
 		this.log = log;
 		// this.directory = directory;
 		lhpnFile = new LHPNFile(log);
+		this.directory = directory;
 		if (filename != null) {
 			File f = new File(directory + File.separator + filename);
 			if (!(f.length() == 0)) {
@@ -187,11 +188,11 @@ public class LHPNEditor extends JPanel implements ActionListener {
 	}
 
 	public void save() {
-		lhpnFile.save(filename);
+		lhpnFile.save(directory + File.separator + filename);
 	}
 	
 	public void saveAs(String newName) {
-		lhpnFile.save(newName);
+		lhpnFile.save(directory + File.separator + newName);
 	}
 
 	public class SaveButton extends AbstractRunnableNamedButton {
@@ -246,7 +247,7 @@ public class LHPNEditor extends JPanel implements ActionListener {
 			else if (getName().contains("Movement")) {
 				String tempString = list.getSelectedValue().toString();
 				String[] tempArray = tempString.split("\\s");
-				lhpnFile.removeFlow(tempArray[0], tempArray[1]);
+				lhpnFile.removeControlFlow(tempArray[0], tempArray[1]);
 				controlFlow.removeItem(tempString);
 			}
 		}

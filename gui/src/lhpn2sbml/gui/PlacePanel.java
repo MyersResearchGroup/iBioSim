@@ -55,7 +55,7 @@ public class PlacePanel extends JPanel implements ActionListener {
 		JPanel tempPanel = new JPanel();
 		JLabel tempLabel = new JLabel("Initial Marking");
 		initBox = new JComboBox(initCond);
-		initBox.setSelectedItem(initCond[0]);
+		initBox.setSelectedItem(initCond[1]);
 		initBox.addActionListener(this);
 		tempPanel.setLayout(new GridLayout(1, 2));
 		tempPanel.add(tempLabel);
