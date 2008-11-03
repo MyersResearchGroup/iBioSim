@@ -92,6 +92,7 @@ public class FileTree extends JPanel implements MouseListener {
 			});
 			tree.addMouseListener(this);
 			tree.addMouseListener(biomodelsim);
+			tree.addFocusListener(biomodelsim);
 		}
 		else {
 			tree = new JTree(new DefaultMutableTreeNode());
