@@ -27,6 +27,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -91,7 +93,7 @@ import datamanager.DataManager;
  * @author Curtis Madsen
  */
 
-public class BioSim implements MouseListener, ActionListener {
+public class BioSim implements MouseListener, ActionListener, FocusListener {
 
 	private JFrame frame; // Frame where components of the GUI are displayed
 
@@ -184,7 +186,7 @@ public class BioSim implements MouseListener, ActionListener {
 
 	private Pattern IDpat = Pattern.compile("([a-zA-Z]|_)([a-zA-Z]|[0-9]|_)*");
 
-	private boolean lema;
+	private boolean lema, treeFocused;
 
 	private JMenuItem copy, rename, delete, save, saveAs, saveAsGcm, saveAsGraph, saveAsSbml,
 			saveAsTemplate, saveAsLhpn, check, run, export, refresh, viewCircuit, viewRules, viewTrace,
@@ -5446,6 +5448,13 @@ public class BioSim implements MouseListener, ActionListener {
 	}
 
 	public void mouseReleased(MouseEvent e) {
+		if(treeFocused) {
+			log.addText("focused");
+		}
+		else {
+			log.addText("not focused");
+		}
+		if (!treeFocused) {
 		int selectedTab = tab.indexAtLocation(e.getPoint().x, e.getPoint().y);
 		if (selectedTab != -1) {
 			tab.setSelectedIndex(selectedTab);
@@ -5716,58 +5725,8 @@ public class BioSim implements MouseListener, ActionListener {
 			saveSbml.setEnabled(false);
 			saveTemp.setEnabled(false);
 		}
+		}
 		if (tree.getFile() != null) {
-		if (tree.getFile().length() > 4
-				&& tree.getFile().substring(tree.getFile().length() - 5).equals(".sbml")
-				|| tree.getFile().length() > 3
-				&& tree.getFile().substring(tree.getFile().length() - 4).equals(".xml")) {
-			viewModGraph.setEnabled(true);
-			viewModGraph.setActionCommand("graph");
-			viewModBrowser.setEnabled(true);
-			createAnal.setEnabled(true);
-			createAnal.setActionCommand("simulate");
-			createLearn.setEnabled(true);
-			createSbml.setEnabled(false);
-		}
-		else if (tree.getFile().length() > 3
-				&& tree.getFile().substring(tree.getFile().length() - 4).equals(".gcm")) {
-			viewModGraph.setEnabled(true);
-			viewModGraph.setActionCommand("graphDot");
-			viewModBrowser.setEnabled(false);
-			createAnal.setEnabled(true);
-			createAnal.setActionCommand("createSim");
-			createLearn.setEnabled(true);
-			createSbml.setEnabled(true);
-		}
-		else if (tree.getFile().length() > 3
-				&& tree.getFile().substring(tree.getFile().length() - 4).equals(".vhd")) {
-			viewModGraph.setEnabled(true);
-			viewModBrowser.setEnabled(false);
-			createAnal.setEnabled(true);
-			createAnal.setActionCommand("createSim");
-			createLearn.setEnabled(true);
-			createSynth.setEnabled(true);
-			createVer.setEnabled(true);
-		}
-		else if (tree.getFile().length() > 1
-				&& tree.getFile().substring(tree.getFile().length() - 2).equals(".g")) {
-			viewModGraph.setEnabled(true);
-			viewModBrowser.setEnabled(false);
-			createAnal.setEnabled(true);
-			createAnal.setActionCommand("createSim");
-			createLearn.setEnabled(true);
-			createSynth.setEnabled(true);
-			createVer.setEnabled(true);
-		}
-		else {
-			viewModGraph.setEnabled(false);
-			viewModBrowser.setEnabled(false);
-			createAnal.setEnabled(false);
-			createLearn.setEnabled(false);
-			createSbml.setEnabled(false);
-			createSynth.setEnabled(false);
-			createVer.setEnabled(false);
-		}
 		if (e.isPopupTrigger() && tree.getFile() != null) {
 			popup.removeAll();
 			if (tree.getFile().length() > 4
@@ -6802,6 +6761,171 @@ public class BioSim implements MouseListener, ActionListener {
 				}
 			}
 		}
+	}
+	
+	public void focusGained(FocusEvent e) {
+		treeFocused = true;
+		log.addText("focus gained");
+		if (tree.getFile() != null) {
+		if (tree.getFile().length() > 4
+				&& tree.getFile().substring(tree.getFile().length() - 5).equals(".sbml")
+				|| tree.getFile().length() > 3
+				&& tree.getFile().substring(tree.getFile().length() - 4).equals(".xml")) {
+			viewModGraph.setEnabled(true);
+			viewModGraph.setActionCommand("graph");
+			viewModBrowser.setEnabled(true);
+			createAnal.setEnabled(true);
+			createAnal.setActionCommand("simulate");
+			createLearn.setEnabled(true);
+			createSbml.setEnabled(false);
+			saveButton.setEnabled(false);
+			saveasButton.setEnabled(false);
+			runButton.setEnabled(false);
+			refreshButton.setEnabled(false);
+			checkButton.setEnabled(false);
+			exportButton.setEnabled(false);
+			save.setEnabled(false);
+			run.setEnabled(false);
+			saveAs.setEnabled(false);
+			refresh.setEnabled(false);
+			check.setEnabled(false);
+			export.setEnabled(false);
+			viewRules.setEnabled(false);
+			viewTrace.setEnabled(false);
+			viewCircuit.setEnabled(false);
+			viewLog.setEnabled(false);
+			saveParam.setEnabled(false);
+			saveSbml.setEnabled(false);
+			saveTemp.setEnabled(false);
+		}
+		else if (tree.getFile().length() > 3
+				&& tree.getFile().substring(tree.getFile().length() - 4).equals(".gcm")) {
+			viewModGraph.setEnabled(true);
+			viewModGraph.setActionCommand("graphDot");
+			viewModBrowser.setEnabled(false);
+			createAnal.setEnabled(true);
+			createAnal.setActionCommand("createSim");
+			createLearn.setEnabled(true);
+			createSbml.setEnabled(true);
+			saveButton.setEnabled(false);
+			saveasButton.setEnabled(false);
+			runButton.setEnabled(false);
+			refreshButton.setEnabled(false);
+			checkButton.setEnabled(false);
+			exportButton.setEnabled(false);
+			save.setEnabled(false);
+			run.setEnabled(false);
+			saveAs.setEnabled(false);
+			refresh.setEnabled(false);
+			check.setEnabled(false);
+			export.setEnabled(false);
+			viewRules.setEnabled(false);
+			viewTrace.setEnabled(false);
+			viewCircuit.setEnabled(false);
+			viewLog.setEnabled(false);
+			saveParam.setEnabled(false);
+			saveSbml.setEnabled(false);
+			saveTemp.setEnabled(false);
+		}
+		else if (tree.getFile().length() > 3
+				&& tree.getFile().substring(tree.getFile().length() - 4).equals(".vhd")) {
+			viewModGraph.setEnabled(true);
+			viewModBrowser.setEnabled(false);
+			createAnal.setEnabled(true);
+			createAnal.setActionCommand("createSim");
+			createLearn.setEnabled(true);
+			createSynth.setEnabled(true);
+			createVer.setEnabled(true);
+			saveButton.setEnabled(false);
+			saveasButton.setEnabled(false);
+			runButton.setEnabled(false);
+			refreshButton.setEnabled(false);
+			checkButton.setEnabled(false);
+			exportButton.setEnabled(false);
+			save.setEnabled(false);
+			run.setEnabled(false);
+			saveAs.setEnabled(false);
+			refresh.setEnabled(false);
+			check.setEnabled(false);
+			export.setEnabled(false);
+			viewRules.setEnabled(false);
+			viewTrace.setEnabled(false);
+			viewCircuit.setEnabled(false);
+			viewLog.setEnabled(false);
+			saveParam.setEnabled(false);
+			saveSbml.setEnabled(false);
+			saveTemp.setEnabled(false);
+		}
+		else if (tree.getFile().length() > 1
+				&& tree.getFile().substring(tree.getFile().length() - 2).equals(".g")) {
+			viewModGraph.setEnabled(true);
+			viewModBrowser.setEnabled(false);
+			createAnal.setEnabled(true);
+			createAnal.setActionCommand("createSim");
+			createLearn.setEnabled(true);
+			createSynth.setEnabled(true);
+			createVer.setEnabled(true);
+			saveButton.setEnabled(false);
+			saveasButton.setEnabled(false);
+			runButton.setEnabled(false);
+			refreshButton.setEnabled(false);
+			checkButton.setEnabled(false);
+			exportButton.setEnabled(false);
+			save.setEnabled(false);
+			run.setEnabled(false);
+			saveAs.setEnabled(false);
+			refresh.setEnabled(false);
+			check.setEnabled(false);
+			export.setEnabled(false);
+			viewRules.setEnabled(false);
+			viewTrace.setEnabled(false);
+			viewCircuit.setEnabled(false);
+			viewLog.setEnabled(false);
+			saveParam.setEnabled(false);
+			saveSbml.setEnabled(false);
+			saveTemp.setEnabled(false);
+		}
+		else {
+			viewModGraph.setEnabled(false);
+			viewModBrowser.setEnabled(false);
+			createAnal.setEnabled(false);
+			createLearn.setEnabled(false);
+			createSbml.setEnabled(false);
+			createSynth.setEnabled(false);
+			createVer.setEnabled(false);
+			saveButton.setEnabled(false);
+			saveasButton.setEnabled(false);
+			runButton.setEnabled(false);
+			refreshButton.setEnabled(false);
+			checkButton.setEnabled(false);
+			exportButton.setEnabled(false);
+			save.setEnabled(false);
+			run.setEnabled(false);
+			saveAs.setEnabled(false);
+			refresh.setEnabled(false);
+			check.setEnabled(false);
+			export.setEnabled(false);
+			viewRules.setEnabled(false);
+			viewTrace.setEnabled(false);
+			viewCircuit.setEnabled(false);
+			viewLog.setEnabled(false);
+			saveParam.setEnabled(false);
+			saveSbml.setEnabled(false);
+			saveTemp.setEnabled(false);
+		}
+		}
+	}
+	
+	public void focusLost(FocusEvent e) {
+		treeFocused = false;
+		log.addText("focus lost");
+		viewModGraph.setEnabled(false);
+		viewModBrowser.setEnabled(false);
+		createAnal.setEnabled(false);
+		createLearn.setEnabled(false);
+		createSbml.setEnabled(false);
+		createSynth.setEnabled(false);
+		createVer.setEnabled(false);
 	}
 
 	public void mouseClicked(MouseEvent e) {

@@ -65,6 +65,8 @@ public class LHPNEditor extends JPanel implements ActionListener {
 	private LHPNFile lhpnFile = null;
 
 	private JPanel mainPanel, buttonPanel;
+	
+	private BioSim biosim;
 
 	public LHPNEditor() {
 		super();
@@ -74,6 +76,8 @@ public class LHPNEditor extends JPanel implements ActionListener {
 		super();
 		// this.biosim = biosim;
 		this.log = log;
+		this.biosim = biosim;
+		addMouseListener(biosim);
 		// this.directory = directory;
 		lhpnFile = new LHPNFile(log);
 		this.directory = directory;
@@ -159,6 +163,7 @@ public class LHPNEditor extends JPanel implements ActionListener {
 
 		JPanel placePanel = Utility.createPanel(this, "Places", places, addPlace, removePlace,
 				editPlace);
+		placePanel.addMouseListener(biosim);
 		mainPanelCenterCenter.add(placePanel);
 
 		//log.addText("build transition panel");
