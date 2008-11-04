@@ -706,8 +706,8 @@ public class BioSim implements MouseListener, ActionListener, FocusListener {
 		}
 		else {
 			// file.add(pref);
-			file.add(exit);
 			file.addSeparator();
+			file.add(exit);
 			help.add(about);
 		}
 		if (biosimrc.get("biosim.check.undeclared", "").equals("false")) {
@@ -4512,12 +4512,12 @@ public class BioSim implements MouseListener, ActionListener, FocusListener {
 				for (int j = 0; j <= i; j++) {
 					String save = recentProjectPaths[j];
 					recentProjects[j].setText(projDir.split(separator)[projDir.split(separator).length - 1]);
-					file.add(recentProjects[j]);
+					file.insert(recentProjects[j], file.getItemCount() - 3 - numberRecentProj);
 					recentProjectPaths[j] = projDir;
 					projDir = save;
 				}
 				for (int j = i + 1; j < numberRecentProj; j++) {
-					file.add(recentProjects[j]);
+					file.insert(recentProjects[j], file.getItemCount() - 3 - numberRecentProj);
 				}
 				return;
 			}
@@ -4528,7 +4528,7 @@ public class BioSim implements MouseListener, ActionListener, FocusListener {
 		for (int i = 0; i < numberRecentProj; i++) {
 			String save = recentProjectPaths[i];
 			recentProjects[i].setText(projDir.split(separator)[projDir.split(separator).length - 1]);
-			file.add(recentProjects[i]);
+			file.insert(recentProjects[i], file.getItemCount() - 3 - numberRecentProj);
 			recentProjectPaths[i] = projDir;
 			projDir = save;
 		}
@@ -5448,184 +5448,21 @@ public class BioSim implements MouseListener, ActionListener, FocusListener {
 	}
 
 	public void mouseReleased(MouseEvent e) {
-		if(treeFocused) {
+		if (treeFocused) {
 			log.addText("focused");
 		}
 		else {
 			log.addText("not focused");
 		}
 		if (!treeFocused) {
-		int selectedTab = tab.indexAtLocation(e.getPoint().x, e.getPoint().y);
-		if (selectedTab != -1) {
-			tab.setSelectedIndex(selectedTab);
-		}
-		Component comp = tab.getSelectedComponent();
-		if (comp instanceof GCM2SBMLEditor) {
-			saveButton.setEnabled(true);
-			saveasButton.setEnabled(true);
-			runButton.setEnabled(false);
-			refreshButton.setEnabled(false);
-			checkButton.setEnabled(false);
-			exportButton.setEnabled(false);
-			save.setEnabled(true);
-			run.setEnabled(false);
-			saveAs.setEnabled(true);
-			refresh.setEnabled(false);
-			check.setEnabled(false);
-			export.setEnabled(false);
-			viewCircuit.setEnabled(false);
-			viewLog.setEnabled(false);
-			saveParam.setEnabled(false);
-			saveSbml.setEnabled(true);
-			saveTemp.setEnabled(true);
-		}
-		else if (comp instanceof LHPNEditor) {
-			saveButton.setEnabled(true);
-			saveasButton.setEnabled(true);
-			runButton.setEnabled(false);
-			refreshButton.setEnabled(false);
-			checkButton.setEnabled(false);
-			exportButton.setEnabled(false);
-			save.setEnabled(true);
-			run.setEnabled(false);
-			saveAs.setEnabled(true);
-			refresh.setEnabled(false);
-			check.setEnabled(false);
-			export.setEnabled(false);
-			viewRules.setEnabled(false);
-			viewTrace.setEnabled(false);
-			viewCircuit.setEnabled(false);
-			viewLog.setEnabled(false);
-			saveParam.setEnabled(false);
-		}
-		else if (comp instanceof SBML_Editor) {
-			saveButton.setEnabled(true);
-			saveasButton.setEnabled(true);
-			runButton.setEnabled(false);
-			refreshButton.setEnabled(false);
-			checkButton.setEnabled(true);
-			exportButton.setEnabled(false);
-			save.setEnabled(true);
-			run.setEnabled(false);
-			saveAs.setEnabled(true);
-			refresh.setEnabled(false);
-			check.setEnabled(false);
-			export.setEnabled(false);
-			viewCircuit.setEnabled(false);
-			viewLog.setEnabled(false);
-			saveParam.setEnabled(false);
-			saveSbml.setEnabled(true);
-			saveTemp.setEnabled(true);
-		}
-		else if (comp instanceof Graph) {
-			saveButton.setEnabled(true);
-			saveasButton.setEnabled(true);
-			runButton.setEnabled(false);
-			refreshButton.setEnabled(true);
-			checkButton.setEnabled(false);
-			exportButton.setEnabled(true);
-			save.setEnabled(true);
-			run.setEnabled(false);
-			saveAs.setEnabled(true);
-			refresh.setEnabled(true);
-			check.setEnabled(false);
-			export.setEnabled(true);
-			viewCircuit.setEnabled(false);
-			viewLog.setEnabled(false);
-			saveParam.setEnabled(false);
-			saveSbml.setEnabled(false);
-			saveTemp.setEnabled(false);
-		}
-		else if (comp instanceof JTabbedPane) {
-			Component component = ((JTabbedPane) comp).getSelectedComponent();
-			// int index = tab.getSelectedIndex();
-			if (component instanceof Graph) {
+			int selectedTab = tab.indexAtLocation(e.getPoint().x, e.getPoint().y);
+			if (selectedTab != -1) {
+				tab.setSelectedIndex(selectedTab);
+			}
+			Component comp = tab.getSelectedComponent();
+			if (comp instanceof GCM2SBMLEditor) {
 				saveButton.setEnabled(true);
 				saveasButton.setEnabled(true);
-				runButton.setEnabled(true);
-				refreshButton.setEnabled(true);
-				checkButton.setEnabled(false);
-				exportButton.setEnabled(true);
-				save.setEnabled(true);
-				run.setEnabled(true);
-				saveAs.setEnabled(true);
-				refresh.setEnabled(true);
-				check.setEnabled(false);
-				export.setEnabled(true);
-				viewRules.setEnabled(false);
-				viewTrace.setEnabled(false);
-				viewCircuit.setEnabled(false);
-				viewLog.setEnabled(false);
-				saveParam.setEnabled(false);
-				saveSbml.setEnabled(false);
-				saveTemp.setEnabled(false);
-			}
-			else if (component instanceof Reb2Sac) {
-				saveButton.setEnabled(true);
-				saveasButton.setEnabled(false);
-				runButton.setEnabled(true);
-				refreshButton.setEnabled(false);
-				checkButton.setEnabled(false);
-				exportButton.setEnabled(false);
-				save.setEnabled(false);
-				run.setEnabled(true);
-				saveAs.setEnabled(false);
-				refresh.setEnabled(false);
-				check.setEnabled(false);
-				export.setEnabled(false);
-				viewRules.setEnabled(false);
-				viewTrace.setEnabled(false);
-				viewCircuit.setEnabled(false);
-				viewLog.setEnabled(false);
-				saveParam.setEnabled(true);
-				saveSbml.setEnabled(false);
-				saveTemp.setEnabled(false);
-			}
-			else if (component instanceof SBML_Editor) {
-				saveButton.setEnabled(true);
-				saveasButton.setEnabled(false);
-				runButton.setEnabled(true);
-				refreshButton.setEnabled(false);
-				checkButton.setEnabled(false);
-				exportButton.setEnabled(false);
-				save.setEnabled(false);
-				run.setEnabled(true);
-				saveAs.setEnabled(false);
-				refresh.setEnabled(false);
-				check.setEnabled(false);
-				export.setEnabled(false);
-				viewRules.setEnabled(false);
-				viewTrace.setEnabled(false);
-				viewCircuit.setEnabled(false);
-				viewLog.setEnabled(false);
-				saveParam.setEnabled(true);
-				saveSbml.setEnabled(false);
-				saveTemp.setEnabled(false);
-			}
-			else if (component instanceof Learn) {
-				saveButton.setEnabled(true);
-				saveasButton.setEnabled(false);
-				runButton.setEnabled(true);
-				refreshButton.setEnabled(false);
-				checkButton.setEnabled(false);
-				exportButton.setEnabled(false);
-				save.setEnabled(((Learn) component).getSaveGcmEnabled());
-				run.setEnabled(true);
-				saveAs.setEnabled(false);
-				refresh.setEnabled(false);
-				check.setEnabled(false);
-				export.setEnabled(false);
-				viewCircuit.setEnabled(((Learn) component).getViewGcmEnabled());
-				viewRules.setEnabled(false);
-				viewTrace.setEnabled(false);
-				viewLog.setEnabled(((Learn) component).getViewLogEnabled());
-				saveParam.setEnabled(true);
-				saveSbml.setEnabled(false);
-				saveTemp.setEnabled(false);
-			}
-			else if (component instanceof DataManager) {
-				saveButton.setEnabled(true);
-				saveasButton.setEnabled(false);
 				runButton.setEnabled(false);
 				refreshButton.setEnabled(false);
 				checkButton.setEnabled(false);
@@ -5637,23 +5474,21 @@ public class BioSim implements MouseListener, ActionListener, FocusListener {
 				check.setEnabled(false);
 				export.setEnabled(false);
 				viewCircuit.setEnabled(false);
-				viewRules.setEnabled(false);
-				viewTrace.setEnabled(false);
 				viewLog.setEnabled(false);
 				saveParam.setEnabled(false);
-				saveSbml.setEnabled(false);
-				saveTemp.setEnabled(false);
+				saveSbml.setEnabled(true);
+				saveTemp.setEnabled(true);
 			}
-			else if (component instanceof JPanel) {
+			else if (comp instanceof LHPNEditor) {
 				saveButton.setEnabled(true);
-				saveasButton.setEnabled(false);
-				runButton.setEnabled(true);
+				saveasButton.setEnabled(true);
+				runButton.setEnabled(false);
 				refreshButton.setEnabled(false);
 				checkButton.setEnabled(false);
 				exportButton.setEnabled(false);
-				save.setEnabled(false);
-				run.setEnabled(true);
-				saveAs.setEnabled(false);
+				save.setEnabled(true);
+				run.setEnabled(false);
+				saveAs.setEnabled(true);
 				refresh.setEnabled(false);
 				check.setEnabled(false);
 				export.setEnabled(false);
@@ -5661,400 +5496,565 @@ public class BioSim implements MouseListener, ActionListener, FocusListener {
 				viewTrace.setEnabled(false);
 				viewCircuit.setEnabled(false);
 				viewLog.setEnabled(false);
+				saveParam.setEnabled(false);
+			}
+			else if (comp instanceof SBML_Editor) {
+				saveButton.setEnabled(true);
+				saveasButton.setEnabled(true);
+				runButton.setEnabled(false);
+				refreshButton.setEnabled(false);
+				checkButton.setEnabled(true);
+				exportButton.setEnabled(false);
+				save.setEnabled(true);
+				run.setEnabled(false);
+				saveAs.setEnabled(true);
+				refresh.setEnabled(false);
+				check.setEnabled(false);
+				export.setEnabled(false);
+				viewCircuit.setEnabled(false);
+				viewLog.setEnabled(false);
+				saveParam.setEnabled(false);
+				saveSbml.setEnabled(true);
+				saveTemp.setEnabled(true);
+			}
+			else if (comp instanceof Graph) {
+				saveButton.setEnabled(true);
+				saveasButton.setEnabled(true);
+				runButton.setEnabled(false);
+				refreshButton.setEnabled(true);
+				checkButton.setEnabled(false);
+				exportButton.setEnabled(true);
+				save.setEnabled(true);
+				run.setEnabled(false);
+				saveAs.setEnabled(true);
+				refresh.setEnabled(true);
+				check.setEnabled(false);
+				export.setEnabled(true);
+				viewCircuit.setEnabled(false);
+				viewLog.setEnabled(false);
+				saveParam.setEnabled(false);
+				saveSbml.setEnabled(false);
+				saveTemp.setEnabled(false);
+			}
+			else if (comp instanceof JTabbedPane) {
+				Component component = ((JTabbedPane) comp).getSelectedComponent();
+				// int index = tab.getSelectedIndex();
+				if (component instanceof Graph) {
+					saveButton.setEnabled(true);
+					saveasButton.setEnabled(true);
+					runButton.setEnabled(true);
+					refreshButton.setEnabled(true);
+					checkButton.setEnabled(false);
+					exportButton.setEnabled(true);
+					save.setEnabled(true);
+					run.setEnabled(true);
+					saveAs.setEnabled(true);
+					refresh.setEnabled(true);
+					check.setEnabled(false);
+					export.setEnabled(true);
+					viewRules.setEnabled(false);
+					viewTrace.setEnabled(false);
+					viewCircuit.setEnabled(false);
+					viewLog.setEnabled(false);
+					saveParam.setEnabled(false);
+					saveSbml.setEnabled(false);
+					saveTemp.setEnabled(false);
+				}
+				else if (component instanceof Reb2Sac) {
+					saveButton.setEnabled(true);
+					saveasButton.setEnabled(false);
+					runButton.setEnabled(true);
+					refreshButton.setEnabled(false);
+					checkButton.setEnabled(false);
+					exportButton.setEnabled(false);
+					save.setEnabled(false);
+					run.setEnabled(true);
+					saveAs.setEnabled(false);
+					refresh.setEnabled(false);
+					check.setEnabled(false);
+					export.setEnabled(false);
+					viewRules.setEnabled(false);
+					viewTrace.setEnabled(false);
+					viewCircuit.setEnabled(false);
+					viewLog.setEnabled(false);
+					saveParam.setEnabled(true);
+					saveSbml.setEnabled(false);
+					saveTemp.setEnabled(false);
+				}
+				else if (component instanceof SBML_Editor) {
+					saveButton.setEnabled(true);
+					saveasButton.setEnabled(false);
+					runButton.setEnabled(true);
+					refreshButton.setEnabled(false);
+					checkButton.setEnabled(false);
+					exportButton.setEnabled(false);
+					save.setEnabled(false);
+					run.setEnabled(true);
+					saveAs.setEnabled(false);
+					refresh.setEnabled(false);
+					check.setEnabled(false);
+					export.setEnabled(false);
+					viewRules.setEnabled(false);
+					viewTrace.setEnabled(false);
+					viewCircuit.setEnabled(false);
+					viewLog.setEnabled(false);
+					saveParam.setEnabled(true);
+					saveSbml.setEnabled(false);
+					saveTemp.setEnabled(false);
+				}
+				else if (component instanceof Learn) {
+					saveButton.setEnabled(true);
+					saveasButton.setEnabled(false);
+					runButton.setEnabled(true);
+					refreshButton.setEnabled(false);
+					checkButton.setEnabled(false);
+					exportButton.setEnabled(false);
+					save.setEnabled(((Learn) component).getSaveGcmEnabled());
+					run.setEnabled(true);
+					saveAs.setEnabled(false);
+					refresh.setEnabled(false);
+					check.setEnabled(false);
+					export.setEnabled(false);
+					viewCircuit.setEnabled(((Learn) component).getViewGcmEnabled());
+					viewRules.setEnabled(false);
+					viewTrace.setEnabled(false);
+					viewLog.setEnabled(((Learn) component).getViewLogEnabled());
+					saveParam.setEnabled(true);
+					saveSbml.setEnabled(false);
+					saveTemp.setEnabled(false);
+				}
+				else if (component instanceof DataManager) {
+					saveButton.setEnabled(true);
+					saveasButton.setEnabled(false);
+					runButton.setEnabled(false);
+					refreshButton.setEnabled(false);
+					checkButton.setEnabled(false);
+					exportButton.setEnabled(false);
+					save.setEnabled(true);
+					run.setEnabled(false);
+					saveAs.setEnabled(true);
+					refresh.setEnabled(false);
+					check.setEnabled(false);
+					export.setEnabled(false);
+					viewCircuit.setEnabled(false);
+					viewRules.setEnabled(false);
+					viewTrace.setEnabled(false);
+					viewLog.setEnabled(false);
+					saveParam.setEnabled(false);
+					saveSbml.setEnabled(false);
+					saveTemp.setEnabled(false);
+				}
+				else if (component instanceof JPanel) {
+					saveButton.setEnabled(true);
+					saveasButton.setEnabled(false);
+					runButton.setEnabled(true);
+					refreshButton.setEnabled(false);
+					checkButton.setEnabled(false);
+					exportButton.setEnabled(false);
+					save.setEnabled(false);
+					run.setEnabled(true);
+					saveAs.setEnabled(false);
+					refresh.setEnabled(false);
+					check.setEnabled(false);
+					export.setEnabled(false);
+					viewRules.setEnabled(false);
+					viewTrace.setEnabled(false);
+					viewCircuit.setEnabled(false);
+					viewLog.setEnabled(false);
+					saveParam.setEnabled(true);
+					saveSbml.setEnabled(false);
+					saveTemp.setEnabled(false);
+				}
+			}
+			else if (comp instanceof Verification) {
+				saveButton.setEnabled(true);
+				saveasButton.setEnabled(true);
+				runButton.setEnabled(true);
+				refreshButton.setEnabled(false);
+				checkButton.setEnabled(false);
+				exportButton.setEnabled(false);
+				save.setEnabled(true);
+				run.setEnabled(true);
+				saveAs.setEnabled(true);
+				refresh.setEnabled(false);
+				check.setEnabled(false);
+				export.setEnabled(false);
+				viewRules.setEnabled(false);
+				viewTrace.setEnabled(((Verification) comp).getViewTraceEnabled());
+				viewCircuit.setEnabled(true);
+				viewLog.setEnabled(((Verification) comp).getViewLogEnabled());
 				saveParam.setEnabled(true);
+			}
+			else if (comp instanceof Synthesis) {
+				saveButton.setEnabled(true);
+				saveasButton.setEnabled(true);
+				runButton.setEnabled(true);
+				refreshButton.setEnabled(false);
+				checkButton.setEnabled(false);
+				exportButton.setEnabled(false);
+				save.setEnabled(true);
+				run.setEnabled(true);
+				saveAs.setEnabled(true);
+				refresh.setEnabled(false);
+				check.setEnabled(false);
+				export.setEnabled(false);
+				viewRules.setEnabled(((Synthesis) comp).getViewRulesEnabled());
+				viewTrace.setEnabled(((Synthesis) comp).getViewTraceEnabled());
+				viewCircuit.setEnabled(((Synthesis) comp).getViewCircuitEnabled());
+				viewLog.setEnabled(((Synthesis) comp).getViewLogEnabled());
+				saveParam.setEnabled(false);
+			}
+			else {
+				saveButton.setEnabled(false);
+				saveasButton.setEnabled(false);
+				runButton.setEnabled(false);
+				refreshButton.setEnabled(false);
+				checkButton.setEnabled(false);
+				exportButton.setEnabled(false);
+				save.setEnabled(false);
+				run.setEnabled(false);
+				saveAs.setEnabled(false);
+				refresh.setEnabled(false);
+				check.setEnabled(false);
+				export.setEnabled(false);
+				viewCircuit.setEnabled(false);
+				viewRules.setEnabled(false);
+				viewTrace.setEnabled(false);
+				viewLog.setEnabled(false);
+				saveParam.setEnabled(false);
 				saveSbml.setEnabled(false);
 				saveTemp.setEnabled(false);
 			}
 		}
-		else if (comp instanceof Verification) {
-			saveButton.setEnabled(true);
-			saveasButton.setEnabled(true);
-			runButton.setEnabled(true);
-			refreshButton.setEnabled(false);
-			checkButton.setEnabled(false);
-			exportButton.setEnabled(false);
-			save.setEnabled(true);
-			run.setEnabled(true);
-			saveAs.setEnabled(true);
-			refresh.setEnabled(false);
-			check.setEnabled(false);
-			export.setEnabled(false);
-			viewRules.setEnabled(false);
-			viewTrace.setEnabled(((Verification) comp).getViewTraceEnabled());
-			viewCircuit.setEnabled(true);
-			viewLog.setEnabled(((Verification) comp).getViewLogEnabled());
-			saveParam.setEnabled(true);
-		}
-		else if (comp instanceof Synthesis) {
-			saveButton.setEnabled(true);
-			saveasButton.setEnabled(true);
-			runButton.setEnabled(true);
-			refreshButton.setEnabled(false);
-			checkButton.setEnabled(false);
-			exportButton.setEnabled(false);
-			save.setEnabled(true);
-			run.setEnabled(true);
-			saveAs.setEnabled(true);
-			refresh.setEnabled(false);
-			check.setEnabled(false);
-			export.setEnabled(false);
-			viewRules.setEnabled(((Synthesis) comp).getViewRulesEnabled());
-			viewTrace.setEnabled(((Synthesis) comp).getViewTraceEnabled());
-			viewCircuit.setEnabled(((Synthesis) comp).getViewCircuitEnabled());
-			viewLog.setEnabled(((Synthesis) comp).getViewLogEnabled());
-			saveParam.setEnabled(false);
-		}
-		else {
-			saveButton.setEnabled(false);
-			saveasButton.setEnabled(false);
-			runButton.setEnabled(false);
-			refreshButton.setEnabled(false);
-			checkButton.setEnabled(false);
-			exportButton.setEnabled(false);
-			save.setEnabled(false);
-			run.setEnabled(false);
-			saveAs.setEnabled(false);
-			refresh.setEnabled(false);
-			check.setEnabled(false);
-			export.setEnabled(false);
-			viewCircuit.setEnabled(false);
-			viewRules.setEnabled(false);
-			viewTrace.setEnabled(false);
-			viewLog.setEnabled(false);
-			saveParam.setEnabled(false);
-			saveSbml.setEnabled(false);
-			saveTemp.setEnabled(false);
-		}
-		}
 		if (tree.getFile() != null) {
-		if (e.isPopupTrigger() && tree.getFile() != null) {
-			popup.removeAll();
-			if (tree.getFile().length() > 4
-					&& tree.getFile().substring(tree.getFile().length() - 5).equals(".sbml")
-					|| tree.getFile().length() > 3
-					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".xml")) {
-				JMenuItem edit = new JMenuItem("View/Edit");
-				edit.addActionListener(this);
-				edit.setActionCommand("sbmlEditor");
-				JMenuItem graph = new JMenuItem("View Network");
-				graph.addActionListener(this);
-				graph.setActionCommand("graph");
-				JMenuItem browse = new JMenuItem("View in Browser");
-				browse.addActionListener(this);
-				browse.setActionCommand("browse");
-				JMenuItem simulate = new JMenuItem("Create Analysis View");
-				simulate.addActionListener(this);
-				simulate.setActionCommand("simulate");
-				JMenuItem createLearn = new JMenuItem("Create Learn View");
-				createLearn.addActionListener(this);
-				createLearn.setActionCommand("createLearn");
-				JMenuItem delete = new JMenuItem("Delete");
-				delete.addActionListener(this);
-				delete.setActionCommand("delete");
-				JMenuItem copy = new JMenuItem("Copy");
-				copy.addActionListener(this);
-				copy.setActionCommand("copy");
-				JMenuItem rename = new JMenuItem("Rename");
-				rename.addActionListener(this);
-				rename.setActionCommand("rename");
-				popup.add(simulate);
-				popup.add(createLearn);
-				popup.addSeparator();
-				popup.add(graph);
-				popup.add(browse);
-				popup.addSeparator();
-				popup.add(edit);
-				popup.add(copy);
-				popup.add(rename);
-				popup.add(delete);
-			}
-			else if (tree.getFile().length() > 3
-					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".gcm")) {
-				JMenuItem create = new JMenuItem("Create Analysis View");
-				create.addActionListener(this);
-				create.setActionCommand("createSim");
-				JMenuItem createLearn = new JMenuItem("Create Learn View");
-				createLearn.addActionListener(this);
-				createLearn.setActionCommand("createLearn");
-				JMenuItem createSBML = new JMenuItem("Create SBML File");
-				createSBML.addActionListener(this);
-				createSBML.setActionCommand("createSBML");
-				JMenuItem edit = new JMenuItem("View/Edit");
-				edit.addActionListener(this);
-				edit.setActionCommand("dotEditor");
-				JMenuItem graph = new JMenuItem("View Genetic Circuit");
-				graph.addActionListener(this);
-				graph.setActionCommand("graphDot");
-				JMenuItem delete = new JMenuItem("Delete");
-				delete.addActionListener(this);
-				delete.setActionCommand("delete");
-				JMenuItem copy = new JMenuItem("Copy");
-				copy.addActionListener(this);
-				copy.setActionCommand("copy");
-				JMenuItem rename = new JMenuItem("Rename");
-				rename.addActionListener(this);
-				rename.setActionCommand("rename");
-				popup.add(create);
-				popup.add(createLearn);
-				popup.add(createSBML);
-				popup.addSeparator();
-				popup.add(graph);
-				popup.addSeparator();
-				popup.add(edit);
-				popup.add(copy);
-				popup.add(rename);
-				popup.add(delete);
-			}
-			else if (tree.getFile().length() > 3
-					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".grf")) {
-				JMenuItem edit = new JMenuItem("View/Edit");
-				edit.addActionListener(this);
-				edit.setActionCommand("openGraph");
-				JMenuItem delete = new JMenuItem("Delete");
-				delete.addActionListener(this);
-				delete.setActionCommand("delete");
-				JMenuItem copy = new JMenuItem("Copy");
-				copy.addActionListener(this);
-				copy.setActionCommand("copy");
-				JMenuItem rename = new JMenuItem("Rename");
-				rename.addActionListener(this);
-				rename.setActionCommand("rename");
-				popup.add(edit);
-				popup.add(copy);
-				popup.add(rename);
-				popup.add(delete);
-			}
-			else if (tree.getFile().length() > 3
-					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".vhd")) {
-				JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
-				createSynthesis.addActionListener(this);
-				createSynthesis.setActionCommand("createSynthesis");
-				JMenuItem createAnalysis = new JMenuItem("Create Analysis View");
-				createAnalysis.addActionListener(this);
-				createAnalysis.setActionCommand("createSim");
-				JMenuItem createLearn = new JMenuItem("Create Learn View");
-				createLearn.addActionListener(this);
-				createLearn.setActionCommand("createLearn");
-				JMenuItem edit = new JMenuItem("View/Edit");
-				edit.addActionListener(this);
-				edit.setActionCommand("dotEditor");
-				JMenuItem delete = new JMenuItem("Delete");
-				delete.addActionListener(this);
-				delete.setActionCommand("delete");
-				JMenuItem copy = new JMenuItem("Copy");
-				copy.addActionListener(this);
-				copy.setActionCommand("copy");
-				JMenuItem rename = new JMenuItem("Rename");
-				rename.addActionListener(this);
-				rename.setActionCommand("rename");
-				popup.add(createSynthesis);
-				popup.add(createAnalysis);
-				popup.add(createLearn);
-				popup.addSeparator();
-				popup.add(edit);
-				popup.add(copy);
-				popup.add(rename);
-				popup.add(delete);
-			}
-			else if (tree.getFile().length() > 1
-					&& tree.getFile().substring(tree.getFile().length() - 2).equals(".g")) {
-				JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
-				createSynthesis.addActionListener(this);
-				createSynthesis.setActionCommand("createSynthesis");
-				JMenuItem createAnalysis = new JMenuItem("Create Analysis View");
-				createAnalysis.addActionListener(this);
-				createAnalysis.setActionCommand("createSim");
-				JMenuItem createLearn = new JMenuItem("Create Learn View");
-				createLearn.addActionListener(this);
-				createLearn.setActionCommand("createLearn");
-				JMenuItem edit = new JMenuItem("View/Edit");
-				edit.addActionListener(this);
-				edit.setActionCommand("dotEditor");
-				JMenuItem delete = new JMenuItem("Delete");
-				delete.addActionListener(this);
-				delete.setActionCommand("delete");
-				JMenuItem copy = new JMenuItem("Copy");
-				copy.addActionListener(this);
-				copy.setActionCommand("copy");
-				JMenuItem rename = new JMenuItem("Rename");
-				rename.addActionListener(this);
-				rename.setActionCommand("rename");
-				popup.add(createSynthesis);
-				popup.add(createAnalysis);
-				popup.add(createLearn);
-				popup.addSeparator();
-				popup.add(edit);
-				popup.add(copy);
-				popup.add(rename);
-				popup.add(delete);
-			}
-			else if (tree.getFile().length() > 3
-					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".csp")) {
-				JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
-				createSynthesis.addActionListener(this);
-				createSynthesis.setActionCommand("createSynthesis");
-				JMenuItem createAnalysis = new JMenuItem("Create Analysis View");
-				createAnalysis.addActionListener(this);
-				createAnalysis.setActionCommand("createSim");
-				JMenuItem createLearn = new JMenuItem("Create Learn View");
-				createLearn.addActionListener(this);
-				createLearn.setActionCommand("createLearn");
-				JMenuItem edit = new JMenuItem("View/Edit");
-				edit.addActionListener(this);
-				edit.setActionCommand("dotEditor");
-				JMenuItem delete = new JMenuItem("Delete");
-				delete.addActionListener(this);
-				delete.setActionCommand("delete");
-				JMenuItem copy = new JMenuItem("Copy");
-				copy.addActionListener(this);
-				copy.setActionCommand("copy");
-				JMenuItem rename = new JMenuItem("Rename");
-				rename.addActionListener(this);
-				rename.setActionCommand("rename");
-				popup.add(createSynthesis);
-				popup.add(createAnalysis);
-				popup.add(createLearn);
-				popup.addSeparator();
-				popup.add(edit);
-				popup.add(copy);
-				popup.add(rename);
-				popup.add(delete);
-			}
-			else if (tree.getFile().length() > 3
-					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".hse")) {
-				JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
-				createSynthesis.addActionListener(this);
-				createSynthesis.setActionCommand("createSynthesis");
-				JMenuItem createAnalysis = new JMenuItem("Create Analysis View");
-				createAnalysis.addActionListener(this);
-				createAnalysis.setActionCommand("createSim");
-				JMenuItem createLearn = new JMenuItem("Create Learn View");
-				createLearn.addActionListener(this);
-				createLearn.setActionCommand("createLearn");
-				JMenuItem edit = new JMenuItem("View/Edit");
-				edit.addActionListener(this);
-				edit.setActionCommand("dotEditor");
-				JMenuItem delete = new JMenuItem("Delete");
-				delete.addActionListener(this);
-				delete.setActionCommand("delete");
-				JMenuItem copy = new JMenuItem("Copy");
-				copy.addActionListener(this);
-				copy.setActionCommand("copy");
-				JMenuItem rename = new JMenuItem("Rename");
-				rename.addActionListener(this);
-				rename.setActionCommand("rename");
-				popup.add(createSynthesis);
-				popup.add(createAnalysis);
-				popup.add(createLearn);
-				popup.addSeparator();
-				popup.add(edit);
-				popup.add(copy);
-				popup.add(rename);
-				popup.add(delete);
-			}
-			else if (tree.getFile().length() > 3
-					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".unc")) {
-				JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
-				createSynthesis.addActionListener(this);
-				createSynthesis.setActionCommand("createSynthesis");
-				JMenuItem edit = new JMenuItem("View/Edit");
-				edit.addActionListener(this);
-				edit.setActionCommand("dotEditor");
-				JMenuItem delete = new JMenuItem("Delete");
-				delete.addActionListener(this);
-				delete.setActionCommand("delete");
-				JMenuItem copy = new JMenuItem("Copy");
-				copy.addActionListener(this);
-				copy.setActionCommand("copy");
-				JMenuItem rename = new JMenuItem("Rename");
-				rename.addActionListener(this);
-				rename.setActionCommand("rename");
-				popup.add(createSynthesis);
-				popup.addSeparator();
-				popup.add(edit);
-				popup.add(copy);
-				popup.add(rename);
-				popup.add(delete);
-			}
-			else if (tree.getFile().length() > 3
-					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".rsg")) {
-				JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
-				createSynthesis.addActionListener(this);
-				createSynthesis.setActionCommand("createSynthesis");
-				JMenuItem edit = new JMenuItem("View/Edit");
-				edit.addActionListener(this);
-				edit.setActionCommand("dotEditor");
-				JMenuItem delete = new JMenuItem("Delete");
-				delete.addActionListener(this);
-				delete.setActionCommand("delete");
-				JMenuItem copy = new JMenuItem("Copy");
-				copy.addActionListener(this);
-				copy.setActionCommand("copy");
-				JMenuItem rename = new JMenuItem("Rename");
-				rename.addActionListener(this);
-				rename.setActionCommand("rename");
-				popup.add(createSynthesis);
-				popup.addSeparator();
-				popup.add(edit);
-				popup.add(copy);
-				popup.add(rename);
-				popup.add(delete);
-			}
-			else if (new File(tree.getFile()).isDirectory() && !tree.getFile().equals(root)) {
-				boolean sim = false;
-				boolean synth = false;
-				boolean ver = false;
-				for (String s : new File(tree.getFile()).list()) {
-					if (s.length() > 3 && s.substring(s.length() - 4).equals(".sim")) {
-						sim = true;
+			if (e.isPopupTrigger() && tree.getFile() != null) {
+				popup.removeAll();
+				if (tree.getFile().length() > 4
+						&& tree.getFile().substring(tree.getFile().length() - 5).equals(".sbml")
+						|| tree.getFile().length() > 3
+						&& tree.getFile().substring(tree.getFile().length() - 4).equals(".xml")) {
+					JMenuItem edit = new JMenuItem("View/Edit");
+					edit.addActionListener(this);
+					edit.setActionCommand("sbmlEditor");
+					JMenuItem graph = new JMenuItem("View Network");
+					graph.addActionListener(this);
+					graph.setActionCommand("graph");
+					JMenuItem browse = new JMenuItem("View in Browser");
+					browse.addActionListener(this);
+					browse.setActionCommand("browse");
+					JMenuItem simulate = new JMenuItem("Create Analysis View");
+					simulate.addActionListener(this);
+					simulate.setActionCommand("simulate");
+					JMenuItem createLearn = new JMenuItem("Create Learn View");
+					createLearn.addActionListener(this);
+					createLearn.setActionCommand("createLearn");
+					JMenuItem delete = new JMenuItem("Delete");
+					delete.addActionListener(this);
+					delete.setActionCommand("delete");
+					JMenuItem copy = new JMenuItem("Copy");
+					copy.addActionListener(this);
+					copy.setActionCommand("copy");
+					JMenuItem rename = new JMenuItem("Rename");
+					rename.addActionListener(this);
+					rename.setActionCommand("rename");
+					popup.add(simulate);
+					popup.add(createLearn);
+					popup.addSeparator();
+					popup.add(graph);
+					popup.add(browse);
+					popup.addSeparator();
+					popup.add(edit);
+					popup.add(copy);
+					popup.add(rename);
+					popup.add(delete);
+				}
+				else if (tree.getFile().length() > 3
+						&& tree.getFile().substring(tree.getFile().length() - 4).equals(".gcm")) {
+					JMenuItem create = new JMenuItem("Create Analysis View");
+					create.addActionListener(this);
+					create.setActionCommand("createSim");
+					JMenuItem createLearn = new JMenuItem("Create Learn View");
+					createLearn.addActionListener(this);
+					createLearn.setActionCommand("createLearn");
+					JMenuItem createSBML = new JMenuItem("Create SBML File");
+					createSBML.addActionListener(this);
+					createSBML.setActionCommand("createSBML");
+					JMenuItem edit = new JMenuItem("View/Edit");
+					edit.addActionListener(this);
+					edit.setActionCommand("dotEditor");
+					JMenuItem graph = new JMenuItem("View Genetic Circuit");
+					graph.addActionListener(this);
+					graph.setActionCommand("graphDot");
+					JMenuItem delete = new JMenuItem("Delete");
+					delete.addActionListener(this);
+					delete.setActionCommand("delete");
+					JMenuItem copy = new JMenuItem("Copy");
+					copy.addActionListener(this);
+					copy.setActionCommand("copy");
+					JMenuItem rename = new JMenuItem("Rename");
+					rename.addActionListener(this);
+					rename.setActionCommand("rename");
+					popup.add(create);
+					popup.add(createLearn);
+					popup.add(createSBML);
+					popup.addSeparator();
+					popup.add(graph);
+					popup.addSeparator();
+					popup.add(edit);
+					popup.add(copy);
+					popup.add(rename);
+					popup.add(delete);
+				}
+				else if (tree.getFile().length() > 3
+						&& tree.getFile().substring(tree.getFile().length() - 4).equals(".grf")) {
+					JMenuItem edit = new JMenuItem("View/Edit");
+					edit.addActionListener(this);
+					edit.setActionCommand("openGraph");
+					JMenuItem delete = new JMenuItem("Delete");
+					delete.addActionListener(this);
+					delete.setActionCommand("delete");
+					JMenuItem copy = new JMenuItem("Copy");
+					copy.addActionListener(this);
+					copy.setActionCommand("copy");
+					JMenuItem rename = new JMenuItem("Rename");
+					rename.addActionListener(this);
+					rename.setActionCommand("rename");
+					popup.add(edit);
+					popup.add(copy);
+					popup.add(rename);
+					popup.add(delete);
+				}
+				else if (tree.getFile().length() > 3
+						&& tree.getFile().substring(tree.getFile().length() - 4).equals(".vhd")) {
+					JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
+					createSynthesis.addActionListener(this);
+					createSynthesis.setActionCommand("createSynthesis");
+					JMenuItem createAnalysis = new JMenuItem("Create Analysis View");
+					createAnalysis.addActionListener(this);
+					createAnalysis.setActionCommand("createSim");
+					JMenuItem createLearn = new JMenuItem("Create Learn View");
+					createLearn.addActionListener(this);
+					createLearn.setActionCommand("createLearn");
+					JMenuItem edit = new JMenuItem("View/Edit");
+					edit.addActionListener(this);
+					edit.setActionCommand("dotEditor");
+					JMenuItem delete = new JMenuItem("Delete");
+					delete.addActionListener(this);
+					delete.setActionCommand("delete");
+					JMenuItem copy = new JMenuItem("Copy");
+					copy.addActionListener(this);
+					copy.setActionCommand("copy");
+					JMenuItem rename = new JMenuItem("Rename");
+					rename.addActionListener(this);
+					rename.setActionCommand("rename");
+					popup.add(createSynthesis);
+					popup.add(createAnalysis);
+					popup.add(createLearn);
+					popup.addSeparator();
+					popup.add(edit);
+					popup.add(copy);
+					popup.add(rename);
+					popup.add(delete);
+				}
+				else if (tree.getFile().length() > 1
+						&& tree.getFile().substring(tree.getFile().length() - 2).equals(".g")) {
+					JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
+					createSynthesis.addActionListener(this);
+					createSynthesis.setActionCommand("createSynthesis");
+					JMenuItem createAnalysis = new JMenuItem("Create Analysis View");
+					createAnalysis.addActionListener(this);
+					createAnalysis.setActionCommand("createSim");
+					JMenuItem createLearn = new JMenuItem("Create Learn View");
+					createLearn.addActionListener(this);
+					createLearn.setActionCommand("createLearn");
+					JMenuItem edit = new JMenuItem("View/Edit");
+					edit.addActionListener(this);
+					edit.setActionCommand("dotEditor");
+					JMenuItem delete = new JMenuItem("Delete");
+					delete.addActionListener(this);
+					delete.setActionCommand("delete");
+					JMenuItem copy = new JMenuItem("Copy");
+					copy.addActionListener(this);
+					copy.setActionCommand("copy");
+					JMenuItem rename = new JMenuItem("Rename");
+					rename.addActionListener(this);
+					rename.setActionCommand("rename");
+					popup.add(createSynthesis);
+					popup.add(createAnalysis);
+					popup.add(createLearn);
+					popup.addSeparator();
+					popup.add(edit);
+					popup.add(copy);
+					popup.add(rename);
+					popup.add(delete);
+				}
+				else if (tree.getFile().length() > 3
+						&& tree.getFile().substring(tree.getFile().length() - 4).equals(".csp")) {
+					JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
+					createSynthesis.addActionListener(this);
+					createSynthesis.setActionCommand("createSynthesis");
+					JMenuItem createAnalysis = new JMenuItem("Create Analysis View");
+					createAnalysis.addActionListener(this);
+					createAnalysis.setActionCommand("createSim");
+					JMenuItem createLearn = new JMenuItem("Create Learn View");
+					createLearn.addActionListener(this);
+					createLearn.setActionCommand("createLearn");
+					JMenuItem edit = new JMenuItem("View/Edit");
+					edit.addActionListener(this);
+					edit.setActionCommand("dotEditor");
+					JMenuItem delete = new JMenuItem("Delete");
+					delete.addActionListener(this);
+					delete.setActionCommand("delete");
+					JMenuItem copy = new JMenuItem("Copy");
+					copy.addActionListener(this);
+					copy.setActionCommand("copy");
+					JMenuItem rename = new JMenuItem("Rename");
+					rename.addActionListener(this);
+					rename.setActionCommand("rename");
+					popup.add(createSynthesis);
+					popup.add(createAnalysis);
+					popup.add(createLearn);
+					popup.addSeparator();
+					popup.add(edit);
+					popup.add(copy);
+					popup.add(rename);
+					popup.add(delete);
+				}
+				else if (tree.getFile().length() > 3
+						&& tree.getFile().substring(tree.getFile().length() - 4).equals(".hse")) {
+					JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
+					createSynthesis.addActionListener(this);
+					createSynthesis.setActionCommand("createSynthesis");
+					JMenuItem createAnalysis = new JMenuItem("Create Analysis View");
+					createAnalysis.addActionListener(this);
+					createAnalysis.setActionCommand("createSim");
+					JMenuItem createLearn = new JMenuItem("Create Learn View");
+					createLearn.addActionListener(this);
+					createLearn.setActionCommand("createLearn");
+					JMenuItem edit = new JMenuItem("View/Edit");
+					edit.addActionListener(this);
+					edit.setActionCommand("dotEditor");
+					JMenuItem delete = new JMenuItem("Delete");
+					delete.addActionListener(this);
+					delete.setActionCommand("delete");
+					JMenuItem copy = new JMenuItem("Copy");
+					copy.addActionListener(this);
+					copy.setActionCommand("copy");
+					JMenuItem rename = new JMenuItem("Rename");
+					rename.addActionListener(this);
+					rename.setActionCommand("rename");
+					popup.add(createSynthesis);
+					popup.add(createAnalysis);
+					popup.add(createLearn);
+					popup.addSeparator();
+					popup.add(edit);
+					popup.add(copy);
+					popup.add(rename);
+					popup.add(delete);
+				}
+				else if (tree.getFile().length() > 3
+						&& tree.getFile().substring(tree.getFile().length() - 4).equals(".unc")) {
+					JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
+					createSynthesis.addActionListener(this);
+					createSynthesis.setActionCommand("createSynthesis");
+					JMenuItem edit = new JMenuItem("View/Edit");
+					edit.addActionListener(this);
+					edit.setActionCommand("dotEditor");
+					JMenuItem delete = new JMenuItem("Delete");
+					delete.addActionListener(this);
+					delete.setActionCommand("delete");
+					JMenuItem copy = new JMenuItem("Copy");
+					copy.addActionListener(this);
+					copy.setActionCommand("copy");
+					JMenuItem rename = new JMenuItem("Rename");
+					rename.addActionListener(this);
+					rename.setActionCommand("rename");
+					popup.add(createSynthesis);
+					popup.addSeparator();
+					popup.add(edit);
+					popup.add(copy);
+					popup.add(rename);
+					popup.add(delete);
+				}
+				else if (tree.getFile().length() > 3
+						&& tree.getFile().substring(tree.getFile().length() - 4).equals(".rsg")) {
+					JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
+					createSynthesis.addActionListener(this);
+					createSynthesis.setActionCommand("createSynthesis");
+					JMenuItem edit = new JMenuItem("View/Edit");
+					edit.addActionListener(this);
+					edit.setActionCommand("dotEditor");
+					JMenuItem delete = new JMenuItem("Delete");
+					delete.addActionListener(this);
+					delete.setActionCommand("delete");
+					JMenuItem copy = new JMenuItem("Copy");
+					copy.addActionListener(this);
+					copy.setActionCommand("copy");
+					JMenuItem rename = new JMenuItem("Rename");
+					rename.addActionListener(this);
+					rename.setActionCommand("rename");
+					popup.add(createSynthesis);
+					popup.addSeparator();
+					popup.add(edit);
+					popup.add(copy);
+					popup.add(rename);
+					popup.add(delete);
+				}
+				else if (new File(tree.getFile()).isDirectory() && !tree.getFile().equals(root)) {
+					boolean sim = false;
+					boolean synth = false;
+					boolean ver = false;
+					for (String s : new File(tree.getFile()).list()) {
+						if (s.length() > 3 && s.substring(s.length() - 4).equals(".sim")) {
+							sim = true;
+						}
+						else if (s.length() > 4 && s.substring(s.length() - 4).equals(".syn")) {
+							synth = true;
+						}
+						else if (s.length() > 4 && s.substring(s.length() - 4).equals(".ver")) {
+							ver = true;
+						}
 					}
-					else if (s.length() > 4 && s.substring(s.length() - 4).equals(".syn")) {
-						synth = true;
+					JMenuItem open;
+					if (sim) {
+						open = new JMenuItem("Open Analysis View");
+						open.addActionListener(this);
+						open.setActionCommand("openSim");
 					}
-					else if (s.length() > 4 && s.substring(s.length() - 4).equals(".ver")) {
-						ver = true;
+					else if (synth) {
+						open = new JMenuItem("Open Synthesis View");
+						open.addActionListener(this);
+						open.setActionCommand("openSynth");
 					}
+					else if (ver) {
+						open = new JMenuItem("Open Verification View");
+						open.addActionListener(this);
+						open.setActionCommand("openVerification");
+					}
+					else {
+						open = new JMenuItem("Open Learn View");
+						open.addActionListener(this);
+						open.setActionCommand("openLearn");
+					}
+					JMenuItem delete = new JMenuItem("Delete");
+					delete.addActionListener(this);
+					delete.setActionCommand("deleteSim");
+					JMenuItem copy = new JMenuItem("Copy");
+					copy.addActionListener(this);
+					copy.setActionCommand("copy");
+					JMenuItem rename = new JMenuItem("Rename");
+					rename.addActionListener(this);
+					rename.setActionCommand("rename");
+					popup.add(open);
+					popup.addSeparator();
+					popup.add(copy);
+					popup.add(rename);
+					popup.add(delete);
 				}
-				JMenuItem open;
-				if (sim) {
-					open = new JMenuItem("Open Analysis View");
-					open.addActionListener(this);
-					open.setActionCommand("openSim");
+				if (popup.getComponentCount() != 0) {
+					popup.show(e.getComponent(), e.getX(), e.getY());
 				}
-				else if (synth) {
-					open = new JMenuItem("Open Synthesis View");
-					open.addActionListener(this);
-					open.setActionCommand("openSynth");
-				}
-				else if (ver) {
-					open = new JMenuItem("Open Verification View");
-					open.addActionListener(this);
-					open.setActionCommand("openVerification");
-				}
-				else {
-					open = new JMenuItem("Open Learn View");
-					open.addActionListener(this);
-					open.setActionCommand("openLearn");
-				}
-				JMenuItem delete = new JMenuItem("Delete");
-				delete.addActionListener(this);
-				delete.setActionCommand("deleteSim");
-				JMenuItem copy = new JMenuItem("Copy");
-				copy.addActionListener(this);
-				copy.setActionCommand("copy");
-				JMenuItem rename = new JMenuItem("Rename");
-				rename.addActionListener(this);
-				rename.setActionCommand("rename");
-				popup.add(open);
-				popup.addSeparator();
-				popup.add(copy);
-				popup.add(rename);
-				popup.add(delete);
 			}
-			if (popup.getComponentCount() != 0) {
-				popup.show(e.getComponent(), e.getX(), e.getY());
-			}
-		}
 		}
 	}
 
@@ -6762,160 +6762,160 @@ public class BioSim implements MouseListener, ActionListener, FocusListener {
 			}
 		}
 	}
-	
+
 	public void focusGained(FocusEvent e) {
 		treeFocused = true;
 		log.addText("focus gained");
 		if (tree.getFile() != null) {
-		if (tree.getFile().length() > 4
-				&& tree.getFile().substring(tree.getFile().length() - 5).equals(".sbml")
-				|| tree.getFile().length() > 3
-				&& tree.getFile().substring(tree.getFile().length() - 4).equals(".xml")) {
-			viewModGraph.setEnabled(true);
-			viewModGraph.setActionCommand("graph");
-			viewModBrowser.setEnabled(true);
-			createAnal.setEnabled(true);
-			createAnal.setActionCommand("simulate");
-			createLearn.setEnabled(true);
-			createSbml.setEnabled(false);
-			saveButton.setEnabled(false);
-			saveasButton.setEnabled(false);
-			runButton.setEnabled(false);
-			refreshButton.setEnabled(false);
-			checkButton.setEnabled(false);
-			exportButton.setEnabled(false);
-			save.setEnabled(false);
-			run.setEnabled(false);
-			saveAs.setEnabled(false);
-			refresh.setEnabled(false);
-			check.setEnabled(false);
-			export.setEnabled(false);
-			viewRules.setEnabled(false);
-			viewTrace.setEnabled(false);
-			viewCircuit.setEnabled(false);
-			viewLog.setEnabled(false);
-			saveParam.setEnabled(false);
-			saveSbml.setEnabled(false);
-			saveTemp.setEnabled(false);
-		}
-		else if (tree.getFile().length() > 3
-				&& tree.getFile().substring(tree.getFile().length() - 4).equals(".gcm")) {
-			viewModGraph.setEnabled(true);
-			viewModGraph.setActionCommand("graphDot");
-			viewModBrowser.setEnabled(false);
-			createAnal.setEnabled(true);
-			createAnal.setActionCommand("createSim");
-			createLearn.setEnabled(true);
-			createSbml.setEnabled(true);
-			saveButton.setEnabled(false);
-			saveasButton.setEnabled(false);
-			runButton.setEnabled(false);
-			refreshButton.setEnabled(false);
-			checkButton.setEnabled(false);
-			exportButton.setEnabled(false);
-			save.setEnabled(false);
-			run.setEnabled(false);
-			saveAs.setEnabled(false);
-			refresh.setEnabled(false);
-			check.setEnabled(false);
-			export.setEnabled(false);
-			viewRules.setEnabled(false);
-			viewTrace.setEnabled(false);
-			viewCircuit.setEnabled(false);
-			viewLog.setEnabled(false);
-			saveParam.setEnabled(false);
-			saveSbml.setEnabled(false);
-			saveTemp.setEnabled(false);
-		}
-		else if (tree.getFile().length() > 3
-				&& tree.getFile().substring(tree.getFile().length() - 4).equals(".vhd")) {
-			viewModGraph.setEnabled(true);
-			viewModBrowser.setEnabled(false);
-			createAnal.setEnabled(true);
-			createAnal.setActionCommand("createSim");
-			createLearn.setEnabled(true);
-			createSynth.setEnabled(true);
-			createVer.setEnabled(true);
-			saveButton.setEnabled(false);
-			saveasButton.setEnabled(false);
-			runButton.setEnabled(false);
-			refreshButton.setEnabled(false);
-			checkButton.setEnabled(false);
-			exportButton.setEnabled(false);
-			save.setEnabled(false);
-			run.setEnabled(false);
-			saveAs.setEnabled(false);
-			refresh.setEnabled(false);
-			check.setEnabled(false);
-			export.setEnabled(false);
-			viewRules.setEnabled(false);
-			viewTrace.setEnabled(false);
-			viewCircuit.setEnabled(false);
-			viewLog.setEnabled(false);
-			saveParam.setEnabled(false);
-			saveSbml.setEnabled(false);
-			saveTemp.setEnabled(false);
-		}
-		else if (tree.getFile().length() > 1
-				&& tree.getFile().substring(tree.getFile().length() - 2).equals(".g")) {
-			viewModGraph.setEnabled(true);
-			viewModBrowser.setEnabled(false);
-			createAnal.setEnabled(true);
-			createAnal.setActionCommand("createSim");
-			createLearn.setEnabled(true);
-			createSynth.setEnabled(true);
-			createVer.setEnabled(true);
-			saveButton.setEnabled(false);
-			saveasButton.setEnabled(false);
-			runButton.setEnabled(false);
-			refreshButton.setEnabled(false);
-			checkButton.setEnabled(false);
-			exportButton.setEnabled(false);
-			save.setEnabled(false);
-			run.setEnabled(false);
-			saveAs.setEnabled(false);
-			refresh.setEnabled(false);
-			check.setEnabled(false);
-			export.setEnabled(false);
-			viewRules.setEnabled(false);
-			viewTrace.setEnabled(false);
-			viewCircuit.setEnabled(false);
-			viewLog.setEnabled(false);
-			saveParam.setEnabled(false);
-			saveSbml.setEnabled(false);
-			saveTemp.setEnabled(false);
-		}
-		else {
-			viewModGraph.setEnabled(false);
-			viewModBrowser.setEnabled(false);
-			createAnal.setEnabled(false);
-			createLearn.setEnabled(false);
-			createSbml.setEnabled(false);
-			createSynth.setEnabled(false);
-			createVer.setEnabled(false);
-			saveButton.setEnabled(false);
-			saveasButton.setEnabled(false);
-			runButton.setEnabled(false);
-			refreshButton.setEnabled(false);
-			checkButton.setEnabled(false);
-			exportButton.setEnabled(false);
-			save.setEnabled(false);
-			run.setEnabled(false);
-			saveAs.setEnabled(false);
-			refresh.setEnabled(false);
-			check.setEnabled(false);
-			export.setEnabled(false);
-			viewRules.setEnabled(false);
-			viewTrace.setEnabled(false);
-			viewCircuit.setEnabled(false);
-			viewLog.setEnabled(false);
-			saveParam.setEnabled(false);
-			saveSbml.setEnabled(false);
-			saveTemp.setEnabled(false);
-		}
+			if (tree.getFile().length() > 4
+					&& tree.getFile().substring(tree.getFile().length() - 5).equals(".sbml")
+					|| tree.getFile().length() > 3
+					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".xml")) {
+				viewModGraph.setEnabled(true);
+				viewModGraph.setActionCommand("graph");
+				viewModBrowser.setEnabled(true);
+				createAnal.setEnabled(true);
+				createAnal.setActionCommand("simulate");
+				createLearn.setEnabled(true);
+				createSbml.setEnabled(false);
+				saveButton.setEnabled(false);
+				saveasButton.setEnabled(false);
+				runButton.setEnabled(false);
+				refreshButton.setEnabled(false);
+				checkButton.setEnabled(false);
+				exportButton.setEnabled(false);
+				save.setEnabled(false);
+				run.setEnabled(false);
+				saveAs.setEnabled(false);
+				refresh.setEnabled(false);
+				check.setEnabled(false);
+				export.setEnabled(false);
+				viewRules.setEnabled(false);
+				viewTrace.setEnabled(false);
+				viewCircuit.setEnabled(false);
+				viewLog.setEnabled(false);
+				saveParam.setEnabled(false);
+				saveSbml.setEnabled(false);
+				saveTemp.setEnabled(false);
+			}
+			else if (tree.getFile().length() > 3
+					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".gcm")) {
+				viewModGraph.setEnabled(true);
+				viewModGraph.setActionCommand("graphDot");
+				viewModBrowser.setEnabled(false);
+				createAnal.setEnabled(true);
+				createAnal.setActionCommand("createSim");
+				createLearn.setEnabled(true);
+				createSbml.setEnabled(true);
+				saveButton.setEnabled(false);
+				saveasButton.setEnabled(false);
+				runButton.setEnabled(false);
+				refreshButton.setEnabled(false);
+				checkButton.setEnabled(false);
+				exportButton.setEnabled(false);
+				save.setEnabled(false);
+				run.setEnabled(false);
+				saveAs.setEnabled(false);
+				refresh.setEnabled(false);
+				check.setEnabled(false);
+				export.setEnabled(false);
+				viewRules.setEnabled(false);
+				viewTrace.setEnabled(false);
+				viewCircuit.setEnabled(false);
+				viewLog.setEnabled(false);
+				saveParam.setEnabled(false);
+				saveSbml.setEnabled(false);
+				saveTemp.setEnabled(false);
+			}
+			else if (tree.getFile().length() > 3
+					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".vhd")) {
+				viewModGraph.setEnabled(true);
+				viewModBrowser.setEnabled(false);
+				createAnal.setEnabled(true);
+				createAnal.setActionCommand("createSim");
+				createLearn.setEnabled(true);
+				createSynth.setEnabled(true);
+				createVer.setEnabled(true);
+				saveButton.setEnabled(false);
+				saveasButton.setEnabled(false);
+				runButton.setEnabled(false);
+				refreshButton.setEnabled(false);
+				checkButton.setEnabled(false);
+				exportButton.setEnabled(false);
+				save.setEnabled(false);
+				run.setEnabled(false);
+				saveAs.setEnabled(false);
+				refresh.setEnabled(false);
+				check.setEnabled(false);
+				export.setEnabled(false);
+				viewRules.setEnabled(false);
+				viewTrace.setEnabled(false);
+				viewCircuit.setEnabled(false);
+				viewLog.setEnabled(false);
+				saveParam.setEnabled(false);
+				saveSbml.setEnabled(false);
+				saveTemp.setEnabled(false);
+			}
+			else if (tree.getFile().length() > 1
+					&& tree.getFile().substring(tree.getFile().length() - 2).equals(".g")) {
+				viewModGraph.setEnabled(true);
+				viewModBrowser.setEnabled(false);
+				createAnal.setEnabled(true);
+				createAnal.setActionCommand("createSim");
+				createLearn.setEnabled(true);
+				createSynth.setEnabled(true);
+				createVer.setEnabled(true);
+				saveButton.setEnabled(false);
+				saveasButton.setEnabled(false);
+				runButton.setEnabled(false);
+				refreshButton.setEnabled(false);
+				checkButton.setEnabled(false);
+				exportButton.setEnabled(false);
+				save.setEnabled(false);
+				run.setEnabled(false);
+				saveAs.setEnabled(false);
+				refresh.setEnabled(false);
+				check.setEnabled(false);
+				export.setEnabled(false);
+				viewRules.setEnabled(false);
+				viewTrace.setEnabled(false);
+				viewCircuit.setEnabled(false);
+				viewLog.setEnabled(false);
+				saveParam.setEnabled(false);
+				saveSbml.setEnabled(false);
+				saveTemp.setEnabled(false);
+			}
+			else {
+				viewModGraph.setEnabled(false);
+				viewModBrowser.setEnabled(false);
+				createAnal.setEnabled(false);
+				createLearn.setEnabled(false);
+				createSbml.setEnabled(false);
+				createSynth.setEnabled(false);
+				createVer.setEnabled(false);
+				saveButton.setEnabled(false);
+				saveasButton.setEnabled(false);
+				runButton.setEnabled(false);
+				refreshButton.setEnabled(false);
+				checkButton.setEnabled(false);
+				exportButton.setEnabled(false);
+				save.setEnabled(false);
+				run.setEnabled(false);
+				saveAs.setEnabled(false);
+				refresh.setEnabled(false);
+				check.setEnabled(false);
+				export.setEnabled(false);
+				viewRules.setEnabled(false);
+				viewTrace.setEnabled(false);
+				viewCircuit.setEnabled(false);
+				viewLog.setEnabled(false);
+				saveParam.setEnabled(false);
+				saveSbml.setEnabled(false);
+				saveTemp.setEnabled(false);
+			}
 		}
 	}
-	
+
 	public void focusLost(FocusEvent e) {
 		treeFocused = false;
 		log.addText("focus lost");
