@@ -407,8 +407,9 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		removeInit = new RemoveButton("Remove Component", components);
 		editInit = new EditButton("Edit Component", components);
 		for (String s :gcm.getComponents().keySet() ) {
-			if ( gcm.getComponents().get(s).getProperty("ComponentFile") != null) {
-				components.addItem(s + " " + gcm.getComponents().get(s).getProperty("ComponentFile").replace(".gcm", "")+ " " + gcm.getComponentPortMap(s));
+			if ( gcm.getComponents().get(s).getProperty("gcm") != null) {
+				components.addItem(s + " " + gcm.getComponents().get(s).getProperty("gcm").replace(".gcm", "")
+						+ " " + gcm.getComponentPortMap(s));
 			}
 		}
 		initPanel = Utility.createPanel(this, "Components", components, addInit, removeInit, editInit);

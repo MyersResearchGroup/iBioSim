@@ -164,7 +164,7 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 				}
 				i++;
 			}
-			property.put("ComponentFile", selectedComponent);
+			property.put("gcm", selectedComponent);
 
 			if (selected != null && !oldName.equals(id)) {
 				gcm.changeComponentName(oldName, id);
