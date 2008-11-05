@@ -1,10 +1,10 @@
 package gcm2sbml.network;
 
 import gcm2sbml.parser.GCMFile;
+import gcm2sbml.parser.GCMParser;
 import gcm2sbml.util.GlobalConstants;
 import gcm2sbml.util.Utility;
 import gcm2sbml.visitor.AbstractPrintVisitor;
-import gcm2sbml.visitor.PrintActivatedBindingVisitor;
 import gcm2sbml.visitor.PrintActivatedBindingVisitor;
 import gcm2sbml.visitor.PrintActivatedProductionVisitor;
 import gcm2sbml.visitor.PrintBiochemicalVisitor;
@@ -20,7 +20,6 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.sbml.libsbml.Compartment;
 import org.sbml.libsbml.KineticLaw;
 import org.sbml.libsbml.Model;
 import org.sbml.libsbml.Parameter;
@@ -178,6 +177,7 @@ public class GeneticNetwork {
 			printPromoterBinding(document);
 			// System.out.println(counter++);
 			//checkConsistancy(document);
+			printComponents(document, filename);
 			PrintStream p = new PrintStream(new FileOutputStream(filename));
 
 			m.setName("Created from " + new File(filename).getName().replace("sbml", "gcm"));
@@ -481,6 +481,70 @@ public class GeneticNetwork {
 		visitor.setBiochemicalAbstraction(biochemicalAbstraction);
 		visitor.setDimerizationAbstraction(dimerizationAbstraction);
 		visitor.run();
+	}
+	
+	private void printComponents(SBMLDocument document, String filename) {
+		for (String s : properties.getComponents().keySet()) {
+			GCMParser parser = new GCMParser(currentRoot + File.separator +
+					properties.getComponents().get(s).getProperty("gcm"));
+			GeneticNetwork network = parser.buildNetwork();
+			SBMLDocument d =  network.outputSBML(filename);
+			Model m = d.getModel();
+			for (int i = 0; i < m.getNumSpecies(); i ++) {
+				Species spec = m.getSpecies(i);
+				String newName = s + "_" + spec.getId();
+				for (Object port : properties.getComponents().get(s).keySet()) {
+					if (spec.getId().equals((String) port)) {
+						newName = (String) port;
+					}
+				}
+				for (int j = 0; j < m.getNumReactions(); j ++) {
+					org.sbml.libsbml.Reaction r = m.getReaction(j);
+					for (int k = 0; k < r.getNumModifiers(); k ++) {
+						if(r.getModifier(k).getSpecies().equals(spec.getId())) {
+							r.getModifier(k).setSpecies(newName);
+						}
+					}
+					for (int k = 0; k < r.getNumProducts(); k ++) {
+						if(r.getProduct(k).getSpecies().equals(spec.getId())) {
+							r.getProduct(k).setSpecies(newName);
+						}
+					}
+					for (int k = 0; k < r.getNumReactants(); k ++) {
+						if(r.getReactant(k).getSpecies().equals(spec.getId())) {
+							r.getReactant(k).setSpecies(newName);
+						}
+					}
+					String formula = " " + r.getKineticLaw().getFormula() + " ";
+					formula.replace(spec.getId(), newName);
+					r.getKineticLaw().setFormula(formula);
+				}
+				spec.setId(newName);
+				boolean add = true;
+				for (int j = 0; j < document.getModel().getNumSpecies(); j ++) {
+					if (document.getModel().getSpecies(j).getId().equals(spec.getId())) {
+						add = false;
+					}
+				}
+				if (add) {
+					document.getModel().addSpecies(spec);
+				}
+			}
+			for (int i = 0; i < m.getNumReactions(); i ++) {
+				org.sbml.libsbml.Reaction r = m.getReaction(i);
+				String newName = s + "_" + r.getId();
+				r.setId(newName);
+				boolean add = true;
+				for (int j = 0; j < document.getModel().getNumReactions(); j ++) {
+					if (document.getModel().getReaction(j).getId().equals(r.getId())) {
+						add = false;
+					}
+				}
+				if (add) {
+					document.getModel().addReaction(r);
+				}
+			}
+		}
 	}
 
 	/**
