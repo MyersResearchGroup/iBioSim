@@ -89,6 +89,17 @@ public class GCMFile {
 				// buffer.deleteCharAt(buffer.length() - 1);
 				buffer.append("]\n");
 			}
+			for (String s : components.keySet()) {
+				buffer.append(s + " [");
+				Properties prop = components.get(s);
+				for (Object propName : prop.keySet()) {
+					if (propName.toString().equals("gcm")) {
+						buffer.append(checkCompabilitySave(propName.toString()) + "=\""
+								+ prop.getProperty(propName.toString()).toString()+ "\"");
+					}
+				}
+				buffer.append("]\n");
+			}
 			for (String s : influences.keySet()) {
 				buffer.append(getInput(s) + " -> "// + getArrow(s) + " "
 						+ getOutput(s) + " [");				
@@ -120,6 +131,18 @@ public class GCMFile {
 				}
 				buffer.append("]\n");
 			}
+			for (String s : components.keySet()) {
+				Properties prop = components.get(s);
+				for (Object propName : prop.keySet()) {
+					if (!propName.toString().equals("gcm") &&
+							!propName.toString().equals(GlobalConstants.ID)) {
+						buffer.append(s + " -> " +
+								prop.getProperty(propName.toString()).toString()
+								+ " [port=" + propName.toString());
+						buffer.append(", arrowhead=none]\n");
+					}
+				}
+			}
 			buffer.append("}\nGlobal {\n");
 			for (String s : defaultParameters.keySet()) {
 				if (globalParameters.containsKey(s)) {
@@ -147,6 +170,7 @@ public class GCMFile {
 				}
 				buffer.append("]\n");
 			}
+			/*
 			buffer.append("}\nComponents {\n");
 			for (String s : components.keySet()) {
 				buffer.append(s + " [");
@@ -164,6 +188,7 @@ public class GCMFile {
 				}
 				buffer.append("]\n");
 			}
+			*/
 			buffer.append("}\n");
 			buffer.append(GlobalConstants.SBMLFILE + "=\"" + sbmlFile + "\"\n");
 			if (bioAbs) {
@@ -204,7 +229,7 @@ public class GCMFile {
 			parseInfluences(data);
 			parseGlobal(data);
 			parsePromoters(data);
-			parseComponents(data);
+			//parseComponents(data);
 			parseSBMLFile(data);
 			parseBioAbs(data);
 			parseDimAbs(data);
@@ -357,7 +382,7 @@ public class GCMFile {
 		Properties c = components.get(s);
 		ArrayList<String> ports = new ArrayList<String>();
 		for (Object key : c.keySet()) {
-			if (!key.equals("ComponentFile")) {
+			if (!key.equals("gcm")) {
 				ports.add((String) key);
 			}
 		}
@@ -564,7 +589,16 @@ public class GCMFile {
 			if (properties.containsKey("label")) {
 				properties.put(GlobalConstants.ID, properties.getProperty("label").replace("\"", ""));
 			}
-			species.put(name, properties);
+			if (properties.containsKey("gcm")) {
+				if (properties.containsKey(GlobalConstants.TYPE)) {
+					properties.remove(GlobalConstants.TYPE);
+				}
+				properties.put("gcm", properties.getProperty("gcm").replace("\"", ""));
+				components.put(name, properties);
+			}
+			else {
+				species.put(name, properties);
+			}
 		}
 	}
 	
@@ -639,6 +673,7 @@ public class GCMFile {
 		}
 	}
 	
+	/*
 	private void parseComponents(StringBuffer data) {
 		Pattern network = Pattern.compile(COMPONENTS_LIST);
 		Matcher matcher = network.matcher(data.toString());
@@ -662,6 +697,7 @@ public class GCMFile {
 			components.put(name, properties);
 		}
 	}
+	*/
 
 	private void parseInfluences(StringBuffer data) {
 		Pattern pattern = Pattern.compile(REACTION);
@@ -690,44 +726,49 @@ public class GCMFile {
 				}
 			}
 
-			String name = "";
-			if (properties.containsKey("arrowhead")) {
-				if (properties.getProperty("arrowhead").indexOf("vee") != -1) {
-					properties.setProperty(GlobalConstants.TYPE,
-							GlobalConstants.ACTIVATION);
-					if (properties.containsKey(GlobalConstants.BIO) && properties.get(GlobalConstants.BIO).equals("yes")) {
-						name = matcher.group(2) + " +> " + matcher.group(5);
+			if (properties.containsKey("port")) {
+				components.get(matcher.group(2)).put(properties.get("port"), matcher.group(5));
+			}
+			else {
+				String name = "";
+				if (properties.containsKey("arrowhead")) {
+					if (properties.getProperty("arrowhead").indexOf("vee") != -1) {
+						properties.setProperty(GlobalConstants.TYPE,
+								GlobalConstants.ACTIVATION);
+						if (properties.containsKey(GlobalConstants.BIO) && properties.get(GlobalConstants.BIO).equals("yes")) {
+							name = matcher.group(2) + " +> " + matcher.group(5);
+						} else {
+							name = matcher.group(2) + " -> " + matcher.group(5);
+						}
 					} else {
-						name = matcher.group(2) + " -> " + matcher.group(5);
-					}
-				} else {
-					properties.setProperty(GlobalConstants.TYPE,
-							GlobalConstants.REPRESSION);
-					if (properties.containsKey(GlobalConstants.BIO) && properties.get(GlobalConstants.BIO).equals("yes")) {
-						name = matcher.group(2) + " +| " + matcher.group(5);
-					} else {
-						name = matcher.group(2) + " -| " + matcher.group(5);
+						properties.setProperty(GlobalConstants.TYPE,
+								GlobalConstants.REPRESSION);
+						if (properties.containsKey(GlobalConstants.BIO) && properties.get(GlobalConstants.BIO).equals("yes")) {
+							name = matcher.group(2) + " +| " + matcher.group(5);
+						} else {
+							name = matcher.group(2) + " -| " + matcher.group(5);
+						}
 					}
 				}
-			}
-			if (properties.getProperty(GlobalConstants.PROMOTER) != null) {
-				name = name + ", Promoter "
+				if (properties.getProperty(GlobalConstants.PROMOTER) != null) {
+					name = name + ", Promoter "
 						+ properties.getProperty(GlobalConstants.PROMOTER);
-			} else {
-				name = name + ", Promoter " + "default";
-			}
-			if (!properties.containsKey("label")) {
-				String label = properties.getProperty(GlobalConstants.PROMOTER);
-				if (label == null) {
-					label = "";
+				} else {
+					name = name + ", Promoter " + "default";
 				}
-				if (properties.containsKey(GlobalConstants.BIO) && properties.get(GlobalConstants.BIO).equals("yes")) {
-					label = label + "+";					
+				if (!properties.containsKey("label")) {
+					String label = properties.getProperty(GlobalConstants.PROMOTER);
+					if (label == null) {
+						label = "";
+					}
+					if (properties.containsKey(GlobalConstants.BIO) && properties.get(GlobalConstants.BIO).equals("yes")) {
+						label = label + "+";					
+					}
+					properties.put("label", "\""+label+"\"");
 				}
-				properties.put("label", "\""+label+"\"");
+				properties.put(GlobalConstants.NAME, name);
+				influences.put(name, properties);
 			}
-			properties.put(GlobalConstants.NAME, name);
-			influences.put(name, properties);
 		}
 	}
 
@@ -809,7 +850,7 @@ public class GCMFile {
 
 	private static final String PROMOTERS_LIST = "Promoters\\s\\{([^}]*)\\s\\}";
 	
-	private static final String COMPONENTS_LIST = "Components\\s\\{([^}]*)\\s\\}";
+	//private static final String COMPONENTS_LIST = "Components\\s\\{([^}]*)\\s\\}";
 	
 	private String sbmlFile = "";
 	
