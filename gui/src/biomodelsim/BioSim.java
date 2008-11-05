@@ -4512,12 +4512,22 @@ public class BioSim implements MouseListener, ActionListener, FocusListener {
 				for (int j = 0; j <= i; j++) {
 					String save = recentProjectPaths[j];
 					recentProjects[j].setText(projDir.split(separator)[projDir.split(separator).length - 1]);
-					file.insert(recentProjects[j], file.getItemCount() - 3 - numberRecentProj);
+					if (file.getItem(file.getItemCount() - 1) == exit) {
+						file.insert(recentProjects[j], file.getItemCount() - 3 - numberRecentProj);
+					}
+					else {
+						file.add(recentProjects[j]);
+					}
 					recentProjectPaths[j] = projDir;
 					projDir = save;
 				}
 				for (int j = i + 1; j < numberRecentProj; j++) {
-					file.insert(recentProjects[j], file.getItemCount() - 3 - numberRecentProj);
+					if (file.getItem(file.getItemCount() - 1) == exit) {
+						file.insert(recentProjects[j], file.getItemCount() - 3 - numberRecentProj);
+					}
+					else {
+						file.add(recentProjects[j]);
+					}
 				}
 				return;
 			}
@@ -4528,7 +4538,12 @@ public class BioSim implements MouseListener, ActionListener, FocusListener {
 		for (int i = 0; i < numberRecentProj; i++) {
 			String save = recentProjectPaths[i];
 			recentProjects[i].setText(projDir.split(separator)[projDir.split(separator).length - 1]);
-			file.insert(recentProjects[i], file.getItemCount() - 3 - numberRecentProj);
+			if (file.getItem(file.getItemCount() - 1) == exit) {
+				file.insert(recentProjects[i], file.getItemCount() - 3 - numberRecentProj);
+			}
+			else {
+				file.add(recentProjects[i]);
+			}
 			recentProjectPaths[i] = projDir;
 			projDir = save;
 		}
