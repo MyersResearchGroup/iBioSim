@@ -10,7 +10,6 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Properties;
-import java.util.Set;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JComboBox;
@@ -34,24 +33,42 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 
 	private HashMap<String, PropertyField> fields = null;
 
-	private Set<String> species;
+	private String[] species;
 
-	private String selectedComponent;
+	private String selectedComponent, oldPort;
 
 	public ComponentsPanel(String selected, PropertyList componentsList, PropertyList influences,
-			GCMFile gcm, Set<String> species, String selectedComponent) {
-		super(new GridLayout(species.size() + 2, 1));
+			GCMFile gcm, String[] species, String selectedComponent, String oldPort) {
+		super(new GridLayout(species.length + 2, 1));
 		this.selected = selected;
 		this.componentsList = componentsList;
 		this.influences = influences;
 		this.gcm = gcm;
 		this.species = species;
 		this.selectedComponent = selectedComponent;
+		this.oldPort = oldPort;
 
 		fields = new HashMap<String, PropertyField>();
 		portmapBox = new ArrayList<JComboBox>();
-		for (int i = 0; i < species.size(); i++) {
-			JComboBox port = new JComboBox(gcm.getSpecies().keySet().toArray(new String[0]));
+		for (int i = 0; i < species.length; i++) {
+			String[] specs = gcm.getSpecies().keySet().toArray(new String[0]);
+			int j, k;
+			String index;
+			for (j = 1; j < specs.length; j++) {
+				index = specs[j];
+				k = j;
+				while ((k > 0) && specs[k - 1].compareToIgnoreCase(index) > 0) {
+					specs[k] = specs[k - 1];
+					k = k - 1;
+				}
+				specs[k] = index;
+			}
+			String[] specsWithNone = new String[specs.length + 1];
+			specsWithNone[0] = "--none--";
+			for (int l = 1; l < specsWithNone.length; l++) {
+				specsWithNone[l] = specs[l - 1];
+			}
+			JComboBox port = new JComboBox(specsWithNone);
 			port.addActionListener(this);
 			portmapBox.add(port);
 		}
@@ -81,7 +98,12 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 			fields.get(GlobalConstants.ID).setValue(selected);
 			i = 0;
 			for (String s : species) {
-				portmapBox.get(i).setSelectedItem(prop.getProperty(s));
+				if (prop.containsKey(s)) {
+					portmapBox.get(i).setSelectedItem(prop.getProperty(s));
+				}
+				else {
+					portmapBox.get(i).setSelectedIndex(0);
+				}
 				i++;
 			}
 			// typeBox.setSelectedItem(prop.getProperty(GlobalConstants.TYPE));
@@ -137,7 +159,9 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 			}
 			int i = 0;
 			for (String s : species) {
-				property.put(s, portmapBox.get(i).getSelectedItem().toString());
+				if (!portmapBox.get(i).getSelectedItem().toString().equals("--none--")) {
+					property.put(s, portmapBox.get(i).getSelectedItem().toString());
+				}
 				i++;
 			}
 			property.put("ComponentFile", selectedComponent);
@@ -148,9 +172,23 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 				influences.addAllItem(gcm.getInfluences().keySet());
 			}
 			gcm.addComponent(id, property);
-			componentsList.removeItem(oldName + " " + selectedComponent.replace(".gcm", ""));
-			componentsList.addItem(id + " " + selectedComponent.replace(".gcm", ""));
-			componentsList.setSelectedValue(id + " " + selectedComponent.replace(".gcm", ""), true);
+			String newPort = "(";
+			boolean added = false;
+			for (int j = 0; j < species.length; j++) {
+				if (!portmapBox.get(j).getSelectedItem().toString().equals("--none--")) {
+					newPort += species[j] + "->" + portmapBox.get(j).getSelectedItem() + ", ";
+					added = true;
+				}
+			}
+			if (added) {
+				newPort = newPort.substring(0, newPort.length() - 2);
+			}
+			newPort += ")";
+			componentsList.removeItem(oldName + " " + selectedComponent.replace(".gcm", "") + " "
+					+ oldPort);
+			componentsList.addItem(id + " " + selectedComponent.replace(".gcm", "") + " " + newPort);
+			componentsList.setSelectedValue(id + " " + selectedComponent.replace(".gcm", "") + " "
+					+ newPort, true);
 
 		}
 		else if (value == JOptionPane.NO_OPTION) {

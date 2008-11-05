@@ -408,7 +408,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		editInit = new EditButton("Edit Component", components);
 		for (String s :gcm.getComponents().keySet() ) {
 			if ( gcm.getComponents().get(s).getProperty("ComponentFile") != null) {
-				components.addItem(s + " " + gcm.getComponents().get(s).getProperty("ComponentFile").replace(".gcm", ""));
+				components.addItem(s + " " + gcm.getComponents().get(s).getProperty("ComponentFile").replace(".gcm", "")+ " " + gcm.getComponentPortMap(s));
 			}
 		}
 		initPanel = Utility.createPanel(this, "Components", components, addInit, removeInit, editInit);
@@ -535,7 +535,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 						list.removeItem(name);
 					}
 					else {
-						JOptionPane.showMessageDialog(biosim.frame(), "Cannot remove component " + name
+						JOptionPane.showMessageDialog(biosim.frame(), "Cannot remove component " + name.split(" ")[0]
 								+ " because it is currently in other reactions");
 					}
 				}
@@ -609,6 +609,17 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 							components.add(s);
 						}
 					}
+					int i, j;
+					String index;
+					for (i = 1; i < components.size(); i++) {
+						index = components.get(i);
+						j = i;
+						while ((j > 0) && components.get(j - 1).compareToIgnoreCase(index) > 0) {
+							components.set(j, components.get(j - 1));
+							j = j - 1;
+						}
+						components.set(j, index);
+					}
 					comp = (String) JOptionPane.showInputDialog(biosim.frame(), "Choose a gcm to use as a component:",
 							"Component Editor", JOptionPane.PLAIN_MESSAGE, null, components
 									.toArray(new String[0]), null);
@@ -616,10 +627,24 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 				if (comp != null && !comp.equals("")) {
 					GCMFile getSpecs = new GCMFile();
 					getSpecs.load(path + File.separator + comp);
+					String oldPort = null;
 					if (selected != null) {
+						oldPort = selected.substring(selected.split(" ")[0].length() + selected.split(" ")[1].length() + 2);
 						selected = selected.split(" ")[0];
 					}
-					ComponentsPanel panel = new ComponentsPanel(selected, list, influences, gcm, getSpecs.getSpecies().keySet(), comp);
+					String[] specs = getSpecs.getSpecies().keySet().toArray(new String[0]);
+					int i, j;
+					String index;
+					for (i = 1; i < specs.length; i++) {
+						index = specs[i];
+						j = i;
+						while ((j > 0) && specs[j - 1].compareToIgnoreCase(index) > 0) {
+							specs[j] = specs[j - 1];
+							j = j - 1;
+						}
+						specs[j] = index;
+					}
+					ComponentsPanel panel = new ComponentsPanel(selected, list, influences, gcm, specs, comp, oldPort);
 				}
 			}
 			else if (getName().contains("Parameter")) {

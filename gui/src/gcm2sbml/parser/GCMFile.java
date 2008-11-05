@@ -8,6 +8,7 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Properties;
@@ -174,7 +175,6 @@ public class GCMFile {
 			p.print(buffer);
 			p.close();
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -351,6 +351,36 @@ public class GCMFile {
 	public HashMap<String, Properties> getComponents() {
 		return components;
 	}
+	
+	public String getComponentPortMap(String s) {
+		String portmap = "(";
+		Properties c = components.get(s);
+		ArrayList<String> ports = new ArrayList<String>();
+		for (Object key : c.keySet()) {
+			if (!key.equals("ComponentFile")) {
+				ports.add((String) key);
+			}
+		}
+		int i, j;
+		String index;
+		for (i = 1; i < ports.size(); i++) {
+			index = ports.get(i);
+			j = i;
+			while ((j > 0) && ports.get(j - 1).compareToIgnoreCase(index) > 0) {
+				ports.set(j, ports.get(j - 1));
+				j = j - 1;
+			}
+			ports.set(j, index);
+		}
+		if (ports.size() > 0) {
+			portmap += ports.get(0) + "->" + c.getProperty(ports.get(0));
+		}
+		for (int k = 1; k < ports.size(); k++) {
+			portmap += ", " + ports.get(k) + "->" + c.getProperty(ports.get(k));
+		}
+		portmap += ")";
+		return portmap;
+	}
 
 	public HashMap<String, Properties> getInfluences() {
 		return influences;
@@ -385,7 +415,7 @@ public class GCMFile {
 	
 	public boolean removeComponentCheck(String name) {
 		for (String s : influences.keySet()) {
-			if (s.contains(name)) {
+			if ((" " + s + " ").contains(" " + name + " ")) {
 				return false;
 			}
 		}
