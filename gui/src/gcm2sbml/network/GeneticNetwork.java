@@ -20,8 +20,6 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import javax.swing.JOptionPane;
-
 import org.sbml.libsbml.ASTNode;
 import org.sbml.libsbml.Constraint;
 import org.sbml.libsbml.Delay;
@@ -690,12 +688,19 @@ public class GeneticNetwork {
 				Species spec = m.getSpecies(i);
 				String newName = s + "_" + spec.getId();
 				for (Object port : properties.getComponents().get(s).keySet()) {
-					if (spec.getId().equals((String) port)) {
-						newName = (String) port;
+					if (spec.getId().equals(properties.getComponents().get(s).getProperty((String) port))) {
+						newName = "_" + s + "_" + (String) port;
 					}
 				}
 				updateVarId(true, spec.getId(), newName, d);
 				spec.setId(newName);
+			}
+			for (int i = 0; i < m.getNumSpecies(); i ++) {
+				Species spec = m.getSpecies(i);
+				if (spec.getId().startsWith("_" + s + "_")) {
+					updateVarId(true, spec.getId(), spec.getId().substring(2 + s.length()), d);
+					spec.setId(spec.getId().substring(2 + s.length()));
+				}
 				boolean add = true;
 				for (int j = 0; j < document.getModel().getNumSpecies(); j ++) {
 					if (document.getModel().getSpecies(j).getId().equals(spec.getId())) {
