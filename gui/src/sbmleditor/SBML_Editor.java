@@ -6626,6 +6626,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		s = s.replace("(" + origVar + " ", "(" + newVar + " ");
 		s = s.replace("(" + origVar + ",", "(" + newVar + ",");
 		s = s.replace(" " + origVar + ")", " " + newVar + ")");
+		s = s.replace(" " + origVar + "^", " " + newVar + "^");
 		return s.trim();
 	}
 
@@ -8885,8 +8886,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			}
 			document.getModel().setName(modelName.getText().trim());
 			SBMLWriter writer = new SBMLWriter();
-			writer.writeSBML(document, simDir + separator + stem + direct
-					+ separator + file.split(separator)[file.split(separator).length - 1]);
+			writer.writeSBML(document, simDir + separator + stem + direct + separator
+					+ file.split(separator)[file.split(separator).length - 1]);
 		}
 		catch (Exception e1) {
 			JOptionPane.showMessageDialog(biosim.frame(), "Unable to create sbml file.",

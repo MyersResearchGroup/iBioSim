@@ -20,6 +20,7 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.sbml.libsbml.ASTNode;
 import org.sbml.libsbml.KineticLaw;
 import org.sbml.libsbml.Model;
 import org.sbml.libsbml.Parameter;
@@ -30,6 +31,7 @@ import org.sbml.libsbml.Species;
 import org.sbml.libsbml.SpeciesReference;
 import org.sbml.libsbml.Unit;
 import org.sbml.libsbml.UnitDefinition;
+import org.sbml.libsbml.libsbml;
 
 /**
  * This class represents a genetic network
@@ -483,6 +485,96 @@ public class GeneticNetwork {
 		visitor.run();
 	}
 	
+	private ASTNode updateMathVar(ASTNode math, String origVar, String newVar) {
+		String s = updateFormulaVar(myFormulaToString(math), origVar, newVar);
+		return myParseFormula(s);
+	}
+	
+	private String myFormulaToString(ASTNode mathFormula) {
+		String formula = libsbml.formulaToString(mathFormula);
+		formula = formula.replaceAll("arccot", "acot");
+		formula = formula.replaceAll("arccoth", "acoth");
+		formula = formula.replaceAll("arccsc", "acsc");
+		formula = formula.replaceAll("arccsch", "acsch");
+		formula = formula.replaceAll("arcsec", "asec");
+		formula = formula.replaceAll("arcsech", "asech");
+		formula = formula.replaceAll("arccosh", "acosh");
+		formula = formula.replaceAll("arcsinh", "asinh");
+		formula = formula.replaceAll("arctanh", "atanh");
+		String newformula = formula.replaceFirst("00e", "0e");
+		while (!(newformula.equals(formula))) {
+			formula = newformula;
+			newformula = formula.replaceFirst("0e\\+", "e+");
+			newformula = newformula.replaceFirst("0e-", "e-");
+		}
+		formula = formula.replaceFirst("\\.e\\+", ".0e+");
+		formula = formula.replaceFirst("\\.e-", ".0e-");
+		return formula;
+	}
+	
+	private String updateFormulaVar(String s, String origVar, String newVar) {
+		s = " " + s + " ";
+		s = s.replace(" " + origVar + " ", " " + newVar + " ");
+		s = s.replace(" " + origVar + "(", " " + newVar + "(");
+		s = s.replace("(" + origVar + ")", "(" + newVar + ")");
+		s = s.replace("(" + origVar + " ", "(" + newVar + " ");
+		s = s.replace("(" + origVar + ",", "(" + newVar + ",");
+		s = s.replace(" " + origVar + ")", " " + newVar + ")");
+		s = s.replace(" " + origVar + "^", " " + newVar + "^");
+		return s.trim();
+	}
+	
+	private ASTNode myParseFormula(String formula) {
+		ASTNode mathFormula = libsbml.parseFormula(formula);
+		if (mathFormula == null)
+			return null;
+		setTimeAndTrigVar(mathFormula);
+		return mathFormula;
+	}
+	
+	private void setTimeAndTrigVar(ASTNode node) {
+		if (node.getType() == libsbml.AST_NAME) {
+			if (node.getName().equals("t")) {
+				node.setType(libsbml.AST_NAME_TIME);
+			}
+			else if (node.getName().equals("time")) {
+				node.setType(libsbml.AST_NAME_TIME);
+			}
+		}
+		if (node.getType() == libsbml.AST_FUNCTION) {
+			if (node.getName().equals("acot")) {
+				node.setType(libsbml.AST_FUNCTION_ARCCOT);
+			}
+			else if (node.getName().equals("acoth")) {
+				node.setType(libsbml.AST_FUNCTION_ARCCOTH);
+			}
+			else if (node.getName().equals("acsc")) {
+				node.setType(libsbml.AST_FUNCTION_ARCCSC);
+			}
+			else if (node.getName().equals("acsch")) {
+				node.setType(libsbml.AST_FUNCTION_ARCCSCH);
+			}
+			else if (node.getName().equals("asec")) {
+				node.setType(libsbml.AST_FUNCTION_ARCSEC);
+			}
+			else if (node.getName().equals("asech")) {
+				node.setType(libsbml.AST_FUNCTION_ARCSECH);
+			}
+			else if (node.getName().equals("acosh")) {
+				node.setType(libsbml.AST_FUNCTION_ARCCOSH);
+			}
+			else if (node.getName().equals("asinh")) {
+				node.setType(libsbml.AST_FUNCTION_ARCSINH);
+			}
+			else if (node.getName().equals("atanh")) {
+				node.setType(libsbml.AST_FUNCTION_ARCTANH);
+			}
+		}
+
+		for (int c = 0; c < node.getNumChildren(); c++)
+			setTimeAndTrigVar(node.getChild(c));
+	}
+	
 	private void printComponents(SBMLDocument document, String filename) {
 		for (String s : properties.getComponents().keySet()) {
 			GCMParser parser = new GCMParser(currentRoot + File.separator +
@@ -515,9 +607,8 @@ public class GeneticNetwork {
 							r.getReactant(k).setSpecies(newName);
 						}
 					}
-					String formula = " " + r.getKineticLaw().getFormula() + " ";
-					formula.replace(spec.getId(), newName);
-					r.getKineticLaw().setFormula(formula);
+					r.getKineticLaw().setMath(
+							updateMathVar(r.getKineticLaw().getMath(), spec.getId(), newName));
 				}
 				spec.setId(newName);
 				boolean add = true;
