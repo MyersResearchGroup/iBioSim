@@ -20,15 +20,25 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import javax.swing.JOptionPane;
+
 import org.sbml.libsbml.ASTNode;
+import org.sbml.libsbml.Constraint;
+import org.sbml.libsbml.Delay;
+import org.sbml.libsbml.EventAssignment;
+import org.sbml.libsbml.InitialAssignment;
 import org.sbml.libsbml.KineticLaw;
 import org.sbml.libsbml.Model;
+import org.sbml.libsbml.ModifierSpeciesReference;
 import org.sbml.libsbml.Parameter;
+import org.sbml.libsbml.Rule;
 import org.sbml.libsbml.SBMLDocument;
 import org.sbml.libsbml.SBMLReader;
 import org.sbml.libsbml.SBMLWriter;
 import org.sbml.libsbml.Species;
 import org.sbml.libsbml.SpeciesReference;
+import org.sbml.libsbml.StoichiometryMath;
+import org.sbml.libsbml.Trigger;
 import org.sbml.libsbml.Unit;
 import org.sbml.libsbml.UnitDefinition;
 import org.sbml.libsbml.libsbml;
@@ -575,6 +585,100 @@ public class GeneticNetwork {
 			setTimeAndTrigVar(node.getChild(c));
 	}
 	
+	private void updateVarId(boolean isSpecies, String origId, String newId, SBMLDocument document) {
+		if (origId.equals(newId))
+			return;
+		Model model = document.getModel();
+		for (int i = 0; i < model.getNumReactions(); i++) {
+			org.sbml.libsbml.Reaction reaction = (org.sbml.libsbml.Reaction) model.getListOfReactions().get(i);
+			for (int j = 0; j < reaction.getNumProducts(); j++) {
+				if (reaction.getProduct(j).isSetSpecies()) {
+					SpeciesReference specRef = reaction.getProduct(j);
+					if (isSpecies && origId.equals(specRef.getSpecies())) {
+						specRef.setSpecies(newId);
+					}
+					if (specRef.isSetStoichiometryMath()) {
+						StoichiometryMath sm = new StoichiometryMath(updateMathVar(specRef
+								.getStoichiometryMath().getMath(), origId, newId));
+						specRef.setStoichiometryMath(sm);
+					}
+				}
+			}
+			if (isSpecies) {
+				for (int j = 0; j < reaction.getNumModifiers(); j++) {
+					if (reaction.getModifier(j).isSetSpecies()) {
+						ModifierSpeciesReference specRef = reaction.getModifier(j);
+						if (origId.equals(specRef.getSpecies())) {
+							specRef.setSpecies(newId);
+						}
+					}
+				}
+			}
+			for (int j = 0; j < reaction.getNumReactants(); j++) {
+				if (reaction.getReactant(j).isSetSpecies()) {
+					SpeciesReference specRef = reaction.getReactant(j);
+					if (isSpecies && origId.equals(specRef.getSpecies())) {
+						specRef.setSpecies(newId);
+					}
+					if (specRef.isSetStoichiometryMath()) {
+						StoichiometryMath sm = new StoichiometryMath(updateMathVar(specRef
+								.getStoichiometryMath().getMath(), origId, newId));
+						specRef.setStoichiometryMath(sm);
+					}
+				}
+			}
+			reaction.getKineticLaw().setMath(
+					updateMathVar(reaction.getKineticLaw().getMath(), origId, newId));
+		}
+		if (model.getNumInitialAssignments() > 0) {
+			for (int i = 0; i < model.getNumInitialAssignments(); i++) {
+				InitialAssignment init = (InitialAssignment) model.getListOfInitialAssignments().get(i);
+				if (origId.equals(init.getSymbol())) {
+					init.setSymbol(newId);
+				}
+				init.setMath(updateMathVar(init.getMath(), origId, newId));
+			}
+		}
+		if (model.getNumRules() > 0) {
+			for (int i = 0; i < model.getNumRules(); i++) {
+				Rule rule = (Rule) model.getListOfRules().get(i);
+				if (rule.isSetVariable() && origId.equals(rule.getVariable())) {
+					rule.setVariable(newId);
+				}
+				rule.setMath(updateMathVar(rule.getMath(), origId, newId));
+			}
+		}
+		if (model.getNumConstraints() > 0) {
+			for (int i = 0; i < model.getNumConstraints(); i++) {
+				Constraint constraint = (Constraint) model.getListOfConstraints().get(i);
+				constraint.setMath(updateMathVar(constraint.getMath(), origId, newId));
+			}
+		}
+		if (model.getNumEvents() > 0) {
+			for (int i = 0; i < model.getNumEvents(); i++) {
+				org.sbml.libsbml.Event event = (org.sbml.libsbml.Event) model.getListOfEvents().get(i);
+				if (event.isSetTrigger()) {
+					Trigger trigger = new Trigger(updateMathVar(event.getTrigger().getMath(), origId, newId));
+					event.setTrigger(trigger);
+				}
+				if (event.isSetDelay()) {
+					Delay delay = new Delay(updateMathVar(event.getDelay().getMath(), origId, newId));
+					delay.setSBMLDocument(document);
+					event.setDelay(delay);
+				}
+				for (int j = 0; j < event.getNumEventAssignments(); j++) {
+					EventAssignment ea = (EventAssignment) event.getListOfEventAssignments().get(j);
+					if (ea.getVariable().equals(origId)) {
+						ea.setVariable(newId);
+					}
+					if (ea.isSetMath()) {
+						ea.setMath(updateMathVar(ea.getMath(), origId, newId));
+					}
+				}
+			}
+		}
+	}
+	
 	private void printComponents(SBMLDocument document, String filename) {
 		for (String s : properties.getComponents().keySet()) {
 			GCMParser parser = new GCMParser(currentRoot + File.separator +
@@ -590,26 +694,7 @@ public class GeneticNetwork {
 						newName = (String) port;
 					}
 				}
-				for (int j = 0; j < m.getNumReactions(); j ++) {
-					org.sbml.libsbml.Reaction r = m.getReaction(j);
-					for (int k = 0; k < r.getNumModifiers(); k ++) {
-						if(r.getModifier(k).getSpecies().equals(spec.getId())) {
-							r.getModifier(k).setSpecies(newName);
-						}
-					}
-					for (int k = 0; k < r.getNumProducts(); k ++) {
-						if(r.getProduct(k).getSpecies().equals(spec.getId())) {
-							r.getProduct(k).setSpecies(newName);
-						}
-					}
-					for (int k = 0; k < r.getNumReactants(); k ++) {
-						if(r.getReactant(k).getSpecies().equals(spec.getId())) {
-							r.getReactant(k).setSpecies(newName);
-						}
-					}
-					r.getKineticLaw().setMath(
-							updateMathVar(r.getKineticLaw().getMath(), spec.getId(), newName));
-				}
+				updateVarId(true, spec.getId(), newName, d);
 				spec.setId(newName);
 				boolean add = true;
 				for (int j = 0; j < document.getModel().getNumSpecies(); j ++) {
@@ -624,6 +709,7 @@ public class GeneticNetwork {
 			for (int i = 0; i < m.getNumReactions(); i ++) {
 				org.sbml.libsbml.Reaction r = m.getReaction(i);
 				String newName = s + "_" + r.getId();
+				updateVarId(false, r.getId(), newName, d);
 				r.setId(newName);
 				boolean add = true;
 				for (int j = 0; j < document.getModel().getNumReactions(); j ++) {
