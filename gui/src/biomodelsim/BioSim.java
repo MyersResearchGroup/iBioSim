@@ -5193,7 +5193,7 @@ public class BioSim implements MouseListener, MouseMotionListener, ActionListene
 		Container container = frame.getContentPane();
 			Component deepComponent = SwingUtilities.getDeepestComponentAt(container,
 					containerPoint.x, containerPoint.y);
-			log.addText(deepComponent.toString());
+			//log.addText(deepComponent.toString());
 		if (tabFocused) {
 				if ((component instanceof JButton) || (component instanceof JTree)) {
 					//log.addText("set invisible");
@@ -5204,12 +5204,12 @@ public class BioSim implements MouseListener, MouseMotionListener, ActionListene
 			//log.addText("set invisible");
 			frame.getGlassPane().setVisible(false);
 			if (!((deepComponent instanceof JTree) || (deepComponent instanceof JButton))) {
-				log.addText(deepComponent.toString());
+				//log.addText(deepComponent.toString());
 				tabFocused = true;
 				enableTabMenu(tab.getSelectedIndex());
 			}
 			else if (deepComponent instanceof JButton) {
-				log.addText("on button");
+				//log.addText("on button");
 				deepComponent.dispatchEvent(new MouseEvent(container,
                         e.getID(),
                         e.getWhen(),
