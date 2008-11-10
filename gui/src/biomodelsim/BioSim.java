@@ -30,6 +30,8 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -96,7 +98,7 @@ import datamanager.DataManager;
  * @author Curtis Madsen
  */
 
-public class BioSim implements MouseListener, MouseMotionListener, ActionListener {
+public class BioSim implements MouseListener, MouseMotionListener, ActionListener, FocusListener {
 
 	private JFrame frame; // Frame where components of the GUI are displayed
 
@@ -191,7 +193,7 @@ public class BioSim implements MouseListener, MouseMotionListener, ActionListene
 
 	private Pattern IDpat = Pattern.compile("([a-zA-Z]|_)([a-zA-Z]|[0-9]|_)*");
 
-	private boolean lema, tabFocused;
+	private boolean lema, tabFocused, menuSelected = false;
 
 	private JMenuItem copy, rename, delete, save, saveAs, saveAsGcm, saveAsGraph, saveAsSbml,
 			saveAsTemplate, saveAsLhpn, check, run, export, refresh, viewCircuit, viewRules,
@@ -683,6 +685,11 @@ public class BioSim implements MouseListener, MouseMotionListener, ActionListene
 		// tools.add(createSbml);
 		// }
 		root = null;
+		file.addMouseMotionListener(this);
+		edit.addMouseMotionListener(this);
+		view.addMouseMotionListener(this);
+		tools.addMouseMotionListener(this);
+		help.addMouseMotionListener(this);
 
 		// Create recent project menu items
 		numberRecentProj = 0;
@@ -884,6 +891,7 @@ public class BioSim implements MouseListener, MouseMotionListener, ActionListene
 		frame.setContentPane(mainPanel);
 		frame.setJMenuBar(menuBar);
 		frame.addMouseListener(this);
+		menuBar.addMouseListener(this);
 		//tree.addMouseMotionListener(this);
 		frame.getGlassPane().addMouseListener(this);
 		//frame.getGlassPane().addMouseListener(this);
@@ -5187,6 +5195,7 @@ public class BioSim implements MouseListener, MouseMotionListener, ActionListene
 	}
 
 	public void mousePressed(MouseEvent e) {
+		//log.addText("pressed");
 		//frame.getGlassPane().setVisible(false);
 		Point containerPoint = e.getPoint();
 		Component component = e.getComponent();
@@ -5203,21 +5212,29 @@ public class BioSim implements MouseListener, MouseMotionListener, ActionListene
 		else if (!tabFocused && !(e.getComponent() instanceof JTree)) {
 			//log.addText("set invisible");
 			frame.getGlassPane().setVisible(false);
-			if (!((deepComponent instanceof JTree) || (deepComponent instanceof JButton))) {
+			//log.addText(deepComponent.toString());
+			if (!((deepComponent instanceof JTree) || (deepComponent instanceof JButton) || (deepComponent instanceof JToolBar))) {
 				//log.addText(deepComponent.toString());
 				tabFocused = true;
 				enableTabMenu(tab.getSelectedIndex());
 			}
-			else if (deepComponent instanceof JButton) {
+			else if ((deepComponent instanceof JButton) || (deepComponent instanceof JToolBar)) {
 				//log.addText("on button");
-				deepComponent.dispatchEvent(new MouseEvent(container,
+				Point glassPanePoint = e.getPoint();
+				Component glassPane = frame.getGlassPane();
+				Point componentPoint = SwingUtilities.convertPoint(
+                        glassPane,
+                        glassPanePoint,
+                        deepComponent);
+				deepComponent.dispatchEvent(new MouseEvent(deepComponent,
                         e.getID(),
                         e.getWhen(),
                         e.getModifiers(),
-                        containerPoint.x,
-                        containerPoint.y,
+                        componentPoint.x,
+                        componentPoint.y,
                         e.getClickCount(),
                         e.isPopupTrigger()));
+				//deepComponent.dispatchEvent(new ActionEvent(deepComponent, e.getID(), ""));
 			}
 		}
 		if (e.isPopupTrigger() && tree.getFile() != null) {
@@ -5885,7 +5902,8 @@ public class BioSim implements MouseListener, MouseMotionListener, ActionListene
 	}
 
 	public void mouseReleased(MouseEvent e) {
-		//log.addText("released");
+		//log.addText(e.getComponent().toString());
+		//mouseComponent = e.getComponent();
 		if (tabFocused) {
 			int selectedTab = tab.indexAtLocation(e.getPoint().x, e.getPoint().y);
 			enableTabMenu(selectedTab);
@@ -6227,13 +6245,30 @@ public class BioSim implements MouseListener, MouseMotionListener, ActionListene
 	}
 	
 	public void mouseMoved(MouseEvent e) {
-		//log.addText("mouse moved");
-		if (!tabFocused) {
-			//log.addText("set visible");
-			frame.getGlassPane().setVisible(true);
+		//log.addText(mouseComponent.toString());
+		if (!menuSelected) {
+			if (tabFocused) {
+				int selectedTab = tab.indexAtLocation(e.getPoint().x, e.getPoint().y);
+				enableTabMenu(selectedTab);
+			}
+			else if (tree.getFile() != null) {
+				enableTreeMenu();
+			}
+		}
+		if (e.getComponent() instanceof JMenu) {
+			menuSelected = true;
 		}
 		else {
-			frame.getGlassPane().setVisible(false);
+			menuSelected = false;
+		}
+	}
+	
+	public void focusLost(FocusEvent e) {
+		//mouseReleased();
+		//log.addText(mouseComponent.toString());
+		tabFocused = true;
+		if (!menuSelected) {
+			enableTabMenu(tab.getSelectedIndex());
 		}
 	}
 
@@ -7006,6 +7041,9 @@ public class BioSim implements MouseListener, MouseMotionListener, ActionListene
 	}
 	
 	public void mouseDragged(MouseEvent e) {
+	}
+	
+	public void focusGained(FocusEvent e) {
 	}
 
 	public JMenuItem getExitButton() {
