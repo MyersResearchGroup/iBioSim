@@ -1045,9 +1045,11 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 			else {
 				prop.setProperty("genenet.find.base.prob", "false");
 			}
+			log.addText("Saving learn parameters to file:\n" + directory + separator + lrnFile + "\n");
 			FileOutputStream out = new FileOutputStream(new File(directory + separator + lrnFile));
 			prop.store(out, learnFile);
 			out.close();
+			log.addText("Creating levels file:\n" + directory + separator + "levels.lvl\n");
 			FileWriter write = new FileWriter(new File(directory + separator + "levels.lvl"));
 			write.write("time, 0\n");
 			for (int i = 0; i < species.size(); i++) {
@@ -1322,15 +1324,15 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 	public boolean hasChanged() {
 		return change;
 	}
-	
+
 	public boolean getViewGcmEnabled() {
 		return viewGcm.isEnabled();
 	}
-	
+
 	public boolean getSaveGcmEnabled() {
 		return saveGcm.isEnabled();
 	}
-	
+
 	public boolean getViewLogEnabled() {
 		return viewLog.isEnabled();
 	}
