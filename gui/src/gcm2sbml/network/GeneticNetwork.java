@@ -157,11 +157,10 @@ public class GeneticNetwork {
 		document.setModel(m);
 		Utility.addCompartments(document, compartment);
 		document.getModel().getCompartment(compartment).setSize(1);
-		outputSBML(filename, document);
-		return document;
+		return outputSBML(filename, document);
 	}
 
-	public void outputSBML(String filename, SBMLDocument document) {
+	public SBMLDocument outputSBML(String filename, SBMLDocument document) {
 		try {
 			Model m = document.getModel();
 			//checkConsistancy(document);
@@ -196,6 +195,7 @@ public class GeneticNetwork {
 			p.print(writer.writeToString(document));
 
 			p.close();
+			return document;
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new IllegalStateException("Unable to output to SBML");
@@ -208,17 +208,16 @@ public class GeneticNetwork {
 	 * @param filename
 	 * @return the sbml document
 	 */
-	public void mergeSBML(String filename) {
+	public SBMLDocument mergeSBML(String filename) {
 		try {			
 			if (sbmlDocument.equals("")) {
-				outputSBML(filename);
-				return;
+				return outputSBML(filename);
 			}
 
 			SBMLDocument document = new SBMLReader().readSBML(currentRoot + sbmlDocument);
 			//checkConsistancy(document);
 			currentDocument = document;
-			outputSBML(filename, document);
+			return outputSBML(filename, document);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new IllegalStateException("Unable to output to SBML");
@@ -677,55 +676,83 @@ public class GeneticNetwork {
 		}
 	}
 	
+	private void unionSBML(SBMLDocument mainDoc, SBMLDocument doc, String compName) {
+		Model m = doc.getModel();
+		for (int i = 0; i < m.getNumSpecies(); i ++) {
+			Species spec = m.getSpecies(i);
+			if (!spec.getId().equals("RNAP")) {
+				String newName = compName + "_" + spec.getId();
+				for (Object port : properties.getComponents().get(compName).keySet()) {
+					if (spec.getId().equals(properties.getComponents().get(compName).getProperty((String) port))) {
+						newName = "_" + compName + "_" + (String) port;
+						int removeDeg = -1;
+						for (int j = 0; j < m.getNumReactions(); j ++) {
+							org.sbml.libsbml.Reaction r = m.getReaction(j);
+							if (r.getId().equals("Degradation_" + spec.getId())) {
+								removeDeg = j;
+							}
+						}
+						if (removeDeg != -1) {
+							m.getListOfReactions().remove(removeDeg);
+						}
+					}
+				}
+				updateVarId(true, spec.getId(), newName, doc);
+				spec.setId(newName);
+			}
+		}
+		for (int i = 0; i < m.getNumSpecies(); i ++) {
+			Species spec = m.getSpecies(i);
+			if (spec.getId().startsWith("_" + compName + "_")) {
+				updateVarId(true, spec.getId(), spec.getId().substring(2 + compName.length()), doc);
+				spec.setId(spec.getId().substring(2 + compName.length()));
+			}
+			boolean add = true;
+			for (int j = 0; j < mainDoc.getModel().getNumSpecies(); j ++) {
+				if (mainDoc.getModel().getSpecies(j).getId().equals(spec.getId())) {
+					add = false;
+				}
+			}
+			if (add) {
+				mainDoc.getModel().addSpecies(spec);
+			}
+		}
+		for (int i = 0; i < m.getNumReactions(); i ++) {
+			org.sbml.libsbml.Reaction r = m.getReaction(i);
+			String newName = compName + "_" + r.getId();
+			updateVarId(false, r.getId(), newName, doc);
+			r.setId(newName);
+			boolean add = true;
+			for (int j = 0; j < mainDoc.getModel().getNumReactions(); j ++) {
+				if (mainDoc.getModel().getReaction(j).getId().equals(r.getId())) {
+					add = false;
+				}
+			}
+			if (add) {
+				mainDoc.getModel().addReaction(r);
+			}
+		}
+		for (int i = 0; i < m.getNumUnitDefinitions(); i ++) {
+			UnitDefinition u = m.getUnitDefinition(i);
+			boolean add = true;
+			for (int j = 0; j < mainDoc.getModel().getNumUnitDefinitions(); j ++) {
+				if (mainDoc.getModel().getUnitDefinition(j).getId().equals(u.getId())) {
+					add = false;
+				}
+			}
+			if (add) {
+				mainDoc.getModel().addUnitDefinition(u);
+			}
+		}
+	}
+	
 	private void printComponents(SBMLDocument document, String filename) {
 		for (String s : properties.getComponents().keySet()) {
 			GCMParser parser = new GCMParser(currentRoot + File.separator +
 					properties.getComponents().get(s).getProperty("gcm"));
 			GeneticNetwork network = parser.buildNetwork();
-			SBMLDocument d =  network.outputSBML(filename);
-			Model m = d.getModel();
-			for (int i = 0; i < m.getNumSpecies(); i ++) {
-				Species spec = m.getSpecies(i);
-				String newName = s + "_" + spec.getId();
-				for (Object port : properties.getComponents().get(s).keySet()) {
-					if (spec.getId().equals(properties.getComponents().get(s).getProperty((String) port))) {
-						newName = "_" + s + "_" + (String) port;
-					}
-				}
-				updateVarId(true, spec.getId(), newName, d);
-				spec.setId(newName);
-			}
-			for (int i = 0; i < m.getNumSpecies(); i ++) {
-				Species spec = m.getSpecies(i);
-				if (spec.getId().startsWith("_" + s + "_")) {
-					updateVarId(true, spec.getId(), spec.getId().substring(2 + s.length()), d);
-					spec.setId(spec.getId().substring(2 + s.length()));
-				}
-				boolean add = true;
-				for (int j = 0; j < document.getModel().getNumSpecies(); j ++) {
-					if (document.getModel().getSpecies(j).getId().equals(spec.getId())) {
-						add = false;
-					}
-				}
-				if (add) {
-					document.getModel().addSpecies(spec);
-				}
-			}
-			for (int i = 0; i < m.getNumReactions(); i ++) {
-				org.sbml.libsbml.Reaction r = m.getReaction(i);
-				String newName = s + "_" + r.getId();
-				updateVarId(false, r.getId(), newName, d);
-				r.setId(newName);
-				boolean add = true;
-				for (int j = 0; j < document.getModel().getNumReactions(); j ++) {
-					if (document.getModel().getReaction(j).getId().equals(r.getId())) {
-						add = false;
-					}
-				}
-				if (add) {
-					document.getModel().addReaction(r);
-				}
-			}
+			SBMLDocument d =  network.mergeSBML(filename);
+			unionSBML(document, d, s);
 		}
 	}
 
