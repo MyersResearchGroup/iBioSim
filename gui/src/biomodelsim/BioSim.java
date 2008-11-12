@@ -5982,6 +5982,8 @@ public class BioSim implements MouseListener, MouseMotionListener, ActionListene
 					// sbml.addMouseListener(this);
 					simTab.addTab("Parameter Editor", sbml);
 					simTab.getComponentAt(simTab.getComponents().length - 1).setName("SBML Editor");
+					simTab.addTab("SBML Elements", sbml.getElementsPanel());
+					simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
 					Graph tsdGraph = reb2sac.createGraph(null);
 					// tsdGraph.addMouseListener(this);
 					simTab.addTab("TSD Graph", tsdGraph);
@@ -6077,6 +6079,8 @@ public class BioSim implements MouseListener, MouseMotionListener, ActionListene
 					// sbml.addMouseListener(this);
 					simTab.addTab("Parameter Editor", sbml);
 					simTab.getComponentAt(simTab.getComponents().length - 1).setName("SBML Editor");
+					simTab.addTab("SBML Elements", sbml.getElementsPanel());
+					simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
 					Graph tsdGraph = reb2sac.createGraph(null);
 					// tsdGraph.addMouseListener(this);
 					simTab.addTab("TSD Graph", tsdGraph);
@@ -6596,6 +6600,8 @@ public class BioSim implements MouseListener, MouseMotionListener, ActionListene
 						// sbml.addMouseListener(this);
 						simTab.addTab("Parameter Editor", sbml);
 						simTab.getComponentAt(simTab.getComponents().length - 1).setName("SBML Editor");
+						simTab.addTab("SBML Elements", sbml.getElementsPanel());
+						simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
 						// if (open != null) {
 						Graph tsdGraph = reb2sac.createGraph(open);
 						// tsdGraph.addMouseListener(this);
@@ -6813,6 +6819,8 @@ public class BioSim implements MouseListener, MouseMotionListener, ActionListene
 			// sbml.addMouseListener(this);
 			simTab.addTab("Parameter Editor", sbml);
 			simTab.getComponentAt(simTab.getComponents().length - 1).setName("SBML Editor");
+			simTab.addTab("SBML Elements", sbml.getElementsPanel());
+			simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
 			Graph tsdGraph = reb2sac.createGraph(null);
 			// tsdGraph.addMouseListener(this);
 			simTab.addTab("TSD Graph", tsdGraph);
@@ -6944,6 +6952,8 @@ public class BioSim implements MouseListener, MouseMotionListener, ActionListene
 							((SBML_Editor) (sim.getComponentAt(j))).setDirty(dirty);
 							new File(properties).delete();
 							new File(properties.replace(".sim", ".temp")).renameTo(new File(properties));
+							sim.setComponentAt(j + 1, ((SBML_Editor) (sim.getComponentAt(j))).getElementsPanel());
+							sim.getComponentAt(j + 1).setName("");
 						}
 					}
 				}
