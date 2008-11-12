@@ -798,6 +798,81 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		}
 	}
 
+	public JScrollPane getElementsPanel() {
+		if (paramsOnly) {
+			int initsNum = 0;
+			if (inits.length > 0) {
+				initsNum += inits.length + 1;
+			}
+			int rulNum = 0;
+			if (rul.length > 0) {
+				rulNum += rul.length + 1;
+			}
+			int consNum = 0;
+			if (cons.length > 0) {
+				consNum += cons.length + 1;
+			}
+			int evNum = 0;
+			if (ev.length > 0) {
+				evNum += ev.length + 1;
+			}
+			JPanel elements = new JPanel(new GridLayout(1, 4));
+			if (initsNum > 0) {
+				JPanel initsPanel = new JPanel(new GridLayout(initsNum, 1));
+				initsPanel.add(new JLabel("Initial Assignments:"));
+				for (int i = 0; i < inits.length; i++) {
+					initsPanel.add(new JCheckBox(inits[i]));
+				}
+				JPanel initial = new JPanel();
+				((FlowLayout) initial.getLayout()).setAlignment(FlowLayout.LEFT);
+				initial.add(initsPanel);
+				elements.add(initial);
+			}
+			if (rul.length > 0) {
+				JPanel rulPanel = new JPanel(new GridLayout(rulNum, 1));
+				rulPanel.add(new JLabel("Rules:"));
+				for (int i = 0; i < rul.length; i++) {
+					rulPanel.add(new JCheckBox(rul[i]));
+				}
+				JPanel rules = new JPanel();
+				((FlowLayout) rules.getLayout()).setAlignment(FlowLayout.LEFT);
+				rules.add(rulPanel);
+				elements.add(rules);
+			}
+			if (cons.length > 0) {
+				JPanel consPanel = new JPanel(new GridLayout(consNum, 1));
+				consPanel.add(new JLabel("Constaints:"));
+				for (int i = 0; i < cons.length; i++) {
+					consPanel.add(new JCheckBox(cons[i]));
+				}
+				JPanel constaints = new JPanel();
+				((FlowLayout) constaints.getLayout()).setAlignment(FlowLayout.LEFT);
+				constaints.add(consPanel);
+				elements.add(constaints);
+			}
+			if (ev.length > 0) {
+				JPanel evPanel = new JPanel(new GridLayout(evNum, 1));
+				evPanel.add(new JLabel("Events:"));
+				for (int i = 0; i < ev.length; i++) {
+					evPanel.add(new JCheckBox(ev[i]));
+				}
+				JPanel events = new JPanel();
+				((FlowLayout) events.getLayout()).setAlignment(FlowLayout.LEFT);
+				events.add(evPanel);
+				elements.add(events);
+			}
+			JPanel elementsPanel = new JPanel();
+			((FlowLayout) elementsPanel.getLayout()).setAlignment(FlowLayout.LEFT);
+			elementsPanel.add(elements);
+			JScrollPane scroll = new JScrollPane();
+			scroll.setViewportView(elements);
+			return scroll;
+		}
+		else {
+			return null;
+		}
+	}
+
 	/**
 	 * Private helper method to create definitions/types frame.
 	 */
