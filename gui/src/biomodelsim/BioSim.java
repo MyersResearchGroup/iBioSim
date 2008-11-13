@@ -67,9 +67,7 @@ import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.JTree;
 import javax.swing.SwingUtilities;
-import javax.swing.InputMap;
 import javax.swing.AbstractAction;
-import javax.swing.ActionMap;
 import javax.swing.Action;
 
 import tabs.CloseAndMaxTabbedPane;
@@ -511,7 +509,6 @@ public class BioSim implements MouseListener, MouseMotionListener, ActionListene
 		// ShortCutKey));
 		openProj.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ShortCutKey));
 		close.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, ShortCutKey));
-<<<<<<< BioSim.java
 		closeAll.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, ShortCutKey
 				| KeyEvent.SHIFT_MASK));
 		// saveAsMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,
@@ -532,30 +529,6 @@ public class BioSim implements MouseListener, MouseMotionListener, ActionListene
 		// ShortCutKey));
 		// about.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A,
 		// ShortCutKey));
-=======
-		closeAll.setAccelerator(KeyStroke
-				.getKeyStroke(KeyEvent.VK_W, ShortCutKey | KeyEvent.SHIFT_MASK));
-		// newMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N,
-		// ShortCutKey
-		// | KeyEvent.ALT_DOWN_MASK));
-		// saveAsMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,
-		// ShortCutKey | KeyEvent.ALT_DOWN_MASK));
-		// importMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I,
-		// ShortCutKey | KeyEvent.ALT_DOWN_MASK));
-		// exportMenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E,
-		// ShortCutKey | KeyEvent.ALT_DOWN_MASK));
-		// viewModel.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M,
-		// ShortCutKey | KeyEvent.ALT_DOWN_MASK));
-		// newCircuit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G,
-		// ShortCutKey));
-		// newModel.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,
-		// ShortCutKey));
-		// newVhdl.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V,
-		// ShortCutKey));
-		// newLhpn.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L,
-		// ShortCutKey));
-		// about.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ShortCutKey));
->>>>>>> 1.225
 		manual.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, ShortCutKey));
 		save.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ShortCutKey));
 		run.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, ShortCutKey));
@@ -566,7 +539,6 @@ public class BioSim implements MouseListener, MouseMotionListener, ActionListene
 		refresh.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0));
 		createAnal.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ShortCutKey));
 		createLearn.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, ShortCutKey));
-<<<<<<< BioSim.java
 		Action newAction = new NewAction();
 		Action saveAction = new SaveAction();
 		Action importAction = new ImportAction();
@@ -607,23 +579,6 @@ public class BioSim implements MouseListener, MouseMotionListener, ActionListene
 		// ShortCutKey));
 		// importVhdl.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_H,
 		// ShortCutKey));
-=======
-		// graph.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, ShortCutKey));
-		// probGraph.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_H,
-		// ShortCutKey));
-		// if (!lema) {
-		// importDot.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N,
-		// ShortCutKey));
-		// }
-		// else {
-		// importLhpn.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N,
-		// ShortCutKey));
-		// }
-		// importSbml.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_B,
-		// ShortCutKey));
-		// importVhdl.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_H,
-		// ShortCutKey));
->>>>>>> 1.225
 		newMenu.setMnemonic(KeyEvent.VK_N);
 		saveAsMenu.setMnemonic(KeyEvent.VK_A);
 		importMenu.setMnemonic(KeyEvent.VK_I);
@@ -1859,26 +1814,16 @@ public class BioSim implements MouseListener, MouseMotionListener, ActionListene
 		else if (e.getSource() == close) {
 			Component comp = tab.getSelectedComponent();
 			Point point = comp.getLocation();
-<<<<<<< BioSim.java
 			tab.fireCloseTabEvent(new MouseEvent(comp, e.getID(), e.getWhen(), e.getModifiers(),
 					point.x, point.y, 0, false), tab.getSelectedIndex());
-=======
-			tab.fireCloseTabEvent(new MouseEvent(comp, e.getID(), e.getWhen(), e.getModifiers(), point.x,
-					point.y, 0, false), tab.getSelectedIndex());
->>>>>>> 1.225
 		}
 		else if (e.getSource() == closeAll) {
 			while (tab.getSelectedComponent() != null) {
 				int index = tab.getSelectedIndex();
 				Component comp = tab.getComponent(index);
 				Point point = comp.getLocation();
-<<<<<<< BioSim.java
 				tab.fireCloseTabEvent(new MouseEvent(comp, e.getID(), e.getWhen(),
 						e.getModifiers(), point.x, point.y, 0, false), index);
-=======
-				tab.fireCloseTabEvent(new MouseEvent(comp, e.getID(), e.getWhen(), e.getModifiers(),
-						point.x, point.y, 0, false), index);
->>>>>>> 1.225
 			}
 		}
 		else if (e.getSource() == viewRules) {
@@ -1968,15 +1913,10 @@ public class BioSim implements MouseListener, MouseMotionListener, ActionListene
 		else if (e.getActionCommand().equals("createSynthesis")) {
 			if (root != null) {
 				for (int i = 0; i < tab.getTabCount(); i++) {
-<<<<<<< BioSim.java
 					if (tab
 							.getTitleAt(i)
 							.equals(
 									tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
-=======
-					if (tab.getTitleAt(i).equals(
-							tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
->>>>>>> 1.225
 						tab.setSelectedIndex(i);
 						if (save(i) != 1) {
 							return;
@@ -2078,15 +2018,10 @@ public class BioSim implements MouseListener, MouseMotionListener, ActionListene
 		else if (e.getActionCommand().equals("createVerify")) {
 			if (root != null) {
 				for (int i = 0; i < tab.getTabCount(); i++) {
-<<<<<<< BioSim.java
 					if (tab
 							.getTitleAt(i)
 							.equals(
 									tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
-=======
-					if (tab.getTitleAt(i).equals(
-							tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
->>>>>>> 1.225
 						tab.setSelectedIndex(i);
 						if (save(i) != 1) {
 							return;
@@ -2281,14 +2216,9 @@ public class BioSim implements MouseListener, MouseMotionListener, ActionListene
 				GeneticNetwork.setRoot(root + File.separator);
 				network.mergeSBML(root + separator + sbmlFile);
 				refreshTree();
-<<<<<<< BioSim.java
 				SBML_Editor sbml = new SBML_Editor(root + separator + sbmlFile, null, log, this,
 						null, null);
 				// sbml.addMouseListener(this);
-=======
-				SBML_Editor sbml = new SBML_Editor(root + separator + sbmlFile, null, log, this, null, null);
-				// sbml.addMouseListener(this);
->>>>>>> 1.225
 				addTab(sbmlFile, sbml, "SBML Editor");
 			}
 			catch (Exception e1) {
@@ -2316,14 +2246,9 @@ public class BioSim implements MouseListener, MouseMotionListener, ActionListene
 				}
 				else {
 					File work = new File(directory);
-<<<<<<< BioSim.java
 					GCM2SBMLEditor gcm = new GCM2SBMLEditor(work.getAbsolutePath(), theFile, this,
 							log);
 					// gcm.addMouseListener(this);
-=======
-					GCM2SBMLEditor gcm = new GCM2SBMLEditor(work.getAbsolutePath(), theFile, this, log);
-					// gcm.addMouseListener(this);
->>>>>>> 1.225
 					addTab(theFile, gcm, "GCM Editor");
 				}
 			}
@@ -2338,15 +2263,10 @@ public class BioSim implements MouseListener, MouseMotionListener, ActionListene
 			try {
 				boolean done = false;
 				for (int i = 0; i < tab.getTabCount(); i++) {
-<<<<<<< BioSim.java
 					if (tab
 							.getTitleAt(i)
 							.equals(
 									tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
-=======
-					if (tab.getTitleAt(i).equals(
-							tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
->>>>>>> 1.225
 						tab.setSelectedIndex(i);
 						done = true;
 					}
@@ -2367,15 +2287,10 @@ public class BioSim implements MouseListener, MouseMotionListener, ActionListene
 		else if (e.getActionCommand().equals("graph")) {
 			try {
 				for (int i = 0; i < tab.getTabCount(); i++) {
-<<<<<<< BioSim.java
 					if (tab
 							.getTitleAt(i)
 							.equals(
 									tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
-=======
-					if (tab.getTitleAt(i).equals(
-							tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
->>>>>>> 1.225
 						tab.setSelectedIndex(i);
 						if (save(i) != 1) {
 							return;
@@ -2386,7 +2301,6 @@ public class BioSim implements MouseListener, MouseMotionListener, ActionListene
 				Run run = new Run(null);
 				JCheckBox dummy = new JCheckBox();
 				dummy.setSelected(false);
-<<<<<<< BioSim.java
 				run.createProperties(0, "Print Interval", 1, 1, 1, tree.getFile()
 						.substring(
 								0,
@@ -2396,15 +2310,6 @@ public class BioSim implements MouseListener, MouseMotionListener, ActionListene
 						new String[0], new String[0], "tsd.printer", "amount", tree.getFile()
 								.split(separator), "none", frame, tree.getFile(), 0.1, 0.1, 0.1,
 						15, dummy, "", dummy, null);
-=======
-				run.createProperties(0, "Print Interval", 1, 1, 1, tree.getFile().substring(
-						0,
-						tree.getFile().length()
-								- (tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]
-										.length())), 314159, 1, new String[0], new String[0], "tsd.printer", "amount",
-						tree.getFile().split(separator), "none", frame, tree.getFile(), 0.1, 0.1, 0.1, 15,
-						dummy, "", dummy, null);
->>>>>>> 1.225
 				String filename = tree.getFile();
 				String directory = "";
 				String theFile = "";
@@ -2490,15 +2395,10 @@ public class BioSim implements MouseListener, MouseMotionListener, ActionListene
 		else if (e.getActionCommand().equals("browse")) {
 			try {
 				for (int i = 0; i < tab.getTabCount(); i++) {
-<<<<<<< BioSim.java
 					if (tab
 							.getTitleAt(i)
 							.equals(
 									tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
-=======
-					if (tab.getTitleAt(i).equals(
-							tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
->>>>>>> 1.225
 						tab.setSelectedIndex(i);
 						if (save(i) != 1) {
 							return;
@@ -2509,7 +2409,6 @@ public class BioSim implements MouseListener, MouseMotionListener, ActionListene
 				Run run = new Run(null);
 				JCheckBox dummy = new JCheckBox();
 				dummy.setSelected(false);
-<<<<<<< BioSim.java
 				run.createProperties(0, "Print Interval", 1, 1, 1, tree.getFile()
 						.substring(
 								0,
@@ -2519,15 +2418,6 @@ public class BioSim implements MouseListener, MouseMotionListener, ActionListene
 						new String[0], new String[0], "tsd.printer", "amount", tree.getFile()
 								.split(separator), "none", frame, tree.getFile(), 0.1, 0.1, 0.1,
 						15, dummy, "", dummy, null);
-=======
-				run.createProperties(0, "Print Interval", 1, 1, 1, tree.getFile().substring(
-						0,
-						tree.getFile().length()
-								- (tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]
-										.length())), 314159, 1, new String[0], new String[0], "tsd.printer", "amount",
-						tree.getFile().split(separator), "none", frame, tree.getFile(), 0.1, 0.1, 0.1, 15,
-						dummy, "", dummy, null);
->>>>>>> 1.225
 				String filename = tree.getFile();
 				String directory = "";
 				String theFile = "";
@@ -2984,14 +2874,9 @@ public class BioSim implements MouseListener, MouseMotionListener, ActionListene
 								if (i != -1) {
 									tab.remove(i);
 								}
-<<<<<<< BioSim.java
 								GCM2SBMLEditor gcm = new GCM2SBMLEditor(root + separator, f
 										.getName(), this, log);
 								// gcm.addMouseListener(this);
-=======
-								GCM2SBMLEditor gcm = new GCM2SBMLEditor(root + separator, f.getName(), this, log);
-								// gcm.addMouseListener(this);
->>>>>>> 1.225
 								addTab(f.getName(), gcm, "GCM Editor");
 								refreshTree();
 							}
@@ -3051,14 +2936,9 @@ public class BioSim implements MouseListener, MouseMotionListener, ActionListene
 								SBMLWriter writer = new SBMLWriter();
 								writer.writeSBML(document, root + separator + simName);
 								SBML_Editor sbml = new SBML_Editor(f, null, log, this, null, null);
-<<<<<<< BioSim.java
 								// sbml.addMouseListener(this);
 								addTab(f.split(separator)[f.split(separator).length - 1], sbml,
 										"SBML Editor");
-=======
-								// sbml.addMouseListener(this);
-								addTab(f.split(separator)[f.split(separator).length - 1], sbml, "SBML Editor");
->>>>>>> 1.225
 								refreshTree();
 							}
 						}
@@ -3175,14 +3055,9 @@ public class BioSim implements MouseListener, MouseMotionListener, ActionListene
 								if (i != -1) {
 									tab.remove(i);
 								}
-<<<<<<< BioSim.java
 								LHPNEditor lhpn = new LHPNEditor(root + separator, f.getName(),
 										null, this, log);
 								// lhpn.addMouseListener(this);
-=======
-								LHPNEditor lhpn = new LHPNEditor(root + separator, f.getName(), null, this, log);
-								// lhpn.addMouseListener(this);
->>>>>>> 1.225
 								addTab(f.getName(), lhpn, "LHPN Editor");
 								refreshTree();
 							}
@@ -3985,15 +3860,10 @@ public class BioSim implements MouseListener, MouseMotionListener, ActionListene
 		else if (e.getActionCommand().equals("createLearn")) {
 			if (root != null) {
 				for (int i = 0; i < tab.getTabCount(); i++) {
-<<<<<<< BioSim.java
 					if (tab
 							.getTitleAt(i)
 							.equals(
 									tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
-=======
-					if (tab.getTitleAt(i).equals(
-							tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
->>>>>>> 1.225
 						tab.setSelectedIndex(i);
 						if (save(i) != 1) {
 							return;
@@ -4037,19 +3907,12 @@ public class BioSim implements MouseListener, MouseMotionListener, ActionListene
 							Learn learn = new Learn(root + separator + lrnName, log, this);
 							// learn.addMouseListener(this);
 							lrnTab.addTab("Learn", learn);
-<<<<<<< BioSim.java
 							lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName(
 									"Learn");
 							Graph tsdGraph = new Graph(null, "amount", lrnName + " data",
 									"tsd.printer", root + separator + lrnName, "time", this, null,
 									log, null, true, true);
 							// tsdGraph.addMouseListener(this);
-=======
-							lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Learn");
-							Graph tsdGraph = new Graph(null, "amount", lrnName + " data", "tsd.printer", root
-									+ separator + lrnName, "time", this, null, log, null, true, true);
-							// tsdGraph.addMouseListener(this);
->>>>>>> 1.225
 							lrnTab.addTab("TSD Graph", tsdGraph);
 							lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName(
 									"TSD Graph");
@@ -4268,15 +4131,10 @@ public class BioSim implements MouseListener, MouseMotionListener, ActionListene
 		else if (e.getActionCommand().equals("copy") || e.getSource() == copy) {
 			if (!tree.getFile().equals(root)) {
 				for (int i = 0; i < tab.getTabCount(); i++) {
-<<<<<<< BioSim.java
 					if (tab
 							.getTitleAt(i)
 							.equals(
 									tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
-=======
-					if (tab.getTitleAt(i).equals(
-							tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
->>>>>>> 1.225
 						tab.setSelectedIndex(i);
 						if (save(i) != 1) {
 							return;
@@ -5061,15 +4919,10 @@ public class BioSim implements MouseListener, MouseMotionListener, ActionListene
 		else if (e.getActionCommand().equals("openGraph")) {
 			boolean done = false;
 			for (int i = 0; i < tab.getTabCount(); i++) {
-<<<<<<< BioSim.java
 				if (tab
 						.getTitleAt(i)
 						.equals(
 								tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
-=======
-				if (tab.getTitleAt(i).equals(
-						tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
->>>>>>> 1.225
 					tab.setSelectedIndex(i);
 					done = true;
 				}
@@ -5895,17 +5748,11 @@ public class BioSim implements MouseListener, MouseMotionListener, ActionListene
 							}
 						}
 						if (!done) {
-<<<<<<< BioSim.java
 							SBML_Editor sbml = new SBML_Editor(tree.getFile(), null, log, this,
 									null, null);
 							// sbml.addMouseListener(this);
 							addTab(
 									tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],
-=======
-							SBML_Editor sbml = new SBML_Editor(tree.getFile(), null, log, this, null, null);
-							// sbml.addMouseListener(this);
-							addTab(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],
->>>>>>> 1.225
 									sbml, "SBML Editor");
 						}
 					}
@@ -5935,14 +5782,9 @@ public class BioSim implements MouseListener, MouseMotionListener, ActionListene
 							tab.setSelectedIndex(i);
 						}
 						else {
-<<<<<<< BioSim.java
 							GCM2SBMLEditor gcm = new GCM2SBMLEditor(work.getAbsolutePath(),
 									theFile, this, log);
 							// gcm.addMouseListener(this);
-=======
-							GCM2SBMLEditor gcm = new GCM2SBMLEditor(work.getAbsolutePath(), theFile, this, log);
-							// gcm.addMouseListener(this);
->>>>>>> 1.225
 							addTab(theFile, gcm, "GCM Editor");
 						}
 					}
@@ -6002,14 +5844,9 @@ public class BioSim implements MouseListener, MouseMotionListener, ActionListene
 						}
 						else {
 							// log.addText("make Editor");
-<<<<<<< BioSim.java
 							LHPNEditor editor = new LHPNEditor(work.getAbsolutePath(), theFile,
 									lhpn, this, log);
 							// editor.addMouseListener(this);
-=======
-							LHPNEditor editor = new LHPNEditor(work.getAbsolutePath(), theFile, lhpn, this, log);
-							// editor.addMouseListener(this);
->>>>>>> 1.225
 							addTab(theFile, editor, "LHPN Editor");
 							// log.addText("Editor made");
 						}
@@ -6551,12 +6388,14 @@ public class BioSim implements MouseListener, MouseMotionListener, ActionListene
 					menuSelected = false;
 				}
 			}
+			else {
+				menuSelected = false;
+			}
 		}
 	}
 
 	public void focusLost(FocusEvent e) {
 		// mouseReleased();
-		// log.addText(mouseComponent.toString());
 		tabFocused = true;
 		if (!menuSelected) {
 			enableTabMenu(tab.getSelectedIndex());
@@ -6576,14 +6415,9 @@ public class BioSim implements MouseListener, MouseMotionListener, ActionListene
 					// ".sim")).close();
 					String[] dot = tree.getFile().split(separator);
 					String sbmlFile = /*
-<<<<<<< BioSim.java
 										 * root + separator + simName +
 										 * separator +
 										 */(dot[dot.length - 1].substring(0, dot[dot.length - 1].length() - 3) + "sbml");
-=======
-														 * root + separator + simName + separator +
-														 */(dot[dot.length - 1].substring(0, dot[dot.length - 1].length() - 3) + "sbml");
->>>>>>> 1.225
 					GCMParser parser = new GCMParser(tree.getFile());
 					GeneticNetwork network = parser.buildNetwork();
 					GeneticNetwork.setRoot(root + File.separator);
@@ -6606,15 +6440,9 @@ public class BioSim implements MouseListener, MouseMotionListener, ActionListene
 							+ separator
 							+ (dot[dot.length - 1].substring(0, dot[dot.length - 1].length() - 3) + "sbml");
 					JTabbedPane simTab = new JTabbedPane();
-<<<<<<< BioSim.java
 					Reb2Sac reb2sac = new Reb2Sac(sbmlFile, sbmlFile, root, this, simName.trim(),
 							log, simTab, null);
 					// reb2sac.addMouseListener(this);
-=======
-					Reb2Sac reb2sac = new Reb2Sac(sbmlFile, sbmlFile, root, this, simName.trim(), log,
-							simTab, null);
-					// reb2sac.addMouseListener(this);
->>>>>>> 1.225
 					simTab.addTab("Simulation Options", reb2sac);
 					simTab.getComponentAt(simTab.getComponents().length - 1).setName("Simulate");
 					JPanel abstraction = reb2sac.getAdvanced();
@@ -6664,15 +6492,10 @@ public class BioSim implements MouseListener, MouseMotionListener, ActionListene
 		}
 		else {
 			for (int i = 0; i < tab.getTabCount(); i++) {
-<<<<<<< BioSim.java
 				if (tab
 						.getTitleAt(i)
 						.equals(
 								tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
-=======
-				if (tab.getTitleAt(i).equals(
-						tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
->>>>>>> 1.225
 					tab.setSelectedIndex(i);
 					if (save(i) != 1) {
 						return;
@@ -6720,15 +6543,9 @@ public class BioSim implements MouseListener, MouseMotionListener, ActionListene
 					 */
 					refreshTree();
 					JTabbedPane simTab = new JTabbedPane();
-<<<<<<< BioSim.java
 					Reb2Sac reb2sac = new Reb2Sac(sbmlFile, sbmlFileProp, root, this, simName
 							.trim(), log, simTab, null);
 					// reb2sac.addMouseListener(this);
-=======
-					Reb2Sac reb2sac = new Reb2Sac(sbmlFile, sbmlFileProp, root, this, simName.trim(), log,
-							simTab, null);
-					// reb2sac.addMouseListener(this);
->>>>>>> 1.225
 					simTab.addTab("Simulation Options", reb2sac);
 					simTab.getComponentAt(simTab.getComponents().length - 1).setName("Simulate");
 					JPanel abstraction = reb2sac.getAdvanced();
@@ -6873,18 +6690,11 @@ public class BioSim implements MouseListener, MouseMotionListener, ActionListene
 			// learn.addMouseListener(this);
 			lrnTab.addTab("Learn", learn);
 			lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Learn");
-<<<<<<< BioSim.java
 			Graph tsdGraph = new Graph(null, "amount", tree.getFile().split(separator)[tree
 					.getFile().split(separator).length - 1]
 					+ " data", "tsd.printer", tree.getFile(), "time", this, open, log, null, true,
 					true);
 			// tsdGraph.addMouseListener(this);
-=======
-			Graph tsdGraph = new Graph(null, "amount", tree.getFile().split(separator)[tree.getFile()
-					.split(separator).length - 1]
-					+ " data", "tsd.printer", tree.getFile(), "time", this, open, log, null, true, true);
-			// tsdGraph.addMouseListener(this);
->>>>>>> 1.225
 			lrnTab.addTab("TSD Graph", tsdGraph);
 			lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("TSD Graph");
 			// }
@@ -7583,13 +7393,8 @@ public class BioSim implements MouseListener, MouseMotionListener, ActionListene
 						out = new FileOutputStream(new File(root + separator + newSim + separator
 								+ ss));
 					}
-<<<<<<< BioSim.java
 					FileInputStream in = new FileInputStream(new File(root + separator + oldSim
 							+ separator + ss));
-=======
-					FileInputStream in = new FileInputStream(new File(root + separator + oldSim + separator
-							+ ss));
->>>>>>> 1.225
 					int read = in.read();
 					while (read != -1) {
 						out.write(read);
