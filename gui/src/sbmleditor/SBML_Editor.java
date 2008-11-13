@@ -285,7 +285,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 
 	private String paramFile;
 
-	private ArrayList<String> parameterChanges;
+	private ArrayList<String> parameterChanges, elementChanges;
 
 	private Pattern IDpat = Pattern.compile("([a-zA-Z]|_)([a-zA-Z]|[0-9]|_)*");
 
@@ -468,13 +468,21 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		ArrayList<String> getParams = new ArrayList<String>();
 		if (paramsOnly) {
 			parameterChanges = new ArrayList<String>();
+			elementChanges = new ArrayList<String>();
 			try {
 				Scanner scan = new Scanner(new File(paramFile));
 				if (scan.hasNextLine()) {
 					scan.nextLine();
 				}
 				while (scan.hasNextLine()) {
-					getParams.add(scan.nextLine());
+					String s = scan.nextLine();
+					if (s.trim().equals("")) {
+						break;
+					}
+					getParams.add(s);
+				}
+				while (scan.hasNextLine()) {
+					elementChanges.add(scan.nextLine());
 				}
 				scan.close();
 			}
@@ -821,40 +829,100 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				JPanel initsPanel = new JPanel(new GridLayout(initsNum, 1));
 				initsPanel.add(new JLabel("Initial Assignments:"));
 				for (int i = 0; i < inits.length; i++) {
-					initsPanel.add(new JCheckBox(inits[i]));
+					JCheckBox temp = new JCheckBox(inits[i]);
+					if (!elementChanges.contains(inits[i])) {
+						temp.setSelected(true);
+					}
+					temp.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent e) {
+							JCheckBox clicked = ((JCheckBox) e.getSource());
+							if (clicked.isSelected()) {
+								elementChanges.remove(clicked.getText());
+							}
+							else {
+								elementChanges.add(clicked.getText());
+							}
+						}
+					});
+					initsPanel.add(temp);
 				}
 				JPanel initial = new JPanel();
 				((FlowLayout) initial.getLayout()).setAlignment(FlowLayout.LEFT);
 				initial.add(initsPanel);
 				elements.add(initial);
 			}
-			if (rul.length > 0) {
+			if (rulNum > 0) {
 				JPanel rulPanel = new JPanel(new GridLayout(rulNum, 1));
 				rulPanel.add(new JLabel("Rules:"));
 				for (int i = 0; i < rul.length; i++) {
-					rulPanel.add(new JCheckBox(rul[i]));
+					JCheckBox temp = new JCheckBox(rul[i]);
+					if (!elementChanges.contains(rul[i])) {
+						temp.setSelected(true);
+					}
+					temp.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent e) {
+							JCheckBox clicked = ((JCheckBox) e.getSource());
+							if (clicked.isSelected()) {
+								elementChanges.remove(clicked.getText());
+							}
+							else {
+								elementChanges.add(clicked.getText());
+							}
+						}
+					});
+					rulPanel.add(temp);
 				}
 				JPanel rules = new JPanel();
 				((FlowLayout) rules.getLayout()).setAlignment(FlowLayout.LEFT);
 				rules.add(rulPanel);
 				elements.add(rules);
 			}
-			if (cons.length > 0) {
+			if (consNum > 0) {
 				JPanel consPanel = new JPanel(new GridLayout(consNum, 1));
 				consPanel.add(new JLabel("Constaints:"));
 				for (int i = 0; i < cons.length; i++) {
-					consPanel.add(new JCheckBox(cons[i]));
+					JCheckBox temp = new JCheckBox(cons[i]);
+					if (!elementChanges.contains(cons[i])) {
+						temp.setSelected(true);
+					}
+					temp.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent e) {
+							JCheckBox clicked = ((JCheckBox) e.getSource());
+							if (clicked.isSelected()) {
+								elementChanges.remove(clicked.getText());
+							}
+							else {
+								elementChanges.add(clicked.getText());
+							}
+						}
+					});
+					consPanel.add(temp);
 				}
 				JPanel constaints = new JPanel();
 				((FlowLayout) constaints.getLayout()).setAlignment(FlowLayout.LEFT);
 				constaints.add(consPanel);
 				elements.add(constaints);
 			}
-			if (ev.length > 0) {
+			if (evNum > 0) {
 				JPanel evPanel = new JPanel(new GridLayout(evNum, 1));
 				evPanel.add(new JLabel("Events:"));
 				for (int i = 0; i < ev.length; i++) {
-					evPanel.add(new JCheckBox(ev[i]));
+					JCheckBox temp = new JCheckBox(ev[i]);
+					if (!elementChanges.contains(ev[i])) {
+						temp.setSelected(true);
+					}
+					temp.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent e) {
+							JCheckBox clicked = ((JCheckBox) e.getSource());
+							if (clicked.isSelected()) {
+								elementChanges.remove(clicked.getText());
+							}
+							else {
+								elementChanges.add(clicked.getText());
+							}
+						}
+					});
+					evPanel.add(temp);
 				}
 				JPanel events = new JPanel();
 				((FlowLayout) events.getLayout()).setAlignment(FlowLayout.LEFT);
@@ -8902,6 +8970,10 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			for (String s : parameterChanges) {
 				out.write((s + "\n").getBytes());
 			}
+			out.write(("\n").getBytes());
+			for (String s : elementChanges) {
+				out.write((s + "\n").getBytes());
+			}
 			out.close();
 		}
 		catch (Exception e1) {
@@ -8962,6 +9034,43 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			document.getModel().setName(modelName.getText().trim());
 			SBMLWriter writer = new SBMLWriter();
 			writer.writeSBML(document, simDir + separator + stem + direct + separator
+					+ file.split(separator)[file.split(separator).length - 1]);
+			SBMLReader reader = new SBMLReader();
+			SBMLDocument d = reader.readSBML(simDir + separator + stem + direct + separator
+					+ file.split(separator)[file.split(separator).length - 1]);
+			for (String s : elementChanges) {
+				for (long i = d.getModel().getNumInitialAssignments() - 1; i >= 0; i--) {
+					if (s.contains("=")) {
+						String formula = myFormulaToString(((InitialAssignment) d.getModel()
+								.getListOfInitialAssignments().get(i)).getMath());
+						String sFormula = s.substring(s.indexOf('=') + 1).trim();
+						sFormula = myFormulaToString(myParseFormula(sFormula));
+						sFormula = s.substring(0, s.indexOf('=') + 1) + " " + sFormula;
+						if ((((InitialAssignment) d.getModel().getListOfInitialAssignments().get(i))
+								.getSymbol()
+								+ " = " + formula).equals(sFormula)) {
+							d.getModel().getListOfInitialAssignments().remove(i);
+						}
+					}
+				}
+				for (long i = d.getModel().getNumConstraints() - 1; i >= 0; i--) {
+					if (d.getModel().getListOfConstraints().get(i).getId().equals(s)) {
+						d.getModel().getListOfConstraints().remove(i);
+					}
+				}
+				for (long i = d.getModel().getNumEvents() - 1; i >= 0; i--) {
+					if (d.getModel().getListOfEvents().get(i).getId().equals(s)) {
+						d.getModel().getListOfEvents().remove(i);
+					}
+				}
+				for (long i = d.getModel().getNumRules() - 1; i >= 0; i--) {
+					if (d.getModel().getListOfRules().get(i).getId().equals(s)) {
+						d.getModel().getListOfEvents().remove(i);
+					}
+				}
+			}
+			writer = new SBMLWriter();
+			writer.writeSBML(d, simDir + separator + stem + direct + separator
 					+ file.split(separator)[file.split(separator).length - 1]);
 		}
 		catch (Exception e1) {
