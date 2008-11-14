@@ -6374,7 +6374,7 @@ public class BioSim implements MouseListener, MouseMotionListener, ActionListene
 		// log.addText(mouseComponent.toString());
 		if (!menuSelected) {
 			if (tabFocused) {
-				int selectedTab = tab.indexAtLocation(e.getPoint().x, e.getPoint().y);
+				int selectedTab = tab.getSelectedIndex();
 				enableTabMenu(selectedTab);
 			}
 			else if (tree.getFile() != null) {
