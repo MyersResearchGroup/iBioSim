@@ -24,7 +24,7 @@ public class VarAssignPanel extends JPanel implements ActionListener {
 
 	private String selected = "", transition, id, oldName = null;
 
-	private PropertyList assignmentList;
+	private PropertyList assignmentList, continuousList;
 
 	//private String[] varList, boolList, contList;
 	private String[] contList;
@@ -40,12 +40,13 @@ public class VarAssignPanel extends JPanel implements ActionListener {
 
 	private HashMap<String, PropertyField> fields = null;
 
-	public VarAssignPanel(String transition, String selected, PropertyList assignmentList,
+	public VarAssignPanel(String transition, String selected, PropertyList assignmentList, PropertyList continuousList,
 			LHPNFile lhpn) {
 		super(new GridLayout(6, 1));
 		this.selected = selected;
 		this.transition = transition;
 		this.assignmentList = assignmentList;
+		this.continuousList = continuousList;
 		this.lhpn = lhpn;
 
 		fields = new HashMap<String, PropertyField>();
@@ -173,6 +174,8 @@ public class VarAssignPanel extends JPanel implements ActionListener {
 			//System.out.println(id);
 			assignmentList.addItem(id);
 			assignmentList.setSelectedValue(id, true);
+			continuousList.removeItem(oldName);
+			continuousList.addItem(id);
 
 		}
 		else if (value == JOptionPane.NO_OPTION) {

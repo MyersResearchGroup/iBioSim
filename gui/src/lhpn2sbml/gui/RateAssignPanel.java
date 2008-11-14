@@ -26,7 +26,7 @@ public class RateAssignPanel extends JPanel implements ActionListener {
 
 	private String selected = "", transition, id, oldVar = null, variable;
 
-	private PropertyList assignmentList;
+	private PropertyList assignmentList, rateAssignList;
 
 	// private String[] varList, boolList, contList;
 	private String[] rateList;
@@ -45,12 +45,13 @@ public class RateAssignPanel extends JPanel implements ActionListener {
 
 	private HashMap<String, PropertyField> fields = null;
 
-	public RateAssignPanel(String transition, String selected, PropertyList assignmentList,
+	public RateAssignPanel(String transition, String selected, PropertyList assignmentList, PropertyList rateAssignList,
 			LHPNFile lhpn, Log log) {
 		super(new GridLayout(6, 1));
 		this.selected = selected;
 		this.transition = transition;
 		this.assignmentList = assignmentList;
+		this.rateAssignList = rateAssignList;
 		this.lhpn = lhpn;
 		this.log = log;
 
@@ -91,7 +92,7 @@ public class RateAssignPanel extends JPanel implements ActionListener {
 		// add(tempPanel);
 
 		if (selected != null) {
-			String[] idArray = selected.split(":=");
+			String[] idArray = selected.split("':=");
 			variable = idArray[0];
 		}
 
@@ -169,7 +170,7 @@ public class RateAssignPanel extends JPanel implements ActionListener {
 			 * Utility.createErrorMessage("Error", "Assignment already
 			 * exists.[1]"); return false; } }
 			 */
-			id = varBox.getSelectedItem().toString() + ":=" + fields.get("Assignment value").getValue();
+			id = varBox.getSelectedItem().toString() + "':=" + fields.get("Assignment value").getValue();
 			variable = varBox.getSelectedItem().toString();
 
 			// Check to see if we need to add or edit
@@ -192,6 +193,8 @@ public class RateAssignPanel extends JPanel implements ActionListener {
 			assignmentList.removeItem(oldName);
 			assignmentList.addItem(id);
 			assignmentList.setSelectedValue(id, true);
+			rateAssignList.removeItem(oldName);
+			rateAssignList.addItem(id);
 
 		}
 		else if (value == JOptionPane.NO_OPTION) {
@@ -203,7 +206,7 @@ public class RateAssignPanel extends JPanel implements ActionListener {
 
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("comboBoxChanged")) {
-			setID(varBox.getSelectedItem().toString() + ":=" + fields.get("Assignment Value"));
+			setID(varBox.getSelectedItem().toString() + "':=" + fields.get("Assignment Value"));
 			// setType(typeBox.getSelectedItem().toString());
 		}
 	}

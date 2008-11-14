@@ -26,7 +26,7 @@ public class BoolAssignPanel extends JPanel implements ActionListener {
 
 	private String selected = "", oldName = null, transition, id;
 
-	private PropertyList assignmentList;
+	private PropertyList assignmentList, booleanList;
 
 	//private String[] varList, boolList, contList;
 	private String[] boolList;
@@ -44,12 +44,13 @@ public class BoolAssignPanel extends JPanel implements ActionListener {
 
 	private HashMap<String, PropertyField> fields = null;
 
-	public BoolAssignPanel(String transition, String selected, PropertyList assignmentList,
+	public BoolAssignPanel(String transition, String selected, PropertyList assignmentList, PropertyList booleanList,
 			LHPNFile lhpn, Log log) {
 		super(new GridLayout(6, 1));
 		this.selected = selected;
 		this.transition = transition;
 		this.assignmentList = assignmentList;
+		this.booleanList = booleanList;
 		this.lhpn = lhpn;
 		this.log = log;
 
@@ -179,7 +180,8 @@ public class BoolAssignPanel extends JPanel implements ActionListener {
 			assignmentList.removeItem(oldName);
 			assignmentList.addItem(id);
 			assignmentList.setSelectedValue(id, true);
-
+			booleanList.removeItem(oldName);
+			booleanList.addItem(id);
 		}
 		else if (value == JOptionPane.NO_OPTION) {
 			// System.out.println();
