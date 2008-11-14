@@ -24,6 +24,7 @@ import javax.swing.JFrame;
 //import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.Icon;
 
 public class TransitionsPanel extends JPanel implements ActionListener {
 
@@ -31,9 +32,14 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 
 	// private TransitionsPanel frame;
 
-	private PropertyList transitionsList, boolAssignments, varAssignments, rateAssignments;
+	private PropertyList transitionsList, boolAssignments, varAssignments, rateAssignments,
+			assignments;
+
+	private JPanel fieldPanel;
 
 	private String[] options = { "Ok", "Cancel" };
+
+	private Object[] types = { "Boolean", "Continuous", "Rate" };
 
 	private LHPNFile lhpn;
 
@@ -50,7 +56,7 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 		this.log = log;
 
 		fields = new HashMap<String, PropertyField>();
-		JPanel fieldPanel = new JPanel(new GridLayout(3, 2));
+		fieldPanel = new JPanel(new GridLayout(3, 2));
 
 		// ID field
 		PropertyField field = new PropertyField(GlobalConstants.ID, "", null, null,
@@ -76,73 +82,101 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 		constraints.gridy = 0;
 		add(fieldPanel, constraints);
 
-		// Boolean Assignment panel
+		// Assignment panel
+		assignments = new PropertyList("Assignment List");
 		boolAssignments = new PropertyList("Boolean Assignment List");
-		EditButton addBoolAssign = new EditButton("Add Boolean Assignment", boolAssignments);
-		RemoveButton removeBoolAssign = new RemoveButton("Remove Boolean Assignment",
-				boolAssignments);
-		EditButton editBoolAssign = new EditButton("Edit Boolean Assignment", boolAssignments);
+		varAssignments = new PropertyList("Continuous Assignment List");
+		rateAssignments = new PropertyList("Rate Assignment List");
+		EditButton addAssign = new EditButton("Add Assignment", assignments);
+		RemoveButton removeAssign = new RemoveButton("Remove Assignment", assignments);
+		EditButton editAssign = new EditButton("Edit Assignment", assignments);
 		if (selected != null) {
 			if (lhpn.getBooleanVars(selected) != null) {
 				for (String s : lhpn.getBooleanVars(selected)) {
-					boolAssignments.addItem(s + ":=" + lhpn.getBoolAssign(selected, s));
+					if (!s.equals(null)) {
+						boolAssignments.addItem(s + ":="
+								+ lhpn.getBoolAssign(selected, s).toString());
+						assignments.addItem(s + ":=" + lhpn.getBoolAssign(selected, s).toString());
+					}
 				}
 			}
-		}
-
-		JPanel boolAssignPanel = Utility.createPanel(this, "Boolean Assignments", boolAssignments,
-				addBoolAssign, removeBoolAssign, editBoolAssign);
-		constraints.gridx = 0;
-		constraints.gridy = 1;
-		add(boolAssignPanel, constraints);
-
-		// Variable Assignment panel
-		varAssignments = new PropertyList("Variable Assignment List");
-		EditButton addVarAssign = new EditButton("Add Variable Assignment", varAssignments);
-		RemoveButton removeVarAssign = new RemoveButton("Remove Variable Assignment",
-				varAssignments);
-		EditButton editVarAssign = new EditButton("Edit Variable Assignment", varAssignments);
-		if (selected != null) {
 			if (lhpn.getContAssignVars(selected) != null) {
 				for (String s : lhpn.getContAssignVars(selected)) {
-					varAssignments.addItem(s + ":=" + lhpn.getContAssign(selected, s));
+					if (!s.equals(null)) {
+						varAssignments.addItem(s + ":=" + lhpn.getContAssign(selected, s));
+						assignments.addItem(s + ":=" + lhpn.getContAssign(selected, s));
+					}
 				}
 			}
-		}
-
-		JPanel varAssignPanel = Utility.createPanel(this, "Variable Assignments", varAssignments,
-				addVarAssign, removeVarAssign, editVarAssign);
-		constraints.gridx = 0;
-		constraints.gridy = 2;
-		add(varAssignPanel, constraints);
-
-		// Rate Assignment panel
-		rateAssignments = new PropertyList("Rate Assignment List");
-		EditButton addRateAssign = new EditButton("Add Rate Assignment", rateAssignments);
-		RemoveButton removeRateAssign = new RemoveButton("Remove Rate Assignment", rateAssignments);
-		EditButton editRateAssign = new EditButton("Edit Rate Assignment", rateAssignments);
-		if (selected != null) {
 			if (lhpn.getRateVars(selected) != null) {
 				for (String s : lhpn.getRateVars(selected)) {
 					// log.addText(selected + " " + s);
-					rateAssignments.addItem(s + ":=" + lhpn.getRateAssign(selected, s));
+					if (!s.equals(null)) {
+						rateAssignments.addItem(s + "':=" + lhpn.getRateAssign(selected, s));
+						assignments.addItem(s + "':=" + lhpn.getRateAssign(selected, s));
+					}
 				}
 			}
 		}
 
-		JPanel rateAssignPanel = Utility.createPanel(this, "Rate Assignments", rateAssignments,
-				addRateAssign, removeRateAssign, editRateAssign);
+		JPanel assignPanel = Utility.createPanel(this, "Assignments", assignments, addAssign,
+				removeAssign, editAssign);
 		constraints.gridx = 0;
-		constraints.gridy = 3;
-		constraints.fill = GridBagConstraints.BOTH;
-		add(rateAssignPanel, constraints);
+		constraints.gridy = 1;
+		add(assignPanel, constraints);
+
+		/*
+		 * // Boolean Assignment panel boolAssignments = new
+		 * PropertyList("Boolean Assignment List"); EditButton addBoolAssign =
+		 * new EditButton("Add Boolean Assignment", boolAssignments);
+		 * RemoveButton removeBoolAssign = new RemoveButton("Remove Boolean
+		 * Assignment", boolAssignments); EditButton editBoolAssign = new
+		 * EditButton("Edit Boolean Assignment", boolAssignments); if (selected !=
+		 * null) { if (lhpn.getBooleanVars(selected) != null) { for (String s :
+		 * lhpn.getBooleanVars(selected)) { boolAssignments.addItem(s + ":=" +
+		 * lhpn.getBoolAssign(selected, s)); } } }
+		 * 
+		 * JPanel boolAssignPanel = Utility.createPanel(this, "Boolean
+		 * Assignments", boolAssignments, addBoolAssign, removeBoolAssign,
+		 * editBoolAssign); constraints.gridx = 0; constraints.gridy = 1;
+		 * add(boolAssignPanel, constraints); // Variable Assignment panel
+		 * varAssignments = new PropertyList("Variable Assignment List");
+		 * EditButton addVarAssign = new EditButton("Add Variable Assignment",
+		 * varAssignments); RemoveButton removeVarAssign = new
+		 * RemoveButton("Remove Variable Assignment", varAssignments);
+		 * EditButton editVarAssign = new EditButton("Edit Variable Assignment",
+		 * varAssignments); if (selected != null) { if
+		 * (lhpn.getContAssignVars(selected) != null) { for (String s :
+		 * lhpn.getContAssignVars(selected)) { varAssignments.addItem(s + ":=" +
+		 * lhpn.getContAssign(selected, s)); } } }
+		 * 
+		 * JPanel varAssignPanel = Utility.createPanel(this, "Variable
+		 * Assignments", varAssignments, addVarAssign, removeVarAssign,
+		 * editVarAssign); constraints.gridx = 0; constraints.gridy = 2;
+		 * add(varAssignPanel, constraints); // Rate Assignment panel
+		 * rateAssignments = new PropertyList("Rate Assignment List");
+		 * EditButton addRateAssign = new EditButton("Add Rate Assignment",
+		 * rateAssignments); RemoveButton removeRateAssign = new
+		 * RemoveButton("Remove Rate Assignment", rateAssignments); EditButton
+		 * editRateAssign = new EditButton("Edit Rate Assignment",
+		 * rateAssignments); if (selected != null) { if
+		 * (lhpn.getRateVars(selected) != null) { for (String s :
+		 * lhpn.getRateVars(selected)) { // log.addText(selected + " " + s);
+		 * rateAssignments.addItem(s + ":=" + lhpn.getRateAssign(selected, s)); } } }
+		 * 
+		 * JPanel rateAssignPanel = Utility.createPanel(this, "Rate
+		 * Assignments", rateAssignments, addRateAssign, removeRateAssign,
+		 * editRateAssign); constraints.gridx = 0; constraints.gridy = 3;
+		 * constraints.fill = GridBagConstraints.BOTH; add(rateAssignPanel,
+		 * constraints);
+		 */
 
 		String oldName = null;
 		if (selected != null) {
 			oldName = selected;
 			// Properties prop = lhpn.getVariables().get(selected);
 			fields.get(GlobalConstants.ID).setValue(selected);
-			//log.addText(lhpn.getDelay(selected));
+			// log.addText(lhpn.getDelay(selected));
 			fields.get("Delay").setValue(lhpn.getDelay(selected));
 			fields.get("Enabling Condition").setValue(lhpn.getEnabling(selected));
 			log.addText(selected + lhpn.getEnabling(selected));
@@ -217,7 +251,7 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 	}
 
 	public void save(String transition) {
-		//log.addText("saving...");
+		// log.addText("saving...");
 		lhpn.removeAllAssign(transition);
 		if (boolAssignments.getItems() != null) {
 			for (String s : boolAssignments.getItems()) {
@@ -228,13 +262,14 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 		if (varAssignments.getItems() != null) {
 			for (String s : varAssignments.getItems()) {
 				String[] tempArray = s.split(":=");
-				//System.out.println(selected + " " + tempArray[0] + " " + tempArray[1]);
+				// System.out.println(selected + " " + tempArray[0] + " " +
+				// tempArray[1]);
 				lhpn.addContAssign(transition, tempArray[0], tempArray[1]);
 			}
 		}
 		if (rateAssignments.getItems() != null) {
 			for (String s : rateAssignments.getItems()) {
-				String[] tempArray = s.split(":=");
+				String[] tempArray = s.split("':=");
 				lhpn.addRateAssign(transition, tempArray[0], tempArray[1]);
 			}
 		}
@@ -259,14 +294,15 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 		}
 
 		public void run() {
-			if (getName().contains("Boolean")) {
-				lhpn.removeBoolAssign(selected, list.getSelectedValue().toString());
+			String assignment = list.getSelectedValue().toString();
+			if (getName().contains("Boolean") || isBoolean(assignment)) {
+				lhpn.removeBoolAssign(selected, assignment);
 			}
-			else if (getName().contains("Variable")) {
-				lhpn.removeContAssign(selected, list.getSelectedValue().toString());
+			else if (getName().contains("Variable") || isContinuous(assignment)) {
+				lhpn.removeContAssign(selected, assignment);
 			}
-			else if (getName().contains("Rate")) {
-				lhpn.removeRateAssign(selected, list.getSelectedValue().toString());
+			else if (getName().contains("Rate") || isRate(assignment)) {
+				lhpn.removeRateAssign(selected, assignment);
 			}
 		}
 
@@ -301,7 +337,16 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 				Utility.createErrorMessage("Error", "Nothing selected to edit");
 				return;
 			}
-			if (getName().contains("Boolean")) {
+			String type = "", assignment = "";
+			if (list.getSelectedValue() == null) {
+				type = (String) JOptionPane.showInputDialog(fieldPanel,
+						"Which type of variable assignment do you want to add?", "Assignment Type",
+						JOptionPane.PLAIN_MESSAGE, null, types, types[0]);
+			}
+			else {
+				assignment = list.getSelectedValue().toString();
+			}
+			if (getName().contains("Boolean") || type.equals("Boolean") || isBoolean(assignment)) {
 				String variable = null;
 				if (list.getSelectedValue() != null && getName().contains("Edit")) {
 					variable = list.getSelectedValue().toString();
@@ -310,10 +355,12 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 					Utility.createErrorMessage("Error", "Add boolean variables first");
 				}
 				else {
-					BoolAssignPanel panel = new BoolAssignPanel(selected, variable, list, lhpn, log);
+					BoolAssignPanel panel = new BoolAssignPanel(selected, variable, list,
+							boolAssignments, lhpn, log);
 				}
 			}
-			else if (getName().contains("Variable")) {
+			else if (getName().contains("Variable") || type.equals("Continuous")
+					|| isContinuous(assignment)) {
 				String variable = null;
 				if (list.getSelectedValue() != null && getName().contains("Edit")) {
 					variable = list.getSelectedValue().toString();
@@ -322,11 +369,12 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 					Utility.createErrorMessage("Error", "Add continuous variables first");
 				}
 				else {
-					//System.out.println("transition " + selected);
-					VarAssignPanel panel = new VarAssignPanel(selected, variable, list, lhpn);
+					// System.out.println("transition " + selected);
+					VarAssignPanel panel = new VarAssignPanel(selected, variable, list,
+							varAssignments, lhpn);
 				}
 			}
-			else if (getName().contains("Rate")) {
+			else if (getName().contains("Rate") || type.equals("Rate") || isRate(assignment)) {
 				String variable = null;
 				if (list.getSelectedValue() != null && getName().contains("Edit")) {
 					variable = list.getSelectedValue().toString();
@@ -335,7 +383,8 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 					Utility.createErrorMessage("Error", "Add continuous variables first");
 				}
 				else {
-					RateAssignPanel panel = new RateAssignPanel(selected, variable, list, lhpn, log);
+					RateAssignPanel panel = new RateAssignPanel(selected, variable, list,
+							rateAssignments, lhpn, log);
 				}
 			}
 		}
@@ -347,6 +396,33 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 		private String name = null;
 
 		private PropertyList list = null;
+	}
+
+	private boolean isBoolean(String assignment) {
+		for (String s : boolAssignments.getItems()) {
+			if (s.equals(assignment)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private boolean isContinuous(String assignment) {
+		for (String s : varAssignments.getItems()) {
+			if (s.equals(assignment)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private boolean isRate(String assignment) {
+		for (String s : rateAssignments.getItems()) {
+			if (s.equals(assignment)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private void loadProperties(Properties property) {

@@ -872,7 +872,7 @@ public class LHPNFile {
 		}
 	}
 
-	public boolean getBoolAssign(String trans, String var) {
+	public Boolean getBoolAssign(String trans, String var) {
 		if (booleanAssignments.containsKey(trans)) {
 			Properties prop = booleanAssignments.get(trans);
 			if (prop != null && var != null) {

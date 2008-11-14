@@ -1811,7 +1811,7 @@ public class BioSim implements MouseListener, MouseMotionListener, ActionListene
 			Component comp = tab.getSelectedComponent();
 			((GCM2SBMLEditor) comp).save("template");
 		}
-		else if (e.getSource() == close) {
+		else if (e.getSource() == close && tab.getSelectedComponent() != null) {
 			Component comp = tab.getSelectedComponent();
 			Point point = comp.getLocation();
 			tab.fireCloseTabEvent(new MouseEvent(comp, e.getID(), e.getWhen(), e.getModifiers(),
