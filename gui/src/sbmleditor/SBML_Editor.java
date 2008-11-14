@@ -9064,8 +9064,16 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					}
 				}
 				for (long i = d.getModel().getNumRules() - 1; i >= 0; i--) {
-					if (d.getModel().getListOfRules().get(i).getId().equals(s)) {
-						d.getModel().getListOfEvents().remove(i);
+					if (s.contains("=")) {
+						String formula = myFormulaToString(((Rule) d.getModel().getListOfRules().get(i))
+								.getMath());
+						String sFormula = s.substring(s.indexOf('=') + 1).trim();
+						sFormula = myFormulaToString(myParseFormula(sFormula));
+						sFormula = s.substring(0, s.indexOf('=') + 1) + " " + sFormula;
+						if ((((Rule) d.getModel().getListOfRules().get(i)).getVariable() + " = " + formula)
+								.equals(sFormula)) {
+							d.getModel().getListOfRules().remove(i);
+						}
 					}
 				}
 			}
