@@ -683,8 +683,8 @@ public class GeneticNetwork {
 			if (!spec.getId().equals("RNAP")) {
 				String newName = compName + "_" + spec.getId();
 				for (Object port : properties.getComponents().get(compName).keySet()) {
-					if (spec.getId().equals(properties.getComponents().get(compName).getProperty((String) port))) {
-						newName = "_" + compName + "_" + (String) port;
+					if (spec.getId().equals((String) port)) {
+						newName = "_" + compName + "_" + properties.getComponents().get(compName).getProperty((String) port);
 						int removeDeg = -1;
 						for (int j = 0; j < m.getNumReactions(); j ++) {
 							org.sbml.libsbml.Reaction r = m.getReaction(j);
