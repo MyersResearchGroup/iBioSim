@@ -9054,7 +9054,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					}
 				}
 				for (long i = d.getModel().getNumConstraints() - 1; i >= 0; i--) {
-					if (d.getModel().getListOfConstraints().get(i).getId().equals(s)) {
+					if (d.getModel().getListOfConstraints().get(i).getMetaId().equals(s)) {
 						d.getModel().getListOfConstraints().remove(i);
 					}
 				}
