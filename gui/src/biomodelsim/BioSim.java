@@ -7510,6 +7510,7 @@ public class BioSim implements MouseListener, MouseMotionListener, ActionListene
 				check.setEnabled(false);
 				export.setEnabled(false);
 				exportMenu.setEnabled(false);
+				viewModel.setEnabled(true);
 				viewCircuit.setEnabled(((Learn) component).getViewGcmEnabled());
 				viewRules.setEnabled(false);
 				viewTrace.setEnabled(false);
@@ -7595,6 +7596,7 @@ public class BioSim implements MouseListener, MouseMotionListener, ActionListene
 			check.setEnabled(false);
 			export.setEnabled(false);
 			exportMenu.setEnabled(false);
+			viewModel.setEnabled(true);
 			viewRules.setEnabled(false);
 			viewTrace.setEnabled(((Verification) comp).getViewTraceEnabled());
 			viewCircuit.setEnabled(true);
@@ -7621,6 +7623,7 @@ public class BioSim implements MouseListener, MouseMotionListener, ActionListene
 			check.setEnabled(false);
 			export.setEnabled(false);
 			exportMenu.setEnabled(false);
+			viewModel.setEnabled(true);
 			viewRules.setEnabled(((Synthesis) comp).getViewRulesEnabled());
 			viewTrace.setEnabled(((Synthesis) comp).getViewTraceEnabled());
 			viewCircuit.setEnabled(((Synthesis) comp).getViewCircuitEnabled());
@@ -7695,6 +7698,7 @@ public class BioSim implements MouseListener, MouseMotionListener, ActionListene
 			copy.setEnabled(true);
 			rename.setEnabled(true);
 			delete.setEnabled(true);
+			viewModel.setEnabled(true);
 			viewRules.setEnabled(false);
 			viewTrace.setEnabled(false);
 			viewCircuit.setEnabled(false);
@@ -7718,6 +7722,7 @@ public class BioSim implements MouseListener, MouseMotionListener, ActionListene
 			copy.setEnabled(true);
 			rename.setEnabled(true);
 			delete.setEnabled(true);
+			viewModel.setEnabled(true);
 			viewRules.setEnabled(false);
 			viewTrace.setEnabled(false);
 			viewCircuit.setEnabled(false);
@@ -7749,6 +7754,7 @@ public class BioSim implements MouseListener, MouseMotionListener, ActionListene
 		}
 		else if (tree.getFile().length() > 3
 				&& tree.getFile().substring(tree.getFile().length() - 4).equals(".vhd")) {
+			viewModel.setEnabled(true);
 			viewModGraph.setEnabled(true);
 			viewModBrowser.setEnabled(false);
 			createAnal.setEnabled(true);
@@ -7772,6 +7778,7 @@ public class BioSim implements MouseListener, MouseMotionListener, ActionListene
 		}
 		else if (tree.getFile().length() > 1
 				&& tree.getFile().substring(tree.getFile().length() - 2).equals(".g")) {
+			viewModel.setEnabled(true);
 			viewModGraph.setEnabled(true);
 			viewModBrowser.setEnabled(false);
 			createAnal.setEnabled(true);
