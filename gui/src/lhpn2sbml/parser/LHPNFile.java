@@ -30,10 +30,14 @@ public class LHPNFile {
 	private HashMap<String, Properties> controlFlow;
 
 	private HashMap<String, Properties> variables;
+	
+	private HashMap<String, Integer> integers; 
 
 	private HashMap<String, Properties> rateAssignments;
 
 	private HashMap<String, Properties> contAssignments;
+	
+	private HashMap<String, Properties> intAssignments;
 
 	private HashMap<String, String> delays;
 
@@ -50,8 +54,10 @@ public class LHPNFile {
 		booleanAssignments = new HashMap<String, Properties>();
 		controlFlow = new HashMap<String, Properties>();
 		variables = new HashMap<String, Properties>();
+		integers = new HashMap<String, Integer>();
 		rateAssignments = new HashMap<String, Properties>();
 		contAssignments = new HashMap<String, Properties>();
+		intAssignments = new HashMap<String, Properties>();
 	}
 
 	public LHPNFile(Log log) {
@@ -64,8 +70,10 @@ public class LHPNFile {
 		booleanAssignments = new HashMap<String, Properties>();
 		controlFlow = new HashMap<String, Properties>();
 		variables = new HashMap<String, Properties>();
+		integers = new HashMap<String, Integer>();
 		rateAssignments = new HashMap<String, Properties>();
 		contAssignments = new HashMap<String, Properties>();
+		intAssignments = new HashMap<String, Properties>();
 	}
 
 	public void save(String filename) {
@@ -100,6 +108,12 @@ public class LHPNFile {
 			}
 			if (!variables.isEmpty()) {
 				buffer.append("\n#@.variables ");
+				for (String s : variables.keySet()) {
+					buffer.append(s + " ");
+				}
+			}
+			if (!integers.isEmpty()) {
+				buffer.append("\n#@.integers ");
 				for (String s : variables.keySet()) {
 					buffer.append(s + " ");
 				}
@@ -182,6 +196,14 @@ public class LHPNFile {
 				}
 				buffer.append("}\n");
 			}
+			if (!integers.isEmpty()) {
+				buffer.append("#@.init_ints {");
+				for (String s : integers.keySet()) {
+					Integer integer = integers.get(s);
+					buffer.append("<" + s + "=" + integer.toString() + ">");
+				}
+				buffer.append("}\n");
+			}
 			if (!enablings.isEmpty()) {
 				buffer.append("#@.enablings {");
 				for (String s : enablings.keySet()) {
@@ -238,6 +260,19 @@ public class LHPNFile {
 				}
 				buffer.append("}");
 			}
+			if (!intAssignments.isEmpty()) {
+				buffer.append("#@.int_assignments {");
+				for (String s : intAssignments.keySet()) {
+					Properties prop = intAssignments.get(s);
+					buffer.append("<" + s + "=");
+					for (Object key : prop.keySet()) {
+						String t = (String) key;
+						buffer.append("[" + t + ":=" + prop.getProperty(t) + "]");
+					}
+					buffer.append(">");
+				}
+				buffer.append("}\n");
+			}
 			if (!variables.isEmpty()) {
 				buffer.append("\n#@.continuous ");
 				for (String s : variables.keySet()) {
@@ -290,6 +325,7 @@ public class LHPNFile {
 			parseControlFlow(data);
 			// log.addText("check3");
 			parseVars(data);
+			parseIntegers(data);
 			// log.addText("check4");
 			parseMarking(data);
 			// log.addText("check5");
@@ -584,6 +620,15 @@ public class LHPNFile {
 				}
 			}
 		}
+		for (String s : integers.keySet()) {
+			Properties prop = intAssignments.get(s);
+			for (Object object : prop.keySet()) {
+				String propName = object.toString();
+				if (propName.equals(name)) {
+					flag = 1;
+				}
+			}
+		}
 		if (flag == 0 && name != null && variables.containsKey(name)) {
 			variables.remove(name);
 		}
@@ -594,6 +639,10 @@ public class LHPNFile {
 			outputs.remove(name);
 		}
 		return flag;
+	}
+	
+	public void addInteger(String name, Integer ic) {
+		integers.put(name, ic);
 	}
 
 	public void addRateAssign(String transition, String name, String value) {
@@ -651,6 +700,26 @@ public class LHPNFile {
 			contAssignments.put(transition, prop);
 		}
 	}
+	
+	public void addIntAssign(String transition, String name, String value) {
+		Properties prop = new Properties();
+		if (intAssignments.get(transition) != null) {
+			prop = intAssignments.get(transition);
+		}
+		// System.out.println("here " + transition + name + value);
+		prop.setProperty(name, value);
+		intAssignments.put(transition, prop);
+	}
+
+	public void removeIntAssign(String transition, String name) {
+		if (intAssignments.containsKey(transition)) {
+			Properties prop = intAssignments.get(transition);
+			if (name != null && prop.containsKey(name)) {
+				prop.remove(name);
+			}
+			intAssignments.put(transition, prop);
+		}
+	}
 
 	public void removeAllAssign(String transition) {
 		Properties prop = new Properties();
@@ -663,6 +732,9 @@ public class LHPNFile {
 		if (rateAssignments.containsKey(transition)) {
 			rateAssignments.put(transition, prop);
 		}
+		if (intAssignments.containsKey(transition)) {
+			intAssignments.put(transition, prop);
+		}
 	}
 
 	public void changeVariableName(String oldName, String newName) {
@@ -673,6 +745,10 @@ public class LHPNFile {
 		else if (isInput(oldName)) {
 			inputs.put(newName, inputs.get(oldName));
 			inputs.remove(oldName);
+		}
+		else if (isInteger(oldName)) {
+			integers.put(newName, integers.get(oldName));
+			integers.remove(oldName);
 		}
 		else {
 			outputs.put(newName, outputs.get(oldName));
@@ -697,6 +773,10 @@ public class LHPNFile {
 
 	public HashMap<String, Properties> getVariables() {
 		return variables;
+	}
+	
+	public HashMap<String, Integer> getIntegers() {
+		return integers;
 	}
 
 	public HashMap<String, Boolean> getInputs() {
@@ -749,6 +829,10 @@ public class LHPNFile {
 		if (isContinuous(var)) {
 			Properties prop = variables.get(var);
 			return prop.getProperty("value");
+		}
+		else if (isInteger(var)) {
+			Integer integer = integers.get(var);
+			return integer.toString();
 		}
 		else if (isInput(var)) {
 			if (inputs.get(var)) {
@@ -834,6 +918,27 @@ public class LHPNFile {
 		contVars = contAssignments.get(trans);
 		return contVars;
 	}
+	
+	public String[] getIntVars() {
+		if (!integers.isEmpty()) {
+			Object[] objArray = integers.keySet().toArray();
+			String[] vars = new String[objArray.length];
+			for (int i = 0; i < objArray.length; i++) {
+				vars[i] = objArray[i].toString();
+			}
+			return vars;
+		}
+		else {
+			return null;
+		}
+	}
+
+	public Properties getIntVars(String trans) {
+		// log.addText(trans);
+		Properties intVars = new Properties();
+		intVars = intAssignments.get(trans);
+		return intVars;
+	}
 
 	public String[] getContAssignVars(String trans) {
 		// log.addText(trans);
@@ -893,6 +998,16 @@ public class LHPNFile {
 		}
 		return null;
 	}
+	
+	public String getIntAssign(String transition, String var) {
+		if (intAssignments.containsKey(transition) && var != null) {
+			Properties prop = intAssignments.get(transition);
+			if (prop.containsKey(var)) {
+				return prop.getProperty(var);
+			}
+		}
+		return null;
+	}
 
 	public String getRateAssign(String transition, String var) {
 		Properties prop = rateAssignments.get(transition);
@@ -923,15 +1038,19 @@ public class LHPNFile {
 	}
 
 	public boolean isContinuous(String var) {
-		return variables.keySet().contains(var);
+		return variables.containsKey(var);
 	}
 
 	public boolean isInput(String var) {
-		return inputs.keySet().contains(var);
+		return inputs.containsKey(var);
 	}
 
 	public boolean isOutput(String var) {
-		return outputs.keySet().contains(var);
+		return outputs.containsKey(var);
+	}
+	
+	public boolean isInteger(String var) {
+		return integers.containsKey(var);
 	}
 
 	public boolean isTransition(String var) {
@@ -1152,6 +1271,46 @@ public class LHPNFile {
 		}
 		// log.addText("check3end");
 	}
+	
+	private void parseIntegers(StringBuffer data) {
+		// log.addText("check3 start");
+		Integer initCond = 0;
+		Properties initValue = new Properties();
+		// log.addText("check3a");
+		Pattern linePattern = Pattern.compile(INTEGERS);
+		Matcher lineMatcher = linePattern.matcher(data.toString());
+		lineMatcher.find();
+		// log.addText("check3b");
+		Pattern varPattern = Pattern.compile(WORD);
+		Matcher varMatcher = varPattern.matcher(lineMatcher.group(1));
+		// log.addText("check3c");
+		while (varMatcher.find()) {
+			integers.put(varMatcher.group(), initCond);
+		}
+		// log.addText("check3d " + VARS_INIT);
+		Pattern initLinePattern = Pattern.compile(INTS_INIT);
+		// log.addText("check3d1");
+		Matcher initLineMatcher = initLinePattern.matcher(data.toString());
+		// log.addText("check3d2");
+		initLineMatcher.find();
+		// log.addText("check3e");
+		Pattern initPattern = Pattern.compile(INIT_COND);
+		Matcher initMatcher = initPattern.matcher(initLineMatcher.group(1));
+		// log.addText("check3f");
+		while (initMatcher.find()) {
+			initValue.put(initMatcher.group(1), initMatcher.group(2));
+		}
+		// log.addText("check3g");
+		// log.addText("check3i");
+		// log.addText("check3j");
+		for (String s : integers.keySet()) {
+			// log.addText("check3for" + s);
+			initCond = (Integer) initValue.get(s);
+			// log.addText("check3for" + initCond.toString());
+			integers.put(s, initCond);
+		}
+		// log.addText("check3end");
+	}
 
 	private void parseMarking(StringBuffer data) {
 		// log.addText("check4start");
@@ -1307,6 +1466,10 @@ public class LHPNFile {
 	private static final String INIT_RATE = "#@\\.init_rates \\{([\\S[^\\}]]+?)\\}";
 
 	private static final String INIT_COND = "<(\\w+)=([-\\d]+)>";
+	
+	private static final String INTEGERS = "#@\\.integers ([.[^\\n]]+)\\n";
+	
+	private static final String INTS_INIT = "#@\\.init_ints \\{([\\S[^\\}]]+?)\\}";
 
 	private static final String MARKING_LINE = "\\.marking \\{(.+)\\}";
 
