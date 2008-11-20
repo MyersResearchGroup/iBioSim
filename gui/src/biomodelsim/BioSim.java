@@ -838,7 +838,7 @@ public class BioSim implements MouseListener, MouseMotionListener, ActionListene
 		}
 		else {
 			// file.add(pref);
-			//file.addSeparator();
+			file.addSeparator();
 			file.add(exit);
 			help.add(about);
 		}
@@ -6047,7 +6047,7 @@ public class BioSim implements MouseListener, MouseMotionListener, ActionListene
 					menuSelected = false;
 				}
 			}
-			else if (!(e.getComponent() instanceof JTree)){
+			else if (!(e.getComponent() instanceof JTree)) {
 				menuSelected = false;
 			}
 		}
