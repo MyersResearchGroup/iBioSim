@@ -7911,10 +7911,10 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				save.setEnabled(true);
 				run.setEnabled(true);
 				saveAs.setEnabled(true);
-				saveAsMenu.setEnabled(false);
+				saveAsMenu.setEnabled(true);
 				saveAsGcm.setEnabled(false);
 				saveAsLhpn.setEnabled(false);
-				saveAsGraph.setEnabled(false);
+				saveAsGraph.setEnabled(true);
 				saveAsSbml.setEnabled(false);
 				saveAsTemplate.setEnabled(false);
 				refresh.setEnabled(true);
@@ -8039,8 +8039,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				save.setEnabled(true);
 				run.setEnabled(false);
 				saveAs.setEnabled(true);
-				saveAsMenu.setEnabled(false);
-				saveAsGcm.setEnabled(false);
+				saveAsMenu.setEnabled(true);
+				saveAsGcm.setEnabled(true);
 				saveAsLhpn.setEnabled(false);
 				saveAsGraph.setEnabled(false);
 				saveAsSbml.setEnabled(false);
