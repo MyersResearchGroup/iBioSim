@@ -27,7 +27,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-//import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 //import java.awt.event.FocusEvent;
@@ -71,6 +71,7 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 
 import tabs.CloseAndMaxTabbedPane;
+import tabs.CloseTabPaneUI.ScrollableTabPanel;
 
 import com.apple.eawt.ApplicationAdapter;
 import com.apple.eawt.ApplicationEvent;
@@ -101,7 +102,7 @@ import datamanager.DataManager;
  * @author Curtis Madsen
  */
 
-public class BioSim implements MouseListener, ActionListener {
+public class BioSim implements MouseListener, ActionListener, MouseMotionListener {
 
 	private JFrame frame; // Frame where components of the GUI are displayed
 
@@ -837,7 +838,6 @@ public class BioSim implements MouseListener, ActionListener {
 		}
 		else {
 			// file.add(pref);
-			file.addSeparator();
 			file.add(exit);
 			help.add(about);
 		}
@@ -1000,6 +1000,7 @@ public class BioSim implements MouseListener, ActionListener {
 		frame.setJMenuBar(menuBar);
 		frame.getGlassPane().setVisible(true);
 		frame.getGlassPane().addMouseListener(this);
+		frame.getGlassPane().addMouseMotionListener(this);
 		frame.addMouseListener(this);
 		menuBar.addMouseListener(this);
 		frame.pack();
@@ -5327,6 +5328,7 @@ public class BioSim implements MouseListener, ActionListener {
 	}
 
 	public void mousePressed(MouseEvent e) {
+		//log.addText(e.getSource().toString());
 		if (e.getSource() == frame.getGlassPane()) {
 			Component glassPane = frame.getGlassPane();
 			Point glassPanePoint = e.getPoint();
@@ -5339,7 +5341,6 @@ public class BioSim implements MouseListener, ActionListener {
 					Component component = menuBar.getComponentAt(glassPanePoint);
 					Point componentPoint = SwingUtilities.convertPoint(glassPane, glassPanePoint,
 							component);
-					// log.addText(componentPoint.toString());
 					component.dispatchEvent(new MouseEvent(component, e.getID(), e.getWhen(), e
 							.getModifiers(), componentPoint.x, componentPoint.y, e.getClickCount(),
 							e.isPopupTrigger()));
@@ -5351,9 +5352,17 @@ public class BioSim implements MouseListener, ActionListener {
 						containerPoint.x, containerPoint.y);
 				Point componentPoint = SwingUtilities.convertPoint(glassPane, glassPanePoint,
 						deepComponent);
+				if (deepComponent instanceof ScrollableTabPanel) {
+					Point tabPoint = SwingUtilities.convertPoint(glassPane, glassPanePoint, tab);
+					tab.dispatchEvent(new MouseEvent(tab, e.getID(), e.getWhen(), e
+							.getModifiers(), tabPoint.x, tabPoint.y, e.getClickCount(), e
+							.isPopupTrigger()));
+				}
+				else {
 				deepComponent.dispatchEvent(new MouseEvent(deepComponent, e.getID(), e.getWhen(), e
 						.getModifiers(), componentPoint.x, componentPoint.y, e.getClickCount(), e
 						.isPopupTrigger()));
+				}
 			}
 		}
 		else {
@@ -6051,20 +6060,26 @@ public class BioSim implements MouseListener, ActionListener {
 						containerPoint.x, containerPoint.y);
 				Point componentPoint = SwingUtilities.convertPoint(glassPane, glassPanePoint,
 						deepComponent);
-				if (deepComponent != null) {
-					deepComponent.dispatchEvent(new MouseEvent(deepComponent, e.getID(), e
-							.getWhen(), e.getModifiers(), componentPoint.x, componentPoint.y, e
-							.getClickCount(), e.isPopupTrigger()));
+				if (deepComponent instanceof ScrollableTabPanel) {
+							Point tabPoint = SwingUtilities.convertPoint(glassPane, glassPanePoint, tab);
+							tab.dispatchEvent(new MouseEvent(tab, e.getID(), e.getWhen(), e
+									.getModifiers(), tabPoint.x, tabPoint.y, e.getClickCount(), e
+									.isPopupTrigger()));
+					}
+					else {
+				deepComponent.dispatchEvent(new MouseEvent(deepComponent, e.getID(), e.getWhen(), e
+						.getModifiers(), componentPoint.x, componentPoint.y, e.getClickCount(), e
+						.isPopupTrigger()));
+						}
+				if (deepComponent instanceof JTree) {
+					enableTreeMenu();
+				}
+				else {
+					enableTabMenu(tab.getSelectedIndex());
 				}
 			}
 		}
 		else {
-			if (e.getSource() == tree) {
-				enableTreeMenu();
-			}
-			else if (!(e.getSource() instanceof JMenu)) {
-				enableTabMenu(tab.getSelectedIndex());
-			}
 			if (tree.getFile() != null) {
 				if (e.isPopupTrigger() && tree.getFile() != null) {
 					popup.removeAll();
@@ -6396,6 +6411,38 @@ public class BioSim implements MouseListener, ActionListener {
 				}
 			}
 			frame.getGlassPane().setVisible(true);
+		}
+	}
+	
+	public void mouseMoved(MouseEvent e) {
+		Component glassPane = frame.getGlassPane();
+		Point glassPanePoint = e.getPoint();
+		// Component component = e.getComponent();
+		Container container = frame.getContentPane();
+		Point containerPoint = SwingUtilities.convertPoint(glassPane, glassPanePoint, frame
+				.getContentPane());
+		if (containerPoint.y < 0) { // we're not in the content pane
+			if (containerPoint.y + menuBar.getHeight() >= 0) {
+				Component component = menuBar.getComponentAt(glassPanePoint);
+				Point componentPoint = SwingUtilities.convertPoint(glassPane, glassPanePoint,
+						component);
+				component.dispatchEvent(new MouseEvent(component, e.getID(), e.getWhen(), e
+						.getModifiers(), componentPoint.x, componentPoint.y, e.getClickCount(),
+						e.isPopupTrigger()));
+				frame.getGlassPane().setVisible(false);
+			}
+		}
+		else {
+			Component deepComponent = SwingUtilities.getDeepestComponentAt(container,
+					containerPoint.x, containerPoint.y);
+			Point componentPoint = SwingUtilities.convertPoint(glassPane, glassPanePoint,
+					deepComponent);
+			//if (deepComponent instanceof ScrollableTabPanel) {
+			//	deepComponent = tab.findComponentAt(componentPoint);
+			//}
+			deepComponent.dispatchEvent(new MouseEvent(deepComponent, e.getID(), e.getWhen(), e
+					.getModifiers(), componentPoint.x, componentPoint.y, e.getClickCount(), e
+					.isPopupTrigger()));
 		}
 	}
 
@@ -7278,12 +7325,81 @@ public class BioSim implements MouseListener, ActionListener {
 	}
 
 	public void mouseClicked(MouseEvent e) {
+		if (e.getSource() == frame.getGlassPane()) {
+		Component glassPane = frame.getGlassPane();
+		Point glassPanePoint = e.getPoint();
+		// Component component = e.getComponent();
+		Container container = frame.getContentPane();
+		Point containerPoint = SwingUtilities.convertPoint(glassPane, glassPanePoint, frame
+				.getContentPane());
+		if (containerPoint.y < 0) { // we're not in the content pane
+			if (containerPoint.y + menuBar.getHeight() >= 0) {
+				Component component = menuBar.getComponentAt(glassPanePoint);
+				Point componentPoint = SwingUtilities.convertPoint(glassPane, glassPanePoint,
+						component);
+				component.dispatchEvent(new MouseEvent(component, e.getID(), e.getWhen(), e
+						.getModifiers(), componentPoint.x, componentPoint.y, e.getClickCount(),
+						e.isPopupTrigger()));
+				frame.getGlassPane().setVisible(false);
+			}
+		}
+		else {
+			Component deepComponent = SwingUtilities.getDeepestComponentAt(container,
+					containerPoint.x, containerPoint.y);
+			Point componentPoint = SwingUtilities.convertPoint(glassPane, glassPanePoint,
+					deepComponent);
+			//if (deepComponent instanceof ScrollableTabPanel) {
+			//	deepComponent = tab.findComponentAt(componentPoint);
+			//}
+			deepComponent.dispatchEvent(new MouseEvent(deepComponent, e.getID(), e.getWhen(), e
+					.getModifiers(), componentPoint.x, componentPoint.y, e.getClickCount(), e
+					.isPopupTrigger()));
+			if (deepComponent instanceof JTree) {
+				enableTreeMenu();
+			}
+			else {
+				enableTabMenu(tab.getSelectedIndex());
+			}
+		}
+		}
 	}
 
 	public void mouseEntered(MouseEvent e) {
 	}
 
 	public void mouseExited(MouseEvent e) {
+	}
+	
+	public void mouseDragged(MouseEvent e) {
+		Component glassPane = frame.getGlassPane();
+		Point glassPanePoint = e.getPoint();
+		// Component component = e.getComponent();
+		Container container = frame.getContentPane();
+		Point containerPoint = SwingUtilities.convertPoint(glassPane, glassPanePoint, frame
+				.getContentPane());
+		if (containerPoint.y < 0) { // we're not in the content pane
+			if (containerPoint.y + menuBar.getHeight() >= 0) {
+				Component component = menuBar.getComponentAt(glassPanePoint);
+				Point componentPoint = SwingUtilities.convertPoint(glassPane, glassPanePoint,
+						component);
+				component.dispatchEvent(new MouseEvent(component, e.getID(), e.getWhen(), e
+						.getModifiers(), componentPoint.x, componentPoint.y, e.getClickCount(),
+						e.isPopupTrigger()));
+				frame.getGlassPane().setVisible(false);
+			}
+		}
+		else {
+			Component deepComponent = SwingUtilities.getDeepestComponentAt(container,
+					containerPoint.x, containerPoint.y);
+			Point componentPoint = SwingUtilities.convertPoint(glassPane, glassPanePoint,
+					deepComponent);
+			//if (deepComponent instanceof ScrollableTabPanel) {
+			//	deepComponent = tab.findComponentAt(componentPoint);
+			//}
+			deepComponent.dispatchEvent(new MouseEvent(deepComponent, e.getID(), e.getWhen(), e
+					.getModifiers(), componentPoint.x, componentPoint.y, e.getClickCount(), e
+					.isPopupTrigger()));
+		}
 	}
 
 	public JMenuItem getExitButton() {
