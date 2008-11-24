@@ -71,7 +71,6 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 
 import tabs.CloseAndMaxTabbedPane;
-import tabs.CloseTabPaneUI.ScrollableTabPanel;
 
 import com.apple.eawt.ApplicationAdapter;
 import com.apple.eawt.ApplicationEvent;
@@ -5352,17 +5351,9 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						containerPoint.x, containerPoint.y);
 				Point componentPoint = SwingUtilities.convertPoint(glassPane, glassPanePoint,
 						deepComponent);
-				if (deepComponent instanceof ScrollableTabPanel) {
-					Point tabPoint = SwingUtilities.convertPoint(glassPane, glassPanePoint, tab);
-					tab.dispatchEvent(new MouseEvent(tab, e.getID(), e.getWhen(), e
-							.getModifiers(), tabPoint.x, tabPoint.y, e.getClickCount(), e
-							.isPopupTrigger()));
-				}
-				else {
 				deepComponent.dispatchEvent(new MouseEvent(deepComponent, e.getID(), e.getWhen(), e
 						.getModifiers(), componentPoint.x, componentPoint.y, e.getClickCount(), e
 						.isPopupTrigger()));
-				}
 			}
 		}
 		else {
@@ -6060,17 +6051,9 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						containerPoint.x, containerPoint.y);
 				Point componentPoint = SwingUtilities.convertPoint(glassPane, glassPanePoint,
 						deepComponent);
-				if (deepComponent instanceof ScrollableTabPanel) {
-							Point tabPoint = SwingUtilities.convertPoint(glassPane, glassPanePoint, tab);
-							tab.dispatchEvent(new MouseEvent(tab, e.getID(), e.getWhen(), e
-									.getModifiers(), tabPoint.x, tabPoint.y, e.getClickCount(), e
-									.isPopupTrigger()));
-					}
-					else {
 				deepComponent.dispatchEvent(new MouseEvent(deepComponent, e.getID(), e.getWhen(), e
 						.getModifiers(), componentPoint.x, componentPoint.y, e.getClickCount(), e
 						.isPopupTrigger()));
-						}
 				if (deepComponent instanceof JTree) {
 					enableTreeMenu();
 				}
