@@ -28,7 +28,7 @@ public class VariablesPanel extends JPanel implements ActionListener {
 
 	private String[] options = { "Ok", "Cancel" };
 
-	private Boolean boolCont;
+	private Boolean continuous, integer;
 
 	private LHPNFile lhpn;
 
@@ -40,7 +40,7 @@ public class VariablesPanel extends JPanel implements ActionListener {
 
 	// private JComboBox typeBox, modeBox, initBox;
 
-	private static final String[] types = new String[] { "boolean", "continuous" };
+	private static final String[] types = new String[] { "boolean", "continuous", "integer" };
 
 	private static final String[] modes = new String[] { "input", "output" };
 
@@ -48,13 +48,14 @@ public class VariablesPanel extends JPanel implements ActionListener {
 
 	private HashMap<String, PropertyField> fields = null;
 
-	public VariablesPanel(String selected, PropertyList variablesList, Boolean boolCont,
+	public VariablesPanel(String selected, PropertyList variablesList, Boolean boolCont, Boolean integer,
 			LHPNFile lhpn) {
 		super(new GridLayout(6, 1));
 		this.selected = selected;
 		this.variablesList = variablesList;
 		this.lhpn = lhpn;
-		this.boolCont = boolCont;
+		this.continuous = boolCont;
+		this.integer = integer;
 
 		fields = new HashMap<String, PropertyField>();
 
@@ -67,8 +68,11 @@ public class VariablesPanel extends JPanel implements ActionListener {
 		// Type label
 		JPanel tempPanel = new JPanel();
 		String type = "";
-		if (boolCont) {
+		if (continuous) {
 			type = types[1];
+		}
+		else if (integer) {
+			type = types[2];
 		}
 		else {
 			type = types[0];
@@ -84,7 +88,7 @@ public class VariablesPanel extends JPanel implements ActionListener {
 		add(tempPanel);
 
 		// Initial field
-		if (boolCont) {
+		if (continuous || integer) {
 			// JOptionPane.showMessageDialog(this, lhpn.isContinuous(selected));
 			if (selected != null) {
 				initField = new PropertyField("Initial Value", lhpn.getInitialVal(selected), null,
@@ -110,7 +114,7 @@ public class VariablesPanel extends JPanel implements ActionListener {
 		}
 
 		// Mode field
-		if (!boolCont) {
+		if (!continuous) {
 			tempPanel = new JPanel();
 			JLabel modeLabel = new JLabel("Mode");
 			modeBox = new JComboBox(modes);
@@ -123,7 +127,7 @@ public class VariablesPanel extends JPanel implements ActionListener {
 		}
 
 		// Initial rate field
-		if (boolCont) {
+		if (continuous) {
 			if (selected != null) {
 				rateField = new PropertyField("Initial Rate", lhpn.getInitialRate(selected), null,
 						null, Utility.NUMstring);
@@ -149,7 +153,7 @@ public class VariablesPanel extends JPanel implements ActionListener {
 			// typeBox.setSelectedItem(types[0]);
 			// setType(types[0]);
 			// }
-			if (lhpn.isContinuous(selected)) {
+			if (lhpn.isContinuous(selected) || lhpn.isInteger(selected)) {
 				fields.get("Initial value").setValue(lhpn.getInitialVal(selected));
 			}
 			else {
@@ -171,7 +175,7 @@ public class VariablesPanel extends JPanel implements ActionListener {
 					initBox.setSelectedItem(booleans[1]);
 				}
 			}
-			if (!boolCont) {
+			if (!continuous && !integer) {
 				if (lhpn.isInput(selected)) {
 					modeBox.setSelectedItem(modes[0]);
 				}
@@ -255,18 +259,22 @@ public class VariablesPanel extends JPanel implements ActionListener {
 			if (id.equals(oldName)) {
 				lhpn.removeVar(id);
 			}
-			if (lhpn.isContinuous(id) || boolCont) {
+			if (lhpn.isContinuous(id) || continuous) {
 				//System.out.println("add var " + property);
 				lhpn.addVar(id, property);
 			}
-			else if (lhpn.isInput(id) || (!boolCont && modeBox.getSelectedItem().equals("input"))) {
+			else if (lhpn.isInteger(id) || integer) {
+				//System.out.println("add var " + property);
+				lhpn.addInteger(id, fields.get("Initial value").getValue());
+			}
+			else if (lhpn.isInput(id) || (!continuous && modeBox.getSelectedItem().equals("input"))) {
 				Boolean temp = false;
 				if (initBox.getSelectedItem().equals("true")) {
 					temp = true;
 				}
 				lhpn.addInput(id, temp);
 			}
-			else if (lhpn.isOutput(id) || (!boolCont && modeBox.getSelectedItem().equals("output"))) {
+			else if (lhpn.isOutput(id) || (!continuous && modeBox.getSelectedItem().equals("output"))) {
 				Boolean temp = false;
 				if (initBox.getSelectedItem().equals("true")) {
 					temp = true;
@@ -311,7 +319,7 @@ public class VariablesPanel extends JPanel implements ActionListener {
 			initPanel.add(initBox);
 			add(initPanel);
 			HashMap<String, Boolean> inits;
-			if (!boolCont) {
+			if (!continuous) {
 				if (modeBox.getSelectedIndex() == 0) {
 					inits = lhpn.getInputs();
 				}
