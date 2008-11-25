@@ -39,7 +39,7 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 
 	private String[] options = { "Ok", "Cancel" };
 
-	private Object[] types = { "Boolean", "Continuous", "Rate" };
+	private Object[] types = { "Boolean", "Continuous", "Integer", "Rate" };
 
 	private LHPNFile lhpn;
 
@@ -93,7 +93,7 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 		if (selected != null) {
 			if (lhpn.getBooleanVars(selected) != null) {
 				for (String s : lhpn.getBooleanVars(selected)) {
-					if (!s.equals(null)) {
+					if (s != null) {
 						boolAssignments.addItem(s + ":="
 								+ lhpn.getBoolAssign(selected, s).toString());
 						assignments.addItem(s + ":=" + lhpn.getBoolAssign(selected, s).toString());
@@ -179,7 +179,7 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 			// log.addText(lhpn.getDelay(selected));
 			fields.get("Delay").setValue(lhpn.getDelay(selected));
 			fields.get("Enabling Condition").setValue(lhpn.getEnabling(selected));
-			log.addText(selected + lhpn.getEnabling(selected));
+			//log.addText(selected + lhpn.getEnabling(selected));
 			// loadProperties(prop);
 		}
 

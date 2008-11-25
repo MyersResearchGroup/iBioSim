@@ -58,7 +58,7 @@ public class LHPNEditor extends JPanel implements ActionListener {
 
 	private String filename = "", directory = "";
 
-	private String[] varOptions = new String[] { "Boolean", "Continuous" };
+	private String[] varOptions = new String[] { "Boolean", "Continuous", "Integer" };
 
 	// private String lhpnName = "";
 
@@ -280,23 +280,32 @@ public class LHPNEditor extends JPanel implements ActionListener {
 			}
 			if (getName().contains("Variable")) {
 				String selected = null;
-				Boolean boolCont = false;
+				Boolean continuous = false;
+				Boolean integer = false;
 				if (list.getSelectedValue() != null && getName().contains("Edit")) {
 					selected = list.getSelectedValue().toString();
 					if (lhpnFile.isContinuous(selected)) {
-						boolCont = true;
+						continuous = true;
+					}
+					else if (lhpnFile.isInteger(selected)) {
+						integer = true;
 					}
 				}
 				else {
-					String temp = (String)JOptionPane.showInputDialog(mainPanel, "Boolean or Continuous variable?",
+					String temp = (String)JOptionPane.showInputDialog(mainPanel, "",
 							"Variable Type Selection", JOptionPane.PLAIN_MESSAGE, null, varOptions,
 							varOptions[0]);
+					if (temp != null) {
 					if (temp.equals(varOptions[1])) {
-						boolCont = true;
+						continuous = true;
+					}
+					else if (temp.equals(varOptions[2])) {
+						integer =  true;
+					}
 					}
 				}
 				//log.addText(selected);
-				VariablesPanel panel = new VariablesPanel(selected, list, boolCont, lhpnFile);
+				VariablesPanel panel = new VariablesPanel(selected, list, continuous, integer, lhpnFile);
 			}
 			else if (getName().contains("Place")) {
 				String selected = null;
