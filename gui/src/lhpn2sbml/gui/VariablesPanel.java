@@ -114,7 +114,7 @@ public class VariablesPanel extends JPanel implements ActionListener {
 		}
 
 		// Mode field
-		if (!continuous) {
+		if (!continuous && !integer) {
 			tempPanel = new JPanel();
 			JLabel modeLabel = new JLabel("Mode");
 			modeBox = new JComboBox(modes);

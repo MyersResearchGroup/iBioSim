@@ -32,8 +32,8 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 
 	// private TransitionsPanel frame;
 
-	private PropertyList transitionsList, boolAssignments, varAssignments, rateAssignments,
-			assignments;
+	private PropertyList transitionsList, boolAssignments, varAssignments, intAssignments,
+			rateAssignments, assignments;
 
 	private JPanel fieldPanel;
 
@@ -86,6 +86,7 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 		assignments = new PropertyList("Assignment List");
 		boolAssignments = new PropertyList("Boolean Assignment List");
 		varAssignments = new PropertyList("Continuous Assignment List");
+		intAssignments = new PropertyList("Integer Assignment List");
 		rateAssignments = new PropertyList("Rate Assignment List");
 		EditButton addAssign = new EditButton("Add Assignment", assignments);
 		RemoveButton removeAssign = new RemoveButton("Remove Assignment", assignments);
@@ -93,7 +94,7 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 		if (selected != null) {
 			if (lhpn.getBooleanVars(selected) != null) {
 				for (String s : lhpn.getBooleanVars(selected)) {
-					if (s != null) {
+					if (s != null && lhpn.getBoolAssign(selected, s) != null) {
 						boolAssignments.addItem(s + ":="
 								+ lhpn.getBoolAssign(selected, s).toString());
 						assignments.addItem(s + ":=" + lhpn.getBoolAssign(selected, s).toString());
@@ -102,18 +103,33 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 			}
 			if (lhpn.getContAssignVars(selected) != null) {
 				for (String s : lhpn.getContAssignVars(selected)) {
-					if (!s.equals(null)) {
-						varAssignments.addItem(s + ":=" + lhpn.getContAssign(selected, s));
-						assignments.addItem(s + ":=" + lhpn.getContAssign(selected, s));
+					if (s != null) {
+						if (!s.equals(null)) {
+							varAssignments.addItem(s + ":=" + lhpn.getContAssign(selected, s));
+							assignments.addItem(s + ":=" + lhpn.getContAssign(selected, s));
+						}
+					}
+				}
+			}
+			if (lhpn.getIntVars(selected) != null) {
+				for (Object obj : lhpn.getIntVars(selected).keySet()) {
+					if (obj != null) {
+						String s = (String) obj;
+						if (!s.equals(null)) {
+							intAssignments.addItem(s + ":=" + lhpn.getIntAssign(selected, s));
+							assignments.addItem(s + ":=" + lhpn.getIntAssign(selected, s));
+						}
 					}
 				}
 			}
 			if (lhpn.getRateVars(selected) != null) {
 				for (String s : lhpn.getRateVars(selected)) {
 					// log.addText(selected + " " + s);
-					if (!s.equals(null)) {
-						rateAssignments.addItem(s + "':=" + lhpn.getRateAssign(selected, s));
-						assignments.addItem(s + "':=" + lhpn.getRateAssign(selected, s));
+					if (s != null) {
+						if (!s.equals(null) && !lhpn.getRateAssign(selected, s).equals("true") && !lhpn.getRateAssign(selected, s).equals("false")) {
+							rateAssignments.addItem(s + "':=" + lhpn.getRateAssign(selected, s));
+							assignments.addItem(s + "':=" + lhpn.getRateAssign(selected, s));
+						}
 					}
 				}
 			}
@@ -179,7 +195,7 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 			// log.addText(lhpn.getDelay(selected));
 			fields.get("Delay").setValue(lhpn.getDelay(selected));
 			fields.get("Enabling Condition").setValue(lhpn.getEnabling(selected));
-			//log.addText(selected + lhpn.getEnabling(selected));
+			// log.addText(selected + lhpn.getEnabling(selected));
 			// loadProperties(prop);
 		}
 
@@ -234,14 +250,15 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 			}
 
 			if (selected != null && !oldName.equals(id)) {
-				lhpn.changeVariableName(oldName, id);
+				lhpn.changeTransitionName(oldName, id);
+			}
+			else if (selected == null) {
+				lhpn.addTransition(id);
 			}
 			save(id);
-			lhpn.addTransition(id);
 			transitionsList.removeItem(oldName);
 			transitionsList.addItem(id);
 			transitionsList.setSelectedValue(id, true);
-
 		}
 		else if (value == JOptionPane.NO_OPTION) {
 			// System.out.println();
@@ -255,20 +272,32 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 		lhpn.removeAllAssign(transition);
 		if (boolAssignments.getItems() != null) {
 			for (String s : boolAssignments.getItems()) {
+				// System.out.println("bool" + s);
 				String[] tempArray = s.split(":=");
 				lhpn.addBoolAssign(transition, tempArray[0], tempArray[1]);
 			}
 		}
 		if (varAssignments.getItems() != null) {
 			for (String s : varAssignments.getItems()) {
+				// System.out.println("var" + s);
 				String[] tempArray = s.split(":=");
 				// System.out.println(selected + " " + tempArray[0] + " " +
 				// tempArray[1]);
 				lhpn.addContAssign(transition, tempArray[0], tempArray[1]);
 			}
 		}
+		if (intAssignments.getItems() != null) {
+			for (String s : intAssignments.getItems()) {
+				// System.out.println("int" + s);
+				String[] tempArray = s.split(":=");
+				// System.out.println(selected + " " + tempArray[0] + " " +
+				// tempArray[1]);
+				lhpn.addIntAssign(transition, tempArray[0], tempArray[1]);
+			}
+		}
 		if (rateAssignments.getItems() != null) {
 			for (String s : rateAssignments.getItems()) {
+				// System.out.println("rate" + s);
 				String[] tempArray = s.split("':=");
 				lhpn.addRateAssign(transition, tempArray[0], tempArray[1]);
 			}
@@ -374,6 +403,22 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 							varAssignments, lhpn);
 				}
 			}
+			else if (getName().contains("Integer") || type.equals("Integer")
+					|| isInteger(assignment)) {
+				String variable = null;
+				if (list.getSelectedValue() != null && getName().contains("Edit")) {
+					variable = list.getSelectedValue().toString();
+				}
+				if (lhpn.getIntVars().length == 0) {
+					Utility.createErrorMessage("Error", "Add integers first");
+				}
+				else {
+					// System.out.println("transition " +
+					// lhpn.getIntVars().length);
+					IntAssignPanel panel = new IntAssignPanel(selected, variable, list,
+							intAssignments, lhpn);
+				}
+			}
 			else if (getName().contains("Rate") || type.equals("Rate") || isRate(assignment)) {
 				String variable = null;
 				if (list.getSelectedValue() != null && getName().contains("Edit")) {
@@ -409,6 +454,15 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 
 	private boolean isContinuous(String assignment) {
 		for (String s : varAssignments.getItems()) {
+			if (s.equals(assignment)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private boolean isInteger(String assignment) {
+		for (String s : intAssignments.getItems()) {
 			if (s.equals(assignment)) {
 				return true;
 			}
