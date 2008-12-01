@@ -92,7 +92,12 @@ public class ControlFlowPanel extends JPanel implements ActionListener {
 		if (placeList.length > 0 && transitionList.length > 0) {
 			tempPanel = new JPanel();
 			tempLabel = new JLabel("To");
-			toBox = new JComboBox(flowStringList);
+			if (isTransition(fromBox)) {
+				toBox = new JComboBox(placeList);
+			}
+			else {
+				toBox = new JComboBox(transitionList);
+			}
 			// toBox.setSelectedItem(flowStringList[0]);
 			toBox.addActionListener(this);
 			tempPanel.setLayout(new GridLayout(1, 2));
