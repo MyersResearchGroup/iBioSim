@@ -139,6 +139,9 @@ public class LHPNEditor extends JPanel implements ActionListener {
 		if (!lhpnFile.getVariables().equals(null)) {
 			variables.addAllItem(lhpnFile.getVariables().keySet());
 		}
+		if (!lhpnFile.getVariables().equals(null)) {
+			variables.addAllItem(lhpnFile.getIntegers().keySet());
+		}
 		if (!lhpnFile.getInputs().equals(null)) {
 			variables.addAllItem(lhpnFile.getInputs().keySet());
 		}

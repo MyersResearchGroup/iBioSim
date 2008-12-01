@@ -114,7 +114,7 @@ public class LHPNFile {
 			}
 			if (!integers.isEmpty()) {
 				buffer.append("\n#@.integers ");
-				for (String s : variables.keySet()) {
+				for (String s : integers.keySet()) {
 					buffer.append(s + " ");
 				}
 			}
@@ -148,8 +148,10 @@ public class LHPNFile {
 				buffer.append("\n.graph\n");
 				for (String s : controlFlow.keySet()) {
 					// log.addText(s);
+					if (controlFlow.get(s) != null) {
 					Properties prop = controlFlow.get(s);
 					// log.addText(s + prop.getProperty("to"));
+					if (prop.getProperty("to") != null) {
 					String toString = prop.getProperty("to");
 					if (toString != null) {
 						// log.addText("to " + toString);
@@ -160,6 +162,8 @@ public class LHPNFile {
 							}
 						}
 					}
+					}
+					if (prop.getProperty("from") != null) {
 					String fromString = prop.getProperty("from");
 					if (fromString != null) {
 						// log.addText("from "+ fromString);
@@ -170,9 +174,12 @@ public class LHPNFile {
 							}
 						}
 					}
+					}
+					}
 				}
 			}
 			boolean flag = false;
+			if (!places.keySet().isEmpty()) {
 			for (String s : places.keySet()) {
 				if (places.get(s).equals(true)) {
 					if (!flag) {
@@ -183,6 +190,7 @@ public class LHPNFile {
 				}
 			}
 			buffer.append("}\n");
+			}
 			if (!variables.isEmpty()) {
 				buffer.append("#@.init_vals {");
 				for (String s : variables.keySet()) {
@@ -285,7 +293,7 @@ public class LHPNFile {
 			// System.out.print(buffer);
 			p.print(buffer);
 			p.close();
-			// log.addText("Saving:\n" + "\n");
+			log.addText("Saving:\n" + file + "\n");
 		}
 		catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -337,6 +345,7 @@ public class LHPNFile {
 			parseRateAssign(data);
 			// log.addText("check8");
 			parseDelayAssign(data);
+			parseIntAssign(data);
 			// log.addText("check9");
 			parseBooleanAssign(data);
 			// log.addText("check0");
@@ -1025,6 +1034,7 @@ public class LHPNFile {
 		if (intAssignments.containsKey(transition) && var != null) {
 			Properties prop = intAssignments.get(transition);
 			if (prop.containsKey(var)) {
+				log.addText(prop.getProperty(var));
 				return prop.getProperty(var);
 			}
 		}
@@ -1298,7 +1308,7 @@ public class LHPNFile {
 
 	private void parseIntegers(StringBuffer data) {
 		// log.addText("check3 start");
-		Integer initCond = 0;
+		String initCond = "0";
 		Properties initValue = new Properties();
 		// log.addText("check3a");
 		Pattern linePattern = Pattern.compile(INTEGERS);
@@ -1309,7 +1319,7 @@ public class LHPNFile {
 			Matcher varMatcher = varPattern.matcher(lineMatcher.group(1));
 			// log.addText("check3c");
 			while (varMatcher.find()) {
-				integers.put(varMatcher.group(), initCond.toString());
+				integers.put(varMatcher.group(), initCond);
 			}
 			// log.addText("check3d " + VARS_INIT);
 			Pattern initLinePattern = Pattern.compile(INTS_INIT);
@@ -1322,6 +1332,7 @@ public class LHPNFile {
 			Matcher initMatcher = initPattern.matcher(initLineMatcher.group(1));
 			// log.addText("check3f");
 			while (initMatcher.find()) {
+				//log.addText(initMatcher.group(1));
 				initValue.put(initMatcher.group(1), initMatcher.group(2));
 			}
 			// log.addText("check3g");
@@ -1329,9 +1340,9 @@ public class LHPNFile {
 			// log.addText("check3j");
 			for (String s : integers.keySet()) {
 				// log.addText("check3for" + s);
-				initCond = (Integer) initValue.get(s);
-				// log.addText("check3for" + initCond.toString());
-				integers.put(s, initCond.toString());
+				initCond = initValue.get(s).toString();
+				// log.addText("check3for" + initCond);
+				integers.put(s, initCond);
 			}
 		}
 		// log.addText("check3end");
@@ -1478,6 +1489,44 @@ public class LHPNFile {
 			}
 		}
 	}
+	
+	private void parseIntAssign(StringBuffer data) {
+		// log.addText("check6start");
+		Properties assignProp = new Properties();
+		Pattern linePattern = Pattern.compile(INT_ASSIGNMENT_LINE);
+		Matcher lineMatcher = linePattern.matcher(data.toString());
+		// Boolean temp = lineMatcher.find();
+		// log.addText(temp.toString());
+		// log.addText("check6a");
+		if (lineMatcher.find()) {
+			Pattern assignPattern = Pattern.compile(ASSIGNMENT);
+			// log.addText("check6a1.0");
+			// log.addText("check6a1 " + lineMatcher.group());
+			Matcher assignMatcher = assignPattern.matcher(lineMatcher.group(1));
+			Pattern varPattern = Pattern.compile(ASSIGN_VAR);
+			Pattern indetPattern = Pattern.compile(INDET_ASSIGN_VAR);
+			Matcher varMatcher;
+			// log.addText("check6ab");
+			while (assignMatcher.find()) {
+				// log.addText("check6while1");
+				varMatcher = varPattern.matcher(assignMatcher.group(2));
+				if (!varMatcher.find()) {
+					varMatcher = indetPattern.matcher(assignMatcher.group(2));
+				}
+				else {
+					varMatcher = varPattern.matcher(assignMatcher.group(2));
+				}
+				//log.addText(varMatcher.toString());
+				while (varMatcher.find()) {
+					// log.addText("check6while2");
+					assignProp.put(varMatcher.group(1), varMatcher.group(2));
+				}
+				//log.addText(assignMatcher.group(1) + assignProp.toString());
+				intAssignments.put(assignMatcher.group(1), assignProp);
+			}
+		}
+		// log.addText("check6end");
+	}
 
 	private static final String INPUT = "\\.inputs([[\\s[^\\n]]\\w+]*?)\\n";
 
@@ -1510,12 +1559,14 @@ public class LHPNFile {
 	private static final String ENABLING = "(<([\\S[^=]]+?)=(\\[([^\\]]+?)\\])+?>)?";
 
 	private static final String ASSIGNMENT_LINE = "#@\\.assignments \\{([.[^\\}]]+?)\\}";
+	
+	private static final String INT_ASSIGNMENT_LINE = "#@\\.int_assignments \\{([.[^\\}]]+?)\\}";
 
 	private static final String RATE_ASSIGNMENT_LINE = "#@\\.rate_assignments \\{([.[^\\}]]+?)\\}";
 
 	private static final String ASSIGNMENT = "<([\\S[^=]]+?)=\\[([^>]+?)\\]>";
 
-	private static final String ASSIGN_VAR = "([\\S[^:]]+?):=([-\\d]+)";
+	private static final String ASSIGN_VAR = "([\\S[^:]]+?):=([\\S]+)";
 
 	private static final String INDET_ASSIGN_VAR = "([\\S[^:]]+?):=(\\[[-\\d]+,[-\\d]+\\])";
 
