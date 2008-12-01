@@ -771,8 +771,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		else {
 			edit.addSeparator();
 			edit.add(pref);
-			// file.add(exit);
-			// file.addSeparator();
+			file.add(exit);
+			file.addSeparator();
 			help.add(about);
 		}
 		view.add(viewCircuit);
@@ -837,7 +837,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		}
 		else {
 			// file.add(pref);
-			file.add(exit);
+			//file.add(exit);
 			help.add(about);
 		}
 		if (biosimrc.get("biosim.check.undeclared", "").equals("false")) {
@@ -3040,6 +3040,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						else {
 							if (overwrite(root + separator + lhpnName, lhpnName)) {
 								File f = new File(root + separator + lhpnName);
+								f.delete();
 								f.createNewFile();
 								new LHPNFile().save(f.getAbsolutePath());
 								int i = getTab(f.getName());
@@ -5826,13 +5827,14 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 								directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
 								theFile = filename.substring(filename.lastIndexOf('\\') + 1);
 							}
+							//log.addText("yo");
 							LHPNFile lhpn = new LHPNFile(log);
 							if (new File(directory + theFile).length() > 0) {
 								// log.addText("here");
 								lhpn.load(directory + theFile);
 								// log.addText("there");
 							}
-							// log.addText("load completed");
+							//log.addText("load completed");
 							File work = new File(directory);
 							int i = getTab(theFile);
 							if (i != -1) {
@@ -5844,7 +5846,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 										lhpn, this, log);
 								// editor.addMouseListener(this);
 								addTab(theFile, editor, "LHPN Editor");
-								// log.addText("Editor made");
+								 //log.addText("Editor made");
 							}
 							// String[] cmd = { "emacs", filename };
 							// Runtime.getRuntime().exec(cmd);
