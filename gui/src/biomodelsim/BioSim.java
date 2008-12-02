@@ -30,6 +30,8 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.awt.event.MouseWheelListener;
+import java.awt.event.MouseWheelEvent;
 //import java.awt.event.FocusEvent;
 //import java.awt.event.FocusListener;
 import java.io.File;
@@ -101,7 +103,7 @@ import datamanager.DataManager;
  * @author Curtis Madsen
  */
 
-public class BioSim implements MouseListener, ActionListener, MouseMotionListener {
+public class BioSim implements MouseListener, ActionListener, MouseMotionListener, MouseWheelListener {
 
 	private JFrame frame; // Frame where components of the GUI are displayed
 
@@ -1000,6 +1002,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		frame.getGlassPane().setVisible(true);
 		frame.getGlassPane().addMouseListener(this);
 		frame.getGlassPane().addMouseMotionListener(this);
+		frame.getGlassPane().addMouseWheelListener(this);
 		frame.addMouseListener(this);
 		menuBar.addMouseListener(this);
 		frame.pack();
@@ -6428,6 +6431,36 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			deepComponent.dispatchEvent(new MouseEvent(deepComponent, e.getID(), e.getWhen(), e
 					.getModifiers(), componentPoint.x, componentPoint.y, e.getClickCount(), e
 					.isPopupTrigger()));
+		}
+	}
+	
+	public void mouseWheelMoved(MouseWheelEvent e) {
+		Component glassPane = frame.getGlassPane();
+		Point glassPanePoint = e.getPoint();
+		// Component component = e.getComponent();
+		Container container = frame.getContentPane();
+		Point containerPoint = SwingUtilities.convertPoint(glassPane, glassPanePoint, frame
+				.getContentPane());
+		if (containerPoint.y < 0) { // we're not in the content pane
+			if (containerPoint.y + menuBar.getHeight() >= 0) {
+				Component component = menuBar.getComponentAt(glassPanePoint);
+				Point componentPoint = SwingUtilities.convertPoint(glassPane, glassPanePoint,
+						component);
+				component.dispatchEvent(new MouseWheelEvent(component, e.getID(), e.getWhen(), e
+						.getModifiers(), componentPoint.x, componentPoint.y, e.getClickCount(), e.isPopupTrigger(),
+						e.getScrollType(), e.getScrollAmount(), e.getWheelRotation()));
+				frame.getGlassPane().setVisible(false);
+			}
+		}
+		else {
+			Component deepComponent = SwingUtilities.getDeepestComponentAt(container,
+					containerPoint.x, containerPoint.y);
+			Point componentPoint = SwingUtilities.convertPoint(glassPane, glassPanePoint,
+					deepComponent);
+			//if (deepComponent instanceof ScrollableTabPanel) {
+			//	deepComponent = tab.findComponentAt(componentPoint);
+			//}
+			deepComponent.dispatchEvent(new MouseWheelEvent(deepComponent, e.getID(), e.getWhen(), e.getModifiers(), componentPoint.x, componentPoint.y, e.getClickCount(), e.isPopupTrigger(), e.getScrollType(), e.getScrollAmount(), e.getWheelRotation()));
 		}
 	}
 
