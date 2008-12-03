@@ -5362,6 +5362,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		}
 		else {
 			if (e.isPopupTrigger() && tree.getFile() != null) {
+				frame.getGlassPane().setVisible(false);
 				popup.removeAll();
 				if (tree.getFile().length() > 4
 						&& tree.getFile().substring(tree.getFile().length() - 5).equals(".sbml")
@@ -6070,6 +6071,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		else {
 			if (tree.getFile() != null) {
 				if (e.isPopupTrigger() && tree.getFile() != null) {
+					frame.getGlassPane().setVisible(false);
 					popup.removeAll();
 					if (tree.getFile().length() > 4
 							&& tree.getFile().substring(tree.getFile().length() - 5)
@@ -6397,8 +6399,10 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						popup.show(e.getComponent(), e.getX(), e.getY());
 					}
 				}
+				else if (!popup.isVisible()){
+					frame.getGlassPane().setVisible(true);
+				}
 			}
-			frame.getGlassPane().setVisible(true);
 		}
 	}
 	
