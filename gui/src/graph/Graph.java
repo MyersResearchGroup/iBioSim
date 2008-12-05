@@ -296,6 +296,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		ChartPanel graph = new ChartPanel(chart);
 		graph.setLayout(new GridLayout(1, 1));
 		JLabel edit = new JLabel("Double click here to create graph");
+		edit.addMouseListener(this);
 		Font font = edit.getFont();
 		font = font.deriveFont(Font.BOLD, 42.0f);
 		edit.setFont(font);
@@ -3460,6 +3461,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		if (graphed.isEmpty()) {
 			graph.setLayout(new GridLayout(1, 1));
 			JLabel edit = new JLabel("Double click here to create graph");
+			edit.addMouseListener(this);
 			Font font = edit.getFont();
 			font = font.deriveFont(Font.BOLD, 42.0f);
 			edit.setFont(font);
@@ -5002,6 +5004,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		ChartPanel graph = new ChartPanel(chart);
 		graph.setLayout(new GridLayout(1, 1));
 		JLabel edit = new JLabel("Double click here to create graph");
+		edit.addMouseListener(this);
 		Font font = edit.getFont();
 		font = font.deriveFont(Font.BOLD, 42.0f);
 		edit.setFont(font);
@@ -6079,6 +6082,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		if (probGraphed.isEmpty()) {
 			graph.setLayout(new GridLayout(1, 1));
 			JLabel edit = new JLabel("Double click here to create graph");
+			edit.addMouseListener(this);
 			Font font = edit.getFont();
 			font = font.deriveFont(Font.BOLD, 42.0f);
 			edit.setFont(font);
