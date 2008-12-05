@@ -18,7 +18,7 @@ public class Buttons {
 	/**
 	 * Returns the pathname of the selected file in the file chooser.
 	 */
-	public static String browse(JFrame frame, File file, JTextField text, int i, String approve) {
+	public static String browse(JFrame frame, File file, JTextField text, int i, String approve, int fileType) {
 		Preferences biosimrc = Preferences.userRoot();
 		if (biosimrc.get("biosim.general.file_browser", "").equals("FileDialog")) {
 			FileDialog fd;
@@ -270,7 +270,30 @@ public class Buttons {
 				fc.addChoosableFileFilter(svgFilter);
 				fc.addChoosableFileFilter(tsdFilter);
 				fc.setAcceptAllFileFilterUsed(false);
-				fc.setFileFilter(pdfFilter);
+				if (fileType == 5) {
+					fc.setFileFilter(csvFilter);
+				}
+				if (fileType == 6) {
+					fc.setFileFilter(datFilter);
+				}
+				if (fileType == 3) {
+					fc.setFileFilter(epsFilter);
+				}
+				if (fileType == 0) {
+					fc.setFileFilter(jpgFilter);
+				}
+				if (fileType == 2) {
+					fc.setFileFilter(pdfFilter);
+				}
+				if (fileType == 1) {
+					fc.setFileFilter(pngFilter);
+				}
+				if (fileType == 4) {
+					fc.setFileFilter(svgFilter);
+				}
+				if (fileType == 7) {
+					fc.setFileFilter(tsdFilter);
+				}
 				retValue = fc.showDialog(frame, approve);
 			}
 			else if (approve.equals("Export Probability")) {
@@ -280,7 +303,21 @@ public class Buttons {
 				fc.addChoosableFileFilter(pngFilter);
 				fc.addChoosableFileFilter(svgFilter);
 				fc.setAcceptAllFileFilterUsed(false);
-				fc.setFileFilter(pdfFilter);
+				if (fileType == 3) {
+					fc.setFileFilter(epsFilter);
+				}
+				if (fileType == 0) {
+					fc.setFileFilter(jpgFilter);
+				}
+				if (fileType == 2) {
+					fc.setFileFilter(pdfFilter);
+				}
+				if (fileType == 1) {
+					fc.setFileFilter(pngFilter);
+				}
+				if (fileType == 4) {
+					fc.setFileFilter(svgFilter);
+				}
 				retValue = fc.showDialog(frame, approve);
 			}
 			else if (approve.equals("Import SBML")) {
