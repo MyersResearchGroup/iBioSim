@@ -31,6 +31,18 @@ public class FileTree extends JPanel implements MouseListener {
 
 	public static final ImageIcon ICON_LHPN = new ImageIcon(System.getenv("BIOSIM") + File.separator
 			+ "gui" + File.separator + "icons" + File.separator + "icon_pnlogo.gif");
+	
+	public static final ImageIcon ICON_CSP = new ImageIcon(System.getenv("BIOSIM") + File.separator
+			+ "gui" + File.separator + "icons" + File.separator + "iconCSP.png");
+	
+	public static final ImageIcon ICON_HSE = new ImageIcon(System.getenv("BIOSIM") + File.separator
+			+ "gui" + File.separator + "icons" + File.separator + "iconHSE.png");
+	
+	public static final ImageIcon ICON_UNC = new ImageIcon(System.getenv("BIOSIM") + File.separator
+			+ "gui" + File.separator + "icons" + File.separator + "iconUNC.png");
+	
+	public static final ImageIcon ICON_RSG = new ImageIcon(System.getenv("BIOSIM") + File.separator
+			+ "gui" + File.separator + "icons" + File.separator + "iconRSG.png");
 
 	public static final ImageIcon ICON_MODEL = new ImageIcon(System.getenv("BIOSIM") + File.separator
 			+ "gui" + File.separator + "icons" + File.separator + "model.png");

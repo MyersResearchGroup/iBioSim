@@ -28,10 +28,10 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.awt.event.MouseWheelListener;
 import java.awt.event.MouseWheelEvent;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 //import java.awt.event.FocusEvent;
 //import java.awt.event.FocusListener;
 import java.io.File;
@@ -79,6 +79,7 @@ import com.apple.eawt.ApplicationEvent;
 import com.apple.eawt.Application;
 
 import learn.Learn;
+import learn.LearnLHPN;
 
 import synthesis.Synthesis;
 
@@ -94,6 +95,7 @@ import reb2sac.Run;
 import sbmleditor.SBML_Editor;
 import buttons.Buttons;
 import datamanager.DataManager;
+import datamanager.DataManagerLHPN;
 
 /**
  * This class creates a GUI for the Tstubd program. It implements the
@@ -1881,7 +1883,12 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			openSim();
 		}
 		else if (e.getActionCommand().equals("openLearn")) {
-			openLearn();
+			if (lema) {
+				openLearnLHPN();
+			}
+			else {
+				openLearn();
+			}
 		}
 		else if (e.getActionCommand().equals("openSynth")) {
 			openSynth();
@@ -3906,19 +3913,39 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							}
 							refreshTree();
 							JTabbedPane lrnTab = new JTabbedPane();
+							if (lema) {
+								DataManagerLHPN data = new DataManagerLHPN(root + separator + lrnName, this);
+								lrnTab.addTab("Data Manager", data);
+							}
+							else {
 							DataManager data = new DataManager(root + separator + lrnName, this);
 							// data.addMouseListener(this);
 							lrnTab.addTab("Data Manager", data);
+							}
 							lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName(
 									"Data Manager");
-							Learn learn = new Learn(root + separator + lrnName, log, this);
+							if (lema) {
+								LearnLHPN learn = new LearnLHPN(root + separator + lrnName, log, this);
+								lrnTab.addTab("Learn", learn);
+							}
+							else {
+								Learn learn = new Learn(root + separator + lrnName, log, this);
+								lrnTab.addTab("Learn", learn);
+							}
 							// learn.addMouseListener(this);
-							lrnTab.addTab("Learn", learn);
 							lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName(
 									"Learn");
-							Graph tsdGraph = new Graph(null, "amount", lrnName + " data",
+							Graph tsdGraph;
+							if (lema) {
+								tsdGraph = new Graph(null, "amount", lrnName + " data",
+										"tsd.printer", root + separator + lrnName, "time", this, null,
+										log, null, true, false);
+							}
+							else {
+							tsdGraph = new Graph(null, "amount", lrnName + " data",
 									"tsd.printer", root + separator + lrnName, "time", this, null,
 									log, null, true, true);
+							}
 							// tsdGraph.addMouseListener(this);
 							lrnTab.addTab("TSD Graph", tsdGraph);
 							lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName(
@@ -5322,6 +5349,30 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					JOptionPane.ERROR_MESSAGE);
 		}
 	}
+	
+	/**
+	 * Saves a circuit from a learn view to the project view
+	 */
+	public void saveLhpn(String filename, String path) {
+		try {
+			if (overwrite(root + separator + filename, filename)) {
+				FileOutputStream out = new FileOutputStream(new File(root + separator + filename));
+				FileInputStream in = new FileInputStream(new File(path));
+				int read = in.read();
+				while (read != -1) {
+					out.write(read);
+					read = in.read();
+				}
+				in.close();
+				out.close();
+				refreshTree();
+			}
+		}
+		catch (Exception e1) {
+			JOptionPane.showMessageDialog(frame, "Unable to save LHPN.", "Error",
+					JOptionPane.ERROR_MESSAGE);
+		}
+	}
 
 	/**
 	 * Returns the frame.
@@ -6025,7 +6076,12 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							openVerify();
 						}
 						else {
-							openLearn();
+							if (lema) {
+								openLearnLHPN();
+							}
+							else {
+								openLearn();
+							}
 						}
 					}
 				}
@@ -6760,6 +6816,132 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					.getFile().split(separator).length - 1]
 					+ " data", "tsd.printer", tree.getFile(), "time", this, open, log, null, true,
 					true);
+			// tsdGraph.addMouseListener(this);
+			lrnTab.addTab("TSD Graph", tsdGraph);
+			lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("TSD Graph");
+			// }
+			/*
+			 * else { lrnTab.addTab("Data Manager", new
+			 * DataManager(tree.getFile(), this));
+			 * lrnTab.getComponentAt(lrnTab.getComponents().length -
+			 * 1).setName("Data Manager"); JLabel noData = new JLabel("No data
+			 * available"); Font font = noData.getFont(); font =
+			 * font.deriveFont(Font.BOLD, 42.0f); noData.setFont(font);
+			 * noData.setHorizontalAlignment(SwingConstants.CENTER);
+			 * lrnTab.addTab("Learn", noData);
+			 * lrnTab.getComponentAt(lrnTab.getComponents().length -
+			 * 1).setName("Learn"); JLabel noData1 = new JLabel("No data
+			 * available"); font = noData1.getFont(); font =
+			 * font.deriveFont(Font.BOLD, 42.0f); noData1.setFont(font);
+			 * noData1.setHorizontalAlignment(SwingConstants.CENTER);
+			 * lrnTab.addTab("TSD Graph", noData1);
+			 * lrnTab.getComponentAt(lrnTab.getComponents().length -
+			 * 1).setName("TSD Graph"); }
+			 */
+			addTab(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],
+					lrnTab, null);
+		}
+	}
+	
+	private void openLearnLHPN() {
+		boolean done = false;
+		for (int i = 0; i < tab.getTabCount(); i++) {
+			if (tab.getTitleAt(i).equals(
+					tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
+				tab.setSelectedIndex(i);
+				done = true;
+			}
+		}
+		if (!done) {
+			JTabbedPane lrnTab = new JTabbedPane();
+			// String graphFile = "";
+			String open = null;
+			if (new File(tree.getFile()).isDirectory()) {
+				String[] list = new File(tree.getFile()).list();
+				int run = 0;
+				for (int i = 0; i < list.length; i++) {
+					if (!(new File(list[i]).isDirectory()) && list[i].length() > 4) {
+						String end = "";
+						for (int j = 1; j < 5; j++) {
+							end = list[i].charAt(list[i].length() - j) + end;
+						}
+						if (end.equals(".tsd") || end.equals(".dat") || end.equals(".csv")) {
+							if (list[i].contains("run-")) {
+								int tempNum = Integer.parseInt(list[i].substring(4, list[i]
+										.length()
+										- end.length()));
+								if (tempNum > run) {
+									run = tempNum;
+									// graphFile = tree.getFile() + separator +
+									// list[i];
+								}
+							}
+						}
+						else if (end.equals(".grf")) {
+							open = tree.getFile() + separator + list[i];
+						}
+					}
+				}
+			}
+
+			String lrnFile = tree.getFile() + separator
+					+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]
+					+ ".lrn";
+			String lrnFile2 = tree.getFile() + separator + ".lrn";
+			Properties load = new Properties();
+			String learnFile = "";
+			try {
+				if (new File(lrnFile2).exists()) {
+					FileInputStream in = new FileInputStream(new File(lrnFile2));
+					load.load(in);
+					in.close();
+					new File(lrnFile2).delete();
+				}
+				if (new File(lrnFile).exists()) {
+					FileInputStream in = new FileInputStream(new File(lrnFile));
+					load.load(in);
+					in.close();
+					if (load.containsKey("genenet.file")) {
+						learnFile = load.getProperty("genenet.file");
+						learnFile = learnFile.split(separator)[learnFile.split(separator).length - 1];
+					}
+				}
+				FileOutputStream out = new FileOutputStream(new File(lrnFile));
+				load.store(out, learnFile);
+				out.close();
+
+			}
+			catch (Exception e) {
+				JOptionPane.showMessageDialog(frame(), "Unable to load properties file!",
+						"Error Loading Properties", JOptionPane.ERROR_MESSAGE);
+			}
+			for (int i = 0; i < tab.getTabCount(); i++) {
+				if (tab.getTitleAt(i).equals(learnFile)) {
+					tab.setSelectedIndex(i);
+					if (save(i) != 1) {
+						return;
+					}
+					break;
+				}
+			}
+			if (!(new File(root + separator + learnFile).exists())) {
+				JOptionPane.showMessageDialog(frame, "Unable to open view because " + learnFile
+						+ " is missing.", "Error", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			// if (!graphFile.equals("")) {
+			DataManagerLHPN data = new DataManagerLHPN(tree.getFile(), this);
+			// data.addMouseListener(this);
+			lrnTab.addTab("Data Manager", data);
+			lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Data Manager");
+			LearnLHPN learn = new LearnLHPN(tree.getFile(), log, this);
+			// learn.addMouseListener(this);
+			lrnTab.addTab("Learn", learn);
+			lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Learn");
+			Graph tsdGraph = new Graph(null, "amount", tree.getFile().split(separator)[tree
+					.getFile().split(separator).length - 1]
+					+ " data", "tsd.printer", tree.getFile(), "time", this, open, log, null, true,
+					false);
 			// tsdGraph.addMouseListener(this);
 			lrnTab.addTab("TSD Graph", tsdGraph);
 			lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("TSD Graph");
