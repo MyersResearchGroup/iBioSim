@@ -105,7 +105,8 @@ import datamanager.DataManagerLHPN;
  * @author Curtis Madsen
  */
 
-public class BioSim implements MouseListener, ActionListener, MouseMotionListener, MouseWheelListener {
+public class BioSim implements MouseListener, ActionListener, MouseMotionListener,
+		MouseWheelListener {
 
 	private JFrame frame; // Frame where components of the GUI are displayed
 
@@ -841,7 +842,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		}
 		else {
 			// file.add(pref);
-			//file.add(exit);
+			// file.add(exit);
 			help.add(about);
 		}
 		if (biosimrc.get("biosim.check.undeclared", "").equals("false")) {
@@ -3914,18 +3915,20 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							refreshTree();
 							JTabbedPane lrnTab = new JTabbedPane();
 							if (lema) {
-								DataManagerLHPN data = new DataManagerLHPN(root + separator + lrnName, this);
+								DataManagerLHPN data = new DataManagerLHPN(root + separator
+										+ lrnName, this);
 								lrnTab.addTab("Data Manager", data);
 							}
 							else {
-							DataManager data = new DataManager(root + separator + lrnName, this);
-							// data.addMouseListener(this);
-							lrnTab.addTab("Data Manager", data);
+								DataManager data = new DataManager(root + separator + lrnName, this);
+								// data.addMouseListener(this);
+								lrnTab.addTab("Data Manager", data);
 							}
 							lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName(
 									"Data Manager");
 							if (lema) {
-								LearnLHPN learn = new LearnLHPN(root + separator + lrnName, log, this);
+								LearnLHPN learn = new LearnLHPN(root + separator + lrnName, log,
+										this);
 								lrnTab.addTab("Learn", learn);
 							}
 							else {
@@ -3938,13 +3941,13 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							Graph tsdGraph;
 							if (lema) {
 								tsdGraph = new Graph(null, "amount", lrnName + " data",
-										"tsd.printer", root + separator + lrnName, "time", this, null,
-										log, null, true, false);
+										"tsd.printer", root + separator + lrnName, "time", this,
+										null, log, null, true, false);
 							}
 							else {
-							tsdGraph = new Graph(null, "amount", lrnName + " data",
-									"tsd.printer", root + separator + lrnName, "time", this, null,
-									log, null, true, true);
+								tsdGraph = new Graph(null, "amount", lrnName + " data",
+										"tsd.printer", root + separator + lrnName, "time", this,
+										null, log, null, true, true);
 							}
 							// tsdGraph.addMouseListener(this);
 							lrnTab.addTab("TSD Graph", tsdGraph);
@@ -5349,7 +5352,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					JOptionPane.ERROR_MESSAGE);
 		}
 	}
-	
+
 	/**
 	 * Saves a circuit from a learn view to the project view
 	 */
@@ -5382,7 +5385,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 	}
 
 	public void mousePressed(MouseEvent e) {
-		//log.addText(e.getSource().toString());
+		// log.addText(e.getSource().toString());
 		if (e.getSource() == frame.getGlassPane()) {
 			Component glassPane = frame.getGlassPane();
 			Point glassPanePoint = e.getPoint();
@@ -5784,6 +5787,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			}
 			else if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2) {
 				if (tree.getFile() != null) {
+					int index = tab.getSelectedIndex();
+					enableTabMenu(index);
 					if (tree.getFile().length() >= 5
 							&& tree.getFile().substring(tree.getFile().length() - 5)
 									.equals(".sbml") || tree.getFile().length() >= 4
@@ -5882,14 +5887,14 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 								directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
 								theFile = filename.substring(filename.lastIndexOf('\\') + 1);
 							}
-							//log.addText("yo");
+							// log.addText("yo");
 							LHPNFile lhpn = new LHPNFile(log);
 							if (new File(directory + theFile).length() > 0) {
 								// log.addText("here");
 								lhpn.load(directory + theFile);
 								// log.addText("there");
 							}
-							//log.addText("load completed");
+							// log.addText("load completed");
 							File work = new File(directory);
 							int i = getTab(theFile);
 							if (i != -1) {
@@ -5901,7 +5906,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 										lhpn, this, log);
 								// editor.addMouseListener(this);
 								addTab(theFile, editor, "LHPN Editor");
-								 //log.addText("Editor made");
+								// log.addText("Editor made");
 							}
 							// String[] cmd = { "emacs", filename };
 							// Runtime.getRuntime().exec(cmd);
@@ -6116,7 +6121,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				deepComponent.dispatchEvent(new MouseEvent(deepComponent, e.getID(), e.getWhen(), e
 						.getModifiers(), componentPoint.x, componentPoint.y, e.getClickCount(), e
 						.isPopupTrigger()));
-				if (deepComponent instanceof JTree) {
+				if ((deepComponent instanceof JTree) && (e.getClickCount() != 2)) {
 					enableTreeMenu();
 				}
 				else {
@@ -6455,13 +6460,13 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						popup.show(e.getComponent(), e.getX(), e.getY());
 					}
 				}
-				else if (!popup.isVisible()){
+				else if (!popup.isVisible()) {
 					frame.getGlassPane().setVisible(true);
 				}
 			}
 		}
 	}
-	
+
 	public void mouseMoved(MouseEvent e) {
 		Component glassPane = frame.getGlassPane();
 		Point glassPanePoint = e.getPoint();
@@ -6475,8 +6480,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				Point componentPoint = SwingUtilities.convertPoint(glassPane, glassPanePoint,
 						component);
 				component.dispatchEvent(new MouseEvent(component, e.getID(), e.getWhen(), e
-						.getModifiers(), componentPoint.x, componentPoint.y, e.getClickCount(),
-						e.isPopupTrigger()));
+						.getModifiers(), componentPoint.x, componentPoint.y, e.getClickCount(), e
+						.isPopupTrigger()));
 				frame.getGlassPane().setVisible(false);
 			}
 		}
@@ -6485,15 +6490,15 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					containerPoint.x, containerPoint.y);
 			Point componentPoint = SwingUtilities.convertPoint(glassPane, glassPanePoint,
 					deepComponent);
-			//if (deepComponent instanceof ScrollableTabPanel) {
-			//	deepComponent = tab.findComponentAt(componentPoint);
-			//}
+			// if (deepComponent instanceof ScrollableTabPanel) {
+			// deepComponent = tab.findComponentAt(componentPoint);
+			// }
 			deepComponent.dispatchEvent(new MouseEvent(deepComponent, e.getID(), e.getWhen(), e
 					.getModifiers(), componentPoint.x, componentPoint.y, e.getClickCount(), e
 					.isPopupTrigger()));
 		}
 	}
-	
+
 	public void mouseWheelMoved(MouseWheelEvent e) {
 		Component glassPane = frame.getGlassPane();
 		Point glassPanePoint = e.getPoint();
@@ -6507,8 +6512,9 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				Point componentPoint = SwingUtilities.convertPoint(glassPane, glassPanePoint,
 						component);
 				component.dispatchEvent(new MouseWheelEvent(component, e.getID(), e.getWhen(), e
-						.getModifiers(), componentPoint.x, componentPoint.y, e.getClickCount(), e.isPopupTrigger(),
-						e.getScrollType(), e.getScrollAmount(), e.getWheelRotation()));
+						.getModifiers(), componentPoint.x, componentPoint.y, e.getClickCount(), e
+						.isPopupTrigger(), e.getScrollType(), e.getScrollAmount(), e
+						.getWheelRotation()));
 				frame.getGlassPane().setVisible(false);
 			}
 		}
@@ -6517,10 +6523,13 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					containerPoint.x, containerPoint.y);
 			Point componentPoint = SwingUtilities.convertPoint(glassPane, glassPanePoint,
 					deepComponent);
-			//if (deepComponent instanceof ScrollableTabPanel) {
-			//	deepComponent = tab.findComponentAt(componentPoint);
-			//}
-			deepComponent.dispatchEvent(new MouseWheelEvent(deepComponent, e.getID(), e.getWhen(), e.getModifiers(), componentPoint.x, componentPoint.y, e.getClickCount(), e.isPopupTrigger(), e.getScrollType(), e.getScrollAmount(), e.getWheelRotation()));
+			// if (deepComponent instanceof ScrollableTabPanel) {
+			// deepComponent = tab.findComponentAt(componentPoint);
+			// }
+			deepComponent.dispatchEvent(new MouseWheelEvent(deepComponent, e.getID(), e.getWhen(),
+					e.getModifiers(), componentPoint.x, componentPoint.y, e.getClickCount(), e
+							.isPopupTrigger(), e.getScrollType(), e.getScrollAmount(), e
+							.getWheelRotation()));
 		}
 	}
 
@@ -6842,7 +6851,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					lrnTab, null);
 		}
 	}
-	
+
 	private void openLearnLHPN() {
 		boolean done = false;
 		for (int i = 0; i < tab.getTabCount(); i++) {
@@ -7530,41 +7539,41 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 
 	public void mouseClicked(MouseEvent e) {
 		if (e.getSource() == frame.getGlassPane()) {
-		Component glassPane = frame.getGlassPane();
-		Point glassPanePoint = e.getPoint();
-		// Component component = e.getComponent();
-		Container container = frame.getContentPane();
-		Point containerPoint = SwingUtilities.convertPoint(glassPane, glassPanePoint, frame
-				.getContentPane());
-		if (containerPoint.y < 0) { // we're not in the content pane
-			if (containerPoint.y + menuBar.getHeight() >= 0) {
-				Component component = menuBar.getComponentAt(glassPanePoint);
-				Point componentPoint = SwingUtilities.convertPoint(glassPane, glassPanePoint,
-						component);
-				component.dispatchEvent(new MouseEvent(component, e.getID(), e.getWhen(), e
-						.getModifiers(), componentPoint.x, componentPoint.y, e.getClickCount(),
-						e.isPopupTrigger()));
-				frame.getGlassPane().setVisible(false);
-			}
-		}
-		else {
-			Component deepComponent = SwingUtilities.getDeepestComponentAt(container,
-					containerPoint.x, containerPoint.y);
-			Point componentPoint = SwingUtilities.convertPoint(glassPane, glassPanePoint,
-					deepComponent);
-			//if (deepComponent instanceof ScrollableTabPanel) {
-			//	deepComponent = tab.findComponentAt(componentPoint);
-			//}
-			deepComponent.dispatchEvent(new MouseEvent(deepComponent, e.getID(), e.getWhen(), e
-					.getModifiers(), componentPoint.x, componentPoint.y, e.getClickCount(), e
-					.isPopupTrigger()));
-			if (deepComponent instanceof JTree) {
-				enableTreeMenu();
+			Component glassPane = frame.getGlassPane();
+			Point glassPanePoint = e.getPoint();
+			// Component component = e.getComponent();
+			Container container = frame.getContentPane();
+			Point containerPoint = SwingUtilities.convertPoint(glassPane, glassPanePoint, frame
+					.getContentPane());
+			if (containerPoint.y < 0) { // we're not in the content pane
+				if (containerPoint.y + menuBar.getHeight() >= 0) {
+					Component component = menuBar.getComponentAt(glassPanePoint);
+					Point componentPoint = SwingUtilities.convertPoint(glassPane, glassPanePoint,
+							component);
+					component.dispatchEvent(new MouseEvent(component, e.getID(), e.getWhen(), e
+							.getModifiers(), componentPoint.x, componentPoint.y, e.getClickCount(),
+							e.isPopupTrigger()));
+					frame.getGlassPane().setVisible(false);
+				}
 			}
 			else {
-				enableTabMenu(tab.getSelectedIndex());
+				Component deepComponent = SwingUtilities.getDeepestComponentAt(container,
+						containerPoint.x, containerPoint.y);
+				Point componentPoint = SwingUtilities.convertPoint(glassPane, glassPanePoint,
+						deepComponent);
+				// if (deepComponent instanceof ScrollableTabPanel) {
+				// deepComponent = tab.findComponentAt(componentPoint);
+				// }
+				deepComponent.dispatchEvent(new MouseEvent(deepComponent, e.getID(), e.getWhen(), e
+						.getModifiers(), componentPoint.x, componentPoint.y, e.getClickCount(), e
+						.isPopupTrigger()));
+				if ((deepComponent instanceof JTree) && (e.getClickCount() != 2)) {
+					enableTreeMenu();
+				}
+				else {
+					enableTabMenu(tab.getSelectedIndex());
+				}
 			}
-		}
 		}
 	}
 
@@ -7573,7 +7582,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 
 	public void mouseExited(MouseEvent e) {
 	}
-	
+
 	public void mouseDragged(MouseEvent e) {
 		Component glassPane = frame.getGlassPane();
 		Point glassPanePoint = e.getPoint();
@@ -7587,8 +7596,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				Point componentPoint = SwingUtilities.convertPoint(glassPane, glassPanePoint,
 						component);
 				component.dispatchEvent(new MouseEvent(component, e.getID(), e.getWhen(), e
-						.getModifiers(), componentPoint.x, componentPoint.y, e.getClickCount(),
-						e.isPopupTrigger()));
+						.getModifiers(), componentPoint.x, componentPoint.y, e.getClickCount(), e
+						.isPopupTrigger()));
 				frame.getGlassPane().setVisible(false);
 			}
 		}
@@ -7597,9 +7606,9 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					containerPoint.x, containerPoint.y);
 			Point componentPoint = SwingUtilities.convertPoint(glassPane, glassPanePoint,
 					deepComponent);
-			//if (deepComponent instanceof ScrollableTabPanel) {
-			//	deepComponent = tab.findComponentAt(componentPoint);
-			//}
+			// if (deepComponent instanceof ScrollableTabPanel) {
+			// deepComponent = tab.findComponentAt(componentPoint);
+			// }
 			deepComponent.dispatchEvent(new MouseEvent(deepComponent, e.getID(), e.getWhen(), e
 					.getModifiers(), componentPoint.x, componentPoint.y, e.getClickCount(), e
 					.isPopupTrigger()));
