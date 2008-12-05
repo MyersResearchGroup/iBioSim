@@ -8130,6 +8130,12 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		}
 		else if (comp instanceof JTabbedPane) {
 			Component component = ((JTabbedPane) comp).getSelectedComponent();
+			Boolean learn = false;
+			for (Component c : ((JTabbedPane) comp).getComponents()) {
+				if (c instanceof Learn) {
+					learn = true;
+				}
+			}
 			// int index = tab.getSelectedIndex();
 			if (component instanceof Graph) {
 				saveButton.setEnabled(true);
@@ -8139,7 +8145,12 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				checkButton.setEnabled(false);
 				exportButton.setEnabled(true);
 				save.setEnabled(true);
-				run.setEnabled(true);
+				if (learn) {
+					run.setEnabled(false);
+				}
+				else {
+					run.setEnabled(true);
+				}
 				saveAs.setEnabled(true);
 				saveAsMenu.setEnabled(true);
 				saveAsGcm.setEnabled(false);
