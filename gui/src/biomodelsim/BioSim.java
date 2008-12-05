@@ -411,8 +411,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		saveAs = new JMenuItem("Save As");
 		saveAsGcm = new JMenuItem("Genetic Circuit Model");
 		saveAsGraph = new JMenuItem("Graph");
-		saveAsSbml = new JMenuItem("SBML Model");
-		saveAsTemplate = new JMenuItem("SBML Template");
+		saveAsSbml = new JMenuItem("Save SBML Model");
+		saveAsTemplate = new JMenuItem("Save SBML Template");
 		saveAsLhpn = new JMenuItem("LHPN");
 		run = new JMenuItem("Save and Run");
 		check = new JMenuItem("Save and Check");
@@ -472,6 +472,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		probGraph.addActionListener(this);
 		save.addActionListener(this);
 		saveAs.addActionListener(this);
+		saveAsSbml.addActionListener(this);
+		saveAsTemplate.addActionListener(this);
 		run.addActionListener(this);
 		check.addActionListener(this);
 		saveSbml.addActionListener(this);
@@ -710,7 +712,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		file.add(closeAll);
 		file.addSeparator();
 		file.add(save);
-		file.add(saveAsMenu);
+		//file.add(saveAsMenu);
 		if (!lema) {
 			saveAsMenu.add(saveAsGcm);
 			saveAsMenu.add(saveAsGraph);
@@ -722,6 +724,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			saveAsMenu.add(saveAsGraph);
 		}
 		file.add(saveAs);
+		file.add(saveAsSbml);
+		file.add(saveAsTemplate);
 		file.add(run);
 		file.add(check);
 		if (!lema) {
@@ -1806,16 +1810,11 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		}
 		else if (e.getSource() == saveAsSbml) {
 			Component comp = tab.getSelectedComponent();
-			if (comp instanceof GCM2SBMLEditor) {
-				((GCM2SBMLEditor) comp).save("SBML");
-			}
-			else {
-				((SBML_Editor) comp).save(false, "", true);
-			}
+			((GCM2SBMLEditor) comp).save("Save as SBML");
 		}
 		else if (e.getSource() == saveAsTemplate) {
 			Component comp = tab.getSelectedComponent();
-			((GCM2SBMLEditor) comp).save("template");
+			((GCM2SBMLEditor) comp).save("Save as SBML template");
 		}
 		else if (e.getSource() == close && tab.getSelectedComponent() != null) {
 			Component comp = tab.getSelectedComponent();
@@ -2568,7 +2567,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					((Graph) component).save();
 				}
 				else if (component instanceof Learn) {
-					((Learn) component).save();
+					((Learn) component).saveGcm();
 				}
 				else if (component instanceof DataManager) {
 					((DataManager) component).saveChanges(((JTabbedPane) comp).getTitleAt(index));
@@ -2663,6 +2662,9 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					((Reb2Sac) (((JTabbedPane) comp).getComponent(index))).getRunButton().doClick();
 				}
 				else if (component instanceof JPanel) {
+					((Reb2Sac) (((JTabbedPane) comp).getComponent(index))).getRunButton().doClick();
+				}
+				else if (component instanceof JScrollPane) {
 					((Reb2Sac) (((JTabbedPane) comp).getComponent(index))).getRunButton().doClick();
 				}
 			}
@@ -8140,7 +8142,12 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			if (component instanceof Graph) {
 				saveButton.setEnabled(true);
 				saveasButton.setEnabled(true);
-				runButton.setEnabled(true);
+				if (learn) {
+					run.setEnabled(false);
+				}
+				else {
+					runButton.setEnabled(true);
+				}
 				refreshButton.setEnabled(true);
 				checkButton.setEnabled(false);
 				exportButton.setEnabled(true);
@@ -8242,7 +8249,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				saveTemp.setEnabled(false);
 			}
 			else if (component instanceof Learn) {
-				saveButton.setEnabled(true);
+				saveButton.setEnabled(((Learn) component).getSaveGcmEnabled());
 				saveasButton.setEnabled(false);
 				runButton.setEnabled(true);
 				refreshButton.setEnabled(false);
@@ -8299,6 +8306,34 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				saveTemp.setEnabled(false);
 			}
 			else if (component instanceof JPanel) {
+				saveButton.setEnabled(true);
+				saveasButton.setEnabled(false);
+				runButton.setEnabled(true);
+				refreshButton.setEnabled(false);
+				checkButton.setEnabled(false);
+				exportButton.setEnabled(false);
+				save.setEnabled(false);
+				run.setEnabled(true);
+				saveAs.setEnabled(false);
+				saveAsMenu.setEnabled(false);
+				saveAsGcm.setEnabled(false);
+				saveAsLhpn.setEnabled(false);
+				saveAsGraph.setEnabled(false);
+				saveAsSbml.setEnabled(false);
+				saveAsTemplate.setEnabled(false);
+				refresh.setEnabled(false);
+				check.setEnabled(false);
+				export.setEnabled(false);
+				exportMenu.setEnabled(false);
+				viewRules.setEnabled(false);
+				viewTrace.setEnabled(false);
+				viewCircuit.setEnabled(false);
+				viewLog.setEnabled(false);
+				saveParam.setEnabled(true);
+				saveSbml.setEnabled(false);
+				saveTemp.setEnabled(false);
+			}
+			else if (component instanceof JScrollPane) {
 				saveButton.setEnabled(true);
 				saveasButton.setEnabled(false);
 				runButton.setEnabled(true);
@@ -8484,6 +8519,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		}
 		else if (tree.getFile().length() > 3
 				&& tree.getFile().substring(tree.getFile().length() - 4).equals(".grf")) {
+			viewModel.setEnabled(false);
 			viewModGraph.setEnabled(false);
 			viewModBrowser.setEnabled(false);
 			createAnal.setEnabled(false);
