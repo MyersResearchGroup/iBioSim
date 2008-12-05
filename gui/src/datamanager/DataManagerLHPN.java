@@ -627,7 +627,7 @@ public class DataManagerLHPN extends JPanel implements ActionListener, TableMode
 		}
 		else if (e.getSource() == importFile) {
 			String importFile = Buttons.browse(biosim.frame(), null, null,
-					JFileChooser.FILES_AND_DIRECTORIES, "Import");
+					JFileChooser.FILES_AND_DIRECTORIES, "Import", -1);
 			if (importFile != null && !importFile.trim().equals("")) {
 				saveChanges(null);
 				importFile = importFile.trim();

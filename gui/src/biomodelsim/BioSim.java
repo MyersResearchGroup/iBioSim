@@ -1844,6 +1844,78 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				((Verification) comp).viewTrace();
 			}
 		}
+		else if (e.getSource() == exportCsv) {
+			Component comp = tab.getSelectedComponent();
+			if (comp instanceof Graph) {
+				((Graph) comp).export(5);
+			}
+			else if (comp instanceof JTabbedPane) {
+				((Graph) ((JTabbedPane) comp).getSelectedComponent()).export(5);
+			}
+		}
+		else if (e.getSource() == exportDat) {
+			Component comp = tab.getSelectedComponent();
+			if (comp instanceof Graph) {
+				((Graph) comp).export(6);
+			}
+			else if (comp instanceof JTabbedPane) {
+				((Graph) ((JTabbedPane) comp).getSelectedComponent()).export();
+			}
+		}
+		else if (e.getSource() == exportEps) {
+			Component comp = tab.getSelectedComponent();
+			if (comp instanceof Graph) {
+				((Graph) comp).export(3);
+			}
+			else if (comp instanceof JTabbedPane) {
+				((Graph) ((JTabbedPane) comp).getSelectedComponent()).export(3);
+			}
+		}
+		else if (e.getSource() == exportJpg) {
+			Component comp = tab.getSelectedComponent();
+			if (comp instanceof Graph) {
+				((Graph) comp).export(0);
+			}
+			else if (comp instanceof JTabbedPane) {
+				((Graph) ((JTabbedPane) comp).getSelectedComponent()).export(0);
+			}
+		}
+		else if (e.getSource() == exportPdf) {
+			Component comp = tab.getSelectedComponent();
+			if (comp instanceof Graph) {
+				((Graph) comp).export(2);
+			}
+			else if (comp instanceof JTabbedPane) {
+				((Graph) ((JTabbedPane) comp).getSelectedComponent()).export(2);
+			}
+		}
+		else if (e.getSource() == exportPng) {
+			Component comp = tab.getSelectedComponent();
+			if (comp instanceof Graph) {
+				((Graph) comp).export(1);
+			}
+			else if (comp instanceof JTabbedPane) {
+				((Graph) ((JTabbedPane) comp).getSelectedComponent()).export(1);
+			}
+		}
+		else if (e.getSource() == exportSvg) {
+			Component comp = tab.getSelectedComponent();
+			if (comp instanceof Graph) {
+				((Graph) comp).export(4);
+			}
+			else if (comp instanceof JTabbedPane) {
+				((Graph) ((JTabbedPane) comp).getSelectedComponent()).export(4);
+			}
+		}
+		else if (e.getSource() == exportTsd) {
+			Component comp = tab.getSelectedComponent();
+			if (comp instanceof Graph) {
+				((Graph) comp).export(7);
+			}
+			else if (comp instanceof JTabbedPane) {
+				((Graph) ((JTabbedPane) comp).getSelectedComponent()).export(7);
+			}
+		}
 		else if (e.getSource() == about) {
 			about();
 		}
@@ -2710,7 +2782,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				}
 			}
 			String filename = Buttons.browse(frame, null, null, JFileChooser.DIRECTORIES_ONLY,
-					"New");
+					"New", -1);
 			if (!filename.trim().equals("")) {
 				filename = filename.trim();
 				File f = new File(filename);
@@ -2789,7 +2861,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			}
 			String projDir = "";
 			if (e.getSource() == openProj) {
-				projDir = Buttons.browse(frame, f, null, JFileChooser.DIRECTORIES_ONLY, "Open");
+				projDir = Buttons.browse(frame, f, null, JFileChooser.DIRECTORIES_ONLY, "Open", -1);
 			}
 			else if (e.getSource() == recentProjects[0]) {
 				projDir = recentProjectPaths[0];
@@ -3307,7 +3379,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		else if (e.getSource() == importSbml) {
 			if (root != null) {
 				String filename = Buttons.browse(frame, new File(root), null,
-						JFileChooser.FILES_AND_DIRECTORIES, "Import SBML");
+						JFileChooser.FILES_AND_DIRECTORIES, "Import SBML", -1);
 				if (!filename.trim().equals("")) {
 					if (new File(filename.trim()).isDirectory()) {
 						JTextArea messageArea = new JTextArea();
@@ -3504,7 +3576,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		else if (e.getSource() == importDot) {
 			if (root != null) {
 				String filename = Buttons.browse(frame, new File(root), null,
-						JFileChooser.FILES_AND_DIRECTORIES, "Import Genetic Circuit");
+						JFileChooser.FILES_AND_DIRECTORIES, "Import Genetic Circuit", -1);
 				if (new File(filename.trim()).isDirectory()) {
 					for (String s : new File(filename.trim()).list()) {
 						if (!(filename.trim() + separator + s).equals("")
@@ -3583,7 +3655,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		else if (e.getSource() == importVhdl) {
 			if (root != null) {
 				String filename = Buttons.browse(frame, new File(root), null,
-						JFileChooser.FILES_ONLY, "Import VHDL Model");
+						JFileChooser.FILES_ONLY, "Import VHDL Model", -1);
 				if (filename.length() > 3
 						&& !filename.substring(filename.length() - 4, filename.length()).equals(
 								".vhd")) {
@@ -3622,7 +3694,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		else if (e.getSource() == importLhpn) {
 			if (root != null) {
 				String filename = Buttons.browse(frame, new File(root), null,
-						JFileChooser.FILES_ONLY, "Import LHPN");
+						JFileChooser.FILES_ONLY, "Import LHPN", -1);
 				if (filename.length() > 1
 						&& !filename.substring(filename.length() - 2, filename.length()).equals(
 								".g")) {
@@ -3661,7 +3733,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		else if (e.getSource() == importCsp) {
 			if (root != null) {
 				String filename = Buttons.browse(frame, new File(root), null,
-						JFileChooser.FILES_ONLY, "Import CSP");
+						JFileChooser.FILES_ONLY, "Import CSP", -1);
 				if (filename.length() > 1
 						&& !filename.substring(filename.length() - 4, filename.length()).equals(
 								".csp")) {
@@ -3700,7 +3772,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		else if (e.getSource() == importHse) {
 			if (root != null) {
 				String filename = Buttons.browse(frame, new File(root), null,
-						JFileChooser.FILES_ONLY, "Import HSE");
+						JFileChooser.FILES_ONLY, "Import HSE", -1);
 				if (filename.length() > 1
 						&& !filename.substring(filename.length() - 4, filename.length()).equals(
 								".hse")) {
@@ -3739,7 +3811,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		else if (e.getSource() == importUnc) {
 			if (root != null) {
 				String filename = Buttons.browse(frame, new File(root), null,
-						JFileChooser.FILES_ONLY, "Import UNC");
+						JFileChooser.FILES_ONLY, "Import UNC", -1);
 				if (filename.length() > 1
 						&& !filename.substring(filename.length() - 4, filename.length()).equals(
 								".unc")) {
@@ -3778,7 +3850,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		else if (e.getSource() == importRsg) {
 			if (root != null) {
 				String filename = Buttons.browse(frame, new File(root), null,
-						JFileChooser.FILES_ONLY, "Import RSG");
+						JFileChooser.FILES_ONLY, "Import RSG", -1);
 				if (filename.length() > 1
 						&& !filename.substring(filename.length() - 4, filename.length()).equals(
 								".rsg")) {
