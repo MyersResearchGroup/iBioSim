@@ -24,7 +24,7 @@ import javax.swing.JFrame;
 //import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.Icon;
+//import javax.swing.Icon;
 
 public class TransitionsPanel extends JPanel implements ActionListener {
 
@@ -324,14 +324,33 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 
 		public void run() {
 			String assignment = list.getSelectedValue().toString();
-			if (getName().contains("Boolean") || isBoolean(assignment)) {
+			log.addText(assignment);
+			if (isBoolean(assignment)) {
+				log.addText("boolean");
+				list.removeItem(assignment);
+				boolAssignments.removeItem(assignment);
 				lhpn.removeBoolAssign(selected, assignment);
 			}
-			else if (getName().contains("Variable") || isContinuous(assignment)) {
+			else if (isContinuous(assignment)) {
+				log.addText("Continuous");
+				list.removeItem(assignment);
+				varAssignments.removeItem(assignment);
 				lhpn.removeContAssign(selected, assignment);
 			}
-			else if (getName().contains("Rate") || isRate(assignment)) {
+			else if (isRate(assignment)) {
+				log.addText("rate");
+				list.removeItem(assignment);
+				rateAssignments.removeItem(assignment);
 				lhpn.removeRateAssign(selected, assignment);
+			}
+			else if (isInteger(assignment)) {
+				log.addText("integer");
+				list.removeItem(assignment);
+				intAssignments.removeItem(assignment);
+				lhpn.removeIntAssign(selected, assignment);
+			}
+			else {
+				log.addText("else");
 			}
 		}
 

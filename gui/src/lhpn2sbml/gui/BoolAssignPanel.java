@@ -38,7 +38,7 @@ public class BoolAssignPanel extends JPanel implements ActionListener {
 	private Log log;
 
 	//private JComboBox typeBox, varBox;
-	private JComboBox varBox, valueBox;
+	private JComboBox varBox;//, valueBox;
 
 	//private static final String[] types = { "boolean", "continuous", "rate" };
 
@@ -100,7 +100,7 @@ public class BoolAssignPanel extends JPanel implements ActionListener {
 		add(tempPanel);
 
 		// Value field
-		tempPanel = new JPanel();
+		/*tempPanel = new JPanel();
 		JLabel valueLabel = new JLabel("Assigned Value");
 		valueBox = new JComboBox(values);
 		valueBox.setSelectedItem(values[0]);
@@ -108,18 +108,28 @@ public class BoolAssignPanel extends JPanel implements ActionListener {
 		tempPanel.setLayout(new GridLayout(1, 2));
 		tempPanel.add(valueLabel);
 		tempPanel.add(valueBox);
-		add(tempPanel);
+		add(tempPanel);*/
+		
+		PropertyField field = new PropertyField("Assigned Value", lhpn.getContAssign(transition, selected), null, null,
+				Utility.NAMEstring);
+		fields.put("Assignment value", field);
+		add(field);
 		
 		if (selected != null) {
 			oldName = selected;
 			//Properties prop = lhpn.getVariables().get(selected);
 			//fields.get(GlobalConstants.ID).setValue(selected);
-			if (lhpn.getBoolAssign(transition, selected)) {
-				valueBox.setSelectedItem(values[0]);
-			}
-			else {
-				valueBox.setSelectedItem(values[1]);
-			}
+			//if (lhpn.getBoolAssign(transition, selected)) {
+				//fields.get("Assignment value").setValue(lhpn.getBoolAssign(transition, selected));
+				//valueBox.setSelectedItem(values[0]);
+			//}
+			//else {
+				//valueBox.setSelectedItem(values[1]);
+			//}
+			PropertyField assignField = fields.get("Assignment value");
+			String[] tempArray = oldName.split(":=");
+			assignField.setValue(tempArray[1]);
+			fields.put("Assignment value", assignField);
 			//loadProperties(prop);
 		}
 
@@ -159,7 +169,7 @@ public class BoolAssignPanel extends JPanel implements ActionListener {
 			//		return false;
 			//	}
 			//}
-			id = varBox.getSelectedItem().toString() + ":=" + valueBox.getSelectedItem().toString();
+			id = varBox.getSelectedItem().toString() + ":=" + fields.get("Assignment value").getValue();
 
 			// Check to see if we need to add or edit
 			Properties property = new Properties();
@@ -169,7 +179,7 @@ public class BoolAssignPanel extends JPanel implements ActionListener {
 			//	}
 			//}
 			property.put("Variable", varBox.getSelectedItem().toString());
-			property.put("Value", valueBox.getSelectedItem().toString());
+			property.put("Value", fields.get("Assignment value").getValue());
 
 			//if (selected != null && !oldName.equals(id)) {
 			//	lhpn.changeVariableName(oldName, id);
@@ -204,12 +214,13 @@ public class BoolAssignPanel extends JPanel implements ActionListener {
 		//	}
 		//}
 		property.put("Variable", varBox.getSelectedItem().toString());
-		property.put("Value", valueBox.getSelectedItem().toString());
+		property.put("Value", fields.get("Assignment value").getValue());
 
 		if (selected != null && !oldName.equals(id)) {
 			lhpn.changeVariableName(oldName, id);
 		}
 		else {
+			log.addText("here " + property.getProperty("Value"));
 			lhpn.addBoolAssign(transition, id, property.getProperty("Value"));
 		}
 	}

@@ -94,7 +94,7 @@ public class IntAssignPanel extends JPanel implements ActionListener {
 
 		// Initial field
 		field = new PropertyField("Assignment Value", lhpn.getContAssign(transition, selected), null, null,
-				Utility.NUMstring);
+				Utility.NAMEstring);
 		fields.put("Assignment value", field);
 		add(field);
 		

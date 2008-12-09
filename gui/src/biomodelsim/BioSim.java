@@ -8215,7 +8215,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				saveButton.setEnabled(true);
 				saveasButton.setEnabled(true);
 				if (learn) {
-					run.setEnabled(false);
+					runButton.setEnabled(false);
 				}
 				else {
 					runButton.setEnabled(true);
