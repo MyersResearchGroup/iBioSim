@@ -262,11 +262,13 @@ public class LHPNFile {
 					Properties prop = booleanAssignments.get(s);
 					for (Object key : prop.keySet()) {
 						String t = (String) key;
-						buffer.append("[" + t + ":=" + prop.getProperty(t) + "]");
+						if (isInput(t) || isOutput(t)) {
+							buffer.append("[" + t + ":=" + prop.getProperty(t) + "]");
+						}
 					}
 					buffer.append(">");
 				}
-				buffer.append("}");
+				buffer.append("}\n");
 			}
 			if (!intAssignments.isEmpty()) {
 				buffer.append("#@.int_assignments {");
@@ -275,7 +277,9 @@ public class LHPNFile {
 					buffer.append("<" + s + "=");
 					for (Object key : prop.keySet()) {
 						String t = (String) key;
-						buffer.append("[" + t + ":=" + prop.getProperty(t) + "]");
+						if (isInteger(t)) {
+							buffer.append("[" + t + ":=" + prop.getProperty(t) + "]");
+						}
 					}
 					buffer.append(">");
 				}
@@ -963,6 +967,12 @@ public class LHPNFile {
 		// log.addText(trans);
 		Properties intVars = new Properties();
 		intVars = intAssignments.get(trans);
+		for (Object s : intVars.keySet()) {
+			String t = (String)	s;
+			if (!isInteger(t)) {
+				intVars.remove(t);
+			}
+		}
 		return intVars;
 	}
 
@@ -1001,19 +1011,12 @@ public class LHPNFile {
 		return null;
 	}
 
-	public Boolean getBoolAssign(String trans, String var) {
+	public String getBoolAssign(String trans, String var) {
 		if (booleanAssignments.containsKey(trans)) {
 			Properties prop = booleanAssignments.get(trans);
 			if (prop != null && var != null) {
 				if (prop.containsKey(var)) {
-					if (prop.getProperty(var).equals("true")
-							|| prop.getProperty(var).equals("TRUE")) {
-						return true;
-					}
-					else if (prop.getProperty(var).equals("false")
-							|| prop.getProperty(var).equals("FALSE")) {
-						return false;
-					}
+					return prop.getProperty(var);
 				}
 			}
 		}
@@ -1034,7 +1037,6 @@ public class LHPNFile {
 		if (intAssignments.containsKey(transition) && var != null) {
 			Properties prop = intAssignments.get(transition);
 			if (prop.containsKey(var)) {
-				log.addText(prop.getProperty(var));
 				return prop.getProperty(var);
 			}
 		}
@@ -1578,7 +1580,7 @@ public class LHPNFile {
 
 	private static final String BOOLEAN_TRANS = "<([\\w_]+?)=([\\S[^>]]+?)>";
 
-	private static final String BOOLEAN_ASSIGN = "\\[([\\w_]+):=(\\w+)\\]";
+	private static final String BOOLEAN_ASSIGN = "\\[([\\w_]+):=([\\S^\\]]+)\\]";
 
 	private static final String WORD = "(\\S+)";
 

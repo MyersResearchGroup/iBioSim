@@ -67,7 +67,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 
 	private BioSim biosim;
 
-	private String learnFile;
+	private String learnFile, binFile, lhpnFile, datFile;
 
 	private boolean change;
 
@@ -93,6 +93,9 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 		this.directory = directory;
 		String[] getFilename = directory.split(separator);
 		lrnFile = getFilename[getFilename.length - 1] + ".lrn";
+		datFile = getFilename[getFilename.length - 1] + ".dat";
+		binFile = getFilename[getFilename.length - 1] + ".bins";
+		lhpnFile = getFilename[getFilename.length - 1] + ".g";
 		Preferences biosimrc = Preferences.userRoot();
 
 		// Sets up the encodings area
@@ -167,7 +170,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 
 		// Sets up the thresholds area
 		JPanel thresholdPanel2 = new JPanel(new GridLayout(8, 2));
-		JPanel thresholdPanel1 = new JPanel(new GridLayout(2, 2));
+		JPanel thresholdPanel1 = new JPanel(new GridLayout(3, 2));
 		JLabel propertyLabel = new JLabel("Property to verify:");
 		property = new JTextField("");
 		thresholdPanel1.add(propertyLabel);
@@ -175,8 +178,8 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 		
 		JLabel iterationLabel = new JLabel("Iterations of optimization algorithm");
 		iteration = new JTextField("10000");
-		thresholdPanel2.add(iterationLabel);
-		thresholdPanel2.add(iteration);
+		thresholdPanel1.add(iterationLabel);
+		thresholdPanel1.add(iteration);
 		
 		/*JLabel activationLabel = new JLabel("Ratio For Activation (Ta):");
 		thresholdPanel2.add(activationLabel);
@@ -420,7 +423,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 		runHolder.add(viewLog);
 		viewLog.addActionListener(this);
 		viewLog.setMnemonic(KeyEvent.VK_R);
-		if (!(new File(directory + separator + "method.gcm").exists())) {
+		if (!(new File(directory + separator + "method.g").exists())) {
 			viewLhpn.setEnabled(false);
 			saveLhpn.setEnabled(false);
 		}
@@ -1022,7 +1025,22 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 	}
 
 	public void run() {
-		
+		try {
+			String command = "python data2lhpn.py -b " + binFile;
+			if (!property.getText().isEmpty()) {
+			String propFile = binFile.replace("bins", "prop");
+			File prop = new File(directory + separator + propFile);
+			prop.createNewFile();
+			FileWriter write = new FileWriter(prop);
+			write.write(property.getText().trim());
+			write.close();
+			command = command + " -p " + propFile;
+			}
+			Runtime.getRuntime().exec(command);
+		}
+		catch (Exception e) {
+			
+		}
 	}
 
 	public boolean hasChanged() {

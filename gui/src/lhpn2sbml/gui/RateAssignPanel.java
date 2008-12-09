@@ -114,7 +114,7 @@ public class RateAssignPanel extends JPanel implements ActionListener {
 
 		// Initial field
 		PropertyField field = new PropertyField("Assignment Value", lhpn.getRateAssign(transition,
-				variable), null, null, Utility.NUMstring);
+				variable), null, null, Utility.NAMEstring);
 		fields.put("Assignment value", field);
 		add(field);
 
