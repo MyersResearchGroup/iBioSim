@@ -1027,7 +1027,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 	public void run() {
 		try {
 			String command = "python data2lhpn.py -b " + binFile;
-			if (!property.getText().isEmpty()) {
+			if (property.getText().length() > 0) {
 			String propFile = binFile.replace("bins", "prop");
 			File prop = new File(directory + separator + propFile);
 			prop.createNewFile();
