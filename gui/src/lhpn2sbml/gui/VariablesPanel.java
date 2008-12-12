@@ -161,7 +161,7 @@ public class VariablesPanel extends JPanel implements ActionListener {
 				else {
 					rateLow = new PropertyField("Rate Lower Bound", initRate, null, null,
 							Utility.NAMEstring);
-					rateLow = new PropertyField("Rate Lower Bound", "", null, null,
+					rateHigh = new PropertyField("Rate Upper Bound", "", null, null,
 							Utility.NAMEstring);
 				}
 			}
