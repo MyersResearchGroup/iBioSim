@@ -95,7 +95,7 @@ import reb2sac.Run;
 import sbmleditor.SBML_Editor;
 import buttons.Buttons;
 import datamanager.DataManager;
-import datamanager.DataManagerLHPN;
+//import datamanager.DataManagerLHPN;
 
 /**
  * This class creates a GUI for the Tstubd program. It implements the
@@ -3989,12 +3989,12 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							refreshTree();
 							JTabbedPane lrnTab = new JTabbedPane();
 							if (lema) {
-								DataManagerLHPN data = new DataManagerLHPN(root + separator
-										+ lrnName, this);
+								DataManager data = new DataManager(root + separator
+										+ lrnName, this, lema);
 								lrnTab.addTab("Data Manager", data);
 							}
 							else {
-								DataManager data = new DataManager(root + separator + lrnName, this);
+								DataManager data = new DataManager(root + separator + lrnName, this, lema);
 								// data.addMouseListener(this);
 								lrnTab.addTab("Data Manager", data);
 							}
@@ -6887,7 +6887,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				return;
 			}
 			// if (!graphFile.equals("")) {
-			DataManager data = new DataManager(tree.getFile(), this);
+			DataManager data = new DataManager(tree.getFile(), this, lema);
 			// data.addMouseListener(this);
 			lrnTab.addTab("Data Manager", data);
 			lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Data Manager");
@@ -7013,7 +7013,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				return;
 			}
 			// if (!graphFile.equals("")) {
-			DataManagerLHPN data = new DataManagerLHPN(tree.getFile(), this);
+			DataManager data = new DataManager(tree.getFile(), this, lema);
 			// data.addMouseListener(this);
 			lrnTab.addTab("Data Manager", data);
 			lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Data Manager");
@@ -7894,7 +7894,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 	}
 
 	public void refreshLearn(String learnName, boolean data) {
-		for (int i = 0; i < tab.getComponentCount(); i++) {
+		for (int i = 0; i < tab.getTabCount(); i++) {
 			if (tab.getTitleAt(i).equals(learnName)) {
 				for (int j = 0; j < ((JTabbedPane) tab.getComponentAt(i)).getComponentCount(); j++) {
 					if (((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j).getName().equals(

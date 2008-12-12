@@ -43,13 +43,22 @@ public class DATParser extends Parser {
 								word += cha;
 							}
 						}
-						else {
+						else if (withinParens) {
 							if (cha == ')') {
 								withinWord = false;
 								readWord = false;
 								withinParens = false;
 							}
 							else if (cha == ' ' && word.equals("")) {
+							}
+							else {
+								word += cha;
+							}
+						}
+						else {
+							if (Character.isWhitespace(cha)) {
+								withinWord = false;
+								readWord = false;
 							}
 							else {
 								word += cha;
@@ -87,6 +96,8 @@ public class DATParser extends Parser {
 						else if (cha == ',' && !withinParens) {
 						}
 						else {
+							withinWord = true;
+							word += cha;
 						}
 					}
 				}

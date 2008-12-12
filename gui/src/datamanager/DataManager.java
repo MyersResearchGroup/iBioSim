@@ -1,6 +1,7 @@
 package datamanager;
 
 import gcm2sbml.parser.GCMFile;
+import lhpn2sbml.parser.LHPNFile;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
@@ -51,13 +52,14 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 
 	private JPanel filesPanel;
 
-	private boolean dirty;
+	private boolean dirty, lema;
 
 	private String previous;
 
 	private String[] list;
 
-	public DataManager(String directory, BioSim biosim) {
+	public DataManager(String directory, BioSim biosim, boolean lema) {
+		this.lema = lema;
 		if (File.separator.equals("\\")) {
 			separator = "\\\\";
 		}
@@ -807,7 +809,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 										directory.split(separator)[directory.split(separator).length - 1], true);
 							}
 						}
-						catch (Exception e1) {
+						catch (IOException e1) {
 							JOptionPane.showMessageDialog(biosim.frame(), "Unable to import file.", "Error",
 									JOptionPane.ERROR_MESSAGE);
 						}
@@ -1151,6 +1153,17 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 				GCMFile gcm = new GCMFile();
 				gcm.load(background);
 				HashMap<String, Properties> speciesMap = gcm.getSpecies();
+				for (String s : speciesMap.keySet()) {
+					getSpecies.add(s);
+				}
+				species = getSpecies.toArray(new String[0]);
+			}
+			else if (background.contains(".g")) {
+				ArrayList<String> getSpecies = new ArrayList<String>();
+				LHPNFile lhpn = new LHPNFile();
+				//System.out.println(background);
+				lhpn.load(background);
+				HashMap<String, Properties> speciesMap = lhpn.getVariables();
 				for (String s : speciesMap.keySet()) {
 					getSpecies.add(s);
 				}

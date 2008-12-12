@@ -272,7 +272,7 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 		lhpn.removeAllAssign(transition);
 		if (boolAssignments.getItems() != null) {
 			for (String s : boolAssignments.getItems()) {
-				// System.out.println("bool" + s);
+				//System.out.println("bool" + s);
 				String[] tempArray = s.split(":=");
 				lhpn.addBoolAssign(transition, tempArray[0], tempArray[1]);
 			}
@@ -324,33 +324,25 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 
 		public void run() {
 			String assignment = list.getSelectedValue().toString();
-			log.addText(assignment);
 			if (isBoolean(assignment)) {
-				log.addText("boolean");
 				list.removeItem(assignment);
 				boolAssignments.removeItem(assignment);
 				lhpn.removeBoolAssign(selected, assignment);
 			}
 			else if (isContinuous(assignment)) {
-				log.addText("Continuous");
 				list.removeItem(assignment);
 				varAssignments.removeItem(assignment);
 				lhpn.removeContAssign(selected, assignment);
 			}
 			else if (isRate(assignment)) {
-				log.addText("rate");
 				list.removeItem(assignment);
 				rateAssignments.removeItem(assignment);
 				lhpn.removeRateAssign(selected, assignment);
 			}
 			else if (isInteger(assignment)) {
-				log.addText("integer");
 				list.removeItem(assignment);
 				intAssignments.removeItem(assignment);
 				lhpn.removeIntAssign(selected, assignment);
-			}
-			else {
-				log.addText("else");
 			}
 		}
 
