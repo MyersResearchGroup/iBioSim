@@ -4,7 +4,7 @@ import lhpn2sbml.parser.*;
 
 import gcm2sbml.gui.*;
 //import gcm2sbml.parser.GCMFile;
-import gcm2sbml.util.GlobalConstants;
+//import gcm2sbml.util.GlobalConstants;
 import gcm2sbml.util.Utility;
 
 import java.awt.GridLayout;
@@ -31,7 +31,7 @@ public class BoolAssignPanel extends JPanel implements ActionListener {
 	//private String[] varList, boolList, contList;
 	private String[] boolList;
 	
-	private String[] values = {"true", "false"};
+	//private String[] values = {"true", "false"};
 	private String[] options = { "Ok", "Cancel" };
 
 	private LHPNFile lhpn;

@@ -3,7 +3,7 @@ package lhpn2sbml.gui;
 import lhpn2sbml.parser.*;
 
 import gcm2sbml.gui.*;
-import gcm2sbml.parser.GCMFile;
+//import gcm2sbml.parser.GCMFile;
 import gcm2sbml.util.GlobalConstants;
 import gcm2sbml.util.Utility;
 
@@ -12,8 +12,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import javax.swing.DefaultListModel;
+//import javax.swing.DefaultListModel;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -34,7 +36,7 @@ public class VariablesPanel extends JPanel implements ActionListener {
 
 	private JPanel initPanel = null;
 
-	private PropertyField initField = null, rateField;
+	private PropertyField initLow = null, initHigh = null, rateLow, rateHigh;
 
 	private JComboBox modeBox, initBox;
 
@@ -48,8 +50,8 @@ public class VariablesPanel extends JPanel implements ActionListener {
 
 	private HashMap<String, PropertyField> fields = null;
 
-	public VariablesPanel(String selected, PropertyList variablesList, Boolean boolCont, Boolean integer,
-			LHPNFile lhpn) {
+	public VariablesPanel(String selected, PropertyList variablesList, Boolean boolCont,
+			Boolean integer, LHPNFile lhpn) {
 		super(new GridLayout(6, 1));
 		this.selected = selected;
 		this.variablesList = variablesList;
@@ -61,7 +63,7 @@ public class VariablesPanel extends JPanel implements ActionListener {
 
 		// ID field
 		PropertyField field = new PropertyField(GlobalConstants.ID, "", null, null,
-				Utility.NAMEstring);
+				Utility.IDstring);
 		fields.put(GlobalConstants.ID, field);
 		add(field);
 
@@ -91,14 +93,32 @@ public class VariablesPanel extends JPanel implements ActionListener {
 		if (continuous || integer) {
 			// JOptionPane.showMessageDialog(this, lhpn.isContinuous(selected));
 			if (selected != null) {
-				initField = new PropertyField("Initial Value", lhpn.getInitialVal(selected), null,
-						null, Utility.NUMstring);
+				String initVal = lhpn.getInitialVal(selected);
+				Pattern pattern = Pattern.compile("\\[([\\S^,]),([\\S^\\]])\\]");
+				Matcher matcher = pattern.matcher(initVal);
+				if (matcher.find()) {
+					initLow = new PropertyField("Initial Lower Bound", matcher.group(1), null,
+							null, Utility.NAMEstring);
+					initHigh = new PropertyField("Initial Upper Bound", matcher.group(2), null,
+							null, Utility.NAMEstring);
+				}
+				else {
+					initLow = new PropertyField("Initial Lower Bound", initVal, null, null,
+							Utility.NAMEstring);
+					initHigh = new PropertyField("Initial Upper Bound", "", null, null,
+							Utility.NAMEstring);
+				}
 			}
 			else {
-				initField = new PropertyField("Initial Value", "0", null, null, Utility.NUMstring);
+				initLow = new PropertyField("Initial Lower Bound", "0", null, null,
+						Utility.NAMEstring);
+				initHigh = new PropertyField("Initial Lower Bound", "", null, null,
+						Utility.NAMEstring);
 			}
-			fields.put("Initial value", initField);
-			add(initField);
+			fields.put("Initial lower", initLow);
+			fields.put("Initial upper", initHigh);
+			add(initLow);
+			add(initHigh);
 		}
 		else {
 			// JOptionPane.showMessageDialog(this, lhpn.isContinuous(selected));
@@ -129,14 +149,30 @@ public class VariablesPanel extends JPanel implements ActionListener {
 		// Initial rate field
 		if (continuous) {
 			if (selected != null) {
-				rateField = new PropertyField("Initial Rate", lhpn.getInitialRate(selected), null,
-						null, Utility.NUMstring);
+				String initRate = lhpn.getInitialRate(selected);
+				Pattern pattern = Pattern.compile("\\[([\\S^,]),([\\S^\\]])\\]");
+				Matcher matcher = pattern.matcher(initRate);
+				if (matcher.find()) {
+					rateLow = new PropertyField("Rate Lower Bound", matcher.group(1), null, null,
+							Utility.NAMEstring);
+					rateHigh = new PropertyField("Rate Upper Bound", matcher.group(2), null, null,
+							Utility.NAMEstring);
+				}
+				else {
+					rateLow = new PropertyField("Rate Lower Bound", initRate, null, null,
+							Utility.NAMEstring);
+					rateLow = new PropertyField("Rate Lower Bound", "", null, null,
+							Utility.NAMEstring);
+				}
 			}
 			else {
-				rateField = new PropertyField("Initial Rate", "0", null, null, Utility.NUMstring);
+				rateLow = new PropertyField("Rate Lower Bound", "0", null, null, Utility.NAMEstring);
+				rateHigh = new PropertyField("Rate Upper Bound", "", null, null, Utility.NAMEstring);
 			}
-			fields.put("Initial rate", rateField);
-			add(rateField);
+			fields.put("Rate lower", rateLow);
+			fields.put("Rate upper", rateHigh);
+			add(rateLow);
+			add(rateHigh);
 		}
 
 		String oldName = null;
@@ -144,7 +180,8 @@ public class VariablesPanel extends JPanel implements ActionListener {
 			oldName = selected;
 			// Properties prop = lhpn.getVariables().get(selected);
 			fields.get(GlobalConstants.ID).setValue(selected);
-			//System.out.print("after " + fields.get(GlobalConstants.ID).getValue());
+			// System.out.print("after " +
+			// fields.get(GlobalConstants.ID).getValue());
 			// if (lhpn.isContinuous(selected)) {
 			// typeBox.setSelectedItem(types[1]);
 			// setType(types[1]);
@@ -154,7 +191,16 @@ public class VariablesPanel extends JPanel implements ActionListener {
 			// setType(types[0]);
 			// }
 			if (lhpn.isContinuous(selected) || lhpn.isInteger(selected)) {
-				fields.get("Initial value").setValue(lhpn.getInitialVal(selected));
+				String initVal = lhpn.getInitialVal(selected);
+				Pattern pattern = Pattern.compile("\\[([\\S^,]),([\\S^\\]])\\]");
+				Matcher matcher = pattern.matcher(initVal);
+				if (matcher.find()) {
+					fields.get("Initial lower").setValue(matcher.group(1));
+					fields.get("Initial upper").setValue(matcher.group(2));
+				}
+				else {
+					fields.get("Initial lower").setValue(initVal);
+				}
 			}
 			else {
 				HashMap<String, Boolean> inits;
@@ -184,10 +230,21 @@ public class VariablesPanel extends JPanel implements ActionListener {
 				}
 			}
 			if (lhpn.isContinuous(selected)) {
-				fields.get("Initial rate").setValue(lhpn.getInitialRate(selected));
+				String initRate = lhpn.getInitialRate(selected);
+				Pattern pattern = Pattern.compile("\\[([\\S^,]),([\\S^\\]])\\]");
+				Matcher matcher = pattern.matcher(initRate);
+				if (matcher.find()) {
+					fields.get("Rate lower").setValue(matcher.group(1));
+					fields.get("Rate upper").setValue(matcher.group(2));
+				}
+				else {
+					fields.get("Rate lower").setValue(initRate);
+				}
 				fields.get(GlobalConstants.ID).setValue(selected);
-				//System.out.print(" " + fields.get(GlobalConstants.ID).getValue());
-				//System.out.print(" " + fields.get("Initial rate").getValue());
+				// System.out.print(" " +
+				// fields.get(GlobalConstants.ID).getValue());
+				// System.out.print(" " + fields.get("Initial
+				// rate").getValue());
 			}
 			// loadProperties(prop);
 		}
@@ -228,7 +285,8 @@ public class VariablesPanel extends JPanel implements ActionListener {
 					return false;
 				}
 			}
-			//System.out.print("after " + fields.get(GlobalConstants.ID).getValue());
+			// System.out.print("after " +
+			// fields.get(GlobalConstants.ID).getValue());
 			String id = fields.get(GlobalConstants.ID).getValue();
 
 			// Check to see if we need to add or edit
@@ -239,17 +297,25 @@ public class VariablesPanel extends JPanel implements ActionListener {
 				}
 			}
 			String tempVal = "";
-			if (property.containsKey("Initial Value")) {
-			tempVal = property.getProperty("Initial Value");
-			property.setProperty("value", tempVal);
-			property.remove("Initial Value");
+			if (property.containsKey("Initial Lower Bound")) {
+				tempVal = property.getProperty("Initial Lower Bound");
+				if (property.containsKey("Initial Upper Bound")) {
+					tempVal = "[" + tempVal + "," + property.getProperty("Initial Upper Bound") + "]";
+				}
+				property.setProperty("value", tempVal);
+				property.remove("Initial Lower Bound");
+				property.remove("Initial Upper Bound");
 			}
-			if (property.containsKey("Initial Rate")) {
-			tempVal = property.getProperty("Initial Rate");
-			property.setProperty("rate", tempVal);
-			property.remove("Initial Rate");
+			if (property.containsKey("Rate Lower Bound")) {
+				tempVal = property.getProperty("Rate Lower Bound");
+				if (property.containsKey("Rate Upper Bound")) {
+					tempVal = "[" + tempVal + "," + property.getProperty("Rate Upper Bound") + "]";
+				}
+				property.setProperty("rate", tempVal);
+				property.remove("Rate Lower Bound");
+				property.remove("Rate Upper Bound");
 			}
-			
+
 			// property.put(GlobalConstants.TYPE,
 			// typeBox.getSelectedItem().toString());
 
@@ -260,12 +326,16 @@ public class VariablesPanel extends JPanel implements ActionListener {
 				lhpn.removeVar(id);
 			}
 			if (lhpn.isContinuous(id) || continuous) {
-				//System.out.println("add var " + property);
+				// System.out.println("add var " + property);
 				lhpn.addVar(id, property);
 			}
 			else if (lhpn.isInteger(id) || integer) {
-				//System.out.println("add var " + property);
-				lhpn.addInteger(id, fields.get("Initial value").getValue());
+				// System.out.println("add var " + property);
+				tempVal = fields.get("Initial lower").getValue();
+				if (fields.containsKey("Initial upper")) {
+					tempVal = "[" + tempVal + "," + fields.get("Initial upper").getValue() + "]";
+				}
+				lhpn.addInteger(id, tempVal);
 			}
 			else if (lhpn.isInput(id) || (!continuous && modeBox.getSelectedItem().equals("input"))) {
 				Boolean temp = false;
@@ -274,7 +344,8 @@ public class VariablesPanel extends JPanel implements ActionListener {
 				}
 				lhpn.addInput(id, temp);
 			}
-			else if (lhpn.isOutput(id) || (!continuous && modeBox.getSelectedItem().equals("output"))) {
+			else if (lhpn.isOutput(id)
+					|| (!continuous && modeBox.getSelectedItem().equals("output"))) {
 				Boolean temp = false;
 				if (initBox.getSelectedItem().equals("true")) {
 					temp = true;
@@ -299,71 +370,13 @@ public class VariablesPanel extends JPanel implements ActionListener {
 		}
 	}
 
-	private void setType(String type) {
-		// JOptionPane.showMessageDialog(this, type + types[0] +
-		// type.equals(types[0]));
-		if (type.equals(types[0]) && initField != null) {
-			// JOptionPane.showMessageDialog(this, type + types[0] +
-			// type.equals(types[0]));
-			remove(initField);
-			remove(rateField);
-			initField = null;
-			fields.remove("Initial value");
-			initPanel = new JPanel();
-			JLabel initLabel = new JLabel("Initial Value");
-			initBox = new JComboBox(booleans);
-			initBox.setSelectedItem(booleans[0]);
-			initBox.addActionListener(this);
-			initPanel.setLayout(new GridLayout(1, 2));
-			initPanel.add(initLabel);
-			initPanel.add(initBox);
-			add(initPanel);
-			HashMap<String, Boolean> inits;
-			if (!continuous) {
-				if (modeBox.getSelectedIndex() == 0) {
-					inits = lhpn.getInputs();
-				}
-				else {
-					inits = lhpn.getOutputs();
-				}
-				if (inits.get(selected)) {
-					initBox.setSelectedItem(booleans[1]);
-				}
-				else {
-					initBox.setSelectedItem(booleans[0]);
-				}
-			}
-			lhpn.removeVar(selected);
-
-		}
-		else if (type.equals(types[1]) && initPanel != null) {
-			// JOptionPane.showMessageDialog(this, "here");
-			remove(initPanel);
-			initPanel = null;
-			initField = new PropertyField("Initial Value", lhpn.getInitialVal(selected), null,
-					null, Utility.NUMstring);
-			fields.put("Initial value", initField);
-			add(initField);
-			if (lhpn.isInput(selected)) {
-				lhpn.removeInput(selected);
-			}
-			else if (lhpn.isOutput(selected)) {
-				lhpn.removeOutput(selected);
-			}
-			Properties prop = new Properties();
-			prop.setProperty("value", "0");
-			prop.setProperty("rate", "0");
-			lhpn.addVar(selected, prop);
-		}
-	}
-
-	//private void loadProperties(Properties property) {
-	//	for (Object o : property.keySet()) {
-	//		if (fields.containsKey(o.toString())) {
-	//			fields.get(o.toString()).setValue(property.getProperty(o.toString()));
-	//			fields.get(o.toString()).setCustom();
-	//		}
-	//	}
-	//}
+	// private void loadProperties(Properties property) {
+	// for (Object o : property.keySet()) {
+	// if (fields.containsKey(o.toString())) {
+	// fields.get(o.toString()).setValue(property.getProperty(o.toString()));
+	// fields.get(o.toString()).setCustom();
+	// }
+	// }
+	// }
 
 }
