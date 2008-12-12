@@ -7,7 +7,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.swing.JOptionPane;
+//import javax.swing.JOptionPane;
 import biomodelsim.Log;
 
 /**
@@ -188,15 +188,15 @@ public class LHPNFile {
 				}
 				buffer.append("}\n");
 			}
-			if (!variables.isEmpty() && !integers.isEmpty()) {
+			if (!variables.isEmpty() || !integers.isEmpty()) {
 				buffer.append("#@.init_vals {");
 				for (String s : variables.keySet()) {
 					Properties prop = variables.get(s);
 					buffer.append("<" + s + "=" + prop.getProperty("value") + ">");
 				}
 				for (String s : integers.keySet()) {
-					Properties prop = variables.get(s);
-					buffer.append("<" + s + "=" + prop.getProperty("value") + ">");
+					String ic = integers.get(s);
+					buffer.append("<" + s + "=" + ic + ">");
 				}
 				if (!variables.isEmpty()) {
 					buffer.append("}\n#@.init_rates {");
@@ -263,10 +263,10 @@ public class LHPNFile {
 					}
 					buffer.append(">");
 				}
-				buffer.append("}\n");
+				buffer.append("}");
 			}
 			if (!intAssignments.isEmpty()) {
-				buffer.append("#@.int_assignments {");
+				buffer.append("\n#@.int_assignments {");
 				for (String s : intAssignments.keySet()) {
 					Properties prop = intAssignments.get(s);
 					buffer.append("<" + s + "=");
@@ -315,7 +315,7 @@ public class LHPNFile {
 			String str;
 			while ((str = in.readLine()) != null) {
 				data.append(str + "\n");
-				//System.out.println(str);
+				// System.out.println(str);
 			}
 			in.close();
 		}
@@ -325,40 +325,40 @@ public class LHPNFile {
 		}
 
 		try {
-			//System.out.println("check1");
+			// System.out.println("check1");
 			// log.addText("check1");
 			parseInOut(data);
-			//System.out.println("check2");
+			// System.out.println("check2");
 			// log.addText("check2");
 			// parseTransitions(data);
 			parseControlFlow(data);
-			//System.out.println("check3");
+			// System.out.println("check3");
 			// log.addText("check3");
 			parseVars(data);
-			//System.out.println("check4");
+			// System.out.println("check4");
 			// log.addText("check");
 			parseIntegers(data);
 			// parseInitialVals(data);
-			//System.out.println("check5");
+			// System.out.println("check5");
 			// log.addText("check4");
 			parseMarking(data);
-			//System.out.println("check6");
+			// System.out.println("check6");
 			// log.addText("check5");
 			parseEnabling(data);
-			//System.out.println("check7");
+			// System.out.println("check7");
 			// log.addText("check6");
 			parseContAssign(data);
-			//System.out.println("check8");
+			// System.out.println("check8");
 			// log.addText("check7");
 			parseRateAssign(data);
-			//System.out.println("check9");
+			// System.out.println("check9");
 			// log.addText("check8");
 			parseDelayAssign(data);
 			parseIntAssign(data);
-			//System.out.println("check0");
+			// System.out.println("check0");
 			// log.addText("check9");
 			parseBooleanAssign(data);
-			//System.out.println("check11");
+			// System.out.println("check11");
 			// log.addText("check0");
 		}
 		catch (Exception e) {
@@ -1212,15 +1212,15 @@ public class LHPNFile {
 	}
 
 	private void parseInOut(StringBuffer data) {
-		//System.out.println("hello?");
+		// System.out.println("hello?");
 		Properties varOrder = new Properties();
-		//System.out.println("check1start");
+		// System.out.println("check1start");
 		// log.addText("check1start");
 		Pattern inLinePattern = Pattern.compile(INPUT);
 		Matcher inLineMatcher = inLinePattern.matcher(data.toString());
 		Integer i = 0;
 		Integer inLength = 0;
-		//System.out.println("check1a-");
+		// System.out.println("check1a-");
 		if (inLineMatcher.find()) {
 			System.out.println("checkifin");
 			Pattern inPattern = Pattern.compile(WORD);
@@ -1231,7 +1231,7 @@ public class LHPNFile {
 				inLength++;
 			}
 		}
-		//System.out.println("check1a");
+		// System.out.println("check1a");
 		Pattern outPattern = Pattern.compile(OUTPUT);
 		Matcher outLineMatcher = outPattern.matcher(data.toString());
 		if (outLineMatcher.find()) {
@@ -1245,7 +1245,7 @@ public class LHPNFile {
 				i++;
 			}
 		}
-		//System.out.println("check1e");
+		// System.out.println("check1e");
 		// log.addText("check1c");
 		Pattern initState = Pattern.compile(INIT_STATE);
 		Matcher initMatcher = initState.matcher(data.toString());
@@ -1367,23 +1367,23 @@ public class LHPNFile {
 			Matcher initLineMatcher = initLinePattern.matcher(data.toString());
 			// log.addText("check3d2");
 			if (initLineMatcher.find()) {
-			// log.addText("check3e");
-			Pattern initPattern = Pattern.compile(INIT_COND);
-			Matcher initMatcher = initPattern.matcher(initLineMatcher.group(1));
-			// log.addText("check3f");
-			while (initMatcher.find()) {
-				if (integers.containsKey(initMatcher.group(1))) {
-					initValue.put(initMatcher.group(1), initMatcher.group(2));
+				// log.addText("check3e");
+				Pattern initPattern = Pattern.compile(INIT_COND);
+				Matcher initMatcher = initPattern.matcher(initLineMatcher.group(1));
+				// log.addText("check3f");
+				while (initMatcher.find()) {
+					if (integers.containsKey(initMatcher.group(1))) {
+						initValue.put(initMatcher.group(1), initMatcher.group(2));
+					}
 				}
-			}
 			}
 			// log.addText("check3g");
 			// log.addText("check3i");
 			// log.addText("check3j");
 			for (String s : integers.keySet()) {
-				// log.addText("check3for" + s);
+				//log.addText("check3for" + s);
 				if (initValue.get(s) != null) {
-				initCond = initValue.get(s).toString();
+					initCond = initValue.get(s).toString();
 				}
 				// log.addText("check3for" + initCond);
 				integers.put(s, initCond);
@@ -1581,7 +1581,7 @@ public class LHPNFile {
 	private static final String TRANSITION = "\\.dummy([^\\n]*?)\\n";
 
 	private static final String PLACE = "\\n([^.#][\\w_\\+-/]+ [\\w_\\+-/]+)";
-	
+
 	private static final String CONTINUOUS = "#@\\.continuous ([.[^\\n]]+)\\n";
 
 	private static final String VARIABLES = "#@\\.variables ([.[^\\n]]+)\\n";
@@ -1590,7 +1590,7 @@ public class LHPNFile {
 
 	private static final String INIT_RATE = "#@\\.init_rates \\{([\\S[^\\}]]+?)\\}";
 
-	private static final String INIT_COND = "<(\\w+)=([-\\d]+)>";
+	private static final String INIT_COND = "<(\\w+)=([\\S^>]+)>";
 
 	// private static final String INTS_INIT = "#@\\.init_ints
 	// \\{([\\S[^\\}]]+?)\\}";

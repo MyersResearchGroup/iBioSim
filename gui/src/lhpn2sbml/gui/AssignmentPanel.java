@@ -34,8 +34,6 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 
 	private JComboBox typeBox, varBox;
 
-	private static final String[] types = { "boolean", "continuous", "rate" };
-
 	private HashMap<String, PropertyField> fields = null;
 
 	public AssignmentPanel(String selected, PropertyList assignmentList,
@@ -66,22 +64,11 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 				Utility.NAMEstring);
 		fields.put(GlobalConstants.ID, field);
 		add(field);
-
-		// Type field
-		JPanel tempPanel = new JPanel();
-		JLabel tempLabel = new JLabel("Type");
-		typeBox = new JComboBox(types);
-		typeBox.setSelectedItem(types[0]);
-		typeBox.addActionListener(this);
-		tempPanel.setLayout(new GridLayout(1, 2));
-		tempPanel.add(tempLabel);
-		tempPanel.add(typeBox);
-		add(tempPanel);
 		
 		// Variable field
-		tempPanel = new JPanel();
+		JPanel tempPanel = new JPanel();
 		JLabel varLabel = new JLabel("Variable");
-		varBox = new JComboBox(types);
+		varBox = new JComboBox(varList);
 		varBox.setSelectedItem(varList[0]);
 		varBox.addActionListener(this);
 		tempPanel.setLayout(new GridLayout(1, 2));
@@ -101,26 +88,10 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 			oldName = selected;
 			Properties prop = lhpn.getVariables().get(selected);
 			fields.get(GlobalConstants.ID).setValue(selected);
-			if (lhpn.isContinuous(selected)) {
-				typeBox.setSelectedItem(types[1]);
-				setType(types[1]);
-			}
-			else {
-				typeBox.setSelectedItem(types[0]);
-				setType(types[0]);
-			}
 			fields.get("Initial value").setValue(lhpn.getInitialVal(selected));
-			if (lhpn.isInput(selected)) {
-				varBox.setSelectedItem(types[0]);
-			}
-			else {
-				varBox.setSelectedItem(types[1]);
-			}
 			fields.get("Initial rate").setValue(lhpn.getInitialRate(selected));
 			loadProperties(prop);
 		}
-
-		setType(types[0]);
 		boolean display = false;
 		while (!display) {
 			display = openGui(oldName);
