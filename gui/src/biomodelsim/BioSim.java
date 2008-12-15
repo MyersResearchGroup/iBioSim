@@ -38,6 +38,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -95,6 +96,7 @@ import reb2sac.Run;
 import sbmleditor.SBML_Editor;
 import buttons.Buttons;
 import datamanager.DataManager;
+
 //import datamanager.DataManagerLHPN;
 
 /**
@@ -712,7 +714,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		file.add(closeAll);
 		file.addSeparator();
 		file.add(save);
-		//file.add(saveAsMenu);
+		// file.add(saveAsMenu);
 		if (!lema) {
 			saveAsMenu.add(saveAsGcm);
 			saveAsMenu.add(saveAsGraph);
@@ -727,8 +729,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		file.add(saveAsSbml);
 		file.add(saveAsTemplate);
 		file.add(run);
-		file.add(check);
 		if (!lema) {
+			file.add(check);
 			file.add(saveParam);
 		}
 		file.addSeparator();
@@ -2632,6 +2634,9 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			else if (comp instanceof SBML_Editor) {
 				((SBML_Editor) comp).save(false, "", true);
 			}
+			else if (comp instanceof Graph) {
+				((Graph) comp).save();
+			}
 			else if (comp instanceof JTabbedPane) {
 				Component component = ((JTabbedPane) comp).getSelectedComponent();
 				int index = ((JTabbedPane) comp).getSelectedIndex();
@@ -2686,6 +2691,9 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			}
 			else if (comp instanceof SBML_Editor) {
 				((SBML_Editor) comp).saveAs();
+			}
+			else if (comp instanceof Graph) {
+				((Graph) comp).saveAs();
 			}
 			else if (comp instanceof JTabbedPane) {
 				Component component = ((JTabbedPane) comp).getSelectedComponent();
@@ -2767,7 +2775,10 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		}
 		else if (e.getActionCommand().equals("export")) {
 			Component comp = tab.getSelectedComponent();
-			if (comp instanceof JTabbedPane) {
+			if (comp instanceof Graph) {
+				((Graph) comp).export();
+			}
+			else if (comp instanceof JTabbedPane) {
 				Component component = ((JTabbedPane) comp).getSelectedComponent();
 				if (component instanceof Graph) {
 					((Graph) component).export();
@@ -3989,12 +4000,13 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							refreshTree();
 							JTabbedPane lrnTab = new JTabbedPane();
 							if (lema) {
-								DataManager data = new DataManager(root + separator
-										+ lrnName, this, lema);
+								DataManager data = new DataManager(root + separator + lrnName,
+										this, lema);
 								lrnTab.addTab("Data Manager", data);
 							}
 							else {
-								DataManager data = new DataManager(root + separator + lrnName, this, lema);
+								DataManager data = new DataManager(root + separator + lrnName,
+										this, lema);
 								// data.addMouseListener(this);
 								lrnTab.addTab("Data Manager", data);
 							}
@@ -5927,20 +5939,31 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".vhd")) {
 						try {
 							String filename = tree.getFile();
-							/*
-							 * String directory = ""; String theFile = ""; if
-							 * (filename.lastIndexOf('/') >= 0) { directory =
-							 * filename.substring(0, filename.lastIndexOf('/') +
-							 * 1); theFile =
-							 * filename.substring(filename.lastIndexOf('/') +
-							 * 1); } if (filename.lastIndexOf('\\') >= 0) {
-							 * directory = filename.substring(0,
-							 * filename.lastIndexOf('\\') + 1); theFile =
-							 * filename.substring(filename.lastIndexOf('\\') +
-							 * 1); }
-							 */
-							String[] command = { "emacs", filename };
-							Runtime.getRuntime().exec(command);
+							String directory = "";
+							String theFile = "";
+							if (filename.lastIndexOf('/') >= 0) {
+								directory = filename.substring(0, filename.lastIndexOf('/') + 1);
+								theFile = filename.substring(filename.lastIndexOf('/') + 1);
+							}
+							if (filename.lastIndexOf('\\') >= 0) {
+								directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
+								theFile = filename.substring(filename.lastIndexOf('\\') + 1);
+							}
+							File work = new File(directory);
+							int i = getTab(theFile);
+							if (i != -1) {
+								tab.setSelectedIndex(i);
+							}
+							else {
+								File file = new File(work + separator + theFile);
+								FileReader read = new FileReader(file);
+								char cha = (char) read.read();
+								JTextArea text = new JTextArea(filename);
+								// gcm.addMouseListener(this);
+								addTab(theFile, text, "VHDL Editor");
+							}
+							// String[] command = { "emacs", filename };
+							// Runtime.getRuntime().exec(command);
 						}
 						catch (Exception e1) {
 							JOptionPane.showMessageDialog(frame, "Unable to view this vhdl file.",
@@ -8433,6 +8456,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				saveSbml.setEnabled(false);
 				saveTemp.setEnabled(false);
 			}
+		}
+		else if (comp instanceof JPanel) {
 		}
 		else if (comp instanceof Verification) {
 			saveButton.setEnabled(true);
