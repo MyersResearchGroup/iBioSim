@@ -464,7 +464,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 
 		this.setLayout(new BorderLayout());
 		this.add(tab, BorderLayout.PAGE_START);
-		this.add(buttonPanel, BorderLayout.PAGE_END);
+		//this.add(buttonPanel, BorderLayout.PAGE_END);
 		change = false;
 	}
 
@@ -958,6 +958,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			FileOutputStream out = new FileOutputStream(new File(directory + separator + verFile));
 			prop.store(out, verifyFile);
 			out.close();
+			log.addText("Saving Parameter File:\n" + directory + separator + verFile);
 			change = false;
 		}
 		catch (Exception e1) {
