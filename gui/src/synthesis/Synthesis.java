@@ -649,7 +649,7 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 
 		this.setLayout(new BorderLayout());
 		this.add(tab, BorderLayout.PAGE_START);
-		this.add(buttonPanel, BorderLayout.PAGE_END);
+		//this.add(buttonPanel, BorderLayout.PAGE_END);
 		change = false;
 	}
 
@@ -1325,6 +1325,7 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 			FileOutputStream out = new FileOutputStream(new File(directory + separator + synthFile));
 			prop.store(out, synthesisFile);
 			out.close();
+			log.addText("Saving Parameter File:\n" + directory + separator + synthFile);
 			change = false;
 		}
 		catch (Exception e1) {
