@@ -72,6 +72,7 @@ import javax.swing.JTree;
 import javax.swing.SwingUtilities;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.JViewport;
 
 import tabs.CloseAndMaxTabbedPane;
 
@@ -2662,6 +2663,29 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			else if (comp instanceof Synthesis) {
 				((Synthesis) comp).save();
 			}
+			else if (comp instanceof JScrollPane) {
+				String fileName = tab.getTitleAt(tab.getSelectedIndex());
+				try {
+					File output = new File(root + separator + fileName);
+					output.createNewFile();
+					FileOutputStream outStream = new FileOutputStream(output);
+					Component[] array = ((JScrollPane) comp).getComponents();
+					array = ((JViewport) array[0]).getComponents();
+					if (array[0] instanceof JTextArea) {
+						String text = ((JTextArea) array[0]).getText();
+						char[] chars = text.toCharArray();
+						for (int j = 0; j < chars.length; j++) {
+							outStream.write((int) chars[j]);
+						}
+					}
+					outStream.close();
+					log.addText("Saving file:\n" + root + separator + fileName);
+				}
+				catch (Exception e1) {
+					JOptionPane.showMessageDialog(frame, "Error saving file " + fileName, "Error",
+							JOptionPane.ERROR_MESSAGE);
+				}
+			}
 		}
 		// if the save as button is pressed on the Tool Bar
 		else if (e.getActionCommand().equals("saveas")) {
@@ -2706,6 +2730,84 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			}
 			else if (comp instanceof Synthesis) {
 				((Synthesis) comp).saveAs();
+			}
+			else if (comp instanceof JScrollPane) {
+				String fileName = tab.getTitleAt(tab.getSelectedIndex());
+				String newName = "";
+				if (fileName.endsWith(".vhd")) {
+					newName = JOptionPane.showInputDialog(frame(), "Enter VHDL name:",
+							"VHDL Name", JOptionPane.PLAIN_MESSAGE);
+					if (newName == null) {
+						return;
+					}
+					if (!newName.endsWith(".vhd")) {
+						newName = newName + ".vhd";
+					}
+				}
+				else if (fileName.endsWith(".csp")) {
+					newName = JOptionPane.showInputDialog(frame(), "Enter CSP name:",
+							"CSP Name", JOptionPane.PLAIN_MESSAGE);
+					if (newName == null) {
+						return;
+					}
+					if (!newName.endsWith(".csp")) {
+						newName = newName + ".csp";
+					}
+				}
+				else if (fileName.endsWith(".hse")) {
+					newName = JOptionPane.showInputDialog(frame(), "Enter HSE name:",
+							"HSE Name", JOptionPane.PLAIN_MESSAGE);
+					if (newName == null) {
+						return;
+					}
+					if (!newName.endsWith(".hse")) {
+						newName = newName + ".hse";
+					}
+				}
+				else if (fileName.endsWith(".unc")) {
+					newName = JOptionPane.showInputDialog(frame(), "Enter UNC name:",
+							"UNC Name", JOptionPane.PLAIN_MESSAGE);
+					if (newName == null) {
+						return;
+					}
+					if (!newName.endsWith(".unc")) {
+						newName = newName + ".unc";
+					}
+				}
+				else if (fileName.endsWith(".rsg")) {
+					newName = JOptionPane.showInputDialog(frame(), "Enter RSG name:",
+							"RSG Name", JOptionPane.PLAIN_MESSAGE);
+					if (newName == null) {
+						return;
+					}
+					if (!newName.endsWith(".rsg")) {
+						newName = newName + ".rsg";
+					}
+				}
+				try {
+					File output = new File(root + separator + newName);
+					output.createNewFile();
+					FileOutputStream outStream = new FileOutputStream(output);
+					Component[] array = ((JScrollPane) comp).getComponents();
+					array = ((JViewport) array[0]).getComponents();
+					if (array[0] instanceof JTextArea) {
+						String text = ((JTextArea) array[0]).getText();
+						char[] chars = text.toCharArray();
+						for (int j = 0; j < chars.length; j++) {
+							outStream.write((int) chars[j]);
+						}
+					}
+					outStream.close();
+					log.addText("Saving file:\n" + root + separator + newName);
+					File oldFile = new File(root + separator + fileName);
+					oldFile.delete();
+					tab.setTitleAt(tab.getSelectedIndex(), newName);
+					refreshTree();
+				}
+				catch (Exception e1) {
+					JOptionPane.showMessageDialog(frame, "Error saving file " + newName, "Error",
+							JOptionPane.ERROR_MESSAGE);
+				}
 			}
 		}
 		// if the run button is selected on the tool bar
@@ -5956,11 +6058,20 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							}
 							else {
 								File file = new File(work + separator + theFile);
-								FileReader read = new FileReader(file);
-								char cha = (char) read.read();
-								JTextArea text = new JTextArea(filename);
+								String input = "";
+								FileReader in = new FileReader(file);
+								int read = in.read();
+								while (read != -1) {
+									input += (char) read;
+									read = in.read();
+								}
+								in.close();
+								JTextArea text = new JTextArea(input);
+								text.setEditable(true);
+								text.setLineWrap(true);
+								JScrollPane scroll = new JScrollPane(text);
 								// gcm.addMouseListener(this);
-								addTab(theFile, text, "VHDL Editor");
+								addTab(theFile, scroll, "VHDL Editor");
 							}
 							// String[] command = { "emacs", filename };
 							// Runtime.getRuntime().exec(command);
@@ -5984,7 +6095,6 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 								directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
 								theFile = filename.substring(filename.lastIndexOf('\\') + 1);
 							}
-							// log.addText("yo");
 							LHPNFile lhpn = new LHPNFile(log);
 							if (new File(directory + theFile).length() > 0) {
 								// log.addText("here");
@@ -6017,20 +6127,38 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".csp")) {
 						try {
 							String filename = tree.getFile();
-							/*
-							 * String directory = ""; String theFile = ""; if
-							 * (filename.lastIndexOf('/') >= 0) { directory =
-							 * filename.substring(0, filename.lastIndexOf('/') +
-							 * 1); theFile =
-							 * filename.substring(filename.lastIndexOf('/') +
-							 * 1); } if (filename.lastIndexOf('\\') >= 0) {
-							 * directory = filename.substring(0,
-							 * filename.lastIndexOf('\\') + 1); theFile =
-							 * filename.substring(filename.lastIndexOf('\\') +
-							 * 1); }
-							 */
-							String[] command = { "emacs", filename };
-							Runtime.getRuntime().exec(command);
+							String directory = "";
+							String theFile = "";
+							if (filename.lastIndexOf('/') >= 0) {
+								directory = filename.substring(0, filename.lastIndexOf('/') + 1);
+								theFile = filename.substring(filename.lastIndexOf('/') + 1);
+							}
+							if (filename.lastIndexOf('\\') >= 0) {
+								directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
+								theFile = filename.substring(filename.lastIndexOf('\\') + 1);
+							}
+							File work = new File(directory);
+							int i = getTab(theFile);
+							if (i != -1) {
+								tab.setSelectedIndex(i);
+							}
+							else {
+								File file = new File(work + separator + theFile);
+								String input = "";
+								FileReader in = new FileReader(file);
+								int read = in.read();
+								while (read != -1) {
+									input += (char) read;
+									read = in.read();
+								}
+								in.close();
+								JTextArea text = new JTextArea(input);
+								text.setEditable(true);
+								text.setLineWrap(true);
+								JScrollPane scroll = new JScrollPane(text);
+								// gcm.addMouseListener(this);
+								addTab(theFile, scroll, "CSP Editor");
+							}
 						}
 						catch (Exception e1) {
 							JOptionPane.showMessageDialog(frame, "Unable to view this csp file.",
@@ -6041,20 +6169,38 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".hse")) {
 						try {
 							String filename = tree.getFile();
-							/*
-							 * String directory = ""; String theFile = ""; if
-							 * (filename.lastIndexOf('/') >= 0) { directory =
-							 * filename.substring(0, filename.lastIndexOf('/') +
-							 * 1); theFile =
-							 * filename.substring(filename.lastIndexOf('/') +
-							 * 1); } if (filename.lastIndexOf('\\') >= 0) {
-							 * directory = filename.substring(0,
-							 * filename.lastIndexOf('\\') + 1); theFile =
-							 * filename.substring(filename.lastIndexOf('\\') +
-							 * 1); }
-							 */
-							String[] command = { "emacs", filename };
-							Runtime.getRuntime().exec(command);
+							String directory = "";
+							String theFile = "";
+							if (filename.lastIndexOf('/') >= 0) {
+								directory = filename.substring(0, filename.lastIndexOf('/') + 1);
+								theFile = filename.substring(filename.lastIndexOf('/') + 1);
+							}
+							if (filename.lastIndexOf('\\') >= 0) {
+								directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
+								theFile = filename.substring(filename.lastIndexOf('\\') + 1);
+							}
+							File work = new File(directory);
+							int i = getTab(theFile);
+							if (i != -1) {
+								tab.setSelectedIndex(i);
+							}
+							else {
+								File file = new File(work + separator + theFile);
+								String input = "";
+								FileReader in = new FileReader(file);
+								int read = in.read();
+								while (read != -1) {
+									input += (char) read;
+									read = in.read();
+								}
+								in.close();
+								JTextArea text = new JTextArea(input);
+								text.setEditable(true);
+								text.setLineWrap(true);
+								JScrollPane scroll = new JScrollPane(text);
+								// gcm.addMouseListener(this);
+								addTab(theFile, scroll, "HSE Editor");
+							}
 						}
 						catch (Exception e1) {
 							JOptionPane.showMessageDialog(frame, "Unable to view this hse file.",
@@ -6065,20 +6211,38 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".unc")) {
 						try {
 							String filename = tree.getFile();
-							/*
-							 * String directory = ""; String theFile = ""; if
-							 * (filename.lastIndexOf('/') >= 0) { directory =
-							 * filename.substring(0, filename.lastIndexOf('/') +
-							 * 1); theFile =
-							 * filename.substring(filename.lastIndexOf('/') +
-							 * 1); } if (filename.lastIndexOf('\\') >= 0) {
-							 * directory = filename.substring(0,
-							 * filename.lastIndexOf('\\') + 1); theFile =
-							 * filename.substring(filename.lastIndexOf('\\') +
-							 * 1); }
-							 */
-							String[] command = { "emacs", filename };
-							Runtime.getRuntime().exec(command);
+							String directory = "";
+							String theFile = "";
+							if (filename.lastIndexOf('/') >= 0) {
+								directory = filename.substring(0, filename.lastIndexOf('/') + 1);
+								theFile = filename.substring(filename.lastIndexOf('/') + 1);
+							}
+							if (filename.lastIndexOf('\\') >= 0) {
+								directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
+								theFile = filename.substring(filename.lastIndexOf('\\') + 1);
+							}
+							File work = new File(directory);
+							int i = getTab(theFile);
+							if (i != -1) {
+								tab.setSelectedIndex(i);
+							}
+							else {
+								File file = new File(work + separator + theFile);
+								String input = "";
+								FileReader in = new FileReader(file);
+								int read = in.read();
+								while (read != -1) {
+									input += (char) read;
+									read = in.read();
+								}
+								in.close();
+								JTextArea text = new JTextArea(input);
+								text.setEditable(true);
+								text.setLineWrap(true);
+								JScrollPane scroll = new JScrollPane(text);
+								// gcm.addMouseListener(this);
+								addTab(theFile, scroll, "UNC Editor");
+							}
 						}
 						catch (Exception e1) {
 							JOptionPane.showMessageDialog(frame, "Unable to view this unc file.",
@@ -6089,20 +6253,38 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".rsg")) {
 						try {
 							String filename = tree.getFile();
-							/*
-							 * String directory = ""; String theFile = ""; if
-							 * (filename.lastIndexOf('/') >= 0) { directory =
-							 * filename.substring(0, filename.lastIndexOf('/') +
-							 * 1); theFile =
-							 * filename.substring(filename.lastIndexOf('/') +
-							 * 1); } if (filename.lastIndexOf('\\') >= 0) {
-							 * directory = filename.substring(0,
-							 * filename.lastIndexOf('\\') + 1); theFile =
-							 * filename.substring(filename.lastIndexOf('\\') +
-							 * 1); }
-							 */
-							String[] command = { "emacs", filename };
-							Runtime.getRuntime().exec(command);
+							String directory = "";
+							String theFile = "";
+							if (filename.lastIndexOf('/') >= 0) {
+								directory = filename.substring(0, filename.lastIndexOf('/') + 1);
+								theFile = filename.substring(filename.lastIndexOf('/') + 1);
+							}
+							if (filename.lastIndexOf('\\') >= 0) {
+								directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
+								theFile = filename.substring(filename.lastIndexOf('\\') + 1);
+							}
+							File work = new File(directory);
+							int i = getTab(theFile);
+							if (i != -1) {
+								tab.setSelectedIndex(i);
+							}
+							else {
+								File file = new File(work + separator + theFile);
+								String input = "";
+								FileReader in = new FileReader(file);
+								int read = in.read();
+								while (read != -1) {
+									input += (char) read;
+									read = in.read();
+								}
+								in.close();
+								JTextArea text = new JTextArea(input);
+								text.setEditable(true);
+								text.setLineWrap(true);
+								JScrollPane scroll = new JScrollPane(text);
+								// gcm.addMouseListener(this);
+								addTab(theFile, scroll, "RSG Editor");
+							}
 						}
 						catch (Exception e1) {
 							JOptionPane.showMessageDialog(frame, "Unable to view this rsg file.",
@@ -7953,8 +8135,14 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						if (((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j) instanceof Learn) {
 						}
 						else {
-							((JTabbedPane) tab.getComponentAt(i)).setComponentAt(j, new Learn(root
-									+ separator + learnName, log, this));
+							if (lema) {
+								((JTabbedPane) tab.getComponentAt(i)).setComponentAt(j,
+										new LearnLHPN(root + separator + learnName, log, this));
+							}
+							else {
+								((JTabbedPane) tab.getComponentAt(i)).setComponentAt(j, new Learn(
+										root + separator + learnName, log, this));
+							}
 							((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j)
 									.setName("Learn");
 						}
@@ -8098,6 +8286,9 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			tab.setSelectedIndex(selectedTab);
 		}
 		Component comp = tab.getSelectedComponent();
+		// if (comp != null) {
+		// log.addText(comp.toString());
+		// }
 		viewModel.setEnabled(false);
 		viewModGraph.setEnabled(false);
 		viewModBrowser.setEnabled(false);
@@ -8512,6 +8703,34 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			viewCircuit.setEnabled(((Synthesis) comp).getViewCircuitEnabled());
 			viewLog.setEnabled(((Synthesis) comp).getViewLogEnabled());
 			saveParam.setEnabled(false);
+		}
+		else if (comp instanceof JScrollPane) {
+			saveButton.setEnabled(true);
+			saveasButton.setEnabled(true);
+			runButton.setEnabled(false);
+			refreshButton.setEnabled(false);
+			checkButton.setEnabled(false);
+			exportButton.setEnabled(false);
+			save.setEnabled(true);
+			run.setEnabled(false);
+			saveAs.setEnabled(true);
+			saveAsMenu.setEnabled(false);
+			saveAsGcm.setEnabled(false);
+			saveAsLhpn.setEnabled(false);
+			saveAsGraph.setEnabled(false);
+			saveAsSbml.setEnabled(false);
+			saveAsTemplate.setEnabled(false);
+			refresh.setEnabled(false);
+			check.setEnabled(false);
+			export.setEnabled(false);
+			exportMenu.setEnabled(false);
+			viewRules.setEnabled(false);
+			viewTrace.setEnabled(false);
+			viewCircuit.setEnabled(false);
+			viewLog.setEnabled(false);
+			saveParam.setEnabled(true);
+			saveSbml.setEnabled(false);
+			saveTemp.setEnabled(false);
 		}
 		else {
 			saveButton.setEnabled(false);
