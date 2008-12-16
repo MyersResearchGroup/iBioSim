@@ -325,40 +325,40 @@ public class LHPNFile {
 		}
 
 		try {
-			 System.out.println("check1");
+			// System.out.println("check1");
 			// log.addText("check1");
 			parseInOut(data);
-			 System.out.println("check2");
+			// System.out.println("check2");
 			// log.addText("check2");
 			// parseTransitions(data);
 			parseControlFlow(data);
-			 System.out.println("check3");
+			// System.out.println("check3");
 			// log.addText("check3");
 			parseVars(data);
-			 System.out.println("check4");
+			// System.out.println("check4");
 			// log.addText("check");
 			parseIntegers(data);
 			// parseInitialVals(data);
-			 System.out.println("check5");
+			// System.out.println("check5");
 			// log.addText("check4");
 			parseMarking(data);
-			 System.out.println("check6");
+			// System.out.println("check6");
 			// log.addText("check5");
 			parseEnabling(data);
-			 System.out.println("check7");
+			// System.out.println("check7");
 			// log.addText("check6");
 			parseContAssign(data);
-			 System.out.println("check8");
+			// System.out.println("check8");
 			// log.addText("check7");
 			parseRateAssign(data);
-			 System.out.println("check9");
+			// System.out.println("check9");
 			// log.addText("check8");
 			parseDelayAssign(data);
 			parseIntAssign(data);
-			 System.out.println("check0");
+			// System.out.println("check0");
 			// log.addText("check9");
 			parseBooleanAssign(data);
-			 System.out.println("check11");
+			// System.out.println("check11");
 			// log.addText("check0");
 		}
 		catch (Exception e) {
@@ -1299,45 +1299,45 @@ public class LHPNFile {
 		Matcher lineMatcher = linePattern.matcher(data.toString());
 		if (lineMatcher.find()) {
 			// log.addText("check3b");
-			System.out.println("check3b");
+			//System.out.println("check3b");
 			Pattern varPattern = Pattern.compile(WORD);
 			Matcher varMatcher = varPattern.matcher(lineMatcher.group(1));
 			// log.addText("check3c");
-			System.out.println("check3c");
+			//System.out.println("check3c");
 			while (varMatcher.find()) {
 				variables.put(varMatcher.group(), initCond);
 			}
 			// log.addText("check3d " + VARS_INIT);
-			System.out.println("check3c");
+			//System.out.println("check3c");
 			Pattern initLinePattern = Pattern.compile(VARS_INIT);
 			// log.addText("check3d1");
-			System.out.println("check3d");
+			//System.out.println("check3d");
 			Matcher initLineMatcher = initLinePattern.matcher(data.toString());
 			// log.addText("check3d2");
-			System.out.println("check3e");
+			//System.out.println("check3e");
 			initLineMatcher.find();
 			// log.addText("check3e");
-			System.out.println("check3f");
+			//System.out.println("check3f");
 			Pattern initPattern = Pattern.compile(INIT_COND);
 			Matcher initMatcher = initPattern.matcher(initLineMatcher.group(1));
 			// log.addText("check3f");
-			System.out.println("check3g");
+			//System.out.println("check3g");
 			while (initMatcher.find()) {
 				if (variables.containsKey(initMatcher.group(1))) {
 					initValue.put(initMatcher.group(1), initMatcher.group(2));
 				}
 			}
 			// log.addText("check3g");
-			System.out.println("check3h");
+			//System.out.println("check3h");
 			Pattern rateLinePattern = Pattern.compile(INIT_RATE);
 			Matcher rateLineMatcher = rateLinePattern.matcher(data.toString());
 			if (rateLineMatcher.find()) {
 				// log.addText("check3h");
-				System.out.println("check3i");
+				//System.out.println("check3i");
 				Pattern ratePattern = Pattern.compile(INIT_COND);
 				Matcher rateMatcher = ratePattern.matcher(rateLineMatcher.group(1));
 				// log.addText("check3i");
-				System.out.println("check3j");
+				//System.out.println("check3j");
 				while (rateMatcher.find()) {
 					// log.addText(rateMatcher.group(1) + "value" +
 					// rateMatcher.group(2));
@@ -1345,19 +1345,19 @@ public class LHPNFile {
 				}
 			}
 			// log.addText("check3j");
-			System.out.println("check3k");
+			//System.out.println("check3k");
 			for (String s : variables.keySet()) {
 				// log.addText("check3for" + s);
-				System.out.println("check3for " + s);
+				//System.out.println("check3for " + s);
 				initCond.put("value", initValue.get(s));
 				initCond.put("rate", initRate.get(s));
 				// log.addText("check3for" + initCond.toString());
-				System.out.println("check3for " + initCond.toString());
+				//System.out.println("check3for " + initCond.toString());
 				variables.put(s, initCond);
 			}
 		}
 		// log.addText("check3end");
-		System.out.println("check3end");
+		//System.out.println("check3end");
 	}
 
 	private void parseIntegers(StringBuffer data) {
