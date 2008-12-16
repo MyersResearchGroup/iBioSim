@@ -1757,20 +1757,26 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					((Learn) component).viewGcm();
 				}
 			}
-			else if (comp instanceof Verification) {
-				((Verification) comp).viewCircuit();
-			}
-			else if (comp instanceof Synthesis) {
-				((Synthesis) comp).viewCircuit();
+			else if (comp instanceof JPanel) {
+				Component[] array = ((JPanel) comp).getComponents();
+				if (array[0] instanceof Verification) {
+					((Verification) array[0]).viewCircuit();
+				}
+				else if (array[0] instanceof Synthesis) {
+					((Synthesis) array[0]).viewCircuit();
+				}
 			}
 		}
 		else if (e.getSource() == viewLog) {
 			Component comp = tab.getSelectedComponent();
-			if (comp instanceof Verification) {
-				((Verification) comp).viewLog();
-			}
-			else if (comp instanceof Synthesis) {
-				((Synthesis) comp).viewLog();
+			if (comp instanceof JPanel) {
+				Component[] array = ((JPanel) comp).getComponents();
+				if (array[0] instanceof Verification) {
+					((Verification) array[0]).viewLog();
+				}
+				else if (array[0] instanceof Synthesis) {
+					((Synthesis) array[0]).viewLog();
+				}
 			}
 			else if (comp instanceof JTabbedPane) {
 				Component component = ((JTabbedPane) comp).getSelectedComponent();
@@ -1836,15 +1842,19 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		}
 		else if (e.getSource() == viewRules) {
 			Component comp = tab.getSelectedComponent();
-			((Synthesis) comp).viewRules();
+			Component[] array = ((JPanel) comp).getComponents();
+			((Synthesis) array[0]).viewRules();
 		}
 		else if (e.getSource() == viewTrace) {
 			Component comp = tab.getSelectedComponent();
-			if (comp instanceof Synthesis) {
-				((Synthesis) comp).viewTrace();
-			}
-			else {
-				((Verification) comp).viewTrace();
+			if (comp instanceof JPanel) {
+				Component[] array = ((JPanel) comp).getComponents();
+				if (array[0] instanceof Synthesis) {
+					((Synthesis) array[0]).viewTrace();
+				}
+				else {
+					((Verification) array[0]).viewTrace();
+				}
 			}
 		}
 		else if (e.getSource() == exportCsv) {
@@ -2084,7 +2094,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							 * (lrnTab.getComponents().length - 1).setName("TSD
 							 * Graph");
 							 */
-							addTab(synthName, synthPane, null);
+							addTab(synthName, synthPane, "Synthesis");
 						}
 					}
 					catch (Exception e1) {
@@ -2190,7 +2200,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							 * (lrnTab.getComponents().length - 1).setName("TSD
 							 * Graph");
 							 */
-							addTab(verName, verPane, null);
+							addTab(verName, verPane, "Verification");
 						}
 					}
 					catch (Exception e1) {
@@ -2657,11 +2667,16 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					((Reb2Sac) component).save();
 				}
 			}
-			else if (comp instanceof Verification) {
-				((Verification) comp).save();
-			}
-			else if (comp instanceof Synthesis) {
-				((Synthesis) comp).save();
+			if (comp instanceof JPanel) {
+				if (comp.getName().equals("Verification")) {
+					Component[] array = ((JPanel) comp).getComponents();
+					((Verification) array[0]).save();
+				}
+				else if (comp.getName().equals("Synthesis")) {
+					// ((Synthesis) tab.getSelectedComponent()).save();
+					Component[] array = ((JPanel) comp).getComponents();
+					((Synthesis) array[0]).save();
+				}
 			}
 			else if (comp instanceof JScrollPane) {
 				String fileName = tab.getTitleAt(tab.getSelectedIndex());
@@ -2725,18 +2740,22 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					((Graph) component).saveAs();
 				}
 			}
-			else if (comp instanceof Verification) {
-				((Verification) comp).saveAs();
-			}
-			else if (comp instanceof Synthesis) {
-				((Synthesis) comp).saveAs();
+			else if (comp instanceof JPanel) {
+				if (comp.getName().equals("Verification")) {
+					Component[] array = ((JPanel) comp).getComponents();
+					((Verification) array[0]).saveAs();
+				}
+				else if (comp.getName().equals("Synthesis")) {
+					Component[] array = ((JPanel) comp).getComponents();
+					((Synthesis) array[0]).saveAs();
+				}
 			}
 			else if (comp instanceof JScrollPane) {
 				String fileName = tab.getTitleAt(tab.getSelectedIndex());
 				String newName = "";
 				if (fileName.endsWith(".vhd")) {
-					newName = JOptionPane.showInputDialog(frame(), "Enter VHDL name:",
-							"VHDL Name", JOptionPane.PLAIN_MESSAGE);
+					newName = JOptionPane.showInputDialog(frame(), "Enter VHDL name:", "VHDL Name",
+							JOptionPane.PLAIN_MESSAGE);
 					if (newName == null) {
 						return;
 					}
@@ -2745,8 +2764,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					}
 				}
 				else if (fileName.endsWith(".csp")) {
-					newName = JOptionPane.showInputDialog(frame(), "Enter CSP name:",
-							"CSP Name", JOptionPane.PLAIN_MESSAGE);
+					newName = JOptionPane.showInputDialog(frame(), "Enter CSP name:", "CSP Name",
+							JOptionPane.PLAIN_MESSAGE);
 					if (newName == null) {
 						return;
 					}
@@ -2755,8 +2774,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					}
 				}
 				else if (fileName.endsWith(".hse")) {
-					newName = JOptionPane.showInputDialog(frame(), "Enter HSE name:",
-							"HSE Name", JOptionPane.PLAIN_MESSAGE);
+					newName = JOptionPane.showInputDialog(frame(), "Enter HSE name:", "HSE Name",
+							JOptionPane.PLAIN_MESSAGE);
 					if (newName == null) {
 						return;
 					}
@@ -2765,8 +2784,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					}
 				}
 				else if (fileName.endsWith(".unc")) {
-					newName = JOptionPane.showInputDialog(frame(), "Enter UNC name:",
-							"UNC Name", JOptionPane.PLAIN_MESSAGE);
+					newName = JOptionPane.showInputDialog(frame(), "Enter UNC name:", "UNC Name",
+							JOptionPane.PLAIN_MESSAGE);
 					if (newName == null) {
 						return;
 					}
@@ -2775,8 +2794,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					}
 				}
 				else if (fileName.endsWith(".rsg")) {
-					newName = JOptionPane.showInputDialog(frame(), "Enter RSG name:",
-							"RSG Name", JOptionPane.PLAIN_MESSAGE);
+					newName = JOptionPane.showInputDialog(frame(), "Enter RSG name:", "RSG Name",
+							JOptionPane.PLAIN_MESSAGE);
 					if (newName == null) {
 						return;
 					}
@@ -2850,13 +2869,17 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					((Reb2Sac) (((JTabbedPane) comp).getComponent(index))).getRunButton().doClick();
 				}
 			}
-			else if (comp instanceof Verification) {
-				((Verification) comp).save();
-				((Verification) comp).run();
-			}
-			else if (comp instanceof Synthesis) {
-				((Synthesis) comp).save();
-				((Synthesis) comp).run();
+			else if (comp instanceof JPanel) {
+				if (comp.getName().equals("Verification")) {
+					Component[] array = ((JPanel) comp).getComponents();
+					((Verification) array[0]).save();
+					((Verification) array[0]).run();
+				}
+				else if (comp.getName().equals("Synthesis")) {
+					Component[] array = ((JPanel) comp).getComponents();
+					((Synthesis) array[0]).save();
+					((Synthesis) array[0]).run();
+				}
 			}
 		}
 		else if (e.getActionCommand().equals("refresh")) {
@@ -7345,7 +7368,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			// synth.addMouseListener(this);
 			synthPanel.add(synth);
 			addTab(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],
-					synthPanel, null);
+					synthPanel, "Synthesis");
 		}
 	}
 
@@ -7435,7 +7458,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			// ver.addMouseListener(this);
 			verPanel.add(ver);
 			addTab(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],
-					verPanel, null);
+					verPanel, "Verification");
 		}
 	}
 
@@ -8649,60 +8672,71 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			}
 		}
 		else if (comp instanceof JPanel) {
-		}
-		else if (comp instanceof Verification) {
-			saveButton.setEnabled(true);
-			saveasButton.setEnabled(true);
-			runButton.setEnabled(true);
-			refreshButton.setEnabled(false);
-			checkButton.setEnabled(false);
-			exportButton.setEnabled(false);
-			save.setEnabled(true);
-			run.setEnabled(true);
-			saveAs.setEnabled(false);
-			saveAsMenu.setEnabled(false);
-			saveAsGcm.setEnabled(false);
-			saveAsLhpn.setEnabled(false);
-			saveAsGraph.setEnabled(false);
-			saveAsSbml.setEnabled(false);
-			saveAsTemplate.setEnabled(false);
-			refresh.setEnabled(false);
-			check.setEnabled(false);
-			export.setEnabled(false);
-			exportMenu.setEnabled(false);
-			viewModel.setEnabled(true);
-			viewRules.setEnabled(false);
-			viewTrace.setEnabled(((Verification) comp).getViewTraceEnabled());
-			viewCircuit.setEnabled(true);
-			viewLog.setEnabled(((Verification) comp).getViewLogEnabled());
-			saveParam.setEnabled(true);
-		}
-		else if (comp instanceof Synthesis) {
-			saveButton.setEnabled(true);
-			saveasButton.setEnabled(true);
-			runButton.setEnabled(true);
-			refreshButton.setEnabled(false);
-			checkButton.setEnabled(false);
-			exportButton.setEnabled(false);
-			save.setEnabled(true);
-			run.setEnabled(true);
-			saveAs.setEnabled(false);
-			saveAsMenu.setEnabled(false);
-			saveAsGcm.setEnabled(false);
-			saveAsLhpn.setEnabled(false);
-			saveAsGraph.setEnabled(false);
-			saveAsSbml.setEnabled(false);
-			saveAsTemplate.setEnabled(false);
-			refresh.setEnabled(false);
-			check.setEnabled(false);
-			export.setEnabled(false);
-			exportMenu.setEnabled(false);
-			viewModel.setEnabled(true);
-			viewRules.setEnabled(((Synthesis) comp).getViewRulesEnabled());
-			viewTrace.setEnabled(((Synthesis) comp).getViewTraceEnabled());
-			viewCircuit.setEnabled(((Synthesis) comp).getViewCircuitEnabled());
-			viewLog.setEnabled(((Synthesis) comp).getViewLogEnabled());
-			saveParam.setEnabled(false);
+			if (comp.getName().equals("Verification")) {
+				saveButton.setEnabled(true);
+				saveasButton.setEnabled(true);
+				runButton.setEnabled(true);
+				refreshButton.setEnabled(false);
+				checkButton.setEnabled(false);
+				exportButton.setEnabled(false);
+				save.setEnabled(true);
+				run.setEnabled(true);
+				saveAs.setEnabled(false);
+				saveAsMenu.setEnabled(false);
+				saveAsGcm.setEnabled(false);
+				saveAsLhpn.setEnabled(false);
+				saveAsGraph.setEnabled(false);
+				saveAsSbml.setEnabled(false);
+				saveAsTemplate.setEnabled(false);
+				refresh.setEnabled(false);
+				check.setEnabled(false);
+				export.setEnabled(false);
+				exportMenu.setEnabled(false);
+				viewModel.setEnabled(true);
+				viewRules.setEnabled(false);
+				// viewTrace.setEnabled(((Verification)
+				// comp).getViewTraceEnabled());
+				viewTrace.setEnabled(true);
+				viewCircuit.setEnabled(true);
+				// viewLog.setEnabled(((Verification)
+				// comp).getViewLogEnabled());
+				viewLog.setEnabled(true);
+				saveParam.setEnabled(true);
+			}
+			else if (comp.getName().equals("Synthesis")) {
+				saveButton.setEnabled(true);
+				saveasButton.setEnabled(true);
+				runButton.setEnabled(true);
+				refreshButton.setEnabled(false);
+				checkButton.setEnabled(false);
+				exportButton.setEnabled(false);
+				save.setEnabled(true);
+				run.setEnabled(true);
+				saveAs.setEnabled(false);
+				saveAsMenu.setEnabled(false);
+				saveAsGcm.setEnabled(false);
+				saveAsLhpn.setEnabled(false);
+				saveAsGraph.setEnabled(false);
+				saveAsSbml.setEnabled(false);
+				saveAsTemplate.setEnabled(false);
+				refresh.setEnabled(false);
+				check.setEnabled(false);
+				export.setEnabled(false);
+				exportMenu.setEnabled(false);
+				viewModel.setEnabled(true);
+				// viewRules.setEnabled(((Synthesis)
+				// comp).getViewRulesEnabled());
+				// viewTrace.setEnabled(((Synthesis)
+				// comp).getViewTraceEnabled());
+				// viewCircuit.setEnabled(((Synthesis)
+				// comp).getViewCircuitEnabled());
+				// viewLog.setEnabled(((Synthesis) comp).getViewLogEnabled());
+				viewRules.setEnabled(true);
+				viewTrace.setEnabled(true);
+				viewCircuit.setEnabled(true);
+				viewLog.setEnabled(true);
+				saveParam.setEnabled(false);
+			}
 		}
 		else if (comp instanceof JScrollPane) {
 			saveButton.setEnabled(true);
