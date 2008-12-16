@@ -20,6 +20,8 @@ public class DATParser extends Parser {
 			char cha;
 			boolean rightAfterPound = false;
 			boolean usingQuotes = false;
+			boolean junkLine = false;
+			boolean endJunk = false;
 			while (reading) {
 				String word = "";
 				boolean readWord = true;
@@ -59,6 +61,10 @@ public class DATParser extends Parser {
 							if (Character.isWhitespace(cha)) {
 								withinWord = false;
 								readWord = false;
+								if (cha == '\n') {
+									junkLine = false;
+									endJunk = true;
+								}
 							}
 							else {
 								word += cha;
@@ -67,7 +73,10 @@ public class DATParser extends Parser {
 					}
 					else {
 						if (cha == '\n') {
-							moveToData = true;
+							if (!junkLine) {
+								moveToData = true;
+							}
+							junkLine = false;
 						}
 						else if (Character.isWhitespace(cha)) {
 						}
@@ -101,8 +110,15 @@ public class DATParser extends Parser {
 						}
 					}
 				}
-				if (!word.equals("")) {
-					species.add(word);
+				if (word.equals("Variables:") || word.equals("Points:")) {
+					junkLine = true;
+				}
+				if (!word.equals("") && !junkLine) {
+					if (!endJunk) {
+						System.out.println("new specie: " + word);
+						species.add(word);
+					}
+					endJunk = false;
 				}
 				if (moveToData) {
 					for (int i = 0; i < species.size(); i++) {
