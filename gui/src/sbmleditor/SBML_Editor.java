@@ -786,7 +786,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			saveRun.add(saveNoRun);
 			JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, saveRun, null);
 			splitPane.setDividerSize(0);
-			this.add(splitPane, "South");
+			//this.add(splitPane, "South");
 		}
 		else {
 			check = new JButton("Save and Check SBML");
@@ -802,7 +802,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			saveRun.add(saveNoRun);
 			saveRun.add(check);
 			saveRun.add(saveAs);
-			this.add(saveRun, "South");
+			//this.add(saveRun, "South");
 		}
 	}
 

@@ -462,7 +462,7 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 		tab.addTab("Basic Options", firstTab);
 		tab.addTab("Advanced Options", secondTab);
 		this.add(tab, "Center");
-		this.add(runHolder, "South");
+		//this.add(runHolder, "South");
 		firstRead = true;
 		if (user.isSelected()) {
 			auto.doClick();

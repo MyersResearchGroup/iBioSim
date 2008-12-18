@@ -795,9 +795,9 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		// tab.addTab("Advanced Options", propertiesPanel);
 		this.setLayout(new BorderLayout());
 		this.add(mainTabbedPanel, "Center");
-		JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, runHolder, null);
-		splitPane.setDividerSize(0);
-		this.add(splitPane, "South");
+		//JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, runHolder, null);
+		//splitPane.setDividerSize(0);
+		//this.add(splitPane, "South");
 		SBMLReader reader = new SBMLReader();
 		SBMLDocument document = reader.readSBML(sbmlFile);
 		Model model = document.getModel();
@@ -3587,9 +3587,9 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			}
 		});
 		saveButton.setMnemonic(KeyEvent.VK_S);
-		JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, runHolder, null);
-		splitPane.setDividerSize(0);
-		constructPanel.add(splitPane, "South");
+		//JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, runHolder, null);
+		//splitPane.setDividerSize(0);
+		//constructPanel.add(splitPane, "South");
 		return constructPanel;
 	}
 
