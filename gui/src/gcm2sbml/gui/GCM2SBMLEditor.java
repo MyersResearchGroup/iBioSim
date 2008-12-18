@@ -365,7 +365,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		// JSplitPane pane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, null,
 		// buttons);
 		// pane.setDividerSize(2);
-		mainPanelCenterDown.add(buttons, BorderLayout.CENTER);
+		//mainPanelCenterDown.add(buttons, BorderLayout.CENTER);
 
 		promoters = new PropertyList("Promoter List");
 		EditButton addInit = new EditButton("Add Promoter", promoters);

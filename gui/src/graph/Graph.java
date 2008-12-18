@@ -354,12 +354,12 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		// ButtonHolder.add(exportCsv);
 
 		// puts all the components of the graph gui into a display panel
-		JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, ButtonHolder, null);
-		splitPane.setDividerSize(0);
+		//JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, ButtonHolder, null);
+		//splitPane.setDividerSize(0);
 		this.removeAll();
 		this.setLayout(new BorderLayout());
 		this.add(graph, "Center");
-		this.add(splitPane, "South");
+		//this.add(splitPane, "South");
 
 		// determines maximum and minimum values and resizes
 		resize(dataset);
@@ -3505,12 +3505,12 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		// ButtonHolder.add(exportEps);
 		// ButtonHolder.add(exportSvg);
 		// ButtonHolder.add(exportCsv);
-		JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, ButtonHolder, null);
-		splitPane.setDividerSize(0);
+		//JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, ButtonHolder, null);
+		//splitPane.setDividerSize(0);
 		this.removeAll();
 		this.setLayout(new BorderLayout());
 		this.add(graph, "Center");
-		this.add(splitPane, "South");
+		//this.add(splitPane, "South");
 		this.revalidate();
 	}
 
@@ -5175,12 +5175,12 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		ButtonHolder.add(refresh);
 
 		// puts all the components of the graph gui into a display panel
-		JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, ButtonHolder, null);
-		splitPane.setDividerSize(0);
+		//JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, ButtonHolder, null);
+		//splitPane.setDividerSize(0);
 		this.removeAll();
 		this.setLayout(new BorderLayout());
 		this.add(graph, "Center");
-		this.add(splitPane, "South");
+		//this.add(splitPane, "South");
 	}
 
 	private void editProbGraph() {
@@ -6249,12 +6249,12 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		ButtonHolder.add(saveAs);
 		ButtonHolder.add(export);
 		ButtonHolder.add(refresh);
-		JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, ButtonHolder, null);
-		splitPane.setDividerSize(0);
+		//JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, ButtonHolder, null);
+		//splitPane.setDividerSize(0);
 		this.removeAll();
 		this.setLayout(new BorderLayout());
 		this.add(graph, "Center");
-		this.add(splitPane, "South");
+		//this.add(splitPane, "South");
 		this.revalidate();
 	}
 
