@@ -1222,7 +1222,7 @@ public class LHPNFile {
 		Integer inLength = 0;
 		// System.out.println("check1a-");
 		if (inLineMatcher.find()) {
-			System.out.println("checkifin");
+			//System.out.println("checkifin");
 			Pattern inPattern = Pattern.compile(WORD);
 			Matcher inMatcher = inPattern.matcher(inLineMatcher.group());
 			while (inMatcher.find()) {
@@ -1289,12 +1289,12 @@ public class LHPNFile {
 
 	private void parseVars(StringBuffer data) {
 		// log.addText("check3 start");
-		System.out.println("check3 start");
+		//System.out.println("check3 start");
 		Properties initCond = new Properties();
 		Properties initValue = new Properties();
 		Properties initRate = new Properties();
 		// log.addText("check3a");
-		System.out.println("check3a");
+		//System.out.println("check3a");
 		Pattern linePattern = Pattern.compile(CONTINUOUS);
 		Matcher lineMatcher = linePattern.matcher(data.toString());
 		if (lineMatcher.find()) {
