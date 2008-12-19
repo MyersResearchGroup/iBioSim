@@ -299,7 +299,7 @@ public class VariablesPanel extends JPanel implements ActionListener {
 			String tempVal = "";
 			if (property.containsKey("Initial Lower Bound")) {
 				tempVal = property.getProperty("Initial Lower Bound");
-				if (property.containsKey("Initial Upper Bound")) {
+				if (property.containsKey("Initial Upper Bound") && !property.get("Initial Upper Bound").equals("")) {
 					tempVal = "[" + tempVal + "," + property.getProperty("Initial Upper Bound") + "]";
 				}
 				property.setProperty("value", tempVal);
@@ -308,7 +308,7 @@ public class VariablesPanel extends JPanel implements ActionListener {
 			}
 			if (property.containsKey("Rate Lower Bound")) {
 				tempVal = property.getProperty("Rate Lower Bound");
-				if (property.containsKey("Rate Upper Bound")) {
+				if (property.containsKey("Rate Upper Bound") && !property.get("Rate Upper Bound").equals("")) {
 					tempVal = "[" + tempVal + "," + property.getProperty("Rate Upper Bound") + "]";
 				}
 				property.setProperty("rate", tempVal);

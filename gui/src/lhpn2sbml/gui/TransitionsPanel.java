@@ -299,6 +299,7 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 			for (String s : rateAssignments.getItems()) {
 				// System.out.println("rate" + s);
 				String[] tempArray = s.split("':=");
+				System.out.println(tempArray[1]);
 				lhpn.addRateAssign(transition, tempArray[0], tempArray[1]);
 			}
 		}
@@ -377,8 +378,20 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 				Utility.createErrorMessage("Error", "Nothing selected to edit");
 				return;
 			}
-			String type = "", assignment = "";
-			if (list.getSelectedValue() == null) {
+			//String type = "", assignment = "";
+			String variable = null;
+			if (list.getSelectedValue() != null && getName().contains("Edit")) {
+				variable = list.getSelectedValue().toString();
+			}
+			if ((lhpn.getContVars().length == 0) && (lhpn.getBooleanVars().length == 0) && (lhpn.getIntVars().length == 0)) {
+				Utility.createErrorMessage("Error", "Add variables first");
+			}
+			else {
+				// System.out.println("transition " + selected);
+				AssignmentPanel panel = new AssignmentPanel(selected, variable, list,
+						varAssignments, rateAssignments, boolAssignments, intAssignments, lhpn);
+			}
+			/*if (list.getSelectedValue() == null) {
 				type = (String) JOptionPane.showInputDialog(fieldPanel,
 						"Which type of variable assignment do you want to add?", "Assignment Type",
 						JOptionPane.PLAIN_MESSAGE, null, types, types[0]);
@@ -442,7 +455,7 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 					RateAssignPanel panel = new RateAssignPanel(selected, variable, list,
 							rateAssignments, lhpn, log);
 				}
-			}
+			}*/
 		}
 
 		public String getName() {
