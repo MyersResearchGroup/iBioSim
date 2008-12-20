@@ -671,7 +671,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 								end = list1[i].charAt(list1[i].length() - j) + end;
 							}
 							if (end.equals(".tsd")) {
-								try {
+								//try {
 									String last = "run-" + (run + 1) + ".tsd";
 									TSDParser tsd = new TSDParser(importFile + separator + list1[i], biosim, false);
 									ArrayList<String> specs = tsd.getSpecies();
@@ -696,11 +696,11 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 									tsd.outputTSD(directory + separator + last);
 									p.setProperty(last, importFile + separator + list1[i]);
 									run++;
-								}
-								catch (Exception e1) {
-									JOptionPane.showMessageDialog(biosim.frame(), "Unable to import file.", "Error",
-											JOptionPane.ERROR_MESSAGE);
-								}
+								//}
+								//catch (IOException e1) {
+								//	JOptionPane.showMessageDialog(biosim.frame(), "Unable to import file.", "Error",
+								//			JOptionPane.ERROR_MESSAGE);
+								//}
 							}
 						}
 					}
