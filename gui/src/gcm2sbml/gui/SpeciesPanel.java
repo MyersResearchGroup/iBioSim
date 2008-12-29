@@ -19,9 +19,10 @@ import javax.swing.JPanel;
 
 public class SpeciesPanel extends JPanel implements ActionListener {
 	public SpeciesPanel(String selected, PropertyList speciesList,
-			PropertyList influencesList, GCMFile gcm) {
+			PropertyList influencesList, GCMFile gcm, boolean paramsOnly) {
 		super(new GridLayout(6, 1));
 		this.selected = selected;
+		this.paramsOnly = paramsOnly;
 		this.speciesList = speciesList;
 		this.influences = influencesList;
 		this.gcm = gcm;
@@ -31,12 +32,18 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		// ID field
 		PropertyField field = new PropertyField(GlobalConstants.ID,
 				"", null, null, Utility.IDstring);
+		if (paramsOnly) {
+			field.setEnabled(false);
+		}
 		fields.put(GlobalConstants.ID, field);
 		add(field);
 
 		// Name field
 		field = new PropertyField(GlobalConstants.NAME,
 				"", null, null, Utility.NAMEstring);
+		if (paramsOnly) {
+			field.setEnabled(false);
+		}
 		fields.put(GlobalConstants.NAME, field);
 		add(field);
 		
@@ -49,6 +56,10 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		tempPanel.setLayout(new GridLayout(1, 2));
 		tempPanel.add(tempLabel);
 		tempPanel.add(typeBox);
+		if (paramsOnly) {
+			tempLabel.setEnabled(false);
+			typeBox.setEnabled(false);
+		}
 		add(tempPanel);
 
 		// Initial field
@@ -75,6 +86,9 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 				PropertyField.states[0], gcm
 						.getParameter(GlobalConstants.KASSOCIATION_STRING),
 				Utility.NUMstring);
+		if (paramsOnly) {
+			field.setEnabled(false);
+		}
 		fields.put(GlobalConstants.KASSOCIATION_STRING, field);
 		add(field);
 
@@ -84,6 +98,9 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 				PropertyField.states[0], gcm
 						.getParameter(GlobalConstants.KDECAY_STRING),
 				Utility.NUMstring);
+		if (paramsOnly) {
+			field.setEnabled(false);
+		}
 		fields.put(GlobalConstants.KDECAY_STRING, field);
 		add(field);
 
@@ -199,6 +216,8 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 	}
 
 	private String selected = "";
+	
+	private boolean paramsOnly;
 
 	private PropertyList speciesList = null;
 
