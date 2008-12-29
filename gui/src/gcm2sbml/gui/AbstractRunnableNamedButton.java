@@ -16,5 +16,9 @@ public abstract class AbstractRunnableNamedButton extends JButton implements Nam
 		return super.getName();
 	}
 	
+	public void setEnabled(boolean enabled) {
+		super.setEnabled(enabled);
+	}
+	
 	private String name = "";
 }

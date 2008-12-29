@@ -47,16 +47,19 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 	private String gcmname = "";
 
 	private GCMFile gcm = null;
+	
+	private boolean paramsOnly;
 
-	public GCM2SBMLEditor(String path) {
-		this(path, null, null, null);
+	public GCM2SBMLEditor(String path, boolean paramsOnly) {
+		this(path, null, null, null, paramsOnly);
 	}
 
-	public GCM2SBMLEditor(String path, String filename, BioSim biosim, Log log) {
+	public GCM2SBMLEditor(String path, String filename, BioSim biosim, Log log, boolean paramsOnly) {
 		super();
 		this.biosim = biosim;
 		this.log = log;
 		this.path = path;
+		this.paramsOnly = paramsOnly;
 		gcm = new GCMFile();
 		if (filename != null) {
 			gcm.load(path + File.separator + filename);
@@ -315,6 +318,10 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		JLabel sbmlFileLabel = new JLabel("SBML File:");
 		sbmlFiles = new JComboBox();
 		sbmlFiles.addActionListener(this);
+		if (paramsOnly) {
+			sbmlFileLabel.setEnabled(false);
+			sbmlFiles.setEnabled(false);
+		}
 		reloadFiles();
 		mainPanelNorth.add(sbmlFileLabel);
 		mainPanelNorth.add(sbmlFiles);
@@ -322,6 +329,10 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		JLabel bioAbsLabel = new JLabel("Biochemical abstraction:");
 		bioAbs = new JCheckBox();
 		bioAbs.addActionListener(this);
+		if (paramsOnly) {
+			bioAbsLabel.setEnabled(false);
+			bioAbs.setEnabled(false);
+		}
 		mainPanelNorth.add(bioAbsLabel);
 		mainPanelNorth.add(bioAbs);
 		if (gcm.getBioAbs()) {
@@ -331,6 +342,10 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		JLabel dimAbsLabel = new JLabel("Dimerization abstraction:");
 		dimAbs = new JCheckBox();
 		dimAbs.addActionListener(this);
+		if (paramsOnly) {
+			dimAbsLabel.setEnabled(false);
+			dimAbs.setEnabled(false);
+		}
 		mainPanelNorth.add(dimAbsLabel);
 		mainPanelNorth.add(dimAbs);
 		if (gcm.getDimAbs()) {
@@ -370,6 +385,10 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		promoters = new PropertyList("Promoter List");
 		EditButton addInit = new EditButton("Add Promoter", promoters);
 		RemoveButton removeInit = new RemoveButton("Remove Promoter", promoters);
+		if (paramsOnly) {
+			addInit.setEnabled(false);
+			removeInit.setEnabled(false);
+		}
 		EditButton editInit = new EditButton("Edit Promoter", promoters);
 		promoters.addAllItem(gcm.getPromoters().keySet());
 
@@ -380,6 +399,10 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		species = new PropertyList("Species List");
 		addInit = new EditButton("Add Species", species);
 		removeInit = new RemoveButton("Remove Species", species);
+		if (paramsOnly) {
+			addInit.setEnabled(false);
+			removeInit.setEnabled(false);
+		}
 		editInit = new EditButton("Edit Species", species);
 		species.addAllItem(gcm.getSpecies().keySet());
 
@@ -389,6 +412,10 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		influences = new PropertyList("Influence List");
 		addInit = new EditButton("Add Influence", influences);
 		removeInit = new RemoveButton("Remove Influence", influences);
+		if (paramsOnly) {
+			addInit.setEnabled(false);
+			removeInit.setEnabled(false);
+		}
 		editInit = new EditButton("Edit Influence", influences);
 		influences.addAllItem(gcm.getInfluences().keySet());
 
@@ -581,7 +608,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 				if (list.getSelectedValue() != null && getName().contains("Edit")) {
 					selected = list.getSelectedValue().toString();
 				}
-				SpeciesPanel panel = new SpeciesPanel(selected, list, influences, gcm);
+				SpeciesPanel panel = new SpeciesPanel(selected, list, influences, gcm, paramsOnly);
 			}
 			else if (getName().contains("Influence")) {
 				String selected = null;
