@@ -725,10 +725,10 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		file.add(saveAs);
 		file.add(saveAsSbml);
 		file.add(saveAsTemplate);
+		file.add(saveParam);
 		file.add(run);
 		if (!lema) {
 			file.add(check);
-			file.add(saveParam);
 		}
 		file.addSeparator();
 		file.add(importMenu);
@@ -1755,6 +1755,9 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				if (component instanceof Learn) {
 					((Learn) component).save();
 				}
+				else if (component instanceof LearnLHPN) {
+					((LearnLHPN) component).save();
+				}
 				else {
 					((Reb2Sac) ((JTabbedPane) comp).getComponentAt(2)).save();
 				}
@@ -2756,6 +2759,10 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				else if (component instanceof Learn) {
 					((Learn) component).save();
 					((Learn) component).run();
+				}
+				else if (component instanceof LearnLHPN) {
+					((LearnLHPN) component).save();
+					((LearnLHPN) component).run();
 				}
 				else if (component instanceof SBML_Editor) {
 					((Reb2Sac) (((JTabbedPane) comp).getComponent(index))).getRunButton().doClick();
@@ -8124,6 +8131,9 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				saveTemp.setEnabled(false);
 			}
 			else if (component instanceof Learn) {
+				if (((Learn) component).isComboSelected()) {
+					frame.getGlassPane().setVisible(false);
+				}
 				saveButton.setEnabled(((Learn) component).getSaveGcmEnabled());
 				saveasButton.setEnabled(false);
 				runButton.setEnabled(true);
@@ -8148,6 +8158,38 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				viewRules.setEnabled(false);
 				viewTrace.setEnabled(false);
 				viewLog.setEnabled(((Learn) component).getViewLogEnabled());
+				saveParam.setEnabled(true);
+				saveSbml.setEnabled(false);
+				saveTemp.setEnabled(false);
+			}
+			else if (component instanceof LearnLHPN) {
+				if (((LearnLHPN) component).isComboSelected()) {
+					frame.getGlassPane().setVisible(false);
+				}
+				saveButton.setEnabled(((LearnLHPN) component).getSaveLhpnEnabled());
+				saveasButton.setEnabled(false);
+				runButton.setEnabled(true);
+				refreshButton.setEnabled(false);
+				checkButton.setEnabled(false);
+				exportButton.setEnabled(false);
+				save.setEnabled(((LearnLHPN) component).getSaveLhpnEnabled());
+				run.setEnabled(true);
+				saveAs.setEnabled(false);
+				saveAsMenu.setEnabled(false);
+				saveAsGcm.setEnabled(false);
+				saveAsLhpn.setEnabled(false);
+				saveAsGraph.setEnabled(false);
+				saveAsSbml.setEnabled(false);
+				saveAsTemplate.setEnabled(false);
+				refresh.setEnabled(false);
+				check.setEnabled(false);
+				export.setEnabled(false);
+				exportMenu.setEnabled(false);
+				viewModel.setEnabled(true);
+				viewCircuit.setEnabled(((LearnLHPN) component).getViewLhpnEnabled());
+				viewRules.setEnabled(false);
+				viewTrace.setEnabled(false);
+				viewLog.setEnabled(((LearnLHPN) component).getViewLogEnabled());
 				saveParam.setEnabled(true);
 				saveSbml.setEnabled(false);
 				saveTemp.setEnabled(false);
@@ -8655,6 +8697,10 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 
 	public String getRoot() {
 		return root;
+	}
+	
+	public void setGlassPane(boolean visible) {
+		frame.getGlassPane().setVisible(visible);
 	}
 
 	public boolean overwrite(String fullPath, String name) {

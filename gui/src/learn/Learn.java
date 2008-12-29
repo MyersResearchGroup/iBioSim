@@ -9,6 +9,7 @@ import java.util.*;
 import java.util.prefs.Preferences;
 
 import javax.swing.*;
+
 import org.sbml.libsbml.*;
 import biomodelsim.*;
 
@@ -499,6 +500,10 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 			editText(num);
 			speciesPanel.revalidate();
 			speciesPanel.repaint();
+			biosim.setGlassPane(true);
+		}
+		else if (e.getSource() == numBins || e.getSource() == debug) {
+			biosim.setGlassPane(true);
 		}
 		else if (e.getSource() == user) {
 			if (!firstRead) {
@@ -1323,6 +1328,21 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 
 	public boolean hasChanged() {
 		return change;
+	}
+	
+	public boolean isComboSelected() {
+		if (debug.isFocusOwner() || numBins.isFocusOwner()) {
+			return true;
+		}
+		if (species == null) {
+			return false;
+		}
+		for (int i = 0; i < species.size(); i++) {
+			if (((JComboBox) species.get(i).get(1)).isFocusOwner()) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public boolean getViewGcmEnabled() {
