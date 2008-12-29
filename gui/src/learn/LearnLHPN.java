@@ -378,6 +378,10 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 
 		// sortSpecies();
 		JPanel runHolder = new JPanel();
+		levels(false);
+		if (auto.isSelected()) {
+			auto.doClick();
+		}
 
 		// Creates the run button
 		run = new JButton("Save and Learn");
@@ -486,7 +490,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 			if (!firstRead) {
 				try {
 					FileWriter write = new FileWriter(new File(directory + separator + binFile));
-					write.write("time 0\n");
+					//write.write("time 0\n");
 					for (int i = 0; i < variables.size(); i++) {
 						if (((JTextField) variables.get(i).get(0)).getText().trim().equals("")) {
 							write.write("?");
@@ -671,12 +675,12 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 							String[] getString = st.split(" ");
 							if (getString[0].trim().equals(s)) {
 								found = true;
-								if (getString.length >= 2) {
-									((JComboBox) specs.get(1)).setSelectedItem(getString[1].trim());
+								if (getString.length >= 1) {
+									((JComboBox) specs.get(1)).setSelectedItem(getString.length - 1);
 									for (int i = 0; i < Integer
 											.parseInt((String) ((JComboBox) specs.get(1))
 													.getSelectedItem()) - 1; i++) {
-										if (getString[i + 1].trim().equals("?")) {
+										if (getString[i + 2].trim().equals("?")) {
 											specs.add(new JTextField(""));
 										}
 										else {
