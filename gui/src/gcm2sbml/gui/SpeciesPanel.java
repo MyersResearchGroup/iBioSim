@@ -86,11 +86,11 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 				PropertyField.states[0], gcm
 						.getParameter(GlobalConstants.KASSOCIATION_STRING),
 				Utility.NUMstring);
+		fields.put(GlobalConstants.KASSOCIATION_STRING, field);
+		add(field);
 		if (paramsOnly) {
 			field.setEnabled(false);
 		}
-		fields.put(GlobalConstants.KASSOCIATION_STRING, field);
-		add(field);
 
 		// Decay field
 		field = new PropertyField(GlobalConstants.KDECAY_STRING, gcm
@@ -98,11 +98,11 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 				PropertyField.states[0], gcm
 						.getParameter(GlobalConstants.KDECAY_STRING),
 				Utility.NUMstring);
+		fields.put(GlobalConstants.KDECAY_STRING, field);
+		add(field);
 		if (paramsOnly) {
 			field.setEnabled(false);
 		}
-		fields.put(GlobalConstants.KDECAY_STRING, field);
-		add(field);
 
 		String oldName = null;
 		if (selected != null) {
