@@ -126,7 +126,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 		// auto.setSelected(true);
 		// }
 		// else {
-		user.setSelected(true);
+		//user.setSelected(true);
 		// }
 		user.addActionListener(this);
 		range.addActionListener(this);
@@ -344,7 +344,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 				if (load.getProperty("learn.use").equals("auto")) {
 					auto.setSelected(true);
 				}
-				else {
+				else if (load.getProperty("learn.use").equals("user")) {
 					user.setSelected(true);
 				}
 			}
@@ -490,7 +490,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 			if (!firstRead) {
 				try {
 					FileWriter write = new FileWriter(new File(directory + separator + binFile));
-					//write.write("time 0\n");
+					// write.write("time 0\n");
 					for (int i = 0; i < variables.size(); i++) {
 						if (((JTextField) variables.get(i).get(0)).getText().trim().equals("")) {
 							write.write("?");
@@ -498,7 +498,8 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 						else {
 							write.write(((JTextField) variables.get(i).get(0)).getText().trim());
 						}
-						write.write(" " + ((JComboBox) variables.get(i).get(1)).getSelectedItem());
+						// write.write(" " + ((JComboBox)
+						// variables.get(i).get(1)).getSelectedItem());
 						for (int j = 2; j < variables.get(i).size(); j++) {
 							if (((JTextField) variables.get(i).get(j)).getText().trim().equals("")) {
 								write.write(" ?");
@@ -568,7 +569,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 		try {
 			if (!readfile) {
 				FileWriter write = new FileWriter(new File(directory + separator + binFile));
-				//write.write("time 0\n");
+				// write.write("time 0\n");
 				for (int i = 0; i < variables.size(); i++) {
 					if (((JTextField) variables.get(i).get(0)).getText().trim().equals("")) {
 						write.write("?");
@@ -576,7 +577,8 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 					else {
 						write.write(((JTextField) variables.get(i).get(0)).getText().trim());
 					}
-					//write.write(" " + ((JComboBox) variables.get(i).get(1)).getSelectedItem());
+					// write.write(" " + ((JComboBox)
+					// variables.get(i).get(1)).getSelectedItem());
 					for (int j = 2; j < variables.get(i).size(); j++) {
 						if (((JTextField) variables.get(i).get(j)).getText().trim().equals("")) {
 							write.write(" ?");
@@ -589,16 +591,16 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 					write.write("\n");
 				}
 				write.close();
-				//Integer numThresh = Integer.parseInt(numBins.getSelectedItem().toString()) - 1;
-				String command = "python $BIOSIM/bin/autogenT.py -b" + binFile + " -i" + iteration.getText();
+				// Integer numThresh =
+				// Integer.parseInt(numBins.getSelectedItem().toString()) - 1;
+				String command = "autogenT.py -b" + binFile + " -i" + iteration.getText();
 				if (range.isSelected()) {
 					command = command + " -cr";
 				}
-				command = command + " " + directory + separator + "*.tsd";
-				log.addText("Executing:\n" + command + "\n");
-				//Runtime exec = Runtime.getRuntime();
+				log.addText("Executing:\n" + command + " " + directory + "\n");
 				File work = new File(directory);
-				Process learn = Runtime.getRuntime().exec(command, null, work);
+				Runtime exec = Runtime.getRuntime();
+				Process learn = exec.exec(command, null, work);
 				try {
 					String output = "";
 					InputStream reb = learn.getInputStream();
@@ -676,15 +678,16 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 							if (getString[0].trim().equals(s)) {
 								found = true;
 								if (getString.length >= 1) {
-									((JComboBox) specs.get(1)).setSelectedItem(getString.length - 1);
+									((JComboBox) specs.get(1))
+											.setSelectedItem(getString.length - 1);
 									for (int i = 0; i < Integer
 											.parseInt((String) ((JComboBox) specs.get(1))
 													.getSelectedItem()) - 1; i++) {
-										if (getString[i + 2].trim().equals("?")) {
+										if (getString[i + 1].trim().equals("?")) {
 											specs.add(new JTextField(""));
 										}
 										else {
-											specs.add(new JTextField(getString[i + 2].trim()));
+											specs.add(new JTextField(getString[i + 1].trim()));
 										}
 										sp.add(specs.get(i + 2));
 									}
@@ -948,7 +951,6 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 			if (range.isSelected()) {
 				command = command + " -cr";
 			}
-			command = command + " " + directory + separator + "*.tsd";
 			Runtime.getRuntime().exec(command);
 			FileWriter write = new FileWriter(new File(directory + separator + binFile));
 			for (int i = 0; i < variables.size(); i++) {
@@ -958,7 +960,8 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 				else {
 					write.write(((JTextField) variables.get(i).get(0)).getText().trim());
 				}
-				//write.write(", " + ((JComboBox) variables.get(i).get(1)).getSelectedItem());
+				// write.write(", " + ((JComboBox)
+				// variables.get(i).get(1)).getSelectedItem());
 				for (int j = 2; j < variables.get(i).size(); j++) {
 					if (((JTextField) variables.get(i).get(j)).getText().trim().equals("")) {
 						write.write(" ?");
@@ -981,19 +984,15 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 	public void run() {
 		try {
 			if (auto.isSelected()) {
-				String makeBin = "python $BIOSIM/bin/autogenT.py -b " + binFile + " -t "
+				String makeBin = "autogenT.py -b " + binFile + " -t "
 						+ numBins.getSelectedItem().toString() + " -i " + iteration.getText();
 				if (range.isSelected()) {
-					makeBin = makeBin + " -cr ";
+					makeBin = makeBin + " -cr";
 				}
-				else {
-					makeBin = makeBin + " -cp ";
-				}
-				makeBin = makeBin + "*.tsd";
 				log.addText("Creating levels file:\n" + directory + separator + binFile + "\n");
 				Runtime.getRuntime().exec(makeBin);
 			}
-			String command = "python $BIOSIM/bin/data2lhpn.py -b " + binFile;
+			String command = "data2lhpn.py -b " + binFile;
 			if (property.getText().length() > 0) {
 				String propFile = binFile.replace("bins", "prop");
 				File prop = new File(directory + separator + propFile);
@@ -1003,7 +1002,6 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 				write.close();
 				command = command + " -p " + propFile;
 			}
-			command = command + " " + datFile;
 			Runtime.getRuntime().exec(command);
 		}
 		catch (Exception e) {
