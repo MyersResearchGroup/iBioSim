@@ -2570,18 +2570,21 @@ def main():
 		parser.print_help()
 		sys.exit()
 	#print "args:"+str(args)
-	datFileL = args
+	i = 1
+	while os.path.isfile("run-" + str(i) + ".tsd"):
+		datFileL[i-1] = "run-" + str(i) + ".tsd"
+		i += 1
 	
 	#The thresholds, variables, and prop files are the same for all
 	#dat files, so process them before processing the individual dat
 	#files
-	baseFileL = os.path.splitext(datFileL[0])
+	baseFileL = os.path.splitext("run-1.tsd")
 	if options.binsFile == "":
 		options.binsFile = baseFileL[0] + ".bins"
 	#The variable names and ordering must be consistent across files,
 	#so it is extracted from the first dat file and checked against
 	#every other dat file
-	varsL = extractVars(datFileL[0])
+	varsL = extractVars("run-1.tsd")
 	divisionsL, tParam = parseBinsFile(options.binsFile,varsL,options.trace)
 	gFile = baseFileL[0] + ".g"
 	psFile = baseFileL[0] + ".ps"

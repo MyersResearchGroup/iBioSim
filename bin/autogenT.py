@@ -182,7 +182,7 @@ def parseDatFile(datFile,varsL):
 	linesL = inputF.read()
 	rowsL = rowsR.findall(linesL)
 	for i in range(len(rowsL)):
-         rowsL[i] = cleanRow(rowsL[i])
+		rowsL[i] = cleanRow(rowsL[i])
 	numPoints = -1
 	varNames = cleanRow(rowsL[0])
 	varNamesL = []
@@ -419,7 +419,7 @@ def parseBinsFile(binsFile,varsL):
 		cStr = cText.cSetFg(cText.RED)
 		cStr += "WARNING:"
 		cStr += cText.cSetAttr(cText.NONE)
-		print cStr+" There must be a threshold for every variable in the dat file."
+		print cStr+" There is not a threshold for every variable in the dat file."
 		#sys.exit()
 	#print "divisionsL:"+str(divisionsL)
 	return divisionsL, tParam
@@ -437,26 +437,26 @@ def cleanRow(row):
 # variable.  Also build a list of the extreme values for each
 # variable.
 ##############################################################################
-def reorderDatL(datFileL,varsL):
+def reorderDatL(varsL):
 	datValsL = []
 	datValsExtremaL = []
 	for i in range(len(varsL)):
 		datValsL.append([])
 		datValsExtremaL.append([])
-		
-	for i in range(len(datFileL)):
-		#print "Working on: "+datFileL[i]
-		datL,numPoints = parseDatFile(datFileL[i],varsL)
-		#Reorder the datL array into something more reasonable and then
-		#find the min, max for each variable
-		for j in range(len(varsL)):
-			for k in range(len(datL)):
-				datValsL[j].append(datL[k][j])
 
-		for j in range(1,len(varsL)):
-			#print "datValsL:"+str(datValsL[j])
-			datValsExtremaL[j] = (min(datValsL[j]),max(datValsL[j]))
-			#print "datValsExtremaL["+str(j)+"]:"+str(datValsExtremaL[j])
+	i = 1
+	while 0==0:
+		try:
+			datFile = "run-" + str(i) + ".tsd"
+			datL,numPoints = parseDatFile(datFile,varsL)
+			for j in range(len(varsL)):
+				for k in range(len(datL)):
+					datValsL[j].append(datL[k][j])
+			for j in range(1,len(varsL)):
+				datValsExtremaL[j] = (min(datValsL[j]),max(datValsL[j]))
+		except:
+			break
+		i += 1
 	return datValsL, datValsExtremaL
 			
 ##############################################################################
@@ -740,12 +740,12 @@ def main():
 	
 	(options, args) = parser.parse_args()
 
-	if len(args) > 0:
-		datFileL = args
-	else:
-		print "At least one data file is required."
-		parser.print_help()
-		sys.exit()
+	#if len(args) > 0:
+	#	datFileL = args
+	#else:
+	#	print "At least one data file is required."
+	#	parser.print_help()
+	#	sys.exit()
 
 	if not options.binsFile:
 		baseFileL = os.path.splitext(datFileL[0])
@@ -781,8 +781,8 @@ def main():
 		parser.print_help()
 		sys.exit()
 
-	varsL = extractVars(datFileL[0])
-	datValsL, datValsExtremaL = reorderDatL(datFileL,varsL)
+	varsL = extractVars("run-1.tsd")
+	datValsL, datValsExtremaL = reorderDatL(varsL)
 	if os.path.isfile(options.binsFile):
 		initDivL, tParam = parseBinsFile(options.binsFile,varsL)
 	divisionsL = initDivisionsL(datValsExtremaL,varsL,initDivL)
