@@ -202,7 +202,9 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 
 	public boolean checkUndeclared, checkUnits;
 
-	private JCheckBox Undeclared, Units;
+	private JCheckBox Undeclared, Units, viewerCheck;
+	
+	private JTextField viewerField;
 
 	private Pattern IDpat = Pattern.compile("([a-zA-Z]|_)([a-zA-Z]|[0-9]|_)*");
 
@@ -1648,16 +1650,23 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			}
 		}
 		else {
+			JPanel prefPanel = new JPanel(new GridLayout(0,2));
+			JLabel viewerLabel = new JLabel("External Editor for non-LHPN files:");
+			viewerField = new JTextField("");
+			viewerCheck = new JCheckBox("Use External Viewer");
+			prefPanel.add(viewerLabel);
+			prefPanel.add(viewerField);
+			prefPanel.add(viewerCheck);
 			// Preferences biosimrc = Preferences.userRoot();
-			JPanel vhdlPrefs = new JPanel();
-			JPanel lhpnPrefs = new JPanel();
-			JTabbedPane prefTabsNoLema = new JTabbedPane();
-			prefTabsNoLema.addTab("VHDL Preferences", vhdlPrefs);
-			prefTabsNoLema.addTab("LHPN Preferences", lhpnPrefs);
+			//JPanel vhdlPrefs = new JPanel();
+			//JPanel lhpnPrefs = new JPanel();
+			//JTabbedPane prefTabsNoLema = new JTabbedPane();
+			//prefTabsNoLema.addTab("VHDL Preferences", vhdlPrefs);
+			//prefTabsNoLema.addTab("LHPN Preferences", lhpnPrefs);
 			Object[] options = { "Save", "Cancel" };
 			// int value =
 			JOptionPane
-					.showOptionDialog(frame, prefTabsNoLema, "Preferences",
+					.showOptionDialog(frame, prefPanel, "Preferences",
 							JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
 							options[0]);
 		}
@@ -6096,21 +6105,36 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 								tab.setSelectedIndex(i);
 							}
 							else {
-								File file = new File(work + separator + theFile);
-								String input = "";
-								FileReader in = new FileReader(file);
-								int read = in.read();
-								while (read != -1) {
-									input += (char) read;
-									read = in.read();
+								if (viewerCheck.isSelected()) {
+									String command = viewerField.getText() + " " + directory + separator
+											+ theFile;
+									Runtime exec = Runtime.getRuntime();
+									try {
+										exec.exec(command);
+									}
+									catch (Exception e1) {
+										JOptionPane.showMessageDialog(frame,
+												"Unable to open external editor.",
+												"Error Opening Editor", JOptionPane.ERROR_MESSAGE);
+									}
 								}
-								in.close();
-								JTextArea text = new JTextArea(input);
-								text.setEditable(true);
-								text.setLineWrap(true);
-								JScrollPane scroll = new JScrollPane(text);
-								// gcm.addMouseListener(this);
-								addTab(theFile, scroll, "VHDL Editor");
+								else {
+									File file = new File(work + separator + theFile);
+									String input = "";
+									FileReader in = new FileReader(file);
+									int read = in.read();
+									while (read != -1) {
+										input += (char) read;
+										read = in.read();
+									}
+									in.close();
+									JTextArea text = new JTextArea(input);
+									text.setEditable(true);
+									text.setLineWrap(true);
+									JScrollPane scroll = new JScrollPane(text);
+									// gcm.addMouseListener(this);
+									addTab(theFile, scroll, "VHDL Editor");
+								}
 							}
 							// String[] command = { "emacs", filename };
 							// Runtime.getRuntime().exec(command);
@@ -6182,21 +6206,36 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 								tab.setSelectedIndex(i);
 							}
 							else {
-								File file = new File(work + separator + theFile);
-								String input = "";
-								FileReader in = new FileReader(file);
-								int read = in.read();
-								while (read != -1) {
-									input += (char) read;
-									read = in.read();
+								if (viewerCheck.isSelected()) {
+									String command = viewerField.getText()  + " " + directory + separator
+											+ theFile;
+									Runtime exec = Runtime.getRuntime();
+									try {
+										exec.exec(command);
+									}
+									catch (Exception e1) {
+										JOptionPane.showMessageDialog(frame,
+												"Unable to open external editor.",
+												"Error Opening Editor", JOptionPane.ERROR_MESSAGE);
+									}
 								}
-								in.close();
-								JTextArea text = new JTextArea(input);
-								text.setEditable(true);
-								text.setLineWrap(true);
-								JScrollPane scroll = new JScrollPane(text);
-								// gcm.addMouseListener(this);
-								addTab(theFile, scroll, "CSP Editor");
+								else {
+									File file = new File(work + separator + theFile);
+									String input = "";
+									FileReader in = new FileReader(file);
+									int read = in.read();
+									while (read != -1) {
+										input += (char) read;
+										read = in.read();
+									}
+									in.close();
+									JTextArea text = new JTextArea(input);
+									text.setEditable(true);
+									text.setLineWrap(true);
+									JScrollPane scroll = new JScrollPane(text);
+									// gcm.addMouseListener(this);
+									addTab(theFile, scroll, "CSP Editor");
+								}
 							}
 						}
 						catch (Exception e1) {
@@ -6224,21 +6263,36 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 								tab.setSelectedIndex(i);
 							}
 							else {
-								File file = new File(work + separator + theFile);
-								String input = "";
-								FileReader in = new FileReader(file);
-								int read = in.read();
-								while (read != -1) {
-									input += (char) read;
-									read = in.read();
+								if (viewerCheck.isSelected()) {
+									String command = viewerField.getText() + " " + directory + separator
+											+ theFile;
+									Runtime exec = Runtime.getRuntime();
+									try {
+										exec.exec(command);
+									}
+									catch (Exception e1) {
+										JOptionPane.showMessageDialog(frame,
+												"Unable to open external editor.",
+												"Error Opening Editor", JOptionPane.ERROR_MESSAGE);
+									}
 								}
-								in.close();
-								JTextArea text = new JTextArea(input);
-								text.setEditable(true);
-								text.setLineWrap(true);
-								JScrollPane scroll = new JScrollPane(text);
-								// gcm.addMouseListener(this);
-								addTab(theFile, scroll, "HSE Editor");
+								else {
+									File file = new File(work + separator + theFile);
+									String input = "";
+									FileReader in = new FileReader(file);
+									int read = in.read();
+									while (read != -1) {
+										input += (char) read;
+										read = in.read();
+									}
+									in.close();
+									JTextArea text = new JTextArea(input);
+									text.setEditable(true);
+									text.setLineWrap(true);
+									JScrollPane scroll = new JScrollPane(text);
+									// gcm.addMouseListener(this);
+									addTab(theFile, scroll, "HSE Editor");
+								}
 							}
 						}
 						catch (Exception e1) {
@@ -6266,21 +6320,36 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 								tab.setSelectedIndex(i);
 							}
 							else {
-								File file = new File(work + separator + theFile);
-								String input = "";
-								FileReader in = new FileReader(file);
-								int read = in.read();
-								while (read != -1) {
-									input += (char) read;
-									read = in.read();
+								if (viewerCheck.isSelected()) {
+									String command = viewerField.getText() + " " + directory + separator
+											+ theFile;
+									Runtime exec = Runtime.getRuntime();
+									try {
+										exec.exec(command);
+									}
+									catch (Exception e1) {
+										JOptionPane.showMessageDialog(frame,
+												"Unable to open external editor.",
+												"Error Opening Editor", JOptionPane.ERROR_MESSAGE);
+									}
 								}
-								in.close();
-								JTextArea text = new JTextArea(input);
-								text.setEditable(true);
-								text.setLineWrap(true);
-								JScrollPane scroll = new JScrollPane(text);
-								// gcm.addMouseListener(this);
-								addTab(theFile, scroll, "UNC Editor");
+								else {
+									File file = new File(work + separator + theFile);
+									String input = "";
+									FileReader in = new FileReader(file);
+									int read = in.read();
+									while (read != -1) {
+										input += (char) read;
+										read = in.read();
+									}
+									in.close();
+									JTextArea text = new JTextArea(input);
+									text.setEditable(true);
+									text.setLineWrap(true);
+									JScrollPane scroll = new JScrollPane(text);
+									// gcm.addMouseListener(this);
+									addTab(theFile, scroll, "UNC Editor");
+								}
 							}
 						}
 						catch (Exception e1) {
@@ -6308,21 +6377,36 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 								tab.setSelectedIndex(i);
 							}
 							else {
-								File file = new File(work + separator + theFile);
-								String input = "";
-								FileReader in = new FileReader(file);
-								int read = in.read();
-								while (read != -1) {
-									input += (char) read;
-									read = in.read();
+								if (viewerCheck.isSelected()) {
+									String command = viewerField.getText() + " " + directory + separator
+											+ theFile;
+									Runtime exec = Runtime.getRuntime();
+									try {
+										exec.exec(command);
+									}
+									catch (Exception e1) {
+										JOptionPane.showMessageDialog(frame,
+												"Unable to open external editor.",
+												"Error Opening Editor", JOptionPane.ERROR_MESSAGE);
+									}
 								}
-								in.close();
-								JTextArea text = new JTextArea(input);
-								text.setEditable(true);
-								text.setLineWrap(true);
-								JScrollPane scroll = new JScrollPane(text);
-								// gcm.addMouseListener(this);
-								addTab(theFile, scroll, "RSG Editor");
+								else {
+									File file = new File(work + separator + theFile);
+									String input = "";
+									FileReader in = new FileReader(file);
+									int read = in.read();
+									while (read != -1) {
+										input += (char) read;
+										read = in.read();
+									}
+									in.close();
+									JTextArea text = new JTextArea(input);
+									text.setEditable(true);
+									text.setLineWrap(true);
+									JScrollPane scroll = new JScrollPane(text);
+									// gcm.addMouseListener(this);
+									addTab(theFile, scroll, "RSG Editor");
+								}
 							}
 						}
 						catch (Exception e1) {
