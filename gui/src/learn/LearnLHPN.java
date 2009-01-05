@@ -69,7 +69,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 
 	private BioSim biosim;
 
-	private String learnFile, binFile, lhpnFile, datFile;
+	private String learnFile, binFile, lhpnFile;
 
 	private boolean change;
 
@@ -95,7 +95,6 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 		this.directory = directory;
 		String[] getFilename = directory.split(separator);
 		lrnFile = getFilename[getFilename.length - 1] + ".lrn";
-		datFile = getFilename[getFilename.length - 1] + ".dat";
 		binFile = getFilename[getFilename.length - 1] + ".bins";
 		lhpnFile = getFilename[getFilename.length - 1] + ".g";
 		Preferences biosimrc = Preferences.userRoot();
@@ -866,8 +865,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 						copy += ".g";
 					}
 				}
-				biosim.saveLhpn(copy, directory + separator); // +
-				// "method.gcm");
+				biosim.saveLhpn(copy, directory + separator + lhpnFile);
 			}
 			else {
 				JOptionPane.showMessageDialog(biosim.frame(), "No circuit has been generated yet.",
