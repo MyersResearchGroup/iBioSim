@@ -1137,6 +1137,11 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 				background = directory.substring(0, directory.length() - lrnName.length()) + separator
 						+ getProp[getProp.length - 1];
 			}
+			else if (p.containsKey("learn.file")) {
+				String[] getProp = p.getProperty("learn.file").split(separator);
+				background = directory.substring(0, directory.length() - lrnName.length()) + separator
+						+ getProp[getProp.length - 1];
+			}
 			else {
 				background = null;
 			}
