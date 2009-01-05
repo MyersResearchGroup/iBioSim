@@ -115,7 +115,6 @@ public class DATParser extends Parser {
 				}
 				if (!word.equals("") && !junkLine) {
 					if (!endJunk) {
-						System.out.println("new specie: " + word);
 						species.add(word);
 					}
 					endJunk = false;
