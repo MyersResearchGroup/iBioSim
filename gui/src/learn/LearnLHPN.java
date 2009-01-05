@@ -126,7 +126,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 		// auto.setSelected(true);
 		// }
 		// else {
-		//user.setSelected(true);
+		// user.setSelected(true);
 		// }
 		user.addActionListener(this);
 		range.addActionListener(this);
@@ -881,6 +881,26 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 	}
 
 	public void viewLhpn() {
+		try {
+			File work = new File(directory);
+			if (new File(directory + separator + lhpnFile).exists()) {
+				String dotFile = lhpnFile.replace(".lhpn", ".dot");
+				String command = "open " + dotFile;
+				log.addText("Executing:\n" + "open " + directory + separator + dotFile + "\n");
+				Runtime exec = Runtime.getRuntime();
+				exec.exec("atacs -lloddl " + lhpnFile + " " + dotFile, null, work);
+				exec = Runtime.getRuntime();
+				exec.exec(command, null, work);
+			}
+			else {
+				JOptionPane.showMessageDialog(biosim.frame(), "No circuit has been generated yet.",
+						"Error", JOptionPane.ERROR_MESSAGE);
+			}
+		}
+		catch (Exception e1) {
+			JOptionPane.showMessageDialog(biosim.frame(), "Unable to view circuit.", "Error",
+					JOptionPane.ERROR_MESSAGE);
+		}
 	}
 
 	public void viewLog() {
@@ -945,13 +965,6 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 			out.close();
 			String[] tempBin = lrnFile.split("\\.");
 			String binFile = tempBin[0] + ".bins";
-			log.addText("Creating levels file:\n" + directory + separator + binFile + "\n");
-			String command = "python $BIOSIM/bin/autogenT.py -b" + binFile + " -t"
-					+ numBins.getSelectedItem().toString() + " -i" + iteration.getText();
-			if (range.isSelected()) {
-				command = command + " -cr";
-			}
-			Runtime.getRuntime().exec(command);
 			FileWriter write = new FileWriter(new File(directory + separator + binFile));
 			for (int i = 0; i < variables.size(); i++) {
 				if (((JTextField) variables.get(i).get(0)).getText().trim().equals("")) {
@@ -973,6 +986,14 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 				write.write("\n");
 			}
 			write.close();
+			log.addText("Creating levels file:\n" + directory + separator + binFile + "\n");
+			String command = "autogenT.py -b" + binFile + " -t"
+					+ numBins.getSelectedItem().toString() + " -i" + iteration.getText();
+			if (range.isSelected()) {
+				command = command + " -cr";
+			}
+			File work = new File(directory);
+			Runtime.getRuntime().exec(command, null, work);
 			change = false;
 		}
 		catch (Exception e1) {
@@ -983,16 +1004,19 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 
 	public void run() {
 		try {
+			File work = new File(directory);
 			if (auto.isSelected()) {
-				String makeBin = "autogenT.py -b " + binFile + " -t "
-						+ numBins.getSelectedItem().toString() + " -i " + iteration.getText();
+				String makeBin = "autogenT.py -b" + binFile + " -t"
+						+ numBins.getSelectedItem().toString() + " -i" + iteration.getText();
 				if (range.isSelected()) {
 					makeBin = makeBin + " -cr";
 				}
+				log.addText(makeBin);
 				log.addText("Creating levels file:\n" + directory + separator + binFile + "\n");
-				Runtime.getRuntime().exec(makeBin);
+				Process bins = Runtime.getRuntime().exec(makeBin, null, work);
+				bins.waitFor();
 			}
-			String command = "data2lhpn.py -b " + binFile;
+			String command = "data2lhpn.py -b" + binFile + " -l" + lhpnFile;
 			if (property.getText().length() > 0) {
 				String propFile = binFile.replace("bins", "prop");
 				File prop = new File(directory + separator + propFile);
@@ -1002,10 +1026,12 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 				write.close();
 				command = command + " -p " + propFile;
 			}
-			Runtime.getRuntime().exec(command);
+			log.addText("Executing:\n" + command + "\n");
+			Process run = Runtime.getRuntime().exec(command, null, work);
+			run.waitFor();
 		}
 		catch (Exception e) {
-
+			log.addText("exception");
 		}
 	}
 
