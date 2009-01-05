@@ -1756,6 +1756,9 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				if (component instanceof Learn) {
 					((Learn) component).viewGcm();
 				}
+				else if (component instanceof LearnLHPN) {
+					((LearnLHPN) component).viewLhpn();
+				}
 			}
 			else if (comp instanceof JPanel) {
 				Component[] array = ((JPanel) comp).getComponents();
@@ -6426,20 +6429,24 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				}
 			}
 			else {
-				Component deepComponent = SwingUtilities.getDeepestComponentAt(container,
-						containerPoint.x, containerPoint.y);
-				Point componentPoint = SwingUtilities.convertPoint(glassPane, glassPanePoint,
-						deepComponent);
-				if (e != null) {
-					deepComponent.dispatchEvent(new MouseEvent(deepComponent, e.getID(), e
-							.getWhen(), e.getModifiers(), componentPoint.x, componentPoint.y, e
-							.getClickCount(), e.isPopupTrigger()));
+				try {
+					Component deepComponent = SwingUtilities.getDeepestComponentAt(container,
+							containerPoint.x, containerPoint.y);
+					Point componentPoint = SwingUtilities.convertPoint(glassPane, glassPanePoint,
+							deepComponent);
+					if (e != null) {
+						deepComponent.dispatchEvent(new MouseEvent(deepComponent, e.getID(), e
+								.getWhen(), e.getModifiers(), componentPoint.x, componentPoint.y, e
+								.getClickCount(), e.isPopupTrigger()));
+					}
+					if ((deepComponent instanceof JTree) && (e.getClickCount() != 2)) {
+						enableTreeMenu();
+					}
+					else {
+						enableTabMenu(tab.getSelectedIndex());
+					}
 				}
-				if ((deepComponent instanceof JTree) && (e.getClickCount() != 2)) {
-					enableTreeMenu();
-				}
-				else {
-					enableTabMenu(tab.getSelectedIndex());
+				catch (Exception e1) {
 				}
 			}
 		}
@@ -7916,6 +7923,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			}
 		}
 		else {
+			try {
 			Component deepComponent = SwingUtilities.getDeepestComponentAt(container,
 					containerPoint.x, containerPoint.y);
 			Point componentPoint = SwingUtilities.convertPoint(glassPane, glassPanePoint,
@@ -7926,6 +7934,9 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			deepComponent.dispatchEvent(new MouseEvent(deepComponent, e.getID(), e.getWhen(), e
 					.getModifiers(), componentPoint.x, componentPoint.y, e.getClickCount(), e
 					.isPopupTrigger()));
+			}
+			catch (Exception e1) {
+			}
 		}
 	}
 

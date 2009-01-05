@@ -217,10 +217,19 @@ public class LHPNFile {
 				}
 				buffer.append("}\n");
 			}
-			if (!contAssignments.isEmpty()) {
+			if (!contAssignments.isEmpty() || !intAssignments.isEmpty()) {
 				buffer.append("#@.assignments {");
 				for (String s : contAssignments.keySet()) {
 					Properties prop = contAssignments.get(s);
+					buffer.append("<" + s + "=");
+					for (Object key : prop.keySet()) {
+						String t = (String) key;
+						buffer.append("[" + t + ":=" + prop.getProperty(t) + "]");
+					}
+					buffer.append(">");
+				}
+				for (String s : intAssignments.keySet()) {
+					Properties prop = intAssignments.get(s);
 					buffer.append("<" + s + "=");
 					for (Object key : prop.keySet()) {
 						String t = (String) key;
