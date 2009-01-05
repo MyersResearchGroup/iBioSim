@@ -38,19 +38,8 @@ import re, os.path, cText, copy, sys
 from optparse import OptionParser
 
 #Regular expressions
-numPointsR = re.compile("Points: ")
-lSpaceR = re.compile("^\s+")
-newLR = re.compile("\n+")
-tSpaceR = re.compile("\s+$")
-lineSpaceR = re.compile("^\s+$")
-lParenR = re.compile("^\\(+")
-rParenR = re.compile("\\)+$")
 lQuoteR = re.compile("\"+")
 tQuoteR = re.compile("\"+")
-rowsR = re.compile("\\((.*?)\\)")
-binCommentR = re.compile("^\#")
-lDotR = re.compile("^\.\w")
-
 numVarsR = re.compile("Variables: ")
 numPointsR = re.compile("Points: ")
 spaceR = re.compile("\s+")

@@ -95,6 +95,8 @@ binCommentR = re.compile("^\#")
 lParenR = re.compile("\\(+")
 rParenR = re.compile("\\)+")
 rowsR = re.compile("\\(.*?\\)")
+lQuoteR = re.compile("\"+")
+tQuoteR = re.compile("\"+")
 
 ##############################################################################
 # A class to hold the lists of places and transitions in the graph.
@@ -959,6 +961,14 @@ def cleanLine(line):
 	return lineTS
 
 ##############################################################################
+# Remove leading & trailing space as well as trailing new line characters.
+##############################################################################
+def cleanName(name):
+	nameNL = re.sub(lQuoteR,"",name)
+	nameTS = re.sub(tQuoteR,"",nameNL)
+	return nameTS
+
+##############################################################################
 # Creates a 2 dimensional array of lists rows x cols with each value
 # initialized to initVal. 
 ##############################################################################
@@ -994,6 +1004,7 @@ def extractVars(datFile):
 	varNames = cleanRow(row)
 	varNamesL = varNames.split(",")
 	for varStr in varNamesL:
+		varStr = cleanName(varStr)
 		varsL.append(Variable(varStr))
 	varsL[0].dmvc = False
 	inputF.close()
@@ -1015,6 +1026,7 @@ def parseDatFile(datFile,varsL):
 	numPoints = len(varNamesL)
 	if len(varNamesL) == len(varsL):
 		for i in range(len(varNamesL)):
+			varNamesL[i] = cleanName(varNamesL[i])
 			if varNamesL[i] != varsL[i].name:
 				cStr = cText.cSetFg(cText.RED)
 				cStr += "ERROR:"
@@ -1252,10 +1264,10 @@ def parseBinsFile(binsFile,varsL,trace):
 	inputF.close()
 	if numDivisions != len(varsL)-1 and not trace:
 		cStr = cText.cSetFg(cText.RED)
-		cStr += "ERROR:"
+		cStr += "Warning:"
 		cStr += cText.cSetAttr(cText.NONE)
-		print cStr+" There must be a threshold for every variable in the dat file."
-		sys.exit()
+		print cStr+" There is not a threshold for every variable in the dat file."
+		#sys.exit()
 	print "divisionsL:"+str(divisionsL)
 	return divisionsL, tParam
 
@@ -2163,23 +2175,33 @@ def writeGfile(varsL,datL,binsL,ratesL,divisionsL,tParam,g,gFile):
 							outputF.write("<t" + str(t.transitionNum) + "=[" + varsL[i].name + ":=[" + t.minRateInt(i) + "," + t.maxRateInt(i) + "]]>")
 		outputF.write("}\n")
 	if dmvcVarExists(varsL):
-		outputF.write("#@.assignments {")
+		flag = 0
+		#outputF.write("#@.assignments {")
 		for p in placeL:
 			if p.isDmvcP():
 				for t in p.incomingL:
+					if flag == 0:
+						outputF.write("#@.assignments {")
+					flag = 1
 					outputF.write("<t" + str(t.transitionNum) + "=[" + varsL[p.dmvcVar].name + ":=" + str(int(p.dmvcVal)) + "]>")
 			if p.isAsgnP():
 				for a in p.asg:
 					if a.valL:
 						for t in p.incomingL:
 							outputF.write("<t" + str(t.transitionNum) + "=[" + varsL[a.var].name + ":=" + str(int(a.avgValue())) + "]>")
-		outputF.write("}\n")
-		outputF.write("#@.delay_assignments {")
+		if flag == 1:
+			outputF.write("}\n")
+		flag = 0
+		#outputF.write("#@.delay_assignments {")
 		for p in placeL:
 			if p.isDmvcP():
 				for t in p.outgoingL:
+					if flag == 0:
+						outputF.write("#@.delay_assignments {")
+					flag = 1
 					outputF.write("<t" + str(t.transitionNum) + "=[" + p.minTimeInt() + "," + p.maxTimeInt() + "]>")
-		outputF.write("}\n")
+		if flag == 1:
+			outputF.write("}\n")
 	if g.failProp:
 		outputF.write("#@.boolean_assignments {")
 		for p in placeL:
@@ -2559,21 +2581,26 @@ def main():
 	parser.set_defaults(binsFile="",propFile="",trace=False)
 	parser.add_option("-b", "--bins", action="store", dest="binsFile", help="The name of the file containing the thresholds to be used.")
 	parser.add_option("-p", "--prop", action="store", dest="propFile", help="The name of the file containing the property to be verified.")
+	parser.add_option("-l", "--lhpn", action="store", dest="gFile", help="The name of the .g (LHPN) file to be created.")
 
 	(options, args) = parser.parse_args()
 
-	if not len(args) > 0:
-		cStr = cText.cSetFg(cText.RED)
-		cStr += "ERROR:"
-		cStr += cText.cSetAttr(cText.NONE)
-		print cStr + " At least one data file is required."
-		parser.print_help()
-		sys.exit()
+	#if not len(args) > 0:
+	#	cStr = cText.cSetFg(cText.RED)
+	#	cStr += "ERROR:"
+	#	cStr += cText.cSetAttr(cText.NONE)
+	#	print cStr + " At least one data file is required."
+	#	parser.print_help()
+		#sys.exit()
 	#print "args:"+str(args)
+	tempDatL = [100]
 	i = 1
 	while os.path.isfile("run-" + str(i) + ".tsd"):
-		datFileL[i-1] = "run-" + str(i) + ".tsd"
+		tempDatL[i-1] = "run-" + str(i) + ".tsd"
 		i += 1
+	datFileL = [i-2]
+	for i in range(len(datFileL)):
+		datFileL[i] = tempDatL[i]
 	
 	#The thresholds, variables, and prop files are the same for all
 	#dat files, so process them before processing the individual dat
@@ -2586,7 +2613,7 @@ def main():
 	#every other dat file
 	varsL = extractVars("run-1.tsd")
 	divisionsL, tParam = parseBinsFile(options.binsFile,varsL,options.trace)
-	gFile = baseFileL[0] + ".g"
+	gFile = options.gFile
 	psFile = baseFileL[0] + ".ps"
 	vaFile = baseFileL[0] + ".va"
 	vhdFile = baseFileL[0] + ".vhd"
@@ -2629,7 +2656,7 @@ def main():
 	writeGfile(varsL,datL,binsL,ratesL,normDivisionsL,tParam,normG,gFile)
 	#writePSfile(normG,varsL,psFile)
 	writeVHDLAMSfile(varsL,datL,binsL,ratesL,normDivisionsL,tParam,normG,vhdFile)
-	printStatistics(9,normG,divisionsL,varsL)
+	#printStatistics(9,normG,divisionsL,varsL)
 	print "Coverage:\n"+str(cvg)
 ##############################################################################
 ##############################################################################
