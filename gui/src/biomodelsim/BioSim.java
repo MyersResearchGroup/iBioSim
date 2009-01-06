@@ -205,10 +205,14 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 	private JCheckBox Undeclared, Units, viewerCheck;
 	
 	private JTextField viewerField;
+	
+	private JLabel viewerLabel;
 
 	private Pattern IDpat = Pattern.compile("([a-zA-Z]|_)([a-zA-Z]|[0-9]|_)*");
 
-	private boolean lema;
+	private boolean lema, externView;
+	
+	private String viewer;
 
 	private JMenuItem copy, rename, delete, save, saveAs, saveAsGcm, saveAsGraph, saveAsSbml,
 			saveAsTemplate, saveAsLhpn, check, run, export, refresh, viewCircuit, viewRules,
@@ -774,6 +778,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		// file.add(saveTemp);
 		// }
 		help.add(manual);
+		externView = false;
+		viewer = "";
 		if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
 			new MacOSAboutHandler();
 			new MacOSPreferencesHandler();
@@ -1651,9 +1657,14 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		}
 		else {
 			JPanel prefPanel = new JPanel(new GridLayout(0,2));
-			JLabel viewerLabel = new JLabel("External Editor for non-LHPN files:");
+			viewerLabel = new JLabel("External Editor for non-LHPN files:");
 			viewerField = new JTextField("");
 			viewerCheck = new JCheckBox("Use External Viewer");
+			viewerCheck.addActionListener(this);
+			viewerCheck.setSelected(externView);
+			viewerField.setText(viewer);
+			viewerLabel.setEnabled(externView);
+			viewerField.setEnabled(externView);
 			prefPanel.add(viewerLabel);
 			prefPanel.add(viewerField);
 			prefPanel.add(viewerCheck);
@@ -1664,11 +1675,13 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			//prefTabsNoLema.addTab("VHDL Preferences", vhdlPrefs);
 			//prefTabsNoLema.addTab("LHPN Preferences", lhpnPrefs);
 			Object[] options = { "Save", "Cancel" };
-			// int value =
-			JOptionPane
+			int value = JOptionPane
 					.showOptionDialog(frame, prefPanel, "Preferences",
 							JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
 							options[0]);
+			if (value == JOptionPane.YES_OPTION) {
+				viewer = viewerField.getText();
+			}
 		}
 	}
 
@@ -1758,6 +1771,11 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 	 * selected.
 	 */
 	public void actionPerformed(ActionEvent e) {
+		if (e.getSource() == viewerCheck) {
+			externView = viewerCheck.isSelected();
+			viewerLabel.setEnabled(viewerCheck.isSelected());
+			viewerField.setEnabled(viewerCheck.isSelected());
+		}
 		if (e.getSource() == viewCircuit) {
 			Component comp = tab.getSelectedComponent();
 			if (comp instanceof JTabbedPane) {
@@ -6105,7 +6123,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 								tab.setSelectedIndex(i);
 							}
 							else {
-								if (viewerCheck.isSelected()) {
+								if (externView) {
 									String command = viewerField.getText() + " " + directory + separator
 											+ theFile;
 									Runtime exec = Runtime.getRuntime();
@@ -6206,7 +6224,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 								tab.setSelectedIndex(i);
 							}
 							else {
-								if (viewerCheck.isSelected()) {
+								if (externView) {
 									String command = viewerField.getText()  + " " + directory + separator
 											+ theFile;
 									Runtime exec = Runtime.getRuntime();
@@ -6263,7 +6281,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 								tab.setSelectedIndex(i);
 							}
 							else {
-								if (viewerCheck.isSelected()) {
+								if (externView) {
 									String command = viewerField.getText() + " " + directory + separator
 											+ theFile;
 									Runtime exec = Runtime.getRuntime();
@@ -6320,7 +6338,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 								tab.setSelectedIndex(i);
 							}
 							else {
-								if (viewerCheck.isSelected()) {
+								if (externView) {
 									String command = viewerField.getText() + " " + directory + separator
 											+ theFile;
 									Runtime exec = Runtime.getRuntime();
@@ -6377,7 +6395,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 								tab.setSelectedIndex(i);
 							}
 							else {
-								if (viewerCheck.isSelected()) {
+								if (externView) {
 									String command = viewerField.getText() + " " + directory + separator
 											+ theFile;
 									Runtime exec = Runtime.getRuntime();
