@@ -2188,6 +2188,9 @@ def writeGfile(varsL,datL,binsL,ratesL,divisionsL,tParam,g,gFile):
 				for a in p.asg:
 					if a.valL:
 						for t in p.incomingL:
+							if flag == 0:
+								outputF.write("#@.assignments {")
+							flag = 1
 							outputF.write("<t" + str(t.transitionNum) + "=[" + varsL[a.var].name + ":=" + str(int(a.avgValue())) + "]>")
 		if flag == 1:
 			outputF.write("}\n")
@@ -2593,10 +2596,11 @@ def main():
 	#	parser.print_help()
 		#sys.exit()
 	#print "args:"+str(args)
-	tempDatL = [100]
+	tempDatL = []
 	i = 1
 	while os.path.isfile("run-" + str(i) + ".tsd"):
-		tempDatL[i-1] = "run-" + str(i) + ".tsd"
+		print i
+		tempDatL.append("run-" + str(i) + ".tsd")
 		i += 1
 	datFileL = [i-2]
 	for i in range(len(datFileL)):
@@ -2646,7 +2650,7 @@ def main():
 	exG = expandGraph(g,varsL)
 	print "Expanded graph:"
 	print str(exG)
-	writeVerilogAfile(varsL,datL,binsL,ratesL,divisionsL,tParam,exG,vaFile)
+	#writeVerilogAfile(varsL,datL,binsL,ratesL,divisionsL,tParam,exG,vaFile)
 	sbcG = rmMultipleBinChange(exG,varsL)
 	#Values need to be normalized for the g file
 	normG, normDivisionsL = normalizeValues(sbcG,varsL,divisionsL)
