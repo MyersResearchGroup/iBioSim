@@ -13,7 +13,7 @@ import javax.swing.JPanel;
 
 public class ParameterPanel extends JPanel {
 	public ParameterPanel(String totalSelected, PropertyList parameterList,
-			GCMFile gcm) {
+			GCMFile gcm, boolean paramsOnly) {
 		super(new GridLayout(1, 2));
 		this.totalSelected = totalSelected;
 		this.parameterList = parameterList;
@@ -26,7 +26,7 @@ public class ParameterPanel extends JPanel {
 		// Initial field
 		PropertyField field = new PropertyField(selected, gcm
 				.getParameter(selected), PropertyField.states[0], gcm
-				.getDefaultParameters().get(selected), Utility.NUMstring);
+				.getDefaultParameters().get(selected), Utility.NUMstring, paramsOnly);
 		fields.put(selected, field);
 		if (gcm.getGlobalParameters().containsKey(selected)) {
 			field.setValue(gcm.getGlobalParameters().get(selected));

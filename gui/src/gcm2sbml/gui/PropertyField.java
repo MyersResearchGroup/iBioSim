@@ -18,8 +18,9 @@ public class PropertyField extends JPanel implements ActionListener,
 		PropertyProvider {
 
 	public PropertyField(String name, String value, String state,
-			String defaultValue, String repExp) {
+			String defaultValue, String repExp, boolean paramsOnly) {
 		super(new GridLayout(1, 3));
+		this.paramsOnly = paramsOnly;
 		if (state == null) {
 			setLayout(new GridLayout(1, 2));
 		}
@@ -30,7 +31,7 @@ public class PropertyField extends JPanel implements ActionListener,
 
 	public PropertyField(String name, String value, String state,
 			String defaultValue) {
-		this(name, value, state, defaultValue, null);
+		this(name, value, state, defaultValue, null, false);
 	}
 
 	public void setEnabled(boolean state) {
@@ -42,10 +43,21 @@ public class PropertyField extends JPanel implements ActionListener,
 		}
 		name.setEnabled(state);
 		if (state) {
-			if (box.getSelectedItem().equals(states[0])) {
-				setDefault();
-			} else {
-				setCustom();
+			if (paramsOnly) {
+				if (box.getSelectedItem().equals(paramStates[0])) {
+					setDefault();
+				} else if (box.getSelectedItem().equals(paramStates[1])) {
+					setCustom();
+				} else {
+					setSweep();
+				}
+			}
+			else {
+				if (box.getSelectedItem().equals(states[0])) {
+					setDefault();
+				} else {
+					setCustom();
+				}
 			}
 		}
 	}
@@ -67,13 +79,29 @@ public class PropertyField extends JPanel implements ActionListener,
 		field = new JTextField(20);
 		field.setText(valueString);
 		if (stateString != null) {
-			box = new JComboBox(new DefaultComboBoxModel(states));
+			if (paramsOnly) {
+				box = new JComboBox(new DefaultComboBoxModel(paramStates));
+			}
+			else {
+				box = new JComboBox(new DefaultComboBoxModel(states));
+			}
 			box.addActionListener(this);
 			this.add(box);
-			if (stateString.equals(states[0])) {
-				setDefault();
-			} else {
-				setCustom();
+			if (paramsOnly) {
+				if (stateString.equals(paramStates[0])) {
+					setDefault();
+				} else if (stateString.equals(paramStates[1])) {
+					setCustom();
+				} else {
+					setSweep();
+				}
+			}
+			else {
+				if (stateString.equals(states[0])) {
+					setDefault();
+				} else {
+					setCustom();
+				}
 			}
 		}
 		field.addActionListener(this);
@@ -83,10 +111,21 @@ public class PropertyField extends JPanel implements ActionListener,
 	public void actionPerformed(ActionEvent e) {
 		// TODO: Need to check source
 		if (e.getActionCommand().equals("comboBoxChanged")) {
-			if (box.getSelectedItem().equals(states[0])) {
-				setDefault();
-			} else {
-				setCustom();
+			if (paramsOnly) {
+				if (box.getSelectedItem().equals(paramStates[0])) {
+					setDefault();
+				} else if (box.getSelectedItem().equals(paramStates[1])) {
+					setCustom();
+				} else {
+					setSweep();
+				}
+			}
+			else {
+				if (box.getSelectedItem().equals(states[0])) {
+					setDefault();
+				} else {
+					setCustom();
+				}
 			}
 		} else {
 			if (Utility.isValid(e.getActionCommand(), regExp)) {
@@ -102,14 +141,32 @@ public class PropertyField extends JPanel implements ActionListener,
 		field.setEnabled(false);
 		name.setEnabled(false);
 		field.setText(defaultValue);
-		box.setSelectedItem(states[0]);
+		if (paramsOnly) {
+			box.setSelectedItem(paramStates[0]);
+		}
+		else {
+			box.setSelectedItem(states[0]);
+		}
 	}
 
 	public void setCustom() {
 		if (isEnabled && box != null) {
 			field.setEnabled(true);
 			name.setEnabled(true);
-			box.setSelectedItem(states[1]);
+			if (paramsOnly) {
+				box.setSelectedItem(paramStates[1]);
+			}
+			else {
+				box.setSelectedItem(states[1]);
+			}
+		}
+	}
+	
+	public void setSweep() {
+		if (isEnabled && box != null) {
+			field.setEnabled(true);
+			name.setEnabled(true);
+			box.setSelectedItem(paramStates[2]);
 		}
 	}
 
@@ -165,6 +222,10 @@ public class PropertyField extends JPanel implements ActionListener,
 	// private JLabel idL
 
 	public static final String[] states = new String[] { "default", "custom" };
+	
+	public static final String[] paramStates = new String[] { "default", "custom", "sweep" };
 
 	private String defaultValue = null;
+	
+	private boolean paramsOnly;
 }

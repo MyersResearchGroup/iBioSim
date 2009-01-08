@@ -16,7 +16,7 @@ import javax.swing.JPanel;
 
 public class PromoterPanel extends JPanel {
 	public PromoterPanel(String selected, PropertyList promoterList,
-			PropertyList influencesList, GCMFile gcm) {
+			PropertyList influencesList, GCMFile gcm, boolean paramsOnly) {
 		super(new GridLayout(8, 1));
 		this.selected = selected;
 		this.promoterList = promoterList;
@@ -27,13 +27,19 @@ public class PromoterPanel extends JPanel {
 
 		// ID field
 		PropertyField field = new PropertyField(GlobalConstants.ID, "", null,
-				null, Utility.IDstring);
+				null, Utility.IDstring, paramsOnly);
+		if (paramsOnly) {
+			field.setEnabled(false);
+		}
 		fields.put(GlobalConstants.ID, field);
 		add(field);		
 
 		// Name field
 		field = new PropertyField(GlobalConstants.NAME, "", null,
-				null, Utility.NAMEstring);
+				null, Utility.NAMEstring, paramsOnly);
+		if (paramsOnly) {
+			field.setEnabled(false);
+		}
 		fields.put(GlobalConstants.NAME, field);
 		add(field);		
 		
@@ -44,7 +50,7 @@ public class PromoterPanel extends JPanel {
 		field = new PropertyField(GlobalConstants.PROMOTER_COUNT_STRING, gcm
 				.getParameter(GlobalConstants.PROMOTER_COUNT_STRING),
 				PropertyField.states[0], gcm
-				.getParameter(GlobalConstants.PROMOTER_COUNT_STRING), Utility.NUMstring);
+				.getParameter(GlobalConstants.PROMOTER_COUNT_STRING), Utility.NUMstring, paramsOnly);
 		fields.put(GlobalConstants.PROMOTER_COUNT_STRING, field);
 		add(field);		
 		
@@ -60,7 +66,7 @@ public class PromoterPanel extends JPanel {
 		field = new PropertyField(GlobalConstants.RNAP_BINDING_STRING, gcm
 				.getParameter(GlobalConstants.RNAP_BINDING_STRING),
 				PropertyField.states[0], gcm
-				.getParameter(GlobalConstants.RNAP_BINDING_STRING), Utility.NUMstring);
+				.getParameter(GlobalConstants.RNAP_BINDING_STRING), Utility.NUMstring, paramsOnly);
 		fields.put(GlobalConstants.RNAP_BINDING_STRING, field);
 		add(field);
 		
@@ -68,7 +74,7 @@ public class PromoterPanel extends JPanel {
 		field = new PropertyField(GlobalConstants.OCR_STRING, gcm
 				.getParameter(GlobalConstants.OCR_STRING),
 				PropertyField.states[0], gcm
-				.getParameter(GlobalConstants.OCR_STRING), Utility.NUMstring);
+				.getParameter(GlobalConstants.OCR_STRING), Utility.NUMstring, paramsOnly);
 		fields.put(GlobalConstants.OCR_STRING, field);
 		add(field);
 		
@@ -76,7 +82,7 @@ public class PromoterPanel extends JPanel {
 		field = new PropertyField(GlobalConstants.STOICHIOMETRY_STRING, gcm
 				.getParameter(GlobalConstants.STOICHIOMETRY_STRING),
 				PropertyField.states[0], gcm
-				.getParameter(GlobalConstants.STOICHIOMETRY_STRING), Utility.NUMstring);
+				.getParameter(GlobalConstants.STOICHIOMETRY_STRING), Utility.NUMstring, paramsOnly);
 		fields.put(GlobalConstants.STOICHIOMETRY_STRING, field);
 		add(field);		
 		
@@ -85,7 +91,7 @@ public class PromoterPanel extends JPanel {
 				.getParameter(GlobalConstants.KBASAL_STRING),
 				PropertyField.states[0], gcm
 						.getParameter(GlobalConstants.KBASAL_STRING),
-				Utility.NUMstring);
+				Utility.NUMstring, paramsOnly);
 		fields.put(GlobalConstants.KBASAL_STRING, field);
 		add(field);
 		
@@ -93,7 +99,7 @@ public class PromoterPanel extends JPanel {
 		field = new PropertyField(GlobalConstants.ACTIVED_STRING, gcm
 				.getParameter(GlobalConstants.ACTIVED_STRING),
 				PropertyField.states[0], gcm
-				.getParameter(GlobalConstants.ACTIVED_STRING), Utility.NUMstring);
+				.getParameter(GlobalConstants.ACTIVED_STRING), Utility.NUMstring, paramsOnly);
 		fields.put(GlobalConstants.ACTIVED_STRING, field);
 		add(field);
 

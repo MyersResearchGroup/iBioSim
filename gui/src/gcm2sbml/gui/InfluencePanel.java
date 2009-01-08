@@ -18,7 +18,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 public class InfluencePanel extends JPanel implements ActionListener {
-	public InfluencePanel(String selected, PropertyList list, GCMFile gcm) {
+	public InfluencePanel(String selected, PropertyList list, GCMFile gcm, boolean paramsOnly) {
 		super(new GridLayout(11, 1));
 		this.selected = selected;
 		this.list = list;
@@ -28,7 +28,7 @@ public class InfluencePanel extends JPanel implements ActionListener {
 
 		// Name field
 		PropertyField field = new PropertyField(GlobalConstants.NAME, "", null,
-				null, "(.*)");
+				null, "(.*)", paramsOnly);
 		field.setEnabled(false);
 		fields.put(GlobalConstants.NAME, field);
 		add(field);
@@ -43,6 +43,10 @@ public class InfluencePanel extends JPanel implements ActionListener {
 		tempPanel.setLayout(new GridLayout(1, 2));
 		tempPanel.add(tempLabel);
 		tempPanel.add(inputBox);
+		if (paramsOnly) {
+			tempLabel.setEnabled(false);
+			inputBox.setEnabled(false);
+		}
 		add(tempPanel);
 
 		// Output field
@@ -55,6 +59,10 @@ public class InfluencePanel extends JPanel implements ActionListener {
 		tempPanel.setLayout(new GridLayout(1, 2));
 		tempPanel.add(tempLabel);
 		tempPanel.add(outputBox);
+		if (paramsOnly) {
+			tempLabel.setEnabled(false);
+			outputBox.setEnabled(false);
+		}
 		add(tempPanel);
 
 		// Promoter field
@@ -67,6 +75,10 @@ public class InfluencePanel extends JPanel implements ActionListener {
 		tempPanel.setLayout(new GridLayout(1, 2));
 		tempPanel.add(tempLabel);
 		tempPanel.add(promoterBox);
+		if (paramsOnly) {
+			tempLabel.setEnabled(false);
+			promoterBox.setEnabled(false);
+		}
 		add(tempPanel);
 
 		// Type field
@@ -78,6 +90,10 @@ public class InfluencePanel extends JPanel implements ActionListener {
 		tempPanel.setLayout(new GridLayout(1, 2));
 		tempPanel.add(tempLabel);
 		tempPanel.add(typeBox);
+		if (paramsOnly) {
+			tempLabel.setEnabled(false);
+			typeBox.setEnabled(false);
+		}
 		add(tempPanel);
 
 		// Biochemical field
@@ -90,6 +106,10 @@ public class InfluencePanel extends JPanel implements ActionListener {
 		tempPanel.setLayout(new GridLayout(1, 2));
 		tempPanel.add(tempLabel);
 		tempPanel.add(bioBox);
+		if (paramsOnly) {
+			tempLabel.setEnabled(false);
+			bioBox.setEnabled(false);
+		}
 		add(tempPanel);
 
 		fields.get(GlobalConstants.NAME).setValue(inputBox.getSelectedItem() + " -| "
@@ -101,7 +121,7 @@ public class InfluencePanel extends JPanel implements ActionListener {
 				.getParameter(GlobalConstants.COOPERATIVITY_STRING),
 				PropertyField.states[0], gcm
 						.getParameter(GlobalConstants.COOPERATIVITY_STRING),
-				Utility.NUMstring);
+				Utility.NUMstring, paramsOnly);
 		fields.put(GlobalConstants.COOPERATIVITY_STRING, field);
 		add(field);
 
@@ -110,7 +130,7 @@ public class InfluencePanel extends JPanel implements ActionListener {
 				.getParameter(GlobalConstants.MAX_DIMER_STRING),
 				PropertyField.states[0], gcm
 						.getParameter(GlobalConstants.MAX_DIMER_STRING),
-				Utility.NUMstring);
+				Utility.NUMstring, paramsOnly);
 		fields.put(GlobalConstants.MAX_DIMER_STRING, field);
 		add(field);
 
@@ -119,7 +139,7 @@ public class InfluencePanel extends JPanel implements ActionListener {
 				.getParameter(GlobalConstants.KREP_STRING),
 				PropertyField.states[0], gcm
 						.getParameter(GlobalConstants.KREP_STRING),
-				Utility.NUMstring);
+				Utility.NUMstring, paramsOnly);
 		fields.put(GlobalConstants.KREP_STRING, field);
 		add(field);
 
@@ -128,7 +148,7 @@ public class InfluencePanel extends JPanel implements ActionListener {
 				.getParameter(GlobalConstants.KACT_STRING),
 				PropertyField.states[0], gcm
 						.getParameter(GlobalConstants.KACT_STRING),
-				Utility.NUMstring);
+				Utility.NUMstring, paramsOnly);
 		fields.put(GlobalConstants.KACT_STRING, field);
 		field.setEnabled(false);
 		add(field);
@@ -138,7 +158,7 @@ public class InfluencePanel extends JPanel implements ActionListener {
 				.getParameter(GlobalConstants.KBIO_STRING),
 				PropertyField.states[0], gcm
 						.getParameter(GlobalConstants.KBIO_STRING),
-				Utility.NUMstring);
+				Utility.NUMstring, paramsOnly);
 		fields.put(GlobalConstants.KBIO_STRING, field);
 		field.setEnabled(false);
 		add(field);
