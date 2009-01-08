@@ -176,12 +176,12 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 		// Sets up the thresholds area
 		JPanel thresholdPanel2 = new JPanel(new GridLayout(8, 2));
 		JPanel thresholdPanel1 = new JPanel(new GridLayout(3, 2));
-		JLabel propertyLabel = new JLabel("Property to verify:");
+		JLabel propertyLabel = new JLabel("Property to Verify:");
 		property = new JTextField("");
 		thresholdPanel1.add(propertyLabel);
 		thresholdPanel1.add(property);
 
-		JLabel iterationLabel = new JLabel("Iterations of optimization algorithm");
+		JLabel iterationLabel = new JLabel("Iterations of Optimization Algorithm");
 		iteration = new JTextField("10000");
 		thresholdPanel1.add(iterationLabel);
 		thresholdPanel1.add(iteration);
@@ -221,8 +221,8 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 		 * thresholdPanel2.add(relaxIPDelta);
 		 */
 
-		numBinsLabel = new JLabel("Number Of Bins:");
-		String[] bins = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
+		numBinsLabel = new JLabel("Number of Bins:");
+		String[] bins = { "2", "3", "4", "5", "6", "7", "8", "9" };
 		numBins = new JComboBox(bins);
 		numBins.setSelectedItem(biosimrc.get("biosim.learn.bins", ""));
 		numBins.addActionListener(this);
@@ -380,6 +380,9 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 		levels(false);
 		if (auto.isSelected()) {
 			auto.doClick();
+		}
+		else {
+			user.doClick();
 		}
 
 		// Creates the run button
@@ -657,7 +660,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 					// check.setSelected(true);
 					// specs.add(check);
 					specs.add(new JTextField(s));
-					String[] options = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
+					String[] options = { "2", "3", "4", "5", "6", "7", "8", "9" };
 					JComboBox combo = new JComboBox(options);
 					combo.setSelectedItem(numBins.getSelectedItem());
 					specs.add(combo);
@@ -1027,9 +1030,10 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 			log.addText("Executing:\n" + command + "\n");
 			Process run = Runtime.getRuntime().exec(command, null, work);
 			run.waitFor();
+			command = "atacs -lloddl " + lhpnFile;
+			Runtime.getRuntime().exec(command, null, work);
 		}
 		catch (Exception e) {
-			log.addText("exception");
 		}
 	}
 
