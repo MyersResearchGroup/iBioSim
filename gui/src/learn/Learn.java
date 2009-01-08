@@ -200,7 +200,7 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 		// relaxIPDelta.addActionListener(this);
 		thresholdPanel2.add(relaxIPDelta);
 		numBinsLabel = new JLabel("Number Of Bins:");
-		String[] bins = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
+		String[] bins = { "2", "3", "4", "5", "6", "7", "8", "9" };
 		numBins = new JComboBox(bins);
 		numBins.setSelectedItem(biosimrc.get("biosim.learn.bins", ""));
 		numBins.addActionListener(this);
@@ -721,7 +721,7 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 					// check.setSelected(true);
 					// specs.add(check);
 					specs.add(new JTextField(s));
-					String[] options = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
+					String[] options = { "2", "3", "4", "5", "6", "7", "8", "9" };
 					JComboBox combo = new JComboBox(options);
 					combo.setSelectedItem(numBins.getSelectedItem());
 					specs.add(combo);
