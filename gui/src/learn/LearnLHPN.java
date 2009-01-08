@@ -354,7 +354,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 		}
 
 		variablesList = new ArrayList<String>();
-		LHPNFile lhpn = new LHPNFile();
+		LHPNFile lhpn = new LHPNFile(log);
 		lhpn.load(learnFile);
 		HashMap<String, Properties> variablesMap = lhpn.getVariables();
 		for (String s : variablesMap.keySet()) {

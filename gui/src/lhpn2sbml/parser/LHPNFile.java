@@ -45,21 +45,6 @@ public class LHPNFile {
 
 	private Log log;
 
-	public LHPNFile() {
-		places = new HashMap<String, Boolean>();
-		inputs = new HashMap<String, Boolean>();
-		outputs = new HashMap<String, Boolean>();
-		enablings = new HashMap<String, String>();
-		delays = new HashMap<String, String>();
-		booleanAssignments = new HashMap<String, Properties>();
-		controlFlow = new HashMap<String, Properties>();
-		variables = new HashMap<String, Properties>();
-		integers = new HashMap<String, String>();
-		rateAssignments = new HashMap<String, Properties>();
-		contAssignments = new HashMap<String, Properties>();
-		intAssignments = new HashMap<String, Properties>();
-	}
-
 	public LHPNFile(Log log) {
 		this.log = log;
 		places = new HashMap<String, Boolean>();
@@ -99,24 +84,27 @@ public class LHPNFile {
 					boolOrder.put(s, i);
 					i++;
 				}
+				buffer.append("\n");
 			}
 			if (!controlFlow.isEmpty()) {
-				buffer.append("\n.dummy ");
+				buffer.append(".dummy ");
 				for (String s : controlFlow.keySet()) {
 					buffer.append(s + " ");
 				}
+				buffer.append("\n");
 			}
 			if (!variables.isEmpty() || !integers.isEmpty()) {
-				buffer.append("\n#@.variables ");
+				buffer.append("#@.variables ");
 				for (String s : variables.keySet()) {
 					buffer.append(s + " ");
 				}
 				for (String s : integers.keySet()) {
 					buffer.append(s + " ");
 				}
+				buffer.append("\n");
 			}
 			if (!inputs.isEmpty() || !outputs.isEmpty()) {
-				buffer.append("\n#@.init_state [");
+				buffer.append("#@.init_state [");
 				for (i = 0; i < boolOrder.size(); i++) {
 					for (String s : inputs.keySet()) {
 						if (boolOrder.get(s).equals(i)) {
@@ -139,10 +127,10 @@ public class LHPNFile {
 						}
 					}
 				}
-				buffer.append("]");
+				buffer.append("]\n");
 			}
 			if (!controlFlow.isEmpty()) {
-				buffer.append("\n.graph\n");
+				buffer.append(".graph\n");
 				for (String s : controlFlow.keySet()) {
 					// log.addText(s);
 					if (controlFlow.get(s) != null) {
@@ -272,10 +260,10 @@ public class LHPNFile {
 					}
 					buffer.append(">");
 				}
-				buffer.append("}");
+				buffer.append("}\n");
 			}
 			if (!intAssignments.isEmpty()) {
-				buffer.append("\n#@.int_assignments {");
+				buffer.append("#@.int_assignments {");
 				for (String s : intAssignments.keySet()) {
 					Properties prop = intAssignments.get(s);
 					buffer.append("<" + s + "=");
@@ -287,15 +275,17 @@ public class LHPNFile {
 					}
 					buffer.append(">");
 				}
+				buffer.append("}\n");
 			}
 			if (!variables.isEmpty()) {
-				buffer.append("\n#@.continuous ");
+				buffer.append("#@.continuous ");
 				for (String s : variables.keySet()) {
 					buffer.append(s + " ");
 				}
+				buffer.append("\n");
 			}
 			if (buffer.toString().length() > 0) {
-				buffer.append("\n.end\n");
+				buffer.append(".end\n");
 			}
 			// System.out.print(buffer);
 			p.print(buffer);

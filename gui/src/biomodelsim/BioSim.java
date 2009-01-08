@@ -184,7 +184,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 
 	private JPanel mainPanel; // the main panel
 
-	private Log log; // the log
+	public Log log; // the log
 
 	private JPopupMenu popup; // popup menu
 
@@ -3306,7 +3306,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 								File f = new File(root + separator + lhpnName);
 								f.delete();
 								f.createNewFile();
-								new LHPNFile().save(f.getAbsolutePath());
+								new LHPNFile(log).save(f.getAbsolutePath());
 								int i = getTab(f.getName());
 								if (i != -1) {
 									tab.remove(i);
@@ -3318,7 +3318,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							if (overwrite(root + separator + lhpnName, lhpnName)) {
 								File f = new File(root + separator + lhpnName);
 								f.createNewFile();
-								new LHPNFile().save(f.getAbsolutePath());
+								new LHPNFile(log).save(f.getAbsolutePath());
 								int i = getTab(f.getName());
 								if (i != -1) {
 									tab.remove(i);
@@ -4143,7 +4143,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						"Learn View ID", JOptionPane.PLAIN_MESSAGE);
 				if (lrnName != null && !lrnName.trim().equals("")) {
 					lrnName = lrnName.trim();
-					try {
+					//try {
 						if (overwrite(root + separator + lrnName, lrnName)) {
 							new File(root + separator + lrnName).mkdir();
 							// new FileWriter(new File(root + separator +
@@ -4157,7 +4157,11 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 								FileOutputStream out = new FileOutputStream(new File(root
 										+ separator + lrnName.trim() + separator + lrnName.trim()
 										+ ".lrn"));
-								out.write(("genenet.file=" + sbmlFileNoPath + "\n").getBytes());
+								if (lema) {
+									out.write(("learn.file=" + sbmlFileNoPath + "\n").getBytes());
+								} else {
+									out.write(("genenet.file=" + sbmlFileNoPath + "\n").getBytes());
+								}
 								out.close();
 							}
 							catch (Exception e1) {
@@ -4167,17 +4171,9 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							}
 							refreshTree();
 							JTabbedPane lrnTab = new JTabbedPane();
-							if (lema) {
-								DataManager data = new DataManager(root + separator + lrnName,
-										this, lema);
-								lrnTab.addTab("Data Manager", data);
-							}
-							else {
-								DataManager data = new DataManager(root + separator + lrnName,
-										this, lema);
-								// data.addMouseListener(this);
-								lrnTab.addTab("Data Manager", data);
-							}
+							DataManager data = new DataManager(root + separator + lrnName,
+									this, lema);
+							lrnTab.addTab("Data Manager", data);
 							lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName(
 									"Data Manager");
 							if (lema) {
@@ -4193,16 +4189,9 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName(
 									"Learn");
 							Graph tsdGraph;
-							if (lema) {
-								tsdGraph = new Graph(null, "amount", lrnName + " data",
-										"tsd.printer", root + separator + lrnName, "time", this,
-										null, log, null, true, false);
-							}
-							else {
-								tsdGraph = new Graph(null, "amount", lrnName + " data",
-										"tsd.printer", root + separator + lrnName, "time", this,
-										null, log, null, true, true);
-							}
+							tsdGraph = new Graph(null, "amount", lrnName + " data",
+									"tsd.printer", root + separator + lrnName, "time", this,
+									null, log, null, true, false);
 							// tsdGraph.addMouseListener(this);
 							lrnTab.addTab("TSD Graph", tsdGraph);
 							lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName(
@@ -4229,12 +4218,12 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							 */
 							addTab(lrnName, lrnTab, null);
 						}
-					}
-					catch (Exception e1) {
-						JOptionPane.showMessageDialog(frame,
-								"Unable to create Learn View directory.", "Error",
-								JOptionPane.ERROR_MESSAGE);
-					}
+//					}
+//					catch (Exception e1) {
+//						JOptionPane.showMessageDialog(frame,
+//								"Unable to create Learn View directory.", "Error",
+//								JOptionPane.ERROR_MESSAGE);
+//					}
 				}
 			}
 			else {
@@ -4269,7 +4258,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						// directory = System.getenv("BIOSIM") + "\\docs\\";
 						command = "cmd /c start ";
 					}
-					log.addText(command + root + theFile + "\n");
+					log.addText(command + root + separator + theFile + "\n");
 					exec.exec(command + theFile, null, work);
 				}
 				else if (tree.getFile().length() >= 4
