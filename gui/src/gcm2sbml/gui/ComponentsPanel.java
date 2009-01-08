@@ -38,7 +38,7 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 	private String selectedComponent, oldPort;
 
 	public ComponentsPanel(String selected, PropertyList componentsList, PropertyList influences,
-			GCMFile gcm, String[] species, String selectedComponent, String oldPort) {
+			GCMFile gcm, String[] species, String selectedComponent, String oldPort, boolean paramsOnly) {
 		super(new GridLayout(species.length + 2, 1));
 		this.selected = selected;
 		this.componentsList = componentsList;
@@ -74,7 +74,8 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 		}
 
 		// ID field
-		PropertyField field = new PropertyField(GlobalConstants.ID, "", null, null, Utility.IDstring);
+		PropertyField field = new PropertyField(GlobalConstants.ID, "", null, null, Utility.IDstring,
+				paramsOnly);
 		fields.put(GlobalConstants.ID, field);
 		add(field);
 

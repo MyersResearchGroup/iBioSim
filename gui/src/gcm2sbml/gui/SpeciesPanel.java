@@ -22,7 +22,6 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			PropertyList influencesList, GCMFile gcm, boolean paramsOnly) {
 		super(new GridLayout(6, 1));
 		this.selected = selected;
-		this.paramsOnly = paramsOnly;
 		this.speciesList = speciesList;
 		this.influences = influencesList;
 		this.gcm = gcm;
@@ -31,7 +30,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 
 		// ID field
 		PropertyField field = new PropertyField(GlobalConstants.ID,
-				"", null, null, Utility.IDstring);
+				"", null, null, Utility.IDstring, paramsOnly);
 		if (paramsOnly) {
 			field.setEnabled(false);
 		}
@@ -40,7 +39,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 
 		// Name field
 		field = new PropertyField(GlobalConstants.NAME,
-				"", null, null, Utility.NAMEstring);
+				"", null, null, Utility.NAMEstring, paramsOnly);
 		if (paramsOnly) {
 			field.setEnabled(false);
 		}
@@ -63,11 +62,20 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		add(tempPanel);
 
 		// Initial field
-		field = new PropertyField(GlobalConstants.INITIAL_STRING, gcm
-				.getParameter(GlobalConstants.INITIAL_STRING),
-				PropertyField.states[0], gcm
-						.getParameter(GlobalConstants.INITIAL_STRING),
-				Utility.NUMstring);
+		if (paramsOnly) {
+			field = new PropertyField(GlobalConstants.INITIAL_STRING, gcm
+					.getParameter(GlobalConstants.INITIAL_STRING),
+					PropertyField.paramStates[0], gcm
+							.getParameter(GlobalConstants.INITIAL_STRING),
+					Utility.NUMstring, paramsOnly);
+		}
+		else {
+			field = new PropertyField(GlobalConstants.INITIAL_STRING, gcm
+					.getParameter(GlobalConstants.INITIAL_STRING),
+					PropertyField.states[0], gcm
+							.getParameter(GlobalConstants.INITIAL_STRING),
+					Utility.NUMstring, paramsOnly);
+		}
 		fields.put(GlobalConstants.INITIAL_STRING, field);
 		add(field);
 
@@ -81,28 +89,40 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 //		add(field);
 
 		// Dimerization field
-		field = new PropertyField(GlobalConstants.KASSOCIATION_STRING, gcm
-				.getParameter(GlobalConstants.KASSOCIATION_STRING),
-				PropertyField.states[0], gcm
-						.getParameter(GlobalConstants.KASSOCIATION_STRING),
-				Utility.NUMstring);
+		if (paramsOnly) {
+			field = new PropertyField(GlobalConstants.KASSOCIATION_STRING, gcm
+					.getParameter(GlobalConstants.KASSOCIATION_STRING),
+					PropertyField.paramStates[0], gcm
+							.getParameter(GlobalConstants.KASSOCIATION_STRING),
+					Utility.NUMstring, paramsOnly);
+		}
+		else {
+			field = new PropertyField(GlobalConstants.KASSOCIATION_STRING, gcm
+					.getParameter(GlobalConstants.KASSOCIATION_STRING),
+					PropertyField.states[0], gcm
+							.getParameter(GlobalConstants.KASSOCIATION_STRING),
+					Utility.NUMstring, paramsOnly);
+		}
 		fields.put(GlobalConstants.KASSOCIATION_STRING, field);
 		add(field);
-		if (paramsOnly) {
-			field.setEnabled(false);
-		}
 
 		// Decay field
-		field = new PropertyField(GlobalConstants.KDECAY_STRING, gcm
-				.getParameter(GlobalConstants.KDECAY_STRING),
-				PropertyField.states[0], gcm
-						.getParameter(GlobalConstants.KDECAY_STRING),
-				Utility.NUMstring);
+		if (paramsOnly) {
+			field = new PropertyField(GlobalConstants.KDECAY_STRING, gcm
+					.getParameter(GlobalConstants.KDECAY_STRING),
+					PropertyField.paramStates[0], gcm
+							.getParameter(GlobalConstants.KDECAY_STRING),
+					Utility.NUMstring, paramsOnly);
+		}
+		else {
+			field = new PropertyField(GlobalConstants.KDECAY_STRING, gcm
+					.getParameter(GlobalConstants.KDECAY_STRING),
+					PropertyField.states[0], gcm
+							.getParameter(GlobalConstants.KDECAY_STRING),
+					Utility.NUMstring, paramsOnly);
+		}
 		fields.put(GlobalConstants.KDECAY_STRING, field);
 		add(field);
-		if (paramsOnly) {
-			field.setEnabled(false);
-		}
 
 		String oldName = null;
 		if (selected != null) {
@@ -216,8 +236,6 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 	}
 
 	private String selected = "";
-	
-	private boolean paramsOnly;
 
 	private PropertyList speciesList = null;
 

@@ -615,14 +615,14 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 				if (list.getSelectedValue() != null && getName().contains("Edit")) {
 					selected = list.getSelectedValue().toString();
 				}
-				InfluencePanel panel = new InfluencePanel(selected, list, gcm);
+				InfluencePanel panel = new InfluencePanel(selected, list, gcm, paramsOnly);
 			}
 			else if (getName().contains("Promoter")) {
 				String selected = null;
 				if (list.getSelectedValue() != null && getName().contains("Edit")) {
 					selected = list.getSelectedValue().toString();
 				}
-				PromoterPanel panel = new PromoterPanel(selected, list, influences, gcm);
+				PromoterPanel panel = new PromoterPanel(selected, list, influences, gcm, paramsOnly);
 			}
 			else if (getName().contains("Component")) {
 				String selected = null;
@@ -673,7 +673,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 						}
 						specs[j] = index;
 					}
-					ComponentsPanel panel = new ComponentsPanel(selected, list, influences, gcm, specs, comp, oldPort);
+					ComponentsPanel panel = new ComponentsPanel(selected, list, influences, gcm, specs, comp, oldPort, paramsOnly);
 				}
 			}
 			else if (getName().contains("Parameter")) {
@@ -681,7 +681,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 				if (list.getSelectedValue() != null && getName().contains("Edit")) {
 					selected = list.getSelectedValue().toString();
 				}
-				ParameterPanel panel = new ParameterPanel(selected, list, gcm);
+				ParameterPanel panel = new ParameterPanel(selected, list, gcm, paramsOnly);
 			}
 		}
 
