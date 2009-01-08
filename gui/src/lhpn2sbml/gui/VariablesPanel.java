@@ -112,7 +112,7 @@ public class VariablesPanel extends JPanel implements ActionListener {
 			else {
 				initLow = new PropertyField("Initial Lower Bound", "0", null, null,
 						Utility.NAMEstring);
-				initHigh = new PropertyField("Initial Lower Bound", "", null, null,
+				initHigh = new PropertyField("Initial Upper Bound", "", null, null,
 						Utility.NAMEstring);
 			}
 			fields.put("Initial lower", initLow);

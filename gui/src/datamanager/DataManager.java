@@ -1165,7 +1165,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 			}
 			else if (background.contains(".g")) {
 				ArrayList<String> getSpecies = new ArrayList<String>();
-				LHPNFile lhpn = new LHPNFile();
+				LHPNFile lhpn = new LHPNFile(biosim.log);
 				//System.out.println(background);
 				lhpn.load(background);
 				HashMap<String, Properties> speciesMap = lhpn.getVariables();
