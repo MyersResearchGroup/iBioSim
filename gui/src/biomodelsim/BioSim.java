@@ -2794,11 +2794,11 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				}
 				else if (component instanceof Learn) {
 					((Learn) component).save();
-					((Learn) component).run();
+					new Thread((Learn) component).start();
 				}
 				else if (component instanceof LearnLHPN) {
 					((LearnLHPN) component).save();
-					((LearnLHPN) component).run();
+					new Thread((LearnLHPN) component).start();
 				}
 				else if (component instanceof SBML_Editor) {
 					((Reb2Sac) (((JTabbedPane) comp).getComponent(index))).getRunButton().doClick();
