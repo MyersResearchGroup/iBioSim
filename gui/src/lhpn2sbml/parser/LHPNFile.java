@@ -262,21 +262,6 @@ public class LHPNFile {
 				}
 				buffer.append("}\n");
 			}
-			if (!intAssignments.isEmpty()) {
-				buffer.append("#@.int_assignments {");
-				for (String s : intAssignments.keySet()) {
-					Properties prop = intAssignments.get(s);
-					buffer.append("<" + s + "=");
-					for (Object key : prop.keySet()) {
-						String t = (String) key;
-						if (isInteger(t)) {
-							buffer.append("[" + t + ":=" + prop.getProperty(t) + "]");
-						}
-					}
-					buffer.append(">");
-				}
-				buffer.append("}\n");
-			}
 			if (!variables.isEmpty()) {
 				buffer.append("#@.continuous ");
 				for (String s : variables.keySet()) {
@@ -946,7 +931,7 @@ public class LHPNFile {
 			return vars;
 		}
 		else {
-			return null;
+			return new String[0];
 		}
 	}
 
