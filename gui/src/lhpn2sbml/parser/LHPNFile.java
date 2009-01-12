@@ -331,14 +331,14 @@ public class LHPNFile {
 			parseEnabling(data);
 			// System.out.println("check7");
 			// log.addText("check6");
-			parseContAssign(data);
+			parseAssign(data);
 			// System.out.println("check8");
 			// log.addText("check7");
 			parseRateAssign(data);
 			// System.out.println("check9");
 			// log.addText("check8");
 			parseDelayAssign(data);
-			parseIntAssign(data);
+			//parseIntAssign(data);
 			// System.out.println("check0");
 			// log.addText("check9");
 			parseBooleanAssign(data);
@@ -1422,9 +1422,8 @@ public class LHPNFile {
 		}
 	}
 
-	private void parseContAssign(StringBuffer data) {
+	private void parseAssign(StringBuffer data) {
 		// log.addText("check6start");
-		Properties assignProp = new Properties();
 		Pattern linePattern = Pattern.compile(ASSIGNMENT_LINE);
 		Matcher lineMatcher = linePattern.matcher(data.toString());
 		// Boolean temp = lineMatcher.find();
@@ -1440,15 +1439,32 @@ public class LHPNFile {
 			Matcher varMatcher;
 			// log.addText("check6ab");
 			while (assignMatcher.find()) {
+				Properties assignProp = new Properties();
+				Properties intProp = new Properties();
 				// log.addText("check6while1");
 				varMatcher = varPattern.matcher(assignMatcher.group(2));
 				if (!varMatcher.find()) {
 					varMatcher = indetPattern.matcher(assignMatcher.group(2));
 				}
+				else {
+					// log.addText("check6 else");
+					if (isInteger(varMatcher.group(1))) {
+						intProp.put(varMatcher.group(1), varMatcher.group(2));
+					}
+					else {
+						assignProp.put(varMatcher.group(1), varMatcher.group(2));
+					}
+				}
 				while (varMatcher.find()) {
 					// log.addText("check6while2");
-					assignProp.put(varMatcher.group(1), varMatcher.group(2));
+					if (isInteger(varMatcher.group(1))) {
+						intProp.put(varMatcher.group(1), varMatcher.group(2));
+					}
+					else {
+						assignProp.put(varMatcher.group(1), varMatcher.group(2));
+					}
 				}
+				intAssignments.put(assignMatcher.group(1), intProp);
 				contAssignments.put(assignMatcher.group(1), assignProp);
 			}
 		}
@@ -1537,7 +1553,7 @@ public class LHPNFile {
 	private void parseIntAssign(StringBuffer data) {
 		// log.addText("check6start");
 		Properties assignProp = new Properties();
-		Pattern linePattern = Pattern.compile(INT_ASSIGNMENT_LINE);
+		Pattern linePattern = Pattern.compile(ASSIGNMENT_LINE);
 		Matcher lineMatcher = linePattern.matcher(data.toString());
 		// Boolean temp = lineMatcher.find();
 		// log.addText(temp.toString());
@@ -1605,7 +1621,7 @@ public class LHPNFile {
 
 	private static final String ASSIGNMENT_LINE = "#@\\.assignments \\{([.[^\\}]]+?)\\}";
 
-	private static final String INT_ASSIGNMENT_LINE = "#@\\.int_assignments \\{([.[^\\}]]+?)\\}";
+	//private static final String INT_ASSIGNMENT_LINE = "#@\\.int_assignments \\{([.[^\\}]]+?)\\}";
 
 	private static final String RATE_ASSIGNMENT_LINE = "#@\\.rate_assignments \\{([.[^\\}]]+?)\\}";
 
