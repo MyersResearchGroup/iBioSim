@@ -209,21 +209,27 @@ public class LHPNFile {
 				buffer.append("#@.assignments {");
 				for (String s : contAssignments.keySet()) {
 					Properties prop = contAssignments.get(s);
-					buffer.append("<" + s + "=");
-					for (Object key : prop.keySet()) {
-						String t = (String) key;
-						buffer.append("[" + t + ":=" + prop.getProperty(t) + "]");
+					if (!prop.isEmpty()) {
+						buffer.append("<" + s + "=");
+						for (Object key : prop.keySet()) {
+							String t = (String) key;
+							log.addText("key " + t);
+							buffer.append("[" + t + ":=" + prop.getProperty(t) + "]");
+						}
+						buffer.append(">");
 					}
-					buffer.append(">");
 				}
 				for (String s : intAssignments.keySet()) {
 					Properties prop = intAssignments.get(s);
-					buffer.append("<" + s + "=");
-					for (Object key : prop.keySet()) {
-						String t = (String) key;
-						buffer.append("[" + t + ":=" + prop.getProperty(t) + "]");
+					if (!prop.isEmpty()) {
+						buffer.append("<" + s + "=");
+						for (Object key : prop.keySet()) {
+							String t = (String) key;
+							log.addText("key1 " + t+s);
+							buffer.append("[" + t + ":=" + prop.getProperty(t) + "]");
+						}
+						buffer.append(">");
 					}
-					buffer.append(">");
 				}
 				buffer.append("}\n");
 			}
@@ -338,7 +344,7 @@ public class LHPNFile {
 			// System.out.println("check9");
 			// log.addText("check8");
 			parseDelayAssign(data);
-			//parseIntAssign(data);
+			// parseIntAssign(data);
 			// System.out.println("check0");
 			// log.addText("check9");
 			parseBooleanAssign(data);
@@ -1206,7 +1212,7 @@ public class LHPNFile {
 		Integer inLength = 0;
 		// System.out.println("check1a-");
 		if (inLineMatcher.find()) {
-			//System.out.println("checkifin");
+			// System.out.println("checkifin");
 			Pattern inPattern = Pattern.compile(WORD);
 			Matcher inMatcher = inPattern.matcher(inLineMatcher.group());
 			while (inMatcher.find()) {
@@ -1273,55 +1279,55 @@ public class LHPNFile {
 
 	private void parseVars(StringBuffer data) {
 		// log.addText("check3 start");
-		//System.out.println("check3 start");
+		// System.out.println("check3 start");
 		Properties initCond = new Properties();
 		Properties initValue = new Properties();
 		Properties initRate = new Properties();
 		// log.addText("check3a");
-		//System.out.println("check3a");
+		// System.out.println("check3a");
 		Pattern linePattern = Pattern.compile(CONTINUOUS);
 		Matcher lineMatcher = linePattern.matcher(data.toString());
 		if (lineMatcher.find()) {
 			// log.addText("check3b");
-			//System.out.println("check3b");
+			// System.out.println("check3b");
 			Pattern varPattern = Pattern.compile(WORD);
 			Matcher varMatcher = varPattern.matcher(lineMatcher.group(1));
 			// log.addText("check3c");
-			//System.out.println("check3c");
+			// System.out.println("check3c");
 			while (varMatcher.find()) {
 				variables.put(varMatcher.group(), initCond);
 			}
 			// log.addText("check3d " + VARS_INIT);
-			//System.out.println("check3c");
+			// System.out.println("check3c");
 			Pattern initLinePattern = Pattern.compile(VARS_INIT);
 			// log.addText("check3d1");
-			//System.out.println("check3d");
+			// System.out.println("check3d");
 			Matcher initLineMatcher = initLinePattern.matcher(data.toString());
 			// log.addText("check3d2");
-			//System.out.println("check3e");
+			// System.out.println("check3e");
 			initLineMatcher.find();
 			// log.addText("check3e");
-			//System.out.println("check3f");
+			// System.out.println("check3f");
 			Pattern initPattern = Pattern.compile(INIT_COND);
 			Matcher initMatcher = initPattern.matcher(initLineMatcher.group(1));
 			// log.addText("check3f");
-			//System.out.println("check3g");
+			// System.out.println("check3g");
 			while (initMatcher.find()) {
 				if (variables.containsKey(initMatcher.group(1))) {
 					initValue.put(initMatcher.group(1), initMatcher.group(2));
 				}
 			}
 			// log.addText("check3g");
-			//System.out.println("check3h");
+			// System.out.println("check3h");
 			Pattern rateLinePattern = Pattern.compile(INIT_RATE);
 			Matcher rateLineMatcher = rateLinePattern.matcher(data.toString());
 			if (rateLineMatcher.find()) {
 				// log.addText("check3h");
-				//System.out.println("check3i");
+				// System.out.println("check3i");
 				Pattern ratePattern = Pattern.compile(INIT_COND);
 				Matcher rateMatcher = ratePattern.matcher(rateLineMatcher.group(1));
 				// log.addText("check3i");
-				//System.out.println("check3j");
+				// System.out.println("check3j");
 				while (rateMatcher.find()) {
 					// log.addText(rateMatcher.group(1) + "value" +
 					// rateMatcher.group(2));
@@ -1329,19 +1335,19 @@ public class LHPNFile {
 				}
 			}
 			// log.addText("check3j");
-			//System.out.println("check3k");
+			// System.out.println("check3k");
 			for (String s : variables.keySet()) {
 				// log.addText("check3for" + s);
-				//System.out.println("check3for " + s);
+				// System.out.println("check3for " + s);
 				initCond.put("value", initValue.get(s));
 				initCond.put("rate", initRate.get(s));
 				// log.addText("check3for" + initCond.toString());
-				//System.out.println("check3for " + initCond.toString());
+				// System.out.println("check3for " + initCond.toString());
 				variables.put(s, initCond);
 			}
 		}
 		// log.addText("check3end");
-		//System.out.println("check3end");
+		// System.out.println("check3end");
 	}
 
 	private void parseIntegers(StringBuffer data) {
@@ -1381,7 +1387,7 @@ public class LHPNFile {
 			// log.addText("check3i");
 			// log.addText("check3j");
 			for (String s : integers.keySet()) {
-				//log.addText("check3for" + s);
+				// log.addText("check3for" + s);
 				if (initValue.get(s) != null) {
 					initCond = initValue.get(s).toString();
 				}
@@ -1621,7 +1627,8 @@ public class LHPNFile {
 
 	private static final String ASSIGNMENT_LINE = "#@\\.assignments \\{([.[^\\}]]+?)\\}";
 
-	//private static final String INT_ASSIGNMENT_LINE = "#@\\.int_assignments \\{([.[^\\}]]+?)\\}";
+	// private static final String INT_ASSIGNMENT_LINE = "#@\\.int_assignments
+	// \\{([.[^\\}]]+?)\\}";
 
 	private static final String RATE_ASSIGNMENT_LINE = "#@\\.rate_assignments \\{([.[^\\}]]+?)\\}";
 
