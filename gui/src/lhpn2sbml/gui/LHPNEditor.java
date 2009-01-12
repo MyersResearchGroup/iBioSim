@@ -322,7 +322,7 @@ public class LHPNEditor extends JPanel implements ActionListener {
 				if (list.getSelectedValue() != null && getName().contains("Edit")) {
 					selected = list.getSelectedValue().toString();
 				}
-				TransitionsPanel panel = new TransitionsPanel(selected, list, lhpnFile, log);
+				TransitionsPanel panel = new TransitionsPanel(selected, list, controlFlow, lhpnFile, log);
 			}
 			else if (getName().contains("Movement")) {
 				String selected = null;
