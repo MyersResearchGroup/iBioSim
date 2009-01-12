@@ -332,7 +332,7 @@ public class VariablesPanel extends JPanel implements ActionListener {
 			else if (lhpn.isInteger(id) || integer) {
 				// System.out.println("add var " + property);
 				tempVal = fields.get("Initial lower").getValue();
-				if (fields.containsKey("Initial upper")) {
+				if (fields.containsKey("Initial upper") && !fields.get("Initial upper").getValue().equals("")) {
 					tempVal = "[" + tempVal + "," + fields.get("Initial upper").getValue() + "]";
 				}
 				lhpn.addInteger(id, tempVal);
