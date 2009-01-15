@@ -811,6 +811,13 @@ public class GCMFile {
 		}
 
 	}
+	
+	public void setParameters(HashMap<String, String> parameters) {
+		for (String s : parameters.keySet()) {
+			defaultParameters.put(s, parameters.get(s));
+			this.parameters.put(s, parameters.get(s));
+		}
+	}
 
 	
 	private String checkCompabilitySave(String key) {

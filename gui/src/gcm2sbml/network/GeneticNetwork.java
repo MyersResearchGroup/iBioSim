@@ -750,6 +750,7 @@ public class GeneticNetwork {
 		for (String s : properties.getComponents().keySet()) {
 			GCMParser parser = new GCMParser(currentRoot + File.separator +
 					properties.getComponents().get(s).getProperty("gcm"));
+			parser.setParameters(properties.getParameters());
 			GeneticNetwork network = parser.buildNetwork();
 			SBMLDocument d =  network.mergeSBML(filename);
 			unionSBML(document, d, s);
