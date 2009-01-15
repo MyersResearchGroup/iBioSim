@@ -209,6 +209,10 @@ public class GCMParser {
 		species.setProperties(property);
 		return species;
 	}
+	
+	public void setParameters(HashMap<String, String> parameters) {
+		gcm.setParameters(parameters);
+	}
 
 	// Holds the text of the GCM
 	private StringBuffer data = null;

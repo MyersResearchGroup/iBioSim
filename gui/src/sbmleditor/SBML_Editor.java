@@ -6,6 +6,7 @@ import java.awt.event.*;
 import java.util.*;
 import java.util.regex.*;
 import javax.swing.*;
+
 import org.sbml.libsbml.*;
 import biomodelsim.*;
 import reb2sac.*;
@@ -786,7 +787,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			saveRun.add(saveNoRun);
 			JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, saveRun, null);
 			splitPane.setDividerSize(0);
-			//this.add(splitPane, "South");
+			// this.add(splitPane, "South");
 		}
 		else {
 			check = new JButton("Save and Check SBML");
@@ -802,7 +803,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			saveRun.add(saveNoRun);
 			saveRun.add(check);
 			saveRun.add(saveAs);
-			//this.add(saveRun, "South");
+			// this.add(saveRun, "South");
 		}
 	}
 
@@ -5397,7 +5398,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		JPanel compartPanel = new JPanel();
 		JPanel compPanel;
 		if (paramsOnly) {
-			compPanel = new JPanel(new GridLayout(13, 2));
+			compPanel = new JPanel(new GridLayout(10, 2));
 		}
 		else {
 			compPanel = new JPanel(new GridLayout(8, 2));
@@ -5410,10 +5411,6 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		JLabel constLabel = new JLabel("Constant:");
 		JLabel sizeLabel = new JLabel("Size:");
 		JLabel compUnitsLabel = new JLabel("Units:");
-		JLabel startLabel = new JLabel("Start:");
-		JLabel stopLabel = new JLabel("Stop:");
-		JLabel stepLabel = new JLabel("Step:");
-		JLabel levelLabel = new JLabel("Level:");
 		compID = new JTextField(12);
 		compName = new JTextField(12);
 		ListOf listOfCompTypes = document.getModel().getListOfCompartmentTypes();
@@ -5454,13 +5451,48 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				}
 			}
 		});
-		String[] list = { "Original", "Custom", "Sweep" };
+		String[] list = { "Original", "Custom" };
 		String[] list1 = { "1", "2" };
 		final JComboBox type = new JComboBox(list);
 		final JTextField start = new JTextField();
 		final JTextField stop = new JTextField();
 		final JTextField step = new JTextField();
 		final JComboBox level = new JComboBox(list1);
+		final JButton sweep = new JButton("Sweep");
+		sweep.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Object[] options = { "Ok", "Close" };
+				JPanel p = new JPanel(new GridLayout(4, 2));
+				JLabel startLabel = new JLabel("Start:");
+				JLabel stopLabel = new JLabel("Stop:");
+				JLabel stepLabel = new JLabel("Step:");
+				JLabel levelLabel = new JLabel("Level:");
+				p.add(startLabel);
+				p.add(start);
+				p.add(stopLabel);
+				p.add(stop);
+				p.add(stepLabel);
+				p.add(step);
+				p.add(levelLabel);
+				p.add(level);
+				int i = JOptionPane.showOptionDialog(biosim.frame(), p, "Sweep", JOptionPane.YES_NO_OPTION,
+						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+				if (i == JOptionPane.YES_OPTION) {
+					double startVal = 0.0;
+					double stopVal = 0.0;
+					double stepVal = 0.0;
+					try {
+						startVal = Double.parseDouble(start.getText().trim());
+						stopVal = Double.parseDouble(stop.getText().trim());
+						stepVal = Double.parseDouble(step.getText().trim());
+					}
+					catch (Exception e1) {
+					}
+					compSize.setText("(" + startVal + "," + stopVal + "," + stepVal + ","
+							+ level.getSelectedItem() + ")");
+				}
+			}
+		});
 		if (paramsOnly) {
 			compID.setEnabled(false);
 			compName.setEnabled(false);
@@ -5470,10 +5502,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			compOutside.setEnabled(false);
 			compConstant.setEnabled(false);
 			compSize.setEnabled(false);
-			start.setEnabled(false);
-			stop.setEnabled(false);
-			step.setEnabled(false);
-			level.setEnabled(false);
+			sweep.setEnabled(false);
 		}
 		if (option.equals("OK")) {
 			try {
@@ -5512,32 +5541,9 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				if (paramsOnly
 						&& (((String) compartments.getSelectedValue()).contains("Custom") || ((String) compartments
 								.getSelectedValue()).contains("Sweep"))) {
-					if (((String) compartments.getSelectedValue()).contains("Custom")) {
-						type.setSelectedItem("Custom");
-					}
-					else {
-						type.setSelectedItem("Sweep");
-					}
-					if (((String) type.getSelectedItem()).equals("Sweep")) {
-						String[] splits = ((String) compartments.getSelectedValue()).split(" ");
-						String sweepVal = splits[splits.length - 1];
-						start.setText((sweepVal).split(",")[0].substring(1).trim());
-						stop.setText((sweepVal).split(",")[1].trim());
-						step.setText((sweepVal).split(",")[2].trim());
-						level.setSelectedItem((sweepVal).split(",")[3].replace(")", "").trim());
-						start.setEnabled(true);
-						stop.setEnabled(true);
-						step.setEnabled(true);
-						level.setEnabled(true);
-						compSize.setEnabled(false);
-					}
-					else {
-						start.setEnabled(false);
-						stop.setEnabled(false);
-						step.setEnabled(false);
-						level.setEnabled(false);
-						compSize.setEnabled(true);
-					}
+					type.setSelectedItem("Custom");
+					sweep.setEnabled(true);
+					compSize.setEnabled(true);
 				}
 			}
 			catch (Exception e) {
@@ -5560,26 +5566,11 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			type.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					if (!((String) type.getSelectedItem()).equals("Original")) {
-						if (((String) type.getSelectedItem()).equals("Sweep")) {
-							start.setEnabled(true);
-							stop.setEnabled(true);
-							step.setEnabled(true);
-							level.setEnabled(true);
-							compSize.setEnabled(false);
-						}
-						else {
-							start.setEnabled(false);
-							stop.setEnabled(false);
-							step.setEnabled(false);
-							level.setEnabled(false);
-							compSize.setEnabled(true);
-						}
+						sweep.setEnabled(true);
+						compSize.setEnabled(true);
 					}
 					else {
-						start.setEnabled(false);
-						stop.setEnabled(false);
-						step.setEnabled(false);
-						level.setEnabled(false);
+						sweep.setEnabled(false);
 						compSize.setEnabled(false);
 						SBMLReader reader = new SBMLReader();
 						SBMLDocument d = reader.readSBML(file);
@@ -5597,18 +5588,12 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		}
 		compPanel.add(sizeLabel);
 		compPanel.add(compSize);
+		if (paramsOnly) {
+			compPanel.add(new JLabel());
+			compPanel.add(sweep);
+		}
 		compPanel.add(compUnitsLabel);
 		compPanel.add(compUnits);
-		if (paramsOnly) {
-			compPanel.add(startLabel);
-			compPanel.add(start);
-			compPanel.add(stopLabel);
-			compPanel.add(stop);
-			compPanel.add(stepLabel);
-			compPanel.add(step);
-			compPanel.add(levelLabel);
-			compPanel.add(level);
-		}
 		compartPanel.add(compPanel);
 		Object[] options = { option, "Cancel" };
 		int value = JOptionPane.showOptionDialog(biosim.frame(), compartPanel, "Compartment Editor",
@@ -5649,14 +5634,35 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			}
 			Double addCompSize = 1.0;
 			if ((!error) && (Integer.parseInt((String) dimBox.getSelectedItem()) != 0)) {
-				try {
-					addCompSize = Double.parseDouble(compSize.getText().trim());
+				if (compSize.getText().trim().startsWith("(") && compSize.getText().trim().endsWith(")")) {
+					try {
+						Double.parseDouble((compSize.getText().trim()).split(",")[0].substring(1).trim());
+						Double.parseDouble((compSize.getText().trim()).split(",")[1].trim());
+						Double.parseDouble((compSize.getText().trim()).split(",")[2].trim());
+						int lev = Integer.parseInt((compSize.getText().trim()).split(",")[3].replace(")", "")
+								.trim());
+						if (lev != 1 && lev != 2) {
+							error = true;
+							JOptionPane.showMessageDialog(biosim.frame(), "The level can only be 1 or 2.",
+									"Error", JOptionPane.ERROR_MESSAGE);
+						}
+					}
+					catch (Exception e1) {
+						error = true;
+						JOptionPane.showMessageDialog(biosim.frame(), "Invalid sweeping parameters.", "Error",
+								JOptionPane.ERROR_MESSAGE);
+					}
 				}
-				catch (Exception e1) {
-					error = true;
-					JOptionPane.showMessageDialog(biosim.frame(),
-							"The compartment size must be a real number.", "Enter a Valid Size",
-							JOptionPane.ERROR_MESSAGE);
+				else {
+					try {
+						addCompSize = Double.parseDouble(compSize.getText().trim());
+					}
+					catch (Exception e1) {
+						error = true;
+						JOptionPane.showMessageDialog(biosim.frame(),
+								"The compartment size must be a real number.", "Enter a Valid Size",
+								JOptionPane.ERROR_MESSAGE);
+					}
 				}
 			}
 			if (!error) {
@@ -5681,27 +5687,22 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				if (paramsOnly && !((String) type.getSelectedItem()).equals("Original")) {
 					int index = compartments.getSelectedIndex();
 					String[] splits = comps[index].split(" ");
-					for (int i = 0; i < splits.length - 2; i++) {
+					addComp += splits[0] + " ";
+					for (int i = 1; i < splits.length - 2; i++) {
 						addComp += splits[i] + " ";
 					}
-					if (!splits[splits.length - 2].equals("Custom")
+					if (splits.length > 1 && !splits[splits.length - 2].equals("Custom")
 							&& !splits[splits.length - 2].equals("Sweep")) {
 						addComp += splits[splits.length - 2] + " " + splits[splits.length - 1] + " ";
 					}
-					if (((String) type.getSelectedItem()).equals("Sweep")) {
-						try {
-							double startVal = Double.parseDouble(start.getText().trim());
-							double stopVal = Double.parseDouble(stop.getText().trim());
-							double stepVal = Double.parseDouble(step.getText().trim());
-							addComp += "Sweep (" + startVal + "," + stopVal + "," + stepVal + ","
-									+ level.getSelectedItem() + ")";
-						}
-						catch (Exception e1) {
-							error = true;
-							JOptionPane.showMessageDialog(biosim.frame(),
-									"The start, stop, and step fields must be real numbers.", "Enter a Valid Sweep",
-									JOptionPane.ERROR_MESSAGE);
-						}
+					if (compSize.getText().trim().startsWith("(") && compSize.getText().trim().endsWith(")")) {
+						double startVal = Double.parseDouble((compSize.getText().trim()).split(",")[0]
+								.substring(1).trim());
+						double stopVal = Double.parseDouble((compSize.getText().trim()).split(",")[1].trim());
+						double stepVal = Double.parseDouble((compSize.getText().trim()).split(",")[2].trim());
+						int lev = Integer.parseInt((compSize.getText().trim()).split(",")[3].replace(")", "")
+								.trim());
+						addComp += "Sweep (" + startVal + "," + stopVal + "," + stepVal + "," + lev + ")";
 					}
 					else {
 						addComp += "Custom " + addCompSize;
@@ -5736,7 +5737,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 							c.unsetCompartmentType();
 						}
 						c.setSpatialDimensions(Integer.parseInt((String) dimBox.getSelectedItem()));
-						if (compSize.getText().trim().equals("")) {
+						if (compSize.getText().trim().equals("") || compSize.getText().trim().startsWith("(")) {
 							c.unsetSize();
 						}
 						else {
