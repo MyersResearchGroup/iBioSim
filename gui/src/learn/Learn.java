@@ -463,7 +463,7 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 		tab.addTab("Basic Options", firstTab);
 		tab.addTab("Advanced Options", secondTab);
 		this.add(tab, "Center");
-		//this.add(runHolder, "South");
+		// this.add(runHolder, "South");
 		firstRead = true;
 		if (user.isSelected()) {
 			auto.doClick();
@@ -978,16 +978,13 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 		try {
 			if (new File(directory + separator + "run.log").exists()) {
 				File log = new File(directory + separator + "run.log");
-				BufferedReader input = new BufferedReader(new FileReader(log));
-				String line = null;
+				FileInputStream input = new FileInputStream(log);
 				JTextArea messageArea = new JTextArea();
-				while ((line = input.readLine()) != null) {
-					messageArea.append(line);
-					messageArea.append(System.getProperty("line.separator"));
+				int read = -1;
+				while ((read = input.read()) != -1) {
+					messageArea.append("" + (char) read);
 				}
 				input.close();
-				messageArea.setLineWrap(true);
-				messageArea.setWrapStyleWord(true);
 				messageArea.setEditable(false);
 				JScrollPane scrolls = new JScrollPane();
 				scrolls.setMinimumSize(new Dimension(500, 500));
@@ -1329,7 +1326,7 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 	public boolean hasChanged() {
 		return change;
 	}
-	
+
 	public boolean isComboSelected() {
 		if (debug.isFocusOwner() || numBins.isFocusOwner()) {
 			return true;
