@@ -24,9 +24,16 @@ public class ParameterPanel extends JPanel {
 		selected = CompatibilityFixer.getGCMName(selected);
 
 		// Initial field
-		PropertyField field = new PropertyField(selected, gcm
-				.getParameter(selected), PropertyField.states[0], gcm
-				.getDefaultParameters().get(selected), Utility.NUMstring, paramsOnly);
+		PropertyField field;
+		if (paramsOnly) {
+			field = new PropertyField(selected, gcm
+					.getParameter(selected), PropertyField.paramStates[0], gcm
+					.getDefaultParameters().get(selected), Utility.SWEEPstring, paramsOnly);
+		} else {
+			field = new PropertyField(selected, gcm
+					.getParameter(selected), PropertyField.states[0], gcm
+					.getDefaultParameters().get(selected), Utility.NUMstring, paramsOnly);
+		}
 		fields.put(selected, field);
 		if (gcm.getGlobalParameters().containsKey(selected)) {
 			field.setValue(gcm.getGlobalParameters().get(selected));
@@ -63,8 +70,16 @@ public class ParameterPanel extends JPanel {
 			String newItem = CompatibilityFixer.getGuiName(selected);
 			if (fields.get(selected).getState().equals(PropertyField.states[1])) {
 				gcm.setParameter(selected, fields.get(selected).getValue());
-				newItem = newItem +  " ("+CompatibilityFixer.getSBMLName(selected)+"), Custom, " + fields.get(selected).getValue();
+				newItem = newItem +  " ("+CompatibilityFixer.getSBMLName(selected)+"), ";
+				if (fields.get(selected).getValue().trim().startsWith("(")) {
+					newItem = newItem + "Sweep, " + fields.get(selected).getValue();
+				} else {
+					newItem = newItem + "Custom, " + fields.get(selected).getValue();
+				}
 			} else if (fields.get(selected).getState().equals(PropertyField.states[0])) {
+				gcm.removeParameter(selected);
+				newItem = newItem + " ("+CompatibilityFixer.getSBMLName(selected)+"), Default, " + gcm.getParameter(selected);
+			} else if (fields.get(selected).getState().equals(PropertyField.paramStates[0])) {
 				gcm.removeParameter(selected);
 				newItem = newItem + " ("+CompatibilityFixer.getSBMLName(selected)+"), Default, " + gcm.getParameter(selected);
 			}

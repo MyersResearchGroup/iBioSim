@@ -355,6 +355,7 @@ public class Utility {
 			.compile("([\\d]*[\\.\\d]?\\d+)");
 	private static Utility instance = null;
 	public static final String NUMstring = "([\\d]*[\\.\\d]?\\d+)";
+	public static final String SWEEPstring = "(\\([\\d]*[\\.\\d]?\\d+,[[\\s]*]?[\\d]*[\\.\\d]?\\d+,[[\\s]*]?[\\d]*[\\.\\d]?\\d+,[[\\s]*]?[12]\\))|([\\d]*[\\.\\d]?\\d+)";
 	public static final String PROPstring = "([a-zA-Z]|_)([a-zA-Z]|[0-9]|_)*";
 	public static final String IDstring = "([a-zA-Z])([a-zA-Z]|[0-9]|_)*";
 	public static final String NAMEstring = "(.)*";

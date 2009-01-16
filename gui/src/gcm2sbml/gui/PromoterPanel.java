@@ -22,6 +22,7 @@ public class PromoterPanel extends JPanel {
 		this.promoterList = promoterList;
 		this.influenceList = influencesList;
 		this.gcm = gcm;
+		this.paramsOnly = paramsOnly;
 
 		fields = new HashMap<String, PropertyField>();
 
@@ -47,10 +48,17 @@ public class PromoterPanel extends JPanel {
 //		add(field);
 		
 		// promoter count
-		field = new PropertyField(GlobalConstants.PROMOTER_COUNT_STRING, gcm
-				.getParameter(GlobalConstants.PROMOTER_COUNT_STRING),
-				PropertyField.states[0], gcm
-				.getParameter(GlobalConstants.PROMOTER_COUNT_STRING), Utility.NUMstring, paramsOnly);
+		if (paramsOnly) {
+			field = new PropertyField(GlobalConstants.PROMOTER_COUNT_STRING, gcm
+					.getParameter(GlobalConstants.PROMOTER_COUNT_STRING),
+					PropertyField.paramStates[0], gcm
+					.getParameter(GlobalConstants.PROMOTER_COUNT_STRING), Utility.SWEEPstring, paramsOnly);
+		} else {
+			field = new PropertyField(GlobalConstants.PROMOTER_COUNT_STRING, gcm
+					.getParameter(GlobalConstants.PROMOTER_COUNT_STRING),
+					PropertyField.states[0], gcm
+					.getParameter(GlobalConstants.PROMOTER_COUNT_STRING), Utility.NUMstring, paramsOnly);
+		}
 		fields.put(GlobalConstants.PROMOTER_COUNT_STRING, field);
 		add(field);		
 		
@@ -63,43 +71,79 @@ public class PromoterPanel extends JPanel {
 //		add(field);		
 
 		// RNAP binding
-		field = new PropertyField(GlobalConstants.RNAP_BINDING_STRING, gcm
-				.getParameter(GlobalConstants.RNAP_BINDING_STRING),
-				PropertyField.states[0], gcm
-				.getParameter(GlobalConstants.RNAP_BINDING_STRING), Utility.NUMstring, paramsOnly);
+		if (paramsOnly) {
+			field = new PropertyField(GlobalConstants.RNAP_BINDING_STRING, gcm
+					.getParameter(GlobalConstants.RNAP_BINDING_STRING),
+					PropertyField.paramStates[0], gcm
+					.getParameter(GlobalConstants.RNAP_BINDING_STRING), Utility.SWEEPstring, paramsOnly);
+		} else {
+			field = new PropertyField(GlobalConstants.RNAP_BINDING_STRING, gcm
+					.getParameter(GlobalConstants.RNAP_BINDING_STRING),
+					PropertyField.states[0], gcm
+					.getParameter(GlobalConstants.RNAP_BINDING_STRING), Utility.NUMstring, paramsOnly);
+		}
 		fields.put(GlobalConstants.RNAP_BINDING_STRING, field);
 		add(field);
 		
 		// kocr
-		field = new PropertyField(GlobalConstants.OCR_STRING, gcm
-				.getParameter(GlobalConstants.OCR_STRING),
-				PropertyField.states[0], gcm
-				.getParameter(GlobalConstants.OCR_STRING), Utility.NUMstring, paramsOnly);
+		if (paramsOnly) {
+			field = new PropertyField(GlobalConstants.OCR_STRING, gcm
+					.getParameter(GlobalConstants.OCR_STRING),
+					PropertyField.paramStates[0], gcm
+					.getParameter(GlobalConstants.OCR_STRING), Utility.SWEEPstring, paramsOnly);
+		} else {
+			field = new PropertyField(GlobalConstants.OCR_STRING, gcm
+					.getParameter(GlobalConstants.OCR_STRING),
+					PropertyField.states[0], gcm
+					.getParameter(GlobalConstants.OCR_STRING), Utility.NUMstring, paramsOnly);
+		}
 		fields.put(GlobalConstants.OCR_STRING, field);
 		add(field);
 		
-		// stoichiometry 
-		field = new PropertyField(GlobalConstants.STOICHIOMETRY_STRING, gcm
-				.getParameter(GlobalConstants.STOICHIOMETRY_STRING),
-				PropertyField.states[0], gcm
-				.getParameter(GlobalConstants.STOICHIOMETRY_STRING), Utility.NUMstring, paramsOnly);
+		// stoichiometry
+		if (paramsOnly) {
+			field = new PropertyField(GlobalConstants.STOICHIOMETRY_STRING, gcm
+					.getParameter(GlobalConstants.STOICHIOMETRY_STRING),
+					PropertyField.paramStates[0], gcm
+					.getParameter(GlobalConstants.STOICHIOMETRY_STRING), Utility.SWEEPstring, paramsOnly);
+		} else {
+			field = new PropertyField(GlobalConstants.STOICHIOMETRY_STRING, gcm
+					.getParameter(GlobalConstants.STOICHIOMETRY_STRING),
+					PropertyField.states[0], gcm
+					.getParameter(GlobalConstants.STOICHIOMETRY_STRING), Utility.NUMstring, paramsOnly);
+		}
 		fields.put(GlobalConstants.STOICHIOMETRY_STRING, field);
 		add(field);		
 		
 		// kbasal
-		field = new PropertyField(GlobalConstants.KBASAL_STRING, gcm
-				.getParameter(GlobalConstants.KBASAL_STRING),
-				PropertyField.states[0], gcm
-						.getParameter(GlobalConstants.KBASAL_STRING),
-				Utility.NUMstring, paramsOnly);
+		if (paramsOnly) {
+			field = new PropertyField(GlobalConstants.KBASAL_STRING, gcm
+					.getParameter(GlobalConstants.KBASAL_STRING),
+					PropertyField.paramStates[0], gcm
+							.getParameter(GlobalConstants.KBASAL_STRING),
+					Utility.SWEEPstring, paramsOnly);
+		} else {
+			field = new PropertyField(GlobalConstants.KBASAL_STRING, gcm
+					.getParameter(GlobalConstants.KBASAL_STRING),
+					PropertyField.states[0], gcm
+							.getParameter(GlobalConstants.KBASAL_STRING),
+					Utility.NUMstring, paramsOnly);
+		}
 		fields.put(GlobalConstants.KBASAL_STRING, field);
 		add(field);
 		
 		// kactived production
-		field = new PropertyField(GlobalConstants.ACTIVED_STRING, gcm
-				.getParameter(GlobalConstants.ACTIVED_STRING),
-				PropertyField.states[0], gcm
-				.getParameter(GlobalConstants.ACTIVED_STRING), Utility.NUMstring, paramsOnly);
+		if (paramsOnly) {
+			field = new PropertyField(GlobalConstants.ACTIVED_STRING, gcm
+					.getParameter(GlobalConstants.ACTIVED_STRING),
+					PropertyField.paramStates[0], gcm
+					.getParameter(GlobalConstants.ACTIVED_STRING), Utility.SWEEPstring, paramsOnly);
+		} else {
+			field = new PropertyField(GlobalConstants.ACTIVED_STRING, gcm
+					.getParameter(GlobalConstants.ACTIVED_STRING),
+					PropertyField.states[0], gcm
+					.getParameter(GlobalConstants.ACTIVED_STRING), Utility.NUMstring, paramsOnly);
+		}
 		fields.put(GlobalConstants.ACTIVED_STRING, field);
 		add(field);
 
@@ -167,7 +211,18 @@ public class PromoterPanel extends JPanel {
 				influenceList.addAllItem(gcm.getInfluences().keySet());
 			}
 			gcm.addPromoter(id, property);
+			if (paramsOnly) {
+				if (fields.get(GlobalConstants.PROMOTER_COUNT_STRING).getState().equals(PropertyField.states[1]) ||
+						fields.get(GlobalConstants.RNAP_BINDING_STRING).getState().equals(PropertyField.states[1]) ||
+						fields.get(GlobalConstants.OCR_STRING).getState().equals(PropertyField.states[1]) ||
+						fields.get(GlobalConstants.STOICHIOMETRY_STRING).getState().equals(PropertyField.states[1]) ||
+						fields.get(GlobalConstants.KBASAL_STRING).getState().equals(PropertyField.states[1]) ||
+						fields.get(GlobalConstants.ACTIVED_STRING).getState().equals(PropertyField.states[1])) {
+					id += " Modified";
+				}
+			}
 			promoterList.removeItem(oldName);
+			promoterList.removeItem(oldName + " Modified");
 			promoterList.addItem(id);
 			promoterList.setSelectedValue(id, true);
 
@@ -202,4 +257,5 @@ public class PromoterPanel extends JPanel {
 	private GCMFile gcm = null;
 	private PropertyList promoterList = null;
 	private PropertyList influenceList = null;
+	private boolean paramsOnly;
 }

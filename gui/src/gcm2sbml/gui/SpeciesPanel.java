@@ -25,6 +25,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		this.speciesList = speciesList;
 		this.influences = influencesList;
 		this.gcm = gcm;
+		this.paramsOnly = paramsOnly;
 
 		fields = new HashMap<String, PropertyField>();
 
@@ -67,7 +68,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 					.getParameter(GlobalConstants.INITIAL_STRING),
 					PropertyField.paramStates[0], gcm
 							.getParameter(GlobalConstants.INITIAL_STRING),
-					Utility.NUMstring, paramsOnly);
+					Utility.SWEEPstring, paramsOnly);
 		}
 		else {
 			field = new PropertyField(GlobalConstants.INITIAL_STRING, gcm
@@ -94,7 +95,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 					.getParameter(GlobalConstants.KASSOCIATION_STRING),
 					PropertyField.paramStates[0], gcm
 							.getParameter(GlobalConstants.KASSOCIATION_STRING),
-					Utility.NUMstring, paramsOnly);
+					Utility.SWEEPstring, paramsOnly);
 		}
 		else {
 			field = new PropertyField(GlobalConstants.KASSOCIATION_STRING, gcm
@@ -112,7 +113,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 					.getParameter(GlobalConstants.KDECAY_STRING),
 					PropertyField.paramStates[0], gcm
 							.getParameter(GlobalConstants.KDECAY_STRING),
-					Utility.NUMstring, paramsOnly);
+					Utility.SWEEPstring, paramsOnly);
 		}
 		else {
 			field = new PropertyField(GlobalConstants.KDECAY_STRING, gcm
@@ -192,7 +193,15 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 				influences.addAllItem(gcm.getInfluences().keySet());
 			}
 			gcm.addSpecies(id, property);
+			if (paramsOnly) {
+				if (fields.get(GlobalConstants.INITIAL_STRING).getState().equals(PropertyField.states[1]) ||
+						fields.get(GlobalConstants.KASSOCIATION_STRING).getState().equals(PropertyField.states[1]) ||
+						fields.get(GlobalConstants.KDECAY_STRING).getState().equals(PropertyField.states[1])) {
+					id += " Modified";
+				}
+			}
 			speciesList.removeItem(oldName);
+			speciesList.removeItem(oldName + " Modified");
 			speciesList.addItem(id);
 			speciesList.setSelectedValue(id, true);
 
@@ -251,4 +260,6 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			"unconstrained" };
 
 	private HashMap<String, PropertyField> fields = null;
+	
+	private boolean paramsOnly;
 }

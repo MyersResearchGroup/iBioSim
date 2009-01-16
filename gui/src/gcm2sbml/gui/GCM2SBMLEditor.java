@@ -607,6 +607,9 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 				String selected = null;
 				if (list.getSelectedValue() != null && getName().contains("Edit")) {
 					selected = list.getSelectedValue().toString();
+					if (selected.split(" ").length > 1) {
+						selected = selected.split(" ")[0];
+					}
 				}
 				SpeciesPanel panel = new SpeciesPanel(selected, list, influences, gcm, paramsOnly);
 			}
@@ -614,6 +617,9 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 				String selected = null;
 				if (list.getSelectedValue() != null && getName().contains("Edit")) {
 					selected = list.getSelectedValue().toString();
+					if (selected.split(" ")[selected.split(" ").length - 1].equals("Modified")) {
+						selected = selected.substring(0, selected.length() - 9);
+					}
 				}
 				InfluencePanel panel = new InfluencePanel(selected, list, gcm, paramsOnly);
 			}
@@ -621,6 +627,9 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 				String selected = null;
 				if (list.getSelectedValue() != null && getName().contains("Edit")) {
 					selected = list.getSelectedValue().toString();
+					if (selected.split(" ").length > 1) {
+						selected = selected.split(" ")[0];
+					}
 				}
 				PromoterPanel panel = new PromoterPanel(selected, list, influences, gcm, paramsOnly);
 			}

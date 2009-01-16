@@ -8,6 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -44,13 +45,11 @@ public class PropertyField extends JPanel implements ActionListener,
 		name.setEnabled(state);
 		if (state) {
 			if (paramsOnly) {
-				if (box.getSelectedItem().equals(paramStates[0])) {
+				if (box.getSelectedItem().equals(paramStates[0]) || box.getSelectedItem().equals(states[0])) {
 					setDefault();
-				} else if (box.getSelectedItem().equals(paramStates[1])) {
-					setCustom();
 				} else {
-					setSweep();
-				}
+					setCustom();
+				} 
 			}
 			else {
 				if (box.getSelectedItem().equals(states[0])) {
@@ -88,12 +87,10 @@ public class PropertyField extends JPanel implements ActionListener,
 			box.addActionListener(this);
 			this.add(box);
 			if (paramsOnly) {
-				if (stateString.equals(paramStates[0])) {
+				if (stateString.equals(paramStates[0]) || stateString.equals(states[0])) {
 					setDefault();
-				} else if (stateString.equals(paramStates[1])) {
-					setCustom();
 				} else {
-					setSweep();
+					setCustom();
 				}
 			}
 			else {
@@ -106,19 +103,25 @@ public class PropertyField extends JPanel implements ActionListener,
 		}
 		field.addActionListener(this);
 		this.add(field);
+		if (paramsOnly && box != null) {
+			sweep = new JButton("Sweep");
+			sweep.addActionListener(this);
+			this.add(sweep);
+			if (stateString.equals(paramStates[0])) {
+				sweep.setEnabled(false);
+			}
+		}
 	}
 
 	public void actionPerformed(ActionEvent e) {
 		// TODO: Need to check source
 		if (e.getActionCommand().equals("comboBoxChanged")) {
 			if (paramsOnly) {
-				if (box.getSelectedItem().equals(paramStates[0])) {
+				if (box.getSelectedItem().equals(paramStates[0]) || box.getSelectedItem().equals(states[0])) {
 					setDefault();
-				} else if (box.getSelectedItem().equals(paramStates[1])) {
-					setCustom();
 				} else {
-					setSweep();
-				}
+					setCustom();
+				} 
 			}
 			else {
 				if (box.getSelectedItem().equals(states[0])) {
@@ -126,6 +129,42 @@ public class PropertyField extends JPanel implements ActionListener,
 				} else {
 					setCustom();
 				}
+			}
+		} else if (e.getSource() == sweep) {
+			Object[] options = { "Ok", "Close" };
+			JPanel p = new JPanel(new GridLayout(4, 2));
+			JLabel startLabel = new JLabel("Start:");
+			JLabel stopLabel = new JLabel("Stop:");
+			JLabel stepLabel = new JLabel("Step:");
+			JLabel levelLabel = new JLabel("Level:");
+			String[] list1 = { "1", "2" };
+			final JTextField start = new JTextField();
+			final JTextField stop = new JTextField();
+			final JTextField step = new JTextField();
+			final JComboBox level = new JComboBox(list1);
+			p.add(startLabel);
+			p.add(start);
+			p.add(stopLabel);
+			p.add(stop);
+			p.add(stepLabel);
+			p.add(step);
+			p.add(levelLabel);
+			p.add(level);
+			int i = JOptionPane.showOptionDialog(this, p, "Sweep", JOptionPane.YES_NO_OPTION,
+					JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+			if (i == JOptionPane.YES_OPTION) {
+				double startVal = 0.0;
+				double stopVal = 0.0;
+				double stepVal = 0.0;
+				try {
+					startVal = Double.parseDouble(start.getText().trim());
+					stopVal = Double.parseDouble(stop.getText().trim());
+					stepVal = Double.parseDouble(step.getText().trim());
+				}
+				catch (Exception e1) {
+				}
+				setValue("(" + startVal + "," + stopVal + "," + stepVal + ","
+						+ level.getSelectedItem() + ")");
 			}
 		} else {
 			if (Utility.isValid(e.getActionCommand(), regExp)) {
@@ -143,6 +182,9 @@ public class PropertyField extends JPanel implements ActionListener,
 		field.setText(defaultValue);
 		if (paramsOnly) {
 			box.setSelectedItem(paramStates[0]);
+			if (sweep != null) {
+				sweep.setEnabled(false);
+			}
 		}
 		else {
 			box.setSelectedItem(states[0]);
@@ -155,18 +197,13 @@ public class PropertyField extends JPanel implements ActionListener,
 			name.setEnabled(true);
 			if (paramsOnly) {
 				box.setSelectedItem(paramStates[1]);
+				if (sweep != null) {
+					sweep.setEnabled(true);
+				}
 			}
 			else {
 				box.setSelectedItem(states[1]);
 			}
-		}
-	}
-	
-	public void setSweep() {
-		if (isEnabled && box != null) {
-			field.setEnabled(true);
-			name.setEnabled(true);
-			box.setSelectedItem(paramStates[2]);
 		}
 	}
 
@@ -218,12 +255,14 @@ public class PropertyField extends JPanel implements ActionListener,
 	private JTextField field = null;
 
 	private JTextField idField = null;
+	
+	private JButton sweep = null;
 
 	// private JLabel idL
 
 	public static final String[] states = new String[] { "default", "custom" };
 	
-	public static final String[] paramStates = new String[] { "default", "custom", "sweep" };
+	public static final String[] paramStates = new String[] { "original", "custom" };
 
 	private String defaultValue = null;
 	
