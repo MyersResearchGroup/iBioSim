@@ -16,6 +16,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 //import javax.swing.DefaultListModel;
 //import javax.swing.JComboBox;
@@ -24,6 +26,7 @@ import javax.swing.JFrame;
 //import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+
 //import javax.swing.Icon;
 
 public class TransitionsPanel extends JPanel implements ActionListener {
@@ -32,8 +35,8 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 
 	// private TransitionsPanel frame;
 
-	private PropertyList transitionsList, controlList, boolAssignments, varAssignments, intAssignments,
-			rateAssignments, assignments;
+	private PropertyList transitionsList, controlList, boolAssignments, varAssignments,
+			intAssignments, rateAssignments, assignments;
 
 	private JPanel fieldPanel;
 
@@ -47,7 +50,8 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 
 	private HashMap<String, PropertyField> fields = null;
 
-	public TransitionsPanel(String selected, PropertyList transitionsList, PropertyList controlList, LHPNFile lhpn, Log log) {
+	public TransitionsPanel(String selected, PropertyList transitionsList,
+			PropertyList controlList, LHPNFile lhpn, Log log) {
 		super(new GridBagLayout());
 		GridBagConstraints constraints = new GridBagConstraints();
 		this.selected = selected;
@@ -57,7 +61,7 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 		this.log = log;
 
 		fields = new HashMap<String, PropertyField>();
-		fieldPanel = new JPanel(new GridLayout(3, 2));
+		fieldPanel = new JPanel(new GridLayout(4, 2));
 
 		// ID field
 		PropertyField field = new PropertyField(GlobalConstants.ID, "", null, null,
@@ -68,8 +72,11 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 		fieldPanel.add(field);
 
 		// Delay field
-		field = new PropertyField("Delay", "", null, null, "\\[\\d+,\\d+\\]");
-		fields.put("Delay", field);
+		field = new PropertyField("Delay Lower Bound", "0", null, null, Utility.NAMEstring);
+		fields.put("Delay lower", field);
+		fieldPanel.add(field);
+		field = new PropertyField("Delay Upper Bound", "inf", null, null, Utility.NAMEstring);
+		fields.put("Delay upper", field);
 		fieldPanel.add(field);
 
 		// Enabling condition field
@@ -127,7 +134,8 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 				for (String s : lhpn.getRateVars(selected)) {
 					// log.addText(selected + " " + s);
 					if (s != null) {
-						if (!s.equals(null) && !lhpn.getRateAssign(selected, s).equals("true") && !lhpn.getRateAssign(selected, s).equals("false")) {
+						if (!s.equals(null) && !lhpn.getRateAssign(selected, s).equals("true")
+								&& !lhpn.getRateAssign(selected, s).equals("false")) {
 							rateAssignments.addItem(s + "':=" + lhpn.getRateAssign(selected, s));
 							assignments.addItem(s + "':=" + lhpn.getRateAssign(selected, s));
 						}
@@ -194,7 +202,16 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 			// Properties prop = lhpn.getVariables().get(selected);
 			fields.get(GlobalConstants.ID).setValue(selected);
 			// log.addText(lhpn.getDelay(selected));
-			fields.get("Delay").setValue(lhpn.getDelay(selected));
+			String delay = lhpn.getDelay(selected);
+			Pattern pattern = Pattern.compile("\\[([\\S^,]),([\\S^\\]])\\]");
+			Matcher matcher = pattern.matcher(delay);
+			if (matcher.find()) {
+				fields.get("Delay lower").setValue(matcher.group(1));
+				fields.get("Delay upper").setValue(matcher.group(2));
+			}
+			else {
+				fields.get("Delay lower").setValue(delay);
+			}
 			fields.get("Enabling Condition").setValue(lhpn.getEnabling(selected));
 			// log.addText(selected + lhpn.getEnabling(selected));
 			// loadProperties(prop);
@@ -280,7 +297,7 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 		lhpn.removeAllAssign(transition);
 		if (boolAssignments.getItems() != null) {
 			for (String s : boolAssignments.getItems()) {
-				//System.out.println("bool" + s);
+				// System.out.println("bool" + s);
 				String[] tempArray = s.split(":=");
 				lhpn.addBoolAssign(transition, tempArray[0], tempArray[1]);
 			}
@@ -307,11 +324,19 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 			for (String s : rateAssignments.getItems()) {
 				// System.out.println("rate" + s);
 				String[] tempArray = s.split("':=");
-				//System.out.println(tempArray[1]);
+				// System.out.println(tempArray[1]);
 				lhpn.addRateAssign(transition, tempArray[0], tempArray[1]);
 			}
 		}
-		lhpn.changeDelay(transition, fields.get("Delay").getValue());
+		String delay;
+		if (!fields.get("Delay upper").getValue().equals("")) {
+			delay = "[" + fields.get("Delay upper").getValue() + ","
+					+ fields.get("Delay lower").getValue() + "]";
+		}
+		else {
+			delay = fields.get("Delay lower").getValue();
+		}
+		lhpn.changeDelay(transition, delay);
 		lhpn.changeEnabling(transition, fields.get("Enabling Condition").getValue());
 	}
 
@@ -386,12 +411,13 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 				Utility.createErrorMessage("Error", "Nothing selected to edit");
 				return;
 			}
-			//String type = "", assignment = "";
+			// String type = "", assignment = "";
 			String variable = null;
 			if (list.getSelectedValue() != null && getName().contains("Edit")) {
 				variable = list.getSelectedValue().toString();
 			}
-			if ((lhpn.getContVars().length == 0) && (lhpn.getBooleanVars().length == 0) && (lhpn.getIntVars().length == 0)) {
+			if ((lhpn.getContVars().length == 0) && (lhpn.getBooleanVars().length == 0)
+					&& (lhpn.getIntVars().length == 0)) {
 				Utility.createErrorMessage("Error", "Add variables first");
 			}
 			else {
@@ -399,71 +425,49 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 				AssignmentPanel panel = new AssignmentPanel(selected, variable, list,
 						varAssignments, rateAssignments, boolAssignments, intAssignments, lhpn);
 			}
-			/*if (list.getSelectedValue() == null) {
-				type = (String) JOptionPane.showInputDialog(fieldPanel,
-						"Which type of variable assignment do you want to add?", "Assignment Type",
-						JOptionPane.PLAIN_MESSAGE, null, types, types[0]);
-			}
-			else {
-				assignment = list.getSelectedValue().toString();
-			}
-			if (getName().contains("Boolean") || type.equals("Boolean") || isBoolean(assignment)) {
-				String variable = null;
-				if (list.getSelectedValue() != null && getName().contains("Edit")) {
-					variable = list.getSelectedValue().toString();
-				}
-				if (lhpn.getBooleanVars().length == 0) {
-					Utility.createErrorMessage("Error", "Add boolean variables first");
-				}
-				else {
-					BoolAssignPanel panel = new BoolAssignPanel(selected, variable, list,
-							boolAssignments, lhpn, log);
-				}
-			}
-			else if (getName().contains("Variable") || type.equals("Continuous")
-					|| isContinuous(assignment)) {
-				String variable = null;
-				if (list.getSelectedValue() != null && getName().contains("Edit")) {
-					variable = list.getSelectedValue().toString();
-				}
-				if (lhpn.getContVars().length == 0) {
-					Utility.createErrorMessage("Error", "Add continuous variables first");
-				}
-				else {
-					// System.out.println("transition " + selected);
-					VarAssignPanel panel = new VarAssignPanel(selected, variable, list,
-							varAssignments, lhpn);
-				}
-			}
-			else if (getName().contains("Integer") || type.equals("Integer")
-					|| isInteger(assignment)) {
-				String variable = null;
-				if (list.getSelectedValue() != null && getName().contains("Edit")) {
-					variable = list.getSelectedValue().toString();
-				}
-				if (lhpn.getIntVars().length == 0) {
-					Utility.createErrorMessage("Error", "Add integers first");
-				}
-				else {
-					// System.out.println("transition " +
-					// lhpn.getIntVars().length);
-					IntAssignPanel panel = new IntAssignPanel(selected, variable, list,
-							intAssignments, lhpn);
-				}
-			}
-			else if (getName().contains("Rate") || type.equals("Rate") || isRate(assignment)) {
-				String variable = null;
-				if (list.getSelectedValue() != null && getName().contains("Edit")) {
-					variable = list.getSelectedValue().toString();
-				}
-				if (lhpn.getContVars().length == 0) {
-					Utility.createErrorMessage("Error", "Add continuous variables first");
-				}
-				else {
-					RateAssignPanel panel = new RateAssignPanel(selected, variable, list,
-							rateAssignments, lhpn, log);
-				}
-			}*/
+			/*
+			 * if (list.getSelectedValue() == null) { type = (String)
+			 * JOptionPane.showInputDialog(fieldPanel, "Which type of variable
+			 * assignment do you want to add?", "Assignment Type",
+			 * JOptionPane.PLAIN_MESSAGE, null, types, types[0]); } else {
+			 * assignment = list.getSelectedValue().toString(); } if
+			 * (getName().contains("Boolean") || type.equals("Boolean") ||
+			 * isBoolean(assignment)) { String variable = null; if
+			 * (list.getSelectedValue() != null && getName().contains("Edit")) {
+			 * variable = list.getSelectedValue().toString(); } if
+			 * (lhpn.getBooleanVars().length == 0) {
+			 * Utility.createErrorMessage("Error", "Add boolean variables
+			 * first"); } else { BoolAssignPanel panel = new
+			 * BoolAssignPanel(selected, variable, list, boolAssignments, lhpn,
+			 * log); } } else if (getName().contains("Variable") ||
+			 * type.equals("Continuous") || isContinuous(assignment)) { String
+			 * variable = null; if (list.getSelectedValue() != null &&
+			 * getName().contains("Edit")) { variable =
+			 * list.getSelectedValue().toString(); } if
+			 * (lhpn.getContVars().length == 0) {
+			 * Utility.createErrorMessage("Error", "Add continuous variables
+			 * first"); } else { // System.out.println("transition " +
+			 * selected); VarAssignPanel panel = new VarAssignPanel(selected,
+			 * variable, list, varAssignments, lhpn); } } else if
+			 * (getName().contains("Integer") || type.equals("Integer") ||
+			 * isInteger(assignment)) { String variable = null; if
+			 * (list.getSelectedValue() != null && getName().contains("Edit")) {
+			 * variable = list.getSelectedValue().toString(); } if
+			 * (lhpn.getIntVars().length == 0) {
+			 * Utility.createErrorMessage("Error", "Add integers first"); } else { //
+			 * System.out.println("transition " + // lhpn.getIntVars().length);
+			 * IntAssignPanel panel = new IntAssignPanel(selected, variable,
+			 * list, intAssignments, lhpn); } } else if
+			 * (getName().contains("Rate") || type.equals("Rate") ||
+			 * isRate(assignment)) { String variable = null; if
+			 * (list.getSelectedValue() != null && getName().contains("Edit")) {
+			 * variable = list.getSelectedValue().toString(); } if
+			 * (lhpn.getContVars().length == 0) {
+			 * Utility.createErrorMessage("Error", "Add continuous variables
+			 * first"); } else { RateAssignPanel panel = new
+			 * RateAssignPanel(selected, variable, list, rateAssignments, lhpn,
+			 * log); } }
+			 */
 		}
 
 		public String getName() {
