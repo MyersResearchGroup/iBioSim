@@ -1032,9 +1032,11 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 
 		if (frameSize.height > screenSize.height) {
 			frameSize.height = screenSize.height;
+			frame.setSize(frameSize);
 		}
 		if (frameSize.width > screenSize.width) {
 			frameSize.width = screenSize.width;
+			frame.setSize(frameSize);
 		}
 		int x = screenSize.width / 2 - frameSize.width / 2;
 		int y = screenSize.height / 2 - frameSize.height / 2;
@@ -2798,7 +2800,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				}
 				else if (component instanceof LearnLHPN) {
 					((LearnLHPN) component).save();
-					new Thread((LearnLHPN) component).start();
+					((LearnLHPN) component).learn();
 				}
 				else if (component instanceof SBML_Editor) {
 					((Reb2Sac) (((JTabbedPane) comp).getComponent(index))).getRunButton().doClick();
@@ -6195,6 +6197,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					}
 				}
 				catch (Exception e1) {
+					e1.printStackTrace();
 				}
 			}
 		}
@@ -8811,10 +8814,10 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 	public boolean overwrite(String fullPath, String name) {
 		if (new File(fullPath).exists()) {
 			Object[] options = { "Overwrite", "Cancel" };
-			int value = JOptionPane.showOptionDialog(frame, name + " already exists."
-					+ "\nDo you want to overwrite?", "Overwrite", JOptionPane.YES_NO_OPTION,
-					JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-			if (value == JOptionPane.YES_OPTION) {
+			//int value = JOptionPane.showOptionDialog(frame, name + " already exists."
+			//		+ "\nDo you want to overwrite?", "Overwrite", JOptionPane.YES_NO_OPTION,
+			//		JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+			//if (value == JOptionPane.YES_OPTION) {
 				String[] views = canDelete(name);
 				if (views.length == 0) {
 					for (int i = 0; i < tab.getTabCount(); i++) {
@@ -8854,10 +8857,10 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							JOptionPane.ERROR_MESSAGE);
 					return false;
 				}
-			}
-			else {
-				return false;
-			}
+			//}
+			//else {
+			//	return false;
+			//}
 		}
 		else {
 			return true;
