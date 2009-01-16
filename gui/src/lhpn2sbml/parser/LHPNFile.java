@@ -198,14 +198,20 @@ public class LHPNFile {
 				buffer.append("}\n");
 			}
 			if (!enablings.isEmpty()) {
-				buffer.append("#@.enablings {");
+				flag = false;
 				for (String s : enablings.keySet()) {
 					if (s != null && !enablings.get(s).equals("")) {
+						if (!flag) {
+							buffer.append("#@.enablings {");
+							flag = true;
+						}
 						// log.addText("here " + enablings.get(s));
 						buffer.append("<" + s + "=[" + enablings.get(s) + "]>");
 					}
 				}
-				buffer.append("}\n");
+				if (flag) {
+					buffer.append("}\n");
+				}
 			}
 			if (!contAssignments.isEmpty() || !intAssignments.isEmpty()) {
 				buffer.append("#@.assignments {");
@@ -1604,7 +1610,7 @@ public class LHPNFile {
 
 	private static final String TRANSITION = "\\.dummy([^\\n]*?)\\n";
 
-	private static final String PLACE = "\\n([^.#][\\w_\\+-/]+ [\\w_\\+-/]+)";
+	private static final String PLACE = "\\n([\\w_\\+-/&&[^\\.#]]+ [\\w_\\+-/]+)";
 
 	private static final String CONTINUOUS = "#@\\.continuous ([.[^\\n]]+)\\n";
 
