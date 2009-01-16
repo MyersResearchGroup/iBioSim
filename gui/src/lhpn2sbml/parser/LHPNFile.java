@@ -174,7 +174,9 @@ public class LHPNFile {
 						buffer.append(s + " ");
 					}
 				}
-				buffer.append("}\n");
+				if (flag) {
+					buffer.append("}\n");
+				}
 			}
 			if (!variables.isEmpty() || !integers.isEmpty()) {
 				buffer.append("#@.init_vals {");
