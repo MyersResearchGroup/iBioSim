@@ -8533,234 +8533,60 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		saveAsGraph.setEnabled(false);
 		saveAsSbml.setEnabled(false);
 		saveAsTemplate.setEnabled(false);
-		if (tree.getFile().length() > 4
-				&& tree.getFile().substring(tree.getFile().length() - 5).equals(".sbml")
-				|| tree.getFile().length() > 3
-				&& tree.getFile().substring(tree.getFile().length() - 4).equals(".xml")) {
-			viewModGraph.setEnabled(true);
-			viewModGraph.setActionCommand("graph");
-			viewModBrowser.setEnabled(true);
+		if (tree.getFile()!=null) {
+			if (tree.getFile().length() > 4
+					&& tree.getFile().substring(tree.getFile().length() - 5).equals(".sbml")
+					|| tree.getFile().length() > 3
+					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".xml")) {
+				viewModGraph.setEnabled(true);
+				viewModGraph.setActionCommand("graph");
+				viewModBrowser.setEnabled(true);
 			createAnal.setEnabled(true);
-			createAnal.setActionCommand("simulate");
-			createLearn.setEnabled(true);
-			createSbml.setEnabled(false);
-			refresh.setEnabled(false);
-			check.setEnabled(false);
-			export.setEnabled(false);
-			copy.setEnabled(true);
-			rename.setEnabled(true);
-			delete.setEnabled(true);
-			viewModel.setEnabled(true);
-			viewRules.setEnabled(false);
-			viewTrace.setEnabled(false);
-			viewCircuit.setEnabled(false);
-			viewLog.setEnabled(false);
-			saveParam.setEnabled(false);
-			saveSbml.setEnabled(false);
-			saveTemp.setEnabled(false);
-		}
-		else if (tree.getFile().length() > 3
-				&& tree.getFile().substring(tree.getFile().length() - 4).equals(".gcm")) {
-			viewModGraph.setEnabled(true);
-			viewModGraph.setActionCommand("graphDot");
-			viewModBrowser.setEnabled(false);
-			createAnal.setEnabled(true);
-			createAnal.setActionCommand("createSim");
-			createLearn.setEnabled(true);
-			createSbml.setEnabled(true);
-			refresh.setEnabled(false);
-			check.setEnabled(false);
-			export.setEnabled(false);
-			copy.setEnabled(true);
-			rename.setEnabled(true);
-			delete.setEnabled(true);
-			viewModel.setEnabled(true);
-			viewRules.setEnabled(false);
-			viewTrace.setEnabled(false);
-			viewCircuit.setEnabled(false);
-			viewLog.setEnabled(false);
-			saveParam.setEnabled(false);
-			saveSbml.setEnabled(false);
-			saveTemp.setEnabled(false);
-		}
-		else if (tree.getFile().length() > 3
-				&& tree.getFile().substring(tree.getFile().length() - 4).equals(".grf")) {
-			viewModel.setEnabled(false);
-			viewModGraph.setEnabled(false);
-			viewModBrowser.setEnabled(false);
-			createAnal.setEnabled(false);
-			createLearn.setEnabled(false);
-			createSbml.setEnabled(false);
-			refresh.setEnabled(false);
-			check.setEnabled(false);
-			export.setEnabled(false);
-			copy.setEnabled(true);
-			rename.setEnabled(true);
-			delete.setEnabled(true);
-			viewRules.setEnabled(false);
-			viewTrace.setEnabled(false);
-			viewCircuit.setEnabled(false);
-			viewLog.setEnabled(false);
-			saveParam.setEnabled(false);
-			saveSbml.setEnabled(false);
-			saveTemp.setEnabled(false);
-		}
-		else if (tree.getFile().length() > 3
-				&& tree.getFile().substring(tree.getFile().length() - 4).equals(".vhd")) {
-			viewModel.setEnabled(true);
-			viewModGraph.setEnabled(true);
-			viewModBrowser.setEnabled(false);
-			createAnal.setEnabled(true);
-			createAnal.setActionCommand("createSim");
-			createLearn.setEnabled(true);
-			createSynth.setEnabled(true);
-			createVer.setEnabled(true);
-			refresh.setEnabled(false);
-			check.setEnabled(false);
-			export.setEnabled(false);
-			copy.setEnabled(true);
-			rename.setEnabled(true);
-			delete.setEnabled(true);
-			viewRules.setEnabled(false);
-			viewTrace.setEnabled(false);
-			viewCircuit.setEnabled(false);
-			viewLog.setEnabled(false);
-			saveParam.setEnabled(false);
-			saveSbml.setEnabled(false);
-			saveTemp.setEnabled(false);
-		}
-		else if (tree.getFile().length() > 1
-				&& tree.getFile().substring(tree.getFile().length() - 2).equals(".g")) {
-			viewModel.setEnabled(true);
-			viewModGraph.setEnabled(true);
-			viewModBrowser.setEnabled(false);
-			createAnal.setEnabled(true);
-			createAnal.setActionCommand("createSim");
-			createLearn.setEnabled(true);
-			createSynth.setEnabled(true);
-			createVer.setEnabled(true);
-			refresh.setEnabled(false);
-			check.setEnabled(false);
-			export.setEnabled(false);
-			copy.setEnabled(true);
-			rename.setEnabled(true);
-			delete.setEnabled(true);
-			viewRules.setEnabled(false);
-			viewTrace.setEnabled(false);
-			viewCircuit.setEnabled(false);
-			viewLog.setEnabled(false);
-			saveParam.setEnabled(false);
-			saveSbml.setEnabled(false);
-			saveTemp.setEnabled(false);
-		}
-		else if (tree.getFile().length() > 3
-				&& tree.getFile().substring(tree.getFile().length() - 4).equals(".csp")) {
-			viewModGraph.setEnabled(false);
-			viewModBrowser.setEnabled(false);
-			createAnal.setEnabled(false);
-			createLearn.setEnabled(false);
-			createSynth.setEnabled(false);
-			createVer.setEnabled(false);
-			refresh.setEnabled(false);
-			check.setEnabled(false);
-			export.setEnabled(false);
-			copy.setEnabled(true);
-			rename.setEnabled(true);
-			delete.setEnabled(true);
-			viewRules.setEnabled(false);
-			viewTrace.setEnabled(false);
-			viewCircuit.setEnabled(false);
-			viewLog.setEnabled(false);
-			saveParam.setEnabled(false);
-			saveSbml.setEnabled(false);
-			saveTemp.setEnabled(false);
-		}
-		else if (tree.getFile().length() > 3
-				&& tree.getFile().substring(tree.getFile().length() - 4).equals(".hse")) {
-			viewModGraph.setEnabled(false);
-			viewModBrowser.setEnabled(false);
-			createAnal.setEnabled(false);
-			createLearn.setEnabled(false);
-			createSynth.setEnabled(false);
-			createVer.setEnabled(false);
-			refresh.setEnabled(false);
-			check.setEnabled(false);
-			export.setEnabled(false);
-			copy.setEnabled(true);
-			rename.setEnabled(true);
-			delete.setEnabled(true);
-			viewRules.setEnabled(false);
-			viewTrace.setEnabled(false);
-			viewCircuit.setEnabled(false);
-			viewLog.setEnabled(false);
-			saveParam.setEnabled(false);
-			saveSbml.setEnabled(false);
-			saveTemp.setEnabled(false);
-		}
-		else if (tree.getFile().length() > 3
-				&& tree.getFile().substring(tree.getFile().length() - 4).equals(".unc")) {
-			viewModGraph.setEnabled(false);
-			viewModBrowser.setEnabled(false);
-			createAnal.setEnabled(false);
-			createLearn.setEnabled(false);
-			createSynth.setEnabled(false);
-			createVer.setEnabled(false);
-			refresh.setEnabled(false);
-			check.setEnabled(false);
-			export.setEnabled(false);
-			copy.setEnabled(true);
-			rename.setEnabled(true);
-			delete.setEnabled(true);
-			viewRules.setEnabled(false);
-			viewTrace.setEnabled(false);
-			viewCircuit.setEnabled(false);
-			viewLog.setEnabled(false);
-			saveParam.setEnabled(false);
-			saveSbml.setEnabled(false);
-			saveTemp.setEnabled(false);
-		}
-		else if (tree.getFile().length() > 3
-				&& tree.getFile().substring(tree.getFile().length() - 4).equals(".rsg")) {
-			viewModGraph.setEnabled(false);
-			viewModBrowser.setEnabled(false);
-			createAnal.setEnabled(false);
-			createLearn.setEnabled(false);
-			createSynth.setEnabled(false);
-			createVer.setEnabled(false);
-			refresh.setEnabled(false);
-			check.setEnabled(false);
-			export.setEnabled(false);
-			copy.setEnabled(true);
-			rename.setEnabled(true);
-			delete.setEnabled(true);
-			viewRules.setEnabled(false);
-			viewTrace.setEnabled(false);
-			viewCircuit.setEnabled(false);
-			viewLog.setEnabled(false);
-			saveParam.setEnabled(false);
-			saveSbml.setEnabled(false);
-			saveTemp.setEnabled(false);
-		}
-		else if (new File(tree.getFile()).isDirectory() && !tree.getFile().equals(root)) {
-			boolean sim = false;
-			boolean synth = false;
-			boolean ver = false;
-			boolean learn = false;
-			for (String s : new File(tree.getFile()).list()) {
-				if (s.length() > 3 && s.substring(s.length() - 4).equals(".sim")) {
-					sim = true;
-				}
-				else if (s.length() > 4 && s.substring(s.length() - 4).equals(".syn")) {
-					synth = true;
-				}
-				else if (s.length() > 4 && s.substring(s.length() - 4).equals(".ver")) {
-					ver = true;
-				}
-				else if (s.length() > 4 && s.substring(s.length() - 4).equals(".lrn")) {
-					learn = true;
-				}
+				createAnal.setActionCommand("simulate");
+				createLearn.setEnabled(true);
+				createSbml.setEnabled(false);
+				refresh.setEnabled(false);
+				check.setEnabled(false);
+				export.setEnabled(false);
+				copy.setEnabled(true);
+				rename.setEnabled(true);
+				delete.setEnabled(true);
+				viewModel.setEnabled(true);
+				viewRules.setEnabled(false);
+				viewTrace.setEnabled(false);
+				viewCircuit.setEnabled(false);
+				viewLog.setEnabled(false);
+				saveParam.setEnabled(false);
+				saveSbml.setEnabled(false);
+				saveTemp.setEnabled(false);
 			}
-			if (sim || synth || ver || learn) {
+			else if (tree.getFile().length() > 3
+					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".gcm")) {
+				viewModGraph.setEnabled(true);
+				viewModGraph.setActionCommand("graphDot");
+				viewModBrowser.setEnabled(false);
+				createAnal.setEnabled(true);
+				createAnal.setActionCommand("createSim");
+				createLearn.setEnabled(true);
+				createSbml.setEnabled(true);
+				refresh.setEnabled(false);
+				check.setEnabled(false);
+				export.setEnabled(false);
+				copy.setEnabled(true);
+				rename.setEnabled(true);
+				delete.setEnabled(true);
+				viewModel.setEnabled(true);
+				viewRules.setEnabled(false);
+				viewTrace.setEnabled(false);
+				viewCircuit.setEnabled(false);
+				viewLog.setEnabled(false);
+				saveParam.setEnabled(false);
+				saveSbml.setEnabled(false);
+				saveTemp.setEnabled(false);
+			}
+			else if (tree.getFile().length() > 3
+					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".grf")) {
+				viewModel.setEnabled(false);
 				viewModGraph.setEnabled(false);
 				viewModBrowser.setEnabled(false);
 				createAnal.setEnabled(false);
@@ -8780,26 +8606,202 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				saveSbml.setEnabled(false);
 				saveTemp.setEnabled(false);
 			}
-		}
-		else {
-			viewModGraph.setEnabled(false);
-			viewModBrowser.setEnabled(false);
-			createAnal.setEnabled(false);
-			createLearn.setEnabled(false);
-			createSbml.setEnabled(false);
-			refresh.setEnabled(false);
-			check.setEnabled(false);
-			export.setEnabled(false);
-			copy.setEnabled(false);
-			rename.setEnabled(false);
-			delete.setEnabled(false);
-			viewRules.setEnabled(false);
-			viewTrace.setEnabled(false);
-			viewCircuit.setEnabled(false);
-			viewLog.setEnabled(false);
-			saveParam.setEnabled(false);
-			saveSbml.setEnabled(false);
-			saveTemp.setEnabled(false);
+			else if (tree.getFile().length() > 3
+					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".vhd")) {
+				viewModel.setEnabled(true);
+				viewModGraph.setEnabled(true);
+				viewModBrowser.setEnabled(false);
+				createAnal.setEnabled(true);
+				createAnal.setActionCommand("createSim");
+				createLearn.setEnabled(true);
+				createSynth.setEnabled(true);
+				createVer.setEnabled(true);
+				refresh.setEnabled(false);
+				check.setEnabled(false);
+				export.setEnabled(false);
+				copy.setEnabled(true);
+				rename.setEnabled(true);
+				delete.setEnabled(true);
+				viewRules.setEnabled(false);
+				viewTrace.setEnabled(false);
+				viewCircuit.setEnabled(false);
+				viewLog.setEnabled(false);
+				saveParam.setEnabled(false);
+				saveSbml.setEnabled(false);
+				saveTemp.setEnabled(false);
+			}
+			else if (tree.getFile().length() > 1
+					&& tree.getFile().substring(tree.getFile().length() - 2).equals(".g")) {
+				viewModel.setEnabled(true);
+				viewModGraph.setEnabled(true);
+				viewModBrowser.setEnabled(false);
+				createAnal.setEnabled(true);
+				createAnal.setActionCommand("createSim");
+				createLearn.setEnabled(true);
+				createSynth.setEnabled(true);
+				createVer.setEnabled(true);
+				refresh.setEnabled(false);
+				check.setEnabled(false);
+				export.setEnabled(false);
+				copy.setEnabled(true);
+				rename.setEnabled(true);
+				delete.setEnabled(true);
+				viewRules.setEnabled(false);
+				viewTrace.setEnabled(false);
+				viewCircuit.setEnabled(false);
+				viewLog.setEnabled(false);
+				saveParam.setEnabled(false);
+				saveSbml.setEnabled(false);
+				saveTemp.setEnabled(false);
+			}
+			else if (tree.getFile().length() > 3
+					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".csp")) {
+				viewModGraph.setEnabled(false);
+				viewModBrowser.setEnabled(false);
+				createAnal.setEnabled(false);
+				createLearn.setEnabled(false);
+				createSynth.setEnabled(false);
+				createVer.setEnabled(false);
+				refresh.setEnabled(false);
+				check.setEnabled(false);
+				export.setEnabled(false);
+				copy.setEnabled(true);
+				rename.setEnabled(true);
+				delete.setEnabled(true);
+				viewRules.setEnabled(false);
+				viewTrace.setEnabled(false);
+				viewCircuit.setEnabled(false);
+				viewLog.setEnabled(false);
+				saveParam.setEnabled(false);
+				saveSbml.setEnabled(false);
+				saveTemp.setEnabled(false);
+			}
+			else if (tree.getFile().length() > 3
+					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".hse")) {
+				viewModGraph.setEnabled(false);
+				viewModBrowser.setEnabled(false);
+				createAnal.setEnabled(false);
+				createLearn.setEnabled(false);
+				createSynth.setEnabled(false);
+				createVer.setEnabled(false);
+				refresh.setEnabled(false);
+				check.setEnabled(false);
+				export.setEnabled(false);
+				copy.setEnabled(true);
+				rename.setEnabled(true);
+				delete.setEnabled(true);
+				viewRules.setEnabled(false);
+				viewTrace.setEnabled(false);
+				viewCircuit.setEnabled(false);
+				viewLog.setEnabled(false);
+				saveParam.setEnabled(false);
+				saveSbml.setEnabled(false);
+				saveTemp.setEnabled(false);
+			}
+			else if (tree.getFile().length() > 3
+					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".unc")) {
+				viewModGraph.setEnabled(false);
+				viewModBrowser.setEnabled(false);
+				createAnal.setEnabled(false);
+				createLearn.setEnabled(false);
+				createSynth.setEnabled(false);
+				createVer.setEnabled(false);
+				refresh.setEnabled(false);
+				check.setEnabled(false);
+				export.setEnabled(false);
+				copy.setEnabled(true);
+				rename.setEnabled(true);
+				delete.setEnabled(true);
+				viewRules.setEnabled(false);
+				viewTrace.setEnabled(false);
+				viewCircuit.setEnabled(false);
+				viewLog.setEnabled(false);
+				saveParam.setEnabled(false);
+				saveSbml.setEnabled(false);
+				saveTemp.setEnabled(false);
+			}
+			else if (tree.getFile().length() > 3
+					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".rsg")) {
+				viewModGraph.setEnabled(false);
+				viewModBrowser.setEnabled(false);
+				createAnal.setEnabled(false);
+				createLearn.setEnabled(false);
+				createSynth.setEnabled(false);
+				createVer.setEnabled(false);
+				refresh.setEnabled(false);
+				check.setEnabled(false);
+				export.setEnabled(false);
+				copy.setEnabled(true);
+				rename.setEnabled(true);
+				delete.setEnabled(true);
+				viewRules.setEnabled(false);
+				viewTrace.setEnabled(false);
+				viewCircuit.setEnabled(false);
+				viewLog.setEnabled(false);
+				saveParam.setEnabled(false);
+				saveSbml.setEnabled(false);
+				saveTemp.setEnabled(false);
+			}
+			else if (new File(tree.getFile()).isDirectory() && !tree.getFile().equals(root)) {
+				boolean sim = false;
+				boolean synth = false;
+				boolean ver = false;
+				boolean learn = false;
+				for (String s : new File(tree.getFile()).list()) {
+					if (s.length() > 3 && s.substring(s.length() - 4).equals(".sim")) {
+						sim = true;
+					}
+					else if (s.length() > 4 && s.substring(s.length() - 4).equals(".syn")) {
+						synth = true;
+					}
+					else if (s.length() > 4 && s.substring(s.length() - 4).equals(".ver")) {
+						ver = true;
+					}
+					else if (s.length() > 4 && s.substring(s.length() - 4).equals(".lrn")) {
+						learn = true;
+					}
+				}
+				if (sim || synth || ver || learn) {
+					viewModGraph.setEnabled(false);
+					viewModBrowser.setEnabled(false);
+					createAnal.setEnabled(false);
+					createLearn.setEnabled(false);
+					createSbml.setEnabled(false);
+					refresh.setEnabled(false);
+					check.setEnabled(false);
+					export.setEnabled(false);
+					copy.setEnabled(true);
+					rename.setEnabled(true);
+					delete.setEnabled(true);
+					viewRules.setEnabled(false);
+					viewTrace.setEnabled(false);
+					viewCircuit.setEnabled(false);
+					viewLog.setEnabled(false);
+					saveParam.setEnabled(false);
+					saveSbml.setEnabled(false);
+					saveTemp.setEnabled(false);
+				}
+			}
+			else {
+				viewModGraph.setEnabled(false);
+				viewModBrowser.setEnabled(false);
+				createAnal.setEnabled(false);
+				createLearn.setEnabled(false);
+				createSbml.setEnabled(false);
+				refresh.setEnabled(false);
+				check.setEnabled(false);
+				export.setEnabled(false);
+				copy.setEnabled(false);
+				rename.setEnabled(false);
+				delete.setEnabled(false);
+				viewRules.setEnabled(false);
+				viewTrace.setEnabled(false);
+				viewCircuit.setEnabled(false);
+				viewLog.setEnabled(false);
+				saveParam.setEnabled(false);
+				saveSbml.setEnabled(false);
+				saveTemp.setEnabled(false);
+			}
 		}
 	}
 
