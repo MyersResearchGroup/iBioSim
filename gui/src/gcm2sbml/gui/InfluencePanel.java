@@ -1,5 +1,6 @@
 package gcm2sbml.gui;
 
+import gcm2sbml.parser.CompatibilityFixer;
 import gcm2sbml.parser.GCMFile;
 import gcm2sbml.util.GlobalConstants;
 import gcm2sbml.util.Utility;
@@ -323,6 +324,51 @@ public class InfluencePanel extends JPanel implements ActionListener {
 			return true;
 		}
 		return true;
+	}
+	
+	public String updates() {
+		String updates = "";
+		if (paramsOnly) {
+			if (fields.get(GlobalConstants.COOPERATIVITY_STRING).getState().equals(PropertyField.states[1])) {
+				updates += "\"" + fields.get(GlobalConstants.NAME).getValue() + "\"/"
+						+ CompatibilityFixer.getSBMLName(GlobalConstants.COOPERATIVITY_STRING) + " "
+						+ fields.get(GlobalConstants.COOPERATIVITY_STRING).getValue();
+			}
+			if (fields.get(GlobalConstants.MAX_DIMER_STRING).getState()
+					.equals(PropertyField.states[1])) {
+				if (!updates.equals("")) {
+					updates += "\n";
+				}
+				updates += "\"" + fields.get(GlobalConstants.NAME).getValue() + "\"/"
+				+ CompatibilityFixer.getSBMLName(GlobalConstants.MAX_DIMER_STRING) + " "
+				+ fields.get(GlobalConstants.MAX_DIMER_STRING).getValue();
+			}
+			if (fields.get(GlobalConstants.KREP_STRING).getState().equals(PropertyField.states[1])) {
+				if (!updates.equals("")) {
+					updates += "\n";
+				}
+				updates += "\"" + fields.get(GlobalConstants.NAME).getValue() + "\"/"
+				+ CompatibilityFixer.getSBMLName(GlobalConstants.KREP_STRING) + " "
+				+ fields.get(GlobalConstants.KREP_STRING).getValue();
+			}
+			if (fields.get(GlobalConstants.KACT_STRING).getState().equals(PropertyField.states[1])) {
+				if (!updates.equals("")) {
+					updates += "\n";
+				}
+				updates += "\"" + fields.get(GlobalConstants.NAME).getValue() + "\"/"
+				+ CompatibilityFixer.getSBMLName(GlobalConstants.KACT_STRING) + " "
+				+ fields.get(GlobalConstants.KACT_STRING).getValue();
+			}
+			if (fields.get(GlobalConstants.KBIO_STRING).getState().equals(PropertyField.states[1])) {
+				if (!updates.equals("")) {
+					updates += "\n";
+				}
+				updates += "\"" + fields.get(GlobalConstants.NAME).getValue() + "\"/"
+				+ CompatibilityFixer.getSBMLName(GlobalConstants.KBIO_STRING) + " "
+				+ fields.get(GlobalConstants.KBIO_STRING).getValue();
+			}
+		}
+		return updates;
 	}
 
 	public void actionPerformed(ActionEvent e) {

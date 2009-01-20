@@ -2,6 +2,7 @@ package gcm2sbml.gui;
 
 import gcm2sbml.parser.CompatibilityFixer;
 import gcm2sbml.parser.GCMFile;
+import gcm2sbml.util.GlobalConstants;
 import gcm2sbml.util.Utility;
 
 import java.awt.GridLayout;
@@ -18,6 +19,8 @@ public class ParameterPanel extends JPanel {
 		this.totalSelected = totalSelected;
 		this.parameterList = parameterList;
 		this.gcm = gcm;
+		this.paramsOnly = paramsOnly;
+		changedParam = "";
 
 		fields = new HashMap<String, PropertyField>();
 		selected = totalSelected.substring(0, totalSelected.indexOf(" ("));
@@ -71,10 +74,12 @@ public class ParameterPanel extends JPanel {
 			if (fields.get(selected).getState().equals(PropertyField.states[1])) {
 				gcm.setParameter(selected, fields.get(selected).getValue());
 				newItem = newItem +  " ("+CompatibilityFixer.getSBMLName(selected)+"), ";
-				if (fields.get(selected).getValue().trim().startsWith("(")) {
+				if (paramsOnly && fields.get(selected).getValue().trim().startsWith("(")) {
 					newItem = newItem + "Sweep, " + fields.get(selected).getValue();
+					changedParam += CompatibilityFixer.getSBMLName(selected) + " " + fields.get(selected).getValue();
 				} else {
 					newItem = newItem + "Custom, " + fields.get(selected).getValue();
+					changedParam += CompatibilityFixer.getSBMLName(selected) + " " + fields.get(selected).getValue();
 				}
 			} else if (fields.get(selected).getState().equals(PropertyField.states[0])) {
 				gcm.removeParameter(selected);
@@ -92,9 +97,15 @@ public class ParameterPanel extends JPanel {
 		}
 		return true;
 	}
+	
+	public String updates() {
+			return changedParam;
+	}
 
 	private String[] options = { "Ok", "Cancel" };
 
+	private boolean paramsOnly;
+	private String changedParam = "";
 	private String totalSelected = "";
 	private String selected = "";
 	private GCMFile gcm = null;
