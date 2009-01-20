@@ -2273,9 +2273,19 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				GeneticNetwork.setRoot(root + File.separator);
 				network.mergeSBML(root + separator + sbmlFile);
 				refreshTree();
-				SBML_Editor sbml = new SBML_Editor(root + separator + sbmlFile, null, log, this, null, null);
-				// sbml.addMouseListener(this);
-				addTab(sbmlFile, sbml, "SBML Editor");
+				boolean done = false;
+				for (int i = 0; i < tab.getTabCount(); i++) {
+					if (tab.getTitleAt(i).equals(sbmlFile)) {
+						updateOpenSBML(sbmlFile);
+						tab.setSelectedIndex(i);
+						done = true;
+					}
+				}
+				if (!done) {
+					SBML_Editor sbml = new SBML_Editor(root + separator + sbmlFile, null, log, this, null,
+							null);
+					addTab(sbmlFile, sbml, "SBML Editor");
+				}
 			}
 			catch (Exception e1) {
 				JOptionPane.showMessageDialog(frame, "Unable to create SBML file.", "Error",
@@ -8533,7 +8543,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		saveAsGraph.setEnabled(false);
 		saveAsSbml.setEnabled(false);
 		saveAsTemplate.setEnabled(false);
-		if (tree.getFile()!=null) {
+		if (tree.getFile() != null) {
 			if (tree.getFile().length() > 4
 					&& tree.getFile().substring(tree.getFile().length() - 5).equals(".sbml")
 					|| tree.getFile().length() > 3
@@ -8541,7 +8551,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				viewModGraph.setEnabled(true);
 				viewModGraph.setActionCommand("graph");
 				viewModBrowser.setEnabled(true);
-			createAnal.setEnabled(true);
+				createAnal.setEnabled(true);
 				createAnal.setActionCommand("simulate");
 				createLearn.setEnabled(true);
 				createSbml.setEnabled(false);
@@ -8816,53 +8826,55 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 	public boolean overwrite(String fullPath, String name) {
 		if (new File(fullPath).exists()) {
 			Object[] options = { "Overwrite", "Cancel" };
-			//int value = JOptionPane.showOptionDialog(frame, name + " already exists."
-			//		+ "\nDo you want to overwrite?", "Overwrite", JOptionPane.YES_NO_OPTION,
-			//		JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-			//if (value == JOptionPane.YES_OPTION) {
-				String[] views = canDelete(name);
-				if (views.length == 0) {
-					for (int i = 0; i < tab.getTabCount(); i++) {
-						if (tab.getTitleAt(i).equals(name)) {
-							tab.remove(i);
-						}
+			// int value = JOptionPane.showOptionDialog(frame, name + " already
+			// exists."
+			// + "\nDo you want to overwrite?", "Overwrite",
+			// JOptionPane.YES_NO_OPTION,
+			// JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+			// if (value == JOptionPane.YES_OPTION) {
+			String[] views = canDelete(name);
+			if (views.length == 0) {
+				for (int i = 0; i < tab.getTabCount(); i++) {
+					if (tab.getTitleAt(i).equals(name)) {
+						tab.remove(i);
 					}
-					File dir = new File(fullPath);
-					if (dir.isDirectory()) {
-						deleteDir(dir);
-					}
-					else {
-						System.gc();
-						dir.delete();
-					}
-					return true;
+				}
+				File dir = new File(fullPath);
+				if (dir.isDirectory()) {
+					deleteDir(dir);
 				}
 				else {
-					String view = "";
-					for (int i = 0; i < views.length; i++) {
-						if (i == views.length - 1) {
-							view += views[i];
-						}
-						else {
-							view += views[i] + "\n";
-						}
-					}
-					String message = "Unable to overwrite file." + "\nIt is linked to the following views:\n"
-							+ view + "\nDelete these views first.";
-					JTextArea messageArea = new JTextArea(message);
-					messageArea.setEditable(false);
-					JScrollPane scroll = new JScrollPane();
-					scroll.setMinimumSize(new Dimension(300, 300));
-					scroll.setPreferredSize(new Dimension(300, 300));
-					scroll.setViewportView(messageArea);
-					JOptionPane.showMessageDialog(frame, scroll, "Unable To Overwrite File",
-							JOptionPane.ERROR_MESSAGE);
-					return false;
+					System.gc();
+					dir.delete();
 				}
-			//}
-			//else {
-			//	return false;
-			//}
+				return true;
+			}
+			else {
+				String view = "";
+				for (int i = 0; i < views.length; i++) {
+					if (i == views.length - 1) {
+						view += views[i];
+					}
+					else {
+						view += views[i] + "\n";
+					}
+				}
+				String message = "Unable to overwrite file." + "\nIt is linked to the following views:\n"
+						+ view + "\nDelete these views first.";
+				JTextArea messageArea = new JTextArea(message);
+				messageArea.setEditable(false);
+				JScrollPane scroll = new JScrollPane();
+				scroll.setMinimumSize(new Dimension(300, 300));
+				scroll.setPreferredSize(new Dimension(300, 300));
+				scroll.setViewportView(messageArea);
+				JOptionPane.showMessageDialog(frame, scroll, "Unable To Overwrite File",
+						JOptionPane.ERROR_MESSAGE);
+				return false;
+			}
+			// }
+			// else {
+			// return false;
+			// }
 		}
 		else {
 			return true;
