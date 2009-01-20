@@ -49,6 +49,8 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 	private GCMFile gcm = null;
 	
 	private boolean paramsOnly;
+	
+	private ArrayList<String> parameterChanges;
 
 	public GCM2SBMLEditor(String path, boolean paramsOnly) {
 		this(path, null, null, null, paramsOnly);
@@ -60,6 +62,9 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		this.log = log;
 		this.path = path;
 		this.paramsOnly = paramsOnly;
+		if (paramsOnly) {
+			parameterChanges = new ArrayList<String>();
+		}
 		gcm = new GCMFile();
 		if (filename != null) {
 			gcm.load(path + File.separator + filename);

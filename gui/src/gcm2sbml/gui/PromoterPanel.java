@@ -1,5 +1,6 @@
 package gcm2sbml.gui;
 
+import gcm2sbml.parser.CompatibilityFixer;
 import gcm2sbml.parser.GCMFile;
 import gcm2sbml.util.GlobalConstants;
 import gcm2sbml.util.Utility;
@@ -231,6 +232,59 @@ public class PromoterPanel extends JPanel {
 			return true;
 		}
 		return true;
+	}
+	
+	public String updates() {
+		String updates = "";
+		if (paramsOnly) {
+			if (fields.get(GlobalConstants.PROMOTER_COUNT_STRING).getState().equals(PropertyField.states[1])) {
+				updates += fields.get(GlobalConstants.ID).getValue() + "/"
+						+ CompatibilityFixer.getSBMLName(GlobalConstants.PROMOTER_COUNT_STRING) + " "
+						+ fields.get(GlobalConstants.PROMOTER_COUNT_STRING).getValue();
+			}
+			if (fields.get(GlobalConstants.RNAP_BINDING_STRING).getState()
+					.equals(PropertyField.states[1])) {
+				if (!updates.equals("")) {
+					updates += "\n";
+				}
+				updates += fields.get(GlobalConstants.ID).getValue() + "/"
+				+ CompatibilityFixer.getSBMLName(GlobalConstants.RNAP_BINDING_STRING) + " "
+				+ fields.get(GlobalConstants.RNAP_BINDING_STRING).getValue();
+			}
+			if (fields.get(GlobalConstants.OCR_STRING).getState().equals(PropertyField.states[1])) {
+				if (!updates.equals("")) {
+					updates += "\n";
+				}
+				updates += fields.get(GlobalConstants.ID).getValue() + "/"
+				+ CompatibilityFixer.getSBMLName(GlobalConstants.OCR_STRING) + " "
+				+ fields.get(GlobalConstants.OCR_STRING).getValue();
+			}
+			if (fields.get(GlobalConstants.STOICHIOMETRY_STRING).getState().equals(PropertyField.states[1])) {
+				if (!updates.equals("")) {
+					updates += "\n";
+				}
+				updates += fields.get(GlobalConstants.ID).getValue() + "/"
+				+ CompatibilityFixer.getSBMLName(GlobalConstants.STOICHIOMETRY_STRING) + " "
+				+ fields.get(GlobalConstants.STOICHIOMETRY_STRING).getValue();
+			}
+			if (fields.get(GlobalConstants.KBASAL_STRING).getState().equals(PropertyField.states[1])) {
+				if (!updates.equals("")) {
+					updates += "\n";
+				}
+				updates += fields.get(GlobalConstants.ID).getValue() + "/"
+				+ CompatibilityFixer.getSBMLName(GlobalConstants.KBASAL_STRING) + " "
+				+ fields.get(GlobalConstants.KBASAL_STRING).getValue();
+			}
+			if (fields.get(GlobalConstants.ACTIVED_STRING).getState().equals(PropertyField.states[1])) {
+				if (!updates.equals("")) {
+					updates += "\n";
+				}
+				updates += fields.get(GlobalConstants.ID).getValue() + "/"
+				+ CompatibilityFixer.getSBMLName(GlobalConstants.ACTIVED_STRING) + " "
+				+ fields.get(GlobalConstants.ACTIVED_STRING).getValue();
+			}
+		}
+		return updates;
 	}
 
 	public void actionPerformed(ActionEvent e) {
