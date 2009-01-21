@@ -71,18 +71,22 @@ public class LHPNFile {
 			if (!inputs.isEmpty()) {
 				buffer.append(".inputs ");
 				for (String s : inputs.keySet()) {
-					buffer.append(s + " ");
-					boolOrder.put(s, i);
-					i++;
+					if (inputs.get(s) != null) {
+						buffer.append(s + " ");
+						boolOrder.put(s, i);
+						i++;
+					}
 				}
 				buffer.append("\n");
 			}
 			if (!outputs.isEmpty()) {
 				buffer.append(".outputs ");
 				for (String s : outputs.keySet()) {
-					buffer.append(s + " ");
-					boolOrder.put(s, i);
-					i++;
+					if (outputs.get(s) != null) {
+						buffer.append(s + " ");
+						boolOrder.put(s, i);
+						i++;
+					}
 				}
 				buffer.append("\n");
 			}
@@ -104,10 +108,14 @@ public class LHPNFile {
 				buffer.append("\n");
 			}
 			if (!inputs.isEmpty() || !outputs.isEmpty()) {
-				buffer.append("#@.init_state [");
+				boolean flag = false;
 				for (i = 0; i < boolOrder.size(); i++) {
 					for (String s : inputs.keySet()) {
 						if (boolOrder.get(s).equals(i)) {
+							if (!flag) {
+								buffer.append("#@.init_state [");
+								flag = true;
+							}
 							if (inputs.get(s)) {
 								buffer.append("1");
 							}
@@ -117,17 +125,25 @@ public class LHPNFile {
 						}
 					}
 					for (String s : outputs.keySet()) {
-						if (boolOrder.get(s).equals(i)) {
-							if (outputs.get(s)) {
-								buffer.append("1");
-							}
-							else {
-								buffer.append("0");
+						if (s != null) {
+							if (boolOrder.get(s).equals(i) && outputs.get(s) != null) {
+								if (!flag) {
+									buffer.append("#@.init_state [");
+									flag = true;
+								}
+								if (outputs.get(s)) {
+									buffer.append("1");
+								}
+								else {
+									buffer.append("0");
+								}
 							}
 						}
 					}
 				}
-				buffer.append("]\n");
+				if (flag) {
+					buffer.append("]\n");
+				}
 			}
 			if (!controlFlow.isEmpty()) {
 				buffer.append(".graph\n");
@@ -221,7 +237,6 @@ public class LHPNFile {
 						buffer.append("<" + s + "=");
 						for (Object key : prop.keySet()) {
 							String t = (String) key;
-							log.addText("key " + t);
 							buffer.append("[" + t + ":=" + prop.getProperty(t) + "]");
 						}
 						buffer.append(">");
@@ -233,7 +248,6 @@ public class LHPNFile {
 						buffer.append("<" + s + "=");
 						for (Object key : prop.keySet()) {
 							String t = (String) key;
-							log.addText("key1 " + t+s);
 							buffer.append("[" + t + ":=" + prop.getProperty(t) + "]");
 						}
 						buffer.append(">");
@@ -286,7 +300,7 @@ public class LHPNFile {
 			if (buffer.toString().length() > 0) {
 				buffer.append(".end\n");
 			}
-			// System.out.print(buffer);
+			System.out.print(buffer);
 			p.print(buffer);
 			p.close();
 			log.addText("Saving:\n" + file + "\n");
@@ -1648,11 +1662,11 @@ public class LHPNFile {
 
 	private static final String DELAY_LINE = "#@\\.delay_assignments \\{([\\S[^\\}]]+?)\\}";
 
-	private static final String DELAY = "<([\\w_]+)=(\\[\\d+,\\d+\\])>";
+	private static final String DELAY = "<([\\w_]+)=(\\[\\w+,\\w+\\])>";
 
 	private static final String BOOLEAN_LINE = "#@\\.boolean_assignments \\{([\\S[^\\}]]+?)\\}";
 
-	private static final String BOOLEAN_TRANS = "<([\\w_]+?)=([\\S[^>]]+?)>";
+	private static final String BOOLEAN_TRANS = "<([\\w]+?)=([\\S[^>]]+?)>";
 
 	private static final String BOOLEAN_ASSIGN = "\\[([\\w_]+):=([\\S^\\]]+)\\]";
 

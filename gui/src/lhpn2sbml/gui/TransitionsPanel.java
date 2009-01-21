@@ -203,14 +203,16 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 			fields.get(GlobalConstants.ID).setValue(selected);
 			// log.addText(lhpn.getDelay(selected));
 			String delay = lhpn.getDelay(selected);
-			Pattern pattern = Pattern.compile("\\[([\\S^,]),([\\S^\\]])\\]");
-			Matcher matcher = pattern.matcher(delay);
-			if (matcher.find()) {
-				fields.get("Delay lower").setValue(matcher.group(1));
-				fields.get("Delay upper").setValue(matcher.group(2));
-			}
-			else {
-				fields.get("Delay lower").setValue(delay);
+			if (delay != null) {
+				Pattern pattern = Pattern.compile("\\[([\\S^,]+?),([\\S^\\]]+?)\\]");
+				Matcher matcher = pattern.matcher(delay);
+				if (matcher.find()) {
+					fields.get("Delay lower").setValue(matcher.group(1));
+					fields.get("Delay upper").setValue(matcher.group(2));
+				}
+				else {
+					fields.get("Delay lower").setValue(delay);
+				}
 			}
 			fields.get("Enabling Condition").setValue(lhpn.getEnabling(selected));
 			// log.addText(selected + lhpn.getEnabling(selected));
@@ -278,10 +280,12 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 			transitionsList.addItem(id);
 			transitionsList.setSelectedValue(id, true);
 			for (String s : controlList.getItems()) {
-				if (s.contains(oldName)) {
-					controlList.removeItem(s);
-					s = s.replace(oldName, id);
-					controlList.addItem(s);
+				if (oldName != null) {
+					if (s.contains(oldName)) {
+						controlList.removeItem(s);
+						s = s.replace(oldName, id);
+						controlList.addItem(s);
+					}
 				}
 			}
 		}

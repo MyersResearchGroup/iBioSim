@@ -204,9 +204,14 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 		mainPanelCenterCenter.add(flowPanel);
 
 	}
+	
+	public boolean isDirty() {
+		return dirty;
+	}
 
 	public void save() {
 		dirty = false;
+		log.addText("check LHPN");
 		lhpnFile.save(directory + File.separator + filename);
 	}
 
