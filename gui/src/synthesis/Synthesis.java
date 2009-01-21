@@ -48,6 +48,8 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 	private ButtonGroup timingMethodGroup, technologyGroup, algorithmGroup;
 
 	private String directory, separator, synthFile, synthesisFile, sourceFile;
+	
+	private String oldMax, oldDelay, oldBdd;
 
 	private boolean change;
 
@@ -106,6 +108,9 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 		maxSize.setPreferredSize(new Dimension(30, 18));
 		gateDelay.setPreferredSize(new Dimension(70, 18));
 		bddSize.setPreferredSize(new Dimension(40, 18));
+		oldMax = maxSize.getText();
+		oldDelay = gateDelay.getText();
+		oldBdd = bddSize.getText();
 
 		algorithm = new JLabel("Synthesis Algorithm:");
 		timingMethod = new JLabel("Timing Method:");
@@ -128,28 +133,52 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 		bag = new JRadioButton("BAG");
 		bap = new JRadioButton("BAP");
 		baptdc = new JRadioButton("BAPTDC");
+		untimed.addActionListener(this);
+		geometric.addActionListener(this);
+		posets.addActionListener(this);
+		bag.addActionListener(this);
+		bap.addActionListener(this);
+		baptdc.addActionListener(this);
 		// Technology Options
 		atomicGates = new JRadioButton("Atomic Gates");
 		generalizedC = new JRadioButton("Generalized-C");
 		standardC = new JRadioButton("Standard-C");
 		bmGc = new JRadioButton("BM gC");
 		bm2 = new JRadioButton("BM 2-level");
+		atomicGates.addActionListener(this);
+		generalizedC.addActionListener(this);
+		standardC.addActionListener(this);
+		bmGc.addActionListener(this);
+		bm2.addActionListener(this);
 		// Other Basic Options
 		dot = new JCheckBox("Dot");
 		verbose = new JCheckBox("Verbose");
 		quiet = new JCheckBox("Quiet");
 		noinsert = new JCheckBox("No Insert");
+		dot.addActionListener(this);
+		verbose.addActionListener(this);
+		quiet.addActionListener(this);
+		noinsert.addActionListener(this);
 		// Synthesis Algorithms
 		singleCube = new JRadioButton("Single Cube");
 		multicube = new JRadioButton("Multicube");
 		bdd = new JRadioButton("BDD");
 		direct = new JRadioButton("Direct");
+		singleCube.addActionListener(this);
+		multicube.addActionListener(this);
+		bdd.addActionListener(this);
+		direct.addActionListener(this);
 		// Compilations Options
 		newTab = new JCheckBox("New Tab");
 		postProc = new JCheckBox("Post Processing");
 		redCheck = new JCheckBox("Redundancy Check");
 		xForm2 = new JCheckBox("Don't Use Transform 2");
 		expandRate = new JCheckBox("Expand Rate");
+		newTab.addActionListener(this);
+		postProc.addActionListener(this);
+		redCheck.addActionListener(this);
+		xForm2.addActionListener(this);
+		expandRate.addActionListener(this);
 		// Advanced Timing Options
 		genrg = new JCheckBox("Generate RG");
 		timsubset = new JCheckBox("Subsets");
@@ -162,12 +191,28 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 		nofail = new JCheckBox("No fail");
 		keepgoing = new JCheckBox("Keep going");
 		explpn = new JCheckBox("Expand LHPN");
+		genrg.addActionListener(this);
+		timsubset.addActionListener(this);
+		superset.addActionListener(this);
+		infopt.addActionListener(this);
+		orbmatch.addActionListener(this);
+		interleav.addActionListener(this);
+		prune.addActionListener(this);
+		disabling.addActionListener(this);
+		nofail.addActionListener(this);
+		keepgoing.addActionListener(this);
+		explpn.addActionListener(this);
 		// Advanced Synthesis Options
 		shareGate = new JCheckBox("Share Gate");
 		combo = new JCheckBox("Combo");
 		exact = new JCheckBox("Exact");
 		manual = new JCheckBox("Manual");
 		inponly = new JCheckBox("Input Only");
+		shareGate.addActionListener(this);
+		combo.addActionListener(this);
+		exact.addActionListener(this);
+		manual.addActionListener(this);
+		inponly.addActionListener(this);
 		// Pruning Options
 		notFirst = new JCheckBox("Not First");
 		preserve = new JCheckBox("Preserve");
@@ -178,10 +223,22 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 		conflict = new JCheckBox("Conflict");
 		reachable = new JCheckBox("Reachable");
 		dumb = new JCheckBox("Dumb");
+		notFirst.addActionListener(this);
+		preserve.addActionListener(this);
+		ordered.addActionListener(this);
+		subset.addActionListener(this);
+		unsafe.addActionListener(this);
+		expensive.addActionListener(this);
+		conflict.addActionListener(this);
+		reachable.addActionListener(this);
+		dumb.addActionListener(this);
 		// Other Advanced Options
 		nochecks = new JCheckBox("No checks");
 		reduction = new JCheckBox("Reduction");
 		minins = new JCheckBox("Limit Transition Point Size");
+		nochecks.addActionListener(this);
+		reduction.addActionListener(this);
+		minins.addActionListener(this);
 
 		timingMethodGroup = new ButtonGroup();
 		technologyGroup = new ButtonGroup();
@@ -1327,6 +1384,9 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 			out.close();
 			log.addText("Saving Parameter File:\n" + directory + separator + synthFile);
 			change = false;
+			oldMax = maxSize.getText();
+			oldDelay = gateDelay.getText();
+			oldBdd = bddSize.getText();
 		}
 		catch (Exception e1) {
 			JOptionPane.showMessageDialog(biosim.frame(), "Unable to save parameter file!",
@@ -1531,6 +1591,15 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 	}
 
 	public boolean hasChanged() {
+		if (!oldMax.equals(maxSize.getText())) {
+			return true;
+		}
+		if (!oldDelay.equals(gateDelay.getText())) {
+			return true;
+		}
+		if (!oldBdd.equals(bddSize.getText())) {
+			return true;
+		}
 		return change;
 	}
 }

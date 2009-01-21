@@ -45,7 +45,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 
 	private ButtonGroup timingMethodGroup, algorithmGroup;
 
-	private String directory, separator, verFile, verifyFile, sourceFile;
+	private String directory, separator, verFile, verifyFile, sourceFile, oldBdd;
 
 	private boolean change;
 
@@ -99,6 +99,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 
 		bddSize = new JTextField("");
 		bddSize.setPreferredSize(new Dimension(40, 18));
+		oldBdd = bddSize.getText();
 
 		algorithm = new JLabel("Verification Algorithm:");
 		timingMethod = new JLabel("Timing Method:");
@@ -117,25 +118,46 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		bag = new JRadioButton("BAG");
 		bap = new JRadioButton("BAP");
 		baptdc = new JRadioButton("BAPTDC");
+		untimed.addActionListener(this);
+		geometric.addActionListener(this);
+		posets.addActionListener(this);
+		bag.addActionListener(this);
+		bap.addActionListener(this);
+		baptdc.addActionListener(this);
 		// Basic Timing Options
 		abst = new JCheckBox("Abstract");
 		partialOrder = new JCheckBox("Partial Order");
+		abst.addActionListener(this);
+		partialOrder.addActionListener(this);
 		// Other Basic Options
 		dot = new JCheckBox("Dot");
 		verbose = new JCheckBox("Verbose");
 		quiet = new JCheckBox("Quiet");
+		dot.addActionListener(this);
+		verbose.addActionListener(this);
+		quiet.addActionListener(this);
 		// Verification Algorithms
 		verify = new JRadioButton("Verify");
 		vergate = new JRadioButton("Verify Gates");
 		orbits = new JRadioButton("Orbits");
 		search = new JRadioButton("Search");
 		trace = new JRadioButton("Trace");
+		verify.addActionListener(this);
+		vergate.addActionListener(this);
+		orbits.addActionListener(this);
+		search.addActionListener(this);
+		trace.addActionListener(this);
 		// Compilations Options
 		newTab = new JCheckBox("New Tab");
 		postProc = new JCheckBox("Post Processing");
 		redCheck = new JCheckBox("Redundancy Check");
 		xForm2 = new JCheckBox("Don't Use Transform 2");
 		expandRate = new JCheckBox("Expand Rate");
+		newTab.addActionListener(this);
+		postProc.addActionListener(this);
+		redCheck.addActionListener(this);
+		xForm2.addActionListener(this);
+		expandRate.addActionListener(this);
 		// Advanced Timing Options
 		genrg = new JCheckBox("Generate RG");
 		timsubset = new JCheckBox("Subsets");
@@ -148,9 +170,22 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		nofail = new JCheckBox("No fail");
 		keepgoing = new JCheckBox("Keep going");
 		explpn = new JCheckBox("Expand LHPN");
+		genrg.addActionListener(this);
+		timsubset.addActionListener(this);
+		superset.addActionListener(this);
+		infopt.addActionListener(this);
+		orbmatch.addActionListener(this);
+		interleav.addActionListener(this);
+		prune.addActionListener(this);
+		disabling.addActionListener(this);
+		nofail.addActionListener(this);
+		keepgoing.addActionListener(this);
+		explpn.addActionListener(this);
 		// Other Advanced Options
 		nochecks = new JCheckBox("No checks");
 		reduction = new JCheckBox("Reduction");
+		nochecks.addActionListener(this);
+		reduction.addActionListener(this);
 
 		timingMethodGroup = new ButtonGroup();
 		algorithmGroup = new ButtonGroup();
@@ -960,6 +995,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			out.close();
 			log.addText("Saving Parameter File:\n" + directory + separator + verFile);
 			change = false;
+			oldBdd = bddSize.getText();
 		}
 		catch (Exception e1) {
 			JOptionPane.showMessageDialog(biosim.frame(), "Unable to save parameter file!",
@@ -1099,6 +1135,9 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 	}
 
 	public boolean hasChanged() {
+		if (!oldBdd.equals(bddSize.getText())) {
+			return true;
+		}
 		return change;
 	}
 }
