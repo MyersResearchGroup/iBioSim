@@ -24,7 +24,7 @@ public class PlacePanel extends JPanel implements ActionListener {
 
 	private String selected = "";
 
-	private PropertyList placeList;
+	private PropertyList placeList, controlList;
 	
 	private JComboBox initBox;
 	
@@ -36,11 +36,12 @@ public class PlacePanel extends JPanel implements ActionListener {
 
 	private HashMap<String, PropertyField> fields = null;
 
-	public PlacePanel(String selected, PropertyList placeList,
+	public PlacePanel(String selected, PropertyList placeList, PropertyList controlList,
 			LHPNFile lhpn) {
 		super(new GridLayout(6, 1));
 		this.selected = selected;
 		this.placeList = placeList;
+		this.controlList = controlList;
 		this.lhpn = lhpn;
 
 		fields = new HashMap<String, PropertyField>();
@@ -128,7 +129,13 @@ public class PlacePanel extends JPanel implements ActionListener {
 			placeList.removeItem(oldName);
 			placeList.addItem(id);
 			placeList.setSelectedValue(id, true);
-
+			for (String s : controlList.getItems()) {
+				if (s.contains(oldName)) {
+					controlList.removeItem(s);
+					s = s.replace(oldName, id);
+					controlList.addItem(s);
+				}
+			}
 		}
 		else if (value == JOptionPane.NO_OPTION) {
 			// System.out.println();

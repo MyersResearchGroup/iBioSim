@@ -391,7 +391,7 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 				if (list.getSelectedValue() != null && getName().contains("Edit")) {
 					selected = list.getSelectedValue().toString();
 				}
-				PlacePanel panel = new PlacePanel(selected, list, lhpnFile);
+				PlacePanel panel = new PlacePanel(selected, list, controlFlow, lhpnFile);
 			}
 			else if (getName().contains("Transition")) {
 				String selected = null;
