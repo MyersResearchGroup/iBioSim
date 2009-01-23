@@ -286,15 +286,20 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		}
 
 		// Creates a new frame
-		if (!lema) {
-			frame = new JFrame("iBioSim");
-			frame.setIconImage(new ImageIcon(System.getenv("BIOSIM") + separator + "gui"
-					+ separator + "icons" + separator + "iBioSim.png").getImage());
+		if (lema) {
+			frame = new JFrame("LEMA");
+			frame.setIconImage(new ImageIcon(System.getenv("BIOSIM") + separator + "gui" + separator
+					+ "icons" + separator + "iBioSim.png").getImage());
+		}
+		else if (atacs) {
+			frame = new JFrame("ATACS");
+			frame.setIconImage(new ImageIcon(System.getenv("BIOSIM") + separator + "gui" + separator
+					+ "icons" + separator + "iBioSim.png").getImage());
 		}
 		else {
-			frame = new JFrame("ATACS");
-			frame.setIconImage(new ImageIcon(System.getenv("BIOSIM") + separator + "gui"
-					+ separator + "icons" + separator + "iBioSim.png").getImage());
+			frame = new JFrame("iBioSim");
+			frame.setIconImage(new ImageIcon(System.getenv("BIOSIM") + separator + "gui" + separator
+					+ "icons" + separator + "iBioSim.png").getImage());
 		}
 
 		// Makes it so that clicking the x in the corner closes the program
