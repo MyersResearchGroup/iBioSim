@@ -44,6 +44,8 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 	//private static final String[] types = { "boolean", "continuous", "rate" };
 
 	private HashMap<String, PropertyField> fields = null;
+	
+	//private boolean rate = false;
 
 	public AssignmentPanel(String transition, String selected, PropertyList assignmentList, PropertyList continuousList, PropertyList rateList, PropertyList booleanList, PropertyList integerList,
 			LHPNFile lhpn) {
@@ -130,7 +132,8 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 		if (selected != null) {
 			oldName = selected;
 			String[] tempArray = new String[2];
-			if (oldName.matches("[\\S^']+':=[\\S+]")) {
+			if (oldName.matches("[\\S^']+':=[\\S]+")) {
+				rateBox.setSelected(true);
 				tempArray = oldName.split("':=");
 			}
 			else {
@@ -316,11 +319,11 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 				if (selected != null && !oldName.equals(id)) {
 					String[] selectArray = selected.split("':=");
 					String[] oldArray = oldName.split("':=");
-					lhpn.removeContAssign(selectArray[0], oldArray[0]);
+					lhpn.removeRateAssign(selectArray[0], oldArray[0]);
 				}
 				else {
 					//System.out.println(transition + " " + id + " " + property.getProperty("Assignment value"));
-					lhpn.addContAssign(transition, variable, value);
+					lhpn.addRateAssign(transition, variable, value);
 				}
 			}
 		}
