@@ -281,10 +281,13 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 			transitionsList.setSelectedValue(id, true);
 			for (String s : controlList.getItems()) {
 				if (oldName != null) {
-					if (s.contains(oldName)) {
-						controlList.removeItem(s);
-						s = s.replace(oldName, id);
-						controlList.addItem(s);
+					String[] array = s.split("\\s");
+					for (String t : array) {
+						if (t.equals(oldName)) {
+							controlList.removeItem(s);
+							s = s.replace(oldName, id);
+							controlList.addItem(s);
+						}
 					}
 				}
 			}
@@ -334,8 +337,8 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 		}
 		String delay;
 		if (!fields.get("Delay upper").getValue().equals("")) {
-			delay = "[" + fields.get("Delay upper").getValue() + ","
-					+ fields.get("Delay lower").getValue() + "]";
+			delay = "[" + fields.get("Delay lower").getValue() + ","
+					+ fields.get("Delay upper").getValue() + "]";
 		}
 		else {
 			delay = fields.get("Delay lower").getValue();
