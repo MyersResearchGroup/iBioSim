@@ -4539,7 +4539,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					String cmd = "atacs -llodpl " + filename;
 					File work = new File(root);
 					Runtime exec = Runtime.getRuntime();
-					exec.exec(cmd, null, work);
+					Process ATACS=exec.exec(cmd, null, work);
+					ATACS.waitFor();
 					log.addText("Executing:\n" + cmd);
 					String[] findTheFile = filename.split("\\.");
 					// String directory = "";
@@ -4705,6 +4706,10 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				e1.printStackTrace();
 				JOptionPane.showMessageDialog(frame, "File cannot be read", "Error",
 						JOptionPane.ERROR_MESSAGE);
+			}
+			catch (InterruptedException e2) {
+				// TODO Auto-generated catch block
+				e2.printStackTrace();
 			}
 		}
 		else if (e.getActionCommand().equals("copy") || e.getSource() == copy) {

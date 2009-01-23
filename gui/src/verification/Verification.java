@@ -198,7 +198,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		algorithmGroup = new ButtonGroup();
 
 		if (lema) {
-			bdd.setSelected(true);
+			dbm.setSelected(true);
 		}
 		else {
 			untimed.setSelected(true);
@@ -525,9 +525,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		basicOptions.add(Box.createVerticalGlue());
 
 		advOptions.add(compilationPanel);
-		if (!lema) {
-			advOptions.add(advTimingPanel);
-		}
+		advOptions.add(advTimingPanel);
 		advOptions.add(advancedPanel);
 		advOptions.add(bddPanel);
 		advOptions.setLayout(new BoxLayout(advOptions, BoxLayout.Y_AXIS));
@@ -580,7 +578,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		if (traceFile.exists()) {
 			traceFile.delete();
 		}
-		String options = "";
+		String options = "-ll ";
 		// BDD Linkspace Size
 		if (!bddSize.getText().equals("") && !bddSize.getText().equals("0")) {
 			options = options + "-L" + bddSize.getText() + " ";
