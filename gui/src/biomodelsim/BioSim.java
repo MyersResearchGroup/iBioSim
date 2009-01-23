@@ -136,6 +136,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 	private JMenuItem newUnc; // The new extended burst mode menu item
 
 	private JMenuItem newRsg; // The new rsg menu item
+	
+	private JMenuItem newSpice; // The new spice circuit item
 
 	private JMenuItem exit; // The exit menu item
 
@@ -156,6 +158,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 	private JMenuItem importUnc; // The import extended burst mode menu item
 
 	private JMenuItem importRsg; // The import rsg menu item
+	
+	private JMenuItem importSpice; // The import spice circuit item
 
 	private JMenuItem manual; // The manual menu item
 
@@ -395,6 +399,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		newProj = new JMenuItem("Project");
 		newCircuit = new JMenuItem("Genetic Circuit Model");
 		newModel = new JMenuItem("SBML Model");
+		newSpice = new JMenuItem("Spice Circuit");
 		if (lema) {
 			newVhdl = new JMenuItem("VHDL-AMS Model");
 			newLhpn = new JMenuItem("Labeled Hybrid Petri Net");
@@ -419,6 +424,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			importVhdl = new JMenuItem("VHDL Model");
 			importLhpn = new JMenuItem("Petri Net");
 		}
+		importSpice = new JMenuItem("Spice Circuit");
 		importCsp = new JMenuItem("CSP Model");
 		importHse = new JMenuItem("Handshaking Expansion");
 		importUnc = new JMenuItem("Extended Burst Mode Machine");
@@ -474,6 +480,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		newHse.addActionListener(this);
 		newUnc.addActionListener(this);
 		newRsg.addActionListener(this);
+		newSpice.addActionListener(this);
 		exit.addActionListener(this);
 		about.addActionListener(this);
 		importSbml.addActionListener(this);
@@ -484,6 +491,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		importHse.addActionListener(this);
 		importUnc.addActionListener(this);
 		importRsg.addActionListener(this);
+		importSpice.addActionListener(this);
 		exportCsv.addActionListener(this);
 		exportDat.addActionListener(this);
 		exportEps.addActionListener(this);
@@ -627,11 +635,12 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		newModel.setMnemonic(KeyEvent.VK_S);
 		newVhdl.setMnemonic(KeyEvent.VK_V);
 		newLhpn.setMnemonic(KeyEvent.VK_L);
+		newSpice.setMnemonic(KeyEvent.VK_P);
 		about.setMnemonic(KeyEvent.VK_A);
 		manual.setMnemonic(KeyEvent.VK_M);
 		graph.setMnemonic(KeyEvent.VK_T);
 		probGraph.setMnemonic(KeyEvent.VK_H);
-		if (!lema && !atacs) {
+		if (!async) {
 			importDot.setMnemonic(KeyEvent.VK_G);
 		}
 		else {
@@ -639,6 +648,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		}
 		importSbml.setMnemonic(KeyEvent.VK_S);
 		importVhdl.setMnemonic(KeyEvent.VK_V);
+		importSpice.setMnemonic(KeyEvent.VK_P);
 		save.setMnemonic(KeyEvent.VK_S);
 		run.setMnemonic(KeyEvent.VK_R);
 		check.setMnemonic(KeyEvent.VK_K);
@@ -663,6 +673,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		importHse.setEnabled(false);
 		importUnc.setEnabled(false);
 		importRsg.setEnabled(false);
+		importSpice.setEnabled(false);
 		exportMenu.setEnabled(false);
 		// exportCsv.setEnabled(false);
 		// exportDat.setEnabled(false);
@@ -680,6 +691,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		newHse.setEnabled(false);
 		newUnc.setEnabled(false);
 		newRsg.setEnabled(false);
+		newSpice.setEnabled(false);
 		graph.setEnabled(false);
 		probGraph.setEnabled(false);
 		save.setEnabled(false);
@@ -730,6 +742,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		else {
 			newMenu.add(newVhdl);
 			newMenu.add(newLhpn);
+			newMenu.add(newSpice);
 		}
 		newMenu.add(graph);
 		newMenu.add(probGraph);
@@ -758,22 +771,27 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		}
 		file.add(saveParam);
 		file.add(run);
-		if (!lema) {
+		if (!async) {
 			file.add(check);
 		}
 		file.addSeparator();
 		file.add(importMenu);
-		if (!lema) {
+		if (!async) {
 			importMenu.add(importDot);
 			importMenu.add(importSbml);
 		}
-		else {
+		else if (atacs) {
 			importMenu.add(importVhdl);
 			importMenu.add(importLhpn);
 			importMenu.add(importCsp);
 			importMenu.add(importHse);
 			importMenu.add(importUnc);
 			importMenu.add(importRsg);
+		}
+		else {
+			importMenu.add(importVhdl);
+			importMenu.add(importLhpn);
+			importMenu.add(importSpice);
 		}
 		file.add(exportMenu);
 		exportMenu.add(exportCsv);
@@ -818,7 +836,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		}
 		view.add(viewCircuit);
 		view.add(viewLog);
-		if (lema) {
+		if (async) {
 			view.addSeparator();
 			view.add(viewRules);
 			view.add(viewTrace);
@@ -829,10 +847,16 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		viewModel.add(viewModBrowser);
 		view.addSeparator();
 		view.add(refresh);
-		tools.add(createAnal);
-		tools.add(createLearn);
-		if (lema) {
+		if (!async) {
+			tools.add(createAnal);
+		}
+		if (!atacs) {
+			tools.add(createLearn);
+		}
+		if (atacs) {
 			tools.add(createSynth);
+		}
+		if (async) {
 			tools.add(createVer);
 		}
 		// else {
@@ -1027,7 +1051,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 
 		// Packs the frame and displays it
 		mainPanel = new JPanel(new BorderLayout());
-		tree = new FileTree(null, this, lema);
+		tree = new FileTree(null, this, lema, atacs);
 		log = new Log();
 		tab = new CloseAndMaxTabbedPane(false, this);
 		tab.setPreferredSize(new Dimension(1100, 550));
@@ -2028,7 +2052,16 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		else if (e.getSource() == manual) {
 			try {
 				String directory = "";
-				String theFile = "iBioSim.html";
+				String theFile = "";
+				if (!async) {
+					theFile = "iBioSim.html";
+				}
+				else if (atacs) {
+					theFile = "ATACS.html";
+				}
+				else {
+					theFile = "LEMA.html";
+				}
 				String command = "";
 				if (System.getProperty("os.name").contentEquals("Linux")) {
 					directory = System.getenv("BIOSIM") + "/docs/";
@@ -2269,7 +2302,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 									+ circuitFileNoPath;
 							// log.addText(circuitFile);
 							JPanel verPane = new JPanel();
-							Verification verify = new Verification(work, circuitFile, log, this);
+							Verification verify = new Verification(work, circuitFile, log, this, lema, atacs);
 							// verify.addMouseListener(this);
 							verify.save();
 							verPane.add(verify);
@@ -3073,6 +3106,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				importHse.setEnabled(true);
 				importUnc.setEnabled(true);
 				importRsg.setEnabled(true);
+				importSpice.setEnabled(true);
 				newCircuit.setEnabled(true);
 				newModel.setEnabled(true);
 				newVhdl.setEnabled(true);
@@ -3081,6 +3115,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				newHse.setEnabled(true);
 				newUnc.setEnabled(true);
 				newRsg.setEnabled(true);
+				newSpice.setEnabled(true);
 				graph.setEnabled(true);
 				probGraph.setEnabled(true);
 			}
@@ -3144,6 +3179,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						importHse.setEnabled(true);
 						importUnc.setEnabled(true);
 						importRsg.setEnabled(true);
+						importSpice.setEnabled(true);
 						newCircuit.setEnabled(true);
 						newModel.setEnabled(true);
 						newVhdl.setEnabled(true);
@@ -3152,6 +3188,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						newHse.setEnabled(true);
 						newUnc.setEnabled(true);
 						newRsg.setEnabled(true);
+						newSpice.setEnabled(true);
 						graph.setEnabled(true);
 						probGraph.setEnabled(true);
 					}
@@ -3322,9 +3359,27 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						else {
 							File f = new File(root + separator + vhdlName);
 							f.createNewFile();
-							String[] command = { "emacs", f.getName() };
-							Runtime.getRuntime().exec(command);
-							refreshTree();
+							if (externView) {
+								String command = viewerField.getText() + " " + root
+										+ separator + vhdlName;
+								Runtime exec = Runtime.getRuntime();
+								try {
+									exec.exec(command);
+								}
+								catch (Exception e1) {
+									JOptionPane.showMessageDialog(frame,
+											"Unable to open external editor.",
+											"Error Opening Editor", JOptionPane.ERROR_MESSAGE);
+								}
+							}
+							else {
+								JTextArea text = new JTextArea("");
+								text.setEditable(true);
+								text.setLineWrap(true);
+								JScrollPane scroll = new JScrollPane(text);
+								// gcm.addMouseListener(this);
+								addTab(vhdlName, scroll, "VHDL Editor");
+							}
 						}
 					}
 				}
@@ -3448,9 +3503,27 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						else {
 							File f = new File(root + separator + cspName);
 							f.createNewFile();
-							String[] command = { "emacs", f.getName() };
-							Runtime.getRuntime().exec(command);
-							refreshTree();
+							if (externView) {
+								String command = viewerField.getText() + " " + root
+										+ separator + cspName;
+								Runtime exec = Runtime.getRuntime();
+								try {
+									exec.exec(command);
+								}
+								catch (Exception e1) {
+									JOptionPane.showMessageDialog(frame,
+											"Unable to open external editor.",
+											"Error Opening Editor", JOptionPane.ERROR_MESSAGE);
+								}
+							}
+							else {
+								JTextArea text = new JTextArea("");
+								text.setEditable(true);
+								text.setLineWrap(true);
+								JScrollPane scroll = new JScrollPane(text);
+								// gcm.addMouseListener(this);
+								addTab(cspName, scroll, "CSP Editor");
+							}
 						}
 					}
 				}
@@ -3500,9 +3573,27 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						else {
 							File f = new File(root + separator + hseName);
 							f.createNewFile();
-							String[] command = { "emacs", f.getName() };
-							Runtime.getRuntime().exec(command);
-							refreshTree();
+							if (externView) {
+								String command = viewerField.getText() + " " + root
+										+ separator + hseName;
+								Runtime exec = Runtime.getRuntime();
+								try {
+									exec.exec(command);
+								}
+								catch (Exception e1) {
+									JOptionPane.showMessageDialog(frame,
+											"Unable to open external editor.",
+											"Error Opening Editor", JOptionPane.ERROR_MESSAGE);
+								}
+							}
+							else {
+								JTextArea text = new JTextArea("");
+								text.setEditable(true);
+								text.setLineWrap(true);
+								JScrollPane scroll = new JScrollPane(text);
+								// gcm.addMouseListener(this);
+								addTab(hseName, scroll, "HSE Editor");
+							}
 						}
 					}
 				}
@@ -3552,9 +3643,27 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						else {
 							File f = new File(root + separator + uncName);
 							f.createNewFile();
-							String[] command = { "emacs", f.getName() };
-							Runtime.getRuntime().exec(command);
-							refreshTree();
+							if (externView) {
+								String command = viewerField.getText() + " " + root
+										+ separator + uncName;
+								Runtime exec = Runtime.getRuntime();
+								try {
+									exec.exec(command);
+								}
+								catch (Exception e1) {
+									JOptionPane.showMessageDialog(frame,
+											"Unable to open external editor.",
+											"Error Opening Editor", JOptionPane.ERROR_MESSAGE);
+								}
+							}
+							else {
+								JTextArea text = new JTextArea("");
+								text.setEditable(true);
+								text.setLineWrap(true);
+								JScrollPane scroll = new JScrollPane(text);
+								// gcm.addMouseListener(this);
+								addTab(uncName, scroll, "UNC Editor");
+							}
 						}
 					}
 				}
@@ -3604,9 +3713,97 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						else {
 							File f = new File(root + separator + rsgName);
 							f.createNewFile();
-							String[] command = { "emacs", f.getName() };
-							Runtime.getRuntime().exec(command);
-							refreshTree();
+							if (externView) {
+								String command = viewerField.getText() + " " + root
+										+ separator + rsgName;
+								Runtime exec = Runtime.getRuntime();
+								try {
+									exec.exec(command);
+								}
+								catch (Exception e1) {
+									JOptionPane.showMessageDialog(frame,
+											"Unable to open external editor.",
+											"Error Opening Editor", JOptionPane.ERROR_MESSAGE);
+								}
+							}
+							else {
+								JTextArea text = new JTextArea("");
+								text.setEditable(true);
+								text.setLineWrap(true);
+								JScrollPane scroll = new JScrollPane(text);
+								// gcm.addMouseListener(this);
+								addTab(rsgName, scroll, "RSG Editor");
+							}
+						}
+					}
+				}
+				catch (IOException e1) {
+					JOptionPane.showMessageDialog(frame, "Unable to create new model.", "Error",
+							JOptionPane.ERROR_MESSAGE);
+				}
+			}
+			else {
+				JOptionPane.showMessageDialog(frame, "You must open or create a project first.",
+						"Error", JOptionPane.ERROR_MESSAGE);
+			}
+		}
+//		 if the new rsg menu item is selected
+		else if (e.getSource() == newSpice) {
+			if (root != null) {
+				try {
+					String spiceName = JOptionPane.showInputDialog(frame,
+							"Enter Spice Circuit ID:", "Circuit ID",
+							JOptionPane.PLAIN_MESSAGE);
+					if (spiceName != null && !spiceName.trim().equals("")) {
+						spiceName = spiceName.trim();
+						if (spiceName.length() > 3) {
+							if (!spiceName.substring(spiceName.length() - 4).equals(".cir")) {
+								spiceName += ".cir";
+							}
+						}
+						else {
+							spiceName += ".cir";
+						}
+						String modelID = "";
+						if (spiceName.length() > 3) {
+							if (spiceName.substring(spiceName.length() - 4).equals(".cir")) {
+								modelID = spiceName.substring(0, spiceName.length() - 4);
+							}
+							else {
+								modelID = spiceName.substring(0, spiceName.length() - 3);
+							}
+						}
+						if (!(IDpat.matcher(modelID).matches())) {
+							JOptionPane
+									.showMessageDialog(
+											frame,
+											"A model ID can only contain letters, numbers, and underscores.",
+											"Invalid ID", JOptionPane.ERROR_MESSAGE);
+						}
+						else {
+							File f = new File(root + separator + spiceName);
+							f.createNewFile();
+							if (externView) {
+								String command = viewerField.getText() + " " + root
+										+ separator + spiceName;
+								Runtime exec = Runtime.getRuntime();
+								try {
+									exec.exec(command);
+								}
+								catch (Exception e1) {
+									JOptionPane.showMessageDialog(frame,
+											"Unable to open external editor.",
+											"Error Opening Editor", JOptionPane.ERROR_MESSAGE);
+								}
+							}
+							else {
+								JTextArea text = new JTextArea("");
+								text.setEditable(true);
+								text.setLineWrap(true);
+								JScrollPane scroll = new JScrollPane(text);
+								// gcm.addMouseListener(this);
+								addTab(spiceName, scroll, "Spice Editor");
+							}
 						}
 					}
 				}
@@ -4101,6 +4298,45 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 								".rsg")) {
 					JOptionPane.showMessageDialog(frame,
 							"You must select a valid rsg file to import.", "Error",
+							JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				else if (!filename.equals("")) {
+					String[] file = filename.split(separator);
+					try {
+						FileOutputStream out = new FileOutputStream(new File(root + separator
+								+ file[file.length - 1]));
+						FileInputStream in = new FileInputStream(new File(filename));
+						int read = in.read();
+						while (read != -1) {
+							out.write(read);
+							read = in.read();
+						}
+						in.close();
+						out.close();
+						refreshTree();
+					}
+					catch (Exception e1) {
+						JOptionPane.showMessageDialog(frame, "Unable to import file.", "Error",
+								JOptionPane.ERROR_MESSAGE);
+					}
+				}
+			}
+			else {
+				JOptionPane.showMessageDialog(frame, "You must open or create a project first.",
+						"Error", JOptionPane.ERROR_MESSAGE);
+			}
+		}
+//		 if the import spice menu item is selected
+		else if (e.getSource() == importSpice) {
+			if (root != null) {
+				String filename = Buttons.browse(frame, new File(root), null,
+						JFileChooser.FILES_ONLY, "Import Spice Circuit", -1);
+				if (filename.length() > 1
+						&& !filename.substring(filename.length() - 4, filename.length()).equals(
+								".cir")) {
+					JOptionPane.showMessageDialog(frame,
+							"You must select a valid spice circuit file to import.", "Error",
 							JOptionPane.ERROR_MESSAGE);
 					return;
 				}
@@ -5372,7 +5608,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 	 */
 	public void refresh() {
 		mainPanel.remove(tree);
-		tree = new FileTree(new File(root), this, lema);
+		tree = new FileTree(new File(root), this, lema, atacs);
 		mainPanel.add(tree, "West");
 		mainPanel.validate();
 	}
@@ -5859,7 +6095,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					rename.addActionListener(this);
 					rename.setActionCommand("rename");
 					popup.add(createSynthesis);
-					popup.add(createAnalysis);
+					//popup.add(createAnalysis);
 					popup.add(createLearn);
 					popup.add(createVerification);
 					popup.addSeparator();
@@ -5896,7 +6132,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					rename.addActionListener(this);
 					rename.setActionCommand("rename");
 					popup.add(createSynthesis);
-					popup.add(createAnalysis);
+					//popup.add(createAnalysis);
 					popup.add(createLearn);
 					popup.add(createVerification);
 					popup.addSeparator();
@@ -5933,7 +6169,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					rename.addActionListener(this);
 					rename.setActionCommand("rename");
 					popup.add(createSynthesis);
-					popup.add(createAnalysis);
+					//popup.add(createAnalysis);
 					popup.add(createLearn);
 					popup.add(createVerification);
 					popup.addSeparator();
@@ -5970,7 +6206,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					rename.addActionListener(this);
 					rename.setActionCommand("rename");
 					popup.add(createSynthesis);
-					popup.add(createAnalysis);
+					//popup.add(createAnalysis);
 					popup.add(createLearn);
 					popup.add(createVerification);
 					popup.addSeparator();
@@ -6517,6 +6753,63 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						}
 					}
 					else if (tree.getFile().length() >= 4
+							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".cir")) {
+						try {
+							String filename = tree.getFile();
+							String directory = "";
+							String theFile = "";
+							if (filename.lastIndexOf('/') >= 0) {
+								directory = filename.substring(0, filename.lastIndexOf('/') + 1);
+								theFile = filename.substring(filename.lastIndexOf('/') + 1);
+							}
+							if (filename.lastIndexOf('\\') >= 0) {
+								directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
+								theFile = filename.substring(filename.lastIndexOf('\\') + 1);
+							}
+							File work = new File(directory);
+							int i = getTab(theFile);
+							if (i != -1) {
+								tab.setSelectedIndex(i);
+							}
+							else {
+								if (externView) {
+									String command = viewerField.getText() + " " + directory
+											+ separator + theFile;
+									Runtime exec = Runtime.getRuntime();
+									try {
+										exec.exec(command);
+									}
+									catch (Exception e1) {
+										JOptionPane.showMessageDialog(frame,
+												"Unable to open external editor.",
+												"Error Opening Editor", JOptionPane.ERROR_MESSAGE);
+									}
+								}
+								else {
+									File file = new File(work + separator + theFile);
+									String input = "";
+									FileReader in = new FileReader(file);
+									int read = in.read();
+									while (read != -1) {
+										input += (char) read;
+										read = in.read();
+									}
+									in.close();
+									JTextArea text = new JTextArea(input);
+									text.setEditable(true);
+									text.setLineWrap(true);
+									JScrollPane scroll = new JScrollPane(text);
+									// gcm.addMouseListener(this);
+									addTab(theFile, scroll, "Spice Editor");
+								}
+							}
+						}
+						catch (Exception e1) {
+							JOptionPane.showMessageDialog(frame, "Unable to view this spice file.",
+									"Error", JOptionPane.ERROR_MESSAGE);
+						}
+					}
+					else if (tree.getFile().length() >= 4
 							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".grf")) {
 						boolean done = false;
 						for (int i = 0; i < tab.getTabCount(); i++) {
@@ -6764,7 +7057,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						rename.addActionListener(this);
 						rename.setActionCommand("rename");
 						popup.add(createSynthesis);
-						popup.add(createAnalysis);
+						//popup.add(createAnalysis);
 						popup.add(createLearn);
 						popup.addSeparator();
 						popup.add(edit);
@@ -6796,7 +7089,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						rename.addActionListener(this);
 						rename.setActionCommand("rename");
 						popup.add(createSynthesis);
-						popup.add(createAnalysis);
+						//popup.add(createAnalysis);
 						popup.add(createLearn);
 						popup.addSeparator();
 						popup.add(edit);
@@ -6828,7 +7121,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						rename.addActionListener(this);
 						rename.setActionCommand("rename");
 						popup.add(createSynthesis);
-						popup.add(createAnalysis);
+						//popup.add(createAnalysis);
 						popup.add(createLearn);
 						popup.addSeparator();
 						popup.add(edit);
@@ -6860,7 +7153,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						rename.addActionListener(this);
 						rename.setActionCommand("rename");
 						popup.add(createSynthesis);
-						popup.add(createAnalysis);
+						//popup.add(createAnalysis);
 						popup.add(createLearn);
 						popup.addSeparator();
 						popup.add(edit);
@@ -7663,7 +7956,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				return;
 			}
 			// if (!graphFile.equals("")) {
-			Verification ver = new Verification(tree.getFile(), "flag", log, this);
+			Verification ver = new Verification(tree.getFile(), "flag", log, this, lema, atacs);
 			// ver.addMouseListener(this);
 			verPanel.add(ver);
 			addTab(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],
@@ -7942,17 +8235,22 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 
 		public void actionPerformed(ActionEvent e) {
 			popup.add(newProj);
-			if (!lema) {
+			if (!async) {
 				popup.add(newCircuit);
 				popup.add(newModel);
 			}
-			else {
+			else if (atacs) {
 				popup.add(newVhdl);
 				popup.add(newLhpn);
 				popup.add(newCsp);
 				popup.add(newHse);
 				popup.add(newUnc);
 				popup.add(newRsg);
+			}
+			else {
+				popup.add(newVhdl);
+				popup.add(newLhpn);
+				popup.add(newSpice);
 			}
 			popup.add(graph);
 			popup.add(probGraph);
@@ -7997,13 +8295,18 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				popup.add(importDot);
 				popup.add(importSbml);
 			}
-			else {
+			else if (atacs) {
 				popup.add(importVhdl);
 				popup.add(importLhpn);
 				popup.add(importCsp);
 				popup.add(importHse);
 				popup.add(importUnc);
 				popup.add(importRsg);
+			}
+			else {
+				popup.add(importVhdl);
+				popup.add(importLhpn);
+				popup.add(importSpice);
 			}
 			if (popup.getComponentCount() != 0) {
 				popup.show(mainPanel, mainPanel.getMousePosition().x,

@@ -35,7 +35,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			compilation, bddSizeLabel, advTiming;
 
 	private JRadioButton untimed, geometric, posets, bag, bap, baptdc, verify, vergate, orbits,
-			search, trace;
+			search, trace, bdd, dbm, smt;
 
 	private JCheckBox abst, partialOrder, dot, verbose, quiet, genrg, timsubset, superset, infopt,
 			orbmatch, interleav, prune, disabling, nofail, keepgoing, explpn, nochecks, reduction,
@@ -58,7 +58,8 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 	 * the input fields, puts them on panels, adds the panels to the frame, and
 	 * then displays the frame.
 	 */
-	public Verification(String directory, String filename, Log log, BioSim biosim) {
+	public Verification(String directory, String filename, Log log, BioSim biosim, boolean lema,
+			boolean atacs) {
 		if (File.separator.equals("\\")) {
 			separator = "\\\\";
 		}
@@ -118,12 +119,18 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		bag = new JRadioButton("BAG");
 		bap = new JRadioButton("BAP");
 		baptdc = new JRadioButton("BAPTDC");
+		bdd = new JRadioButton("BDD");
+		dbm = new JRadioButton("DBM");
+		smt = new JRadioButton("SMT");
 		untimed.addActionListener(this);
 		geometric.addActionListener(this);
 		posets.addActionListener(this);
 		bag.addActionListener(this);
 		bap.addActionListener(this);
 		baptdc.addActionListener(this);
+		bdd.addActionListener(this);
+		dbm.addActionListener(this);
+		smt.addActionListener(this);
 		// Basic Timing Options
 		abst = new JCheckBox("Abstract");
 		partialOrder = new JCheckBox("Partial Order");
@@ -190,16 +197,28 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		timingMethodGroup = new ButtonGroup();
 		algorithmGroup = new ButtonGroup();
 
-		untimed.setSelected(true);
+		if (lema) {
+			bdd.setSelected(true);
+		}
+		else {
+			untimed.setSelected(true);
+		}
 		verify.setSelected(true);
 
 		// Groups the radio buttons
-		timingMethodGroup.add(untimed);
-		timingMethodGroup.add(geometric);
-		timingMethodGroup.add(posets);
-		timingMethodGroup.add(bag);
-		timingMethodGroup.add(bap);
-		timingMethodGroup.add(baptdc);
+		if (lema) {
+			timingMethodGroup.add(bdd);
+			timingMethodGroup.add(dbm);
+			timingMethodGroup.add(smt);
+		}
+		else {
+			timingMethodGroup.add(untimed);
+			timingMethodGroup.add(geometric);
+			timingMethodGroup.add(posets);
+			timingMethodGroup.add(bag);
+			timingMethodGroup.add(bap);
+			timingMethodGroup.add(baptdc);
+		}
 		algorithmGroup.add(verify);
 		algorithmGroup.add(vergate);
 		algorithmGroup.add(orbits);
@@ -211,12 +230,19 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 
 		// Adds the buttons to their panels
 		timingRadioPanel.add(timingMethod);
-		timingRadioPanel.add(untimed);
-		timingRadioPanel.add(geometric);
-		timingRadioPanel.add(posets);
-		timingRadioPanel.add(bag);
-		timingRadioPanel.add(bap);
-		timingRadioPanel.add(baptdc);
+		if (lema) {
+			timingRadioPanel.add(bdd);
+			timingRadioPanel.add(dbm);
+			timingRadioPanel.add(smt);
+		}
+		else {
+			timingRadioPanel.add(untimed);
+			timingRadioPanel.add(geometric);
+			timingRadioPanel.add(posets);
+			timingRadioPanel.add(bag);
+			timingRadioPanel.add(bap);
+			timingRadioPanel.add(baptdc);
+		}
 
 		timingCheckBoxPanel.add(timingOptions);
 		timingCheckBoxPanel.add(abst);
@@ -296,6 +322,15 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				}
 				else if (load.getProperty("verification.timing.methods").equals("bap")) {
 					bap.setSelected(true);
+				}
+				else if (load.getProperty("verification.timing.methods").equals("bdd")) {
+					bdd.setSelected(true);
+				}
+				else if (load.getProperty("verification.timing.methods").equals("dcm")) {
+					dbm.setSelected(true);
+				}
+				else if (load.getProperty("verification.timing.methods").equals("smt")) {
+					smt.setSelected(true);
 				}
 				else {
 					baptdc.setSelected(true);
@@ -479,14 +514,20 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		viewLog.setMnemonic(KeyEvent.VK_V);
 
 		basicOptions.add(timingRadioPanel);
-		basicOptions.add(timingCheckBoxPanel);
+		if (!lema) {
+			basicOptions.add(timingCheckBoxPanel);
+		}
 		basicOptions.add(otherPanel);
-		basicOptions.add(algorithmPanel);
+		if (!lema) {
+			basicOptions.add(algorithmPanel);
+		}
 		basicOptions.setLayout(new BoxLayout(basicOptions, BoxLayout.Y_AXIS));
 		basicOptions.add(Box.createVerticalGlue());
 
 		advOptions.add(compilationPanel);
-		advOptions.add(advTimingPanel);
+		if (!lema) {
+			advOptions.add(advTimingPanel);
+		}
 		advOptions.add(advancedPanel);
 		advOptions.add(bddPanel);
 		advOptions.setLayout(new BoxLayout(advOptions, BoxLayout.Y_AXIS));
@@ -499,7 +540,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 
 		this.setLayout(new BorderLayout());
 		this.add(tab, BorderLayout.PAGE_START);
-		//this.add(buttonPanel, BorderLayout.PAGE_END);
+		// this.add(buttonPanel, BorderLayout.PAGE_END);
 		change = false;
 	}
 
@@ -559,6 +600,15 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		}
 		else if (bap.isSelected()) {
 			options = options + "-tp";
+		}
+		else if (bdd.isSelected()) {
+			options = options + "-tB";
+		}
+		else if (dbm.isSelected()) {
+			options = options + "-tL";
+		}
+		else if (smt.isSelected()) {
+			options = options + "-tM";
 		}
 		else {
 			options = options + "-tt";
@@ -692,10 +742,10 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		JPanel all = new JPanel(new BorderLayout());
 		JLabel label = new JLabel("Running...");
 		JProgressBar progress = new JProgressBar();
-		//progress.setStringPainted(true);
+		// progress.setStringPainted(true);
 		progress.setIndeterminate(true);
 		// progress.setString("");
-		//progress.setValue(0);
+		// progress.setValue(0);
 		text.add(label);
 		progBar.add(progress);
 		button.add(cancel);
@@ -790,10 +840,10 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					JOptionPane.ERROR_MESSAGE);
 		}
 	}
-	
+
 	public void saveAs() {
-		String newName = JOptionPane.showInputDialog(biosim.frame(), "Enter Verification name:", "Verification Name",
-				JOptionPane.PLAIN_MESSAGE);
+		String newName = JOptionPane.showInputDialog(biosim.frame(), "Enter Verification name:",
+				"Verification Name", JOptionPane.PLAIN_MESSAGE);
 		if (newName == null) {
 			return;
 		}
@@ -802,7 +852,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		}
 		save(newName);
 	}
-	
+
 	public void save() {
 		save(verFile);
 	}
@@ -833,6 +883,15 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			}
 			else if (bap.isSelected()) {
 				prop.setProperty("verification.timing.methods", "bap");
+			}
+			else if (bdd.isSelected()) {
+				prop.setProperty("verification.timing.methods", "bdd");
+			}
+			else if (dbm.isSelected()) {
+				prop.setProperty("verification.timing.methods", "dbm");
+			}
+			else if (smt.isSelected()) {
+				prop.setProperty("verification.timing.methods", "smt");
 			}
 			else {
 				prop.setProperty("verification.timing.methods", "baptdc");
@@ -1050,11 +1109,11 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 	public boolean getViewTraceEnabled() {
 		return viewTrace.isEnabled();
 	}
-	
+
 	public boolean getViewLogEnabled() {
 		return viewLog.isEnabled();
 	}
-	
+
 	public void viewTrace() {
 		String[] getFilename = sourceFile.split("\\.");
 		String traceFilename = getFilename[0] + ".trace";

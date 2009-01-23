@@ -300,7 +300,7 @@ public class LHPNFile {
 			if (buffer.toString().length() > 0) {
 				buffer.append(".end\n");
 			}
-			System.out.print(buffer);
+			//System.out.print(buffer);
 			p.print(buffer);
 			p.close();
 			log.addText("Saving:\n" + file + "\n");

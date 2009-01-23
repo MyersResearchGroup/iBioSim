@@ -211,7 +211,6 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 
 	public void save() {
 		dirty = false;
-		log.addText("check LHPN");
 		lhpnFile.save(directory + File.separator + filename);
 	}
 

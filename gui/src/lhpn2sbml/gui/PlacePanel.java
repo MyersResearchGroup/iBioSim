@@ -25,9 +25,9 @@ public class PlacePanel extends JPanel implements ActionListener {
 	private String selected = "";
 
 	private PropertyList placeList, controlList;
-	
+
 	private JComboBox initBox;
-	
+
 	private String[] initCond = { "true", "false" };
 
 	private String[] options = { "Ok", "Cancel" };
@@ -66,7 +66,7 @@ public class PlacePanel extends JPanel implements ActionListener {
 		String oldName = null;
 		if (selected != null) {
 			oldName = selected;
-			//Properties prop = lhpn.getVariables().get(selected);
+			// Properties prop = lhpn.getVariables().get(selected);
 			fields.get(GlobalConstants.ID).setValue(selected);
 			if (lhpn.getPlaceInitial(selected)) {
 				initBox.setSelectedItem(initCond[0]);
@@ -75,7 +75,7 @@ public class PlacePanel extends JPanel implements ActionListener {
 				initBox.setSelectedItem(initCond[1]);
 			}
 		}
-		
+
 		boolean display = false;
 		while (!display) {
 			display = openGui(oldName);
@@ -131,13 +131,19 @@ public class PlacePanel extends JPanel implements ActionListener {
 			placeList.addItem(id);
 			placeList.setSelectedValue(id, true);
 			if (oldName != null) {
-			for (String s : controlList.getItems()) {
-				if (s.contains(oldName)) {
-					controlList.removeItem(s);
-					s = s.replace(oldName, id);
-					controlList.addItem(s);
+				for (String s : controlList.getItems()) {
+					String[] array = s.split("\\s");
+					for (String t : array) {
+						if (t.equals(oldName)) {
+							lhpn.removeControlFlow(array[0], array[1]);
+							controlList.removeItem(s);
+							s = s.replace(oldName, id);
+							array = s.split("\\s");
+							lhpn.addControlFlow(array[0], array[1]);
+							controlList.addItem(s);
+						}
+					}
 				}
-			}
 			}
 		}
 		else if (value == JOptionPane.NO_OPTION) {
@@ -149,10 +155,10 @@ public class PlacePanel extends JPanel implements ActionListener {
 
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("comboBoxChanged")) {
-			//setType(initBox.getSelectedItem().toString());
+			// setType(initBox.getSelectedItem().toString());
 		}
 	}
-	
+
 	private void loadProperties(Properties property) {
 		for (Object o : property.keySet()) {
 			if (fields.containsKey(o.toString())) {
