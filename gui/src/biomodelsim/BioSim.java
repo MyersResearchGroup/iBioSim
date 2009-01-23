@@ -6428,7 +6428,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							}
 							else {
 								GCM2SBMLEditor gcm = new GCM2SBMLEditor(work.getAbsolutePath(),
-										theFile, this, log, true);
+										theFile, this, log, false);
 								// gcm.addMouseListener(this);
 								addTab(theFile, gcm, "GCM Editor");
 							}
