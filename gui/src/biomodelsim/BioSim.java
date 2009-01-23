@@ -4568,9 +4568,10 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					String cmd = "atacs -lvslllodpl " + filename;
 					File work = new File(root);
 					Runtime exec = Runtime.getRuntime();
-					exec.exec(cmd, null, work);
+					Process view = exec.exec(cmd, null, work);
 					log.addText("Executing:\n" + cmd);
 					String[] findTheFile = filename.split("\\.");
+					view.waitFor();
 					// String directory = "";
 					String theFile = findTheFile[0] + ".dot";
 					String command = "";
@@ -4596,8 +4597,9 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					String cmd = "atacs -lcslllodpl " + filename;
 					File work = new File(root);
 					Runtime exec = Runtime.getRuntime();
-					exec.exec(cmd, null, work);
+					Process view = exec.exec(cmd, null, work);
 					log.addText("Executing:\n" + cmd);
+					view.waitFor();
 					String[] findTheFile = filename.split("\\.");
 					// String directory = "";
 					String theFile = findTheFile[0] + ".dot";
@@ -4624,8 +4626,9 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					String cmd = "atacs -lhslllodpl " + filename;
 					File work = new File(root);
 					Runtime exec = Runtime.getRuntime();
-					exec.exec(cmd, null, work);
+					Process view = exec.exec(cmd, null, work);
 					log.addText("Executing:\n" + cmd);
+					view.waitFor();
 					String[] findTheFile = filename.split("\\.");
 					// String directory = "";
 					String theFile = findTheFile[0] + ".dot";
@@ -4652,8 +4655,9 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					String cmd = "atacs -lxodps " + filename;
 					File work = new File(root);
 					Runtime exec = Runtime.getRuntime();
-					exec.exec(cmd, null, work);
+					Process view = exec.exec(cmd, null, work);
 					log.addText("Executing:\n" + cmd);
+					view.waitFor();
 					String[] findTheFile = filename.split("\\.");
 					// String directory = "";
 					String theFile = findTheFile[0] + ".dot";
@@ -4680,8 +4684,9 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					String cmd = "atacs -lsodps " + filename;
 					File work = new File(root);
 					Runtime exec = Runtime.getRuntime();
-					exec.exec(cmd, null, work);
+					Process view = exec.exec(cmd, null, work);
 					log.addText("Executing:\n" + cmd);
+					view.waitFor();
 					String[] findTheFile = filename.split("\\.");
 					// String directory = "";
 					String theFile = findTheFile[0] + ".dot";
