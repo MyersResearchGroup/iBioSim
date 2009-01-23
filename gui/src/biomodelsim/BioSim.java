@@ -211,7 +211,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 
 	private Pattern IDpat = Pattern.compile("([a-zA-Z]|_)([a-zA-Z]|[0-9]|_)*");
 
-	private boolean lema, externView, treeSelected = false;
+	private boolean lema, atacs, async, externView, treeSelected = false;
 
 	private String viewer;
 
@@ -270,8 +270,10 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 	 * 
 	 * @throws Exception
 	 */
-	public BioSim(boolean lema) {
+	public BioSim(boolean lema, boolean atacs) {
 		this.lema = lema;
+		this.atacs = atacs;
+		async = lema||atacs;
 		if (File.separator.equals("\\")) {
 			separator = "\\\\";
 		}
@@ -393,8 +395,14 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		newProj = new JMenuItem("Project");
 		newCircuit = new JMenuItem("Genetic Circuit Model");
 		newModel = new JMenuItem("SBML Model");
-		newVhdl = new JMenuItem("VHDL Model");
-		newLhpn = new JMenuItem("Labeled Hybrid Petri Net");
+		if (lema) {
+			newVhdl = new JMenuItem("VHDL-AMS Model");
+			newLhpn = new JMenuItem("Labeled Hybrid Petri Net");
+		}
+		else {
+			newVhdl = new JMenuItem("VHDL Model");
+			newLhpn = new JMenuItem("Petri Net");
+		}
 		newCsp = new JMenuItem("CSP Model");
 		newHse = new JMenuItem("Handshaking Expansion");
 		newUnc = new JMenuItem("Extended Burst Mode Machine");
@@ -403,8 +411,14 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		probGraph = new JMenuItem("Histogram");
 		importSbml = new JMenuItem("SBML Model");
 		importDot = new JMenuItem("Genetic Circuit Model");
-		importVhdl = new JMenuItem("VHDL Model");
-		importLhpn = new JMenuItem("Labeled Hybrid Petri Net");
+		if (lema) {
+			importVhdl = new JMenuItem("VHDL-AMS Model");
+			importLhpn = new JMenuItem("Labeled Hybrid Petri Net");
+		}
+		else {
+			importVhdl = new JMenuItem("VHDL Model");
+			importLhpn = new JMenuItem("Petri Net");
+		}
 		importCsp = new JMenuItem("CSP Model");
 		importHse = new JMenuItem("Handshaking Expansion");
 		importUnc = new JMenuItem("Extended Burst Mode Machine");
@@ -617,7 +631,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		manual.setMnemonic(KeyEvent.VK_M);
 		graph.setMnemonic(KeyEvent.VK_T);
 		probGraph.setMnemonic(KeyEvent.VK_H);
-		if (!lema) {
+		if (!lema && !atacs) {
 			importDot.setMnemonic(KeyEvent.VK_G);
 		}
 		else {
@@ -701,17 +715,21 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		// edit.add(pref);
 		file.add(newMenu);
 		newMenu.add(newProj);
-		if (!lema) {
+		if (!async) {
 			newMenu.add(newCircuit);
 			newMenu.add(newModel);
 		}
-		else {
+		else if (atacs) {
 			newMenu.add(newVhdl);
 			newMenu.add(newLhpn);
 			newMenu.add(newCsp);
 			newMenu.add(newHse);
 			newMenu.add(newUnc);
 			newMenu.add(newRsg);
+		}
+		else {
+			newMenu.add(newVhdl);
+			newMenu.add(newLhpn);
 		}
 		newMenu.add(graph);
 		newMenu.add(probGraph);
@@ -723,7 +741,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		file.addSeparator();
 		file.add(save);
 		// file.add(saveAsMenu);
-		if (!lema) {
+		if (!async) {
 			saveAsMenu.add(saveAsGcm);
 			saveAsMenu.add(saveAsGraph);
 			saveAsMenu.add(saveAsSbml);
@@ -734,8 +752,10 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			saveAsMenu.add(saveAsGraph);
 		}
 		file.add(saveAs);
-		file.add(saveAsSbml);
-		file.add(saveAsTemplate);
+		if (!async) {
+			file.add(saveAsSbml);
+			file.add(saveAsTemplate);
+		}
 		file.add(saveParam);
 		file.add(run);
 		if (!lema) {
@@ -1069,7 +1089,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 	}
 
 	public void preferences() {
-		if (!lema) {
+		if (!async) {
 			Undeclared = new JCheckBox("Check for undeclared units in SBML");
 			if (checkUndeclared) {
 				Undeclared.setSelected(true);
@@ -1319,7 +1339,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			analysisLabels.add(new JLabel("Random Seed:"));
 			analysisLabels.add(new JLabel("Runs:"));
 			analysisLabels.add(new JLabel("Rapid Equilibrium Condition 1:"));
-			analysisLabels.add(new JLabel("Rapid Equilibrium Condition 2:"));
+			analysisLabels.add(new JLabel("Rapid Equilibrium Cojdition 2:"));
 			analysisLabels.add(new JLabel("QSSA Condition:"));
 			analysisLabels.add(new JLabel("Max Concentration Threshold:"));
 			JPanel analysisFields = new JPanel(new GridLayout(13, 1));
@@ -2719,7 +2739,6 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			Component comp = tab.getSelectedComponent();
 			// int index = tab.getSelectedIndex();
 			if (comp instanceof LHPNEditor) {
-				log.addText("check Bio");
 				((LHPNEditor) comp).save();
 			}
 			else if (comp instanceof GCM2SBMLEditor) {
@@ -6617,7 +6636,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					}
 				}
 				catch (Exception e1) {
-					 e1.printStackTrace();
+					e1.printStackTrace();
 				}
 			}
 		}
@@ -8149,12 +8168,18 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					+ " security exception.");
 			System.exit(1);
 		}
-		if (args.length > 0 && args[0].equals("-lema")) {
-			new BioSim(true);
+		boolean lemaFlag = false, atacsFlag = false;
+		if (args.length > 0) {
+			for (int i=0; i<args.length; i++) {
+				if (args[i].equals("-lema")) {
+					lemaFlag = true;
+				}
+				else if (args[i].equals("-atacs")) {
+					atacsFlag = true;
+				}
+			}
 		}
-		else {
-			new BioSim(false);
-		}
+		new BioSim(lemaFlag, atacsFlag);
 	}
 
 	public void copySim(String newSim) {
