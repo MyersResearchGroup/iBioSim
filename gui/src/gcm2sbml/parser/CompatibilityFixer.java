@@ -14,6 +14,15 @@ public class CompatibilityFixer {
 		return sbmlName.get(id);
 	}
 	
+	public static String convertSBMLName(String id) {
+		for (String s : sbmlName.keySet()) {
+			if (sbmlName.get(s).equals(id)) {
+				return s;
+			}
+		}
+		return null;
+	}
+	
 	public static String getGCMName(String guiid) {
 		return gcmName.get(guiid);
 	}

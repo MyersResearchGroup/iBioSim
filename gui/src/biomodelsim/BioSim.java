@@ -134,7 +134,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 	private JMenuItem newUnc; // The new extended burst mode menu item
 
 	private JMenuItem newRsg; // The new rsg menu item
-	
+
 	private JMenuItem newSpice; // The new spice circuit item
 
 	private JMenuItem exit; // The exit menu item
@@ -156,7 +156,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 	private JMenuItem importUnc; // The import extended burst mode menu item
 
 	private JMenuItem importRsg; // The import rsg menu item
-	
+
 	private JMenuItem importSpice; // The import spice circuit item
 
 	private JMenuItem manual; // The manual menu item
@@ -275,7 +275,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 	public BioSim(boolean lema, boolean atacs) {
 		this.lema = lema;
 		this.atacs = atacs;
-		async = lema||atacs;
+		async = lema || atacs;
 		if (File.separator.equals("\\")) {
 			separator = "\\\\";
 		}
@@ -2099,7 +2099,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			if (root != null) {
 				for (int i = 0; i < tab.getTabCount(); i++) {
 					if (tab.getTitleAt(i).equals(
-									tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
+							tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
 						tab.setSelectedIndex(i);
 						if (save(i) != 1) {
 							return;
@@ -2188,7 +2188,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			if (root != null) {
 				for (int i = 0; i < tab.getTabCount(); i++) {
 					if (tab.getTitleAt(i).equals(
-									tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
+							tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
 						tab.setSelectedIndex(i);
 						if (save(i) != 1) {
 							return;
@@ -2403,7 +2403,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				}
 				else {
 					File work = new File(directory);
-					GCM2SBMLEditor gcm = new GCM2SBMLEditor(work.getAbsolutePath(), theFile, this, log, false);
+					GCM2SBMLEditor gcm = new GCM2SBMLEditor(work.getAbsolutePath(), theFile, this, log,
+							false, null);
 					// gcm.addMouseListener(this);
 					addTab(theFile, gcm, "GCM Editor");
 				}
@@ -2420,7 +2421,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				boolean done = false;
 				for (int i = 0; i < tab.getTabCount(); i++) {
 					if (tab.getTitleAt(i).equals(
-									tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
+							tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
 						tab.setSelectedIndex(i);
 						done = true;
 					}
@@ -2440,7 +2441,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			try {
 				for (int i = 0; i < tab.getTabCount(); i++) {
 					if (tab.getTitleAt(i).equals(
-									tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
+							tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
 						tab.setSelectedIndex(i);
 						if (save(i) != 1) {
 							return;
@@ -2452,8 +2453,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				JCheckBox dummy = new JCheckBox();
 				dummy.setSelected(false);
 				run.createProperties(0, "Print Interval", 1, 1, 1, tree.getFile().substring(
-								0,
-								tree.getFile().length()
+						0,
+						tree.getFile().length()
 								- (tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]
 										.length())), 314159, 1, new String[0], new String[0], "tsd.printer", "amount",
 						tree.getFile().split(separator), "none", frame, tree.getFile(), 0.1, 0.1, 0.1, 15,
@@ -2540,7 +2541,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			try {
 				for (int i = 0; i < tab.getTabCount(); i++) {
 					if (tab.getTitleAt(i).equals(
-									tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
+							tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
 						tab.setSelectedIndex(i);
 						if (save(i) != 1) {
 							return;
@@ -2552,8 +2553,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				JCheckBox dummy = new JCheckBox();
 				dummy.setSelected(false);
 				run.createProperties(0, "Print Interval", 1, 1, 1, tree.getFile().substring(
-								0,
-								tree.getFile().length()
+						0,
+						tree.getFile().length()
 								- (tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]
 										.length())), 314159, 1, new String[0], new String[0], "tsd.printer", "amount",
 						tree.getFile().split(separator), "none", frame, tree.getFile(), 0.1, 0.1, 0.1, 15,
@@ -3146,7 +3147,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 									tab.remove(i);
 								}
 								GCM2SBMLEditor gcm = new GCM2SBMLEditor(root + separator, f.getName(), this, log,
-										false);
+										false, null);
 								// gcm.addMouseListener(this);
 								addTab(f.getName(), gcm, "GCM Editor");
 								refreshTree();
@@ -3619,7 +3620,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						JOptionPane.ERROR_MESSAGE);
 			}
 		}
-//		 if the new rsg menu item is selected
+		// if the new rsg menu item is selected
 		else if (e.getSource() == newSpice) {
 			if (root != null) {
 				try {
@@ -4176,7 +4177,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						JOptionPane.ERROR_MESSAGE);
 			}
 		}
-//		 if the import spice menu item is selected
+		// if the import spice menu item is selected
 		else if (e.getSource() == importSpice) {
 			if (root != null) {
 				String filename = Buttons.browse(frame, new File(root), null, JFileChooser.FILES_ONLY,
@@ -4278,7 +4279,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			if (root != null) {
 				for (int i = 0; i < tab.getTabCount(); i++) {
 					if (tab.getTitleAt(i).equals(
-									tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
+							tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
 						tab.setSelectedIndex(i);
 						if (save(i) != 1) {
 							return;
@@ -4372,7 +4373,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					String cmd = "atacs -llodpl " + filename;
 					File work = new File(root);
 					Runtime exec = Runtime.getRuntime();
-					Process ATACS=exec.exec(cmd, null, work);
+					Process ATACS = exec.exec(cmd, null, work);
 					ATACS.waitFor();
 					log.addText("Executing:\n" + cmd);
 					String[] findTheFile = filename.split("\\.");
@@ -4549,7 +4550,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			if (!tree.getFile().equals(root)) {
 				for (int i = 0; i < tab.getTabCount(); i++) {
 					if (tab.getTitleAt(i).equals(
-									tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
+							tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
 						tab.setSelectedIndex(i);
 						if (save(i) != 1) {
 							return;
@@ -5207,7 +5208,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			boolean done = false;
 			for (int i = 0; i < tab.getTabCount(); i++) {
 				if (tab.getTitleAt(i).equals(
-								tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
+						tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
 					tab.setSelectedIndex(i);
 					done = true;
 				}
@@ -5782,7 +5783,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					if (atacs) {
 						popup.add(createSynthesis);
 					}
-					//popup.add(createAnalysis);
+					// popup.add(createAnalysis);
 					if (lema) {
 						popup.add(createLearn);
 					}
@@ -5823,7 +5824,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					if (atacs) {
 						popup.add(createSynthesis);
 					}
-					//popup.add(createAnalysis);
+					// popup.add(createAnalysis);
 					if (lema) {
 						popup.add(createLearn);
 					}
@@ -5864,7 +5865,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					if (atacs) {
 						popup.add(createSynthesis);
 					}
-					//popup.add(createAnalysis);
+					// popup.add(createAnalysis);
 					if (lema) {
 						popup.add(createLearn);
 					}
@@ -5905,7 +5906,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					if (atacs) {
 						popup.add(createSynthesis);
 					}
-					//popup.add(createAnalysis);
+					// popup.add(createAnalysis);
 					if (lema) {
 						popup.add(createLearn);
 					}
@@ -6111,7 +6112,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							}
 							else {
 								GCM2SBMLEditor gcm = new GCM2SBMLEditor(work.getAbsolutePath(), theFile, this, log,
-										false);
+										false, null);
 								// gcm.addMouseListener(this);
 								addTab(theFile, gcm, "GCM Editor");
 							}
@@ -6732,7 +6733,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						if (atacs) {
 							popup.add(createSynthesis);
 						}
-						//popup.add(createAnalysis);
+						// popup.add(createAnalysis);
 						if (lema) {
 							popup.add(createLearn);
 						}
@@ -6768,7 +6769,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						if (atacs) {
 							popup.add(createSynthesis);
 						}
-						//popup.add(createAnalysis);
+						// popup.add(createAnalysis);
 						if (lema) {
 							popup.add(createLearn);
 						}
@@ -6804,7 +6805,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						if (atacs) {
 							popup.add(createSynthesis);
 						}
-						//popup.add(createAnalysis);
+						// popup.add(createAnalysis);
 						if (lema) {
 							popup.add(createLearn);
 						}
@@ -6840,7 +6841,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						if (atacs) {
 							popup.add(createSynthesis);
 						}
-						//popup.add(createAnalysis);
+						// popup.add(createAnalysis);
 						if (lema) {
 							popup.add(createLearn);
 						}
@@ -7033,7 +7034,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					String[] dot = tree.getFile().split(separator);
 					String sbmlFile = /*
 														 * root + separator + simName + separator +
-										 */(dot[dot.length - 1].substring(0, dot[dot.length - 1].length() - 3) + "sbml");
+														 */(dot[dot.length - 1].substring(0, dot[dot.length - 1].length() - 3) + "sbml");
 					GCMParser parser = new GCMParser(tree.getFile());
 					GeneticNetwork network = parser.buildNetwork();
 					GeneticNetwork.setRoot(root + File.separator);
@@ -7105,7 +7106,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		else {
 			for (int i = 0; i < tab.getTabCount(); i++) {
 				if (tab.getTitleAt(i).equals(
-								tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
+						tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
 					tab.setSelectedIndex(i);
 					if (save(i) != 1) {
 						return;
@@ -8092,7 +8093,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		}
 		boolean lemaFlag = false, atacsFlag = false;
 		if (args.length > 0) {
-			for (int i=0; i<args.length; i++) {
+			for (int i = 0; i < args.length; i++) {
 				if (args[i].equals("-lema")) {
 					lemaFlag = true;
 				}
@@ -8155,7 +8156,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						out = new FileOutputStream(new File(root + separator + newSim + separator + ss));
 					}
 					FileInputStream in = new FileInputStream(new File(root + separator + oldSim + separator
-								+ ss));
+							+ ss));
 					int read = in.read();
 					while (read != -1) {
 						out.write(read);
