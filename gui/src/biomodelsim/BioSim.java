@@ -4538,7 +4538,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					String theFile = findTheFile[0] + ".dot";
 					File dot = new File(root + separator + theFile);
 					dot.delete();
-					String cmd = "atacs -llodpl " + filename;
+					String cmd = "atacs -cPllodpl " + filename;
 					File work = new File(root);
 					Runtime exec = Runtime.getRuntime();
 					Process ATACS = exec.exec(cmd, null, work);

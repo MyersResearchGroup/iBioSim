@@ -235,8 +235,8 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 				dot.delete();
 				String command = "open " + dotFile;
 				Runtime exec = Runtime.getRuntime();
-				log.addText("Executing:\n" + "atacs -llodpl " + filename + "\n");
-				Process load = exec.exec("atacs -llodpl " + filename, null, work);
+				log.addText("Executing:\n" + "atacs -cPllodpl " + filename + "\n");
+				Process load = exec.exec("atacs -cPllodpl " + filename, null, work);
 				load.waitFor();
 				if (dot.exists()) {
 					exec.exec(command, null, work);
