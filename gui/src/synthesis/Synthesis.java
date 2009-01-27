@@ -1442,8 +1442,30 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 				else if (circuitFile.endsWith(".rsg")) {
 					cmd = "atacs -lsodps " + circuitFile;
 				}
+				if (new File(directory + separator + graphFile).exists()) {
 				exec.exec(cmd, null, work);
 				log.addText("Executing:\n" + cmd);
+				}
+				else {
+					File log = new File(directory + separator + "atacs.log");
+					BufferedReader input = new BufferedReader(new FileReader(log));
+					String line = null;
+					JTextArea messageArea = new JTextArea();
+					while ((line = input.readLine()) != null) {
+						messageArea.append(line);
+						messageArea.append(System.getProperty("line.separator"));
+					}
+					input.close();
+					messageArea.setLineWrap(true);
+					messageArea.setWrapStyleWord(true);
+					messageArea.setEditable(false);
+					JScrollPane scrolls = new JScrollPane();
+					scrolls.setMinimumSize(new Dimension(500, 500));
+					scrolls.setPreferredSize(new Dimension(500, 500));
+					scrolls.setViewportView(messageArea);
+					JOptionPane.showMessageDialog(biosim.frame(), scrolls, "Log",
+							JOptionPane.INFORMATION_MESSAGE);
+				}
 			}
 			String command = "";
 			if (System.getProperty("os.name").contentEquals("Linux")) {
