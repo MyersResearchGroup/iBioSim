@@ -72,7 +72,7 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 	private JPanel mainPanel;// buttonPanel;
 
 	private boolean flag = true, dirty = false;
-	
+
 	private BioSim biosim;
 
 	public LHPNEditor() {
@@ -81,7 +81,7 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 
 	public LHPNEditor(String directory, String filename, LHPNFile lhpn, BioSim biosim, Log log) {
 		super();
-		 this.biosim = biosim;
+		this.biosim = biosim;
 		this.log = log;
 		addMouseListener(biosim);
 
@@ -211,7 +211,7 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 		mainPanelCenterCenter.add(flowPanel);
 
 	}
-	
+
 	public boolean isDirty() {
 		return dirty;
 	}
@@ -231,13 +231,15 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 			File work = new File(directory);
 			if (new File(directory + separator + filename).exists()) {
 				String dotFile = filename.replace(".lhpn", ".dot");
-				 String command = "open " + dotFile;
+				File dot = new File(directory + separator + dotFile);
+				dot.delete();
+				String command = "open " + dotFile;
 				Runtime exec = Runtime.getRuntime();
 				log.addText("Executing:\n" + "atacs -llodpl " + filename + "\n");
 				Process load = exec.exec("atacs -llodpl " + filename, null, work);
 				load.waitFor();
-				if (new File(directory + separator + dotFile).exists()) {
-				 exec.exec(command, null, work);
+				if (dot.exists()) {
+					exec.exec(command, null, work);
 				}
 				else {
 					File log = new File(directory + separator + "atacs.log");
@@ -413,8 +415,8 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 						else if (temp.equals(varOptions[2])) {
 							integer = true;
 						}
-						VariablesPanel panel = new VariablesPanel(selected, list, continuous, integer,
-								lhpnFile);
+						VariablesPanel panel = new VariablesPanel(selected, list, continuous,
+								integer, lhpnFile);
 					}
 				}
 				// log.addText(selected);

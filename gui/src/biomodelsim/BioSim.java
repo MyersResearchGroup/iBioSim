@@ -4534,16 +4534,17 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						&& tree.getFile().substring(tree.getFile().length() - 2).equals(".g")) {
 					String filename = tree.getFile().split(separator)[tree.getFile().split(
 							separator).length - 1];
+					String[] findTheFile = filename.split("\\.");
+					String theFile = findTheFile[0] + ".dot";
+					File dot = new File(root + separator + theFile);
+					dot.delete();
 					String cmd = "atacs -llodpl " + filename;
 					File work = new File(root);
 					Runtime exec = Runtime.getRuntime();
 					Process ATACS = exec.exec(cmd, null, work);
 					ATACS.waitFor();
 					log.addText("Executing:\n" + cmd);
-					String[] findTheFile = filename.split("\\.");
-					// String directory = "";
-					String theFile = findTheFile[0] + ".dot";
-					if (new File(root + separator + theFile).exists()) {
+					if (dot.exists()) {
 						String command = "";
 						if (System.getProperty("os.name").contentEquals("Linux")) {
 							// directory = System.getenv("BIOSIM") + "/docs/";
