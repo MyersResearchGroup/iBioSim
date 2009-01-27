@@ -586,6 +586,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 			Scanner f = new Scanner(new File(directory + separator + binFile));
 			str = new ArrayList<String>();
 			while (f.hasNextLine()) {
+				log.addText(f.nextLine());
 				str.add(f.nextLine());
 			}
 		}
@@ -625,6 +626,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 					JComboBox combo = new JComboBox(options);
 					String[] dmvOptions = { "", "Yes", "No" };
 					JComboBox dmv = new JComboBox(dmvOptions);
+					dmv.setSelectedIndex(0);
 					combo.setSelectedItem(numBins.getSelectedItem());
 					specs.add(dmv);
 					specs.add(combo);
@@ -865,9 +867,31 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 				String command = "open " + dotFile;
 				log.addText("Executing:\n" + "open " + directory + separator + dotFile + "\n");
 				Runtime exec = Runtime.getRuntime();
-				Process load = exec.exec("atacs -lloddl " + lhpnFile + " " + dotFile, null, work);
+				Process load = exec.exec("atacs -llodpl " + lhpnFile + " " + dotFile, null, work);
 				load.waitFor();
+				if (new File(directory + separator + dotFile).exists()) {
 				exec.exec(command, null, work);
+				}
+				else {
+					File log = new File(directory + separator + "atacs.log");
+					BufferedReader input = new BufferedReader(new FileReader(log));
+					String line = null;
+					JTextArea messageArea = new JTextArea();
+					while ((line = input.readLine()) != null) {
+						messageArea.append(line);
+						messageArea.append(System.getProperty("line.separator"));
+					}
+					input.close();
+					messageArea.setLineWrap(true);
+					messageArea.setWrapStyleWord(true);
+					messageArea.setEditable(false);
+					JScrollPane scrolls = new JScrollPane();
+					scrolls.setMinimumSize(new Dimension(500, 500));
+					scrolls.setPreferredSize(new Dimension(500, 500));
+					scrolls.setViewportView(messageArea);
+					JOptionPane.showMessageDialog(biosim.frame(), scrolls, "Log",
+							JOptionPane.INFORMATION_MESSAGE);
+				}
 			}
 			else {
 				JOptionPane.showMessageDialog(biosim.frame(), "No circuit has been generated yet.",

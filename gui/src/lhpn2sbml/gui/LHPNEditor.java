@@ -12,9 +12,12 @@ import gcm2sbml.gui.Runnable;
 import gcm2sbml.util.Utility;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.*;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 //import java.io.FileNotFoundException;
 //import java.io.FileOutputStream;
 //import java.io.PrintStream;
@@ -31,6 +34,8 @@ import java.io.File;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 //import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 //import javax.swing.JButton;
@@ -67,6 +72,8 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 	private JPanel mainPanel;// buttonPanel;
 
 	private boolean flag = true, dirty = false;
+	
+	private BioSim biosim;
 
 	public LHPNEditor() {
 		super();
@@ -74,7 +81,7 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 
 	public LHPNEditor(String directory, String filename, LHPNFile lhpn, BioSim biosim, Log log) {
 		super();
-		// this.biosim = biosim;
+		 this.biosim = biosim;
 		this.log = log;
 		addMouseListener(biosim);
 
@@ -223,13 +230,35 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 		try {
 			File work = new File(directory);
 			if (new File(directory + separator + filename).exists()) {
-				//String dotFile = filename.replace(".lhpn", ".dot");
-				// String command = "open " + dotFile;
+				String dotFile = filename.replace(".lhpn", ".dot");
+				 String command = "open " + dotFile;
 				Runtime exec = Runtime.getRuntime();
-				log.addText("Executing:\n" + "atacs -lloddl " + filename + "\n");
-				Process load = exec.exec("atacs -lloddl " + filename, null, work);
+				log.addText("Executing:\n" + "atacs -llodpl " + filename + "\n");
+				Process load = exec.exec("atacs -llodpl " + filename, null, work);
 				load.waitFor();
-				// exec.exec(command, null, work);
+				if (new File(directory + separator + dotFile).exists()) {
+				 exec.exec(command, null, work);
+				}
+				else {
+					File log = new File(directory + separator + "atacs.log");
+					BufferedReader input = new BufferedReader(new FileReader(log));
+					String line = null;
+					JTextArea messageArea = new JTextArea();
+					while ((line = input.readLine()) != null) {
+						messageArea.append(line);
+						messageArea.append(System.getProperty("line.separator"));
+					}
+					input.close();
+					messageArea.setLineWrap(true);
+					messageArea.setWrapStyleWord(true);
+					messageArea.setEditable(false);
+					JScrollPane scrolls = new JScrollPane();
+					scrolls.setMinimumSize(new Dimension(500, 500));
+					scrolls.setPreferredSize(new Dimension(500, 500));
+					scrolls.setViewportView(messageArea);
+					JOptionPane.showMessageDialog(biosim.frame(), scrolls, "Log",
+							JOptionPane.INFORMATION_MESSAGE);
+				}
 			}
 			else {
 				JOptionPane.showMessageDialog(this, "No circuit has been generated yet.", "Error",
