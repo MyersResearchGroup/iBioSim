@@ -161,8 +161,13 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 
 		// Sets up the thresholds area
 		JPanel thresholdPanel2 = new JPanel(new GridLayout(8, 2));
-		JPanel thresholdPanel1 = new JPanel(new GridLayout(3, 2));
+		JPanel thresholdPanel1 = new JPanel(new GridLayout(4, 2));
 
+		JLabel backgroundLabel = new JLabel("Linked Background file:");
+		JTextField backgroundField = new JTextField(lhpnFile);
+		backgroundField.setEditable(false);
+		thresholdPanel1.add(backgroundLabel);
+		thresholdPanel1.add(backgroundField);
 		JLabel iterationLabel = new JLabel("Iterations of Optimization Algorithm");
 		iteration = new JTextField("10000");
 		thresholdPanel1.add(iterationLabel);
@@ -303,6 +308,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 				learnFile = directory.substring(0, directory.length()
 						- getFilename[getFilename.length - 1].length())
 						+ separator + getProp[getProp.length - 1];
+				backgroundField.setText(getProp[getProp.length - 1]);
 			}
 			if (load.containsKey("learn.iter")) {
 				iteration.setText(load.getProperty("learn.iter"));

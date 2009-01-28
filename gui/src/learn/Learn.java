@@ -162,7 +162,7 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 		// initNet.add(browseInit);
 
 		// Sets up the thresholds area
-		JPanel thresholdPanel1 = new JPanel(new GridLayout(4, 2));
+		JPanel thresholdPanel1 = new JPanel(new GridLayout(5, 2));
 		JPanel thresholdPanel2 = new JPanel(new GridLayout(8, 2));
 		JLabel activationLabel = new JLabel("Ratio For Activation (Ta):");
 		thresholdPanel2.add(activationLabel);
@@ -179,6 +179,11 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 		influenceLevel = new JTextField(biosimrc.get("biosim.learn.tm", ""));
 		// influenceLevel.addActionListener(this);
 		thresholdPanel2.add(influenceLevel);
+		JLabel backgroundLabel = new JLabel("Linked Background File:");
+		JTextField backgroundField = new JTextField(learnFile);
+		backgroundField.setEditable(false);
+		thresholdPanel1.add(backgroundLabel);
+		thresholdPanel1.add(backgroundField);
 		JLabel letNThroughLabel = new JLabel("Minimum Number Of Initial Vectors (Tn):  ");
 		thresholdPanel1.add(letNThroughLabel);
 		letNThrough = new JTextField(biosimrc.get("biosim.learn.tn", ""));
@@ -294,6 +299,7 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 				learnFile = directory.substring(0, directory.length()
 						- getFilename[getFilename.length - 1].length())
 						+ separator + getProp[getProp.length - 1];
+				backgroundField.setText(getProp[getProp.length - 1]);
 			}
 			if (load.containsKey("genenet.Tn")) {
 				letNThrough.setText(load.getProperty("genenet.Tn"));
