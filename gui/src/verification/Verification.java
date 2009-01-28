@@ -578,7 +578,13 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		if (traceFile.exists()) {
 			traceFile.delete();
 		}
-		String options = "-ll ";
+		String options = "";
+		if (sourceFile.endsWith(".g")) {
+			options = "-ll ";
+		}
+		else if (sourceFile.endsWith(".vhd") || sourceFile.endsWith(".vhdl")) {
+			options = "-lvslll ";
+		}
 		// BDD Linkspace Size
 		if (!bddSize.getText().equals("") && !bddSize.getText().equals("0")) {
 			options = options + "-L" + bddSize.getText() + " ";
