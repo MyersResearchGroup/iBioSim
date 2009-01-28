@@ -29,7 +29,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 
 	private JComboBox debug; // debug combo box
 
-	private JTextField property, iteration;
+	private JTextField iteration;
 
 	// private JTextField windowRising, windowSize;
 
@@ -162,10 +162,6 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 		// Sets up the thresholds area
 		JPanel thresholdPanel2 = new JPanel(new GridLayout(8, 2));
 		JPanel thresholdPanel1 = new JPanel(new GridLayout(3, 2));
-		JLabel propertyLabel = new JLabel("Property to Verify:");
-		property = new JTextField("");
-		thresholdPanel1.add(propertyLabel);
-		thresholdPanel1.add(property);
 
 		JLabel iterationLabel = new JLabel("Iterations of Optimization Algorithm");
 		iteration = new JTextField("10000");
@@ -310,9 +306,6 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 			}
 			if (load.containsKey("learn.iter")) {
 				iteration.setText(load.getProperty("learn.iter"));
-			}
-			if (load.containsKey("learn.prop")) {
-				property.setText(load.getProperty("learn.prop"));
 			}
 			if (load.containsKey("learn.bins")) {
 				numBins.setSelectedItem(load.getProperty("learn.bins"));
@@ -583,6 +576,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 				// Integer.parseInt(numBins.getSelectedItem().toString()) - 1;
 				new Thread(this).start();
 			}
+			Integer i=0;
 			Scanner f = new Scanner(new File(directory + separator + binFile));
 			str = new ArrayList<String>();
 			while (f.hasNextLine()) {
@@ -947,7 +941,6 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 			in.close();
 			prop.setProperty("learn.file", learnFile);
 			prop.setProperty("learn.iter", this.iteration.getText().trim());
-			prop.setProperty("learn.prop", this.property.getText().trim());
 			prop.setProperty("learn.bins", (String) this.numBins.getSelectedItem());
 			if (range.isSelected()) {
 				prop.setProperty("learn.equal", "range");
@@ -1043,15 +1036,6 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 			}
 			new Thread(this).start();
 			String command = "data2lhpn.py -b" + binFile + " -l" + lhpnFile;
-			if (property.getText().length() > 0) {
-				String propFile = binFile.replace("bins", "prop");
-				File prop = new File(directory + separator + propFile);
-				prop.createNewFile();
-				FileWriter write = new FileWriter(prop);
-				write.write(property.getText().trim());
-				write.close();
-				command = command + " -p " + propFile;
-			}
 			log.addText("Executing:\n" + command + " " + directory + "\n");
 			File work = new File(directory);
 			Process run = Runtime.getRuntime().exec(command, null, work);
