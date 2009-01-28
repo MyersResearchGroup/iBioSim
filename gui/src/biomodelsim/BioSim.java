@@ -9554,6 +9554,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		saveAsGraph.setEnabled(false);
 		saveAsSbml.setEnabled(false);
 		saveAsTemplate.setEnabled(false);
+		if (tree.getFile() != null) {
 		if (tree.getFile().length() > 4
 				&& tree.getFile().substring(tree.getFile().length() - 5).equals(".sbml")
 				|| tree.getFile().length() > 3
@@ -9827,6 +9828,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			saveSbml.setEnabled(false);
 			saveTemp.setEnabled(false);
 		}
+	}
 	}
 
 	public String getRoot() {

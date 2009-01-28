@@ -52,7 +52,7 @@ import biomodelsim.Log;
  */
 public class LHPNEditor extends JPanel implements ActionListener, MouseListener {
 	// , MouseListener {
-	private JTextField lhpnNameTextField;
+	private JTextField lhpnNameTextField, propertyField;
 
 	private PropertyList variables, places, transitions, controlFlow;
 
@@ -123,9 +123,15 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 		lhpnNameTextField = new JTextField(filename, 15);
 		lhpnNameTextField.setEditable(false);
 		lhpnNameTextField.addActionListener(this);
+		propertyField = new JTextField(lhpnFile.getProperty(),15);
+		propertyField.setEditable(true);
+		propertyField.addActionListener(this);
 		JLabel lhpnNameLabel = new JLabel("LHPN Id:");
+		JLabel propertyLabel = new JLabel("Property:");
 		mainPanelNorth.add(lhpnNameLabel);
 		mainPanelNorth.add(lhpnNameTextField);
+		mainPanelNorth.add(propertyLabel);
+		mainPanelNorth.add(propertyField);
 
 		// buttonPanel = new JPanel();
 		// JButton save = new JButton("Save");
@@ -218,11 +224,13 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 
 	public void save() {
 		dirty = false;
+		lhpnFile.addProperty(propertyField.getText());
 		lhpnFile.save(directory + File.separator + filename);
 	}
 
 	public void saveAs(String newName) {
 		dirty = false;
+		lhpnFile.addProperty(propertyField.getText());
 		lhpnFile.save(directory + File.separator + newName);
 	}
 

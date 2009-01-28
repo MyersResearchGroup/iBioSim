@@ -42,6 +42,8 @@ public class LHPNFile {
 	private HashMap<String, String> delays;
 
 	private HashMap<String, Properties> booleanAssignments;
+	
+	private String property;
 
 	private Log log;
 
@@ -194,6 +196,9 @@ public class LHPNFile {
 					buffer.append("}\n");
 				}
 			}
+			if (property != null && !property.equals("")) {
+				buffer.append("#@.property " + property + "\n");
+			}
 			if (!variables.isEmpty() || !integers.isEmpty()) {
 				buffer.append("#@.init_vals {");
 				for (String s : variables.keySet()) {
@@ -337,6 +342,7 @@ public class LHPNFile {
 		}
 
 		try {
+			parseProperty(data);
 			// System.out.println("check1");
 			// log.addText("check1");
 			parseInOut(data);
@@ -614,7 +620,7 @@ public class LHPNFile {
 		enablings.put(name, cond);
 	}
 
-	private void removeEnabling(String name) {
+	public void removeEnabling(String name) {
 		if (name != null && enablings.containsKey(name)) {
 			enablings.remove(name);
 		}
@@ -770,6 +776,18 @@ public class LHPNFile {
 		if (intAssignments.containsKey(transition)) {
 			intAssignments.put(transition, prop);
 		}
+	}
+	
+	public void addProperty(String newProperty) {
+		property = newProperty;
+	}
+	
+	public void removeProperty() {
+		property = "";
+	}
+	
+	public String getProperty() {
+		return property;
 	}
 
 	public void changeVariableName(String oldName, String newName) {
@@ -1144,6 +1162,14 @@ public class LHPNFile {
 	 * (line_matcher.find()) { String name = matcher.group();
 	 * controlFlow.put(name, name); } }
 	 */
+	
+	private void parseProperty(StringBuffer data) {
+		Pattern pattern = Pattern.compile(PROPERTY);
+		Matcher lineMatcher = pattern.matcher(data.toString());
+		if (lineMatcher.find()) {
+			property = lineMatcher.group(1);
+		}
+	}
 
 	private void parseControlFlow(StringBuffer data) {
 		// log.addText("check2start");
@@ -1615,6 +1641,8 @@ public class LHPNFile {
 		}
 		// log.addText("check6end");
 	}
+	
+	private static final String PROPERTY = "#@\\.property (\\S+?)\\n";
 
 	private static final String INPUT = "\\.inputs([[\\s[^\\n]]\\w+]*?)\\n";
 
