@@ -45,7 +45,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 
 	private ButtonGroup timingMethodGroup, algorithmGroup;
 
-	private String directory, separator, verName, verFile, verifyFile, sourceFile, oldBdd;
+	private String directory, separator, verName, verFile, verifyFile, oldBdd;
 
 	private boolean change;
 
@@ -66,15 +66,13 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		else {
 			separator = File.separator;
 		}
-
 		this.biosim = biosim;
 		this.log = log;
 		this.directory = directory;
-		this.sourceFile = filename;
 		String[] getFilename = directory.split(separator);
 		this.verName = verName;
 		verFile = verName + ".ver";
-		String[] tempArray = sourceFile.split("\\.");
+		String[] tempArray = filename.split("\\.");
 		String traceFilename = tempArray[0] + ".trace";
 		File traceFile = new File(traceFilename);
 
@@ -293,17 +291,11 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		verifyFile = "";
 		// log.addText(directory + separator + verFile);
 		try {
-			FileInputStream in = new FileInputStream(new File(directory + separator + verName + separator + verFile));
+			FileInputStream in = new FileInputStream(new File(directory + separator + verFile));
 			load.load(in);
 			in.close();
 			if (load.containsKey("verification.file")) {
-				String[] getProp = load.getProperty("verification.file").split(separator);
-				verifyFile = directory.substring(0, directory.length()
-						- getFilename[getFilename.length - 1].length())
-						+ getProp[getProp.length - 1];
-			}
-			if (load.containsKey("verification.source")) {
-				sourceFile = load.getProperty("verification.source");
+				verifyFile = load.getProperty("verification.file");
 			}
 			if (load.containsKey("verification.bddSize")) {
 				bddSize.setText(load.getProperty("verification .bddSize"));
@@ -558,7 +550,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			new Thread(this).start();
 		}
 		else if (e.getSource() == save) {
-			log.addText("Saving:\n" + directory + separator + verName + separator + verFile + "\n");
+			log.addText("Saving:\n" + directory + separator + verFile + "\n");
 			save(verFile);
 		}
 		else if (e.getSource() == viewCircuit) {
@@ -574,17 +566,17 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 
 	public void run() {
 		// String command = "/home/shang/kjones/atacs/bin/atacs -";
-		String[] tempArray = sourceFile.split("\\.");
+		String[] tempArray = verifyFile.split("\\.");
 		String traceFilename = tempArray[0] + ".trace";
 		File traceFile = new File(traceFilename);
 		if (traceFile.exists()) {
 			traceFile.delete();
 		}
 		String options = "";
-		if (sourceFile.endsWith(".g")) {
+		if (verifyFile.endsWith(".g")) {
 			options = "-ll ";
 		}
-		else if (sourceFile.endsWith(".vhd") || sourceFile.endsWith(".vhdl")) {
+		else if (verifyFile.endsWith(".vhd") || verifyFile.endsWith(".vhdl")) {
 			options = "-lvslll ";
 		}
 		// BDD Linkspace Size
@@ -709,9 +701,9 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		else {
 			options = options + "vt ";
 		}
-		// String[] temp = sourceFile.split(separator);
+		// String[] temp = verifyFile.split(separator);
 		// String src = temp[temp.length - 1];
-		String cmd = "atacs " + options + " " + sourceFile;
+		String cmd = "atacs " + options + " .." + separator + verifyFile;
 		// String[] cmd = {"emacs", "temp" };
 		// JOptionPane.showMessageDialog(this, cmd);
 		// Runtime exec = Runtime.getRuntime();
@@ -867,11 +859,10 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		// JOptionPane.showMessageDialog(this, verifyFile);
 		try {
 			Properties prop = new Properties();
-			FileInputStream in = new FileInputStream(new File(directory + separator + verName + separator + filename));
+			FileInputStream in = new FileInputStream(new File(directory + separator + filename));
 			prop.load(in);
 			in.close();
 			prop.setProperty("verification.file", verifyFile);
-			prop.setProperty("verification.source", sourceFile);
 			if (!bddSize.equals("")) {
 				prop.setProperty("verification.bddSize", this.bddSize.getText().trim());
 			}
@@ -1055,10 +1046,10 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			else {
 				prop.setProperty("verification.reduction", "false");
 			}
-			FileOutputStream out = new FileOutputStream(new File(directory + separator + verName + separator + verFile));
+			FileOutputStream out = new FileOutputStream(new File(directory + separator + verFile));
 			prop.store(out, verifyFile);
 			out.close();
-			log.addText("Saving Parameter File:\n" + directory + separator + verName + separator + verFile);
+			log.addText("Saving Parameter File:\n" + directory + separator + verFile);
 			change = false;
 			oldBdd = bddSize.getText();
 		}
@@ -1069,7 +1060,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 	}
 
 	public void viewCircuit() {
-		String[] getFilename = sourceFile.split("\\.");
+		String[] getFilename = verifyFile.split("\\.");
 		String circuitFile = getFilename[0] + ".prs";
 		// JOptionPane.showMessageDialog(this, circuitFile);
 		// JOptionPane.showMessageDialog(this, directory + separator +
@@ -1077,7 +1068,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		try {
 			// JOptionPane.showMessageDialog(this, directory + separator +
 			// "run.log");
-			// String[] getFilename = sourceFile.split(".");
+			// String[] getFilename = verifyFile.split(".");
 			// String circuitFile = getFilename[0] + ".ps";
 			// JOptionPane.showMessageDialog(this, directory + separator +
 			// circuitFile);
@@ -1121,7 +1112,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 	}
 
 	public void viewTrace() {
-		String[] getFilename = sourceFile.split("\\.");
+		String[] getFilename = verifyFile.split("\\.");
 		String traceFilename = getFilename[0] + ".trace";
 		// JOptionPane.showMessageDialog(this, circuitFile);
 		// JOptionPane.showMessageDialog(this, directory + separator +
@@ -1129,7 +1120,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		try {
 			// JOptionPane.showMessageDialog(this, directory + separator +
 			// "run.log");
-			// String[] getFilename = sourceFile.split(".");
+			// String[] getFilename = verifyFile.split(".");
 			// String circuitFile = getFilename[0] + ".ps";
 			// JOptionPane.showMessageDialog(this, directory + separator +
 			// circuitFile);
