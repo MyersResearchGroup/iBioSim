@@ -362,7 +362,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 
 		// sortSpecies();
 		JPanel runHolder = new JPanel();
-		levels(false);
+		autogen(false);
 		if (auto.isSelected()) {
 			auto.doClick();
 		}
@@ -509,7 +509,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 			// levelsBin();
 			variablesPanel.revalidate();
 			variablesPanel.repaint();
-			levels(true);
+			levels();
 		}
 		else if (e.getSource() == auto) {
 			numBinsLabel.setEnabled(true);
@@ -522,7 +522,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 			}
 		}
 		else if (e.getSource() == suggest) {
-			levels(false);
+			autogen(false);
 			variablesPanel.revalidate();
 			variablesPanel.repaint();
 		}
@@ -551,8 +551,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 		}
 	}
 
-	private void levels(boolean readfile) {
-		ArrayList<String> str = null;
+	private void autogen(boolean readfile) {
 		try {
 			if (!readfile) {
 				FileWriter write = new FileWriter(new File(directory + separator + binFile));
@@ -580,8 +579,18 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 				write.close();
 				// Integer numThresh =
 				// Integer.parseInt(numBins.getSelectedItem().toString()) - 1;
+				// Thread myThread = new Thread(this);
 				new Thread(this).start();
+				levels();
 			}
+		}
+		catch (Exception e1) {
+		}
+	}
+
+	private void levels() {
+		ArrayList<String> str = null;
+		try {
 			Scanner f = new Scanner(new File(directory + separator + binFile));
 			str = new ArrayList<String>();
 			while (f.hasNextLine()) {
@@ -870,7 +879,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 				Process load = exec.exec("atacs -cPllodpl " + lhpnFile + " " + dotFile, null, work);
 				load.waitFor();
 				if (dot.exists()) {
-				exec.exec(command, null, work);
+					exec.exec(command, null, work);
 				}
 				else {
 					File log = new File(directory + separator + "atacs.log");
@@ -1174,6 +1183,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 			}
 			running.setCursor(null);
 			running.dispose();
+			levels();
 		}
 		catch (Exception e1) {
 		}
