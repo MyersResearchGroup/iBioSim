@@ -582,11 +582,9 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 				// Integer.parseInt(numBins.getSelectedItem().toString()) - 1;
 				new Thread(this).start();
 			}
-			Integer i=0;
 			Scanner f = new Scanner(new File(directory + separator + binFile));
 			str = new ArrayList<String>();
 			while (f.hasNextLine()) {
-				log.addText(f.nextLine());
 				str.add(f.nextLine());
 			}
 		}
