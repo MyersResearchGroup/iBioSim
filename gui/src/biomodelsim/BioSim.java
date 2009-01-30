@@ -4458,6 +4458,17 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						String sbmlFile = tree.getFile();
 						String[] getFilename = sbmlFile.split(separator);
 						String sbmlFileNoPath = getFilename[getFilename.length - 1];
+						if (sbmlFileNoPath.endsWith(".vhd")) {
+							try {
+								File work = new File(root);
+								Runtime.getRuntime().exec("atacs -lvsl " + sbmlFileNoPath, null, work);
+								sbmlFileNoPath = sbmlFileNoPath.replace(".vhd", ".g");
+							}
+							catch (IOException e1) {
+								JOptionPane.showMessageDialog(frame, "Unable to generate LHPN from VHDL file!",
+										"Error Generating File", JOptionPane.ERROR_MESSAGE);
+							}
+						}
 						try {
 							FileOutputStream out = new FileOutputStream(new File(root + separator
 									+ lrnName.trim() + separator + lrnName.trim() + ".lrn"));
