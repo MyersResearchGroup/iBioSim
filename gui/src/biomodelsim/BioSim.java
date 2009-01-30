@@ -2257,7 +2257,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						"Verification View ID", JOptionPane.PLAIN_MESSAGE);
 				if (verName != null && !verName.trim().equals("")) {
 					verName = verName.trim();
-					try {
+					//try {
 						if (overwrite(root + separator + verName, verName)) {
 							new File(root + separator + verName).mkdir();
 							// new FileWriter(new File(root + separator +
@@ -2295,11 +2295,9 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							 */
 							refreshTree();
 							//String work = root + separator + verName;
-							String circuitFile = root + separator + verName.trim() + separator
-									+ circuitFileNoPath;
 							// log.addText(circuitFile);
 							JPanel verPane = new JPanel();
-							Verification verify = new Verification(root, verName, circuitFile, log, this,
+							Verification verify = new Verification(root + separator + verName, verName, circuitFileNoPath, log, this,
 									lema, atacs);
 							// verify.addMouseListener(this);
 							verify.save();
@@ -2326,12 +2324,12 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							 */
 							addTab(verName, verPane, "Verification");
 						}
-					}
-					catch (Exception e1) {
-						JOptionPane.showMessageDialog(frame,
-								"Unable to create Verification View directory.", "Error",
-								JOptionPane.ERROR_MESSAGE);
-					}
+					//}
+					//catch (Exception e1) {
+					//	JOptionPane.showMessageDialog(frame,
+					//			"Unable to create Verification View directory.", "Error",
+					//			JOptionPane.ERROR_MESSAGE);
+					//}
 				}
 			}
 			else {
@@ -8071,7 +8069,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		if (!done) {
 			JPanel verPanel = new JPanel();
 			// String graphFile = "";
-			if (new File(tree.getFile()).isDirectory()) {
+/*			if (new File(tree.getFile()).isDirectory()) {
 				String[] list = new File(tree.getFile()).list();
 				int run = 0;
 				for (int i = 0; i < list.length; i++) {
@@ -8094,21 +8092,13 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						}
 					}
 				}
-			}
+			}*/
 
-			String verFile = tree.getFile() + separator
-					+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]
-					+ ".ver";
-			String verFile2 = tree.getFile() + separator + ".ver";
+		    String verName = tree.getFile().split(separator)[tree.getFile().split(separator).length - 1];
+			String verFile = tree.getFile() + separator + verName + ".ver";
 			Properties load = new Properties();
 			String verifyFile = "";
 			try {
-				if (new File(verFile2).exists()) {
-					FileInputStream in = new FileInputStream(new File(verFile2));
-					load.load(in);
-					in.close();
-					new File(verFile2).delete();
-				}
 				if (new File(verFile).exists()) {
 					FileInputStream in = new FileInputStream(new File(verFile));
 					load.load(in);
@@ -8141,9 +8131,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				return;
 			}
 			// if (!graphFile.equals("")) {
-			String[] tempArray = verFile.split("\\.");
-			String verName = tempArray[tempArray.length - 1];
-			Verification ver = new Verification(root, verName, "flag", log, this, lema, atacs);
+			Verification ver = new Verification(root + separator + verName, verName, "flag", log, this, lema, atacs);
 			// ver.addMouseListener(this);
 			verPanel.add(ver);
 			addTab(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],
