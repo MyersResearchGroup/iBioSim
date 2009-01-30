@@ -663,7 +663,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 								found = true;
 								if (getString.length >= 1) {
 									((JComboBox) specs.get(2))
-											.setSelectedItem(getString.length - 1);
+											.setSelectedItem(String.valueOf(getString.length - 1));
 									for (int i = 0; i < Integer
 											.parseInt((String) ((JComboBox) specs.get(2))
 													.getSelectedItem()) - 1; i++) {
