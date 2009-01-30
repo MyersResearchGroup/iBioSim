@@ -581,10 +581,10 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 				// Integer.parseInt(numBins.getSelectedItem().toString()) - 1;
 				// Thread myThread = new Thread(this);
 				new Thread(this).start();
-				levels();
 			}
 		}
 		catch (Exception e1) {
+			levels();
 		}
 	}
 
@@ -758,7 +758,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 			if ((specs.size() - 3) < boxes) {
 				for (int i = 0; i < boxes - 1; i++) {
 					try {
-						specs.get(i + 2);
+						specs.get(i + 3);
 					}
 					catch (Exception e1) {
 						JTextField temp = new JTextField("");
@@ -771,8 +771,8 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 				try {
 					if (boxes > 0) {
 						while (true) {
-							specs.remove(boxes + 1);
-							((JPanel) panels[num + 1]).remove(boxes + 1);
+							specs.remove(boxes + 2);
+							((JPanel) panels[num + 1]).remove(boxes + 2);
 						}
 					}
 					else if (boxes == 0) {
