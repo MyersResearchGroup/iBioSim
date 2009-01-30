@@ -984,9 +984,9 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 					}
 					write.write(((JTextField) variables.get(i).get(0)).getText().trim() + " ");
 				}
-				if (flag) {
-					// write.write("\n");
-				}
+			}
+			if (flag) {
+				write.write("\n");
 			}
 			for (int i = 0; i < variables.size(); i++) {
 				if (((JTextField) variables.get(i).get(0)).getText().trim().equals("")) {
