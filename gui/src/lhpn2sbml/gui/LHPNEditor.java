@@ -223,9 +223,9 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 	}
 
 	public void save() {
-		dirty = false;
 		lhpnFile.addProperty(propertyField.getText());
 		lhpnFile.save(directory + File.separator + filename);
+		dirty = false;
 	}
 
 	public void saveAs(String newName) {
