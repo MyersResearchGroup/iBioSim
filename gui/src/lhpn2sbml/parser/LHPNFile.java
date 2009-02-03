@@ -1192,8 +1192,8 @@ public class LHPNFile {
 			// log.addText("check2b");
 			while (placeMatcher.find()) {
 				// log.addText("check2 while");
-				String temp = placeMatcher.group(1).replaceAll("\\+/", "P");
-				temp = temp.replaceAll("-/", "M");
+				String temp = placeMatcher.group(1).replaceAll("\\+", "P");
+				temp = temp.replaceAll("-", "M");
 				// String[] tempLine = tempString.split("#");
 				String[] tempPlace = temp.split("\\s");
 				// String trans = "";
