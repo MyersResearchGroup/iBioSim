@@ -30,15 +30,7 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 
-import org.sbml.libsbml.InitialAssignment;
-import org.sbml.libsbml.KineticLaw;
-import org.sbml.libsbml.ListOf;
-import org.sbml.libsbml.Parameter;
-import org.sbml.libsbml.Rule;
-import org.sbml.libsbml.SBMLDocument;
-import org.sbml.libsbml.SBMLReader;
-import org.sbml.libsbml.SBMLWriter;
-
+import reb2sac.Reb2Sac;
 import reb2sac.Reb2SacThread;
 
 import biomodelsim.BioSim;
@@ -66,19 +58,23 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 	
 	private ArrayList<String> parameterChanges;
 	
-	String paramFile, refFile;
+	private String paramFile, refFile, simName;
+	
+	private Reb2Sac reb2sac;
 
 	public GCM2SBMLEditor(String path) {
-		this(path, null, null, null, false, null);
+		this(path, null, null, null, false, null, null, null);
 	}
 
-	public GCM2SBMLEditor(String path, String filename, BioSim biosim, Log log, boolean paramsOnly, String paramFile) {
+	public GCM2SBMLEditor(String path, String filename, BioSim biosim, Log log, boolean paramsOnly, String simName, String paramFile, Reb2Sac reb2sac) {
 		super();
 		this.biosim = biosim;
 		this.log = log;
 		this.path = path;
 		this.paramsOnly = paramsOnly;
 		this.paramFile = paramFile;
+		this.simName = simName;
+		this.reb2sac = reb2sac;
 		if (paramFile != null) {
 			try {
 				Scanner scan = new Scanner(new File(paramFile));
@@ -95,6 +91,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		}
 		if (paramsOnly) {
 			parameterChanges = new ArrayList<String>();
+			filename = refFile;
 		}
 		gcm = new GCMFile();
 		if (filename != null) {
@@ -389,39 +386,39 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 									sweepTwo += "_" + sweepThese2.get(i) + "=" + sweep2.get(i).get(k);
 								}
 							}
-							//new File(simDir + separator + stem + sweepTwo.replace("/", "-")).mkdir();
-							//createSBML(stem, sweepTwo);
-							//new Reb2SacThread(reb2sac).start(stem + sweepTwo.replace("/", "-"));
-							//reb2sac.emptyFrames();
+							new File(path + File.separator + simName + File.separator + stem + sweepTwo.replace("/", "-")).mkdir();
+							createSBML(stem, sweepTwo);
+							new Reb2SacThread(reb2sac).start(stem + sweepTwo.replace("/", "-"));
+							reb2sac.emptyFrames();
 						}
 					}
 					else {
-						//new File(simDir + separator + stem + sweep.replace("/", "-")).mkdir();
-						//createSBML(stem, sweep);
-						//new Reb2SacThread(reb2sac).start(stem + sweep.replace("/", "-"));
-						//reb2sac.emptyFrames();
+						new File(path + File.separator + simName + File.separator + stem + sweep.replace("/", "-")).mkdir();
+						createSBML(stem, sweep);
+						new Reb2SacThread(reb2sac).start(stem + sweep.replace("/", "-"));
+						reb2sac.emptyFrames();
 					}
 				}
 			}
 			else {
 				if (!stem.equals("")) {
-					//new File(simDir + separator + stem).mkdir();
+					new File(path + File.separator + simName + File.separator + stem).mkdir();
 				}
-				//createSBML(stem, ".");
+				createSBML(stem, ".");
 				if (!stem.equals("")) {
-					//new Reb2SacThread(reb2sac).start(stem);
+					new Reb2SacThread(reb2sac).start(stem);
 				}
 				else {
-					//new Reb2SacThread(reb2sac).start(".");
+					new Reb2SacThread(reb2sac).start(".");
 				}
-				//reb2sac.emptyFrames();
+				reb2sac.emptyFrames();
 			}
 		}
 		else {
 			if (!stem.equals("")) {
-				//new File(simDir + separator + stem).mkdir();
+				new File(path + File.separator + simName + File.separator + stem).mkdir();
 			}
-			//createSBML(stem, ".");
+			createSBML(stem, ".");
 		}
 		dirty = false;
 	}
@@ -483,15 +480,27 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 			if (direct.equals(".") && !stem.equals("")) {
 				direct = "";
 			}
-			//document.getModel().setName(modelName.getText().trim());
-			//SBMLWriter writer = new SBMLWriter();
-			//writer.writeSBML(document, simDir + separator + stem + direct + separator
-			//		+ file.split(separator)[file.split(separator).length - 1]);
+			GCMParser parser = new GCMParser(path + File.separator + gcmname + ".gcm");
+			GeneticNetwork network = null;
+			try {
+				network = parser.buildNetwork();
+			}
+			catch (IllegalStateException e) {
+				JOptionPane.showMessageDialog(biosim.frame(), e.getMessage(), "Error",
+						JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			network.loadProperties(gcm);
+			network.mergeSBML(path + File.separator + simName + File.separator + stem + direct + File.separator + gcmname + ".sbml");
 		}
 		catch (Exception e1) {
 			JOptionPane.showMessageDialog(biosim.frame(), "Unable to create sbml file.",
 					"Error Creating File", JOptionPane.ERROR_MESSAGE);
 		}
+	}
+	
+	public String getRefFile() {
+		return refFile;
 	}
 
 	public void actionPerformed(ActionEvent e) {
