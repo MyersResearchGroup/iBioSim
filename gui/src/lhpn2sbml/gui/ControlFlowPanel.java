@@ -110,7 +110,7 @@ public class ControlFlowPanel extends JPanel implements ActionListener {
 		if (selected != null) {
 			// JOptionPane.showMessageDialog(this, "here");
 			oldName = selected;
-			//fields.get(GlobalConstants.ID).setValue(selected);
+			// fields.get(GlobalConstants.ID).setValue(selected);
 			String[] flowArray = selected.split("\\s");
 			fromBox.setSelectedItem(flowArray[0]);
 			toBox.setSelectedItem(flowArray[1]);
@@ -145,7 +145,7 @@ public class ControlFlowPanel extends JPanel implements ActionListener {
 				}
 				if (flag) {
 					toBox.setSelectedItem(to);
-					//JOptionPane.showMessageDialog(this, to);
+					// JOptionPane.showMessageDialog(this, to);
 				}
 			}
 		}
@@ -161,37 +161,37 @@ public class ControlFlowPanel extends JPanel implements ActionListener {
 					"There must be places and transitions to create control flow.",
 					"Control Flow Error", JOptionPane.ERROR_MESSAGE);
 		}
-		fields.get(GlobalConstants.ID).setValue(fromBox.getSelectedItem().toString() + " "
-				+ toBox.getSelectedItem().toString());
+		fields.get(GlobalConstants.ID).setValue(
+				fromBox.getSelectedItem().toString() + " " + toBox.getSelectedItem().toString());
 	}
 
-	//private boolean checkValues() {
-	//	for (PropertyField f : fields.values()) {
-	//		if (!f.isValid()) {
-	//			return false;
-	//		}
-	//	}
-	//	return true;
-	//}
+	// private boolean checkValues() {
+	// for (PropertyField f : fields.values()) {
+	// if (!f.isValid()) {
+	// return false;
+	// }
+	// }
+	// return true;
+	// }
 
 	private boolean openGui(String oldName) {
 		String id = (String) fromBox.getSelectedItem() + " " + (String) toBox.getSelectedItem();
-		//JOptionPane.showMessageDialog(this, oldName);
+		// JOptionPane.showMessageDialog(this, oldName);
 		String[] oldFlow = new String[2];
 		if (oldName != null) {
 			oldFlow = oldName.split("\\s");
 		}
-		String[] newFlow = {(String) fromBox.getSelectedItem(), (String) toBox.getSelectedItem()};
+		String[] newFlow = { (String) fromBox.getSelectedItem(), (String) toBox.getSelectedItem() };
 		int value = JOptionPane.showOptionDialog(new JFrame(), this, "Control Flow Editor",
 				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		if (value == JOptionPane.YES_OPTION) {
 			id = (String) fromBox.getSelectedItem() + " " + (String) toBox.getSelectedItem();
 			newFlow[0] = (String) fromBox.getSelectedItem();
 			newFlow[1] = (String) toBox.getSelectedItem();
-			//if (!checkValues()) {
-			//	Utility.createErrorMessage("Error", "Illegal values entered.");
-			//	return false;
-			//}
+			// if (!checkValues()) {
+			// Utility.createErrorMessage("Error", "Illegal values entered.");
+			// return false;
+			// }
 			if (oldName == null) {
 				if (lhpn.containsFlow(newFlow[0], newFlow[1])) {
 					Utility.createErrorMessage("Error", "Movement already exists.");
@@ -199,7 +199,7 @@ public class ControlFlowPanel extends JPanel implements ActionListener {
 				}
 			}
 			else if (!oldName.equals(id)) {
-					if (lhpn.containsFlow(newFlow[0], newFlow[1])) {
+				if (lhpn.containsFlow(newFlow[0], newFlow[1])) {
 					Utility.createErrorMessage("Error", "Movement already exists.");
 					return false;
 				}
@@ -213,7 +213,7 @@ public class ControlFlowPanel extends JPanel implements ActionListener {
 			lhpn.addControlFlow(fromBox.getSelectedItem().toString(), toBox.getSelectedItem()
 					.toString());
 			flowList.removeItem(oldName);
-			//JOptionPane.showMessageDialog(this, id);
+			// JOptionPane.showMessageDialog(this, id);
 			flowList.addItem(id);
 			flowList.setSelectedValue(id, true);
 		}
@@ -265,9 +265,9 @@ public class ControlFlowPanel extends JPanel implements ActionListener {
 					toBox.removeItem(transitionList[i]);
 					toBox.addItem(transitionList[i]);
 				}
-					if (flag) {
-						toBox.setSelectedItem(to);
-					}
+				if (flag) {
+					toBox.setSelectedItem(to);
+				}
 			}
 			else if (isTransition(fromBox)) {
 				String to = "";
@@ -275,7 +275,7 @@ public class ControlFlowPanel extends JPanel implements ActionListener {
 				if (toBox.getSelectedItem() != null) {
 					to = toBox.getSelectedItem().toString();
 					flag = true;
-					//JOptionPane.showMessageDialog(this, "to: " + to);
+					// JOptionPane.showMessageDialog(this, "to: " + to);
 				}
 				toBox.removeAllItems();
 				// JOptionPane.showMessageDialog(this, toBox.getItemCount());
@@ -288,12 +288,13 @@ public class ControlFlowPanel extends JPanel implements ActionListener {
 				}
 				// JOptionPane.showMessageDialog(this, toBox.getItemCount());
 			}
-			//JOptionPane.showMessageDialog(this, fromBox.getSelectedItem().toString() + " "
-			//		+ toBox.getSelectedItem().toString());
-			
+			// JOptionPane.showMessageDialog(this,
+			// fromBox.getSelectedItem().toString() + " "
+			// + toBox.getSelectedItem().toString());
+
 		}
-		fields.get(GlobalConstants.ID).setValue(fromBox.getSelectedItem().toString() + " "
-				+ toBox.getSelectedItem().toString());
+		fields.get(GlobalConstants.ID).setValue(
+				fromBox.getSelectedItem().toString() + " " + toBox.getSelectedItem().toString());
 	}
 
 	// private void loadProperties(Properties property) {
