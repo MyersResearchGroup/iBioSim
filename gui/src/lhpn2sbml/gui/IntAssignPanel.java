@@ -213,7 +213,7 @@ public class IntAssignPanel extends JPanel implements ActionListener {
 			lhpn.removeIntAssign(selectArray[0], oldArray[0]);
 		}
 		else {
-			System.out.println(transition + " " + id + " " + property.getProperty("Assignment value"));
+			//System.out.println(transition + " " + id + " " + property.getProperty("Assignment value"));
 			lhpn.addIntAssign(transition, id, property.getProperty("Value"));
 		}
 	}
