@@ -4146,9 +4146,25 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						}
 						in.close();
 						out.close();
+						File work = new File(root);
+						String oldName = root + separator + file[file.length - 1];
+						String newName = oldName.replace(".g", "_NEW.g");
+						Process atacs = Runtime.getRuntime().exec("atacs -llsl " + oldName, null, work);
+						atacs.waitFor();
+						FileOutputStream old = new FileOutputStream(new File(oldName));
+						FileInputStream newFile = new FileInputStream(new File(newName));
+						int readNew = newFile.read();
+						while (readNew != -1) {
+							old.write(readNew);
+							readNew = newFile.read();
+						}
+						old.close();
+						newFile.close();
+						new File(newName).delete();
 						refreshTree();
 					}
 					catch (Exception e1) {
+						e1.printStackTrace();
 						JOptionPane.showMessageDialog(frame, "Unable to import file.", "Error",
 								JOptionPane.ERROR_MESSAGE);
 					}
