@@ -475,12 +475,10 @@ public class LHPNFile {
 	// }
 
 	public void addTransition(String name) {
-		log.addText("noprop");
 		controlFlow.put(name, null);
 	}
 
 	public void addTransition(String name, Properties prop) {
-		log.addText("withprop");
 		controlFlow.put(name, prop);
 	}
 
@@ -1280,7 +1278,6 @@ public class LHPNFile {
 			Pattern output = Pattern.compile(WORD);
 			Matcher outMatcher = output.matcher(outLineMatcher.group(1));
 			while (outMatcher.find()) {
-				// log.addText("out " + outMatcher.group());
 				varOrder.setProperty(i.toString(), outMatcher.group());
 				i++;
 			}
@@ -1322,7 +1319,6 @@ public class LHPNFile {
 				else if (name != null) {
 					outputs.put(name, false);
 				}
-				i++;
 			}
 		}
 	}
