@@ -423,10 +423,10 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 						else if (temp.equals(varOptions[2])) {
 							integer = true;
 						}
+							VariablesPanel panel = new VariablesPanel(selected, list, continuous,
+									integer, lhpnFile);
 					}
 				}
-				VariablesPanel panel = new VariablesPanel(selected, list, continuous,
-						integer, lhpnFile);
 				// log.addText(selected);
 			}
 			else if (getName().contains("Place")) {
