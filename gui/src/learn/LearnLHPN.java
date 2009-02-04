@@ -663,7 +663,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 								found = true;
 								if (getString.length >= 1) {
 									((JComboBox) specs.get(2))
-											.setSelectedItem(String.valueOf(getString.length - 1));
+											.setSelectedItem(String.valueOf(getString.length));
 									for (int i = 0; i < Integer
 											.parseInt((String) ((JComboBox) specs.get(2))
 													.getSelectedItem()) - 1; i++) {
@@ -1103,8 +1103,9 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 			JPanel button = new JPanel();
 			JPanel all = new JPanel(new BorderLayout());
 			JLabel label = new JLabel("Running...");
-			JProgressBar progress = new JProgressBar(0, Integer.parseInt(iteration.getText()));
-			progress.setStringPainted(true);
+			JProgressBar progress = new JProgressBar();
+			progress.setIndeterminate(true);
+			//progress.setStringPainted(true);
 			// progress.setString("");
 			progress.setValue(0);
 			text.add(label);
