@@ -749,9 +749,9 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 				influes.add(s);
 			}
 			for (String s : parameterChanges) {
-				if (s.contains("/") && influes.contains(s.split("/")[0].trim())) {
-					influes.remove(s.split("/")[0].trim());
-					influes.add(s.split("/")[0].trim() + " Modified");
+				if (s.contains("\"") && influes.contains(s.split("\"")[1].trim())) {
+					influes.remove(s.split("\"")[1].trim());
+					influes.add(s.split("\"")[1].trim() + " Modified");
 				}
 			}
 			influences.addAllItem(influes);
@@ -962,13 +962,15 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 				SpeciesPanel panel = new SpeciesPanel(selected, list, influences, gcm, paramsOnly);
 				if (paramsOnly) {
 					String updates = panel.updates();
-					for (int i = parameterChanges.size() - 1; i >= 0; i--) {
-						if (parameterChanges.get(i).startsWith(updates.split("/")[0])) {
-							parameterChanges.remove(i);
+					if (!updates.equals("")) {
+						for (int i = parameterChanges.size() - 1; i >= 0; i--) {
+							if (parameterChanges.get(i).startsWith(updates.split("/")[0])) {
+								parameterChanges.remove(i);
+							}
 						}
-					}
-					for (String s : updates.split("\n")) {
-						parameterChanges.add(s);
+						for (String s : updates.split("\n")) {
+							parameterChanges.add(s);
+						}
 					}
 				}
 			}
@@ -983,13 +985,15 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 				InfluencePanel panel = new InfluencePanel(selected, list, gcm, paramsOnly);
 				if (paramsOnly) {
 					String updates = panel.updates();
-					for (int i = parameterChanges.size() - 1; i >= 0; i--) {
-						if (parameterChanges.get(i).startsWith(updates.split("/")[0])) {
-							parameterChanges.remove(i);
+					if (!updates.equals("")) {
+						for (int i = parameterChanges.size() - 1; i >= 0; i--) {
+							if (parameterChanges.get(i).startsWith(updates.split("/")[0])) {
+								parameterChanges.remove(i);
+							}
 						}
-					}
-					for (String s : updates.split("\n")) {
-						parameterChanges.add(s);
+						for (String s : updates.split("\n")) {
+							parameterChanges.add(s);
+						}
 					}
 				}
 			}
@@ -1004,13 +1008,15 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 				PromoterPanel panel = new PromoterPanel(selected, list, influences, gcm, paramsOnly);
 				if (paramsOnly) {
 					String updates = panel.updates();
-					for (int i = parameterChanges.size() - 1; i >= 0; i--) {
-						if (parameterChanges.get(i).startsWith(updates.split("/")[0])) {
-							parameterChanges.remove(i);
+					if (!updates.equals("")) {
+						for (int i = parameterChanges.size() - 1; i >= 0; i--) {
+							if (parameterChanges.get(i).startsWith(updates.split("/")[0])) {
+								parameterChanges.remove(i);
+							}
 						}
-					}
-					for (String s : updates.split("\n")) {
-						parameterChanges.add(s);
+						for (String s : updates.split("\n")) {
+							parameterChanges.add(s);
+						}
 					}
 				}
 			}
@@ -1076,13 +1082,15 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 				ParameterPanel panel = new ParameterPanel(selected, list, gcm, paramsOnly);
 				if (paramsOnly) {
 					String updates = panel.updates();
-					for (int i = parameterChanges.size() - 1; i >= 0; i--) {
-						if (parameterChanges.get(i).startsWith(updates.split(" ")[0])) {
-							parameterChanges.remove(i);
+					if (!updates.equals("")) {
+						for (int i = parameterChanges.size() - 1; i >= 0; i--) {
+							if (parameterChanges.get(i).startsWith(updates.split(" ")[0])) {
+								parameterChanges.remove(i);
+							}
 						}
-					}
-					for (String s : updates.split("\n")) {
-						parameterChanges.add(s);
+						for (String s : updates.split("\n")) {
+							parameterChanges.add(s);
+						}
 					}
 				}
 			}
