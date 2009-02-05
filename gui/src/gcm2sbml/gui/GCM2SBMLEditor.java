@@ -4,6 +4,7 @@ import gcm2sbml.network.GeneticNetwork;
 import gcm2sbml.parser.CompatibilityFixer;
 import gcm2sbml.parser.GCMFile;
 import gcm2sbml.parser.GCMParser;
+import gcm2sbml.util.GlobalConstants;
 import gcm2sbml.util.Utility;
 
 import java.awt.BorderLayout;
@@ -53,20 +54,21 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 	private String gcmname = "";
 
 	private GCMFile gcm = null;
-	
+
 	private boolean paramsOnly;
-	
+
 	private ArrayList<String> parameterChanges;
-	
+
 	private String paramFile, refFile, simName;
-	
+
 	private Reb2Sac reb2sac;
 
 	public GCM2SBMLEditor(String path) {
 		this(path, null, null, null, false, null, null, null);
 	}
 
-	public GCM2SBMLEditor(String path, String filename, BioSim biosim, Log log, boolean paramsOnly, String simName, String paramFile, Reb2Sac reb2sac) {
+	public GCM2SBMLEditor(String path, String filename, BioSim biosim, Log log, boolean paramsOnly,
+			String simName, String paramFile, Reb2Sac reb2sac) {
 		super();
 		this.biosim = biosim;
 		this.log = log;
@@ -101,6 +103,9 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		}
 		else {
 			this.filename = "";
+		}
+		if (paramsOnly) {
+			loadParams();
 		}
 		buildGui(this.filename);
 	}
@@ -306,7 +311,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		reload(newName);
 		biosim.refreshTree();
 	}
-	
+
 	public void saveParams(boolean run, String stem) {
 		if (run) {
 			ArrayList<String> sweepThese1 = new ArrayList<String>();
@@ -315,16 +320,11 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 			ArrayList<ArrayList<Double>> sweep2 = new ArrayList<ArrayList<Double>>();
 			for (String s : parameterChanges) {
 				if (s.split(" ")[1].startsWith("(")) {
-					if ((s.split(" ")[1]).split(",")[3].replace(")", "").trim()
-							.equals("1")) {
+					if ((s.split(" ")[1]).split(",")[3].replace(")", "").trim().equals("1")) {
 						sweepThese1.add(s.split(" ")[0]);
-						double start = Double
-								.parseDouble((s.split(" ")[1]).split(",")[0].substring(1)
-										.trim());
-						double stop = Double
-								.parseDouble((s.split(" ")[1]).split(",")[1].trim());
-						double step = Double
-								.parseDouble((s.split(" ")[1]).split(",")[2].trim());
+						double start = Double.parseDouble((s.split(" ")[1]).split(",")[0].substring(1).trim());
+						double stop = Double.parseDouble((s.split(" ")[1]).split(",")[1].trim());
+						double step = Double.parseDouble((s.split(" ")[1]).split(",")[2].trim());
 						ArrayList<Double> add = new ArrayList<Double>();
 						for (double i = start; i <= stop; i += step) {
 							add.add(i);
@@ -333,13 +333,9 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 					}
 					else {
 						sweepThese2.add(s.split(" ")[0]);
-						double start = Double
-								.parseDouble((s.split(" ")[1]).split(",")[0].substring(1)
-										.trim());
-						double stop = Double
-								.parseDouble((s.split(" ")[1]).split(",")[1].trim());
-						double step = Double
-								.parseDouble((s.split(" ")[1]).split(",")[2].trim());
+						double start = Double.parseDouble((s.split(" ")[1]).split(",")[0].substring(1).trim());
+						double stop = Double.parseDouble((s.split(" ")[1]).split(",")[1].trim());
+						double step = Double.parseDouble((s.split(" ")[1]).split(",")[2].trim());
 						ArrayList<Double> add = new ArrayList<Double>();
 						for (double i = start; i <= stop; i += step) {
 							add.add(i);
@@ -386,14 +382,16 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 									sweepTwo += "_" + sweepThese2.get(i) + "=" + sweep2.get(i).get(k);
 								}
 							}
-							new File(path + File.separator + simName + File.separator + stem + sweepTwo.replace("/", "-")).mkdir();
+							new File(path + File.separator + simName + File.separator + stem
+									+ sweepTwo.replace("/", "-")).mkdir();
 							createSBML(stem, sweepTwo);
 							new Reb2SacThread(reb2sac).start(stem + sweepTwo.replace("/", "-"));
 							reb2sac.emptyFrames();
 						}
 					}
 					else {
-						new File(path + File.separator + simName + File.separator + stem + sweep.replace("/", "-")).mkdir();
+						new File(path + File.separator + simName + File.separator + stem
+								+ sweep.replace("/", "-")).mkdir();
 						createSBML(stem, sweep);
 						new Reb2SacThread(reb2sac).start(stem + sweep.replace("/", "-"));
 						reb2sac.emptyFrames();
@@ -418,19 +416,80 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 			if (!stem.equals("")) {
 				new File(path + File.separator + simName + File.separator + stem).mkdir();
 			}
-			createSBML(stem, ".");
+			try {
+				FileOutputStream out = new FileOutputStream(new File(paramFile));
+				out.write((refFile + "\n").getBytes());
+				for (String s : parameterChanges) {
+					if (!s.trim().equals("")) {
+						out.write((s + "\n").getBytes());
+					}
+				}
+				out.close();
+			}
+			catch (Exception e1) {
+				JOptionPane.showMessageDialog(biosim.frame(), "Unable to save parameter file.",
+						"Error Saving File", JOptionPane.ERROR_MESSAGE);
+			}
 		}
 		dirty = false;
 	}
-	
+
+	private void loadParams() {
+		if (paramsOnly) {
+			try {
+				Scanner scan = new Scanner(new File(paramFile));
+				if (scan.hasNextLine()) {
+					scan.nextLine();
+				}
+				while (scan.hasNextLine()) {
+					String s = scan.nextLine();
+					if (!s.trim().equals("")) {
+						parameterChanges.add(s);
+					}
+				}
+				scan.close();
+			}
+			catch (Exception e) {
+			}
+			for (String update : parameterChanges) {
+				String id;
+				if (update.contains("/")) {
+					id = update.split("/")[0];
+					id = id.replace("\"", "");
+					String prop = CompatibilityFixer.convertSBMLName(update.split("/")[1].substring(0, update.split("/")[1].indexOf(" ")).trim());
+					String value = update.split(" ")[update.split(" ").length - 1].trim();
+					Properties props = null;
+					if(gcm.getSpecies().containsKey(id)) {
+						props = gcm.getSpecies().get(id);
+					}
+					else if(gcm.getPromoters().containsKey(id)) {
+						props = gcm.getPromoters().get(id);
+					}
+					else if(gcm.getInfluences().containsKey(id)) {
+						props = gcm.getInfluences().get(id);
+					}
+					if (props != null) {
+						props.put(prop, value);
+					}
+				}
+				else {
+					id = update.split(" ")[0];
+					String value = update.split(" ")[1].trim();
+					gcm.setParameter(CompatibilityFixer.convertSBMLName(id), value);
+				}
+			}
+		}
+	}
+
 	public void createSBML(String stem, String direct) {
 		try {
 			FileOutputStream out = new FileOutputStream(new File(paramFile));
 			out.write((refFile + "\n").getBytes());
 			for (String s : parameterChanges) {
-				out.write((s + "\n").getBytes());
+				if (!s.trim().equals("")) {
+					out.write((s + "\n").getBytes());
+				}
 			}
-			out.write(("\n").getBytes());
 			out.close();
 		}
 		catch (Exception e1) {
@@ -458,20 +517,24 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 					if (di.contains("/")) {
 						if (gcm.getPromoters().containsKey(di.split("=")[0].split("/")[0])) {
 							Properties promoterProps = gcm.getPromoters().get(di.split("=")[0].split("/")[0]);
-							promoterProps.put(CompatibilityFixer.convertSBMLName(di.split("=")[0].split("/")[1]), di.split("=")[1]);
+							promoterProps.put(CompatibilityFixer.convertSBMLName(di.split("=")[0].split("/")[1]),
+									di.split("=")[1]);
 						}
 						if (gcm.getSpecies().containsKey(di.split("=")[0].split("/")[0])) {
 							Properties speciesProps = gcm.getSpecies().get(di.split("=")[0].split("/")[0]);
-							speciesProps.put(CompatibilityFixer.convertSBMLName(di.split("=")[0].split("/")[1]), di.split("=")[1]);
+							speciesProps.put(CompatibilityFixer.convertSBMLName(di.split("=")[0].split("/")[1]),
+									di.split("=")[1]);
 						}
 						if (gcm.getInfluences().containsKey(di.split("=")[0].split("/")[0].substring(1))) {
-							Properties influenceProps = gcm.getInfluences().get(di.split("=")[0].split("/")[0].substring(1));
-							influenceProps.put(CompatibilityFixer.convertSBMLName(di.split("=")[0].split("/")[1]).replace("\"", ""), di.split("=")[1]);
+							Properties influenceProps = gcm.getInfluences().get(
+									di.split("=")[0].split("/")[0].substring(1));
+							influenceProps.put(CompatibilityFixer.convertSBMLName(di.split("=")[0].split("/")[1])
+									.replace("\"", ""), di.split("=")[1]);
 						}
 					}
 					else {
 						if (gcm.getParameters().containsKey(di.split("=")[0])) {
-							gcm.getParameters().put(di.split("=")[0], di.split("=")[1]);
+							gcm.getParameters().put(CompatibilityFixer.convertSBMLName(di.split("=")[0]), di.split("=")[1]);
 						}
 					}
 				}
@@ -491,14 +554,15 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 				return;
 			}
 			network.loadProperties(gcm);
-			network.mergeSBML(path + File.separator + simName + File.separator + stem + direct + File.separator + gcmname + ".sbml");
+			network.mergeSBML(path + File.separator + simName + File.separator + stem + direct
+					+ File.separator + gcmname + ".sbml");
 		}
 		catch (Exception e1) {
 			JOptionPane.showMessageDialog(biosim.frame(), "Unable to create sbml file.",
 					"Error Creating File", JOptionPane.ERROR_MESSAGE);
 		}
 	}
-	
+
 	public String getRefFile() {
 		return refFile;
 	}
@@ -609,7 +673,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		// JSplitPane pane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, null,
 		// buttons);
 		// pane.setDividerSize(2);
-		//mainPanelCenterDown.add(buttons, BorderLayout.CENTER);
+		// mainPanelCenterDown.add(buttons, BorderLayout.CENTER);
 
 		promoters = new PropertyList("Promoter List");
 		EditButton addInit = new EditButton("Add Promoter", promoters);
@@ -619,7 +683,23 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 			removeInit.setEnabled(false);
 		}
 		EditButton editInit = new EditButton("Edit Promoter", promoters);
-		promoters.addAllItem(gcm.getPromoters().keySet());
+		if (paramsOnly) {
+			Set<String> prom = gcm.getPromoters().keySet();
+			ArrayList<String> proms = new ArrayList<String>();
+			for (String s : prom) {
+				proms.add(s);
+			}
+			for (String s : parameterChanges) {
+				if (s.contains("/") && proms.contains(s.split("/")[0].trim())) {
+					proms.remove(s.split("/")[0].trim());
+					proms.add(s.split("/")[0].trim() + " Modified");
+				}
+			}
+			promoters.addAllItem(proms);
+		}
+		else {
+			promoters.addAllItem(gcm.getPromoters().keySet());
+		}
 
 		JPanel initPanel = Utility.createPanel(this, "Promoters", promoters, addInit, removeInit,
 				editInit);
@@ -633,7 +713,23 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 			removeInit.setEnabled(false);
 		}
 		editInit = new EditButton("Edit Species", species);
-		species.addAllItem(gcm.getSpecies().keySet());
+		if (paramsOnly) {
+			Set<String> spec = gcm.getSpecies().keySet();
+			ArrayList<String> specs = new ArrayList<String>();
+			for (String s : spec) {
+				specs.add(s);
+			}
+			for (String s : parameterChanges) {
+				if (s.contains("/") && specs.contains(s.split("/")[0].trim())) {
+					specs.remove(s.split("/")[0].trim());
+					specs.add(s.split("/")[0].trim() + " Modified");
+				}
+			}
+			species.addAllItem(specs);
+		}
+		else {
+			species.addAllItem(gcm.getSpecies().keySet());
+		}
 
 		initPanel = Utility.createPanel(this, "Species", species, addInit, removeInit, editInit);
 		mainPanelCenterCenter.add(initPanel);
@@ -646,7 +742,23 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 			removeInit.setEnabled(false);
 		}
 		editInit = new EditButton("Edit Influence", influences);
-		influences.addAllItem(gcm.getInfluences().keySet());
+		if (paramsOnly) {
+			Set<String> influe = gcm.getInfluences().keySet();
+			ArrayList<String> influes = new ArrayList<String>();
+			for (String s : influe) {
+				influes.add(s);
+			}
+			for (String s : parameterChanges) {
+				if (s.contains("/") && influes.contains(s.split("/")[0].trim())) {
+					influes.remove(s.split("/")[0].trim());
+					influes.add(s.split("/")[0].trim() + " Modified");
+				}
+			}
+			influences.addAllItem(influes);
+		}
+		else {
+			influences.addAllItem(gcm.getInfluences().keySet());
+		}
 
 		initPanel = Utility.createPanel(this, "Influences", influences, addInit, removeInit, editInit);
 		mainPanelCenterCenter.add(initPanel);
@@ -663,10 +775,11 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		addInit = new EditButton("Add Component", components);
 		removeInit = new RemoveButton("Remove Component", components);
 		editInit = new EditButton("Edit Component", components);
-		for (String s :gcm.getComponents().keySet() ) {
-			if ( gcm.getComponents().get(s).getProperty("gcm") != null) {
-				components.addItem(s + " " + gcm.getComponents().get(s).getProperty("gcm").replace(".gcm", "")
-						+ " " + gcm.getComponentPortMap(s));
+		for (String s : gcm.getComponents().keySet()) {
+			if (gcm.getComponents().get(s).getProperty("gcm") != null) {
+				components.addItem(s + " "
+						+ gcm.getComponents().get(s).getProperty("gcm").replace(".gcm", "") + " "
+						+ gcm.getComponentPortMap(s));
 			}
 		}
 		initPanel = Utility.createPanel(this, "Components", components, addInit, removeInit, editInit);
@@ -712,8 +825,14 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		HashSet<String> results = new HashSet<String>();
 		for (String s : gcm.getParameters().keySet()) {
 			if (gcm.getGlobalParameters().containsKey(s)) {
-				results.add(CompatibilityFixer.getGuiName(s) + " (" + CompatibilityFixer.getSBMLName(s)
-						+ "), Custom, " + gcm.getParameter(s));
+				if (gcm.getParameter(s).contains("(")) {
+					results.add(CompatibilityFixer.getGuiName(s) + " (" + CompatibilityFixer.getSBMLName(s)
+							+ "), Sweep, " + gcm.getParameter(s));
+				}
+				else {
+					results.add(CompatibilityFixer.getGuiName(s) + " (" + CompatibilityFixer.getSBMLName(s)
+							+ "), Custom, " + gcm.getParameter(s));
+				}
 			}
 			else {
 				results.add(CompatibilityFixer.getGuiName(s) + " (" + CompatibilityFixer.getSBMLName(s)
@@ -793,8 +912,8 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 						list.removeItem(name);
 					}
 					else {
-						JOptionPane.showMessageDialog(biosim.frame(), "Cannot remove component " + name.split(" ")[0]
-								+ " because it is currently in other reactions");
+						JOptionPane.showMessageDialog(biosim.frame(), "Cannot remove component "
+								+ name.split(" ")[0] + " because it is currently in other reactions");
 					}
 				}
 			}
@@ -841,16 +960,17 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 					}
 				}
 				SpeciesPanel panel = new SpeciesPanel(selected, list, influences, gcm, paramsOnly);
-				String updates = panel.updates();
-				for (int i = parameterChanges.size() - 1; i >= 0; i --) {
-					if(parameterChanges.get(i).startsWith(updates.split("/")[0])) {
-						parameterChanges.remove(i);
+				if (paramsOnly) {
+					String updates = panel.updates();
+					for (int i = parameterChanges.size() - 1; i >= 0; i--) {
+						if (parameterChanges.get(i).startsWith(updates.split("/")[0])) {
+							parameterChanges.remove(i);
+						}
+					}
+					for (String s : updates.split("\n")) {
+						parameterChanges.add(s);
 					}
 				}
-				for (String s : updates.split("\n")) { 
-					parameterChanges.add(s);
-				}
-				
 			}
 			else if (getName().contains("Influence")) {
 				String selected = null;
@@ -861,14 +981,16 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 					}
 				}
 				InfluencePanel panel = new InfluencePanel(selected, list, gcm, paramsOnly);
-				String updates = panel.updates();
-				for (int i = parameterChanges.size() - 1; i >= 0; i --) {
-					if(parameterChanges.get(i).startsWith(updates.split("/")[0])) {
-						parameterChanges.remove(i);
+				if (paramsOnly) {
+					String updates = panel.updates();
+					for (int i = parameterChanges.size() - 1; i >= 0; i--) {
+						if (parameterChanges.get(i).startsWith(updates.split("/")[0])) {
+							parameterChanges.remove(i);
+						}
 					}
-				}
-				for (String s : updates.split("\n")) { 
-					parameterChanges.add(s);
+					for (String s : updates.split("\n")) {
+						parameterChanges.add(s);
+					}
 				}
 			}
 			else if (getName().contains("Promoter")) {
@@ -880,14 +1002,16 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 					}
 				}
 				PromoterPanel panel = new PromoterPanel(selected, list, influences, gcm, paramsOnly);
-				String updates = panel.updates();
-				for (int i = parameterChanges.size() - 1; i >= 0; i --) {
-					if(parameterChanges.get(i).startsWith(updates.split("/")[0])) {
-						parameterChanges.remove(i);
+				if (paramsOnly) {
+					String updates = panel.updates();
+					for (int i = parameterChanges.size() - 1; i >= 0; i--) {
+						if (parameterChanges.get(i).startsWith(updates.split("/")[0])) {
+							parameterChanges.remove(i);
+						}
 					}
-				}
-				for (String s : updates.split("\n")) { 
-					parameterChanges.add(s);
+					for (String s : updates.split("\n")) {
+						parameterChanges.add(s);
+					}
 				}
 			}
 			else if (getName().contains("Component")) {
@@ -915,16 +1039,17 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 						}
 						components.set(j, index);
 					}
-					comp = (String) JOptionPane.showInputDialog(biosim.frame(), "Choose a gcm to use as a component:",
-							"Component Editor", JOptionPane.PLAIN_MESSAGE, null, components
-									.toArray(new String[0]), null);
+					comp = (String) JOptionPane.showInputDialog(biosim.frame(),
+							"Choose a gcm to use as a component:", "Component Editor", JOptionPane.PLAIN_MESSAGE,
+							null, components.toArray(new String[0]), null);
 				}
 				if (comp != null && !comp.equals("")) {
 					GCMFile getSpecs = new GCMFile();
 					getSpecs.load(path + File.separator + comp);
 					String oldPort = null;
 					if (selected != null) {
-						oldPort = selected.substring(selected.split(" ")[0].length() + selected.split(" ")[1].length() + 2);
+						oldPort = selected.substring(selected.split(" ")[0].length()
+								+ selected.split(" ")[1].length() + 2);
 						selected = selected.split(" ")[0];
 					}
 					String[] specs = getSpecs.getSpecies().keySet().toArray(new String[0]);
@@ -939,7 +1064,8 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 						}
 						specs[j] = index;
 					}
-					ComponentsPanel panel = new ComponentsPanel(selected, list, influences, gcm, specs, comp, oldPort, paramsOnly);
+					ComponentsPanel panel = new ComponentsPanel(selected, list, influences, gcm, specs, comp,
+							oldPort, paramsOnly);
 				}
 			}
 			else if (getName().contains("Parameter")) {
@@ -948,14 +1074,16 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 					selected = list.getSelectedValue().toString();
 				}
 				ParameterPanel panel = new ParameterPanel(selected, list, gcm, paramsOnly);
-				String updates = panel.updates();
-				for (int i = parameterChanges.size() - 1; i >= 0; i --) {
-					if(parameterChanges.get(i).startsWith(updates.split(" ")[0])) {
-						parameterChanges.remove(i);
+				if (paramsOnly) {
+					String updates = panel.updates();
+					for (int i = parameterChanges.size() - 1; i >= 0; i--) {
+						if (parameterChanges.get(i).startsWith(updates.split(" ")[0])) {
+							parameterChanges.remove(i);
+						}
 					}
-				}
-				for (String s : updates.split("\n")) { 
-					parameterChanges.add(s);
+					for (String s : updates.split("\n")) {
+						parameterChanges.add(s);
+					}
 				}
 			}
 		}

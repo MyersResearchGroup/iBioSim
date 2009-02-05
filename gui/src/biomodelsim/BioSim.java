@@ -5947,6 +5947,28 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						}
 					}
 					else if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i).getName()
+							.equals("GCM Editor")) {
+						if (((GCM2SBMLEditor) ((JTabbedPane) tab.getComponentAt(index))
+									.getComponent(i)).isDirty()) {
+							Object[] options = { "Yes", "No", "Cancel" };
+							int value = JOptionPane.showOptionDialog(frame,
+									"Do you want to save parameter changes for "
+											+ tab.getTitleAt(index) + "?", "Save Changes", JOptionPane.YES_NO_CANCEL_OPTION,
+									JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+							if (value == JOptionPane.YES_OPTION) {
+								((GCM2SBMLEditor) ((JTabbedPane) tab.getComponentAt(index))
+										.getComponent(i)).saveParams(false, "");
+								return 1;
+							}
+							else if (value == JOptionPane.NO_OPTION) {
+								return 1;
+							}
+							else {
+								return 0;
+							}
+						}
+					}
+					else if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i).getName()
 							.equals("Learn")) {
 						if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof Learn) {
 							if (((Learn) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i))
