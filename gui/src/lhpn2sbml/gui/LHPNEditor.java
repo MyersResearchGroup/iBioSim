@@ -123,7 +123,7 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 		lhpnNameTextField = new JTextField(filename, 15);
 		lhpnNameTextField.setEditable(false);
 		lhpnNameTextField.addActionListener(this);
-		propertyField = new JTextField(lhpnFile.getProperty(),15);
+		propertyField = new JTextField(lhpnFile.getProperty(), 15);
 		propertyField.setEditable(true);
 		propertyField.addActionListener(this);
 		JLabel lhpnNameLabel = new JLabel("LHPN Id:");
@@ -403,6 +403,7 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 				String selected = null;
 				Boolean continuous = false;
 				Boolean integer = false;
+				//log.addText(list.getSelectedValue().toString());
 				if (list.getSelectedValue() != null && getName().contains("Edit")) {
 					selected = list.getSelectedValue().toString();
 					if (lhpnFile.isContinuous(selected)) {
@@ -411,6 +412,8 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 					else if (lhpnFile.isInteger(selected)) {
 						integer = true;
 					}
+					VariablesPanel panel = new VariablesPanel(selected, list, continuous, integer,
+							lhpnFile);
 				}
 				else {
 					String temp = (String) JOptionPane.showInputDialog(mainPanel, "",
@@ -423,8 +426,8 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 						else if (temp.equals(varOptions[2])) {
 							integer = true;
 						}
-							VariablesPanel panel = new VariablesPanel(selected, list, continuous,
-									integer, lhpnFile);
+						VariablesPanel panel = new VariablesPanel(selected, list, continuous,
+								integer, lhpnFile);
 					}
 				}
 				// log.addText(selected);
