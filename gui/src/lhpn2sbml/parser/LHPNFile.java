@@ -127,7 +127,8 @@ public class LHPNFile {
 						}
 					}
 					for (String s : outputs.keySet()) {
-						if (s != null) {
+						if (s != null && boolOrder.get(s) != null) {
+							//log.addText(s);
 							if (boolOrder.get(s).equals(i) && outputs.get(s) != null) {
 								if (!flag) {
 									buffer.append("#@.init_state [");
