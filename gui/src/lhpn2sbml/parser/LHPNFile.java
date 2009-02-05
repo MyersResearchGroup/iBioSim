@@ -21,9 +21,9 @@ public class LHPNFile {
 
 	private HashMap<String, Boolean> places;
 
-	private HashMap<String, Boolean> inputs;
+	private HashMap<String, String> inputs;
 
-	private HashMap<String, Boolean> outputs;
+	private HashMap<String, String> outputs;
 
 	private HashMap<String, String> enablings;
 
@@ -50,8 +50,8 @@ public class LHPNFile {
 	public LHPNFile(Log log) {
 		this.log = log;
 		places = new HashMap<String, Boolean>();
-		inputs = new HashMap<String, Boolean>();
-		outputs = new HashMap<String, Boolean>();
+		inputs = new HashMap<String, String>();
+		outputs = new HashMap<String, String>();
 		enablings = new HashMap<String, String>();
 		delays = new HashMap<String, String>();
 		booleanAssignments = new HashMap<String, Properties>();
@@ -118,11 +118,14 @@ public class LHPNFile {
 								buffer.append("#@.init_state [");
 								flag = true;
 							}
-							if (inputs.get(s)) {
+							if (inputs.get(s).equals("true")) {
 								buffer.append("1");
 							}
-							else {
+							else if (inputs.get(s).equals("false"))	{
 								buffer.append("0");
+							}
+							else {
+								buffer.append("X");
 							}
 						}
 					}
@@ -134,11 +137,14 @@ public class LHPNFile {
 									buffer.append("#@.init_state [");
 									flag = true;
 								}
-								if (outputs.get(s)) {
+								if (outputs.get(s).equals("true")) {
 									buffer.append("1");
 								}
-								else {
+								else if (outputs.get(s).equals("false")) {
 									buffer.append("0");
+								}
+								else {
+									buffer.append("X");
 								}
 							}
 						}
@@ -319,8 +325,8 @@ public class LHPNFile {
 
 	public void load(String filename) {
 		places = new HashMap<String, Boolean>();
-		inputs = new HashMap<String, Boolean>();
-		outputs = new HashMap<String, Boolean>();
+		inputs = new HashMap<String, String>();
+		outputs = new HashMap<String, String>();
 		enablings = new HashMap<String, String>();
 		controlFlow = new HashMap<String, Properties>();
 		variables = new HashMap<String, Properties>();
@@ -395,7 +401,7 @@ public class LHPNFile {
 		}
 	}
 
-	public void addInput(String name, Boolean ic) {
+	public void addInput(String name, String ic) {
 		inputs.put(name, ic);
 	}
 
@@ -405,7 +411,7 @@ public class LHPNFile {
 		}
 	}
 
-	public void addOutput(String name, Boolean ic) {
+	public void addOutput(String name, String ic) {
 		outputs.put(name, ic);
 	}
 
@@ -846,11 +852,11 @@ public class LHPNFile {
 		return integers;
 	}
 
-	public HashMap<String, Boolean> getInputs() {
+	public HashMap<String, String> getInputs() {
 		return inputs;
 	}
 
-	public HashMap<String, Boolean> getOutputs() {
+	public HashMap<String, String> getOutputs() {
 		return outputs;
 	}
 
@@ -902,20 +908,10 @@ public class LHPNFile {
 			return integer;
 		}
 		else if (isInput(var)) {
-			if (inputs.get(var)) {
-				return "true";
-			}
-			else {
-				return "false";
-			}
+			return inputs.get(var);
 		}
 		else if (isOutput(var)) {
-			if (outputs.get(var)) {
-				return "true";
-			}
-			else {
-				return "false";
-			}
+			return outputs.get(var);
 		}
 		else {
 			return "";
@@ -1305,20 +1301,26 @@ public class LHPNFile {
 			for (i = 0; i < inLength; i++) {
 				String name = varOrder.getProperty(i.toString());
 				if (initArray[i].equals("1")) {
-					inputs.put(name, true);
+					inputs.put(name, "true");
+				}
+				else if (initArray[i].equals("0")) {
+					inputs.put(name, "false");
 				}
 				else {
-					inputs.put(name, false);
+					inputs.put(name, "unknown");
 				}
 			}
 			// log.addText("check1f");
 			for (i = inLength; i < initArray.length; i++) {
 				String name = varOrder.getProperty(i.toString());
 				if (initArray[i].equals("1") && name != null) {
-					outputs.put(name, true);
+					outputs.put(name, "true");
 				}
-				else if (name != null) {
-					outputs.put(name, false);
+				else if (initArray[i].equals("0") && name != null) {
+					outputs.put(name, "false");
+				}
+				else {
+					outputs.put(name, "unknown");
 				}
 			}
 		}

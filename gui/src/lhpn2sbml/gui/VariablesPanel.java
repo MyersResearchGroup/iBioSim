@@ -46,7 +46,7 @@ public class VariablesPanel extends JPanel implements ActionListener {
 
 	private static final String[] modes = new String[] { "input", "output" };
 
-	private static final String[] booleans = new String[] { "true", "false" };
+	private static final String[] booleans = new String[] { "true", "false", "unknown" };
 
 	private HashMap<String, PropertyField> fields = null;
 
@@ -203,7 +203,7 @@ public class VariablesPanel extends JPanel implements ActionListener {
 				}
 			}
 			else {
-				HashMap<String, Boolean> inits;
+				HashMap<String, String> inits;
 				if (lhpn.isInput(selected)) {
 					inits = lhpn.getInputs();
 					// JOptionPane.showMessageDialog(this,
@@ -214,12 +214,7 @@ public class VariablesPanel extends JPanel implements ActionListener {
 					// JOptionPane.showMessageDialog(this, inits.toString());
 				}
 				// JOptionPane.showMessageDialog(this, inits.toString());
-				if (inits.get(selected)) {
-					initBox.setSelectedItem(booleans[0]);
-				}
-				else {
-					initBox.setSelectedItem(booleans[1]);
-				}
+				initBox.setSelectedItem(inits.get(selected));
 			}
 			if (!continuous && !integer) {
 				if (lhpn.isInput(selected)) {
@@ -338,19 +333,19 @@ public class VariablesPanel extends JPanel implements ActionListener {
 				lhpn.addInteger(id, tempVal);
 			}
 			else if (lhpn.isInput(id) || (!continuous && modeBox.getSelectedItem().equals("input"))) {
-				Boolean temp = false;
-				if (initBox.getSelectedItem().equals("true")) {
-					temp = true;
-				}
-				lhpn.addInput(id, temp);
+				//Boolean temp = false;
+				//if (initBox.getSelectedItem().equals("true")) {
+				//	temp = true;
+				//}
+				lhpn.addInput(id, initBox.getSelectedItem().toString());
 			}
 			else if (lhpn.isOutput(id)
 					|| (!continuous && modeBox.getSelectedItem().equals("output"))) {
-				Boolean temp = false;
-				if (initBox.getSelectedItem().equals("true")) {
-					temp = true;
-				}
-				lhpn.addOutput(id, temp);
+				//Boolean temp = false;
+				//if (initBox.getSelectedItem().equals("true")) {
+				//	temp = true;
+				//}
+				lhpn.addOutput(id, initBox.getSelectedItem().toString());
 			}
 			variablesList.removeItem(oldName);
 			variablesList.addItem(id);
