@@ -2,7 +2,6 @@ package gcm2sbml.gui;
 
 import gcm2sbml.parser.CompatibilityFixer;
 import gcm2sbml.parser.GCMFile;
-import gcm2sbml.util.GlobalConstants;
 import gcm2sbml.util.Utility;
 
 import java.awt.GridLayout;
