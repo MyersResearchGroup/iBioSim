@@ -4465,6 +4465,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 								Runtime.getRuntime().exec("atacs -lvsl " + sbmlFileNoPath, null,
 										work);
 								sbmlFileNoPath = sbmlFileNoPath.replace(".vhd", ".g");
+								log.addText("atacs -lvsl " + sbmlFileNoPath + "\n");
 							}
 							catch (IOException e1) {
 								JOptionPane.showMessageDialog(frame,
