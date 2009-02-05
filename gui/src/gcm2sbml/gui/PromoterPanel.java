@@ -283,6 +283,9 @@ public class PromoterPanel extends JPanel {
 				+ CompatibilityFixer.getSBMLName(GlobalConstants.ACTIVED_STRING) + " "
 				+ fields.get(GlobalConstants.ACTIVED_STRING).getValue();
 			}
+			if (updates.equals("")) {
+				updates += fields.get(GlobalConstants.ID).getValue() + "/";
+			}
 		}
 		return updates;
 	}
