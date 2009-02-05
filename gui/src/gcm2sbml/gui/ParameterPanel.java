@@ -86,6 +86,7 @@ public class ParameterPanel extends JPanel {
 			} else if (fields.get(selected).getState().equals(PropertyField.paramStates[0])) {
 				gcm.removeParameter(selected);
 				newItem = newItem + " ("+CompatibilityFixer.getSBMLName(selected)+"), Default, " + gcm.getParameter(selected);
+				changedParam += CompatibilityFixer.getSBMLName(selected);
 			}
 			parameterList.removeItem(totalSelected);
 			parameterList.addItem(newItem);

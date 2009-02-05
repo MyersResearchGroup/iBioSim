@@ -367,6 +367,9 @@ public class InfluencePanel extends JPanel implements ActionListener {
 				+ CompatibilityFixer.getSBMLName(GlobalConstants.KBIO_STRING) + " "
 				+ fields.get(GlobalConstants.KBIO_STRING).getValue();
 			}
+			if (updates.equals("")) {
+				updates += "\"" + fields.get(GlobalConstants.NAME).getValue() + "\"/";
+			}
 		}
 		return updates;
 	}

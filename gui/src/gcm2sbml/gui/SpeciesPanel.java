@@ -224,6 +224,9 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 				+ CompatibilityFixer.getSBMLName(GlobalConstants.KDECAY_STRING) + " "
 				+ fields.get(GlobalConstants.KDECAY_STRING).getValue();
 			}
+			if (updates.equals("")) {
+				updates += fields.get(GlobalConstants.ID).getValue() + "/";
+			}
 		}
 		return updates;
 	}

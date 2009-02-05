@@ -968,8 +968,10 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 								parameterChanges.remove(i);
 							}
 						}
-						for (String s : updates.split("\n")) {
-							parameterChanges.add(s);
+						if (updates.contains(" ")) {
+							for (String s : updates.split("\n")) {
+								parameterChanges.add(s);
+							}
 						}
 					}
 				}
@@ -991,8 +993,10 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 								parameterChanges.remove(i);
 							}
 						}
-						for (String s : updates.split("\n")) {
-							parameterChanges.add(s);
+						if (!updates.endsWith("/")) {
+							for (String s : updates.split("\n")) {
+								parameterChanges.add(s);
+							}
 						}
 					}
 				}
@@ -1014,8 +1018,10 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 								parameterChanges.remove(i);
 							}
 						}
-						for (String s : updates.split("\n")) {
-							parameterChanges.add(s);
+						if (updates.contains(" ")) {
+							for (String s : updates.split("\n")) {
+								parameterChanges.add(s);
+							}
 						}
 					}
 				}
@@ -1088,8 +1094,10 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 								parameterChanges.remove(i);
 							}
 						}
-						for (String s : updates.split("\n")) {
-							parameterChanges.add(s);
+						if (updates.contains(" ")) {
+							for (String s : updates.split("\n")) {
+								parameterChanges.add(s);
+							}
 						}
 					}
 				}
