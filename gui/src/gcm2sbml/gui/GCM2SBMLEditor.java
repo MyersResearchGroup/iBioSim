@@ -527,6 +527,9 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 						if (gcm.getGlobalParameters().containsKey(CompatibilityFixer.convertSBMLName(di.split("=")[0]))) {
 							gcm.getGlobalParameters().put(CompatibilityFixer.convertSBMLName(di.split("=")[0]), di.split("=")[1]);
 						}
+						if (gcm.getParameters().containsKey(CompatibilityFixer.convertSBMLName(di.split("=")[0]))) {
+							gcm.getParameters().put(CompatibilityFixer.convertSBMLName(di.split("=")[0]), di.split("=")[1]);
+						}
 					}
 				}
 			}
