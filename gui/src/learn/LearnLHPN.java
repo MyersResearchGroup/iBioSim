@@ -473,6 +473,9 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 		else if (e.getSource() == numBins || e.getSource() == debug) {
 			biosim.setGlassPane(true);
 		}
+		else if (e.getActionCommand().equals("dmv")) {
+			levels();
+		}
 		else if (e.getSource() == user) {
 			if (!firstRead) {
 				try {
@@ -631,9 +634,12 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 					specs.add(new JTextField(s));
 					String[] options = { "2", "3", "4", "5", "6", "7", "8", "9" };
 					JComboBox combo = new JComboBox(options);
-					String[] dmvOptions = { "", "Yes", "No" };
-					JComboBox dmv = new JComboBox(dmvOptions);
-					dmv.setSelectedIndex(0);
+					//String[] dmvOptions = { "", "Yes", "No" };
+					//JComboBox dmv = new JComboBox(dmvOptions);
+					JCheckBox dmv = new JCheckBox();
+					//dmv.setSelectedIndex(0);
+					dmv.addActionListener(this);
+					dmv.setActionCommand("dmv" + j);
 					combo.setSelectedItem(numBins.getSelectedItem());
 					specs.add(dmv);
 					specs.add(combo);
@@ -654,7 +660,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 							if (getString[0].trim().equals(".dmvc")) {
 								for (int i = 1; i < getString.length; i++) {
 									if (getString[i].equals(s)) {
-										((JComboBox) specs.get(1)).setSelectedItem("Yes");
+										((JCheckBox) specs.get(1)).setSelected(true);
 										break;
 									}
 								}
@@ -672,6 +678,9 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 										}
 										else {
 											specs.add(new JTextField(getString[i + 1].trim()));
+										}
+										if (!((JCheckBox) specs.get(1)).isSelected()) {
+											((JTextField) specs.get(i+3)).setEditable(false);
 										}
 										sp.add(specs.get(i + 3));
 									}
@@ -1046,8 +1055,8 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 				}
 				write.close();
 				// bins.waitFor();
+				new Thread(this).start();
 			}
-			new Thread(this).start();
 			String command = "data2lhpn.py -b" + binFile + " -l" + lhpnFile;
 			log.addText("Executing:\n" + command + " " + directory + "\n");
 			File work = new File(directory);
@@ -1202,8 +1211,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 			return false;
 		}
 		for (int i = 0; i < variables.size(); i++) {
-			if (((JComboBox) variables.get(i).get(1)).isFocusOwner()
-					|| ((JComboBox) variables.get(i).get(2)).isFocusOwner()) {
+			if (((JComboBox) variables.get(i).get(2)).isFocusOwner()) {
 				return true;
 			}
 		}
