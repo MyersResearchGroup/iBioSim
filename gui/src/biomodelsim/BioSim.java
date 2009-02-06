@@ -3412,19 +3412,19 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 											"Invalid ID", JOptionPane.ERROR_MESSAGE);
 						}
 						else {
-							if (overwrite(root + separator + lhpnName, lhpnName)) {
-								File f = new File(root + separator + lhpnName);
-								f.delete();
-								f.createNewFile();
-								new LHPNFile(log).save(f.getAbsolutePath());
-								int i = getTab(f.getName());
-								if (i != -1) {
-									tab.remove(i);
-								}
-								addTab(f.getName(), new LHPNEditor(root + separator, f.getName(),
-										null, this, log), "LHPN Editor");
-								refreshTree();
-							}
+//							if (overwrite(root + separator + lhpnName, lhpnName)) {
+//								File f = new File(root + separator + lhpnName);
+//								f.delete();
+//								f.createNewFile();
+//								new LHPNFile(log).save(f.getAbsolutePath());
+//								int i = getTab(f.getName());
+//								if (i != -1) {
+//									tab.remove(i);
+//								}
+//								addTab(f.getName(), new LHPNEditor(root + separator, f.getName(),
+//										null, this, log), "LHPN Editor");
+//								refreshTree();
+//							}
 							if (overwrite(root + separator + lhpnName, lhpnName)) {
 								File f = new File(root + separator + lhpnName);
 								f.createNewFile();
@@ -9922,56 +9922,54 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 	public boolean overwrite(String fullPath, String name) {
 		if (new File(fullPath).exists()) {
 			Object[] options = { "Overwrite", "Cancel" };
-			// int value = JOptionPane.showOptionDialog(frame, name + " already
-			// exists."
-			// + "\nDo you want to overwrite?", "Overwrite",
-			// JOptionPane.YES_NO_OPTION,
-			// JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-			// if (value == JOptionPane.YES_OPTION) {
-			String[] views = canDelete(name);
-			if (views.length == 0) {
-				for (int i = 0; i < tab.getTabCount(); i++) {
-					if (tab.getTitleAt(i).equals(name)) {
-						tab.remove(i);
+			int value = JOptionPane.showOptionDialog(frame, name + " already exists."
+					+ "\nDo you want to overwrite?", "Overwrite", JOptionPane.YES_NO_OPTION,
+					JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+			if (value == JOptionPane.YES_OPTION) {
+				String[] views = canDelete(name);
+				if (views.length == 0) {
+					for (int i = 0; i < tab.getTabCount(); i++) {
+						if (tab.getTitleAt(i).equals(name)) {
+							tab.remove(i);
+						}
 					}
-				}
-				File dir = new File(fullPath);
-				if (dir.isDirectory()) {
-					deleteDir(dir);
-				}
-				else {
-					System.gc();
-					dir.delete();
-				}
-				return true;
-			}
-			else {
-				String view = "";
-				for (int i = 0; i < views.length; i++) {
-					if (i == views.length - 1) {
-						view += views[i];
+					File dir = new File(fullPath);
+					if (dir.isDirectory()) {
+						deleteDir(dir);
 					}
 					else {
-						view += views[i] + "\n";
+						System.gc();
+						dir.delete();
 					}
+					return true;
 				}
-				String message = "Unable to overwrite file."
-						+ "\nIt is linked to the following views:\n" + view
-						+ "\nDelete these views first.";
-				JTextArea messageArea = new JTextArea(message);
-				messageArea.setEditable(false);
-				JScrollPane scroll = new JScrollPane();
-				scroll.setMinimumSize(new Dimension(300, 300));
-				scroll.setPreferredSize(new Dimension(300, 300));
-				scroll.setViewportView(messageArea);
-				JOptionPane.showMessageDialog(frame, scroll, "Unable To Overwrite File",
-						JOptionPane.ERROR_MESSAGE);
+				else {
+					String view = "";
+					for (int i = 0; i < views.length; i++) {
+						if (i == views.length - 1) {
+							view += views[i];
+						}
+						else {
+							view += views[i] + "\n";
+						}
+					}
+					String message = "Unable to overwrite file."
+							+ "\nIt is linked to the following views:\n" + view
+							+ "\nDelete these views first.";
+					JTextArea messageArea = new JTextArea(message);
+					messageArea.setEditable(false);
+					JScrollPane scroll = new JScrollPane();
+					scroll.setMinimumSize(new Dimension(300, 300));
+					scroll.setPreferredSize(new Dimension(300, 300));
+					scroll.setViewportView(messageArea);
+					JOptionPane.showMessageDialog(frame, scroll, "Unable To Overwrite File",
+							JOptionPane.ERROR_MESSAGE);
+					return false;
+				}
+			}
+			else {
 				return false;
 			}
-			// }
-			// else {
-			// return false;
-			// }
 		}
 		else {
 			return true;
