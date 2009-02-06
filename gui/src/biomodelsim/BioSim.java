@@ -8161,9 +8161,9 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						verifyFile = verifyFile.split(separator)[verifyFile.split(separator).length - 1];
 					}
 				}
-				FileOutputStream out = new FileOutputStream(new File(verifyFile));
-				load.store(out, verifyFile);
-				out.close();
+				//FileOutputStream out = new FileOutputStream(new File(verifyFile));
+				//load.store(out, verifyFile);
+				//out.close();
 			}
 			catch (Exception e) {
 				JOptionPane.showMessageDialog(frame(), "Unable to load properties file!",
