@@ -686,6 +686,9 @@ public class LHPNFile {
 		else if (flag == 0 && name != null && outputs.containsKey(name)) {
 			outputs.remove(name);
 		}
+		else if (flag == 0 && name != null && integers.containsKey(name)) {
+			integers.remove(name);
+		}
 		return flag;
 	}
 
