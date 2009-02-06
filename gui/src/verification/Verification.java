@@ -37,7 +37,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 	private JRadioButton untimed, geometric, posets, bag, bap, baptdc, verify, vergate, orbits,
 			search, trace, bdd, dbm, smt;
 
-	private JCheckBox abst, partialOrder, dot, verbose, quiet, genrg, timsubset, superset, infopt,
+	private JCheckBox abst, partialOrder, dot, verbose, genrg, timsubset, superset, infopt,
 			orbmatch, interleav, prune, disabling, nofail, keepgoing, explpn, nochecks, reduction,
 			newTab, postProc, redCheck, xForm2, expandRate;
 
@@ -45,9 +45,9 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 
 	private ButtonGroup timingMethodGroup, algorithmGroup;
 
-	private String directory, separator, verName, verFile, verifyFile, oldBdd;
+	private String directory, separator, verFile, verifyFile, oldBdd;
 
-	private boolean change;
+	private boolean change, atacs;
 
 	private Log log;
 
@@ -58,19 +58,19 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 	 * the input fields, puts them on panels, adds the panels to the frame, and
 	 * then displays the frame.
 	 */
-	public Verification(String directory, String verName, String filename, Log log, BioSim biosim, boolean lema,
-			boolean atacs) {
+	public Verification(String directory, String verName, String filename, Log log, BioSim biosim,
+			boolean lema, boolean atacs) {
 		if (File.separator.equals("\\")) {
 			separator = "\\\\";
 		}
 		else {
 			separator = File.separator;
 		}
+		this.atacs = atacs;
 		this.biosim = biosim;
 		this.log = log;
 		this.directory = directory;
-		String[] getFilename = directory.split(separator);
-		this.verName = verName;
+		// String[] getFilename = directory.split(separator);
 		verFile = verName + ".ver";
 		String[] tempArray = filename.split("\\.");
 		String traceFilename = tempArray[0] + ".trace";
@@ -112,24 +112,28 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 
 		// Initializes the radio buttons and check boxes
 		// Timing Methods
-		untimed = new JRadioButton("Untimed");
-		geometric = new JRadioButton("Geometric");
-		posets = new JRadioButton("POSETs");
-		bag = new JRadioButton("BAG");
-		bap = new JRadioButton("BAP");
-		baptdc = new JRadioButton("BAPTDC");
-		bdd = new JRadioButton("BDD");
-		dbm = new JRadioButton("DBM");
-		smt = new JRadioButton("SMT");
-		untimed.addActionListener(this);
-		geometric.addActionListener(this);
-		posets.addActionListener(this);
-		bag.addActionListener(this);
-		bap.addActionListener(this);
-		baptdc.addActionListener(this);
-		bdd.addActionListener(this);
-		dbm.addActionListener(this);
-		smt.addActionListener(this);
+		if (atacs) {
+			untimed = new JRadioButton("Untimed");
+			geometric = new JRadioButton("Geometric");
+			posets = new JRadioButton("POSETs");
+			bag = new JRadioButton("BAG");
+			bap = new JRadioButton("BAP");
+			baptdc = new JRadioButton("BAPTDC");
+			untimed.addActionListener(this);
+			geometric.addActionListener(this);
+			posets.addActionListener(this);
+			bag.addActionListener(this);
+			bap.addActionListener(this);
+			baptdc.addActionListener(this);
+		}
+		else {
+			bdd = new JRadioButton("BDD");
+			dbm = new JRadioButton("DBM");
+			smt = new JRadioButton("SMT");
+			bdd.addActionListener(this);
+			dbm.addActionListener(this);
+			smt.addActionListener(this);
+		}
 		// Basic Timing Options
 		abst = new JCheckBox("Abstract");
 		partialOrder = new JCheckBox("Partial Order");
@@ -138,10 +142,8 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		// Other Basic Options
 		dot = new JCheckBox("Dot");
 		verbose = new JCheckBox("Verbose");
-		quiet = new JCheckBox("Quiet");
 		dot.addActionListener(this);
 		verbose.addActionListener(this);
-		quiet.addActionListener(this);
 		// Verification Algorithms
 		verify = new JRadioButton("Verify");
 		vergate = new JRadioButton("Verify Gates");
@@ -250,7 +252,6 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		otherPanel.add(otherOptions);
 		otherPanel.add(dot);
 		otherPanel.add(verbose);
-		otherPanel.add(quiet);
 
 		algorithmPanel.add(algorithm);
 		algorithmPanel.add(verify);
@@ -296,37 +297,42 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			in.close();
 			if (load.containsKey("verification.file")) {
 				verifyFile = load.getProperty("verification.file");
+				//log.addText(verifyFile);
 			}
 			if (load.containsKey("verification.bddSize")) {
 				bddSize.setText(load.getProperty("verification .bddSize"));
 			}
 			if (load.containsKey("verification.timing.methods")) {
-				if (load.getProperty("verification.timing.methods").equals("untimed")) {
-					untimed.setSelected(true);
-				}
-				else if (load.getProperty("verification.timing.methods").equals("geometric")) {
-					geometric.setSelected(true);
-				}
-				else if (load.getProperty("verification.timing.methods").equals("posets")) {
-					posets.setSelected(true);
-				}
-				else if (load.getProperty("verification.timing.methods").equals("bag")) {
-					bag.setSelected(true);
-				}
-				else if (load.getProperty("verification.timing.methods").equals("bap")) {
-					bap.setSelected(true);
-				}
-				else if (load.getProperty("verification.timing.methods").equals("bdd")) {
-					bdd.setSelected(true);
-				}
-				else if (load.getProperty("verification.timing.methods").equals("dcm")) {
-					dbm.setSelected(true);
-				}
-				else if (load.getProperty("verification.timing.methods").equals("smt")) {
-					smt.setSelected(true);
+				if (atacs) {
+					if (load.getProperty("verification.timing.methods").equals("untimed")) {
+						untimed.setSelected(true);
+					}
+					else if (load.getProperty("verification.timing.methods").equals("geometric")) {
+						geometric.setSelected(true);
+					}
+					else if (load.getProperty("verification.timing.methods").equals("posets")) {
+						posets.setSelected(true);
+					}
+					else if (load.getProperty("verification.timing.methods").equals("bag")) {
+						bag.setSelected(true);
+					}
+					else if (load.getProperty("verification.timing.methods").equals("bap")) {
+						bap.setSelected(true);
+					}
+					else {
+						baptdc.setSelected(true);
+					}
 				}
 				else {
-					baptdc.setSelected(true);
+					if (load.getProperty("verification.timing.methods").equals("bdd")) {
+						bdd.setSelected(true);
+					}
+					else if (load.getProperty("verification.timing.methods").equals("dcm")) {
+						dbm.setSelected(true);
+					}
+					else if (load.getProperty("verification.timing.methods").equals("smt")) {
+						smt.setSelected(true);
+					}
 				}
 			}
 			if (load.containsKey("verification.Abst")) {
@@ -349,11 +355,11 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					verbose.setSelected(true);
 				}
 			}
-			if (load.containsKey("verification.quiet")) {
-				if (load.getProperty("verification.quiet").equals("true")) {
-					quiet.setSelected(true);
-				}
-			}
+			//if (load.containsKey("verification.quiet")) {
+			//	if (load.getProperty("verification.quiet").equals("true")) {
+			//		quiet.setSelected(true);
+			//	}
+			//}
 			if (load.containsKey("verification.partial.order")) {
 				if (load.getProperty("verification.partial.order").equals("true")) {
 					partialOrder.setSelected(true);
@@ -569,47 +575,82 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		String[] tempArray = verifyFile.split("\\.");
 		String traceFilename = tempArray[0] + ".trace";
 		File traceFile = new File(traceFilename);
+		String pargName = verFile.replace(".g", ".grf");
+		File pargFile = new File(pargName);
+		String dotName = verFile.replace(".g", ".dot");
+		File dotFile = new File(dotName);
 		if (traceFile.exists()) {
 			traceFile.delete();
 		}
+		if (pargFile.exists()) {
+			pargFile.delete();
+		}
+		if (dotFile.exists()) {
+			dotFile.delete();
+		}
+		tempArray = verifyFile.split(separator);
+		String sourceFile = tempArray[tempArray.length - 1];
+		String[] workArray = directory.split(separator);
+		String workDir = "";
+		for (int i=0; i<(workArray.length - 2); i++) {
+			workDir = workDir + workArray[i] + separator;
+		}
+		//log.addText("copy to " + directory + separator + sourceFile);
+		//log.addText("copy from " + workDir + separator + sourceFile);
+		try {
+		FileOutputStream copyout = new FileOutputStream(new File(workDir + separator + sourceFile));
+		FileInputStream copyin = new FileInputStream(new File(directory + separator + sourceFile));
+		int read = copyin.read();
+		while (read != -1) {
+			copyout.write(read);
+			read = copyin.read();
+		}
+		copyin.close();
+		copyout.close();
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(biosim.frame(), "Cannot copy file "
+					+ sourceFile, "Copy Error",
+					JOptionPane.ERROR_MESSAGE);
+		}
 		String options = "";
-		if (verifyFile.endsWith(".g")) {
-			options = "-ll ";
-		}
-		else if (verifyFile.endsWith(".vhd") || verifyFile.endsWith(".vhdl")) {
-			options = "-lvslll ";
-		}
 		// BDD Linkspace Size
 		if (!bddSize.getText().equals("") && !bddSize.getText().equals("0")) {
 			options = options + "-L" + bddSize.getText() + " ";
 		}
+		options = options + "-oq";
 		// Timing method
-		if (untimed.isSelected()) {
-			options = options + "-tu";
-		}
-		else if (geometric.isSelected()) {
-			options = options + "-tg";
-		}
-		else if (posets.isSelected()) {
-			options = options + "-ts";
-		}
-		else if (bag.isSelected()) {
-			options = options + "-tg";
-		}
-		else if (bap.isSelected()) {
-			options = options + "-tp";
-		}
-		else if (bdd.isSelected()) {
-			options = options + "-tB";
-		}
-		else if (dbm.isSelected()) {
-			options = options + "-tL";
-		}
-		else if (smt.isSelected()) {
-			options = options + "-tM";
+		if (atacs) {
+			if (untimed.isSelected()) {
+				options = options + "tu";
+			}
+			else if (geometric.isSelected()) {
+				options = options + "tg";
+			}
+			else if (posets.isSelected()) {
+				options = options + "ts";
+			}
+			else if (bag.isSelected()) {
+				options = options + "tg";
+			}
+			else if (bap.isSelected()) {
+				options = options + "tp";
+			}
+			else {
+				options = options + "tt";
+			}
 		}
 		else {
-			options = options + "-tt";
+			if (bdd.isSelected()) {
+				options = options + "tB";
+			}
+			else if (dbm.isSelected()) {
+				options = options + "tL";
+			}
+			else if (smt.isSelected()) {
+				options = options + "tM";
+			}
 		}
 		// Timing Options
 		if (abst.isSelected()) {
@@ -624,9 +665,6 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		}
 		if (verbose.isSelected()) {
 			options = options + "ov";
-		}
-		if (quiet.isSelected()) {
-			options = options + "oq";
 		}
 		// Advanced Timing Options
 		if (genrg.isSelected()) {
@@ -687,23 +725,29 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		}
 		// Verification Algorithms
 		if (verify.isSelected()) {
-			options = options + "va ";
+			options = options + "va";
 		}
 		else if (vergate.isSelected()) {
-			options = options + "vg ";
+			options = options + "vg";
 		}
 		else if (orbits.isSelected()) {
-			options = options + "vo ";
+			options = options + "vo";
 		}
 		else if (search.isSelected()) {
-			options = options + "vs ";
+			options = options + "vs";
 		}
 		else {
-			options = options + "vt ";
+			options = options + "vt";
+		}
+		if (verifyFile.endsWith(".g")) {
+			options = options + "ll ";
+		}
+		else if (verifyFile.endsWith(".vhd") || verifyFile.endsWith(".vhdl")) {
+			options = options + "lvslll ";
 		}
 		// String[] temp = verifyFile.split(separator);
 		// String src = temp[temp.length - 1];
-		String cmd = "atacs " + options + " .." + separator + verifyFile;
+		String cmd = "atacs " + options + sourceFile;
 		// String[] cmd = {"emacs", "temp" };
 		// JOptionPane.showMessageDialog(this, cmd);
 		// Runtime exec = Runtime.getRuntime();
@@ -802,7 +846,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 						+ " canceled by the user.", "Canceled Verification",
 						JOptionPane.ERROR_MESSAGE);
 			}
-			else {
+			/*else {
 				if (traceFile.exists()) {
 					JOptionPane.showMessageDialog(biosim.frame(), "Verification Failed",
 							"Verification Results", JOptionPane.WARNING_MESSAGE);
@@ -814,7 +858,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 							"Verification Results", JOptionPane.INFORMATION_MESSAGE);
 					viewTrace.setEnabled(false);
 				}
-			}
+			}*/
 			running.setCursor(null);
 			running.dispose();
 			String output = "";
@@ -832,6 +876,35 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			reb.close();
 			viewLog.setEnabled(true);
 			ver.waitFor();
+			FileInputStream atacsLog = new FileInputStream(new File(directory + separator + "atacs.log"));
+			InputStreamReader atacsReader = new InputStreamReader(atacsLog);
+			BufferedReader atacsBuffer = new BufferedReader(atacsReader);
+			boolean success = false;
+			while ((output = atacsBuffer.readLine()) != null) {
+				if (output.contains("Verification succeeded.")) {
+					JOptionPane.showMessageDialog(biosim.frame(), "Verification succeeded!", "Success",
+							JOptionPane.INFORMATION_MESSAGE);
+					success = true;
+					break;
+				}
+			}
+			if (!success) {
+				log.addText("failed");
+				if (new File(pargName).exists()) {
+					//log.addText("view parg");
+					Process parg = exec.exec("parg " + pargName);
+					parg.waitFor();
+				}
+				else if (new File(dotName).exists()) {
+					//log.addText("view dot");
+					Process dot = exec.exec("open " + dotName);
+					dot.waitFor();
+				}
+				else {
+					//log.addText("view log");
+					viewLog();
+				}
+			}
 		}
 		catch (Exception e) {
 			JOptionPane.showMessageDialog(biosim.frame(), "Unable to verify model.", "Error",
@@ -866,32 +939,36 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			if (!bddSize.equals("")) {
 				prop.setProperty("verification.bddSize", this.bddSize.getText().trim());
 			}
-			if (untimed.isSelected()) {
-				prop.setProperty("verification.timing.methods", "untimed");
-			}
-			else if (geometric.isSelected()) {
-				prop.setProperty("verification.timing.methods", "geometric");
-			}
-			else if (posets.isSelected()) {
-				prop.setProperty("verification.timing.methods", "posets");
-			}
-			else if (bag.isSelected()) {
-				prop.setProperty("verification.timing.methods", "bag");
-			}
-			else if (bap.isSelected()) {
-				prop.setProperty("verification.timing.methods", "bap");
-			}
-			else if (bdd.isSelected()) {
-				prop.setProperty("verification.timing.methods", "bdd");
-			}
-			else if (dbm.isSelected()) {
-				prop.setProperty("verification.timing.methods", "dbm");
-			}
-			else if (smt.isSelected()) {
-				prop.setProperty("verification.timing.methods", "smt");
+			if (atacs) {
+				if (untimed.isSelected()) {
+					prop.setProperty("verification.timing.methods", "untimed");
+				}
+				else if (geometric.isSelected()) {
+					prop.setProperty("verification.timing.methods", "geometric");
+				}
+				else if (posets.isSelected()) {
+					prop.setProperty("verification.timing.methods", "posets");
+				}
+				else if (bag.isSelected()) {
+					prop.setProperty("verification.timing.methods", "bag");
+				}
+				else if (bap.isSelected()) {
+					prop.setProperty("verification.timing.methods", "bap");
+				}
+				else {
+					prop.setProperty("verification.timing.methods", "baptdc");
+				}
 			}
 			else {
-				prop.setProperty("verification.timing.methods", "baptdc");
+				if (bdd.isSelected()) {
+					prop.setProperty("verification.timing.methods", "bdd");
+				}
+				else if (dbm.isSelected()) {
+					prop.setProperty("verification.timing.methods", "dbm");
+				}
+				else if (smt.isSelected()) {
+					prop.setProperty("verification.timing.methods", "smt");
+				}
 			}
 			if (abst.isSelected()) {
 				prop.setProperty("verification.Abst", "true");
@@ -917,12 +994,12 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			else {
 				prop.setProperty("verification.Verb", "false");
 			}
-			if (quiet.isSelected()) {
-				prop.setProperty("verification.quiet", "true");
-			}
-			else {
-				prop.setProperty("verification.quiet", "false");
-			}
+			//if (quiet.isSelected()) {
+			//	prop.setProperty("verification.quiet", "true");
+			//}
+			//else {
+			//	prop.setProperty("verification.quiet", "false");
+			//}
 			if (verify.isSelected()) {
 				prop.setProperty("verification.algorithm", "verify");
 			}
@@ -1049,7 +1126,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			FileOutputStream out = new FileOutputStream(new File(directory + separator + verFile));
 			prop.store(out, verifyFile);
 			out.close();
-			log.addText("Saving Parameter File:\n" + directory + separator + verFile);
+			log.addText("Saving Parameter File:\n" + directory + separator + verFile + "\n");
 			change = false;
 			oldBdd = bddSize.getText();
 		}
