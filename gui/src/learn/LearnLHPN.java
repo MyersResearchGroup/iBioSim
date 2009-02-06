@@ -986,7 +986,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 			FileWriter write = new FileWriter(new File(directory + separator + binFile));
 			boolean flag = false;
 			for (int i = 0; i < variables.size(); i++) {
-				if (((JComboBox) variables.get(i).get(1)).getSelectedItem().equals("Yes")) {
+				if (((JCheckBox) variables.get(i).get(1)).isSelected()) {
 					if (!flag) {
 						write.write(".dmvc ");
 						flag = true;
@@ -1029,7 +1029,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 			change = false;
 		}
 		catch (Exception e1) {
-			// e1.printStackTrace();
+			 e1.printStackTrace();
 			JOptionPane.showMessageDialog(biosim.frame(), "Unable to save parameter file!",
 					"Error Saving File", JOptionPane.ERROR_MESSAGE);
 		}
