@@ -297,7 +297,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			in.close();
 			if (load.containsKey("verification.file")) {
 				verifyFile = load.getProperty("verification.file");
-				//log.addText(verifyFile);
+				// log.addText(verifyFile);
 			}
 			if (load.containsKey("verification.bddSize")) {
 				bddSize.setText(load.getProperty("verification .bddSize"));
@@ -355,11 +355,11 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					verbose.setSelected(true);
 				}
 			}
-			//if (load.containsKey("verification.quiet")) {
-			//	if (load.getProperty("verification.quiet").equals("true")) {
-			//		quiet.setSelected(true);
-			//	}
-			//}
+			// if (load.containsKey("verification.quiet")) {
+			// if (load.getProperty("verification.quiet").equals("true")) {
+			// quiet.setSelected(true);
+			// }
+			// }
 			if (load.containsKey("verification.partial.order")) {
 				if (load.getProperty("verification.partial.order").equals("true")) {
 					partialOrder.setSelected(true);
@@ -575,10 +575,19 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		String[] tempArray = verifyFile.split("\\.");
 		String traceFilename = tempArray[0] + ".trace";
 		File traceFile = new File(traceFilename);
-		String pargName = verFile.replace(".g", ".grf");
+		String pargName = "";
+		String dotName = "";
+		if (verifyFile.endsWith(".g")) {
+			pargName = directory + separator + verifyFile.replace(".g", ".grf");
+			dotName = directory + separator + verifyFile.replace(".g", ".dot");
+		}
+		else if (verifyFile.endsWith(".vhd")) {
+			pargName = directory + separator + verifyFile.replace(".vhd", ".grf");
+			dotName = directory + separator + verifyFile.replace(".vhd", ".dot");
+		}
 		File pargFile = new File(pargName);
-		String dotName = verFile.replace(".g", ".dot");
 		File dotFile = new File(dotName);
+		//log.addText("graph names " + pargName + "  " + dotName);
 		if (traceFile.exists()) {
 			traceFile.delete();
 		}
@@ -592,27 +601,31 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		String sourceFile = tempArray[tempArray.length - 1];
 		String[] workArray = directory.split(separator);
 		String workDir = "";
-		for (int i=0; i<(workArray.length - 2); i++) {
+		for (int i = 0; i < (workArray.length - 1); i++) {
 			workDir = workDir + workArray[i] + separator;
 		}
-		//log.addText("copy to " + directory + separator + sourceFile);
-		//log.addText("copy from " + workDir + separator + sourceFile);
+		// log.addText("copy to " + directory + separator + sourceFile);
+		// log.addText("copy from " + workDir + separator + sourceFile);
 		try {
-		FileOutputStream copyout = new FileOutputStream(new File(workDir + separator + sourceFile));
-		FileInputStream copyin = new FileInputStream(new File(directory + separator + sourceFile));
-		int read = copyin.read();
-		while (read != -1) {
-			copyout.write(read);
-			read = copyin.read();
-		}
-		copyin.close();
-		copyout.close();
+			File newFile = new File(directory + separator + sourceFile);
+			newFile.createNewFile();
+			FileOutputStream copyin = new FileOutputStream(newFile);
+			FileInputStream copyout = new FileInputStream(new File(workDir + separator
+					+ sourceFile));
+			int read = copyout.read();
+			//System.out.println(read);
+			while (read != -1) {
+				//System.out.println(read);
+				copyin.write(read);
+				read = copyout.read();
+			}
+			copyin.close();
+			copyout.close();
 		}
 		catch (IOException e) {
 			e.printStackTrace();
-			JOptionPane.showMessageDialog(biosim.frame(), "Cannot copy file "
-					+ sourceFile, "Copy Error",
-					JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(biosim.frame(), "Cannot copy file " + sourceFile,
+					"Copy Error", JOptionPane.ERROR_MESSAGE);
 		}
 		String options = "";
 		// BDD Linkspace Size
@@ -846,19 +859,15 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 						+ " canceled by the user.", "Canceled Verification",
 						JOptionPane.ERROR_MESSAGE);
 			}
-			/*else {
-				if (traceFile.exists()) {
-					JOptionPane.showMessageDialog(biosim.frame(), "Verification Failed",
-							"Verification Results", JOptionPane.WARNING_MESSAGE);
-					viewTrace.setEnabled(true);
-					viewTrace();
-				}
-				else {
-					JOptionPane.showMessageDialog(biosim.frame(), "Verification Succeeded",
-							"Verification Results", JOptionPane.INFORMATION_MESSAGE);
-					viewTrace.setEnabled(false);
-				}
-			}*/
+			/*
+			 * else { if (traceFile.exists()) {
+			 * JOptionPane.showMessageDialog(biosim.frame(), "Verification
+			 * Failed", "Verification Results", JOptionPane.WARNING_MESSAGE);
+			 * viewTrace.setEnabled(true); viewTrace(); } else {
+			 * JOptionPane.showMessageDialog(biosim.frame(), "Verification
+			 * Succeeded", "Verification Results",
+			 * JOptionPane.INFORMATION_MESSAGE); viewTrace.setEnabled(false); } }
+			 */
 			running.setCursor(null);
 			running.dispose();
 			String output = "";
@@ -876,32 +885,33 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			reb.close();
 			viewLog.setEnabled(true);
 			ver.waitFor();
-			FileInputStream atacsLog = new FileInputStream(new File(directory + separator + "atacs.log"));
+			FileInputStream atacsLog = new FileInputStream(new File(directory + separator
+					+ "atacs.log"));
 			InputStreamReader atacsReader = new InputStreamReader(atacsLog);
 			BufferedReader atacsBuffer = new BufferedReader(atacsReader);
 			boolean success = false;
 			while ((output = atacsBuffer.readLine()) != null) {
 				if (output.contains("Verification succeeded.")) {
-					JOptionPane.showMessageDialog(biosim.frame(), "Verification succeeded!", "Success",
-							JOptionPane.INFORMATION_MESSAGE);
+					JOptionPane.showMessageDialog(biosim.frame(), "Verification succeeded!",
+							"Success", JOptionPane.INFORMATION_MESSAGE);
 					success = true;
 					break;
 				}
 			}
 			if (!success) {
-				log.addText("failed");
+				//log.addText("failed");
 				if (new File(pargName).exists()) {
-					//log.addText("view parg");
+					// log.addText("view parg");
 					Process parg = exec.exec("parg " + pargName);
 					parg.waitFor();
 				}
 				else if (new File(dotName).exists()) {
-					//log.addText("view dot");
+					// log.addText("view dot");
 					Process dot = exec.exec("open " + dotName);
 					dot.waitFor();
 				}
 				else {
-					//log.addText("view log");
+					// log.addText("view log");
 					viewLog();
 				}
 			}
@@ -994,12 +1004,12 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			else {
 				prop.setProperty("verification.Verb", "false");
 			}
-			//if (quiet.isSelected()) {
-			//	prop.setProperty("verification.quiet", "true");
-			//}
-			//else {
-			//	prop.setProperty("verification.quiet", "false");
-			//}
+			// if (quiet.isSelected()) {
+			// prop.setProperty("verification.quiet", "true");
+			// }
+			// else {
+			// prop.setProperty("verification.quiet", "false");
+			// }
 			if (verify.isSelected()) {
 				prop.setProperty("verification.algorithm", "verify");
 			}
