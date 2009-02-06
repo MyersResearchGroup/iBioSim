@@ -313,96 +313,107 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 	}
 
 	public void saveParams(boolean run, String stem) {
-		if (run) {
-			ArrayList<String> sweepThese1 = new ArrayList<String>();
-			ArrayList<ArrayList<Double>> sweep1 = new ArrayList<ArrayList<Double>>();
-			ArrayList<String> sweepThese2 = new ArrayList<String>();
-			ArrayList<ArrayList<Double>> sweep2 = new ArrayList<ArrayList<Double>>();
-			for (String s : parameterChanges) {
-				if (s.split(" ")[1].startsWith("(")) {
-					if ((s.split(" ")[1]).split(",")[3].replace(")", "").trim().equals("1")) {
-						sweepThese1.add(s.split(" ")[0]);
-						double start = Double.parseDouble((s.split(" ")[1]).split(",")[0].substring(1).trim());
-						double stop = Double.parseDouble((s.split(" ")[1]).split(",")[1].trim());
-						double step = Double.parseDouble((s.split(" ")[1]).split(",")[2].trim());
-						ArrayList<Double> add = new ArrayList<Double>();
-						for (double i = start; i <= stop; i += step) {
-							add.add(i);
-						}
-						sweep1.add(add);
+		ArrayList<String> sweepThese1 = new ArrayList<String>();
+		ArrayList<ArrayList<Double>> sweep1 = new ArrayList<ArrayList<Double>>();
+		ArrayList<String> sweepThese2 = new ArrayList<String>();
+		ArrayList<ArrayList<Double>> sweep2 = new ArrayList<ArrayList<Double>>();
+		for (String s : parameterChanges) {
+			if (s.split(" ")[s.split(" ").length - 1].startsWith("(")) {
+				if ((s.split(" ")[s.split(" ").length - 1]).split(",")[3].replace(")", "").trim().equals(
+						"1")) {
+					sweepThese1.add(s.split(" ")[0]);
+					double start = Double.parseDouble((s.split(" ")[s.split(" ").length - 1]).split(",")[0]
+							.substring(1).trim());
+					double stop = Double.parseDouble((s.split(" ")[s.split(" ").length - 1]).split(",")[1]
+							.trim());
+					double step = Double.parseDouble((s.split(" ")[s.split(" ").length - 1]).split(",")[2]
+							.trim());
+					ArrayList<Double> add = new ArrayList<Double>();
+					for (double i = start; i <= stop; i += step) {
+						add.add(i);
 					}
-					else {
-						sweepThese2.add(s.split(" ")[0]);
-						double start = Double.parseDouble((s.split(" ")[1]).split(",")[0].substring(1).trim());
-						double stop = Double.parseDouble((s.split(" ")[1]).split(",")[1].trim());
-						double step = Double.parseDouble((s.split(" ")[1]).split(",")[2].trim());
-						ArrayList<Double> add = new ArrayList<Double>();
-						for (double i = start; i <= stop; i += step) {
-							add.add(i);
-						}
-						sweep2.add(add);
+					sweep1.add(add);
+				}
+				else {
+					sweepThese2.add(s.split(" ")[0]);
+					double start = Double.parseDouble((s.split(" ")[s.split(" ").length - 1]).split(",")[0]
+							.substring(1).trim());
+					double stop = Double.parseDouble((s.split(" ")[s.split(" ").length - 1]).split(",")[1]
+							.trim());
+					double step = Double.parseDouble((s.split(" ")[s.split(" ").length - 1]).split(",")[2]
+							.trim());
+					ArrayList<Double> add = new ArrayList<Double>();
+					for (double i = start; i <= stop; i += step) {
+						add.add(i);
 					}
+					sweep2.add(add);
 				}
 			}
-			if (sweepThese1.size() > 0) {
-				int max = 0;
-				for (ArrayList<Double> d : sweep1) {
-					max = Math.max(max, d.size());
-				}
-				for (int j = 0; j < max; j++) {
-					String sweep = "";
-					for (int i = 0; i < sweepThese1.size(); i++) {
-						int k = j;
-						if (k >= sweep1.get(i).size()) {
-							k = sweep1.get(i).size() - 1;
-						}
-						if (sweep.equals("")) {
-							sweep += sweepThese1.get(i) + "=" + sweep1.get(i).get(k);
-						}
-						else {
-							sweep += "_" + sweepThese1.get(i) + "=" + sweep1.get(i).get(k);
-						}
+		}
+		if (sweepThese1.size() > 0) {
+			int max = 0;
+			for (ArrayList<Double> d : sweep1) {
+				max = Math.max(max, d.size());
+			}
+			for (int j = 0; j < max; j++) {
+				String sweep = "";
+				for (int i = 0; i < sweepThese1.size(); i++) {
+					int k = j;
+					if (k >= sweep1.get(i).size()) {
+						k = sweep1.get(i).size() - 1;
 					}
-					if (sweepThese2.size() > 0) {
-						int max2 = 0;
-						for (ArrayList<Double> d : sweep2) {
-							max2 = Math.max(max2, d.size());
-						}
-						for (int l = 0; l < max2; l++) {
-							String sweepTwo = sweep;
-							for (int i = 0; i < sweepThese2.size(); i++) {
-								int k = l;
-								if (k >= sweep2.get(i).size()) {
-									k = sweep2.get(i).size() - 1;
-								}
-								if (sweepTwo.equals("")) {
-									sweepTwo += sweepThese2.get(i) + "=" + sweep2.get(i).get(k);
-								}
-								else {
-									sweepTwo += "_" + sweepThese2.get(i) + "=" + sweep2.get(i).get(k);
-								}
+					if (sweep.equals("")) {
+						sweep += sweepThese1.get(i) + "=" + sweep1.get(i).get(k);
+					}
+					else {
+						sweep += "_" + sweepThese1.get(i) + "=" + sweep1.get(i).get(k);
+					}
+				}
+				if (sweepThese2.size() > 0) {
+					int max2 = 0;
+					for (ArrayList<Double> d : sweep2) {
+						max2 = Math.max(max2, d.size());
+					}
+					for (int l = 0; l < max2; l++) {
+						String sweepTwo = sweep;
+						for (int i = 0; i < sweepThese2.size(); i++) {
+							int k = l;
+							if (k >= sweep2.get(i).size()) {
+								k = sweep2.get(i).size() - 1;
 							}
-							new File(path + File.separator + simName + File.separator + stem
-									+ sweepTwo.replace("/", "-")).mkdir();
-							createSBML(stem, sweepTwo);
+							if (sweepTwo.equals("")) {
+								sweepTwo += sweepThese2.get(i) + "=" + sweep2.get(i).get(k);
+							}
+							else {
+								sweepTwo += "_" + sweepThese2.get(i) + "=" + sweep2.get(i).get(k);
+							}
+						}
+						new File(path + File.separator + simName + File.separator + stem
+								+ sweepTwo.replace("/", "-")).mkdir();
+						createSBML(stem, sweepTwo);
+						if (run) {
 							new Reb2SacThread(reb2sac).start(stem + sweepTwo.replace("/", "-"));
 							reb2sac.emptyFrames();
 						}
 					}
-					else {
-						new File(path + File.separator + simName + File.separator + stem
-								+ sweep.replace("/", "-")).mkdir();
-						createSBML(stem, sweep);
+				}
+				else {
+					new File(path + File.separator + simName + File.separator + stem
+							+ sweep.replace("/", "-")).mkdir();
+					createSBML(stem, sweep);
+					if (run) {
 						new Reb2SacThread(reb2sac).start(stem + sweep.replace("/", "-"));
 						reb2sac.emptyFrames();
 					}
 				}
 			}
-			else {
-				if (!stem.equals("")) {
-					new File(path + File.separator + simName + File.separator + stem).mkdir();
-				}
-				createSBML(stem, ".");
+		}
+		else {
+			if (!stem.equals("")) {
+				new File(path + File.separator + simName + File.separator + stem).mkdir();
+			}
+			createSBML(stem, ".");
+			if (run) {
 				if (!stem.equals("")) {
 					new Reb2SacThread(reb2sac).start(stem);
 				}
@@ -412,26 +423,6 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 				reb2sac.emptyFrames();
 			}
 		}
-		else {
-			if (!stem.equals("")) {
-				new File(path + File.separator + simName + File.separator + stem).mkdir();
-			}
-			try {
-				FileOutputStream out = new FileOutputStream(new File(paramFile));
-				out.write((refFile + "\n").getBytes());
-				for (String s : parameterChanges) {
-					if (!s.trim().equals("")) {
-						out.write((s + "\n").getBytes());
-					}
-				}
-				out.close();
-			}
-			catch (Exception e1) {
-				JOptionPane.showMessageDialog(biosim.frame(), "Unable to save parameter file.",
-						"Error Saving File", JOptionPane.ERROR_MESSAGE);
-			}
-		}
-		dirty = false;
 	}
 
 	private void loadParams() {
@@ -533,8 +524,8 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 						}
 					}
 					else {
-						if (gcm.getParameters().containsKey(di.split("=")[0])) {
-							gcm.getParameters().put(CompatibilityFixer.convertSBMLName(di.split("=")[0]), di.split("=")[1]);
+						if (gcm.getGlobalParameters().containsKey(CompatibilityFixer.convertSBMLName(di.split("=")[0]))) {
+							gcm.getGlobalParameters().put(CompatibilityFixer.convertSBMLName(di.split("=")[0]), di.split("=")[1]);
 						}
 					}
 				}
@@ -543,7 +534,10 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 			if (direct.equals(".") && !stem.equals("")) {
 				direct = "";
 			}
-			GCMParser parser = new GCMParser(path + File.separator + gcmname + ".gcm");
+			gcm.save(path + File.separator + simName + File.separator + stem + direct
+					+ File.separator + gcmname + ".gcm");
+			GCMParser parser = new GCMParser(path + File.separator + simName + File.separator + stem + direct
+					+ File.separator + gcmname + ".gcm");
 			GeneticNetwork network = null;
 			try {
 				network = parser.buildNetwork();
