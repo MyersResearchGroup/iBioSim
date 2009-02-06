@@ -321,6 +321,7 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 							+ name, "Cannot remove variable" + name, JOptionPane.ERROR_MESSAGE);
 				}
 				variables.removeItem(name);
+				lhpnFile.removeVar(name);
 			}
 			else if (getName().contains("Place")) {
 				lhpnFile.removePlace(list.getSelectedValue().toString());
