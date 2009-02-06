@@ -736,27 +736,28 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		if (expandRate.isSelected()) {
 			options = options + "cE";
 		}
-		// Verification Algorithms
-		if (verify.isSelected()) {
-			options = options + "va";
-		}
-		else if (vergate.isSelected()) {
-			options = options + "vg";
-		}
-		else if (orbits.isSelected()) {
-			options = options + "vo";
-		}
-		else if (search.isSelected()) {
-			options = options + "vs";
-		}
-		else {
-			options = options + "vt";
-		}
+		// Load file type
 		if (verifyFile.endsWith(".g")) {
-			options = options + "ll ";
+			options = options + "ll";
 		}
 		else if (verifyFile.endsWith(".vhd") || verifyFile.endsWith(".vhdl")) {
-			options = options + "lvslll ";
+			options = options + "lvslll";
+		}
+		// Verification Algorithms
+		if (verify.isSelected()) {
+			options = options + "va ";
+		}
+		else if (vergate.isSelected()) {
+			options = options + "vg ";
+		}
+		else if (orbits.isSelected()) {
+			options = options + "vo ";
+		}
+		else if (search.isSelected()) {
+			options = options + "vs ";
+		}
+		else {
+			options = options + "vt ";
 		}
 		// String[] temp = verifyFile.split(separator);
 		// String src = temp[temp.length - 1];
