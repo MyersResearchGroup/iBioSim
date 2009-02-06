@@ -903,11 +903,13 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				if (new File(pargName).exists()) {
 					// log.addText("view parg");
 					Process parg = exec.exec("parg " + pargName);
+					log.addText("parg " + pargName + "\n");
 					parg.waitFor();
 				}
 				else if (new File(dotName).exists()) {
 					// log.addText("view dot");
 					Process dot = exec.exec("open " + dotName);
+					log.addText("open " + dotName + "\n");
 					dot.waitFor();
 				}
 				else {
