@@ -163,7 +163,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 		JPanel thresholdPanel2 = new JPanel(new GridLayout(8, 2));
 		JPanel thresholdPanel1 = new JPanel(new GridLayout(4, 2));
 
-		JLabel backgroundLabel = new JLabel("Linked Background file:");
+		JLabel backgroundLabel = new JLabel("Model File:");
 		JTextField backgroundField = new JTextField(lhpnFile);
 		backgroundField.setEditable(false);
 		thresholdPanel1.add(backgroundLabel);

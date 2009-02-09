@@ -31,8 +31,10 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener; //import java.awt.event.FocusEvent;
-//import java.awt.event.FocusListener;
+import java.awt.event.WindowListener; 
+import java.awt.event.ComponentListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.WindowFocusListener;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -108,7 +110,7 @@ import datamanager.DataManager;
  */
 
 public class BioSim implements MouseListener, ActionListener, MouseMotionListener,
-		MouseWheelListener {
+		MouseWheelListener, WindowFocusListener {
 
 	private JFrame frame; // Frame where components of the GUI are displayed
 
@@ -326,7 +328,9 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		};
 		frame.addWindowListener(w);
 		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		frame.addWindowFocusListener(this);
 		popup = new JPopupMenu();
+		//popup.addComponentListener(this);
 
 		// Sets up the Tool Bar
 		toolbar = new JToolBar();
@@ -7606,6 +7610,10 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		}
 	}
 
+	public void windowGainedFocus(WindowEvent e) {
+		setGlassPane(true);
+	}
+
 	private void simulate(boolean isDot) throws Exception {
 		if (isDot) {
 			String simName = JOptionPane.showInputDialog(frame, "Enter Analysis ID:",
@@ -8726,6 +8734,26 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			catch (Exception e1) {
 			}
 		}
+	}
+	
+	public void componentHidden(ComponentEvent e) {
+		log.addText("hidden");
+		setGlassPane(true);
+	}
+	
+	public void componentResized(ComponentEvent e) {
+		log.addText("resized");
+	}
+	
+	public void componentMoved(ComponentEvent e) {
+		log.addText("moved");
+	}
+	
+	public void componentShown(ComponentEvent e) {
+		log.addText("shown");
+	}
+	
+	public void windowLostFocus(WindowEvent e) {
 	}
 
 	public JMenuItem getExitButton() {

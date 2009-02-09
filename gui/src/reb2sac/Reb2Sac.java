@@ -369,7 +369,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		none.setSelected(true);
 		JPanel topPanel = new JPanel(new BorderLayout());
 		JPanel backgroundPanel = new JPanel();
-		JLabel backgroundLabel = new JLabel("Linked Background file:");
+		JLabel backgroundLabel = new JLabel("Model File:");
 		String[] tempArray = sbmlFile.split(separator);
 		JTextField backgroundField = new JTextField(tempArray[tempArray.length - 1]);
 		backgroundField.setEditable(false);
