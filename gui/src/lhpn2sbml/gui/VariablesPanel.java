@@ -63,7 +63,7 @@ public class VariablesPanel extends JPanel implements ActionListener {
 
 		// ID field
 		PropertyField field = new PropertyField(GlobalConstants.ID, "", null, null,
-				Utility.IDstring);
+				Utility.ATACSIDstring);
 		fields.put(GlobalConstants.ID, field);
 		add(field);
 

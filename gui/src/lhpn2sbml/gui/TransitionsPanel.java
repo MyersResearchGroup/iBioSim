@@ -65,7 +65,7 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 
 		// ID field
 		PropertyField field = new PropertyField(GlobalConstants.ID, "", null, null,
-				Utility.NAMEstring);
+				Utility.ATACSIDstring);
 		// field.setMaximumSize(new Dimension(5, 5));
 		// field.setPreferredSize(new Dimension(5, 5));
 		fields.put(GlobalConstants.ID, field);

@@ -48,7 +48,7 @@ public class PlacePanel extends JPanel implements ActionListener {
 
 		// ID field
 		PropertyField field = new PropertyField(GlobalConstants.ID, "", null, null,
-				Utility.NAMEstring);
+				Utility.ATACSIDstring);
 		fields.put(GlobalConstants.ID, field);
 		add(field);
 
