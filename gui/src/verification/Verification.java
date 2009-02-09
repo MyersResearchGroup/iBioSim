@@ -513,6 +513,17 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		buttonPanel.add(viewLog);
 		viewLog.setMnemonic(KeyEvent.VK_V);
 
+		JPanel backgroundPanel = new JPanel();
+		JLabel backgroundLabel = new JLabel("Linked Background file:");
+		tempArray = verifyFile.split(separator);
+		String sourceFile = tempArray[tempArray.length - 1];
+		JTextField backgroundField = new JTextField(sourceFile);
+		backgroundField.setMaximumSize(new Dimension(200,20));
+		backgroundField.setEditable(false);
+		backgroundPanel.add(backgroundLabel);
+		backgroundPanel.add(backgroundField);
+		backgroundPanel.setMaximumSize(new Dimension(400,30));
+		basicOptions.add(backgroundPanel);
 		basicOptions.add(timingRadioPanel);
 		if (!lema) {
 			basicOptions.add(timingCheckBoxPanel);

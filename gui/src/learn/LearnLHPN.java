@@ -473,8 +473,9 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 		else if (e.getSource() == numBins || e.getSource() == debug) {
 			biosim.setGlassPane(true);
 		}
-		else if (e.getActionCommand().equals("dmv")) {
-			levels();
+		else if (e.getActionCommand().contains("dmv")) {
+			int num = Integer.parseInt(e.getActionCommand().substring(3)) - 1;
+			editText(num);
 		}
 		else if (e.getSource() == user) {
 			if (!firstRead) {
@@ -595,10 +596,13 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 		ArrayList<String> str = null;
 		try {
 			Scanner f = new Scanner(new File(directory + separator + binFile));
+			//log.addText(directory + separator + binFile);
 			str = new ArrayList<String>();
+			str.add(f.nextLine());
 			while (f.hasNextLine()) {
 				str.add(f.nextLine());
 			}
+			log.addText(str.toString());
 		}
 		catch (Exception e1) {
 		}
@@ -680,6 +684,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 											specs.add(new JTextField(getString[i + 1].trim()));
 										}
 										if (!((JCheckBox) specs.get(1)).isSelected()) {
+											//log.addText("here");
 											((JTextField) specs.get(i+3)).setEditable(false);
 										}
 										sp.add(specs.get(i + 3));
@@ -764,15 +769,28 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 			ArrayList<Component> specs = variables.get(num);
 			Component[] panels = variablesPanel.getComponents();
 			int boxes = Integer.parseInt((String) ((JComboBox) specs.get(2)).getSelectedItem());
+			boolean selected = ((JCheckBox) specs.get(1)).isSelected();
 			if ((specs.size() - 3) < boxes) {
 				for (int i = 0; i < boxes - 1; i++) {
 					try {
-						specs.get(i + 3);
+						JTextField text = (JTextField) specs.get(i + 3);
+						if (selected) {
+							text.setEditable(false);
+						}
+						else {
+							text.setEditable(true);
+						}
 					}
 					catch (Exception e1) {
 						JTextField temp = new JTextField("");
 						((JPanel) panels[num + 1]).add(temp);
 						specs.add(temp);
+						if (selected) {
+							temp.setEditable(false);
+						}
+						else {
+							temp.setEditable(true);
+						}
 					}
 				}
 			}
@@ -1062,8 +1080,19 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 			File work = new File(directory);
 			Process run = Runtime.getRuntime().exec(command, null, work);
 			run.waitFor();
-			command = "atacs -lloddl " + lhpnFile;
-			Runtime.getRuntime().exec(command, null, work);
+			if (new File(lhpnFile).exists()) {
+				viewLhpn();
+			}
+			else {
+				viewLog();
+			}
+			//command = "atacs -llodpl " + lhpnFile;
+			//Runtime.getRuntime().exec(command, null, work);
+			//log.addText(command);
+			//String dotFile = lhpnFile.replace(".g", ".dot");
+			//command = "open " + dotFile;
+			//Runtime.getRuntime().exec(command, null, work);
+			//log.addText(command);
 		}
 		catch (Exception e) {
 		}

@@ -7,6 +7,7 @@ import java.util.regex.Pattern;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+
 import org.sbml.libsbml.*;
 import sbmleditor.*;
 import gcm2sbml.gui.GCM2SBMLEditor;
@@ -366,11 +367,21 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		abs.add(abstraction);
 		abs.add(nary);
 		none.setSelected(true);
+		JPanel topPanel = new JPanel(new BorderLayout());
+		JPanel backgroundPanel = new JPanel();
+		JLabel backgroundLabel = new JLabel("Linked Background file:");
+		String[] tempArray = sbmlFile.split(separator);
+		JTextField backgroundField = new JTextField(tempArray[tempArray.length - 1]);
+		backgroundField.setEditable(false);
+		backgroundPanel.add(backgroundLabel);
+		backgroundPanel.add(backgroundField);
 		JPanel absAndNaryPanel = new JPanel();
 		absAndNaryPanel.add(choose);
 		absAndNaryPanel.add(none);
 		absAndNaryPanel.add(abstraction);
 		absAndNaryPanel.add(nary);
+		topPanel.add(backgroundPanel, BorderLayout.NORTH);
+		topPanel.add(absAndNaryPanel, BorderLayout.SOUTH);
 		none.addActionListener(this);
 		abstraction.addActionListener(this);
 		nary.addActionListener(this);
@@ -438,7 +449,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 
 		// Puts all the radio buttons in a panel
 		JPanel radioButtonPanel = new JPanel(new BorderLayout());
-		radioButtonPanel.add(absAndNaryPanel, "North");
+		radioButtonPanel.add(topPanel, "North");
 		radioButtonPanel.add(odeMonteAndMarkovPanel, "Center");
 		radioButtonPanel.add(overwritePanel, "South");
 
