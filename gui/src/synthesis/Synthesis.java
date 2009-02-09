@@ -687,7 +687,7 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 
 		JPanel backgroundPanel = new JPanel();
 		//log.addText(sourceFile);
-		JLabel backgroundLabel = new JLabel("Linked Background file:");
+		JLabel backgroundLabel = new JLabel("Model File:");
 		String[] tempArray = sourceFile.split(separator);
 		String sourceFileNoPath = tempArray[tempArray.length - 1];
 		JTextField backgroundField = new JTextField(sourceFileNoPath);

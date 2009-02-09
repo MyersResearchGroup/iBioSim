@@ -514,7 +514,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		viewLog.setMnemonic(KeyEvent.VK_V);
 
 		JPanel backgroundPanel = new JPanel();
-		JLabel backgroundLabel = new JLabel("Linked Background file:");
+		JLabel backgroundLabel = new JLabel("Model File:");
 		tempArray = verifyFile.split(separator);
 		String sourceFile = tempArray[tempArray.length - 1];
 		JTextField backgroundField = new JTextField(sourceFile);

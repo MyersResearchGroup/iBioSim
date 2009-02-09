@@ -179,7 +179,7 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 		influenceLevel = new JTextField(biosimrc.get("biosim.learn.tm", ""));
 		// influenceLevel.addActionListener(this);
 		thresholdPanel2.add(influenceLevel);
-		JLabel backgroundLabel = new JLabel("Linked Background File:");
+		JLabel backgroundLabel = new JLabel("Model File:");
 		JTextField backgroundField = new JTextField(learnFile);
 		backgroundField.setEditable(false);
 		thresholdPanel1.add(backgroundLabel);

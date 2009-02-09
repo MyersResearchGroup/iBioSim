@@ -278,9 +278,12 @@ public class ControlFlowPanel extends JPanel implements ActionListener {
 					// JOptionPane.showMessageDialog(this, "to: " + to);
 				}
 				toBox.removeAllItems();
+				//System.out.println(toBox.getItemCount());
 				// JOptionPane.showMessageDialog(this, toBox.getItemCount());
 				for (int i = 0; i < placeList.length; i++) {
-					toBox.removeItem(placeList[i]);
+					System.out.println(i);
+					System.out.println(placeList.length);
+					//toBox.removeItem(placeList[i]);
 					toBox.addItem(placeList[i]);
 				}
 				if (flag) {
