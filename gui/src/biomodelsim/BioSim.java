@@ -888,11 +888,29 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		recentProjects[4].setMnemonic(KeyEvent.VK_5);
 		Preferences biosimrc = Preferences.userRoot();
 		for (int i = 0; i < 5; i++) {
-			recentProjects[i].setText(biosimrc.get("biosim.recent.project." + i, ""));
-			recentProjectPaths[i] = biosimrc.get("biosim.recent.project.path." + i, "");
-			if (!recentProjectPaths[i].equals("")) {
-				file.add(recentProjects[i]);
-				numberRecentProj = i + 1;
+			if (atacs) {
+				recentProjects[i].setText(biosimrc.get("atacs.recent.project." + i, ""));
+				recentProjectPaths[i] = biosimrc.get("atacs.recent.project.path." + i, "");
+				if (!recentProjectPaths[i].equals("")) {
+					file.add(recentProjects[i]);
+					numberRecentProj = i + 1;
+				}
+			}
+			else if (lema) {
+				recentProjects[i].setText(biosimrc.get("lema.recent.project." + i, ""));
+				recentProjectPaths[i] = biosimrc.get("lema.recent.project.path." + i, "");
+				if (!recentProjectPaths[i].equals("")) {
+					file.add(recentProjects[i]);
+					numberRecentProj = i + 1;
+				}
+			}
+			else {
+				recentProjects[i].setText(biosimrc.get("biosim.recent.project." + i, ""));
+				recentProjectPaths[i] = biosimrc.get("biosim.recent.project.path." + i, "");
+				if (!recentProjectPaths[i].equals("")) {
+					file.add(recentProjects[i]);
+					numberRecentProj = i + 1;
+				}
 			}
 		}
 		if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
@@ -1809,8 +1827,18 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		}
 		Preferences biosimrc = Preferences.userRoot();
 		for (int i = 0; i < numberRecentProj; i++) {
-			biosimrc.put("biosim.recent.project." + i, recentProjects[i].getText());
-			biosimrc.put("biosim.recent.project.path." + i, recentProjectPaths[i]);
+			if (atacs) {
+				biosimrc.put("atacs.recent.project." + i, recentProjects[i].getText());
+				biosimrc.put("atacs.recent.project.path." + i, recentProjectPaths[i]);
+			}
+			else if (lema) {
+				biosimrc.put("lema.recent.project." + i, recentProjects[i].getText());
+				biosimrc.put("lema.recent.project.path." + i, recentProjectPaths[i]);
+			}
+			else {
+				biosimrc.put("biosim.recent.project." + i, recentProjects[i].getText());
+				biosimrc.put("biosim.recent.project.path." + i, recentProjectPaths[i]);
+			}
 		}
 		System.exit(1);
 	}
@@ -3075,7 +3103,15 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				}
 				new File(filename).mkdir();
 				try {
-					new FileWriter(new File(filename + separator + ".prj")).close();
+					if (lema) {
+						new FileWriter(new File(filename + separator + "LEMA.prj")).close();
+					}
+					else if (atacs) {
+						new FileWriter(new File(filename + separator + "ATACS.prj")).close();
+					}
+					else {
+						new FileWriter(new File(filename + separator + "BioSim.prj")).close();
+					}
 				}
 				catch (IOException e1) {
 					JOptionPane.showMessageDialog(frame, "Unable create a new project.", "Error",
@@ -3152,6 +3188,15 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					boolean isProject = false;
 					for (String temp : new File(projDir).list()) {
 						if (temp.equals(".prj")) {
+							isProject = true;
+						}
+						if (lema && temp.equals("LEMA.prj")) {
+							isProject = true;
+						}
+						else if (atacs && temp.equals("ATACS.prj")) {
+							isProject = true;
+						}
+						else if (temp.equals("BioSim.prj")) {
 							isProject = true;
 						}
 					}
@@ -3412,19 +3457,21 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 											"Invalid ID", JOptionPane.ERROR_MESSAGE);
 						}
 						else {
-//							if (overwrite(root + separator + lhpnName, lhpnName)) {
-//								File f = new File(root + separator + lhpnName);
-//								f.delete();
-//								f.createNewFile();
-//								new LHPNFile(log).save(f.getAbsolutePath());
-//								int i = getTab(f.getName());
-//								if (i != -1) {
-//									tab.remove(i);
-//								}
-//								addTab(f.getName(), new LHPNEditor(root + separator, f.getName(),
-//										null, this, log), "LHPN Editor");
-//								refreshTree();
-//							}
+							// if (overwrite(root + separator + lhpnName,
+							// lhpnName)) {
+							// File f = new File(root + separator + lhpnName);
+							// f.delete();
+							// f.createNewFile();
+							// new LHPNFile(log).save(f.getAbsolutePath());
+							// int i = getTab(f.getName());
+							// if (i != -1) {
+							// tab.remove(i);
+							// }
+							// addTab(f.getName(), new LHPNEditor(root +
+							// separator, f.getName(),
+							// null, this, log), "LHPN Editor");
+							// refreshTree();
+							// }
 							if (overwrite(root + separator + lhpnName, lhpnName)) {
 								File f = new File(root + separator + lhpnName);
 								f.createNewFile();
@@ -4149,7 +4196,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						File work = new File(root);
 						String oldName = root + separator + file[file.length - 1];
 						String newName = oldName.replace(".g", "_NEW.g");
-						Process atacs = Runtime.getRuntime().exec("atacs -llsl " + oldName, null, work);
+						Process atacs = Runtime.getRuntime().exec("atacs -llsl " + oldName, null,
+								work);
 						atacs.waitFor();
 						FileOutputStream old = new FileOutputStream(new File(oldName));
 						FileInputStream newFile = new FileInputStream(new File(newName));
@@ -5950,12 +5998,13 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					else if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i).getName()
 							.equals("GCM Editor")) {
 						if (((GCM2SBMLEditor) ((JTabbedPane) tab.getComponentAt(index))
-									.getComponent(i)).isDirty()) {
+								.getComponent(i)).isDirty()) {
 							Object[] options = { "Yes", "No", "Cancel" };
 							int value = JOptionPane.showOptionDialog(frame,
 									"Do you want to save parameter changes for "
-											+ tab.getTitleAt(index) + "?", "Save Changes", JOptionPane.YES_NO_CANCEL_OPTION,
-									JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+											+ tab.getTitleAt(index) + "?", "Save Changes",
+									JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE,
+									null, options, options[0]);
 							if (value == JOptionPane.YES_OPTION) {
 								((GCM2SBMLEditor) ((JTabbedPane) tab.getComponentAt(index))
 										.getComponent(i)).saveParams(false, "");
@@ -7570,9 +7619,9 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					// ".sim")).close();
 					String[] dot = tree.getFile().split(separator);
 					String sbmlFile = /*
-									 * root + separator + simName + separator +
-									 */(dot[dot.length - 1].substring(0, dot[dot.length - 1]
-							.length() - 3) + "sbml");
+										 * root + separator + simName +
+										 * separator +
+										 */(dot[dot.length - 1].substring(0, dot[dot.length - 1].length() - 3) + "sbml");
 					GCMParser parser = new GCMParser(tree.getFile());
 					GeneticNetwork network = parser.buildNetwork();
 					GeneticNetwork.setRoot(root + File.separator);
@@ -7704,8 +7753,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					 * try { FileOutputStream out = new FileOutputStream(new
 					 * File(sbmlFile)); SBMLWriter writer = new SBMLWriter();
 					 * String doc = writer.writeToString(document); byte[]
-					 * output = doc.getBytes(); out.write(output); out.close();
-					 * } catch (Exception e1) {
+					 * output = doc.getBytes(); out.write(output); out.close(); }
+					 * catch (Exception e1) {
 					 * JOptionPane.showMessageDialog(frame, "Unable to copy sbml
 					 * file to output location.", "Error",
 					 * JOptionPane.ERROR_MESSAGE); }
@@ -8140,11 +8189,11 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			 * list.length; i++) { if (!(new File(list[i]).isDirectory()) &&
 			 * list[i].length() > 4) { String end = ""; for (int j = 1; j < 5;
 			 * j++) { end = list[i].charAt(list[i].length() - j) + end; } if
-			 * (end.equals(".tsd") || end.equals(".dat") || end.equals(".csv"))
-			 * { if (list[i].contains("run-")) { int tempNum =
+			 * (end.equals(".tsd") || end.equals(".dat") || end.equals(".csv")) {
+			 * if (list[i].contains("run-")) { int tempNum =
 			 * Integer.parseInt(list[i].substring(4, list[i] .length() -
-			 * end.length())); if (tempNum > run) { run = tempNum; // graphFile
-			 * = tree.getFile() + separator + // list[i]; } } } } } }
+			 * end.length())); if (tempNum > run) { run = tempNum; // graphFile =
+			 * tree.getFile() + separator + // list[i]; } } } } } }
 			 */
 
 			String verName = tree.getFile().split(separator)[tree.getFile().split(separator).length - 1];
@@ -8161,9 +8210,10 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						verifyFile = verifyFile.split(separator)[verifyFile.split(separator).length - 1];
 					}
 				}
-				//FileOutputStream out = new FileOutputStream(new File(verifyFile));
-				//load.store(out, verifyFile);
-				//out.close();
+				// FileOutputStream out = new FileOutputStream(new
+				// File(verifyFile));
+				// load.store(out, verifyFile);
+				// out.close();
 			}
 			catch (Exception e) {
 				JOptionPane.showMessageDialog(frame(), "Unable to load properties file!",
