@@ -685,6 +685,18 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 		}
 		viewLog.setMnemonic(KeyEvent.VK_V);
 
+		JPanel backgroundPanel = new JPanel();
+		//log.addText(sourceFile);
+		JLabel backgroundLabel = new JLabel("Linked Background file:");
+		String[] tempArray = sourceFile.split(separator);
+		String sourceFileNoPath = tempArray[tempArray.length - 1];
+		JTextField backgroundField = new JTextField(sourceFileNoPath);
+		backgroundField.setMaximumSize(new Dimension(200,20));
+		backgroundField.setEditable(false);
+		backgroundPanel.add(backgroundLabel);
+		backgroundPanel.add(backgroundField);
+		backgroundPanel.setMaximumSize(new Dimension(400,30));
+		basicOptions.add(backgroundPanel);
 		basicOptions.add(timingRadioPanel);
 		basicOptions.add(technologyPanel);
 		basicOptions.add(otherPanel);
