@@ -35,6 +35,8 @@ import java.awt.event.WindowListener;
 import java.awt.event.ComponentListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.WindowFocusListener;
+import java.awt.event.FocusListener;
+import java.awt.event.FocusEvent;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -330,6 +332,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		frame.addWindowFocusListener(this);
 		popup = new JPopupMenu();
+		//popup.addFocusListener(this);
 		//popup.addComponentListener(this);
 
 		// Sets up the Tool Bar
@@ -8736,25 +8739,32 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		}
 	}
 	
-	public void componentHidden(ComponentEvent e) {
-		log.addText("hidden");
-		setGlassPane(true);
-	}
+	//public void componentHidden(ComponentEvent e) {
+	//	log.addText("hidden");
+	//	setGlassPane(true);
+	//}
 	
-	public void componentResized(ComponentEvent e) {
-		log.addText("resized");
-	}
+	//public void componentResized(ComponentEvent e) {
+	//	log.addText("resized");
+	//}
 	
-	public void componentMoved(ComponentEvent e) {
-		log.addText("moved");
-	}
+	//public void componentMoved(ComponentEvent e) {
+	//	log.addText("moved");
+	//}
 	
-	public void componentShown(ComponentEvent e) {
-		log.addText("shown");
-	}
+	//public void componentShown(ComponentEvent e) {
+	//	log.addText("shown");
+	//}
 	
 	public void windowLostFocus(WindowEvent e) {
 	}
+	
+	//public void focusGained(FocusEvent e) {
+	//}
+	
+	//public void focusLost(FocusEvent e) {
+	//	log.addText("focus lost");
+	//}
 
 	public JMenuItem getExitButton() {
 		return exit;

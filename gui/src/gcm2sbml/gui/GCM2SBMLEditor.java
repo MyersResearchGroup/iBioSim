@@ -168,7 +168,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 	}
 
 	public void save(String command) {
-		log.addText("save");
+		//log.addText("save");
 		dirty = false;
 
 		if (!sbmlFiles.getSelectedItem().equals(none)) {

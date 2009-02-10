@@ -55,7 +55,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 
 	private BioSim biosim;
 
-	private String learnFile, binFile, lhpnFile;
+	private String learnFile, binFile, newBinFile, lhpnFile;
 
 	private boolean change;
 
@@ -82,6 +82,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 		String[] getFilename = directory.split(separator);
 		lrnFile = getFilename[getFilename.length - 1] + ".lrn";
 		binFile = getFilename[getFilename.length - 1] + ".bins";
+		newBinFile = getFilename[getFilename.length - 1] + "_NEW" + ".bins";
 		lhpnFile = getFilename[getFilename.length - 1] + ".g";
 		Preferences biosimrc = Preferences.userRoot();
 
@@ -345,6 +346,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 		for (String s : variablesMap.keySet()) {
 			variablesList.add(s);
 		}
+		//System.out.println(variablesList);
 		try {
 			FileWriter write = new FileWriter(new File(directory + separator + "background.g"));
 			BufferedReader input = new BufferedReader(new FileReader(new File(learnFile)));
@@ -559,28 +561,52 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 		try {
 			if (!readfile) {
 				FileWriter write = new FileWriter(new File(directory + separator + binFile));
+				FileWriter writeNew = new FileWriter(new File(directory + separator + newBinFile));
 				// write.write("time 0\n");
+				boolean flag = false;
+				for (int i = 0; i < variables.size(); i++) {
+					if (((JCheckBox) variables.get(i).get(1)).isSelected()) {
+						if (!flag) {
+							write.write(".dmvc ");
+							writeNew.write(".dmvc ");
+							flag = true;
+						}
+						write.write(((JTextField) variables.get(i).get(0)).getText().trim() + " "); 
+						writeNew.write(((JTextField) variables.get(i).get(0)).getText().trim() + " "); 
+					}
+				}
+				if (flag) { 
+					write.write("\n");
+					writeNew.write("\n");
+				}
 				for (int i = 0; i < variables.size(); i++) {
 					if (((JTextField) variables.get(i).get(0)).getText().trim().equals("")) {
 						write.write("?");
+						writeNew.write("?");
 					}
 					else {
 						write.write(((JTextField) variables.get(i).get(0)).getText().trim());
+						writeNew.write(((JTextField) variables.get(i).get(0)).getText().trim());
 					}
 					// write.write(" " + ((JComboBox)
 					// variables.get(i).get(1)).getSelectedItem());
 					for (int j = 3; j < variables.get(i).size(); j++) {
 						if (((JTextField) variables.get(i).get(j)).getText().trim().equals("")) {
 							write.write(" ?");
+							writeNew.write(" ?");
 						}
 						else {
 							write.write(" "
 									+ ((JTextField) variables.get(i).get(j)).getText().trim());
+							writeNew.write(" "
+									+ ((JTextField) variables.get(i).get(j)).getText().trim());
 						}
 					}
 					write.write("\n");
+					writeNew.write("\n");
 				}
 				write.close();
+				writeNew.close();
 				// Integer numThresh =
 				// Integer.parseInt(numBins.getSelectedItem().toString()) - 1;
 				// Thread myThread = new Thread(this);
@@ -602,12 +628,14 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 			while (f.hasNextLine()) {
 				str.add(f.nextLine());
 			}
-			log.addText(str.toString());
+			f.close();
+			//System.out.println("here " + str.toString());
 		}
 		catch (Exception e1) {
 		}
 		if (!directory.equals("")) {
 			if (true) {
+				//System.out.println(str.toString());
 				variablesPanel.removeAll();
 				this.variables = new ArrayList<ArrayList<Component>>();
 				variablesPanel.setLayout(new GridLayout(variablesList.size() + 1, 1));
@@ -629,6 +657,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 				variablesPanel.add(label);
 				int j = 0;
 				for (String s : variablesList) {
+					//System.out.println(s + str.toString());
 					j++;
 					JPanel sp = new JPanel(new GridLayout());
 					ArrayList<Component> specs = new ArrayList<Component>();
@@ -660,12 +689,14 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 					if (str != null) {
 						boolean found = false;
 						for (String st : str) {
+							//log.addText(s + " here " + st);
 							String[] getString = st.split(" ");
+							//log.addText(getString[0] + s);
 							if (getString[0].trim().equals(".dmvc")) {
 								for (int i = 1; i < getString.length; i++) {
 									if (getString[i].equals(s)) {
+										//log.addText(s);
 										((JCheckBox) specs.get(1)).setSelected(true);
-										break;
 									}
 								}
 							}
@@ -681,9 +712,10 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 											specs.add(new JTextField(""));
 										}
 										else {
+											//log.addText(getString[i+1]);
 											specs.add(new JTextField(getString[i + 1].trim()));
 										}
-										if (!((JCheckBox) specs.get(1)).isSelected()) {
+										if (((JCheckBox) specs.get(1)).isSelected()) {
 											//log.addText("here");
 											((JTextField) specs.get(i+3)).setEditable(false);
 										}
@@ -694,9 +726,6 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 										sp.add(new JLabel());
 									}
 								}
-							}
-							if (((JComboBox) specs.get(1)).getSelectedItem().equals("")) {
-								((JComboBox) specs.get(1)).setSelectedItem("No");
 							}
 						}
 						if (!found) {
@@ -1102,7 +1131,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 		try {
 			File work = new File(directory);
 			final JFrame running = new JFrame("Progress");
-			String makeBin = "autogenT.py -b" + binFile + " -i" + iteration.getText();
+			String makeBin = "autogenT.py -b" + newBinFile + " -i" + iteration.getText();
 			if (range.isSelected()) {
 				makeBin = makeBin + " -cr";
 			}
@@ -1222,9 +1251,21 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 			}
 			running.setCursor(null);
 			running.dispose();
+			FileOutputStream out = new FileOutputStream(new File(directory + separator
+					+ binFile));
+			FileInputStream in = new FileInputStream(new File(directory + separator
+					+ newBinFile));
+			int read = in.read();
+			while (read != -1) {
+				out.write(read);
+				read = in.read();
+			}
+			in.close();
+			out.close();
 			levels();
 		}
 		catch (Exception e1) {
+			e1.printStackTrace();
 		}
 	}
 
