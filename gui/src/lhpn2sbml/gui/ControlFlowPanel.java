@@ -33,6 +33,8 @@ public class ControlFlowPanel extends JPanel implements ActionListener {
 	private String[] options = { "Ok", "Cancel" };
 
 	private LHPNFile lhpn;
+	
+	private boolean flag = false;
 
 	private HashMap<String, PropertyField> fields = null;
 
@@ -43,6 +45,7 @@ public class ControlFlowPanel extends JPanel implements ActionListener {
 		this.lhpn = lhpn;
 
 		placeList = lhpn.getPlaceList();
+		//System.out.println(placeList.length);
 		transitionList = lhpn.getTransitionList();
 		flowStringList = new String[0];
 		if (!placeList.equals(null) && !transitionList.equals(null)) {
@@ -249,7 +252,11 @@ public class ControlFlowPanel extends JPanel implements ActionListener {
 	}
 
 	public void actionPerformed(ActionEvent e) {
+		if (flag) {
+			return;
+		}
 		if (e.getActionCommand().equals("comboBoxChanged")) {
+			flag = true;
 			if (isPlace(fromBox)) {
 				String to = "";
 				Boolean flag = false;
@@ -258,11 +265,12 @@ public class ControlFlowPanel extends JPanel implements ActionListener {
 					flag = true;
 				}
 				toBox.removeAllItems();
+				//System.out.println(toBox.getItemCount());
 				// JOptionPane.showMessageDialog(this, toBox.getItemCount());
 				for (int i = 0; i < transitionList.length; i++) {
 					// JOptionPane.showMessageDialog(this, "transition " + i + "
 					// " + transitionList[i]);
-					toBox.removeItem(transitionList[i]);
+					//toBox.removeItem(transitionList[i]);
 					toBox.addItem(transitionList[i]);
 				}
 				if (flag) {
@@ -278,23 +286,25 @@ public class ControlFlowPanel extends JPanel implements ActionListener {
 					// JOptionPane.showMessageDialog(this, "to: " + to);
 				}
 				toBox.removeAllItems();
-				//System.out.println(toBox.getItemCount());
-				// JOptionPane.showMessageDialog(this, toBox.getItemCount());
-				for (int i = 0; i < placeList.length; i++) {
-					System.out.println(i);
-					System.out.println(placeList.length);
+				//toBox.removeAll();
+				//System.out.println("count " + toBox.getItemCount());
+				//System.out.println("starting for loop");
+				for (int i = 0; i < placeList.length; ++i) {
+					//System.out.println(placeList.length);
+					//System.out.println(i + " : " + placeList[i]);
+					//System.out.println(placeList.length);
 					//toBox.removeItem(placeList[i]);
 					toBox.addItem(placeList[i]);
+					//System.out.println(i + " adsf " + toBox.getItemAt(i));
+					//System.out.println(placeList[i]);
+					//System.out.println("");
 				}
+				//System.out.println("leaving for loop");
 				if (flag) {
 					toBox.setSelectedItem(to);
 				}
-				// JOptionPane.showMessageDialog(this, toBox.getItemCount());
 			}
-			// JOptionPane.showMessageDialog(this,
-			// fromBox.getSelectedItem().toString() + " "
-			// + toBox.getSelectedItem().toString());
-
+			flag = false;
 		}
 		fields.get(GlobalConstants.ID).setValue(
 				fromBox.getSelectedItem().toString() + " " + toBox.getSelectedItem().toString());
