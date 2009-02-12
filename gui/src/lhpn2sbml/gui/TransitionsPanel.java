@@ -364,26 +364,28 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 		}
 
 		public void run() {
+			if (list.getSelectedValue() != null) {
 			String assignment = list.getSelectedValue().toString();
-			if (isBoolean(assignment)) {
-				list.removeItem(assignment);
-				boolAssignments.removeItem(assignment);
-				lhpn.removeBoolAssign(selected, assignment);
-			}
-			else if (isContinuous(assignment)) {
-				list.removeItem(assignment);
-				varAssignments.removeItem(assignment);
-				lhpn.removeContAssign(selected, assignment);
-			}
-			else if (isRate(assignment)) {
-				list.removeItem(assignment);
-				rateAssignments.removeItem(assignment);
-				lhpn.removeRateAssign(selected, assignment);
-			}
-			else if (isInteger(assignment)) {
-				list.removeItem(assignment);
-				intAssignments.removeItem(assignment);
-				lhpn.removeIntAssign(selected, assignment);
+				if (isBoolean(assignment)) {
+					list.removeItem(assignment);
+					boolAssignments.removeItem(assignment);
+					lhpn.removeBoolAssign(selected, assignment);
+				}
+				else if (isContinuous(assignment)) {
+					list.removeItem(assignment);
+					varAssignments.removeItem(assignment);
+					lhpn.removeContAssign(selected, assignment);
+				}
+				else if (isRate(assignment)) {
+					list.removeItem(assignment);
+					rateAssignments.removeItem(assignment);
+					lhpn.removeRateAssign(selected, assignment);
+				}
+				else if (isInteger(assignment)) {
+					list.removeItem(assignment);
+					intAssignments.removeItem(assignment);
+					lhpn.removeIntAssign(selected, assignment);
+				}
 			}
 		}
 
