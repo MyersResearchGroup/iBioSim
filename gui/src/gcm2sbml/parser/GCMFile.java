@@ -58,6 +58,30 @@ public class GCMFile {
 	public void setBioAbs(boolean bioAbs) {
 		this.bioAbs = bioAbs;
 	}
+	
+	public void createLogicalModel() {
+		for (String influence: influences.keySet()) {
+			if (influences.get(influence).get(GlobalConstants.TYPE).equals(GlobalConstants.ACTIVATION)) {
+				Double np = Double.parseDouble(parameters.get(GlobalConstants.STOICHIOMETRY_STRING));
+				Double ng = Double.parseDouble(parameters.get(GlobalConstants.PROMOTER_COUNT_STRING));
+				Double kb = Double.parseDouble(parameters.get(GlobalConstants.KBASAL_STRING));
+				Double Ko = Double.parseDouble(parameters.get(GlobalConstants.RNAP_BINDING_STRING));
+				Double ka = Double.parseDouble(parameters.get(GlobalConstants.ACTIVED_STRING));
+				Double Ka = Double.parseDouble(parameters.get(GlobalConstants.KACT_STRING));
+				Double nc = Double.parseDouble(parameters.get(GlobalConstants.COOPERATIVITY_STRING));
+				Double RNAP = Double.parseDouble(parameters.get(GlobalConstants.RNAP_STRING));
+			}
+			else {
+				Double np = Double.parseDouble(parameters.get(GlobalConstants.STOICHIOMETRY_STRING));
+				Double ko = Double.parseDouble(parameters.get(GlobalConstants.OCR_STRING));
+				Double ng = Double.parseDouble(parameters.get(GlobalConstants.PROMOTER_COUNT_STRING));
+				Double Ko = Double.parseDouble(parameters.get(GlobalConstants.RNAP_BINDING_STRING));
+				Double Kr = Double.parseDouble(parameters.get(GlobalConstants.KREP_STRING));
+				Double nc = Double.parseDouble(parameters.get(GlobalConstants.COOPERATIVITY_STRING));
+				Double RNAP = Double.parseDouble(parameters.get(GlobalConstants.RNAP_STRING));
+			}
+		}
+	}
 
 	public void save(String filename) {
 		try {
