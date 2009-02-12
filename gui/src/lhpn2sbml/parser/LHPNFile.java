@@ -42,7 +42,7 @@ public class LHPNFile {
 	private HashMap<String, String> delays;
 
 	private HashMap<String, Properties> booleanAssignments;
-	
+
 	private String property;
 
 	private Log log;
@@ -121,7 +121,7 @@ public class LHPNFile {
 							if (inputs.get(s).equals("true")) {
 								buffer.append("1");
 							}
-							else if (inputs.get(s).equals("false"))	{
+							else if (inputs.get(s).equals("false")) {
 								buffer.append("0");
 							}
 							else {
@@ -131,7 +131,7 @@ public class LHPNFile {
 					}
 					for (String s : outputs.keySet()) {
 						if (s != null && boolOrder.get(s) != null) {
-							//log.addText(s);
+							// log.addText(s);
 							if (boolOrder.get(s).equals(i) && outputs.get(s) != null) {
 								if (!flag) {
 									buffer.append("#@.init_state [");
@@ -242,10 +242,14 @@ public class LHPNFile {
 				}
 			}
 			if (!contAssignments.isEmpty() || !intAssignments.isEmpty()) {
-				buffer.append("#@.assignments {");
+				flag = false;
 				for (String s : contAssignments.keySet()) {
 					Properties prop = contAssignments.get(s);
 					if (!prop.isEmpty()) {
+						if (!flag) {
+							buffer.append("#@.assignments {");
+							flag = true;
+						}
 						buffer.append("<" + s + "=");
 						for (Object key : prop.keySet()) {
 							String t = (String) key;
@@ -257,6 +261,10 @@ public class LHPNFile {
 				for (String s : intAssignments.keySet()) {
 					Properties prop = intAssignments.get(s);
 					if (!prop.isEmpty()) {
+						if (!flag) {
+							buffer.append("#@.assignments {");
+							flag = true;
+						}
 						buffer.append("<" + s + "=");
 						for (Object key : prop.keySet()) {
 							String t = (String) key;
@@ -265,20 +273,36 @@ public class LHPNFile {
 						buffer.append(">");
 					}
 				}
-				buffer.append("}\n");
+				if (flag) {
+					buffer.append("}\n");
+				}
 			}
 			if (!rateAssignments.isEmpty()) {
-				buffer.append("#@.rate_assignments {");
+				flag = false;
 				for (String s : rateAssignments.keySet()) {
+					boolean varFlag = false;
 					Properties prop = rateAssignments.get(s);
-					buffer.append("<" + s + "=");
 					for (Object key : prop.keySet()) {
 						String t = (String) key;
-						buffer.append("[" + t + ":=" + prop.getProperty(t) + "]");
+						if (!t.equals("")) {
+							if (!flag) {
+								buffer.append("#@.rate_assignments {");
+								flag = true;
+							}
+							if (!varFlag) {
+								buffer.append("<" + s + "=");
+								varFlag = true;
+							}
+							buffer.append("[" + t + ":=" + prop.getProperty(t) + "]");
+						}		
 					}
+					if (varFlag) {
 					buffer.append(">");
+					}
 				}
-				buffer.append("}\n");
+				if (flag) { 
+					buffer.append("}\n");
+				}
 			}
 			if (!delays.isEmpty()) {
 				buffer.append("#@.delay_assignments {");
@@ -288,19 +312,33 @@ public class LHPNFile {
 				buffer.append("}\n");
 			}
 			if (!booleanAssignments.isEmpty()) {
-				buffer.append("#@.boolean_assignments {");
+				flag = false;
 				for (String s : booleanAssignments.keySet()) {
-					buffer.append("<" + s + "=");
-					Properties prop = booleanAssignments.get(s);
-					for (Object key : prop.keySet()) {
-						String t = (String) key;
-						if (isInput(t) || isOutput(t)) {
-							buffer.append("[" + t + ":=" + prop.getProperty(t) + "]");
+					if (!s.equals("")) {
+						boolean varFlag = false;
+						Properties prop = booleanAssignments.get(s);
+						for (Object key : prop.keySet()) {
+							String t = (String) key;
+							if (!t.equals("") && (isInput(t) || isOutput(t))) {
+								if (!flag) {
+									buffer.append("#@.boolean_assignments {");
+									flag = true;
+								}
+								if (!varFlag) {
+									buffer.append("<" + s + "=");
+									varFlag = true;
+								}
+									buffer.append("[" + t + ":=" + prop.getProperty(t) + "]");
+							}
+						}
+						if (varFlag) {
+							buffer.append(">");
 						}
 					}
-					buffer.append(">");
 				}
-				buffer.append("}\n");
+				if (flag) {
+					buffer.append("}\n");
+				}
 			}
 			if (!variables.isEmpty()) {
 				buffer.append("#@.continuous ");
@@ -312,7 +350,7 @@ public class LHPNFile {
 			if (buffer.toString().length() > 0) {
 				buffer.append(".end\n");
 			}
-			//System.out.print(buffer);
+			// System.out.print(buffer);
 			p.print(buffer);
 			p.close();
 			log.addText("Saving:\n" + file + "\n");
@@ -787,15 +825,15 @@ public class LHPNFile {
 			intAssignments.put(transition, prop);
 		}
 	}
-	
+
 	public void addProperty(String newProperty) {
 		property = newProperty;
 	}
-	
+
 	public void removeProperty() {
 		property = "";
 	}
-	
+
 	public String getProperty() {
 		return property;
 	}
@@ -846,9 +884,10 @@ public class LHPNFile {
 		}
 		enablings.put(transition, enabling);
 	}
-	
+
 	public String[] getAllVariables() {
-		String[] allVariables = new String[variables.size() + integers.size() + inputs.size() + outputs.size()];
+		String[] allVariables = new String[variables.size() + integers.size() + inputs.size()
+				+ outputs.size()];
 		int i = 0;
 		for (String s : variables.keySet()) {
 			allVariables[i] = s;
@@ -1184,7 +1223,7 @@ public class LHPNFile {
 	 * (line_matcher.find()) { String name = matcher.group();
 	 * controlFlow.put(name, name); } }
 	 */
-	
+
 	private void parseProperty(StringBuffer data) {
 		Pattern pattern = Pattern.compile(PROPERTY);
 		Matcher lineMatcher = pattern.matcher(data.toString());
@@ -1667,7 +1706,7 @@ public class LHPNFile {
 		}
 		// log.addText("check6end");
 	}
-	
+
 	private static final String PROPERTY = "#@\\.property (\\S+?)\\n";
 
 	private static final String INPUT = "\\.inputs([[\\s[^\\n]]\\w+]*?)\\n";
