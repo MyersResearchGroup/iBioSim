@@ -268,16 +268,21 @@ public class VariablesPanel extends JPanel implements ActionListener {
 				Utility.createErrorMessage("Error", "Illegal values entered.");
 				return false;
 			}
+			String[] allVariables = lhpn.getAllVariables();
 			if (oldName == null) {
-				if (lhpn.getVariables().containsKey(fields.get(GlobalConstants.ID).getValue())) {
-					Utility.createErrorMessage("Error", "Variable id already exists.");
-					return false;
+				for (int i=0; i<allVariables.length; i++) {
+					if (allVariables[i].equals(fields.get(GlobalConstants.ID).getValue())) {
+						Utility.createErrorMessage("Error", "Variable id already exists.");
+						return false;
+					}
 				}
 			}
 			else if (!oldName.equals(fields.get(GlobalConstants.ID).getValue())) {
-				if (lhpn.getVariables().containsKey(fields.get(GlobalConstants.ID).getValue())) {
-					Utility.createErrorMessage("Error", "Variable id already exists.");
-					return false;
+				for (int i=0; i<allVariables.length; i++) {
+					if (allVariables[i].equals(fields.get(GlobalConstants.ID).getValue())) {
+						Utility.createErrorMessage("Error", "Variable id already exists.");
+						return false;
+					}
 				}
 			}
 			// System.out.print("after " +

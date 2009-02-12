@@ -846,6 +846,28 @@ public class LHPNFile {
 		}
 		enablings.put(transition, enabling);
 	}
+	
+	public String[] getAllVariables() {
+		String[] allVariables = new String[variables.size() + integers.size() + inputs.size() + outputs.size()];
+		int i = 0;
+		for (String s : variables.keySet()) {
+			allVariables[i] = s;
+			i++;
+		}
+		for (String s : integers.keySet()) {
+			allVariables[i] = s;
+			i++;
+		}
+		for (String s : inputs.keySet()) {
+			allVariables[i] = s;
+			i++;
+		}
+		for (String s : outputs.keySet()) {
+			allVariables[i] = s;
+			i++;
+		}
+		return allVariables;
+	}
 
 	public HashMap<String, Properties> getVariables() {
 		return variables;
