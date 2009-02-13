@@ -1303,19 +1303,18 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 	public void updateSpecies(String newLearnFile) {
 		learnFile = newLearnFile;
 		variablesList = new ArrayList<String>();
-		if ((learnFile.contains(".sbml")) || (learnFile.contains(".xml"))) {
-			SBMLReader reader = new SBMLReader();
-			SBMLDocument document = reader.readSBML(learnFile);
-			Model model = document.getModel();
-			ListOf ids = model.getListOfSpecies();
-			try {
+		/*if ((learnFile.contains(".vhd")) || (learnFile.contains(".g"))) {
+			LHPNFile lhpn = new LHPNFile();
+			lhpn.load(directory + separator + learnFile);
+			Set<String> ids = lhpn.getVariables().keySet();
+			/*try {
 				FileWriter write = new FileWriter(
-						new File(directory + separator + "background.gcm"));
+						new File(directory + separator + "background.g"));
 				write.write("digraph G {\n");
-				for (int i = 0; i < model.getNumSpecies(); i++) {
-					variablesList.add(((Species) ids.get(i)).getId());
-					write.write("s" + i + " [shape=ellipse,color=black,label=\""
-							+ ((Species) ids.get(i)).getId() + "\"" + "];\n");
+				for (String s : ids) {
+					variablesList.add(s);
+					write.write("s" + s + " [shape=ellipse,color=black,label=\""
+							+ (s) + "\"" + "];\n");
 				}
 				write.write("}\n");
 				write.close();
@@ -1326,13 +1325,14 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 			}
 		}
 		else {
-			GCMFile gcm = new GCMFile();
-			gcm.load(learnFile);
-			HashMap<String, Properties> speciesMap = gcm.getSpecies();
+			*/
+			LHPNFile lhpn = new LHPNFile();
+			lhpn.load(learnFile);
+			HashMap<String, Properties> speciesMap = lhpn.getVariables();
 			for (String s : speciesMap.keySet()) {
 				variablesList.add(s);
 			}
-			try {
+			/*try {
 				FileWriter write = new FileWriter(
 						new File(directory + separator + "background.gcm"));
 				BufferedReader input = new BufferedReader(new FileReader(new File(learnFile)));
@@ -1347,7 +1347,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 				JOptionPane.showMessageDialog(biosim.frame(), "Unable to create background file!",
 						"Error Writing Background", JOptionPane.ERROR_MESSAGE);
 			}
-		}
+			*/
 		sortVariables();
 		if (user.isSelected()) {
 			auto.doClick();
@@ -1357,6 +1357,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 			user.doClick();
 			auto.doClick();
 		}
+		levels();
 	}
 
 	private void sortVariables() {

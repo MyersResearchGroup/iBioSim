@@ -112,7 +112,7 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 
 		// Assignment lower bound
 		PropertyField field = new PropertyField("Assignment Lower Bound", "", null, null,
-				Utility.NAMEstring);
+				Utility.VALstring);
 		fields.put("Assignment lower", field);
 		add(field);
 		

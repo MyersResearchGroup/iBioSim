@@ -52,14 +52,14 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 
 	private JPanel filesPanel;
 
-	private boolean dirty, lema;
+	private boolean dirty;
 
 	private String previous;
 
 	private String[] list;
 
 	public DataManager(String directory, BioSim biosim, boolean lema) {
-		this.lema = lema;
+		//this.lema = lema;
 		if (File.separator.equals("\\")) {
 			separator = "\\\\";
 		}
@@ -218,7 +218,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 					biosim.refreshLearn(directory.split(separator)[directory.split(separator).length - 1],
 							true);
 				}
-				catch (Exception e1) {
+				catch (IOException e1) {
 					JOptionPane.showMessageDialog(biosim.frame(), "Unable to add new file.", "Error",
 							JOptionPane.ERROR_MESSAGE);
 				}
@@ -307,7 +307,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 					biosim.refreshLearn(directory.split(separator)[directory.split(separator).length - 1],
 							false);
 				}
-				catch (Exception e1) {
+				catch (IOException e1) {
 					JOptionPane.showMessageDialog(biosim.frame(), "Unable to remove selected files.",
 							"Error", JOptionPane.ERROR_MESSAGE);
 				}
@@ -369,7 +369,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 				previous = rename;
 				files.setSelectedValue(rename, true);
 			}
-			catch (Exception e1) {
+			catch (IOException e1) {
 				JOptionPane.showMessageDialog(biosim.frame(), "Unable to rename selected file.", "Error",
 						JOptionPane.ERROR_MESSAGE);
 			}
@@ -459,7 +459,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 				previous = copy;
 				files.setSelectedValue(copy, true);
 			}
-			catch (Exception e1) {
+			catch (IOException e1) {
 				JOptionPane.showMessageDialog(biosim.frame(), "Unable to copy selected file.", "Error",
 						JOptionPane.ERROR_MESSAGE);
 			}
@@ -536,7 +536,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 						p.load(load);
 						load.close();
 					}
-					catch (Exception e1) {
+					catch (IOException e1) {
 					}
 					for (int i = 0; i < list1.length; i++) {
 						if (!(new File(root + separator + sims.getSelectedValue() + separator + list1[i])
@@ -618,7 +618,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 									directory.split(separator)[directory.split(separator).length - 1], true);
 						}
 					}
-					catch (Exception e1) {
+					catch (IOException e1) {
 					}
 				}
 			}
@@ -661,7 +661,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 						p.load(load);
 						load.close();
 					}
-					catch (Exception e1) {
+					catch (IOException e1) {
 					}
 					for (int i = 0; i < list1.length; i++) {
 						if (!(new File(importFile + separator + list1[i]).isDirectory())
@@ -741,7 +741,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 									directory.split(separator)[directory.split(separator).length - 1], true);
 						}
 					}
-					catch (Exception e1) {
+					catch (IOException e1) {
 					}
 				}
 				else {
@@ -844,7 +844,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 						}
 					}
 				}
-				catch (Exception e1) {
+				catch (IOException e1) {
 					JOptionPane.showMessageDialog(biosim.frame(), "Unable to save file.", "Error",
 							JOptionPane.ERROR_MESSAGE);
 				}
@@ -1113,7 +1113,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 							}
 						}
 					}
-					catch (Exception e1) {
+					catch (IOException e1) {
 						JOptionPane.showMessageDialog(biosim.frame(), "Unable to save file.", "Error",
 								JOptionPane.ERROR_MESSAGE);
 					}
@@ -1146,7 +1146,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 				background = null;
 			}
 		}
-		catch (Exception e) {
+		catch (IOException e) {
 			JOptionPane.showMessageDialog(biosim.frame(), "Unable to load background file.", "Error",
 					JOptionPane.ERROR_MESSAGE);
 			background = null;
@@ -1297,7 +1297,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 					}
 					previous = file;
 				}
-				catch (Exception e1) {
+				catch (IOException e1) {
 					JOptionPane.showMessageDialog(biosim.frame(), "Unable to display file.", "Error",
 							JOptionPane.ERROR_MESSAGE);
 				}
