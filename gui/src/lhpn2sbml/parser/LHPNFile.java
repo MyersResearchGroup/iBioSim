@@ -821,6 +821,7 @@ public class LHPNFile {
 		}
 		//System.out.println("here " + transition + name + value);
 		prop.setProperty(name, value);
+		//log.addText("lhpn " + prop.toString());
 		contAssignments.put(transition, prop);
 	}
 
@@ -830,6 +831,7 @@ public class LHPNFile {
 			if (name != null && prop.containsKey(name)) {
 				prop.remove(name);
 			}
+			//log.addText("lhpn " + prop.toString());
 			contAssignments.put(transition, prop);
 		}
 	}
@@ -1087,9 +1089,9 @@ public class LHPNFile {
 	}
 
 	public Properties getContVars(String trans) {
-		// log.addText(trans);
 		Properties contVars = new Properties();
 		contVars = contAssignments.get(trans);
+		//log.addText("lhpn " + contVars.toString());
 		return contVars;
 	}
 
@@ -1189,6 +1191,7 @@ public class LHPNFile {
 	public String getContAssign(String transition, String var) {
 		if (contAssignments.containsKey(transition) && var != null) {
 			Properties prop = contAssignments.get(transition);
+			//log.addText("lhpn " + prop.toString());
 			if (prop.containsKey(var)) {
 				return prop.getProperty(var);
 			}
