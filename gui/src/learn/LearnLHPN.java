@@ -61,7 +61,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 
 	private ArrayList<String> variablesList;
 
-	private boolean firstRead;
+	private boolean firstRead, generate, execute;
 
 	/**
 	 * This is the constructor for the Learn class. It initializes all the input
@@ -346,7 +346,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 		for (String s : variablesMap.keySet()) {
 			variablesList.add(s);
 		}
-		//System.out.println(variablesList);
+		// System.out.println(variablesList);
 		try {
 			FileWriter write = new FileWriter(new File(directory + separator + "background.g"));
 			BufferedReader input = new BufferedReader(new FileReader(new File(learnFile)));
@@ -541,7 +541,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 		// if the run button is selected
 		else if (e.getSource() == run) {
 			save();
-			new Thread(this).start();
+			learn();
 		}
 		else if (e.getSource() == save) {
 			save();
@@ -571,11 +571,12 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 							writeNew.write(".dmvc ");
 							flag = true;
 						}
-						write.write(((JTextField) variables.get(i).get(0)).getText().trim() + " "); 
-						writeNew.write(((JTextField) variables.get(i).get(0)).getText().trim() + " "); 
+						write.write(((JTextField) variables.get(i).get(0)).getText().trim() + " ");
+						writeNew.write(((JTextField) variables.get(i).get(0)).getText().trim()
+								+ " ");
 					}
 				}
-				if (flag) { 
+				if (flag) {
 					write.write("\n");
 					writeNew.write("\n");
 				}
@@ -610,6 +611,8 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 				// Integer numThresh =
 				// Integer.parseInt(numBins.getSelectedItem().toString()) - 1;
 				// Thread myThread = new Thread(this);
+				generate = true;
+				execute = false;
 				new Thread(this).start();
 			}
 		}
@@ -622,20 +625,20 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 		ArrayList<String> str = null;
 		try {
 			Scanner f = new Scanner(new File(directory + separator + binFile));
-			//log.addText(directory + separator + binFile);
+			// log.addText(directory + separator + binFile);
 			str = new ArrayList<String>();
 			str.add(f.nextLine());
 			while (f.hasNextLine()) {
 				str.add(f.nextLine());
 			}
 			f.close();
-			//System.out.println("here " + str.toString());
+			// System.out.println("here " + str.toString());
 		}
 		catch (Exception e1) {
 		}
 		if (!directory.equals("")) {
 			if (true) {
-				//System.out.println(str.toString());
+				// System.out.println(str.toString());
 				variablesPanel.removeAll();
 				this.variables = new ArrayList<ArrayList<Component>>();
 				variablesPanel.setLayout(new GridLayout(variablesList.size() + 1, 1));
@@ -657,7 +660,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 				variablesPanel.add(label);
 				int j = 0;
 				for (String s : variablesList) {
-					//System.out.println(s + str.toString());
+					// System.out.println(s + str.toString());
 					j++;
 					JPanel sp = new JPanel(new GridLayout());
 					ArrayList<Component> specs = new ArrayList<Component>();
@@ -667,10 +670,10 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 					specs.add(new JTextField(s));
 					String[] options = { "2", "3", "4", "5", "6", "7", "8", "9" };
 					JComboBox combo = new JComboBox(options);
-					//String[] dmvOptions = { "", "Yes", "No" };
-					//JComboBox dmv = new JComboBox(dmvOptions);
+					// String[] dmvOptions = { "", "Yes", "No" };
+					// JComboBox dmv = new JComboBox(dmvOptions);
 					JCheckBox dmv = new JCheckBox();
-					//dmv.setSelectedIndex(0);
+					// dmv.setSelectedIndex(0);
 					dmv.addActionListener(this);
 					dmv.setActionCommand("dmv" + j);
 					combo.setSelectedItem(numBins.getSelectedItem());
@@ -689,13 +692,13 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 					if (str != null) {
 						boolean found = false;
 						for (String st : str) {
-							//log.addText(s + " here " + st);
+							// log.addText(s + " here " + st);
 							String[] getString = st.split(" ");
-							//log.addText(getString[0] + s);
+							// log.addText(getString[0] + s);
 							if (getString[0].trim().equals(".dmvc")) {
 								for (int i = 1; i < getString.length; i++) {
 									if (getString[i].equals(s)) {
-										//log.addText(s);
+										// log.addText(s);
 										((JCheckBox) specs.get(1)).setSelected(true);
 									}
 								}
@@ -703,8 +706,8 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 							else if (getString[0].trim().equals(s)) {
 								found = true;
 								if (getString.length >= 1) {
-									((JComboBox) specs.get(2))
-											.setSelectedItem(String.valueOf(getString.length));
+									((JComboBox) specs.get(2)).setSelectedItem(String
+											.valueOf(getString.length));
 									for (int i = 0; i < Integer
 											.parseInt((String) ((JComboBox) specs.get(2))
 													.getSelectedItem()) - 1; i++) {
@@ -712,12 +715,12 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 											specs.add(new JTextField(""));
 										}
 										else {
-											//log.addText(getString[i+1]);
+											// log.addText(getString[i+1]);
 											specs.add(new JTextField(getString[i + 1].trim()));
 										}
 										if (((JCheckBox) specs.get(1)).isSelected()) {
-											//log.addText("here");
-											((JTextField) specs.get(i+3)).setEditable(false);
+											// log.addText("here");
+											((JTextField) specs.get(i + 3)).setEditable(false);
 										}
 										sp.add(specs.get(i + 3));
 									}
@@ -1077,7 +1080,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 			change = false;
 		}
 		catch (Exception e1) {
-			 e1.printStackTrace();
+			e1.printStackTrace();
 			JOptionPane.showMessageDialog(biosim.frame(), "Unable to save parameter file!",
 					"Error Saving File", JOptionPane.ERROR_MESSAGE);
 		}
@@ -1086,7 +1089,23 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 	public void learn() {
 		try {
 			if (auto.isSelected()) {
+				generate = true;
+			}
+			else {
 				FileWriter write = new FileWriter(new File(directory + separator + binFile));
+				boolean flag = false;
+				for (int i = 0; i < variables.size(); i++) {
+					if (((JCheckBox) variables.get(i).get(1)).isSelected()) {
+						if (!flag) {
+							write.write(".dmvc ");
+							flag = true;
+						}
+						write.write(((JTextField) variables.get(i).get(0)).getText().trim() + " ");
+					}
+				}
+				if (flag) {
+					write.write("\n");
+				}
 				for (int i = 0; i < variables.size(); i++) {
 					if (((JTextField) variables.get(i).get(0)).getText().trim().equals("")) {
 						write.write("?");
@@ -1094,35 +1113,22 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 					else {
 						write.write(((JTextField) variables.get(i).get(0)).getText().trim());
 					}
-					// write.write(", " + ((JComboBox)
-					// variables.get(i).get(1)).getSelectedItem());
 					for (int j = 3; j < variables.get(i).size(); j++) {
-						write.write(" ?");
+						if (((JTextField) variables.get(i).get(j)).getText().trim().equals("")) {
+							write.write(" ?");
+						}
+						else {
+							write.write(" "
+									+ ((JTextField) variables.get(i).get(j)).getText().trim());
+						}
 					}
 					write.write("\n");
 				}
 				write.close();
-				// bins.waitFor();
-				new Thread(this).start();
+				generate = false;
 			}
-			String command = "data2lhpn.py -b" + binFile + " -l" + lhpnFile;
-			log.addText("Executing:\n" + command + " " + directory + "\n");
-			File work = new File(directory);
-			Process run = Runtime.getRuntime().exec(command, null, work);
-			run.waitFor();
-			if (new File(lhpnFile).exists()) {
-				viewLhpn();
-			}
-			else {
-				viewLog();
-			}
-			//command = "atacs -llodpl " + lhpnFile;
-			//Runtime.getRuntime().exec(command, null, work);
-			//log.addText(command);
-			//String dotFile = lhpnFile.replace(".g", ".dot");
-			//command = "open " + dotFile;
-			//Runtime.getRuntime().exec(command, null, work);
-			//log.addText(command);
+			execute = true;
+			new Thread(this).start();
 		}
 		catch (Exception e) {
 		}
@@ -1132,14 +1138,6 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 		try {
 			File work = new File(directory);
 			final JFrame running = new JFrame("Progress");
-			String makeBin = "autogenT.py -b" + newBinFile + " -i" + iteration.getText();
-			if (range.isSelected()) {
-				makeBin = makeBin + " -cr";
-			}
-			log.addText(makeBin);
-			// log.addText("Creating levels file:\n" + directory + separator
-			// + binFile + "\n");
-			final Process bins = Runtime.getRuntime().exec(makeBin, null, work);
 			final JButton cancel = new JButton("Cancel");
 			WindowListener w = new WindowListener() {
 				public void windowClosing(WindowEvent arg0) {
@@ -1173,7 +1171,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 			JLabel label = new JLabel("Running...");
 			JProgressBar progress = new JProgressBar();
 			progress.setIndeterminate(true);
-			//progress.setStringPainted(true);
+			// progress.setStringPainted(true);
 			// progress.setString("");
 			progress.setValue(0);
 			text.add(label);
@@ -1205,65 +1203,130 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 			running.setLocation(x, y);
 			running.setVisible(true);
 			running.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-			cancel.setActionCommand("Cancel");
-			cancel.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					bins.destroy();
-					running.setCursor(null);
-					running.dispose();
+			if (generate) {
+				String makeBin = "autogenT.py -b" + newBinFile + " -i" + iteration.getText();
+				if (range.isSelected()) {
+					makeBin = makeBin + " -cr";
 				}
-			});
-			biosim.getExitButton().setActionCommand("Exit program");
-			biosim.getExitButton().addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					bins.destroy();
-					running.setCursor(null);
-					running.dispose();
-				}
-			});
-			try {
-				String output = "";
-				InputStream reb = bins.getInputStream();
-				InputStreamReader isr = new InputStreamReader(reb);
-				BufferedReader br = new BufferedReader(isr);
-				FileWriter out = new FileWriter(new File(directory + separator + "run.log"));
-				int count = 0;
-				while ((output = br.readLine()) != null) {
-					if (output.matches("\\d+/\\d+")) {
-						// log.addText(output);
-						count += 500;
-						progress.setValue(count);
+				log.addText(makeBin);
+				// log.addText("Creating levels file:\n" + directory + separator
+				// + binFile + "\n");
+				final Process bins = Runtime.getRuntime().exec(makeBin, null, work);
+				cancel.setActionCommand("Cancel");
+				cancel.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						bins.destroy();
+						running.setCursor(null);
+						running.dispose();
 					}
-					out.write(output);
-					out.write("\n");
+				});
+				biosim.getExitButton().setActionCommand("Exit program");
+				biosim.getExitButton().addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						bins.destroy();
+						running.setCursor(null);
+						running.dispose();
+					}
+				});
+				try {
+					String output = "";
+					InputStream reb = bins.getInputStream();
+					InputStreamReader isr = new InputStreamReader(reb);
+					BufferedReader br = new BufferedReader(isr);
+					FileWriter out = new FileWriter(new File(directory + separator + "run.log"));
+					int count = 0;
+					while ((output = br.readLine()) != null) {
+						if (output.matches("\\d+/\\d+")) {
+							// log.addText(output);
+							count += 500;
+							progress.setValue(count);
+						}
+						out.write(output);
+						out.write("\n");
+					}
+					br.close();
+					isr.close();
+					reb.close();
+					out.close();
+					viewLog.setEnabled(true);
 				}
-				br.close();
-				isr.close();
-				reb.close();
+				catch (Exception e) {
+				}
+				int exitValue = bins.waitFor();
+				if (exitValue == 143) {
+					JOptionPane.showMessageDialog(biosim.frame(), "Learning was"
+							+ " canceled by the user.", "Canceled Learning",
+							JOptionPane.ERROR_MESSAGE);
+				}
+				FileOutputStream out = new FileOutputStream(new File(directory + separator
+						+ binFile));
+				FileInputStream in = new FileInputStream(new File(directory + separator
+						+ newBinFile));
+				int read = in.read();
+				while (read != -1) {
+					out.write(read);
+					read = in.read();
+				}
+				in.close();
 				out.close();
-				viewLog.setEnabled(true);
+				if (!execute) {
+					levels();
+				}
 			}
-			catch (Exception e) {
-			}
-			int exitValue = bins.waitFor();
-			if (exitValue == 143) {
-				JOptionPane.showMessageDialog(biosim.frame(), "Learning was"
-						+ " canceled by the user.", "Canceled Learning", JOptionPane.ERROR_MESSAGE);
+			if (execute) {
+				String command = "data2lhpn.py -b" + binFile + " -l" + lhpnFile;
+				log.addText("Executing:\n" + command + " " + directory + "\n");
+				//File work = new File(directory);
+				final Process run = Runtime.getRuntime().exec(command, null, work);
+				cancel.setActionCommand("Cancel");
+				cancel.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						run.destroy();
+						running.setCursor(null);
+						running.dispose();
+					}
+				});
+				biosim.getExitButton().setActionCommand("Exit program");
+				biosim.getExitButton().addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						run.destroy();
+						running.setCursor(null);
+						running.dispose();
+					}
+				});
+				try {
+					String output = "";
+					InputStream reb = run.getInputStream();
+					InputStreamReader isr = new InputStreamReader(reb);
+					BufferedReader br = new BufferedReader(isr);
+					FileWriter out = new FileWriter(new File(directory + separator + "run.log"));
+					while ((output = br.readLine()) != null) {
+						out.write(output);
+						out.write("\n");
+					}
+					br.close();
+					isr.close();
+					reb.close();
+					out.close();
+					viewLog.setEnabled(true);
+				}
+				catch (Exception e) {
+				}
+				int exitValue = run.waitFor();
+				if (exitValue == 143) {
+					JOptionPane.showMessageDialog(biosim.frame(), "Learning was"
+							+ " canceled by the user.", "Canceled Learning",
+							JOptionPane.ERROR_MESSAGE);
+				}
+				if (new File(lhpnFile).exists()) {
+					viewLhpn();
+				}
+				else {
+					viewLog();
+				}
 			}
 			running.setCursor(null);
 			running.dispose();
-			FileOutputStream out = new FileOutputStream(new File(directory + separator
-					+ binFile));
-			FileInputStream in = new FileInputStream(new File(directory + separator
-					+ newBinFile));
-			int read = in.read();
-			while (read != -1) {
-				out.write(read);
-				read = in.read();
-			}
-			in.close();
-			out.close();
-			levels();
 		}
 		catch (Exception e1) {
 			e1.printStackTrace();
@@ -1304,51 +1367,35 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 	public void updateSpecies(String newLearnFile) {
 		learnFile = newLearnFile;
 		variablesList = new ArrayList<String>();
-		/*if ((learnFile.contains(".vhd")) || (learnFile.contains(".g"))) {
-			LHPNFile lhpn = new LHPNFile();
-			lhpn.load(directory + separator + learnFile);
-			Set<String> ids = lhpn.getVariables().keySet();
-			/*try {
-				FileWriter write = new FileWriter(
-						new File(directory + separator + "background.g"));
-				write.write("digraph G {\n");
-				for (String s : ids) {
-					variablesList.add(s);
-					write.write("s" + s + " [shape=ellipse,color=black,label=\""
-							+ (s) + "\"" + "];\n");
-				}
-				write.write("}\n");
-				write.close();
-			}
-			catch (Exception e) {
-				JOptionPane.showMessageDialog(biosim.frame(), "Unable to create background file!",
-						"Error Writing Background", JOptionPane.ERROR_MESSAGE);
-			}
+		/*
+		 * if ((learnFile.contains(".vhd")) || (learnFile.contains(".g"))) {
+		 * LHPNFile lhpn = new LHPNFile(); lhpn.load(directory + separator +
+		 * learnFile); Set<String> ids = lhpn.getVariables().keySet(); /*try {
+		 * FileWriter write = new FileWriter( new File(directory + separator +
+		 * "background.g")); write.write("digraph G {\n"); for (String s : ids) {
+		 * variablesList.add(s); write.write("s" + s + "
+		 * [shape=ellipse,color=black,label=\"" + (s) + "\"" + "];\n"); }
+		 * write.write("}\n"); write.close(); } catch (Exception e) {
+		 * JOptionPane.showMessageDialog(biosim.frame(), "Unable to create
+		 * background file!", "Error Writing Background",
+		 * JOptionPane.ERROR_MESSAGE); } } else {
+		 */
+		LHPNFile lhpn = new LHPNFile();
+		lhpn.load(learnFile);
+		HashMap<String, Properties> speciesMap = lhpn.getVariables();
+		for (String s : speciesMap.keySet()) {
+			variablesList.add(s);
 		}
-		else {
-			*/
-			LHPNFile lhpn = new LHPNFile();
-			lhpn.load(learnFile);
-			HashMap<String, Properties> speciesMap = lhpn.getVariables();
-			for (String s : speciesMap.keySet()) {
-				variablesList.add(s);
-			}
-			/*try {
-				FileWriter write = new FileWriter(
-						new File(directory + separator + "background.gcm"));
-				BufferedReader input = new BufferedReader(new FileReader(new File(learnFile)));
-				String line = null;
-				while ((line = input.readLine()) != null) {
-					write.write(line + "\n");
-				}
-				write.close();
-				input.close();
-			}
-			catch (Exception e) {
-				JOptionPane.showMessageDialog(biosim.frame(), "Unable to create background file!",
-						"Error Writing Background", JOptionPane.ERROR_MESSAGE);
-			}
-			*/
+		/*
+		 * try { FileWriter write = new FileWriter( new File(directory +
+		 * separator + "background.gcm")); BufferedReader input = new
+		 * BufferedReader(new FileReader(new File(learnFile))); String line =
+		 * null; while ((line = input.readLine()) != null) { write.write(line +
+		 * "\n"); } write.close(); input.close(); } catch (Exception e) {
+		 * JOptionPane.showMessageDialog(biosim.frame(), "Unable to create
+		 * background file!", "Error Writing Background",
+		 * JOptionPane.ERROR_MESSAGE); }
+		 */
 		sortVariables();
 		if (user.isSelected()) {
 			auto.doClick();
