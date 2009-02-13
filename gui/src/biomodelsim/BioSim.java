@@ -218,7 +218,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 
 	private Pattern IDpat = Pattern.compile("([a-zA-Z]|_)([a-zA-Z]|[0-9]|_)*");
 
-	private boolean lema, atacs, async, externView, treeSelected = false;
+	private boolean lema, atacs, async, externView, treeSelected = false, popupFlag = false, menuFlag = false;
 
 	private String viewer;
 
@@ -6245,27 +6245,35 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						&& tree.getFile().substring(tree.getFile().length() - 4).equals(".xml")) {
 					JMenuItem edit = new JMenuItem("View/Edit");
 					edit.addActionListener(this);
+					edit.addMouseListener(this);
 					edit.setActionCommand("sbmlEditor");
 					JMenuItem graph = new JMenuItem("View Network");
 					graph.addActionListener(this);
+					graph.addMouseListener(this);
 					graph.setActionCommand("graph");
 					JMenuItem browse = new JMenuItem("View in Browser");
 					browse.addActionListener(this);
+					browse.addMouseListener(this);
 					browse.setActionCommand("browse");
 					JMenuItem simulate = new JMenuItem("Create Analysis View");
 					simulate.addActionListener(this);
+					simulate.addMouseListener(this);
 					simulate.setActionCommand("simulate");
 					JMenuItem createLearn = new JMenuItem("Create Learn View");
 					createLearn.addActionListener(this);
+					createLearn.addMouseListener(this);
 					createLearn.setActionCommand("createLearn");
 					JMenuItem delete = new JMenuItem("Delete");
 					delete.addActionListener(this);
+					delete.addMouseListener(this);
 					delete.setActionCommand("delete");
 					JMenuItem copy = new JMenuItem("Copy");
 					copy.addActionListener(this);
+					copy.addMouseListener(this);
 					copy.setActionCommand("copy");
 					JMenuItem rename = new JMenuItem("Rename");
 					rename.addActionListener(this);
+					rename.addMouseListener(this);
 					rename.setActionCommand("rename");
 					popup.add(simulate);
 					popup.add(createLearn);
@@ -6282,27 +6290,35 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						&& tree.getFile().substring(tree.getFile().length() - 4).equals(".gcm")) {
 					JMenuItem create = new JMenuItem("Create Analysis View");
 					create.addActionListener(this);
+					create.addMouseListener(this);
 					create.setActionCommand("createSim");
 					JMenuItem createLearn = new JMenuItem("Create Learn View");
 					createLearn.addActionListener(this);
+					createLearn.addMouseListener(this);
 					createLearn.setActionCommand("createLearn");
 					JMenuItem createSBML = new JMenuItem("Create SBML File");
 					createSBML.addActionListener(this);
+					createSBML.addMouseListener(this);
 					createSBML.setActionCommand("createSBML");
 					JMenuItem edit = new JMenuItem("View/Edit");
 					edit.addActionListener(this);
+					edit.addMouseListener(this);
 					edit.setActionCommand("dotEditor");
 					JMenuItem graph = new JMenuItem("View Genetic Circuit");
 					graph.addActionListener(this);
+					graph.addMouseListener(this);
 					graph.setActionCommand("graphDot");
 					JMenuItem delete = new JMenuItem("Delete");
 					delete.addActionListener(this);
+					delete.addMouseListener(this);
 					delete.setActionCommand("delete");
 					JMenuItem copy = new JMenuItem("Copy");
 					copy.addActionListener(this);
+					copy.addMouseListener(this);
 					copy.setActionCommand("copy");
 					JMenuItem rename = new JMenuItem("Rename");
 					rename.addActionListener(this);
+					rename.addMouseListener(this);
 					rename.setActionCommand("rename");
 					popup.add(create);
 					popup.add(createLearn);
@@ -6319,27 +6335,35 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						&& tree.getFile().substring(tree.getFile().length() - 4).equals(".vhd")) {
 					JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
 					createSynthesis.addActionListener(this);
+					createSynthesis.addMouseListener(this);
 					createSynthesis.setActionCommand("createSynthesis");
 					JMenuItem createAnalysis = new JMenuItem("Create Analysis View");
 					createAnalysis.addActionListener(this);
+					createAnalysis.addMouseListener(this);
 					createAnalysis.setActionCommand("createSim");
 					JMenuItem createLearn = new JMenuItem("Create Learn View");
 					createLearn.addActionListener(this);
+					createLearn.addMouseListener(this);
 					createLearn.setActionCommand("createLearn");
 					JMenuItem createVerification = new JMenuItem("Create Verification View");
 					createVerification.addActionListener(this);
+					createVerification.addMouseListener(this);
 					createVerification.setActionCommand("createVerify");
 					JMenuItem viewModel = new JMenuItem("View Model");
 					viewModel.addActionListener(this);
+					viewModel.addMouseListener(this);
 					viewModel.setActionCommand("viewModel");
 					JMenuItem delete = new JMenuItem("Delete");
 					delete.addActionListener(this);
+					delete.addMouseListener(this);
 					delete.setActionCommand("delete");
 					JMenuItem copy = new JMenuItem("Copy");
 					copy.addActionListener(this);
+					copy.addMouseListener(this);
 					copy.setActionCommand("copy");
 					JMenuItem rename = new JMenuItem("Rename");
 					rename.addActionListener(this);
+					rename.addMouseListener(this);
 					rename.setActionCommand("rename");
 					if (atacs) {
 						popup.add(createSynthesis);
@@ -6360,27 +6384,35 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						&& tree.getFile().substring(tree.getFile().length() - 2).equals(".g")) {
 					JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
 					createSynthesis.addActionListener(this);
+					createSynthesis.addMouseListener(this);
 					createSynthesis.setActionCommand("createSynthesis");
 					JMenuItem createAnalysis = new JMenuItem("Create Analysis View");
 					createAnalysis.addActionListener(this);
+					createAnalysis.addMouseListener(this);
 					createAnalysis.setActionCommand("createSim");
 					JMenuItem createLearn = new JMenuItem("Create Learn View");
 					createLearn.addActionListener(this);
+					createLearn.addMouseListener(this);
 					createLearn.setActionCommand("createLearn");
 					JMenuItem createVerification = new JMenuItem("Create Verification View");
 					createVerification.addActionListener(this);
+					createVerification.addMouseListener(this);
 					createVerification.setActionCommand("createVerify");
 					JMenuItem viewModel = new JMenuItem("View Model");
 					viewModel.addActionListener(this);
+					viewModel.addMouseListener(this);
 					viewModel.setActionCommand("viewModel");
 					JMenuItem delete = new JMenuItem("Delete");
 					delete.addActionListener(this);
+					delete.addMouseListener(this);
 					delete.setActionCommand("delete");
 					JMenuItem copy = new JMenuItem("Copy");
 					copy.addActionListener(this);
+					copy.addMouseListener(this);
 					copy.setActionCommand("copy");
 					JMenuItem rename = new JMenuItem("Rename");
 					rename.addActionListener(this);
+					rename.addMouseListener(this);
 					rename.setActionCommand("rename");
 					if (atacs) {
 						popup.add(createSynthesis);
@@ -6401,27 +6433,35 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						&& tree.getFile().substring(tree.getFile().length() - 4).equals(".csp")) {
 					JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
 					createSynthesis.addActionListener(this);
+					createSynthesis.addMouseListener(this);
 					createSynthesis.setActionCommand("createSynthesis");
 					JMenuItem createAnalysis = new JMenuItem("Create Analysis View");
 					createAnalysis.addActionListener(this);
+					createAnalysis.addMouseListener(this);
 					createAnalysis.setActionCommand("createSim");
 					JMenuItem createLearn = new JMenuItem("Create Learn View");
 					createLearn.addActionListener(this);
+					createLearn.addMouseListener(this);
 					createLearn.setActionCommand("createLearn");
 					JMenuItem createVerification = new JMenuItem("Create Verification View");
 					createVerification.addActionListener(this);
+					createVerification.addMouseListener(this);
 					createVerification.setActionCommand("createVerify");
 					JMenuItem viewModel = new JMenuItem("View Model");
 					viewModel.addActionListener(this);
+					viewModel.addMouseListener(this);
 					viewModel.setActionCommand("viewModel");
 					JMenuItem delete = new JMenuItem("Delete");
 					delete.addActionListener(this);
+					delete.addMouseListener(this);
 					delete.setActionCommand("delete");
 					JMenuItem copy = new JMenuItem("Copy");
 					copy.addActionListener(this);
+					copy.addMouseListener(this);
 					copy.setActionCommand("copy");
 					JMenuItem rename = new JMenuItem("Rename");
 					rename.addActionListener(this);
+					rename.addMouseListener(this);
 					rename.setActionCommand("rename");
 					if (atacs) {
 						popup.add(createSynthesis);
@@ -6442,27 +6482,35 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						&& tree.getFile().substring(tree.getFile().length() - 4).equals(".hse")) {
 					JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
 					createSynthesis.addActionListener(this);
+					createSynthesis.addMouseListener(this);
 					createSynthesis.setActionCommand("createSynthesis");
 					JMenuItem createAnalysis = new JMenuItem("Create Analysis View");
 					createAnalysis.addActionListener(this);
+					createAnalysis.addMouseListener(this);
 					createAnalysis.setActionCommand("createSim");
 					JMenuItem createLearn = new JMenuItem("Create Learn View");
 					createLearn.addActionListener(this);
+					createLearn.addMouseListener(this);
 					createLearn.setActionCommand("createLearn");
 					JMenuItem createVerification = new JMenuItem("Create Verification View");
 					createVerification.addActionListener(this);
+					createVerification.addMouseListener(this);
 					createVerification.setActionCommand("createVerify");
 					JMenuItem viewModel = new JMenuItem("View Model");
 					viewModel.addActionListener(this);
+					viewModel.addMouseListener(this);
 					viewModel.setActionCommand("viewModel");
 					JMenuItem delete = new JMenuItem("Delete");
 					delete.addActionListener(this);
+					delete.addMouseListener(this);
 					delete.setActionCommand("delete");
 					JMenuItem copy = new JMenuItem("Copy");
 					copy.addActionListener(this);
+					copy.addMouseListener(this);
 					copy.setActionCommand("copy");
 					JMenuItem rename = new JMenuItem("Rename");
 					rename.addActionListener(this);
+					rename.addMouseListener(this);
 					rename.setActionCommand("rename");
 					if (atacs) {
 						popup.add(createSynthesis);
@@ -6483,18 +6531,23 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						&& tree.getFile().substring(tree.getFile().length() - 4).equals(".unc")) {
 					JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
 					createSynthesis.addActionListener(this);
+					createSynthesis.addMouseListener(this);
 					createSynthesis.setActionCommand("createSynthesis");
 					JMenuItem viewModel = new JMenuItem("View Model");
 					viewModel.addActionListener(this);
+					viewModel.addMouseListener(this);
 					viewModel.setActionCommand("viewModel");
 					JMenuItem delete = new JMenuItem("Delete");
 					delete.addActionListener(this);
+					delete.addMouseListener(this);
 					delete.setActionCommand("delete");
 					JMenuItem copy = new JMenuItem("Copy");
 					copy.addActionListener(this);
+					copy.addMouseListener(this);
 					copy.setActionCommand("copy");
 					JMenuItem rename = new JMenuItem("Rename");
 					rename.addActionListener(this);
+					rename.addMouseListener(this);
 					rename.setActionCommand("rename");
 					popup.add(createSynthesis);
 					popup.addSeparator();
@@ -6508,18 +6561,23 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						&& tree.getFile().substring(tree.getFile().length() - 4).equals(".rsg")) {
 					JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
 					createSynthesis.addActionListener(this);
+					createSynthesis.addMouseListener(this);
 					createSynthesis.setActionCommand("createSynthesis");
 					JMenuItem viewModel = new JMenuItem("View Model");
 					viewModel.addActionListener(this);
+					viewModel.addMouseListener(this);
 					viewModel.setActionCommand("viewModel");
 					JMenuItem delete = new JMenuItem("Delete");
 					delete.addActionListener(this);
+					delete.addMouseListener(this);
 					delete.setActionCommand("delete");
 					JMenuItem copy = new JMenuItem("Copy");
 					copy.addActionListener(this);
+					copy.addMouseListener(this);
 					copy.setActionCommand("copy");
 					JMenuItem rename = new JMenuItem("Rename");
 					rename.addActionListener(this);
+					rename.addMouseListener(this);
 					rename.setActionCommand("rename");
 					popup.add(createSynthesis);
 					popup.addSeparator();
@@ -6533,15 +6591,19 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						&& tree.getFile().substring(tree.getFile().length() - 4).equals(".grf")) {
 					JMenuItem edit = new JMenuItem("View/Edit");
 					edit.addActionListener(this);
+					edit.addMouseListener(this);
 					edit.setActionCommand("openGraph");
 					JMenuItem delete = new JMenuItem("Delete");
 					delete.addActionListener(this);
+					delete.addMouseListener(this);
 					delete.setActionCommand("delete");
 					JMenuItem copy = new JMenuItem("Copy");
 					copy.addActionListener(this);
+					copy.addMouseListener(this);
 					copy.setActionCommand("copy");
 					JMenuItem rename = new JMenuItem("Rename");
 					rename.addActionListener(this);
+					rename.addMouseListener(this);
 					rename.setActionCommand("rename");
 					popup.add(edit);
 					popup.add(copy);
@@ -6552,15 +6614,19 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						&& tree.getFile().substring(tree.getFile().length() - 4).equals(".prb")) {
 					JMenuItem edit = new JMenuItem("View/Edit");
 					edit.addActionListener(this);
+					edit.addMouseListener(this);
 					edit.setActionCommand("openGraph");
 					JMenuItem delete = new JMenuItem("Delete");
 					delete.addActionListener(this);
+					delete.addMouseListener(this);
 					delete.setActionCommand("delete");
 					JMenuItem copy = new JMenuItem("Copy");
 					copy.addActionListener(this);
+					copy.addMouseListener(this);
 					copy.setActionCommand("copy");
 					JMenuItem rename = new JMenuItem("Rename");
 					rename.addActionListener(this);
+					rename.addMouseListener(this);
 					rename.setActionCommand("rename");
 					popup.add(edit);
 					popup.add(copy);
@@ -6605,12 +6671,15 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					}
 					JMenuItem delete = new JMenuItem("Delete");
 					delete.addActionListener(this);
+					delete.addMouseListener(this);
 					delete.setActionCommand("deleteSim");
 					JMenuItem copy = new JMenuItem("Copy");
 					copy.addActionListener(this);
+					copy.addMouseListener(this);
 					copy.setActionCommand("copy");
 					JMenuItem rename = new JMenuItem("Rename");
 					rename.addActionListener(this);
+					rename.addMouseListener(this);
 					rename.setActionCommand("rename");
 					popup.add(open);
 					popup.addSeparator();
@@ -7207,27 +7276,35 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".xml")) {
 						JMenuItem edit = new JMenuItem("View/Edit");
 						edit.addActionListener(this);
+						edit.addMouseListener(this);
 						edit.setActionCommand("sbmlEditor");
 						JMenuItem graph = new JMenuItem("View Network");
 						graph.addActionListener(this);
+						graph.addMouseListener(this);
 						graph.setActionCommand("graph");
 						JMenuItem browse = new JMenuItem("View in Browser");
 						browse.addActionListener(this);
+						browse.addMouseListener(this);
 						browse.setActionCommand("browse");
 						JMenuItem simulate = new JMenuItem("Create Analysis View");
 						simulate.addActionListener(this);
+						simulate.addMouseListener(this);
 						simulate.setActionCommand("simulate");
 						JMenuItem createLearn = new JMenuItem("Create Learn View");
 						createLearn.addActionListener(this);
+						createLearn.addMouseListener(this);
 						createLearn.setActionCommand("createLearn");
 						JMenuItem delete = new JMenuItem("Delete");
 						delete.addActionListener(this);
+						delete.addMouseListener(this);
 						delete.setActionCommand("delete");
 						JMenuItem copy = new JMenuItem("Copy");
 						copy.addActionListener(this);
+						copy.addMouseListener(this);
 						copy.setActionCommand("copy");
 						JMenuItem rename = new JMenuItem("Rename");
 						rename.addActionListener(this);
+						rename.addMouseListener(this);
 						rename.setActionCommand("rename");
 						popup.add(simulate);
 						popup.add(createLearn);
@@ -7244,27 +7321,35 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".gcm")) {
 						JMenuItem create = new JMenuItem("Create Analysis View");
 						create.addActionListener(this);
+						create.addMouseListener(this);
 						create.setActionCommand("createSim");
 						JMenuItem createLearn = new JMenuItem("Create Learn View");
 						createLearn.addActionListener(this);
+						createLearn.addMouseListener(this);
 						createLearn.setActionCommand("createLearn");
 						JMenuItem createSBML = new JMenuItem("Create SBML File");
 						createSBML.addActionListener(this);
+						createSBML.addMouseListener(this);
 						createSBML.setActionCommand("createSBML");
 						JMenuItem edit = new JMenuItem("View/Edit");
 						edit.addActionListener(this);
+						edit.addMouseListener(this);
 						edit.setActionCommand("dotEditor");
 						JMenuItem graph = new JMenuItem("View Genetic Circuit");
 						graph.addActionListener(this);
+						graph.addMouseListener(this);
 						graph.setActionCommand("graphDot");
 						JMenuItem delete = new JMenuItem("Delete");
 						delete.addActionListener(this);
+						delete.addMouseListener(this);
 						delete.setActionCommand("delete");
 						JMenuItem copy = new JMenuItem("Copy");
 						copy.addActionListener(this);
+						copy.addMouseListener(this);
 						copy.setActionCommand("copy");
 						JMenuItem rename = new JMenuItem("Rename");
 						rename.addActionListener(this);
+						rename.addMouseListener(this);
 						rename.setActionCommand("rename");
 						popup.add(create);
 						popup.add(createLearn);
@@ -7281,15 +7366,19 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".grf")) {
 						JMenuItem edit = new JMenuItem("View/Edit");
 						edit.addActionListener(this);
+						edit.addMouseListener(this);
 						edit.setActionCommand("openGraph");
 						JMenuItem delete = new JMenuItem("Delete");
 						delete.addActionListener(this);
+						delete.addMouseListener(this);
 						delete.setActionCommand("delete");
 						JMenuItem copy = new JMenuItem("Copy");
 						copy.addActionListener(this);
+						copy.addMouseListener(this);
 						copy.setActionCommand("copy");
 						JMenuItem rename = new JMenuItem("Rename");
 						rename.addActionListener(this);
+						rename.addMouseListener(this);
 						rename.setActionCommand("rename");
 						popup.add(edit);
 						popup.add(copy);
@@ -7300,24 +7389,31 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".vhd")) {
 						JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
 						createSynthesis.addActionListener(this);
+						createSynthesis.addMouseListener(this);
 						createSynthesis.setActionCommand("createSynthesis");
 						JMenuItem createAnalysis = new JMenuItem("Create Analysis View");
 						createAnalysis.addActionListener(this);
+						createAnalysis.addMouseListener(this);
 						createAnalysis.setActionCommand("createSim");
 						JMenuItem createLearn = new JMenuItem("Create Learn View");
 						createLearn.addActionListener(this);
+						createLearn.addMouseListener(this);
 						createLearn.setActionCommand("createLearn");
 						JMenuItem edit = new JMenuItem("View/Edit");
 						edit.addActionListener(this);
+						edit.addMouseListener(this);
 						edit.setActionCommand("dotEditor");
 						JMenuItem delete = new JMenuItem("Delete");
 						delete.addActionListener(this);
+						delete.addMouseListener(this);
 						delete.setActionCommand("delete");
 						JMenuItem copy = new JMenuItem("Copy");
 						copy.addActionListener(this);
+						copy.addMouseListener(this);
 						copy.setActionCommand("copy");
 						JMenuItem rename = new JMenuItem("Rename");
 						rename.addActionListener(this);
+						rename.addMouseListener(this);
 						rename.setActionCommand("rename");
 						if (atacs) {
 							popup.add(createSynthesis);
@@ -7336,24 +7432,31 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							&& tree.getFile().substring(tree.getFile().length() - 2).equals(".g")) {
 						JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
 						createSynthesis.addActionListener(this);
+						createSynthesis.addMouseListener(this);
 						createSynthesis.setActionCommand("createSynthesis");
 						JMenuItem createAnalysis = new JMenuItem("Create Analysis View");
 						createAnalysis.addActionListener(this);
+						createAnalysis.addMouseListener(this);
 						createAnalysis.setActionCommand("createSim");
 						JMenuItem createLearn = new JMenuItem("Create Learn View");
 						createLearn.addActionListener(this);
+						createLearn.addMouseListener(this);
 						createLearn.setActionCommand("createLearn");
 						JMenuItem edit = new JMenuItem("View/Edit");
 						edit.addActionListener(this);
+						edit.addMouseListener(this);
 						edit.setActionCommand("dotEditor");
 						JMenuItem delete = new JMenuItem("Delete");
 						delete.addActionListener(this);
+						delete.addMouseListener(this);
 						delete.setActionCommand("delete");
 						JMenuItem copy = new JMenuItem("Copy");
 						copy.addActionListener(this);
+						copy.addMouseListener(this);
 						copy.setActionCommand("copy");
 						JMenuItem rename = new JMenuItem("Rename");
 						rename.addActionListener(this);
+						rename.addMouseListener(this);
 						rename.setActionCommand("rename");
 						if (atacs) {
 							popup.add(createSynthesis);
@@ -7372,24 +7475,31 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".csp")) {
 						JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
 						createSynthesis.addActionListener(this);
+						createSynthesis.addMouseListener(this);
 						createSynthesis.setActionCommand("createSynthesis");
 						JMenuItem createAnalysis = new JMenuItem("Create Analysis View");
 						createAnalysis.addActionListener(this);
+						createAnalysis.addMouseListener(this);
 						createAnalysis.setActionCommand("createSim");
 						JMenuItem createLearn = new JMenuItem("Create Learn View");
 						createLearn.addActionListener(this);
+						createLearn.addMouseListener(this);
 						createLearn.setActionCommand("createLearn");
 						JMenuItem edit = new JMenuItem("View/Edit");
 						edit.addActionListener(this);
+						edit.addMouseListener(this);
 						edit.setActionCommand("dotEditor");
 						JMenuItem delete = new JMenuItem("Delete");
 						delete.addActionListener(this);
+						delete.addMouseListener(this);
 						delete.setActionCommand("delete");
 						JMenuItem copy = new JMenuItem("Copy");
 						copy.addActionListener(this);
+						copy.addMouseListener(this);
 						copy.setActionCommand("copy");
 						JMenuItem rename = new JMenuItem("Rename");
 						rename.addActionListener(this);
+						rename.addMouseListener(this);
 						rename.setActionCommand("rename");
 						if (atacs) {
 							popup.add(createSynthesis);
@@ -7408,24 +7518,31 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".hse")) {
 						JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
 						createSynthesis.addActionListener(this);
+						createSynthesis.addMouseListener(this);
 						createSynthesis.setActionCommand("createSynthesis");
 						JMenuItem createAnalysis = new JMenuItem("Create Analysis View");
 						createAnalysis.addActionListener(this);
+						createAnalysis.addMouseListener(this);
 						createAnalysis.setActionCommand("createSim");
 						JMenuItem createLearn = new JMenuItem("Create Learn View");
 						createLearn.addActionListener(this);
+						createLearn.addMouseListener(this);
 						createLearn.setActionCommand("createLearn");
 						JMenuItem edit = new JMenuItem("View/Edit");
 						edit.addActionListener(this);
+						edit.addMouseListener(this);
 						edit.setActionCommand("dotEditor");
 						JMenuItem delete = new JMenuItem("Delete");
 						delete.addActionListener(this);
+						delete.addMouseListener(this);
 						delete.setActionCommand("delete");
 						JMenuItem copy = new JMenuItem("Copy");
 						copy.addActionListener(this);
+						copy.addMouseListener(this);
 						copy.setActionCommand("copy");
 						JMenuItem rename = new JMenuItem("Rename");
 						rename.addActionListener(this);
+						rename.addMouseListener(this);
 						rename.setActionCommand("rename");
 						if (atacs) {
 							popup.add(createSynthesis);
@@ -7444,18 +7561,23 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".unc")) {
 						JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
 						createSynthesis.addActionListener(this);
+						createSynthesis.addMouseListener(this);
 						createSynthesis.setActionCommand("createSynthesis");
 						JMenuItem edit = new JMenuItem("View/Edit");
 						edit.addActionListener(this);
+						edit.addMouseListener(this);
 						edit.setActionCommand("dotEditor");
 						JMenuItem delete = new JMenuItem("Delete");
 						delete.addActionListener(this);
+						delete.addMouseListener(this);
 						delete.setActionCommand("delete");
 						JMenuItem copy = new JMenuItem("Copy");
 						copy.addActionListener(this);
+						copy.addMouseListener(this);
 						copy.setActionCommand("copy");
 						JMenuItem rename = new JMenuItem("Rename");
 						rename.addActionListener(this);
+						rename.addMouseListener(this);
 						rename.setActionCommand("rename");
 						popup.add(createSynthesis);
 						popup.addSeparator();
@@ -7468,18 +7590,23 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".rsg")) {
 						JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
 						createSynthesis.addActionListener(this);
+						createSynthesis.addMouseListener(this);
 						createSynthesis.setActionCommand("createSynthesis");
 						JMenuItem edit = new JMenuItem("View/Edit");
 						edit.addActionListener(this);
+						edit.addMouseListener(this);
 						edit.setActionCommand("dotEditor");
 						JMenuItem delete = new JMenuItem("Delete");
 						delete.addActionListener(this);
+						delete.addMouseListener(this);
 						delete.setActionCommand("delete");
 						JMenuItem copy = new JMenuItem("Copy");
 						copy.addActionListener(this);
+						copy.addMouseListener(this);
 						copy.setActionCommand("copy");
 						JMenuItem rename = new JMenuItem("Rename");
 						rename.addActionListener(this);
+						rename.addMouseListener(this);
 						rename.setActionCommand("rename");
 						popup.add(createSynthesis);
 						popup.addSeparator();
@@ -7526,12 +7653,15 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						}
 						JMenuItem delete = new JMenuItem("Delete");
 						delete.addActionListener(this);
+						delete.addMouseListener(this);
 						delete.setActionCommand("deleteSim");
 						JMenuItem copy = new JMenuItem("Copy");
 						copy.addActionListener(this);
+						copy.addMouseListener(this);
 						copy.setActionCommand("copy");
 						JMenuItem rename = new JMenuItem("Rename");
 						rename.addActionListener(this);
+						rename.addMouseListener(this);
 						rename.setActionCommand("rename");
 						popup.add(open);
 						popup.addSeparator();
@@ -8701,20 +8831,34 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 	}
 
 	public void mouseEntered(MouseEvent e) {
-		//if (e.getSource() == tree.tree) {
-		//	setGlassPane(true);
-		//}
-		if (e.getSource() == popup) {
+		if (e.getSource() == tree.tree) {
+			setGlassPane(false);
+		}
+		else if (e.getSource() == popup) {
+			popupFlag = true;
+			setGlassPane(false);
+		}
+		else if (e.getSource() instanceof JMenuItem) {
+			menuFlag = true;
 			setGlassPane(false);
 		}
 	}
 
 	public void mouseExited(MouseEvent e) {
-		if (e.getSource() == tree.tree) {
+		if (e.getSource() == tree.tree && !popupFlag && !menuFlag) {
 			setGlassPane(true);
 		}
 		else if (e.getSource() == popup) {
-			setGlassPane(true);
+			popupFlag = false;
+			if (!menuFlag) {
+				setGlassPane(true);
+			}
+		}
+		else if (e.getSource() instanceof JMenuItem) {
+			menuFlag = false;
+			if (!popupFlag) {
+				setGlassPane(true);
+			}
 		}
 	}
 
