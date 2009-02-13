@@ -316,6 +316,7 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 				// System.out.println(selected + " " + tempArray[0] + " " +
 				// tempArray[1]);
 				lhpn.addContAssign(transition, tempArray[0], tempArray[1]);
+				//log.addText("continuous "+ tempArray[0]);
 			}
 		}
 		if (intAssignments.getItems() != null) {
@@ -325,6 +326,7 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 				// System.out.println(selected + " " + tempArray[0] + " " +
 				// tempArray[1]);
 				lhpn.addIntAssign(transition, tempArray[0], tempArray[1]);
+				//log.addText("integer " + tempArray[0]);
 			}
 		}
 		if (rateAssignments.getItems() != null) {

@@ -62,6 +62,21 @@ public class LHPNFile {
 		contAssignments = new HashMap<String, Properties>();
 		intAssignments = new HashMap<String, Properties>();
 	}
+	
+	public LHPNFile() {
+		places = new HashMap<String, Boolean>();
+		inputs = new HashMap<String, String>();
+		outputs = new HashMap<String, String>();
+		enablings = new HashMap<String, String>();
+		delays = new HashMap<String, String>();
+		booleanAssignments = new HashMap<String, Properties>();
+		controlFlow = new HashMap<String, Properties>();
+		variables = new HashMap<String, Properties>();
+		integers = new HashMap<String, String>();
+		rateAssignments = new HashMap<String, Properties>();
+		contAssignments = new HashMap<String, Properties>();
+		intAssignments = new HashMap<String, Properties>();
+	}
 
 	public void save(String filename) {
 		try {
@@ -253,6 +268,7 @@ public class LHPNFile {
 						buffer.append("<" + s + "=");
 						for (Object key : prop.keySet()) {
 							String t = (String) key;
+							//log.addText("contkey " + t);
 							buffer.append("[" + t + ":=" + prop.getProperty(t) + "]");
 						}
 						buffer.append(">");
@@ -268,6 +284,7 @@ public class LHPNFile {
 						buffer.append("<" + s + "=");
 						for (Object key : prop.keySet()) {
 							String t = (String) key;
+							//log.addText("key " + t);
 							buffer.append("[" + t + ":=" + prop.getProperty(t) + "]");
 						}
 						buffer.append(">");
@@ -642,6 +659,30 @@ public class LHPNFile {
 			}
 			return false;
 		}
+	}
+	
+	public boolean containsFlow(String place) {
+		if (controlFlow.containsKey(place)) {
+			return true;
+		}
+		Properties prop = controlFlow.get(place);
+		if (prop.containsKey("to")) {
+		String[] toList = prop.get("to").toString().split(" ");
+		for (int i=0; i<toList.length; i++) {
+			if (toList[i].equals(place)) {
+				return true;
+			}
+		}
+		}
+		if (prop.containsKey("from")) {
+		String[] fromList = prop.get("from").toString().split(" ");
+		for (int i=0; i<fromList.length; i++) {
+			if (fromList[i].equals(place)) {
+				return true;
+			}
+		}
+		}
+		return false;
 	}
 
 	public void addTransition(String name, String delay, Properties rateAssign,

@@ -226,12 +226,14 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 		lhpnFile.addProperty(propertyField.getText());
 		lhpnFile.save(directory + File.separator + filename);
 		dirty = false;
+		biosim.updateAsyncViews(filename);
 	}
 
 	public void saveAs(String newName) {
 		dirty = false;
 		lhpnFile.addProperty(propertyField.getText());
 		lhpnFile.save(directory + File.separator + newName);
+		biosim.updateAsyncViews(newName);
 	}
 
 	public void viewLhpn() {
@@ -243,7 +245,7 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 				dot.delete();
 				String command = "open " + dotFile;
 				Runtime exec = Runtime.getRuntime();
-				log.addText("Executing:\n" + "atacs -cPllodpl " + filename + "\n");
+				log.addText("Executing:\natacs -cPllodpl " + filename + "\n");
 				Process load = exec.exec("atacs -cPllodpl " + filename, null, work);
 				load.waitFor();
 				if (dot.exists()) {
@@ -319,17 +321,28 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 				if (lhpnFile.removeVar(name) != 0) {
 					JOptionPane.showMessageDialog(this, "Must delete assignments to variable "
 							+ name, "Cannot remove variable" + name, JOptionPane.ERROR_MESSAGE);
+					return;
 				}
 				variables.removeItem(name);
 				lhpnFile.removeVar(name);
 			}
 			else if (getName().contains("Place")) {
-				lhpnFile.removePlace(list.getSelectedValue().toString());
-				places.removeItem(list.getSelectedValue().toString());
+				String name = list.getSelectedValue().toString();
+				if (lhpnFile.containsFlow(name)) {
+					JOptionPane.showMessageDialog(this, "Must remove " + name + " from control flow", "Cannot remove place" + name, JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				lhpnFile.removePlace(name);
+				places.removeItem(name);
 			}
 			else if (getName().contains("Transition")) {
-				lhpnFile.removeTransition(list.getSelectedValue().toString());
-				transitions.removeItem(list.getSelectedValue().toString());
+				String name = list.getSelectedValue().toString();
+				if (lhpnFile.containsFlow(name)) {
+					JOptionPane.showMessageDialog(this, "Must remove " + name + " from control flow", "Cannot remove transition" + name, JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				lhpnFile.removeTransition(name);
+				transitions.removeItem(name);
 			}
 			else if (getName().contains("Movement")) {
 				String tempString = list.getSelectedValue().toString();
