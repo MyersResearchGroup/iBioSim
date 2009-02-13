@@ -32,11 +32,11 @@ import java.awt.event.MouseWheelListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener; 
-import java.awt.event.ComponentListener;
-import java.awt.event.ComponentEvent;
+//import java.awt.event.ComponentListener;
+//import java.awt.event.ComponentEvent;
 import java.awt.event.WindowFocusListener;
-import java.awt.event.FocusListener;
-import java.awt.event.FocusEvent;
+//import java.awt.event.FocusListener;
+//import java.awt.event.FocusEvent;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -76,6 +76,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JViewport;
+import javax.swing.tree.TreePath;
 
 import tabs.CloseAndMaxTabbedPane;
 
@@ -332,6 +333,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		frame.addWindowFocusListener(this);
 		popup = new JPopupMenu();
+		popup.addMouseListener(this);
 		//popup.addFocusListener(this);
 		//popup.addComponentListener(this);
 
@@ -8699,9 +8701,21 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 	}
 
 	public void mouseEntered(MouseEvent e) {
+		//if (e.getSource() == tree.tree) {
+		//	setGlassPane(true);
+		//}
+		if (e.getSource() == popup) {
+			setGlassPane(false);
+		}
 	}
 
 	public void mouseExited(MouseEvent e) {
+		if (e.getSource() == tree.tree) {
+			setGlassPane(true);
+		}
+		else if (e.getSource() == popup) {
+			setGlassPane(true);
+		}
 	}
 
 	public void mouseDragged(MouseEvent e) {

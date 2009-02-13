@@ -21,7 +21,7 @@ public class FileTree extends JPanel implements MouseListener {
 
 	private File dir; // root directory
 
-	private JTree tree; // JTree
+	public JTree tree; // JTree
 
 	private String separator;
 	
