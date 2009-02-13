@@ -268,7 +268,7 @@ public class VariablesPanel extends JPanel implements ActionListener {
 				Utility.createErrorMessage("Error", "Illegal values entered.");
 				return false;
 			}
-			String[] allVariables = lhpn.getAllVariables();
+			String[] allVariables = lhpn.getAllIDs();
 			if (oldName == null) {
 				for (int i=0; i<allVariables.length; i++) {
 					if (allVariables[i].equals(fields.get(GlobalConstants.ID).getValue())) {

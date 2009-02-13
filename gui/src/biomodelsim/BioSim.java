@@ -76,7 +76,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JViewport;
-import javax.swing.tree.TreePath;
+//import javax.swing.tree.TreePath;
 
 import tabs.CloseAndMaxTabbedPane;
 
@@ -883,6 +883,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		for (int i = 0; i < 5; i++) {
 			recentProjects[i] = new JMenuItem();
 			recentProjects[i].addActionListener(this);
+			recentProjects[i].setActionCommand("recent" + i);
 			recentProjectPaths[i] = "";
 		}
 		recentProjects[0].setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ShortCutKey));
