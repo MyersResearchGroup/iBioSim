@@ -2881,6 +2881,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					newName = newName + ".g";
 				}
 				((LHPNEditor) comp).saveAs(newName);
+				tab.setTitleAt(tab.getSelectedIndex(), newName);
 			}
 			else if (comp instanceof GCM2SBMLEditor) {
 				String newName = JOptionPane.showInputDialog(frame(), "Enter GCM name:",

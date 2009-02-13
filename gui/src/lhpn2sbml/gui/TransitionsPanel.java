@@ -42,11 +42,11 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 
 	private String[] options = { "Ok", "Cancel" };
 
-	private Object[] types = { "Boolean", "Continuous", "Integer", "Rate" };
+	//private Object[] types = { "Boolean", "Continuous", "Integer", "Rate" };
 
 	private LHPNFile lhpn;
 
-	private Log log;
+	//private Log log;
 
 	private HashMap<String, PropertyField> fields = null;
 
@@ -58,7 +58,7 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 		this.transitionsList = transitionsList;
 		this.controlList = controlList;
 		this.lhpn = lhpn;
-		this.log = log;
+		//this.log = log;
 
 		fields = new HashMap<String, PropertyField>();
 		fieldPanel = new JPanel(new GridLayout(4, 2));
@@ -113,6 +113,7 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 				for (String s : lhpn.getContAssignVars(selected)) {
 					if (s != null) {
 						if (!s.equals(null)) {
+							log.addText(s + lhpn.getContAssign(selected, s));
 							varAssignments.addItem(s + ":=" + lhpn.getContAssign(selected, s));
 							assignments.addItem(s + ":=" + lhpn.getContAssign(selected, s));
 						}
@@ -331,7 +332,7 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 		}
 		if (rateAssignments.getItems() != null) {
 			for (String s : rateAssignments.getItems()) {
-				// System.out.println("rate" + s);
+				//System.out.println("rate" + s);
 				String[] tempArray = s.split("':=");
 				// System.out.println(tempArray[1]);
 				lhpn.addRateAssign(transition, tempArray[0], tempArray[1]);

@@ -233,6 +233,8 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 		dirty = false;
 		lhpnFile.addProperty(propertyField.getText());
 		lhpnFile.save(directory + File.separator + newName);
+		reload(newName);
+		biosim.refreshTree();
 		biosim.updateAsyncViews(newName);
 	}
 
@@ -281,6 +283,11 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 			JOptionPane.showMessageDialog(this, "Unable to view circuit.", "Error",
 					JOptionPane.ERROR_MESSAGE);
 		}
+	}
+	
+	public void reload(String newName) {
+		lhpnFile.load(directory + File.separator + newName);
+		lhpnNameTextField.setText(newName);
 	}
 
 	public class SaveButton extends AbstractRunnableNamedButton {
