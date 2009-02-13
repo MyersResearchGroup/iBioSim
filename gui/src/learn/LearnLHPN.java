@@ -926,15 +926,16 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 		try {
 			File work = new File(directory);
 			if (new File(directory + separator + lhpnFile).exists()) {
-				String dotFile = lhpnFile.replace(".lhpn", ".dot");
+				String dotFile = lhpnFile.replace(".g", ".dot");
 				File dot = new File(directory + separator + dotFile);
 				dot.delete();
-				String command = "open " + dotFile;
-				log.addText("Executing:\n" + "open " + directory + separator + dotFile + "\n");
+				log.addText("Executing:\n" + "atacs -cPllodpl " + lhpnFile + " " + dotFile);
 				Runtime exec = Runtime.getRuntime();
 				Process load = exec.exec("atacs -cPllodpl " + lhpnFile + " " + dotFile, null, work);
 				load.waitFor();
 				if (dot.exists()) {
+					String command = "open " + dotFile;
+					log.addText("open " + directory + separator + dotFile + "\n");
 					exec.exec(command, null, work);
 				}
 				else {

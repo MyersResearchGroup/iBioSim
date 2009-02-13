@@ -9083,8 +9083,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		//log.addText("update");
 		for (int i = 0; i < tab.getTabCount(); i++) {
 			String tab = this.tab.getTitleAt(i);
-			String properties = root + separator + tab + separator + tab + ".ver";
-			String properties1 = root + separator + tab + separator + tab + ".synth";
+//			String properties = root + separator + tab + separator + tab + ".ver";
+//			String properties1 = root + separator + tab + separator + tab + ".synth";
 			String properties2 = root + separator + tab + separator + tab + ".lrn";
 			//log.addText(properties + "\n" + properties1 + "\n" + properties2 + "\n");
 //			if (new File(properties).exists()) {
