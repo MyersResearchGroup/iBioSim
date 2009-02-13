@@ -62,7 +62,7 @@ public class LHPNFile {
 		contAssignments = new HashMap<String, Properties>();
 		intAssignments = new HashMap<String, Properties>();
 	}
-	
+
 	public LHPNFile() {
 		places = new HashMap<String, Boolean>();
 		inputs = new HashMap<String, String>();
@@ -268,7 +268,7 @@ public class LHPNFile {
 						buffer.append("<" + s + "=");
 						for (Object key : prop.keySet()) {
 							String t = (String) key;
-							//log.addText("contkey " + t);
+							// log.addText("contkey " + t);
 							buffer.append("[" + t + ":=" + prop.getProperty(t) + "]");
 						}
 						buffer.append(">");
@@ -284,7 +284,7 @@ public class LHPNFile {
 						buffer.append("<" + s + "=");
 						for (Object key : prop.keySet()) {
 							String t = (String) key;
-							//log.addText("key " + t);
+							// log.addText("key " + t);
 							buffer.append("[" + t + ":=" + prop.getProperty(t) + "]");
 						}
 						buffer.append(">");
@@ -311,13 +311,13 @@ public class LHPNFile {
 								varFlag = true;
 							}
 							buffer.append("[" + t + ":=" + prop.getProperty(t) + "]");
-						}		
+						}
 					}
 					if (varFlag) {
-					buffer.append(">");
+						buffer.append(">");
 					}
 				}
-				if (flag) { 
+				if (flag) {
 					buffer.append("}\n");
 				}
 			}
@@ -345,7 +345,7 @@ public class LHPNFile {
 									buffer.append("<" + s + "=");
 									varFlag = true;
 								}
-									buffer.append("[" + t + ":=" + prop.getProperty(t) + "]");
+								buffer.append("[" + t + ":=" + prop.getProperty(t) + "]");
 							}
 						}
 						if (varFlag) {
@@ -660,27 +660,29 @@ public class LHPNFile {
 			return false;
 		}
 	}
-	
+
 	public boolean containsFlow(String place) {
 		if (controlFlow.containsKey(place)) {
 			return true;
 		}
-		Properties prop = controlFlow.get(place);
-		if (prop.containsKey("to")) {
-		String[] toList = prop.get("to").toString().split(" ");
-		for (int i=0; i<toList.length; i++) {
-			if (toList[i].equals(place)) {
-				return true;
+		for (String s : controlFlow.keySet()) {
+			Properties prop = controlFlow.get(s);
+			if (prop.containsKey("to")) {
+				String[] toList = prop.get("to").toString().split(" ");
+				for (int i = 0; i < toList.length; i++) {
+					if (toList[i].equals(place)) {
+						return true;
+					}
+				}
 			}
-		}
-		}
-		if (prop.containsKey("from")) {
-		String[] fromList = prop.get("from").toString().split(" ");
-		for (int i=0; i<fromList.length; i++) {
-			if (fromList[i].equals(place)) {
-				return true;
+			if (prop.containsKey("from")) {
+				String[] fromList = prop.get("from").toString().split(" ");
+				for (int i = 0; i < fromList.length; i++) {
+					if (fromList[i].equals(place)) {
+						return true;
+					}
+				}
 			}
-		}
 		}
 		return false;
 	}
