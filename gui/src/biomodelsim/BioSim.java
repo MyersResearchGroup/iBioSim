@@ -9087,96 +9087,96 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			String properties1 = root + separator + tab + separator + tab + ".synth";
 			String properties2 = root + separator + tab + separator + tab + ".lrn";
 			//log.addText(properties + "\n" + properties1 + "\n" + properties2 + "\n");
-			if (new File(properties).exists()) {
-				String check = "";
-				try {
-					Scanner s = new Scanner(new File(properties));
-					if (s.hasNextLine()) {
-						check = s.nextLine();
-						check = check.split(separator)[check.split(separator).length - 1];
-					}
-					s.close();
-				}
-				catch (Exception e) {
-				}
-				if (check.equals(updatedFile)) {
-					JTabbedPane sim = ((JTabbedPane) (this.tab.getComponentAt(i)));
-					for (int j = 0; j < sim.getTabCount(); j++) {
-						if (sim.getComponentAt(j).getName().equals("Verification")) {
-							new File(properties).renameTo(new File(properties.replace(".ver",
-									".temp")));
-							boolean dirty = ((SBML_Editor) (sim.getComponentAt(j))).isDirty();
-							((SBML_Editor) (sim.getComponentAt(j))).save(false, "", true);
-							if (updatedFile.contains(".g")) {
-								GCMParser parser = new GCMParser(root + separator + updatedFile);
-								GeneticNetwork network = parser.buildNetwork();
-								GeneticNetwork.setRoot(root + File.separator);
-								network.mergeSBML(root + separator + tab + separator
-										+ updatedFile.replace(".g", ".vhd"));
-								((SBML_Editor) (sim.getComponentAt(j))).updateSBML(i, j, root
-										+ separator + tab + separator
-										+ updatedFile.replace(".g", ".vhd"));
-							}
-							else {
-								((SBML_Editor) (sim.getComponentAt(j))).updateSBML(i, j, root
-										+ separator + updatedFile);
-							}
-							((SBML_Editor) (sim.getComponentAt(j))).setDirty(dirty);
-							new File(properties).delete();
-							new File(properties.replace(".ver", ".temp")).renameTo(new File(
-									properties));
-							sim.setComponentAt(j + 1, ((SBML_Editor) (sim.getComponentAt(j)))
-									.getElementsPanel());
-							sim.getComponentAt(j + 1).setName("");
-						}
-					}
-				}
-			}
-			if (new File(properties1).exists()) {
-				String check = "";
-				try {
-					Scanner s = new Scanner(new File(properties1));
-					if (s.hasNextLine()) {
-						check = s.nextLine();
-						check = check.split(separator)[check.split(separator).length - 1];
-					}
-					s.close();
-				}
-				catch (Exception e) {
-				}
-				if (check.equals(updatedFile)) {
-					JTabbedPane sim = ((JTabbedPane) (this.tab.getComponentAt(i)));
-					for (int j = 0; j < sim.getTabCount(); j++) {
-						if (sim.getComponentAt(j).getName().equals("Synthesis")) {
-							new File(properties).renameTo(new File(properties.replace(".synth",
-									".temp")));
-							boolean dirty = ((SBML_Editor) (sim.getComponentAt(j))).isDirty();
-							((SBML_Editor) (sim.getComponentAt(j))).save(false, "", true);
-							if (updatedFile.contains(".g")) {
-								GCMParser parser = new GCMParser(root + separator + updatedFile);
-								GeneticNetwork network = parser.buildNetwork();
-								GeneticNetwork.setRoot(root + File.separator);
-								network.mergeSBML(root + separator + tab + separator
-										+ updatedFile.replace(".g", ".vhd"));
-								((SBML_Editor) (sim.getComponentAt(j))).updateSBML(i, j, root
-										+ separator + tab + separator
-										+ updatedFile.replace(".g", ".vhd"));
-							}
-							else {
-								((SBML_Editor) (sim.getComponentAt(j))).updateSBML(i, j, root
-										+ separator + updatedFile);
-							}
-							((SBML_Editor) (sim.getComponentAt(j))).setDirty(dirty);
-							new File(properties).delete();
-							new File(properties.replace(".synth", ".temp")).renameTo(new File(
-									properties));
-							sim.setComponentAt(j + 1, ((SBML_Editor) (sim.getComponentAt(j)))
-									.getElementsPanel());
-							sim.getComponentAt(j + 1).setName("");
-						}
-					}
-				}
-			}
+//			if (new File(properties).exists()) {
+//				String check = "";
+//				try {
+//					Scanner s = new Scanner(new File(properties));
+//					if (s.hasNextLine()) {
+//						check = s.nextLine();
+//						check = check.split(separator)[check.split(separator).length - 1];
+//					}
+//					s.close();
+//				}
+//				catch (Exception e) {
+//				}
+//				if (check.equals(updatedFile)) {
+//					JTabbedPane sim = ((JTabbedPane) (this.tab.getComponentAt(i)));
+//					for (int j = 0; j < sim.getTabCount(); j++) {
+//						if (sim.getComponentAt(j).getName().equals("Verification")) {
+//							new File(properties).renameTo(new File(properties.replace(".ver",
+//									".temp")));
+//							boolean dirty = ((SBML_Editor) (sim.getComponentAt(j))).isDirty();
+//							((SBML_Editor) (sim.getComponentAt(j))).save(false, "", true);
+//							if (updatedFile.contains(".g")) {
+//								GCMParser parser = new GCMParser(root + separator + updatedFile);
+//								GeneticNetwork network = parser.buildNetwork();
+//								GeneticNetwork.setRoot(root + File.separator);
+//								network.mergeSBML(root + separator + tab + separator
+//										+ updatedFile.replace(".g", ".vhd"));
+//								((SBML_Editor) (sim.getComponentAt(j))).updateSBML(i, j, root
+//										+ separator + tab + separator
+//										+ updatedFile.replace(".g", ".vhd"));
+//							}
+//							else {
+//								((SBML_Editor) (sim.getComponentAt(j))).updateSBML(i, j, root
+//										+ separator + updatedFile);
+//							}
+//							((SBML_Editor) (sim.getComponentAt(j))).setDirty(dirty);
+//							new File(properties).delete();
+//							new File(properties.replace(".ver", ".temp")).renameTo(new File(
+//									properties));
+//							sim.setComponentAt(j + 1, ((SBML_Editor) (sim.getComponentAt(j)))
+//									.getElementsPanel());
+//							sim.getComponentAt(j + 1).setName("");
+//						}
+//					}
+//				}
+//			}
+//			if (new File(properties1).exists()) {
+//				String check = "";
+//				try {
+//					Scanner s = new Scanner(new File(properties1));
+//					if (s.hasNextLine()) {
+//						check = s.nextLine();
+//						check = check.split(separator)[check.split(separator).length - 1];
+//					}
+//					s.close();
+//				}
+//				catch (Exception e) {
+//				}
+//				if (check.equals(updatedFile)) {
+//					JTabbedPane sim = ((JTabbedPane) (this.tab.getComponentAt(i)));
+//					for (int j = 0; j < sim.getTabCount(); j++) {
+//						if (sim.getComponentAt(j).getName().equals("Synthesis")) {
+//							new File(properties).renameTo(new File(properties.replace(".synth",
+//									".temp")));
+//							boolean dirty = ((SBML_Editor) (sim.getComponentAt(j))).isDirty();
+//							((SBML_Editor) (sim.getComponentAt(j))).save(false, "", true);
+//							if (updatedFile.contains(".g")) {
+//								GCMParser parser = new GCMParser(root + separator + updatedFile);
+//								GeneticNetwork network = parser.buildNetwork();
+//								GeneticNetwork.setRoot(root + File.separator);
+//								network.mergeSBML(root + separator + tab + separator
+//										+ updatedFile.replace(".g", ".vhd"));
+//								((SBML_Editor) (sim.getComponentAt(j))).updateSBML(i, j, root
+//										+ separator + tab + separator
+//										+ updatedFile.replace(".g", ".vhd"));
+//							}
+//							else {
+//								((SBML_Editor) (sim.getComponentAt(j))).updateSBML(i, j, root
+//										+ separator + updatedFile);
+//							}
+//							((SBML_Editor) (sim.getComponentAt(j))).setDirty(dirty);
+//							new File(properties).delete();
+//							new File(properties.replace(".synth", ".temp")).renameTo(new File(
+//									properties));
+//							sim.setComponentAt(j + 1, ((SBML_Editor) (sim.getComponentAt(j)))
+//									.getElementsPanel());
+//							sim.getComponentAt(j + 1).setName("");
+//						}
+//					}
+//				}
+//			}
 			if (new File(properties2).exists()) {
 				String check = "";
 				try {
