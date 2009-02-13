@@ -329,7 +329,7 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 			else if (getName().contains("Place")) {
 				String name = list.getSelectedValue().toString();
 				if (lhpnFile.containsFlow(name)) {
-					JOptionPane.showMessageDialog(this, "Must remove " + name + " from control flow", "Cannot remove place" + name, JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(this, "Must remove " + name + " from control flow", "Cannot remove place " + name, JOptionPane.ERROR_MESSAGE);
 					return;
 				}
 				lhpnFile.removePlace(name);
@@ -338,7 +338,7 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 			else if (getName().contains("Transition")) {
 				String name = list.getSelectedValue().toString();
 				if (lhpnFile.containsFlow(name)) {
-					JOptionPane.showMessageDialog(this, "Must remove " + name + " from control flow", "Cannot remove transition" + name, JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(this, "Must remove " + name + " from control flow", "Cannot remove transition " + name, JOptionPane.ERROR_MESSAGE);
 					return;
 				}
 				lhpnFile.removeTransition(name);
