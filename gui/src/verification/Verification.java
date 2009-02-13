@@ -476,7 +476,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		catch (Exception e) {
 			JOptionPane.showMessageDialog(biosim.frame(), "Unable to load properties file!",
 					"Error Loading Properties", JOptionPane.ERROR_MESSAGE);
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 		// save();
 
@@ -634,7 +634,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			copyout.close();
 		}
 		catch (IOException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 			JOptionPane.showMessageDialog(biosim.frame(), "Cannot copy file " + sourceFile,
 					"Copy Error", JOptionPane.ERROR_MESSAGE);
 		}
