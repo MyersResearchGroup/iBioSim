@@ -260,6 +260,7 @@ public class LHPNFile {
 				flag = false;
 				for (String s : contAssignments.keySet()) {
 					Properties prop = contAssignments.get(s);
+					//log.addText(prop.toString());
 					if (!prop.isEmpty()) {
 						if (!flag) {
 							buffer.append("#@.assignments {");
@@ -268,7 +269,6 @@ public class LHPNFile {
 						buffer.append("<" + s + "=");
 						for (Object key : prop.keySet()) {
 							String t = (String) key;
-							// log.addText("contkey " + t);
 							buffer.append("[" + t + ":=" + prop.getProperty(t) + "]");
 						}
 						buffer.append(">");
@@ -440,6 +440,7 @@ public class LHPNFile {
 			parseBooleanAssign(data);
 			// System.out.println("check11");
 			// log.addText("check0");
+			//log.addText(intAssignments.toString());
 		}
 		catch (Exception e) {
 			throw new IllegalArgumentException("Unable to parse LHPN");
@@ -818,7 +819,7 @@ public class LHPNFile {
 		if (contAssignments.get(transition) != null) {
 			prop = contAssignments.get(transition);
 		}
-		// System.out.println("here " + transition + name + value);
+		//System.out.println("here " + transition + name + value);
 		prop.setProperty(name, value);
 		contAssignments.put(transition, prop);
 	}
@@ -1626,8 +1627,12 @@ public class LHPNFile {
 						assignProp.put(varMatcher.group(1), varMatcher.group(2));
 					}
 				}
-				intAssignments.put(assignMatcher.group(1), intProp);
-				contAssignments.put(assignMatcher.group(1), assignProp);
+				if (intProp.size() > 0) {
+					intAssignments.put(assignMatcher.group(1), intProp);
+				}
+				if (assignProp.size() > 0) {
+					contAssignments.put(assignMatcher.group(1), assignProp);
+				}
 			}
 		}
 		// log.addText("check6end");
