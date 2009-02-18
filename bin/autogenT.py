@@ -79,8 +79,16 @@ class Variable:
 	"A continuous variable in the system being modeled."
 	def __init__(self,nameStr):
 		self.name = nameStr #the name of the variable
+		self.dmvc = None #Boolean denoting the status of the variable as a discrete multi-valued continuous (DMVC) variable
+		self.input = None #Boolean denoting that the variable is a model input
+		self.output = None #Boolean denoting that the variable is a model output
+		self.type = None #Describes the type of the variable using an enumerated type (VOLTAGE, CURRENT) which is needed by Verilog-A.
 	def __str__(self):
-		retStr = self.name
+		retStr = self.name+"["
+		if self.dmvc:
+			retStr = retStr + "1]"
+		else:
+			retStr = retStr + "0]"
 		return retStr
 ## End Class Variable ########################################################
 
@@ -112,6 +120,51 @@ class ThresholdParameters:
 		else:
 			return False
 ## End Class ThresholdParameters #############################################
+
+##############################################################################
+# A class for data required for the discovery of discrete multi-valued
+# continuous variables.
+##############################################################################
+class DMVCpart:
+	"Information about a single run of a constant value."
+	numDMVCparts = 0
+	def __init__(self):
+		self.id = DMVCpart.numDMVCparts #unique numeric ID for each run
+		DMVCpart.numDMVCparts = DMVCpart.numDMVCparts + 1
+		self.varInd = -1 #an index into the varsL array denoting which variable owns the run
+		self.valueL = [] #the list of values for this run
+		self.startPoint = -1 #an index into datL for the start point of the run
+		self.endPoint = -1 #an index into datL for the end point of the run
+		self.nextRun = None #a reference to the next sequential run
+	def __str__(self):
+		retStr = "Part:"+str(self.id)+" Start:"+str(self.startPoint)+" End:"+str(self.endPoint)+" Val:"+str(self.constVal())
+		if self.nextRun:
+			retStr += " Next:"+str(self.nextRun.id)
+		else:
+			retStr += " Next:None"
+		return retStr
+	############################################################################
+	# Calculate the constant value from the value list.  Currently it is an
+	# average of all list values.
+	############################################################################
+	def constVal(self):
+		total = 0
+		for i in self.valueL:
+			total = total + i
+		return total/float(len(self.valueL))
+  ############################################################################
+	# Calculate the delay for a given DMVC run.
+  ############################################################################
+	def calcDelay(self,datL):
+		ind1 = self.startPoint
+		ind2 = self.endPoint
+		delay = datL[ind2][0]-datL[ind1][0]
+	  #Assuming that there is some time between runs we want to account for that time.  If we assume a constant rate of change we can just split the difference
+		if self.nextRun:
+			ind3 = self.nextRun.startPoint
+			delay += ((datL[ind3][0]-datL[ind2][0])/2)
+		return delay
+## End Class DMVCpart ########################################################
 
 ##############################################################################
 # Remove leading & trailing space as well as trailing new line characters.
@@ -266,7 +319,7 @@ def parseBinsFile(binsFile,varsL):
 					cStr = cText.cSetFg(cText.RED)
 					cStr += "ERROR:"
 					cStr += cText.cSetAttr(cText.NONE)
-					print cStr+" Attemptd to set .absoluteTime with"+absoluteTimeL[i]+" which is unrecognized.  It was not set.  Please use True or False."
+					print cStr+" Attempted to set .absoluteTime with"+absoluteTimeL[i]+" which is unrecognized.  It was not set.  Please use True or False."
 					sys.exit()
 			elif percentR.match(linesL[i]):
 				percentL = spaceR.split(linesL[i])
@@ -308,11 +361,12 @@ def parseBinsFile(binsFile,varsL):
 			elif dmvcR.match(linesL[i]):
 				cLine = cleanLine(linesL[i])
 				dmvcL = spaceR.split(cLine)
+				outputL = spaceR.split(cLine)
 				for i in range(1,len(dmvcL)):
 					found = False
 					for j in range(1,len(varsL)):
 						if outputL[i] == varsL[j].name:
-							#print varsL[j].name+" is dmvc."
+							print varsL[j].name+" is dmvc."
 							varsL[j].dmvc = True
 							found = True
 							break
@@ -388,10 +442,10 @@ def parseBinsFile(binsFile,varsL):
 					found = True
 					break
 			if not found:
-				cStr = cText.cSetFg(cText.RED)
-				cStr += "ERROR:"
-				cStr += cText.cSetAttr(cText.NONE)
-				print cStr+" Unparseable line in the thresholds file."
+				#cStr = cText.cSetFg(cText.RED)
+				cStr = "ERROR:"
+				#cStr += cText.cSetAttr(cText.NONE)
+				print cStr+" Variable not included in the data file."
 				print "Line: "+linesL[i]
 				sys.exit()
 	divisionsL = [[]]
@@ -403,6 +457,7 @@ def parseBinsFile(binsFile,varsL):
 			else:
 				fL.append(s)
 		divisionsL.append(fL)
+		#print len(fL)
 	inputF.close()
 	if numDivisions != len(varsL)-1:
 		cStr = cText.cSetFg(cText.RED)
@@ -447,6 +502,91 @@ def reorderDatL(varsL):
 			break
 		i += 1
 	return datValsL, datValsExtremaL
+
+##############################################################################
+# Explore a potential DVMC run.  If the run is valid (currently this
+# means long enough) then return the run.  Else return None.
+##############################################################################
+def exploreRun(datL,i,j,tParam):
+	run = DMVCpart()
+	run.startPoint = i
+	run.varInd = j
+	run.valueL.append(datL[i][j])
+	while i+1 < len(datL) and tParam.epsilonEquiv(datL[run.startPoint][j],datL[i+1][j]):
+		run.valueL.append(datL[i+1][j])
+		i = i+1
+		#print "i:"+str(i)+" j:"+str(j)
+	run.endPoint = i
+	if not tParam.absoluteTime:
+		if ((run.endPoint-run.startPoint)+1) < tParam.length:
+			#print "Run is too short from "+str(run.startPoint)+" to "+str(run.endPoint)+" ["+str((run.endPoint-run.startPoint)+1)+"]"
+			return None, i
+		else:
+			#print "Found a run from "+str(run.startPoint)+" to "+str(run.endPoint)+"["+str((run.endPoint-run.startPoint)+1)+"]"
+			return run, i
+	else:
+		if run.calcDelay(datL) < tParam.time:
+			#print "Run is too short from "+str(run.startPoint)+" to "+str(run.endPoint)+" ["+str(run.calcDelay(datL))+"]"
+			return None, i
+		else:
+			#print "Found a run from "+str(run.startPoint)+" to "+str(run.endPoint)+" ["+str(run.calcDelay(datL))+"]"
+			return run, i
+
+##############################################################################
+# Determine which variables should be considered multi-valued
+# continuous variables.  Marks varsL[i].dmvc for DMVC variables and
+# returns a list of valid DMVC runs varsL long.  Empty lists exist for
+# non-DMVC places and lists of valid runs are present for DMVC
+# variables.
+##############################################################################
+def findDMVC(datL,varsL,tParam):
+	tempRun = None
+	prevRun = None
+	runL = []
+	for j in range(len(varsL)):
+		runL.append([])
+		if varsL[j].dmvc != False:
+			#print "Examining variable["+str(j)+"]: "+varsL[j].name
+			mark = 0
+			for i in range(len(datL)-1):
+				if i < mark:
+					continue
+				if tParam.epsilonEquiv(datL[i][j],datL[i+1][j]):
+					#print "Exploring from:"+str(i)
+					tempRun,mark = exploreRun(datL,i,j,tParam)
+					#print "Returning at:"+str(mark)
+					if tempRun != None:
+						if len(runL[j]) > 1:
+							prevRun.nextRun = tempRun
+						prevRun = tempRun
+						runL[j].append(tempRun)
+			#determine if a high enough percentage of the run is constant
+			if not tParam.absoluteTime:
+				numPoints = 0
+				for run in runL[j]:
+					#print "run:"+str(run)
+					#print "runDelay:"+str(run.calcDelay(datL))
+					numPoints += (run.endPoint-run.startPoint) + 1
+				if (numPoints/float(len(datL))) < tParam.percent:
+					#print "Clearing runs for "+varsL[j].name+" ["+str(numPoints/float(len(datL)))+"]"+str(numPoints)+"/"+str(len(datL))
+					runL[j] = [] #clear the runs if they don't meet the percentage requirement
+				else:
+					#print varsL[j].name+" is a DMVC. ["+str(numPoints/float(len(datL)))+"]"
+					varsL[j].dmvc = True
+			else:
+				absTime = 0.0
+				for run in runL[j]:
+					#print "run:"+str(run)
+					#print "runDelay:"+str(run.calcDelay(datL))
+					absTime += run.calcDelay(datL)
+				if (absTime/(datL[len(datL)-1][0]-datL[0][0])) < tParam.percent:
+					#print "Clearing runs for "+varsL[j].name+" ["+str(absTime/(datL[len(datL)-1][0]-datL[0][0]))+"]"+str(absTime)+"/"+str(datL[len(datL)-1][0]-datL[0][0])
+					runL[j] = []
+				else:
+					#print varsL[j].name+" is a DMVC. ["+str(absTime/(datL[len(datL)-1][0]-datL[0][0]))+"]"
+					varsL[j].dmvc = True
+	#return runL for processing during the graph building
+	return runL	
 			
 ##############################################################################
 # Create an initial set of divisions based upon the number of bins and
@@ -702,6 +842,15 @@ def greedyOpt(divisionsL,datValsL,datValsExtremaL,initDivL):
 ##############################################################################
 def writeBinsFile(varsL,divisionsL,binsFile):
 	outputF = open(binsFile, 'w')
+	flag = False
+	for i in range(len(varsL)):
+		if (varsL[i].dmvc == True):
+			if (flag == False):
+				outputF.write(".dmvc ")
+				flag = True
+			outputF.write(varsL[i].name + " ")
+	if (flag == True):
+		outputF.write("\n")
 	for i in range(1,len(varsL)):
 		if len(divisionsL[i]) > 1:
 			outputF.write(varsL[i].name)
@@ -774,6 +923,7 @@ def main():
 	datValsL, datValsExtremaL = reorderDatL(varsL)
 	if os.path.isfile(options.binsFile):
 		initDivL, tParam = parseBinsFile(options.binsFile,varsL)
+	dmvcRunL = findDMVC(datValsL,varsL,tParam)
 	divisionsL = initDivisionsL(datValsExtremaL,varsL,initDivL)
 	print "Iterations: "+str(iterations)
 	print "Optimization function: "+optFunc.func_name

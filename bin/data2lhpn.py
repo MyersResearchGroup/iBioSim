@@ -998,13 +998,12 @@ def extractVars(datFile):
 	varsL = []
 	line = ""
 	inputF = open(datFile, 'r')
-	rowsL = inputF.read()
-	rowsM = rowsR.match(rowsL)
-	row = rowsM.group()
-	varNames = cleanRow(row)
-	varNamesL = varNames.split(",")
+	varNamesL = inputF.readlines()
+	for i in range(len(varNamesL)):
+		varNamesL[i] = cleanLine(varNamesL[i])
+		tempL = varNamesL[i].split(" ")
+		varNamesL[i] = tempL[0]
 	for varStr in varNamesL:
-		varStr = cleanName(varStr)
 		varsL.append(Variable(varStr))
 	varsL[0].dmvc = False
 	inputF.close()
@@ -1023,29 +1022,25 @@ def parseDatFile(datFile,varsL):
 	varNames = cleanRow(rowsL[0])
 	varNamesL = []
 	varNamesL = varNames.split(",")
-	numPoints = len(varNamesL)
-	if len(varNamesL) == len(varsL):
-		for i in range(len(varNamesL)):
-			varNamesL[i] = cleanName(varNamesL[i])
-			if varNamesL[i] != varsL[i].name:
-				cStr = cText.cSetFg(cText.RED)
-				cStr += "ERROR:"
-				cStr += cText.cSetAttr(cText.NONE)
-				print cStr+" Expected "+varsL[i].name+" in position "+str(i)+" but received "+varNamesL[i]+" in file: "+datFile
-				sys.exit()
-	else:
-		cStr = cText.cSetFg(cText.RED)
-		cStr += "ERROR:"
-		cStr += cText.cSetAttr(cText.NONE)
-		print cStr + " Expected "+str(len(varsL))+" variables but received "+str(len(varNamesL))+" in file: "+datFile
-		sys.exit()
+	numPoints = len(varsL)
+	varIndexL = []
+	for i in range(len(varNamesL)):
+		varNamesL[i] = cleanName(varNamesL[i])
+		flag = 0
+		for j in range(len(varsL)):
+			if varNamesL[i] == varsL[j].name:
+				flag = 1
+				varIndexL.append(i)
+				break
+		if flag == 0:
+			print "The variable "+varNamesL[i]+" will not be included in the LHPN."
 	
 	datL = []
 	for i in range(1,len(rowsL)):
 		valStrL = cleanRow(rowsL[i]).split(",")
 		valL = []
-		for s in valStrL:
-			valL.append(float(s))
+		for i in varIndexL:
+			valL.append(float(valStrL[i]))
 		datL.append(valL)
 	inputF.close()
 	return datL, numPoints
@@ -1243,7 +1238,7 @@ def parseBinsFile(binsFile,varsL,trace):
 			numDivisions += 1
 			cLineL = cleanLine(linesL[i]).split(" ")
 			found = False
-			for j in range(1,len(varsL)):
+			for j in range(0,len(varsL)):
 				if cLineL[0] == varsL[j].name:
 					divisionsStrL[j-1] = cLineL[1:]
 					found = True
@@ -1252,7 +1247,7 @@ def parseBinsFile(binsFile,varsL,trace):
 				cStr = cText.cSetFg(cText.RED)
 				cStr += "ERROR:"
 				cStr += cText.cSetAttr(cText.NONE)
-				print cStr+" Unparseable line in the thresholds file."
+				print cStr+" Variable not found in the data file."
 				print "Line: "+linesL[i]
 				sys.exit()
 	divisionsL = [[]]
@@ -2615,7 +2610,7 @@ def main():
 	#The variable names and ordering must be consistent across files,
 	#so it is extracted from the first dat file and checked against
 	#every other dat file
-	varsL = extractVars("run-1.tsd")
+	varsL = extractVars(options.binsFile)
 	divisionsL, tParam = parseBinsFile(options.binsFile,varsL,options.trace)
 	gFile = options.gFile
 	psFile = baseFileL[0] + ".ps"
