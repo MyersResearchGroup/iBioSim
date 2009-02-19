@@ -31,7 +31,7 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener; 
+import java.awt.event.WindowListener;
 //import java.awt.event.ComponentListener;
 //import java.awt.event.ComponentEvent;
 import java.awt.event.WindowFocusListener;
@@ -218,7 +218,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 
 	private Pattern IDpat = Pattern.compile("([a-zA-Z]|_)([a-zA-Z]|[0-9]|_)*");
 
-	private boolean lema, atacs, async, externView, treeSelected = false, popupFlag = false, menuFlag = false;
+	private boolean lema, atacs, async, externView, treeSelected = false, popupFlag = false,
+			menuFlag = false;
 
 	private String viewer;
 
@@ -334,8 +335,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		frame.addWindowFocusListener(this);
 		popup = new JPopupMenu();
 		popup.addMouseListener(this);
-		//popup.addFocusListener(this);
-		//popup.addComponentListener(this);
+		// popup.addFocusListener(this);
+		// popup.addComponentListener(this);
 
 		// Sets up the Tool Bar
 		toolbar = new JToolBar();
@@ -8899,33 +8900,33 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			}
 		}
 	}
-	
-	//public void componentHidden(ComponentEvent e) {
-	//	log.addText("hidden");
-	//	setGlassPane(true);
-	//}
-	
-	//public void componentResized(ComponentEvent e) {
-	//	log.addText("resized");
-	//}
-	
-	//public void componentMoved(ComponentEvent e) {
-	//	log.addText("moved");
-	//}
-	
-	//public void componentShown(ComponentEvent e) {
-	//	log.addText("shown");
-	//}
-	
+
+	// public void componentHidden(ComponentEvent e) {
+	// log.addText("hidden");
+	// setGlassPane(true);
+	// }
+
+	// public void componentResized(ComponentEvent e) {
+	// log.addText("resized");
+	// }
+
+	// public void componentMoved(ComponentEvent e) {
+	// log.addText("moved");
+	// }
+
+	// public void componentShown(ComponentEvent e) {
+	// log.addText("shown");
+	// }
+
 	public void windowLostFocus(WindowEvent e) {
 	}
-	
-	//public void focusGained(FocusEvent e) {
-	//}
-	
-	//public void focusLost(FocusEvent e) {
-	//	log.addText("focus lost");
-	//}
+
+	// public void focusGained(FocusEvent e) {
+	// }
+
+	// public void focusLost(FocusEvent e) {
+	// log.addText("focus lost");
+	// }
 
 	public JMenuItem getExitButton() {
 		return exit;
@@ -9226,103 +9227,112 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 	}
 
 	public void updateAsyncViews(String updatedFile) {
-		//log.addText("update");
+		// log.addText("update");
 		for (int i = 0; i < tab.getTabCount(); i++) {
 			String tab = this.tab.getTitleAt(i);
-//			String properties = root + separator + tab + separator + tab + ".ver";
-//			String properties1 = root + separator + tab + separator + tab + ".synth";
+			// String properties = root + separator + tab + separator + tab +
+			// ".ver";
+			// String properties1 = root + separator + tab + separator + tab +
+			// ".synth";
 			String properties2 = root + separator + tab + separator + tab + ".lrn";
-			//log.addText(properties + "\n" + properties1 + "\n" + properties2 + "\n");
-//			if (new File(properties).exists()) {
-//				String check = "";
-//				try {
-//					Scanner s = new Scanner(new File(properties));
-//					if (s.hasNextLine()) {
-//						check = s.nextLine();
-//						check = check.split(separator)[check.split(separator).length - 1];
-//					}
-//					s.close();
-//				}
-//				catch (Exception e) {
-//				}
-//				if (check.equals(updatedFile)) {
-//					JTabbedPane sim = ((JTabbedPane) (this.tab.getComponentAt(i)));
-//					for (int j = 0; j < sim.getTabCount(); j++) {
-//						if (sim.getComponentAt(j).getName().equals("Verification")) {
-//							new File(properties).renameTo(new File(properties.replace(".ver",
-//									".temp")));
-//							boolean dirty = ((SBML_Editor) (sim.getComponentAt(j))).isDirty();
-//							((SBML_Editor) (sim.getComponentAt(j))).save(false, "", true);
-//							if (updatedFile.contains(".g")) {
-//								GCMParser parser = new GCMParser(root + separator + updatedFile);
-//								GeneticNetwork network = parser.buildNetwork();
-//								GeneticNetwork.setRoot(root + File.separator);
-//								network.mergeSBML(root + separator + tab + separator
-//										+ updatedFile.replace(".g", ".vhd"));
-//								((SBML_Editor) (sim.getComponentAt(j))).updateSBML(i, j, root
-//										+ separator + tab + separator
-//										+ updatedFile.replace(".g", ".vhd"));
-//							}
-//							else {
-//								((SBML_Editor) (sim.getComponentAt(j))).updateSBML(i, j, root
-//										+ separator + updatedFile);
-//							}
-//							((SBML_Editor) (sim.getComponentAt(j))).setDirty(dirty);
-//							new File(properties).delete();
-//							new File(properties.replace(".ver", ".temp")).renameTo(new File(
-//									properties));
-//							sim.setComponentAt(j + 1, ((SBML_Editor) (sim.getComponentAt(j)))
-//									.getElementsPanel());
-//							sim.getComponentAt(j + 1).setName("");
-//						}
-//					}
-//				}
-//			}
-//			if (new File(properties1).exists()) {
-//				String check = "";
-//				try {
-//					Scanner s = new Scanner(new File(properties1));
-//					if (s.hasNextLine()) {
-//						check = s.nextLine();
-//						check = check.split(separator)[check.split(separator).length - 1];
-//					}
-//					s.close();
-//				}
-//				catch (Exception e) {
-//				}
-//				if (check.equals(updatedFile)) {
-//					JTabbedPane sim = ((JTabbedPane) (this.tab.getComponentAt(i)));
-//					for (int j = 0; j < sim.getTabCount(); j++) {
-//						if (sim.getComponentAt(j).getName().equals("Synthesis")) {
-//							new File(properties).renameTo(new File(properties.replace(".synth",
-//									".temp")));
-//							boolean dirty = ((SBML_Editor) (sim.getComponentAt(j))).isDirty();
-//							((SBML_Editor) (sim.getComponentAt(j))).save(false, "", true);
-//							if (updatedFile.contains(".g")) {
-//								GCMParser parser = new GCMParser(root + separator + updatedFile);
-//								GeneticNetwork network = parser.buildNetwork();
-//								GeneticNetwork.setRoot(root + File.separator);
-//								network.mergeSBML(root + separator + tab + separator
-//										+ updatedFile.replace(".g", ".vhd"));
-//								((SBML_Editor) (sim.getComponentAt(j))).updateSBML(i, j, root
-//										+ separator + tab + separator
-//										+ updatedFile.replace(".g", ".vhd"));
-//							}
-//							else {
-//								((SBML_Editor) (sim.getComponentAt(j))).updateSBML(i, j, root
-//										+ separator + updatedFile);
-//							}
-//							((SBML_Editor) (sim.getComponentAt(j))).setDirty(dirty);
-//							new File(properties).delete();
-//							new File(properties.replace(".synth", ".temp")).renameTo(new File(
-//									properties));
-//							sim.setComponentAt(j + 1, ((SBML_Editor) (sim.getComponentAt(j)))
-//									.getElementsPanel());
-//							sim.getComponentAt(j + 1).setName("");
-//						}
-//					}
-//				}
-//			}
+			// log.addText(properties + "\n" + properties1 + "\n" + properties2
+			// + "\n");
+			// if (new File(properties).exists()) {
+			// String check = "";
+			// try {
+			// Scanner s = new Scanner(new File(properties));
+			// if (s.hasNextLine()) {
+			// check = s.nextLine();
+			// check = check.split(separator)[check.split(separator).length -
+			// 1];
+			// }
+			// s.close();
+			// }
+			// catch (Exception e) {
+			// }
+			// if (check.equals(updatedFile)) {
+			// JTabbedPane sim = ((JTabbedPane) (this.tab.getComponentAt(i)));
+			// for (int j = 0; j < sim.getTabCount(); j++) {
+			// if (sim.getComponentAt(j).getName().equals("Verification")) {
+			// new File(properties).renameTo(new File(properties.replace(".ver",
+			// ".temp")));
+			// boolean dirty = ((SBML_Editor)
+			// (sim.getComponentAt(j))).isDirty();
+			// ((SBML_Editor) (sim.getComponentAt(j))).save(false, "", true);
+			// if (updatedFile.contains(".g")) {
+			// GCMParser parser = new GCMParser(root + separator + updatedFile);
+			// GeneticNetwork network = parser.buildNetwork();
+			// GeneticNetwork.setRoot(root + File.separator);
+			// network.mergeSBML(root + separator + tab + separator
+			// + updatedFile.replace(".g", ".vhd"));
+			// ((SBML_Editor) (sim.getComponentAt(j))).updateSBML(i, j, root
+			// + separator + tab + separator
+			// + updatedFile.replace(".g", ".vhd"));
+			// }
+			// else {
+			// ((SBML_Editor) (sim.getComponentAt(j))).updateSBML(i, j, root
+			// + separator + updatedFile);
+			// }
+			// ((SBML_Editor) (sim.getComponentAt(j))).setDirty(dirty);
+			// new File(properties).delete();
+			// new File(properties.replace(".ver", ".temp")).renameTo(new File(
+			// properties));
+			// sim.setComponentAt(j + 1, ((SBML_Editor) (sim.getComponentAt(j)))
+			// .getElementsPanel());
+			// sim.getComponentAt(j + 1).setName("");
+			// }
+			// }
+			// }
+			// }
+			// if (new File(properties1).exists()) {
+			// String check = "";
+			// try {
+			// Scanner s = new Scanner(new File(properties1));
+			// if (s.hasNextLine()) {
+			// check = s.nextLine();
+			// check = check.split(separator)[check.split(separator).length -
+			// 1];
+			// }
+			// s.close();
+			// }
+			// catch (Exception e) {
+			// }
+			// if (check.equals(updatedFile)) {
+			// JTabbedPane sim = ((JTabbedPane) (this.tab.getComponentAt(i)));
+			// for (int j = 0; j < sim.getTabCount(); j++) {
+			// if (sim.getComponentAt(j).getName().equals("Synthesis")) {
+			// new File(properties).renameTo(new
+			// File(properties.replace(".synth",
+			// ".temp")));
+			// boolean dirty = ((SBML_Editor)
+			// (sim.getComponentAt(j))).isDirty();
+			// ((SBML_Editor) (sim.getComponentAt(j))).save(false, "", true);
+			// if (updatedFile.contains(".g")) {
+			// GCMParser parser = new GCMParser(root + separator + updatedFile);
+			// GeneticNetwork network = parser.buildNetwork();
+			// GeneticNetwork.setRoot(root + File.separator);
+			// network.mergeSBML(root + separator + tab + separator
+			// + updatedFile.replace(".g", ".vhd"));
+			// ((SBML_Editor) (sim.getComponentAt(j))).updateSBML(i, j, root
+			// + separator + tab + separator
+			// + updatedFile.replace(".g", ".vhd"));
+			// }
+			// else {
+			// ((SBML_Editor) (sim.getComponentAt(j))).updateSBML(i, j, root
+			// + separator + updatedFile);
+			// }
+			// ((SBML_Editor) (sim.getComponentAt(j))).setDirty(dirty);
+			// new File(properties).delete();
+			// new File(properties.replace(".synth", ".temp")).renameTo(new
+			// File(
+			// properties));
+			// sim.setComponentAt(j + 1, ((SBML_Editor) (sim.getComponentAt(j)))
+			// .getElementsPanel());
+			// sim.getComponentAt(j + 1).setName("");
+			// }
+			// }
+			// }
+			// }
 			if (new File(properties2).exists()) {
 				String check = "";
 				try {
@@ -9346,7 +9356,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				if (check.equals(updatedFile)) {
 					JTabbedPane learn = ((JTabbedPane) (this.tab.getComponentAt(i)));
 					for (int j = 0; j < learn.getTabCount(); j++) {
-						//log.addText(learn.getComponentAt(j).getName());
+						// log.addText(learn.getComponentAt(j).getName());
 						if (learn.getComponentAt(j).getName().equals("Data Manager")) {
 							((DataManager) (learn.getComponentAt(j))).updateSpecies();
 						}
@@ -9360,20 +9370,20 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					}
 				}
 			}
-			//ArrayList<String> saved = new ArrayList<String>();
-			//String[] files = new File(root).list();
-			//for (String s : files) {
-			//	if (s.contains(".g") && !saved.contains(s)) {
-			//		LHPNFile lhpn = new LHPNFile();
-			//		lhpn.load(root + separator + s);
-					//if (gcm.getSBMLFile().equals(updatedFile)) {
-					//	updateAsyncViews(s);
-					//}
-			//	}
-			//}
+			// ArrayList<String> saved = new ArrayList<String>();
+			// String[] files = new File(root).list();
+			// for (String s : files) {
+			// if (s.contains(".g") && !saved.contains(s)) {
+			// LHPNFile lhpn = new LHPNFile();
+			// lhpn.load(root + separator + s);
+			// if (gcm.getSBMLFile().equals(updatedFile)) {
+			// updateAsyncViews(s);
+			// }
+			// }
+			// }
 		}
 	}
-	
+
 	public void updateViews(String updatedFile) {
 		for (int i = 0; i < tab.getTabCount(); i++) {
 			String tab = this.tab.getTitleAt(i);
@@ -10417,6 +10427,48 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						load.close();
 						if (p.containsKey("genenet.file")) {
 							String[] getProp = p.getProperty("genenet.file").split(separator);
+							check = getProp[getProp.length - 1];
+						}
+						else if (p.containsKey("learn.file")) {
+							String[] getProp = p.getProperty("learn.file").split(separator);
+							check = getProp[getProp.length - 1];
+						}
+						else {
+							check = "";
+						}
+					}
+					catch (Exception e) {
+						check = "";
+					}
+				}
+				else if (new File(root + separator + s + separator + s + ".ver").exists()) {
+					try {
+						Properties p = new Properties();
+						FileInputStream load = new FileInputStream(new File(root + separator + s
+								+ separator + s + ".lrn"));
+						p.load(load);
+						load.close();
+						if (p.containsKey("verification.file")) {
+							String[] getProp = p.getProperty("verification.file").split(separator);
+							check = getProp[getProp.length - 1];
+						}
+						else {
+							check = "";
+						}
+					}
+					catch (Exception e) {
+						check = "";
+					}
+				}
+				else if (new File(root + separator + s + separator + s + ".synth").exists()) {
+					try {
+						Properties p = new Properties();
+						FileInputStream load = new FileInputStream(new File(root + separator + s
+								+ separator + s + ".lrn"));
+						p.load(load);
+						load.close();
+						if (p.containsKey("synthesis.file")) {
+							String[] getProp = p.getProperty("synthesis.file").split(separator);
 							check = getProp[getProp.length - 1];
 						}
 						else {
