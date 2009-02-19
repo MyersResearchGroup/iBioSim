@@ -1274,6 +1274,8 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 				}
 			}
 			if (execute) {
+				File lhpn = new File(lhpnFile);
+				lhpn.delete();
 				String command = "data2lhpn.py -b" + binFile + " -l" + lhpnFile;
 				log.addText("Executing:\n" + command + " " + directory + "\n");
 				//File work = new File(directory);
