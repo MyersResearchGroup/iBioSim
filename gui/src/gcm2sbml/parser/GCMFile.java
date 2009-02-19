@@ -1,6 +1,8 @@
 package gcm2sbml.parser;
 
+import gcm2sbml.network.SpeciesInterface;
 import gcm2sbml.util.GlobalConstants;
+import gcm2sbml.util.Utility;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -15,6 +17,14 @@ import java.util.Properties;
 import java.util.prefs.Preferences;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.sbml.libsbml.KineticLaw;
+import org.sbml.libsbml.Model;
+import org.sbml.libsbml.ModifierSpeciesReference;
+import org.sbml.libsbml.Parameter;
+import org.sbml.libsbml.SBMLDocument;
+import org.sbml.libsbml.Species;
+import org.sbml.libsbml.SpeciesReference;
 
 /**
  * This class describes a GCM file
@@ -59,7 +69,21 @@ public class GCMFile {
 		this.bioAbs = bioAbs;
 	}
 	
-	public void createLogicalModel() {
+	public void createLogicalModel(String filename) {
+		if (filename != null && !filename.trim().equals("")) {
+			filename = filename.trim();
+			if (!filename.endsWith(".xml") && !filename.endsWith(".sbml")) {
+				filename += ".xml";
+			}
+		}
+		else {
+			return;
+		}
+		SBMLDocument document = new SBMLDocument(2, 3);
+		Model m = document.createModel();
+		document.setModel(m);
+		Utility.addCompartments(document, "default");
+		document.getModel().getCompartment("default").setSize(1);
 		for (String influence: influences.keySet()) {
 			if (influences.get(influence).get(GlobalConstants.TYPE).equals(GlobalConstants.ACTIVATION)) {
 				Double np = Double.parseDouble(parameters.get(GlobalConstants.STOICHIOMETRY_STRING));
@@ -70,6 +94,39 @@ public class GCMFile {
 				Double Ka = Double.parseDouble(parameters.get(GlobalConstants.KACT_STRING));
 				Double nc = Double.parseDouble(parameters.get(GlobalConstants.COOPERATIVITY_STRING));
 				Double RNAP = Double.parseDouble(parameters.get(GlobalConstants.RNAP_STRING));
+				String input = getInput(influence);
+				String output = getOutput(influence);
+				boolean addInput = true;
+				boolean addOutput = true;
+				for (int i = 0; i < document.getModel().getNumSpecies(); i ++) {
+					if (document.getModel().getSpecies(i).getId().equals(input)) {
+						addInput = false;
+					}
+					else if (document.getModel().getSpecies(i).getId().equals(output)) {
+						addOutput = false;
+					}
+				}
+				if (addInput) {
+					Species s = Utility.makeSpecies(input, "default", 0);
+					Utility.addSpecies(document, s);
+				}
+				if (addOutput) {
+					Species s = Utility.makeSpecies(output, "default", 0);
+					Utility.addSpecies(document, s);
+				}
+				org.sbml.libsbml.Reaction r = new org.sbml.libsbml.Reaction(
+						input + "_activates_" + output);
+				r.addModifier(new ModifierSpeciesReference(input));
+				r.addProduct(new SpeciesReference(output, 1));
+				r.setReversible(false);
+				r.setFast(false);
+				KineticLaw kl = new KineticLaw();
+				kl.setFormula(np + " * " + ng + " * (" + kb + " * " + Ko + " * " + RNAP + " + "
+						+ ka + " * " + Ka + " * pow(" + input + ", " + nc + ") * " + RNAP + ") / ("
+						+ 1 + " + " + Ko + " * " + RNAP + " + " + Ka + " * pow(" + input + ", "
+						+ nc + ") * " + RNAP + ")");
+				r.setKineticLaw(kl);
+				Utility.addReaction(document, r);
 			}
 			else {
 				Double np = Double.parseDouble(parameters.get(GlobalConstants.STOICHIOMETRY_STRING));
@@ -79,6 +136,26 @@ public class GCMFile {
 				Double Kr = Double.parseDouble(parameters.get(GlobalConstants.KREP_STRING));
 				Double nc = Double.parseDouble(parameters.get(GlobalConstants.COOPERATIVITY_STRING));
 				Double RNAP = Double.parseDouble(parameters.get(GlobalConstants.RNAP_STRING));
+				String input = getInput(influence);
+				String output = getOutput(influence);
+				boolean addInput = true;
+				boolean addOutput = true;
+				for (int i = 0; i < document.getModel().getNumSpecies(); i ++) {
+					if (document.getModel().getSpecies(i).getId().equals(input)) {
+						addInput = false;
+					}
+					else if (document.getModel().getSpecies(i).getId().equals(output)) {
+						addOutput = false;
+					}
+				}
+				if (addInput) {
+					Species s = Utility.makeSpecies(input, "default", 0);
+					Utility.addSpecies(document, s);
+				}
+				if (addOutput) {
+					Species s = Utility.makeSpecies(output, "default", 0);
+					Utility.addSpecies(document, s);
+				}
 			}
 		}
 	}
