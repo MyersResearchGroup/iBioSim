@@ -605,7 +605,12 @@ public class LHPNFile {
 					}
 				}
 			}
-			prop.put("to", toList);
+			if (toList.length > 0) {
+				prop.put("to", toList);
+			}
+			else {
+				prop.remove("to");
+			}
 			controlFlow.put(fromName, prop);
 		}
 		else {
@@ -626,7 +631,12 @@ public class LHPNFile {
 					}
 				}
 			}
-			prop.put("from", list);
+			if (fromList.length > 0) {
+				prop.put("from", fromList);
+			}
+			else {
+				prop.remove("from");
+			}
 			controlFlow.put(toName, prop);
 		}
 	}
