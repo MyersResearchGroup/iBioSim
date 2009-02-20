@@ -1,10 +1,10 @@
 package gcm2sbml.parser;
 
-import gcm2sbml.network.SpeciesInterface;
 import gcm2sbml.util.GlobalConstants;
 import gcm2sbml.util.Utility;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -21,8 +21,8 @@ import java.util.regex.Pattern;
 import org.sbml.libsbml.KineticLaw;
 import org.sbml.libsbml.Model;
 import org.sbml.libsbml.ModifierSpeciesReference;
-import org.sbml.libsbml.Parameter;
 import org.sbml.libsbml.SBMLDocument;
+import org.sbml.libsbml.SBMLWriter;
 import org.sbml.libsbml.Species;
 import org.sbml.libsbml.SpeciesReference;
 
@@ -84,21 +84,25 @@ public class GCMFile {
 		document.setModel(m);
 		Utility.addCompartments(document, "default");
 		document.getModel().getCompartment("default").setSize(1);
-		for (String influence: influences.keySet()) {
-			if (influences.get(influence).get(GlobalConstants.TYPE).equals(GlobalConstants.ACTIVATION)) {
-				Double np = Double.parseDouble(parameters.get(GlobalConstants.STOICHIOMETRY_STRING));
-				Double ng = Double.parseDouble(parameters.get(GlobalConstants.PROMOTER_COUNT_STRING));
+		for (String influence : influences.keySet()) {
+			if (influences.get(influence).get(GlobalConstants.TYPE).equals(
+					GlobalConstants.ACTIVATION)) {
+				Double np = Double
+						.parseDouble(parameters.get(GlobalConstants.STOICHIOMETRY_STRING));
+				Double ng = Double.parseDouble(parameters
+						.get(GlobalConstants.PROMOTER_COUNT_STRING));
 				Double kb = Double.parseDouble(parameters.get(GlobalConstants.KBASAL_STRING));
 				Double Ko = Double.parseDouble(parameters.get(GlobalConstants.RNAP_BINDING_STRING));
 				Double ka = Double.parseDouble(parameters.get(GlobalConstants.ACTIVED_STRING));
 				Double Ka = Double.parseDouble(parameters.get(GlobalConstants.KACT_STRING));
-				Double nc = Double.parseDouble(parameters.get(GlobalConstants.COOPERATIVITY_STRING));
+				Double nc = Double
+						.parseDouble(parameters.get(GlobalConstants.COOPERATIVITY_STRING));
 				Double RNAP = Double.parseDouble(parameters.get(GlobalConstants.RNAP_STRING));
 				String input = getInput(influence);
 				String output = getOutput(influence);
 				boolean addInput = true;
 				boolean addOutput = true;
-				for (int i = 0; i < document.getModel().getNumSpecies(); i ++) {
+				for (int i = 0; i < document.getModel().getNumSpecies(); i++) {
 					if (document.getModel().getSpecies(i).getId().equals(input)) {
 						addInput = false;
 					}
@@ -114,8 +118,8 @@ public class GCMFile {
 					Species s = Utility.makeSpecies(output, "default", 0);
 					Utility.addSpecies(document, s);
 				}
-				org.sbml.libsbml.Reaction r = new org.sbml.libsbml.Reaction(
-						input + "_activates_" + output);
+				org.sbml.libsbml.Reaction r = new org.sbml.libsbml.Reaction(input + "_activates_"
+						+ output);
 				r.addModifier(new ModifierSpeciesReference(input));
 				r.addProduct(new SpeciesReference(output, 1));
 				r.setReversible(false);
@@ -129,18 +133,21 @@ public class GCMFile {
 				Utility.addReaction(document, r);
 			}
 			else {
-				Double np = Double.parseDouble(parameters.get(GlobalConstants.STOICHIOMETRY_STRING));
+				Double np = Double
+						.parseDouble(parameters.get(GlobalConstants.STOICHIOMETRY_STRING));
 				Double ko = Double.parseDouble(parameters.get(GlobalConstants.OCR_STRING));
-				Double ng = Double.parseDouble(parameters.get(GlobalConstants.PROMOTER_COUNT_STRING));
+				Double ng = Double.parseDouble(parameters
+						.get(GlobalConstants.PROMOTER_COUNT_STRING));
 				Double Ko = Double.parseDouble(parameters.get(GlobalConstants.RNAP_BINDING_STRING));
 				Double Kr = Double.parseDouble(parameters.get(GlobalConstants.KREP_STRING));
-				Double nc = Double.parseDouble(parameters.get(GlobalConstants.COOPERATIVITY_STRING));
+				Double nc = Double
+						.parseDouble(parameters.get(GlobalConstants.COOPERATIVITY_STRING));
 				Double RNAP = Double.parseDouble(parameters.get(GlobalConstants.RNAP_STRING));
 				String input = getInput(influence);
 				String output = getOutput(influence);
 				boolean addInput = true;
 				boolean addOutput = true;
-				for (int i = 0; i < document.getModel().getNumSpecies(); i ++) {
+				for (int i = 0; i < document.getModel().getNumSpecies(); i++) {
 					if (document.getModel().getSpecies(i).getId().equals(input)) {
 						addInput = false;
 					}
@@ -156,7 +163,30 @@ public class GCMFile {
 					Species s = Utility.makeSpecies(output, "default", 0);
 					Utility.addSpecies(document, s);
 				}
+				org.sbml.libsbml.Reaction r = new org.sbml.libsbml.Reaction(input + "_activates_"
+						+ output);
+				r.addModifier(new ModifierSpeciesReference(input));
+				r.addProduct(new SpeciesReference(output, 1));
+				r.setReversible(false);
+				r.setFast(false);
+				KineticLaw kl = new KineticLaw();
+				kl.setFormula(np + " * " + ko + " * " + ng + " * (" + Ko + " * " + RNAP + ") / ("
+						+ 1 + " + " + Ko + " * " + RNAP + " + " + Kr + " * pow(" + input + ", "
+						+ nc + ") * " + RNAP + ")");
+				r.setKineticLaw(kl);
+				Utility.addReaction(document, r);
 			}
+		}
+		try {
+			SBMLWriter writer = new SBMLWriter();
+			PrintStream p = new PrintStream(new FileOutputStream(filename));
+			m.setId(new File(filename).getName().replace(".xml", "").replace(".sbml", ""));
+			p.print(writer.writeToString(document));
+			p.close();
+		}
+		catch (FileNotFoundException e) {
+			e.printStackTrace();
+			throw new IllegalStateException("Unable to output to SBML");
 		}
 	}
 
