@@ -663,7 +663,7 @@ public class LHPNFile {
 	}
 
 	public boolean containsFlow(String place) {
-		if (controlFlow.containsKey(place)) {
+		if (controlFlow.containsKey(place) && !controlFlow.get(place).isEmpty()) {
 			return true;
 		}
 		for (String s : controlFlow.keySet()) {
