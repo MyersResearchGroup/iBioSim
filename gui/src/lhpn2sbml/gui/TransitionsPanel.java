@@ -113,7 +113,6 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 				for (String s : lhpn.getContAssignVars(selected)) {
 					if (s != null) {
 						if (!s.equals(null)) {
-							log.addText(s + lhpn.getContAssign(selected, s));
 							varAssignments.addItem(s + ":=" + lhpn.getContAssign(selected, s));
 							assignments.addItem(s + ":=" + lhpn.getContAssign(selected, s));
 						}
@@ -310,36 +309,36 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 		lhpn.removeAllAssign(transition);
 		if (boolAssignments.getItems() != null) {
 			for (String s : boolAssignments.getItems()) {
-				// System.out.println("bool" + s);
+				//System.out.println("bool" + s);
 				String[] tempArray = s.split(":=");
 				lhpn.addBoolAssign(transition, tempArray[0], tempArray[1]);
 			}
 		}
 		if (varAssignments.getItems() != null) {
 			for (String s : varAssignments.getItems()) {
-				// System.out.println("var" + s);
+				//System.out.println("var " + s);
 				String[] tempArray = s.split(":=");
-				// System.out.println(selected + " " + tempArray[0] + " " +
-				// tempArray[1]);
+				//System.out.println(transition + " " + tempArray[0] + " " +
+				//		tempArray[1]);
 				lhpn.addContAssign(transition, tempArray[0], tempArray[1]);
 				//log.addText("continuous "+ tempArray[0]);
 			}
 		}
 		if (intAssignments.getItems() != null) {
 			for (String s : intAssignments.getItems()) {
-				// System.out.println("int" + s);
+				//System.out.println("int" + s);
 				String[] tempArray = s.split(":=");
-				// System.out.println(selected + " " + tempArray[0] + " " +
-				// tempArray[1]);
+				//System.out.println(transition + " " + tempArray[0] + " " +
+				//tempArray[1]);
 				lhpn.addIntAssign(transition, tempArray[0], tempArray[1]);
 				//log.addText("integer " + tempArray[0]);
 			}
 		}
 		if (rateAssignments.getItems() != null) {
 			for (String s : rateAssignments.getItems()) {
-				//System.out.println("rate" + s);
+				//System.out.println("rate " + s);
 				String[] tempArray = s.split("':=");
-				// System.out.println(tempArray[1]);
+				//System.out.println(tempArray[1]);
 				lhpn.addRateAssign(transition, tempArray[0], tempArray[1]);
 			}
 		}

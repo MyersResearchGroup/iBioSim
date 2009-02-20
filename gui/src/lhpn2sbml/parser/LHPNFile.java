@@ -673,8 +673,10 @@ public class LHPNFile {
 	}
 
 	public boolean containsFlow(String place) {
-		if (controlFlow.containsKey(place) && !controlFlow.get(place).isEmpty()) {
-			return true;
+		if (controlFlow.containsKey(place)) {
+				if	(!controlFlow.get(place).isEmpty()) {
+					return true;
+				}
 		}
 		for (String s : controlFlow.keySet()) {
 			Properties prop = controlFlow.get(s);
@@ -867,17 +869,20 @@ public class LHPNFile {
 	}
 
 	public void removeAllAssign(String transition) {
-		Properties prop = new Properties();
 		if (booleanAssignments.containsKey(transition)) {
+			Properties prop = new Properties();
 			booleanAssignments.put(transition, prop);
 		}
 		if (contAssignments.containsKey(transition)) {
+			Properties prop = new Properties();
 			contAssignments.put(transition, prop);
 		}
 		if (rateAssignments.containsKey(transition)) {
+			Properties prop = new Properties();
 			rateAssignments.put(transition, prop);
 		}
 		if (intAssignments.containsKey(transition)) {
+			Properties prop = new Properties();
 			intAssignments.put(transition, prop);
 		}
 	}
