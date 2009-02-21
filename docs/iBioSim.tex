@@ -9,11 +9,11 @@
 
 \title{iBioSim: User's Manual}
 
-\author{Chris J. Myers, Nathan Barker, Hiroyuki Kuwahara, Curtis
+\author{Chris J. Myers, Nathan Barker, Kevin Jones, Hiroyuki Kuwahara, Curtis
   Madsen, Nam Nguyen} 
 
 \date{Created: August 6th, 2008\\
-  Last Revised: August 14th, 2008
+  Last Revised: January 19th, 2009
 }
 
 \begin{document}
@@ -149,7 +149,60 @@ of the model is performed.
 \includegraphics[height=45mm]{screenshots/import}
 \end{center} 
 
-\subsection{Creating and Opening Views}
+\subsection{Editing Project Objects}
+
+\noindent
+All project objects can be modified by highlighting the object
+and using a right mouse click to open a menu of options as shown
+below. Using this menu, every type of object can be copied, renamed, or
+deleted. For a GCM, the ``View/Edit'' option opens the
+model in a GCM editor (see Section~\ref{GCMEdit}). For an SBML model,
+the ``View/Edit'' option opens the model in an SBML editor 
+(see Section~\ref{SBMLEdit}). For a TSD graph, the ``View/Edit'' 
+option opens the TSD graph in a TSD graph editor (see Section~\ref{TSDEdit}). 
+For a probability graph, the ``View/Edit'' option opens
+the probability graph in a probability graph editor 
+(see Section~\ref{ProbEdit}). 
+For an analysis view, the ``Open Analysis View'' option opens the
+analysis view (see Section~\ref{Analysis}). For a learn view, the
+``Open Learn View'' option opens the learn view (see Section~\ref{Learn}).
+
+\begin{center}
+\begin{tabular}{ccc}
+\includegraphics[height=65mm]{screenshots/modGCM} & &
+\includegraphics[height=65mm]{screenshots/modSBML} \\ \\
+\includegraphics[height=35mm]{screenshots/modAnalysis} & &
+\includegraphics[height=35mm]{screenshots/modLearn}
+\end{tabular}
+\end{center}
+
+\subsection{Viewing Project Objects}
+
+\noindent
+A GCM can also be viewed using 
+%%tth:\begin{html}<A HREF="http://www.graphviz.org/">\end{html}
+GraphViz's
+%%tth:\begin{html}</A>\end{html}
+dotty program  by right clicking on the model you want to view and
+selecting the ``View Genetic Circuit'' option. 
+There are two additional ways to view an SBML model. You
+can either select the ``View Network'' option or the
+``View in Browser'' option.  The ``View Network''
+option converts the model to a GraphViz file and then will open that 
+file with GraphViz's dotty program.  The ``View in Browser'' option 
+coverts the model to an xhtml file and opens that file with your 
+default xhtml browser.
+
+\begin{center}
+\begin{tabular}{ccc}
+\includegraphics[height=65mm]{screenshots/modGCM} & &
+\includegraphics[height=65mm]{screenshots/modSBML} \\ \\
+\includegraphics[height=35mm]{screenshots/modAnalysis} & &
+\includegraphics[height=35mm]{screenshots/modLearn}
+\end{tabular}
+\end{center}
+
+\subsection{Creating Tool Views}
 
 \noindent
 To perform analysis or learning, right click on a model and
@@ -177,47 +230,6 @@ SBML Model option in the right click menu or the Save as SBML button in
 the GCM Editor (see Section~\ref{GCMEdit}).  You can then open and
 edit this model using an SBML editor (see Section~\ref{SBMLEdit}) and
 create an analysis view from this edited model.
-
-\subsection{Viewing and Modifying Project Objects}
-
-\noindent
-All project objects can be modified by highlighting the object
-and using a right mouse click to open a menu of options as shown
-below. Using this menu, every type of object can be copied, renamed, or
-deleted. For a GCM, the ``View/Edit'' option opens the
-model in a GCM editor (see Section~\ref{GCMEdit}). For an SBML model,
-the ``View/Edit'' option opens the model in an SBML editor 
-(see Section~\ref{SBMLEdit}). For a TSD graph, the ``View/Edit'' 
-option opens the TSD graph in a TSD graph editor (see Section~\ref{TSDEdit}). 
-For a probability graph, the ``View/Edit'' option opens
-the probability graph in a probability graph editor 
-(see Section~\ref{ProbEdit}). 
-For an analysis view, the ``Open Analysis View'' option opens the
-analysis view (see Section~\ref{Analysis}). For a learn view, the
-``Open Learn View'' option opens the learn view (see Section~\ref{Learn}).
-
-A GCM can also be viewed using 
-%%tth:\begin{html}<A HREF="http://www.graphviz.org/">\end{html}
-GraphViz's
-%%tth:\begin{html}</A>\end{html}
-dotty program  by right clicking on the model you want to view and
-selecting the ``View Genetic Circuit'' option. 
-There are two additional ways to view an SBML model. You
-can either select the ``View Network'' option or the
-``View in Browser'' option.  The ``View Network''
-option converts the model to a GraphViz file and then will open that 
-file with GraphViz's dotty program.  The ``View in Browser'' option 
-coverts the model to an xhtml file and opens that file with your 
-default xhtml browser.
-
-\begin{center}
-\begin{tabular}{ccc}
-\includegraphics[height=65mm]{screenshots/modGCM} & &
-\includegraphics[height=65mm]{screenshots/modSBML} \\ \\
-\includegraphics[height=35mm]{screenshots/modAnalysis} & &
-\includegraphics[height=35mm]{screenshots/modLearn}
-\end{tabular}
-\end{center}
 
 \section{\label{SBMLEdit}SBML Editor}
 
