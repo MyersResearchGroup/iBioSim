@@ -1010,6 +1010,24 @@ def extractVars(datFile):
 	return varsL
 
 ##############################################################################
+# Create the list of variables included in the .dat file.  All data files must
+# have the same variables in the same order.
+##############################################################################
+def extractDatVars(datFile):
+	varsL = []
+	line = ""
+	inputF = open(datFile, 'r')
+	for i in range(3):
+		line = inputF.readline()
+	varNames = cleanLine(line)
+	varNamesL = varNames.split(" ")
+	for varStr in varNamesL:
+		varsL.append(Variable(varStr))
+	varsL[0].dmvc = False
+	inputF.close()
+	return varsL
+
+##############################################################################
 # Parse a .dat file ensuring that the varsL matches the global list.
 ##############################################################################
 def parseDatFile(datFile,varsL):
@@ -1056,7 +1074,7 @@ def cleanRow(row):
 ##############################################################################
 # Parse the .bins (thresholds) file.
 ##############################################################################
-def parseBinsFile(binsFile,varsL,trace):
+def parseBinsFile(binsFile,varsL,trace,datVarsL):
 	global pathLength
 	global rateSampling
 	global minDelayVal
@@ -1238,8 +1256,8 @@ def parseBinsFile(binsFile,varsL,trace):
 			numDivisions += 1
 			cLineL = cleanLine(linesL[i]).split(" ")
 			found = False
-			for j in range(0,len(varsL)):
-				if cLineL[0] == varsL[j].name:
+			for j in range(0,len(datVarsL)):
+				if cLineL[0] == datVarsL[j].name:
 					divisionsStrL[j-1] = cLineL[1:]
 					found = True
 					break
@@ -2594,7 +2612,7 @@ def main():
 	tempDatL = []
 	i = 1
 	while os.path.isfile("run-" + str(i) + ".tsd"):
-		print i
+		#print i
 		tempDatL.append("run-" + str(i) + ".tsd")
 		i += 1
 	datFileL = [i-2]
@@ -2611,7 +2629,8 @@ def main():
 	#so it is extracted from the first dat file and checked against
 	#every other dat file
 	varsL = extractVars(options.binsFile)
-	divisionsL, tParam = parseBinsFile(options.binsFile,varsL,options.trace)
+	datVarsL = extractDatVars(datFileL[0])
+	divisionsL, tParam = parseBinsFile(options.binsFile,varsL,options.trace,datVarsL)
 	gFile = options.gFile
 	psFile = baseFileL[0] + ".ps"
 	vaFile = baseFileL[0] + ".va"
