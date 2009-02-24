@@ -5708,6 +5708,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 								}
 							}
 							refreshTree();
+							updateViewNames(tree.getFile(), rename);
 						}
 					}
 				}
@@ -9227,7 +9228,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 	}
 
 	public void updateAsyncViews(String updatedFile) {
-		// log.addText("update");
+		//log.addText(updatedFile);
 		for (int i = 0; i < tab.getTabCount(); i++) {
 			String tab = this.tab.getTitleAt(i);
 			// String properties = root + separator + tab + separator + tab +
@@ -9487,6 +9488,98 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						updateViews(s);
 					}
 				}
+			}
+		}
+	}
+	
+	private void updateViewNames(String oldname, String newname) {
+		for (int i = 0; i < tab.getTabCount(); i++) {
+			String tab = this.tab.getTitleAt(i);
+			String properties = root + separator + tab + separator + tab + ".ver";
+			String properties1 = root + separator + tab + separator + tab + ".synth";
+			String properties2 = root + separator + tab + separator + tab + ".lrn";
+			if (new File(properties).exists()) {
+				String check;
+				try {
+					Properties p = new Properties();
+					FileInputStream load = new FileInputStream(new File(properties2));
+					p.load(load);
+					load.close();
+					if (p.containsKey("learn.file")) {
+						String[] getProp = p.getProperty("learn.file").split(separator);
+						check = getProp[getProp.length - 1];
+					}
+					else {
+						check = "";
+					}
+				}
+				catch (Exception e) {
+					JOptionPane.showMessageDialog(frame, "Unable to load background file.",
+							"Error", JOptionPane.ERROR_MESSAGE);
+					check = "";
+				}
+				if (check.equals(oldname)) {
+					
+				}
+			}
+			if (new File(properties1).exists()) {
+				String check;
+				try {
+				Properties p = new Properties();
+				FileInputStream load = new FileInputStream(new File(properties2));
+				p.load(load);
+				load.close();
+				if (p.containsKey("learn.file")) {
+					String[] getProp = p.getProperty("learn.file").split(separator);
+					check = getProp[getProp.length - 1];
+				}
+				else {
+					check = "";
+				}
+			}
+			catch (Exception e) {
+				JOptionPane.showMessageDialog(frame, "Unable to load background file.",
+						"Error", JOptionPane.ERROR_MESSAGE);
+				check = "";
+			}
+			}
+			if (new File(properties2).exists()) {
+				String check = "";
+				try {
+					Properties p = new Properties();
+					FileInputStream load = new FileInputStream(new File(properties2));
+					p.load(load);
+					load.close();
+					if (p.containsKey("learn.file")) {
+						String[] getProp = p.getProperty("learn.file").split(separator);
+						check = getProp[getProp.length - 1];
+					}
+					else {
+						check = "";
+					}
+				}
+				catch (Exception e) {
+					JOptionPane.showMessageDialog(frame, "Unable to load background file.",
+							"Error", JOptionPane.ERROR_MESSAGE);
+					check = "";
+				}
+				/*if (check.equals(updatedFile)) {
+					JTabbedPane learn = ((JTabbedPane) (this.tab.getComponentAt(i)));
+					for (int j = 0; j < learn.getTabCount(); j++) {
+						// log.addText(learn.getComponentAt(j).getName());
+						if (learn.getComponentAt(j).getName().equals("Data Manager")) {
+							((DataManager) (learn.getComponentAt(j))).updateSpecies();
+						}
+						else if (learn.getComponentAt(j).getName().equals("Learn")) {
+							((LearnLHPN) (learn.getComponentAt(j))).updateSpecies(root + separator
+									+ updatedFile);
+						}
+						else if (learn.getComponentAt(j).getName().contains("Graph")) {
+							((Graph) (learn.getComponentAt(j))).refresh();
+						}
+					}
+				}
+				*/
 			}
 		}
 	}
