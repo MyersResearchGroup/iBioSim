@@ -937,8 +937,16 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 				Process load = exec.exec("atacs -cPllodpl " + lhpnFile + " " + dotFile, null, work);
 				load.waitFor();
 				if (dot.exists()) {
-					String command = "open " + dotFile;
-					log.addText("open " + directory + separator + dotFile + "\n");
+					viewLhpn.setEnabled(true);
+					String command = "";
+					if (System.getProperty("os.name").contentEquals("Linux")) {
+						command = "gnome-open " + dotFile;
+						log.addText("gnome-open " + directory + separator + dotFile + "\n");
+					}
+					else {
+						command = "open " + dotFile;
+						log.addText("open " + directory + separator + dotFile + "\n");
+					}
 					exec.exec(command, null, work);
 				}
 				else {
@@ -1089,6 +1097,54 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 	public void learn() {
 		try {
 			if (auto.isSelected()) {
+				FileWriter write = new FileWriter(new File(directory + separator + binFile));
+				FileWriter writeNew = new FileWriter(new File(directory + separator + newBinFile));
+				// write.write("time 0\n");
+				boolean flag = false;
+				for (int i = 0; i < variables.size(); i++) {
+					if (((JCheckBox) variables.get(i).get(1)).isSelected()) {
+						if (!flag) {
+							write.write(".dmvc ");
+							writeNew.write(".dmvc ");
+							flag = true;
+						}
+						write.write(((JTextField) variables.get(i).get(0)).getText().trim() + " ");
+						writeNew.write(((JTextField) variables.get(i).get(0)).getText().trim()
+								+ " ");
+					}
+				}
+				if (flag) {
+					write.write("\n");
+					writeNew.write("\n");
+				}
+				for (int i = 0; i < variables.size(); i++) {
+					if (((JTextField) variables.get(i).get(0)).getText().trim().equals("")) {
+						write.write("?");
+						writeNew.write("?");
+					}
+					else {
+						write.write(((JTextField) variables.get(i).get(0)).getText().trim());
+						writeNew.write(((JTextField) variables.get(i).get(0)).getText().trim());
+					}
+					// write.write(" " + ((JComboBox)
+					// variables.get(i).get(1)).getSelectedItem());
+					for (int j = 3; j < variables.get(i).size(); j++) {
+						if (((JTextField) variables.get(i).get(j)).getText().trim().equals("")) {
+							write.write(" ?");
+							writeNew.write(" ?");
+						}
+						else {
+							write.write(" "
+									+ ((JTextField) variables.get(i).get(j)).getText().trim());
+							writeNew.write(" "
+									+ ((JTextField) variables.get(i).get(j)).getText().trim());
+						}
+					}
+					write.write("\n");
+					writeNew.write("\n");
+				}
+				write.close();
+				writeNew.close();
 				generate = true;
 			}
 			else {
@@ -1135,6 +1191,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 	}
 
 	public void run() {
+		new File(directory + separator + lhpnFile).delete();
 		fail = false;
 		try {
 			File work = new File(directory);
@@ -1328,7 +1385,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 							+ " canceled by the user.", "Canceled Learning",
 							JOptionPane.ERROR_MESSAGE);
 				}
-				if (new File(lhpnFile).exists()) {
+				if (new File(directory + separator + lhpnFile).exists()) {
 					viewLhpn();
 				}
 				else {

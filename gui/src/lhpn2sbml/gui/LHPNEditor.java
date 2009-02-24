@@ -245,7 +245,13 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 				String dotFile = filename.replace(".lhpn", ".dot");
 				File dot = new File(directory + separator + dotFile);
 				dot.delete();
-				String command = "open " + dotFile;
+				String command = "";
+				if (System.getProperty("os.name").contentEquals("Linux")) {
+					command = "gnome-open " + dotFile;
+				}
+				else {
+					command = "open " + dotFile;
+				}
 				Runtime exec = Runtime.getRuntime();
 				log.addText("Executing:\natacs -cPllodpl " + filename + "\n");
 				Process load = exec.exec("atacs -cPllodpl " + filename, null, work);
