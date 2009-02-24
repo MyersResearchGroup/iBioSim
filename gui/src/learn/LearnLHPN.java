@@ -57,7 +57,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 
 	private String learnFile, binFile, newBinFile, lhpnFile;
 
-	private boolean change;
+	private boolean change, fail;
 
 	private ArrayList<String> variablesList;
 
@@ -170,7 +170,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 		thresholdPanel1.add(backgroundLabel);
 		thresholdPanel1.add(backgroundField);
 		JLabel iterationLabel = new JLabel("Iterations of Optimization Algorithm");
-		iteration = new JTextField("10000");
+		iteration = new JTextField("10");
 		thresholdPanel1.add(iterationLabel);
 		thresholdPanel1.add(iteration);
 
@@ -1135,6 +1135,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 	}
 
 	public void run() {
+		fail = false;
 		try {
 			File work = new File(directory);
 			final JFrame running = new JFrame("Progress");
@@ -1203,6 +1204,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 			running.setLocation(x, y);
 			running.setVisible(true);
 			running.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+			FileWriter out = new FileWriter(new File(directory + separator + "run.log"));
 			if (generate) {
 				String makeBin = "autogenT.py -b" + newBinFile + " -i" + iteration.getText();
 				if (range.isSelected()) {
@@ -1233,7 +1235,6 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 					InputStream reb = bins.getInputStream();
 					InputStreamReader isr = new InputStreamReader(reb);
 					BufferedReader br = new BufferedReader(isr);
-					FileWriter out = new FileWriter(new File(directory + separator + "run.log"));
 					int count = 0;
 					while ((output = br.readLine()) != null) {
 						if (output.matches("\\d+/\\d+")) {
@@ -1241,13 +1242,18 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 							count += 500;
 							progress.setValue(count);
 						}
+						else if (output.contains("ERROR")) {
+							fail = true;
+						}
 						out.write(output);
 						out.write("\n");
 					}
 					br.close();
 					isr.close();
 					reb.close();
-					out.close();
+					if (!execute || fail) {
+						out.close();
+					}
 					viewLog.setEnabled(true);
 				}
 				catch (Exception e) {
@@ -1258,22 +1264,22 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 							+ " canceled by the user.", "Canceled Learning",
 							JOptionPane.ERROR_MESSAGE);
 				}
-				FileOutputStream out = new FileOutputStream(new File(directory + separator
+				FileOutputStream outBins = new FileOutputStream(new File(directory + separator
 						+ binFile));
-				FileInputStream in = new FileInputStream(new File(directory + separator
+				FileInputStream inBins = new FileInputStream(new File(directory + separator
 						+ newBinFile));
-				int read = in.read();
+				int read = inBins.read();
 				while (read != -1) {
-					out.write(read);
-					read = in.read();
+					outBins.write(read);
+					read = inBins.read();
 				}
-				in.close();
-				out.close();
+				inBins.close();
+				outBins.close();
 				if (!execute) {
 					levels();
 				}
 			}
-			if (execute) {
+			if (execute && !fail) {
 				File lhpn = new File(lhpnFile);
 				lhpn.delete();
 				String command = "data2lhpn.py -b" + binFile + " -l" + lhpnFile;
@@ -1301,8 +1307,10 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 					InputStream reb = run.getInputStream();
 					InputStreamReader isr = new InputStreamReader(reb);
 					BufferedReader br = new BufferedReader(isr);
-					FileWriter out = new FileWriter(new File(directory + separator + "run.log"));
 					while ((output = br.readLine()) != null) {
+						if (output.contains("ERROR")) {
+							fail = true;
+						}
 						out.write(output);
 						out.write("\n");
 					}
@@ -1324,11 +1332,14 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 					viewLhpn();
 				}
 				else {
-					viewLog();
+					fail = true;
 				}
 			}
 			running.setCursor(null);
 			running.dispose();
+			if (fail) {
+				viewLog();
+			}
 		}
 		catch (Exception e1) {
 			e1.printStackTrace();
