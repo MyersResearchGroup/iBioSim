@@ -5568,47 +5568,12 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 										((GCM2SBMLEditor) tab.getComponentAt(i)).reload(rename
 												.substring(0, rename.length() - 4));
 									}
-									else if (tree.getFile().length() > 3
-											&& tree.getFile()
-													.substring(tree.getFile().length() - 4).equals(
-															".vhd")) {
-										((GCM2SBMLEditor) tab.getComponentAt(i)).reload(rename
-												.substring(0, rename.length() - 4));
-									}
 									else if (tree.getFile().length() > 1
 											&& tree.getFile()
 													.substring(tree.getFile().length() - 2).equals(
 															".g")) {
-										((GCM2SBMLEditor) tab.getComponentAt(i)).reload(rename
+										((LHPNEditor) tab.getComponentAt(i)).reload(rename
 												.substring(0, rename.length() - 2));
-									}
-									else if (tree.getFile().length() > 3
-											&& tree.getFile()
-													.substring(tree.getFile().length() - 4).equals(
-															".csp")) {
-										((GCM2SBMLEditor) tab.getComponentAt(i)).reload(rename
-												.substring(0, rename.length() - 4));
-									}
-									else if (tree.getFile().length() > 3
-											&& tree.getFile()
-													.substring(tree.getFile().length() - 4).equals(
-															".hse")) {
-										((GCM2SBMLEditor) tab.getComponentAt(i)).reload(rename
-												.substring(0, rename.length() - 4));
-									}
-									else if (tree.getFile().length() > 3
-											&& tree.getFile()
-													.substring(tree.getFile().length() - 4).equals(
-															".unc")) {
-										((GCM2SBMLEditor) tab.getComponentAt(i)).reload(rename
-												.substring(0, rename.length() - 4));
-									}
-									else if (tree.getFile().length() > 3
-											&& tree.getFile()
-													.substring(tree.getFile().length() - 4).equals(
-															".rsg")) {
-										((GCM2SBMLEditor) tab.getComponentAt(i)).reload(rename
-												.substring(0, rename.length() - 4));
 									}
 									else {
 										JTabbedPane t = new JTabbedPane();
@@ -5708,6 +5673,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 								}
 							}
 							refreshTree();
+							//updateAsyncViews(rename);
 							updateViewNames(tree.getFile(), rename);
 						}
 					}
@@ -9493,51 +9459,66 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 	}
 	
 	private void updateViewNames(String oldname, String newname) {
-		for (int i = 0; i < tab.getTabCount(); i++) {
-			String tab = this.tab.getTitleAt(i);
-			String properties = root + separator + tab + separator + tab + ".ver";
-			String properties1 = root + separator + tab + separator + tab + ".synth";
-			String properties2 = root + separator + tab + separator + tab + ".lrn";
+		File work = new File(root);
+		String[] fileList = work.list();
+		String[] temp = oldname.split(separator);
+		oldname = temp[temp.length - 1];
+		for (int i = 0; i < fileList.length; i++) {
+			String tabTitle = fileList[i];
+			String properties = root + separator + tabTitle + separator + tabTitle + ".ver";
+			String properties1 = root + separator + tabTitle + separator + tabTitle + ".synth";
+			String properties2 = root + separator + tabTitle + separator + tabTitle + ".lrn";
 			if (new File(properties).exists()) {
 				String check;
+				Properties p = new Properties();
 				try {
-					Properties p = new Properties();
-					FileInputStream load = new FileInputStream(new File(properties2));
+					FileInputStream load = new FileInputStream(new File(properties));
 					p.load(load);
 					load.close();
-					if (p.containsKey("learn.file")) {
-						String[] getProp = p.getProperty("learn.file").split(separator);
+					if (p.containsKey("verification.file")) {
+						String[] getProp = p.getProperty("verification.file").split(separator);
 						check = getProp[getProp.length - 1];
 					}
 					else {
 						check = "";
 					}
+					if (check.equals(oldname)) {
+						p.setProperty("verification.file", newname);
+						FileOutputStream out = new FileOutputStream(new File(properties));
+						p.store(out, properties);
+					}
 				}
 				catch (Exception e) {
+					//log.addText("verification");
+					//e.printStackTrace();
 					JOptionPane.showMessageDialog(frame, "Unable to load background file.",
 							"Error", JOptionPane.ERROR_MESSAGE);
 					check = "";
-				}
-				if (check.equals(oldname)) {
-					
 				}
 			}
 			if (new File(properties1).exists()) {
 				String check;
 				try {
 				Properties p = new Properties();
-				FileInputStream load = new FileInputStream(new File(properties2));
+				FileInputStream load = new FileInputStream(new File(properties1));
 				p.load(load);
 				load.close();
-				if (p.containsKey("learn.file")) {
-					String[] getProp = p.getProperty("learn.file").split(separator);
+				if (p.containsKey("synthesis.file")) {
+					String[] getProp = p.getProperty("synthesis.file").split(separator);
 					check = getProp[getProp.length - 1];
 				}
 				else {
 					check = "";
 				}
+				if (check.equals(oldname)) {
+					p.setProperty("synthesis.file", newname);
+					FileOutputStream out = new FileOutputStream(new File(properties1));
+					p.store(out, properties1);
+				}
 			}
 			catch (Exception e) {
+				//log.addText("synthesis");
+				//e.printStackTrace();
 				JOptionPane.showMessageDialog(frame, "Unable to load background file.",
 						"Error", JOptionPane.ERROR_MESSAGE);
 				check = "";
@@ -9557,31 +9538,21 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					else {
 						check = "";
 					}
+					if (check.equals(oldname)) {
+						p.setProperty("learn.file", newname);
+						FileOutputStream out = new FileOutputStream(new File(properties2));
+						p.store(out, properties2);
+					}
 				}
 				catch (Exception e) {
+					//e.printStackTrace();
 					JOptionPane.showMessageDialog(frame, "Unable to load background file.",
 							"Error", JOptionPane.ERROR_MESSAGE);
 					check = "";
 				}
-				/*if (check.equals(updatedFile)) {
-					JTabbedPane learn = ((JTabbedPane) (this.tab.getComponentAt(i)));
-					for (int j = 0; j < learn.getTabCount(); j++) {
-						// log.addText(learn.getComponentAt(j).getName());
-						if (learn.getComponentAt(j).getName().equals("Data Manager")) {
-							((DataManager) (learn.getComponentAt(j))).updateSpecies();
-						}
-						else if (learn.getComponentAt(j).getName().equals("Learn")) {
-							((LearnLHPN) (learn.getComponentAt(j))).updateSpecies(root + separator
-									+ updatedFile);
-						}
-						else if (learn.getComponentAt(j).getName().contains("Graph")) {
-							((Graph) (learn.getComponentAt(j))).refresh();
-						}
-					}
-				}
-				*/
 			}
 		}
+		updateAsyncViews(newname);
 	}
 
 	private void enableTabMenu(int selectedTab) {

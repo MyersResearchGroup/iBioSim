@@ -43,7 +43,7 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 			disabling, nofail, keepgoing, explpn, nochecks, reduction, minins, newTab, postProc,
 			redCheck, xForm2, expandRate;
 
-	private JTextField maxSize, gateDelay, bddSize;
+	private JTextField maxSize, gateDelay, bddSize, backgroundField;
 
 	private ButtonGroup timingMethodGroup, technologyGroup, algorithmGroup;
 
@@ -690,7 +690,7 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 		JLabel backgroundLabel = new JLabel("Model File:");
 		String[] tempArray = sourceFile.split(separator);
 		String sourceFileNoPath = tempArray[tempArray.length - 1];
-		JTextField backgroundField = new JTextField(sourceFileNoPath);
+		backgroundField = new JTextField(sourceFileNoPath);
 		backgroundField.setMaximumSize(new Dimension(200,20));
 		backgroundField.setEditable(false);
 		backgroundPanel.add(backgroundLabel);
@@ -1404,6 +1404,19 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 			JOptionPane.showMessageDialog(biosim.frame(), "Unable to save parameter file!",
 					"Error Saving File", JOptionPane.ERROR_MESSAGE);
 		}
+	}
+	
+	public void reload(Properties prop, String newname) {
+		try {
+			FileOutputStream out = new FileOutputStream(new File(directory + separator + synthFile));
+			prop.store(out, synthesisFile);
+			out.close();
+		}
+		catch (IOException e) {
+			JOptionPane.showMessageDialog(biosim.frame(), "Unable to save parameter file!",
+					"Error Saving File", JOptionPane.ERROR_MESSAGE);
+		}
+		backgroundField.setText(newname);
 	}
 	
 	public boolean getViewCircuitEnabled() {
