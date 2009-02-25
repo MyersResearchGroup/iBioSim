@@ -41,7 +41,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			orbmatch, interleav, prune, disabling, nofail, keepgoing, explpn, nochecks, reduction,
 			newTab, postProc, redCheck, xForm2, expandRate;
 
-	private JTextField bddSize;
+	private JTextField bddSize, backgroundField;
 
 	private ButtonGroup timingMethodGroup, algorithmGroup;
 
@@ -476,7 +476,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		catch (Exception e) {
 			JOptionPane.showMessageDialog(biosim.frame(), "Unable to load properties file!",
 					"Error Loading Properties", JOptionPane.ERROR_MESSAGE);
-			//e.printStackTrace();
+			// e.printStackTrace();
 		}
 		// save();
 
@@ -517,12 +517,12 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		JLabel backgroundLabel = new JLabel("Model File:");
 		tempArray = verifyFile.split(separator);
 		String sourceFile = tempArray[tempArray.length - 1];
-		JTextField backgroundField = new JTextField(sourceFile);
-		backgroundField.setMaximumSize(new Dimension(200,20));
+		backgroundField = new JTextField(sourceFile);
+		backgroundField.setMaximumSize(new Dimension(200, 20));
 		backgroundField.setEditable(false);
 		backgroundPanel.add(backgroundLabel);
 		backgroundPanel.add(backgroundField);
-		backgroundPanel.setMaximumSize(new Dimension(400,30));
+		backgroundPanel.setMaximumSize(new Dimension(400, 30));
 		basicOptions.add(backgroundPanel);
 		basicOptions.add(timingRadioPanel);
 		if (!lema) {
@@ -598,7 +598,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		}
 		File pargFile = new File(pargName);
 		File dotFile = new File(dotName);
-		//log.addText("graph names " + pargName + "  " + dotName);
+		// log.addText("graph names " + pargName + " " + dotName);
 		if (traceFile.exists()) {
 			traceFile.delete();
 		}
@@ -621,12 +621,12 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			File newFile = new File(directory + separator + sourceFile);
 			newFile.createNewFile();
 			FileOutputStream copyin = new FileOutputStream(newFile);
-			FileInputStream copyout = new FileInputStream(new File(workDir + separator
-					+ sourceFile));
+			FileInputStream copyout = new FileInputStream(
+					new File(workDir + separator + sourceFile));
 			int read = copyout.read();
-			//System.out.println(read);
+			// System.out.println(read);
 			while (read != -1) {
-				//System.out.println(read);
+				// System.out.println(read);
 				copyin.write(read);
 				read = copyout.read();
 			}
@@ -634,7 +634,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			copyout.close();
 		}
 		catch (IOException e) {
-			//e.printStackTrace();
+			// e.printStackTrace();
 			JOptionPane.showMessageDialog(biosim.frame(), "Cannot copy file " + sourceFile,
 					"Copy Error", JOptionPane.ERROR_MESSAGE);
 		}
@@ -911,7 +911,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				}
 			}
 			if (!success) {
-				//log.addText("failed");
+				// log.addText("failed");
 				if (new File(pargName).exists()) {
 					// log.addText("view parg");
 					Process parg = exec.exec("parg " + pargName);
@@ -1158,6 +1158,19 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			JOptionPane.showMessageDialog(biosim.frame(), "Unable to save parameter file!",
 					"Error Saving File", JOptionPane.ERROR_MESSAGE);
 		}
+	}
+
+	public void reload(Properties prop, String newname) {
+		try {
+			FileOutputStream out = new FileOutputStream(new File(directory + separator + verFile));
+			prop.store(out, verifyFile);
+			out.close();
+		}
+		catch (IOException e) {
+			JOptionPane.showMessageDialog(biosim.frame(), "Unable to save parameter file!",
+					"Error Saving File", JOptionPane.ERROR_MESSAGE);
+		}
+		backgroundField.setText(newname);
 	}
 
 	public void viewCircuit() {

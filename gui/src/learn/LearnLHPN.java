@@ -29,7 +29,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 
 	private JComboBox debug; // debug combo box
 
-	private JTextField iteration;
+	private JTextField iteration, backgroundField;
 
 	// private JTextField windowRising, windowSize;
 
@@ -165,7 +165,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 		JPanel thresholdPanel1 = new JPanel(new GridLayout(4, 2));
 
 		JLabel backgroundLabel = new JLabel("Model File:");
-		JTextField backgroundField = new JTextField(lhpnFile);
+		backgroundField = new JTextField(lhpnFile);
 		backgroundField.setEditable(false);
 		thresholdPanel1.add(backgroundLabel);
 		thresholdPanel1.add(backgroundField);
@@ -341,6 +341,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 
 		variablesList = new ArrayList<String>();
 		LHPNFile lhpn = new LHPNFile(log);
+		//log.addText(learnFile);
 		lhpn.load(learnFile);
 		HashMap<String, Properties> variablesMap = lhpn.getVariables();
 		for (String s : variablesMap.keySet()) {
@@ -581,30 +582,32 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 					writeNew.write("\n");
 				}
 				for (int i = 0; i < variables.size(); i++) {
-					if (((JTextField) variables.get(i).get(0)).getText().trim().equals("")) {
-						write.write("?");
-						writeNew.write("?");
-					}
-					else {
-						write.write(((JTextField) variables.get(i).get(0)).getText().trim());
-						writeNew.write(((JTextField) variables.get(i).get(0)).getText().trim());
-					}
-					// write.write(" " + ((JComboBox)
-					// variables.get(i).get(1)).getSelectedItem());
-					for (int j = 3; j < variables.get(i).size(); j++) {
-						if (((JTextField) variables.get(i).get(j)).getText().trim().equals("")) {
-							write.write(" ?");
-							writeNew.write(" ?");
+					//if (!((JCheckBox) variables.get(i).get(1)).isSelected()) {
+						if (((JTextField) variables.get(i).get(0)).getText().trim().equals("")) {
+							write.write("?");
+							writeNew.write("?");
 						}
 						else {
-							write.write(" "
-									+ ((JTextField) variables.get(i).get(j)).getText().trim());
-							writeNew.write(" "
-									+ ((JTextField) variables.get(i).get(j)).getText().trim());
+							write.write(((JTextField) variables.get(i).get(0)).getText().trim());
+							writeNew.write(((JTextField) variables.get(i).get(0)).getText().trim());
 						}
-					}
-					write.write("\n");
-					writeNew.write("\n");
+						// write.write(" " + ((JComboBox)
+						// variables.get(i).get(1)).getSelectedItem());
+						for (int j = 3; j < variables.get(i).size(); j++) {
+							if (((JTextField) variables.get(i).get(j)).getText().trim().equals("")) {
+								write.write(" ?");
+								writeNew.write(" ?");
+							}
+							else {
+								write.write(" "
+										+ ((JTextField) variables.get(i).get(j)).getText().trim());
+								writeNew.write(" "
+										+ ((JTextField) variables.get(i).get(j)).getText().trim());
+							}
+						}
+						write.write("\n");
+						writeNew.write("\n");
+					//}
 				}
 				write.close();
 				writeNew.close();
@@ -1076,7 +1079,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 				write.write("\n");
 			}
 			write.close();
-			log.addText("Creating levels file:\n" + directory + separator + binFile + "\n");
+			//log.addText("Creating levels file:\n" + directory + separator + binFile + "\n");
 			// String command = "autogenT.py -b" + binFile + " -t"
 			// + numBins.getSelectedItem().toString() + " -i" +
 			// iteration.getText();
@@ -1092,6 +1095,41 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 			JOptionPane.showMessageDialog(biosim.frame(), "Unable to save parameter file!",
 					"Error Saving File", JOptionPane.ERROR_MESSAGE);
 		}
+	}
+	
+	public void reload(String newname) {
+		try {
+			Properties prop = new Properties();
+			FileInputStream in = new FileInputStream(new File(directory + separator + lrnFile));
+			prop.load(in);
+			in.close();
+			prop.setProperty("learn.file", newname);
+			prop.setProperty("learn.iter", this.iteration.getText().trim());
+			prop.setProperty("learn.bins", (String) this.numBins.getSelectedItem());
+			if (range.isSelected()) {
+				prop.setProperty("learn.equal", "range");
+			}
+			else {
+				prop.setProperty("learn.equal", "points");
+			}
+			if (auto.isSelected()) {
+				prop.setProperty("learn.use", "auto");
+			}
+			else {
+				prop.setProperty("learn.use", "user");
+			}
+			log.addText("Saving learn parameters to file:\n" + directory + separator + lrnFile
+					+ "\n");
+			FileOutputStream out = new FileOutputStream(new File(directory + separator + lrnFile));
+			prop.store(out, learnFile);
+			out.close();
+		}
+		catch (Exception e1) {
+			//e1.printStackTrace();
+			JOptionPane.showMessageDialog(biosim.frame(), "Unable to save parameter file!",
+					"Error Saving File", JOptionPane.ERROR_MESSAGE);
+		}
+		backgroundField.setText(newname);
 	}
 
 	public void learn() {
@@ -1118,30 +1156,32 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 					writeNew.write("\n");
 				}
 				for (int i = 0; i < variables.size(); i++) {
-					if (((JTextField) variables.get(i).get(0)).getText().trim().equals("")) {
-						write.write("?");
-						writeNew.write("?");
-					}
-					else {
-						write.write(((JTextField) variables.get(i).get(0)).getText().trim());
-						writeNew.write(((JTextField) variables.get(i).get(0)).getText().trim());
-					}
-					// write.write(" " + ((JComboBox)
-					// variables.get(i).get(1)).getSelectedItem());
-					for (int j = 3; j < variables.get(i).size(); j++) {
-						if (((JTextField) variables.get(i).get(j)).getText().trim().equals("")) {
-							write.write(" ?");
-							writeNew.write(" ?");
+					if (!((JCheckBox) variables.get(i).get(1)).isSelected()) {
+						if (((JTextField) variables.get(i).get(0)).getText().trim().equals("")) {
+							write.write("?");
+							writeNew.write("?");
 						}
 						else {
-							write.write(" "
-									+ ((JTextField) variables.get(i).get(j)).getText().trim());
-							writeNew.write(" "
-									+ ((JTextField) variables.get(i).get(j)).getText().trim());
+							write.write(((JTextField) variables.get(i).get(0)).getText().trim());
+							writeNew.write(((JTextField) variables.get(i).get(0)).getText().trim());
 						}
+						// write.write(" " + ((JComboBox)
+						// variables.get(i).get(1)).getSelectedItem());
+						for (int j = 3; j < variables.get(i).size(); j++) {
+							if (((JTextField) variables.get(i).get(j)).getText().trim().equals("")) {
+								write.write(" ?");
+								writeNew.write(" ?");
+							}
+							else {
+								write.write(" "
+										+ ((JTextField) variables.get(i).get(j)).getText().trim());
+								writeNew.write(" "
+										+ ((JTextField) variables.get(i).get(j)).getText().trim());
+							}
+						}
+						write.write("\n");
+						writeNew.write("\n");
 					}
-					write.write("\n");
-					writeNew.write("\n");
 				}
 				write.close();
 				writeNew.close();
@@ -1341,7 +1381,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 				lhpn.delete();
 				String command = "data2lhpn.py -b" + binFile + " -l" + lhpnFile;
 				log.addText("Executing:\n" + command + " " + directory + "\n");
-				//File work = new File(directory);
+				// File work = new File(directory);
 				final Process run = Runtime.getRuntime().exec(command, null, work);
 				cancel.setActionCommand("Cancel");
 				cancel.addActionListener(new ActionListener() {
