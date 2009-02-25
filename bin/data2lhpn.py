@@ -995,14 +995,20 @@ def dmvcVarExists(varsL):
 # in the same order.
 ##############################################################################
 def extractVars(datFile):
+	var = 0
 	varsL = []
 	line = ""
 	inputF = open(datFile, 'r')
 	varNamesL = inputF.readlines()
 	for i in range(len(varNamesL)):
-		varNamesL[i] = cleanLine(varNamesL[i])
-		tempL = varNamesL[i].split(" ")
+		lineArrayL = cleanLine(varNamesL[i])
+		tempL = lineArrayL[i].split(" ")
+		if (lDotR.match(tempL[0])):
+			for j in range(1,len(tempL)):
+			    varNamesL[var] = tempL[j]
+			    var += 1
 		varNamesL[i] = tempL[0]
+		var += 1
 	for varStr in varNamesL:
 		varsL.append(Variable(varStr))
 	varsL[0].dmvc = False
@@ -1015,13 +1021,17 @@ def extractVars(datFile):
 ##############################################################################
 def extractDatVars(datFile):
 	varsL = []
-	line = ""
 	inputF = open(datFile, 'r')
-	for i in range(3):
-		line = inputF.readline()
-	varNames = cleanLine(line)
-	varNamesL = varNames.split(" ")
+	linesL = inputF.read()
+	rowsL = rowsR.findall(linesL)
+	for i in range(len(rowsL)):
+         rowsL[i] = cleanRow(rowsL[i])
+	numPoints = -1
+	varNames = cleanRow(rowsL[0])
+	varNamesL = []
+	varNamesL = varNames.split(",")
 	for varStr in varNamesL:
+		varStr = cleanName(varStr)
 		varsL.append(Variable(varStr))
 	varsL[0].dmvc = False
 	inputF.close()
@@ -1185,7 +1195,7 @@ def parseBinsFile(binsFile,varsL,trace,datVarsL):
 				for i in range(1,len(dmvcL)):
 					found = False
 					for j in range(1,len(varsL)):
-						if outputL[i] == varsL[j].name:
+						if dmvcL[i] == varsL[j].name:
 							#print varsL[j].name+" is dmvc."
 							varsL[j].dmvc = True
 							found = True
@@ -1258,7 +1268,7 @@ def parseBinsFile(binsFile,varsL,trace,datVarsL):
 			found = False
 			for j in range(0,len(datVarsL)):
 				if cLineL[0] == datVarsL[j].name:
-					divisionsStrL[j-1] = cLineL[1:]
+					#divisionsStrL[j-1] = cLineL[1:]
 					found = True
 					break
 			if not found:
@@ -1268,11 +1278,16 @@ def parseBinsFile(binsFile,varsL,trace,datVarsL):
 				print cStr+" Variable not found in the data file."
 				print "Line: "+linesL[i]
 				sys.exit()
+			for j in range(0,len(varsL)):
+				if cLineL[0] == varsL[j].name:
+					divisionsStrL[j-1] = cLineL[1:]
+					break
 	divisionsL = [[]]
 	for sL in divisionsStrL:
 		fL = []
 		for s in sL:
-			fL.append(float(s))
+			if s != "?":
+				fL.append(float(s))
 		divisionsL.append(fL)
 	inputF.close()
 	if numDivisions != len(varsL)-1 and not trace:
