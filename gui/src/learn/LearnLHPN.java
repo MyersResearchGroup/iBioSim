@@ -1098,37 +1098,37 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 	}
 	
 	public void reload(String newname) {
-		try {
-			Properties prop = new Properties();
-			FileInputStream in = new FileInputStream(new File(directory + separator + lrnFile));
-			prop.load(in);
-			in.close();
-			prop.setProperty("learn.file", newname);
-			prop.setProperty("learn.iter", this.iteration.getText().trim());
-			prop.setProperty("learn.bins", (String) this.numBins.getSelectedItem());
-			if (range.isSelected()) {
-				prop.setProperty("learn.equal", "range");
-			}
-			else {
-				prop.setProperty("learn.equal", "points");
-			}
-			if (auto.isSelected()) {
-				prop.setProperty("learn.use", "auto");
-			}
-			else {
-				prop.setProperty("learn.use", "user");
-			}
-			log.addText("Saving learn parameters to file:\n" + directory + separator + lrnFile
-					+ "\n");
-			FileOutputStream out = new FileOutputStream(new File(directory + separator + lrnFile));
-			prop.store(out, learnFile);
-			out.close();
-		}
-		catch (Exception e1) {
-			//e1.printStackTrace();
-			JOptionPane.showMessageDialog(biosim.frame(), "Unable to save parameter file!",
-					"Error Saving File", JOptionPane.ERROR_MESSAGE);
-		}
+//		try {
+//			Properties prop = new Properties();
+//			FileInputStream in = new FileInputStream(new File(directory + separator + lrnFile));
+//			prop.load(in);
+//			in.close();
+//			prop.setProperty("learn.file", newname);
+//			prop.setProperty("learn.iter", this.iteration.getText().trim());
+//			prop.setProperty("learn.bins", (String) this.numBins.getSelectedItem());
+//			if (range.isSelected()) {
+//				prop.setProperty("learn.equal", "range");
+//			}
+//			else {
+//				prop.setProperty("learn.equal", "points");
+//			}
+//			if (auto.isSelected()) {
+//				prop.setProperty("learn.use", "auto");
+//			}
+//			else {
+//				prop.setProperty("learn.use", "user");
+//			}
+//			log.addText("Saving learn parameters to file:\n" + directory + separator + lrnFile
+//					+ "\n");
+//			FileOutputStream out = new FileOutputStream(new File(directory + separator + lrnFile));
+//			prop.store(out, learnFile);
+//			out.close();
+//		}
+//		catch (Exception e1) {
+//			//e1.printStackTrace();
+//			JOptionPane.showMessageDialog(biosim.frame(), "Unable to save parameter file!",
+//					"Error Saving File", JOptionPane.ERROR_MESSAGE);
+//		}
 		backgroundField.setText(newname);
 	}
 
