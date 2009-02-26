@@ -5673,7 +5673,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 								}
 							}
 							refreshTree();
-							//updateAsyncViews(rename);
+							// updateAsyncViews(rename);
 							updateViewNames(tree.getFile(), rename);
 						}
 					}
@@ -9194,7 +9194,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 	}
 
 	public void updateAsyncViews(String updatedFile) {
-		//log.addText(updatedFile);
+		// log.addText(updatedFile);
 		for (int i = 0; i < tab.getTabCount(); i++) {
 			String tab = this.tab.getTitleAt(i);
 			// String properties = root + separator + tab + separator + tab +
@@ -9323,13 +9323,13 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				if (check.equals(updatedFile)) {
 					JTabbedPane learn = ((JTabbedPane) (this.tab.getComponentAt(i)));
 					for (int j = 0; j < learn.getTabCount(); j++) {
-						// log.addText(learn.getComponentAt(j).getName());
 						if (learn.getComponentAt(j).getName().equals("Data Manager")) {
 							((DataManager) (learn.getComponentAt(j))).updateSpecies();
 						}
 						else if (learn.getComponentAt(j).getName().equals("Learn")) {
 							((LearnLHPN) (learn.getComponentAt(j))).updateSpecies(root + separator
 									+ updatedFile);
+							((LearnLHPN) (learn.getComponentAt(j))).reload(updatedFile);
 						}
 						else if (learn.getComponentAt(j).getName().contains("Graph")) {
 							((Graph) (learn.getComponentAt(j))).refresh();
@@ -9337,17 +9337,6 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					}
 				}
 			}
-			// ArrayList<String> saved = new ArrayList<String>();
-			// String[] files = new File(root).list();
-			// for (String s : files) {
-			// if (s.contains(".g") && !saved.contains(s)) {
-			// LHPNFile lhpn = new LHPNFile();
-			// lhpn.load(root + separator + s);
-			// if (gcm.getSBMLFile().equals(updatedFile)) {
-			// updateAsyncViews(s);
-			// }
-			// }
-			// }
 		}
 	}
 
@@ -9457,7 +9446,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			}
 		}
 	}
-	
+
 	private void updateViewNames(String oldname, String newname) {
 		File work = new File(root);
 		String[] fileList = work.list();
@@ -9489,8 +9478,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					}
 				}
 				catch (Exception e) {
-					//log.addText("verification");
-					//e.printStackTrace();
+					// log.addText("verification");
+					// e.printStackTrace();
 					JOptionPane.showMessageDialog(frame, "Unable to load background file.",
 							"Error", JOptionPane.ERROR_MESSAGE);
 					check = "";
@@ -9499,30 +9488,30 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			if (new File(properties1).exists()) {
 				String check;
 				try {
-				Properties p = new Properties();
-				FileInputStream load = new FileInputStream(new File(properties1));
-				p.load(load);
-				load.close();
-				if (p.containsKey("synthesis.file")) {
-					String[] getProp = p.getProperty("synthesis.file").split(separator);
-					check = getProp[getProp.length - 1];
+					Properties p = new Properties();
+					FileInputStream load = new FileInputStream(new File(properties1));
+					p.load(load);
+					load.close();
+					if (p.containsKey("synthesis.file")) {
+						String[] getProp = p.getProperty("synthesis.file").split(separator);
+						check = getProp[getProp.length - 1];
+					}
+					else {
+						check = "";
+					}
+					if (check.equals(oldname)) {
+						p.setProperty("synthesis.file", newname);
+						FileOutputStream out = new FileOutputStream(new File(properties1));
+						p.store(out, properties1);
+					}
 				}
-				else {
+				catch (Exception e) {
+					// log.addText("synthesis");
+					// e.printStackTrace();
+					JOptionPane.showMessageDialog(frame, "Unable to load background file.",
+							"Error", JOptionPane.ERROR_MESSAGE);
 					check = "";
 				}
-				if (check.equals(oldname)) {
-					p.setProperty("synthesis.file", newname);
-					FileOutputStream out = new FileOutputStream(new File(properties1));
-					p.store(out, properties1);
-				}
-			}
-			catch (Exception e) {
-				//log.addText("synthesis");
-				//e.printStackTrace();
-				JOptionPane.showMessageDialog(frame, "Unable to load background file.",
-						"Error", JOptionPane.ERROR_MESSAGE);
-				check = "";
-			}
 			}
 			if (new File(properties2).exists()) {
 				String check = "";
@@ -9545,7 +9534,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					}
 				}
 				catch (Exception e) {
-					//e.printStackTrace();
+					// e.printStackTrace();
 					JOptionPane.showMessageDialog(frame, "Unable to load background file.",
 							"Error", JOptionPane.ERROR_MESSAGE);
 					check = "";
