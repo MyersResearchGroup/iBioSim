@@ -1160,16 +1160,16 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		}
 	}
 
-	public void reload(Properties prop, String newname) {
-		try {
-			FileOutputStream out = new FileOutputStream(new File(directory + separator + verFile));
-			prop.store(out, verifyFile);
-			out.close();
-		}
-		catch (IOException e) {
-			JOptionPane.showMessageDialog(biosim.frame(), "Unable to save parameter file!",
-					"Error Saving File", JOptionPane.ERROR_MESSAGE);
-		}
+	public void reload(String newname) {
+//		try {
+//			FileOutputStream out = new FileOutputStream(new File(directory + separator + verFile));
+//			prop.store(out, verifyFile);
+//			out.close();
+//		}
+//		catch (IOException e) {
+//			JOptionPane.showMessageDialog(biosim.frame(), "Unable to save parameter file!",
+//					"Error Saving File", JOptionPane.ERROR_MESSAGE);
+//		}
 		backgroundField.setText(newname);
 	}
 

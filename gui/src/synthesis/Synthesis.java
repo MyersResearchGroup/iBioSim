@@ -1406,16 +1406,8 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 		}
 	}
 	
-	public void reload(Properties prop, String newname) {
-		try {
-			FileOutputStream out = new FileOutputStream(new File(directory + separator + synthFile));
-			prop.store(out, synthesisFile);
-			out.close();
-		}
-		catch (IOException e) {
-			JOptionPane.showMessageDialog(biosim.frame(), "Unable to save parameter file!",
-					"Error Saving File", JOptionPane.ERROR_MESSAGE);
-		}
+	public void reload(String newname) {
+//		
 		backgroundField.setText(newname);
 	}
 	
