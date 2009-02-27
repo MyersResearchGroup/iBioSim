@@ -1002,12 +1002,13 @@ def extractVars(datFile):
 	varNamesL = inputF.readlines()
 	for i in range(len(varNamesL)):
 		lineArrayL = cleanLine(varNamesL[i])
-		tempL = lineArrayL[i].split(" ")
+		tempL = varNamesL[i].split(" ")
 		if (lDotR.match(tempL[0])):
-			for j in range(1,len(tempL)):
+			for j in range(2,len(tempL)):
 			    varNamesL[var] = tempL[j]
 			    var += 1
-		varNamesL[i] = tempL[0]
+		else:
+			varNamesL[i] = tempL[0]
 		var += 1
 	for varStr in varNamesL:
 		varsL.append(Variable(varStr))
@@ -1315,7 +1316,7 @@ def genBins(varsL,datL,divisionsL):
 	#print "divisionsL:"+str(divisionsL)
 	for i in range(len(datL)):
 		#loop through each variable except time
-		for j in range(1,len(varsL)):
+		for j in range(1,len(varsL)-1):
 			for k in range(len(divisionsL[j])):
 				#print "Compare:  "+str(datL[i][j])+"<="+str(divisionsL[j][k])
 				if (datL[i][j] <= divisionsL[j][k]):
@@ -1346,7 +1347,11 @@ def genRates(varsL,datL,binsL,rateSampling):
 				while mark < len(datL) and binsL[i] == binsL[mark]:
 					mark += 1
 				if datL[mark-1][0] != datL[i][0] and (mark-i) >= pathLength:
-					for j in range(1,len(varsL)):
+					for j in range(1,len(varsL)-1):
+						#print ratesL[i][j]
+						print len(datL[mark-1])
+						print j
+						#print datL[i][j]
 						ratesL[i][j] = (datL[mark-1][j]-datL[i][j])/(datL[mark-1][0]-datL[i][0])
 		else:
 			#Calculate the rates for each data point until the window would move the second point outside the bin
@@ -1425,7 +1430,7 @@ def findDMVC(datL,varsL,tParam):
 	tempRun = None
 	prevRun = None
 	runL = []
-	for j in range(len(varsL)):
+	for j in range(len(varsL)-1):
 		runL.append([])
 		if varsL[j].dmvc != False:
 			#print "Examining variable["+str(j)+"]: "+varsL[j].name
@@ -1545,7 +1550,7 @@ def updateTimeInfo(g,varsL,datL,dmvcRunL,tParam,cvg,divisionsL):
 	place = None #current place
 	prevPlace = None #previous place (required to build outgoingL)
 	transition = None
-	for i in range(len(varsL)):
+	for i in range(len(varsL)-1):
 		#Only produce time based loops for DMVC input variables
 		if varsL[i].dmvc and varsL[i].input:
 			#print "Working on DMVC variable: "+varsL[i].name
@@ -2098,22 +2103,35 @@ def writeGfile(varsL,datL,binsL,ratesL,divisionsL,tParam,g,gFile):
 		if p.outgoingL:
 			for t in p.outgoingL:
 				outputF.write("p"+str(p.placeNum)+" t"+str(t.transitionNum)+"\n")
-	outputF.write(".marking {")
+	flag = False
 	for p in g.initMarkingL:
-		outputF.write("p"+str(p.placeNum)+" ")
-	outputF.write("}\n")
-	outputF.write("#@.init_vals {")
-	for i in range(1,len(varsL)):
+		if p != None:
+			if flag == False:
+				outputF.write(".marking {")
+				flag = True
+			outputF.write("p"+str(p.placeNum)+" ")
+	if flag ==  True:
+		outputF.write("}\n")
+	flag = False
+	for i in range(1,len(varsL)-1):
+		if flag == False:
+			outputF.write("#@.init_vals {")
+			flag = True
 		outputF.write("<" + varsL[i].name + "=[" + g.minInitValInt(i) + "," + g.maxInitValInt(i) + "]>")
-	outputF.write("}\n")
-	outputF.write("#@.init_rates {")
-	for i in range(1,len(varsL)):
+	if flag == True:
+		outputF.write("}\n")
+	flag = False
+	for i in range(1,len(varsL)-1):
+		if flag == False:
+			outputF.write("#@.init_rates {")
+			flag = True
 		if g.initRateL[i][0] == "-" or varsL[i].dmvc:
 			outputF.write("<"+varsL[i].name+"=0>")
 		else:
 			outputF.write("<" + varsL[i].name + "=[" + g.minInitRateInt(i) + "," + g.maxInitRateInt(i) + "]>")
-	outputF.write("}\n")
-	outputF.write("#@.enablings {")
+	if flag == True:
+		outputF.write("}\n")
+	flag = False
 	if g.failProp:
 		enFailAnd = "&~fail"
 		enFail = "~fail"
@@ -2126,6 +2144,9 @@ def writeGfile(varsL,datL,binsL,ratesL,divisionsL,tParam,g,gFile):
 			#print "t"+str(t.transitionNum)+" - len(diffL):"+str(len(diffL))
 			condStr = ""
 			for ind in range(len(diffL)):
+				if flag == False:
+					outputF.write("#@.enablings {")
+					flag = True
 				if ind > 0:
 					condStr += "&"
 				i = diffL[ind]
@@ -2177,14 +2198,15 @@ def writeGfile(varsL,datL,binsL,ratesL,divisionsL,tParam,g,gFile):
 					condStr += "~(" + varsL[i].name + ">=" + val + ")"
 			t.enabling = condStr + enFailAnd
 			outputF.write("<t" + str(t.transitionNum) + "=[" + condStr + enFailAnd + "]>")
-	outputF.write("}\n")
+	if flag == True:
+		outputF.write("}\n")
 	hasRates = False
 	for i in range(1,len(varsL)):
 		if not varsL[i].dmvc:
 			hasRates = True
 			break
 	if hasRates:
-		outputF.write("#@.rate_assignments {")
+		flag = False
 		if placeRates:
 		  #Place based rate generation output
 			for p in placeL:
@@ -2192,6 +2214,9 @@ def writeGfile(varsL,datL,binsL,ratesL,divisionsL,tParam,g,gFile):
 					for t in p.incomingL:
 						for i in range(1,len(varsL)):
 							if not varsL[i].dmvc:
+								if flag == False:
+									outputF.write("#@.rate_assignments {")
+									flag = True
 								outputF.write("<t" + str(t.transitionNum) + "=[" + varsL[i].name + ":=[" + p.minRateInt(i) + "," + p.maxRateInt(i) + "]]>")
 		else:
 		  #Transition based rate generation output
@@ -2200,8 +2225,12 @@ def writeGfile(varsL,datL,binsL,ratesL,divisionsL,tParam,g,gFile):
 					diffL = t.outgoingP.diff(t.incomingP,varsL)
 					for i in diffL:
 						if t.incomingP.isRateP():
+							if flag == False:
+								outputF.write("#@.rate_assignments {")
+								flag = True
 							outputF.write("<t" + str(t.transitionNum) + "=[" + varsL[i].name + ":=[" + t.minRateInt(i) + "," + t.maxRateInt(i) + "]]>")
-		outputF.write("}\n")
+		if flag == True:
+			outputF.write("}\n")
 	if dmvcVarExists(varsL):
 		flag = 0
 		#outputF.write("#@.assignments {")
@@ -2688,7 +2717,7 @@ def main():
 		print "Graph with meta-bins:\n" + str(normG)
 	writeGfile(varsL,datL,binsL,ratesL,normDivisionsL,tParam,normG,gFile)
 	#writePSfile(normG,varsL,psFile)
-	writeVHDLAMSfile(varsL,datL,binsL,ratesL,normDivisionsL,tParam,normG,vhdFile)
+	#writeVHDLAMSfile(varsL,datL,binsL,ratesL,normDivisionsL,tParam,normG,vhdFile)
 	#printStatistics(9,normG,divisionsL,varsL)
 	print "Coverage:\n"+str(cvg)
 ##############################################################################

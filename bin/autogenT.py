@@ -366,7 +366,7 @@ def parseBinsFile(binsFile,varsL):
 					found = False
 					for j in range(1,len(varsL)):
 						if outputL[i] == varsL[j].name:
-							print varsL[j].name+" is dmvc."
+							#print varsL[j].name+" is dmvc."
 							varsL[j].dmvc = True
 							found = True
 							break
@@ -598,6 +598,7 @@ def initDivisionsL(datValsExtremaL,varsL,divisionsL):
 	#for i in range(len(varsL)):
 	#	divisionsL.append([])
 	for i in range(1,len(varsL)):
+		print varsL[i]
 		#print "i:"+str(i)+" "+str(datValsExtremaL[i])
 		interval = float(abs(datValsExtremaL[i][1]-datValsExtremaL[i][0]) / (numThresholds+1))
 		#print "interval:"+str(interval)
