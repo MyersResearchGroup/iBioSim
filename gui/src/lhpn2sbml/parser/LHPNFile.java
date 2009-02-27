@@ -40,6 +40,8 @@ public class LHPNFile {
 	private HashMap<String, Properties> intAssignments;
 
 	private HashMap<String, String> delays;
+	
+	private HashMap<String, String> transitionRates;
 
 	private HashMap<String, Properties> booleanAssignments;
 
@@ -54,6 +56,7 @@ public class LHPNFile {
 		outputs = new HashMap<String, String>();
 		enablings = new HashMap<String, String>();
 		delays = new HashMap<String, String>();
+		transitionRates = new HashMap<String, String>();
 		booleanAssignments = new HashMap<String, Properties>();
 		controlFlow = new HashMap<String, Properties>();
 		variables = new HashMap<String, Properties>();
@@ -69,6 +72,7 @@ public class LHPNFile {
 		outputs = new HashMap<String, String>();
 		enablings = new HashMap<String, String>();
 		delays = new HashMap<String, String>();
+		transitionRates = new HashMap<String, String>();
 		booleanAssignments = new HashMap<String, Properties>();
 		controlFlow = new HashMap<String, Properties>();
 		variables = new HashMap<String, Properties>();
@@ -328,6 +332,13 @@ public class LHPNFile {
 				}
 				buffer.append("}\n");
 			}
+			if (!transitionRates.isEmpty()) {
+				buffer.append("#@.transition_rates {");
+				for (String s : transitionRates.keySet()) {
+					buffer.append("<" + s + "=" + transitionRates.get(s) + ">");
+				}
+				buffer.append("}\n");
+			}
 			if (!booleanAssignments.isEmpty()) {
 				flag = false;
 				for (String s : booleanAssignments.keySet()) {
@@ -434,6 +445,7 @@ public class LHPNFile {
 			// System.out.println("check9");
 			// log.addText("check8");
 			parseDelayAssign(data);
+			parseTransitionRate(data);
 			// parseIntAssign(data);
 			// System.out.println("check0");
 			// log.addText("check9");
@@ -700,10 +712,11 @@ public class LHPNFile {
 		return false;
 	}
 
-	public void addTransition(String name, String delay, Properties rateAssign,
+	public void addTransition(String name, String delay, String transitionRate, Properties rateAssign,
 			Properties booleanAssign, String enabling) {
 		addTransition(name);
 		delays.put(name, delay);
+		transitionRates.put(name, transitionRate);
 		rateAssignments.put(name, rateAssign);
 		booleanAssignments.put(name, booleanAssign);
 		enablings.put(name, enabling);
@@ -712,6 +725,7 @@ public class LHPNFile {
 	public void removeTransition(String name) {
 		controlFlow.remove(name);
 		delays.remove(name);
+		transitionRates.remove(name);
 		rateAssignments.remove(name);
 		booleanAssignments.remove(name);
 		enablings.remove(name);
@@ -923,6 +937,8 @@ public class LHPNFile {
 		controlFlow.remove(oldName);
 		delays.put(newName, delays.get(oldName));
 		delays.remove(oldName);
+		transitionRates.put(newName, transitionRates.get(oldName));
+		transitionRates.remove(oldName);
 		rateAssignments.put(newName, rateAssignments.get(oldName));
 		rateAssignments.remove(oldName);
 		booleanAssignments.put(newName, booleanAssignments.get(oldName));
@@ -937,6 +953,14 @@ public class LHPNFile {
 		}
 		// log.addText(transition + delay);
 		delays.put(transition, delay);
+	}
+	
+	public void changeTransitionRate(String transition, String rate) {
+		if (transitionRates.containsKey(transition)) {
+			transitionRates.remove(transition);
+		}
+		// log.addText(transition + delay);
+		transitionRates.put(transition, rate);
 	}
 
 	public void changeEnabling(String transition, String enabling) {
@@ -1003,6 +1027,14 @@ public class LHPNFile {
 
 	public String getDelay(String var) {
 		return delays.get(var);
+	}
+	
+	public HashMap<String, String> getTransitionRates() {
+		return transitionRates;
+	}
+
+	public String getTransitionRate(String var) {
+		return transitionRates.get(var);
 	}
 
 	public String[] getControlFlow() {
@@ -1724,6 +1756,23 @@ public class LHPNFile {
 		}
 		// log.addText("check8end");
 	}
+	
+	private void parseTransitionRate(StringBuffer data) {
+		// log.addText("check8start");
+		Pattern linePattern = Pattern.compile(TRANS_RATE_LINE);
+		Matcher lineMatcher = linePattern.matcher(data.toString());
+		if (lineMatcher.find()) {
+			// log.addText("check8a");
+			Pattern delayPattern = Pattern.compile(DELAY);
+			Matcher delayMatcher = delayPattern.matcher(lineMatcher.group(1));
+			// log.addText("check8b");
+			while (delayMatcher.find()) {
+				// log.addText("check8while");
+				transitionRates.put(delayMatcher.group(1), delayMatcher.group(2));
+			}
+		}
+		// log.addText("check8end");
+	}
 
 	private void parseBooleanAssign(StringBuffer data) {
 		Pattern linePattern = Pattern.compile(BOOLEAN_LINE);
@@ -1830,6 +1879,8 @@ public class LHPNFile {
 	private static final String DELAY_LINE = "#@\\.delay_assignments \\{([\\S[^\\}]]+?)\\}";
 
 	private static final String DELAY = "<([\\w_]+)=(\\[\\w+,\\w+\\])>";
+	
+	private static final String TRANS_RATE_LINE = "#@\\.transition_rates \\{([\\S[^\\}]]+?)\\}";
 
 	private static final String BOOLEAN_LINE = "#@\\.boolean_assignments \\{([\\S[^\\}]]+?)\\}";
 

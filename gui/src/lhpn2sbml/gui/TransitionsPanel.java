@@ -61,7 +61,7 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 		//this.log = log;
 
 		fields = new HashMap<String, PropertyField>();
-		fieldPanel = new JPanel(new GridLayout(4, 2));
+		fieldPanel = new JPanel(new GridLayout(5, 2));
 
 		// ID field
 		PropertyField field = new PropertyField(GlobalConstants.ID, "", null, null,
@@ -77,6 +77,9 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 		fieldPanel.add(field);
 		field = new PropertyField("Delay Upper Bound", "inf", null, null, Utility.NAMEstring);
 		fields.put("Delay upper", field);
+		fieldPanel.add(field);
+		field = new PropertyField("Transition Rate", "", null, null, Utility.NAMEstring);
+		fields.put("Transition rate", field);
 		fieldPanel.add(field);
 
 		// Enabling condition field
@@ -215,6 +218,7 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 				}
 			}
 			fields.get("Enabling Condition").setValue(lhpn.getEnabling(selected));
+			fields.get("Transition rate").setValue(lhpn.getTransitionRate(selected));
 			// log.addText(selected + lhpn.getEnabling(selected));
 			// loadProperties(prop);
 		}
@@ -351,6 +355,7 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 			delay = fields.get("Delay lower").getValue();
 		}
 		lhpn.changeDelay(transition, delay);
+		lhpn.changeTransitionRate(transition, fields.get("Transition rate").getValue());
 		lhpn.changeEnabling(transition, fields.get("Enabling Condition").getValue());
 	}
 
