@@ -223,7 +223,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 			String templateName = JOptionPane.showInputDialog(biosim.frame(),
 					"Enter SBML template name:", "SBML Template Name", JOptionPane.PLAIN_MESSAGE);
 			if (!templateName.contains(".sbml") && !templateName.contains(".xml")) {
-				templateName = templateName + ".sbml";
+				templateName = templateName + ".xml";
 			}
 			if (new File(path + File.separator + templateName).exists()) {
 				int value = JOptionPane.showOptionDialog(biosim.frame(), templateName
@@ -263,26 +263,26 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 			}
 			network.loadProperties(gcm);
 			// Finally, output to a file
-			if (new File(path + File.separator + gcmname + ".sbml").exists()) {
+			if (new File(path + File.separator + gcmname + ".xml").exists()) {
 				int value = JOptionPane.showOptionDialog(biosim.frame(), gcmname
-						+ ".sbml already exists.  Overwrite file?", "Save file", JOptionPane.YES_NO_OPTION,
+						+ ".xml already exists.  Overwrite file?", "Save file", JOptionPane.YES_NO_OPTION,
 						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 				if (value == JOptionPane.YES_OPTION) {
-					network.mergeSBML(path + File.separator + gcmname + ".sbml");
+					network.mergeSBML(path + File.separator + gcmname + ".xml");
 					log.addText("Saving GCM file as SBML file:\n" + path + File.separator + gcmname
-							+ ".sbml\n");
+							+ ".xml\n");
 					biosim.refreshTree();
-					biosim.updateOpenSBML(gcmname + ".sbml");
+					biosim.updateOpenSBML(gcmname + ".xml");
 				}
 				else {
 					// Do nothing
 				}
 			}
 			else {
-				network.mergeSBML(path + File.separator + gcmname + ".sbml");
+				network.mergeSBML(path + File.separator + gcmname + ".xml");
 				log
 						.addText("Saving GCM file as SBML file:\n" + path + File.separator + gcmname
-								+ ".sbml\n");
+								+ ".xml\n");
 				biosim.refreshTree();
 			}
 		}
@@ -552,7 +552,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 			}
 			network.loadProperties(gcm);
 			network.mergeSBML(path + File.separator + simName + File.separator + stem + direct
-					+ File.separator + gcmname + ".sbml");
+					+ File.separator + gcmname + ".xml");
 		}
 		catch (Exception e1) {
 			JOptionPane.showMessageDialog(biosim.frame(), "Unable to create sbml file.",

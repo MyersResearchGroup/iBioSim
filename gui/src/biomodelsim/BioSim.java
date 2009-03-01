@@ -2438,7 +2438,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				String[] dot = tree.getFile().split(separator);
 				String sbmlFile = dot[dot.length - 1]
 						.substring(0, dot[dot.length - 1].length() - 3)
-						+ "sbml";
+						+ "xml";
 				// log.addText("Executing:\ngcm2sbml.pl " + tree.getFile() + " "
 				// + root
 				// + separator + sbmlFile
