@@ -1774,7 +1774,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		Font font = bioSim.getFont();
 		font = font.deriveFont(Font.BOLD, 36.0f);
 		bioSim.setFont(font);
-		JLabel version = new JLabel("Version 1.02", JLabel.CENTER);
+		JLabel version = new JLabel("Version 1.1", JLabel.CENTER);
 		JLabel uOfU = new JLabel("University of Utah", JLabel.CENTER);
 		JButton credits = new JButton("Credits");
 		credits.addActionListener(new ActionListener() {
