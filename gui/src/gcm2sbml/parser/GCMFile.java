@@ -1,10 +1,17 @@
 package gcm2sbml.parser;
 
 import gcm2sbml.util.GlobalConstants;
-import gcm2sbml.util.Utility;
 
+import java.awt.AWTError;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.GridLayout;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -18,13 +25,19 @@ import java.util.prefs.Preferences;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.sbml.libsbml.KineticLaw;
-import org.sbml.libsbml.Model;
-import org.sbml.libsbml.ModifierSpeciesReference;
-import org.sbml.libsbml.SBMLDocument;
-import org.sbml.libsbml.SBMLWriter;
-import org.sbml.libsbml.Species;
-import org.sbml.libsbml.SpeciesReference;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextField;
+
+import lhpn2sbml.parser.LHPNFile;
+
+import buttons.Buttons;
 
 /**
  * This class describes a GCM file
@@ -69,21 +82,175 @@ public class GCMFile {
 		this.bioAbs = bioAbs;
 	}
 	
-	public void createLogicalModel(String filename) {
-		if (filename != null && !filename.trim().equals("")) {
-			filename = filename.trim();
-			if (!filename.endsWith(".xml") && !filename.endsWith(".sbml")) {
-				filename += ".xml";
+	public void createLogicalModel(final String filename) {
+		final JFrame naryFrame = new JFrame("Nary Properties");
+		WindowListener w = new WindowListener() {
+			public void windowClosing(WindowEvent arg0) {
+				naryFrame.dispose();
+			}
+
+			public void windowOpened(WindowEvent arg0) {
+			}
+
+			public void windowClosed(WindowEvent arg0) {
+			}
+
+			public void windowIconified(WindowEvent arg0) {
+			}
+
+			public void windowDeiconified(WindowEvent arg0) {
+			}
+
+			public void windowActivated(WindowEvent arg0) {
+			}
+
+			public void windowDeactivated(WindowEvent arg0) {
+			}
+		};
+		naryFrame.addWindowListener(w);
+
+		JTabbedPane naryTabs = new JTabbedPane();
+		ArrayList<JPanel> specProps = new ArrayList<JPanel>();
+		final ArrayList<JTextField> texts = new ArrayList<JTextField>();
+		final ArrayList<JList> consLevel = new ArrayList<JList>();
+		final ArrayList<Object[]> conLevel = new ArrayList<Object[]>();
+		final ArrayList<String> specs = new ArrayList<String>();
+		for (String spec : species.keySet()) {
+			specs.add(spec);
+			JPanel newPanel1 = new JPanel(new GridLayout(1, 2));
+			JPanel newPanel2 = new JPanel(new GridLayout(1, 2));
+			JPanel otherLabel = new JPanel();
+			otherLabel.add(new JLabel(spec + " Concentration Level:"));
+			newPanel2.add(otherLabel);
+			consLevel.add(new JList());
+			conLevel.add(new Object[0]);
+			consLevel.get(consLevel.size() - 1).setListData(new Object[0]);
+			conLevel.set(conLevel.size() - 1, new Object[0]);
+			JScrollPane scroll = new JScrollPane();
+			scroll.setPreferredSize(new Dimension(260, 100));
+			scroll.setViewportView(consLevel.get(consLevel.size() - 1));
+			JPanel area = new JPanel();
+			area.add(scroll);
+			newPanel2.add(area);
+			JPanel addAndRemove = new JPanel();
+			JTextField adding = new JTextField(15);
+			texts.add(adding);
+			JButton Add = new JButton("Add");
+			JButton Remove = new JButton("Remove");
+			Add.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					int number = Integer.parseInt(e.getActionCommand().substring(3,
+							e.getActionCommand().length()));
+					try {
+						double get = Double.parseDouble(texts.get(number).getText().trim());
+						if (get < 0) {
+							JOptionPane.showMessageDialog(naryFrame,
+									"Concentration Levels Must Be Positive Real Numbers.", "Error",
+									JOptionPane.ERROR_MESSAGE);
+						}
+						else {
+							JList add = new JList();
+							Object[] adding = { "" + get };
+							add.setListData(adding);
+							add.setSelectedIndex(0);
+							Object[] sort = Buttons.add(conLevel.get(number),
+									consLevel.get(number), add, false, null, null, null, null,
+									null, null, naryFrame);
+							int in;
+							for (int out = 1; out < sort.length; out++) {
+								double temp = Double.parseDouble((String) sort[out]);
+								in = out;
+								while (in > 0 && Double.parseDouble((String) sort[in - 1]) >= temp) {
+									sort[in] = sort[in - 1];
+									--in;
+								}
+								sort[in] = temp + "";
+							}
+							conLevel.set(number, sort);
+						}
+					}
+					catch (Exception e1) {
+						JOptionPane.showMessageDialog(naryFrame,
+								"Concentration Levels Must Be Positive Real Numbers.", "Error",
+								JOptionPane.ERROR_MESSAGE);
+					}
+				}
+			});
+			Add.setActionCommand("Add" + (consLevel.size() - 1));
+			Remove.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					int number = Integer.parseInt(e.getActionCommand().substring(6,
+							e.getActionCommand().length()));
+					conLevel.set(number, Buttons
+							.remove(consLevel.get(number), conLevel.get(number)));
+				}
+			});
+			Remove.setActionCommand("Remove" + (consLevel.size() - 1));
+			addAndRemove.add(adding);
+			addAndRemove.add(Add);
+			addAndRemove.add(Remove);
+			JPanel newnewPanel = new JPanel(new BorderLayout());
+			newnewPanel.add(newPanel1, "North");
+			newnewPanel.add(newPanel2, "Center");
+			newnewPanel.add(addAndRemove, "South");
+			specProps.add(newnewPanel);
+			naryTabs.addTab(spec + " Properties", specProps.get(specProps.size() - 1));
+		}
+
+		JButton naryRun = new JButton("Create");
+		JButton naryClose = new JButton("Cancel");
+		naryRun.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				convertToLHPN(specs, conLevel).save(filename);
+				naryFrame.dispose();
+			}
+		});
+		naryClose.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				naryFrame.dispose();
+			}
+		});
+		JPanel naryRunPanel = new JPanel();
+		naryRunPanel.add(naryRun);
+		naryRunPanel.add(naryClose);
+
+		JPanel naryPanel = new JPanel(new BorderLayout());
+		naryPanel.add(naryTabs, "Center");
+		naryPanel.add(naryRunPanel, "South");
+
+		naryFrame.setContentPane(naryPanel);
+		naryFrame.pack();
+		Dimension screenSize;
+		try {
+			Toolkit tk = Toolkit.getDefaultToolkit();
+			screenSize = tk.getScreenSize();
+		}
+		catch (AWTError awe) {
+			screenSize = new Dimension(640, 480);
+		}
+		Dimension frameSize = naryFrame.getSize();
+
+		if (frameSize.height > screenSize.height) {
+			frameSize.height = screenSize.height;
+		}
+		if (frameSize.width > screenSize.width) {
+			frameSize.width = screenSize.width;
+		}
+		int x = screenSize.width / 2 - frameSize.width / 2;
+		int y = screenSize.height / 2 - frameSize.height / 2;
+		naryFrame.setLocation(x, y);
+		naryFrame.setResizable(false);
+		naryFrame.setVisible(true);
+	}
+
+	private LHPNFile convertToLHPN(ArrayList<String> specs, ArrayList<Object[]> conLevel) {
+		LHPNFile LHPN = new LHPNFile();
+		for (int i = 0; i < specs.size(); i++) {
+			LHPN.addPlace(specs.get(i) + "=0.0", true);
+			for (Object threshold : conLevel.get(i)) {
+				LHPN.addPlace(specs.get(i) + "=" + threshold, false);
 			}
 		}
-		else {
-			return;
-		}
-		SBMLDocument document = new SBMLDocument(2, 3);
-		Model m = document.createModel();
-		document.setModel(m);
-		Utility.addCompartments(document, "default");
-		document.getModel().getCompartment("default").setSize(1);
 		for (String influence : influences.keySet()) {
 			if (influences.get(influence).get(GlobalConstants.TYPE).equals(
 					GlobalConstants.ACTIVATION)) {
@@ -100,37 +267,6 @@ public class GCMFile {
 				Double RNAP = Double.parseDouble(parameters.get(GlobalConstants.RNAP_STRING));
 				String input = getInput(influence);
 				String output = getOutput(influence);
-				boolean addInput = true;
-				boolean addOutput = true;
-				for (int i = 0; i < document.getModel().getNumSpecies(); i++) {
-					if (document.getModel().getSpecies(i).getId().equals(input)) {
-						addInput = false;
-					}
-					else if (document.getModel().getSpecies(i).getId().equals(output)) {
-						addOutput = false;
-					}
-				}
-				if (addInput) {
-					Species s = Utility.makeSpecies(input, "default", 0);
-					Utility.addSpecies(document, s);
-				}
-				if (addOutput) {
-					Species s = Utility.makeSpecies(output, "default", 0);
-					Utility.addSpecies(document, s);
-				}
-				org.sbml.libsbml.Reaction r = new org.sbml.libsbml.Reaction(input + "_activates_"
-						+ output);
-				r.addModifier(new ModifierSpeciesReference(input));
-				r.addProduct(new SpeciesReference(output, 1));
-				r.setReversible(false);
-				r.setFast(false);
-				KineticLaw kl = new KineticLaw();
-				kl.setFormula(np + " * " + ng + " * (" + kb + " * " + Ko + " * " + RNAP + " + "
-						+ ka + " * " + Ka + " * pow(" + input + ", " + nc + ") * " + RNAP + ") / ("
-						+ 1 + " + " + Ko + " * " + RNAP + " + " + Ka + " * pow(" + input + ", "
-						+ nc + ") * " + RNAP + ")");
-				r.setKineticLaw(kl);
-				Utility.addReaction(document, r);
 			}
 			else {
 				Double np = Double
@@ -145,49 +281,9 @@ public class GCMFile {
 				Double RNAP = Double.parseDouble(parameters.get(GlobalConstants.RNAP_STRING));
 				String input = getInput(influence);
 				String output = getOutput(influence);
-				boolean addInput = true;
-				boolean addOutput = true;
-				for (int i = 0; i < document.getModel().getNumSpecies(); i++) {
-					if (document.getModel().getSpecies(i).getId().equals(input)) {
-						addInput = false;
-					}
-					else if (document.getModel().getSpecies(i).getId().equals(output)) {
-						addOutput = false;
-					}
-				}
-				if (addInput) {
-					Species s = Utility.makeSpecies(input, "default", 0);
-					Utility.addSpecies(document, s);
-				}
-				if (addOutput) {
-					Species s = Utility.makeSpecies(output, "default", 0);
-					Utility.addSpecies(document, s);
-				}
-				org.sbml.libsbml.Reaction r = new org.sbml.libsbml.Reaction(input + "_activates_"
-						+ output);
-				r.addModifier(new ModifierSpeciesReference(input));
-				r.addProduct(new SpeciesReference(output, 1));
-				r.setReversible(false);
-				r.setFast(false);
-				KineticLaw kl = new KineticLaw();
-				kl.setFormula(np + " * " + ko + " * " + ng + " * (" + Ko + " * " + RNAP + ") / ("
-						+ 1 + " + " + Ko + " * " + RNAP + " + " + Kr + " * pow(" + input + ", "
-						+ nc + ") * " + RNAP + ")");
-				r.setKineticLaw(kl);
-				Utility.addReaction(document, r);
 			}
 		}
-		try {
-			SBMLWriter writer = new SBMLWriter();
-			PrintStream p = new PrintStream(new FileOutputStream(filename));
-			m.setId(new File(filename).getName().replace(".xml", "").replace(".sbml", ""));
-			p.print(writer.writeToString(document));
-			p.close();
-		}
-		catch (FileNotFoundException e) {
-			e.printStackTrace();
-			throw new IllegalStateException("Unable to output to SBML");
-		}
+		return LHPN;
 	}
 
 	public void save(String filename) {
