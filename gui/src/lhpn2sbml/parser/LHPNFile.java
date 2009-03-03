@@ -28,6 +28,8 @@ public class LHPNFile {
 	private HashMap<String, String> enablings;
 
 	private HashMap<String, Properties> controlFlow;
+	
+	private HashMap<String, Properties> controlPlaces;
 
 	private HashMap<String, Properties> variables;
 
@@ -59,6 +61,7 @@ public class LHPNFile {
 		transitionRates = new HashMap<String, String>();
 		booleanAssignments = new HashMap<String, Properties>();
 		controlFlow = new HashMap<String, Properties>();
+		controlPlaces= new HashMap<String, Properties>();
 		variables = new HashMap<String, Properties>();
 		integers = new HashMap<String, String>();
 		rateAssignments = new HashMap<String, Properties>();
@@ -75,6 +78,7 @@ public class LHPNFile {
 		transitionRates = new HashMap<String, String>();
 		booleanAssignments = new HashMap<String, Properties>();
 		controlFlow = new HashMap<String, Properties>();
+		controlPlaces= new HashMap<String, Properties>();
 		variables = new HashMap<String, Properties>();
 		integers = new HashMap<String, String>();
 		rateAssignments = new HashMap<String, Properties>();
@@ -124,6 +128,13 @@ public class LHPNFile {
 					buffer.append(s + " ");
 				}
 				for (String s : integers.keySet()) {
+					buffer.append(s + " ");
+				}
+				buffer.append("\n");
+			}
+			if (!places.isEmpty()) {
+				buffer.append("#|.places ");
+				for (String s : places.keySet()) {
 					buffer.append(s + " ");
 				}
 				buffer.append("\n");
@@ -384,7 +395,6 @@ public class LHPNFile {
 			log.addText("Saving:\n" + file + "\n");
 		}
 		catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -395,6 +405,7 @@ public class LHPNFile {
 		outputs = new HashMap<String, String>();
 		enablings = new HashMap<String, String>();
 		controlFlow = new HashMap<String, Properties>();
+		controlPlaces = new HashMap<String, Properties>();
 		variables = new HashMap<String, Properties>();
 		contAssignments = new HashMap<String, Properties>();
 		rateAssignments = new HashMap<String, Properties>();
@@ -562,6 +573,7 @@ public class LHPNFile {
 		if (isTransition(fromName)) {
 			Properties prop = new Properties();
 			String list = "";
+			String placeList = "";
 			if (controlFlow.containsKey(fromName)) {
 				if (controlFlow.get(fromName) != null) {
 					prop = controlFlow.get(fromName);
@@ -572,14 +584,27 @@ public class LHPNFile {
 			else {
 				list = toName;
 			}
+			if (controlPlaces.containsKey(fromName)) {
+				if (controlPlaces.get(fromName) != null) {
+					prop = controlPlaces.get(fromName);
+					placeList = prop.getProperty("to");
+					placeList = placeList + " " + toName;
+				}
+			}
+			else {
+				placeList = toName;
+			}
 			// log.addText(list);
 			// System.out.println(prop == null);
 			prop.setProperty("to", list);
 			controlFlow.put(fromName, prop);
+			prop.setProperty("to", placeList);
+			controlPlaces.put(fromName, prop);
 		}
 		else {
 			Properties prop = new Properties();
 			String list = "";
+			String placeList = "";
 			if (controlFlow.containsKey(toName)) {
 				if (controlFlow.get(toName) != null) {
 					prop = controlFlow.get(toName);
@@ -593,8 +618,23 @@ public class LHPNFile {
 			else {
 				list = fromName;
 			}
+			if (controlPlaces.containsKey(toName)) {
+				if (controlPlaces.get(toName) != null) {
+					prop = controlPlaces.get(toName);
+					placeList = prop.getProperty("from");
+					placeList = placeList + " " + fromName;
+				}
+				else {
+					placeList = fromName;
+				}
+			}
+			else {
+				placeList = fromName;
+			}
 			prop.setProperty("from", list);
 			controlFlow.put(toName, prop);
+			prop.setProperty("from", list);
+			controlPlaces.put(toName, prop);
 		}
 	}
 
@@ -624,6 +664,30 @@ public class LHPNFile {
 				prop.remove("to");
 			}
 			controlFlow.put(fromName, prop);
+			prop = controlPlaces.get(toName);
+			list = prop.getProperty("from").split("\\s");
+			String[] fromList = new String[list.length - 1];
+			flag = false;
+			for (int i = 0; i < list.length - 1; i++) {
+				if (toName.equals(list[i])) {
+					flag = true;
+				}
+				else {
+					if (flag) {
+						fromList[i - 1] = list[i];
+					}
+					else {
+						fromList[i] = list[i];
+					}
+				}
+			}
+			if (fromList.length > 0) {
+				prop.put("from", fromList);
+			}
+			else {
+				prop.remove("from");
+			}
+			controlPlaces.put(toName, prop);
 		}
 		else {
 			Properties prop = controlFlow.get(toName);
@@ -649,7 +713,31 @@ public class LHPNFile {
 			else {
 				prop.remove("from");
 			}
-			controlFlow.put(toName, prop);
+			controlPlaces.put(toName, prop);
+			prop = controlPlaces.get(fromName);
+			list = prop.getProperty("to").split("\\s");
+			String[] toList = new String[list.length - 1];
+			flag = false;
+			for (int i = 0; i < list.length - 1; i++) {
+				if (toName.equals(list[i])) {
+					flag = true;
+				}
+				else {
+					if (flag) {
+						toList[i - 1] = list[i];
+					}
+					else {
+						toList[i] = list[i];
+					}
+				}
+			}
+			if (toList.length > 0) {
+				prop.put("to", toList);
+			}
+			else {
+				prop.remove("to");
+			}
+			controlPlaces.put(fromName, prop);
 		}
 	}
 
@@ -1377,6 +1465,7 @@ public class LHPNFile {
 					tempProp.setProperty("to", tempString);
 					controlFlow.put(tempPlace[0], tempProp);
 					places.put(tempPlace[1], false);
+					controlPlaces.put(tempPlace[0], new Properties());
 					// trans = tempPlace[0];
 				}
 				else if (controlFlow.containsKey(tempPlace[1])) {
@@ -1402,6 +1491,49 @@ public class LHPNFile {
 					// log.addText("check2e");
 					controlFlow.put(tempPlace[1], tempProp);
 					places.put(tempPlace[0], false);
+					controlPlaces.put(tempPlace[0], new Properties());
+					// trans = tempPlace[1];
+				}
+				if (controlPlaces.containsKey(tempPlace[0])) {
+					// log.addText("check2 if");
+					Properties tempProp = new Properties();
+					if (controlPlaces.get(tempPlace[0]) != null) {
+						tempProp = controlPlaces.get(tempPlace[0]);
+					}
+					String tempString;
+					if (tempProp.containsKey("to")) {
+						tempString = tempProp.getProperty("to");
+						tempString = tempString + " " + tempPlace[1];
+					}
+					else {
+						tempString = tempPlace[1];
+					}
+					tempProp.setProperty("to", tempString);
+					controlPlaces.put(tempPlace[0], tempProp);
+					// trans = tempPlace[0];
+				}
+				else if (controlPlaces.containsKey(tempPlace[1])) {
+					Properties tempProp = controlPlaces.get(tempPlace[1]);
+					// log.addText("check2c");
+					String tempString;
+					// Boolean temp = tempProp.containsKey("from");
+					// log.addText("check2c1");
+					// log.addText(temp.toString());
+					if (tempProp.containsKey("from")) {
+						// log.addText("check2a if");
+						tempString = tempProp.getProperty("from");
+						// log.addText("check2a if1");
+						tempString = tempString + " " + tempPlace[0];
+					}
+					else {
+						// log.addText("check2a else");
+						tempString = tempPlace[0];
+					}
+					// log.addText("check2d");
+					// log.addText("check2d1");
+					tempProp.setProperty("from", tempString);
+					// log.addText("check2e");
+					controlPlaces.put(tempPlace[1], tempProp);
 					// trans = tempPlace[1];
 				}
 			}
