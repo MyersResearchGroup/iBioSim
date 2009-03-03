@@ -392,7 +392,9 @@ public class LHPNFile {
 			// System.out.print(buffer);
 			p.print(buffer);
 			p.close();
-			log.addText("Saving:\n" + file + "\n");
+			if (log != null) {
+				log.addText("Saving:\n" + file + "\n");
+			}
 		}
 		catch (FileNotFoundException e) {
 			e.printStackTrace();
