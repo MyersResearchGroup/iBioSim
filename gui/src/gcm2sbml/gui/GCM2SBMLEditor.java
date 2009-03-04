@@ -611,7 +611,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 			}
 			network.loadProperties(gcm);
 			network.mergeSBML(path + File.separator + simName + File.separator + stem + direct
-					+ File.separator + gcmname + ".xml");
+					+ File.separator + gcmname + ".sbml");
 		}
 		catch (Exception e1) {
 			JOptionPane.showMessageDialog(biosim.frame(), "Unable to create sbml file.",
