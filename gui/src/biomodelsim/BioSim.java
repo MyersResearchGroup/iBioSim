@@ -8954,17 +8954,15 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							sim.getComponentAt(j + 1).setName("");
 						}
 						else if (sim.getComponentAt(j).getName().equals("GCM Editor")) {
-							if (updatedFile.contains(".gcm")) {
-								new File(properties).renameTo(new File(properties.replace(".sim", ".temp")));
-								boolean dirty = ((GCM2SBMLEditor) (sim.getComponentAt(j))).isDirty();
-								((GCM2SBMLEditor) (sim.getComponentAt(j))).saveParams(false, "");
-								((GCM2SBMLEditor) (sim.getComponentAt(j))).reload(updatedFile.replace(".gcm", ""));
-								((GCM2SBMLEditor) (sim.getComponentAt(j))).refresh();
-								((GCM2SBMLEditor) (sim.getComponentAt(j))).loadParams();
-								((GCM2SBMLEditor) (sim.getComponentAt(j))).setDirty(dirty);
-								new File(properties).delete();
-								new File(properties.replace(".sim", ".temp")).renameTo(new File(properties));
-							}
+							new File(properties).renameTo(new File(properties.replace(".sim", ".temp")));
+							boolean dirty = ((GCM2SBMLEditor) (sim.getComponentAt(j))).isDirty();
+							((GCM2SBMLEditor) (sim.getComponentAt(j))).saveParams(false, "");
+							((GCM2SBMLEditor) (sim.getComponentAt(j))).reload(check.replace(".gcm", ""));
+							((GCM2SBMLEditor) (sim.getComponentAt(j))).refresh();
+							((GCM2SBMLEditor) (sim.getComponentAt(j))).loadParams();
+							((GCM2SBMLEditor) (sim.getComponentAt(j))).setDirty(dirty);
+							new File(properties).delete();
+							new File(properties.replace(".sim", ".temp")).renameTo(new File(properties));
 						}
 					}
 				}
