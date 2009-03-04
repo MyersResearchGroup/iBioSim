@@ -120,6 +120,51 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		gcm.load(path + File.separator + newName + ".gcm");
 		GCMNameTextField.setText(newName);
 	}
+	
+	public void refresh() {
+		if (paramsOnly) {
+			Set<String> prom = gcm.getPromoters().keySet();
+			ArrayList<String> proms = new ArrayList<String>();
+			for (String s : prom) {
+				proms.add(s);
+			}
+			for (String s : parameterChanges) {
+				if (s.contains("/") && proms.contains(s.split("/")[0].trim())) {
+					proms.remove(s.split("/")[0].trim());
+					proms.add(s.split("/")[0].trim() + " Modified");
+				}
+			}
+			promoters.removeAllItem();
+			promoters.addAllItem(proms);
+			Set<String> spec = gcm.getSpecies().keySet();
+			ArrayList<String> specs = new ArrayList<String>();
+			for (String s : spec) {
+				specs.add(s);
+			}
+			for (String s : parameterChanges) {
+				if (s.contains("/") && specs.contains(s.split("/")[0].trim())) {
+					specs.remove(s.split("/")[0].trim());
+					specs.add(s.split("/")[0].trim() + " Modified");
+				}
+			}
+			species.removeAllItem();
+			species.addAllItem(specs);
+			Set<String> influe = gcm.getInfluences().keySet();
+			ArrayList<String> influes = new ArrayList<String>();
+			for (String s : influe) {
+				influes.add(s);
+			}
+			for (String s : parameterChanges) {
+				if (s.contains("\"") && influes.contains(s.split("\"")[1].trim())) {
+					influes.remove(s.split("\"")[1].trim());
+					influes.add(s.split("\"")[1].trim() + " Modified");
+				}
+			}
+			influences.removeAllItem();
+			influences.addAllItem(influes);
+			reloadParameters();
+		}
+	}
 
 	public String getGCMName() {
 		return gcmname;
@@ -157,6 +202,10 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 
 	public boolean isDirty() {
 		return dirty;
+	}
+	
+	public void setDirty(boolean dirty) {
+		this.dirty = dirty;
 	}
 
 	public GCMFile getGCM() {
@@ -328,6 +377,11 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 							.trim());
 					double step = Double.parseDouble((s.split(" ")[s.split(" ").length - 1]).split(",")[2]
 							.trim());
+					if (step <= 0) {
+						JOptionPane.showMessageDialog(biosim.frame(), "Step must be a positive number."
+								+ "\nDefaulting to a step of 1.", "Error", JOptionPane.ERROR_MESSAGE);
+						step = 1;
+					}
 					ArrayList<Double> add = new ArrayList<Double>();
 					for (double i = start; i <= stop; i += step) {
 						add.add(i);
@@ -342,6 +396,11 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 							.trim());
 					double step = Double.parseDouble((s.split(" ")[s.split(" ").length - 1]).split(",")[2]
 							.trim());
+					if (step <= 0) {
+						JOptionPane.showMessageDialog(biosim.frame(), "Step must be a positive number."
+								+ "\nDefaulting to a step of 1.", "Error", JOptionPane.ERROR_MESSAGE);
+						step = 1;
+					}
 					ArrayList<Double> add = new ArrayList<Double>();
 					for (double i = start; i <= stop; i += step) {
 						add.add(i);
@@ -425,7 +484,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		}
 	}
 
-	private void loadParams() {
+	public void loadParams() {
 		if (paramsOnly) {
 			try {
 				Scanner scan = new Scanner(new File(paramFile));
