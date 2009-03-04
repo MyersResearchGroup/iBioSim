@@ -4931,7 +4931,6 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 								oldDelayStr = myFormulaToString(e.getDelay().getMath());
 							}
 							Delay delay = new Delay(myParseFormula(eventDelay.getText().trim()));
-							delay.setSBMLDocument(document);
 							e.setDelay(delay);
 							error = checkEventDelayUnits(e.getDelay());
 							if (error) {
@@ -4940,7 +4939,6 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 								}
 								else {
 									Delay oldDelay = new Delay(myParseFormula(oldDelayStr));
-									oldDelay.setSBMLDocument(document);
 									e.setDelay(oldDelay);
 								}
 							}
@@ -4989,7 +4987,6 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					e.setTrigger(trigger);
 					if (!eventDelay.getText().trim().equals("")) {
 						Delay delay = new Delay(myParseFormula(eventDelay.getText().trim()));
-						delay.setSBMLDocument(document);
 						e.setDelay(delay);
 						error = checkEventDelayUnits(e.getDelay());
 					}
@@ -6769,7 +6766,6 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				}
 				if (event.isSetDelay()) {
 					Delay delay = new Delay(updateMathVar(event.getDelay().getMath(), origId, newId));
-					delay.setSBMLDocument(document);
 					event.setDelay(delay);
 				}
 				ev[i] = event.getId();
