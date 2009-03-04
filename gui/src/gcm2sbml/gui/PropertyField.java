@@ -155,16 +155,24 @@ public class PropertyField extends JPanel implements ActionListener,
 			if (i == JOptionPane.YES_OPTION) {
 				double startVal = 0.0;
 				double stopVal = 0.0;
-				double stepVal = 0.0;
+				double stepVal = 1.0;
 				try {
 					startVal = Double.parseDouble(start.getText().trim());
+				}
+				catch (Exception e1) {
+				}
+				try {
 					stopVal = Double.parseDouble(stop.getText().trim());
+				}
+				catch (Exception e1) {
+				}
+				try {
 					stepVal = Double.parseDouble(step.getText().trim());
 				}
 				catch (Exception e1) {
 				}
-				setValue("(" + startVal + "," + stopVal + "," + stepVal + ","
-						+ level.getSelectedItem() + ")");
+				setValue("(" + startVal + "," + stopVal + "," + stepVal + "," + level.getSelectedItem()
+						+ ")");
 			}
 		} else {
 			if (Utility.isValid(e.getActionCommand(), regExp)) {
