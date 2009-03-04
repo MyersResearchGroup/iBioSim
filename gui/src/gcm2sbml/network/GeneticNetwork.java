@@ -660,7 +660,6 @@ public class GeneticNetwork {
 				}
 				if (event.isSetDelay()) {
 					Delay delay = new Delay(updateMathVar(event.getDelay().getMath(), origId, newId));
-					delay.setSBMLDocument(document);
 					event.setDelay(delay);
 				}
 				for (int j = 0; j < event.getNumEventAssignments(); j++) {
