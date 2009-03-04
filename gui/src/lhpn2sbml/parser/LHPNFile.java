@@ -445,6 +445,7 @@ public class LHPNFile {
 			// parseInitialVals(data);
 			// System.out.println("check5");
 			// log.addText("check4");
+			parsePlaces(data);
 			parseMarking(data);
 			// System.out.println("check6");
 			// log.addText("check5");
@@ -468,6 +469,7 @@ public class LHPNFile {
 			//log.addText(intAssignments.toString());
 		}
 		catch (Exception e) {
+			e.printStackTrace();
 			throw new IllegalArgumentException("Unable to parse LHPN");
 		}
 	}
@@ -1746,6 +1748,19 @@ public class LHPNFile {
 		}
 		// log.addText("check3end");
 	}
+	
+	private void parsePlaces(StringBuffer data) {
+		Pattern linePattern = Pattern.compile(PLACES_LINE);
+		Matcher lineMatcher = linePattern.matcher(data.toString());
+		if (lineMatcher.find()) {
+			//log.addText(lineMatcher.group());
+			Pattern markPattern = Pattern.compile(MARKING);
+			Matcher markMatcher = markPattern.matcher(lineMatcher.group(1));
+			while (markMatcher.find()) {
+				places.put(markMatcher.group(), false);
+			}
+		}
+	}
 
 	private void parseMarking(StringBuffer data) {
 		// log.addText("check4start");
@@ -1989,6 +2004,8 @@ public class LHPNFile {
 	// private static final String INTS_INIT = "#@\\.init_ints
 	// \\{([\\S[^\\}]]+?)\\}";
 
+	private static final String PLACES_LINE = "#\\|\\.places ([.[^\\n]]+)\\n";
+	
 	private static final String MARKING_LINE = "\\.marking \\{(.+)\\}";
 
 	private static final String MARKING = "\\w+";
