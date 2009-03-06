@@ -28,7 +28,7 @@ public class LHPNFile {
 	private HashMap<String, String> enablings;
 
 	private HashMap<String, Properties> controlFlow;
-	
+
 	private HashMap<String, Properties> controlPlaces;
 
 	private HashMap<String, Properties> variables;
@@ -42,7 +42,7 @@ public class LHPNFile {
 	private HashMap<String, Properties> intAssignments;
 
 	private HashMap<String, String> delays;
-	
+
 	private HashMap<String, String> transitionRates;
 
 	private HashMap<String, Properties> booleanAssignments;
@@ -61,7 +61,7 @@ public class LHPNFile {
 		transitionRates = new HashMap<String, String>();
 		booleanAssignments = new HashMap<String, Properties>();
 		controlFlow = new HashMap<String, Properties>();
-		controlPlaces= new HashMap<String, Properties>();
+		controlPlaces = new HashMap<String, Properties>();
 		variables = new HashMap<String, Properties>();
 		integers = new HashMap<String, String>();
 		rateAssignments = new HashMap<String, Properties>();
@@ -78,7 +78,7 @@ public class LHPNFile {
 		transitionRates = new HashMap<String, String>();
 		booleanAssignments = new HashMap<String, Properties>();
 		controlFlow = new HashMap<String, Properties>();
-		controlPlaces= new HashMap<String, Properties>();
+		controlPlaces = new HashMap<String, Properties>();
 		variables = new HashMap<String, Properties>();
 		integers = new HashMap<String, String>();
 		rateAssignments = new HashMap<String, Properties>();
@@ -275,7 +275,7 @@ public class LHPNFile {
 				flag = false;
 				for (String s : contAssignments.keySet()) {
 					Properties prop = contAssignments.get(s);
-					//log.addText(prop.toString());
+					// log.addText(prop.toString());
 					if (!prop.isEmpty()) {
 						if (!flag) {
 							buffer.append("#@.assignments {");
@@ -466,7 +466,7 @@ public class LHPNFile {
 			parseBooleanAssign(data);
 			// System.out.println("check11");
 			// log.addText("check0");
-			//log.addText(intAssignments.toString());
+			// log.addText(intAssignments.toString());
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -777,26 +777,28 @@ public class LHPNFile {
 	}
 
 	public boolean containsFlow(String place) {
-		if (controlFlow.containsKey(place)) {
-				if	(!controlFlow.get(place).isEmpty()) {
-					return true;
-				}
+		if (controlFlow.containsKey(place) && controlFlow.get(place) != null) {
+			if (!controlFlow.get(place).isEmpty()) {
+				return true;
+			}
 		}
 		for (String s : controlFlow.keySet()) {
-			Properties prop = controlFlow.get(s);
-			if (prop.containsKey("to")) {
-				String[] toList = prop.get("to").toString().split(" ");
-				for (int i = 0; i < toList.length; i++) {
-					if (toList[i].equals(place)) {
-						return true;
+			if (controlFlow.get(s) != null) {
+				Properties prop = controlFlow.get(s);
+				if (prop.containsKey("to")) {
+					String[] toList = prop.get("to").toString().split(" ");
+					for (int i = 0; i < toList.length; i++) {
+						if (toList[i].equals(place)) {
+							return true;
+						}
 					}
 				}
-			}
-			if (prop.containsKey("from")) {
-				String[] fromList = prop.get("from").toString().split(" ");
-				for (int i = 0; i < fromList.length; i++) {
-					if (fromList[i].equals(place)) {
-						return true;
+				if (prop.containsKey("from")) {
+					String[] fromList = prop.get("from").toString().split(" ");
+					for (int i = 0; i < fromList.length; i++) {
+						if (fromList[i].equals(place)) {
+							return true;
+						}
 					}
 				}
 			}
@@ -804,8 +806,8 @@ public class LHPNFile {
 		return false;
 	}
 
-	public void addTransition(String name, String delay, String transitionRate, Properties rateAssign,
-			Properties booleanAssign, String enabling) {
+	public void addTransition(String name, String delay, String transitionRate,
+			Properties rateAssign, Properties booleanAssign, String enabling) {
 		addTransition(name);
 		delays.put(name, delay);
 		transitionRates.put(name, transitionRate);
@@ -937,9 +939,9 @@ public class LHPNFile {
 		if (contAssignments.get(transition) != null) {
 			prop = contAssignments.get(transition);
 		}
-		//System.out.println("here " + transition + name + value);
+		// System.out.println("here " + transition + name + value);
 		prop.setProperty(name, value);
-		//log.addText("lhpn " + prop.toString());
+		// log.addText("lhpn " + prop.toString());
 		contAssignments.put(transition, prop);
 	}
 
@@ -949,7 +951,7 @@ public class LHPNFile {
 			if (name != null && prop.containsKey(name)) {
 				prop.remove(name);
 			}
-			//log.addText("lhpn " + prop.toString());
+			// log.addText("lhpn " + prop.toString());
 			contAssignments.put(transition, prop);
 		}
 	}
@@ -1046,7 +1048,7 @@ public class LHPNFile {
 		// log.addText(transition + delay);
 		delays.put(transition, delay);
 	}
-	
+
 	public void changeTransitionRate(String transition, String rate) {
 		if (transitionRates.containsKey(transition)) {
 			transitionRates.remove(transition);
@@ -1120,7 +1122,7 @@ public class LHPNFile {
 	public String getDelay(String var) {
 		return delays.get(var);
 	}
-	
+
 	public HashMap<String, String> getTransitionRates() {
 		return transitionRates;
 	}
@@ -1238,7 +1240,7 @@ public class LHPNFile {
 	public Properties getContVars(String trans) {
 		Properties contVars = new Properties();
 		contVars = contAssignments.get(trans);
-		//log.addText("lhpn " + contVars.toString());
+		// log.addText("lhpn " + contVars.toString());
 		return contVars;
 	}
 
@@ -1338,7 +1340,7 @@ public class LHPNFile {
 	public String getContAssign(String transition, String var) {
 		if (contAssignments.containsKey(transition) && var != null) {
 			Properties prop = contAssignments.get(transition);
-			//log.addText("lhpn " + prop.toString());
+			// log.addText("lhpn " + prop.toString());
 			if (prop.containsKey(var)) {
 				return prop.getProperty(var);
 			}
@@ -1748,12 +1750,12 @@ public class LHPNFile {
 		}
 		// log.addText("check3end");
 	}
-	
+
 	private void parsePlaces(StringBuffer data) {
 		Pattern linePattern = Pattern.compile(PLACES_LINE);
 		Matcher lineMatcher = linePattern.matcher(data.toString());
 		if (lineMatcher.find()) {
-			//log.addText(lineMatcher.group());
+			// log.addText(lineMatcher.group());
 			Pattern markPattern = Pattern.compile(MARKING);
 			Matcher markMatcher = markPattern.matcher(lineMatcher.group(1));
 			while (markMatcher.find()) {
@@ -1905,7 +1907,7 @@ public class LHPNFile {
 		}
 		// log.addText("check8end");
 	}
-	
+
 	private void parseTransitionRate(StringBuffer data) {
 		// log.addText("check8start");
 		Pattern linePattern = Pattern.compile(TRANS_RATE_LINE);
@@ -2005,7 +2007,7 @@ public class LHPNFile {
 	// \\{([\\S[^\\}]]+?)\\}";
 
 	private static final String PLACES_LINE = "#\\|\\.places ([.[^\\n]]+)\\n";
-	
+
 	private static final String MARKING_LINE = "\\.marking \\{(.+)\\}";
 
 	private static final String MARKING = "\\w+";
@@ -2030,7 +2032,7 @@ public class LHPNFile {
 	private static final String DELAY_LINE = "#@\\.delay_assignments \\{([\\S[^\\}]]+?)\\}";
 
 	private static final String DELAY = "<([\\w_]+)=(\\[\\w+,\\w+\\])>";
-	
+
 	private static final String TRANS_RATE_LINE = "#@\\.transition_rates \\{([\\S[^\\}]]+?)\\}";
 
 	private static final String BOOLEAN_LINE = "#@\\.boolean_assignments \\{([\\S[^\\}]]+?)\\}";
