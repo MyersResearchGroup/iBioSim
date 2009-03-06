@@ -6302,21 +6302,25 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					if (sim) {
 						open = new JMenuItem("Open Analysis View");
 						open.addActionListener(this);
+						open.addMouseListener(this);
 						open.setActionCommand("openSim");
 					}
 					else if (synth) {
 						open = new JMenuItem("Open Synthesis View");
 						open.addActionListener(this);
+						open.addMouseListener(this);
 						open.setActionCommand("openSynth");
 					}
 					else if (ver) {
 						open = new JMenuItem("Open Verification View");
 						open.addActionListener(this);
+						open.addMouseListener(this);
 						open.setActionCommand("openVerification");
 					}
 					else {
 						open = new JMenuItem("Open Learn View");
 						open.addActionListener(this);
+						open.addMouseListener(this);
 						open.setActionCommand("openLearn");
 					}
 					JMenuItem delete = new JMenuItem("Delete");
@@ -6496,7 +6500,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							// Runtime.getRuntime().exec(cmd);
 						}
 						catch (Exception e1) {
-							JOptionPane.showMessageDialog(frame, "Unable to view this lhpn file.", "Error",
+							e1.printStackTrace();
+							JOptionPane.showMessageDialog(frame, "Unable to view this LHPN file.", "Error",
 									JOptionPane.ERROR_MESSAGE);
 						}
 					}
@@ -7256,21 +7261,25 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						if (sim) {
 							open = new JMenuItem("Open Analysis View");
 							open.addActionListener(this);
+							open.addMouseListener(this);
 							open.setActionCommand("openSim");
 						}
 						else if (synth) {
 							open = new JMenuItem("Open Synthesis View");
 							open.addActionListener(this);
+							open.addMouseListener(this);
 							open.setActionCommand("openSynth");
 						}
 						else if (ver) {
 							open = new JMenuItem("Open Verification View");
 							open.addActionListener(this);
+							open.addMouseListener(this);
 							open.setActionCommand("openVerification");
 						}
 						else {
 							open = new JMenuItem("Open Learn View");
 							open.addActionListener(this);
+							open.addMouseListener(this);
 							open.setActionCommand("openLearn");
 						}
 						JMenuItem delete = new JMenuItem("Delete");
