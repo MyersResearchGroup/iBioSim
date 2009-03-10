@@ -39,7 +39,7 @@ public class ControlFlowPanel extends JPanel implements ActionListener {
 	private HashMap<String, PropertyField> fields = null;
 
 	public ControlFlowPanel(String selected, PropertyList flowList, LHPNFile lhpn) {
-		super(new GridLayout(6, 1));
+		super(new GridLayout(2, 1));
 		this.selected = selected;
 		this.flowList = flowList;
 		this.lhpn = lhpn;
