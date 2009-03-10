@@ -244,43 +244,120 @@ public class GCMFile {
 	}
 
 	private LHPNFile convertToLHPN(ArrayList<String> specs, ArrayList<Object[]> conLevel) {
-		LHPNFile LHPN = new LHPNFile();
-		for (int i = 0; i < specs.size(); i++) {
-			LHPN.addPlace(specs.get(i) + "=0.0", true);
-			for (Object threshold : conLevel.get(i)) {
-				LHPN.addPlace(specs.get(i) + "=" + threshold, false);
-			}
-		}
+		HashMap<String, ArrayList<String>> infl = new HashMap<String, ArrayList<String>>();
 		for (String influence : influences.keySet()) {
 			if (influences.get(influence).get(GlobalConstants.TYPE).equals(
 					GlobalConstants.ACTIVATION)) {
-				Double np = Double
-						.parseDouble(parameters.get(GlobalConstants.STOICHIOMETRY_STRING));
-				Double ng = Double.parseDouble(parameters
-						.get(GlobalConstants.PROMOTER_COUNT_STRING));
-				Double kb = Double.parseDouble(parameters.get(GlobalConstants.KBASAL_STRING));
-				Double Ko = Double.parseDouble(parameters.get(GlobalConstants.RNAP_BINDING_STRING));
-				Double ka = Double.parseDouble(parameters.get(GlobalConstants.ACTIVED_STRING));
-				Double Ka = Double.parseDouble(parameters.get(GlobalConstants.KACT_STRING));
-				Double nc = Double
-						.parseDouble(parameters.get(GlobalConstants.COOPERATIVITY_STRING));
-				Double RNAP = Double.parseDouble(parameters.get(GlobalConstants.RNAP_STRING));
 				String input = getInput(influence);
 				String output = getOutput(influence);
+				if (infl.containsKey(output)) {
+					infl.get(output).add("act:" + input);
+				}
+				else {
+					ArrayList<String> out = new ArrayList<String>();
+					out.add("act:" + input);
+					infl.put(output, out);
+				}
 			}
 			else {
-				Double np = Double
-						.parseDouble(parameters.get(GlobalConstants.STOICHIOMETRY_STRING));
-				Double ko = Double.parseDouble(parameters.get(GlobalConstants.OCR_STRING));
-				Double ng = Double.parseDouble(parameters
-						.get(GlobalConstants.PROMOTER_COUNT_STRING));
-				Double Ko = Double.parseDouble(parameters.get(GlobalConstants.RNAP_BINDING_STRING));
-				Double Kr = Double.parseDouble(parameters.get(GlobalConstants.KREP_STRING));
-				Double nc = Double
-						.parseDouble(parameters.get(GlobalConstants.COOPERATIVITY_STRING));
-				Double RNAP = Double.parseDouble(parameters.get(GlobalConstants.RNAP_STRING));
 				String input = getInput(influence);
 				String output = getOutput(influence);
+				if (infl.containsKey(output)) {
+					infl.get(output).add("rep:" + input);
+				}
+				else {
+					ArrayList<String> out = new ArrayList<String>();
+					out.add("rep:" + input);
+					infl.put(output, out);
+				}
+			}
+		}
+		Double np = Double.parseDouble(parameters.get(GlobalConstants.STOICHIOMETRY_STRING));
+		Double ng = Double.parseDouble(parameters.get(GlobalConstants.PROMOTER_COUNT_STRING));
+		Double kb = Double.parseDouble(parameters.get(GlobalConstants.KBASAL_STRING));
+		Double Ko = Double.parseDouble(parameters.get(GlobalConstants.RNAP_BINDING_STRING));
+		Double ka = Double.parseDouble(parameters.get(GlobalConstants.ACTIVED_STRING));
+		Double Ka = Double.parseDouble(parameters.get(GlobalConstants.KACT_STRING));
+		Double ko = Double.parseDouble(parameters.get(GlobalConstants.OCR_STRING));
+		Double Kr = Double.parseDouble(parameters.get(GlobalConstants.KREP_STRING));
+		Double kd = Double.parseDouble(parameters.get(GlobalConstants.KDECAY_STRING));
+		Double nc = Double.parseDouble(parameters.get(GlobalConstants.COOPERATIVITY_STRING));
+		Double RNAP = Double.parseDouble(parameters.get(GlobalConstants.RNAP_STRING));
+		LHPNFile LHPN = new LHPNFile();
+		for (int i = 0; i < specs.size(); i++) {
+			LHPN.addPlace(specs.get(i) + "=0.0", true);
+			LHPN.addInteger(specs.get(i), "0");
+			String number = "0.0";
+			for (Object threshold : conLevel.get(i)) {
+				LHPN.addPlace(specs.get(i) + "=" + threshold, false);
+				LHPN.addTransition(specs.get(i) + "+=" + threshold);
+				LHPN.addControlFlow(specs.get(i) + "=" + number, specs.get(i) + "+=" + threshold);
+				LHPN
+						.addControlFlow(specs.get(i) + "+=" + threshold, specs.get(i) + "="
+								+ threshold);
+				LHPN
+						.addIntAssign(specs.get(i) + "+=" + threshold, specs.get(i),
+								(String) threshold);
+				ArrayList<String> activators = new ArrayList<String>();
+				ArrayList<String> repressors = new ArrayList<String>();
+				if (infl.containsKey(specs.get(i))) {
+					for (String in : infl.get(specs.get(i))) {
+						String[] parse = in.split(":");
+						if (parse[0].equals("act")) {
+							activators.add(parse[1]);
+						}
+						else {
+							repressors.add(parse[1]);
+						}
+					}
+				}
+				String rate = "";
+				if (activators.size() != 0) {
+					if (repressors.size() != 0) {
+						rate += (np * ng) + "*(" + (kb * Ko * RNAP);
+						for (String act : activators) {
+							rate += "+" + (ka * Ka * RNAP) + "*(" + act + "^" + nc + ")";
+						}
+						rate += ")/(" + (1 + (Ko * RNAP));
+						for (String act : activators) {
+							rate += "+" + (Ka * RNAP) + "*(" + act + "^" + nc + ")";
+						}
+						rate += ")";
+					}
+					else {
+						rate += (np * ng) + "*(" + (kb * Ko * RNAP);
+						for (String act : activators) {
+							rate += "+" + (ka * Ka * RNAP) + "*(" + act + "^" + nc + ")";
+						}
+						rate += ")/(" + (1 + (Ko * RNAP));
+						for (String act : activators) {
+							rate += "+" + (Ka * RNAP) + "*(" + act + "^" + nc + ")";
+						}
+						for (String rep : repressors) {
+							rate += "+" + Kr + "*(" + rep + "^" + nc + ")";
+						}
+						rate += ")";
+					}
+				}
+				else {
+					if (repressors.size() != 0) {
+						rate += (np * ko * ng) + "*(" + (Ko * RNAP) + ")/(" + (1 + (Ko * RNAP));
+						for (String rep : repressors) {
+							rate += "+" + Kr + "*(" + rep + "^" + nc + ")";
+						}
+						rate += ")";
+					}
+				}
+				LHPN.addRateAssign(specs.get(i) + "+=" + threshold, "r", rate);
+				LHPN.addTransition(specs.get(i) + "-=" + threshold);
+				LHPN
+						.addControlFlow(specs.get(i) + "=" + threshold, specs.get(i) + "-="
+								+ threshold);
+				LHPN.addControlFlow(specs.get(i) + "-=" + threshold, specs.get(i) + "=" + number);
+				LHPN.addIntAssign(specs.get(i) + "-=" + threshold, specs.get(i), number);
+				LHPN.addRateAssign(specs.get(i) + "-=" + threshold, "r", "(" + specs.get(i) + "*"
+						+ kd + ")/" + "(" + threshold + "-" + number + ")");
+				number = (String) threshold;
 			}
 		}
 		return LHPN;
