@@ -38,7 +38,7 @@ public class PlacePanel extends JPanel implements ActionListener {
 
 	public PlacePanel(String selected, PropertyList placeList, PropertyList controlList,
 			LHPNFile lhpn) {
-		super(new GridLayout(6, 1));
+		super(new GridLayout(2, 1));
 		this.selected = selected;
 		this.placeList = placeList;
 		this.controlList = controlList;
@@ -62,6 +62,8 @@ public class PlacePanel extends JPanel implements ActionListener {
 		tempPanel.add(tempLabel);
 		tempPanel.add(initBox);
 		add(tempPanel);
+		
+		
 
 		String oldName = null;
 		if (selected != null) {
