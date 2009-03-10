@@ -170,8 +170,9 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 			variables.addAllItem(lhpnFile.getInputs().keySet());
 		}
 		if (!lhpnFile.getOutputs().equals(null)) {
-			// log.addText(lhpnFile.getOutputs().toString());
-			variables.addAllItem(lhpnFile.getOutputs().keySet());
+			if (!(lhpnFile.getOutputs().keySet() != null)) {
+				variables.addAllItem(lhpnFile.getOutputs().keySet());
+			}
 		}
 
 		JPanel varPanel = Utility.createPanel(this, "Variables", variables, addVar, removeVar,
