@@ -5388,6 +5388,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					}
 				}
 				catch (Exception e1) {
+					e1.printStackTrace();
 					JOptionPane.showMessageDialog(frame, "Unable to rename selected file.", "Error",
 							JOptionPane.ERROR_MESSAGE);
 				}
@@ -8784,44 +8785,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				// catch (Exception e) {
 				// }
 				// if (check.equals(updatedFile)) {
-				JTabbedPane sim = ((JTabbedPane) (this.tab.getComponentAt(i)));
-				for (int j = 0; j < sim.getTabCount(); j++) {
-					if (sim.getComponentAt(j).getName().equals("Verification")) {
-						// new File(properties).renameTo(new
-						// File(properties.replace(".ver",
-						// ".temp")));
-						// boolean dirty = ((SBML_Editor)
-						// (sim.getComponentAt(j))).isDirty();
-						((Verification) (sim.getComponentAt(j))).reload(updatedFile);
-						// if (updatedFile.contains(".g")) {
-						// GCMParser parser = new GCMParser(root + separator +
-						// updatedFile);
-						// GeneticNetwork network = parser.buildNetwork();
-						// GeneticNetwork.setRoot(root + File.separator);
-						// network.mergeSBML(root + separator + tab + separator
-						// + updatedFile.replace(".g", ".vhd"));
-						// ((SBML_Editor) (sim.getComponentAt(j))).updateSBML(i,
-						// j, root
-						// + separator + tab + separator
-						// + updatedFile.replace(".g", ".vhd"));
-						// }
-						// else {
-						// ((SBML_Editor) (sim.getComponentAt(j))).updateSBML(i,
-						// j, root
-						// + separator + updatedFile);
-						// }
-						// ((SBML_Editor)
-						// (sim.getComponentAt(j))).setDirty(dirty);
-						// new File(properties).delete();
-						// new File(properties.replace(".ver",
-						// ".temp")).renameTo(new File(
-						// properties));
-						// sim.setComponentAt(j + 1, ((SBML_Editor)
-						// (sim.getComponentAt(j)))
-						// .getElementsPanel());
-						// sim.getComponentAt(j + 1).setName("");
-					}
-				}
+				Verification verify = ((Verification) (((JPanel) this.tab.getComponentAt(i)).getComponent(0)));
+				verify.reload(updatedFile);
 			}
 			// }
 			if (new File(properties1).exists()) {
