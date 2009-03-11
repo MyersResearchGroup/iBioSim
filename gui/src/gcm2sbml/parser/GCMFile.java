@@ -246,7 +246,8 @@ public class GCMFile {
 	private LHPNFile convertToLHPN(ArrayList<String> specs, ArrayList<Object[]> conLevel) {
 		HashMap<String, ArrayList<String>> infl = new HashMap<String, ArrayList<String>>();
 		for (String influence : influences.keySet()) {
-			if (influences.get(influence).get(GlobalConstants.TYPE).equals(GlobalConstants.ACTIVATION)) {
+			if (influences.get(influence).get(GlobalConstants.TYPE).equals(
+					GlobalConstants.ACTIVATION)) {
 				String input = getInput(influence);
 				String output = getOutput(influence);
 				if (infl.containsKey(output)) {
@@ -284,15 +285,20 @@ public class GCMFile {
 		Double RNAP = Double.parseDouble(parameters.get(GlobalConstants.RNAP_STRING));
 		LHPNFile LHPN = new LHPNFile();
 		for (int i = 0; i < specs.size(); i++) {
-			LHPN.addPlace(specs.get(i) + "=0.0", true);
+			int placeNum = 0;
+			int transNum = 0;
+			String previousPlaceName = specs.get(i) + placeNum;
+			placeNum++;
+			LHPN.addPlace(previousPlaceName, true);
 			LHPN.addInteger(specs.get(i), "0");
 			String number = "0.0";
 			for (Object threshold : conLevel.get(i)) {
-				LHPN.addPlace(specs.get(i) + "=" + threshold, false);
-				LHPN.addTransition(specs.get(i) + "+=" + threshold);
-				LHPN.addControlFlow(specs.get(i) + "=" + number, specs.get(i) + "+=" + threshold);
-				LHPN.addControlFlow(specs.get(i) + "+=" + threshold, specs.get(i) + "=" + threshold);
-				LHPN.addIntAssign(specs.get(i) + "+=" + threshold, specs.get(i), (String) threshold);
+				LHPN.addPlace(specs.get(i) + placeNum, false);
+				LHPN.addTransition(specs.get(i) + "_trans" + transNum);
+				LHPN.addControlFlow(previousPlaceName, specs.get(i) + "_trans" + transNum);
+				LHPN.addControlFlow(specs.get(i) + "_trans" + transNum, specs.get(i) + placeNum);
+				LHPN.addIntAssign(specs.get(i) + "_trans" + transNum, specs.get(i),
+						(String) threshold);
 				ArrayList<String> activators = new ArrayList<String>();
 				ArrayList<String> repressors = new ArrayList<String>();
 				if (infl.containsKey(specs.get(i))) {
@@ -343,14 +349,18 @@ public class GCMFile {
 						rate += ")";
 					}
 				}
-				LHPN.addRateAssign(specs.get(i) + "+=" + threshold, "r", "(" + rate + ")/" + "("
+				LHPN.addRateAssign(specs.get(i) + "_trans" + transNum, "r", "(" + rate + ")/" + "("
 						+ threshold + "-" + number + ")");
-				LHPN.addTransition(specs.get(i) + "-=" + threshold);
-				LHPN.addControlFlow(specs.get(i) + "=" + threshold, specs.get(i) + "-=" + threshold);
-				LHPN.addControlFlow(specs.get(i) + "-=" + threshold, specs.get(i) + "=" + number);
-				LHPN.addIntAssign(specs.get(i) + "-=" + threshold, specs.get(i), number);
-				LHPN.addRateAssign(specs.get(i) + "-=" + threshold, "r", "(" + specs.get(i) + "*" + kd
-						+ ")/" + "(" + threshold + "-" + number + ")");
+				transNum++;
+				LHPN.addTransition(specs.get(i) + "_trans" + transNum);
+				LHPN.addControlFlow(specs.get(i) + placeNum, specs.get(i) + "_trans" + transNum);
+				LHPN.addControlFlow(specs.get(i) + "_trans" + transNum, previousPlaceName);
+				LHPN.addIntAssign(specs.get(i) + "_trans" + transNum, specs.get(i), number);
+				LHPN.addRateAssign(specs.get(i) + "_trans" + transNum, "r", "(" + specs.get(i)
+						+ "*" + kd + ")/" + "(" + threshold + "-" + number + ")");
+				transNum++;
+				previousPlaceName = specs.get(i) + placeNum;
+				placeNum++;
 				number = (String) threshold;
 			}
 		}
