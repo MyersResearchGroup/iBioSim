@@ -246,8 +246,7 @@ public class GCMFile {
 	private LHPNFile convertToLHPN(ArrayList<String> specs, ArrayList<Object[]> conLevel) {
 		HashMap<String, ArrayList<String>> infl = new HashMap<String, ArrayList<String>>();
 		for (String influence : influences.keySet()) {
-			if (influences.get(influence).get(GlobalConstants.TYPE).equals(
-					GlobalConstants.ACTIVATION)) {
+			if (influences.get(influence).get(GlobalConstants.TYPE).equals(GlobalConstants.ACTIVATION)) {
 				String input = getInput(influence);
 				String output = getOutput(influence);
 				if (infl.containsKey(output)) {
@@ -292,12 +291,8 @@ public class GCMFile {
 				LHPN.addPlace(specs.get(i) + "=" + threshold, false);
 				LHPN.addTransition(specs.get(i) + "+=" + threshold);
 				LHPN.addControlFlow(specs.get(i) + "=" + number, specs.get(i) + "+=" + threshold);
-				LHPN
-						.addControlFlow(specs.get(i) + "+=" + threshold, specs.get(i) + "="
-								+ threshold);
-				LHPN
-						.addIntAssign(specs.get(i) + "+=" + threshold, specs.get(i),
-								(String) threshold);
+				LHPN.addControlFlow(specs.get(i) + "+=" + threshold, specs.get(i) + "=" + threshold);
+				LHPN.addIntAssign(specs.get(i) + "+=" + threshold, specs.get(i), (String) threshold);
 				ArrayList<String> activators = new ArrayList<String>();
 				ArrayList<String> repressors = new ArrayList<String>();
 				if (infl.containsKey(specs.get(i))) {
@@ -348,15 +343,14 @@ public class GCMFile {
 						rate += ")";
 					}
 				}
-				LHPN.addRateAssign(specs.get(i) + "+=" + threshold, "r", rate);
+				LHPN.addRateAssign(specs.get(i) + "+=" + threshold, "r", "(" + rate + ")/" + "("
+						+ threshold + "-" + number + ")");
 				LHPN.addTransition(specs.get(i) + "-=" + threshold);
-				LHPN
-						.addControlFlow(specs.get(i) + "=" + threshold, specs.get(i) + "-="
-								+ threshold);
+				LHPN.addControlFlow(specs.get(i) + "=" + threshold, specs.get(i) + "-=" + threshold);
 				LHPN.addControlFlow(specs.get(i) + "-=" + threshold, specs.get(i) + "=" + number);
 				LHPN.addIntAssign(specs.get(i) + "-=" + threshold, specs.get(i), number);
-				LHPN.addRateAssign(specs.get(i) + "-=" + threshold, "r", "(" + specs.get(i) + "*"
-						+ kd + ")/" + "(" + threshold + "-" + number + ")");
+				LHPN.addRateAssign(specs.get(i) + "-=" + threshold, "r", "(" + specs.get(i) + "*" + kd
+						+ ")/" + "(" + threshold + "-" + number + ")");
 				number = (String) threshold;
 			}
 		}
