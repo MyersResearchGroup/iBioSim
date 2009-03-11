@@ -284,20 +284,27 @@ public class GCMFile {
 		Double nc = Double.parseDouble(parameters.get(GlobalConstants.COOPERATIVITY_STRING));
 		Double RNAP = Double.parseDouble(parameters.get(GlobalConstants.RNAP_STRING));
 		LHPNFile LHPN = new LHPNFile();
+		Properties initCond = new Properties();
+		initCond.put("value", "0.0");
+		initCond.put("rate", "0");
+		LHPN.addVar("r", initCond);
 		for (int i = 0; i < specs.size(); i++) {
 			int placeNum = 0;
 			int transNum = 0;
 			String previousPlaceName = specs.get(i) + placeNum;
 			placeNum++;
 			LHPN.addPlace(previousPlaceName, true);
-			LHPN.addInteger(specs.get(i), "0");
+			initCond = new Properties();
+			initCond.put("value", "0.0");
+			initCond.put("rate", "0");
+			LHPN.addVar(specs.get(i), initCond);
 			String number = "0.0";
 			for (Object threshold : conLevel.get(i)) {
 				LHPN.addPlace(specs.get(i) + placeNum, false);
 				LHPN.addTransition(specs.get(i) + "_trans" + transNum);
 				LHPN.addControlFlow(previousPlaceName, specs.get(i) + "_trans" + transNum);
 				LHPN.addControlFlow(specs.get(i) + "_trans" + transNum, specs.get(i) + placeNum);
-				LHPN.addIntAssign(specs.get(i) + "_trans" + transNum, specs.get(i),
+				LHPN.addContAssign(specs.get(i) + "_trans" + transNum, specs.get(i),
 						(String) threshold);
 				ArrayList<String> activators = new ArrayList<String>();
 				ArrayList<String> repressors = new ArrayList<String>();
@@ -349,13 +356,16 @@ public class GCMFile {
 						rate += ")";
 					}
 				}
+				if (rate.equals("")) {
+					rate = "0.0";
+				}
 				LHPN.addRateAssign(specs.get(i) + "_trans" + transNum, "r", "(" + rate + ")/" + "("
 						+ threshold + "-" + number + ")");
 				transNum++;
 				LHPN.addTransition(specs.get(i) + "_trans" + transNum);
 				LHPN.addControlFlow(specs.get(i) + placeNum, specs.get(i) + "_trans" + transNum);
 				LHPN.addControlFlow(specs.get(i) + "_trans" + transNum, previousPlaceName);
-				LHPN.addIntAssign(specs.get(i) + "_trans" + transNum, specs.get(i), number);
+				LHPN.addContAssign(specs.get(i) + "_trans" + transNum, specs.get(i), number);
 				LHPN.addRateAssign(specs.get(i) + "_trans" + transNum, "r", "(" + specs.get(i)
 						+ "*" + kd + ")/" + "(" + threshold + "-" + number + ")");
 				transNum++;
