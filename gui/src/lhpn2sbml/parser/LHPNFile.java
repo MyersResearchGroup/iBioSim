@@ -1410,6 +1410,25 @@ public class LHPNFile {
 		}
 		return false;
 	}
+	
+	public Abstraction abstractLhpn() {
+		Abstraction abstraction = new Abstraction();
+		abstraction.addPlaces(places);
+		abstraction.addInputs(inputs);
+		abstraction.addOutputs(outputs);
+		abstraction.addEnablings(enablings);
+		abstraction.addDelays(delays);
+		abstraction.addRates(transitionRates);
+		abstraction.addBooleanAssignments(booleanAssignments);
+		abstraction.addMovements(controlFlow);
+		abstraction.addPlaceMovements(controlPlaces);
+		abstraction.addVariables(variables);
+		abstraction.addIntegers(integers);
+		abstraction.addRateAssignments(rateAssignments);
+		abstraction.addContinuousAssignments(contAssignments);
+		abstraction.addIntegerAssignments(intAssignments);
+		return abstraction;
+	}
 
 	/*
 	 * private void parseTransitions(StringBuffer data) { Pattern pattern =
@@ -1914,7 +1933,7 @@ public class LHPNFile {
 		Matcher lineMatcher = linePattern.matcher(data.toString());
 		if (lineMatcher.find()) {
 			// log.addText("check8a");
-			Pattern delayPattern = Pattern.compile(DELAY);
+			Pattern delayPattern = Pattern.compile(BOOLEAN_TRANS);
 			Matcher delayMatcher = delayPattern.matcher(lineMatcher.group(1));
 			// log.addText("check8b");
 			while (delayMatcher.find()) {
@@ -1932,54 +1951,66 @@ public class LHPNFile {
 			Pattern transPattern = Pattern.compile(BOOLEAN_TRANS);
 			Matcher transMatcher = transPattern.matcher(lineMatcher.group(1));
 			Pattern assignPattern = Pattern.compile(BOOLEAN_ASSIGN);
+			Pattern rangePattern = Pattern.compile(BOOLEAN_RANGE);
 			while (transMatcher.find()) {
 				Properties prop = new Properties();
+				Matcher rangeMatcher = rangePattern.matcher(transMatcher.group(2));
 				Matcher assignMatcher = assignPattern.matcher(transMatcher.group(2));
-				while (assignMatcher.find()) {
-					prop.put(assignMatcher.group(1), assignMatcher.group(2));
+				for (int i=0; i<inputs.size() + outputs.size(); i++) {
+					if (rangeMatcher.find()) {
+						System.out.println(rangeMatcher.group(1) + " range " + rangeMatcher.group(2));
+						prop.put(rangeMatcher.group(1), rangeMatcher.group(2));
+					}
+					else if (assignMatcher.find()) {
+						System.out.println(assignMatcher.group(1) + " norange " + assignMatcher.group(2));
+						prop.put(assignMatcher.group(1), assignMatcher.group(2));
+					}
+					else {
+						break;
+					}
 				}
 				booleanAssignments.put(transMatcher.group(1), prop);
 			}
 		}
 	}
 
-	private void parseIntAssign(StringBuffer data) {
-		// log.addText("check6start");
-		Properties assignProp = new Properties();
-		Pattern linePattern = Pattern.compile(ASSIGNMENT_LINE);
-		Matcher lineMatcher = linePattern.matcher(data.toString());
-		// Boolean temp = lineMatcher.find();
-		// log.addText(temp.toString());
-		// log.addText("check6a");
-		if (lineMatcher.find()) {
-			Pattern assignPattern = Pattern.compile(ASSIGNMENT);
-			// log.addText("check6a1.0");
-			// log.addText("check6a1 " + lineMatcher.group());
-			Matcher assignMatcher = assignPattern.matcher(lineMatcher.group(1));
-			Pattern varPattern = Pattern.compile(ASSIGN_VAR);
-			Pattern indetPattern = Pattern.compile(INDET_ASSIGN_VAR);
-			Matcher varMatcher;
-			// log.addText("check6ab");
-			while (assignMatcher.find()) {
-				// log.addText("check6while1");
-				varMatcher = varPattern.matcher(assignMatcher.group(2));
-				if (!varMatcher.find()) {
-					varMatcher = indetPattern.matcher(assignMatcher.group(2));
-				}
-				else {
-					varMatcher = varPattern.matcher(assignMatcher.group(2));
-				}
-				// log.addText(varMatcher.toString());
-				while (varMatcher.find()) {
-					// log.addText("check6while2");
-					assignProp.put(varMatcher.group(1), varMatcher.group(2));
-				}
-				// log.addText(assignMatcher.group(1) + assignProp.toString());
-				intAssignments.put(assignMatcher.group(1), assignProp);
-			}
-		}
-		// log.addText("check6end");
-	}
+//	private void parseIntAssign(StringBuffer data) {
+//		// log.addText("check6start");
+//		Properties assignProp = new Properties();
+//		Pattern linePattern = Pattern.compile(ASSIGNMENT_LINE);
+//		Matcher lineMatcher = linePattern.matcher(data.toString());
+//		// Boolean temp = lineMatcher.find();
+//		// log.addText(temp.toString());
+//		// log.addText("check6a");
+//		if (lineMatcher.find()) {
+//			Pattern assignPattern = Pattern.compile(ASSIGNMENT);
+//			// log.addText("check6a1.0");
+//			// log.addText("check6a1 " + lineMatcher.group());
+//			Matcher assignMatcher = assignPattern.matcher(lineMatcher.group(1));
+//			Pattern varPattern = Pattern.compile(ASSIGN_VAR);
+//			Pattern indetPattern = Pattern.compile(INDET_ASSIGN_VAR);
+//			Matcher varMatcher;
+//			// log.addText("check6ab");
+//			while (assignMatcher.find()) {
+//				// log.addText("check6while1");
+//				varMatcher = varPattern.matcher(assignMatcher.group(2));
+//				if (!varMatcher.find()) {
+//					varMatcher = indetPattern.matcher(assignMatcher.group(2));
+//				}
+//				else {
+//					varMatcher = varPattern.matcher(assignMatcher.group(2));
+//				}
+//				// log.addText(varMatcher.toString());
+//				while (varMatcher.find()) {
+//					// log.addText("check6while2");
+//					assignProp.put(varMatcher.group(1), varMatcher.group(2));
+//				}
+//				// log.addText(assignMatcher.group(1) + assignProp.toString());
+//				intAssignments.put(assignMatcher.group(1), assignProp);
+//			}
+//		}
+//		// log.addText("check6end");
+//	}
 
 	private static final String PROPERTY = "#@\\.property (\\S+?)\\n";
 
@@ -2039,7 +2070,9 @@ public class LHPNFile {
 
 	private static final String BOOLEAN_TRANS = "<([\\w]+?)=([\\S[^>]]+?)>";
 
-	private static final String BOOLEAN_ASSIGN = "\\[([\\w_]+):=([\\S^\\]]+)\\]";
+	private static final String BOOLEAN_ASSIGN = "\\[([\\w_]+):=([\\S^\\]]+?)\\]";
+	
+	private static final String BOOLEAN_RANGE = "\\[([\\w_]+):=(\\[[\\S^\\]]+?,[\\S^\\]]+?\\])\\]";
 
 	private static final String WORD = "(\\S+)";
 
