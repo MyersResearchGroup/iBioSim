@@ -1897,11 +1897,6 @@ public class LHPNFile {
 					// log.addText("indet " + indetMatcher.group(1) + ":=" +
 					// indetMatcher.group(2));
 				}
-				// log.addText("rates for " + assignMatcher.group(1));
-				// for (Object o : assignProp.keySet()) {
-				// log.addText((String)o + " " +
-				// assignProp.getProperty((String)o));
-				// }
 				rateAssignments.put(assignMatcher.group(1), assignProp);
 			}
 		}
@@ -1957,16 +1952,15 @@ public class LHPNFile {
 				Matcher rangeMatcher = rangePattern.matcher(transMatcher.group(2));
 				Matcher assignMatcher = assignPattern.matcher(transMatcher.group(2));
 				for (int i=0; i<inputs.size() + outputs.size(); i++) {
-					if (rangeMatcher.find()) {
-						System.out.println(rangeMatcher.group(1) + " range " + rangeMatcher.group(2));
+					while (rangeMatcher.find()) {
+						//System.out.println(rangeMatcher.group(1) + " range " + rangeMatcher.group(2));
 						prop.put(rangeMatcher.group(1), rangeMatcher.group(2));
 					}
-					else if (assignMatcher.find()) {
-						System.out.println(assignMatcher.group(1) + " norange " + assignMatcher.group(2));
-						prop.put(assignMatcher.group(1), assignMatcher.group(2));
-					}
-					else {
-						break;
+					while (assignMatcher.find()) {
+						if (!prop.containsKey(assignMatcher.group(1))) {
+							//System.out.println(assignMatcher.group(1) + " norange " + assignMatcher.group(2));
+							prop.put(assignMatcher.group(1), assignMatcher.group(2));
+						}
 					}
 				}
 				booleanAssignments.put(transMatcher.group(1), prop);
