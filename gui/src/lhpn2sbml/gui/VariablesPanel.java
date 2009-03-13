@@ -52,7 +52,7 @@ public class VariablesPanel extends JPanel implements ActionListener {
 
 	public VariablesPanel(String selected, PropertyList variablesList, Boolean boolCont,
 			Boolean integer, LHPNFile lhpn) {
-		super(new GridLayout(4, 1));
+		super(new GridLayout(6, 1));
 		this.selected = selected;
 		this.variablesList = variablesList;
 		this.lhpn = lhpn;
