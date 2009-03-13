@@ -78,7 +78,9 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 		field = new PropertyField("Delay Upper Bound", "inf", null, null, Utility.NAMEstring);
 		fields.put("Delay upper", field);
 		fieldPanel.add(field);
-		field = new PropertyField("Transition Rate", "", null, null, Utility.NAMEstring);
+		
+		// Transition Rate Field
+		field = new PropertyField("Transition Rate", "", null, null, Utility.NUMstring);
 		fields.put("Transition rate", field);
 		fieldPanel.add(field);
 
