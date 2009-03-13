@@ -1156,6 +1156,24 @@ public class LHPNFile {
 		}
 		return retString.split("\\n");
 	}
+	
+	public String[] getPreset(String node) {
+		if (isTransition(node)) {
+			return controlFlow.get(node).getProperty("from").split(" ");
+		}
+		else {
+			return controlPlaces.get(node).getProperty("from").split(" ");
+		}
+	}
+	
+	public String[] getPostset(String node) {
+		if (isTransition(node)) {
+			return controlFlow.get(node).getProperty("to").split(" ");
+		}
+		else {
+			return controlPlaces.get(node).getProperty("to").split(" ");
+		}
+	}
 
 	public String getInitialVal(String var) {
 		if (isContinuous(var)) {
