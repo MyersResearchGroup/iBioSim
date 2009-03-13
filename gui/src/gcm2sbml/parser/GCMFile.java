@@ -252,21 +252,21 @@ public class GCMFile {
 				String output = getOutput(influence);
 				if (influences.get(influence).get(GlobalConstants.BIO).equals("yes")) {
 					if (infl.containsKey(output)) {
-						infl.get(output).add("bioAct:" + input);
+						infl.get(output).add("bioAct:" + input + ":" + influence);
 					}
 					else {
 						ArrayList<String> out = new ArrayList<String>();
-						out.add("bioAct:" + input);
+						out.add("bioAct:" + input + ":" + influence);
 						infl.put(output, out);
 					}
 				}
 				else {
 					if (infl.containsKey(output)) {
-						infl.get(output).add("act:" + input);
+						infl.get(output).add("act:" + input + ":" + influence);
 					}
 					else {
 						ArrayList<String> out = new ArrayList<String>();
-						out.add("act:" + input);
+						out.add("act:" + input + ":" + influence);
 						infl.put(output, out);
 					}
 				}
@@ -277,38 +277,26 @@ public class GCMFile {
 				String output = getOutput(influence);
 				if (influences.get(influence).get(GlobalConstants.BIO).equals("yes")) {
 					if (infl.containsKey(output)) {
-						infl.get(output).add("bioRep:" + input);
+						infl.get(output).add("bioRep:" + input + ":" + influence);
 					}
 					else {
 						ArrayList<String> out = new ArrayList<String>();
-						out.add("bioRep:" + input);
+						out.add("bioRep:" + input + ":" + influence);
 						infl.put(output, out);
 					}
 				}
 				else {
 					if (infl.containsKey(output)) {
-						infl.get(output).add("rep:" + input);
+						infl.get(output).add("rep:" + input + ":" + influence);
 					}
 					else {
 						ArrayList<String> out = new ArrayList<String>();
-						out.add("rep:" + input);
+						out.add("rep:" + input + ":" + influence);
 						infl.put(output, out);
 					}
 				}
 			}
 		}
-		Double np = Double.parseDouble(parameters.get(GlobalConstants.STOICHIOMETRY_STRING));
-		Double ng = Double.parseDouble(parameters.get(GlobalConstants.PROMOTER_COUNT_STRING));
-		Double kb = Double.parseDouble(parameters.get(GlobalConstants.KBASAL_STRING));
-		Double Kb = Double.parseDouble(parameters.get(GlobalConstants.KBIO_STRING));
-		Double Ko = Double.parseDouble(parameters.get(GlobalConstants.RNAP_BINDING_STRING));
-		Double ka = Double.parseDouble(parameters.get(GlobalConstants.ACTIVED_STRING));
-		Double Ka = Double.parseDouble(parameters.get(GlobalConstants.KACT_STRING));
-		Double ko = Double.parseDouble(parameters.get(GlobalConstants.OCR_STRING));
-		Double Kr = Double.parseDouble(parameters.get(GlobalConstants.KREP_STRING));
-		Double kd = Double.parseDouble(parameters.get(GlobalConstants.KDECAY_STRING));
-		Double nc = Double.parseDouble(parameters.get(GlobalConstants.COOPERATIVITY_STRING));
-		Double RNAP = Double.parseDouble(parameters.get(GlobalConstants.RNAP_STRING));
 		LHPNFile LHPN = new LHPNFile();
 		Properties initCond = new Properties();
 		initCond.put("rate", "0");
@@ -332,20 +320,78 @@ public class GCMFile {
 				ArrayList<String> repressors = new ArrayList<String>();
 				ArrayList<String> bioActivators = new ArrayList<String>();
 				ArrayList<String> bioRepressors = new ArrayList<String>();
+				Double np = Double
+						.parseDouble(parameters.get(GlobalConstants.STOICHIOMETRY_STRING));
+				Double ng = Double.parseDouble(parameters
+						.get(GlobalConstants.PROMOTER_COUNT_STRING));
+				Double kb = Double.parseDouble(parameters.get(GlobalConstants.KBASAL_STRING));
+				Double Kb = Double.parseDouble(parameters.get(GlobalConstants.KBIO_STRING));
+				Double Ko = Double.parseDouble(parameters.get(GlobalConstants.RNAP_BINDING_STRING));
+				Double ka = Double.parseDouble(parameters.get(GlobalConstants.ACTIVED_STRING));
+				Double Ka = Double.parseDouble(parameters.get(GlobalConstants.KACT_STRING));
+				Double ko = Double.parseDouble(parameters.get(GlobalConstants.OCR_STRING));
+				Double Kr = Double.parseDouble(parameters.get(GlobalConstants.KREP_STRING));
+				Double kd = Double.parseDouble(parameters.get(GlobalConstants.KDECAY_STRING));
+				Double nc = Double
+						.parseDouble(parameters.get(GlobalConstants.COOPERATIVITY_STRING));
+				Double RNAP = Double.parseDouble(parameters.get(GlobalConstants.RNAP_STRING));
 				if (infl.containsKey(specs.get(i))) {
 					for (String in : infl.get(specs.get(i))) {
 						String[] parse = in.split(":");
+						String species = parse[1];
+						String influence = parse[2];
+						String promoter = influence.split(" ")[influence.split(" ").length - 1];
 						if (parse[0].equals("act")) {
-							activators.add(parse[1]);
+							activators.add(species);
 						}
 						else if (parse[0].equals("rep")) {
-							repressors.add(parse[1]);
+							repressors.add(species);
 						}
 						else if (parse[0].equals("bioAct")) {
-							bioActivators.add(parse[1]);
+							bioActivators.add(species);
 						}
 						else if (parse[0].equals("bioRep")) {
-							bioRepressors.add(parse[1]);
+							bioRepressors.add(species);
+						}
+						Properties p = this.species.get(species);
+						if (p.contains(GlobalConstants.KDECAY_STRING)) {
+							kd = Double.parseDouble((String) p.get(GlobalConstants.KDECAY_STRING));
+						}
+						p = influences.get(influence);
+						if (p.contains(GlobalConstants.COOPERATIVITY_STRING)) {
+							nc = Double.parseDouble((String) p
+									.get(GlobalConstants.COOPERATIVITY_STRING));
+						}
+						if (p.contains(GlobalConstants.KREP_STRING)) {
+							Kr = Double.parseDouble((String) p.get(GlobalConstants.KREP_STRING));
+						}
+						if (p.contains(GlobalConstants.KACT_STRING)) {
+							Ka = Double.parseDouble((String) p.get(GlobalConstants.KACT_STRING));
+						}
+						if (p.contains(GlobalConstants.KBIO_STRING)) {
+							Kb = Double.parseDouble((String) p.get(GlobalConstants.KBIO_STRING));
+						}
+						p = promoters.get(promoter);
+						if (p.contains(GlobalConstants.PROMOTER_COUNT_STRING)) {
+							ng = Double.parseDouble((String) p
+									.get(GlobalConstants.PROMOTER_COUNT_STRING));
+						}
+						if (p.contains(GlobalConstants.RNAP_BINDING_STRING)) {
+							Ko = Double.parseDouble((String) p
+									.get(GlobalConstants.RNAP_BINDING_STRING));
+						}
+						if (p.contains(GlobalConstants.OCR_STRING)) {
+							ko = Double.parseDouble((String) p.get(GlobalConstants.OCR_STRING));
+						}
+						if (p.contains(GlobalConstants.STOICHIOMETRY_STRING)) {
+							np = Double.parseDouble((String) p
+									.get(GlobalConstants.STOICHIOMETRY_STRING));
+						}
+						if (p.contains(GlobalConstants.KBASAL_STRING)) {
+							kb = Double.parseDouble((String) p.get(GlobalConstants.KBASAL_STRING));
+						}
+						if (p.contains(GlobalConstants.ACTIVED_STRING)) {
+							ka = Double.parseDouble((String) p.get(GlobalConstants.ACTIVED_STRING));
 						}
 					}
 				}
