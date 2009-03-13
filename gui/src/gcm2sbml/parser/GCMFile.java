@@ -83,7 +83,7 @@ public class GCMFile {
 	}
 	
 	public void createLogicalModel(final String filename) {
-		final JFrame naryFrame = new JFrame("Nary Properties");
+		final JFrame naryFrame = new JFrame("Thresholds");
 		WindowListener w = new WindowListener() {
 			public void windowClosing(WindowEvent arg0) {
 				naryFrame.dispose();
@@ -120,7 +120,7 @@ public class GCMFile {
 			JPanel newPanel1 = new JPanel(new GridLayout(1, 2));
 			JPanel newPanel2 = new JPanel(new GridLayout(1, 2));
 			JPanel otherLabel = new JPanel();
-			otherLabel.add(new JLabel(spec + " Concentration Level:"));
+			otherLabel.add(new JLabel(spec + " Amount:"));
 			newPanel2.add(otherLabel);
 			consLevel.add(new JList());
 			conLevel.add(new Object[0]);
@@ -142,10 +142,10 @@ public class GCMFile {
 					int number = Integer.parseInt(e.getActionCommand().substring(3,
 							e.getActionCommand().length()));
 					try {
-						double get = Double.parseDouble(texts.get(number).getText().trim());
-						if (get < 0) {
+						int get = Integer.parseInt(texts.get(number).getText().trim());
+						if (get <= 0) {
 							JOptionPane.showMessageDialog(naryFrame,
-									"Concentration Levels Must Be Positive Real Numbers.", "Error",
+									"Amounts Must Be Positive Integers.", "Error",
 									JOptionPane.ERROR_MESSAGE);
 						}
 						else {
@@ -171,7 +171,7 @@ public class GCMFile {
 					}
 					catch (Exception e1) {
 						JOptionPane.showMessageDialog(naryFrame,
-								"Concentration Levels Must Be Positive Real Numbers.", "Error",
+								"Amounts Must Be Positive Integers.", "Error",
 								JOptionPane.ERROR_MESSAGE);
 					}
 				}
@@ -250,31 +250,57 @@ public class GCMFile {
 					GlobalConstants.ACTIVATION)) {
 				String input = getInput(influence);
 				String output = getOutput(influence);
-				if (infl.containsKey(output)) {
-					infl.get(output).add("act:" + input);
+				if (influences.get(influence).get(GlobalConstants.BIO).equals("yes")) {
+					if (infl.containsKey(output)) {
+						infl.get(output).add("bioAct:" + input);
+					}
+					else {
+						ArrayList<String> out = new ArrayList<String>();
+						out.add("bioAct:" + input);
+						infl.put(output, out);
+					}
 				}
 				else {
-					ArrayList<String> out = new ArrayList<String>();
-					out.add("act:" + input);
-					infl.put(output, out);
+					if (infl.containsKey(output)) {
+						infl.get(output).add("act:" + input);
+					}
+					else {
+						ArrayList<String> out = new ArrayList<String>();
+						out.add("act:" + input);
+						infl.put(output, out);
+					}
 				}
 			}
-			else {
+			else if (influences.get(influence).get(GlobalConstants.TYPE).equals(
+					GlobalConstants.REPRESSION)) {
 				String input = getInput(influence);
 				String output = getOutput(influence);
-				if (infl.containsKey(output)) {
-					infl.get(output).add("rep:" + input);
+				if (influences.get(influence).get(GlobalConstants.BIO).equals("yes")) {
+					if (infl.containsKey(output)) {
+						infl.get(output).add("bioRep:" + input);
+					}
+					else {
+						ArrayList<String> out = new ArrayList<String>();
+						out.add("bioRep:" + input);
+						infl.put(output, out);
+					}
 				}
 				else {
-					ArrayList<String> out = new ArrayList<String>();
-					out.add("rep:" + input);
-					infl.put(output, out);
+					if (infl.containsKey(output)) {
+						infl.get(output).add("rep:" + input);
+					}
+					else {
+						ArrayList<String> out = new ArrayList<String>();
+						out.add("rep:" + input);
+						infl.put(output, out);
+					}
 				}
 			}
 		}
 		Double np = Double.parseDouble(parameters.get(GlobalConstants.STOICHIOMETRY_STRING));
 		Double ng = Double.parseDouble(parameters.get(GlobalConstants.PROMOTER_COUNT_STRING));
 		Double kb = Double.parseDouble(parameters.get(GlobalConstants.KBASAL_STRING));
+		Double Kb = Double.parseDouble(parameters.get(GlobalConstants.KBIO_STRING));
 		Double Ko = Double.parseDouble(parameters.get(GlobalConstants.RNAP_BINDING_STRING));
 		Double ka = Double.parseDouble(parameters.get(GlobalConstants.ACTIVED_STRING));
 		Double Ka = Double.parseDouble(parameters.get(GlobalConstants.KACT_STRING));
@@ -285,7 +311,6 @@ public class GCMFile {
 		Double RNAP = Double.parseDouble(parameters.get(GlobalConstants.RNAP_STRING));
 		LHPNFile LHPN = new LHPNFile();
 		Properties initCond = new Properties();
-		initCond.put("value", "0.0");
 		initCond.put("rate", "0");
 		LHPN.addVar("r", initCond);
 		for (int i = 0; i < specs.size(); i++) {
@@ -294,31 +319,46 @@ public class GCMFile {
 			String previousPlaceName = specs.get(i) + placeNum;
 			placeNum++;
 			LHPN.addPlace(previousPlaceName, true);
-			initCond = new Properties();
-			initCond.put("value", "0.0");
-			initCond.put("rate", "0");
-			LHPN.addVar(specs.get(i), initCond);
-			String number = "0.0";
+			LHPN.addInteger(specs.get(i), "0");
+			String number = "0";
 			for (Object threshold : conLevel.get(i)) {
 				LHPN.addPlace(specs.get(i) + placeNum, false);
 				LHPN.addTransition(specs.get(i) + "_trans" + transNum);
 				LHPN.addControlFlow(previousPlaceName, specs.get(i) + "_trans" + transNum);
 				LHPN.addControlFlow(specs.get(i) + "_trans" + transNum, specs.get(i) + placeNum);
-				LHPN.addContAssign(specs.get(i) + "_trans" + transNum, specs.get(i),
+				LHPN.addIntAssign(specs.get(i) + "_trans" + transNum, specs.get(i),
 						(String) threshold);
 				ArrayList<String> activators = new ArrayList<String>();
 				ArrayList<String> repressors = new ArrayList<String>();
+				ArrayList<String> bioActivators = new ArrayList<String>();
+				ArrayList<String> bioRepressors = new ArrayList<String>();
 				if (infl.containsKey(specs.get(i))) {
 					for (String in : infl.get(specs.get(i))) {
 						String[] parse = in.split(":");
 						if (parse[0].equals("act")) {
 							activators.add(parse[1]);
 						}
-						else {
+						else if (parse[0].equals("rep")) {
 							repressors.add(parse[1]);
+						}
+						else if (parse[0].equals("bioAct")) {
+							bioActivators.add(parse[1]);
+						}
+						else if (parse[0].equals("bioRep")) {
+							bioRepressors.add(parse[1]);
 						}
 					}
 				}
+				String addBio = "" + Kb;
+				for (String bioAct : bioActivators) {
+					addBio += "*" + bioAct;
+				}
+				activators.add(addBio);
+				addBio = "" + Kb;
+				for (String bioRep : bioRepressors) {
+					addBio += "*" + bioRep;
+				}
+				repressors.add(addBio);
 				String rate = "";
 				if (activators.size() != 0) {
 					if (repressors.size() != 0) {
@@ -365,7 +405,7 @@ public class GCMFile {
 				LHPN.addTransition(specs.get(i) + "_trans" + transNum);
 				LHPN.addControlFlow(specs.get(i) + placeNum, specs.get(i) + "_trans" + transNum);
 				LHPN.addControlFlow(specs.get(i) + "_trans" + transNum, previousPlaceName);
-				LHPN.addContAssign(specs.get(i) + "_trans" + transNum, specs.get(i), number);
+				LHPN.addIntAssign(specs.get(i) + "_trans" + transNum, specs.get(i), number);
 				LHPN.addRateAssign(specs.get(i) + "_trans" + transNum, "r", "(" + specs.get(i)
 						+ "*" + kd + ")/" + "(" + threshold + "-" + number + ")");
 				transNum++;
