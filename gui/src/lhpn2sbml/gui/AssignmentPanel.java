@@ -11,6 +11,7 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -29,8 +30,9 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 
 	private PropertyList assignmentList, continuousList, rateList, integerList, booleanList;
 
-	private String[] varList, boolList, contList, intList;
-	//private String[] contList, varList;
+	private ArrayList<String> boolList, contList, intList;
+	
+	private String[] varList;
 	
 	private String[] options = { "Ok", "Cancel" };
 
@@ -62,10 +64,50 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 
 		fields = new HashMap<String, PropertyField>();
 		
-		contList = lhpn.getContVars();
-		boolList = lhpn.getBooleanVars();
-		intList = lhpn.getIntVars();
-		varList = new String[contList.length + boolList.length + intList.length];
+		contList = new ArrayList<String>();
+		boolList = new ArrayList<String>();
+		intList = new ArrayList<String>();
+		String[] tempArray = lhpn.getContVars();
+		String[] tempList = assignmentList.getItems();
+		for (int i=0; i<tempArray.length; i++) {
+			boolean contains = false;
+			for (int j=0; j<tempList.length; j++) {
+				if (tempList[j].startsWith(tempArray[i])) {
+					contains = true;
+					break;
+				}
+			}
+			if (!contains && tempArray[i] != null) {
+				contList.add(tempArray[i]);
+			}
+		}
+		tempArray = lhpn.getBooleanVars();
+		for (int i=0; i<tempArray.length; i++) {
+			boolean contains = false;
+			for (int j=0; j<tempList.length; j++) {
+				if (tempList[j].startsWith(tempArray[i])) {
+					contains = true;
+					break;
+				}
+			}
+			if (!contains && tempArray[i] != null) {
+				boolList.add(tempArray[i]);
+			}
+		}
+		tempArray = lhpn.getIntVars();
+		for (int i=0; i<tempArray.length; i++) {
+			boolean contains = false;
+			for (int j=0; j<tempList.length; j++) {
+				if (tempList[j].startsWith(tempArray[i])) {
+					contains = true;
+					break;
+				}
+			}
+			if (!contains && tempArray[i] != null) {
+				contList.add(tempArray[i]);
+			}
+		}
+		varList = new String[contList.size() + boolList.size() + intList.size()];
 		//if (boolList.length > 0 && contList.length > 0 && intList.length > 0) {
 		//	System.arraycopy(boolList, 0, varList, 0, boolList.length);
 		//	System.arraycopy(contList, 0, varList, boolList.length,
@@ -78,14 +120,14 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 		//}
 		//else if (boolList.length > 0 && intList.length > 0) {	
 		//}
-		if (boolList.length > 0) {
-			System.arraycopy(boolList, 0, varList, 0, boolList.length);
+		for (int i=0; i<boolList.size(); i++) {
+			varList[i] = boolList.get(i);
 		}
-		if (contList.length > 0) {
-			System.arraycopy(contList, 0, varList, boolList.length, contList.length);
+		for (int i=0; i<contList.size(); i++) {
+			varList[i+boolList.size()] = contList.get(i);
 		}
-		if (intList.length > 0) {
-			System.arraycopy(intList, 0, varList, boolList.length + contList.length, intList.length);
+		for (int i=0; i<intList.size(); i++) {
+			varList[i+boolList.size()+contList.size()] = intList.get(i);
 		}
 
 		// Type field
@@ -131,7 +173,7 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 		
 		if (selected != null) {
 			oldName = selected;
-			String[] tempArray = new String[2];
+			tempArray = new String[2];
 			if (oldName.matches("[\\S^']+':=[\\S]+")) {
 				rateBox.setSelected(true);
 				tempArray = oldName.split("':=");

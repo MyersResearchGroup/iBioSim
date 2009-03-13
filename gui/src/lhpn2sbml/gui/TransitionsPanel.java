@@ -441,6 +441,9 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 					&& (lhpn.getIntVars().length == 0)) {
 				Utility.createErrorMessage("Error", "Add variables first");
 			}
+			else if (getName().contains("Add") && (list.getItems().length == lhpn.getContVars().length + lhpn.getBooleanVars().length + lhpn.getIntVars().length)) {
+				Utility.createErrorMessage("Error", "All variable have already been assigned in this transition");
+			}
 			else {
 				// System.out.println("transition " + selected);
 				AssignmentPanel panel = new AssignmentPanel(selected, variable, list,
