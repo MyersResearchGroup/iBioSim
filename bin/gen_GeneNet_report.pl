@@ -263,7 +263,7 @@ sub check_correctness{
     my $r_c = $correct_arcs;
     my $r_t = $total_influence_arcs;
     my $p_c = $correct_arcs;
-    my $p_t = $correct_arcs + $wrong_influence_arcs;
+    my $p_t = $correct_arcs + $wrong_influence_arcs + $extra_arcs;
     return ($r_c,$r_t,$p_c,$p_t);
 
 }
