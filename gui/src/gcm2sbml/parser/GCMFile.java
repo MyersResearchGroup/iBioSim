@@ -158,9 +158,9 @@ public class GCMFile {
 									null, null, naryFrame);
 							int in;
 							for (int out = 1; out < sort.length; out++) {
-								double temp = Double.parseDouble((String) sort[out]);
+								int temp = Integer.parseInt((String) sort[out]);
 								in = out;
-								while (in > 0 && Double.parseDouble((String) sort[in - 1]) >= temp) {
+								while (in > 0 && Integer.parseInt((String) sort[in - 1]) >= temp) {
 									sort[in] = sort[in - 1];
 									--in;
 								}
@@ -250,7 +250,8 @@ public class GCMFile {
 					GlobalConstants.ACTIVATION)) {
 				String input = getInput(influence);
 				String output = getOutput(influence);
-				if (influences.get(influence).get(GlobalConstants.BIO).equals("yes")) {
+				if (influences.get(influence).contains(GlobalConstants.BIO)
+						&& influences.get(influence).get(GlobalConstants.BIO).equals("yes")) {
 					if (infl.containsKey(output)) {
 						infl.get(output).add("bioAct:" + input + ":" + influence);
 					}
@@ -275,7 +276,8 @@ public class GCMFile {
 					GlobalConstants.REPRESSION)) {
 				String input = getInput(influence);
 				String output = getOutput(influence);
-				if (influences.get(influence).get(GlobalConstants.BIO).equals("yes")) {
+				if (influences.get(influence).contains(GlobalConstants.BIO)
+						&& influences.get(influence).get(GlobalConstants.BIO).equals("yes")) {
 					if (infl.containsKey(output)) {
 						infl.get(output).add("bioRep:" + input + ":" + influence);
 					}
@@ -300,6 +302,7 @@ public class GCMFile {
 		LHPNFile LHPN = new LHPNFile();
 		Properties initCond = new Properties();
 		initCond.put("rate", "0");
+		initCond.put("value", "0");
 		LHPN.addVar("r", initCond);
 		for (int i = 0; i < specs.size(); i++) {
 			int placeNum = 0;
@@ -399,12 +402,16 @@ public class GCMFile {
 				for (String bioAct : bioActivators) {
 					addBio += "*" + bioAct;
 				}
-				activators.add(addBio);
+				if (!addBio.equals("" + Kb)) {
+					activators.add(addBio);
+				}
 				addBio = "" + Kb;
 				for (String bioRep : bioRepressors) {
 					addBio += "*" + bioRep;
 				}
-				repressors.add(addBio);
+				if (!addBio.equals("" + Kb)) {
+					repressors.add(addBio);
+				}
 				String rate = "";
 				if (activators.size() != 0) {
 					if (repressors.size() != 0) {
