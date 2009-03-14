@@ -217,9 +217,13 @@ public class InfluencePanel extends JPanel implements ActionListener {
 					GlobalConstants.ACTIVATION)) {
 				typeBox.setSelectedItem(types[1]);
 				setType(types[1]);
-			} else {
+			} else if (prop.get(GlobalConstants.TYPE).equals(
+						GlobalConstants.REPRESSION)) {
 				typeBox.setSelectedItem(types[0]);
 				setType(types[0]);
+			} else {
+				typeBox.setSelectedItem(types[2]);
+				setType(types[2]);
 			}
 			if (prop.containsKey(GlobalConstants.BIO)) {
 				bioBox.setSelectedItem(bio[1]);
@@ -385,6 +389,8 @@ public class InfluencePanel extends JPanel implements ActionListener {
 				arrow = " +| ";
 			} else if ((typeBox.getSelectedItem()==types[1]) && (bioBox.getSelectedItem().equals(bio[1]))) {
 				arrow = " +> ";
+			} else if ((typeBox.getSelectedItem()==types[2])) {
+				arrow = " x> ";
 			}	
 			fields.get(GlobalConstants.NAME).setValue(
 					inputBox.getSelectedItem() + arrow
@@ -400,6 +406,8 @@ public class InfluencePanel extends JPanel implements ActionListener {
 				arrow = " +| ";
 			} else if ((typeBox.getSelectedItem()==types[1]) && (bioBox.getSelectedItem().equals(bio[1]))) {
 				arrow = " +> ";
+			} else if ((typeBox.getSelectedItem()==types[2])) {
+				arrow = " x> ";
 			}
 			fields.get(GlobalConstants.NAME).setValue(
 					inputBox.getSelectedItem() + arrow
@@ -422,6 +430,8 @@ public class InfluencePanel extends JPanel implements ActionListener {
 				arrow = " +| ";
 			} else if ((typeBox.getSelectedItem()==types[1]) && (bioBox.getSelectedItem().equals(bio[1]))) {
 				arrow = " +> ";
+			} else if ((typeBox.getSelectedItem()==types[2])) {
+				arrow = " x> ";
 			}
 			fields.get(GlobalConstants.NAME).setValue(
 					inputBox.getSelectedItem() + arrow
@@ -436,6 +446,9 @@ public class InfluencePanel extends JPanel implements ActionListener {
 			fields.get(GlobalConstants.KREP_STRING).setEnabled(true);
 		} else if (type.equals(types[1])) {
 			fields.get(GlobalConstants.KACT_STRING).setEnabled(true);
+			fields.get(GlobalConstants.KREP_STRING).setEnabled(false);
+		} else if (type.equals(types[2])) {
+			fields.get(GlobalConstants.KACT_STRING).setEnabled(false);
 			fields.get(GlobalConstants.KREP_STRING).setEnabled(false);
 		} else {
 			throw new IllegalStateException("Illegal state");
@@ -456,7 +469,7 @@ public class InfluencePanel extends JPanel implements ActionListener {
 	}
 
 	private String[] options = { "Ok", "Cancel" };
-	private String[] types = { "repression", "activation" };
+	private String[] types = { "repression", "activation", "no influence" };
 	private String[] bio = { "no", "yes" };
 	private HashMap<String, PropertyField> fields = null;
 	private GCMFile gcm = null;

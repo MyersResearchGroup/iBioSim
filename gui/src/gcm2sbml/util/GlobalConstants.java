@@ -48,6 +48,7 @@ public class GlobalConstants {
 	public static final String BIO = "biochem";
 	public static final String ACTIVATION = "activation";
 	public static final String REPRESSION = "repression";
+	public static final String NOINFLUENCE = "no influence";
 	
 	
 //	public static final String MAX_DIMER_VALUE = "1";

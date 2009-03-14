@@ -38,8 +38,8 @@ public class Promoter {
 		} else if (reaction.getType().equals("vee")) {
 			activatingReactions.add(reaction);
 		} else {
-			throw new IllegalArgumentException(
-					"Reaction must be activating or repressing");
+			//throw new IllegalArgumentException(
+			//		"Reaction must be activating or repressing");
 		}
 	}
 

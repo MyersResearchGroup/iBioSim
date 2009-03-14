@@ -172,8 +172,13 @@ public class GCMParser {
 			if (property.containsKey(GlobalConstants.KACT_STRING)) {
 				r.setBindingConstant(Double.parseDouble(property.getProperty(GlobalConstants.KACT_STRING)));
 			}		
-		} else {
+		} else if (property.getProperty(GlobalConstants.TYPE).equals(GlobalConstants.REPRESSION)) {
 			r.setType("tee");
+			if (property.containsKey(GlobalConstants.KREP_STRING)) {
+				r.setBindingConstant(Double.parseDouble(property.getProperty(GlobalConstants.KREP_STRING)));
+			}					
+		} else {
+			r.setType("dot");
 			if (property.containsKey(GlobalConstants.KREP_STRING)) {
 				r.setBindingConstant(Double.parseDouble(property.getProperty(GlobalConstants.KREP_STRING)));
 			}					
