@@ -485,8 +485,8 @@ public class GCMFile {
 								+ "\"" + ",");
 					} else {
 						buffer.append(checkCompabilitySave(propName.toString()) + "="
-								+ prop.getProperty(propName.toString()).toString()
-								+ ",");
+								+ "\"" + prop.getProperty(propName.toString()).toString()
+								+ "\"" + ",");
 					}
 				}
 				if (!prop.containsKey("shape")) {
@@ -532,8 +532,11 @@ public class GCMFile {
 					if (prop.getProperty(GlobalConstants.TYPE).equals(
 							GlobalConstants.ACTIVATION)) {
 						type = "vee";
-					} else {
+					} else if (prop.getProperty(GlobalConstants.TYPE).equals(
+							GlobalConstants.REPRESSION)) {
 						type = "tee";
+					} else {
+						type = "dot";
 					}
 					buffer.append("arrowhead=" + type + "");
 				}
@@ -1151,13 +1154,21 @@ public class GCMFile {
 						} else {
 							name = matcher.group(2) + " -> " + matcher.group(5);
 						}
-					} else {
+					} else if (properties.getProperty("arrowhead").indexOf("tee") != -1) {
 						properties.setProperty(GlobalConstants.TYPE,
 								GlobalConstants.REPRESSION);
 						if (properties.containsKey(GlobalConstants.BIO) && properties.get(GlobalConstants.BIO).equals("yes")) {
 							name = matcher.group(2) + " +| " + matcher.group(5);
 						} else {
 							name = matcher.group(2) + " -| " + matcher.group(5);
+						}
+					} else {
+						properties.setProperty(GlobalConstants.TYPE,
+								GlobalConstants.NOINFLUENCE);
+						if (properties.containsKey(GlobalConstants.BIO) && properties.get(GlobalConstants.BIO).equals("yes")) {
+							name = matcher.group(2) + " x> " + matcher.group(5);
+						} else {
+							name = matcher.group(2) + " x> " + matcher.group(5);
 						}
 					}
 				}
@@ -1249,12 +1260,12 @@ public class GCMFile {
 
 	private static final String STATE = "(^|\\n) *([^- \\n]*) *\\[(.*)\\]";
 
-	private static final String REACTION = "(^|\\n) *([^ \\n]*) (\\-|\\+)(\\>|\\|) *([^ \n]*) *\\[([^\\]]*)]";
+	private static final String REACTION = "(^|\\n) *([^ \\n]*) (\\-|\\+|x)(\\>|\\|) *([^ \n]*) *\\[([^\\]]*)]";
 
 	// private static final String PARSE = "(^|\\n) *([^ \\n,]*) *\\-\\> *([^
 	// \n,]*)";
 
-	private static final String PARSE = "(^|\\n) *([^ \\n,]*) (\\-|\\+)(\\>|\\|) *([^ \n,]*), Promoter ([a-zA-Z\\d_]+)";
+	private static final String PARSE = "(^|\\n) *([^ \\n,]*) (\\-|\\+|x)(\\>|\\|) *([^ \n,]*), Promoter ([a-zA-Z\\d_]+)";
 
 	private static final String PROPERTY = "([a-zA-Z\\ \\-]+)=(\"([^\"]*)\"|([^\\s,]+))";
 
