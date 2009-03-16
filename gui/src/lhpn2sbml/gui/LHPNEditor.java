@@ -243,7 +243,7 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 		try {
 			File work = new File(directory);
 			if (new File(directory + separator + filename).exists()) {
-				String dotFile = filename.replace(".lhpn", ".dot");
+				String dotFile = filename.replace(".lpn", ".dot");
 				File dot = new File(directory + separator + dotFile);
 				dot.delete();
 				String command = "";
