@@ -83,7 +83,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 		lrnFile = getFilename[getFilename.length - 1] + ".lrn";
 		binFile = getFilename[getFilename.length - 1] + ".bins";
 		newBinFile = getFilename[getFilename.length - 1] + "_NEW" + ".bins";
-		lhpnFile = getFilename[getFilename.length - 1] + ".g";
+		lhpnFile = getFilename[getFilename.length - 1] + ".lpn";
 		Preferences biosimrc = Preferences.userRoot();
 
 		// Sets up the encodings area
@@ -907,12 +907,12 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 				}
 				if (!copy.equals("")) {
 					if (copy.length() > 1) {
-						if (!copy.substring(copy.length() - 2).equals(".g")) {
-							copy += ".g";
+						if (!copy.substring(copy.length() - 2).equals(".lpn")) {
+							copy += ".lpn";
 						}
 					}
 					else {
-						copy += ".g";
+						copy += ".lpn";
 					}
 				}
 				biosim.saveLhpn(copy, directory + separator + lhpnFile);
@@ -932,7 +932,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 		try {
 			File work = new File(directory);
 			if (new File(directory + separator + lhpnFile).exists()) {
-				String dotFile = lhpnFile.replace(".g", ".dot");
+				String dotFile = lhpnFile.replace(".lpn", ".dot");
 				File dot = new File(directory + separator + dotFile);
 				dot.delete();
 				log.addText("Executing:\n" + "atacs -cPllodpl " + lhpnFile + " " + dotFile);
@@ -1478,7 +1478,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 		learnFile = newLearnFile;
 		variablesList = new ArrayList<String>();
 		/*
-		 * if ((learnFile.contains(".vhd")) || (learnFile.contains(".g"))) {
+		 * if ((learnFile.contains(".vhd")) || (learnFile.contains(".lpn"))) {
 		 * LHPNFile lhpn = new LHPNFile(); lhpn.load(directory + separator +
 		 * learnFile); Set<String> ids = lhpn.getVariables().keySet(); /*try {
 		 * FileWriter write = new FileWriter( new File(directory + separator +

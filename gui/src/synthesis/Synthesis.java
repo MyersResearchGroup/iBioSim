@@ -1442,6 +1442,9 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 			if (!circuit.exists()) {
 				String cmd = "";
 				if (circuitFile.endsWith(".g")) {
+					cmd = "atacs -lgslllodpl " + circuitFile;
+				}
+				else if (circuitFile.endsWith(".lpn")) {
 					cmd = "atacs -llodpl " + circuitFile;
 				}
 				else if (circuitFile.endsWith(".vhd")) {
