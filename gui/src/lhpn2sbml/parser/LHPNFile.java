@@ -527,7 +527,8 @@ public class LHPNFile {
 	// if (controlFlow.containsKey(from)) {
 	// name = from;
 	// flow = controlFlow.get(from);
-	// flow.setProperty(name + "postset", flow.getProperty(name + "postset") + to + " ");
+	// flow.setProperty(name + "postset", flow.getProperty(name + "postset") +
+	// to + " ");
 	// }
 	// else if (controlFlow.containsKey(to)) {
 	// name = to;
@@ -557,7 +558,8 @@ public class LHPNFile {
 	// }
 	// flow.setProperty(name + "postset", "");
 	// for (int i = 0; i < toArray.length - 1; i++) {
-	// flow.setProperty("postset", flow.getProperty("postset") + toArray[i] + " ");
+	// flow.setProperty("postset", flow.getProperty("postset") + toArray[i] + "
+	// ");
 	// }
 	// }
 	// else if (controlFlow.containsKey(to)) {
@@ -576,7 +578,8 @@ public class LHPNFile {
 	// }
 	// flow.setProperty("preset", "");
 	// for (int i = 0; i < fromArray.length - 1; i++) {
-	// flow.setProperty("preset", flow.getProperty("preset") + fromArray[i] + " ");
+	// flow.setProperty("preset", flow.getProperty("preset") + fromArray[i] + "
+	// ");
 	// }
 	// }
 	// }
@@ -592,44 +595,46 @@ public class LHPNFile {
 	public void addControlFlow(String fromName, String toName) {
 		// log.addText(fromName+toName);
 		if (isTransition(fromName)) {
-			Properties prop = new Properties();
+			Properties propTrans = new Properties();
+			Properties propPlace = new Properties();
 			String list = "";
 			String placeList = "";
 			if (controlFlow.containsKey(fromName)) {
 				if (controlFlow.get(fromName) != null) {
-					prop = controlFlow.get(fromName);
-					list = prop.getProperty("postset");
+					propTrans = controlFlow.get(fromName);
+					list = propTrans.getProperty("postset");
 					list = list + " " + toName;
 				}
 			}
 			else {
 				list = toName;
 			}
-			if (controlPlaces.containsKey(fromName)) {
-				if (controlPlaces.get(fromName) != null) {
-					prop = controlPlaces.get(fromName);
-					placeList = prop.getProperty("postset");
-					placeList = placeList + " " + toName;
+			if (controlPlaces.containsKey(toName)) {
+				if (controlPlaces.get(toName) != null) {
+					propPlace = controlPlaces.get(toName);
+					placeList = propPlace.getProperty("preset");
+					placeList = placeList + " " + fromName;
 				}
 			}
 			else {
-				placeList = toName;
+				placeList = fromName;
 			}
 			// log.addText(list);
 			// System.out.println(prop == null);
-			prop.setProperty("postset", list);
-			controlFlow.put(fromName, prop);
-			prop.setProperty("postset", placeList);
-			controlPlaces.put(fromName, prop);
+			propTrans.setProperty("postset", list);
+			controlFlow.put(fromName, propTrans);
+			propPlace.setProperty("preset", placeList);
+			controlPlaces.put(toName, propPlace);
 		}
 		else {
-			Properties prop = new Properties();
+			Properties propTrans = new Properties();
+			Properties propPlace = new Properties();
 			String list = "";
 			String placeList = "";
 			if (controlFlow.containsKey(toName)) {
 				if (controlFlow.get(toName) != null) {
-					prop = controlFlow.get(toName);
-					list = prop.getProperty("preset");
+					propTrans = controlFlow.get(toName);
+					list = propTrans.getProperty("preset");
 					list = list + " " + fromName;
 				}
 				else {
@@ -639,29 +644,33 @@ public class LHPNFile {
 			else {
 				list = fromName;
 			}
-			if (controlPlaces.containsKey(toName)) {
-				if (controlPlaces.get(toName) != null) {
-					prop = controlPlaces.get(toName);
-					placeList = prop.getProperty("preset");
-					placeList = placeList + " " + fromName;
+			if (controlPlaces.containsKey(fromName)) {
+				if (controlPlaces.get(fromName) != null) {
+					propPlace = controlPlaces.get(fromName);
+					placeList = propPlace.getProperty("postset");
+					placeList = placeList + " " + toName;
 				}
 				else {
-					placeList = fromName;
+					placeList = toName;
 				}
 			}
 			else {
-				placeList = fromName;
+				placeList = toName;
 			}
-			prop.setProperty("preset", list);
-			controlFlow.put(toName, prop);
-			prop.setProperty("preset", list);
-			controlPlaces.put(toName, prop);
+			propTrans.setProperty("preset", list);
+			controlFlow.put(toName, propTrans);
+			propPlace.setProperty("postset", list);
+			controlPlaces.put(fromName, propPlace);
 		}
 	}
 
 	public void removeControlFlow(String fromName, String toName) {
+		//System.out.println(fromName + toName);
 		if (isTransition(fromName)) {
-			Properties prop = controlFlow.get(fromName);
+			Properties prop = new Properties();
+			if (controlFlow.get(fromName) != null) {
+				prop = controlFlow.get(fromName);
+			}
 			String[] list = prop.getProperty("postset").split("\\s");
 			String[] toList = new String[list.length - 1];
 			Boolean flag = false;
@@ -685,7 +694,9 @@ public class LHPNFile {
 				prop.remove("postset");
 			}
 			controlFlow.put(fromName, prop);
-			prop = controlPlaces.get(toName);
+			if (controlPlaces.get(toName) != null) {
+				prop = controlPlaces.get(toName);
+			}
 			list = prop.getProperty("preset").split("\\s");
 			String[] fromList = new String[list.length - 1];
 			flag = false;
@@ -711,7 +722,10 @@ public class LHPNFile {
 			controlPlaces.put(toName, prop);
 		}
 		else {
-			Properties prop = controlFlow.get(toName);
+			Properties prop = new Properties();
+			if (controlFlow.get(toName) != null) {
+				prop = controlFlow.get(toName);
+			}
 			String[] list = prop.getProperty("preset").split("\\s");
 			String[] fromList = new String[list.length - 1];
 			Boolean flag = false;
@@ -735,30 +749,34 @@ public class LHPNFile {
 				prop.remove("preset");
 			}
 			controlPlaces.put(toName, prop);
-			prop = controlPlaces.get(fromName);
-			list = prop.getProperty("postset").split("\\s");
-			String[] toList = new String[list.length - 1];
-			flag = false;
-			for (int i = 0; i < list.length - 1; i++) {
-				if (toName.equals(list[i])) {
-					flag = true;
-				}
-				else {
-					if (flag) {
-						toList[i - 1] = list[i];
+			if (controlPlaces.get(fromName) != null) {
+				prop = controlPlaces.get(fromName);
+			}
+			if (prop.getProperty("postset") != null) {
+				list = prop.getProperty("postset").split("\\s");
+				String[] toList = new String[list.length - 1];
+				flag = false;
+				for (int i = 0; i < list.length - 1; i++) {
+					if (toName.equals(list[i])) {
+						flag = true;
 					}
 					else {
-						toList[i] = list[i];
+						if (flag) {
+							toList[i - 1] = list[i];
+						}
+						else {
+							toList[i] = list[i];
+						}
 					}
 				}
+				if (toList.length > 0) {
+					prop.put("postset", toList);
+				}
+				else {
+					prop.remove("postset");
+				}
+				controlPlaces.put(fromName, prop);
 			}
-			if (toList.length > 0) {
-				prop.put("postset", toList);
-			}
-			else {
-				prop.remove("postset");
-			}
-			controlPlaces.put(fromName, prop);
 		}
 	}
 
@@ -1173,7 +1191,7 @@ public class LHPNFile {
 		}
 		return retString.split("\\n");
 	}
-	
+
 	public String[] getPreset(String node) {
 		if (isTransition(node)) {
 			return controlFlow.get(node).getProperty("preset").split(" ");
@@ -1182,7 +1200,7 @@ public class LHPNFile {
 			return controlPlaces.get(node).getProperty("preset").split(" ");
 		}
 	}
-	
+
 	public String[] getPostset(String node) {
 		if (isTransition(node)) {
 			return controlFlow.get(node).getProperty("postset").split(" ");
@@ -1445,7 +1463,7 @@ public class LHPNFile {
 		}
 		return false;
 	}
-	
+
 	public Abstraction abstractLhpn() {
 		Abstraction abstraction = new Abstraction();
 		abstraction.addPlaces(places);
@@ -1986,14 +2004,16 @@ public class LHPNFile {
 				Properties prop = new Properties();
 				Matcher rangeMatcher = rangePattern.matcher(transMatcher.group(2));
 				Matcher assignMatcher = assignPattern.matcher(transMatcher.group(2));
-				for (int i=0; i<inputs.size() + outputs.size(); i++) {
+				for (int i = 0; i < inputs.size() + outputs.size(); i++) {
 					while (rangeMatcher.find()) {
-						//System.out.println(rangeMatcher.group(1) + " range " + rangeMatcher.group(2));
+						// System.out.println(rangeMatcher.group(1) + " range "
+						// + rangeMatcher.group(2));
 						prop.put(rangeMatcher.group(1), rangeMatcher.group(2));
 					}
 					while (assignMatcher.find()) {
 						if (!prop.containsKey(assignMatcher.group(1))) {
-							//System.out.println(assignMatcher.group(1) + " norange " + assignMatcher.group(2));
+							// System.out.println(assignMatcher.group(1) + "
+							// norange " + assignMatcher.group(2));
 							prop.put(assignMatcher.group(1), assignMatcher.group(2));
 						}
 					}
@@ -2003,43 +2023,43 @@ public class LHPNFile {
 		}
 	}
 
-//	private void parseIntAssign(StringBuffer data) {
-//		// log.addText("check6start");
-//		Properties assignProp = new Properties();
-//		Pattern linePattern = Pattern.compile(ASSIGNMENT_LINE);
-//		Matcher lineMatcher = linePattern.matcher(data.toString());
-//		// Boolean temp = lineMatcher.find();
-//		// log.addText(temp.toString());
-//		// log.addText("check6a");
-//		if (lineMatcher.find()) {
-//			Pattern assignPattern = Pattern.compile(ASSIGNMENT);
-//			// log.addText("check6a1.0");
-//			// log.addText("check6a1 " + lineMatcher.group());
-//			Matcher assignMatcher = assignPattern.matcher(lineMatcher.group(1));
-//			Pattern varPattern = Pattern.compile(ASSIGN_VAR);
-//			Pattern indetPattern = Pattern.compile(INDET_ASSIGN_VAR);
-//			Matcher varMatcher;
-//			// log.addText("check6ab");
-//			while (assignMatcher.find()) {
-//				// log.addText("check6while1");
-//				varMatcher = varPattern.matcher(assignMatcher.group(2));
-//				if (!varMatcher.find()) {
-//					varMatcher = indetPattern.matcher(assignMatcher.group(2));
-//				}
-//				else {
-//					varMatcher = varPattern.matcher(assignMatcher.group(2));
-//				}
-//				// log.addText(varMatcher.toString());
-//				while (varMatcher.find()) {
-//					// log.addText("check6while2");
-//					assignProp.put(varMatcher.group(1), varMatcher.group(2));
-//				}
-//				// log.addText(assignMatcher.group(1) + assignProp.toString());
-//				intAssignments.put(assignMatcher.group(1), assignProp);
-//			}
-//		}
-//		// log.addText("check6end");
-//	}
+	// private void parseIntAssign(StringBuffer data) {
+	// // log.addText("check6start");
+	// Properties assignProp = new Properties();
+	// Pattern linePattern = Pattern.compile(ASSIGNMENT_LINE);
+	// Matcher lineMatcher = linePattern.matcher(data.toString());
+	// // Boolean temp = lineMatcher.find();
+	// // log.addText(temp.toString());
+	// // log.addText("check6a");
+	// if (lineMatcher.find()) {
+	// Pattern assignPattern = Pattern.compile(ASSIGNMENT);
+	// // log.addText("check6a1.0");
+	// // log.addText("check6a1 " + lineMatcher.group());
+	// Matcher assignMatcher = assignPattern.matcher(lineMatcher.group(1));
+	// Pattern varPattern = Pattern.compile(ASSIGN_VAR);
+	// Pattern indetPattern = Pattern.compile(INDET_ASSIGN_VAR);
+	// Matcher varMatcher;
+	// // log.addText("check6ab");
+	// while (assignMatcher.find()) {
+	// // log.addText("check6while1");
+	// varMatcher = varPattern.matcher(assignMatcher.group(2));
+	// if (!varMatcher.find()) {
+	// varMatcher = indetPattern.matcher(assignMatcher.group(2));
+	// }
+	// else {
+	// varMatcher = varPattern.matcher(assignMatcher.group(2));
+	// }
+	// // log.addText(varMatcher.toString());
+	// while (varMatcher.find()) {
+	// // log.addText("check6while2");
+	// assignProp.put(varMatcher.group(1), varMatcher.group(2));
+	// }
+	// // log.addText(assignMatcher.group(1) + assignProp.toString());
+	// intAssignments.put(assignMatcher.group(1), assignProp);
+	// }
+	// }
+	// // log.addText("check6end");
+	// }
 
 	private static final String PROPERTY = "#@\\.property (\\S+?)\\n";
 
@@ -2100,7 +2120,7 @@ public class LHPNFile {
 	private static final String BOOLEAN_TRANS = "<([\\w]+?)=([\\S[^>]]+?)>";
 
 	private static final String BOOLEAN_ASSIGN = "\\[([\\w_]+):=([\\S^\\]]+?)\\]";
-	
+
 	private static final String BOOLEAN_RANGE = "\\[([\\w_]+):=(\\[[\\S^\\]]+?,[\\S^\\]]+?\\])\\]";
 
 	private static final String WORD = "(\\S+)";
