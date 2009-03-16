@@ -211,8 +211,8 @@ public class FileTree extends JPanel implements MouseListener {
 								.equals(".g")) {
 					curDir.add(new DefaultMutableTreeNode(new IconData(ICON_LHPN, null, files.get(fnum))));
 				}
-				else if (async && files.get(fnum).toString().length() > 1
-						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 2)
+				else if (async && files.get(fnum).toString().length() > 3
+						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4)
 								.equals(".lpn")) {
 					curDir.add(new DefaultMutableTreeNode(new IconData(ICON_LHPN, null, files.get(fnum))));
 				}
@@ -274,7 +274,12 @@ public class FileTree extends JPanel implements MouseListener {
 				}
 				else if (async && files.get(fnum).toString().length() > 1
 						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 2)
-								.equals("g")) {
+								.equals(".g")) {
+					curDir.add(new DefaultMutableTreeNode(new IconData(ICON_LHPN, null, files.get(fnum))));
+				}
+				else if (async && files.get(fnum).toString().length() > 3
+						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4)
+								.equals(".lpn")) {
 					curDir.add(new DefaultMutableTreeNode(new IconData(ICON_LHPN, null, files.get(fnum))));
 				}
 				else if (atacs && files.get(fnum).toString().length() > 3
@@ -548,8 +553,8 @@ public class FileTree extends JPanel implements MouseListener {
 						current.insert(
 								new DefaultMutableTreeNode(new IconData(ICON_LHPN, null, files.get(fnum))), insert);
 					}
-					else if (async && files.get(fnum).toString().length() > 1
-							&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 2)
+					else if (async && files.get(fnum).toString().length() > 3
+							&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4)
 									.equals(".lpn")) {
 						current.insert(
 								new DefaultMutableTreeNode(new IconData(ICON_LHPN, null, files.get(fnum))), insert);
@@ -645,8 +650,8 @@ public class FileTree extends JPanel implements MouseListener {
 						current.insert(
 								new DefaultMutableTreeNode(new IconData(ICON_LHPN, null, files.get(fnum))), insert);
 					}
-					else if (async && files.get(fnum).toString().length() > 1
-							&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 2)
+					else if (async && files.get(fnum).toString().length() > 3
+							&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4)
 									.equals(".lpn")) {
 						current.insert(
 								new DefaultMutableTreeNode(new IconData(ICON_LHPN, null, files.get(fnum))), insert);

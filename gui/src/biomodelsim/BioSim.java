@@ -3368,8 +3368,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							JOptionPane.PLAIN_MESSAGE);
 					if (lhpnName != null && !lhpnName.trim().equals("")) {
 						lhpnName = lhpnName.trim();
-						if (lhpnName.length() > 1) {
-							if (!lhpnName.substring(lhpnName.length() - 2).equals(".lpn")) {
+						if (lhpnName.length() > 3) {
+							if (!lhpnName.substring(lhpnName.length() - 4).equals(".lpn")) {
 								lhpnName += ".lpn";
 							}
 						}
@@ -3377,12 +3377,12 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							lhpnName += ".lpn";
 						}
 						String modelID = "";
-						if (lhpnName.length() > 1) {
-							if (lhpnName.substring(lhpnName.length() - 2).equals(".lpn")) {
-								modelID = lhpnName.substring(0, lhpnName.length() - 2);
+						if (lhpnName.length() > 3) {
+							if (lhpnName.substring(lhpnName.length() - 4).equals(".lpn")) {
+								modelID = lhpnName.substring(0, lhpnName.length() - 4);
 							}
 							else {
-								modelID = lhpnName.substring(0, lhpnName.length() - 1);
+								modelID = lhpnName.substring(0, lhpnName.length() - 3);
 							}
 						}
 						if (!(IDpat.matcher(modelID).matches())) {
@@ -4074,7 +4074,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						"Import LHPN", -1);
 				if ((filename.length() > 1
 						&& !filename.substring(filename.length() - 2, filename.length()).equals(".g"))
-						|| (filename.length() > 3
+						&& (filename.length() > 3
 						&& !filename.substring(filename.length() - 4, filename.length()).equals(".lpn"))){
 					JOptionPane.showMessageDialog(frame, "You must select a valid lhpn file to import.",
 							"Error", JOptionPane.ERROR_MESSAGE);
@@ -4096,10 +4096,11 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						if (filename.substring(filename.length() - 2, filename.length()).equals(".g")) {
 							File work = new File(root);
 							String oldName = root + separator + file[file.length - 1];
-							String newName = oldName.replace(".lpn", "_NEW.g");
+							String newName = oldName.replace(".g", "_NEW.g");
+							String lpnName = oldName.replace(".g", ".lpn");
 							Process atacs = Runtime.getRuntime().exec("atacs -llsl " + oldName, null, work);
 							atacs.waitFor();
-							FileOutputStream old = new FileOutputStream(new File(oldName));
+							FileOutputStream old = new FileOutputStream(new File(lpnName));
 							FileInputStream newFile = new FileInputStream(new File(newName));
 							int readNew = newFile.read();
 							while (readNew != -1) {
@@ -4109,6 +4110,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							old.close();
 							newFile.close();
 							new File(newName).delete();
+							//new File(oldName).delete();
 						}
 						refreshTree();
 					}
@@ -6763,8 +6765,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 									JOptionPane.ERROR_MESSAGE);
 						}
 					}
-					else if (tree.getFile().length() >= 2
-							&& tree.getFile().substring(tree.getFile().length() - 2).equals(".lpn")) {
+					else if (tree.getFile().length() >= 4
+							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".lpn")) {
 						try {
 							String filename = tree.getFile();
 							String directory = "";
