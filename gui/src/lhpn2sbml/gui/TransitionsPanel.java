@@ -80,7 +80,7 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 		fieldPanel.add(field);
 
 		// Transition Rate Field
-		field = new PropertyField("Transition Rate", "", null, null, "\\d*");
+		field = new PropertyField("Transition Rate", "", null, null, Utility.NAMEstring);
 		fields.put("Transition rate", field);
 		fieldPanel.add(field);
 
