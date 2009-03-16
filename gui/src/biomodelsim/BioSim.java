@@ -430,14 +430,14 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		probGraph = new JMenuItem("Histogram");
 		importSbml = new JMenuItem("SBML Model");
 		importDot = new JMenuItem("Genetic Circuit Model");
+		importG = new JMenuItem("Petri Net");
+		importLpn = new JMenuItem("Labeled Petri Net");
+		importLhpn = new JMenuItem("Labeled Hybrid Petri Net");
 		if (lema) {
 			importVhdl = new JMenuItem("VHDL-AMS Model");
-			importLhpn = new JMenuItem("Labeled Hybrid Petri Net");
 		}
 		else {
 			importVhdl = new JMenuItem("VHDL Model");
-			importG = new JMenuItem("Petri Net");
-			importLpn = new JMenuItem("Labeled Petri Net");
 		}
 		importSpice = new JMenuItem("Spice Circuit");
 		importCsp = new JMenuItem("CSP Model");
