@@ -42,11 +42,11 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 
 	private String[] options = { "Ok", "Cancel" };
 
-	//private Object[] types = { "Boolean", "Continuous", "Integer", "Rate" };
+	// private Object[] types = { "Boolean", "Continuous", "Integer", "Rate" };
 
 	private LHPNFile lhpn;
 
-	//private Log log;
+	// private Log log;
 
 	private HashMap<String, PropertyField> fields = null;
 
@@ -58,7 +58,7 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 		this.transitionsList = transitionsList;
 		this.controlList = controlList;
 		this.lhpn = lhpn;
-		//this.log = log;
+		// this.log = log;
 
 		fields = new HashMap<String, PropertyField>();
 		fieldPanel = new JPanel(new GridLayout(5, 2));
@@ -78,7 +78,7 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 		field = new PropertyField("Delay Upper Bound", "inf", null, null, Utility.NAMEstring);
 		fields.put("Delay upper", field);
 		fieldPanel.add(field);
-		
+
 		// Transition Rate Field
 		field = new PropertyField("Transition Rate", "", null, null, "\\d*");
 		fields.put("Transition rate", field);
@@ -217,7 +217,14 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 				}
 				else {
 					fields.get("Delay lower").setValue(delay);
+					if (delay.equals("")) {
+						fields.get("Delay upper").setValue("");
+					}
 				}
+			}
+			else if (lhpn.getTransitionRate(selected) != null) {
+				fields.get("Delay lower").setValue(delay);
+				fields.get("Delay upper").setValue("");
 			}
 			fields.get("Enabling Condition").setValue(lhpn.getEnabling(selected));
 			fields.get("Transition rate").setValue(lhpn.getTransitionRate(selected));
@@ -250,16 +257,18 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 				return false;
 			}
 			String[] allVariables = lhpn.getAllIDs();
-			if (oldName == null) {
-				for (int i=0; i<allVariables.length; i++) {
-					if (allVariables[i].equals(fields.get(GlobalConstants.ID).getValue())) {
-						Utility.createErrorMessage("Error", "Transition id already exists.");
-						return false;
+			if (oldName == null && allVariables != null) {
+				for (int i = 0; i < allVariables.length; i++) {
+					if (allVariables[i] != null) {
+						if (allVariables[i].equals(fields.get(GlobalConstants.ID).getValue())) {
+							Utility.createErrorMessage("Error", "Transition id already exists.");
+							return false;
+						}
 					}
 				}
 			}
 			else if (!oldName.equals(fields.get(GlobalConstants.ID).getValue())) {
-				for (int i=0; i<allVariables.length; i++) {
+				for (int i = 0; i < allVariables.length; i++) {
 					if (allVariables[i].equals(fields.get(GlobalConstants.ID).getValue())) {
 						Utility.createErrorMessage("Error", "Transition id already exists.");
 						return false;
@@ -315,36 +324,36 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 		lhpn.removeAllAssign(transition);
 		if (boolAssignments.getItems() != null) {
 			for (String s : boolAssignments.getItems()) {
-				//System.out.println("bool" + s);
+				// System.out.println("bool" + s);
 				String[] tempArray = s.split(":=");
 				lhpn.addBoolAssign(transition, tempArray[0], tempArray[1]);
 			}
 		}
 		if (varAssignments.getItems() != null) {
 			for (String s : varAssignments.getItems()) {
-				//System.out.println("var " + s);
+				// System.out.println("var " + s);
 				String[] tempArray = s.split(":=");
-				//System.out.println(transition + " " + tempArray[0] + " " +
-				//		tempArray[1]);
+				// System.out.println(transition + " " + tempArray[0] + " " +
+				// tempArray[1]);
 				lhpn.addContAssign(transition, tempArray[0], tempArray[1]);
-				//log.addText("continuous "+ tempArray[0]);
+				// log.addText("continuous "+ tempArray[0]);
 			}
 		}
 		if (intAssignments.getItems() != null) {
 			for (String s : intAssignments.getItems()) {
-				//System.out.println("int" + s);
+				// System.out.println("int" + s);
 				String[] tempArray = s.split(":=");
-				//System.out.println(transition + " " + tempArray[0] + " " +
-				//tempArray[1]);
+				// System.out.println(transition + " " + tempArray[0] + " " +
+				// tempArray[1]);
 				lhpn.addIntAssign(transition, tempArray[0], tempArray[1]);
-				//log.addText("integer " + tempArray[0]);
+				// log.addText("integer " + tempArray[0]);
 			}
 		}
 		if (rateAssignments.getItems() != null) {
 			for (String s : rateAssignments.getItems()) {
-				//System.out.println("rate " + s);
+				// System.out.println("rate " + s);
 				String[] tempArray = s.split("':=");
-				//System.out.println(tempArray[1]);
+				// System.out.println(tempArray[1]);
 				lhpn.addRateAssign(transition, tempArray[0], tempArray[1]);
 			}
 		}
@@ -379,7 +388,7 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 
 		public void run() {
 			if (list.getSelectedValue() != null) {
-			String assignment = list.getSelectedValue().toString();
+				String assignment = list.getSelectedValue().toString();
 				if (isBoolean(assignment)) {
 					list.removeItem(assignment);
 					boolAssignments.removeItem(assignment);
@@ -443,8 +452,11 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 					&& (lhpn.getIntVars().length == 0)) {
 				Utility.createErrorMessage("Error", "Add variables first");
 			}
-			else if (getName().contains("Add") && (list.getItems().length == lhpn.getContVars().length + lhpn.getBooleanVars().length + lhpn.getIntVars().length)) {
-				Utility.createErrorMessage("Error", "All variable have already been assigned in this transition");
+			else if (getName().contains("Add")
+					&& (list.getItems().length == lhpn.getContVars().length
+							+ lhpn.getBooleanVars().length + lhpn.getIntVars().length)) {
+				Utility.createErrorMessage("Error",
+						"All variable have already been assigned in this transition");
 			}
 			else {
 				// System.out.println("transition " + selected);

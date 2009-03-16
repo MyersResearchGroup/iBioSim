@@ -337,18 +337,35 @@ public class LHPNFile {
 				}
 			}
 			if (!delays.isEmpty()) {
-				buffer.append("#@.delay_assignments {");
+				flag = false;
 				for (String s : delays.keySet()) {
-					buffer.append("<" + s + "=" + delays.get(s) + ">");
+					if (s != null && !delays.get(s).equals("")) {
+						if (!flag) {
+							buffer.append("#@.delay_assignments {");
+							flag = true;
+						}
+						buffer.append("<" + s + "=" + delays.get(s) + ">");
+					}
 				}
-				buffer.append("}\n");
+				if (flag) {
+					buffer.append("}\n");
+				}
 			}
 			if (!transitionRates.isEmpty()) {
-				buffer.append("#@.transition_rates {");
+				flag = false;
 				for (String s : transitionRates.keySet()) {
-					buffer.append("<" + s + "=" + transitionRates.get(s) + ">");
+					if (s != null && !transitionRates.get(s).equals("")) {
+						if (!flag) {
+							buffer.append("#@.transition_rates {");
+							flag = true;
+						}
+						// log.addText("here " + enablings.get(s));
+						buffer.append("<" + s + "=[" + transitionRates.get(s) + "]>");
+					}
 				}
-				buffer.append("}\n");
+				if (flag) {
+					buffer.append("}\n");
+				}
 			}
 			if (!booleanAssignments.isEmpty()) {
 				flag = false;
@@ -1946,12 +1963,12 @@ public class LHPNFile {
 		Matcher lineMatcher = linePattern.matcher(data.toString());
 		if (lineMatcher.find()) {
 			// log.addText("check8a");
-			Pattern delayPattern = Pattern.compile(BOOLEAN_TRANS);
+			Pattern delayPattern = Pattern.compile(ENABLING);
 			Matcher delayMatcher = delayPattern.matcher(lineMatcher.group(1));
 			// log.addText("check8b");
 			while (delayMatcher.find()) {
 				// log.addText("check8while");
-				transitionRates.put(delayMatcher.group(1), delayMatcher.group(2));
+				transitionRates.put(delayMatcher.group(2), delayMatcher.group(4));
 			}
 		}
 		// log.addText("check8end");
