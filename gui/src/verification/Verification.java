@@ -592,6 +592,10 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			pargName = directory + separator + verifyFile.replace(".g", ".grf");
 			dotName = directory + separator + verifyFile.replace(".g", ".dot");
 		}
+		else if (verifyFile.endsWith(".lpn")) {
+			pargName = directory + separator + verifyFile.replace(".lpn", ".grf");
+			dotName = directory + separator + verifyFile.replace(".lpn", ".dot");
+		}
 		else if (verifyFile.endsWith(".vhd")) {
 			pargName = directory + separator + verifyFile.replace(".vhd", ".grf");
 			dotName = directory + separator + verifyFile.replace(".vhd", ".dot");
@@ -749,6 +753,9 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		}
 		// Load file type
 		if (verifyFile.endsWith(".g")) {
+			options = options + "lg";
+		}
+		else if (verifyFile.endsWith(".lpn")) {
 			options = options + "ll";
 		}
 		else if (verifyFile.endsWith(".vhd") || verifyFile.endsWith(".vhdl")) {

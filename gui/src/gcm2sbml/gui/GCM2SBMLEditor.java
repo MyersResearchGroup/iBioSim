@@ -255,7 +255,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 
 		// Write out species and influences to a gcm file
 		gcm.save(path + File.separator + gcmname + ".gcm");
-		gcm.createLogicalModel(path + File.separator + gcmname + ".g");
+		gcm.createLogicalModel(path + File.separator + gcmname + ".gcm");
 		log.addText("Saving GCM file:\n" + path + File.separator + gcmname + ".gcm\n");
 
 		if (command.contains("template")) {

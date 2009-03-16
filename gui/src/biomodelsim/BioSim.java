@@ -148,6 +148,10 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 	private JMenuItem importVhdl; // The import vhdl menu item
 
 	private JMenuItem importLhpn; // The import lhpn menu item
+	
+	private JMenuItem importLpn; // The import lpn menu item
+	
+	private JMenuItem importG; // The import .g file menu item
 
 	private JMenuItem importCsp; // The import csp menu item
 
@@ -432,7 +436,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		}
 		else {
 			importVhdl = new JMenuItem("VHDL Model");
-			importLhpn = new JMenuItem("Petri Net");
+			importG = new JMenuItem("Petri Net");
+			importLpn = new JMenuItem("Labeled Petri Net");
 		}
 		importSpice = new JMenuItem("Spice Circuit");
 		importCsp = new JMenuItem("CSP Model");
@@ -497,6 +502,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		importDot.addActionListener(this);
 		importVhdl.addActionListener(this);
 		importLhpn.addActionListener(this);
+		importLpn.addActionListener(this);
+		importG.addActionListener(this);
 		importCsp.addActionListener(this);
 		importHse.addActionListener(this);
 		importUnc.addActionListener(this);
@@ -675,6 +682,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		importSbml.setEnabled(false);
 		importVhdl.setEnabled(false);
 		importLhpn.setEnabled(false);
+		importLpn.setEnabled(false);
+		importG.setEnabled(false);
 		importCsp.setEnabled(false);
 		importHse.setEnabled(false);
 		importUnc.setEnabled(false);
@@ -788,7 +797,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		}
 		else if (atacs) {
 			importMenu.add(importVhdl);
-			importMenu.add(importLhpn);
+			importMenu.add(importG);
+			importMenu.add(importLpn);
 			importMenu.add(importCsp);
 			importMenu.add(importHse);
 			importMenu.add(importUnc);
@@ -2790,8 +2800,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				if (newName == null) {
 					return;
 				}
-				if (!newName.endsWith(".g")) {
-					newName = newName + ".g";
+				if (!newName.endsWith(".lpn")) {
+					newName = newName + ".lpn";
 				}
 				((LHPNEditor) comp).saveAs(newName);
 				tab.setTitleAt(tab.getSelectedIndex(), newName);
@@ -2840,6 +2850,16 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					}
 					if (!newName.endsWith(".vhd")) {
 						newName = newName + ".vhd";
+					}
+				}
+				else if (fileName.endsWith(".g")) {
+					newName = JOptionPane.showInputDialog(frame(), "Enter Petri net name:", "Petri net Name",
+							JOptionPane.PLAIN_MESSAGE);
+					if (newName == null) {
+						return;
+					}
+					if (!newName.endsWith(".g")) {
+						newName = newName + ".g";
 					}
 				}
 				else if (fileName.endsWith(".csp")) {
@@ -3048,6 +3068,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				importSbml.setEnabled(true);
 				importVhdl.setEnabled(true);
 				importLhpn.setEnabled(true);
+				importLpn.setEnabled(true);
+				importG.setEnabled(true);
 				importCsp.setEnabled(true);
 				importHse.setEnabled(true);
 				importUnc.setEnabled(true);
@@ -3130,6 +3152,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						importSbml.setEnabled(true);
 						importVhdl.setEnabled(true);
 						importLhpn.setEnabled(true);
+						importLpn.setEnabled(true);
+						importG.setEnabled(true);
 						importCsp.setEnabled(true);
 						importHse.setEnabled(true);
 						importUnc.setEnabled(true);
@@ -3345,16 +3369,16 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					if (lhpnName != null && !lhpnName.trim().equals("")) {
 						lhpnName = lhpnName.trim();
 						if (lhpnName.length() > 1) {
-							if (!lhpnName.substring(lhpnName.length() - 2).equals(".g")) {
-								lhpnName += ".g";
+							if (!lhpnName.substring(lhpnName.length() - 2).equals(".lpn")) {
+								lhpnName += ".lpn";
 							}
 						}
 						else {
-							lhpnName += ".g";
+							lhpnName += ".lpn";
 						}
 						String modelID = "";
 						if (lhpnName.length() > 1) {
-							if (lhpnName.substring(lhpnName.length() - 2).equals(".g")) {
+							if (lhpnName.substring(lhpnName.length() - 2).equals(".lpn")) {
 								modelID = lhpnName.substring(0, lhpnName.length() - 2);
 							}
 							else {
@@ -4048,8 +4072,10 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			if (root != null) {
 				String filename = Buttons.browse(frame, new File(root), null, JFileChooser.FILES_ONLY,
 						"Import LHPN", -1);
-				if (filename.length() > 1
-						&& !filename.substring(filename.length() - 2, filename.length()).equals(".g")) {
+				if ((filename.length() > 1
+						&& !filename.substring(filename.length() - 2, filename.length()).equals(".g"))
+						|| (filename.length() > 3
+						&& !filename.substring(filename.length() - 4, filename.length()).equals(".lpn"))){
 					JOptionPane.showMessageDialog(frame, "You must select a valid lhpn file to import.",
 							"Error", JOptionPane.ERROR_MESSAGE);
 					return;
@@ -4067,21 +4093,116 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						}
 						in.close();
 						out.close();
-						File work = new File(root);
-						String oldName = root + separator + file[file.length - 1];
-						String newName = oldName.replace(".g", "_NEW.g");
-						Process atacs = Runtime.getRuntime().exec("atacs -llsl " + oldName, null, work);
-						atacs.waitFor();
-						FileOutputStream old = new FileOutputStream(new File(oldName));
-						FileInputStream newFile = new FileInputStream(new File(newName));
-						int readNew = newFile.read();
-						while (readNew != -1) {
-							old.write(readNew);
-							readNew = newFile.read();
+						if (filename.substring(filename.length() - 2, filename.length()).equals(".g")) {
+							File work = new File(root);
+							String oldName = root + separator + file[file.length - 1];
+							String newName = oldName.replace(".lpn", "_NEW.g");
+							Process atacs = Runtime.getRuntime().exec("atacs -llsl " + oldName, null, work);
+							atacs.waitFor();
+							FileOutputStream old = new FileOutputStream(new File(oldName));
+							FileInputStream newFile = new FileInputStream(new File(newName));
+							int readNew = newFile.read();
+							while (readNew != -1) {
+								old.write(readNew);
+								readNew = newFile.read();
+							}
+							old.close();
+							newFile.close();
+							new File(newName).delete();
 						}
-						old.close();
-						newFile.close();
-						new File(newName).delete();
+						refreshTree();
+					}
+					catch (Exception e1) {
+						e1.printStackTrace();
+						JOptionPane.showMessageDialog(frame, "Unable to import file.", "Error",
+								JOptionPane.ERROR_MESSAGE);
+					}
+				}
+			}
+			else {
+				JOptionPane.showMessageDialog(frame, "You must open or create a project first.", "Error",
+						JOptionPane.ERROR_MESSAGE);
+			}
+		}
+		else if (e.getSource() == importLpn) {
+			if (root != null) {
+				String filename = Buttons.browse(frame, new File(root), null, JFileChooser.FILES_ONLY,
+						"Import LHPN", -1);
+				if ((filename.length() > 1
+						&& !filename.substring(filename.length() - 2, filename.length()).equals(".g"))
+						|| (filename.length() > 3
+						&& !filename.substring(filename.length() - 4, filename.length()).equals(".lpn"))){
+					JOptionPane.showMessageDialog(frame, "You must select a valid lhpn file to import.",
+							"Error", JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				else if (!filename.equals("")) {
+					String[] file = filename.split(separator);
+					try {
+						FileOutputStream out = new FileOutputStream(new File(root + separator
+								+ file[file.length - 1]));
+						FileInputStream in = new FileInputStream(new File(filename));
+						int read = in.read();
+						while (read != -1) {
+							out.write(read);
+							read = in.read();
+						}
+						in.close();
+						out.close();
+						if (filename.substring(filename.length() - 2, filename.length()).equals(".g")) {
+							File work = new File(root);
+							String oldName = root + separator + file[file.length - 1];
+							String newName = oldName.replace(".lpn", "_NEW.g");
+							Process atacs = Runtime.getRuntime().exec("atacs -llsl " + oldName, null, work);
+							atacs.waitFor();
+							FileOutputStream old = new FileOutputStream(new File(oldName));
+							FileInputStream newFile = new FileInputStream(new File(newName));
+							int readNew = newFile.read();
+							while (readNew != -1) {
+								old.write(readNew);
+								readNew = newFile.read();
+							}
+							old.close();
+							newFile.close();
+							new File(newName).delete();
+						}
+						refreshTree();
+					}
+					catch (Exception e1) {
+						e1.printStackTrace();
+						JOptionPane.showMessageDialog(frame, "Unable to import file.", "Error",
+								JOptionPane.ERROR_MESSAGE);
+					}
+				}
+			}
+			else {
+				JOptionPane.showMessageDialog(frame, "You must open or create a project first.", "Error",
+						JOptionPane.ERROR_MESSAGE);
+			}
+		}
+		else if (e.getSource() == importG) {
+			if (root != null) {
+				String filename = Buttons.browse(frame, new File(root), null, JFileChooser.FILES_ONLY,
+						"Import Net", -1);
+				if (filename.length() > 1
+						&& !filename.substring(filename.length() - 2, filename.length()).equals(".g")){
+					JOptionPane.showMessageDialog(frame, "You must select a valid Petri net file to import.",
+							"Error", JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				else if (!filename.equals("")) {
+					String[] file = filename.split(separator);
+					try {
+						FileOutputStream out = new FileOutputStream(new File(root + separator
+								+ file[file.length - 1]));
+						FileInputStream in = new FileInputStream(new File(filename));
+						int read = in.read();
+						while (read != -1) {
+							out.write(read);
+							read = in.read();
+						}
+						in.close();
+						out.close();
 						refreshTree();
 					}
 					catch (Exception e1) {
@@ -4374,7 +4495,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							try {
 								File work = new File(root);
 								Runtime.getRuntime().exec("atacs -lvsl " + sbmlFileNoPath, null, work);
-								sbmlFileNoPath = sbmlFileNoPath.replace(".vhd", ".g");
+								sbmlFileNoPath = sbmlFileNoPath.replace(".vhd", ".lpn");
 								log.addText("atacs -lvsl " + sbmlFileNoPath + "\n");
 							}
 							catch (IOException e1) {
@@ -4448,14 +4569,64 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		}
 		else if (e.getActionCommand().equals("viewModel")) {
 			try {
-				if (tree.getFile().length() >= 2
-						&& tree.getFile().substring(tree.getFile().length() - 2).equals(".g")) {
+				if (tree.getFile().length() >= 4
+						&& tree.getFile().substring(tree.getFile().length() - 4).equals(".lpn")) {
 					String filename = tree.getFile().split(separator)[tree.getFile().split(separator).length - 1];
 					String[] findTheFile = filename.split("\\.");
 					String theFile = findTheFile[0] + ".dot";
 					File dot = new File(root + separator + theFile);
 					dot.delete();
 					String cmd = "atacs -cPllodpl " + filename;
+					File work = new File(root);
+					Runtime exec = Runtime.getRuntime();
+					Process ATACS = exec.exec(cmd, null, work);
+					ATACS.waitFor();
+					log.addText("Executing:\n" + cmd);
+					if (dot.exists()) {
+						String command = "";
+						if (System.getProperty("os.name").contentEquals("Linux")) {
+							// directory = System.getenv("BIOSIM") + "/docs/";
+							command = "gnome-open ";
+						}
+						else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
+							// directory = System.getenv("BIOSIM") + "/docs/";
+							command = "open ";
+						}
+						else {
+							// directory = System.getenv("BIOSIM") + "\\docs\\";
+							command = "cmd /c start ";
+						}
+						log.addText(command + root + separator + theFile + "\n");
+						exec.exec(command + theFile, null, work);
+					}
+					else {
+						File log = new File(root + separator + "atacs.log");
+						BufferedReader input = new BufferedReader(new FileReader(log));
+						String line = null;
+						JTextArea messageArea = new JTextArea();
+						while ((line = input.readLine()) != null) {
+							messageArea.append(line);
+							messageArea.append(System.getProperty("line.separator"));
+						}
+						input.close();
+						messageArea.setLineWrap(true);
+						messageArea.setWrapStyleWord(true);
+						messageArea.setEditable(false);
+						JScrollPane scrolls = new JScrollPane();
+						scrolls.setMinimumSize(new Dimension(500, 500));
+						scrolls.setPreferredSize(new Dimension(500, 500));
+						scrolls.setViewportView(messageArea);
+						JOptionPane.showMessageDialog(frame(), scrolls, "Log", JOptionPane.INFORMATION_MESSAGE);
+					}
+				}
+				else if (tree.getFile().length() >= 2
+						&& tree.getFile().substring(tree.getFile().length() - 2).equals(".g")) {
+					String filename = tree.getFile().split(separator)[tree.getFile().split(separator).length - 1];
+					String[] findTheFile = filename.split("\\.");
+					String theFile = findTheFile[0] + ".dot";
+					File dot = new File(root + separator + theFile);
+					dot.delete();
+					String cmd = "atacs -cPlgodpl " + filename;
 					File work = new File(root);
 					Runtime exec = Runtime.getRuntime();
 					Process ATACS = exec.exec(cmd, null, work);
@@ -4750,7 +4921,6 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						JOptionPane.ERROR_MESSAGE);
 			}
 			catch (InterruptedException e2) {
-				// TODO Auto-generated catch block
 				e2.printStackTrace();
 			}
 		}
@@ -4830,6 +5000,17 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							}
 							else {
 								copy += ".g";
+							}
+						}
+						else if (tree.getFile().length() >= 4
+								&& tree.getFile().substring(tree.getFile().length() - 4).equals(".lpn")) {
+							if (copy.length() > 3) {
+								if (!copy.substring(copy.length() - 4).equals(".lpn")) {
+									copy += ".lpn";
+								}
+							}
+							else {
+								copy += ".lpn";
 							}
 						}
 						else if (tree.getFile().length() >= 4
@@ -4921,6 +5102,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 								|| tree.getFile().substring(tree.getFile().length() - 4).equals(".vhd")
 								|| tree.getFile().substring(tree.getFile().length() - 4).equals(".csp")
 								|| tree.getFile().substring(tree.getFile().length() - 4).equals(".hse")
+								|| tree.getFile().substring(tree.getFile().length() - 4).equals(".lpn")
 								|| tree.getFile().substring(tree.getFile().length() - 4).equals(".unc") || tree
 								.getFile().substring(tree.getFile().length() - 4).equals(".rsg"))
 								|| (tree.getFile().length() >= 2 && tree.getFile().substring(
@@ -5116,6 +5298,17 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							}
 						}
 						else if (tree.getFile().length() >= 4
+								&& tree.getFile().substring(tree.getFile().length() - 4).equals(".lpn")) {
+							if (rename.length() > 3) {
+								if (!rename.substring(rename.length() - 4).equals(".lpn")) {
+									rename += ".lpn";
+								}
+							}
+							else {
+								rename += ".lpn";
+							}
+						}
+						else if (tree.getFile().length() >= 4
 								&& tree.getFile().substring(tree.getFile().length() - 4).equals(".csp")) {
 							if (rename.length() > 3) {
 								if (!rename.substring(rename.length() - 4).equals(".csp")) {
@@ -5291,10 +5484,10 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 										((GCM2SBMLEditor) tab.getComponentAt(i)).reload(rename.substring(0, rename
 												.length() - 4));
 									}
-									else if (tree.getFile().length() > 1
-											&& tree.getFile().substring(tree.getFile().length() - 2).equals(".g")) {
+									else if (tree.getFile().length() > 3
+											&& tree.getFile().substring(tree.getFile().length() - 4).equals(".lpn")) {
 										((LHPNEditor) tab.getComponentAt(i)).reload(rename.substring(0,
-												rename.length() - 2));
+												rename.length() - 4));
 									}
 									else {
 										JTabbedPane t = new JTabbedPane();
@@ -6081,6 +6274,55 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					popup.add(delete);
 				}
 				else if (tree.getFile().length() > 3
+						&& tree.getFile().substring(tree.getFile().length() - 4).equals(".lpn")) {
+					JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
+					createSynthesis.addActionListener(this);
+					createSynthesis.addMouseListener(this);
+					createSynthesis.setActionCommand("createSynthesis");
+					JMenuItem createAnalysis = new JMenuItem("Create Analysis View");
+					createAnalysis.addActionListener(this);
+					createAnalysis.addMouseListener(this);
+					createAnalysis.setActionCommand("createSim");
+					JMenuItem createLearn = new JMenuItem("Create Learn View");
+					createLearn.addActionListener(this);
+					createLearn.addMouseListener(this);
+					createLearn.setActionCommand("createLearn");
+					JMenuItem createVerification = new JMenuItem("Create Verification View");
+					createVerification.addActionListener(this);
+					createVerification.addMouseListener(this);
+					createVerification.setActionCommand("createVerify");
+					JMenuItem viewModel = new JMenuItem("View Model");
+					viewModel.addActionListener(this);
+					viewModel.addMouseListener(this);
+					viewModel.setActionCommand("viewModel");
+					JMenuItem delete = new JMenuItem("Delete");
+					delete.addActionListener(this);
+					delete.addMouseListener(this);
+					delete.setActionCommand("delete");
+					JMenuItem copy = new JMenuItem("Copy");
+					copy.addActionListener(this);
+					copy.addMouseListener(this);
+					copy.setActionCommand("copy");
+					JMenuItem rename = new JMenuItem("Rename");
+					rename.addActionListener(this);
+					rename.addMouseListener(this);
+					rename.setActionCommand("rename");
+					if (atacs) {
+						popup.add(createSynthesis);
+					}
+					// popup.add(createAnalysis);
+					if (lema) {
+						popup.add(createLearn);
+					}
+					popup.add(createVerification);
+					popup.addSeparator();
+					popup.add(viewModel);
+					popup.addSeparator();
+					popup.add(copy);
+					popup.add(rename);
+					popup.add(delete);
+				}
+				else if (tree.getFile().length() > 3
 						&& tree.getFile().substring(tree.getFile().length() - 4).equals(".csp")) {
 					JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
 					createSynthesis.addActionListener(this);
@@ -6466,6 +6708,63 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					}
 					else if (tree.getFile().length() >= 2
 							&& tree.getFile().substring(tree.getFile().length() - 2).equals(".g")) {
+						try {
+							String filename = tree.getFile();
+							String directory = "";
+							String theFile = "";
+							if (filename.lastIndexOf('/') >= 0) {
+								directory = filename.substring(0, filename.lastIndexOf('/') + 1);
+								theFile = filename.substring(filename.lastIndexOf('/') + 1);
+							}
+							if (filename.lastIndexOf('\\') >= 0) {
+								directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
+								theFile = filename.substring(filename.lastIndexOf('\\') + 1);
+							}
+							File work = new File(directory);
+							int i = getTab(theFile);
+							if (i != -1) {
+								tab.setSelectedIndex(i);
+							}
+							else {
+								if (externView) {
+									String command = viewerField.getText() + " " + directory + separator + theFile;
+									Runtime exec = Runtime.getRuntime();
+									try {
+										exec.exec(command);
+									}
+									catch (Exception e1) {
+										JOptionPane.showMessageDialog(frame, "Unable to open external editor.",
+												"Error Opening Editor", JOptionPane.ERROR_MESSAGE);
+									}
+								}
+								else {
+									File file = new File(work + separator + theFile);
+									String input = "";
+									FileReader in = new FileReader(file);
+									int read = in.read();
+									while (read != -1) {
+										input += (char) read;
+										read = in.read();
+									}
+									in.close();
+									JTextArea text = new JTextArea(input);
+									text.setEditable(true);
+									text.setLineWrap(true);
+									JScrollPane scroll = new JScrollPane(text);
+									// gcm.addMouseListener(this);
+									addTab(theFile, scroll, "Petri Net Editor");
+								}
+							}
+							// String[] command = { "emacs", filename };
+							// Runtime.getRuntime().exec(command);
+						}
+						catch (Exception e1) {
+							JOptionPane.showMessageDialog(frame, "Unable to view this .g file.", "Error",
+									JOptionPane.ERROR_MESSAGE);
+						}
+					}
+					else if (tree.getFile().length() >= 2
+							&& tree.getFile().substring(tree.getFile().length() - 2).equals(".lpn")) {
 						try {
 							String filename = tree.getFile();
 							String directory = "";
@@ -7058,6 +7357,49 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					}
 					else if (tree.getFile().length() > 1
 							&& tree.getFile().substring(tree.getFile().length() - 2).equals(".g")) {
+						JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
+						createSynthesis.addActionListener(this);
+						createSynthesis.addMouseListener(this);
+						createSynthesis.setActionCommand("createSynthesis");
+						JMenuItem createAnalysis = new JMenuItem("Create Analysis View");
+						createAnalysis.addActionListener(this);
+						createAnalysis.addMouseListener(this);
+						createAnalysis.setActionCommand("createSim");
+						JMenuItem createLearn = new JMenuItem("Create Learn View");
+						createLearn.addActionListener(this);
+						createLearn.addMouseListener(this);
+						createLearn.setActionCommand("createLearn");
+						JMenuItem edit = new JMenuItem("View/Edit");
+						edit.addActionListener(this);
+						edit.addMouseListener(this);
+						edit.setActionCommand("dotEditor");
+						JMenuItem delete = new JMenuItem("Delete");
+						delete.addActionListener(this);
+						delete.addMouseListener(this);
+						delete.setActionCommand("delete");
+						JMenuItem copy = new JMenuItem("Copy");
+						copy.addActionListener(this);
+						copy.addMouseListener(this);
+						copy.setActionCommand("copy");
+						JMenuItem rename = new JMenuItem("Rename");
+						rename.addActionListener(this);
+						rename.addMouseListener(this);
+						rename.setActionCommand("rename");
+						if (atacs) {
+							popup.add(createSynthesis);
+						}
+						// popup.add(createAnalysis);
+						if (lema) {
+							popup.add(createLearn);
+						}
+						popup.addSeparator();
+						popup.add(edit);
+						popup.add(copy);
+						popup.add(rename);
+						popup.add(delete);
+					}
+					else if (tree.getFile().length() > 3
+							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".lpn")) {
 						JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
 						createSynthesis.addActionListener(this);
 						createSynthesis.addMouseListener(this);
@@ -9744,6 +10086,35 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			}
 			else if (tree.getFile().length() > 1
 					&& tree.getFile().substring(tree.getFile().length() - 2).equals(".g")) {
+				viewModel.setEnabled(true);
+				viewModGraph.setEnabled(true);
+				viewModBrowser.setEnabled(false);
+				createAnal.setEnabled(true);
+				createAnal.setActionCommand("createSim");
+				createLearn.setEnabled(true);
+				createSynth.setEnabled(true);
+				createVer.setEnabled(true);
+				refresh.setEnabled(false);
+				check.setEnabled(false);
+				export.setEnabled(false);
+				copy.setEnabled(true);
+				rename.setEnabled(true);
+				delete.setEnabled(true);
+				viewRules.setEnabled(false);
+				viewTrace.setEnabled(false);
+				viewCircuit.setEnabled(false);
+				if (new File(root + separator + "atacs.log").exists()) {
+					viewLog.setEnabled(true);
+				}
+				else {
+					viewLog.setEnabled(false);
+				}
+				saveParam.setEnabled(false);
+				saveSbml.setEnabled(false);
+				saveTemp.setEnabled(false);
+			}
+			else if (tree.getFile().length() > 3
+					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".lpn")) {
 				viewModel.setEnabled(true);
 				viewModGraph.setEnabled(true);
 				viewModBrowser.setEnabled(false);

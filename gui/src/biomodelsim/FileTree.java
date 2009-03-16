@@ -206,9 +206,14 @@ public class FileTree extends JPanel implements MouseListener {
 								.equals(".vhd")) {
 					curDir.add(new DefaultMutableTreeNode(new IconData(ICON_VHDL, null, files.get(fnum))));
 				}
-				else if (async && files.get(fnum).toString().length() > 1
+				else if (atacs && files.get(fnum).toString().length() > 1
 						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 2)
 								.equals(".g")) {
+					curDir.add(new DefaultMutableTreeNode(new IconData(ICON_LHPN, null, files.get(fnum))));
+				}
+				else if (async && files.get(fnum).toString().length() > 1
+						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 2)
+								.equals(".lpn")) {
 					curDir.add(new DefaultMutableTreeNode(new IconData(ICON_LHPN, null, files.get(fnum))));
 				}
 				else if (atacs && files.get(fnum).toString().length() > 3
@@ -341,6 +346,7 @@ public class FileTree extends JPanel implements MouseListener {
 							|| parent.getChildAt(i).toString().contains(".gcm")
 							|| parent.getChildAt(i).toString().contains(".vhd")
 							|| parent.getChildAt(i).toString().contains(".g")
+							|| parent.getChildAt(i).toString().contains(".lpn")
 							|| parent.getChildAt(i).toString().contains(".csp")
 							|| parent.getChildAt(i).toString().contains(".hse")
 							|| parent.getChildAt(i).toString().contains(".unc")
@@ -502,6 +508,7 @@ public class FileTree extends JPanel implements MouseListener {
 								&& !current.getChildAt(i).toString().contains(".gcm")
 								&& !current.getChildAt(i).toString().contains(".vhd")
 								&& !current.getChildAt(i).toString().contains(".g")
+								&& !current.getChildAt(i).toString().contains(".lpn")
 								&& !current.getChildAt(i).toString().contains(".csp")
 								&& !current.getChildAt(i).toString().contains(".hse")
 								&& !current.getChildAt(i).toString().contains(".unc")
@@ -535,9 +542,15 @@ public class FileTree extends JPanel implements MouseListener {
 						current.insert(
 								new DefaultMutableTreeNode(new IconData(ICON_VHDL, null, files.get(fnum))), insert);
 					}
-					else if (async && files.get(fnum).toString().length() > 1
+					else if (atacs && files.get(fnum).toString().length() > 1
 							&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 2)
 									.equals(".g")) {
+						current.insert(
+								new DefaultMutableTreeNode(new IconData(ICON_LHPN, null, files.get(fnum))), insert);
+					}
+					else if (async && files.get(fnum).toString().length() > 1
+							&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 2)
+									.equals(".lpn")) {
 						current.insert(
 								new DefaultMutableTreeNode(new IconData(ICON_LHPN, null, files.get(fnum))), insert);
 					}
@@ -592,6 +605,7 @@ public class FileTree extends JPanel implements MouseListener {
 								&& !current.getChildAt(i).toString().contains(".gcm")
 								&& !current.getChildAt(i).toString().contains(".vhd")
 								&& !current.getChildAt(i).toString().contains(".g")
+								&& !current.getChildAt(i).toString().contains(".lpn")
 								&& !current.getChildAt(i).toString().contains(".csp")
 								&& !current.getChildAt(i).toString().contains(".hse")
 								&& !current.getChildAt(i).toString().contains(".unc")
@@ -625,9 +639,15 @@ public class FileTree extends JPanel implements MouseListener {
 						current.insert(
 								new DefaultMutableTreeNode(new IconData(ICON_VHDL, null, files.get(fnum))), insert);
 					}
-					else if (async && files.get(fnum).toString().length() > 1
+					else if (atacs && files.get(fnum).toString().length() > 1
 							&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 2)
 									.equals(".g")) {
+						current.insert(
+								new DefaultMutableTreeNode(new IconData(ICON_LHPN, null, files.get(fnum))), insert);
+					}
+					else if (async && files.get(fnum).toString().length() > 1
+							&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 2)
+									.equals(".lpn")) {
 						current.insert(
 								new DefaultMutableTreeNode(new IconData(ICON_LHPN, null, files.get(fnum))), insert);
 					}

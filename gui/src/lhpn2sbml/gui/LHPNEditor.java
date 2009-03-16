@@ -101,7 +101,7 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 				lhpnFile.load(directory + File.separator + filename);
 			}
 			this.filename = filename;
-			// this.lhpnName = filename.replace(".g", "");
+			// this.lhpnName = filename.replace(".lpn", "");
 		}
 		else {
 			this.filename = "";
@@ -293,7 +293,7 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 	}
 	
 	public void reload(String newName) {
-		filename = newName + ".g";
+		filename = newName + ".lpn";
 		lhpnFile.load(directory + File.separator + newName);
 		lhpnNameTextField.setText(newName);
 	}
