@@ -859,6 +859,10 @@ public class LHPNFile {
 		booleanAssignments.remove(name);
 		enablings.remove(name);
 	}
+	
+	public void addTransitionRate(String name, String transitionRate) {
+		transitionRates.put(name, transitionRate);
+	}
 
 	public void addEnabling(String name, String cond) {
 		enablings.put(name, cond);

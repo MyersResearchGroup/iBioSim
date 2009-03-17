@@ -300,10 +300,10 @@ public class GCMFile {
 			}
 		}
 		LHPNFile LHPN = new LHPNFile();
-		Properties initCond = new Properties();
-		initCond.put("rate", "0");
-		initCond.put("value", "0");
-		LHPN.addVar("r", initCond);
+		// Properties initCond = new Properties();
+		// initCond.put("rate", "0");
+		// initCond.put("value", "0");
+		// LHPN.addVar("r", initCond);
 		for (int i = 0; i < specs.size(); i++) {
 			int placeNum = 0;
 			int transNum = 0;
@@ -452,15 +452,15 @@ public class GCMFile {
 				if (rate.equals("")) {
 					rate = "0.0";
 				}
-				LHPN.addRateAssign(specs.get(i) + "_trans" + transNum, "r", "(" + rate + ")/" + "("
+				LHPN.addTransitionRate(specs.get(i) + "_trans" + transNum, "(" + rate + ")/" + "("
 						+ threshold + "-" + number + ")");
 				transNum++;
 				LHPN.addTransition(specs.get(i) + "_trans" + transNum);
 				LHPN.addControlFlow(specs.get(i) + placeNum, specs.get(i) + "_trans" + transNum);
 				LHPN.addControlFlow(specs.get(i) + "_trans" + transNum, previousPlaceName);
 				LHPN.addIntAssign(specs.get(i) + "_trans" + transNum, specs.get(i), number);
-				LHPN.addRateAssign(specs.get(i) + "_trans" + transNum, "r", "(" + specs.get(i)
-						+ "*" + kd + ")/" + "(" + threshold + "-" + number + ")");
+				LHPN.addTransitionRate(specs.get(i) + "_trans" + transNum, "(" + specs.get(i) + "*"
+						+ kd + ")/" + "(" + threshold + "-" + number + ")");
 				transNum++;
 				previousPlaceName = specs.get(i) + placeNum;
 				placeNum++;
