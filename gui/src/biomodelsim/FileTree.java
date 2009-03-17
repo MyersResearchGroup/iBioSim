@@ -56,6 +56,12 @@ public class FileTree extends JPanel implements MouseListener {
 	public static final ImageIcon ICON_SIMULATION = new ImageIcon(System.getenv("BIOSIM")
 			+ File.separator + "gui" + File.separator + "icons" + File.separator + "simulation.jpg");
 
+	public static final ImageIcon ICON_SYNTHESIS = new ImageIcon(System.getenv("BIOSIM")
+			+ File.separator + "gui" + File.separator + "icons" + File.separator + "synth.png");
+
+	public static final ImageIcon ICON_VERIFY = new ImageIcon(System.getenv("BIOSIM")
+			+ File.separator + "gui" + File.separator + "icons" + File.separator + "check.png");
+
 	public static final ImageIcon ICON_PROJECT = new ImageIcon(System.getenv("BIOSIM")
 			+ File.separator + "gui" + File.separator + "icons" + File.separator + "project.jpg");
 
@@ -128,13 +134,13 @@ public class FileTree extends JPanel implements MouseListener {
 		}
 		else {
 			if (sim && synth) {  // Verification node
-				curDir = new DefaultMutableTreeNode(new IconData(ICON_SIMULATION, null, dir.getName()));
+				curDir = new DefaultMutableTreeNode(new IconData(ICON_VERIFY, null, dir.getName()));
 			}
 			else if (sim) {
 				curDir = new DefaultMutableTreeNode(new IconData(ICON_SIMULATION, null, dir.getName()));
 			}
 			else if (synth) {
-				curDir = new DefaultMutableTreeNode(new IconData(ICON_SIMULATION, null, dir.getName()));
+				curDir = new DefaultMutableTreeNode(new IconData(ICON_SYNTHESIS, null, dir.getName()));
 			}
 			else {
 				curDir = new DefaultMutableTreeNode(new IconData(ICON_LEARN, null, dir.getName()));
@@ -457,13 +463,13 @@ public class FileTree extends JPanel implements MouseListener {
 							}
 						}
 						if (doAdd) {
-							fixTree(current, new DefaultMutableTreeNode(new IconData(ICON_SIMULATION, null, f
+							fixTree(current, new DefaultMutableTreeNode(new IconData(ICON_SYNTHESIS, null, f
 									.getName())), f, doAdd);
 						}
 						else {
 							current.remove(getChild);
 							doAdd = true;
-							fixTree(current, new DefaultMutableTreeNode(new IconData(ICON_SIMULATION, null, f
+							fixTree(current, new DefaultMutableTreeNode(new IconData(ICON_SYNTHESIS, null, f
 									.getName())), f, doAdd);
 						}
 					}
@@ -479,13 +485,13 @@ public class FileTree extends JPanel implements MouseListener {
 							}
 						}
 						if (doAdd) {
-							fixTree(current, new DefaultMutableTreeNode(new IconData(ICON_SIMULATION, null, f
+							fixTree(current, new DefaultMutableTreeNode(new IconData(ICON_VERIFY, null, f
 									.getName())), f, doAdd);
 						}
 						else {
 							current.remove(getChild);
 							doAdd = true;
-							fixTree(current, new DefaultMutableTreeNode(new IconData(ICON_SIMULATION, null, f
+							fixTree(current, new DefaultMutableTreeNode(new IconData(ICON_VERIFY, null, f
 									.getName())), f, doAdd);
 						}
 					}

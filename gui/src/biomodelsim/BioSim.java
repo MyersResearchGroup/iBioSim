@@ -1748,13 +1748,13 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		if (lema) {
 			name = new JLabel("LEMA", JLabel.CENTER);
 			version = new JLabel("Version 1.0", JLabel.CENTER);
-			developers = "Kevin Jones\nScott Little\nChris Myers\nNicholas Seegmiller\n"
+			developers = "Kevin Jones\nScott Little\nCurtis Madsen\nChris Myers\nNicholas Seegmiller\n"
 				+ "Robert Thacker\nDavid Walter";
 		} else if (atacs) {
 			name = new JLabel("ATACS", JLabel.CENTER);
 			version = new JLabel("Version 6.0", JLabel.CENTER);
 			developers = "Wendy Belluomini\nJeff Cuthbert\nHans Jacobson\nKevin Jones\nSung-Tae Jung\n"
-				+ "Christopher Krieger\nScott Little\nEric Mercer\nChris Myers\n"
+				+ "Christopher Krieger\nScott Little\nCurtis Madsen\nEric Mercer\nChris Myers\n"
 				+ "Curt Nelson\nEric Peskin\nNicholas Seegmiller\nDavid Walter\nHao Zheng";
 		} else {
 			name = new JLabel("iBioSim", JLabel.CENTER);
