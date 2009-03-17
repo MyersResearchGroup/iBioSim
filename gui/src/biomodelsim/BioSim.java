@@ -294,17 +294,17 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		if (lema) {
 			frame = new JFrame("LEMA");
 			frame.setIconImage(new ImageIcon(System.getenv("BIOSIM") + separator + "gui" + separator
-					+ "icons" + separator + "iBioSim.png").getImage());
+					+ "icons" + separator + "LEMA.png").getImage());
 		}
 		else if (atacs) {
 			frame = new JFrame("ATACS");
 			frame.setIconImage(new ImageIcon(System.getenv("BIOSIM") + separator + "gui" + separator
-					+ "icons" + separator + "atacs.png").getImage());
+					+ "icons" + separator + "ATACS.png").getImage());
 		}
 		else {
 			frame = new JFrame("iBioSim");
 			frame.setIconImage(new ImageIcon(System.getenv("BIOSIM") + separator + "gui" + separator
-					+ "icons" + separator + "atacs.png").getImage());
+					+ "icons" + separator + "iBioSim.png").getImage());
 		}
 
 		// Makes it so that clicking the x in the corner closes the program
@@ -1742,18 +1742,35 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		// + "gui"
 		// + File.separator + "icons" + File.separator +
 		// "iBioSim.png").getImage());
-		JLabel bioSim = new JLabel("iBioSim", JLabel.CENTER);
-		Font font = bioSim.getFont();
+		JLabel name;
+		JLabel version;
+		final String developers;
+		if (lema) {
+			name = new JLabel("LEMA", JLabel.CENTER);
+			version = new JLabel("Version 1.0", JLabel.CENTER);
+			developers = "Kevin Jones\nScott Little\nChris Myers\nNicholas Seegmiller\n"
+				+ "Robert Thacker\nDavid Walter";
+		} else if (atacs) {
+			name = new JLabel("ATACS", JLabel.CENTER);
+			version = new JLabel("Version 6.0", JLabel.CENTER);
+			developers = "Wendy Belluomini\nJeff Cuthbert\nHans Jacobson\nKevin Jones\nSung-Tae Jung\n"
+				+ "Christopher Krieger\nScott Little\nEric Mercer\nChris Myers\n"
+				+ "Curt Nelson\nEric Peskin\nNicholas Seegmiller\nDavid Walter\nHao Zheng";
+		} else {
+			name = new JLabel("iBioSim", JLabel.CENTER);
+			version = new JLabel("Version 1.1.1", JLabel.CENTER);
+			developers = "Nathan Barker\nKevin Jones\nHiroyuki Kuwahara\n"
+				+ "Curtis Madsen\nChris Myers\nNam Nguyen";
+		}
+		Font font = name.getFont();
 		font = font.deriveFont(Font.BOLD, 36.0f);
-		bioSim.setFont(font);
-		JLabel version = new JLabel("Version 1.11", JLabel.CENTER);
+		name.setFont(font);
 		JLabel uOfU = new JLabel("University of Utah", JLabel.CENTER);
 		JButton credits = new JButton("Credits");
 		credits.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Object[] options = { "Close" };
-				JOptionPane.showOptionDialog(f, "Nathan Barker\nKevin Jones\nHiroyuki Kuwahara\n"
-						+ "Curtis Madsen\nChris Myers\nNam Nguyen", "Credits", JOptionPane.YES_OPTION,
+				JOptionPane.showOptionDialog(f, developers, "Credits", JOptionPane.YES_OPTION,
 						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 			}
 		});
@@ -1768,12 +1785,22 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		buttons.add(close);
 		JPanel aboutPanel = new JPanel(new BorderLayout());
 		JPanel uOfUPanel = new JPanel(new BorderLayout());
-		uOfUPanel.add(bioSim, "North");
+		uOfUPanel.add(name, "North");
 		uOfUPanel.add(version, "Center");
 		uOfUPanel.add(uOfU, "South");
-		aboutPanel.add(new javax.swing.JLabel(new javax.swing.ImageIcon(System.getenv("BIOSIM")
-				+ File.separator + "gui" + File.separator + "icons" + File.separator + "iBioSim.png")),
-				"North");
+		if (lema) {
+			aboutPanel.add(new javax.swing.JLabel(new javax.swing.ImageIcon(System.getenv("BIOSIM")
+					+ File.separator + "gui" + File.separator + "icons" + File.separator + "LEMA.png")),
+					"North");
+		} else if (atacs) {
+			aboutPanel.add(new javax.swing.JLabel(new javax.swing.ImageIcon(System.getenv("BIOSIM")
+					+ File.separator + "gui" + File.separator + "icons" + File.separator + "ATACS.png")),
+					"North");
+		} else {
+			aboutPanel.add(new javax.swing.JLabel(new javax.swing.ImageIcon(System.getenv("BIOSIM")
+					+ File.separator + "gui" + File.separator + "icons" + File.separator + "iBioSim.png")),
+					"North");
+		}
 		// aboutPanel.add(bioSim, "North");
 		aboutPanel.add(uOfUPanel, "Center");
 		aboutPanel.add(buttons, "South");
