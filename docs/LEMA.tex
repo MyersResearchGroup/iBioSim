@@ -85,7 +85,7 @@ a project by selecting one of your five most recently opened
 projects by selecting the project name shown in the File drop
 down menu shown below. 
 \begin{center}
-\includegraphics[height=50mm]{screenshots/project}
+\includegraphics[height=50mm]{screenshots/projectLema}
 \end{center}
 
 \subsection{Creating Models and Graphs}
@@ -109,7 +109,7 @@ created, it can be opened again later by right clicking on the object in the
 project window and selecting ``Edit'', or alternatively
 double-clicking on the object.
 \begin{center}
-\includegraphics[height=45mm]{screenshots/newModel}
+\includegraphics[height=45mm]{screenshots/newModelLema}
 \end{center}
 
 \subsection{Importing Models}
@@ -125,7 +125,7 @@ To import an LHPN, the procedure is the same except use the
 Import $\rightarrow$ LHPN Model option.  Before bringing the model
 into the project, it will be edited to a format consistent with this tool.  
 \begin{center}
-\includegraphics[height=45mm]{screenshots/import}
+\includegraphics[height=45mm]{screenshots/importLema}
 \end{center} 
 
 \subsection{Editing Project Objects}
@@ -148,10 +148,10 @@ verification view (see Section~\ref{Verification}). For a learn view, the
 
 \begin{center}
 \begin{tabular}{ccc}
-\includegraphics[height=65mm]{screenshots/modGCM} & &
-\includegraphics[height=65mm]{screenshots/modSBML} \\ \\
-\includegraphics[height=35mm]{screenshots/modAnalysis} & &
-\includegraphics[height=35mm]{screenshots/modLearn}
+\includegraphics[height=65mm]{screenshots/modLHPN} & &
+\includegraphics[height=65mm]{screenshots/modVHDL} \\ \\
+\includegraphics[height=35mm]{screenshots/modVerify} & &
+\includegraphics[height=35mm]{screenshots/modLearnLema}
 \end{tabular}
 \end{center}
 
@@ -168,10 +168,10 @@ LHPN and viewed using the same ``View Model'' option.
 
 \begin{center}
 \begin{tabular}{ccc}
-\includegraphics[height=65mm]{screenshots/modGCM} & &
-\includegraphics[height=65mm]{screenshots/modSBML} \\ \\
-\includegraphics[height=35mm]{screenshots/modAnalysis} & &
-\includegraphics[height=35mm]{screenshots/modLearn}
+\includegraphics[height=65mm]{screenshots/modLHPN} & &
+\includegraphics[height=65mm]{screenshots/modVHDL} \\ \\
+\includegraphics[height=35mm]{screenshots/modVerify} & &
+\includegraphics[height=35mm]{screenshots/modLearnLema}
 \end{tabular}
 \end{center}
 
@@ -191,8 +191,8 @@ and selecting ``Open Verification/Learn View'' or alternatively
 double-clicking on the view.
 \begin{center}
 \begin{tabular}{ccc}
-\includegraphics[height=55mm]{screenshots/createAnalysis} & & 
-\includegraphics[height=55mm]{screenshots/createLearn}
+\includegraphics[height=55mm]{screenshots/createVerification} & & 
+\includegraphics[height=55mm]{screenshots/createLearnLema}
 \end{tabular}
 \end{center}
 
@@ -228,7 +228,7 @@ the model. The Save As button can also be used to store the
 model, but in this case, a new model ID will be requested and the
 model will be saved using that ID. 
 \begin{center}
-\includegraphics[height=90mm]{screenshots/SBMLedit}
+\includegraphics[height=90mm]{screenshots/LHPNedit}
 \end{center}
 
 \subsection{\label{places}Places}
@@ -246,7 +246,7 @@ As shown below, a place has the following fields:
 \item Initial Marking: a boolean describing whether the place is initially marked.
 \end{itemize}
 \begin{center}
-\includegraphics[height=80mm]{screenshots/compartment}
+\includegraphics[height=80mm]{screenshots/place}
 \end{center}
 
 \subsection{\label{transitions}Transitions}
@@ -275,7 +275,7 @@ As shown below, a transition has the following fields:
        ``Remove Assignment'' buttons.
 \end{itemize}
 \begin{center}
-\includegraphics[height=65mm]{screenshots/species}
+\includegraphics[height=65mm]{screenshots/transition}
 \end{center}
 
 \subsubsection{\label{assignments}Assignments}
@@ -294,6 +294,9 @@ An assignment consists of the following fields:
        or rate of a continuous variable (Note: this field is disabled for
        non-continous variables).
 \end{itemize}
+\begin{center}
+\includegraphics[height=65mm]{screenshots/assignment}
+\end{center}
 
 \subsection{\label{variables}Variables}
 
@@ -317,13 +320,9 @@ As shown below, a variable contains the following fields:
 To change a variable from one type to another, the user must remove the initial
 variable and then add a new variable with the same id of the desired type.
 \begin{center}
-\includegraphics[height=70mm]{screenshots/reaction}
-\begin{tabular}{cc}
-\includegraphics[height=35mm]{screenshots/reactant} &
-\includegraphics[height=35mm]{screenshots/product}
-\end{tabular}
-\includegraphics[height=35mm]{screenshots/localParam}\\
-\includegraphics[height=35mm]{screenshots/kineticLaw} 
+\includegraphics[height=70mm]{screenshots/contVariable}
+\includegraphics[height=35mm]{screenshots/boolVariable}
+\includegraphics[height=35mm]{screenshots/intVariable}
 \end{center}
 
 \subsection{\label{controlFlow}Control Flow}
@@ -340,7 +339,7 @@ As shown below, a movement includes the following fields:
        the trailing end of the edge.
 \end{itemize}
 \begin{center}
-\includegraphics[height=60mm]{screenshots/parameter}
+\includegraphics[height=60mm]{screenshots/movement}
 \end{center}
 
 \section{\label{TextEdit}Text Editor}
@@ -354,7 +353,7 @@ the desired external text editor in the space provided.  Every time that a
 VHDL-AMS or Spice model is opened, it will be opened in the external text 
 editor.
 \begin{center}
-\includegraphics[height=80mm]{screenshots/GCMedit}
+\includegraphics[height=80mm]{screenshots/VHDLedit}
 \end{center}
 \clearpage
 
@@ -366,7 +365,7 @@ The verification view is used to verify the property stated in the LHPN model.
 basic options (see Section~\ref{basOptions}),  and
 advanced options (see Section~\ref{advOptions}).
 \begin{center}
-\includegraphics[height=80mm]{screenshots/analysisView}
+\includegraphics[height=80mm]{screenshots/verificationView}
 \end{center}
 
 \subsection{\label{basOptions}Basic Options}
@@ -386,13 +385,13 @@ timing method to be used in the verification.
 \item BDD specifies binary decision diagram modeling.
 \item DBM [NEEDS DESCRIPTION]
 \item SMT [NEEDS DESCRIPTION]
-\end {itemize}
+\end{itemize}
 
 The other options refer to miscellaneous ATACS options.
-\begin {itemize}
+\begin{itemize}
 \item Dot [NEEDS DESCRIPTION]
 \item Verbose [NEEDS DESCRIPTION]
-\end {itemize}
+\end{itemize}
 
 \subsection{\label{advOptions}Advanced Options}
 
@@ -431,7 +430,7 @@ The other advanced options include
 \item BDD Linkspace Size [NEEDS DESCRIPTION]
 \end{itemize}
 \begin{center}
-\includegraphics[height=80mm]{screenshots/absOptions}
+\includegraphics[height=80mm]{screenshots/advOptions}
 \end{center}
 
 \section{\label{Learn}Learn View}
@@ -471,7 +470,7 @@ points can be copied using the Copy Data Point button.  When you are
 satisfied with all your changes, you should press the Save button
 to record your changes.
 \begin{center}
-\includegraphics[height=85mm]{screenshots/dataManager}
+\includegraphics[height=85mm]{screenshots/dataManagerLema}
 \end{center}
 
 \clearpage
@@ -489,7 +488,7 @@ menu options to save the parameters without learning, view the last learned
 circuit, save the generated circuit into the project, and view the last run
 log. 
 \begin{center}
-\includegraphics[height=85mm]{screenshots/learn}
+\includegraphics[height=85mm]{screenshots/learnLema}
 \end{center}
 
 The learning options shown below are as follows:
@@ -514,9 +513,6 @@ button will provide the levels that would have been auto
 generated as a suggestion. These levels can then edited by the
 user.  The number of bins for each species can also be individually adjusted.  
 \end{itemize}
-\begin{center}
-\includegraphics[height=85mm]{screenshots/advLearn}
-\end{center}
 
 \section{\label{TSDEdit}TSD Graph Editor}
 
@@ -529,7 +525,7 @@ menu option. Once created, they can be viewed and edited by double
 clicking on the graph in the project window.  An example graph is
 shown below.
 \begin{center}
-\includegraphics[height=80mm]{screenshots/TSDgraph}
+\includegraphics[height=80mm]{screenshots/TSDgraphLema}
 \end{center}
 
 In the TSD graph editor shown below,
@@ -550,7 +546,7 @@ graphed. The parameters that you can select for a graph include:
 Determines whether to automatically resize the graph for best fit. 
 \end{itemize}
 \begin{center}
-\includegraphics[height=80mm]{screenshots/editGraph}
+\includegraphics[height=80mm]{screenshots/editGraphLema}
 \end{center}
 
 The data selection menu on the left displays all of the
@@ -620,10 +616,7 @@ under the {\tt File} menu on Linux and Windows or the {\tt LEMA}
 menu on MacOS.  As shown below, the user can decided whether they wish
 to use an external editor for VHDL-AMS models, and which editor to use.
 \begin{center}
-\begin{tabular}{cc}
-\includegraphics[height=80mm]{screenshots/SBMLPref} &
-\includegraphics[height=80mm]{screenshots/GCMPref}
-\end{tabular}
+\includegraphics[height=80mm]{screenshots/preferenceLema} 
 \end{center}
 
 \section{\label{LHPN}Labeled Hybrid Petri Net Format}
@@ -685,9 +678,9 @@ the example being given for a ``.\#@init\_vals'' line.
 The enabling condition for each transition is given in a ``\#@.enablings'' line
 in the following format.
 
-\begin {verbatim}
+\begin{verbatim}
 #@.enablings {<transition1=[enabling condition1]><transition2...>}
-\end {verbatim}
+\end{verbatim}
 
 The delay for each transition is specified in the ``\#@.delay\_assignments'' 
 line according to the following format, where each lower and upper bound of the
