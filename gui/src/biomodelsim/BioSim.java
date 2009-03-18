@@ -4102,7 +4102,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				if ((filename.length() > 1
 						&& !filename.substring(filename.length() - 2, filename.length()).equals(".g"))
 						&& (filename.length() > 3
-						&& !filename.substring(filename.length() - 4, filename.length()).equals(".lpn"))){
+						&& !filename.substring(filename.length() - 4, filename.length()).equals(".lpn"))) {
+					System.out.println(filename.substring(filename.length() - 2, filename.length()));
 					JOptionPane.showMessageDialog(frame, "You must select a valid lhpn file to import.",
 							"Error", JOptionPane.ERROR_MESSAGE);
 					return;
@@ -4144,11 +4145,11 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		else if (e.getSource() == importLpn) {
 			if (root != null) {
 				String filename = Buttons.browse(frame, new File(root), null, JFileChooser.FILES_ONLY,
-						"Import LHPN", -1);
+						"Import LPN", -1);
 				if ((filename.length() > 1
 						&& !filename.substring(filename.length() - 2, filename.length()).equals(".g"))
-						|| (filename.length() > 3
-						&& !filename.substring(filename.length() - 4, filename.length()).equals(".lpn"))){
+						&& (filename.length() > 3
+						&& !filename.substring(filename.length() - 4, filename.length()).equals(".lpn"))) {
 					JOptionPane.showMessageDialog(frame, "You must select a valid lhpn file to import.",
 							"Error", JOptionPane.ERROR_MESSAGE);
 					return;
