@@ -807,7 +807,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		else {
 			importMenu.add(importVhdl);
 			importMenu.add(importLhpn);
-			importMenu.add(importSpice);
+			//importMenu.add(importSpice);
 		}
 		file.add(exportMenu);
 		exportMenu.add(exportCsv);
