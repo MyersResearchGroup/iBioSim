@@ -271,9 +271,11 @@ public class VariablesPanel extends JPanel implements ActionListener {
 			String[] allVariables = lhpn.getAllIDs();
 			if (oldName == null) {
 				for (int i=0; i<allVariables.length; i++) {
+					if (allVariables[i] != null) {
 					if (allVariables[i].equals(fields.get(GlobalConstants.ID).getValue())) {
 						Utility.createErrorMessage("Error", "Variable id already exists.");
 						return false;
+					}
 					}
 				}
 			}
