@@ -1,5 +1,8 @@
 package synthesis;
 
+import gcm2sbml.util.Utility;
+import gcm2sbml.gui.PropertyList;
+
 import javax.swing.*;
 
 import java.awt.*;
@@ -16,11 +19,12 @@ import java.io.InputStreamReader;
 import java.util.Properties;
 
 import biomodelsim.*;
+import buttons.Buttons;
 
 /**
  * This class creates a GUI front end for the Synthesis tool. It provides the
  * necessary options to run an atacs simulation of the circuit and manage the
- * results from the BioSim GUI.
+ * results from the ATACS GUI.
  * 
  * @author Kevin Jones
  */
@@ -29,7 +33,8 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 
 	private static final long serialVersionUID = -5806315070287184299L;
 
-	private JButton save, run, viewCircuit, viewRules, viewTrace, viewLog;
+	private JButton save, run, viewCircuit, viewRules, viewTrace, viewLog, addComponent,
+			removeComponent;
 
 	private JLabel algorithm, timingMethod, technology, otherOptions, otherOptions2, maxSizeLabel,
 			gateDelayLabel, compilation, bddSizeLabel, advTiming, synthesisOptions, pruning;
@@ -43,13 +48,15 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 			disabling, nofail, keepgoing, explpn, nochecks, reduction, minins, newTab, postProc,
 			redCheck, xForm2, expandRate;
 
-	private JTextField maxSize, gateDelay, bddSize, backgroundField;
+	private JTextField maxSize, gateDelay, bddSize, backgroundField, componentField;
 
 	private ButtonGroup timingMethodGroup, technologyGroup, algorithmGroup;
 
 	private String directory, separator, synthFile, synthesisFile, sourceFile;
-	
+
 	private String oldMax, oldDelay, oldBdd;
+
+	private PropertyList componentList;
 
 	private boolean change;
 
@@ -111,6 +118,7 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 		oldMax = maxSize.getText();
 		oldDelay = gateDelay.getText();
 		oldBdd = bddSize.getText();
+		componentList = new PropertyList("");
 
 		algorithm = new JLabel("Synthesis Algorithm:");
 		timingMethod = new JLabel("Timing Method:");
@@ -239,6 +247,16 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 		nochecks.addActionListener(this);
 		reduction.addActionListener(this);
 		minins.addActionListener(this);
+		// Component List
+		addComponent = new JButton("Add Component");
+		removeComponent = new JButton("Remove Component");
+		addComponent.addActionListener(this);
+		removeComponent.addActionListener(this);
+		GridBagConstraints constraints = new GridBagConstraints();
+		JPanel componentPanel = Utility.createPanel(this, "Components", componentList,
+				addComponent, removeComponent, null);
+		constraints.gridx = 0;
+		constraints.gridy = 1;
 
 		timingMethodGroup = new ButtonGroup();
 		technologyGroup = new ButtonGroup();
@@ -370,6 +388,11 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 			}
 			if (load.containsKey("synthesis.bddSize")) {
 				bddSize.setText(load.getProperty("synthesis.bddSize"));
+			}
+			Integer i=0;
+			while (load.containsKey("synthesis.compList" + i.toString())) {
+				componentList.addItem(load.getProperty("synthesis.compList" + i.toString()));
+				i++;
 			}
 			if (load.containsKey("synthesis.timing.methods")) {
 				if (load.getProperty("synthesis.timing.methods").equals("untimed")) {
@@ -686,22 +709,30 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 		viewLog.setMnemonic(KeyEvent.VK_V);
 
 		JPanel backgroundPanel = new JPanel();
-		//log.addText(sourceFile);
+		// log.addText(sourceFile);
 		JLabel backgroundLabel = new JLabel("Model File:");
-		String[] tempArray = sourceFile.split(separator);
+		String[] tempArray = synthesisFile.split(separator);
 		String sourceFileNoPath = tempArray[tempArray.length - 1];
 		backgroundField = new JTextField(sourceFileNoPath);
-		backgroundField.setMaximumSize(new Dimension(200,20));
+		backgroundField.setMaximumSize(new Dimension(200, 20));
 		backgroundField.setEditable(false);
+		JLabel componentLabel = new JLabel("Component:");
+		componentField = new JTextField();
+		componentField.setPreferredSize(new Dimension(200, 20));
 		backgroundPanel.add(backgroundLabel);
 		backgroundPanel.add(backgroundField);
-		backgroundPanel.setMaximumSize(new Dimension(400,30));
+		if (synthesisFile.endsWith(".vhd")) {
+			backgroundPanel.add(componentLabel);
+			backgroundPanel.add(componentField);
+		}
+		backgroundPanel.setMaximumSize(new Dimension(600, 30));
 		basicOptions.add(backgroundPanel);
 		basicOptions.add(timingRadioPanel);
 		basicOptions.add(technologyPanel);
 		basicOptions.add(otherPanel);
 		basicOptions.add(valuePanel);
 		basicOptions.add(algorithmPanel);
+		basicOptions.add(componentPanel);
 		basicOptions.setLayout(new BoxLayout(basicOptions, BoxLayout.Y_AXIS));
 
 		advOptions.add(compilationPanel);
@@ -718,7 +749,7 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 
 		this.setLayout(new BorderLayout());
 		this.add(tab, BorderLayout.PAGE_START);
-		//this.add(buttonPanel, BorderLayout.PAGE_END);
+		// this.add(buttonPanel, BorderLayout.PAGE_END);
 		change = false;
 	}
 
@@ -751,11 +782,50 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 		else if (e.getSource() == viewLog) {
 			viewLog();
 		}
+		else if (e.getSource() == addComponent) {
+			String filename = Buttons.browse(biosim.frame(), new File(directory), null,
+					JFileChooser.FILES_ONLY, "Select Component", -1);
+			if (!filename.equals("")) {
+				if (!filename.endsWith(".vhd")) {
+					JOptionPane.showMessageDialog(biosim.frame(),
+							"You must select a valid VHDL file.", "Error",
+							JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				String[] file = filename.split(separator);
+				try {
+					FileOutputStream out = new FileOutputStream(new File(directory + separator
+							+ file[file.length - 1]));
+					FileInputStream in = new FileInputStream(new File(filename));
+					int read = in.read();
+					while (read != -1) {
+						out.write(read);
+						read = in.read();
+					}
+					in.close();
+					out.close();
+				}
+				catch (IOException e1) {
+					JOptionPane.showMessageDialog(biosim.frame(),
+							"Cannot add the selected component.", "Error",
+							JOptionPane.ERROR_MESSAGE);
+				}
+				componentList.addItem(file[file.length - 1]);
+				return;
+			}
+		}
+		else if (e.getSource() == removeComponent) {
+			if (componentList.getSelectedValue() != null) {
+				String selected = componentList.getSelectedValue().toString();
+				componentList.removeItem(selected);
+				new File(directory + separator + selected).delete();
+			}
+		}
 	}
 
 	public void run() {
 		// String command = "/home/shang/kjones/atacs/bin/atacs -";
-		String[] tempArray = sourceFile.split(separator);
+		String[] tempArray = synthesisFile.split(separator);
 		String circuitFile = tempArray[tempArray.length - 1];
 		tempArray = sourceFile.split("\\.");
 		String traceFilename = tempArray[0] + ".trace";
@@ -952,9 +1022,13 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 		// String[] temp = sourceFile.split(separator);
 		// String src = temp[temp.length - 1];
 		String cmd = "atacs " + options + " " + circuitFile;
-		// String[] cmd = {"emacs", "temp" };
-		// JOptionPane.showMessageDialog(this, cmd);
-		// Runtime exec = Runtime.getRuntime();
+		String[] components = componentList.getItems();
+		for (String s : components) {
+			cmd = cmd + " " + s;
+		}
+		if (!componentField.getText().trim().equals("")) {
+			cmd = cmd + " " + componentField.getText().trim();
+		}
 		final JButton cancel = new JButton("Cancel");
 		final JFrame running = new JFrame("Progress");
 		WindowListener w = new WindowListener() {
@@ -1099,10 +1173,10 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 		catch (Exception e) {
 		}
 	}
-	
+
 	public void saveAs() {
-		String newName = JOptionPane.showInputDialog(biosim.frame(), "Enter Synthesis name:", "Synthesis Name",
-				JOptionPane.PLAIN_MESSAGE);
+		String newName = JOptionPane.showInputDialog(biosim.frame(), "Enter Synthesis name:",
+				"Synthesis Name", JOptionPane.PLAIN_MESSAGE);
 		if (newName == null) {
 			return;
 		}
@@ -1111,7 +1185,7 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 		}
 		save(newName);
 	}
-	
+
 	public void save() {
 		save(synthFile);
 	}
@@ -1119,13 +1193,20 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 	public void save(String filename) {
 		try {
 			Properties prop = new Properties();
-			FileInputStream in = new FileInputStream(new File(directory + separator + filename));
-			prop.load(in);
-			in.close();
+			//FileInputStream in = new FileInputStream(new File(directory + separator + filename));
+			//prop.load(in);
+			//in.close();
 			prop.setProperty("synthesis.file", synthesisFile);
 			prop.setProperty("synthesis.source", sourceFile);
 			prop.setProperty("synthesis.Max", this.maxSize.getText().trim());
 			prop.setProperty("synthesis.Delay", this.gateDelay.getText().trim());
+			if (!componentField.getText().trim().equals("")) {
+				prop.setProperty("synthesis.Component", this.componentField.getText().trim());
+			}
+			String[] components = componentList.getItems();
+			for (Integer i=0; i<components.length; i++) {
+				prop.setProperty("synthesis.compList" + i.toString(), components[i]);
+			}
 			if (!bddSize.equals("")) {
 				prop.setProperty("synthesis.bddSize", this.bddSize.getText().trim());
 			}
@@ -1394,7 +1475,7 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 			FileOutputStream out = new FileOutputStream(new File(directory + separator + synthFile));
 			prop.store(out, synthesisFile);
 			out.close();
-			log.addText("Saving Parameter File:\n" + directory + separator + synthFile);
+			log.addText("Saving Parameter File:\n" + directory + separator + synthFile + "\n");
 			change = false;
 			oldMax = maxSize.getText();
 			oldDelay = gateDelay.getText();
@@ -1405,16 +1486,16 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 					"Error Saving File", JOptionPane.ERROR_MESSAGE);
 		}
 	}
-	
+
 	public void reload(String newname) {
-//		
+		//		
 		backgroundField.setText(newname);
 	}
-	
+
 	public boolean getViewCircuitEnabled() {
 		return viewCircuit.isEnabled();
 	}
-	
+
 	public boolean getViewRulesEnabled() {
 		return viewRules.isEnabled();
 	}
@@ -1463,8 +1544,8 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 					cmd = "atacs -lsodps " + circuitFile;
 				}
 				if (new File(directory + separator + graphFile).exists()) {
-				exec.exec(cmd, null, work);
-				log.addText("Executing:\n" + cmd);
+					exec.exec(cmd, null, work);
+					log.addText("Executing:\n" + cmd);
 				}
 				else {
 					File log = new File(directory + separator + "atacs.log");
