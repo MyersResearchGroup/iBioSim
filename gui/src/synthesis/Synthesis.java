@@ -17,9 +17,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Properties;
+import java.util.ArrayList;
 
 import biomodelsim.*;
-import buttons.Buttons;
 
 /**
  * This class creates a GUI front end for the Synthesis tool. It provides the
@@ -52,7 +52,8 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 
 	private ButtonGroup timingMethodGroup, technologyGroup, algorithmGroup;
 
-	private String directory, separator, synthFile, synthesisFile, sourceFile;
+	private String directory, separator, root, synthFile, synthesisFile, sourceFile,
+			sourceFileNoPath;
 
 	private String oldMax, oldDelay, oldBdd;
 
@@ -250,8 +251,8 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 		// Component List
 		addComponent = new JButton("Add Component");
 		removeComponent = new JButton("Remove Component");
-		addComponent.addActionListener(this);
-		removeComponent.addActionListener(this);
+		//addComponent.addActionListener(this);
+		//removeComponent.addActionListener(this);
 		GridBagConstraints constraints = new GridBagConstraints();
 		JPanel componentPanel = Utility.createPanel(this, "Components", componentList,
 				addComponent, removeComponent, null);
@@ -389,7 +390,7 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 			if (load.containsKey("synthesis.bddSize")) {
 				bddSize.setText(load.getProperty("synthesis.bddSize"));
 			}
-			Integer i=0;
+			Integer i = 0;
 			while (load.containsKey("synthesis.compList" + i.toString())) {
 				componentList.addItem(load.getProperty("synthesis.compList" + i.toString()));
 				i++;
@@ -651,6 +652,16 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 			JOptionPane.showMessageDialog(biosim.frame(), "Unable to load properties file!",
 					"Error Loading Properties", JOptionPane.ERROR_MESSAGE);
 		}
+		String[] tempArray = synthesisFile.split(separator);
+		sourceFileNoPath = tempArray[tempArray.length - 1];
+		backgroundField = new JTextField(sourceFileNoPath);
+		// String[] components = new File(directory).list();
+		// for (int i=0; i<components.length; i++) {
+		// if (components[i].endsWith(".vhd") &&
+		// components[i].equals(sourceFileNoPath)) {
+		// componentList.addItem(components[i]);
+		// }
+		// }
 		// save();
 
 		getFilename = sourceFile.split(separator);
@@ -711,9 +722,6 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 		JPanel backgroundPanel = new JPanel();
 		// log.addText(sourceFile);
 		JLabel backgroundLabel = new JLabel("Model File:");
-		String[] tempArray = synthesisFile.split(separator);
-		String sourceFileNoPath = tempArray[tempArray.length - 1];
-		backgroundField = new JTextField(sourceFileNoPath);
 		backgroundField.setMaximumSize(new Dimension(200, 20));
 		backgroundField.setEditable(false);
 		JLabel componentLabel = new JLabel("Component:");
@@ -783,34 +791,46 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 			viewLog();
 		}
 		else if (e.getSource() == addComponent) {
-			String filename = Buttons.browse(biosim.frame(), new File(directory), null,
-					JFileChooser.FILES_ONLY, "Select Component", -1);
-			if (!filename.equals("")) {
+			String[] tempDir = directory.split(separator);
+			root = tempDir[0];
+			for (int i = 1; i < tempDir.length - 1; i++) {
+				root = root + separator + tempDir[i];
+			}
+			String[] vhdlFiles = new File(root).list();
+			ArrayList<String> tempFiles = new ArrayList<String>();
+			for (int i = 0; i < vhdlFiles.length; i++) {
+				if (vhdlFiles[i].endsWith(".vhd")) {
+					tempFiles.add(vhdlFiles[i]);
+				}
+			}
+			vhdlFiles = new String[tempFiles.size()];
+			for (int i = 0; i < vhdlFiles.length; i++) {
+				vhdlFiles[i] = tempFiles.get(i);
+			}
+			String filename = (String) JOptionPane.showInputDialog(this, "", "Select Component",
+					JOptionPane.PLAIN_MESSAGE, null, vhdlFiles, vhdlFiles[0]);
+			if (filename != null) {
+				String[] comps = componentList.getItems();
+				boolean contains = false;
+				for (int i=0; i<comps.length; i++) {
+					if (comps[i].equals(filename)) {
+						contains = true;
+					}
+				}
 				if (!filename.endsWith(".vhd")) {
 					JOptionPane.showMessageDialog(biosim.frame(),
 							"You must select a valid VHDL file.", "Error",
 							JOptionPane.ERROR_MESSAGE);
 					return;
 				}
-				String[] file = filename.split(separator);
-				try {
-					FileOutputStream out = new FileOutputStream(new File(directory + separator
-							+ file[file.length - 1]));
-					FileInputStream in = new FileInputStream(new File(filename));
-					int read = in.read();
-					while (read != -1) {
-						out.write(read);
-						read = in.read();
-					}
-					in.close();
-					out.close();
-				}
-				catch (IOException e1) {
+				else if (new File(directory + separator + filename).exists()
+						|| filename.equals(sourceFileNoPath) || contains) {
 					JOptionPane.showMessageDialog(biosim.frame(),
-							"Cannot add the selected component.", "Error",
+							"This component is already contained in this tool.", "Error",
 							JOptionPane.ERROR_MESSAGE);
+					return;
 				}
-				componentList.addItem(file[file.length - 1]);
+				componentList.addItem(filename);
 				return;
 			}
 		}
@@ -842,6 +862,24 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 		}
 		if (traceFile.exists()) {
 			traceFile.delete();
+		}
+		for (String s : componentList.getItems()) {
+			try {
+				FileOutputStream out = new FileOutputStream(new File(root + separator + s));
+				FileInputStream in = new FileInputStream(new File(directory + separator + s));
+				int read = in.read();
+				while (read != -1) {
+					out.write(read);
+					read = in.read();
+				}
+				in.close();
+				out.close();
+			}
+			catch (IOException e1) {
+				e1.printStackTrace();
+				JOptionPane.showMessageDialog(biosim.frame(), "Cannot update the file " + s + ".",
+						"Error", JOptionPane.ERROR_MESSAGE);
+			}
 		}
 		String options = "";
 		// Text field options
@@ -1021,7 +1059,7 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 		options = options + "pn";
 		// String[] temp = sourceFile.split(separator);
 		// String src = temp[temp.length - 1];
-		String cmd = "atacs " + options + " " + circuitFile;
+		String cmd = "atacs " + options;
 		String[] components = componentList.getItems();
 		for (String s : components) {
 			cmd = cmd + " " + s;
@@ -1029,6 +1067,7 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 		if (!componentField.getText().trim().equals("")) {
 			cmd = cmd + " " + componentField.getText().trim();
 		}
+		cmd = cmd + " " + circuitFile;
 		final JButton cancel = new JButton("Cancel");
 		final JFrame running = new JFrame("Progress");
 		WindowListener w = new WindowListener() {
@@ -1193,9 +1232,10 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 	public void save(String filename) {
 		try {
 			Properties prop = new Properties();
-			//FileInputStream in = new FileInputStream(new File(directory + separator + filename));
-			//prop.load(in);
-			//in.close();
+			// FileInputStream in = new FileInputStream(new File(directory +
+			// separator + filename));
+			// prop.load(in);
+			// in.close();
 			prop.setProperty("synthesis.file", synthesisFile);
 			prop.setProperty("synthesis.source", sourceFile);
 			prop.setProperty("synthesis.Max", this.maxSize.getText().trim());
@@ -1204,7 +1244,7 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 				prop.setProperty("synthesis.Component", this.componentField.getText().trim());
 			}
 			String[] components = componentList.getItems();
-			for (Integer i=0; i<components.length; i++) {
+			for (Integer i = 0; i < components.length; i++) {
 				prop.setProperty("synthesis.compList" + i.toString(), components[i]);
 			}
 			if (!bddSize.equals("")) {
@@ -1484,6 +1524,25 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 		catch (Exception e1) {
 			JOptionPane.showMessageDialog(biosim.frame(), "Unable to save parameter file!",
 					"Error Saving File", JOptionPane.ERROR_MESSAGE);
+		}
+		for (String s : componentList.getItems()) {
+			try {
+				new File(directory + separator + s).createNewFile();
+				FileOutputStream out = new FileOutputStream(new File(root + separator + s));
+				FileInputStream in = new FileInputStream(new File(directory + separator + s));
+				int read = in.read();
+				while (read != -1) {
+					out.write(read);
+					read = in.read();
+				}
+				in.close();
+				out.close();
+			}
+			catch (IOException e1) {
+				e1.printStackTrace();
+				JOptionPane.showMessageDialog(biosim.frame(), "Cannot add the selected component.",
+						"Error", JOptionPane.ERROR_MESSAGE);
+			}
 		}
 	}
 
