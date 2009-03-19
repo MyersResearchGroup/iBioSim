@@ -4170,19 +4170,19 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						if (filename.substring(filename.length() - 2, filename.length()).equals(".g")) {
 							File work = new File(root);
 							String oldName = root + separator + file[file.length - 1];
-							String newName = oldName.replace(".lpn", "_NEW.g");
-							Process atacs = Runtime.getRuntime().exec("atacs -llsl " + oldName, null, work);
+							//String newName = oldName.replace(".lpn", "_NEW.g");
+							Process atacs = Runtime.getRuntime().exec("atacs -lgsl " + oldName, null, work);
 							atacs.waitFor();
-							FileOutputStream old = new FileOutputStream(new File(oldName));
-							FileInputStream newFile = new FileInputStream(new File(newName));
-							int readNew = newFile.read();
-							while (readNew != -1) {
-								old.write(readNew);
-								readNew = newFile.read();
-							}
-							old.close();
-							newFile.close();
-							new File(newName).delete();
+//							FileOutputStream old = new FileOutputStream(new File(oldName));
+//							FileInputStream newFile = new FileInputStream(new File(newName));
+//							int readNew = newFile.read();
+//							while (readNew != -1) {
+//								old.write(readNew);
+//								readNew = newFile.read();
+//							}
+//							old.close();
+//							newFile.close();
+//							new File(newName).delete();
 						}
 						refreshTree();
 					}
