@@ -799,7 +799,7 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 			String[] vhdlFiles = new File(root).list();
 			ArrayList<String> tempFiles = new ArrayList<String>();
 			for (int i = 0; i < vhdlFiles.length; i++) {
-				if (vhdlFiles[i].endsWith(".vhd")) {
+				if (vhdlFiles[i].endsWith(".vhd") && !vhdlFiles[i].equals(sourceFileNoPath)) {
 					tempFiles.add(vhdlFiles[i]);
 				}
 			}
@@ -1064,10 +1064,10 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 		for (String s : components) {
 			cmd = cmd + " " + s;
 		}
+		cmd = cmd + " " + circuitFile;
 		if (!componentField.getText().trim().equals("")) {
 			cmd = cmd + " " + componentField.getText().trim();
 		}
-		cmd = cmd + " " + circuitFile;
 		final JButton cancel = new JButton("Cancel");
 		final JFrame running = new JFrame("Progress");
 		WindowListener w = new WindowListener() {
