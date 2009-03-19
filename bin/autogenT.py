@@ -853,11 +853,11 @@ def writeBinsFile(varsL,divisionsL,binsFile):
 	if (flag == True):
 		outputF.write("\n")
 	for i in range(1,len(varsL)):
-		if len(divisionsL[i]) > 1:
-			outputF.write(varsL[i].name)
-			for div in divisionsL[i]:
-				outputF.write(" "+str(div))
-			outputF.write("\n")
+			if len(divisionsL[i]) > 1:
+				outputF.write(varsL[i].name)
+				for div in divisionsL[i]:
+					outputF.write(" "+str(div))
+				outputF.write("\n")
 	outputF.close()
 
 ##############################################################################

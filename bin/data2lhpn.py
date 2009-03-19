@@ -1172,7 +1172,7 @@ def parseBinsFile(binsFile,varsL,trace):
 				for i in range(1,len(dmvcL)):
 					found = False
 					for j in range(1,len(varsL)):
-						if outputL[i] == varsL[j].name:
+						if dmvcL[i] == varsL[j].name:
 							#print varsL[j].name+" is dmvc."
 							varsL[j].dmvc = True
 							found = True
