@@ -12,6 +12,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -37,6 +38,8 @@ import javax.swing.JTextField;
 
 import lhpn2sbml.parser.LHPNFile;
 
+import biomodelsim.BioSim;
+import biomodelsim.Log;
 import buttons.Buttons;
 
 /**
@@ -82,7 +85,8 @@ public class GCMFile {
 		this.bioAbs = bioAbs;
 	}
 	
-	public void createLogicalModel(final String filename) {
+	public void createLogicalModel(final String filename, final Log log, final BioSim biosim,
+			final String path, final String lpnName) {
 		final JFrame naryFrame = new JFrame("Thresholds");
 		WindowListener w = new WindowListener() {
 			public void windowClosing(WindowEvent arg0) {
@@ -202,6 +206,8 @@ public class GCMFile {
 		naryRun.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				convertToLHPN(specs, conLevel).save(filename);
+				log.addText("Saving GCM file as LHPN:\n" + path + File.separator + lpnName + "\n");
+				biosim.refreshTree();
 				naryFrame.dispose();
 			}
 		});
@@ -300,10 +306,6 @@ public class GCMFile {
 			}
 		}
 		LHPNFile LHPN = new LHPNFile();
-		// Properties initCond = new Properties();
-		// initCond.put("rate", "0");
-		// initCond.put("value", "0");
-		// LHPN.addVar("r", initCond);
 		for (int i = 0; i < specs.size(); i++) {
 			int placeNum = 0;
 			int transNum = 0;

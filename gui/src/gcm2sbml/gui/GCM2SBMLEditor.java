@@ -255,7 +255,6 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 
 		// Write out species and influences to a gcm file
 		gcm.save(path + File.separator + gcmname + ".gcm");
-		// gcm.createLogicalModel(path + File.separator + gcmname + ".lpn");
 		log.addText("Saving GCM file:\n" + path + File.separator + gcmname + ".gcm\n");
 
 		if (command.contains("template")) {
@@ -297,6 +296,27 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 				log.addText("Saving GCM file as SBML template:\n" + path + File.separator + templateName
 						+ "\n");
 				biosim.refreshTree();
+			}
+		}
+		else if (command.contains("LHPN")) {
+			String lpnName = JOptionPane.showInputDialog(biosim.frame(),
+					"Enter LHPN name:", "LHPN Name", JOptionPane.PLAIN_MESSAGE);
+			if (!lpnName.trim().contains(".lpn")) {
+				lpnName = lpnName.trim() + ".lpn";
+			}
+			if (new File(path + File.separator + lpnName).exists()) {
+				int value = JOptionPane.showOptionDialog(biosim.frame(), lpnName
+						+ " already exists.  Overwrite file?", "Save file", JOptionPane.YES_NO_OPTION,
+						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+				if (value == JOptionPane.YES_OPTION) {
+					gcm.createLogicalModel(path + File.separator + lpnName, log, biosim, path, lpnName);
+				}
+				else {
+					// Do nothing
+				}
+			}
+			else {
+				gcm.createLogicalModel(path + File.separator + lpnName, log, biosim, path, lpnName);
 			}
 		}
 		else if (command.contains("SBML")) {
