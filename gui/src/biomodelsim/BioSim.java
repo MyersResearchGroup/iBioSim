@@ -225,9 +225,10 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 	private String viewer;
 
 	private JMenuItem copy, rename, delete, save, saveAs, saveAsGcm, saveAsGraph, saveAsSbml,
-			saveAsTemplate, saveAsLhpn, check, run, export, refresh, viewCircuit, viewRules,
-			viewTrace, viewLog, saveParam, saveSbml, saveTemp, viewModGraph, viewModBrowser,
-			createAnal, createLearn, createSbml, createSynth, createVer, close, closeAll;
+			saveAsTemplate, saveGcmAsLhpn, saveAsLhpn, check, run, export, refresh, viewCircuit,
+			viewRules, viewTrace, viewLog, saveParam, saveSbml, saveTemp, viewModGraph,
+			viewModBrowser, createAnal, createLearn, createSbml, createSynth, createVer, close,
+			closeAll;
 
 	public class MacOSAboutHandler extends Application {
 
@@ -458,6 +459,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		saveAsGraph = new JMenuItem("Graph");
 		saveAsSbml = new JMenuItem("Save SBML Model");
 		saveAsTemplate = new JMenuItem("Save SBML Template");
+		saveGcmAsLhpn = new JMenuItem("Save LHPN Model");
 		saveAsLhpn = new JMenuItem("LHPN");
 		run = new JMenuItem("Save and Run");
 		check = new JMenuItem("Save and Check");
@@ -523,6 +525,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		saveAs.addActionListener(this);
 		saveAsSbml.addActionListener(this);
 		saveAsTemplate.addActionListener(this);
+		saveGcmAsLhpn.addActionListener(this);
 		run.addActionListener(this);
 		check.addActionListener(this);
 		saveSbml.addActionListener(this);
@@ -716,6 +719,9 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		save.setEnabled(false);
 		saveAs.setEnabled(false);
 		saveAsMenu.setEnabled(false);
+		saveAsSbml.setEnabled(false);
+		saveAsTemplate.setEnabled(false);
+		saveGcmAsLhpn.setEnabled(false);
 		run.setEnabled(false);
 		check.setEnabled(false);
 		saveSbml.setEnabled(false);
@@ -778,6 +784,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			saveAsMenu.add(saveAsGraph);
 			saveAsMenu.add(saveAsSbml);
 			saveAsMenu.add(saveAsTemplate);
+			saveAsMenu.add(saveGcmAsLhpn);
 		}
 		else {
 			saveAsMenu.add(saveAsLhpn);
@@ -787,6 +794,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		if (!async) {
 			file.add(saveAsSbml);
 			file.add(saveAsTemplate);
+			file.add(saveGcmAsLhpn);
 		}
 		file.add(saveParam);
 		file.add(run);
@@ -2004,6 +2012,10 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		else if (e.getSource() == saveAsGcm) {
 			Component comp = tab.getSelectedComponent();
 			((GCM2SBMLEditor) comp).save("GCM");
+		}
+		else if (e.getSource() == saveGcmAsLhpn) {
+			Component comp = tab.getSelectedComponent();
+			((GCM2SBMLEditor) comp).save("LHPN");
 		}
 		else if (e.getSource() == saveAsLhpn) {
 			Component comp = tab.getSelectedComponent();
@@ -8124,9 +8136,9 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					// ".sim")).close();
 					String[] dot = tree.getFile().split(separator);
 					String sbmlFile = /*
-										 * root + separator + simName +
-										 * separator +
-										 */(dot[dot.length - 1].substring(0, dot[dot.length - 1].length() - 3) + "sbml");
+									 * root + separator + simName + separator +
+									 */(dot[dot.length - 1].substring(0, dot[dot.length - 1]
+							.length() - 3) + "sbml");
 					GCMParser parser = new GCMParser(tree.getFile());
 					GeneticNetwork network = parser.buildNetwork();
 					GeneticNetwork.setRoot(root + File.separator);
@@ -8258,8 +8270,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					 * try { FileOutputStream out = new FileOutputStream(new
 					 * File(sbmlFile)); SBMLWriter writer = new SBMLWriter();
 					 * String doc = writer.writeToString(document); byte[]
-					 * output = doc.getBytes(); out.write(output); out.close(); }
-					 * catch (Exception e1) {
+					 * output = doc.getBytes(); out.write(output); out.close();
+					 * } catch (Exception e1) {
 					 * JOptionPane.showMessageDialog(frame, "Unable to copy sbml
 					 * file to output location.", "Error",
 					 * JOptionPane.ERROR_MESSAGE); }
@@ -8694,11 +8706,11 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			 * list.length; i++) { if (!(new File(list[i]).isDirectory()) &&
 			 * list[i].length() > 4) { String end = ""; for (int j = 1; j < 5;
 			 * j++) { end = list[i].charAt(list[i].length() - j) + end; } if
-			 * (end.equals(".tsd") || end.equals(".dat") || end.equals(".csv")) {
-			 * if (list[i].contains("run-")) { int tempNum =
+			 * (end.equals(".tsd") || end.equals(".dat") || end.equals(".csv"))
+			 * { if (list[i].contains("run-")) { int tempNum =
 			 * Integer.parseInt(list[i].substring(4, list[i] .length() -
-			 * end.length())); if (tempNum > run) { run = tempNum; // graphFile =
-			 * tree.getFile() + separator + // list[i]; } } } } } }
+			 * end.length())); if (tempNum > run) { run = tempNum; // graphFile
+			 * = tree.getFile() + separator + // list[i]; } } } } } }
 			 */
 
 			String verName = tree.getFile().split(separator)[tree.getFile().split(separator).length - 1];
@@ -9961,6 +9973,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			saveAsGraph.setEnabled(false);
 			saveAsSbml.setEnabled(true);
 			saveAsTemplate.setEnabled(true);
+			saveGcmAsLhpn.setEnabled(true);
 			refresh.setEnabled(false);
 			check.setEnabled(false);
 			export.setEnabled(false);
@@ -9987,6 +10000,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			saveAsGraph.setEnabled(false);
 			saveAsSbml.setEnabled(false);
 			saveAsTemplate.setEnabled(false);
+			saveGcmAsLhpn.setEnabled(false);
 			refresh.setEnabled(false);
 			check.setEnabled(false);
 			export.setEnabled(false);
@@ -10013,6 +10027,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			saveAsGraph.setEnabled(false);
 			saveAsSbml.setEnabled(true);
 			saveAsTemplate.setEnabled(false);
+			saveGcmAsLhpn.setEnabled(false);
 			refresh.setEnabled(false);
 			check.setEnabled(false);
 			export.setEnabled(false);
@@ -10037,6 +10052,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			saveAsGraph.setEnabled(true);
 			saveAsSbml.setEnabled(false);
 			saveAsTemplate.setEnabled(false);
+			saveGcmAsLhpn.setEnabled(false);
 			run.setEnabled(false);
 			saveAs.setEnabled(true);
 			refresh.setEnabled(true);
@@ -10099,6 +10115,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				saveAsGraph.setEnabled(true);
 				saveAsSbml.setEnabled(false);
 				saveAsTemplate.setEnabled(false);
+				saveGcmAsLhpn.setEnabled(false);
 				refresh.setEnabled(true);
 				check.setEnabled(false);
 				export.setEnabled(true);
@@ -10142,6 +10159,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				saveAsGraph.setEnabled(false);
 				saveAsSbml.setEnabled(false);
 				saveAsTemplate.setEnabled(false);
+				saveGcmAsLhpn.setEnabled(false);
 				refresh.setEnabled(false);
 				check.setEnabled(false);
 				export.setEnabled(false);
@@ -10170,6 +10188,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				saveAsGraph.setEnabled(false);
 				saveAsSbml.setEnabled(false);
 				saveAsTemplate.setEnabled(false);
+				saveGcmAsLhpn.setEnabled(false);
 				refresh.setEnabled(false);
 				check.setEnabled(false);
 				export.setEnabled(false);
@@ -10201,6 +10220,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				saveAsGraph.setEnabled(false);
 				saveAsSbml.setEnabled(false);
 				saveAsTemplate.setEnabled(false);
+				saveGcmAsLhpn.setEnabled(false);
 				refresh.setEnabled(false);
 				check.setEnabled(false);
 				export.setEnabled(false);
@@ -10233,6 +10253,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				saveAsGraph.setEnabled(false);
 				saveAsSbml.setEnabled(false);
 				saveAsTemplate.setEnabled(false);
+				saveGcmAsLhpn.setEnabled(false);
 				refresh.setEnabled(false);
 				check.setEnabled(false);
 				export.setEnabled(false);
@@ -10262,6 +10283,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				saveAsGraph.setEnabled(false);
 				saveAsSbml.setEnabled(false);
 				saveAsTemplate.setEnabled(false);
+				saveGcmAsLhpn.setEnabled(false);
 				refresh.setEnabled(false);
 				check.setEnabled(false);
 				export.setEnabled(false);
@@ -10290,6 +10312,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				saveAsGraph.setEnabled(false);
 				saveAsSbml.setEnabled(false);
 				saveAsTemplate.setEnabled(false);
+				saveGcmAsLhpn.setEnabled(false);
 				refresh.setEnabled(false);
 				check.setEnabled(false);
 				export.setEnabled(false);
@@ -10318,6 +10341,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				saveAsGraph.setEnabled(false);
 				saveAsSbml.setEnabled(false);
 				saveAsTemplate.setEnabled(false);
+				saveGcmAsLhpn.setEnabled(false);
 				refresh.setEnabled(false);
 				check.setEnabled(false);
 				export.setEnabled(false);
@@ -10348,6 +10372,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				saveAsGraph.setEnabled(false);
 				saveAsSbml.setEnabled(false);
 				saveAsTemplate.setEnabled(false);
+				saveGcmAsLhpn.setEnabled(false);
 				refresh.setEnabled(false);
 				check.setEnabled(false);
 				export.setEnabled(false);
@@ -10379,6 +10404,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				saveAsGraph.setEnabled(false);
 				saveAsSbml.setEnabled(false);
 				saveAsTemplate.setEnabled(false);
+				saveGcmAsLhpn.setEnabled(false);
 				refresh.setEnabled(false);
 				check.setEnabled(false);
 				export.setEnabled(false);
@@ -10414,6 +10440,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			saveAsGraph.setEnabled(false);
 			saveAsSbml.setEnabled(false);
 			saveAsTemplate.setEnabled(false);
+			saveGcmAsLhpn.setEnabled(false);
 			refresh.setEnabled(false);
 			check.setEnabled(false);
 			export.setEnabled(false);
@@ -10442,6 +10469,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			saveAsGraph.setEnabled(false);
 			saveAsSbml.setEnabled(false);
 			saveAsTemplate.setEnabled(false);
+			saveGcmAsLhpn.setEnabled(false);
 			refresh.setEnabled(false);
 			check.setEnabled(false);
 			export.setEnabled(false);
@@ -10478,6 +10506,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		saveAsGraph.setEnabled(false);
 		saveAsSbml.setEnabled(false);
 		saveAsTemplate.setEnabled(false);
+		saveGcmAsLhpn.setEnabled(false);
 		if (tree.getFile() != null) {
 			if (tree.getFile().length() > 4
 					&& tree.getFile().substring(tree.getFile().length() - 5).equals(".sbml")

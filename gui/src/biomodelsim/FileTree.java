@@ -217,7 +217,7 @@ public class FileTree extends JPanel implements MouseListener {
 								.equals(".g")) {
 					curDir.add(new DefaultMutableTreeNode(new IconData(ICON_LHPN, null, files.get(fnum))));
 				}
-				else if (async && files.get(fnum).toString().length() > 3
+				else if (files.get(fnum).toString().length() > 3
 						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4)
 								.equals(".lpn")) {
 					curDir.add(new DefaultMutableTreeNode(new IconData(ICON_LHPN, null, files.get(fnum))));
@@ -278,12 +278,12 @@ public class FileTree extends JPanel implements MouseListener {
 								.equals(".vhd")) {
 					curDir.add(new DefaultMutableTreeNode(new IconData(ICON_VHDL, null, files.get(fnum))));
 				}
-				else if (async && files.get(fnum).toString().length() > 1
+				else if (atacs && files.get(fnum).toString().length() > 1
 						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 2)
 								.equals(".g")) {
 					curDir.add(new DefaultMutableTreeNode(new IconData(ICON_LHPN, null, files.get(fnum))));
 				}
-				else if (async && files.get(fnum).toString().length() > 3
+				else if (files.get(fnum).toString().length() > 3
 						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4)
 								.equals(".lpn")) {
 					curDir.add(new DefaultMutableTreeNode(new IconData(ICON_LHPN, null, files.get(fnum))));
@@ -559,7 +559,7 @@ public class FileTree extends JPanel implements MouseListener {
 						current.insert(
 								new DefaultMutableTreeNode(new IconData(ICON_LHPN, null, files.get(fnum))), insert);
 					}
-					else if (async && files.get(fnum).toString().length() > 3
+					else if (files.get(fnum).toString().length() > 3
 							&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4)
 									.equals(".lpn")) {
 						current.insert(
@@ -656,7 +656,7 @@ public class FileTree extends JPanel implements MouseListener {
 						current.insert(
 								new DefaultMutableTreeNode(new IconData(ICON_LHPN, null, files.get(fnum))), insert);
 					}
-					else if (async && files.get(fnum).toString().length() > 3
+					else if (files.get(fnum).toString().length() > 3
 							&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4)
 									.equals(".lpn")) {
 						current.insert(
