@@ -1113,7 +1113,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 				else {
 					ArrayList<String> components = new ArrayList<String>();
 					for (String s : new File(path).list()) {
-						if (s.endsWith(".gcm")) {
+						if (s.endsWith(".gcm") && !s.equals(filename)) {
 							components.add(s);
 						}
 					}
@@ -1128,9 +1128,18 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 						}
 						components.set(j, index);
 					}
-					comp = (String) JOptionPane.showInputDialog(biosim.frame(),
-							"Choose a gcm to use as a component:", "Component Editor", JOptionPane.PLAIN_MESSAGE,
-							null, components.toArray(new String[0]), null);
+					if (components.size() == 0) {
+						comp = null;
+						JOptionPane.showMessageDialog(biosim.frame(),
+								"There aren't any other gcms to use as components."
+										+ "\nCreate a new gcm or import a gcm into the project first.",
+								"Add Another GCM To The Project", JOptionPane.ERROR_MESSAGE);
+					}
+					else {
+						comp = (String) JOptionPane.showInputDialog(biosim.frame(),
+								"Choose a gcm to use as a component:", "Component Editor",
+								JOptionPane.PLAIN_MESSAGE, null, components.toArray(new String[0]), null);
+					}
 				}
 				if (comp != null && !comp.equals("")) {
 					GCMFile getSpecs = new GCMFile();
