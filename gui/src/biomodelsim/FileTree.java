@@ -225,22 +225,22 @@ public class FileTree extends JPanel implements MouseListener {
 				else if (atacs && files.get(fnum).toString().length() > 3
 						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4)
 								.equals("csp")) {
-					curDir.add(new DefaultMutableTreeNode(new IconData(ICON_MODEL, null, files.get(fnum))));
+					curDir.add(new DefaultMutableTreeNode(new IconData(ICON_CSP, null, files.get(fnum))));
 				}
 				else if (atacs && files.get(fnum).toString().length() > 3
 						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4)
 								.equals(".hse")) {
-					curDir.add(new DefaultMutableTreeNode(new IconData(ICON_VHDL, null, files.get(fnum))));
+					curDir.add(new DefaultMutableTreeNode(new IconData(ICON_HSE, null, files.get(fnum))));
 				}
 				else if (atacs && files.get(fnum).toString().length() > 3
 						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4)
 								.equals(".unc")) {
-					curDir.add(new DefaultMutableTreeNode(new IconData(ICON_MODEL, null, files.get(fnum))));
+					curDir.add(new DefaultMutableTreeNode(new IconData(ICON_UNC, null, files.get(fnum))));
 				}
 				else if (atacs && files.get(fnum).toString().length() > 3
 						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4)
 								.equals(".rsg")) {
-					curDir.add(new DefaultMutableTreeNode(new IconData(ICON_MODEL, null, files.get(fnum))));
+					curDir.add(new DefaultMutableTreeNode(new IconData(ICON_RSG, null, files.get(fnum))));
 				}
 				//else if (lema && files.get(fnum).toString().length() > 3
 				//		&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4)
@@ -291,22 +291,22 @@ public class FileTree extends JPanel implements MouseListener {
 				else if (atacs && files.get(fnum).toString().length() > 3
 						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4)
 								.equals(".csp")) {
-					curDir.add(new DefaultMutableTreeNode(new IconData(ICON_LHPN, null, files.get(fnum))));
+					curDir.add(new DefaultMutableTreeNode(new IconData(ICON_CSP, null, files.get(fnum))));
 				}
 				else if (atacs && files.get(fnum).toString().length() > 3
 						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4)
 								.equals(".hse")) {
-					curDir.add(new DefaultMutableTreeNode(new IconData(ICON_LHPN, null, files.get(fnum))));
+					curDir.add(new DefaultMutableTreeNode(new IconData(ICON_HSE, null, files.get(fnum))));
 				}
 				else if (atacs && files.get(fnum).toString().length() > 3
 						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4)
 								.equals(".unc")) {
-					curDir.add(new DefaultMutableTreeNode(new IconData(ICON_LHPN, null, files.get(fnum))));
+					curDir.add(new DefaultMutableTreeNode(new IconData(ICON_UNC, null, files.get(fnum))));
 				}
 				else if (atacs && files.get(fnum).toString().length() > 3
 						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4)
 								.equals(".rsg")) {
-					curDir.add(new DefaultMutableTreeNode(new IconData(ICON_LHPN, null, files.get(fnum))));
+					curDir.add(new DefaultMutableTreeNode(new IconData(ICON_RSG, null, files.get(fnum))));
 				}
 				//else if (lema && files.get(fnum).toString().length() > 3
 				//		&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4)
@@ -569,25 +569,25 @@ public class FileTree extends JPanel implements MouseListener {
 							&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4)
 									.equals(".csp")) {
 						current.insert(
-								new DefaultMutableTreeNode(new IconData(ICON_LHPN, null, files.get(fnum))), insert);
+								new DefaultMutableTreeNode(new IconData(ICON_CSP, null, files.get(fnum))), insert);
 					}
 					else if (atacs && files.get(fnum).toString().length() > 3
 							&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4)
 									.equals(".hse")) {
 						current.insert(
-								new DefaultMutableTreeNode(new IconData(ICON_LHPN, null, files.get(fnum))), insert);
+								new DefaultMutableTreeNode(new IconData(ICON_HSE, null, files.get(fnum))), insert);
 					}
 					else if (atacs && files.get(fnum).toString().length() > 3
 							&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4)
 									.equals(".unc")) {
 						current.insert(
-								new DefaultMutableTreeNode(new IconData(ICON_LHPN, null, files.get(fnum))), insert);
+								new DefaultMutableTreeNode(new IconData(ICON_UNC, null, files.get(fnum))), insert);
 					}
 					else if (atacs && files.get(fnum).toString().length() > 3
 							&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4)
 									.equals(".rsg")) {
 						current.insert(
-								new DefaultMutableTreeNode(new IconData(ICON_LHPN, null, files.get(fnum))), insert);
+								new DefaultMutableTreeNode(new IconData(ICON_RSG, null, files.get(fnum))), insert);
 					}
 					//else if (lema && files.get(fnum).toString().length() > 3
 					//		&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4)
@@ -666,25 +666,25 @@ public class FileTree extends JPanel implements MouseListener {
 							&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4)
 									.equals(".csp")) {
 						current.insert(
-								new DefaultMutableTreeNode(new IconData(ICON_LHPN, null, files.get(fnum))), insert);
+								new DefaultMutableTreeNode(new IconData(ICON_CSP, null, files.get(fnum))), insert);
 					}
 					else if (atacs && files.get(fnum).toString().length() > 3
 							&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4)
 									.equals(".hse")) {
 						current.insert(
-								new DefaultMutableTreeNode(new IconData(ICON_LHPN, null, files.get(fnum))), insert);
+								new DefaultMutableTreeNode(new IconData(ICON_HSE, null, files.get(fnum))), insert);
 					}
 					else if (atacs && files.get(fnum).toString().length() > 3
 							&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4)
 									.equals(".unc")) {
 						current.insert(
-								new DefaultMutableTreeNode(new IconData(ICON_LHPN, null, files.get(fnum))), insert);
+								new DefaultMutableTreeNode(new IconData(ICON_UNC, null, files.get(fnum))), insert);
 					}
 					else if (atacs && files.get(fnum).toString().length() > 3
 							&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4)
 									.equals(".rsg")) {
 						current.insert(
-								new DefaultMutableTreeNode(new IconData(ICON_LHPN, null, files.get(fnum))), insert);
+								new DefaultMutableTreeNode(new IconData(ICON_RSG, null, files.get(fnum))), insert);
 					}
 					//else if (lema && files.get(fnum).toString().length() > 3
 					//		&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4)
