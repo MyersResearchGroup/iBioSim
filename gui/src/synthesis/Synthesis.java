@@ -854,9 +854,17 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 		tempArray = sourceFile.split("\\.");
 		String traceFilename = tempArray[0] + ".trace";
 		File traceFile = new File(traceFilename);
-		String rulesFilename = tempArray[0] + ".prs";
+		String rulesFilename, graphFilename;
+		//log.addText(tempArray[0]);
+		if (componentField.getText().trim().equals("")) {
+			rulesFilename = tempArray[0] + ".prs";
+			graphFilename = tempArray[0] + ".dot";
+		}
+		else {
+			rulesFilename = directory + separator + componentField.getText().trim() + ".prs";
+			graphFilename = directory + separator + componentField.getText().trim() + ".dot";
+		}
 		File rulesFile = new File(rulesFilename);
-		String graphFilename = tempArray[0] + ".dot";
 		File graphFile = new File(graphFilename);
 		if (rulesFile.exists()) {
 			rulesFile.delete();
@@ -869,8 +877,8 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 		}
 		for (String s : componentList.getItems()) {
 			try {
-				FileOutputStream out = new FileOutputStream(new File(root + separator + s));
-				FileInputStream in = new FileInputStream(new File(directory + separator + s));
+				FileInputStream in = new FileInputStream(new File(root + separator + s));
+				FileOutputStream out = new FileOutputStream(new File(directory + separator + s));
 				int read = in.read();
 				while (read != -1) {
 					out.write(read);
@@ -1167,6 +1175,7 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 								JOptionPane.ERROR_MESSAGE);
 			}
 			else {
+				//log.addText(rulesFile.getName());
 				if (rulesFile.exists()) {
 					viewCircuit.setEnabled(true);
 					viewRules.setEnabled(true);
@@ -1532,8 +1541,8 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 		for (String s : componentList.getItems()) {
 			try {
 				new File(directory + separator + s).createNewFile();
-				FileOutputStream out = new FileOutputStream(new File(root + separator + s));
-				FileInputStream in = new FileInputStream(new File(directory + separator + s));
+				FileInputStream in = new FileInputStream(new File(root + separator + s));
+				FileOutputStream out = new FileOutputStream(new File(directory + separator + s));
 				int read = in.read();
 				while (read != -1) {
 					out.write(read);
@@ -1574,13 +1583,15 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 	public void viewCircuit() {
 		String[] getFilename = sourceFile.split(separator);
 		String circuitFile = getFilename[getFilename.length - 1];
+		String graphFile;
 		if (componentField.getText().trim().equals("")) {
 			getFilename = getFilename[getFilename.length - 1].split("\\.");
+			graphFile = getFilename[0] + ".dot";
 		}
 		else {
 			getFilename = componentField.getText().trim().split("\\.");
+			graphFile = getFilename[0] + ".dot";
 		}
-		String graphFile = getFilename[0] + ".dot";
 		// JOptionPane.showMessageDialog(this, circuitFile);
 		// JOptionPane.showMessageDialog(this, directory + separator +
 		// circuitFile);
