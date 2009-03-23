@@ -84,6 +84,11 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 		this.sourceFile = filename;
 		String[] getFilename = directory.split(separator);
 		synthFile = getFilename[getFilename.length - 1] + ".syn";
+		String[] tempDir = directory.split(separator);
+		root = tempDir[0];
+		for (int i = 1; i < tempDir.length - 1; i++) {
+			root = root + separator + tempDir[i];
+		}
 
 		JPanel timingRadioPanel = new JPanel();
 		timingRadioPanel.setMaximumSize(new Dimension(1000, 35));
@@ -120,6 +125,7 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 		oldDelay = gateDelay.getText();
 		oldBdd = bddSize.getText();
 		componentList = new PropertyList("");
+		componentField = new JTextField();
 
 		algorithm = new JLabel("Synthesis Algorithm:");
 		timingMethod = new JLabel("Timing Method:");
@@ -390,6 +396,9 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 			if (load.containsKey("synthesis.bddSize")) {
 				bddSize.setText(load.getProperty("synthesis.bddSize"));
 			}
+			if (load.containsKey("synthesis.Component") && load.getProperty("synthesis.Component") != null) {
+				componentField.setText(load.getProperty("synthesis.Component"));
+			}
 			Integer i = 0;
 			while (load.containsKey("synthesis.compList" + i.toString())) {
 				componentList.addItem(load.getProperty("synthesis.compList" + i.toString()));
@@ -649,6 +658,7 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 			}
 		}
 		catch (Exception e) {
+			e.printStackTrace();
 			JOptionPane.showMessageDialog(biosim.frame(), "Unable to load properties file!",
 					"Error Loading Properties", JOptionPane.ERROR_MESSAGE);
 		}
@@ -725,7 +735,6 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 		backgroundField.setMaximumSize(new Dimension(200, 20));
 		backgroundField.setEditable(false);
 		JLabel componentLabel = new JLabel("Component:");
-		componentField = new JTextField();
 		componentField.setPreferredSize(new Dimension(200, 20));
 		backgroundPanel.add(backgroundLabel);
 		backgroundPanel.add(backgroundField);
@@ -791,11 +800,6 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 			viewLog();
 		}
 		else if (e.getSource() == addComponent) {
-			String[] tempDir = directory.split(separator);
-			root = tempDir[0];
-			for (int i = 1; i < tempDir.length - 1; i++) {
-				root = root + separator + tempDir[i];
-			}
 			String[] vhdlFiles = new File(root).list();
 			ArrayList<String> tempFiles = new ArrayList<String>();
 			for (int i = 0; i < vhdlFiles.length; i++) {
@@ -1570,7 +1574,12 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 	public void viewCircuit() {
 		String[] getFilename = sourceFile.split(separator);
 		String circuitFile = getFilename[getFilename.length - 1];
-		getFilename = getFilename[getFilename.length - 1].split("\\.");
+		if (componentField.getText().trim().equals("")) {
+			getFilename = getFilename[getFilename.length - 1].split("\\.");
+		}
+		else {
+			getFilename = componentField.getText().trim().split("\\.");
+		}
 		String graphFile = getFilename[0] + ".dot";
 		// JOptionPane.showMessageDialog(this, circuitFile);
 		// JOptionPane.showMessageDialog(this, directory + separator +
