@@ -767,7 +767,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		else {
 			newMenu.add(newVhdl);
 			newMenu.add(newLhpn);
-			newMenu.add(newSpice);
+			//newMenu.add(newSpice);
 		}
 		newMenu.add(graph);
 		newMenu.add(probGraph);
