@@ -3112,7 +3112,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				else if (comp.getName().equals("Synthesis")) {
 					Component[] array = ((JPanel) comp).getComponents();
 					((Synthesis) array[0]).save();
-					((Synthesis) array[0]).run();
+					new Thread((Synthesis) array[0]).start();
 				}
 			}
 		}
