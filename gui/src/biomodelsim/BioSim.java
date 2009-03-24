@@ -5817,7 +5817,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 										((LHPNEditor) tab.getComponentAt(i)).reload(rename
 												.substring(0, rename.length() - 4));
 									}
-									else {
+									else if (tab.getComponentAt(i) instanceof JTabbedPane) {
 										JTabbedPane t = new JTabbedPane();
 										int selected = ((JTabbedPane) tab.getComponentAt(i))
 												.getSelectedIndex();
