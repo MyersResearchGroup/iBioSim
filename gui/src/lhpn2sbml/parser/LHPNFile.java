@@ -43,7 +43,9 @@ public class LHPNFile {
 
 	private HashMap<String, String> delays;
 
-	private HashMap<String, String> transitionRates;
+	private HashMap<String, ExprTree> transitionRates;
+	
+	private HashMap<String, String> transitionRateStrings;
 
 	private HashMap<String, Properties> booleanAssignments;
 
@@ -58,7 +60,8 @@ public class LHPNFile {
 		outputs = new HashMap<String, String>();
 		enablings = new HashMap<String, String>();
 		delays = new HashMap<String, String>();
-		transitionRates = new HashMap<String, String>();
+		transitionRates = new HashMap<String, ExprTree>();
+		transitionRateStrings = new HashMap<String, String>();
 		booleanAssignments = new HashMap<String, Properties>();
 		controlFlow = new HashMap<String, Properties>();
 		controlPlaces = new HashMap<String, Properties>();
@@ -75,7 +78,8 @@ public class LHPNFile {
 		outputs = new HashMap<String, String>();
 		enablings = new HashMap<String, String>();
 		delays = new HashMap<String, String>();
-		transitionRates = new HashMap<String, String>();
+		transitionRates = new HashMap<String, ExprTree>();
+		transitionRateStrings = new HashMap<String, String>();
 		booleanAssignments = new HashMap<String, Properties>();
 		controlFlow = new HashMap<String, Properties>();
 		controlPlaces = new HashMap<String, Properties>();
@@ -351,16 +355,16 @@ public class LHPNFile {
 					buffer.append("}\n");
 				}
 			}
-			if (!transitionRates.isEmpty()) {
+			if (!transitionRateStrings.isEmpty()) {
 				flag = false;
-				for (String s : transitionRates.keySet()) {
-					if (s != null && !transitionRates.get(s).equals("")) {
+				for (String s : transitionRateStrings.keySet()) {
+					if (s != null && !transitionRateStrings.get(s).equals("")) {
 						if (!flag) {
 							buffer.append("#@.transition_rates {");
 							flag = true;
 						}
 						// log.addText("here " + enablings.get(s));
-						buffer.append("<" + s + "=[" + transitionRates.get(s) + "]>");
+						buffer.append("<" + s + "=[" + transitionRateStrings.get(s) + "]>");
 					}
 				}
 				if (flag) {
@@ -845,7 +849,8 @@ public class LHPNFile {
 			Properties rateAssign, Properties booleanAssign, String enabling) {
 		addTransition(name);
 		delays.put(name, delay);
-		transitionRates.put(name, transitionRate);
+		transitionRates.put(name, null);
+		transitionRateStrings.put(name, transitionRate);
 		rateAssignments.put(name, rateAssign);
 		booleanAssignments.put(name, booleanAssign);
 		enablings.put(name, enabling);
@@ -855,13 +860,25 @@ public class LHPNFile {
 		controlFlow.remove(name);
 		delays.remove(name);
 		transitionRates.remove(name);
+		transitionRateStrings.remove(name);
 		rateAssignments.remove(name);
 		booleanAssignments.remove(name);
 		enablings.remove(name);
 	}
 	
 	public void addTransitionRate(String name, String transitionRate) {
-		transitionRates.put(name, transitionRate);
+		ExprTree expr = new ExprTree();
+		String tokvalue = new String();
+		int position = 0;
+		int token = expr.intexpr_gettok(transitionRate, tokvalue, 256, position);
+		signalADT[] signals = new signalADT[256];
+		int nsignals = 0;
+		eventADT[] events = new eventADT[256];
+		int nevents = 0;
+		int nplaces = 0;
+		expr.intexpr_L(token, transitionRate, tokvalue, position, expr, signals, nsignals, events, nevents, nplaces);
+		transitionRates.put(name, expr);
+		transitionRateStrings.put(name, transitionRate);
 	}
 
 	public void addEnabling(String name, String cond) {
@@ -1072,6 +1089,8 @@ public class LHPNFile {
 		delays.remove(oldName);
 		transitionRates.put(newName, transitionRates.get(oldName));
 		transitionRates.remove(oldName);
+		transitionRateStrings.put(newName, transitionRateStrings.get(oldName));
+		transitionRateStrings.remove(oldName);
 		rateAssignments.put(newName, rateAssignments.get(oldName));
 		rateAssignments.remove(oldName);
 		booleanAssignments.put(newName, booleanAssignments.get(oldName));
@@ -1092,8 +1111,21 @@ public class LHPNFile {
 		if (transitionRates.containsKey(transition)) {
 			transitionRates.remove(transition);
 		}
-		// log.addText(transition + delay);
-		transitionRates.put(transition, rate);
+		ExprTree expr = new ExprTree();
+		String tokvalue = new String();
+		int position = 0;
+		int token = expr.intexpr_gettok(rate, tokvalue, 256, position);
+		signalADT[] signals = new signalADT[256];
+		int nsignals = 0;
+		eventADT[] events = new eventADT[256];
+		int nevents = 0;
+		int nplaces = 0;
+		expr.intexpr_L(token, rate, tokvalue, position, expr, signals, nsignals, events, nevents, nplaces);
+		transitionRates.put(transition, expr);
+		if (transitionRateStrings.containsKey(transition)) {
+			transitionRateStrings.remove(transition);
+		}
+		transitionRateStrings.put(transition, rate);
 	}
 
 	public void changeEnabling(String transition, String enabling) {
@@ -1162,12 +1194,20 @@ public class LHPNFile {
 		return delays.get(var);
 	}
 
-	public HashMap<String, String> getTransitionRates() {
+	public HashMap<String, ExprTree> getTransitionRates() {
 		return transitionRates;
 	}
+	
+	public HashMap<String, String> getTransitionRateStrings() {
+		return transitionRateStrings;
+	}
 
-	public String getTransitionRate(String var) {
+	public ExprTree getTransitionRate(String var) {
 		return transitionRates.get(var);
+	}
+	
+	public String getTransitionRateString(String var) {
+		return transitionRateStrings.get(var);
 	}
 
 	public String[] getControlFlow() {
@@ -1476,6 +1516,7 @@ public class LHPNFile {
 		abstraction.addEnablings(enablings);
 		abstraction.addDelays(delays);
 		abstraction.addRates(transitionRates);
+		abstraction.addRateStrings(transitionRateStrings);
 		abstraction.addBooleanAssignments(booleanAssignments);
 		abstraction.addMovements(controlFlow);
 		abstraction.addPlaceMovements(controlPlaces);
@@ -2014,7 +2055,18 @@ public class LHPNFile {
 			// log.addText("check8b");
 			while (delayMatcher.find()) {
 				// log.addText("check8while");
-				transitionRates.put(delayMatcher.group(2), delayMatcher.group(4));
+				ExprTree expr = new ExprTree();
+				String tokvalue = new String();
+				int position = 0;
+				int token = expr.intexpr_gettok(delayMatcher.group(4), tokvalue, 256, position);
+				signalADT[] signals = new signalADT[256];
+				int nsignals = 0;
+				eventADT[] events = new eventADT[256];
+				int nevents = 0;
+				int nplaces = 0;
+				expr.intexpr_L(token, delayMatcher.group(4), tokvalue, position, expr, signals, nsignals, events, nevents, nplaces);
+				transitionRates.put(delayMatcher.group(2), expr);
+				transitionRateStrings.put(delayMatcher.group(2), delayMatcher.group(4));
 			}
 		}
 		// log.addText("check8end");
