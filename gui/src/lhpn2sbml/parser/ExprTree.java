@@ -1,6 +1,25 @@
 package lhpn2sbml.parser;
 
 public class ExprTree {
+	
+	String op;
+	  char isit;  // b=Boolean, i=Integer, c=Continuous, n=Number, t=Truth value, 
+	              //w=bitWise, a=Arithmetic, r=Relational, l=Logical
+	  int lvalue,uvalue;
+	  int index;
+	  double real;
+	  boolean logical;
+	  ExprTree r1, r2;
+	  ExprTree() {
+	  }
+	  ExprTree(char willbe, boolean lNV, boolean uNV, int ptr) {
+	  }
+	  ExprTree(char willbe, int lNV, int uNV, int ptr) {
+	  }
+	  ExprTree(ExprTree nr1, ExprTree nr2, String nop, char willbe) {
+	  }
+	  void op_set(String new_op) {
+	  }
 
 	public int intexpr_gettok(String expr, String tokvalue, int maxtok, int position) {
 		char c;
@@ -67,12 +86,12 @@ public class ExprTree {
 	}
 
 	public boolean intexpr_U(int token,String expr,String tokvalue,int position,
-		       exprsn result, signalADT[] signals,int nsignals, 
+		       ExprTree result, signalADT[] signals,int nsignals, 
 		       eventADT[] events,int nevents, int nplaces)
 	{
 	  int i;
 	  int temp;
-	  exprsn newresult = null;
+	  ExprTree newresult = null;
 
 	  switch (token) {
 	  case WORD:
@@ -102,7 +121,7 @@ public class ExprTree {
 		(result).lvalue = (int)(result).lvalue & (int)newresult.lvalue;	
 		(result).uvalue = (result).lvalue;	
 	      } else{
-		(result) = new exprsn((result),newresult,"&",'w');    
+		(result) = new ExprTree((result),newresult,"&",'w');    
 	      }
 	      (token)=intexpr_gettok(expr,tokvalue,MAXTOKEN,position);
 	    } else if (!tokvalue.equals("or")){
@@ -134,7 +153,7 @@ public class ExprTree {
 		(result).lvalue = (int)(result).lvalue | (int)newresult.lvalue;	
 		(result).uvalue = (result).lvalue;	
 	      } else{
-		(result) = new exprsn((result),newresult,"|",'w');    
+		(result) = new ExprTree((result),newresult,"|",'w');    
 	      }
 	      (token)=intexpr_gettok(expr,tokvalue,MAXTOKEN,position);
 	    } else if (!tokvalue.equals("exor")){
@@ -166,7 +185,7 @@ public class ExprTree {
 		(result).lvalue = (int)(result).lvalue ^ (int)newresult.lvalue;	
 		(result).uvalue = (result).lvalue;	
 	      } else{
-		(result) = new exprsn((result),newresult,"^",'w');    
+		(result) = new ExprTree((result),newresult,"^",'w');    
 	      }
 	      (token)=intexpr_gettok(expr,tokvalue,MAXTOKEN,position);
 	    } else if (!tokvalue.equals("not")){
@@ -189,21 +208,21 @@ public class ExprTree {
 		(result).lvalue = ~(int)(result).lvalue;
 		(result).uvalue = (result).lvalue;	
 	      } else{
-		(result) = new exprsn((result),null,"~",'w');    
+		(result) = new ExprTree((result),null,"~",'w');    
 	      }
 	      (token)=intexpr_gettok(expr,tokvalue,MAXTOKEN,position);
 	    } else if ((!tokvalue.equals("true"))||(!tokvalue.equals("t"))){
-	      (result) = new exprsn('t',true,true,-1);
+	      (result) = new ExprTree('t',true,true,-1);
 	      (token)=intexpr_gettok(expr,tokvalue,MAXTOKEN,position);
 	    }else if ((!tokvalue.equals("false"))||(!tokvalue.equals("f"))){
-	      (result) = new exprsn('t',false,false,-1);
+	      (result) = new ExprTree('t',false,false,-1);
 	      (token)=intexpr_gettok(expr,tokvalue,MAXTOKEN,position);
 	    }else{
 	      //do boolean lookup here!!!
 	      for (i=0;i<nsignals;i++){
 		if (!signals[i].name.equals(tokvalue)){{
 		  //printf("successful lookup of boolean variable %s\n",signals[i]);
-		  (result) = new exprsn('b',0,1,i);
+		  (result) = new ExprTree('b',0,1,i);
 		  (token)=intexpr_gettok(expr,tokvalue,MAXTOKEN,position);
 		  return true;
 		}
@@ -213,11 +232,11 @@ public class ExprTree {
 		  //printf("successful lookup of variable %s\n",events[i]->event);
 		  if (events[i].type == VAR){
 		    //printf("parsed discrete variable\n");
-		    (result) = new exprsn('i',-INFIN,INFIN,i);
+		    (result) = new ExprTree('i',-INFIN,INFIN,i);
 		  }
 		  else{
 		    //printf("parsed continuous variable\n");
-		    (result) = new exprsn('c',-INFIN,INFIN,i);
+		    (result) = new ExprTree('c',-INFIN,INFIN,i);
 		    //printf("isit = %c\n",(*result)->isit);
 		  }
 		  (token)=intexpr_gettok(expr,tokvalue,MAXTOKEN,position);
@@ -229,7 +248,7 @@ public class ExprTree {
 		return false;
 	      }
 	      temp = Integer.parseInt(tokvalue);
-	      (result) = new exprsn('n',temp,temp,-1);
+	      (result) = new ExprTree('n',temp,temp,-1);
 	      (token)=intexpr_gettok(expr,tokvalue,MAXTOKEN,position);
 	      //printf("resolved number %f\n",temp);
 	    }
@@ -253,7 +272,7 @@ public class ExprTree {
 	}
 
 	public boolean intexpr_T(int token,String expr,String tokvalue,int position,
-	      exprsn result, signalADT[] signals,int nsignals, 
+	      ExprTree result, signalADT[] signals,int nsignals, 
 	      eventADT[] events,int nevents, int nplaces)
 	{
 	  switch (token) {
@@ -273,7 +292,7 @@ public class ExprTree {
 	      (result).lvalue = -((result).lvalue);
 	      (result).uvalue = (result).lvalue;	
 	    } else{
-	      (result) = new exprsn((result),null,"U-",'a');    
+	      (result) = new ExprTree((result),null,"U-",'a');    
 	    }
 	  default:
 	    System.out.printf("T:ERROR: Expected a ID, Number, (, or -\n");
@@ -282,10 +301,10 @@ public class ExprTree {
 	}
 
 	public boolean intexpr_C(int token,String expr,String tokvalue,int position,
-		       exprsn result, signalADT[] signals,int nsignals, 
+		       ExprTree result, signalADT[] signals,int nsignals, 
 		       eventADT[] events,int nevents, int nplaces)
 	{
-	  exprsn newresult = null;
+	  ExprTree newresult = null;
 
 	  switch (token) {
 	  case '*':
@@ -300,7 +319,7 @@ public class ExprTree {
 		(result).lvalue = (result).lvalue * newresult.lvalue;	
 		(result).uvalue = (result).lvalue;	
 	      } else{
-		(result) = new exprsn((result),newresult,"*",'a');    
+		(result) = new ExprTree((result),newresult,"*",'a');    
 	      }
 	    if (!intexpr_C(token,expr,tokvalue,position,result,signals,nsignals,
 			   events,nevents,nplaces)) 
@@ -318,7 +337,7 @@ public class ExprTree {
 		(result).lvalue = (result).lvalue / newresult.lvalue;	
 		(result).uvalue = (result).lvalue;	
 	      } else{
-		(result) = new exprsn((result),newresult,"/",'a');    
+		(result) = new ExprTree((result),newresult,"/",'a');    
 	      }
 	    if (!intexpr_C(token,expr,tokvalue,position,result,signals,nsignals,
 			   events,nevents,nplaces)) 
@@ -336,7 +355,7 @@ public class ExprTree {
 	      (result).lvalue = (int)(result).lvalue % (int)newresult.lvalue;	
 	      (result).uvalue = (result).lvalue;	
 	    } else{
-	      (result) = new exprsn((result),newresult,"%",'a');    
+	      (result) = new ExprTree((result),newresult,"%",'a');    
 	    }
 	    if (!intexpr_C(token,expr,tokvalue,position,result,signals,nsignals,
 			   events,nevents,nplaces)) 
@@ -368,7 +387,7 @@ public class ExprTree {
 	      (result).lvalue = (result).lvalue * newresult.lvalue;	
 	      (result).uvalue = (result).lvalue;	
 	    } else{
-	      (result) = new exprsn((result),newresult,"*",'a');    
+	      (result) = new ExprTree((result),newresult,"*",'a');    
 	    }
 	    if (!intexpr_C(token,expr,tokvalue,position,result,signals,nsignals,
 			   events,nevents,nplaces)) 
@@ -383,10 +402,10 @@ public class ExprTree {
 	}
 
 	public boolean intexpr_B(int token,String expr,String tokvalue,int position,
-		       exprsn result, signalADT[] signals,int nsignals, 
+		       ExprTree result, signalADT[] signals,int nsignals, 
 		       eventADT[] events,int nevents, int nplaces)
 	{
-	  exprsn newresult = null;
+	  ExprTree newresult = null;
 
 	  switch (token) {
 	  case '+':
@@ -401,7 +420,7 @@ public class ExprTree {
 	      (result).lvalue = (result).lvalue + newresult.lvalue;	
 	      (result).uvalue = (result).lvalue;	
 	    } else{
-	      (result) = new exprsn((result),newresult,"+",'a');    
+	      (result) = new ExprTree((result),newresult,"+",'a');    
 	    }
 	    if (!intexpr_B(token,expr,tokvalue,position,result,signals,nsignals,
 			   events,nevents,nplaces)) 
@@ -419,7 +438,7 @@ public class ExprTree {
 	      (result).lvalue = (result).lvalue - newresult.lvalue;	
 	      (result).uvalue = (result).lvalue;	
 	    } else{
-	      (result) = new exprsn((result),newresult,"-",'a');    
+	      (result) = new ExprTree((result),newresult,"-",'a');    
 	    }
 	    if (!intexpr_B(token,expr,tokvalue,position,result,signals,nsignals,
 			   events,nevents,nplaces)) 
@@ -445,7 +464,7 @@ public class ExprTree {
 	}
 
 	public boolean intexpr_S(int token,String expr,String tokvalue,int position,
-		       exprsn result, signalADT[] signals,int nsignals, 
+		       ExprTree result, signalADT[] signals,int nsignals, 
 		       eventADT[] events,int nevents, int nplaces)
 	{
 	  switch (token) {
@@ -467,7 +486,7 @@ public class ExprTree {
 	}
 
 	public boolean intexpr_R(int token,String expr,String tokvalue,int position,
-		       exprsn result, signalADT[] signals,int nsignals, 
+		       ExprTree result, signalADT[] signals,int nsignals, 
 		       eventADT[] events,int nevents, int nplaces)
 	{
 	  switch (token) {
@@ -489,10 +508,10 @@ public class ExprTree {
 	}
 
 	public boolean intexpr_P(int token,String expr,String tokvalue,int position,
-		       exprsn result, signalADT[] signals,int nsignals, 
+		       ExprTree result, signalADT[] signals,int nsignals, 
 		       eventADT[] events,int nevents, int nplaces)
 	{
-	  exprsn newresult = null;
+	  ExprTree newresult = null;
 	  int spos,i;
 	  char[] ineq = new char[VAR];
 	  String comp;
@@ -539,7 +558,7 @@ public class ExprTree {
 		  }
 		}
 	      }else{
-		(result) = new exprsn((result),newresult,"==",'r');    
+		(result) = new ExprTree((result),newresult,"==",'r');    
 	      }
 	    }
 	    break;
@@ -587,7 +606,7 @@ public class ExprTree {
 		    }
 		  }
 		}else{
-		  (result) = new exprsn((result),newresult,">=",'r');    
+		  (result) = new ExprTree((result),newresult,">=",'r');    
 		}
 	      }
 	    }else{
@@ -629,7 +648,7 @@ public class ExprTree {
 		    }
 		  }
 		}else{
-		  (result) = new exprsn((result),newresult,">",'r');    
+		  (result) = new ExprTree((result),newresult,">",'r');    
 		}
 	      }
 	    }
@@ -678,7 +697,7 @@ public class ExprTree {
 		    }
 		  }
 		}else{
-		  (result) = new exprsn((result),newresult,"<=",'r');    
+		  (result) = new ExprTree((result),newresult,"<=",'r');    
 		}
 	      }
 	    }else{
@@ -720,7 +739,7 @@ public class ExprTree {
 		    }
 		  }
 		}else{
-		  (result) = new exprsn((result),newresult,"<",'r');    
+		  (result) = new ExprTree((result),newresult,"<",'r');    
 		}
 	      }
 	    }
@@ -742,7 +761,7 @@ public class ExprTree {
 		(((int)(result).lvalue)>>((int)newresult.lvalue))&1;	
 	      (result).uvalue = (result).lvalue;	
 	    } else{
-	      (result) = new exprsn((result),newresult,"[]",'w');    
+	      (result) = new ExprTree((result),newresult,"[]",'w');    
 	    }
 	    (token)=intexpr_gettok(expr,tokvalue,MAXTOKEN,position);
 	    break;
@@ -762,7 +781,7 @@ public class ExprTree {
 
 
 	public boolean intexpr_O(int token,String expr,String tokvalue,int position,
-		       exprsn result, signalADT[] signals,int nsignals, 
+		       ExprTree result, signalADT[] signals,int nsignals, 
 		       eventADT[] events,int nevents, int nplaces)
 	{
 	  //  printf("O\n");
@@ -787,7 +806,7 @@ public class ExprTree {
 	}
 
 	public boolean intexpr_N(int token,String expr,String tokvalue,int position,
-		       exprsn result, signalADT[] signals,int nsignals, 
+		       ExprTree result, signalADT[] signals,int nsignals, 
 		       eventADT[] events,int nevents, int nplaces)
 	{
 	  //  printf("N\n");
@@ -816,7 +835,7 @@ public class ExprTree {
 	      }
 	      (result).uvalue = (result).lvalue;	
 	    } else{
-	      (result) = new exprsn((result),null,"!",'l');    
+	      (result) = new ExprTree((result),null,"!",'l');    
 	    }
 	    break;
 	  default:
@@ -827,10 +846,10 @@ public class ExprTree {
 	}
 
 	public boolean intexpr_E(int token,String expr,String tokvalue,int position,
-		       exprsn result, signalADT[] signals,int nsignals, 
+		       ExprTree result, signalADT[] signals,int nsignals, 
 		       eventADT[] events,int nevents, int nplaces)
 	{
-	  exprsn newresult = null;
+	  ExprTree newresult = null;
 	  //printf("E\n");
 
 	  switch (token) {
@@ -851,7 +870,7 @@ public class ExprTree {
 	      }
 	      (result).uvalue = (result).lvalue;	
 	    } else{
-	      (result) = new exprsn((result),newresult,"&&",'l');    
+	      (result) = new ExprTree((result),newresult,"&&",'l');    
 	    }
 	    if (!intexpr_E(token,expr,tokvalue,position,result,signals,nsignals,
 			   events,nevents,nplaces)) 
@@ -869,10 +888,10 @@ public class ExprTree {
 	}
 
 	public boolean intexpr_D(int token,String expr,String tokvalue,int position,
-		       exprsn result, signalADT[] signals,int nsignals, 
+		       ExprTree result, signalADT[] signals,int nsignals, 
 		       eventADT[] events,int nevents, int nplaces)
 	{
-	  exprsn newresult = null;
+	  ExprTree newresult = null;
 	  //printf("D\n");
 
 	  switch (token) {
@@ -893,7 +912,7 @@ public class ExprTree {
 	      }
 	      (result).uvalue = (result).lvalue;	
 	    } else{
-	      (result) = new exprsn((result),newresult,"||",'l');    
+	      (result) = new ExprTree((result),newresult,"||",'l');    
 	    }
 	    if (!intexpr_D(token,expr,tokvalue,position,result,signals,nsignals,
 			   events,nevents,nplaces)) 
@@ -918,7 +937,7 @@ public class ExprTree {
 	      }
 	      (result).uvalue = (result).lvalue;	
 	    } else{
-	      (result) = new exprsn((result),newresult,"->",'l');    
+	      (result) = new ExprTree((result),newresult,"->",'l');    
 	    }
 	    if (!intexpr_D(token,expr,tokvalue,position,result,signals,nsignals,
 			   events,nevents,nplaces)) 
@@ -932,7 +951,7 @@ public class ExprTree {
 	}
 
 	public boolean intexpr_M(int token,String expr,String tokvalue,int position,
-		       exprsn result, signalADT[] signals,int nsignals, 
+		       ExprTree result, signalADT[] signals,int nsignals, 
 		       eventADT[] events,int nevents, int nplaces)
 	{
 	  //printf("M\n");
@@ -956,7 +975,7 @@ public class ExprTree {
 	}
 
 	public boolean intexpr_L(int token,String expr,String tokvalue,int position,
-		       exprsn result, signalADT[] signals,int nsignals, 
+		       ExprTree result, signalADT[] signals,int nsignals, 
 		       eventADT[] events,int nevents, int nplaces)
 	{
 	  //printf("L\n");
@@ -979,50 +998,6 @@ public class ExprTree {
 	  return true;
 	}
 	
-	class exprsn {
-		 String op;
-		  char isit;  // b=Boolean, i=Integer, c=Continuous, n=Number, t=Truth value, 
-		              //w=bitWise, a=Arithmetic, r=Relational, l=Logical
-		  int lvalue,uvalue;
-		  int index;
-		  double real;
-		  boolean logical;
-		  exprsn r1, r2;
-		  exprsn(char willbe, boolean lNV, boolean uNV, int ptr) {
-		  }
-		  exprsn(char willbe, int lNV, int uNV, int ptr) {
-		  }
-		  exprsn(exprsn nr1, exprsn nr2, String nop, char willbe) {
-		  }
-		  void op_set(String new_op) {
-		  }
-		}
-	
-	class eventADT {
-		  String event;
-		  boolean dropped;
-		  boolean immediate;
-		  int color;
-		  int signal;
-		  int lower;
-		  int upper;
-		  int process;
-		  int type;
-		  String data;
-		  String hsl;
-		  String transRate;
-		  int rate;
-		  int lrate;
-		  int urate;
-		  int lrange;
-		  int urange;
-		  int linitrate;
-		  int uinitrate;
-		  level_exp SOP;
-		  exprsn EXP;
-		  ineqADT inequalities;
-	}
-	
 	class ineqADT {
 		  // 0 =  ">", 1 = ">=", 2 = "<", 3 = "<=", 4 = "="
 		  // 5 = ":=", 6 = "'dot:=", 7 = ":=T/F"  *AMS* 
@@ -1030,23 +1005,8 @@ public class ExprTree {
 		  int uconstant; //for upper bound rate assignments
 		  int constant;
 		  String uexpr,lexpr;
-		  exprsn utree, ltree;
+		  ExprTree utree, ltree;
 		  int signal;
-		}
-	
-	class signalADT {
-		  String name;
-		  boolean is_level;
-		  int event;
-		  int riselower;
-		  int riseupper;
-		  int falllower;
-		  int fallupper;
-		  int maxoccurrence;
-		}
-	
-	class level_exp {
-		  String product;
 		}
 
 

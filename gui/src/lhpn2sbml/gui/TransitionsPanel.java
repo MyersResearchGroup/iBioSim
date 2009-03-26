@@ -49,6 +49,8 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 	// private Log log;
 
 	private HashMap<String, PropertyField> fields = null;
+	
+	private ExprTree delayTree, rateTree, enablingTree;
 
 	public TransitionsPanel(String selected, PropertyList transitionsList,
 			PropertyList controlList, LHPNFile lhpn, Log log) {
@@ -227,7 +229,7 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 				fields.get("Delay upper").setValue("");
 			}
 			fields.get("Enabling Condition").setValue(lhpn.getEnabling(selected));
-			fields.get("Transition rate").setValue(lhpn.getTransitionRate(selected));
+			fields.get("Transition rate").setValue(lhpn.getTransitionRateString(selected));
 			// log.addText(selected + lhpn.getEnabling(selected));
 			// loadProperties(prop);
 		}
@@ -281,6 +283,8 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 			}
 			String id = fields.get(GlobalConstants.ID).getValue();
 
+			//if ()
+			
 			// Check to see if we need to add or edit
 			Properties property = new Properties();
 			for (PropertyField f : fields.values()) {

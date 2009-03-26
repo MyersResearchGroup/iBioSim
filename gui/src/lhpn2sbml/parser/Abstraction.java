@@ -31,7 +31,9 @@ public class Abstraction extends LHPNFile {
 
 	private HashMap<String, String> delays;
 
-	private HashMap<String, String> transitionRates;
+	private HashMap<String, ExprTree> transitionRates;
+	
+	private HashMap<String, String> transitionRateStrings;
 
 	private HashMap<String, Properties> booleanAssignments;
 	
@@ -141,9 +143,15 @@ public class Abstraction extends LHPNFile {
 		}
 	}
 	
-	public void addRates(HashMap<String, String> newRates) {
+	public void addRates(HashMap<String, ExprTree> newRates) {
 		for (String s : newRates.keySet()) {
 			transitionRates.put(s, newRates.get(s));
+		}
+	}
+	
+	public void addRateStrings(HashMap<String, String> newRates) {
+		for (String s : newRates.keySet()) {
+			transitionRateStrings.put(s, newRates.get(s));
 		}
 	}
 	
