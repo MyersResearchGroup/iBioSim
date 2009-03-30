@@ -136,7 +136,7 @@ public class PropertyField extends JPanel implements ActionListener {
 		field.setText(value);
 	}
 
-	public boolean isValid() {
+	public boolean isValidValue() {
 		if (getValue() == null) {
 			return false;
 		}
