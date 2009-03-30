@@ -121,7 +121,7 @@ public class VarAssignPanel extends JPanel implements ActionListener {
 
 	private boolean checkValues() {
 		for (PropertyField f : fields.values()) {
-			if (!f.isValid()) {
+			if (!f.isValidValue()) {
 				return false;
 			}
 		}
