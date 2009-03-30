@@ -24,18 +24,28 @@ public class Abstraction extends LHPNFile {
 	private HashMap<String, String> integers;
 
 	private HashMap<String, Properties> rateAssignments;
+	
+	private HashMap<String, HashMap<String, ExprTree[]>> rateAssignmentTrees;
 
 	private HashMap<String, Properties> contAssignments;
+	
+	private HashMap<String, HashMap<String, ExprTree[]>> contAssignmentTrees;
 
 	private HashMap<String, Properties> intAssignments;
+	
+	private HashMap<String, HashMap<String, ExprTree[]>> intAssignmentTrees;
 
 	private HashMap<String, String> delays;
+	
+	private HashMap<String, ExprTree[]> delayTrees;
 
 	private HashMap<String, ExprTree> transitionRates;
 	
 	private HashMap<String, String> transitionRateStrings;
 
 	private HashMap<String, Properties> booleanAssignments;
+	
+	private HashMap<String, HashMap<String, ExprTree[]>> booleanAssignmentTrees;
 	
 	public Abstraction () {
 		super();
@@ -143,13 +153,19 @@ public class Abstraction extends LHPNFile {
 		}
 	}
 	
-	public void addRates(HashMap<String, ExprTree> newRates) {
+	public void addDelayTrees(HashMap<String, ExprTree[]> newRates) {
+		for (String s : newRates.keySet()) {
+			delayTrees.put(s, newRates.get(s));
+		}
+	}
+	
+	public void addRateTrees(HashMap<String, ExprTree> newRates) {
 		for (String s : newRates.keySet()) {
 			transitionRates.put(s, newRates.get(s));
 		}
 	}
 	
-	public void addRateStrings(HashMap<String, String> newRates) {
+	public void addRates(HashMap<String, String> newRates) {
 		for (String s : newRates.keySet()) {
 			transitionRateStrings.put(s, newRates.get(s));
 		}
@@ -164,6 +180,18 @@ public class Abstraction extends LHPNFile {
 				prop.setProperty(t, oldProp.getProperty(t));
 			}
 			booleanAssignments.put(s, prop);
+		}
+	}
+	
+	public void addBooleanAssignmentTrees(HashMap<String, HashMap<String, ExprTree[]>> newAssignment) {
+		for (String s : newAssignment.keySet()) {
+			HashMap<String, ExprTree[]> map = new HashMap<String, ExprTree[]>();
+			HashMap<String, ExprTree[]> oldMap = newAssignment.get(s);
+			for (Object o : oldMap.keySet()) {
+				String t = o.toString();
+				map.put(t, oldMap.get(t));
+			}
+			booleanAssignmentTrees.put(s, map);
 		}
 	}
 	
@@ -221,6 +249,18 @@ public class Abstraction extends LHPNFile {
 		}
 	}
 	
+	public void addRateAssignmentTrees(HashMap<String, HashMap<String, ExprTree[]>> newAssignment) {
+		for (String s : newAssignment.keySet()) {
+			HashMap<String, ExprTree[]> map = new HashMap<String, ExprTree[]>();
+			HashMap<String, ExprTree[]> oldMap = newAssignment.get(s);
+			for (Object o : oldMap.keySet()) {
+				String t = o.toString();
+				map.put(t, oldMap.get(t));
+			}
+			rateAssignmentTrees.put(s, map);
+		}
+	}
+	
 	public void addContinuousAssignments(HashMap<String, Properties> newAssignment) {
 		for (String s : newAssignment.keySet()) {
 			Properties prop = new Properties();
@@ -233,6 +273,18 @@ public class Abstraction extends LHPNFile {
 		}
 	}
 	
+	public void addContinuousAssignmentTrees(HashMap<String, HashMap<String, ExprTree[]>> newAssignment) {
+		for (String s : newAssignment.keySet()) {
+			HashMap<String, ExprTree[]> map = new HashMap<String, ExprTree[]>();
+			HashMap<String, ExprTree[]> oldMap = newAssignment.get(s);
+			for (Object o : oldMap.keySet()) {
+				String t = o.toString();
+				map.put(t, oldMap.get(t));
+			}
+			contAssignmentTrees.put(s, map);
+		}
+	}
+	
 	public void addIntegerAssignments(HashMap<String, Properties> newAssignment) {
 		for (String s : newAssignment.keySet()) {
 			Properties prop = new Properties();
@@ -242,6 +294,18 @@ public class Abstraction extends LHPNFile {
 				prop.setProperty(t, oldProp.getProperty(t));
 			}
 			intAssignments.put(s, prop);
+		}
+	}
+	
+	public void addIntegerAssignmentTrees(HashMap<String, HashMap<String, ExprTree[]>> newAssignment) {
+		for (String s : newAssignment.keySet()) {
+			HashMap<String, ExprTree[]> map = new HashMap<String, ExprTree[]>();
+			HashMap<String, ExprTree[]> oldMap = newAssignment.get(s);
+			for (Object o : oldMap.keySet()) {
+				String t = o.toString();
+				map.put(t, oldMap.get(t));
+			}
+			intAssignmentTrees.put(s, map);
 		}
 	}
 }

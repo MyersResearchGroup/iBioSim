@@ -229,7 +229,7 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 				fields.get("Delay upper").setValue("");
 			}
 			fields.get("Enabling Condition").setValue(lhpn.getEnabling(selected));
-			fields.get("Transition rate").setValue(lhpn.getTransitionRateString(selected));
+			fields.get("Transition rate").setValue(lhpn.getTransitionRate(selected));
 			// log.addText(selected + lhpn.getEnabling(selected));
 			// loadProperties(prop);
 		}
