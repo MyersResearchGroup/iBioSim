@@ -4316,16 +4316,19 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				else if (!filename.equals("")) {
 					String[] file = filename.split(separator);
 					try {
-						FileOutputStream out = new FileOutputStream(new File(root + separator
-								+ file[file.length - 1]));
-						FileInputStream in = new FileInputStream(new File(filename));
-						int read = in.read();
-						while (read != -1) {
-							out.write(read);
-							read = in.read();
+						if (!new File(filename).exists()) {
+							FileOutputStream out = new FileOutputStream(new File(root + separator
+									+ file[file.length - 1]));
+							FileInputStream in = new FileInputStream(new File(filename));
+							log.addText(filename);
+							int read = in.read();
+							while (read != -1) {
+								out.write(read);
+								read = in.read();
+							}
+							in.close();
+							out.close();
 						}
-						in.close();
-						out.close();
 						if (filename.substring(filename.length() - 2, filename.length()).equals(
 								".g")) {
 							File work = new File(root);
@@ -7179,7 +7182,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							// Runtime.getRuntime().exec(cmd);
 						}
 						catch (Exception e1) {
-							e1.printStackTrace();
+							// e1.printStackTrace();
 							JOptionPane.showMessageDialog(frame, "Unable to view this LHPN file.",
 									"Error", JOptionPane.ERROR_MESSAGE);
 						}
@@ -7589,7 +7592,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					}
 				}
 				catch (Exception e1) {
-					e1.printStackTrace();
+					// e1.printStackTrace();
 				}
 			}
 		}
@@ -8138,9 +8141,9 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					// ".sim")).close();
 					String[] dot = tree.getFile().split(separator);
 					String sbmlFile = /*
-									 * root + separator + simName + separator +
-									 */(dot[dot.length - 1].substring(0, dot[dot.length - 1]
-							.length() - 3) + "sbml");
+										 * root + separator + simName +
+										 * separator +
+										 */(dot[dot.length - 1].substring(0, dot[dot.length - 1].length() - 3) + "sbml");
 					GCMParser parser = new GCMParser(tree.getFile());
 					GeneticNetwork network = parser.buildNetwork();
 					GeneticNetwork.setRoot(root + File.separator);
@@ -8272,8 +8275,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					 * try { FileOutputStream out = new FileOutputStream(new
 					 * File(sbmlFile)); SBMLWriter writer = new SBMLWriter();
 					 * String doc = writer.writeToString(document); byte[]
-					 * output = doc.getBytes(); out.write(output); out.close();
-					 * } catch (Exception e1) {
+					 * output = doc.getBytes(); out.write(output); out.close(); }
+					 * catch (Exception e1) {
 					 * JOptionPane.showMessageDialog(frame, "Unable to copy sbml
 					 * file to output location.", "Error",
 					 * JOptionPane.ERROR_MESSAGE); }
@@ -8708,11 +8711,11 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			 * list.length; i++) { if (!(new File(list[i]).isDirectory()) &&
 			 * list[i].length() > 4) { String end = ""; for (int j = 1; j < 5;
 			 * j++) { end = list[i].charAt(list[i].length() - j) + end; } if
-			 * (end.equals(".tsd") || end.equals(".dat") || end.equals(".csv"))
-			 * { if (list[i].contains("run-")) { int tempNum =
+			 * (end.equals(".tsd") || end.equals(".dat") || end.equals(".csv")) {
+			 * if (list[i].contains("run-")) { int tempNum =
 			 * Integer.parseInt(list[i].substring(4, list[i] .length() -
-			 * end.length())); if (tempNum > run) { run = tempNum; // graphFile
-			 * = tree.getFile() + separator + // list[i]; } } } } } }
+			 * end.length())); if (tempNum > run) { run = tempNum; // graphFile =
+			 * tree.getFile() + separator + // list[i]; } } } } } }
 			 */
 
 			String verName = tree.getFile().split(separator)[tree.getFile().split(separator).length - 1];
