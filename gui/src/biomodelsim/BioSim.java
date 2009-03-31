@@ -558,8 +558,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		viewModBrowser.setActionCommand("browse");
 		createLearn.setActionCommand("createLearn");
 		createSbml.setActionCommand("createSBML");
-		createSynth.setActionCommand("openSynth");
-		createVer.setActionCommand("openVerify");
+		createSynth.setActionCommand("createSynthesis");
+		createVer.setActionCommand("createVerify");
 		ShortCutKey = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
 		copy.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, ShortCutKey));
 		rename.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0));
