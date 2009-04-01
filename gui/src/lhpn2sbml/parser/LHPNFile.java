@@ -512,8 +512,8 @@ public class LHPNFile {
 			// log.addText(intAssignments.toString());
 		}
 		catch (Exception e) {
-			e.printStackTrace();
-			throw new IllegalArgumentException("Unable to parse LHPN");
+			//e.printStackTrace();
+			// throw new IllegalArgumentException("Unable to parse LHPN");
 		}
 	}
 
@@ -524,6 +524,31 @@ public class LHPNFile {
 	public void removePlace(String name) {
 		if (name != null && places.containsKey(name)) {
 			places.remove(name);
+			controlPlaces.remove(name);
+		}
+		for (String s : controlFlow.keySet()) {
+			Properties prop = controlFlow.get(s);
+			String[] array = prop.getProperty("preset").split(" ");
+			String setString = new String();
+			int offset = 0;
+			for (int i=1; i<array.length; i++) {
+				if (array[i].equals(name)) {
+					offset += 1;
+				}
+				setString = setString + " " + array[i - offset];
+			}
+			prop.setProperty("preset", setString);
+			array = prop.getProperty("postset").split(" ");
+			setString = new String();
+			offset = 0;
+			for (int i=1; i<array.length; i++) {
+				if (array[i].equals(name)) {
+					offset += 1;
+				}
+				setString = setString + " " + array[i - offset];
+			}
+			prop.setProperty("postset", setString);
+			controlFlow.put(s, prop);
 		}
 	}
 
@@ -1747,7 +1772,7 @@ public class LHPNFile {
 		}
 		return null;
 	}
-	
+
 	public ExprTree[] getBoolAssignTree(String transition, String var) {
 		HashMap<String, ExprTree[]> map = booleanAssignmentTrees.get(transition);
 		if (map != null && var != null) {
@@ -2476,27 +2501,29 @@ public class LHPNFile {
 				Pattern rangePattern = Pattern.compile(RANGE);
 				Matcher rangeMatcher = rangePattern.matcher(delayMatcher.group(2));
 				String tokvalue = new String();
-				rangeMatcher.find();
-				int position = 0;
-				int token = expr[0].intexpr_gettok(rangeMatcher.group(1), tokvalue, 256, position);
-				signalADT[] signals = new signalADT[256];
-				int nsignals = 0;
-				eventADT[] events = new eventADT[256];
-				int nevents = 0;
-				int nplaces = 0;
-				expr[0].intexpr_L(token, rangeMatcher.group(1), tokvalue, position, expr[0],
-						signals, nsignals, events, nevents, nplaces);
-				tokvalue = new String();
-				position = 0;
-				token = expr[1].intexpr_gettok(rangeMatcher.group(2), tokvalue, 256, position);
-				signals = new signalADT[256];
-				nsignals = 0;
-				events = new eventADT[256];
-				nevents = 0;
-				nplaces = 0;
-				expr[1].intexpr_L(token, rangeMatcher.group(2), tokvalue, position, expr[1],
-						signals, nsignals, events, nevents, nplaces);
-				delayTrees.put(delayMatcher.group(1), expr);
+				if (rangeMatcher.find()) {
+					int position = 0;
+					int token = expr[0].intexpr_gettok(rangeMatcher.group(1), tokvalue, 256,
+							position);
+					signalADT[] signals = new signalADT[256];
+					int nsignals = 0;
+					eventADT[] events = new eventADT[256];
+					int nevents = 0;
+					int nplaces = 0;
+					expr[0].intexpr_L(token, rangeMatcher.group(1), tokvalue, position, expr[0],
+							signals, nsignals, events, nevents, nplaces);
+					tokvalue = new String();
+					position = 0;
+					token = expr[1].intexpr_gettok(rangeMatcher.group(2), tokvalue, 256, position);
+					signals = new signalADT[256];
+					nsignals = 0;
+					events = new eventADT[256];
+					nevents = 0;
+					nplaces = 0;
+					expr[1].intexpr_L(token, rangeMatcher.group(2), tokvalue, position, expr[1],
+							signals, nsignals, events, nevents, nplaces);
+					delayTrees.put(delayMatcher.group(1), expr);
+				}
 			}
 		}
 		// log.addText("check8end");
@@ -2562,18 +2589,19 @@ public class LHPNFile {
 						eventADT[] events = new eventADT[256];
 						int nevents = 0;
 						int nplaces = 0;
-						expr[0].intexpr_L(token, newRangeMatcher.group(1), tokvalue, position, expr[0],
-								signals, nsignals, events, nevents, nplaces);
+						expr[0].intexpr_L(token, newRangeMatcher.group(1), tokvalue, position,
+								expr[0], signals, nsignals, events, nevents, nplaces);
 						tokvalue = new String();
 						position = 0;
-						token = expr[1].intexpr_gettok(newRangeMatcher.group(2), tokvalue, 256, position);
+						token = expr[1].intexpr_gettok(newRangeMatcher.group(2), tokvalue, 256,
+								position);
 						signals = new signalADT[256];
 						nsignals = 0;
 						events = new eventADT[256];
 						nevents = 0;
 						nplaces = 0;
-						expr[1].intexpr_L(token, newRangeMatcher.group(2), tokvalue, position, expr[1],
-								signals, nsignals, events, nevents, nplaces);
+						expr[1].intexpr_L(token, newRangeMatcher.group(2), tokvalue, position,
+								expr[1], signals, nsignals, events, nevents, nplaces);
 						map.put(newRangeMatcher.group(1), expr);
 					}
 					while (assignMatcher.find()) {
@@ -2585,15 +2613,16 @@ public class LHPNFile {
 						ExprTree expr = new ExprTree();
 						String tokvalue = new String();
 						int position = 0;
-						int token = expr.intexpr_gettok(assignMatcher.group(2), tokvalue, 256, position);
+						int token = expr.intexpr_gettok(assignMatcher.group(2), tokvalue, 256,
+								position);
 						signalADT[] signals = new signalADT[256];
 						int nsignals = 0;
 						eventADT[] events = new eventADT[256];
 						int nevents = 0;
 						int nplaces = 0;
-						expr.intexpr_L(token, assignMatcher.group(2), tokvalue, position, expr, signals,
-								nsignals, events, nevents, nplaces);
-						ExprTree[] array = {expr};
+						expr.intexpr_L(token, assignMatcher.group(2), tokvalue, position, expr,
+								signals, nsignals, events, nevents, nplaces);
+						ExprTree[] array = { expr };
 						map.put(assignMatcher.group(1), array);
 					}
 				}
