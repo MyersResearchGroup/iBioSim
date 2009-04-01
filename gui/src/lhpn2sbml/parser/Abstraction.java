@@ -52,38 +52,37 @@ public class Abstraction extends LHPNFile {
 	}
 	
 	public void abstractSTG() {
-		// Transform 0
+		// Transform 0 - Merge Parallel Places
 		for (String s : controlPlaces.keySet()) {
 			for (String t : controlPlaces.keySet()) {
 				if (!s.equals(t)) {
 					Properties prop1 = controlPlaces.get(s);
 					Properties prop2 = controlPlaces.get(t);
-					String[] set1 = prop1.get("to").toString().split(" ");
-					String[] set2 = prop2.get("to").toString().split(" ");
-					if (set1.length != set2.length) {
-						continue;
+					if (comparePreset(prop1, prop2) && comparePostset(prop1, prop2) && (places.get(s).equals(places.get(t)))) {
+						combinePlaces(s, t);
 					}
-					boolean contains = false;
-					for (int i=0; i<set1.length; i++) {
-						contains = false;
-						for (int j=0; j<set2.length; j++) {
-							if (set1[i].equals(set2[j])) {
-								contains = true;
-							}
-						}
-						if (!contains) {
-							break;
-						}
-					}
-					
 				}
 			}
 		}
+		// Transform 1 - Remove a Place in a Self Loop
+		for (String s : controlPlaces.keySet()) {
+			String[] preset = controlPlaces.get(s).getProperty("preset").split(" ");
+			String[] postset = controlPlaces.get(s).getProperty("postset").split(" ");
+			if (preset.length == 1 && postset.length == 1) {
+				if (preset[0].equals(postset[0])) {
+					removePlace(s);
+				}
+				else {
+					continue;
+				}
+			}
+		}
+		// Transform 3 - Remove a Transition with a Single Place in the Postset
 	}
 	
 	private boolean comparePreset(Properties flow1, Properties flow2) {
-		String[] set1 = flow1.get("from").toString().split(" ");
-		String[] set2 = flow2.get("from").toString().split(" ");
+		String[] set1 = flow1.get("preset").toString().split(" ");
+		String[] set2 = flow2.get("preset").toString().split(" ");
 		if (set1.length != set2.length) {
 			return false;
 		}
@@ -103,8 +102,8 @@ public class Abstraction extends LHPNFile {
 	}
 	
 	private boolean comparePostset(Properties flow1, Properties flow2) {
-		String[] set1 = flow1.get("to").toString().split(" ");
-		String[] set2 = flow2.get("to").toString().split(" ");
+		String[] set1 = flow1.get("postset").toString().split(" ");
+		String[] set2 = flow2.get("postset").toString().split(" ");
 		if (set1.length != set2.length) {
 			return false;
 		}
@@ -121,6 +120,47 @@ public class Abstraction extends LHPNFile {
 			}
 		}	
 		return true;
+	}
+	
+	public void combinePlaces(String place1, String place2) {
+		String newPlace = new String();
+		newPlace = place1;
+		for (String s : controlFlow.keySet()) {
+			Properties prop = controlFlow.get(s);
+			String[] array = prop.getProperty("preset").split(" ");
+			String setString = new String();
+			if (array[0].equals(place2)) {
+				setString = newPlace;
+			}
+			else {
+				setString = array[0];
+			}
+			for (int i=1; i<array.length; i++) {
+				if (array[i].equals(place2)) {
+					array[i] = newPlace;
+				}
+				setString = setString + " " + array[i];
+			}
+			prop.setProperty("preset", setString);
+			array = prop.getProperty("postset").split(" ");
+			setString = new String();
+			if (array[0].equals(place2)) {
+				setString = newPlace;
+			}
+			else {
+				setString = array[0];
+			}
+			for (int i=1; i<array.length; i++) {
+				if (array[i].equals(place2)) {
+					array[i] = newPlace;
+				}
+				setString = setString + " " + array[i];
+			}
+			prop.setProperty("postset", setString);
+			controlFlow.put(s, prop);
+		}
+		controlPlaces.remove(place2);
+		places.remove(place2);
 	}
 	
 	public void addPlaces(HashMap<String, Boolean> newPlaces) {
