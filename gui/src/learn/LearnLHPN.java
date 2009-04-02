@@ -564,23 +564,23 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 				FileWriter write = new FileWriter(new File(directory + separator + binFile));
 				FileWriter writeNew = new FileWriter(new File(directory + separator + newBinFile));
 				// write.write("time 0\n");
-				boolean flag = false;
-				for (int i = 0; i < variables.size(); i++) {
-					if (((JCheckBox) variables.get(i).get(1)).isSelected()) {
-						if (!flag) {
-							write.write(".dmvc ");
-							writeNew.write(".dmvc ");
-							flag = true;
-						}
-						write.write(((JTextField) variables.get(i).get(0)).getText().trim() + " ");
-						writeNew.write(((JTextField) variables.get(i).get(0)).getText().trim()
-								+ " ");
-					}
-				}
-				if (flag) {
-					write.write("\n");
-					writeNew.write("\n");
-				}
+				//boolean flag = false;
+				//for (int i = 0; i < variables.size(); i++) {
+					//if (((JCheckBox) variables.get(i).get(1)).isSelected()) {
+					//	if (!flag) {
+					//		write.write(".dmvc ");
+					//		writeNew.write(".dmvc ");
+					//		flag = true;
+					//	}
+					//	write.write(((JTextField) variables.get(i).get(0)).getText().trim() + " ");
+					//	writeNew.write(((JTextField) variables.get(i).get(0)).getText().trim()
+					//			+ " ");
+					//}
+				//}
+				//if (flag) {
+				//	write.write("\n");
+				//	writeNew.write("\n");
+				//}
 				for (int i = 0; i < variables.size(); i++) {
 					//if (!((JCheckBox) variables.get(i).get(1)).isSelected()) {
 						if (((JTextField) variables.get(i).get(0)).getText().trim().equals("")) {
@@ -593,7 +593,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 						}
 						// write.write(" " + ((JComboBox)
 						// variables.get(i).get(1)).getSelectedItem());
-						for (int j = 3; j < variables.get(i).size(); j++) {
+						for (int j = 2; j < variables.get(i).size(); j++) {
 							if (((JTextField) variables.get(i).get(j)).getText().trim().equals("")) {
 								write.write(" ?");
 								writeNew.write(" ?");
@@ -620,6 +620,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 			}
 		}
 		catch (Exception e1) {
+			//e1.printStackTrace();
 			levels();
 		}
 	}
@@ -672,6 +673,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 					// specs.add(check);
 					specs.add(new JTextField(s));
 					String[] options = { "2", "3", "4", "5", "6", "7", "8", "9" };
+					//String[] options = { "3", "4", "5", "6", "7", "8", "9" };
 					JComboBox combo = new JComboBox(options);
 					// String[] dmvOptions = { "", "Yes", "No" };
 					// JComboBox dmv = new JComboBox(dmvOptions);
@@ -805,10 +807,10 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 			Component[] panels = variablesPanel.getComponents();
 			int boxes = Integer.parseInt((String) ((JComboBox) specs.get(1)).getSelectedItem());
 			//boolean selected = ((JCheckBox) specs.get(1)).isSelected();
-			if ((specs.size() - 3) < boxes) {
+			if ((specs.size() - 2) < boxes) {
 				for (int i = 0; i < boxes - 2; i++) {
 					try {
-						JTextField text = (JTextField) specs.get(i + 3);
+						JTextField text = (JTextField) specs.get(i + 2);
 						//if (selected) {
 						//	text.setEditable(false);
 						//}
@@ -852,7 +854,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 				max = Math.max(max, variables.get(i).size());
 			}
 			if (((JPanel) panels[0]).getComponentCount() < max) {
-				for (int i = 0; i < max; i++) {
+				for (int i = 0; i < max - 1; i++) {
 					try {
 						((JPanel) panels[0]).getComponent(i + 1);
 					}
@@ -1068,7 +1070,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 				}
 				// write.write(", " + ((JComboBox)
 				// variables.get(i).get(1)).getSelectedItem());
-				for (int j = 3; j < variables.get(i).size(); j++) {
+				for (int j = 2; j < variables.get(i).size(); j++) {
 					if (((JTextField) variables.get(i).get(j)).getText().trim().equals("")) {
 						write.write(" ?");
 					}
