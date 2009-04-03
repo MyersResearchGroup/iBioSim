@@ -128,6 +128,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 	private JMenuItem newVhdl; // The new vhdl menu item
 
 	private JMenuItem newLhpn; // The new lhpn menu item
+	
+	private JMenuItem newG; // The new petri net menu item
 
 	private JMenuItem newCsp; // The new csp menu item
 
@@ -421,8 +423,9 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		}
 		else {
 			newVhdl = new JMenuItem("VHDL Model");
-			newLhpn = new JMenuItem("Petri Net");
+			newLhpn = new JMenuItem("Labeled Petri Net");
 		}
+		newG = new JMenuItem("Petri Net");
 		newCsp = new JMenuItem("CSP Model");
 		newHse = new JMenuItem("Handshaking Expansion");
 		newUnc = new JMenuItem("Extended Burst Mode Machine");
@@ -493,6 +496,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		newModel.addActionListener(this);
 		newVhdl.addActionListener(this);
 		newLhpn.addActionListener(this);
+		newG.addActionListener(this);
 		newCsp.addActionListener(this);
 		newHse.addActionListener(this);
 		newUnc.addActionListener(this);
@@ -655,6 +659,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		newModel.setMnemonic(KeyEvent.VK_S);
 		newVhdl.setMnemonic(KeyEvent.VK_V);
 		newLhpn.setMnemonic(KeyEvent.VK_L);
+		newG.setMnemonic(KeyEvent.VK_N);
 		newSpice.setMnemonic(KeyEvent.VK_P);
 		about.setMnemonic(KeyEvent.VK_A);
 		manual.setMnemonic(KeyEvent.VK_M);
@@ -709,6 +714,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		newModel.setEnabled(false);
 		newVhdl.setEnabled(false);
 		newLhpn.setEnabled(false);
+		newG.setEnabled(false);
 		newCsp.setEnabled(false);
 		newHse.setEnabled(false);
 		newUnc.setEnabled(false);
@@ -758,6 +764,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		}
 		else if (atacs) {
 			newMenu.add(newVhdl);
+			newMenu.add(newG);
 			newMenu.add(newLhpn);
 			newMenu.add(newCsp);
 			newMenu.add(newHse);
@@ -3213,6 +3220,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				newModel.setEnabled(true);
 				newVhdl.setEnabled(true);
 				newLhpn.setEnabled(true);
+				newG.setEnabled(true);
 				newCsp.setEnabled(true);
 				newHse.setEnabled(true);
 				newUnc.setEnabled(true);
@@ -3297,6 +3305,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						newModel.setEnabled(true);
 						newVhdl.setEnabled(true);
 						newLhpn.setEnabled(true);
+						newG.setEnabled(true);
 						newCsp.setEnabled(true);
 						newHse.setEnabled(true);
 						newUnc.setEnabled(true);
@@ -3492,6 +3501,72 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 								JScrollPane scroll = new JScrollPane(text);
 								// gcm.addMouseListener(this);
 								addTab(vhdlName, scroll, "VHDL Editor");
+							}
+						}
+					}
+				}
+				catch (IOException e1) {
+					JOptionPane.showMessageDialog(frame, "Unable to create new model.", "Error",
+							JOptionPane.ERROR_MESSAGE);
+				}
+			}
+
+		}
+		// if the new petri net menu item is selected
+		else if (e.getSource() == newG) {
+			if (root != null) {
+				try {
+					String vhdlName = JOptionPane.showInputDialog(frame, "Enter Petri Net Model ID:",
+							"Model ID", JOptionPane.PLAIN_MESSAGE);
+					if (vhdlName != null && !vhdlName.trim().equals("")) {
+						vhdlName = vhdlName.trim();
+						if (vhdlName.length() > 42) {
+							if (!vhdlName.substring(vhdlName.length() - 3).equals(".g")) {
+								vhdlName += ".g";
+							}
+						}
+						else {
+							vhdlName += ".g";
+						}
+						String modelID = "";
+						if (vhdlName.length() > 1) {
+							if (vhdlName.substring(vhdlName.length() - 2).equals(".g")) {
+								modelID = vhdlName.substring(0, vhdlName.length() - 2);
+							}
+							else {
+								modelID = vhdlName.substring(0, vhdlName.length() - 1);
+							}
+						}
+						if (!(IDpat.matcher(modelID).matches())) {
+							JOptionPane
+									.showMessageDialog(
+											frame,
+											"A model ID can only contain letters, numbers, and underscores.",
+											"Invalid ID", JOptionPane.ERROR_MESSAGE);
+						}
+						else {
+							File f = new File(root + separator + vhdlName);
+							f.createNewFile();
+							if (externView) {
+								String command = viewerField.getText() + " " + root + separator
+										+ vhdlName;
+								Runtime exec = Runtime.getRuntime();
+								try {
+									exec.exec(command);
+								}
+								catch (Exception e1) {
+									JOptionPane.showMessageDialog(frame,
+											"Unable to open external editor.",
+											"Error Opening Editor", JOptionPane.ERROR_MESSAGE);
+								}
+							}
+							else {
+								JTextArea text = new JTextArea("");
+								text.setEditable(true);
+								text.setLineWrap(true);
+								JScrollPane scroll = new JScrollPane(text);
+								// gcm.addMouseListener(this);
+								addTab(vhdlName, scroll, "Petri Net Editor");
 							}
 						}
 					}
