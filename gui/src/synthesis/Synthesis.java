@@ -1167,28 +1167,6 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 					running.dispose();
 				}
 			});
-			int exitValue = synth.waitFor();
-			if (exitValue == 143) {
-				JOptionPane
-						.showMessageDialog(biosim.frame(), "Synthesis was"
-								+ " canceled by the user.", "Canceled Synthesis",
-								JOptionPane.ERROR_MESSAGE);
-			}
-			else {
-				//log.addText(rulesFile.getName());
-				if (rulesFile.exists()) {
-					viewCircuit.setEnabled(true);
-					viewRules.setEnabled(true);
-					viewTrace.setEnabled(false);
-					viewCircuit();
-				}
-				else {
-					viewCircuit.setEnabled(false);
-					viewRules.setEnabled(false);
-					viewTrace.setEnabled(true);
-					viewTrace();
-				}
-			}
 			running.setCursor(null);
 			running.dispose();
 			cancel.setActionCommand("Cancel");
@@ -1221,6 +1199,28 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 			isr.close();
 			reb.close();
 			viewLog.setEnabled(true);
+			int exitValue = synth.waitFor();
+			if (exitValue == 143) {
+				JOptionPane
+						.showMessageDialog(biosim.frame(), "Synthesis was"
+								+ " canceled by the user.", "Canceled Synthesis",
+								JOptionPane.ERROR_MESSAGE);
+			}
+			else {
+				//log.addText(rulesFile.getName());
+				if (rulesFile.exists()) {
+					viewCircuit.setEnabled(true);
+					viewRules.setEnabled(true);
+					viewTrace.setEnabled(false);
+					viewCircuit();
+				}
+				else {
+					viewCircuit.setEnabled(false);
+					viewRules.setEnabled(false);
+					viewTrace.setEnabled(true);
+					viewTrace();
+				}
+			}
 		}
 		catch (Exception e) {
 		}
