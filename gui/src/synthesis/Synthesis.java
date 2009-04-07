@@ -1658,7 +1658,7 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 			}
 			else {
 				// directory = System.getenv("BIOSIM") + "\\docs\\";
-				command = "dotty start ";
+				command = "dotty ";
 			}
 			exec.exec(command + graphFile, null, work);
 			log.addText(command + directory + separator + graphFile + "\n");
