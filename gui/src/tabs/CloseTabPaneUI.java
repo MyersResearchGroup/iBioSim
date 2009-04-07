@@ -70,6 +70,7 @@ import javax.swing.plaf.basic.BasicTabbedPaneUI;
 import javax.swing.text.View;
 
 import com.sun.java.swing.plaf.windows.WindowsIconFactory;
+import biomodelsim.BioSim;
 
 /**
  * UI for <code>CloseAndMaxTabbedPane</code>.
@@ -140,8 +141,8 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 	protected JPopupMenu actionPopupMenu;
 
 	protected JMenuItem closeItem;
-
-	public CloseTabPaneUI() {
+	
+	public CloseTabPaneUI(BioSim biosim) {
 
 		super();
 
@@ -150,7 +151,7 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 		closeImgI = new BufferedImage(BUTTONSIZE, BUTTONSIZE, BufferedImage.TYPE_4BYTE_ABGR);
 
 		closeB = new JButton();
-		closeB.setIcon(new ImageIcon(System.getenv("BIOSIM") + File.separator + "gui" + File.separator
+		closeB.setIcon(new ImageIcon(biosim.ENVVAR + File.separator + "gui" + File.separator
 				+ "icons" + File.separator + "close.gif"));
 		closeB.setSize(BUTTONSIZE, BUTTONSIZE);
 
@@ -296,8 +297,8 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 			updateCloseIcon(x, y);
 	}
 
-	public static ComponentUI createUI(JComponent c) {
-		return new CloseTabPaneUI();
+	public static ComponentUI createUI(JComponent c, BioSim biosim) {
+		return new CloseTabPaneUI(biosim);
 	}
 
 	/**

@@ -53,9 +53,9 @@ public class CloseAndMaxTabbedPane extends JTabbedPane {
 		super.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
 		this.biosim = biosim;
 		if (enhancedUI)
-			paneUI = new CloseTabPaneEnhancedUI();
+			paneUI = new CloseTabPaneEnhancedUI(biosim);
 		else
-			paneUI = new CloseTabPaneUI();
+			paneUI = new CloseTabPaneUI(biosim);
 
 		super.setUI(paneUI);
 	}

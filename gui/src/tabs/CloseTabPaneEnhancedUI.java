@@ -20,6 +20,8 @@ import javax.swing.plaf.ComponentUI;
 import javax.swing.plaf.basic.BasicGraphicsUtils;
 import javax.swing.text.View;
 
+import biomodelsim.BioSim;
+
 /**
  * This UI displays a different interface, which is independent from the look
  * and feel.
@@ -40,8 +42,12 @@ public class CloseTabPaneEnhancedUI extends CloseTabPaneUI {
 
 	private static final Color selectedColor = new Color(15, 70, 180);
 
-	public static ComponentUI createUI(JComponent c) {
-		return new CloseTabPaneEnhancedUI();
+	public CloseTabPaneEnhancedUI(BioSim biosim) {
+		super(biosim);
+	}
+	
+	public static ComponentUI createUI(JComponent c, BioSim biosim) {
+		return new CloseTabPaneEnhancedUI(biosim);
 	}
 
 	protected void paintFocusIndicator(Graphics g, int tabPlacement, Rectangle[] rects, int tabIndex,

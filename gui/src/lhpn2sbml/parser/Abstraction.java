@@ -49,8 +49,14 @@ public class Abstraction extends LHPNFile {
 
 	private HashMap<String, HashMap<String, ExprTree[]>> booleanAssignmentTrees;
 
+	private ArrayList<HashMap<String, Properties>> assignments = new ArrayList<HashMap<String, Properties>>();
+
 	public Abstraction() {
 		super();
+		assignments.add(booleanAssignments);
+		assignments.add(contAssignments);
+		assignments.add(intAssignments);
+		assignments.add(rateAssignments);
 	}
 
 	public void abstractSTG() {
@@ -60,8 +66,14 @@ public class Abstraction extends LHPNFile {
 				if (!s.equals(t)) {
 					Properties prop1 = controlPlaces.get(s);
 					Properties prop2 = controlPlaces.get(t);
+					boolean assign = false;
+					for (HashMap<String, Properties> h : assignments) {
+						if (h.get(t) == null || h.get(t).keySet().isEmpty()) {
+							assign = true;
+						}
+					}
 					if (comparePreset(prop1, prop2) && comparePostset(prop1, prop2)
-							&& (places.get(s).equals(places.get(t)))) {
+							&& (places.get(s).equals(places.get(t))) && !assign) {
 						combinePlaces(s, t);
 					}
 				}
@@ -84,8 +96,14 @@ public class Abstraction extends LHPNFile {
 		for (String s : controlFlow.keySet()) {
 			String[] postset = controlFlow.get(s).getProperty("postset").split(" ");
 			if (postset.length == 1) {
+				boolean assign = false;
+				for (HashMap<String, Properties> h : assignments) {
+					if (h.get(s) == null || h.get(s).keySet().isEmpty()) {
+						assign = true;
+					}
+				}
 				String[] preset = controlPlaces.get(postset[0]).getProperty("preset").split(" ");
-				if (preset.length == 1) {
+				if (preset.length == 1 && !assign) {
 					removeTrans3(s, preset, postset);
 				}
 			}
@@ -94,8 +112,14 @@ public class Abstraction extends LHPNFile {
 		for (String s : controlFlow.keySet()) {
 			String[] preset = controlFlow.get(s).getProperty("preset").split(" ");
 			if (preset.length == 1) {
+				boolean assign = false;
+				for (HashMap<String, Properties> h : assignments) {
+					if (h.get(s) == null || h.get(s).keySet().isEmpty()) {
+						assign = true;
+					}
+				}
 				String[] postset = controlPlaces.get(preset[0]).getProperty("postset").split(" ");
-				if (postset.length == 1) {
+				if (postset.length == 1 && !assign) {
 					removeTrans4(s, preset, postset);
 				}
 			}
@@ -106,8 +130,13 @@ public class Abstraction extends LHPNFile {
 			for (String t : controlFlow.keySet()) {
 				boolean samePreset = comparePreset(controlFlow.get(s), controlFlow.get(t));
 				boolean samePostset = comparePostset(controlFlow.get(s), controlFlow.get(t));
-				;
-				if (samePreset || samePostset) {
+				boolean assign = false;
+				for (HashMap<String, Properties> h : assignments) {
+					if (h.get(t) == null || h.get(t).keySet().isEmpty()) {
+						assign = true;
+					}
+				}
+				if ((samePreset || samePostset) && !assign) {
 					combineTransitions(s, t, samePreset, samePostset);
 				}
 			}
@@ -118,33 +147,41 @@ public class Abstraction extends LHPNFile {
 				boolean transform = true;
 				String[] preset1 = controlFlow.get(s).getProperty("preset").split(" ");
 				String[] preset2 = controlFlow.get(t).getProperty("preset").split(" ");
-				for (String u : preset1) {
+				boolean assign = false;
+				for (HashMap<String, Properties> h : assignments) {
+					if (h.get(t) == null || h.get(t).keySet().isEmpty()) {
+						assign = true;
+					}
+				}
+				if (!assign) {
+					for (String u : preset1) {
+						if (transform) {
+							for (String v : preset2) {
+								Properties prop1 = controlPlaces.get(u);
+								Properties prop2 = controlPlaces.get(v);
+								if (!comparePostset(prop1, prop2)) {
+									transform = false;
+									break;
+								}
+							}
+						}
+					}
 					if (transform) {
-						for (String v : preset2) {
-							Properties prop1 = controlPlaces.get(u);
-							Properties prop2 = controlPlaces.get(v);
-							if (!comparePostset(prop1, prop2)) {
-								transform = false;
-								break;
+						String[] postset1 = controlFlow.get(s).getProperty("postset").split(" ");
+						String[] postset2 = controlFlow.get(t).getProperty("postset").split(" ");
+						for (String u : postset1) {
+							for (String v : postset2) {
+								Properties prop1 = controlPlaces.get(u);
+								Properties prop2 = controlPlaces.get(v);
+								if (!comparePreset(prop1, prop2)) {
+									transform = false;
+									break;
+								}
 							}
 						}
 					}
 				}
-				if (transform) {
-					String[] postset1 = controlFlow.get(s).getProperty("postset").split(" ");
-					String[] postset2 = controlFlow.get(t).getProperty("postset").split(" ");
-					for (String u : postset1) {
-						for (String v : postset2) {
-							Properties prop1 = controlPlaces.get(u);
-							Properties prop2 = controlPlaces.get(v);
-							if (!comparePreset(prop1, prop2)) {
-								transform = false;
-								break;
-							}
-						}
-					}
-				}
-				if (transform) {
+				if (transform && !assign) {
 					combineTransitions(s, t, true, true);
 				}
 			}
