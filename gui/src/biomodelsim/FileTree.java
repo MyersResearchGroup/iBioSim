@@ -26,53 +26,37 @@ public class FileTree extends JPanel implements MouseListener {
 	private String separator;
 	
 	private boolean lema, atacs, async;
-	public static final ImageIcon ICON_VHDL = new ImageIcon(System.getenv("BIOSIM") + File.separator
-			+ "gui" + File.separator + "icons" + File.separator + "iconVHDL.png");
-
-	public static final ImageIcon ICON_LHPN = new ImageIcon(System.getenv("BIOSIM") + File.separator
-			+ "gui" + File.separator + "icons" + File.separator + "icon_pnlogo.gif");
+	public static ImageIcon ICON_VHDL;
 	
-	public static final ImageIcon ICON_CSP = new ImageIcon(System.getenv("BIOSIM") + File.separator
-			+ "gui" + File.separator + "icons" + File.separator + "iconCSP.png");
+	public static ImageIcon ICON_LHPN;
 	
-	public static final ImageIcon ICON_HSE = new ImageIcon(System.getenv("BIOSIM") + File.separator
-			+ "gui" + File.separator + "icons" + File.separator + "iconHSE.png");
+	public static ImageIcon ICON_CSP;
 	
-	public static final ImageIcon ICON_UNC = new ImageIcon(System.getenv("BIOSIM") + File.separator
-			+ "gui" + File.separator + "icons" + File.separator + "iconUNC.png");
+	public static ImageIcon ICON_HSE;
 	
-	public static final ImageIcon ICON_RSG = new ImageIcon(System.getenv("BIOSIM") + File.separator
-			+ "gui" + File.separator + "icons" + File.separator + "iconRSG.png");
+	public static ImageIcon ICON_UNC; 
+	
+	public static ImageIcon ICON_RSG;
 
-	public static final ImageIcon ICON_MODEL = new ImageIcon(System.getenv("BIOSIM") + File.separator
-			+ "gui" + File.separator + "icons" + File.separator + "model.png");
+	public static ImageIcon ICON_MODEL;
 
-	public static final ImageIcon ICON_DOT = new ImageIcon(System.getenv("BIOSIM") + File.separator
-			+ "gui" + File.separator + "icons" + File.separator + "dot.jpg");
+	public static ImageIcon ICON_DOT;
 
-	public static final ImageIcon ICON_SBML = new ImageIcon(System.getenv("BIOSIM") + File.separator
-			+ "gui" + File.separator + "icons" + File.separator + "sbml.jpg");
+	public static ImageIcon ICON_SBML;
 
-	public static final ImageIcon ICON_SIMULATION = new ImageIcon(System.getenv("BIOSIM")
-			+ File.separator + "gui" + File.separator + "icons" + File.separator + "simulation.jpg");
+	public static ImageIcon ICON_SIMULATION;
 
-	public static final ImageIcon ICON_SYNTHESIS = new ImageIcon(System.getenv("BIOSIM")
-			+ File.separator + "gui" + File.separator + "icons" + File.separator + "synth.png");
+	public static ImageIcon ICON_SYNTHESIS;
 
-	public static final ImageIcon ICON_VERIFY = new ImageIcon(System.getenv("BIOSIM")
-			+ File.separator + "gui" + File.separator + "icons" + File.separator + "check.png");
+	public static ImageIcon ICON_VERIFY;
+	
+	public static ImageIcon ICON_PROJECT;
 
-	public static final ImageIcon ICON_PROJECT = new ImageIcon(System.getenv("BIOSIM")
-			+ File.separator + "gui" + File.separator + "icons" + File.separator + "project.jpg");
+	public static ImageIcon ICON_GRAPH;
 
-	public static final ImageIcon ICON_GRAPH = new ImageIcon(System.getenv("BIOSIM") + File.separator
-			+ "gui" + File.separator + "icons" + File.separator + "graph.jpg");
-
-	public static final ImageIcon ICON_PROBGRAPH = new ImageIcon(System.getenv("BIOSIM")
-			+ File.separator + "gui" + File.separator + "icons" + File.separator + "probability.jpg");
-
-	public static final ImageIcon ICON_LEARN = new ImageIcon(System.getenv("BIOSIM") + File.separator
-			+ "gui" + File.separator + "icons" + File.separator + "learn.jpg");
+	public static ImageIcon ICON_PROBGRAPH; 
+	
+	public static ImageIcon ICON_LEARN;
 
 	/**
 	 * Construct a FileTree
@@ -87,6 +71,54 @@ public class FileTree extends JPanel implements MouseListener {
 		else {
 			separator = File.separator;
 		}
+		
+		ICON_VHDL = new ImageIcon(biomodelsim.ENVVAR + File.separator
+				+ "gui" + File.separator + "icons" + File.separator + "iconVHDL.png");
+
+		ICON_LHPN = new ImageIcon(biomodelsim.ENVVAR + File.separator
+				+ "gui" + File.separator + "icons" + File.separator + "icon_pnlogo.gif");
+		
+		ICON_CSP = new ImageIcon(biomodelsim.ENVVAR + File.separator
+				+ "gui" + File.separator + "icons" + File.separator + "iconCSP.png");
+		
+		ICON_HSE = new ImageIcon(biomodelsim.ENVVAR + File.separator
+				+ "gui" + File.separator + "icons" + File.separator + "iconHSE.png");
+		
+		ICON_UNC = new ImageIcon(biomodelsim.ENVVAR + File.separator
+				+ "gui" + File.separator + "icons" + File.separator + "iconUNC.png");
+		
+		ICON_RSG = new ImageIcon(biomodelsim.ENVVAR + File.separator
+				+ "gui" + File.separator + "icons" + File.separator + "iconRSG.png");
+
+		ICON_MODEL = new ImageIcon(biomodelsim.ENVVAR + File.separator
+				+ "gui" + File.separator + "icons" + File.separator + "model.png");
+
+		ICON_DOT = new ImageIcon(biomodelsim.ENVVAR + File.separator
+				+ "gui" + File.separator + "icons" + File.separator + "dot.jpg");
+
+		ICON_SBML = new ImageIcon(biomodelsim.ENVVAR + File.separator
+				+ "gui" + File.separator + "icons" + File.separator + "sbml.jpg");
+
+		ICON_SIMULATION = new ImageIcon(biomodelsim.ENVVAR
+				+ File.separator + "gui" + File.separator + "icons" + File.separator + "simulation.jpg");
+
+		ICON_SYNTHESIS = new ImageIcon(biomodelsim.ENVVAR
+				+ File.separator + "gui" + File.separator + "icons" + File.separator + "synth.png");
+
+		ICON_VERIFY = new ImageIcon(biomodelsim.ENVVAR
+				+ File.separator + "gui" + File.separator + "icons" + File.separator + "check.png");
+
+		ICON_PROJECT = new ImageIcon(biomodelsim.ENVVAR
+				+ File.separator + "gui" + File.separator + "icons" + File.separator + "project.jpg");
+
+		ICON_GRAPH = new ImageIcon(biomodelsim.ENVVAR + File.separator
+				+ "gui" + File.separator + "icons" + File.separator + "graph.jpg");
+
+		ICON_PROBGRAPH = new ImageIcon(biomodelsim.ENVVAR
+				+ File.separator + "gui" + File.separator + "icons" + File.separator + "probability.jpg");
+
+		ICON_LEARN = new ImageIcon(biomodelsim.ENVVAR + File.separator
+				+ "gui" + File.separator + "icons" + File.separator + "learn.jpg");
 
 		setLayout(new BorderLayout());
 

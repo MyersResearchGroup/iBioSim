@@ -231,6 +231,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			viewRules, viewTrace, viewLog, saveParam, saveSbml, saveTemp, viewModGraph,
 			viewModBrowser, createAnal, createLearn, createSbml, createSynth, createVer, close,
 			closeAll;
+	
+	public String ENVVAR;
 
 	public class MacOSAboutHandler extends Application {
 
@@ -292,21 +294,30 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		else {
 			separator = File.separator;
 		}
+		if (atacs) {
+			ENVVAR = System.getenv("ATACS");
+		}
+		else if (lema) {
+			ENVVAR = System.getenv("LEMA");
+		}
+		else {
+			ENVVAR = System.getenv("BIOSIM");
+		}
 
 		// Creates a new frame
 		if (lema) {
 			frame = new JFrame("LEMA");
-			frame.setIconImage(new ImageIcon(System.getenv("BIOSIM") + separator + "gui"
+			frame.setIconImage(new ImageIcon(ENVVAR + separator + "gui"
 					+ separator + "icons" + separator + "LEMA.png").getImage());
 		}
 		else if (atacs) {
 			frame = new JFrame("ATACS");
-			frame.setIconImage(new ImageIcon(System.getenv("BIOSIM") + separator + "gui"
+			frame.setIconImage(new ImageIcon(ENVVAR + separator + "gui"
 					+ separator + "icons" + separator + "ATACS.png").getImage());
 		}
 		else {
 			frame = new JFrame("iBioSim");
-			frame.setIconImage(new ImageIcon(System.getenv("BIOSIM") + separator + "gui"
+			frame.setIconImage(new ImageIcon(ENVVAR + separator + "gui"
 					+ separator + "icons" + separator + "iBioSim.png").getImage());
 		}
 
@@ -344,29 +355,29 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 
 		// Sets up the Tool Bar
 		toolbar = new JToolBar();
-		String imgName = System.getenv("BIOSIM") + File.separator + "gui" + File.separator
+		String imgName = ENVVAR + File.separator + "gui" + File.separator
 				+ "icons" + File.separator + "save.png";
 		saveButton = makeToolButton(imgName, "save", "Save", "Save");
 		// toolButton = new JButton("Save");
 		toolbar.add(saveButton);
-		imgName = System.getenv("BIOSIM") + File.separator + "gui" + File.separator + "icons"
+		imgName = ENVVAR + File.separator + "gui" + File.separator + "icons"
 				+ File.separator + "saveas.png";
 		saveasButton = makeToolButton(imgName, "saveas", "Save As", "Save As");
 		toolbar.add(saveasButton);
-		imgName = System.getenv("BIOSIM") + File.separator + "gui" + File.separator + "icons"
+		imgName = ENVVAR + File.separator + "gui" + File.separator + "icons"
 				+ File.separator + "run-icon.jpg";
 		runButton = makeToolButton(imgName, "run", "Save and Run", "Run");
 		// toolButton = new JButton("Run");
 		toolbar.add(runButton);
-		imgName = System.getenv("BIOSIM") + File.separator + "gui" + File.separator + "icons"
+		imgName = ENVVAR + File.separator + "gui" + File.separator + "icons"
 				+ File.separator + "refresh.jpg";
 		refreshButton = makeToolButton(imgName, "refresh", "Refresh", "Refresh");
 		toolbar.add(refreshButton);
-		imgName = System.getenv("BIOSIM") + File.separator + "gui" + File.separator + "icons"
+		imgName = ENVVAR + File.separator + "gui" + File.separator + "icons"
 				+ File.separator + "savecheck.png";
 		checkButton = makeToolButton(imgName, "check", "Save and Check", "Save and Check");
 		toolbar.add(checkButton);
-		imgName = System.getenv("BIOSIM") + File.separator + "gui" + File.separator + "icons"
+		imgName = ENVVAR + File.separator + "gui" + File.separator + "icons"
 				+ File.separator + "export.jpg";
 		exportButton = makeToolButton(imgName, "export", "Export", "Export");
 		toolbar.add(exportButton);
@@ -1787,7 +1798,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 
 	public void about() {
 		final JFrame f = new JFrame("About");
-		// frame.setIconImage(new ImageIcon(System.getenv("BIOSIM") +
+		// frame.setIconImage(new ImageIcon(ENVVAR +
 		// File.separator
 		// + "gui"
 		// + File.separator + "icons" + File.separator +
@@ -1841,17 +1852,17 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		uOfUPanel.add(version, "Center");
 		uOfUPanel.add(uOfU, "South");
 		if (lema) {
-			aboutPanel.add(new javax.swing.JLabel(new javax.swing.ImageIcon(System.getenv("BIOSIM")
+			aboutPanel.add(new javax.swing.JLabel(new javax.swing.ImageIcon(ENVVAR
 					+ File.separator + "gui" + File.separator + "icons" + File.separator
 					+ "LEMA.png")), "North");
 		}
 		else if (atacs) {
-			aboutPanel.add(new javax.swing.JLabel(new javax.swing.ImageIcon(System.getenv("BIOSIM")
+			aboutPanel.add(new javax.swing.JLabel(new javax.swing.ImageIcon(ENVVAR
 					+ File.separator + "gui" + File.separator + "icons" + File.separator
 					+ "ATACS.png")), "North");
 		}
 		else {
-			aboutPanel.add(new javax.swing.JLabel(new javax.swing.ImageIcon(System.getenv("BIOSIM")
+			aboutPanel.add(new javax.swing.JLabel(new javax.swing.ImageIcon(ENVVAR
 					+ File.separator + "gui" + File.separator + "icons" + File.separator
 					+ "iBioSim.png")), "North");
 		}
@@ -2162,15 +2173,15 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				}
 				String command = "";
 				if (System.getProperty("os.name").contentEquals("Linux")) {
-					directory = System.getenv("BIOSIM") + "/docs/";
+					directory = ENVVAR + "/docs/";
 					command = "gnome-open ";
 				}
 				else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
-					directory = System.getenv("BIOSIM") + "/docs/";
+					directory = ENVVAR + "/docs/";
 					command = "open ";
 				}
 				else {
-					directory = System.getenv("BIOSIM") + "\\docs\\";
+					directory = ENVVAR + "\\docs\\";
 					command = "cmd /c start ";
 				}
 				File work = new File(directory);
@@ -4866,15 +4877,15 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					if (dot.exists()) {
 						String command = "";
 						if (System.getProperty("os.name").contentEquals("Linux")) {
-							// directory = System.getenv("BIOSIM") + "/docs/";
+							// directory = ENVVAR + "/docs/";
 							command = "gnome-open ";
 						}
 						else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
-							// directory = System.getenv("BIOSIM") + "/docs/";
+							// directory = ENVVAR + "/docs/";
 							command = "open ";
 						}
 						else {
-							// directory = System.getenv("BIOSIM") + "\\docs\\";
+							// directory = ENVVAR + "\\docs\\";
 							command = "cmd /c start ";
 						}
 						log.addText(command + root + separator + theFile + "\n");
@@ -4918,15 +4929,15 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					if (dot.exists()) {
 						String command = "";
 						if (System.getProperty("os.name").contentEquals("Linux")) {
-							// directory = System.getenv("BIOSIM") + "/docs/";
+							// directory = ENVVAR + "/docs/";
 							command = "gnome-open ";
 						}
 						else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
-							// directory = System.getenv("BIOSIM") + "/docs/";
+							// directory = ENVVAR + "/docs/";
 							command = "open ";
 						}
 						else {
-							// directory = System.getenv("BIOSIM") + "\\docs\\";
+							// directory = ENVVAR + "\\docs\\";
 							command = "cmd /c start ";
 						}
 						log.addText(command + root + separator + theFile + "\n");
@@ -4969,15 +4980,15 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					if (new File(root + separator + theFile).exists()) {
 						String command = "";
 						if (System.getProperty("os.name").contentEquals("Linux")) {
-							// directory = System.getenv("BIOSIM") + "/docs/";
+							// directory = ENVVAR + "/docs/";
 							command = "gnome-open ";
 						}
 						else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
-							// directory = System.getenv("BIOSIM") + "/docs/";
+							// directory = ENVVAR + "/docs/";
 							command = "open ";
 						}
 						else {
-							// directory = System.getenv("BIOSIM") + "\\docs\\";
+							// directory = ENVVAR + "\\docs\\";
 							command = "cmd /c start ";
 						}
 						log.addText(command + root + theFile + "\n");
@@ -5020,15 +5031,15 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					if (new File(root + separator + theFile).exists()) {
 						String command = "";
 						if (System.getProperty("os.name").contentEquals("Linux")) {
-							// directory = System.getenv("BIOSIM") + "/docs/";
+							// directory = ENVVAR + "/docs/";
 							command = "gnome-open ";
 						}
 						else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
-							// directory = System.getenv("BIOSIM") + "/docs/";
+							// directory = ENVVAR + "/docs/";
 							command = "open ";
 						}
 						else {
-							// directory = System.getenv("BIOSIM") + "\\docs\\";
+							// directory = ENVVAR + "\\docs\\";
 							command = "cmd /c start ";
 						}
 						log.addText(command + root + theFile + "\n");
@@ -5071,15 +5082,15 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					if (new File(root + separator + theFile).exists()) {
 						String command = "";
 						if (System.getProperty("os.name").contentEquals("Linux")) {
-							// directory = System.getenv("BIOSIM") + "/docs/";
+							// directory = ENVVAR + "/docs/";
 							command = "gnome-open ";
 						}
 						else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
-							// directory = System.getenv("BIOSIM") + "/docs/";
+							// directory = ENVVAR + "/docs/";
 							command = "open ";
 						}
 						else {
-							// directory = System.getenv("BIOSIM") + "\\docs\\";
+							// directory = ENVVAR + "\\docs\\";
 							command = "cmd /c start ";
 						}
 						log.addText(command + root + theFile + "\n");
@@ -5122,15 +5133,15 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					if (new File(root + separator + theFile).exists()) {
 						String command = "";
 						if (System.getProperty("os.name").contentEquals("Linux")) {
-							// directory = System.getenv("BIOSIM") + "/docs/";
+							// directory = ENVVAR + "/docs/";
 							command = "gnome-open ";
 						}
 						else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
-							// directory = System.getenv("BIOSIM") + "/docs/";
+							// directory = ENVVAR + "/docs/";
 							command = "open ";
 						}
 						else {
-							// directory = System.getenv("BIOSIM") + "\\docs\\";
+							// directory = ENVVAR + "\\docs\\";
 							command = "cmd /c start ";
 						}
 						log.addText(command + root + theFile + "\n");
@@ -5173,15 +5184,15 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					if (new File(root + separator + theFile).exists()) {
 						String command = "";
 						if (System.getProperty("os.name").contentEquals("Linux")) {
-							// directory = System.getenv("BIOSIM") + "/docs/";
+							// directory = ENVVAR + "/docs/";
 							command = "gnome-open ";
 						}
 						else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
-							// directory = System.getenv("BIOSIM") + "/docs/";
+							// directory = ENVVAR + "/docs/";
 							command = "open ";
 						}
 						else {
-							// directory = System.getenv("BIOSIM") + "\\docs\\";
+							// directory = ENVVAR + "\\docs\\";
 							command = "cmd /c start ";
 						}
 						log.addText(command + root + theFile + "\n");
@@ -6709,9 +6720,9 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						popup.add(createSynthesis);
 					}
 					// popup.add(createAnalysis);
-					if (lema) {
-						popup.add(createLearn);
-					}
+					//if (lema) {
+					//	popup.add(createLearn);
+					//}
 					popup.add(createVerification);
 					popup.addSeparator();
 					popup.add(viewModel);
@@ -7805,10 +7816,14 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						createLearn.addActionListener(this);
 						createLearn.addMouseListener(this);
 						createLearn.setActionCommand("createLearn");
-						JMenuItem edit = new JMenuItem("View/Edit");
-						edit.addActionListener(this);
-						edit.addMouseListener(this);
-						edit.setActionCommand("dotEditor");
+						JMenuItem createVerification = new JMenuItem("Create Verification View");
+						createVerification.addActionListener(this);
+						createVerification.addMouseListener(this);
+						createVerification.setActionCommand("createVerify");
+						JMenuItem viewModel = new JMenuItem("View Model");
+						viewModel.addActionListener(this);
+						viewModel.addMouseListener(this);
+						viewModel.setActionCommand("viewModel");
 						JMenuItem delete = new JMenuItem("Delete");
 						delete.addActionListener(this);
 						delete.addMouseListener(this);
@@ -7828,8 +7843,10 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						if (lema) {
 							popup.add(createLearn);
 						}
+						popup.add(createVerification);
 						popup.addSeparator();
-						popup.add(edit);
+						popup.add(viewModel);
+						popup.addSeparator();
 						popup.add(copy);
 						popup.add(rename);
 						popup.add(delete);
@@ -7848,10 +7865,14 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						createLearn.addActionListener(this);
 						createLearn.addMouseListener(this);
 						createLearn.setActionCommand("createLearn");
-						JMenuItem edit = new JMenuItem("View/Edit");
-						edit.addActionListener(this);
-						edit.addMouseListener(this);
-						edit.setActionCommand("dotEditor");
+						JMenuItem createVerification = new JMenuItem("Create Verification View");
+						createVerification.addActionListener(this);
+						createVerification.addMouseListener(this);
+						createVerification.setActionCommand("createVerify");
+						JMenuItem viewModel = new JMenuItem("View Model");
+						viewModel.addActionListener(this);
+						viewModel.addMouseListener(this);
+						viewModel.setActionCommand("viewModel");
 						JMenuItem delete = new JMenuItem("Delete");
 						delete.addActionListener(this);
 						delete.addMouseListener(this);
@@ -7868,11 +7889,13 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							popup.add(createSynthesis);
 						}
 						// popup.add(createAnalysis);
-						if (lema) {
-							popup.add(createLearn);
-						}
+						//if (lema) {
+						//	popup.add(createLearn);
+						//}
+						popup.add(createVerification);
 						popup.addSeparator();
-						popup.add(edit);
+						popup.add(viewModel);
+						popup.addSeparator();
 						popup.add(copy);
 						popup.add(rename);
 						popup.add(delete);
@@ -7891,10 +7914,14 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						createLearn.addActionListener(this);
 						createLearn.addMouseListener(this);
 						createLearn.setActionCommand("createLearn");
-						JMenuItem edit = new JMenuItem("View/Edit");
-						edit.addActionListener(this);
-						edit.addMouseListener(this);
-						edit.setActionCommand("dotEditor");
+						JMenuItem createVerification = new JMenuItem("Create Verification View");
+						createVerification.addActionListener(this);
+						createVerification.addMouseListener(this);
+						createVerification.setActionCommand("createVerify");
+						JMenuItem viewModel = new JMenuItem("View Model");
+						viewModel.addActionListener(this);
+						viewModel.addMouseListener(this);
+						viewModel.setActionCommand("viewModel");
 						JMenuItem delete = new JMenuItem("Delete");
 						delete.addActionListener(this);
 						delete.addMouseListener(this);
@@ -7914,8 +7941,12 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						if (lema) {
 							popup.add(createLearn);
 						}
+						if (atacs || lema) {
+							popup.add(createVerification);
+							popup.addSeparator();
+						}
+						popup.add(viewModel);
 						popup.addSeparator();
-						popup.add(edit);
 						popup.add(copy);
 						popup.add(rename);
 						popup.add(delete);
@@ -7934,10 +7965,14 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						createLearn.addActionListener(this);
 						createLearn.addMouseListener(this);
 						createLearn.setActionCommand("createLearn");
-						JMenuItem edit = new JMenuItem("View/Edit");
-						edit.addActionListener(this);
-						edit.addMouseListener(this);
-						edit.setActionCommand("dotEditor");
+						JMenuItem createVerification = new JMenuItem("Create Verification View");
+						createVerification.addActionListener(this);
+						createVerification.addMouseListener(this);
+						createVerification.setActionCommand("createVerify");
+						JMenuItem viewModel = new JMenuItem("View Model");
+						viewModel.addActionListener(this);
+						viewModel.addMouseListener(this);
+						viewModel.setActionCommand("viewModel");
 						JMenuItem delete = new JMenuItem("Delete");
 						delete.addActionListener(this);
 						delete.addMouseListener(this);
@@ -7957,8 +7992,10 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						if (lema) {
 							popup.add(createLearn);
 						}
+						popup.add(createVerification);
 						popup.addSeparator();
-						popup.add(edit);
+						popup.add(viewModel);
+						popup.addSeparator();
 						popup.add(copy);
 						popup.add(rename);
 						popup.add(delete);
@@ -7977,10 +8014,14 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						createLearn.addActionListener(this);
 						createLearn.addMouseListener(this);
 						createLearn.setActionCommand("createLearn");
-						JMenuItem edit = new JMenuItem("View/Edit");
-						edit.addActionListener(this);
-						edit.addMouseListener(this);
-						edit.setActionCommand("dotEditor");
+						JMenuItem createVerification = new JMenuItem("Create Verification View");
+						createVerification.addActionListener(this);
+						createVerification.addMouseListener(this);
+						createVerification.setActionCommand("createVerify");
+						JMenuItem viewModel = new JMenuItem("View Model");
+						viewModel.addActionListener(this);
+						viewModel.addMouseListener(this);
+						viewModel.setActionCommand("viewModel");
 						JMenuItem delete = new JMenuItem("Delete");
 						delete.addActionListener(this);
 						delete.addMouseListener(this);
@@ -8000,8 +8041,10 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						if (lema) {
 							popup.add(createLearn);
 						}
+						popup.add(createVerification);
 						popup.addSeparator();
-						popup.add(edit);
+						popup.add(viewModel);
+						popup.addSeparator();
 						popup.add(copy);
 						popup.add(rename);
 						popup.add(delete);
@@ -8012,10 +8055,10 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						createSynthesis.addActionListener(this);
 						createSynthesis.addMouseListener(this);
 						createSynthesis.setActionCommand("createSynthesis");
-						JMenuItem edit = new JMenuItem("View/Edit");
-						edit.addActionListener(this);
-						edit.addMouseListener(this);
-						edit.setActionCommand("dotEditor");
+						JMenuItem viewModel = new JMenuItem("View Model");
+						viewModel.addActionListener(this);
+						viewModel.addMouseListener(this);
+						viewModel.setActionCommand("viewModel");
 						JMenuItem delete = new JMenuItem("Delete");
 						delete.addActionListener(this);
 						delete.addMouseListener(this);
@@ -8030,7 +8073,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						rename.setActionCommand("rename");
 						popup.add(createSynthesis);
 						popup.addSeparator();
-						popup.add(edit);
+						popup.add(viewModel);
+						popup.addSeparator();
 						popup.add(copy);
 						popup.add(rename);
 						popup.add(delete);
@@ -8041,10 +8085,10 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						createSynthesis.addActionListener(this);
 						createSynthesis.addMouseListener(this);
 						createSynthesis.setActionCommand("createSynthesis");
-						JMenuItem edit = new JMenuItem("View/Edit");
-						edit.addActionListener(this);
-						edit.addMouseListener(this);
-						edit.setActionCommand("dotEditor");
+						JMenuItem viewModel = new JMenuItem("View Model");
+						viewModel.addActionListener(this);
+						viewModel.addMouseListener(this);
+						viewModel.setActionCommand("viewModel");
 						JMenuItem delete = new JMenuItem("Delete");
 						delete.addActionListener(this);
 						delete.addMouseListener(this);
@@ -8059,7 +8103,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						rename.setActionCommand("rename");
 						popup.add(createSynthesis);
 						popup.addSeparator();
-						popup.add(edit);
+						popup.add(viewModel);
+						popup.addSeparator();
 						popup.add(copy);
 						popup.add(rename);
 						popup.add(delete);
