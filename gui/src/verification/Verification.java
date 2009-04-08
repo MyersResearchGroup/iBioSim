@@ -872,12 +872,6 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			});
 			log.addText("Executing:\n" + cmd + "\n");
 			// Process synth = exec.exec(cmd, null, work);
-			int exitValue = ver.waitFor();
-			if (exitValue == 143) {
-				JOptionPane.showMessageDialog(biosim.frame(), "Verification was"
-						+ " canceled by the user.", "Canceled Verification",
-						JOptionPane.ERROR_MESSAGE);
-			}
 			/*
 			 * else { if (traceFile.exists()) {
 			 * JOptionPane.showMessageDialog(biosim.frame(), "Verification
@@ -916,6 +910,12 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					success = true;
 					break;
 				}
+			}
+			int exitValue = ver.waitFor();
+			if (exitValue == 143) {
+				JOptionPane.showMessageDialog(biosim.frame(), "Verification was"
+						+ " canceled by the user.", "Canceled Verification",
+						JOptionPane.ERROR_MESSAGE);
 			}
 			if (!success) {
 				// log.addText("failed");
