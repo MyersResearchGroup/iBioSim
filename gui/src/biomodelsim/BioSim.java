@@ -4886,7 +4886,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						}
 						else {
 							// directory = ENVVAR + "\\docs\\";
-							command = "cmd /c start ";
+							command = "dotty start ";
 						}
 						log.addText(command + root + separator + theFile + "\n");
 						exec.exec(command + theFile, null, work);
@@ -4938,7 +4938,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						}
 						else {
 							// directory = ENVVAR + "\\docs\\";
-							command = "cmd /c start ";
+							command = "dotty start ";
 						}
 						log.addText(command + root + separator + theFile + "\n");
 						exec.exec(command + theFile, null, work);
@@ -4989,7 +4989,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						}
 						else {
 							// directory = ENVVAR + "\\docs\\";
-							command = "cmd /c start ";
+							command = "dotty start ";
 						}
 						log.addText(command + root + theFile + "\n");
 						exec.exec(command + theFile, null, work);
@@ -5040,7 +5040,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						}
 						else {
 							// directory = ENVVAR + "\\docs\\";
-							command = "cmd /c start ";
+							command = "dotty start ";
 						}
 						log.addText(command + root + theFile + "\n");
 						exec.exec(command + theFile, null, work);
@@ -5091,7 +5091,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						}
 						else {
 							// directory = ENVVAR + "\\docs\\";
-							command = "cmd /c start ";
+							command = "dotty start ";
 						}
 						log.addText(command + root + theFile + "\n");
 						exec.exec(command + theFile, null, work);
@@ -5142,7 +5142,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						}
 						else {
 							// directory = ENVVAR + "\\docs\\";
-							command = "cmd /c start ";
+							command = "dotty start ";
 						}
 						log.addText(command + root + theFile + "\n");
 						exec.exec(command + theFile, null, work);
@@ -5193,7 +5193,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						}
 						else {
 							// directory = ENVVAR + "\\docs\\";
-							command = "cmd /c start ";
+							command = "dotty start ";
 						}
 						log.addText(command + root + theFile + "\n");
 						exec.exec(command + theFile, null, work);
