@@ -295,7 +295,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			separator = File.separator;
 		}
 		if (atacs) {
-			ENVVAR = System.getenv("ATACS");
+			ENVVAR = System.getenv("ATACSGUI");
 		}
 		else if (lema) {
 			ENVVAR = System.getenv("LEMA");
@@ -788,7 +788,9 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			// newMenu.add(newSpice);
 		}
 		newMenu.add(graph);
-		newMenu.add(probGraph);
+		if (!async) {
+			newMenu.add(probGraph);
+		}
 		file.add(openProj);
 		// openMenu.add(openProj);
 		file.addSeparator();
