@@ -37,7 +37,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 	private JRadioButton untimed, geometric, posets, bag, bap, baptdc, verify, vergate, orbits,
 			search, trace, bdd, dbm, smt;
 
-	private JCheckBox abst, partialOrder, dot, verbose, genrg, timsubset, superset, infopt,
+	private JCheckBox abst, partialOrder, dot, verbose, graph, genrg, timsubset, superset, infopt,
 			orbmatch, interleav, prune, disabling, nofail, keepgoing, explpn, nochecks, reduction,
 			newTab, postProc, redCheck, xForm2, expandRate;
 
@@ -142,8 +142,10 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		// Other Basic Options
 		dot = new JCheckBox("Dot");
 		verbose = new JCheckBox("Verbose");
+		graph = new JCheckBox("Show State Graph");
 		dot.addActionListener(this);
 		verbose.addActionListener(this);
+		graph.addActionListener(this);
 		// Verification Algorithms
 		verify = new JRadioButton("Verify");
 		vergate = new JRadioButton("Verify Gates");
@@ -252,6 +254,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		otherPanel.add(otherOptions);
 		otherPanel.add(dot);
 		otherPanel.add(verbose);
+		otherPanel.add(graph);
 
 		algorithmPanel.add(algorithm);
 		algorithmPanel.add(verify);
@@ -353,6 +356,11 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			if (load.containsKey("verification.Verb")) {
 				if (load.getProperty("verification.Verb").equals("true")) {
 					verbose.setSelected(true);
+				}
+			}
+			if (load.containsKey("verification.Graph")) {
+				if (load.getProperty("verification.Graph").equals("true")) {
+					graph.setSelected(true);
 				}
 			}
 			// if (load.containsKey("verification.quiet")) {
@@ -763,23 +771,26 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		}
 		// Verification Algorithms
 		if (verify.isSelected()) {
-			options = options + "va ";
+			options = options + "va";
 		}
 		else if (vergate.isSelected()) {
-			options = options + "vg ";
+			options = options + "vg";
 		}
 		else if (orbits.isSelected()) {
-			options = options + "vo ";
+			options = options + "vo";
 		}
 		else if (search.isSelected()) {
-			options = options + "vs ";
+			options = options + "vs";
 		}
 		else {
-			options = options + "vt ";
+			options = options + "vt";
+		}
+		if (graph.isSelected()) {
+			options = options + "ps";
 		}
 		// String[] temp = verifyFile.split(separator);
 		// String src = temp[temp.length - 1];
-		String cmd = "atacs " + options + sourceFile;
+		String cmd = "atacs " + options + " " + sourceFile;
 		// String[] cmd = {"emacs", "temp" };
 		// JOptionPane.showMessageDialog(this, cmd);
 		// Runtime exec = Runtime.getRuntime();
@@ -936,6 +947,16 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					viewLog();
 				}
 			}
+			if (graph.isSelected()) {
+				if (dot.isSelected()) {
+					exec.exec("dotty " + dotName);
+					log.addText("Executing:\ndotty " + dotName + "\n");
+				}
+				else {
+					exec.exec("parg " + pargName);
+					log.addText("Executing:\nparg " + pargName + "\n");
+				}
+			}
 		}
 		catch (Exception e) {
 			JOptionPane.showMessageDialog(biosim.frame(), "Unable to verify model.", "Error",
@@ -1024,6 +1045,12 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			}
 			else {
 				prop.setProperty("verification.Verb", "false");
+			}
+			if (graph.isSelected()) {
+				prop.setProperty("verification.Graph", "true");
+			}
+			else {
+				prop.setProperty("verification.Graph", "false");
 			}
 			// if (quiet.isSelected()) {
 			// prop.setProperty("verification.quiet", "true");
