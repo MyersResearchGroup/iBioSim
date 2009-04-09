@@ -31,26 +31,28 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 	private PropertyList assignmentList, continuousList, rateList, integerList, booleanList;
 
 	private ArrayList<String> boolList, contList, intList;
-	
+
 	private String[] varList;
-	
+
 	private String[] options = { "Ok", "Cancel" };
 
 	private LHPNFile lhpn;
 
-	//private JComboBox typeBox, varBox;
+	// private JComboBox typeBox, varBox;
 	private JComboBox varBox;
-	
+
 	private JCheckBox rateBox;
 
-	//private static final String[] types = { "boolean", "continuous", "rate" };
+	// private static final String[] types = { "boolean", "continuous", "rate"
+	// };
 
 	private HashMap<String, PropertyField> fields = null;
-	
-	//private boolean rate = false;
 
-	public AssignmentPanel(String transition, String selected, PropertyList assignmentList, PropertyList continuousList, PropertyList rateList, PropertyList booleanList, PropertyList integerList,
-			LHPNFile lhpn) {
+	// private boolean rate = false;
+
+	public AssignmentPanel(String transition, String selected, PropertyList assignmentList,
+			PropertyList continuousList, PropertyList rateList, PropertyList booleanList,
+			PropertyList integerList, LHPNFile lhpn) {
 		super(new GridLayout(4, 1));
 		this.selected = selected;
 		this.transition = transition;
@@ -59,22 +61,26 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 		this.rateList = rateList;
 		this.booleanList = booleanList;
 		this.integerList = integerList;
-		
+
 		this.lhpn = lhpn;
 
 		fields = new HashMap<String, PropertyField>();
-		
+
 		contList = new ArrayList<String>();
 		boolList = new ArrayList<String>();
 		intList = new ArrayList<String>();
 		String[] tempArray = lhpn.getContVars();
 		String[] tempList = assignmentList.getItems();
-		for (int i=0; i<tempArray.length; i++) {
+		for (int i = 0; i < tempArray.length; i++) {
 			boolean contains = false;
-			for (int j=0; j<tempList.length; j++) {
-				if (tempList[j].startsWith(tempArray[i])) {
-					contains = true;
-					break;
+			if (selected != null) {
+				if (!tempArray[i].equals(selected)) {
+					for (int j = 0; j < tempList.length; j++) {
+						if (tempList[j].startsWith(tempArray[i])) {
+							contains = true;
+							break;
+						}
+					}
 				}
 			}
 			if (!contains && tempArray[i] != null) {
@@ -82,12 +88,16 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 			}
 		}
 		tempArray = lhpn.getBooleanVars();
-		for (int i=0; i<tempArray.length; i++) {
+		for (int i = 0; i < tempArray.length; i++) {
 			boolean contains = false;
-			for (int j=0; j<tempList.length; j++) {
-				if (tempList[j].startsWith(tempArray[i])) {
-					contains = true;
-					break;
+			if (selected != null) {
+				if (!selected.startsWith(tempArray[i])) {
+					for (int j = 0; j < tempList.length; j++) {
+						if (tempList[j].startsWith(tempArray[i])) {
+							contains = true;
+							break;
+						}
+					}
 				}
 			}
 			if (!contains && tempArray[i] != null) {
@@ -95,12 +105,16 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 			}
 		}
 		tempArray = lhpn.getIntVars();
-		for (int i=0; i<tempArray.length; i++) {
+		for (int i = 0; i < tempArray.length; i++) {
 			boolean contains = false;
-			for (int j=0; j<tempList.length; j++) {
-				if (tempList[j].startsWith(tempArray[i])) {
-					contains = true;
-					break;
+			if (selected != null) {
+				if (!tempArray[i].equals(selected)) {
+					for (int j = 0; j < tempList.length; j++) {
+						if (tempList[j].startsWith(tempArray[i])) {
+							contains = true;
+							break;
+						}
+					}
 				}
 			}
 			if (!contains && tempArray[i] != null) {
@@ -108,39 +122,41 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 			}
 		}
 		varList = new String[contList.size() + boolList.size() + intList.size()];
-		//if (boolList.length > 0 && contList.length > 0 && intList.length > 0) {
-		//	System.arraycopy(boolList, 0, varList, 0, boolList.length);
-		//	System.arraycopy(contList, 0, varList, boolList.length,
-		//			contList.length);
-		//	System.arraycopy(intList, 0, varList, boolList.length + contList.length,
-		//			intList.length);
-		//}
-		//else if (boolList.length > 0 && contList.length > 0) {
-		//	System.arraycopy(boolList, 0, varList, 0, boolList.length);
-		//}
-		//else if (boolList.length > 0 && intList.length > 0) {	
-		//}
-		for (int i=0; i<boolList.size(); i++) {
+		// if (boolList.length > 0 && contList.length > 0 && intList.length > 0)
+		// {
+		// System.arraycopy(boolList, 0, varList, 0, boolList.length);
+		// System.arraycopy(contList, 0, varList, boolList.length,
+		// contList.length);
+		// System.arraycopy(intList, 0, varList, boolList.length +
+		// contList.length,
+		// intList.length);
+		// }
+		// else if (boolList.length > 0 && contList.length > 0) {
+		// System.arraycopy(boolList, 0, varList, 0, boolList.length);
+		// }
+		// else if (boolList.length > 0 && intList.length > 0) {
+		// }
+		for (int i = 0; i < boolList.size(); i++) {
 			varList[i] = boolList.get(i);
 		}
-		for (int i=0; i<contList.size(); i++) {
-			varList[i+boolList.size()] = contList.get(i);
+		for (int i = 0; i < contList.size(); i++) {
+			varList[i + boolList.size()] = contList.get(i);
 		}
-		for (int i=0; i<intList.size(); i++) {
-			varList[i+boolList.size()+contList.size()] = intList.get(i);
+		for (int i = 0; i < intList.size(); i++) {
+			varList[i + boolList.size() + contList.size()] = intList.get(i);
 		}
 
 		// Type field
-		//JPanel tempPanel = new JPanel();
-		//JLabel tempLabel = new JLabel("Type");
-		//typeBox = new JComboBox(types);
-		//typeBox.setSelectedItem(types[0]);
-		//typeBox.addActionListener(this);
-		//tempPanel.setLayout(new GridLayout(1, 2));
-		//tempPanel.add(tempLabel);
-		//tempPanel.add(typeBox);
-		//add(tempPanel);
-		
+		// JPanel tempPanel = new JPanel();
+		// JLabel tempLabel = new JLabel("Type");
+		// typeBox = new JComboBox(types);
+		// typeBox.setSelectedItem(types[0]);
+		// typeBox.addActionListener(this);
+		// tempPanel.setLayout(new GridLayout(1, 2));
+		// tempPanel.add(tempLabel);
+		// tempPanel.add(typeBox);
+		// add(tempPanel);
+
 		// Variable field
 		JPanel tempPanel = new JPanel();
 		JLabel varLabel = new JLabel("Variable");
@@ -157,20 +173,19 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 				Utility.VALstring);
 		fields.put("Assignment lower", field);
 		add(field);
-		
+
 		// Assignment upper bound
-		field = new PropertyField("Assignment Upper Bound", "", null, null,
-				Utility.NAMEstring);
+		field = new PropertyField("Assignment Upper Bound", "", null, null, Utility.NAMEstring);
 		fields.put("Assignment upper", field);
 		add(field);
-		
-		//Rate Assignment Box
+
+		// Rate Assignment Box
 		rateBox = new JCheckBox("Rate Assignment");
 		add(rateBox);
 		if (!lhpn.isContinuous(varBox.getSelectedItem().toString())) {
 			rateBox.setEnabled(false);
 		}
-		
+
 		if (selected != null) {
 			oldName = selected;
 			tempArray = new String[2];
@@ -181,7 +196,7 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 			else {
 				tempArray = oldName.split(":=");
 			}
-			for (int i=0; i<varList.length; i++) {
+			for (int i = 0; i < varList.length; i++) {
 				if (varList[i].equals(tempArray[0])) {
 					varBox.setSelectedItem(varList[i]);
 					break;
@@ -202,10 +217,10 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 			else {
 				fields.get("Assignment lower").setValue(tempArray[1]);
 			}
-			//loadProperties(prop);
+			// loadProperties(prop);
 		}
 
-		//setType(types[0]);
+		// setType(types[0]);
 		boolean display = false;
 		while (!display) {
 			display = openGui(oldName);
@@ -238,18 +253,23 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 					}
 				}
 			}
-			//else if (!oldName.equals(fields.get(GlobalConstants.ID).getValue())) {
-			//	if (lhpn.getVariables().containsKey(fields.get(GlobalConstants.ID).getValue())) {
-			//		Utility.createErrorMessage("Error", "Assignment id already exists.");
-			//		return false;
-			//	}
-			//}
+			// else if
+			// (!oldName.equals(fields.get(GlobalConstants.ID).getValue())) {
+			// if
+			// (lhpn.getVariables().containsKey(fields.get(GlobalConstants.ID).getValue()))
+			// {
+			// Utility.createErrorMessage("Error", "Assignment id already
+			// exists.");
+			// return false;
+			// }
+			// }
 			String assign = "";
 			if (fields.get("Assignment upper").getValue().equals("")) {
 				assign = fields.get("Assignment lower").getValue();
 			}
 			else {
-				assign = "[" + fields.get("Assignment lower").getValue() + "," + fields.get("Assignment upper").getValue() + "]";
+				assign = "[" + fields.get("Assignment lower").getValue() + ","
+						+ fields.get("Assignment upper").getValue() + "]";
 			}
 			if (rateBox.isSelected()) {
 				id = varBox.getSelectedItem().toString() + "':=" + assign;
@@ -261,22 +281,24 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 			// Check to see if we need to add or edit
 			Properties property = new Properties();
 			for (PropertyField f : fields.values()) {
-				//System.out.println(f.getKey());
+				// System.out.println(f.getKey());
 				if (f.getState() == null || f.getState().equals(PropertyField.states[1])) {
 					property.put(f.getKey(), f.getValue());
 				}
 			}
 			property.put("Variable", varBox.getSelectedItem().toString());
 
-			//if (selected != null && !oldName.equals(id)) {
-			//	lhpn.removeContAssign(selected, oldName);
-			//}
-			//else {
-			//	System.out.println(transition + " " + id + " " + property.getProperty("Assignment value"));
-			//	lhpn.addContAssign(transition, id, property.getProperty("Value"));
-			//}
+			// if (selected != null && !oldName.equals(id)) {
+			// lhpn.removeContAssign(selected, oldName);
+			// }
+			// else {
+			// System.out.println(transition + " " + id + " " +
+			// property.getProperty("Assignment value"));
+			// lhpn.addContAssign(transition, id,
+			// property.getProperty("Value"));
+			// }
 			assignmentList.removeItem(oldName);
-			//System.out.println(id);
+			// System.out.println(id);
 			assignmentList.addItem(id);
 			assignmentList.setSelectedValue(id, true);
 			String var = varBox.getSelectedItem().toString();
@@ -286,7 +308,8 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 					rateList.addItem(id);
 				}
 				else {
-					Utility.createErrorMessage("Error", "Rate assignments must be for continuous variables.");
+					Utility.createErrorMessage("Error",
+							"Rate assignments must be for continuous variables.");
 					return false;
 				}
 			}
@@ -312,7 +335,7 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("comboBoxChanged")) {
-			//setID(varBox.getSelectedItem().toString());
+			// setID(varBox.getSelectedItem().toString());
 			if (lhpn.isContinuous(varBox.getSelectedItem().toString())) {
 				rateBox.setEnabled(true);
 			}
@@ -321,13 +344,13 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 			}
 		}
 	}
-	
+
 	private void setID(String var) {
 		PropertyField idField = fields.get(GlobalConstants.ID);
 		idField.setValue(var);
 		fields.put(GlobalConstants.ID, idField);
 	}
-	
+
 	public void save() {
 		String variable = varBox.getSelectedItem().toString();
 		String value = "";
@@ -335,7 +358,8 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 			value = fields.get("Assignment lower").getValue();
 		}
 		else {
-			value = "[" + fields.get("Assignment lower").getValue() + "," + fields.get("Assignment upper").getValue() + "]";
+			value = "[" + fields.get("Assignment lower").getValue() + ","
+					+ fields.get("Assignment upper").getValue() + "]";
 		}
 		Properties property = new Properties();
 		for (PropertyField f : fields.values()) {
@@ -353,7 +377,8 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 					lhpn.removeContAssign(selectArray[0], oldArray[0]);
 				}
 				else {
-					//System.out.println(transition + " " + id + " " + property.getProperty("Assignment value"));
+					// System.out.println(transition + " " + id + " " +
+					// property.getProperty("Assignment value"));
 					lhpn.addContAssign(transition, variable, value);
 				}
 			}
@@ -364,7 +389,8 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 					lhpn.removeRateAssign(selectArray[0], oldArray[0]);
 				}
 				else {
-					//System.out.println(transition + " " + id + " " + property.getProperty("Assignment value"));
+					// System.out.println(transition + " " + id + " " +
+					// property.getProperty("Assignment value"));
 					lhpn.addRateAssign(transition, variable, value);
 				}
 			}
@@ -376,7 +402,8 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 				lhpn.removeIntAssign(selectArray[0], oldArray[0]);
 			}
 			else {
-				//System.out.println(transition + " " + id + " " + property.getProperty("Assignment value"));
+				// System.out.println(transition + " " + id + " " +
+				// property.getProperty("Assignment value"));
 				lhpn.addIntAssign(transition, variable, value);
 			}
 		}
@@ -387,31 +414,28 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 				lhpn.removeBoolAssign(selectArray[0], oldArray[0]);
 			}
 			else {
-				//System.out.println(transition + " " + id + " " + property.getProperty("Assignment value"));
+				// System.out.println(transition + " " + id + " " +
+				// property.getProperty("Assignment value"));
 				lhpn.addBoolAssign(transition, variable, value);
 			}
 		}
 	}
-	
-	//private void setType(String type) {
-		/*if (type.equals(types[0])) {
-			// fields.get(GlobalConstants.MAX_DIMER_STRING).setEnabled(true);
-			fields.get(GlobalConstants.KASSOCIATION_STRING).setEnabled(true);
-			fields.get(GlobalConstants.KDECAY_STRING).setEnabled(true);
-		}
-		else if (type.equals(types[1])) {
-			// fields.get(GlobalConstants.MAX_DIMER_STRING).setEnabled(true);
-			fields.get(GlobalConstants.KASSOCIATION_STRING).setEnabled(true);
-			fields.get(GlobalConstants.KDECAY_STRING).setEnabled(false);
-		}
-		else {
-			// fields.get(GlobalConstants.MAX_DIMER_STRING).setEnabled(true);
-			fields.get(GlobalConstants.KASSOCIATION_STRING).setEnabled(true);
-			fields.get(GlobalConstants.KDECAY_STRING).setEnabled(true);
-		}
-		*/
-	//}
 
+	// private void setType(String type) {
+	/*
+	 * if (type.equals(types[0])) { //
+	 * fields.get(GlobalConstants.MAX_DIMER_STRING).setEnabled(true);
+	 * fields.get(GlobalConstants.KASSOCIATION_STRING).setEnabled(true);
+	 * fields.get(GlobalConstants.KDECAY_STRING).setEnabled(true); } else if
+	 * (type.equals(types[1])) { //
+	 * fields.get(GlobalConstants.MAX_DIMER_STRING).setEnabled(true);
+	 * fields.get(GlobalConstants.KASSOCIATION_STRING).setEnabled(true);
+	 * fields.get(GlobalConstants.KDECAY_STRING).setEnabled(false); } else { //
+	 * fields.get(GlobalConstants.MAX_DIMER_STRING).setEnabled(true);
+	 * fields.get(GlobalConstants.KASSOCIATION_STRING).setEnabled(true);
+	 * fields.get(GlobalConstants.KDECAY_STRING).setEnabled(true); }
+	 */
+	// }
 	private void loadProperties(Properties property) {
 		for (Object o : property.keySet()) {
 			if (fields.containsKey(o.toString())) {

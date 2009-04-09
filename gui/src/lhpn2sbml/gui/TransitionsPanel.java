@@ -460,7 +460,7 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 					&& (list.getItems().length == lhpn.getContVars().length
 							+ lhpn.getBooleanVars().length + lhpn.getIntVars().length)) {
 				Utility.createErrorMessage("Error",
-						"All variable have already been assigned in this transition");
+						"All variables have already been assigned in this transition");
 			}
 			else {
 				// System.out.println("transition " + selected);
