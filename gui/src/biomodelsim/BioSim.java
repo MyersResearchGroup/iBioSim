@@ -3276,7 +3276,14 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			}
 			String projDir = "";
 			if (e.getSource() == openProj) {
-				projDir = Buttons.browse(frame, f, null, JFileChooser.DIRECTORIES_ONLY, "Open", -1);
+				projDir = Buttons.browse(frame, f, null, JFileChooser.FILES_AND_DIRECTORIES, "Open", -1);
+				if (projDir.endsWith(".prj")) {
+					String[] tempArray = projDir.split(separator);
+					projDir = "";
+					for (int i=0; i<tempArray.length - 1; i++) {
+						projDir = projDir + tempArray[i] + separator;
+					}
+				}
 			}
 			else if (e.getSource() == recentProjects[0]) {
 				projDir = recentProjectPaths[0];
@@ -3293,6 +3300,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			else if (e.getSource() == recentProjects[4]) {
 				projDir = recentProjectPaths[4];
 			}
+			//log.addText(projDir);
 			if (!projDir.equals("")) {
 				if (new File(projDir).isDirectory()) {
 					boolean isProject = false;
