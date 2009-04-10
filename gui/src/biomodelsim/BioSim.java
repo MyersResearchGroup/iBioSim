@@ -128,7 +128,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 	private JMenuItem newVhdl; // The new vhdl menu item
 
 	private JMenuItem newLhpn; // The new lhpn menu item
-	
+
 	private JMenuItem newG; // The new petri net menu item
 
 	private JMenuItem newCsp; // The new csp menu item
@@ -231,7 +231,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			viewRules, viewTrace, viewLog, saveParam, saveSbml, saveTemp, viewModGraph,
 			viewModBrowser, createAnal, createLearn, createSbml, createSynth, createVer, close,
 			closeAll;
-	
+
 	public String ENVVAR;
 
 	public class MacOSAboutHandler extends Application {
@@ -307,18 +307,18 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		// Creates a new frame
 		if (lema) {
 			frame = new JFrame("LEMA");
-			frame.setIconImage(new ImageIcon(ENVVAR + separator + "gui"
-					+ separator + "icons" + separator + "LEMA.png").getImage());
+			frame.setIconImage(new ImageIcon(ENVVAR + separator + "gui" + separator + "icons"
+					+ separator + "LEMA.png").getImage());
 		}
 		else if (atacs) {
 			frame = new JFrame("ATACS");
-			frame.setIconImage(new ImageIcon(ENVVAR + separator + "gui"
-					+ separator + "icons" + separator + "ATACS.png").getImage());
+			frame.setIconImage(new ImageIcon(ENVVAR + separator + "gui" + separator + "icons"
+					+ separator + "ATACS.png").getImage());
 		}
 		else {
 			frame = new JFrame("iBioSim");
-			frame.setIconImage(new ImageIcon(ENVVAR + separator + "gui"
-					+ separator + "icons" + separator + "iBioSim.png").getImage());
+			frame.setIconImage(new ImageIcon(ENVVAR + separator + "gui" + separator + "icons"
+					+ separator + "iBioSim.png").getImage());
 		}
 
 		// Makes it so that clicking the x in the corner closes the program
@@ -355,30 +355,30 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 
 		// Sets up the Tool Bar
 		toolbar = new JToolBar();
-		String imgName = ENVVAR + File.separator + "gui" + File.separator
-				+ "icons" + File.separator + "save.png";
+		String imgName = ENVVAR + File.separator + "gui" + File.separator + "icons"
+				+ File.separator + "save.png";
 		saveButton = makeToolButton(imgName, "save", "Save", "Save");
 		// toolButton = new JButton("Save");
 		toolbar.add(saveButton);
-		imgName = ENVVAR + File.separator + "gui" + File.separator + "icons"
-				+ File.separator + "saveas.png";
+		imgName = ENVVAR + File.separator + "gui" + File.separator + "icons" + File.separator
+				+ "saveas.png";
 		saveasButton = makeToolButton(imgName, "saveas", "Save As", "Save As");
 		toolbar.add(saveasButton);
-		imgName = ENVVAR + File.separator + "gui" + File.separator + "icons"
-				+ File.separator + "run-icon.jpg";
+		imgName = ENVVAR + File.separator + "gui" + File.separator + "icons" + File.separator
+				+ "run-icon.jpg";
 		runButton = makeToolButton(imgName, "run", "Save and Run", "Run");
 		// toolButton = new JButton("Run");
 		toolbar.add(runButton);
-		imgName = ENVVAR + File.separator + "gui" + File.separator + "icons"
-				+ File.separator + "refresh.jpg";
+		imgName = ENVVAR + File.separator + "gui" + File.separator + "icons" + File.separator
+				+ "refresh.jpg";
 		refreshButton = makeToolButton(imgName, "refresh", "Refresh", "Refresh");
 		toolbar.add(refreshButton);
-		imgName = ENVVAR + File.separator + "gui" + File.separator + "icons"
-				+ File.separator + "savecheck.png";
+		imgName = ENVVAR + File.separator + "gui" + File.separator + "icons" + File.separator
+				+ "savecheck.png";
 		checkButton = makeToolButton(imgName, "check", "Save and Check", "Save and Check");
 		toolbar.add(checkButton);
-		imgName = ENVVAR + File.separator + "gui" + File.separator + "icons"
-				+ File.separator + "export.jpg";
+		imgName = ENVVAR + File.separator + "gui" + File.separator + "icons" + File.separator
+				+ "export.jpg";
 		exportButton = makeToolButton(imgName, "export", "Export", "Export");
 		toolbar.add(exportButton);
 		saveButton.setEnabled(false);
@@ -1788,12 +1788,27 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			// JTabbedPane prefTabsNoLema = new JTabbedPane();
 			// prefTabsNoLema.addTab("VHDL Preferences", vhdlPrefs);
 			// prefTabsNoLema.addTab("LHPN Preferences", lhpnPrefs);
+			Preferences biosimrc = Preferences.userRoot();
+			JCheckBox dialog = new JCheckBox("Use File Dialog");
+			if (biosimrc.get("biosim.general.file_browser", "").equals("FileDialog")) {
+				dialog.setSelected(true);
+			}
+			else {
+				dialog.setSelected(false);
+			}
+			prefPanel.add(dialog);
 			Object[] options = { "Save", "Cancel" };
 			int value = JOptionPane
 					.showOptionDialog(frame, prefPanel, "Preferences", JOptionPane.YES_NO_OPTION,
 							JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 			if (value == JOptionPane.YES_OPTION) {
 				viewer = viewerField.getText();
+				if (dialog.isSelected()) {
+					biosimrc.put("biosim.general.file_browser", "FileDialog");
+				}
+				else {
+					biosimrc.put("biosim.general.file_browser", "JFileChooser");
+				}
 			}
 		}
 	}
@@ -1854,19 +1869,16 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		uOfUPanel.add(version, "Center");
 		uOfUPanel.add(uOfU, "South");
 		if (lema) {
-			aboutPanel.add(new javax.swing.JLabel(new javax.swing.ImageIcon(ENVVAR
-					+ File.separator + "gui" + File.separator + "icons" + File.separator
-					+ "LEMA.png")), "North");
+			aboutPanel.add(new javax.swing.JLabel(new javax.swing.ImageIcon(ENVVAR + File.separator
+					+ "gui" + File.separator + "icons" + File.separator + "LEMA.png")), "North");
 		}
 		else if (atacs) {
-			aboutPanel.add(new javax.swing.JLabel(new javax.swing.ImageIcon(ENVVAR
-					+ File.separator + "gui" + File.separator + "icons" + File.separator
-					+ "ATACS.png")), "North");
+			aboutPanel.add(new javax.swing.JLabel(new javax.swing.ImageIcon(ENVVAR + File.separator
+					+ "gui" + File.separator + "icons" + File.separator + "ATACS.png")), "North");
 		}
 		else {
-			aboutPanel.add(new javax.swing.JLabel(new javax.swing.ImageIcon(ENVVAR
-					+ File.separator + "gui" + File.separator + "icons" + File.separator
-					+ "iBioSim.png")), "North");
+			aboutPanel.add(new javax.swing.JLabel(new javax.swing.ImageIcon(ENVVAR + File.separator
+					+ "gui" + File.separator + "icons" + File.separator + "iBioSim.png")), "North");
 		}
 		// aboutPanel.add(bioSim, "North");
 		aboutPanel.add(uOfUPanel, "Center");
@@ -3529,8 +3541,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		else if (e.getSource() == newG) {
 			if (root != null) {
 				try {
-					String vhdlName = JOptionPane.showInputDialog(frame, "Enter Petri Net Model ID:",
-							"Model ID", JOptionPane.PLAIN_MESSAGE);
+					String vhdlName = JOptionPane.showInputDialog(frame,
+							"Enter Petri Net Model ID:", "Model ID", JOptionPane.PLAIN_MESSAGE);
 					if (vhdlName != null && !vhdlName.trim().equals("")) {
 						vhdlName = vhdlName.trim();
 						if (vhdlName.length() > 42) {
@@ -6722,9 +6734,9 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						popup.add(createSynthesis);
 					}
 					// popup.add(createAnalysis);
-					//if (lema) {
-					//	popup.add(createLearn);
-					//}
+					// if (lema) {
+					// popup.add(createLearn);
+					// }
 					popup.add(createVerification);
 					popup.addSeparator();
 					popup.add(viewModel);
@@ -7891,9 +7903,9 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							popup.add(createSynthesis);
 						}
 						// popup.add(createAnalysis);
-						//if (lema) {
-						//	popup.add(createLearn);
-						//}
+						// if (lema) {
+						// popup.add(createLearn);
+						// }
 						popup.add(createVerification);
 						popup.addSeparator();
 						popup.add(viewModel);
