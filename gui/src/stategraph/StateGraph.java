@@ -1,20 +1,21 @@
 package stategraph;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Stack;
-
 import lhpn2sbml.parser.ExprTree;
 import lhpn2sbml.parser.LHPNFile;
 
 public class StateGraph {
-	private HashMap<boolean[], LinkedList<Marking>> stateGraph;
+	private HashMap<String, LinkedList<Marking>> stateGraph;
 	private LHPNFile lhpn;
 
 	public StateGraph(LHPNFile lhpn) {
 		this.lhpn = lhpn;
-		stateGraph = new HashMap<boolean[], LinkedList<Marking>>();
+		stateGraph = new HashMap<String, LinkedList<Marking>>();
 		buildStateGraph();
 	}
 
@@ -40,8 +41,12 @@ public class StateGraph {
 			}
 		}
 		LinkedList<Marking> markings = new LinkedList<Marking>();
-		markings.add(new Marking(markedPlaces.toArray(new String[0]), new Marking[0] ,variableVector));
-		stateGraph.put(variableVector, markings);
+		int counter = 0;
+		Marking state = new Marking(markedPlaces.toArray(new String[0]), new Marking[0], "S"
+				+ counter);
+		markings.add(state);
+		counter++;
+		stateGraph.put(vectorToString(variableVector), markings);
 		Stack<Transition> transitionsToFire = new Stack<Transition>();
 		for (String transition : lhpn.getTransitionList()) {
 			boolean addToStack = true;
@@ -52,7 +57,7 @@ public class StateGraph {
 			}
 			if (addToStack) {
 				transitionsToFire.push(new Transition(transition, copyArrayList(markedPlaces),
-						copyStateVector(variableVector)));
+						copyStateVector(variableVector), state));
 			}
 		}
 		while (transitionsToFire.size() != 0) {
@@ -76,10 +81,14 @@ public class StateGraph {
 					}
 				}
 			}
-			if (!stateGraph.containsKey(variableVector)) {
+			if (!stateGraph.containsKey(vectorToString(variableVector))) {
 				markings = new LinkedList<Marking>();
-				markings.add(new Marking(markedPlaces.toArray(new String[0]), new Marking[0] ,variableVector));
-				stateGraph.put(variableVector, markings);
+				state = new Marking(markedPlaces.toArray(new String[0]), new Marking[0], "S"
+						+ counter);
+				markings.add(state);
+				fire.getParent().addNextState(state);
+				counter++;
+				stateGraph.put(vectorToString(variableVector), markings);
 				for (String transition : lhpn.getTransitionList()) {
 					boolean addToStack = true;
 					for (String place : lhpn.getPreset(transition)) {
@@ -88,18 +97,20 @@ public class StateGraph {
 						}
 					}
 					if (addToStack) {
-						transitionsToFire.push(new Transition(transition,
-								copyArrayList(markedPlaces), copyStateVector(variableVector)));
+						transitionsToFire
+								.push(new Transition(transition, copyArrayList(markedPlaces),
+										copyStateVector(variableVector), state));
 					}
 				}
 			}
 			else {
-				markings = stateGraph.get(variableVector);
-				boolean add = false;
+				markings = stateGraph.get(vectorToString(variableVector));
+				boolean add = true;
+				boolean same = true;
 				for (Marking mark : markings) {
 					for (String place : mark.getMarkings()) {
 						if (!markedPlaces.contains(place)) {
-							add = true;
+							same = false;
 						}
 					}
 					for (String place : markedPlaces) {
@@ -110,13 +121,22 @@ public class StateGraph {
 							}
 						}
 						if (!contains) {
-							add = true;
+							same = false;
 						}
 					}
+					if (same) {
+						add = false;
+						fire.getParent().addNextState(mark);
+					}
+					same = true;
 				}
 				if (add) {
-					markings.add(new Marking(markedPlaces.toArray(new String[0]), new Marking[0] ,variableVector));
-					stateGraph.put(variableVector, markings);
+					state = new Marking(markedPlaces.toArray(new String[0]), new Marking[0], "S"
+							+ counter);
+					markings.add(state);
+					fire.getParent().addNextState(state);
+					counter++;
+					stateGraph.put(vectorToString(variableVector), markings);
 					for (String transition : lhpn.getTransitionList()) {
 						boolean addToStack = true;
 						for (String place : lhpn.getPreset(transition)) {
@@ -126,7 +146,8 @@ public class StateGraph {
 						}
 						if (addToStack) {
 							transitionsToFire.push(new Transition(transition,
-									copyArrayList(markedPlaces), copyStateVector(variableVector)));
+									copyArrayList(markedPlaces), copyStateVector(variableVector),
+									state));
 						}
 					}
 				}
@@ -154,16 +175,52 @@ public class StateGraph {
 		return copy;
 	}
 
+	private String vectorToString(boolean[] vector) {
+		String string = "";
+		for (boolean b : vector) {
+			if (b) {
+				string += "1";
+			}
+			else {
+				string += "0";
+			}
+		}
+		return string;
+	}
+
+	public void outputStateGraph(String file) {
+		try {
+			BufferedWriter out = new BufferedWriter(new FileWriter(file));
+			out.write("digraph G {\n");
+
+			for (String state : stateGraph.keySet()) {
+				for (Marking m : stateGraph.get(state)) {
+					out.write(m.getID() + " [shape=\"ellipse\",label=\"" + state + "\"]\n");
+					for (Marking next : m.getNextStates()) {
+						out.write(m.getID() + " -> " + next.getID() + "\n");
+					}
+				}
+			}
+			out.write("}");
+			out.close();
+		}
+		catch (Exception e) {
+			System.err.println("Error outputting state graph as dot file.");
+		}
+	}
+
 	private class Transition {
 		private String transition;
 		private boolean[] variableVector;
 		private ArrayList<String> markedPlaces;
+		private Marking parent;
 
 		private Transition(String transition, ArrayList<String> markedPlaces,
-				boolean[] variableVector) {
+				boolean[] variableVector, Marking parent) {
 			this.transition = transition;
 			this.markedPlaces = markedPlaces;
 			this.variableVector = variableVector;
+			this.parent = parent;
 		}
 
 		private String getTransition() {
@@ -177,17 +234,25 @@ public class StateGraph {
 		private boolean[] getVariableVector() {
 			return variableVector;
 		}
+
+		private Marking getParent() {
+			return parent;
+		}
 	}
 
 	private class Marking {
 		private String[] markings;
-		private boolean[] stateVector;
 		private Marking[] nextStates;
+		private String id;
 
-		private Marking(String[] markings, Marking[] nextStates, boolean[] stateVector) {
+		private Marking(String[] markings, Marking[] nextStates, String id) {
 			this.markings = markings;
 			this.nextStates = nextStates;
-			this.stateVector = stateVector;
+			this.id = id;
+		}
+
+		private String getID() {
+			return id;
 		}
 
 		private String[] getMarkings() {
@@ -196,10 +261,6 @@ public class StateGraph {
 
 		private Marking[] getNextStates() {
 			return nextStates;
-		}
-		
-		private boolean[] getStateVector() {
-			return stateVector;
 		}
 
 		private void addNextState(Marking nextState) {
