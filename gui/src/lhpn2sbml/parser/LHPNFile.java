@@ -1577,19 +1577,39 @@ public class LHPNFile {
 
 	public String[] getPreset(String node) {
 		if (isTransition(node)) {
-			return controlFlow.get(node).getProperty("preset").split(" ");
+			if (controlFlow.get(node).containsKey("preset")) {
+				return controlFlow.get(node).getProperty("preset").split(" ");
+			}
+			else {
+				return new String[0];
+			}
 		}
 		else {
-			return controlPlaces.get(node).getProperty("preset").split(" ");
+			if (controlPlaces.get(node).containsKey("preset")) {
+				return controlPlaces.get(node).getProperty("preset").split(" ");
+			}
+			else {
+				return new String[0];
+			}
 		}
 	}
 
 	public String[] getPostset(String node) {
 		if (isTransition(node)) {
-			return controlFlow.get(node).getProperty("postset").split(" ");
+			if (controlFlow.get(node).containsKey("postset")) {
+				return controlFlow.get(node).getProperty("postset").split(" ");
+			}
+			else {
+				return new String[0];
+			}
 		}
 		else {
-			return controlPlaces.get(node).getProperty("postset").split(" ");
+			if (controlPlaces.get(node).containsKey("postset")) {
+				return controlPlaces.get(node).getProperty("postset").split(" ");
+			}
+			else {
+				return new String[0];
+			}
 		}
 	}
 
