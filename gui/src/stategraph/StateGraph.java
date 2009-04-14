@@ -50,10 +50,15 @@ public class StateGraph {
 		Stack<Transition> transitionsToFire = new Stack<Transition>();
 		for (String transition : lhpn.getTransitionList()) {
 			boolean addToStack = true;
-			for (String place : lhpn.getPreset(transition)) {
-				if (!markedPlaces.contains(place)) {
-					addToStack = false;
+			if (lhpn.getPreset(transition).length != 0) {
+				for (String place : lhpn.getPreset(transition)) {
+					if (!markedPlaces.contains(place)) {
+						addToStack = false;
+					}
 				}
+			}
+			else {
+				addToStack = false;
 			}
 			if (addToStack) {
 				transitionsToFire.push(new Transition(transition, copyArrayList(markedPlaces),
@@ -72,8 +77,7 @@ public class StateGraph {
 			}
 			for (int i = 0; i < variables.size(); i++) {
 				if (lhpn.getBoolAssignTree(fire.getTransition(), variables.get(i)) != null) {
-					if (evaluateExp(lhpn.getBoolAssignTree(fire.getTransition(), variables.get(i)))
-							.equals("true")) {
+					if (evaluateExp(lhpn.getBoolAssignTree(fire.getTransition(), variables.get(i))) == 1) {
 						variableVector[i] = true;
 					}
 					else {
@@ -91,10 +95,15 @@ public class StateGraph {
 				stateGraph.put(vectorToString(variableVector), markings);
 				for (String transition : lhpn.getTransitionList()) {
 					boolean addToStack = true;
-					for (String place : lhpn.getPreset(transition)) {
-						if (!markedPlaces.contains(place)) {
-							addToStack = false;
+					if (lhpn.getPreset(transition).length != 0) {
+						for (String place : lhpn.getPreset(transition)) {
+							if (!markedPlaces.contains(place)) {
+								addToStack = false;
+							}
 						}
+					}
+					else {
+						addToStack = false;
 					}
 					if (addToStack) {
 						transitionsToFire
@@ -139,10 +148,15 @@ public class StateGraph {
 					stateGraph.put(vectorToString(variableVector), markings);
 					for (String transition : lhpn.getTransitionList()) {
 						boolean addToStack = true;
-						for (String place : lhpn.getPreset(transition)) {
-							if (!markedPlaces.contains(place)) {
-								addToStack = false;
+						if (lhpn.getPreset(transition).length != 0) {
+							for (String place : lhpn.getPreset(transition)) {
+								if (!markedPlaces.contains(place)) {
+									addToStack = false;
+								}
 							}
+						}
+						else {
+							addToStack = false;
 						}
 						if (addToStack) {
 							transitionsToFire.push(new Transition(transition,
@@ -155,8 +169,8 @@ public class StateGraph {
 		}
 	}
 
-	private String evaluateExp(ExprTree[] exprTrees) {
-		return "false";
+	private int evaluateExp(ExprTree[] exprTrees) {
+		return 0;
 	}
 
 	private ArrayList<String> copyArrayList(ArrayList<String> original) {
