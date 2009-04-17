@@ -10,12 +10,12 @@ import lhpn2sbml.parser.ExprTree;
 import lhpn2sbml.parser.LHPNFile;
 
 public class StateGraph {
-	private HashMap<String, LinkedList<Marking>> stateGraph;
+	private HashMap<String, LinkedList<State>> stateGraph;
 	private LHPNFile lhpn;
 
 	public StateGraph(LHPNFile lhpn) {
 		this.lhpn = lhpn;
-		stateGraph = new HashMap<String, LinkedList<Marking>>();
+		stateGraph = new HashMap<String, LinkedList<State>>();
 		buildStateGraph();
 	}
 
@@ -40,10 +40,9 @@ public class StateGraph {
 				markedPlaces.add(place);
 			}
 		}
-		LinkedList<Marking> markings = new LinkedList<Marking>();
+		LinkedList<State> markings = new LinkedList<State>();
 		int counter = 0;
-		Marking state = new Marking(markedPlaces.toArray(new String[0]), new Marking[0], "S"
-				+ counter);
+		State state = new State(markedPlaces.toArray(new String[0]), new State[0], "S" + counter);
 		markings.add(state);
 		counter++;
 		stateGraph.put(vectorToString(variableVector), markings);
@@ -86,9 +85,8 @@ public class StateGraph {
 				}
 			}
 			if (!stateGraph.containsKey(vectorToString(variableVector))) {
-				markings = new LinkedList<Marking>();
-				state = new Marking(markedPlaces.toArray(new String[0]), new Marking[0], "S"
-						+ counter);
+				markings = new LinkedList<State>();
+				state = new State(markedPlaces.toArray(new String[0]), new State[0], "S" + counter);
 				markings.add(state);
 				fire.getParent().addNextState(state);
 				counter++;
@@ -116,7 +114,7 @@ public class StateGraph {
 				markings = stateGraph.get(vectorToString(variableVector));
 				boolean add = true;
 				boolean same = true;
-				for (Marking mark : markings) {
+				for (State mark : markings) {
 					for (String place : mark.getMarkings()) {
 						if (!markedPlaces.contains(place)) {
 							same = false;
@@ -140,7 +138,7 @@ public class StateGraph {
 					same = true;
 				}
 				if (add) {
-					state = new Marking(markedPlaces.toArray(new String[0]), new Marking[0], "S"
+					state = new State(markedPlaces.toArray(new String[0]), new State[0], "S"
 							+ counter);
 					markings.add(state);
 					fire.getParent().addNextState(state);
@@ -171,6 +169,10 @@ public class StateGraph {
 
 	private int evaluateExp(ExprTree[] exprTrees) {
 		return 0;
+	}
+
+	public HashMap<String, LinkedList<State>> getStateGraph() {
+		return stateGraph;
 	}
 
 	private ArrayList<String> copyArrayList(ArrayList<String> original) {
@@ -208,9 +210,9 @@ public class StateGraph {
 			out.write("digraph G {\n");
 
 			for (String state : stateGraph.keySet()) {
-				for (Marking m : stateGraph.get(state)) {
+				for (State m : stateGraph.get(state)) {
 					out.write(m.getID() + " [shape=\"ellipse\",label=\"" + state + "\"]\n");
-					for (Marking next : m.getNextStates()) {
+					for (State next : m.getNextStates()) {
 						out.write(m.getID() + " -> " + next.getID() + "\n");
 					}
 				}
@@ -227,10 +229,10 @@ public class StateGraph {
 		private String transition;
 		private boolean[] variableVector;
 		private ArrayList<String> markedPlaces;
-		private Marking parent;
+		private State parent;
 
 		private Transition(String transition, ArrayList<String> markedPlaces,
-				boolean[] variableVector, Marking parent) {
+				boolean[] variableVector, State parent) {
 			this.transition = transition;
 			this.markedPlaces = markedPlaces;
 			this.variableVector = variableVector;
@@ -249,20 +251,24 @@ public class StateGraph {
 			return variableVector;
 		}
 
-		private Marking getParent() {
+		private State getParent() {
 			return parent;
 		}
 	}
 
-	private class Marking {
+	public class State {
 		private String[] markings;
-		private Marking[] nextStates;
+		private State[] nextStates;
+		private State[] prevStates;
 		private String id;
+		private int color;
 
-		private Marking(String[] markings, Marking[] nextStates, String id) {
+		private State(String[] markings, State[] nextStates, String id) {
 			this.markings = markings;
 			this.nextStates = nextStates;
+			prevStates = new State[0];
 			this.id = id;
+			color = -1;
 		}
 
 		private String getID() {
@@ -273,17 +279,39 @@ public class StateGraph {
 			return markings;
 		}
 
-		private Marking[] getNextStates() {
+		public State[] getNextStates() {
 			return nextStates;
 		}
 
-		private void addNextState(Marking nextState) {
-			Marking[] newNextStates = new Marking[nextStates.length + 1];
+		public State[] getPrevStates() {
+			return prevStates;
+		}
+
+		public int getColor() {
+			return color;
+		}
+
+		public void setColor(int color) {
+			this.color = color;
+		}
+
+		private void addNextState(State nextState) {
+			State[] newNextStates = new State[nextStates.length + 1];
 			for (int i = 0; i < nextStates.length; i++) {
 				newNextStates[i] = nextStates[i];
 			}
 			newNextStates[newNextStates.length - 1] = nextState;
 			nextStates = newNextStates;
+			nextState.addPreviousState(this);
+		}
+
+		private void addPreviousState(State prevState) {
+			State[] newPrevStates = new State[prevStates.length + 1];
+			for (int i = 0; i < prevStates.length; i++) {
+				newPrevStates[i] = prevStates[i];
+			}
+			newPrevStates[newPrevStates.length - 1] = prevState;
+			nextStates = newPrevStates;
 		}
 	}
 }
