@@ -1167,8 +1167,6 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 					running.dispose();
 				}
 			});
-			running.setCursor(null);
-			running.dispose();
 			cancel.setActionCommand("Cancel");
 			cancel.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
@@ -1200,6 +1198,8 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 			reb.close();
 			viewLog.setEnabled(true);
 			int exitValue = synth.waitFor();
+			running.setCursor(null);
+			running.dispose();
 			if (exitValue == 143) {
 				JOptionPane
 						.showMessageDialog(biosim.frame(), "Synthesis was"
