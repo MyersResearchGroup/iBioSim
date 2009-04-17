@@ -749,7 +749,9 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 		basicOptions.add(otherPanel);
 		basicOptions.add(valuePanel);
 		basicOptions.add(algorithmPanel);
-		basicOptions.add(componentPanel);
+		if (synthesisFile.endsWith(".vhd")) {
+			basicOptions.add(componentPanel);
+		}
 		basicOptions.setLayout(new BoxLayout(basicOptions, BoxLayout.Y_AXIS));
 
 		advOptions.add(compilationPanel);
