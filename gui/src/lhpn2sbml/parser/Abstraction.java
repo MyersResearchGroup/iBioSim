@@ -187,6 +187,25 @@ public class Abstraction extends LHPNFile {
 			}
 		}
 	}
+	
+	public void abstractVars(String[] vars) {
+		for (String s : vars) {
+			for (String t : controlFlow.keySet()) {
+				for (HashMap<String, Properties> v : assignments) {
+					if (v.containsKey(t)) {
+						if (v.get(t).containsKey(s)) {
+							v.get(t).remove(s);
+						}
+					}
+				}
+			}
+			for (String t : enablings.keySet()) {
+				if (enablings.get(t).contains(s)) {
+					enablings.put(s, enablings.get(t).replace(s, "X"));
+				}
+			}
+		}
+	}
 
 	private boolean comparePreset(Properties flow1, Properties flow2) {
 		String[] set1 = flow1.get("preset").toString().split(" ");

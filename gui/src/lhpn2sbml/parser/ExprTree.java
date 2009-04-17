@@ -98,7 +98,7 @@ public class ExprTree {
 	    if (!tokvalue.equals("and")){
 	      (token)=intexpr_gettok(expr,tokvalue,MAXTOKEN,position);
 	      if ((token) != '(') {
-		System.out.print("ERROR: Expected a (\n");
+		//System.out.print("ERROR: Expected a (\n");
 		return false;
 	      }
 	      (token)=intexpr_gettok(expr,tokvalue,MAXTOKEN,position);
@@ -127,7 +127,7 @@ public class ExprTree {
 	    } else if (!tokvalue.equals("or")){
 	      (token)=intexpr_gettok(expr,tokvalue,MAXTOKEN,position);
 	      if ((token) != '(') {
-		System.out.printf("ERROR: Expected a (\n");
+		//System.out.printf("ERROR: Expected a (\n");
 		return false;
 	      }
 	      (token)=intexpr_gettok(expr,tokvalue,MAXTOKEN,position);
@@ -159,7 +159,7 @@ public class ExprTree {
 	    } else if (!tokvalue.equals("exor")){
 	      (token)=intexpr_gettok(expr,tokvalue,MAXTOKEN,position);
 	      if ((token) != '(') {
-		System.out.printf("ERROR: Expected a (\n");
+		//System.out.printf("ERROR: Expected a (\n");
 		return false;
 	      }
 	      (token)=intexpr_gettok(expr,tokvalue,MAXTOKEN,position);
@@ -191,7 +191,7 @@ public class ExprTree {
 	    } else if (!tokvalue.equals("not")){
 	      (token)=intexpr_gettok(expr,tokvalue,MAXTOKEN,position);
 	      if ((token) != '(') {
-		System.out.printf("ERROR: Expected a (\n");
+		//System.out.printf("ERROR: Expected a (\n");
 		return false;
 	      }
 	      (token)=intexpr_gettok(expr,tokvalue,MAXTOKEN,position);
