@@ -46,7 +46,7 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 			manual, inponly, notFirst, preserve, ordered, subset, unsafe, expensive, conflict,
 			reachable, dumb, genrg, timsubset, superset, infopt, orbmatch, interleav, prune,
 			disabling, nofail, keepgoing, explpn, nochecks, reduction, minins, newTab, postProc,
-			redCheck, xForm2, expandRate;
+			redCheck, xForm2, expandRate, graph;
 
 	private JTextField maxSize, gateDelay, bddSize, backgroundField, componentField;
 
@@ -170,10 +170,12 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 		verbose = new JCheckBox("Verbose");
 		quiet = new JCheckBox("Quiet");
 		noinsert = new JCheckBox("No Insert");
+		graph = new JCheckBox("Show State Graph");
 		dot.addActionListener(this);
 		verbose.addActionListener(this);
 		quiet.addActionListener(this);
 		noinsert.addActionListener(this);
+		graph.addActionListener(this);
 		// Synthesis Algorithms
 		singleCube = new JRadioButton("Single Cube");
 		multicube = new JRadioButton("Multicube");
@@ -310,10 +312,11 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 		technologyPanel.add(bm2);
 
 		otherPanel.add(otherOptions);
-		otherPanel.add(dot);
+		//otherPanel.add(dot);
 		otherPanel.add(verbose);
 		otherPanel.add(quiet);
 		otherPanel.add(noinsert);
+		otherPanel.add(graph);
 
 		valuePanel.add(maxSizeLabel);
 		valuePanel.add(maxSize);
@@ -469,6 +472,11 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 			if (load.containsKey("synthesis.noinsert")) {
 				if (load.getProperty("synthesis.noinsert").equals("true")) {
 					noinsert.setSelected(true);
+				}
+			}
+			if (load.containsKey("synthesis.graph")) {
+				if (load.getProperty("synthesis.graph").equals("true")) {
+					graph.setSelected(true);
 				}
 			}
 			if (load.containsKey("synthesis.partial.order")) {
@@ -853,10 +861,12 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 		// String command = "/home/shang/kjones/atacs/bin/atacs -";
 		String[] tempArray = synthesisFile.split(separator);
 		String circuitFile = tempArray[tempArray.length - 1];
-		tempArray = sourceFile.split("\\.");
+		tempArray = sourceFile.split("separator");
+		tempArray = tempArray[tempArray.length - 1].split("\\.");
 		String traceFilename = tempArray[0] + ".trace";
 		File traceFile = new File(traceFilename);
 		String rulesFilename, graphFilename;
+		String pargFilename = tempArray[0] + ".grf";
 		//log.addText(tempArray[0]);
 		if (componentField.getText().trim().equals("")) {
 			rulesFilename = tempArray[0] + ".prs";
@@ -1071,6 +1081,9 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 			options = options + "yd";
 		}
 		options = options + "pn";
+		if (graph.isSelected()) {
+			options = options + "ps";
+		}
 		// String[] temp = sourceFile.split(separator);
 		// String src = temp[temp.length - 1];
 		String cmd = "atacs " + options;
@@ -1223,6 +1236,28 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 					viewTrace();
 				}
 			}
+			if (graph.isSelected()) {
+				if (dot.isSelected()) {
+					String command;
+					if (System.getProperty("os.name").contentEquals("Linux")) {
+						command = "gnome-open ";
+					}
+					else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
+						// directory = System.getenv("BIOSIM") + "/docs/";
+						command = "open ";
+					}
+					else {
+						// directory = System.getenv("BIOSIM") + "\\docs\\";
+						command = "dotty ";
+					}
+					exec.exec(command + graphFilename);
+					log.addText("Executing:\n" + command + graphFilename + "\n");
+				}
+				else {
+					exec.exec("parg " + pargFilename);
+					log.addText("Executing:\nparg " + pargFilename + "\n");
+				}
+			}
 		}
 		catch (Exception e) {
 		}
@@ -1321,6 +1356,12 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 			}
 			else {
 				prop.setProperty("synthesis.noinsert", "false");
+			}
+			if (graph.isSelected()) {
+				prop.setProperty("synthesis.graph", "true");
+			}
+			else {
+				prop.setProperty("synthesis.graph", "false");
 			}
 			if (singleCube.isSelected()) {
 				prop.setProperty("synthesis.algorithm", "singleCube");
