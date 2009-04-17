@@ -892,8 +892,6 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			 * Succeeded", "Verification Results",
 			 * JOptionPane.INFORMATION_MESSAGE); viewTrace.setEnabled(false); } }
 			 */
-			running.setCursor(null);
-			running.dispose();
 			String output = "";
 			InputStream reb = ver.getInputStream();
 			InputStreamReader isr = new InputStreamReader(reb);
@@ -909,6 +907,8 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			reb.close();
 			viewLog.setEnabled(true);
 			ver.waitFor();
+			running.setCursor(null);
+			running.dispose();
 			FileInputStream atacsLog = new FileInputStream(new File(directory + separator
 					+ "atacs.log"));
 			InputStreamReader atacsReader = new InputStreamReader(atacsLog);
