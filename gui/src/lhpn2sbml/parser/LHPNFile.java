@@ -502,18 +502,18 @@ public class LHPNFile {
 			// System.out.println("check9");
 			// log.addText("check8");
 			parseDelayAssign(data);
-			parseTransitionRate(data);
 			// parseIntAssign(data);
 			// System.out.println("check0");
 			// log.addText("check9");
 			parseBooleanAssign(data);
+			parseTransitionRate(data);
 			// System.out.println("check11");
 			// log.addText("check0");
 			// log.addText(intAssignments.toString());
 		}
 		catch (Exception e) {
-			//e.printStackTrace();
-			// throw new IllegalArgumentException("Unable to parse LHPN");
+			e.printStackTrace();
+			//throw new IllegalArgumentException("Unable to parse LHPN");
 		}
 	}
 
@@ -2517,33 +2517,33 @@ public class LHPNFile {
 			while (delayMatcher.find()) {
 				// log.addText("check8while");
 				delays.put(delayMatcher.group(1), delayMatcher.group(2));
-				ExprTree[] expr = new ExprTree[2];
-				Pattern rangePattern = Pattern.compile(RANGE);
-				Matcher rangeMatcher = rangePattern.matcher(delayMatcher.group(2));
-				String tokvalue = new String();
-				if (rangeMatcher.find()) {
-					int position = 0;
-					int token = expr[0].intexpr_gettok(rangeMatcher.group(1), tokvalue, 256,
-							position);
-					signalADT[] signals = new signalADT[256];
-					int nsignals = 0;
-					eventADT[] events = new eventADT[256];
-					int nevents = 0;
-					int nplaces = 0;
-					expr[0].intexpr_L(token, rangeMatcher.group(1), tokvalue, position, expr[0],
-							signals, nsignals, events, nevents, nplaces);
-					tokvalue = new String();
-					position = 0;
-					token = expr[1].intexpr_gettok(rangeMatcher.group(2), tokvalue, 256, position);
-					signals = new signalADT[256];
-					nsignals = 0;
-					events = new eventADT[256];
-					nevents = 0;
-					nplaces = 0;
-					expr[1].intexpr_L(token, rangeMatcher.group(2), tokvalue, position, expr[1],
-							signals, nsignals, events, nevents, nplaces);
-					delayTrees.put(delayMatcher.group(1), expr);
-				}
+//				ExprTree[] expr = new ExprTree[2];
+//				Pattern rangePattern = Pattern.compile(RANGE);
+//				Matcher rangeMatcher = rangePattern.matcher(delayMatcher.group(2));
+//				String tokvalue = new String();
+//				if (rangeMatcher.find()) {
+//					int position = 0;
+//					int token = expr[0].intexpr_gettok(rangeMatcher.group(1), tokvalue, 256,
+//							position);
+//					signalADT[] signals = new signalADT[256];
+//					int nsignals = 0;
+//					eventADT[] events = new eventADT[256];
+//					int nevents = 0;
+//					int nplaces = 0;
+//					expr[0].intexpr_L(token, rangeMatcher.group(1), tokvalue, position, expr[0],
+//							signals, nsignals, events, nevents, nplaces);
+//					tokvalue = new String();
+//					position = 0;
+//					token = expr[1].intexpr_gettok(rangeMatcher.group(2), tokvalue, 256, position);
+//					signals = new signalADT[256];
+//					nsignals = 0;
+//					events = new eventADT[256];
+//					nevents = 0;
+//					nplaces = 0;
+//					expr[1].intexpr_L(token, rangeMatcher.group(2), tokvalue, position, expr[1],
+//							signals, nsignals, events, nevents, nplaces);
+//					delayTrees.put(delayMatcher.group(1), expr);
+//				}
 			}
 		}
 		// log.addText("check8end");
