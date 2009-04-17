@@ -74,12 +74,20 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 		for (int i = 0; i < tempArray.length; i++) {
 			boolean contains = false;
 			if (selected != null) {
-				if (!tempArray[i].equals(selected)) {
+				if (!(selected.startsWith(tempArray[i] + ":=") || selected.startsWith(tempArray[i] + "':="))) {
 					for (int j = 0; j < tempList.length; j++) {
-						if (tempList[j].startsWith(tempArray[i])) {
+						if (tempList[j].startsWith(tempArray[i] + ":=") || tempList[j].startsWith(tempArray[i] + "':=")) {
 							contains = true;
 							break;
 						}
+					}
+				}
+			}
+			else {
+				for (int j = 0; j < tempList.length; j++) {
+					if (tempList[j].startsWith(tempArray[i] + ":=") || tempList[j].startsWith(tempArray[i] + "':=")) {
+						contains = true;
+						break;
 					}
 				}
 			}
@@ -91,12 +99,20 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 		for (int i = 0; i < tempArray.length; i++) {
 			boolean contains = false;
 			if (selected != null) {
-				if (!selected.startsWith(tempArray[i])) {
+				if (!selected.startsWith(tempArray[i] + ":=")) {
 					for (int j = 0; j < tempList.length; j++) {
-						if (tempList[j].startsWith(tempArray[i])) {
+						if (tempList[j].startsWith(tempArray[i] + ":=")) {
 							contains = true;
 							break;
 						}
+					}
+				}
+			}
+			else {
+				for (int j = 0; j < tempList.length; j++) {
+					if (tempList[j].startsWith(tempArray[i] + ":=")) {
+						contains = true;
+						break;
 					}
 				}
 			}
@@ -108,17 +124,25 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 		for (int i = 0; i < tempArray.length; i++) {
 			boolean contains = false;
 			if (selected != null) {
-				if (!tempArray[i].equals(selected)) {
+				if (!selected.startsWith(tempArray[i] + ":=")) {
 					for (int j = 0; j < tempList.length; j++) {
-						if (tempList[j].startsWith(tempArray[i])) {
+						if (tempList[j].startsWith(tempArray[i] + ":=")) {
 							contains = true;
 							break;
 						}
 					}
 				}
 			}
+			else {
+				for (int j = 0; j < tempList.length; j++) {
+					if (tempList[j].startsWith(tempArray[i] + ":=")) {
+						contains = true;
+						break;
+					}
+				}
+			}
 			if (!contains && tempArray[i] != null) {
-				contList.add(tempArray[i]);
+				intList.add(tempArray[i]);
 			}
 		}
 		varList = new String[contList.size() + boolList.size() + intList.size()];

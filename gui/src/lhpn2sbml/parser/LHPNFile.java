@@ -2359,39 +2359,39 @@ public class LHPNFile {
 				}
 				else {
 					// log.addText("check6 else");
-					ExprTree[] expr = new ExprTree[2];
-					Pattern rangePattern = Pattern.compile(RANGE);
-					Matcher rangeMatcher = rangePattern.matcher(varMatcher.group(2));
-					rangeMatcher.find();
-					String tokvalue = new String();
-					int position = 0;
-					int token = expr[0].intexpr_gettok(rangeMatcher.group(1), tokvalue, 256,
-							position);
-					signalADT[] signals = new signalADT[256];
-					int nsignals = 0;
-					eventADT[] events = new eventADT[256];
-					int nevents = 0;
-					int nplaces = 0;
-					expr[0].intexpr_L(token, rangeMatcher.group(1), tokvalue, position, expr[0],
-							signals, nsignals, events, nevents, nplaces);
-					tokvalue = new String();
-					position = 0;
-					token = expr[1].intexpr_gettok(rangeMatcher.group(2), tokvalue, 256, position);
-					signals = new signalADT[256];
-					nsignals = 0;
-					events = new eventADT[256];
-					nevents = 0;
-					nplaces = 0;
-					expr[1].intexpr_L(token, rangeMatcher.group(2), tokvalue, position, expr[1],
-							signals, nsignals, events, nevents, nplaces);
-					if (isInteger(varMatcher.group(1))) {
-						intProp.put(varMatcher.group(1), varMatcher.group(2));
-						intMap.put(varMatcher.group(1), expr);
-					}
-					else {
-						assignProp.put(varMatcher.group(1), varMatcher.group(2));
-						assignMap.put(varMatcher.group(1), expr);
-					}
+//					ExprTree[] expr = new ExprTree[2];
+//					Pattern rangePattern = Pattern.compile(RANGE);
+//					Matcher rangeMatcher = rangePattern.matcher(varMatcher.group(2));
+//					rangeMatcher.find();
+//					String tokvalue = new String();
+//					int position = 0;
+//					int token = expr[0].intexpr_gettok(rangeMatcher.group(1), tokvalue, 256,
+//							position);
+//					signalADT[] signals = new signalADT[256];
+//					int nsignals = 0;
+//					eventADT[] events = new eventADT[256];
+//					int nevents = 0;
+//					int nplaces = 0;
+//					expr[0].intexpr_L(token, rangeMatcher.group(1), tokvalue, position, expr[0],
+//							signals, nsignals, events, nevents, nplaces);
+//					tokvalue = new String();
+//					position = 0;
+//					token = expr[1].intexpr_gettok(rangeMatcher.group(2), tokvalue, 256, position);
+//					signals = new signalADT[256];
+//					nsignals = 0;
+//					events = new eventADT[256];
+//					nevents = 0;
+//					nplaces = 0;
+//					expr[1].intexpr_L(token, rangeMatcher.group(2), tokvalue, position, expr[1],
+//							signals, nsignals, events, nevents, nplaces);
+					//if (isInteger(varMatcher.group(1))) {
+					//	intProp.put(varMatcher.group(1), varMatcher.group(2));
+					//	intMap.put(varMatcher.group(1), expr);
+					//}
+					//else {
+					//	assignProp.put(varMatcher.group(1), varMatcher.group(2));
+					//	assignMap.put(varMatcher.group(1), expr);
+					//}
 				}
 				while (varMatcher.find()) {
 					ExprTree expr = new ExprTree();
