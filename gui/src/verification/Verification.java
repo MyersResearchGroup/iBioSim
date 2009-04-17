@@ -937,9 +937,20 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					parg.waitFor();
 				}
 				else if (new File(dotName).exists()) {
-					// log.addText("view dot");
+					String command;
+					if (System.getProperty("os.name").contentEquals("Linux")) {
+						command = "gnome-open ";
+					}
+					else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
+						// directory = System.getenv("BIOSIM") + "/docs/";
+						command = "open ";
+					}
+					else {
+						// directory = System.getenv("BIOSIM") + "\\docs\\";
+						command = "dotty ";
+					}
 					Process dot = exec.exec("open " + dotName);
-					log.addText("open " + dotName + "\n");
+					log.addText(command + dotName + "\n");
 					dot.waitFor();
 				}
 				else {
@@ -949,8 +960,20 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			}
 			if (graph.isSelected()) {
 				if (dot.isSelected()) {
-					exec.exec("dotty " + dotName);
-					log.addText("Executing:\ndotty " + dotName + "\n");
+					String command;
+					if (System.getProperty("os.name").contentEquals("Linux")) {
+						command = "gnome-open ";
+					}
+					else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
+						// directory = System.getenv("BIOSIM") + "/docs/";
+						command = "open ";
+					}
+					else {
+						// directory = System.getenv("BIOSIM") + "\\docs\\";
+						command = "dotty ";
+					}
+					exec.exec(command + dotName);
+					log.addText("Executing:\n" + command + dotName + "\n");
 				}
 				else {
 					exec.exec("parg " + pargName);
@@ -1195,15 +1218,17 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 	}
 
 	public void reload(String newname) {
-//		try {
-//			FileOutputStream out = new FileOutputStream(new File(directory + separator + verFile));
-//			prop.store(out, verifyFile);
-//			out.close();
-//		}
-//		catch (IOException e) {
-//			JOptionPane.showMessageDialog(biosim.frame(), "Unable to save parameter file!",
-//					"Error Saving File", JOptionPane.ERROR_MESSAGE);
-//		}
+		// try {
+		// FileOutputStream out = new FileOutputStream(new File(directory +
+		// separator + verFile));
+		// prop.store(out, verifyFile);
+		// out.close();
+		// }
+		// catch (IOException e) {
+		// JOptionPane.showMessageDialog(biosim.frame(), "Unable to save
+		// parameter file!",
+		// "Error Saving File", JOptionPane.ERROR_MESSAGE);
+		// }
 		backgroundField.setText(newname);
 	}
 
