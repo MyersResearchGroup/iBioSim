@@ -42,7 +42,8 @@ public class StateGraph {
 		}
 		LinkedList<State> markings = new LinkedList<State>();
 		int counter = 0;
-		State state = new State(markedPlaces.toArray(new String[0]), new State[0], "S" + counter);
+		State state = new State(markedPlaces.toArray(new String[0]), new State[0], "S" + counter,
+				vectorToString(variableVector));
 		markings.add(state);
 		counter++;
 		stateGraph.put(vectorToString(variableVector), markings);
@@ -86,7 +87,8 @@ public class StateGraph {
 			}
 			if (!stateGraph.containsKey(vectorToString(variableVector))) {
 				markings = new LinkedList<State>();
-				state = new State(markedPlaces.toArray(new String[0]), new State[0], "S" + counter);
+				state = new State(markedPlaces.toArray(new String[0]), new State[0], "S" + counter,
+						vectorToString(variableVector));
 				markings.add(state);
 				fire.getParent().addNextState(state);
 				counter++;
@@ -139,7 +141,7 @@ public class StateGraph {
 				}
 				if (add) {
 					state = new State(markedPlaces.toArray(new String[0]), new State[0], "S"
-							+ counter);
+							+ counter, vectorToString(variableVector));
 					markings.add(state);
 					fire.getParent().addNextState(state);
 					counter++;
@@ -260,14 +262,16 @@ public class StateGraph {
 		private String[] markings;
 		private State[] nextStates;
 		private State[] prevStates;
+		private String stateVector;
 		private String id;
 		private int color;
 
-		private State(String[] markings, State[] nextStates, String id) {
+		public State(String[] markings, State[] nextStates, String id, String stateVector) {
 			this.markings = markings;
 			this.nextStates = nextStates;
 			prevStates = new State[0];
 			this.id = id;
+			this.stateVector = stateVector;
 			color = -1;
 		}
 
@@ -293,6 +297,10 @@ public class StateGraph {
 
 		public void setColor(int color) {
 			this.color = color;
+		}
+
+		public String getStateVector() {
+			return stateVector;
 		}
 
 		private void addNextState(State nextState) {
