@@ -13,7 +13,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Properties;
+
+import gcm2sbml.gui.PropertyList;
+import gcm2sbml.util.Utility;
 
 import biomodelsim.*;
 
@@ -29,7 +33,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 
 	private static final long serialVersionUID = -5806315070287184299L;
 
-	private JButton save, run, viewCircuit, viewTrace, viewLog;
+	private JButton save, run, viewCircuit, viewTrace, viewLog, addComponent, removeComponent;
 
 	private JLabel algorithm, timingMethod, timingOptions, otherOptions, otherOptions2,
 			compilation, bddSizeLabel, advTiming;
@@ -41,13 +45,15 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			orbmatch, interleav, prune, disabling, nofail, keepgoing, explpn, nochecks, reduction,
 			newTab, postProc, redCheck, xForm2, expandRate;
 
-	private JTextField bddSize, backgroundField;
+	private JTextField bddSize, backgroundField, componentField;
 
 	private ButtonGroup timingMethodGroup, algorithmGroup;
 
-	private String directory, separator, verFile, verifyFile, oldBdd;
+	private String directory, separator, root, verFile, verifyFile, oldBdd, sourceFileNoPath;
 
 	private boolean change, atacs;
+
+	private PropertyList componentList;
 
 	private Log log;
 
@@ -75,6 +81,11 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		String[] tempArray = filename.split("\\.");
 		String traceFilename = tempArray[0] + ".trace";
 		File traceFile = new File(traceFilename);
+		String[] tempDir = directory.split(separator);
+		root = tempDir[0];
+		for (int i = 1; i < tempDir.length - 1; i++) {
+			root = root + separator + tempDir[i];
+		}
 
 		JPanel timingRadioPanel = new JPanel();
 		timingRadioPanel.setMaximumSize(new Dimension(1000, 35));
@@ -100,6 +111,8 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		bddSize = new JTextField("");
 		bddSize.setPreferredSize(new Dimension(40, 18));
 		oldBdd = bddSize.getText();
+		componentField = new JTextField("");
+		componentList = new PropertyList("");
 
 		algorithm = new JLabel("Verification Algorithm:");
 		timingMethod = new JLabel("Timing Method:");
@@ -196,6 +209,16 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		reduction = new JCheckBox("Reduction");
 		nochecks.addActionListener(this);
 		reduction.addActionListener(this);
+		// Component List
+		addComponent = new JButton("Add Component");
+		removeComponent = new JButton("Remove Component");
+		// addComponent.addActionListener(this);
+		// removeComponent.addActionListener(this);
+		GridBagConstraints constraints = new GridBagConstraints();
+		JPanel componentPanel = Utility.createPanel(this, "Components", componentList,
+				addComponent, removeComponent, null);
+		constraints.gridx = 0;
+		constraints.gridy = 1;
 
 		timingMethodGroup = new ButtonGroup();
 		algorithmGroup = new ButtonGroup();
@@ -304,6 +327,14 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			}
 			if (load.containsKey("verification.bddSize")) {
 				bddSize.setText(load.getProperty("verification .bddSize"));
+			}
+			if (load.containsKey("verification.component")) {
+				componentField.setText(load.getProperty("verification.component"));
+			}
+			Integer i = 0;
+			while (load.containsKey("synthesis.compList" + i.toString())) {
+				componentList.addItem(load.getProperty("synthesis.compList" + i.toString()));
+				i++;
 			}
 			if (load.containsKey("verification.timing.methods")) {
 				if (atacs) {
@@ -480,6 +511,9 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					reduction.setSelected(true);
 				}
 			}
+			tempArray = verifyFile.split(separator);
+			sourceFileNoPath = tempArray[tempArray.length - 1];
+			backgroundField = new JTextField(sourceFileNoPath);
 		}
 		catch (Exception e) {
 			JOptionPane.showMessageDialog(biosim.frame(), "Unable to load properties file!",
@@ -524,13 +558,19 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		JPanel backgroundPanel = new JPanel();
 		JLabel backgroundLabel = new JLabel("Model File:");
 		tempArray = verifyFile.split(separator);
+		JLabel componentLabel = new JLabel("Component:");
+		componentField.setPreferredSize(new Dimension(200, 20));
 		String sourceFile = tempArray[tempArray.length - 1];
 		backgroundField = new JTextField(sourceFile);
 		backgroundField.setMaximumSize(new Dimension(200, 20));
 		backgroundField.setEditable(false);
 		backgroundPanel.add(backgroundLabel);
 		backgroundPanel.add(backgroundField);
-		backgroundPanel.setMaximumSize(new Dimension(400, 30));
+		if (verifyFile.endsWith(".vhd")) {
+			backgroundPanel.add(componentLabel);
+			backgroundPanel.add(componentField);
+		}
+		backgroundPanel.setMaximumSize(new Dimension(500, 30));
 		basicOptions.add(backgroundPanel);
 		basicOptions.add(timingRadioPanel);
 		if (!lema) {
@@ -539,6 +579,9 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		basicOptions.add(otherPanel);
 		if (!lema) {
 			basicOptions.add(algorithmPanel);
+		}
+		if (verifyFile.endsWith(".vhd")) {
+			basicOptions.add(componentPanel);
 		}
 		basicOptions.setLayout(new BoxLayout(basicOptions, BoxLayout.Y_AXIS));
 		basicOptions.add(Box.createVerticalGlue());
@@ -587,6 +630,52 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		else if (e.getSource() == viewLog) {
 			viewLog();
 		}
+		else if (e.getSource() == addComponent) {
+			String[] vhdlFiles = new File(root).list();
+			ArrayList<String> tempFiles = new ArrayList<String>();
+			for (int i = 0; i < vhdlFiles.length; i++) {
+				if (vhdlFiles[i].endsWith(".vhd") && !vhdlFiles[i].equals(sourceFileNoPath)) {
+					tempFiles.add(vhdlFiles[i]);
+				}
+			}
+			vhdlFiles = new String[tempFiles.size()];
+			for (int i = 0; i < vhdlFiles.length; i++) {
+				vhdlFiles[i] = tempFiles.get(i);
+			}
+			String filename = (String) JOptionPane.showInputDialog(this, "", "Select Component",
+					JOptionPane.PLAIN_MESSAGE, null, vhdlFiles, vhdlFiles[0]);
+			if (filename != null) {
+				String[] comps = componentList.getItems();
+				boolean contains = false;
+				for (int i = 0; i < comps.length; i++) {
+					if (comps[i].equals(filename)) {
+						contains = true;
+					}
+				}
+				if (!filename.endsWith(".vhd")) {
+					JOptionPane.showMessageDialog(biosim.frame(),
+							"You must select a valid VHDL file.", "Error",
+							JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				else if (new File(directory + separator + filename).exists()
+						|| filename.equals(sourceFileNoPath) || contains) {
+					JOptionPane.showMessageDialog(biosim.frame(),
+							"This component is already contained in this tool.", "Error",
+							JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				componentList.addItem(filename);
+				return;
+			}
+		}
+		else if (e.getSource() == removeComponent) {
+			if (componentList.getSelectedValue() != null) {
+				String selected = componentList.getSelectedValue().toString();
+				componentList.removeItem(selected);
+				new File(directory + separator + selected).delete();
+			}
+		}
 	}
 
 	public void run() {
@@ -596,17 +685,39 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		File traceFile = new File(traceFilename);
 		String pargName = "";
 		String dotName = "";
-		if (verifyFile.endsWith(".g")) {
-			pargName = directory + separator + verifyFile.replace(".g", ".grf");
-			dotName = directory + separator + verifyFile.replace(".g", ".dot");
+		if (componentField.getText().trim().equals("")) {
+			if (verifyFile.endsWith(".g")) {
+				pargName = directory + separator + verifyFile.replace(".g", ".grf");
+				dotName = directory + separator + verifyFile.replace(".g", ".dot");
+			}
+			else if (verifyFile.endsWith(".lpn")) {
+				pargName = directory + separator + verifyFile.replace(".lpn", ".grf");
+				dotName = directory + separator + verifyFile.replace(".lpn", ".dot");
+			}
+			else if (verifyFile.endsWith(".vhd")) {
+				pargName = directory + separator + verifyFile.replace(".vhd", ".grf");
+				dotName = directory + separator + verifyFile.replace(".vhd", ".dot");
+			}
 		}
-		else if (verifyFile.endsWith(".lpn")) {
-			pargName = directory + separator + verifyFile.replace(".lpn", ".grf");
-			dotName = directory + separator + verifyFile.replace(".lpn", ".dot");
-		}
-		else if (verifyFile.endsWith(".vhd")) {
-			pargName = directory + separator + verifyFile.replace(".vhd", ".grf");
-			dotName = directory + separator + verifyFile.replace(".vhd", ".dot");
+		else {
+			if (componentField.getText().trim().endsWith(".g")) {
+				pargName = directory + separator
+						+ componentField.getText().trim().replace(".g", ".grf");
+				dotName = directory + separator
+						+ componentField.getText().trim().replace(".g", ".dot");
+			}
+			else if (componentField.getText().trim().endsWith(".lpn")) {
+				pargName = directory + separator
+						+ componentField.getText().trim().replace(".lpn", ".grf");
+				dotName = directory + separator
+						+ componentField.getText().trim().replace(".lpn", ".dot");
+			}
+			else if (componentField.getText().trim().endsWith(".vhd")) {
+				pargName = directory + separator
+						+ componentField.getText().trim().replace(".vhd", ".grf");
+				dotName = directory + separator
+						+ componentField.getText().trim().replace(".vhd", ".dot");
+			}
 		}
 		File pargFile = new File(pargName);
 		File dotFile = new File(dotName);
@@ -619,6 +730,24 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		}
 		if (dotFile.exists()) {
 			dotFile.delete();
+		}
+		for (String s : componentList.getItems()) {
+			try {
+				FileInputStream in = new FileInputStream(new File(root + separator + s));
+				FileOutputStream out = new FileOutputStream(new File(directory + separator + s));
+				int read = in.read();
+				while (read != -1) {
+					out.write(read);
+					read = in.read();
+				}
+				in.close();
+				out.close();
+			}
+			catch (IOException e1) {
+				e1.printStackTrace();
+				JOptionPane.showMessageDialog(biosim.frame(), "Cannot update the file " + s + ".",
+						"Error", JOptionPane.ERROR_MESSAGE);
+			}
 		}
 		tempArray = verifyFile.split(separator);
 		String sourceFile = tempArray[tempArray.length - 1];
@@ -790,7 +919,15 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		}
 		// String[] temp = verifyFile.split(separator);
 		// String src = temp[temp.length - 1];
-		String cmd = "atacs " + options + " " + sourceFile;
+		String cmd = "atacs " + options;
+		String[] components = componentList.getItems();
+		for (String s : components) {
+			cmd = cmd + " " + s;
+		}
+		cmd = cmd + " " + sourceFile;
+		if (!componentField.getText().trim().equals("")) {
+			cmd = cmd + " " + componentField.getText().trim();
+		}
 		// String[] cmd = {"emacs", "temp" };
 		// JOptionPane.showMessageDialog(this, cmd);
 		// Runtime exec = Runtime.getRuntime();
@@ -1014,6 +1151,13 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			if (!bddSize.equals("")) {
 				prop.setProperty("verification.bddSize", this.bddSize.getText().trim());
 			}
+			if (!componentField.getText().trim().equals("")) {
+				prop.setProperty("verification.component", componentField.getText().trim());
+			}
+			String[] components = componentList.getItems();
+			for (Integer i = 0; i < components.length; i++) {
+				prop.setProperty("synthesis.compList" + i.toString(), components[i]);
+			}
 			if (atacs) {
 				if (untimed.isSelected()) {
 					prop.setProperty("verification.timing.methods", "untimed");
@@ -1215,6 +1359,25 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			JOptionPane.showMessageDialog(biosim.frame(), "Unable to save parameter file!",
 					"Error Saving File", JOptionPane.ERROR_MESSAGE);
 		}
+		for (String s : componentList.getItems()) {
+			try {
+				new File(directory + separator + s).createNewFile();
+				FileInputStream in = new FileInputStream(new File(root + separator + s));
+				FileOutputStream out = new FileOutputStream(new File(directory + separator + s));
+				int read = in.read();
+				while (read != -1) {
+					out.write(read);
+					read = in.read();
+				}
+				in.close();
+				out.close();
+			}
+			catch (IOException e1) {
+				e1.printStackTrace();
+				JOptionPane.showMessageDialog(biosim.frame(), "Cannot add the selected component.",
+						"Error", JOptionPane.ERROR_MESSAGE);
+			}
+		}
 	}
 
 	public void reload(String newname) {
@@ -1233,7 +1396,14 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 	}
 
 	public void viewCircuit() {
-		String[] getFilename = verifyFile.split("\\.");
+		String[] getFilename;
+		if (componentField.getText().trim().equals("")) {
+			getFilename = verifyFile.split("\\.");
+		}
+		else {
+			getFilename = new String[1];
+			getFilename[0] = componentField.getText().trim();
+		}
 		String circuitFile = getFilename[0] + ".prs";
 		// JOptionPane.showMessageDialog(this, circuitFile);
 		// JOptionPane.showMessageDialog(this, directory + separator +
