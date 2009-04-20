@@ -1,13 +1,18 @@
 package lhpn2sbml.parser;
 
 //import java.io.*;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
 import java.util.*;
 //import java.util.regex.Matcher;
 //import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Abstraction extends LHPNFile {
+import biomodelsim.Log;
+
+public class Abstraction {
 
 	private HashMap<String, Boolean> places;
 
@@ -51,8 +56,32 @@ public class Abstraction extends LHPNFile {
 
 	private ArrayList<HashMap<String, Properties>> assignments = new ArrayList<HashMap<String, Properties>>();
 
-	public Abstraction() {
-		super();
+	private String property;
+
+	private Log log;
+
+	public Abstraction(Log log) {
+		this.log = log;
+		places = new HashMap<String, Boolean>();
+		inputs = new HashMap<String, String>();
+		outputs = new HashMap<String, String>();
+		enablings = new HashMap<String, String>();
+		controlFlow = new HashMap<String, Properties>();
+		controlPlaces = new HashMap<String, Properties>();
+		variables = new HashMap<String, Properties>();
+		integers = new HashMap<String, String>();
+		rateAssignments = new HashMap<String, Properties>();
+		rateAssignmentTrees = new HashMap<String, HashMap<String, ExprTree[]>>();
+		contAssignments = new HashMap<String, Properties>();
+		contAssignmentTrees = new HashMap<String, HashMap<String, ExprTree[]>>();
+		intAssignments = new HashMap<String, Properties>();
+		intAssignmentTrees = new HashMap<String, HashMap<String, ExprTree[]>>();
+		delays = new HashMap<String, String>();
+		delayTrees = new HashMap<String, ExprTree[]>();
+		transitionRates = new HashMap<String, ExprTree>();
+		transitionRateStrings = new HashMap<String, String>();
+		booleanAssignments = new HashMap<String, Properties>();
+		booleanAssignmentTrees = new HashMap<String, HashMap<String, ExprTree[]>>();
 		assignments.add(booleanAssignments);
 		assignments.add(contAssignments);
 		assignments.add(intAssignments);
@@ -72,6 +101,7 @@ public class Abstraction extends LHPNFile {
 							assign = true;
 						}
 					}
+					// System.out.println(s + t);
 					if (comparePreset(prop1, prop2) && comparePostset(prop1, prop2)
 							&& (places.get(s).equals(places.get(t))) && !assign) {
 						combinePlaces(s, t);
@@ -93,20 +123,28 @@ public class Abstraction extends LHPNFile {
 			}
 		}
 		// Transform 3 - Remove a Transition with a Single Place in the Postset
+		ArrayList<String> remove = new ArrayList<String>();
 		for (String s : controlFlow.keySet()) {
 			String[] postset = controlFlow.get(s).getProperty("postset").split(" ");
 			if (postset.length == 1) {
 				boolean assign = false;
 				for (HashMap<String, Properties> h : assignments) {
-					if (h.get(s) == null || h.get(s).keySet().isEmpty()) {
-						assign = true;
+					// System.out.println(assignments);
+					if (h.get(s) != null) {
+						if (!h.get(s).keySet().isEmpty()) {
+							assign = true;
+						}
 					}
 				}
 				String[] preset = controlPlaces.get(postset[0]).getProperty("preset").split(" ");
 				if (preset.length == 1 && !assign) {
-					removeTrans3(s, preset, postset);
+					remove.add(s);
 				}
 			}
+		}
+		for (String s : remove) {
+			removeTrans3(s, controlFlow.get(s).getProperty("preset").split(" "), controlFlow.get(s)
+					.getProperty("postset").split(" "));
 		}
 		// Transform 4 - Remove a Transition with a Single Place in the Preset
 		for (String s : controlFlow.keySet()) {
@@ -114,8 +152,10 @@ public class Abstraction extends LHPNFile {
 			if (preset.length == 1) {
 				boolean assign = false;
 				for (HashMap<String, Properties> h : assignments) {
-					if (h.get(s) == null || h.get(s).keySet().isEmpty()) {
-						assign = true;
+					if (h.get(s) != null) {
+						if (!h.get(s).keySet().isEmpty()) {
+							assign = true;
+						}
 					}
 				}
 				String[] postset = controlPlaces.get(preset[0]).getProperty("postset").split(" ");
@@ -187,7 +227,7 @@ public class Abstraction extends LHPNFile {
 			}
 		}
 	}
-	
+
 	public void abstractVars(String[] vars) {
 		for (String s : vars) {
 			for (String t : controlFlow.keySet()) {
@@ -204,6 +244,338 @@ public class Abstraction extends LHPNFile {
 					enablings.put(s, enablings.get(t).replace(s, "X"));
 				}
 			}
+		}
+	}
+
+	public void save(String filename) {
+		try {
+			String file = filename;
+			PrintStream p = new PrintStream(new FileOutputStream(filename));
+			StringBuffer buffer = new StringBuffer();
+			HashMap<String, Integer> boolOrder = new HashMap<String, Integer>();
+			int i = 0;
+			if (!inputs.isEmpty()) {
+				buffer.append(".inputs ");
+				for (String s : inputs.keySet()) {
+					if (inputs.get(s) != null) {
+						buffer.append(s + " ");
+						boolOrder.put(s, i);
+						i++;
+					}
+				}
+				buffer.append("\n");
+			}
+			if (!outputs.isEmpty()) {
+				buffer.append(".outputs ");
+				for (String s : outputs.keySet()) {
+					if (outputs.get(s) != null) {
+						buffer.append(s + " ");
+						boolOrder.put(s, i);
+						i++;
+					}
+				}
+				buffer.append("\n");
+			}
+			if (!controlFlow.isEmpty()) {
+				buffer.append(".dummy ");
+				for (String s : controlFlow.keySet()) {
+					buffer.append(s + " ");
+				}
+				buffer.append("\n");
+			}
+			if (!variables.isEmpty() || !integers.isEmpty()) {
+				buffer.append("#@.variables ");
+				for (String s : variables.keySet()) {
+					buffer.append(s + " ");
+				}
+				for (String s : integers.keySet()) {
+					buffer.append(s + " ");
+				}
+				buffer.append("\n");
+			}
+			if (!places.isEmpty()) {
+				buffer.append("#|.places ");
+				for (String s : places.keySet()) {
+					buffer.append(s + " ");
+				}
+				buffer.append("\n");
+			}
+			if (!inputs.isEmpty() || !outputs.isEmpty()) {
+				boolean flag = false;
+				for (i = 0; i < boolOrder.size(); i++) {
+					for (String s : inputs.keySet()) {
+						if (boolOrder.get(s).equals(i)) {
+							if (!flag) {
+								buffer.append("#@.init_state [");
+								flag = true;
+							}
+							if (inputs.get(s).equals("true")) {
+								buffer.append("1");
+							}
+							else if (inputs.get(s).equals("false")) {
+								buffer.append("0");
+							}
+							else {
+								buffer.append("X");
+							}
+						}
+					}
+					for (String s : outputs.keySet()) {
+						if (s != null && boolOrder.get(s) != null) {
+							// log.addText(s);
+							if (boolOrder.get(s).equals(i) && outputs.get(s) != null) {
+								if (!flag) {
+									buffer.append("#@.init_state [");
+									flag = true;
+								}
+								if (outputs.get(s).equals("true")) {
+									buffer.append("1");
+								}
+								else if (outputs.get(s).equals("false")) {
+									buffer.append("0");
+								}
+								else {
+									buffer.append("X");
+								}
+							}
+						}
+					}
+				}
+				if (flag) {
+					buffer.append("]\n");
+				}
+			}
+			if (!controlFlow.isEmpty()) {
+				buffer.append(".graph\n");
+				for (String s : controlFlow.keySet()) {
+					// log.addText(s);
+					if (controlFlow.get(s) != null) {
+						Properties prop = controlFlow.get(s);
+						// log.addText(s + prop.getProperty("postset"));
+						if (prop.getProperty("postset") != null) {
+							String toString = prop.getProperty("postset");
+							if (toString != null) {
+								// log.addText("to " + toString);
+								String[] toArray = toString.split("\\s");
+								for (i = 0; i < toArray.length; i++) {
+									if (toArray[i] != null && !toArray[i].equals("null")) {
+										buffer.append(s + " " + toArray[i] + "\n");
+									}
+								}
+							}
+						}
+						if (prop.getProperty("preset") != null) {
+							String fromString = prop.getProperty("preset");
+							if (fromString != null) {
+								// log.addText("from "+ fromString);
+								String[] fromArray = fromString.split("\\s");
+								for (i = 0; i < fromArray.length; i++) {
+									if (fromArray[i] != null && !fromArray[i].equals("null")) {
+										buffer.append(fromArray[i] + " " + s + "\n");
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			boolean flag = false;
+			if (!places.keySet().isEmpty()) {
+				for (String s : places.keySet()) {
+					if (places.get(s).equals(true)) {
+						if (!flag) {
+							buffer.append(".marking {");
+							flag = true;
+						}
+						buffer.append(s + " ");
+					}
+				}
+				if (flag) {
+					buffer.append("}\n");
+				}
+			}
+			if (property != null && !property.equals("")) {
+				buffer.append("#@.property " + property + "\n");
+			}
+			if (!variables.isEmpty() || !integers.isEmpty()) {
+				buffer.append("#@.init_vals {");
+				for (String s : variables.keySet()) {
+					Properties prop = variables.get(s);
+					buffer.append("<" + s + "=" + prop.getProperty("value") + ">");
+				}
+				for (String s : integers.keySet()) {
+					String ic = integers.get(s);
+					buffer.append("<" + s + "=" + ic + ">");
+				}
+				if (!variables.isEmpty()) {
+					buffer.append("}\n#@.init_rates {");
+					for (String s : variables.keySet()) {
+						Properties prop = variables.get(s);
+						buffer.append("<" + s + "=" + prop.getProperty("rate") + ">");
+					}
+				}
+				buffer.append("}\n");
+			}
+			if (!enablings.isEmpty()) {
+				flag = false;
+				for (String s : enablings.keySet()) {
+					if (s != null && !enablings.get(s).equals("")) {
+						if (!flag) {
+							buffer.append("#@.enablings {");
+							flag = true;
+						}
+						// log.addText("here " + enablings.get(s));
+						buffer.append("<" + s + "=[" + enablings.get(s) + "]>");
+					}
+				}
+				if (flag) {
+					buffer.append("}\n");
+				}
+			}
+			if (!contAssignments.isEmpty() || !intAssignments.isEmpty()) {
+				flag = false;
+				for (String s : contAssignments.keySet()) {
+					Properties prop = contAssignments.get(s);
+					// log.addText(prop.toString());
+					if (!prop.isEmpty()) {
+						if (!flag) {
+							buffer.append("#@.assignments {");
+							flag = true;
+						}
+						buffer.append("<" + s + "=");
+						for (Object key : prop.keySet()) {
+							String t = (String) key;
+							buffer.append("[" + t + ":=" + prop.getProperty(t) + "]");
+						}
+						buffer.append(">");
+					}
+				}
+				for (String s : intAssignments.keySet()) {
+					Properties prop = intAssignments.get(s);
+					if (!prop.isEmpty()) {
+						if (!flag) {
+							buffer.append("#@.assignments {");
+							flag = true;
+						}
+						buffer.append("<" + s + "=");
+						for (Object key : prop.keySet()) {
+							String t = (String) key;
+							// log.addText("key " + t);
+							buffer.append("[" + t + ":=" + prop.getProperty(t) + "]");
+						}
+						buffer.append(">");
+					}
+				}
+				if (flag) {
+					buffer.append("}\n");
+				}
+			}
+			if (!rateAssignments.isEmpty()) {
+				flag = false;
+				for (String s : rateAssignments.keySet()) {
+					boolean varFlag = false;
+					Properties prop = rateAssignments.get(s);
+					for (Object key : prop.keySet()) {
+						String t = (String) key;
+						if (!t.equals("")) {
+							if (!flag) {
+								buffer.append("#@.rate_assignments {");
+								flag = true;
+							}
+							if (!varFlag) {
+								buffer.append("<" + s + "=");
+								varFlag = true;
+							}
+							buffer.append("[" + t + ":=" + prop.getProperty(t) + "]");
+						}
+					}
+					if (varFlag) {
+						buffer.append(">");
+					}
+				}
+				if (flag) {
+					buffer.append("}\n");
+				}
+			}
+			if (!delays.isEmpty()) {
+				flag = false;
+				for (String s : delays.keySet()) {
+					if (s != null && !delays.get(s).equals("")) {
+						if (!flag) {
+							buffer.append("#@.delay_assignments {");
+							flag = true;
+						}
+						buffer.append("<" + s + "=" + delays.get(s) + ">");
+					}
+				}
+				if (flag) {
+					buffer.append("}\n");
+				}
+			}
+			if (!transitionRateStrings.isEmpty()) {
+				flag = false;
+				for (String s : transitionRateStrings.keySet()) {
+					if (s != null && !transitionRateStrings.get(s).equals("")) {
+						if (!flag) {
+							buffer.append("#@.transition_rates {");
+							flag = true;
+						}
+						// log.addText("here " + enablings.get(s));
+						buffer.append("<" + s + "=[" + transitionRateStrings.get(s) + "]>");
+					}
+				}
+				if (flag) {
+					buffer.append("}\n");
+				}
+			}
+			if (!booleanAssignments.isEmpty()) {
+				flag = false;
+				for (String s : booleanAssignments.keySet()) {
+					if (!s.equals("")) {
+						boolean varFlag = false;
+						Properties prop = booleanAssignments.get(s);
+						for (Object key : prop.keySet()) {
+							String t = (String) key;
+							if (!t.equals("") && (isInput(t) || isOutput(t))) {
+								if (!flag) {
+									buffer.append("#@.boolean_assignments {");
+									flag = true;
+								}
+								if (!varFlag) {
+									buffer.append("<" + s + "=");
+									varFlag = true;
+								}
+								buffer.append("[" + t + ":=" + prop.getProperty(t) + "]");
+							}
+						}
+						if (varFlag) {
+							buffer.append(">");
+						}
+					}
+				}
+				if (flag) {
+					buffer.append("}\n");
+				}
+			}
+			if (!variables.isEmpty()) {
+				buffer.append("#@.continuous ");
+				for (String s : variables.keySet()) {
+					buffer.append(s + " ");
+				}
+				buffer.append("\n");
+			}
+			if (buffer.toString().length() > 0) {
+				buffer.append(".end\n");
+			}
+			// System.out.print(buffer);
+			p.print(buffer);
+			p.close();
+			if (log != null) {
+				log.addText("Saving:\n" + file + "\n");
+			}
+		}
+		catch (FileNotFoundException e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -229,6 +601,10 @@ public class Abstraction extends LHPNFile {
 	}
 
 	private boolean comparePostset(Properties flow1, Properties flow2) {
+		// System.out.println(flow1);
+		// System.out.println(flow2);
+		// System.out.println(flow1.get("postset"));
+		// System.out.println(flow2.get("postset"));
 		String[] set1 = flow1.get("postset").toString().split(" ");
 		String[] set2 = flow2.get("postset").toString().split(" ");
 		if (set1.length != set2.length) {
@@ -373,72 +749,89 @@ public class Abstraction extends LHPNFile {
 			if (newMatcher.find()) {
 				String newDelay[] = { newMatcher.group(1), newMatcher.group(2) };
 				for (int i = 0; i < newDelay.length; i++) {
-					newDelay[i] = String.valueOf(Integer.parseInt(newDelay[i])
-							+ Integer.parseInt(oldDelay[i]));
+					if (!oldDelay[i].equals("inf") && !newDelay[i].equals("inf")) {
+						newDelay[i] = String.valueOf(Integer.parseInt(newDelay[i])
+								+ Integer.parseInt(oldDelay[i]));
+					}
+					else {
+						newDelay[i] = "inf";
+					}
 				}
-				delays.put(transition, "[" + newDelay[0] + "," + newDelay[1] + "]");
+				delays.put(t, "[" + newDelay[0] + "," + newDelay[1] + "]");
 			}
 		}
 		// Combine assignments
 		Properties oldProp = contAssignments.get(transition);
-		for (String t : postset) {
-			Properties newProp = contAssignments.get(t);
-			for (Object o : oldProp.keySet()) {
-				if (!newProp.containsKey(o)) {
-					newProp.setProperty(o.toString(), oldProp.getProperty(o.toString()));
+		if (oldProp != null) {
+			for (String t : postset) {
+				Properties newProp = contAssignments.get(t);
+				for (Object o : oldProp.keySet()) {
+					if (!newProp.containsKey(o)) {
+						newProp.setProperty(o.toString(), oldProp.getProperty(o.toString()));
+					}
 				}
+				contAssignments.put(t, newProp);
 			}
-			contAssignments.put(t, newProp);
 		}
 		oldProp = booleanAssignments.get(transition);
-		for (String t : postset) {
-			Properties newProp = booleanAssignments.get(t);
-			for (Object o : oldProp.keySet()) {
-				if (!newProp.containsKey(o)) {
-					newProp.setProperty(o.toString(), oldProp.getProperty(o.toString()));
+		if (oldProp != null) {
+			for (String t : postset) {
+				Properties newProp = booleanAssignments.get(t);
+				for (Object o : oldProp.keySet()) {
+					if (!newProp.containsKey(o)) {
+						newProp.setProperty(o.toString(), oldProp.getProperty(o.toString()));
+					}
 				}
+				booleanAssignments.put(t, newProp);
 			}
-			booleanAssignments.put(t, newProp);
 		}
 		oldProp = intAssignments.get(transition);
-		for (String t : postset) {
-			Properties newProp = intAssignments.get(t);
-			for (Object o : oldProp.keySet()) {
-				if (!newProp.containsKey(o)) {
-					newProp.setProperty(o.toString(), oldProp.getProperty(o.toString()));
+		if (oldProp != null) {
+			for (String t : postset) {
+				Properties newProp = intAssignments.get(t);
+				for (Object o : oldProp.keySet()) {
+					if (!newProp.containsKey(o)) {
+						newProp.setProperty(o.toString(), oldProp.getProperty(o.toString()));
+					}
 				}
+				intAssignments.put(t, newProp);
 			}
-			intAssignments.put(t, newProp);
 		}
 		HashMap<String, ExprTree[]> oldMap = contAssignmentTrees.get(transition);
-		for (String t : postset) {
-			HashMap<String, ExprTree[]> newMap = contAssignmentTrees.get(t);
-			for (Object o : oldMap.keySet()) {
-				if (!newMap.containsKey(o)) {
-					newMap.put(o.toString(), oldMap.get(o.toString()));
+		if (oldMap != null) {
+			for (String t : postset) {
+				HashMap<String, ExprTree[]> newMap = contAssignmentTrees.get(t);
+				for (Object o : oldMap.keySet()) {
+					if (!newMap.containsKey(o)) {
+						newMap.put(o.toString(), oldMap.get(o.toString()));
+					}
 				}
+				contAssignmentTrees.put(t, newMap);
 			}
-			contAssignmentTrees.put(t, newMap);
 		}
 		oldMap = booleanAssignmentTrees.get(transition);
-		for (String t : postset) {
-			HashMap<String, ExprTree[]> newMap = booleanAssignmentTrees.get(t);
-			for (Object o : oldMap.keySet()) {
-				if (!newMap.containsKey(o)) {
-					newMap.put(o.toString(), oldMap.get(o.toString()));
+		if (oldMap != null) {
+			for (String t : postset) {
+				HashMap<String, ExprTree[]> newMap = booleanAssignmentTrees.get(t);
+				for (Object o : oldMap.keySet()) {
+					if (!newMap.containsKey(o)) {
+						newMap.put(o.toString(), oldMap.get(o.toString()));
+					}
 				}
+				booleanAssignmentTrees.put(t, newMap);
 			}
-			booleanAssignmentTrees.put(t, newMap);
 		}
 		oldMap = intAssignmentTrees.get(transition);
-		for (String t : postset) {
-			HashMap<String, ExprTree[]> newMap = intAssignmentTrees.get(t);
-			for (Object o : oldMap.keySet()) {
-				if (!newMap.containsKey(o)) {
-					newMap.put(o.toString(), oldMap.get(o.toString()));
+		if (oldMap != null) {
+			for (String t : postset) {
+				HashMap<String, ExprTree[]> newMap = intAssignmentTrees.get(t);
+				for (Object o : oldMap.keySet()) {
+					if (!newMap.containsKey(o)) {
+						newMap.put(o.toString(), oldMap.get(o.toString()));
+					}
 				}
+				intAssignmentTrees.put(t, newMap);
 			}
-			intAssignmentTrees.put(t, newMap);
 		}
 		removeTransition(transition);
 	}
@@ -681,9 +1074,7 @@ public class Abstraction extends LHPNFile {
 	}
 
 	public void addPlaces(HashMap<String, Boolean> newPlaces) {
-		for (String s : newPlaces.keySet()) {
-			places.put(s, newPlaces.get(s));
-		}
+		places.putAll(newPlaces);
 	}
 
 	public void addInputs(HashMap<String, String> newInputs) {
@@ -760,6 +1151,7 @@ public class Abstraction extends LHPNFile {
 				String t = o.toString();
 				prop.setProperty(t, oldProp.getProperty(t));
 			}
+			// System.out.println(s + prop.toString());
 			controlFlow.put(s, prop);
 		}
 	}
@@ -865,6 +1257,66 @@ public class Abstraction extends LHPNFile {
 			}
 			intAssignmentTrees.put(s, map);
 		}
+	}
+
+	public void addProperty(String prop) {
+		property = prop;
+	}
+
+	public void removePlace(String name) {
+		if (name != null && places.containsKey(name)) {
+			places.remove(name);
+			controlPlaces.remove(name);
+		}
+		for (String s : controlFlow.keySet()) {
+			Properties prop = controlFlow.get(s);
+			String[] array = prop.getProperty("preset").split(" ");
+			String setString = new String();
+			int offset = 0;
+			for (int i = 1; i < array.length; i++) {
+				if (array[i].equals(name)) {
+					offset += 1;
+				}
+				setString = setString + " " + array[i - offset];
+			}
+			prop.setProperty("preset", setString);
+			array = prop.getProperty("postset").split(" ");
+			setString = new String();
+			offset = 0;
+			for (int i = 1; i < array.length; i++) {
+				if (array[i].equals(name)) {
+					offset += 1;
+				}
+				setString = setString + " " + array[i - offset];
+			}
+			prop.setProperty("postset", setString);
+			controlFlow.put(s, prop);
+		}
+	}
+
+	public void removeTransition(String name) {
+		controlFlow.remove(name);
+		delays.remove(name);
+		delayTrees.remove(name);
+		transitionRates.remove(name);
+		transitionRateStrings.remove(name);
+		rateAssignments.remove(name);
+		rateAssignmentTrees.remove(name);
+		booleanAssignments.remove(name);
+		booleanAssignmentTrees.remove(name);
+		enablings.remove(name);
+		contAssignments.remove(name);
+		contAssignmentTrees.remove(name);
+		intAssignments.remove(name);
+		intAssignmentTrees.remove(name);
+	}
+
+	public boolean isInput(String var) {
+		return inputs.containsKey(var);
+	}
+
+	public boolean isOutput(String var) {
+		return outputs.containsKey(var);
 	}
 
 	private static final String RANGE = "\\[(\\w+?),(\\w+?)\\]";
