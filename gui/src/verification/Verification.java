@@ -700,24 +700,8 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			}
 		}
 		else {
-			if (componentField.getText().trim().endsWith(".g")) {
-				pargName = directory + separator
-						+ componentField.getText().trim().replace(".g", ".grf");
-				dotName = directory + separator
-						+ componentField.getText().trim().replace(".g", ".dot");
-			}
-			else if (componentField.getText().trim().endsWith(".lpn")) {
-				pargName = directory + separator
-						+ componentField.getText().trim().replace(".lpn", ".grf");
-				dotName = directory + separator
-						+ componentField.getText().trim().replace(".lpn", ".dot");
-			}
-			else if (componentField.getText().trim().endsWith(".vhd")) {
-				pargName = directory + separator
-						+ componentField.getText().trim().replace(".vhd", ".grf");
-				dotName = directory + separator
-						+ componentField.getText().trim().replace(".vhd", ".dot");
-			}
+			pargName = directory + separator + componentField.getText().trim() + ".grf";
+			dotName = directory + separator + componentField.getText().trim() + ".dot";
 		}
 		File pargFile = new File(pargName);
 		File dotFile = new File(dotName);
