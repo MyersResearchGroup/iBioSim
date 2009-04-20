@@ -7700,7 +7700,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					}
 				}
 				catch (Exception e1) {
-					// e1.printStackTrace();
+					e1.printStackTrace();
 				}
 			}
 		}

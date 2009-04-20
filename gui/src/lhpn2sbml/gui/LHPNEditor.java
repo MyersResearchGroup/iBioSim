@@ -1,6 +1,7 @@
 package lhpn2sbml.gui;
 
 import lhpn2sbml.parser.LHPNFile;
+import lhpn2sbml.parser.Abstraction;
 
 import gcm2sbml.gui.AbstractRunnableNamedButton;
 //import gcm2sbml.gui.InfluencePanel;
@@ -38,7 +39,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 //import javax.swing.JSplitPane;
 import javax.swing.JTextField;
-//import javax.swing.JButton;
+import javax.swing.JButton;
 
 import biomodelsim.BioSim;
 import biomodelsim.Log;
@@ -70,6 +71,8 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 	private LHPNFile lhpnFile = null;
 
 	private JPanel mainPanel;// buttonPanel;
+	
+	private JButton abstButton;
 
 	private boolean flag = true, dirty = false;
 
@@ -128,10 +131,13 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 		propertyField.addActionListener(this);
 		JLabel lhpnNameLabel = new JLabel("LHPN Id:");
 		JLabel propertyLabel = new JLabel("Property:");
+		abstButton = new JButton("Abstract LHPN");
+		abstButton.addActionListener(this);
 		mainPanelNorth.add(lhpnNameLabel);
 		mainPanelNorth.add(lhpnNameTextField);
 		mainPanelNorth.add(propertyLabel);
 		mainPanelNorth.add(propertyField);
+		//mainPanelNorth.add(abstButton);
 
 		// buttonPanel = new JPanel();
 		// JButton save = new JButton("Save");
@@ -373,6 +379,13 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 		Object o = e.getSource();
 		if (o instanceof Runnable) {
 			((Runnable) o).run();
+		}
+		else if (e.getSource() == abstButton) {
+			Abstraction abst = lhpnFile.abstractLhpn();
+			abst.abstractSTG();
+			String abstFilename = filename.replace(".lpn", "_ABST.lpn");
+			abst.save(directory + separator + abstFilename);
+			biosim.refreshTree();
 		}
 	}
 
