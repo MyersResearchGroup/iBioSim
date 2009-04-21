@@ -5,6 +5,7 @@ import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Stack;
 import lhpn2sbml.parser.ExprTree;
 import lhpn2sbml.parser.LHPNFile;
@@ -179,7 +180,7 @@ public class StateGraph {
 		State initial = getInitialState();
 		if (initial != null) {
 			resetColors();
-			int period = findPeriod(0, initial, 0);
+			int period = findPeriod(initial);
 			if (period == 0) {
 				period = 1;
 			}
@@ -188,7 +189,6 @@ public class StateGraph {
 			double tolerance = 0.01;
 			boolean done = false;
 			do {
-				double greatestDiff = 0.0;
 				step++;
 				step = step % period;
 				for (String state : stateGraph.keySet()) {
@@ -206,45 +206,51 @@ public class StateGraph {
 								nextProb += (prev.getState().getCurrentProb() * transProb);
 							}
 							m.setNextProb(nextProb);
-							double diff = Math.abs(((m.getCurrentProb() - m.getNextProb()) / m
-									.getCurrentProb()));
-							if (diff > greatestDiff) {
-								greatestDiff = diff;
-							}
 						}
 					}
 				}
-				if (greatestDiff > tolerance) {
-					for (String state : stateGraph.keySet()) {
-						for (State m : stateGraph.get(state)) {
+				for (String state : stateGraph.keySet()) {
+					for (State m : stateGraph.get(state)) {
+						if (m.getColor() % period == step) {
+							if ((m.getNextProb() > tolerance)
+									&& (Math.abs(((m.getCurrentProb() - m.getNextProb()))
+											/ m.getCurrentProb()) > tolerance)) {
+							}
+							else {
+								done = true;
+							}
 							m.setCurrentProbToNext();
 						}
 					}
 				}
-				else {
-					done = true;
-				}
 			}
 			while (!done);
+			double totalProb = 0.0;
 			for (String state : stateGraph.keySet()) {
 				for (State m : stateGraph.get(state)) {
 					m.setCurrentProb(m.getCurrentProb() / period);
+					totalProb += m.getCurrentProb();
+				}
+			}
+			for (String state : stateGraph.keySet()) {
+				for (State m : stateGraph.get(state)) {
+					m.setCurrentProb(m.getCurrentProb() / totalProb);
 				}
 			}
 			resetColors();
 		}
 	}
 
-	private int findPeriod(int color, State state, int period) {
+	private int findPeriod(State state) {
+		int period = 0;
+		int color = 0;
 		state.setColor(color);
+		color++;
+		Queue<State> unVisitedStates = new LinkedList<State>();
 		for (State s : state.getNextStates()) {
 			if (s.getColor() == -1) {
-				if (period == 0) {
-					period = findPeriod(color + 1, s, period);
-				}
-				else {
-					period = gcd(findPeriod(color + 1, s, period), period);
-				}
+				s.setColor(color);
+				unVisitedStates.add(s);
 			}
 			else {
 				if (period == 0) {
@@ -252,6 +258,24 @@ public class StateGraph {
 				}
 				else {
 					period = gcd(state.getColor() - s.getColor() + 1, period);
+				}
+			}
+		}
+		while (!unVisitedStates.isEmpty()) {
+			state = unVisitedStates.poll();
+			color++;
+			for (State s : state.getNextStates()) {
+				if (s.getColor() == -1) {
+					s.setColor(color);
+					unVisitedStates.add(s);
+				}
+				else {
+					if (period == 0) {
+						period = (state.getColor() - s.getColor() + 1);
+					}
+					else {
+						period = gcd(state.getColor() - s.getColor() + 1, period);
+					}
 				}
 			}
 		}
@@ -351,7 +375,7 @@ public class StateGraph {
 
 			for (String state : stateGraph.keySet()) {
 				for (State m : stateGraph.get(state)) {
-					out.write(m.getID() + " [shape=\"ellipse\",label=\"<" + state + "> Prob = "
+					out.write(m.getID() + " [shape=\"ellipse\",label=\"<" + state + ">\\nProb = "
 							+ m.getCurrentProb() + "\"]\n");
 					for (State next : m.getNextStates()) {
 						out.write(m.getID() + " -> " + next.getID() + "\n");
@@ -513,7 +537,7 @@ public class StateGraph {
 				newPrevStates[i] = prevStates[i];
 			}
 			newPrevStates[newPrevStates.length - 1] = new StateTransitionPair(prevState, transition);
-			nextStates = newPrevStates;
+			prevStates = newPrevStates;
 		}
 	}
 }
