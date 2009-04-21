@@ -11,16 +11,17 @@ import lhpn2sbml.parser.LHPNFile;
 
 public class StateGraph {
 	private HashMap<String, LinkedList<State>> stateGraph;
+	private ArrayList<String> variables;
 	private LHPNFile lhpn;
 
 	public StateGraph(LHPNFile lhpn) {
 		this.lhpn = lhpn;
-		stateGraph = new HashMap<String, LinkedList<State>>();
 		buildStateGraph();
 	}
 
 	private void buildStateGraph() {
-		ArrayList<String> variables = new ArrayList<String>();
+		stateGraph = new HashMap<String, LinkedList<State>>();
+		variables = new ArrayList<String>();
 		for (String var : lhpn.getBooleanVars()) {
 			variables.add(var);
 		}
@@ -171,6 +172,72 @@ public class StateGraph {
 
 	private int evaluateExp(ExprTree[] exprTrees) {
 		return 0;
+	}
+
+	public void performMarkovianAnalysis() {
+		State initial = getInitialState();
+		if (initial != null) {
+			resetColors();
+			int period = findPeriod(1, initial, 0);
+			if (period == 0) {
+				period = 1;
+			}
+		}
+	}
+
+	private int findPeriod(int color, State state, int period) {
+		state.setColor(color);
+		for (State s : state.getNextStates()) {
+			if (s.getColor() == -1) {
+				if (period == 0) {
+					period = findPeriod(color + 1, s, period);
+				}
+				else {
+					period = gcd(findPeriod(color + 1, s, period), period);
+				}
+			}
+			else {
+				if (period == 0) {
+					period = (state.getColor() - s.getColor() + 1);
+				}
+				else {
+					period = gcd(state.getColor() - s.getColor() + 1, period);
+				}
+			}
+		}
+		return period;
+	}
+
+	private int gcd(int a, int b) {
+		if (b == 0)
+			return a;
+		return gcd(b, a % b);
+	}
+
+	public void resetColors() {
+		for (String state : stateGraph.keySet()) {
+			for (State m : stateGraph.get(state)) {
+				m.setColor(-1);
+			}
+		}
+	}
+
+	public State getInitialState() {
+		boolean[] variableVector = new boolean[variables.size()];
+		for (int i = 0; i < variableVector.length; i++) {
+			if (lhpn.getInitialVal(variables.get(i)).equals("true")) {
+				variableVector[i] = true;
+			}
+			else {
+				variableVector[i] = false;
+			}
+		}
+		for (State s : stateGraph.get(vectorToString(variableVector))) {
+			if (s.getID().equals("S0")) {
+				return s;
+			}
+		}
+		return null;
 	}
 
 	public HashMap<String, LinkedList<State>> getStateGraph() {
