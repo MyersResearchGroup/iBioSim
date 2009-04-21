@@ -3276,11 +3276,12 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			}
 			String projDir = "";
 			if (e.getSource() == openProj) {
-				projDir = Buttons.browse(frame, f, null, JFileChooser.FILES_AND_DIRECTORIES, "Open", -1);
+				projDir = Buttons.browse(frame, f, null, JFileChooser.FILES_AND_DIRECTORIES,
+						"Open", -1);
 				if (projDir.endsWith(".prj")) {
 					String[] tempArray = projDir.split(separator);
 					projDir = "";
-					for (int i=0; i<tempArray.length - 1; i++) {
+					for (int i = 0; i < tempArray.length - 1; i++) {
 						projDir = projDir + tempArray[i] + separator;
 					}
 				}
@@ -3300,7 +3301,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			else if (e.getSource() == recentProjects[4]) {
 				projDir = recentProjectPaths[4];
 			}
-			//log.addText(projDir);
+			// log.addText(projDir);
 			if (!projDir.equals("")) {
 				if (new File(projDir).isDirectory()) {
 					boolean isProject = false;
@@ -4392,7 +4393,20 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							Process atacs = Runtime.getRuntime().exec("atacs -lgsl " + oldName,
 									null, work);
 							atacs.waitFor();
-							// new File(oldName).delete();
+							String lpnName = oldName.replace(".g", ".lpn");
+							String newName = oldName.replace(".g", "_NEW.lpn");
+							atacs = Runtime.getRuntime().exec("atacs -llsl " + lpnName, null, work);
+							atacs.waitFor();
+							FileOutputStream out = new FileOutputStream(new File(lpnName));
+							FileInputStream in = new FileInputStream(new File(newName));
+							int read = in.read();
+							while (read != -1) {
+								out.write(read);
+								read = in.read();
+							}
+							in.close();
+							out.close();
+							new File(newName).delete();
 						}
 						refreshTree();
 					}
@@ -4446,18 +4460,20 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							Process atacs = Runtime.getRuntime().exec("atacs -lgsl " + oldName,
 									null, work);
 							atacs.waitFor();
-							// FileOutputStream old = new FileOutputStream(new
-							// File(oldName));
-							// FileInputStream newFile = new FileInputStream(new
-							// File(newName));
-							// int readNew = newFile.read();
-							// while (readNew != -1) {
-							// old.write(readNew);
-							// readNew = newFile.read();
-							// }
-							// old.close();
-							// newFile.close();
-							// new File(newName).delete();
+							String lpnName = oldName.replace(".g", ".lpn");
+							String newName = oldName.replace(".g", "_NEW.lpn");
+							atacs = Runtime.getRuntime().exec("atacs -llsl " + lpnName, null, work);
+							atacs.waitFor();
+							FileOutputStream out = new FileOutputStream(new File(lpnName));
+							FileInputStream in = new FileInputStream(new File(newName));
+							int read = in.read();
+							while (read != -1) {
+								out.write(read);
+								read = in.read();
+							}
+							in.close();
+							out.close();
+							new File(newName).delete();
 						}
 						refreshTree();
 					}
