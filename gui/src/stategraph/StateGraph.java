@@ -43,8 +43,8 @@ public class StateGraph {
 		}
 		LinkedList<State> markings = new LinkedList<State>();
 		int counter = 0;
-		State state = new State(markedPlaces.toArray(new String[0]), new StateTransitionPair[0], "S"
-				+ counter, vectorToString(variableVector));
+		State state = new State(markedPlaces.toArray(new String[0]), new StateTransitionPair[0],
+				"S" + counter, vectorToString(variableVector));
 		markings.add(state);
 		counter++;
 		stateGraph.put(vectorToString(variableVector), markings);
@@ -88,8 +88,8 @@ public class StateGraph {
 			}
 			if (!stateGraph.containsKey(vectorToString(variableVector))) {
 				markings = new LinkedList<State>();
-				state = new State(markedPlaces.toArray(new String[0]), new StateTransitionPair[0], "S"
-						+ counter, vectorToString(variableVector));
+				state = new State(markedPlaces.toArray(new String[0]), new StateTransitionPair[0],
+						"S" + counter, vectorToString(variableVector));
 				markings.add(state);
 				fire.getParent().addNextState(state, fire.getTransition());
 				counter++;
@@ -107,8 +107,9 @@ public class StateGraph {
 						addToStack = false;
 					}
 					if (addToStack) {
-						transitionsToFire.push(new Transition(transition, copyArrayList(markedPlaces),
-								copyStateVector(variableVector), state));
+						transitionsToFire
+								.push(new Transition(transition, copyArrayList(markedPlaces),
+										copyStateVector(variableVector), state));
 					}
 				}
 			}
@@ -140,8 +141,9 @@ public class StateGraph {
 					same = true;
 				}
 				if (add) {
-					state = new State(markedPlaces.toArray(new String[0]), new StateTransitionPair[0], "S"
-							+ counter, vectorToString(variableVector));
+					state = new State(markedPlaces.toArray(new String[0]),
+							new StateTransitionPair[0], "S" + counter,
+							vectorToString(variableVector));
 					markings.add(state);
 					fire.getParent().addNextState(state, fire.getTransition());
 					counter++;
@@ -159,8 +161,9 @@ public class StateGraph {
 							addToStack = false;
 						}
 						if (addToStack) {
-							transitionsToFire.push(new Transition(transition, copyArrayList(markedPlaces),
-									copyStateVector(variableVector), state));
+							transitionsToFire.push(new Transition(transition,
+									copyArrayList(markedPlaces), copyStateVector(variableVector),
+									state));
 						}
 					}
 				}
@@ -186,7 +189,7 @@ public class StateGraph {
 			boolean done = false;
 			do {
 				double greatestDiff = 0.0;
-				step ++;
+				step++;
 				step = step % period;
 				for (String state : stateGraph.keySet()) {
 					for (State m : stateGraph.get(state)) {
@@ -195,14 +198,16 @@ public class StateGraph {
 							for (StateTransitionPair prev : m.getPrevStatesWithTrans()) {
 								double transProb = 0.0;
 								try {
-									transProb = Double.parseDouble(lhpn.getTransitionRate(prev.getTransition()));
+									transProb = Double.parseDouble(lhpn.getTransitionRate(prev
+											.getTransition()));
 								}
 								catch (Exception e) {
 								}
 								nextProb += (prev.getState().getCurrentProb() * transProb);
 							}
 							m.setNextProb(nextProb);
-							double diff = Math.abs(((m.getCurrentProb() - m.getNextProb())/m.getCurrentProb()));
+							double diff = Math.abs(((m.getCurrentProb() - m.getNextProb()) / m
+									.getCurrentProb()));
 							if (diff > greatestDiff) {
 								greatestDiff = diff;
 							}
@@ -219,7 +224,8 @@ public class StateGraph {
 				else {
 					done = true;
 				}
-			} while(!done);
+			}
+			while (!done);
 			for (String state : stateGraph.keySet()) {
 				for (State m : stateGraph.get(state)) {
 					m.setCurrentProb(m.getCurrentProb() / period);
@@ -324,7 +330,7 @@ public class StateGraph {
 
 			for (String state : stateGraph.keySet()) {
 				for (State m : stateGraph.get(state)) {
-					out.write(m.getID() + " [shape=\"ellipse\",label=\"" + state + "\"]\n");
+					out.write(m.getID() + " [shape=\"ellipse\",label=\"<" + state + ">\"]\n");
 					for (State next : m.getNextStates()) {
 						out.write(m.getID() + " -> " + next.getID() + "\n");
 					}
@@ -337,7 +343,7 @@ public class StateGraph {
 			System.err.println("Error outputting state graph as dot file.");
 		}
 	}
-	
+
 	public void outputStateGraphWithProbs(String file) {
 		try {
 			BufferedWriter out = new BufferedWriter(new FileWriter(file));
@@ -345,7 +351,8 @@ public class StateGraph {
 
 			for (String state : stateGraph.keySet()) {
 				for (State m : stateGraph.get(state)) {
-					out.write(m.getID() + " [shape=\"ellipse\",label=\"" + state + " Prob = " + m.getCurrentProb() +"\"]\n");
+					out.write(m.getID() + " [shape=\"ellipse\",label=\"<" + state + "> Prob = "
+							+ m.getCurrentProb() + "\"]\n");
 					for (State next : m.getNextStates()) {
 						out.write(m.getID() + " -> " + next.getID() + "\n");
 					}
@@ -365,8 +372,8 @@ public class StateGraph {
 		private ArrayList<String> markedPlaces;
 		private State parent;
 
-		private Transition(String transition, ArrayList<String> markedPlaces, boolean[] variableVector,
-				State parent) {
+		private Transition(String transition, ArrayList<String> markedPlaces,
+				boolean[] variableVector, State parent) {
 			this.transition = transition;
 			this.markedPlaces = markedPlaces;
 			this.variableVector = variableVector;
@@ -418,7 +425,8 @@ public class StateGraph {
 		private double currentProb;
 		private double nextProb;
 
-		public State(String[] markings, StateTransitionPair[] nextStates, String id, String stateVector) {
+		public State(String[] markings, StateTransitionPair[] nextStates, String id,
+				String stateVector) {
 			this.markings = markings;
 			this.nextStates = nextStates;
 			prevStates = new StateTransitionPair[0];
@@ -436,23 +444,23 @@ public class StateGraph {
 		private String[] getMarkings() {
 			return markings;
 		}
-		
+
 		private void setCurrentProb(double probability) {
 			currentProb = probability;
 		}
-		
+
 		private double getCurrentProb() {
 			return currentProb;
 		}
-		
+
 		private void setNextProb(double probability) {
 			nextProb = probability;
 		}
-		
+
 		private double getNextProb() {
 			return nextProb;
 		}
-		
+
 		private void setCurrentProbToNext() {
 			currentProb = nextProb;
 		}
