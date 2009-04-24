@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Stack;
-import lhpn2sbml.parser.ExprTree;
 import lhpn2sbml.parser.LHPNFile;
 
 public class StateGraph {
@@ -79,7 +78,7 @@ public class StateGraph {
 			}
 			for (int i = 0; i < variables.size(); i++) {
 				if (lhpn.getBoolAssignTree(fire.getTransition(), variables.get(i)) != null) {
-					if (evaluateExp(lhpn.getBoolAssignTree(fire.getTransition(), variables.get(i))) == 1) {
+					if (lhpn.getBoolAssign(fire.getTransition(), variables.get(i)).toLowerCase().equals("true")) {
 						variableVector[i] = true;
 					}
 					else {
@@ -172,10 +171,6 @@ public class StateGraph {
 		}
 	}
 
-	private int evaluateExp(ExprTree[] exprTrees) {
-		return 0;
-	}
-
 	public void performMarkovianAnalysis() {
 		State initial = getInitialState();
 		if (initial != null) {
@@ -194,6 +189,15 @@ public class StateGraph {
 				for (String state : stateGraph.keySet()) {
 					for (State m : stateGraph.get(state)) {
 						if (m.getColor() % period == step) {
+							double transitionSum = 0.0;
+							for (StateTransitionPair prev : m.getPrevStatesWithTrans()) {
+								try {
+									transitionSum += Double.parseDouble(lhpn.getTransitionRate(prev
+											.getTransition()));
+								}
+								catch (Exception e) {
+								}
+							}
 							double nextProb = 0.0;
 							for (StateTransitionPair prev : m.getPrevStatesWithTrans()) {
 								double transProb = 0.0;
@@ -203,6 +207,7 @@ public class StateGraph {
 								}
 								catch (Exception e) {
 								}
+								transProb /= transitionSum;
 								nextProb += (prev.getState().getCurrentProb() * transProb);
 							}
 							m.setNextProb(nextProb);
@@ -228,7 +233,16 @@ public class StateGraph {
 			double totalProb = 0.0;
 			for (String state : stateGraph.keySet()) {
 				for (State m : stateGraph.get(state)) {
-					m.setCurrentProb(m.getCurrentProb() / period);
+					double transitionSum = 0.0;
+					for (StateTransitionPair prev : m.getNextStatesWithTrans()) {
+						try {
+							transitionSum += Double.parseDouble(lhpn.getTransitionRate(prev
+									.getTransition()));
+						}
+						catch (Exception e) {
+						}
+					}
+					m.setCurrentProb((m.getCurrentProb() / period) / transitionSum);
 					totalProb += m.getCurrentProb();
 				}
 			}
@@ -487,6 +501,10 @@ public class StateGraph {
 
 		private void setCurrentProbToNext() {
 			currentProb = nextProb;
+		}
+		
+		private StateTransitionPair[] getNextStatesWithTrans() {
+			return nextStates;
 		}
 
 		private StateTransitionPair[] getPrevStatesWithTrans() {
