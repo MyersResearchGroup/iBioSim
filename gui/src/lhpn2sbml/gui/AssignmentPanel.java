@@ -74,9 +74,11 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 		for (int i = 0; i < tempArray.length; i++) {
 			boolean contains = false;
 			if (selected != null) {
-				if (!(selected.startsWith(tempArray[i] + ":=") || selected.startsWith(tempArray[i] + "':="))) {
+				if (!(selected.startsWith(tempArray[i] + ":=") || selected.startsWith(tempArray[i]
+						+ "':="))) {
 					for (int j = 0; j < tempList.length; j++) {
-						if (tempList[j].startsWith(tempArray[i] + ":=") || tempList[j].startsWith(tempArray[i] + "':=")) {
+						if (tempList[j].startsWith(tempArray[i] + ":=")
+								|| tempList[j].startsWith(tempArray[i] + "':=")) {
 							contains = true;
 							break;
 						}
@@ -85,7 +87,8 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 			}
 			else {
 				for (int j = 0; j < tempList.length; j++) {
-					if (tempList[j].startsWith(tempArray[i] + ":=") || tempList[j].startsWith(tempArray[i] + "':=")) {
+					if (tempList[j].startsWith(tempArray[i] + ":=")
+							|| tempList[j].startsWith(tempArray[i] + "':=")) {
 						contains = true;
 						break;
 					}
@@ -378,12 +381,25 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 	public void save() {
 		String variable = varBox.getSelectedItem().toString();
 		String value = "";
+		ExprTree[] expr = new ExprTree[2];
 		if (fields.get("Assignment upper").getValue().equals("")) {
 			value = fields.get("Assignment lower").getValue();
+			expr[0].token = expr[0].intexpr_gettok(value);
+			if (!value.equals("")) {
+				expr[0].intexpr_L(value);
+			}
 		}
 		else {
 			value = "[" + fields.get("Assignment lower").getValue() + ","
 					+ fields.get("Assignment upper").getValue() + "]";
+			expr[0].token = expr[0].intexpr_gettok(fields.get("Assignment lower").getValue());
+			if (!fields.get("Assignment lower").getValue().equals("")) {
+				expr[0].intexpr_L(fields.get("Assignment lower").getValue());
+			}
+			expr[1].token = expr[0].intexpr_gettok(fields.get("Assignment upper").getValue());
+			if (!fields.get("Assignment upper").getValue().equals("")) {
+				expr[1].intexpr_L(fields.get("Assignment upper").getValue());
+			}
 		}
 		Properties property = new Properties();
 		for (PropertyField f : fields.values()) {
@@ -403,7 +419,7 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 				else {
 					// System.out.println(transition + " " + id + " " +
 					// property.getProperty("Assignment value"));
-					lhpn.addContAssign(transition, variable, value);
+					lhpn.addContAssign(transition, variable, value, expr);
 				}
 			}
 			else {
@@ -460,13 +476,12 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 	 * fields.get(GlobalConstants.KDECAY_STRING).setEnabled(true); }
 	 */
 	// }
-	private void loadProperties(Properties property) {
-		for (Object o : property.keySet()) {
-			if (fields.containsKey(o.toString())) {
-				fields.get(o.toString()).setValue(property.getProperty(o.toString()));
-				fields.get(o.toString()).setCustom();
-			}
-		}
-	}
-
+	// private void loadProperties(Properties property) {
+	// for (Object o : property.keySet()) {
+	// if (fields.containsKey(o.toString())) {
+	// fields.get(o.toString()).setValue(property.getProperty(o.toString()));
+	// fields.get(o.toString()).setCustom();
+	// }
+	// }
+	// }
 }
