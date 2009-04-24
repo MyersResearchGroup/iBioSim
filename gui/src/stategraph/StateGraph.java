@@ -78,7 +78,8 @@ public class StateGraph {
 			}
 			for (int i = 0; i < variables.size(); i++) {
 				if (lhpn.getBoolAssignTree(fire.getTransition(), variables.get(i)) != null) {
-					if (lhpn.getBoolAssign(fire.getTransition(), variables.get(i)).toLowerCase().equals("true")) {
+					if (lhpn.getBoolAssign(fire.getTransition(), variables.get(i)).toLowerCase()
+							.equals("true")) {
 						variableVector[i] = true;
 					}
 					else {
@@ -502,7 +503,7 @@ public class StateGraph {
 		private void setCurrentProbToNext() {
 			currentProb = nextProb;
 		}
-		
+
 		private StateTransitionPair[] getNextStatesWithTrans() {
 			return nextStates;
 		}
