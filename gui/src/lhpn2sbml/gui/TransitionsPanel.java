@@ -7,6 +7,7 @@ import gcm2sbml.gui.Runnable;
 import biomodelsim.Log;
 import gcm2sbml.util.GlobalConstants;
 import gcm2sbml.util.Utility;
+import lhpn2sbml.parser.ExprTree;
 
 import java.awt.GridLayout;
 import java.awt.GridBagLayout;
@@ -49,7 +50,7 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 	// private Log log;
 
 	private HashMap<String, PropertyField> fields = null;
-	
+
 	private ExprTree delayTree, rateTree, enablingTree;
 
 	public TransitionsPanel(String selected, PropertyList transitionsList,
@@ -283,8 +284,8 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 			}
 			String id = fields.get(GlobalConstants.ID).getValue();
 
-			//if ()
-			
+			// if ()
+
 			// Check to see if we need to add or edit
 			Properties property = new Properties();
 			for (PropertyField f : fields.values()) {
@@ -339,7 +340,26 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 				String[] tempArray = s.split(":=");
 				// System.out.println(transition + " " + tempArray[0] + " " +
 				// tempArray[1]);
-				lhpn.addContAssign(transition, tempArray[0], tempArray[1]);
+				ExprTree[] expr = new ExprTree[2];
+				Pattern pattern = Pattern.compile("\\[(\\w+?),(\\w+?)\\]");
+				Matcher matcher = pattern.matcher(tempArray[1]);
+				if (matcher.find()) {
+					expr[0].token = expr[0].intexpr_gettok(matcher.group(1));
+					if (!matcher.group(1).equals("")) {
+						expr[0].intexpr_L(matcher.group(1));
+					}
+					expr[1].token = expr[1].intexpr_gettok(matcher.group(2));
+					if (!matcher.group(2).equals("")) {
+						expr[1].intexpr_L(matcher.group(2));
+					}
+				}
+				else {
+					expr[0].token = expr[0].intexpr_gettok(tempArray[1]);
+					if (!tempArray[1].equals("")) {
+						expr[0].intexpr_L(tempArray[1]);
+					}
+				}
+				lhpn.addContAssign(transition, tempArray[0], tempArray[1], expr);
 				// log.addText("continuous "+ tempArray[0]);
 			}
 		}
@@ -557,13 +577,13 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 		return false;
 	}
 
-	private void loadProperties(Properties property) {
-		for (Object o : property.keySet()) {
-			if (fields.containsKey(o.toString())) {
-				fields.get(o.toString()).setValue(property.getProperty(o.toString()));
-				fields.get(o.toString()).setCustom();
-			}
-		}
-	}
+	// private void loadProperties(Properties property) {
+	// for (Object o : property.keySet()) {
+	// if (fields.containsKey(o.toString())) {
+	// fields.get(o.toString()).setValue(property.getProperty(o.toString()));
+	// fields.get(o.toString()).setCustom();
+	// }
+	// }
+	// }
 
 }

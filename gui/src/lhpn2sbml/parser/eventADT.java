@@ -1,7 +1,5 @@
 package lhpn2sbml.parser;
 
-import lhpn2sbml.parser.ExprTree.ineqADT;
-
 public class eventADT {
 	String event;
 
@@ -44,8 +42,6 @@ public class eventADT {
 	level_exp SOP;
 
 	ExprTree EXP;
-
-	ineqADT inequalities;
 
 	class level_exp {
 		String product;

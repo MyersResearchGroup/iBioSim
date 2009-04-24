@@ -214,7 +214,7 @@ public class VarAssignPanel extends JPanel implements ActionListener {
 		}
 		else {
 			//System.out.println(transition + " " + id + " " + property.getProperty("Assignment value"));
-			lhpn.addContAssign(transition, id, property.getProperty("Value"));
+			lhpn.addContAssign(transition, id, property.getProperty("Value"), null);
 		}
 	}
 	
