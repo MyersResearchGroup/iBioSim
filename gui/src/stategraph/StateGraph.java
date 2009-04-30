@@ -260,7 +260,7 @@ public class StateGraph {
 		int period = 0;
 		int color = 0;
 		state.setColor(color);
-		color++;
+		color = state.getColor() + 1;
 		Queue<State> unVisitedStates = new LinkedList<State>();
 		for (State s : state.getNextStates()) {
 			if (s.getColor() == -1) {
@@ -278,7 +278,7 @@ public class StateGraph {
 		}
 		while (!unVisitedStates.isEmpty()) {
 			state = unVisitedStates.poll();
-			color++;
+			color = state.getColor() + 1;
 			for (State s : state.getNextStates()) {
 				if (s.getColor() == -1) {
 					s.setColor(color);
