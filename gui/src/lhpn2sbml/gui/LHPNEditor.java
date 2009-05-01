@@ -19,6 +19,7 @@ import java.awt.event.*;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.util.ArrayList;
 //import java.io.FileNotFoundException;
 //import java.io.FileOutputStream;
 //import java.io.PrintStream;
@@ -29,9 +30,10 @@ import java.io.FileReader;
 //import java.util.Set;
 
 //import javax.swing.DefaultComboBoxModel;
-//import javax.swing.JCheckBox;
+import javax.swing.JCheckBox;
 //import javax.swing.JComboBox;
 //import javax.swing.JFrame;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -71,7 +73,7 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 	private LHPNFile lhpnFile = null;
 
 	private JPanel mainPanel;// buttonPanel;
-	
+
 	private JButton abstButton;
 
 	private boolean flag = true, dirty = false;
@@ -137,7 +139,7 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 		mainPanelNorth.add(lhpnNameTextField);
 		mainPanelNorth.add(propertyLabel);
 		mainPanelNorth.add(propertyField);
-		//mainPanelNorth.add(abstButton);
+		mainPanelNorth.add(abstButton);
 
 		// buttonPanel = new JPanel();
 		// JButton save = new JButton("Save");
@@ -295,7 +297,7 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 					JOptionPane.ERROR_MESSAGE);
 		}
 	}
-	
+
 	public void reload(String newName) {
 		filename = newName + ".lpn";
 		lhpnFile.load(directory + File.separator + newName);
@@ -348,7 +350,9 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 			else if (getName().contains("Place")) {
 				String name = list.getSelectedValue().toString();
 				if (lhpnFile.containsFlow(name)) {
-					JOptionPane.showMessageDialog(this, "Must remove " + name + " from control flow", "Cannot remove place " + name, JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(this, "Must remove " + name
+							+ " from control flow", "Cannot remove place " + name,
+							JOptionPane.ERROR_MESSAGE);
 					return;
 				}
 				lhpnFile.removePlace(name);
@@ -357,7 +361,9 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 			else if (getName().contains("Transition")) {
 				String name = list.getSelectedValue().toString();
 				if (lhpnFile.containsFlow(name)) {
-					JOptionPane.showMessageDialog(this, "Must remove " + name + " from control flow", "Cannot remove transition " + name, JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(this, "Must remove " + name
+							+ " from control flow", "Cannot remove transition " + name,
+							JOptionPane.ERROR_MESSAGE);
 					return;
 				}
 				lhpnFile.removeTransition(name);
@@ -382,10 +388,41 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 		}
 		else if (e.getSource() == abstButton) {
 			Abstraction abst = lhpnFile.abstractLhpn();
-			abst.abstractSTG();
-			String abstFilename = filename.replace(".lpn", "_ABST.lpn");
-			abst.save(directory + separator + abstFilename);
-			biosim.refreshTree();
+			String[] variables = lhpnFile.getBooleanVars();
+			//String[] vars = null;
+			String abstFilename = (String) JOptionPane.showInputDialog(this,
+					"Please enter the file name for the abstracted LHPN.", "Enter Filename",
+					JOptionPane.PLAIN_MESSAGE);
+			if (abstFilename != null) {
+				if (!abstFilename.endsWith(".lpn"))
+					abstFilename = abstFilename + ".lpn";
+				String[] options = { "Ok", "Cancel" };
+				JPanel panel = new JPanel();
+				JCheckBox[] list = new JCheckBox[variables.length];
+				ArrayList<String> tempVars = new ArrayList<String>();
+				for (int i=0; i<variables.length; i++) {
+					JCheckBox temp = new JCheckBox(variables[i]);
+					panel.add(temp);
+					list[i] = temp;
+				}
+				int value = JOptionPane.showOptionDialog(new JFrame(), panel, "Variable Assignment Editor",
+						JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+				if (value == JOptionPane.YES_OPTION) {
+					for (int i=0; i<list.length; i++) {
+						if (list[i].isSelected()) {
+							tempVars.add(variables[i]);
+						}
+					}
+					String[] vars = new String[tempVars.size()];
+					for (int i=0; i<tempVars.size(); i++) {
+						vars[i] = tempVars.get(i);
+					}
+					abst.abstractVars(vars);
+				}
+				abst.abstractSTG();
+				abst.save(directory + separator + abstFilename);
+				biosim.refreshTree();
+			}
 		}
 	}
 
@@ -443,7 +480,7 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 				String selected = null;
 				Boolean continuous = false;
 				Boolean integer = false;
-				//log.addText(list.getSelectedValue().toString());
+				// log.addText(list.getSelectedValue().toString());
 				if (list.getSelectedValue() != null && getName().contains("Edit")) {
 					selected = list.getSelectedValue().toString();
 					if (lhpnFile.isContinuous(selected)) {
