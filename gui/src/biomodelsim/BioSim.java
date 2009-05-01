@@ -4440,11 +4440,11 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				else if (!filename.equals("")) {
 					String[] file = filename.split(separator);
 					try {
-						if (!new File(filename).exists()) {
+						if (new File(filename).exists()) {
 							FileOutputStream out = new FileOutputStream(new File(root + separator
 									+ file[file.length - 1]));
 							FileInputStream in = new FileInputStream(new File(filename));
-							log.addText(filename);
+							//log.addText(filename);
 							int read = in.read();
 							while (read != -1) {
 								out.write(read);
@@ -4455,6 +4455,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						}
 						if (filename.substring(filename.length() - 2, filename.length()).equals(
 								".g")) {
+							//log.addText(filename + file[file.length - 1]);
 							File work = new File(root);
 							String oldName = root + separator + file[file.length - 1];
 							// String newName = oldName.replace(".lpn",
