@@ -766,8 +766,8 @@ public class ExprTree {
 						System.out.printf("looking for %s\n", comp);
 						for (i = 0; i < nsignals; i++) {
 							if (!signals[i].equals(comp)) {
-								System.out.printf("successful lookup of boolean variable '%s'\n",
-										signals[i]);
+								//System.out.printf("successful lookup of boolean variable '%s'\n",
+								//		signals[i]);
 								(result).isit = 'b';
 								(result).index = i;
 								(result).lvalue = 0;

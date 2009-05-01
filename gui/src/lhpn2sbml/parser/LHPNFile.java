@@ -26,6 +26,8 @@ public class LHPNFile {
 	private HashMap<String, String> outputs;
 
 	private HashMap<String, String> enablings;
+	
+	private HashMap<String, ExprTree> enablingTrees;
 
 	private HashMap<String, Properties> controlFlow;
 
@@ -69,6 +71,7 @@ public class LHPNFile {
 		inputs = new HashMap<String, String>();
 		outputs = new HashMap<String, String>();
 		enablings = new HashMap<String, String>();
+		enablingTrees = new HashMap<String, ExprTree>();
 		delays = new HashMap<String, String>();
 		delayTrees = new HashMap<String, ExprTree[]>();
 		transitionRateTrees = new HashMap<String, ExprTree>();
@@ -92,6 +95,7 @@ public class LHPNFile {
 		inputs = new HashMap<String, String>();
 		outputs = new HashMap<String, String>();
 		enablings = new HashMap<String, String>();
+		enablingTrees = new HashMap<String, ExprTree>();
 		delays = new HashMap<String, String>();
 		delayTrees = new HashMap<String, ExprTree[]>();
 		transitionRateTrees = new HashMap<String, ExprTree>();
@@ -447,6 +451,7 @@ public class LHPNFile {
 		inputs = new HashMap<String, String>();
 		outputs = new HashMap<String, String>();
 		enablings = new HashMap<String, String>();
+		enablingTrees = new HashMap<String, ExprTree>();
 		controlFlow = new HashMap<String, Properties>();
 		controlPlaces = new HashMap<String, Properties>();
 		variables = new HashMap<String, Properties>();
@@ -976,6 +981,10 @@ public class LHPNFile {
 		}
 		booleanAssignmentTrees.put(name, assignments);
 		enablings.put(name, enabling);
+		expr = new ExprTree(this);
+		expr.token = expr.intexpr_gettok(enabling);
+		expr.intexpr_L(enabling);
+		enablingTrees.put(name, expr);
 		contAssignments.put(name, null);
 		contAssignmentTrees.put(name, null);
 		intAssignments.put(name, null);
@@ -993,6 +1002,7 @@ public class LHPNFile {
 		booleanAssignments.remove(name);
 		booleanAssignmentTrees.remove(name);
 		enablings.remove(name);
+		enablingTrees.remove(name);
 		contAssignments.remove(name);
 		contAssignmentTrees.remove(name);
 		intAssignments.remove(name);
@@ -1011,11 +1021,18 @@ public class LHPNFile {
 
 	public void addEnabling(String name, String cond) {
 		enablings.put(name, cond);
+		ExprTree expr = new ExprTree(this);
+		expr.token = expr.intexpr_gettok(cond);
+		expr.intexpr_L(cond);
+		enablingTrees.put(name, expr);
 	}
 
 	public void removeEnabling(String name) {
 		if (name != null && enablings.containsKey(name)) {
 			enablings.remove(name);
+		}
+		if (name != null && enablingTrees.containsKey(name)) {
+			enablingTrees.remove(name);
 		}
 	}
 
@@ -1325,6 +1342,8 @@ public class LHPNFile {
 		booleanAssignmentTrees.remove(oldName);
 		enablings.put(newName, enablings.get(oldName));
 		enablings.remove(oldName);
+		enablingTrees.put(newName, enablingTrees.get(oldName));
+		enablingTrees.remove(oldName);
 	}
 
 	public void changeDelay(String transition, String delay) {
@@ -1366,6 +1385,13 @@ public class LHPNFile {
 			enablings.remove(transition);
 		}
 		enablings.put(transition, enabling);
+		if (enablingTrees.containsKey(transition)) {
+			enablingTrees.remove(transition);
+		}
+		ExprTree expr = new ExprTree(this);
+		expr.token = expr.intexpr_gettok(enabling);
+		expr.intexpr_L(enabling);
+		enablingTrees.put(transition, expr);
 	}
 
 	public String[] getAllIDs() {
@@ -1542,6 +1568,10 @@ public class LHPNFile {
 
 	public String getEnabling(String var) {
 		return enablings.get(var);
+	}
+	
+	public ExprTree getEnablingTree(String var) {
+		return enablingTrees.get(var);
 	}
 
 	public String[] getBooleanVars(String trans) {
@@ -1805,6 +1835,7 @@ public class LHPNFile {
 		abstraction.addInputs(inputs);
 		abstraction.addOutputs(outputs);
 		abstraction.addEnablings(enablings);
+		abstraction.addEnablingTrees(enablingTrees);
 		abstraction.addDelays(delays);
 		abstraction.addDelayTrees(delayTrees);
 		abstraction.addRateTrees(transitionRateTrees);
@@ -2227,6 +2258,12 @@ public class LHPNFile {
 			Matcher enabMatcher = enabPattern.matcher(lineMatcher.group(1));
 			while (enabMatcher.find()) {
 				enablings.put(enabMatcher.group(2), enabMatcher.group(4));
+				ExprTree expr = new ExprTree(this);
+				if (enabMatcher.group(4) != null) {
+					expr.token = expr.intexpr_gettok(enabMatcher.group(4));
+					expr.intexpr_L(enabMatcher.group(4));
+					enablingTrees.put(enabMatcher.group(2), expr);
+				}
 				// log.addText(enabMatcher.group(2) + enabMatcher.group(4));
 			}
 		}
