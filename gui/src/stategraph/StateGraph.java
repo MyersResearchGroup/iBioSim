@@ -175,7 +175,7 @@ public class StateGraph {
 	public void performMarkovianAnalysis() {
 		State initial = getInitialState();
 		if (initial != null) {
-			resetColors();
+			resetColorsFromMarkovianAnalysis();
 			int period = findPeriod(initial);
 			if (period == 0) {
 				period = 1;
@@ -303,10 +303,18 @@ public class StateGraph {
 		return gcd(b, a % b);
 	}
 
-	public void resetColors() {
+	private void resetColorsFromMarkovianAnalysis() {
 		for (String state : stateGraph.keySet()) {
 			for (State m : stateGraph.get(state)) {
 				m.setColor(-1);
+			}
+		}
+	}
+
+	public void resetColors() {
+		for (String state : stateGraph.keySet()) {
+			for (State m : stateGraph.get(state)) {
+				m.setColor(0);
 			}
 		}
 	}
@@ -471,7 +479,7 @@ public class StateGraph {
 			prevStates = new StateTransitionPair[0];
 			this.id = id;
 			this.stateVector = stateVector;
-			color = -1;
+			color = 0;
 			currentProb = 0.0;
 			nextProb = 0.0;
 		}
