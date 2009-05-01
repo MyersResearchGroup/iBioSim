@@ -20,6 +20,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
+import javax.swing.BoxLayout;
 //import java.io.FileNotFoundException;
 //import java.io.FileOutputStream;
 //import java.io.PrintStream;
@@ -398,6 +399,7 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 					abstFilename = abstFilename + ".lpn";
 				String[] options = { "Ok", "Cancel" };
 				JPanel panel = new JPanel();
+				panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 				JCheckBox[] list = new JCheckBox[variables.length];
 				ArrayList<String> tempVars = new ArrayList<String>();
 				for (int i=0; i<variables.length; i++) {
