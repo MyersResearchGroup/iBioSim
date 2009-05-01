@@ -77,7 +77,7 @@ public class StateGraph {
 				markedPlaces.add(place);
 			}
 			for (int i = 0; i < variables.size(); i++) {
-				if (lhpn.getBoolAssignTree(fire.getTransition(), variables.get(i)) != null) {
+				if (lhpn.getBoolAssign(fire.getTransition(), variables.get(i)) != null) {
 					if (lhpn.getBoolAssign(fire.getTransition(), variables.get(i)).toLowerCase()
 							.equals("true")) {
 						variableVector[i] = true;
@@ -197,6 +197,7 @@ public class StateGraph {
 											.getTransition()));
 								}
 								catch (Exception e) {
+									transitionSum += 1;
 								}
 							}
 							double nextProb = 0.0;
@@ -207,6 +208,7 @@ public class StateGraph {
 											.getTransition()));
 								}
 								catch (Exception e) {
+									transProb = 1;
 								}
 								transProb /= transitionSum;
 								nextProb += (prev.getState().getCurrentProb() * transProb);
@@ -241,6 +243,7 @@ public class StateGraph {
 									.getTransition()));
 						}
 						catch (Exception e) {
+							transitionSum += 1;
 						}
 					}
 					m.setCurrentProb((m.getCurrentProb() / period) / transitionSum);
