@@ -53,7 +53,8 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 	public void visitDimer(DimerSpecies specie) {
 		loadValues(specie.getProperties());
 		//Check if they have decay rates, if not, then don't allow decay
-		if (!dimerizationAbstraction && decay > 0) {
+//		if (!dimerizationAbstraction && decay > 0) {
+		if (false) {
 			Reaction r = new Reaction("Degradation_"+specie.getId());
 			r.addReactant(new SpeciesReference(specie.getId(), 1));
 			r.setReversible(false);
