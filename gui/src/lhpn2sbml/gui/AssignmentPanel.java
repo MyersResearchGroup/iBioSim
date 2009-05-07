@@ -378,7 +378,7 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 		fields.put(GlobalConstants.ID, idField);
 	}
 
-	public void save() {
+	public boolean save() {
 		String variable = varBox.getSelectedItem().toString();
 		String value = "";
 		ExprTree[] expr = new ExprTree[2];
@@ -456,9 +456,12 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 			else {
 				// System.out.println(transition + " " + id + " " +
 				// property.getProperty("Assignment value"));
-				lhpn.addBoolAssign(transition, variable, value);
+				if (!lhpn.addBoolAssign(transition, variable, value)) {
+					return false;
+				}
 			}
 		}
+		return true;
 	}
 
 	// private void setType(String type) {

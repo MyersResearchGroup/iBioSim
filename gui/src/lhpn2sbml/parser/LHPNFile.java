@@ -1137,7 +1137,8 @@ public class LHPNFile {
 		}
 	}
 
-	public void addBoolAssign(String transition, String name, String value) {
+	public boolean addBoolAssign(String transition, String name, String value) {
+		boolean retval = false;
 		Properties prop = new Properties();
 		if (booleanAssignments.get(transition) != null) {
 			prop = booleanAssignments.get(transition);
@@ -1151,11 +1152,12 @@ public class LHPNFile {
 		ExprTree expr = new ExprTree(this);
 		expr.token = expr.intexpr_gettok(value);
 		if (!value.equals("")) {
-			expr.intexpr_L(value);
+			retval = expr.intexpr_L(value);
 		}
 		ExprTree[] array = { expr };
 		map.put(name, array);
 		booleanAssignmentTrees.put(transition, map);
+		return retval;
 	}
 
 	public void removeBoolAssign(String transition, String name) {
@@ -2508,21 +2510,13 @@ public class LHPNFile {
 			// log.addText("check8b");
 			while (delayMatcher.find()) {
 				// log.addText("check8while");
-				// ExprTree expr = new ExprTree();
-				// String tokvalue = new String();
-				// int position = 0;
-				// int token = expr.intexpr_gettok(delayMatcher.group(4),
-				// tokvalue, 256, position);
-				// signalADT[] signals = new signalADT[256];
-				// int nsignals = 0;
-				// eventADT[] events = new eventADT[256];
-				// int nevents = 0;
-				// int nplaces = 0;
-				// expr.intexpr_L(token, delayMatcher.group(4), tokvalue,
-				// position, expr, signals,
-				// nsignals, events, nevents, nplaces);
-				// transitionRateTrees.put(delayMatcher.group(2), expr);
+				ExprTree expr = new ExprTree(this);
+				if (delayMatcher.group(4) != null) {
+				expr.token = expr.intexpr_gettok(delayMatcher.group(4));
+				expr.intexpr_L(delayMatcher.group(4));
+				transitionRateTrees.put(delayMatcher.group(2), expr);
 				transitionRates.put(delayMatcher.group(2), delayMatcher.group(4));
+				}
 			}
 		}
 		// log.addText("check8end");
