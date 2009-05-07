@@ -1,5 +1,7 @@
 package lhpn2sbml.parser;
 
+import java.util.ArrayList;
+
 public class ExprTree {
 
 	String op;
@@ -25,9 +27,9 @@ public class ExprTree {
 
 	private ExprTree newresult;
 
-	private String[] signals;
+	private ArrayList<String> signals;
 
-	private int nsignals;// nevents, nplaces;
+	//private int nsignals;// nevents, nplaces;
 
 	private LHPNFile lhpn;
 
@@ -36,21 +38,16 @@ public class ExprTree {
 		String[] bools = lhpn.getBooleanVars();
 		String[] conts = lhpn.getContVars();
 		String[] ints = lhpn.getIntVars();
-		signals = new String[bools.length + conts.length + ints.length];
-		int i=0;
-		for (int j=0; j<bools.length; j++) {
-			signals[i] = bools[j];
-			i++;
+		signals = new ArrayList<String>();
+		for (int j = 0; j < bools.length; j++) {
+			signals.add(bools[j]);
 		}
-		for (int j=0; j<conts.length; j++) {
-			signals[i] = conts[j];
-			i++;
+		for (int j = 0; j < conts.length; j++) {
+			signals.add(conts[j]);
 		}
-		for (int j=0; j<ints.length; j++) {
-			signals[i] = conts[j];
-			i++;
+		for (int j = 0; j < ints.length; j++) {
+			signals.add(ints[j]);
 		}
-		nsignals = signals.length;
 	}
 
 	// ExprTree(char willbe, boolean lNV, boolean uNV, int ptr) {
@@ -124,16 +121,15 @@ public class ExprTree {
 		}
 		position = source.position;
 		token = source.token;
-		//if (source.result != null) {
-		//	result = source.result;
-		//}
+		// if (source.result != null) {
+		// result = source.result;
+		// }
 		if (source.newresult != null) {
 			newresult = source.newresult;
 		}
 		if (source.signals != null) {
 			signals = source.signals;
 		}
-		nsignals = source.nsignals;
 		if (source.lhpn != null) {
 			lhpn = source.lhpn;
 		}
@@ -202,7 +198,6 @@ public class ExprTree {
 	public boolean intexpr_U(String expr) {
 		// System.out.println("U: token = " + token + " tokvalue = " + tokvalue
 		// + " result = " + result);
-		int i;
 		int temp;
 		ExprTree newresult = null;
 
@@ -233,7 +228,7 @@ public class ExprTree {
 					(this).uvalue = (this).lvalue;
 				}
 				else {
-					//(result) = new ExprTree((result), newresult, "&", 'w');
+					// (result) = new ExprTree((result), newresult, "&", 'w');
 					setNodeValues((this), newresult, "&", 'w');
 				}
 				(token) = intexpr_gettok(expr);
@@ -266,7 +261,7 @@ public class ExprTree {
 					(this).uvalue = (this).lvalue;
 				}
 				else {
-					//(result) = new ExprTree((result), newresult, "|", 'w');
+					// (result) = new ExprTree((result), newresult, "|", 'w');
 					setNodeValues((this), newresult, "|", 'w');
 				}
 				(token) = intexpr_gettok(expr);
@@ -299,7 +294,7 @@ public class ExprTree {
 					(this).uvalue = (this).lvalue;
 				}
 				else {
-					//(result) = new ExprTree((result), newresult, "^", 'w');
+					// (result) = new ExprTree((result), newresult, "^", 'w');
 					setNodeValues((this), newresult, "^", 'w');
 				}
 				(token) = intexpr_gettok(expr);
@@ -324,48 +319,48 @@ public class ExprTree {
 					(this).uvalue = (this).lvalue;
 				}
 				else {
-					//(result) = new ExprTree((result), null, "~", 'w');
+					// (result) = new ExprTree((result), null, "~", 'w');
 					setNodeValues((this), null, "~", 'w');
 				}
 				(token) = intexpr_gettok(expr);
 			}
 			else if ((tokvalue.equals("true")) || (tokvalue.equals("t")) || tokvalue.equals("TRUE")
 					|| tokvalue.equals("T")) {
-				//(result) = new ExprTree('t', 1, 1, null);
+				// (result) = new ExprTree('t', 1, 1, null);
 				setVarValues('t', 1, 1, null);
 				(token) = intexpr_gettok(expr);
 			}
 			else if ((tokvalue.equals("false")) || (tokvalue.equals("f"))
 					|| tokvalue.equals("FALSE") || tokvalue.equals("F")) {
-				//(result) = new ExprTree('t', 0, 0, null);
+				// (result) = new ExprTree('t', 0, 0, null);
 				setVarValues('t', 0, 0, null);
 				(token) = intexpr_gettok(expr);
 			}
 			else {
 				// do boolean lookup here!!!
-				for (i = 0; i < nsignals; i++) {
+				//for (i = 0; i < nsignals; i++) {
 					// System.out.println("Signal " + signals[i]);
-					if (signals[i].equals(tokvalue)) {
-						if (lhpn.isInput(signals[i]) || lhpn.isOutput(signals[i])){
+					if (signals.contains(tokvalue)) {
+						if (lhpn.isInput(tokvalue) || lhpn.isOutput(tokvalue)) {
 							// printf("successful lookup of boolean variable
 							// %s\n",signals[i]);
-							//(result) = new ExprTree('b', 0, 1, signals[i]);
-							setVarValues('b', 0, 1, signals[i]);
+							// (result) = new ExprTree('b', 0, 1, signals[i]);
+							setVarValues('b', 0, 1, tokvalue);
 							(token) = intexpr_gettok(expr);
 							return true;
 						}
-						else if (lhpn.isInteger(signals[i])) {
-							setVarValues('i', -INFIN, INFIN, signals[i]);
+						else if (lhpn.isInteger(tokvalue)) {
+							setVarValues('i', -INFIN, INFIN, tokvalue);
 							(token) = intexpr_gettok(expr);
 							return true;
 						}
 						else {
-							setVarValues('c', -INFIN, INFIN, signals[i]);
+							setVarValues('c', -INFIN, INFIN, tokvalue);
 							(token) = intexpr_gettok(expr);
 							return true;
 						}
 					}
-				}
+				//}
 				if (tokvalue.equals("")) {
 					System.out.printf("U1:ERROR(%s): Expected a ID, Number, or a (\n", tokvalue);
 					return false;
@@ -375,7 +370,7 @@ public class ExprTree {
 					return false;
 				}
 				temp = Integer.parseInt(tokvalue);
-				//result = new ExprTree('n', temp, temp, null);
+				// result = new ExprTree('n', temp, temp, null);
 				setVarValues('n', temp, temp, null);
 				token = intexpr_gettok(expr);
 				// printf("resolved number %f\n",temp);
@@ -418,7 +413,7 @@ public class ExprTree {
 				(this).uvalue = (this).lvalue;
 			}
 			else {
-				//(result) = new ExprTree((result), null, "U-", 'a');
+				// (result) = new ExprTree((result), null, "U-", 'a');
 				setNodeValues((this), null, "U-", 'a');
 			}
 			break;
@@ -433,13 +428,14 @@ public class ExprTree {
 	public boolean intexpr_C(String expr) {
 		// System.out.println("C: token = " + token + " tokvalue = " + tokvalue
 		// + " result = " + result);
-		//ExprTree newresult = null;
+		// ExprTree newresult = null;
 		newresult = new ExprTree(this);
 		switch (token) {
 		case '*':
 			(token) = intexpr_gettok(expr);
 			newresult.token = token;
 			newresult.tokvalue = tokvalue;
+			newresult.position = position;
 			if (!newresult.intexpr_T(expr))
 				return false;
 			token = newresult.token;
@@ -452,7 +448,7 @@ public class ExprTree {
 				(this).uvalue = (this).lvalue;
 			}
 			else {
-				//(result) = new ExprTree((result), newresult, "*", 'a');
+				// (result) = new ExprTree((result), newresult, "*", 'a');
 				setNodeValues((this), newresult, "*", 'a');
 			}
 			if (!intexpr_C(expr))
@@ -462,6 +458,7 @@ public class ExprTree {
 			(token) = intexpr_gettok(expr);
 			newresult.token = token;
 			newresult.tokvalue = tokvalue;
+			newresult.position = position;
 			if (!newresult.intexpr_T(expr))
 				return false;
 			token = newresult.token;
@@ -474,7 +471,7 @@ public class ExprTree {
 				(this).uvalue = (this).lvalue;
 			}
 			else {
-				//(result) = new ExprTree((result), newresult, "/", 'a');
+				// (result) = new ExprTree((result), newresult, "/", 'a');
 				setNodeValues((this), newresult, "/", 'a');
 			}
 			if (!intexpr_C(expr))
@@ -484,6 +481,7 @@ public class ExprTree {
 			(token) = intexpr_gettok(expr);
 			newresult.token = token;
 			newresult.tokvalue = tokvalue;
+			newresult.position = position;
 			if (!newresult.intexpr_T(expr))
 				return false;
 			token = newresult.token;
@@ -496,7 +494,7 @@ public class ExprTree {
 				(this).uvalue = (this).lvalue;
 			}
 			else {
-				//(result) = new ExprTree((result), newresult, "%", 'a');
+				// (result) = new ExprTree((result), newresult, "%", 'a');
 				setNodeValues((this), newresult, "%", 'a');
 			}
 			if (!intexpr_C(expr))
@@ -530,8 +528,8 @@ public class ExprTree {
 				(this).uvalue = (this).lvalue;
 			}
 			else {
-				//(result) = new ExprTree((result), newresult, "*", 'a');
-				//setNodeValues((this), newresult, "*", 'a');
+				// (result) = new ExprTree((result), newresult, "*", 'a');
+				setNodeValues((this), newresult, "*", 'a');
 			}
 			if (!intexpr_C(expr))
 				return false;
@@ -547,13 +545,14 @@ public class ExprTree {
 	public boolean intexpr_B(String expr) {
 		// System.out.println("B: token = " + token + " tokvalue = " + tokvalue
 		// + " result = " + result);
-		//ExprTree newresult = null;
+		// ExprTree newresult = null;
 		newresult = new ExprTree(this);
 		switch (token) {
 		case '+':
 			(token) = intexpr_gettok(expr);
 			newresult.token = token;
 			newresult.tokvalue = tokvalue;
+			newresult.position = position;
 			if (!newresult.intexpr_S(expr))
 				return false;
 			token = newresult.token;
@@ -566,7 +565,7 @@ public class ExprTree {
 				(this).uvalue = (this).lvalue;
 			}
 			else {
-				//(result) = new ExprTree((result), newresult, "+", 'a');
+				// (result) = new ExprTree((result), newresult, "+", 'a');
 				setNodeValues((this), newresult, "+", 'a');
 			}
 			if (!intexpr_B(expr))
@@ -576,6 +575,7 @@ public class ExprTree {
 			(token) = intexpr_gettok(expr);
 			newresult.token = token;
 			newresult.tokvalue = tokvalue;
+			newresult.position = position;
 			if (!newresult.intexpr_S(expr))
 				return false;
 			token = newresult.token;
@@ -588,7 +588,7 @@ public class ExprTree {
 				(this).uvalue = (this).lvalue;
 			}
 			else {
-				//(result) = new ExprTree((result), newresult, "-", 'a');
+				// (result) = new ExprTree((result), newresult, "-", 'a');
 				setNodeValues((this), newresult, "-", 'a');
 			}
 			if (!intexpr_B(expr))
@@ -654,17 +654,24 @@ public class ExprTree {
 	public boolean intexpr_P(String expr) {
 		// System.out.println("P: token = " + token + " tokvalue = " + tokvalue
 		// + " result = " + result);
-		ExprTree newresult = null;
+		// ExprTree newresult = null;
+		newresult = new ExprTree(this);
 		int spos, i;
-		char[] ineq = new char[VAR];
+		String ineq = "";
 		String comp;
 		// printf("P\n");
 		switch (token) {
 		case '=':
 			spos = position;
 			(token) = intexpr_gettok(expr);
-			if (!intexpr_R(expr))
+			newresult.token = token;
+			newresult.tokvalue = tokvalue;
+			newresult.position = position;
+			if (!newresult.intexpr_R(expr))
 				return false;
+			token = newresult.token;
+			tokvalue = newresult.tokvalue;
+			position = newresult.position;
 			// simplify if operands are static
 			if (((newresult.isit == 'n') || (newresult.isit == 't'))
 					&& (((this).isit == 'n') || ((this).isit == 't'))) {
@@ -687,25 +694,33 @@ public class ExprTree {
 							paren++;
 						if (expr.charAt(i) == ')')
 							paren--;
-						ineq[i - spos] = expr.charAt(i);
+						ineq = ineq + expr.charAt(i);
 					}
-					ineq[i - spos + paren] = 0;
+					//ineq[i - spos + paren] = 0;
 					comp += ineq;
 					// printf("looking for %s\n",comp.c_str());
-					for (i = 0; i < nsignals; i++) {
-						if (!signals[i].equals(comp)) {
+					//for (i = 0; i < nsignals; i++) {
+						if (signals.contains(comp)) {
 							// printf("successful lookup of boolean variable
 							// '%s'\n",signals[i]->name);
 							this.isit = 'b';
-							this.variable = signals[i];
+							this.variable = comp;
 							this.lvalue = 0;
 							this.uvalue = 1;
 							return true;
 						}
-					}
+						else {
+							signals.add(comp);
+							this.isit = 'b';
+							this.variable = comp;
+							this.lvalue = 0;
+							this.uvalue = 1;
+							return true;
+						}
+					//}
 				}
 				else {
-					//(result) = new ExprTree((result), newresult, "==", 'r');
+					// (result) = new ExprTree((result), newresult, "==", 'r');
 					setNodeValues((this), newresult, "==", 'r');
 				}
 			}
@@ -713,11 +728,18 @@ public class ExprTree {
 		case '>':
 			spos = position;
 			(token) = intexpr_gettok(expr);
+			newresult.token = token;
 			if ((token) == '=') {
 				spos = position;
 				(token) = intexpr_gettok(expr);
-				if (!intexpr_R(expr))
+				newresult.token = token;
+				newresult.tokvalue = tokvalue;
+				newresult.position = position;
+				if (!newresult.intexpr_R(expr))
 					return false;
+				token = newresult.token;
+				tokvalue = newresult.tokvalue;
+				position = newresult.position;
 				// simplify if operands are static
 				if (((newresult.isit == 'n') || (newresult.isit == 't'))
 						&& (((this).isit == 'n') || ((this).isit == 't'))) {
@@ -735,30 +757,40 @@ public class ExprTree {
 						comp = variable;
 						comp += ">=";
 						int paren = 0;
+						ineq = new String();
 						for (i = spos; i < position; i++) {
 							if (expr.charAt(i) == '(')
 								paren++;
 							if (expr.charAt(i) == ')')
 								paren--;
-							ineq[i - spos] = expr.charAt(i);
+							ineq = ineq + expr.charAt(i);
 						}
-						ineq[i - spos + paren] = 0;
+						//ineq[i - spos + paren] = 0;
 						comp += ineq;
 						// printf("looking for %s\n",comp.c_str());
-						for (i = 0; i < nsignals; i++) {
-							if (!signals[i].equals(comp)) {
+						//for (i = 0; i < nsignals; i++) {
+							if (signals.contains(comp)) {
 								// printf("successful lookup of boolean variable
 								// '%s'\n",signals[i]->name);
 								(this).isit = 'b';
-								this.variable = signals[i];
+								this.variable = comp;
 								(this).lvalue = 0;
 								(this).uvalue = 1;
 								return true;
 							}
-						}
+						//}
+							else {
+								signals.add(comp);
+								this.isit = 'b';
+								this.variable = comp;
+								this.lvalue = 0;
+								this.uvalue = 1;
+								return true;
+							}
 					}
 					else {
-						//(result) = new ExprTree((result), newresult, ">=", 'r');
+						// (result) = new ExprTree((result), newresult, ">=",
+						// 'r');
 						setNodeValues((this), newresult, ">=", 'r');
 					}
 				}
@@ -783,30 +815,40 @@ public class ExprTree {
 						comp = variable;
 						comp += ">";
 						int paren = 0;
+						ineq = new String();
 						for (i = spos; i < position; i++) {
 							if (expr.charAt(i) == '(')
 								paren++;
 							if (expr.charAt(i) == ')')
 								paren--;
-							ineq[i - spos] = expr.charAt(i);
+							ineq = ineq + expr.charAt(i);
 						}
-						ineq[i - spos + paren] = 0;
+						//ineq[i - spos + paren] = 0;
 						comp += ineq;
 						// printf("looking for %s\n",comp.c_str());
-						for (i = 0; i < nsignals; i++) {
-							if (!signals[i].equals(comp)) {
+						//for (i = 0; i < nsignals; i++) {
+							if (signals.contains(comp)) {
 								// printf("successful lookup of boolean variable
 								// '%s'\n",signals[i]->name);
 								(this).isit = 'b';
-								(this).variable = signals[i];
+								(this).variable = comp;
 								(this).lvalue = 0;
 								(this).uvalue = 1;
 								return true;
 							}
-						}
+							else {
+								signals.add(comp);
+								this.isit = 'b';
+								this.variable = comp;
+								this.lvalue = 0;
+								this.uvalue = 1;
+								return true;
+							}
+						//}
 					}
 					else {
-						//(result) = new ExprTree((result), newresult, ">", 'r');
+						// (result) = new ExprTree((result), newresult, ">",
+						// 'r');
 						setNodeValues((this), newresult, ">", 'r');
 					}
 				}
@@ -818,8 +860,14 @@ public class ExprTree {
 			if ((token) == '=') {
 				spos = position;
 				(token) = intexpr_gettok(expr);
-				if (!intexpr_R(expr))
+				newresult.token = token;
+				newresult.tokvalue = tokvalue;
+				newresult.position = position;
+				if (!newresult.intexpr_R(expr))
 					return false;
+				token = newresult.token;
+				tokvalue = newresult.tokvalue;
+				position = newresult.position;
 				// simplify if operands are static
 				if (((newresult.isit == 'n') || (newresult.isit == 't'))
 						&& (((this).isit == 'n') || ((this).isit == 't'))) {
@@ -837,36 +885,46 @@ public class ExprTree {
 						comp = variable;
 						comp += "<=";
 						int paren = 0;
+						ineq = new String();
 						for (i = spos; i < position; i++) {
 							if (expr.charAt(i) == '(')
 								paren++;
 							if (expr.charAt(i) == ')')
 								paren--;
-							ineq[i - spos] = expr.charAt(i);
+							ineq = ineq + expr.charAt(i);
 						}
-						ineq[i - spos + paren] = 0;
+						//ineq[i - spos + paren] = 0;
 						comp += ineq;
 						// printf("looking for %s\n",comp.c_str());
-						for (i = 0; i < nsignals; i++) {
-							if (!signals[i].equals(comp)) {
+						//for (i = 0; i < nsignals; i++) {
+							if (signals.contains(comp)) {
 								// printf("successful lookup of boolean variable
 								// '%s'\n",signals[i]->name);
 								(this).isit = 'b';
-								(this).variable = signals[i];
+								(this).variable = comp;
 								(this).lvalue = 0;
 								(this).uvalue = 1;
 								return true;
 							}
-						}
+							else {
+								signals.add(comp);
+								this.isit = 'b';
+								this.variable = comp;
+								this.lvalue = 0;
+								this.uvalue = 1;
+								return true;
+							}
+						//}
 					}
 					else {
-						//(result) = new ExprTree((result), newresult, "<=", 'r');
+						// (result) = new ExprTree((result), newresult, "<=",
+						// 'r');
 						setNodeValues((this), newresult, "<=", 'r');
 					}
 				}
 			}
 			else {
-				if (!intexpr_R(expr))
+				if (!newresult.intexpr_R(expr))
 					return false;
 				// simplify if operands are static
 				if (((newresult.isit == 'n') || (newresult.isit == 't'))
@@ -885,31 +943,41 @@ public class ExprTree {
 						comp = variable;
 						comp += "<";
 						int paren = 0;
+						ineq = new String();
 						for (i = spos; i < position; i++) {
 							if (expr.charAt(i) == '(')
 								paren++;
 							if (expr.charAt(i) == ')')
 								paren--;
-							ineq[i - spos] = expr.charAt(i);
+							ineq = ineq + expr.charAt(i);
 						}
-						ineq[i - spos + paren] = 0;
+						//ineq[i - spos + paren] = 0;
 						comp += ineq;
 						System.out.printf("looking for %s\n", comp);
-						for (i = 0; i < nsignals; i++) {
-							if (!signals[i].equals(comp)) {
+						//for (i = 0; i < nsignals; i++) {
+							if (signals.contains(comp)) {
 								// System.out.printf("successful lookup of
 								// boolean variable '%s'\n",
 								// signals[i]);
 								(this).isit = 'b';
-								(this).variable = signals[i];
+								(this).variable = comp;
 								(this).lvalue = 0;
 								(this).uvalue = 1;
 								return true;
 							}
-						}
+							else {
+								signals.add(comp);
+								this.isit = 'b';
+								this.variable = comp;
+								this.lvalue = 0;
+								this.uvalue = 1;
+								return true;
+							}
+						//}
 					}
 					else {
-						//(result) = new ExprTree((result), newresult, "<", 'r');
+						// (result) = new ExprTree((result), newresult, "<",
+						// 'r');
 						setNodeValues((this), newresult, "<", 'r');
 					}
 				}
@@ -917,8 +985,14 @@ public class ExprTree {
 			break;
 		case '[':
 			(token) = intexpr_gettok(expr);
-			if (!intexpr_R(expr))
+			newresult.token = token;
+			newresult.tokvalue = tokvalue;
+			newresult.position = position;
+			if (!newresult.intexpr_R(expr))
 				return false;
+			token = newresult.token;
+			tokvalue = newresult.tokvalue;
+			position = newresult.position;
 			if ((token) != ']') {
 				System.out.printf("ERROR: Expected a ]\n");
 				return false;
@@ -931,7 +1005,7 @@ public class ExprTree {
 				(this).uvalue = (this).lvalue;
 			}
 			else {
-				//(result) = new ExprTree((result), newresult, "[]", 'w');
+				// (result) = new ExprTree((result), newresult, "[]", 'w');
 				setNodeValues((this), newresult, "[]", 'w');
 			}
 			(token) = intexpr_gettok(expr);
@@ -984,38 +1058,38 @@ public class ExprTree {
 			if (!intexpr_O(expr))
 				return false;
 			// simplify if operands are static
-//			if (usenew) {
-//				if (((newresult).isit == 'n') || ((newresult).isit == 't')) {
-//					(newresult).isit = 't';
-//					if (newresult.lvalue == 1) {
-//						newresult.lvalue = 0;
-//					}
-//					else {
-//						newresult.lvalue = 1;
-//					}
-//					(newresult).uvalue = (newresult).lvalue;
-//				}
-//				else {
-//					//(newresult) = new ExprTree((newresult), null, "!", 'l');
-//					setNodeValues((newresult), null, "!", 'l');
-//				}
-//			}
-//			else {
-				if (((this).isit == 'n') || ((this).isit == 't')) {
-					(this).isit = 't';
-					if (this.lvalue == 1) {
-						this.lvalue = 0;
-					}
-					else {
-						this.lvalue = 1;
-					}
-					(this).uvalue = (this).lvalue;
+			// if (usenew) {
+			// if (((newresult).isit == 'n') || ((newresult).isit == 't')) {
+			// (newresult).isit = 't';
+			// if (newresult.lvalue == 1) {
+			// newresult.lvalue = 0;
+			// }
+			// else {
+			// newresult.lvalue = 1;
+			// }
+			// (newresult).uvalue = (newresult).lvalue;
+			// }
+			// else {
+			// //(newresult) = new ExprTree((newresult), null, "!", 'l');
+			// setNodeValues((newresult), null, "!", 'l');
+			// }
+			// }
+			// else {
+			if (((this).isit == 'n') || ((this).isit == 't')) {
+				(this).isit = 't';
+				if (this.lvalue == 1) {
+					this.lvalue = 0;
 				}
 				else {
-					// (result) = new ExprTree((result), null, "!", 'l');
-					setNodeValues((this), null, "!", 'l');
+					this.lvalue = 1;
 				}
-			//}
+				(this).uvalue = (this).lvalue;
+			}
+			else {
+				// (result) = new ExprTree((result), null, "!", 'l');
+				setNodeValues((this), null, "!", 'l');
+			}
+			// }
 			break;
 		default:
 			System.out.printf("N:ERROR: Expected a ID, Number, (, or -\n");
@@ -1033,6 +1107,7 @@ public class ExprTree {
 			token = newresult.intexpr_gettok(expr);
 			newresult.token = token;
 			newresult.tokvalue = tokvalue;
+			newresult.position = position;
 			if (!newresult.intexpr_N(expr))
 				return false;
 			token = newresult.token;
@@ -1078,6 +1153,7 @@ public class ExprTree {
 			(token) = intexpr_gettok(expr);
 			newresult.token = token;
 			newresult.tokvalue = tokvalue;
+			newresult.position = position;
 			if (!newresult.intexpr_M(expr))
 				return false;
 			token = newresult.token;
