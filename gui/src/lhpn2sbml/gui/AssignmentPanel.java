@@ -386,7 +386,8 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 			value = fields.get("Assignment lower").getValue();
 			expr[0].token = expr[0].intexpr_gettok(value);
 			if (!value.equals("")) {
-				expr[0].intexpr_L(value);
+				if (!expr[0].intexpr_L(value))
+					return false;
 			}
 		}
 		else {
@@ -394,11 +395,13 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 					+ fields.get("Assignment upper").getValue() + "]";
 			expr[0].token = expr[0].intexpr_gettok(fields.get("Assignment lower").getValue());
 			if (!fields.get("Assignment lower").getValue().equals("")) {
-				expr[0].intexpr_L(fields.get("Assignment lower").getValue());
+				if (!expr[0].intexpr_L(fields.get("Assignment lower").getValue()))
+					return false;
 			}
 			expr[1].token = expr[0].intexpr_gettok(fields.get("Assignment upper").getValue());
 			if (!fields.get("Assignment upper").getValue().equals("")) {
-				expr[1].intexpr_L(fields.get("Assignment upper").getValue());
+				if (!expr[1].intexpr_L(fields.get("Assignment upper").getValue()))
+					return false;
 			}
 		}
 		Properties property = new Properties();
@@ -419,7 +422,8 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 				else {
 					// System.out.println(transition + " " + id + " " +
 					// property.getProperty("Assignment value"));
-					lhpn.addContAssign(transition, variable, value, expr);
+					if (!lhpn.addContAssign(transition, variable, value, expr))
+						return false;
 				}
 			}
 			else {
@@ -431,7 +435,8 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 				else {
 					// System.out.println(transition + " " + id + " " +
 					// property.getProperty("Assignment value"));
-					lhpn.addRateAssign(transition, variable, value);
+					if (!lhpn.addRateAssign(transition, variable, value))
+						return false;
 				}
 			}
 		}
@@ -444,7 +449,8 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 			else {
 				// System.out.println(transition + " " + id + " " +
 				// property.getProperty("Assignment value"));
-				lhpn.addIntAssign(transition, variable, value);
+				if (!lhpn.addIntAssign(transition, variable, value))
+					return false;
 			}
 		}
 		else if (lhpn.isInput(variable) || lhpn.isOutput(variable)) {
