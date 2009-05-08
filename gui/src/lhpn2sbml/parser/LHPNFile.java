@@ -1099,7 +1099,7 @@ public class LHPNFile {
 		integers.put(name, ic);
 	}
 
-	public void addRateAssign(String transition, String name, String value) {
+	public boolean addRateAssign(String transition, String name, String value) {
 		HashMap<String, ExprTree[]> map = new HashMap<String, ExprTree[]>();
 		if (rateAssignmentTrees.get(transition) != null) {
 			map = rateAssignmentTrees.get(transition);
@@ -1107,7 +1107,8 @@ public class LHPNFile {
 		ExprTree expr = new ExprTree(this);
 		expr.token = expr.intexpr_gettok(value);
 		if (!value.equals("")) {
-			expr.intexpr_L(value);
+			if (!expr.intexpr_L(value))
+				return false;
 		}
 		ExprTree[] array = { expr };
 		map.put(name, array);
@@ -1118,6 +1119,7 @@ public class LHPNFile {
 		}
 		prop.setProperty(name, value);
 		rateAssignments.put(transition, prop);
+		return true;
 	}
 
 	public void removeRateAssign(String transition, String name) {
@@ -1175,7 +1177,7 @@ public class LHPNFile {
 		}
 	}
 
-	public void addContAssign(String transition, String name, String value, ExprTree[] expr) {
+	public boolean addContAssign(String transition, String name, String value, ExprTree[] expr) {
 		HashMap<String, ExprTree[]> map = new HashMap<String, ExprTree[]>();
 		if (contAssignmentTrees.get(transition) != null) {
 			map = contAssignmentTrees.get(transition);
@@ -1190,6 +1192,7 @@ public class LHPNFile {
 		prop.setProperty(name, value);
 		// log.addText("lhpn " + prop.toString());
 		contAssignments.put(transition, prop);
+		return true;
 	}
 
 	public void removeContAssign(String transition, String name) {
@@ -1210,7 +1213,7 @@ public class LHPNFile {
 		}
 	}
 
-	public void addIntAssign(String transition, String name, String value) {
+	public boolean addIntAssign(String transition, String name, String value) {
 		Properties prop = new Properties();
 		if (intAssignments.get(transition) != null) {
 			prop = intAssignments.get(transition);
@@ -1225,11 +1228,13 @@ public class LHPNFile {
 		ExprTree expr = new ExprTree(this);
 		expr.token = expr.intexpr_gettok(value);
 		if (!value.equals("")) {
-			expr.intexpr_L(value);
+			if (!expr.intexpr_L(value))
+				return false;
 		}
 		ExprTree[] array = { expr };
 		map.put(name, array);
 		intAssignmentTrees.put(transition, map);
+		return true;
 	}
 
 	public void removeIntAssign(String transition, String name) {
@@ -1348,7 +1353,7 @@ public class LHPNFile {
 		enablingTrees.remove(oldName);
 	}
 
-	public void changeDelay(String transition, String delay) {
+	public boolean changeDelay(String transition, String delay) {
 		if (delays.containsKey(transition)) {
 			delays.remove(transition);
 		}
@@ -1360,29 +1365,33 @@ public class LHPNFile {
 		ExprTree expr = new ExprTree(this);
 		expr.token = expr.intexpr_gettok(delay);
 		if (!delay.equals("")) {
-			expr.intexpr_L(delay);
+			if (!expr.intexpr_L(delay))
+				return false;
 		}
 		ExprTree[] array = { expr };
 		delayTrees.put(transition, array);
+		return true;
 	}
 
-	public void changeTransitionRate(String transition, String rate) {
+	public boolean changeTransitionRate(String transition, String rate) {
 		if (transitionRateTrees.containsKey(transition)) {
 			transitionRateTrees.remove(transition);
 		}
 		ExprTree expr = new ExprTree(this);
 		expr.token = expr.intexpr_gettok(rate);
 		if (!rate.equals("")) {
-			expr.intexpr_L(rate);
+			if (!(expr.intexpr_L(rate)))
+				return false;
 		}
 		transitionRateTrees.put(transition, expr);
 		if (transitionRates.containsKey(transition)) {
 			transitionRates.remove(transition);
 		}
 		transitionRates.put(transition, rate);
+		return true;
 	}
 
-	public void changeEnabling(String transition, String enabling) {
+	public boolean changeEnabling(String transition, String enabling) {
 		if (enablings.containsKey(transition)) {
 			enablings.remove(transition);
 		}
@@ -1392,8 +1401,10 @@ public class LHPNFile {
 		}
 		ExprTree expr = new ExprTree(this);
 		expr.token = expr.intexpr_gettok(enabling);
-		expr.intexpr_L(enabling);
+		if (!expr.intexpr_L(enabling))
+			return false;
 		enablingTrees.put(transition, expr);
+		return true;
 	}
 
 	public String[] getAllIDs() {
@@ -2301,10 +2312,8 @@ public class LHPNFile {
 			while (assignMatcher.find()) {
 				Properties assignProp = new Properties();
 				Properties intProp = new Properties();
-				// HashMap<String, ExprTree[]> assignMap = new HashMap<String,
-				// ExprTree[]>();
-				// HashMap<String, ExprTree[]> intMap = new HashMap<String,
-				// ExprTree[]>();
+				HashMap<String, ExprTree[]> assignMap = new HashMap<String, ExprTree[]>();
+				HashMap<String, ExprTree[]> intMap = new HashMap<String, ExprTree[]>();
 				// log.addText("check6while1");
 				varMatcher = varPattern.matcher(assignMatcher.group(2));
 				if (!varMatcher.find()) {
@@ -2312,60 +2321,38 @@ public class LHPNFile {
 				}
 				else {
 					// log.addText("check6 else");
-					// ExprTree[] expr = new ExprTree[2];
-					// Pattern rangePattern = Pattern.compile(RANGE);
-					// Matcher rangeMatcher =
-					// rangePattern.matcher(varMatcher.group(2));
-					// rangeMatcher.find();
-					// String tokvalue = new String();
-					// int position = 0;
-					// int token = expr[0].intexpr_gettok(rangeMatcher.group(1),
-					// tokvalue, 256,
-					// position);
-					// signalADT[] signals = new signalADT[256];
-					// int nsignals = 0;
-					// eventADT[] events = new eventADT[256];
-					// int nevents = 0;
-					// int nplaces = 0;
-					// expr[0].intexpr_L(token, rangeMatcher.group(1), tokvalue,
-					// position, expr[0],
-					// signals, nsignals, events, nevents, nplaces);
-					// tokvalue = new String();
-					// position = 0;
-					// token = expr[1].intexpr_gettok(rangeMatcher.group(2),
-					// tokvalue, 256, position);
-					// signals = new signalADT[256];
-					// nsignals = 0;
-					// events = new eventADT[256];
-					// nevents = 0;
-					// nplaces = 0;
-					// expr[1].intexpr_L(token, rangeMatcher.group(2), tokvalue,
-					// position, expr[1],
-					// signals, nsignals, events, nevents, nplaces);
-					// if (isInteger(varMatcher.group(1))) {
-					// intProp.put(varMatcher.group(1), varMatcher.group(2));
-					// intMap.put(varMatcher.group(1), expr);
-					// }
-					// else {
-					// assignProp.put(varMatcher.group(1), varMatcher.group(2));
-					// assignMap.put(varMatcher.group(1), expr);
-					// }
+					ExprTree[] expr = new ExprTree[2];
+					Pattern rangePattern = Pattern.compile(RANGE);
+					Matcher rangeMatcher = rangePattern.matcher(varMatcher.group(2));
+					rangeMatcher.find();
+					expr[0].token = expr[0].intexpr_gettok(rangeMatcher.group(1));
+					expr[0].intexpr_L(rangeMatcher.group(1));
+					expr[1].token = expr[1].intexpr_gettok(rangeMatcher.group(2));
+					expr[1].intexpr_L(rangeMatcher.group(2));
 					if (isInteger(varMatcher.group(1))) {
 						intProp.put(varMatcher.group(1), varMatcher.group(2));
-						// intMap.put(varMatcher.group(1), array);
+						intMap.put(varMatcher.group(1), expr);
 					}
 					else {
 						assignProp.put(varMatcher.group(1), varMatcher.group(2));
-						// assignMap.put(varMatcher.group(1), array);
+						assignMap.put(varMatcher.group(1), expr);
+					}
+					if (isInteger(varMatcher.group(1))) {
+						intProp.put(varMatcher.group(1), varMatcher.group(2));
+						intMap.put(varMatcher.group(1), expr);
+					}
+					else {
+						assignProp.put(varMatcher.group(1), varMatcher.group(2));
+						assignMap.put(varMatcher.group(1), expr);
 					}
 				}
 				while (varMatcher.find()) {
-					// ExprTree expr = new ExprTree(this);
-					// expr.token = expr.intexpr_gettok(varMatcher.group(2));
-					// if (!varMatcher.group(2).equals("")) {
-					// expr.intexpr_L(varMatcher.group(2));
-					// }
-					// ExprTree[] array = { expr };
+					ExprTree expr = new ExprTree(this);
+					expr.token = expr.intexpr_gettok(varMatcher.group(2));
+					if (!varMatcher.group(2).equals("")) {
+						expr.intexpr_L(varMatcher.group(2));
+					}
+					ExprTree[] array = { expr };
 					// log.addText("check6while2");
 					if (isInteger(varMatcher.group(1))) {
 						intProp.put(varMatcher.group(1), varMatcher.group(2));
@@ -2373,7 +2360,7 @@ public class LHPNFile {
 					}
 					else {
 						assignProp.put(varMatcher.group(1), varMatcher.group(2));
-						// assignMap.put(varMatcher.group(1), array);
+						assignMap.put(varMatcher.group(1), array);
 					}
 				}
 				if (intProp.size() > 0) {
@@ -2399,8 +2386,7 @@ public class LHPNFile {
 			Matcher indetMatcher;
 			while (assignMatcher.find()) {
 				Properties assignProp = new Properties();
-				// HashMap<String, ExprTree[]> map = new HashMap<String,
-				// ExprTree[]>();
+				HashMap<String, ExprTree[]> map = new HashMap<String, ExprTree[]>();
 				if (rateAssignments.containsKey(assignMatcher.group(1))) {
 					assignProp = rateAssignments.get(assignMatcher.group(1));
 				}
@@ -2408,13 +2394,13 @@ public class LHPNFile {
 				varMatcher = varPattern.matcher(assignMatcher.group(2));
 				// log.addText(assignMatcher.group(2) + " " + indetPattern);
 				while (varMatcher.find()) {
-					// ExprTree expr = new ExprTree(this);
-					// expr.token = expr.intexpr_gettok(varMatcher.group(2));
-					// if (!varMatcher.group(2).equals("")) {
-					// expr.intexpr_L(varMatcher.group(2));
-					// }
-					// ExprTree[] array = { expr };
-					// map.put(varMatcher.group(1), array);
+					ExprTree expr = new ExprTree(this);
+					expr.token = expr.intexpr_gettok(varMatcher.group(2));
+					if (!varMatcher.group(2).equals("")) {
+						expr.intexpr_L(varMatcher.group(2));
+					}
+					ExprTree[] array = { expr };
+					map.put(varMatcher.group(1), array);
 					if (!assignProp.containsKey(varMatcher.group(1))) {
 						assignProp.put(varMatcher.group(1), varMatcher.group(2));
 					}
@@ -2423,26 +2409,23 @@ public class LHPNFile {
 				}
 				indetMatcher = indetPattern.matcher(assignMatcher.group(2));
 				while (indetMatcher.find()) {
-					// ExprTree[] expr = new ExprTree[2];
+					ExprTree[] expr = new ExprTree[2];
 					assignProp.put(indetMatcher.group(1), indetMatcher.group(2));
-					// Pattern rangePattern = Pattern.compile(RANGE);
-					// Matcher rangeMatcher =
-					// rangePattern.matcher(indetMatcher.group(2));
-					// rangeMatcher.find();
-					// expr[0].token =
-					// expr[0].intexpr_gettok(rangeMatcher.group(1));
-					// if (!rangeMatcher.group(1).equals("")) {
-					// expr[0].intexpr_L(rangeMatcher.group(1));
-					// }
-					// expr[1].token =
-					// expr[1].intexpr_gettok(rangeMatcher.group(2));
-					// if (!rangeMatcher.group(2).equals("")) {
-					// expr[1].intexpr_L(rangeMatcher.group(2));
-					// }
-					// map.put(varMatcher.group(1), expr);
+					Pattern rangePattern = Pattern.compile(RANGE);
+					Matcher rangeMatcher = rangePattern.matcher(indetMatcher.group(2));
+					rangeMatcher.find();
+					expr[0].token = expr[0].intexpr_gettok(rangeMatcher.group(1));
+					if (!rangeMatcher.group(1).equals("")) {
+						expr[0].intexpr_L(rangeMatcher.group(1));
+					}
+					expr[1].token = expr[1].intexpr_gettok(rangeMatcher.group(2));
+					if (!rangeMatcher.group(2).equals("")) {
+						expr[1].intexpr_L(rangeMatcher.group(2));
+					}
+					map.put(varMatcher.group(1), expr);
 				}
 				rateAssignments.put(assignMatcher.group(1), assignProp);
-				// rateAssignmentTrees.put(assignMatcher.group(1), map);
+				rateAssignmentTrees.put(assignMatcher.group(1), map);
 			}
 		}
 		// for (String s: rateAssignments.keySet()) {
@@ -2462,38 +2445,16 @@ public class LHPNFile {
 			while (delayMatcher.find()) {
 				// log.addText("check8while");
 				delays.put(delayMatcher.group(1), delayMatcher.group(2));
-				// ExprTree[] expr = new ExprTree[2];
-				// Pattern rangePattern = Pattern.compile(RANGE);
-				// Matcher rangeMatcher =
-				// rangePattern.matcher(delayMatcher.group(2));
-				// String tokvalue = new String();
-				// if (rangeMatcher.find()) {
-				// int position = 0;
-				// int token = expr[0].intexpr_gettok(rangeMatcher.group(1),
-				// tokvalue, 256,
-				// position);
-				// signalADT[] signals = new signalADT[256];
-				// int nsignals = 0;
-				// eventADT[] events = new eventADT[256];
-				// int nevents = 0;
-				// int nplaces = 0;
-				// expr[0].intexpr_L(token, rangeMatcher.group(1), tokvalue,
-				// position, expr[0],
-				// signals, nsignals, events, nevents, nplaces);
-				// tokvalue = new String();
-				// position = 0;
-				// token = expr[1].intexpr_gettok(rangeMatcher.group(2),
-				// tokvalue, 256, position);
-				// signals = new signalADT[256];
-				// nsignals = 0;
-				// events = new eventADT[256];
-				// nevents = 0;
-				// nplaces = 0;
-				// expr[1].intexpr_L(token, rangeMatcher.group(2), tokvalue,
-				// position, expr[1],
-				// signals, nsignals, events, nevents, nplaces);
-				// delayTrees.put(delayMatcher.group(1), expr);
-				// }
+				ExprTree[] expr = new ExprTree[2];
+				Pattern rangePattern = Pattern.compile(RANGE);
+				Matcher rangeMatcher = rangePattern.matcher(delayMatcher.group(2));
+				if (rangeMatcher.find()) {
+					expr[0].token = expr[0].intexpr_gettok(rangeMatcher.group(1));
+					expr[0].intexpr_L(rangeMatcher.group(1));
+					expr[1].token = expr[1].intexpr_gettok(rangeMatcher.group(2));
+					expr[1].intexpr_L(rangeMatcher.group(2));
+					delayTrees.put(delayMatcher.group(1), expr);
+				}
 			}
 		}
 		// log.addText("check8end");
@@ -2512,10 +2473,10 @@ public class LHPNFile {
 				// log.addText("check8while");
 				ExprTree expr = new ExprTree(this);
 				if (delayMatcher.group(4) != null) {
-				expr.token = expr.intexpr_gettok(delayMatcher.group(4));
-				expr.intexpr_L(delayMatcher.group(4));
-				transitionRateTrees.put(delayMatcher.group(2), expr);
-				transitionRates.put(delayMatcher.group(2), delayMatcher.group(4));
+					expr.token = expr.intexpr_gettok(delayMatcher.group(4));
+					expr.intexpr_L(delayMatcher.group(4));
+					transitionRateTrees.put(delayMatcher.group(2), expr);
+					transitionRates.put(delayMatcher.group(2), delayMatcher.group(4));
 				}
 			}
 		}

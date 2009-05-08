@@ -49,22 +49,7 @@ public class ExprTree {
 			signals.add(ints[j]);
 		}
 	}
-
-	// ExprTree(char willbe, boolean lNV, boolean uNV, int ptr) {
-	// op = "";
-	// r1 = null;
-	// r2 = null;
-	// isit = willbe;
-	// if ((isit== 'b')||(isit=='t'))
-	// logical = true;
-	// else
-	// logical = false;
-	// uvalue = uNV;
-	// lvalue = lNV;
-	// index = ptr;
-	// real = 0;
-	// }
-
+	
 	ExprTree(char willbe, int lNV, int uNV, String var) {
 		op = "";
 		r1 = null;
@@ -1058,23 +1043,6 @@ public class ExprTree {
 			if (!intexpr_O(expr))
 				return false;
 			// simplify if operands are static
-			// if (usenew) {
-			// if (((newresult).isit == 'n') || ((newresult).isit == 't')) {
-			// (newresult).isit = 't';
-			// if (newresult.lvalue == 1) {
-			// newresult.lvalue = 0;
-			// }
-			// else {
-			// newresult.lvalue = 1;
-			// }
-			// (newresult).uvalue = (newresult).lvalue;
-			// }
-			// else {
-			// //(newresult) = new ExprTree((newresult), null, "!", 'l');
-			// setNodeValues((newresult), null, "!", 'l');
-			// }
-			// }
-			// else {
 			if (((this).isit == 'n') || ((this).isit == 't')) {
 				(this).isit = 't';
 				if (this.lvalue == 1) {
@@ -1089,7 +1057,6 @@ public class ExprTree {
 				// (result) = new ExprTree((result), null, "!", 'l');
 				setNodeValues((this), null, "!", 'l');
 			}
-			// }
 			break;
 		default:
 			System.out.printf("N:ERROR: Expected a ID, Number, (, or -\n");
@@ -1295,7 +1262,7 @@ public class ExprTree {
 
 	// private static final int MAXTOKEN = 2000;
 
-	private static final int VAR = 262144;
+	//private static final int VAR = 262144;
 
 	private static final int INFIN = 2147483647;
 
