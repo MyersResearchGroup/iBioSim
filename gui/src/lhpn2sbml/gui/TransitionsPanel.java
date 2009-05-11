@@ -42,6 +42,8 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 	private JPanel fieldPanel;
 
 	private String[] options = { "Ok", "Cancel" };
+	
+	private String[] allVariables;
 
 	// private Object[] types = { "Boolean", "Continuous", "Integer", "Rate" };
 
@@ -237,6 +239,7 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 
 		// setType(types[0]);
 		boolean display = false;
+		allVariables = lhpn.getAllIDs();
 		while (!display) {
 			display = openGui(oldName);
 		}
@@ -259,7 +262,6 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 				Utility.createErrorMessage("Error", "Illegal values entered.");
 				return false;
 			}
-			String[] allVariables = lhpn.getAllIDs();
 			if (oldName == null && allVariables != null) {
 				for (int i = 0; i < allVariables.length; i++) {
 					if (allVariables[i] != null) {
@@ -283,6 +285,10 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 				return false;
 			}
 			String id = fields.get(GlobalConstants.ID).getValue();
+			if (!save(id)) {
+				Utility.createErrorMessage("Error", "Illegal values entered.");
+				return false;
+			}
 
 			// Check to see if we need to add or edit
 			Properties property = new Properties();
@@ -291,16 +297,12 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 					property.put(f.getKey(), f.getValue());
 				}
 			}
-
+			
 			if (selected != null && !oldName.equals(id)) {
 				lhpn.changeTransitionName(oldName, id);
 			}
 			else if (selected == null) {
 				lhpn.addTransition(id);
-			}
-			if (!save(id)) {
-				Utility.createErrorMessage("Error", "Illegal values entered.");
-				return false;
 			}
 			transitionsList.removeItem(oldName);
 			transitionsList.addItem(id);
@@ -349,15 +351,25 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 					if (!matcher.group(1).equals("")) {
 						if (!expr[0].intexpr_L(matcher.group(1))) return false;
 					}
+					else {
+						expr[0] = null;
+					}
 					expr[1].token = expr[1].intexpr_gettok(matcher.group(2));
 					if (!matcher.group(2).equals("")) {
 						if (!expr[1].intexpr_L(matcher.group(2))) return false;
+					}
+					else {
+						expr[1] = null;
 					}
 				}
 				else {
 					expr[0].token = expr[0].intexpr_gettok(tempArray[1]);
 					if (!tempArray[1].equals("")) {
 						if (!expr[0].intexpr_L(tempArray[1])) return false;
+					}
+					else {
+						expr[0] = null;
+						expr[1] = null;
 					}
 				}
 				lhpn.addContAssign(transition, tempArray[0], tempArray[1], expr);
