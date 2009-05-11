@@ -280,6 +280,9 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 					}
 				}
 			}
+			if (!save()) {
+				return false;
+			}
 			// else if
 			// (!oldName.equals(fields.get(GlobalConstants.ID).getValue())) {
 			// if
@@ -372,11 +375,11 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 		}
 	}
 
-	private void setID(String var) {
-		PropertyField idField = fields.get(GlobalConstants.ID);
-		idField.setValue(var);
-		fields.put(GlobalConstants.ID, idField);
-	}
+//	private void setID(String var) {
+//		PropertyField idField = fields.get(GlobalConstants.ID);
+//		idField.setValue(var);
+//		fields.put(GlobalConstants.ID, idField);
+//	}
 
 	public boolean save() {
 		String variable = varBox.getSelectedItem().toString();
@@ -412,61 +415,61 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 		}
 		property.put("Variable", variable);
 
-		if (lhpn.isContinuous(variable)) {
-			if (!rateBox.isSelected()) {
-				if (selected != null && !oldName.equals(id)) {
-					String[] selectArray = selected.split(":=");
-					String[] oldArray = oldName.split(":=");
-					lhpn.removeContAssign(selectArray[0], oldArray[0]);
-				}
-				else {
-					// System.out.println(transition + " " + id + " " +
-					// property.getProperty("Assignment value"));
-					if (!lhpn.addContAssign(transition, variable, value, expr))
-						return false;
-				}
-			}
-			else {
-				if (selected != null && !oldName.equals(id)) {
-					String[] selectArray = selected.split("':=");
-					String[] oldArray = oldName.split("':=");
-					lhpn.removeRateAssign(selectArray[0], oldArray[0]);
-				}
-				else {
-					// System.out.println(transition + " " + id + " " +
-					// property.getProperty("Assignment value"));
-					if (!lhpn.addRateAssign(transition, variable, value))
-						return false;
-				}
-			}
-		}
-		else if (lhpn.isInteger(variable)) {
-			if (selected != null && !oldName.equals(id)) {
-				String[] selectArray = selected.split(":=");
-				String[] oldArray = oldName.split(":=");
-				lhpn.removeIntAssign(selectArray[0], oldArray[0]);
-			}
-			else {
-				// System.out.println(transition + " " + id + " " +
-				// property.getProperty("Assignment value"));
-				if (!lhpn.addIntAssign(transition, variable, value))
-					return false;
-			}
-		}
-		else if (lhpn.isInput(variable) || lhpn.isOutput(variable)) {
-			if (selected != null && !oldName.equals(id)) {
-				String[] selectArray = selected.split(":=");
-				String[] oldArray = oldName.split(":=");
-				lhpn.removeBoolAssign(selectArray[0], oldArray[0]);
-			}
-			else {
-				// System.out.println(transition + " " + id + " " +
-				// property.getProperty("Assignment value"));
-				if (!lhpn.addBoolAssign(transition, variable, value)) {
-					return false;
-				}
-			}
-		}
+//		if (lhpn.isContinuous(variable)) {
+//			if (!rateBox.isSelected()) {
+//				if (selected != null && !oldName.equals(id)) {
+//					String[] selectArray = selected.split(":=");
+//					String[] oldArray = oldName.split(":=");
+//					lhpn.removeContAssign(selectArray[0], oldArray[0]);
+//				}
+//				else {
+//					// System.out.println(transition + " " + id + " " +
+//					// property.getProperty("Assignment value"));
+//					if (!lhpn.addContAssign(transition, variable, value, expr))
+//						return false;
+//				}
+//			}
+//			else {
+//				if (selected != null && !oldName.equals(id)) {
+//					String[] selectArray = selected.split("':=");
+//					String[] oldArray = oldName.split("':=");
+//					lhpn.removeRateAssign(selectArray[0], oldArray[0]);
+//				}
+//				else {
+//					// System.out.println(transition + " " + id + " " +
+//					// property.getProperty("Assignment value"));
+//					if (!lhpn.addRateAssign(transition, variable, value))
+//						return false;
+//				}
+//			}
+//		}
+//		else if (lhpn.isInteger(variable)) {
+//			if (selected != null && !oldName.equals(id)) {
+//				String[] selectArray = selected.split(":=");
+//				String[] oldArray = oldName.split(":=");
+//				lhpn.removeIntAssign(selectArray[0], oldArray[0]);
+//			}
+//			else {
+//				// System.out.println(transition + " " + id + " " +
+//				// property.getProperty("Assignment value"));
+//				if (!lhpn.addIntAssign(transition, variable, value))
+//					return false;
+//			}
+//		}
+//		else if (lhpn.isInput(variable) || lhpn.isOutput(variable)) {
+//			if (selected != null && !oldName.equals(id)) {
+//				String[] selectArray = selected.split(":=");
+//				String[] oldArray = oldName.split(":=");
+//				lhpn.removeBoolAssign(selectArray[0], oldArray[0]);
+//			}
+//			else {
+//				// System.out.println(transition + " " + id + " " +
+//				// property.getProperty("Assignment value"));
+//				if (!lhpn.addBoolAssign(transition, variable, value)) {
+//					return false;
+//				}
+//			}
+//		}
 		return true;
 	}
 
