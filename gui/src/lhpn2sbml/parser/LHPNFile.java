@@ -2099,12 +2099,12 @@ public class LHPNFile {
 		Matcher initMatcher = initState.matcher(data.toString());
 		if (initMatcher.find()) {
 			// log.addText("check1d");
-			Pattern initDigit = Pattern.compile("\\d+");
+			Pattern initDigit = Pattern.compile("[01X]+");
 			Matcher digitMatcher = initDigit.matcher(initMatcher.group());
 			digitMatcher.find();
 			// log.addText("check1e");
 			String[] initArray = new String[digitMatcher.group().length()];
-			Pattern bit = Pattern.compile("[01]");
+			Pattern bit = Pattern.compile("[01X]");
 			Matcher bitMatcher = bit.matcher(digitMatcher.group());
 			// log.addText("check1f");
 			i = 0;
@@ -2650,7 +2650,7 @@ public class LHPNFile {
 
 	private static final String OUTPUT = "\\.outputs([[\\s[^\\n]]\\w+]*?)\\n";
 
-	private static final String INIT_STATE = "#@\\.init_state \\[(\\d+)\\]";
+	private static final String INIT_STATE = "#@\\.init_state \\[(\\w+)\\]";
 
 	private static final String TRANSITION = "\\.dummy([^\\n]*?)\\n";
 
