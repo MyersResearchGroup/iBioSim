@@ -170,16 +170,28 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 		RemoveButton removeVar = new RemoveButton("Remove Variable", variables);
 		EditButton editVar = new EditButton("Edit Variable", variables);
 		if (!lhpnFile.getVariables().equals(null)) {
-			variables.addAllItem(lhpnFile.getVariables().keySet());
+			//variables.addAllItem(lhpnFile.getVariables().keySet());
+			for (String s : lhpnFile.getVariables().keySet()) {
+				variables.addItem(s + " - continuous - " + lhpnFile.getInitialVal(s) + " - " + lhpnFile.getInitialRate(s));
+			}
 		}
 		if (!lhpnFile.getVariables().equals(null)) {
-			variables.addAllItem(lhpnFile.getIntegers().keySet());
+			//variables.addAllItem(lhpnFile.getIntegers().keySet());
+			for (String s : lhpnFile.getIntegers().keySet()) {
+				variables.addItem(s + " - integer - " + lhpnFile.getInitialVal(s));
+			}
 		}
 		if (!lhpnFile.getInputs().equals(null)) {
-			variables.addAllItem(lhpnFile.getInputs().keySet());
+			for (String s : lhpnFile.getInputs().keySet()) {
+				variables.addItem(s + " - boolean - " + lhpnFile.getInitialVal(s));
+			}
+			//variables.addAllItem(lhpnFile.getInputs().keySet());
 		}
 		if (!lhpnFile.getOutputs().equals(null)) {
-			variables.addAllItem(lhpnFile.getOutputs().keySet());
+			//variables.addAllItem(lhpnFile.getOutputs().keySet());
+			for (String s : lhpnFile.getOutputs().keySet()) {
+				variables.addItem(s + " - boolean - " + lhpnFile.getInitialVal(s));
+			}
 		}
 
 		JPanel varPanel = Utility.createPanel(this, "Variables", variables, addVar, removeVar,
@@ -491,6 +503,8 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 					else if (lhpnFile.isInteger(selected)) {
 						integer = true;
 					}
+					//String[] array = selected.split(" ");
+					//selected = array[0];
 					VariablesPanel panel = new VariablesPanel(selected, list, continuous, integer,
 							lhpnFile);
 				}
