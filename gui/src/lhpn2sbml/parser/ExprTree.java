@@ -29,7 +29,7 @@ public class ExprTree {
 
 	private ArrayList<String> signals;
 
-	//private int nsignals;// nevents, nplaces;
+	// private int nsignals;// nevents, nplaces;
 
 	private LHPNFile lhpn;
 
@@ -49,7 +49,7 @@ public class ExprTree {
 			signals.add(ints[j]);
 		}
 	}
-	
+
 	ExprTree(char willbe, int lNV, int uNV, String var) {
 		op = "";
 		r1 = null;
@@ -323,29 +323,29 @@ public class ExprTree {
 			}
 			else {
 				// do boolean lookup here!!!
-				//for (i = 0; i < nsignals; i++) {
-					// System.out.println("Signal " + signals[i]);
-					if (signals.contains(tokvalue)) {
-						if (lhpn.isInput(tokvalue) || lhpn.isOutput(tokvalue)) {
-							// printf("successful lookup of boolean variable
-							// %s\n",signals[i]);
-							// (result) = new ExprTree('b', 0, 1, signals[i]);
-							setVarValues('b', 0, 1, tokvalue);
-							(token) = intexpr_gettok(expr);
-							return true;
-						}
-						else if (lhpn.isInteger(tokvalue)) {
-							setVarValues('i', -INFIN, INFIN, tokvalue);
-							(token) = intexpr_gettok(expr);
-							return true;
-						}
-						else {
-							setVarValues('c', -INFIN, INFIN, tokvalue);
-							(token) = intexpr_gettok(expr);
-							return true;
-						}
+				// for (i = 0; i < nsignals; i++) {
+				// System.out.println("Signal " + signals[i]);
+				if (signals.contains(tokvalue)) {
+					if (lhpn.isInput(tokvalue) || lhpn.isOutput(tokvalue)) {
+						// printf("successful lookup of boolean variable
+						// %s\n",signals[i]);
+						// (result) = new ExprTree('b', 0, 1, signals[i]);
+						setVarValues('b', 0, 1, tokvalue);
+						(token) = intexpr_gettok(expr);
+						return true;
 					}
-				//}
+					else if (lhpn.isInteger(tokvalue)) {
+						setVarValues('i', -INFIN, INFIN, tokvalue);
+						(token) = intexpr_gettok(expr);
+						return true;
+					}
+					else {
+						setVarValues('c', -INFIN, INFIN, tokvalue);
+						(token) = intexpr_gettok(expr);
+						return true;
+					}
+				}
+				// }
 				if (tokvalue.equals("")) {
 					System.out.printf("U1:ERROR(%s): Expected a ID, Number, or a (\n", tokvalue);
 					return false;
@@ -681,28 +681,28 @@ public class ExprTree {
 							paren--;
 						ineq = ineq + expr.charAt(i);
 					}
-					//ineq[i - spos + paren] = 0;
+					// ineq[i - spos + paren] = 0;
 					comp += ineq;
 					// printf("looking for %s\n",comp.c_str());
-					//for (i = 0; i < nsignals; i++) {
-						if (signals.contains(comp)) {
-							// printf("successful lookup of boolean variable
-							// '%s'\n",signals[i]->name);
-							this.isit = 'b';
-							this.variable = comp;
-							this.lvalue = 0;
-							this.uvalue = 1;
-							return true;
-						}
-						else {
-							signals.add(comp);
-							this.isit = 'b';
-							this.variable = comp;
-							this.lvalue = 0;
-							this.uvalue = 1;
-							return true;
-						}
-					//}
+					// for (i = 0; i < nsignals; i++) {
+					if (signals.contains(comp)) {
+						// printf("successful lookup of boolean variable
+						// '%s'\n",signals[i]->name);
+						this.isit = 'b';
+						this.variable = comp;
+						this.lvalue = 0;
+						this.uvalue = 1;
+						return true;
+					}
+					else {
+						signals.add(comp);
+						this.isit = 'b';
+						this.variable = comp;
+						this.lvalue = 0;
+						this.uvalue = 1;
+						return true;
+					}
+					// }
 				}
 				else {
 					// (result) = new ExprTree((result), newresult, "==", 'r');
@@ -750,28 +750,28 @@ public class ExprTree {
 								paren--;
 							ineq = ineq + expr.charAt(i);
 						}
-						//ineq[i - spos + paren] = 0;
+						// ineq[i - spos + paren] = 0;
 						comp += ineq;
 						// printf("looking for %s\n",comp.c_str());
-						//for (i = 0; i < nsignals; i++) {
-							if (signals.contains(comp)) {
-								// printf("successful lookup of boolean variable
-								// '%s'\n",signals[i]->name);
-								(this).isit = 'b';
-								this.variable = comp;
-								(this).lvalue = 0;
-								(this).uvalue = 1;
-								return true;
-							}
-						//}
-							else {
-								signals.add(comp);
-								this.isit = 'b';
-								this.variable = comp;
-								this.lvalue = 0;
-								this.uvalue = 1;
-								return true;
-							}
+						// for (i = 0; i < nsignals; i++) {
+						if (signals.contains(comp)) {
+							// printf("successful lookup of boolean variable
+							// '%s'\n",signals[i]->name);
+							(this).isit = 'b';
+							this.variable = comp;
+							(this).lvalue = 0;
+							(this).uvalue = 1;
+							return true;
+						}
+						// }
+						else {
+							signals.add(comp);
+							this.isit = 'b';
+							this.variable = comp;
+							this.lvalue = 0;
+							this.uvalue = 1;
+							return true;
+						}
 					}
 					else {
 						// (result) = new ExprTree((result), newresult, ">=",
@@ -781,6 +781,9 @@ public class ExprTree {
 				}
 			}
 			else {
+				newresult.token = token;
+				newresult.tokvalue = tokvalue;
+				newresult.position = position;
 				if (!intexpr_R(expr))
 					return false;
 				// simplify if operands are static
@@ -808,28 +811,28 @@ public class ExprTree {
 								paren--;
 							ineq = ineq + expr.charAt(i);
 						}
-						//ineq[i - spos + paren] = 0;
+						// ineq[i - spos + paren] = 0;
 						comp += ineq;
 						// printf("looking for %s\n",comp.c_str());
-						//for (i = 0; i < nsignals; i++) {
-							if (signals.contains(comp)) {
-								// printf("successful lookup of boolean variable
-								// '%s'\n",signals[i]->name);
-								(this).isit = 'b';
-								(this).variable = comp;
-								(this).lvalue = 0;
-								(this).uvalue = 1;
-								return true;
-							}
-							else {
-								signals.add(comp);
-								this.isit = 'b';
-								this.variable = comp;
-								this.lvalue = 0;
-								this.uvalue = 1;
-								return true;
-							}
-						//}
+						// for (i = 0; i < nsignals; i++) {
+						if (signals.contains(comp)) {
+							// printf("successful lookup of boolean variable
+							// '%s'\n",signals[i]->name);
+							(this).isit = 'b';
+							(this).variable = comp;
+							(this).lvalue = 0;
+							(this).uvalue = 1;
+							return true;
+						}
+						else {
+							signals.add(comp);
+							this.isit = 'b';
+							this.variable = comp;
+							this.lvalue = 0;
+							this.uvalue = 1;
+							return true;
+						}
+						// }
 					}
 					else {
 						// (result) = new ExprTree((result), newresult, ">",
@@ -878,28 +881,28 @@ public class ExprTree {
 								paren--;
 							ineq = ineq + expr.charAt(i);
 						}
-						//ineq[i - spos + paren] = 0;
+						// ineq[i - spos + paren] = 0;
 						comp += ineq;
 						// printf("looking for %s\n",comp.c_str());
-						//for (i = 0; i < nsignals; i++) {
-							if (signals.contains(comp)) {
-								// printf("successful lookup of boolean variable
-								// '%s'\n",signals[i]->name);
-								(this).isit = 'b';
-								(this).variable = comp;
-								(this).lvalue = 0;
-								(this).uvalue = 1;
-								return true;
-							}
-							else {
-								signals.add(comp);
-								this.isit = 'b';
-								this.variable = comp;
-								this.lvalue = 0;
-								this.uvalue = 1;
-								return true;
-							}
-						//}
+						// for (i = 0; i < nsignals; i++) {
+						if (signals.contains(comp)) {
+							// printf("successful lookup of boolean variable
+							// '%s'\n",signals[i]->name);
+							(this).isit = 'b';
+							(this).variable = comp;
+							(this).lvalue = 0;
+							(this).uvalue = 1;
+							return true;
+						}
+						else {
+							signals.add(comp);
+							this.isit = 'b';
+							this.variable = comp;
+							this.lvalue = 0;
+							this.uvalue = 1;
+							return true;
+						}
+						// }
 					}
 					else {
 						// (result) = new ExprTree((result), newresult, "<=",
@@ -909,8 +912,14 @@ public class ExprTree {
 				}
 			}
 			else {
+				newresult.token = token;
+				newresult.tokvalue = tokvalue;
+				newresult.position = position;
 				if (!newresult.intexpr_R(expr))
 					return false;
+				token = newresult.token;
+				tokvalue = newresult.tokvalue;
+				position = newresult.position;
 				// simplify if operands are static
 				if (((newresult.isit == 'n') || (newresult.isit == 't'))
 						&& (((this).isit == 'n') || ((this).isit == 't'))) {
@@ -936,29 +945,29 @@ public class ExprTree {
 								paren--;
 							ineq = ineq + expr.charAt(i);
 						}
-						//ineq[i - spos + paren] = 0;
+						// ineq[i - spos + paren] = 0;
 						comp += ineq;
 						System.out.printf("looking for %s\n", comp);
-						//for (i = 0; i < nsignals; i++) {
-							if (signals.contains(comp)) {
-								// System.out.printf("successful lookup of
-								// boolean variable '%s'\n",
-								// signals[i]);
-								(this).isit = 'b';
-								(this).variable = comp;
-								(this).lvalue = 0;
-								(this).uvalue = 1;
-								return true;
-							}
-							else {
-								signals.add(comp);
-								this.isit = 'b';
-								this.variable = comp;
-								this.lvalue = 0;
-								this.uvalue = 1;
-								return true;
-							}
-						//}
+						// for (i = 0; i < nsignals; i++) {
+						if (signals.contains(comp)) {
+							// System.out.printf("successful lookup of
+							// boolean variable '%s'\n",
+							// signals[i]);
+							(this).isit = 'b';
+							(this).variable = comp;
+							(this).lvalue = 0;
+							(this).uvalue = 1;
+							return true;
+						}
+						else {
+							signals.add(comp);
+							this.isit = 'b';
+							this.variable = comp;
+							this.lvalue = 0;
+							this.uvalue = 1;
+							return true;
+						}
+						// }
 					}
 					else {
 						// (result) = new ExprTree((result), newresult, "<",
@@ -1071,7 +1080,7 @@ public class ExprTree {
 		// + " result = ");
 		switch (token) {
 		case '&':
-			token = newresult.intexpr_gettok(expr);
+			token = intexpr_gettok(expr);
 			newresult.token = token;
 			newresult.tokvalue = tokvalue;
 			newresult.position = position;
@@ -1198,7 +1207,7 @@ public class ExprTree {
 	}
 
 	public boolean intexpr_L(String expr) {
-		//System.out.println(expr);
+		// System.out.println(expr);
 		// System.out.println("L: token = " + token + " tokvalue = " + tokvalue
 		// + " result = " + result);
 		switch (token) {
@@ -1263,7 +1272,7 @@ public class ExprTree {
 
 	// private static final int MAXTOKEN = 2000;
 
-	//private static final int VAR = 262144;
+	// private static final int VAR = 262144;
 
 	private static final int INFIN = 2147483647;
 

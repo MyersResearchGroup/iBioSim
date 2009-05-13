@@ -401,7 +401,23 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 		}
 		else if (e.getSource() == abstButton) {
 			Abstraction abst = lhpnFile.abstractLhpn();
-			String[] variables = lhpnFile.getBooleanVars();
+			String[] boolVars = lhpnFile.getBooleanVars();
+			String[] contVars = lhpnFile.getContVars();
+			String[] intVars = lhpnFile.getIntVars();
+			String[] variables = new String[boolVars.length + contVars.length + intVars.length];
+			int k=0;
+			for (int j=0; j<contVars.length; j++) {
+				variables[k] = contVars[j];
+				k++;
+			}
+			for (int j=0; j<intVars.length; j++) {
+				variables[k] = intVars[j];
+				k++;
+			}
+			for (int j=0; j<boolVars.length; j++) {
+				variables[k] = boolVars[j];
+				k++;
+			}
 			//String[] vars = null;
 			String abstFilename = (String) JOptionPane.showInputDialog(this,
 					"Please enter the file name for the abstracted LHPN.", "Enter Filename",
