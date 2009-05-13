@@ -151,11 +151,16 @@ public class Abstraction {
 					String[] postset = controlFlow.get(s).getProperty("postset").split(" ");
 					if (postset.length == 1 && !postset[0].equals("")) {
 						boolean assign = false;
-						for (HashMap<String, Properties> h : assignments) {
-							// System.out.println(assignments);
-							if (h.get(s) != null) {
-								if (!h.get(s).keySet().isEmpty()) {
-									assign = true;
+						if (enablings.containsKey(s)) {
+							assign = true;
+						}
+						if (!assign) {
+							for (HashMap<String, Properties> h : assignments) {
+								// System.out.println(assignments);
+								if (h.get(s) != null) {
+									if (!h.get(s).keySet().isEmpty()) {
+										assign = true;
+									}
 								}
 							}
 						}
@@ -182,10 +187,15 @@ public class Abstraction {
 					String[] preset = controlFlow.get(s).getProperty("preset").split(" ");
 					if (preset.length == 1 && !preset[0].equals("")) {
 						boolean assign = false;
-						for (HashMap<String, Properties> h : assignments) {
-							if (h.get(s) != null) {
-								if (!h.get(s).keySet().isEmpty()) {
-									assign = true;
+						if (enablings.containsKey(s)) {
+							assign = true;
+						}
+						if (!assign) {
+							for (HashMap<String, Properties> h : assignments) {
+								if (h.get(s) != null) {
+									if (!h.get(s).keySet().isEmpty()) {
+										assign = true;
+									}
 								}
 							}
 						}
@@ -215,9 +225,14 @@ public class Abstraction {
 					boolean samePreset = comparePreset(controlFlow.get(s), controlFlow.get(t));
 					boolean samePostset = comparePostset(controlFlow.get(s), controlFlow.get(t));
 					boolean assign = false;
-					for (HashMap<String, Properties> h : assignments) {
-						if (h.get(t) == null || h.get(t).keySet().isEmpty()) {
-							assign = true;
+					if (enablings.containsKey(t)) {
+						assign = true;
+					}
+					if (!assign) {
+						for (HashMap<String, Properties> h : assignments) {
+							if (h.get(t) == null || h.get(t).keySet().isEmpty()) {
+								assign = true;
+							}
 						}
 					}
 					if ((samePreset || samePostset) && !assign) {
@@ -243,9 +258,14 @@ public class Abstraction {
 						String[] preset1 = controlFlow.get(s).getProperty("preset").split(" ");
 						String[] preset2 = controlFlow.get(t).getProperty("preset").split(" ");
 						boolean assign = false;
-						for (HashMap<String, Properties> h : assignments) {
-							if (h.get(t) == null || h.get(t).keySet().isEmpty()) {
-								assign = true;
+						if (enablings.containsKey(t)) {
+							assign = true;
+						}
+						if (!assign) {
+							for (HashMap<String, Properties> h : assignments) {
+								if (h.get(t) == null || h.get(t).keySet().isEmpty()) {
+									assign = true;
+								}
 							}
 						}
 						if (!assign) {
@@ -306,18 +326,27 @@ public class Abstraction {
 						}
 					}
 				}
-				for (String t : enablings.keySet()) {
-					if (t != null) {
-						if (enablings.get(t).contains(s)) {
-							enablings.put(s, enablings.get(t).replace(s, "MAYBE"));
-						}
-					}
-				}
+				// for (String t : enablings.keySet()) {
+				// if (t != null) {
+				// if (enablings.get(t).contains(s)) {
+				// enablings.put(s, enablings.get(t).replace(s, "MAYBE"));
+				// }
+				// }
+				// }
 				if (inputs.containsKey(s)) {
-					inputs.remove(s);
+					inputs.put(s, "unknown");
 				}
 				else if (outputs.containsKey(s)) {
-					outputs.remove(s);
+					outputs.put(s, "unknown");
+				}
+				else if (variables.containsKey(s)) {
+					Properties prop = new Properties();
+					prop.setProperty("value", "[-INF,INF]");
+					prop.setProperty("rate", "[-INF,INF]");
+					variables.put(s, prop);
+				}
+				else if (integers.containsKey(s)) {
+					integers.put(s, "[-INF,INF]");
 				}
 				// for (String t : enablingTrees.keySet()) {
 				// ExprTree expr = enablingTrees.get(t);
@@ -862,80 +891,6 @@ public class Abstraction {
 				}
 			}
 		}
-		// Combine assignments
-		// Properties oldProp = contAssignments.get(transition);
-		// if (oldProp != null) {
-		// for (String t : postset) {
-		// Properties newProp = contAssignments.get(t);
-		// for (Object o : oldProp.keySet()) {
-		// if (!newProp.containsKey(o)) {
-		// newProp.setProperty(o.toString(), oldProp.getProperty(o.toString()));
-		// }
-		// }
-		// contAssignments.put(t, newProp);
-		// }
-		// }
-		// oldProp = booleanAssignments.get(transition);
-		// if (oldProp != null) {
-		// for (String t : postset) {
-		// Properties newProp = booleanAssignments.get(t);
-		// for (Object o : oldProp.keySet()) {
-		// if (!newProp.containsKey(o)) {
-		// newProp.setProperty(o.toString(), oldProp.getProperty(o.toString()));
-		// }
-		// }
-		// booleanAssignments.put(t, newProp);
-		// }
-		// }
-		// oldProp = intAssignments.get(transition);
-		// if (oldProp != null) {
-		// for (String t : postset) {
-		// Properties newProp = intAssignments.get(t);
-		// for (Object o : oldProp.keySet()) {
-		// if (!newProp.containsKey(o)) {
-		// newProp.setProperty(o.toString(), oldProp.getProperty(o.toString()));
-		// }
-		// }
-		// intAssignments.put(t, newProp);
-		// }
-		// }
-		// HashMap<String, ExprTree[]> oldMap =
-		// contAssignmentTrees.get(transition);
-		// if (oldMap != null) {
-		// for (String t : postset) {
-		// HashMap<String, ExprTree[]> newMap = contAssignmentTrees.get(t);
-		// for (Object o : oldMap.keySet()) {
-		// if (!newMap.containsKey(o)) {
-		// newMap.put(o.toString(), oldMap.get(o.toString()));
-		// }
-		// }
-		// contAssignmentTrees.put(t, newMap);
-		// }
-		// }
-		// oldMap = booleanAssignmentTrees.get(transition);
-		// if (oldMap != null) {
-		// for (String t : postset) {
-		// HashMap<String, ExprTree[]> newMap = booleanAssignmentTrees.get(t);
-		// for (Object o : oldMap.keySet()) {
-		// if (!newMap.containsKey(o)) {
-		// newMap.put(o.toString(), oldMap.get(o.toString()));
-		// }
-		// }
-		// booleanAssignmentTrees.put(t, newMap);
-		// }
-		// }
-		// oldMap = intAssignmentTrees.get(transition);
-		// if (oldMap != null) {
-		// for (String t : postset) {
-		// HashMap<String, ExprTree[]> newMap = intAssignmentTrees.get(t);
-		// for (Object o : oldMap.keySet()) {
-		// if (!newMap.containsKey(o)) {
-		// newMap.put(o.toString(), oldMap.get(o.toString()));
-		// }
-		// }
-		// intAssignmentTrees.put(t, newMap);
-		// }
-		// }
 		removeTransition(transition);
 		// save("/home/shang/kjones/eclipse/temp/temp.lpn");
 	}
@@ -1015,72 +970,6 @@ public class Abstraction {
 				}
 			}
 		}
-		// Combine assignments
-		// Properties oldProp = contAssignments.get(transition);
-		// if (oldProp != null) {
-		// for (String t : postset) {
-		// Properties newProp = contAssignments.get(t);
-		// for (Object o : oldProp.keySet()) {
-		// if (!newProp.containsKey(o)) {
-		// newProp.setProperty(o.toString(), oldProp.getProperty(o.toString()));
-		// }
-		// }
-		// contAssignments.put(t, newProp);
-		// }
-		// oldProp = booleanAssignments.get(transition);
-		// for (String t : postset) {
-		// Properties newProp = booleanAssignments.get(t);
-		// for (Object o : oldProp.keySet()) {
-		// if (!newProp.containsKey(o)) {
-		// newProp.setProperty(o.toString(), oldProp.getProperty(o.toString()));
-		// }
-		// }
-		// booleanAssignments.put(t, newProp);
-		// }
-		// oldProp = intAssignments.get(transition);
-		// for (String t : postset) {
-		// Properties newProp = intAssignments.get(t);
-		// for (Object o : oldProp.keySet()) {
-		// if (!newProp.containsKey(o)) {
-		// newProp.setProperty(o.toString(), oldProp.getProperty(o.toString()));
-		// }
-		// }
-		// intAssignments.put(t, newProp);
-		// }
-		// }
-		// HashMap<String, ExprTree[]> oldMap =
-		// contAssignmentTrees.get(transition);
-		// if (oldMap != null) {
-		// for (String t : postset) {
-		// HashMap<String, ExprTree[]> newMap = contAssignmentTrees.get(t);
-		// for (Object o : oldMap.keySet()) {
-		// if (!newMap.containsKey(o)) {
-		// newMap.put(o.toString(), oldMap.get(o.toString()));
-		// }
-		// }
-		// contAssignmentTrees.put(t, newMap);
-		// }
-		// oldMap = booleanAssignmentTrees.get(transition);
-		// for (String t : postset) {
-		// HashMap<String, ExprTree[]> newMap = booleanAssignmentTrees.get(t);
-		// for (Object o : oldMap.keySet()) {
-		// if (!newMap.containsKey(o)) {
-		// newMap.put(o.toString(), oldMap.get(o.toString()));
-		// }
-		// }
-		// booleanAssignmentTrees.put(t, newMap);
-		// }
-		// oldMap = intAssignmentTrees.get(transition);
-		// for (String t : postset) {
-		// HashMap<String, ExprTree[]> newMap = intAssignmentTrees.get(t);
-		// for (Object o : oldMap.keySet()) {
-		// if (!newMap.containsKey(o)) {
-		// newMap.put(o.toString(), oldMap.get(o.toString()));
-		// }
-		// }
-		// intAssignmentTrees.put(t, newMap);
-		// }
-		// }
 		removeTransition(transition);
 	}
 
@@ -1151,56 +1040,6 @@ public class Abstraction {
 			prop.setProperty("postset", setString);
 			controlPlaces.put(s, prop);
 		}
-		// Combine assignments
-		// Properties oldProp = contAssignments.get(trans2);
-		// Properties newProp = contAssignments.get(trans1);
-		// for (Object o : oldProp.keySet()) {
-		// if (!newProp.containsKey(o)) {
-		// newProp.setProperty(o.toString(), oldProp.getProperty(o.toString()));
-		// }
-		// }
-		// contAssignments.put(trans1, newProp);
-		// oldProp = booleanAssignments.get(trans2);
-		// newProp = booleanAssignments.get(trans1);
-		// for (Object o : oldProp.keySet()) {
-		// if (!newProp.containsKey(o)) {
-		// newProp.setProperty(o.toString(), oldProp.getProperty(o.toString()));
-		// }
-		// }
-		// booleanAssignments.put(trans1, newProp);
-		// oldProp = intAssignments.get(trans2);
-		// newProp = intAssignments.get(trans1);
-		// for (Object o : oldProp.keySet()) {
-		// if (!newProp.containsKey(o)) {
-		// newProp.setProperty(o.toString(), oldProp.getProperty(o.toString()));
-		// }
-		// }
-		// intAssignments.put(trans1, newProp);
-		// HashMap<String, ExprTree[]> oldMap = contAssignmentTrees.get(trans2);
-		// HashMap<String, ExprTree[]> newMap = contAssignmentTrees.get(trans1);
-		// for (Object o : oldMap.keySet()) {
-		// if (!newMap.containsKey(o)) {
-		// newMap.put(o.toString(), oldMap.get(o.toString()));
-		// }
-		// }
-		// contAssignmentTrees.put(trans1, newMap);
-		// oldMap = booleanAssignmentTrees.get(trans2);
-		// newMap = booleanAssignmentTrees.get(trans1);
-		// for (Object o : oldMap.keySet()) {
-		// if (!newMap.containsKey(o)) {
-		// newMap.put(o.toString(), oldMap.get(o.toString()));
-		// }
-		// }
-		// booleanAssignmentTrees.put(trans1, newMap);
-		// oldMap = intAssignmentTrees.get(trans2);
-		// newMap = intAssignmentTrees.get(trans1);
-		// for (Object o : oldMap.keySet()) {
-		// if (!newMap.containsKey(o)) {
-		// newMap.put(o.toString(), oldMap.get(o.toString()));
-		// }
-		// }
-		// intAssignmentTrees.put(trans1, newMap);
-		// removeTransition(trans2);
 	}
 
 	public void addPlaces(HashMap<String, Boolean> newPlaces) {
