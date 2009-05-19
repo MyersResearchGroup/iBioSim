@@ -29,6 +29,8 @@ public class ExprTree {
 
 	private ArrayList<String> signals;
 
+	private String result;
+
 	// private int nsignals;// nevents, nplaces;
 
 	private LHPNFile lhpn;
@@ -1225,6 +1227,65 @@ public class ExprTree {
 			return false;
 		}
 		return true;
+	}
+
+	public String toString() {
+		result = "";
+		getElement();
+		return result;
+	}
+
+	private void getElement() {
+		switch (isit) {
+		case 'b': // Boolean
+		case 'i': // Integer
+		case 'c': // Continuous
+			result = result + variable;
+			break;
+		case 'n': // Number
+			if (uvalue == lvalue) {
+				Integer tempVal = uvalue;
+				result = result + tempVal.toString();
+			}
+			else {
+				Integer tempuval = uvalue;
+				Integer templval = lvalue;
+				result = result + "[" + templval.toString() + "," + tempuval.toString() + "]";
+			}
+			break;
+		case 't': // Truth value
+			if (uvalue == 1 && lvalue == 1) {
+				result = result + "TRUE";
+			}
+			else if (uvalue == 0 && lvalue == 0) {
+				result = result + "FALSE";
+			}
+			//else {
+			//	System.out.println("WARNING: Unknown assignment to a boolean variable");
+			//	result = result + "UNKNOWN";
+			//}
+			break;
+		case 'w': // bitWise
+		case 'a': // Arithmetic
+		case 'r': // Relational
+		case 'l': // Logical
+			if (op.equals("!")) {
+				result = result + op;
+				if (r1 != null) {
+					r1.getElement();
+				}
+			}
+			else {
+				if (r1 != null) {
+					r1.getElement();
+				}
+				result = result + op;
+			}
+		}
+		if (r2 != null) {
+			r2.getElement();
+		}
+		return;
 	}
 
 	private void setVarValues(char willbe, int lNV, int uNV, String var) {
