@@ -1270,7 +1270,7 @@ public class ExprTree {
 		case 'r': // Relational
 		case 'l': // Logical
 			if (op.equals("!")) {
-				result = result + op;
+				result = result + "~";
 				if (r1 != null) {
 					result = r1.getElement(result);
 				}
@@ -1279,7 +1279,18 @@ public class ExprTree {
 				if (r1 != null) {
 					result = r1.getElement(result);
 				}
-				result = result + op;
+				if (op.equals("&&")) {
+					result = result + "&";
+				}
+				else if (op.equals("||")) {
+					result = result + "|";
+				}
+				else if (op.equals("==")) {
+					result = result + "=";
+				}
+				else {
+					result = result + op;
+				}
 			}
 		}
 		if (r2 != null) {
