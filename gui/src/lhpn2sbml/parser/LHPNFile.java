@@ -2317,6 +2317,7 @@ public class LHPNFile {
 					expr.token = expr.intexpr_gettok(enabMatcher.group(4));
 					expr.intexpr_L(enabMatcher.group(4));
 					enablingTrees.put(enabMatcher.group(2), expr);
+					//log.addText(expr.toString());
 				}
 				else {
 					enablingTrees.put(enabMatcher.group(2), null);

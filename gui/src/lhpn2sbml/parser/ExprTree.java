@@ -29,7 +29,7 @@ public class ExprTree {
 
 	private ArrayList<String> signals;
 
-	private String result;
+	//private String result;
 
 	// private int nsignals;// nevents, nplaces;
 
@@ -1230,12 +1230,12 @@ public class ExprTree {
 	}
 
 	public String toString() {
-		result = "";
-		getElement();
+		String result = "";
+		result = getElement(result);
 		return result;
 	}
 
-	private void getElement() {
+	private String getElement(String result) {
 		switch (isit) {
 		case 'b': // Boolean
 		case 'i': // Integer
@@ -1272,20 +1272,20 @@ public class ExprTree {
 			if (op.equals("!")) {
 				result = result + op;
 				if (r1 != null) {
-					r1.getElement();
+					result = r1.getElement(result);
 				}
 			}
 			else {
 				if (r1 != null) {
-					r1.getElement();
+					result = r1.getElement(result);
 				}
 				result = result + op;
 			}
 		}
 		if (r2 != null) {
-			r2.getElement();
+			result = r2.getElement(result);
 		}
-		return;
+		return result;
 	}
 
 	private void setVarValues(char willbe, int lNV, int uNV, String var) {
