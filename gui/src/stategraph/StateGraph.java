@@ -27,7 +27,7 @@ public class StateGraph {
 		}
 		boolean[] variableVector = new boolean[variables.size()];
 		for (int i = 0; i < variableVector.length; i++) {
-			if (lhpn.getInitialVal(variables.get(i)).equals("true")) {
+			if (lhpn.getInitialVal(variables.get(i)).toLowerCase().equals("true")) {
 				variableVector[i] = true;
 			}
 			else {
