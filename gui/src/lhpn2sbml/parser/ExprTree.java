@@ -1,6 +1,8 @@
 package lhpn2sbml.parser;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Properties;
 
 public class ExprTree {
 
@@ -1334,6 +1336,126 @@ public class ExprTree {
 			lvalue = -INFIN;
 		}
 		variable = null;
+	}
+	
+	public double evaluateExp(HashMap<String, String> variables) {
+		switch (isit) {
+		case 'b': // Boolean
+			if (variables.get(variable).toLowerCase().equals("true")) {
+				return 1.0;
+			}
+			else {
+				return 0.0;
+			}
+		case 'i': // Integer
+		case 'c': // Continuous
+			return Double.parseDouble(variables.get(variable));
+		case 'n': // Number
+			if (uvalue == lvalue) {
+				return uvalue;
+			}
+			else {
+				return ((uvalue - lvalue) * new java.util.Random().nextDouble()) + lvalue;
+			}
+		case 't': // Truth value
+			if (uvalue == 1 && lvalue == 1) {
+				return 1.0;
+			}
+			else {
+				return 0.0;
+			}
+		case 'w': // bitWise
+		case 'a': // Arithmetic
+		case 'r': // Relational
+		case 'l': // Logical
+			if (op.equals("!")) {
+				if (r1 != null) {
+					if (r1.evaluateExp(variables) != 0.0) {
+						return 0.0;
+					}
+					else {
+						return 1.0;
+					}
+				}
+				else if (r2 != null) {
+					if (r2.evaluateExp(variables) != 0.0) {
+						return 0.0;
+					}
+					else {
+						return 1.0;
+					}
+				}
+				else {
+					return 0.0;
+				}
+			}
+			else {
+				double left = 0.0;
+				double right = 0.0;
+				if (r1 != null) {
+					left = r1.evaluateExp(variables);
+				}
+				if (r2 != null) {
+					right = r2.evaluateExp(variables);
+				}
+				if (op.equals("&&")) {
+					if (left == 1.0 && right == 1.0) {
+						return 1.0;
+					}
+					else {
+						return 0.0;
+					}
+				}
+				else if (op.equals("||")) {
+					if (left == 1.0 || right == 1.0) {
+						return 1.0;
+					}
+					else {
+						return 0.0;
+					}
+				}
+				else if (op.equals("==")) {
+					if (left == right) {
+						return 1.0;
+					}
+					else {
+						return 0.0;
+					}
+				}
+				else if (op.equals("+")) {
+					return left + right;
+				}
+				else if (op.equals("*")) {
+					return left * right;
+				}
+				else if (op.equals("/")) {
+					return left / right;
+				}
+				else if (op.equals("%")) {
+					return left % right;
+				}
+				else if (op.equals("<")) {
+					if (left < right) {
+						return 1.0;
+					}
+					else {
+						return 0.0;
+					}
+				}
+				else if (op.equals(">")) {
+					if (left > right) {
+						return 1.0;
+					}
+					else {
+						return 0.0;
+					}
+				}
+				else {
+					return 0.0;
+				}
+			}
+		}
+		return 0.0;
 	}
 
 	private static final int WORD = 1;
