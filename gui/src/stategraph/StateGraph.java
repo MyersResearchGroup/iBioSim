@@ -34,6 +34,16 @@ public class StateGraph {
 				variableVector[i] = false;
 			}
 		}
+		HashMap<String, String> allVariables = new HashMap<String, String>();
+		for (String var : lhpn.getBooleanVars()) {
+			allVariables.put(var, lhpn.getInitialVal(var));
+		}
+		for (String var : lhpn.getContVars()) {
+			allVariables.put(var, lhpn.getInitialVal(var));
+		}
+		for (String var : lhpn.getIntVars()) {
+			allVariables.put(var, lhpn.getInitialVal(var));
+		}
 		ArrayList<String> markedPlaces = new ArrayList<String>();
 		HashMap<String, Boolean> places = lhpn.getPlaces();
 		for (String place : places.keySet()) {
@@ -77,15 +87,26 @@ public class StateGraph {
 				markedPlaces.add(place);
 			}
 			for (int i = 0; i < variables.size(); i++) {
-				if (lhpn.getBoolAssign(fire.getTransition(), variables.get(i)) != null) {
-					if (lhpn.getBoolAssign(fire.getTransition(), variables.get(i)).toLowerCase()
-							.equals("true")) {
+				if (lhpn.getBoolAssignTree(fire.getTransition(), variables.get(i)) != null) {
+					if (lhpn.getBoolAssignTree(fire.getTransition(), variables.get(i))[0]
+							.evaluateExp(allVariables) == 1.0) {
 						variableVector[i] = true;
 					}
 					else {
 						variableVector[i] = false;
 					}
 				}
+				// if (lhpn.getBoolAssign(fire.getTransition(),
+				// variables.get(i)) != null) {
+				// if (lhpn.getBoolAssign(fire.getTransition(),
+				// variables.get(i)).toLowerCase()
+				// .equals("true")) {
+				// variableVector[i] = true;
+				// }
+				// else {
+				// variableVector[i] = false;
+				// }
+				// }
 			}
 			if (!stateGraph.containsKey(vectorToString(variableVector))) {
 				markings = new LinkedList<State>();
