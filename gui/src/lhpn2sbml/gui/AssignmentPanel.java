@@ -385,6 +385,8 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 		String variable = varBox.getSelectedItem().toString();
 		String value = "";
 		ExprTree[] expr = new ExprTree[2];
+		expr[0] = new ExprTree(lhpn);
+		expr[1] = new ExprTree(lhpn);
 		if (fields.get("Assignment upper").getValue().equals("")) {
 			value = fields.get("Assignment lower").getValue();
 			expr[0].token = expr[0].intexpr_gettok(value);
