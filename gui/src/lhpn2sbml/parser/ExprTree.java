@@ -37,7 +37,7 @@ public class ExprTree {
 
 	private LHPNFile lhpn;
 
-	ExprTree(LHPNFile lhpn) {
+	public ExprTree(LHPNFile lhpn) {
 		this.lhpn = lhpn;
 		String[] bools = lhpn.getBooleanVars();
 		String[] conts = lhpn.getContVars();
