@@ -2,7 +2,6 @@ package lhpn2sbml.parser;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Properties;
 
 public class ExprTree {
 
