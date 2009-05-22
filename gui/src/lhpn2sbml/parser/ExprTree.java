@@ -358,7 +358,7 @@ public class ExprTree {
 					System.out.printf("U1:ERROR(%s): Expected a ID, Number, or a (\n", tokvalue);
 					return false;
 				}
-				temp = Integer.parseInt(tokvalue);
+				temp = (int)Double.parseDouble(tokvalue);
 				// result = new ExprTree('n', temp, temp, null);
 				setVarValues('n', temp, temp, null);
 				token = intexpr_gettok(expr);
