@@ -263,7 +263,9 @@ public class StateGraph {
 								// catch (Exception e) {
 								// transProb = 1;
 								// }
-								transProb /= transitionSum;
+								if (transitionSum != 0.0) {
+									transProb /= transitionSum;
+								}
 								nextProb += (prev.getState().getCurrentProb() * transProb);
 							}
 							m.setNextProb(nextProb);
@@ -307,13 +309,23 @@ public class StateGraph {
 						// transitionSum += 1;
 						// }
 					}
-					m.setCurrentProb((m.getCurrentProb() / period) / transitionSum);
+					if (transitionSum == 0.0) {
+						m.setCurrentProb(0.0);
+					}
+					else {
+						m.setCurrentProb((m.getCurrentProb() / period) / transitionSum);
+					}
 					totalProb += m.getCurrentProb();
 				}
 			}
 			for (String state : stateGraph.keySet()) {
 				for (State m : stateGraph.get(state)) {
-					m.setCurrentProb(m.getCurrentProb() / totalProb);
+					if (totalProb == 0.0) {
+						m.setCurrentProb(0.0);
+					}
+					else {
+						m.setCurrentProb(m.getCurrentProb() / totalProb);
+					}
 				}
 			}
 			resetColors();
