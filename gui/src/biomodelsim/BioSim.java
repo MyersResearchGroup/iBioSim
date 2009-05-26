@@ -3278,7 +3278,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			}
 			String projDir = "";
 			if (e.getSource() == openProj) {
-				projDir = Buttons.browse(frame, f, null, JFileChooser.FILES_AND_DIRECTORIES,
+				projDir = Buttons.browse(frame, f, null, JFileChooser.DIRECTORIES_ONLY,
 						"Open", -1);
 				if (projDir.endsWith(".prj")) {
 					String[] tempArray = projDir.split(separator);
