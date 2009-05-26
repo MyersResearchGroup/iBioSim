@@ -481,7 +481,7 @@ public class GCMFile {
 				Properties prop = species.get(s);
 				for (Object propName : prop.keySet()) {
 					if ((propName.toString().equals(GlobalConstants.NAME)) ||
-						(propName.toString().equals("label"))) {
+							(propName.toString().equals("label"))) {
 						buffer.append(checkCompabilitySave(propName.toString()) + "="
 								+ "\"" + prop.getProperty(propName.toString()).toString()
 								+ "\"" + ",");
@@ -524,9 +524,13 @@ public class GCMFile {
 				prop.setProperty(GlobalConstants.NAME, "\""+ getInput(s) + " " + getArrow(s) + " "
 						+ getOutput(s)+ ", Promoter " + promo + "\"");
 				for (Object propName : prop.keySet()) {
-					buffer.append(checkCompabilitySave(propName.toString()) + "="
-							+ prop.getProperty(propName.toString()).toString()
-							+ ",");
+					if (propName.toString().equals("label")) {
+						buffer.append("label=\"\"");
+					} else {
+						buffer.append(checkCompabilitySave(propName.toString()) + "="
+								+ prop.getProperty(propName.toString()).toString()
+								+ ",");
+					}
 				}
 				
 				String type = "";
