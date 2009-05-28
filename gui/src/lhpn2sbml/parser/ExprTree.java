@@ -154,7 +154,12 @@ public class ExprTree {
 					return WORD;
 				}
 			case '-':
-				if (!readword) {
+				if (tokvalue.endsWith("E")) {
+					readword = true;
+					tokvalue += c;
+					break;
+				}
+				else if (!readword) {
 					if (expr.charAt(position) == '>') {
 						position++;
 						return (IMPLIES);
