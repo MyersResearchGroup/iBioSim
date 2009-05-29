@@ -292,9 +292,9 @@ public class StateGraph {
 			for (String state : stateGraph.keySet()) {
 				for (State m : stateGraph.get(state)) {
 					double transitionSum = 0.0;
-					for (StateTransitionPair prev : m.getNextStatesWithTrans()) {
-						if (lhpn.getTransitionRateTree(prev.getTransition()) != null) {
-							transitionSum += lhpn.getTransitionRateTree(prev.getTransition())
+					for (StateTransitionPair next : m.getNextStatesWithTrans()) {
+						if (lhpn.getTransitionRateTree(next.getTransition()) != null) {
+							transitionSum += lhpn.getTransitionRateTree(next.getTransition())
 									.evaluateExp(m.getVariables());
 						}
 						else {
