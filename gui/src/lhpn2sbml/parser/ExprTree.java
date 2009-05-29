@@ -10,7 +10,7 @@ public class ExprTree {
 	char isit; // b=Boolean, i=Integer, c=Continuous, n=Number, t=Truth value,
 
 	// w=bitWise, a=Arithmetic, r=Relational, l=Logical
-	int lvalue, uvalue;
+	double lvalue, uvalue;
 
 	String variable;
 
@@ -191,7 +191,7 @@ public class ExprTree {
 	public boolean intexpr_U(String expr) {
 		// System.out.println("U: token = " + token + " tokvalue = " + tokvalue
 		// + " result = " + result);
-		int temp;
+		double temp;
 		ExprTree newresult = null;
 
 		switch (token) {
@@ -362,7 +362,7 @@ public class ExprTree {
 					System.out.printf("U1:ERROR(%s): Expected a ID, Number, or a (\n", tokvalue);
 					return false;
 				}
-				temp = (int)Double.parseDouble(tokvalue);
+				temp = Double.parseDouble(tokvalue);
 				// result = new ExprTree('n', temp, temp, null);
 				setVarValues('n', temp, temp, null);
 				token = intexpr_gettok(expr);
@@ -1250,12 +1250,12 @@ public class ExprTree {
 			break;
 		case 'n': // Number
 			if (uvalue == lvalue) {
-				Integer tempVal = uvalue;
+				Double tempVal = uvalue;
 				result = result + tempVal.toString();
 			}
 			else {
-				Integer tempuval = uvalue;
-				Integer templval = lvalue;
+				Double tempuval = uvalue;
+				Double templval = lvalue;
 				result = result + "[" + templval.toString() + "," + tempuval.toString() + "]";
 			}
 			break;
@@ -1305,7 +1305,7 @@ public class ExprTree {
 		return result;
 	}
 
-	private void setVarValues(char willbe, int lNV, int uNV, String var) {
+	private void setVarValues(char willbe, double lNV, double uNV, String var) {
 		op = "";
 		r1 = null;
 		r2 = null;
