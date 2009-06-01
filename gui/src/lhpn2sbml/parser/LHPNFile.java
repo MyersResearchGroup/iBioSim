@@ -931,6 +931,8 @@ public class LHPNFile {
 			rangeMatcher = rangePattern.matcher(delay);
 			if (rangeMatcher.find()) {
 				array = new ExprTree[2];
+				array[0] = new ExprTree(this);
+				array[1] = new ExprTree(this);
 				array[0].token = array[0].intexpr_gettok(rangeMatcher.group(1));
 				if (!rangeMatcher.group(1).equals("")) {
 					array[0].intexpr_L(rangeMatcher.group(1));
@@ -961,6 +963,8 @@ public class LHPNFile {
 			rangeMatcher = rangePattern.matcher(delay);
 			if (rangeMatcher.find()) {
 				array = new ExprTree[2];
+				array[0] = new ExprTree(this);
+				array[1] = new ExprTree(this);
 				array[0].token = array[0].intexpr_gettok(rangeMatcher.group(1));
 				if (!rangeMatcher.group(1).equals("")) {
 					array[0].intexpr_L(rangeMatcher.group(1));
@@ -2447,6 +2451,8 @@ public class LHPNFile {
 				while (indetMatcher.find()) {
 					indet = true;
 					ExprTree[] expr = new ExprTree[2];
+					expr[0] = new ExprTree(this);
+					expr[1] = new ExprTree(this);
 					assignProp.put(indetMatcher.group(1), indetMatcher.group(2));
 					Pattern rangePattern = Pattern.compile(RANGE);
 					Matcher rangeMatcher = rangePattern.matcher(indetMatcher.group(2));
@@ -2569,6 +2575,8 @@ public class LHPNFile {
 						// + rangeMatcher.group(2));
 						prop.put(rangeMatcher.group(1), rangeMatcher.group(2));
 						ExprTree[] expr = new ExprTree[2];
+						expr[0] = new ExprTree(this);
+						expr[1] = new ExprTree(this);
 						Pattern newRangePattern = Pattern.compile(RANGE);
 						Matcher newRangeMatcher = newRangePattern.matcher(rangeMatcher.group(2));
 						newRangeMatcher.find();
