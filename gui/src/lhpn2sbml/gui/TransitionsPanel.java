@@ -344,6 +344,8 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 				// System.out.println(transition + " " + tempArray[0] + " " +
 				// tempArray[1]);
 				ExprTree[] expr = new ExprTree[2];
+				expr[0] = new ExprTree(lhpn);
+				expr[1] = new ExprTree(lhpn);
 				Pattern pattern = Pattern.compile("\\[(\\w+?),(\\w+?)\\]");
 				Matcher matcher = pattern.matcher(tempArray[1]);
 				if (matcher.find()) {
