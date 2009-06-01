@@ -483,7 +483,7 @@ public class ExprTree {
 			if (((newresult.isit == 'n') || (newresult.isit == 't'))
 					&& (((this).isit == 'n') || ((this).isit == 't'))) {
 				(this).isit = 'n';
-				(this).lvalue = (int) (this).lvalue % (int) newresult.lvalue;
+				(this).lvalue = (this).lvalue % newresult.lvalue;
 				(this).uvalue = (this).lvalue;
 			}
 			else {
