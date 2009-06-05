@@ -522,7 +522,7 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 						integer = true;
 					}
 					VariablesPanel panel = new VariablesPanel(selected, list, continuous, integer,
-							lhpnFile);
+							lhpnFile, biosim.atacs);
 				}
 				else {
 					String temp = (String) JOptionPane.showInputDialog(mainPanel, "",
@@ -536,7 +536,7 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 							integer = true;
 						}
 						VariablesPanel panel = new VariablesPanel(selected, list, continuous,
-								integer, lhpnFile);
+								integer, lhpnFile, biosim.atacs);
 					}
 				}
 				// log.addText(selected);
