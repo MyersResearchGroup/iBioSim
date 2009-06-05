@@ -66,6 +66,10 @@ public class StateGraph {
 					if (!markedPlaces.contains(place)) {
 						addToStack = false;
 					}
+					else if (lhpn.getEnablingTree(transition) != null
+							&& lhpn.getEnablingTree(transition).evaluateExp(allVariables) == 0.0) {
+						addToStack = false;
+					}
 				}
 			}
 			else {
@@ -191,6 +195,11 @@ public class StateGraph {
 						if (lhpn.getPreset(transition).length != 0) {
 							for (String place : lhpn.getPreset(transition)) {
 								if (!markedPlaces.contains(place)) {
+									addToStack = false;
+								}
+								else if (lhpn.getEnablingTree(transition) != null
+										&& lhpn.getEnablingTree(transition).evaluateExp(
+												allVariables) == 0.0) {
 									addToStack = false;
 								}
 							}
