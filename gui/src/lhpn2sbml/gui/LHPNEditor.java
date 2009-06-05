@@ -513,14 +513,14 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 				// log.addText(list.getSelectedValue().toString());
 				if (list.getSelectedValue() != null && getName().contains("Edit")) {
 					selected = list.getSelectedValue().toString();
-					if (lhpnFile.isContinuous(selected)) {
+					String[] array = selected.split(" ");
+					String VarName = array[0];
+					if (lhpnFile.isContinuous(VarName)) {
 						continuous = true;
 					}
-					else if (lhpnFile.isInteger(selected)) {
+					else if (lhpnFile.isInteger(VarName)) {
 						integer = true;
 					}
-					//String[] array = selected.split(" ");
-					//selected = array[0];
 					VariablesPanel panel = new VariablesPanel(selected, list, continuous, integer,
 							lhpnFile);
 				}
