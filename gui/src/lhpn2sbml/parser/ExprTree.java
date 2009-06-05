@@ -154,7 +154,7 @@ public class ExprTree {
 					return WORD;
 				}
 			case '-':
-				if (tokvalue.endsWith("E")) {
+				if (tokvalue.endsWith("E") || tokvalue.endsWith("e")) {
 					readword = true;
 					tokvalue += c;
 					break;
