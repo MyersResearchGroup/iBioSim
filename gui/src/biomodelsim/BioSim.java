@@ -222,8 +222,10 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 
 	private Pattern IDpat = Pattern.compile("([a-zA-Z]|_)([a-zA-Z]|[0-9]|_)*");
 
-	private boolean lema, atacs, async, externView, treeSelected = false, popupFlag = false,
+	private boolean lema, async, externView, treeSelected = false, popupFlag = false,
 			menuFlag = false;
+	
+	public boolean atacs;
 
 	private String viewer;
 

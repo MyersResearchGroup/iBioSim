@@ -51,8 +51,8 @@ public class VariablesPanel extends JPanel implements ActionListener {
 	private HashMap<String, PropertyField> fields = null;
 
 	public VariablesPanel(String selected, PropertyList variablesList, Boolean boolCont,
-			Boolean integer, LHPNFile lhpn) {
-		super(new GridLayout(6, 1));
+			Boolean integer, LHPNFile lhpn, boolean atacs) {
+		super(new GridLayout(4, 1));
 		if (selected != null) {
 			String[] array = selected.split(" ");
 			this.name = array[0];
@@ -147,8 +147,10 @@ public class VariablesPanel extends JPanel implements ActionListener {
 			modeBox.setSelectedItem(modes[0]);
 			modeBox.addActionListener(this);
 			tempPanel.setLayout(new GridLayout(1, 2));
-			tempPanel.add(modeLabel);
-			tempPanel.add(modeBox);
+			if (atacs) {
+				tempPanel.add(modeLabel);
+				tempPanel.add(modeBox);
+			}
 			add(tempPanel);
 		}
 
