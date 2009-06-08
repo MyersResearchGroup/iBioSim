@@ -32,7 +32,7 @@ public class ExprTree {
 
 	private ArrayList<String> signals;
 
-	//private String result;
+	// private String result;
 
 	// private int nsignals;// nevents, nplaces;
 
@@ -127,9 +127,12 @@ public class ExprTree {
 
 	public int intexpr_gettok(String expr) {
 		char c;
-		boolean readword;
+		boolean readword, readsci, readnum, readsign;
 		tokvalue = "";
 		readword = false;
+		readnum = false;
+		readsci = false;
+		readsign = false;
 		while (position < expr.length()) {
 			c = expr.charAt(position);
 			position++;
@@ -142,7 +145,6 @@ public class ExprTree {
 			case '~':
 			case '|':
 			case '&':
-			case '+':
 			case '*':
 			case '^':
 			case '/':
@@ -156,13 +158,17 @@ public class ExprTree {
 					position--;
 					return WORD;
 				}
+			case '+':
 			case '-':
-				if (tokvalue.endsWith("E") || tokvalue.endsWith("e")) {
-					readword = true;
+				if ((readsci) && (!readnum) && (readsign)) {
 					tokvalue += c;
+					readsign = false;
 					break;
 				}
-				else if (!readword) {
+				if ((readsci) && (!readnum) && (!readsign)) {
+					return -1;
+				}
+				else if ((!readword) && (!readnum) && (!readsci)) {
 					if (expr.charAt(position) == '>') {
 						position++;
 						return (IMPLIES);
@@ -179,13 +185,40 @@ public class ExprTree {
 					return (WORD);
 				}
 				break;
+			case '0':
+			case '1':
+			case '2':
+			case '3':
+			case '4':
+			case '5':
+			case '6':
+			case '7':
+			case '8':
+			case '9':
+				if (!readword) {
+					readnum = true;
+				}
+				tokvalue += c;
+				break;
+			case 'E':
+			case 'e':
+				if (readsci) {
+					return -1;
+				}
+				else if (readnum) {
+					readsci = true;
+					readnum = false;
+					readsign = true;
+					tokvalue += c;
+					break;
+				}
 			default:
 				readword = true;
 				tokvalue += c;
 				break;
 			}
 		}
-		if (!readword)
+		if (!readword&&!readnum)
 			return (END_OF_STRING);
 		else
 			return (WORD);
@@ -202,8 +235,9 @@ public class ExprTree {
 			if (tokvalue.equals("and")) {
 				token = intexpr_gettok(expr);
 				if ((token) != '(') {
-					Utility.createErrorMessage("ERROR", "Invalid expression: " + expr + "\nU: Expected a (");
-					//System.out.print("ERROR: Expected a (\n");
+					Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
+							+ "\nU: Expected a (");
+					// System.out.print("ERROR: Expected a (\n");
 					return false;
 				}
 				token = intexpr_gettok(expr);
@@ -214,8 +248,9 @@ public class ExprTree {
 				if (!intexpr_R(expr))
 					return false;
 				if ((token) != ')') {
-					Utility.createErrorMessage("ERROR", "Invalid expression: " + expr + "\nU: Expected a (");
-					//System.out.printf("ERROR: Expected a )\n");
+					Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
+							+ "\nU: Expected a (");
+					// System.out.printf("ERROR: Expected a )\n");
 					return false;
 				}
 				// simplify if operands are static
@@ -234,24 +269,27 @@ public class ExprTree {
 			else if (tokvalue.equals("or")) {
 				(token) = intexpr_gettok(expr);
 				if ((token) != '(') {
-					Utility.createErrorMessage("ERROR", "Invalid expression: " + expr + "\nU: Expected a (");
-					//System.out.printf("ERROR: Expected a (\n");
+					Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
+							+ "\nU: Expected a (");
+					// System.out.printf("ERROR: Expected a (\n");
 					return false;
 				}
 				(token) = intexpr_gettok(expr);
 				if (!intexpr_R(expr))
 					return false;
 				if ((token) != ',') {
-					Utility.createErrorMessage("ERROR", "Invalid expression: " + expr + "\nU: Expected a (");
-					//System.out.printf("ERROR: Expected a ,\n");
+					Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
+							+ "\nU: Expected a (");
+					// System.out.printf("ERROR: Expected a ,\n");
 					return false;
 				}
 				(token) = intexpr_gettok(expr);
 				if (!intexpr_R(expr))
 					return false;
 				if ((token) != ')') {
-					Utility.createErrorMessage("ERROR", "Invalid expression: " + expr + "\nU: Expected a (");
-					//System.out.printf("ERROR: Expected a )\n");
+					Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
+							+ "\nU: Expected a (");
+					// System.out.printf("ERROR: Expected a )\n");
 					return false;
 				}
 				// simplify if operands are static
@@ -270,24 +308,27 @@ public class ExprTree {
 			else if (tokvalue.equals("exor")) {
 				(token) = intexpr_gettok(expr);
 				if ((token) != '(') {
-					Utility.createErrorMessage("ERROR", "Invalid expression: " + expr + "\nU: Expected a (");
-					//System.out.printf("ERROR: Expected a (\n");
+					Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
+							+ "\nU: Expected a (");
+					// System.out.printf("ERROR: Expected a (\n");
 					return false;
 				}
 				(token) = intexpr_gettok(expr);
 				if (!intexpr_R(expr))
 					return false;
 				if ((token) != ',') {
-					Utility.createErrorMessage("ERROR", "Invalid expression: " + expr + "\nU: Expected a (");
-					//System.out.printf("ERROR: Expected a ,\n");
+					Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
+							+ "\nU: Expected a (");
+					// System.out.printf("ERROR: Expected a ,\n");
 					return false;
 				}
 				(token) = intexpr_gettok(expr);
 				if (!intexpr_R(expr))
 					return false;
 				if ((token) != ')') {
-					Utility.createErrorMessage("ERROR", "Invalid expression: " + expr + "\nU: Expected a (");
-					//System.out.printf("ERROR: Expected a )\n");
+					Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
+							+ "\nU: Expected a (");
+					// System.out.printf("ERROR: Expected a )\n");
 					return false;
 				}
 				// simplify if operands are static
@@ -306,16 +347,18 @@ public class ExprTree {
 			else if (tokvalue.equals("not")) {
 				(token) = intexpr_gettok(expr);
 				if ((token) != '(') {
-					Utility.createErrorMessage("ERROR", "Invalid expression: " + expr + "\nU: Expected a (");
-					//System.out.printf("ERROR: Expected a (\n");
+					Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
+							+ "\nU: Expected a (");
+					// System.out.printf("ERROR: Expected a (\n");
 					return false;
 				}
 				(token) = intexpr_gettok(expr);
 				if (!intexpr_R(expr))
 					return false;
 				if ((token) != ')') {
-					Utility.createErrorMessage("ERROR", "Invalid expression: " + expr + "\nU: Expected a (");
-					//System.out.printf("ERROR: Expected a )\n");
+					Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
+							+ "\nU: Expected a (");
+					// System.out.printf("ERROR: Expected a )\n");
 					return false;
 				}
 				// simplify if operands are static
@@ -368,13 +411,17 @@ public class ExprTree {
 				}
 				// }
 				if (tokvalue.equals("")) {
-					Utility.createErrorMessage("ERROR", "Invalid expression: " + expr + "\nU1:(" + tokvalue + "): Expected a ID, Number, or a (\n");
-					//System.out.printf("U1:ERROR(%s): Expected a ID, Number, or a (\n", tokvalue);
+					Utility.createErrorMessage("ERROR", "Invalid expression: " + expr + "\nU1:("
+							+ tokvalue + "): Expected a ID, Number, or a (\n");
+					// System.out.printf("U1:ERROR(%s): Expected a ID, Number,
+					// or a (\n", tokvalue);
 					return false;
 				}
 				else if ((int) (tokvalue.charAt(0)) > ('9') || ((int) (tokvalue.charAt(0)) < '0')) {
-					Utility.createErrorMessage("ERROR", "Invalid expression: " + expr + "\nU1:(" + tokvalue + "): Expected a ID, Number, or a (\n");
-					//System.out.printf("U1:ERROR(%s): Expected a ID, Number, or a (\n", tokvalue);
+					Utility.createErrorMessage("ERROR", "Invalid expression: " + expr + "\nU1:("
+							+ tokvalue + "): Expected a ID, Number, or a (\n");
+					// System.out.printf("U1:ERROR(%s): Expected a ID, Number,
+					// or a (\n", tokvalue);
 					return false;
 				}
 				temp = Double.parseDouble(tokvalue);
@@ -389,15 +436,17 @@ public class ExprTree {
 			if (!intexpr_L(expr))
 				return false;
 			if ((token) != ')') {
-				Utility.createErrorMessage("ERROR", "Invalid expression: " + expr + "\nU: Expected a (");
-				//System.out.printf("ERROR: Expected a )\n");
+				Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
+						+ "\nU: Expected a (");
+				// System.out.printf("ERROR: Expected a )\n");
 				return false;
 			}
 			(token) = intexpr_gettok(expr);
 			break;
 		default:
-			Utility.createErrorMessage("ERROR", "Invalid expression: " + expr + "\nU2: Expected a ID, Number, or a (");
-			//System.out.printf("U2:ERROR: Expected a ID, Number, or a (\n");
+			Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
+					+ "\nU2: Expected a ID, Number, or a (");
+			// System.out.printf("U2:ERROR: Expected a ID, Number, or a (\n");
 			return false;
 		}
 		return true;
@@ -429,8 +478,9 @@ public class ExprTree {
 			break;
 		default:
 			// System.out.println(token);
-			Utility.createErrorMessage("ERROR", "Invalid expression: " + expr + "\nT: Expected a ID, Number, (, or -\n");
-			//System.out.printf("T:ERROR: Expected a ID, Number, (, or -\n");
+			Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
+					+ "\nT: Expected a ID, Number, (, or -\n");
+			// System.out.printf("T:ERROR: Expected a ID, Number, (, or -\n");
 			return false;
 		}
 		return true;
@@ -570,8 +620,9 @@ public class ExprTree {
 			break;
 
 		default:
-			Utility.createErrorMessage("ERROR", "Invalid expression: " + expr + "\nC: Expected a * or /\n");
-			//System.out.printf("ERROR: Expected a * or /\n");
+			Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
+					+ "\nC: Expected a * or /\n");
+			// System.out.printf("ERROR: Expected a * or /\n");
 			return false;
 		}
 		return true;
@@ -642,8 +693,9 @@ public class ExprTree {
 		case END_OF_STRING:
 			break;
 		default:
-			Utility.createErrorMessage("ERROR", "Invalid expression: " + expr + "\nB: Expected a + or -\n");
-			//System.out.printf("ERROR: Expected a + or -\n");
+			Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
+					+ "\nB: Expected a + or -\n");
+			// System.out.printf("ERROR: Expected a + or -\n");
 			return false;
 		}
 		return true;
@@ -662,8 +714,9 @@ public class ExprTree {
 				return false;
 			break;
 		default:
-			Utility.createErrorMessage("ERROR", "Invalid expression: " + expr + "\nS: Expected a ID, Number, (, or -\n");
-			//System.out.printf("S:ERROR: Expected a ID, Number, (, or -\n");
+			Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
+					+ "\nS: Expected a ID, Number, (, or -\n");
+			// System.out.printf("S:ERROR: Expected a ID, Number, (, or -\n");
 			return false;
 		}
 		return true;
@@ -682,8 +735,9 @@ public class ExprTree {
 				return false;
 			break;
 		default:
-			Utility.createErrorMessage("ERROR", "Invalid expression: " + expr + "\nR: Expected a ID, Number, (, or -\n");
-			//System.out.printf("R:ERROR: Expected a ID, Number, (, or -\n");
+			Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
+					+ "\nR: Expected a ID, Number, (, or -\n");
+			// System.out.printf("R:ERROR: Expected a ID, Number, (, or -\n");
 			return false;
 		}
 		return true;
@@ -1041,8 +1095,9 @@ public class ExprTree {
 			tokvalue = newresult.tokvalue;
 			position = newresult.position;
 			if ((token) != ']') {
-				Utility.createErrorMessage("ERROR", "Invalid expression: " + expr + "\nP: Expected a ]");
-				//System.out.printf("ERROR: Expected a ]\n");
+				Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
+						+ "\nP: Expected a ]");
+				// System.out.printf("ERROR: Expected a ]\n");
 				return false;
 			}
 			// simplify if operands are static
@@ -1065,8 +1120,9 @@ public class ExprTree {
 		case END_OF_STRING:
 			break;
 		default:
-			Utility.createErrorMessage("ERROR", "Invalid expression: " + expr + "\nP: Expected a [, =, <, or >");
-			//System.out.printf("ERROR: Expected a [, =, <, or >\n");
+			Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
+					+ "\nP: Expected a [, =, <, or >");
+			// System.out.printf("ERROR: Expected a [, =, <, or >\n");
 			return false;
 		}
 		// printf("/P\n");
@@ -1086,8 +1142,9 @@ public class ExprTree {
 				return false;
 			break;
 		default:
-			Utility.createErrorMessage("ERROR", "Invalid expression: " + expr + "\nO: Expected a ID, Number, or a (");
-			//System.out.printf("O:ERROR: Expected a ID, Number, or a (\n");
+			Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
+					+ "\nO: Expected a ID, Number, or a (");
+			// System.out.printf("O:ERROR: Expected a ID, Number, or a (\n");
 			return false;
 		}
 		return true;
@@ -1124,8 +1181,9 @@ public class ExprTree {
 			}
 			break;
 		default:
-			Utility.createErrorMessage("ERROR", "Invalid expression: " + expr + "\nN: Expected a ID, Number, (, or -");
-			//System.out.printf("N:ERROR: Expected a ID, Number, (, or -\n");
+			Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
+					+ "\nN: Expected a ID, Number, (, or -");
+			// System.out.printf("N:ERROR: Expected a ID, Number, (, or -\n");
 			return false;
 		}
 		return true;
@@ -1171,8 +1229,9 @@ public class ExprTree {
 		case END_OF_STRING:
 			break;
 		default:
-			Utility.createErrorMessage("ERROR", "Invalid expression: " + expr + "\nE:(" + token + "): Expected an &");
-			//System.out.printf("ERROR(%c): Expected an &\n", (token));
+			Utility.createErrorMessage("ERROR", "Invalid expression: " + expr + "\nE:(" + token
+					+ "): Expected an &");
+			// System.out.printf("ERROR(%c): Expected an &\n", (token));
 			return false;
 		}
 		return true;
@@ -1238,8 +1297,9 @@ public class ExprTree {
 				return false;
 			break;
 		default:
-			Utility.createErrorMessage("ERROR", "Invalid expression: " + expr + "\nD: Expected an | or ->");
-			//System.out.printf("ERROR: Expected an | or ->\n");
+			Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
+					+ "\nD: Expected an | or ->");
+			// System.out.printf("ERROR: Expected an | or ->\n");
 			return false;
 		}
 		return true;
@@ -1259,8 +1319,9 @@ public class ExprTree {
 				return false;
 			break;
 		default:
-			Utility.createErrorMessage("ERROR", "Invalid expression: " + expr + "\nM: Expected a ID, Number, (, or -");
-			//System.out.printf("M: ERROR: Expected a ID, Number, (, or -\n");
+			Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
+					+ "\nM: Expected a ID, Number, (, or -");
+			// System.out.printf("M: ERROR: Expected a ID, Number, (, or -\n");
 			return false;
 		}
 		return true;
@@ -1281,8 +1342,9 @@ public class ExprTree {
 				return false;
 			break;
 		default:
-			Utility.createErrorMessage("ERROR", "Invalid expression: " + expr + "\nL: Expected a ID, Number, (, or -");
-			//System.out.printf("L:ERROR: Expected a ID, Number, (, or -\n");
+			Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
+					+ "\nL: Expected a ID, Number, (, or -");
+			// System.out.printf("L:ERROR: Expected a ID, Number, (, or -\n");
 			return false;
 		}
 		return true;
@@ -1319,10 +1381,11 @@ public class ExprTree {
 			else if (uvalue == 0 && lvalue == 0) {
 				result = result + "FALSE";
 			}
-			//else {
-			//	System.out.println("WARNING: Unknown assignment to a boolean variable");
-			//	result = result + "UNKNOWN";
-			//}
+			// else {
+			// System.out.println("WARNING: Unknown assignment to a boolean
+			// variable");
+			// result = result + "UNKNOWN";
+			// }
 			break;
 		case 'w': // bitWise
 		case 'a': // Arithmetic
@@ -1394,7 +1457,7 @@ public class ExprTree {
 		}
 		variable = null;
 	}
-	
+
 	public double evaluateExp(HashMap<String, String> variables) {
 		switch (isit) {
 		case 'b': // Boolean
