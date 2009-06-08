@@ -1398,19 +1398,19 @@ public class LHPNFile {
 	}
 
 	public boolean changeTransitionRate(String transition, String rate) {
-		if (transitionRates.containsKey(transition)) {
-			transitionRates.remove(transition);
-		}
-		transitionRates.put(transition, rate);
-		if (transitionRateTrees.containsKey(transition)) {
-			transitionRateTrees.remove(transition);
-		}
 		ExprTree expr = new ExprTree(this);
 		if (!rate.equals("")) {
 			expr.token = expr.intexpr_gettok(rate);
 			if (!(expr.intexpr_L(rate)))
 				return false;
+			if (transitionRates.containsKey(transition)) {
+				transitionRates.remove(transition);
+			}
+			if (transitionRateTrees.containsKey(transition)) {
+				transitionRateTrees.remove(transition);
+			}
 			transitionRateTrees.put(transition, expr);
+			transitionRates.put(transition, rate);
 		}
 		else {
 			transitionRateTrees.put(transition, null);
@@ -1419,19 +1419,19 @@ public class LHPNFile {
 	}
 
 	public boolean changeEnabling(String transition, String enabling) {
-		if (enablings.containsKey(transition)) {
-			enablings.remove(transition);
-		}
-		enablings.put(transition, enabling);
-		if (enablingTrees.containsKey(transition)) {
-			enablingTrees.remove(transition);
-		}
 		ExprTree expr = new ExprTree(this);
 		if (!enabling.equals("")) {
 			expr.token = expr.intexpr_gettok(enabling);
 			if (!expr.intexpr_L(enabling))
 				return false;
+			if (enablings.containsKey(transition)) {
+				enablings.remove(transition);
+			}
+			if (enablingTrees.containsKey(transition)) {
+				enablingTrees.remove(transition);
+			}
 			enablingTrees.put(transition, expr);
+			enablings.put(transition, enabling);
 		}
 		else {
 			enablingTrees.put(transition, null);
