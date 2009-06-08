@@ -273,7 +273,6 @@ public class VariablesPanel extends JPanel implements ActionListener {
 				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		if (value == JOptionPane.YES_OPTION) {
 			if (!checkValues()) {
-				Utility.createErrorMessage("Error", "Illegal values entered.");
 				return false;
 			}
 			String[] allVariables = lhpn.getAllIDs();
