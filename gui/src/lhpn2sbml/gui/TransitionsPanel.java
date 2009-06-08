@@ -286,7 +286,7 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 			}
 			String id = fields.get(GlobalConstants.ID).getValue();
 			if (!save(id)) {
-				Utility.createErrorMessage("Error", "Illegal values entered.");
+				//Utility.createErrorMessage("Error", "Illegal values entered.");
 				return false;
 			}
 
