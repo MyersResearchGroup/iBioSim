@@ -144,6 +144,7 @@ public class ExprTree {
 			case '&':
 			case '+':
 			case '*':
+			case '^':
 			case '/':
 			case '%':
 			case '=':
@@ -460,6 +461,29 @@ public class ExprTree {
 			else {
 				// (result) = new ExprTree((result), newresult, "*", 'a');
 				setNodeValues((this), newresult, "*", 'a');
+			}
+			if (!intexpr_C(expr))
+				return false;
+			break;
+		case '^':
+			(token) = intexpr_gettok(expr);
+			newresult.token = token;
+			newresult.tokvalue = tokvalue;
+			newresult.position = position;
+			if (!newresult.intexpr_T(expr))
+				return false;
+			token = newresult.token;
+			position = newresult.position;
+			// simplify if operands are static
+			if (((newresult.isit == 'n') || (newresult.isit == 't'))
+					&& (((this).isit == 'n') || ((this).isit == 't'))) {
+				(this).isit = 'n';
+				(this).lvalue = lvalue * newresult.lvalue;
+				(this).uvalue = (this).lvalue;
+			}
+			else {
+				// (result) = new ExprTree((result), newresult, "*", 'a');
+				setNodeValues((this), newresult, "^", 'a');
 			}
 			if (!intexpr_C(expr))
 				return false;
