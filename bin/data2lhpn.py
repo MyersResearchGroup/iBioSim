@@ -1018,7 +1018,7 @@ def parseDatFile(datFile,varsL):
 	linesL = inputF.read()
 	rowsL = rowsR.findall(linesL)
 	for i in range(len(rowsL)):
-         rowsL[i] = cleanRow(rowsL[i])
+		rowsL[i] = cleanRow(rowsL[i])
 	numPoints = -1
 	varNames = cleanRow(rowsL[0])
 	varNamesL = []
@@ -1293,12 +1293,15 @@ def genBins(varsL,datL,divisionsL):
 				if (datL[i][j] <= divisionsL[j][k]):
 					#print "binsL["+str(i)+"]["+str(j)+"] = "+str(k)
 					binsL[i][j] = k
+					#print str(binsL[i][j]),
 					break
 				else:
 					#handles the case when the datum is in the highest bin
 					#i.e. for 2 boundary numbers 3 bins are required
 					#print "binsL["+str(i)+"]["+str(j)+"] = "+str(k+1)
 					binsL[i][j] = k+1
+			print str(binsL[i][j]),
+		print "\n"
 	return binsL
 
 ##############################################################################
@@ -1320,6 +1323,8 @@ def genRates(varsL,datL,binsL,rateSampling):
 				if datL[mark-1][0] != datL[i][0] and (mark-i) >= pathLength:
 					for j in range(1,len(varsL)):
 						ratesL[i][j] = (datL[mark-1][j]-datL[i][j])/(datL[mark-1][0]-datL[i][0])
+					#print str(binsL[mark])
+					#print "\n"
 		else:
 			#Calculate the rates for each data point until the window would move the second point outside the bin
 			for i in range(len(datL)-rateSampling):
@@ -2596,15 +2601,16 @@ def main():
 	#	parser.print_help()
 		#sys.exit()
 	#print "args:"+str(args)
-	tempDatL = []
+	datFileL = []
 	i = 1
 	while os.path.isfile("run-" + str(i) + ".tsd"):
-		print i
-		tempDatL.append("run-" + str(i) + ".tsd")
+		#print i
+		datFileL.append("run-" + str(i) + ".tsd")
 		i += 1
-	datFileL = [i-2]
-	for i in range(len(datFileL)):
-		datFileL[i] = tempDatL[i]
+	#datFileL = [i-2]
+	print "length " + str(i) + str(len(datFileL))
+	#for i in range(len(datFileL)):
+	#	datFileL[i] = tempDatL[i]
 	
 	#The thresholds, variables, and prop files are the same for all
 	#dat files, so process them before processing the individual dat
@@ -2639,12 +2645,14 @@ def main():
 	
 		binsL = genBins(varsL,datL,divisionsL)
 		writeSortFile(varsL,numPoints,datL,binsL,sortFile)
+		print "print1 " + str(len(varsL)) + str(len(datFileL))
 	
 		ratesL = genRates(varsL,datL,binsL,rateSampling)
 		writeRateFile(varsL,numPoints,datL,binsL,ratesL,rateFile)
 
 		dmvcRunL = findDMVC(datL,varsL,tParam)
 		updateGraph(g,varsL,datL,binsL,ratesL,dmvcRunL,tParam,failProp,cvg,divisionsL)
+	print "print2 " + str(len(varsL))
 
 	#Graph expansion is used for non-input DMVC places
 	exG = expandGraph(g,varsL)
