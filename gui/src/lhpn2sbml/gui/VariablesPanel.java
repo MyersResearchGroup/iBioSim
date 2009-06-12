@@ -340,6 +340,12 @@ public class VariablesPanel extends JPanel implements ActionListener {
 			if (lhpn.isContinuous(id) || continuous) {
 				// System.out.println("add var " + property);
 				lhpn.addVar(id, property);
+				tempVal = fields.get("Initial lower").getValue();
+				if (fields.containsKey("Initial upper")
+						&& !fields.get("Initial upper").getValue().equals("")) {
+					tempVal = "[" + tempVal + "," + fields.get("Initial upper").getValue() + "]";
+					//System.out.println(fields.get("Initial upper").getValue());
+				}
 			}
 			else if (lhpn.isInteger(id) || integer) {
 				// System.out.println("add var " + property);
@@ -347,6 +353,7 @@ public class VariablesPanel extends JPanel implements ActionListener {
 				if (fields.containsKey("Initial upper")
 						&& !fields.get("Initial upper").getValue().equals("")) {
 					tempVal = "[" + tempVal + "," + fields.get("Initial upper").getValue() + "]";
+					//System.out.println(fields.get("Initial upper").getValue());
 				}
 				lhpn.addInteger(id, tempVal);
 			}
@@ -374,10 +381,10 @@ public class VariablesPanel extends JPanel implements ActionListener {
 				list = id + " - " + type + " - " + initBox.getSelectedItem().toString();
 			}
 			if (continuous) {
-				tempVal = property.getProperty("Rate Lower Bound");
-				if (property.containsKey("Rate Upper Bound")
-						&& !property.get("Rate Upper Bound").equals("")) {
-					tempVal = "[" + tempVal + "," + property.getProperty("Rate Upper Bound") + "]";
+				tempVal = fields.get("Rate lower").getValue();
+				if (fields.containsKey("Rate upper")
+						&& !fields.get("Rate upper").getValue().equals("")) {
+					tempVal = "[" + tempVal + "," + fields.get("Rate upper").getValue() + "]";
 				}
 				list = list + " - " + tempVal;
 			}
