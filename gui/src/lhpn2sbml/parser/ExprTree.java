@@ -125,14 +125,84 @@ public class ExprTree {
 		}
 	}
 
+	// public int intexpr_gettok(String expr) {
+	// char c;
+	// boolean readword;
+	// tokvalue = "";
+	// readword = false;
+	// while (position < expr.length()) {
+	// c = expr.charAt(position);
+	// position++;
+	// switch (c) {
+	// case '(':
+	// case ')':
+	// case '[':
+	// case ']':
+	// case ',':
+	// case '~':
+	// case '|':
+	// case '&':
+	// case '+':
+	// case '*':
+	// case '^':
+	// case '/':
+	// case '%':
+	// case '=':
+	// case '<':
+	// case '>':
+	// if (!readword)
+	// return c;
+	// else {
+	// position--;
+	// return WORD;
+	// }
+	// case '-':
+	// if (tokvalue.endsWith("E") || tokvalue.endsWith("e")) {
+	// readword = true;
+	// tokvalue += c;
+	// break;
+	// }
+	// else if (!readword) {
+	// if (expr.charAt(position) == '>') {
+	// position++;
+	// return (IMPLIES);
+	// }
+	// else
+	// return (c);
+	// }
+	// else {
+	// position--;
+	// return (WORD);
+	// }
+	// case ' ':
+	// if (readword) {
+	// return (WORD);
+	// }
+	// break;
+	// default:
+	// readword = true;
+	// tokvalue += c;
+	// break;
+	// }
+	// }
+	// if (!readword)
+	// return (END_OF_STRING);
+	// else
+	// return (WORD);
+	// }
+
 	public int intexpr_gettok(String expr) {
 		char c;
-		boolean readword, readsci, readnum, readsign;
-		tokvalue = "";
+		boolean readword;
+		boolean readnum;
+		boolean readsci;
+		boolean readsign;
+
 		readword = false;
 		readnum = false;
 		readsci = false;
 		readsign = false;
+		tokvalue = "";
 		while (position < expr.length()) {
 			c = expr.charAt(position);
 			position++;
@@ -152,11 +222,12 @@ public class ExprTree {
 			case '=':
 			case '<':
 			case '>':
-				if (!readword)
-					return c;
+				if ((!readword) && (!readnum) && (!readsci)) {
+					return (c);
+				}
 				else {
 					position--;
-					return WORD;
+					return (WORD);
 				}
 			case '+':
 			case '-':
@@ -169,12 +240,7 @@ public class ExprTree {
 					return -1;
 				}
 				else if ((!readword) && (!readnum) && (!readsci)) {
-					if (expr.charAt(position) == '>') {
-						position++;
-						return (IMPLIES);
-					}
-					else
-						return (c);
+					return (c);
 				}
 				else {
 					position--;
@@ -200,6 +266,15 @@ public class ExprTree {
 				}
 				tokvalue += c;
 				break;
+			case '.':
+				if (readsci) {
+					return -1;
+				}
+				else if (!readword) {
+					readnum = true;
+				}
+				tokvalue += c;
+				break;
 			case 'E':
 			case 'e':
 				if (readsci) {
@@ -213,15 +288,21 @@ public class ExprTree {
 					break;
 				}
 			default:
+				if ((readnum) || (readsci)) {
+					return -1;
+				}
 				readword = true;
 				tokvalue += c;
 				break;
 			}
 		}
-		if (!readword&&!readnum)
+		if ((!readword) && (!readnum)) {
 			return (END_OF_STRING);
-		else
+		}
+		else if (readword || readnum) {
 			return (WORD);
+		}
+		return -1;
 	}
 
 	public boolean intexpr_U(String expr) {
