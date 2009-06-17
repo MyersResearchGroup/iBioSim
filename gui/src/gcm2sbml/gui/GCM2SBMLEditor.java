@@ -515,7 +515,16 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 				while (scan.hasNextLine()) {
 					String s = scan.nextLine();
 					if (!s.trim().equals("")) {
-						parameterChanges.add(s);
+						boolean added = false;
+						for (int i = 0; i < parameterChanges.size(); i ++) {
+							if (parameterChanges.get(i).split(" ")[0].equals(s.split(" ")[0])) {
+								parameterChanges.set(i, s);
+								added = true;
+							}
+						}
+						if (!added) {
+							parameterChanges.add(s);
+						}
 					}
 				}
 				scan.close();

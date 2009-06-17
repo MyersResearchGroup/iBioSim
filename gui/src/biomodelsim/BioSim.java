@@ -224,7 +224,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 
 	private boolean lema, async, externView, treeSelected = false, popupFlag = false,
 			menuFlag = false;
-	
+
 	public boolean atacs;
 
 	private String viewer;
@@ -2520,49 +2520,21 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		// if the edit popup menu is selected on a dot file
 		else if (e.getActionCommand().equals("createSBML")) {
 			try {
-				String[] dot = tree.getFile().split(separator);
-				String sbmlFile = dot[dot.length - 1]
-						.substring(0, dot[dot.length - 1].length() - 3)
-						+ "xml";
-				// log.addText("Executing:\ngcm2sbml.pl " + tree.getFile() + " "
-				// + root
-				// + separator + sbmlFile
-				// + "\n");
-				// Runtime exec = Runtime.getRuntime();
-				// String filename = tree.getFile();
-				// String directory = "";
-				// String theFile = "";
-				// if (filename.lastIndexOf('/') >= 0) {
-				// directory = filename.substring(0,
-				// filename.lastIndexOf('/') + 1);
-				// theFile = filename.substring(filename.lastIndexOf('/') + 1);
-				// }
-				// if (filename.lastIndexOf('\\') >= 0) {
-				// directory = filename.substring(0, filename
-				// .lastIndexOf('\\') + 1);
-				// theFile = filename
-				// .substring(filename.lastIndexOf('\\') + 1);
-				// }
-				// File work = new File(directory);
-
-				GCMParser parser = new GCMParser(tree.getFile());
-				GeneticNetwork network = parser.buildNetwork();
-				GeneticNetwork.setRoot(root + File.separator);
-				network.mergeSBML(root + separator + sbmlFile);
-				refreshTree();
-				boolean done = false;
-				for (int i = 0; i < tab.getTabCount(); i++) {
-					if (tab.getTitleAt(i).equals(sbmlFile)) {
-						updateOpenSBML(sbmlFile);
-						tab.setSelectedIndex(i);
-						done = true;
-					}
+				String directory = "";
+				String theFile = "";
+				String filename = tree.getFile();
+				if (filename.lastIndexOf('/') >= 0) {
+					directory = filename.substring(0, filename.lastIndexOf('/') + 1);
+					theFile = filename.substring(filename.lastIndexOf('/') + 1);
 				}
-				if (!done) {
-					SBML_Editor sbml = new SBML_Editor(root + separator + sbmlFile, null, log,
-							this, null, null);
-					addTab(sbmlFile, sbml, "SBML Editor");
+				if (filename.lastIndexOf('\\') >= 0) {
+					directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
+					theFile = filename.substring(filename.lastIndexOf('\\') + 1);
 				}
+				File work = new File(directory);
+				GCM2SBMLEditor gcm = new GCM2SBMLEditor(work.getAbsolutePath(), theFile, this, log,
+						false, null, null, null);
+				gcm.save("Save as SBML");
 			}
 			catch (Exception e1) {
 				JOptionPane.showMessageDialog(frame, "Unable to create SBML file.", "Error",
@@ -3280,8 +3252,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			}
 			String projDir = "";
 			if (e.getSource() == openProj) {
-				projDir = Buttons.browse(frame, f, null, JFileChooser.DIRECTORIES_ONLY,
-						"Open", -1);
+				projDir = Buttons.browse(frame, f, null, JFileChooser.DIRECTORIES_ONLY, "Open", -1);
 				if (projDir.endsWith(".prj")) {
 					String[] tempArray = projDir.split(separator);
 					projDir = "";
@@ -4446,7 +4417,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							FileOutputStream out = new FileOutputStream(new File(root + separator
 									+ file[file.length - 1]));
 							FileInputStream in = new FileInputStream(new File(filename));
-							//log.addText(filename);
+							// log.addText(filename);
 							int read = in.read();
 							while (read != -1) {
 								out.write(read);
@@ -4457,7 +4428,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						}
 						if (filename.substring(filename.length() - 2, filename.length()).equals(
 								".g")) {
-							//log.addText(filename + file[file.length - 1]);
+							// log.addText(filename + file[file.length - 1]);
 							File work = new File(root);
 							String oldName = root + separator + file[file.length - 1];
 							// String newName = oldName.replace(".lpn",
