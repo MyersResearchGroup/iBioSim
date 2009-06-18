@@ -54,20 +54,20 @@ public class StateGraph {
 		LinkedList<State> markings = new LinkedList<State>();
 		int counter = 0;
 		State state = new State(markedPlaces.toArray(new String[0]), new StateTransitionPair[0],
-				"S" + counter, vectorToString(variableVector), allVariables);
+				"S" + counter, vectorToString(variableVector), copyAllVariables(allVariables));
 		markings.add(state);
 		counter++;
 		stateGraph.put(vectorToString(variableVector), markings);
 		Stack<Transition> transitionsToFire = new Stack<Transition>();
 		for (String transition : lhpn.getTransitionList()) {
 			boolean addToStack = true;
+			if (lhpn.getEnablingTree(transition) != null
+					&& lhpn.getEnablingTree(transition).evaluateExp(allVariables) == 0.0) {
+				addToStack = false;
+			}
 			if (lhpn.getPreset(transition).length != 0) {
 				for (String place : lhpn.getPreset(transition)) {
 					if (!markedPlaces.contains(place)) {
-						addToStack = false;
-					}
-					else if (lhpn.getEnablingTree(transition) != null
-							&& lhpn.getEnablingTree(transition).evaluateExp(allVariables) == 0.0) {
 						addToStack = false;
 					}
 				}
@@ -84,6 +84,7 @@ public class StateGraph {
 			Transition fire = transitionsToFire.pop();
 			markedPlaces = fire.getMarkedPlaces();
 			variableVector = fire.getVariableVector();
+			allVariables = copyAllVariables(fire.getParent().getVariables());
 			for (String place : lhpn.getPreset(fire.getTransition())) {
 				markedPlaces.remove(place);
 			}
@@ -131,13 +132,18 @@ public class StateGraph {
 			if (!stateGraph.containsKey(vectorToString(variableVector))) {
 				markings = new LinkedList<State>();
 				state = new State(markedPlaces.toArray(new String[0]), new StateTransitionPair[0],
-						"S" + counter, vectorToString(variableVector), allVariables);
+						"S" + counter, vectorToString(variableVector),
+						copyAllVariables(allVariables));
 				markings.add(state);
 				fire.getParent().addNextState(state, fire.getTransition());
 				counter++;
 				stateGraph.put(vectorToString(variableVector), markings);
 				for (String transition : lhpn.getTransitionList()) {
 					boolean addToStack = true;
+					if (lhpn.getEnablingTree(transition) != null
+							&& lhpn.getEnablingTree(transition).evaluateExp(allVariables) == 0.0) {
+						addToStack = false;
+					}
 					if (lhpn.getPreset(transition).length != 0) {
 						for (String place : lhpn.getPreset(transition)) {
 							if (!markedPlaces.contains(place)) {
@@ -185,21 +191,20 @@ public class StateGraph {
 				if (add) {
 					state = new State(markedPlaces.toArray(new String[0]),
 							new StateTransitionPair[0], "S" + counter,
-							vectorToString(variableVector), allVariables);
+							vectorToString(variableVector), copyAllVariables(allVariables));
 					markings.add(state);
 					fire.getParent().addNextState(state, fire.getTransition());
 					counter++;
 					stateGraph.put(vectorToString(variableVector), markings);
 					for (String transition : lhpn.getTransitionList()) {
 						boolean addToStack = true;
+						if (lhpn.getEnablingTree(transition) != null
+								&& lhpn.getEnablingTree(transition).evaluateExp(allVariables) == 0.0) {
+							addToStack = false;
+						}
 						if (lhpn.getPreset(transition).length != 0) {
 							for (String place : lhpn.getPreset(transition)) {
 								if (!markedPlaces.contains(place)) {
-									addToStack = false;
-								}
-								else if (lhpn.getEnablingTree(transition) != null
-										&& lhpn.getEnablingTree(transition).evaluateExp(
-												allVariables) == 0.0) {
 									addToStack = false;
 								}
 							}
@@ -438,6 +443,14 @@ public class StateGraph {
 		boolean[] copy = new boolean[original.length];
 		for (int i = 0; i < original.length; i++) {
 			copy[i] = original[i];
+		}
+		return copy;
+	}
+
+	private HashMap<String, String> copyAllVariables(HashMap<String, String> original) {
+		HashMap<String, String> copy = new HashMap<String, String>();
+		for (String s : original.keySet()) {
+			copy.put(s, original.get(s));
 		}
 		return copy;
 	}
