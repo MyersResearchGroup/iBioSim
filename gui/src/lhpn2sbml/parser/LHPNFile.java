@@ -2409,7 +2409,7 @@ public class LHPNFile {
 					// log.addText("check6while2");
 					if (isInteger(varMatcher.group(1))) {
 						intProp.put(varMatcher.group(1), varMatcher.group(2));
-						// intMap.put(varMatcher.group(1), array);
+						intMap.put(varMatcher.group(1), array);
 					}
 					else {
 						assignProp.put(varMatcher.group(1), varMatcher.group(2));
@@ -2418,9 +2418,11 @@ public class LHPNFile {
 				} while (varMatcher.find());
 				if (intProp.size() > 0) {
 					intAssignments.put(assignMatcher.group(1), intProp);
+					intAssignmentTrees.put(assignMatcher.group(1), intMap);
 				}
 				if (assignProp.size() > 0) {
 					contAssignments.put(assignMatcher.group(1), assignProp);
+					contAssignmentTrees.put(assignMatcher.group(1), assignMap);
 				}
 			}
 		}
