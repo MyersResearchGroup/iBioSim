@@ -4879,7 +4879,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				lhpnFile.load(tree.getFile());
 				log.addText("Creating state graph.");
 				StateGraph sg = new StateGraph(lhpnFile);
-				sg.outputStateGraph(tree.getFile().replace(".lpn", ".dot"));
+				sg.outputStateGraph(tree.getFile().replace(".lpn", ".dot"), false);
 				String command = "";
 				if (System.getProperty("os.name").contentEquals("Linux")) {
 					// directory = ENVVAR + "/docs/";
@@ -4915,7 +4915,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				log.addText("Creating state graph.");
 				StateGraph sg = new StateGraph(lhpnFile);
 				sg.performMarkovianAnalysis();
-				sg.outputStateGraphWithProbs(tree.getFile().replace(".lpn", ".dot"));
+				sg.outputStateGraph(tree.getFile().replace(".lpn", ".dot"), true);
 				String command = "";
 				if (System.getProperty("os.name").contentEquals("Linux")) {
 					// directory = ENVVAR + "/docs/";
