@@ -87,9 +87,14 @@ public class StateGraph {
 			}
 			for (String key : allVariables.keySet()) {
 				if (lhpn.getBoolAssignTree(fire.getTransition(), key) != null) {
-					allVariables.put(key, ""
-							+ lhpn.getBoolAssignTree(fire.getTransition(), key)[0]
-									.evaluateExp(allVariables));
+					double eval = lhpn.getBoolAssignTree(fire.getTransition(), key)[0]
+							.evaluateExp(allVariables);
+					if (eval == 0.0) {
+						allVariables.put(key, "false");
+					}
+					else {
+						allVariables.put(key, "true");
+					}
 				}
 				if (lhpn.getContAssignTree(fire.getTransition(), key) != null) {
 					allVariables.put(key, ""
@@ -447,14 +452,16 @@ public class StateGraph {
 			for (String state : stateGraph.keySet()) {
 				for (State m : stateGraph.get(state)) {
 					if (withProbs) {
-						out.write(m.getID() + " [shape=\"ellipse\",label=\"<" + state
-								+ ">\\nProb = " + m.getCurrentProb() + "\"]\n");
+						out.write(m.getID() + " [shape=\"ellipse\",label=\"" + m.getID() + "\\n<"
+								+ state + ">\\nProb = " + m.getCurrentProb() + "\"]\n");
 					}
 					else {
-						out.write(m.getID() + " [shape=\"ellipse\",label=\"<" + state + ">\"]\n");
+						out.write(m.getID() + " [shape=\"ellipse\",label=\"" + m.getID() + "\\n<"
+								+ state + ">\"]\n");
 					}
-					for (State next : m.getNextStates()) {
-						out.write(m.getID() + " -> " + next.getID() + "\n");
+					for (StateTransitionPair next : m.getNextStatesWithTrans()) {
+						out.write(m.getID() + " -> " + next.getState().getID() + " [label=\""
+								+ next.getTransition() + "\"]\n");
 					}
 				}
 			}
