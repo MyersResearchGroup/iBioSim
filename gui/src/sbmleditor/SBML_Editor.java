@@ -4930,23 +4930,23 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 							if (e.isSetDelay()) {
 								oldDelayStr = myFormulaToString(e.getDelay().getMath());
 							}
-							Delay delay = new Delay(myParseFormula(eventDelay.getText().trim()));
-							e.setDelay(delay);
+							e.createDelay();
+							e.getDelay().setMath(myParseFormula(eventDelay.getText().trim()));
 							error = checkEventDelayUnits(e.getDelay());
 							if (error) {
 								if (oldDelayStr.equals("")) {
 									e.unsetDelay();
 								}
 								else {
-									Delay oldDelay = new Delay(myParseFormula(oldDelayStr));
-									e.setDelay(oldDelay);
+									e.createDelay();
+									e.getDelay().setMath(myParseFormula(oldDelayStr));
 								}
 							}
 						}
 					}
 					if (!error) {
-						Trigger trigger = new Trigger(myParseFormula(eventTrigger.getText().trim()));
-						e.setTrigger(trigger);
+						e.createTrigger();
+						e.getTrigger().setMath(myParseFormula(eventTrigger.getText().trim()));
 						if (eventID.getText().trim().equals("")) {
 							e.unsetId();
 						}
@@ -4983,11 +4983,11 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				else {
 					JList add = new JList();
 					org.sbml.libsbml.Event e = document.getModel().createEvent();
-					Trigger trigger = new Trigger(myParseFormula(eventTrigger.getText().trim()));
-					e.setTrigger(trigger);
+					e.createTrigger();
+					e.getTrigger().setMath(myParseFormula(eventTrigger.getText().trim()));
 					if (!eventDelay.getText().trim().equals("")) {
-						Delay delay = new Delay(myParseFormula(eventDelay.getText().trim()));
-						e.setDelay(delay);
+						e.createDelay();	
+						e.getDelay().setMath(myParseFormula(eventDelay.getText().trim()));
 						error = checkEventDelayUnits(e.getDelay());
 					}
 					if (!error) {
@@ -6653,9 +6653,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						specRef.setSpecies(newId);
 					}
 					if (specRef.isSetStoichiometryMath()) {
-						StoichiometryMath sm = new StoichiometryMath(updateMathVar(specRef
+						specRef.getStoichiometryMath().setMath(updateMathVar(specRef
 								.getStoichiometryMath().getMath(), origId, newId));
-						specRef.setStoichiometryMath(sm);
 					}
 				}
 			}
@@ -6676,9 +6675,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						specRef.setSpecies(newId);
 					}
 					if (specRef.isSetStoichiometryMath()) {
-						StoichiometryMath sm = new StoichiometryMath(updateMathVar(specRef
+						specRef.getStoichiometryMath().setMath(updateMathVar(specRef
 								.getStoichiometryMath().getMath(), origId, newId));
-						specRef.setStoichiometryMath(sm);
 					}
 				}
 			}
@@ -6761,12 +6759,10 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			for (int i = 0; i < model.getNumEvents(); i++) {
 				org.sbml.libsbml.Event event = (org.sbml.libsbml.Event) model.getListOfEvents().get(i);
 				if (event.isSetTrigger()) {
-					Trigger trigger = new Trigger(updateMathVar(event.getTrigger().getMath(), origId, newId));
-					event.setTrigger(trigger);
+					event.getTrigger().setMath(updateMathVar(event.getTrigger().getMath(), origId, newId));
 				}
 				if (event.isSetDelay()) {
-					Delay delay = new Delay(updateMathVar(event.getDelay().getMath(), origId, newId));
-					event.setDelay(delay);
+					event.getDelay().setMath(updateMathVar(event.getDelay().getMath(), origId, newId));
 				}
 				ev[i] = event.getId();
 				for (int j = 0; j < event.getNumEventAssignments(); j++) {
@@ -8509,9 +8505,9 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						produ.unsetStoichiometryMath();
 					}
 					else {
-						StoichiometryMath sm = new StoichiometryMath(myParseFormula(productStoiciometry
+						produ.createStoichiometryMath();
+						produ.getStoichiometryMath().setMath(myParseFormula(productStoiciometry
 								.getText().trim()));
-						produ.setStoichiometryMath(sm);
 						produ.setStoichiometry(1);
 					}
 					product[index] = prod;
@@ -8527,9 +8523,9 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						produ.setStoichiometry(val);
 					}
 					else {
-						StoichiometryMath sm = new StoichiometryMath(myParseFormula(productStoiciometry
+						produ.createStoichiometryMath();
+						produ.getStoichiometryMath().setMath(myParseFormula(productStoiciometry
 								.getText().trim()));
-						produ.setStoichiometryMath(sm);
 					}
 					JList add = new JList();
 					Object[] adding = { prod };
@@ -8875,9 +8871,9 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						reactan.unsetStoichiometryMath();
 					}
 					else {
-						StoichiometryMath sm = new StoichiometryMath(myParseFormula(reactantStoiciometry
+						reactan.createStoichiometryMath();
+						reactan.getStoichiometryMath().setMath(myParseFormula(reactantStoiciometry
 								.getText().trim()));
-						reactan.setStoichiometryMath(sm);
 						reactan.setStoichiometry(1);
 					}
 					reacta[index] = react;
@@ -8893,9 +8889,9 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						reactan.setStoichiometry(val);
 					}
 					else {
-						StoichiometryMath sm = new StoichiometryMath(myParseFormula(reactantStoiciometry
+						reactan.createStoichiometryMath();
+						reactan.getStoichiometryMath().setMath(myParseFormula(reactantStoiciometry
 								.getText().trim()));
-						reactan.setStoichiometryMath(sm);
 					}
 					JList add = new JList();
 					Object[] adding = { react };
