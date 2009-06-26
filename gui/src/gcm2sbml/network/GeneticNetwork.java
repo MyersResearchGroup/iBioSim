@@ -595,9 +595,8 @@ public class GeneticNetwork {
 						specRef.setSpecies(newId);
 					}
 					if (specRef.isSetStoichiometryMath()) {
-						StoichiometryMath sm = new StoichiometryMath(updateMathVar(specRef
+						specRef.getStoichiometryMath().setMath(updateMathVar(specRef
 								.getStoichiometryMath().getMath(), origId, newId));
-						specRef.setStoichiometryMath(sm);
 					}
 				}
 			}
@@ -618,9 +617,8 @@ public class GeneticNetwork {
 						specRef.setSpecies(newId);
 					}
 					if (specRef.isSetStoichiometryMath()) {
-						StoichiometryMath sm = new StoichiometryMath(updateMathVar(specRef
+						specRef.getStoichiometryMath().setMath(updateMathVar(specRef
 								.getStoichiometryMath().getMath(), origId, newId));
-						specRef.setStoichiometryMath(sm);
 					}
 				}
 			}
@@ -655,12 +653,10 @@ public class GeneticNetwork {
 			for (int i = 0; i < model.getNumEvents(); i++) {
 				org.sbml.libsbml.Event event = (org.sbml.libsbml.Event) model.getListOfEvents().get(i);
 				if (event.isSetTrigger()) {
-					Trigger trigger = new Trigger(updateMathVar(event.getTrigger().getMath(), origId, newId));
-					event.setTrigger(trigger);
+					event.getTrigger().setMath(updateMathVar(event.getTrigger().getMath(), origId, newId));
 				}
 				if (event.isSetDelay()) {
-					Delay delay = new Delay(updateMathVar(event.getDelay().getMath(), origId, newId));
-					event.setDelay(delay);
+					event.getDelay().setMath(updateMathVar(event.getDelay().getMath(), origId, newId));
 				}
 				for (int j = 0; j < event.getNumEventAssignments(); j++) {
 					EventAssignment ea = (EventAssignment) event.getListOfEventAssignments().get(j);
