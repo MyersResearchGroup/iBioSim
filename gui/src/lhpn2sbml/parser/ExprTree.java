@@ -1635,6 +1635,9 @@ public class ExprTree {
 				else if (op.equals("%")) {
 					return left % right;
 				}
+				else if (op.equals("^")) {
+					return Math.pow(left, right);
+				}
 				else if (op.equals("<")) {
 					if (left < right) {
 						return 1.0;
