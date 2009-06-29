@@ -211,6 +211,12 @@ public class StateGraph {
 			initial.setCurrentProb(1.0);
 			double tolerance = 0.01;
 			boolean done = false;
+			for (String state : stateGraph.keySet()) {
+				for (State m : stateGraph.get(state)) {
+					System.out.print(m.getID() + "=" + m.getCurrentProb() + ", ");
+				}
+			}
+			System.out.println();
 			do {
 				step++;
 				step = step % period;
@@ -262,20 +268,31 @@ public class StateGraph {
 						}
 					}
 				}
+				boolean change = false;
 				for (String state : stateGraph.keySet()) {
 					for (State m : stateGraph.get(state)) {
 						if (m.getColor() % period == step) {
-							if ((m.getNextProb() > tolerance)
+							if ((m.getCurrentProb() != 0)
 									&& (Math.abs(((m.getCurrentProb() - m.getNextProb()))
 											/ m.getCurrentProb()) > tolerance)) {
+								change = true;
 							}
-							else {
-								done = true;
+							else if (m.getCurrentProb() == 0 && m.getNextProb() != 0) {
+								change = true;
 							}
 							m.setCurrentProbToNext();
 						}
 					}
 				}
+				if (!change) {
+					done = true;
+				}
+				for (String state : stateGraph.keySet()) {
+					for (State m : stateGraph.get(state)) {
+						System.out.print(m.getID() + "=" + m.getCurrentProb() + ", ");
+					}
+				}
+				System.out.println();
 			}
 			while (!done);
 			double totalProb = 0.0;
