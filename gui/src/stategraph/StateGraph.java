@@ -227,18 +227,7 @@ public class StateGraph {
 								else {
 									transProb = 1.0;
 								}
-								double transitionSum = 0.0;
-								for (StateTransitionPair prevNext : prev.getState()
-										.getNextStatesWithTrans()) {
-									if (lhpn.getTransitionRateTree(prevNext.getTransition()) != null) {
-										transitionSum += lhpn.getTransitionRateTree(
-												prevNext.getTransition()).evaluateExp(
-												prev.getState().getVariables());
-									}
-									else {
-										transitionSum += 1.0;
-									}
-								}
+								double transitionSum = prev.getState().getTransitionSum();
 								if (transitionSum != 0) {
 									transProb = (transProb / transitionSum);
 								}
@@ -493,6 +482,7 @@ public class StateGraph {
 		private double currentProb;
 		private double nextProb;
 		private HashMap<String, String> variables;
+		private double transitionSum;
 
 		public State(String[] markings, StateTransitionPair[] nextStates, String id,
 				String stateVector, HashMap<String, String> variables) {
@@ -505,6 +495,7 @@ public class StateGraph {
 			currentProb = 0.0;
 			nextProb = 0.0;
 			this.variables = variables;
+			transitionSum = -1;
 		}
 
 		private String getID() {
@@ -537,6 +528,22 @@ public class StateGraph {
 
 		private void setCurrentProbToNext() {
 			currentProb = nextProb;
+		}
+		
+		private double getTransitionSum () {
+			if (transitionSum == -1) {
+				transitionSum = 0;
+				for (StateTransitionPair next : nextStates) {
+					if (lhpn.getTransitionRateTree(next.getTransition()) != null) {
+						transitionSum += lhpn.getTransitionRateTree(
+								next.getTransition()).evaluateExp(variables);
+					}
+					else {
+						transitionSum += 1.0;
+					}
+				}
+			}
+			return transitionSum;
 		}
 
 		private StateTransitionPair[] getNextStatesWithTrans() {
