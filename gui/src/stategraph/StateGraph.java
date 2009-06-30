@@ -529,14 +529,14 @@ public class StateGraph {
 		private void setCurrentProbToNext() {
 			currentProb = nextProb;
 		}
-		
-		private double getTransitionSum () {
+
+		private double getTransitionSum() {
 			if (transitionSum == -1) {
 				transitionSum = 0;
 				for (StateTransitionPair next : nextStates) {
 					if (lhpn.getTransitionRateTree(next.getTransition()) != null) {
-						transitionSum += lhpn.getTransitionRateTree(
-								next.getTransition()).evaluateExp(variables);
+						transitionSum += lhpn.getTransitionRateTree(next.getTransition())
+								.evaluateExp(variables);
 					}
 					else {
 						transitionSum += 1.0;
