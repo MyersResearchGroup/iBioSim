@@ -211,54 +211,32 @@ public class StateGraph {
 			initial.setCurrentProb(1.0);
 			double tolerance = 0.01;
 			boolean done = false;
-			for (String state : stateGraph.keySet()) {
-				for (State m : stateGraph.get(state)) {
-					System.out.print(m.getID() + "=" + m.getCurrentProb() + ", ");
-				}
-			}
-			System.out.println();
 			do {
 				step++;
 				step = step % period;
 				for (String state : stateGraph.keySet()) {
 					for (State m : stateGraph.get(state)) {
 						if (m.getColor() % period == step) {
-							double transitionSum = 0.0;
-							for (StateTransitionPair prev : m.getPrevStatesWithTrans()) {
-								if (lhpn.getTransitionRateTree(prev.getTransition()) != null) {
-									transitionSum += lhpn.getTransitionRateTree(
-											prev.getTransition()).evaluateExp(m.getVariables());
-								}
-								else {
-									transitionSum += 1.0;
-								}
-								// try {
-								// transitionSum +=
-								// Double.parseDouble(lhpn.getTransitionRate(prev
-								// .getTransition()));
-								// }
-								// catch (Exception e) {
-								// transitionSum += 1;
-								// }
-							}
 							double nextProb = 0.0;
 							for (StateTransitionPair prev : m.getPrevStatesWithTrans()) {
 								double transProb = 0.0;
 								if (lhpn.getTransitionRateTree(prev.getTransition()) != null) {
 									transProb = lhpn.getTransitionRateTree(prev.getTransition())
-											.evaluateExp(m.getVariables());
+											.evaluateExp(prev.getState().getVariables());
 								}
 								else {
 									transProb = 1.0;
 								}
-								// try {
-								// transProb =
-								// Double.parseDouble(lhpn.getTransitionRate(prev
-								// .getTransition()));
-								// }
-								// catch (Exception e) {
-								// transProb = 1;
-								// }
+								double transitionSum = 0.0;
+								for (StateTransitionPair prevNext: prev.getState().getNextStatesWithTrans()) {
+									if (lhpn.getTransitionRateTree(prevNext.getTransition()) != null) {
+										transitionSum += lhpn.getTransitionRateTree(
+												prevNext.getTransition()).evaluateExp(prev.getState().getVariables());
+									}
+									else {
+										transitionSum += 1.0;
+									}
+								}
 								if (transitionSum != 0) {
 									transProb = (transProb / transitionSum);
 								}
@@ -287,48 +265,15 @@ public class StateGraph {
 				if (!change) {
 					done = true;
 				}
-				for (String state : stateGraph.keySet()) {
-					for (State m : stateGraph.get(state)) {
-						System.out.print(m.getID() + "=" + m.getCurrentProb() + ", ");
-					}
-				}
-				System.out.println();
 			}
 			while (!done);
 			double totalProb = 0.0;
 			for (String state : stateGraph.keySet()) {
 				for (State m : stateGraph.get(state)) {
-					// double transitionSum = 0.0;
-					// for (StateTransitionPair next :
-					// m.getNextStatesWithTrans()) {
-					// if (lhpn.getTransitionRateTree(next.getTransition()) !=
-					// null) {
-					// transitionSum +=
-					// lhpn.getTransitionRateTree(next.getTransition())
-					// .evaluateExp(m.getVariables());
-					// }
-					// else {
-					// transitionSum += 1.0;
-					// }
-					// try {
-					// transitionSum +=
-					// Double.parseDouble(lhpn.getTransitionRate(prev
-					// .getTransition()));
-					// }
-					// catch (Exception e) {
-					// transitionSum += 1;
-					// }
-					// }
-					// if (transitionSum == 0.0) {
-					// m.setCurrentProb(0.0);
-					// }
-					// else {
 					m.setCurrentProb(m.getCurrentProb() / period);
-					// }
 					totalProb += m.getCurrentProb();
 				}
 			}
-			System.out.println(totalProb);
 			for (String state : stateGraph.keySet()) {
 				for (State m : stateGraph.get(state)) {
 					if (totalProb == 0.0) {
