@@ -202,7 +202,7 @@ public class StateGraph {
 	public void performMarkovianAnalysis() {
 		State initial = getInitialState();
 		if (initial != null) {
-			resetColorsFromMarkovianAnalysis();
+			resetColorsForMarkovianAnalysis();
 			int period = findPeriod(initial);
 			if (period == 0) {
 				period = 1;
@@ -259,8 +259,8 @@ public class StateGraph {
 								// catch (Exception e) {
 								// transProb = 1;
 								// }
-								if (transitionSum != 0.0) {
-									transProb /= transitionSum;
+								if (transitionSum != 0) {
+									transProb = (transProb / transitionSum);
 								}
 								nextProb += (prev.getState().getCurrentProb() * transProb);
 							}
@@ -298,33 +298,37 @@ public class StateGraph {
 			double totalProb = 0.0;
 			for (String state : stateGraph.keySet()) {
 				for (State m : stateGraph.get(state)) {
-					double transitionSum = 0.0;
-					for (StateTransitionPair next : m.getNextStatesWithTrans()) {
-						if (lhpn.getTransitionRateTree(next.getTransition()) != null) {
-							transitionSum += lhpn.getTransitionRateTree(next.getTransition())
-									.evaluateExp(m.getVariables());
-						}
-						else {
-							transitionSum += 1.0;
-						}
-						// try {
-						// transitionSum +=
-						// Double.parseDouble(lhpn.getTransitionRate(prev
-						// .getTransition()));
-						// }
-						// catch (Exception e) {
-						// transitionSum += 1;
-						// }
-					}
-					if (transitionSum == 0.0) {
-						m.setCurrentProb(0.0);
-					}
-					else {
-						m.setCurrentProb((m.getCurrentProb() / period) / transitionSum);
-					}
+					// double transitionSum = 0.0;
+					// for (StateTransitionPair next :
+					// m.getNextStatesWithTrans()) {
+					// if (lhpn.getTransitionRateTree(next.getTransition()) !=
+					// null) {
+					// transitionSum +=
+					// lhpn.getTransitionRateTree(next.getTransition())
+					// .evaluateExp(m.getVariables());
+					// }
+					// else {
+					// transitionSum += 1.0;
+					// }
+					// try {
+					// transitionSum +=
+					// Double.parseDouble(lhpn.getTransitionRate(prev
+					// .getTransition()));
+					// }
+					// catch (Exception e) {
+					// transitionSum += 1;
+					// }
+					// }
+					// if (transitionSum == 0.0) {
+					// m.setCurrentProb(0.0);
+					// }
+					// else {
+					m.setCurrentProb(m.getCurrentProb() / period);
+					// }
 					totalProb += m.getCurrentProb();
 				}
 			}
+			System.out.println(totalProb);
 			for (String state : stateGraph.keySet()) {
 				for (State m : stateGraph.get(state)) {
 					if (totalProb == 0.0) {
@@ -386,7 +390,7 @@ public class StateGraph {
 		return gcd(b, a % b);
 	}
 
-	private void resetColorsFromMarkovianAnalysis() {
+	private void resetColorsForMarkovianAnalysis() {
 		for (String state : stateGraph.keySet()) {
 			for (State m : stateGraph.get(state)) {
 				m.setColor(-1);
