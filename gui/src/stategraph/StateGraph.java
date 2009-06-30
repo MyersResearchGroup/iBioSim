@@ -228,10 +228,12 @@ public class StateGraph {
 									transProb = 1.0;
 								}
 								double transitionSum = 0.0;
-								for (StateTransitionPair prevNext: prev.getState().getNextStatesWithTrans()) {
+								for (StateTransitionPair prevNext : prev.getState()
+										.getNextStatesWithTrans()) {
 									if (lhpn.getTransitionRateTree(prevNext.getTransition()) != null) {
 										transitionSum += lhpn.getTransitionRateTree(
-												prevNext.getTransition()).evaluateExp(prev.getState().getVariables());
+												prevNext.getTransition()).evaluateExp(
+												prev.getState().getVariables());
 									}
 									else {
 										transitionSum += 1.0;
