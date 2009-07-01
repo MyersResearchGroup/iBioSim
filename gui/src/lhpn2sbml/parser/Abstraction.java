@@ -167,7 +167,7 @@ public class Abstraction {
 						// log.addText(postset[0]);
 						String[] preset = controlPlaces.get(postset[0]).getProperty("preset")
 								.split(" ");
-						if (preset.length == 1 && !assign) {
+						if (preset.length == 1 && !assign && !places.get(postset[0])) {
 							remove.add(s);
 						}
 					}
@@ -202,7 +202,7 @@ public class Abstraction {
 						// log.addText(preset[0]);
 						String[] postset = controlPlaces.get(preset[0]).getProperty("postset")
 								.split(" ");
-						if (postset.length == 1 && !assign) {
+						if (postset.length == 1 && !assign && !places.get(preset[0])) {
 							remove.add(s);
 						}
 					}
@@ -355,6 +355,10 @@ public class Abstraction {
 				// }
 			}
 		}
+	}
+	
+	public void abstractAssign() {
+		
 	}
 
 	public void save(String filename) {

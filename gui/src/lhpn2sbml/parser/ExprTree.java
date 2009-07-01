@@ -1437,6 +1437,68 @@ public class ExprTree {
 		return result;
 	}
 
+	public boolean implies(ExprTree expr) {
+		if (isEqual(expr)) {
+			return true;
+		}
+		if  (expr.isit == 'l' && expr.op.equals("||")) {
+			if (implies(expr.r1) || implies(expr.r2)) {
+				return true;
+			}
+		}
+		switch (isit) {
+		case 't': // Truth value
+			if (uvalue == 1 && lvalue == 1) {
+				return false;
+			}
+			else if (uvalue == 0 && lvalue == 0) {
+				return true;
+			}
+			else {
+				return false;
+			}
+		case 'r': // Relational
+			if (op.contains(">")) {
+				if (expr.isit == 'r' && expr.op.contains(">")) {
+					if (r2.lvalue > expr.r2.uvalue) {
+						return true;
+					}
+					else if (r2.lvalue == expr.r2.uvalue && op.length() >= expr.op.length()) {
+						return true;
+					}
+				}
+			}
+			else if (op.contains("<")) {
+				if (expr.isit == 'r' && expr.op.contains("<")) {
+					if (r2.lvalue < expr.r2.uvalue) {
+						return true;
+					}
+					else if (r2.lvalue == expr.r2.uvalue && op.length() >= expr.op.length()) {
+						return true;
+					}
+				}
+			}
+			return false;
+		case 'l': // Logical
+			if (op.equals("&&")) {
+				if (expr.isit == 'b') {
+					if (r1.implies(expr) || r2.implies(expr)) {
+						return true;
+					}
+				}
+			}
+			return false;
+		case 'b': // Boolean
+		case 'i': // Integer
+		case 'c': // Continuous
+		case 'n': // Number
+		case 'w': // bitWise
+		case 'a': // Arithmetic
+		default:
+			return false;
+		}
+	}
+
 	private String getElement(String result) {
 		switch (isit) {
 		case 'b': // Boolean
@@ -1500,6 +1562,61 @@ public class ExprTree {
 			result = r2.getElement(result);
 		}
 		return result;
+	}
+	
+	private boolean isEqual(ExprTree expr) {
+		if (isit == expr.isit) {
+			boolean same = false;
+			switch (isit) {
+			case 'b': // Boolean
+			case 'i': // Integer
+			case 'c': // Continuous
+				if (variable.equals(expr.variable)) {
+					same = true;
+				}
+				break;
+			case 'n': // Number
+				if (uvalue == expr.uvalue && lvalue == expr.lvalue) {
+					same = true;
+				}
+				break;
+			case 't': // Truth value
+				if (uvalue == expr.uvalue && lvalue == expr.lvalue) {
+					same = true;
+				}
+				break;
+			case 'w': // bitWise
+			case 'a': // Arithmetic
+			case 'r': // Relational
+			case 'l': // Logical
+				if (op.equals(expr.op)) {
+					same = true;
+				}
+			}
+			if (same) {
+				boolean r1Same = false, r2Same = false;
+				if (r1 == null) {
+					if (expr.r1 == null) {
+						r1Same = true;
+					}
+				}
+				else if (r1.isEqual(expr.r1)) {
+					r1Same = true;
+				}
+				if (r2 == null) {
+					if (expr.r2 == null) {
+						r2Same = true;
+					}
+				}
+				else if (r2.isEqual(expr.r2)) {
+					r2Same = true;
+				}
+				if (r1Same && r2Same) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	private void setVarValues(char willbe, double lNV, double uNV, String var) {
