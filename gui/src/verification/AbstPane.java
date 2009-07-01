@@ -45,7 +45,7 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 
 	private ButtonGroup group;
 
-	private String directory, separator, root, verFile, verifyFile, oldBdd, sourceFileNoPath;
+	private String directory, separator, root, verFile, oldBdd, sourceFileNoPath;
 
 	private boolean change, atacs;
 
@@ -62,219 +62,146 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 	 */
 	public AbstPane(String directory, String verName, String filename, Log log, BioSim biosim,
 			boolean lema, boolean atacs) {
-		if (File.separator.equals("\\")) {
-			separator = "\\\\";
-		}
-		else {
-			separator = File.separator;
-		}
-		this.atacs = atacs;
-		this.biosim = biosim;
-		this.log = log;
-		this.directory = directory;
-		// String[] getFilename = directory.split(separator);
-		verFile = verName + ".ver";
-		String[] tempArray = filename.split("\\.");
-		String traceFilename = tempArray[0] + ".trace";
-		File traceFile = new File(traceFilename);
-		String[] tempDir = directory.split(separator);
-		root = tempDir[0];
-		for (int i = 1; i < tempDir.length - 1; i++) {
-			root = root + separator + tempDir[i];
-		}
+//		 Creates the interesting species JList
+		JList intSpecies = new JList();
+		JList species = new JList();
+		JLabel spLabel = new JLabel("Available Species:");
+		JLabel speciesLabel = new JLabel("Interesting Species:");
+		JPanel speciesHolder = new JPanel(new BorderLayout());
+		JPanel listOfSpeciesLabelHolder = new JPanel(new GridLayout(1, 2));
+		JPanel listOfSpeciesHolder = new JPanel(new GridLayout(1, 2));
+		JScrollPane scroll = new JScrollPane();
+		JScrollPane scroll1 = new JScrollPane();
+		scroll.setMinimumSize(new Dimension(260, 200));
+		scroll.setPreferredSize(new Dimension(276, 132));
+		scroll.setViewportView(species);
+		scroll1.setMinimumSize(new Dimension(260, 200));
+		scroll1.setPreferredSize(new Dimension(276, 132));
+		scroll1.setViewportView(intSpecies);
+		JButton addIntSpecies = new JButton("Add Species");
+		JButton removeIntSpecies = new JButton("Remove Species");
+		JButton clearIntSpecies = new JButton("Clear Species");
+		listOfSpeciesLabelHolder.add(spLabel);
+		listOfSpeciesHolder.add(scroll1);
+		listOfSpeciesLabelHolder.add(speciesLabel);
+		listOfSpeciesHolder.add(scroll);
+		speciesHolder.add(listOfSpeciesLabelHolder, "North");
+		speciesHolder.add(listOfSpeciesHolder, "Center");
+		JPanel buttonHolder = new JPanel();
+		buttonHolder.add(addIntSpecies);
+		buttonHolder.add(removeIntSpecies);
+		buttonHolder.add(clearIntSpecies);
+		speciesHolder.add(buttonHolder, "South");
+		intSpecies.setEnabled(false);
+		species.setEnabled(false);
+		//intSpecies.addMouseListener(this);
+		//species.addMouseListener(this);
+		spLabel.setEnabled(false);
+		speciesLabel.setEnabled(false);
+		addIntSpecies.setEnabled(false);
+		removeIntSpecies.setEnabled(false);
+		addIntSpecies.addActionListener(this);
+		removeIntSpecies.addActionListener(this);
+		clearIntSpecies.setEnabled(false);
+		clearIntSpecies.addActionListener(this);
 
-		JPanel timingRadioPanel = new JPanel();
-		timingRadioPanel.setMaximumSize(new Dimension(1000, 35));
-		JPanel timingCheckBoxPanel = new JPanel();
-		timingCheckBoxPanel.setMaximumSize(new Dimension(1000, 30));
-		JPanel otherPanel = new JPanel();
-		otherPanel.setMaximumSize(new Dimension(1000, 35));
-		JPanel algorithmPanel = new JPanel();
-		algorithmPanel.setMaximumSize(new Dimension(1000, 35));
-		JPanel buttonPanel = new JPanel();
-		JPanel compilationPanel = new JPanel();
-		compilationPanel.setMaximumSize(new Dimension(1000, 35));
-		JPanel advancedPanel = new JPanel();
-		advancedPanel.setMaximumSize(new Dimension(1000, 35));
-		JPanel bddPanel = new JPanel();
-		bddPanel.setMaximumSize(new Dimension(1000, 35));
-		JPanel pruningPanel = new JPanel();
-		pruningPanel.setMaximumSize(new Dimension(1000, 35));
-		JPanel advTimingPanel = new JPanel();
-		advTimingPanel.setMaximumSize(new Dimension(1000, 62));
-		advTimingPanel.setPreferredSize(new Dimension(1000, 62));
-
-		field = new JTextField("");
-		field.setPreferredSize(new Dimension(40, 18));
-		oldBdd = field.getText();
-		componentList = new PropertyList("");
-
-		label = new JLabel("Verification Algorithm:");
-
-		// Initializes the radio buttons and check boxes
-		// Timing Methods
-		if (atacs) {
-			radio = new JRadioButton("Untimed");
-			radio.addActionListener(this);
-		}
-		else {
-			radio = new JRadioButton("BDD");
-			radio.addActionListener(this);
-		}
-		// Basic Timing Options
-		check = new JCheckBox("Abstract");
-		check.addActionListener(this);
-		// Component List
-		button = new JButton("Add Component");
-		// addComponent.addActionListener(this);
-		// removeComponent.addActionListener(this);
-		GridBagConstraints constraints = new GridBagConstraints();
-		JPanel componentPanel = Utility.createPanel(this, "Components", componentList,
-				button, null, null);
-		constraints.gridx = 0;
-		constraints.gridy = 1;
-
-		group = new ButtonGroup();
-
-		// Initial Settings
-		if (lema) {
-			check.setSelected(true);
-		}
-		else {
-			check.setSelected(true);
-		}
-		check.setSelected(true);
-
-		// Groups the radio buttons
-		if (lema) {
-			group.add(radio);
-		}
-		else {
-			group.add(radio);
-		}
-		group.add(radio);
-		JPanel basicOptions = new JPanel();
-		JPanel advOptions = new JPanel();
-
-		// Adds the buttons to their panels
-		timingRadioPanel.add(button);
-		if (lema) {
-			timingRadioPanel.add(radio);
-		}
-		else {
-			timingRadioPanel.add(radio);
-		}
-
-		timingCheckBoxPanel.add(radio);
-
-		otherPanel.add(check);
+		// Creates some abstraction options
+		JPanel advancedGrid = new JPanel(new GridLayout(8, 2));
+		JPanel advanced = new JPanel(new GridLayout(2, 1));
+		JPanel rapidSpace1 = new JPanel();
+		JPanel rapidSpace2 = new JPanel();
+		JPanel rapidSpace3 = new JPanel();
+		JPanel rapidSpace4 = new JPanel();
+		JPanel qssaSpace1 = new JPanel();
+		JPanel qssaSpace2 = new JPanel();
+		JPanel maxConSpace1 = new JPanel();
+		JPanel maxConSpace2 = new JPanel();
+		JLabel rapidLabel1 = new JLabel("Rapid Equilibrium Condition 1:");
+		JTextField rapid1 = new JTextField("", 15);
+		JLabel rapidLabel2 = new JLabel("Rapid Equilibrium Condition 2:");
+		JTextField rapid2 = new JTextField("", 15);
+		JLabel qssaLabel = new JLabel("QSSA Condition:");
+		JTextField qssa = new JTextField("", 15);
+		JLabel maxConLabel = new JLabel("Max Concentration Threshold:");
+		JTextField maxCon = new JTextField("", 15);
+		maxConLabel.setEnabled(false);
+		//maxCon.setEnabled(false);
+		qssaLabel.setEnabled(false);
+		//qssa.setEnabled(false);
+		rapidLabel1.setEnabled(false);
+		//rapid1.setEnabled(false);
+		rapidLabel2.setEnabled(false);
+		//rapid2.setEnabled(false);
+		advancedGrid.add(rapidLabel1);
+		advancedGrid.add(rapid1);
+		advancedGrid.add(rapidSpace1);
+		advancedGrid.add(rapidSpace2);
+		advancedGrid.add(rapidLabel2);
+		advancedGrid.add(rapid2);
+		advancedGrid.add(rapidSpace3);
+		advancedGrid.add(rapidSpace4);
+		advancedGrid.add(qssaLabel);
+		advancedGrid.add(qssa);
+		advancedGrid.add(qssaSpace1);
+		advancedGrid.add(qssaSpace2);
+		advancedGrid.add(maxConLabel);
+		advancedGrid.add(maxCon);
+		advancedGrid.add(maxConSpace1);
+		advancedGrid.add(maxConSpace2);
+		advanced.add(advancedGrid);
+		// JPanel space = new JPanel();
+		// advanced.add(space);
+		advanced.add(speciesHolder);
 
 		// load parameters
-		Properties load = new Properties();
-		verifyFile = "";
+//		Properties load = new Properties();
 		// log.addText(directory + separator + verFile);
-		try {
-			FileInputStream in = new FileInputStream(new File(directory + separator + verFile));
-			load.load(in);
-			in.close();
-			if (load.containsKey("verification.file")) {
-				verifyFile = load.getProperty("verification.file");
-				// log.addText(verifyFile);
-			}
-			if (load.containsKey("verification.bddSize")) {
-				field.setText(load.getProperty("verification .bddSize"));
-			}
-			Integer i = 0;
-			while (load.containsKey("synthesis.compList" + i.toString())) {
-				componentList.addItem(load.getProperty("synthesis.compList" + i.toString()));
-				i++;
-			}
-			if (load.containsKey("verification.timing.methods")) {
-				if (atacs) {
-					if (load.getProperty("verification.timing.methods").equals("untimed")) {
-						check.setSelected(true);
-					}
-				}
-				else {
-					if (load.getProperty("verification.timing.methods").equals("bdd")) {
-						check.setSelected(true);
-					}
-				}
-			}
-			if (load.containsKey("verification.Abst")) {
-				if (load.getProperty("verification.Abst").equals("true")) {
-					check.setSelected(true);
-				}
-			}
-			tempArray = verifyFile.split(separator);
-			sourceFileNoPath = tempArray[tempArray.length - 1];
-			field = new JTextField(sourceFileNoPath);
-		}
-		catch (Exception e) {
-			JOptionPane.showMessageDialog(biosim.frame(), "Unable to load properties file!",
-					"Error Loading Properties", JOptionPane.ERROR_MESSAGE);
-			// e.printStackTrace();
-		}
+//		try {
+//			FileInputStream in = new FileInputStream(new File(directory + separator + verFile));
+//			load.load(in);
+//			in.close();
+//			if (load.containsKey("verification.file")) {
+//				verifyFile = load.getProperty("verification.file");
+//				// log.addText(verifyFile);
+//			}
+//			if (load.containsKey("verification.bddSize")) {
+//				field.setText(load.getProperty("verification .bddSize"));
+//			}
+//			Integer i = 0;
+//			while (load.containsKey("synthesis.compList" + i.toString())) {
+//				componentList.addItem(load.getProperty("synthesis.compList" + i.toString()));
+//				i++;
+//			}
+//			if (load.containsKey("verification.timing.methods")) {
+//				if (atacs) {
+//					if (load.getProperty("verification.timing.methods").equals("untimed")) {
+//						check.setSelected(true);
+//					}
+//				}
+//				else {
+//					if (load.getProperty("verification.timing.methods").equals("bdd")) {
+//						check.setSelected(true);
+//					}
+//				}
+//			}
+//			if (load.containsKey("verification.Abst")) {
+//				if (load.getProperty("verification.Abst").equals("true")) {
+//					check.setSelected(true);
+//				}
+//			}
+//			String[] tempArray = verifyFile.split(separator);
+//			sourceFileNoPath = tempArray[tempArray.length - 1];
+//			field = new JTextField(sourceFileNoPath);
+//		}
+//		catch (Exception e) {
+//			JOptionPane.showMessageDialog(biosim.frame(), "Unable to load properties file!",
+//					"Error Loading Properties", JOptionPane.ERROR_MESSAGE);
+//			// e.printStackTrace();
+//		}
 		// save();
 
-		// Creates the run button
-		button = new JButton("Save and Verify");
-		button.addActionListener(this);
-		buttonPanel.add(button);
-		button.setMnemonic(KeyEvent.VK_S);
-
-		// Creates the save button
-
-		// Creates the view circuit button
-
-		// Creates the view trace button
-
-		// Creates the view log button
-		JPanel backgroundPanel = new JPanel();
-		JLabel backgroundLabel = new JLabel("Model File:");
-		tempArray = verifyFile.split(separator);
-		JLabel componentLabel = new JLabel("Component:");
-		field.setPreferredSize(new Dimension(200, 20));
-		String sourceFile = tempArray[tempArray.length - 1];
-		field = new JTextField(sourceFile);
-		field.setMaximumSize(new Dimension(200, 20));
-		field.setEditable(false);
-		backgroundPanel.add(backgroundLabel);
-		backgroundPanel.add(field);
-		if (verifyFile.endsWith(".vhd")) {
-			backgroundPanel.add(componentLabel);
-			backgroundPanel.add(field);
-		}
-		backgroundPanel.setMaximumSize(new Dimension(500, 30));
-		basicOptions.add(backgroundPanel);
-		basicOptions.add(timingRadioPanel);
-		if (!lema) {
-			basicOptions.add(timingCheckBoxPanel);
-		}
-		basicOptions.add(otherPanel);
-		if (!lema) {
-			basicOptions.add(algorithmPanel);
-		}
-		if (verifyFile.endsWith(".vhd")) {
-			basicOptions.add(componentPanel);
-		}
-		basicOptions.setLayout(new BoxLayout(basicOptions, BoxLayout.Y_AXIS));
-		basicOptions.add(Box.createVerticalGlue());
-
-		advOptions.add(compilationPanel);
-		advOptions.add(advTimingPanel);
-		advOptions.add(advancedPanel);
-		advOptions.add(bddPanel);
-		advOptions.setLayout(new BoxLayout(advOptions, BoxLayout.Y_AXIS));
-		advOptions.add(Box.createVerticalGlue());
-
-		JTabbedPane tab = new JTabbedPane();
-		tab.addTab("Basic Options", basicOptions);
-		tab.addTab("Advanced Options", advOptions);
-		tab.setPreferredSize(new Dimension(1000, 480));
-
-		this.setLayout(new BorderLayout());
-		this.add(tab, BorderLayout.PAGE_START);
+		//this.setLayout(new BorderLayout());
+		this.add(advanced);
 		// this.add(buttonPanel, BorderLayout.PAGE_END);
 		change = false;
 	}
@@ -364,7 +291,7 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 			FileInputStream in = new FileInputStream(new File(directory + separator + filename));
 			prop.load(in);
 			in.close();
-			prop.setProperty("verification.file", verifyFile);
+			//prop.setProperty("verification.file", verifyFile);
 			if (!field.getText().trim().equals("")) {
 				prop.setProperty("verification.component", field.getText().trim());
 			}
@@ -399,7 +326,7 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 				prop.setProperty("verification.reduction", "false");
 			}
 			FileOutputStream out = new FileOutputStream(new File(directory + separator + verFile));
-			prop.store(out, verifyFile);
+			//prop.store(out, verifyFile);
 			out.close();
 			log.addText("Saving Parameter File:\n" + directory + separator + verFile + "\n");
 			change = false;
@@ -436,96 +363,96 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 	public void viewCircuit() {
 		String[] getFilename;
 		if (field.getText().trim().equals("")) {
-			getFilename = verifyFile.split("\\.");
+			//getFilename = verifyFile.split("\\.");
 		}
 		else {
 			getFilename = new String[1];
 			getFilename[0] = field.getText().trim();
 		}
-		String circuitFile = getFilename[0] + ".prs";
+		//String circuitFile = getFilename[0] + ".prs";
 		// JOptionPane.showMessageDialog(this, circuitFile);
 		// JOptionPane.showMessageDialog(this, directory + separator +
 		// circuitFile);
-		try {
-			// JOptionPane.showMessageDialog(this, directory + separator +
-			// "run.log");
-			// String[] getFilename = verifyFile.split(".");
-			// String circuitFile = getFilename[0] + ".ps";
-			// JOptionPane.showMessageDialog(this, directory + separator +
-			// circuitFile);
-			if (new File(circuitFile).exists()) {
-				File log = new File(circuitFile);
-				BufferedReader input = new BufferedReader(new FileReader(log));
-				String line = null;
-				JTextArea messageArea = new JTextArea();
-				while ((line = input.readLine()) != null) {
-					messageArea.append(line);
-					messageArea.append(System.getProperty("line.separator"));
-				}
-				input.close();
-				messageArea.setLineWrap(true);
-				messageArea.setWrapStyleWord(true);
-				messageArea.setEditable(false);
-				JScrollPane scrolls = new JScrollPane();
-				scrolls.setMinimumSize(new Dimension(500, 500));
-				scrolls.setPreferredSize(new Dimension(500, 500));
-				scrolls.setViewportView(messageArea);
-				JOptionPane.showMessageDialog(biosim.frame(), scrolls, "Circuit View",
-						JOptionPane.INFORMATION_MESSAGE);
-			}
-			else {
-				JOptionPane.showMessageDialog(biosim.frame(), "No circuit view exists.", "Error",
-						JOptionPane.ERROR_MESSAGE);
-			}
-		}
-		catch (Exception e1) {
-			JOptionPane.showMessageDialog(biosim.frame(), "Unable to view circuit.", "Error",
-					JOptionPane.ERROR_MESSAGE);
-		}
+//		try {
+//			// JOptionPane.showMessageDialog(this, directory + separator +
+//			// "run.log");
+//			// String[] getFilename = verifyFile.split(".");
+//			// String circuitFile = getFilename[0] + ".ps";
+//			// JOptionPane.showMessageDialog(this, directory + separator +
+//			// circuitFile);
+//			if (new File(circuitFile).exists()) {
+//				File log = new File(circuitFile);
+//				BufferedReader input = new BufferedReader(new FileReader(log));
+//				String line = null;
+//				JTextArea messageArea = new JTextArea();
+//				while ((line = input.readLine()) != null) {
+//					messageArea.append(line);
+//					messageArea.append(System.getProperty("line.separator"));
+//				}
+//				input.close();
+//				messageArea.setLineWrap(true);
+//				messageArea.setWrapStyleWord(true);
+//				messageArea.setEditable(false);
+//				JScrollPane scrolls = new JScrollPane();
+//				scrolls.setMinimumSize(new Dimension(500, 500));
+//				scrolls.setPreferredSize(new Dimension(500, 500));
+//				scrolls.setViewportView(messageArea);
+//				JOptionPane.showMessageDialog(biosim.frame(), scrolls, "Circuit View",
+//						JOptionPane.INFORMATION_MESSAGE);
+//			}
+//			else {
+//				JOptionPane.showMessageDialog(biosim.frame(), "No circuit view exists.", "Error",
+//						JOptionPane.ERROR_MESSAGE);
+//			}
+//		}
+//		catch (Exception e1) {
+//			JOptionPane.showMessageDialog(biosim.frame(), "Unable to view circuit.", "Error",
+//					JOptionPane.ERROR_MESSAGE);
+//		}
 	}
 
 	public void viewTrace() {
-		String[] getFilename = verifyFile.split("\\.");
-		String traceFilename = getFilename[0] + ".trace";
+		//String[] getFilename = verifyFile.split("\\.");
+		//String traceFilename = getFilename[0] + ".trace";
 		// JOptionPane.showMessageDialog(this, circuitFile);
 		// JOptionPane.showMessageDialog(this, directory + separator +
 		// circuitFile);
-		try {
-			// JOptionPane.showMessageDialog(this, directory + separator +
-			// "run.log");
-			// String[] getFilename = verifyFile.split(".");
-			// String circuitFile = getFilename[0] + ".ps";
-			// JOptionPane.showMessageDialog(this, directory + separator +
-			// circuitFile);
-			if (new File(traceFilename).exists()) {
-				File log = new File(traceFilename);
-				BufferedReader input = new BufferedReader(new FileReader(log));
-				String line = null;
-				JTextArea messageArea = new JTextArea();
-				while ((line = input.readLine()) != null) {
-					messageArea.append(line);
-					messageArea.append(System.getProperty("line.separator"));
-				}
-				input.close();
-				messageArea.setLineWrap(true);
-				messageArea.setWrapStyleWord(true);
-				messageArea.setEditable(false);
-				JScrollPane scrolls = new JScrollPane();
-				scrolls.setMinimumSize(new Dimension(500, 500));
-				scrolls.setPreferredSize(new Dimension(500, 500));
-				scrolls.setViewportView(messageArea);
-				JOptionPane.showMessageDialog(biosim.frame(), scrolls, "Trace View",
-						JOptionPane.INFORMATION_MESSAGE);
-			}
-			else {
-				JOptionPane.showMessageDialog(biosim.frame(), "No trace file exists.", "Error",
-						JOptionPane.ERROR_MESSAGE);
-			}
-		}
-		catch (Exception e1) {
-			JOptionPane.showMessageDialog(biosim.frame(), "Unable to view trace.", "Error",
-					JOptionPane.ERROR_MESSAGE);
-		}
+//		try {
+//			// JOptionPane.showMessageDialog(this, directory + separator +
+//			// "run.log");
+//			// String[] getFilename = verifyFile.split(".");
+//			// String circuitFile = getFilename[0] + ".ps";
+//			// JOptionPane.showMessageDialog(this, directory + separator +
+//			// circuitFile);
+//			if (new File(traceFilename).exists()) {
+//				File log = new File(traceFilename);
+//				BufferedReader input = new BufferedReader(new FileReader(log));
+//				String line = null;
+//				JTextArea messageArea = new JTextArea();
+//				while ((line = input.readLine()) != null) {
+//					messageArea.append(line);
+//					messageArea.append(System.getProperty("line.separator"));
+//				}
+//				input.close();
+//				messageArea.setLineWrap(true);
+//				messageArea.setWrapStyleWord(true);
+//				messageArea.setEditable(false);
+//				JScrollPane scrolls = new JScrollPane();
+//				scrolls.setMinimumSize(new Dimension(500, 500));
+//				scrolls.setPreferredSize(new Dimension(500, 500));
+//				scrolls.setViewportView(messageArea);
+//				JOptionPane.showMessageDialog(biosim.frame(), scrolls, "Trace View",
+//						JOptionPane.INFORMATION_MESSAGE);
+//			}
+//			else {
+//				JOptionPane.showMessageDialog(biosim.frame(), "No trace file exists.", "Error",
+//						JOptionPane.ERROR_MESSAGE);
+//			}
+//		}
+//		catch (Exception e1) {
+//			JOptionPane.showMessageDialog(biosim.frame(), "Unable to view trace.", "Error",
+//					JOptionPane.ERROR_MESSAGE);
+//		}
 	}
 
 	public void viewLog() {
