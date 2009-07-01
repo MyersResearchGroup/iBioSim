@@ -261,7 +261,13 @@ public class StateGraph {
 			double totalProb = 0.0;
 			for (String state : stateGraph.keySet()) {
 				for (State m : stateGraph.get(state)) {
-					m.setCurrentProb(m.getCurrentProb() / period);
+					double transitionSum = m.getTransitionSum();
+					if (transitionSum == 0.0) {
+						m.setCurrentProb(0.0);
+					}
+					else {
+						m.setCurrentProb((m.getCurrentProb() / period) / transitionSum);
+					}
 					totalProb += m.getCurrentProb();
 				}
 			}
