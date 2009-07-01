@@ -140,7 +140,7 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 		mainPanelNorth.add(lhpnNameTextField);
 		mainPanelNorth.add(propertyLabel);
 		mainPanelNorth.add(propertyField);
-		mainPanelNorth.add(abstButton);
+		//mainPanelNorth.add(abstButton);
 
 		// buttonPanel = new JPanel();
 		// JButton save = new JButton("Save");
@@ -204,7 +204,15 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 		EditButton addPlace = new EditButton("Add Place", places);
 		RemoveButton removePlace = new RemoveButton("Remove Place", places);
 		EditButton editPlace = new EditButton("Edit Place", places);
-		places.addAllItem(lhpnFile.getPlaces().keySet());
+		for (String s : lhpnFile.getPlaces().keySet()) {
+			if (lhpnFile.getPlaceInitial(s)) {
+				places.addItem(s + " - marked");
+			}
+			else {
+				places.addItem(s + " - unmarked");
+			}
+		}
+		//places.addAllItem(lhpnFile.getPlaces().keySet());
 
 		JPanel placePanel = Utility.createPanel(this, "Places", places, addPlace, removePlace,
 				editPlace);
@@ -358,10 +366,13 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 					return;
 				}
 				variables.removeItem(name);
-				lhpnFile.removeVar(name);
+				String var = name.split(" ")[0];
+				lhpnFile.removeVar(var);
 			}
 			else if (getName().contains("Place")) {
 				String name = list.getSelectedValue().toString();
+				String[] array = name.split(" ");
+				name = array[0];
 				if (lhpnFile.containsFlow(name)) {
 					JOptionPane.showMessageDialog(this, "Must remove " + name
 							+ " from control flow", "Cannot remove place " + name,
@@ -545,6 +556,8 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 				String selected = null;
 				if (list.getSelectedValue() != null && getName().contains("Edit")) {
 					selected = list.getSelectedValue().toString();
+					String[] array = selected.split(" ");
+					selected = array[0];
 				}
 				PlacePanel panel = new PlacePanel(selected, list, controlFlow, lhpnFile);
 			}

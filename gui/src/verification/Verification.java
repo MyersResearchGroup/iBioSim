@@ -16,6 +16,9 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Properties;
 
+import lhpn2sbml.parser.Abstraction;
+import lhpn2sbml.parser.LHPNFile;
+
 import gcm2sbml.gui.PropertyList;
 import gcm2sbml.util.Utility;
 
@@ -39,7 +42,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			compilation, bddSizeLabel, advTiming;
 
 	private JRadioButton untimed, geometric, posets, bag, bap, baptdc, verify, vergate, orbits,
-			search, trace, bdd, dbm, smt;
+			search, trace, bdd, dbm, smt, lhpn, view;
 
 	private JCheckBox abst, partialOrder, dot, verbose, graph, genrg, timsubset, superset, infopt,
 			orbmatch, interleav, prune, disabling, nofail, keepgoing, explpn, nochecks, reduction,
@@ -147,6 +150,10 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			dbm.addActionListener(this);
 			smt.addActionListener(this);
 		}
+		lhpn = new JRadioButton("LHPN");
+		view = new JRadioButton("View");
+		lhpn.addActionListener(this);
+		view.addActionListener(this);
 		// Basic Timing Options
 		abst = new JCheckBox("Abstract");
 		partialOrder = new JCheckBox("Partial Order");
@@ -245,6 +252,8 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			timingMethodGroup.add(bap);
 			timingMethodGroup.add(baptdc);
 		}
+		timingMethodGroup.add(lhpn);
+		timingMethodGroup.add(view);
 		algorithmGroup.add(verify);
 		algorithmGroup.add(vergate);
 		algorithmGroup.add(orbits);
@@ -269,6 +278,8 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			timingRadioPanel.add(bap);
 			timingRadioPanel.add(baptdc);
 		}
+		timingRadioPanel.add(lhpn);
+		timingRadioPanel.add(view);
 
 		timingCheckBoxPanel.add(timingOptions);
 		timingCheckBoxPanel.add(abst);
@@ -353,8 +364,14 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					else if (load.getProperty("verification.timing.methods").equals("bap")) {
 						bap.setSelected(true);
 					}
-					else {
+					else if (load.getProperty("verification.timing.methods").equals("baptdc")) {
 						baptdc.setSelected(true);
+					}
+					else if (load.getProperty("verification.timing.methods").equals("lhpn")) {
+						lhpn.setSelected(true);
+					}
+					else {
+						view.setSelected(true);
 					}
 				}
 				else {
@@ -366,6 +383,12 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					}
 					else if (load.getProperty("verification.timing.methods").equals("smt")) {
 						smt.setSelected(true);
+					}
+					else if (load.getProperty("verification.timing.methods").equals("lhpn")) {
+						lhpn.setSelected(true);
+					}
+					else {
+						view.setSelected(true);
 					}
 				}
 			}
@@ -422,7 +445,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				else if (load.getProperty("verification.algorithm").equals("search")) {
 					search.setSelected(true);
 				}
-				else {
+				else if (load.getProperty("verification.algorithm").equals("trace")) {
 					trace.setSelected(true);
 				}
 			}
@@ -679,6 +702,69 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 	}
 
 	public void run() {
+		if (lhpn.isSelected() || view.isSelected()) {
+			LHPNFile lhpnFile = new LHPNFile();
+			lhpnFile.load(directory + separator + verifyFile);
+			Abstraction abstraction = lhpnFile.abstractLhpn();
+			String[] boolVars = lhpnFile.getBooleanVars();
+			String[] contVars = lhpnFile.getContVars();
+			String[] intVars = lhpnFile.getIntVars();
+			String[] variables = new String[boolVars.length + contVars.length + intVars.length];
+			int k=0;
+			for (int j=0; j<contVars.length; j++) {
+				variables[k] = contVars[j];
+				k++;
+			}
+			for (int j=0; j<intVars.length; j++) {
+				variables[k] = intVars[j];
+				k++;
+			}
+			for (int j=0; j<boolVars.length; j++) {
+				variables[k] = boolVars[j];
+				k++;
+			}
+			// String[] vars = null;
+			String abstFilename = (String) JOptionPane.showInputDialog(this,
+					"Please enter the file name for the abstracted LHPN.", "Enter Filename",
+					JOptionPane.PLAIN_MESSAGE);
+			if (abstFilename != null) {
+				if (!abstFilename.endsWith(".lpn"))
+					abstFilename = abstFilename + ".lpn";
+				String[] options = { "Ok", "Cancel" };
+				JPanel panel = new JPanel();
+				panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+				JCheckBox[] list = new JCheckBox[variables.length];
+				ArrayList<String> tempVars = new ArrayList<String>();
+				for (int i=0; i<variables.length; i++) {
+					JCheckBox temp = new JCheckBox(variables[i]);
+					panel.add(temp);
+					list[i] = temp;
+				}
+				int value = JOptionPane.showOptionDialog(new JFrame(), panel, "Variable Assignment Editor",
+						JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+				if (value == JOptionPane.YES_OPTION) {
+					for (int i=0; i<list.length; i++) {
+						if (list[i].isSelected()) {
+							tempVars.add(variables[i]);
+						}
+					}
+					String[] vars = new String[tempVars.size()];
+					for (int i=0; i<tempVars.size(); i++) {
+						vars[i] = tempVars.get(i);
+					}
+					abstraction.abstractVars(vars);
+				}
+				abstraction.abstractSTG();
+				String[] array = directory.split(separator);
+				String tempDir = "";
+				for (int i=0; i<array.length-1; i++) {
+					tempDir = tempDir + array[i] + separator;
+				}
+				abstraction.save(tempDir + separator + abstFilename);
+				biosim.refreshTree();
+				return;
+			}
+		}
 		// String command = "/home/shang/kjones/atacs/bin/atacs -";
 		String[] tempArray = verifyFile.split("\\.");
 		String traceFilename = tempArray[0] + ".trace";
@@ -895,7 +981,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		else if (search.isSelected()) {
 			options = options + "vs";
 		}
-		else {
+		else if (trace.isSelected()) {
 			options = options + "vt";
 		}
 		if (graph.isSelected()) {
@@ -1158,8 +1244,14 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				else if (bap.isSelected()) {
 					prop.setProperty("verification.timing.methods", "bap");
 				}
-				else {
+				else if (baptdc.isSelected()) {
 					prop.setProperty("verification.timing.methods", "baptdc");
+				}
+				else if (lhpn.isSelected()) {
+					prop.setProperty("verification.timing.methods", "lhpn");
+				}
+				else {
+					prop.setProperty("verification.timing.methods", "view");
 				}
 			}
 			else {
@@ -1171,6 +1263,12 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				}
 				else if (smt.isSelected()) {
 					prop.setProperty("verification.timing.methods", "smt");
+				}
+				else if (lhpn.isSelected()) {
+					prop.setProperty("verification.timing.methods", "lhpn");
+				}
+				else {
+					prop.setProperty("verification.timing.methods", "view");
 				}
 			}
 			if (abst.isSelected()) {
@@ -1221,7 +1319,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			else if (search.isSelected()) {
 				prop.setProperty("verification.algorithm", "search");
 			}
-			else {
+			else if (trace.isSelected()) {
 				prop.setProperty("verification.algorithm", "trace");
 			}
 			if (newTab.isSelected()) {
