@@ -146,10 +146,10 @@ public class GCMFile {
 					int number = Integer.parseInt(e.getActionCommand().substring(3,
 							e.getActionCommand().length()));
 					try {
-						int get = Integer.parseInt(texts.get(number).getText().trim());
+						double get = Double.parseDouble(texts.get(number).getText().trim());
 						if (get <= 0) {
 							JOptionPane.showMessageDialog(naryFrame,
-									"Amounts Must Be Positive Integers.", "Error",
+									"Amounts Must Be Positive Real Numbers.", "Error",
 									JOptionPane.ERROR_MESSAGE);
 						}
 						else {
@@ -175,7 +175,7 @@ public class GCMFile {
 					}
 					catch (Exception e1) {
 						JOptionPane.showMessageDialog(naryFrame,
-								"Amounts Must Be Positive Integers.", "Error",
+								"Amounts Must Be Positive Real Numbers.", "Error",
 								JOptionPane.ERROR_MESSAGE);
 					}
 				}
