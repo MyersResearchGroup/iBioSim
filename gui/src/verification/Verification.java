@@ -39,10 +39,10 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 	private JButton save, run, viewCircuit, viewTrace, viewLog, addComponent, removeComponent;
 
 	private JLabel algorithm, timingMethod, timingOptions, otherOptions, otherOptions2,
-			compilation, bddSizeLabel, advTiming;
+			compilation, bddSizeLabel, advTiming, abstractLabel;
 
 	private JRadioButton untimed, geometric, posets, bag, bap, baptdc, verify, vergate, orbits,
-			search, trace, bdd, dbm, smt, lhpn, view;
+			search, trace, bdd, dbm, smt, lhpn, view, none, simplify, abstractLhpn;
 
 	private JCheckBox abst, partialOrder, dot, verbose, graph, genrg, timsubset, superset, infopt,
 			orbmatch, interleav, prune, disabling, nofail, keepgoing, explpn, nochecks, reduction,
@@ -50,13 +50,19 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 
 	private JTextField bddSize, backgroundField, componentField;
 
-	private ButtonGroup timingMethodGroup, algorithmGroup;
+	private ButtonGroup timingMethodGroup, algorithmGroup, abstractionGroup;
 
-	private String directory, separator, root, verFile, verifyFile, oldBdd, sourceFileNoPath;
+	private String directory, separator, root, verFile, oldBdd, sourceFileNoPath;
+	
+	public String verifyFile;
 
 	private boolean change, atacs;
+	
+	private JTabbedPane bigTab;
 
 	private PropertyList componentList;
+	
+	private AbstPane abstPane;
 
 	private Log log;
 
@@ -67,7 +73,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 	 * the input fields, puts them on panels, adds the panels to the frame, and
 	 * then displays the frame.
 	 */
-	public Verification(String directory, String verName, String filename, Log log, BioSim biosim,
+	public Verification(String directory, String verName, String filename, Log log, BioSim biosim, JTabbedPane bigTab,
 			boolean lema, boolean atacs) {
 		if (File.separator.equals("\\")) {
 			separator = "\\\\";
@@ -79,6 +85,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		this.biosim = biosim;
 		this.log = log;
 		this.directory = directory;
+		this.bigTab = bigTab;
 		// String[] getFilename = directory.split(separator);
 		verFile = verName + ".ver";
 		String[] tempArray = filename.split("\\.");
@@ -90,6 +97,8 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			root = root + separator + tempDir[i];
 		}
 
+		JPanel abstractionPanel = new JPanel();
+		abstractionPanel.setMaximumSize(new Dimension(1000, 35));
 		JPanel timingRadioPanel = new JPanel();
 		timingRadioPanel.setMaximumSize(new Dimension(1000, 35));
 		JPanel timingCheckBoxPanel = new JPanel();
@@ -117,6 +126,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		componentField = new JTextField("");
 		componentList = new PropertyList("");
 
+		abstractLabel = new JLabel("Abstraction:");
 		algorithm = new JLabel("Verification Algorithm:");
 		timingMethod = new JLabel("Timing Method:");
 		timingOptions = new JLabel("Timing Options:");
@@ -127,6 +137,10 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		advTiming = new JLabel("Timing Options:");
 
 		// Initializes the radio buttons and check boxes
+		// Abstraction Options
+		none = new JRadioButton("None");
+		simplify = new JRadioButton("Simplification");
+		abstractLhpn = new JRadioButton("Abstraction");
 		// Timing Methods
 		if (atacs) {
 			untimed = new JRadioButton("Untimed");
@@ -227,9 +241,11 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		constraints.gridx = 0;
 		constraints.gridy = 1;
 
+		abstractionGroup = new ButtonGroup();
 		timingMethodGroup = new ButtonGroup();
 		algorithmGroup = new ButtonGroup();
 
+		abstractLhpn.setSelected(true);
 		if (lema) {
 			dbm.setSelected(true);
 		}
@@ -239,6 +255,9 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		verify.setSelected(true);
 
 		// Groups the radio buttons
+		abstractionGroup.add(none);
+		abstractionGroup.add(simplify);
+		abstractionGroup.add(abstractLhpn);
 		if (lema) {
 			timingMethodGroup.add(bdd);
 			timingMethodGroup.add(dbm);
@@ -264,6 +283,10 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		JPanel advOptions = new JPanel();
 
 		// Adds the buttons to their panels
+		abstractionPanel.add(abstractLabel);
+		abstractionPanel.add(none);
+		abstractionPanel.add(simplify);
+		abstractionPanel.add(abstractLhpn);
 		timingRadioPanel.add(timingMethod);
 		if (lema) {
 			timingRadioPanel.add(bdd);
@@ -346,6 +369,17 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			while (load.containsKey("synthesis.compList" + i.toString())) {
 				componentList.addItem(load.getProperty("synthesis.compList" + i.toString()));
 				i++;
+			}
+			if (load.containsKey("verification.abstraction")) {
+				if (load.getProperty("verification.abstraction").equals("none")) {
+					none.setSelected(true);
+				}
+				else if (load.getProperty("verification.abstraction").equals("simplify")) {
+					simplify.setSelected(true);
+				}
+				else {
+					abstractLhpn.setSelected(true);
+				}
 			}
 			if (load.containsKey("verification.timing.methods")) {
 				if (atacs) {
@@ -595,6 +629,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		}
 		backgroundPanel.setMaximumSize(new Dimension(500, 30));
 		basicOptions.add(backgroundPanel);
+		basicOptions.add(abstractionPanel);
 		basicOptions.add(timingRadioPanel);
 		if (!lema) {
 			basicOptions.add(timingCheckBoxPanel);
@@ -702,7 +737,8 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 	}
 
 	public void run() {
-		if (lhpn.isSelected() || view.isSelected()) {
+		if (simplify.isSelected() || abstractLhpn.isSelected()) {
+			abstPane = (AbstPane) (((JPanel) bigTab.getComponentAt(1)).getComponent(0));
 			LHPNFile lhpnFile = new LHPNFile();
 			lhpnFile.load(directory + separator + verifyFile);
 			Abstraction abstraction = lhpnFile.abstractLhpn();
@@ -710,16 +746,16 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			String[] contVars = lhpnFile.getContVars();
 			String[] intVars = lhpnFile.getIntVars();
 			String[] variables = new String[boolVars.length + contVars.length + intVars.length];
-			int k=0;
-			for (int j=0; j<contVars.length; j++) {
+			int k = 0;
+			for (int j = 0; j < contVars.length; j++) {
 				variables[k] = contVars[j];
 				k++;
 			}
-			for (int j=0; j<intVars.length; j++) {
+			for (int j = 0; j < intVars.length; j++) {
 				variables[k] = intVars[j];
 				k++;
 			}
-			for (int j=0; j<boolVars.length; j++) {
+			for (int j = 0; j < boolVars.length; j++) {
 				variables[k] = boolVars[j];
 				k++;
 			}
@@ -730,467 +766,504 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			if (abstFilename != null) {
 				if (!abstFilename.endsWith(".lpn"))
 					abstFilename = abstFilename + ".lpn";
-				String[] options = { "Ok", "Cancel" };
-				JPanel panel = new JPanel();
-				panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-				JCheckBox[] list = new JCheckBox[variables.length];
-				ArrayList<String> tempVars = new ArrayList<String>();
-				for (int i=0; i<variables.length; i++) {
-					JCheckBox temp = new JCheckBox(variables[i]);
-					panel.add(temp);
-					list[i] = temp;
-				}
-				int value = JOptionPane.showOptionDialog(new JFrame(), panel, "Variable Assignment Editor",
-						JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-				if (value == JOptionPane.YES_OPTION) {
-					for (int i=0; i<list.length; i++) {
-						if (list[i].isSelected()) {
-							tempVars.add(variables[i]);
-						}
-					}
-					String[] vars = new String[tempVars.size()];
-					for (int i=0; i<tempVars.size(); i++) {
-						vars[i] = tempVars.get(i);
-					}
-					abstraction.abstractVars(vars);
-				}
+				//String[] options = { "Ok", "Cancel" };
+				//JPanel panel = new JPanel();
+				//panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+				//JCheckBox[] list = new JCheckBox[variables.length];
+				//ArrayList<String> tempVars = new ArrayList<String>();
+				//for (int i = 0; i < variables.length; i++) {
+				//	JCheckBox temp = new JCheckBox(variables[i]);
+				//	panel.add(temp);
+				//	list[i] = temp;
+				//}
+				//int value = JOptionPane.showOptionDialog(new JFrame(), panel,
+				//		"Variable Assignment Editor", JOptionPane.YES_NO_OPTION,
+				//		JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+				//if (value == JOptionPane.YES_OPTION) {
+				//	for (int i = 0; i < list.length; i++) {
+				//		if (list[i].isSelected()) {
+				//			tempVars.add(variables[i]);
+				//		}
+				//	}
+				//	String[] vars = new String[tempVars.size()];
+				//	for (int i = 0; i < tempVars.size(); i++) {
+				//		vars[i] = tempVars.get(i);
+				//	}	
+				//}
+				abstraction.abstractVars(abstPane.getIntVars());
 				abstraction.abstractSTG();
 				String[] array = directory.split(separator);
 				String tempDir = "";
-				for (int i=0; i<array.length-1; i++) {
+				for (int i = 0; i < array.length - 1; i++) {
 					tempDir = tempDir + array[i] + separator;
 				}
+				if (lhpn.isSelected()) {
 				abstraction.save(tempDir + separator + abstFilename);
 				biosim.refreshTree();
+				}
+				else if (view.isSelected()) {
+					abstraction.save(directory + separator + abstFilename);
+					File work = new File(directory + separator);
+					try {
+						Runtime exec = Runtime.getRuntime();
+						Process makeDot = exec.exec("atacs -llodsl " + abstFilename, null, work);
+						makeDot.waitFor();
+						String dotName = abstFilename.replace(".lpn", ".dot");
+						if (new File(directory + separator + dotName).exists()) {
+							String command;
+							if (System.getProperty("os.name").contentEquals("Linux")) {
+								command = "gnome-open ";
+							}
+							else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
+								// directory = System.getenv("BIOSIM") + "/docs/";
+								command = "open ";
+							}
+							else {
+								// directory = System.getenv("BIOSIM") + "\\docs\\";
+								command = "dotty ";
+							}
+							Process dot = exec.exec(command + dotName, null, work);
+							log.addText(command + dotName + "\n");
+							dot.waitFor();
+						}
+					}
+					catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
 				return;
 			}
 		}
-		// String command = "/home/shang/kjones/atacs/bin/atacs -";
-		String[] tempArray = verifyFile.split("\\.");
-		String traceFilename = tempArray[0] + ".trace";
-		File traceFile = new File(traceFilename);
-		String pargName = "";
-		String dotName = "";
-		if (componentField.getText().trim().equals("")) {
-			if (verifyFile.endsWith(".g")) {
-				pargName = directory + separator + verifyFile.replace(".g", ".grf");
-				dotName = directory + separator + verifyFile.replace(".g", ".dot");
-			}
-			else if (verifyFile.endsWith(".lpn")) {
-				pargName = directory + separator + verifyFile.replace(".lpn", ".grf");
-				dotName = directory + separator + verifyFile.replace(".lpn", ".dot");
-			}
-			else if (verifyFile.endsWith(".vhd")) {
-				pargName = directory + separator + verifyFile.replace(".vhd", ".grf");
-				dotName = directory + separator + verifyFile.replace(".vhd", ".dot");
-			}
-		}
-		else {
-			pargName = directory + separator + componentField.getText().trim() + ".grf";
-			dotName = directory + separator + componentField.getText().trim() + ".dot";
-		}
-		File pargFile = new File(pargName);
-		File dotFile = new File(dotName);
-		// log.addText("graph names " + pargName + " " + dotName);
-		if (traceFile.exists()) {
-			traceFile.delete();
-		}
-		if (pargFile.exists()) {
-			pargFile.delete();
-		}
-		if (dotFile.exists()) {
-			dotFile.delete();
-		}
-		for (String s : componentList.getItems()) {
-			try {
-				FileInputStream in = new FileInputStream(new File(root + separator + s));
-				FileOutputStream out = new FileOutputStream(new File(directory + separator + s));
-				int read = in.read();
-				while (read != -1) {
-					out.write(read);
-					read = in.read();
+		if (!lhpn.isSelected() && !view.isSelected()) {
+			// String command = "/home/shang/kjones/atacs/bin/atacs -";
+			String[] tempArray = verifyFile.split("\\.");
+			String traceFilename = tempArray[0] + ".trace";
+			File traceFile = new File(traceFilename);
+			String pargName = "";
+			String dotName = "";
+			if (componentField.getText().trim().equals("")) {
+				if (verifyFile.endsWith(".g")) {
+					pargName = directory + separator + verifyFile.replace(".g", ".grf");
+					dotName = directory + separator + verifyFile.replace(".g", ".dot");
 				}
-				in.close();
-				out.close();
-			}
-			catch (IOException e1) {
-				e1.printStackTrace();
-				JOptionPane.showMessageDialog(biosim.frame(), "Cannot update the file " + s + ".",
-						"Error", JOptionPane.ERROR_MESSAGE);
-			}
-		}
-		tempArray = verifyFile.split(separator);
-		String sourceFile = tempArray[tempArray.length - 1];
-		String[] workArray = directory.split(separator);
-		String workDir = "";
-		for (int i = 0; i < (workArray.length - 1); i++) {
-			workDir = workDir + workArray[i] + separator;
-		}
-		// log.addText("copy to " + directory + separator + sourceFile);
-		// log.addText("copy from " + workDir + separator + sourceFile);
-		try {
-			File newFile = new File(directory + separator + sourceFile);
-			newFile.createNewFile();
-			FileOutputStream copyin = new FileOutputStream(newFile);
-			FileInputStream copyout = new FileInputStream(
-					new File(workDir + separator + sourceFile));
-			int read = copyout.read();
-			// System.out.println(read);
-			while (read != -1) {
-				// System.out.println(read);
-				copyin.write(read);
-				read = copyout.read();
-			}
-			copyin.close();
-			copyout.close();
-		}
-		catch (IOException e) {
-			// e.printStackTrace();
-			JOptionPane.showMessageDialog(biosim.frame(), "Cannot copy file " + sourceFile,
-					"Copy Error", JOptionPane.ERROR_MESSAGE);
-		}
-		String options = "";
-		// BDD Linkspace Size
-		if (!bddSize.getText().equals("") && !bddSize.getText().equals("0")) {
-			options = options + "-L" + bddSize.getText() + " ";
-		}
-		options = options + "-oq";
-		// Timing method
-		if (atacs) {
-			if (untimed.isSelected()) {
-				options = options + "tu";
-			}
-			else if (geometric.isSelected()) {
-				options = options + "tg";
-			}
-			else if (posets.isSelected()) {
-				options = options + "ts";
-			}
-			else if (bag.isSelected()) {
-				options = options + "tg";
-			}
-			else if (bap.isSelected()) {
-				options = options + "tp";
+				else if (verifyFile.endsWith(".lpn")) {
+					pargName = directory + separator + verifyFile.replace(".lpn", ".grf");
+					dotName = directory + separator + verifyFile.replace(".lpn", ".dot");
+				}
+				else if (verifyFile.endsWith(".vhd")) {
+					pargName = directory + separator + verifyFile.replace(".vhd", ".grf");
+					dotName = directory + separator + verifyFile.replace(".vhd", ".dot");
+				}
 			}
 			else {
-				options = options + "tt";
+				pargName = directory + separator + componentField.getText().trim() + ".grf";
+				dotName = directory + separator + componentField.getText().trim() + ".dot";
 			}
-		}
-		else {
-			if (bdd.isSelected()) {
-				options = options + "tB";
+			File pargFile = new File(pargName);
+			File dotFile = new File(dotName);
+			// log.addText("graph names " + pargName + " " + dotName);
+			if (traceFile.exists()) {
+				traceFile.delete();
 			}
-			else if (dbm.isSelected()) {
-				options = options + "tL";
+			if (pargFile.exists()) {
+				pargFile.delete();
 			}
-			else if (smt.isSelected()) {
-				options = options + "tM";
+			if (dotFile.exists()) {
+				dotFile.delete();
 			}
-		}
-		// Timing Options
-		if (abst.isSelected()) {
-			options = options + "oa";
-		}
-		if (partialOrder.isSelected()) {
-			options = options + "op";
-		}
-		// Other Options
-		if (dot.isSelected()) {
-			options = options + "od";
-		}
-		if (verbose.isSelected()) {
-			options = options + "ov";
-		}
-		// Advanced Timing Options
-		if (genrg.isSelected()) {
-			options = options + "oG";
-		}
-		if (timsubset.isSelected()) {
-			options = options + "oS";
-		}
-		if (superset.isSelected()) {
-			options = options + "oU";
-		}
-		if (infopt.isSelected()) {
-			options = options + "oF";
-		}
-		if (orbmatch.isSelected()) {
-			options = options + "oO";
-		}
-		if (interleav.isSelected()) {
-			options = options + "oI";
-		}
-		if (prune.isSelected()) {
-			options = options + "oP";
-		}
-		if (disabling.isSelected()) {
-			options = options + "oD";
-		}
-		if (nofail.isSelected()) {
-			options = options + "of";
-		}
-		if (keepgoing.isSelected()) {
-			options = options + "oK";
-		}
-		if (explpn.isSelected()) {
-			options = options + "oL";
-		}
-		// Other Advanced Options
-		if (nochecks.isSelected()) {
-			options = options + "on";
-		}
-		if (reduction.isSelected()) {
-			options = options + "oR";
-		}
-		// Compilation Options
-		if (newTab.isSelected()) {
-			options = options + "cN";
-		}
-		if (postProc.isSelected()) {
-			options = options + "cP";
-		}
-		if (redCheck.isSelected()) {
-			options = options + "cR";
-		}
-		if (xForm2.isSelected()) {
-			options = options + "cT";
-		}
-		if (expandRate.isSelected()) {
-			options = options + "cE";
-		}
-		// Load file type
-		if (verifyFile.endsWith(".g")) {
-			options = options + "lg";
-		}
-		else if (verifyFile.endsWith(".lpn")) {
-			options = options + "ll";
-		}
-		else if (verifyFile.endsWith(".vhd") || verifyFile.endsWith(".vhdl")) {
-			options = options + "lvslll";
-		}
-		// Verification Algorithms
-		if (verify.isSelected()) {
-			options = options + "va";
-		}
-		else if (vergate.isSelected()) {
-			options = options + "vg";
-		}
-		else if (orbits.isSelected()) {
-			options = options + "vo";
-		}
-		else if (search.isSelected()) {
-			options = options + "vs";
-		}
-		else if (trace.isSelected()) {
-			options = options + "vt";
-		}
-		if (graph.isSelected()) {
-			options = options + "ps";
-		}
-		// String[] temp = verifyFile.split(separator);
-		// String src = temp[temp.length - 1];
-		String cmd = "atacs " + options;
-		String[] components = componentList.getItems();
-		for (String s : components) {
-			cmd = cmd + " " + s;
-		}
-		cmd = cmd + " " + sourceFile;
-		if (!componentField.getText().trim().equals("")) {
-			cmd = cmd + " " + componentField.getText().trim();
-		}
-		// String[] cmd = {"emacs", "temp" };
-		// JOptionPane.showMessageDialog(this, cmd);
-		// Runtime exec = Runtime.getRuntime();
-		final JButton cancel = new JButton("Cancel");
-		final JFrame running = new JFrame("Progress");
-		WindowListener w = new WindowListener() {
-			public void windowClosing(WindowEvent arg0) {
-				cancel.doClick();
-				running.dispose();
-			}
-
-			public void windowOpened(WindowEvent arg0) {
-			}
-
-			public void windowClosed(WindowEvent arg0) {
-			}
-
-			public void windowIconified(WindowEvent arg0) {
-			}
-
-			public void windowDeiconified(WindowEvent arg0) {
-			}
-
-			public void windowActivated(WindowEvent arg0) {
-			}
-
-			public void windowDeactivated(WindowEvent arg0) {
-			}
-		};
-		running.addWindowListener(w);
-		JPanel text = new JPanel();
-		JPanel progBar = new JPanel();
-		JPanel button = new JPanel();
-		JPanel all = new JPanel(new BorderLayout());
-		JLabel label = new JLabel("Running...");
-		JProgressBar progress = new JProgressBar();
-		// progress.setStringPainted(true);
-		progress.setIndeterminate(true);
-		// progress.setString("");
-		// progress.setValue(0);
-		text.add(label);
-		progBar.add(progress);
-		button.add(cancel);
-		all.add(text, "North");
-		all.add(progBar, "Center");
-		all.add(button, "South");
-		all.setOpaque(true);
-		running.setContentPane(all);
-		running.pack();
-		Dimension screenSize;
-		try {
-			Toolkit tk = Toolkit.getDefaultToolkit();
-			screenSize = tk.getScreenSize();
-		}
-		catch (AWTError awe) {
-			screenSize = new Dimension(640, 480);
-		}
-		Dimension frameSize = running.getSize();
-
-		if (frameSize.height > screenSize.height) {
-			frameSize.height = screenSize.height;
-		}
-		if (frameSize.width > screenSize.width) {
-			frameSize.width = screenSize.width;
-		}
-		int x = screenSize.width / 2 - frameSize.width / 2;
-		int y = screenSize.height / 2 - frameSize.height / 2;
-		running.setLocation(x, y);
-		running.setVisible(true);
-		running.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-		File work = new File(directory);
-		Runtime exec = Runtime.getRuntime();
-		try {
-			final Process ver = exec.exec(cmd, null, work);
-			cancel.setActionCommand("Cancel");
-			cancel.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					ver.destroy();
-					running.setCursor(null);
-					running.dispose();
-				}
-			});
-			biosim.getExitButton().setActionCommand("Exit program");
-			biosim.getExitButton().addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					ver.destroy();
-					running.setCursor(null);
-					running.dispose();
-				}
-			});
-			log.addText("Executing:\n" + cmd + "\n");
-			// Process synth = exec.exec(cmd, null, work);
-			/*
-			 * else { if (traceFile.exists()) {
-			 * JOptionPane.showMessageDialog(biosim.frame(), "Verification
-			 * Failed", "Verification Results", JOptionPane.WARNING_MESSAGE);
-			 * viewTrace.setEnabled(true); viewTrace(); } else {
-			 * JOptionPane.showMessageDialog(biosim.frame(), "Verification
-			 * Succeeded", "Verification Results",
-			 * JOptionPane.INFORMATION_MESSAGE); viewTrace.setEnabled(false); } }
-			 */
-			String output = "";
-			InputStream reb = ver.getInputStream();
-			InputStreamReader isr = new InputStreamReader(reb);
-			BufferedReader br = new BufferedReader(isr);
-			FileWriter out = new FileWriter(new File(directory + separator + "run.log"));
-			while ((output = br.readLine()) != null) {
-				out.write(output);
-				out.write("\n");
-			}
-			out.close();
-			br.close();
-			isr.close();
-			reb.close();
-			viewLog.setEnabled(true);
-			ver.waitFor();
-			running.setCursor(null);
-			running.dispose();
-			FileInputStream atacsLog = new FileInputStream(new File(directory + separator
-					+ "atacs.log"));
-			InputStreamReader atacsReader = new InputStreamReader(atacsLog);
-			BufferedReader atacsBuffer = new BufferedReader(atacsReader);
-			boolean success = false;
-			while ((output = atacsBuffer.readLine()) != null) {
-				if (output.contains("Verification succeeded.")) {
-					JOptionPane.showMessageDialog(biosim.frame(), "Verification succeeded!",
-							"Success", JOptionPane.INFORMATION_MESSAGE);
-					success = true;
-					break;
-				}
-			}
-			int exitValue = ver.waitFor();
-			if (exitValue == 143) {
-				JOptionPane.showMessageDialog(biosim.frame(), "Verification was"
-						+ " canceled by the user.", "Canceled Verification",
-						JOptionPane.ERROR_MESSAGE);
-			}
-			if (!success) {
-				// log.addText("failed");
-				if (new File(pargName).exists()) {
-					// log.addText("view parg");
-					Process parg = exec.exec("parg " + pargName);
-					log.addText("parg " + pargName + "\n");
-					parg.waitFor();
-				}
-				else if (new File(dotName).exists()) {
-					String command;
-					if (System.getProperty("os.name").contentEquals("Linux")) {
-						command = "gnome-open ";
+			for (String s : componentList.getItems()) {
+				try {
+					FileInputStream in = new FileInputStream(new File(root + separator + s));
+					FileOutputStream out = new FileOutputStream(new File(directory + separator + s));
+					int read = in.read();
+					while (read != -1) {
+						out.write(read);
+						read = in.read();
 					}
-					else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
-						// directory = System.getenv("BIOSIM") + "/docs/";
-						command = "open ";
-					}
-					else {
-						// directory = System.getenv("BIOSIM") + "\\docs\\";
-						command = "dotty ";
-					}
-					Process dot = exec.exec("open " + dotName);
-					log.addText(command + dotName + "\n");
-					dot.waitFor();
+					in.close();
+					out.close();
+				}
+				catch (IOException e1) {
+					e1.printStackTrace();
+					JOptionPane.showMessageDialog(biosim.frame(), "Cannot update the file " + s
+							+ ".", "Error", JOptionPane.ERROR_MESSAGE);
+				}
+			}
+			tempArray = verifyFile.split(separator);
+			String sourceFile = tempArray[tempArray.length - 1];
+			String[] workArray = directory.split(separator);
+			String workDir = "";
+			for (int i = 0; i < (workArray.length - 1); i++) {
+				workDir = workDir + workArray[i] + separator;
+			}
+			// log.addText("copy to " + directory + separator + sourceFile);
+			// log.addText("copy from " + workDir + separator + sourceFile);
+			try {
+				File newFile = new File(directory + separator + sourceFile);
+				newFile.createNewFile();
+				FileOutputStream copyin = new FileOutputStream(newFile);
+				FileInputStream copyout = new FileInputStream(new File(workDir + separator
+						+ sourceFile));
+				int read = copyout.read();
+				// System.out.println(read);
+				while (read != -1) {
+					// System.out.println(read);
+					copyin.write(read);
+					read = copyout.read();
+				}
+				copyin.close();
+				copyout.close();
+			}
+			catch (IOException e) {
+				// e.printStackTrace();
+				JOptionPane.showMessageDialog(biosim.frame(), "Cannot copy file " + sourceFile,
+						"Copy Error", JOptionPane.ERROR_MESSAGE);
+			}
+			String options = "";
+			// BDD Linkspace Size
+			if (!bddSize.getText().equals("") && !bddSize.getText().equals("0")) {
+				options = options + "-L" + bddSize.getText() + " ";
+			}
+			options = options + "-oq";
+			// Timing method
+			if (atacs) {
+				if (untimed.isSelected()) {
+					options = options + "tu";
+				}
+				else if (geometric.isSelected()) {
+					options = options + "tg";
+				}
+				else if (posets.isSelected()) {
+					options = options + "ts";
+				}
+				else if (bag.isSelected()) {
+					options = options + "tg";
+				}
+				else if (bap.isSelected()) {
+					options = options + "tp";
 				}
 				else {
-					// log.addText("view log");
-					viewLog();
+					options = options + "tt";
 				}
+			}
+			else {
+				if (bdd.isSelected()) {
+					options = options + "tB";
+				}
+				else if (dbm.isSelected()) {
+					options = options + "tL";
+				}
+				else if (smt.isSelected()) {
+					options = options + "tM";
+				}
+			}
+			// Timing Options
+			if (abst.isSelected()) {
+				options = options + "oa";
+			}
+			if (partialOrder.isSelected()) {
+				options = options + "op";
+			}
+			// Other Options
+			if (dot.isSelected()) {
+				options = options + "od";
+			}
+			if (verbose.isSelected()) {
+				options = options + "ov";
+			}
+			// Advanced Timing Options
+			if (genrg.isSelected()) {
+				options = options + "oG";
+			}
+			if (timsubset.isSelected()) {
+				options = options + "oS";
+			}
+			if (superset.isSelected()) {
+				options = options + "oU";
+			}
+			if (infopt.isSelected()) {
+				options = options + "oF";
+			}
+			if (orbmatch.isSelected()) {
+				options = options + "oO";
+			}
+			if (interleav.isSelected()) {
+				options = options + "oI";
+			}
+			if (prune.isSelected()) {
+				options = options + "oP";
+			}
+			if (disabling.isSelected()) {
+				options = options + "oD";
+			}
+			if (nofail.isSelected()) {
+				options = options + "of";
+			}
+			if (keepgoing.isSelected()) {
+				options = options + "oK";
+			}
+			if (explpn.isSelected()) {
+				options = options + "oL";
+			}
+			// Other Advanced Options
+			if (nochecks.isSelected()) {
+				options = options + "on";
+			}
+			if (reduction.isSelected()) {
+				options = options + "oR";
+			}
+			// Compilation Options
+			if (newTab.isSelected()) {
+				options = options + "cN";
+			}
+			if (postProc.isSelected()) {
+				options = options + "cP";
+			}
+			if (redCheck.isSelected()) {
+				options = options + "cR";
+			}
+			if (xForm2.isSelected()) {
+				options = options + "cT";
+			}
+			if (expandRate.isSelected()) {
+				options = options + "cE";
+			}
+			// Load file type
+			if (verifyFile.endsWith(".g")) {
+				options = options + "lg";
+			}
+			else if (verifyFile.endsWith(".lpn")) {
+				options = options + "ll";
+			}
+			else if (verifyFile.endsWith(".vhd") || verifyFile.endsWith(".vhdl")) {
+				options = options + "lvslll";
+			}
+			// Verification Algorithms
+			if (verify.isSelected()) {
+				options = options + "va";
+			}
+			else if (vergate.isSelected()) {
+				options = options + "vg";
+			}
+			else if (orbits.isSelected()) {
+				options = options + "vo";
+			}
+			else if (search.isSelected()) {
+				options = options + "vs";
+			}
+			else if (trace.isSelected()) {
+				options = options + "vt";
 			}
 			if (graph.isSelected()) {
-				if (dot.isSelected()) {
-					String command;
-					if (System.getProperty("os.name").contentEquals("Linux")) {
-						command = "gnome-open ";
+				options = options + "ps";
+			}
+			// String[] temp = verifyFile.split(separator);
+			// String src = temp[temp.length - 1];
+			String cmd = "atacs " + options;
+			String[] components = componentList.getItems();
+			for (String s : components) {
+				cmd = cmd + " " + s;
+			}
+			cmd = cmd + " " + sourceFile;
+			if (!componentField.getText().trim().equals("")) {
+				cmd = cmd + " " + componentField.getText().trim();
+			}
+			// String[] cmd = {"emacs", "temp" };
+			// JOptionPane.showMessageDialog(this, cmd);
+			// Runtime exec = Runtime.getRuntime();
+			final JButton cancel = new JButton("Cancel");
+			final JFrame running = new JFrame("Progress");
+			WindowListener w = new WindowListener() {
+				public void windowClosing(WindowEvent arg0) {
+					cancel.doClick();
+					running.dispose();
+				}
+
+				public void windowOpened(WindowEvent arg0) {
+				}
+
+				public void windowClosed(WindowEvent arg0) {
+				}
+
+				public void windowIconified(WindowEvent arg0) {
+				}
+
+				public void windowDeiconified(WindowEvent arg0) {
+				}
+
+				public void windowActivated(WindowEvent arg0) {
+				}
+
+				public void windowDeactivated(WindowEvent arg0) {
+				}
+			};
+			running.addWindowListener(w);
+			JPanel text = new JPanel();
+			JPanel progBar = new JPanel();
+			JPanel button = new JPanel();
+			JPanel all = new JPanel(new BorderLayout());
+			JLabel label = new JLabel("Running...");
+			JProgressBar progress = new JProgressBar();
+			// progress.setStringPainted(true);
+			progress.setIndeterminate(true);
+			// progress.setString("");
+			// progress.setValue(0);
+			text.add(label);
+			progBar.add(progress);
+			button.add(cancel);
+			all.add(text, "North");
+			all.add(progBar, "Center");
+			all.add(button, "South");
+			all.setOpaque(true);
+			running.setContentPane(all);
+			running.pack();
+			Dimension screenSize;
+			try {
+				Toolkit tk = Toolkit.getDefaultToolkit();
+				screenSize = tk.getScreenSize();
+			}
+			catch (AWTError awe) {
+				screenSize = new Dimension(640, 480);
+			}
+			Dimension frameSize = running.getSize();
+
+			if (frameSize.height > screenSize.height) {
+				frameSize.height = screenSize.height;
+			}
+			if (frameSize.width > screenSize.width) {
+				frameSize.width = screenSize.width;
+			}
+			int x = screenSize.width / 2 - frameSize.width / 2;
+			int y = screenSize.height / 2 - frameSize.height / 2;
+			running.setLocation(x, y);
+			running.setVisible(true);
+			running.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+			File work = new File(directory);
+			Runtime exec = Runtime.getRuntime();
+			try {
+				final Process ver = exec.exec(cmd, null, work);
+				cancel.setActionCommand("Cancel");
+				cancel.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						ver.destroy();
+						running.setCursor(null);
+						running.dispose();
 					}
-					else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
-						// directory = System.getenv("BIOSIM") + "/docs/";
-						command = "open ";
+				});
+				biosim.getExitButton().setActionCommand("Exit program");
+				biosim.getExitButton().addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						ver.destroy();
+						running.setCursor(null);
+						running.dispose();
+					}
+				});
+				log.addText("Executing:\n" + cmd + "\n");
+				// Process synth = exec.exec(cmd, null, work);
+				/*
+				 * else { if (traceFile.exists()) {
+				 * JOptionPane.showMessageDialog(biosim.frame(), "Verification
+				 * Failed", "Verification Results",
+				 * JOptionPane.WARNING_MESSAGE); viewTrace.setEnabled(true);
+				 * viewTrace(); } else {
+				 * JOptionPane.showMessageDialog(biosim.frame(), "Verification
+				 * Succeeded", "Verification Results",
+				 * JOptionPane.INFORMATION_MESSAGE);
+				 * viewTrace.setEnabled(false); } }
+				 */
+				String output = "";
+				InputStream reb = ver.getInputStream();
+				InputStreamReader isr = new InputStreamReader(reb);
+				BufferedReader br = new BufferedReader(isr);
+				FileWriter out = new FileWriter(new File(directory + separator + "run.log"));
+				while ((output = br.readLine()) != null) {
+					out.write(output);
+					out.write("\n");
+				}
+				out.close();
+				br.close();
+				isr.close();
+				reb.close();
+				viewLog.setEnabled(true);
+				ver.waitFor();
+				running.setCursor(null);
+				running.dispose();
+				FileInputStream atacsLog = new FileInputStream(new File(directory + separator
+						+ "atacs.log"));
+				InputStreamReader atacsReader = new InputStreamReader(atacsLog);
+				BufferedReader atacsBuffer = new BufferedReader(atacsReader);
+				boolean success = false;
+				while ((output = atacsBuffer.readLine()) != null) {
+					if (output.contains("Verification succeeded.")) {
+						JOptionPane.showMessageDialog(biosim.frame(), "Verification succeeded!",
+								"Success", JOptionPane.INFORMATION_MESSAGE);
+						success = true;
+						break;
+					}
+				}
+				int exitValue = ver.waitFor();
+				if (exitValue == 143) {
+					JOptionPane.showMessageDialog(biosim.frame(), "Verification was"
+							+ " canceled by the user.", "Canceled Verification",
+							JOptionPane.ERROR_MESSAGE);
+				}
+				if (!success) {
+					// log.addText("failed");
+					if (new File(pargName).exists()) {
+						// log.addText("view parg");
+						Process parg = exec.exec("parg " + pargName);
+						log.addText("parg " + pargName + "\n");
+						parg.waitFor();
+					}
+					else if (new File(dotName).exists()) {
+						String command;
+						if (System.getProperty("os.name").contentEquals("Linux")) {
+							command = "gnome-open ";
+						}
+						else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
+							// directory = System.getenv("BIOSIM") + "/docs/";
+							command = "open ";
+						}
+						else {
+							// directory = System.getenv("BIOSIM") + "\\docs\\";
+							command = "dotty ";
+						}
+						Process dot = exec.exec("open " + dotName);
+						log.addText(command + dotName + "\n");
+						dot.waitFor();
 					}
 					else {
-						// directory = System.getenv("BIOSIM") + "\\docs\\";
-						command = "dotty ";
+						// log.addText("view log");
+						viewLog();
 					}
-					exec.exec(command + dotName);
-					log.addText("Executing:\n" + command + dotName + "\n");
 				}
-				else {
-					exec.exec("parg " + pargName);
-					log.addText("Executing:\nparg " + pargName + "\n");
+				if (graph.isSelected()) {
+					if (dot.isSelected()) {
+						String command;
+						if (System.getProperty("os.name").contentEquals("Linux")) {
+							command = "gnome-open ";
+						}
+						else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
+							// directory = System.getenv("BIOSIM") + "/docs/";
+							command = "open ";
+						}
+						else {
+							// directory = System.getenv("BIOSIM") + "\\docs\\";
+							command = "dotty ";
+						}
+						exec.exec(command + dotName);
+						log.addText("Executing:\n" + command + dotName + "\n");
+					}
+					else {
+						exec.exec("parg " + pargName);
+						log.addText("Executing:\nparg " + pargName + "\n");
+					}
 				}
 			}
-		}
-		catch (Exception e) {
-			JOptionPane.showMessageDialog(biosim.frame(), "Unable to verify model.", "Error",
-					JOptionPane.ERROR_MESSAGE);
+			catch (Exception e) {
+				JOptionPane.showMessageDialog(biosim.frame(), "Unable to verify model.", "Error",
+						JOptionPane.ERROR_MESSAGE);
+			}
 		}
 	}
 
@@ -1227,6 +1300,15 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			String[] components = componentList.getItems();
 			for (Integer i = 0; i < components.length; i++) {
 				prop.setProperty("synthesis.compList" + i.toString(), components[i]);
+			}
+			if (none.isSelected()) {
+				prop.setProperty("verification.abstraction", "none");
+			}
+			else if (simplify.isSelected()) {
+				prop.setProperty("verification.abstraction", "simplify");
+			}
+			else {
+				prop.setProperty("verification.abstraction", "abstract");
 			}
 			if (atacs) {
 				if (untimed.isSelected()) {

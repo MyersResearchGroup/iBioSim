@@ -314,7 +314,57 @@ public class Abstraction {
 		}
 	}
 
-	public void abstractVars(String[] vars) {
+	public void abstractVars(String[] intVars) {
+		String[] vars = new String[variables.size() + inputs.size() + outputs.size() + variables.size() - intVars.length];
+		int i=0;
+		for (String s : variables.keySet()) {
+			boolean flag = false;
+			for (int j=0; j<intVars.length; j++) {
+				if (s.equals(intVars[j])) {
+					flag = true;
+				}
+			}
+			if (!flag) {
+				vars[i] = s;
+				i++;
+			}
+		}
+		for (String s : inputs.keySet()) {
+			boolean flag = false;
+			for (int j=0; j<intVars.length; j++) {
+				if (s.equals(intVars[j])) {
+					flag = true;
+				}
+			}
+			if (!flag) {
+				vars[i] = s;
+				i++;
+			}
+		}
+		for (String s : outputs.keySet()) {
+			boolean flag = false;
+			for (int j=0; j<intVars.length; j++) {
+				if (s.equals(intVars[j])) {
+					flag = true;
+				}
+			}
+			if (!flag) {
+				vars[i] = s;
+				i++;
+			}
+		}
+		for (String s : integers.keySet()) {
+			boolean flag = false;
+			for (int j=0; j<intVars.length; j++) {
+				if (s.equals(intVars[j])) {
+					flag = true;
+				}
+			}
+			if (!flag) {
+				vars[i] = s;
+				i++;
+			}
+		}
 		if (vars != null) {
 			for (String s : vars) {
 				for (String t : controlFlow.keySet()) {

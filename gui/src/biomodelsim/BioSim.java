@@ -2419,12 +2419,12 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						JTabbedPane verTab = new JTabbedPane();
 						JPanel verPane = new JPanel();
 						Verification verify = new Verification(root + separator + verName, verName,
-								circuitFileNoPath, log, this, lema, atacs);
+								circuitFileNoPath, log, this, verTab, lema, atacs);
 						// verify.addMouseListener(this);
 						verify.save();
 						verPane.add(verify);
 						JPanel abstPane = new JPanel();
-						AbstPane abst = new AbstPane(root + separator + verName, verName,
+						AbstPane abst = new AbstPane(root + separator + verName, verify,
 								circuitFileNoPath, log, this, lema, atacs);
 						abstPane.add(abst);
 						verTab.addTab("verify", verPane);
@@ -9002,10 +9002,10 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			}
 			// if (!graphFile.equals("")) {
 			Verification ver = new Verification(root + separator + verName, verName, "flag", log,
-					this, lema, atacs);
+					this, verTab, lema, atacs);
 			// ver.addMouseListener(this);
 			verPanel.add(ver);
-			AbstPane abst = new AbstPane(root + separator + verName, verName, "flag", log,
+			AbstPane abst = new AbstPane(root + separator + verName, ver, "flag", log,
 					this, lema, atacs);
 			abstPanel.add(abst);
 			verTab.add("verify", verPanel);

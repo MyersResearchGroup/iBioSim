@@ -16,6 +16,8 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Properties;
 
+import lhpn2sbml.parser.LHPNFile;
+
 import gcm2sbml.gui.PropertyList;
 import gcm2sbml.util.Utility;
 
@@ -33,8 +35,12 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 
 	private static final long serialVersionUID = -5806315070287184299L;
 
-	private JButton button;
+	private JButton addIntSpecies, removeIntSpecies, clearIntSpecies;
 
+	private JList species, intSpecies;
+	
+	private DefaultListModel listModel;
+	
 	private JLabel label;
 
 	private JRadioButton radio;
@@ -60,11 +66,20 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 	 * the input fields, puts them on panels, adds the panels to the frame, and
 	 * then displays the frame.
 	 */
-	public AbstPane(String directory, String verName, String filename, Log log, BioSim biosim,
+	public AbstPane(String directory, Verification verification, String filename, Log log, BioSim biosim,
 			boolean lema, boolean atacs) {
+		if (File.separator.equals("\\")) {
+			separator = "\\\\";
+		}
+		else {
+			separator = File.separator;
+		}
+		LHPNFile lhpn = new LHPNFile();
+		lhpn.load(directory + separator + verification.verifyFile);
 //		 Creates the interesting species JList
-		JList intSpecies = new JList();
-		JList species = new JList();
+		listModel = new DefaultListModel();
+		intSpecies = new JList(lhpn.getAllVariables());
+		species = new JList(listModel);
 		JLabel spLabel = new JLabel("Available Species:");
 		JLabel speciesLabel = new JLabel("Interesting Species:");
 		JPanel speciesHolder = new JPanel(new BorderLayout());
@@ -78,9 +93,12 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 		scroll1.setMinimumSize(new Dimension(260, 200));
 		scroll1.setPreferredSize(new Dimension(276, 132));
 		scroll1.setViewportView(intSpecies);
-		JButton addIntSpecies = new JButton("Add Species");
-		JButton removeIntSpecies = new JButton("Remove Species");
-		JButton clearIntSpecies = new JButton("Clear Species");
+		addIntSpecies = new JButton("Add Species");
+		removeIntSpecies = new JButton("Remove Species");
+		clearIntSpecies = new JButton("Clear Species");
+		addIntSpecies.addActionListener(this);
+		removeIntSpecies.addActionListener(this);
+		clearIntSpecies.addActionListener(this);
 		listOfSpeciesLabelHolder.add(spLabel);
 		listOfSpeciesHolder.add(scroll1);
 		listOfSpeciesLabelHolder.add(speciesLabel);
@@ -92,18 +110,18 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 		buttonHolder.add(removeIntSpecies);
 		buttonHolder.add(clearIntSpecies);
 		speciesHolder.add(buttonHolder, "South");
-		intSpecies.setEnabled(false);
-		species.setEnabled(false);
+		//intSpecies.setEnabled(false);
+		//species.setEnabled(false);
 		//intSpecies.addMouseListener(this);
 		//species.addMouseListener(this);
-		spLabel.setEnabled(false);
-		speciesLabel.setEnabled(false);
-		addIntSpecies.setEnabled(false);
-		removeIntSpecies.setEnabled(false);
-		addIntSpecies.addActionListener(this);
-		removeIntSpecies.addActionListener(this);
-		clearIntSpecies.setEnabled(false);
-		clearIntSpecies.addActionListener(this);
+		//spLabel.setEnabled(false);
+		//speciesLabel.setEnabled(false);
+		//addIntSpecies.setEnabled(false);
+		//removeIntSpecies.setEnabled(false);
+		//addIntSpecies.addActionListener(this);
+		//removeIntSpecies.addActionListener(this);
+		//clearIntSpecies.setEnabled(false);
+		//clearIntSpecies.addActionListener(this);
 
 		// Creates some abstraction options
 		JPanel advancedGrid = new JPanel(new GridLayout(8, 2));
@@ -148,7 +166,7 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 		advancedGrid.add(maxCon);
 		advancedGrid.add(maxConSpace1);
 		advancedGrid.add(maxConSpace2);
-		advanced.add(advancedGrid);
+		//advanced.add(advancedGrid);
 		// JPanel space = new JPanel();
 		// advanced.add(space);
 		advanced.add(speciesHolder);
@@ -214,53 +232,14 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 	 * @throws
 	 */
 	public void actionPerformed(ActionEvent e) {
-		change = true;
-		if (e.getSource() == button) {
-			save(verFile);
-			new Thread(this).start();
+		if (e.getSource() == addIntSpecies) {
+			listModel.addElement(intSpecies.getSelectedValue());
 		}
-		else if (e.getSource() == button) {
-			log.addText("Saving:\n" + directory + separator + verFile + "\n");
-			save(verFile);
+		if (e.getSource() == removeIntSpecies) {
+			listModel.removeElement(species.getSelectedValue());
 		}
-		else if (e.getSource() == button) {
-			String[] vhdlFiles = new File(root).list();
-			ArrayList<String> tempFiles = new ArrayList<String>();
-			for (int i = 0; i < vhdlFiles.length; i++) {
-				if (vhdlFiles[i].endsWith(".vhd") && !vhdlFiles[i].equals(sourceFileNoPath)) {
-					tempFiles.add(vhdlFiles[i]);
-				}
-			}
-			vhdlFiles = new String[tempFiles.size()];
-			for (int i = 0; i < vhdlFiles.length; i++) {
-				vhdlFiles[i] = tempFiles.get(i);
-			}
-			String filename = (String) JOptionPane.showInputDialog(this, "", "Select Component",
-					JOptionPane.PLAIN_MESSAGE, null, vhdlFiles, vhdlFiles[0]);
-			if (filename != null) {
-				String[] comps = componentList.getItems();
-				boolean contains = false;
-				for (int i = 0; i < comps.length; i++) {
-					if (comps[i].equals(filename)) {
-						contains = true;
-					}
-				}
-				if (!filename.endsWith(".vhd")) {
-					JOptionPane.showMessageDialog(biosim.frame(),
-							"You must select a valid VHDL file.", "Error",
-							JOptionPane.ERROR_MESSAGE);
-					return;
-				}
-				else if (new File(directory + separator + filename).exists()
-						|| filename.equals(sourceFileNoPath) || contains) {
-					JOptionPane.showMessageDialog(biosim.frame(),
-							"This component is already contained in this tool.", "Error",
-							JOptionPane.ERROR_MESSAGE);
-					return;
-				}
-				componentList.addItem(filename);
-				return;
-			}
+		if (e.getSource() == clearIntSpecies) {
+			listModel.removeAllElements();
 		}
 	}
 
@@ -358,6 +337,14 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 
 	public void reload(String newname) {
 		field.setText(newname);
+	}
+	
+	public String[] getIntVars() {
+		String[] intVars = new String[listModel.getSize()];
+		for (int i=0; i<listModel.getSize(); i++) {
+			intVars[i] = listModel.elementAt(i).toString();
+		}
+		return intVars;
 	}
 
 	public void viewCircuit() {
