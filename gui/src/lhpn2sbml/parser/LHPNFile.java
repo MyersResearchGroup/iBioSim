@@ -1413,6 +1413,7 @@ public class LHPNFile {
 			transitionRates.put(transition, rate);
 		}
 		else {
+			transitionRates.remove(transition);
 			transitionRateTrees.put(transition, null);
 		}
 		return true;
@@ -1434,6 +1435,7 @@ public class LHPNFile {
 			enablings.put(transition, enabling);
 		}
 		else {
+			enablings.remove(transition);
 			enablingTrees.put(transition, null);
 		}
 		return true;
@@ -1464,6 +1466,29 @@ public class LHPNFile {
 			i++;
 		}
 		for (String s : places.keySet()) {
+			allVariables[i] = s;
+			i++;
+		}
+		return allVariables;
+	}
+	
+	public String[] getAllVariables() {
+		String[] allVariables = new String[variables.size() + integers.size() + inputs.size()
+				+ outputs.size() + delays.size() + places.size()];
+		int i = 0;
+		for (String s : variables.keySet()) {
+			allVariables[i] = s;
+			i++;
+		}
+		for (String s : integers.keySet()) {
+			allVariables[i] = s;
+			i++;
+		}
+		for (String s : inputs.keySet()) {
+			allVariables[i] = s;
+			i++;
+		}
+		for (String s : outputs.keySet()) {
 			allVariables[i] = s;
 			i++;
 		}
