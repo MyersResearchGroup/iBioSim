@@ -80,8 +80,8 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 		listModel = new DefaultListModel();
 		intSpecies = new JList(lhpn.getAllVariables());
 		species = new JList(listModel);
-		JLabel spLabel = new JLabel("Available Species:");
-		JLabel speciesLabel = new JLabel("Interesting Species:");
+		JLabel spLabel = new JLabel("Available Variables:");
+		JLabel speciesLabel = new JLabel("Interesting Variables:");
 		JPanel speciesHolder = new JPanel(new BorderLayout());
 		JPanel listOfSpeciesLabelHolder = new JPanel(new GridLayout(1, 2));
 		JPanel listOfSpeciesHolder = new JPanel(new GridLayout(1, 2));
@@ -93,9 +93,9 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 		scroll1.setMinimumSize(new Dimension(260, 200));
 		scroll1.setPreferredSize(new Dimension(276, 132));
 		scroll1.setViewportView(intSpecies);
-		addIntSpecies = new JButton("Add Species");
-		removeIntSpecies = new JButton("Remove Species");
-		clearIntSpecies = new JButton("Clear Species");
+		addIntSpecies = new JButton("Add Variable");
+		removeIntSpecies = new JButton("Remove Variable");
+		clearIntSpecies = new JButton("Clear Variable");
 		addIntSpecies.addActionListener(this);
 		removeIntSpecies.addActionListener(this);
 		clearIntSpecies.addActionListener(this);
