@@ -416,13 +416,13 @@ public class GCMFile {
 				}
 				String rate = "";
 				if (activators.size() != 0) {
-					rate += (np * ng) + "*(" + (kb * Ko * RNAP);
+					rate += "(" + np + "*" + ng + ")*((" + kb + "*" + Ko + "*" + RNAP + ")";
 					for (String act : activators) {
-						rate += "+" + (ka * Ka * RNAP) + "*(" + act + "^" + nc + ")";
+						rate += "+(" + ka + "*" + Ka + "*" + RNAP + ")*(" + act + "^" + nc + ")";
 					}
-					rate += ")/(" + (1 + (Ko * RNAP));
+					rate += ")/((1+(" + Ko + "*" + RNAP + "))";
 					for (String act : activators) {
-						rate += "+" + (Ka * RNAP) + "*(" + act + "^" + nc + ")";
+						rate += "+(" + Ka + "*" + RNAP + ")*(" + act + "^" + nc + ")";
 					}
 					if (repressors.size() != 0) {
 						for (String rep : repressors) {
@@ -433,7 +433,8 @@ public class GCMFile {
 				}
 				else {
 					if (repressors.size() != 0) {
-						rate += (np * ko * ng) + "*(" + (Ko * RNAP) + ")/(" + (1 + (Ko * RNAP));
+						rate += "(" + np + "*" + ko + "*" + ng + ")*((" + Ko + "*" + RNAP
+								+ "))/((1+(" + Ko + "*" + RNAP + "))";
 						for (String rep : repressors) {
 							rate += "+" + Kr + "*(" + rep + "^" + nc + ")";
 						}
