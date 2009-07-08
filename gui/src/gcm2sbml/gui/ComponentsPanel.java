@@ -13,10 +13,11 @@ import java.util.Properties;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JComboBox;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+
+import biomodelsim.BioSim;
 
 public class ComponentsPanel extends JPanel implements ActionListener {
 	private String selected = "";
@@ -37,8 +38,11 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 
 	private String selectedComponent, oldPort;
 
+	private BioSim biosim;
+
 	public ComponentsPanel(String selected, PropertyList componentsList, PropertyList influences,
-			GCMFile gcm, String[] species, String selectedComponent, String oldPort, boolean paramsOnly) {
+			GCMFile gcm, String[] species, String selectedComponent, String oldPort,
+			boolean paramsOnly, BioSim biosim) {
 		super(new GridLayout(species.length + 2, 1));
 		this.selected = selected;
 		this.componentsList = componentsList;
@@ -47,6 +51,7 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 		this.species = species;
 		this.selectedComponent = selectedComponent;
 		this.oldPort = oldPort;
+		this.biosim = biosim;
 
 		fields = new HashMap<String, PropertyField>();
 		portmapBox = new ArrayList<JComboBox>();
@@ -74,8 +79,8 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 		}
 
 		// ID field
-		PropertyField field = new PropertyField(GlobalConstants.ID, "", null, null, Utility.IDstring,
-				paramsOnly);
+		PropertyField field = new PropertyField(GlobalConstants.ID, "", null, null,
+				Utility.IDstring, paramsOnly);
 		fields.put(GlobalConstants.ID, field);
 		add(field);
 
@@ -128,7 +133,7 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 	}
 
 	private boolean openGui(String oldName) {
-		int value = JOptionPane.showOptionDialog(new JFrame(), this, "Component Editor",
+		int value = JOptionPane.showOptionDialog(biosim.frame(), this, "Component Editor",
 				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		if (value == JOptionPane.YES_OPTION) {
 			if (!checkValues()) {
@@ -187,7 +192,8 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 			newPort += ")";
 			componentsList.removeItem(oldName + " " + selectedComponent.replace(".gcm", "") + " "
 					+ oldPort);
-			componentsList.addItem(id + " " + selectedComponent.replace(".gcm", "") + " " + newPort);
+			componentsList
+					.addItem(id + " " + selectedComponent.replace(".gcm", "") + " " + newPort);
 			componentsList.setSelectedValue(id + " " + selectedComponent.replace(".gcm", "") + " "
 					+ newPort, true);
 

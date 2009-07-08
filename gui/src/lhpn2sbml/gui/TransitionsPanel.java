@@ -4,6 +4,7 @@ import lhpn2sbml.parser.*;
 
 import gcm2sbml.gui.*;
 import gcm2sbml.gui.Runnable;
+import biomodelsim.BioSim;
 import biomodelsim.Log;
 import gcm2sbml.util.GlobalConstants;
 import gcm2sbml.util.Utility;
@@ -22,7 +23,6 @@ import java.util.regex.Pattern;
 
 //import javax.swing.DefaultListModel;
 //import javax.swing.JComboBox;
-import javax.swing.JFrame;
 //import javax.swing.BoxLayout;
 //import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -52,17 +52,20 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 	// private Log log;
 
 	private HashMap<String, PropertyField> fields = null;
+	
+	private BioSim biosim;
 
 	//private ExprTree delayTree, rateTree, enablingTree;
 
 	public TransitionsPanel(String selected, PropertyList transitionsList,
-			PropertyList controlList, LHPNFile lhpn, Log log) {
+			PropertyList controlList, LHPNFile lhpn, Log log, BioSim biosim) {
 		super(new GridBagLayout());
 		GridBagConstraints constraints = new GridBagConstraints();
 		this.selected = selected;
 		this.transitionsList = transitionsList;
 		this.controlList = controlList;
 		this.lhpn = lhpn;
+		this.biosim = biosim;
 		// this.log = log;
 
 		fields = new HashMap<String, PropertyField>();
@@ -256,7 +259,7 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 	}
 
 	private boolean openGui(String oldName) {
-		int value = JOptionPane.showOptionDialog(new JFrame(), this, "Transition Editor",
+		int value = JOptionPane.showOptionDialog(biosim.frame(), this, "Transition Editor",
 				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		if (value == JOptionPane.YES_OPTION) {
 			if (!checkValues()) {
@@ -505,7 +508,7 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 			else {
 				// System.out.println("transition " + selected);
 				AssignmentPanel panel = new AssignmentPanel(selected, variable, list,
-						varAssignments, rateAssignments, boolAssignments, intAssignments, lhpn);
+						varAssignments, rateAssignments, boolAssignments, intAssignments, lhpn, biosim);
 			}
 			/*
 			 * if (list.getSelectedValue() == null) { type = (String)

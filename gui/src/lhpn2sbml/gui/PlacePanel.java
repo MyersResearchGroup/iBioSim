@@ -3,7 +3,6 @@ package lhpn2sbml.gui;
 import lhpn2sbml.parser.*;
 
 import gcm2sbml.gui.*;
-import gcm2sbml.parser.GCMFile;
 import gcm2sbml.util.GlobalConstants;
 import gcm2sbml.util.Utility;
 
@@ -13,12 +12,12 @@ import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Properties;
 
-import javax.swing.DefaultListModel;
 import javax.swing.JComboBox;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+
+import biomodelsim.BioSim;
 
 public class PlacePanel extends JPanel implements ActionListener {
 
@@ -35,14 +34,17 @@ public class PlacePanel extends JPanel implements ActionListener {
 	private LHPNFile lhpn;
 
 	private HashMap<String, PropertyField> fields = null;
+	
+	private BioSim biosim;
 
 	public PlacePanel(String selected, PropertyList placeList, PropertyList controlList,
-			LHPNFile lhpn) {
+			LHPNFile lhpn, BioSim biosim) {
 		super(new GridLayout(2, 1));
 		this.selected = selected;
 		this.placeList = placeList;
 		this.controlList = controlList;
 		this.lhpn = lhpn;
+		this.biosim = biosim;
 
 		fields = new HashMap<String, PropertyField>();
 
@@ -94,7 +96,7 @@ public class PlacePanel extends JPanel implements ActionListener {
 	}
 
 	private boolean openGui(String oldName) {
-		int value = JOptionPane.showOptionDialog(new JFrame(), this, "Place Editor",
+		int value = JOptionPane.showOptionDialog(biosim.frame(), this, "Place Editor",
 				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		if (value == JOptionPane.YES_OPTION) {
 			if (!checkValues()) {

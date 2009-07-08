@@ -17,10 +17,11 @@ import java.util.regex.Pattern;
 
 //import javax.swing.DefaultListModel;
 import javax.swing.JComboBox;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+
+import biomodelsim.BioSim;
 
 public class VariablesPanel extends JPanel implements ActionListener {
 
@@ -49,9 +50,11 @@ public class VariablesPanel extends JPanel implements ActionListener {
 	private static final String[] booleans = new String[] { "true", "false", "unknown" };
 
 	private HashMap<String, PropertyField> fields = null;
+	
+	private BioSim biosim;
 
 	public VariablesPanel(String selected, PropertyList variablesList, Boolean boolCont,
-			Boolean integer, LHPNFile lhpn, boolean atacs) {
+			Boolean integer, LHPNFile lhpn, boolean atacs, BioSim biosim) {
 		super(new GridLayout(4, 1));
 		if (selected != null) {
 			String[] array = selected.split(" ");
@@ -65,6 +68,7 @@ public class VariablesPanel extends JPanel implements ActionListener {
 		this.lhpn = lhpn;
 		this.continuous = boolCont;
 		this.integer = integer;
+		this.biosim = biosim;
 
 		fields = new HashMap<String, PropertyField>();
 
@@ -269,7 +273,7 @@ public class VariablesPanel extends JPanel implements ActionListener {
 	}
 
 	private boolean openGui(String oldName) {
-		int value = JOptionPane.showOptionDialog(new JFrame(), this, "Variable Editor",
+		int value = JOptionPane.showOptionDialog(biosim.frame(), this, "Variable Editor",
 				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		if (value == JOptionPane.YES_OPTION) {
 			if (!checkValues()) {

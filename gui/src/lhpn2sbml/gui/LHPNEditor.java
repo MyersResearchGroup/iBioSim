@@ -34,7 +34,6 @@ import javax.swing.BoxLayout;
 import javax.swing.JCheckBox;
 //import javax.swing.JComboBox;
 //import javax.swing.JFrame;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -446,7 +445,7 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 					panel.add(temp);
 					list[i] = temp;
 				}
-				int value = JOptionPane.showOptionDialog(new JFrame(), panel, "Variable Assignment Editor",
+				int value = JOptionPane.showOptionDialog(biosim.frame(), panel, "Variable Assignment Editor",
 						JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 				if (value == JOptionPane.YES_OPTION) {
 					for (int i=0; i<list.length; i++) {
@@ -533,7 +532,7 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 						integer = true;
 					}
 					VariablesPanel panel = new VariablesPanel(selected, list, continuous, integer,
-							lhpnFile, biosim.atacs);
+							lhpnFile, biosim.atacs, biosim);
 				}
 				else {
 					String temp = (String) JOptionPane.showInputDialog(mainPanel, "",
@@ -547,7 +546,7 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 							integer = true;
 						}
 						VariablesPanel panel = new VariablesPanel(selected, list, continuous,
-								integer, lhpnFile, biosim.atacs);
+								integer, lhpnFile, biosim.atacs, biosim);
 					}
 				}
 				// log.addText(selected);
@@ -559,7 +558,7 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 					String[] array = selected.split(" ");
 					selected = array[0];
 				}
-				PlacePanel panel = new PlacePanel(selected, list, controlFlow, lhpnFile);
+				PlacePanel panel = new PlacePanel(selected, list, controlFlow, lhpnFile, biosim);
 			}
 			else if (getName().contains("Transition")) {
 				String selected = null;
@@ -567,14 +566,14 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 					selected = list.getSelectedValue().toString();
 				}
 				TransitionsPanel panel = new TransitionsPanel(selected, list, controlFlow,
-						lhpnFile, log);
+						lhpnFile, log, biosim);
 			}
 			else if (getName().contains("Movement")) {
 				String selected = null;
 				if (list.getSelectedValue() != null && getName().contains("Edit")) {
 					selected = list.getSelectedValue().toString();
 				}
-				ControlFlowPanel panel = new ControlFlowPanel(selected, list, lhpnFile);
+				ControlFlowPanel panel = new ControlFlowPanel(selected, list, lhpnFile, biosim);
 			}
 		}
 
