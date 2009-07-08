@@ -1311,7 +1311,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				choices = new String[] { "ODE", "Monte Carlo", "SBML", "Network", "Browser" };
 			}
 			else {
-				choices = new String[] { "Monte Carlo", "Markov", "SBML", "Network", "Browser" };
+				choices = new String[] { "Monte Carlo", "Markov", "SBML", "Network", "Browser",
+						"LHPN" };
 			}
 			final JComboBox type = new JComboBox(choices);
 			type.setSelectedItem(biosimrc.get("biosim.sim.type", ""));
@@ -1359,6 +1360,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						type.addItem("SBML");
 						type.addItem("Network");
 						type.addItem("Browser");
+						type.addItem("LHPN");
 						type.setSelectedItem(o);
 					}
 				}
