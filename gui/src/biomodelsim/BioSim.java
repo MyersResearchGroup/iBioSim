@@ -2527,24 +2527,90 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		// if the edit popup menu is selected on a dot file
 		else if (e.getActionCommand().equals("createSBML")) {
 			try {
-				String directory = "";
 				String theFile = "";
 				String filename = tree.getFile();
+				GCMFile gcm = new GCMFile();
+				gcm.load(filename);
+				GCMParser parser = new GCMParser(filename);
+				GeneticNetwork network = null;
+				try {
+					network = parser.buildNetwork();
+				}
+				catch (IllegalStateException e1) {
+					JOptionPane.showMessageDialog(frame, e1.getMessage(), "Error",
+							JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				network.loadProperties(gcm);
 				if (filename.lastIndexOf('/') >= 0) {
-					directory = filename.substring(0, filename.lastIndexOf('/') + 1);
 					theFile = filename.substring(filename.lastIndexOf('/') + 1);
 				}
 				if (filename.lastIndexOf('\\') >= 0) {
-					directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
 					theFile = filename.substring(filename.lastIndexOf('\\') + 1);
 				}
-				File work = new File(directory);
-				GCM2SBMLEditor gcm = new GCM2SBMLEditor(work.getAbsolutePath(), theFile, this, log,
-						false, null, null, null);
-				gcm.save("Save as SBML");
+				if (new File(root + File.separator + theFile.replace(".gcm", "") + ".xml").exists()) {
+					String[] options = { "Ok", "Cancel" };
+					int value = JOptionPane.showOptionDialog(frame, theFile.replace(".gcm", "")
+							+ ".xml already exists.  Overwrite file?", "Save file",
+							JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
+							options[0]);
+					if (value == JOptionPane.YES_OPTION) {
+						network.mergeSBML(root + File.separator + theFile.replace(".gcm", "")
+								+ ".xml");
+						log.addText("Saving GCM file as SBML file:\n" + root + File.separator
+								+ theFile.replace(".gcm", "") + ".xml\n");
+						refreshTree();
+						updateOpenSBML(theFile.replace(".gcm", "") + ".xml");
+					}
+					else {
+						// Do nothing
+					}
+				}
+				else {
+					network.mergeSBML(root + File.separator + theFile.replace(".gcm", "") + ".xml");
+					log.addText("Saving GCM file as SBML file:\n" + root + File.separator
+							+ theFile.replace(".gcm", "") + ".xml\n");
+					refreshTree();
+				}
 			}
 			catch (Exception e1) {
 				JOptionPane.showMessageDialog(frame, "Unable to create SBML file.", "Error",
+						JOptionPane.ERROR_MESSAGE);
+			}
+		}
+		else if (e.getActionCommand().equals("createLHPN")) {
+			try {
+				String theFile = "";
+				String filename = tree.getFile();
+				GCMFile gcm = new GCMFile();
+				gcm.load(filename);
+				if (filename.lastIndexOf('/') >= 0) {
+					theFile = filename.substring(filename.lastIndexOf('/') + 1);
+				}
+				if (filename.lastIndexOf('\\') >= 0) {
+					theFile = filename.substring(filename.lastIndexOf('\\') + 1);
+				}
+				if (new File(root + File.separator + theFile.replace(".gcm", "") + ".lpn").exists()) {
+					String[] options = { "Ok", "Cancel" };
+					int value = JOptionPane.showOptionDialog(frame, theFile.replace(".gcm", "")
+							+ ".lpn already exists.  Overwrite file?", "Save file",
+							JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
+							options[0]);
+					if (value == JOptionPane.YES_OPTION) {
+						gcm.createLogicalModel(root + File.separator + theFile.replace(".gcm", "")
+								+ ".lpn", log, this, root, theFile.replace(".gcm", "") + ".lpn");
+					}
+					else {
+						// Do nothing
+					}
+				}
+				else {
+					gcm.createLogicalModel(root + File.separator + theFile.replace(".gcm", "")
+							+ ".lpn", log, this, root, theFile.replace(".gcm", "") + ".lpn");
+				}
+			}
+			catch (Exception e1) {
+				JOptionPane.showMessageDialog(frame, "Unable to create LHPN file.", "Error",
 						JOptionPane.ERROR_MESSAGE);
 			}
 		}
@@ -3120,7 +3186,9 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						((Verification) array[0]).save();
 						new Thread((Verification) array[0]).start();
 					}
-					else ((Reb2Sac) (((JTabbedPane) comp).getComponent(index))).getRunButton().doClick();
+					else
+						((Reb2Sac) (((JTabbedPane) comp).getComponent(index))).getRunButton()
+								.doClick();
 				}
 				else if (component instanceof JScrollPane) {
 					((Reb2Sac) (((JTabbedPane) comp).getComponent(index))).getRunButton().doClick();
@@ -6371,142 +6439,145 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			if (tab.getComponentAt(index) instanceof JTabbedPane) {
 				for (int i = 0; i < ((JTabbedPane) tab.getComponentAt(index)).getTabCount(); i++) {
 					if (((JTabbedPane) tab.getComponentAt(index)).getComponentAt(i).getName() != null) {
-					if (((JTabbedPane) tab.getComponentAt(index)).getComponentAt(i).getName()
-							.equals("Simulate")) {
-						if (((Reb2Sac) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i))
-								.hasChanged()) {
-							Object[] options = { "Yes", "No", "Cancel" };
-							int value = JOptionPane.showOptionDialog(frame,
-									"Do you want to save simulation option changes for "
-											+ tab.getTitleAt(index) + "?", "Save Changes",
-									JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE,
-									null, options, options[0]);
-							if (value == JOptionPane.YES_OPTION) {
-								((Reb2Sac) ((JTabbedPane) tab.getComponentAt(index))
-										.getComponent(i)).save();
-							}
-							else if (value == JOptionPane.CANCEL_OPTION) {
-								return 0;
-							}
-						}
-					}
-					else if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i).getName()
-							.equals("SBML Editor")) {
-						if (((SBML_Editor) ((JTabbedPane) tab.getComponentAt(index))
-								.getComponent(i)).isDirty()) {
-							Object[] options = { "Yes", "No", "Cancel" };
-							int value = JOptionPane.showOptionDialog(frame,
-									"Do you want to save parameter changes for "
-											+ tab.getTitleAt(index) + "?", "Save Changes",
-									JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE,
-									null, options, options[0]);
-							if (value == JOptionPane.YES_OPTION) {
-								((SBML_Editor) ((JTabbedPane) tab.getComponentAt(index))
-										.getComponent(i)).save(false, "", true);
-							}
-							else if (value == JOptionPane.CANCEL_OPTION) {
-								return 0;
-							}
-						}
-					}
-					else if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i).getName()
-							.equals("GCM Editor")) {
-						if (((GCM2SBMLEditor) ((JTabbedPane) tab.getComponentAt(index))
-								.getComponent(i)).isDirty()) {
-							Object[] options = { "Yes", "No", "Cancel" };
-							int value = JOptionPane.showOptionDialog(frame,
-									"Do you want to save parameter changes for "
-											+ tab.getTitleAt(index) + "?", "Save Changes",
-									JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE,
-									null, options, options[0]);
-							if (value == JOptionPane.YES_OPTION) {
-								((GCM2SBMLEditor) ((JTabbedPane) tab.getComponentAt(index))
-										.getComponent(i)).saveParams(false, "");
-								return 1;
-							}
-							else if (value == JOptionPane.NO_OPTION) {
-								return 1;
-							}
-							else {
-								return 0;
-							}
-						}
-					}
-					else if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i).getName()
-							.equals("Learn")) {
-						if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof Learn) {
-							if (((Learn) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i))
-									.hasChanged()) {
-								Object[] options = { "Yes", "No", "Cancel" };
-								int value = JOptionPane.showOptionDialog(frame,
-										"Do you want to save learn option changes for "
-												+ tab.getTitleAt(index) + "?", "Save Changes",
-										JOptionPane.YES_NO_CANCEL_OPTION,
-										JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-								if (value == JOptionPane.YES_OPTION) {
-									if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof Learn) {
-										((Learn) ((JTabbedPane) tab.getComponentAt(index))
-												.getComponent(i)).save();
-									}
-								}
-								else if (value == JOptionPane.CANCEL_OPTION) {
-									return 0;
-								}
-							}
-						}
-						if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof LearnLHPN) {
-							if (((LearnLHPN) ((JTabbedPane) tab.getComponentAt(index))
+						if (((JTabbedPane) tab.getComponentAt(index)).getComponentAt(i).getName()
+								.equals("Simulate")) {
+							if (((Reb2Sac) ((JTabbedPane) tab.getComponentAt(index))
 									.getComponent(i)).hasChanged()) {
 								Object[] options = { "Yes", "No", "Cancel" };
 								int value = JOptionPane.showOptionDialog(frame,
-										"Do you want to save learn option changes for "
+										"Do you want to save simulation option changes for "
 												+ tab.getTitleAt(index) + "?", "Save Changes",
 										JOptionPane.YES_NO_CANCEL_OPTION,
 										JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 								if (value == JOptionPane.YES_OPTION) {
-									if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof LearnLHPN) {
-										((LearnLHPN) ((JTabbedPane) tab.getComponentAt(index))
-												.getComponent(i)).save();
-									}
+									((Reb2Sac) ((JTabbedPane) tab.getComponentAt(index))
+											.getComponent(i)).save();
 								}
 								else if (value == JOptionPane.CANCEL_OPTION) {
 									return 0;
 								}
 							}
 						}
-					}
-					else if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i).getName()
-							.equals("Data Manager")) {
-						if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof DataManager) {
-							((DataManager) ((JTabbedPane) tab.getComponentAt(index))
-									.getComponent(i)).saveChanges(tab.getTitleAt(index));
-						}
-					}
-					else if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i).getName()
-							.contains("Graph")) {
-						if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof Graph) {
-							if (((Graph) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i))
-									.hasChanged()) {
+						else if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i)
+								.getName().equals("SBML Editor")) {
+							if (((SBML_Editor) ((JTabbedPane) tab.getComponentAt(index))
+									.getComponent(i)).isDirty()) {
 								Object[] options = { "Yes", "No", "Cancel" };
 								int value = JOptionPane.showOptionDialog(frame,
-										"Do you want to save graph changes for "
+										"Do you want to save parameter changes for "
 												+ tab.getTitleAt(index) + "?", "Save Changes",
 										JOptionPane.YES_NO_CANCEL_OPTION,
 										JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 								if (value == JOptionPane.YES_OPTION) {
-									if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof Graph) {
-										Graph g = ((Graph) ((JTabbedPane) tab.getComponentAt(index))
-												.getComponent(i));
-										g.save();
-									}
+									((SBML_Editor) ((JTabbedPane) tab.getComponentAt(index))
+											.getComponent(i)).save(false, "", true);
 								}
 								else if (value == JOptionPane.CANCEL_OPTION) {
 									return 0;
 								}
 							}
 						}
+						else if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i)
+								.getName().equals("GCM Editor")) {
+							if (((GCM2SBMLEditor) ((JTabbedPane) tab.getComponentAt(index))
+									.getComponent(i)).isDirty()) {
+								Object[] options = { "Yes", "No", "Cancel" };
+								int value = JOptionPane.showOptionDialog(frame,
+										"Do you want to save parameter changes for "
+												+ tab.getTitleAt(index) + "?", "Save Changes",
+										JOptionPane.YES_NO_CANCEL_OPTION,
+										JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+								if (value == JOptionPane.YES_OPTION) {
+									((GCM2SBMLEditor) ((JTabbedPane) tab.getComponentAt(index))
+											.getComponent(i)).saveParams(false, "");
+									return 1;
+								}
+								else if (value == JOptionPane.NO_OPTION) {
+									return 1;
+								}
+								else {
+									return 0;
+								}
+							}
+						}
+						else if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i)
+								.getName().equals("Learn")) {
+							if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof Learn) {
+								if (((Learn) ((JTabbedPane) tab.getComponentAt(index))
+										.getComponent(i)).hasChanged()) {
+									Object[] options = { "Yes", "No", "Cancel" };
+									int value = JOptionPane.showOptionDialog(frame,
+											"Do you want to save learn option changes for "
+													+ tab.getTitleAt(index) + "?", "Save Changes",
+											JOptionPane.YES_NO_CANCEL_OPTION,
+											JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+									if (value == JOptionPane.YES_OPTION) {
+										if (((JTabbedPane) tab.getComponentAt(index))
+												.getComponent(i) instanceof Learn) {
+											((Learn) ((JTabbedPane) tab.getComponentAt(index))
+													.getComponent(i)).save();
+										}
+									}
+									else if (value == JOptionPane.CANCEL_OPTION) {
+										return 0;
+									}
+								}
+							}
+							if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof LearnLHPN) {
+								if (((LearnLHPN) ((JTabbedPane) tab.getComponentAt(index))
+										.getComponent(i)).hasChanged()) {
+									Object[] options = { "Yes", "No", "Cancel" };
+									int value = JOptionPane.showOptionDialog(frame,
+											"Do you want to save learn option changes for "
+													+ tab.getTitleAt(index) + "?", "Save Changes",
+											JOptionPane.YES_NO_CANCEL_OPTION,
+											JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+									if (value == JOptionPane.YES_OPTION) {
+										if (((JTabbedPane) tab.getComponentAt(index))
+												.getComponent(i) instanceof LearnLHPN) {
+											((LearnLHPN) ((JTabbedPane) tab.getComponentAt(index))
+													.getComponent(i)).save();
+										}
+									}
+									else if (value == JOptionPane.CANCEL_OPTION) {
+										return 0;
+									}
+								}
+							}
+						}
+						else if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i)
+								.getName().equals("Data Manager")) {
+							if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof DataManager) {
+								((DataManager) ((JTabbedPane) tab.getComponentAt(index))
+										.getComponent(i)).saveChanges(tab.getTitleAt(index));
+							}
+						}
+						else if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i)
+								.getName().contains("Graph")) {
+							if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof Graph) {
+								if (((Graph) ((JTabbedPane) tab.getComponentAt(index))
+										.getComponent(i)).hasChanged()) {
+									Object[] options = { "Yes", "No", "Cancel" };
+									int value = JOptionPane.showOptionDialog(frame,
+											"Do you want to save graph changes for "
+													+ tab.getTitleAt(index) + "?", "Save Changes",
+											JOptionPane.YES_NO_CANCEL_OPTION,
+											JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+									if (value == JOptionPane.YES_OPTION) {
+										if (((JTabbedPane) tab.getComponentAt(index))
+												.getComponent(i) instanceof Graph) {
+											Graph g = ((Graph) ((JTabbedPane) tab
+													.getComponentAt(index)).getComponent(i));
+											g.save();
+										}
+									}
+									else if (value == JOptionPane.CANCEL_OPTION) {
+										return 0;
+									}
+								}
+							}
+						}
 					}
-				}
 				}
 			}
 			else if (tab.getComponentAt(index) instanceof JPanel) {
@@ -6705,6 +6776,10 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					createSBML.addActionListener(this);
 					createSBML.addMouseListener(this);
 					createSBML.setActionCommand("createSBML");
+					JMenuItem createLHPN = new JMenuItem("Create LHPN File");
+					createLHPN.addActionListener(this);
+					createLHPN.addMouseListener(this);
+					createLHPN.setActionCommand("createLHPN");
 					JMenuItem edit = new JMenuItem("View/Edit");
 					edit.addActionListener(this);
 					edit.addMouseListener(this);
@@ -6728,6 +6803,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					popup.add(create);
 					popup.add(createLearn);
 					popup.add(createSBML);
+					popup.add(createLHPN);
 					popup.addSeparator();
 					popup.add(graph);
 					popup.addSeparator();
@@ -7861,6 +7937,10 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						createSBML.addActionListener(this);
 						createSBML.addMouseListener(this);
 						createSBML.setActionCommand("createSBML");
+						JMenuItem createLHPN = new JMenuItem("Create LHPN File");
+						createLHPN.addActionListener(this);
+						createLHPN.addMouseListener(this);
+						createLHPN.setActionCommand("createLHPN");
 						JMenuItem edit = new JMenuItem("View/Edit");
 						edit.addActionListener(this);
 						edit.addMouseListener(this);
@@ -7884,6 +7964,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						popup.add(create);
 						popup.add(createLearn);
 						popup.add(createSBML);
+						popup.add(createLHPN);
 						popup.addSeparator();
 						popup.add(graph);
 						popup.addSeparator();
@@ -9005,8 +9086,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					this, verTab, lema, atacs);
 			// ver.addMouseListener(this);
 			verPanel.add(ver);
-			AbstPane abst = new AbstPane(root + separator + verName, ver, "flag", log,
-					this, lema, atacs);
+			AbstPane abst = new AbstPane(root + separator + verName, ver, "flag", log, this, lema,
+					atacs);
 			abstPanel.add(abst);
 			verTab.add("verify", verPanel);
 			verTab.add("abstract", abstPanel);
@@ -9878,8 +9959,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				// catch (Exception e) {
 				// }
 				// if (check.equals(updatedFile)) {
-				Verification verify = ((Verification) (((JPanel) ((JTabbedPane) this.tab.getComponentAt(i)).getComponentAt(0))
-						.getComponent(0)));
+				Verification verify = ((Verification) (((JPanel) ((JTabbedPane) this.tab
+						.getComponentAt(i)).getComponentAt(0)).getComponent(0)));
 				verify.reload(updatedFile);
 			}
 			// }
