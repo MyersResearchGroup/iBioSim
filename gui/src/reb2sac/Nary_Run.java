@@ -61,7 +61,7 @@ public class Nary_Run implements ActionListener, Runnable {
 
 	private String[] getFilename; // array of filename
 
-	private JRadioButton sbml, dot, xhtml; // Radio Buttons output option
+	private JRadioButton sbml, dot, xhtml, lhpn; // Radio Buttons output option
 
 	/*
 	 * Radio Buttons that represent the different abstractions
@@ -117,11 +117,12 @@ public class Nary_Run implements ActionListener, Runnable {
 	public Nary_Run(Component component, JTextField amountTerm, JRadioButton ge, JRadioButton gt,
 			JRadioButton eq, JRadioButton lt, JRadioButton le, JComboBox simulators,
 			String[] getFilename, String filename, JRadioButton sbml, JRadioButton dot,
-			JRadioButton xhtml, JRadioButton nary, JRadioButton ODE, JRadioButton monteCarlo,
-			double timeLimit, String useInterval, double printInterval, double timeStep, String outDir,
-			long rndSeed, int run, String printer_id, String printer_track_quantity, String[] termCond,
-			String[] intSpecies, double rap1, double rap2, double qss, int con, Log log,
-			JCheckBox usingSSA, String ssaFile, BioSim biomodelsim, JTabbedPane simTab, String root) {
+			JRadioButton xhtml, JRadioButton lhpn, JRadioButton nary, JRadioButton ODE,
+			JRadioButton monteCarlo, double timeLimit, String useInterval, double printInterval,
+			double timeStep, String outDir, long rndSeed, int run, String printer_id,
+			String printer_track_quantity, String[] termCond, String[] intSpecies, double rap1,
+			double rap2, double qss, int con, Log log, JCheckBox usingSSA, String ssaFile,
+			BioSim biomodelsim, JTabbedPane simTab, String root) {
 		if (File.separator.equals("\\")) {
 			separator = "\\\\";
 		}
@@ -157,6 +158,7 @@ public class Nary_Run implements ActionListener, Runnable {
 		this.dot = dot;
 		this.sbml = sbml;
 		this.xhtml = xhtml;
+		this.lhpn = lhpn;
 		this.nary = nary;
 		this.monteCarlo = monteCarlo;
 		this.ODE = ODE;
@@ -235,8 +237,8 @@ public class Nary_Run implements ActionListener, Runnable {
 		// reads in the species properties to determine which species to use
 		Properties naryProps = new Properties();
 		try {
-			FileInputStream load = new FileInputStream(
-					new File(outDir + separator + "species.properties"));
+			FileInputStream load = new FileInputStream(new File(outDir + separator
+					+ "species.properties"));
 			naryProps.load(load);
 			load.close();
 			FileOutputStream store = new FileOutputStream(new File(outDir + separator
@@ -250,8 +252,8 @@ public class Nary_Run implements ActionListener, Runnable {
 			load.close();
 		}
 		catch (Exception e1) {
-			JOptionPane.showMessageDialog(component, "Properties File Not Found!", "File Not Found",
-					JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(component, "Properties File Not Found!",
+					"File Not Found", JOptionPane.ERROR_MESSAGE);
 		}
 		Iterator<Object> iter = naryProps.keySet().iterator();
 		getSpeciesProps = new ArrayList<String>();
@@ -410,8 +412,8 @@ public class Nary_Run implements ActionListener, Runnable {
 			Object[] adding = { highLow.getSelectedItem() + "." + speci.getSelectedItem() };
 			add.setListData(adding);
 			add.setSelectedIndex(0);
-			finalStates = Buttons.add(finalStates, finalState, add, false, amountTerm, ge, gt, eq, lt,
-					le, naryFrame);
+			finalStates = Buttons.add(finalStates, finalState, add, false, amountTerm, ge, gt, eq,
+					lt, le, naryFrame);
 		}
 		// if the remove button for the final states is clicked
 		else if (e.getSource() == finalRemove) {
@@ -435,8 +437,8 @@ public class Nary_Run implements ActionListener, Runnable {
 						Object[] adding = { "" + get };
 						add.setListData(adding);
 						add.setSelectedIndex(0);
-						Object[] sort = Buttons.add(conLevel.get(number), consLevel.get(number), add, false,
-								amountTerm, ge, gt, eq, lt, le, naryFrame);
+						Object[] sort = Buttons.add(conLevel.get(number), consLevel.get(number),
+								add, false, amountTerm, ge, gt, eq, lt, le, naryFrame);
 						int in;
 						for (int out = 1; out < sort.length; out++) {
 							double temp = Double.parseDouble((String) sort[out]);
@@ -467,8 +469,8 @@ public class Nary_Run implements ActionListener, Runnable {
 	}
 
 	/**
-	 * If the nary run button is pressed, this method starts a new thread for the
-	 * nary abstraction.
+	 * If the nary run button is pressed, this method starts a new thread for
+	 * the nary abstraction.
 	 */
 	public void run() {
 		naryFrame.dispose();
@@ -555,8 +557,8 @@ public class Nary_Run implements ActionListener, Runnable {
 		naryCancel.addActionListener(runProgram);
 		runProgram.createNaryProperties(timeLimit, useInterval, printInterval, timeStep, outDir,
 				rndSeed, run, printer_id, printer_track_quantity, getFilename, naryFrame, filename,
-				monteCarlo, stopE, stopR, finalS, inhib, consLevel, getSpeciesProps, conLevel, termCond,
-				intSpecies, rap1, rap2, qss, con, counts, usingSSA, ssaFile);
+				monteCarlo, stopE, stopR, finalS, inhib, consLevel, getSpeciesProps, conLevel,
+				termCond, intSpecies, rap1, rap2, qss, con, counts, usingSSA, ssaFile);
 		if (monteCarlo.isSelected()) {
 			File[] files = new File(outDir).listFiles();
 			for (File f : files) {
@@ -565,9 +567,9 @@ public class Nary_Run implements ActionListener, Runnable {
 				}
 			}
 		}
-		runProgram.execute(filename, sbml, dot, xhtml, naryFrame, ODE, monteCarlo, sim, printer_id,
-				printer_track_quantity, outDir, nary, 2, intSpecies, log, usingSSA, ssaFile, biomodelsim,
-				simTab, root, progress, run, "");
+		runProgram.execute(filename, sbml, dot, xhtml, lhpn, naryFrame, ODE, monteCarlo, sim,
+				printer_id, printer_track_quantity, outDir, nary, 2, intSpecies, log, usingSSA,
+				ssaFile, biomodelsim, simTab, root, progress, run, "", null);
 		running.setCursor(null);
 		running.dispose();
 		naryCancel.removeActionListener(runProgram);

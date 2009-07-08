@@ -5,7 +5,11 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
+
+import lhpn2sbml.gui.LHPNEditor;
+
 import biomodelsim.*;
+import gcm2sbml.gui.GCM2SBMLEditor;
 import graph.*;
 import buttons.*;
 import sbmleditor.*;
@@ -35,31 +39,36 @@ public class Run implements ActionListener {
 	}
 
 	/**
-	 * This method is given which buttons are selected and creates the properties
-	 * file from all the other information given.
+	 * This method is given which buttons are selected and creates the
+	 * properties file from all the other information given.
 	 * 
 	 * @param useInterval
 	 * 
 	 * @param stem
 	 */
 	public void createProperties(double timeLimit, String useInterval, double printInterval,
-			double timeStep, double absError, String outDir, long rndSeed, int run, String[] termCond,
-			String[] intSpecies, String printer_id, String printer_track_quantity, String[] getFilename,
-			String selectedButtons, Component component, String filename, double rap1, double rap2,
-			double qss, int con, JCheckBox usingSSA, String ssaFile, JCheckBox usingSad, File sadFile) {
+			double timeStep, double absError, String outDir, long rndSeed, int run,
+			String[] termCond, String[] intSpecies, String printer_id,
+			String printer_track_quantity, String[] getFilename, String selectedButtons,
+			Component component, String filename, double rap1, double rap2, double qss, int con,
+			JCheckBox usingSSA, String ssaFile, JCheckBox usingSad, File sadFile) {
 		Properties abs = new Properties();
 		if (selectedButtons.contains("abs") || selectedButtons.contains("nary")) {
 			abs.setProperty("reb2sac.abstraction.method.0.1", "enzyme-kinetic-qssa-1");
-			abs.setProperty("reb2sac.abstraction.method.0.2", "reversible-to-irreversible-transformer");
-			abs.setProperty("reb2sac.abstraction.method.0.3", "multiple-products-reaction-eliminator");
-			abs.setProperty("reb2sac.abstraction.method.0.4", "multiple-reactants-reaction-eliminator");
+			abs.setProperty("reb2sac.abstraction.method.0.2",
+					"reversible-to-irreversible-transformer");
+			abs.setProperty("reb2sac.abstraction.method.0.3",
+					"multiple-products-reaction-eliminator");
+			abs.setProperty("reb2sac.abstraction.method.0.4",
+					"multiple-reactants-reaction-eliminator");
 			abs.setProperty("reb2sac.abstraction.method.0.5",
 					"single-reactant-product-reaction-eliminator");
 			abs.setProperty("reb2sac.abstraction.method.0.6", "dimer-to-monomer-substitutor");
 			abs.setProperty("reb2sac.abstraction.method.0.7", "inducer-structure-transformer");
 			abs.setProperty("reb2sac.abstraction.method.1.1", "modifier-structure-transformer");
 			abs.setProperty("reb2sac.abstraction.method.1.2", "modifier-constant-propagation");
-			abs.setProperty("reb2sac.abstraction.method.2.1", "operator-site-forward-binding-remover");
+			abs.setProperty("reb2sac.abstraction.method.2.1",
+					"operator-site-forward-binding-remover");
 			abs.setProperty("reb2sac.abstraction.method.2.3", "enzyme-kinetic-rapid-equilibrium-1");
 			abs.setProperty("reb2sac.abstraction.method.2.4", "irrelevant-species-remover");
 			abs.setProperty("reb2sac.abstraction.method.2.5", "inducer-structure-transformer");
@@ -71,12 +80,14 @@ public class Run implements ActionListener {
 			abs.setProperty("reb2sac.abstraction.method.2.2", "dimerization-reduction");
 		}
 		else if (selectedButtons.contains("nary")) {
-			abs.setProperty("reb2sac.abstraction.method.2.2", "dimerization-reduction-level-assignment");
+			abs.setProperty("reb2sac.abstraction.method.2.2",
+					"dimerization-reduction-level-assignment");
 		}
 		abs.setProperty("simulation.printer", printer_id);
 		abs.setProperty("simulation.printer.tracking.quantity", printer_track_quantity);
 		if (selectedButtons.equals("none_monteCarlo")) {
-			abs.setProperty("reb2sac.abstraction.method.3.1", "reversible-to-irreversible-transformer");
+			abs.setProperty("reb2sac.abstraction.method.3.1",
+					"reversible-to-irreversible-transformer");
 			abs.setProperty("reb2sac.abstraction.method.3.2", "kinetic-law-constants-simplifier");
 		}
 		else if (selectedButtons.contains("none")) {
@@ -117,6 +128,9 @@ public class Run implements ActionListener {
 		}
 		else if (selectedButtons.contains("xhtml")) {
 			abs.setProperty("reb2sac.simulation.method", "Browser");
+		}
+		else if (selectedButtons.contains("lhpn")) {
+			abs.setProperty("reb2sac.simulation.method", "LHPN");
 		}
 		if (!selectedButtons.contains("monteCarlo")) {
 			// if (selectedButtons.equals("none_ODE") ||
@@ -171,7 +185,9 @@ public class Run implements ActionListener {
 		}
 		for (int i = 0; i < termCond.length; i++) {
 			if (termCond[i] != "") {
-				abs.setProperty("simulation.run.termination.condition." + (i + 1), "" + termCond[i]);
+				abs
+						.setProperty("simulation.run.termination.condition." + (i + 1), ""
+								+ termCond[i]);
 			}
 		}
 		try {
@@ -205,16 +221,16 @@ public class Run implements ActionListener {
 	 */
 	public void createNaryProperties(double timeLimit, String useInterval, double printInterval,
 			double timeStep, String outDir, long rndSeed, int run, String printer_id,
-			String printer_track_quantity, String[] getFilename, Component component, String filename,
-			JRadioButton monteCarlo, String stopE, double stopR, String[] finalS,
-			ArrayList<JTextField> inhib, ArrayList<JList> consLevel, ArrayList<String> getSpeciesProps,
-			ArrayList<Object[]> conLevel, String[] termCond, String[] intSpecies, double rap1,
-			double rap2, double qss, int con, ArrayList<Integer> counts, JCheckBox usingSSA,
-			String ssaFile) {
+			String printer_track_quantity, String[] getFilename, Component component,
+			String filename, JRadioButton monteCarlo, String stopE, double stopR, String[] finalS,
+			ArrayList<JTextField> inhib, ArrayList<JList> consLevel,
+			ArrayList<String> getSpeciesProps, ArrayList<Object[]> conLevel, String[] termCond,
+			String[] intSpecies, double rap1, double rap2, double qss, int con,
+			ArrayList<Integer> counts, JCheckBox usingSSA, String ssaFile) {
 		Properties nary = new Properties();
 		try {
-			FileInputStream load = new FileInputStream(
-					new File(outDir + separator + "species.properties"));
+			FileInputStream load = new FileInputStream(new File(outDir + separator
+					+ "species.properties"));
 			nary.load(load);
 			load.close();
 		}
@@ -223,9 +239,13 @@ public class Run implements ActionListener {
 					"File Not Found", JOptionPane.ERROR_MESSAGE);
 		}
 		nary.setProperty("reb2sac.abstraction.method.0.1", "enzyme-kinetic-qssa-1");
-		nary.setProperty("reb2sac.abstraction.method.0.2", "reversible-to-irreversible-transformer");
+		nary
+				.setProperty("reb2sac.abstraction.method.0.2",
+						"reversible-to-irreversible-transformer");
 		nary.setProperty("reb2sac.abstraction.method.0.3", "multiple-products-reaction-eliminator");
-		nary.setProperty("reb2sac.abstraction.method.0.4", "multiple-reactants-reaction-eliminator");
+		nary
+				.setProperty("reb2sac.abstraction.method.0.4",
+						"multiple-reactants-reaction-eliminator");
 		nary.setProperty("reb2sac.abstraction.method.0.5",
 				"single-reactant-product-reaction-eliminator");
 		nary.setProperty("reb2sac.abstraction.method.0.6", "dimer-to-monomer-substitutor");
@@ -252,16 +272,18 @@ public class Run implements ActionListener {
 		nary.setProperty("reb2sac.analysis.stop.rate", "" + stopR);
 		for (int i = 0; i < getSpeciesProps.size(); i++) {
 			if (!(inhib.get(i).getText().trim() != "<<none>>")) {
-				nary.setProperty("reb2sac.absolute.inhibition.threshold." + getSpeciesProps.get(i), inhib
-						.get(i).getText().trim());
+				nary.setProperty("reb2sac.absolute.inhibition.threshold." + getSpeciesProps.get(i),
+						inhib.get(i).getText().trim());
 			}
 			String[] consLevels = Buttons.getList(conLevel.get(i), consLevel.get(i));
 			for (int j = 0; j < counts.get(i); j++) {
-				nary.remove("reb2sac.concentration.level." + getSpeciesProps.get(i) + "." + (j + 1));
+				nary
+						.remove("reb2sac.concentration.level." + getSpeciesProps.get(i) + "."
+								+ (j + 1));
 			}
 			for (int j = 0; j < consLevels.length; j++) {
-				nary.setProperty("reb2sac.concentration.level." + getSpeciesProps.get(i) + "." + (j + 1),
-						consLevels[j]);
+				nary.setProperty("reb2sac.concentration.level." + getSpeciesProps.get(i) + "."
+						+ (j + 1), consLevels[j]);
 			}
 		}
 		if (monteCarlo.isSelected()) {
@@ -301,15 +323,16 @@ public class Run implements ActionListener {
 		nary.setProperty("reb2sac.operator.max.concentration.threshold", "" + con);
 		for (int i = 0; i < termCond.length; i++) {
 			if (termCond[i] != "") {
-				nary.setProperty("simulation.run.termination.condition." + (i + 1), "" + termCond[i]);
+				nary.setProperty("simulation.run.termination.condition." + (i + 1), ""
+						+ termCond[i]);
 			}
 		}
 		try {
 			FileOutputStream store = new FileOutputStream(new File((filename.substring(0, filename
 					.length()
 					- getFilename[getFilename.length - 1].length()))
-					+ getFilename[getFilename.length - 1].substring(0, getFilename[getFilename.length - 1]
-							.length() - 5) + ".properties"));
+					+ getFilename[getFilename.length - 1].substring(0,
+							getFilename[getFilename.length - 1].length() - 5) + ".properties"));
 			nary.store(store, getFilename[getFilename.length - 1].substring(0,
 					getFilename[getFilename.length - 1].length() - 5)
 					+ " Properties");
@@ -327,11 +350,11 @@ public class Run implements ActionListener {
 	 * this method creates a Graph object.
 	 */
 	public int execute(String filename, JRadioButton sbml, JRadioButton dot, JRadioButton xhtml,
-			Component component, JRadioButton ode, JRadioButton monteCarlo, String sim,
-			String printer_id, String printer_track_quantity, String outDir, JRadioButton nary,
-			int naryRun, String[] intSpecies, Log log, JCheckBox usingSSA, String ssaFile,
-			BioSim biomodelsim, JTabbedPane simTab, String root, JProgressBar progress, int steps,
-			String simName) {
+			JRadioButton lhpn, Component component, JRadioButton ode, JRadioButton monteCarlo,
+			String sim, String printer_id, String printer_track_quantity, String outDir,
+			JRadioButton nary, int naryRun, String[] intSpecies, Log log, JCheckBox usingSSA,
+			String ssaFile, BioSim biomodelsim, JTabbedPane simTab, String root,
+			JProgressBar progress, int steps, String simName, GCM2SBMLEditor gcmEditor) {
 		Runtime exec = Runtime.getRuntime();
 		int exitValue = 255;
 		while (outDir.split(separator)[outDir.split(separator).length - 1].equals(".")) {
@@ -343,6 +366,7 @@ public class Run implements ActionListener {
 			String directory = "";
 			String theFile = "";
 			String sbmlName = "";
+			String lhpnName = "";
 			if (filename.lastIndexOf('/') >= 0) {
 				directory = filename.substring(0, filename.lastIndexOf('/') + 1);
 				theFile = filename.substring(filename.lastIndexOf('/') + 1);
@@ -356,17 +380,18 @@ public class Run implements ActionListener {
 			if (out.length() > 4 && out.substring(out.length() - 5, out.length()).equals(".sbml")) {
 				out = out.substring(0, out.length() - 5);
 			}
-			else if (out.length() > 3 && out.substring(out.length() - 4, out.length()).equals(".xml")) {
+			else if (out.length() > 3
+					&& out.substring(out.length() - 4, out.length()).equals(".xml")) {
 				out = out.substring(0, out.length() - 4);
 			}
-			if (nary.isSelected() && naryRun == 1) {
+			if (nary.isSelected() && !lhpn.isSelected() && naryRun == 1) {
 				log.addText("Executing:\nreb2sac --target.encoding=nary-level " + filename + "\n");
 				time1 = System.nanoTime();
 				reb2sac = exec.exec("reb2sac --target.encoding=nary-level " + theFile, null, work);
 			}
 			else if (sbml.isSelected()) {
-				sbmlName = JOptionPane.showInputDialog(component, "Enter SBML Model ID:", "Model ID",
-						JOptionPane.PLAIN_MESSAGE);
+				sbmlName = JOptionPane.showInputDialog(component, "Enter SBML Model ID:",
+						"Model ID", JOptionPane.PLAIN_MESSAGE);
 				if (sbmlName != null && !sbmlName.trim().equals("")) {
 					sbmlName = sbmlName.trim();
 					if (sbmlName.length() > 4) {
@@ -381,8 +406,9 @@ public class Run implements ActionListener {
 					if (f.exists()) {
 						Object[] options = { "Overwrite", "Cancel" };
 						int value = JOptionPane.showOptionDialog(component, "File already exists."
-								+ "\nDo you want to overwrite?", "Overwrite", JOptionPane.YES_NO_OPTION,
-								JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+								+ "\nDo you want to overwrite?", "Overwrite",
+								JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
+								options, options[0]);
 						if (value == JOptionPane.YES_OPTION) {
 							File dir = new File(root + separator + sbmlName);
 							if (dir.isDirectory()) {
@@ -397,37 +423,80 @@ public class Run implements ActionListener {
 							return 0;
 						}
 					}
-					log.addText("Executing:\nreb2sac --target.encoding=sbml --out=" + ".." + separator
-							+ sbmlName + " " + filename + "\n");
+					log.addText("Executing:\nreb2sac --target.encoding=sbml --out=" + ".."
+							+ separator + sbmlName + " " + filename + "\n");
 					time1 = System.nanoTime();
-					reb2sac = exec.exec("reb2sac --target.encoding=sbml --out=" + ".." + separator + sbmlName
-							+ " " + theFile, null, work);
+					reb2sac = exec.exec("reb2sac --target.encoding=sbml --out=" + ".." + separator
+							+ sbmlName + " " + theFile, null, work);
 				}
 				else {
 					time1 = System.nanoTime();
 				}
 			}
+			else if (lhpn.isSelected()) {
+				lhpnName = JOptionPane.showInputDialog(component, "Enter LHPN Model ID:",
+						"Model ID", JOptionPane.PLAIN_MESSAGE);
+				if (lhpnName != null && !lhpnName.trim().equals("")) {
+					lhpnName = lhpnName.trim();
+					if (lhpnName.length() > 4) {
+						if (!lhpnName.substring(lhpnName.length() - 3).equals(".lpn")) {
+							lhpnName += ".lpn";
+						}
+					}
+					else {
+						lhpnName += ".lpn";
+					}
+					File f = new File(root + separator + lhpnName);
+					if (f.exists()) {
+						Object[] options = { "Overwrite", "Cancel" };
+						int value = JOptionPane.showOptionDialog(component, "File already exists."
+								+ "\nDo you want to overwrite?", "Overwrite",
+								JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
+								options, options[0]);
+						if (value == JOptionPane.YES_OPTION) {
+							File dir = new File(root + separator + lhpnName);
+							if (dir.isDirectory()) {
+								biomodelsim.deleteDir(dir);
+							}
+							else {
+								System.gc();
+								dir.delete();
+							}
+						}
+						else {
+							return 0;
+						}
+					}
+					gcmEditor.getGCM().createLogicalModel(root + separator + lhpnName, log,
+							biomodelsim, root, lhpnName);
+					time1 = System.nanoTime();
+					exitValue = 0;
+				}
+				else {
+					time1 = System.nanoTime();
+					exitValue = 0;
+				}
+			}
 			else if (dot.isSelected()) {
-				log.addText("Executing:\nreb2sac --target.encoding=dot --out=" + out + ".dot " + filename
-						+ "\n");
+				log.addText("Executing:\nreb2sac --target.encoding=dot --out=" + out + ".dot "
+						+ filename + "\n");
 				time1 = System.nanoTime();
-				reb2sac = exec.exec("reb2sac --target.encoding=dot --out=" + out + ".dot " + theFile, null,
-						work);
+				reb2sac = exec.exec("reb2sac --target.encoding=dot --out=" + out + ".dot "
+						+ theFile, null, work);
 			}
 			else if (xhtml.isSelected()) {
 				log.addText("Executing:\nreb2sac --target.encoding=xhtml --out=" + out + ".xhtml "
 						+ filename + "\n");
 				time1 = System.nanoTime();
-				reb2sac = exec.exec("reb2sac --target.encoding=xhtml --out=" + out + ".xhtml " + theFile,
-						null, work);
+				reb2sac = exec.exec("reb2sac --target.encoding=xhtml --out=" + out + ".xhtml "
+						+ theFile, null, work);
 			}
 			else if (usingSSA.isSelected()) {
-				log
-						.addText("Executing:\nreb2sac --target.encoding=ssa-with-user-update " + filename
-								+ "\n");
+				log.addText("Executing:\nreb2sac --target.encoding=ssa-with-user-update "
+						+ filename + "\n");
 				time1 = System.nanoTime();
-				reb2sac = exec
-						.exec("reb2sac --target.encoding=ssa-with-user-update " + theFile, null, work);
+				reb2sac = exec.exec("reb2sac --target.encoding=ssa-with-user-update " + theFile,
+						null, work);
 			}
 			else {
 				if (sim.equals("atacs")) {
@@ -436,9 +505,11 @@ public class Run implements ActionListener {
 					reb2sac = exec.exec("reb2sac --target.encoding=hse2 " + theFile, null, work);
 				}
 				else {
-					log.addText("Executing:\nreb2sac --target.encoding=" + sim + " " + filename + "\n");
+					log.addText("Executing:\nreb2sac --target.encoding=" + sim + " " + filename
+							+ "\n");
 					time1 = System.nanoTime();
-					reb2sac = exec.exec("reb2sac --target.encoding=" + sim + " " + theFile, null, work);
+					reb2sac = exec.exec("reb2sac --target.encoding=" + sim + " " + theFile, null,
+							work);
 				}
 			}
 			String error = "";
@@ -467,74 +538,79 @@ public class Run implements ActionListener {
 			}
 			catch (Exception e) {
 			}
-			exitValue = reb2sac.waitFor();
-			long time2 = System.nanoTime();
-			long minutes;
-			long hours;
-			long days;
-			double secs = ((time2 - time1) / 1000000000.0);
-			long seconds = ((time2 - time1) / 1000000000);
-			secs = secs - seconds;
-			minutes = seconds / 60;
-			secs = seconds % 60 + secs;
-			hours = minutes / 60;
-			minutes = minutes % 60;
-			days = hours / 24;
-			hours = hours % 60;
-			String time;
-			String dayLabel;
-			String hourLabel;
-			String minuteLabel;
-			String secondLabel;
-			if (days == 1) {
-				dayLabel = " day ";
+			if (reb2sac != null) {
+				exitValue = reb2sac.waitFor();
+				long time2 = System.nanoTime();
+				long minutes;
+				long hours;
+				long days;
+				double secs = ((time2 - time1) / 1000000000.0);
+				long seconds = ((time2 - time1) / 1000000000);
+				secs = secs - seconds;
+				minutes = seconds / 60;
+				secs = seconds % 60 + secs;
+				hours = minutes / 60;
+				minutes = minutes % 60;
+				days = hours / 24;
+				hours = hours % 60;
+				String time;
+				String dayLabel;
+				String hourLabel;
+				String minuteLabel;
+				String secondLabel;
+				if (days == 1) {
+					dayLabel = " day ";
+				}
+				else {
+					dayLabel = " days ";
+				}
+				if (hours == 1) {
+					hourLabel = " hour ";
+				}
+				else {
+					hourLabel = " hours ";
+				}
+				if (minutes == 1) {
+					minuteLabel = " minute ";
+				}
+				else {
+					minuteLabel = " minutes ";
+				}
+				if (seconds == 1) {
+					secondLabel = " second";
+				}
+				else {
+					secondLabel = " seconds";
+				}
+				if (days != 0) {
+					time = days + dayLabel + hours + hourLabel + minutes + minuteLabel + secs
+							+ secondLabel;
+				}
+				else if (hours != 0) {
+					time = hours + hourLabel + minutes + minuteLabel + secs + secondLabel;
+				}
+				else if (minutes != 0) {
+					time = minutes + minuteLabel + secs + secondLabel;
+				}
+				else {
+					time = secs + secondLabel;
+				}
+				if (!error.equals("")) {
+					log.addText("Errors:\n" + error + "\n");
+				}
+				log.addText("Total Simulation Time: " + time + " for " + simName + "\n\n");
 			}
-			else {
-				dayLabel = " days ";
-			}
-			if (hours == 1) {
-				hourLabel = " hour ";
-			}
-			else {
-				hourLabel = " hours ";
-			}
-			if (minutes == 1) {
-				minuteLabel = " minute ";
-			}
-			else {
-				minuteLabel = " minutes ";
-			}
-			if (seconds == 1) {
-				secondLabel = " second";
-			}
-			else {
-				secondLabel = " seconds";
-			}
-			if (days != 0) {
-				time = days + dayLabel + hours + hourLabel + minutes + minuteLabel + secs + secondLabel;
-			}
-			else if (hours != 0) {
-				time = hours + hourLabel + minutes + minuteLabel + secs + secondLabel;
-			}
-			else if (minutes != 0) {
-				time = minutes + minuteLabel + secs + secondLabel;
-			}
-			else {
-				time = secs + secondLabel;
-			}
-			if (!error.equals("")) {
-				log.addText("Errors:\n" + error + "\n");
-			}
-			log.addText("Total Simulation Time: " + time + " for " + simName + "\n\n");
 			if (exitValue != 0) {
 				if (exitValue == 143) {
 					JOptionPane.showMessageDialog(biomodelsim.frame(), "The simulation was"
-							+ " canceled by the user.", "Canceled Simulation", JOptionPane.ERROR_MESSAGE);
+							+ " canceled by the user.", "Canceled Simulation",
+							JOptionPane.ERROR_MESSAGE);
 				}
 				else if (exitValue == 139) {
 					JOptionPane.showMessageDialog(biomodelsim.frame(),
-							"The selected model is not a valid sbml file." + "\nYou must select an sbml file.",
-							"Not An SBML File", JOptionPane.ERROR_MESSAGE);
+							"The selected model is not a valid sbml file."
+									+ "\nYou must select an sbml file.", "Not An SBML File",
+							JOptionPane.ERROR_MESSAGE);
 				}
 				else {
 					JOptionPane.showMessageDialog(biomodelsim.frame(), "Error In Execution!\n"
@@ -543,11 +619,11 @@ public class Run implements ActionListener {
 				}
 			}
 			else {
-				if (nary.isSelected() && naryRun == 1) {
+				if (nary.isSelected() && !lhpn.isSelected() && naryRun == 1) {
 				}
 				else if (sbml.isSelected()) {
-					biomodelsim.addTab(sbmlName, new SBML_Editor(root + separator + sbmlName, null, log,
-							biomodelsim, null, null), "SBML Editor");
+					biomodelsim.addTab(sbmlName, new SBML_Editor(root + separator + sbmlName, null,
+							log, biomodelsim, null, null), "SBML Editor");
 					biomodelsim.refreshTree();
 				}
 				else if (dot.isSelected()) {
@@ -574,7 +650,9 @@ public class Run implements ActionListener {
 						exec.exec("open " + out + ".xhtml", null, work);
 					}
 					else {
-						log.addText("Executing:\ncmd /c start " + directory + out + ".xhtml" + "\n");
+						log
+								.addText("Executing:\ncmd /c start " + directory + out + ".xhtml"
+										+ "\n");
 						exec.exec("cmd /c start " + out + ".xhtml", null, work);
 					}
 				}
@@ -586,10 +664,14 @@ public class Run implements ActionListener {
 									((Graph) simTab.getComponentAt(i)).refresh();
 								}
 								else {
-									simTab.setComponentAt(i, new Graph(r2s, printer_track_quantity, outDir
-											.split(separator)[outDir.split(separator).length - 1]
-											+ " simulation results", printer_id, outDir, "time", biomodelsim, null, log,
-											null, true, false));
+									simTab
+											.setComponentAt(i,
+													new Graph(r2s, printer_track_quantity, outDir
+															.split(separator)[outDir
+															.split(separator).length - 1]
+															+ " simulation results", printer_id,
+															outDir, "time", biomodelsim, null, log,
+															null, true, false));
 									simTab.getComponentAt(i).setName("TSD Graph");
 								}
 							}
@@ -598,13 +680,18 @@ public class Run implements ActionListener {
 									((Graph) simTab.getComponentAt(i)).refresh();
 								}
 								else {
-									if (new File(filename.substring(0, filename.length()
-											- filename.split(separator)[filename.split(separator).length - 1].length())
+									if (new File(filename.substring(0,
+											filename.length()
+													- filename.split(separator)[filename
+															.split(separator).length - 1].length())
 											+ "sim-rep.txt").exists()) {
-										simTab.setComponentAt(i, new Graph(r2s, printer_track_quantity, outDir
-												.split(separator)[outDir.split(separator).length - 1]
-												+ " simulation results", printer_id, outDir, "time", biomodelsim, null,
-												log, null, false, false));
+										simTab.setComponentAt(i,
+												new Graph(r2s, printer_track_quantity,
+														outDir.split(separator)[outDir
+																.split(separator).length - 1]
+																+ " simulation results",
+														printer_id, outDir, "time", biomodelsim,
+														null, log, null, false, false));
 										simTab.getComponentAt(i).setName("ProbGraph");
 									}
 								}
@@ -614,8 +701,11 @@ public class Run implements ActionListener {
 				}
 				else if (sim.equals("atacs")) {
 					log.addText("Executing:\natacs -T0.000001 -oqoflhsgllvA "
-							+ filename.substring(0, filename.length()
-									- filename.split(separator)[filename.split(separator).length - 1].length())
+							+ filename
+									.substring(0,
+											filename.length()
+													- filename.split(separator)[filename
+															.split(separator).length - 1].length())
 							+ "out.hse\n");
 					exec.exec("atacs -T0.000001 -oqoflhsgllvA out.hse", null, work);
 					for (int i = 0; i < simTab.getComponentCount(); i++) {
@@ -624,18 +714,21 @@ public class Run implements ActionListener {
 								((Graph) simTab.getComponentAt(i)).refresh();
 							}
 							else {
-								simTab.setComponentAt(i, new Graph(r2s, printer_track_quantity, outDir
-										.split(separator)[outDir.split(separator).length - 1]
-										+ " simulation results", printer_id, outDir, "time", biomodelsim, null, log,
-										null, false, false));
+								simTab.setComponentAt(i, new Graph(r2s, printer_track_quantity,
+										outDir.split(separator)[outDir.split(separator).length - 1]
+												+ " simulation results", printer_id, outDir,
+										"time", biomodelsim, null, log, null, false, false));
 								simTab.getComponentAt(i).setName("ProbGraph");
 							}
 						}
 					}
-					// simTab.add("Probability Graph", new Graph(printer_track_quantity,
-					// outDir.split(separator)[outDir.split(separator).length - 1] + "
+					// simTab.add("Probability Graph", new
+					// Graph(printer_track_quantity,
+					// outDir.split(separator)[outDir.split(separator).length -
+					// 1] + "
 					// simulation results",
-					// printer_id, outDir, "time", biomodelsim, null, log, null, false));
+					// printer_id, outDir, "time", biomodelsim, null, log, null,
+					// false));
 					// simTab.getComponentAt(simTab.getComponentCount() -
 					// 1).setName("ProbGraph");
 				}
@@ -648,10 +741,13 @@ public class Run implements ActionListener {
 										((Graph) simTab.getComponentAt(i)).refresh();
 									}
 									else {
-										simTab.setComponentAt(i, new Graph(r2s, printer_track_quantity, outDir
-												.split(separator)[outDir.split(separator).length - 1]
-												+ " simulation results", printer_id, outDir, "time", biomodelsim, null,
-												log, null, true, false));
+										simTab.setComponentAt(i,
+												new Graph(r2s, printer_track_quantity,
+														outDir.split(separator)[outDir
+																.split(separator).length - 1]
+																+ " simulation results",
+														printer_id, outDir, "time", biomodelsim,
+														null, log, null, true, false));
 										simTab.getComponentAt(i).setName("TSD Graph");
 									}
 								}
@@ -661,12 +757,16 @@ public class Run implements ActionListener {
 									}
 									else {
 										if (new File(filename.substring(0, filename.length()
-												- filename.split(separator)[filename.split(separator).length - 1].length())
+												- filename.split(separator)[filename
+														.split(separator).length - 1].length())
 												+ "sim-rep.txt").exists()) {
-											simTab.setComponentAt(i, new Graph(r2s, printer_track_quantity, outDir
-													.split(separator)[outDir.split(separator).length - 1]
-													+ " simulation results", printer_id, outDir, "time", biomodelsim, null,
-													log, null, false, false));
+											simTab.setComponentAt(i,
+													new Graph(r2s, printer_track_quantity, outDir
+															.split(separator)[outDir
+															.split(separator).length - 1]
+															+ " simulation results", printer_id,
+															outDir, "time", biomodelsim, null, log,
+															null, false, false));
 											simTab.getComponentAt(i).setName("ProbGraph");
 										}
 									}
@@ -680,10 +780,13 @@ public class Run implements ActionListener {
 										((Graph) simTab.getComponentAt(i)).refresh();
 									}
 									else {
-										simTab.setComponentAt(i, new Graph(r2s, printer_track_quantity, outDir
-												.split(separator)[outDir.split(separator).length - 1]
-												+ " simulation results", printer_id, outDir, "time", biomodelsim, null,
-												log, null, true, false));
+										simTab.setComponentAt(i,
+												new Graph(r2s, printer_track_quantity,
+														outDir.split(separator)[outDir
+																.split(separator).length - 1]
+																+ " simulation results",
+														printer_id, outDir, "time", biomodelsim,
+														null, log, null, true, false));
 										simTab.getComponentAt(i).setName("TSD Graph");
 									}
 								}
@@ -693,12 +796,16 @@ public class Run implements ActionListener {
 									}
 									else {
 										if (new File(filename.substring(0, filename.length()
-												- filename.split(separator)[filename.split(separator).length - 1].length())
+												- filename.split(separator)[filename
+														.split(separator).length - 1].length())
 												+ "sim-rep.txt").exists()) {
-											simTab.setComponentAt(i, new Graph(r2s, printer_track_quantity, outDir
-													.split(separator)[outDir.split(separator).length - 1]
-													+ " simulation results", printer_id, outDir, "time", biomodelsim, null,
-													log, null, false, false));
+											simTab.setComponentAt(i,
+													new Graph(r2s, printer_track_quantity, outDir
+															.split(separator)[outDir
+															.split(separator).length - 1]
+															+ " simulation results", printer_id,
+															outDir, "time", biomodelsim, null, log,
+															null, false, false));
 											simTab.getComponentAt(i).setName("ProbGraph");
 										}
 									}
@@ -726,6 +833,8 @@ public class Run implements ActionListener {
 	 * This method is called if a button that cancels the simulation is pressed.
 	 */
 	public void actionPerformed(ActionEvent e) {
-		reb2sac.destroy();
+		if (reb2sac != null) {
+			reb2sac.destroy();
+		}
 	}
 }
