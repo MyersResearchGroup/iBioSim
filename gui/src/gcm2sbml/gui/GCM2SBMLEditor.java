@@ -1045,7 +1045,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 						selected = selected.split(" ")[0];
 					}
 				}
-				SpeciesPanel panel = new SpeciesPanel(selected, list, influences, gcm, paramsOnly);
+				SpeciesPanel panel = new SpeciesPanel(selected, list, influences, gcm, paramsOnly, biosim);
 				if (paramsOnly) {
 					String updates = panel.updates();
 					if (!updates.equals("")) {
@@ -1070,7 +1070,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 						selected = selected.substring(0, selected.length() - 9);
 					}
 				}
-				InfluencePanel panel = new InfluencePanel(selected, list, gcm, paramsOnly);
+				InfluencePanel panel = new InfluencePanel(selected, list, gcm, paramsOnly, biosim);
 				if (paramsOnly) {
 					String updates = panel.updates();
 					if (!updates.equals("")) {
@@ -1095,7 +1095,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 						selected = selected.split(" ")[0];
 					}
 				}
-				PromoterPanel panel = new PromoterPanel(selected, list, influences, gcm, paramsOnly);
+				PromoterPanel panel = new PromoterPanel(selected, list, influences, gcm, paramsOnly, biosim);
 				if (paramsOnly) {
 					String updates = panel.updates();
 					if (!updates.equals("")) {
@@ -1172,7 +1172,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 						specs[j] = index;
 					}
 					ComponentsPanel panel = new ComponentsPanel(selected, list, influences, gcm, specs, comp,
-							oldPort, paramsOnly);
+							oldPort, paramsOnly, biosim);
 				}
 			}
 			else if (getName().contains("Parameter")) {
@@ -1180,7 +1180,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 				if (list.getSelectedValue() != null && getName().contains("Edit")) {
 					selected = list.getSelectedValue().toString();
 				}
-				ParameterPanel panel = new ParameterPanel(selected, list, gcm, paramsOnly);
+				ParameterPanel panel = new ParameterPanel(selected, list, gcm, paramsOnly, biosim);
 				if (paramsOnly) {
 					String updates = panel.updates();
 					if (!updates.equals("")) {

@@ -4,7 +4,6 @@ import lhpn2sbml.parser.*;
 
 import gcm2sbml.gui.*;
 //import gcm2sbml.parser.GCMFile;
-import gcm2sbml.util.GlobalConstants;
 import gcm2sbml.util.Utility;
 
 import java.awt.GridLayout;
@@ -18,11 +17,12 @@ import java.util.regex.Pattern;
 
 //import javax.swing.DefaultListModel;
 import javax.swing.JComboBox;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JCheckBox;
+
+import biomodelsim.BioSim;
 
 public class AssignmentPanel extends JPanel implements ActionListener {
 
@@ -47,12 +47,14 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 	// };
 
 	private HashMap<String, PropertyField> fields = null;
+	
+	private BioSim biosim;
 
 	// private boolean rate = false;
 
 	public AssignmentPanel(String transition, String selected, PropertyList assignmentList,
 			PropertyList continuousList, PropertyList rateList, PropertyList booleanList,
-			PropertyList integerList, LHPNFile lhpn) {
+			PropertyList integerList, LHPNFile lhpn, BioSim biosim) {
 		super(new GridLayout(4, 1));
 		this.selected = selected;
 		this.transition = transition;
@@ -61,6 +63,7 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 		this.rateList = rateList;
 		this.booleanList = booleanList;
 		this.integerList = integerList;
+		this.biosim = biosim;
 
 		this.lhpn = lhpn;
 
@@ -264,7 +267,7 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 	}
 
 	private boolean openGui(String oldName) {
-		int value = JOptionPane.showOptionDialog(new JFrame(), this, "Variable Assignment Editor",
+		int value = JOptionPane.showOptionDialog(biosim.frame(), this, "Variable Assignment Editor",
 				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		if (value == JOptionPane.YES_OPTION) {
 			if (!checkValues()) {

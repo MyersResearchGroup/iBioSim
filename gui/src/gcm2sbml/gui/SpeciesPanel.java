@@ -13,20 +13,22 @@ import java.util.Properties;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JComboBox;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import biomodelsim.BioSim;
+
 public class SpeciesPanel extends JPanel implements ActionListener {
 	public SpeciesPanel(String selected, PropertyList speciesList, PropertyList influencesList,
-			GCMFile gcm, boolean paramsOnly) {
+			GCMFile gcm, boolean paramsOnly, BioSim biosim) {
 		super(new GridLayout(6, 1));
 		this.selected = selected;
 		this.speciesList = speciesList;
 		this.influences = influencesList;
 		this.gcm = gcm;
 		this.paramsOnly = paramsOnly;
+		this.biosim = biosim;
 
 		fields = new HashMap<String, PropertyField>();
 
@@ -140,7 +142,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 	}
 
 	private boolean openGui(String oldName) {
-		int value = JOptionPane.showOptionDialog(new JFrame(), this, "Species Editor",
+		int value = JOptionPane.showOptionDialog(biosim.frame(), this, "Species Editor",
 				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		if (value == JOptionPane.YES_OPTION) {
 			if (!checkValues()) {
@@ -281,4 +283,6 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 	private HashMap<String, PropertyField> fields = null;
 
 	private boolean paramsOnly;
+	
+	private BioSim biosim;
 }
