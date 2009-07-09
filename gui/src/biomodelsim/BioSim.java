@@ -1323,7 +1323,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				choices = new String[] { "gillespie", "emc-sim", "bunker", "nmc" };
 			}
 			else if (type.getSelectedItem().equals("Markov")) {
-				choices = new String[] { "atacs", "ctmc-transient" };
+				choices = new String[] {"markov-chain-analysis", "atacs", "ctmc-transient" };
 			}
 			else {
 				choices = new String[] { "euler", "gear1", "gear2", "rk4imp", "rk8pd", "rkf45" };
@@ -5000,6 +5000,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				lhpnFile.load(tree.getFile());
 				log.addText("Creating state graph.");
 				StateGraph sg = new StateGraph(lhpnFile);
+				log.addText("Performing Markov Chain analysis.");
 				sg.performMarkovianAnalysis();
 				sg.outputStateGraph(tree.getFile().replace(".lpn", ".dot"), true);
 				String command = "";

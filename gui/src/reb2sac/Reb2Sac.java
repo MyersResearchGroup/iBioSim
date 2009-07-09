@@ -1064,7 +1064,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		else if (e.getSource() == markov) {
 			Button_Enabling.enableMarkov(seed, seedLabel, runs, runsLabel, stepLabel, step,
 					errorLabel, absErr, limitLabel, limit, intervalLabel, interval, simulators,
-					simulatorsLabel, explanation, description, usingSSA, fileStem, fileStemLabel);
+					simulatorsLabel, explanation, description, usingSSA, fileStem, fileStemLabel, gcmEditor);
 			overwrite.setEnabled(false);
 			append.setEnabled(false);
 			choose3.setEnabled(false);
@@ -1241,6 +1241,13 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			}
 			else if (simulators.getSelectedItem().equals("atacs")) {
 				description.setText("ATACS Analysis Tool");
+				step.setEnabled(false);
+				stepLabel.setEnabled(false);
+				errorLabel.setEnabled(false);
+				absErr.setEnabled(false);
+			}
+			else if (simulators.getSelectedItem().equals("markov-chain-analysis")) {
+				description.setText("Markov Chain Analysis");
 				step.setEnabled(false);
 				stepLabel.setEnabled(false);
 				errorLabel.setEnabled(false);
@@ -2531,7 +2538,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 							+ separator + outDir + separator + "user-defined.dat", biomodelsim,
 					simTab, root, progress, steps, simName, gcmEditor);
 		}
-		if (nary.isSelected() && !lhpn.isSelected() && exit == 0) {
+		if (nary.isSelected() && !sim.equals("markov-chain-analysis") && !lhpn.isSelected() && exit == 0) {
 			new Nary_Run(this, amountTerm, ge, gt, eq, lt, le, simulators,
 					simProp.split(separator), simProp, sbml, dot, xhtml, lhpn, nary, ODE,
 					monteCarlo, timeLimit, ((String) (intervalLabel.getSelectedItem())),
@@ -3517,7 +3524,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 						Button_Enabling.enableMarkov(seed, seedLabel, runs, runsLabel, stepLabel,
 								step, errorLabel, absErr, limitLabel, limit, intervalLabel,
 								interval, simulators, simulatorsLabel, explanation, description,
-								usingSSA, fileStem, fileStemLabel);
+								usingSSA, fileStem, fileStemLabel, gcmEditor);
 						absErr.setEnabled(false);
 					}
 					else if (load.getProperty("reb2sac.simulation.method").equals("SBML")) {
@@ -3655,6 +3662,12 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		gcmEditor = gcm;
 		if (nary.isSelected()) {
 			lhpn.setEnabled(true);
+		}
+		if (markov.isSelected()) {
+			simulators.removeAllItems();
+			simulators.addItem("markov-chain-analysis");
+			simulators.addItem("atacs");
+			simulators.addItem("ctmc-transient");
 		}
 	}
 
