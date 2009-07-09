@@ -266,7 +266,7 @@ public class Button_Enabling {
 			JLabel runsLabel, JLabel stepLabel, JTextField step, JLabel errorLabel,
 			JTextField absErr, JLabel limitLabel, JTextField limit, JComboBox intervalLabel,
 			JTextField interval, JComboBox simulators, JLabel simulatorsLabel, JLabel explanation,
-			JLabel description, JCheckBox usingSSA, JTextField fileStem, JLabel fileStemLabel) {
+			JLabel description, JCheckBox usingSSA, JTextField fileStem, JLabel fileStemLabel, GCM2SBMLEditor gcmEditor) {
 		seed.setEnabled(false);
 		seedLabel.setEnabled(false);
 		runs.setEnabled(false);
@@ -288,6 +288,9 @@ public class Button_Enabling {
 			description.setEnabled(true);
 		}
 		simulators.removeAllItems();
+		if (gcmEditor != null) {
+			simulators.addItem("markov-chain-analysis");
+		}
 		simulators.addItem("atacs");
 		simulators.addItem("ctmc-transient");
 	}
