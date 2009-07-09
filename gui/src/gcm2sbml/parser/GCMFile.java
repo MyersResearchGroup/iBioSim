@@ -87,6 +87,11 @@ public class GCMFile {
 
 	public void createLogicalModel(final String filename, final Log log, final BioSim biosim,
 			final String path, final String lpnName) {
+		try {
+			new File(filename + ".temp").createNewFile();
+		}
+		catch (IOException e2) {
+		}
 		final JFrame naryFrame = new JFrame("Thresholds");
 		WindowListener w = new WindowListener() {
 			public void windowClosing(WindowEvent arg0) {
@@ -209,11 +214,13 @@ public class GCMFile {
 				log.addText("Saving GCM file as LHPN:\n" + path + File.separator + lpnName + "\n");
 				biosim.refreshTree();
 				naryFrame.dispose();
+				new File(filename + ".temp").delete();
 			}
 		});
 		naryClose.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				naryFrame.dispose();
+				new File(filename + ".temp").delete();
 			}
 		});
 		JPanel naryRunPanel = new JPanel();
