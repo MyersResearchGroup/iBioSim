@@ -507,29 +507,32 @@ public class Run implements ActionListener {
 					reb2sac = exec.exec("reb2sac --target.encoding=hse2 " + theFile, null, work);
 				}
 				else if (sim.equals("markov-chain-analysis")) {
+					new File(filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + ".lpn").delete();
 					gcmEditor.getGCM().createLogicalModel(filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + ".lpn", log,
 							biomodelsim, directory, theFile.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + ".lpn");
 					LHPNFile lhpnFile = new LHPNFile();
-					while (!new File(filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + ".lpn").exists()) {
+					while (new File(filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + ".lpn.temp").exists()) {
 					}
-					lhpnFile.load(filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + ".lpn");
+					if (new File(filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + ".lpn").exists()) {
+						lhpnFile.load(filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + ".lpn");
+						StateGraph sg = new StateGraph(lhpnFile);
+						log.addText("Performing Markov Chain analysis.");
+						sg.performMarkovianAnalysis();
+						sg.outputStateGraph(filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + ".dot", true);
+						if (System.getProperty("os.name").contentEquals("Linux")) {
+							log.addText("Executing:\ndotty " + filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + ".dot" + "\n");
+							exec.exec("dotty " + theFile.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + ".dot", null, work);
+						}
+						else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
+							log.addText("Executing:\nopen " + filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + ".dot" + "\n");
+							exec.exec("open " + theFile.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + ".dot", null, work);
+						}
+						else {
+							log.addText("Executing:\ndotty " + filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + ".dot" + "\n");
+							exec.exec("dotty " + theFile.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + ".dot", null, work);
+						}
+					}
 					time1 = System.nanoTime();
-					StateGraph sg = new StateGraph(lhpnFile);
-					log.addText("Performing Markov Chain analysis.");
-					sg.performMarkovianAnalysis();
-					sg.outputStateGraph(filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + ".dot", true);
-					if (System.getProperty("os.name").contentEquals("Linux")) {
-						log.addText("Executing:\ndotty " + filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + ".dot" + "\n");
-						exec.exec("dotty " + theFile.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + ".dot", null, work);
-					}
-					else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
-						log.addText("Executing:\nopen " + filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + ".dot" + "\n");
-						exec.exec("open " + theFile.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + ".dot", null, work);
-					}
-					else {
-						log.addText("Executing:\ndotty " + filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + ".dot" + "\n");
-						exec.exec("dotty " + theFile.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + ".dot", null, work);
-					}
 					exitValue = 0;
 				}
 				else {
