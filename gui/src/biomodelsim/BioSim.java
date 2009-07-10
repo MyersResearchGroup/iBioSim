@@ -8516,10 +8516,11 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						simTab.addTab("Parameter Editor", gcm);
 						simTab.getComponentAt(simTab.getComponents().length - 1).setName(
 								"GCM Editor");
-						if(!gcm.getSBMLFile().equals("--none--")) {
-							SBML_Editor sbml = new SBML_Editor(root + separator + gcm.getSBMLFile(), reb2sac, log, this, root
-									+ separator + simName.trim(), root + separator + simName.trim()
-									+ separator + simName.trim() + ".sim");
+						if (!gcm.getSBMLFile().equals("--none--")) {
+							SBML_Editor sbml = new SBML_Editor(
+									root + separator + gcm.getSBMLFile(), reb2sac, log, this, root
+											+ separator + simName.trim(), root + separator
+											+ simName.trim() + separator + simName.trim() + ".sim");
 							simTab.addTab("SBML Elements", sbml.getElementsPanel());
 							simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
 						}
@@ -8640,10 +8641,11 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						simTab.addTab("Parameter Editor", gcm);
 						simTab.getComponentAt(simTab.getComponents().length - 1).setName(
 								"GCM Editor");
-						if(!gcm.getSBMLFile().equals("--none--")) {
-							SBML_Editor sbml = new SBML_Editor(root + separator + gcm.getSBMLFile(), reb2sac, log, this, root
-									+ separator + simName.trim(), root + separator + simName.trim()
-									+ separator + simName.trim() + ".sim");
+						if (!gcm.getSBMLFile().equals("--none--")) {
+							SBML_Editor sbml = new SBML_Editor(
+									root + separator + gcm.getSBMLFile(), reb2sac, log, this, root
+											+ separator + simName.trim(), root + separator
+											+ simName.trim() + separator + simName.trim() + ".sim");
 							simTab.addTab("SBML Elements", sbml.getElementsPanel());
 							simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
 						}
@@ -9330,13 +9332,15 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							simTab.addTab("Parameter Editor", gcm);
 							simTab.getComponentAt(simTab.getComponents().length - 1).setName(
 									"GCM Editor");
-							if(!gcm.getSBMLFile().equals("--none--")) {
-								SBML_Editor sbml = new SBML_Editor(root + separator + gcm.getSBMLFile(), reb2sac, log, this,
-										root + separator + split[split.length - 1].trim(), root
-										+ separator + split[split.length - 1].trim()
-										+ separator + split[split.length - 1].trim() + ".sim");
+							if (!gcm.getSBMLFile().equals("--none--")) {
+								SBML_Editor sbml = new SBML_Editor(root + separator
+										+ gcm.getSBMLFile(), reb2sac, log, this, root + separator
+										+ split[split.length - 1].trim(), root + separator
+										+ split[split.length - 1].trim() + separator
+										+ split[split.length - 1].trim() + ".sim");
 								simTab.addTab("SBML Elements", sbml.getElementsPanel());
-								simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
+								simTab.getComponentAt(simTab.getComponents().length - 1)
+										.setName("");
 							}
 						}
 						else {
@@ -9839,10 +9843,10 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				// sbml.addMouseListener(this);
 				simTab.addTab("Parameter Editor", gcm);
 				simTab.getComponentAt(simTab.getComponents().length - 1).setName("GCM Editor");
-				if(!gcm.getSBMLFile().equals("--none--")) {
-					SBML_Editor sbml = new SBML_Editor(root + separator + gcm.getSBMLFile(), reb2sac, log, this, root
-							+ separator + newSim, root + separator + newSim + separator + newSim
-							+ ".sim");
+				if (!gcm.getSBMLFile().equals("--none--")) {
+					SBML_Editor sbml = new SBML_Editor(root + separator + gcm.getSBMLFile(),
+							reb2sac, log, this, root + separator + newSim, root + separator
+									+ newSim + separator + newSim + ".sim");
 					simTab.addTab("SBML Elements", sbml.getElementsPanel());
 					simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
 				}
