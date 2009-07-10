@@ -1064,7 +1064,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		else if (e.getSource() == markov) {
 			Button_Enabling.enableMarkov(seed, seedLabel, runs, runsLabel, stepLabel, step,
 					errorLabel, absErr, limitLabel, limit, intervalLabel, interval, simulators,
-					simulatorsLabel, explanation, description, usingSSA, fileStem, fileStemLabel, gcmEditor);
+					simulatorsLabel, explanation, description, usingSSA, fileStem, fileStemLabel,
+					gcmEditor);
 			overwrite.setEnabled(false);
 			append.setEnabled(false);
 			choose3.setEnabled(false);
@@ -2538,7 +2539,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 							+ separator + outDir + separator + "user-defined.dat", biomodelsim,
 					simTab, root, progress, steps, simName, gcmEditor);
 		}
-		if (nary.isSelected() && !sim.equals("markov-chain-analysis") && !lhpn.isSelected() && exit == 0) {
+		if (nary.isSelected() && !sim.equals("markov-chain-analysis") && !lhpn.isSelected()
+				&& exit == 0) {
 			new Nary_Run(this, amountTerm, ge, gt, eq, lt, le, simulators,
 					simProp.split(separator), simProp, sbml, dot, xhtml, lhpn, nary, ODE,
 					monteCarlo, timeLimit, ((String) (intervalLabel.getSelectedItem())),
