@@ -406,7 +406,8 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 				if (!expr[0].intexpr_L(fields.get("Assignment lower").getValue()))
 					return false;
 			}
-			expr[1].token = expr[0].intexpr_gettok(fields.get("Assignment upper").getValue());
+			System.out.println(fields.get("Assignment upper").getValue());
+			expr[1].token = expr[1].intexpr_gettok(fields.get("Assignment upper").getValue());
 			if (!fields.get("Assignment upper").getValue().equals("")) {
 				if (!expr[1].intexpr_L(fields.get("Assignment upper").getValue()))
 					return false;
