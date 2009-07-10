@@ -738,6 +738,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 
 	public void run() {
 		if (simplify.isSelected() || abstractLhpn.isSelected()) {
+			copyFile();
 			abstPane = (AbstPane) (((JPanel) bigTab.getComponentAt(1)).getComponent(0));
 			LHPNFile lhpnFile = new LHPNFile();
 			lhpnFile.load(directory + separator + verifyFile);
@@ -760,9 +761,15 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				k++;
 			}
 			// String[] vars = null;
-			String abstFilename = (String) JOptionPane.showInputDialog(this,
+			String abstFilename;
+			if (lhpn.isSelected()) {
+			abstFilename = (String) JOptionPane.showInputDialog(this,
 					"Please enter the file name for the abstracted LHPN.", "Enter Filename",
 					JOptionPane.PLAIN_MESSAGE);
+			}
+			else {
+				abstFilename = verifyFile.replace(".lpn", "_abs.lpn");
+			}
 			if (abstFilename != null) {
 				if (!abstFilename.endsWith(".lpn"))
 					abstFilename = abstFilename + ".lpn";
@@ -806,7 +813,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					File work = new File(directory + separator);
 					try {
 						Runtime exec = Runtime.getRuntime();
-						Process makeDot = exec.exec("atacs -llodsl " + abstFilename, null, work);
+						Process makeDot = exec.exec("atacs -cPllodsl " + abstFilename, null, work);
 						makeDot.waitFor();
 						String dotName = abstFilename.replace(".lpn", ".dot");
 						if (new File(directory + separator + dotName).exists()) {
@@ -891,34 +898,13 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			}
 			tempArray = verifyFile.split(separator);
 			String sourceFile = tempArray[tempArray.length - 1];
-			String[] workArray = directory.split(separator);
-			String workDir = "";
-			for (int i = 0; i < (workArray.length - 1); i++) {
-				workDir = workDir + workArray[i] + separator;
-			}
+			//String[] workArray = directory.split(separator);
+			//String workDir = "";
+			//for (int i = 0; i < (workArray.length - 1); i++) {
+			//workDir = workDir + workArray[i] + separator;
+			//}
 			// log.addText("copy to " + directory + separator + sourceFile);
 			// log.addText("copy from " + workDir + separator + sourceFile);
-			try {
-				File newFile = new File(directory + separator + sourceFile);
-				newFile.createNewFile();
-				FileOutputStream copyin = new FileOutputStream(newFile);
-				FileInputStream copyout = new FileInputStream(new File(workDir + separator
-						+ sourceFile));
-				int read = copyout.read();
-				// System.out.println(read);
-				while (read != -1) {
-					// System.out.println(read);
-					copyin.write(read);
-					read = copyout.read();
-				}
-				copyin.close();
-				copyout.close();
-			}
-			catch (IOException e) {
-				// e.printStackTrace();
-				JOptionPane.showMessageDialog(biosim.frame(), "Cannot copy file " + sourceFile,
-						"Copy Error", JOptionPane.ERROR_MESSAGE);
-			}
 			String options = "";
 			// BDD Linkspace Size
 			if (!bddSize.getText().equals("") && !bddSize.getText().equals("0")) {
@@ -1702,5 +1688,36 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			return true;
 		}
 		return change;
+	}
+	
+	public void copyFile() {
+		String[] tempArray = verifyFile.split(separator);
+		String sourceFile = tempArray[tempArray.length - 1];
+		String[] workArray = directory.split(separator);
+		String workDir = "";
+		for (int i = 0; i < (workArray.length - 1); i++) {
+			workDir = workDir + workArray[i] + separator;
+		}
+		try {
+			File newFile = new File(directory + separator + sourceFile);
+			newFile.createNewFile();
+			FileOutputStream copyin = new FileOutputStream(newFile);
+			FileInputStream copyout = new FileInputStream(new File(workDir + separator
+					+ sourceFile));
+			int read = copyout.read();
+			// System.out.println(read);
+			while (read != -1) {
+				// System.out.println(read);
+				copyin.write(read);
+				read = copyout.read();
+			}
+			copyin.close();
+			copyout.close();
+		}
+		catch (IOException e) {
+			// e.printStackTrace();
+			JOptionPane.showMessageDialog(biosim.frame(), "Cannot copy file " + sourceFile,
+					"Copy Error", JOptionPane.ERROR_MESSAGE);
+		}
 	}
 }

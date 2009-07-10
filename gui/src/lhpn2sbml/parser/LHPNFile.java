@@ -225,7 +225,7 @@ public class LHPNFile {
 								// log.addText("to " + toString);
 								String[] toArray = toString.split("\\s");
 								for (i = 0; i < toArray.length; i++) {
-									if (toArray[i] != null && !toArray[i].equals("null")) {
+									if (toArray[i] != null && !toArray[i].equals("null") && !toArray[i].equals("")) {
 										buffer.append(s + " " + toArray[i] + "\n");
 									}
 								}
@@ -237,7 +237,7 @@ public class LHPNFile {
 								// log.addText("from "+ fromString);
 								String[] fromArray = fromString.split("\\s");
 								for (i = 0; i < fromArray.length; i++) {
-									if (fromArray[i] != null && !fromArray[i].equals("null")) {
+									if (fromArray[i] != null && !fromArray[i].equals("null") && !fromArray[i].equals("")) {
 										buffer.append(fromArray[i] + " " + s + "\n");
 									}
 								}
@@ -309,12 +309,12 @@ public class LHPNFile {
 							buffer.append("#@.assignments {");
 							flag = true;
 						}
-						buffer.append("<" + s + "=");
+						//buffer.append("<" + s + "=");
 						for (Object key : prop.keySet()) {
 							String t = (String) key;
-							buffer.append("[" + t + ":=" + prop.getProperty(t) + "]");
+							buffer.append("<" + s + "=[" + t + ":=" + prop.getProperty(t) + "]>");
 						}
-						buffer.append(">");
+						//buffer.append(">");
 					}
 				}
 				for (String s : intAssignments.keySet()) {
@@ -324,13 +324,13 @@ public class LHPNFile {
 							buffer.append("#@.assignments {");
 							flag = true;
 						}
-						buffer.append("<" + s + "=");
+						//buffer.append("<" + s + "=");
 						for (Object key : prop.keySet()) {
 							String t = (String) key;
 							// log.addText("key " + t);
-							buffer.append("[" + t + ":=" + prop.getProperty(t) + "]");
+							buffer.append("<" + s + "=[" + t + ":=" + prop.getProperty(t) + "]>");
 						}
-						buffer.append(">");
+						//buffer.append(">");
 					}
 				}
 				if (flag) {
@@ -340,7 +340,7 @@ public class LHPNFile {
 			if (!rateAssignments.isEmpty()) {
 				flag = false;
 				for (String s : rateAssignments.keySet()) {
-					boolean varFlag = false;
+					//boolean varFlag = false;
 					Properties prop = rateAssignments.get(s);
 					for (Object key : prop.keySet()) {
 						String t = (String) key;
@@ -349,16 +349,16 @@ public class LHPNFile {
 								buffer.append("#@.rate_assignments {");
 								flag = true;
 							}
-							if (!varFlag) {
-								buffer.append("<" + s + "=");
-								varFlag = true;
-							}
-							buffer.append("[" + t + ":=" + prop.getProperty(t) + "]");
+							//if (!varFlag) {
+							//	buffer.append("<" + s + "=");
+							//	varFlag = true;
+							//}
+							buffer.append("<" + s + "=[" + t + ":=" + prop.getProperty(t) + "]>");
 						}
 					}
-					if (varFlag) {
-						buffer.append(">");
-					}
+					//if (varFlag) {
+					//	buffer.append(">");
+					//}
 				}
 				if (flag) {
 					buffer.append("}\n");
@@ -399,7 +399,7 @@ public class LHPNFile {
 				flag = false;
 				for (String s : booleanAssignments.keySet()) {
 					if (!s.equals("")) {
-						boolean varFlag = false;
+						//boolean varFlag = false;
 						Properties prop = booleanAssignments.get(s);
 						for (Object key : prop.keySet()) {
 							String t = (String) key;
@@ -408,16 +408,16 @@ public class LHPNFile {
 									buffer.append("#@.boolean_assignments {");
 									flag = true;
 								}
-								if (!varFlag) {
-									buffer.append("<" + s + "=");
-									varFlag = true;
-								}
-								buffer.append("[" + t + ":=" + prop.getProperty(t) + "]");
+								//if (!varFlag) {
+									//buffer.append("<" + s + "=");
+								//	varFlag = true;
+								//}
+								buffer.append("<" + s + "=[" + t + ":=" + prop.getProperty(t) + "]>");
 							}
 						}
-						if (varFlag) {
-							buffer.append(">");
-						}
+						//if (varFlag) {
+						//	buffer.append(">");
+						//}
 					}
 				}
 				if (flag) {
@@ -521,6 +521,92 @@ public class LHPNFile {
 			// throw new IllegalArgumentException("Unable to parse LHPN");
 		}
 	}
+	
+	public void printDot(String filename) {
+		try {
+			String file = filename;
+			PrintStream p = new PrintStream(new FileOutputStream(filename));
+			StringBuffer buffer = new StringBuffer();
+			buffer.append("digraph G\nsize=\"7.5,10\"\n");
+			for (String s: delays.keySet()) {
+				buffer.append(s + " [shape=plaintext,label=\"" + s);
+				if (enablings.containsKey(s)) {
+					buffer.append("\\n{" + enablings.get(s) + "}");
+				}
+				if (delays.containsKey(s)) {
+					buffer.append("\\n[" + delays.get(s) + "]");
+				}
+				if (contAssignments.containsKey(s) || intAssignments.containsKey(s) || booleanAssignments.containsKey(s)) {
+					buffer.append("\\n<");
+					boolean flag = false;
+					if (booleanAssignments.containsKey(s)) {
+						Properties prop = booleanAssignments.get(s);
+						for (Object t : prop.keySet()) {
+							if (!flag) {
+								buffer.append(",");
+							}
+							else {
+								flag = true;
+							}
+							buffer.append(t.toString() + ":=" + booleanAssignments.get(t.toString()));
+						}
+					}
+					if (contAssignments.containsKey(s)) {
+						Properties prop = contAssignments.get(s);
+						for (Object t : prop.keySet()) {
+							if (!flag) {
+								buffer.append(",");
+							}
+							else {
+								flag = true;
+							}
+							buffer.append(t.toString() + ":=" + prop.getProperty(t.toString()));
+						}
+					}
+					if (intAssignments.containsKey(s)) {
+						Properties prop = intAssignments.get(s);
+						for (Object t : prop.keySet()) {
+							if (!flag) {
+								buffer.append(",");
+							}
+							else {
+								flag = true;
+							}
+							buffer.append(t.toString() + ":=" + prop.getProperty(t.toString()));
+						}
+					}
+					buffer.append(">\"");
+				}
+				buffer.append("];\n");
+			}
+			for (String s : places.keySet()) {
+				buffer.append(s + " [label=\"" + s + "\"];\n" + s + " [shape=circle,width=0.40,height=0.40]\n");
+				if (places.get(s)) {
+					buffer.append(s + " [height=.3,width=.3,peripheries=2,style=filled,color=black,fontcolor=white];\n");
+				}
+			}
+			for (String s : controlFlow.keySet()) {
+				String[] postset = controlFlow.get(s).getProperty("postset").split(" ");
+				for (String t : postset) {
+					buffer.append(s + " -> " + t + "\n");
+				}
+			}
+			for (String s : controlPlaces.keySet()) {
+				String[] postset = controlFlow.get(s).getProperty("postset").split(" ");
+				for (String t : postset) {
+					buffer.append(s + " -> " + t + "\n");
+				}
+			}
+			p.print(buffer);
+			p.close();
+			if (log != null) {
+				log.addText("Saving:\n" + file + "\n");
+			}
+		}
+		catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+	}
 
 	public void addPlace(String name, Boolean ic) {
 		places.put(name, ic);
@@ -529,28 +615,59 @@ public class LHPNFile {
 	public void removePlace(String name) {
 		if (name != null && places.containsKey(name)) {
 			places.remove(name);
-			controlPlaces.remove(name);
+			//controlPlaces.remove(name);
+		}
+//		for (String s : controlFlow.keySet()) {
+//			Properties prop = controlFlow.get(s);
+//			String[] array = prop.getProperty("preset").split(" ");
+//			String setString = new String();
+//			int offset = 0;
+//			for (int i = 1; i < array.length; i++) {
+//				if (arra[i].equals(name)) {
+//					offset += 1;
+//				}
+//				setString = setString + " " + array[i - offset];
+//			}
+//			prop.setProperty("preset", setString);
+//			array = prop.getProperty("postset").split(" ");
+//			setString = new String();
+//			offset = 0;
+//			for (int i = 1; i < array.length; i++) {
+//				if (array[i].equals(name)) {
+//					offset += 1;
+//				}
+//				setString = setString + " " + array[i - offset];
+//			}
+//			prop.setProperty("postset", setString);
+//			controlFlow.put(s, prop);
+//		}
+	}
+	
+	public void renamePlace(String oldName, String newName, Boolean ic) {
+		if (oldName != null && places.containsKey(oldName)) {
+			places.put(newName, ic);
+			places.remove(oldName);
+			controlPlaces.put(newName, controlPlaces.get(oldName));
+			controlPlaces.remove(oldName);
 		}
 		for (String s : controlFlow.keySet()) {
 			Properties prop = controlFlow.get(s);
 			String[] array = prop.getProperty("preset").split(" ");
 			String setString = new String();
-			int offset = 0;
 			for (int i = 1; i < array.length; i++) {
-				if (array[i].equals(name)) {
-					offset += 1;
+				if (array[i].equals(oldName)) {
+					array[i] = newName;
 				}
-				setString = setString + " " + array[i - offset];
+				setString = setString + " " + array[i];
 			}
 			prop.setProperty("preset", setString);
 			array = prop.getProperty("postset").split(" ");
 			setString = new String();
-			offset = 0;
 			for (int i = 1; i < array.length; i++) {
-				if (array[i].equals(name)) {
-					offset += 1;
+				if (array[i].equals(oldName)) {
+					array[i] = newName;
 				}
-				setString = setString + " " + array[i - offset];
+				setString = setString + " " + array[i];
 			}
 			prop.setProperty("postset", setString);
 			controlFlow.put(s, prop);
@@ -2404,18 +2521,30 @@ public class LHPNFile {
 							expr[1] = null;
 						}
 						if (isInteger(varMatcher.group(1))) {
+							if (intAssignments.containsKey(assignMatcher.group(1))) {
+								intProp = intAssignments.get(assignMatcher.group(1));
+							}
 							intProp.put(varMatcher.group(1), varMatcher.group(2));
 							intMap.put(varMatcher.group(1), expr);
 						}
 						else {
+							if (contAssignments.containsKey(assignMatcher.group(1))) {
+								assignProp = contAssignments.get(assignMatcher.group(1));
+							}
 							assignProp.put(varMatcher.group(1), varMatcher.group(2));
 							assignMap.put(varMatcher.group(1), expr);
 						}
 						if (isInteger(varMatcher.group(1))) {
+							if (intAssignments.containsKey(assignMatcher.group(1))) {
+								intProp = intAssignments.get(assignMatcher.group(1));
+							}
 							intProp.put(varMatcher.group(1), varMatcher.group(2));
 							intMap.put(varMatcher.group(1), expr);
 						}
 						else {
+							if (contAssignments.containsKey(assignMatcher.group(1))) {
+								assignProp = contAssignments.get(assignMatcher.group(1));
+							}
 							assignProp.put(varMatcher.group(1), varMatcher.group(2));
 							assignMap.put(varMatcher.group(1), expr);
 						}
@@ -2433,10 +2562,16 @@ public class LHPNFile {
 					ExprTree[] array = { expr };
 					// log.addText("check6while2");
 					if (isInteger(varMatcher.group(1))) {
+						if (intAssignments.containsKey(assignMatcher.group(1))) {
+							intProp = intAssignments.get(assignMatcher.group(1));
+						}
 						intProp.put(varMatcher.group(1), varMatcher.group(2));
 						intMap.put(varMatcher.group(1), array);
 					}
 					else {
+						if (contAssignments.containsKey(assignMatcher.group(1))) {
+							assignProp = contAssignments.get(assignMatcher.group(1));
+						}
 						assignProp.put(varMatcher.group(1), varMatcher.group(2));
 						assignMap.put(varMatcher.group(1), array);
 					}
@@ -2601,6 +2736,9 @@ public class LHPNFile {
 					while (rangeMatcher.find()) {
 						// System.out.println(rangeMatcher.group(1) + " range "
 						// + rangeMatcher.group(2));
+						if (booleanAssignments.containsKey(transMatcher.group(1))) {
+							prop = booleanAssignments.get(transMatcher.group(1));
+						}
 						prop.put(rangeMatcher.group(1), rangeMatcher.group(2));
 						ExprTree[] expr = new ExprTree[2];
 						expr[0] = new ExprTree(this);
@@ -2626,6 +2764,9 @@ public class LHPNFile {
 					}
 					while (assignMatcher.find()) {
 						if (!prop.containsKey(assignMatcher.group(1))) {
+							if (booleanAssignments.containsKey(transMatcher.group(1))) {
+								prop = booleanAssignments.get(transMatcher.group(1));
+							}
 							// System.out.println(assignMatcher.group(1) + "
 							// norange " + assignMatcher.group(2));
 							prop.put(assignMatcher.group(1), assignMatcher.group(2));
