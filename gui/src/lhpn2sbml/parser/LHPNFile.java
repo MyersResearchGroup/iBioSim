@@ -784,12 +784,14 @@ public class LHPNFile {
 				if (controlFlow.get(fromName) != null) {
 					propTrans = controlFlow.get(fromName);
 					list = propTrans.getProperty("postset");
-					if (!list.equals("null")) {
+					if (list != null) {
+					//if (!list.equals("null")) {
 						list = list + " " + toName;
 					}
 					else {
 						list = toName;
 					}
+					//}
 				}
 			}
 			else {
@@ -799,12 +801,14 @@ public class LHPNFile {
 				if (controlPlaces.get(toName) != null) {
 					propPlace = controlPlaces.get(toName);
 					placeList = propPlace.getProperty("preset");
-					if (!placeList.equals("null")) {
+					if (placeList != null) {
+					//if (!placeList.equals("null")) {
 						placeList = placeList + " " + fromName;
 					}
 					else {
 						placeList = fromName;
 					}
+					//}
 				}
 			}
 			else {
@@ -826,7 +830,7 @@ public class LHPNFile {
 				if (controlFlow.get(toName) != null) {
 					propTrans = controlFlow.get(toName);
 					list = propTrans.getProperty("preset");
-					if (!list.equals("null")) {
+					if (list != null) {
 						list = list + " " + fromName;
 					}
 					else {
@@ -844,7 +848,7 @@ public class LHPNFile {
 				if (controlPlaces.get(fromName) != null) {
 					propPlace = controlPlaces.get(fromName);
 					placeList = propPlace.getProperty("postset");
-					if (!placeList.equals("null")) {
+					if (placeList != null) {
 						placeList = placeList + " " + toName;
 					}
 					else {
