@@ -1418,7 +1418,7 @@ public class LHPNFile {
 		ExprTree[] expr = new ExprTree[2];
 		expr[0] = new ExprTree(this);
 		expr[1] = new ExprTree(this);
-		Pattern pattern = Pattern.compile("\\[(\\w+?),(\\w+?)\\]");
+		Pattern pattern = Pattern.compile("\\[(\\S+?),(\\S+?)\\]");
 		Matcher matcher = pattern.matcher(value);
 		if (matcher.find()) {
 			expr[0].token = expr[0].intexpr_gettok(matcher.group(1));
