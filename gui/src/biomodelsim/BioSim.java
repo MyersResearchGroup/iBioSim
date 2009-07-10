@@ -8494,7 +8494,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							+ (dot[dot.length - 1].substring(0, dot[dot.length - 1].length() - 3) + "sbml");
 					JTabbedPane simTab = new JTabbedPane();
 					Reb2Sac reb2sac = new Reb2Sac(sbmlFile, sbmlFile, root, this, simName.trim(),
-							log, simTab, null);
+							log, simTab, null, dot[dot.length - 1]);
 					// reb2sac.addMouseListener(this);
 					simTab.addTab("Simulation Options", reb2sac);
 					simTab.getComponentAt(simTab.getComponents().length - 1).setName("Simulate");
@@ -8611,7 +8611,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					refreshTree();
 					JTabbedPane simTab = new JTabbedPane();
 					Reb2Sac reb2sac = new Reb2Sac(sbmlFile, sbmlFileProp, root, this, simName
-							.trim(), log, simTab, null);
+							.trim(), log, simTab, null, sbml1[sbml1.length - 1]);
 					// reb2sac.addMouseListener(this);
 					simTab.addTab("Simulation Options", reb2sac);
 					simTab.getComponentAt(simTab.getComponents().length - 1).setName("Simulate");
@@ -9295,7 +9295,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						}
 						JTabbedPane simTab = new JTabbedPane();
 						Reb2Sac reb2sac = new Reb2Sac(sbmlLoadFile, getAFile, root, this,
-								split[split.length - 1].trim(), log, simTab, openFile);
+								split[split.length - 1].trim(), log, simTab, openFile, gcmFile);
 						simTab.addTab("Simulation Options", reb2sac);
 						simTab.getComponentAt(simTab.getComponents().length - 1)
 								.setName("Simulate");
@@ -9802,7 +9802,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			refreshTree();
 			JTabbedPane simTab = new JTabbedPane();
 			Reb2Sac reb2sac = new Reb2Sac(sbmlLoadFile, sbmlFile, root, this, newSim, log, simTab,
-					propertiesFile);
+					propertiesFile, gcmFile);
 			simTab.addTab("Simulation Options", reb2sac);
 			simTab.getComponentAt(simTab.getComponents().length - 1).setName("Simulate");
 			simTab.addTab("Abstraction Options", reb2sac.getAdvanced());

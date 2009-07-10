@@ -186,9 +186,11 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 	 * This is the constructor for the GUI. It initializes all the input fields,
 	 * puts them on panels, adds the panels to the frame, and then displays the
 	 * GUI.
+	 * 
+	 * @param modelFile
 	 */
 	public Reb2Sac(String sbmlFile, String sbmlProp, String root, BioSim biomodelsim,
-			String simName, Log log, JTabbedPane simTab, String open) {
+			String simName, Log log, JTabbedPane simTab, String open, String modelFile) {
 		if (File.separator.equals("\\")) {
 			separator = "\\\\";
 		}
@@ -374,7 +376,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		JPanel topPanel = new JPanel(new BorderLayout());
 		JPanel backgroundPanel = new JPanel();
 		JLabel backgroundLabel = new JLabel("Model File:");
-		String[] tempArray = sbmlFile.split(separator);
+		String[] tempArray = modelFile.split(separator);
 		JTextField backgroundField = new JTextField(tempArray[tempArray.length - 1]);
 		backgroundField.setEditable(false);
 		backgroundPanel.add(backgroundLabel);
@@ -3671,6 +3673,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			simulators.addItem("atacs");
 			simulators.addItem("ctmc-transient");
 		}
+		change = false;
 	}
 
 	public void updateSpeciesList() {
