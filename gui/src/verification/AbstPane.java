@@ -51,7 +51,7 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 
 	// private ButtonGroup group;
 
-	private String directory, separator, root, verFile, oldBdd;
+	private String directory, separator, root, absFile, oldBdd;
 
 	// sourceFileNoPath;
 
@@ -76,6 +76,9 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 		else {
 			separator = File.separator;
 		}
+		this.directory = directory;
+		this.log = log;
+		absFile = verification.getVerName() + ".abs";
 		verification.copyFile();
 		LHPNFile lhpn = new LHPNFile();
 		lhpn.load(directory + separator + verification.verifyFile);
@@ -175,55 +178,28 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 		advanced.add(speciesHolder);
 
 		// load parameters
-		// Properties load = new Properties();
+		Properties load = new Properties();
 		// log.addText(directory + separator + verFile);
-		// try {
-		// FileInputStream in = new FileInputStream(new File(directory +
-		// separator + verFile));
-		// load.load(in);
-		// in.close();
-		// if (load.containsKey("verification.file")) {
-		// verifyFile = load.getProperty("verification.file");
-		// // log.addText(verifyFile);
-		// }
-		// if (load.containsKey("verification.bddSize")) {
-		// field.setText(load.getProperty("verification .bddSize"));
-		// }
-		// Integer i = 0;
-		// while (load.containsKey("synthesis.compList" + i.toString())) {
-		// componentList.addItem(load.getProperty("synthesis.compList" +
-		// i.toString()));
-		// i++;
-		// }
-		// if (load.containsKey("verification.timing.methods")) {
-		// if (atacs) {
-		// if
-		// (load.getProperty("verification.timing.methods").equals("untimed")) {
-		// check.setSelected(true);
-		// }
-		// }
-		// else {
-		// if (load.getProperty("verification.timing.methods").equals("bdd")) {
-		// check.setSelected(true);
-		// }
-		// }
-		// }
-		// if (load.containsKey("verification.Abst")) {
-		// if (load.getProperty("verification.Abst").equals("true")) {
-		// check.setSelected(true);
-		// }
-		// }
-		// String[] tempArray = verifyFile.split(separator);
-		// sourceFileNoPath = tempArray[tempArray.length - 1];
-		// field = new JTextField(sourceFileNoPath);
-		// }
-		// catch (Exception e) {
-		// JOptionPane.showMessageDialog(biosim.frame(), "Unable to load
-		// properties file!",
-		// "Error Loading Properties", JOptionPane.ERROR_MESSAGE);
-		// // e.printStackTrace();
-		// }
-		// save();
+		try {
+			FileInputStream in = new FileInputStream(new File(directory + separator + absFile));
+			load.load(in);
+			in.close();
+			if (load.containsKey("abstraction.interesting")) {
+				String intVars = load.getProperty("abstraction.interesting");
+				String[] array = intVars.split(" ");
+				for (String s : array) {
+					if (!s.equals("")) {
+						listModel.addElement(s);
+					}
+				}
+			}
+		}
+		catch (Exception e) {
+			JOptionPane.showMessageDialog(biosim.frame(), "Unable to load properties file!",
+					"Error Loading Properties", JOptionPane.ERROR_MESSAGE);
+			// e.printStackTrace();
+		}
+		save();
 
 		// this.setLayout(new BorderLayout());
 		this.add(advanced);
@@ -267,60 +243,37 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 	}
 
 	public void save() {
-		save(verFile);
+		save(absFile);
 	}
 
 	public void save(String filename) {
 		// JOptionPane.showMessageDialog(this, verifyFile);
 		try {
+			//System.out.println(absFile);
 			Properties prop = new Properties();
-			FileInputStream in = new FileInputStream(new File(directory + separator + filename));
-			prop.load(in);
-			in.close();
+			//FileInputStream in = new FileInputStream(new File(directory + separator + filename));
+			//prop.load(in);
+			//in.close();
 			// prop.setProperty("verification.file", verifyFile);
-			if (!field.getText().trim().equals("")) {
-				prop.setProperty("verification.component", field.getText().trim());
+			String intVars = "";
+			for (int i = 0; i < listModel.getSize(); i++) {
+				intVars = listModel.getElementAt(i) + " ";
 			}
-			String[] components = componentList.getItems();
-			for (Integer i = 0; i < components.length; i++) {
-				prop.setProperty("synthesis.compList" + i.toString(), components[i]);
+			if (!intVars.equals("")) {
+				prop.setProperty("abstraction.interesting", intVars);
 			}
-			if (atacs) {
-				if (check.isSelected()) {
-					prop.setProperty("verification.timing.methods", "untimed");
-				}
-				else if (check.isSelected()) {
-					prop.setProperty("verification.timing.methods", "geometric");
-				}
-				else if (check.isSelected()) {
-					prop.setProperty("verification.timing.methods", "posets");
-				}
-				else if (check.isSelected()) {
-					prop.setProperty("verification.timing.methods", "bag");
-				}
-				else if (check.isSelected()) {
-					prop.setProperty("verification.timing.methods", "bap");
-				}
-				else {
-					prop.setProperty("verification.timing.methods", "baptdc");
-				}
-			}
-			if (check.isSelected()) {
-				prop.setProperty("verification.reduction", "true");
-			}
-			else {
-				prop.setProperty("verification.reduction", "false");
-			}
-			FileOutputStream out = new FileOutputStream(new File(directory + separator + verFile));
-			// prop.store(out, verifyFile);
+			FileOutputStream out = new FileOutputStream(new File(directory + separator + absFile));
+			prop.store(out, absFile);
 			out.close();
-			log.addText("Saving Parameter File:\n" + directory + separator + verFile + "\n");
+			log.addText("Saving Parameter File:\n" + directory + separator + absFile + "\n");
 			change = false;
 		}
 		catch (Exception e1) {
+			//e1.printStackTrace();
 			JOptionPane.showMessageDialog(biosim.frame(), "Unable to save parameter file!",
 					"Error Saving File", JOptionPane.ERROR_MESSAGE);
 		}
+		if (componentList != null) {
 		for (String s : componentList.getItems()) {
 			try {
 				new File(directory + separator + s).createNewFile();
@@ -339,6 +292,7 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 				JOptionPane.showMessageDialog(biosim.frame(), "Cannot add the selected component.",
 						"Error", JOptionPane.ERROR_MESSAGE);
 			}
+		}
 		}
 	}
 
@@ -408,51 +362,51 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 		// }
 	}
 
-	public void viewTrace() {
-		// String[] getFilename = verifyFile.split("\\.");
-		// String traceFilename = getFilename[0] + ".trace";
-		// JOptionPane.showMessageDialog(this, circuitFile);
-		// JOptionPane.showMessageDialog(this, directory + separator +
-		// circuitFile);
-		// try {
-		// // JOptionPane.showMessageDialog(this, directory + separator +
-		// // "run.log");
-		// // String[] getFilename = verifyFile.split(".");
-		// // String circuitFile = getFilename[0] + ".ps";
-		// // JOptionPane.showMessageDialog(this, directory + separator +
-		// // circuitFile);
-		// if (new File(traceFilename).exists()) {
-		// File log = new File(traceFilename);
-		// BufferedReader input = new BufferedReader(new FileReader(log));
-		// String line = null;
-		// JTextArea messageArea = new JTextArea();
-		// while ((line = input.readLine()) != null) {
-		// messageArea.append(line);
-		// messageArea.append(System.getProperty("line.separator"));
-		// }
-		// input.close();
-		// messageArea.setLineWrap(true);
-		// messageArea.setWrapStyleWord(true);
-		// messageArea.setEditable(false);
-		// JScrollPane scrolls = new JScrollPane();
-		// scrolls.setMinimumSize(new Dimension(500, 500));
-		// scrolls.setPreferredSize(new Dimension(500, 500));
-		// scrolls.setViewportView(messageArea);
-		// JOptionPane.showMessageDialog(biosim.frame(), scrolls, "Trace View",
-		// JOptionPane.INFORMATION_MESSAGE);
-		// }
-		// else {
-		// JOptionPane.showMessageDialog(biosim.frame(), "No trace file
-		// exists.", "Error",
-		// JOptionPane.ERROR_MESSAGE);
-		// }
-		// }
-		// catch (Exception e1) {
-		// JOptionPane.showMessageDialog(biosim.frame(), "Unable to view
-		// trace.", "Error",
-		// JOptionPane.ERROR_MESSAGE);
-		// }
-	}
+	// public void viewTrace() {
+	// String[] getFilename = verifyFile.split("\\.");
+	// String traceFilename = getFilename[0] + ".trace";
+	// JOptionPane.showMessageDialog(this, circuitFile);
+	// JOptionPane.showMessageDialog(this, directory + separator +
+	// circuitFile);
+	// try {
+	// // JOptionPane.showMessageDialog(this, directory + separator +
+	// // "run.log");
+	// // String[] getFilename = verifyFile.split(".");
+	// // String circuitFile = getFilename[0] + ".ps";
+	// // JOptionPane.showMessageDialog(this, directory + separator +
+	// // circuitFile);
+	// if (new File(traceFilename).exists()) {
+	// File log = new File(traceFilename);
+	// BufferedReader input = new BufferedReader(new FileReader(log));
+	// String line = null;
+	// JTextArea messageArea = new JTextArea();
+	// while ((line = input.readLine()) != null) {
+	// messageArea.append(line);
+	// messageArea.append(System.getProperty("line.separator"));
+	// }
+	// input.close();
+	// messageArea.setLineWrap(true);
+	// messageArea.setWrapStyleWord(true);
+	// messageArea.setEditable(false);
+	// JScrollPane scrolls = new JScrollPane();
+	// scrolls.setMinimumSize(new Dimension(500, 500));
+	// scrolls.setPreferredSize(new Dimension(500, 500));
+	// scrolls.setViewportView(messageArea);
+	// JOptionPane.showMessageDialog(biosim.frame(), scrolls, "Trace View",
+	// JOptionPane.INFORMATION_MESSAGE);
+	// }
+	// else {
+	// JOptionPane.showMessageDialog(biosim.frame(), "No trace file
+	// exists.", "Error",
+	// JOptionPane.ERROR_MESSAGE);
+	// }
+	// }
+	// catch (Exception e1) {
+	// JOptionPane.showMessageDialog(biosim.frame(), "Unable to view
+	// trace.", "Error",
+	// JOptionPane.ERROR_MESSAGE);
+	// }
+	// }
 
 	public void viewLog() {
 		try {

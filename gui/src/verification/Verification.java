@@ -1720,4 +1720,10 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					"Copy Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
+	
+	public String getVerName() {
+		String verName = verFile.replace(".ver", "");
+		return verName;
+	}
+	
 }
