@@ -314,12 +314,14 @@ public class GCMFile {
 		}
 		LHPNFile LHPN = new LHPNFile();
 		for (int i = 0; i < specs.size(); i++) {
+			LHPN.addInteger(specs.get(i), "0");
+		}
+		for (int i = 0; i < specs.size(); i++) {
 			int placeNum = 0;
 			int transNum = 0;
 			String previousPlaceName = specs.get(i) + placeNum;
 			placeNum++;
 			LHPN.addPlace(previousPlaceName, true);
-			LHPN.addInteger(specs.get(i), "0");
 			String number = "0";
 			for (Object threshold : conLevel.get(i)) {
 				LHPN.addPlace(specs.get(i) + placeNum, false);
