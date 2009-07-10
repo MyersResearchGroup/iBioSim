@@ -347,38 +347,7 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 				String[] tempArray = s.split(":=");
 				// System.out.println(transition + " " + tempArray[0] + " " +
 				// tempArray[1]);
-				ExprTree[] expr = new ExprTree[2];
-				expr[0] = new ExprTree(lhpn);
-				expr[1] = new ExprTree(lhpn);
-				Pattern pattern = Pattern.compile("\\[(\\w+?),(\\w+?)\\]");
-				Matcher matcher = pattern.matcher(tempArray[1]);
-				if (matcher.find()) {
-					expr[0].token = expr[0].intexpr_gettok(matcher.group(1));
-					if (!matcher.group(1).equals("")) {
-						if (!expr[0].intexpr_L(matcher.group(1))) return false;
-					}
-					else {
-						expr[0] = null;
-					}
-					expr[1].token = expr[1].intexpr_gettok(matcher.group(2));
-					if (!matcher.group(2).equals("")) {
-						if (!expr[1].intexpr_L(matcher.group(2))) return false;
-					}
-					else {
-						expr[1] = null;
-					}
-				}
-				else {
-					expr[0].token = expr[0].intexpr_gettok(tempArray[1]);
-					if (!tempArray[1].equals("")) {
-						if (!expr[0].intexpr_L(tempArray[1])) return false;
-					}
-					else {
-						expr[0] = null;
-						expr[1] = null;
-					}
-				}
-				lhpn.addContAssign(transition, tempArray[0], tempArray[1], expr);
+				lhpn.addContAssign(transition, tempArray[0], tempArray[1]);
 				// log.addText("continuous "+ tempArray[0]);
 			}
 		}
