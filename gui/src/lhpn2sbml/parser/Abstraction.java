@@ -119,6 +119,7 @@ public class Abstraction {
 				}
 			}
 			for (String[] a : merge) {
+				System.out.println("Transform 0");
 				change = true;
 				combinePlaces(a[0], a[1]);
 			}
@@ -140,6 +141,7 @@ public class Abstraction {
 				}
 			}
 			for (String s : remove) {
+				System.out.println("Transform 1");
 				change = true;
 				removePlace(s);
 			}
@@ -174,8 +176,13 @@ public class Abstraction {
 				}
 			}
 			for (String s : remove) {
-				// log.addText("[3]Removing transition: " + s);
+				//if (s != null) {
+				 System.out.println("[3]Removing transition: " + s);
+				//}
 				change = true;
+				//System.out.println("s: " + s);
+				//System.out.println("preset: " + controlFlow.get(s).getProperty("preset"));
+				//System.out.println("postset: " + controlFlow.get(s).getProperty("postset"));
 				removeTrans3(s, controlFlow.get(s).getProperty("preset").split(" "), controlFlow
 						.get(s).getProperty("postset").split(" "));
 			}
@@ -210,7 +217,7 @@ public class Abstraction {
 			}
 			for (String s : remove) {
 				if (controlFlow.get(s) != null) {
-					// log.addText("[4]Removing transition: " + s);
+					 System.out.println("[4]Removing transition: " + s);
 					change = true;
 					removeTrans4(s, controlFlow.get(s).getProperty("preset").split(" "),
 							controlFlow.get(s).getProperty("postset").split(" "));
@@ -222,16 +229,17 @@ public class Abstraction {
 			HashMap<String, boolean[]> samesets = new HashMap<String, boolean[]>();
 			for (String s : controlFlow.keySet()) {
 				for (String t : controlFlow.keySet()) {
+					if (!s.equals(t)) {
 					boolean samePreset = comparePreset(controlFlow.get(s), controlFlow.get(t));
 					boolean samePostset = comparePostset(controlFlow.get(s), controlFlow.get(t));
-					boolean assign = false;
-					if (enablings.containsKey(t)) {
-						assign = true;
+					boolean assign = true;
+					if (!enablings.containsKey(t)) {
+						assign = false;
 					}
 					if (!assign) {
 						for (HashMap<String, Properties> h : assignments) {
 							if (h.get(t) == null || h.get(t).keySet().isEmpty()) {
-								assign = true;
+								assign = false;
 							}
 						}
 					}
@@ -241,10 +249,11 @@ public class Abstraction {
 						combine.add(array);
 						samesets.put(s, same);
 					}
+					}
 				}
 			}
 			for (String[] s : combine) {
-				// log.addText("[5]Removing transition: " + s[1]);
+				System.out.println("[5]Removing transition: " + s[1] + s[0]);
 				change = true;
 				combineTransitions(s[0], s[1], samesets.get(s[0])[0], samesets.get(s[0])[1]);
 			}
@@ -253,18 +262,19 @@ public class Abstraction {
 			for (String s : controlFlow.keySet()) {
 				for (String t : controlFlow.keySet()) {
 					boolean transform = true;
+					if (!s.equals(t)) {
 					if (controlFlow.get(s).getProperty("preset") != null
 							&& controlFlow.get(t).getProperty("preset") != null) {
 						String[] preset1 = controlFlow.get(s).getProperty("preset").split(" ");
 						String[] preset2 = controlFlow.get(t).getProperty("preset").split(" ");
-						boolean assign = false;
-						if (enablings.containsKey(t)) {
-							assign = true;
+						boolean assign = true;
+						if (!enablings.containsKey(t)) {
+							assign = false;
 						}
 						if (!assign) {
 							for (HashMap<String, Properties> h : assignments) {
 								if (h.get(t) == null || h.get(t).keySet().isEmpty()) {
-									assign = true;
+									assign = false;
 								}
 							}
 						}
@@ -272,11 +282,13 @@ public class Abstraction {
 							for (String u : preset1) {
 								if (transform) {
 									for (String v : preset2) {
+										if (!u.equals(v)) {
 										Properties prop1 = controlPlaces.get(u);
 										Properties prop2 = controlPlaces.get(v);
 										if (!comparePostset(prop1, prop2)) {
 											transform = false;
 											break;
+										}
 										}
 									}
 								}
@@ -288,11 +300,13 @@ public class Abstraction {
 										.split(" ");
 								for (String u : postset1) {
 									for (String v : postset2) {
+										if (!u.equals(v)) {
 										Properties prop1 = controlPlaces.get(u);
 										Properties prop2 = controlPlaces.get(v);
 										if (!comparePreset(prop1, prop2)) {
 											transform = false;
 											break;
+										}
 										}
 									}
 								}
@@ -304,13 +318,31 @@ public class Abstraction {
 							// combineTransitions(s, t, true, true);
 						}
 					}
+					}
 				}
 			}
 			for (String[] s : combine) {
-				// log.addText("[5b]Removing transition: " + s[1]);
+				System.out.println("[5b]Removing transition: " + s[1] + s[0]);
 				change = true;
 				combineTransitions(s[0], s[1], true, true);
 			}
+			// Transform: Remove dead place
+			/*for (String s : controlPlaces.keySet()) {
+				boolean flag = false;
+				if (!controlPlaces.get(s).containsKey("preset") || controlPlaces.get(s).getProperty("preset") == null) {
+					flag = true;
+				}
+				else if (controlPlaces.get(s).getProperty("preset").equals("")) {
+					flag = true;
+				}
+				if (flag) {
+					String[] postset = controlPlaces.get(s).getProperty("postset").split(" ");
+					removePlace(s);
+					for (String t : postset) {
+						removeTransition(t);
+					}
+				}
+			}*/
 		}
 	}
 
@@ -408,7 +440,44 @@ public class Abstraction {
 	}
 	
 	public void abstractAssign() {
-		
+		for (String s : controlFlow.keySet()) {
+			String[] postset = controlFlow.get(s).getProperty("postset").split(" ");
+			for (String t : postset) {
+				String[] postTrans = controlPlaces.get(t).getProperty("postset").split(" ");
+				for (String u : postTrans) {
+					boolean flag = true;
+					for (Object o : contAssignments.get(u).keySet()) {
+						String key = o.toString();
+						if (!contAssignments.get(s).keySet().contains(key)) {
+							flag = false;
+						}
+					}
+					for (Object o : intAssignments.get(u).keySet()) {
+						String key = o.toString();
+						if (!intAssignments.get(s).keySet().contains(key)) {
+							flag = false;
+						}
+					}
+					for (Object o : booleanAssignments.get(u).keySet()) {
+						String key = o.toString();
+						if (!booleanAssignments.get(s).keySet().contains(key)) {
+							flag = false;
+						}
+					}
+					if (flag) {
+						for (Object o : contAssignments.get(u).keySet()) {
+							// Do transform
+						}
+						for (Object o : intAssignments.get(u).keySet()) {
+//							 Do transform
+						}
+						for (Object o : booleanAssignments.get(u).keySet()) {
+//							 Do transform
+						}
+					}
+				}
+			}
+		}
 	}
 
 	public void save(String filename) {
