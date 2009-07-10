@@ -1264,27 +1264,50 @@ public class LHPNFile {
 	}
 
 	public boolean addRateAssign(String transition, String name, String value) {
+		ExprTree[] expr = new ExprTree[2];
+		expr[0] = new ExprTree(this);
+		expr[1] = new ExprTree(this);
+		Pattern pattern = Pattern.compile("\\[(\\S+?),(\\S+?)\\]");
+		Matcher matcher = pattern.matcher(value);
+		if (matcher.find()) {
+			expr[0].token = expr[0].intexpr_gettok(matcher.group(1));
+			if (!matcher.group(1).equals("")) {
+				if (!expr[0].intexpr_L(matcher.group(1))) return false;
+			}
+			else {
+				expr[0] = null;
+			}
+			expr[1].token = expr[1].intexpr_gettok(matcher.group(2));
+			if (!matcher.group(2).equals("")) {
+				if (!expr[1].intexpr_L(matcher.group(2))) return false;
+			}
+			else {
+				expr[1] = null;
+			}
+		}
+		else {
+			expr[0].token = expr[0].intexpr_gettok(value);
+			if (!value.equals("")) {
+				if (!expr[0].intexpr_L(value)) return false;
+			}
+			else {
+				expr[0] = null;
+				expr[1] = null;
+			}
+		}
 		HashMap<String, ExprTree[]> map = new HashMap<String, ExprTree[]>();
 		if (rateAssignmentTrees.get(transition) != null) {
 			map = rateAssignmentTrees.get(transition);
 		}
-		ExprTree expr = new ExprTree(this);
-		expr.token = expr.intexpr_gettok(value);
-		if (!value.equals("")) {
-			if (!expr.intexpr_L(value))
-				return false;
-		}
-		else {
-			expr = null;
-		}
-		ExprTree[] array = { expr };
-		map.put(name, array);
+		map.put(name, expr);
 		rateAssignmentTrees.put(transition, map);
 		Properties prop = new Properties();
 		if (rateAssignments.get(transition) != null) {
 			prop = rateAssignments.get(transition);
 		}
+		// System.out.println("here " + transition + name + value);
 		prop.setProperty(name, value);
+		// log.addText("lhpn " + prop.toString());
 		rateAssignments.put(transition, prop);
 		return true;
 	}
