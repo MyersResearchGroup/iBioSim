@@ -6,7 +6,6 @@ import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
 
-import lhpn2sbml.gui.LHPNEditor;
 import lhpn2sbml.parser.LHPNFile;
 
 import biomodelsim.*;
@@ -386,7 +385,8 @@ public class Run implements ActionListener {
 					&& out.substring(out.length() - 4, out.length()).equals(".xml")) {
 				out = out.substring(0, out.length() - 4);
 			}
-			if (nary.isSelected() && !sim.equals("markov-chain-analysis") && !lhpn.isSelected() && naryRun == 1) {
+			if (nary.isSelected() && !sim.equals("markov-chain-analysis") && !lhpn.isSelected()
+					&& naryRun == 1) {
 				log.addText("Executing:\nreb2sac --target.encoding=nary-level " + filename + "\n");
 				time1 = System.nanoTime();
 				reb2sac = exec.exec("reb2sac --target.encoding=nary-level " + theFile, null, work);
@@ -507,29 +507,56 @@ public class Run implements ActionListener {
 					reb2sac = exec.exec("reb2sac --target.encoding=hse2 " + theFile, null, work);
 				}
 				else if (sim.equals("markov-chain-analysis")) {
-					new File(filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + ".lpn").delete();
-					gcmEditor.getGCM().createLogicalModel(filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + ".lpn", log,
-							biomodelsim, directory, theFile.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + ".lpn");
+					new File(filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "")
+							+ ".lpn").delete();
+					gcmEditor.getGCM().createLogicalModel(
+							filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "")
+									+ ".lpn",
+							log,
+							biomodelsim,
+							directory,
+							theFile.replace(".gcm", "").replace(".sbml", "").replace(".xml", "")
+									+ ".lpn");
 					LHPNFile lhpnFile = new LHPNFile();
-					while (new File(filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + ".lpn.temp").exists()) {
+					while (new File(filename.replace(".gcm", "").replace(".sbml", "").replace(
+							".xml", "")
+							+ ".lpn.temp").exists()) {
 					}
-					if (new File(filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + ".lpn").exists()) {
-						lhpnFile.load(filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + ".lpn");
+					if (new File(filename.replace(".gcm", "").replace(".sbml", "").replace(".xml",
+							"")
+							+ ".lpn").exists()) {
+						lhpnFile.load(filename.replace(".gcm", "").replace(".sbml", "").replace(
+								".xml", "")
+								+ ".lpn");
 						StateGraph sg = new StateGraph(lhpnFile);
 						log.addText("Performing Markov Chain analysis.");
 						sg.performMarkovianAnalysis();
-						sg.outputStateGraph(filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + ".dot", true);
+						sg.outputStateGraph(filename.replace(".gcm", "").replace(".sbml", "")
+								.replace(".xml", "")
+								+ ".dot", true);
 						if (System.getProperty("os.name").contentEquals("Linux")) {
-							log.addText("Executing:\ndotty " + filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + ".dot" + "\n");
-							exec.exec("dotty " + theFile.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + ".dot", null, work);
+							log.addText("Executing:\ndotty "
+									+ filename.replace(".gcm", "").replace(".sbml", "").replace(
+											".xml", "") + ".dot" + "\n");
+							exec.exec("dotty "
+									+ theFile.replace(".gcm", "").replace(".sbml", "").replace(
+											".xml", "") + ".dot", null, work);
 						}
 						else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
-							log.addText("Executing:\nopen " + filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + ".dot" + "\n");
-							exec.exec("open " + theFile.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + ".dot", null, work);
+							log.addText("Executing:\nopen "
+									+ filename.replace(".gcm", "").replace(".sbml", "").replace(
+											".xml", "") + ".dot" + "\n");
+							exec.exec("open "
+									+ theFile.replace(".gcm", "").replace(".sbml", "").replace(
+											".xml", "") + ".dot", null, work);
 						}
 						else {
-							log.addText("Executing:\ndotty " + filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + ".dot" + "\n");
-							exec.exec("dotty " + theFile.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + ".dot", null, work);
+							log.addText("Executing:\ndotty "
+									+ filename.replace(".gcm", "").replace(".sbml", "").replace(
+											".xml", "") + ".dot" + "\n");
+							exec.exec("dotty "
+									+ theFile.replace(".gcm", "").replace(".sbml", "").replace(
+											".xml", "") + ".dot", null, work);
 						}
 					}
 					time1 = System.nanoTime();
