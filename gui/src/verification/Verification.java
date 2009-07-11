@@ -58,7 +58,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 
 	private boolean change, atacs;
 	
-	private JTabbedPane bigTab;
+	//private JTabbedPane bigTab;
 
 	private PropertyList componentList;
 	
@@ -73,7 +73,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 	 * the input fields, puts them on panels, adds the panels to the frame, and
 	 * then displays the frame.
 	 */
-	public Verification(String directory, String verName, String filename, Log log, BioSim biosim, JTabbedPane bigTab,
+	public Verification(String directory, String verName, String filename, Log log, BioSim biosim,
 			boolean lema, boolean atacs) {
 		if (File.separator.equals("\\")) {
 			separator = "\\\\";
@@ -85,7 +85,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		this.biosim = biosim;
 		this.log = log;
 		this.directory = directory;
-		this.bigTab = bigTab;
+		//this.bigTab = bigTab;
 		// String[] getFilename = directory.split(separator);
 		verFile = verName + ".ver";
 		String[] tempArray = filename.split("\\.");
@@ -650,10 +650,14 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		advOptions.add(bddPanel);
 		advOptions.setLayout(new BoxLayout(advOptions, BoxLayout.Y_AXIS));
 		advOptions.add(Box.createVerticalGlue());
+		
+		abstPane = new AbstPane(root + separator + verName, this,
+				log, biosim, lema, atacs);
 
 		JTabbedPane tab = new JTabbedPane();
 		tab.addTab("Basic Options", basicOptions);
 		tab.addTab("Advanced Options", advOptions);
+		tab.addTab("Abstraction Options", abstPane);
 		tab.setPreferredSize(new Dimension(1000, 480));
 
 		this.setLayout(new BorderLayout());
@@ -739,7 +743,6 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 	public void run() {
 		if (simplify.isSelected() || abstractLhpn.isSelected()) {
 			copyFile();
-			abstPane = (AbstPane) (((JPanel) bigTab.getComponentAt(1)).getComponent(0));
 			LHPNFile lhpnFile = new LHPNFile();
 			lhpnFile.load(directory + separator + verifyFile);
 			Abstraction abstraction = lhpnFile.abstractLhpn();

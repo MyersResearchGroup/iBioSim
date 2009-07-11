@@ -2418,19 +2418,19 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						refreshTree();
 						// String work = root + separator + verName;
 						// log.addText(circuitFile);
-						JTabbedPane verTab = new JTabbedPane();
-						JPanel verPane = new JPanel();
+						//JTabbedPane verTab = new JTabbedPane();
+						//JPanel verPane = new JPanel();
 						Verification verify = new Verification(root + separator + verName, verName,
-								circuitFileNoPath, log, this, verTab, lema, atacs);
+								circuitFileNoPath, log, this, lema, atacs);
 						// verify.addMouseListener(this);
 						verify.save();
-						verPane.add(verify);
-						JPanel abstPane = new JPanel();
-						AbstPane abst = new AbstPane(root + separator + verName, verify,
-								circuitFileNoPath, log, this, lema, atacs);
-						abstPane.add(abst);
-						verTab.addTab("verify", verPane);
-						verTab.addTab("abstract", abstPane);
+						//verPane.add(verify);
+						//JPanel abstPane = new JPanel();
+						//AbstPane abst = new AbstPane(root + separator + verName, verify,
+						//		circuitFileNoPath, log, this, lema, atacs);
+						//abstPane.add(abst);
+						//verTab.addTab("verify", verPane);
+						//verTab.addTab("abstract", abstPane);
 						/*
 						 * JLabel noData = new JLabel("No data available"); Font
 						 * font = noData.getFont(); font =
@@ -2448,7 +2448,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						 * (lrnTab.getComponents().length -
 						 * 1).setName("TSD Graph");
 						 */
-						addTab(verName, verTab, "Verification");
+						addTab(verName, verify, "Verification");
 					}
 					// }
 					// catch (Exception e1) {
@@ -9046,9 +9046,9 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			}
 		}
 		if (!done) {
-			JPanel verPanel = new JPanel();
-			JPanel abstPanel = new JPanel();
-			JTabbedPane verTab = new JTabbedPane();
+			//JPanel verPanel = new JPanel();
+			//JPanel abstPanel = new JPanel();
+			//JPanel verTab = new JTabbedPane();
 			// String graphFile = "";
 			/*
 			 * if (new File(tree.getFile()).isDirectory()) { String[] list = new
@@ -9102,16 +9102,16 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			}
 			// if (!graphFile.equals("")) {
 			Verification ver = new Verification(root + separator + verName, verName, "flag", log,
-					this, verTab, lema, atacs);
+					this, lema, atacs);
 			// ver.addMouseListener(this);
-			verPanel.add(ver);
-			AbstPane abst = new AbstPane(root + separator + verName, ver, "flag", log, this, lema,
-					atacs);
-			abstPanel.add(abst);
-			verTab.add("verify", verPanel);
-			verTab.add("abstract", abstPanel);
+			//verPanel.add(ver);
+			//AbstPane abst = new AbstPane(root + separator + verName, ver, "flag", log, this, lema,
+			//		atacs);
+			//abstPanel.add(abst);
+			//verTab.add("verify", verPanel);
+			//verTab.add("abstract", abstPanel);
 			addTab(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],
-					verTab, "Verification");
+					ver, "Verification");
 		}
 	}
 
