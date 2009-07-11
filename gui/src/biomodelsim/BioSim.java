@@ -2943,6 +2943,9 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			else if (comp instanceof Graph) {
 				((Graph) comp).save();
 			}
+			else if (comp instanceof Verification) {
+				((Verification) comp).save();
+			}
 			else if (comp instanceof JTabbedPane) {
 				Component component = ((JTabbedPane) comp).getSelectedComponent();
 				int index = ((JTabbedPane) comp).getSelectedIndex();
@@ -2966,11 +2969,6 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				}
 				else if (component instanceof Reb2Sac) {
 					((Reb2Sac) component).save();
-				}
-				else if (comp.getName().equals("Verification")) {
-					Component comp1 = ((JTabbedPane) comp).getComponent(0);
-					Component[] array = ((JPanel) comp1).getComponents();
-					((Verification) array[0]).save();
 				}
 			}
 			if (comp instanceof JPanel) {
@@ -3038,15 +3036,13 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			else if (comp instanceof Graph) {
 				((Graph) comp).saveAs();
 			}
+			else if (comp instanceof Verification) {
+				((Verification) comp).saveAs();
+			}
 			else if (comp instanceof JTabbedPane) {
 				Component component = ((JTabbedPane) comp).getSelectedComponent();
 				if (component instanceof Graph) {
 					((Graph) component).saveAs();
-				}
-				else if (comp.getName().equals("Verification")) {
-					Component comp1 = ((JTabbedPane) comp).getComponent(0);
-					Component[] array = ((JPanel) comp1).getComponents();
-					((Verification) array[0]).saveAs();
 				}
 			}
 			else if (comp instanceof JPanel) {
@@ -3195,6 +3191,10 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				else if (component instanceof JScrollPane) {
 					((Reb2Sac) (((JTabbedPane) comp).getComponent(index))).getRunButton().doClick();
 				}
+			}
+			else if (comp instanceof Verification) {
+				((Verification) comp).save();
+				new Thread((Verification) comp).start();
 			}
 			else if (comp instanceof JPanel) {
 				if (comp.getName().equals("Verification")) {
