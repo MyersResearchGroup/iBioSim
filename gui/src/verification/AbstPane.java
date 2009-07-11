@@ -68,7 +68,7 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 	 * the input fields, puts them on panels, adds the panels to the frame, and
 	 * then displays the frame.
 	 */
-	public AbstPane(String directory, Verification verification, String filename, Log log,
+	public AbstPane(String directory, Verification verification, Log log,
 			BioSim biosim, boolean lema, boolean atacs) {
 		if (File.separator.equals("\\")) {
 			separator = "\\\\";
