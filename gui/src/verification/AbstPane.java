@@ -39,13 +39,13 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 
 	private JList species, intSpecies;
 
-	private DefaultListModel listModel;
+	public DefaultListModel listModel;
 
 	// private JLabel label;
 
 	// private JRadioButton radio;
 
-	private JCheckBox check;
+	// private JCheckBox check;
 
 	private JTextField field;
 
@@ -216,13 +216,21 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 	 */
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == addIntSpecies) {
-			listModel.addElement(intSpecies.getSelectedValue());
+			if (!listModel.contains(intSpecies.getSelectedValue())) {
+				listModel.addElement(intSpecies.getSelectedValue());
+			}
 		}
 		if (e.getSource() == removeIntSpecies) {
 			listModel.removeElement(species.getSelectedValue());
 		}
 		if (e.getSource() == clearIntSpecies) {
 			listModel.removeAllElements();
+		}
+	}
+	
+	public void addIntVar(String variable) {
+		if (!listModel.contains(variable)) {
+			listModel.addElement(variable);
 		}
 	}
 

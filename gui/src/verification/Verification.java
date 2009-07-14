@@ -359,6 +359,8 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				verifyFile = load.getProperty("verification.file");
 				// log.addText(verifyFile);
 			}
+			abstPane = new AbstPane(root + separator + verName, this,
+					log, biosim, lema, atacs);
 			if (load.containsKey("verification.bddSize")) {
 				bddSize.setText(load.getProperty("verification .bddSize"));
 			}
@@ -568,11 +570,21 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					reduction.setSelected(true);
 				}
 			}
+			if (load.containsKey("abstraction.interesting")) {
+				String intVars = load.getProperty("abstraction.interesting");
+				String[] array = intVars.split(" ");
+				for (String s : array) {
+					if (!s.equals("")) {
+						abstPane.addIntVar(s);
+					}
+				}
+			}
 			tempArray = verifyFile.split(separator);
 			sourceFileNoPath = tempArray[tempArray.length - 1];
 			backgroundField = new JTextField(sourceFileNoPath);
 		}
 		catch (Exception e) {
+			e.printStackTrace();
 			JOptionPane.showMessageDialog(biosim.frame(), "Unable to load properties file!",
 					"Error Loading Properties", JOptionPane.ERROR_MESSAGE);
 			// e.printStackTrace();
@@ -650,9 +662,6 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		advOptions.add(bddPanel);
 		advOptions.setLayout(new BoxLayout(advOptions, BoxLayout.Y_AXIS));
 		advOptions.add(Box.createVerticalGlue());
-		
-		abstPane = new AbstPane(root + separator + verName, this,
-				log, biosim, lema, atacs);
 
 		JTabbedPane tab = new JTabbedPane();
 		tab.addTab("Basic Options", basicOptions);
@@ -1500,6 +1509,13 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			}
 			else {
 				prop.setProperty("verification.reduction", "false");
+			}
+			String intVars = "";
+			for (int i = 0; i < abstPane.listModel.getSize(); i++) {
+				intVars = intVars + abstPane.listModel.getElementAt(i) + " ";
+			}
+			if (!intVars.equals("")) {
+				prop.setProperty("abstraction.interesting", intVars.trim());
 			}
 			FileOutputStream out = new FileOutputStream(new File(directory + separator + verFile));
 			prop.store(out, verifyFile);
