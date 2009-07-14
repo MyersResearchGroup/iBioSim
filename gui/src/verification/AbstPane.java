@@ -180,26 +180,26 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 		// load parameters
 		Properties load = new Properties();
 		// log.addText(directory + separator + verFile);
-		try {
-			FileInputStream in = new FileInputStream(new File(directory + separator + absFile));
-			load.load(in);
-			in.close();
-			if (load.containsKey("abstraction.interesting")) {
-				String intVars = load.getProperty("abstraction.interesting");
-				String[] array = intVars.split(" ");
-				for (String s : array) {
-					if (!s.equals("")) {
-						listModel.addElement(s);
-					}
-				}
-			}
-		}
-		catch (Exception e) {
-			JOptionPane.showMessageDialog(biosim.frame(), "Unable to load properties file!",
-					"Error Loading Properties", JOptionPane.ERROR_MESSAGE);
-			// e.printStackTrace();
-		}
-		save();
+//		try {
+//			FileInputStream in = new FileInputStream(new File(directory + separator + absFile));
+//			load.load(in);
+//			in.close();
+//			if (load.containsKey("abstraction.interesting")) {
+//				String intVars = load.getProperty("abstraction.interesting");
+//				String[] array = intVars.split(" ");
+//				for (String s : array) {
+//					if (!s.equals("")) {
+//						listModel.addElement(s);
+//					}
+//				}
+//			}
+//		}
+//		catch (Exception e) {
+//			JOptionPane.showMessageDialog(biosim.frame(), "Unable to load properties file!",
+//					"Error Loading Properties", JOptionPane.ERROR_MESSAGE);
+//			// e.printStackTrace();
+//		}
+//		save();
 
 		// this.setLayout(new BorderLayout());
 		this.add(advanced);

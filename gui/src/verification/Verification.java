@@ -53,15 +53,15 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 	private ButtonGroup timingMethodGroup, algorithmGroup, abstractionGroup;
 
 	private String directory, separator, root, verFile, oldBdd, sourceFileNoPath;
-	
+
 	public String verifyFile;
 
 	private boolean change, atacs;
-	
-	//private JTabbedPane bigTab;
+
+	// private JTabbedPane bigTab;
 
 	private PropertyList componentList;
-	
+
 	private AbstPane abstPane;
 
 	private Log log;
@@ -85,7 +85,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		this.biosim = biosim;
 		this.log = log;
 		this.directory = directory;
-		//this.bigTab = bigTab;
+		// this.bigTab = bigTab;
 		// String[] getFilename = directory.split(separator);
 		verFile = verName + ".ver";
 		String[] tempArray = filename.split("\\.");
@@ -359,8 +359,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				verifyFile = load.getProperty("verification.file");
 				// log.addText(verifyFile);
 			}
-			abstPane = new AbstPane(root + separator + verName, this,
-					log, biosim, lema, atacs);
+			abstPane = new AbstPane(root + separator + verName, this, log, biosim, lema, atacs);
 			if (load.containsKey("verification.bddSize")) {
 				bddSize.setText(load.getProperty("verification .bddSize"));
 			}
@@ -775,9 +774,9 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			// String[] vars = null;
 			String abstFilename;
 			if (lhpn.isSelected()) {
-			abstFilename = (String) JOptionPane.showInputDialog(this,
-					"Please enter the file name for the abstracted LHPN.", "Enter Filename",
-					JOptionPane.PLAIN_MESSAGE);
+				abstFilename = (String) JOptionPane.showInputDialog(this,
+						"Please enter the file name for the abstracted LHPN.", "Enter Filename",
+						JOptionPane.PLAIN_MESSAGE);
 			}
 			else {
 				abstFilename = verifyFile.replace(".lpn", "_abs.lpn");
@@ -785,30 +784,30 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			if (abstFilename != null) {
 				if (!abstFilename.endsWith(".lpn"))
 					abstFilename = abstFilename + ".lpn";
-				//String[] options = { "Ok", "Cancel" };
-				//JPanel panel = new JPanel();
-				//panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-				//JCheckBox[] list = new JCheckBox[variables.length];
-				//ArrayList<String> tempVars = new ArrayList<String>();
-				//for (int i = 0; i < variables.length; i++) {
-				//	JCheckBox temp = new JCheckBox(variables[i]);
-				//	panel.add(temp);
-				//	list[i] = temp;
-				//}
-				//int value = JOptionPane.showOptionDialog(new JFrame(), panel,
-				//		"Variable Assignment Editor", JOptionPane.YES_NO_OPTION,
-				//		JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-				//if (value == JOptionPane.YES_OPTION) {
-				//	for (int i = 0; i < list.length; i++) {
-				//		if (list[i].isSelected()) {
-				//			tempVars.add(variables[i]);
-				//		}
-				//	}
-				//	String[] vars = new String[tempVars.size()];
-				//	for (int i = 0; i < tempVars.size(); i++) {
-				//		vars[i] = tempVars.get(i);
-				//	}	
-				//}
+				// String[] options = { "Ok", "Cancel" };
+				// JPanel panel = new JPanel();
+				// panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+				// JCheckBox[] list = new JCheckBox[variables.length];
+				// ArrayList<String> tempVars = new ArrayList<String>();
+				// for (int i = 0; i < variables.length; i++) {
+				// JCheckBox temp = new JCheckBox(variables[i]);
+				// panel.add(temp);
+				// list[i] = temp;
+				// }
+				// int value = JOptionPane.showOptionDialog(new JFrame(), panel,
+				// "Variable Assignment Editor", JOptionPane.YES_NO_OPTION,
+				// JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+				// if (value == JOptionPane.YES_OPTION) {
+				// for (int i = 0; i < list.length; i++) {
+				// if (list[i].isSelected()) {
+				// tempVars.add(variables[i]);
+				// }
+				// }
+				// String[] vars = new String[tempVars.size()];
+				// for (int i = 0; i < tempVars.size(); i++) {
+				// vars[i] = tempVars.get(i);
+				// }
+				// }
 				abstraction.abstractVars(abstPane.getIntVars());
 				abstraction.abstractSTG();
 				String[] array = directory.split(separator);
@@ -817,15 +816,15 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					tempDir = tempDir + array[i] + separator;
 				}
 				if (lhpn.isSelected()) {
-				abstraction.save(tempDir + separator + abstFilename);
-				biosim.refreshTree();
+					abstraction.save(tempDir + separator + abstFilename);
+					biosim.refreshTree();
 				}
 				else if (view.isSelected()) {
 					abstraction.save(directory + separator + abstFilename);
 					File work = new File(directory + separator);
 					try {
 						Runtime exec = Runtime.getRuntime();
-						Process makeDot = exec.exec("atacs -cPllodsl " + abstFilename, null, work);
+						Process makeDot = exec.exec("atacs -cPllodpl " + abstFilename, null, work);
 						makeDot.waitFor();
 						String dotName = abstFilename.replace(".lpn", ".dot");
 						if (new File(directory + separator + dotName).exists()) {
@@ -833,12 +832,15 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 							if (System.getProperty("os.name").contentEquals("Linux")) {
 								command = "gnome-open ";
 							}
-							else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
-								// directory = System.getenv("BIOSIM") + "/docs/";
+							else if (System.getProperty("os.name").toLowerCase().startsWith(
+									"mac os")) {
+								// directory = System.getenv("BIOSIM") +
+								// "/docs/";
 								command = "open ";
 							}
 							else {
-								// directory = System.getenv("BIOSIM") + "\\docs\\";
+								// directory = System.getenv("BIOSIM") +
+								// "\\docs\\";
 								command = "dotty ";
 							}
 							Process dot = exec.exec(command + dotName, null, work);
@@ -910,11 +912,11 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			}
 			tempArray = verifyFile.split(separator);
 			String sourceFile = tempArray[tempArray.length - 1];
-			//String[] workArray = directory.split(separator);
-			//String workDir = "";
-			//for (int i = 0; i < (workArray.length - 1); i++) {
-			//workDir = workDir + workArray[i] + separator;
-			//}
+			// String[] workArray = directory.split(separator);
+			// String workDir = "";
+			// for (int i = 0; i < (workArray.length - 1); i++) {
+			// workDir = workDir + workArray[i] + separator;
+			// }
 			// log.addText("copy to " + directory + separator + sourceFile);
 			// log.addText("copy from " + workDir + separator + sourceFile);
 			String options = "";
@@ -1708,7 +1710,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		}
 		return change;
 	}
-	
+
 	public void copyFile() {
 		String[] tempArray = verifyFile.split(separator);
 		String sourceFile = tempArray[tempArray.length - 1];
@@ -1721,8 +1723,8 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			File newFile = new File(directory + separator + sourceFile);
 			newFile.createNewFile();
 			FileOutputStream copyin = new FileOutputStream(newFile);
-			FileInputStream copyout = new FileInputStream(new File(workDir + separator
-					+ sourceFile));
+			FileInputStream copyout = new FileInputStream(
+					new File(workDir + separator + sourceFile));
 			int read = copyout.read();
 			// System.out.println(read);
 			while (read != -1) {
@@ -1739,10 +1741,10 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					"Copy Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
-	
+
 	public String getVerName() {
 		String verName = verFile.replace(".ver", "");
 		return verName;
 	}
-	
+
 }
