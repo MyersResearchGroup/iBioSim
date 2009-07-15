@@ -1527,6 +1527,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			oldBdd = bddSize.getText();
 		}
 		catch (Exception e1) {
+			e1.printStackTrace();
 			JOptionPane.showMessageDialog(biosim.frame(), "Unable to save parameter file!",
 					"Error Saving File", JOptionPane.ERROR_MESSAGE);
 		}
