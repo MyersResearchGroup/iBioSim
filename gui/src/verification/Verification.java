@@ -1514,7 +1514,9 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			}
 			String intVars = "";
 			for (int i = 0; i < abstPane.listModel.getSize(); i++) {
-				intVars = intVars + abstPane.listModel.getElementAt(i) + " ";
+				if (abstPane.listModel.getElementAt(i) != null) {
+					intVars = intVars + abstPane.listModel.getElementAt(i) + " ";
+				}
 			}
 			if (!intVars.equals("")) {
 				prop.setProperty("abstraction.interesting", intVars.trim());
