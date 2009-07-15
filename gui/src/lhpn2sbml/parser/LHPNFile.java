@@ -1666,6 +1666,11 @@ public class LHPNFile {
 		return true;
 	}
 
+	public void changeInitialMarking(String p,boolean ic){  // SB
+		places.remove(p);
+		places.put(p, ic);
+	}
+	
 	public String[] getAllIDs() {
 		String[] allVariables = new String[variables.size() + integers.size() + inputs.size()
 				+ outputs.size() + delays.size() + places.size()];
@@ -1793,7 +1798,7 @@ public class LHPNFile {
 		}
 		return retString.split("\\n");
 	}
-
+/*
 	public String[] getPreset(String node) {
 		if (isTransition(node)) {
 			if (controlFlow.get(node).containsKey("preset")) {
@@ -1812,7 +1817,33 @@ public class LHPNFile {
 			}
 		}
 	}
-
+*/
+	public String[] getPreset(String node) {
+		if (isTransition(node)) {
+			if (controlFlow.get(node).containsKey("preset")) {
+				return controlFlow.get(node).getProperty("preset").split(" ");
+			}
+			else {
+				return new String[0];
+			}
+		}
+		else if (controlPlaces.get(node).containsKey("preset")) {
+				return controlPlaces.get(node).getProperty("preset").split(" ");
+		}
+		else {
+			Pattern p = Pattern.compile(node);
+			for (String st: getTransitionList()){
+				Matcher matcher = p.matcher(st);
+				if (matcher.find()){
+					String[] pre_trans = new String[0];
+					pre_trans[0] = st;
+					return pre_trans;
+				}
+			}
+			return new String[0];
+			
+		}
+	}
 	public String[] getPostset(String node) {
 		if (isTransition(node)) {
 			if (controlFlow.get(node).containsKey("postset")) {
