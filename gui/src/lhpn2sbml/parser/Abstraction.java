@@ -376,7 +376,7 @@ public class Abstraction {
 
 	public void abstractVars(String[] intVars) {
 		String[] vars = new String[variables.size() + inputs.size() + outputs.size()
-				+ variables.size() - intVars.length];
+				+ integers.size() - intVars.length];
 		int i = 0;
 		for (String s : variables.keySet()) {
 			boolean flag = false;

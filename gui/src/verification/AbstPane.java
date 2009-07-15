@@ -311,7 +311,9 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 	public String[] getIntVars() {
 		String[] intVars = new String[listModel.getSize()];
 		for (int i = 0; i < listModel.getSize(); i++) {
-			intVars[i] = listModel.elementAt(i).toString();
+			if (listModel.elementAt(i) != null) {
+				intVars[i] = listModel.elementAt(i).toString();
+			}
 		}
 		return intVars;
 	}
