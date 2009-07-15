@@ -119,7 +119,7 @@ public class Abstraction {
 				}
 			}
 			for (String[] a : merge) {
-				//System.out.println("Transform 0");
+				// System.out.println("Transform 0");
 				change = true;
 				combinePlaces(a[0], a[1]);
 			}
@@ -131,7 +131,7 @@ public class Abstraction {
 					String[] preset = controlPlaces.get(s).getProperty("preset").split(" ");
 					String[] postset = controlPlaces.get(s).getProperty("postset").split(" ");
 					if (preset.length == 1 && postset.length == 1) {
-						if (preset[0].equals(postset[0])) {
+						if (preset[0].equals(postset[0]) && !places.get(s)) {
 							remove.add(s);
 						}
 						else {
@@ -141,7 +141,7 @@ public class Abstraction {
 				}
 			}
 			for (String s : remove) {
-				//System.out.println("Transform 1");
+				// System.out.println("Transform 1");
 				change = true;
 				removePlace(s);
 			}
@@ -177,16 +177,19 @@ public class Abstraction {
 			}
 			for (String s : remove) {
 				// if (s != null) {
-				//System.out.println("[3]Removing transition: " + s);
+				// System.out.println("[3]Removing transition: " + s);
 				// }
-				change = true;
 				// System.out.println("s: " + s);
 				// System.out.println("preset: " +
 				// controlFlow.get(s).getProperty("preset"));
 				// System.out.println("postset: " +
 				// controlFlow.get(s).getProperty("postset"));
-				removeTrans3(s, controlFlow.get(s).getProperty("preset").split(" "), controlFlow
-						.get(s).getProperty("postset").split(" "));
+				if (controlFlow.get(s).containsKey("preset")
+						&& controlFlow.get(s).containsKey("postset")) {
+					removeTrans3(s, controlFlow.get(s).getProperty("preset").split(" "),
+							controlFlow.get(s).getProperty("postset").split(" "));
+					change = true;
+				}
 			}
 			// Transform 4 - Remove a Transition with a Single Place in the
 			// Preset
@@ -219,7 +222,7 @@ public class Abstraction {
 			}
 			for (String s : remove) {
 				if (controlFlow.get(s) != null) {
-					//System.out.println("[4]Removing transition: " + s);
+					// System.out.println("[4]Removing transition: " + s);
 					change = true;
 					removeTrans4(s, controlFlow.get(s).getProperty("preset").split(" "),
 							controlFlow.get(s).getProperty("postset").split(" "));
@@ -251,29 +254,35 @@ public class Abstraction {
 							combine.add(array);
 							samesets.put(s, same);
 						}
-						else if (samePreset) {
+						else if (samePreset && controlFlow.get(s).containsKey("postset") && controlFlow.get(t).containsKey("postset")) {					
 							String[] postset1 = controlFlow.get(s).getProperty("postset")
 									.split(" ");
 							String[] postset2 = controlFlow.get(t).getProperty("postset")
 									.split(" ");
 							if (postset1.length == 1 && postset2.length == 1) {
-								comparePreset(controlPlaces.get(postset1[0]), controlPlaces
-										.get(postset2[0]), s, t);
+								if (comparePreset(controlPlaces.get(postset1[0]), controlPlaces
+										.get(postset2[0]), s, t)) {
+									String[] array = {s, t};
+									combine.add(array);
+								}
 							}
 						}
-						else if (samePostset) {
+						else if (samePostset && controlFlow.get(s).containsKey("preset") && controlFlow.get(t).containsKey("postset")) {
 							String[] preset1 = controlFlow.get(s).getProperty("preset").split(" ");
 							String[] preset2 = controlFlow.get(t).getProperty("preset").split(" ");
 							if (preset1.length == 1 && preset2.length == 1) {
-								comparePostset(controlPlaces.get(preset1[0]), controlPlaces
-										.get(preset2[0]), s, t);
+								if (comparePostset(controlPlaces.get(preset1[0]), controlPlaces
+										.get(preset2[0]), s, t)) {
+									String[] array = {s, t};
+									combine.add(array);
+								}
 							}
 						}
 					}
 				}
 			}
 			for (String[] s : combine) {
-				//System.out.println("[5]Removing transition: " + s[1] + s[0]);
+				// System.out.println("[5]Removing transition: " + s[1] + s[0]);
 				change = true;
 				combineTransitions(s[0], s[1], samesets.get(s[0])[0], samesets.get(s[0])[1]);
 			}
@@ -313,7 +322,7 @@ public class Abstraction {
 										}
 									}
 								}
-								if (transform) {
+								if (transform && controlFlow.get(s).containsKey("postset") && controlFlow.get(t).containsKey("postset")) {
 									String[] postset1 = controlFlow.get(s).getProperty("postset")
 											.split(" ");
 									String[] postset2 = controlFlow.get(t).getProperty("postset")
@@ -342,9 +351,14 @@ public class Abstraction {
 				}
 			}
 			for (String[] s : combine) {
-				//System.out.println("[5b]Removing transition: " + s[1] + s[0]);
+				// System.out.println("[5b]Removing transition: " + s[1] +
+				// s[0]);
+				if (controlFlow.containsKey(s[0]) && controlFlow.containsKey(s[1])) {
+				if (controlFlow.get(s[0]).containsKey("preset") && controlFlow.get(s[0]).containsKey("postset") && controlFlow.get(s[1]).containsKey("preset") && controlFlow.get(s[1]).containsKey("postset")) {
 				change = true;
 				combineTransitions(s[0], s[1], true, true);
+				}
+				}
 			}
 			// Transform: Remove dead place
 			/*
@@ -934,7 +948,7 @@ public class Abstraction {
 	}
 
 	private void combinePlaces(String place1, String place2) {
-		//System.out.println(place1 + place2);
+		// System.out.println(place1 + place2);
 		String newPlace = new String();
 		newPlace = place1;
 		for (String s : controlFlow.keySet()) {
@@ -1089,10 +1103,16 @@ public class Abstraction {
 		// Add delays
 		String[] oldDelay = new String[2];
 		Pattern rangePattern = Pattern.compile(RANGE);
+		if (delays.containsKey(transition)) {
 		Matcher rangeMatcher = rangePattern.matcher(delays.get(transition));
 		if (rangeMatcher.find()) {
 			oldDelay[0] = rangeMatcher.group(1);
 			oldDelay[1] = rangeMatcher.group(2);
+		}
+		}
+		else {
+			oldDelay[0] = "0";
+			oldDelay[1] = "0";
 		}
 		for (String t : postset) {
 			if (delays.get(t) != null) {
