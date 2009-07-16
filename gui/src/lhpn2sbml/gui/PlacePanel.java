@@ -138,8 +138,10 @@ public class PlacePanel extends JPanel implements ActionListener {
 			lhpn.addPlace(id, ic);
 			//lhpn.renamePlace(oldName, id, ic);
 			for (String s : placeList.getItems()) {
-				if (s.startsWith(oldName)) {
-					placeList.removeItem(s);
+				if (oldName != null) {
+					if (s.startsWith(oldName)) {
+						placeList.removeItem(s);
+					}
 				}
 			}
 			//placeList.removeItem(oldName);
