@@ -254,7 +254,8 @@ public class Abstraction {
 							combine.add(array);
 							samesets.put(s, same);
 						}
-						else if (samePreset && controlFlow.get(s).containsKey("postset") && controlFlow.get(t).containsKey("postset")) {					
+						else if (samePreset && controlFlow.get(s).containsKey("postset")
+								&& controlFlow.get(t).containsKey("postset")) {
 							String[] postset1 = controlFlow.get(s).getProperty("postset")
 									.split(" ");
 							String[] postset2 = controlFlow.get(t).getProperty("postset")
@@ -262,18 +263,19 @@ public class Abstraction {
 							if (postset1.length == 1 && postset2.length == 1) {
 								if (comparePreset(controlPlaces.get(postset1[0]), controlPlaces
 										.get(postset2[0]), s, t)) {
-									String[] array = {s, t};
+									String[] array = { s, t };
 									combine.add(array);
 								}
 							}
 						}
-						else if (samePostset && controlFlow.get(s).containsKey("preset") && controlFlow.get(t).containsKey("postset")) {
+						else if (samePostset && controlFlow.get(s).containsKey("preset")
+								&& controlFlow.get(t).containsKey("postset")) {
 							String[] preset1 = controlFlow.get(s).getProperty("preset").split(" ");
 							String[] preset2 = controlFlow.get(t).getProperty("preset").split(" ");
 							if (preset1.length == 1 && preset2.length == 1) {
 								if (comparePostset(controlPlaces.get(preset1[0]), controlPlaces
 										.get(preset2[0]), s, t)) {
-									String[] array = {s, t};
+									String[] array = { s, t };
 									combine.add(array);
 								}
 							}
@@ -322,7 +324,8 @@ public class Abstraction {
 										}
 									}
 								}
-								if (transform && controlFlow.get(s).containsKey("postset") && controlFlow.get(t).containsKey("postset")) {
+								if (transform && controlFlow.get(s).containsKey("postset")
+										&& controlFlow.get(t).containsKey("postset")) {
 									String[] postset1 = controlFlow.get(s).getProperty("postset")
 											.split(" ");
 									String[] postset2 = controlFlow.get(t).getProperty("postset")
@@ -354,10 +357,13 @@ public class Abstraction {
 				// System.out.println("[5b]Removing transition: " + s[1] +
 				// s[0]);
 				if (controlFlow.containsKey(s[0]) && controlFlow.containsKey(s[1])) {
-				if (controlFlow.get(s[0]).containsKey("preset") && controlFlow.get(s[0]).containsKey("postset") && controlFlow.get(s[1]).containsKey("preset") && controlFlow.get(s[1]).containsKey("postset")) {
-				change = true;
-				combineTransitions(s[0], s[1], true, true);
-				}
+					if (controlFlow.get(s[0]).containsKey("preset")
+							&& controlFlow.get(s[0]).containsKey("postset")
+							&& controlFlow.get(s[1]).containsKey("preset")
+							&& controlFlow.get(s[1]).containsKey("postset")) {
+						change = true;
+						combineTransitions(s[0], s[1], true, true);
+					}
 				}
 			}
 			// Transform: Remove dead place
@@ -1054,6 +1060,7 @@ public class Abstraction {
 
 	private void removeTrans3(String transition, String[] preset, String[] postset) {
 		String place = postset[0];
+		boolean marked = places.get(place);
 		// preset = controlFlow.get(transition).getProperty("preset").split("
 		// ");
 		postset = controlPlaces.get(postset[0]).getProperty("postset").split(" ");
@@ -1103,26 +1110,32 @@ public class Abstraction {
 		// Add delays
 		String[] oldDelay = new String[2];
 		Pattern rangePattern = Pattern.compile(RANGE);
-		if (delays.containsKey(transition)) {
 		Matcher rangeMatcher = rangePattern.matcher(delays.get(transition));
 		if (rangeMatcher.find()) {
 			oldDelay[0] = rangeMatcher.group(1);
 			oldDelay[1] = rangeMatcher.group(2);
 		}
-		}
-		else {
-			oldDelay[0] = "0";
-			oldDelay[1] = "0";
-		}
+		ArrayList list = new ArrayList<String>();
 		for (String t : postset) {
+			if (controlPlaces.get(t).containsKey("postset")) {
+				for (String u : controlPlaces.get(t).getProperty("postset").split(" ")) {
+					list.add(u);
+				}
+			}
+		}
+		Object[] postTrans = list.toArray();
+		for (Object o : postTrans) {
+			String t = o.toString();
 			if (delays.get(t) != null) {
 				Matcher newMatcher = rangePattern.matcher(delays.get(t));
 				if (newMatcher.find()) {
 					String newDelay[] = { newMatcher.group(1), newMatcher.group(2) };
 					for (int i = 0; i < newDelay.length; i++) {
 						if (!oldDelay[i].equals("inf") && !newDelay[i].equals("inf")) {
-							newDelay[i] = String.valueOf(Integer.parseInt(newDelay[i])
-									+ Integer.parseInt(oldDelay[i]));
+							if (i!=0 || !marked) {
+								newDelay[i] = String.valueOf(Integer.parseInt(newDelay[i])
+										+ Integer.parseInt(oldDelay[i]));
+							}
 						}
 						else {
 							newDelay[i] = "inf";
@@ -1193,21 +1206,32 @@ public class Abstraction {
 			oldDelay[0] = rangeMatcher.group(1);
 			oldDelay[1] = rangeMatcher.group(2);
 		}
+		HashMap<String, Boolean> postTrans = new HashMap<String, Boolean>();
 		for (String t : postset) {
+			if (controlPlaces.get(t).containsKey("postset")) {
+				for (String u : controlPlaces.get(t).getProperty("postset").split(" ")) {
+					postTrans.put(u, places.get(t));
+				}
+			}
+		}
+		for (Object o : postTrans.keySet()) {
+			String t = o.toString();
 			if (delays.get(t) != null) {
 				Matcher newMatcher = rangePattern.matcher(delays.get(t));
 				if (newMatcher.find()) {
 					String newDelay[] = { newMatcher.group(1), newMatcher.group(2) };
 					for (int i = 0; i < newDelay.length; i++) {
 						if (!oldDelay[i].equals("inf") && !newDelay[i].equals("inf")) {
-							newDelay[i] = String.valueOf(Integer.parseInt(newDelay[i])
-									+ Integer.parseInt(oldDelay[i]));
+							if (i!=0 || !postTrans.get(t)) {
+								newDelay[i] = String.valueOf(Integer.parseInt(newDelay[i])
+										+ Integer.parseInt(oldDelay[i]));
+							}
 						}
 						else {
 							newDelay[i] = "inf";
 						}
 					}
-					delays.put(transition, "[" + newDelay[0] + "," + newDelay[1] + "]");
+					delays.put(t, "[" + newDelay[0] + "," + newDelay[1] + "]");
 				}
 			}
 		}
