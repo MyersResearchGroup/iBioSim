@@ -749,11 +749,25 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 	}
 
 	public void run() {
+		//copyFile();
+		String[] array = directory.split(separator);
+		String tempDir = "";
+		for (int i = 0; i < array.length - 1; i++) {
+			tempDir = tempDir + array[i] + separator;
+		}
+		LHPNFile lhpnFile = new LHPNFile();
+		lhpnFile.load(tempDir + separator + verifyFile);
+		Abstraction abstraction = lhpnFile.abstractLhpn();
+		String abstFilename;
+		if (lhpn.isSelected()) {
+			abstFilename = (String) JOptionPane.showInputDialog(this,
+					"Please enter the file name for the abstracted LHPN.", "Enter Filename",
+					JOptionPane.PLAIN_MESSAGE);
+		}
+		else {
+			abstFilename = verifyFile.replace(".lpn", "_abs.lpn");
+		}
 		if (simplify.isSelected() || abstractLhpn.isSelected()) {
-			copyFile();
-			LHPNFile lhpnFile = new LHPNFile();
-			lhpnFile.load(directory + separator + verifyFile);
-			Abstraction abstraction = lhpnFile.abstractLhpn();
 			String[] boolVars = lhpnFile.getBooleanVars();
 			String[] contVars = lhpnFile.getContVars();
 			String[] intVars = lhpnFile.getIntVars();
@@ -772,15 +786,6 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				k++;
 			}
 			// String[] vars = null;
-			String abstFilename;
-			if (lhpn.isSelected()) {
-				abstFilename = (String) JOptionPane.showInputDialog(this,
-						"Please enter the file name for the abstracted LHPN.", "Enter Filename",
-						JOptionPane.PLAIN_MESSAGE);
-			}
-			else {
-				abstFilename = verifyFile.replace(".lpn", "_abs.lpn");
-			}
 			if (abstFilename != null) {
 				if (!abstFilename.endsWith(".lpn"))
 					abstFilename = abstFilename + ".lpn";
@@ -810,50 +815,13 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				// }
 				abstraction.abstractVars(abstPane.getIntVars());
 				abstraction.abstractSTG();
-				String[] array = directory.split(separator);
-				String tempDir = "";
-				for (int i = 0; i < array.length - 1; i++) {
-					tempDir = tempDir + array[i] + separator;
-				}
-				if (lhpn.isSelected()) {
-					abstraction.save(tempDir + separator + abstFilename);
-					biosim.refreshTree();
-				}
-				else if (view.isSelected()) {
-					abstraction.save(directory + separator + abstFilename);
-					File work = new File(directory + separator);
-					try {
-						Runtime exec = Runtime.getRuntime();
-						Process makeDot = exec.exec("atacs -cPllodpl " + abstFilename, null, work);
-						makeDot.waitFor();
-						String dotName = abstFilename.replace(".lpn", ".dot");
-						if (new File(directory + separator + dotName).exists()) {
-							String command;
-							if (System.getProperty("os.name").contentEquals("Linux")) {
-								command = "gnome-open ";
-							}
-							else if (System.getProperty("os.name").toLowerCase().startsWith(
-									"mac os")) {
-								// directory = System.getenv("BIOSIM") +
-								// "/docs/";
-								command = "open ";
-							}
-							else {
-								// directory = System.getenv("BIOSIM") +
-								// "\\docs\\";
-								command = "dotty ";
-							}
-							Process dot = exec.exec(command + dotName, null, work);
-							log.addText(command + dotName + "\n");
-							dot.waitFor();
-						}
-					}
-					catch (Exception e) {
-						e.printStackTrace();
-					}
-				}
-				return;
 			}
+			if (!lhpn.isSelected() && !view.isSelected()) {
+				abstraction.save(directory + separator + verifyFile);
+			}
+		}
+		if (!lhpn.isSelected() && !view.isSelected()) {
+			abstraction.save(directory + separator + verifyFile);
 		}
 		if (!lhpn.isSelected() && !view.isSelected()) {
 			// String command = "/home/shang/kjones/atacs/bin/atacs -";
@@ -1263,6 +1231,44 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			catch (Exception e) {
 				JOptionPane.showMessageDialog(biosim.frame(), "Unable to verify model.", "Error",
 						JOptionPane.ERROR_MESSAGE);
+			}
+		}
+		else {
+			if (lhpn.isSelected()) {
+				abstraction.save(tempDir + separator + abstFilename);
+				biosim.refreshTree();
+			}
+			else if (view.isSelected()) {
+				abstraction.save(directory + separator + abstFilename);
+				File work = new File(directory + separator);
+				try {
+					Runtime exec = Runtime.getRuntime();
+					Process makeDot = exec.exec("atacs -cPllodpl " + abstFilename, null, work);
+					makeDot.waitFor();
+					String dotName = abstFilename.replace(".lpn", ".dot");
+					if (new File(directory + separator + dotName).exists()) {
+						String command;
+						if (System.getProperty("os.name").contentEquals("Linux")) {
+							command = "gnome-open ";
+						}
+						else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
+							// directory = System.getenv("BIOSIM") +
+							// "/docs/";
+							command = "open ";
+						}
+						else {
+							// directory = System.getenv("BIOSIM") +
+							// "\\docs\\";
+							command = "dotty ";
+						}
+						Process dot = exec.exec(command + dotName, null, work);
+						log.addText(command + dotName + "\n");
+						dot.waitFor();
+					}
+				}
+				catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 		}
 	}
