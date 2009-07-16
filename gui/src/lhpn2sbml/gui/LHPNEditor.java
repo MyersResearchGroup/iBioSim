@@ -369,9 +369,9 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 				lhpnFile.removeVar(var);
 			}
 			else if (getName().contains("Place")) {
-				String name = list.getSelectedValue().toString();
-				String[] array = name.split(" ");
-				name = array[0];
+				String id = list.getSelectedValue().toString();
+				String[] array = id.split(" ");
+				String name = array[0];
 				if (lhpnFile.containsFlow(name)) {
 					JOptionPane.showMessageDialog(this, "Must remove " + name
 							+ " from control flow", "Cannot remove place " + name,
@@ -379,7 +379,7 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 					return;
 				}
 				lhpnFile.removePlace(name);
-				places.removeItem(name);
+				places.removeItem(id);
 			}
 			else if (getName().contains("Transition")) {
 				String name = list.getSelectedValue().toString();
@@ -393,10 +393,12 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 				transitions.removeItem(name);
 			}
 			else if (getName().contains("Movement")) {
-				String tempString = list.getSelectedValue().toString();
-				String[] tempArray = tempString.split("\\s");
-				lhpnFile.removeControlFlow(tempArray[0], tempArray[1]);
-				controlFlow.removeItem(tempString);
+				if (list.getSelectedValue()!=null) {
+					String tempString = list.getSelectedValue().toString();
+					String[] tempArray = tempString.split("\\s");
+					lhpnFile.removeControlFlow(tempArray[0], tempArray[1]);
+					controlFlow.removeItem(tempString);
+				}
 			}
 		}
 
