@@ -864,7 +864,7 @@ public class LHPNFile {
 			}
 			propTrans.setProperty("preset", list);
 			controlFlow.put(toName, propTrans);
-			propPlace.setProperty("postset", list);
+			propPlace.setProperty("postset", placeList);
 			controlPlaces.put(fromName, propPlace);
 		}
 	}
