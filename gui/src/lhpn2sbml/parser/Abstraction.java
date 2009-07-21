@@ -4,8 +4,7 @@ package lhpn2sbml.parser;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
-import java.util.*;
-//import java.util.regex.Matcher;
+import java.util.*; //import java.util.regex.Matcher;
 //import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -317,7 +316,7 @@ public class Abstraction {
 								for (HashMap<String, Properties> h : assignments) {
 									if (h.get(t) != null) {
 										if (!h.get(t).keySet().isEmpty()) {
-										assign = true;
+											assign = true;
 										}
 									}
 								}
@@ -330,10 +329,10 @@ public class Abstraction {
 												Properties prop1 = controlPlaces.get(u);
 												Properties prop2 = controlPlaces.get(v);
 												if (prop1 != null && prop2 != null) {
-												if (!comparePreset(prop1, prop2)) {
-													transform = false;
-													break;
-												}
+													if (!comparePreset(prop1, prop2)) {
+														transform = false;
+														break;
+													}
 												}
 											}
 										}
@@ -390,7 +389,8 @@ public class Abstraction {
 			 * (controlPlaces.get(s).getProperty("preset").equals("")) { flag =
 			 * true; } if (flag) { String[] postset =
 			 * controlPlaces.get(s).getProperty("postset").split(" ");
-			 * removePlace(s); for (String t : postset) { removeTransition(t); } } }
+			 * removePlace(s); for (String t : postset) { removeTransition(t); }
+			 * } }
 			 */
 		}
 	}
@@ -1130,7 +1130,7 @@ public class Abstraction {
 			oldDelay[0] = rangeMatcher.group(1);
 			oldDelay[1] = rangeMatcher.group(2);
 		}
-		ArrayList list = new ArrayList<String>();
+		ArrayList<String> list = new ArrayList<String>();
 		for (String t : postset) {
 			if (controlPlaces.get(t).containsKey("postset")) {
 				for (String u : controlPlaces.get(t).getProperty("postset").split(" ")) {
@@ -1340,12 +1340,12 @@ public class Abstraction {
 		removeTransition(trans2);
 		if (!samePostset) {
 			for (String s : postset2) {
-				//boolean unique = true;
-				//for (String t : postset1) {
-				//	if (t.equals(s)) {
-				//		unique = false;
-				//	}
-				//}
+				// boolean unique = true;
+				// for (String t : postset1) {
+				// if (t.equals(s)) {
+				// unique = false;
+				// }
+				// }
 				if (controlPlaces.containsKey(postset1[0])) {
 					combinePlaces(s, postset1[0]);
 				}
@@ -1353,16 +1353,48 @@ public class Abstraction {
 		}
 		else if (!samePreset) {
 			for (String s : preset2) {
-				//boolean unique = true;
-				//for (String t : preset1) {
-				//	if (t.equals(s)) {
-				//		unique = false;
-				//	}
-				//}
+				// boolean unique = true;
+				// for (String t : preset1) {
+				// if (t.equals(s)) {
+				// unique = false;
+				// }
+				// }
 				if (controlPlaces.containsKey(preset1[0])) {
 					combinePlaces(s, preset1[0]);
 				}
 			}
+		}
+		String[] delay = { delays.get(trans1), delays.get(trans2) };
+		String[][] delayRange = new String[2][2];
+		Pattern pattern = Pattern.compile("\\[(S+?),(S+?)\\]");
+		for (int i = 0; i < delay.length; i++) {
+			Matcher matcher = pattern.matcher(delay[i]);
+			if (matcher.find()) {
+				delayRange[i][0] = matcher.group(1);
+				delayRange[i][1] = matcher.group(2);
+			}
+			else {
+				delayRange[i][0] = delay[i];
+				delayRange[i][1] = delay[i];
+			}
+		}
+		if (Integer.parseInt(delayRange[0][0]) < Integer.parseInt(delayRange[1][0])) {
+			delay[0] = delayRange[0][0];
+		}
+		else {
+			delay[0] = delayRange[1][0];
+		}
+		if (Integer.parseInt(delayRange[0][1]) > Integer.parseInt(delayRange[1][1])) {
+			delay[0] = delayRange[0][1];
+		}
+		else {
+			delay[0] = delayRange[1][1];
+		}
+		if (delay[0].equals(delay[1])) {
+			delays.put(trans1, delay[0]);
+		}
+		else {
+			delays.put(trans1, "[" + delay[0] + "," + delay[1] + "]");
 		}
 	}
 
