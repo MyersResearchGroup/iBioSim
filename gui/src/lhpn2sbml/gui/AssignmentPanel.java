@@ -57,7 +57,7 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 			PropertyList integerList, LHPNFile lhpn, BioSim biosim) {
 		super(new GridLayout(4, 1));
 		this.selected = selected;
-		this.transition = transition;
+		//this.transition = transition;
 		this.assignmentList = assignmentList;
 		this.continuousList = continuousList;
 		this.rateList = rateList;
