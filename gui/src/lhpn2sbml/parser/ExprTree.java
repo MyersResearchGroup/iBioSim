@@ -37,12 +37,31 @@ public class ExprTree {
 	// private int nsignals;// nevents, nplaces;
 
 	private LHPNFile lhpn;
+	
+	private Abstraction abstraction;
 
 	public ExprTree(LHPNFile lhpn) {
 		this.lhpn = lhpn;
 		String[] bools = lhpn.getBooleanVars();
 		String[] conts = lhpn.getContVars();
 		String[] ints = lhpn.getIntVars();
+		signals = new ArrayList<String>();
+		for (int j = 0; j < bools.length; j++) {
+			signals.add(bools[j]);
+		}
+		for (int j = 0; j < conts.length; j++) {
+			signals.add(conts[j]);
+		}
+		for (int j = 0; j < ints.length; j++) {
+			signals.add(ints[j]);
+		}
+	}
+	
+	public ExprTree(Abstraction abstraction) {
+		this.abstraction = abstraction;
+		String[] bools = abstraction.getBooleanVars();
+		String[] conts = abstraction.getContVars();
+		String[] ints = abstraction.getIntVars();
 		signals = new ArrayList<String>();
 		for (int j = 0; j < bools.length; j++) {
 			signals.add(bools[j]);
@@ -243,7 +262,7 @@ public class ExprTree {
 		// System.out.println("U: token = " + token + " tokvalue = " + tokvalue
 		// + " result = " + result);
 		double temp;
-		ExprTree newresult = null;
+		//ExprTree newresult = new ExprTree();
 
 		switch (token) {
 		case WORD:
