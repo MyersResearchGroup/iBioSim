@@ -1,6 +1,6 @@
 package learn;
 
-import gcm2sbml.parser.GCMFile;
+//import gcm2sbml.parser.GCMFile;
 import lhpn2sbml.parser.LHPNFile;
 import parser.*;
 import java.awt.*;
@@ -11,7 +11,7 @@ import java.util.prefs.Preferences;
 
 import javax.swing.*;
 
-import org.sbml.libsbml.*;
+//import org.sbml.libsbml.*;
 import biomodelsim.*;
 
 /**

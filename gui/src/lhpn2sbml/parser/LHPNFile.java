@@ -793,6 +793,9 @@ public class LHPNFile {
 					}
 					//}
 				}
+				else {
+					list = toName;
+				}
 			}
 			else {
 				list = toName;
@@ -809,6 +812,9 @@ public class LHPNFile {
 						placeList = fromName;
 					}
 					//}
+				}
+				else {
+					placeList = fromName;
 				}
 			}
 			else {
