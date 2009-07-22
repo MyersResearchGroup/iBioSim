@@ -380,18 +380,9 @@ public class Abstraction {
 					}
 				}
 			}
-			// Transform: Remove dead place
-			/*
-			 * for (String s : controlPlaces.keySet()) { boolean flag = false;
-			 * if (!controlPlaces.get(s).containsKey("preset") ||
-			 * controlPlaces.get(s).getProperty("preset") == null) { flag =
-			 * true; } else if
-			 * (controlPlaces.get(s).getProperty("preset").equals("")) { flag =
-			 * true; } if (flag) { String[] postset =
-			 * controlPlaces.get(s).getProperty("postset").split(" ");
-			 * removePlace(s); for (String t : postset) { removeTransition(t); }
-			 * } }
-			 */
+			//if (removeDeadPlaces()) {
+			//	change = true;
+			//}
 		}
 	}
 
@@ -498,25 +489,30 @@ public class Abstraction {
 					boolean flag = true;
 					for (Object o : contAssignments.get(u).keySet()) {
 						String key = o.toString();
-						if (!contAssignments.get(s).keySet().contains(key) || (contAssignmentTrees.get(u).get(key)[0].isit != 'c')) {
+						if (!contAssignments.get(s).keySet().contains(key)
+								|| (contAssignmentTrees.get(u).get(key)[0].isit != 'c')) {
 							flag = false;
 						}
 					}
 					for (Object o : intAssignments.get(u).keySet()) {
 						String key = o.toString();
-						if (!intAssignments.get(s).keySet().contains(key) || (intAssignmentTrees.get(u).get(key)[0].isit != 'i')) {
+						if (!intAssignments.get(s).keySet().contains(key)
+								|| (intAssignmentTrees.get(u).get(key)[0].isit != 'i')) {
 							flag = false;
 						}
 					}
 					for (Object o : booleanAssignments.get(u).keySet()) {
 						String key = o.toString();
-						if (!booleanAssignments.get(s).keySet().contains(key) || (booleanAssignmentTrees.get(u).get(key)[0].isit != 't')) {
+						if (!booleanAssignments.get(s).keySet().contains(key)
+								|| (booleanAssignmentTrees.get(u).get(key)[0].isit != 't')) {
 							flag = false;
 						}
 					}
 					if (flag) {
 						for (Object o : contAssignments.get(u).keySet()) {
-							String[] assign = { contAssignments.get(u).get(o.toString()).toString(), contAssignments.get(u).get(o.toString()).toString() };
+							String[] assign = {
+									contAssignments.get(u).get(o.toString()).toString(),
+									contAssignments.get(u).get(o.toString()).toString() };
 							String[][] assignRange = new String[2][2];
 							Pattern pattern = Pattern.compile("\\[(\\S+?),(\\S+?)\\]");
 							for (int i = 0; i < assign.length; i++) {
@@ -536,7 +532,8 @@ public class Abstraction {
 							else if (assignRange[1][0].equals("inf")) {
 								assign[0] = assignRange[0][0];
 							}
-							else if (Float.parseFloat(assignRange[0][0]) < Float.parseFloat(assignRange[1][0])) {
+							else if (Float.parseFloat(assignRange[0][0]) < Float
+									.parseFloat(assignRange[1][0])) {
 								assign[0] = assignRange[0][0];
 							}
 							else {
@@ -545,7 +542,8 @@ public class Abstraction {
 							if (assignRange[0][1].equals("inf") || assignRange[1][1].equals("inf")) {
 								assign[1] = "inf";
 							}
-							else if (Float.parseFloat(assignRange[0][1]) > Float.parseFloat(assignRange[1][1])) {
+							else if (Float.parseFloat(assignRange[0][1]) > Float
+									.parseFloat(assignRange[1][1])) {
 								assign[1] = assignRange[0][1];
 							}
 							else {
@@ -555,11 +553,13 @@ public class Abstraction {
 								addContAssign(s, o.toString(), assign[0]);
 							}
 							else {
-								addContAssign(s, o.toString(), "[" + assign[0] + "," + assign[1] + "]");
+								addContAssign(s, o.toString(), "[" + assign[0] + "," + assign[1]
+										+ "]");
 							}
 						}
 						for (Object o : intAssignments.get(u).keySet()) {
-							String[] assign = { intAssignments.get(u).get(o.toString()).toString(), intAssignments.get(u).get(o.toString()).toString() };
+							String[] assign = { intAssignments.get(u).get(o.toString()).toString(),
+									intAssignments.get(u).get(o.toString()).toString() };
 							String[][] assignRange = new String[2][2];
 							Pattern pattern = Pattern.compile("\\[(\\S+?),(\\S+?)\\]");
 							for (int i = 0; i < assign.length; i++) {
@@ -579,7 +579,8 @@ public class Abstraction {
 							else if (assignRange[1][0].equals("inf")) {
 								assign[0] = assignRange[0][0];
 							}
-							else if (Integer.parseInt(assignRange[0][0]) < Integer.parseInt(assignRange[1][0])) {
+							else if (Integer.parseInt(assignRange[0][0]) < Integer
+									.parseInt(assignRange[1][0])) {
 								assign[0] = assignRange[0][0];
 							}
 							else {
@@ -588,7 +589,8 @@ public class Abstraction {
 							if (assignRange[0][1].equals("inf") || assignRange[1][1].equals("inf")) {
 								assign[1] = "inf";
 							}
-							else if (Integer.parseInt(assignRange[0][1]) > Integer.parseInt(assignRange[1][1])) {
+							else if (Integer.parseInt(assignRange[0][1]) > Integer
+									.parseInt(assignRange[1][1])) {
 								assign[1] = assignRange[0][1];
 							}
 							else {
@@ -598,11 +600,14 @@ public class Abstraction {
 								addIntAssign(s, o.toString(), assign[0]);
 							}
 							else {
-								addIntAssign(s, o.toString(), "[" + assign[0] + "," + assign[1] + "]");
+								addIntAssign(s, o.toString(), "[" + assign[0] + "," + assign[1]
+										+ "]");
 							}
 						}
 						for (Object o : booleanAssignments.get(u).keySet()) {
-							String[] assign = { booleanAssignments.get(u).get(o.toString()).toString(), booleanAssignments.get(u).get(o.toString()).toString() };
+							String[] assign = {
+									booleanAssignments.get(u).get(o.toString()).toString(),
+									booleanAssignments.get(u).get(o.toString()).toString() };
 							String[][] assignRange = new String[2][2];
 							Pattern pattern = Pattern.compile("\\[(\\S+?),(\\S+?)\\]");
 							for (int i = 0; i < assign.length; i++) {
@@ -616,13 +621,15 @@ public class Abstraction {
 									assignRange[i][1] = assign[i];
 								}
 							}
-							if (assignRange[0][0].equals("false") || assignRange[1][0].equals("false")) {
+							if (assignRange[0][0].equals("false")
+									|| assignRange[1][0].equals("false")) {
 								assign[0] = "false";
 							}
 							else {
 								assign[0] = "true";
 							}
-							if (assignRange[0][1].equals("true") || assignRange[1][1].equals("true")) {
+							if (assignRange[0][1].equals("true")
+									|| assignRange[1][1].equals("true")) {
 								assign[1] = "true";
 							}
 							else {
@@ -632,13 +639,32 @@ public class Abstraction {
 								addBoolAssign(s, o.toString(), assign[0]);
 							}
 							else {
-								addBoolAssign(s, o.toString(), "[" + assign[0] + "," + assign[1] + "]");
+								addBoolAssign(s, o.toString(), "[" + assign[0] + "," + assign[1]
+										+ "]");
 							}
 						}
 					}
 				}
 			}
 		}
+	}
+
+	private boolean removeDeadPlaces() {
+		boolean change = false;
+		for (String s : places.keySet()) {
+			if ((!controlPlaces.get(s).containsKey("preset")
+					|| controlPlaces.get(s).getProperty("preset") == null || controlPlaces.get(s)
+					.getProperty("preset").equals(""))
+					&& !places.get(s)) {
+				String[] postset = controlPlaces.get(s).getProperty("postset").split(" ");
+				for (String t : postset) {
+					removeTransition(t);
+				}
+				removePlace(s);
+				change = true;
+			}
+		}
+		return change;
 	}
 
 	public void save(String filename) {
@@ -1769,7 +1795,7 @@ public class Abstraction {
 		intAssignments.remove(name);
 		intAssignmentTrees.remove(name);
 	}
-	
+
 	public String[] getBooleanVars() {
 		Object[] inArray = inputs.keySet().toArray();
 		Object[] outArray = outputs.keySet().toArray();
@@ -1786,7 +1812,7 @@ public class Abstraction {
 		}
 		return vars;
 	}
-	
+
 	public String[] getContVars() {
 		if (!variables.isEmpty()) {
 			Object[] objArray = variables.keySet().toArray();
@@ -1800,7 +1826,7 @@ public class Abstraction {
 			return new String[0];
 		}
 	}
-	
+
 	public String[] getIntVars() {
 		if (!integers.isEmpty()) {
 			Object[] objArray = integers.keySet().toArray();
@@ -1814,7 +1840,7 @@ public class Abstraction {
 			return new String[0];
 		}
 	}
-	
+
 	public boolean addContAssign(String transition, String name, String value) {
 		ExprTree[] expr = new ExprTree[2];
 		expr[0] = new ExprTree(this);
@@ -1824,14 +1850,16 @@ public class Abstraction {
 		if (matcher.find()) {
 			expr[0].token = expr[0].intexpr_gettok(matcher.group(1));
 			if (!matcher.group(1).equals("")) {
-				if (!expr[0].intexpr_L(matcher.group(1))) return false;
+				if (!expr[0].intexpr_L(matcher.group(1)))
+					return false;
 			}
 			else {
 				expr[0] = null;
 			}
 			expr[1].token = expr[1].intexpr_gettok(matcher.group(2));
 			if (!matcher.group(2).equals("")) {
-				if (!expr[1].intexpr_L(matcher.group(2))) return false;
+				if (!expr[1].intexpr_L(matcher.group(2)))
+					return false;
 			}
 			else {
 				expr[1] = null;
@@ -1840,7 +1868,8 @@ public class Abstraction {
 		else {
 			expr[0].token = expr[0].intexpr_gettok(value);
 			if (!value.equals("")) {
-				if (!expr[0].intexpr_L(value)) return false;
+				if (!expr[0].intexpr_L(value))
+					return false;
 			}
 			else {
 				expr[0] = null;
@@ -1863,7 +1892,7 @@ public class Abstraction {
 		contAssignments.put(transition, prop);
 		return true;
 	}
-	
+
 	public boolean addIntAssign(String transition, String name, String value) {
 		ExprTree[] expr = new ExprTree[2];
 		expr[0] = new ExprTree(this);
@@ -1873,14 +1902,16 @@ public class Abstraction {
 		if (matcher.find()) {
 			expr[0].token = expr[0].intexpr_gettok(matcher.group(1));
 			if (!matcher.group(1).equals("")) {
-				if (!expr[0].intexpr_L(matcher.group(1))) return false;
+				if (!expr[0].intexpr_L(matcher.group(1)))
+					return false;
 			}
 			else {
 				expr[0] = null;
 			}
 			expr[1].token = expr[1].intexpr_gettok(matcher.group(2));
 			if (!matcher.group(2).equals("")) {
-				if (!expr[1].intexpr_L(matcher.group(2))) return false;
+				if (!expr[1].intexpr_L(matcher.group(2)))
+					return false;
 			}
 			else {
 				expr[1] = null;
@@ -1889,7 +1920,8 @@ public class Abstraction {
 		else {
 			expr[0].token = expr[0].intexpr_gettok(value);
 			if (!value.equals("")) {
-				if (!expr[0].intexpr_L(value)) return false;
+				if (!expr[0].intexpr_L(value))
+					return false;
 			}
 			else {
 				expr[0] = null;
@@ -1912,7 +1944,7 @@ public class Abstraction {
 		intAssignments.put(transition, prop);
 		return true;
 	}
-	
+
 	public boolean addBoolAssign(String transition, String name, String value) {
 		boolean retval = false;
 		Properties prop = new Properties();
