@@ -22,7 +22,6 @@ import java.util.HashMap;
 
 import org.sbml.libsbml.ASTNode;
 import org.sbml.libsbml.Constraint;
-import org.sbml.libsbml.Delay;
 import org.sbml.libsbml.EventAssignment;
 import org.sbml.libsbml.InitialAssignment;
 import org.sbml.libsbml.KineticLaw;
@@ -35,8 +34,6 @@ import org.sbml.libsbml.SBMLReader;
 import org.sbml.libsbml.SBMLWriter;
 import org.sbml.libsbml.Species;
 import org.sbml.libsbml.SpeciesReference;
-import org.sbml.libsbml.StoichiometryMath;
-import org.sbml.libsbml.Trigger;
 import org.sbml.libsbml.Unit;
 import org.sbml.libsbml.UnitDefinition;
 import org.sbml.libsbml.libsbml;
@@ -216,6 +213,22 @@ public class GeneticNetwork {
 
 			SBMLDocument document = new SBMLReader().readSBML(currentRoot + sbmlDocument);
 			//checkConsistancy(document);
+			currentDocument = document;
+			return outputSBML(filename, document);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new IllegalStateException("Unable to output to SBML");
+		}
+	}
+	
+	/**
+	 * Merges an SBML file network to an SBML file
+	 * 
+	 * @param filename
+	 * @return the sbml document
+	 */
+	public SBMLDocument mergeSBML(String filename, SBMLDocument document) {
+		try {
 			currentDocument = document;
 			return outputSBML(filename, document);
 		} catch (Exception e) {
