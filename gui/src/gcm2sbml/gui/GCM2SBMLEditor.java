@@ -30,6 +30,11 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 
+import org.sbml.libsbml.InitialAssignment;
+import org.sbml.libsbml.Rule;
+import org.sbml.libsbml.SBMLDocument;
+import org.sbml.libsbml.SBMLReader;
+
 import reb2sac.Reb2Sac;
 import reb2sac.Reb2SacThread;
 import sbmleditor.SBML_Editor;
@@ -650,8 +655,54 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 				return;
 			}
 			network.loadProperties(gcm);
-			network.mergeSBML(path + File.separator + simName + File.separator + stem + direct
-					+ File.separator + gcmname + ".sbml");
+			if (!getSBMLFile().equals(none)) {
+				SBMLDocument d = new SBMLReader().readSBML(path + File.separator + getSBMLFile());
+				for (String s : sbmlParamFile.getElementChanges()) {
+					for (long i = d.getModel().getNumInitialAssignments() - 1; i >= 0; i--) {
+						if (s.contains("=")) {
+							String formula = sbmlParamFile.myFormulaToString(((InitialAssignment) d.getModel()
+									.getListOfInitialAssignments().get(i)).getMath());
+							String sFormula = s.substring(s.indexOf('=') + 1).trim();
+							sFormula = sbmlParamFile.myFormulaToString(sbmlParamFile.myParseFormula(sFormula));
+							sFormula = s.substring(0, s.indexOf('=') + 1) + " " + sFormula;
+							if ((((InitialAssignment) d.getModel().getListOfInitialAssignments().get(i))
+									.getSymbol()
+									+ " = " + formula).equals(sFormula)) {
+								d.getModel().getListOfInitialAssignments().remove(i);
+							}
+						}
+					}
+					for (long i = d.getModel().getNumConstraints() - 1; i >= 0; i--) {
+						if (d.getModel().getListOfConstraints().get(i).getMetaId().equals(s)) {
+							d.getModel().getListOfConstraints().remove(i);
+						}
+					}
+					for (long i = d.getModel().getNumEvents() - 1; i >= 0; i--) {
+						if (d.getModel().getListOfEvents().get(i).getId().equals(s)) {
+							d.getModel().getListOfEvents().remove(i);
+						}
+					}
+					for (long i = d.getModel().getNumRules() - 1; i >= 0; i--) {
+						if (s.contains("=")) {
+							String formula = sbmlParamFile.myFormulaToString(((Rule) d.getModel().getListOfRules()
+									.get(i)).getMath());
+							String sFormula = s.substring(s.indexOf('=') + 1).trim();
+							sFormula = sbmlParamFile.myFormulaToString(sbmlParamFile.myParseFormula(sFormula));
+							sFormula = s.substring(0, s.indexOf('=') + 1) + " " + sFormula;
+							if ((((Rule) d.getModel().getListOfRules().get(i)).getVariable() + " = " + formula)
+									.equals(sFormula)) {
+								d.getModel().getListOfRules().remove(i);
+							}
+						}
+					}
+				}
+				network.mergeSBML(path + File.separator + simName + File.separator + stem + direct
+						+ File.separator + gcmname + ".sbml", d);
+			}
+			else {
+				network.mergeSBML(path + File.separator + simName + File.separator + stem + direct
+						+ File.separator + gcmname + ".sbml");
+			}
 		}
 		catch (Exception e1) {
 			JOptionPane.showMessageDialog(biosim.frame(), "Unable to create sbml file.",
