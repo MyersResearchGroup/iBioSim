@@ -83,9 +83,9 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 
 	private int dmvcCnt = 0;
 
-	private int pathLength = 15;
+	private int pathLength = 7 ;// intFixed 25 pd 7 integrator 15;
 
-	private int rateSampling =  -1 ; //20; //-1;
+	private int rateSampling = -1 ; //intFixed 250; 20; //-1;
 
 	private boolean placeRates = true;
 
@@ -112,42 +112,26 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 
 	// private boolean limitExists;
 
-	private Double delayScaleFactor;
+	private Double delayScaleFactor = 1.0;
 
-	private Double varScaleFactor;
+	private Double varScaleFactor = 1.0;
 
 	BufferedWriter out;
 
 	File logFile;
 
 	// Threshold parameters
-	private double epsilon = 0.1; // What is the +/- epsilon where signals are
+	private double epsilon = 0.1; // What is the +/- epsilon where signals are considered to be equivalent
 
-	// considered to be equivalent
+	private int runLength = 15; // the number of time points that a value must persist to be considered constant
 
-	private int runLength = 15; // the number of time points that a value must
+	private double runTime = 5e-12; // 10e-6 for intFixed; 5e-6 for integrator. 5e-12 for pd;// the amount of time that must pass to be considered constant when using absoluteTime
 
-	// persist to be considered constant
+	private boolean absoluteTime = true; // true for intfixed //false; true for pd; false for integrator// when False time points are used to determine DMVC and when true absolutime time is used to determine DMVC
 
-	private double runTime = 5e-6;// the amount of time that must pass to be
+	private double percent = 0.8; // a decimal value representing the percent of the total trace that must be constant to qualify to become a DMVC var
 
-	// considered constant when using
-	// absoluteTime
-
-	private boolean absoluteTime = false;// when False time points are used
-
-	// to determine DMVC and when true
-	// absolutime time is used to
-	// determine DMVC
-
-	private double percent = 0.8; // a decimal value representing the percent
-
-	// of the total trace that must be constant
-	// to qualify to become a DMVC var
-
-	// private int[] numValuesL;// the number of constant values for each
-	// variable...-1 indicates that the variable isn't considered a DMVC
-	// variable
+	// private int[] numValuesL;// the number of constant values for each variable...-1 indicates that the variable isn't considered a DMVC variable
 
 	// private double vaRateUpdateInterval = 1e-6;// how often the rate is added
 	// to the continuous variable in the Verilog-A model output
@@ -156,8 +140,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 
 	// Pattern absoluteTimeR = Pattern.compile(".absoluteTime"); //SB
 
-	// Pattern falseR = Pattern.compile("false",Pattern.CASE_INSENSITIVE);
-	// //pass the I flag to be case insensitive
+	// Pattern falseR = Pattern.compile("false",Pattern.CASE_INSENSITIVE); //pass the I flag to be case insensitive
 
 	/**
 	 * This is the constructor for the Learn class. It initializes all the input
@@ -1646,14 +1629,43 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 			int i = 1;
 			// String failProp = ""; // ?????????
 			divisionsL = parseBinFile();
-			// reqdVarsL.get(1).setInput(true); // temporary. should probably be
-			// provided in binsfile??
+		 //   reqdVarsL.get(1).setInput(true); // temporary. should probably be provided in binsfile??
+			reqdVarsL.get(4).setInput(true); // for pd
+			reqdVarsL.get(5).setInput(true); // for pd
+			String failProp = "";
+			String enFailAnd = "";
+			String enFail = "";
 			// Graph g = new Graph(reqdVarsL.toArray(new
 			// Variable[reqdVarsL.size()]),failProp);
 			// Add logic to deal with failprop and related places/transitions
 			g = new LHPNFile(); // The generated lhpn is stored in this object
 			placeInfo = new HashMap<String, Properties>();
 			transitionInfo = new HashMap<String, Properties>();
+			if (new File(directory + separator + "learn" + ".prop").exists()){
+				BufferedReader prop = new BufferedReader(new FileReader(directory + separator + "learn" + ".prop"));
+				failProp = prop.readLine();
+				failProp = failProp.replace("\n", "");
+				Properties p0 = new Properties();
+				placeInfo.put("failProp", p0);
+				p0.setProperty("placeNum", numPlaces.toString());
+				p0.setProperty("type", "PROP");
+				p0.setProperty("initiallyMarked", "true");
+				g.addPlace("p" + numPlaces, true);
+				numPlaces++;
+				Properties p1 = new Properties();
+				transitionInfo.put("failProp", p1);
+				p1.setProperty("transitionNum", numTransitions
+						.toString());
+				g.addTransition("t" + numTransitions); // prevTranKey+key);
+				g.addControlFlow("p"
+						+ placeInfo.get("failProp").getProperty(
+								"placeNum"), "t"
+						+ transitionInfo.get("failProp")
+								.getProperty("transitionNum")); 
+				numTransitions++;
+				enFailAnd = "&~fail";
+				enFail = "~fail";
+			}
 			while (new File(directory + separator + "run-" + i + ".tsd").exists()) {
 				genBinsRates("run-" + i + ".tsd", divisionsL);
 				detectDMV();
@@ -1665,9 +1677,11 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 				String binEncoding = getPlaceInfoIndex(g.getPreset(st1)[0]);
 				out.write(" Incoming place " + g.getPreset(st1)[0]
 						+ " Bin encoding is " + binEncoding);
-				binEncoding = getPlaceInfoIndex(g.getPostset(st1)[0]);
-				out.write(" Outgoing place " + g.getPostset(st1)[0]
+				if (g.getPostset(st1).length != 0){
+					binEncoding = getPlaceInfoIndex(g.getPostset(st1)[0]);
+					out.write(" Outgoing place " + g.getPostset(st1)[0]
 						+ " Bin encoding is " + binEncoding);
+				}
 			}
 			out.write("\nTotal no of transitions : " + numTransitions);
 			out.write("\nTotal no of places : " + numPlaces);
@@ -1695,6 +1709,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 					g.addVar(v.getName(), initCond);
 				}
 			}
+			g.addOutput("fail", "false");
 			normalize();
 			for (String t : g.getTransitionList()) {
 				// Transition t = g.get_valT(sortedTrans.get(j));
@@ -1737,6 +1752,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 							}
 						}
 					}
+					condStr += enFailAnd;
 					g.addEnabling(t, condStr);
 				} else if ((g.getPreset(t) != null)
 						&& (g.getPostset(t) != null)
@@ -1747,6 +1763,11 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 					String nextPlace = g.getPostset(t)[0];
 					g.changeDelay(t, "[" + (int) Double.parseDouble(placeInfo.get(getPlaceInfoIndex(nextPlace)).getProperty("dMin")) + "," + (int) Double.parseDouble(placeInfo.get(getPlaceInfoIndex(nextPlace)).getProperty("dMax")) + "]");
 					g.addIntAssign(t, placeInfo.get(getPlaceInfoIndex(g.getPostset(t)[0])).getProperty("DMVCVariable"), "[" + (int) Math.floor(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(g.getPostset(t)[0])).getProperty("DMVCValue")))	+ "," + (int) Math.ceil(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(g.getPostset(t)[0])).getProperty("DMVCValue"))) + "]");
+					g.addEnabling(t, enFail);
+				} else if ((g.getPreset(t) != null) && (placeInfo.get(getPlaceInfoIndex(g.getPreset(t)[0])).getProperty("type").equalsIgnoreCase("PROP"))){
+					g.addEnabling(t, failProp);
+					g.addBoolAssign(t, "fail", "true"); // fail would be the variable name
+					//g.addProperty(failProp);
 				}
 				// if ((t.getIncomingP() != null) &&
 				// (t.getIncomingP().isPropP())){
@@ -2127,59 +2148,37 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 		try {
 			for (int i = 0; i < reqdVarsL.size(); i++) {
 				if (reqdVarsL.get(i).isDmvc() && reqdVarsL.get(i).isInput()) {
-					out.write(reqdVarsL.get(i).getName()
-							+ " is a dmvc input variable \n");
-					// dmvcCnt = 0; in case of multiple tsd files, this may be a
-					// problem. may create a new distinct place with an existing
-					// key.??
+					out.write(reqdVarsL.get(i).getName() + " is a dmvc input variable \n");
+					// dmvcCnt = 0; in case of multiple tsd files, this may be a problem. may create a new distinct place with an existing key.??
 					prevPlace = null;
+					currPlace = null;
 					p3 = null;
 					Properties p2 = null;
 					String k;
 					DMVCrun runs = reqdVarsL.get(i).getRuns();
 					Double[] avgVals = runs.getAvgVals();
-					out.write("variable " + reqdVarsL.get(i).getName()
-							+ " Number of runs = " + avgVals.length
-							+ "Avg Values are : " + avgVals + "\n");
-					for (int j = 0; j < avgVals.length; j++) { // this gives
-						// number of
-						// runs/startpoints/endpoints
+					out.write("variable " + reqdVarsL.get(i).getName() + " Number of runs = " + avgVals.length + "Avg Values are : " + avgVals + "\n");
+					for (int j = 0; j < avgVals.length; j++) { // this gives number of runs/startpoints/endpoints
 						exists = false;
 						places = g.getPlaceList();
 						if (places.length > 1) {
 							for (String st : places) {
 								k = getPlaceInfoIndex(st);
-								if (placeInfo.get(k).getProperty("type")
-										.equalsIgnoreCase("DMVC")) {
-									if ((Math.abs(Double.parseDouble(placeInfo
-											.get(k).getProperty("DMVCValue"))
-											- avgVals[j]) < epsilon)
-											&& (placeInfo.get(k).getProperty(
-													"DMVCVariable")
-													.equalsIgnoreCase(reqdVarsL
-															.get(i).getName()))) {
-										out
-												.write("Place with key "
-														+ k
-														+ "already exists. so adding dmvcTime to it\n");
-										addDmvcTime(placeInfo.get(k), reqdVarsL
-												.get(i).getName(), calcDelay(
-												runs.getStartPoint(j), runs
-														.getEndPoint(j)));
+								if (placeInfo.get(k).getProperty("type").equalsIgnoreCase("DMVC")) {
+									if ((Math.abs(Double.parseDouble(placeInfo.get(k).getProperty("DMVCValue")) - avgVals[j]) < epsilon)
+											&& (placeInfo.get(k).getProperty("DMVCVariable").equalsIgnoreCase(reqdVarsL.get(i).getName()))) {
+										out.write("Place with key " + k + "already exists. so adding dmvcTime to it\n");
+										addDmvcTime(placeInfo.get(k), reqdVarsL.get(i).getName(), calcDelay(runs.getStartPoint(j), runs.getEndPoint(j)));
 										exists = true;
 										prevPlace = currPlace;
 										currPlace = getPlaceInfoIndex(st);// k;
 										p2 = placeInfo.get(currPlace);
-										if (j == 0) { // adding the place
-											// corresponding to the
-											// first dmv run to
-											// initial marking.
-											// SHOULD ensure that multiple dmv
-											// places belonging to same var are
-											// not marked initially
+		//next few lines commented to remove multiple dmv input places of same variable from being marked.
+										/*	if (j == 0) { // adding the place corresponding to the first dmv run to initial marking. 
+											// SHOULD ensure that multiple dmv places belonging to same var are not marked initially
 											placeInfo.get(k).setProperty("initiallyMarked", "true");
 											g.changeInitialMarking("p"	+ placeInfo.get(k).getProperty("placeNum"),true);
-										}
+										} */
 										// break ; here?
 									}
 								}
@@ -2213,17 +2212,12 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 							dmvcCnt++;
 							dmvcPlaceL.add(currPlace);
 						}
-						Double d = calcDelay(runs.getStartPoint(j), runs
-								.getEndPoint(j));// data.get(0).get(runs.getEndPoint(j))
+						Double d = calcDelay(runs.getStartPoint(j), runs.getEndPoint(j));// data.get(0).get(runs.getEndPoint(j))
 						// -
 						// data.get(0).get(runs.getStartPoint(j));//
 						// data.get(0).get(reqdVarsL.get(prevPlace.getDmvcVar()).getRuns().getEndPoint(j-1));
 						addDuration(p2, d); // addDelay
-						out.write("Delay in place p"
-								+ p2.getProperty("placeNum")
-								+ " after updating " + d + " is ["
-								+ p2.getProperty("dMin") + ","
-								+ p2.getProperty("dMax") + "]\n");
+						out.write("Delay in place p"+ p2.getProperty("placeNum")+ " after updating " + d + " is ["+ p2.getProperty("dMin") + ","+ p2.getProperty("dMax") + "]\n");
 						if (prevPlace != null) {
 							if (transitionInfo.containsKey(prevPlace
 									+ currPlace)) {
@@ -2231,15 +2225,9 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 							} else {
 								p3 = new Properties();
 								transitionInfo.put(prevPlace + currPlace, p3);
-								p3.setProperty("transitionNum", numTransitions
-										.toString());
+								p3.setProperty("transitionNum", numTransitions.toString());
 								g.addTransition("t" + numTransitions); // prevTranKey+key);
-								g.addControlFlow("p"
-										+ placeInfo.get(prevPlace).getProperty(
-												"placeNum"), "t"
-										+ transitionInfo.get(
-												prevPlace + currPlace)
-												.getProperty("transitionNum")); 
+								g.addControlFlow("p"+ placeInfo.get(prevPlace).getProperty("placeNum"), "t"+ transitionInfo.get(prevPlace + currPlace).getProperty("transitionNum")); 
 								g.addControlFlow("t"+ transitionInfo.get(prevPlace+ currPlace).getProperty("transitionNum"),"p"+ placeInfo.get(currPlace).getProperty("placeNum"));
 								numTransitions++;
 							}
@@ -2277,11 +2265,9 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 			for (int l = 0; l < reqdVarsL.size(); l++) {
 				key = key + bins[l][initMark];
 			}
-			if (placeInfo.get(key).getProperty("initiallyMarked")
-					.equalsIgnoreCase("false")) {
+			if (placeInfo.get(key).getProperty("initiallyMarked").equalsIgnoreCase("false")) {
 				placeInfo.get(key).setProperty("initiallyMarked", "true");
-				g.changeInitialMarking("p"
-						+ placeInfo.get(key).getProperty("placeNum"), true);
+				g.changeInitialMarking("p" + placeInfo.get(key).getProperty("placeNum"), true);
 			}
 		}
 
@@ -2466,8 +2452,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 			// magnitude alone?? or even by
 			// sign.. think
 			Double maxRate = getMaxRate();
-			out.write("minimum rate is " + minRate
-					+ " before scaling the variable.\n");
+			out.write("minimum rate is " + minRate + " before scaling the variable.\n");
 			if ((minRate != null) && (minRate != 0)) {
 				for (int i = 0; i < 14; i++) {
 					if (scaleFactor > Math.abs(minRateVal / minRate)) {
@@ -2476,25 +2461,21 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 					scaleFactor *= 10.0;
 				}
 				for (int i = 0; i < 14; i++) {
-					if ((maxRate != null)
-							&& (Math.abs((int) (maxRate * scaleFactor)) < Integer.MAX_VALUE)) {
+					if ((maxRate != null) && (Math.abs((int) (maxRate * scaleFactor)) < Integer.MAX_VALUE)) {
 						break;
 					}
 					scaleFactor /= 10.0;
 				}
-				if ((maxRate != null)
-						&& (Math.abs((int) (maxRate * scaleFactor)) > Integer.MAX_VALUE)) {
+				if ((maxRate != null) && (Math.abs((int) (maxRate * scaleFactor)) > Integer.MAX_VALUE)) {
 					System.out.println("Rate Scaling has caused an overflow");
 				}
-				out.write("minimum rate is " + minRate * scaleFactor
-						+ " after scaling by " + scaleFactor + "\n");
+				out.write("minimum rate is " + minRate * scaleFactor + " after scaling by " + scaleFactor + "\n");
 				varScaleFactor = scaleFactor;
 				scaleVariable();
 			}
 			Double minDivision = getMinDiv();
 			Double maxDivision = getMaxDiv();
-			out.write("minimum division is " + minDivision
-					+ " before scaling for division.\n");
+			out.write("minimum division is " + minDivision + " before scaling for division.\n");
 			scaleFactor = 1.0;
 			if ((minDivision != null) && (minDivision != 0)) {
 				for (int i = 0; i < 14; i++) {
@@ -2505,8 +2486,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 				}
 				if ((maxDivision != null)
 						&& (Math.abs((int) (maxDivision * scaleFactor)) > Integer.MAX_VALUE)) {
-					System.out
-							.println("Division Scaling has caused an overflow");
+					System.out.println("Division Scaling has caused an overflow");
 				}
 				out.write("minimum division is " + minDivision * scaleFactor
 						+ " after scaling by " + scaleFactor + "\n");
@@ -2521,61 +2501,49 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 
 	public void scaleVariable() {
 		for (String place : placeInfo.keySet()) {
-			Properties p = placeInfo.get(place);
-			if (p.getProperty("type").equals("DMVC")) {
-				p.setProperty("DMVCValue", Double.toString(Double.parseDouble(p
-						.getProperty("DMVCValue"))
-						* varScaleFactor));
-			} else {
-				for (Variable v : reqdVarsL) {
-					if (!v.isDmvc()) {
-						// p.setProperty(v.getName() +
-						// "_rMin",Integer.toString((int)(Double.parseDouble(p.getProperty(v.getName()
-						// + "_rMin"))/delayScaleFactor)));
-						// p.setProperty(v.getName() +
-						// "_rMax",Integer.toString((int)(Double.parseDouble(p.getProperty(v.getName()
-						// + "_rMax"))/delayScaleFactor)));
-						p.setProperty(v.getName() + "_rMin", Double
-								.toString(Double.parseDouble(p.getProperty(v
-										.getName()
-										+ "_rMin"))
-										* varScaleFactor));
-						p.setProperty(v.getName() + "_rMax", Double
-								.toString(Double.parseDouble(p.getProperty(v
-										.getName()
-										+ "_rMax"))
-										* varScaleFactor));
-					} else {
-						// p.setProperty(v.getName() +
-						// "_rMin",Integer.toString((int)(Double.parseDouble(p.getProperty(v.getName()
-						// + "_rMin"))/delayScaleFactor)));
-						// p.setProperty(v.getName() +
-						// "_rMax",Integer.toString((int)(Double.parseDouble(p.getProperty(v.getName()
-						// + "_rMax"))/delayScaleFactor)));
-						if (!v.isInput()) {
-							p.setProperty(v.getName() + "_vMin", Double
-									.toString(Double
-											.parseDouble(p.getProperty(v
-													.getName()
-													+ "_vMin"))
-											* varScaleFactor));
-							p.setProperty(v.getName() + "_vMax", Double
-									.toString(Double
-											.parseDouble(p.getProperty(v
-													.getName()
-													+ "_vMax"))
-											* varScaleFactor));
-						}
+			if (place != "failProp"){
+				Properties p = placeInfo.get(place);
+				if (p.getProperty("type").equals("DMVC")) {
+					p.setProperty("DMVCValue", Double.toString(Double.parseDouble(p.getProperty("DMVCValue"))* varScaleFactor));
+				} else {
+					for (Variable v : reqdVarsL) {
+						if (!v.isDmvc()) {
+							// p.setProperty(v.getName() +
+							// "_rMin",Integer.toString((int)(Double.parseDouble(p.getProperty(v.getName()
+							// + "_rMin"))/delayScaleFactor)));
+							// p.setProperty(v.getName() +
+							// "_rMax",Integer.toString((int)(Double.parseDouble(p.getProperty(v.getName()
+							// + "_rMax"))/delayScaleFactor)));
+							p.setProperty(v.getName() + "_rMin", Double
+									.toString(Double.parseDouble(p.getProperty(v.getName()
+											+ "_rMin"))* varScaleFactor));
+							p.setProperty(v.getName() + "_rMax", Double
+									.toString(Double.parseDouble(p.getProperty(v.getName()
+											+ "_rMax"))* varScaleFactor));
+						} else {
+							// p.setProperty(v.getName() +
+							// "_rMin",Integer.toString((int)(Double.parseDouble(p.getProperty(v.getName()
+							// + "_rMin"))/delayScaleFactor)));
+							// p.setProperty(v.getName() +
+							// "_rMax",Integer.toString((int)(Double.parseDouble(p.getProperty(v.getName()
+							// + "_rMax"))/delayScaleFactor)));
+							if (!v.isInput()) {
+								p.setProperty(v.getName() + "_vMin", Double
+										.toString(Double.parseDouble(p.getProperty(v.getName()
+												+ "_vMin"))* varScaleFactor));
+								p.setProperty(v.getName() + "_vMax", Double
+										.toString(Double.parseDouble(p.getProperty(v.getName()
+												+ "_vMax")) * varScaleFactor));
+							}
 
+						}
 					}
 				}
 			}
-
 		}
 		for (Variable v : reqdVarsL) {
 			v.scaleInitByVar(varScaleFactor);
-			for (int i = 0; i < divisionsL.size(); i++) { // or
-				// reqdVarsL.size()
+			for (int i = 0; i < divisionsL.size(); i++) { // or reqdVarsL.size()
 				for (int j = 0; j < divisionsL.get(i).size(); j++) {
 					divisionsL.get(i).set(j,
 							divisionsL.get(i).get(j) * varScaleFactor);
@@ -2586,72 +2554,60 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 
 	public void scaleDelay() {
 		for (String place : placeInfo.keySet()) {
-			Properties p = placeInfo.get(place);
-			if (p.getProperty("type").equals("DMVC")) {
-				String[] times = null;
-				String name = p.getProperty("DMVCVar");
-				String s = p.getProperty("dmvcTime_" + name);
-				String newS = null;
-				if (s != null) {
-					times = s.split(" ");
-					for (int i = 0; i < times.length; i++) {
-						if (newS == null) {
-							// newS =
-							// Integer.toString((int)(Double.parseDouble(times[i])*delayScaleFactor));
-							newS = Double.toString(Double.parseDouble(times[i])
-									* delayScaleFactor);
-						} else {
-							// newS = newS +
-							// Integer.toString((int)(Double.parseDouble(times[i])*delayScaleFactor));
-							newS = newS
-									+ Double.toString(Double
-											.parseDouble(times[i])
-											* delayScaleFactor);
+			if (place != "failProp"){
+				Properties p = placeInfo.get(place);
+				if (p.getProperty("type").equals("DMVC")) {
+					String[] times = null;
+					String name = p.getProperty("DMVCVar");
+					String s = p.getProperty("dmvcTime_" + name);
+					String newS = null;
+					if (s != null) {
+						times = s.split(" ");
+						for (int i = 0; i < times.length; i++) {
+							if (newS == null) {
+								// newS = Integer.toString((int)(Double.parseDouble(times[i])*delayScaleFactor));
+								newS = Double.toString(Double.parseDouble(times[i])
+										* delayScaleFactor);
+							} else {
+								// newS = newS + Integer.toString((int)(Double.parseDouble(times[i])*delayScaleFactor));
+								newS = newS + Double.toString(Double
+										.parseDouble(times[i]) * delayScaleFactor);
+							}
 						}
+						p.setProperty("dmvcTime_" + name, newS);
 					}
-					p.setProperty("dmvcTime_" + name, newS);
-				}
-				p.setProperty("dMin", Double.toString(Double.parseDouble(p
-						.getProperty("dMin"))
-						* delayScaleFactor));
-				p.setProperty("dMax", Double.toString(Double.parseDouble(p
-						.getProperty("dMax"))
-						* delayScaleFactor));
-			} else {
-				// p.setProperty("dMin",Integer.toString((int)(Double.parseDouble(p.getProperty("dMin"))*delayScaleFactor)));
-				// p.setProperty("dMax",Integer.toString((int)(Double.parseDouble(p.getProperty("dMax"))*delayScaleFactor)));
-				p.setProperty("dMin", Double.toString(Double.parseDouble(p
-						.getProperty("dMin"))
-						* delayScaleFactor));
-				p.setProperty("dMax", Double.toString(Double.parseDouble(p
-						.getProperty("dMax"))
-						* delayScaleFactor));
-				for (Variable v : reqdVarsL) {
-					if (!v.isDmvc()) {
-						// p.setProperty(v.getName() +
-						// "_rMin",Integer.toString((int)(Double.parseDouble(p.getProperty(v.getName()
-						// + "_rMin"))/delayScaleFactor)));
-						// p.setProperty(v.getName() +
-						// "_rMax",Integer.toString((int)(Double.parseDouble(p.getProperty(v.getName()
-						// + "_rMax"))/delayScaleFactor)));
-						p.setProperty(v.getName() + "_rMin", Double
-								.toString(Double.parseDouble(p.getProperty(v
-										.getName()
-										+ "_rMin"))
-										/ delayScaleFactor));
-						p.setProperty(v.getName() + "_rMax", Double
-								.toString(Double.parseDouble(p.getProperty(v
-										.getName()
-										+ "_rMax"))
-										/ delayScaleFactor));
+					p.setProperty("dMin", Double.toString(Double.parseDouble(p
+							.getProperty("dMin")) * delayScaleFactor));
+					p.setProperty("dMax", Double.toString(Double.parseDouble(p
+							.getProperty("dMax")) * delayScaleFactor));
+				} else{
+					// p.setProperty("dMin",Integer.toString((int)(Double.parseDouble(p.getProperty("dMin"))*delayScaleFactor)));
+					// p.setProperty("dMax",Integer.toString((int)(Double.parseDouble(p.getProperty("dMax"))*delayScaleFactor)));
+					p.setProperty("dMin", Double.toString(Double.parseDouble(p
+							.getProperty("dMin")) * delayScaleFactor));
+					p.setProperty("dMax", Double.toString(Double.parseDouble(p
+							.getProperty("dMax")) * delayScaleFactor));
+					for (Variable v : reqdVarsL) {
+						if (!v.isDmvc()) {
+							// p.setProperty(v.getName() +
+							// "_rMin",Integer.toString((int)(Double.parseDouble(p.getProperty(v.getName()
+							// + "_rMin"))/delayScaleFactor)));
+							// p.setProperty(v.getName() +
+							// "_rMax",Integer.toString((int)(Double.parseDouble(p.getProperty(v.getName()
+							// + "_rMax"))/delayScaleFactor)));
+							p.setProperty(v.getName() + "_rMin", Double
+									.toString(Double.parseDouble(p.getProperty(v
+											.getName() + "_rMin"))	/ delayScaleFactor));
+							p.setProperty(v.getName() + "_rMax", Double
+									.toString(Double.parseDouble(p.getProperty(v
+											.getName() + "_rMax"))	/ delayScaleFactor));
+						}
 					}
 				}
 			}
-
 		}
 		for (Variable v : reqdVarsL) {
-			// if (!v.isDmvc()){ this if maynot be required.. rates do exist for
-			// dmvc ones as well.. since calculated before detectDMV
+			// if (!v.isDmvc()){ this if maynot be required.. rates do exist for dmvc ones as well.. since calculated before detectDMV
 			v.scaleInitByDelay(delayScaleFactor);
 			// }
 		}
@@ -2870,8 +2826,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable {
 		String[] preset_encoding = pre_bin.split("");
 		String[] postset_encoding = post_bin.split("");
 		for (int j = 1; j < preset_encoding.length; j++) { // to account for ""
-			// being created in
-			// the array
+			// being created in the array
 			if (Integer.parseInt(preset_encoding[j]) != Integer
 					.parseInt(postset_encoding[j])) {
 				diffL.add(j - 1);// to account for "" being created in the
