@@ -2418,19 +2418,20 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						refreshTree();
 						// String work = root + separator + verName;
 						// log.addText(circuitFile);
-						//JTabbedPane verTab = new JTabbedPane();
-						//JPanel verPane = new JPanel();
+						// JTabbedPane verTab = new JTabbedPane();
+						// JPanel verPane = new JPanel();
 						Verification verify = new Verification(root + separator + verName, verName,
 								circuitFileNoPath, log, this, lema, atacs);
 						// verify.addMouseListener(this);
 						verify.save();
-						//verPane.add(verify);
-						//JPanel abstPane = new JPanel();
-						//AbstPane abst = new AbstPane(root + separator + verName, verify,
-						//		circuitFileNoPath, log, this, lema, atacs);
-						//abstPane.add(abst);
-						//verTab.addTab("verify", verPane);
-						//verTab.addTab("abstract", abstPane);
+						// verPane.add(verify);
+						// JPanel abstPane = new JPanel();
+						// AbstPane abst = new AbstPane(root + separator +
+						// verName, verify,
+						// circuitFileNoPath, log, this, lema, atacs);
+						// abstPane.add(abst);
+						// verTab.addTab("verify", verPane);
+						// verTab.addTab("abstract", abstPane);
 						/*
 						 * JLabel noData = new JLabel("No data available"); Font
 						 * font = noData.getFont(); font =
@@ -2947,28 +2948,30 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				((Verification) comp).save();
 			}
 			else if (comp instanceof JTabbedPane) {
-				Component component = ((JTabbedPane) comp).getSelectedComponent();
-				int index = ((JTabbedPane) comp).getSelectedIndex();
-				if (component instanceof Graph) {
-					((Graph) component).save();
-				}
-				else if (component instanceof Learn) {
-					((Learn) component).saveGcm();
-				}
-				else if (component instanceof LearnLHPN) {
-					((LearnLHPN) component).saveLhpn();
-				}
-				else if (component instanceof DataManager) {
-					((DataManager) component).saveChanges(((JTabbedPane) comp).getTitleAt(index));
-				}
-				else if (component instanceof SBML_Editor) {
-					((SBML_Editor) component).save(false, "", true);
-				}
-				else if (component instanceof GCM2SBMLEditor) {
-					((GCM2SBMLEditor) component).saveParams(false, "");
-				}
-				else if (component instanceof Reb2Sac) {
-					((Reb2Sac) component).save();
+				for (Component component : ((JTabbedPane) comp).getComponents()) {
+					int index = ((JTabbedPane) comp).getSelectedIndex();
+					if (component instanceof Graph) {
+						((Graph) component).save();
+					}
+					else if (component instanceof Learn) {
+						((Learn) component).saveGcm();
+					}
+					else if (component instanceof LearnLHPN) {
+						((LearnLHPN) component).saveLhpn();
+					}
+					else if (component instanceof DataManager) {
+						((DataManager) component).saveChanges(((JTabbedPane) comp)
+								.getTitleAt(index));
+					}
+					else if (component instanceof SBML_Editor) {
+						((SBML_Editor) component).save(false, "", true);
+					}
+					else if (component instanceof GCM2SBMLEditor) {
+						((GCM2SBMLEditor) component).saveParams(false, "");
+					}
+					else if (component instanceof Reb2Sac) {
+						((Reb2Sac) component).save();
+					}
 				}
 			}
 			if (comp instanceof JPanel) {
@@ -8523,6 +8526,14 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 											+ simName.trim() + separator + simName.trim() + ".sim");
 							simTab.addTab("SBML Elements", sbml.getElementsPanel());
 							simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
+							gcm.setSBMLParamFile(sbml);
+						}
+						else {
+							JScrollPane scroll = new JScrollPane();
+							scroll.setViewportView(new JPanel());
+							simTab.addTab("SBML Elements", scroll);
+							simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
+							gcm.setSBMLParamFile(null);
 						}
 					}
 					else {
@@ -8648,6 +8659,14 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 											+ simName.trim() + separator + simName.trim() + ".sim");
 							simTab.addTab("SBML Elements", sbml.getElementsPanel());
 							simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
+							gcm.setSBMLParamFile(sbml);
+						}
+						else {
+							JScrollPane scroll = new JScrollPane();
+							scroll.setViewportView(new JPanel());
+							simTab.addTab("SBML Elements", scroll);
+							simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
+							gcm.setSBMLParamFile(null);
 						}
 					}
 					else {
@@ -9046,9 +9065,9 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			}
 		}
 		if (!done) {
-			//JPanel verPanel = new JPanel();
-			//JPanel abstPanel = new JPanel();
-			//JPanel verTab = new JTabbedPane();
+			// JPanel verPanel = new JPanel();
+			// JPanel abstPanel = new JPanel();
+			// JPanel verTab = new JTabbedPane();
 			// String graphFile = "";
 			/*
 			 * if (new File(tree.getFile()).isDirectory()) { String[] list = new
@@ -9104,12 +9123,13 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			Verification ver = new Verification(root + separator + verName, verName, "flag", log,
 					this, lema, atacs);
 			// ver.addMouseListener(this);
-			//verPanel.add(ver);
-			//AbstPane abst = new AbstPane(root + separator + verName, ver, "flag", log, this, lema,
-			//		atacs);
-			//abstPanel.add(abst);
-			//verTab.add("verify", verPanel);
-			//verTab.add("abstract", abstPanel);
+			// verPanel.add(ver);
+			// AbstPane abst = new AbstPane(root + separator + verName, ver,
+			// "flag", log, this, lema,
+			// atacs);
+			// abstPanel.add(abst);
+			// verTab.add("verify", verPanel);
+			// verTab.add("abstract", abstPanel);
 			addTab(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],
 					ver, "Verification");
 		}
@@ -9341,6 +9361,15 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 								simTab.addTab("SBML Elements", sbml.getElementsPanel());
 								simTab.getComponentAt(simTab.getComponents().length - 1)
 										.setName("");
+								gcm.setSBMLParamFile(sbml);
+							}
+							else {
+								JScrollPane scroll = new JScrollPane();
+								scroll.setViewportView(new JPanel());
+								simTab.addTab("SBML Elements", scroll);
+								simTab.getComponentAt(simTab.getComponents().length - 1)
+										.setName("");
+								gcm.setSBMLParamFile(null);
 							}
 						}
 						else {
@@ -9849,6 +9878,14 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 									+ newSim + separator + newSim + ".sim");
 					simTab.addTab("SBML Elements", sbml.getElementsPanel());
 					simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
+					gcm.setSBMLParamFile(sbml);
+				}
+				else {
+					JScrollPane scroll = new JScrollPane();
+					scroll.setViewportView(new JPanel());
+					simTab.addTab("SBML Elements", scroll);
+					simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
+					gcm.setSBMLParamFile(null);
 				}
 			}
 			else {
@@ -10155,6 +10192,24 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							new File(properties).delete();
 							new File(properties.replace(".sim", ".temp")).renameTo(new File(
 									properties));
+							if (!((GCM2SBMLEditor) (sim.getComponentAt(j))).getSBMLFile().equals(
+									"--none--")) {
+								SBML_Editor sbml = new SBML_Editor(root + separator
+										+ ((GCM2SBMLEditor) (sim.getComponentAt(j))).getSBMLFile(),
+										((Reb2Sac) sim.getComponentAt(0)), log, this, root
+												+ separator + tab, root + separator + tab
+												+ separator + tab + ".sim");
+								sim.setComponentAt(j + 1, sbml.getElementsPanel());
+								sim.getComponentAt(j + 1).setName("");
+								((GCM2SBMLEditor) (sim.getComponentAt(j))).setSBMLParamFile(sbml);
+							}
+							else {
+								JScrollPane scroll = new JScrollPane();
+								scroll.setViewportView(new JPanel());
+								sim.setComponentAt(j + 1, scroll);
+								sim.getComponentAt(j + 1).setName("");
+								((GCM2SBMLEditor) (sim.getComponentAt(j))).setSBMLParamFile(null);
+							}
 						}
 					}
 				}

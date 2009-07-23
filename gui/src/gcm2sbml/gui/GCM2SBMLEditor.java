@@ -4,7 +4,6 @@ import gcm2sbml.network.GeneticNetwork;
 import gcm2sbml.parser.CompatibilityFixer;
 import gcm2sbml.parser.GCMFile;
 import gcm2sbml.parser.GCMParser;
-import gcm2sbml.util.GlobalConstants;
 import gcm2sbml.util.Utility;
 
 import java.awt.BorderLayout;
@@ -33,6 +32,7 @@ import javax.swing.JTextField;
 
 import reb2sac.Reb2Sac;
 import reb2sac.Reb2SacThread;
+import sbmleditor.SBML_Editor;
 
 import biomodelsim.BioSim;
 import biomodelsim.Log;
@@ -62,6 +62,8 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 	private String paramFile, refFile, simName;
 
 	private Reb2Sac reb2sac;
+	
+	private SBML_Editor sbmlParamFile;
 
 	public GCM2SBMLEditor(String path) {
 		this(path, null, null, null, false, null, null, null);
@@ -77,6 +79,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		this.paramFile = paramFile;
 		this.simName = simName;
 		this.reb2sac = reb2sac;
+		sbmlParamFile = null;
 		if (paramFile != null) {
 			try {
 				Scanner scan = new Scanner(new File(paramFile));
@@ -526,6 +529,9 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 							parameterChanges.add(s);
 						}
 					}
+					else {
+						break;
+					}
 				}
 				scan.close();
 			}
@@ -569,6 +575,10 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 				if (!s.trim().equals("")) {
 					out.write((s + "\n").getBytes());
 				}
+			}
+			out.write(("\n").getBytes());
+			for (String s : sbmlParamFile.getElementChanges()) {
+				out.write((s + "\n").getBytes());
 			}
 			out.close();
 		}
@@ -1206,6 +1216,10 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		private String name = null;
 
 		private PropertyList list = null;
+	}
+	
+	public void setSBMLParamFile(SBML_Editor sbmlParamFile) {
+		this.sbmlParamFile = sbmlParamFile;
 	}
 
 	private boolean lock = false;
