@@ -55,7 +55,7 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 
 	// sourceFileNoPath;
 
-	private boolean change, atacs;
+	private boolean change;
 
 	private PropertyList componentList;
 
@@ -176,30 +176,6 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 		// JPanel space = new JPanel();
 		// advanced.add(space);
 		advanced.add(speciesHolder);
-
-		// load parameters
-		Properties load = new Properties();
-		// log.addText(directory + separator + verFile);
-//		try {
-//			FileInputStream in = new FileInputStream(new File(directory + separator + absFile));
-//			load.load(in);
-//			in.close();
-//			if (load.containsKey("abstraction.interesting")) {
-//				String intVars = load.getProperty("abstraction.interesting");
-//				String[] array = intVars.split(" ");
-//				for (String s : array) {
-//					if (!s.equals("")) {
-//						listModel.addElement(s);
-//					}
-//				}
-//			}
-//		}
-//		catch (Exception e) {
-//			JOptionPane.showMessageDialog(biosim.frame(), "Unable to load properties file!",
-//					"Error Loading Properties", JOptionPane.ERROR_MESSAGE);
-//			// e.printStackTrace();
-//		}
-//		save();
 
 		// this.setLayout(new BorderLayout());
 		this.add(advanced);
@@ -327,97 +303,8 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 			getFilename = new String[1];
 			getFilename[0] = field.getText().trim();
 		}
-		// String circuitFile = getFilename[0] + ".prs";
-		// JOptionPane.showMessageDialog(this, circuitFile);
-		// JOptionPane.showMessageDialog(this, directory + separator +
-		// circuitFile);
-		// try {
-		// // JOptionPane.showMessageDialog(this, directory + separator +
-		// // "run.log");
-		// // String[] getFilename = verifyFile.split(".");
-		// // String circuitFile = getFilename[0] + ".ps";
-		// // JOptionPane.showMessageDialog(this, directory + separator +
-		// // circuitFile);
-		// if (new File(circuitFile).exists()) {
-		// File log = new File(circuitFile);
-		// BufferedReader input = new BufferedReader(new FileReader(log));
-		// String line = null;
-		// JTextArea messageArea = new JTextArea();
-		// while ((line = input.readLine()) != null) {
-		// messageArea.append(line);
-		// messageArea.append(System.getProperty("line.separator"));
-		// }
-		// input.close();
-		// messageArea.setLineWrap(true);
-		// messageArea.setWrapStyleWord(true);
-		// messageArea.setEditable(false);
-		// JScrollPane scrolls = new JScrollPane();
-		// scrolls.setMinimumSize(new Dimension(500, 500));
-		// scrolls.setPreferredSize(new Dimension(500, 500));
-		// scrolls.setViewportView(messageArea);
-		// JOptionPane.showMessageDialog(biosim.frame(), scrolls, "Circuit
-		// View",
-		// JOptionPane.INFORMATION_MESSAGE);
-		// }
-		// else {
-		// JOptionPane.showMessageDialog(biosim.frame(), "No circuit view
-		// exists.", "Error",
-		// JOptionPane.ERROR_MESSAGE);
-		// }
-		// }
-		// catch (Exception e1) {
-		// JOptionPane.showMessageDialog(biosim.frame(), "Unable to view
-		// circuit.", "Error",
-		// JOptionPane.ERROR_MESSAGE);
-		// }
 	}
-
-	// public void viewTrace() {
-	// String[] getFilename = verifyFile.split("\\.");
-	// String traceFilename = getFilename[0] + ".trace";
-	// JOptionPane.showMessageDialog(this, circuitFile);
-	// JOptionPane.showMessageDialog(this, directory + separator +
-	// circuitFile);
-	// try {
-	// // JOptionPane.showMessageDialog(this, directory + separator +
-	// // "run.log");
-	// // String[] getFilename = verifyFile.split(".");
-	// // String circuitFile = getFilename[0] + ".ps";
-	// // JOptionPane.showMessageDialog(this, directory + separator +
-	// // circuitFile);
-	// if (new File(traceFilename).exists()) {
-	// File log = new File(traceFilename);
-	// BufferedReader input = new BufferedReader(new FileReader(log));
-	// String line = null;
-	// JTextArea messageArea = new JTextArea();
-	// while ((line = input.readLine()) != null) {
-	// messageArea.append(line);
-	// messageArea.append(System.getProperty("line.separator"));
-	// }
-	// input.close();
-	// messageArea.setLineWrap(true);
-	// messageArea.setWrapStyleWord(true);
-	// messageArea.setEditable(false);
-	// JScrollPane scrolls = new JScrollPane();
-	// scrolls.setMinimumSize(new Dimension(500, 500));
-	// scrolls.setPreferredSize(new Dimension(500, 500));
-	// scrolls.setViewportView(messageArea);
-	// JOptionPane.showMessageDialog(biosim.frame(), scrolls, "Trace View",
-	// JOptionPane.INFORMATION_MESSAGE);
-	// }
-	// else {
-	// JOptionPane.showMessageDialog(biosim.frame(), "No trace file
-	// exists.", "Error",
-	// JOptionPane.ERROR_MESSAGE);
-	// }
-	// }
-	// catch (Exception e1) {
-	// JOptionPane.showMessageDialog(biosim.frame(), "Unable to view
-	// trace.", "Error",
-	// JOptionPane.ERROR_MESSAGE);
-	// }
-	// }
-
+	
 	public void viewLog() {
 		try {
 			// JOptionPane.showMessageDialog(this, directory + separator +

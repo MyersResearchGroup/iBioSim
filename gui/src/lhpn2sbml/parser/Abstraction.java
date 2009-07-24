@@ -211,10 +211,13 @@ public class Abstraction {
 							}
 						}
 						// log.addText(preset[0]);
-						String[] postset = controlPlaces.get(preset[0]).getProperty("postset")
-								.split(" ");
-						if (postset.length == 1 && !assign && !places.get(preset[0])) {
-							remove.add(s);
+						// String[] postset =
+						// controlPlaces.get(preset[0]).getProperty("postset")
+						// .split(" ");
+						if (places.containsKey(preset[0])) {
+							if (!assign && !places.get(preset[0])) {
+								remove.add(s);
+							}
 						}
 					}
 				}
@@ -380,9 +383,9 @@ public class Abstraction {
 					}
 				}
 			}
-			//if (removeDeadPlaces()) {
-			//	change = true;
-			//}
+			// if (removeDeadPlaces()) {
+			// change = true;
+			// }
 		}
 	}
 
@@ -1307,6 +1310,7 @@ public class Abstraction {
 		// ");
 		preset = controlPlaces.get(preset[0]).getProperty("preset").split(" ");
 		boolean marked = places.get(place);
+		String[] transPostset = controlPlaces.get(place).getProperty("postset").split(" ");
 		// Combine control Flow
 		for (String t : postset) {
 			if (controlPlaces.get(t) != null) {
@@ -1347,6 +1351,27 @@ public class Abstraction {
 				prop.setProperty("postset", tempList.trim());
 				controlFlow.put(t, prop);
 			}
+		}
+		for (String s : transPostset) {
+			String presetString = "";
+			Properties tempProp = controlFlow.get(s);
+			for (String t : postset) {
+				if (controlPlaces.get(t) != null) {
+					String[] tempPreset = controlPlaces.get(t).getProperty("preset").split(" ");
+					String tempList = "";
+					for (int i = 0; i < tempPreset.length; i++) {
+						if (!tempPreset[i].equals(transition)) {
+							tempList = tempList + s + " ";
+						}
+					}
+					Properties prop = controlPlaces.get(t);
+					prop.setProperty("preset", tempList.trim());
+					controlPlaces.put(t, prop);
+				}
+				presetString = presetString + t + " ";
+			}
+			tempProp.setProperty("preset", presetString);
+			controlFlow.put(s, tempProp);
 		}
 		places.remove(place);
 		controlPlaces.remove(place);
@@ -1634,15 +1659,16 @@ public class Abstraction {
 	}
 
 	public void addPlaceMovements(HashMap<String, Properties> newMovement) {
-		for (String s : newMovement.keySet()) {
-			Properties prop = new Properties();
-			Properties oldProp = newMovement.get(s);
-			for (Object o : oldProp.keySet()) {
-				String t = o.toString();
-				prop.setProperty(t, oldProp.getProperty(t));
-			}
-			controlPlaces.put(s, prop);
-		}
+		//for (String s : newMovement.keySet()) {
+		//	Properties prop = new Properties();
+		//	Properties oldProp = newMovement.get(s);
+		//	for (Object o : oldProp.keySet()) {
+		//		String t = o.toString();
+		//		prop.setProperty(t, oldProp.getProperty(t));
+		//	}
+		//	controlPlaces.put(s, prop);
+		//}
+		controlPlaces = newMovement;
 	}
 
 	public void addVariables(HashMap<String, Properties> newVariable) {
