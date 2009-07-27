@@ -166,10 +166,24 @@ public class Abstraction {
 							}
 						}
 						// log.addText(postset[0]);
-						String[] preset = controlPlaces.get(postset[0]).getProperty("preset")
-								.split(" ");
-						if (preset.length == 1 && !assign && !places.get(postset[0])) {
-							remove.add(s);
+						boolean post = true;
+						String[] preset;
+						if (controlFlow.get(s).containsKey("preset")) {
+							preset = controlFlow.get(s).getProperty("preset").split(" ");
+							for (String p : preset) {
+								if (controlPlaces.get(p).getProperty("postset").split(" ").length != 1) {
+									post = false;
+								}
+							}
+						}
+						if (controlPlaces.containsKey(postset[0])) {
+							if (controlPlaces.get(postset[0]).containsKey("preset")) {
+								preset = controlPlaces.get(postset[0]).getProperty("preset").split(
+										" ");
+								if ((preset.length == 1 || post) && !assign) {
+									remove.add(s);
+								}
+							}
 						}
 					}
 				}
@@ -1219,6 +1233,7 @@ public class Abstraction {
 		// preset = controlFlow.get(transition).getProperty("preset").split("
 		// ");
 		postset = controlPlaces.get(postset[0]).getProperty("postset").split(" ");
+		String[] placePreset = controlPlaces.get(place).getProperty("preset").split(" ");
 		// boolean marked = places.get(place);
 		// Combine control Flow
 		for (String t : preset) {
@@ -1232,15 +1247,23 @@ public class Abstraction {
 					// }
 				}
 			}
+			for (String p : placePreset) {
+				if (!p.equals(transition)) {
+					tempList = tempList + p + " ";
+				}
+				Properties prop = controlFlow.get(p);
+				String placePostset = prop.getProperty("postset");
+				prop.setProperty("postset", placePostset + " " + t);
+			}
 			for (int i = 0; i < postset.length; i++) {
 				tempList = tempList + postset[i] + " ";
 			}
 			Properties prop = controlPlaces.get(t);
 			prop.setProperty("postset", tempList.trim());
 			controlPlaces.put(t, prop);
-			// if (marked) {
-			// places.put(t, true);
-			// }
+			if (marked) {
+				places.put(t, true);
+			}
 		}
 		for (String t : postset) {
 			String[] tempPreset = controlFlow.get(t).getProperty("preset").split(" ");
@@ -1260,8 +1283,7 @@ public class Abstraction {
 			prop.setProperty("preset", tempList.trim());
 			controlFlow.put(t, prop);
 		}
-		controlPlaces.remove(place);
-		places.remove(place);
+		removePlace(place);
 		// Add delays
 		String[] oldDelay = new String[2];
 		Pattern rangePattern = Pattern.compile(RANGE);
@@ -1270,17 +1292,18 @@ public class Abstraction {
 			oldDelay[0] = rangeMatcher.group(1);
 			oldDelay[1] = rangeMatcher.group(2);
 		}
-		ArrayList<String> list = new ArrayList<String>();
+		// ArrayList<String> list = new ArrayList<String>();
+		// for (String t : preset) {
+		// if (controlPlaces.get(t).containsKey("postset")) {
+		// for (String u :
+		// controlPlaces.get(t).getProperty("postset").split(" ")) {
+		// list.add(u);
+		// }
+		// }
+		// }
+		// Object[] postTrans = list.toArray();
 		for (String t : postset) {
-			if (controlPlaces.get(t).containsKey("postset")) {
-				for (String u : controlPlaces.get(t).getProperty("postset").split(" ")) {
-					list.add(u);
-				}
-			}
-		}
-		Object[] postTrans = list.toArray();
-		for (Object o : postTrans) {
-			String t = o.toString();
+			// String t = o.toString();
 			if (delays.get(t) != null) {
 				Matcher newMatcher = rangePattern.matcher(delays.get(t));
 				if (newMatcher.find()) {
@@ -1659,15 +1682,15 @@ public class Abstraction {
 	}
 
 	public void addPlaceMovements(HashMap<String, Properties> newMovement) {
-		//for (String s : newMovement.keySet()) {
-		//	Properties prop = new Properties();
-		//	Properties oldProp = newMovement.get(s);
-		//	for (Object o : oldProp.keySet()) {
-		//		String t = o.toString();
-		//		prop.setProperty(t, oldProp.getProperty(t));
-		//	}
-		//	controlPlaces.put(s, prop);
-		//}
+		// for (String s : newMovement.keySet()) {
+		// Properties prop = new Properties();
+		// Properties oldProp = newMovement.get(s);
+		// for (Object o : oldProp.keySet()) {
+		// String t = o.toString();
+		// prop.setProperty(t, oldProp.getProperty(t));
+		// }
+		// controlPlaces.put(s, prop);
+		// }
 		controlPlaces = newMovement;
 	}
 
