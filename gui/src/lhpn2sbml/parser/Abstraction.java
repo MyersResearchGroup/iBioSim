@@ -225,11 +225,18 @@ public class Abstraction {
 							}
 						}
 						// log.addText(preset[0]);
-						// String[] postset =
-						// controlPlaces.get(preset[0]).getProperty("postset")
-						// .split(" ");
-						if (places.containsKey(preset[0])) {
-							if (!assign && !places.get(preset[0])) {
+						boolean pre = true;
+						if (controlFlow.get(s).containsKey("postset")) {
+							for (String p : controlFlow.get(s).getProperty("postset").split(" ")) {
+								if (controlPlaces.get(p).getProperty("preset").split(" ").length != 1) {
+									pre = false;
+								}
+							}
+						}
+						String[] postset = controlPlaces.get(preset[0]).getProperty("postset")
+								.split(" ");
+						if ((postset.length == 1 || pre) && places.containsKey(preset[0])) {
+							if (!assign) {
 								remove.add(s);
 							}
 						}
