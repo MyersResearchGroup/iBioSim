@@ -2242,7 +2242,12 @@ public class LHPNFile {
 					String tempString;
 					if (tempProp.containsKey("postset")) {
 						tempString = tempProp.getProperty("postset");
+						if (!tempString.equals("")) {
 						tempString = tempString + " " + tempPlace[1];
+						}
+						else {
+							tempString = tempPlace[1];
+						}
 					}
 					else {
 						tempString = tempPlace[1];
@@ -2276,7 +2281,10 @@ public class LHPNFile {
 						// log.addText("check2a if");
 						tempString = tempProp.getProperty("preset");
 						// log.addText("check2a if1");
+						if (!tempString.equals("")) 
 						tempString = tempString + " " + tempPlace[0];
+					else 
+						tempString = tempPlace[0];
 					}
 					else {
 						// log.addText("check2a else");
