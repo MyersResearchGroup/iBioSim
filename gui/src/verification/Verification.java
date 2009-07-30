@@ -757,7 +757,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		}
 		LHPNFile lhpnFile = new LHPNFile();
 		lhpnFile.load(tempDir + separator + verifyFile);
-		Abstraction abstraction = lhpnFile.abstractLhpn();
+		Abstraction abstraction = lhpnFile.abstractLhpn(this);
 		String abstFilename;
 		if (lhpn.isSelected()) {
 			abstFilename = (String) JOptionPane.showInputDialog(this,
@@ -1718,6 +1718,11 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			return true;
 		}
 		return change;
+	}
+	
+	public boolean isSimplify() {
+		if (simplify.isSelected()) return true;
+		return false;
 	}
 
 	public void copyFile() {
