@@ -1,7 +1,7 @@
 package lhpn2sbml.gui;
 
 import lhpn2sbml.parser.LHPNFile;
-import lhpn2sbml.parser.Abstraction;
+//import lhpn2sbml.parser.Abstraction;
 
 import gcm2sbml.gui.AbstractRunnableNamedButton;
 //import gcm2sbml.gui.InfluencePanel;
@@ -420,7 +420,7 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 			((Runnable) o).run();
 		}
 		else if (e.getSource() == abstButton) {
-			Abstraction abst = lhpnFile.abstractLhpn();
+			//Abstraction abst = lhpnFile.abstractLhpn();
 			String[] boolVars = lhpnFile.getBooleanVars();
 			String[] contVars = lhpnFile.getContVars();
 			String[] intVars = lhpnFile.getIntVars();
@@ -467,10 +467,10 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 					for (int i=0; i<tempVars.size(); i++) {
 						vars[i] = tempVars.get(i);
 					}
-					abst.abstractVars(vars);
+					//abst.abstractVars(vars);
 				}
-				abst.abstractSTG();
-				abst.save(directory + separator + abstFilename);
+				//abst.abstractSTG();
+				//abst.save(directory + separator + abstFilename);
 				biosim.refreshTree();
 			}
 		}

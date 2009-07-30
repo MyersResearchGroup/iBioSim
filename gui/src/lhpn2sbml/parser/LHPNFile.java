@@ -10,6 +10,8 @@ import java.util.regex.Pattern;
 //import javax.swing.JOptionPane;
 import biomodelsim.Log;
 
+import verification.Verification;
+
 /**
  * This class describes an LHPN file
  * 
@@ -2163,8 +2165,8 @@ public class LHPNFile {
 		return false;
 	}
 
-	public Abstraction abstractLhpn() {
-		Abstraction abstraction = new Abstraction(log);
+	public Abstraction abstractLhpn(Verification pane) {
+		Abstraction abstraction = new Abstraction(log, pane);
 		abstraction.addPlaces(places);
 		abstraction.addInputs(inputs);
 		abstraction.addOutputs(outputs);
