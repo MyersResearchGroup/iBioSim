@@ -1527,6 +1527,9 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			if (!intVars.equals("")) {
 				prop.setProperty("abstraction.interesting", intVars.trim());
 			}
+			else {
+				prop.remove("abstraction.interesting");
+			}
 			FileOutputStream out = new FileOutputStream(new File(directory + separator + verFile));
 			prop.store(out, verifyFile);
 			out.close();

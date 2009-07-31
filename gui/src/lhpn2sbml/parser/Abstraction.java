@@ -207,7 +207,7 @@ public class Abstraction {
 					// String[] preset =
 					// controlFlow.get(s).getProperty("preset").split(" ");
 					String[] postset = controlFlow.get(s).getProperty("postset").split(" ");
-					if (postset.length == 1) {
+					if (postset.length == 1 && !postset[0].equals("")) {
 						if (removeTrans3(s, controlFlow.get(s).getProperty("preset").split(" "),
 								postset))
 							change = true;
@@ -236,7 +236,7 @@ public class Abstraction {
 						}
 						// log.addText(preset[0]);
 						boolean pre = true;
-						if (controlFlow.get(s).containsKey("postset")) {
+						if (controlFlow.get(s).containsKey("postset") && !controlFlow.get(s).getProperty("postset").equals("")) {
 							for (String p : controlFlow.get(s).getProperty("postset").split(" ")) {
 								if (controlPlaces.get(p).getProperty("preset").split(" ").length != 1) {
 									pre = false;
@@ -414,7 +414,7 @@ public class Abstraction {
 					}
 				}
 			}
-			if (verPane.isSimplify()) {
+			if (!verPane.isSimplify()) {
 				if (removeDeadPlaces()) {
 					change = true;
 				}
@@ -694,6 +694,7 @@ public class Abstraction {
 					&& !places.get(s)) {
 				String[] postset = controlPlaces.get(s).getProperty("postset").split(" ");
 				for (String t : postset) {
+					if (controlFlow.get(t).getProperty("preset").split(" ").length == 1)
 					removeTransition(t);
 				}
 				removePlace(s);
@@ -1254,11 +1255,14 @@ public class Abstraction {
 		}
 		// preset = controlFlow.get(transition).getProperty("preset").split("
 		// ");
-		if (controlPlaces.get(postset[0]).containsKey("postset")) {
+		if (controlPlaces.get(place).containsKey("postset")) {
 			postset = controlPlaces.get(postset[0]).getProperty("postset").split(" ");
-			if (postset.length == 1 && postset[0].equals(transition)) {
+			if ((postset.length == 1 && postset[0].equals(transition))) {
 				return false;
 			}
+		}
+		else if (preset[0].equals("")) {
+			return false;
 		}
 		else {
 			postset = new String[0];
@@ -1291,9 +1295,16 @@ public class Abstraction {
 				}
 			}
 			for (int i = 0; i < postset.length; i++) {
+				if (!tempList.contains(postset[i])) {
 				tempList = tempList + postset[i] + " ";
+				}
 			}
 			Properties prop = controlPlaces.get(t);
+			prop.setProperty("preset", tempList.trim());
+			tempList = "";
+			for (String u : postset) {
+				tempList = tempList + u + " ";
+			}
 			prop.setProperty("postset", tempList.trim());
 			controlPlaces.put(t, prop);
 			if (marked) {
@@ -1375,9 +1386,15 @@ public class Abstraction {
 		// ");
 		if (controlPlaces.get(preset[0]).containsKey("preset")) {
 			preset = controlPlaces.get(preset[0]).getProperty("preset").split(" ");
-			if (preset.length == 1 && preset[0].equals(transition)) {
+			if (postset.length == 1) {
+			String[] tempPostset = controlPlaces.get(postset[0]).getProperty("postset").split(" ");
+			if (tempPostset.length == 1 && tempPostset[0].equals(transition)) {
 				return false;
 			}
+			}
+		}
+		else if (postset[0].equals("")) {
+			return false;
 		}
 		else {
 			preset = new String[0];
@@ -1458,10 +1475,12 @@ public class Abstraction {
 		}
 		HashMap<String, Boolean> postTrans = new HashMap<String, Boolean>();
 		for (String t : postset) {
+			if (controlPlaces.containsKey(t)) {
 			if (controlPlaces.get(t).containsKey("postset")) {
 				for (String u : controlPlaces.get(t).getProperty("postset").split(" ")) {
 					postTrans.put(u, places.get(t));
 				}
+			}
 			}
 		}
 		for (Object o : postTrans.keySet()) {
@@ -1496,7 +1515,7 @@ public class Abstraction {
 		}
 		String[] delay = { delays.get(trans1), delays.get(trans2) };
 		String[][] delayRange = new String[2][2];
-		Pattern pattern = Pattern.compile("\\[(\\d+?),(\\d+?)\\]");
+		Pattern pattern = Pattern.compile("\\[(\\S+?),(\\S+?)\\]");
 		for (int i = 0; i < delay.length; i++) {
 			Matcher matcher = pattern.matcher(delay[i]);
 			if (matcher.find()) {
@@ -1623,7 +1642,7 @@ public class Abstraction {
 				// unique = false;
 				// }
 				// }
-				if (controlPlaces.containsKey(postset1[0])) {
+				if (controlPlaces.containsKey(postset1[0]) && places.get(s) == places.get(postset1[0])) {
 					combinePlaces(s, postset1[0]);
 				}
 			}
@@ -1636,7 +1655,7 @@ public class Abstraction {
 				// unique = false;
 				// }
 				// }
-				if (controlPlaces.containsKey(preset1[0])) {
+				if (controlPlaces.containsKey(preset1[0]) && places.get(s) == places.get(postset1[0])) {
 					combinePlaces(s, preset1[0]);
 				}
 			}
