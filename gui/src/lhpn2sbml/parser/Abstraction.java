@@ -236,7 +236,8 @@ public class Abstraction {
 						}
 						// log.addText(preset[0]);
 						boolean pre = true;
-						if (controlFlow.get(s).containsKey("postset") && !controlFlow.get(s).getProperty("postset").equals("")) {
+						if (controlFlow.get(s).containsKey("postset")
+								&& !controlFlow.get(s).getProperty("postset").equals("")) {
 							for (String p : controlFlow.get(s).getProperty("postset").split(" ")) {
 								if (controlPlaces.get(p).getProperty("preset").split(" ").length != 1) {
 									pre = false;
@@ -423,53 +424,54 @@ public class Abstraction {
 	}
 
 	public void abstractVars(String[] intVars) {
+		ArrayList<String> interestingVars = getIntVars(intVars);
 		String[] vars = new String[variables.size() + inputs.size() + outputs.size()
-				+ integers.size() - intVars.length];
+				+ integers.size() - interestingVars.size()];
 		int i = 0;
 		for (String s : variables.keySet()) {
-			boolean flag = false;
-			for (int j = 0; j < intVars.length; j++) {
-				if (s.equals(intVars[j])) {
-					flag = true;
-				}
-			}
-			if (!flag) {
+			// boolean flag = false;
+			// for (int j = 0; j < intVars.length; j++) {
+			// if (s.equals(intVars[j])) {
+			// flag = true;
+			// }
+			// }
+			if (!interestingVars.contains(s)) {
 				vars[i] = s;
 				i++;
 			}
 		}
 		for (String s : inputs.keySet()) {
-			boolean flag = false;
-			for (int j = 0; j < intVars.length; j++) {
-				if (s.equals(intVars[j])) {
-					flag = true;
-				}
-			}
-			if (!flag) {
+			// boolean flag = false;
+			// for (int j = 0; j < intVars.length; j++) {
+			// if (s.equals(intVars[j])) {
+			// flag = true;
+			// }
+			// }
+			if (!interestingVars.contains(s)) {
 				vars[i] = s;
 				i++;
 			}
 		}
 		for (String s : outputs.keySet()) {
-			boolean flag = false;
-			for (int j = 0; j < intVars.length; j++) {
-				if (s.equals(intVars[j])) {
-					flag = true;
-				}
-			}
-			if (!flag) {
+			// boolean flag = false;
+			// for (int j = 0; j < intVars.length; j++) {
+			// if (s.equals(intVars[j])) {
+			// flag = true;
+			// }
+			// }
+			if (!interestingVars.contains(s)) {
 				vars[i] = s;
 				i++;
 			}
 		}
 		for (String s : integers.keySet()) {
-			boolean flag = false;
-			for (int j = 0; j < intVars.length; j++) {
-				if (s.equals(intVars[j])) {
-					flag = true;
-				}
-			}
-			if (!flag) {
+			// boolean flag = false;
+			// for (int j = 0; j < intVars.length; j++) {
+			// if (s.equals(intVars[j])) {
+			// flag = true;
+			// }
+			// }
+			if (!interestingVars.contains(s)) {
 				vars[i] = s;
 				i++;
 			}
@@ -695,13 +697,127 @@ public class Abstraction {
 				String[] postset = controlPlaces.get(s).getProperty("postset").split(" ");
 				for (String t : postset) {
 					if (controlFlow.get(t).getProperty("preset").split(" ").length == 1)
-					removeTransition(t);
+						removeTransition(t);
 				}
 				removePlace(s);
 				change = true;
 			}
 		}
 		return change;
+	}
+
+	private ArrayList<String> getIntVars(String[] oldIntVars) {
+		ArrayList<String> intVars = new ArrayList<String>();
+		intVars.add("fail");
+		for (String s : oldIntVars) {
+			intVars.add(s);
+		}
+		HashMap<String, HashMap<String, ExprTree[]>> assignments = new HashMap<String, HashMap<String, ExprTree[]>>();
+		for (String s : contAssignmentTrees.keySet()) {
+			assignments.put(s, contAssignmentTrees.get(s));
+		}
+		for (String s : intAssignmentTrees.keySet()) {
+			assignments.put(s, intAssignmentTrees.get(s));
+		}
+		for (String s : booleanAssignmentTrees.keySet()) {
+			assignments.put(s, booleanAssignmentTrees.get(s));
+		}
+		for (String s : rateAssignmentTrees.keySet()) {
+			assignments.put(s, rateAssignmentTrees.get(s));
+		}
+		ArrayList<String> tempIntVars = new ArrayList<String>();
+		tempIntVars = intVars;
+		do {
+			intVars = tempIntVars;
+			for (String var : intVars) {
+				for (HashMap<String, ExprTree[]> h : contAssignmentTrees.values()) {
+					for (String s : h.keySet()) {
+						for (ExprTree e : h.get(s)) {
+							if (e.containsVar(var)) {
+								tempIntVars.add(var);
+							}
+						}
+					}
+				}
+				for (HashMap<String, ExprTree[]> h : intAssignmentTrees.values()) {
+					for (String s : h.keySet()) {
+						for (ExprTree e : h.get(s)) {
+							if (e.containsVar(var)) {
+								tempIntVars.add(var);
+							}
+						}
+					}
+				}
+				for (HashMap<String, ExprTree[]> h : booleanAssignmentTrees.values()) {
+					for (String s : h.keySet()) {
+						for (ExprTree e : h.get(s)) {
+							if (e.containsVar(var)) {
+								tempIntVars.add(var);
+							}
+						}
+					}
+				}
+				for (HashMap<String, ExprTree[]> h : rateAssignmentTrees.values()) {
+					for (String s : h.keySet()) {
+						for (ExprTree e : h.get(s)) {
+							if (e.containsVar(var)) {
+								tempIntVars.add(var);
+							}
+						}
+					}
+				}
+			}
+		}
+		while (!intVars.equals(tempIntVars));
+		tempIntVars = intVars;
+		do {
+			intVars = tempIntVars;
+			for (String var : intVars) {
+				ArrayList<String> process = new ArrayList<String>();
+				for (String s : contAssignmentTrees.keySet()) {
+					if (contAssignmentTrees.get(s).keySet().contains(s)) {
+						process.add(s);
+					}
+				}
+				for (String s : intAssignmentTrees.keySet()) {
+					if (intAssignmentTrees.get(s).keySet().contains(s)) {
+						process.add(s);
+					}
+				}
+				for (String s : booleanAssignmentTrees.keySet()) {
+					if (booleanAssignmentTrees.get(s).keySet().contains(s)) {
+						process.add(s);
+					}
+				}
+				for (String s : rateAssignmentTrees.keySet()) {
+					if (rateAssignmentTrees.get(s).keySet().contains(s)) {
+						process.add(s);
+					}
+				}
+				ArrayList<String> tempProcess = new ArrayList<String>();
+				tempProcess = process;
+				do {
+					process = tempProcess;
+					for (String s : process) {
+						for (String t : controlFlow.get(s).getProperty("postset").split(" ")) {
+							for (String u : controlPlaces.get(t).getProperty("postset").split(" ")) {
+								if (!tempProcess.contains(u)) {
+									tempProcess.add(u);
+								}
+							}
+						}
+					}
+				} while (!tempProcess.equals(process));
+				for (String trans : process) {
+					ArrayList<String> tempVars = enablingTrees.get(trans).getVars();
+					for (String s : tempVars) {
+						if (!tempIntVars.contains(s)) tempIntVars.add(s);
+					}
+				}
+			}
+		}
+		while (!intVars.equals(tempIntVars));
+		return intVars;
 	}
 
 	public void save(String filename) {
@@ -1296,7 +1412,7 @@ public class Abstraction {
 			}
 			for (int i = 0; i < postset.length; i++) {
 				if (!tempList.contains(postset[i])) {
-				tempList = tempList + postset[i] + " ";
+					tempList = tempList + postset[i] + " ";
 				}
 			}
 			Properties prop = controlPlaces.get(t);
@@ -1387,10 +1503,11 @@ public class Abstraction {
 		if (controlPlaces.get(preset[0]).containsKey("preset")) {
 			preset = controlPlaces.get(preset[0]).getProperty("preset").split(" ");
 			if (postset.length == 1) {
-			String[] tempPostset = controlPlaces.get(postset[0]).getProperty("postset").split(" ");
-			if (tempPostset.length == 1 && tempPostset[0].equals(transition)) {
-				return false;
-			}
+				String[] tempPostset = controlPlaces.get(postset[0]).getProperty("postset").split(
+						" ");
+				if (tempPostset.length == 1 && tempPostset[0].equals(transition)) {
+					return false;
+				}
 			}
 		}
 		else if (postset[0].equals("")) {
@@ -1476,11 +1593,11 @@ public class Abstraction {
 		HashMap<String, Boolean> postTrans = new HashMap<String, Boolean>();
 		for (String t : postset) {
 			if (controlPlaces.containsKey(t)) {
-			if (controlPlaces.get(t).containsKey("postset")) {
-				for (String u : controlPlaces.get(t).getProperty("postset").split(" ")) {
-					postTrans.put(u, places.get(t));
+				if (controlPlaces.get(t).containsKey("postset")) {
+					for (String u : controlPlaces.get(t).getProperty("postset").split(" ")) {
+						postTrans.put(u, places.get(t));
+					}
 				}
-			}
 			}
 		}
 		for (Object o : postTrans.keySet()) {
@@ -1642,7 +1759,8 @@ public class Abstraction {
 				// unique = false;
 				// }
 				// }
-				if (controlPlaces.containsKey(postset1[0]) && places.get(s) == places.get(postset1[0])) {
+				if (controlPlaces.containsKey(postset1[0])
+						&& places.get(s) == places.get(postset1[0])) {
 					combinePlaces(s, postset1[0]);
 				}
 			}
@@ -1655,7 +1773,8 @@ public class Abstraction {
 				// unique = false;
 				// }
 				// }
-				if (controlPlaces.containsKey(preset1[0]) && places.get(s) == places.get(postset1[0])) {
+				if (controlPlaces.containsKey(preset1[0])
+						&& places.get(s) == places.get(postset1[0])) {
 					combinePlaces(s, preset1[0]);
 				}
 			}

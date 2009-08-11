@@ -37,8 +37,8 @@ public class ExprTree {
 	// private int nsignals;// nevents, nplaces;
 
 	private LHPNFile lhpn;
-	
-	private Abstraction abstraction;
+
+	//private Abstraction abstraction;
 
 	public ExprTree(LHPNFile lhpn) {
 		this.lhpn = lhpn;
@@ -56,9 +56,9 @@ public class ExprTree {
 			signals.add(ints[j]);
 		}
 	}
-	
+
 	public ExprTree(Abstraction abstraction) {
-		this.abstraction = abstraction;
+		//this.abstraction = abstraction;
 		String[] bools = abstraction.getBooleanVars();
 		String[] conts = abstraction.getContVars();
 		String[] ints = abstraction.getIntVars();
@@ -262,7 +262,7 @@ public class ExprTree {
 		// System.out.println("U: token = " + token + " tokvalue = " + tokvalue
 		// + " result = " + result);
 		double temp;
-		//ExprTree newresult = new ExprTree();
+		// ExprTree newresult = new ExprTree();
 
 		switch (token) {
 		case WORD:
@@ -1394,7 +1394,7 @@ public class ExprTree {
 		if (isEqual(expr)) {
 			return true;
 		}
-		if  (expr.isit == 'l' && expr.op.equals("||")) {
+		if (expr.isit == 'l' && expr.op.equals("||")) {
 			if (implies(expr.r1) || implies(expr.r2)) {
 				return true;
 			}
@@ -1450,6 +1450,58 @@ public class ExprTree {
 		default:
 			return false;
 		}
+	}
+
+	public boolean containsVar(String var) {
+		switch (isit) {
+		case 'b': // Boolean
+		case 'i': // Integer
+		case 'c': // Continuous
+			if (variable.equals(var))
+				return true;
+			return false;
+		case 'r': // Relational
+		case 'l': // Logical
+		case 'a': // Arithmetic
+		case 'w': // bitWise
+			if (r1.containsVar(var)) {
+				return true;
+			}
+			else if (r2.containsVar(var)) {
+				return true;
+			}
+			return false;
+		case 'n': // Number
+		case 't': // Truth value
+		default:
+			return false;
+		}
+	}
+
+	public ArrayList<String> getVars() {
+		ArrayList<String> vars = new ArrayList<String>();
+		switch (isit) {
+		case 'b': // Boolean
+		case 'i': // Integer
+		case 'c': // Continuous
+			if (!vars.contains(variable))
+				vars.add(variable);
+			break;
+		case 'r': // Relational
+		case 'l': // Logical
+		case 'a': // Arithmetic
+		case 'w': // bitWise
+			if (r1 != null)
+				vars.addAll(r1.getVars());
+			if (r1 != null)
+				vars.addAll(r2.getVars());
+			break;
+		case 'n': // Number
+		case 't': // Truth value
+		default:
+			break;
+		}
+		return vars;
 	}
 
 	private String getElement(String result) {
@@ -1516,7 +1568,7 @@ public class ExprTree {
 		}
 		return result;
 	}
-	
+
 	private boolean isEqual(ExprTree expr) {
 		if (isit == expr.isit) {
 			boolean same = false;
