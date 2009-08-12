@@ -36,6 +36,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 
+import lhpn2sbml.parser.ExprTree;
 import lhpn2sbml.parser.LHPNFile;
 
 import biomodelsim.BioSim;
@@ -765,6 +766,25 @@ public class GCMFile {
 	public void addComponent(String name, Properties properties) {
 		components.put(name, properties);
 	}
+	
+	public void addCondition(String condition) {
+		boolean retval = false;
+		ExprTree expr = new ExprTree(convertToLHPN(new ArrayList<String>(), new ArrayList<Object[]>()));
+		expr.token = expr.intexpr_gettok(condition);
+		if (!condition.equals("")) {
+			retval = expr.intexpr_L(condition);
+		}
+		else {
+			expr = null;
+		}
+		if (retval) {
+			conditions.put(condition, expr);
+		}
+	}
+	
+	public HashMap<String, ExprTree> getConditions() {
+		return conditions;
+	}
 
 	public void addInfluences(String name, Properties property) {
 		influences.put(name, property);
@@ -1297,6 +1317,8 @@ public class GCMFile {
 	private HashMap<String, Properties> promoters;
 
 	private HashMap<String, Properties> components;
+	
+	private HashMap<String, ExprTree> conditions;
 
 	private HashMap<String, String> parameters;
 
