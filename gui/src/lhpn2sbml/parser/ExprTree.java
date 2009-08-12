@@ -4,6 +4,7 @@ import gcm2sbml.util.Utility;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Properties;
 
 public class ExprTree {
 
@@ -1493,7 +1494,7 @@ public class ExprTree {
 		case 'w': // bitWise
 			if (r1 != null)
 				vars.addAll(r1.getVars());
-			if (r1 != null)
+			if (r2 != null)
 				vars.addAll(r2.getVars());
 			break;
 		case 'n': // Number
@@ -1502,6 +1503,109 @@ public class ExprTree {
 			break;
 		}
 		return vars;
+	}
+	
+	public boolean containsCont() {
+		switch (isit) {
+		case 'b': // Boolean
+		case 't': // Truth value
+			return false;
+		case 'i': // Integer
+		case 'c': // Continuous
+		case 'r': // Relational
+		case 'a': // Arithmetic
+		case 'n': // Number
+			return true;
+		case 'l': // Logical
+		case 'w': // bitWise
+			boolean r1cont = false, r2cont = false;
+			if (r1 != null)
+				r1cont = r1.containsCont();
+			if (r2 != null)
+				r2cont = r2.containsCont();
+			return (r1cont||r2cont);
+		}
+		return false;
+	}
+	
+	public boolean becomesFalse(Properties prop) {
+		switch (isit) {
+		case 'b': // Boolean
+			if (prop.containsKey(variable))
+				if (prop.get(variable).toString().toLowerCase().equals("false"))
+					return true;
+			return false;
+		case 't': // Truth value
+			if (lvalue == 0) return true;
+			return false;
+		case 'l': // Logical
+		case 'w': // bitWise
+			if (op.equals("||")) {
+				if (r1.becomesFalse(prop) && r2.becomesFalse(prop))
+					return true;
+				return false;
+			}
+			else if (op.equals("&&")) {
+				if (r1.becomesFalse(prop) || r2.becomesFalse(prop))
+					return true;
+				return false;
+			}
+			else if (op.equals("==")) {
+				if (!r1.isEqual(r2)) return true;
+				return false;
+			}
+			else if (op.equals("!")) {
+				if (r1.becomesTrue(prop)) return true;
+				return false;
+			}
+		case 'i': // Integer
+		case 'c': // Continuous
+		case 'r': // Relational
+		case 'a': // Arithmetic
+		case 'n': // Number
+			return false;
+		}
+		return false;
+	}
+	
+	public boolean becomesTrue(Properties prop) {
+		switch (isit) {
+		case 'b': // Boolean
+			if (prop.containsKey(variable))
+				if (prop.get(variable).toString().toLowerCase().equals("true"))
+					return true;
+			return false;
+		case 't': // Truth value
+			if (uvalue == 1) return true;
+			return false;
+		case 'l': // Logical
+		case 'w': // bitWise
+			if (op.equals("||")) {
+				if (r1.becomesTrue(prop) || r2.becomesTrue(prop))
+					return true;
+				return false;
+			}
+			else if (op.equals("&&")) {
+				if (r1.becomesTrue(prop) && r2.becomesFalse(prop))
+					return true;
+				return false;
+			}
+			else if (op.equals("==")) {
+				if (r1.isEqual(r2, prop)) return true;
+				return false;
+			}
+			else if (op.equals("!")) {
+				if (r1.becomesFalse(prop)) return true;
+				return false;
+			}
+		case 'i': // Integer
+		case 'c': // Continuous
+		case 'r': // Relational
+		case 'a': // Arithmetic
+		case 'n': // Number
+			return false;
+		}
+		return false;
 	}
 
 	private String getElement(String result) {
@@ -1581,13 +1685,74 @@ public class ExprTree {
 				}
 				break;
 			case 'n': // Number
+			case 't': // Truth value
 				if (uvalue == expr.uvalue && lvalue == expr.lvalue) {
 					same = true;
 				}
 				break;
+			case 'w': // bitWise
+			case 'a': // Arithmetic
+			case 'r': // Relational
+			case 'l': // Logical
+				if (op.equals(expr.op)) {
+					same = true;
+				}
+			}
+			if (same) {
+				boolean r1Same = false, r2Same = false;
+				if (r1 == null) {
+					if (expr.r1 == null) {
+						r1Same = true;
+					}
+				}
+				else if (r1.isEqual(expr.r1)) {
+					r1Same = true;
+				}
+				if (r2 == null) {
+					if (expr.r2 == null) {
+						r2Same = true;
+					}
+				}
+				else if (r2.isEqual(expr.r2)) {
+					r2Same = true;
+				}
+				if (r1Same && r2Same) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	private boolean isEqual(ExprTree expr, Properties prop) {
+		if (isit == expr.isit) {
+			boolean same = false;
+			switch (isit) {
+			case 'b': // Boolean
+			case 'i': // Integer
+			case 'c': // Continuous
+				if (prop.containsKey(variable)) {
+					if (prop.containsKey(expr.variable)) {
+						if (prop.getProperty(variable).equals(prop.getProperty(expr.variable)))
+							same = true;
+					}
+				}
+				else if (variable.equals(expr.variable)) {
+					same = true;
+				}
+				break;
+			case 'n': // Number
 			case 't': // Truth value
 				if (uvalue == expr.uvalue && lvalue == expr.lvalue) {
 					same = true;
+				}
+				else if (prop.containsKey(expr.variable)) {
+					if (uvalue == lvalue) {
+						if (uvalue == 1.0 && prop.getProperty(expr.variable).toLowerCase().equals("true"))
+							same = true;
+						else if (uvalue == 0.0 && prop.getProperty(expr.variable).toLowerCase().equals("false"))
+							same = true;
+					}
 				}
 				break;
 			case 'w': // bitWise

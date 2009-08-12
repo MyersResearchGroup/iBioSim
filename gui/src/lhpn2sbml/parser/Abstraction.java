@@ -419,6 +419,9 @@ public class Abstraction {
 				if (removeDeadPlaces()) {
 					change = true;
 				}
+				if (removeDeadTransitions()) {
+					change = true;
+				}
 			}
 		}
 	}
@@ -701,6 +704,47 @@ public class Abstraction {
 				}
 				removePlace(s);
 				change = true;
+			}
+		}
+		return change;
+	}
+	
+	private boolean removeDeadTransitions() {
+		boolean change = false;
+		HashMap<String, String> initVars = new HashMap<String, String>();
+		for (String s : variables.keySet()) {
+			initVars.put(s, variables.get(s).getProperty("value"));
+		}
+		initVars.putAll(integers);
+		initVars.putAll(inputs);
+		initVars.putAll(outputs);
+		for (String t : enablingTrees.keySet()) {
+			ExprTree expr = enablingTrees.get(t);
+			if (expr.containsCont()) continue;
+			if (expr.evaluateExp(initVars) == 1) {
+				boolean enabled = true;
+				for (String trans : booleanAssignments.keySet()) {
+					if (trans.equals(t) || expr.becomesFalse(booleanAssignments.get(trans))) {
+						enabled = false;
+						break;
+					}
+				}
+				if (enabled) {
+					enablings.remove(t);
+					enablingTrees.remove(t);
+				}
+			}
+			else if (expr.evaluateExp(initVars) == 0) {
+				boolean disabled = true;
+				for (String trans : booleanAssignments.keySet()) {
+					if (trans.equals(t) || expr.becomesTrue(booleanAssignments.get(trans))) {
+						disabled = false;
+						break;
+					}
+				}
+				if (disabled) {
+					removeTransition(t);
+				}
 			}
 		}
 		return change;
