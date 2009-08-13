@@ -708,7 +708,7 @@ public class Abstraction {
 		}
 		return change;
 	}
-	
+
 	private boolean removeDeadTransitions() {
 		boolean change = false;
 		HashMap<String, String> initVars = new HashMap<String, String>();
@@ -720,7 +720,8 @@ public class Abstraction {
 		initVars.putAll(outputs);
 		for (String t : enablingTrees.keySet()) {
 			ExprTree expr = enablingTrees.get(t);
-			if (expr.containsCont()) continue;
+			if (expr.containsCont())
+				continue;
 			if (expr.evaluateExp(initVars) == 1) {
 				boolean enabled = true;
 				for (String trans : booleanAssignments.keySet()) {
@@ -743,11 +744,50 @@ public class Abstraction {
 					}
 				}
 				if (disabled) {
+					for (String s : controlPlaces.keySet()) {
+						Properties prop = controlPlaces.get(s);
+						if (prop.getProperty("preset").contains(t)) {
+							String[] preset = prop.getProperty("preset").split(" ");
+							String temp = "";
+							for (String u : preset) {
+								if (!u.equals(t)) {
+									temp = temp + u + " ";
+								}
+							}
+							prop.setProperty("preset", temp);
+						}
+						if (prop.getProperty("postset").contains(t)) {
+							String[] postset = prop.getProperty("postset").split(" ");
+							String temp = "";
+							for (String u : postset) {
+								if (!u.equals(t)) {
+									temp = temp + u + " ";
+								}
+							}
+							prop.setProperty("postset", temp);
+						}
+						controlPlaces.put(s, prop);
+					}
 					removeTransition(t);
 				}
 			}
 		}
+		for (String s : places.keySet()) {
+			if (places.get(s)) continue;
+			if (hasMarkedPreset(s)) continue;
+			removePlace(s);
+		}
 		return change;
+	}
+	
+	private boolean hasMarkedPreset(String place) {
+		for (String t : controlPlaces.get(place).getProperty("preset").split(" ")) {
+			for (String p : controlFlow.get(t).getProperty("preset").split(" ")) {
+				if (places.get(p)) return true;
+				else if (hasMarkedPreset(p)) return true;
+			}
+		}
+		return false;
 	}
 
 	private ArrayList<String> getIntVars(String[] oldIntVars) {
@@ -851,11 +891,13 @@ public class Abstraction {
 							}
 						}
 					}
-				} while (!tempProcess.equals(process));
+				}
+				while (!tempProcess.equals(process));
 				for (String trans : process) {
 					ArrayList<String> tempVars = enablingTrees.get(trans).getVars();
 					for (String s : tempVars) {
-						if (!tempIntVars.contains(s)) tempIntVars.add(s);
+						if (!tempIntVars.contains(s))
+							tempIntVars.add(s);
 					}
 				}
 			}
