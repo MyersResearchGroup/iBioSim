@@ -530,7 +530,14 @@ public class Run implements ActionListener {
 								+ ".lpn");
 						StateGraph sg = new StateGraph(lhpnFile);
 						log.addText("Performing Markov Chain analysis.");
-						sg.performMarkovianAnalysis();
+						String simrep = sg.performMarkovianAnalysis(gcmEditor.getGCM()
+								.getConditions());
+						if (simrep != null) {
+							FileOutputStream simrepstream = new FileOutputStream(new File(directory
+									+ separator + "sim-rep.txt"));
+							simrepstream.write((simrep).getBytes());
+							simrepstream.close();
+						}
 						sg.outputStateGraph(filename.replace(".gcm", "").replace(".sbml", "")
 								.replace(".xml", "")
 								+ ".dot", true);

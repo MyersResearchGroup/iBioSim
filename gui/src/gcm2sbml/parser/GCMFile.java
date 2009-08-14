@@ -57,6 +57,7 @@ public class GCMFile {
 		influences = new HashMap<String, Properties>();
 		promoters = new HashMap<String, Properties>();
 		components = new HashMap<String, Properties>();
+		conditions = new HashMap<String, ExprTree>();
 		globalParameters = new HashMap<String, String>();
 		parameters = new HashMap<String, String>();
 		loadDefaultParameters();
@@ -767,9 +768,17 @@ public class GCMFile {
 		components.put(name, properties);
 	}
 	
-	public void addCondition(String condition) {
+	public boolean addCondition(String condition) {
 		boolean retval = false;
-		ExprTree expr = new ExprTree(convertToLHPN(new ArrayList<String>(), new ArrayList<Object[]>()));
+		ArrayList<String> specs = new ArrayList<String>();
+		ArrayList<Object[]> conLevel = new ArrayList<Object[]>();
+		for (String spec : species.keySet()) {
+			specs.add(spec);
+			ArrayList<String> level = new ArrayList<String>();
+			level.add("0");
+			conLevel.add(level.toArray());
+		}
+		ExprTree expr = new ExprTree(convertToLHPN(specs, conLevel));
 		expr.token = expr.intexpr_gettok(condition);
 		if (!condition.equals("")) {
 			retval = expr.intexpr_L(condition);
@@ -780,6 +789,11 @@ public class GCMFile {
 		if (retval) {
 			conditions.put(condition, expr);
 		}
+		return retval;
+	}
+	
+	public void removeCondition(String condition) {
+		conditions.remove(condition);
 	}
 	
 	public HashMap<String, ExprTree> getConditions() {
