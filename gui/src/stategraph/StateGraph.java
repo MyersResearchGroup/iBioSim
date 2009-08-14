@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Stack;
+
+import lhpn2sbml.parser.ExprTree;
 import lhpn2sbml.parser.LHPNFile;
 
 public class StateGraph {
@@ -199,7 +201,7 @@ public class StateGraph {
 		}
 	}
 
-	public void performMarkovianAnalysis() {
+	public String performMarkovianAnalysis(HashMap<String, ExprTree> conditions) {
 		State initial = getInitialState();
 		if (initial != null) {
 			resetColorsForMarkovianAnalysis();
@@ -282,7 +284,29 @@ public class StateGraph {
 				}
 			}
 			resetColors();
+			HashMap<String, Double> output = new HashMap<String, Double>();
+			if (conditions != null) {
+				for (String s : conditions.keySet()) {
+					double prob = 0;
+					for (String state : stateGraph.keySet()) {
+						for (State m : stateGraph.get(state)) {
+							if (conditions.get(s).evaluateExp(m.getVariables()) == 1.0) {
+								prob += m.getCurrentProb();
+							}
+						}
+					}
+					output.put(s, prob);
+				}
+				String result1 = "#total";
+				String result2 = "100";
+				for (String s : output.keySet()) {
+					result1 += " " + s;
+					result2 += " " + output.get(s);
+				}
+				return result1 + "\n" + result2;
+			}
 		}
+		return null;
 	}
 
 	private int findPeriod(State state) {

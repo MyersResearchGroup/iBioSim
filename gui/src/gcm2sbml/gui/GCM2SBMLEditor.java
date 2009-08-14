@@ -931,6 +931,16 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		}
 		initPanel = Utility.createPanel(this, "Components", components, addInit, removeInit, editInit);
 		tabPanel.add(initPanel, "Center");
+		
+		conditions = new PropertyList("Condition List");
+		addInit = new EditButton("Add Condition", conditions);
+		removeInit = new RemoveButton("Remove Condition", conditions);
+		editInit = new EditButton("Edit Condition", conditions);
+		for (String s : gcm.getConditions().keySet()) {
+			conditions.addItem(s);
+		}
+		initPanel = Utility.createPanel(this, "Conditions", conditions, addInit, removeInit, editInit);
+		tabPanel.add(initPanel, "South");
 	}
 
 	public void reloadFiles() {
@@ -1173,6 +1183,13 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 					}
 				}
 			}
+			else if (getName().contains("Condition")) {
+				String selected = null;
+				if (list.getSelectedValue() != null && getName().contains("Edit")) {
+					selected = list.getSelectedValue().toString();
+				}
+				ConditionsPanel panel = new ConditionsPanel(selected, list, gcm, paramsOnly, biosim);
+			}
 			else if (getName().contains("Component")) {
 				String selected = null;
 				String comp = null;
@@ -1288,6 +1305,8 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 	private PropertyList parameters = null;
 
 	private PropertyList components = null;
+	
+	private PropertyList conditions = null;
 
 	private JComboBox sbmlFiles = null;
 
