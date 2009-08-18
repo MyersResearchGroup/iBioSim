@@ -590,6 +590,10 @@ public class GCMFile {
 				}
 				buffer.append("]\n");
 			}
+			buffer.append("}\nConditions {\n");
+			for (String s : conditions.keySet()) {
+				buffer.append(s + "\n");
+			}
 			/*
 			 * buffer.append("}\nComponents {\n"); for (String s :
 			 * components.keySet()) { buffer.append(s + " ["); Properties prop =
@@ -622,6 +626,7 @@ public class GCMFile {
 		influences = new HashMap<String, Properties>();
 		promoters = new HashMap<String, Properties>();
 		components = new HashMap<String, Properties>();
+		conditions = new HashMap<String, ExprTree>();
 		globalParameters = new HashMap<String, String>();
 		parameters = new HashMap<String, String>();
 		StringBuffer data = new StringBuffer();
@@ -643,10 +648,10 @@ public class GCMFile {
 			parseInfluences(data);
 			parseGlobal(data);
 			parsePromoters(data);
-			// parseComponents(data);
 			parseSBMLFile(data);
 			parseBioAbs(data);
 			parseDimAbs(data);
+			parseConditions(data);
 		}
 		catch (Exception e) {
 			throw new IllegalArgumentException("Unable to parse GCM");
@@ -1099,6 +1104,17 @@ public class GCMFile {
 			}
 		}
 	}
+	
+	private void parseConditions(StringBuffer data) {
+		Pattern pattern = Pattern.compile(CONDITION);
+		Matcher matcher = pattern.matcher(data.toString());
+		if (matcher.find()) {
+			String s = matcher.group(1).trim();
+			for (String cond : s.split("\n")) {
+				addCondition(cond.trim());
+			}
+		}
+	}
 
 	private void parsePromoters(StringBuffer data) {
 		Pattern network = Pattern.compile(PROMOTERS_LIST);
@@ -1306,6 +1322,8 @@ public class GCMFile {
 	private static final String PROPERTY = "([a-zA-Z\\ \\-]+)=(\"([^\"]*)\"|([^\\s,]+))";
 
 	private static final String GLOBAL = "Global\\s\\{([^}]*)\\s\\}";
+	
+	private static final String CONDITION = "Conditions\\s\\{([^}]*)\\s\\}";
 
 	private static final String SBMLFILE = GlobalConstants.SBMLFILE + "=\"([^\"]*)\"";
 

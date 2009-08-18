@@ -1059,6 +1059,14 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 					}
 				}
 			}
+			else if (getName().contains("Condition")) {
+				String name = null;
+				if (list.getSelectedValue() != null) {
+					name = list.getSelectedValue().toString();
+					gcm.removeCondition(name);
+					list.removeItem(name);
+				}
+			}
 			else if (getName().contains("Component")) {
 				String name = null;
 				if (list.getSelectedValue() != null) {
