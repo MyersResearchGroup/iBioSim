@@ -428,9 +428,7 @@ public class Abstraction {
 
 	public void abstractVars(String[] intVars) {
 		ArrayList<String> interestingVars = getIntVars(intVars);
-		String[] vars = new String[variables.size() + inputs.size() + outputs.size()
-				+ integers.size() - interestingVars.size()];
-		int i = 0;
+		ArrayList<String> vars = new ArrayList<String>();
 		for (String s : variables.keySet()) {
 			// boolean flag = false;
 			// for (int j = 0; j < intVars.length; j++) {
@@ -439,8 +437,7 @@ public class Abstraction {
 			// }
 			// }
 			if (!interestingVars.contains(s)) {
-				vars[i] = s;
-				i++;
+				vars.add(s);
 			}
 		}
 		for (String s : inputs.keySet()) {
@@ -451,8 +448,7 @@ public class Abstraction {
 			// }
 			// }
 			if (!interestingVars.contains(s)) {
-				vars[i] = s;
-				i++;
+				vars.add(s);
 			}
 		}
 		for (String s : outputs.keySet()) {
@@ -463,8 +459,7 @@ public class Abstraction {
 			// }
 			// }
 			if (!interestingVars.contains(s)) {
-				vars[i] = s;
-				i++;
+				vars.add(s);
 			}
 		}
 		for (String s : integers.keySet()) {
@@ -475,8 +470,7 @@ public class Abstraction {
 			// }
 			// }
 			if (!interestingVars.contains(s)) {
-				vars[i] = s;
-				i++;
+				vars.add(s);
 			}
 		}
 		if (vars != null) {
@@ -692,6 +686,7 @@ public class Abstraction {
 
 	private boolean removeDeadPlaces() {
 		boolean change = false;
+		ArrayList<String> removePlace = new ArrayList<String>();
 		for (String s : places.keySet()) {
 			if ((!controlPlaces.get(s).containsKey("preset")
 					|| controlPlaces.get(s).getProperty("preset") == null || controlPlaces.get(s)
@@ -699,12 +694,81 @@ public class Abstraction {
 					&& !places.get(s)) {
 				String[] postset = controlPlaces.get(s).getProperty("postset").split(" ");
 				for (String t : postset) {
-					if (controlFlow.get(t).getProperty("preset").split(" ").length == 1)
-						removeTransition(t);
+					for (String v : controlPlaces.keySet()) {
+						Properties prop = controlPlaces.get(v);
+						if (prop.containsKey("preset")) {
+							if (prop.getProperty("preset").contains(t)) {
+								String[] preset = prop.getProperty("preset").split(" ");
+								String temp = "";
+								for (String u : preset) {
+									if (!u.equals(t)) {
+										temp = temp + u + " ";
+									}
+								}
+								prop.setProperty("preset", temp);
+							}
+						}
+						if (prop.containsKey("postset")) {
+							if (prop.getProperty("postset").contains(t)) {
+								String[] tempPostset = prop.getProperty("postset").split(" ");
+								String temp = "";
+								for (String u : tempPostset) {
+									if (!u.equals(t)) {
+										temp = temp + u + " ";
+									}
+								}
+								prop.setProperty("postset", temp);
+							}
+						}
+						controlPlaces.put(v, prop);
+					}
+					removeTransition(t);
 				}
-				removePlace(s);
+				removePlace.add(s);
+				change = true;
+				continue;
+			}
+			if (!controlPlaces.get(s).containsKey("preset")
+					&& !controlPlaces.get(s).containsKey("postset")) {
+				removePlace.add(s);
+			}
+			if (!change) {
+				if (places.get(s))
+					continue;
+				if (hasMarkedPreset(s))
+					continue;
+				for (String t : controlPlaces.get(s).getProperty("postset").split(" ")) {
+					for (String v : controlPlaces.keySet()) {
+						Properties prop = controlPlaces.get(v);
+						if (prop.getProperty("preset").contains(t)) {
+							String[] preset = prop.getProperty("preset").split(" ");
+							String temp = "";
+							for (String u : preset) {
+								if (!u.equals(t)) {
+									temp = temp + u + " ";
+								}
+							}
+							prop.setProperty("preset", temp);
+						}
+						if (prop.getProperty("postset").contains(t)) {
+							String[] postset = prop.getProperty("postset").split(" ");
+							String temp = "";
+							for (String u : postset) {
+								if (!u.equals(t)) {
+									temp = temp + u + " ";
+								}
+							}
+							prop.setProperty("postset", temp);
+						}
+						controlPlaces.put(v, prop);
+					}
+					removeTransition(t);
+				}
 				change = true;
 			}
+		}
+		for (String s : removePlace) {
+			removePlace(s);
 		}
 		return change;
 	}
@@ -772,19 +836,20 @@ public class Abstraction {
 				}
 			}
 		}
-		for (String s : places.keySet()) {
-			if (places.get(s)) continue;
-			if (hasMarkedPreset(s)) continue;
-			removePlace(s);
-		}
 		return change;
 	}
-	
+
 	private boolean hasMarkedPreset(String place) {
-		for (String t : controlPlaces.get(place).getProperty("preset").split(" ")) {
-			for (String p : controlFlow.get(t).getProperty("preset").split(" ")) {
-				if (places.get(p)) return true;
-				else if (hasMarkedPreset(p)) return true;
+		if (controlPlaces.get(place).containsKey("preset")) {
+			for (String t : controlPlaces.get(place).getProperty("preset").split(" ")) {
+				if (controlFlow.get(t).containsKey("preset")) {
+					for (String p : controlFlow.get(t).getProperty("preset").split(" ")) {
+						if (places.get(p))
+							return true;
+						else if (hasMarkedPreset(p))
+							return true;
+					}
+				}
 			}
 		}
 		return false;
@@ -1501,8 +1566,9 @@ public class Abstraction {
 					tempList = tempList + postset[i] + " ";
 				}
 			}
-			Properties prop = controlPlaces.get(t);
-			prop.setProperty("preset", tempList.trim());
+			Properties prop = new Properties();
+			prop = controlPlaces.get(t);
+			// prop.setProperty("preset", tempList.trim());
 			tempList = "";
 			for (String u : postset) {
 				tempList = tempList + u + " ";
@@ -1641,7 +1707,12 @@ public class Abstraction {
 					tempList = tempList + postset[i] + " ";
 				}
 				Properties prop = controlFlow.get(t);
-				prop.setProperty("postset", tempList.trim());
+				if (!tempList.equals("")) {
+					prop.setProperty("postset", tempList.trim());
+				}
+				else {
+					prop.remove("postset");
+				}
 				controlFlow.put(t, prop);
 			}
 		}
@@ -1658,7 +1729,12 @@ public class Abstraction {
 						}
 					}
 					Properties prop = controlPlaces.get(t);
-					prop.setProperty("preset", tempList.trim());
+					if (!tempList.equals("")) {
+						prop.setProperty("preset", tempList.trim());
+					}
+					else {
+						prop.remove("preset");
+					}
 					controlPlaces.put(t, prop);
 				}
 				presetString = presetString + t + " ";

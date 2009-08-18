@@ -884,80 +884,58 @@ public class LHPNFile {
 			if (controlFlow.get(fromName) != null) {
 				prop = controlFlow.get(fromName);
 			}
-			String[] list = prop.getProperty("postset").split("\\s");
-			String[] toList = new String[list.length - 1];
-			Boolean flag = false;
-			for (int i = 0; i < list.length - 1; i++) {
-				if (toName.equals(list[i])) {
-					flag = true;
+			if (prop.containsKey("postset") && prop.getProperty("postset") != null) {
+				String[] list = prop.getProperty("postset").split("\\s");
+				String toList = "";
+				for (int i = 0; i < list.length - 1; i++) {
+					if (toName.equals(list[i])) {
+						toList = toList + list[i] + " ";
+					}
+				}
+				if (!toList.equals("")) {
+					prop.put("postset", toList.trim());
 				}
 				else {
-					if (flag) {
-						toList[i - 1] = list[i];
-					}
-					else {
-						toList[i] = list[i];
+					prop.remove("postset");
+				}
+				controlFlow.put(fromName, prop);
+				if (controlPlaces.get(toName) != null) {
+					prop = controlPlaces.get(toName);
+				}
+				list = prop.getProperty("preset").split("\\s");
+				String fromList = "";
+				for (int i = 0; i < list.length - 1; i++) {
+					if (!toName.equals(list[i])) {
+						fromList = fromList + list[i] + " ";
 					}
 				}
-			}
-			if (toList.length > 0) {
-				prop.put("postset", toList);
-			}
-			else {
-				prop.remove("postset");
-			}
-			controlFlow.put(fromName, prop);
-			if (controlPlaces.get(toName) != null) {
-				prop = controlPlaces.get(toName);
-			}
-			list = prop.getProperty("preset").split("\\s");
-			String[] fromList = new String[list.length - 1];
-			flag = false;
-			for (int i = 0; i < list.length - 1; i++) {
-				if (toName.equals(list[i])) {
-					flag = true;
+				if (!fromList.equals("")) {
+					prop.put("preset", fromList.trim());
 				}
 				else {
-					if (flag) {
-						fromList[i - 1] = list[i];
-					}
-					else {
-						fromList[i] = list[i];
-					}
+					prop.remove("preset");
 				}
+				controlPlaces.put(toName, prop);
 			}
-			if (fromList.length > 0) {
-				prop.put("preset", fromList);
-			}
-			else {
-				prop.remove("preset");
-			}
-			controlPlaces.put(toName, prop);
 		}
 		else {
 			Properties prop = new Properties();
 			if (controlFlow.get(toName) != null) {
 				prop = controlFlow.get(toName);
 			}
-			if (prop.containsKey("preset")) {
+			if (prop.containsKey("preset") && prop.getProperty("preset") != null) {
 				String[] list = prop.getProperty("preset").split("\\s");
-				String[] fromList = new String[list.length - 1];
-				Boolean flag = false;
+				String fromList = "";
 				for (int i = 0; i < list.length - 1; i++) {
-					if (toName.equals(list[i])) {
-						flag = true;
-					}
-					else {
-						if (flag) {
-							fromList[i - 1] = list[i];
-						}
-						else {
-							fromList[i] = list[i];
-						}
+					if (!toName.equals(list[i])) {
+						fromList = fromList + list[i] + " ";
 					}
 				}
-				if (fromList.length > 0) {
-					prop.put("preset", fromList);
+				if (!fromList.equals("")) {
+					prop.put("preset", fromList.trim());
+				}
+				else {
+					prop.remove("preset");
 				}
 			}
 			else {
@@ -969,23 +947,14 @@ public class LHPNFile {
 			}
 			if (prop.getProperty("postset") != null) {
 				String[] list = prop.getProperty("postset").split("\\s");
-				String[] toList = new String[list.length - 1];
-				boolean flag = false;
+				String toList = "";
 				for (int i = 0; i < list.length - 1; i++) {
-					if (toName.equals(list[i])) {
-						flag = true;
-					}
-					else {
-						if (flag) {
-							toList[i - 1] = list[i];
-						}
-						else {
-							toList[i] = list[i];
-						}
+					if (!toName.equals(list[i])) {
+						toList = toList + list[i] + " ";
 					}
 				}
-				if (toList.length > 0) {
-					prop.put("postset", toList);
+				if (!toList.equals("")) {
+					prop.put("postset", toList.trim());
 				}
 				else {
 					prop.remove("postset");
@@ -2245,7 +2214,7 @@ public class LHPNFile {
 					if (tempProp.containsKey("postset")) {
 						tempString = tempProp.getProperty("postset");
 						if (!tempString.equals("")) {
-						tempString = tempString + " " + tempPlace[1];
+							tempString = tempString + " " + tempPlace[1];
 						}
 						else {
 							tempString = tempPlace[1];
@@ -2283,10 +2252,10 @@ public class LHPNFile {
 						// log.addText("check2a if");
 						tempString = tempProp.getProperty("preset");
 						// log.addText("check2a if1");
-						if (!tempString.equals("")) 
-						tempString = tempString + " " + tempPlace[0];
-					else 
-						tempString = tempPlace[0];
+						if (!tempString.equals(""))
+							tempString = tempString + " " + tempPlace[0];
+						else
+							tempString = tempPlace[0];
 					}
 					else {
 						// log.addText("check2a else");
