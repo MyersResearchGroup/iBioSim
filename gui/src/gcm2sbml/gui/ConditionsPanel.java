@@ -6,7 +6,6 @@ import gcm2sbml.util.Utility;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.util.HashMap;
-import java.util.Properties;
 
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -16,11 +15,10 @@ import biomodelsim.BioSim;
 public class ConditionsPanel extends JPanel {
 	public ConditionsPanel(String selected, PropertyList conditionList, GCMFile gcm,
 			boolean paramsOnly, BioSim biosim) {
-		super(new GridLayout(8, 1));
+		super(new GridLayout(1, 1));
 		this.selected = selected;
 		this.conditionList = conditionList;
 		this.gcm = gcm;
-		this.paramsOnly = paramsOnly;
 		this.biosim = biosim;
 
 		fields = new HashMap<String, PropertyField>();
@@ -28,9 +26,6 @@ public class ConditionsPanel extends JPanel {
 		// Condition field
 		PropertyField field = new PropertyField("Condition", "", null, null, "Condition",
 				paramsOnly);
-		if (paramsOnly) {
-			field.setEnabled(false);
-		}
 		fields.put("Condition", field);
 		add(field);
 
@@ -73,10 +68,8 @@ public class ConditionsPanel extends JPanel {
 				conditionList.setSelectedValue(id, true);
 			}
 			else {
-				Utility.createErrorMessage("Error", "Illegal values entered.");
 				return false;
 			}
-
 		}
 		else if (value == JOptionPane.NO_OPTION) {
 			// System.out.println();
@@ -88,24 +81,10 @@ public class ConditionsPanel extends JPanel {
 	public void actionPerformed(ActionEvent e) {
 	}
 
-	private void loadProperties(Properties property) {
-		for (Object o : property.keySet()) {
-			if (fields.containsKey(o.toString())) {
-				fields.get(o.toString()).setValue(property.getProperty(o.toString()));
-				fields.get(o.toString()).setCustom();
-			}
-			// if (o.equals(GlobalConstants.NAME)) {
-			// fields.get("ID").setValue(
-			// property.getProperty(o.toString()));
-			// }
-		}
-	}
-
 	private String[] options = { "Ok", "Cancel" };
 	private HashMap<String, PropertyField> fields = null;
 	private String selected = "";
 	private GCMFile gcm = null;
 	private PropertyList conditionList = null;
-	private boolean paramsOnly;
 	private BioSim biosim;
 }
