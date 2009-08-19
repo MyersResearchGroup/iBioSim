@@ -201,7 +201,7 @@ public class StateGraph {
 		}
 	}
 
-	public String performMarkovianAnalysis(HashMap<String, ExprTree> conditions) {
+	public String performMarkovianAnalysis(ArrayList<String> conditions) {
 		State initial = getInitialState();
 		if (initial != null) {
 			resetColorsForMarkovianAnalysis();
@@ -286,11 +286,14 @@ public class StateGraph {
 			resetColors();
 			HashMap<String, Double> output = new HashMap<String, Double>();
 			if (conditions != null) {
-				for (String s : conditions.keySet()) {
+				for (String s : conditions) {
 					double prob = 0;
 					for (String state : stateGraph.keySet()) {
 						for (State m : stateGraph.get(state)) {
-							if (conditions.get(s).evaluateExp(m.getVariables()) == 1.0) {
+							ExprTree expr = new ExprTree(lhpn);
+							expr.token = expr.intexpr_gettok(s);
+							expr.intexpr_L(s);
+							if (expr.evaluateExp(m.getVariables()) == 1.0) {
 								prob += m.getCurrentProb();
 							}
 						}
@@ -298,12 +301,12 @@ public class StateGraph {
 					output.put(s, prob);
 				}
 				String result1 = "#total";
-				String result2 = "100";
+				String result2 = "100.0";
 				for (String s : output.keySet()) {
 					result1 += " " + s;
 					result2 += " " + output.get(s);
 				}
-				return result1 + "\n" + result2;
+				return result1 + "\n" + result2 + "\n";
 			}
 		}
 		return null;

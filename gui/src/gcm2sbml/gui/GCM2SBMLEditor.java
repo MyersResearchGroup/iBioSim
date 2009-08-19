@@ -936,7 +936,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		addInit = new EditButton("Add Condition", conditions);
 		removeInit = new RemoveButton("Remove Condition", conditions);
 		editInit = new EditButton("Edit Condition", conditions);
-		for (String s : gcm.getConditions().keySet()) {
+		for (String s : gcm.getConditions()) {
 			conditions.addItem(s);
 		}
 		initPanel = Utility.createPanel(this, "Conditions", conditions, addInit, removeInit, editInit);
