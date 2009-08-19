@@ -46,13 +46,13 @@ public class ConditionsPanel extends JPanel {
 				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		if (value == JOptionPane.YES_OPTION) {
 			if (oldName == null) {
-				if (gcm.getConditions().containsKey(fields.get("Condition").getValue())) {
+				if (gcm.getConditions().contains(fields.get("Condition").getValue())) {
 					Utility.createErrorMessage("Error", "Condition already exists.");
 					return false;
 				}
 			}
 			else if (!oldName.equals(fields.get("Condition").getValue())) {
-				if (gcm.getConditions().containsKey(fields.get("Condition").getValue())) {
+				if (gcm.getConditions().contains(fields.get("Condition").getValue())) {
 					Utility.createErrorMessage("Error", "Condition already exists.");
 					return false;
 				}

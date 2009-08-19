@@ -57,7 +57,7 @@ public class GCMFile {
 		influences = new HashMap<String, Properties>();
 		promoters = new HashMap<String, Properties>();
 		components = new HashMap<String, Properties>();
-		conditions = new HashMap<String, ExprTree>();
+		conditions = new ArrayList<String>();
 		globalParameters = new HashMap<String, String>();
 		parameters = new HashMap<String, String>();
 		loadDefaultParameters();
@@ -591,7 +591,7 @@ public class GCMFile {
 				buffer.append("]\n");
 			}
 			buffer.append("}\nConditions {\n");
-			for (String s : conditions.keySet()) {
+			for (String s : conditions) {
 				buffer.append(s + "\n");
 			}
 			/*
@@ -626,7 +626,7 @@ public class GCMFile {
 		influences = new HashMap<String, Properties>();
 		promoters = new HashMap<String, Properties>();
 		components = new HashMap<String, Properties>();
-		conditions = new HashMap<String, ExprTree>();
+		conditions = new ArrayList<String>();
 		globalParameters = new HashMap<String, String>();
 		parameters = new HashMap<String, String>();
 		StringBuffer data = new StringBuffer();
@@ -792,7 +792,7 @@ public class GCMFile {
 			expr = null;
 		}
 		if (retval) {
-			conditions.put(condition, expr);
+			conditions.add(condition);
 		}
 		return retval;
 	}
@@ -801,7 +801,7 @@ public class GCMFile {
 		conditions.remove(condition);
 	}
 	
-	public HashMap<String, ExprTree> getConditions() {
+	public ArrayList<String> getConditions() {
 		return conditions;
 	}
 
@@ -1350,7 +1350,7 @@ public class GCMFile {
 
 	private HashMap<String, Properties> components;
 	
-	private HashMap<String, ExprTree> conditions;
+	private ArrayList<String> conditions;
 
 	private HashMap<String, String> parameters;
 
