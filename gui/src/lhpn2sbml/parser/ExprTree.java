@@ -926,8 +926,11 @@ public class ExprTree {
 				newresult.token = token;
 				newresult.tokvalue = tokvalue;
 				newresult.position = position;
-				if (!intexpr_R(expr))
+				if (!newresult.intexpr_R(expr))
 					return false;
+				token = newresult.token;
+				tokvalue = newresult.tokvalue;
+				position = newresult.position;
 				// simplify if operands are static
 				if (((newresult.isit == 'n') || (newresult.isit == 't'))
 						&& (((this).isit == 'n') || ((this).isit == 't'))) {
