@@ -1944,6 +1944,22 @@ public class ExprTree {
 						return 0.0;
 					}
 				}
+				else if (op.equals("<=")) {
+					if (left <= right) {
+						return 1.0;
+					}
+					else {
+						return 0.0;
+					}
+				}
+				else if (op.equals(">=")) {
+					if (left >= right) {
+						return 1.0;
+					}
+					else {
+						return 0.0;
+					}
+				}
 				else {
 					return 0.0;
 				}
