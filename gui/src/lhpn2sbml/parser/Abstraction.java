@@ -97,6 +97,18 @@ public class Abstraction {
 
 	public void abstractSTG() {
 		boolean change = true;
+		ArrayList<String> removeEnab = new ArrayList<String>();
+		for (String s : enablings.keySet()) {
+			if (enablings.get(s) == null) {
+				removeEnab.add(s);
+			}
+			else if (enablings.get(s).equals("") || enablings.get(s).trim().equals("~shutdown") || enablings.get(s).equals("~false")) {
+				removeEnab.add(s);
+			}
+		}
+		for (String s : removeEnab) {
+			enablings.remove(s);
+		}
 		while (change) {
 			change = false;
 			// Transform 0 - Merge Parallel Places
@@ -782,8 +794,14 @@ public class Abstraction {
 		initVars.putAll(integers);
 		initVars.putAll(inputs);
 		initVars.putAll(outputs);
+		ArrayList<String> removeTrans = new ArrayList<String>();
+		ArrayList<String> removeEnab = new ArrayList<String>();
 		for (String t : enablingTrees.keySet()) {
 			ExprTree expr = enablingTrees.get(t);
+			if (expr == null) {
+				removeEnab.add(t);
+				continue;
+			}
 			if (expr.containsCont())
 				continue;
 			if (expr.evaluateExp(initVars) == 1) {
@@ -795,8 +813,7 @@ public class Abstraction {
 					}
 				}
 				if (enabled) {
-					enablings.remove(t);
-					enablingTrees.remove(t);
+					removeEnab.add(t);
 				}
 			}
 			else if (expr.evaluateExp(initVars) == 0) {
@@ -832,9 +849,16 @@ public class Abstraction {
 						}
 						controlPlaces.put(s, prop);
 					}
-					removeTransition(t);
+					removeTrans.add(t);
 				}
 			}
+		}
+		for (String t : removeEnab) {
+			enablings.remove(t);
+			enablingTrees.remove(t);
+		}
+		for (String t : removeTrans) {
+			removeTransition(t);
 		}
 		return change;
 	}
@@ -846,6 +870,7 @@ public class Abstraction {
 					for (String p : controlFlow.get(t).getProperty("preset").split(" ")) {
 						if (places.get(p))
 							return true;
+						else if (p.equals(place)) return false;
 						else if (hasMarkedPreset(p))
 							return true;
 					}
@@ -1936,7 +1961,7 @@ public class Abstraction {
 				// }
 				// }
 				if (controlPlaces.containsKey(preset1[0])
-						&& places.get(s) == places.get(postset1[0])) {
+						&& places.get(s) == places.get(preset1[0])) {
 					combinePlaces(s, preset1[0]);
 				}
 			}
