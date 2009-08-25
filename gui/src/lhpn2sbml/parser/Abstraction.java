@@ -171,6 +171,7 @@ public class Abstraction {
 						boolean assign = false;
 						if (enablings.containsKey(s)) {
 							assign = true;
+							continue;
 						}
 						if (!assign) {
 							for (HashMap<String, Properties> h : assignments) {
@@ -178,6 +179,7 @@ public class Abstraction {
 								if (h.get(s) != null) {
 									if (!h.get(s).keySet().isEmpty()) {
 										assign = true;
+										break;
 									}
 								}
 							}
@@ -270,7 +272,8 @@ public class Abstraction {
 				if (controlFlow.get(s) != null) {
 					// System.out.println("[4]Removing transition: " + s);
 					if (controlFlow.get(s).getProperty("preset") != null
-							&& controlFlow.get(s).getProperty("postset") != null) {
+							&& controlFlow.get(s).getProperty("postset") != null
+							&& !controlFlow.get(s).getProperty("postset").equals("")) {
 						if (removeTrans4(s, controlFlow.get(s).getProperty("preset").split(" "),
 								controlFlow.get(s).getProperty("postset").split(" ")))
 							change = true;
@@ -286,14 +289,14 @@ public class Abstraction {
 					if (!s.equals(t)) {
 						boolean samePreset = comparePreset(controlFlow.get(s), controlFlow.get(t));
 						boolean samePostset = comparePostset(controlFlow.get(s), controlFlow.get(t));
-						boolean assign = true;
-						if (!enablings.containsKey(t)) {
-							assign = false;
+						boolean assign = false;
+						if (enablings.containsKey(t)) {
+							assign = true;
 						}
 						if (!assign) {
 							for (HashMap<String, Properties> h : assignments) {
-								if (h.get(t) == null || h.get(t).keySet().isEmpty()) {
-									assign = false;
+								if ((h.get(t) != null && !h.get(t).keySet().isEmpty()) || (h.get(s) != null && !h.get(s).keySet().isEmpty())) {
+									assign = true;
 								}
 							}
 						}
@@ -306,7 +309,7 @@ public class Abstraction {
 						else if (samePreset && controlFlow.get(s).containsKey("postset")
 								&& controlFlow.get(t).containsKey("postset")
 								&& controlFlow.get(s).containsKey("preset")
-								&& controlFlow.get(t).containsKey("preset")) {
+								&& controlFlow.get(t).containsKey("preset") && !assign) {
 							String[] postset1 = controlFlow.get(s).getProperty("postset")
 									.split(" ");
 							String[] postset2 = controlFlow.get(t).getProperty("postset")
@@ -324,7 +327,7 @@ public class Abstraction {
 						else if (samePostset && controlFlow.get(s).containsKey("preset")
 								&& controlFlow.get(t).containsKey("preset")
 								&& controlFlow.get(s).containsKey("postset")
-								&& controlFlow.get(t).containsKey("postset")) {
+								&& controlFlow.get(t).containsKey("postset") && !assign) {
 							String[] preset1 = controlFlow.get(s).getProperty("preset").split(" ");
 							String[] preset2 = controlFlow.get(t).getProperty("preset").split(" ");
 							if (preset1.length == 1 && preset2.length == 1) {
@@ -361,8 +364,8 @@ public class Abstraction {
 							}
 							if (!assign) {
 								for (HashMap<String, Properties> h : assignments) {
-									if (h.get(t) != null) {
-										if (!h.get(t).keySet().isEmpty()) {
+									if (h.get(t) != null && h.get(s) != null) {
+										if (!h.get(t).keySet().isEmpty() || !h.get(s).keySet().isEmpty()) {
 											assign = true;
 										}
 									}
@@ -1563,20 +1566,19 @@ public class Abstraction {
 		// boolean marked = places.get(place);
 		// Combine control Flow
 		for (String t : preset) {
-			String[] tempPostset = controlPlaces.get(t).getProperty("postset").split(" ");
+			//String[] tempPostset = controlPlaces.get(t).getProperty("postset").split(" ");
 			String tempList = "";
-			for (int i = 0; i < tempPostset.length; i++) {
-				if (!tempPostset[i].equals(transition) && !tempPostset[i].equals("")) {
-					tempList = tempList + tempPostset[i] + " ";
-					// if (marked) {
-					// places.put(tempPostset[i], true);
-					// }
-				}
-			}
+//			for (int i = 0; i < tempPostset.length; i++) {
+//				if (!tempPostset[i].equals(transition) && !tempPostset[i].equals("")) {
+//					tempList = tempList + tempPostset[i] + " ";
+//					// if (marked) {
+//					// places.put(tempPostset[i], true);
+//					// }
+//				}
+//			}
 			for (String p : placePreset) {
 				if (!p.equals(transition) && !p.equals("")) {
 					tempList = tempList + p + " ";
-				}
 				Properties prop = controlFlow.get(p);
 				String placePostset = prop.getProperty("postset");
 				if (!placePostset.equals("")) {
@@ -1585,15 +1587,11 @@ public class Abstraction {
 				else {
 					prop.setProperty("postset", t);
 				}
-			}
-			for (int i = 0; i < postset.length; i++) {
-				if (!tempList.contains(postset[i])) {
-					tempList = tempList + postset[i] + " ";
 				}
 			}
 			Properties prop = new Properties();
 			prop = controlPlaces.get(t);
-			// prop.setProperty("preset", tempList.trim());
+			prop.setProperty("preset", tempList.trim());
 			tempList = "";
 			for (String u : postset) {
 				tempList = tempList + u + " ";
