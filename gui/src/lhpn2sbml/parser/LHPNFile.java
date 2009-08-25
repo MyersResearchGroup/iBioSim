@@ -2453,16 +2453,17 @@ public class LHPNFile {
 			Matcher initLineMatcher = initLinePattern.matcher(data.toString());
 			// log.addText("check3d2");
 			// System.out.println("check3e");
-			initLineMatcher.find();
-			// log.addText("check3e");
-			// System.out.println("check3f");
-			Pattern initPattern = Pattern.compile(INIT_COND);
-			Matcher initMatcher = initPattern.matcher(initLineMatcher.group(1));
-			// log.addText("check3f");
-			// System.out.println("check3g");
-			while (initMatcher.find()) {
-				if (variables.containsKey(initMatcher.group(1))) {
-					initValue.put(initMatcher.group(1), initMatcher.group(2));
+			if (initLineMatcher.find()) {
+				// log.addText("check3e");
+				// System.out.println("check3f");
+				Pattern initPattern = Pattern.compile(INIT_COND);
+				Matcher initMatcher = initPattern.matcher(initLineMatcher.group(1));
+				// log.addText("check3f");
+				// System.out.println("check3g");
+				while (initMatcher.find()) {
+					if (variables.containsKey(initMatcher.group(1))) {
+						initValue.put(initMatcher.group(1), initMatcher.group(2));
+					}
 				}
 			}
 			// log.addText("check3g");
@@ -2487,8 +2488,18 @@ public class LHPNFile {
 			for (String s : variables.keySet()) {
 				// log.addText("check3for" + s);
 				// System.out.println("check3for " + s);
-				initCond.put("value", initValue.get(s));
-				initCond.put("rate", initRate.get(s));
+				if (initValue.containsKey(s)) {
+					initCond.put("value", initValue.get(s));
+				}
+				else {
+					initCond.put("value", "0");
+				}
+				if (initRate.containsKey(s)) {
+					initCond.put("rate", initRate.get(s));
+				}
+				else {
+					initCond.put("rate", "0");
+				}
 				// log.addText("check3for" + initCond.toString());
 				// System.out.println("check3for " + initCond.toString());
 				variables.put(s, initCond);
