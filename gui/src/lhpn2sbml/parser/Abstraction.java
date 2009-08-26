@@ -102,7 +102,7 @@ public class Abstraction {
 			if (enablings.get(s) == null) {
 				removeEnab.add(s);
 			}
-			else if (enablings.get(s).equals("") || enablings.get(s).trim().equals("~shutdown") || enablings.get(s).equals("~false")) {
+			else if (enablings.get(s).equals("") || enablings.get(s).trim().equals("~shutdown") || enablings.get(s).equals("~fail")) {
 				removeEnab.add(s);
 			}
 		}
@@ -314,7 +314,7 @@ public class Abstraction {
 									.split(" ");
 							String[] postset2 = controlFlow.get(t).getProperty("postset")
 									.split(" ");
-							if (postset1.length == 1 && postset2.length == 1) {
+							if (postset1.length == 1 && postset2.length == 1 && controlPlaces.containsKey(postset1[0]) && controlPlaces.containsKey(postset2[0])) {
 								if (comparePreset(controlPlaces.get(postset1[0]), controlPlaces
 										.get(postset2[0]), s, t)) {
 									String[] array = { s, t };
@@ -869,6 +869,7 @@ public class Abstraction {
 	private boolean hasMarkedPreset(String place) {
 		if (controlPlaces.get(place).containsKey("preset")) {
 			for (String t : controlPlaces.get(place).getProperty("preset").split(" ")) {
+				if (controlFlow.containsKey(t)) {
 				if (controlFlow.get(t).containsKey("preset")) {
 					for (String p : controlFlow.get(t).getProperty("preset").split(" ")) {
 						if (places.get(p))
@@ -877,6 +878,7 @@ public class Abstraction {
 						else if (hasMarkedPreset(p))
 							return true;
 					}
+				}
 				}
 			}
 		}
