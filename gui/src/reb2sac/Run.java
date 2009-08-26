@@ -568,6 +568,20 @@ public class Run implements ActionListener {
 					}
 					time1 = System.nanoTime();
 					exitValue = 0;
+					for (int i = 0; i < simTab.getComponentCount(); i++) {
+						if (simTab.getComponentAt(i).getName().equals("ProbGraph")) {
+							if (simTab.getComponentAt(i) instanceof Graph) {
+								((Graph) simTab.getComponentAt(i)).refresh();
+							}
+							else {
+								simTab.setComponentAt(i, new Graph(r2s, printer_track_quantity,
+										outDir.split(separator)[outDir.split(separator).length - 1]
+												+ " simulation results", printer_id, outDir,
+										"time", biomodelsim, null, log, null, false, false));
+								simTab.getComponentAt(i).setName("ProbGraph");
+							}
+						}
+					}
 				}
 				else {
 					log.addText("Executing:\nreb2sac --target.encoding=" + sim + " " + filename
