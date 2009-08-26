@@ -774,7 +774,8 @@ public class GCMFile {
 	}
 	
 	public boolean addCondition(String condition) {
-		boolean retval = false;
+		boolean retval = true;
+		for (String part: condition.split("->")) {
 		ArrayList<String> specs = new ArrayList<String>();
 		ArrayList<Object[]> conLevel = new ArrayList<Object[]>();
 		for (String spec : species.keySet()) {
@@ -784,12 +785,14 @@ public class GCMFile {
 			conLevel.add(level.toArray());
 		}
 		ExprTree expr = new ExprTree(convertToLHPN(specs, conLevel));
-		expr.token = expr.intexpr_gettok(condition);
-		if (!condition.equals("")) {
-			retval = expr.intexpr_L(condition);
+		expr.token = expr.intexpr_gettok(part);
+		if (!part.equals("")) {
+			retval = (expr.intexpr_L(part) && retval);
 		}
 		else {
 			expr = null;
+			retval = false;
+		}
 		}
 		if (retval) {
 			conditions.add(condition);
