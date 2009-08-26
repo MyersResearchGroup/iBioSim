@@ -59,7 +59,7 @@ public class ConditionsPanel extends JPanel {
 			}
 			String id = fields.get("Condition").getValue();
 
-			if (selected != null && !oldName.equals(id)) {
+			if (selected != null) {
 				gcm.removeCondition(oldName);
 			}
 			if (gcm.addCondition(id)) {

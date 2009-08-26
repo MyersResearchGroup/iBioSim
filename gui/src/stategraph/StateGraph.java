@@ -288,20 +288,50 @@ public class StateGraph {
 			if (conditions != null) {
 				for (String s : conditions) {
 					double prob = 0;
-					for (String state : stateGraph.keySet()) {
-						for (State m : stateGraph.get(state)) {
-							ExprTree expr = new ExprTree(lhpn);
-							expr.token = expr.intexpr_gettok(s);
-							expr.intexpr_L(s);
-							if (expr.evaluateExp(m.getVariables()) == 1.0) {
-								prob += m.getCurrentProb();
+					for (String ss : s.split("&&")) {
+						if (ss.split("->").length == 2) {
+							String[] states = ss.split("->");
+							for (String state : stateGraph.keySet()) {
+								for (State m : stateGraph.get(state)) {
+									ExprTree expr = new ExprTree(lhpn);
+									expr.token = expr.intexpr_gettok(states[0]);
+									expr.intexpr_L(states[0]);
+									if (expr.evaluateExp(m.getVariables()) == 1.0) {
+										for (StateTransitionPair nextState : m
+												.getNextStatesWithTrans()) {
+											ExprTree nextExpr = new ExprTree(lhpn);
+											nextExpr.token = nextExpr.intexpr_gettok(states[1]);
+											nextExpr.intexpr_L(states[1]);
+											if (nextExpr.evaluateExp(nextState.getState()
+													.getVariables()) == 1.0) {
+												prob += (m.getCurrentProb() * (lhpn
+														.getTransitionRateTree(
+																nextState.getTransition())
+														.evaluateExp(m.getVariables()) / m
+														.getTransitionSum()));
+											}
+										}
+									}
+								}
+							}
+						}
+						else {
+							for (String state : stateGraph.keySet()) {
+								for (State m : stateGraph.get(state)) {
+									ExprTree expr = new ExprTree(lhpn);
+									expr.token = expr.intexpr_gettok(ss);
+									expr.intexpr_L(ss);
+									if (expr.evaluateExp(m.getVariables()) == 1.0) {
+										prob += m.getCurrentProb();
+									}
+								}
 							}
 						}
 					}
 					output.put(s, prob);
 				}
 				String result1 = "#total";
-				String result2 = "100.0";
+				String result2 = "1.0";
 				for (String s : output.keySet()) {
 					result1 += " " + s;
 					result2 += " " + output.get(s);
