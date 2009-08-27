@@ -541,29 +541,41 @@ public class Run implements ActionListener {
 						sg.outputStateGraph(filename.replace(".gcm", "").replace(".sbml", "")
 								.replace(".xml", "")
 								+ ".dot", true);
-						if (System.getProperty("os.name").contentEquals("Linux")) {
-							log.addText("Executing:\ndotty "
-									+ filename.replace(".gcm", "").replace(".sbml", "").replace(
-											".xml", "") + ".dot" + "\n");
-							exec.exec("dotty "
-									+ theFile.replace(".gcm", "").replace(".sbml", "").replace(
-											".xml", "") + ".dot", null, work);
-						}
-						else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
-							log.addText("Executing:\nopen "
-									+ filename.replace(".gcm", "").replace(".sbml", "").replace(
-											".xml", "") + ".dot" + "\n");
-							exec.exec("open "
-									+ theFile.replace(".gcm", "").replace(".sbml", "").replace(
-											".xml", "") + ".dot", null, work);
-						}
-						else {
-							log.addText("Executing:\ndotty "
-									+ filename.replace(".gcm", "").replace(".sbml", "").replace(
-											".xml", "") + ".dot" + "\n");
-							exec.exec("dotty "
-									+ theFile.replace(".gcm", "").replace(".sbml", "").replace(
-											".xml", "") + ".dot", null, work);
+						if (sg.getNumberOfStates() > 30) {
+							String[] options = { "Yes", "No" };
+							int value = JOptionPane
+									.showOptionDialog(
+											biomodelsim.frame(),
+											"The state graph contains more than 30 states and may not open well in dotty.\nOpen it with dotty anyway?",
+											"More Than 30 States", JOptionPane.YES_NO_OPTION,
+											JOptionPane.WARNING_MESSAGE, null, options, options[0]);
+							if (value == JOptionPane.YES_OPTION) {
+								if (System.getProperty("os.name").contentEquals("Linux")) {
+									log.addText("Executing:\ndotty "
+											+ filename.replace(".gcm", "").replace(".sbml", "")
+													.replace(".xml", "") + ".dot" + "\n");
+									exec.exec("dotty "
+											+ theFile.replace(".gcm", "").replace(".sbml", "")
+													.replace(".xml", "") + ".dot", null, work);
+								}
+								else if (System.getProperty("os.name").toLowerCase().startsWith(
+										"mac os")) {
+									log.addText("Executing:\nopen "
+											+ filename.replace(".gcm", "").replace(".sbml", "")
+													.replace(".xml", "") + ".dot" + "\n");
+									exec.exec("open "
+											+ theFile.replace(".gcm", "").replace(".sbml", "")
+													.replace(".xml", "") + ".dot", null, work);
+								}
+								else {
+									log.addText("Executing:\ndotty "
+											+ filename.replace(".gcm", "").replace(".sbml", "")
+													.replace(".xml", "") + ".dot" + "\n");
+									exec.exec("dotty "
+											+ theFile.replace(".gcm", "").replace(".sbml", "")
+													.replace(".xml", "") + ".dot", null, work);
+								}
+							}
 						}
 					}
 					time1 = System.nanoTime();
