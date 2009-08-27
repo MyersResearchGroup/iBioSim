@@ -428,6 +428,16 @@ public class StateGraph {
 		return stateGraph;
 	}
 
+	public int getNumberOfStates() {
+		int count = 0;
+		for (String s : stateGraph.keySet()) {
+			for (int i = 0; i < stateGraph.get(s).size(); i++) {
+				count++;
+			}
+		}
+		return count;
+	}
+
 	private ArrayList<String> copyArrayList(ArrayList<String> original) {
 		ArrayList<String> copy = new ArrayList<String>();
 		for (String element : original) {
