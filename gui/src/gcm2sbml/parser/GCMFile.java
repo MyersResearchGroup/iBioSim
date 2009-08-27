@@ -387,27 +387,31 @@ public class GCMFile {
 						if (p.contains(GlobalConstants.KBIO_STRING)) {
 							Kb = Double.parseDouble((String) p.get(GlobalConstants.KBIO_STRING));
 						}
-						p = promoters.get(promoter);
-						if (p.contains(GlobalConstants.PROMOTER_COUNT_STRING)) {
-							ng = Double.parseDouble((String) p
-									.get(GlobalConstants.PROMOTER_COUNT_STRING));
-						}
-						if (p.contains(GlobalConstants.RNAP_BINDING_STRING)) {
-							Ko = Double.parseDouble((String) p
-									.get(GlobalConstants.RNAP_BINDING_STRING));
-						}
-						if (p.contains(GlobalConstants.OCR_STRING)) {
-							ko = Double.parseDouble((String) p.get(GlobalConstants.OCR_STRING));
-						}
-						if (p.contains(GlobalConstants.STOICHIOMETRY_STRING)) {
-							np = Double.parseDouble((String) p
-									.get(GlobalConstants.STOICHIOMETRY_STRING));
-						}
-						if (p.contains(GlobalConstants.KBASAL_STRING)) {
-							kb = Double.parseDouble((String) p.get(GlobalConstants.KBASAL_STRING));
-						}
-						if (p.contains(GlobalConstants.ACTIVED_STRING)) {
-							ka = Double.parseDouble((String) p.get(GlobalConstants.ACTIVED_STRING));
+						if (promoters.containsKey(promoter)) {
+							p = promoters.get(promoter);
+							if (p.contains(GlobalConstants.PROMOTER_COUNT_STRING)) {
+								ng = Double.parseDouble((String) p
+										.get(GlobalConstants.PROMOTER_COUNT_STRING));
+							}
+							if (p.contains(GlobalConstants.RNAP_BINDING_STRING)) {
+								Ko = Double.parseDouble((String) p
+										.get(GlobalConstants.RNAP_BINDING_STRING));
+							}
+							if (p.contains(GlobalConstants.OCR_STRING)) {
+								ko = Double.parseDouble((String) p.get(GlobalConstants.OCR_STRING));
+							}
+							if (p.contains(GlobalConstants.STOICHIOMETRY_STRING)) {
+								np = Double.parseDouble((String) p
+										.get(GlobalConstants.STOICHIOMETRY_STRING));
+							}
+							if (p.contains(GlobalConstants.KBASAL_STRING)) {
+								kb = Double.parseDouble((String) p
+										.get(GlobalConstants.KBASAL_STRING));
+							}
+							if (p.contains(GlobalConstants.ACTIVED_STRING)) {
+								ka = Double.parseDouble((String) p
+										.get(GlobalConstants.ACTIVED_STRING));
+							}
 						}
 					}
 				}
