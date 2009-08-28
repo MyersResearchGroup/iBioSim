@@ -490,8 +490,14 @@ public class StateGraph {
 								+ state + ">\"]\n");
 					}
 					for (StateTransitionPair next : m.getNextStatesWithTrans()) {
-						out.write(m.getID() + " -> " + next.getState().getID() + " [label=\""
-								+ next.getTransition() + "\"]\n");
+						out.write(m.getID()
+								+ " -> "
+								+ next.getState().getID()
+								+ " [label=\""
+								+ next.getTransition()
+								+ "\\n"
+								+ (lhpn.getTransitionRateTree(next.getTransition()).evaluateExp(
+										m.getVariables()) / m.getTransitionSum()) + "\"]\n");
 					}
 				}
 			}
