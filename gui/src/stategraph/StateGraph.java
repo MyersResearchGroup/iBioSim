@@ -2,6 +2,7 @@ package stategraph;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -489,6 +490,9 @@ public class StateGraph {
 						out.write(m.getID() + " [shape=\"ellipse\",label=\"" + m.getID() + "\\n<"
 								+ state + ">\"]\n");
 					}
+					NumberFormat num = NumberFormat.getInstance();
+					num.setMaximumFractionDigits(4);
+					num.setGroupingUsed(false);
 					for (StateTransitionPair next : m.getNextStatesWithTrans()) {
 						out.write(m.getID()
 								+ " -> "
@@ -496,8 +500,9 @@ public class StateGraph {
 								+ " [label=\""
 								+ next.getTransition()
 								+ "\\n"
-								+ (lhpn.getTransitionRateTree(next.getTransition()).evaluateExp(
-										m.getVariables()) / m.getTransitionSum()) + "\"]\n");
+								+ Double.parseDouble(num.format((lhpn.getTransitionRateTree(
+										next.getTransition()).evaluateExp(m.getVariables()) / m
+										.getTransitionSum()))) + "\"]\n");
 					}
 				}
 			}
