@@ -1832,6 +1832,7 @@ public class ExprTree {
 	public double evaluateExp(HashMap<String, String> variables) {
 		switch (isit) {
 		case 'b': // Boolean
+			if (!variables.containsKey(variable) || variables.get(variable).toLowerCase().equals("unknown")) return Double.NaN;
 			if (variables.get(variable).toLowerCase().equals("true")) {
 				return 1.0;
 			}
@@ -1840,7 +1841,12 @@ public class ExprTree {
 			}
 		case 'i': // Integer
 		case 'c': // Continuous
-			return Double.parseDouble(variables.get(variable));
+			try {
+				return Double.parseDouble(variables.get(variable));
+			}
+			catch (NumberFormatException e) {
+				return Double.NaN;
+			}
 		case 'n': // Number
 			if (uvalue == lvalue) {
 				return uvalue;
@@ -1852,8 +1858,11 @@ public class ExprTree {
 			if (uvalue == 1 && lvalue == 1) {
 				return 1.0;
 			}
-			else {
+			else if (uvalue == 0 && lvalue == 0) {
 				return 0.0;
+			}
+			else {
+				return Double.NaN;
 			}
 		case 'w': // bitWise
 		case 'a': // Arithmetic
@@ -1861,56 +1870,73 @@ public class ExprTree {
 		case 'l': // Logical
 			if (op.equals("!")) {
 				if (r1 != null) {
-					if (r1.evaluateExp(variables) != 0.0) {
+					if (r1.evaluateExp(variables) == 1.0) {
 						return 0.0;
 					}
-					else {
+					else if (r1.evaluateExp(variables) == 0.0) {
 						return 1.0;
+					}
+					else {
+						return Double.NaN;
 					}
 				}
 				else if (r2 != null) {
-					if (r2.evaluateExp(variables) != 0.0) {
+					if (r2.evaluateExp(variables) == 1.0) {
 						return 0.0;
 					}
-					else {
+					else if (r2.evaluateExp(variables) == 0.0) {
 						return 1.0;
+					}
+					else {
+						return Double.NaN;
 					}
 				}
 				else {
-					return 0.0;
+					return Double.NaN;
 				}
 			}
 			else {
-				double left = 0.0;
-				double right = 0.0;
+				double left;
+				double right;
 				if (r1 != null) {
 					left = r1.evaluateExp(variables);
 				}
+				else {
+					left = Double.NaN;
+				}
 				if (r2 != null) {
 					right = r2.evaluateExp(variables);
+				}
+				else {
+					right = Double.NaN;
 				}
 				if (op.equals("&&")) {
 					if (left == 1.0 && right == 1.0) {
 						return 1.0;
 					}
-					else {
+					else if (left == 0.0 || right == 0.0) {
 						return 0.0;
 					}
+					else return Double.NaN;
 				}
 				else if (op.equals("||")) {
 					if (left == 1.0 || right == 1.0) {
 						return 1.0;
 					}
-					else {
+					else if (left == 0.0 && right == 0.0) {
 						return 0.0;
 					}
+					else return Double.NaN;
 				}
 				else if (op.equals("==")) {
 					if (left == right) {
 						return 1.0;
 					}
-					else {
+					else if (left != right) {
 						return 0.0;
+					}
+					else {
+						return Double.NaN;
 					}
 				}
 				else if (op.equals("+")) {
@@ -1932,40 +1958,52 @@ public class ExprTree {
 					if (left < right) {
 						return 1.0;
 					}
-					else {
+					else if (left >= right) {
 						return 0.0;
+					}
+					else {
+						return Double.NaN;
 					}
 				}
 				else if (op.equals(">")) {
 					if (left > right) {
 						return 1.0;
 					}
-					else {
+					else if (left <= right) {
 						return 0.0;
+					}
+					else {
+						return Double.NaN;
 					}
 				}
 				else if (op.equals("<=")) {
 					if (left <= right) {
 						return 1.0;
 					}
-					else {
+					else if (left > right) {
 						return 0.0;
+					}
+					else {
+						return Double.NaN;
 					}
 				}
 				else if (op.equals(">=")) {
 					if (left >= right) {
 						return 1.0;
 					}
-					else {
+					else if (left < right) {
 						return 0.0;
+					}
+					else {
+						return Double.NaN;
 					}
 				}
 				else {
-					return 0.0;
+					return Double.NaN;
 				}
 			}
 		}
-		return 0.0;
+		return Double.NaN;
 	}
 
 	private static final int WORD = 1;
