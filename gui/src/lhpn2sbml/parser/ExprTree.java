@@ -1531,11 +1531,11 @@ public class ExprTree {
 		return false;
 	}
 	
-	public boolean becomesFalse(Properties prop) {
+	public boolean becomesFalse(HashMap<String, String> variables) {
 		switch (isit) {
 		case 'b': // Boolean
-			if (prop.containsKey(variable))
-				if (prop.get(variable).toString().toLowerCase().equals("false"))
+			if (variables.containsKey(variable))
+				if (variables.get(variable).toString().toLowerCase().equals("false"))
 					return true;
 			return false;
 		case 't': // Truth value
@@ -1544,12 +1544,12 @@ public class ExprTree {
 		case 'l': // Logical
 		case 'w': // bitWise
 			if (op.equals("||")) {
-				if (r1.becomesFalse(prop) && r2.becomesFalse(prop))
+				if (r1.becomesFalse(variables) && r2.becomesFalse(variables))
 					return true;
 				return false;
 			}
 			else if (op.equals("&&")) {
-				if (r1.becomesFalse(prop) || r2.becomesFalse(prop))
+				if (r1.becomesFalse(variables) || r2.becomesFalse(variables))
 					return true;
 				return false;
 			}
@@ -1558,12 +1558,52 @@ public class ExprTree {
 				return false;
 			}
 			else if (op.equals("!")) {
-				if (r1.becomesTrue(prop)) return true;
+				if (r1.becomesTrue(variables)) return true;
 				return false;
 			}
+		case 'r': // Relational
+			double left;
+			double right;
+			if (r1 != null) {
+				left = r1.evaluateExp(variables);
+			}
+			else {
+				left = Double.NaN;
+			}
+			if (r2 != null) {
+				right = r2.evaluateExp(variables);
+			}
+			else {
+				right = Double.NaN;
+			}
+			if (op.equals("==")) {
+				if (left != right) {
+					return true;
+				}
+			}
+			else if (op.equals(">=")) {
+				if (left < right) {
+					return true;
+				}
+			}
+			else if (op.equals("<=")) {
+				if (left > right) {
+					return true;
+				}
+			}
+			else if (op.equals(">")) {
+				if (left <= right) {
+					return true;
+				}
+			}
+			else if (op.equals("<")) {
+				if (left >= right) {
+					return true;
+				}
+			}
+			return false;
 		case 'i': // Integer
 		case 'c': // Continuous
-		case 'r': // Relational
 		case 'a': // Arithmetic
 		case 'n': // Number
 			return false;
@@ -1571,11 +1611,11 @@ public class ExprTree {
 		return false;
 	}
 	
-	public boolean becomesTrue(Properties prop) {
+	public boolean becomesTrue(HashMap<String, String> variables) {
 		switch (isit) {
 		case 'b': // Boolean
-			if (prop.containsKey(variable))
-				if (prop.get(variable).toString().toLowerCase().equals("true"))
+			if (variables.containsKey(variable))
+				if (variables.get(variable).toString().toLowerCase().equals("true"))
 					return true;
 			return false;
 		case 't': // Truth value
@@ -1584,26 +1624,66 @@ public class ExprTree {
 		case 'l': // Logical
 		case 'w': // bitWise
 			if (op.equals("||")) {
-				if (r1.becomesTrue(prop) || r2.becomesTrue(prop))
+				if (r1.becomesTrue(variables) || r2.becomesTrue(variables))
 					return true;
 				return false;
 			}
 			else if (op.equals("&&")) {
-				if (r1.becomesTrue(prop) && r2.becomesFalse(prop))
+				if (r1.becomesTrue(variables) && r2.becomesFalse(variables))
 					return true;
 				return false;
 			}
 			else if (op.equals("==")) {
-				if (r1.isEqual(r2, prop)) return true;
+				if (r1.isEqual(r2, variables)) return true;
 				return false;
 			}
 			else if (op.equals("!")) {
-				if (r1.becomesFalse(prop)) return true;
+				if (r1.becomesFalse(variables)) return true;
 				return false;
 			}
+		case 'r': // Relational
+			double left;
+			double right;
+			if (r1 != null) {
+				left = r1.evaluateExp(variables);
+			}
+			else {
+				left = Double.NaN;
+			}
+			if (r2 != null) {
+				right = r2.evaluateExp(variables);
+			}
+			else {
+				right = Double.NaN;
+			}
+			if (op.equals("==")) {
+				if (left == right) {
+					return true;
+				}
+			}
+			else if (op.equals(">=")) {
+				if (left >= right) {
+					return true;
+				}
+			}
+			else if (op.equals("<=")) {
+				if (left <= right) {
+					return true;
+				}
+			}
+			else if (op.equals(">")) {
+				if (left > right) {
+					return true;
+				}
+			}
+			else if (op.equals("<")) {
+				if (left < right) {
+					return true;
+				}
+			}
+			return false;
 		case 'i': // Integer
 		case 'c': // Continuous
-		case 'r': // Relational
 		case 'a': // Arithmetic
 		case 'n': // Number
 			return false;
@@ -1727,16 +1807,16 @@ public class ExprTree {
 		return false;
 	}
 	
-	private boolean isEqual(ExprTree expr, Properties prop) {
+	private boolean isEqual(ExprTree expr, HashMap<String, String> variables) {
 		if (isit == expr.isit) {
 			boolean same = false;
 			switch (isit) {
 			case 'b': // Boolean
 			case 'i': // Integer
 			case 'c': // Continuous
-				if (prop.containsKey(variable)) {
-					if (prop.containsKey(expr.variable)) {
-						if (prop.getProperty(variable).equals(prop.getProperty(expr.variable)))
+				if (variables.containsKey(variable)) {
+					if (variables.containsKey(expr.variable)) {
+						if (variables.get(variable).equals(variables.get(expr.variable)))
 							same = true;
 					}
 				}
@@ -1749,11 +1829,11 @@ public class ExprTree {
 				if (uvalue == expr.uvalue && lvalue == expr.lvalue) {
 					same = true;
 				}
-				else if (prop.containsKey(expr.variable)) {
+				else if (variables.containsKey(expr.variable)) {
 					if (uvalue == lvalue) {
-						if (uvalue == 1.0 && prop.getProperty(expr.variable).toLowerCase().equals("true"))
+						if (uvalue == 1.0 && variables.get(expr.variable).toLowerCase().equals("true"))
 							same = true;
-						else if (uvalue == 0.0 && prop.getProperty(expr.variable).toLowerCase().equals("false"))
+						else if (uvalue == 0.0 && variables.get(expr.variable).toLowerCase().equals("false"))
 							same = true;
 					}
 				}

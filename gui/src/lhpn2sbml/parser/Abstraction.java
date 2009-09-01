@@ -810,7 +810,15 @@ public class Abstraction {
 			if (expr.evaluateExp(initVars) == 1) {
 				boolean enabled = true;
 				for (String trans : booleanAssignments.keySet()) {
-					if (trans.equals(t) || expr.becomesFalse(booleanAssignments.get(trans))) {
+					HashMap<String, String> assignments = new HashMap<String, String>();
+					Properties prop = new Properties();
+					prop.putAll(booleanAssignments);
+					prop.putAll(contAssignments);
+					prop.putAll(intAssignments);
+					for (Object o : prop.keySet()) {
+						assignments.put(o.toString(), prop.get(o).toString());
+					}
+					if (trans.equals(t) || expr.becomesFalse(assignments)) {
 						enabled = false;
 						break;
 					}
@@ -822,7 +830,15 @@ public class Abstraction {
 			else if (expr.evaluateExp(initVars) == 0) {
 				boolean disabled = true;
 				for (String trans : booleanAssignments.keySet()) {
-					if (trans.equals(t) || expr.becomesTrue(booleanAssignments.get(trans))) {
+					HashMap<String, String> assignments = new HashMap<String, String>();
+					Properties prop = new Properties();
+					prop.putAll(booleanAssignments);
+					prop.putAll(contAssignments);
+					prop.putAll(intAssignments);
+					for (Object o : prop.keySet()) {
+						assignments.put(o.toString(), prop.get(o).toString());
+					}
+					if (trans.equals(t) || expr.becomesTrue(assignments)) {
 						disabled = false;
 						break;
 					}
