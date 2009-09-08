@@ -27,6 +27,7 @@ import org.sbml.libsbml.Reaction;
 import org.sbml.libsbml.SBMLDocument;
 import org.sbml.libsbml.SBMLReader;
 import org.sbml.libsbml.Species;
+import org.sbml.libsbml.SpeciesReference;
 
 /**
  * This is a utility class. The constructor is private so that only one instance
@@ -82,6 +83,27 @@ public class Utility {
 				JOptionPane.ERROR_MESSAGE);
 	}
 
+	public static Reaction Reaction(String id) {
+		Reaction r = new Reaction(2,4);
+		r.setId(id);
+		return r;
+	}
+
+	public static SpeciesReference SpeciesReference(String id, double stoichiometry) {
+		SpeciesReference sr = new SpeciesReference(2,4);
+		sr.setId(id);
+		sr.setStoichiometry(stoichiometry);
+		return sr;
+	}
+	
+	public static Parameter Parameter(String id, double value, String units) {
+		Parameter p = new Parameter(2,4);
+		p.setId(id);
+		p.setValue(value);
+		p.setUnits(units);
+		return p;
+	}
+	
 	public static Species makeSpecies(String id, String compartment,
 			double amount) {
 		Species specie = new Species(2,4);

@@ -50,112 +50,107 @@ public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 
 	public void visitDimer(DimerSpecies specie) {
 		loadValues(specie.getProperties());
-		Reaction r = new Reaction("R_act_production_" + promoter.getId() + "_"
+		Reaction r = Utility.Reaction("R_act_production_" + promoter.getId() + "_"
 				+ specie.getId());
-		r.addReactant(new SpeciesReference("RNAP_" + promoter.getId() + "_"
+		r.addReactant(Utility.SpeciesReference("RNAP_" + promoter.getId() + "_"
 				+ specie.getId(), 1));
 		for (SpeciesInterface species : promoter.getOutputs()) {
-			r.addProduct(new SpeciesReference(species.getId(), stoc));
+			r.addProduct(Utility.SpeciesReference(species.getId(), stoc));
 		}
-		r.addProduct(new SpeciesReference("RNAP_" + promoter.getId() + "_"
+		r.addProduct(Utility.SpeciesReference("RNAP_" + promoter.getId() + "_"
 				+ specie.getId(), 1));
 		r.setReversible(false);
 		r.setFast(false);
-		KineticLaw kl = new KineticLaw();
-		kl.addParameter(new Parameter(actString, act, GeneticNetwork
+		KineticLaw kl = r.createKineticLaw();
+		kl.addParameter(Utility.Parameter(actString, act, GeneticNetwork
 				.getMoleTimeParameter(1)));
 		kl.setFormula(actString+ "*RNAP_" + promoter.getId() + "_"
 				+ specie.getId());
-		r.setKineticLaw(kl);
 		Utility.addReaction(document, r);
 
 	}
 
 	public void visitBiochemical(BiochemicalSpecies specie) {
 		loadValues(specie.getProperties());
-		Reaction r = new Reaction("R_act_production_" + promoter.getId() + "_"
+		Reaction r = Utility.Reaction("R_act_production_" + promoter.getId() + "_"
 				+ specie.getId());
-		r.addReactant(new SpeciesReference("RNAP_" + promoter.getId() + "_"
+		r.addReactant(Utility.SpeciesReference("RNAP_" + promoter.getId() + "_"
 				+ specie.getId(), 1));
 		for (SpeciesInterface species : promoter.getOutputs()) {
-			r.addProduct(new SpeciesReference(species.getId(), stoc));
+			r.addProduct(Utility.SpeciesReference(species.getId(), stoc));
 		}
-		r.addProduct(new SpeciesReference("RNAP_" + promoter.getId() + "_"
+		r.addProduct(Utility.SpeciesReference("RNAP_" + promoter.getId() + "_"
 				+ specie.getId(), 1));
 		r.setReversible(false);
 		r.setFast(false);
-		KineticLaw kl = new KineticLaw();
-		kl.addParameter(new Parameter(actString, act, GeneticNetwork
+		KineticLaw kl = r.createKineticLaw();
+		kl.addParameter(Utility.Parameter(actString, act, GeneticNetwork
 				.getMoleTimeParameter(1)));
 		kl.setFormula(actString+ "*RNAP_" + promoter.getId() + "_"
 				+ specie.getId());
-		r.setKineticLaw(kl);
 		Utility.addReaction(document, r);
 	}
 
 	public void visitBaseSpecies(BaseSpecies specie) {
 		loadValues(specie.getProperties());
-		Reaction r = new Reaction("R_act_production_" + promoter.getId() + "_"
+		Reaction r = Utility.Reaction("R_act_production_" + promoter.getId() + "_"
 				+ specie.getId());
-		r.addReactant(new SpeciesReference("RNAP_" + promoter.getId() + "_"
+		r.addReactant(Utility.SpeciesReference("RNAP_" + promoter.getId() + "_"
 				+ specie.getId(), 1));
 		for (SpeciesInterface species : promoter.getOutputs()) {
-			r.addProduct(new SpeciesReference(species.getId(), stoc));
+			r.addProduct(Utility.SpeciesReference(species.getId(), stoc));
 		}
-		r.addProduct(new SpeciesReference("RNAP_" + promoter.getId() + "_"
+		r.addProduct(Utility.SpeciesReference("RNAP_" + promoter.getId() + "_"
 				+ specie.getId(), 1));
 		r.setReversible(false);
 		r.setFast(false);
-		KineticLaw kl = new KineticLaw();
-		kl.addParameter(new Parameter(actString, act, GeneticNetwork
+		KineticLaw kl = r.createKineticLaw();
+		kl.addParameter(Utility.Parameter(actString, act, GeneticNetwork
 				.getMoleTimeParameter(1)));
 		kl.setFormula(actString+ "*RNAP_" + promoter.getId() + "_"
 				+ specie.getId());
-		r.setKineticLaw(kl);
 		Utility.addReaction(document, r);
 	}
 
 	public void visitConstantSpecies(ConstantSpecies specie) {
 		loadValues(specie.getProperties());
-		Reaction r = new Reaction("R_act_production_" + promoter.getId() + "_"
+		Reaction r = Utility.Reaction("R_act_production_" + promoter.getId() + "_"
 				+ specie.getId());
-		r.addReactant(new SpeciesReference("RNAP_" + promoter.getId() + "_"
+		r.addReactant(Utility.SpeciesReference("RNAP_" + promoter.getId() + "_"
 				+ specie.getId(), 1));
 		for (SpeciesInterface species : promoter.getOutputs()) {
-			r.addProduct(new SpeciesReference(species.getId(), stoc));
+			r.addProduct(Utility.SpeciesReference(species.getId(), stoc));
 		}
-		r.addProduct(new SpeciesReference("RNAP_" + promoter.getId() + "_"
+		r.addProduct(Utility.SpeciesReference("RNAP_" + promoter.getId() + "_"
 				+ specie.getId(), 1));
 		r.setReversible(false);
 		r.setFast(false);
-		KineticLaw kl = new KineticLaw();
-		kl.addParameter(new Parameter(actString, act, GeneticNetwork
+		KineticLaw kl = r.createKineticLaw();
+		kl.addParameter(Utility.Parameter(actString, act, GeneticNetwork
 				.getMoleTimeParameter(1)));
 		kl.setFormula(actString+ "*RNAP_" + promoter.getId() + "_"
 				+ specie.getId());
-		r.setKineticLaw(kl);
 		Utility.addReaction(document, r);
 	}
 
 	public void visitSpasticSpecies(SpasticSpecies specie) {
 		loadValues(specie.getProperties());
-		Reaction r = new Reaction("R_act_production_" + promoter.getId() + "_"
+		Reaction r = Utility.Reaction("R_act_production_" + promoter.getId() + "_"
 				+ specie.getId());
-		r.addReactant(new SpeciesReference("RNAP_" + "_" + promoter.getId()
+		r.addReactant(Utility.SpeciesReference("RNAP_" + "_" + promoter.getId()
 				+ "_" + specie.getId(), 1));
 		for (SpeciesInterface species : promoter.getOutputs()) {
-			r.addProduct(new SpeciesReference(species.getId(), stoc));
+			r.addProduct(Utility.SpeciesReference(species.getId(), stoc));
 		}
-		r.addProduct(new SpeciesReference("RNAP_" + promoter.getId() + "_"
+		r.addProduct(Utility.SpeciesReference("RNAP_" + promoter.getId() + "_"
 				+ specie.getId(), 1));
 		r.setReversible(false);
 		r.setFast(false);
-		KineticLaw kl = new KineticLaw();
-		kl.addParameter(new Parameter(actString, act, GeneticNetwork
+		KineticLaw kl = r.createKineticLaw();
+		kl.addParameter(Utility.Parameter(actString, act, GeneticNetwork
 				.getMoleTimeParameter(1)));
 		kl.setFormula(actString+ "*RNAP_" + promoter.getId() + "_"
 				+ specie.getId());
-		r.setKineticLaw(kl);
 		Utility.addReaction(document, r);
 	}
 
