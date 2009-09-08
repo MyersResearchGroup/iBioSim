@@ -53,17 +53,16 @@ public class PrintDimerizationVisitor extends AbstractPrintVisitor {
 		loadValues(specie.getProperties());
 		// Check if we are running abstraction, if not, then don't allow decay
 		if (!dimerizationAbstraction) {
-			Reaction r = new Reaction("Dimerization_"+specie.getId());
-			r.addReactant(new SpeciesReference(specie.getMonomer().getId(), dimer));
-			r.addProduct(new SpeciesReference(specie.getId(), 1));
+			Reaction r = Utility.Reaction("Dimerization_"+specie.getId());
+			r.addReactant(Utility.SpeciesReference(specie.getMonomer().getId(), dimer));
+			r.addProduct(Utility.SpeciesReference(specie.getId(), 1));
 			r.setReversible(true);
 			r.setFast(true);
-			KineticLaw kl = new KineticLaw();
-			kl.addParameter(new Parameter(kdimerString, kdimer, GeneticNetwork.getMoleTimeParameter((int)dimer)));
-			kl.addParameter(new Parameter("kr", 1, GeneticNetwork.getMoleTimeParameter(1)));
+			KineticLaw kl = r.createKineticLaw();
+			kl.addParameter(Utility.Parameter(kdimerString, kdimer, GeneticNetwork.getMoleTimeParameter((int)dimer)));
+			kl.addParameter(Utility.Parameter("kr", 1, GeneticNetwork.getMoleTimeParameter(1)));
 			kl.setFormula(kdimerString+"*" + specie.getMonomer().getId() + " ^"+dimer+"-kr*"+specie.getId());
 			
-			r.setKineticLaw(kl);
 			Utility.addReaction(document, r);		
 		}
 	}

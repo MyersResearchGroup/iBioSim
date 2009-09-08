@@ -347,8 +347,8 @@ public class GeneticNetwork {
 		for (Promoter p : promoters.values()) {
 			if (p.getOutputs().size()==0) continue;
 			if (p.getActivators().size() > 0 && p.getRepressors().size() == 0) {
-				org.sbml.libsbml.Reaction r = new org.sbml.libsbml.Reaction(
-						"R_basal_production_" + p.getId());
+				org.sbml.libsbml.Reaction r = new org.sbml.libsbml.Reaction(2,4);
+				r.setId("R_basal_production_" + p.getId());
 				r.addReactant(Utility.SpeciesReference("RNAP_" + p.getId(), 1));
 				for (SpeciesInterface species : p.getOutputs()) {
 					r.addProduct(Utility.SpeciesReference(species.getId(), stoc));
@@ -373,8 +373,8 @@ public class GeneticNetwork {
 				v.run();
 			} else if (p.getActivators().size() == 0
 					&& p.getRepressors().size() >= 0) {
-				org.sbml.libsbml.Reaction r = new org.sbml.libsbml.Reaction(
-						"R_production_" + p.getId());
+				org.sbml.libsbml.Reaction r = new org.sbml.libsbml.Reaction(2,4);
+				r.setId("R_production_" + p.getId());
 				r.addReactant(Utility.SpeciesReference("RNAP_" + p.getId(), 1));
 				for (SpeciesInterface species : p.getOutputs()) {
 					r.addProduct(Utility.SpeciesReference(species.getId(), stoc));
@@ -396,8 +396,8 @@ public class GeneticNetwork {
 			} else {
 				// TODO: Should ask Chris how to handle
 				// Both activated and repressed
-				org.sbml.libsbml.Reaction r = new org.sbml.libsbml.Reaction(
-						"R_basal_production_" + p.getId());
+				org.sbml.libsbml.Reaction r = new org.sbml.libsbml.Reaction(2,4);
+				r.setId("R_basal_production_" + p.getId());
 				r.addReactant(Utility.SpeciesReference("RNAP_" + p.getId(), 1));
 				for (SpeciesInterface species : p.getOutputs()) {
 					r.addProduct(Utility.SpeciesReference(species.getId(), stoc));

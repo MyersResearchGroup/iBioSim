@@ -55,23 +55,22 @@ public class PrintBiochemicalVisitor extends AbstractPrintVisitor {
 			if (specie.getRateConstant() != -1) {
 				newkf = specie.getRateConstant();
 			}
-			Reaction r = new Reaction("Biochemical_" + specie.getId());
+			Reaction r = Utility.Reaction("Biochemical_" + specie.getId());
 			String multi = kbioString+"*";
 			for (SpeciesInterface s : specie.getInputs()) {
-				r.addReactant(new SpeciesReference(s.getId(), 1));
+				r.addReactant(Utility.SpeciesReference(s.getId(), 1));
 				multi = multi + s.getId() + "*";
 			}
 			multi = multi.substring(0, multi.length() - 1);
 
-			r.addProduct(new SpeciesReference(specie.getId(), 1));
+			r.addProduct(Utility.SpeciesReference(specie.getId(), 1));
 			r.setReversible(true);
 			r.setFast(true);
-			KineticLaw kl = new KineticLaw();
-			kl.addParameter(new Parameter(kbioString, newkf, GeneticNetwork.getMoleTimeParameter(specie.getInputs().size())));
-			kl.addParameter(new Parameter("kr", 1, GeneticNetwork.getMoleTimeParameter(1)));
+			KineticLaw kl = r.createKineticLaw();
+			kl.addParameter(Utility.Parameter(kbioString, newkf, GeneticNetwork.getMoleTimeParameter(specie.getInputs().size())));
+			kl.addParameter(Utility.Parameter("kr", 1, GeneticNetwork.getMoleTimeParameter(1)));
 			kl.setFormula(multi + "-kr*" + specie.getId());
 
-			r.setKineticLaw(kl);
 			Utility.addReaction(document, r);
 		}
 	}
