@@ -288,16 +288,15 @@ public class GeneticNetwork {
 			if (p.getOutputs().size()==0) continue;
 			org.sbml.libsbml.Reaction r = new org.sbml.libsbml.Reaction(2,4);
 			r.setId("R_RNAP_" + p.getId());
-			r.addReactant(new SpeciesReference("RNAP", 1));
-			r.addReactant(new SpeciesReference(p.getId(), 1));
-			r.addProduct(new SpeciesReference("RNAP_" + p.getId()));
+			r.addReactant(Utility.SpeciesReference("RNAP", 1));
+			r.addReactant(Utility.SpeciesReference(p.getId(), 1));
+			r.addProduct(Utility.SpeciesReference("RNAP_" + p.getId(), 1));
 			r.setReversible(true);
-			KineticLaw kl = new KineticLaw();
-			kl.addParameter(new Parameter("kf", rnap, getMoleTimeParameter(2)));
-			kl.addParameter(new Parameter("kr", 1, getMoleTimeParameter(1)));
+			KineticLaw kl = r.createKineticLaw();
+			kl.addParameter(Utility.Parameter("kf", rnap, getMoleTimeParameter(2)));
+			kl.addParameter(Utility.Parameter("kr", 1, getMoleTimeParameter(1)));
 			kl.setFormula("kf*" + "RNAP*" + p.getId() + "-kr*RNAP_"
-					+ p.getId());
-			r.setKineticLaw(kl);
+					+ p.getId());		
 			Utility.addReaction(document, r);
 
 			// Next setup activated binding
@@ -350,24 +349,23 @@ public class GeneticNetwork {
 			if (p.getActivators().size() > 0 && p.getRepressors().size() == 0) {
 				org.sbml.libsbml.Reaction r = new org.sbml.libsbml.Reaction(
 						"R_basal_production_" + p.getId());
-				r.addReactant(new SpeciesReference("RNAP_" + p.getId(), 1));
+				r.addReactant(Utility.SpeciesReference("RNAP_" + p.getId(), 1));
 				for (SpeciesInterface species : p.getOutputs()) {
-					r.addProduct(new SpeciesReference(species.getId(), stoc));
+					r.addProduct(Utility.SpeciesReference(species.getId(), stoc));
 				}
-				r.addProduct(new SpeciesReference("RNAP_" + p.getId(), 1));
+				r.addProduct(Utility.SpeciesReference("RNAP_" + p.getId(), 1));
 				r.setReversible(false);
 				r.setFast(false);
-				KineticLaw kl = new KineticLaw();
+				KineticLaw kl = r.createKineticLaw();
 				if (p.getProperty(GlobalConstants.KBASAL_STRING) != null) {
-					kl.addParameter(new Parameter("basal", Double.parseDouble(p
+					kl.addParameter(Utility.Parameter("basal", Double.parseDouble(p
 							.getProperty(GlobalConstants.KBASAL_STRING)),
 							getMoleTimeParameter(1)));
 				} else {
-					kl.addParameter(new Parameter("basal", basal,
+					kl.addParameter(Utility.Parameter("basal", basal,
 							getMoleTimeParameter(1)));
 				}
 				kl.setFormula("basal*" + "RNAP_" + p.getId());
-				r.setKineticLaw(kl);
 				Utility.addReaction(document, r);
 
 				PrintActivatedProductionVisitor v = new PrintActivatedProductionVisitor(
@@ -377,48 +375,46 @@ public class GeneticNetwork {
 					&& p.getRepressors().size() >= 0) {
 				org.sbml.libsbml.Reaction r = new org.sbml.libsbml.Reaction(
 						"R_production_" + p.getId());
-				r.addReactant(new SpeciesReference("RNAP_" + p.getId(), 1));
+				r.addReactant(Utility.SpeciesReference("RNAP_" + p.getId(), 1));
 				for (SpeciesInterface species : p.getOutputs()) {
-					r.addProduct(new SpeciesReference(species.getId(), stoc));
+					r.addProduct(Utility.SpeciesReference(species.getId(), stoc));
 				}
-				r.addProduct(new SpeciesReference("RNAP_" + p.getId(), 1));
+				r.addProduct(Utility.SpeciesReference("RNAP_" + p.getId(), 1));
 				r.setReversible(false);
 				r.setFast(false);
-				KineticLaw kl = new KineticLaw();
+				KineticLaw kl = r.createKineticLaw();
 				if (p.getProperty(GlobalConstants.OCR_STRING) != null) {
-					kl.addParameter(new Parameter("koc", Double.parseDouble(p
+					kl.addParameter(Utility.Parameter("koc", Double.parseDouble(p
 							.getProperty(GlobalConstants.OCR_STRING)),
 							getMoleTimeParameter(1)));
 				} else {
-					kl.addParameter(new Parameter("koc", koc,
+					kl.addParameter(Utility.Parameter("koc", koc,
 							getMoleTimeParameter(1)));
 				}
 				kl.setFormula("koc*" + "RNAP_" + p.getId());
-				r.setKineticLaw(kl);
 				Utility.addReaction(document, r);
 			} else {
 				// TODO: Should ask Chris how to handle
 				// Both activated and repressed
 				org.sbml.libsbml.Reaction r = new org.sbml.libsbml.Reaction(
 						"R_basal_production_" + p.getId());
-				r.addReactant(new SpeciesReference("RNAP_" + p.getId(), 1));
+				r.addReactant(Utility.SpeciesReference("RNAP_" + p.getId(), 1));
 				for (SpeciesInterface species : p.getOutputs()) {
-					r.addProduct(new SpeciesReference(species.getId(), stoc));
+					r.addProduct(Utility.SpeciesReference(species.getId(), stoc));
 				}
-				r.addProduct(new SpeciesReference("RNAP_" + p.getId(), 1));
+				r.addProduct(Utility.SpeciesReference("RNAP_" + p.getId(), 1));
 				r.setReversible(false);
 				r.setFast(false);
-				KineticLaw kl = new KineticLaw();
+				KineticLaw kl = r.createKineticLaw();
 				if (p.getProperty(GlobalConstants.KBASAL_STRING) != null) {
-					kl.addParameter(new Parameter("basal", Double.parseDouble(p
+					kl.addParameter(Utility.Parameter("basal", Double.parseDouble(p
 							.getProperty(GlobalConstants.KBASAL_STRING)),
 							getMoleTimeParameter(1)));
 				} else {
-					kl.addParameter(new Parameter("basal", basal,
+					kl.addParameter(Utility.Parameter("basal", basal,
 							getMoleTimeParameter(1)));
 				}
 				kl.setFormula("basal*" + "RNAP_" + p.getId());
-				r.setKineticLaw(kl);
 				Utility.addReaction(document, r);
 
 				PrintActivatedProductionVisitor v = new PrintActivatedProductionVisitor(
