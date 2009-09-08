@@ -70,12 +70,12 @@ public class Utility {
 		return "";
 	}
 
-	public static Compartment makeCompartment(String id) {
+/*	public static Compartment makeCompartment(String id) {
 		Compartment c = new Compartment("default");
 		c.setConstant(true);
 		c.setSpatialDimensions(3);
 		return c;
-	}
+	}*/
 
 	public static void createErrorMessage(String title, String message) {
 		JOptionPane.showMessageDialog(null, message, title,
@@ -84,7 +84,9 @@ public class Utility {
 
 	public static Species makeSpecies(String id, String compartment,
 			double amount) {
-		Species specie = new Species(id, id);
+		Species specie = new Species(2,4);
+		specie.setId(id);
+		specie.setName(id);
 		specie.setCompartment(compartment);
 		specie.setInitialAmount(amount);		
 		return specie;
@@ -330,7 +332,8 @@ public class Utility {
 	
 	public static boolean addCompartments(SBMLDocument document, String compartment) {
 		if (document.getModel().getCompartment(compartment) == null) {
-			document.getModel().addCompartment(new Compartment(compartment));
+			Compartment comp = document.getModel().createCompartment();
+			comp.setId(compartment);
 			return true;
 		}
 		else {
@@ -340,7 +343,8 @@ public class Utility {
 					c.remove(i);
 				}
 			}
-			document.getModel().addCompartment(new Compartment(compartment));
+			Compartment comp = document.getModel().createCompartment();
+			comp.setId(compartment);
 			return true;
 			//Give warning
 		}

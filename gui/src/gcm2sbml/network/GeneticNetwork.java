@@ -101,7 +101,7 @@ public class GeneticNetwork {
 		setSpecies(species);
 		setPromoters(promoters);
 		
-		SBMLDocument document = new SBMLDocument(2, 3);
+		SBMLDocument document = new SBMLDocument(2, 4);
 		currentDocument = document;
 		Model m = document.createModel();
 		document.setModel(m);
@@ -148,7 +148,7 @@ public class GeneticNetwork {
 	 * @return the sbml document
 	 */
 	public SBMLDocument outputSBML(String filename) {
-		SBMLDocument document = new SBMLDocument(2, 3);
+		SBMLDocument document = new SBMLDocument(2, 4);
 		currentDocument = document;
 		Model m = document.createModel();
 		document.setModel(m);
@@ -286,8 +286,8 @@ public class GeneticNetwork {
 		for (Promoter p : promoters.values()) {
 			// First setup RNAP binding
 			if (p.getOutputs().size()==0) continue;
-			org.sbml.libsbml.Reaction r = new org.sbml.libsbml.Reaction(
-					"R_RNAP_" + p.getId());
+			org.sbml.libsbml.Reaction r = new org.sbml.libsbml.Reaction(2,4);
+			r.setId("R_RNAP_" + p.getId());
 			r.addReactant(new SpeciesReference("RNAP", 1));
 			r.addReactant(new SpeciesReference(p.getId(), 1));
 			r.addProduct(new SpeciesReference("RNAP_" + p.getId()));
