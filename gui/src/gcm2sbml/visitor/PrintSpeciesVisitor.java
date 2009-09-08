@@ -88,18 +88,17 @@ public class PrintSpeciesVisitor extends AbstractPrintVisitor {
 		s.setHasOnlySubstanceUnits(true);
 		Utility.addSpecies(document, s);
 		
-		org.sbml.libsbml.Reaction r = new org.sbml.libsbml.Reaction(
-				"Spastic_production_" + s.getName());
+		org.sbml.libsbml.Reaction r = new org.sbml.libsbml.Reaction(2,4);
+		r.setId("Spastic_production_" + s.getName());
 		
-		r.addProduct(new SpeciesReference(s.getName(), Double.parseDouble(parameters.getParameter(GlobalConstants.STOICHIOMETRY_STRING))));
+		r.addProduct(Utility.SpeciesReference(s.getName(), Double.parseDouble(parameters.getParameter(GlobalConstants.STOICHIOMETRY_STRING))));
 		
 		r.setReversible(false);
 		r.setFast(false);
-		KineticLaw kl = new KineticLaw();
-		kl.addParameter(new Parameter("kp", Double.parseDouble(parameters
+		KineticLaw kl = r.createKineticLaw();
+		kl.addParameter(Utility.Parameter("kp", Double.parseDouble(parameters
 					.getParameter((GlobalConstants.OCR_STRING)))));	
 		kl.setFormula("kp");
-		r.setKineticLaw(kl);
 		Utility.addReaction(document, r);		
 	}
 	

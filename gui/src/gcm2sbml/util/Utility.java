@@ -104,6 +104,13 @@ public class Utility {
 		return p;
 	}
 	
+	public static Parameter Parameter(String id, double value) {
+		Parameter p = new Parameter(2,4);
+		p.setId(id);
+		p.setValue(value);
+		return p;
+	}
+	
 	public static Species makeSpecies(String id, String compartment,
 			double amount) {
 		Species specie = new Species(2,4);
