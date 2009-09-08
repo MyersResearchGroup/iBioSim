@@ -1891,7 +1891,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		}
 		if (!usedIDs.contains(reacID.trim()) && !reacID.trim().equals("")) {
 			Reaction react = document.getModel().createReaction();
-			react.setKineticLaw(new KineticLaw());
+			react.createKineticLaw();
 			int index = reactions.getSelectedIndex();
 			Reaction r = document.getModel().getReaction(
 					((String) reactions.getSelectedValue()).split(" ")[0]);
@@ -3222,11 +3222,11 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 							u.getListOfUnits().remove(0);
 						}
 						for (int i = 0; i < uList.length; i++) {
-							Unit unit = new Unit(extractUnitKind(uList[i]), Integer.valueOf(
-									extractUnitExp(uList[i])).intValue(), Integer.valueOf(
-									extractUnitScale(uList[i])).intValue(), Double.valueOf(
-									extractUnitMult(uList[i])).doubleValue());
-							u.addUnit(unit);
+							Unit unit = u.createUnit();
+							unit.setKind(libsbml.UnitKind_forName(extractUnitKind(uList[i])));
+							unit.setExponent(Integer.valueOf(extractUnitExp(uList[i])).intValue());
+							unit.setScale(Integer.valueOf(extractUnitScale(uList[i])).intValue());
+							unit.setMultiplier(Double.valueOf(extractUnitMult(uList[i])).doubleValue());
 						}
 						units[index] = addUnit;
 						sort(units);
@@ -3241,11 +3241,11 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						u.setName(unitName.getText().trim());
 						usedIDs.add(addUnit);
 						for (int i = 0; i < uList.length; i++) {
-							Unit unit = new Unit(extractUnitKind(uList[i]), Integer.valueOf(
-									extractUnitExp(uList[i])).intValue(), Integer.valueOf(
-									extractUnitScale(uList[i])).intValue(), Double.valueOf(
-									extractUnitMult(uList[i])).doubleValue());
-							u.addUnit(unit);
+							Unit unit = u.createUnit();
+							unit.setKind(libsbml.UnitKind_forName(extractUnitKind(uList[i])));
+							unit.setExponent(Integer.valueOf(extractUnitExp(uList[i])).intValue());
+							unit.setScale(Integer.valueOf(extractUnitScale(uList[i])).intValue());
+							unit.setMultiplier(Double.valueOf(extractUnitMult(uList[i])).doubleValue());
 						}
 						JList add = new JList();
 						Object[] adding = { addUnit };
@@ -7544,7 +7544,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				}
 				else {
 					Reaction react = document.getModel().createReaction();
-					react.setKineticLaw(new KineticLaw());
+					react.createKineticLaw();
 					int index = reactions.getSelectedIndex();
 					for (int i = 0; i < changedParameters.size(); i++) {
 						react.getKineticLaw().addParameter(changedParameters.get(i));
@@ -10074,14 +10074,19 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				UnitDefinition timeUnitDef = document.getModel().getUnitDefinition("time");
 				for (int i = 0; i < timeUnitDef.getNumUnits(); i++) {
 					Unit timeUnit = timeUnitDef.getUnit(i);
-					Unit recTimeUnit = new Unit(timeUnit.getKind(), timeUnit.getExponent() * (-1),
-							timeUnit.getScale(), timeUnit.getMultiplier());
-					unitDefVar.addUnit(recTimeUnit);
+					Unit recTimeUnit = unitDefVar.createUnit();
+					recTimeUnit.setKind(timeUnit.getKind());
+					recTimeUnit.setExponent(timeUnit.getExponent() * (-1));
+					recTimeUnit.setScale(timeUnit.getScale());
+					recTimeUnit.setMultiplier(timeUnit.getMultiplier());
 				}
 			}
 			else {
-				Unit unit = new Unit("second", -1, 0, 1.0);
-				unitDefVar.addUnit(unit);
+				Unit unit = unitDefVar.createUnit();
+				unit.setKind(libsbml.UnitKind_forName("second"));
+				unit.setExponent(-1);
+				unit.setScale(0);
+				unit.setMultiplier(1.0);
 			}
 			if (!UnitDefinition.areEquivalent(unitDef, unitDefVar)) {
 				JOptionPane.showMessageDialog(biosim.frame(),
@@ -10281,7 +10286,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		}
 		else if (biosim.checkUnits) {
 			UnitDefinition unitDef = law.getDerivedUnitDefinition();
-			UnitDefinition unitDefLaw = new UnitDefinition();
+			UnitDefinition unitDefLaw = new UnitDefinition(2,4);
 			if (document.getModel().getUnitDefinition("substance") != null) {
 				UnitDefinition subUnitDef = document.getModel().getUnitDefinition("substance");
 				for (int i = 0; i < subUnitDef.getNumUnits(); i++) {
@@ -10290,21 +10295,29 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				}
 			}
 			else {
-				Unit unit = new Unit("mole", 1, 0, 1.0);
-				unitDefLaw.addUnit(unit);
+				Unit unit = unitDefLaw.createUnit();
+				unit.setKind(libsbml.UnitKind_forName("mole"));
+				unit.setExponent(1);
+				unit.setScale(0);
+				unit.setMultiplier(1.0);
 			}
 			if (document.getModel().getUnitDefinition("time") != null) {
 				UnitDefinition timeUnitDef = document.getModel().getUnitDefinition("time");
 				for (int i = 0; i < timeUnitDef.getNumUnits(); i++) {
 					Unit timeUnit = timeUnitDef.getUnit(i);
-					Unit recTimeUnit = new Unit(timeUnit.getKind(), timeUnit.getExponent() * (-1),
-							timeUnit.getScale(), timeUnit.getMultiplier());
-					unitDefLaw.addUnit(recTimeUnit);
+					Unit recTimeUnit = unitDefLaw.createUnit();
+					recTimeUnit.setKind(timeUnit.getKind());
+					recTimeUnit.setExponent(timeUnit.getExponent() * (-1));
+					recTimeUnit.setScale(timeUnit.getScale());
+					recTimeUnit.setMultiplier(timeUnit.getMultiplier());
 				}
 			}
 			else {
-				Unit unit = new Unit("second", -1, 0, 1.0);
-				unitDefLaw.addUnit(unit);
+				Unit unit = unitDefLaw.createUnit();
+				unit.setKind(libsbml.UnitKind_forName("second"));
+				unit.setExponent(-1);
+				unit.setScale(0);
+				unit.setMultiplier(1.0);
 			}
 			if (!UnitDefinition.areEquivalent(unitDef, unitDefLaw)) {
 				JOptionPane.showMessageDialog(biosim.frame(),
