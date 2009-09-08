@@ -86,10 +86,9 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 		r.addReactant(Utility.SpeciesReference(specie.getId(), 1));
 		r.setReversible(false);
 		r.setFast(false);
-		KineticLaw kl = new KineticLaw();
+		KineticLaw kl = r.createKineticLaw();
 		kl.addParameter(Utility.Parameter(decayString, decay, decayUnitString));
 		kl.setFormula(decayString + "*" + specie.getId());
-		r.setKineticLaw(kl);
 		Utility.addReaction(document, r);
 	}
 
@@ -103,10 +102,9 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 		r.addReactant(Utility.SpeciesReference(specie.getId(), 1));
 		r.setReversible(false);
 		r.setFast(false);
-		KineticLaw kl = new KineticLaw();
+		KineticLaw kl = r.createKineticLaw();
 		kl.addParameter(Utility.Parameter(decayString, decay, decayUnitString));
 		kl.setFormula(decayString + "*" + specie.getId());
-		r.setKineticLaw(kl);
 		Utility.addReaction(document, r);
 	}
 	
