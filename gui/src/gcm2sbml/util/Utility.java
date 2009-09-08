@@ -91,7 +91,7 @@ public class Utility {
 
 	public static SpeciesReference SpeciesReference(String id, double stoichiometry) {
 		SpeciesReference sr = new SpeciesReference(2,4);
-		sr.setId(id);
+		sr.setSpecies(id);
 		sr.setStoichiometry(stoichiometry);
 		return sr;
 	}
