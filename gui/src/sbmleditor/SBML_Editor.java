@@ -7151,11 +7151,11 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			}
 		}
 		else {
-			Parameter p = new Parameter();
+			Parameter p = new Parameter(2,4);
 			p.setId("kf");
 			p.setValue(0.1);
 			changedParameters.add(p);
-			p = new Parameter();
+			p = new Parameter(2,4);
 			p.setId("kr");
 			p.setValue(1.0);
 			changedParameters.add(p);
@@ -8484,7 +8484,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					}
 					else {
 						int index = reacParameters.getSelectedIndex();
-						Parameter paramet = new Parameter();
+						Parameter paramet = new Parameter(2,4);
 						changedParameters.add(paramet);
 						paramet.setId(reacParamID.getText().trim());
 						paramet.setName(reacParamName.getText().trim());
@@ -8733,7 +8733,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					products.setSelectedIndex(index);
 				}
 				else {
-					SpeciesReference produ = new SpeciesReference();
+					SpeciesReference produ = new SpeciesReference(2,4);
 					changedProducts.add(produ);
 					produ.setSpecies((String) productSpecies.getSelectedItem());
 					if (stoiciLabel.getSelectedItem().equals("Stoichiometry")) {
@@ -8870,7 +8870,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					}
 				}
 				if (!error) {
-					ModifierSpeciesReference modi = new ModifierSpeciesReference();
+					ModifierSpeciesReference modi = new ModifierSpeciesReference(2,4);
 					changedModifiers.add(modi);
 					modi.setSpecies((String) modifierSpecies.getSelectedItem());
 					JList add = new JList();
@@ -9112,7 +9112,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					reactants.setSelectedIndex(index);
 				}
 				else {
-					SpeciesReference reactan = new SpeciesReference();
+					SpeciesReference reactan = new SpeciesReference(2,4);
 					changedReactants.add(reactan);
 					reactan.setSpecies((String) reactantSpecies.getSelectedItem());
 					if (stoiciLabel.getSelectedItem().equals("Stoichiometry")) {
