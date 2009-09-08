@@ -1117,7 +1117,7 @@ public class GeneticNetwork {
 				}
 			}
 		}
-		UnitDefinition t = new UnitDefinition();
+		UnitDefinition t = new UnitDefinition(2,4);
 		String name = "u_";
 		for (int i = 0; i < unitNames.size(); i++) {
 			String sign = "";
@@ -1126,8 +1126,11 @@ public class GeneticNetwork {
 			}
 			name = name + multiplier.get(i) + "_" + unitNames.get(i) + "_"
 					+ sign + Math.abs(exponents.get(i)) + "_";
-			t.addUnit(new Unit(unitNames.get(i), exponents.get(i).intValue(),
-					multiplier.get(i).intValue()));
+			Unit u = t.createUnit();
+			u.setKind(libsbml.UnitKind_forName(unitNames.get(i)));
+			u.setExponent(exponents.get(i).intValue());
+			u.setMultiplier(multiplier.get(i).intValue());
+			u.setScale(0);
 		}
 		name = name.substring(0, name.length() - 1);
 		t.setId(name);
