@@ -212,6 +212,7 @@ public class GeneticNetwork {
 			}
 
 			SBMLDocument document = new SBMLReader().readSBML(currentRoot + sbmlDocument);
+			document.setLevelAndVersion(2,4);
 			//checkConsistancy(document);
 			currentDocument = document;
 			return outputSBML(filename, document);

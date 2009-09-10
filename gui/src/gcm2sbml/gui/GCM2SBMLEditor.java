@@ -659,6 +659,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 			network.loadProperties(gcm);
 			if (!getSBMLFile().equals(none)) {
 				SBMLDocument d = new SBMLReader().readSBML(path + File.separator + getSBMLFile());
+				d.setLevelAndVersion(2,4);
 				for (String s : sbmlParamFile.getElementChanges()) {
 					for (long i = d.getModel().getNumInitialAssignments() - 1; i >= 0; i--) {
 						if (s.contains("=")) {
