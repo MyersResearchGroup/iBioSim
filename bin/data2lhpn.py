@@ -2060,11 +2060,11 @@ def writeGfile(varsL,datL,binsL,ratesL,divisionsL,tParam,g,gFile):
 	for t in transitionL:
 		outputF.write(" t" + str(t.transitionNum))
 	outputF.write("\n")
-	outputF.write("#@.variables")
+	outputF.write("#@@.variables")
 	for i in range(1,len(varsL)):
 		outputF.write(" "+varsL[i].name)
 	outputF.write("\n")
-	outputF.write("#@.init_state [0")
+	outputF.write("#@@.init_state [0")
 	outputF.write("]\n")
 	#write out the graph of places and transitions
 	outputF.write(".graph\n")
@@ -2079,18 +2079,18 @@ def writeGfile(varsL,datL,binsL,ratesL,divisionsL,tParam,g,gFile):
 	for p in g.initMarkingL:
 		outputF.write("p"+str(p.placeNum)+" ")
 	outputF.write("}\n")
-	outputF.write("#@.init_vals {")
+	outputF.write("#@@.init_vals {")
 	for i in range(1,len(varsL)):
 		outputF.write("<" + varsL[i].name + "=[" + g.minInitValInt(i) + "," + g.maxInitValInt(i) + "]>")
 	outputF.write("}\n")
-	outputF.write("#@.init_rates {")
+	outputF.write("#@@.init_rates {")
 	for i in range(1,len(varsL)):
 		if g.initRateL[i][0] == "-" or varsL[i].dmvc:
 			outputF.write("<"+varsL[i].name+"=0>")
 		else:
 			outputF.write("<" + varsL[i].name + "=[" + g.minInitRateInt(i) + "," + g.maxInitRateInt(i) + "]>")
 	outputF.write("}\n")
-	outputF.write("#@.enablings {")
+	outputF.write("#@@.enablings {")
 	if g.failProp:
 		enFailAnd = "&~fail"
 		enFail = "~fail"
@@ -2161,7 +2161,7 @@ def writeGfile(varsL,datL,binsL,ratesL,divisionsL,tParam,g,gFile):
 			hasRates = True
 			break
 	if hasRates:
-		outputF.write("#@.rate_assignments {")
+		outputF.write("#@@.rate_assignments {")
 		if placeRates:
 		  #Place based rate generation output
 			for p in placeL:
@@ -2181,12 +2181,12 @@ def writeGfile(varsL,datL,binsL,ratesL,divisionsL,tParam,g,gFile):
 		outputF.write("}\n")
 	if dmvcVarExists(varsL):
 		flag = 0
-		#outputF.write("#@.assignments {")
+		#outputF.write("#@@.assignments {")
 		for p in placeL:
 			if p.isDmvcP():
 				for t in p.incomingL:
 					if flag == 0:
-						outputF.write("#@.assignments {")
+						outputF.write("#@@.assignments {")
 					flag = 1
 					outputF.write("<t" + str(t.transitionNum) + "=[" + varsL[p.dmvcVar].name + ":=" + str(int(p.dmvcVal)) + "]>")
 			if p.isAsgnP():
@@ -2194,30 +2194,30 @@ def writeGfile(varsL,datL,binsL,ratesL,divisionsL,tParam,g,gFile):
 					if a.valL:
 						for t in p.incomingL:
 							if flag == 0:
-								outputF.write("#@.assignments {")
+								outputF.write("#@@.assignments {")
 							flag = 1
 							outputF.write("<t" + str(t.transitionNum) + "=[" + varsL[a.var].name + ":=" + str(int(a.avgValue())) + "]>")
 		if flag == 1:
 			outputF.write("}\n")
 		flag = 0
-		#outputF.write("#@.delay_assignments {")
+		#outputF.write("#@@.delay_assignments {")
 		for p in placeL:
 			if p.isDmvcP():
 				for t in p.outgoingL:
 					if flag == 0:
-						outputF.write("#@.delay_assignments {")
+						outputF.write("#@@.delay_assignments {")
 					flag = 1
 					outputF.write("<t" + str(t.transitionNum) + "=[" + p.minTimeInt() + "," + p.maxTimeInt() + "]>")
 		if flag == 1:
 			outputF.write("}\n")
 	if g.failProp:
-		outputF.write("#@.boolean_assignments {")
+		outputF.write("#@@.boolean_assignments {")
 		for p in placeL:
 			if p.isPropP():
 				for t in p.outgoingL:
 					outputF.write("<t"+str(t.transitionNum)+"=[fail:=TRUE]>")
 		outputF.write("}\n")
-	outputF.write("#@.continuous")
+	outputF.write("#@@.continuous")
 	for i in range(1,len(varsL)):
 		outputF.write(" "+varsL[i].name)
 	outputF.write("\n")
@@ -2286,7 +2286,7 @@ def writeVerilogAfile(varsL,datL,binsL,ratesL,divisionsL,tParam,g,vaFile):
 	outputF.write("\n\tanalog begin\n")
 
 	#Setup the initial values and rates
-	outputF.write("\t\t@(initial_step) begin\n")
+	outputF.write("\t\t@@(initial_step) begin\n")
 	for i in range(1,len(varsL)):
 		if not varsL[i].input:
 			outputF.write("\t\t\t"+varsL[i].name+"_var = "+str(g.initValL[i][0])+";\n")
@@ -2315,7 +2315,7 @@ def writeVerilogAfile(varsL,datL,binsL,ratesL,divisionsL,tParam,g,vaFile):
 	for p in dmvcPlaceL:
 		dmvcPlaceVarL[p.dmvcVar].append(p)
 
-	#Generate @(cross) statements for continuous rate variables.  This
+	#Generate @@(cross) statements for continuous rate variables.  This
 	#should work as the probability of two of these changing at the same
 	#time is unlikely
 	for p in ratePlaceL:
@@ -2342,9 +2342,9 @@ def writeVerilogAfile(varsL,datL,binsL,ratesL,divisionsL,tParam,g,vaFile):
 							direction = "-1"
 							val = divisionsL[i][t.outgoingP.binEncodingL[i-1]]
 						if varsL[i].input:
-							outputF.write("\t\t@(cross(V("+varsL[i].name+"_io) - "+str(val)+","+direction+")) begin\n")
+							outputF.write("\t\t@@(cross(V("+varsL[i].name+"_io) - "+str(val)+","+direction+")) begin\n")
 						else:
-							outputF.write("\t\t@(cross("+varsL[i].name+"_var - "+str(val)+","+direction+")) begin\n")
+							outputF.write("\t\t@@(cross("+varsL[i].name+"_var - "+str(val)+","+direction+")) begin\n")
 						for j in range(1,len(varsL)):
 							if not varsL[j].dmvc and not varsL[j].input:
 								outputF.write("\t\t\trate_"+varsL[j].name+" = "+str(p.avgRate(j)*tParam.vaRateUpdateInterval)+";\n")
@@ -2415,7 +2415,7 @@ def writeVerilogAfile(varsL,datL,binsL,ratesL,divisionsL,tParam,g,vaFile):
 		initVal = 0.0
 		for p in dmvcPlaceVarL[i]:
 			if not varsL[p.dmvcVar].input:
-				outputF.write("\t\t@(timer("+str(initVal)+","+str(period)+")) begin\n")
+				outputF.write("\t\t@@(timer("+str(initVal)+","+str(period)+")) begin\n")
 				outputF.write("\t\t\t"+varsL[p.dmvcVar].name+"_var = "+str(p.dmvcVal)+";\n")
 				outputF.write("\t\tend\n")
 				initVal += p.avgTime()
@@ -2429,7 +2429,7 @@ def writeVerilogAfile(varsL,datL,binsL,ratesL,divisionsL,tParam,g,vaFile):
 			hasRate = True
 			break
 	if hasRate:
-		outputF.write("\t\t@(timer(0.0,"+str(tParam.vaRateUpdateInterval)+")) begin\n")
+		outputF.write("\t\t@@(timer(0.0,"+str(tParam.vaRateUpdateInterval)+")) begin\n")
 		for i in range(1,len(varsL)):
 			if not varsL[i].dmvc and not varsL[i].input:
 				outputF.write("\t\t\t"+varsL[i].name+"_var = "+varsL[i].name+"_var + rate_"+varsL[i].name+";\n")

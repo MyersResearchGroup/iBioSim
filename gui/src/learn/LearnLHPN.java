@@ -13,6 +13,7 @@ import javax.swing.*;
 
 //import org.sbml.libsbml.*;
 import biomodelsim.*;
+import org.jdesktop.layout.*;
 
 /**
  * This class creates a GUI for the Learn program. It implements the
@@ -27,6 +28,8 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 
 	private JButton save, run, viewLhpn, saveLhpn, viewLog; // the run button
 
+	private JButton viewCoverage; // SB
+	
 	private JComboBox debug; // debug combo box
 
 	private JTextField iteration, backgroundField, propertyG;
@@ -303,146 +306,145 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		JPanel jPanel1 = new JPanel();
 		JPanel jPanel2 = new JPanel();
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        org.jdesktop.layout.GroupLayout jPanel1Layout = new org.jdesktop.layout.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
+            jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanel1Layout.createSequentialGroup()
+                .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(jPanel1Layout.createSequentialGroup()
                         .addContainerGap()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(epsilonLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 104, Short.MAX_VALUE)
-                                .addComponent(epsilonG, javax.swing.GroupLayout.DEFAULT_SIZE, 81, Short.MAX_VALUE))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(rateSamplingLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(129, 129, 129)
-                                .addComponent(rateSamplingG, javax.swing.GroupLayout.DEFAULT_SIZE, 81, Short.MAX_VALUE))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(pathLengthLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 121, Short.MAX_VALUE)
-                                .addGap(68, 68, 68)
-                                .addComponent(pathLengthG, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(60, 60, 60)
-                        .addComponent(rateLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(jPanel1Layout.createSequentialGroup()
+                                .add(epsilonLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 85, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 104, Short.MAX_VALUE)
+                                .add(epsilonG, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 81, Short.MAX_VALUE))
+                            .add(jPanel1Layout.createSequentialGroup()
+                                .add(rateSamplingLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                                .add(129, 129, 129)
+                                .add(rateSamplingG, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 81, Short.MAX_VALUE))
+                            .add(jPanel1Layout.createSequentialGroup()
+                                .add(pathLengthLabel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 121, Short.MAX_VALUE)
+                                .add(68, 68, 68)
+                                .add(pathLengthG, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 81, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
+                    .add(jPanel1Layout.createSequentialGroup()
+                        .add(60, 60, 60)
+                        .add(rateLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 186, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
 
-        jPanel1Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {epsilonG, pathLengthG, rateSamplingG});
+        jPanel1Layout.linkSize(new java.awt.Component[] {epsilonG, pathLengthG, rateSamplingG}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
 
         jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+            jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(rateLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(51, 51, 51)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(epsilonLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(epsilonG, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(rateSamplingLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(rateSamplingG, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(pathLengthLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(pathLengthG, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(35, 35, 35))
+                .add(rateLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(51, 51, 51)
+                .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(epsilonLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(epsilonG, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .add(18, 18, 18)
+                .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(rateSamplingLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(rateSamplingG, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .add(18, 18, 18)
+                .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(pathLengthLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(pathLengthG, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .add(35, 35, 35))
         );
 
-        jPanel1Layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {epsilonG, epsilonLabel, pathLengthG, pathLengthLabel, rateSamplingG, rateSamplingLabel});
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel1Layout.linkSize(new java.awt.Component[] {epsilonG, epsilonLabel, pathLengthG, pathLengthLabel, rateSamplingG, rateSamplingLabel}, org.jdesktop.layout.GroupLayout.VERTICAL);
+       
+        org.jdesktop.layout.GroupLayout jPanel2Layout = new org.jdesktop.layout.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addContainerGap(140, Short.MAX_VALUE)
-                .addComponent(dmvcLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 206, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(85, 85, 85))
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(83, 83, 83)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(percentLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(percentG, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap())
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(absTimeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(31, 31, 31)
-                        .addComponent(absTimeG)
-                        .addGap(30, 30, 30))))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addGap(73, 73, 73)
-                .addComponent(runTimeLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 251, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(runTimeG, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addContainerGap(73, Short.MAX_VALUE)
-                .addComponent(runLengthLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(runLengthG, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+            jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanel2Layout.createSequentialGroup()
+                    .addContainerGap(140, Short.MAX_VALUE)
+                    .add(dmvcLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 206, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(85, 85, 85))
+                .add(jPanel2Layout.createSequentialGroup()
+                    .add(83, 83, 83)
+                    .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                        .add(jPanel2Layout.createSequentialGroup()
+                            .add(percentLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 112, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                            .add(percentG, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 46, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .addContainerGap())
+                        .add(jPanel2Layout.createSequentialGroup()
+                            .add(absTimeLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 85, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .add(31, 31, 31)
+                            .add(absTimeG)
+                            .add(30, 30, 30))))
+                .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel2Layout.createSequentialGroup()
+                    .add(73, 73, 73)
+                    .add(runTimeLabel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 251, Short.MAX_VALUE)
+                    .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                    .add(runTimeG, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 46, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap())
+                .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel2Layout.createSequentialGroup()
+                	.addContainerGap(73, Short.MAX_VALUE)
+                    .add(runLengthLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 103, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                    .add(runLengthG, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 81, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap())
         );
 
-        jPanel2Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {percentG, runLengthG, runTimeG});
+        jPanel2Layout.linkSize(new java.awt.Component[] {percentG, runLengthG, runTimeG}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
 
-        jPanel2Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {absTimeLabel, percentLabel, runLengthLabel, runTimeLabel});
+        jPanel2Layout.linkSize(new java.awt.Component[] {absTimeLabel, percentLabel, runLengthLabel, runTimeLabel}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
 
         jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addGap(53, 53, 53)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(dmvcLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(34, 34, 34)
-                        .addComponent(absTimeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(absTimeG))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(percentLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(percentG, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(runTimeLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(runTimeG, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(runLengthLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(runLengthG, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(63, 63, 63))
+            jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel2Layout.createSequentialGroup()
+                .add(53, 53, 53)
+                .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                .add(jPanel2Layout.createSequentialGroup()
+                .add(dmvcLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(35, 35, 35)
+                    .add(absTimeLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(absTimeG))
+                .add(18, 18, 18)
+                .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, percentLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, percentG, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .add(18, 18, 18)
+                .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, runTimeLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, runTimeG, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .add(18, 18, 18)
+                .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, runLengthLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 17, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, runLengthG, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .add(63, 63, 63))
         );
+        jPanel2Layout.linkSize(new java.awt.Component[] {absTimeLabel, percentG, percentLabel, runLengthG, runLengthLabel, runTimeG, runTimeLabel}, org.jdesktop.layout.GroupLayout.VERTICAL);
 
-        jPanel2Layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {absTimeLabel, percentG, percentLabel, runLengthG, runLengthLabel, runTimeG, runTimeLabel});
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(newPanel);
+        org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(newPanel);
         newPanel.setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(72, 72, 72)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 256, Short.MAX_VALUE)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(157, 157, 157))
+            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
+                .add(72, 72, 72)
+                .add(jPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 256, Short.MAX_VALUE)
+                .add(jPanel2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(157, 157, 157))
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
+            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(layout.createSequentialGroup()
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 298, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(56, 56, 56)
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 207, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .add(jPanel2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .add(layout.createSequentialGroup()
+                        .add(56, 56, 56)
+                        .add(jPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
-		
 		divisionsL = new ArrayList<ArrayList<Double>>(); // SB
 		reqdVarsL = new ArrayList<Variable>();
 		/*
@@ -745,7 +747,15 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		if (!(new File(directory + separator + "run.log").exists())) {
 			viewLog.setEnabled(false);
 		}
-
+		// SB
+		viewCoverage = new JButton("View Coverage Report");
+		runHolder.add(viewCoverage);
+		viewCoverage.addActionListener(this);
+	//	viewCoverage.setMnemonic(KeyEvent.VK_R);
+		if (!(new File(directory + separator + "run.cvg").exists())) {
+			viewCoverage.setEnabled(false);
+		}
+		
 		// Creates the main panel
 		this.setLayout(new BorderLayout());
 		JPanel middlePanel = new JPanel(new BorderLayout());
@@ -925,9 +935,6 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				if (reqdVarsL.get(j-1).isInput()){ //tempPorts.get(j-1)){
 					((JCheckBox)((JPanel) c).getComponent(1)).setSelected(true); // SB
 				}
-				//if (tempPorts.get(j-1)){
-				//	((JCheckBox)((JPanel) c).getComponent(1)).setSelected(true); // SB
-				//}	
 				j++;
 			}
 		} 
@@ -954,6 +961,8 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			viewLog();
 		} else if (e.getSource() == saveLhpn) {
 			saveLhpn();
+		} else if (e.getSource() == viewCoverage) {  // SB
+			viewCoverage();
 		}
 	}
 
@@ -1384,6 +1393,40 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		}
 	}
 
+	// SB
+	public void viewCoverage() {
+		try {
+			if (new File(directory + separator + "run.cvg").exists()) {
+				File cvgRpt = new File(directory + separator + "run.cvg");
+				BufferedReader input = new BufferedReader(new FileReader(cvgRpt));
+				String line = null;
+				JTextArea messageArea = new JTextArea();
+				while ((line = input.readLine()) != null) {
+					messageArea.append(line);
+					messageArea.append(System.getProperty("line.separator"));
+				}
+				input.close();
+				messageArea.setLineWrap(true);
+				messageArea.setWrapStyleWord(true);
+				messageArea.setEditable(false);
+				JScrollPane scrolls = new JScrollPane();
+				scrolls.setMinimumSize(new Dimension(500, 500));
+				scrolls.setPreferredSize(new Dimension(500, 500));
+				scrolls.setViewportView(messageArea);
+				JOptionPane.showMessageDialog(biosim.frame(), scrolls,
+						"Coverage Report", JOptionPane.INFORMATION_MESSAGE);
+			} else {
+				JOptionPane.showMessageDialog(biosim.frame(),
+						"No Coverage Report exists.", "Error",
+						JOptionPane.ERROR_MESSAGE);
+			}
+		} catch (Exception e1) {
+			JOptionPane.showMessageDialog(biosim.frame(),
+					"Unable to view Coverage Report.", "Error",
+					JOptionPane.ERROR_MESSAGE);
+		}
+	}
+	
 	public void save() {
 		try {
 			Properties prop = new Properties();
@@ -1653,11 +1696,14 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			running.setLocation(x, y);
 			running.setVisible(true);
 			running.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-			FileWriter out = new FileWriter(new File(directory + separator
-					+ "run.log"));
+		//	FileWriter out = new FileWriter(new File(directory + separator + "run.log"));
+			logFile = new File(directory + separator + "run.log");
+			logFile.createNewFile();
+			out = new BufferedWriter(new FileWriter(logFile));
 			if (generate) {
-				log.addText("Running:");
-				log.addText("autoGenT()");
+		//		log.addText("Running:");
+		//		log.addText("autoGenT()");
+				out.write("Running autoGenT\n");
 				//divisionsL = autoGenT(divisionsL);		
 				divisionsL = autoGenT();	
 /*
@@ -1744,8 +1790,8 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				lhpn.delete();
 				// String command = "data2lhpn.py -b" + binFile + " -l" +
 				// lhpnFile;
-				String command = "dataToLHPN()";
-				log.addText("Running:\n" + command  + "\n");
+			//	String command = "dataToLHPN()";
+			//	log.addText("Running:\n" + command  + "\n");
 				dataToLHPN();
 				// log.addText("Executing:\n" + command + " " + directory +
 				// "\n");
@@ -1801,8 +1847,10 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				// }
 				viewLog.setEnabled(true);
 				if (new File(directory + separator + lhpnFile).exists()) {
+					viewCoverage.setEnabled(true); // SB
 					viewLhpn();
 				} else {
+					viewCoverage.setEnabled(false); // SB
 					fail = true;
 				}
 
@@ -1848,6 +1896,10 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		return viewLog.isEnabled();
 	}
 
+	public boolean getViewCoverageEnabled() {   // SB
+		return viewCoverage.isEnabled();
+	}
+	
 	public void updateSpecies(String newLearnFile) {
 		learnFile = newLearnFile;
 		variablesList = new ArrayList<String>();
@@ -1933,14 +1985,18 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			delayScaleFactor = 1.0;
 			varScaleFactor = 1.0;
 			/* end Initializations */
-			logFile = new File(directory + separator + "tmp.log");
-			logFile.createNewFile();
-			out = new BufferedWriter(new FileWriter(logFile));
+			//String[] getRootDir = directory.split(separator);
+			//String rootDir = directory;
+			//rootDir = rootDir.replace(getRootDir[getRootDir.length - 1], "") ;
+			//	logFile = new File(rootDir + "atacs.log");
+			
+			out.write("Running: dataToLHPN\n");
 			TSDParser tsd = new TSDParser(directory + separator + "run-1.tsd",
 					biosim, false);
 			varNames = tsd.getSpecies();
-			String[] learnDir = lrnFile.split("\\.");
-			File cvgFile = new File(directory + separator + learnDir[0] + ".cvg");
+			//String[] learnDir = lrnFile.split("\\.");
+			//File cvgFile = new File(directory + separator + learnDir[0] + ".cvg");
+			File cvgFile = new File(directory + separator + "run.cvg");
 			cvgFile.createNewFile();
 			BufferedWriter coverage = new BufferedWriter(new FileWriter(cvgFile));
 			//FileOutputStream coverage = new FileOutputStream(cvgFile);
@@ -2050,7 +2106,8 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				}
 			}
 			g.addOutput("fail", "false");
-			normalize();
+			ArrayList<ArrayList<Double>> scaleDiv;
+			scaleDiv = normalize();
 			for (String t : g.getTransitionList()) {
 				// Transition t = g.get_valT(sortedTrans.get(j));
 				if ((g.getPreset(t) != null)
@@ -2064,10 +2121,11 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 					String[] binOutgoing = getPlaceInfoIndex(g.getPostset(t)[0]).split("");
 					for (int k : diffL) {
 						if (Integer.parseInt(binIncoming[k + 1]) < Integer.parseInt(binOutgoing[k + 1])) {
-							double val = divisionsL.get(k).get(Integer.parseInt(binIncoming[k + 1])).doubleValue();
+						//	double val = divisionsL.get(k).get(Integer.parseInt(binIncoming[k + 1])).doubleValue();
+							double val = scaleDiv.get(k).get(Integer.parseInt(binIncoming[k + 1])).doubleValue();
 							condStr += "(" + reqdVarsL.get(k).getName() + ">=" + (int) Math.floor(val) + ")";
 						} else {
-							double val = divisionsL.get(k).get(Integer.parseInt(binOutgoing[k + 1])).doubleValue();
+							double val = scaleDiv.get(k).get(Integer.parseInt(binOutgoing[k + 1])).doubleValue();
 							condStr += "~(" + reqdVarsL.get(k).getName() + ">="	+ (int) Math.ceil(val) + ")";
 						}
 						if (diffL.get(diffL.size() - 1) != k) {
@@ -2123,7 +2181,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				// + t.getOutgoingP().getDmvcVal() + "]>");
 				// }
 			}
-			out.write("\n#@.rate_assignments {");
+		//	out.write("\n#@.rate_assignments {");
 			if (placeRates) {
 				for (String st1 : g.getPlaceList()) {
 					String p = getPlaceInfoIndex(st1);
@@ -2132,12 +2190,12 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 						for (String t : g.getPreset(st1)) {
 							for (int k = 0; k < reqdVarsL.size(); k++) {
 								if (!reqdVarsL.get(k).isDmvc()) {
-									out.write("<" + t	+ "=["	+ reqdVarsL.get(k).getName() + ":=["	+ getMinRate(p, reqdVarsL.get(k).getName())	+ "," + getMaxRate(p, reqdVarsL.get(k).getName()) + "]]>");
+								//	out.write("<" + t	+ "=["	+ reqdVarsL.get(k).getName() + ":=["	+ getMinRate(p, reqdVarsL.get(k).getName())	+ "," + getMaxRate(p, reqdVarsL.get(k).getName()) + "]]>");
 									g.addRateAssign(t, reqdVarsL.get(k).getName(), "["	+ getMinRate(p, reqdVarsL.get(k).getName())	+ "," + getMaxRate(p, reqdVarsL.get(k).getName()) + "]");
 								}
 							}
 						}
-						out.write("\n");
+					//	out.write("\n");
 					}
 				}
 			}
@@ -2165,45 +2223,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		}
 
 	}
-/*
-	public ArrayList<ArrayList<Double>> parseBinFile() {
-		reqdVarsL = new ArrayList<Variable>();
-		ArrayList<String> linesBinFileL = null;
-		int h = 0;
-		//ArrayList<ArrayList<Double>> divisionsL = new ArrayList<ArrayList<Double>>();
-		
-		try {
-			Scanner f1 = new Scanner(new File(directory + separator + binFile));
-			// log.addText(directory + separator + binFile);
-			linesBinFileL = new ArrayList<String>();
-			linesBinFileL.add(f1.nextLine());
-			while (f1.hasNextLine()) {
-				linesBinFileL.add(f1.nextLine());
-			}
-			out.write("Required variables and their levels are :");
-			for (String st : linesBinFileL) {
-				divisionsL.add(new ArrayList<Double>());
-				String[] wordsBinFileL = st.split("\\s");
-				for (int i = 0; i < wordsBinFileL.length; i++) {
-					if (i == 0) {
-						reqdVarsL.add(new Variable(wordsBinFileL[i]));
-						out.write("\n"	+ reqdVarsL.get(reqdVarsL.size() - 1).getName());
-					} else {
-						divisionsL.get(h).add(Double.parseDouble(wordsBinFileL[i]));
 
-					}
-				}
-				out.write(" " + divisionsL.get(h));
-				h++;
-				// max = Math.max(max, wordsBinFileL.length + 1);
-			}
-			f1.close();
-
-		} catch (Exception e1) {
-		}
-		return divisionsL;
-	}
-*/
 	public void genBinsRates(ArrayList<ArrayList<Double>> divisionsL) { // genBins
 //	public void genBinsRates(String datFile,ArrayList<ArrayList<Double>> divisionsL) { // genBins
 //		TSDParser tsd = new TSDParser(directory + separator + datFile, biosim,false);
@@ -2342,6 +2362,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				}
 			}
 		}
+		/*
 		try {
 			for (int i = 0; i < (data.get(0).size()); i++) {
 				for (int j = 0; j < reqdVarsL.size(); j++) {
@@ -2361,7 +2382,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		} catch (IOException e) {
 			System.out
 					.println("Log file couldn't be opened for writing rates and bins ");
-		}
+		}*/
 	}
 
 	public boolean compareBins(int j, int mark) {
@@ -2476,7 +2497,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 					String k;
 					DMVCrun runs = reqdVarsL.get(i).getRuns();
 					Double[] avgVals = runs.getAvgVals();
-					out.write("variable " + reqdVarsL.get(i).getName() + " Number of runs = " + avgVals.length + "Avg Values are : " + avgVals + "\n");
+					out.write("variable " + reqdVarsL.get(i).getName() + " Number of runs = " + avgVals.length + "Avg Values are : " + avgVals.toString() + "\n");
 					for (int j = 0; j < avgVals.length; j++) { // this gives number of runs/startpoints/endpoints
 						exists = false;
 						places = g.getPlaceList();
@@ -2632,9 +2653,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 								+ " is not a dmvc \n");
 					} else {
 						reqdVarsL.get(i).setDmvc(true);
-						out
-								.write(reqdVarsL.get(i).getName()
-										+ " is  a dmvc \n");
+						out.write(reqdVarsL.get(i).getName() + " is  a dmvc \n");
 					}
 				} else {
 					if ((absTime / (data.get(0).get(data.get(0).size() - 1) - data
@@ -2645,8 +2664,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 								+ " is not a dmvc \n");
 					} else {
 						reqdVarsL.get(i).setDmvc(true);
-						out
-								.write(reqdVarsL.get(i).getName()
+						out.write(reqdVarsL.get(i).getName()
 										+ " is  a dmvc \n");
 					}
 				}
@@ -2722,10 +2740,21 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		}
 	}
 
-	public void normalize() {
+	public ArrayList<ArrayList<Double>> normalize() {
 		Double minDelay = getMinDelay();
 		Double maxDelay = getMaxDelay();
+		Double minDivision = null;
+		Double maxDivision = null;
 		Double scaleFactor = 1.0;
+		ArrayList<ArrayList<Double>> scaledDiv = new ArrayList<ArrayList<Double>>();
+		// deep copy of divisions
+		for (ArrayList<Double> o1 : divisionsL){
+			ArrayList<Double> tempDiv = new ArrayList<Double>();
+			for (Double o2 : o1){
+				tempDiv.add( o2.doubleValue()); // clone() not working here
+			}
+			scaledDiv.add(tempDiv);
+		}
 		try {
 			out.write("minimum delay is " + minDelay
 					+ " before scaling time.\n");
@@ -2767,10 +2796,10 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				}
 				out.write("minimum rate is " + minRate * scaleFactor + " after scaling by " + scaleFactor + "\n");
 				varScaleFactor = scaleFactor;
-				scaleVariable(scaleFactor);
+				scaledDiv = scaleVariable(scaleFactor,scaledDiv);
 			}
-			Double minDivision = getMinDiv();
-			Double maxDivision = getMaxDiv();
+			minDivision = getMinDiv(scaledDiv);
+			maxDivision = getMaxDiv(scaledDiv);
 			out.write("minimum division is " + minDivision + " before scaling for division.\n");
 			scaleFactor = 1.0;
 			if ((minDivision != null) && (minDivision != 0)) {
@@ -2787,15 +2816,15 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				out.write("minimum division is " + minDivision * scaleFactor
 						+ " after scaling by " + scaleFactor + "\n");
 				varScaleFactor *= scaleFactor;
-				scaleVariable(scaleFactor);
+				scaledDiv = scaleVariable(scaleFactor,scaledDiv);
 			}
 		} catch (IOException e) {
 			System.out.println("LPN file couldn't be created/written ");
 		}
-		return;
+		return(scaledDiv);
 	}
 
-	public void scaleVariable(Double scaleFactor) {
+	public ArrayList<ArrayList<Double>> scaleVariable(Double scaleFactor, ArrayList<ArrayList<Double>> divisions) {
 		for (String place : placeInfo.keySet()) {
 			if (place != "failProp"){
 				Properties p = placeInfo.get(place);
@@ -2840,11 +2869,12 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		int i = 0;
 		for (Variable v : reqdVarsL) {
 			v.scaleInitByVar(scaleFactor);
-			for (int j = 0; j < divisionsL.get(i).size(); j++) {
-					divisionsL.get(i).set(j,divisionsL.get(i).get(j) * scaleFactor);
+			for (int j = 0; j < divisions.get(i).size(); j++) {
+					divisions.get(i).set(j,divisions.get(i).get(j) * scaleFactor);
 			}
 			i++;
 		}
+		return divisions;
 	}
 
 	public void scaleDelay() {
@@ -2910,24 +2940,24 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 
 	}
 
-	public Double getMinDiv() {
-		Double minDiv = divisionsL.get(0).get(0);
-		for (int i = 0; i < divisionsL.size(); i++) {
-			for (int j = 0; j < divisionsL.get(i).size(); j++) {
-				if (divisionsL.get(i).get(j) < minDiv) {
-					minDiv = divisionsL.get(i).get(j);
+	public Double getMinDiv(ArrayList<ArrayList<Double>> divisions) {
+		Double minDiv = divisions.get(0).get(0);
+		for (int i = 0; i < divisions.size(); i++) {
+			for (int j = 0; j < divisions.get(i).size(); j++) {
+				if (divisions.get(i).get(j) < minDiv) {
+					minDiv = divisions.get(i).get(j);
 				}
 			}
 		}
 		return minDiv;
 	}
 
-	public Double getMaxDiv() {
-		Double maxDiv = divisionsL.get(0).get(0);
-		for (int i = 0; i < divisionsL.size(); i++) {
-			for (int j = 0; j < divisionsL.get(i).size(); j++) {
-				if (divisionsL.get(i).get(j) > maxDiv) {
-					maxDiv = divisionsL.get(i).get(j);
+	public Double getMaxDiv(ArrayList<ArrayList<Double>> divisions) {
+		Double maxDiv = divisions.get(0).get(0);
+		for (int i = 0; i < divisions.size(); i++) {
+			for (int j = 0; j < divisions.get(i).size(); j++) {
+				if (divisions.get(i).get(j) > maxDiv) {
+					maxDiv = divisions.get(i).get(j);
 				}
 			}
 		}
@@ -3574,6 +3604,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 					}
 				}
 			}
+			/*
 			try {
 				logFile = new File(directory + separator + "tmp.log");
 				logFile.createNewFile();
@@ -3596,7 +3627,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				out.close();
 			} catch (IOException e) {
 				System.out.println("Log file couldn't be opened for writing rates and bins ");
-			}
+			}*/
 			return rates;
 		}
 	
@@ -3794,15 +3825,62 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 	}
 	//T[] aux = (T[])a.clone();
 }
-/*
- * public String cleanRow (String row){ String rowNS,rowTS = null; try{ rowNS =
- * lParenR.matcher(row).replaceAll(""); rowTS =
- * rParenR.matcher(rowNS).replaceAll(""); return rowTS; }
- * catch(PatternSyntaxException pse){ System.out.format("There is a problem with
- * the regular expression!%n"); System.out.format("The pattern in question is:
- * %s%n",pse.getPattern()); System.out.format("The description is:
- * %s%n",pse.getDescription()); System.out.format("The message is:
- * %s%n",pse.getMessage()); System.out.format("The index is:
- * %s%n",pse.getIndex()); System.exit(0); return rowTS; } }
+
+/*  OBSOLETE METHODS
+public ArrayList<ArrayList<Double>> parseBinFile() {
+	reqdVarsL = new ArrayList<Variable>();
+	ArrayList<String> linesBinFileL = null;
+	int h = 0;
+	//ArrayList<ArrayList<Double>> divisionsL = new ArrayList<ArrayList<Double>>();
+	
+	try {
+		Scanner f1 = new Scanner(new File(directory + separator + binFile));
+		// log.addText(directory + separator + binFile);
+		linesBinFileL = new ArrayList<String>();
+		linesBinFileL.add(f1.nextLine());
+		while (f1.hasNextLine()) {
+			linesBinFileL.add(f1.nextLine());
+		}
+		out.write("Required variables and their levels are :");
+		for (String st : linesBinFileL) {
+			divisionsL.add(new ArrayList<Double>());
+			String[] wordsBinFileL = st.split("\\s");
+			for (int i = 0; i < wordsBinFileL.length; i++) {
+				if (i == 0) {
+					reqdVarsL.add(new Variable(wordsBinFileL[i]));
+					out.write("\n"	+ reqdVarsL.get(reqdVarsL.size() - 1).getName());
+				} else {
+					divisionsL.get(h).add(Double.parseDouble(wordsBinFileL[i]));
+
+				}
+			}
+			out.write(" " + divisionsL.get(h));
+			h++;
+			// max = Math.max(max, wordsBinFileL.length + 1);
+		}
+		f1.close();
+
+	} catch (Exception e1) {
+	}
+	return divisionsL;
+}
+
+ public String cleanRow (String row){ 
+  	String rowNS,rowTS = null; 
+  	try{ 
+  		rowNS =lParenR.matcher(row).replaceAll(""); 
+  		rowTS = rParenR.matcher(rowNS).replaceAll(""); 
+  		return rowTS; 
+  	}
+  	catch(PatternSyntaxException pse){ 
+ 	    System.out.format("There is a problem withthe regular expression!%n"); 
+	    System.out.format("The pattern in question is:%s%n",pse.getPattern()); 
+	    System.out.format("The description is:%s%n",pse.getDescription()); 
+  	    System.out.format("The message is:%s%n",pse.getMessage()); 
+ 	    System.out.format("The index is:%s%n",pse.getIndex()); 
+	    System.exit(0); 
+	    return rowTS; 
+	} 
+}
  */
 

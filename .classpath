@@ -28,11 +28,13 @@
 	<classpathentry kind="lib" path="gui/lib/js.jar"/>
 	<classpathentry kind="lib" path="gui/lib/junit.jar"/>
 	<classpathentry kind="lib" path="gui/lib/libsbmlj.jar"/>
+	<classpathentry kind="lib" path="gui/lib/org-jdesktop-layout.jar"/>
 	<classpathentry kind="lib" path="gui/lib/pdf-transcoder.jar"/>
 	<classpathentry kind="lib" path="gui/lib/sbmlj.jar"/>
 	<classpathentry kind="lib" path="gui/lib/xalan-2.6.0.jar"/>
 	<classpathentry kind="lib" path="gui/lib/xerces_2_5_0.jar"/>
 	<classpathentry kind="lib" path="gui/lib/xml-apis-ext.jar"/>
 	<classpathentry kind="lib" path="gui/lib/xml-apis.jar"/>
+	<classpathentry kind="lib" path="gui/lib/swing-layout-1.0.3.jar"/>
 	<classpathentry kind="output" path="gui/dist/classes"/>
 </classpath>
