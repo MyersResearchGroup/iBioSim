@@ -8,18 +8,15 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
-//import java.io.FileWriter;
-import java.io.IOException;
-//import java.io.InputStream;
+import java.io.FileReader; //import java.io.FileWriter;
+import java.io.IOException; //import java.io.InputStream;
 //import java.io.InputStreamReader;
 //import java.util.ArrayList;
 import java.util.Properties;
 
 import lhpn2sbml.parser.LHPNFile;
 
-import gcm2sbml.gui.PropertyList;
-//import gcm2sbml.util.Utility;
+import gcm2sbml.gui.PropertyList; //import gcm2sbml.util.Utility;
 
 import biomodelsim.*;
 
@@ -39,21 +36,14 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 
 	private JList species, intSpecies;
 
+	public JCheckBox xform0, xform1, xform3, xform4, xform5, xform6, xform7, xform8, xform9, xform10, xform11,
+			xform12, xform13, xform14, xform15, xform16;
+
 	public DefaultListModel listModel;
-
-	// private JLabel label;
-
-	// private JRadioButton radio;
-
-	// private JCheckBox check;
 
 	private JTextField field;
 
-	// private ButtonGroup group;
-
 	private String directory, separator, root, absFile, oldBdd;
-
-	// sourceFileNoPath;
 
 	private boolean change;
 
@@ -68,8 +58,8 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 	 * the input fields, puts them on panels, adds the panels to the frame, and
 	 * then displays the frame.
 	 */
-	public AbstPane(String directory, Verification verification, Log log,
-			BioSim biosim, boolean lema, boolean atacs) {
+	public AbstPane(String directory, Verification verification, Log log, BioSim biosim,
+			boolean lema, boolean atacs) {
 		if (File.separator.equals("\\")) {
 			separator = "\\\\";
 		}
@@ -78,6 +68,7 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 		}
 		this.directory = directory;
 		this.log = log;
+		this.setLayout(new BorderLayout());
 		absFile = verification.getVerName() + ".abs";
 		verification.copyFile();
 		LHPNFile lhpn = new LHPNFile();
@@ -116,70 +107,62 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 		buttonHolder.add(removeIntSpecies);
 		buttonHolder.add(clearIntSpecies);
 		speciesHolder.add(buttonHolder, "South");
-		// intSpecies.setEnabled(false);
-		// species.setEnabled(false);
-		// intSpecies.addMouseListener(this);
-		// species.addMouseListener(this);
-		// spLabel.setEnabled(false);
-		// speciesLabel.setEnabled(false);
-		// addIntSpecies.setEnabled(false);
-		// removeIntSpecies.setEnabled(false);
-		// addIntSpecies.addActionListener(this);
-		// removeIntSpecies.addActionListener(this);
-		// clearIntSpecies.setEnabled(false);
-		// clearIntSpecies.addActionListener(this);
+		this.add(speciesHolder, "North");
 
-		// Creates some abstraction options
-		JPanel advancedGrid = new JPanel(new GridLayout(8, 2));
-		JPanel advanced = new JPanel(new GridLayout(2, 1));
-		JPanel rapidSpace1 = new JPanel();
-		JPanel rapidSpace2 = new JPanel();
-		JPanel rapidSpace3 = new JPanel();
-		JPanel rapidSpace4 = new JPanel();
-		JPanel qssaSpace1 = new JPanel();
-		JPanel qssaSpace2 = new JPanel();
-		JPanel maxConSpace1 = new JPanel();
-		JPanel maxConSpace2 = new JPanel();
-		JLabel rapidLabel1 = new JLabel("Rapid Equilibrium Condition 1:");
-		JTextField rapid1 = new JTextField("", 15);
-		JLabel rapidLabel2 = new JLabel("Rapid Equilibrium Condition 2:");
-		JTextField rapid2 = new JTextField("", 15);
-		JLabel qssaLabel = new JLabel("QSSA Condition:");
-		JTextField qssa = new JTextField("", 15);
-		JLabel maxConLabel = new JLabel("Max Concentration Threshold:");
-		JTextField maxCon = new JTextField("", 15);
-		maxConLabel.setEnabled(false);
-		// maxCon.setEnabled(false);
-		qssaLabel.setEnabled(false);
-		// qssa.setEnabled(false);
-		rapidLabel1.setEnabled(false);
-		// rapid1.setEnabled(false);
-		rapidLabel2.setEnabled(false);
-		// rapid2.setEnabled(false);
-		advancedGrid.add(rapidLabel1);
-		advancedGrid.add(rapid1);
-		advancedGrid.add(rapidSpace1);
-		advancedGrid.add(rapidSpace2);
-		advancedGrid.add(rapidLabel2);
-		advancedGrid.add(rapid2);
-		advancedGrid.add(rapidSpace3);
-		advancedGrid.add(rapidSpace4);
-		advancedGrid.add(qssaLabel);
-		advancedGrid.add(qssa);
-		advancedGrid.add(qssaSpace1);
-		advancedGrid.add(qssaSpace2);
-		advancedGrid.add(maxConLabel);
-		advancedGrid.add(maxCon);
-		advancedGrid.add(maxConSpace1);
-		advancedGrid.add(maxConSpace2);
-		// advanced.add(advancedGrid);
-		// JPanel space = new JPanel();
-		// advanced.add(space);
-		advanced.add(speciesHolder);
+		// Add abstraction option check boxes
+		JPanel xformPanel = new JPanel();
+		//xformPanel.setLayout(new BorderLayout());
+		xform0 = new JCheckBox("Transform 0");
+		xform1 = new JCheckBox("Transform 1");
+		xform3 = new JCheckBox("Transform 3");
+		xform4 = new JCheckBox("Transform 4");
+		xform5 = new JCheckBox("Transform 5");
+		xform6 = new JCheckBox("Transform 6");
+		xform7 = new JCheckBox("Transform 7");
+		xform8 = new JCheckBox("Transform 8");
+		xform9 = new JCheckBox("Transform 9");
+		xform10 = new JCheckBox("Transform 10");
+		xform11 = new JCheckBox("Transform 11");
+		xform12 = new JCheckBox("Transform 12");
+		xform13 = new JCheckBox("Transform 13");
+		xform14 = new JCheckBox("Transform 14");
+		xform15 = new JCheckBox("Transform 15");
+		xform16 = new JCheckBox("Transform 16");
+		xform0.setSelected(true);
+		xform1.setSelected(true);
+		xform0.setSelected(true);
+		xform3.setSelected(true);
+		xform4.setSelected(true);
+		xform5.setSelected(true);
+		xform6.setSelected(true);
+		xform7.setSelected(true);
+		xform8.setSelected(true);
+		xform9.setSelected(true);
+		xform10.setSelected(true);
+		xform11.setSelected(true);
+		xform12.setSelected(true);
+		xform13.setSelected(true);
+		xform14.setSelected(true);
+		xform15.setSelected(true);
+		xform16.setSelected(true);
+		xformPanel.add(xform0);
+		xformPanel.add(xform1);
+		xformPanel.add(xform3);
+		xformPanel.add(xform4);
+		xformPanel.add(xform5);
+		xformPanel.add(xform6);
+		xformPanel.add(xform7);
+		xformPanel.add(xform8);
+		xformPanel.add(xform9);
+		xformPanel.add(xform10);
+		xformPanel.add(xform11);
+		xformPanel.add(xform12);
+		xformPanel.add(xform13);
+		xformPanel.add(xform14);
+		xformPanel.add(xform15);
+		xformPanel.add(xform16);
+		this.add(xformPanel, "Center");
 
-		// this.setLayout(new BorderLayout());
-		this.add(advanced);
-		// this.add(buttonPanel, BorderLayout.PAGE_END);
 		change = false;
 	}
 
@@ -203,7 +186,7 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 			listModel.removeAllElements();
 		}
 	}
-	
+
 	public void addIntVar(String variable) {
 		if (!listModel.contains(variable)) {
 			listModel.addElement(variable);
@@ -233,11 +216,12 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 	public void save(String filename) {
 		// JOptionPane.showMessageDialog(this, verifyFile);
 		try {
-			//System.out.println(absFile);
+			// System.out.println(absFile);
 			Properties prop = new Properties();
-			//FileInputStream in = new FileInputStream(new File(directory + separator + filename));
-			//prop.load(in);
-			//in.close();
+			// FileInputStream in = new FileInputStream(new File(directory +
+			// separator + filename));
+			// prop.load(in);
+			// in.close();
 			// prop.setProperty("verification.file", verifyFile);
 			String intVars = "";
 			for (int i = 0; i < listModel.getSize(); i++) {
@@ -253,30 +237,31 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 			change = false;
 		}
 		catch (Exception e1) {
-			//e1.printStackTrace();
+			// e1.printStackTrace();
 			JOptionPane.showMessageDialog(biosim.frame(), "Unable to save parameter file!",
 					"Error Saving File", JOptionPane.ERROR_MESSAGE);
 		}
 		if (componentList != null) {
-		for (String s : componentList.getItems()) {
-			try {
-				new File(directory + separator + s).createNewFile();
-				FileInputStream in = new FileInputStream(new File(root + separator + s));
-				FileOutputStream out = new FileOutputStream(new File(directory + separator + s));
-				int read = in.read();
-				while (read != -1) {
-					out.write(read);
-					read = in.read();
+			for (String s : componentList.getItems()) {
+				try {
+					new File(directory + separator + s).createNewFile();
+					FileInputStream in = new FileInputStream(new File(root + separator + s));
+					FileOutputStream out = new FileOutputStream(new File(directory + separator + s));
+					int read = in.read();
+					while (read != -1) {
+						out.write(read);
+						read = in.read();
+					}
+					in.close();
+					out.close();
 				}
-				in.close();
-				out.close();
+				catch (IOException e1) {
+					e1.printStackTrace();
+					JOptionPane.showMessageDialog(biosim.frame(),
+							"Cannot add the selected component.", "Error",
+							JOptionPane.ERROR_MESSAGE);
+				}
 			}
-			catch (IOException e1) {
-				e1.printStackTrace();
-				JOptionPane.showMessageDialog(biosim.frame(), "Cannot add the selected component.",
-						"Error", JOptionPane.ERROR_MESSAGE);
-			}
-		}
 		}
 	}
 
@@ -304,7 +289,7 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 			getFilename[0] = field.getText().trim();
 		}
 	}
-	
+
 	public void viewLog() {
 		try {
 			// JOptionPane.showMessageDialog(this, directory + separator +
