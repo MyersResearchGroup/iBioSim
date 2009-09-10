@@ -813,7 +813,9 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				// vars[i] = tempVars.get(i);
 				// }
 				// }
-				abstraction.abstractVars(abstPane.getIntVars());
+				if (abstPane.xform13.isSelected()) {
+					abstraction.abstractVars(abstPane.getIntVars());
+				}
 				abstraction.abstractSTG();
 			}
 			if (!lhpn.isSelected() && !view.isSelected()) {
@@ -1762,6 +1764,10 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 	public String getVerName() {
 		String verName = verFile.replace(".ver", "");
 		return verName;
+	}
+	
+	public AbstPane getAbstPane() {
+		return abstPane;
 	}
 
 }
