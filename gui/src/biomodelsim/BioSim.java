@@ -4142,6 +4142,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 								SBMLReader reader = new SBMLReader();
 								SBMLDocument document = reader.readSBML(filename.trim() + separator
 										+ s);
+								document.setLevelAndVersion(2,4);
 								if (document.getNumErrors() == 0) {
 									if (overwrite(root + separator + s, s)) {
 										long numErrors = document.checkConsistency();
@@ -4230,6 +4231,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						try {
 							SBMLReader reader = new SBMLReader();
 							SBMLDocument document = reader.readSBML(filename.trim());
+							document.setLevelAndVersion(2,4);
 							if (document.getNumErrors() > 0) {
 								JOptionPane.showMessageDialog(frame, "Invalid SBML file.", "Error",
 										JOptionPane.ERROR_MESSAGE);
@@ -5607,6 +5609,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							SBMLReader reader = new SBMLReader();
 							SBMLDocument document = new SBMLDocument();
 							document = reader.readSBML(tree.getFile());
+							document.setLevelAndVersion(2,4);
 							document.getModel().setId(modelID);
 							SBMLWriter writer = new SBMLWriter();
 							writer.writeSBML(document, root + separator + copy);
@@ -5662,6 +5665,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 										SBMLReader reader = new SBMLReader();
 										SBMLDocument document = reader.readSBML(tree.getFile()
 												+ separator + ss);
+										document.setLevelAndVersion(2,4);
 										SBMLWriter writer = new SBMLWriter();
 										writer.writeSBML(document, root + separator + copy
 												+ separator + ss);
@@ -5963,6 +5967,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 								SBMLReader reader = new SBMLReader();
 								SBMLDocument document = new SBMLDocument();
 								document = reader.readSBML(root + separator + rename);
+								document.setLevelAndVersion(2,4);
 								document.getModel().setId(modelID);
 								SBMLWriter writer = new SBMLWriter();
 								writer.writeSBML(document, root + separator + rename);
@@ -8613,7 +8618,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			SBMLReader reader = new SBMLReader();
 			SBMLDocument document = reader.readSBML(tree.getFile());
 			// document.setLevel(2);
-			document.setLevelAndVersion(2, 3);
+			document.setLevelAndVersion(2,4);
 			String simName = JOptionPane.showInputDialog(frame, "Enter analysis id:",
 					"Analysis ID", JOptionPane.PLAIN_MESSAGE);
 			if (simName != null && !simName.trim().equals("")) {
@@ -9784,6 +9789,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					SBMLReader reader = new SBMLReader();
 					SBMLDocument document = reader.readSBML(root + separator + oldSim + separator
 							+ ss);
+					document.setLevelAndVersion(2,4);
 					SBMLWriter writer = new SBMLWriter();
 					writer.writeSBML(document, root + separator + newSim + separator + ss);
 					sbmlFile = root + separator + newSim + separator + ss;

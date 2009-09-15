@@ -375,7 +375,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		if (!file.equals("")) {
 			SBMLReader reader = new SBMLReader();
 			document = reader.readSBML(file);
-			document.setLevelAndVersion(2, 3);
+			document.setLevelAndVersion(2,4);
 			model = document.getModel();
 			modelName = new JTextField(model.getName(), 50);
 			if (model.getId().equals("")) {
@@ -5678,6 +5678,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						compSize.setEnabled(false);
 						SBMLReader reader = new SBMLReader();
 						SBMLDocument d = reader.readSBML(file);
+						d.setLevelAndVersion(2,4);
 						if (d.getModel().getCompartment(
 								((String) compartments.getSelectedValue()).split(" ")[0])
 								.isSetSize()) {
@@ -6485,6 +6486,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						initLabel.setEnabled(false);
 						SBMLReader reader = new SBMLReader();
 						SBMLDocument d = reader.readSBML(file);
+						d.setLevelAndVersion(2,4);
 						if (d.getModel().getSpecies(
 								((String) species.getSelectedValue()).split(" ")[0])
 								.isSetInitialAmount()) {
@@ -7904,6 +7906,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						paramUnits.setEnabled(false);
 						SBMLReader reader = new SBMLReader();
 						SBMLDocument d = reader.readSBML(file);
+						d.setLevelAndVersion(2,4);
 						if (d.getModel().getParameter(
 								((String) parameters.getSelectedValue()).split(" ")[0])
 								.isSetValue()) {
@@ -8282,6 +8285,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						reacParamUnits.setEnabled(false);
 						SBMLReader reader = new SBMLReader();
 						SBMLDocument d = reader.readSBML(file);
+						d.setLevelAndVersion(2,4);
 						KineticLaw KL = d.getModel().getReaction(
 								((String) reactions.getSelectedValue()).split(" ")[0])
 								.getKineticLaw();
@@ -9352,6 +9356,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			SBMLReader reader = new SBMLReader();
 			SBMLDocument d = reader.readSBML(simDir + separator + stem + direct + separator
 					+ file.split(separator)[file.split(separator).length - 1]);
+			d.setLevelAndVersion(2,4);
 			for (String s : elementChanges) {
 				for (long i = d.getModel().getNumInitialAssignments() - 1; i >= 0; i--) {
 					if (s.contains("=")) {
@@ -9434,6 +9439,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		// crash when attempting to save a newly added parameter with no units
 		SBMLReader reader = new SBMLReader();
 		document = reader.readSBML(file);
+		document.setLevelAndVersion(2,4);
 		long numErrors = document.checkConsistency();
 		String message = "";
 		for (long i = 0; i < numErrors; i++) {

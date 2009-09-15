@@ -370,6 +370,7 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 		if ((learnFile.contains(".sbml")) || (learnFile.contains(".xml"))) {
 			SBMLReader reader = new SBMLReader();
 			SBMLDocument document = reader.readSBML(learnFile);
+			document.setLevelAndVersion(2,4);
 			Model model = document.getModel();
 			ListOf ids = model.getListOfSpecies();
 			try {
@@ -1366,6 +1367,7 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 		if ((learnFile.contains(".sbml")) || (learnFile.contains(".xml"))) {
 			SBMLReader reader = new SBMLReader();
 			SBMLDocument document = reader.readSBML(learnFile);
+			document.setLevelAndVersion(2,4);
 			Model model = document.getModel();
 			ListOf ids = model.getListOfSpecies();
 			try {
