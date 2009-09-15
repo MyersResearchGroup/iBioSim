@@ -250,7 +250,9 @@ public class Utility {
 	
 	public static SBMLDocument openDocument(String filename) {
 		SBMLReader reader = new SBMLReader();
-		return reader.readSBML(filename);
+		SBMLDocument document = reader.readSBML(filename);
+		document.setLevelAndVersion(2,4);
+		return document;
 	}
 
 	public static HashMap<String, double[]> calculateAverage(String folder) {

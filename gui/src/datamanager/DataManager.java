@@ -1177,6 +1177,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 			else {
 				SBMLReader reader = new SBMLReader();
 				SBMLDocument document = reader.readSBML(background);
+				document.setLevelAndVersion(2,4);
 				Model model = document.getModel();
 				ListOf ids = model.getListOfSpecies();
 				ArrayList<String> getSpecies = new ArrayList<String>();

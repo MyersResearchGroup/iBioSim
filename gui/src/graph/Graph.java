@@ -6383,6 +6383,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			else {
 				SBMLReader reader = new SBMLReader();
 				SBMLDocument document = reader.readSBML(background);
+				document.setLevelAndVersion(2,4);
 				Model model = document.getModel();
 				ListOf ids = model.getListOfSpecies();
 				for (int i = 0; i < model.getNumSpecies(); i++) {
