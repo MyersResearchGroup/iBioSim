@@ -143,7 +143,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 
 	private JComboBox compTypeBox, dimBox; // compartment type combo box
 
-	private JComboBox specTypeBox, specBoundary, specConstant; // species combo
+	private JComboBox specTypeBox, specBoundary, specConstant, specHasOnly; // species combo
 
 	// boxes
 
@@ -6278,10 +6278,10 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		}
 		JPanel speciesPanel;
 		if (paramsOnly) {
-			speciesPanel = new JPanel(new GridLayout(10, 2));
+			speciesPanel = new JPanel(new GridLayout(11, 2));
 		}
 		else {
-			speciesPanel = new JPanel(new GridLayout(8, 2));
+			speciesPanel = new JPanel(new GridLayout(9, 2));
 		}
 		JLabel idLabel = new JLabel("ID:");
 		JLabel nameLabel = new JLabel("Name:");
@@ -6292,6 +6292,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		JLabel unitLabel = new JLabel("Units:");
 		JLabel boundLabel = new JLabel("Boundary Condition:");
 		JLabel constLabel = new JLabel("Constant:");
+		JLabel hasOnlyLabel = new JLabel("Has Only Substance Units:");
 		ID = new JTextField();
 		String selectedID = "";
 		Name = new JTextField();
@@ -6319,6 +6320,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		specBoundary.setSelectedItem("false");
 		specConstant = new JComboBox(optionsTF);
 		specConstant.setSelectedItem("false");
+		specHasOnly = new JComboBox(optionsTF);
+		specHasOnly.setSelectedItem("false");
 		ListOf listOfSpecTypes = document.getModel().getListOfSpeciesTypes();
 		String[] specTypeList = new String[(int) document.getModel().getNumSpeciesTypes() + 1];
 		specTypeList[0] = "( none )";
@@ -6390,6 +6393,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			specTypeBox.setEnabled(false);
 			specBoundary.setEnabled(false);
 			specConstant.setEnabled(false);
+			specHasOnly.setEnabled(false);
 			comp.setEnabled(false);
 			init.setEnabled(false);
 			initLabel.setEnabled(false);
@@ -6415,6 +6419,12 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				}
 				else {
 					specConstant.setSelectedItem("false");
+				}
+				if (specie.getHasOnlySubstanceUnits()) {
+					specHasOnly.setSelectedItem("true");
+				}
+				else {
+					specHasOnly.setSelectedItem("false");
 				}
 				if (specie.isSetInitialAmount()) {
 					init.setText("" + specie.getInitialAmount());
@@ -6471,6 +6481,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		speciesPanel.add(specBoundary);
 		speciesPanel.add(constLabel);
 		speciesPanel.add(specConstant);
+		speciesPanel.add(hasOnlyLabel);
+		speciesPanel.add(specHasOnly);
 		if (paramsOnly) {
 			JLabel typeLabel = new JLabel("Value Type:");
 			type.addActionListener(new ActionListener() {
@@ -6666,6 +6678,12 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						else {
 							specie.setConstant(false);
 						}
+						if (specHasOnly.getSelectedItem().equals("true")) {
+							specie.setHasOnlySubstanceUnits(true);
+						}
+						else {
+							specie.setHasOnlySubstanceUnits(false);
+						}
 						for (int i = 0; i < usedIDs.size(); i++) {
 							if (usedIDs.get(i).equals(val)) {
 								usedIDs.set(i, ID.getText().trim());
@@ -6680,12 +6698,10 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						if (initLabel.getSelectedItem().equals("Initial Amount")) {
 							specie.setInitialAmount(initial);
 							specie.unsetInitialConcentration();
-							specie.setHasOnlySubstanceUnits(true);
 						}
 						else {
 							specie.unsetInitialAmount();
 							specie.setInitialConcentration(initial);
-							specie.setHasOnlySubstanceUnits(false);
 						}
 						if (unit.equals("( none )")) {
 							specie.unsetUnits();
@@ -6734,17 +6750,21 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						else {
 							specie.setConstant(false);
 						}
+						if (specHasOnly.getSelectedItem().equals("true")) {
+							specie.setHasOnlySubstanceUnits(true);
+						}
+						else {
+							specie.setHasOnlySubstanceUnits(false);
+						}
 						usedIDs.add(ID.getText().trim());
 						if (!selSpecType.equals("( none )")) {
 							specie.setSpeciesType(selSpecType);
 						}
 						if (initLabel.getSelectedItem().equals("Initial Amount")) {
 							specie.setInitialAmount(initial);
-							specie.setHasOnlySubstanceUnits(true);
 						}
 						else {
 							specie.setInitialConcentration(initial);
-							specie.setHasOnlySubstanceUnits(false);
 						}
 						if (!unit.equals("( none )")) {
 							specie.setUnits(unit);
