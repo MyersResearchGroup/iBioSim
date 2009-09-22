@@ -3802,8 +3802,14 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					species.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 					for (int i = 0; i < specs.length; i++) {
 						if (specs[i].split(" ")[1].equals(val)) {
-							specs[i] = specs[i].split(" ")[0] + " " + specTypeID.getText().trim()
-									+ " " + specs[i].split(" ")[2] + " " + specs[i].split(" ")[3];
+							if (specs[i].split(" ").length==5) {
+								specs[i] = specs[i].split(" ")[0] + " " + specTypeID.getText().trim()
+								+ " " + specs[i].split(" ")[2] + " " + specs[i].split(" ")[3] 
+                                + " " + specs[i].split(" ")[4];
+							} else {
+								specs[i] = specs[i].split(" ")[0] + " " + specTypeID.getText().trim()
+								+ " " + specs[i].split(" ")[2] + " " + specs[i].split(" ")[3];
+							}
 						}
 					}
 					sort(specs);
@@ -5910,13 +5916,24 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						species.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 						for (int i = 0; i < specs.length; i++) {
 							if (specs[i].split(" ")[1].equals(val)) {
-								specs[i] = specs[i].split(" ")[0] + " " + compID.getText().trim()
-										+ " " + specs[i].split(" ")[2];
+								if (specs[i].split(" ").length==4) {
+									specs[i] = specs[i].split(" ")[0] + " " + compID.getText().trim()
+									+ " " + specs[i].split(" ")[2] + " " + specs[i].split(" ")[3];
+								} else {
+									specs[i] = specs[i].split(" ")[0] + " " + compID.getText().trim()
+									+ " " + specs[i].split(" ")[2];
+								}
 							}
 							else if (specs[i].split(" ")[2].equals(val)) {
-								specs[i] = specs[i].split(" ")[0] + " " + specs[i].split(" ")[1]
-										+ " " + compID.getText().trim() + " "
-										+ specs[i].split(" ")[3];
+								if (specs[i].split(" ").length==5) {
+									specs[i] = specs[i].split(" ")[0] + " " + specs[i].split(" ")[1]
+									    	 + " " + compID.getText().trim() + " " + specs[i].split(" ")[3] 
+                                             + " " + specs[i].split(" ")[4];
+								} else {
+									specs[i] = specs[i].split(" ")[0] + " " + specs[i].split(" ")[1]
+									                      										+ " " + compID.getText().trim() + " "
+									                      										+ specs[i].split(" ")[3];
+								}
 							}
 						}
 						sort(specs);
