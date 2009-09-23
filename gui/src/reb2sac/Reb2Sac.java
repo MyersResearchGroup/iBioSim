@@ -844,9 +844,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		// runHolder, null);
 		// splitPane.setDividerSize(0);
 		// this.add(splitPane, "South");
-		SBMLReader reader = new SBMLReader();
-		SBMLDocument document = reader.readSBML(sbmlFile);
-		document.setLevelAndVersion(2,4);
+		SBMLDocument document = BioSim.readSBML(sbmlFile);
 		Model model = document.getModel();
 		ArrayList<String> listOfSpecs = new ArrayList<String>();
 		if (model != null) {
@@ -1608,9 +1606,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		}
 		// if the add sad button is clicked
 		else if (e.getSource() == addSAD) {
-			SBMLReader reader = new SBMLReader();
-			SBMLDocument document = reader.readSBML(sbmlFile);
-			document.setLevelAndVersion(2,4);
+			SBMLDocument document = BioSim.readSBML(sbmlFile);
 			Model model = document.getModel();
 			ArrayList<String> listOfSpecs = new ArrayList<String>();
 			ArrayList<String> listOfReacs = new ArrayList<String>();
@@ -1660,9 +1656,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				JTextField time = new JTextField(15);
 				time.setText(get[0]);
 				String filename = sbmlFile;
-				SBMLReader reader = new SBMLReader();
-				SBMLDocument document = reader.readSBML(filename);
-				document.setLevelAndVersion(2,4);
+				SBMLDocument document = BioSim.readSBML(filename);
 				Model model = document.getModel();
 				ArrayList<String> listOfSpecs = new ArrayList<String>();
 				if (model != null) {
@@ -1873,9 +1867,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 						"Edit Termination Condition", JOptionPane.YES_NO_OPTION,
 						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 				if (value == JOptionPane.YES_OPTION) {
-					SBMLReader reader = new SBMLReader();
-					SBMLDocument document = reader.readSBML(sbmlFile);
-					document.setLevelAndVersion(2,4);
+					SBMLDocument document = BioSim.readSBML(sbmlFile);
 					Model model = document.getModel();
 					ArrayList<String> listOfSpecs = new ArrayList<String>();
 					ArrayList<String> listOfReacs = new ArrayList<String>();
@@ -3323,9 +3315,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				try {
 					filename = sbmlFile;
 					ArrayList<String> listOfSpecs = new ArrayList<String>();
-					SBMLReader reader = new SBMLReader();
-					SBMLDocument document = reader.readSBML(filename);
-					document.setLevelAndVersion(2,4);
+					SBMLDocument document = BioSim.readSBML(filename);
 					Model model = document.getModel();
 					if (model != null) {
 						ListOf listOfSpecies = model.getListOfSpecies();
@@ -3682,9 +3672,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 	}
 
 	public void updateSpeciesList() {
-		SBMLReader reader = new SBMLReader();
-		SBMLDocument document = reader.readSBML(sbmlFile);
-		document.setLevelAndVersion(2,4);
+		SBMLDocument document = BioSim.readSBML(sbmlFile);
 		Model model = document.getModel();
 		ArrayList<String> listOfSpecs = new ArrayList<String>();
 		if (model != null) {

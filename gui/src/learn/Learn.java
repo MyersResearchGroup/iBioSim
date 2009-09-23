@@ -268,16 +268,18 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 		 * thresholdPanel2.add(windowRisingLabel);
 		 * thresholdPanel2.add(windowRising); JLabel windowSizeLabel = new
 		 * JLabel("Window Size:"); windowSize = new JTextField("1");
-		 * thresholdPanel2.add(windowSizeLabel); thresholdPanel2.add(windowSize);
-		 * harshenBoundsOnTie = new JCheckBox("Harshen Bounds On Tie");
+		 * thresholdPanel2.add(windowSizeLabel);
+		 * thresholdPanel2.add(windowSize); harshenBoundsOnTie = new
+		 * JCheckBox("Harshen Bounds On Tie");
 		 * harshenBoundsOnTie.setSelected(true); donotInvertSortOrder = new
 		 * JCheckBox("Do Not Invert Sort Order");
 		 * donotInvertSortOrder.setSelected(true); seedParents = new
 		 * JCheckBox("Parents Should Be Ranked By Score");
-		 * seedParents.setSelected(true); mustNotWinMajority = new JCheckBox("Must
-		 * Not Win Majority"); mustNotWinMajority.setSelected(true);
-		 * donotTossSingleRatioParents = new JCheckBox("Single Ratio Parents Should
-		 * Be Kept"); donotTossChangedInfluenceSingleParents = new JCheckBox(
+		 * seedParents.setSelected(true); mustNotWinMajority = new
+		 * JCheckBox("Must Not Win Majority");
+		 * mustNotWinMajority.setSelected(true); donotTossSingleRatioParents =
+		 * new JCheckBox("Single Ratio Parents Should Be Kept");
+		 * donotTossChangedInfluenceSingleParents = new JCheckBox(
 		 * "Parents That Change Influence Should Not Be Tossed");
 		 * thresholdPanel2.add(harshenBoundsOnTie);
 		 * thresholdPanel2.add(donotInvertSortOrder);
@@ -368,13 +370,12 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 
 		speciesList = new ArrayList<String>();
 		if ((learnFile.contains(".sbml")) || (learnFile.contains(".xml"))) {
-			SBMLReader reader = new SBMLReader();
-			SBMLDocument document = reader.readSBML(learnFile);
-			document.setLevelAndVersion(2,4);
+			SBMLDocument document = BioSim.readSBML(learnFile);
 			Model model = document.getModel();
 			ListOf ids = model.getListOfSpecies();
 			try {
-				FileWriter write = new FileWriter(new File(directory + separator + "background.gcm"));
+				FileWriter write = new FileWriter(
+						new File(directory + separator + "background.gcm"));
 				write.write("digraph G {\n");
 				for (int i = 0; i < model.getNumSpecies(); i++) {
 					speciesList.add(((Species) ids.get(i)).getId());
@@ -397,7 +398,8 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 				speciesList.add(s);
 			}
 			try {
-				FileWriter write = new FileWriter(new File(directory + separator + "background.gcm"));
+				FileWriter write = new FileWriter(
+						new File(directory + separator + "background.gcm"));
 				BufferedReader input = new BufferedReader(new FileReader(new File(learnFile)));
 				String line = null;
 				while ((line = input.readLine()) != null) {
@@ -492,13 +494,13 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 		/*
 		 * if (e.getActionCommand().contains("box")) { int num =
 		 * Integer.parseInt(e.getActionCommand().substring(3)) - 1; if
-		 * (!((JCheckBox) this.species.get(num).get(0)).isSelected()) { ((JComboBox)
-		 * this.species.get(num).get(2)).setSelectedItem("0"); editText(num);
-		 * speciesPanel.revalidate(); speciesPanel.repaint(); for (int i = 1; i <
-		 * this.species.get(num).size(); i++) {
+		 * (!((JCheckBox) this.species.get(num).get(0)).isSelected()) {
+		 * ((JComboBox) this.species.get(num).get(2)).setSelectedItem("0");
+		 * editText(num); speciesPanel.revalidate(); speciesPanel.repaint(); for
+		 * (int i = 1; i < this.species.get(num).size(); i++) {
 		 * this.species.get(num).get(i).setEnabled(false); } } else {
-		 * this.species.get(num).get(1).setEnabled(true); if (user.isSelected()) {
-		 * for (int i = 2; i < this.species.get(num).size(); i++) {
+		 * this.species.get(num).get(1).setEnabled(true); if (user.isSelected())
+		 * { for (int i = 2; i < this.species.get(num).size(); i++) {
 		 * this.species.get(num).get(i).setEnabled(true); } } } } else
 		 */
 		change = true;
@@ -515,7 +517,8 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 		else if (e.getSource() == user) {
 			if (!firstRead) {
 				try {
-					FileWriter write = new FileWriter(new File(directory + separator + "levels.lvl"));
+					FileWriter write = new FileWriter(
+							new File(directory + separator + "levels.lvl"));
 					write.write("time, 0\n");
 					for (int i = 0; i < species.size(); i++) {
 						if (((JTextField) species.get(i).get(0)).getText().trim().equals("")) {
@@ -530,7 +533,8 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 								write.write(", -1");
 							}
 							else {
-								write.write(", " + ((JTextField) species.get(i).get(j)).getText().trim());
+								write.write(", "
+										+ ((JTextField) species.get(i).get(j)).getText().trim());
 							}
 						}
 						write.write("\n");
@@ -607,7 +611,8 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 							write.write(", -1");
 						}
 						else {
-							write.write(", " + ((JTextField) species.get(i).get(j)).getText().trim());
+							write.write(", "
+									+ ((JTextField) species.get(i).get(j)).getText().trim());
 						}
 					}
 					write.write("\n");
@@ -679,7 +684,8 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 				// if (Character.isWhitespace(cha)) {
 				// word += cha;
 				// }
-				// else if (cha == ',' || cha == ':' || cha == ';' || cha == '\"' || cha
+				// else if (cha == ',' || cha == ':' || cha == ';' || cha ==
+				// '\"' || cha
 				// == '\''
 				// || cha == '(' || cha == ')' || cha == '[' || cha == ']') {
 				// if (!word.equals("") && !word.equals("time")) {
@@ -749,8 +755,9 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 								found = true;
 								if (getString.length >= 2) {
 									((JComboBox) specs.get(1)).setSelectedItem(getString[1].trim());
-									for (int i = 0; i < Integer.parseInt((String) ((JComboBox) specs.get(1))
-											.getSelectedItem()) - 1; i++) {
+									for (int i = 0; i < Integer
+											.parseInt((String) ((JComboBox) specs.get(1))
+													.getSelectedItem()) - 1; i++) {
 										if (getString[i + 2].trim().equals("-1")) {
 											specs.add(new JTextField(""));
 										}
@@ -759,20 +766,21 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 										}
 										sp.add(specs.get(i + 2));
 									}
-									for (int i = Integer.parseInt((String) ((JComboBox) specs.get(1))
-											.getSelectedItem()) - 1; i < max - 3; i++) {
+									for (int i = Integer.parseInt((String) ((JComboBox) specs
+											.get(1)).getSelectedItem()) - 1; i < max - 3; i++) {
 										sp.add(new JLabel());
 									}
 								}
 							}
 						}
 						if (!found) {
-							for (int i = 0; i < Integer.parseInt((String) ((JComboBox) specs.get(1))
-									.getSelectedItem()) - 1; i++) {
+							for (int i = 0; i < Integer
+									.parseInt((String) ((JComboBox) specs.get(1)).getSelectedItem()) - 1; i++) {
 								specs.add(new JTextField(""));
 								sp.add(specs.get(i + 2));
 							}
-							for (int i = Integer.parseInt((String) ((JComboBox) specs.get(1)).getSelectedItem()) - 1; i < max - 3; i++) {
+							for (int i = Integer.parseInt((String) ((JComboBox) specs.get(1))
+									.getSelectedItem()) - 1; i < max - 3; i++) {
 								sp.add(new JLabel());
 							}
 						}
@@ -792,42 +800,45 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 	}
 
 	/*
-	 * private void levelsBin() { if (!directory.equals("")) { // File n = null; //
-	 * for (File f : new File(directory).listFiles()) { // if
-	 * (f.getAbsolutePath().contains(".tsd")) { // n = f; // } // } if (true) { //
-	 * if (n != null) { // ArrayList<String> species = new ArrayList<String>(); //
-	 * try { // InputStream input = new FileInputStream(n); // boolean reading =
-	 * true; // char cha; // while (reading) { // String word = ""; // boolean
-	 * readWord = true; // while (readWord) { // int read = input.read(); // if
-	 * (read == -1) { // reading = false; // readWord = false; // } // cha =
-	 * (char) read; // if (Character.isWhitespace(cha)) { // word += cha; // } //
-	 * else if (cha == ',' || cha == ':' || cha == ';' || cha == '\"' || cha // ==
-	 * '\'' // || cha == '(' || cha == ')' || cha == '[' || cha == ']') { // if
+	 * private void levelsBin() { if (!directory.equals("")) { // File n = null;
+	 * // for (File f : new File(directory).listFiles()) { // if
+	 * (f.getAbsolutePath().contains(".tsd")) { // n = f; // } // } if (true) {
+	 * // if (n != null) { // ArrayList<String> species = new
+	 * ArrayList<String>(); // try { // InputStream input = new
+	 * FileInputStream(n); // boolean reading = true; // char cha; // while
+	 * (reading) { // String word = ""; // boolean readWord = true; // while
+	 * (readWord) { // int read = input.read(); // if (read == -1) { // reading
+	 * = false; // readWord = false; // } // cha = (char) read; // if
+	 * (Character.isWhitespace(cha)) { // word += cha; // } // else if (cha ==
+	 * ',' || cha == ':' || cha == ';' || cha == '\"' || cha // == '\'' // ||
+	 * cha == '(' || cha == ')' || cha == '[' || cha == ']') { // if
 	 * (!word.equals("") && !word.equals("time")) { // try { //
 	 * Double.parseDouble(word); // } // catch (Exception e2) { //
-	 * species.add(word); // } // } // word = ""; // } // else if (read != -1) { //
-	 * word += cha; // } // } // } // input.close(); // } // catch (Exception e1) { // }
-	 * speciesPanel.removeAll(); this.species = new ArrayList<ArrayList<Component>>();
-	 * speciesPanel.setLayout(new GridLayout(speciesList.size() + 1, 1)); JPanel
-	 * label = new JPanel(new GridLayout()); // label.add(new JLabel("Use"));
-	 * label.add(new JLabel("Species")); label.add(new JLabel("Number Of Bins"));
-	 * for (int i = 0; i < Integer.parseInt((String) numBins.getSelectedItem()) -
-	 * 1; i++) { label.add(new JLabel("Level " + (i + 1))); }
-	 * speciesPanel.add(label); int j = 0; for (String s : speciesList) { j++;
-	 * JPanel sp = new JPanel(new GridLayout()); ArrayList<Component> specs = new
-	 * ArrayList<Component>(); // JCheckBox check = new JCheckBox(); //
-	 * check.setSelected(true); // specs.add(check); specs.add(new JTextField(s));
-	 * String[] options = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
-	 * JComboBox combo = new JComboBox(options);
-	 * combo.setSelectedItem(numBins.getSelectedItem()); specs.add(combo);
-	 * ((JTextField) specs.get(0)).setEditable(false); // sp.add(specs.get(0)); //
-	 * ((JCheckBox) specs.get(0)).addActionListener(this); // ((JCheckBox)
+	 * species.add(word); // } // } // word = ""; // } // else if (read != -1) {
+	 * // word += cha; // } // } // } // input.close(); // } // catch (Exception
+	 * e1) { // } speciesPanel.removeAll(); this.species = new
+	 * ArrayList<ArrayList<Component>>(); speciesPanel.setLayout(new
+	 * GridLayout(speciesList.size() + 1, 1)); JPanel label = new JPanel(new
+	 * GridLayout()); // label.add(new JLabel("Use")); label.add(new
+	 * JLabel("Species")); label.add(new JLabel("Number Of Bins")); for (int i =
+	 * 0; i < Integer.parseInt((String) numBins.getSelectedItem()) - 1; i++) {
+	 * label.add(new JLabel("Level " + (i + 1))); } speciesPanel.add(label); int
+	 * j = 0; for (String s : speciesList) { j++; JPanel sp = new JPanel(new
+	 * GridLayout()); ArrayList<Component> specs = new ArrayList<Component>();
+	 * // JCheckBox check = new JCheckBox(); // check.setSelected(true); //
+	 * specs.add(check); specs.add(new JTextField(s)); String[] options = { "0",
+	 * "1", "2", "3", "4", "5", "6", "7", "8", "9" }; JComboBox combo = new
+	 * JComboBox(options); combo.setSelectedItem(numBins.getSelectedItem());
+	 * specs.add(combo); ((JTextField) specs.get(0)).setEditable(false); //
+	 * sp.add(specs.get(0)); // ((JCheckBox)
+	 * specs.get(0)).addActionListener(this); // ((JCheckBox)
 	 * specs.get(0)).setActionCommand("box" + j); sp.add(specs.get(0));
 	 * sp.add(specs.get(1)); ((JComboBox) specs.get(1)).addActionListener(this);
 	 * ((JComboBox) specs.get(1)).setActionCommand("text" + j);
 	 * this.species.add(specs); for (int i = 0; i < Integer.parseInt((String)
 	 * ((JComboBox) specs.get(1)) .getSelectedItem()) - 1; i++) { specs.add(new
-	 * JTextField("")); sp.add(specs.get(i + 2)); } speciesPanel.add(sp); } } } }
+	 * JTextField("")); sp.add(specs.get(i + 2)); } speciesPanel.add(sp); } } }
+	 * }
 	 */
 
 	private void editText(int num) {
@@ -1054,7 +1065,8 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 			else {
 				prop.setProperty("genenet.find.base.prob", "false");
 			}
-			log.addText("Saving learn parameters to file:\n" + directory + separator + lrnFile + "\n");
+			log.addText("Saving learn parameters to file:\n" + directory + separator + lrnFile
+					+ "\n");
 			FileOutputStream out = new FileOutputStream(new File(directory + separator + lrnFile));
 			prop.store(out, learnFile);
 			out.close();
@@ -1128,8 +1140,8 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 				}
 			}
 			catch (Exception e2) {
-				JOptionPane.showMessageDialog(this, "Must enter numbers into input fields.", "Error",
-						JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(this, "Must enter numbers into input fields.",
+						"Error", JOptionPane.ERROR_MESSAGE);
 			}
 			if (user.isSelected()) {
 				FileWriter write = new FileWriter(new File(directory + separator + "levels.lvl"));
@@ -1147,7 +1159,8 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 							write.write(", -1");
 						}
 						else {
-							write.write(", " + ((JTextField) species.get(i).get(j)).getText().trim());
+							write.write(", "
+									+ ((JTextField) species.get(i).get(j)).getText().trim());
 						}
 					}
 					write.write("\n");
@@ -1158,15 +1171,16 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 			geneNet += " --cpp_harshenBoundsOnTie --cpp_cmp_output_donotInvertSortOrder --cpp_seedParents --cmp_score_mustNotWinMajority";
 			/*
 			 * if (harshenBoundsOnTie.isSelected()) { geneNet += "
-			 * --cpp_harshenBoundsOnTie"; } if (donotInvertSortOrder.isSelected()) {
-			 * geneNet += " --cpp_cmp_output_donotInvertSortOrder"; } if
-			 * (seedParents.isSelected()) { geneNet += " --cpp_seedParents"; } if
-			 * (mustNotWinMajority.isSelected()) { geneNet += "
+			 * --cpp_harshenBoundsOnTie"; } if
+			 * (donotInvertSortOrder.isSelected()) { geneNet +=
+			 * " --cpp_cmp_output_donotInvertSortOrder"; } if
+			 * (seedParents.isSelected()) { geneNet += " --cpp_seedParents"; }
+			 * if (mustNotWinMajority.isSelected()) { geneNet += "
 			 * --cmp_score_mustNotWinMajority"; } if
 			 * (donotTossSingleRatioParents.isSelected()) { geneNet += "
 			 * --score_donotTossSingleRatioParents"; } if
-			 * (donotTossChangedInfluenceSingleParents.isSelected()) { geneNet += "
-			 * --output_donotTossChangedInfluenceSingleParents"; }
+			 * (donotTossChangedInfluenceSingleParents.isSelected()) { geneNet
+			 * += " --output_donotTossChangedInfluenceSingleParents"; }
 			 */
 			if (spacing.isSelected()) {
 				geneNet += " -binN";
@@ -1283,20 +1297,22 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 			}
 			int exitValue = learn.waitFor();
 			if (exitValue == 143) {
-				JOptionPane.showMessageDialog(biosim.frame(), "Learning was" + " canceled by the user.",
-						"Canceled Learning", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(biosim.frame(), "Learning was"
+						+ " canceled by the user.", "Canceled Learning", JOptionPane.ERROR_MESSAGE);
 			}
 			else {
 				if (new File(directory + separator + "method.gcm").exists()) {
 					if (System.getProperty("os.name").contentEquals("Linux")) {
 						String command = "dotty method.gcm";
-						log.addText("Executing:\n" + "dotty " + directory + separator + "method.gcm\n");
+						log.addText("Executing:\n" + "dotty " + directory + separator
+								+ "method.gcm\n");
 						exec = Runtime.getRuntime();
 						exec.exec(command, null, work);
 					}
 					else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
 						String command = "open method.dot";
-						log.addText("Executing:\n" + "open " + directory + separator + "method.dot\n");
+						log.addText("Executing:\n" + "open " + directory + separator
+								+ "method.dot\n");
 						exec = Runtime.getRuntime();
 						exec.exec("cp method.gcm method.dot", null, work);
 						exec = Runtime.getRuntime();
@@ -1304,7 +1320,8 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 					}
 					else {
 						String command = "dotty method.gcm";
-						log.addText("Executing:\n" + "dotty " + directory + separator + "method.gcm\n");
+						log.addText("Executing:\n" + "dotty " + directory + separator
+								+ "method.gcm\n");
 						exec = Runtime.getRuntime();
 						exec.exec(command, null, work);
 					}
@@ -1365,13 +1382,12 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 		learnFile = newLearnFile;
 		speciesList = new ArrayList<String>();
 		if ((learnFile.contains(".sbml")) || (learnFile.contains(".xml"))) {
-			SBMLReader reader = new SBMLReader();
-			SBMLDocument document = reader.readSBML(learnFile);
-			document.setLevelAndVersion(2,4);
+			SBMLDocument document = BioSim.readSBML(learnFile);
 			Model model = document.getModel();
 			ListOf ids = model.getListOfSpecies();
 			try {
-				FileWriter write = new FileWriter(new File(directory + separator + "background.gcm"));
+				FileWriter write = new FileWriter(
+						new File(directory + separator + "background.gcm"));
 				write.write("digraph G {\n");
 				for (int i = 0; i < model.getNumSpecies(); i++) {
 					speciesList.add(((Species) ids.get(i)).getId());
@@ -1394,7 +1410,8 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 				speciesList.add(s);
 			}
 			try {
-				FileWriter write = new FileWriter(new File(directory + separator + "background.gcm"));
+				FileWriter write = new FileWriter(
+						new File(directory + separator + "background.gcm"));
 				BufferedReader input = new BufferedReader(new FileReader(new File(learnFile)));
 				String line = null;
 				while ((line = input.readLine()) != null) {

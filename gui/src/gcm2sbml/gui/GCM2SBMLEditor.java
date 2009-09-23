@@ -33,7 +33,6 @@ import javax.swing.JTextField;
 import org.sbml.libsbml.InitialAssignment;
 import org.sbml.libsbml.Rule;
 import org.sbml.libsbml.SBMLDocument;
-import org.sbml.libsbml.SBMLReader;
 
 import reb2sac.Reb2Sac;
 import reb2sac.Reb2SacThread;
@@ -658,8 +657,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 			}
 			network.loadProperties(gcm);
 			if (!getSBMLFile().equals(none)) {
-				SBMLDocument d = new SBMLReader().readSBML(path + File.separator + getSBMLFile());
-				d.setLevelAndVersion(2,4);
+				SBMLDocument d = BioSim.readSBML(path + File.separator + getSBMLFile());
 				for (String s : sbmlParamFile.getElementChanges()) {
 					for (long i = d.getModel().getNumInitialAssignments() - 1; i >= 0; i--) {
 						if (s.contains("=")) {
