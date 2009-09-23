@@ -5,6 +5,8 @@ import gcm2sbml.network.GeneticNetwork;
 import gcm2sbml.parser.GCMFile;
 import gcm2sbml.parser.GCMParser;
 
+import biomodelsim.BioSim;
+
 import java.io.FileOutputStream;
 import java.lang.reflect.Field;
 import java.util.Properties;
@@ -81,8 +83,7 @@ public class GCMParserTest extends TestCase {
 	}	
 	
 	public void testRead() {
-		SBMLReader reader = new SBMLReader();
-		SBMLDocument doc = reader.readSBML("nand.sbml");
+		SBMLDocument doc = BioSim.readSBML("nand.sbml");
 		System.out.println(doc.getModel().getName());
 		System.out.println(doc.getModel().getId());
 		

@@ -143,7 +143,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 
 	private JComboBox compTypeBox, dimBox; // compartment type combo box
 
-	private JComboBox specTypeBox, specBoundary, specConstant, specHasOnly; // species combo
+	private JComboBox specTypeBox, specBoundary, specConstant, specHasOnly; // species
+																			// combo
 
 	// boxes
 
@@ -373,9 +374,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		// creates the sbml reader and reads the sbml file
 		Model model;
 		if (!file.equals("")) {
-			SBMLReader reader = new SBMLReader();
-			document = reader.readSBML(file);
-			document.setLevelAndVersion(2,4);
+			document = BioSim.readSBML(file);
 			model = document.getModel();
 			modelName = new JTextField(model.getName(), 50);
 			if (model.getId().equals("")) {
@@ -3226,7 +3225,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 							unit.setKind(libsbml.UnitKind_forName(extractUnitKind(uList[i])));
 							unit.setExponent(Integer.valueOf(extractUnitExp(uList[i])).intValue());
 							unit.setScale(Integer.valueOf(extractUnitScale(uList[i])).intValue());
-							unit.setMultiplier(Double.valueOf(extractUnitMult(uList[i])).doubleValue());
+							unit.setMultiplier(Double.valueOf(extractUnitMult(uList[i]))
+									.doubleValue());
 						}
 						units[index] = addUnit;
 						sort(units);
@@ -3245,7 +3245,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 							unit.setKind(libsbml.UnitKind_forName(extractUnitKind(uList[i])));
 							unit.setExponent(Integer.valueOf(extractUnitExp(uList[i])).intValue());
 							unit.setScale(Integer.valueOf(extractUnitScale(uList[i])).intValue());
-							unit.setMultiplier(Double.valueOf(extractUnitMult(uList[i])).doubleValue());
+							unit.setMultiplier(Double.valueOf(extractUnitMult(uList[i]))
+									.doubleValue());
 						}
 						JList add = new JList();
 						Object[] adding = { addUnit };
@@ -3802,13 +3803,16 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					species.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 					for (int i = 0; i < specs.length; i++) {
 						if (specs[i].split(" ")[1].equals(val)) {
-							if (specs[i].split(" ").length==5) {
-								specs[i] = specs[i].split(" ")[0] + " " + specTypeID.getText().trim()
-								+ " " + specs[i].split(" ")[2] + " " + specs[i].split(" ")[3] 
-                                + " " + specs[i].split(" ")[4];
-							} else {
-								specs[i] = specs[i].split(" ")[0] + " " + specTypeID.getText().trim()
-								+ " " + specs[i].split(" ")[2] + " " + specs[i].split(" ")[3];
+							if (specs[i].split(" ").length == 5) {
+								specs[i] = specs[i].split(" ")[0] + " "
+										+ specTypeID.getText().trim() + " "
+										+ specs[i].split(" ")[2] + " " + specs[i].split(" ")[3]
+										+ " " + specs[i].split(" ")[4];
+							}
+							else {
+								specs[i] = specs[i].split(" ")[0] + " "
+										+ specTypeID.getText().trim() + " "
+										+ specs[i].split(" ")[2] + " " + specs[i].split(" ")[3];
 							}
 						}
 					}
@@ -5682,9 +5686,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					else {
 						sweep.setEnabled(false);
 						compSize.setEnabled(false);
-						SBMLReader reader = new SBMLReader();
-						SBMLDocument d = reader.readSBML(file);
-						d.setLevelAndVersion(2,4);
+						SBMLDocument d = BioSim.readSBML(file);
 						if (d.getModel().getCompartment(
 								((String) compartments.getSelectedValue()).split(" ")[0])
 								.isSetSize()) {
@@ -5916,23 +5918,29 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						species.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 						for (int i = 0; i < specs.length; i++) {
 							if (specs[i].split(" ")[1].equals(val)) {
-								if (specs[i].split(" ").length==4) {
-									specs[i] = specs[i].split(" ")[0] + " " + compID.getText().trim()
-									+ " " + specs[i].split(" ")[2] + " " + specs[i].split(" ")[3];
-								} else {
-									specs[i] = specs[i].split(" ")[0] + " " + compID.getText().trim()
-									+ " " + specs[i].split(" ")[2];
+								if (specs[i].split(" ").length == 4) {
+									specs[i] = specs[i].split(" ")[0] + " "
+											+ compID.getText().trim() + " "
+											+ specs[i].split(" ")[2] + " " + specs[i].split(" ")[3];
+								}
+								else {
+									specs[i] = specs[i].split(" ")[0] + " "
+											+ compID.getText().trim() + " "
+											+ specs[i].split(" ")[2];
 								}
 							}
 							else if (specs[i].split(" ")[2].equals(val)) {
-								if (specs[i].split(" ").length==5) {
-									specs[i] = specs[i].split(" ")[0] + " " + specs[i].split(" ")[1]
-									    	 + " " + compID.getText().trim() + " " + specs[i].split(" ")[3] 
-                                             + " " + specs[i].split(" ")[4];
-								} else {
-									specs[i] = specs[i].split(" ")[0] + " " + specs[i].split(" ")[1]
-									                      										+ " " + compID.getText().trim() + " "
-									                      										+ specs[i].split(" ")[3];
+								if (specs[i].split(" ").length == 5) {
+									specs[i] = specs[i].split(" ")[0] + " "
+											+ specs[i].split(" ")[1] + " "
+											+ compID.getText().trim() + " "
+											+ specs[i].split(" ")[3] + " " + specs[i].split(" ")[4];
+								}
+								else {
+									specs[i] = specs[i].split(" ")[0] + " "
+											+ specs[i].split(" ")[1] + " "
+											+ compID.getText().trim() + " "
+											+ specs[i].split(" ")[3];
 								}
 							}
 						}
@@ -6513,9 +6521,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						sweep.setEnabled(false);
 						init.setEnabled(false);
 						initLabel.setEnabled(false);
-						SBMLReader reader = new SBMLReader();
-						SBMLDocument d = reader.readSBML(file);
-						d.setLevelAndVersion(2,4);
+						SBMLDocument d = BioSim.readSBML(file);
 						if (d.getModel().getSpecies(
 								((String) species.getSelectedValue()).split(" ")[0])
 								.isSetInitialAmount()) {
@@ -6634,7 +6640,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						selected = ((String) species.getSelectedValue()).split(" ")[0];
 					}
 					for (int i = 0; i < document.getModel().getNumSpecies(); i++) {
-						if (!listOfSpecies.get(i).getId().equals(selected)) {
+						if (!((Species) listOfSpecies.get(i)).getId().equals(selected)) {
 							if (((Species) listOfSpecies.get(i)).getCompartment().equals(
 									(String) comp.getSelectedItem())
 									&& ((Species) listOfSpecies.get(i)).getSpeciesType().equals(
@@ -7190,11 +7196,11 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			}
 		}
 		else {
-			Parameter p = new Parameter(2,4);
+			Parameter p = new Parameter(2, 4);
 			p.setId("kf");
 			p.setValue(0.1);
 			changedParameters.add(p);
-			p = new Parameter(2,4);
+			p = new Parameter(2, 4);
 			p.setId("kr");
 			p.setValue(1.0);
 			changedParameters.add(p);
@@ -7941,9 +7947,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						sweep.setEnabled(false);
 						paramValue.setEnabled(false);
 						paramUnits.setEnabled(false);
-						SBMLReader reader = new SBMLReader();
-						SBMLDocument d = reader.readSBML(file);
-						d.setLevelAndVersion(2,4);
+						SBMLDocument d = BioSim.readSBML(file);
 						if (d.getModel().getParameter(
 								((String) parameters.getSelectedValue()).split(" ")[0])
 								.isSetValue()) {
@@ -8320,9 +8324,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						sweep.setEnabled(false);
 						reacParamValue.setEnabled(false);
 						reacParamUnits.setEnabled(false);
-						SBMLReader reader = new SBMLReader();
-						SBMLDocument d = reader.readSBML(file);
-						d.setLevelAndVersion(2,4);
+						SBMLDocument d = BioSim.readSBML(file);
 						KineticLaw KL = d.getModel().getReaction(
 								((String) reactions.getSelectedValue()).split(" ")[0])
 								.getKineticLaw();
@@ -8525,7 +8527,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					}
 					else {
 						int index = reacParameters.getSelectedIndex();
-						Parameter paramet = new Parameter(2,4);
+						Parameter paramet = new Parameter(2, 4);
 						changedParameters.add(paramet);
 						paramet.setId(reacParamID.getText().trim());
 						paramet.setName(reacParamName.getText().trim());
@@ -8774,7 +8776,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					products.setSelectedIndex(index);
 				}
 				else {
-					SpeciesReference produ = new SpeciesReference(2,4);
+					SpeciesReference produ = new SpeciesReference(2, 4);
 					changedProducts.add(produ);
 					produ.setSpecies((String) productSpecies.getSelectedItem());
 					if (stoiciLabel.getSelectedItem().equals("Stoichiometry")) {
@@ -8911,7 +8913,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					}
 				}
 				if (!error) {
-					ModifierSpeciesReference modi = new ModifierSpeciesReference(2,4);
+					ModifierSpeciesReference modi = new ModifierSpeciesReference(2, 4);
 					changedModifiers.add(modi);
 					modi.setSpecies((String) modifierSpecies.getSelectedItem());
 					JList add = new JList();
@@ -9153,7 +9155,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					reactants.setSelectedIndex(index);
 				}
 				else {
-					SpeciesReference reactan = new SpeciesReference(2,4);
+					SpeciesReference reactan = new SpeciesReference(2, 4);
 					changedReactants.add(reactan);
 					reactan.setSpecies((String) reactantSpecies.getSelectedItem());
 					if (stoiciLabel.getSelectedItem().equals("Stoichiometry")) {
@@ -9390,10 +9392,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			SBMLWriter writer = new SBMLWriter();
 			writer.writeSBML(document, simDir + separator + stem + direct + separator
 					+ file.split(separator)[file.split(separator).length - 1]);
-			SBMLReader reader = new SBMLReader();
-			SBMLDocument d = reader.readSBML(simDir + separator + stem + direct + separator
+			SBMLDocument d = BioSim.readSBML(simDir + separator + stem + direct + separator
 					+ file.split(separator)[file.split(separator).length - 1]);
-			d.setLevelAndVersion(2,4);
 			for (String s : elementChanges) {
 				for (long i = d.getModel().getNumInitialAssignments() - 1; i >= 0; i--) {
 					if (s.contains("=")) {
@@ -9474,9 +9474,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		// Hack to avoid wierd bug.
 		// By reloading the file before consistency checks, it seems to avoid a
 		// crash when attempting to save a newly added parameter with no units
-		SBMLReader reader = new SBMLReader();
-		document = reader.readSBML(file);
-		document.setLevelAndVersion(2,4);
+		document = BioSim.readSBML(file);
 		long numErrors = document.checkConsistency();
 		String message = "";
 		for (long i = 0; i < numErrors; i++) {
@@ -10329,7 +10327,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		}
 		else if (biosim.checkUnits) {
 			UnitDefinition unitDef = law.getDerivedUnitDefinition();
-			UnitDefinition unitDefLaw = new UnitDefinition(2,4);
+			UnitDefinition unitDefLaw = new UnitDefinition(2, 4);
 			if (document.getModel().getUnitDefinition("substance") != null) {
 				UnitDefinition subUnitDef = document.getModel().getUnitDefinition("substance");
 				for (int i = 0; i < subUnitDef.getNumUnits(); i++) {

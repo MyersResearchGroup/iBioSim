@@ -27,16 +27,16 @@ import org.sbml.libsbml.InitialAssignment;
 import org.sbml.libsbml.KineticLaw;
 import org.sbml.libsbml.Model;
 import org.sbml.libsbml.ModifierSpeciesReference;
-import org.sbml.libsbml.Parameter;
 import org.sbml.libsbml.Rule;
 import org.sbml.libsbml.SBMLDocument;
-import org.sbml.libsbml.SBMLReader;
 import org.sbml.libsbml.SBMLWriter;
 import org.sbml.libsbml.Species;
 import org.sbml.libsbml.SpeciesReference;
 import org.sbml.libsbml.Unit;
 import org.sbml.libsbml.UnitDefinition;
 import org.sbml.libsbml.libsbml;
+
+import biomodelsim.BioSim;
 
 /**
  * This class represents a genetic network
@@ -211,8 +211,7 @@ public class GeneticNetwork {
 				return outputSBML(filename);
 			}
 
-			SBMLDocument document = new SBMLReader().readSBML(currentRoot + sbmlDocument);
-			document.setLevelAndVersion(2,4);
+			SBMLDocument document = BioSim.readSBML(currentRoot + sbmlDocument);
 			//checkConsistancy(document);
 			currentDocument = document;
 			return outputSBML(filename, document);

@@ -25,9 +25,10 @@ import org.sbml.libsbml.ListOf;
 import org.sbml.libsbml.Parameter;
 import org.sbml.libsbml.Reaction;
 import org.sbml.libsbml.SBMLDocument;
-import org.sbml.libsbml.SBMLReader;
 import org.sbml.libsbml.Species;
 import org.sbml.libsbml.SpeciesReference;
+
+import biomodelsim.BioSim;
 
 /**
  * This is a utility class. The constructor is private so that only one instance
@@ -249,9 +250,7 @@ public class Utility {
 	}
 	
 	public static SBMLDocument openDocument(String filename) {
-		SBMLReader reader = new SBMLReader();
-		SBMLDocument document = reader.readSBML(filename);
-		document.setLevelAndVersion(2,4);
+		SBMLDocument document = BioSim.readSBML(filename);
 		return document;
 	}
 
