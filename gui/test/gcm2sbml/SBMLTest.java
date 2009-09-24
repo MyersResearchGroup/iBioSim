@@ -20,6 +20,8 @@ import org.sbml.libsbml.SBMLDocument;
 import org.sbml.libsbml.SBMLWriter;
 import org.sbml.libsbml.Species;
 
+import biomodelsim.BioSim;
+
 public class SBMLTest extends TestCase {
 	
 	public void testAddDuplicate() {
@@ -27,7 +29,7 @@ public class SBMLTest extends TestCase {
 			System.loadLibrary("sbmlj");
 			String filename = "foo.sbml";
 			
-			SBMLDocument document = new SBMLDocument(2, 3);
+			SBMLDocument document = new SBMLDocument(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
 			String compartment = "default";
 			Model m = document.createModel();
 			document.setModel(m);

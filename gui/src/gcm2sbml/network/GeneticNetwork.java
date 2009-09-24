@@ -101,7 +101,7 @@ public class GeneticNetwork {
 		setSpecies(species);
 		setPromoters(promoters);
 		
-		SBMLDocument document = new SBMLDocument(2, 4);
+		SBMLDocument document = new SBMLDocument(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
 		currentDocument = document;
 		Model m = document.createModel();
 		document.setModel(m);
@@ -148,7 +148,7 @@ public class GeneticNetwork {
 	 * @return the sbml document
 	 */
 	public SBMLDocument outputSBML(String filename) {
-		SBMLDocument document = new SBMLDocument(2, 4);
+		SBMLDocument document = new SBMLDocument(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
 		currentDocument = document;
 		Model m = document.createModel();
 		document.setModel(m);
@@ -286,7 +286,7 @@ public class GeneticNetwork {
 		for (Promoter p : promoters.values()) {
 			// First setup RNAP binding
 			if (p.getOutputs().size()==0) continue;
-			org.sbml.libsbml.Reaction r = new org.sbml.libsbml.Reaction(2,4);
+			org.sbml.libsbml.Reaction r = new org.sbml.libsbml.Reaction(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
 			r.setId("R_RNAP_" + p.getId());
 			r.addReactant(Utility.SpeciesReference("RNAP", 1));
 			r.addReactant(Utility.SpeciesReference(p.getId(), 1));
@@ -347,7 +347,7 @@ public class GeneticNetwork {
 		for (Promoter p : promoters.values()) {
 			if (p.getOutputs().size()==0) continue;
 			if (p.getActivators().size() > 0 && p.getRepressors().size() == 0) {
-				org.sbml.libsbml.Reaction r = new org.sbml.libsbml.Reaction(2,4);
+				org.sbml.libsbml.Reaction r = new org.sbml.libsbml.Reaction(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
 				r.setId("R_basal_production_" + p.getId());
 				r.addReactant(Utility.SpeciesReference("RNAP_" + p.getId(), 1));
 				for (SpeciesInterface species : p.getOutputs()) {
@@ -373,7 +373,7 @@ public class GeneticNetwork {
 				v.run();
 			} else if (p.getActivators().size() == 0
 					&& p.getRepressors().size() >= 0) {
-				org.sbml.libsbml.Reaction r = new org.sbml.libsbml.Reaction(2,4);
+				org.sbml.libsbml.Reaction r = new org.sbml.libsbml.Reaction(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
 				r.setId("R_production_" + p.getId());
 				r.addReactant(Utility.SpeciesReference("RNAP_" + p.getId(), 1));
 				for (SpeciesInterface species : p.getOutputs()) {
@@ -396,7 +396,7 @@ public class GeneticNetwork {
 			} else {
 				// TODO: Should ask Chris how to handle
 				// Both activated and repressed
-				org.sbml.libsbml.Reaction r = new org.sbml.libsbml.Reaction(2,4);
+				org.sbml.libsbml.Reaction r = new org.sbml.libsbml.Reaction(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
 				r.setId("R_basal_production_" + p.getId());
 				r.addReactant(Utility.SpeciesReference("RNAP_" + p.getId(), 1));
 				for (SpeciesInterface species : p.getOutputs()) {
@@ -1117,7 +1117,7 @@ public class GeneticNetwork {
 				}
 			}
 		}
-		UnitDefinition t = new UnitDefinition(2,4);
+		UnitDefinition t = new UnitDefinition(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
 		String name = "u_";
 		for (int i = 0; i < unitNames.size(); i++) {
 			String sign = "";
