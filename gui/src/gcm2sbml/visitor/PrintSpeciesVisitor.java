@@ -9,6 +9,8 @@ import org.sbml.libsbml.SBMLDocument;
 import org.sbml.libsbml.Species;
 import org.sbml.libsbml.SpeciesReference;
 
+import biomodelsim.BioSim;
+
 import gcm2sbml.network.BaseSpecies;
 import gcm2sbml.network.BiochemicalSpecies;
 import gcm2sbml.network.ConstantSpecies;
@@ -88,7 +90,7 @@ public class PrintSpeciesVisitor extends AbstractPrintVisitor {
 		s.setHasOnlySubstanceUnits(true);
 		Utility.addSpecies(document, s);
 		
-		org.sbml.libsbml.Reaction r = new org.sbml.libsbml.Reaction(2,4);
+		org.sbml.libsbml.Reaction r = new org.sbml.libsbml.Reaction(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
 		r.setId("Spastic_production_" + s.getName());
 		
 		r.addProduct(Utility.SpeciesReference(s.getName(), Double.parseDouble(parameters.getParameter(GlobalConstants.STOICHIOMETRY_STRING))));

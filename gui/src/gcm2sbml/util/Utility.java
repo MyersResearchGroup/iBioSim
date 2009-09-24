@@ -85,20 +85,20 @@ public class Utility {
 	}
 
 	public static Reaction Reaction(String id) {
-		Reaction r = new Reaction(2,4);
+		Reaction r = new Reaction(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
 		r.setId(id);
 		return r;
 	}
 
 	public static SpeciesReference SpeciesReference(String id, double stoichiometry) {
-		SpeciesReference sr = new SpeciesReference(2,4);
+		SpeciesReference sr = new SpeciesReference(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
 		sr.setSpecies(id);
 		sr.setStoichiometry(stoichiometry);
 		return sr;
 	}
 	
 	public static Parameter Parameter(String id, double value, String units) {
-		Parameter p = new Parameter(2,4);
+		Parameter p = new Parameter(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
 		p.setId(id);
 		p.setValue(value);
 		p.setUnits(units);
@@ -106,7 +106,7 @@ public class Utility {
 	}
 	
 	public static Parameter Parameter(String id, double value) {
-		Parameter p = new Parameter(2,4);
+		Parameter p = new Parameter(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
 		p.setId(id);
 		p.setValue(value);
 		return p;
@@ -114,7 +114,7 @@ public class Utility {
 	
 	public static Species makeSpecies(String id, String compartment,
 			double amount) {
-		Species specie = new Species(2,4);
+		Species specie = new Species(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
 		specie.setId(id);
 		specie.setName(id);
 		specie.setCompartment(compartment);
