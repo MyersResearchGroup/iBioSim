@@ -89,6 +89,13 @@ public class Variable {
 		}
 	}
 	
+	public void reset(){
+		initRate_rMax = null;
+		initRate_rMin = null;
+		initValue_vMin = null;
+		initValue_vMax = null;
+		this.runs = new DMVCrun();
+	}
 	public String getInitValue(){
 		return ("["+(int)Math.floor(initValue_vMin)+","+(int)Math.ceil(initValue_vMax)+"]");
 	}

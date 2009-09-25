@@ -8,6 +8,8 @@ import java.awt.event.*;
 import java.io.*;
 import java.util.*;
 import java.util.prefs.Preferences;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.*;
 
@@ -29,6 +31,8 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 	private JButton save, run, viewLhpn, saveLhpn, viewLog; // the run button
 
 	private JButton viewCoverage; // SB
+	
+	private JButton viewVHDL; // SB
 	
 	private JComboBox debug; // debug combo box
 
@@ -152,12 +156,26 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 	
 	private boolean suggestIsSource = false;
 	
+	private Double[] lowerLimit;
+	
+	private Double[] upperLimit; 
+	
+	private String[] transEnablingsVHDL;
+	
+	private String[][] transIntAssignVHDL;
+	
+	private String[] transDelayAssignVHDL;
+	
+	private String failPropVHDL;
+	
 	// private int[] numValuesL;// the number of constant values for each variable...-1 indicates that the variable isn't considered a DMVC variable
 
 	// private double vaRateUpdateInterval = 1e-6;// how often the rate is added
 	// to the continuous variable in the Verilog-A model output
 
 	// Pattern lParenR = Pattern.compile("\\(+"); //SB
+	
+	//Pattern floatingPointNum = Pattern.compile(">=(-*[0-9]+\\.*[0-9]*)"); //SB
 
 	// Pattern absoluteTimeR = Pattern.compile(".absoluteTime"); //SB
 
@@ -749,11 +767,18 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		}
 		// SB
 		viewCoverage = new JButton("View Coverage Report");
+		viewVHDL = new JButton("View VHDL-AMS Model");
 		runHolder.add(viewCoverage);
+		runHolder.add(viewVHDL);
 		viewCoverage.addActionListener(this);
+		viewVHDL.addActionListener(this);
 	//	viewCoverage.setMnemonic(KeyEvent.VK_R);
 		if (!(new File(directory + separator + "run.cvg").exists())) {
 			viewCoverage.setEnabled(false);
+		}
+		String vhdFile = lhpnFile.replace(".lpn",".vhd");
+		if (!(new File(directory + separator + vhdFile).exists())) {
+			viewVHDL.setEnabled(false);
 		}
 		
 		// Creates the main panel
@@ -963,6 +988,8 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			saveLhpn();
 		} else if (e.getSource() == viewCoverage) {  // SB
 			viewCoverage();
+		} else if (e.getSource() == viewVHDL) {  // SB
+			viewVHDL();
 		}
 	}
 
@@ -1427,6 +1454,41 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		}
 	}
 	
+	// SB
+	public void viewVHDL() {
+		try {
+			String vhdFile = lhpnFile.replace(".lpn", ".vhd");
+			if (new File(directory + separator + vhdFile).exists()) {
+				File vhdlAmsFile = new File(directory + separator + vhdFile);
+				BufferedReader input = new BufferedReader(new FileReader(vhdlAmsFile));
+				String line = null;
+				JTextArea messageArea = new JTextArea();
+				while ((line = input.readLine()) != null) {
+					messageArea.append(line);
+					messageArea.append(System.getProperty("line.separator"));
+				}
+				input.close();
+				messageArea.setLineWrap(true);
+				messageArea.setWrapStyleWord(true);
+				messageArea.setEditable(false);
+				JScrollPane scrolls = new JScrollPane();
+				scrolls.setMinimumSize(new Dimension(800, 500));
+				scrolls.setPreferredSize(new Dimension(800, 500));
+				scrolls.setViewportView(messageArea);
+				JOptionPane.showMessageDialog(biosim.frame(), scrolls,
+						"VHDL-AMS Model", JOptionPane.INFORMATION_MESSAGE);
+			} else {
+				JOptionPane.showMessageDialog(biosim.frame(),
+						"VHDL-AMS model does not exist.", "Error",
+						JOptionPane.ERROR_MESSAGE);
+			}
+		} catch (Exception e1) {
+			JOptionPane.showMessageDialog(biosim.frame(),
+					"Unable to view VHDL-AMS model.", "Error",
+					JOptionPane.ERROR_MESSAGE);
+		}
+	}
+	
 	public void save() {
 		try {
 			Properties prop = new Properties();
@@ -1848,9 +1910,11 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				viewLog.setEnabled(true);
 				if (new File(directory + separator + lhpnFile).exists()) {
 					viewCoverage.setEnabled(true); // SB
+					viewVHDL.setEnabled(true); // SB
 					viewLhpn();
 				} else {
 					viewCoverage.setEnabled(false); // SB
+					viewVHDL.setEnabled(false); // SB
 					fail = true;
 				}
 
@@ -1898,6 +1962,10 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 
 	public boolean getViewCoverageEnabled() {   // SB
 		return viewCoverage.isEnabled();
+	}
+	
+	public boolean getViewVHDLEnabled() {   // SB
+		return viewVHDL.isEnabled();
 	}
 	
 	public void updateSpecies(String newLearnFile) {
@@ -1976,14 +2044,14 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 
 	public void dataToLHPN() {
 		try {
-			/* Initializations added on Aug 12,2009. These initializations ensure that place,transition 
-			 * numbers start from 0 everytime we click play button on LEMA though compiled only once. 
+			/* Initializations being done in resetAll method added on Aug 12,2009. These 
+			 * initializations ensure that place,transition numbers start from 0 
+			 * everytime we click play button on LEMA though compiled only once. 
+			 * Init values and rates being cleared for the same reason. 
 			 */
-			dmvcCnt = 0;
-			numPlaces = 0;
-			numTransitions = 0;
-			delayScaleFactor = 1.0;
-			varScaleFactor = 1.0;
+			resetAll();
+			lowerLimit = new Double[reqdVarsL.size()];
+			upperLimit = new Double[reqdVarsL.size()];
 			/* end Initializations */
 			//String[] getRootDir = directory.split(separator);
 			//String rootDir = directory;
@@ -2007,6 +2075,9 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		//    reqdVarsL.get(1).setInput(true); // 
 		//	reqdVarsL.get(4).setInput(true); // for pd
 		//	reqdVarsL.get(5).setInput(true); // for pd
+			lowerLimit[0] = -800.0;  // for integrator
+			upperLimit[0] = 800.0;  // for integrator
+			
 			String failProp = "";
 			String enFailAnd = "";
 			String enFail = "";
@@ -2026,6 +2097,11 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				//BufferedReader prop = new BufferedReader(new FileReader(directory + separator + "learn" + ".prop"));
 				failProp = propertyG.getText().trim();
 				failProp = "~(" + failProp + ")";
+				failPropVHDL = failProp.replaceAll("~", "not ");
+				failPropVHDL = failPropVHDL.replaceAll("\\|", " or ");
+				failPropVHDL = failPropVHDL.replaceAll("\\&", " and ");
+				failPropVHDL = failPropVHDL.replaceAll(">=(-*[0-9]+\\.[0-9]*)", "'above($1)");
+				failProp = failProp.replaceAll("\\.[0-9]*","");
 				Properties p0 = new Properties();
 				placeInfo.put("failProp", p0);
 				p0.setProperty("placeNum", numPlaces.toString());
@@ -2081,7 +2157,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			}
 			out.write("\nTotal no of transitions : " + numTransitions);
 			out.write("\nTotal no of places : " + numPlaces);
-			out.write("\nPlaces are : ");
+	/*		out.write("\nPlaces are : ");
 			for (String st3 : g.getPlaceList()) {
 				out.write(st3 + " ");
 			}
@@ -2094,7 +2170,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 					out.write(t + " " + p + "\n");
 				}
 			}
-
+	*/
 			Properties initCond = new Properties();
 			for (Variable v : reqdVarsL) {
 				if (v.isDmvc()) {
@@ -2108,8 +2184,14 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			g.addOutput("fail", "false");
 			ArrayList<ArrayList<Double>> scaleDiv;
 			scaleDiv = normalize();
-			for (String t : g.getTransitionList()) {
+			String[] transitionList = g.getTransitionList();
+			transEnablingsVHDL = new String[transitionList.length];
+			transDelayAssignVHDL = new String[transitionList.length];
+			transIntAssignVHDL = new String[transitionList.length][reqdVarsL.size()];
+			int transNum;
+			for (String t : transitionList) {
 				// Transition t = g.get_valT(sortedTrans.get(j));
+				transNum = Integer.parseInt(t.split("t")[1]);
 				if ((g.getPreset(t) != null)
 						&& (g.getPostset(t) != null)
 						&& (placeInfo.get(getPlaceInfoIndex(g.getPreset(t)[0])).getProperty("type").equalsIgnoreCase("RATE"))
@@ -2117,6 +2199,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 					// g.getPreset(t).length != 0 && g.getPostset(t).length != 0 ??
 					ArrayList<Integer> diffL = diff(getPlaceInfoIndex(g.getPreset(t)[0]), getPlaceInfoIndex(g.getPostset(t)[0]));
 					String condStr = "";
+					transEnablingsVHDL[transNum] = "";
 					String[] binIncoming = getPlaceInfoIndex(g.getPreset(t)[0]).split("");
 					String[] binOutgoing = getPlaceInfoIndex(g.getPostset(t)[0]).split("");
 					for (int k : diffL) {
@@ -2124,12 +2207,15 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 						//	double val = divisionsL.get(k).get(Integer.parseInt(binIncoming[k + 1])).doubleValue();
 							double val = scaleDiv.get(k).get(Integer.parseInt(binIncoming[k + 1])).doubleValue();
 							condStr += "(" + reqdVarsL.get(k).getName() + ">=" + (int) Math.floor(val) + ")";
+							transEnablingsVHDL[transNum] += reqdVarsL.get(k).getName() + "'above(" + (int) Math.floor(val)+".0)";	
 						} else {
 							double val = scaleDiv.get(k).get(Integer.parseInt(binOutgoing[k + 1])).doubleValue();
 							condStr += "~(" + reqdVarsL.get(k).getName() + ">="	+ (int) Math.ceil(val) + ")";
+							transEnablingsVHDL[transNum] += "not " + reqdVarsL.get(k).getName() + "'above(" + (int) Math.ceil(val)+".0)";
 						}
 						if (diffL.get(diffL.size() - 1) != k) {
 							condStr += "&";
+							transEnablingsVHDL[transNum] += " and ";
 						}
 						// Enablings Till above.. Below one is dmvc
 						// delay,assignment. Whenever a transition's incoming
@@ -2138,20 +2224,26 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 						// of this dmvc value with delay equal to that of the in
 						// b/w place's duration range. This has to be changed
 						// after taking the causal relation input
-						if ((reqdVarsL.get(k).isDmvc())
-								&& (!reqdVarsL.get(k).isInput())) { // require
+						if ((reqdVarsL.get(k).isDmvc()) && (!reqdVarsL.get(k).isInput())) { // require
 							// few more changes here.should
 							// check for those variables that are constant over
 							// these regions and make them as causal????? thesis
 							String pPrev = g.getPreset(t)[0];
 							for (String tPrev : g.getPreset(pPrev)) {
-								out.write("\n<" + tPrev + "= " + "{" + placeInfo.get(getPlaceInfoIndex(pPrev)).getProperty("dMin") + "," + placeInfo.get(getPlaceInfoIndex(pPrev)).getProperty("dMax") + "}" + "[" + reqdVarsL.get(k).getName() + ":=[" + placeInfo.get(getPlaceInfoIndex(g.getPostset(t)[0])).getProperty(reqdVarsL.get(k).getName() + "_vMin") + "," + placeInfo.get(getPlaceInfoIndex(g.getPostset(t)[0])).getProperty(reqdVarsL.get(k).getName() + "_vMax") + "]>");
+				//				out.write("\n<" + tPrev + "= " + "{" + placeInfo.get(getPlaceInfoIndex(pPrev)).getProperty("dMin") + "," + placeInfo.get(getPlaceInfoIndex(pPrev)).getProperty("dMax") + "}" + "[" + reqdVarsL.get(k).getName() + ":=[" + placeInfo.get(getPlaceInfoIndex(g.getPostset(t)[0])).getProperty(reqdVarsL.get(k).getName() + "_vMin") + "," + placeInfo.get(getPlaceInfoIndex(g.getPostset(t)[0])).getProperty(reqdVarsL.get(k).getName() + "_vMax") + "]>");
 								g.changeDelay(tPrev, "[" + (int) Double.parseDouble(placeInfo.get(getPlaceInfoIndex(pPrev)).getProperty("dMin")) + "," + (int) Double.parseDouble(placeInfo.get(getPlaceInfoIndex(pPrev)).getProperty("dMax")) + "]");
 								g.addIntAssign(tPrev,reqdVarsL.get(k).getName(),"[" + (int) Math.floor(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(g.getPostset(t)[0])).getProperty(reqdVarsL.get(k).getName() + "_vMin"))) + ","+ (int) Math.ceil(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(g.getPostset(t)[0])).getProperty(reqdVarsL.get(k).getName() + "_vMax"))) + "]");
+								int dmvTnum =  Integer.parseInt(tPrev.split("t")[1]);
+								transIntAssignVHDL[dmvTnum][k] = reqdVarsL.get(k).getName() +" => span(" + (int) Math.floor(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(g.getPostset(t)[0])).getProperty(reqdVarsL.get(k).getName() + "_vMin"))) + ".0,"+ (int) Math.ceil(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(g.getPostset(t)[0])).getProperty(reqdVarsL.get(k).getName() + "_vMax"))) + ".0)";
+								transDelayAssignVHDL[dmvTnum] = "delay(" + (int) Double.parseDouble(placeInfo.get(getPlaceInfoIndex(pPrev)).getProperty("dMin")) + "," + (int) Double.parseDouble(placeInfo.get(getPlaceInfoIndex(pPrev)).getProperty("dMax")) + ")";
 							}
 						}
 					}
+					if (diffL.size() > 1){
+						transEnablingsVHDL[transNum] = "(" + transEnablingsVHDL[transNum] + ")";
+					}
 					condStr += enFailAnd;
+					//transEnablingsVHDL[transNum] += enFailAnd;
 					g.addEnabling(t, condStr);
 				} else if ((g.getPreset(t) != null)
 						&& (g.getPostset(t) != null)
@@ -2215,13 +2307,26 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			 * (p.isPropP()){ for (Transition t:p.getOutgoing()){ out.write("<t" +
 			 * t.getTransitionNum() + "=[fail:=TRUE]>"); } } } out.write("\n"); }
 			 */out.close();
+	//		addMetaBins();
+	//		addMetaBinTransitions();
 			g.save(directory + separator + lhpnFile);
-			writeVHDLAMSFile(lhpnFile.split("\\.")[0]+".vhd");
+			writeVHDLAMSFile(lhpnFile.replace(".lpn",".vhd"));
 			
 		} catch (IOException e) {
 			System.out.println("LPN file couldn't be created/written ");
 		}
 
+	}
+	
+	public void resetAll(){
+		dmvcCnt = 0;
+		numPlaces = 0;
+		numTransitions = 0;
+		delayScaleFactor = 1.0;
+		varScaleFactor = 1.0;
+		for (Variable v: reqdVarsL){
+			v.reset();
+		}
 	}
 
 	public void genBinsRates(ArrayList<ArrayList<Double>> divisionsL) { // genBins
@@ -2418,6 +2523,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 					p0.setProperty("placeNum", numPlaces.toString());
 					p0.setProperty("type", "RATE");
 					p0.setProperty("initiallyMarked", "false");
+					p0.setProperty("metaType","false");  // REMOVE LATER?????
 					g.addPlace("p" + numPlaces, false);
 					numPlaces++;
 					cvgProp.setProperty("places", String.valueOf(Integer.parseInt(cvgProp.getProperty("places"))+1));
@@ -2507,7 +2613,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 								if (placeInfo.get(k).getProperty("type").equalsIgnoreCase("DMVC")) {
 									if ((Math.abs(Double.parseDouble(placeInfo.get(k).getProperty("DMVCValue")) - avgVals[j]) < epsilon)
 											&& (placeInfo.get(k).getProperty("DMVCVariable").equalsIgnoreCase(reqdVarsL.get(i).getName()))) {
-										out.write("Place with key " + k + "already exists. so adding dmvcTime to it\n");
+					//					out.write("Place with key " + k + "already exists. so adding dmvcTime to it\n");
 										addDmvcTime(placeInfo.get(k), reqdVarsL.get(i).getName(), calcDelay(runs.getStartPoint(j), runs.getEndPoint(j)));
 										exists = true;
 										prevPlace = currPlace;
@@ -2548,7 +2654,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 						Double d = calcDelay(runs.getStartPoint(j), runs.getEndPoint(j));// data.get(0).get(runs.getEndPoint(j)) - data.get(0).get(runs.getStartPoint(j));
 						// data.get(0).get(reqdVarsL.get(prevPlace.getDmvcVar()).getRuns().getEndPoint(j-1));
 						addDuration(p2, d); // addDelay
-						out.write("Delay in place p"+ p2.getProperty("placeNum")+ " after updating " + d + " is ["+ p2.getProperty("dMin") + ","+ p2.getProperty("dMax") + "]\n");
+		//				out.write("Delay in place p"+ p2.getProperty("placeNum")+ " after updating " + d + " is ["+ p2.getProperty("dMin") + ","+ p2.getProperty("dMax") + "]\n");
 						if (prevPlace != null) {
 							if (transitionInfo.containsKey(prevPlace + currPlace)) {
 								p3 = transitionInfo.get(prevPlace + currPlace);
@@ -3642,6 +3748,349 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		return true;
 	}
 	
+	public void addMetaBins(){
+		boolean foundBin = false;
+		for (String st1 : g.getPlaceList()){
+			String p = getPlaceInfoIndex(st1);
+			String[] binEncoding ;
+			ArrayList<Integer> syncBinEncoding;
+			String o1;
+			// st1 w.r.t g
+			// p w.r.t placeInfo
+			if (placeInfo.get(p).getProperty("type").equalsIgnoreCase("RATE")) {
+				String [] bE = p.split("");
+				binEncoding = new String[bE.length - 1];
+				for (int i = 0; i < bE.length - 1; i++){
+					binEncoding[i] = bE[i+1];    // since p.split("") gives ,0,1 if p was 01
+				}
+				for (int i = 0; i < binEncoding.length ; i++){
+					if (!reqdVarsL.get(i).isDmvc()){
+					if ((lowerLimit[i] != null) && (getMinRate(p,reqdVarsL.get(i).getName()) < 0)){
+						syncBinEncoding = new ArrayList<Integer>();
+						// deep copy of bin encoding
+						for (int n = 0; n < binEncoding.length; n++){
+							o1 = binEncoding[n];
+							if (o1 == "A"){
+								syncBinEncoding.add(-1);
+							}
+							else if (o1 == "Z"){
+								syncBinEncoding.add(divisionsL.get(n).size());
+							}
+							else{
+								syncBinEncoding.add( Integer.parseInt(o1)); // clone() not working here
+							}
+						}
+						foundBin = false;
+						while (!foundBin){
+							syncBinEncoding.set(i,syncBinEncoding.get(i) - 1);
+							String key = "";
+							for (int m = 0; m < syncBinEncoding.size(); m++){
+								if (syncBinEncoding.get(m) != -1){
+									key += syncBinEncoding.get(m).toString();
+								}
+								else{
+									key += "A"; // ***Encoding -1 as A
+								}
+							}
+							if ((syncBinEncoding.get(i) == -1) && (!placeInfo.containsKey(key))){ 
+								foundBin = true;
+								Properties p0 = new Properties();
+								placeInfo.put(key, p0);
+								p0.setProperty("placeNum", numPlaces.toString());
+								p0.setProperty("type", "RATE");
+								p0.setProperty("initiallyMarked", "false");
+								p0.setProperty("metaType","true");
+								p0.setProperty("metaVar", String.valueOf(i));
+								g.addPlace("p" + numPlaces, false);
+								numPlaces++;
+								if (getMaxRate(p,reqdVarsL.get(i).getName()) > 0){ // minrate is 0; maxrate remains the same if positive
+									addRate(p0, reqdVarsL.get(i).getName(), 0.0);
+									addRate(p0, reqdVarsL.get(i).getName(), (double)getMaxRate(p,reqdVarsL.get(i).getName()));
+							/*
+							 * This transition should be added only in this case but
+							 * since dotty cribs if there's no place on a transition's postset,
+							 * moving this one down so that this transition is created even if the 
+							 * min,max rate is 0 in which case it wouldn't make sense to have this
+							 * transition
+							 * 		Properties p2 = new Properties();
+									transitionInfo.put(key + p, p2);
+									p2.setProperty("transitionNum", numTransitions.toString());
+									g.addTransition("t" + numTransitions); // prevTranKey+key);
+									g.addControlFlow("p" + placeInfo.get(key).getProperty("placeNum"), "t" + transitionInfo.get(key + p).getProperty("transitionNum")); 
+									g.addControlFlow("t" + transitionInfo.get(key + p).getProperty("transitionNum"), "p" + placeInfo.get(p).getProperty("placeNum"));
+									g.addEnabling("t" + numTransitions, "(" + reqdVarsL.get(i).getName() + ">=" + (int) Math.floor(lowerLimit[i]) + ")" + "&~fail");
+									numTransitions++; */
+								}
+								else{
+									addRate(p0, reqdVarsL.get(i).getName(), 0.0); // if the maximum rate was negative, then make the min & max rates both as zero
+								}
+								Properties p1 = new Properties();
+								transitionInfo.put(p + key, p1);
+								p1.setProperty("transitionNum", numTransitions.toString());
+								g.addTransition("t" + numTransitions); // prevTranKey+key);
+								g.addControlFlow("p" + placeInfo.get(p).getProperty("placeNum"), "t" + transitionInfo.get(p + key).getProperty("transitionNum")); 
+								g.addControlFlow("t" + transitionInfo.get(p + key).getProperty("transitionNum"), "p" + placeInfo.get(key).getProperty("placeNum"));
+							//	g.addEnabling("t" + numTransitions, "~fail");
+								g.addEnabling("t" + numTransitions, "~(" + reqdVarsL.get(i).getName() + ">=" + (int) Math.floor(lowerLimit[i]) + ")" + "&~fail");
+								g.addRateAssign("t" + numTransitions, reqdVarsL.get(i).getName(), "["	+ getMinRate(key, reqdVarsL.get(i).getName())	+ "," + getMaxRate(key, reqdVarsL.get(i).getName()) + "]");
+								numTransitions++;
+								Properties p2 = new Properties();
+								transitionInfo.put(key + p, p2);
+								p2.setProperty("transitionNum", numTransitions.toString());
+								g.addTransition("t" + numTransitions); // prevTranKey+key);
+								g.addControlFlow("p" + placeInfo.get(key).getProperty("placeNum"), "t" + transitionInfo.get(key + p).getProperty("transitionNum")); 
+								g.addControlFlow("t" + transitionInfo.get(key + p).getProperty("transitionNum"), "p" + placeInfo.get(p).getProperty("placeNum"));
+								g.addEnabling("t" + numTransitions, "(" + reqdVarsL.get(i).getName() + ">=" + (int) Math.floor(lowerLimit[i]) + ")" + "&~fail");
+								g.addRateAssign("t" + numTransitions, reqdVarsL.get(i).getName(), "["	+ getMinRate(p, reqdVarsL.get(i).getName())	+ "," + getMaxRate(p, reqdVarsL.get(i).getName()) + "]");
+								numTransitions++;
+								
+							}
+							else if (placeInfo.containsKey(key)){
+								foundBin = true;
+								//Properties syncP = placeInfo.get(key);
+								Properties p1;
+								if (!transitionInfo.containsKey(p + key)) { // instead of tuple
+									p1 = new Properties();
+									transitionInfo.put(p + key, p1);
+									p1.setProperty("transitionNum", numTransitions.toString());
+									g.addTransition("t" + numTransitions); // prevTranKey+key);
+									g.addControlFlow("p" + placeInfo.get(p).getProperty("placeNum"), "t" + transitionInfo.get(p + key).getProperty("transitionNum")); 
+									g.addControlFlow("t" + transitionInfo.get(p + key).getProperty("transitionNum"), "p" + placeInfo.get(key).getProperty("placeNum"));
+								//	g.addEnabling("t" + numTransitions, "~fail");
+									g.addEnabling("t" + numTransitions, "~(" + reqdVarsL.get(i).getName() + ">=" + (int) Math.floor(lowerLimit[i]) + ")" + "&~fail");
+									g.addRateAssign("t" + numTransitions, reqdVarsL.get(i).getName(), "["	+ getMinRate(key, reqdVarsL.get(i).getName())	+ "," + getMaxRate(key, reqdVarsL.get(i).getName()) + "]");
+									numTransitions++;
+								}
+							}
+						}
+					}
+					if ((upperLimit[i] != null) && getMaxRate(p,reqdVarsL.get(i).getName()) > 0){
+						syncBinEncoding = new ArrayList<Integer>();
+						// deep copy of bin encoding
+						for (int n = 0; n < binEncoding.length; n++){
+							o1 = binEncoding[n];
+							if (o1 == "A"){
+								syncBinEncoding.add(-1);
+							}
+							else if (o1 == "Z"){
+								syncBinEncoding.add(divisionsL.get(n).size()+1);
+							}
+							else{
+								syncBinEncoding.add( Integer.parseInt(o1)); // clone() not working here
+							}
+						}
+						foundBin = false;
+						while (!foundBin){
+							syncBinEncoding.set(i,syncBinEncoding.get(i) + 1);
+							String key = "";
+							for (int m = 0; m < syncBinEncoding.size(); m++){
+								if (syncBinEncoding.get(m) < divisionsL.get(i).size()+1){
+									key += syncBinEncoding.get(m).toString();
+								}
+								else{
+									key += "Z"; // ***Encoding highest bin +1 as Z
+									// encoding not required here.. but may be useful to distinguish the pseudobins from normal bins in future
+								}
+							}
+							if ((syncBinEncoding.get(i) == divisionsL.get(i).size() + 1) && (!placeInfo.containsKey(key))){ 
+								// divisionsL.get(i).size() + 1 or  divisionsL.get(i).size()???
+								foundBin = true;
+								Properties p0 = new Properties();
+								placeInfo.put(key, p0);
+								p0.setProperty("placeNum", numPlaces.toString());
+								p0.setProperty("type", "RATE");
+								p0.setProperty("initiallyMarked", "false");
+								p0.setProperty("metaType","true");
+								p0.setProperty("metaVar", String.valueOf(i));
+								g.addPlace("p" + numPlaces, false);
+								numPlaces++;
+								if (getMinRate(p,reqdVarsL.get(i).getName()) < 0){ // maxrate is 0; minrate remains the same if negative
+									addRate(p0, reqdVarsL.get(i).getName(), 0.0);
+									addRate(p0, reqdVarsL.get(i).getName(), (double)getMinRate(p,reqdVarsL.get(i).getName()));
+									/*
+									 * This transition should be added only in this case but
+									 * since dotty cribs if there's no place on a transition's postset,
+									 * moving this one down so that this transition is created even if the 
+									 * min,max rate is 0 in which case it wouldn't make sense to have this
+									 * transition
+									 * 				
+									Properties p2 = new Properties();
+									transitionInfo.put(key + p, p2);
+									p2.setProperty("transitionNum", numTransitions.toString());
+									g.addTransition("t" + numTransitions); // prevTranKey+key);
+									g.addControlFlow("p" + placeInfo.get(key).getProperty("placeNum"), "t" + transitionInfo.get(key + p).getProperty("transitionNum")); 
+									g.addControlFlow("t" + transitionInfo.get(key + p).getProperty("transitionNum"), "p" + placeInfo.get(p).getProperty("placeNum"));
+									g.addEnabling("t" + numTransitions, "~(" + reqdVarsL.get(i).getName() + ">=" + (int) Math.ceil(upperLimit[i]) + ")" + "&~fail");
+									numTransitions++; 
+									*/
+								}
+								else{
+									addRate(p0, reqdVarsL.get(i).getName(), 0.0); // if the minimum rate was positive, then make the min & max rates both as zero
+								}
+								
+								Properties p1 = new Properties();
+								transitionInfo.put(p + key, p1);
+								p1.setProperty("transitionNum", numTransitions.toString());
+								g.addTransition("t" + numTransitions); // prevTranKey+key);
+								g.addControlFlow("p" + placeInfo.get(p).getProperty("placeNum"), "t" + transitionInfo.get(p + key).getProperty("transitionNum")); 
+								g.addControlFlow("t" + transitionInfo.get(p + key).getProperty("transitionNum"), "p" + placeInfo.get(key).getProperty("placeNum"));
+							//	g.addEnabling("t" + numTransitions, "~fail");
+								g.addRateAssign("t" + numTransitions, reqdVarsL.get(i).getName(), "["	+ getMinRate(key, reqdVarsL.get(i).getName())	+ "," + getMaxRate(key, reqdVarsL.get(i).getName()) + "]");
+								g.addEnabling("t" + numTransitions, "(" + reqdVarsL.get(i).getName() + ">=" + (int) Math.ceil(upperLimit[i]) + ")" + "&~fail");
+								numTransitions++;
+								Properties p2 = new Properties();
+								transitionInfo.put(key + p, p2);
+								p2.setProperty("transitionNum", numTransitions.toString());
+								g.addTransition("t" + numTransitions); // prevTranKey+key);
+								g.addControlFlow("p" + placeInfo.get(key).getProperty("placeNum"), "t" + transitionInfo.get(key + p).getProperty("transitionNum")); 
+								g.addControlFlow("t" + transitionInfo.get(key + p).getProperty("transitionNum"), "p" + placeInfo.get(p).getProperty("placeNum"));
+								g.addEnabling("t" + numTransitions, "~(" + reqdVarsL.get(i).getName() + ">=" + (int) Math.ceil(upperLimit[i]) + ")" + "&~fail");
+								g.addRateAssign("t" + numTransitions, reqdVarsL.get(i).getName(), "["	+ getMinRate(p, reqdVarsL.get(i).getName())	+ "," + getMaxRate(p, reqdVarsL.get(i).getName()) + "]");
+								numTransitions++; 
+							}
+							else if (placeInfo.containsKey(key)){
+								foundBin = true;
+								//Properties syncP = placeInfo.get(key);
+								Properties p1;
+								if (!transitionInfo.containsKey(p + key)) { // instead of tuple
+									p1 = new Properties();
+									transitionInfo.put(p + key, p1);
+									p1.setProperty("transitionNum", numTransitions.toString());
+									g.addTransition("t" + numTransitions); // prevTranKey+key);
+									g.addControlFlow("p" + placeInfo.get(p).getProperty("placeNum"), "t" + transitionInfo.get(p + key).getProperty("transitionNum")); 
+									g.addControlFlow("t" + transitionInfo.get(p + key).getProperty("transitionNum"), "p" + placeInfo.get(key).getProperty("placeNum"));
+								//	g.addEnabling("t" + numTransitions, "~fail");
+									g.addRateAssign("t" + numTransitions, reqdVarsL.get(i).getName(), "["	+ getMinRate(key, reqdVarsL.get(i).getName())	+ "," + getMaxRate(key, reqdVarsL.get(i).getName()) + "]");
+									g.addEnabling("t" + numTransitions, "(" + reqdVarsL.get(i).getName() + ">=" + (int) Math.ceil(upperLimit[i]) + ")" + "&~fail");
+									numTransitions++;
+								}
+							}
+						}
+					}
+					}
+				}
+			}
+		}
+	}
+	public void addMetaBinTransitions(){ 
+		// Adds transitions b/w existing metaBins. 
+		// Doesn't add any new metabins. Doesn't add transitions b/w metabins & normal bins
+		boolean foundBin = false;
+		for (String st1 : g.getPlaceList()){
+			String p = getPlaceInfoIndex(st1);
+			Properties placeP = placeInfo.get(p);
+			String[] binEncoding ;
+			ArrayList<Integer> syncBinEncoding;
+			String o1;
+			// st1 w.r.t g
+			// p w.r.t placeInfo
+			if (placeP.getProperty("type").equalsIgnoreCase("RATE") && placeP.getProperty("metaType").equalsIgnoreCase("true")) {
+				String [] bE = p.split("");
+				binEncoding = new String[bE.length - 1];
+				for (int i = 0; i < bE.length - 1; i++){
+					binEncoding[i] = bE[i+1];    // since p.split("") gives ,0,1 if p was 01
+				}
+				for (int i = 0; i < binEncoding.length ; i++){
+					if ((!reqdVarsL.get(i).isDmvc()) && (Integer.parseInt(placeP.getProperty("metaVar")) != i)){
+					if ((getMinRate(p,reqdVarsL.get(i).getName()) < 0)){
+						syncBinEncoding = new ArrayList<Integer>();
+						// deep copy of bin encoding
+						for (int n = 0; n < binEncoding.length; n++){
+							o1 = binEncoding[n];
+							if (o1 == "A"){
+								syncBinEncoding.add(-1);
+							}
+							else if (o1 == "Z"){
+								syncBinEncoding.add(divisionsL.get(n).size());
+							}
+							else{
+								syncBinEncoding.add( Integer.parseInt(o1)); // clone() not working here
+							}
+						}
+						foundBin = false;
+						while (!foundBin){
+							syncBinEncoding.set(i,syncBinEncoding.get(i) - 1);
+							String key = "";
+							for (int m = 0; m < syncBinEncoding.size(); m++){
+								if (syncBinEncoding.get(m) != -1){
+									key += syncBinEncoding.get(m).toString();
+								}
+								else{
+									key += "A"; // ***Encoding -1 as A
+								}
+							}
+							if (placeInfo.containsKey(key)){
+								foundBin = true;
+								//Properties syncP = placeInfo.get(key);
+								Properties p1;
+								if (!transitionInfo.containsKey(p + key)) { // instead of tuple
+									p1 = new Properties();
+									transitionInfo.put(p + key, p1);
+									p1.setProperty("transitionNum", numTransitions.toString());
+									g.addTransition("t" + numTransitions); // prevTranKey+key);
+									g.addControlFlow("p" + placeInfo.get(p).getProperty("placeNum"), "t" + transitionInfo.get(p + key).getProperty("transitionNum")); 
+									g.addControlFlow("t" + transitionInfo.get(p + key).getProperty("transitionNum"), "p" + placeInfo.get(key).getProperty("placeNum"));
+								//	g.addEnabling("t" + numTransitions, "~fail");
+									g.addEnabling("t" + numTransitions, "~(" + reqdVarsL.get(i).getName() + ">=" + (int) Math.floor(lowerLimit[i]) + ")" + "&~fail");
+									g.addRateAssign("t" + numTransitions, reqdVarsL.get(i).getName(), "["	+ getMinRate(key, reqdVarsL.get(i).getName())	+ "," + getMaxRate(key, reqdVarsL.get(i).getName()) + "]");
+									numTransitions++;
+								}
+							}
+						}
+					}
+					if (getMaxRate(p,reqdVarsL.get(i).getName()) > 0){
+						syncBinEncoding = new ArrayList<Integer>();
+						// deep copy of bin encoding
+						for (int n = 0; n < binEncoding.length; n++){
+							o1 = binEncoding[n];
+							if (o1 == "A"){
+								syncBinEncoding.add(-1);
+							}
+							else if (o1 == "Z"){
+								syncBinEncoding.add(divisionsL.get(n).size()+1);
+							}
+							else{
+								syncBinEncoding.add( Integer.parseInt(o1)); // clone() not working here
+							}
+						}
+						foundBin = false;
+						while (!foundBin){
+							syncBinEncoding.set(i,syncBinEncoding.get(i) + 1);
+							String key = "";
+							for (int m = 0; m < syncBinEncoding.size(); m++){
+								if (syncBinEncoding.get(m) < divisionsL.get(i).size()+1){
+									key += syncBinEncoding.get(m).toString();
+								}
+								else{
+									key += "Z"; // ***Encoding highest bin +1 as Z
+									// encoding not required here.. but may be useful to distinguish the pseudobins from normal bins in future
+								}
+							}
+							if (placeInfo.containsKey(key)){
+								foundBin = true;
+								//Properties syncP = placeInfo.get(key);
+								Properties p1;
+								if (!transitionInfo.containsKey(p + key)) { // instead of tuple
+									p1 = new Properties();
+									transitionInfo.put(p + key, p1);
+									p1.setProperty("transitionNum", numTransitions.toString());
+									g.addTransition("t" + numTransitions); // prevTranKey+key);
+									g.addControlFlow("p" + placeInfo.get(p).getProperty("placeNum"), "t" + transitionInfo.get(p + key).getProperty("transitionNum")); 
+									g.addControlFlow("t" + transitionInfo.get(p + key).getProperty("transitionNum"), "p" + placeInfo.get(key).getProperty("placeNum"));
+								//	g.addEnabling("t" + numTransitions, "~fail");
+									g.addRateAssign("t" + numTransitions, reqdVarsL.get(i).getName(), "["	+ getMinRate(key, reqdVarsL.get(i).getName())	+ "," + getMaxRate(key, reqdVarsL.get(i).getName()) + "]");
+									g.addEnabling("t" + numTransitions, "(" + reqdVarsL.get(i).getName() + ">=" + (int) Math.ceil(upperLimit[i]) + ")" + "&~fail");
+									numTransitions++;
+								}
+							}
+						}
+					}
+					}
+				}
+			}
+		}
+	}
+
 	public void writeVHDLAMSFile(String vhdFile){
 		try{
 			ArrayList<String> ratePlaces = new ArrayList<String>();
@@ -3649,6 +4098,8 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			File VHDLFile = new File(directory + separator + vhdFile);
 			VHDLFile.createNewFile();
 			BufferedWriter vhdlAms = new BufferedWriter(new FileWriter(VHDLFile));
+			StringBuffer buffer = new StringBuffer();
+			String pNum;
 			vhdlAms.write("library IEEE;\n");
 			vhdlAms.write("use IEEE.std_logic_1164.all;\n");
 			vhdlAms.write("use work.handshake.all;\n");
@@ -3659,17 +4110,17 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			for (Variable v : reqdVarsL){
 				vhdlAms.write("\tquantity "+v.getName()+":real;\n");
 			}
-			vhdlAms.write("\nbegin\n");
-			for (Variable v : reqdVarsL){ // taking the lower value from the initial value range. Ok?
-				vhdlAms.write("\tbreak "+v.getName()+" => "+((((v.getInitValue()).split("\\,"))[0]).split("\\["))[1]+".0;\n");
-			}
-			vhdlAms.write("\n");
-			for (Variable v : reqdVarsL){
-				if (v.isDmvc()){
-					vhdlAms.write("\t"+v.getName()+"'dot == 0.0;\n");
+			for (int i = 0; i < numPlaces; i++){
+				String p = getPlaceInfoIndex("p"+i);
+				if (!placeInfo.get(p).getProperty("type").equalsIgnoreCase("RATE")) {
+					continue;
 				}
+				vhdlAms.write("\tshared variable place:integer:= "+i+";\n");
+				break;
 			}
-			vhdlAms.write("\n");
+			if (failPropVHDL != null){
+				vhdlAms.write("\tshared variable fail:boolean:= false;\n");
+			}
 			for (String st1 : g.getPlaceList()){
 				String p = getPlaceInfoIndex(st1);
 				if (placeInfo.get(p).getProperty("type").equalsIgnoreCase("RATE")) {
@@ -3677,6 +4128,9 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				}
 				if (placeInfo.get(p).getProperty("type").equalsIgnoreCase("DMVC")) {
 					dmvcPlaces.add(p); // w.r.t placeInfo here
+				}
+				if (placeInfo.get(p).getProperty("type").equalsIgnoreCase("PROP")) {
+					
 				}
 			}
 			/*for (String st:dmvcPlaces){
@@ -3727,20 +4181,170 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				}
 			});
 			// sending the initial place to the end of the list. since if statements begin with preset of each place
-			ratePlaces.add(ratePlaces.get(0)); 
-			ratePlaces.remove(0);
+			//ratePlaces.add(ratePlaces.get(0)); 
+			//ratePlaces.remove(0);
 			
 			/*System.out.println("after sorting:");
 			for (String st:dmvcPlaces){
 				System.out.println("p" + placeInfo.get(st).getProperty("placeNum") + "," +placeInfo.get(st).getProperty("DMVCVariable"));
 			}*/
+			vhdlAms.write("begin\n");
+			//buffer.append("\nbegin\n");
+			String[] vals;
+			for (Variable v : reqdVarsL){ // taking the lower value from the initial value range. Ok?
+				//vhdlAms.write("\tbreak "+v.getName()+" => "+((((v.getInitValue()).split("\\,"))[0]).split("\\["))[1]+".0;\n");
+				vals = v.getInitValue().split("\\,");
+				vhdlAms.write("\tbreak "+v.getName()+" => span("+((vals[0]).split("\\["))[1]+".0,"+ ((vals[1]).split("\\]"))[0] +".0);\n");
+				//buffer.append("\tbreak "+v.getName()+" => span("+((vals[0]).split("\\["))[1]+".0,"+ ((vals[1]).split("\\]"))[0] +".0);\n");
+			}
+			vhdlAms.write("\n");
+			//buffer.append("\n");
+			for (Variable v : reqdVarsL){
+				if (v.isDmvc()){
+					vhdlAms.write("\t"+v.getName()+"'dot == 0.0;\n");
+					//buffer.append("\t"+v.getName()+"'dot == 0.0;\n");
+				}
+			}
+			vhdlAms.write("\n");
+			//buffer.append("\n");
 			ArrayList<ArrayList<String>> dmvcVarPlaces = new ArrayList<ArrayList<String>>();
+			boolean contVarExists = false;
 			for (Variable v: reqdVarsL){
 				dmvcVarPlaces.add(new ArrayList<String>());
+				if (v.isDmvc()){
+					continue;
+				}
+				else{
+					contVarExists = true;
+				}
 			}
 			for (String st:dmvcPlaces){
 				dmvcVarPlaces.get(Integer.parseInt(st.split("_")[1])).add(st);
 			}
+			if (contVarExists){
+				if (ratePlaces.size() != 0){
+					//vhdlAms.write("\tcase place use\n");
+					buffer.append("\tcase place use\n");
+				}
+				//vhdlAms.write("\ntype rate_places is (");
+				for (String p : ratePlaces){
+					pNum = p.split("p")[1];
+					//vhdlAms.write("\t\twhen "+p.split("p")[1] +" =>\n");
+					buffer.append("\t\twhen "+ pNum +" =>\n");
+					for (int j = 0; j<reqdVarsL.size(); j++){
+						if ((!reqdVarsL.get(j).isInput()) && (!reqdVarsL.get(j).isDmvc())){
+							//if (!(reqdVarsL.get(j).isInput() && reqdVarsL.get(j).isDmvc())){
+							//vhdlAms.write("\t\t\t" + reqdVarsL.get(j).getName() + "'dot == span(" + getMinRate(getPlaceInfoIndex(p), reqdVarsL.get(j).getName())+".0,"+getMaxRate(getPlaceInfoIndex(p), reqdVarsL.get(j).getName())+".0);\n");
+							buffer.append("\t\t\t" + reqdVarsL.get(j).getName() + "'dot == span(" + getMinRate(getPlaceInfoIndex(p), reqdVarsL.get(j).getName())+".0,"+getMaxRate(getPlaceInfoIndex(p), reqdVarsL.get(j).getName())+".0);\n");
+						}
+					}
+				}
+				vhdlAms.write(buffer.toString());
+				vhdlAms.write("\t\twhen others =>\n");
+				for (int j = 0; j<reqdVarsL.size(); j++){
+					if ((!reqdVarsL.get(j).isInput()) && (!reqdVarsL.get(j).isDmvc())){
+						//if (!(reqdVarsL.get(j).isInput() && reqdVarsL.get(j).isDmvc())){
+					vhdlAms.write("\t\t\t" + reqdVarsL.get(j).getName() + "'dot == 0.0;\n");
+					}
+				}
+				vhdlAms.write("\tend case;\n");
+			}
+			vhdlAms.write("\tprocess\n");
+			vhdlAms.write("\tbegin\n");
+			vhdlAms.write("\tcase place is\n");
+			buffer.delete(0, buffer.length());
+			String[] transL;
+			int transNum;
+			for (String p : ratePlaces){
+				pNum = p.split("p")[1];
+				vhdlAms.write("\t\twhen "+pNum +" =>\n");
+				vhdlAms.write("\t\t\twait until ");
+				transL = g.getPostset(p);
+				if (transL.length == 1){
+					transNum = Integer.parseInt(transL[0].split("t")[1]);
+					vhdlAms.write(transEnablingsVHDL[transNum] + ";\n");
+					if (transDelayAssignVHDL[transNum] != null){
+						vhdlAms.write("\t\t\twait for "+ transDelayAssignVHDL[transNum]+";\n");
+						//vhdlAms.write("\t\t\tbreak "+ transIntAssignVHDL[transNum]+";\n");
+						for (String s : transIntAssignVHDL[transNum]){
+							if (s != null){
+								vhdlAms.write("\t\t\tbreak "+ s +";\n");
+							}
+						}
+					}
+					vhdlAms.write("\t\t\tplace := " + g.getPostset(transL[0])[0].split("p")[1] + ";\n");
+				}
+				else{
+					boolean firstTrans = true;
+					buffer.delete(0, buffer.length());
+					for (String t : transL){
+						transNum = Integer.parseInt(t.split("t")[1]);
+						if (firstTrans){
+							firstTrans = false;
+							vhdlAms.write("(" + transEnablingsVHDL[transNum]);
+							buffer.append("\t\t\tif " + transEnablingsVHDL[transNum] + " then\n");
+							if (transDelayAssignVHDL[transNum] != null){
+								buffer.append("\t\t\t\twait for "+ transDelayAssignVHDL[transNum]+";\n");
+								for (String s : transIntAssignVHDL[transNum]){
+									if (s != null){
+										buffer.append("\t\t\t\tbreak "+ s +";\n");
+									}
+								}
+							}
+							buffer.append("\t\t\t\tplace := " + g.getPostset(t)[0].split("p")[1] + ";\n"); 
+						}
+						else{
+							vhdlAms.write(" or " +transEnablingsVHDL[transNum] );
+							buffer.append("\t\t\telsif " + transEnablingsVHDL[transNum] + " then\n");
+							if (transDelayAssignVHDL[transNum] != null){
+								buffer.append("\t\t\t\twait for "+ transDelayAssignVHDL[transNum]+";\n");
+								//buffer.append("\t\t\t\tbreak "+ transIntAssignVHDL[transNum]+";\n");
+								for (String s : transIntAssignVHDL[transNum]){
+									if (s != null){
+										buffer.append("\t\t\t\tbreak "+ s +";\n");
+									}
+								}
+							}
+							buffer.append("\t\t\t\tplace := " + g.getPostset(t)[0].split("p")[1] + ";\n"); 
+						}
+					}
+					vhdlAms.write(");\n");
+					buffer.append("\t\t\tend if;\n");
+					vhdlAms.write(buffer.toString());
+				}
+			}
+			vhdlAms.write("\t\twhen others =>\n\t\t\twait for 0.0;\n\t\t\tplace := "+ ratePlaces.get(0).split("p")[1] + ";\n\tend case;\n\tend process;\n");
+			for (int i = 0; i < dmvcVarPlaces.size(); i++){
+				if (dmvcVarPlaces.get(i).size() != 0){
+				vhdlAms.write("\tprocess\n");
+				vhdlAms.write("\tbegin\n");
+				for (String p : dmvcVarPlaces.get(i)){
+					vhdlAms.write("\t\twait for delay("+ (int) Math.floor(Double.parseDouble(placeInfo.get(p).getProperty("dMin")))+","+(int)Math.ceil(Double.parseDouble(placeInfo.get(p).getProperty("dMax"))) +");\n");
+		// recheck above line.. truncating double to int.. becomes 0 in most unscaled cases?/
+					vhdlAms.write("\t\tbreak "+reqdVarsL.get(i).getName()+ " => "+ (int) Math.floor(Double.parseDouble(placeInfo.get(p).getProperty("DMVCValue"))) + ".0;\n");
+				}
+				vhdlAms.write("\tend process;\n\n");
+				}
+			}
+			if (failPropVHDL != null){
+				vhdlAms.write("\tprocess\n");
+				vhdlAms.write("\tbegin\n");
+				vhdlAms.write("\t\twait until " + failPropVHDL + ";\n");
+				vhdlAms.write("\t\tfail := true;\n");
+				vhdlAms.write("\tend process;\n\n");
+			}
+		//	vhdlAms.write("\tend process;\n\n");
+			vhdlAms.write("end "+vhdFile.split("\\.")[0]+";\n");
+			vhdlAms.close();
+			
+		}
+		catch(IOException e){
+			
+		}
+	}
+	//T[] aux = (T[])a.clone();
+}
+/*
 			ArrayList<ArrayList<String>> ifL = new ArrayList<ArrayList<String>>();
 			ArrayList<ArrayList<String>> ifRateL = new ArrayList<ArrayList<String>>();
 			for (Variable v: reqdVarsL){
@@ -3825,7 +4429,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 	}
 	//T[] aux = (T[])a.clone();
 }
-
+*/
 /*  OBSOLETE METHODS
 public ArrayList<ArrayList<Double>> parseBinFile() {
 	reqdVarsL = new ArrayList<Variable>();

@@ -231,9 +231,9 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 
 	private JMenuItem copy, rename, delete, save, saveAs, saveAsGcm, saveAsGraph, saveAsSbml,
 			saveAsTemplate, saveGcmAsLhpn, saveAsLhpn, check, run, export, refresh, viewCircuit,
-			viewRules, viewTrace, viewLog, viewCoverage, saveParam, saveSbml, saveTemp,
-			viewModGraph, viewModBrowser, createAnal, createLearn, createSbml, createSynth,
-			createVer, close, closeAll;
+			viewRules, viewTrace, viewLog, viewCoverage, viewVHDL, saveParam, saveSbml, saveTemp, viewModGraph,
+			viewModBrowser, createAnal, createLearn, createSbml, createSynth, createVer, close,
+			closeAll;
 
 	public String ENVVAR;
 
@@ -493,7 +493,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		viewRules = new JMenuItem("Rules");
 		viewTrace = new JMenuItem("Trace");
 		viewLog = new JMenuItem("Log");
-		viewCoverage = new JMenuItem("Coverage Report"); // SB
+		viewCoverage = new JMenuItem("Coverage Report");  // SB
+		viewVHDL = new JMenuItem("VHDL-AMS Model");  // SB
 		viewModGraph = new JMenuItem("Using GraphViz");
 		viewModBrowser = new JMenuItem("Using Browser");
 		createAnal = new JMenuItem("Analysis Tool");
@@ -560,6 +561,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		viewTrace.addActionListener(this);
 		viewLog.addActionListener(this);
 		viewCoverage.addActionListener(this); // SB
+		viewVHDL.addActionListener(this); // SB
 		viewModGraph.addActionListener(this);
 		viewModBrowser.addActionListener(this);
 		createAnal.addActionListener(this);
@@ -621,6 +623,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		viewCircuit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));
 		viewLog.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F3, 0));
 		viewCoverage.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, 0)); // SB
+		viewVHDL.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F6, 0)); // SB
 		refresh.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0));
 		createAnal.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ShortCutKey));
 		createLearn.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, ShortCutKey));
@@ -764,6 +767,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		viewTrace.setEnabled(false);
 		viewLog.setEnabled(false);
 		viewCoverage.setEnabled(false); // SB
+		viewVHDL.setEnabled(false); // SB
 		viewModel.setEnabled(false);
 		viewModGraph.setEnabled(false);
 		viewModBrowser.setEnabled(false);
@@ -896,6 +900,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		view.add(viewCircuit);
 		view.add(viewLog);
 		view.add(viewCoverage); // SB
+		view.add(viewVHDL); //SB
 		if (async) {
 			view.addSeparator();
 			view.add(viewRules);
@@ -2045,6 +2050,22 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				}
 				else if (component instanceof LearnLHPN) {
 					((LearnLHPN) component).viewCoverage();
+				}
+			}
+		}
+		else if (e.getSource() == viewVHDL) {  // SB
+			Component comp = tab.getSelectedComponent();
+			if (treeSelected) {
+				JOptionPane.showMessageDialog(frame(), "VDHL Model does not  exist.", "Error",
+						JOptionPane.ERROR_MESSAGE);
+			}
+			else if (comp instanceof JTabbedPane) {
+				Component component = ((JTabbedPane) comp).getSelectedComponent();
+				if (component instanceof Learn) {
+			//		((Learn) component).viewVHDL();
+				}
+				else if (component instanceof LearnLHPN) {
+					((LearnLHPN) component).viewVHDL();
 				}
 			}
 		}
@@ -10421,7 +10442,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			exportMenu.setEnabled(false);
 			viewCircuit.setEnabled(false);
 			viewLog.setEnabled(false);
-			viewCoverage.setEnabled(false); // SB
+			viewCoverage.setEnabled(false); //SB
+			viewVHDL.setEnabled(false); // SB
 			saveParam.setEnabled(false);
 			saveSbml.setEnabled(true);
 			saveTemp.setEnabled(true);
@@ -10451,7 +10473,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			viewTrace.setEnabled(false);
 			viewCircuit.setEnabled(true);
 			viewLog.setEnabled(false);
-			viewCoverage.setEnabled(false); // SB
+			viewCoverage.setEnabled(false); //SB
+			viewVHDL.setEnabled(false); // SB
 			saveParam.setEnabled(false);
 		}
 		else if (comp instanceof SBML_Editor) {
@@ -10477,7 +10500,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			exportMenu.setEnabled(false);
 			viewCircuit.setEnabled(false);
 			viewLog.setEnabled(false);
-			viewCoverage.setEnabled(false); // SB
+			viewCoverage.setEnabled(false); //SB
+			viewVHDL.setEnabled(false); // SB
 			saveParam.setEnabled(false);
 			saveSbml.setEnabled(true);
 			saveTemp.setEnabled(true);
@@ -10520,7 +10544,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			exportSvg.setEnabled(true);
 			viewCircuit.setEnabled(false);
 			viewLog.setEnabled(false);
-			viewCoverage.setEnabled(false); // SB
+			viewCoverage.setEnabled(false); //SB
+			viewVHDL.setEnabled(false); // SB
 			saveParam.setEnabled(false);
 			saveSbml.setEnabled(false);
 			saveTemp.setEnabled(false);
@@ -10584,7 +10609,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				viewTrace.setEnabled(false);
 				viewCircuit.setEnabled(false);
 				viewLog.setEnabled(false);
-				viewCoverage.setEnabled(false); // SB
+				viewCoverage.setEnabled(false); //SB
+				viewVHDL.setEnabled(false); // SB
 				saveParam.setEnabled(false);
 				saveSbml.setEnabled(false);
 				saveTemp.setEnabled(false);
@@ -10614,7 +10640,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				viewTrace.setEnabled(false);
 				viewCircuit.setEnabled(false);
 				viewLog.setEnabled(false);
-				viewCoverage.setEnabled(false); // SB
+				viewCoverage.setEnabled(false); //SB
+				viewVHDL.setEnabled(false); // SB
 				saveParam.setEnabled(true);
 				saveSbml.setEnabled(false);
 				saveTemp.setEnabled(false);
@@ -10644,7 +10671,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				viewTrace.setEnabled(false);
 				viewCircuit.setEnabled(false);
 				viewLog.setEnabled(false);
-				viewCoverage.setEnabled(false); // SB
+				viewCoverage.setEnabled(false); //SB
+				viewVHDL.setEnabled(false); // SB
 				saveParam.setEnabled(true);
 				saveSbml.setEnabled(false);
 				saveTemp.setEnabled(false);
@@ -10678,9 +10706,9 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				viewRules.setEnabled(false);
 				viewTrace.setEnabled(false);
 				viewLog.setEnabled(((Learn) component).getViewLogEnabled());
-				viewCoverage.setEnabled(false); // SB
-				// viewCoverage.setEnabled(((Learn)
-				// component).getViewCoverageEnabled()); // SB
+				viewCoverage.setEnabled(false);  // SB
+				viewVHDL.setEnabled(false); // SB
+		//		viewCoverage.setEnabled(((Learn) component).getViewCoverageEnabled());  // SB
 				saveParam.setEnabled(true);
 				saveSbml.setEnabled(false);
 				saveTemp.setEnabled(false);
@@ -10714,7 +10742,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				viewRules.setEnabled(false);
 				viewTrace.setEnabled(false);
 				viewLog.setEnabled(((LearnLHPN) component).getViewLogEnabled());
-				viewCoverage.setEnabled(((LearnLHPN) component).getViewCoverageEnabled()); // SB
+				viewCoverage.setEnabled(((LearnLHPN) component).getViewCoverageEnabled());  // SB
+				viewVHDL.setEnabled(((LearnLHPN) component).getViewVHDLEnabled()); // SB
 				saveParam.setEnabled(true);
 				saveSbml.setEnabled(false);
 				saveTemp.setEnabled(false);
@@ -10744,7 +10773,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				viewRules.setEnabled(false);
 				viewTrace.setEnabled(false);
 				viewLog.setEnabled(false);
-				viewCoverage.setEnabled(false); // SB
+				viewCoverage.setEnabled(false);  // SB
+				viewVHDL.setEnabled(false); // SB
 				saveParam.setEnabled(false);
 				saveSbml.setEnabled(false);
 				saveTemp.setEnabled(false);
@@ -10774,7 +10804,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				viewTrace.setEnabled(false);
 				viewCircuit.setEnabled(false);
 				viewLog.setEnabled(false);
-				viewCoverage.setEnabled(false); // SB
+				viewCoverage.setEnabled(false);  // SB
+				viewVHDL.setEnabled(false); // SB
 				saveParam.setEnabled(true);
 				saveSbml.setEnabled(false);
 				saveTemp.setEnabled(false);
@@ -10804,7 +10835,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				viewTrace.setEnabled(false);
 				viewCircuit.setEnabled(false);
 				viewLog.setEnabled(false);
-				viewCoverage.setEnabled(false); // SB
+				viewCoverage.setEnabled(false);  // SB
+				viewVHDL.setEnabled(false); // SB
 				saveParam.setEnabled(true);
 				saveSbml.setEnabled(false);
 				saveTemp.setEnabled(false);
@@ -10841,7 +10873,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				// viewLog.setEnabled(((Verification)
 				// comp).getViewLogEnabled());
 				viewLog.setEnabled(true);
-				viewCoverage.setEnabled(false); // SB
+				viewCoverage.setEnabled(false);  // SB
+				viewVHDL.setEnabled(false); // SB
 				saveParam.setEnabled(true);
 			}
 			else if (comp.getName().equals("Synthesis")) {
@@ -10877,7 +10910,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				viewTrace.setEnabled(true);
 				viewCircuit.setEnabled(true);
 				viewLog.setEnabled(true);
-				viewCoverage.setEnabled(true); // SB
+				viewCoverage.setEnabled(true);  // SB
+				viewVHDL.setEnabled(true); // SB
 				saveParam.setEnabled(false);
 			}
 		}
@@ -10906,7 +10940,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			viewTrace.setEnabled(false);
 			viewCircuit.setEnabled(false);
 			viewLog.setEnabled(false);
-			viewCoverage.setEnabled(false); // SB
+			viewCoverage.setEnabled(false);  // SB
+			viewVHDL.setEnabled(false); // SB
 			saveParam.setEnabled(true);
 			saveSbml.setEnabled(false);
 			saveTemp.setEnabled(false);
@@ -10936,7 +10971,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			viewRules.setEnabled(false);
 			viewTrace.setEnabled(false);
 			viewLog.setEnabled(false);
-			viewCoverage.setEnabled(false); // SB
+			viewCoverage.setEnabled(false);  // SB
+			viewVHDL.setEnabled(false); // SB
 			saveParam.setEnabled(false);
 			saveSbml.setEnabled(false);
 			saveTemp.setEnabled(false);
@@ -10989,7 +11025,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				viewTrace.setEnabled(false);
 				viewCircuit.setEnabled(false);
 				viewLog.setEnabled(false);
-				viewCoverage.setEnabled(false); // SB
+				viewCoverage.setEnabled(false);  // SB
+				viewVHDL.setEnabled(false); // SB
 				saveParam.setEnabled(false);
 				saveSbml.setEnabled(false);
 				saveTemp.setEnabled(false);
@@ -11014,7 +11051,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				viewTrace.setEnabled(false);
 				viewCircuit.setEnabled(false);
 				viewLog.setEnabled(false);
-				viewCoverage.setEnabled(false); // SB
+				viewCoverage.setEnabled(false);  // SB
+				viewVHDL.setEnabled(false); // SB
 				saveParam.setEnabled(false);
 				saveSbml.setEnabled(false);
 				saveTemp.setEnabled(false);
@@ -11037,7 +11075,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				viewTrace.setEnabled(false);
 				viewCircuit.setEnabled(false);
 				viewLog.setEnabled(false);
-				viewCoverage.setEnabled(false); // SB
+				viewCoverage.setEnabled(false);  // SB
+				viewVHDL.setEnabled(false); // SB
 				saveParam.setEnabled(false);
 				saveSbml.setEnabled(false);
 				saveTemp.setEnabled(false);
@@ -11062,7 +11101,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				viewTrace.setEnabled(false);
 				viewCircuit.setEnabled(false);
 				viewLog.setEnabled(false);
-				viewCoverage.setEnabled(false); // SB
+				viewCoverage.setEnabled(false);  // SB
+				viewVHDL.setEnabled(false); // SB
 				saveParam.setEnabled(false);
 				saveSbml.setEnabled(false);
 				saveTemp.setEnabled(false);
@@ -11092,7 +11132,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				else {
 					viewLog.setEnabled(false);
 				}
-				viewCoverage.setEnabled(false); // SB
+				viewCoverage.setEnabled(false);  // SB
+				viewVHDL.setEnabled(false); // SB
 				saveParam.setEnabled(false);
 				saveSbml.setEnabled(false);
 				saveTemp.setEnabled(false);
@@ -11122,7 +11163,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				else {
 					viewLog.setEnabled(false);
 				}
-				viewCoverage.setEnabled(false); // SB
+				viewCoverage.setEnabled(false);  // SB
+				viewVHDL.setEnabled(false); // SB
 				saveParam.setEnabled(false);
 				saveSbml.setEnabled(false);
 				saveTemp.setEnabled(false);
@@ -11145,7 +11187,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				viewTrace.setEnabled(false);
 				viewCircuit.setEnabled(false);
 				viewLog.setEnabled(false);
-				viewCoverage.setEnabled(false); // SB
+				viewCoverage.setEnabled(false);  // SB
+				viewVHDL.setEnabled(false); // SB
 				saveParam.setEnabled(false);
 				saveSbml.setEnabled(false);
 				saveTemp.setEnabled(false);
@@ -11168,7 +11211,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				viewTrace.setEnabled(false);
 				viewCircuit.setEnabled(false);
 				viewLog.setEnabled(false);
-				viewCoverage.setEnabled(false); // SB
+				viewCoverage.setEnabled(false);  // SB
+				viewVHDL.setEnabled(false); // SB
 				saveParam.setEnabled(false);
 				saveSbml.setEnabled(false);
 				saveTemp.setEnabled(false);
@@ -11191,7 +11235,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				viewTrace.setEnabled(false);
 				viewCircuit.setEnabled(false);
 				viewLog.setEnabled(false);
-				viewCoverage.setEnabled(false); // SB
+				viewCoverage.setEnabled(false);  // SB
+				viewVHDL.setEnabled(false); // SB
 				saveParam.setEnabled(false);
 				saveSbml.setEnabled(false);
 				saveTemp.setEnabled(false);
@@ -11214,7 +11259,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				viewTrace.setEnabled(false);
 				viewCircuit.setEnabled(false);
 				viewLog.setEnabled(false);
-				viewCoverage.setEnabled(false); // SB
+				viewCoverage.setEnabled(false);  // SB
+				viewVHDL.setEnabled(false); // SB
 				saveParam.setEnabled(false);
 				saveSbml.setEnabled(false);
 				saveTemp.setEnabled(false);
@@ -11254,7 +11300,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					viewTrace.setEnabled(false);
 					viewCircuit.setEnabled(false);
 					viewLog.setEnabled(false);
-					viewCoverage.setEnabled(false); // SB
+					viewCoverage.setEnabled(false);  // SB
+					viewVHDL.setEnabled(false); // SB
 					saveParam.setEnabled(false);
 					saveSbml.setEnabled(false);
 					saveTemp.setEnabled(false);
@@ -11276,7 +11323,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				viewTrace.setEnabled(false);
 				viewCircuit.setEnabled(false);
 				viewLog.setEnabled(false);
-				viewCoverage.setEnabled(false); // SB
+				viewCoverage.setEnabled(false);  // SB
+				viewVHDL.setEnabled(false); // SB
 				saveParam.setEnabled(false);
 				saveSbml.setEnabled(false);
 				saveTemp.setEnabled(false);
@@ -11557,3 +11605,4 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		return document;
 	}
 }
+
