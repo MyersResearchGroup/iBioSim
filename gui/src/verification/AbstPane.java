@@ -112,22 +112,22 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 		// Add abstraction option check boxes
 		JPanel xformPanel = new JPanel();
 		//xformPanel.setLayout(new BorderLayout());
-		xform0 = new JCheckBox("Transform 0");
-		xform1 = new JCheckBox("Transform 1");
-		xform3 = new JCheckBox("Transform 3");
-		xform4 = new JCheckBox("Transform 4");
-		xform5 = new JCheckBox("Transform 5");
-		xform6 = new JCheckBox("Transform 6");
-		xform7 = new JCheckBox("Transform 7");
+		xform0 = new JCheckBox("Transform 0"); // Merge parallel places
+		xform1 = new JCheckBox("Transform 1"); // Remove place in self-loop
+		xform3 = new JCheckBox("Transform 3"); // Remove trans with 1 place in preset
+		xform4 = new JCheckBox("Transform 4"); // Remove trans with 1 place in postset
+		xform5 = new JCheckBox("Transform 5"); // Merge trans with same pre/postset
+		xform6 = new JCheckBox("Transform 6"); // Merge trans with same preset
+		xform7 = new JCheckBox("Transform 7"); // Merge trans with same postset
 		xform8 = new JCheckBox("Transform 8");
 		xform9 = new JCheckBox("Transform 9");
 		xform10 = new JCheckBox("Transform 10");
 		xform11 = new JCheckBox("Transform 11");
-		xform12 = new JCheckBox("Transform 12");
-		xform13 = new JCheckBox("Transform 13");
-		xform14 = new JCheckBox("Transform 14");
-		xform15 = new JCheckBox("Transform 15");
-		xform16 = new JCheckBox("Transform 16");
+		xform12 = new JCheckBox("Transform 12"); // Abstract assignments
+		xform13 = new JCheckBox("Transform 13"); // Remove variables
+		xform14 = new JCheckBox("Transform 14"); // Remove dead places
+		xform15 = new JCheckBox("Transform 15"); // Remove dead transitions
+		xform16 = new JCheckBox("Transform 16"); // Simplify enabling conditions
 		xform0.setSelected(true);
 		xform1.setSelected(true);
 		xform0.setSelected(true);
