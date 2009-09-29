@@ -21,51 +21,51 @@ import verification.Verification;
 
 public class LHPNFile {
 
-	private HashMap<String, Boolean> places;
+	protected HashMap<String, Boolean> places;
 
-	private HashMap<String, String> inputs;
+	protected HashMap<String, String> inputs;
 
-	private HashMap<String, String> outputs;
+	protected HashMap<String, String> outputs;
 
-	private HashMap<String, String> enablings;
+	protected HashMap<String, String> enablings;
 
-	private HashMap<String, ExprTree> enablingTrees;
+	protected HashMap<String, ExprTree> enablingTrees;
 
-	private HashMap<String, Properties> controlFlow;
+	protected HashMap<String, Properties> controlFlow;
 
-	private HashMap<String, Properties> controlPlaces;
+	protected HashMap<String, Properties> controlPlaces;
 
-	private HashMap<String, Properties> variables;
+	protected HashMap<String, Properties> variables;
 
-	private HashMap<String, String> integers;
+	protected HashMap<String, String> integers;
 
-	private HashMap<String, Properties> rateAssignments;
+	protected HashMap<String, Properties> rateAssignments;
 
-	private HashMap<String, HashMap<String, ExprTree[]>> rateAssignmentTrees;
+	protected HashMap<String, HashMap<String, ExprTree[]>> rateAssignmentTrees;
 
-	private HashMap<String, Properties> contAssignments;
+	protected HashMap<String, Properties> contAssignments;
 
-	private HashMap<String, HashMap<String, ExprTree[]>> contAssignmentTrees;
+	protected HashMap<String, HashMap<String, ExprTree[]>> contAssignmentTrees;
 
-	private HashMap<String, Properties> intAssignments;
+	protected HashMap<String, Properties> intAssignments;
 
-	private HashMap<String, HashMap<String, ExprTree[]>> intAssignmentTrees;
+	protected HashMap<String, HashMap<String, ExprTree[]>> intAssignmentTrees;
 
-	private HashMap<String, String> delays;
+	protected HashMap<String, String> delays;
 
 	// private HashMap<String, ExprTree[]> delayTrees;
 
-	private HashMap<String, ExprTree> transitionRateTrees;
+	protected HashMap<String, ExprTree> transitionRateTrees;
 
-	private HashMap<String, String> transitionRates;
+	protected HashMap<String, String> transitionRates;
 
-	private HashMap<String, Properties> booleanAssignments;
+	protected HashMap<String, Properties> booleanAssignments;
 
-	private HashMap<String, HashMap<String, ExprTree[]>> booleanAssignmentTrees;
+	protected HashMap<String, HashMap<String, ExprTree[]>> booleanAssignmentTrees;
 
-	private String property;
+	protected String property;
 
-	private Log log;
+	protected Log log;
 
 	public LHPNFile(Log log) {
 		this.log = log;
@@ -625,7 +625,7 @@ public class LHPNFile {
 	public void removePlace(String name) {
 		if (name != null && places.containsKey(name)) {
 			places.remove(name);
-			// controlPlaces.remove(name);
+			controlPlaces.remove(name);
 		}
 		// for (String s : controlFlow.keySet()) {
 		// Properties prop = controlFlow.get(s);
@@ -887,9 +887,9 @@ public class LHPNFile {
 			if (prop.containsKey("postset") && prop.getProperty("postset") != null) {
 				String[] list = prop.getProperty("postset").split("\\s");
 				String toList = "";
-				for (int i = 0; i < list.length - 1; i++) {
-					if (toName.equals(list[i])) {
-						toList = toList + list[i] + " ";
+				for (String p : list) {
+					if (!toName.equals(p)) {
+						toList = toList + p + " ";
 					}
 				}
 				if (!toList.equals("")) {
@@ -902,18 +902,20 @@ public class LHPNFile {
 				if (controlPlaces.get(toName) != null) {
 					prop = controlPlaces.get(toName);
 				}
-				list = prop.getProperty("preset").split("\\s");
-				String fromList = "";
-				for (int i = 0; i < list.length - 1; i++) {
-					if (!toName.equals(list[i])) {
-						fromList = fromList + list[i] + " ";
+				if (prop.containsKey("preset")) {
+					list = prop.getProperty("preset").split("\\s");
+					String fromList = "";
+					for (String t : list) {
+						if (!toName.equals(t)) {
+							fromList = fromList + t + " ";
+						}
 					}
-				}
-				if (!fromList.equals("")) {
-					prop.put("preset", fromList.trim());
-				}
-				else {
-					prop.remove("preset");
+					if (!fromList.equals("")) {
+						prop.put("preset", fromList.trim());
+					}
+					else {
+						prop.remove("preset");
+					}
 				}
 				controlPlaces.put(toName, prop);
 			}
@@ -926,9 +928,9 @@ public class LHPNFile {
 			if (prop.containsKey("preset") && prop.getProperty("preset") != null) {
 				String[] list = prop.getProperty("preset").split("\\s");
 				String fromList = "";
-				for (int i = 0; i < list.length - 1; i++) {
-					if (!toName.equals(list[i])) {
-						fromList = fromList + list[i] + " ";
+				for (String p : list) {
+					if (!fromName.equals(p)) {
+						fromList = fromList + p + " ";
 					}
 				}
 				if (!fromList.equals("")) {
@@ -941,16 +943,16 @@ public class LHPNFile {
 			else {
 				prop.remove("preset");
 			}
-			controlPlaces.put(toName, prop);
+			controlFlow.put(toName, prop);
 			if (controlPlaces.get(fromName) != null) {
 				prop = controlPlaces.get(fromName);
 			}
 			if (prop.getProperty("postset") != null) {
 				String[] list = prop.getProperty("postset").split("\\s");
 				String toList = "";
-				for (int i = 0; i < list.length - 1; i++) {
-					if (!toName.equals(list[i])) {
-						toList = toList + list[i] + " ";
+				for (String t : list) {
+					if (!toName.equals(t)) {
+						toList = toList + t + " ";
 					}
 				}
 				if (!toList.equals("")) {
@@ -2142,8 +2144,6 @@ public class LHPNFile {
 		abstraction.addEnablings(enablings);
 		abstraction.addEnablingTrees(enablingTrees);
 		abstraction.addDelays(delays);
-		// abstraction.addDelayTrees(delayTrees);
-		abstraction.addRateTrees(transitionRateTrees);
 		abstraction.addRates(transitionRates);
 		abstraction.addBooleanAssignments(booleanAssignments);
 		abstraction.addBooleanAssignmentTrees(booleanAssignmentTrees);
