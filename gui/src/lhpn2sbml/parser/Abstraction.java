@@ -992,337 +992,337 @@ public class Abstraction extends LHPNFile {
 		return intVars;
 	}
 
-	public void save(String filename) {
-		try {
-			String file = filename;
-			PrintStream p = new PrintStream(new FileOutputStream(filename));
-			StringBuffer buffer = new StringBuffer();
-			HashMap<String, Integer> boolOrder = new HashMap<String, Integer>();
-			int i = 0;
-			if (!inputs.isEmpty()) {
-				buffer.append(".inputs ");
-				for (String s : inputs.keySet()) {
-					if (inputs.get(s) != null) {
-						buffer.append(s + " ");
-						boolOrder.put(s, i);
-						i++;
-					}
-				}
-				buffer.append("\n");
-			}
-			if (!outputs.isEmpty()) {
-				buffer.append(".outputs ");
-				for (String s : outputs.keySet()) {
-					if (outputs.get(s) != null) {
-						buffer.append(s + " ");
-						boolOrder.put(s, i);
-						i++;
-					}
-				}
-				buffer.append("\n");
-			}
-			if (!controlFlow.isEmpty()) {
-				buffer.append(".dummy ");
-				for (String s : controlFlow.keySet()) {
-					buffer.append(s + " ");
-				}
-				buffer.append("\n");
-			}
-			if (!variables.isEmpty() || !integers.isEmpty()) {
-				buffer.append("#@.variables ");
-				for (String s : variables.keySet()) {
-					buffer.append(s + " ");
-				}
-				for (String s : integers.keySet()) {
-					buffer.append(s + " ");
-				}
-				buffer.append("\n");
-			}
-			if (!places.isEmpty()) {
-				buffer.append("#|.places ");
-				for (String s : places.keySet()) {
-					buffer.append(s + " ");
-				}
-				buffer.append("\n");
-			}
-			if (!inputs.isEmpty() || !outputs.isEmpty()) {
-				boolean flag = false;
-				for (i = 0; i < boolOrder.size(); i++) {
-					for (String s : inputs.keySet()) {
-						if (boolOrder.get(s).equals(i)) {
-							if (!flag) {
-								buffer.append("#@.init_state [");
-								flag = true;
-							}
-							if (inputs.get(s).equals("true")) {
-								buffer.append("1");
-							}
-							else if (inputs.get(s).equals("false")) {
-								buffer.append("0");
-							}
-							else {
-								buffer.append("X");
-							}
-						}
-					}
-					for (String s : outputs.keySet()) {
-						if (s != null && boolOrder.get(s) != null) {
-							// log.addText(s);
-							if (boolOrder.get(s).equals(i) && outputs.get(s) != null) {
-								if (!flag) {
-									buffer.append("#@.init_state [");
-									flag = true;
-								}
-								if (outputs.get(s).equals("true")) {
-									buffer.append("1");
-								}
-								else if (outputs.get(s).equals("false")) {
-									buffer.append("0");
-								}
-								else {
-									buffer.append("X");
-								}
-							}
-						}
-					}
-				}
-				if (flag) {
-					buffer.append("]\n");
-				}
-			}
-			if (!controlFlow.isEmpty()) {
-				buffer.append(".graph\n");
-				for (String s : controlFlow.keySet()) {
-					// log.addText(s);
-					if (controlFlow.get(s) != null) {
-						Properties prop = controlFlow.get(s);
-						// log.addText(s + prop.getProperty("postset"));
-						if (prop.getProperty("postset") != null) {
-							String toString = prop.getProperty("postset");
-							if (toString != null) {
-								// log.addText("to " + toString);
-								String[] toArray = toString.split("\\s");
-								for (i = 0; i < toArray.length; i++) {
-									if (toArray[i] != null && !toArray[i].equals("null")) {
-										buffer.append(s + " " + toArray[i] + "\n");
-									}
-								}
-							}
-						}
-						if (prop.getProperty("preset") != null) {
-							String fromString = prop.getProperty("preset");
-							if (fromString != null) {
-								// log.addText("from "+ fromString);
-								String[] fromArray = fromString.split("\\s");
-								for (i = 0; i < fromArray.length; i++) {
-									if (fromArray[i] != null && !fromArray[i].equals("null")) {
-										buffer.append(fromArray[i] + " " + s + "\n");
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-			boolean flag = false;
-			if (!places.keySet().isEmpty()) {
-				for (String s : places.keySet()) {
-					if (places.get(s).equals(true)) {
-						if (!flag) {
-							buffer.append(".marking {");
-							flag = true;
-						}
-						buffer.append(s + " ");
-					}
-				}
-				if (flag) {
-					buffer.append("}\n");
-				}
-			}
-			if (property != null && !property.equals("")) {
-				buffer.append("#@.property " + property + "\n");
-			}
-			if (!variables.isEmpty() || !integers.isEmpty()) {
-				buffer.append("#@.init_vals {");
-				for (String s : variables.keySet()) {
-					Properties prop = variables.get(s);
-					buffer.append("<" + s + "=" + prop.getProperty("value") + ">");
-				}
-				for (String s : integers.keySet()) {
-					String ic = integers.get(s);
-					buffer.append("<" + s + "=" + ic + ">");
-				}
-				if (!variables.isEmpty()) {
-					buffer.append("}\n#@.init_rates {");
-					for (String s : variables.keySet()) {
-						Properties prop = variables.get(s);
-						buffer.append("<" + s + "=" + prop.getProperty("rate") + ">");
-					}
-				}
-				buffer.append("}\n");
-			}
-			if (!enablings.isEmpty()) {
-				flag = false;
-				for (String s : enablings.keySet()) {
-					if (s != null && !enablings.get(s).equals("")) {
-						if (!flag) {
-							buffer.append("#@.enablings {");
-							flag = true;
-						}
-						// log.addText("here " + enablings.get(s));
-						buffer.append("<" + s + "=[" + enablings.get(s) + "]>");
-					}
-				}
-				if (flag) {
-					buffer.append("}\n");
-				}
-			}
-			if (!contAssignments.isEmpty() || !intAssignments.isEmpty()) {
-				flag = false;
-				for (String s : contAssignments.keySet()) {
-					Properties prop = contAssignments.get(s);
-					// log.addText(prop.toString());
-					if (!prop.isEmpty()) {
-						if (!flag) {
-							buffer.append("#@.assignments {");
-							flag = true;
-						}
-						buffer.append("<" + s + "=");
-						for (Object key : prop.keySet()) {
-							String t = (String) key;
-							buffer.append("[" + t + ":=" + prop.getProperty(t) + "]");
-						}
-						buffer.append(">");
-					}
-				}
-				for (String s : intAssignments.keySet()) {
-					Properties prop = intAssignments.get(s);
-					if (!prop.isEmpty()) {
-						if (!flag) {
-							buffer.append("#@.assignments {");
-							flag = true;
-						}
-						buffer.append("<" + s + "=");
-						for (Object key : prop.keySet()) {
-							String t = (String) key;
-							// log.addText("key " + t);
-							buffer.append("[" + t + ":=" + prop.getProperty(t) + "]");
-						}
-						buffer.append(">");
-					}
-				}
-				if (flag) {
-					buffer.append("}\n");
-				}
-			}
-			if (!rateAssignments.isEmpty()) {
-				flag = false;
-				for (String s : rateAssignments.keySet()) {
-					boolean varFlag = false;
-					Properties prop = rateAssignments.get(s);
-					for (Object key : prop.keySet()) {
-						String t = (String) key;
-						if (!t.equals("")) {
-							if (!flag) {
-								buffer.append("#@.rate_assignments {");
-								flag = true;
-							}
-							if (!varFlag) {
-								buffer.append("<" + s + "=");
-								varFlag = true;
-							}
-							buffer.append("[" + t + ":=" + prop.getProperty(t) + "]");
-						}
-					}
-					if (varFlag) {
-						buffer.append(">");
-					}
-				}
-				if (flag) {
-					buffer.append("}\n");
-				}
-			}
-			if (!delays.isEmpty()) {
-				flag = false;
-				for (String s : delays.keySet()) {
-					if (s != null && !delays.get(s).equals("")) {
-						if (!flag) {
-							buffer.append("#@.delay_assignments {");
-							flag = true;
-						}
-						buffer.append("<" + s + "=" + delays.get(s) + ">");
-					}
-				}
-				if (flag) {
-					buffer.append("}\n");
-				}
-			}
-			if (!transitionRates.isEmpty()) {
-				flag = false;
-				for (String s : transitionRates.keySet()) {
-					if (s != null && !transitionRates.get(s).equals("")) {
-						if (!flag) {
-							buffer.append("#@.transition_rates {");
-							flag = true;
-						}
-						// log.addText("here " + enablings.get(s));
-						buffer.append("<" + s + "=[" + transitionRates.get(s) + "]>");
-					}
-				}
-				if (flag) {
-					buffer.append("}\n");
-				}
-			}
-			if (!booleanAssignments.isEmpty()) {
-				flag = false;
-				for (String s : booleanAssignments.keySet()) {
-					if (!s.equals("")) {
-						boolean varFlag = false;
-						Properties prop = booleanAssignments.get(s);
-						for (Object key : prop.keySet()) {
-							String t = (String) key;
-							if (!t.equals("") && (isInput(t) || isOutput(t))) {
-								if (!flag) {
-									buffer.append("#@.boolean_assignments {");
-									flag = true;
-								}
-								if (!varFlag) {
-									buffer.append("<" + s + "=");
-									varFlag = true;
-								}
-								buffer.append("[" + t + ":=" + prop.getProperty(t) + "]");
-							}
-						}
-						if (varFlag) {
-							buffer.append(">");
-						}
-					}
-				}
-				if (flag) {
-					buffer.append("}\n");
-				}
-			}
-			if (!variables.isEmpty()) {
-				buffer.append("#@.continuous ");
-				for (String s : variables.keySet()) {
-					buffer.append(s + " ");
-				}
-				buffer.append("\n");
-			}
-			if (buffer.toString().length() > 0) {
-				buffer.append(".end\n");
-			}
-			// System.out.print(buffer);
-			p.print(buffer);
-			p.close();
-			if (log != null) {
-				log.addText("Saving:\n" + file + "\n");
-			}
-		}
-		catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-	}
+//	public void save(String filename) {
+//		try {
+//			String file = filename;
+//			PrintStream p = new PrintStream(new FileOutputStream(filename));
+//			StringBuffer buffer = new StringBuffer();
+//			HashMap<String, Integer> boolOrder = new HashMap<String, Integer>();
+//			int i = 0;
+//			if (!inputs.isEmpty()) {
+//				buffer.append(".inputs ");
+//				for (String s : inputs.keySet()) {
+//					if (inputs.get(s) != null) {
+//						buffer.append(s + " ");
+//						boolOrder.put(s, i);
+//						i++;
+//					}
+//				}
+//				buffer.append("\n");
+//			}
+//			if (!outputs.isEmpty()) {
+//				buffer.append(".outputs ");
+//				for (String s : outputs.keySet()) {
+//					if (outputs.get(s) != null) {
+//						buffer.append(s + " ");
+//						boolOrder.put(s, i);
+//						i++;
+//					}
+//				}
+//				buffer.append("\n");
+//			}
+//			if (!controlFlow.isEmpty()) {
+//				buffer.append(".dummy ");
+//				for (String s : controlFlow.keySet()) {
+//					buffer.append(s + " ");
+//				}
+//				buffer.append("\n");
+//			}
+//			if (!variables.isEmpty() || !integers.isEmpty()) {
+//				buffer.append("#@.variables ");
+//				for (String s : variables.keySet()) {
+//					buffer.append(s + " ");
+//				}
+//				for (String s : integers.keySet()) {
+//					buffer.append(s + " ");
+//				}
+//				buffer.append("\n");
+//			}
+//			if (!places.isEmpty()) {
+//				buffer.append("#|.places ");
+//				for (String s : places.keySet()) {
+//					buffer.append(s + " ");
+//				}
+//				buffer.append("\n");
+//			}
+//			if (!inputs.isEmpty() || !outputs.isEmpty()) {
+//				boolean flag = false;
+//				for (i = 0; i < boolOrder.size(); i++) {
+//					for (String s : inputs.keySet()) {
+//						if (boolOrder.get(s).equals(i)) {
+//							if (!flag) {
+//								buffer.append("#@.init_state [");
+//								flag = true;
+//							}
+//							if (inputs.get(s).equals("true")) {
+//								buffer.append("1");
+//							}
+//							else if (inputs.get(s).equals("false")) {
+//								buffer.append("0");
+//							}
+//							else {
+//								buffer.append("X");
+//							}
+//						}
+//					}
+//					for (String s : outputs.keySet()) {
+//						if (s != null && boolOrder.get(s) != null) {
+//							// log.addText(s);
+//							if (boolOrder.get(s).equals(i) && outputs.get(s) != null) {
+//								if (!flag) {
+//									buffer.append("#@.init_state [");
+//									flag = true;
+//								}
+//								if (outputs.get(s).equals("true")) {
+//									buffer.append("1");
+//								}
+//								else if (outputs.get(s).equals("false")) {
+//									buffer.append("0");
+//								}
+//								else {
+//									buffer.append("X");
+//								}
+//							}
+//						}
+//					}
+//				}
+//				if (flag) {
+//					buffer.append("]\n");
+//				}
+//			}
+//			if (!controlFlow.isEmpty()) {
+//				buffer.append(".graph\n");
+//				for (String s : controlFlow.keySet()) {
+//					// log.addText(s);
+//					if (controlFlow.get(s) != null) {
+//						Properties prop = controlFlow.get(s);
+//						// log.addText(s + prop.getProperty("postset"));
+//						if (prop.getProperty("postset") != null) {
+//							String toString = prop.getProperty("postset");
+//							if (toString != null) {
+//								// log.addText("to " + toString);
+//								String[] toArray = toString.split("\\s");
+//								for (i = 0; i < toArray.length; i++) {
+//									if (toArray[i] != null && !toArray[i].equals("null")) {
+//										buffer.append(s + " " + toArray[i] + "\n");
+//									}
+//								}
+//							}
+//						}
+//						if (prop.getProperty("preset") != null) {
+//							String fromString = prop.getProperty("preset");
+//							if (fromString != null) {
+//								// log.addText("from "+ fromString);
+//								String[] fromArray = fromString.split("\\s");
+//								for (i = 0; i < fromArray.length; i++) {
+//									if (fromArray[i] != null && !fromArray[i].equals("null")) {
+//										buffer.append(fromArray[i] + " " + s + "\n");
+//									}
+//								}
+//							}
+//						}
+//					}
+//				}
+//			}
+//			boolean flag = false;
+//			if (!places.keySet().isEmpty()) {
+//				for (String s : places.keySet()) {
+//					if (places.get(s).equals(true)) {
+//						if (!flag) {
+//							buffer.append(".marking {");
+//							flag = true;
+//						}
+//						buffer.append(s + " ");
+//					}
+//				}
+//				if (flag) {
+//					buffer.append("}\n");
+//				}
+//			}
+//			if (property != null && !property.equals("")) {
+//				buffer.append("#@.property " + property + "\n");
+//			}
+//			if (!variables.isEmpty() || !integers.isEmpty()) {
+//				buffer.append("#@.init_vals {");
+//				for (String s : variables.keySet()) {
+//					Properties prop = variables.get(s);
+//					buffer.append("<" + s + "=" + prop.getProperty("value") + ">");
+//				}
+//				for (String s : integers.keySet()) {
+//					String ic = integers.get(s);
+//					buffer.append("<" + s + "=" + ic + ">");
+//				}
+//				if (!variables.isEmpty()) {
+//					buffer.append("}\n#@.init_rates {");
+//					for (String s : variables.keySet()) {
+//						Properties prop = variables.get(s);
+//						buffer.append("<" + s + "=" + prop.getProperty("rate") + ">");
+//					}
+//				}
+//				buffer.append("}\n");
+//			}
+//			if (!enablings.isEmpty()) {
+//				flag = false;
+//				for (String s : enablings.keySet()) {
+//					if (s != null && !enablings.get(s).equals("")) {
+//						if (!flag) {
+//							buffer.append("#@.enablings {");
+//							flag = true;
+//						}
+//						// log.addText("here " + enablings.get(s));
+//						buffer.append("<" + s + "=[" + enablings.get(s) + "]>");
+//					}
+//				}
+//				if (flag) {
+//					buffer.append("}\n");
+//				}
+//			}
+//			if (!contAssignments.isEmpty() || !intAssignments.isEmpty()) {
+//				flag = false;
+//				for (String s : contAssignments.keySet()) {
+//					Properties prop = contAssignments.get(s);
+//					// log.addText(prop.toString());
+//					if (!prop.isEmpty()) {
+//						if (!flag) {
+//							buffer.append("#@.assignments {");
+//							flag = true;
+//						}
+//						buffer.append("<" + s + "=");
+//						for (Object key : prop.keySet()) {
+//							String t = (String) key;
+//							buffer.append("[" + t + ":=" + prop.getProperty(t) + "]");
+//						}
+//						buffer.append(">");
+//					}
+//				}
+//				for (String s : intAssignments.keySet()) {
+//					Properties prop = intAssignments.get(s);
+//					if (!prop.isEmpty()) {
+//						if (!flag) {
+//							buffer.append("#@.assignments {");
+//							flag = true;
+//						}
+//						buffer.append("<" + s + "=");
+//						for (Object key : prop.keySet()) {
+//							String t = (String) key;
+//							// log.addText("key " + t);
+//							buffer.append("[" + t + ":=" + prop.getProperty(t) + "]");
+//						}
+//						buffer.append(">");
+//					}
+//				}
+//				if (flag) {
+//					buffer.append("}\n");
+//				}
+//			}
+//			if (!rateAssignments.isEmpty()) {
+//				flag = false;
+//				for (String s : rateAssignments.keySet()) {
+//					boolean varFlag = false;
+//					Properties prop = rateAssignments.get(s);
+//					for (Object key : prop.keySet()) {
+//						String t = (String) key;
+//						if (!t.equals("")) {
+//							if (!flag) {
+//								buffer.append("#@.rate_assignments {");
+//								flag = true;
+//							}
+//							if (!varFlag) {
+//								buffer.append("<" + s + "=");
+//								varFlag = true;
+//							}
+//							buffer.append("[" + t + ":=" + prop.getProperty(t) + "]");
+//						}
+//					}
+//					if (varFlag) {
+//						buffer.append(">");
+//					}
+//				}
+//				if (flag) {
+//					buffer.append("}\n");
+//				}
+//			}
+//			if (!delays.isEmpty()) {
+//				flag = false;
+//				for (String s : delays.keySet()) {
+//					if (s != null && !delays.get(s).equals("")) {
+//						if (!flag) {
+//							buffer.append("#@.delay_assignments {");
+//							flag = true;
+//						}
+//						buffer.append("<" + s + "=" + delays.get(s) + ">");
+//					}
+//				}
+//				if (flag) {
+//					buffer.append("}\n");
+//				}
+//			}
+//			if (!transitionRates.isEmpty()) {
+//				flag = false;
+//				for (String s : transitionRates.keySet()) {
+//					if (s != null && !transitionRates.get(s).equals("")) {
+//						if (!flag) {
+//							buffer.append("#@.transition_rates {");
+//							flag = true;
+//						}
+//						// log.addText("here " + enablings.get(s));
+//						buffer.append("<" + s + "=[" + transitionRates.get(s) + "]>");
+//					}
+//				}
+//				if (flag) {
+//					buffer.append("}\n");
+//				}
+//			}
+//			if (!booleanAssignments.isEmpty()) {
+//				flag = false;
+//				for (String s : booleanAssignments.keySet()) {
+//					if (!s.equals("")) {
+//						boolean varFlag = false;
+//						Properties prop = booleanAssignments.get(s);
+//						for (Object key : prop.keySet()) {
+//							String t = (String) key;
+//							if (!t.equals("") && (isInput(t) || isOutput(t))) {
+//								if (!flag) {
+//									buffer.append("#@.boolean_assignments {");
+//									flag = true;
+//								}
+//								if (!varFlag) {
+//									buffer.append("<" + s + "=");
+//									varFlag = true;
+//								}
+//								buffer.append("[" + t + ":=" + prop.getProperty(t) + "]");
+//							}
+//						}
+//						if (varFlag) {
+//							buffer.append(">");
+//						}
+//					}
+//				}
+//				if (flag) {
+//					buffer.append("}\n");
+//				}
+//			}
+//			if (!variables.isEmpty()) {
+//				buffer.append("#@.continuous ");
+//				for (String s : variables.keySet()) {
+//					buffer.append(s + " ");
+//				}
+//				buffer.append("\n");
+//			}
+//			if (buffer.toString().length() > 0) {
+//				buffer.append(".end\n");
+//			}
+//			// System.out.print(buffer);
+//			p.print(buffer);
+//			p.close();
+//			if (log != null) {
+//				log.addText("Saving:\n" + file + "\n");
+//			}
+//		}
+//		catch (FileNotFoundException e) {
+//			e.printStackTrace();
+//		}
+//	}
 
 	private boolean comparePreset(Properties flow1, Properties flow2) {
 		if (flow1.getProperty("preset") != null && flow2.getProperty("preset") != null) {
