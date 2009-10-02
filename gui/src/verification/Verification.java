@@ -789,30 +789,6 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			if (abstFilename != null) {
 				if (!abstFilename.endsWith(".lpn"))
 					abstFilename = abstFilename + ".lpn";
-				// String[] options = { "Ok", "Cancel" };
-				// JPanel panel = new JPanel();
-				// panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-				// JCheckBox[] list = new JCheckBox[variables.length];
-				// ArrayList<String> tempVars = new ArrayList<String>();
-				// for (int i = 0; i < variables.length; i++) {
-				// JCheckBox temp = new JCheckBox(variables[i]);
-				// panel.add(temp);
-				// list[i] = temp;
-				// }
-				// int value = JOptionPane.showOptionDialog(new JFrame(), panel,
-				// "Variable Assignment Editor", JOptionPane.YES_NO_OPTION,
-				// JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-				// if (value == JOptionPane.YES_OPTION) {
-				// for (int i = 0; i < list.length; i++) {
-				// if (list[i].isSelected()) {
-				// tempVars.add(variables[i]);
-				// }
-				// }
-				// String[] vars = new String[tempVars.size()];
-				// for (int i = 0; i < tempVars.size(); i++) {
-				// vars[i] = tempVars.get(i);
-				// }
-				// }
 				if (abstPane.xform13.isSelected()) {
 					abstraction.abstractVars(abstPane.getIntVars());
 				}
