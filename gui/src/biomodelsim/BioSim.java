@@ -4165,39 +4165,22 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						for (String s : new File(filename.trim()).list()) {
 							try {
 								SBMLDocument document = readSBML(filename.trim() + separator + s);
-								if (document.getNumErrors() == 0) {
-									if (overwrite(root + separator + s, s)) {
-										long numErrors = document.checkConsistency();
-										if (numErrors > 0) {
-											display = true;
-											messageArea
-													.append("--------------------------------------------------------------------------------------\n");
-											messageArea.append(s);
-											messageArea
-													.append("\n--------------------------------------------------------------------------------------\n\n");
-											for (long i = 0; i < numErrors; i++) {
-												String error = document.getError(i).getMessage(); // .
-												// replace
-												// (
-												// "."
-												// ,
-												// ".\n"
-												// )
-												// ;
-												messageArea.append(i + ":" + error + "\n");
-											}
+								if (overwrite(root + separator + s, s)) {
+									long numErrors = document.checkConsistency();
+									if (numErrors > 0) {
+										display = true;
+										messageArea
+										.append("--------------------------------------------------------------------------------------\n");
+										messageArea.append(s);
+										messageArea
+										.append("\n--------------------------------------------------------------------------------------\n\n");
+										for (long i = 0; i < numErrors; i++) {
+											String error = document.getError(i).getMessage(); 
+											messageArea.append(i + ":" + error + "\n");
 										}
-										// FileOutputStream out = new
-										// FileOutputStream(new File(root
-										// + separator + s));
-										SBMLWriter writer = new SBMLWriter();
-										writer.writeSBML(document, root + separator + s);
-										// String doc =
-										// writer.writeToString(document);
-										// byte[] output = doc.getBytes();
-										// out.write(output);
-										// out.close();
 									}
+									SBMLWriter writer = new SBMLWriter();
+									writer.writeSBML(document, root + separator + s);
 								}
 							}
 							catch (Exception e1) {
@@ -4252,84 +4235,63 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						String[] file = filename.trim().split(separator);
 						try {
 							SBMLDocument document = readSBML(filename.trim());
-							if (document.getNumErrors() > 0) {
-								JOptionPane.showMessageDialog(frame, "Invalid SBML file.", "Error",
-										JOptionPane.ERROR_MESSAGE);
-							}
-							else {
-								if (overwrite(root + separator + file[file.length - 1],
-										file[file.length - 1])) {
-									long numErrors = document.checkConsistency();
-									if (numErrors > 0) {
-										final JFrame f = new JFrame("SBML Errors and Warnings");
-										JTextArea messageArea = new JTextArea();
-										messageArea
-												.append("Imported SBML file contains the errors listed below. ");
-										messageArea
-												.append("It is recommended that you fix them before using this model or you may get unexpected results.\n\n");
-										for (long i = 0; i < numErrors; i++) {
-											String error = document.getError(i).getMessage(); // .
-											// replace
-											// (
-											// "."
-											// ,
-											// ".\n"
-											// )
-											// ;
-											messageArea.append(i + ":" + error + "\n");
-										}
-										messageArea.setLineWrap(true);
-										messageArea.setEditable(false);
-										messageArea.setSelectionStart(0);
-										messageArea.setSelectionEnd(0);
-										JScrollPane scroll = new JScrollPane();
-										scroll.setMinimumSize(new Dimension(600, 600));
-										scroll.setPreferredSize(new Dimension(600, 600));
-										scroll.setViewportView(messageArea);
-										JButton close = new JButton("Dismiss");
-										close.addActionListener(new ActionListener() {
-											public void actionPerformed(ActionEvent e) {
-												f.dispose();
-											}
-										});
-										JPanel consistencyPanel = new JPanel(new BorderLayout());
-										consistencyPanel.add(scroll, "Center");
-										consistencyPanel.add(close, "South");
-										f.setContentPane(consistencyPanel);
-										f.pack();
-										Dimension screenSize;
-										try {
-											Toolkit tk = Toolkit.getDefaultToolkit();
-											screenSize = tk.getScreenSize();
-										}
-										catch (AWTError awe) {
-											screenSize = new Dimension(640, 480);
-										}
-										Dimension frameSize = f.getSize();
-										if (frameSize.height > screenSize.height) {
-											frameSize.height = screenSize.height;
-										}
-										if (frameSize.width > screenSize.width) {
-											frameSize.width = screenSize.width;
-										}
-										int x = screenSize.width / 2 - frameSize.width / 2;
-										int y = screenSize.height / 2 - frameSize.height / 2;
-										f.setLocation(x, y);
-										f.setVisible(true);
+							if (overwrite(root + separator + file[file.length - 1],
+									file[file.length - 1])) {
+								long numErrors = document.checkConsistency();
+								if (numErrors > 0) {
+									final JFrame f = new JFrame("SBML Errors and Warnings");
+									JTextArea messageArea = new JTextArea();
+									messageArea
+									.append("Imported SBML file contains the errors listed below. ");
+									messageArea
+									.append("It is recommended that you fix them before using this model or you may get unexpected results.\n\n");
+									for (long i = 0; i < numErrors; i++) {
+										String error = document.getError(i).getMessage(); 
+										messageArea.append(i + ":" + error + "\n");
 									}
-									// FileOutputStream out = new
-									// FileOutputStream(new File(root
-									// + separator + file[file.length - 1]));
-									SBMLWriter writer = new SBMLWriter();
-									writer.writeSBML(document, root + separator
-											+ file[file.length - 1]);
-									// String doc =
-									// writer.writeToString(document);
-									// byte[] output = doc.getBytes();
-									// out.write(output);
-									// out.close();
-									refreshTree();
+									messageArea.setLineWrap(true);
+									messageArea.setEditable(false);
+									messageArea.setSelectionStart(0);
+									messageArea.setSelectionEnd(0);
+									JScrollPane scroll = new JScrollPane();
+									scroll.setMinimumSize(new Dimension(600, 600));
+									scroll.setPreferredSize(new Dimension(600, 600));
+									scroll.setViewportView(messageArea);
+									JButton close = new JButton("Dismiss");
+									close.addActionListener(new ActionListener() {
+										public void actionPerformed(ActionEvent e) {
+											f.dispose();
+										}
+									});
+									JPanel consistencyPanel = new JPanel(new BorderLayout());
+									consistencyPanel.add(scroll, "Center");
+									consistencyPanel.add(close, "South");
+									f.setContentPane(consistencyPanel);
+									f.pack();
+									Dimension screenSize;
+									try {
+										Toolkit tk = Toolkit.getDefaultToolkit();
+										screenSize = tk.getScreenSize();
+									}
+									catch (AWTError awe) {
+										screenSize = new Dimension(640, 480);
+									}
+									Dimension frameSize = f.getSize();
+									if (frameSize.height > screenSize.height) {
+										frameSize.height = screenSize.height;
+									}
+									if (frameSize.width > screenSize.width) {
+										frameSize.width = screenSize.width;
+									}
+									int x = screenSize.width / 2 - frameSize.width / 2;
+									int y = screenSize.height / 2 - frameSize.height / 2;
+									f.setLocation(x, y);
+									f.setVisible(true);
 								}
+								SBMLWriter writer = new SBMLWriter();
+								writer.writeSBML(document, root + separator
+										+ file[file.length - 1]);
+								refreshTree();
 							}
 						}
 						catch (Exception e1) {
