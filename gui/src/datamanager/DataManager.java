@@ -18,7 +18,6 @@ import javax.swing.table.TableModel;
 import org.sbml.libsbml.ListOf;
 import org.sbml.libsbml.Model;
 import org.sbml.libsbml.SBMLDocument;
-import org.sbml.libsbml.SBMLReader;
 import org.sbml.libsbml.Species;
 
 import parser.*;
