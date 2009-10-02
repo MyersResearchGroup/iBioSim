@@ -2138,14 +2138,11 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		}
 		else if (e.getSource() == viewTrace) {
 			Component comp = tab.getSelectedComponent();
-			if (comp instanceof JPanel) {
-				Component[] array = ((JPanel) comp).getComponents();
-				if (array[0] instanceof Synthesis) {
-					((Synthesis) array[0]).viewTrace();
-				}
-				else {
-					((Verification) array[0]).viewTrace();
-				}
+			if (comp instanceof Verification) {
+				((Verification) comp).viewTrace();
+			}
+			else if (comp instanceof Synthesis) {
+				((Synthesis) comp).viewTrace();
 			}
 		}
 		else if (e.getSource() == exportCsv) {
