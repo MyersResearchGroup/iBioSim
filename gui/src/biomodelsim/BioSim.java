@@ -2019,11 +2019,14 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							JOptionPane.ERROR_MESSAGE);
 				}
 			}
+			else if (comp instanceof JPanel) {
+				Component[] array = ((JPanel) comp).getComponents();
+				if (array[0] instanceof Synthesis) {
+					((Synthesis) array[0]).viewLog();
+				}
+			}
 			else if (comp instanceof Verification) {
 				((Verification) comp).viewLog();
-			}
-			else if (comp instanceof Synthesis) {
-				((Synthesis) comp).viewLog();
 			}
 			else if (comp instanceof JTabbedPane) {
 				Component component = ((JTabbedPane) comp).getSelectedComponent();
