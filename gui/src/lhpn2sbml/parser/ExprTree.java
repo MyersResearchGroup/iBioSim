@@ -1731,6 +1731,7 @@ public class ExprTree {
 				if (r1 != null) {
 					result = r1.getElement(result);
 				}
+				break;
 			}
 			else {
 				if (r1 != null) {

@@ -3225,13 +3225,6 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					((Reb2Sac) (((JTabbedPane) comp).getComponent(index))).getRunButton().doClick();
 				}
 				else if (component instanceof JPanel) {
-					if (comp.getName().equals("Verification")) {
-						Component comp1 = ((JTabbedPane) comp).getComponent(0);
-						Component[] array = ((JPanel) comp1).getComponents();
-						((Verification) array[0]).save();
-						new Thread((Verification) array[0]).start();
-					}
-					else
 						((Reb2Sac) (((JTabbedPane) comp).getComponent(index))).getRunButton()
 								.doClick();
 				}
@@ -3243,18 +3236,9 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				((Verification) comp).save();
 				new Thread((Verification) comp).start();
 			}
-			else if (comp instanceof JPanel) {
-				if (comp.getName().equals("Verification")) {
-					Component comp1 = ((JTabbedPane) comp).getComponent(0);
-					Component[] array = ((JPanel) comp1).getComponents();
-					((Verification) array[0]).save();
-					new Thread((Verification) array[0]).start();
-				}
-				else if (comp.getName().equals("Synthesis")) {
-					Component[] array = ((JPanel) comp).getComponents();
-					((Synthesis) array[0]).save();
-					new Thread((Synthesis) array[0]).start();
-				}
+			else if (comp instanceof Synthesis) {
+				((Synthesis) comp).save();
+				new Thread((Synthesis) comp).start();
 			}
 		}
 		else if (e.getActionCommand().equals("refresh")) {
