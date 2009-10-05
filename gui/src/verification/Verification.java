@@ -367,8 +367,8 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				componentField.setText(load.getProperty("verification.component"));
 			}
 			Integer i = 0;
-			while (load.containsKey("synthesis.compList" + i.toString())) {
-				componentList.addItem(load.getProperty("synthesis.compList" + i.toString()));
+			while (load.containsKey("verification.compList" + i.toString())) {
+				componentList.addItem(load.getProperty("verification.compList" + i.toString()));
 				i++;
 			}
 			if (load.containsKey("verification.abstraction")) {
@@ -1295,9 +1295,21 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			if (!componentField.getText().trim().equals("")) {
 				prop.setProperty("verification.component", componentField.getText().trim());
 			}
+			else {
+				prop.remove("verification.component");
+			}
 			String[] components = componentList.getItems();
+			if (components.length == 0) {
+				for (Object s : prop.keySet()) {
+					if (s.toString().startsWith("verification.compList")) {
+						prop.remove(s);
+					}
+				}
+			}
+			else {
 			for (Integer i = 0; i < components.length; i++) {
-				prop.setProperty("synthesis.compList" + i.toString(), components[i]);
+				prop.setProperty("verification.compList" + i.toString(), components[i]);
+			}
 			}
 			if (none.isSelected()) {
 				prop.setProperty("verification.abstraction", "none");
