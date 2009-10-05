@@ -749,14 +749,28 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 	}
 
 	public void run() {
-		//copyFile();
+		copyFile();
 		String[] array = directory.split(separator);
 		String tempDir = "";
+		String lpnFile = "";
+		if (!verifyFile.endsWith("lpn")) {
+			String[] temp = verifyFile.split(".");
+			lpnFile = temp[0] + ".lpn";
+		}
+		else {
+			lpnFile = verifyFile;
+		}
+		File work = new File(directory);
+		try {
+			Runtime.getRuntime().exec("atacs -llsl " + verifyFile, null, work);
+		}
+		catch (Exception e) {
+		}
 		for (int i = 0; i < array.length - 1; i++) {
 			tempDir = tempDir + array[i] + separator;
 		}
 		LHPNFile lhpnFile = new LHPNFile();
-		lhpnFile.load(tempDir + separator + verifyFile);
+		lhpnFile.load(tempDir + separator + lpnFile);
 		Abstraction abstraction = lhpnFile.abstractLhpn(this);
 		String abstFilename;
 		if (lhpn.isSelected()) {
@@ -765,7 +779,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					JOptionPane.PLAIN_MESSAGE);
 		}
 		else {
-			abstFilename = verifyFile.replace(".lpn", "_abs.lpn");
+			abstFilename = lpnFile.replace(".lpn", "_abs.lpn");
 		}
 		if (simplify.isSelected() || abstractLhpn.isSelected()) {
 			String[] boolVars = lhpnFile.getBooleanVars();
@@ -795,11 +809,11 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				abstraction.abstractSTG();
 			}
 			if (!lhpn.isSelected() && !view.isSelected()) {
-				abstraction.save(directory + separator + verifyFile);
+				abstraction.save(directory + separator + lpnFile);
 			}
 		}
 		if (!lhpn.isSelected() && !view.isSelected()) {
-			abstraction.save(directory + separator + verifyFile);
+			abstraction.save(directory + separator + lpnFile);
 		}
 		if (!lhpn.isSelected() && !view.isSelected()) {
 			// String command = "/home/shang/kjones/atacs/bin/atacs -";
@@ -1084,7 +1098,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			running.setLocation(x, y);
 			running.setVisible(true);
 			running.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-			File work = new File(directory);
+			work = new File(directory);
 			Runtime exec = Runtime.getRuntime();
 			try {
 				final Process ver = exec.exec(cmd, null, work);
@@ -1218,7 +1232,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			}
 			else if (view.isSelected()) {
 				abstraction.save(directory + separator + abstFilename);
-				File work = new File(directory + separator);
+				work = new File(directory + separator);
 				try {
 					Runtime exec = Runtime.getRuntime();
 					Process makeDot = exec.exec("atacs -cPllodpl " + abstFilename, null, work);
@@ -1700,9 +1714,10 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		}
 		return change;
 	}
-	
+
 	public boolean isSimplify() {
-		if (simplify.isSelected()) return true;
+		if (simplify.isSelected())
+			return true;
 		return false;
 	}
 
@@ -1741,7 +1756,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		String verName = verFile.replace(".ver", "");
 		return verName;
 	}
-	
+
 	public AbstPane getAbstPane() {
 		return abstPane;
 	}
