@@ -2641,6 +2641,8 @@ public class LHPNFile {
 				else {
 					// log.addText("check6 else");
 					ExprTree[] expr = new ExprTree[2];
+					expr[0] = new ExprTree(this);
+					expr[1] = new ExprTree(this);
 					Pattern rangePattern = Pattern.compile(RANGE);
 					Matcher rangeMatcher = rangePattern.matcher(varMatcher.group(2));
 					if (rangeMatcher.find()) {
@@ -2651,7 +2653,7 @@ public class LHPNFile {
 						else {
 							expr[0] = null;
 						}
-						if (!rangeMatcher.group(1).equals("")) {
+						if (!rangeMatcher.group(2).equals("")) {
 							expr[1].token = expr[1].intexpr_gettok(rangeMatcher.group(2));
 							expr[1].intexpr_L(rangeMatcher.group(2));
 						}
@@ -2687,32 +2689,36 @@ public class LHPNFile {
 							assignMap.put(varMatcher.group(1), expr);
 						}
 					}
+					else {
+						ExprTree tempExpr = new ExprTree(this);
+						tempExpr.token = tempExpr.intexpr_gettok(varMatcher.group(2));
+						if (!varMatcher.group(2).equals("")) {
+							tempExpr.intexpr_L(varMatcher.group(2));
+						}
+						else {
+							expr = null;
+						}
+						expr[0] = tempExpr;
+						expr[1] = null;
+						// log.addText("check6while2");
+						if (isInteger(varMatcher.group(1))) {
+							if (intAssignments.containsKey(assignMatcher.group(1))) {
+								intProp = intAssignments.get(assignMatcher.group(1));
+							}
+							intProp.put(varMatcher.group(1), varMatcher.group(2));
+							intMap.put(varMatcher.group(1), expr);
+						}
+						else {
+							if (contAssignments.containsKey(assignMatcher.group(1))) {
+								assignProp = contAssignments.get(assignMatcher.group(1));
+							}
+							assignProp.put(varMatcher.group(1), varMatcher.group(2));
+							assignMap.put(varMatcher.group(1), expr);
+						}
+					}
 				}
 				do {
-					ExprTree expr = new ExprTree(this);
-					expr.token = expr.intexpr_gettok(varMatcher.group(2));
-					if (!varMatcher.group(2).equals("")) {
-						expr.intexpr_L(varMatcher.group(2));
-					}
-					else {
-						expr = null;
-					}
-					ExprTree[] array = { expr };
-					// log.addText("check6while2");
-					if (isInteger(varMatcher.group(1))) {
-						if (intAssignments.containsKey(assignMatcher.group(1))) {
-							intProp = intAssignments.get(assignMatcher.group(1));
-						}
-						intProp.put(varMatcher.group(1), varMatcher.group(2));
-						intMap.put(varMatcher.group(1), array);
-					}
-					else {
-						if (contAssignments.containsKey(assignMatcher.group(1))) {
-							assignProp = contAssignments.get(assignMatcher.group(1));
-						}
-						assignProp.put(varMatcher.group(1), varMatcher.group(2));
-						assignMap.put(varMatcher.group(1), array);
-					}
+					
 				}
 				while (varMatcher.find());
 				if (intProp.size() > 0) {
@@ -2747,6 +2753,7 @@ public class LHPNFile {
 				// log.addText("here " + assignMatcher.group(2));
 				// String temp = assignMatcher.group(2);
 				varMatcher = varPattern.matcher(assignMatcher.group(2));
+				varMatcher.find();
 				// log.addText(assignMatcher.group(2) + " " + indetPattern);
 				boolean indet = false;
 				indetMatcher = indetPattern.matcher(assignMatcher.group(2));
@@ -3010,7 +3017,7 @@ public class LHPNFile {
 
 	private static final String ASSIGNMENT = "<([\\S[^=]]+?)=\\[([^>]+?)\\]>";
 
-	private static final String ASSIGN_VAR = "([\\S[^:]]+?):=([\\S]+)";
+	private static final String ASSIGN_VAR = "([\\S[^:]]+?):=(.+)";
 
 	private static final String INDET_ASSIGN_VAR = "([\\S[^:]]+?):=(\\[[-\\d]+,[-\\d]+\\])";
 
@@ -3030,6 +3037,6 @@ public class LHPNFile {
 
 	private static final String WORD = "(\\S+)";
 
-	private static final String RANGE = "\\[(\\w+?),(\\w+?)\\]";
+	private static final String RANGE = "\\[([\\w-]+?),([\\w-]+?)\\]";
 
 }
