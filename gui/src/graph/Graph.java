@@ -406,6 +406,55 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		}
 		catch (Exception e) {
 		}
+		if ((label.contains("average") && file.contains("mean.tsd"))
+				|| (label.contains("variance") && file.contains("variance.tsd"))
+				|| (label.contains("deviation") && file.contains("standard_deviation.tsd"))) {
+			biomodelsim.frame().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+			TSDParser p = new TSDParser(file, biomodelsim, warning);
+			biomodelsim.frame().setCursor(null);
+			warn = p.getWarning();
+			graphSpecies = p.getSpecies();
+			ArrayList<ArrayList<Double>> data = p.getData();
+			if (learnSpecs != null) {
+				for (String spec : learnSpecs) {
+					if (!graphSpecies.contains(spec)) {
+						graphSpecies.add(spec);
+						ArrayList<Double> d = new ArrayList<Double>();
+						for (int i = 0; i < data.get(0).size(); i++) {
+							d.add(0.0);
+						}
+						data.add(d);
+					}
+				}
+				for (int i = 1; i < graphSpecies.size(); i++) {
+					if (!learnSpecs.contains(graphSpecies.get(i))) {
+						graphSpecies.remove(i);
+						data.remove(i);
+						i--;
+					}
+				}
+			}
+			else if (averageOrder != null) {
+				for (String spec : averageOrder) {
+					if (!graphSpecies.contains(spec)) {
+						graphSpecies.add(spec);
+						ArrayList<Double> d = new ArrayList<Double>();
+						for (int i = 0; i < data.get(0).size(); i++) {
+							d.add(0.0);
+						}
+						data.add(d);
+					}
+				}
+				for (int i = 1; i < graphSpecies.size(); i++) {
+					if (!averageOrder.contains(graphSpecies.get(i))) {
+						graphSpecies.remove(i);
+						data.remove(i);
+						i--;
+					}
+				}
+			}
+			return data;
+		}
 		if (label.contains("average") || label.contains("variance") || label.contains("deviation")) {
 			int counter = 1;
 			while (!(new File(file).exists())) {
@@ -1325,7 +1374,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			if (file.length() > 3
 					&& file.substring(file.length() - 4).equals(
 							"." + printer_id.substring(0, printer_id.length() - 8))) {
-				if (file.contains("run-")) {
+				if (file.contains("run-") || file.contains("mean") || file.contains("variance")
+						|| file.contains("standard_deviation")) {
 					add = true;
 				}
 				else {
@@ -1381,7 +1431,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					boolean add2 = false;
 					for (String f : files3) {
 						if (f.contains(printer_id.substring(0, printer_id.length() - 8))) {
-							if (f.contains("run-")) {
+							if (f.contains("run-") || f.contains("mean") || f.contains("variance")
+									|| f.contains("standard_deviation")) {
 								add2 = true;
 							}
 							else {
@@ -1433,7 +1484,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								for (String f2 : files2) {
 									if (f2.contains(printer_id
 											.substring(0, printer_id.length() - 8))) {
-										if (f2.contains("run-")) {
+										if (f2.contains("run-") || f2.contains("mean")
+												|| f2.contains("variance")
+												|| f2.contains("standard_deviation")) {
 											add3 = true;
 										}
 										else {
@@ -1530,83 +1583,92 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 									}
 								}
 								int run = 1;
+								String r2 = null;
 								for (String s : files2) {
-									if (s.length() > 4) {
-										String end = "";
-										for (int j = 1; j < 5; j++) {
-											end = s.charAt(s.length() - j) + end;
-										}
-										if (end.equals(".tsd") || end.equals(".dat")
-												|| end.equals(".csv")) {
-											if (s.contains("run-")) {
-												run = Math.max(run, Integer.parseInt(s.substring(4,
-														s.length() - end.length())));
+									if (s.contains("run-")) {
+										r2 = s;
+									}
+								}
+								if (r2 != null) {
+									for (String s : files2) {
+										if (s.length() > 4) {
+											String end = "";
+											for (int j = 1; j < 5; j++) {
+												end = s.charAt(s.length() - j) + end;
+											}
+											if (end.equals(".tsd") || end.equals(".dat")
+													|| end.equals(".csv")) {
+												if (s.contains("run-")) {
+													run = Math.max(run, Integer
+															.parseInt(s.substring(4, s.length()
+																	- end.length())));
+												}
 											}
 										}
 									}
-								}
-								for (int i = 0; i < run; i++) {
-									if (new File(outDir + separator + file + separator + f
-											+ separator + "run-" + (i + 1) + "."
-											+ printer_id.substring(0, printer_id.length() - 8))
-											.exists()) {
-										IconNode n;
-										if (learnSpecs != null) {
-											n = new IconNode(p.get("run-"
-													+ (i + 1)
-													+ "."
-													+ printer_id.substring(0,
-															printer_id.length() - 8)), "run-"
-													+ (i + 1));
-											if (d2.getChildCount() > 3) {
-												boolean added = false;
-												for (int j = 3; j < d2.getChildCount(); j++) {
-													if (d2
-															.getChildAt(j)
-															.toString()
-															.compareToIgnoreCase(
-																	(String) p
-																			.get("run-"
-																					+ (i + 1)
-																					+ "."
-																					+ printer_id
-																							.substring(
-																									0,
-																									printer_id
-																											.length() - 8))) > 0) {
-														d2.insert(n, j);
-														added = true;
-														break;
+									for (int i = 0; i < run; i++) {
+										if (new File(outDir + separator + file + separator + f
+												+ separator + "run-" + (i + 1) + "."
+												+ printer_id.substring(0, printer_id.length() - 8))
+												.exists()) {
+											IconNode n;
+											if (learnSpecs != null) {
+												n = new IconNode(p.get("run-"
+														+ (i + 1)
+														+ "."
+														+ printer_id.substring(0, printer_id
+																.length() - 8)), "run-" + (i + 1));
+												if (d2.getChildCount() > 3) {
+													boolean added = false;
+													for (int j = 3; j < d2.getChildCount(); j++) {
+														if (d2
+																.getChildAt(j)
+																.toString()
+																.compareToIgnoreCase(
+																		(String) p
+																				.get("run-"
+																						+ (i + 1)
+																						+ "."
+																						+ printer_id
+																								.substring(
+																										0,
+																										printer_id
+																												.length() - 8))) > 0) {
+															d2.insert(n, j);
+															added = true;
+															break;
+														}
+													}
+													if (!added) {
+														d2.add(n);
 													}
 												}
-												if (!added) {
+												else {
 													d2.add(n);
 												}
 											}
 											else {
+												n = new IconNode("run-" + (i + 1), "run-" + (i + 1));
 												d2.add(n);
 											}
-										}
-										else {
-											n = new IconNode("run-" + (i + 1), "run-" + (i + 1));
-											d2.add(n);
-										}
-										n.setIconName("");
-										for (GraphSpecies g : graphed) {
-											if (g.getRunNumber().equals("run-" + (i + 1))
-													&& g.getDirectory().equals(
-															d.getName() + separator + d2.getName())) {
-												n.setIcon(TextIcons.getIcon("g"));
-												n.setIconName("" + (char) 10003);
-												d2.setIcon(MetalIconFactory
-														.getFileChooserUpFolderIcon());
-												d2.setIconName("" + (char) 10003);
-												d.setIcon(MetalIconFactory
-														.getFileChooserUpFolderIcon());
-												d.setIconName("" + (char) 10003);
-												simDir.setIcon(MetalIconFactory
-														.getFileChooserUpFolderIcon());
-												simDir.setIconName("" + (char) 10003);
+											n.setIconName("");
+											for (GraphSpecies g : graphed) {
+												if (g.getRunNumber().equals("run-" + (i + 1))
+														&& g.getDirectory().equals(
+																d.getName() + separator
+																		+ d2.getName())) {
+													n.setIcon(TextIcons.getIcon("g"));
+													n.setIconName("" + (char) 10003);
+													d2.setIcon(MetalIconFactory
+															.getFileChooserUpFolderIcon());
+													d2.setIconName("" + (char) 10003);
+													d.setIcon(MetalIconFactory
+															.getFileChooserUpFolderIcon());
+													d.setIconName("" + (char) 10003);
+													simDir.setIcon(MetalIconFactory
+															.getFileChooserUpFolderIcon());
+													simDir.setIconName("" + (char) 10003);
+												}
 											}
 										}
 									}
@@ -1660,64 +1722,75 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						}
 					}
 					int run = 1;
+					String r = null;
 					for (String s : files3) {
-						if (s.length() > 4) {
-							String end = "";
-							for (int j = 1; j < 5; j++) {
-								end = s.charAt(s.length() - j) + end;
-							}
-							if (end.equals(".tsd") || end.equals(".dat") || end.equals(".csv")) {
-								if (s.contains("run-")) {
-									run = Math.max(run, Integer.parseInt(s.substring(4, s.length()
-											- end.length())));
+						if (s.contains("run-")) {
+							r = s;
+						}
+					}
+					if (r != null) {
+						for (String s : files3) {
+							if (s.length() > 4) {
+								String end = "";
+								for (int j = 1; j < 5; j++) {
+									end = s.charAt(s.length() - j) + end;
+								}
+								if (end.equals(".tsd") || end.equals(".dat") || end.equals(".csv")) {
+									if (s.contains("run-")) {
+										run = Math.max(run, Integer.parseInt(s.substring(4, s
+												.length()
+												- end.length())));
+									}
 								}
 							}
 						}
-					}
-					for (int i = 0; i < run; i++) {
-						if (new File(outDir + separator + file + separator + "run-" + (i + 1) + "."
-								+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
-							IconNode n;
-							if (learnSpecs != null) {
-								n = new IconNode(p.get("run-" + (i + 1) + "."
-										+ printer_id.substring(0, printer_id.length() - 8)), "run-"
-										+ (i + 1));
-								if (d.getChildCount() > 3) {
-									boolean added = false;
-									for (int j = 3; j < d.getChildCount(); j++) {
-										if (d.getChildAt(j).toString().compareToIgnoreCase(
-												(String) p.get("run-"
-														+ (i + 1)
-														+ "."
-														+ printer_id.substring(0, printer_id
-																.length() - 8))) > 0) {
-											d.insert(n, j);
-											added = true;
-											break;
+						for (int i = 0; i < run; i++) {
+							if (new File(outDir + separator + file + separator + "run-" + (i + 1)
+									+ "." + printer_id.substring(0, printer_id.length() - 8))
+									.exists()) {
+								IconNode n;
+								if (learnSpecs != null) {
+									n = new IconNode(p.get("run-" + (i + 1) + "."
+											+ printer_id.substring(0, printer_id.length() - 8)),
+											"run-" + (i + 1));
+									if (d.getChildCount() > 3) {
+										boolean added = false;
+										for (int j = 3; j < d.getChildCount(); j++) {
+											if (d.getChildAt(j).toString().compareToIgnoreCase(
+													(String) p.get("run-"
+															+ (i + 1)
+															+ "."
+															+ printer_id.substring(0, printer_id
+																	.length() - 8))) > 0) {
+												d.insert(n, j);
+												added = true;
+												break;
+											}
+										}
+										if (!added) {
+											d.add(n);
 										}
 									}
-									if (!added) {
+									else {
 										d.add(n);
 									}
 								}
 								else {
+									n = new IconNode("run-" + (i + 1), "run-" + (i + 1));
 									d.add(n);
 								}
-							}
-							else {
-								n = new IconNode("run-" + (i + 1), "run-" + (i + 1));
-								d.add(n);
-							}
-							n.setIconName("");
-							for (GraphSpecies g : graphed) {
-								if (g.getRunNumber().equals("run-" + (i + 1))
-										&& g.getDirectory().equals(d.getName())) {
-									n.setIcon(TextIcons.getIcon("g"));
-									n.setIconName("" + (char) 10003);
-									d.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
-									d.setIconName("" + (char) 10003);
-									simDir.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
-									simDir.setIconName("" + (char) 10003);
+								n.setIconName("");
+								for (GraphSpecies g : graphed) {
+									if (g.getRunNumber().equals("run-" + (i + 1))
+											&& g.getDirectory().equals(d.getName())) {
+										n.setIcon(TextIcons.getIcon("g"));
+										n.setIconName("" + (char) 10003);
+										d.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
+										d.setIconName("" + (char) 10003);
+										simDir.setIcon(MetalIconFactory
+												.getFileChooserUpFolderIcon());
+										simDir.setIconName("" + (char) 10003);
+									}
 								}
 							}
 						}
@@ -1762,57 +1835,71 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			}
 		}
 		int run = 1;
+		String runs = null;
 		for (String s : new File(outDir).list()) {
-			if (s.length() > 4) {
-				String end = "";
-				for (int j = 1; j < 5; j++) {
-					end = s.charAt(s.length() - j) + end;
-				}
-				if (end.equals(".tsd") || end.equals(".dat") || end.equals(".csv")) {
-					if (s.contains("run-")) {
-						run = Math.max(run, Integer.parseInt(s.substring(4, s.length()
-								- end.length())));
+			if (s.contains("run-")) {
+				runs = s;
+			}
+		}
+		if (runs != null) {
+			for (String s : new File(outDir).list()) {
+				if (s.length() > 4) {
+					String end = "";
+					for (int j = 1; j < 5; j++) {
+						end = s.charAt(s.length() - j) + end;
+					}
+					if (end.equals(".tsd") || end.equals(".dat") || end.equals(".csv")) {
+						if (s.contains("run-")) {
+							run = Math.max(run, Integer.parseInt(s.substring(4, s.length()
+									- end.length())));
+						}
 					}
 				}
 			}
-		}
-		for (int i = 0; i < run; i++) {
-			if (new File(outDir + separator + "run-" + (i + 1) + "."
-					+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
-				IconNode n;
-				if (learnSpecs != null) {
-					n = new IconNode(p.get("run-" + (i + 1) + "."
-							+ printer_id.substring(0, printer_id.length() - 8)), "run-" + (i + 1));
-					if (simDir.getChildCount() > 3) {
-						boolean added = false;
-						for (int j = 3; j < simDir.getChildCount(); j++) {
-							if (simDir.getChildAt(j).toString().compareToIgnoreCase(
-									(String) p.get("run-" + (i + 1) + "."
-											+ printer_id.substring(0, printer_id.length() - 8))) > 0) {
-								simDir.insert(n, j);
-								added = true;
-								break;
+			for (int i = 0; i < run; i++) {
+				if (new File(outDir + separator + "run-" + (i + 1) + "."
+						+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
+					IconNode n;
+					if (learnSpecs != null) {
+						n = new IconNode(p.get("run-" + (i + 1) + "."
+								+ printer_id.substring(0, printer_id.length() - 8)), "run-"
+								+ (i + 1));
+						if (simDir.getChildCount() > 3) {
+							boolean added = false;
+							for (int j = 3; j < simDir.getChildCount(); j++) {
+								if (simDir.getChildAt(j).toString()
+										.compareToIgnoreCase(
+												(String) p.get("run-"
+														+ (i + 1)
+														+ "."
+														+ printer_id.substring(0, printer_id
+																.length() - 8))) > 0) {
+									simDir.insert(n, j);
+									added = true;
+									break;
+								}
+							}
+							if (!added) {
+								simDir.add(n);
 							}
 						}
-						if (!added) {
+						else {
 							simDir.add(n);
 						}
 					}
 					else {
+						n = new IconNode("run-" + (i + 1), "run-" + (i + 1));
 						simDir.add(n);
 					}
-				}
-				else {
-					n = new IconNode("run-" + (i + 1), "run-" + (i + 1));
-					simDir.add(n);
-				}
-				n.setIconName("");
-				for (GraphSpecies g : graphed) {
-					if (g.getRunNumber().equals("run-" + (i + 1)) && g.getDirectory().equals("")) {
-						n.setIcon(TextIcons.getIcon("g"));
-						n.setIconName("" + (char) 10003);
-						simDir.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
-						simDir.setIconName("" + (char) 10003);
+					n.setIconName("");
+					for (GraphSpecies g : graphed) {
+						if (g.getRunNumber().equals("run-" + (i + 1))
+								&& g.getDirectory().equals("")) {
+							n.setIcon(TextIcons.getIcon("g"));
+							n.setIconName("" + (char) 10003);
+							simDir.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
+							simDir.setIconName("" + (char) 10003);
+						}
 					}
 				}
 			}
@@ -2891,13 +2978,33 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		if (directory.equals("")) {
 			if (selected.equals("Average") || selected.equals("Variance")
 					|| selected.equals("Standard Deviation")) {
-				int nextOne = 1;
-				while (!new File(outDir + separator + "run-" + nextOne + "."
-						+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
-					nextOne++;
+				if (selected.equals("Average")
+						&& new File(outDir + separator + "mean" + "."
+								+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
+					readGraphSpecies(outDir + separator + "mean" + "."
+							+ printer_id.substring(0, printer_id.length() - 8));
 				}
-				readGraphSpecies(outDir + separator + "run-" + nextOne + "."
-						+ printer_id.substring(0, printer_id.length() - 8));
+				else if (selected.equals("Variance")
+						&& new File(outDir + separator + "variance" + "."
+								+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
+					readGraphSpecies(outDir + separator + "variance" + "."
+							+ printer_id.substring(0, printer_id.length() - 8));
+				}
+				else if (selected.equals("Standard Deviation")
+						&& new File(outDir + separator + "standard_deviation" + "."
+								+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
+					readGraphSpecies(outDir + separator + "standard_deviation" + "."
+							+ printer_id.substring(0, printer_id.length() - 8));
+				}
+				else {
+					int nextOne = 1;
+					while (!new File(outDir + separator + "run-" + nextOne + "."
+							+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
+						nextOne++;
+					}
+					readGraphSpecies(outDir + separator + "run-" + nextOne + "."
+							+ printer_id.substring(0, printer_id.length() - 8));
+				}
 			}
 			else {
 				readGraphSpecies(outDir + separator + selected + "."
@@ -2907,13 +3014,35 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		else {
 			if (selected.equals("Average") || selected.equals("Variance")
 					|| selected.equals("Standard Deviation")) {
-				int nextOne = 1;
-				while (!new File(outDir + separator + directory + separator + "run-" + nextOne
-						+ "." + printer_id.substring(0, printer_id.length() - 8)).exists()) {
-					nextOne++;
+				if (selected.equals("Average")
+						&& new File(outDir + separator + directory + separator + "mean" + "."
+								+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
+					readGraphSpecies(outDir + separator + directory + separator + "mean" + "."
+							+ printer_id.substring(0, printer_id.length() - 8));
 				}
-				readGraphSpecies(outDir + separator + directory + separator + "run-" + nextOne
-						+ "." + printer_id.substring(0, printer_id.length() - 8));
+				else if (selected.equals("Variance")
+						&& new File(outDir + separator + directory + separator + "variance" + "."
+								+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
+					readGraphSpecies(outDir + separator + directory + separator + "variance" + "."
+							+ printer_id.substring(0, printer_id.length() - 8));
+				}
+				else if (selected.equals("Standard Deviation")
+						&& new File(outDir + separator + directory + separator
+								+ "standard_deviation" + "."
+								+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
+					readGraphSpecies(outDir + separator + directory + separator
+							+ "standard_deviation" + "."
+							+ printer_id.substring(0, printer_id.length() - 8));
+				}
+				else {
+					int nextOne = 1;
+					while (!new File(outDir + separator + directory + separator + "run-" + nextOne
+							+ "." + printer_id.substring(0, printer_id.length() - 8)).exists()) {
+						nextOne++;
+					}
+					readGraphSpecies(outDir + separator + directory + separator + "run-" + nextOne
+							+ "." + printer_id.substring(0, printer_id.length() - 8));
+				}
 			}
 			else {
 				readGraphSpecies(outDir + separator + directory + separator + selected + "."
