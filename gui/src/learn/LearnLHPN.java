@@ -2261,7 +2261,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 					g.changeIntegerInitCond(v.getName(), v.getInitValue());
 				} else {
 					initCond.put("value", v.getInitValue());
-					initCond.put("rate", v.getInitValue());
+					initCond.put("rate", v.getInitRate());
 					g.changeVarInitCond(v.getName(), initCond);
 				}
 			}
@@ -2333,7 +2333,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 					// Dealing with graphs obtained from DMVC INPUT variables
 					// NO ENABLINGS for these transitions
 					String nextPlace = g.getPostset(t)[0];
-					g.changeDelay(t, "[" + (int) Double.parseDouble(placeInfo.get(getPlaceInfoIndex(nextPlace)).getProperty("dMin")) + "," + (int) Double.parseDouble(placeInfo.get(getPlaceInfoIndex(nextPlace)).getProperty("dMax")) + "]");
+					g.changeDelay(t, "[" + (int) Math.floor(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(nextPlace)).getProperty("dMin"))) + "," + (int) Math.ceil(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(nextPlace)).getProperty("dMax"))) + "]");
 					g.addIntAssign(t, placeInfo.get(getPlaceInfoIndex(g.getPostset(t)[0])).getProperty("DMVCVariable"), "[" + (int) Math.floor(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(g.getPostset(t)[0])).getProperty("DMVCValue")))	+ "," + (int) Math.ceil(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(g.getPostset(t)[0])).getProperty("DMVCValue"))) + "]");
 					g.addEnabling(t, enFail);
 				} else if ((g.getPreset(t) != null) && (placeInfo.get(getPlaceInfoIndex(g.getPreset(t)[0])).getProperty("type").equalsIgnoreCase("PROP"))){
