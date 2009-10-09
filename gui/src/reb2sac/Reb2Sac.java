@@ -2405,10 +2405,18 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		}
 		int steps;
 		if (intervalLabel.getSelectedItem().equals("Print Interval")) {
+		    if (simulators.getSelectedItem().equals("mpde")) {
+			steps = (int) (timeLimit / printInterval);
+		    } else {
 			steps = (int) ((timeLimit / printInterval) * run);
+		    }
 		}
 		else {
+		    if (simulators.getSelectedItem().equals("mpde")) {
+			steps = (int) (printInterval);
+		    } else {
 			steps = (int) (printInterval * run);
+		    }
 		}
 		JProgressBar progress = new JProgressBar(0, steps);
 		progress.setStringPainted(true);
