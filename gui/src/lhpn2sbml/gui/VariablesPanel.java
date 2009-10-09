@@ -55,7 +55,7 @@ public class VariablesPanel extends JPanel implements ActionListener {
 
 	public VariablesPanel(String selected, PropertyList variablesList, Boolean boolCont,
 			Boolean integer, LHPNFile lhpn, boolean atacs, BioSim biosim) {
-		super(new GridLayout(4, 1));
+		super(new GridLayout(6, 1));
 		if (selected != null) {
 			String[] array = selected.split(" ");
 			this.name = array[0];
