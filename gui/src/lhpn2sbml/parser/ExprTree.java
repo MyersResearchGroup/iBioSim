@@ -1508,6 +1508,33 @@ public class ExprTree {
 		return vars;
 	}
 	
+	public void scaleVals(Double scaleFactor) {	// SB
+		switch (isit) {
+		case 'b': // Boolean
+		case 'i': // Integer
+		case 'c': // Continuous
+			//if (!vars.contains(variable))
+			//	vars.add(variable);
+			break;
+		case 'r': // Relational
+		case 'l': // Logical
+		case 'a': // Arithmetic
+		case 'w': // bitWise
+			if (r1 != null)
+				r1.scaleVals(scaleFactor);
+			if (r2 != null)
+				r2.scaleVals(scaleFactor);
+			break;
+		case 'n': // Number
+			variable = String.valueOf((int)(Double.parseDouble(variable)*scaleFactor));
+			break;
+		case 't': // Truth value
+		default:
+			break;
+		}
+		//return ;
+	}
+	
 	public boolean containsCont() {
 		switch (isit) {
 		case 'b': // Boolean

@@ -508,7 +508,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		numBins.setActionCommand("text");
 		thresholdPanel1.add(numBinsLabel);
 		thresholdPanel1.add(numBins);
-		JLabel propertyLabel = new JLabel("Property to be Verified");
+		JLabel propertyLabel = new JLabel("Assertion to be Verified");
 		propertyG = new JTextField("");
 		thresholdPanel1.add(propertyLabel);
 		thresholdPanel1.add(propertyG);
@@ -762,6 +762,10 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			viewLhpn.setEnabled(false);
 			saveLhpn.setEnabled(false);
 		}
+		else{
+			viewLhpn.setEnabled(true);
+			saveLhpn.setEnabled(true);
+		}
 		if (!(new File(directory + separator + "run.log").exists())) {
 			viewLog.setEnabled(false);
 		}
@@ -776,9 +780,15 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		if (!(new File(directory + separator + "run.cvg").exists())) {
 			viewCoverage.setEnabled(false);
 		}
+		else{
+			viewCoverage.setEnabled(true);
+		}
 		String vhdFile = lhpnFile.replace(".lpn",".vhd");
 		if (!(new File(directory + separator + vhdFile).exists())) {
 			viewVHDL.setEnabled(false);
+		}
+		else{
+			viewVHDL.setEnabled(true);
 		}
 		
 		// Creates the main panel
@@ -795,11 +805,11 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				middlePanel, null);
 		splitPane.setDividerSize(0);
 		// secondTab.add(thresholdPanelHold2, "North");
-	//	JPanel binsFileHoldPanel = new JPanel();
-	//	binsFileHoldPanel.add(binsFilePanel);
+		//	JPanel binsFileHoldPanel = new JPanel();
+		//	binsFileHoldPanel.add(binsFilePanel);
 		//binsFileHoldPanel.setMinimumSize(new Dimension(10000,16000));
 		//binsFileHoldPanel.setPreferredSize(getPreferredSize());
-//secondTab.add(binsFileHoldPanel, "Center");
+		//secondTab.add(binsFileHoldPanel, "Center");
 		secondTab.add(newPanel,"Center");
 		firstTab.add(splitPane, "Center");
 		JTabbedPane tab = new JTabbedPane();
@@ -875,7 +885,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 					j++;		// SB
 					continue;	// SB
 				}				//SB
-				if (reqdVarsL.get(j-1).isInput()){ //tempPorts.get(j-1)){
+				if (reqdVarsL.get(j-1).isInput()){ 
 					((JCheckBox)((JPanel) c).getComponent(1)).setSelected(true); // SB
 				}	
 				j++;
@@ -1308,7 +1318,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				}
 				if (!copy.equals("")) {
 					if (copy.length() > 1) {
-						if (!copy.substring(copy.length() - 2).equals(".lpn")) {
+						if (!copy.substring(copy.length() - 4).equals(".lpn")) {
 							copy += ".lpn";
 						}
 					} else {
@@ -1421,6 +1431,38 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 	}
 
 	// SB
+	
+	public void viewLearnComplete() {
+		JFrame learnComplete = new JFrame("LEMA");
+		learnComplete.setResizable(false);
+		JPanel all = new JPanel(new BorderLayout());
+		JLabel label = new JLabel("<html><b>Learning Completed Successfully</b></html>",SwingConstants.CENTER);
+		all.add(label, BorderLayout.CENTER);
+		Dimension screenSize;
+		learnComplete.setContentPane(all);
+		learnComplete.setMinimumSize(new Dimension(300,140));
+		learnComplete.pack();
+		try {
+			Toolkit tk = Toolkit.getDefaultToolkit();
+			screenSize = tk.getScreenSize();
+		} catch (AWTError awe) {
+			screenSize = new Dimension(640, 480);
+		}
+		Dimension frameSize = learnComplete.getSize();
+		
+		if (frameSize.height > screenSize.height) {
+			frameSize.height = screenSize.height;
+		}
+		if (frameSize.width > screenSize.width) {
+			frameSize.width = screenSize.width;
+		}
+		int x = screenSize.width / 2 - frameSize.width / 2;
+		int y = screenSize.height / 2 - frameSize.height / 2;
+		learnComplete.setLocation(x, y);
+		learnComplete.setVisible(true);
+	//	learnComplete.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+	}
+
 	public void viewCoverage() {
 		try {
 			if (new File(directory + separator + "run.cvg").exists()) {
@@ -1492,8 +1534,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 	public void save() {
 		try {
 			Properties prop = new Properties();
-			FileInputStream in = new FileInputStream(new File(directory
-					+ separator + lrnFile));
+			FileInputStream in = new FileInputStream(new File(directory + separator + lrnFile));
 			prop.load(in);
 			in.close();
 			prop.setProperty("learn.file", learnFile);
@@ -1541,6 +1582,9 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				if (inputCount != 0){
 					prop.setProperty("learn.inputs", ip);
 				}
+				else{
+					prop.remove("learn.inputs");
+				}
 			} else {
 				prop.setProperty("learn.use", "user");
 				int k = 0;
@@ -1572,6 +1616,9 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				if (inputCount != 0){
 					prop.setProperty("learn.inputs", ip);
 				}
+				else{
+					prop.remove("learn.inputs");
+				}
 			}
 			prop.setProperty("learn.epsilon", this.epsilonG.getText().trim());
 			prop.setProperty("learn.pathLength", this.pathLengthG.getText().trim());
@@ -1583,8 +1630,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			
 			log.addText("Saving learn parameters to file:\n" + directory
 					+ separator + lrnFile + "\n");
-			FileOutputStream out = new FileOutputStream(new File(directory
-					+ separator + lrnFile));
+			FileOutputStream out = new FileOutputStream(new File(directory + separator + lrnFile));
 			prop.store(out, learnFile);
 			out.close();
 			// log.addText("Creating levels file:\n" + directory + separator +
@@ -1694,13 +1740,15 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		try {
 			File work = new File(directory);
 			final JFrame running = new JFrame("Progress");
-			final JButton cancel = new JButton("Cancel");
+			//running.setUndecorated(true);
+			//final JButton cancel = new JButton("Cancel");
+			running.setResizable(false);
 			WindowListener w = new WindowListener() {
 				public void windowClosing(WindowEvent arg0) {
-					cancel.doClick();
+				//	cancel.doClick();
 					running.dispose();
 				}
-
+				
 				public void windowOpened(WindowEvent arg0) {
 				}
 
@@ -1732,10 +1780,10 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			progress.setValue(0);
 			text.add(label);
 			progBar.add(progress);
-			button.add(cancel);
+		//	button.add(cancel);
 			all.add(text, "North");
 			all.add(progBar, "Center");
-			all.add(button, "South");
+		//	all.add(button, "South");
 			running.setContentPane(all);
 			running.pack();
 			Dimension screenSize;
@@ -1746,7 +1794,6 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				screenSize = new Dimension(640, 480);
 			}
 			Dimension frameSize = running.getSize();
-
 			if (frameSize.height > screenSize.height) {
 				frameSize.height = screenSize.height;
 			}
@@ -1758,7 +1805,6 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			running.setLocation(x, y);
 			running.setVisible(true);
 			running.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-		//	FileWriter out = new FileWriter(new File(directory + separator + "run.log"));
 			logFile = new File(directory + separator + "run.log");
 			logFile.createNewFile();
 			out = new BufferedWriter(new FileWriter(logFile));
@@ -1768,6 +1814,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				out.write("Running autoGenT\n");
 				//divisionsL = autoGenT(divisionsL);		
 				divisionsL = autoGenT();	
+				
 /*
 				String makeBin = "autogenT.py -b" + newBinFile + " -i"
 						+ iteration.getText();
@@ -1848,7 +1895,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				}
 			}
 			if (execute && !fail) {
-				File lhpn = new File(lhpnFile);
+				File lhpn = new File(directory + separator + lhpnFile);
 				lhpn.delete();
 				// String command = "data2lhpn.py -b" + binFile + " -l" +
 				// lhpnFile;
@@ -1909,13 +1956,26 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				// }
 				viewLog.setEnabled(true);
 				if (new File(directory + separator + lhpnFile).exists()) {
-					viewCoverage.setEnabled(true); // SB
-					viewVHDL.setEnabled(true); // SB
-					viewLhpn();
+					viewVHDL.setEnabled(true); 		// SB
+					viewLhpn.setEnabled(true); 		// SB
+					viewCoverage.setEnabled(true); 	// SB
+					saveLhpn.setEnabled(true); 		// SB
+					//viewLearnComplete();			// SB
+					JFrame learnComplete = new JFrame();
+					JOptionPane.showMessageDialog(learnComplete,
+						    "Learning Completed Successfully.",
+						    "LEMA",
+						    JOptionPane.PLAIN_MESSAGE);
+
+					//viewLhpn();
+					biosim.updateMenu(true,true);
 				} else {
+					viewVHDL.setEnabled(false); 	// SB
+					viewLhpn.setEnabled(false); 	// SB
 					viewCoverage.setEnabled(false); // SB
-					viewVHDL.setEnabled(false); // SB
+					saveLhpn.setEnabled(false); 	// SB
 					fail = true;
+					biosim.updateMenu(true,false);
 				}
 
 			}
@@ -2101,6 +2161,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				failPropVHDL = failPropVHDL.replaceAll("\\|", " or ");
 				failPropVHDL = failPropVHDL.replaceAll("\\&", " and ");
 				failPropVHDL = failPropVHDL.replaceAll(">=(-*[0-9]+\\.[0-9]*)", "'above($1)");
+				failPropVHDL = failPropVHDL.replaceAll(">=(-*[0-9]+)", "'above($1\\.0)");
 				failProp = failProp.replaceAll("\\.[0-9]*","");
 				Properties p0 = new Properties();
 				placeInfo.put("failProp", p0);
@@ -2124,6 +2185,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			percent = Double.parseDouble(percentG.getText().trim());
 			runLength = Integer.parseInt(runLengthG.getText().trim());
 			runTime = Double.parseDouble(runTimeG.getText().trim());
+			absoluteTime = absTimeG.isSelected();
 			while (new File(directory + separator + "run-" + i + ".tsd").exists()) {
 				Properties cProp = new Properties();
 				cvgInfo.put(String.valueOf(i), cProp);
@@ -2177,13 +2239,32 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 					g.addInteger(v.getName(), v.getInitValue());
 				} else {
 					initCond.put("value", v.getInitValue());
-					initCond.put("rate", v.getInitValue());
+					initCond.put("rate", v.getInitRate());
 					g.addVar(v.getName(), initCond);
 				}
 			}
 			g.addOutput("fail", "false");
 			ArrayList<ArrayList<Double>> scaleDiv;
+			
+			// temporary
+	/*		for (String t : g.getTransitionList()) {
+				if ((g.getPreset(t) != null) && (placeInfo.get(getPlaceInfoIndex(g.getPreset(t)[0])).getProperty("type").equalsIgnoreCase("PROP"))){
+					g.addEnabling(t, failProp);	
+				}
+			} */
+			// end temporary
+			
 			scaleDiv = normalize();
+			initCond = new Properties(); 
+			for (Variable v : reqdVarsL) {	// Updating with scaled initial values & rates
+				if (v.isDmvc()) {
+					g.changeIntegerInitCond(v.getName(), v.getInitValue());
+				} else {
+					initCond.put("value", v.getInitValue());
+					initCond.put("rate", v.getInitValue());
+					g.changeVarInitCond(v.getName(), initCond);
+				}
+			}
 			String[] transitionList = g.getTransitionList();
 			transEnablingsVHDL = new String[transitionList.length];
 			transDelayAssignVHDL = new String[transitionList.length];
@@ -2615,6 +2696,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 											&& (placeInfo.get(k).getProperty("DMVCVariable").equalsIgnoreCase(reqdVarsL.get(i).getName()))) {
 					//					out.write("Place with key " + k + "already exists. so adding dmvcTime to it\n");
 										addDmvcTime(placeInfo.get(k), reqdVarsL.get(i).getName(), calcDelay(runs.getStartPoint(j), runs.getEndPoint(j)));
+										addDuration(placeInfo.get(k),calcDelay(runs.getStartPoint(j), runs.getEndPoint(j)));
 										exists = true;
 										prevPlace = currPlace;
 										currPlace = getPlaceInfoIndex(st);// k;
@@ -2652,8 +2734,15 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 							cvgProp.setProperty("places", String.valueOf(Integer.parseInt(cvgProp.getProperty("places"))+1));
 						}
 						Double d = calcDelay(runs.getStartPoint(j), runs.getEndPoint(j));// data.get(0).get(runs.getEndPoint(j)) - data.get(0).get(runs.getStartPoint(j));
-						// data.get(0).get(reqdVarsL.get(prevPlace.getDmvcVar()).getRuns().getEndPoint(j-1));
+							// data.get(0).get(reqdVarsL.get(prevPlace.getDmvcVar()).getRuns().getEndPoint(j-1));
+			// TEMPORARY FIX
+						Double minTime = getMinDmvcTime(p2);
+						if ((d > minTime*Math.pow(10.0, 4.0))){ // && (getMinDmvcTime(p2) == getMaxDmvcTime(p2))){
+							deleteInvalidDmvcTime(p2, getMinDmvcTime(p2));	// updates dmin,dmax too
+						}
+			// END TEMPORARY FIX
 						addDuration(p2, d); // addDelay
+					
 		//				out.write("Delay in place p"+ p2.getProperty("placeNum")+ " after updating " + d + " is ["+ p2.getProperty("dMin") + ","+ p2.getProperty("dMax") + "]\n");
 						if (prevPlace != null) {
 							if (transitionInfo.containsKey(prevPlace + currPlace)) {
@@ -2846,6 +2935,36 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		}
 	}
 
+	public void deleteInvalidDmvcTime(Properties p, Double t) {
+		String[] times = null;
+		String name = p.getProperty("DMVCVariable");
+		String s = p.getProperty("dmvcTime_" + name);
+		String newS = null;
+		Double dMin = null, dMax = null;
+		if (s != null) {
+			times = s.split(" ");
+			for (int i = 0; i < times.length; i++) {
+				if (Double.parseDouble(times[i]) != t) {
+					if (newS == null){
+						newS = times[i];
+						dMin = Double.parseDouble(times[i]);
+						dMax = Double.parseDouble(times[i]);
+					}
+					else{
+						newS += " " + times[i];
+						dMin = (Double.parseDouble(times[i]) < dMin) ? Double.parseDouble(times[i]) : dMin;
+						dMax = (Double.parseDouble(times[i]) > dMax) ? Double.parseDouble(times[i]) : dMax;
+					}
+				}
+			}
+			p.setProperty("dmvcTime_" + name, newS);
+		}
+		if (dMin != null){
+			p.setProperty("dMin", dMin.toString());
+			p.setProperty("dMax", dMax.toString());
+		}
+	}
+	
 	public ArrayList<ArrayList<Double>> normalize() {
 		Double minDelay = getMinDelay();
 		Double maxDelay = getMaxDelay();
@@ -2903,6 +3022,14 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				out.write("minimum rate is " + minRate * scaleFactor + " after scaling by " + scaleFactor + "\n");
 				varScaleFactor = scaleFactor;
 				scaledDiv = scaleVariable(scaleFactor,scaledDiv);
+		// TEMPORARY
+	/*			for (String p : g.getPlaceList()){
+					if ((placeInfo.get(getPlaceInfoIndex(p)).getProperty("type")).equals("PROP")){
+						String s = g.scaleEnabling(g.getPostset(p)[0],scaleFactor);
+						System.out.println(s);
+					}
+				}*/
+		// end TEMPORARY
 			}
 			minDivision = getMinDiv(scaledDiv);
 			maxDivision = getMaxDiv(scaledDiv);
@@ -2923,6 +3050,14 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 						+ " after scaling by " + scaleFactor + "\n");
 				varScaleFactor *= scaleFactor;
 				scaledDiv = scaleVariable(scaleFactor,scaledDiv);
+	// TEMPORARY
+	/*			for (String p : g.getPlaceList()){
+					if ((placeInfo.get(getPlaceInfoIndex(p)).getProperty("type")).equals("PROP")){
+						String s = g.scaleEnabling(g.getPostset(p)[0],scaleFactor);
+						System.out.println(s);
+					}
+				}*/
+	// END TEMPORARY
 			}
 		} catch (IOException e) {
 			System.out.println("LPN file couldn't be created/written ");
@@ -3001,7 +3136,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 										* delayScaleFactor);
 							} else {
 								// newS = newS + Integer.toString((int)(Double.parseDouble(times[i])*delayScaleFactor));
-								newS = newS + Double.toString(Double
+								newS = newS + " " + Double.toString(Double
 										.parseDouble(times[i]) * delayScaleFactor);
 							}
 						}

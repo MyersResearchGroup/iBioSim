@@ -20,7 +20,7 @@
 ##   WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
 ##
 ##   IN NO EVENT SHALL UNIVERSITY OF UTAH OR THE AUTHORS OF THIS SOFTWARE BE
-##   LIABLE FOR ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES
+##   LIABLE FOR ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGESp
 ##   OF ANY KIND, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA
 ##   OR PROFITS, WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON
 ##   ANY THEORY OF LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE
@@ -1300,8 +1300,8 @@ def genBins(varsL,datL,divisionsL):
 					#i.e. for 2 boundary numbers 3 bins are required
 					#print "binsL["+str(i)+"]["+str(j)+"] = "+str(k+1)
 					binsL[i][j] = k+1
-			print str(binsL[i][j]),
-		print "\n"
+			#print str(binsL[i][j]),
+		#print "\n"
 	return binsL
 
 ##############################################################################
@@ -2645,7 +2645,7 @@ def main():
 	
 		binsL = genBins(varsL,datL,divisionsL)
 		writeSortFile(varsL,numPoints,datL,binsL,sortFile)
-		print "print1 " + str(len(varsL)) + str(len(datFileL))
+		#print "print1 " + str(len(varsL)) + str(len(datFileL))
 	
 		ratesL = genRates(varsL,datL,binsL,rateSampling)
 		writeRateFile(varsL,numPoints,datL,binsL,ratesL,rateFile)
