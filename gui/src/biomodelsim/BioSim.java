@@ -916,6 +916,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		}
 		else if (atacs){
 			view.add(viewModel);
+			viewModel.add(viewModGraph);
+			viewModel.add(viewModBrowser);
 			view.add(viewCircuit);
 			view.add(viewRules);
 			view.add(viewTrace);
@@ -2070,10 +2072,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			}
 			else if (comp instanceof JTabbedPane) {
 				Component component = ((JTabbedPane) comp).getSelectedComponent();
-				if (component instanceof Learn) {
-					// ((Learn) component).viewCoverage();
-				}
-				else if (component instanceof LearnLHPN) {
+				if (component instanceof LearnLHPN) {
 					((LearnLHPN) component).viewCoverage();
 				}
 			}
@@ -2081,15 +2080,68 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		else if (e.getSource() == viewVHDL) {  // SB
 			Component comp = tab.getSelectedComponent();
 			if (treeSelected) {
-				JOptionPane.showMessageDialog(frame(), "VDHL Model does not  exist.", "Error",
-						JOptionPane.ERROR_MESSAGE);
+				try{
+					String filename = tree.getFile().split(separator)[tree.getFile().split(
+							separator).length - 1];
+					String cmd = "atacs -lvslllodpl " + filename;
+					File work = new File(root);
+					Runtime exec = Runtime.getRuntime();
+					Process view = exec.exec(cmd, null, work);
+					log.addText("Executing:\n" + cmd);
+					String[] findTheFile = filename.split("\\.");
+					view.waitFor();
+					// String directory = "";
+					String theFile = findTheFile[0] + ".dot";
+					if (new File(root + separator + theFile).exists()) {
+						String command = "";
+						if (System.getProperty("os.name").contentEquals("Linux")) {
+							// directory = ENVVAR + "/docs/";
+							command = "gnome-open ";
+						}
+						else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
+							// directory = ENVVAR + "/docs/";
+							command = "open ";
+						}
+						else {
+							// directory = ENVVAR + "\\docs\\";
+							command = "dotty start ";
+						}
+						log.addText(command + root + theFile + "\n");
+						exec.exec(command + theFile, null, work);
+					}
+					else {
+						File log = new File(root + separator + "atacs.log");
+						BufferedReader input = new BufferedReader(new FileReader(log));
+						String line = null;
+						JTextArea messageArea = new JTextArea();
+						while ((line = input.readLine()) != null) {
+							messageArea.append(line);
+							messageArea.append(System.getProperty("line.separator"));
+						}
+						input.close();
+						messageArea.setLineWrap(true);
+						messageArea.setWrapStyleWord(true);
+						messageArea.setEditable(false);
+						JScrollPane scrolls = new JScrollPane();
+						scrolls.setMinimumSize(new Dimension(500, 500));
+						scrolls.setPreferredSize(new Dimension(500, 500));
+						scrolls.setViewportView(messageArea);
+						JOptionPane.showMessageDialog(frame(), scrolls, "Log",
+								JOptionPane.INFORMATION_MESSAGE);
+					}
+				}
+				catch (IOException e1) {
+					e1.printStackTrace();
+					JOptionPane.showMessageDialog(frame, "File cannot be read", "Error",
+							JOptionPane.ERROR_MESSAGE);
+				}
+				catch (InterruptedException e2) {
+					e2.printStackTrace();
+				}
 			}
 			else if (comp instanceof JTabbedPane) {
 				Component component = ((JTabbedPane) comp).getSelectedComponent();
-				if (component instanceof Learn) {
-			//		((Learn) component).viewVHDL();
-				}
-				else if (component instanceof LearnLHPN) {
+				if (component instanceof LearnLHPN) {
 					((LearnLHPN) component).viewVHDL();
 				}
 			}
@@ -2097,15 +2149,69 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		else if (e.getSource() == viewLHPN) {  // SB
 			Component comp = tab.getSelectedComponent();
 			if (treeSelected) {
-				JOptionPane.showMessageDialog(frame(), "LHPN Model does not  exist.", "Error",
-						JOptionPane.ERROR_MESSAGE);
+				try{
+					String filename = tree.getFile().split(separator)[tree.getFile().split(
+							separator).length - 1];
+					String[] findTheFile = filename.split("\\.");
+					String theFile = findTheFile[0] + ".dot";
+					File dot = new File(root + separator + theFile);
+					dot.delete();
+					String cmd = "atacs -cPllodpl " + filename;
+					File work = new File(root);
+					Runtime exec = Runtime.getRuntime();
+					Process ATACS = exec.exec(cmd, null, work);
+					ATACS.waitFor();
+					log.addText("Executing:\n" + cmd);
+					if (dot.exists()) {
+						String command = "";
+						if (System.getProperty("os.name").contentEquals("Linux")) {
+							// directory = ENVVAR + "/docs/";
+							command = "gnome-open ";
+						}
+						else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
+							// directory = ENVVAR + "/docs/";
+							command = "open ";
+						}
+						else {
+							// directory = ENVVAR + "\\docs\\";
+							command = "dotty start ";
+						}
+						log.addText(command + root + separator + theFile + "\n");
+						exec.exec(command + theFile, null, work);
+					}
+					else {
+						File log = new File(root + separator + "atacs.log");
+						BufferedReader input = new BufferedReader(new FileReader(log));
+						String line = null;
+						JTextArea messageArea = new JTextArea();
+						while ((line = input.readLine()) != null) {
+							messageArea.append(line);
+							messageArea.append(System.getProperty("line.separator"));
+						}
+						input.close();
+						messageArea.setLineWrap(true);
+						messageArea.setWrapStyleWord(true);
+						messageArea.setEditable(false);
+						JScrollPane scrolls = new JScrollPane();
+						scrolls.setMinimumSize(new Dimension(500, 500));
+						scrolls.setPreferredSize(new Dimension(500, 500));
+						scrolls.setViewportView(messageArea);
+						JOptionPane.showMessageDialog(frame(), scrolls, "Log",
+								JOptionPane.INFORMATION_MESSAGE);
+					}
+				}
+				catch (IOException e1) {
+					e1.printStackTrace();
+					JOptionPane.showMessageDialog(frame, "File cannot be read", "Error",
+							JOptionPane.ERROR_MESSAGE);
+				}
+				catch (InterruptedException e2) {
+					e2.printStackTrace();
+				}
 			}
 			else if (comp instanceof JTabbedPane) {
 				Component component = ((JTabbedPane) comp).getSelectedComponent();
-				if (component instanceof Learn) {
-			//		((Learn) component).viewVHDL();
-				}
-				else if (component instanceof LearnLHPN) {
+				if (component instanceof LearnLHPN) {
 					((LearnLHPN) component).viewLhpn();
 				}
 			}
