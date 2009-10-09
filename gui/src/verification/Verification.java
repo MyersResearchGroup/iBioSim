@@ -245,7 +245,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		timingMethodGroup = new ButtonGroup();
 		algorithmGroup = new ButtonGroup();
 
-		abstractLhpn.setSelected(true);
+		none.setSelected(true);
 		if (lema) {
 			dbm.setSelected(true);
 		}
