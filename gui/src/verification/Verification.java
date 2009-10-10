@@ -1654,8 +1654,8 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			// String circuitFile = getFilename[0] + ".ps";
 			// JOptionPane.showMessageDialog(this, directory + separator +
 			// circuitFile);
-			if (new File(traceFilename).exists()) {
-				File log = new File(traceFilename);
+			if (new File(directory + separator + traceFilename).exists()) {
+				File log = new File(directory + separator + traceFilename);
 				BufferedReader input = new BufferedReader(new FileReader(log));
 				String line = null;
 				JTextArea messageArea = new JTextArea();
