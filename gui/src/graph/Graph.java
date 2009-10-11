@@ -2311,6 +2311,118 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							}
 						}
 						else {
+							if (g.getRunNumber().equals("Average") &&
+									  new File(outDir + separator + "mean" + "."
+										+ printer_id.substring(0, printer_id.length() - 8))
+										.exists()) {
+								ArrayList<ArrayList<Double>> data;
+								if (allData.containsKey(g.getRunNumber() + " " + g.getDirectory())) {
+									data = allData.get(g.getRunNumber() + " " + g.getDirectory());
+								}
+								else {
+									data = readData(outDir + separator + "mean."
+											+ printer_id.substring(0, printer_id.length() - 8), g
+											.getRunNumber().toLowerCase(), null, false);
+									for (int i = 2; i < graphSpecies.size(); i++) {
+										String index = graphSpecies.get(i);
+										ArrayList<Double> index2 = data.get(i);
+										int j = i;
+										while ((j > 1)
+												&& graphSpecies.get(j - 1).compareToIgnoreCase(
+														index) > 0) {
+											graphSpecies.set(j, graphSpecies.get(j - 1));
+											data.set(j, data.get(j - 1));
+											j = j - 1;
+										}
+										graphSpecies.set(j, index);
+										data.set(j, index2);
+									}
+									allData.put(g.getRunNumber() + " " + g.getDirectory(), data);
+								}
+								graphData.add(new XYSeries(g.getSpecies()));
+								if (data.size() != 0) {
+									for (int i = 0; i < (data.get(0)).size(); i++) {
+										graphData.get(graphData.size() - 1).add(
+												(data.get(0)).get(i),
+												(data.get(g.getNumber() + 1)).get(i));
+									}
+								}
+							}
+							else if (g.getRunNumber().equals("Variance") &&
+								  new File(outDir + separator + "variance" + "."
+											+ printer_id.substring(0, printer_id.length() - 8))
+											.exists()) {
+								ArrayList<ArrayList<Double>> data;
+								if (allData.containsKey(g.getRunNumber() + " " + g.getDirectory())) {
+									data = allData.get(g.getRunNumber() + " " + g.getDirectory());
+								}
+								else {
+									data = readData(outDir + separator + "variance."
+											+ printer_id.substring(0, printer_id.length() - 8), g
+											.getRunNumber().toLowerCase(), null, false);
+									for (int i = 2; i < graphSpecies.size(); i++) {
+										String index = graphSpecies.get(i);
+										ArrayList<Double> index2 = data.get(i);
+										int j = i;
+										while ((j > 1)
+												&& graphSpecies.get(j - 1).compareToIgnoreCase(
+														index) > 0) {
+											graphSpecies.set(j, graphSpecies.get(j - 1));
+											data.set(j, data.get(j - 1));
+											j = j - 1;
+										}
+										graphSpecies.set(j, index);
+										data.set(j, index2);
+									}
+									allData.put(g.getRunNumber() + " " + g.getDirectory(), data);
+								}
+								graphData.add(new XYSeries(g.getSpecies()));
+								if (data.size() != 0) {
+									for (int i = 0; i < (data.get(0)).size(); i++) {
+										graphData.get(graphData.size() - 1).add(
+												(data.get(0)).get(i),
+												(data.get(g.getNumber() + 1)).get(i));
+									}
+								}
+							}
+							else if (g.getRunNumber().equals("Standard Deviation") &&
+								  new File(outDir + separator + "standard_deviation" + "."
+									+ printer_id.substring(0, printer_id.length() - 8))
+									.exists()) {
+								ArrayList<ArrayList<Double>> data;
+								if (allData.containsKey(g.getRunNumber() + " " + g.getDirectory())) {
+									data = allData.get(g.getRunNumber() + " " + g.getDirectory());
+								}
+								else {
+									data = readData(outDir + separator + "standard_deviation."
+											+ printer_id.substring(0, printer_id.length() - 8), g
+											.getRunNumber().toLowerCase(), null, false);
+									for (int i = 2; i < graphSpecies.size(); i++) {
+										String index = graphSpecies.get(i);
+										ArrayList<Double> index2 = data.get(i);
+										int j = i;
+										while ((j > 1)
+												&& graphSpecies.get(j - 1).compareToIgnoreCase(
+														index) > 0) {
+											graphSpecies.set(j, graphSpecies.get(j - 1));
+											data.set(j, data.get(j - 1));
+											j = j - 1;
+										}
+										graphSpecies.set(j, index);
+										data.set(j, index2);
+									}
+									allData.put(g.getRunNumber() + " " + g.getDirectory(), data);
+								}
+								graphData.add(new XYSeries(g.getSpecies()));
+								if (data.size() != 0) {
+									for (int i = 0; i < (data.get(0)).size(); i++) {
+										graphData.get(graphData.size() - 1).add(
+												(data.get(0)).get(i),
+												(data.get(g.getNumber() + 1)).get(i));
+									}
+								}
+						  }
+							else {
 							boolean ableToGraph = false;
 							try {
 								for (String s : new File(outDir).list()) {
@@ -2367,6 +2479,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								thisOne--;
 							}
 						}
+						}
 					}
 					else {
 						thisOne++;
@@ -2421,6 +2534,118 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								thisOne--;
 							}
 						}
+						else {
+							if (g.getRunNumber().equals("Average") &&
+								  new File(outDir + separator + g.getDirectory() + separator + "mean" + "."
+									+ printer_id.substring(0, printer_id.length() - 8))
+									.exists()) {
+							ArrayList<ArrayList<Double>> data;
+							if (allData.containsKey(g.getRunNumber() + " " + g.getDirectory())) {
+								data = allData.get(g.getRunNumber() + " " + g.getDirectory());
+							}
+							else {
+								data = readData(outDir + separator + g.getDirectory() + separator + "mean."
+										+ printer_id.substring(0, printer_id.length() - 8), g
+										.getRunNumber().toLowerCase(), null, false);
+								for (int i = 2; i < graphSpecies.size(); i++) {
+									String index = graphSpecies.get(i);
+									ArrayList<Double> index2 = data.get(i);
+									int j = i;
+									while ((j > 1)
+											&& graphSpecies.get(j - 1).compareToIgnoreCase(
+													index) > 0) {
+										graphSpecies.set(j, graphSpecies.get(j - 1));
+										data.set(j, data.get(j - 1));
+										j = j - 1;
+									}
+									graphSpecies.set(j, index);
+									data.set(j, index2);
+								}
+								allData.put(g.getRunNumber() + " " + g.getDirectory(), data);
+							}
+							graphData.add(new XYSeries(g.getSpecies()));
+							if (data.size() != 0) {
+								for (int i = 0; i < (data.get(0)).size(); i++) {
+									graphData.get(graphData.size() - 1).add(
+											(data.get(0)).get(i),
+											(data.get(g.getNumber() + 1)).get(i));
+								}
+							}
+						}
+						else if (g.getRunNumber().equals("Variance") &&
+							  new File(outDir + separator + g.getDirectory() + separator + "variance" + "."
+										+ printer_id.substring(0, printer_id.length() - 8))
+										.exists()) {
+							ArrayList<ArrayList<Double>> data;
+							if (allData.containsKey(g.getRunNumber() + " " + g.getDirectory())) {
+								data = allData.get(g.getRunNumber() + " " + g.getDirectory());
+							}
+							else {
+								data = readData(outDir + separator + g.getDirectory() + separator + "variance."
+										+ printer_id.substring(0, printer_id.length() - 8), g
+										.getRunNumber().toLowerCase(), null, false);
+								for (int i = 2; i < graphSpecies.size(); i++) {
+									String index = graphSpecies.get(i);
+									ArrayList<Double> index2 = data.get(i);
+									int j = i;
+									while ((j > 1)
+											&& graphSpecies.get(j - 1).compareToIgnoreCase(
+													index) > 0) {
+										graphSpecies.set(j, graphSpecies.get(j - 1));
+										data.set(j, data.get(j - 1));
+										j = j - 1;
+									}
+									graphSpecies.set(j, index);
+									data.set(j, index2);
+								}
+								allData.put(g.getRunNumber() + " " + g.getDirectory(), data);
+							}
+							graphData.add(new XYSeries(g.getSpecies()));
+							if (data.size() != 0) {
+								for (int i = 0; i < (data.get(0)).size(); i++) {
+									graphData.get(graphData.size() - 1).add(
+											(data.get(0)).get(i),
+											(data.get(g.getNumber() + 1)).get(i));
+								}
+							}
+						}
+						else if (g.getRunNumber().equals("Standard Deviation") &&
+							  new File(outDir + separator + g.getDirectory() + separator + "standard_deviation" + "."
+								+ printer_id.substring(0, printer_id.length() - 8))
+								.exists()) {
+							ArrayList<ArrayList<Double>> data;
+							if (allData.containsKey(g.getRunNumber() + " " + g.getDirectory())) {
+								data = allData.get(g.getRunNumber() + " " + g.getDirectory());
+							}
+							else {
+								data = readData(outDir + separator + g.getDirectory() + separator + "standard_deviation."
+										+ printer_id.substring(0, printer_id.length() - 8), g
+										.getRunNumber().toLowerCase(), null, false);
+								for (int i = 2; i < graphSpecies.size(); i++) {
+									String index = graphSpecies.get(i);
+									ArrayList<Double> index2 = data.get(i);
+									int j = i;
+									while ((j > 1)
+											&& graphSpecies.get(j - 1).compareToIgnoreCase(
+													index) > 0) {
+										graphSpecies.set(j, graphSpecies.get(j - 1));
+										data.set(j, data.get(j - 1));
+										j = j - 1;
+									}
+									graphSpecies.set(j, index);
+									data.set(j, index2);
+								}
+								allData.put(g.getRunNumber() + " " + g.getDirectory(), data);
+							}
+							graphData.add(new XYSeries(g.getSpecies()));
+							if (data.size() != 0) {
+								for (int i = 0; i < (data.get(0)).size(); i++) {
+									graphData.get(graphData.size() - 1).add(
+											(data.get(0)).get(i),
+											(data.get(g.getNumber() + 1)).get(i));
+								}
+							}
+					  }
 						else {
 							boolean ableToGraph = false;
 							try {
@@ -2480,6 +2705,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								unableToGraph.add(g);
 								thisOne--;
 							}
+						}
 						}
 					}
 				}
