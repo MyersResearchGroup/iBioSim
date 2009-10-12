@@ -232,7 +232,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 
 	private JMenuItem copy, rename, delete, save, saveAs, saveAsGcm, saveAsGraph, saveAsSbml,
 			saveAsTemplate, saveGcmAsLhpn, saveAsLhpn, check, run, export, refresh, viewCircuit,
-			viewRules, viewTrace, viewLog, viewCoverage, viewVHDL, viewLHPN, saveParam, saveSbml, saveTemp, viewModGraph,
+			viewRules, viewTrace, viewLog, viewCoverage, viewVHDL, viewVerilog, viewLHPN, saveParam, saveSbml, saveTemp, viewModGraph,
 			viewModBrowser, createAnal, createLearn, createSbml, createSynth, createVer, close,
 			closeAll;
 
@@ -496,6 +496,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		viewLog = new JMenuItem("Log");
 		viewCoverage = new JMenuItem("Coverage Report");  	// SB
 		viewVHDL = new JMenuItem("VHDL-AMS Model");  		// SB
+		viewVerilog = new JMenuItem("Verilog-AMS Model");	// SB
 		viewLHPN = new JMenuItem("LHPN Model");				// SB
 		viewModGraph = new JMenuItem("Using GraphViz");
 		viewModBrowser = new JMenuItem("Using Browser");
@@ -564,6 +565,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		viewLog.addActionListener(this);
 		viewCoverage.addActionListener(this); // SB
 		viewVHDL.addActionListener(this); // SB
+		viewVerilog.addActionListener(this); // SB
 		viewLHPN.addActionListener(this); // SB
 		viewModGraph.addActionListener(this);
 		viewModBrowser.addActionListener(this);
@@ -627,7 +629,9 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		if (lema){
 			//viewCoverage.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, 0)); // SB
 			viewVHDL.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, 0)); 	// SB
+			viewVerilog.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0)); 	// SB
 			viewLHPN.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));		// SB
+			viewTrace.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F6, 0));		// SB
 		}
 		else{
 			viewCircuit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));
@@ -776,6 +780,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		viewLog.setEnabled(false);
 		viewCoverage.setEnabled(false); // SB
 		viewVHDL.setEnabled(false); 	// SB
+		viewVerilog.setEnabled(false); 	// SB
 		viewLHPN.setEnabled(false); 	// SB
 		viewModel.setEnabled(false);
 		viewModGraph.setEnabled(false);
@@ -906,13 +911,14 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			file.addSeparator();
 			help.add(about);
 		}
-		if (lema){
-			view.add(viewVHDL); 	// SB
-			view.add(viewLHPN);		// SB
-			view.addSeparator();	// SB
-			view.add(viewCoverage); // SB
-			view.add(viewLog); 		// SB
-			view.add(viewTrace); 	// SB
+		if (lema){					// SB
+			view.add(viewVHDL); 	
+			view.add(viewVerilog);	
+			view.add(viewLHPN);		
+			view.addSeparator();	
+			view.add(viewCoverage); 
+			view.add(viewLog); 		
+			view.add(viewTrace); 	
 		}
 		else if (atacs){
 			view.add(viewModel);
@@ -2080,38 +2086,11 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		else if (e.getSource() == viewVHDL) {  // SB
 			Component comp = tab.getSelectedComponent();
 			if (treeSelected) {
-				try{
-					String filename = tree.getFile().split(separator)[tree.getFile().split(
-							separator).length - 1];
-					String cmd = "atacs -lvslllodpl " + filename;
-					File work = new File(root);
-					Runtime exec = Runtime.getRuntime();
-					Process view = exec.exec(cmd, null, work);
-					log.addText("Executing:\n" + cmd);
-					String[] findTheFile = filename.split("\\.");
-					view.waitFor();
-					// String directory = "";
-					String theFile = findTheFile[0] + ".dot";
-					if (new File(root + separator + theFile).exists()) {
-						String command = "";
-						if (System.getProperty("os.name").contentEquals("Linux")) {
-							// directory = ENVVAR + "/docs/";
-							command = "gnome-open ";
-						}
-						else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
-							// directory = ENVVAR + "/docs/";
-							command = "open ";
-						}
-						else {
-							// directory = ENVVAR + "\\docs\\";
-							command = "dotty start ";
-						}
-						log.addText(command + root + theFile + "\n");
-						exec.exec(command + theFile, null, work);
-					}
-					else {
-						File log = new File(root + separator + "atacs.log");
-						BufferedReader input = new BufferedReader(new FileReader(log));
+				try {
+					String vhdFile = tree.getFile();
+					if (new File(vhdFile).exists()) {
+						File vhdlAmsFile = new File(vhdFile);
+						BufferedReader input = new BufferedReader(new FileReader(vhdlAmsFile));
 						String line = null;
 						JTextArea messageArea = new JTextArea();
 						while ((line = input.readLine()) != null) {
@@ -2123,26 +2102,68 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						messageArea.setWrapStyleWord(true);
 						messageArea.setEditable(false);
 						JScrollPane scrolls = new JScrollPane();
-						scrolls.setMinimumSize(new Dimension(500, 500));
-						scrolls.setPreferredSize(new Dimension(500, 500));
+						scrolls.setMinimumSize(new Dimension(800, 500));
+						scrolls.setPreferredSize(new Dimension(800, 500));
 						scrolls.setViewportView(messageArea);
-						JOptionPane.showMessageDialog(frame(), scrolls, "Log",
-								JOptionPane.INFORMATION_MESSAGE);
+						JOptionPane.showMessageDialog(this.frame(), scrolls,
+								"VHDL-AMS Model", JOptionPane.INFORMATION_MESSAGE);
+					} else {
+						JOptionPane.showMessageDialog(this.frame(),
+								"VHDL-AMS model does not exist.", "Error",
+								JOptionPane.ERROR_MESSAGE);
 					}
-				}
-				catch (IOException e1) {
-					e1.printStackTrace();
-					JOptionPane.showMessageDialog(frame, "File cannot be read", "Error",
+				} catch (Exception e1) {
+					JOptionPane.showMessageDialog(this.frame(),
+							"Unable to view VHDL-AMS model.", "Error",
 							JOptionPane.ERROR_MESSAGE);
-				}
-				catch (InterruptedException e2) {
-					e2.printStackTrace();
 				}
 			}
 			else if (comp instanceof JTabbedPane) {
 				Component component = ((JTabbedPane) comp).getSelectedComponent();
 				if (component instanceof LearnLHPN) {
 					((LearnLHPN) component).viewVHDL();
+				}
+			}
+		}
+		else if (e.getSource() == viewVerilog) {  // SB
+			Component comp = tab.getSelectedComponent();
+			if (treeSelected) {
+				try {
+					String vamsFileName = tree.getFile();
+					if (new File(vamsFileName).exists()) {
+						File vamsFile = new File(vamsFileName);
+						BufferedReader input = new BufferedReader(new FileReader(vamsFile));
+						String line = null;
+						JTextArea messageArea = new JTextArea();
+						while ((line = input.readLine()) != null) {
+							messageArea.append(line);
+							messageArea.append(System.getProperty("line.separator"));
+						}
+						input.close();
+						messageArea.setLineWrap(true);
+						messageArea.setWrapStyleWord(true);
+						messageArea.setEditable(false);
+						JScrollPane scrolls = new JScrollPane();
+						scrolls.setMinimumSize(new Dimension(800, 500));
+						scrolls.setPreferredSize(new Dimension(800, 500));
+						scrolls.setViewportView(messageArea);
+						JOptionPane.showMessageDialog(this.frame(), scrolls,
+								"Verilog-AMS Model", JOptionPane.INFORMATION_MESSAGE);
+					} else {
+						JOptionPane.showMessageDialog(this.frame(),
+								"Verilog-AMS model does not exist.", "Error",
+								JOptionPane.ERROR_MESSAGE);
+					}
+				} catch (Exception e1) {
+					JOptionPane.showMessageDialog(this.frame(),
+							"Unable to view Verilog-AMS model.", "Error",
+							JOptionPane.ERROR_MESSAGE);
+				}
+			}
+			else if (comp instanceof JTabbedPane) {
+				Component component = ((JTabbedPane) comp).getSelectedComponent();
+				if (component instanceof LearnLHPN) {
+					((LearnLHPN) component).viewVerilog();
 				}
 			}
 		}
@@ -5274,6 +5295,38 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				}
 				else if (tree.getFile().length() >= 4
 						&& tree.getFile().substring(tree.getFile().length() - 4).equals(".vhd")) {
+					try {
+						String vhdFile = tree.getFile();
+						if (new File(vhdFile).exists()) {
+							File vhdlAmsFile = new File(vhdFile);
+							BufferedReader input = new BufferedReader(new FileReader(vhdlAmsFile));
+							String line = null;
+							JTextArea messageArea = new JTextArea();
+							while ((line = input.readLine()) != null) {
+								messageArea.append(line);
+								messageArea.append(System.getProperty("line.separator"));
+							}
+							input.close();
+							messageArea.setLineWrap(true);
+							messageArea.setWrapStyleWord(true);
+							messageArea.setEditable(false);
+							JScrollPane scrolls = new JScrollPane();
+							scrolls.setMinimumSize(new Dimension(800, 500));
+							scrolls.setPreferredSize(new Dimension(800, 500));
+							scrolls.setViewportView(messageArea);
+							JOptionPane.showMessageDialog(this.frame(), scrolls,
+									"VHDL-AMS Model", JOptionPane.INFORMATION_MESSAGE);
+						} else {
+							JOptionPane.showMessageDialog(this.frame(),
+									"VHDL-AMS model does not exist.", "Error",
+									JOptionPane.ERROR_MESSAGE);
+						}
+					} catch (Exception e1) {
+						JOptionPane.showMessageDialog(this.frame(),
+								"Unable to view VHDL-AMS model.", "Error",
+								JOptionPane.ERROR_MESSAGE);
+					}
+					/*
 					String filename = tree.getFile().split(separator)[tree.getFile().split(
 							separator).length - 1];
 					String cmd = "atacs -lvslllodpl " + filename;
@@ -5321,6 +5374,65 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						scrolls.setViewportView(messageArea);
 						JOptionPane.showMessageDialog(frame(), scrolls, "Log",
 								JOptionPane.INFORMATION_MESSAGE);
+					}*/
+				}
+				else if (tree.getFile().length() >= 5
+						&& tree.getFile().substring(tree.getFile().length() - 5).equals(".vams")) {
+					try {
+						String filename = tree.getFile();
+						String directory = "";
+						String theFile = "";
+						if (filename.lastIndexOf('/') >= 0) {
+							directory = filename.substring(0, filename.lastIndexOf('/') + 1);
+							theFile = filename.substring(filename.lastIndexOf('/') + 1);
+						}
+						if (filename.lastIndexOf('\\') >= 0) {
+							directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
+							theFile = filename.substring(filename.lastIndexOf('\\') + 1);
+						}
+						File work = new File(directory);
+						int i = getTab(theFile);
+						if (i != -1) {
+							tab.setSelectedIndex(i);
+						}
+						else {
+							if (externView) {
+								String command = viewerField.getText() + " " + directory
+										+ separator + theFile;
+								Runtime exec = Runtime.getRuntime();
+								try {
+									exec.exec(command);
+								}
+								catch (Exception e1) {
+									JOptionPane.showMessageDialog(frame,
+											"Unable to open external editor.",
+											"Error Opening Editor", JOptionPane.ERROR_MESSAGE);
+								}
+							}
+							else {
+								File file = new File(work + separator + theFile);
+								String input = "";
+								FileReader in = new FileReader(file);
+								int read = in.read();
+								while (read != -1) {
+									input += (char) read;
+									read = in.read();
+								}
+								in.close();
+								JTextArea text = new JTextArea(input);
+								text.setEditable(true);
+								text.setLineWrap(true);
+								JScrollPane scroll = new JScrollPane(text);
+								// gcm.addMouseListener(this);
+								addTab(theFile, scroll, "VHDL Editor");
+							}
+						}
+						// String[] command = { "emacs", filename };
+						// Runtime.getRuntime().exec(command);
+					}
+					catch (Exception e1) {
+						JOptionPane.showMessageDialog(frame, "Unable to view this Verilog-AMS file.",
+								"Error", JOptionPane.ERROR_MESSAGE);
 					}
 				}
 				else if (tree.getFile().length() >= 4
@@ -6805,6 +6917,13 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				}
 				in.close();
 				out.close();
+				out = new BufferedWriter(new FileWriter(root + separator + filename.replace(".lpn", ".vams")));
+				in = new BufferedReader(new FileReader(path.replace(".lpn", ".vams")));
+				while ((str = in.readLine()) != null) {
+					out.write(str + "\n");
+				}
+				in.close();
+				out.close();
 				refreshTree();
 			}
 		}
@@ -6816,6 +6935,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 	
 	public void updateMenu(boolean logEnabled, boolean othersEnabled){
 		viewVHDL.setEnabled(othersEnabled);
+		viewVerilog.setEnabled(othersEnabled); 	
 		viewLHPN.setEnabled(othersEnabled);
 		viewCoverage.setEnabled(othersEnabled);
 		save.setEnabled(othersEnabled);
@@ -7506,6 +7626,65 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						}
 						catch (Exception e1) {
 							JOptionPane.showMessageDialog(frame, "Unable to view this vhdl file.",
+									"Error", JOptionPane.ERROR_MESSAGE);
+						}
+					}
+					else if (tree.getFile().length() >= 5
+							&& tree.getFile().substring(tree.getFile().length() - 5).equals(".vams")) {
+						try {
+							String filename = tree.getFile();
+							String directory = "";
+							String theFile = "";
+							if (filename.lastIndexOf('/') >= 0) {
+								directory = filename.substring(0, filename.lastIndexOf('/') + 1);
+								theFile = filename.substring(filename.lastIndexOf('/') + 1);
+							}
+							if (filename.lastIndexOf('\\') >= 0) {
+								directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
+								theFile = filename.substring(filename.lastIndexOf('\\') + 1);
+							}
+							File work = new File(directory);
+							int i = getTab(theFile);
+							if (i != -1) {
+								tab.setSelectedIndex(i);
+							}
+							else {
+								if (externView) {
+									String command = viewerField.getText() + " " + directory
+											+ separator + theFile;
+									Runtime exec = Runtime.getRuntime();
+									try {
+										exec.exec(command);
+									}
+									catch (Exception e1) {
+										JOptionPane.showMessageDialog(frame,
+												"Unable to open external editor.",
+												"Error Opening Editor", JOptionPane.ERROR_MESSAGE);
+									}
+								}
+								else {
+									File file = new File(work + separator + theFile);
+									String input = "";
+									FileReader in = new FileReader(file);
+									int read = in.read();
+									while (read != -1) {
+										input += (char) read;
+										read = in.read();
+									}
+									in.close();
+									JTextArea text = new JTextArea(input);
+									text.setEditable(true);
+									text.setLineWrap(true);
+									JScrollPane scroll = new JScrollPane(text);
+									// gcm.addMouseListener(this);
+									addTab(theFile, scroll, "VHDL Editor");
+								}
+							}
+							// String[] command = { "emacs", filename };
+							// Runtime.getRuntime().exec(command);
+						}
+						catch (Exception e1) {
+							JOptionPane.showMessageDialog(frame, "Unable to view this Verilog-AMS file.",
 									"Error", JOptionPane.ERROR_MESSAGE);
 						}
 					}
@@ -10549,6 +10728,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			viewLog.setEnabled(false);
 			viewCoverage.setEnabled(false); //SB
 			viewVHDL.setEnabled(false); 	// SB
+			viewVerilog.setEnabled(false); 	// SB
 			viewLHPN.setEnabled(false); 	// SB
 			saveParam.setEnabled(false);
 			saveSbml.setEnabled(true);
@@ -10581,6 +10761,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			viewLog.setEnabled(false);
 			viewCoverage.setEnabled(false); //SB
 			viewVHDL.setEnabled(false); 	// SB
+			viewVerilog.setEnabled(false); 	// SB
 			viewLHPN.setEnabled(false); 	// SB
 			saveParam.setEnabled(false);
 		}
@@ -10609,6 +10790,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			viewLog.setEnabled(false);
 			viewCoverage.setEnabled(false); //SB
 			viewVHDL.setEnabled(false); 	// SB
+			viewVerilog.setEnabled(false); 	// SB
 			viewLHPN.setEnabled(false); 	// SB
 			saveParam.setEnabled(false);
 			saveSbml.setEnabled(true);
@@ -10654,6 +10836,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			viewLog.setEnabled(false);
 			viewCoverage.setEnabled(false); //SB
 			viewVHDL.setEnabled(false); 	// SB
+			viewVerilog.setEnabled(false); 	// SB
 			viewLHPN.setEnabled(false); 	// SB
 			saveParam.setEnabled(false);
 			saveSbml.setEnabled(false);
@@ -10720,6 +10903,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				viewLog.setEnabled(false);
 				viewCoverage.setEnabled(false); //SB
 				viewVHDL.setEnabled(false); 	// SB
+				viewVerilog.setEnabled(false); 	// SB
 				viewLHPN.setEnabled(false); 	// SB
 				saveParam.setEnabled(false);
 				saveSbml.setEnabled(false);
@@ -10752,6 +10936,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				viewLog.setEnabled(false);
 				viewCoverage.setEnabled(false); //SB
 				viewVHDL.setEnabled(false); 	// SB
+				viewVerilog.setEnabled(false); 	// SB
 				viewLHPN.setEnabled(false); 	// SB
 				saveParam.setEnabled(true);
 				saveSbml.setEnabled(false);
@@ -10784,6 +10969,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				viewLog.setEnabled(false);
 				viewCoverage.setEnabled(false); //SB
 				viewVHDL.setEnabled(false); 	// SB
+				viewVerilog.setEnabled(false); 	// SB
 				viewLHPN.setEnabled(false); 	// SB
 				saveParam.setEnabled(true);
 				saveSbml.setEnabled(false);
@@ -10820,6 +11006,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				viewLog.setEnabled(((Learn) component).getViewLogEnabled());
 				viewCoverage.setEnabled(false); // SB
 				viewVHDL.setEnabled(false); 	// SB
+				viewVerilog.setEnabled(false); 	// SB
 				viewLHPN.setEnabled(false); 	// SB
 		//		viewCoverage.setEnabled(((Learn) component).getViewCoverageEnabled());  // SB
 				saveParam.setEnabled(true);
@@ -10857,6 +11044,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				viewLog.setEnabled(((LearnLHPN) component).getViewLogEnabled());
 				viewCoverage.setEnabled(((LearnLHPN) component).getViewCoverageEnabled());  // SB
 				viewVHDL.setEnabled(((LearnLHPN) component).getViewVHDLEnabled());  		// SB
+				viewVerilog.setEnabled(((LearnLHPN) component).getViewVerilogEnabled()); 	// SB
 				viewLHPN.setEnabled(((LearnLHPN) component).getViewLhpnEnabled());			//SB
 				saveParam.setEnabled(true);
 				saveSbml.setEnabled(false);
@@ -10889,6 +11077,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				viewLog.setEnabled(false);
 				viewCoverage.setEnabled(false);  // SB
 				viewVHDL.setEnabled(false); 	// SB
+				viewVerilog.setEnabled(false); 	// SB
 				viewLHPN.setEnabled(false); 	// SB
 				saveParam.setEnabled(false);
 				saveSbml.setEnabled(false);
@@ -10921,6 +11110,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				viewLog.setEnabled(false);
 				viewCoverage.setEnabled(false); // SB
 				viewVHDL.setEnabled(false); 	// SB
+				viewVerilog.setEnabled(false); 	// SB
 				viewLHPN.setEnabled(false); 	// SB
 				saveParam.setEnabled(true);
 				saveSbml.setEnabled(false);
@@ -10953,6 +11143,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				viewLog.setEnabled(false);
 				viewCoverage.setEnabled(false); // SB
 				viewVHDL.setEnabled(false); 	// SB
+				viewVerilog.setEnabled(false); 	// SB
 				viewLHPN.setEnabled(false); 	// SB
 				saveParam.setEnabled(true);
 				saveSbml.setEnabled(false);
@@ -10992,6 +11183,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				viewLog.setEnabled(true);		// Should be true only if log available???
 				viewCoverage.setEnabled(false); // SB
 				viewVHDL.setEnabled(false); 	// SB
+				viewVerilog.setEnabled(false); 	// SB
 				viewLHPN.setEnabled(false); 	// SB
 				saveParam.setEnabled(true);
 			}
@@ -11030,6 +11222,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				viewLog.setEnabled(true);
 				viewCoverage.setEnabled(false);  // SB
 				viewVHDL.setEnabled(false);		// SB
+				viewVerilog.setEnabled(false); 	// SB
 				viewLHPN.setEnabled(false); 	// SB
 				saveParam.setEnabled(false);
 			}
@@ -11061,6 +11254,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			viewLog.setEnabled(false);
 			viewCoverage.setEnabled(false); // SB
 			viewVHDL.setEnabled(false); 	// SB
+			viewVerilog.setEnabled(false); 	// SB
 			viewLHPN.setEnabled(false); 	// SB
 			saveParam.setEnabled(true);
 			saveSbml.setEnabled(false);
@@ -11093,6 +11287,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			viewLog.setEnabled(false);
 			viewCoverage.setEnabled(false); // SB
 			viewVHDL.setEnabled(false); 	// SB
+			viewVerilog.setEnabled(false); 	// SB
 			viewLHPN.setEnabled(false); 	// SB
 			saveParam.setEnabled(false);
 			saveSbml.setEnabled(false);
@@ -11148,6 +11343,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				viewLog.setEnabled(false);
 				viewCoverage.setEnabled(false); // SB
 				viewVHDL.setEnabled(false); 	// SB
+				viewVerilog.setEnabled(false); 	// SB
 				viewLHPN.setEnabled(false); 	// SB
 				saveParam.setEnabled(false);
 				saveSbml.setEnabled(false);
@@ -11175,6 +11371,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				viewLog.setEnabled(false);
 				viewCoverage.setEnabled(false); // SB
 				viewVHDL.setEnabled(false); 	// SB
+				viewVerilog.setEnabled(false); 	// SB
 				viewLHPN.setEnabled(false); 	// SB
 				saveParam.setEnabled(false);
 				saveSbml.setEnabled(false);
@@ -11200,6 +11397,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				viewLog.setEnabled(false);
 				viewCoverage.setEnabled(false); // SB
 				viewVHDL.setEnabled(false); 	// SB
+				viewVerilog.setEnabled(false); 	// SB
 				viewLHPN.setEnabled(false); 	// SB
 				saveParam.setEnabled(false);
 				saveSbml.setEnabled(false);
@@ -11227,6 +11425,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				viewLog.setEnabled(false);
 				viewCoverage.setEnabled(false); // SB
 				viewVHDL.setEnabled(true); 	// SB true ???? since vhd
+				viewVerilog.setEnabled(false); 	// SB
 				viewLHPN.setEnabled(false); 	// SB
 				save.setEnabled(true); 		// SB should be????
 				// saveas too ????
@@ -11262,6 +11461,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				}
 				viewCoverage.setEnabled(false); // SB
 				viewVHDL.setEnabled(false); 	// SB
+				viewVerilog.setEnabled(false); 	// SB
 				viewLHPN.setEnabled(false); 	// SB
 				saveParam.setEnabled(false);
 				saveSbml.setEnabled(false);
@@ -11295,6 +11495,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				// not displaying the correct log too ????? SB
 				viewCoverage.setEnabled(false); // SB
 				viewVHDL.setEnabled(false); 	// SB
+				viewVerilog.setEnabled(false); 	// SB
 				viewLHPN.setEnabled(true); 	// SB	true ??? since lpn
 				save.setEnabled(true); 		// SB should exist ???
 				// saveas too???
@@ -11322,6 +11523,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				viewLog.setEnabled(false);
 				viewCoverage.setEnabled(false); // SB
 				viewVHDL.setEnabled(false); 	// SB
+				viewVerilog.setEnabled(false); 	// SB
 				viewLHPN.setEnabled(false); 	// SB
 				saveParam.setEnabled(false);
 				saveSbml.setEnabled(false);
@@ -11347,6 +11549,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				viewLog.setEnabled(false);
 				viewCoverage.setEnabled(false); // SB
 				viewVHDL.setEnabled(false); 	// SB
+				viewVerilog.setEnabled(false); 	// SB
 				viewLHPN.setEnabled(false); 	// SB
 				saveParam.setEnabled(false);
 				saveSbml.setEnabled(false);
@@ -11372,6 +11575,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				viewLog.setEnabled(false);
 				viewCoverage.setEnabled(false); // SB
 				viewVHDL.setEnabled(false); 	// SB
+				viewVerilog.setEnabled(false); 	// SB
 				viewLHPN.setEnabled(false); 	// SB
 				saveParam.setEnabled(false);
 				saveSbml.setEnabled(false);
@@ -11397,6 +11601,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				viewLog.setEnabled(false);
 				viewCoverage.setEnabled(false); // SB
 				viewVHDL.setEnabled(false); 	// SB
+				viewVerilog.setEnabled(false); 	// SB
 				viewLHPN.setEnabled(false); 	// SB
 				saveParam.setEnabled(false);
 				saveSbml.setEnabled(false);
@@ -11439,6 +11644,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					viewLog.setEnabled(false);
 					viewCoverage.setEnabled(false); // SB
 					viewVHDL.setEnabled(false); 	// SB
+					viewVerilog.setEnabled(false); 	// SB
 					viewLHPN.setEnabled(false); 	// SB		???
 					saveParam.setEnabled(false);
 					saveSbml.setEnabled(false);
@@ -11463,6 +11669,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				viewLog.setEnabled(false);
 				viewCoverage.setEnabled(false); // SB
 				viewVHDL.setEnabled(false); 	// SB
+				viewVerilog.setEnabled(false); 	// SB
 				viewLHPN.setEnabled(false); 	// SB
 				saveParam.setEnabled(false);
 				saveSbml.setEnabled(false);

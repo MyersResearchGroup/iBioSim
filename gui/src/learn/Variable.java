@@ -105,13 +105,17 @@ public class Variable {
 	}
 	
 	public void scaleInitByDelay(Double dScaleFactor){
-		initRate_rMin /=  dScaleFactor;
-		initRate_rMax /=  dScaleFactor;
+		if (!dmvc){
+			initRate_rMin /=  dScaleFactor;
+			initRate_rMax /=  dScaleFactor;
+		}
 	}
 	
 	public void scaleInitByVar(Double vScaleFactor){
-		initRate_rMin *=  vScaleFactor;
-		initRate_rMax *=  vScaleFactor;
+		if (!dmvc){
+			initRate_rMin *=  vScaleFactor;
+			initRate_rMax *=  vScaleFactor;
+		}
 		initValue_vMax *=  vScaleFactor;
 		initValue_vMin *=  vScaleFactor;
 	}
