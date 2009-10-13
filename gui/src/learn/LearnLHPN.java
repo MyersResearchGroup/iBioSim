@@ -312,7 +312,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		absTimeG = new JCheckBox();
 		absTimeG.setSelected(true);
 		absTimeG.addItemListener(this); 
-		JLabel percentLabel = new JLabel("Percent");
+		JLabel percentLabel = new JLabel("Fraction");
 		percentG = new JTextField("0.8");
 		JLabel runTimeLabel = new JLabel("Dmvc Run Time");
 		runTimeG = new JTextField("5e-6");
