@@ -5379,60 +5379,35 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				else if (tree.getFile().length() >= 5
 						&& tree.getFile().substring(tree.getFile().length() - 5).equals(".vams")) {
 					try {
-						String filename = tree.getFile();
-						String directory = "";
-						String theFile = "";
-						if (filename.lastIndexOf('/') >= 0) {
-							directory = filename.substring(0, filename.lastIndexOf('/') + 1);
-							theFile = filename.substring(filename.lastIndexOf('/') + 1);
-						}
-						if (filename.lastIndexOf('\\') >= 0) {
-							directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
-							theFile = filename.substring(filename.lastIndexOf('\\') + 1);
-						}
-						File work = new File(directory);
-						int i = getTab(theFile);
-						if (i != -1) {
-							tab.setSelectedIndex(i);
-						}
-						else {
-							if (externView) {
-								String command = viewerField.getText() + " " + directory
-										+ separator + theFile;
-								Runtime exec = Runtime.getRuntime();
-								try {
-									exec.exec(command);
-								}
-								catch (Exception e1) {
-									JOptionPane.showMessageDialog(frame,
-											"Unable to open external editor.",
-											"Error Opening Editor", JOptionPane.ERROR_MESSAGE);
-								}
+						String vamsFileName = tree.getFile();
+						if (new File(vamsFileName).exists()) {
+							File vamsFile = new File(vamsFileName);
+							BufferedReader input = new BufferedReader(new FileReader(vamsFile));
+							String line = null;
+							JTextArea messageArea = new JTextArea();
+							while ((line = input.readLine()) != null) {
+								messageArea.append(line);
+								messageArea.append(System.getProperty("line.separator"));
 							}
-							else {
-								File file = new File(work + separator + theFile);
-								String input = "";
-								FileReader in = new FileReader(file);
-								int read = in.read();
-								while (read != -1) {
-									input += (char) read;
-									read = in.read();
-								}
-								in.close();
-								JTextArea text = new JTextArea(input);
-								text.setEditable(true);
-								text.setLineWrap(true);
-								JScrollPane scroll = new JScrollPane(text);
-								// gcm.addMouseListener(this);
-								addTab(theFile, scroll, "VHDL Editor");
-							}
+							input.close();
+							messageArea.setLineWrap(true);
+							messageArea.setWrapStyleWord(true);
+							messageArea.setEditable(false);
+							JScrollPane scrolls = new JScrollPane();
+							scrolls.setMinimumSize(new Dimension(800, 500));
+							scrolls.setPreferredSize(new Dimension(800, 500));
+							scrolls.setViewportView(messageArea);
+							JOptionPane.showMessageDialog(this.frame(), scrolls,
+									"Verilog-AMS Model", JOptionPane.INFORMATION_MESSAGE);
+						} else {
+							JOptionPane.showMessageDialog(this.frame(),
+									"Verilog-AMS model does not exist.", "Error",
+									JOptionPane.ERROR_MESSAGE);
 						}
-						// String[] command = { "emacs", filename };
-						// Runtime.getRuntime().exec(command);
-					}
-					catch (Exception e1) {
-						JOptionPane.showMessageDialog(frame, "Unable to view this Verilog-AMS file.",
-								"Error", JOptionPane.ERROR_MESSAGE);
+					} catch (Exception e1) {
+						JOptionPane.showMessageDialog(this.frame(),
+								"Unable to view Verilog-AMS model.", "Error",
+								JOptionPane.ERROR_MESSAGE);
 					}
 				}
 				else if (tree.getFile().length() >= 4
@@ -7129,6 +7104,32 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					popup.add(copy);
 					popup.add(rename);
 					popup.add(delete);
+				}
+				else if (tree.getFile().length() > 4
+						&& tree.getFile().substring(tree.getFile().length() - 5).equals(".vams")) {	//SB
+					JMenuItem viewModel = new JMenuItem("View Model");
+					viewModel.addActionListener(this);
+					viewModel.addMouseListener(this);
+					viewModel.setActionCommand("viewModel");
+					JMenuItem delete = new JMenuItem("Delete");
+					delete.addActionListener(this);
+					delete.addMouseListener(this);
+					delete.setActionCommand("delete");
+					JMenuItem copy = new JMenuItem("Copy");
+					copy.addActionListener(this);
+					copy.addMouseListener(this);
+					copy.setActionCommand("copy");
+					JMenuItem rename = new JMenuItem("Rename");
+					rename.addActionListener(this);
+					rename.addMouseListener(this);
+					rename.setActionCommand("rename");
+					if (lema) {
+						popup.add(viewModel);
+						popup.addSeparator();
+						popup.add(copy);
+						popup.add(rename);
+						popup.add(delete);
+					}
 				}
 				else if (tree.getFile().length() > 1
 						&& tree.getFile().substring(tree.getFile().length() - 2).equals(".g")) {
@@ -11423,10 +11424,41 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				viewTrace.setEnabled(false);
 				viewCircuit.setEnabled(false);
 				viewLog.setEnabled(false);
-				viewCoverage.setEnabled(false); // SB
-				viewVHDL.setEnabled(true); 	// SB true ???? since vhd
-				viewVerilog.setEnabled(false); 	// SB
-				viewLHPN.setEnabled(false); 	// SB
+				viewCoverage.setEnabled(false); 
+				viewVHDL.setEnabled(true); 	
+				viewVerilog.setEnabled(false); 	
+				viewLHPN.setEnabled(false); 	
+				save.setEnabled(true); 		// SB should be????
+				// saveas too ????
+				// viewLog should be available ???
+				saveParam.setEnabled(false);
+				saveSbml.setEnabled(false);
+				saveTemp.setEnabled(false);
+			}
+			else if (tree.getFile().length() > 4
+					&& tree.getFile().substring(tree.getFile().length() - 5).equals(".vams")) {
+				viewModel.setEnabled(true);
+				viewModGraph.setEnabled(false);				// SB	
+				viewModBrowser.setEnabled(false);
+				createAnal.setEnabled(false);				//SB
+				createAnal.setActionCommand("createSim");
+				createLearn.setEnabled(false);				//SB
+				createSynth.setEnabled(false);				//SB
+				createVer.setEnabled(false);				//SB
+				refresh.setEnabled(false);
+				check.setEnabled(false);
+				export.setEnabled(false);
+				copy.setEnabled(true);
+				rename.setEnabled(true);
+				delete.setEnabled(true);
+				viewRules.setEnabled(false);
+				viewTrace.setEnabled(false);
+				viewCircuit.setEnabled(false);
+				viewLog.setEnabled(false);
+				viewCoverage.setEnabled(false); 
+				viewVHDL.setEnabled(false); 	
+				viewVerilog.setEnabled(true); 	
+				viewLHPN.setEnabled(false); 	
 				save.setEnabled(true); 		// SB should be????
 				// saveas too ????
 				// viewLog should be available ???
