@@ -169,6 +169,10 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 	
 	private String[] transEnablingsVAMS;
 	
+	private Double[][] transIntAssignVAMS;
+	
+	private Integer[] transDelayAssignVAMS;
+	
 	private String failPropVHDL;
 	
 	// private int[] numValuesL;// the number of constant values for each variable...-1 indicates that the variable isn't considered a DMVC variable
@@ -2317,6 +2321,8 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			transDelayAssignVHDL = new String[transitionList.length];
 			transIntAssignVHDL = new String[transitionList.length][reqdVarsL.size()];
 			transEnablingsVAMS = new String[transitionList.length];
+			transIntAssignVAMS = new Double[transitionList.length][reqdVarsL.size()];
+			transDelayAssignVAMS = new Integer[transitionList.length];
 			int transNum;
 			for (String t : transitionList) {
 				// Transition t = g.get_valT(sortedTrans.get(j));
@@ -2338,12 +2344,12 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 							double val = scaleDiv.get(k).get(Integer.parseInt(binIncoming[k + 1])).doubleValue();
 							condStr += "(" + reqdVarsL.get(k).getName() + ">=" + (int) Math.floor(val) + ")";
 							transEnablingsVHDL[transNum] += reqdVarsL.get(k).getName() + "'above(" + (int) Math.floor(val)+".0)";	
-							transEnablingsVAMS[transNum] = "@(cross((V(" + reqdVarsL.get(k).getName() + ") - " + (int) Math.floor(val) +"),+1))";	// += temporary
+							transEnablingsVAMS[transNum] = "@(cross((V(" + reqdVarsL.get(k).getName() + ") - " + ((int)val)/varScaleFactor +"),+1))";	// += temporary
 						} else {
 							double val = scaleDiv.get(k).get(Integer.parseInt(binOutgoing[k + 1])).doubleValue();
 							condStr += "~(" + reqdVarsL.get(k).getName() + ">="	+ (int) Math.ceil(val) + ")";
 							transEnablingsVHDL[transNum] += "not " + reqdVarsL.get(k).getName() + "'above(" + (int) Math.ceil(val)+".0)";
-							transEnablingsVAMS[transNum] = "@(cross((V(" + reqdVarsL.get(k).getName() + ") - " + (int) Math.floor(val) +"),-1))";	// +=; temporary
+							transEnablingsVAMS[transNum] = "@(cross((V(" + reqdVarsL.get(k).getName() + ") - " + ((int)val)/varScaleFactor +"),-1))";	// +=; temporary
 						}
 						if (diffL.get(diffL.size() - 1) != k) {
 							condStr += "&";
@@ -2369,6 +2375,8 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 								int dmvTnum =  Integer.parseInt(tPrev.split("t")[1]);
 								transIntAssignVHDL[dmvTnum][k] = reqdVarsL.get(k).getName() +" => span(" + (int) Math.floor(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(g.getPostset(t)[0])).getProperty(reqdVarsL.get(k).getName() + "_vMin"))) + ".0,"+ (int) Math.ceil(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(g.getPostset(t)[0])).getProperty(reqdVarsL.get(k).getName() + "_vMax"))) + ".0)";
 								transDelayAssignVHDL[dmvTnum] = "delay(" + (int) Double.parseDouble(placeInfo.get(getPlaceInfoIndex(pPrev)).getProperty("dMin")) + "," + (int) Double.parseDouble(placeInfo.get(getPlaceInfoIndex(pPrev)).getProperty("dMax")) + ")";
+								transIntAssignVAMS[dmvTnum][k] = ((int)(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(g.getPostset(t)[0])).getProperty(reqdVarsL.get(k).getName() + "_vMin")) + Double.parseDouble(placeInfo.get(getPlaceInfoIndex(g.getPostset(t)[0])).getProperty(reqdVarsL.get(k).getName() + "_vMax"))))/(2.0*varScaleFactor);
+								transDelayAssignVAMS[dmvTnum] =  (int)(((Double.parseDouble(placeInfo.get(getPlaceInfoIndex(pPrev)).getProperty("dMin")) + Double.parseDouble(placeInfo.get(getPlaceInfoIndex(pPrev)).getProperty("dMax")))*Math.pow(10, 9))/(2.0*delayScaleFactor));	// converting seconds to ns using math.pow(10,9)
 							}
 						}
 					}
@@ -4539,13 +4547,13 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			ArrayList<String> dmvcPlaces = new ArrayList<String>();
 			File vamsFile = new File(directory + separator + vamsFileName);
 			vamsFile.createNewFile();
+			Double rateFactor = varScaleFactor/delayScaleFactor;
 			BufferedWriter vams = new BufferedWriter(new FileWriter(vamsFile));
 			StringBuffer buffer = new StringBuffer();
 			StringBuffer buffer2 = new StringBuffer();
 			StringBuffer buffer3 = new StringBuffer();
 			StringBuffer buffer4 = new StringBuffer();
 			StringBuffer initBuffer = new StringBuffer();
-			String pNum;
 			vams.write("`include \"constants.vams\"\n");
 			vams.write("`include \"disciplines.vams\"\n");
 			vams.write("`timescale 1ns/1ps\n\n");
@@ -4564,21 +4572,25 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 					buffer.append("\tinout "+v.getName()+";\n\telectrical "+v.getName()+";\n");
 					if (!v.isDmvc()){
 						buffer2.append("\treal change_"+v.getName()+";\n");
-						buffer2.append("\tinteger rate_"+v.getName()+";\n");
+						buffer2.append("\treal rate_"+v.getName()+";\n");
 						vals = v.getInitValue().split("\\,");
-						double spanAvg = (Double.parseDouble(((vals[0]).split("\\["))[1])+Double.parseDouble(((vals[1]).split("\\]"))[0]))/2.0;
+						double spanAvg = (Double.parseDouble(((vals[0]).split("\\["))[1])+Double.parseDouble(((vals[1]).split("\\]"))[0]))/(2.0*varScaleFactor);
 						initBuffer.append("\t\t\tchange_"+v.getName()+" = "+ spanAvg+";\n");
 						vals = v.getInitRate().split("\\,");
-						spanAvg = (Double.parseDouble(((vals[0]).split("\\["))[1])+Double.parseDouble(((vals[1]).split("\\]"))[0]))/2.0;
+						spanAvg = (Double.parseDouble(((vals[0]).split("\\["))[1])+Double.parseDouble(((vals[1]).split("\\]"))[0]))/(2.0*rateFactor);
 						initBuffer.append("\t\t\trate_"+v.getName()+" = "+ (int)spanAvg+";\n");
+					}
+					else{
+						buffer2.append("\treal "+v.getName()+"Val;\n");
 					}
 				}
 			}
-			if (failPropVHDL != null){
-				buffer.append("\tinout fail;\n\tlogic fail;\n");
-			}
+		//	if (failPropVHDL != null){
+		//		buffer.append("\toutput reg fail;\n\tlogic fail;\n");
+		//		vams.write(", fail");
+		//	}
 			vams.write(");\n" + buffer+"\n");
-			if (buffer2 != null){
+			if (buffer2.length() != 0){
 				vams.write(buffer2.toString());
 			}
 			vams.write("\treal entryTime;\n");
@@ -4595,9 +4607,9 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				vams.write("\t\t\tplace = "+i+";\n");
 				break;
 			}
-			if (failPropVHDL != null){
-				vams.write("\t\t\tfail = false;\n");
-			}
+			//if (failPropVHDL != null){
+			//	vams.write("\t\t\tfail = 1'b0;\n");
+			//}
 			vams.write("\t\tend\n\n");
 			for (String st1 : g.getPlaceList()){
 				String p = getPlaceInfoIndex(st1);
@@ -4695,8 +4707,9 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			for (String st:dmvcPlaces){
 				dmvcVarPlaces.get(Integer.parseInt(st.split("_")[1])).add(st);
 			}
-			String[] transL;
 			int transNum;
+			buffer.delete(0, buffer.length());
+			initBuffer.delete(0, initBuffer.length());
 			String presetPlace = null,postsetPlace = null;
 			for (String t : transitions){
 				presetPlace = g.getPreset(t)[0];
@@ -4706,53 +4719,76 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				transNum = Integer.parseInt(t.split("t")[1]);
 				if (placeInfo.get(getPlaceInfoIndex(presetPlace)).getProperty("type").equals("RATE")){
 					postsetPlace = g.getPostset(t)[0];
-					vams.write("\t\t"+transEnablingsVAMS[transNum] + ";\n\t\tbegin\n");
+					vams.write("\t\t"+transEnablingsVAMS[transNum] + "\n\t\tbegin\n");
 					vams.write("\t\t\tif (place == "+ presetPlace.split("p")[1] +")\n\t\t\tbegin\n");
 					vams.write("\t\t\t\tentryTime = $abstime;\n");
 					vams.write("\t\t\t\tplace = " + postsetPlace.split("p")[1] + ";\n");
 					for (int j = 0; j<reqdVarsL.size(); j++){
 						if ((!reqdVarsL.get(j).isInput()) && (!reqdVarsL.get(j).isDmvc())){
-							vams.write("\t\t\t\trate_"+reqdVarsL.get(j).getName()+ " = "+(int)((getMinRate(getPlaceInfoIndex(postsetPlace), reqdVarsL.get(j).getName())+getMaxRate(getPlaceInfoIndex(postsetPlace), reqdVarsL.get(j).getName()))/2.0) + ";\n");
+							vams.write("\t\t\t\trate_"+reqdVarsL.get(j).getName()+ " = "+(int)((getMinRate(getPlaceInfoIndex(postsetPlace), reqdVarsL.get(j).getName())+getMaxRate(getPlaceInfoIndex(postsetPlace), reqdVarsL.get(j).getName()))/(2.0*rateFactor)) + ";\n");
 							vams.write("\t\t\t\tchange_" + reqdVarsL.get(j).getName()+ " = V("+ reqdVarsL.get(j).getName()+ ");\n");
 						}
 					}
 					vams.write("\t\t\tend\n\t\tend\n");
 				}
+				if (transDelayAssignVAMS[transNum] != null){
+					buffer.append("\talways"+transEnablingsVAMS[transNum] + "\n\tbegin\n");
+					buffer.append("\t\tif (place == "+ presetPlace.split("p")[1] +")\n\t\tbegin\n");
+					buffer.append("\t\t\t#"+transDelayAssignVAMS[transNum]+";\n");
+					for (int i = 0; i < transIntAssignVAMS[transNum].length; i++){
+						if (transIntAssignVAMS[transNum][i] != null){
+							buffer.append("\t\t\t"+reqdVarsL.get(i).getName()+"Val = "+ transIntAssignVAMS[transNum][i]+";\n");
+						}
+					}
+					buffer.append("\t\tend\n\tend\n");
+				}
 			}
 			for (int j = 0; j<reqdVarsL.size(); j++){
 				if ((!reqdVarsL.get(j).isInput()) && (!reqdVarsL.get(j).isDmvc())){	
-					vams.write("\t\tV("+reqdVarsL.get(j).getName()+") <+ transition(change_" + reqdVarsL.get(j).getName() + " + rate_" + reqdVarsL.get(j).getName()+"*($abstime-curr_Time));\n");
+					vams.write("\t\tV("+reqdVarsL.get(j).getName()+") <+ transition(change_" + reqdVarsL.get(j).getName() + " + rate_" + reqdVarsL.get(j).getName()+"*($abstime-entryTime));\n");
+				}
+				if ((!reqdVarsL.get(j).isInput()) && (reqdVarsL.get(j).isDmvc())){
+					vams.write("\t\tV("+reqdVarsL.get(j).getName()+") <+ " + reqdVarsL.get(j).getName() + "Val;\n");
+					vals = reqdVarsL.get(j).getInitValue().split("\\,");
+					double spanAvg = (Double.parseDouble(((vals[0]).split("\\["))[1])+Double.parseDouble(((vals[1]).split("\\]"))[0]))/(2.0*varScaleFactor);
+					initBuffer.append("\t\t"+reqdVarsL.get(j).getName()+"Val = "+ spanAvg+";\n");
 				}
 			}
+			vams.write("\tend\n");
+			if (initBuffer.length() != 0){
+				vams.write("\n\tinitial\n\tbegin\n"+initBuffer+"\tend\n");
+			}
+			if (buffer.length() != 0){
+				vams.write(buffer.toString());
+			}
+			vams.write("endmodule\n\n");
 			buffer.delete(0, buffer.length());
 			buffer2.delete(0, buffer2.length());
 			initBuffer.delete(0, initBuffer.length());
-			vams.write("\tend\nendmodule\n\n");
-			vams.write("module driver ( ");
 			int count = 0;
 			for (int i = 0; i < dmvcVarPlaces.size(); i++){
 				if (dmvcVarPlaces.get(i).size() != 0){
 					if (count == 0){
-						vams.write(reqdVarsL.get(i).getName() + " ");
+						vams.write("module driver ( " + reqdVarsL.get(i).getName() + "drive ");
 						count++;
 					}
 					else{
-						vams.write(", " + reqdVarsL.get(i).getName() + " ");
+						vams.write(", " + reqdVarsL.get(i).getName() + "drive ");
 						count++;
 					}
-					buffer.append("\n\toutput "+ reqdVarsL.get(i).getName() + ";\n");
-					buffer.append("\telectrical "+ reqdVarsL.get(i).getName() + ";\n");
+					buffer.append("\n\toutput "+ reqdVarsL.get(i).getName() + "drive;\n");
+					buffer.append("\telectrical "+ reqdVarsL.get(i).getName() + "drive;\n");
 					buffer2.append("\treal " + reqdVarsL.get(i).getName() + "Val" + ";\n");
 					vals = reqdVarsL.get(i).getInitValue().split("\\,");
-					double spanAvg = (Double.parseDouble(((vals[0]).split("\\["))[1])+Double.parseDouble(((vals[1]).split("\\]"))[0]))/2.0;
+					double spanAvg = (Double.parseDouble(((vals[0]).split("\\["))[1])+Double.parseDouble(((vals[1]).split("\\]"))[0]))/(2.0*varScaleFactor);
 					initBuffer.append("\t\t"+ reqdVarsL.get(i).getName() + "Val = "+ spanAvg+";\n");
 					buffer3.append("\talways\n\tbegin\n");
 					for (String p : dmvcVarPlaces.get(i)){
-						buffer3.append("\t\t#"+ (int) ((Double.parseDouble(placeInfo.get(p).getProperty("dMin"))+ Double.parseDouble(placeInfo.get(p).getProperty("dMax")))/2.0) +" ");
+						buffer3.append("\t\t#"+  (int)(((Double.parseDouble(placeInfo.get(p).getProperty("dMin"))+ Double.parseDouble(placeInfo.get(p).getProperty("dMax")))*Math.pow(10, 9))/(2.0*delayScaleFactor)) +" "); // converting seconds to nanosec. hence pow(10,9)
 						// recheck above line.. truncating double to int.. becomes 0 in most unscaled cases?/
-						buffer3.append(reqdVarsL.get(i).getName()+ "Val = "+ (int) Math.floor(Double.parseDouble(placeInfo.get(p).getProperty("DMVCValue"))) + ";\n");
+						buffer3.append(reqdVarsL.get(i).getName()+ "Val = "+  ((int)(Double.parseDouble(placeInfo.get(p).getProperty("DMVCValue"))))/varScaleFactor + ";\n");
 					}
-					buffer4.append("\t\tV("+reqdVarsL.get(i).getName() + ") <+ "+reqdVarsL.get(i).getName() + "Val;\n");
+					buffer4.append("\t\tV("+reqdVarsL.get(i).getName() + "drive) <+ "+reqdVarsL.get(i).getName() + "Val;\n");
 				}
 			}
 			if (count != 0){
@@ -4761,58 +4797,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				vams.write("\tanalog\n\tbegin\n"+buffer4+"\tend\nendmodule");
 			}
 			vams.close();
-		/*			if (transDelayAssignVHDL[transNum] != null){
-						vhdlAms.write("\t\t\twait for "+ transDelayAssignVHDL[transNum]+";\n");
-						//vhdlAms.write("\t\t\tbreak "+ transIntAssignVHDL[transNum]+";\n");
-						for (String s : transIntAssignVHDL[transNum]){
-							if (s != null){
-								vhdlAms.write("\t\t\tbreak "+ s +";\n");
-							}
-						}
-					}
-					vhdlAms.write("\t\t\tplace := " + g.getPostset(transL[0])[0].split("p")[1] + ";\n");
-				}
-				else{
-					boolean firstTrans = true;
-					buffer.delete(0, buffer.length());
-					for (String t : transL){
-						transNum = Integer.parseInt(t.split("t")[1]);
-						if (firstTrans){
-							firstTrans = false;
-							vhdlAms.write("(" + transEnablingsVHDL[transNum]);
-							buffer.append("\t\t\tif " + transEnablingsVHDL[transNum] + " then\n");
-							if (transDelayAssignVHDL[transNum] != null){
-								buffer.append("\t\t\t\twait for "+ transDelayAssignVHDL[transNum]+";\n");
-								for (String s : transIntAssignVHDL[transNum]){
-									if (s != null){
-										buffer.append("\t\t\t\tbreak "+ s +";\n");
-									}
-								}
-							}
-							buffer.append("\t\t\t\tplace := " + g.getPostset(t)[0].split("p")[1] + ";\n"); 
-						}
-						else{
-							vhdlAms.write(" or " +transEnablingsVHDL[transNum] );
-							buffer.append("\t\t\telsif " + transEnablingsVHDL[transNum] + " then\n");
-							if (transDelayAssignVHDL[transNum] != null){
-								buffer.append("\t\t\t\twait for "+ transDelayAssignVHDL[transNum]+";\n");
-								//buffer.append("\t\t\t\tbreak "+ transIntAssignVHDL[transNum]+";\n");
-								for (String s : transIntAssignVHDL[transNum]){
-									if (s != null){
-										buffer.append("\t\t\t\tbreak "+ s +";\n");
-									}
-								}
-							}
-							buffer.append("\t\t\t\tplace := " + g.getPostset(t)[0].split("p")[1] + ";\n"); 
-						}
-					}
-					vhdlAms.write(");\n");
-					buffer.append("\t\t\tend if;\n");
-					vhdlAms.write(buffer.toString());
-				}
-			}
-			vhdlAms.write("\t\twhen others =>\n\t\t\twait for 0.0;\n\t\t\tplace := "+ ratePlaces.get(0).split("p")[1] + ";\n\tend case;\n\tend process;\n");
-			if (failPropVHDL != null){
+		/*if (failPropVHDL != null){
 				vhdlAms.write("\tprocess\n");
 				vhdlAms.write("\tbegin\n");
 				vhdlAms.write("\t\twait until " + failPropVHDL + ";\n");
