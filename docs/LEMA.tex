@@ -48,7 +48,7 @@ These model checkers are described in
 David Walter and Scott Little's PhD dissertations
 %%tth:\begin{html}</A>\end{html}
 (UofUtah 2007/2008).
-\item Learn tool - a tool to learn a LHPN from simulation data.\\
+\item Learn tool - a tool to generate LHPN, VHDL-AMS and Verilog-AMS models from simulation data.\\
 This tool is described in 
 %%tth:\begin{html}<A HREF="http://www.async.ece.utah.edu/publications">\end{html}
 Scott Little's PhD Dissertation
@@ -478,18 +478,21 @@ to record your changes.
 \subsection{\label{learnTool}Learn Tool}
 
 \noindent
-The learn tool shown below uses a Python script described in <Citation needed,
-if one exists>. To use this learn tool, adjust
-any options described below, if desired, then press the Save and
-Learn button. The resulting circuit is specified using
-our Labeled Hybrid Petri Net Format (see Section~\ref{LHPN}) and is shown
-graphically using GraphViz's Dotty tool.  There are also 
+The learn tool is used to generate abstract models from the 
+simulation data entered through the data manager described above. To 
+use this learn tool, adjust the basic options(see Section 
+~\ref{learnBasOptions}) and advanced options(see Section 
+~\ref{learnAdvOptions}), if desired, then press the Save and Learn button. 
+The resulting abstract models in the form of Labeled Hybrid Petri Net
+ (see Section~\ref{LHPN}),VHDL-AMS and Verilog-AMS can be viewed by 
+clicking appropriate options in the View Menu. The resulting circuit is 
+specified using our Labeled Hybrid Petri Net Format (see Section~\ref{LHPN})
+ and is shown graphically using GraphViz's Dotty tool.  There are also 
 menu options to save the parameters without learning, view the last learned 
-circuit, save the generated circuit into the project, and view the last run
+models, save the generated models into the project, and view the last run
 log. 
-\begin{center}
-\includegraphics[height=85mm]{screenshots/learnLema}
-\end{center}
+
+\subsubsection{\label{learnBasOptions}Basic Options}
 
 The learning options shown below are as follows:
 \begin{itemize}
@@ -500,6 +503,10 @@ the generated bin levels but can also substantially increase run time.
 \item Number of Bins (default=4): \\
 The number of bins value specifies how many values the
 encoded time series data can assume.
+\item Assertion to be Verified: \\
+The property that the generated LHPN must satisfy has to be provided
+in this field. This is the property that would be verified by the
+Verification tool.
 \item Equal Data Per Bins / Equal Spacing of Bins: \\
 This radio button selects whether the auto generated levels
 should be determined by equaling dividing the data between the
@@ -513,6 +520,49 @@ button will provide the levels that would have been auto
 generated as a suggestion. These levels can then edited by the
 user.  The number of bins for each species can also be individually adjusted.  
 \end{itemize}
+
+\begin{center}
+\includegraphics[height=85mm]{screenshots/learnBasicLema}
+\end{center}
+
+\subsubsection{\label{learnAdvOptions}Advanced Options}
+
+\noindent
+The following parameters which are used to configure the model generation 
+process can be specified through the advanced options tab.
+\begin{itemize}
+\item Windowsize(default = -1) : \\Rates are calculated between points 
+that are separated by the number of points specified in this field.If 
+window size = -1, then rates are calculated using just the starting and
+ ending points of the bins.
+\item Pathlength(default = 15): \\If Windowsize = -1, then pathlength 
+specifies the minimum number of consecutive timepoints which should be
+ in the same region for that region to be eligible for rate calculation.
+\item Epsilon(default = 0.1): \\ A variable is considered to be constant
+ if it is within the epsilon bound of a value for certain time.
+\item Absolute Time: \\ This checkbox determines whether a variable is 
+considered constant based on the amount of time or based on the number
+ of time points it stays within the epsilon bound.
+\item DMVC Run Time(default = 5us): \\ If absolute time is checked, DMVC
+ run time(described in 
+%%tth:\begin{html}<A HREF="http://www.async.ece.utah.edu/publications">\end{html}
+Scott Little's PhD Dissertation
+%%tth:\begin{html}</A>\end{html} 
+)determines the minimum duration for which a variable has to be
+ constant so as to ensure that this duration is added to the total time 
+where the variable is constant. 
+\item DMVC Run Length(default = 15): \\ If absolute time is not selected,
+ DMVC run length determines the minimum number of timepoints for which a
+ variable has to be constant so as to ensure that this duration is added
+ to the total time where the variable is constant. 
+\item Fraction(default = 0.8): \\ A decimal value representing the fraction
+ of the total trace that must be constant for the variable to qualify to 
+be Discrete multi-valued continuous(DMVC).
+\end{itemize}
+
+\begin{center}
+\includegraphics[height=85mm]{screenshots/learnAdvLema}
+\end{center}
 
 \section{\label{TSDEdit}TSD Graph Editor}
 

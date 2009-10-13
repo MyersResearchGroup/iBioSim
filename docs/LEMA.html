@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"
            "http://www.w3.org/TR/REC-html40/loose.dtd">
 <html>
-<meta name="GENERATOR" content="TtH 3.81">
+<meta name="GENERATOR" content="TtH 3.85">
  <style type="text/css"> div.p { margin-top: 7pt;}</style>
  <style type="text/css"><!--
  td div.comp { margin-top: -0.6ex; margin-bottom: -1ex;}
@@ -74,6 +74,10 @@
 >6.1&nbsp; Data Manager</a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc6.2"
 >6.2&nbsp; Learn Tool</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc6.2.1"
+>6.2.1&nbsp; Basic Options</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc6.2.2"
+>6.2.2&nbsp; Advanced Options</a><br />
 <a href="#tth_sEc7"
 >7&nbsp; TSD Graph Editor</a><br />
 <a href="#tth_sEc8"
@@ -121,7 +125,7 @@ David Walter and Scott Little's PhD dissertations
 <div class="p"><!----></div>
 </li>
 
-<li> Learn tool - a tool to learn a LHPN from simulation data.<br />
+<li> Learn tool - a tool to generate LHPN, VHDL-AMS and Verilog-AMS models from simulation data.<br />
 This tool is described in 
 <A HREF="http://www.async.ece.utah.edu/publications">
 Scott Little's PhD Dissertation
@@ -766,19 +770,24 @@ to record your changes.
 </a>Learn Tool</h3>
 
 <div class="p"><!----></div>
-The learn tool shown below uses a Python script described in &lt;Citation needed,
-if one exists&#62;. To use this learn tool, adjust
-any options described below, if desired, then press the Save and
-Learn button. The resulting circuit is specified using
-our Labeled Hybrid Petri Net Format (see Section&nbsp;<a href="#LHPN">9</a>) and is shown
-graphically using GraphViz's Dotty tool.  There are also 
+The learn tool is used to generate abstract models from the 
+simulation data entered through the data manager described above. To 
+use this learn tool, adjust the basic options(see Section 
+&nbsp;<a href="#learnBasOptions">6.2.1</a>) and advanced options(see Section 
+&nbsp;<a href="#learnAdvOptions">6.2.2</a>), if desired, then press the Save and Learn button. 
+The resulting abstract models in the form of Labeled Hybrid Petri Net
+ (see Section&nbsp;<a href="#LHPN">9</a>),VHDL-AMS and Verilog-AMS can be viewed by 
+clicking appropriate options in the View Menu. The resulting circuit is 
+specified using our Labeled Hybrid Petri Net Format (see Section&nbsp;<a href="#LHPN">9</a>)
+ and is shown graphically using GraphViz's Dotty tool.  There are also 
 menu options to save the parameters without learning, view the last learned 
-circuit, save the generated circuit into the project, and view the last run
+models, save the generated models into the project, and view the last run
 log. 
 
-<center>
-<img src="screenshots/learnLema.png" alt="screenshots/learnLema.png" />
-</center>
+<div class="p"><!----></div>
+      <h4><a name="tth_sEc6.2.1">
+6.2.1</a>&nbsp;&nbsp;<a name="learnBasOptions">
+</a>Basic Options</h4>
 
 <div class="p"><!----></div>
 The learning options shown below are as follows:
@@ -794,6 +803,13 @@ the generated bin levels but can also substantially increase run time.
 <li> Number of Bins (default=4): <br />
 The number of bins value specifies how many values the
 encoded time series data can assume.
+<div class="p"><!----></div>
+</li>
+
+<li> Assertion to be Verified: <br />
+The property that the generated LHPN must satisfy has to be provided
+in this field. This is the property that would be verified by the
+Verification tool.
 <div class="p"><!----></div>
 </li>
 
@@ -818,6 +834,75 @@ user.  The number of bins for each species can also be individually adjusted.
 <div class="p"><!----></div>
 </li>
 </ul>
+
+<div class="p"><!----></div>
+
+<center><img src="screenshots/learnBasicLema.png" alt="screenshots/learnBasicLema.png" />
+</center>
+
+<div class="p"><!----></div>
+      <h4><a name="tth_sEc6.2.2">
+6.2.2</a>&nbsp;&nbsp;<a name="learnAdvOptions">
+</a>Advanced Options</h4>
+
+<div class="p"><!----></div>
+The following parameters which are used to configure the model generation 
+process can be specified through the advanced options tab.
+
+<ul>
+<li> Windowsize(default = -1) : <br />Rates are calculated between points 
+that are separated by the number of points specified in this field.If 
+window size = -1, then rates are calculated using just the starting and
+ ending points of the bins.
+<div class="p"><!----></div>
+</li>
+
+<li> Pathlength(default = 15): <br />If Windowsize = -1, then pathlength 
+specifies the minimum number of consecutive timepoints which should be
+ in the same region for that region to be eligible for rate calculation.
+<div class="p"><!----></div>
+</li>
+
+<li> Epsilon(default = 0.1): <br />A variable is considered to be constant
+ if it is within the epsilon bound of a value for certain time.
+<div class="p"><!----></div>
+</li>
+
+<li> Absolute Time: <br />This checkbox determines whether a variable is 
+considered constant based on the amount of time or based on the number
+ of time points it stays within the epsilon bound.
+<div class="p"><!----></div>
+</li>
+
+<li> DMVC Run Time(default = 5us): <br />If absolute time is checked, DMVC
+ run time(described in 
+<A HREF="http://www.async.ece.utah.edu/publications">
+Scott Little's PhD Dissertation
+</A> 
+)determines the minimum duration for which a variable has to be
+ constant so as to ensure that this duration is added to the total time 
+where the variable is constant.
+<div class="p"><!----></div>
+</li>
+
+<li> DMVC Run Length(default = 15): <br />If absolute time is not selected,
+ DMVC run length determines the minimum number of timepoints for which a
+ variable has to be constant so as to ensure that this duration is added
+ to the total time where the variable is constant.
+<div class="p"><!----></div>
+</li>
+
+<li> Fraction(default = 0.8): <br />A decimal value representing the fraction
+ of the total trace that must be constant for the variable to qualify to 
+be Discrete multi-valued continuous(DMVC).
+<div class="p"><!----></div>
+</li>
+</ul>
+
+<div class="p"><!----></div>
+
+<center><img src="screenshots/learnAdvLema.png" alt="screenshots/learnAdvLema.png" />
+</center>
 
 <div class="p"><!----></div>
  <h2><a name="tth_sEc7">
@@ -1322,5 +1407,5 @@ Peace Corps in the Phillipines.
 T<sub><font size="-1">E</font></sub>X
 by <a href="http://hutchinson.belmont.ma.us/tth/">
 T<sub><font size="-1">T</font></sub>H</a>,
-version 3.81.<br />On 29 Mar 2009, 08:56.</small>
+version 3.85.<br />On 13 Oct 2009, 11:46.</small>
 </html>
