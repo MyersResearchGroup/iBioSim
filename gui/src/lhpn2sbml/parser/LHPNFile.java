@@ -1890,7 +1890,8 @@ public class LHPNFile {
 	}
 	
 	public String scaleEnabling(String var, Double scaleFactor){	// var is the transition here
-		enablingTrees.get(var).scaleVals(scaleFactor);
+		ExprTree t = enablingTrees.get(var);
+		t.scaleVals(scaleFactor);
 		enablings.put(var,enablingTrees.get(var).toString());
 		return (enablings.get(var));
 	}
