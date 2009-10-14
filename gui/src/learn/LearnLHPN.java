@@ -9,7 +9,7 @@ import java.awt.event.*;
 import java.io.*;
 import java.util.*;
 import java.util.prefs.Preferences;
-//import java.util.regex.Matcher;
+import java.util.regex.*;
 //import java.util.regex.Pattern;
 
 import javax.swing.*;
@@ -2298,7 +2298,13 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			ArrayList<ArrayList<Double>> scaleDiv;
 			
 			// temporary
-	/*		for (String t : g.getTransitionList()) {
+		/*	Pattern pat = Pattern.compile("-*[0-9]+\\.*[0-9]*");
+	        Matcher m = pat.matcher(failProp);
+	        while(m.find()){
+	        	failProp = m.replaceFirst(String.valueOf(Double.parseDouble(m.group())*100.0));
+	        }
+	        System.out.println(failProp);
+			for (String t : g.getTransitionList()) {
 				if ((g.getPreset(t) != null) && (placeInfo.get(getPlaceInfoIndex(g.getPreset(t)[0])).getProperty("type").equalsIgnoreCase("PROP"))){
 					g.addEnabling(t, failProp);	
 				}
@@ -2376,7 +2382,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 								transIntAssignVHDL[dmvTnum][k] = reqdVarsL.get(k).getName() +" => span(" + (int) Math.floor(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(g.getPostset(t)[0])).getProperty(reqdVarsL.get(k).getName() + "_vMin"))) + ".0,"+ (int) Math.ceil(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(g.getPostset(t)[0])).getProperty(reqdVarsL.get(k).getName() + "_vMax"))) + ".0)";
 								transDelayAssignVHDL[dmvTnum] = "delay(" + (int) Double.parseDouble(placeInfo.get(getPlaceInfoIndex(pPrev)).getProperty("dMin")) + "," + (int) Double.parseDouble(placeInfo.get(getPlaceInfoIndex(pPrev)).getProperty("dMax")) + ")";
 								transIntAssignVAMS[dmvTnum][k] = ((int)(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(g.getPostset(t)[0])).getProperty(reqdVarsL.get(k).getName() + "_vMin")) + Double.parseDouble(placeInfo.get(getPlaceInfoIndex(g.getPostset(t)[0])).getProperty(reqdVarsL.get(k).getName() + "_vMax"))))/(2.0*varScaleFactor);
-								transDelayAssignVAMS[dmvTnum] =  (int)(((Double.parseDouble(placeInfo.get(getPlaceInfoIndex(pPrev)).getProperty("dMin")) + Double.parseDouble(placeInfo.get(getPlaceInfoIndex(pPrev)).getProperty("dMax")))*Math.pow(10, 9))/(2.0*delayScaleFactor));	// converting seconds to ns using math.pow(10,9)
+								transDelayAssignVAMS[dmvTnum] =  (int)(((Double.parseDouble(placeInfo.get(getPlaceInfoIndex(pPrev)).getProperty("dMin")) + Double.parseDouble(placeInfo.get(getPlaceInfoIndex(pPrev)).getProperty("dMax")))*Math.pow(10, 12))/(2.0*delayScaleFactor));	// converting seconds to ns using math.pow(10,9)
 							}
 						}
 					}
@@ -3087,12 +3093,12 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				varScaleFactor = scaleFactor;
 				scaledDiv = scaleVariable(scaleFactor,scaledDiv);
 		// TEMPORARY
-	/*			for (String p : g.getPlaceList()){
+		/*		for (String p : g.getPlaceList()){
 					if ((placeInfo.get(getPlaceInfoIndex(p)).getProperty("type")).equals("PROP")){
 						String s = g.scaleEnabling(g.getPostset(p)[0],scaleFactor);
 						System.out.println(s);
 					}
-				}*/
+				} */
 		// end TEMPORARY
 			}
 			minDivision = getMinDiv(scaledDiv);
@@ -3115,7 +3121,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				varScaleFactor *= scaleFactor;
 				scaledDiv = scaleVariable(scaleFactor,scaledDiv);
 	// TEMPORARY
-	/*			for (String p : g.getPlaceList()){
+		/*		for (String p : g.getPlaceList()){
 					if ((placeInfo.get(getPlaceInfoIndex(p)).getProperty("type")).equals("PROP")){
 						String s = g.scaleEnabling(g.getPostset(p)[0],scaleFactor);
 						System.out.println(s);
@@ -4556,7 +4562,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			StringBuffer initBuffer = new StringBuffer();
 			vams.write("`include \"constants.vams\"\n");
 			vams.write("`include \"disciplines.vams\"\n");
-			vams.write("`timescale 1ns/1ps\n\n");
+			vams.write("`timescale 1ps/1ps\n\n");
 			vams.write("module "+vamsFileName.split("\\.")[0]+" (");
 			Variable v;
 			String[] vals;
@@ -4784,7 +4790,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 					initBuffer.append("\t\t"+ reqdVarsL.get(i).getName() + "Val = "+ spanAvg+";\n");
 					buffer3.append("\talways\n\tbegin\n");
 					for (String p : dmvcVarPlaces.get(i)){
-						buffer3.append("\t\t#"+  (int)(((Double.parseDouble(placeInfo.get(p).getProperty("dMin"))+ Double.parseDouble(placeInfo.get(p).getProperty("dMax")))*Math.pow(10, 9))/(2.0*delayScaleFactor)) +" "); // converting seconds to nanosec. hence pow(10,9)
+						buffer3.append("\t\t#"+  (int)(((Double.parseDouble(placeInfo.get(p).getProperty("dMin"))+ Double.parseDouble(placeInfo.get(p).getProperty("dMax")))*Math.pow(10, 12))/(2.0*delayScaleFactor)) +" "); // converting seconds to nanosec. hence pow(10,9)
 						// recheck above line.. truncating double to int.. becomes 0 in most unscaled cases?/
 						buffer3.append(reqdVarsL.get(i).getName()+ "Val = "+  ((int)(Double.parseDouble(placeInfo.get(p).getProperty("DMVCValue"))))/varScaleFactor + ";\n");
 					}
@@ -4795,6 +4801,34 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				vams.write(");\n");
 				vams.write(buffer+"\n"+buffer2+"\n\tinitial\n\tbegin\n"+initBuffer+"\tend\n"+buffer3+"\tend\n");
 				vams.write("\tanalog\n\tbegin\n"+buffer4+"\tend\nendmodule");
+				BufferedWriter topV = new BufferedWriter(new FileWriter(new File(directory + separator + "top.v")));
+				topV.write("`timescale 1ps/1ps\n\nmodule top();\n\n");
+				count = 0;
+				for (int i = 0; i < dmvcVarPlaces.size(); i++){
+					if (dmvcVarPlaces.get(i).size() != 0){
+						if (count == 0){
+							topV.write("\tdriver tb(\n\t\t." + reqdVarsL.get(i).getName() + "drive(" + reqdVarsL.get(i).getName() + ")");
+							count++;
+						}
+						else{
+							topV.write(",\n\t\t." + reqdVarsL.get(i).getName() + "drive(" + reqdVarsL.get(i).getName() + ")");
+							count++;
+						}
+					}
+				}
+				topV.write("\n\t);\n\n");
+				for (int i = 0; i < reqdVarsL.size(); i++){
+					v = reqdVarsL.get(i);
+					if ( i== 0){
+						topV.write("\t"+vamsFileName.split("\\.")[0]+" dut(\n\t\t."+ v.getName() + "(" + v.getName() + ")");
+					}
+					else{
+						topV.write(",\n\t\t." + v.getName() + "(" + reqdVarsL.get(i).getName() + ")");
+						count++;
+					}
+				}
+				topV.write("\n\t);\n\nendmodule");
+				topV.close();
 			}
 			vams.close();
 		/*if (failPropVHDL != null){
