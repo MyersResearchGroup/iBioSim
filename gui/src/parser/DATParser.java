@@ -12,6 +12,7 @@ public class DATParser extends Parser {
 		try {
 			warning = warn;
 			boolean warning2 = warning;
+			boolean warning3 = warning;
 			FileInputStream fileInput = new FileInputStream(new File(filename));
 			ProgressMonitorInputStream prog = new ProgressMonitorInputStream(component,
 					"Reading Reb2sac Output Data From " + new File(filename).getName(), fileInput);
@@ -62,8 +63,12 @@ public class DATParser extends Parser {
 								withinWord = false;
 								readWord = false;
 								if (cha == '\n') {
+									if (junkLine) {
+										endJunk = true;
+									} else {
+										moveToData = true;
+									}
 									junkLine = false;
-									endJunk = true;
 								}
 							}
 							else {
@@ -181,8 +186,15 @@ public class DATParser extends Parser {
 		}
 		catch (IOException e) {
 			JOptionPane.showMessageDialog(component, "Error Reading Data!"
-					+ "\nThere was an error reading the simulation output data.", "Error Reading Data",
+					+ "\nThere was an error reading the simulation data file.", "Error Reading Data",
 					JOptionPane.ERROR_MESSAGE);
+		}
+		catch (NumberFormatException e) {
+			JOptionPane.showMessageDialog(component, "Error Reading Data!"
+					+ "\nNon-numeric data found in the simulation file.", "Error Reading Data",
+					JOptionPane.ERROR_MESSAGE);
+			species.clear();
+			data.clear();
 		}
 	}
 }
