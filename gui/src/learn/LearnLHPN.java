@@ -2350,12 +2350,12 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 							double val = scaleDiv.get(k).get(Integer.parseInt(binIncoming[k + 1])).doubleValue();
 							condStr += "(" + reqdVarsL.get(k).getName() + ">=" + (int) Math.floor(val) + ")";
 							transEnablingsVHDL[transNum] += reqdVarsL.get(k).getName() + "'above(" + (int) Math.floor(val)+".0)";	
-							transEnablingsVAMS[transNum] = "@(cross((V(" + reqdVarsL.get(k).getName() + ") - " + ((int)val)/varScaleFactor +"),+1))";	// += temporary
+							transEnablingsVAMS[transNum] = "always@(cross((V(" + reqdVarsL.get(k).getName() + ") - " + ((int)val)/varScaleFactor +"),+1))";	// += temporary
 						} else {
 							double val = scaleDiv.get(k).get(Integer.parseInt(binOutgoing[k + 1])).doubleValue();
 							condStr += "~(" + reqdVarsL.get(k).getName() + ">="	+ (int) Math.ceil(val) + ")";
 							transEnablingsVHDL[transNum] += "not " + reqdVarsL.get(k).getName() + "'above(" + (int) Math.ceil(val)+".0)";
-							transEnablingsVAMS[transNum] = "@(cross((V(" + reqdVarsL.get(k).getName() + ") - " + ((int)val)/varScaleFactor +"),-1))";	// +=; temporary
+							transEnablingsVAMS[transNum] = "always@(cross((V(" + reqdVarsL.get(k).getName() + ") - " + ((int)val)/varScaleFactor +"),-1))";	// +=; temporary
 						}
 						if (diffL.get(diffL.size() - 1) != k) {
 							condStr += "&";
@@ -4564,6 +4564,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			vams.write("`include \"disciplines.vams\"\n");
 			vams.write("`timescale 1ps/1ps\n\n");
 			vams.write("module "+vamsFileName.split("\\.")[0]+" (");
+			buffer.append("\tparameter delay = 0, rtime = 1p, ftime = 1p;\n");
 			Variable v;
 			String[] vals;
 			for (int i = 0; i < reqdVarsL.size(); i++){
@@ -4581,13 +4582,16 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 						buffer2.append("\treal rate_"+v.getName()+";\n");
 						vals = v.getInitValue().split("\\,");
 						double spanAvg = (Double.parseDouble(((vals[0]).split("\\["))[1])+Double.parseDouble(((vals[1]).split("\\]"))[0]))/(2.0*varScaleFactor);
-						initBuffer.append("\t\t\tchange_"+v.getName()+" = "+ spanAvg+";\n");
+						initBuffer.append("\t\tchange_"+v.getName()+" = "+ spanAvg+";\n");
 						vals = v.getInitRate().split("\\,");
 						spanAvg = (Double.parseDouble(((vals[0]).split("\\["))[1])+Double.parseDouble(((vals[1]).split("\\]"))[0]))/(2.0*rateFactor);
-						initBuffer.append("\t\t\trate_"+v.getName()+" = "+ (int)spanAvg+";\n");
+						initBuffer.append("\t\trate_"+v.getName()+" = "+ (int)spanAvg+";\n");
 					}
 					else{
 						buffer2.append("\treal "+v.getName()+"Val;\n");
+						vals = reqdVarsL.get(i).getInitValue().split("\\,");
+						double spanAvg = (Double.parseDouble(((vals[0]).split("\\["))[1])+Double.parseDouble(((vals[1]).split("\\]"))[0]))/(2.0*varScaleFactor);
+						initBuffer.append("\t\t"+reqdVarsL.get(i).getName()+"Val = "+ spanAvg+";\n");
 					}
 				}
 			}
@@ -4600,9 +4604,9 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				vams.write(buffer2.toString());
 			}
 			vams.write("\treal entryTime;\n");
-			vams.write("\tinteger place;\n\n\tanalog\n\tbegin\n\t\t@(initial_step)\n\t\tbegin\n");
+			vams.write("\tinteger place;\n\n\tinitial\n\tbegin\n");
 			vams.write(initBuffer.toString());
-			vams.write("\t\t\tentryTime = 0;\n");
+			vams.write("\t\tentryTime = 0;\n");
 			buffer.delete(0, buffer.length());
 			buffer2.delete(0, buffer2.length());
 			for (int i = 0; i < numPlaces; i++){
@@ -4610,13 +4614,13 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				if (!placeInfo.get(p).getProperty("type").equalsIgnoreCase("RATE")) {
 					continue;
 				}
-				vams.write("\t\t\tplace = "+i+";\n");
+				vams.write("\t\tplace = "+i+";\n");
 				break;
 			}
 			//if (failPropVHDL != null){
 			//	vams.write("\t\t\tfail = 1'b0;\n");
 			//}
-			vams.write("\t\tend\n\n");
+			vams.write("\tend\n\n");
 			for (String st1 : g.getPlaceList()){
 				String p = getPlaceInfoIndex(st1);
 				if (placeInfo.get(p).getProperty("type").equalsIgnoreCase("RATE")) {
@@ -4725,48 +4729,57 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				transNum = Integer.parseInt(t.split("t")[1]);
 				if (placeInfo.get(getPlaceInfoIndex(presetPlace)).getProperty("type").equals("RATE")){
 					postsetPlace = g.getPostset(t)[0];
-					vams.write("\t\t"+transEnablingsVAMS[transNum] + "\n\t\tbegin\n");
-					vams.write("\t\t\tif (place == "+ presetPlace.split("p")[1] +")\n\t\t\tbegin\n");
-					vams.write("\t\t\t\tentryTime = $abstime;\n");
-					vams.write("\t\t\t\tplace = " + postsetPlace.split("p")[1] + ";\n");
+					vams.write("\t"+transEnablingsVAMS[transNum] + "\n\tbegin\n");
+					vams.write("\t\tif (place == "+ presetPlace.split("p")[1] +")\n\t\tbegin\n");
+					if (transDelayAssignVAMS[transNum] != null){
+						vams.write("\t\t\t#"+transDelayAssignVAMS[transNum]+";\n");
+						for (int i = 0; i < transIntAssignVAMS[transNum].length; i++){
+							if (transIntAssignVAMS[transNum][i] != null){
+								vams.write("\t\t\t"+reqdVarsL.get(i).getName()+"Val = "+ transIntAssignVAMS[transNum][i]+";\n");
+							}
+						}
+					}
+					vams.write("\t\t\tentryTime = $abstime;\n");
+					vams.write("\t\t\tplace = " + postsetPlace.split("p")[1] + ";\n");
 					for (int j = 0; j<reqdVarsL.size(); j++){
 						if ((!reqdVarsL.get(j).isInput()) && (!reqdVarsL.get(j).isDmvc())){
-							vams.write("\t\t\t\trate_"+reqdVarsL.get(j).getName()+ " = "+(int)((getMinRate(getPlaceInfoIndex(postsetPlace), reqdVarsL.get(j).getName())+getMaxRate(getPlaceInfoIndex(postsetPlace), reqdVarsL.get(j).getName()))/(2.0*rateFactor)) + ";\n");
-							vams.write("\t\t\t\tchange_" + reqdVarsL.get(j).getName()+ " = V("+ reqdVarsL.get(j).getName()+ ");\n");
+							vams.write("\t\t\trate_"+reqdVarsL.get(j).getName()+ " = "+(int)((getMinRate(getPlaceInfoIndex(postsetPlace), reqdVarsL.get(j).getName())+getMaxRate(getPlaceInfoIndex(postsetPlace), reqdVarsL.get(j).getName()))/(2.0*rateFactor)) + ";\n");
+							vams.write("\t\t\tchange_" + reqdVarsL.get(j).getName()+ " = V("+ reqdVarsL.get(j).getName()+ ");\n");
 						}
 					}
-					vams.write("\t\t\tend\n\t\tend\n");
+					vams.write("\t\tend\n\tend\n");
 				}
-				if (transDelayAssignVAMS[transNum] != null){
-					buffer.append("\talways"+transEnablingsVAMS[transNum] + "\n\tbegin\n");
-					buffer.append("\t\tif (place == "+ presetPlace.split("p")[1] +")\n\t\tbegin\n");
-					buffer.append("\t\t\t#"+transDelayAssignVAMS[transNum]+";\n");
-					for (int i = 0; i < transIntAssignVAMS[transNum].length; i++){
-						if (transIntAssignVAMS[transNum][i] != null){
-							buffer.append("\t\t\t"+reqdVarsL.get(i).getName()+"Val = "+ transIntAssignVAMS[transNum][i]+";\n");
-						}
-					}
-					buffer.append("\t\tend\n\tend\n");
-				}
+				//if (transDelayAssignVAMS[transNum] != null){
+				//	buffer.append("\t"+transEnablingsVAMS[transNum] + "\n\tbegin\n");
+				//  buffer.append("\t\tif (place == "+ presetPlace.split("p")[1] +")\n\t\tbegin\n");
+				//	buffer.append("\t\t\t#"+transDelayAssignVAMS[transNum]+";\n");
+				//	for (int i = 0; i < transIntAssignVAMS[transNum].length; i++){
+				//		if (transIntAssignVAMS[transNum][i] != null){
+				//			buffer.append("\t\t\t"+reqdVarsL.get(i).getName()+"Val = "+ transIntAssignVAMS[transNum][i]+";\n");
+				//		}
+				//	}
+				//	buffer.append("\t\tend\n\tend\n");
+				//}
 			}
+			vams.write("\tanalog\n\tbegin\n");
 			for (int j = 0; j<reqdVarsL.size(); j++){
 				if ((!reqdVarsL.get(j).isInput()) && (!reqdVarsL.get(j).isDmvc())){	
 					vams.write("\t\tV("+reqdVarsL.get(j).getName()+") <+ transition(change_" + reqdVarsL.get(j).getName() + " + rate_" + reqdVarsL.get(j).getName()+"*($abstime-entryTime));\n");
 				}
 				if ((!reqdVarsL.get(j).isInput()) && (reqdVarsL.get(j).isDmvc())){
-					vams.write("\t\tV("+reqdVarsL.get(j).getName()+") <+ " + reqdVarsL.get(j).getName() + "Val;\n");
-					vals = reqdVarsL.get(j).getInitValue().split("\\,");
-					double spanAvg = (Double.parseDouble(((vals[0]).split("\\["))[1])+Double.parseDouble(((vals[1]).split("\\]"))[0]))/(2.0*varScaleFactor);
-					initBuffer.append("\t\t"+reqdVarsL.get(j).getName()+"Val = "+ spanAvg+";\n");
+					vams.write("\t\tV("+reqdVarsL.get(j).getName()+") <+ transition(" + reqdVarsL.get(j).getName() + "Val,delay,rtime,ftime);\n");
+					//vals = reqdVarsL.get(j).getInitValue().split("\\,");
+					//double spanAvg = (Double.parseDouble(((vals[0]).split("\\["))[1])+Double.parseDouble(((vals[1]).split("\\]"))[0]))/(2.0*varScaleFactor);
+					//initBuffer.append("\t\t"+reqdVarsL.get(j).getName()+"Val = "+ spanAvg+";\n");
 				}
 			}
 			vams.write("\tend\n");
-			if (initBuffer.length() != 0){
-				vams.write("\n\tinitial\n\tbegin\n"+initBuffer+"\tend\n");
-			}
-			if (buffer.length() != 0){
-				vams.write(buffer.toString());
-			}
+		//	if (initBuffer.length() != 0){
+		//		vams.write("\n\tinitial\n\tbegin\n"+initBuffer+"\tend\n");
+		//	}
+			//if (buffer.length() != 0){
+			//	vams.write(buffer.toString());
+			//}
 			vams.write("endmodule\n\n");
 			buffer.delete(0, buffer.length());
 			buffer2.delete(0, buffer2.length());
@@ -4797,12 +4810,12 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 					buffer4.append("\t\tV("+reqdVarsL.get(i).getName() + "drive) <+ "+reqdVarsL.get(i).getName() + "Val;\n");
 				}
 			}
+			BufferedWriter topV = new BufferedWriter(new FileWriter(new File(directory + separator + "top.v")));
+			topV.write("`timescale 1ps/1ps\n\nmodule top();\n\n");
 			if (count != 0){
 				vams.write(");\n");
 				vams.write(buffer+"\n"+buffer2+"\n\tinitial\n\tbegin\n"+initBuffer+"\tend\n"+buffer3+"\tend\n");
 				vams.write("\tanalog\n\tbegin\n"+buffer4+"\tend\nendmodule");
-				BufferedWriter topV = new BufferedWriter(new FileWriter(new File(directory + separator + "top.v")));
-				topV.write("`timescale 1ps/1ps\n\nmodule top();\n\n");
 				count = 0;
 				for (int i = 0; i < dmvcVarPlaces.size(); i++){
 					if (dmvcVarPlaces.get(i).size() != 0){
@@ -4817,19 +4830,19 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 					}
 				}
 				topV.write("\n\t);\n\n");
-				for (int i = 0; i < reqdVarsL.size(); i++){
-					v = reqdVarsL.get(i);
-					if ( i== 0){
-						topV.write("\t"+vamsFileName.split("\\.")[0]+" dut(\n\t\t."+ v.getName() + "(" + v.getName() + ")");
-					}
-					else{
-						topV.write(",\n\t\t." + v.getName() + "(" + reqdVarsL.get(i).getName() + ")");
-						count++;
-					}
-				}
-				topV.write("\n\t);\n\nendmodule");
-				topV.close();
 			}
+			for (int i = 0; i < reqdVarsL.size(); i++){
+				v = reqdVarsL.get(i);
+				if ( i== 0){
+					topV.write("\t"+vamsFileName.split("\\.")[0]+" dut(\n\t\t."+ v.getName() + "(" + v.getName() + ")");
+				}
+				else{
+					topV.write(",\n\t\t." + v.getName() + "(" + reqdVarsL.get(i).getName() + ")");
+					count++;
+				}
+			}
+			topV.write("\n\t);\n\nendmodule");
+			topV.close();
 			vams.close();
 		/*if (failPropVHDL != null){
 				vhdlAms.write("\tprocess\n");
