@@ -2877,10 +2877,11 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			mark = 0;
 			DMVCrun runs = reqdVarsL.get(i).getRuns();
 			runs.clearAll(); // flush all the runs from previous dat file.
-			for (int j = 0; j < data.get(0).size(); j++) {
+			for (int j = 0; j <= data.get(0).size(); j++) {
 				if (j < mark) // not reqd??
 					continue;
-				if (Math.abs(data.get(reqdVarIndices.get(i)).get(j) - data.get(reqdVarIndices.get(i)).get(j + 1)) <= epsilon) {
+				if (((j+1) < data.get(reqdVarIndices.get(i)).size()) && 
+						Math.abs(data.get(reqdVarIndices.get(i)).get(j) - data.get(reqdVarIndices.get(i)).get(j + 1)) <= epsilon) {
 					startPoint = j;
 					runs.addValue(data.get(reqdVarIndices.get(i)).get(j)); // chk carefully reqdVarIndices.get(i)
 					while (((j + 1) < data.get(0).size()) && (Math.abs(data.get(reqdVarIndices.get(i)).get(startPoint) - data.get(reqdVarIndices.get(i)).get(j + 1)) <= epsilon)) {
