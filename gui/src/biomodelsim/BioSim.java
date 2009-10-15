@@ -11174,14 +11174,16 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				export.setEnabled(false);
 				exportMenu.setEnabled(false);
 				viewModel.setEnabled(true);
-				viewRules.setEnabled(false);
+				viewModGraph.setEnabled(true);
+				viewModBrowser.setEnabled(true);
+				viewRules.setEnabled(false);		// always false??
 				// viewTrace.setEnabled(((Verification)
 				// comp).getViewTraceEnabled());
-				viewTrace.setEnabled(true);		// Should be true only if verification Result is available???
-				viewCircuit.setEnabled(true);
+				viewTrace.setEnabled(((Verification) comp).getViewTraceEnabled());		// Should be true only if verification Result is available???
+				viewCircuit.setEnabled(false);		// always true???
 				// viewLog.setEnabled(((Verification)
 				// comp).getViewLogEnabled());
-				viewLog.setEnabled(true);		// Should be true only if log available???
+				viewLog.setEnabled(((Verification) comp).getViewLogEnabled());		// Should be true only if log available???
 				viewCoverage.setEnabled(false); // SB
 				viewVHDL.setEnabled(false); 	// SB
 				viewVerilog.setEnabled(false); 	// SB
@@ -11209,7 +11211,9 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				check.setEnabled(false);
 				export.setEnabled(false);
 				exportMenu.setEnabled(false);
-				viewModel.setEnabled(true);
+				viewModel.setEnabled(true);			//always true??
+				viewModGraph.setEnabled(true);
+				viewModBrowser.setEnabled(true);
 				// viewRules.setEnabled(((Synthesis)
 				// comp).getViewRulesEnabled());
 				// viewTrace.setEnabled(((Synthesis)
@@ -11217,10 +11221,10 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				// viewCircuit.setEnabled(((Synthesis)
 				// comp).getViewCircuitEnabled());
 				// viewLog.setEnabled(((Synthesis) comp).getViewLogEnabled());
-				viewRules.setEnabled(true);
-				viewTrace.setEnabled(true);		// Always ???
-				viewCircuit.setEnabled(true);	// Always ???
-				viewLog.setEnabled(true);
+				viewRules.setEnabled(((Synthesis) comp).getViewRulesEnabled());	
+				viewTrace.setEnabled(((Synthesis) comp).getViewTraceEnabled());		// Always ???
+				viewCircuit.setEnabled(((Synthesis) comp).getViewCircuitEnabled());	// Always ???
+				viewLog.setEnabled(((Synthesis) comp).getViewLogEnabled());
 				viewCoverage.setEnabled(false);  // SB
 				viewVHDL.setEnabled(false);		// SB
 				viewVerilog.setEnabled(false); 	// SB

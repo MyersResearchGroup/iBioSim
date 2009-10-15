@@ -622,7 +622,8 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		viewLog.addActionListener(this);
 		buttonPanel.add(viewLog);
 		viewLog.setMnemonic(KeyEvent.VK_V);
-
+		viewLog.setEnabled(false);
+		
 		JPanel backgroundPanel = new JPanel();
 		JLabel backgroundLabel = new JLabel("Model File:");
 		tempArray = verifyFile.split(separator);
