@@ -797,48 +797,50 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 							}
 							ArrayList<String> specs = parse.getSpecies();
 							ArrayList<ArrayList<Double>> data = parse.getData();
-							int a, b;
-							String index;
-							ArrayList<Double> index2;
-							for (a = 2; a < specs.size(); a++) {
-								index = specs.get(a);
-								index2 = data.get(a);
-								b = a;
-								while ((b > 1) && specs.get(b - 1).compareToIgnoreCase(index) > 0) {
-									specs.set(b, specs.get(b - 1));
-									data.set(b, data.get(b - 1));
-									b = b - 1;
+							if (specs.size() > 0) {
+								int a, b;
+								String index;
+								ArrayList<Double> index2;
+								for (a = 2; a < specs.size(); a++) {
+									index = specs.get(a);
+									index2 = data.get(a);
+									b = a;
+									while ((b > 1) && specs.get(b - 1).compareToIgnoreCase(index) > 0) {
+										specs.set(b, specs.get(b - 1));
+										data.set(b, data.get(b - 1));
+										b = b - 1;
+									}
+									specs.set(b, index);
+									data.set(b, index2);
 								}
-								specs.set(b, index);
-								data.set(b, index2);
-							}
-							parse.setSpecies(specs);
-							parse.setData(data);
-							parse.outputTSD(directory + separator + end);
-							Properties p = new Properties();
-							FileInputStream load = new FileInputStream(new File(directory
-									+ separator + lrnName + ".lrn"));
-							p.load(load);
-							load.close();
-							p.setProperty(end, importFile);
-							FileOutputStream store = new FileOutputStream(new File(directory
-									+ separator + lrnName + ".lrn"));
-							p.store(store, "Learn File Data");
-							store.close();
-							ArrayList<String> getValues = new ArrayList<String>();
-							for (String key : p.keySet().toArray(new String[0])) {
-								if (key.contains(".tsd")) {
-									getValues.add(p.getProperty(key));
+								parse.setSpecies(specs);
+								parse.setData(data);
+								parse.outputTSD(directory + separator + end);
+								Properties p = new Properties();
+								FileInputStream load = new FileInputStream(new File(directory
+										+ separator + lrnName + ".lrn"));
+								p.load(load);
+								load.close();
+								p.setProperty(end, importFile);
+								FileOutputStream store = new FileOutputStream(new File(directory
+										+ separator + lrnName + ".lrn"));
+								p.store(store, "Learn File Data");
+								store.close();
+								ArrayList<String> getValues = new ArrayList<String>();
+								for (String key : p.keySet().toArray(new String[0])) {
+									if (key.contains(".tsd")) {
+										getValues.add(p.getProperty(key));
+									}
 								}
-							}
-							String[] s = getValues.toArray(new String[0]);
-							sort(s);
-							files.setListData(s);
-							this.list = s;
-							files.setSelectedValue(importFile, true);
-							if (s.length > 0) {
-								biosim.refreshLearn(directory.split(separator)[directory
-										.split(separator).length - 1], true);
+								String[] s = getValues.toArray(new String[0]);
+								sort(s);
+								files.setListData(s);
+								this.list = s;
+								files.setSelectedValue(importFile, true);
+								if (s.length > 0) {
+									biosim.refreshLearn(directory.split(separator)[directory
+									                                               .split(separator).length - 1], true);
+								}
 							}
 						}
 						catch (IOException e1) {
