@@ -4808,6 +4808,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 						// recheck above line.. truncating double to int.. becomes 0 in most unscaled cases?/
 						buffer3.append(reqdVarsL.get(i).getName()+ "Val = "+  ((int)(Double.parseDouble(placeInfo.get(p).getProperty("DMVCValue"))))/varScaleFactor + ";\n");
 					}
+					buffer3.append("\tend\n");
 					buffer4.append("\t\tV("+reqdVarsL.get(i).getName() + "drive) <+ transition("+reqdVarsL.get(i).getName() + "Val,delay,rtime,ftime);\n");
 				}
 			}
@@ -4816,7 +4817,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			if (count != 0){
 				vams.write(");\n");
 				vams.write("\tparameter delay = 0, rtime = 1p, ftime = 1p;\n");
-				vams.write(buffer+"\n"+buffer2+"\n\tinitial\n\tbegin\n"+initBuffer+"\tend\n"+buffer3+"\tend\n");
+				vams.write(buffer+"\n"+buffer2+"\n\tinitial\n\tbegin\n"+initBuffer+"\tend\n"+buffer3);
 				vams.write("\tanalog\n\tbegin\n"+buffer4+"\tend\nendmodule");
 				count = 0;
 				for (int i = 0; i < dmvcVarPlaces.size(); i++){
