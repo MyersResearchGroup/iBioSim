@@ -6899,6 +6899,17 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				}
 				in.close();
 				out.close();
+				out = new BufferedWriter(new FileWriter(root + separator + filename.replace(".lpn", "_top.v")));
+				String[] learnPath = path.split(separator);
+				String topVFile = path.replace(learnPath[learnPath.length - 1], "top.v");
+				String[] cktPath = filename.split(separator);
+				in = new BufferedReader(new FileReader(topVFile));
+				while ((str = in.readLine()) != null) {
+					str = str.replace("module top", "module "+ cktPath[cktPath.length -1].replace(".lpn", "_top"));
+					out.write(str + "\n");
+				}
+				in.close();
+				out.close();
 				refreshTree();
 			}
 		}
