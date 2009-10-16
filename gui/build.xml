@@ -88,7 +88,9 @@
     
     <!-- Build the GUI -->
     <target name="build" depends="init">
-        <javac nowarn="on"
+        <javac source="1.5"
+	       target="1.5"
+               nowarn="on"
 	       destdir="${build.classes}"
                debug="${debug.flag}"
                deprecation="on"
