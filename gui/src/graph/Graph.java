@@ -3288,7 +3288,12 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		JPanel speciesPanel2 = new JPanel(new GridLayout(graphSpecies.size(), 3));
 		JPanel speciesPanel3 = new JPanel(new GridLayout(graphSpecies.size(), 3));
 		use = new JCheckBox("Use");
-		JLabel specs = new JLabel("Species");
+		JLabel specs;
+		if (biomodelsim.lema || biomodelsim.atacs) {
+			specs = new JLabel("Variables");
+		} else {
+			specs = new JLabel("Species");
+		}
 		JLabel color = new JLabel("Color");
 		JLabel shape = new JLabel("Shape");
 		connectedLabel = new JCheckBox("Connect");
