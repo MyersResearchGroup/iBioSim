@@ -619,7 +619,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				backgroundField.setText(getProp[getProp.length - 1]);
 				
 			}
-		} catch (Exception e) {
+		} catch (IOException e) {
 			JOptionPane.showMessageDialog(biosim.frame(),
 					"Unable to load properties file!",
 					"Error Loading Properties", JOptionPane.ERROR_MESSAGE);
@@ -696,7 +696,9 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			//	((JComboBox)(((JPanel)variablesPanel.getComponent(j+1)).getComponent(2))).setSelectedItem(savedBins[1]);
 				for (int i = 2; i < savedBins.length ; i++){
 			//		((JTextField)(((JPanel)variablesPanel.getComponent(j+1)).getComponent(i+1))).setText(savedBins[i]);
-					divisionsL.get(j).add(Double.parseDouble(savedBins[i]));
+					if (j < variablesMap.size()) {
+						divisionsL.get(j).add(Double.parseDouble(savedBins[i]));
+					}
 				}
 				j++;
 			}
@@ -707,7 +709,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 					reqdVarsL.get(Integer.parseInt(st1)).setInput(true);
 				}
 			}
-		} catch (Exception e) {
+		} catch (IOException e) {
 			JOptionPane.showMessageDialog(biosim.frame(),
 					"Unable to load properties file!",
 					"Error Loading Properties", JOptionPane.ERROR_MESSAGE);

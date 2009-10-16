@@ -10299,7 +10299,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		}
 		else if (biosim.checkUnits) {
 			UnitDefinition unitDef = delay.getDerivedUnitDefinition();
-			if (!(unitDef.isVariantOfTime())) {
+			if (unitDef!=null && !(unitDef.isVariantOfTime())) {
 				JOptionPane.showMessageDialog(biosim.frame(),
 						"Event delay should be units of time.", "Event Delay Not Time Units",
 						JOptionPane.ERROR_MESSAGE);
