@@ -3283,9 +3283,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			if (p.getProperty("type").equals("RATE")) {
 				for (Variable v : reqdVarsL) {
 					if ((minRate == null)
-							&& (p.getProperty(v.getName() + "_rMin") != null)
-							&& (Double.parseDouble(p.getProperty(v.getName()
-									+ "_rMin")) != 0.0)) {
+							&& (p.getProperty(v.getName() + "_rMin") != null)) {
 						minRate = Double.parseDouble(p.getProperty(v.getName()
 								+ "_rMin"));
 					} else if ((p.getProperty(v.getName() + "_rMin") != null)
@@ -3309,9 +3307,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			if (p.getProperty("type").equals("RATE")) {
 				for (Variable v : reqdVarsL) {
 					if ((maxRate == null)
-							&& (p.getProperty(v.getName() + "_rMax") != null)
-							&& (Double.parseDouble(p.getProperty(v.getName()
-									+ "_rMax")) != 0.0)) {
+							&& (p.getProperty(v.getName() + "_rMax") != null)) {
 						maxRate = Double.parseDouble(p.getProperty(v.getName()
 								+ "_rMax"));
 					} else if ((p.getProperty(v.getName() + "_rMax") != null)
@@ -4812,7 +4808,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 					buffer4.append("\t\tV("+reqdVarsL.get(i).getName() + "drive) <+ transition("+reqdVarsL.get(i).getName() + "Val,delay,rtime,ftime);\n");
 				}
 			}
-			BufferedWriter topV = new BufferedWriter(new FileWriter(new File(directory + separator + "top.v")));
+			BufferedWriter topV = new BufferedWriter(new FileWriter(new File(directory + separator + "top.vams")));
 			topV.write("`timescale 1ps/1ps\n\nmodule top();\n\n");
 			if (count != 0){
 				vams.write(");\n");
