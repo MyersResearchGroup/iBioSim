@@ -1948,7 +1948,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				// lhpnFile;
 			//	String command = "dataToLHPN()";
 			//	log.addText("Running:\n" + command  + "\n");
-				dataToLHPN();
+				dataToLHPN(running);
 				// log.addText("Executing:\n" + command + " " + directory +
 				// "\n");
 				// File work = new File(directory);
@@ -2155,7 +2155,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 	 * Rev. 2 - Satish Batchu ( dataToLHPN() )
 	 */
 
-	public void dataToLHPN() {
+	public void dataToLHPN(JFrame running) {
 		try {
 			/* Initializations being done in resetAll method added on Aug 12,2009. These 
 			 * initializations ensure that place,transition numbers start from 0 
@@ -2251,7 +2251,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				genBinsRates(divisionsL); // changes made here.. data being used was global before.
 				//genBinsRates("run-" + i + ".tsd", divisionsL);
 				detectDMV();
-				updateGraph(bins, rates, cProp);
+				updateGraph(bins, rates, cProp,running);
 				//cProp.store(coverage,  "run-" + String.valueOf(i) + ".tsd");
 				coverage.write("run-" + String.valueOf(i) + ".tsd\t");
 				coverage.write("places : " + cProp.getProperty("places"));
@@ -2837,10 +2837,10 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		}
 	}
 
-	public void updateGraph(int[][] bins, Double[][] rates, Properties cvgProp) {
+	public void updateGraph(int[][] bins, Double[][] rates, Properties cvgProp,JFrame running) {
 		updateRateInfo(bins, rates, cvgProp);
 		updateTimeInfo(bins,cvgProp);
-		int initMark = 0;
+		int initMark = -1;
 		int k;
 		String key;
 		for (int i = 0; i < reqdVarsL.size(); i++) {
@@ -2856,6 +2856,19 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				}
 			}
 			key = "";
+			if (initMark == -1){
+				JOptionPane.showMessageDialog(biosim.frame(),
+							"Unable to calculate rates.\nWindow size or pathlength must be reduced.",
+							"ERROR!", JOptionPane.ERROR_MESSAGE);
+				try {
+					out.write("ERROR! Unable to calculate rates.\nIf Window size = -1, pathlength must be reduced;\n Else, reduce windowsize\n");
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				running.setCursor(null);
+				running.dispose();
+			}
 			for (int l = 0; l < reqdVarsL.size(); l++) {
 				key = key + bins[l][initMark];
 			}
@@ -4635,22 +4648,6 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			/*for (String st:dmvcPlaces){
 				System.out.println("p" + placeInfo.get(st).getProperty("placeNum") + "," +placeInfo.get(st).getProperty("DMVCVariable"));
 			}*/ 
-			/*
-			Collections.sort(dmvcPlaces,new Comparator<String>(){
-				public int compare(String a, String b){
-					String v1 = placeInfo.get(a).getProperty("DMVCVariable");
-					String v2 = placeInfo.get(b).getProperty("DMVCVariable");
-					if (reqdVarsL.indexOf(v1) < reqdVarsL.indexOf(v2)){
-						return -1;
-					}
-					else if (reqdVarsL.indexOf(v1) == reqdVarsL.indexOf(v2)){
-						return 0;
-					}
-					else{
-						return 1;
-					}
-				}
-			});*/
 			Collections.sort(dmvcPlaces,new Comparator<String>(){
 				public int compare(String a, String b){
 					if (Integer.parseInt(a.split("_")[1]) < Integer.parseInt(b.split("_")[1])){
