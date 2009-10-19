@@ -940,7 +940,9 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 					}
 //					write.close();
 				} catch (Exception e1) {
-					System.out.println("exception in ActionPerformed:user");
+					JOptionPane.showMessageDialog(biosim.frame(),
+							"Unable to save thresholds!",
+							"Error saving thresholds", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 			numBinsLabel.setEnabled(false);
@@ -1345,7 +1347,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			}
 		} catch (Exception e1) {
 			JOptionPane.showMessageDialog(biosim.frame(),
-					"Unable to save circuit.", "Error",
+					"Unable to save model.", "Error",
 					JOptionPane.ERROR_MESSAGE);
 		}
 	}
@@ -1404,7 +1406,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			}
 		} catch (Exception e1) {
 			JOptionPane.showMessageDialog(biosim.frame(),
-					"Unable to view circuit.", "Error",
+					"Unable to view LHPN Model.", "Error",
 					JOptionPane.ERROR_MESSAGE);
 		}
 	}
@@ -1785,7 +1787,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		new File(directory + separator + lhpnFile).delete();
 		fail = false;
 		try {
-			File work = new File(directory);
+			//File work = new File(directory);
 			final JFrame running = new JFrame("Progress");
 			//running.setUndecorated(true);
 			//final JButton cancel = new JButton("Cancel");
@@ -2035,6 +2037,10 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			}
 		} catch (Exception e1) {
 			e1.printStackTrace();
+			JOptionPane.showMessageDialog(biosim.frame(),
+					"Unable to create log file.",
+					"ERROR!", JOptionPane.ERROR_MESSAGE);
+			
 		}
 	}
 
@@ -2185,17 +2191,12 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			// & order vars = varNames.toArray(new String[varNames.size()]);
 			int i = 1;
 		//	divisionsL = parseBinFile();
-		//    reqdVarsL.get(1).setInput(true); // 
-		//	reqdVarsL.get(4).setInput(true); // for pd
-		//	reqdVarsL.get(5).setInput(true); // for pd
 			lowerLimit[0] = -800.0;  // for integrator
 			upperLimit[0] = 800.0;  // for integrator
 			
 			String failProp = "";
 			String enFailAnd = "";
 			String enFail = "";
-			// Graph g = new Graph(reqdVarsL.toArray(new
-			// Variable[reqdVarsL.size()]),failProp);
 			// Add logic to deal with failprop and related places/transitions
 			g = new LHPNFile(); // The generated lhpn is stored in this object
 			placeInfo = new HashMap<String, Properties>();
@@ -2462,9 +2463,27 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			writeVHDLAMSFile(lhpnFile.replace(".lpn",".vhd"));
 			writeVerilogAMSFile(lhpnFile.replace(".lpn",".vams"));
 		} catch (IOException e) {
+			e.printStackTrace();
 			System.out.println("LPN file couldn't be created/written ");
+			JOptionPane.showMessageDialog(biosim.frame(),
+					"LPN file couldn't be created/written.",
+					"ERROR!", JOptionPane.ERROR_MESSAGE);
 		}
-
+		catch (ArrayIndexOutOfBoundsException e1) {	// comes from initMark = -1 of updateGraph()
+			e1.printStackTrace();
+			JOptionPane.showMessageDialog(biosim.frame(),
+					"Unable to calculate rates.\nWindow size or pathlength must be reduced.\nLearning unsuccessful.",
+					"ERROR!", JOptionPane.ERROR_MESSAGE);
+			try {
+				out.write("ERROR! Unable to calculate rates.\nIf Window size = -1, pathlength must be reduced;\nElse, reduce windowsize\nLearning unsuccessful.");
+				out.close();
+			} catch (IOException e2) {
+				// TODO Auto-generated catch block
+				e2.printStackTrace();
+			}
+			running.setCursor(null);
+			running.dispose();
+		}
 	}
 	
 	public void resetAll(){
@@ -2832,8 +2851,10 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				}
 			}
 		} catch (IOException e) {
-			System.out
-					.println("Log file couldn't be opened for writing rates and bins ");
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(biosim.frame(),
+					"Log file couldn't be opened for writing rates and bins.",
+					"ERROR!", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
@@ -2856,19 +2877,6 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				}
 			}
 			key = "";
-			if (initMark == -1){
-				JOptionPane.showMessageDialog(biosim.frame(),
-							"Unable to calculate rates.\nWindow size or pathlength must be reduced.",
-							"ERROR!", JOptionPane.ERROR_MESSAGE);
-				try {
-					out.write("ERROR! Unable to calculate rates.\nIf Window size = -1, pathlength must be reduced;\n Else, reduce windowsize\n");
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				running.setCursor(null);
-				running.dispose();
-			}
 			for (int l = 0; l < reqdVarsL.size(); l++) {
 				key = key + bins[l][initMark];
 			}
@@ -2881,7 +2889,6 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				g.changeInitialMarking("p" + placeInfo.get(key).getProperty("placeNum"), true);
 			}
 		}
-
 	}
 
 	public void detectDMV() {
@@ -4556,7 +4563,9 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			
 		}
 		catch(IOException e){
-			
+			JOptionPane.showMessageDialog(biosim.frame(),
+					"VHDL-AMS model couldn't be created/written.",
+					"ERROR!", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 	public void writeVerilogAMSFile(String vamsFileName){
@@ -4854,7 +4863,9 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			
 		}
 		catch(IOException e){
-			
+			JOptionPane.showMessageDialog(biosim.frame(),
+					"Verilog-AMS model couldn't be created/written.",
+					"ERROR!", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 	//T[] aux = (T[])a.clone();
