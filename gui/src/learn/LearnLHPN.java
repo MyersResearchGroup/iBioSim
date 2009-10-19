@@ -1132,7 +1132,9 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				int max = 0;
 				if (!divisionsL.isEmpty()){
 					for (int i = 0; i < divisionsL.size(); i++){
-						max = Math.max(max, divisionsL.get(i).size()+2);
+						if (divisionsL.get(i) != null) {
+							max = Math.max(max, divisionsL.get(i).size()+2);
+						}
 					}
 				}
 				JPanel label = new JPanel(new GridLayout());
@@ -1177,7 +1179,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 					sp.add(specs.get(0));
 					sp.add(specs.get(1));
 					sp.add(specs.get(2));  // Uncommented SB
-					if (reqdVarsL.get(j-1).isInput()){
+					if ((j-1) < reqdVarsL.size() && reqdVarsL.get(j-1).isInput()){
 						((JCheckBox) specs.get(1)).setSelected(true);
 					}
 					else{
@@ -1188,7 +1190,10 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 					this.variables.add(specs);
 					if (!divisionsL.isEmpty()) {
 						boolean found = false;
-						ArrayList<Double> div =  divisionsL.get(j-1);
+						if ((j-1) < divisionsL.size()) {
+							divisionsL.add(null);
+						}
+							ArrayList<Double> div =  divisionsL.get(j-1);
 							// log.addText(s + " here " + st);
 							// String[] getString = st.split(" ");
 							// log.addText(getString[0] + s);
