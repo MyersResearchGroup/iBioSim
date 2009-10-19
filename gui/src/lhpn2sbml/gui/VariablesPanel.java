@@ -104,7 +104,7 @@ public class VariablesPanel extends JPanel implements ActionListener {
 			// JOptionPane.showMessageDialog(this, lhpn.isContinuous(selected));
 			if (name != null) {
 				String initVal = lhpn.getInitialVal(name);
-				Pattern pattern = Pattern.compile("\\[([\\S^,]),([\\S^\\]])\\]");
+				Pattern pattern = Pattern.compile("\\[([\\w-]+?),([\\w-]+?)\\]");
 				Matcher matcher = pattern.matcher(initVal);
 				if (matcher.find()) {
 					initLow = new PropertyField("Initial Lower Bound", matcher.group(1), null,
@@ -162,7 +162,7 @@ public class VariablesPanel extends JPanel implements ActionListener {
 		if (continuous) {
 			if (name != null) {
 				String initRate = lhpn.getInitialRate(name);
-				Pattern pattern = Pattern.compile("\\[([\\S^,]),([\\S^\\]])\\]");
+				Pattern pattern = Pattern.compile("\\[([\\w-]+?),([\\w-]+?)\\]");
 				Matcher matcher = pattern.matcher(initRate);
 				if (matcher.find()) {
 					rateLow = new PropertyField("Rate Lower Bound", matcher.group(1), null, null,
@@ -204,7 +204,7 @@ public class VariablesPanel extends JPanel implements ActionListener {
 			// }
 			if (lhpn.isContinuous(name) || lhpn.isInteger(name)) {
 				String initVal = lhpn.getInitialVal(name);
-				Pattern pattern = Pattern.compile("\\[([\\S^,]),([\\S^\\]])\\]");
+				Pattern pattern = Pattern.compile("\\[([\\w-]+),([\\w-]+)\\]");
 				Matcher matcher = pattern.matcher(initVal);
 				if (matcher.find()) {
 					fields.get("Initial lower").setValue(matcher.group(1));
@@ -238,7 +238,7 @@ public class VariablesPanel extends JPanel implements ActionListener {
 			}
 			if (lhpn.isContinuous(name)) {
 				String initRate = lhpn.getInitialRate(name);
-				Pattern pattern = Pattern.compile("\\[([\\S^,]),([\\S^\\]])\\]");
+				Pattern pattern = Pattern.compile("\\[([\\w-]+),([\\w-]+)\\]");
 				Matcher matcher = pattern.matcher(initRate);
 				if (matcher.find()) {
 					fields.get("Rate lower").setValue(matcher.group(1));

@@ -238,7 +238,7 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 			else {
 				rateBox.setEnabled(false);
 			}
-			Pattern pattern = Pattern.compile("\\[([\\S^,]),([\\S^\\]])\\]");
+			Pattern pattern = Pattern.compile("\\[([\\w-]+),([\\w-]+)\\]");
 			Matcher matcher = pattern.matcher(tempArray[1]);
 			if (matcher.find()) {
 				fields.get("Assignment lower").setValue(matcher.group(1));
