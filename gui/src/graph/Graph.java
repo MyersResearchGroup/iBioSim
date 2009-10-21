@@ -5264,10 +5264,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						}
 						if (ableToGraph) {
 							int nextOne = 1;
-							while (!new File(outDir + separator + "run-" + nextOne + "."
-									+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
-								nextOne++;
-							}
+							//while (!new File(outDir + separator + "run-" + nextOne + "."
+							//		+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
+							//	nextOne++;
+							//}
 							ArrayList<ArrayList<Double>> data;
 							if (allData.containsKey(g.getRunNumber() + " " + g.getDirectory())) {
 								data = allData.get(g.getRunNumber() + " " + g.getDirectory());
@@ -5290,6 +5290,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 											+ printer_id.substring(0, printer_id.length() - 8));
 								}
 								else {
+									while (!new File(outDir + separator + "run-" + nextOne + "."
+											+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
+										nextOne++;
+									}
 									readGraphSpecies(outDir + separator + "run-" + nextOne + "."
 											+ printer_id.substring(0, printer_id.length() - 8));
 								}
@@ -5327,7 +5331,11 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 											.getRunNumber().toLowerCase(), null, false);
 								}
 								else {
-									data = readData(outDir + separator + "run-1."
+									while (!new File(outDir + separator + "run-" + nextOne + "."
+											+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
+										nextOne++;
+									}
+									data = readData(outDir + separator + "run-" + nextOne + "."
 											+ printer_id.substring(0, printer_id.length() - 8), g
 											.getRunNumber().toLowerCase(), null, false);
 								}
@@ -5484,11 +5492,11 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						}
 						if (ableToGraph) {
 							int nextOne = 1;
-							while (!new File(outDir + separator + g.getDirectory() + separator
-									+ "run-" + nextOne + "."
-									+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
-								nextOne++;
-							}
+							//while (!new File(outDir + separator + g.getDirectory() + separator
+							//		+ "run-" + nextOne + "."
+							//		+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
+							//	nextOne++;
+							//}
 							ArrayList<ArrayList<Double>> data;
 							if (allData.containsKey(g.getRunNumber() + " " + g.getDirectory())) {
 								data = allData.get(g.getRunNumber() + " " + g.getDirectory());
@@ -5511,6 +5519,11 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 											+ printer_id.substring(0, printer_id.length() - 8));
 								}
 								else {
+									while (!new File(outDir + separator + g.getDirectory() + separator
+											+ "run-" + nextOne + "."
+											+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
+										nextOne++;
+									}
 									readGraphSpecies(outDir + separator + g.getDirectory() + separator
 											+ "run-" + nextOne + "."
 											+ printer_id.substring(0, printer_id.length() - 8));
@@ -5549,8 +5562,13 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 											.getRunNumber().toLowerCase(), null, false);
 								}
 								else {
+									while (!new File(outDir + separator + g.getDirectory() + separator
+											+ "run-" + nextOne + "."
+											+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
+										nextOne++;
+									}
 									data = readData(outDir + separator + g.getDirectory() + separator
-											+ "run-1."
+											+ "run-" + nextOne + "."
 											+ printer_id.substring(0, printer_id.length() - 8), g
 											.getRunNumber().toLowerCase(), g.getDirectory(), false);
 								}
