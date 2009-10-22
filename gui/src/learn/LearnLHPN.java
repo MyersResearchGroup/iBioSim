@@ -304,7 +304,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		JLabel epsilonLabel = new JLabel("Epsilon");
 		epsilonG = new JTextField("0.1");
 		JLabel pathLengthLabel = new JLabel("Minimum Pathlength");//("Pathlength");
-		pathLengthG = new JTextField("15");
+		pathLengthG = new JTextField("0");
 		JLabel rateSamplingLabel = new JLabel("Window Size");//("Rate Sampling");
 		rateSamplingG = new JTextField("-1");
 		JLabel dmvcLabel = new JLabel("DMVC determination parameters");
@@ -600,8 +600,8 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		 */
 
 		// load parameters
-		// reading lrnFile twice. On the first read, only learnFile (the initial lpn) is processed
-		// in the gap b/w these reads, reqdVarsL is created based on the learnFile
+		// reading lrnFile twice. On the first read, only learnFile (the initial lpn) is processed.
+		// In the gap b/w these reads, reqdVarsL is created based on the learnFile
 		Properties load = new Properties();
 		learnFile = "";
 		
@@ -688,7 +688,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			
 			int j = 0;
 			//levels();
-			while (load.containsKey("learn.bins"+j)){
+			/*while (load.containsKey("learn.bins"+j)){
 				String s = load.getProperty("learn.bins" + j);
 				String[] savedBins = s.split("\\s");
 				//divisionsL.add(new ArrayList<Double>());
@@ -701,12 +701,35 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 					}
 				}
 				j++;
+			}*/
+			if (load.containsKey("learn.varsList")){
+				String varsListString = load.getProperty("learn.varsList");
+				String[] varsList = varsListString.split("\\s");
+				j = 0;
+				for (String st1 : varsList){
+					String s = load.getProperty("learn.bins" + st1);
+					String[] savedBins = s.split("\\s");
+					//divisionsL.add(new ArrayList<Double>());
+					//variablesList.add(savedBins[0]);
+					//	((JComboBox)(((JPanel)variablesPanel.getComponent(j+1)).getComponent(2))).setSelectedItem(savedBins[1]);
+					for (int i = 2; i < savedBins.length ; i++){
+						//		((JTextField)(((JPanel)variablesPanel.getComponent(j+1)).getComponent(i+1))).setText(savedBins[i]);
+						if (j < variablesMap.size()) {
+							divisionsL.get(j).add(Double.parseDouble(savedBins[i]));
+						}
+					}
+					j++;
+				}
 			}
 			if (load.containsKey("learn.inputs")){
 				String s = load.getProperty("learn.inputs");
 				String[] savedInputs = s.split("\\s");
 				for (String st1 : savedInputs){
-					reqdVarsL.get(Integer.parseInt(st1)).setInput(true);
+					for (int i = 0; i < reqdVarsL.size(); i++){
+						if ( reqdVarsL.get(i).getName().equalsIgnoreCase(st1)){
+							reqdVarsL.get(i).setInput(true);
+						}
+					}
 				}
 			}
 		} catch (IOException e) {
@@ -1190,9 +1213,9 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 					this.variables.add(specs);
 					if (!divisionsL.isEmpty()) {
 						boolean found = false;
-						if ((j-1) < divisionsL.size()) {
-							divisionsL.add(null);
-						}
+				//		if ((j-1) < divisionsL.size()) {		COMMENTED BY SB
+				//			divisionsL.add(null);
+				//		}
 							ArrayList<Double> div =  divisionsL.get(j-1);
 							// log.addText(s + " here " + st);
 							// String[] getString = st.split(" ");
@@ -1595,6 +1618,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			prop.setProperty("learn.iter", this.iteration.getText().trim());
 			prop.setProperty("learn.bins", (String) this.numBins.getSelectedItem());
 			prop.setProperty("learn.prop", (String) this.propertyG.getText().trim());
+			String varsList = null;
 			if (range.isSelected()) {
 				prop.setProperty("learn.equal", "range");
 			} else {
@@ -1612,6 +1636,12 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 						k++;
 						continue;
 					}
+					if (k == 1){
+						varsList = ((JTextField)((JPanel)c).getComponent(0)).getText().trim();
+					}
+					else{
+						varsList += " "+ ((JTextField)((JPanel)c).getComponent(0)).getText().trim();
+					}
 					String s =  ((JTextField)((JPanel)c).getComponent(0)).getText().trim() + " " + numOfBins;
 					if ((divisionsL != null) && (divisionsL.size() != 0)){
 						for (int i = 0; i < (numOfBins -1); i++){
@@ -1621,14 +1651,14 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 							}
 						}
 					}
-					prop.setProperty("learn.bins"+ (k-1), s);
+					prop.setProperty("learn.bins"+ ((JTextField)((JPanel)c).getComponent(0)).getText().trim(), s);
 					if (((JCheckBox)((JPanel)c).getComponent(1)).isSelected()){
 						if (inputCount == 0){
 							inputCount++;
-							ip = String.valueOf(k-1);//((JTextField)((JPanel)c).getComponent(0)).getText().trim();
+							ip = ((JTextField)((JPanel)c).getComponent(0)).getText().trim();
 						}
 						else{
-							ip = ip + " " + String.valueOf(k-1);
+							ip = ip + " " + ((JTextField)((JPanel)c).getComponent(0)).getText().trim();
 						}
 					}
 					k++;
@@ -1649,20 +1679,26 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 						k++;
 						continue;
 					}
+					if (k == 1){
+						varsList = ((JTextField)((JPanel)c).getComponent(0)).getText().trim();
+					}
+					else{
+						varsList += " "+ ((JTextField)((JPanel)c).getComponent(0)).getText().trim();
+					}
 					String s =  ((JTextField)((JPanel)c).getComponent(0)).getText().trim() + " " + (String)((JComboBox)((JPanel)c).getComponent(2)).getSelectedItem();
 					int numOfBins = Integer.parseInt((String)((JComboBox)((JPanel)c).getComponent(2)).getSelectedItem())-1;
 					for (int i = 0; i < numOfBins; i++){
 						s += " ";
 						s += ((JTextField)(((JPanel)c).getComponent(i+3))).getText().trim();
 					}
-					prop.setProperty("learn.bins"+ (k-1), s);
+					prop.setProperty("learn.bins"+ ((JTextField)((JPanel)c).getComponent(0)).getText().trim(), s);
 					if (((JCheckBox)((JPanel)c).getComponent(1)).isSelected()){
 						if (inputCount == 0){
 							inputCount++;
-							ip = String.valueOf(k-1);//((JTextField)((JPanel)c).getComponent(0)).getText().trim();
+							ip = ((JTextField)((JPanel)c).getComponent(0)).getText().trim();//((JTextField)((JPanel)c).getComponent(0)).getText().trim();
 						}
 						else{
-							ip = ip + " " + String.valueOf(k-1);
+							ip = ip + " " + ((JTextField)((JPanel)c).getComponent(0)).getText().trim();
 						}
 					}
 					k++;
@@ -1681,6 +1717,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			prop.setProperty("learn.absTime",String.valueOf(this.absTimeG.isSelected()));
 			prop.setProperty("learn.runTime",this.runTimeG.getText().trim());
 			prop.setProperty("learn.runLength",this.runLengthG.getText().trim());
+			prop.setProperty("learn.varsList",varsList);
 			
 			log.addText("Saving learn parameters to file:\n" + directory
 					+ separator + lrnFile + "\n");
@@ -2108,11 +2145,70 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		 * background file!", "Error Writing Background",
 		 * JOptionPane.ERROR_MESSAGE); } } else {
 		 */
+		divisionsL = new ArrayList<ArrayList<Double>>();	// SB
+		reqdVarsL = new ArrayList<Variable>();				// SB
 		LHPNFile lhpn = new LHPNFile();
 		lhpn.load(learnFile);
-		HashMap<String, Properties> speciesMap = lhpn.getVariables();
-		for (String s : speciesMap.keySet()) {
+		HashMap<String, Properties> variablesMap = lhpn.getVariables();
+		for (String s : variablesMap.keySet()) {
 			variablesList.add(s);
+			reqdVarsL.add(new Variable(s));					// SB
+			divisionsL.add(new ArrayList<Double>());		// SB
+		}
+	// Loading the inputs and bins from the existing .lrn file.	
+		Properties load = new Properties();
+		try {
+			FileInputStream in = new FileInputStream(new File(directory
+					+ separator + lrnFile));
+			load.load(in);
+			in.close();
+			int j = 0;
+			if (load.containsKey("learn.varsList")){
+				String varsListString = load.getProperty("learn.varsList");
+				String[] varsList = varsListString.split("\\s");
+				j = 0;
+				for (String st1 : varsList){
+					boolean varFound = false;
+					int varNum = j;
+					for (int i = 0; i < reqdVarsL.size() ; i++){
+						if (st1.equalsIgnoreCase(reqdVarsL.get(i).getName())){
+							varFound = true;
+							varNum = i;
+							break;
+						}
+					}
+					if (!varFound){
+						continue;
+					}
+					String s = load.getProperty("learn.bins" + st1);
+					String[] savedBins = s.split("\\s");
+					//divisionsL.add(new ArrayList<Double>());
+					//variablesList.add(savedBins[0]);
+					//	((JComboBox)(((JPanel)variablesPanel.getComponent(j+1)).getComponent(2))).setSelectedItem(savedBins[1]);
+					for (int i = 2; i < savedBins.length ; i++){
+						//		((JTextField)(((JPanel)variablesPanel.getComponent(j+1)).getComponent(i+1))).setText(savedBins[i]);
+						if (varNum < variablesMap.size()) {	// chk for varNum or j ????
+							divisionsL.get(varNum).add(Double.parseDouble(savedBins[i]));
+						}
+					}
+					j++;
+				}
+			}
+			if (load.containsKey("learn.inputs")){
+				String s = load.getProperty("learn.inputs");
+				String[] savedInputs = s.split("\\s");
+				for (String st1 : savedInputs){
+					for (int i = 0; i < reqdVarsL.size(); i++){
+						if ( reqdVarsL.get(i).getName().equalsIgnoreCase(st1)){
+							reqdVarsL.get(i).setInput(true);
+						}
+					}
+				}
+			}
+		} catch (IOException e) {
+			JOptionPane.showMessageDialog(biosim.frame(),
+					"Unable to load properties file!",
+					"Error Loading Properties", JOptionPane.ERROR_MESSAGE);
 		}
 		/*
 		 * try { FileWriter write = new FileWriter( new File(directory +
