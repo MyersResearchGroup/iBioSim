@@ -1219,6 +1219,13 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				errorLabel.setEnabled(false);
 				absErr.setEnabled(false);
 			}
+			else if (simulators.getSelectedItem().equals("mp")) {
+				description.setText("Mean Path");
+				step.setEnabled(true);
+				stepLabel.setEnabled(true);
+				errorLabel.setEnabled(false);
+				absErr.setEnabled(false);
+			}
 			else if (simulators.getSelectedItem().equals("emc-sim")) {
 				description.setText("Monte Carlo sim with jump count as" + " independent variable");
 				step.setEnabled(true);
@@ -2405,18 +2412,20 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		}
 		int steps;
 		if (intervalLabel.getSelectedItem().equals("Print Interval")) {
-		    if (simulators.getSelectedItem().equals("mpde")) {
-			steps = (int) (timeLimit / printInterval);
-		    } else {
-			steps = (int) ((timeLimit / printInterval) * run);
-		    }
+			if (simulators.getSelectedItem().equals("mpde") || simulators.getSelectedItem().equals("mp")) {
+				steps = (int) (timeLimit / printInterval);
+			}
+			else {
+				steps = (int) ((timeLimit / printInterval) * run);
+			}
 		}
 		else {
-		    if (simulators.getSelectedItem().equals("mpde")) {
-			steps = (int) (printInterval);
-		    } else {
-			steps = (int) (printInterval * run);
-		    }
+			if (simulators.getSelectedItem().equals("mpde") || simulators.getSelectedItem().equals("mp")) {
+				steps = (int) (printInterval);
+			}
+			else {
+				steps = (int) (printInterval * run);
+			}
 		}
 		JProgressBar progress = new JProgressBar(0, steps);
 		progress.setStringPainted(true);
