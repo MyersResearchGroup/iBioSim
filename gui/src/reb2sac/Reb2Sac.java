@@ -1213,14 +1213,14 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				absErr.setEnabled(false);
 			}
 			else if (simulators.getSelectedItem().equals("mpde")) {
-				description.setText("Marginal Probability Density Evolution");
+				description.setText("iSSA (Marginal Probability Density Evolution)");
 				step.setEnabled(true);
 				stepLabel.setEnabled(true);
 				errorLabel.setEnabled(false);
 				absErr.setEnabled(false);
 			}
 			else if (simulators.getSelectedItem().equals("mp")) {
-				description.setText("Mean Path");
+				description.setText("iSSA (Mean Path)");
 				step.setEnabled(true);
 				stepLabel.setEnabled(true);
 				errorLabel.setEnabled(false);
