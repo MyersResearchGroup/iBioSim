@@ -17,10 +17,12 @@ import verification.AbstPane;
 public class Abstraction extends LHPNFile {
 
 	private ArrayList<HashMap<String, Properties>> assignments = new ArrayList<HashMap<String, Properties>>();
-	
-	private HashMap<String, Integer> process_trans = new HashMap<String,Integer>();
-	
-	private HashMap<String, Integer> process_var = new HashMap<String, Integer>();
+
+	private HashMap<String, Integer> process_trans = new HashMap<String, Integer>();
+
+	private HashMap<String, Integer> process_write = new HashMap<String, Integer>();
+
+	private HashMap<String, Integer> process_read = new HashMap<String, Integer>();
 
 	// private Verification verPane;
 
@@ -33,6 +35,7 @@ public class Abstraction extends LHPNFile {
 
 	public void abstractSTG() {
 		boolean change = true;
+		divideProcesses();
 		if (abstPane.xform12.isSelected()) {
 			abstractAssign();
 		}
@@ -57,340 +60,39 @@ public class Abstraction extends LHPNFile {
 			change = false;
 			// Transform 0 - Merge Parallel Places
 			if (abstPane.xform0.isSelected()) {
-				ArrayList<String[]> merge = new ArrayList<String[]>();
-				for (String s : controlPlaces.keySet()) {
-					for (String t : controlPlaces.keySet()) {
-						if (!s.equals(t)) {
-							Properties prop1 = controlPlaces.get(s);
-							Properties prop2 = controlPlaces.get(t);
-							boolean assign = false;
-							for (HashMap<String, Properties> h : assignments) {
-								if (h.get(t) == null || h.get(t).keySet().isEmpty()) {
-									assign = true;
-									break;
-								}
-							}
-							// System.out.println(s + t);
-							if (comparePreset(prop1, prop2) && comparePostset(prop1, prop2)
-									&& (places.get(s).equals(places.get(t))) && !assign) {
-								String[] temp = { s, t };
-								merge.add(temp);
-							}
-						}
-					}
-				}
-				for (String[] a : merge) {
-					// System.out.println("Transform 0");
-					change = true;
-					combinePlaces(a[0], a[1]);
-				}
+				change = checkTrans0(change);
 			}
-			ArrayList<String> remove = new ArrayList<String>();
 			// Transform 1 - Remove a Place in a Self Loop
 			if (abstPane.xform1.isSelected()) {
-				for (String s : controlPlaces.keySet()) {
-					if (controlPlaces.get(s).getProperty("preset") != null
-							&& controlPlaces.get(s).getProperty("postset") != null) {
-						String[] preset = controlPlaces.get(s).getProperty("preset").split(" ");
-						String[] postset = controlPlaces.get(s).getProperty("postset").split(" ");
-						if (preset.length == 1 && postset.length == 1) {
-							if (preset[0].equals(postset[0]) && !places.get(s)) {
-								remove.add(s);
-							}
-							else {
-								continue;
-							}
-						}
-					}
-				}
-				for (String s : remove) {
-					// System.out.println("Transform 1");
-					change = true;
-					removePlace(s);
-				}
+				change = checkTrans1(change);
 			}
 			// Transforms 5a, 6, 7 - Combine Transitions with the Same Preset
 			// and/or Postset
-			ArrayList<String[]> combine = new ArrayList<String[]>();
-			HashMap<String, boolean[]> samesets = new HashMap<String, boolean[]>();
-			for (String s : controlFlow.keySet()) {
-				for (String t : controlFlow.keySet()) {
-					if (!s.equals(t)) {
-						boolean samePreset = comparePreset(controlFlow.get(s), controlFlow.get(t));
-						boolean samePostset = comparePostset(controlFlow.get(s), controlFlow.get(t));
-						boolean assign = false;
-						if (enablings.containsKey(t)) {
-							assign = true;
-						}
-						if (!assign) {
-							for (HashMap<String, Properties> h : assignments) {
-								if ((h.get(t) != null && !h.get(t).keySet().isEmpty())
-										|| (h.get(s) != null && !h.get(s).keySet().isEmpty())) {
-									assign = true;
-								}
-							}
-						}
-						if ((samePreset && samePostset) && !assign && abstPane.xform5.isSelected()) {
-							String[] array = { s, t };
-							boolean[] same = { samePreset, samePostset };
-							combine.add(array);
-							samesets.put(s, same);
-						}
-						else if (samePreset && controlFlow.get(s).containsKey("postset")
-								&& controlFlow.get(t).containsKey("postset")
-								&& controlFlow.get(s).containsKey("preset")
-								&& controlFlow.get(t).containsKey("preset") && !assign
-								&& abstPane.xform6.isSelected()) {
-							String[] postset1 = controlFlow.get(s).getProperty("postset")
-									.split(" ");
-							String[] postset2 = controlFlow.get(t).getProperty("postset")
-									.split(" ");
-							if (postset1.length == 1 && postset2.length == 1
-									&& controlPlaces.containsKey(postset1[0])
-									&& controlPlaces.containsKey(postset2[0])) {
-								if (comparePreset(controlPlaces.get(postset1[0]), controlPlaces
-										.get(postset2[0]), s, t)) {
-									String[] array = { s, t };
-									boolean[] same = { samePreset, samePostset };
-									combine.add(array);
-									samesets.put(s, same);
-								}
-							}
-						}
-						else if (samePostset && controlFlow.get(s).containsKey("preset")
-								&& controlFlow.get(t).containsKey("preset")
-								&& controlFlow.get(s).containsKey("postset")
-								&& controlFlow.get(t).containsKey("postset") && !assign
-								&& abstPane.xform7.isSelected()) {
-							String[] preset1 = controlFlow.get(s).getProperty("preset").split(" ");
-							String[] preset2 = controlFlow.get(t).getProperty("preset").split(" ");
-							if (preset1.length == 1 && preset2.length == 1) {
-								if (comparePostset(controlPlaces.get(preset1[0]), controlPlaces
-										.get(preset2[0]), s, t)) {
-									String[] array = { s, t };
-									boolean[] same = { samePreset, samePostset };
-									combine.add(array);
-									samesets.put(s, same);
-								}
-							}
-						}
-					}
-				}
-			}
-			for (String[] s : combine) {
-				// System.out.println("[5]Removing transition: " + s[1] + s[0]);
-				change = true;
-				combineTransitions(s[0], s[1], samesets.get(s[0])[0], samesets.get(s[0])[1]);
+			if (abstPane.xform5.isSelected() || abstPane.xform6.isSelected()
+					|| abstPane.xform7.isSelected()) {
+				change = checkTrans5(change);
 			}
 			// Transform 5b
 			if (abstPane.xform5.isSelected()) {
-				combine = new ArrayList<String[]>();
-				for (String s : controlFlow.keySet()) {
-					for (String t : controlFlow.keySet()) {
-						boolean transform = true;
-						if (!s.equals(t)) {
-							if (controlFlow.get(s).getProperty("preset") != null
-									&& controlFlow.get(t).getProperty("preset") != null) {
-								String[] preset1 = controlFlow.get(s).getProperty("preset").split(
-										" ");
-								String[] preset2 = controlFlow.get(t).getProperty("preset").split(
-										" ");
-								boolean assign = false;
-								if (enablings.containsKey(t)) {
-									assign = true;
-								}
-								if (!assign) {
-									for (HashMap<String, Properties> h : assignments) {
-										if (h.get(t) != null && h.get(s) != null) {
-											if (!h.get(t).keySet().isEmpty()
-													|| !h.get(s).keySet().isEmpty()) {
-												assign = true;
-											}
-										}
-									}
-								}
-								if (!assign) {
-									for (String u : preset1) {
-										if (transform) {
-											for (String v : preset2) {
-												if (!u.equals(v)) {
-													Properties prop1 = controlPlaces.get(u);
-													Properties prop2 = controlPlaces.get(v);
-													if (prop1 != null && prop2 != null) {
-														if (!comparePreset(prop1, prop2)) {
-															transform = false;
-															break;
-														}
-													}
-												}
-											}
-										}
-									}
-									if (transform && controlFlow.get(s).containsKey("postset")
-											&& controlFlow.get(t).containsKey("postset")) {
-										String[] postset1 = controlFlow.get(s).getProperty(
-												"postset").split(" ");
-										String[] postset2 = controlFlow.get(t).getProperty(
-												"postset").split(" ");
-										for (String u : postset1) {
-											for (String v : postset2) {
-												if (!u.equals(v)) {
-													Properties prop1 = controlPlaces.get(u);
-													Properties prop2 = controlPlaces.get(v);
-													if (!comparePostset(prop1, prop2)) {
-														transform = false;
-														break;
-													}
-												}
-											}
-										}
-									}
-								}
-								if (transform && !assign) {
-									String[] array = { s, t };
-									combine.add(array);
-									// combineTransitions(s, t, true, true);
-								}
-							}
-						}
-					}
-				}
-				for (String[] s : combine) {
-					// System.out.println("[5b]Removing transition: " + s[1] +
-					// s[0]);
-					if (controlFlow.containsKey(s[0]) && controlFlow.containsKey(s[1])) {
-						if (controlFlow.get(s[0]).containsKey("preset")
-								&& controlFlow.get(s[0]).containsKey("postset")
-								&& controlFlow.get(s[1]).containsKey("preset")
-								&& controlFlow.get(s[1]).containsKey("postset")) {
-							change = true;
-							combineTransitions(s[0], s[1], true, true);
-						}
-					}
-				}
+				change = checkTrans5b(change);
 			}
 			// Transform 3 - Remove a Transition with a Single Place in the
 			// Postset
 			if (abstPane.xform3.isSelected()) {
-				remove = new ArrayList<String>();
-				for (String s : controlFlow.keySet()) {
-					if (controlFlow.get(s).getProperty("postset") != null) {
-						String[] postset = controlFlow.get(s).getProperty("postset").split(" ");
-						if (postset.length == 1 && !postset[0].equals("")) {
-							boolean assign = false;
-							if (enablings.containsKey(s)) {
-								assign = true;
-								continue;
-							}
-							if (!assign) {
-								for (HashMap<String, Properties> h : assignments) {
-									// System.out.println(assignments);
-									if (h.get(s) != null) {
-										if (!h.get(s).keySet().isEmpty()) {
-											assign = true;
-											break;
-										}
-									}
-								}
-							}
-							// log.addText(postset[0]);
-							boolean post = true;
-							String[] preset;
-							if (controlFlow.get(s).containsKey("preset")) {
-								preset = controlFlow.get(s).getProperty("preset").split(" ");
-								for (String p : preset) {
-									if (controlPlaces.get(p).getProperty("postset").split(" ").length != 1) {
-										post = false;
-									}
-								}
-							}
-							if (controlPlaces.containsKey(postset[0])) {
-								if (controlPlaces.get(postset[0]).containsKey("preset")) {
-									preset = controlPlaces.get(postset[0]).getProperty("preset")
-											.split(" ");
-									if ((preset.length == 1 || post) && !assign) {
-										remove.add(s);
-									}
-								}
-							}
-						}
-					}
-				}
-				for (String s : remove) {
-					if (controlFlow.get(s).containsKey("preset")
-							&& controlFlow.get(s).containsKey("postset")) {
-						// String[] preset =
-						// controlFlow.get(s).getProperty("preset").split(" ");
-						String[] postset = controlFlow.get(s).getProperty("postset").split(" ");
-						if (postset.length == 1 && !postset[0].equals("")) {
-							if (removeTrans3(s))
-								change = true;
-						}
-					}
-				}
+				change = checkTrans3(change);
 			}
 			// Transform 4 - Remove a Transition with a Single Place in the
 			// Preset
 			if (abstPane.xform4.isSelected()) {
-				remove = new ArrayList<String>();
-				for (String s : controlFlow.keySet()) {
-					if (controlFlow.get(s).getProperty("preset") != null) {
-						String[] preset = controlFlow.get(s).getProperty("preset").split(" ");
-						if (preset.length == 1 && !preset[0].equals("")) {
-							boolean assign = false;
-							if (enablings.containsKey(s)) {
-								assign = true;
-							}
-							if (!assign) {
-								for (HashMap<String, Properties> h : assignments) {
-									if (h.get(s) != null) {
-										if (!h.get(s).keySet().isEmpty()) {
-											assign = true;
-										}
-									}
-								}
-							}
-							// log.addText(preset[0]);
-							boolean pre = true;
-							if (controlFlow.get(s).containsKey("postset")
-									&& !controlFlow.get(s).getProperty("postset").equals("")) {
-								for (String p : controlFlow.get(s).getProperty("postset")
-										.split(" ")) {
-									if (controlPlaces.containsKey(p)) {
-										if (controlPlaces.get(p).getProperty("preset").split(" ").length != 1) {
-											pre = false;
-										}
-									}
-								}
-							}
-							if (controlPlaces.containsKey(preset[0])) {
-								String[] postset = controlPlaces.get(preset[0]).getProperty(
-										"postset").split(" ");
-								if ((postset.length == 1 || pre) && places.containsKey(preset[0])) {
-									if (!assign) {
-										remove.add(s);
-									}
-								}
-							}
-						}
-					}
-				}
-				for (String s : remove) {
-					if (controlFlow.get(s) != null) {
-						// System.out.println("[4]Removing transition: " + s);
-						if (controlFlow.get(s).getProperty("preset") != null
-								&& controlFlow.get(s).getProperty("postset") != null
-								&& !controlFlow.get(s).getProperty("postset").equals("")) {
-							if (removeTrans4(s))
-								change = true;
-						}
-					}
-				}
+				change = checkTrans4(change);
 			}
 			if (abstPane.xform14.isSelected()) {
 				if (removeDeadPlaces()) {
 					change = true;
 				}
+			}
+			if (abstPane.xform8.isSelected()) {
+				change = checkTrans8(change);
 			}
 			if (removeDeadTransitions()) {
 				change = true;
@@ -958,18 +660,8 @@ public class Abstraction extends LHPNFile {
 					// process = tempProcess;
 					for (String s : process) {
 						if (controlFlow.get(s).containsKey("postset")) {
-						for (String t : controlFlow.get(s).getProperty("postset").split(" ")) {
-							for (String u : controlPlaces.get(t).getProperty("postset").split(" ")) {
-								if (!tempProcess.contains(u)) {
-									tempProcess.add(u);
-								}
-							}
-						}
-						}
-						if (controlFlow.get(s).containsKey("preset")) {
-						for (String t : controlFlow.get(s).getProperty("preset").split(" ")) {
-							if (controlPlaces.get(t).containsKey("preset")) {
-								for (String u : controlPlaces.get(t).getProperty("preset").split(
+							for (String t : controlFlow.get(s).getProperty("postset").split(" ")) {
+								for (String u : controlPlaces.get(t).getProperty("postset").split(
 										" ")) {
 									if (!tempProcess.contains(u)) {
 										tempProcess.add(u);
@@ -977,6 +669,17 @@ public class Abstraction extends LHPNFile {
 								}
 							}
 						}
+						if (controlFlow.get(s).containsKey("preset")) {
+							for (String t : controlFlow.get(s).getProperty("preset").split(" ")) {
+								if (controlPlaces.get(t).containsKey("preset")) {
+									for (String u : controlPlaces.get(t).getProperty("preset")
+											.split(" ")) {
+										if (!tempProcess.contains(u)) {
+											tempProcess.add(u);
+										}
+									}
+								}
+							}
 						}
 					}
 				}
@@ -1205,6 +908,359 @@ public class Abstraction extends LHPNFile {
 		prop.setProperty("postset", postset.trim());
 		controlPlaces.put(place1, prop);
 		removePlace(place2);
+	}
+
+	private boolean checkTrans0(boolean change) {
+		ArrayList<String[]> merge = new ArrayList<String[]>();
+		for (String s : controlPlaces.keySet()) {
+			for (String t : controlPlaces.keySet()) {
+				if (!s.equals(t)) {
+					Properties prop1 = controlPlaces.get(s);
+					Properties prop2 = controlPlaces.get(t);
+					boolean assign = false;
+					for (HashMap<String, Properties> h : assignments) {
+						if (h.get(t) == null || h.get(t).keySet().isEmpty()) {
+							assign = true;
+							break;
+						}
+					}
+					// System.out.println(s + t);
+					if (comparePreset(prop1, prop2) && comparePostset(prop1, prop2)
+							&& (places.get(s).equals(places.get(t))) && !assign) {
+						String[] temp = { s, t };
+						merge.add(temp);
+					}
+				}
+			}
+		}
+		for (String[] a : merge) {
+			// System.out.println("Transform 0");
+			change = true;
+			combinePlaces(a[0], a[1]);
+		}
+		return change;
+	}
+
+	private boolean checkTrans1(boolean change) {
+		ArrayList<String> remove = new ArrayList<String>();
+		for (String s : controlPlaces.keySet()) {
+			if (controlPlaces.get(s).getProperty("preset") != null
+					&& controlPlaces.get(s).getProperty("postset") != null) {
+				String[] preset = controlPlaces.get(s).getProperty("preset").split(" ");
+				String[] postset = controlPlaces.get(s).getProperty("postset").split(" ");
+				if (preset.length == 1 && postset.length == 1) {
+					if (preset[0].equals(postset[0]) && !places.get(s)) {
+						remove.add(s);
+					}
+					else {
+						continue;
+					}
+				}
+			}
+		}
+		for (String s : remove) {
+			// System.out.println("Transform 1");
+			change = true;
+			removePlace(s);
+		}
+		return change;
+	}
+
+	private boolean checkTrans5(boolean change) {
+		ArrayList<String[]> combine = new ArrayList<String[]>();
+		HashMap<String, boolean[]> samesets = new HashMap<String, boolean[]>();
+		for (String s : controlFlow.keySet()) {
+			for (String t : controlFlow.keySet()) {
+				if (!s.equals(t)) {
+					boolean samePreset = comparePreset(controlFlow.get(s), controlFlow.get(t));
+					boolean samePostset = comparePostset(controlFlow.get(s), controlFlow.get(t));
+					boolean assign = false;
+					if (enablings.containsKey(t)) {
+						assign = true;
+					}
+					if (!assign) {
+						for (HashMap<String, Properties> h : assignments) {
+							if ((h.get(t) != null && !h.get(t).keySet().isEmpty())
+									|| (h.get(s) != null && !h.get(s).keySet().isEmpty())) {
+								assign = true;
+							}
+						}
+					}
+					if ((samePreset && samePostset) && !assign) {
+						String[] array = { s, t };
+						boolean[] same = { samePreset, samePostset };
+						combine.add(array);
+						samesets.put(s, same);
+					}
+					else if (samePreset && controlFlow.get(s).containsKey("postset")
+							&& controlFlow.get(t).containsKey("postset")
+							&& controlFlow.get(s).containsKey("preset")
+							&& controlFlow.get(t).containsKey("preset") && !assign
+							&& abstPane.xform6.isSelected()) {
+						String[] postset1 = controlFlow.get(s).getProperty("postset").split(" ");
+						String[] postset2 = controlFlow.get(t).getProperty("postset").split(" ");
+						if (postset1.length == 1 && postset2.length == 1
+								&& controlPlaces.containsKey(postset1[0])
+								&& controlPlaces.containsKey(postset2[0])) {
+							if (comparePreset(controlPlaces.get(postset1[0]), controlPlaces
+									.get(postset2[0]), s, t)) {
+								String[] array = { s, t };
+								boolean[] same = { samePreset, samePostset };
+								combine.add(array);
+								samesets.put(s, same);
+							}
+						}
+					}
+					else if (samePostset && controlFlow.get(s).containsKey("preset")
+							&& controlFlow.get(t).containsKey("preset")
+							&& controlFlow.get(s).containsKey("postset")
+							&& controlFlow.get(t).containsKey("postset") && !assign
+							&& abstPane.xform7.isSelected()) {
+						String[] preset1 = controlFlow.get(s).getProperty("preset").split(" ");
+						String[] preset2 = controlFlow.get(t).getProperty("preset").split(" ");
+						if (preset1.length == 1 && preset2.length == 1) {
+							if (comparePostset(controlPlaces.get(preset1[0]), controlPlaces
+									.get(preset2[0]), s, t)) {
+								String[] array = { s, t };
+								boolean[] same = { samePreset, samePostset };
+								combine.add(array);
+								samesets.put(s, same);
+							}
+						}
+					}
+				}
+			}
+		}
+		for (String[] s : combine) {
+			// System.out.println("[5]Removing transition: " + s[1] + s[0]);
+			change = true;
+			combineTransitions(s[0], s[1], samesets.get(s[0])[0], samesets.get(s[0])[1]);
+		}
+		return change;
+	}
+
+	private boolean checkTrans5b(boolean change) {
+		ArrayList<String[]> combine = new ArrayList<String[]>();
+		for (String s : controlFlow.keySet()) {
+			for (String t : controlFlow.keySet()) {
+				boolean transform = true;
+				if (!s.equals(t)) {
+					if (controlFlow.get(s).getProperty("preset") != null
+							&& controlFlow.get(t).getProperty("preset") != null) {
+						String[] preset1 = controlFlow.get(s).getProperty("preset").split(" ");
+						String[] preset2 = controlFlow.get(t).getProperty("preset").split(" ");
+						boolean assign = false;
+						if (enablings.containsKey(t)) {
+							assign = true;
+						}
+						if (!assign) {
+							for (HashMap<String, Properties> h : assignments) {
+								if (h.get(t) != null && h.get(s) != null) {
+									if (!h.get(t).keySet().isEmpty()
+											|| !h.get(s).keySet().isEmpty()) {
+										assign = true;
+									}
+								}
+							}
+						}
+						if (!assign) {
+							for (String u : preset1) {
+								if (transform) {
+									for (String v : preset2) {
+										if (!u.equals(v)) {
+											Properties prop1 = controlPlaces.get(u);
+											Properties prop2 = controlPlaces.get(v);
+											if (prop1 != null && prop2 != null) {
+												if (!comparePreset(prop1, prop2)) {
+													transform = false;
+													break;
+												}
+											}
+										}
+									}
+								}
+							}
+							if (transform && controlFlow.get(s).containsKey("postset")
+									&& controlFlow.get(t).containsKey("postset")) {
+								String[] postset1 = controlFlow.get(s).getProperty("postset")
+										.split(" ");
+								String[] postset2 = controlFlow.get(t).getProperty("postset")
+										.split(" ");
+								for (String u : postset1) {
+									for (String v : postset2) {
+										if (!u.equals(v)) {
+											Properties prop1 = controlPlaces.get(u);
+											Properties prop2 = controlPlaces.get(v);
+											if (!comparePostset(prop1, prop2)) {
+												transform = false;
+												break;
+											}
+										}
+									}
+								}
+							}
+						}
+						if (transform && !assign) {
+							String[] array = { s, t };
+							combine.add(array);
+							// combineTransitions(s, t, true, true);
+						}
+					}
+				}
+			}
+		}
+		for (String[] s : combine) {
+			// System.out.println("[5b]Removing transition: " + s[1] +
+			// s[0]);
+			if (controlFlow.containsKey(s[0]) && controlFlow.containsKey(s[1])) {
+				if (controlFlow.get(s[0]).containsKey("preset")
+						&& controlFlow.get(s[0]).containsKey("postset")
+						&& controlFlow.get(s[1]).containsKey("preset")
+						&& controlFlow.get(s[1]).containsKey("postset")) {
+					change = true;
+					combineTransitions(s[0], s[1], true, true);
+				}
+			}
+		}
+		return change;
+	}
+
+	private boolean checkTrans3(boolean change) {
+		// Remove a transition with a single place in the postset
+		ArrayList<String> remove = new ArrayList<String>();
+		for (String s : controlFlow.keySet()) {
+			if (controlFlow.get(s).getProperty("postset") != null) {
+				String[] postset = controlFlow.get(s).getProperty("postset").split(" ");
+				if (postset.length == 1 && !postset[0].equals("")) {
+					boolean assign = false;
+					if (enablings.containsKey(s)) {
+						assign = true;
+						continue;
+					}
+					if (!assign) {
+						for (HashMap<String, Properties> h : assignments) {
+							// System.out.println(assignments);
+							if (h.get(s) != null) {
+								if (!h.get(s).keySet().isEmpty()) {
+									assign = true;
+									break;
+								}
+							}
+						}
+					}
+					// log.addText(postset[0]);
+					boolean post = true;
+					String[] preset;
+					if (controlFlow.get(s).containsKey("preset")) {
+						preset = controlFlow.get(s).getProperty("preset").split(" ");
+						for (String p : preset) {
+							if (controlPlaces.get(p).getProperty("postset").split(" ").length != 1) {
+								post = false;
+							}
+						}
+					}
+					if (controlPlaces.containsKey(postset[0])) {
+						if (controlPlaces.get(postset[0]).containsKey("preset")) {
+							preset = controlPlaces.get(postset[0]).getProperty("preset").split(" ");
+							if ((preset.length == 1 || post) && !assign) {
+								remove.add(s);
+							}
+						}
+					}
+				}
+			}
+		}
+		for (String s : remove) {
+			if (controlFlow.get(s).containsKey("preset")
+					&& controlFlow.get(s).containsKey("postset")) {
+				// String[] preset =
+				// controlFlow.get(s).getProperty("preset").split(" ");
+				String[] postset = controlFlow.get(s).getProperty("postset").split(" ");
+				if (postset.length == 1 && !postset[0].equals("")) {
+					if (removeTrans3(s))
+						change = true;
+				}
+			}
+		}
+		return change;
+	}
+
+	private boolean checkTrans4(boolean change) {
+		ArrayList<String> remove = new ArrayList<String>();
+		for (String s : controlFlow.keySet()) {
+			if (controlFlow.get(s).getProperty("preset") != null) {
+				String[] preset = controlFlow.get(s).getProperty("preset").split(" ");
+				if (preset.length == 1 && !preset[0].equals("")) {
+					boolean assign = false;
+					if (enablings.containsKey(s)) {
+						assign = true;
+					}
+					if (!assign) {
+						for (HashMap<String, Properties> h : assignments) {
+							if (h.get(s) != null) {
+								if (!h.get(s).keySet().isEmpty()) {
+									assign = true;
+								}
+							}
+						}
+					}
+					// log.addText(preset[0]);
+					boolean pre = true;
+					if (controlFlow.get(s).containsKey("postset")
+							&& !controlFlow.get(s).getProperty("postset").equals("")) {
+						for (String p : controlFlow.get(s).getProperty("postset").split(" ")) {
+							if (controlPlaces.containsKey(p)) {
+								if (controlPlaces.get(p).getProperty("preset").split(" ").length != 1) {
+									pre = false;
+								}
+							}
+						}
+					}
+					if (controlPlaces.containsKey(preset[0])) {
+						String[] postset = controlPlaces.get(preset[0]).getProperty("postset")
+								.split(" ");
+						if ((postset.length == 1 || pre) && places.containsKey(preset[0])) {
+							if (!assign) {
+								remove.add(s);
+							}
+						}
+					}
+				}
+			}
+		}
+		for (String s : remove) {
+			if (controlFlow.get(s) != null) {
+				// System.out.println("[4]Removing transition: " + s);
+				if (controlFlow.get(s).getProperty("preset") != null
+						&& controlFlow.get(s).getProperty("postset") != null
+						&& !controlFlow.get(s).getProperty("postset").equals("")) {
+					if (removeTrans4(s))
+						change = true;
+				}
+			}
+		}
+		return change;
+	}
+
+	private boolean checkTrans8(boolean change) {
+		// Propagate expressions of local variables to transition post sets
+		ArrayList<String> initMarking = new ArrayList<String>();
+		ArrayList<String> unvisited = new ArrayList<String>();
+		ArrayList<String> toVisit = new ArrayList<String>();
+		unvisited.addAll(delays.keySet());
+		for (String p : places.keySet()) {
+			if (places.get(p)) {
+				initMarking.add(p);
+			}
+		}
+		for (int i = 0; i < 2; i++) {
+			for (String p : initMarking) {
+				for (String t : controlPlaces.get(p).getProperty("posetset").split("\\s")) {
+					trans8Iteration(t, unvisited);
+				}
+			}
+		}
+		return change;
 	}
 
 	private boolean removeTrans3(String transition) {
@@ -1777,6 +1833,101 @@ public class Abstraction extends LHPNFile {
 		}
 	}
 
+	private void trans8Iteration(String trans, ArrayList<String> unvisited) {
+		for (HashMap<String, Properties> assign : assignments) {
+			for (Object o : assign.get(trans).keySet()) {
+				String var = o.toString();
+				trans8(trans, var);
+			}
+		}
+		unvisited.remove(trans);
+		for (String p : controlFlow.get(trans).getProperty("postset").split("\\s")) {
+			for (String t : controlPlaces.get(p).getProperty("postset").split("\\s")) {
+				if (unvisited.contains(t)) {
+					trans8Iteration(t, unvisited);
+				}
+			}
+		}
+	}
+
+	private void trans8(String trans, String var) {
+		// Propagate expressions of local variables to transition post sets
+		if (!(process_read.get(var).equals(process_trans.get(trans)) && process_write.get(var)
+				.equals(process_trans.get(trans)))) {
+			return; // Return if the variable is not local
+		}
+		HashMap<String, HashMap<String, ExprTree[]>> typeAssign;
+		// The assignments that will contain var
+		if (isBoolean(var)) {
+			typeAssign = booleanAssignmentTrees;
+		}
+		else {
+			typeAssign = intAssignmentTrees;
+		}
+		ExprTree[] e = typeAssign.get(trans).get(var);
+		for (ExprTree e1 : e) {
+			for (String v : e1.getVars()) {
+				if (!process_read.get(v).equals(process_trans.get(trans))) {
+					return; // Return if the variables in support(e) are not
+					// locally written
+				}
+			}
+		}
+		for (String p : controlFlow.get(trans).getProperty("postset").split("\\s")) {
+			for (String tP : controlPlaces.get(p).getProperty("postset").split("\\s")) {
+				for (String pP : controlFlow.get(tP).getProperty("preset").split("\\s")) {
+					for (String tPP : controlPlaces.get(pP).getProperty("preset").split("\\s")) {
+						ExprTree[] ePP = typeAssign.get(tPP).get(var);
+						for (ExprTree e1 : ePP) {
+							if (!e1.equals(e[0])) {
+								return; // All assignments to var in ..(t..)
+								// must be equal
+							}
+							for (String v : e1.getVars()) {
+								if (isBoolean(v)) { // All variables in
+									// support(e) cannot be
+									// assigned
+									if (booleanAssignments.get(tPP).containsKey(v)) {
+										return;
+									}
+								}
+								else if (isInteger(v)) {
+									if (intAssignments.get(tPP).containsKey(v)) {
+										return;
+									}
+								}
+								else {
+									if (contAssignments.get(tPP).containsKey(v)) {
+										return;
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		// Perform transform
+		for (String p : controlFlow.get(trans).getProperty("postset").split("\\s")) {
+			for (String tP : controlPlaces.get(p).getProperty("postset").split("\\s")) {
+				replace(tP, var, e);
+				for (String pP : controlFlow.get(tP).getProperty("preset").split("\\s")) {
+					for (String tPP : controlPlaces.get(pP).getProperty("preset").split("\\s")) {
+						if (isBoolean(var)) {
+							removeBoolAssign(tPP, var);
+						}
+						else if (isInteger(var)) {
+							removeIntAssign(tPP, var);
+						}
+						else {
+							removeContAssign(tPP, var);
+						}
+					}
+				}
+			}
+		}
+	}
+
 	public void addPlaces(HashMap<String, Boolean> newPlaces) {
 		places.putAll(newPlaces);
 	}
@@ -1957,23 +2108,276 @@ public class Abstraction extends LHPNFile {
 			intAssignmentTrees.put(s, map);
 		}
 	}
-	
-	public void div_process() {
-		for (String t : delays.keySet()) {
+
+	private boolean divideProcesses() {
+		for (String t : delays.keySet()) { // Add all transitions to process
+			// structure
 			process_trans.put(t, 0);
 		}
-		for (String v : inputs.keySet()) {
-			process_var.put(v, 0);
+		for (String v : inputs.keySet()) { // / Add All variables to process
+			// structure
+			process_write.put(v, 0);
+			process_read.put(v, 0);
 		}
 		for (String v : outputs.keySet()) {
-			process_var.put(v, 0);
+			process_write.put(v, 0);
+			process_read.put(v, 0);
 		}
 		for (String v : variables.keySet()) {
-			process_var.put(v, 0);
+			process_write.put(v, 0);
+			process_read.put(v, 0);
 		}
 		for (String v : integers.keySet()) {
-			process_var.put(v, 0);
+			process_write.put(v, 0);
+			process_read.put(v, 0);
 		}
+		Integer i = 1; // The total number of processes
+		Integer process = 1; // The active process number
+		while (process_trans.containsValue(0)) {
+			String new_proc = ""; // Find a transition that is not part of a
+			// process
+			for (String t : process_trans.keySet()) {
+				if (process_trans.get(t) == 0) {
+					new_proc = t;
+					break;
+				}
+			}
+			boolean flag = false; // Make sure that it is not part of a process
+			for (String p : controlFlow.get(new_proc).getProperty("preset").split("\\s")) {
+				if (!flag) // Check the preset to see if it is part of a process
+					for (String t : controlPlaces.get(p).getProperty("preset").split("\\s")) {
+						if (!flag)
+							if (process_trans.get(t) != 0) {
+								flag = true;
+								process = process_trans.get(t);
+								break;
+							}
+					}
+			}
+			if (!flag) // Check the postset to see if it is part of a process
+				for (String p : controlFlow.get(new_proc).getProperty("postset").split("\\s")) {
+					if (!flag)
+						for (String t : controlPlaces.get(p).getProperty("postset").split("\\s")) {
+							if (!flag)
+								if (process_trans.get(t) != 0) {
+									flag = true;
+									process = process_trans.get(t);
+									break;
+								}
+						}
+				}
+			if (!flag) {
+				i++; // Increment the process counter if it is not part of a
+				// process
+				process = i;
+			}
+			if (!addTransProcess(new_proc, process))
+				return false;
+		}
+		assignVariableProcess();
+		return true;
+	}
+
+	private void assignVariableProcess() {
+		for (HashMap<String, Properties> h : assignments) { // For each
+			// transition with
+			// assignments
+			for (String t : h.keySet()) {
+				Properties prop = h.get(t);
+				HashMap<String, HashMap<String, ExprTree[]>> map = null;
+				if (h.equals(booleanAssignments)) {
+					map = booleanAssignmentTrees;
+				}
+				else if (h.equals(contAssignments)) {
+					map = contAssignmentTrees;
+				}
+				else if (h.equals(rateAssignments)) {
+					map = rateAssignmentTrees;
+				}
+				else if (h.equals(intAssignments)) {
+					map = intAssignmentTrees;
+				}
+				for (Object o : prop.keySet()) { // The variables assigned on
+					// each transition
+					String v = o.toString();
+					if ((process_write.get(v) == 0)
+							|| (process_write.get(v) == process_trans.get(t))) {
+						process_write.put(v, process_trans.get(t)); // Mark a
+						// variable
+						// as
+						// locally
+						// written
+						// to a
+						// process
+					}
+					else {
+						process_write.put(v, -1); // Mark a variable as globally
+						// written
+					}
+				}
+				HashMap<String, ExprTree[]> assign = map.get(t);
+				for (ExprTree[] e : assign.values()) {
+					for (ExprTree expr : e) {
+						for (String v : expr.getVars()) {
+							if ((process_read.get(v) == 0)
+									|| (process_read.get(v) == process_trans.get(t))) {
+								process_read.put(v, process_trans.get(t)); // Mark
+								// a
+								// variable
+								// as
+								// locally
+								// read
+							}
+							else {
+								process_read.put(v, -1); // Mark a variable as
+								// globally read
+							}
+						}
+					}
+				}
+			}
+		}
+		for (String t : enablingTrees.keySet()) { // Check enabling conditions
+			// for read variables
+			ExprTree e = enablingTrees.get(t);
+			for (String v : e.getVars()) {
+				if ((process_read.get(v) == 0) || (process_read.get(v) == process_trans.get(t))) {
+					process_read.put(v, process_trans.get(t));
+				}
+				else {
+					process_read.put(v, -1);
+				}
+			}
+		}
+	}
+
+	private boolean addTransProcess(String trans, Integer proc) {
+		process_trans.put(trans, proc); // Add the current transition to the
+		// process
+		for (String p : controlFlow.get(trans).getProperty("postset").split("\\s")) {
+			for (String t : controlPlaces.get(p).getProperty("postset").split("\\s")) {
+				if (process_trans.get(t) == 0)
+					addTransProcess(t, proc); // Add the postset of the
+				// transition to the same
+				// process recursively
+				else if (process_trans.get(t) != proc) {
+					System.out
+							.println("Error: Multiple Process Labels Added to the Same Transition");
+					return false;
+				}
+			}
+		}
+		for (String p : controlFlow.get(trans).getProperty("preset").split("\\s")) {
+			for (String t : controlPlaces.get(p).getProperty("preset").split("\\s")) {
+				if (process_trans.get(t) == 0)
+					addTransProcess(t, proc); // Add the preset of the
+				// transition to the same
+				// process recursively
+				else if (process_trans.get(t) != proc) {
+					System.out
+							.println("Error: Multiple Process Labels Added to the Same Transition");
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+
+	private boolean isBoolean(String var) {
+		if (inputs.containsKey(var)) {
+			return true;
+		}
+		else if (outputs.containsKey(var)) {
+			return true;
+		}
+		return false;
+	}
+
+	private boolean replace(String trans, String var, ExprTree[] expr) {
+		boolean flag = false;
+		if (expr[1] == null) {
+			enablingTrees.get(trans).replace(var, expr[0]);
+			enablings.put(trans, enablingTrees.get(trans).toString());
+			flag = true;
+		}
+		for (HashMap<String, Properties> assign : assignments) {
+			HashMap<String, HashMap<String, ExprTree[]>> assignTree;
+			if (assign.equals(booleanAssignments)) {
+				assignTree = booleanAssignmentTrees;
+			}
+			else if (assign.equals(intAssignments)) {
+				assignTree = intAssignmentTrees;
+			}
+			else if (assign.equals(contAssignments)) {
+				assignTree = contAssignmentTrees;
+			}
+			else {
+				assignTree = rateAssignmentTrees;
+			}
+			for (String v : assignTree.get(trans).keySet()) {
+				ExprTree[] e1 = assignTree.get(trans).get(v);
+				if (e1[1] == null && expr[1] != null) {
+					e1[1] = e1[0];
+				}
+				if (expr[1] == null) {
+					e1[0].replace(var, expr[0]);
+					if (e1[1] != null) {
+						e1[1].replace(var, expr[0]);
+						if (assign.equals(booleanAssignments)) {
+							addBoolAssign(trans, var, "[" + expr[0].toString() + ","
+									+ expr[1].toString() + "]");
+						}
+						else if (assign.equals(intAssignments)) {
+							addIntAssign(trans, var, "[" + expr[0].toString() + ","
+									+ expr[1].toString() + "]");
+						}
+						else if (assign.equals(contAssignments)) {
+							addContAssign(trans, var, "[" + expr[0].toString() + ","
+									+ expr[1].toString() + "]");
+						}
+						else {
+							addRateAssign(trans, var, "[" + expr[0].toString() + ","
+									+ expr[1].toString() + "]");
+						}
+					}
+					else {
+						if (assign.equals(booleanAssignments)) {
+							addBoolAssign(trans, var, expr[0].toString());
+						}
+						else if (assign.equals(intAssignments)) {
+							addIntAssign(trans, var, expr[0].toString());
+						}
+						else if (assign.equals(contAssignments)) {
+							addContAssign(trans, var, expr[0].toString());
+						}
+						else {
+							addRateAssign(trans, var, expr[0].toString());
+						}
+					}
+				}
+				else {
+					e1[0].replace(var, expr[0]);
+					e1[1].replace(var, expr[1]);
+					if (assign.equals(booleanAssignments)) {
+						addBoolAssign(trans, var, "[" + expr[0].toString() + ","
+								+ expr[1].toString() + "]");
+					}
+					else if (assign.equals(intAssignments)) {
+						addIntAssign(trans, var, "[" + expr[0].toString() + ","
+								+ expr[1].toString() + "]");
+					}
+					else if (assign.equals(contAssignments)) {
+						addContAssign(trans, var, "[" + expr[0].toString() + ","
+								+ expr[1].toString() + "]");
+					}
+					else {
+						addRateAssign(trans, var, "[" + expr[0].toString() + ","
+								+ expr[1].toString() + "]");
+					}
+				}
+			}
+		}
+		return flag;
 	}
 
 	private static final String RANGE = "\\[(\\w+?),(\\w+?)\\]";

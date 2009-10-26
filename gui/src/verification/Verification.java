@@ -755,7 +755,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		String tempDir = "";
 		String lpnFile = "";
 		if (!verifyFile.endsWith("lpn")) {
-			String[] temp = verifyFile.split(".");
+			String[] temp = verifyFile.split("\\.");
 			lpnFile = temp[0] + ".lpn";
 		}
 		else {
@@ -763,7 +763,15 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		}
 		File work = new File(directory);
 		try {
-			Runtime.getRuntime().exec("atacs -llsl " + verifyFile, null, work);
+			if (verifyFile.endsWith(".lpn")) {
+				Runtime.getRuntime().exec("atacs -llsl " + verifyFile, null, work);
+			}
+			else if (verifyFile.endsWith(".vhd")) {
+				Runtime.getRuntime().exec("atacs -lvsl " + verifyFile, null, work);
+			}
+			else if (verifyFile.endsWith(".g")) {
+				Runtime.getRuntime().exec("atacs -lgsl " + verifyFile, null, work);
+			}
 		}
 		catch (Exception e) {
 		}
@@ -771,7 +779,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			tempDir = tempDir + array[i] + separator;
 		}
 		LHPNFile lhpnFile = new LHPNFile();
-		lhpnFile.load(tempDir + separator + lpnFile);
+		lhpnFile.load(directory + separator + lpnFile);
 		Abstraction abstraction = lhpnFile.abstractLhpn(this);
 		String abstFilename;
 		if (lhpn.isSelected()) {

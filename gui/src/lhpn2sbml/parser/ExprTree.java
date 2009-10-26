@@ -1558,6 +1558,44 @@ public class ExprTree {
 		return false;
 	}
 	
+	public void replace(String var, ExprTree e) {
+		switch (isit) {
+		case 'b': // Boolean
+		case 'i': // Integer
+		case 'c': // Continuous
+			if (variable.equals(var)) {
+				copy(e);
+			}
+			return;
+		case 'w': // bitWise
+		case 'r': // Relational
+		case 'a': // Arithmetic
+			if (r1 != null)
+				r1.replace(var, e);
+			if (r2 != null)
+				r2.replace(var, e);
+			return;
+		case 'n': // Number
+		case 't': // Truth value
+		case 'l': // Logical
+			return;
+		}
+	}
+	
+	public void copy(ExprTree e) {
+		op = e.op;
+		isit = e.isit;
+		lvalue = e.lvalue;
+		uvalue = e.uvalue;
+		variable = e.variable;
+		real = e.real;
+		logical = e.logical;
+		r1 = new ExprTree(lhpn);
+		r1.copy(e.r1);
+		r2 = new ExprTree(lhpn);
+		r2.copy(e.r2);
+	}
+	
 	public boolean becomesFalse(HashMap<String, String> variables) {
 		switch (isit) {
 		case 'b': // Boolean
