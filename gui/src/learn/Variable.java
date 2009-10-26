@@ -2,7 +2,7 @@ package learn;
 
 //import java.util.*;
 
-public class Variable {
+public class Variable implements Comparable<Variable>{
 
 	private String name;
 	
@@ -119,6 +119,11 @@ public class Variable {
 		initValue_vMax *=  vScaleFactor;
 		initValue_vMin *=  vScaleFactor;
 	}
+	
+	@Override
+	public int compareTo(Variable o) {
+		return (this.getName().compareToIgnoreCase(o.getName()));
+	}
 	/*
 	public void addInitValues(Double d, int i){
 		if (initValues.isEmpty()){
@@ -146,4 +151,6 @@ public class Variable {
 		//this.initRates[j] = d;
 	}
 	*/
+
+	
 }
