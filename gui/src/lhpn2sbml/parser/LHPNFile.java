@@ -1184,7 +1184,7 @@ public class LHPNFile {
 	public void addVar(String name, Properties initCond) {
 		variables.put(name, initCond);
 	}
-	
+
 	public void changeVarInitCond(String name, Properties initCond) {
 		variables.put(name, initCond);
 	}
@@ -1247,11 +1247,11 @@ public class LHPNFile {
 	public void addInteger(String name, String ic) {
 		integers.put(name, ic);
 	}
-	
+
 	public void changeIntegerInitCond(String name, String ic) {
 		integers.put(name, ic);
 	}
-	
+
 	public boolean addRateAssign(String transition, String name, String value) {
 		ExprTree[] expr = new ExprTree[2];
 		expr[0] = new ExprTree(this);
@@ -1888,11 +1888,13 @@ public class LHPNFile {
 	public ExprTree getEnablingTree(String var) {
 		return enablingTrees.get(var);
 	}
-	
-	public String scaleEnabling(String var, Double scaleFactor){	// var is the transition here
+
+	public String scaleEnabling(String var, Double scaleFactor) { // var is the
+																	// transition
+																	// here
 		ExprTree t = enablingTrees.get(var);
 		t.scaleVals(scaleFactor);
-		enablings.put(var,enablingTrees.get(var).toString());
+		enablings.put(var, enablingTrees.get(var).toString());
 		return (enablings.get(var));
 	}
 
@@ -2733,7 +2735,7 @@ public class LHPNFile {
 					}
 				}
 				do {
-					
+
 				}
 				while (varMatcher.find());
 				if (intProp.size() > 0) {

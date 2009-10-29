@@ -39,7 +39,7 @@ public class ExprTree {
 
 	private LHPNFile lhpn;
 
-	//private Abstraction abstraction;
+	// private Abstraction abstraction;
 
 	public ExprTree(LHPNFile lhpn) {
 		this.lhpn = lhpn;
@@ -59,7 +59,7 @@ public class ExprTree {
 	}
 
 	public ExprTree(Abstraction abstraction) {
-		//this.abstraction = abstraction;
+		// this.abstraction = abstraction;
 		String[] bools = abstraction.getBooleanVars();
 		String[] conts = abstraction.getContVars();
 		String[] ints = abstraction.getIntVars();
@@ -1507,14 +1507,14 @@ public class ExprTree {
 		}
 		return vars;
 	}
-	
-	public void scaleVals(Double scaleFactor) {	// SB
+
+	public void scaleVals(Double scaleFactor) { // SB
 		switch (isit) {
 		case 'b': // Boolean
 		case 'i': // Integer
 		case 'c': // Continuous
-			//if (!vars.contains(variable))
-			//	vars.add(variable);
+			// if (!vars.contains(variable))
+			// vars.add(variable);
 			break;
 		case 'r': // Relational
 		case 'l': // Logical
@@ -1526,15 +1526,15 @@ public class ExprTree {
 				r2.scaleVals(scaleFactor);
 			break;
 		case 'n': // Number
-			variable = String.valueOf((int)(Double.parseDouble(variable)*scaleFactor));
+			variable = String.valueOf((int) (Double.parseDouble(variable) * scaleFactor));
 			break;
 		case 't': // Truth value
 		default:
 			break;
 		}
-		//return ;
+		// return ;
 	}
-	
+
 	public boolean containsCont() {
 		switch (isit) {
 		case 'b': // Boolean
@@ -1548,16 +1548,17 @@ public class ExprTree {
 			return true;
 		case 'l': // Logical
 		case 'w': // bitWise
-			boolean r1cont = false, r2cont = false;
+			boolean r1cont = false,
+			r2cont = false;
 			if (r1 != null)
 				r1cont = r1.containsCont();
 			if (r2 != null)
 				r2cont = r2.containsCont();
-			return (r1cont||r2cont);
+			return (r1cont || r2cont);
 		}
 		return false;
 	}
-	
+
 	public void replace(String var, ExprTree e) {
 		switch (isit) {
 		case 'b': // Boolean
@@ -1581,21 +1582,29 @@ public class ExprTree {
 			return;
 		}
 	}
-	
+
 	public void copy(ExprTree e) {
-		op = e.op;
+		if (e.op != null) {
+			op = e.op;
+		}
 		isit = e.isit;
 		lvalue = e.lvalue;
 		uvalue = e.uvalue;
-		variable = e.variable;
+		if (e.variable != null) {
+			variable = e.variable;
+		}
 		real = e.real;
 		logical = e.logical;
 		r1 = new ExprTree(lhpn);
-		r1.copy(e.r1);
+		if (e.r1 != null) {
+			r1.copy(e.r1);
+		}
 		r2 = new ExprTree(lhpn);
-		r2.copy(e.r2);
+		if (e.r2 != null) {
+			r2.copy(e.r2);
+		}
 	}
-	
+
 	public boolean becomesFalse(HashMap<String, String> variables) {
 		switch (isit) {
 		case 'b': // Boolean
@@ -1604,7 +1613,8 @@ public class ExprTree {
 					return true;
 			return false;
 		case 't': // Truth value
-			if (lvalue == 0) return true;
+			if (lvalue == 0)
+				return true;
 			return false;
 		case 'l': // Logical
 		case 'w': // bitWise
@@ -1619,11 +1629,13 @@ public class ExprTree {
 				return false;
 			}
 			else if (op.equals("==")) {
-				if (!r1.isEqual(r2)) return true;
+				if (!r1.isEqual(r2))
+					return true;
 				return false;
 			}
 			else if (op.equals("!")) {
-				if (r1.becomesTrue(variables)) return true;
+				if (r1.becomesTrue(variables))
+					return true;
 				return false;
 			}
 		case 'r': // Relational
@@ -1675,7 +1687,7 @@ public class ExprTree {
 		}
 		return false;
 	}
-	
+
 	public boolean becomesTrue(HashMap<String, String> variables) {
 		switch (isit) {
 		case 'b': // Boolean
@@ -1684,7 +1696,8 @@ public class ExprTree {
 					return true;
 			return false;
 		case 't': // Truth value
-			if (uvalue == 1) return true;
+			if (uvalue == 1)
+				return true;
 			return false;
 		case 'l': // Logical
 		case 'w': // bitWise
@@ -1699,11 +1712,13 @@ public class ExprTree {
 				return false;
 			}
 			else if (op.equals("==")) {
-				if (r1.isEqual(r2, variables)) return true;
+				if (r1.isEqual(r2, variables))
+					return true;
 				return false;
 			}
 			else if (op.equals("!")) {
-				if (r1.becomesFalse(variables)) return true;
+				if (r1.becomesFalse(variables))
+					return true;
 				return false;
 			}
 		case 'r': // Relational
@@ -1822,7 +1837,7 @@ public class ExprTree {
 		return result;
 	}
 
-	private boolean isEqual(ExprTree expr) {
+	public boolean isEqual(ExprTree expr) {
 		if (isit == expr.isit) {
 			boolean same = false;
 			switch (isit) {
@@ -1872,7 +1887,7 @@ public class ExprTree {
 		}
 		return false;
 	}
-	
+
 	private boolean isEqual(ExprTree expr, HashMap<String, String> variables) {
 		if (isit == expr.isit) {
 			boolean same = false;
@@ -1897,9 +1912,11 @@ public class ExprTree {
 				}
 				else if (variables.containsKey(expr.variable)) {
 					if (uvalue == lvalue) {
-						if (uvalue == 1.0 && variables.get(expr.variable).toLowerCase().equals("true"))
+						if (uvalue == 1.0
+								&& variables.get(expr.variable).toLowerCase().equals("true"))
 							same = true;
-						else if (uvalue == 0.0 && variables.get(expr.variable).toLowerCase().equals("false"))
+						else if (uvalue == 0.0
+								&& variables.get(expr.variable).toLowerCase().equals("false"))
 							same = true;
 					}
 				}
@@ -1978,7 +1995,9 @@ public class ExprTree {
 	public double evaluateExp(HashMap<String, String> variables) {
 		switch (isit) {
 		case 'b': // Boolean
-			if (!variables.containsKey(variable) || variables.get(variable).toLowerCase().equals("unknown")) return Double.NaN;
+			if (!variables.containsKey(variable)
+					|| variables.get(variable).toLowerCase().equals("unknown"))
+				return Double.NaN;
 			if (variables.get(variable).toLowerCase().equals("true")) {
 				return 1.0;
 			}
@@ -2063,7 +2082,8 @@ public class ExprTree {
 					else if (left == 0.0 || right == 0.0) {
 						return 0.0;
 					}
-					else return Double.NaN;
+					else
+						return Double.NaN;
 				}
 				else if (op.equals("||")) {
 					if (left == 1.0 || right == 1.0) {
@@ -2072,7 +2092,8 @@ public class ExprTree {
 					else if (left == 0.0 && right == 0.0) {
 						return 0.0;
 					}
-					else return Double.NaN;
+					else
+						return Double.NaN;
 				}
 				else if (op.equals("==")) {
 					if (left == right) {
