@@ -880,46 +880,46 @@ public class ExprTree {
 					(this).uvalue = (this).lvalue;
 				}
 				else {
-					if ((this).isit == 'c') {
-						comp = variable;
-						comp += ">=";
-						int paren = 0;
-						ineq = new String();
-						for (i = spos; i < position; i++) {
-							if (expr.charAt(i) == '(')
-								paren++;
-							if (expr.charAt(i) == ')')
-								paren--;
-							ineq = ineq + expr.charAt(i);
-						}
-						// ineq[i - spos + paren] = 0;
-						comp += ineq;
-						// printf("looking for %s\n",comp.c_str());
-						// for (i = 0; i < nsignals; i++) {
-						if (signals.contains(comp)) {
-							// printf("successful lookup of boolean variable
-							// '%s'\n",signals[i]->name);
-							(this).isit = 'b';
-							this.variable = comp;
-							(this).lvalue = 0;
-							(this).uvalue = 1;
-							return true;
-						}
-						// }
-						else {
-							signals.add(comp);
-							this.isit = 'b';
-							this.variable = comp;
-							this.lvalue = 0;
-							this.uvalue = 1;
-							return true;
-						}
-					}
-					else {
+//					if ((this).isit == 'c') {
+//						comp = variable;
+//						comp += ">=";
+//						int paren = 0;
+//						ineq = new String();
+//						for (i = spos; i < position; i++) {
+//							if (expr.charAt(i) == '(')
+//								paren++;
+//							if (expr.charAt(i) == ')')
+//								paren--;
+//							ineq = ineq + expr.charAt(i);
+//						}
+//						// ineq[i - spos + paren] = 0;
+//						comp += ineq;
+//						// printf("looking for %s\n",comp.c_str());
+//						// for (i = 0; i < nsignals; i++) {
+//						if (signals.contains(comp)) {
+//							// printf("successful lookup of boolean variable
+//							// '%s'\n",signals[i]->name);
+//							(this).isit = 'b';
+//							this.variable = comp;
+//							(this).lvalue = 0;
+//							(this).uvalue = 1;
+//							return true;
+//						}
+//						// }
+//						else {
+//							signals.add(comp);
+//							this.isit = 'b';
+//							this.variable = comp;
+//							this.lvalue = 0;
+//							this.uvalue = 1;
+//							return true;
+//						}
+//					}
+//					else {
 						// (result) = new ExprTree((result), newresult, ">=",
 						// 'r');
 						setNodeValues((this), newresult, ">=", 'r');
-					}
+					//}
 				}
 			}
 			else {
@@ -944,46 +944,46 @@ public class ExprTree {
 					(this).uvalue = (this).lvalue;
 				}
 				else {
-					if ((this).isit == 'c') {
-						comp = variable;
-						comp += ">";
-						int paren = 0;
-						ineq = new String();
-						for (i = spos; i < position; i++) {
-							if (expr.charAt(i) == '(')
-								paren++;
-							if (expr.charAt(i) == ')')
-								paren--;
-							ineq = ineq + expr.charAt(i);
-						}
-						// ineq[i - spos + paren] = 0;
-						comp += ineq;
-						// printf("looking for %s\n",comp.c_str());
-						// for (i = 0; i < nsignals; i++) {
-						if (signals.contains(comp)) {
-							// printf("successful lookup of boolean variable
-							// '%s'\n",signals[i]->name);
-							(this).isit = 'b';
-							(this).variable = comp;
-							(this).lvalue = 0;
-							(this).uvalue = 1;
-							return true;
-						}
-						else {
-							signals.add(comp);
-							this.isit = 'b';
-							this.variable = comp;
-							this.lvalue = 0;
-							this.uvalue = 1;
-							return true;
-						}
-						// }
-					}
-					else {
+//					if ((this).isit == 'c') {
+//						comp = variable;
+//						comp += ">";
+//						int paren = 0;
+//						ineq = new String();
+//						for (i = spos; i < position; i++) {
+//							if (expr.charAt(i) == '(')
+//								paren++;
+//							if (expr.charAt(i) == ')')
+//								paren--;
+//							ineq = ineq + expr.charAt(i);
+//						}
+//						// ineq[i - spos + paren] = 0;
+//						comp += ineq;
+//						// printf("looking for %s\n",comp.c_str());
+//						// for (i = 0; i < nsignals; i++) {
+//						if (signals.contains(comp)) {
+//							// printf("successful lookup of boolean variable
+//							// '%s'\n",signals[i]->name);
+//							(this).isit = 'b';
+//							(this).variable = comp;
+//							(this).lvalue = 0;
+//							(this).uvalue = 1;
+//							return true;
+//						}
+//						else {
+//							signals.add(comp);
+//							this.isit = 'b';
+//							this.variable = comp;
+//							this.lvalue = 0;
+//							this.uvalue = 1;
+//							return true;
+//						}
+//						// }
+//					}
+//					else {
 						// (result) = new ExprTree((result), newresult, ">",
 						// 'r');
 						setNodeValues((this), newresult, ">", 'r');
-					}
+					//}
 				}
 			}
 			break;
@@ -1014,46 +1014,46 @@ public class ExprTree {
 					(this).uvalue = (this).lvalue;
 				}
 				else {
-					if ((this).isit == 'c') {
-						comp = variable;
-						comp += "<=";
-						int paren = 0;
-						ineq = new String();
-						for (i = spos; i < position; i++) {
-							if (expr.charAt(i) == '(')
-								paren++;
-							if (expr.charAt(i) == ')')
-								paren--;
-							ineq = ineq + expr.charAt(i);
-						}
+					//if ((this).isit == 'c') {
+					//	comp = variable;
+					//	comp += "<=";
+					//	int paren = 0;
+					//	ineq = new String();
+					//	for (i = spos; i < position; i++) {
+					///		if (expr.charAt(i) == '(')
+					//			paren++;
+					//		if (expr.charAt(i) == ')')
+					//			paren--;
+					//		ineq = ineq + expr.charAt(i);
+					//	}
 						// ineq[i - spos + paren] = 0;
-						comp += ineq;
+					//	comp += ineq;
 						// printf("looking for %s\n",comp.c_str());
 						// for (i = 0; i < nsignals; i++) {
-						if (signals.contains(comp)) {
+						//if (signals.contains(comp)) {
 							// printf("successful lookup of boolean variable
 							// '%s'\n",signals[i]->name);
-							(this).isit = 'b';
-							(this).variable = comp;
-							(this).lvalue = 0;
-							(this).uvalue = 1;
-							return true;
-						}
-						else {
-							signals.add(comp);
-							this.isit = 'b';
-							this.variable = comp;
-							this.lvalue = 0;
-							this.uvalue = 1;
-							return true;
-						}
+						//	(this).isit = 'b';
+						//	(this).variable = comp;
+						//	(this).lvalue = 0;
+						//	(this).uvalue = 1;
+						//	return true;
+						//}
+						//else {
+						//	signals.add(comp);
+						//	this.isit = 'b';
+						//	this.variable = comp;
+						//	this.lvalue = 0;
+						//	this.uvalue = 1;
+						//	return true;
+						//}
 						// }
-					}
-					else {
+					//}
+					//else {
 						// (result) = new ExprTree((result), newresult, "<=",
 						// 'r');
 						setNodeValues((this), newresult, "<=", 'r');
-					}
+					//}
 				}
 			}
 			else {
@@ -1078,47 +1078,47 @@ public class ExprTree {
 					(this).uvalue = (this).lvalue;
 				}
 				else {
-					if ((this).isit == 'c') {
-						comp = variable;
-						comp += "<";
-						int paren = 0;
-						ineq = new String();
-						for (i = spos; i < position; i++) {
-							if (expr.charAt(i) == '(')
-								paren++;
-							if (expr.charAt(i) == ')')
-								paren--;
-							ineq = ineq + expr.charAt(i);
-						}
-						// ineq[i - spos + paren] = 0;
-						comp += ineq;
-						System.out.printf("looking for %s\n", comp);
-						// for (i = 0; i < nsignals; i++) {
-						if (signals.contains(comp)) {
-							// System.out.printf("successful lookup of
-							// boolean variable '%s'\n",
-							// signals[i]);
-							(this).isit = 'b';
-							(this).variable = comp;
-							(this).lvalue = 0;
-							(this).uvalue = 1;
-							return true;
-						}
-						else {
-							signals.add(comp);
-							this.isit = 'b';
-							this.variable = comp;
-							this.lvalue = 0;
-							this.uvalue = 1;
-							return true;
-						}
-						// }
-					}
-					else {
+//					if ((this).isit == 'c') {
+//						comp = variable;
+//						comp += "<";
+//						int paren = 0;
+//						ineq = new String();
+//						for (i = spos; i < position; i++) {
+//							if (expr.charAt(i) == '(')
+//								paren++;
+//							if (expr.charAt(i) == ')')
+//								paren--;
+//							ineq = ineq + expr.charAt(i);
+//						}
+//						// ineq[i - spos + paren] = 0;
+//						comp += ineq;
+//						System.out.printf("looking for %s\n", comp);
+//						// for (i = 0; i < nsignals; i++) {
+//						if (signals.contains(comp)) {
+//							// System.out.printf("successful lookup of
+//							// boolean variable '%s'\n",
+//							// signals[i]);
+//							(this).isit = 'b';
+//							(this).variable = comp;
+//							(this).lvalue = 0;
+//							(this).uvalue = 1;
+//							return true;
+//						}
+//						else {
+//							signals.add(comp);
+//							this.isit = 'b';
+//							this.variable = comp;
+//							this.lvalue = 0;
+//							this.uvalue = 1;
+//							return true;
+//						}
+//						// }
+//					}
+//					else {
 						// (result) = new ExprTree((result), newresult, "<",
 						// 'r');
 						setNodeValues((this), newresult, "<", 'r');
-					}
+					//}
 				}
 			}
 			break;
