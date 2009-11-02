@@ -94,6 +94,9 @@ public class Abstraction extends LHPNFile {
 			if (abstPane.xform8.isSelected()) {
 				change = checkTrans8(change);
 			}
+			if (abstPane.xform9.isSelected()) {
+				change = checkTrans9(change);
+			}
 			if (removeDeadTransitions()) {
 				change = true;
 			}
@@ -1261,23 +1264,28 @@ public class Abstraction extends LHPNFile {
 		}
 		return change;
 	}
-	
+
 	private boolean checkTrans9(boolean change) {
 		ArrayList<String[]> remove = new ArrayList<String[]>();
 		for (HashMap<String, Properties> assign : assignments) {
 			for (String t : assign.keySet()) {
 				for (Object o : assign.get(t).keySet()) {
 					String var = o.toString();
-				if (readBeforeWrite(t, var)) {
-					String[] temp = { t, var };
-					remove.add(temp);
+					if (readBeforeWrite(t, var)) {
+						String[] temp = { t, var };
+						remove.add(temp);
+					}
 				}
-			}
 			}
 			for (String[] temp : remove) {
 				Properties prop = assign.get(temp[0]);
-				prop.remove(temp[1]);
-				assign.put(temp[0], prop);
+				if (prop != null) {
+					prop.remove(temp[1]);
+					assign.put(temp[0], prop);
+				}
+				else {
+					assign.remove(temp[0]);
+				}
 			}
 		}
 		return change;
@@ -1928,7 +1936,7 @@ public class Abstraction extends LHPNFile {
 									// for (ExprTree e1 : ePP) {
 									if (!ePP[0].isEqual(e[0])) {
 										return change; // All assignments to var
-														// in
+										// in
 										// ..(t..)
 										// must be equal
 									}
@@ -1997,48 +2005,56 @@ public class Abstraction extends LHPNFile {
 		}
 		return true;
 	}
-	
+
 	private boolean readBeforeWrite(String trans, String var) {
 		if (enablingTrees.get(trans).getVars().contains(var)) {
 			return false;
 		}
-		for (String s : booleanAssignmentTrees.get(trans).keySet()) {
-			if (s.equals(var)) {
-				return true;
-			}
-			for (ExprTree e1 : booleanAssignmentTrees.get(trans).get(s)) {
-				if (e1.getVars().contains(var)) {
-					return false;
+		if (booleanAssignmentTrees.containsKey(trans)) {
+			for (String s : booleanAssignmentTrees.get(trans).keySet()) {
+				if (s.equals(var)) {
+					return true;
+				}
+				for (ExprTree e1 : booleanAssignmentTrees.get(trans).get(s)) {
+					if (e1.getVars().contains(var)) {
+						return false;
+					}
 				}
 			}
 		}
-		for (String s : contAssignmentTrees.get(trans).keySet()) {
-			if (s.equals(var)) {
-				return true;
-			}
-			for (ExprTree e1 : contAssignmentTrees.get(trans).get(s)) {
-				if (e1.getVars().contains(var)) {
-					return false;
+		if (contAssignmentTrees.containsKey(trans)) {
+			for (String s : contAssignmentTrees.get(trans).keySet()) {
+				if (s.equals(var)) {
+					return true;
+				}
+				for (ExprTree e1 : contAssignmentTrees.get(trans).get(s)) {
+					if (e1.getVars().contains(var)) {
+						return false;
+					}
 				}
 			}
 		}
-		for (String s : intAssignmentTrees.get(trans).keySet()) {
-			if (s.equals(var)) {
-				return true;
-			}
-			for (ExprTree e1 : intAssignmentTrees.get(trans).get(s)) {
-				if (e1.getVars().contains(var)) {
-					return false;
+		if (intAssignmentTrees.containsKey(trans)) {
+			for (String s : intAssignmentTrees.get(trans).keySet()) {
+				if (s.equals(var)) {
+					return true;
+				}
+				for (ExprTree e1 : intAssignmentTrees.get(trans).get(s)) {
+					if (e1.getVars().contains(var)) {
+						return false;
+					}
 				}
 			}
 		}
-		for (String s : rateAssignmentTrees.get(trans).keySet()) {
-			if (s.equals(var)) {
-				return true;
-			}
-			for (ExprTree e1 : rateAssignmentTrees.get(trans).get(s)) {
-				if (e1.getVars().contains(var)) {
-					return false;
+		if (rateAssignmentTrees.containsKey(trans)) {
+			for (String s : rateAssignmentTrees.get(trans).keySet()) {
+				if (s.equals(var)) {
+					return true;
+				}
+				for (ExprTree e1 : rateAssignmentTrees.get(trans).get(s)) {
+					if (e1.getVars().contains(var)) {
+						return false;
+					}
 				}
 			}
 		}
