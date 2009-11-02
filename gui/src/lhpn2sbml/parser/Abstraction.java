@@ -1261,6 +1261,27 @@ public class Abstraction extends LHPNFile {
 		}
 		return change;
 	}
+	
+	private boolean checkTrans9(boolean change) {
+		ArrayList<String[]> remove = new ArrayList<String[]>();
+		for (HashMap<String, Properties> assign : assignments) {
+			for (String t : assign.keySet()) {
+				for (Object o : assign.get(t).keySet()) {
+					String var = o.toString();
+				if (readBeforeWrite(t, var)) {
+					String[] temp = { t, var };
+					remove.add(temp);
+				}
+			}
+			}
+			for (String[] temp : remove) {
+				Properties prop = assign.get(temp[0]);
+				prop.remove(temp[1]);
+				assign.put(temp[0], prop);
+			}
+		}
+		return change;
+	}
 
 	private boolean removeTrans3(String transition) {
 		// Remove a transition with a single place in the postset
@@ -1969,6 +1990,64 @@ public class Abstraction extends LHPNFile {
 									removeContAssign(tPP, var);
 								}
 							}
+						}
+					}
+				}
+			}
+		}
+		return true;
+	}
+	
+	private boolean readBeforeWrite(String trans, String var) {
+		if (enablingTrees.get(trans).getVars().contains(var)) {
+			return false;
+		}
+		for (String s : booleanAssignmentTrees.get(trans).keySet()) {
+			if (s.equals(var)) {
+				return true;
+			}
+			for (ExprTree e1 : booleanAssignmentTrees.get(trans).get(s)) {
+				if (e1.getVars().contains(var)) {
+					return false;
+				}
+			}
+		}
+		for (String s : contAssignmentTrees.get(trans).keySet()) {
+			if (s.equals(var)) {
+				return true;
+			}
+			for (ExprTree e1 : contAssignmentTrees.get(trans).get(s)) {
+				if (e1.getVars().contains(var)) {
+					return false;
+				}
+			}
+		}
+		for (String s : intAssignmentTrees.get(trans).keySet()) {
+			if (s.equals(var)) {
+				return true;
+			}
+			for (ExprTree e1 : intAssignmentTrees.get(trans).get(s)) {
+				if (e1.getVars().contains(var)) {
+					return false;
+				}
+			}
+		}
+		for (String s : rateAssignmentTrees.get(trans).keySet()) {
+			if (s.equals(var)) {
+				return true;
+			}
+			for (ExprTree e1 : rateAssignmentTrees.get(trans).get(s)) {
+				if (e1.getVars().contains(var)) {
+					return false;
+				}
+			}
+		}
+		if (controlFlow.get(trans).containsKey("postset")) {
+			for (String p : controlFlow.get(trans).getProperty("postset").split("\\s")) {
+				if (controlPlaces.get(p).containsKey("postset")) {
+					for (String t : controlPlaces.get(p).getProperty("postset").split("\\s")) {
+						if (!readBeforeWrite(t, var)) {
+							return false;
 						}
 					}
 				}
