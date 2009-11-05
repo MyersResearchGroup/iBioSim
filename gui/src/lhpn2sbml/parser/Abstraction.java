@@ -95,7 +95,7 @@ public class Abstraction extends LHPNFile {
 				change = checkTrans8(change);
 			}
 			if (abstPane.xform9.isSelected()) {
-				change = checkTrans9(change);
+				// change = checkTrans9(change);
 			}
 			if (removeDeadTransitions()) {
 				change = true;
@@ -601,7 +601,13 @@ public class Abstraction extends LHPNFile {
 				for (HashMap<String, ExprTree[]> h : intAssignmentTrees.values()) {
 					if (h.containsKey(var)) {
 						for (ExprTree e : h.get(var)) {
-							tempIntVars.addAll(e.getVars());
+							if (e != null) {
+								for (String v : e.getVars()) {
+									if (!tempIntVars.contains(v)) {
+										tempIntVars.add(v);
+									}
+								}
+							}
 						}
 					}
 				}
@@ -1865,14 +1871,12 @@ public class Abstraction extends LHPNFile {
 
 	private boolean trans8Iteration(String trans, ArrayList<String> unvisited, boolean change) {
 		ArrayList<String[]> toChange = new ArrayList<String[]>();
-		for (HashMap<String, Properties> assign : assignments) {
-			if (assign.get(trans) != null) {
-				for (Object o : assign.get(trans).keySet()) {
-					String var = o.toString();
-					String[] add = { trans, var };
-					toChange.add(add);
-					// trans8(trans, var, change);
-				}
+		if (intAssignments.get(trans) != null) {
+			for (Object o : intAssignments.get(trans).keySet()) {
+				String var = o.toString();
+				String[] add = { trans, var };
+				toChange.add(add);
+				// trans8(trans, var, change);
 			}
 		}
 		for (String[] array : toChange) {
@@ -2007,8 +2011,10 @@ public class Abstraction extends LHPNFile {
 	}
 
 	private boolean readBeforeWrite(String trans, String var) {
-		if (enablingTrees.get(trans).getVars().contains(var)) {
-			return false;
+		if (enablingTrees.containsKey(trans)) {
+			if (enablingTrees.get(trans).getVars().contains(var)) {
+				return false;
+			}
 		}
 		if (booleanAssignmentTrees.containsKey(trans)) {
 			for (String s : booleanAssignmentTrees.get(trans).keySet()) {
@@ -2040,8 +2046,10 @@ public class Abstraction extends LHPNFile {
 					return true;
 				}
 				for (ExprTree e1 : intAssignmentTrees.get(trans).get(s)) {
-					if (e1.getVars().contains(var)) {
-						return false;
+					if (e1 != null) {
+						if (e1.getVars().contains(var)) {
+							return false;
+						}
 					}
 				}
 			}
@@ -2482,7 +2490,7 @@ public class Abstraction extends LHPNFile {
 					// if (expr[1] == null) {
 					e1[0].replace(var, expr[0]);
 					if (e1.length > 1 && expr.length > 1) {
-						if (e1[1] != null) {
+						if (e1[1] != null && expr[1] != null) {
 							e1[1].replace(var, expr[0]);
 							if (assign.equals(booleanAssignments)) {
 								addBoolAssign(trans, v, "[" + expr[0].toString() + ","
@@ -2503,16 +2511,16 @@ public class Abstraction extends LHPNFile {
 						}
 						else {
 							if (assign.equals(booleanAssignments)) {
-								addBoolAssign(trans, v, expr[0].toString());
+								addBoolAssign(trans, v, e1[0].toString());
 							}
 							else if (assign.equals(intAssignments)) {
-								addIntAssign(trans, v, expr[0].toString());
+								addIntAssign(trans, v, e1[0].toString());
 							}
 							else if (assign.equals(contAssignments)) {
-								addContAssign(trans, v, expr[0].toString());
+								addContAssign(trans, v, e1[0].toString());
 							}
 							else {
-								addRateAssign(trans, v, expr[0].toString());
+								addRateAssign(trans, v, e1[0].toString());
 							}
 						}
 					}

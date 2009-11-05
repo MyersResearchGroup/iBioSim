@@ -2650,6 +2650,13 @@ public class LHPNFile {
 				Properties intProp = new Properties();
 				HashMap<String, ExprTree[]> assignMap = new HashMap<String, ExprTree[]>();
 				HashMap<String, ExprTree[]> intMap = new HashMap<String, ExprTree[]>();
+				//System.out.println(assignMatcher.group(1));
+				if (intAssignmentTrees.containsKey(assignMatcher.group(1))) {
+					intMap = intAssignmentTrees.get(assignMatcher.group(1));
+				}
+				if (contAssignmentTrees.containsKey(assignMatcher.group(1))) {
+					intMap = contAssignmentTrees.get(assignMatcher.group(1));
+				}
 				// log.addText("check6while1");
 				varMatcher = varPattern.matcher(assignMatcher.group(2));
 				if (!varMatcher.find()) {
@@ -2734,10 +2741,6 @@ public class LHPNFile {
 						}
 					}
 				}
-				do {
-
-				}
-				while (varMatcher.find());
 				if (intProp.size() > 0) {
 					intAssignments.put(assignMatcher.group(1), intProp);
 					intAssignmentTrees.put(assignMatcher.group(1), intMap);
