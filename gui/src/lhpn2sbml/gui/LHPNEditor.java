@@ -68,7 +68,7 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 
 	private String filename = "", directory = "", separator = "";
 
-	private String[] varOptions = new String[] { "Boolean", "Continuous", "Integer" };
+	private String[] varOptions = new String[] { "Boolean", "Continuous", "Discrete" };
 
 	// private String lhpnName = "";
 
@@ -179,7 +179,7 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 		if (!lhpnFile.getVariables().equals(null)) {
 			//variables.addAllItem(lhpnFile.getIntegers().keySet());
 			for (String s : lhpnFile.getIntegers().keySet()) {
-				variables.addItem(s + " - integer - " + lhpnFile.getInitialVal(s));
+				variables.addItem(s + " - discrete - " + lhpnFile.getInitialVal(s));
 			}
 		}
 		if (!lhpnFile.getInputs().equals(null)) {

@@ -1779,13 +1779,12 @@ public class ExprTree {
 			result = result + variable;
 			break;
 		case 'n': // Number
-			if (uvalue == lvalue) {
-				Double tempVal = uvalue;
-				result = result + tempVal.toString();
+			Double tempuval = uvalue;
+			Double templval = lvalue;
+			if ((uvalue == lvalue) || tempuval.toString().equals("")) {
+				result = result + tempuval.toString();
 			}
 			else {
-				Double tempuval = uvalue;
-				Double templval = lvalue;
 				result = result + "[" + templval.toString() + "," + tempuval.toString() + "]";
 			}
 			break;

@@ -43,7 +43,7 @@ public class VariablesPanel extends JPanel implements ActionListener {
 
 	// private JComboBox typeBox, modeBox, initBox;
 
-	private static final String[] types = new String[] { "boolean", "continuous", "integer" };
+	private static final String[] types = new String[] { "boolean", "continuous", "discrete" };
 
 	private static final String[] modes = new String[] { "input", "output" };
 
