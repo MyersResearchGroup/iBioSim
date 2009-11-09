@@ -1903,14 +1903,11 @@ public class Abstraction extends LHPNFile {
 		}
 		HashMap<String, HashMap<String, ExprTree[]>> typeAssign;
 		// The assignments that will contain var
-		if (isBoolean(var)) {
-			typeAssign = booleanAssignmentTrees;
-		}
-		else if (isContinuous(var)) {
-			typeAssign = contAssignmentTrees;
+		if (isInteger(var)) {
+			typeAssign = intAssignmentTrees;
 		}
 		else {
-			typeAssign = intAssignmentTrees;
+			return change;
 		}
 		if (typeAssign.containsKey(trans)) {
 			ExprTree[] e = typeAssign.get(trans).get(var);
@@ -1983,12 +1980,12 @@ public class Abstraction extends LHPNFile {
 			if (controlFlow.get(trans).containsKey("postset")) {
 				for (String p : controlFlow.get(trans).getProperty("postset").split("\\s")) {
 					for (String tP : controlPlaces.get(p).getProperty("postset").split("\\s")) {
-						replace(tP, var, e);
 						if (e.length > 1) {
 							if (e[1] != null) {
 								return change;
 							}
 						}
+						replace(tP, var, e);
 						for (String pP : controlFlow.get(tP).getProperty("preset").split("\\s")) {
 							for (String tPP : controlPlaces.get(pP).getProperty("preset").split(
 									"\\s")) {
@@ -2466,6 +2463,9 @@ public class Abstraction extends LHPNFile {
 			enablings.put(trans, enablingTrees.get(trans).toString());
 			flag = true;
 		}
+		if (!intAssignmentTrees.get(trans).containsKey(var)) {
+			addIntAssign(trans, var, expr[0].toString());
+		}
 		// }
 		for (HashMap<String, Properties> assign : assignments) {
 			HashMap<String, HashMap<String, ExprTree[]>> assignTree;
@@ -2490,7 +2490,7 @@ public class Abstraction extends LHPNFile {
 					// if (expr[1] == null) {
 					e1[0].replace(var, expr[0]);
 					if (e1.length > 1 && expr.length > 1) {
-						if (e1[1] != null && expr[1] != null) {
+						if (e1[1] != null && expr[1] != null && !e1[1].toString().equals("") && !expr[1].toString().equals("")) {
 							e1[1].replace(var, expr[0]);
 							if (assign.equals(booleanAssignments)) {
 								addBoolAssign(trans, v, "[" + expr[0].toString() + ","
