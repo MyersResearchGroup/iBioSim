@@ -582,7 +582,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			}
 			if (load.containsKey("abstraction.transforms")) {
 				String xforms = load.getProperty("abstraction.transforms");
-				String[] array = xforms.split(" ");
+				String[] array = xforms.split(", ");
 				for (String s : array) {
 					if (!s.equals("")) {
 						abstPane.addXform(s);
@@ -1569,11 +1569,11 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			String xforms = "";
 			for (int i = 0; i < abstPane.absListModel.getSize(); i++) {
 				if (abstPane.absListModel.getElementAt(i) != null) {
-					xforms = xforms + abstPane.absListModel.getElementAt(i) + " ";
+					xforms = xforms + abstPane.absListModel.getElementAt(i) + ", ";
 				}
 			}
-			if (!intVars.equals("")) {
-				prop.setProperty("abstraction.transforms", intVars.trim());
+			if (!xforms.equals("")) {
+				prop.setProperty("abstraction.transforms", xforms.trim());
 			}
 			else {
 				prop.remove("abstraction.transforms");
