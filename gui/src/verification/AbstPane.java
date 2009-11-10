@@ -32,18 +32,38 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 
 	private static final long serialVersionUID = -5806315070287184299L;
 
-	private JButton addIntSpecies, removeIntSpecies, clearIntSpecies;
+	private JButton addIntSpecies, removeIntSpecies, clearIntSpecies, addXform, removeXform,
+			addAllXforms, clearXforms;
 
-	private JList species, intSpecies;
+	private JList species, intSpecies, xforms, selectXforms;
 
-	public JCheckBox xform0, xform1, xform3, xform4, xform5, xform6, xform7, xform8, xform9, xform10, xform11,
-			xform12, xform13, xform14, xform15, xform16;
+	// public JCheckBox xform0, xform1, xform3, xform4, xform5, xform6, xform7,
+	// xform8, xform9, xform10, xform11,
+	// xform12, xform13, xform14, xform15, xform16;
 
-	public DefaultListModel listModel;
+	public DefaultListModel listModel, absListModel, allXformListModel;
 
 	private JTextField field;
 
 	private String directory, separator, root, absFile, oldBdd;
+
+	public String xform0 = "Merge Parallel Places", xform1 = "Remove Place in Self-Loop",
+			xform3 = "Remove Transition with Single Place in Preset",
+			xform4 = "Remove Transition with Single Place in Postset",
+			xform5 = "Merge Transitions with Same Preset and Postset",
+			xform6 = "Merge Transitions with Same Preset",
+			xform7 = "Merge Transitions with Same Postset",
+			xform8 = "Propagate Assignments to Local Variables",
+			xform9 = "Remove Assignments Written before Read",
+			xform12 = "Abstract Assignments to the Same Variable", xform13 = "Remove Variables",
+			xform14 = "Remove Dead Places", xform15 = "Remove Dead Transitions",
+			xform16 = "Simplify Enabling Conditions";
+
+	private String[] transforms = { xform0, xform1, xform3, xform4, xform5, xform6, xform7, xform8,
+			xform9, xform12, xform13, xform14, xform15, xform16 }, 
+			simplifyXforms = { xform0, xform1 }, 
+			abstractXforms = { xform3, xform4, xform5, xform6, xform7, xform8, xform9,
+			xform12, xform13, xform14, xform15, xform16 };
 
 	private boolean change;
 
@@ -73,6 +93,7 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 		verification.copyFile();
 		LHPNFile lhpn = new LHPNFile();
 		lhpn.load(directory + separator + verification.verifyFile);
+
 		// Creates the interesting species JList
 		listModel = new DefaultListModel();
 		intSpecies = new JList(lhpn.getAllVariables());
@@ -109,59 +130,115 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 		speciesHolder.add(buttonHolder, "South");
 		this.add(speciesHolder, "North");
 
-		// Add abstraction option check boxes
-		JPanel xformPanel = new JPanel();
-		//xformPanel.setLayout(new BorderLayout());
-		xform0 = new JCheckBox("Transform 0"); // Merge parallel places
-		xform1 = new JCheckBox("Transform 1"); // Remove place in self-loop
-		xform3 = new JCheckBox("Transform 3"); // Remove trans with 1 place in preset
-		xform4 = new JCheckBox("Transform 4"); // Remove trans with 1 place in postset
-		xform5 = new JCheckBox("Transform 5"); // Merge trans with same pre/postset
-		xform6 = new JCheckBox("Transform 6"); // Merge trans with same preset
-		xform7 = new JCheckBox("Transform 7"); // Merge trans with same postset
-		xform8 = new JCheckBox("Transform 8");
-		xform9 = new JCheckBox("Transform 9");
-		xform10 = new JCheckBox("Transform 10");
-		xform11 = new JCheckBox("Transform 11");
-		xform12 = new JCheckBox("Transform 12"); // Abstract assignments
-		xform13 = new JCheckBox("Transform 13"); // Remove variables
-		xform14 = new JCheckBox("Transform 14"); // Remove dead places
-		xform15 = new JCheckBox("Transform 15"); // Remove dead transitions
-		xform16 = new JCheckBox("Transform 16"); // Simplify enabling conditions
-		xform0.setSelected(true);
-		xform1.setSelected(true);
-		xform0.setSelected(true);
-		xform3.setSelected(true);
-		xform4.setSelected(true);
-		xform5.setSelected(true);
-		xform6.setSelected(true);
-		xform7.setSelected(true);
-		xform8.setSelected(true);
-		xform9.setSelected(true);
-		xform10.setSelected(true);
-		xform11.setSelected(true);
-		xform12.setSelected(true);
-		xform13.setSelected(true);
-		xform14.setSelected(true);
-		xform15.setSelected(true);
-		xform16.setSelected(true);
-		xformPanel.add(xform0);
-		xformPanel.add(xform1);
-		xformPanel.add(xform3);
-		xformPanel.add(xform4);
-		xformPanel.add(xform5);
-		xformPanel.add(xform6);
-		xformPanel.add(xform7);
-		xformPanel.add(xform8);
-		xformPanel.add(xform9);
-		xformPanel.add(xform10);
-		xformPanel.add(xform11);
-		xformPanel.add(xform12);
-		xformPanel.add(xform13);
-		xformPanel.add(xform14);
-		xformPanel.add(xform15);
-		xformPanel.add(xform16);
-		this.add(xformPanel, "Center");
+		// Creates the abstractions JList
+		absListModel = new DefaultListModel();
+		allXformListModel = new DefaultListModel();
+		if (verification.simplify.isSelected()) {
+			for (String s : simplifyXforms) {
+				allXformListModel.addElement(s);
+			}
+		}
+		else if (verification.abstractLhpn.isSelected()) {
+			for (String s : transforms) {
+				allXformListModel.addElement(s);
+			}
+		}
+		selectXforms = new JList(allXformListModel);
+		xforms = new JList(absListModel);
+		JLabel absLabel = new JLabel("Available Transforms:");
+		JLabel abstractLabel = new JLabel("Selected Transforms:");
+		JPanel absHolder = new JPanel(new BorderLayout());
+		JPanel listOfTransformsLabelHolder = new JPanel(new GridLayout(1, 2));
+		JPanel listOfTransformsHolder = new JPanel(new GridLayout(1, 2));
+		JScrollPane absScroll = new JScrollPane();
+		JScrollPane absScroll1 = new JScrollPane();
+		absScroll.setMinimumSize(new Dimension(260, 200));
+		absScroll.setPreferredSize(new Dimension(276, 132));
+		absScroll.setViewportView(xforms);
+		absScroll1.setMinimumSize(new Dimension(260, 200));
+		absScroll1.setPreferredSize(new Dimension(276, 132));
+		absScroll1.setViewportView(selectXforms);
+		addXform = new JButton("Add Transform");
+		removeXform = new JButton("Remove Transform");
+		addAllXforms = new JButton("Add All Transforms");
+		clearXforms = new JButton("Clear Transforms");
+		addXform.addActionListener(this);
+		removeXform.addActionListener(this);
+		addAllXforms.addActionListener(this);
+		clearXforms.addActionListener(this);
+		listOfTransformsLabelHolder.add(absLabel);
+		listOfTransformsHolder.add(absScroll1);
+		listOfTransformsLabelHolder.add(abstractLabel);
+		listOfTransformsHolder.add(absScroll);
+		absHolder.add(listOfTransformsLabelHolder, "North");
+		absHolder.add(listOfTransformsHolder, "Center");
+		JPanel absButtonHolder = new JPanel();
+		absButtonHolder.add(addXform);
+		absButtonHolder.add(removeXform);
+		absButtonHolder.add(addAllXforms);
+		absButtonHolder.add(clearXforms);
+		absHolder.add(absButtonHolder, "South");
+		this.add(absHolder, "South");
+
+		// // Add abstraction option check boxes
+		// JPanel xformPanel = new JPanel();
+		// //xformPanel.setLayout(new BorderLayout());
+		// xform0 = new JCheckBox("Transform 0"); // Merge parallel places
+		// xform1 = new JCheckBox("Transform 1"); // Remove place in self-loop
+		// xform3 = new JCheckBox("Transform 3"); // Remove trans with 1 place
+		// in preset
+		// xform4 = new JCheckBox("Transform 4"); // Remove trans with 1 place
+		// in postset
+		// xform5 = new JCheckBox("Transform 5"); // Merge trans with same
+		// pre/postset
+		// xform6 = new JCheckBox("Transform 6"); // Merge trans with same
+		// preset
+		// xform7 = new JCheckBox("Transform 7"); // Merge trans with same
+		// postset
+		// xform8 = new JCheckBox("Transform 8");
+		// xform9 = new JCheckBox("Transform 9");
+		// xform10 = new JCheckBox("Transform 10");
+		// xform11 = new JCheckBox("Transform 11");
+		// xform12 = new JCheckBox("Transform 12"); // Abstract assignments
+		// xform13 = new JCheckBox("Transform 13"); // Remove variables
+		// xform14 = new JCheckBox("Transform 14"); // Remove dead places
+		// xform15 = new JCheckBox("Transform 15"); // Remove dead transitions
+		// xform16 = new JCheckBox("Transform 16"); // Simplify enabling
+		// conditions
+		// xform0.setSelected(true);
+		// xform1.setSelected(true);
+		// xform0.setSelected(true);
+		// xform3.setSelected(true);
+		// xform4.setSelected(true);
+		// xform5.setSelected(true);
+		// xform6.setSelected(true);
+		// xform7.setSelected(true);
+		// xform8.setSelected(true);
+		// xform9.setSelected(true);
+		// xform10.setSelected(true);
+		// xform11.setSelected(true);
+		// xform12.setSelected(true);
+		// xform13.setSelected(true);
+		// xform14.setSelected(true);
+		// xform15.setSelected(true);
+		// xform16.setSelected(true);
+		// xformPanel.add(xform0);
+		// xformPanel.add(xform1);
+		// xformPanel.add(xform3);
+		// xformPanel.add(xform4);
+		// xformPanel.add(xform5);
+		// xformPanel.add(xform6);
+		// xformPanel.add(xform7);
+		// xformPanel.add(xform8);
+		// xformPanel.add(xform9);
+		// xformPanel.add(xform10);
+		// xformPanel.add(xform11);
+		// xformPanel.add(xform12);
+		// xformPanel.add(xform13);
+		// xformPanel.add(xform14);
+		// xformPanel.add(xform15);
+		// xformPanel.add(xform16);
+		// this.add(xformPanel, "Center");
 
 		change = false;
 	}
@@ -185,11 +262,35 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 		if (e.getSource() == clearIntSpecies) {
 			listModel.removeAllElements();
 		}
+		if (e.getSource() == addXform) {
+			if (!absListModel.contains(selectXforms.getSelectedValue())) {
+				absListModel.addElement(selectXforms.getSelectedValue());
+			}
+		}
+		if (e.getSource() == removeXform) {
+			absListModel.removeElement(xforms.getSelectedValue());
+		}
+		if (e.getSource() == addAllXforms) {
+			for (String s : transforms) {
+				if (!absListModel.contains(s)) {
+					absListModel.addElement(s);
+				}
+			}
+		}
+		if (e.getSource() == clearXforms) {
+			absListModel.removeAllElements();
+		}
 	}
 
 	public void addIntVar(String variable) {
 		if (!listModel.contains(variable)) {
 			listModel.addElement(variable);
+		}
+	}
+
+	public void addXform(String variable) {
+		if (!absListModel.contains(variable)) {
+			absListModel.addElement(variable);
 		}
 	}
 
@@ -229,6 +330,13 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 			}
 			if (!intVars.equals("")) {
 				prop.setProperty("abstraction.interesting", intVars);
+			}
+			String selXforms = "";
+			for (int i = 0; i < absListModel.getSize(); i++) {
+				intVars = absListModel.getElementAt(i) + " ";
+			}
+			if (!selXforms.equals("")) {
+				prop.setProperty("abstraction.transforms", selXforms);
 			}
 			FileOutputStream out = new FileOutputStream(new File(directory + separator + absFile));
 			prop.store(out, absFile);
@@ -331,4 +439,20 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 		}
 		return change;
 	}
+
+	public void disableAbstract() {
+		for (String s : abstractXforms) {
+			if (absListModel.contains(s)) {
+				absListModel.removeElement(s);
+			}
+			allXformListModel.removeElement(s);
+		}
+	}
+	
+	public void enableAbstract() {
+		for (String s : abstractXforms) {
+			allXformListModel.addElement(s);
+		}
+	}
+
 }
