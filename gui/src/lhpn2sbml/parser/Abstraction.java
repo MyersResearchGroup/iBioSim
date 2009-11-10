@@ -40,7 +40,7 @@ public class Abstraction extends LHPNFile {
 		assignments.add(intAssignments);
 		assignments.add(rateAssignments);
 		divideProcesses();
-		if (abstPane.xform12.isSelected()) {
+		if (abstPane.absListModel.contains(abstPane.xform12)) {
 			abstractAssign();
 		}
 		ArrayList<String> removeEnab = new ArrayList<String>();
@@ -59,42 +59,42 @@ public class Abstraction extends LHPNFile {
 		while (change) {
 			change = false;
 			// Transform 0 - Merge Parallel Places
-			if (abstPane.xform0.isSelected()) {
+			if (abstPane.absListModel.contains(abstPane.xform0)) {
 				change = checkTrans0(change);
 			}
 			// Transform 1 - Remove a Place in a Self Loop
-			if (abstPane.xform1.isSelected()) {
+			if (abstPane.absListModel.contains(abstPane.xform1)) {
 				change = checkTrans1(change);
 			}
 			// Transforms 5a, 6, 7 - Combine Transitions with the Same Preset
 			// and/or Postset
-			if (abstPane.xform5.isSelected() || abstPane.xform6.isSelected()
-					|| abstPane.xform7.isSelected()) {
+			if (abstPane.absListModel.contains(abstPane.xform5) || abstPane.absListModel.contains(abstPane.xform6)
+					|| abstPane.absListModel.contains(abstPane.xform7)) {
 				change = checkTrans5(change);
 			}
 			// Transform 5b
-			if (abstPane.xform5.isSelected()) {
+			if (abstPane.absListModel.contains(abstPane.xform5)) {
 				change = checkTrans5b(change);
 			}
 			// Transform 3 - Remove a Transition with a Single Place in the
 			// Postset
-			if (abstPane.xform3.isSelected()) {
+			if (abstPane.absListModel.contains(abstPane.xform3)) {
 				change = checkTrans3(change);
 			}
 			// Transform 4 - Remove a Transition with a Single Place in the
 			// Preset
-			if (abstPane.xform4.isSelected()) {
+			if (abstPane.absListModel.contains(abstPane.xform4)) {
 				change = checkTrans4(change);
 			}
-			if (abstPane.xform14.isSelected()) {
+			if (abstPane.absListModel.contains(abstPane.xform14)) {
 				if (removeDeadPlaces()) {
 					change = true;
 				}
 			}
-			if (abstPane.xform8.isSelected()) {
+			if (abstPane.absListModel.contains(abstPane.xform8)) {
 				change = checkTrans8(change);
 			}
-			if (abstPane.xform9.isSelected()) {
+			if (abstPane.absListModel.contains(abstPane.xform9)) {
 				// change = checkTrans9(change);
 			}
 			if (removeDeadTransitions()) {
@@ -419,7 +419,7 @@ public class Abstraction extends LHPNFile {
 					&& !controlPlaces.get(s).containsKey("postset")) {
 				removePlace.add(s); // Remove unconnected places
 			}
-			if (!change && abstPane.xform15.isSelected()) {
+			if (!change && abstPane.absListModel.contains(abstPane.xform15)) {
 				if (places.get(s))
 					continue;
 				if (hasMarkedPreset(s)) // If the place is recursively dead
@@ -465,7 +465,7 @@ public class Abstraction extends LHPNFile {
 			}
 			if (expr.containsCont())
 				continue;
-			if (abstPane.xform16.isSelected() && expr.evaluateExp(initVars) == 1) {
+			if (abstPane.absListModel.contains(abstPane.xform16) && expr.evaluateExp(initVars) == 1) {
 				boolean enabled = true;
 				for (String trans : booleanAssignments.keySet()) {
 					HashMap<String, String> assignments = new HashMap<String, String>();
@@ -485,7 +485,7 @@ public class Abstraction extends LHPNFile {
 					removeEnab.add(t);
 				}
 			}
-			else if (abstPane.xform15.isSelected() && expr.evaluateExp(initVars) == 0) {
+			else if (abstPane.absListModel.contains(abstPane.xform15) && expr.evaluateExp(initVars) == 0) {
 				boolean disabled = true;
 				for (String trans : booleanAssignments.keySet()) {
 					HashMap<String, String> assignments = new HashMap<String, String>();
@@ -1005,7 +1005,7 @@ public class Abstraction extends LHPNFile {
 							&& controlFlow.get(t).containsKey("postset")
 							&& controlFlow.get(s).containsKey("preset")
 							&& controlFlow.get(t).containsKey("preset") && !assign
-							&& abstPane.xform6.isSelected()) {
+							&& abstPane.absListModel.contains(abstPane.xform6)) {
 						String[] postset1 = controlFlow.get(s).getProperty("postset").split(" ");
 						String[] postset2 = controlFlow.get(t).getProperty("postset").split(" ");
 						if (postset1.length == 1 && postset2.length == 1
@@ -1024,7 +1024,7 @@ public class Abstraction extends LHPNFile {
 							&& controlFlow.get(t).containsKey("preset")
 							&& controlFlow.get(s).containsKey("postset")
 							&& controlFlow.get(t).containsKey("postset") && !assign
-							&& abstPane.xform7.isSelected()) {
+							&& abstPane.absListModel.contains(abstPane.xform7)) {
 						String[] preset1 = controlFlow.get(s).getProperty("preset").split(" ");
 						String[] preset2 = controlFlow.get(t).getProperty("preset").split(" ");
 						if (preset1.length == 1 && preset2.length == 1) {

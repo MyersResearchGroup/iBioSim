@@ -41,7 +41,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 	private JLabel algorithm, timingMethod, timingOptions, otherOptions, otherOptions2,
 			compilation, bddSizeLabel, advTiming, abstractLabel;
 
-	private JRadioButton untimed, geometric, posets, bag, bap, baptdc, verify, vergate, orbits,
+	public JRadioButton untimed, geometric, posets, bag, bap, baptdc, verify, vergate, orbits,
 			search, trace, bdd, dbm, smt, lhpn, view, none, simplify, abstractLhpn;
 
 	private JCheckBox abst, partialOrder, dot, verbose, graph, genrg, timsubset, superset, infopt,
@@ -141,6 +141,8 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		none = new JRadioButton("None");
 		simplify = new JRadioButton("Simplification");
 		abstractLhpn = new JRadioButton("Abstraction");
+		simplify.addActionListener(this);
+		abstractLhpn.addActionListener(this);
 		// Timing Methods
 		if (atacs) {
 			untimed = new JRadioButton("Untimed");
@@ -359,7 +361,6 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				verifyFile = load.getProperty("verification.file");
 				// log.addText(verifyFile);
 			}
-			abstPane = new AbstPane(root + separator + verName, this, log, biosim, lema, atacs);
 			if (load.containsKey("verification.bddSize")) {
 				bddSize.setText(load.getProperty("verification .bddSize"));
 			}
@@ -382,6 +383,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					abstractLhpn.setSelected(true);
 				}
 			}
+			abstPane = new AbstPane(root + separator + verName, this, log, biosim, lema, atacs);
 			if (load.containsKey("verification.timing.methods")) {
 				if (atacs) {
 					if (load.getProperty("verification.timing.methods").equals("untimed")) {
@@ -578,6 +580,15 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					}
 				}
 			}
+			if (load.containsKey("abstraction.transforms")) {
+				String xforms = load.getProperty("abstraction.transforms");
+				String[] array = xforms.split(" ");
+				for (String s : array) {
+					if (!s.equals("")) {
+						abstPane.addXform(s);
+					}
+				}
+			}
 			tempArray = verifyFile.split(separator);
 			sourceFileNoPath = tempArray[tempArray.length - 1];
 			backgroundField = new JTextField(sourceFileNoPath);
@@ -701,6 +712,12 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		else if (e.getSource() == viewLog) {
 			viewLog();
 		}
+		else if (e.getSource() == simplify) {
+			abstPane.disableAbstract();
+		}
+		else if (e.getSource() == abstractLhpn) {
+			abstPane.enableAbstract();
+		}
 		else if (e.getSource() == addComponent) {
 			String[] vhdlFiles = new File(root).list();
 			ArrayList<String> tempFiles = new ArrayList<String>();
@@ -746,6 +763,12 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				componentList.removeItem(selected);
 				new File(directory + separator + selected).delete();
 			}
+		}
+		else if (e.getSource() == simplify) {
+			abstPane.disableAbstract();
+		}
+		else if (e.getSource() == abstractLhpn) {
+			abstPane.enableAbstract();
 		}
 	}
 
@@ -812,7 +835,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			if (abstFilename != null) {
 				if (!abstFilename.endsWith(".lpn"))
 					abstFilename = abstFilename + ".lpn";
-				if (abstPane.xform13.isSelected()) {
+				if (abstPane.absListModel.contains("Remove Variables")) {
 					abstraction.abstractVars(abstPane.getIntVars());
 				}
 				abstraction.abstractSTG();
@@ -1542,6 +1565,18 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			}
 			else {
 				prop.remove("abstraction.interesting");
+			}
+			String xforms = "";
+			for (int i = 0; i < abstPane.absListModel.getSize(); i++) {
+				if (abstPane.absListModel.getElementAt(i) != null) {
+					xforms = xforms + abstPane.absListModel.getElementAt(i) + " ";
+				}
+			}
+			if (!intVars.equals("")) {
+				prop.setProperty("abstraction.transforms", intVars.trim());
+			}
+			else {
+				prop.remove("abstraction.transforms");
 			}
 			FileOutputStream out = new FileOutputStream(new File(directory + separator + verFile));
 			prop.store(out, verifyFile);
