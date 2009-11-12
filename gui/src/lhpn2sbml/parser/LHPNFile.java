@@ -62,6 +62,8 @@ public class LHPNFile {
 	protected HashMap<String, Properties> booleanAssignments;
 
 	protected HashMap<String, HashMap<String, ExprTree[]>> booleanAssignmentTrees;
+	
+	protected ArrayList<String> fail = new ArrayList<String>();
 
 	protected String property;
 
@@ -158,6 +160,13 @@ public class LHPNFile {
 					buffer.append(s + " ");
 				}
 				for (String s : integers.keySet()) {
+					buffer.append(s + " ");
+				}
+				buffer.append("\n");
+			}
+			if (!fail.isEmpty()) {
+				buffer.append("#@.fail ");
+				for (String s : fail) {
 					buffer.append(s + " ");
 				}
 				buffer.append("\n");
@@ -517,6 +526,7 @@ public class LHPNFile {
 			// log.addText("check9");
 			parseBooleanAssign(data);
 			parseTransitionRate(data);
+			parseFailTransitions(data);
 			// System.out.println("check11");
 			// log.addText("check0");
 			// log.addText(intAssignments.toString());
@@ -1180,6 +1190,23 @@ public class LHPNFile {
 			enablingTrees.remove(name);
 		}
 	}
+	
+	public void addFail(String transition) {
+		if (!fail.contains(transition)) {
+			fail.add(transition);
+		}
+	}
+	
+	public boolean isFail(String transition) {
+		return fail.contains(transition);
+	}
+	
+	public void removeFail(String transition) {
+		if (fail.contains(transition)) {
+			fail.remove(transition);
+		}
+	}
+
 
 	public void addVar(String name, Properties initCond) {
 		variables.put(name, initCond);
@@ -2884,6 +2911,16 @@ public class LHPNFile {
 		}
 		// log.addText("check8end");
 	}
+	
+	private void parseFailTransitions(StringBuffer data) {
+		Pattern linePattern = Pattern.compile(FAIL_LINE);
+		Matcher lineMatcher = linePattern.matcher(data.toString());
+		if (lineMatcher.find()) {
+			for (String s : lineMatcher.group(1).split("\\s")) {
+				fail.add(s);
+			}
+		}
+	}
 
 	private void parseBooleanAssign(StringBuffer data) {
 		Pattern linePattern = Pattern.compile(BOOLEAN_LINE);
@@ -3046,6 +3083,8 @@ public class LHPNFile {
 	private static final String DELAY = "<([\\w_]+)=(\\[\\w+,\\w+\\])>";
 
 	private static final String TRANS_RATE_LINE = "#@\\.transition_rates \\{([\\S[^\\}]]+?)\\}";
+	
+	private static final String FAIL_LINE = "#@\\.fail ([.[^\\n]]+)\\n";
 
 	private static final String BOOLEAN_LINE = "#@\\.boolean_assignments \\{([\\S[^\\}]]+?)\\}";
 
