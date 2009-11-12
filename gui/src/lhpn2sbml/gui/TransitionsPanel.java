@@ -10,6 +10,7 @@ import gcm2sbml.util.GlobalConstants;
 import gcm2sbml.util.Utility;
 import lhpn2sbml.parser.ExprTree;
 
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
@@ -24,9 +25,10 @@ import java.util.regex.Pattern;
 //import javax.swing.DefaultListModel;
 //import javax.swing.JComboBox;
 //import javax.swing.BoxLayout;
-//import javax.swing.JLabel;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JCheckBox;
 
 //import javax.swing.Icon;
 
@@ -44,6 +46,8 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 	private String[] options = { "Ok", "Cancel" };
 	
 	private String[] allVariables;
+	
+	private JCheckBox fail;
 
 	// private Object[] types = { "Boolean", "Continuous", "Integer", "Rate" };
 
@@ -102,6 +106,17 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 		constraints.gridx = 0;
 		constraints.gridy = 0;
 		add(fieldPanel, constraints);
+		
+		// Fail Transition check box
+		JPanel failPanel = new JPanel(new GridLayout(1, 2));
+		//failPanel.setMinimumSize(new Dimension(200, 20));
+		JLabel failLabel = new JLabel("Fail Transition");
+		fail = new JCheckBox();
+		failPanel.add(failLabel);
+		failPanel.add(fail);
+		constraints.gridx = 0;
+		constraints.gridy = 1;
+		add(failPanel,constraints);
 
 		// Assignment panel
 		assignments = new PropertyList("Assignment List");
@@ -160,7 +175,7 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 		JPanel assignPanel = Utility.createPanel(this, "Assignments", assignments, addAssign,
 				removeAssign, editAssign);
 		constraints.gridx = 0;
-		constraints.gridy = 1;
+		constraints.gridy = 2;
 		add(assignPanel, constraints);
 
 		/*
@@ -216,6 +231,9 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 			fields.get(GlobalConstants.ID).setValue(selected);
 			// log.addText(lhpn.getDelay(selected));
 			String delay = lhpn.getDelay(selected);
+			if (lhpn.isFail(oldName)) {
+				fail.setSelected(true);
+			}
 			if (delay != null) {
 				Pattern pattern = Pattern.compile("\\[([\\S^,]+?),([\\S^\\]]+?)\\]");
 				Matcher matcher = pattern.matcher(delay);
@@ -376,6 +394,9 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 		}
 		else {
 			delay = fields.get("Delay lower").getValue();
+		}
+		if (fail.isSelected()) {
+			lhpn.addFail(transition);
 		}
 		if (!lhpn.changeDelay(transition, delay))
 			return false;
