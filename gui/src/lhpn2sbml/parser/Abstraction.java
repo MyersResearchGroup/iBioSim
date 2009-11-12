@@ -1029,7 +1029,7 @@ public class Abstraction extends LHPNFile {
 						String[] preset2 = controlFlow.get(t).getProperty("preset").split(" ");
 						if (preset1.length == 1 && preset2.length == 1) {
 							if (comparePostset(controlPlaces.get(preset1[0]), controlPlaces
-									.get(preset2[0]), s, t)) {
+									.get(preset2[0]), s, t) && !isFail(t)) {
 								String[] array = { s, t };
 								boolean[] same = { samePreset, samePostset };
 								combine.add(array);
@@ -1125,7 +1125,7 @@ public class Abstraction extends LHPNFile {
 				if (controlFlow.get(s[0]).containsKey("preset")
 						&& controlFlow.get(s[0]).containsKey("postset")
 						&& controlFlow.get(s[1]).containsKey("preset")
-						&& controlFlow.get(s[1]).containsKey("postset")) {
+						&& controlFlow.get(s[1]).containsKey("postset") && !isFail(s[1])) {
 					change = true;
 					combineTransitions(s[0], s[1], true, true);
 				}
@@ -1185,7 +1185,7 @@ public class Abstraction extends LHPNFile {
 				// String[] preset =
 				// controlFlow.get(s).getProperty("preset").split(" ");
 				String[] postset = controlFlow.get(s).getProperty("postset").split(" ");
-				if (postset.length == 1 && !postset[0].equals("")) {
+				if (postset.length == 1 && !postset[0].equals("") && !isFail(s)) {
 					if (removeTrans3(s))
 						change = true;
 				}
@@ -1242,7 +1242,7 @@ public class Abstraction extends LHPNFile {
 				// System.out.println("[4]Removing transition: " + s);
 				if (controlFlow.get(s).getProperty("preset") != null
 						&& controlFlow.get(s).getProperty("postset") != null
-						&& !controlFlow.get(s).getProperty("postset").equals("")) {
+						&& !controlFlow.get(s).getProperty("postset").equals("") && !isFail(s)) {
 					if (removeTrans4(s))
 						change = true;
 				}
@@ -2255,6 +2255,12 @@ public class Abstraction extends LHPNFile {
 				map.put(t, oldMap.get(t));
 			}
 			intAssignmentTrees.put(s, map);
+		}
+	}
+	
+	public void addFails(ArrayList<String> fails) {
+		for (String s : fails) {
+			fail.add(s);
 		}
 	}
 
