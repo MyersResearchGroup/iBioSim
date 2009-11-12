@@ -59,46 +59,50 @@ public class Abstraction extends LHPNFile {
 		while (change) {
 			change = false;
 			// Transform 0 - Merge Parallel Places
-			if (abstPane.absListModel.contains(abstPane.xform0)) {
+			if (abstPane.absListModel.contains(abstPane.xform0) && abstPane.isSimplify()) {
 				change = checkTrans0(change);
 			}
 			// Transform 1 - Remove a Place in a Self Loop
-			if (abstPane.absListModel.contains(abstPane.xform1)) {
+			if (abstPane.absListModel.contains(abstPane.xform1) && abstPane.isSimplify()) {
 				change = checkTrans1(change);
 			}
 			// Transforms 5a, 6, 7 - Combine Transitions with the Same Preset
 			// and/or Postset
-			if (abstPane.absListModel.contains(abstPane.xform5) || abstPane.absListModel.contains(abstPane.xform6)
-					|| abstPane.absListModel.contains(abstPane.xform7)) {
+			if ((abstPane.absListModel.contains(abstPane.xform5)
+					|| abstPane.absListModel.contains(abstPane.xform6) || abstPane.absListModel
+					.contains(abstPane.xform7))
+					&& abstPane.isAbstract()) {
 				change = checkTrans5(change);
 			}
 			// Transform 5b
-			if (abstPane.absListModel.contains(abstPane.xform5)) {
+			if (abstPane.absListModel.contains(abstPane.xform5) && abstPane.isAbstract()) {
 				change = checkTrans5b(change);
 			}
 			// Transform 3 - Remove a Transition with a Single Place in the
 			// Postset
-			if (abstPane.absListModel.contains(abstPane.xform3)) {
+			if (abstPane.absListModel.contains(abstPane.xform3) && abstPane.isAbstract()) {
 				change = checkTrans3(change);
 			}
 			// Transform 4 - Remove a Transition with a Single Place in the
 			// Preset
-			if (abstPane.absListModel.contains(abstPane.xform4)) {
+			if (abstPane.absListModel.contains(abstPane.xform4) && abstPane.isAbstract()) {
 				change = checkTrans4(change);
 			}
-			if (abstPane.absListModel.contains(abstPane.xform14)) {
+			if (abstPane.absListModel.contains(abstPane.xform14) && abstPane.isSimplify()) {
 				if (removeDeadPlaces()) {
 					change = true;
 				}
 			}
-			if (abstPane.absListModel.contains(abstPane.xform8)) {
+			if (abstPane.absListModel.contains(abstPane.xform8) && abstPane.isSimplify()) {
 				change = checkTrans8(change);
 			}
-			if (abstPane.absListModel.contains(abstPane.xform9)) {
+			if (abstPane.absListModel.contains(abstPane.xform9) && abstPane.isAbstract()) {
 				// change = checkTrans9(change);
 			}
-			if (removeDeadTransitions()) {
-				change = true;
+			if (abstPane.absListModel.contains(abstPane.xform15) && abstPane.isSimplify()) {
+				if (removeDeadTransitions()) {
+					change = true;
+				}
 			}
 		}
 	}
@@ -465,7 +469,8 @@ public class Abstraction extends LHPNFile {
 			}
 			if (expr.containsCont())
 				continue;
-			if (abstPane.absListModel.contains(abstPane.xform16) && expr.evaluateExp(initVars) == 1) {
+			if (abstPane.absListModel.contains(abstPane.xform16) && expr.evaluateExp(initVars) == 1
+					&& abstPane.isSimplify()) {
 				boolean enabled = true;
 				for (String trans : booleanAssignments.keySet()) {
 					HashMap<String, String> assignments = new HashMap<String, String>();
@@ -485,7 +490,8 @@ public class Abstraction extends LHPNFile {
 					removeEnab.add(t);
 				}
 			}
-			else if (abstPane.absListModel.contains(abstPane.xform15) && expr.evaluateExp(initVars) == 0) {
+			else if (abstPane.absListModel.contains(abstPane.xform15)
+					&& expr.evaluateExp(initVars) == 0 && abstPane.isSimplify()) {
 				boolean disabled = true;
 				for (String trans : booleanAssignments.keySet()) {
 					HashMap<String, String> assignments = new HashMap<String, String>();
@@ -1029,7 +1035,8 @@ public class Abstraction extends LHPNFile {
 						String[] preset2 = controlFlow.get(t).getProperty("preset").split(" ");
 						if (preset1.length == 1 && preset2.length == 1) {
 							if (comparePostset(controlPlaces.get(preset1[0]), controlPlaces
-									.get(preset2[0]), s, t) && !isFail(t)) {
+									.get(preset2[0]), s, t)
+									&& !isFail(t)) {
 								String[] array = { s, t };
 								boolean[] same = { samePreset, samePostset };
 								combine.add(array);
@@ -2257,7 +2264,7 @@ public class Abstraction extends LHPNFile {
 			intAssignmentTrees.put(s, map);
 		}
 	}
-	
+
 	public void addFails(ArrayList<String> fails) {
 		for (String s : fails) {
 			fail.add(s);
@@ -2496,7 +2503,8 @@ public class Abstraction extends LHPNFile {
 					// if (expr[1] == null) {
 					e1[0].replace(var, expr[0]);
 					if (e1.length > 1 && expr.length > 1) {
-						if (e1[1] != null && expr[1] != null && !e1[1].toString().equals("") && !expr[1].toString().equals("")) {
+						if (e1[1] != null && expr[1] != null && !e1[1].toString().equals("")
+								&& !expr[1].toString().equals("")) {
 							e1[1].replace(var, expr[0]);
 							if (assign.equals(booleanAssignments)) {
 								addBoolAssign(trans, v, "[" + expr[0].toString() + ","

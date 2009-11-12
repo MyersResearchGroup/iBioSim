@@ -141,8 +141,6 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		none = new JRadioButton("None");
 		simplify = new JRadioButton("Simplification");
 		abstractLhpn = new JRadioButton("Abstraction");
-		simplify.addActionListener(this);
-		abstractLhpn.addActionListener(this);
 		// Timing Methods
 		if (atacs) {
 			untimed = new JRadioButton("Untimed");
@@ -712,12 +710,6 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		else if (e.getSource() == viewLog) {
 			viewLog();
 		}
-		else if (e.getSource() == simplify) {
-			abstPane.disableAbstract();
-		}
-		else if (e.getSource() == abstractLhpn) {
-			abstPane.enableAbstract();
-		}
 		else if (e.getSource() == addComponent) {
 			String[] vhdlFiles = new File(root).list();
 			ArrayList<String> tempFiles = new ArrayList<String>();
@@ -763,12 +755,6 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				componentList.removeItem(selected);
 				new File(directory + separator + selected).delete();
 			}
-		}
-		else if (e.getSource() == simplify) {
-			abstPane.disableAbstract();
-		}
-		else if (e.getSource() == abstractLhpn) {
-			abstPane.enableAbstract();
 		}
 	}
 
