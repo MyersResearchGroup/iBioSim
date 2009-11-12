@@ -41,29 +41,29 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 	// xform8, xform9, xform10, xform11,
 	// xform12, xform13, xform14, xform15, xform16;
 
-	public DefaultListModel listModel, absListModel, allXformListModel;
+	public DefaultListModel listModel, absListModel;
 
 	private JTextField field;
 
 	private String directory, separator, root, absFile, oldBdd;
 
-	public String xform0 = "Merge Parallel Places", xform1 = "Remove Place in Self-Loop",
-			xform3 = "Remove Transition with Single Place in Preset",
-			xform4 = "Remove Transition with Single Place in Postset",
-			xform5 = "Merge Transitions with Same Preset and Postset",
-			xform6 = "Merge Transitions with Same Preset",
-			xform7 = "Merge Transitions with Same Postset",
-			xform8 = "Propagate Assignments to Local Variables",
-			xform9 = "Remove Assignments Written before Read",
-			xform12 = "Abstract Assignments to the Same Variable", xform13 = "Remove Variables",
-			xform14 = "Remove Dead Places", xform15 = "Remove Dead Transitions",
-			xform16 = "Simplify Enabling Conditions";
+	public String xform0 = "Merge Parallel Places - simplification",
+			xform1 = "Remove Place in Self-Loop - simplification",
+			xform3 = "Remove Transition with Single Place in Preset - abstraction",
+			xform4 = "Remove Transition with Single Place in Postset - abstraction",
+			xform5 = "Merge Transitions with Same Preset and Postset - abstraction",
+			xform6 = "Merge Transitions with Same Preset - abstraction",
+			xform7 = "Merge Transitions with Same Postset - abstraction",
+			xform8 = "Propagate Assignments to Local Variables - simplification",
+			xform9 = "Remove Assignments Written before Read - abstraction",
+			xform12 = "Abstract Assignments to the Same Variable - abstraction",
+			xform13 = "Remove Variables - abstraction",
+			xform14 = "Remove Dead Places - simplification",
+			xform15 = "Remove Dead Transitions - simplification",
+			xform16 = "Simplify Enabling Conditions - simplification";
 
 	private String[] transforms = { xform0, xform1, xform3, xform4, xform5, xform6, xform7, xform8,
-			xform9, xform12, xform13, xform14, xform15, xform16 }, 
-			simplifyXforms = { xform0, xform1 }, 
-			abstractXforms = { xform3, xform4, xform5, xform6, xform7, xform8, xform9,
-			xform12, xform13, xform14, xform15, xform16 };
+			xform9, xform12, xform13, xform14, xform15, xform16 };
 
 	private boolean change;
 
@@ -72,6 +72,8 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 	private Log log;
 
 	private BioSim biosim;
+	
+	private Verification verification;
 
 	/**
 	 * This is the constructor for the Verification class. It initializes all
@@ -88,6 +90,7 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 		}
 		this.directory = directory;
 		this.log = log;
+		this.verification = verification;
 		this.setLayout(new BorderLayout());
 		absFile = verification.getVerName() + ".abs";
 		verification.copyFile();
@@ -132,18 +135,7 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 
 		// Creates the abstractions JList
 		absListModel = new DefaultListModel();
-		allXformListModel = new DefaultListModel();
-		if (verification.simplify.isSelected()) {
-			for (String s : simplifyXforms) {
-				allXformListModel.addElement(s);
-			}
-		}
-		else if (verification.abstractLhpn.isSelected()) {
-			for (String s : transforms) {
-				allXformListModel.addElement(s);
-			}
-		}
-		selectXforms = new JList(allXformListModel);
+		selectXforms = new JList(transforms);
 		xforms = new JList(absListModel);
 		JLabel absLabel = new JLabel("Available Transforms:");
 		JLabel abstractLabel = new JLabel("Selected Transforms:");
@@ -397,6 +389,17 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 			getFilename[0] = field.getText().trim();
 		}
 	}
+	
+	public boolean isSimplify() {
+		if (verification.simplify.isSelected() || verification.abstractLhpn.isSelected()) {
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean isAbstract() {
+		return verification.abstractLhpn.isSelected();
+	}
 
 	public void viewLog() {
 		try {
@@ -438,21 +441,6 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 			return true;
 		}
 		return change;
-	}
-
-	public void disableAbstract() {
-		for (String s : abstractXforms) {
-			if (absListModel.contains(s)) {
-				absListModel.removeElement(s);
-			}
-			allXformListModel.removeElement(s);
-		}
-	}
-	
-	public void enableAbstract() {
-		for (String s : abstractXforms) {
-			allXformListModel.addElement(s);
-		}
 	}
 
 }
