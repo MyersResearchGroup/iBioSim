@@ -2202,6 +2202,7 @@ public class LHPNFile {
 		abstraction.addIntegerAssignments(intAssignments);
 		abstraction.addIntegerAssignmentTrees(intAssignmentTrees);
 		abstraction.addProperty(property);
+		abstraction.addFails(fail);
 		return abstraction;
 	}
 
