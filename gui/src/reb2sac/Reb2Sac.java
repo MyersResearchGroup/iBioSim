@@ -2412,8 +2412,9 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		}
 		int steps;
 		if (intervalLabel.getSelectedItem().equals("Print Interval")) {
-			if (simulators.getSelectedItem().equals("mpde") || simulators.getSelectedItem().equals("mp")) {
-				if(printInterval % timeStep != 0) {
+			if (simulators.getSelectedItem().equals("mpde")
+					|| simulators.getSelectedItem().equals("mp")) {
+				if (printInterval % timeStep != 0) {
 					JOptionPane.showMessageDialog(biomodelsim.frame(),
 							"Print Interval Must Be A Multiple Of Time Step.", "Error",
 							JOptionPane.ERROR_MESSAGE);
@@ -2426,7 +2427,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			}
 		}
 		else {
-			if (simulators.getSelectedItem().equals("mpde") || simulators.getSelectedItem().equals("mp")) {
+			if (simulators.getSelectedItem().equals("mpde")
+					|| simulators.getSelectedItem().equals("mp")) {
 				steps = (int) (printInterval);
 			}
 			else {
@@ -2547,7 +2549,9 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		if ((monteCarlo.isSelected() || ODE.isSelected()) && overwrite.isSelected()) {
 			File[] files = new File(root + separator + outDir).listFiles();
 			for (File f : files) {
-				if (f.getName().contains("run-")) {
+				if (f.getName().contains("run-") || f.getName().contains("mean.")
+						|| f.getName().contains("standard_deviation.")
+						|| f.getName().contains("variance.")) {
 					f.delete();
 				}
 			}
