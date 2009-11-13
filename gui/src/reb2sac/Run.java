@@ -87,9 +87,9 @@ public class Run implements ActionListener {
 		abs.setProperty("simulation.printer", printer_id);
 		abs.setProperty("simulation.printer.tracking.quantity", printer_track_quantity);
 		if (selectedButtons.equals("none_monteCarlo")) {
-			abs.setProperty("reb2sac.abstraction.method.3.1",
-					"reversible-to-irreversible-transformer");
-			abs.setProperty("reb2sac.abstraction.method.3.2", "kinetic-law-constants-simplifier");
+			abs.setProperty("reb2sac.abstraction.method.3.1","distribute-transformer");
+			abs.setProperty("reb2sac.abstraction.method.3.2","reversible-to-irreversible-transformer");
+			abs.setProperty("reb2sac.abstraction.method.3.3", "kinetic-law-constants-simplifier");
 		}
 		else if (selectedButtons.contains("none")) {
 			abs.setProperty("reb2sac.abstraction.method.3.1", "kinetic-law-constants-simplifier");
