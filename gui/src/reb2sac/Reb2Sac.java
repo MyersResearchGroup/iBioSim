@@ -2562,24 +2562,28 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					monteCarlo, sim, printer_id, printer_track_quantity,
 					root + separator + simName, nary, 1, intSpecies, log, usingSSA, root
 							+ separator + outDir + separator + "user-defined.dat", biomodelsim,
-					simTab, root, progress, steps, simName + " " + direct, gcmEditor);
+					simTab, root, progress, steps, simName + " " + direct, gcmEditor, direct);
 		}
 		else {
 			exit = runProgram.execute(simProp, sbml, dot, xhtml, lhpn, biomodelsim.frame(), ODE,
 					monteCarlo, sim, printer_id, printer_track_quantity,
 					root + separator + simName, nary, 1, intSpecies, log, usingSSA, root
 							+ separator + outDir + separator + "user-defined.dat", biomodelsim,
-					simTab, root, progress, steps, simName, gcmEditor);
+					simTab, root, progress, steps, simName, gcmEditor, null);
 		}
 		if (nary.isSelected() && !sim.equals("markov-chain-analysis") && !lhpn.isSelected()
 				&& exit == 0) {
+			String d = null;
+			if (!direct.equals(".")) {
+				d = direct;
+			}
 			new Nary_Run(this, amountTerm, ge, gt, eq, lt, le, simulators,
 					simProp.split(separator), simProp, sbml, dot, xhtml, lhpn, nary, ODE,
 					monteCarlo, timeLimit, ((String) (intervalLabel.getSelectedItem())),
 					printInterval, timeStep, root + separator + simName, rndSeed, run, printer_id,
 					printer_track_quantity, termCond, intSpecies, rap1, rap2, qss, con, log,
 					usingSSA, root + separator + outDir + separator + "user-defined.dat",
-					biomodelsim, simTab, root);
+					biomodelsim, simTab, root, d);
 		}
 		running.setCursor(null);
 		running.dispose();

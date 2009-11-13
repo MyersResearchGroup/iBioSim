@@ -4,7 +4,10 @@ import java.io.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
+
 import javax.swing.*;
+
+import parser.*;
 
 import lhpn2sbml.parser.LHPNFile;
 
@@ -87,8 +90,9 @@ public class Run implements ActionListener {
 		abs.setProperty("simulation.printer", printer_id);
 		abs.setProperty("simulation.printer.tracking.quantity", printer_track_quantity);
 		if (selectedButtons.equals("none_monteCarlo")) {
-			abs.setProperty("reb2sac.abstraction.method.3.1","distribute-transformer");
-			abs.setProperty("reb2sac.abstraction.method.3.2","reversible-to-irreversible-transformer");
+			abs.setProperty("reb2sac.abstraction.method.3.1", "distribute-transformer");
+			abs.setProperty("reb2sac.abstraction.method.3.2",
+					"reversible-to-irreversible-transformer");
 			abs.setProperty("reb2sac.abstraction.method.3.3", "kinetic-law-constants-simplifier");
 		}
 		else if (selectedButtons.contains("none")) {
@@ -355,7 +359,8 @@ public class Run implements ActionListener {
 			String sim, String printer_id, String printer_track_quantity, String outDir,
 			JRadioButton nary, int naryRun, String[] intSpecies, Log log, JCheckBox usingSSA,
 			String ssaFile, BioSim biomodelsim, JTabbedPane simTab, String root,
-			JProgressBar progress, int steps, String simName, GCM2SBMLEditor gcmEditor) {
+			JProgressBar progress, int steps, String simName, GCM2SBMLEditor gcmEditor,
+			String direct) {
 		Runtime exec = Runtime.getRuntime();
 		int exitValue = 255;
 		while (outDir.split(separator)[outDir.split(separator).length - 1].equals(".")) {
@@ -752,6 +757,53 @@ public class Run implements ActionListener {
 						for (int i = 0; i < simTab.getComponentCount(); i++) {
 							if (simTab.getComponentAt(i).getName().equals("TSD Graph")) {
 								if (simTab.getComponentAt(i) instanceof Graph) {
+									boolean outputM = true;
+									boolean outputV = true;
+									boolean outputS = true;
+									String run = "run-1."
+											+ printer_id.substring(0, printer_id.length() - 8);
+									for (String f : work.list()) {
+										if (f.contains("mean")) {
+											outputM = false;
+										}
+										else if (f.contains("variance")) {
+											outputV = false;
+										}
+										else if (f.contains("standard_deviation")) {
+											outputS = false;
+										}
+										else if (f.contains("run-")) {
+											run = f;
+										}
+									}
+									if (outputM) {
+										ArrayList<ArrayList<Double>> mean = ((Graph) simTab
+												.getComponentAt(i)).readData(directory + separator
+												+ run, "average", direct, false);
+										Parser p = new TSDParser(directory + separator + run,
+												biomodelsim, false);
+										Parser p2 = new Parser(p.getSpecies(), mean, biomodelsim);
+										p2.outputTSD(directory + separator + "mean.tsd");
+									}
+									if (outputV) {
+										ArrayList<ArrayList<Double>> var = ((Graph) simTab
+												.getComponentAt(i)).readData(directory + separator
+												+ run, "variance", direct, false);
+										Parser p = new TSDParser(directory + separator + run,
+												biomodelsim, false);
+										Parser p2 = new Parser(p.getSpecies(), var, biomodelsim);
+										p2.outputTSD(directory + separator + "variance.tsd");
+									}
+									if (outputS) {
+										ArrayList<ArrayList<Double>> stddev = ((Graph) simTab
+												.getComponentAt(i)).readData(directory + separator
+												+ run, "deviation", direct, false);
+										Parser p = new TSDParser(directory + separator + run,
+												biomodelsim, false);
+										Parser p2 = new Parser(p.getSpecies(), stddev, biomodelsim);
+										p2.outputTSD(directory + separator
+												+ "standard_deviation.tsd");
+									}
 									((Graph) simTab.getComponentAt(i)).refresh();
 								}
 								else {
@@ -763,6 +815,53 @@ public class Run implements ActionListener {
 															+ " simulation results", printer_id,
 															outDir, "time", biomodelsim, null, log,
 															null, true, false));
+									boolean outputM = true;
+									boolean outputV = true;
+									boolean outputS = true;
+									String run = "run-1."
+											+ printer_id.substring(0, printer_id.length() - 8);
+									for (String f : work.list()) {
+										if (f.contains("mean")) {
+											outputM = false;
+										}
+										else if (f.contains("variance")) {
+											outputV = false;
+										}
+										else if (f.contains("standard_deviation")) {
+											outputS = false;
+										}
+										else if (f.contains("run-")) {
+											run = f;
+										}
+									}
+									if (outputM) {
+										ArrayList<ArrayList<Double>> mean = ((Graph) simTab
+												.getComponentAt(i)).readData(directory + separator
+												+ run, "average", direct, false);
+										Parser p = new TSDParser(directory + separator + run,
+												biomodelsim, false);
+										Parser p2 = new Parser(p.getSpecies(), mean, biomodelsim);
+										p2.outputTSD(directory + separator + "mean.tsd");
+									}
+									if (outputV) {
+										ArrayList<ArrayList<Double>> var = ((Graph) simTab
+												.getComponentAt(i)).readData(directory + separator
+												+ run, "variance", direct, false);
+										Parser p = new TSDParser(directory + separator + run,
+												biomodelsim, false);
+										Parser p2 = new Parser(p.getSpecies(), var, biomodelsim);
+										p2.outputTSD(directory + separator + "variance.tsd");
+									}
+									if (outputS) {
+										ArrayList<ArrayList<Double>> stddev = ((Graph) simTab
+												.getComponentAt(i)).readData(directory + separator
+												+ run, "deviation", direct, false);
+										Parser p = new TSDParser(directory + separator + run,
+												biomodelsim, false);
+										Parser p2 = new Parser(p.getSpecies(), stddev, biomodelsim);
+										p2.outputTSD(directory + separator
+												+ "standard_deviation.tsd");
+									}
 									simTab.getComponentAt(i).setName("TSD Graph");
 								}
 							}
@@ -829,6 +928,55 @@ public class Run implements ActionListener {
 							for (int i = 0; i < simTab.getComponentCount(); i++) {
 								if (simTab.getComponentAt(i).getName().equals("TSD Graph")) {
 									if (simTab.getComponentAt(i) instanceof Graph) {
+										boolean outputM = true;
+										boolean outputV = true;
+										boolean outputS = true;
+										String run = "run-1."
+												+ printer_id.substring(0, printer_id.length() - 8);
+										for (String f : work.list()) {
+											if (f.contains("mean")) {
+												outputM = false;
+											}
+											else if (f.contains("variance")) {
+												outputV = false;
+											}
+											else if (f.contains("standard_deviation")) {
+												outputS = false;
+											}
+											else if (f.contains("run-")) {
+												run = f;
+											}
+										}
+										if (outputM) {
+											ArrayList<ArrayList<Double>> mean = ((Graph) simTab
+													.getComponentAt(i)).readData(directory
+													+ separator + run, "average", direct, false);
+											Parser p = new TSDParser(directory + separator + run,
+													biomodelsim, false);
+											Parser p2 = new Parser(p.getSpecies(), mean,
+													biomodelsim);
+											p2.outputTSD(directory + separator + "mean.tsd");
+										}
+										if (outputV) {
+											ArrayList<ArrayList<Double>> var = ((Graph) simTab
+													.getComponentAt(i)).readData(directory
+													+ separator + run, "variance", direct, false);
+											Parser p = new TSDParser(directory + separator + run,
+													biomodelsim, false);
+											Parser p2 = new Parser(p.getSpecies(), var, biomodelsim);
+											p2.outputTSD(directory + separator + "variance.tsd");
+										}
+										if (outputS) {
+											ArrayList<ArrayList<Double>> stddev = ((Graph) simTab
+													.getComponentAt(i)).readData(directory
+													+ separator + run, "deviation", direct, false);
+											Parser p = new TSDParser(directory + separator + run,
+													biomodelsim, false);
+											Parser p2 = new Parser(p.getSpecies(), stddev,
+													biomodelsim);
+											p2.outputTSD(directory + separator
+													+ "standard_deviation.tsd");
+										}
 										((Graph) simTab.getComponentAt(i)).refresh();
 									}
 									else {
@@ -839,6 +987,55 @@ public class Run implements ActionListener {
 																+ " simulation results",
 														printer_id, outDir, "time", biomodelsim,
 														null, log, null, true, false));
+										boolean outputM = true;
+										boolean outputV = true;
+										boolean outputS = true;
+										String run = "run-1."
+												+ printer_id.substring(0, printer_id.length() - 8);
+										for (String f : work.list()) {
+											if (f.contains("mean")) {
+												outputM = false;
+											}
+											else if (f.contains("variance")) {
+												outputV = false;
+											}
+											else if (f.contains("standard_deviation")) {
+												outputS = false;
+											}
+											else if (f.contains("run-")) {
+												run = f;
+											}
+										}
+										if (outputM) {
+											ArrayList<ArrayList<Double>> mean = ((Graph) simTab
+													.getComponentAt(i)).readData(directory
+													+ separator + run, "average", direct, false);
+											Parser p = new TSDParser(directory + separator + run,
+													biomodelsim, false);
+											Parser p2 = new Parser(p.getSpecies(), mean,
+													biomodelsim);
+											p2.outputTSD(directory + separator + "mean.tsd");
+										}
+										if (outputV) {
+											ArrayList<ArrayList<Double>> var = ((Graph) simTab
+													.getComponentAt(i)).readData(directory
+													+ separator + run, "variance", direct, false);
+											Parser p = new TSDParser(directory + separator + run,
+													biomodelsim, false);
+											Parser p2 = new Parser(p.getSpecies(), var, biomodelsim);
+											p2.outputTSD(directory + separator + "variance.tsd");
+										}
+										if (outputS) {
+											ArrayList<ArrayList<Double>> stddev = ((Graph) simTab
+													.getComponentAt(i)).readData(directory
+													+ separator + run, "deviation", direct, false);
+											Parser p = new TSDParser(directory + separator + run,
+													biomodelsim, false);
+											Parser p2 = new Parser(p.getSpecies(), stddev,
+													biomodelsim);
+											p2.outputTSD(directory + separator
+													+ "standard_deviation.tsd");
+										}
 										simTab.getComponentAt(i).setName("TSD Graph");
 									}
 								}
@@ -868,6 +1065,55 @@ public class Run implements ActionListener {
 							for (int i = 0; i < simTab.getComponentCount(); i++) {
 								if (simTab.getComponentAt(i).getName().equals("TSD Graph")) {
 									if (simTab.getComponentAt(i) instanceof Graph) {
+										boolean outputM = true;
+										boolean outputV = true;
+										boolean outputS = true;
+										String run = "run-1."
+												+ printer_id.substring(0, printer_id.length() - 8);
+										for (String f : work.list()) {
+											if (f.contains("mean")) {
+												outputM = false;
+											}
+											else if (f.contains("variance")) {
+												outputV = false;
+											}
+											else if (f.contains("standard_deviation")) {
+												outputS = false;
+											}
+											else if (f.contains("run-")) {
+												run = f;
+											}
+										}
+										if (outputM) {
+											ArrayList<ArrayList<Double>> mean = ((Graph) simTab
+													.getComponentAt(i)).readData(directory
+													+ separator + run, "average", direct, false);
+											Parser p = new TSDParser(directory + separator + run,
+													biomodelsim, false);
+											Parser p2 = new Parser(p.getSpecies(), mean,
+													biomodelsim);
+											p2.outputTSD(directory + separator + "mean.tsd");
+										}
+										if (outputV) {
+											ArrayList<ArrayList<Double>> var = ((Graph) simTab
+													.getComponentAt(i)).readData(directory
+													+ separator + run, "variance", direct, false);
+											Parser p = new TSDParser(directory + separator + run,
+													biomodelsim, false);
+											Parser p2 = new Parser(p.getSpecies(), var, biomodelsim);
+											p2.outputTSD(directory + separator + "variance.tsd");
+										}
+										if (outputS) {
+											ArrayList<ArrayList<Double>> stddev = ((Graph) simTab
+													.getComponentAt(i)).readData(directory
+													+ separator + run, "deviation", direct, false);
+											Parser p = new TSDParser(directory + separator + run,
+													biomodelsim, false);
+											Parser p2 = new Parser(p.getSpecies(), stddev,
+													biomodelsim);
+											p2.outputTSD(directory + separator
+													+ "standard_deviation.tsd");
+										}
 										((Graph) simTab.getComponentAt(i)).refresh();
 									}
 									else {
@@ -878,6 +1124,55 @@ public class Run implements ActionListener {
 																+ " simulation results",
 														printer_id, outDir, "time", biomodelsim,
 														null, log, null, true, false));
+										boolean outputM = true;
+										boolean outputV = true;
+										boolean outputS = true;
+										String run = "run-1."
+												+ printer_id.substring(0, printer_id.length() - 8);
+										for (String f : work.list()) {
+											if (f.contains("mean")) {
+												outputM = false;
+											}
+											else if (f.contains("variance")) {
+												outputV = false;
+											}
+											else if (f.contains("standard_deviation")) {
+												outputS = false;
+											}
+											else if (f.contains("run-")) {
+												run = f;
+											}
+										}
+										if (outputM) {
+											ArrayList<ArrayList<Double>> mean = ((Graph) simTab
+													.getComponentAt(i)).readData(directory
+													+ separator + run, "average", direct, false);
+											Parser p = new TSDParser(directory + separator + run,
+													biomodelsim, false);
+											Parser p2 = new Parser(p.getSpecies(), mean,
+													biomodelsim);
+											p2.outputTSD(directory + separator + "mean.tsd");
+										}
+										if (outputV) {
+											ArrayList<ArrayList<Double>> var = ((Graph) simTab
+													.getComponentAt(i)).readData(directory
+													+ separator + run, "variance", direct, false);
+											Parser p = new TSDParser(directory + separator + run,
+													biomodelsim, false);
+											Parser p2 = new Parser(p.getSpecies(), var, biomodelsim);
+											p2.outputTSD(directory + separator + "variance.tsd");
+										}
+										if (outputS) {
+											ArrayList<ArrayList<Double>> stddev = ((Graph) simTab
+													.getComponentAt(i)).readData(directory
+													+ separator + run, "deviation", direct, false);
+											Parser p = new TSDParser(directory + separator + run,
+													biomodelsim, false);
+											Parser p2 = new Parser(p.getSpecies(), stddev,
+													biomodelsim);
+											p2.outputTSD(directory + separator
+													+ "standard_deviation.tsd");
+										}
 										simTab.getComponentAt(i).setName("TSD Graph");
 									}
 								}
