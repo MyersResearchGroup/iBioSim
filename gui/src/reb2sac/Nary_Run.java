@@ -109,6 +109,8 @@ public class Nary_Run implements ActionListener, Runnable {
 
 	private String useInterval;
 
+	private String direct;
+
 	/**
 	 * This constructs a new Nary_Run object. This object is a GUI that contains
 	 * input fields for the nary abstraction. This constructor initializes the
@@ -122,7 +124,7 @@ public class Nary_Run implements ActionListener, Runnable {
 			double timeStep, String outDir, long rndSeed, int run, String printer_id,
 			String printer_track_quantity, String[] termCond, String[] intSpecies, double rap1,
 			double rap2, double qss, int con, Log log, JCheckBox usingSSA, String ssaFile,
-			BioSim biomodelsim, JTabbedPane simTab, String root) {
+			BioSim biomodelsim, JTabbedPane simTab, String root, String direct) {
 		if (File.separator.equals("\\")) {
 			separator = "\\\\";
 		}
@@ -168,6 +170,7 @@ public class Nary_Run implements ActionListener, Runnable {
 		this.biomodelsim = biomodelsim;
 		this.simTab = simTab;
 		this.useInterval = useInterval;
+		this.direct = direct;
 
 		// creates the nary frame and adds a window listener
 		naryFrame = new JFrame("Nary Properties");
@@ -569,7 +572,7 @@ public class Nary_Run implements ActionListener, Runnable {
 		}
 		runProgram.execute(filename, sbml, dot, xhtml, lhpn, naryFrame, ODE, monteCarlo, sim,
 				printer_id, printer_track_quantity, outDir, nary, 2, intSpecies, log, usingSSA,
-				ssaFile, biomodelsim, simTab, root, progress, run, "", null);
+				ssaFile, biomodelsim, simTab, root, progress, run, "", null, direct);
 		running.setCursor(null);
 		running.dispose();
 		naryCancel.removeActionListener(runProgram);

@@ -388,10 +388,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	}
 
 	/**
-	 * This private helper method parses the output file of ODE, monte carlo,
+	 * This public helper method parses the output file of ODE, monte carlo,
 	 * and markov abstractions.
 	 */
-	private ArrayList<ArrayList<Double>> readData(String file, String label, String directory,
+	public ArrayList<ArrayList<Double>> readData(String file, String label, String directory,
 			boolean warning) {
 		warn = warning;
 		String[] s = file.split(separator);
@@ -406,9 +406,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		}
 		catch (Exception e) {
 		}
-		if ((label.contains("average") && file.contains("mean.tsd"))
-				|| (label.contains("variance") && file.contains("variance.tsd"))
-				|| (label.contains("deviation") && file.contains("standard_deviation.tsd"))) {
+		if ((label.contains("average") && file.contains("mean"))
+				|| (label.contains("variance") && file.contains("variance"))
+				|| (label.contains("deviation") && file.contains("standard_deviation"))) {
 			biomodelsim.frame().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 			TSDParser p = new TSDParser(file, biomodelsim, warning);
 			biomodelsim.frame().setCursor(null);
