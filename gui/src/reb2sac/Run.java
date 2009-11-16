@@ -772,9 +772,6 @@ public class Run implements ActionListener {
 										else if (f.contains("standard_deviation")) {
 											outputS = false;
 										}
-										else if (f.contains("run-")) {
-											run = f;
-										}
 									}
 									if (outputM) {
 										ArrayList<ArrayList<Double>> mean = ((Graph) simTab
@@ -829,9 +826,6 @@ public class Run implements ActionListener {
 										}
 										else if (f.contains("standard_deviation")) {
 											outputS = false;
-										}
-										else if (f.contains("run-")) {
-											run = f;
 										}
 									}
 									if (outputM) {
@@ -943,9 +937,6 @@ public class Run implements ActionListener {
 											else if (f.contains("standard_deviation")) {
 												outputS = false;
 											}
-											else if (f.contains("run-")) {
-												run = f;
-											}
 										}
 										if (outputM) {
 											ArrayList<ArrayList<Double>> mean = ((Graph) simTab
@@ -1001,9 +992,6 @@ public class Run implements ActionListener {
 											}
 											else if (f.contains("standard_deviation")) {
 												outputS = false;
-											}
-											else if (f.contains("run-")) {
-												run = f;
 											}
 										}
 										if (outputM) {
@@ -1080,9 +1068,6 @@ public class Run implements ActionListener {
 											else if (f.contains("standard_deviation")) {
 												outputS = false;
 											}
-											else if (f.contains("run-")) {
-												run = f;
-											}
 										}
 										if (outputM) {
 											ArrayList<ArrayList<Double>> mean = ((Graph) simTab
@@ -1138,9 +1123,6 @@ public class Run implements ActionListener {
 											}
 											else if (f.contains("standard_deviation")) {
 												outputS = false;
-											}
-											else if (f.contains("run-")) {
-												run = f;
 											}
 										}
 										if (outputM) {
