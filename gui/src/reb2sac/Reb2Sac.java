@@ -2102,8 +2102,15 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				return;
 			}
 		}
-		if (step.getText().trim().equals("inf")) {
+		String sim = (String) simulators.getSelectedItem();
+		if (step.getText().trim().equals("inf") && !sim.equals("euler")) {
 			timeStep = Double.MAX_VALUE;
+		}
+		else if (step.getText().trim().equals("inf") && sim.equals("euler")) {
+			JOptionPane.showMessageDialog(biomodelsim.frame(),
+					"Cannot Select An Infinite Time Step With Euler Simulation.", "Error",
+					JOptionPane.ERROR_MESSAGE);
+			return;
 		}
 		else {
 			try {
@@ -2191,7 +2198,6 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		if (concentrations.isSelected()) {
 			printer_track_quantity = "concentration";
 		}
-		String sim = (String) simulators.getSelectedItem();
 		int[] index = terminations.getSelectedIndices();
 		String[] termCond = Buttons.getList(termConditions, terminations);
 		terminations.setSelectedIndices(index);
@@ -2419,6 +2425,13 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 							"Print Interval Must Be A Multiple Of Time Step.", "Error",
 							JOptionPane.ERROR_MESSAGE);
 					return;
+				}
+				if (printInterval % timeLimit != 0) {
+					JOptionPane.showMessageDialog(biomodelsim.frame(),
+							"Print Interval Must Be A Multiple Of Time Limit.", "Error",
+							JOptionPane.ERROR_MESSAGE);
+					return;
+
 				}
 				steps = (int) (timeLimit / printInterval);
 			}
