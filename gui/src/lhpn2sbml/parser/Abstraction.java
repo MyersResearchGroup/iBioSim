@@ -2476,7 +2476,12 @@ public class Abstraction extends LHPNFile {
 			enablings.put(trans, enablingTrees.get(trans).toString());
 			flag = true;
 		}
-		if (!intAssignmentTrees.get(trans).containsKey(var)) {
+		if (intAssignmentTrees.containsKey(var)) {
+			if (!intAssignmentTrees.get(trans).containsKey(var)) {
+				addIntAssign(trans, var, expr[0].toString());
+			}
+		}
+		else {
 			addIntAssign(trans, var, expr[0].toString());
 		}
 		// }
