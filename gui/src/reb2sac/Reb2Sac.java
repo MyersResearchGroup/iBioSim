@@ -2525,8 +2525,17 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					for (String s : searchForRunFiles) {
 						if (s.length() > 3 && s.substring(0, 4).equals("run-")
 								&& new File(root + separator + outDir + separator + s).isFile()) {
-							start = Math.max(Integer.parseInt(s.substring(4, s.length() - 4)),
-									start);
+							String getNumber = s.substring(4, s.length());
+							String number = "";
+							for (int i = 0; i < getNumber.length(); i++) {
+								if (Character.isDigit(getNumber.charAt(i))) {
+									number += getNumber.charAt(i);
+								}
+								else {
+									break;
+								}
+							}
+							start = Math.max(Integer.parseInt(number), start);
 						}
 					}
 					getProps.setProperty("monte.carlo.simulation.start.index", (start + 1) + "");
@@ -2566,11 +2575,10 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					"Unable to add properties to property file.", "Error",
 					JOptionPane.ERROR_MESSAGE);
 		}
-		if ((monteCarlo.isSelected() || ODE.isSelected()) && overwrite.isSelected()) {
+		if (monteCarlo.isSelected() || ODE.isSelected()) {
 			File[] files = new File(root + separator + outDir).listFiles();
 			for (File f : files) {
-				if (f.getName().contains("run-") || f.getName().contains("mean.")
-						|| f.getName().contains("standard_deviation.")
+				if (f.getName().contains("mean.") || f.getName().contains("standard_deviation.")
 						|| f.getName().contains("variance.")) {
 					f.delete();
 				}

@@ -761,6 +761,7 @@ public class Run implements ActionListener {
 									boolean outputV = true;
 									boolean outputS = true;
 									boolean warning = false;
+									int num = -1;
 									String run = "run-1."
 											+ printer_id.substring(0, printer_id.length() - 8);
 									for (String f : work.list()) {
@@ -772,6 +773,29 @@ public class Run implements ActionListener {
 										}
 										else if (f.contains("standard_deviation")) {
 											outputS = false;
+										}
+										else if (f.contains("run-")) {
+											String getNumber = f.substring(4, f.length());
+											String number = "";
+											for (int j = 0; j < getNumber.length(); j++) {
+												if (Character.isDigit(getNumber.charAt(j))) {
+													number += getNumber.charAt(j);
+												}
+												else {
+													break;
+												}
+											}
+											if (num == -1) {
+												num = Integer.parseInt(number);
+											}
+											else if (Integer.parseInt(number) < num) {
+												num = Integer.parseInt(number);
+											}
+											run = "run-"
+													+ num
+													+ "."
+													+ printer_id.substring(0,
+															printer_id.length() - 8);
 										}
 									}
 									if (outputM) {
@@ -823,6 +847,7 @@ public class Run implements ActionListener {
 									boolean outputV = true;
 									boolean outputS = true;
 									boolean warning = false;
+									int num = -1;
 									String run = "run-1."
 											+ printer_id.substring(0, printer_id.length() - 8);
 									for (String f : work.list()) {
@@ -834,6 +859,29 @@ public class Run implements ActionListener {
 										}
 										else if (f.contains("standard_deviation")) {
 											outputS = false;
+										}
+										else if (f.contains("run-")) {
+											String getNumber = f.substring(4, f.length());
+											String number = "";
+											for (int j = 0; j < getNumber.length(); j++) {
+												if (Character.isDigit(getNumber.charAt(j))) {
+													number += getNumber.charAt(j);
+												}
+												else {
+													break;
+												}
+											}
+											if (num == -1) {
+												num = Integer.parseInt(number);
+											}
+											else if (Integer.parseInt(number) < num) {
+												num = Integer.parseInt(number);
+											}
+											run = "run-"
+													+ num
+													+ "."
+													+ printer_id.substring(0,
+															printer_id.length() - 8);
 										}
 									}
 									if (outputM) {
@@ -940,6 +988,7 @@ public class Run implements ActionListener {
 										boolean outputV = true;
 										boolean outputS = true;
 										boolean warning = false;
+										int num = -1;
 										String run = "run-1."
 												+ printer_id.substring(0, printer_id.length() - 8);
 										for (String f : work.list()) {
@@ -951,6 +1000,29 @@ public class Run implements ActionListener {
 											}
 											else if (f.contains("standard_deviation")) {
 												outputS = false;
+											}
+											else if (f.contains("run-")) {
+												String getNumber = f.substring(4, f.length());
+												String number = "";
+												for (int j = 0; j < getNumber.length(); j++) {
+													if (Character.isDigit(getNumber.charAt(j))) {
+														number += getNumber.charAt(j);
+													}
+													else {
+														break;
+													}
+												}
+												if (num == -1) {
+													num = Integer.parseInt(number);
+												}
+												else if (Integer.parseInt(number) < num) {
+													num = Integer.parseInt(number);
+												}
+												run = "run-"
+														+ num
+														+ "."
+														+ printer_id.substring(0, printer_id
+																.length() - 8);
 											}
 										}
 										if (outputM) {
@@ -1007,6 +1079,7 @@ public class Run implements ActionListener {
 										boolean outputV = true;
 										boolean outputS = true;
 										boolean warning = false;
+										int num = -1;
 										String run = "run-1."
 												+ printer_id.substring(0, printer_id.length() - 8);
 										for (String f : work.list()) {
@@ -1018,6 +1091,29 @@ public class Run implements ActionListener {
 											}
 											else if (f.contains("standard_deviation")) {
 												outputS = false;
+											}
+											else if (f.contains("run-")) {
+												String getNumber = f.substring(4, f.length());
+												String number = "";
+												for (int j = 0; j < getNumber.length(); j++) {
+													if (Character.isDigit(getNumber.charAt(j))) {
+														number += getNumber.charAt(j);
+													}
+													else {
+														break;
+													}
+												}
+												if (num == -1) {
+													num = Integer.parseInt(number);
+												}
+												else if (Integer.parseInt(number) < num) {
+													num = Integer.parseInt(number);
+												}
+												run = "run-"
+														+ num
+														+ "."
+														+ printer_id.substring(0, printer_id
+																.length() - 8);
 											}
 										}
 										if (outputM) {
@@ -1093,6 +1189,7 @@ public class Run implements ActionListener {
 										boolean outputV = true;
 										boolean outputS = true;
 										boolean warning = false;
+										int num = -1;
 										String run = "run-1."
 												+ printer_id.substring(0, printer_id.length() - 8);
 										for (String f : work.list()) {
@@ -1104,6 +1201,29 @@ public class Run implements ActionListener {
 											}
 											else if (f.contains("standard_deviation")) {
 												outputS = false;
+											}
+											else if (f.contains("run-")) {
+												String getNumber = f.substring(4, f.length());
+												String number = "";
+												for (int j = 0; j < getNumber.length(); j++) {
+													if (Character.isDigit(getNumber.charAt(j))) {
+														number += getNumber.charAt(j);
+													}
+													else {
+														break;
+													}
+												}
+												if (num == -1) {
+													num = Integer.parseInt(number);
+												}
+												else if (Integer.parseInt(number) < num) {
+													num = Integer.parseInt(number);
+												}
+												run = "run-"
+														+ num
+														+ "."
+														+ printer_id.substring(0, printer_id
+																.length() - 8);
 											}
 										}
 										if (outputM) {
@@ -1160,6 +1280,7 @@ public class Run implements ActionListener {
 										boolean outputV = true;
 										boolean outputS = true;
 										boolean warning = false;
+										int num = -1;
 										String run = "run-1."
 												+ printer_id.substring(0, printer_id.length() - 8);
 										for (String f : work.list()) {
@@ -1171,6 +1292,29 @@ public class Run implements ActionListener {
 											}
 											else if (f.contains("standard_deviation")) {
 												outputS = false;
+											}
+											else if (f.contains("run-")) {
+												String getNumber = f.substring(4, f.length());
+												String number = "";
+												for (int j = 0; j < getNumber.length(); j++) {
+													if (Character.isDigit(getNumber.charAt(j))) {
+														number += getNumber.charAt(j);
+													}
+													else {
+														break;
+													}
+												}
+												if (num == -1) {
+													num = Integer.parseInt(number);
+												}
+												else if (Integer.parseInt(number) < num) {
+													num = Integer.parseInt(number);
+												}
+												run = "run-"
+														+ num
+														+ "."
+														+ printer_id.substring(0, printer_id
+																.length() - 8);
 											}
 										}
 										if (outputM) {
