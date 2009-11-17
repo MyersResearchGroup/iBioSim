@@ -2426,7 +2426,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 							JOptionPane.ERROR_MESSAGE);
 					return;
 				}
-				if (printInterval % timeLimit != 0) {
+				if (timeLimit % printInterval != 0) {
 					JOptionPane.showMessageDialog(biomodelsim.frame(),
 							"Print Interval Must Be A Multiple Of Time Limit.", "Error",
 							JOptionPane.ERROR_MESSAGE);
@@ -2443,6 +2443,13 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			if (simulators.getSelectedItem().equals("mpde")
 					|| simulators.getSelectedItem().equals("mp")) {
 				steps = (int) (printInterval);
+				double interval = timeLimit / steps;
+				if (interval % timeStep != 0) {
+					JOptionPane.showMessageDialog(biomodelsim.frame(),
+							"Print Interval Must Be A Multiple Of Time Step.", "Error",
+							JOptionPane.ERROR_MESSAGE);
+					return;
+				}
 			}
 			else {
 				steps = (int) (printInterval * run);
