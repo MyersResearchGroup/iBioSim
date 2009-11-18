@@ -66,6 +66,14 @@ public class Abstraction extends LHPNFile {
 			if (abstPane.absListModel.contains(abstPane.xform1) && abstPane.isSimplify()) {
 				change = checkTrans1(change);
 			}
+			// Transform 10 - Simplify Expressions
+			if (abstPane.absListModel.contains(abstPane.xform10) && abstPane.isSimplify()) {
+				simplifyExpr();
+			}
+			// Transform 11 - Remove Unused Variables
+			if (abstPane.absListModel.contains(abstPane.xform11) && abstPane.isSimplify()) {
+				change = removeVars(change);
+			}
 			// Transforms 5a, 6, 7 - Combine Transitions with the Same Preset
 			// and/or Postset
 			if ((abstPane.absListModel.contains(abstPane.xform5)
@@ -1303,6 +1311,264 @@ public class Abstraction extends LHPNFile {
 		}
 		return change;
 	}
+	
+	private void simplifyExpr() {
+		for (String s : enablingTrees.keySet()) {
+			enablings.put(s, enablingTrees.get(s).toString());
+		}
+		for (String s : booleanAssignments.keySet()) {
+			Properties prop = booleanAssignments.get(s);
+			HashMap<String,ExprTree[]> expr = booleanAssignmentTrees.get(s);
+			for (Object o : prop.keySet()) {
+				String t = o.toString();
+				ExprTree[] e = expr.get(t);
+				if (expr.get(t)[1] != null) {
+					prop.setProperty(t, "[" + e[0].toString() + "," + e[1].toString() + "]");
+				}
+				else {
+					prop.setProperty(t, e[0].toString());
+				}
+			}
+			booleanAssignments.put(s, prop);
+		}
+		for (String s : contAssignments.keySet()) {
+			Properties prop = contAssignments.get(s);
+			HashMap<String,ExprTree[]> expr = contAssignmentTrees.get(s);
+			for (Object o : prop.keySet()) {
+				String t = o.toString();
+				ExprTree[] e = expr.get(t);
+				if (expr.get(t)[1] != null) {
+					prop.setProperty(t, "[" + e[0].toString() + "," + e[1].toString() + "]");
+				}
+				else {
+					prop.setProperty(t, e[0].toString());
+				}
+			}
+			contAssignments.put(s, prop);
+		}
+		for (String s : rateAssignments.keySet()) {
+			Properties prop = rateAssignments.get(s);
+			HashMap<String,ExprTree[]> expr = rateAssignmentTrees.get(s);
+			for (Object o : prop.keySet()) {
+				String t = o.toString();
+				ExprTree[] e = expr.get(t);
+				if (expr.get(t)[1] != null) {
+					prop.setProperty(t, "[" + e[0].toString() + "," + e[1].toString() + "]");
+				}
+				else {
+					prop.setProperty(t, e[0].toString());
+				}
+			}
+			rateAssignments.put(s, prop);
+		}
+		for (String s : intAssignments.keySet()) {
+			Properties prop = intAssignments.get(s);
+			HashMap<String,ExprTree[]> expr = intAssignmentTrees.get(s);
+			for (Object o : prop.keySet()) {
+				String t = o.toString();
+				ExprTree[] e = expr.get(t);
+				if (expr.get(t)[1] != null) {
+					prop.setProperty(t, "[" + e[0].toString() + "," + e[1].toString() + "]");
+				}
+				else {
+					prop.setProperty(t, e[0].toString());
+				}
+			}
+			intAssignments.put(s, prop);
+		}
+	}
+	
+	private boolean removeVars(boolean change) {
+		for (String var : variables.keySet()) {
+			boolean used = false;
+			for (ExprTree e : enablingTrees.values()) {
+				if (e.containsVar(var)) {
+					used = true;
+				}
+			}
+			for (HashMap<String, ExprTree[]> map : booleanAssignmentTrees.values()) {
+				for (ExprTree[] expr : map.values()) {
+					for (ExprTree e : expr) {
+						if (e.containsVar(var)) {
+							used = true;
+						}
+					}
+				}
+			}
+			for (HashMap<String, ExprTree[]> map : contAssignmentTrees.values()) {
+				for (ExprTree[] expr : map.values()) {
+					for (ExprTree e : expr) {
+						if (e.containsVar(var)) {
+							used = true;
+						}
+					}
+				}
+			}
+			for (HashMap<String, ExprTree[]> map : intAssignmentTrees.values()) {
+				for (ExprTree[] expr : map.values()) {
+					for (ExprTree e : expr) {
+						if (e.containsVar(var)) {
+							used = true;
+						}
+					}
+				}
+			}
+			for (HashMap<String, ExprTree[]> map : rateAssignmentTrees.values()) {
+				for (ExprTree[] expr : map.values()) {
+					for (ExprTree e : expr) {
+						if (e.containsVar(var)) {
+							used = true;
+						}
+					}
+				}
+			}
+			if (!used) {
+				remove(var);
+			}
+		}
+		for (String var : inputs.keySet()) {
+			boolean used = false;
+			for (ExprTree e : enablingTrees.values()) {
+				if (e.containsVar(var)) {
+					used = true;
+				}
+			}
+			for (HashMap<String, ExprTree[]> map : booleanAssignmentTrees.values()) {
+				for (ExprTree[] expr : map.values()) {
+					for (ExprTree e : expr) {
+						if (e.containsVar(var)) {
+							used = true;
+						}
+					}
+				}
+			}
+			for (HashMap<String, ExprTree[]> map : contAssignmentTrees.values()) {
+				for (ExprTree[] expr : map.values()) {
+					for (ExprTree e : expr) {
+						if (e.containsVar(var)) {
+							used = true;
+						}
+					}
+				}
+			}
+			for (HashMap<String, ExprTree[]> map : intAssignmentTrees.values()) {
+				for (ExprTree[] expr : map.values()) {
+					for (ExprTree e : expr) {
+						if (e.containsVar(var)) {
+							used = true;
+						}
+					}
+				}
+			}
+			for (HashMap<String, ExprTree[]> map : rateAssignmentTrees.values()) {
+				for (ExprTree[] expr : map.values()) {
+					for (ExprTree e : expr) {
+						if (e.containsVar(var)) {
+							used = true;
+						}
+					}
+				}
+			}
+			if (!used) {
+				remove(var);
+			}
+		}
+		for (String var : outputs.keySet()) {
+			boolean used = false;
+			for (ExprTree e : enablingTrees.values()) {
+				if (e.containsVar(var)) {
+					used = true;
+				}
+			}
+			for (HashMap<String, ExprTree[]> map : booleanAssignmentTrees.values()) {
+				for (ExprTree[] expr : map.values()) {
+					for (ExprTree e : expr) {
+						if (e.containsVar(var)) {
+							used = true;
+						}
+					}
+				}
+			}
+			for (HashMap<String, ExprTree[]> map : contAssignmentTrees.values()) {
+				for (ExprTree[] expr : map.values()) {
+					for (ExprTree e : expr) {
+						if (e.containsVar(var)) {
+							used = true;
+						}
+					}
+				}
+			}
+			for (HashMap<String, ExprTree[]> map : intAssignmentTrees.values()) {
+				for (ExprTree[] expr : map.values()) {
+					for (ExprTree e : expr) {
+						if (e.containsVar(var)) {
+							used = true;
+						}
+					}
+				}
+			}
+			for (HashMap<String, ExprTree[]> map : rateAssignmentTrees.values()) {
+				for (ExprTree[] expr : map.values()) {
+					for (ExprTree e : expr) {
+						if (e.containsVar(var)) {
+							used = true;
+						}
+					}
+				}
+			}
+			if (!used) {
+				remove(var);
+			}
+		}
+		for (String var : integers.keySet()) {
+			boolean used = false;
+			for (ExprTree e : enablingTrees.values()) {
+				if (e.containsVar(var)) {
+					used = true;
+				}
+			}
+			for (HashMap<String, ExprTree[]> map : booleanAssignmentTrees.values()) {
+				for (ExprTree[] expr : map.values()) {
+					for (ExprTree e : expr) {
+						if (e.containsVar(var)) {
+							used = true;
+						}
+					}
+				}
+			}
+			for (HashMap<String, ExprTree[]> map : contAssignmentTrees.values()) {
+				for (ExprTree[] expr : map.values()) {
+					for (ExprTree e : expr) {
+						if (e.containsVar(var)) {
+							used = true;
+						}
+					}
+				}
+			}
+			for (HashMap<String, ExprTree[]> map : intAssignmentTrees.values()) {
+				for (ExprTree[] expr : map.values()) {
+					for (ExprTree e : expr) {
+						if (e.containsVar(var)) {
+							used = true;
+						}
+					}
+				}
+			}
+			for (HashMap<String, ExprTree[]> map : rateAssignmentTrees.values()) {
+				for (ExprTree[] expr : map.values()) {
+					for (ExprTree e : expr) {
+						if (e.containsVar(var)) {
+							used = true;
+						}
+					}
+				}
+			}
+			if (!used) {
+				remove(var);
+			}
+		}
+		return change;
+	}
 
 	private boolean removeTrans3(String transition) {
 		// Remove a transition with a single place in the postset
@@ -1319,6 +1585,9 @@ public class Abstraction extends LHPNFile {
 					return false;
 				}
 			}
+		}
+		if (fail.contains(transition)) {
+			return false;
 		}
 		// Update control flow
 		removeControlFlow(transition, place);
@@ -1535,6 +1804,9 @@ public class Abstraction extends LHPNFile {
 				return false;
 			}
 		}
+		if (fail.contains(transition)) {
+			return false;
+		}
 		boolean marked = places.get(place);
 		// Update the control Flow
 		removeControlFlow(place, transition);
@@ -1722,7 +1994,7 @@ public class Abstraction extends LHPNFile {
 
 	private void combineTransitions(String trans1, String trans2, boolean samePreset,
 			boolean samePostset) {
-		if (controlFlow.get(trans1) == null || controlFlow.get(trans2) == null) {
+		if (controlFlow.get(trans1) == null || controlFlow.get(trans2) == null || fail.contains(trans2)) {
 			return;
 		}
 		String[] delay = { delays.get(trans1), delays.get(trans2) };
@@ -2582,6 +2854,20 @@ public class Abstraction extends LHPNFile {
 			}
 		}
 		return flag;
+	}
+	
+	private void remove(String var) {
+		for (HashMap<String, Properties> assign : assignments) {
+			for (String t : assign.keySet()) {
+				if (assign.get(t).containsKey(var)) {
+					removeAssignment(t,var);
+				}
+			}
+		}
+		if (isContinuous(var)) variables.remove(var);
+		else if (isInteger(var)) integers.remove(var);
+		else if (isInput(var)) inputs.remove(var);
+		else if (isOutput(var)) outputs.remove(var);
 	}
 
 	private static final String RANGE = "\\[(\\w+?),(\\w+?)\\]";

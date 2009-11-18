@@ -1527,6 +1527,15 @@ public class LHPNFile {
 			intAssignmentTrees.put(transition, map);
 		}
 	}
+	
+	public void removeAssignment(String transition, String var) {
+		if (isInteger(var)) removeIntAssign(transition, var);
+		else if (isContinuous(var)) {
+			removeContAssign(transition, var);
+			removeRateAssign(transition, var);
+		}
+		else removeBoolAssign(transition, var);
+	}
 
 	public void removeAllAssign(String transition) {
 		if (booleanAssignments.containsKey(transition)) {
