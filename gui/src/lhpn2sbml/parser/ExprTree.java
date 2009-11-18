@@ -880,46 +880,46 @@ public class ExprTree {
 					(this).uvalue = (this).lvalue;
 				}
 				else {
-//					if ((this).isit == 'c') {
-//						comp = variable;
-//						comp += ">=";
-//						int paren = 0;
-//						ineq = new String();
-//						for (i = spos; i < position; i++) {
-//							if (expr.charAt(i) == '(')
-//								paren++;
-//							if (expr.charAt(i) == ')')
-//								paren--;
-//							ineq = ineq + expr.charAt(i);
-//						}
-//						// ineq[i - spos + paren] = 0;
-//						comp += ineq;
-//						// printf("looking for %s\n",comp.c_str());
-//						// for (i = 0; i < nsignals; i++) {
-//						if (signals.contains(comp)) {
-//							// printf("successful lookup of boolean variable
-//							// '%s'\n",signals[i]->name);
-//							(this).isit = 'b';
-//							this.variable = comp;
-//							(this).lvalue = 0;
-//							(this).uvalue = 1;
-//							return true;
-//						}
-//						// }
-//						else {
-//							signals.add(comp);
-//							this.isit = 'b';
-//							this.variable = comp;
-//							this.lvalue = 0;
-//							this.uvalue = 1;
-//							return true;
-//						}
-//					}
-//					else {
-						// (result) = new ExprTree((result), newresult, ">=",
-						// 'r');
-						setNodeValues((this), newresult, ">=", 'r');
-					//}
+					// if ((this).isit == 'c') {
+					// comp = variable;
+					// comp += ">=";
+					// int paren = 0;
+					// ineq = new String();
+					// for (i = spos; i < position; i++) {
+					// if (expr.charAt(i) == '(')
+					// paren++;
+					// if (expr.charAt(i) == ')')
+					// paren--;
+					// ineq = ineq + expr.charAt(i);
+					// }
+					// // ineq[i - spos + paren] = 0;
+					// comp += ineq;
+					// // printf("looking for %s\n",comp.c_str());
+					// // for (i = 0; i < nsignals; i++) {
+					// if (signals.contains(comp)) {
+					// // printf("successful lookup of boolean variable
+					// // '%s'\n",signals[i]->name);
+					// (this).isit = 'b';
+					// this.variable = comp;
+					// (this).lvalue = 0;
+					// (this).uvalue = 1;
+					// return true;
+					// }
+					// // }
+					// else {
+					// signals.add(comp);
+					// this.isit = 'b';
+					// this.variable = comp;
+					// this.lvalue = 0;
+					// this.uvalue = 1;
+					// return true;
+					// }
+					// }
+					// else {
+					// (result) = new ExprTree((result), newresult, ">=",
+					// 'r');
+					setNodeValues((this), newresult, ">=", 'r');
+					// }
 				}
 			}
 			else {
@@ -944,46 +944,46 @@ public class ExprTree {
 					(this).uvalue = (this).lvalue;
 				}
 				else {
-//					if ((this).isit == 'c') {
-//						comp = variable;
-//						comp += ">";
-//						int paren = 0;
-//						ineq = new String();
-//						for (i = spos; i < position; i++) {
-//							if (expr.charAt(i) == '(')
-//								paren++;
-//							if (expr.charAt(i) == ')')
-//								paren--;
-//							ineq = ineq + expr.charAt(i);
-//						}
-//						// ineq[i - spos + paren] = 0;
-//						comp += ineq;
-//						// printf("looking for %s\n",comp.c_str());
-//						// for (i = 0; i < nsignals; i++) {
-//						if (signals.contains(comp)) {
-//							// printf("successful lookup of boolean variable
-//							// '%s'\n",signals[i]->name);
-//							(this).isit = 'b';
-//							(this).variable = comp;
-//							(this).lvalue = 0;
-//							(this).uvalue = 1;
-//							return true;
-//						}
-//						else {
-//							signals.add(comp);
-//							this.isit = 'b';
-//							this.variable = comp;
-//							this.lvalue = 0;
-//							this.uvalue = 1;
-//							return true;
-//						}
-//						// }
-//					}
-//					else {
-						// (result) = new ExprTree((result), newresult, ">",
-						// 'r');
-						setNodeValues((this), newresult, ">", 'r');
-					//}
+					// if ((this).isit == 'c') {
+					// comp = variable;
+					// comp += ">";
+					// int paren = 0;
+					// ineq = new String();
+					// for (i = spos; i < position; i++) {
+					// if (expr.charAt(i) == '(')
+					// paren++;
+					// if (expr.charAt(i) == ')')
+					// paren--;
+					// ineq = ineq + expr.charAt(i);
+					// }
+					// // ineq[i - spos + paren] = 0;
+					// comp += ineq;
+					// // printf("looking for %s\n",comp.c_str());
+					// // for (i = 0; i < nsignals; i++) {
+					// if (signals.contains(comp)) {
+					// // printf("successful lookup of boolean variable
+					// // '%s'\n",signals[i]->name);
+					// (this).isit = 'b';
+					// (this).variable = comp;
+					// (this).lvalue = 0;
+					// (this).uvalue = 1;
+					// return true;
+					// }
+					// else {
+					// signals.add(comp);
+					// this.isit = 'b';
+					// this.variable = comp;
+					// this.lvalue = 0;
+					// this.uvalue = 1;
+					// return true;
+					// }
+					// // }
+					// }
+					// else {
+					// (result) = new ExprTree((result), newresult, ">",
+					// 'r');
+					setNodeValues((this), newresult, ">", 'r');
+					// }
 				}
 			}
 			break;
@@ -1014,46 +1014,46 @@ public class ExprTree {
 					(this).uvalue = (this).lvalue;
 				}
 				else {
-					//if ((this).isit == 'c') {
-					//	comp = variable;
-					//	comp += "<=";
-					//	int paren = 0;
-					//	ineq = new String();
-					//	for (i = spos; i < position; i++) {
-					///		if (expr.charAt(i) == '(')
-					//			paren++;
-					//		if (expr.charAt(i) == ')')
-					//			paren--;
-					//		ineq = ineq + expr.charAt(i);
-					//	}
-						// ineq[i - spos + paren] = 0;
-					//	comp += ineq;
-						// printf("looking for %s\n",comp.c_str());
-						// for (i = 0; i < nsignals; i++) {
-						//if (signals.contains(comp)) {
-							// printf("successful lookup of boolean variable
-							// '%s'\n",signals[i]->name);
-						//	(this).isit = 'b';
-						//	(this).variable = comp;
-						//	(this).lvalue = 0;
-						//	(this).uvalue = 1;
-						//	return true;
-						//}
-						//else {
-						//	signals.add(comp);
-						//	this.isit = 'b';
-						//	this.variable = comp;
-						//	this.lvalue = 0;
-						//	this.uvalue = 1;
-						//	return true;
-						//}
-						// }
-					//}
-					//else {
-						// (result) = new ExprTree((result), newresult, "<=",
-						// 'r');
-						setNodeValues((this), newresult, "<=", 'r');
-					//}
+					// if ((this).isit == 'c') {
+					// comp = variable;
+					// comp += "<=";
+					// int paren = 0;
+					// ineq = new String();
+					// for (i = spos; i < position; i++) {
+					// / if (expr.charAt(i) == '(')
+					// paren++;
+					// if (expr.charAt(i) == ')')
+					// paren--;
+					// ineq = ineq + expr.charAt(i);
+					// }
+					// ineq[i - spos + paren] = 0;
+					// comp += ineq;
+					// printf("looking for %s\n",comp.c_str());
+					// for (i = 0; i < nsignals; i++) {
+					// if (signals.contains(comp)) {
+					// printf("successful lookup of boolean variable
+					// '%s'\n",signals[i]->name);
+					// (this).isit = 'b';
+					// (this).variable = comp;
+					// (this).lvalue = 0;
+					// (this).uvalue = 1;
+					// return true;
+					// }
+					// else {
+					// signals.add(comp);
+					// this.isit = 'b';
+					// this.variable = comp;
+					// this.lvalue = 0;
+					// this.uvalue = 1;
+					// return true;
+					// }
+					// }
+					// }
+					// else {
+					// (result) = new ExprTree((result), newresult, "<=",
+					// 'r');
+					setNodeValues((this), newresult, "<=", 'r');
+					// }
 				}
 			}
 			else {
@@ -1078,47 +1078,47 @@ public class ExprTree {
 					(this).uvalue = (this).lvalue;
 				}
 				else {
-//					if ((this).isit == 'c') {
-//						comp = variable;
-//						comp += "<";
-//						int paren = 0;
-//						ineq = new String();
-//						for (i = spos; i < position; i++) {
-//							if (expr.charAt(i) == '(')
-//								paren++;
-//							if (expr.charAt(i) == ')')
-//								paren--;
-//							ineq = ineq + expr.charAt(i);
-//						}
-//						// ineq[i - spos + paren] = 0;
-//						comp += ineq;
-//						System.out.printf("looking for %s\n", comp);
-//						// for (i = 0; i < nsignals; i++) {
-//						if (signals.contains(comp)) {
-//							// System.out.printf("successful lookup of
-//							// boolean variable '%s'\n",
-//							// signals[i]);
-//							(this).isit = 'b';
-//							(this).variable = comp;
-//							(this).lvalue = 0;
-//							(this).uvalue = 1;
-//							return true;
-//						}
-//						else {
-//							signals.add(comp);
-//							this.isit = 'b';
-//							this.variable = comp;
-//							this.lvalue = 0;
-//							this.uvalue = 1;
-//							return true;
-//						}
-//						// }
-//					}
-//					else {
-						// (result) = new ExprTree((result), newresult, "<",
-						// 'r');
-						setNodeValues((this), newresult, "<", 'r');
-					//}
+					// if ((this).isit == 'c') {
+					// comp = variable;
+					// comp += "<";
+					// int paren = 0;
+					// ineq = new String();
+					// for (i = spos; i < position; i++) {
+					// if (expr.charAt(i) == '(')
+					// paren++;
+					// if (expr.charAt(i) == ')')
+					// paren--;
+					// ineq = ineq + expr.charAt(i);
+					// }
+					// // ineq[i - spos + paren] = 0;
+					// comp += ineq;
+					// System.out.printf("looking for %s\n", comp);
+					// // for (i = 0; i < nsignals; i++) {
+					// if (signals.contains(comp)) {
+					// // System.out.printf("successful lookup of
+					// // boolean variable '%s'\n",
+					// // signals[i]);
+					// (this).isit = 'b';
+					// (this).variable = comp;
+					// (this).lvalue = 0;
+					// (this).uvalue = 1;
+					// return true;
+					// }
+					// else {
+					// signals.add(comp);
+					// this.isit = 'b';
+					// this.variable = comp;
+					// this.lvalue = 0;
+					// this.uvalue = 1;
+					// return true;
+					// }
+					// // }
+					// }
+					// else {
+					// (result) = new ExprTree((result), newresult, "<",
+					// 'r');
+					setNodeValues((this), newresult, "<", 'r');
+					// }
 				}
 			}
 			break;
@@ -1806,32 +1806,170 @@ public class ExprTree {
 		case 'r': // Relational
 		case 'l': // Logical
 			if (op.equals("!")) {
-				result = result + "~";
 				if (r1 != null) {
-					result = r1.getElement(result);
+					result = result + "~" + "(" + r1.getElement(result) + ")";
 				}
 				break;
 			}
 			else {
-				if (r1 != null) {
-					result = r1.getElement(result);
-				}
 				if (op.equals("&&")) {
+					if (r1.isit == 'r' || (r1.isit == 'l' && (r1.op.equals("||")))) {
+						if (r1 != null) {
+							result = result + r1.getElement(result);
+						}
+
+					}
+					else {
+						if (r1 != null) {
+							result = result + r1.getElement(result);
+						}
+					}
 					result = result + "&";
+					if (r2.isit == 'r' || (r2.isit == 'l' && (r2.op.equals("||")))) {
+						if (r2 != null) {
+							result = result + "(" + r2.getElement(result) + ")";
+						}
+					}
+					else {
+						if (r2 != null) {
+							result = result + r2.getElement(result);
+						}
+					}
 				}
 				else if (op.equals("||")) {
+					if (r1.isit == 'r') {
+						if (r1 != null) {
+							result = result + "(" + r1.getElement(result) + ")";
+						}
+					}
+					else {
+						if (r1 != null) {
+							result = result + r1.getElement(result);
+						}
+					}
 					result = result + "|";
+					if (r1.isit == 'r') {
+						if (r2 != null) {
+							result = result + "(" + r2.getElement(result) + ")";
+						}
+					}
+					else {
+						if (r2 != null) {
+							result = result + r2.getElement(result);
+						}
+					}
 				}
 				else if (op.equals("==")) {
+					if (r1 != null) {
+						result = result + r1.getElement(result);
+					}
 					result = result + "=";
+					if (r2 != null) {
+						result = r2.getElement(result);
+					}
+				}
+				else if (op.equals("+")) {
+					if (r1.isit == 'a' && (r1.op.equals("+") || r1.op.equals("-") || r1.op.equals("*") || r1.op.equals("/") || r1.op.equals("^"))) {
+						if (r1 != null) {
+							result = result + r1.getElement(result);
+						}
+					}
+					else {
+						if (r1 != null) {
+							result = result + "(" + r1.getElement(result) + ")";	
+						}
+					}
+					result = result + "+";
+					if (r2.isit == 'a' && (r2.op.equals("+") || r2.op.equals("-") || r2.op.equals("*") || r2.op.equals("/") || r2.op.equals("^"))) {
+						if (r2 != null) {
+							result = result + "(" + r2.getElement(result) + ")";
+						}
+					}
+					else {
+						if (r2 != null) {
+							result = result + r2.getElement(result);
+						}
+					}
+				}
+				else if (op.equals("-")) {
+					if (r1.isit == 'a' && (r1.op.equals("+") || r1.op.equals("-") || r1.op.equals("*") || r1.op.equals("/") || r1.op.equals("^"))) {
+						if (r1 != null) {
+							result = result + r1.getElement(result);
+						}
+					}
+					else {
+						if (r1 != null) {
+							result = result + "(" + r1.getElement(result) + ")";	
+						}
+					}
+					result = result + "-";
+					if (r2.isit == 'a' && (r2.op.equals("-") || r2.op.equals("*") || r2.op.equals("/") || r2.op.equals("^"))) {
+						if (r2 != null) {
+							result = result + "(" + r2.getElement(result) + ")";
+						}
+					}
+					else {
+						if (r2 != null) {
+							result = result + r2.getElement(result);
+						}
+					}
+				}
+				else if (op.equals("*")) {
+					if (r1.isit == 'a' && (r1.op.equals("*") || r1.op.equals("/") || r1.op.equals("^"))) {
+						if (r1 != null) {
+							result = result + r1.getElement(result);
+						}
+					}
+					else {
+						if (r1 != null) {
+							result = result + "(" + r1.getElement(result) + ")";	
+						}
+					}
+					result = result + "*";
+					if (r2.isit == 'a' && (r2.op.equals("*") || r2.op.equals("/") || r2.op.equals("^"))) {
+						if (r2 != null) {
+							result = result + "(" + r2.getElement(result) + ")";
+						}
+					}
+					else {
+						if (r2 != null) {
+							result = result + r2.getElement(result);
+						}
+					}
+				}
+				else if (op.equals("/")) {
+					if (r1.isit == 'a' && (r1.op.equals("*") || r1.op.equals("/") || r1.op.equals("^"))) {
+						if (r1 != null) {
+							result = result + r1.getElement(result);
+						}
+					}
+					else {
+						if (r1 != null) {
+							result = result + "(" + r1.getElement(result) + ")";	
+						}
+					}
+					result = result + "*";
+					if (r2.isit == 'a' && (r2.op.equals("/") || r2.op.equals("^"))) {
+						if (r2 != null) {
+							result = result + "(" + r2.getElement(result) + ")";
+						}
+					}
+					else {
+						if (r2 != null) {
+							result = result + r2.getElement(result);
+						}
+					}
 				}
 				else {
+					if (r1 != null) {
+						result = result + "(" + r1.getElement(result) + ")";
+					}
 					result = result + op;
+					if (r2 != null) {
+						result = result + "(" + r2.getElement(result) + ")";
+					}
 				}
 			}
-		}
-		if (r2 != null) {
-			result = r2.getElement(result);
 		}
 		return result;
 	}
