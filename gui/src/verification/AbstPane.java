@@ -56,6 +56,8 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 			xform7 = "Merge Transitions with Same Postset - abstraction",
 			xform8 = "Propagate Assignments to Local Variables - simplification",
 			xform9 = "Remove Assignments Written before Read - abstraction",
+			xform10 = "Simplify Expressions - simplification",
+			xform11 = "Remove Unused Variables - simplification",
 			xform12 = "Abstract Assignments to the Same Variable - abstraction",
 			xform13 = "Remove Variables - abstraction",
 			xform14 = "Remove Dead Places - simplification",
