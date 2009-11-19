@@ -1548,8 +1548,10 @@ public class Abstraction extends LHPNFile {
 		for (String var : integers.keySet()) {
 			boolean used = false;
 			for (ExprTree e : enablingTrees.values()) {
+				if (e != null) {
 				if (e.containsVar(var)) {
 					used = true;
+				}
 				}
 			}
 			for (HashMap<String, ExprTree[]> map : booleanAssignmentTrees.values()) {
@@ -1573,8 +1575,10 @@ public class Abstraction extends LHPNFile {
 			for (HashMap<String, ExprTree[]> map : intAssignmentTrees.values()) {
 				for (ExprTree[] expr : map.values()) {
 					for (ExprTree e : expr) {
+						if (e != null) {
 						if (e.containsVar(var)) {
 							used = true;
+						}
 						}
 					}
 				}
