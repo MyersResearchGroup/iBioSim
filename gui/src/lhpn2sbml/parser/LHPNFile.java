@@ -165,7 +165,7 @@ public class LHPNFile {
 				buffer.append("\n");
 			}
 			if (!fail.isEmpty()) {
-				buffer.append("#@.fail ");
+				buffer.append("#@.failtrans ");
 				for (String s : fail) {
 					buffer.append(s + " ");
 				}
@@ -3094,7 +3094,7 @@ public class LHPNFile {
 
 	private static final String TRANS_RATE_LINE = "#@\\.transition_rates \\{([\\S[^\\}]]+?)\\}";
 	
-	private static final String FAIL_LINE = "#@\\.fail ([.[^\\n]]+)\\n";
+	private static final String FAIL_LINE = "#@\\.failtrans ([.[^\\n]]+)\\n";
 
 	private static final String BOOLEAN_LINE = "#@\\.boolean_assignments \\{([\\S[^\\}]]+?)\\}";
 
