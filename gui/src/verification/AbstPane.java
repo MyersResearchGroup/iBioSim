@@ -139,6 +139,9 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 		absListModel = new DefaultListModel();
 		selectXforms = new JList(transforms);
 		xforms = new JList(absListModel);
+		for (String s : transforms) {
+			absListModel.addElement(s);
+		}
 		JLabel absLabel = new JLabel("Available Transforms:");
 		JLabel abstractLabel = new JLabel("Selected Transforms:");
 		JPanel absHolder = new JPanel(new BorderLayout());
@@ -286,6 +289,10 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 		if (!absListModel.contains(variable)) {
 			absListModel.addElement(variable);
 		}
+	}
+	
+	public void removeAllXform() {
+		absListModel.removeAllElements();
 	}
 
 	public void run() {

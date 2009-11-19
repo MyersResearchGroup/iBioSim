@@ -579,6 +579,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				}
 			}
 			if (load.containsKey("abstraction.transforms")) {
+				abstPane.removeAllXform();
 				String xforms = load.getProperty("abstraction.transforms");
 				String[] array = xforms.split(", ");
 				for (String s : array) {
