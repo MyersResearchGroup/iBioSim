@@ -1468,11 +1468,15 @@ public class ExprTree {
 		case 'l': // Logical
 		case 'a': // Arithmetic
 		case 'w': // bitWise
+			if (r1 != null) {
 			if (r1.containsVar(var)) {
 				return true;
 			}
-			else if (r2.containsVar(var)) {
+			}
+			if (r2 != null) {
+			if (r2.containsVar(var)) {
 				return true;
+			}
 			}
 			return false;
 		case 'n': // Number
@@ -1777,23 +1781,28 @@ public class ExprTree {
 		case 'i': // Integer
 		case 'c': // Continuous
 			result = result + variable;
+			//result = variable;
 			break;
 		case 'n': // Number
 			Double tempuval = uvalue;
 			Double templval = lvalue;
 			if ((uvalue == lvalue) || tempuval.toString().equals("")) {
 				result = result + tempuval.toString();
+				//result = tempuval.toString();
 			}
 			else {
 				result = result + "[" + templval.toString() + "," + tempuval.toString() + "]";
+				//result = "[" + templval.toString() + "," + tempuval.toString() + "]";
 			}
 			break;
 		case 't': // Truth value
 			if (uvalue == 1 && lvalue == 1) {
 				result = result + "TRUE";
+				//result = "TRUE";
 			}
 			else if (uvalue == 0 && lvalue == 0) {
 				result = result + "FALSE";
+				//result = "FALSE";
 			}
 			// else {
 			// System.out.println("WARNING: Unknown assignment to a boolean
@@ -1807,61 +1816,66 @@ public class ExprTree {
 		case 'l': // Logical
 			if (op.equals("!")) {
 				if (r1 != null) {
-					result = result + "~" + "(" + r1.getElement(result) + ")";
+					if (r1.isit == 'b' || r1.isit == 'i' || r1.isit == 'c' || r1.isit == 'n' || r1.isit == 't') {
+						result = result + "~" + r1.getElement("");
+					}
+					else {
+						result = result + "~" + "(" + r1.getElement("") + ")";
+					}
 				}
 				break;
 			}
 			else {
 				if (op.equals("&&")) {
-					if (r1.isit == 'r' || (r1.isit == 'l' && (r1.op.equals("||")))) {
+					if (r1.isit == 'r' || (r1.isit == 'l' && r1.op.equals("||"))) {
 						if (r1 != null) {
-							result = result + r1.getElement(result);
+							result = "(" + r1.getElement(result) + ")";
 						}
 
 					}
 					else {
 						if (r1 != null) {
-							result = result + r1.getElement(result);
+							result = r1.getElement(result);
 						}
 					}
 					result = result + "&";
-					if (r2.isit == 'r' || (r2.isit == 'l' && (r2.op.equals("||")))) {
+					if (r2.isit == 'r' || (r2.isit == 'l' && r2.op.equals("||"))) {
 						if (r2 != null) {
-							result = result + "(" + r2.getElement(result) + ")";
+							result = "(" + r2.getElement(result) + ")";
 						}
 					}
 					else {
 						if (r2 != null) {
-							result = result + r2.getElement(result);
+							result = r2.getElement(result);
 						}
 					}
 				}
 				else if (op.equals("||")) {
 					if (r1.isit == 'r') {
 						if (r1 != null) {
-							result = result + "(" + r1.getElement(result) + ")";
+							result = "(" + r1.getElement(result) + ")";
 						}
 					}
 					else {
 						if (r1 != null) {
-							result = result + r1.getElement(result);
+							result = r1.getElement(result);
 						}
 					}
 					result = result + "|";
-					if (r1.isit == 'r') {
+					if (r2.isit == 'r') {
 						if (r2 != null) {
-							result = result + "(" + r2.getElement(result) + ")";
+							result = "(" + r2.getElement(result) + ")";
 						}
 					}
 					else {
 						if (r2 != null) {
-							result = result + r2.getElement(result);
+							result = r2.getElement(result);
 						}
 					}
 				}
 				else if (op.equals("==")) {
 					if (r1 != null) {
-						result = result + r1.getElement(result);
+						result = r1.getElement(result);
 					}
 					result = result + "=";
 					if (r2 != null) {
@@ -1869,104 +1883,114 @@ public class ExprTree {
 					}
 				}
 				else if (op.equals("+")) {
-					if (r1.isit == 'a' && (r1.op.equals("+") || r1.op.equals("-") || r1.op.equals("*") || r1.op.equals("/") || r1.op.equals("^"))) {
+					if (r1.isit == 'b' || r1.isit == 'i' || r1.isit == 'c' || r1.isit == 'n' || r1.isit == 't' || (r1.isit == 'a' && (r1.op.equals("+") || r1.op.equals("-") || r1.op.equals("*") || r1.op.equals("/") || r1.op.equals("^")))) {
 						if (r1 != null) {
-							result = result + r1.getElement(result);
+							result = r1.getElement(result);	
 						}
 					}
 					else {
 						if (r1 != null) {
-							result = result + "(" + r1.getElement(result) + ")";	
+							result = "(" + r1.getElement(result) + ")";
 						}
 					}
 					result = result + "+";
-					if (r2.isit == 'a' && (r2.op.equals("+") || r2.op.equals("-") || r2.op.equals("*") || r2.op.equals("/") || r2.op.equals("^"))) {
+					if (r2.isit == 'b' || r2.isit == 'i' || r2.isit == 'c' || r2.isit == 'n' || r2.isit == 't' || (r2.isit == 'a' && (r2.op.equals("+") || r2.op.equals("-") || r2.op.equals("*") || r2.op.equals("/") || r2.op.equals("^")))) {
 						if (r2 != null) {
-							result = result + "(" + r2.getElement(result) + ")";
+							result = r2.getElement(result);
 						}
 					}
 					else {
 						if (r2 != null) {
-							result = result + r2.getElement(result);
+							result = "(" + r2.getElement(result) + ")";
 						}
 					}
 				}
 				else if (op.equals("-")) {
-					if (r1.isit == 'a' && (r1.op.equals("+") || r1.op.equals("-") || r1.op.equals("*") || r1.op.equals("/") || r1.op.equals("^"))) {
+					if (r1.isit == 'b' || r1.isit == 'i' || r1.isit == 'c' || r1.isit == 'n' || r1.isit == 't' || (r1.isit == 'a' && (r1.op.equals("+") || r1.op.equals("-") || r1.op.equals("*") || r1.op.equals("/") || r1.op.equals("^")))) {
 						if (r1 != null) {
-							result = result + r1.getElement(result);
+							result = r1.getElement(result);	
 						}
 					}
 					else {
 						if (r1 != null) {
-							result = result + "(" + r1.getElement(result) + ")";	
+							result = "(" + r1.getElement(result) + ")";
 						}
 					}
 					result = result + "-";
-					if (r2.isit == 'a' && (r2.op.equals("-") || r2.op.equals("*") || r2.op.equals("/") || r2.op.equals("^"))) {
+					if (r2.isit == 'b' || r2.isit == 'i' || r2.isit == 'c' || r2.isit == 'n' || r2.isit == 't' || (r2.isit == 'a' && (r2.op.equals("-") || r2.op.equals("*") || r2.op.equals("/") || r2.op.equals("^")))) {
 						if (r2 != null) {
-							result = result + "(" + r2.getElement(result) + ")";
+							result = r2.getElement(result);
 						}
 					}
 					else {
 						if (r2 != null) {
-							result = result + r2.getElement(result);
+							result = "(" + r2.getElement(result) + ")";
 						}
 					}
 				}
 				else if (op.equals("*")) {
-					if (r1.isit == 'a' && (r1.op.equals("*") || r1.op.equals("/") || r1.op.equals("^"))) {
+					if (r1.isit == 'b' || r1.isit == 'i' || r1.isit == 'c' || r1.isit == 'n' || r1.isit == 't' || (r1.isit == 'a' && (r1.op.equals("*") || r1.op.equals("/") || r1.op.equals("^")))) {
 						if (r1 != null) {
-							result = result + r1.getElement(result);
+							result = r1.getElement(result);
 						}
 					}
 					else {
 						if (r1 != null) {
-							result = result + "(" + r1.getElement(result) + ")";	
+							result = "(" + r1.getElement(result) + ")";	
 						}
 					}
 					result = result + "*";
-					if (r2.isit == 'a' && (r2.op.equals("*") || r2.op.equals("/") || r2.op.equals("^"))) {
+					if (r2.isit == 'b' || r2.isit == 'i' || r2.isit == 'c' || r2.isit == 'n' || r2.isit == 't' || (r2.isit == 'a' && (r2.op.equals("*") || r2.op.equals("/") || r2.op.equals("^")))) {
 						if (r2 != null) {
-							result = result + "(" + r2.getElement(result) + ")";
+							result = r2.getElement(result);
 						}
 					}
 					else {
 						if (r2 != null) {
-							result = result + r2.getElement(result);
+							result = "(" + r2.getElement(result) + ")";
 						}
 					}
 				}
 				else if (op.equals("/")) {
-					if (r1.isit == 'a' && (r1.op.equals("*") || r1.op.equals("/") || r1.op.equals("^"))) {
+					if (r1.isit == 'b' || r1.isit == 'i' || r1.isit == 'c' || r1.isit == 'n' || r1.isit == 't' || (r1.isit == 'a' && (r1.op.equals("*") || r1.op.equals("/") || r1.op.equals("^")))) {
 						if (r1 != null) {
-							result = result + r1.getElement(result);
+							result = r1.getElement(result);
 						}
 					}
 					else {
 						if (r1 != null) {
-							result = result + "(" + r1.getElement(result) + ")";	
+							result = "(" + r1.getElement(result) + ")";	
 						}
 					}
 					result = result + "*";
-					if (r2.isit == 'a' && (r2.op.equals("/") || r2.op.equals("^"))) {
+					if (r2.isit == 'b' || r2.isit == 'i' || r2.isit == 'c' || r2.isit == 'n' || r2.isit == 't' || (r2.isit == 'a' && (r2.op.equals("/") || r2.op.equals("^")))) {
 						if (r2 != null) {
-							result = result + "(" + r2.getElement(result) + ")";
+							result = r2.getElement(result);
 						}
 					}
 					else {
 						if (r2 != null) {
-							result = result + r2.getElement(result);
+							result = "(" + r2.getElement(result) + ")";
 						}
 					}
 				}
 				else {
 					if (r1 != null) {
-						result = result + "(" + r1.getElement(result) + ")";
+						if (r1.isit == 'b' || r1.isit == 'i' || r1.isit == 'c' || r1.isit == 'n' || r1.isit == 't') {
+							result = r1.getElement(result);
+						}
+						else {
+							result = "(" + r1.getElement(result) + ")";
+						}
 					}
 					result = result + op;
 					if (r2 != null) {
-						result = result + "(" + r2.getElement(result) + ")";
+						if (r2.isit == 'b' || r2.isit == 'i' || r2.isit == 'c' || r2.isit == 'n' || r2.isit == 't') {
+							result = r2.getElement(result);
+						}
+						else {
+							result = "(" + r2.getElement(result) + ")";
+						}
 					}
 				}
 			}

@@ -584,7 +584,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				String[] array = xforms.split(", ");
 				for (String s : array) {
 					if (!s.equals("")) {
-						abstPane.addXform(s);
+						abstPane.addXform(s.replace(",", ""));
 					}
 				}
 			}

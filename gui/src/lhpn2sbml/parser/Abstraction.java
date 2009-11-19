@@ -213,181 +213,184 @@ public class Abstraction extends LHPNFile {
 			if (controlFlow.get(s).containsKey("postset")) {
 				String[] postset = controlFlow.get(s).getProperty("postset").split(" ");
 				for (String t : postset) {
-					String[] postTrans = controlPlaces.get(t).getProperty("postset").split(" ");
-					for (String u : postTrans) {
-						boolean flag = true;
-						if (contAssignments.containsKey(u) && contAssignments.containsKey(s)) {
-							for (Object o : contAssignments.get(u).keySet()) {
-								String key = o.toString();
-								if (!contAssignments.get(s).keySet().contains(key)
-										|| (contAssignmentTrees.get(u).get(key)[0].isit != 'c')) {
-									flag = false;
+					if (controlPlaces.get(t).containsKey("postset")) {
+						String[] postTrans = controlPlaces.get(t).getProperty("postset").split(" ");
+						for (String u : postTrans) {
+							boolean flag = true;
+							if (contAssignments.containsKey(u) && contAssignments.containsKey(s)) {
+								for (Object o : contAssignments.get(u).keySet()) {
+									String key = o.toString();
+									if (!contAssignments.get(s).keySet().contains(key)
+											|| (contAssignmentTrees.get(u).get(key)[0].isit != 'c')) {
+										flag = false;
+									}
 								}
 							}
-						}
-						else {
-							flag = false;
-						}
-						if (intAssignments.containsKey(u) && intAssignments.containsKey(s)) {
-							for (Object o : intAssignments.get(u).keySet()) {
-								String key = o.toString();
-								if (!intAssignments.get(s).keySet().contains(key)
-										|| (intAssignmentTrees.get(u).get(key)[0].isit != 'i')) {
-									flag = false;
+							else {
+								flag = false;
+							}
+							if (intAssignments.containsKey(u) && intAssignments.containsKey(s)) {
+								for (Object o : intAssignments.get(u).keySet()) {
+									String key = o.toString();
+									if (!intAssignments.get(s).keySet().contains(key)
+											|| (intAssignmentTrees.get(u).get(key)[0].isit != 'i')) {
+										flag = false;
+									}
 								}
 							}
-						}
-						else {
-							flag = false;
-						}
-						if (booleanAssignments.containsKey(u) && booleanAssignments.containsKey(s)) {
-							for (Object o : booleanAssignmentTrees.get(u).keySet()) {
-								String key = o.toString();
-								if (!booleanAssignments.get(s).keySet().contains(key)
-										|| (booleanAssignmentTrees.get(u).get(key)[0].isit != 't')) {
-									flag = false;
+							else {
+								flag = false;
+							}
+							if (booleanAssignments.containsKey(u)
+									&& booleanAssignments.containsKey(s)) {
+								for (Object o : booleanAssignmentTrees.get(u).keySet()) {
+									String key = o.toString();
+									if (!booleanAssignments.get(s).keySet().contains(key)
+											|| (booleanAssignmentTrees.get(u).get(key)[0].isit != 't')) {
+										flag = false;
+									}
 								}
 							}
-						}
-						else {
-							flag = false;
-						}
-						if (flag) {
-							for (Object o : contAssignments.get(u).keySet()) {
-								String[] assign = {
-										contAssignments.get(u).get(o.toString()).toString(),
-										contAssignments.get(u).get(o.toString()).toString() };
-								String[][] assignRange = new String[2][2];
-								Pattern pattern = Pattern.compile("\\[(\\S+?),(\\S+?)\\]");
-								for (int i = 0; i < assign.length; i++) {
-									Matcher matcher = pattern.matcher(assign[i]);
-									if (matcher.find()) {
-										assignRange[i][0] = matcher.group(1);
-										assignRange[i][1] = matcher.group(2);
+							else {
+								flag = false;
+							}
+							if (flag) {
+								for (Object o : contAssignments.get(u).keySet()) {
+									String[] assign = {
+											contAssignments.get(u).get(o.toString()).toString(),
+											contAssignments.get(u).get(o.toString()).toString() };
+									String[][] assignRange = new String[2][2];
+									Pattern pattern = Pattern.compile("\\[(\\S+?),(\\S+?)\\]");
+									for (int i = 0; i < assign.length; i++) {
+										Matcher matcher = pattern.matcher(assign[i]);
+										if (matcher.find()) {
+											assignRange[i][0] = matcher.group(1);
+											assignRange[i][1] = matcher.group(2);
+										}
+										else {
+											assignRange[i][0] = assign[i];
+											assignRange[i][1] = assign[i];
+										}
+									}
+									if (assignRange[0][0].equals("inf")) {
+										assign[0] = assignRange[1][0];
+									}
+									else if (assignRange[1][0].equals("inf")) {
+										assign[0] = assignRange[0][0];
+									}
+									else if (Float.parseFloat(assignRange[0][0]) < Float
+											.parseFloat(assignRange[1][0])) {
+										assign[0] = assignRange[0][0];
 									}
 									else {
-										assignRange[i][0] = assign[i];
-										assignRange[i][1] = assign[i];
+										assign[0] = assignRange[1][0];
 									}
-								}
-								if (assignRange[0][0].equals("inf")) {
-									assign[0] = assignRange[1][0];
-								}
-								else if (assignRange[1][0].equals("inf")) {
-									assign[0] = assignRange[0][0];
-								}
-								else if (Float.parseFloat(assignRange[0][0]) < Float
-										.parseFloat(assignRange[1][0])) {
-									assign[0] = assignRange[0][0];
-								}
-								else {
-									assign[0] = assignRange[1][0];
-								}
-								if (assignRange[0][1].equals("inf")
-										|| assignRange[1][1].equals("inf")) {
-									assign[1] = "inf";
-								}
-								else if (Float.parseFloat(assignRange[0][1]) > Float
-										.parseFloat(assignRange[1][1])) {
-									assign[1] = assignRange[0][1];
-								}
-								else {
-									assign[1] = assignRange[1][1];
-								}
-								if (assign[0].equals(assign[1])) {
-									addContAssign(s, o.toString(), assign[0]);
-								}
-								else {
-									addContAssign(s, o.toString(), "[" + assign[0] + ","
-											+ assign[1] + "]");
-								}
-							}
-							for (Object o : intAssignments.get(u).keySet()) {
-								String[] assign = {
-										intAssignments.get(u).get(o.toString()).toString(),
-										intAssignments.get(u).get(o.toString()).toString() };
-								String[][] assignRange = new String[2][2];
-								Pattern pattern = Pattern.compile("\\[(\\S+?),(\\S+?)\\]");
-								for (int i = 0; i < assign.length; i++) {
-									Matcher matcher = pattern.matcher(assign[i]);
-									if (matcher.find()) {
-										assignRange[i][0] = matcher.group(1);
-										assignRange[i][1] = matcher.group(2);
+									if (assignRange[0][1].equals("inf")
+											|| assignRange[1][1].equals("inf")) {
+										assign[1] = "inf";
+									}
+									else if (Float.parseFloat(assignRange[0][1]) > Float
+											.parseFloat(assignRange[1][1])) {
+										assign[1] = assignRange[0][1];
 									}
 									else {
-										assignRange[i][0] = assign[i];
-										assignRange[i][1] = assign[i];
+										assign[1] = assignRange[1][1];
 									}
-								}
-								if (assignRange[0][0].equals("inf")) {
-									assign[0] = assignRange[1][0];
-								}
-								else if (assignRange[1][0].equals("inf")) {
-									assign[0] = assignRange[0][0];
-								}
-								else if (Integer.parseInt(assignRange[0][0]) < Integer
-										.parseInt(assignRange[1][0])) {
-									assign[0] = assignRange[0][0];
-								}
-								else {
-									assign[0] = assignRange[1][0];
-								}
-								if (assignRange[0][1].equals("inf")
-										|| assignRange[1][1].equals("inf")) {
-									assign[1] = "inf";
-								}
-								else if (Integer.parseInt(assignRange[0][1]) > Integer
-										.parseInt(assignRange[1][1])) {
-									assign[1] = assignRange[0][1];
-								}
-								else {
-									assign[1] = assignRange[1][1];
-								}
-								if (assign[0].equals(assign[1])) {
-									addIntAssign(s, o.toString(), assign[0]);
-								}
-								else {
-									addIntAssign(s, o.toString(), "[" + assign[0] + "," + assign[1]
-											+ "]");
-								}
-							}
-							for (Object o : booleanAssignments.get(u).keySet()) {
-								String[] assign = {
-										booleanAssignments.get(u).get(o.toString()).toString(),
-										booleanAssignments.get(u).get(o.toString()).toString() };
-								String[][] assignRange = new String[2][2];
-								Pattern pattern = Pattern.compile("\\[(\\S+?),(\\S+?)\\]");
-								for (int i = 0; i < assign.length; i++) {
-									Matcher matcher = pattern.matcher(assign[i]);
-									if (matcher.find()) {
-										assignRange[i][0] = matcher.group(1);
-										assignRange[i][1] = matcher.group(2);
+									if (assign[0].equals(assign[1])) {
+										addContAssign(s, o.toString(), assign[0]);
 									}
 									else {
-										assignRange[i][0] = assign[i];
-										assignRange[i][1] = assign[i];
+										addContAssign(s, o.toString(), "[" + assign[0] + ","
+												+ assign[1] + "]");
 									}
 								}
-								if (assignRange[0][0].equals("false")
-										|| assignRange[1][0].equals("false")) {
-									assign[0] = "false";
+								for (Object o : intAssignments.get(u).keySet()) {
+									String[] assign = {
+											intAssignments.get(u).get(o.toString()).toString(),
+											intAssignments.get(u).get(o.toString()).toString() };
+									String[][] assignRange = new String[2][2];
+									Pattern pattern = Pattern.compile("\\[(\\S+?),(\\S+?)\\]");
+									for (int i = 0; i < assign.length; i++) {
+										Matcher matcher = pattern.matcher(assign[i]);
+										if (matcher.find()) {
+											assignRange[i][0] = matcher.group(1);
+											assignRange[i][1] = matcher.group(2);
+										}
+										else {
+											assignRange[i][0] = assign[i];
+											assignRange[i][1] = assign[i];
+										}
+									}
+									if (assignRange[0][0].equals("inf")) {
+										assign[0] = assignRange[1][0];
+									}
+									else if (assignRange[1][0].equals("inf")) {
+										assign[0] = assignRange[0][0];
+									}
+									else if (Integer.parseInt(assignRange[0][0]) < Integer
+											.parseInt(assignRange[1][0])) {
+										assign[0] = assignRange[0][0];
+									}
+									else {
+										assign[0] = assignRange[1][0];
+									}
+									if (assignRange[0][1].equals("inf")
+											|| assignRange[1][1].equals("inf")) {
+										assign[1] = "inf";
+									}
+									else if (Integer.parseInt(assignRange[0][1]) > Integer
+											.parseInt(assignRange[1][1])) {
+										assign[1] = assignRange[0][1];
+									}
+									else {
+										assign[1] = assignRange[1][1];
+									}
+									if (assign[0].equals(assign[1])) {
+										addIntAssign(s, o.toString(), assign[0]);
+									}
+									else {
+										addIntAssign(s, o.toString(), "[" + assign[0] + ","
+												+ assign[1] + "]");
+									}
 								}
-								else {
-									assign[0] = "true";
-								}
-								if (assignRange[0][1].equals("true")
-										|| assignRange[1][1].equals("true")) {
-									assign[1] = "true";
-								}
-								else {
-									assign[1] = "false";
-								}
-								if (assign[0].equals(assign[1])) {
-									addBoolAssign(s, o.toString(), assign[0]);
-								}
-								else {
-									addBoolAssign(s, o.toString(), "[" + assign[0] + ","
-											+ assign[1] + "]");
+								for (Object o : booleanAssignments.get(u).keySet()) {
+									String[] assign = {
+											booleanAssignments.get(u).get(o.toString()).toString(),
+											booleanAssignments.get(u).get(o.toString()).toString() };
+									String[][] assignRange = new String[2][2];
+									Pattern pattern = Pattern.compile("\\[(\\S+?),(\\S+?)\\]");
+									for (int i = 0; i < assign.length; i++) {
+										Matcher matcher = pattern.matcher(assign[i]);
+										if (matcher.find()) {
+											assignRange[i][0] = matcher.group(1);
+											assignRange[i][1] = matcher.group(2);
+										}
+										else {
+											assignRange[i][0] = assign[i];
+											assignRange[i][1] = assign[i];
+										}
+									}
+									if (assignRange[0][0].equals("false")
+											|| assignRange[1][0].equals("false")) {
+										assign[0] = "false";
+									}
+									else {
+										assign[0] = "true";
+									}
+									if (assignRange[0][1].equals("true")
+											|| assignRange[1][1].equals("true")) {
+										assign[1] = "true";
+									}
+									else {
+										assign[1] = "false";
+									}
+									if (assign[0].equals(assign[1])) {
+										addBoolAssign(s, o.toString(), assign[0]);
+									}
+									else {
+										addBoolAssign(s, o.toString(), "[" + assign[0] + ","
+												+ assign[1] + "]");
+									}
 								}
 							}
 						}
@@ -436,17 +439,20 @@ public class Abstraction extends LHPNFile {
 					continue;
 				if (hasMarkedPreset(s)) // If the place is recursively dead
 					continue;
-				for (String t : controlPlaces.get(s).getProperty("postset").split(" ")) {
-					removeControlFlow(s, t); // Remove all transitions in its
-					// postset
-					if (controlFlow.get(t).containsKey("postset")) {
-						String[] tempPostset = controlFlow.get(t).getProperty("postset").split(
-								"\\s");
-						for (String p : tempPostset) {
-							removeControlFlow(t, p);
+				if (controlPlaces.get(s).containsKey("postset")) {
+					for (String t : controlPlaces.get(s).getProperty("postset").split(" ")) {
+						removeControlFlow(s, t); // Remove all transitions in
+						// its
+						// postset
+						if (controlFlow.get(t).containsKey("postset")) {
+							String[] tempPostset = controlFlow.get(t).getProperty("postset").split(
+									"\\s");
+							for (String p : tempPostset) {
+								removeControlFlow(t, p);
+							}
 						}
+						removeTransition(t);
 					}
-					removeTransition(t);
 				}
 				removePlace.add(s);
 				change = true;
@@ -1278,8 +1284,10 @@ public class Abstraction extends LHPNFile {
 		}
 		for (int i = 0; i < 2; i++) {
 			for (String p : initMarking) {
-				for (String t : controlPlaces.get(p).getProperty("postset").split("\\s")) {
-					change = trans8Iteration(t, unvisited, change);
+				if (controlPlaces.get(p).containsKey("postset")) {
+					for (String t : controlPlaces.get(p).getProperty("postset").split("\\s")) {
+						change = trans8Iteration(t, unvisited, change);
+					}
 				}
 			}
 		}
@@ -1311,29 +1319,40 @@ public class Abstraction extends LHPNFile {
 		}
 		return change;
 	}
-	
+
 	private void simplifyExpr() {
 		for (String s : enablingTrees.keySet()) {
-			enablings.put(s, enablingTrees.get(s).toString());
+			if (s != null && enablingTrees.get(s) != null) {
+				enablings.put(s, enablingTrees.get(s).toString());
+			}
 		}
 		for (String s : booleanAssignments.keySet()) {
 			Properties prop = booleanAssignments.get(s);
-			HashMap<String,ExprTree[]> expr = booleanAssignmentTrees.get(s);
+			HashMap<String, ExprTree[]> expr = booleanAssignmentTrees.get(s);
 			for (Object o : prop.keySet()) {
 				String t = o.toString();
-				ExprTree[] e = expr.get(t);
-				if (expr.get(t)[1] != null) {
-					prop.setProperty(t, "[" + e[0].toString() + "," + e[1].toString() + "]");
-				}
-				else {
-					prop.setProperty(t, e[0].toString());
+				if (expr.containsKey(t)) {
+					ExprTree[] e = expr.get(t);
+					if (expr.get(t).length > 1) {
+						if (expr.get(t)[1] != null) {
+							prop
+									.setProperty(t, "[" + e[0].toString() + "," + e[1].toString()
+											+ "]");
+						}
+						else {
+							prop.setProperty(t, e[0].toString());
+						}
+					}
+					else {
+						prop.setProperty(t, e[0].toString());
+					}
 				}
 			}
 			booleanAssignments.put(s, prop);
 		}
 		for (String s : contAssignments.keySet()) {
 			Properties prop = contAssignments.get(s);
-			HashMap<String,ExprTree[]> expr = contAssignmentTrees.get(s);
+			HashMap<String, ExprTree[]> expr = contAssignmentTrees.get(s);
 			for (Object o : prop.keySet()) {
 				String t = o.toString();
 				ExprTree[] e = expr.get(t);
@@ -1348,7 +1367,7 @@ public class Abstraction extends LHPNFile {
 		}
 		for (String s : rateAssignments.keySet()) {
 			Properties prop = rateAssignments.get(s);
-			HashMap<String,ExprTree[]> expr = rateAssignmentTrees.get(s);
+			HashMap<String, ExprTree[]> expr = rateAssignmentTrees.get(s);
 			for (Object o : prop.keySet()) {
 				String t = o.toString();
 				ExprTree[] e = expr.get(t);
@@ -1363,7 +1382,7 @@ public class Abstraction extends LHPNFile {
 		}
 		for (String s : intAssignments.keySet()) {
 			Properties prop = intAssignments.get(s);
-			HashMap<String,ExprTree[]> expr = intAssignmentTrees.get(s);
+			HashMap<String, ExprTree[]> expr = intAssignmentTrees.get(s);
 			for (Object o : prop.keySet()) {
 				String t = o.toString();
 				ExprTree[] e = expr.get(t);
@@ -1377,13 +1396,15 @@ public class Abstraction extends LHPNFile {
 			intAssignments.put(s, prop);
 		}
 	}
-	
+
 	private boolean removeVars(boolean change) {
 		for (String var : variables.keySet()) {
 			boolean used = false;
 			for (ExprTree e : enablingTrees.values()) {
-				if (e.containsVar(var)) {
-					used = true;
+				if (e != null) {
+					if (e.containsVar(var)) {
+						used = true;
+					}
 				}
 			}
 			for (HashMap<String, ExprTree[]> map : booleanAssignmentTrees.values()) {
@@ -1429,8 +1450,10 @@ public class Abstraction extends LHPNFile {
 		for (String var : inputs.keySet()) {
 			boolean used = false;
 			for (ExprTree e : enablingTrees.values()) {
-				if (e.containsVar(var)) {
-					used = true;
+				if (e != null) {
+					if (e.containsVar(var)) {
+						used = true;
+					}
 				}
 			}
 			for (HashMap<String, ExprTree[]> map : booleanAssignmentTrees.values()) {
@@ -1476,8 +1499,10 @@ public class Abstraction extends LHPNFile {
 		for (String var : outputs.keySet()) {
 			boolean used = false;
 			for (ExprTree e : enablingTrees.values()) {
-				if (e.containsVar(var)) {
-					used = true;
+				if (e != null) {
+					if (e.containsVar(var)) {
+						used = true;
+					}
 				}
 			}
 			for (HashMap<String, ExprTree[]> map : booleanAssignmentTrees.values()) {
@@ -1994,7 +2019,8 @@ public class Abstraction extends LHPNFile {
 
 	private void combineTransitions(String trans1, String trans2, boolean samePreset,
 			boolean samePostset) {
-		if (controlFlow.get(trans1) == null || controlFlow.get(trans2) == null || fail.contains(trans2)) {
+		if (controlFlow.get(trans1) == null || controlFlow.get(trans2) == null
+				|| fail.contains(trans2)) {
 			return;
 		}
 		String[] delay = { delays.get(trans1), delays.get(trans2) };
@@ -2594,16 +2620,21 @@ public class Abstraction extends LHPNFile {
 				}
 			}
 			if (!flag) // Check the postset to see if it is part of a process
-				for (String p : controlFlow.get(new_proc).getProperty("postset").split("\\s")) {
-					if (!flag)
-						for (String t : controlPlaces.get(p).getProperty("postset").split("\\s")) {
-							if (!flag)
-								if (process_trans.get(t) != 0) {
-									flag = true;
-									process = process_trans.get(t);
-									break;
+				if (controlFlow.get(new_proc).containsKey("postset")) {
+					for (String p : controlFlow.get(new_proc).getProperty("postset").split("\\s")) {
+						if (!flag)
+							if (controlPlaces.get(p).containsKey("postset")) {
+								for (String t : controlPlaces.get(p).getProperty("postset").split(
+										"\\s")) {
+									if (!flag)
+										if (process_trans.get(t) != 0) {
+											flag = true;
+											process = process_trans.get(t);
+											break;
+										}
 								}
-						}
+							}
+					}
 				}
 			if (!flag) {
 				i++; // Increment the process counter if it is not part of a
@@ -2855,19 +2886,23 @@ public class Abstraction extends LHPNFile {
 		}
 		return flag;
 	}
-	
+
 	private void remove(String var) {
 		for (HashMap<String, Properties> assign : assignments) {
 			for (String t : assign.keySet()) {
 				if (assign.get(t).containsKey(var)) {
-					removeAssignment(t,var);
+					removeAssignment(t, var);
 				}
 			}
 		}
-		if (isContinuous(var)) variables.remove(var);
-		else if (isInteger(var)) integers.remove(var);
-		else if (isInput(var)) inputs.remove(var);
-		else if (isOutput(var)) outputs.remove(var);
+		if (isContinuous(var))
+			variables.remove(var);
+		else if (isInteger(var))
+			integers.remove(var);
+		else if (isInput(var))
+			inputs.remove(var);
+		else if (isOutput(var))
+			outputs.remove(var);
 	}
 
 	private static final String RANGE = "\\[(\\w+?),(\\w+?)\\]";
