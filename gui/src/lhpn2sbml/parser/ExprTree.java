@@ -4,7 +4,7 @@ import gcm2sbml.util.Utility;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Properties;
+//import java.util.Properties;
 
 public class ExprTree {
 

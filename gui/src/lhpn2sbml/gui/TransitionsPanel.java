@@ -111,9 +111,13 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 		JPanel failPanel = new JPanel(new GridLayout(1, 2));
 		//failPanel.setMinimumSize(new Dimension(200, 20));
 		JLabel failLabel = new JLabel("Fail Transition");
+		//JLabel blankLabel1 = new JLabel("  ");
+		JLabel blankLabel2 = new JLabel("                                     ");
 		fail = new JCheckBox();
 		failPanel.add(failLabel);
+		//failPanel.add(blankLabel1);
 		failPanel.add(fail);
+		failPanel.add(blankLabel2);
 		constraints.gridx = 0;
 		constraints.gridy = 1;
 		add(failPanel,constraints);
