@@ -123,6 +123,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 
 	private JTextField eventID, eventName, eventTrigger, eventDelay; // event
 
+        private JCheckBox assignTime;
 	// fields;
 
 	private JComboBox eaID; // event assignment fields;
@@ -444,7 +445,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		for (int i = 0; i < model.getNumConstraints(); i++) {
 			if (((Constraint) ids.get(i)).isSetMetaId()) {
 				usedIDs.add(((Constraint) ids.get(i)).getMetaId());
-			}
+				}
 		}
 		ids = model.getListOfEvents();
 		for (int i = 0; i < model.getNumEvents(); i++) {
@@ -4803,15 +4804,17 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		int index = events.getSelectedIndex();
 		JPanel eventPanel = new JPanel(new BorderLayout());
 		// JPanel evPanel = new JPanel(new GridLayout(2, 2));
-		JPanel evPanel = new JPanel(new GridLayout(4, 2));
+		JPanel evPanel = new JPanel(new GridLayout(5, 2));
 		JLabel IDLabel = new JLabel("ID:");
 		JLabel NameLabel = new JLabel("Name:");
 		JLabel triggerLabel = new JLabel("Trigger:");
 		JLabel delayLabel = new JLabel("Delay:");
+		JLabel assignTimeLabel = new JLabel("");
 		eventID = new JTextField(12);
 		eventName = new JTextField(12);
 		eventTrigger = new JTextField(12);
 		eventDelay = new JTextField(12);
+		assignTime = new JCheckBox("Use values at trigger time");
 		JPanel eventAssignPanel = new JPanel(new BorderLayout());
 		JPanel addEventAssign = new JPanel();
 		addAssignment = new JButton("Add Assignment");
@@ -4846,6 +4849,9 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					eventTrigger.setText(myFormulaToString(event.getTrigger().getMath()));
 					if (event.isSetDelay()) {
 						eventDelay.setText(myFormulaToString(event.getDelay().getMath()));
+					}
+					if (event.getUseValuesFromTriggerTime()) {
+					    assignTime.setSelected(true);
 					}
 					assign = new String[(int) event.getNumEventAssignments()];
 					origAssign = new String[(int) event.getNumEventAssignments()];
@@ -4882,6 +4888,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		evPanel.add(eventTrigger);
 		evPanel.add(delayLabel);
 		evPanel.add(eventDelay);
+		evPanel.add(assignTime);
+		evPanel.add(assignTimeLabel);
 		eventPanel.add(evPanel, "North");
 		eventPanel.add(eventAssignPanel, "South");
 		Object[] options = { option, "Cancel" };
@@ -4996,6 +5004,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					events.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 					org.sbml.libsbml.Event e = (org.sbml.libsbml.Event) (document.getModel()
 							.getListOfEvents()).get(Eindex);
+					e.setUseValuesFromTriggerTime(assignTime.isSelected());
 					while (e.getNumEventAssignments() > 0) {
 						e.getListOfEventAssignments().remove(0);
 					}
@@ -5069,6 +5078,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				else {
 					JList add = new JList();
 					org.sbml.libsbml.Event e = document.getModel().createEvent();
+					e.setUseValuesFromTriggerTime(assignTime.isSelected());
 					e.createTrigger();
 					e.getTrigger().setMath(myParseFormula(eventTrigger.getText().trim()));
 					if (!eventDelay.getText().trim().equals("")) {
