@@ -2952,6 +2952,9 @@ public class LHPNFile {
 						if (booleanAssignments.containsKey(transMatcher.group(1))) {
 							prop = booleanAssignments.get(transMatcher.group(1));
 						}
+						if (booleanAssignmentTrees.containsKey(transMatcher.group(1))) {
+							map = booleanAssignmentTrees.get(transMatcher.group(1));
+						}
 						prop.put(rangeMatcher.group(1), rangeMatcher.group(2));
 						ExprTree[] expr = new ExprTree[2];
 						expr[0] = new ExprTree(this);
@@ -2983,6 +2986,9 @@ public class LHPNFile {
 							// System.out.println(assignMatcher.group(1) + "
 							// norange " + assignMatcher.group(2));
 							prop.put(assignMatcher.group(1), assignMatcher.group(2));
+						}
+						if (booleanAssignmentTrees.containsKey(transMatcher.group(1))) {
+							map = booleanAssignmentTrees.get(transMatcher.group(1));
 						}
 						ExprTree expr = new ExprTree(this);
 						expr.token = expr.intexpr_gettok(assignMatcher.group(2));
