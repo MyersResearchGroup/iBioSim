@@ -45,7 +45,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			search, trace, bdd, dbm, smt, lhpn, view, none, simplify, abstractLhpn;
 
 	private JCheckBox abst, partialOrder, dot, verbose, graph, genrg, timsubset, superset, infopt,
-			orbmatch, interleav, prune, disabling, nofail, keepgoing, explpn, nochecks, reduction,
+	    orbmatch, interleav, prune, disabling, nofail, noproj, keepgoing, explpn, nochecks, reduction,
 			newTab, postProc, redCheck, xForm2, expandRate;
 
 	private JTextField bddSize, backgroundField, componentField;
@@ -212,6 +212,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		prune = new JCheckBox("Prune");
 		disabling = new JCheckBox("Disabling");
 		nofail = new JCheckBox("No fail");
+		noproj = new JCheckBox("No project");
 		keepgoing = new JCheckBox("Keep going");
 		explpn = new JCheckBox("Expand LHPN");
 		genrg.addActionListener(this);
@@ -223,6 +224,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		prune.addActionListener(this);
 		disabling.addActionListener(this);
 		nofail.addActionListener(this);
+		noproj.addActionListener(this);
 		keepgoing.addActionListener(this);
 		explpn.addActionListener(this);
 		// Other Advanced Options
@@ -337,6 +339,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		advTimingPanel.add(prune);
 		advTimingPanel.add(disabling);
 		advTimingPanel.add(nofail);
+		advTimingPanel.add(noproj);
 		advTimingPanel.add(keepgoing);
 		advTimingPanel.add(explpn);
 
@@ -551,6 +554,11 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			}
 			if (load.containsKey("verification.timing.nofail")) {
 				if (load.getProperty("verification.timing.nofail").equals("true")) {
+					nofail.setSelected(true);
+				}
+			}
+			if (load.containsKey("verification.timing.noproj")) {
+				if (load.getProperty("verification.timing.noproj").equals("true")) {
 					nofail.setSelected(true);
 				}
 			}
@@ -977,6 +985,9 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			}
 			if (nofail.isSelected()) {
 				options = options + "of";
+			}
+			if (noproj.isSelected()) {
+				options = options + "oj";
 			}
 			if (keepgoing.isSelected()) {
 				options = options + "oK";
@@ -1516,6 +1527,12 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			}
 			else {
 				prop.setProperty("verification.timing.nofail", "false");
+			}
+			if (nofail.isSelected()) {
+				prop.setProperty("verification.timing.noproj", "true");
+			}
+			else {
+				prop.setProperty("verification.timing.noproj", "false");
 			}
 			if (keepgoing.isSelected()) {
 				prop.setProperty("verification.timing.keepgoing", "true");
