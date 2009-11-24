@@ -120,7 +120,6 @@ public class Variable implements Comparable<Variable>{
 		initValue_vMin *=  vScaleFactor;
 	}
 	
-	//@Override
 	public int compareTo(Variable o) {
 		return (this.getName().compareToIgnoreCase(o.getName()));
 	}

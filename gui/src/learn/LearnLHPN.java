@@ -327,15 +327,16 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		JLabel dmvcLabel = new JLabel("DMVC determination parameters");
 		JLabel absTimeLabel = new JLabel("Absolute Time");
 		absTimeG = new JCheckBox();
-		absTimeG.setSelected(true);
+		absTimeG.setSelected(false);
 		absTimeG.addItemListener(this); 
 		JLabel percentLabel = new JLabel("Fraction");
 		percentG = new JTextField("0.8");
 		JLabel runTimeLabel = new JLabel("Dmvc Run Time");
 		runTimeG = new JTextField("5e-6");
+		runTimeG.setEnabled(false);
 		JLabel runLengthLabel = new JLabel("DMVC Run Length");
-		runLengthG = new JTextField("15");
-		runLengthG.setEnabled(false);
+		runLengthG = new JTextField("2");
+		runLengthG.setEnabled(true);
 		
 		epsilonG.addActionListener(this); //SB
 		pathLengthG.addActionListener(this); //SB
@@ -2259,6 +2260,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 					for (int i = 0; i < reqdVarsL.size(); i++){
 						if ( reqdVarsL.get(i).getName().equalsIgnoreCase(st1)){
 							reqdVarsL.get(i).setInput(true);
+							break;
 						}
 					}
 				}
@@ -2312,6 +2314,10 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		}
 		Collections.sort(divisionsL, new Comparator<ArrayList<Double>>(){
 			public int compare(ArrayList<Double> a, ArrayList<Double> b){
+				int ind1 = divisionsL.indexOf(a);
+				int ind2 = divisionsL.indexOf(b);
+				String var1 = reqdVarsL.get(ind1).getName();
+				String var2 = reqdVarsL.get(ind2).getName();
 				return (reqdVarsL.get(divisionsL.indexOf(a)).compareTo(reqdVarsL.get(divisionsL.indexOf(b))));
 			}
 		});
@@ -2857,7 +2863,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 					while ((mark < data.get(0).size()) && (compareBins(i, mark))) {
 						mark++;
 					}
-					if ((data.get(0).get(mark - 1) != data.get(0).get(i)) && ((mark - i) >=  pathLength)) { 
+					if ((data.get(0).get(mark - 1) != data.get(0).get(i)) && ((mark - i) >=  pathLength) && (mark != data.get(0).size())) { 	// && (mark != (data.get(0).size() - 1 condition added on nov 23.. to avoid the last region bcoz it's not complete. rechk
 						for (int j = 0; j < reqdVarsL.size(); j++) {
 							k = reqdVarIndices.get(j);
 							rates[j][i] = ((data.get(k).get(mark - 1) - data.get(k).get(i)) / (data.get(0).get(mark - 1) - data.get(0).get(i)));
@@ -2893,9 +2899,10 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 						prevFail = false;
 					}
 				}
-				if (!prevFail){ // for the last genuine rate-calculating region of the trace; this may not be required if the trace is incomplete.trace data may not necessarily end at a region endpt
+				// commented on nov 23. don't need this. should avoid rate calculation too for this region. but not avoiding now.
+			/*	if (!prevFail){ // for the last genuine rate-calculating region of the trace; this may not be required if the trace is incomplete.trace data may not necessarily end at a region endpt
 					duration[binStartPoint] = data.get(0).get(data.get(0).size()-1)	- data.get(0).get(binStartPoint);
-				}
+				}*/ 
 			}
 		} 
 		/*
