@@ -1865,7 +1865,7 @@ public class ExprTree {
 				return false;
 			}
 			else if (op.equals("!")) {
-				if (r1.becomesTrue(variables))
+				if (!r1.becomesFalse(variables))
 					return true;
 				return false;
 			}
@@ -1933,8 +1933,9 @@ public class ExprTree {
 					return true;
 				}
 			}
+		case 'n': // Number
 		case 't': // Truth value
-			if (uvalue == 1)
+			if (uvalue != 0)
 				return true;
 			return false;
 		case 'l': // Logical
@@ -1945,7 +1946,7 @@ public class ExprTree {
 				return false;
 			}
 			else if (op.equals("&&")) {
-				if (r1.becomesTrue(variables) && r2.becomesFalse(variables))
+				if (r1.becomesTrue(variables) && r2.becomesTrue(variables))
 					return true;
 				return false;
 			}
@@ -1955,7 +1956,7 @@ public class ExprTree {
 				return false;
 			}
 			else if (op.equals("!")) {
-				if (r1.becomesFalse(variables))
+				if (!r1.becomesTrue(variables))
 					return true;
 				return false;
 			}
@@ -2001,7 +2002,6 @@ public class ExprTree {
 			}
 			return false;
 		case 'a': // Arithmetic
-		case 'n': // Number
 			return false;
 		}
 		return false;

@@ -487,16 +487,22 @@ public class Abstraction extends LHPNFile {
 			if (abstPane.absListModel.contains(abstPane.xform16) && expr.evaluateExp(initVars) == 1
 					&& abstPane.isSimplify()) {
 				boolean enabled = true;
-				for (String trans : booleanAssignments.keySet()) {
+				for (String trans : delays.keySet()) {
 					HashMap<String, String> assignments = new HashMap<String, String>();
 					Properties prop = new Properties();
-					prop.putAll(booleanAssignments);
-					prop.putAll(contAssignments);
-					prop.putAll(intAssignments);
+					if (booleanAssignments.containsKey(trans)) {
+						prop.putAll(booleanAssignments.get(trans));
+					}
+					if (contAssignments.containsKey(trans)) {
+						prop.putAll(contAssignments.get(trans));
+					}
+					if (intAssignments.containsKey(trans)) {
+						prop.putAll(intAssignments.get(trans));
+					}
 					for (Object o : prop.keySet()) {
 						assignments.put(o.toString(), prop.get(o).toString());
 					}
-					if (trans.equals(t) || expr.becomesFalse(assignments)) {
+					if (!trans.equals(t) && expr.becomesFalse(assignments)) {
 						enabled = false;
 						break;
 					}
@@ -508,16 +514,22 @@ public class Abstraction extends LHPNFile {
 			else if (abstPane.absListModel.contains(abstPane.xform15)
 					&& expr.evaluateExp(initVars) == 0 && abstPane.isSimplify()) {
 				boolean disabled = true;
-				for (String trans : booleanAssignments.keySet()) {
+				for (String trans : delays.keySet()) {
 					HashMap<String, String> assignments = new HashMap<String, String>();
 					Properties prop = new Properties();
-					prop.putAll(booleanAssignments);
-					prop.putAll(contAssignments);
-					prop.putAll(intAssignments);
+					if (booleanAssignments.containsKey(trans)) {
+						prop.putAll(booleanAssignments.get(trans));
+					}
+					if (contAssignments.containsKey(trans)) {
+						prop.putAll(contAssignments.get(trans));
+					}
+					if (intAssignments.containsKey(trans)) {
+						prop.putAll(intAssignments.get(trans));
+					}
 					for (Object o : prop.keySet()) {
 						assignments.put(o.toString(), prop.get(o).toString());
 					}
-					if (trans.equals(t) || expr.becomesTrue(assignments)) {
+					if (!trans.equals(t) && expr.becomesTrue(assignments)) {
 						disabled = false;
 						break;
 					}
