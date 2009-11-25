@@ -1154,6 +1154,7 @@ public class LHPNFile {
 		contAssignmentTrees.remove(name);
 		intAssignments.remove(name);
 		intAssignmentTrees.remove(name);
+		fail.remove(name);
 	}
 
 	public void addTransitionRate(String name, String transitionRate) {
