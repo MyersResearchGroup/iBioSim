@@ -1922,9 +1922,15 @@ public class ExprTree {
 	public boolean becomesTrue(HashMap<String, String> variables) {
 		switch (isit) {
 		case 'b': // Boolean
-			if (variables.containsKey(variable))
+			if (variables.containsKey(variable)) {
+				if (variables.get(variable).toString().matches("[\\d\\.]+")) {
+					if (Double.parseDouble(variables.get(variable).toString()) != 0) {
+						return true;
+					}
+				}
 				if (variables.get(variable).toString().toLowerCase().equals("true"))
 					return true;
+			}
 			return false;
 		case 'i': // Integer
 		case 'c': // Continuous
@@ -2029,12 +2035,12 @@ public class ExprTree {
 			}
 			break;
 		case 't': // Truth value
-			if (uvalue == 1 && lvalue == 1) {
-				result = "TRUE";
+			if (uvalue == 0 && lvalue == 0) {
+				result = "FALSE";
 				// result = "TRUE";
 			}
-			else if (uvalue == 0 && lvalue == 0) {
-				result = "FALSE";
+			else {
+				result = "TRUE";
 				// result = "FALSE";
 			}
 			// else {

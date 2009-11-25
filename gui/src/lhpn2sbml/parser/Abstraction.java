@@ -406,9 +406,7 @@ public class Abstraction extends LHPNFile {
 		ArrayList<String> removePlace = new ArrayList<String>();
 		for (String s : places.keySet()) {
 			if ((!controlPlaces.get(s).containsKey("preset") // If the place is
-					// initially
-					// unmarked and
-					// has no preset
+					// initially unmarked and has no preset
 					|| controlPlaces.get(s).getProperty("preset") == null || controlPlaces.get(s)
 					.getProperty("preset").equals(""))
 					&& !places.get(s)) {
@@ -435,10 +433,14 @@ public class Abstraction extends LHPNFile {
 					&& !controlPlaces.get(s).containsKey("postset")) {
 				removePlace.add(s); // Remove unconnected places
 			}
+		}
+		for (String s : places.keySet()) {
 			if (!change && abstPane.absListModel.contains(abstPane.xform15)) {
 				if (places.get(s))
 					continue;
-				if (hasMarkedPreset(s)) // If the place is recursively dead
+				ArrayList<String> list = new ArrayList<String>();
+				boolean flag;
+				if (flag = hasMarkedPreset(s, list)) // If the place is recursively dead
 					continue;
 				if (controlPlaces.get(s).containsKey("postset")) {
 					for (String t : controlPlaces.get(s).getProperty("postset").split(" ")) {
@@ -453,6 +455,12 @@ public class Abstraction extends LHPNFile {
 							}
 						}
 						removeTransition(t);
+					}
+				}
+				if (controlPlaces.get(s).containsKey("preset")) {
+					for (String t : controlPlaces.get(s).getProperty("preset").split(" ")) {
+						removeControlFlow(t, s); // Remove all transitions in
+						// its preset
 					}
 				}
 				removePlace.add(s);
@@ -484,7 +492,11 @@ public class Abstraction extends LHPNFile {
 			}
 			if (expr.containsCont())
 				continue;
-			if (abstPane.absListModel.contains(abstPane.xform16) && expr.evaluateExp(initVars) == 1
+			//System.out.println(t);
+			//System.out.println(abstPane.absListModel.contains(abstPane.xform15));
+			//System.out.println(expr.evaluateExp(initVars));
+			//System.out.println(abstPane.isSimplify());
+			if (abstPane.absListModel.contains(abstPane.xform16) && !(expr.evaluateExp(initVars) != 0)
 					&& abstPane.isSimplify()) {
 				boolean enabled = true;
 				for (String trans : delays.keySet()) {
@@ -512,7 +524,7 @@ public class Abstraction extends LHPNFile {
 				}
 			}
 			else if (abstPane.absListModel.contains(abstPane.xform15)
-					&& expr.evaluateExp(initVars) == 0 && abstPane.isSimplify()) {
+					&& !(expr.evaluateExp(initVars) == 1) && abstPane.isSimplify()) {
 				boolean disabled = true;
 				for (String trans : delays.keySet()) {
 					HashMap<String, String> assignments = new HashMap<String, String>();
@@ -535,29 +547,15 @@ public class Abstraction extends LHPNFile {
 					}
 				}
 				if (disabled) {
-					for (String s : controlPlaces.keySet()) {
-						Properties prop = controlPlaces.get(s);
-						if (prop.getProperty("preset").contains(t)) {
-							String[] preset = prop.getProperty("preset").split(" ");
-							String temp = "";
-							for (String u : preset) {
-								if (!u.equals(t)) {
-									temp = temp + u + " ";
-								}
-							}
-							prop.setProperty("preset", temp);
+					if (controlFlow.get(t).containsKey("postset")) {
+						for (String p : controlFlow.get(t).getProperty("postset").split("\\s")) {
+							removeControlFlow(t, p);
 						}
-						if (prop.getProperty("postset").contains(t)) {
-							String[] postset = prop.getProperty("postset").split(" ");
-							String temp = "";
-							for (String u : postset) {
-								if (!u.equals(t)) {
-									temp = temp + u + " ";
-								}
-							}
-							prop.setProperty("postset", temp);
+					}
+					if (controlFlow.get(t).containsKey("preset")) {
+						for (String s : controlFlow.get(t).getProperty("preset").split("\\s")) {
+							removeControlFlow(s, t);
 						}
-						controlPlaces.put(s, prop);
 					}
 					removeTrans.add(t);
 				}
@@ -573,7 +571,11 @@ public class Abstraction extends LHPNFile {
 		return change;
 	}
 
-	private boolean hasMarkedPreset(String place) {
+	private boolean hasMarkedPreset(String place, ArrayList<String> list) {
+		if (list.contains(place)) {
+			return false;
+		}
+		list.add(place);
 		if (controlPlaces.get(place).containsKey("preset")) {
 			for (String t : controlPlaces.get(place).getProperty("preset").split(" ")) {
 				if (controlFlow.containsKey(t)) {
@@ -581,9 +583,7 @@ public class Abstraction extends LHPNFile {
 						for (String p : controlFlow.get(t).getProperty("preset").split(" ")) {
 							if (places.get(p))
 								return true;
-							else if (p.equals(place))
-								return false;
-							else if (hasMarkedPreset(p))
+							else if (hasMarkedPreset(p, list))
 								return true;
 						}
 					}
@@ -1348,8 +1348,7 @@ public class Abstraction extends LHPNFile {
 					ExprTree[] e = expr.get(t);
 					if (expr.get(t).length > 1) {
 						if (expr.get(t)[1] != null) {
-							prop
-									.setProperty(t, "[" + e[0].toString() + "," + e[1].toString()
+							prop.setProperty(t, "[" + e[0].toString() + "," + e[1].toString()
 											+ "]");
 						}
 						else {
@@ -1370,7 +1369,12 @@ public class Abstraction extends LHPNFile {
 				String t = o.toString();
 				ExprTree[] e = expr.get(t);
 				if (expr.get(t)[1] != null) {
-					prop.setProperty(t, "[" + e[0].toString() + "," + e[1].toString() + "]");
+					if (!e[1].toString().equals("")) {
+						prop.setProperty(t, "[" + e[0].toString() + "," + e[1].toString() + "]");
+					}
+					else {
+						prop.setProperty(t, e[0].toString());
+					}
 				}
 				else {
 					prop.setProperty(t, e[0].toString());
@@ -1385,7 +1389,12 @@ public class Abstraction extends LHPNFile {
 				String t = o.toString();
 				ExprTree[] e = expr.get(t);
 				if (expr.get(t)[1] != null) {
-					prop.setProperty(t, "[" + e[0].toString() + "," + e[1].toString() + "]");
+					if (!expr.get(t)[1].toString().equals("")) {
+						prop.setProperty(t, "[" + e[0].toString() + "," + e[1].toString() + "]");
+					}
+					else {
+						prop.setProperty(t, e[0].toString());
+					}
 				}
 				else {
 					prop.setProperty(t, e[0].toString());
@@ -1400,7 +1409,12 @@ public class Abstraction extends LHPNFile {
 				String t = o.toString();
 				ExprTree[] e = expr.get(t);
 				if (expr.get(t)[1] != null) {
-					prop.setProperty(t, "[" + e[0].toString() + "," + e[1].toString() + "]");
+					if (!e[1].toString().equals("")) {
+						prop.setProperty(t, "[" + e[0].toString() + "," + e[1].toString() + "]");
+					}
+					else {
+						prop.setProperty(t, e[0].toString());
+					}
 				}
 				else {
 					prop.setProperty(t, e[0].toString());
@@ -2242,7 +2256,7 @@ public class Abstraction extends LHPNFile {
 			}
 		}
 		for (String[] array : toChange) {
-			trans8(array[0], array[1], change);
+			change = trans8(array[0], array[1], change);
 		}
 		unvisited.remove(trans);
 		if (controlFlow.get(trans).containsKey("postset")) {
