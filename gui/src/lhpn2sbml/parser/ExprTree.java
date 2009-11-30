@@ -1423,6 +1423,11 @@ public class ExprTree {
 				return true;
 			}
 		}
+		else if (expr.isit == 'l' && expr.op.equals("&&")) {
+			if (implies(expr.r1) && implies(expr.r2)) {
+				return true;
+			}
+		}
 		switch (isit) {
 		case 't': // Truth value
 			if (uvalue == 1 && lvalue == 1) {
@@ -1460,6 +1465,13 @@ public class ExprTree {
 			if (op.equals("&&")) {
 				if (expr.isit == 'b') {
 					if (r1.implies(expr) || r2.implies(expr)) {
+						return true;
+					}
+				}
+			}
+			else if (op.equals("||")) {
+				if (expr.isit == 'b') {
+					if (r1.implies(expr) && r2.implies(expr)) {
 						return true;
 					}
 				}
@@ -1923,7 +1935,7 @@ public class ExprTree {
 		switch (isit) {
 		case 'b': // Boolean
 			if (variables.containsKey(variable)) {
-				if (variables.get(variable).toString().matches("[\\d\\.]+")) {
+				if (variables.get(variable).toString().matches("[\\d[\\.]]+")) {
 					if (Double.parseDouble(variables.get(variable).toString()) != 0) {
 						return true;
 					}
