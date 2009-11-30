@@ -113,6 +113,9 @@ public class Abstraction extends LHPNFile {
 					change = true;
 				}
 			}
+			if (abstPane.absListModel.contains(abstPane.xform16) && abstPane.isSimplify()) {
+				change = removeDominatedTransitions(change);
+			}
 		}
 	}
 
@@ -440,7 +443,8 @@ public class Abstraction extends LHPNFile {
 					continue;
 				ArrayList<String> list = new ArrayList<String>();
 				boolean flag;
-				if (flag = hasMarkedPreset(s, list)) // If the place is recursively dead
+				if (flag = hasMarkedPreset(s, list)) // If the place is
+														// recursively dead
 					continue;
 				if (controlPlaces.get(s).containsKey("postset")) {
 					for (String t : controlPlaces.get(s).getProperty("postset").split(" ")) {
@@ -492,12 +496,12 @@ public class Abstraction extends LHPNFile {
 			}
 			if (expr.containsCont())
 				continue;
-			//System.out.println(t);
-			//System.out.println(abstPane.absListModel.contains(abstPane.xform15));
-			//System.out.println(expr.evaluateExp(initVars));
-			//System.out.println(abstPane.isSimplify());
-			if (abstPane.absListModel.contains(abstPane.xform16) && !(expr.evaluateExp(initVars) != 0)
-					&& abstPane.isSimplify()) {
+			// System.out.println(t);
+			// System.out.println(abstPane.absListModel.contains(abstPane.xform15));
+			// System.out.println(expr.evaluateExp(initVars));
+			// System.out.println(abstPane.isSimplify());
+			if (abstPane.absListModel.contains(abstPane.xform16)
+					&& !(expr.evaluateExp(initVars) != 0) && abstPane.isSimplify()) {
 				boolean enabled = true;
 				for (String trans : delays.keySet()) {
 					HashMap<String, String> assignments = new HashMap<String, String>();
@@ -567,6 +571,49 @@ public class Abstraction extends LHPNFile {
 		}
 		for (String t : removeTrans) {
 			removeTransition(t);
+		}
+		return change;
+	}
+
+	private boolean removeDominatedTransitions(boolean change) {
+		for (String p : controlPlaces.keySet()) {
+			if (controlPlaces.get(p).containsKey("postset")) {
+				for (String t : controlPlaces.get(p).getProperty("postset").split("\\s")) {
+					for (String tP : controlPlaces.get(p).getProperty("postset").split("\\s")) {
+						if (!t.equals(tP) && enablingTrees.containsKey(t)
+								&& enablingTrees.containsKey(tP) && delays.containsKey(t)
+								&& delays.containsKey(tP)) {
+							if (enablingTrees.get(tP).implies(enablingTrees.get(t))) {
+								String delayT = delays.get(t);
+								String delayTP = delays.get(tP);
+								Pattern rangePattern = Pattern.compile("\\[([\\d]+),([\\d]+)\\]");
+								Matcher delayTMatcher = rangePattern.matcher(delayT);
+								Matcher delayTpMatcher = rangePattern.matcher(delayTP);
+								if (delayTMatcher.find() && delayTpMatcher.find()) {
+									String lower = delayTpMatcher.group(1);
+									String upper = delayTMatcher.group(2);
+									if (Integer.parseInt(lower) > Integer.parseInt(upper)) {
+										if (controlFlow.get(tP).containsKey("preset")) {
+											for (String s : controlFlow.get(tP).getProperty(
+													"preset").split("\\s")) {
+												removeControlFlow(s, tP);
+											}
+										}
+										if (controlFlow.get(tP).containsKey("postset")) {
+											for (String s : controlFlow.get(tP).getProperty(
+													"postset").split("\\s")) {
+												removeControlFlow(tP, s);
+											}
+										}
+										removeTransition(tP);
+										change = true;
+									}
+								}
+							}
+						}
+					}
+				}
+			}
 		}
 		return change;
 	}
@@ -1348,7 +1395,8 @@ public class Abstraction extends LHPNFile {
 					ExprTree[] e = expr.get(t);
 					if (expr.get(t).length > 1) {
 						if (expr.get(t)[1] != null) {
-							prop.setProperty(t, "[" + e[0].toString() + "," + e[1].toString()
+							prop
+									.setProperty(t, "[" + e[0].toString() + "," + e[1].toString()
 											+ "]");
 						}
 						else {
