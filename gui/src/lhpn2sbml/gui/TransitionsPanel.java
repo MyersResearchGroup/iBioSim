@@ -402,6 +402,9 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 		if (fail.isSelected()) {
 			lhpn.addFail(transition);
 		}
+		else {
+			lhpn.removeFail(transition);
+		}
 		if (!lhpn.changeDelay(transition, delay))
 			return false;
 		if (!lhpn.changeTransitionRate(transition, fields.get("Transition rate").getValue()))
