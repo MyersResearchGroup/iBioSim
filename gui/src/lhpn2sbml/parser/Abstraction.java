@@ -496,12 +496,9 @@ public class Abstraction extends LHPNFile {
 			}
 			if (expr.containsCont())
 				continue;
-			// System.out.println(t);
-			// System.out.println(abstPane.absListModel.contains(abstPane.xform15));
-			// System.out.println(expr.evaluateExp(initVars));
-			// System.out.println(abstPane.isSimplify());
+			// If the enabling condition is initially true
 			if (abstPane.absListModel.contains(abstPane.xform16)
-					&& !(expr.evaluateExp(initVars) != 0) && abstPane.isSimplify()) {
+					&& (expr.evaluateExp(initVars) == 1) && abstPane.isSimplify()) {
 				boolean enabled = true;
 				for (String trans : delays.keySet()) {
 					HashMap<String, String> assignments = new HashMap<String, String>();
@@ -527,8 +524,9 @@ public class Abstraction extends LHPNFile {
 					removeEnab.add(t);
 				}
 			}
+			// If the enabling condition is initially false
 			else if (abstPane.absListModel.contains(abstPane.xform15)
-					&& !(expr.evaluateExp(initVars) == 1) && abstPane.isSimplify()) {
+					&& (expr.evaluateExp(initVars) == 0) && abstPane.isSimplify()) {
 				boolean disabled = true;
 				for (String trans : delays.keySet()) {
 					HashMap<String, String> assignments = new HashMap<String, String>();
@@ -1396,15 +1394,15 @@ public class Abstraction extends LHPNFile {
 					if (expr.get(t).length > 1) {
 						if (expr.get(t)[1] != null) {
 							prop
-									.setProperty(t, "[" + e[0].toString() + "," + e[1].toString()
+									.setProperty(t, "[" + e[0].toString("boolean") + "," + e[1].toString("boolean")
 											+ "]");
 						}
 						else {
-							prop.setProperty(t, e[0].toString());
+							prop.setProperty(t, e[0].toString("boolean"));
 						}
 					}
 					else {
-						prop.setProperty(t, e[0].toString());
+						prop.setProperty(t, e[0].toString("boolean"));
 					}
 				}
 			}
@@ -1418,14 +1416,14 @@ public class Abstraction extends LHPNFile {
 				ExprTree[] e = expr.get(t);
 				if (expr.get(t)[1] != null) {
 					if (!e[1].toString().equals("")) {
-						prop.setProperty(t, "[" + e[0].toString() + "," + e[1].toString() + "]");
+						prop.setProperty(t, "[" + e[0].toString("continuous") + "," + e[1].toString("continuous") + "]");
 					}
 					else {
-						prop.setProperty(t, e[0].toString());
+						prop.setProperty(t, e[0].toString("continuous"));
 					}
 				}
 				else {
-					prop.setProperty(t, e[0].toString());
+					prop.setProperty(t, e[0].toString("continuous"));
 				}
 			}
 			contAssignments.put(s, prop);
@@ -1438,14 +1436,14 @@ public class Abstraction extends LHPNFile {
 				ExprTree[] e = expr.get(t);
 				if (expr.get(t)[1] != null) {
 					if (!expr.get(t)[1].toString().equals("")) {
-						prop.setProperty(t, "[" + e[0].toString() + "," + e[1].toString() + "]");
+						prop.setProperty(t, "[" + e[0].toString("continuous") + "," + e[1].toString("continuous") + "]");
 					}
 					else {
-						prop.setProperty(t, e[0].toString());
+						prop.setProperty(t, e[0].toString("continuous"));
 					}
 				}
 				else {
-					prop.setProperty(t, e[0].toString());
+					prop.setProperty(t, e[0].toString("continuous"));
 				}
 			}
 			rateAssignments.put(s, prop);
@@ -1458,14 +1456,14 @@ public class Abstraction extends LHPNFile {
 				ExprTree[] e = expr.get(t);
 				if (expr.get(t)[1] != null) {
 					if (!e[1].toString().equals("")) {
-						prop.setProperty(t, "[" + e[0].toString() + "," + e[1].toString() + "]");
+						prop.setProperty(t, "[" + e[0].toString("integer") + "," + e[1].toString("integer") + "]");
 					}
 					else {
-						prop.setProperty(t, e[0].toString());
+						prop.setProperty(t, e[0].toString("integer"));
 					}
 				}
 				else {
-					prop.setProperty(t, e[0].toString());
+					prop.setProperty(t, e[0].toString("integer"));
 				}
 			}
 			intAssignments.put(s, prop);
@@ -2893,8 +2891,18 @@ public class Abstraction extends LHPNFile {
 	private boolean replace(String trans, String var, ExprTree[] expr) {
 		boolean flag = false;
 		// if (expr[1] == null) {
+		String type;
+		if (isInteger(var)) {
+			type = "integer";
+		}
+		else if (isContinuous(var)){
+			type = "continuous";
+		}
+		else {
+			type = "boolean";
+		}
 		if (enablings.containsKey(trans)) {
-			enablingTrees.get(trans).replace(var, expr[0]);
+			enablingTrees.get(trans).replace(var, type, expr[0]);
 			enablings.put(trans, enablingTrees.get(trans).toString());
 			flag = true;
 		}
@@ -2928,11 +2936,11 @@ public class Abstraction extends LHPNFile {
 					// e1[1] = e1[0];
 					// }
 					// if (expr[1] == null) {
-					e1[0].replace(var, expr[0]);
+					e1[0].replace(var, type, expr[0]);
 					if (e1.length > 1 && expr.length > 1) {
 						if (e1[1] != null && expr[1] != null && !e1[1].toString().equals("")
 								&& !expr[1].toString().equals("")) {
-							e1[1].replace(var, expr[0]);
+							e1[1].replace(var, type, expr[0]);
 							if (assign.equals(booleanAssignments)) {
 								addBoolAssign(trans, v, "[" + e1[0].toString() + ","
 										+ e1[1].toString() + "]");
