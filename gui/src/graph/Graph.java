@@ -410,7 +410,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				|| (label.contains("variance") && file.contains("variance"))
 				|| (label.contains("deviation") && file.contains("standard_deviation"))) {
 			biomodelsim.frame().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-			TSDParser p = new TSDParser(file, biomodelsim, warning);
+			TSDParser p = new TSDParser(file, biomodelsim, warn);
 			biomodelsim.frame().setCursor(null);
 			warn = p.getWarning();
 			graphSpecies = p.getSpecies();
@@ -466,17 +466,17 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			}
 		}
 		if (label.contains("average")) {
-			return calculateAverageVarianceDeviation(file, stem, 0, directory);
+			return calculateAverageVarianceDeviation(file, stem, 0, directory, warn);
 		}
 		else if (label.contains("variance")) {
-			return calculateAverageVarianceDeviation(file, stem, 1, directory);
+			return calculateAverageVarianceDeviation(file, stem, 1, directory, warn);
 		}
 		else if (label.contains("deviation")) {
-			return calculateAverageVarianceDeviation(file, stem, 2, directory);
+			return calculateAverageVarianceDeviation(file, stem, 2, directory, warn);
 		}
 		else {
 			biomodelsim.frame().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-			TSDParser p = new TSDParser(file, biomodelsim, warning);
+			TSDParser p = new TSDParser(file, biomodelsim, warn);
 			biomodelsim.frame().setCursor(null);
 			warn = p.getWarning();
 			graphSpecies = p.getSpecies();
@@ -4519,12 +4519,13 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	}
 
 	private ArrayList<ArrayList<Double>> calculateAverageVarianceDeviation(String startFile,
-			String fileStem, int choice, String directory) {
+			String fileStem, int choice, String directory, boolean warning) {
+		warn = warning;
 		ArrayList<ArrayList<Double>> average = new ArrayList<ArrayList<Double>>();
 		ArrayList<ArrayList<Double>> variance = new ArrayList<ArrayList<Double>>();
 		ArrayList<ArrayList<Double>> deviation = new ArrayList<ArrayList<Double>>();
 		// TSDParser p = new TSDParser(startFile, biomodelsim, false);
-		ArrayList<ArrayList<Double>> data = readData(startFile, "", directory, false);
+		ArrayList<ArrayList<Double>> data = readData(startFile, "", directory, warn);
 		averageOrder = graphSpecies;
 		boolean first = true;
 		int runsToMake = 1;
