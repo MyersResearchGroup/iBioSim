@@ -1376,6 +1376,9 @@ public class LHPNFile {
 	}
 
 	public void removeBoolAssign(String transition, String name) {
+		if (!booleanAssignments.containsKey(transition)) {
+			return;
+		}
 		Properties prop = booleanAssignments.get(transition);
 		if (name != null && prop.containsKey(name)) {
 			prop.remove(name);
@@ -2182,11 +2185,8 @@ public class LHPNFile {
 	}
 
 	public boolean isTransition(String var) {
-		for (String s : controlFlow.keySet()) {
-			if (var.equals(s)) {
-				return true;
-			}
-		}
+		if (delays.containsKey(var))
+			return true;
 		return false;
 	}
 

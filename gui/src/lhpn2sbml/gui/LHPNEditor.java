@@ -366,6 +366,7 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 
 		public void run() {
 			if (getName().contains("Variable")) {
+				if (!list.isSelectionEmpty()) {
 				String name = list.getSelectedValue().toString();
 				if (lhpnFile.removeVar(name) != 0) {
 					JOptionPane.showMessageDialog(this, "Must delete assignments to variable "
@@ -375,8 +376,10 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 				variables.removeItem(name);
 				String var = name.split(" ")[0];
 				lhpnFile.removeVar(var);
+				}
 			}
 			else if (getName().contains("Place")) {
+				if (!list.isSelectionEmpty()) {
 				String id = list.getSelectedValue().toString();
 				String[] array = id.split(" ");
 				String name = array[0];
@@ -388,8 +391,10 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 				}
 				lhpnFile.removePlace(name);
 				places.removeItem(id);
+				}
 			}
 			else if (getName().contains("Transition")) {
+				if (!list.isSelectionEmpty()) {
 				String name = list.getSelectedValue().toString();
 				if (lhpnFile.containsFlow(name)) {
 					JOptionPane.showMessageDialog(this, "Must remove " + name
@@ -399,6 +404,7 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 				}
 				lhpnFile.removeTransition(name);
 				transitions.removeItem(name);
+				}
 			}
 			else if (getName().contains("Movement")) {
 				if (list.getSelectedValue()!=null) {
