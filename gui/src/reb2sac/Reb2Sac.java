@@ -1226,6 +1226,13 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				errorLabel.setEnabled(false);
 				absErr.setEnabled(false);
 			}
+			else if (simulators.getSelectedItem().equals("mp-adaptive")) {
+				description.setText("iSSA (Mean Path Adaptive)");
+				step.setEnabled(true);
+				stepLabel.setEnabled(true);
+				errorLabel.setEnabled(false);
+				absErr.setEnabled(false);
+			}
 			else if (simulators.getSelectedItem().equals("emc-sim")) {
 				description.setText("Monte Carlo sim with jump count as" + " independent variable");
 				step.setEnabled(true);
@@ -2419,23 +2426,24 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		int steps;
 		if (intervalLabel.getSelectedItem().equals("Print Interval")) {
 			if (simulators.getSelectedItem().equals("mpde")
-					|| simulators.getSelectedItem().equals("mp")) {
-				//double test = printInterval / timeStep;
-				//double error = test - ((int) test);
-				//if (error > 0.0001) {
-				//	JOptionPane.showMessageDialog(biomodelsim.frame(),
-				//			"Print Interval Must Be A Multiple Of Time Step.", "Error",
-				//			JOptionPane.ERROR_MESSAGE);
-				//	return;
-				//}
-				//test = timeLimit / printInterval;
-				//error = test - ((int) test);
-				//if (error > 0.0001) {
-				//	JOptionPane.showMessageDialog(biomodelsim.frame(),
-				//			"Time Limit Must Be A Multiple Of Print Interval.", "Error",
-				//			JOptionPane.ERROR_MESSAGE);
-				//	return;
-				//}
+					|| simulators.getSelectedItem().equals("mp")
+					|| simulators.getSelectedItem().equals("mp-adaptive")) {
+				// double test = printInterval / timeStep;
+				// double error = test - ((int) test);
+				// if (error > 0.0001) {
+				// JOptionPane.showMessageDialog(biomodelsim.frame(),
+				// "Print Interval Must Be A Multiple Of Time Step.", "Error",
+				// JOptionPane.ERROR_MESSAGE);
+				// return;
+				// }
+				// test = timeLimit / printInterval;
+				// error = test - ((int) test);
+				// if (error > 0.0001) {
+				// JOptionPane.showMessageDialog(biomodelsim.frame(),
+				// "Time Limit Must Be A Multiple Of Print Interval.", "Error",
+				// JOptionPane.ERROR_MESSAGE);
+				// return;
+				// }
 				steps = (int) (timeLimit / printInterval);
 			}
 			else {
@@ -2444,17 +2452,18 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		}
 		else {
 			if (simulators.getSelectedItem().equals("mpde")
-					|| simulators.getSelectedItem().equals("mp")) {
+					|| simulators.getSelectedItem().equals("mp")
+					|| simulators.getSelectedItem().equals("mp-adaptive")) {
 				steps = (int) (printInterval);
-				//double interval = timeLimit / steps;
-				//double test = interval / timeStep;
-				//double error = test - ((int) test);
-				//if (error > 0.0001) {
-				//	JOptionPane.showMessageDialog(biomodelsim.frame(),
-				//			"Print Interval Must Be A Multiple Of Time Step.", "Error",
-				//			JOptionPane.ERROR_MESSAGE);
-				//	return;
-				//}
+				// double interval = timeLimit / steps;
+				// double test = interval / timeStep;
+				// double error = test - ((int) test);
+				// if (error > 0.0001) {
+				// JOptionPane.showMessageDialog(biomodelsim.frame(),
+				// "Print Interval Must Be A Multiple Of Time Step.", "Error",
+				// JOptionPane.ERROR_MESSAGE);
+				// return;
+				// }
 			}
 			else {
 				steps = (int) (printInterval * run);
