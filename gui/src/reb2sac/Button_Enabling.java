@@ -178,6 +178,7 @@ public class Button_Enabling {
 			simulators.addItem("gillespie");
 			simulators.addItem("mpde");
 			simulators.addItem("mp");
+			simulators.addItem("mp-adaptive");
 			simulators.addItem("emc-sim");
 			simulators.addItem("bunker");
 			simulators.addItem("nmc");
@@ -257,6 +258,7 @@ public class Button_Enabling {
 		simulators.addItem("gillespie");
 		simulators.addItem("mpde");
 		simulators.addItem("mp");
+		simulators.addItem("mp-adaptive");
 		simulators.addItem("emc-sim");
 		simulators.addItem("bunker");
 		simulators.addItem("nmc");
