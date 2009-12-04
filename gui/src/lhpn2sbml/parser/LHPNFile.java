@@ -779,10 +779,12 @@ public class LHPNFile {
 
 	public void addTransition(String name) {
 		controlFlow.put(name, null);
+		delays.put(name,"[-inf,inf]");
 	}
 
 	public void addTransition(String name, Properties prop) {
 		controlFlow.put(name, prop);
+		delays.put(name,"[-inf,inf]");
 	}
 
 	public void addControlFlow(String fromName, String toName) {
@@ -1351,6 +1353,9 @@ public class LHPNFile {
 
 	public boolean addBoolAssign(String transition, String name, String value) {
 		boolean retval = false;
+		if (transition.equals("t39") && name.equals("regB")) {
+			System.out.println("");
+		}
 		Properties prop = new Properties();
 		if (booleanAssignments.get(transition) != null) {
 			prop = booleanAssignments.get(transition);
@@ -1573,6 +1578,29 @@ public class LHPNFile {
 		if (intAssignmentTrees.containsKey(transition)) {
 			HashMap<String, ExprTree[]> map = new HashMap<String, ExprTree[]>();
 			intAssignmentTrees.put(transition, map);
+		}
+	}
+	
+	public void removeAllAssignVar(String var) {
+		for (String t : booleanAssignments.keySet()) {
+			if (booleanAssignments.get(t).containsKey(var)) {
+				removeBoolAssign(t,var);
+			}
+		}
+		for (String t : contAssignments.keySet()) {
+			if (contAssignments.get(t).containsKey(var)) {
+				removeContAssign(t,var);
+			}
+		}
+		for (String t : intAssignments.keySet()) {
+			if (intAssignments.get(t).containsKey(var)) {
+				removeIntAssign(t,var);
+			}
+		}
+		for (String t : rateAssignments.keySet()) {
+			if (rateAssignments.get(t).containsKey(var)) {
+				removeRateAssign(t,var);
+			}
 		}
 	}
 
@@ -2247,7 +2275,7 @@ public class LHPNFile {
 			Matcher transMatcher = transPattern.matcher(name);
 			// log.addText("check2a");
 			while (transMatcher.find()) {
-				controlFlow.put(transMatcher.group(), new Properties());
+				addTransition(transMatcher.group());
 			}
 			Pattern placePattern = Pattern.compile(PLACE);
 			Matcher placeMatcher = placePattern.matcher(data.toString());
@@ -2259,84 +2287,85 @@ public class LHPNFile {
 				// String[] tempLine = tempString.split("#");
 				String[] tempPlace = temp.split("\\s");
 				// String trans = "";
-				if (controlFlow.containsKey(tempPlace[0])) {
-					// log.addText("check2 if");
-					Properties tempProp = new Properties();
-					if (controlFlow.get(tempPlace[0]) != null) {
-						tempProp = controlFlow.get(tempPlace[0]);
-					}
-					String tempString;
-					if (tempProp.containsKey("postset")) {
-						tempString = tempProp.getProperty("postset");
-						if (!tempString.equals("")) {
-							tempString = tempString + " " + tempPlace[1];
-						}
-						else {
-							tempString = tempPlace[1];
-						}
-					}
-					else {
-						tempString = tempPlace[1];
-					}
-					tempProp.setProperty("postset", tempString);
-					controlFlow.put(tempPlace[0], tempProp);
-					places.put(tempPlace[1], false);
-					tempProp = new Properties();
-					if (controlPlaces.get(tempPlace[1]) != null) {
-						tempProp = controlPlaces.get(tempPlace[1]);
-					}
-					if (tempProp.containsKey("preset")) {
-						tempString = tempProp.getProperty("preset");
-						tempString = tempString + " " + tempPlace[0];
-					}
-					else {
-						tempString = tempPlace[0];
-					}
-					tempProp.setProperty("preset", tempString);
-					controlPlaces.put(tempPlace[1], tempProp);
-					// trans = tempPlace[0];
-				}
-				else if (controlFlow.containsKey(tempPlace[1])) {
-					Properties tempProp = controlFlow.get(tempPlace[1]);
-					// log.addText("check2c");
-					String tempString;
-					// Boolean temp = tempProp.containsKey("preset");
-					// log.addText("check2c1");
-					// log.addText(temp.toString());
-					if (tempProp.containsKey("preset")) {
-						// log.addText("check2a if");
-						tempString = tempProp.getProperty("preset");
-						// log.addText("check2a if1");
-						if (!tempString.equals(""))
-							tempString = tempString + " " + tempPlace[0];
-						else
-							tempString = tempPlace[0];
-					}
-					else {
-						// log.addText("check2a else");
-						tempString = tempPlace[0];
-					}
-					// log.addText("check2d");
-					// log.addText("check2d1");
-					tempProp.setProperty("preset", tempString);
-					// log.addText("check2e");
-					controlFlow.put(tempPlace[1], tempProp);
-					places.put(tempPlace[0], false);
-					tempProp = new Properties();
-					if (controlPlaces.get(tempPlace[0]) != null) {
-						tempProp = controlPlaces.get(tempPlace[0]);
-					}
-					if (tempProp.containsKey("postset")) {
-						tempString = tempProp.getProperty("postset");
-						tempString = tempString + " " + tempPlace[1];
-					}
-					else {
-						tempString = tempPlace[1];
-					}
-					tempProp.setProperty("postset", tempString);
-					controlPlaces.put(tempPlace[0], tempProp);
-					// trans = tempPlace[1];
-				}
+				addControlFlow(tempPlace[0], tempPlace[1]);
+//				if (controlFlow.containsKey(tempPlace[0])) {
+//					// log.addText("check2 if");
+//					Properties tempProp = new Properties();
+//					if (controlFlow.get(tempPlace[0]) != null) {
+//						tempProp = controlFlow.get(tempPlace[0]);
+//					}
+//					String tempString;
+//					if (tempProp.containsKey("postset")) {
+//						tempString = tempProp.getProperty("postset");
+//						if (!tempString.equals("")) {
+//							tempString = tempString + " " + tempPlace[1];
+//						}
+//						else {
+//							tempString = tempPlace[1];
+//						}
+//					}
+//					else {
+//						tempString = tempPlace[1];
+//					}
+//					tempProp.setProperty("postset", tempString);
+//					controlFlow.put(tempPlace[0], tempProp);
+//					places.put(tempPlace[1], false);
+//					tempProp = new Properties();
+//					if (controlPlaces.get(tempPlace[1]) != null) {
+//						tempProp = controlPlaces.get(tempPlace[1]);
+//					}
+//					if (tempProp.containsKey("preset")) {
+//						tempString = tempProp.getProperty("preset");
+//						tempString = tempString + " " + tempPlace[0];
+//					}
+//					else {
+//						tempString = tempPlace[0];
+//					}
+//					tempProp.setProperty("preset", tempString);
+//					controlPlaces.put(tempPlace[1], tempProp);
+//					// trans = tempPlace[0];
+//				}
+//				else if (controlFlow.containsKey(tempPlace[1])) {
+//					Properties tempProp = controlFlow.get(tempPlace[1]);
+//					// log.addText("check2c");
+//					String tempString;
+//					// Boolean temp = tempProp.containsKey("preset");
+//					// log.addText("check2c1");
+//					// log.addText(temp.toString());
+//					if (tempProp.containsKey("preset")) {
+//						// log.addText("check2a if");
+//						tempString = tempProp.getProperty("preset");
+//						// log.addText("check2a if1");
+//						if (!tempString.equals(""))
+//							tempString = tempString + " " + tempPlace[0];
+//						else
+//							tempString = tempPlace[0];
+//					}
+//					else {
+//						// log.addText("check2a else");
+//						tempString = tempPlace[0];
+//					}
+//					// log.addText("check2d");
+//					// log.addText("check2d1");
+//					tempProp.setProperty("preset", tempString);
+//					// log.addText("check2e");
+//					controlFlow.put(tempPlace[1], tempProp);
+//					places.put(tempPlace[0], false);
+//					tempProp = new Properties();
+//					if (controlPlaces.get(tempPlace[0]) != null) {
+//						tempProp = controlPlaces.get(tempPlace[0]);
+//					}
+//					if (tempProp.containsKey("postset")) {
+//						tempString = tempProp.getProperty("postset");
+//						tempString = tempString + " " + tempPlace[1];
+//					}
+//					else {
+//						tempString = tempPlace[1];
+//					}
+//					tempProp.setProperty("postset", tempString);
+//					controlPlaces.put(tempPlace[0], tempProp);
+//					// trans = tempPlace[1];
+//				}
 				// if (controlPlaces.containsKey(tempPlace[0])) {
 				// // log.addText("check2 if");
 				// Properties tempProp = new Properties();

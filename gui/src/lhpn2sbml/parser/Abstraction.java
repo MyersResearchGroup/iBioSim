@@ -92,12 +92,13 @@ public class Abstraction extends LHPNFile {
 			if (abstPane.absListModel.contains(abstPane.xform4) && abstPane.isAbstract()) {
 				change = checkTrans4(change);
 			}
+			// Transform 14 - Remove Dead Places
 			if (abstPane.absListModel.contains(abstPane.xform14) && abstPane.isSimplify()) {
 				if (removeDeadPlaces()) {
 					change = true;
 				}
 			}
-			// Transform 8 - Propogate local assignments
+			// Transform 8 - Propagate local assignments
 			if (abstPane.absListModel.contains(abstPane.xform8) && abstPane.isSimplify()) {
 				change = checkTrans8(change);
 			}
@@ -109,13 +110,19 @@ public class Abstraction extends LHPNFile {
 			if (abstPane.absListModel.contains(abstPane.xform10) && abstPane.isSimplify()) {
 				simplifyExpr();
 			}
+			// Transform 15 - Remove Dead Transitions
 			if (abstPane.absListModel.contains(abstPane.xform15) && abstPane.isSimplify()) {
 				if (removeDeadTransitions()) {
 					change = true;
 				}
 			}
+			// Transform 16 - Remove Dominated Transitions
 			if (abstPane.absListModel.contains(abstPane.xform16) && abstPane.isSimplify()) {
 				change = removeDominatedTransitions(change);
+			}
+			// Transform 18 - Remove Unread Variables
+			if (abstPane.absListModel.contains(abstPane.xform18) && abstPane.isAbstract()) {
+				change = removeUnreadVars(change);
 			}
 		}
 	}
@@ -444,7 +451,7 @@ public class Abstraction extends LHPNFile {
 					continue;
 				ArrayList<String> list = new ArrayList<String>();
 				if (hasMarkedPreset(s, list)) // If the place is
-														// recursively dead
+					// recursively dead
 					continue;
 				if (controlPlaces.get(s).containsKey("postset")) {
 					for (String t : controlPlaces.get(s).getProperty("postset").split(" ")) {
@@ -612,6 +619,91 @@ public class Abstraction extends LHPNFile {
 					}
 				}
 			}
+		}
+		return change;
+	}
+
+	private boolean removeUnreadVars(boolean change) {
+		ArrayList<String> allVars = new ArrayList<String>();
+		allVars.addAll(inputs.keySet());
+		allVars.addAll(outputs.keySet());
+		allVars.addAll(variables.keySet());
+		allVars.addAll(integers.keySet());
+		ArrayList<String> remove = new ArrayList<String>();
+		for (String s : allVars) {
+			boolean isRead = false;
+			for (ExprTree e : enablingTrees.values()) {
+				if (e != null) {
+				if (e.containsVar(s)) {
+					isRead = true;
+					break;
+				}
+				}
+			}
+			if (!isRead) {
+				for (HashMap<String, ExprTree[]> map : booleanAssignmentTrees.values()) {
+					for (ExprTree[] eArray : map.values()) {
+						for (ExprTree e : eArray) {
+							if (e != null) {
+								if (e.containsVar(s)) {
+									isRead = true;
+									break;
+								}
+							}
+						}
+					}
+				}
+			}
+			if (!isRead) {
+				for (HashMap<String, ExprTree[]> map : contAssignmentTrees.values()) {
+					for (ExprTree[] eArray : map.values()) {
+						for (ExprTree e : eArray) {
+							if (e != null) {
+								if (e.containsVar(s)) {
+									isRead = true;
+									break;
+								}
+							}
+						}
+					}
+				}
+			}
+			if (!isRead) {
+				for (HashMap<String, ExprTree[]> map : intAssignmentTrees.values()) {
+					for (ExprTree[] eArray : map.values()) {
+						for (ExprTree e : eArray) {
+							if (e != null) {
+								if (e.containsVar(s)) {
+									isRead = true;
+									break;
+								}
+							}
+						}
+					}
+				}
+			}
+			if (!isRead) {
+				for (HashMap<String, ExprTree[]> map : rateAssignmentTrees.values()) {
+					for (ExprTree[] eArray : map.values()) {
+						for (ExprTree e : eArray) {
+							if (e != null) {
+								if (e.containsVar(s)) {
+									isRead = true;
+									break;
+								}
+							}
+						}
+					}
+				}
+			}
+			if (!isRead) {
+				remove.add(s);
+				change = true;
+			}
+		}
+		for (String s : remove) {
+			removeAllAssignVar(s);
+			removeVar(s);
 		}
 		return change;
 	}
@@ -896,104 +988,116 @@ public class Abstraction extends LHPNFile {
 		// System.out.println(place1 + place2);
 		String newPlace = new String();
 		newPlace = place1;
-		for (String s : controlFlow.keySet()) {
-			Properties prop = controlFlow.get(s);
-			if (prop.containsKey("preset")) {
-				String[] array = prop.getProperty("preset").split(" ");
-				String setString = new String();
-				if (array[0].equals(place2)) {
-					setString = newPlace;
-				}
-				else {
-					setString = array[0];
-				}
-				for (int i = 1; i < array.length; i++) {
-					if (array[i].equals(place2)) {
-						array[i] = newPlace;
-					}
-					setString = setString + " " + array[i];
-				}
-				prop.setProperty("preset", setString);
-			}
-			if (prop.containsKey("postset")) {
-				String[] array = prop.getProperty("postset").split(" ");
-				String setString = new String();
-				if (array[0].equals(place2)) {
-					setString = newPlace;
-				}
-				else {
-					setString = array[0];
-				}
-				for (int i = 1; i < array.length; i++) {
-					if (array[i].equals(place2)) {
-						array[i] = newPlace;
-					}
-					setString = setString + " " + array[i];
-				}
-				prop.setProperty("postset", setString);
-			}
-			controlFlow.put(s, prop);
-		}
-		String[] preset1;
-		if (controlPlaces.get(place1).containsKey("preset")) {
-			preset1 = controlPlaces.get(place1).getProperty("preset").split(" ");
-		}
-		else {
-			preset1 = new String[0];
-		}
-		String[] preset2;
 		if (controlPlaces.get(place2).containsKey("preset")) {
-			preset2 = controlPlaces.get(place2).getProperty("preset").split(" ");
-		}
-		else {
-			preset2 = new String[0];
-		}
-		String[] postset1;
-		if (controlPlaces.get(place1).containsKey("preset")) {
-			postset1 = controlPlaces.get(place1).getProperty("preset").split(" ");
-		}
-		else {
-			postset1 = new String[0];
-		}
-		String[] postset2;
-		if (controlPlaces.get(place2).containsKey("preset")) {
-			postset2 = controlPlaces.get(place2).getProperty("preset").split(" ");
-		}
-		else {
-			postset2 = new String[0];
-		}
-		String preset = new String();
-		String postset = new String();
-		for (String s : preset1) {
-			preset = preset + s + " ";
-			for (int i = 0; i < preset2.length; i++) {
-				if (s.equals(preset2[i])) {
-					preset2[i] = "";
-				}
+			for (String t : controlPlaces.get(place2).getProperty("preset").split("\\s")) {
+				addControlFlow(t, place1);
+				removeControlFlow(t, place2);
 			}
 		}
-		for (String s : preset2) {
-			if (!s.equals("")) {
-				preset = preset + s + " ";
+		if (controlPlaces.get(place2).containsKey("postset")) {
+			for (String t : controlPlaces.get(place2).getProperty("postset").split("\\s")) {
+				addControlFlow(place1,t);
+				removeControlFlow(place2,t);
 			}
 		}
-		for (String s : postset1) {
-			postset = postset + s + " ";
-			for (int i = 0; i < postset2.length; i++) {
-				if (s.equals(postset2[i])) {
-					postset2[i] = "";
-				}
-			}
-		}
-		for (String s : postset2) {
-			if (!s.equals("")) {
-				postset = postset + s + " ";
-			}
-		}
-		Properties prop = new Properties();
-		prop.setProperty("preset", preset.trim());
-		prop.setProperty("postset", postset.trim());
-		controlPlaces.put(place1, prop);
+//		for (String s : controlFlow.keySet()) {
+//			Properties prop = controlFlow.get(s);
+//			if (prop.containsKey("preset")) {
+//				String[] array = prop.getProperty("preset").split(" ");
+//				String setString = new String();
+//				if (array[0].equals(place2)) {
+//					setString = newPlace;
+//				}
+//				else {
+//					setString = array[0];
+//				}
+//				for (int i = 1; i < array.length; i++) {
+//					if (array[i].equals(place2)) {
+//						array[i] = newPlace;
+//					}
+//					setString = setString + " " + array[i];
+//				}
+//				prop.setProperty("preset", setString);
+//			}
+//			if (prop.containsKey("postset")) {
+//				String[] array = prop.getProperty("postset").split(" ");
+//				String setString = new String();
+//				if (array[0].equals(place2)) {
+//					setString = newPlace;
+//				}
+//				else {
+//					setString = array[0];
+//				}
+//				for (int i = 1; i < array.length; i++) {
+//					if (array[i].equals(place2)) {
+//						array[i] = newPlace;
+//					}
+//					setString = setString + " " + array[i];
+//				}
+//				prop.setProperty("postset", setString);
+//			}
+//			controlFlow.put(s, prop);
+//		}
+//		String[] preset1;
+//		if (controlPlaces.get(place1).containsKey("preset")) {
+//			preset1 = controlPlaces.get(place1).getProperty("preset").split(" ");
+//		}
+//		else {
+//			preset1 = new String[0];
+//		}
+//		String[] preset2;
+//		if (controlPlaces.get(place2).containsKey("preset")) {
+//			preset2 = controlPlaces.get(place2).getProperty("preset").split(" ");
+//		}
+//		else {
+//			preset2 = new String[0];
+//		}
+//		String[] postset1;
+//		if (controlPlaces.get(place1).containsKey("preset")) {
+//			postset1 = controlPlaces.get(place1).getProperty("preset").split(" ");
+//		}
+//		else {
+//			postset1 = new String[0];
+//		}
+//		String[] postset2;
+//		if (controlPlaces.get(place2).containsKey("preset")) {
+//			postset2 = controlPlaces.get(place2).getProperty("preset").split(" ");
+//		}
+//		else {
+//			postset2 = new String[0];
+//		}
+//		String preset = new String();
+//		String postset = new String();
+//		for (String s : preset1) {
+//			preset = preset + s + " ";
+//			for (int i = 0; i < preset2.length; i++) {
+//				if (s.equals(preset2[i])) {
+//					preset2[i] = "";
+//				}
+//			}
+//		}
+//		for (String s : preset2) {
+//			if (!s.equals("")) {
+//				preset = preset + s + " ";
+//			}
+//		}
+//		for (String s : postset1) {
+//			postset = postset + s + " ";
+//			for (int i = 0; i < postset2.length; i++) {
+//				if (s.equals(postset2[i])) {
+//					postset2[i] = "";
+//				}
+//			}
+//		}
+//		for (String s : postset2) {
+//			if (!s.equals("")) {
+//				postset = postset + s + " ";
+//			}
+//		}
+//		Properties prop = new Properties();
+//		prop.setProperty("preset", preset.trim());
+//		prop.setProperty("postset", postset.trim());
+//		controlPlaces.put(place1, prop);
 		removePlace(place2);
 	}
 
@@ -1394,9 +1498,8 @@ public class Abstraction extends LHPNFile {
 					ExprTree[] e = expr.get(t);
 					if (expr.get(t).length > 1) {
 						if (expr.get(t)[1] != null) {
-							prop
-									.setProperty(t, "[" + e[0].toString("boolean") + "," + e[1].toString("boolean")
-											+ "]");
+							prop.setProperty(t, "[" + e[0].toString("boolean") + ","
+									+ e[1].toString("boolean") + "]");
 						}
 						else {
 							prop.setProperty(t, e[0].toString("boolean"));
@@ -1417,7 +1520,8 @@ public class Abstraction extends LHPNFile {
 				ExprTree[] e = expr.get(t);
 				if (expr.get(t)[1] != null) {
 					if (!e[1].toString().equals("")) {
-						prop.setProperty(t, "[" + e[0].toString("continuous") + "," + e[1].toString("continuous") + "]");
+						prop.setProperty(t, "[" + e[0].toString("continuous") + ","
+								+ e[1].toString("continuous") + "]");
 					}
 					else {
 						prop.setProperty(t, e[0].toString("continuous"));
@@ -1437,7 +1541,8 @@ public class Abstraction extends LHPNFile {
 				ExprTree[] e = expr.get(t);
 				if (expr.get(t)[1] != null) {
 					if (!expr.get(t)[1].toString().equals("")) {
-						prop.setProperty(t, "[" + e[0].toString("continuous") + "," + e[1].toString("continuous") + "]");
+						prop.setProperty(t, "[" + e[0].toString("continuous") + ","
+								+ e[1].toString("continuous") + "]");
 					}
 					else {
 						prop.setProperty(t, e[0].toString("continuous"));
@@ -1457,7 +1562,8 @@ public class Abstraction extends LHPNFile {
 				ExprTree[] e = expr.get(t);
 				if (expr.get(t)[1] != null) {
 					if (!e[1].toString().equals("")) {
-						prop.setProperty(t, "[" + e[0].toString("integer") + "," + e[1].toString("integer") + "]");
+						prop.setProperty(t, "[" + e[0].toString("integer") + ","
+								+ e[1].toString("integer") + "]");
 					}
 					else {
 						prop.setProperty(t, e[0].toString("integer"));
@@ -2349,7 +2455,7 @@ public class Abstraction extends LHPNFile {
 			}
 			// for (ExprTree e1 : e) {
 			for (String v : e[0].getVars()) {
-				if (!process_read.get(v).equals(process_trans.get(trans))) {
+				if (!process_write.get(v).equals(process_trans.get(trans))) {
 					return change; // Return if the variables in support(e) are
 					// not
 					// locally written
@@ -2367,45 +2473,50 @@ public class Abstraction extends LHPNFile {
 									"\\s")) {
 								if (typeAssign.containsKey(tPP)) {
 									if (typeAssign.get(tPP).containsKey(var)) {
-									ExprTree[] ePP = typeAssign.get(tPP).get(var);
-									// for (ExprTree e1 : ePP) {
-									if (!ePP[0].isEqual(e[0])) {
-										return change; // All assignments to var
-										// in
-										// ..(t..)
-										// must be equal
+										ExprTree[] ePP = typeAssign.get(tPP).get(var);
+										// for (ExprTree e1 : ePP) {
+										if (!ePP[0].isEqual(e[0])) {
+											return change; // All assignments to
+											// var
+											// in
+											// ..(t..)
+											// must be equal
+										}
+										for (String v : ePP[0].getVars()) {
+											if (!v.equals(var)) {
+												if (isBoolean(v)) { // All
+													// variables
+													// in
+													// support(e) cannot be
+													// assigned
+													if (booleanAssignments.containsKey(tPP)) {
+														if (booleanAssignments.get(tPP)
+																.containsKey(v)) {
+															return change;
+														}
+													}
+												}
+												else if (isInteger(v)) {
+													if (intAssignments.containsKey(tPP)) {
+														if (intAssignments.get(tPP).containsKey(v)) {
+															return change;
+														}
+													}
+												}
+												else {
+													if (contAssignments.containsKey(tPP)) {
+														if (contAssignments.get(tPP).containsKey(v)) {
+															return change;
+														}
+													}
+												}
+											}
+										}
 									}
-									for (String v : ePP[0].getVars()) {
-										if (isBoolean(v)) { // All variables in
-											// support(e) cannot be
-											// assigned
-											if (booleanAssignments.containsKey(tPP)) {
-												if (booleanAssignments.get(tPP).containsKey(v)) {
-													return change;
-												}
-											}
-										}
-										else if (isInteger(v)) {
-											if (intAssignments.containsKey(tPP)) {
-												if (intAssignments.get(tPP).containsKey(v)) {
-													return change;
-												}
-											}
-										}
-										else {
-											if (contAssignments.containsKey(tPP)) {
-												if (contAssignments.get(tPP).containsKey(v)) {
-													return change;
-												}
-											}
-										}
-									}
+									else {
+										return change;
 									}
 								}
-								else {
-									return change;
-								}
-								// }
 							}
 						}
 					}
@@ -2416,7 +2527,7 @@ public class Abstraction extends LHPNFile {
 				for (String p : controlFlow.get(trans).getProperty("postset").split("\\s")) {
 					for (String tP : controlPlaces.get(p).getProperty("postset").split("\\s")) {
 						if (e.length > 1) {
-							if (e[1] != null) {
+							if (e[1] != null && !e[1].toString().equals("")) {
 								return change;
 							}
 						}
@@ -2454,33 +2565,30 @@ public class Abstraction extends LHPNFile {
 						}
 						if (booleanAssignmentTrees.containsKey(trans)) {
 							for (String s : booleanAssignmentTrees.get(trans).keySet()) {
-								if (s.equals(var)) {
-									return true;
-								}
 								for (ExprTree e1 : booleanAssignmentTrees.get(trans).get(s)) {
 									if (e1.getVars().contains(var)) {
 										return false;
 									}
 								}
+								if (s.equals(var)) {
+									return true;
+								}
 							}
 						}
 						if (contAssignmentTrees.containsKey(trans)) {
 							for (String s : contAssignmentTrees.get(trans).keySet()) {
-								if (s.equals(var)) {
-									return true;
-								}
 								for (ExprTree e1 : contAssignmentTrees.get(trans).get(s)) {
 									if (e1.getVars().contains(var)) {
 										return false;
 									}
 								}
+								if (s.equals(var)) {
+									return true;
+								}
 							}
 						}
 						if (intAssignmentTrees.containsKey(trans)) {
 							for (String s : intAssignmentTrees.get(trans).keySet()) {
-								if (s.equals(var)) {
-									return true;
-								}
 								for (ExprTree e1 : intAssignmentTrees.get(trans).get(s)) {
 									if (e1 != null) {
 										if (e1.getVars().contains(var)) {
@@ -2488,17 +2596,20 @@ public class Abstraction extends LHPNFile {
 										}
 									}
 								}
+								if (s.equals(var)) {
+									return true;
+								}
 							}
 						}
 						if (rateAssignmentTrees.containsKey(trans)) {
 							for (String s : rateAssignmentTrees.get(trans).keySet()) {
-								if (s.equals(var)) {
-									return true;
-								}
 								for (ExprTree e1 : rateAssignmentTrees.get(trans).get(s)) {
 									if (e1.getVars().contains(var)) {
 										return false;
 									}
+								}
+								if (s.equals(var)) {
+									return true;
 								}
 							}
 						}
@@ -2908,7 +3019,7 @@ public class Abstraction extends LHPNFile {
 		if (isInteger(var)) {
 			type = "integer";
 		}
-		else if (isContinuous(var)){
+		else if (isContinuous(var)) {
 			type = "continuous";
 		}
 		else {
@@ -2919,13 +3030,21 @@ public class Abstraction extends LHPNFile {
 			enablings.put(trans, enablingTrees.get(trans).toString());
 			flag = true;
 		}
-		if (intAssignmentTrees.containsKey(var)) {
+		if (intAssignmentTrees.containsKey(trans) && isInteger(var)) {
 			if (!intAssignmentTrees.get(trans).containsKey(var)) {
 				addIntAssign(trans, var, expr[0].toString());
 			}
 		}
-		else {
+		else if (isInteger(var)) {
 			addIntAssign(trans, var, expr[0].toString());
+		}
+		if (booleanAssignmentTrees.containsKey(trans) && isBoolean(var)) {
+			if (!booleanAssignmentTrees.get(trans).containsKey(var)) {
+				addBoolAssign(trans, var, expr[0].toString());
+			}
+		}
+		else if (isBoolean(var)) {
+			addBoolAssign(trans, var, expr[0].toString());
 		}
 		// }
 		for (HashMap<String, Properties> assign : assignments) {
@@ -2944,6 +3063,7 @@ public class Abstraction extends LHPNFile {
 			}
 			if (assignTree.containsKey(trans)) {
 				for (String v : assignTree.get(trans).keySet()) {
+					if (!v.equals(var)) {
 					ExprTree[] e1 = assignTree.get(trans).get(v);
 					// if (e1[1] == null && expr[1] != null) {
 					// e1[1] = e1[0];
@@ -3021,6 +3141,7 @@ public class Abstraction extends LHPNFile {
 					// + expr[1].toString() + "]");
 					// }
 					// }
+				}
 				}
 			}
 		}
