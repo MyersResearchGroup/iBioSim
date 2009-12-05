@@ -7206,11 +7206,13 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			}
 		}
 		else {
-			Parameter p = new Parameter(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
+//			Parameter p = new Parameter(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
+			Parameter p = new Parameter(document.getLevel(), document.getVersion());
 			p.setId("kf");
 			p.setValue(0.1);
 			changedParameters.add(p);
-			p = new Parameter(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
+//			p = new Parameter(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
+			p = new Parameter(document.getLevel(), document.getVersion());
 			p.setId("kr");
 			p.setValue(1.0);
 			changedParameters.add(p);
@@ -8537,7 +8539,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					}
 					else {
 						int index = reacParameters.getSelectedIndex();
-						Parameter paramet = new Parameter(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
+//						Parameter paramet = new Parameter(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
+						Parameter paramet = new Parameter(document.getLevel(), document.getVersion());
 						changedParameters.add(paramet);
 						paramet.setId(reacParamID.getText().trim());
 						paramet.setName(reacParamName.getText().trim());
@@ -8786,7 +8789,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					products.setSelectedIndex(index);
 				}
 				else {
-					SpeciesReference produ = new SpeciesReference(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
+//					SpeciesReference produ = new SpeciesReference(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
+					SpeciesReference produ = new SpeciesReference(document.getLevel(), document.getVersion());
 					changedProducts.add(produ);
 					produ.setSpecies((String) productSpecies.getSelectedItem());
 					if (stoiciLabel.getSelectedItem().equals("Stoichiometry")) {
@@ -8923,7 +8927,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					}
 				}
 				if (!error) {
-					ModifierSpeciesReference modi = new ModifierSpeciesReference(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
+//					ModifierSpeciesReference modi = new ModifierSpeciesReference(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
+					ModifierSpeciesReference modi = new ModifierSpeciesReference(document.getLevel(), document.getVersion());
 					changedModifiers.add(modi);
 					modi.setSpecies((String) modifierSpecies.getSelectedItem());
 					JList add = new JList();
@@ -9165,7 +9170,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					reactants.setSelectedIndex(index);
 				}
 				else {
-					SpeciesReference reactan = new SpeciesReference(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
+//					SpeciesReference reactan = new SpeciesReference(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
+					SpeciesReference reactan = new SpeciesReference(document.getLevel(), document.getVersion());
 					changedReactants.add(reactan);
 					reactan.setSpecies((String) reactantSpecies.getSelectedItem());
 					if (stoiciLabel.getSelectedItem().equals("Stoichiometry")) {
@@ -10337,7 +10343,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		}
 		else if (biosim.checkUnits) {
 			UnitDefinition unitDef = law.getDerivedUnitDefinition();
-			UnitDefinition unitDefLaw = new UnitDefinition(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
+//			UnitDefinition unitDefLaw = new UnitDefinition(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
+			UnitDefinition unitDefLaw = new UnitDefinition(document.getLevel(),document.getVersion());
 			if (document.getModel().getUnitDefinition("substance") != null) {
 				UnitDefinition subUnitDef = document.getModel().getUnitDefinition("substance");
 				for (int i = 0; i < subUnitDef.getNumUnits(); i++) {
