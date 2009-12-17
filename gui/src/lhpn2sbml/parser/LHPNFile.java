@@ -779,12 +779,12 @@ public class LHPNFile {
 
 	public void addTransition(String name) {
 		controlFlow.put(name, null);
-		delays.put(name,"[-inf,inf]");
+		delays.put(name,"[0,inf]");
 	}
 
 	public void addTransition(String name, Properties prop) {
 		controlFlow.put(name, prop);
-		delays.put(name,"[-inf,inf]");
+		delays.put(name,"[0,inf]");
 	}
 
 	public void addControlFlow(String fromName, String toName) {
