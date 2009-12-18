@@ -124,6 +124,10 @@ public class Abstraction extends LHPNFile {
 			if (abstPane.absListModel.contains(abstPane.xform18) && abstPane.isAbstract()) {
 				change = removeUnreadVars(change);
 			}
+			// Transform 20 - Remove Places after Fail Transition
+			if (abstPane.absListModel.contains(abstPane.xform20) && abstPane.isSimplify()) {
+				change = removePostFailPlaces(change);
+			}
 		}
 		// Transform 19 - Merge Coordinated Variables
 		if (abstPane.absListModel.contains(abstPane.xform19) && abstPane.isAbstract()) {
@@ -628,6 +632,19 @@ public class Abstraction extends LHPNFile {
 		return change;
 	}
 
+	private boolean removePostFailPlaces(boolean change) {
+		for (String t : fail) {
+			if (controlFlow.containsKey(t)) {
+				if (controlFlow.get(t).containsKey("postset")) {
+					for (String p : controlFlow.get(t).getProperty("postset").split("\\s")) {
+						removeControlFlow(t, p);
+					}
+				}
+			}
+		}
+		return change;
+	}
+
 	private boolean removeUnreadVars(boolean change) {
 		ArrayList<String> allVars = new ArrayList<String>();
 		allVars.addAll(inputs.keySet());
@@ -717,7 +734,8 @@ public class Abstraction extends LHPNFile {
 		ArrayList<String> remove = new ArrayList<String>();
 		for (String var1 : inputs.keySet()) {
 			for (String var2 : inputs.keySet()) {
-				if (var1.equals(var2)) continue;
+				if (var1.equals(var2))
+					continue;
 				boolean same = true;
 				boolean invert = true;
 				if (inputs.get(var1).equals(inputs.get(var2))) {
@@ -1283,7 +1301,8 @@ public class Abstraction extends LHPNFile {
 				}
 			}
 			for (String var2 : outputs.keySet()) {
-				if (var1.equals(var2)) continue;
+				if (var1.equals(var2))
+					continue;
 				boolean same = true;
 				boolean invert = true;
 				if (outputs.get(var1).equals(outputs.get(var2))) {
@@ -1309,7 +1328,10 @@ public class Abstraction extends LHPNFile {
 				else {
 					same = false;
 				}
-				if ((outputs.get(var1).equals("~(" + outputs.get(var2) + ")")||outputs.get(var1).equals("unknown")&&outputs.get(var2).equals("unknown")) && !same) {
+				if ((outputs.get(var1).equals("~(" + outputs.get(var2) + ")") || outputs.get(var1)
+						.equals("unknown")
+						&& outputs.get(var2).equals("unknown"))
+						&& !same) {
 					for (String s : booleanAssignmentTrees.keySet()) {
 						if (invert) {
 							if (booleanAssignmentTrees.get(s).containsKey(var1)) {
@@ -1477,7 +1499,8 @@ public class Abstraction extends LHPNFile {
 		}
 		for (String var1 : variables.keySet()) {
 			for (String var2 : variables.keySet()) {
-				if (var1.equals(var2)) continue;
+				if (var1.equals(var2))
+					continue;
 				boolean same = true;
 				if (variables.get(var1).equals(variables.get(var2))) {
 					for (String s : contAssignmentTrees.keySet()) {
@@ -1566,7 +1589,8 @@ public class Abstraction extends LHPNFile {
 		}
 		for (String var1 : integers.keySet()) {
 			for (String var2 : integers.keySet()) {
-				if (var1.equals(var2)) continue;
+				if (var1.equals(var2))
+					continue;
 				boolean same = true;
 				if (integers.get(var1).equals(integers.get(var2))) {
 					for (String s : intAssignmentTrees.keySet()) {
@@ -2279,14 +2303,14 @@ public class Abstraction extends LHPNFile {
 				if (postset.length == 1 && !postset[0].equals("")) {
 					boolean assign = false;
 					if (enablings.containsKey(s)) {
-						//for (String var : enablingTrees.get(s).getVars()) {
-						//	if (!process_write.get(var).equals(process_trans.get(s))) {
-						//		assign = true;
-						//		break;
-						//	}
-						//}
-						 assign = true;
-						 continue;
+						for (String var : enablingTrees.get(s).getVars()) {
+							if (!process_write.get(var).equals(process_trans.get(s))) {
+								assign = true;
+								break;
+							}
+						}
+						// assign = true;
+						// continue;
 					}
 					if (!assign) {
 						for (HashMap<String, Properties> h : assignments) {
@@ -2495,11 +2519,15 @@ public class Abstraction extends LHPNFile {
 				String t = o.toString();
 				ExprTree[] e = expr.get(t);
 				if (e != null) {
-				if (e.length > 1) {
-					if (expr.get(t)[1] != null) {
-						if (!expr.get(t)[1].toString().equals("")) {
-							prop.setProperty(t, "[" + e[0].toString("continuous") + ","
-									+ e[1].toString("continuous") + "]");
+					if (e.length > 1) {
+						if (expr.get(t)[1] != null) {
+							if (!expr.get(t)[1].toString().equals("")) {
+								prop.setProperty(t, "[" + e[0].toString("continuous") + ","
+										+ e[1].toString("continuous") + "]");
+							}
+							else {
+								prop.setProperty(t, e[0].toString("continuous"));
+							}
 						}
 						else {
 							prop.setProperty(t, e[0].toString("continuous"));
@@ -2508,10 +2536,6 @@ public class Abstraction extends LHPNFile {
 					else {
 						prop.setProperty(t, e[0].toString("continuous"));
 					}
-				}
-				else {
-					prop.setProperty(t, e[0].toString("continuous"));
-				}
 				}
 			}
 			rateAssignments.put(s, prop);
@@ -2523,18 +2547,18 @@ public class Abstraction extends LHPNFile {
 				String t = o.toString();
 				ExprTree[] e = expr.get(t);
 				if (e != null) {
-				if (expr.get(t)[1] != null) {
-					if (!e[1].toString().equals("")) {
-						prop.setProperty(t, "[" + e[0].toString("integer") + ","
-								+ e[1].toString("integer") + "]");
+					if (expr.get(t)[1] != null) {
+						if (!e[1].toString().equals("")) {
+							prop.setProperty(t, "[" + e[0].toString("integer") + ","
+									+ e[1].toString("integer") + "]");
+						}
+						else {
+							prop.setProperty(t, e[0].toString("integer"));
+						}
 					}
 					else {
 						prop.setProperty(t, e[0].toString("integer"));
 					}
-				}
-				else {
-					prop.setProperty(t, e[0].toString("integer"));
-				}
 				}
 			}
 			intAssignments.put(s, prop);
@@ -2821,15 +2845,17 @@ public class Abstraction extends LHPNFile {
 			}
 		}
 		for (String t : postset) {
-			if (enablingTrees.containsKey(transition)) {
-				ExprTree expr = enablingTrees.get(transition);
-				if (enablingTrees.containsKey(t)) {
-					expr.setNodeValues(expr, enablingTrees.get(t), "&&", 'l');
-					enablingTrees.put(transition, expr);
+			if (enablingTrees.containsKey(t)) {
+				ExprTree expr = enablingTrees.get(t);
+				if (enablingTrees.containsKey(transition)) {
+					expr.setNodeValues(expr, enablingTrees.get(transition), "&&", 'l');
+					enablingTrees.put(t, expr);
+					enablings.put(t, expr.toString());
 				}
 			}
-			else if (enablingTrees.containsKey(t)) {
-				enablingTrees.put(transition, enablingTrees.get(t));
+			else if (enablingTrees.containsKey(transition)) {
+				enablingTrees.put(t, enablingTrees.get(transition));
+				enablings.put(t, enablingTrees.get(transition).toString());
 			}
 			removeControlFlow(place, t);
 		}
