@@ -778,6 +778,7 @@ public class LHPNFile {
 	// }
 
 	public void addTransition(String name) {
+		//controlFlow.put(name, null);
 		controlFlow.put(name, null);
 		delays.put(name,"[0,inf]");
 	}
@@ -1844,6 +1845,8 @@ public class LHPNFile {
 		for (String s : controlFlow.keySet()) {
 			// log.addText("key: " + s);
 			Properties prop = controlFlow.get(s);
+			if (prop != null) {
+			if (prop.containsKey("postset")) {
 			String toString = prop.getProperty("postset");
 			// log.addText("toString " + toString);
 			if (toString != null) {
@@ -1852,7 +1855,9 @@ public class LHPNFile {
 					retString = retString + s + " " + toArray[i] + "\n";
 				}
 			}
+			}
 			// log.addText("getfrom");
+			if (prop.containsKey("preset")) {
 			String fromString = prop.getProperty("preset");
 			if (fromString != null) {
 				// log.addText("fromString " + fromString);
@@ -1860,6 +1865,8 @@ public class LHPNFile {
 				for (int i = 0; i < fromArray.length; i++) {
 					retString = retString + fromArray[i] + " " + s + "\n";
 				}
+			}
+			}
 			}
 		}
 		return retString.split("\\n");
@@ -2838,9 +2845,9 @@ public class LHPNFile {
 					assignProp = rateAssignments.get(assignMatcher.group(1));
 				}
 				// log.addText("here " + assignMatcher.group(2));
-				// String temp = assignMatcher.group(2);
+				 String temp = assignMatcher.group(2);
 				varMatcher = varPattern.matcher(assignMatcher.group(2));
-				varMatcher.find();
+				//varMatcher.find();
 				// log.addText(assignMatcher.group(2) + " " + indetPattern);
 				boolean indet = false;
 				indetMatcher = indetPattern.matcher(assignMatcher.group(2));
@@ -3120,7 +3127,7 @@ public class LHPNFile {
 
 	private static final String ASSIGNMENT = "<([\\S[^=]]+?)=\\[([^>]+?)\\]>";
 
-	private static final String ASSIGN_VAR = "([\\S[^:]]+?):=(.+)";
+	private static final String ASSIGN_VAR = "([^:]+?):=(.+)";
 
 	private static final String INDET_ASSIGN_VAR = "([\\S[^:]]+?):=(\\[[-\\d]+,[-\\d]+\\])";
 

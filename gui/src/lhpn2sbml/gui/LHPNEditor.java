@@ -315,6 +315,7 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 			}
 		}
 		catch (Exception e1) {
+			e1.printStackTrace();
 			JOptionPane.showMessageDialog(this, "Unable to view circuit.", "Error",
 					JOptionPane.ERROR_MESSAGE);
 		}

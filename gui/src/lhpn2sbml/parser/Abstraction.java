@@ -82,15 +82,15 @@ public class Abstraction extends LHPNFile {
 			if (abstPane.absListModel.contains(abstPane.xform5) && abstPane.isAbstract()) {
 				change = checkTrans5b(change);
 			}
-			// Transform 3 - Remove a Transition with a Single Place in the
-			// Postset
-			if (abstPane.absListModel.contains(abstPane.xform3) && abstPane.isAbstract()) {
-				change = checkTrans3(change);
-			}
 			// Transform 4 - Remove a Transition with a Single Place in the
 			// Preset
 			if (abstPane.absListModel.contains(abstPane.xform4) && abstPane.isAbstract()) {
 				change = checkTrans4(change);
+			}
+			// Transform 3 - Remove a Transition with a Single Place in the
+			// Postset
+			if (abstPane.absListModel.contains(abstPane.xform3) && abstPane.isAbstract()) {
+				change = checkTrans3(change);
 			}
 			// Transform 14 - Remove Dead Places
 			if (abstPane.absListModel.contains(abstPane.xform14) && abstPane.isSimplify()) {
@@ -102,7 +102,7 @@ public class Abstraction extends LHPNFile {
 			if (abstPane.absListModel.contains(abstPane.xform8) && abstPane.isSimplify()) {
 				change = checkTrans8(change);
 			}
-			// Transform 9 - Remove Transitions Read before Written
+			// Transform 9 - Remove Assignments Read before Written
 			if (abstPane.absListModel.contains(abstPane.xform9) && abstPane.isAbstract()) {
 				change = checkTrans9(change);
 			}
@@ -124,6 +124,11 @@ public class Abstraction extends LHPNFile {
 			if (abstPane.absListModel.contains(abstPane.xform18) && abstPane.isAbstract()) {
 				change = removeUnreadVars(change);
 			}
+		}
+		// Transform 19 - Merge Coordinated Variables
+		if (abstPane.absListModel.contains(abstPane.xform19) && abstPane.isAbstract()) {
+			change = mergeCoordinatedVars(change);
+			simplifyExpr();
 		}
 	}
 
@@ -634,10 +639,10 @@ public class Abstraction extends LHPNFile {
 			boolean isRead = false;
 			for (ExprTree e : enablingTrees.values()) {
 				if (e != null) {
-				if (e.containsVar(s)) {
-					isRead = true;
-					break;
-				}
+					if (e.containsVar(s)) {
+						isRead = true;
+						break;
+					}
 				}
 			}
 			if (!isRead) {
@@ -703,6 +708,952 @@ public class Abstraction extends LHPNFile {
 		}
 		for (String s : remove) {
 			removeAllAssignVar(s);
+			removeVar(s);
+		}
+		return change;
+	}
+
+	private boolean mergeCoordinatedVars(boolean change) {
+		ArrayList<String> remove = new ArrayList<String>();
+		for (String var1 : inputs.keySet()) {
+			for (String var2 : inputs.keySet()) {
+				if (var1.equals(var2)) continue;
+				boolean same = true;
+				boolean invert = true;
+				if (inputs.get(var1).equals(inputs.get(var2))) {
+					for (String s : booleanAssignmentTrees.keySet()) {
+						if (same) {
+							if (booleanAssignmentTrees.get(s).containsKey(var1)) {
+								if (booleanAssignmentTrees.get(s).containsKey(var2)) {
+									if (!booleanAssignmentTrees.get(s).get(var1)[0]
+											.equals(booleanAssignmentTrees.get(s).get(var2)[0])) {
+										same = false;
+									}
+								}
+								else {
+									same = false;
+								}
+							}
+							else if (booleanAssignmentTrees.get(s).containsKey(var2)) {
+								same = false;
+							}
+						}
+					}
+				}
+				else if (inputs.get(var1).equals("~(" + inputs.get(var2) + ")") && !same) {
+					for (String s : booleanAssignmentTrees.keySet()) {
+						if (invert) {
+							if (booleanAssignmentTrees.get(s).containsKey(var1)) {
+								if (booleanAssignmentTrees.get(s).containsKey(var2)) {
+									ExprTree expr = new ExprTree(booleanAssignmentTrees.get(s).get(
+											var2)[0]);
+									expr.setNodeValues(expr, null, "!", 'l');
+									if (booleanAssignmentTrees.get(s).get(var1)[0].equals(expr)) {
+										continue;
+									}
+									else if (booleanAssignments.get(s).get(var1).toString()
+											.toLowerCase().equals("true")
+											&& booleanAssignments.get(s).get(var2).toString()
+													.toLowerCase().equals("false")
+											|| booleanAssignments.get(s).get(var1).toString()
+													.toLowerCase().equals("false")
+											&& booleanAssignments.get(s).get(var2).toString()
+													.toLowerCase().equals("true")) {
+										continue;
+									}
+									else {
+										invert = false;
+									}
+								}
+								else {
+									invert = false;
+								}
+							}
+							else if (booleanAssignmentTrees.get(s).containsKey(var2)) {
+								invert = false;
+							}
+						}
+					}
+				}
+				else {
+					same = false;
+					invert = false;
+				}
+				if (same) {
+					for (String s : booleanAssignmentTrees.keySet()) {
+						HashMap<String, ExprTree[]> m = booleanAssignmentTrees.get(s);
+						for (ExprTree[] eArray : m.values()) {
+							for (ExprTree e : eArray) {
+								if (e != null) {
+									e.replaceVar(var2, var1);
+								}
+							}
+						}
+						if (m.containsKey(var2)) {
+							m.remove(var2);
+							removeBoolAssign(s, var2);
+						}
+					}
+					for (String s : contAssignmentTrees.keySet()) {
+						HashMap<String, ExprTree[]> m = contAssignmentTrees.get(s);
+						for (ExprTree[] eArray : m.values()) {
+							for (ExprTree e : eArray) {
+								if (e != null) {
+									e.replaceVar(var2, var1);
+								}
+							}
+						}
+						if (m.containsKey(var2)) {
+							m.remove(var2);
+							removeContAssign(s, var2);
+						}
+					}
+					for (String s : intAssignmentTrees.keySet()) {
+						HashMap<String, ExprTree[]> m = intAssignmentTrees.get(s);
+						for (ExprTree[] eArray : m.values()) {
+							for (ExprTree e : eArray) {
+								if (e != null) {
+									e.replaceVar(var2, var1);
+								}
+							}
+						}
+						if (m.containsKey(var2)) {
+							m.remove(var2);
+							removeIntAssign(s, var2);
+						}
+					}
+					for (String s : rateAssignmentTrees.keySet()) {
+						HashMap<String, ExprTree[]> m = rateAssignmentTrees.get(s);
+						for (ExprTree[] eArray : m.values()) {
+							for (ExprTree e : eArray) {
+								if (e != null) {
+									e.replaceVar(var2, var1);
+								}
+							}
+						}
+						if (m.containsKey(var2)) {
+							m.remove(var2);
+							removeRateAssign(s, var2);
+						}
+					}
+					remove.add(var2);
+				}
+				else if (invert) {
+					ExprTree expr = new ExprTree(this);
+					expr.token = expr.intexpr_gettok("~" + var1);
+					expr.intexpr_L("~" + var1);
+					for (ExprTree e : enablingTrees.values()) {
+						e.replace(var2, "", expr);
+					}
+					for (String s : booleanAssignmentTrees.keySet()) {
+						HashMap<String, ExprTree[]> m = booleanAssignmentTrees.get(s);
+						for (ExprTree[] eArray : m.values()) {
+							for (ExprTree e : eArray) {
+								if (e != null) {
+									e.replace(var2, "", expr);
+								}
+							}
+						}
+						if (m.containsKey(var2)) {
+							m.remove(var2);
+							removeBoolAssign(s, var2);
+						}
+					}
+					for (String s : contAssignmentTrees.keySet()) {
+						HashMap<String, ExprTree[]> m = contAssignmentTrees.get(s);
+						for (ExprTree[] eArray : m.values()) {
+							for (ExprTree e : eArray) {
+								if (e != null) {
+									e.replace(var2, "", expr);
+								}
+							}
+						}
+						if (m.containsKey(var2)) {
+							m.remove(var2);
+							removeContAssign(s, var2);
+						}
+					}
+					for (String s : intAssignmentTrees.keySet()) {
+						HashMap<String, ExprTree[]> m = intAssignmentTrees.get(s);
+						for (ExprTree[] eArray : m.values()) {
+							for (ExprTree e : eArray) {
+								if (e != null) {
+									e.replace(var2, "", expr);
+								}
+							}
+						}
+						if (m.containsKey(var2)) {
+							m.remove(var2);
+							removeIntAssign(s, var2);
+						}
+					}
+					for (String s : rateAssignmentTrees.keySet()) {
+						HashMap<String, ExprTree[]> m = rateAssignmentTrees.get(s);
+						for (ExprTree[] eArray : m.values()) {
+							for (ExprTree e : eArray) {
+								if (e != null) {
+									e.replace(var2, "", expr);
+								}
+							}
+						}
+						if (m.containsKey(var2)) {
+							m.remove(var2);
+							removeRateAssign(s, var2);
+						}
+					}
+					remove.add(var2);
+				}
+			}
+			for (String var2 : outputs.keySet()) {
+				boolean same = true;
+				boolean invert = true;
+				if (inputs.get(var1).equals(outputs.get(var2))) {
+					for (String s : booleanAssignmentTrees.keySet()) {
+						if (same) {
+							if (booleanAssignmentTrees.get(s).containsKey(var1)) {
+								if (booleanAssignmentTrees.get(s).containsKey(var2)) {
+									if (!booleanAssignmentTrees.get(s).get(var1)[0]
+											.equals(booleanAssignmentTrees.get(s).get(var2)[0])) {
+										same = false;
+									}
+								}
+								else {
+									same = false;
+								}
+							}
+							else if (booleanAssignmentTrees.get(s).containsKey(var2)) {
+								same = false;
+							}
+						}
+					}
+				}
+				else if (inputs.get(var1).equals("~(" + outputs.get(var2) + ")") && !same) {
+					for (String s : booleanAssignmentTrees.keySet()) {
+						if (invert) {
+							if (booleanAssignmentTrees.get(s).containsKey(var1)) {
+								if (booleanAssignmentTrees.get(s).containsKey(var2)) {
+									ExprTree expr = new ExprTree(booleanAssignmentTrees.get(s).get(
+											var2)[0]);
+									expr.setNodeValues(expr, null, "!", 'l');
+									if (booleanAssignmentTrees.get(s).get(var1)[0].equals(expr)) {
+										continue;
+									}
+									else if (booleanAssignments.get(s).get(var1).toString()
+											.toLowerCase().equals("true")
+											&& booleanAssignments.get(s).get(var2).toString()
+													.toLowerCase().equals("false")
+											|| booleanAssignments.get(s).get(var1).toString()
+													.toLowerCase().equals("false")
+											&& booleanAssignments.get(s).get(var2).toString()
+													.toLowerCase().equals("true")) {
+										continue;
+									}
+									else {
+										invert = false;
+									}
+								}
+								else {
+									invert = false;
+								}
+							}
+							else if (booleanAssignmentTrees.get(s).containsKey(var2)) {
+								invert = false;
+							}
+						}
+					}
+				}
+				else {
+					same = false;
+					invert = false;
+				}
+				if (same) {
+					for (String s : booleanAssignmentTrees.keySet()) {
+						HashMap<String, ExprTree[]> m = booleanAssignmentTrees.get(s);
+						for (ExprTree[] eArray : m.values()) {
+							for (ExprTree e : eArray) {
+								if (e != null) {
+									e.replaceVar(var2, var1);
+								}
+							}
+						}
+						if (m.containsKey(var2)) {
+							m.remove(var2);
+							removeBoolAssign(s, var2);
+						}
+					}
+					for (String s : contAssignmentTrees.keySet()) {
+						HashMap<String, ExprTree[]> m = contAssignmentTrees.get(s);
+						for (ExprTree[] eArray : m.values()) {
+							for (ExprTree e : eArray) {
+								if (e != null) {
+									e.replaceVar(var2, var1);
+								}
+							}
+						}
+						if (m.containsKey(var2)) {
+							m.remove(var2);
+							removeContAssign(s, var2);
+						}
+					}
+					for (String s : intAssignmentTrees.keySet()) {
+						HashMap<String, ExprTree[]> m = intAssignmentTrees.get(s);
+						for (ExprTree[] eArray : m.values()) {
+							for (ExprTree e : eArray) {
+								if (e != null) {
+									e.replaceVar(var2, var1);
+								}
+							}
+						}
+						if (m.containsKey(var2)) {
+							m.remove(var2);
+							removeIntAssign(s, var2);
+						}
+					}
+					for (String s : rateAssignmentTrees.keySet()) {
+						HashMap<String, ExprTree[]> m = rateAssignmentTrees.get(s);
+						for (ExprTree[] eArray : m.values()) {
+							for (ExprTree e : eArray) {
+								if (e != null) {
+									e.replaceVar(var2, var1);
+								}
+							}
+						}
+						if (m.containsKey(var2)) {
+							m.remove(var2);
+							removeRateAssign(s, var2);
+						}
+					}
+					remove.add(var2);
+				}
+				else if (invert) {
+					ExprTree expr = new ExprTree(this);
+					expr.token = expr.intexpr_gettok("~" + var1);
+					expr.intexpr_L("~" + var1);
+					for (ExprTree e : enablingTrees.values()) {
+						e.replace(var2, "", expr);
+					}
+					for (String s : booleanAssignmentTrees.keySet()) {
+						HashMap<String, ExprTree[]> m = booleanAssignmentTrees.get(s);
+						for (ExprTree[] eArray : m.values()) {
+							for (ExprTree e : eArray) {
+								if (e != null) {
+									e.replace(var2, "", expr);
+								}
+							}
+						}
+						if (m.containsKey(var2)) {
+							m.remove(var2);
+							removeBoolAssign(s, var2);
+						}
+					}
+					for (String s : contAssignmentTrees.keySet()) {
+						HashMap<String, ExprTree[]> m = contAssignmentTrees.get(s);
+						for (ExprTree[] eArray : m.values()) {
+							for (ExprTree e : eArray) {
+								if (e != null) {
+									e.replace(var2, "", expr);
+								}
+							}
+						}
+						if (m.containsKey(var2)) {
+							m.remove(var2);
+							removeContAssign(s, var2);
+						}
+					}
+					for (String s : intAssignmentTrees.keySet()) {
+						HashMap<String, ExprTree[]> m = intAssignmentTrees.get(s);
+						for (ExprTree[] eArray : m.values()) {
+							for (ExprTree e : eArray) {
+								if (e != null) {
+									e.replace(var2, "", expr);
+								}
+							}
+						}
+						if (m.containsKey(var2)) {
+							m.remove(var2);
+							removeIntAssign(s, var2);
+						}
+					}
+					for (String s : rateAssignmentTrees.keySet()) {
+						HashMap<String, ExprTree[]> m = rateAssignmentTrees.get(s);
+						for (ExprTree[] eArray : m.values()) {
+							for (ExprTree e : eArray) {
+								if (e != null) {
+									e.replace(var2, "", expr);
+								}
+							}
+						}
+						if (m.containsKey(var2)) {
+							m.remove(var2);
+							removeRateAssign(s, var2);
+						}
+					}
+					remove.add(var2);
+				}
+			}
+		}
+		for (String var1 : outputs.keySet()) {
+			for (String var2 : inputs.keySet()) {
+				boolean same = true;
+				boolean invert = true;
+				if (outputs.get(var1).equals(inputs.get(var2))) {
+					for (String s : booleanAssignmentTrees.keySet()) {
+						if (same) {
+							if (booleanAssignmentTrees.get(s).containsKey(var1)) {
+								if (booleanAssignmentTrees.get(s).containsKey(var2)) {
+									if (!booleanAssignmentTrees.get(s).get(var1)[0]
+											.equals(booleanAssignmentTrees.get(s).get(var2)[0])) {
+										same = false;
+									}
+								}
+								else {
+									same = false;
+								}
+							}
+							else if (booleanAssignmentTrees.get(s).containsKey(var2)) {
+								same = false;
+							}
+						}
+					}
+				}
+				else if (outputs.get(var1).equals("~(" + inputs.get(var2) + ")") && !same) {
+					for (String s : booleanAssignmentTrees.keySet()) {
+						if (invert) {
+							if (booleanAssignmentTrees.get(s).containsKey(var1)) {
+								if (booleanAssignmentTrees.get(s).containsKey(var2)) {
+									ExprTree expr = new ExprTree(booleanAssignmentTrees.get(s).get(
+											var2)[0]);
+									expr.setNodeValues(expr, null, "!", 'l');
+									if (booleanAssignmentTrees.get(s).get(var1)[0].equals(expr)) {
+										continue;
+									}
+									else if (booleanAssignments.get(s).get(var1).toString()
+											.toLowerCase().equals("true")
+											&& booleanAssignments.get(s).get(var2).toString()
+													.toLowerCase().equals("false")
+											|| booleanAssignments.get(s).get(var1).toString()
+													.toLowerCase().equals("false")
+											&& booleanAssignments.get(s).get(var2).toString()
+													.toLowerCase().equals("true")) {
+										continue;
+									}
+									else {
+										invert = false;
+									}
+								}
+								else {
+									invert = false;
+								}
+							}
+							else if (booleanAssignmentTrees.get(s).containsKey(var2)) {
+								invert = false;
+							}
+						}
+					}
+				}
+				else {
+					same = false;
+					invert = false;
+				}
+				if (same) {
+					for (String s : booleanAssignmentTrees.keySet()) {
+						HashMap<String, ExprTree[]> m = booleanAssignmentTrees.get(s);
+						for (ExprTree[] eArray : m.values()) {
+							for (ExprTree e : eArray) {
+								if (e != null) {
+									e.replaceVar(var2, var1);
+								}
+							}
+						}
+						if (m.containsKey(var2)) {
+							m.remove(var2);
+							removeBoolAssign(s, var2);
+						}
+					}
+					for (String s : contAssignmentTrees.keySet()) {
+						HashMap<String, ExprTree[]> m = contAssignmentTrees.get(s);
+						for (ExprTree[] eArray : m.values()) {
+							for (ExprTree e : eArray) {
+								if (e != null) {
+									e.replaceVar(var2, var1);
+								}
+							}
+						}
+						if (m.containsKey(var2)) {
+							m.remove(var2);
+							removeContAssign(s, var2);
+						}
+					}
+					for (String s : intAssignmentTrees.keySet()) {
+						HashMap<String, ExprTree[]> m = intAssignmentTrees.get(s);
+						for (ExprTree[] eArray : m.values()) {
+							for (ExprTree e : eArray) {
+								if (e != null) {
+									e.replaceVar(var2, var1);
+								}
+							}
+						}
+						if (m.containsKey(var2)) {
+							m.remove(var2);
+							removeIntAssign(s, var2);
+						}
+					}
+					for (String s : rateAssignmentTrees.keySet()) {
+						HashMap<String, ExprTree[]> m = rateAssignmentTrees.get(s);
+						for (ExprTree[] eArray : m.values()) {
+							for (ExprTree e : eArray) {
+								if (e != null) {
+									e.replaceVar(var2, var1);
+								}
+							}
+						}
+						if (m.containsKey(var2)) {
+							m.remove(var2);
+							removeRateAssign(s, var2);
+						}
+					}
+					remove.add(var2);
+					change = true;
+				}
+				else if (invert) {
+					ExprTree expr = new ExprTree(this);
+					expr.token = expr.intexpr_gettok("~" + var1);
+					expr.intexpr_L("~" + var1);
+					for (ExprTree e : enablingTrees.values()) {
+						e.replace(var2, "", expr);
+					}
+					for (String s : booleanAssignmentTrees.keySet()) {
+						HashMap<String, ExprTree[]> m = booleanAssignmentTrees.get(s);
+						for (ExprTree[] eArray : m.values()) {
+							for (ExprTree e : eArray) {
+								if (e != null) {
+									e.replace(var2, "", expr);
+								}
+							}
+						}
+						if (m.containsKey(var2)) {
+							m.remove(var2);
+							removeBoolAssign(s, var2);
+						}
+					}
+					for (String s : contAssignmentTrees.keySet()) {
+						HashMap<String, ExprTree[]> m = contAssignmentTrees.get(s);
+						for (ExprTree[] eArray : m.values()) {
+							for (ExprTree e : eArray) {
+								if (e != null) {
+									e.replace(var2, "", expr);
+								}
+							}
+						}
+						if (m.containsKey(var2)) {
+							m.remove(var2);
+							removeContAssign(s, var2);
+						}
+					}
+					for (String s : intAssignmentTrees.keySet()) {
+						HashMap<String, ExprTree[]> m = intAssignmentTrees.get(s);
+						for (ExprTree[] eArray : m.values()) {
+							for (ExprTree e : eArray) {
+								if (e != null) {
+									e.replace(var2, "", expr);
+								}
+							}
+						}
+						if (m.containsKey(var2)) {
+							m.remove(var2);
+							removeIntAssign(s, var2);
+						}
+					}
+					for (String s : rateAssignmentTrees.keySet()) {
+						HashMap<String, ExprTree[]> m = rateAssignmentTrees.get(s);
+						for (ExprTree[] eArray : m.values()) {
+							for (ExprTree e : eArray) {
+								if (e != null) {
+									e.replace(var2, "", expr);
+								}
+							}
+						}
+						if (m.containsKey(var2)) {
+							m.remove(var2);
+							removeRateAssign(s, var2);
+						}
+					}
+					remove.add(var2);
+					change = true;
+				}
+			}
+			for (String var2 : outputs.keySet()) {
+				if (var1.equals(var2)) continue;
+				boolean same = true;
+				boolean invert = true;
+				if (outputs.get(var1).equals(outputs.get(var2))) {
+					for (String s : booleanAssignmentTrees.keySet()) {
+						if (same) {
+							if (booleanAssignmentTrees.get(s).containsKey(var1)) {
+								if (booleanAssignmentTrees.get(s).containsKey(var2)) {
+									if (!booleanAssignmentTrees.get(s).get(var1)[0]
+											.equals(booleanAssignmentTrees.get(s).get(var2)[0])) {
+										same = false;
+									}
+								}
+								else {
+									same = false;
+								}
+							}
+							else if (booleanAssignmentTrees.get(s).containsKey(var2)) {
+								same = false;
+							}
+						}
+					}
+				}
+				else {
+					same = false;
+				}
+				if ((outputs.get(var1).equals("~(" + outputs.get(var2) + ")")||outputs.get(var1).equals("unknown")&&outputs.get(var2).equals("unknown")) && !same) {
+					for (String s : booleanAssignmentTrees.keySet()) {
+						if (invert) {
+							if (booleanAssignmentTrees.get(s).containsKey(var1)) {
+								if (booleanAssignmentTrees.get(s).containsKey(var2)) {
+									ExprTree expr = new ExprTree(booleanAssignmentTrees.get(s).get(
+											var2)[0]);
+									expr.setNodeValues(expr, null, "!", 'l');
+									if (booleanAssignmentTrees.get(s).get(var1)[0].equals(expr)) {
+										continue;
+									}
+									else if (booleanAssignments.get(s).get(var1).toString()
+											.toLowerCase().equals("true")
+											&& booleanAssignments.get(s).get(var2).toString()
+													.toLowerCase().equals("false")
+											|| booleanAssignments.get(s).get(var1).toString()
+													.toLowerCase().equals("false")
+											&& booleanAssignments.get(s).get(var2).toString()
+													.toLowerCase().equals("true")) {
+										continue;
+									}
+									else {
+										invert = false;
+									}
+								}
+								else {
+									invert = false;
+								}
+							}
+							else if (booleanAssignmentTrees.get(s).containsKey(var2)) {
+								invert = false;
+							}
+						}
+					}
+				}
+				else {
+					invert = false;
+				}
+				if (same) {
+					for (String s : booleanAssignmentTrees.keySet()) {
+						HashMap<String, ExprTree[]> m = booleanAssignmentTrees.get(s);
+						for (ExprTree[] eArray : m.values()) {
+							for (ExprTree e : eArray) {
+								if (e != null) {
+									e.replaceVar(var2, var1);
+								}
+							}
+						}
+						if (m.containsKey(var2)) {
+							m.remove(var2);
+							removeBoolAssign(s, var2);
+						}
+					}
+					for (String s : contAssignmentTrees.keySet()) {
+						HashMap<String, ExprTree[]> m = contAssignmentTrees.get(s);
+						for (ExprTree[] eArray : m.values()) {
+							for (ExprTree e : eArray) {
+								if (e != null) {
+									e.replaceVar(var2, var1);
+								}
+							}
+						}
+						if (m.containsKey(var2)) {
+							m.remove(var2);
+							removeContAssign(s, var2);
+						}
+					}
+					for (String s : intAssignmentTrees.keySet()) {
+						HashMap<String, ExprTree[]> m = intAssignmentTrees.get(s);
+						for (ExprTree[] eArray : m.values()) {
+							for (ExprTree e : eArray) {
+								if (e != null) {
+									e.replaceVar(var2, var1);
+								}
+							}
+						}
+						if (m.containsKey(var2)) {
+							m.remove(var2);
+							removeIntAssign(s, var2);
+						}
+					}
+					for (String s : rateAssignmentTrees.keySet()) {
+						HashMap<String, ExprTree[]> m = rateAssignmentTrees.get(s);
+						for (ExprTree[] eArray : m.values()) {
+							for (ExprTree e : eArray) {
+								if (e != null) {
+									e.replaceVar(var2, var1);
+								}
+							}
+						}
+						if (m.containsKey(var2)) {
+							m.remove(var2);
+							removeRateAssign(s, var2);
+						}
+					}
+					remove.add(var2);
+					change = true;
+				}
+				else if (invert) {
+					ExprTree expr = new ExprTree(this);
+					expr.token = expr.intexpr_gettok("~" + var1);
+					expr.intexpr_L("~" + var1);
+					for (ExprTree e : enablingTrees.values()) {
+						e.replace(var2, "", expr);
+					}
+					for (String s : booleanAssignmentTrees.keySet()) {
+						HashMap<String, ExprTree[]> m = booleanAssignmentTrees.get(s);
+						for (ExprTree[] eArray : m.values()) {
+							for (ExprTree e : eArray) {
+								if (e != null) {
+									e.replace(var2, "", expr);
+								}
+							}
+						}
+						if (m.containsKey(var2)) {
+							m.remove(var2);
+							removeBoolAssign(s, var2);
+						}
+					}
+					for (String s : contAssignmentTrees.keySet()) {
+						HashMap<String, ExprTree[]> m = contAssignmentTrees.get(s);
+						for (ExprTree[] eArray : m.values()) {
+							for (ExprTree e : eArray) {
+								if (e != null) {
+									e.replace(var2, "", expr);
+								}
+							}
+						}
+						if (m.containsKey(var2)) {
+							m.remove(var2);
+							removeContAssign(s, var2);
+						}
+					}
+					for (String s : intAssignmentTrees.keySet()) {
+						HashMap<String, ExprTree[]> m = intAssignmentTrees.get(s);
+						for (ExprTree[] eArray : m.values()) {
+							for (ExprTree e : eArray) {
+								if (e != null) {
+									e.replace(var2, "", expr);
+								}
+							}
+						}
+						if (m.containsKey(var2)) {
+							m.remove(var2);
+							removeIntAssign(s, var2);
+						}
+					}
+					for (String s : rateAssignmentTrees.keySet()) {
+						HashMap<String, ExprTree[]> m = rateAssignmentTrees.get(s);
+						for (ExprTree[] eArray : m.values()) {
+							for (ExprTree e : eArray) {
+								if (e != null) {
+									e.replace(var2, "", expr);
+								}
+							}
+						}
+						if (m.containsKey(var2)) {
+							m.remove(var2);
+							removeRateAssign(s, var2);
+						}
+					}
+					remove.add(var2);
+					change = true;
+				}
+			}
+		}
+		for (String var1 : variables.keySet()) {
+			for (String var2 : variables.keySet()) {
+				if (var1.equals(var2)) continue;
+				boolean same = true;
+				if (variables.get(var1).equals(variables.get(var2))) {
+					for (String s : contAssignmentTrees.keySet()) {
+						if (same) {
+							if (contAssignmentTrees.get(s).containsKey(var1)) {
+								if (contAssignmentTrees.get(s).containsKey(var2)) {
+									if (!contAssignmentTrees.get(s).get(var1)[0]
+											.equals(contAssignmentTrees.get(s).get(var2)[0])) {
+										same = false;
+									}
+								}
+								else {
+									same = false;
+								}
+							}
+							else if (contAssignmentTrees.get(s).containsKey(var2)) {
+								same = false;
+							}
+						}
+					}
+				}
+				else {
+					same = false;
+				}
+				if (same) {
+					for (String s : booleanAssignmentTrees.keySet()) {
+						HashMap<String, ExprTree[]> m = booleanAssignmentTrees.get(s);
+						for (ExprTree[] eArray : m.values()) {
+							for (ExprTree e : eArray) {
+								if (e != null) {
+									e.replaceVar(var2, var1);
+								}
+							}
+						}
+						if (m.containsKey(var2)) {
+							m.remove(var2);
+							removeBoolAssign(s, var2);
+						}
+					}
+					for (String s : contAssignmentTrees.keySet()) {
+						HashMap<String, ExprTree[]> m = contAssignmentTrees.get(s);
+						for (ExprTree[] eArray : m.values()) {
+							for (ExprTree e : eArray) {
+								if (e != null) {
+									e.replaceVar(var2, var1);
+								}
+							}
+						}
+						if (m.containsKey(var2)) {
+							m.remove(var2);
+							removeContAssign(s, var2);
+						}
+					}
+					for (String s : intAssignmentTrees.keySet()) {
+						HashMap<String, ExprTree[]> m = intAssignmentTrees.get(s);
+						for (ExprTree[] eArray : m.values()) {
+							for (ExprTree e : eArray) {
+								if (e != null) {
+									e.replaceVar(var2, var1);
+								}
+							}
+						}
+						if (m.containsKey(var2)) {
+							m.remove(var2);
+							removeIntAssign(s, var2);
+						}
+					}
+					for (String s : rateAssignmentTrees.keySet()) {
+						HashMap<String, ExprTree[]> m = rateAssignmentTrees.get(s);
+						for (ExprTree[] eArray : m.values()) {
+							for (ExprTree e : eArray) {
+								if (e != null) {
+									e.replaceVar(var2, var1);
+								}
+							}
+						}
+						if (m.containsKey(var2)) {
+							m.remove(var2);
+							removeRateAssign(s, var2);
+						}
+					}
+					remove.add(var2);
+					change = true;
+				}
+			}
+		}
+		for (String var1 : integers.keySet()) {
+			for (String var2 : integers.keySet()) {
+				if (var1.equals(var2)) continue;
+				boolean same = true;
+				if (integers.get(var1).equals(integers.get(var2))) {
+					for (String s : intAssignmentTrees.keySet()) {
+						if (same) {
+							if (intAssignmentTrees.get(s).containsKey(var1)) {
+								if (intAssignmentTrees.get(s).containsKey(var2)) {
+									if (!intAssignmentTrees.get(s).get(var1)[0]
+											.equals(intAssignmentTrees.get(s).get(var2)[0])) {
+										same = false;
+									}
+								}
+								else {
+									same = false;
+								}
+							}
+							else if (intAssignmentTrees.get(s).containsKey(var2)) {
+								same = false;
+							}
+						}
+					}
+				}
+				else {
+					same = false;
+				}
+				if (same) {
+					for (String s : booleanAssignmentTrees.keySet()) {
+						HashMap<String, ExprTree[]> m = booleanAssignmentTrees.get(s);
+						for (ExprTree[] eArray : m.values()) {
+							for (ExprTree e : eArray) {
+								if (e != null) {
+									e.replaceVar(var2, var1);
+								}
+							}
+						}
+						if (m.containsKey(var2)) {
+							m.remove(var2);
+							removeBoolAssign(s, var2);
+						}
+					}
+					for (String s : contAssignmentTrees.keySet()) {
+						HashMap<String, ExprTree[]> m = contAssignmentTrees.get(s);
+						for (ExprTree[] eArray : m.values()) {
+							for (ExprTree e : eArray) {
+								if (e != null) {
+									e.replaceVar(var2, var1);
+								}
+							}
+						}
+						if (m.containsKey(var2)) {
+							m.remove(var2);
+							removeContAssign(s, var2);
+						}
+					}
+					for (String s : intAssignmentTrees.keySet()) {
+						HashMap<String, ExprTree[]> m = intAssignmentTrees.get(s);
+						for (ExprTree[] eArray : m.values()) {
+							for (ExprTree e : eArray) {
+								if (e != null) {
+									e.replaceVar(var2, var1);
+								}
+							}
+						}
+						if (m.containsKey(var2)) {
+							m.remove(var2);
+							removeIntAssign(s, var2);
+						}
+					}
+					for (String s : rateAssignmentTrees.keySet()) {
+						HashMap<String, ExprTree[]> m = rateAssignmentTrees.get(s);
+						for (ExprTree[] eArray : m.values()) {
+							for (ExprTree e : eArray) {
+								if (e != null) {
+									e.replaceVar(var2, var1);
+								}
+							}
+						}
+						if (m.containsKey(var2)) {
+							m.remove(var2);
+							removeRateAssign(s, var2);
+						}
+					}
+					remove.add(var2);
+					change = true;
+				}
+			}
+		}
+		for (String s : remove) {
 			removeVar(s);
 		}
 		return change;
@@ -986,8 +1937,8 @@ public class Abstraction extends LHPNFile {
 
 	private void combinePlaces(String place1, String place2) {
 		// System.out.println(place1 + place2);
-		String newPlace = new String();
-		newPlace = place1;
+		// String newPlace = new String();
+		// newPlace = place1;
 		if (controlPlaces.get(place2).containsKey("preset")) {
 			for (String t : controlPlaces.get(place2).getProperty("preset").split("\\s")) {
 				addControlFlow(t, place1);
@@ -996,108 +1947,110 @@ public class Abstraction extends LHPNFile {
 		}
 		if (controlPlaces.get(place2).containsKey("postset")) {
 			for (String t : controlPlaces.get(place2).getProperty("postset").split("\\s")) {
-				addControlFlow(place1,t);
-				removeControlFlow(place2,t);
+				addControlFlow(place1, t);
+				removeControlFlow(place2, t);
 			}
 		}
-//		for (String s : controlFlow.keySet()) {
-//			Properties prop = controlFlow.get(s);
-//			if (prop.containsKey("preset")) {
-//				String[] array = prop.getProperty("preset").split(" ");
-//				String setString = new String();
-//				if (array[0].equals(place2)) {
-//					setString = newPlace;
-//				}
-//				else {
-//					setString = array[0];
-//				}
-//				for (int i = 1; i < array.length; i++) {
-//					if (array[i].equals(place2)) {
-//						array[i] = newPlace;
-//					}
-//					setString = setString + " " + array[i];
-//				}
-//				prop.setProperty("preset", setString);
-//			}
-//			if (prop.containsKey("postset")) {
-//				String[] array = prop.getProperty("postset").split(" ");
-//				String setString = new String();
-//				if (array[0].equals(place2)) {
-//					setString = newPlace;
-//				}
-//				else {
-//					setString = array[0];
-//				}
-//				for (int i = 1; i < array.length; i++) {
-//					if (array[i].equals(place2)) {
-//						array[i] = newPlace;
-//					}
-//					setString = setString + " " + array[i];
-//				}
-//				prop.setProperty("postset", setString);
-//			}
-//			controlFlow.put(s, prop);
-//		}
-//		String[] preset1;
-//		if (controlPlaces.get(place1).containsKey("preset")) {
-//			preset1 = controlPlaces.get(place1).getProperty("preset").split(" ");
-//		}
-//		else {
-//			preset1 = new String[0];
-//		}
-//		String[] preset2;
-//		if (controlPlaces.get(place2).containsKey("preset")) {
-//			preset2 = controlPlaces.get(place2).getProperty("preset").split(" ");
-//		}
-//		else {
-//			preset2 = new String[0];
-//		}
-//		String[] postset1;
-//		if (controlPlaces.get(place1).containsKey("preset")) {
-//			postset1 = controlPlaces.get(place1).getProperty("preset").split(" ");
-//		}
-//		else {
-//			postset1 = new String[0];
-//		}
-//		String[] postset2;
-//		if (controlPlaces.get(place2).containsKey("preset")) {
-//			postset2 = controlPlaces.get(place2).getProperty("preset").split(" ");
-//		}
-//		else {
-//			postset2 = new String[0];
-//		}
-//		String preset = new String();
-//		String postset = new String();
-//		for (String s : preset1) {
-//			preset = preset + s + " ";
-//			for (int i = 0; i < preset2.length; i++) {
-//				if (s.equals(preset2[i])) {
-//					preset2[i] = "";
-//				}
-//			}
-//		}
-//		for (String s : preset2) {
-//			if (!s.equals("")) {
-//				preset = preset + s + " ";
-//			}
-//		}
-//		for (String s : postset1) {
-//			postset = postset + s + " ";
-//			for (int i = 0; i < postset2.length; i++) {
-//				if (s.equals(postset2[i])) {
-//					postset2[i] = "";
-//				}
-//			}
-//		}
-//		for (String s : postset2) {
-//			if (!s.equals("")) {
-//				postset = postset + s + " ";
-//			}
-//		}
-//		Properties prop = new Properties();
-//		prop.setProperty("preset", preset.trim());
-//		prop.setProperty("postset", postset.trim());
-//		controlPlaces.put(place1, prop);
+		// for (String s : controlFlow.keySet()) {
+		// Properties prop = controlFlow.get(s);
+		// if (prop.containsKey("preset")) {
+		// String[] array = prop.getProperty("preset").split(" ");
+		// String setString = new String();
+		// if (array[0].equals(place2)) {
+		// setString = newPlace;
+		// }
+		// else {
+		// setString = array[0];
+		// }
+		// for (int i = 1; i < array.length; i++) {
+		// if (array[i].equals(place2)) {
+		// array[i] = newPlace;
+		// }
+		// setString = setString + " " + array[i];
+		// }
+		// prop.setProperty("preset", setString);
+		// }
+		// if (prop.containsKey("postset")) {
+		// String[] array = prop.getProperty("postset").split(" ");
+		// String setString = new String();
+		// if (array[0].equals(place2)) {
+		// setString = newPlace;
+		// }
+		// else {
+		// setString = array[0];
+		// }
+		// for (int i = 1; i < array.length; i++) {
+		// if (array[i].equals(place2)) {
+		// array[i] = newPlace;
+		// }
+		// setString = setString + " " + array[i];
+		// }
+		// prop.setProperty("postset", setString);
+		// }
+		// controlFlow.put(s, prop);
+		// }
+		// String[] preset1;
+		// if (controlPlaces.get(place1).containsKey("preset")) {
+		// preset1 = controlPlaces.get(place1).getProperty("preset").split(" ");
+		// }
+		// else {
+		// preset1 = new String[0];
+		// }
+		// String[] preset2;
+		// if (controlPlaces.get(place2).containsKey("preset")) {
+		// preset2 = controlPlaces.get(place2).getProperty("preset").split(" ");
+		// }
+		// else {
+		// preset2 = new String[0];
+		// }
+		// String[] postset1;
+		// if (controlPlaces.get(place1).containsKey("preset")) {
+		// postset1 =
+		// controlPlaces.get(place1).getProperty("preset").split(" ");
+		// }
+		// else {
+		// postset1 = new String[0];
+		// }
+		// String[] postset2;
+		// if (controlPlaces.get(place2).containsKey("preset")) {
+		// postset2 =
+		// controlPlaces.get(place2).getProperty("preset").split(" ");
+		// }
+		// else {
+		// postset2 = new String[0];
+		// }
+		// String preset = new String();
+		// String postset = new String();
+		// for (String s : preset1) {
+		// preset = preset + s + " ";
+		// for (int i = 0; i < preset2.length; i++) {
+		// if (s.equals(preset2[i])) {
+		// preset2[i] = "";
+		// }
+		// }
+		// }
+		// for (String s : preset2) {
+		// if (!s.equals("")) {
+		// preset = preset + s + " ";
+		// }
+		// }
+		// for (String s : postset1) {
+		// postset = postset + s + " ";
+		// for (int i = 0; i < postset2.length; i++) {
+		// if (s.equals(postset2[i])) {
+		// postset2[i] = "";
+		// }
+		// }
+		// }
+		// for (String s : postset2) {
+		// if (!s.equals("")) {
+		// postset = postset + s + " ";
+		// }
+		// }
+		// Properties prop = new Properties();
+		// prop.setProperty("preset", preset.trim());
+		// prop.setProperty("postset", postset.trim());
+		// controlPlaces.put(place1, prop);
 		removePlace(place2);
 	}
 
@@ -1326,8 +2279,14 @@ public class Abstraction extends LHPNFile {
 				if (postset.length == 1 && !postset[0].equals("")) {
 					boolean assign = false;
 					if (enablings.containsKey(s)) {
-						assign = true;
-						continue;
+						//for (String var : enablingTrees.get(s).getVars()) {
+						//	if (!process_write.get(var).equals(process_trans.get(s))) {
+						//		assign = true;
+						//		break;
+						//	}
+						//}
+						 assign = true;
+						 continue;
 					}
 					if (!assign) {
 						for (HashMap<String, Properties> h : assignments) {
@@ -1462,21 +2421,17 @@ public class Abstraction extends LHPNFile {
 			for (String t : assign.keySet()) {
 				for (Object o : assign.get(t).keySet()) {
 					String var = o.toString();
-					if (!readBeforeWrite(t, var)) {
+					if ((process_read.get(var).equals(process_trans.get(t)) && process_write.get(
+							var).equals(process_trans.get(t)))
+							&& !readBeforeWrite(t, var)) {
+						// boolean tempBool = readBeforeWrite(t,var);
 						String[] temp = { t, var };
 						remove.add(temp);
 					}
 				}
 			}
 			for (String[] temp : remove) {
-				Properties prop = assign.get(temp[0]);
-				if (prop != null) {
-					prop.remove(temp[1]);
-					assign.put(temp[0], prop);
-				}
-				else {
-					assign.remove(temp[0]);
-				}
+				removeAssignment(temp[0], temp[1]);
 				change = true;
 			}
 		}
@@ -1539,10 +2494,16 @@ public class Abstraction extends LHPNFile {
 			for (Object o : prop.keySet()) {
 				String t = o.toString();
 				ExprTree[] e = expr.get(t);
-				if (expr.get(t)[1] != null) {
-					if (!expr.get(t)[1].toString().equals("")) {
-						prop.setProperty(t, "[" + e[0].toString("continuous") + ","
-								+ e[1].toString("continuous") + "]");
+				if (e != null) {
+				if (e.length > 1) {
+					if (expr.get(t)[1] != null) {
+						if (!expr.get(t)[1].toString().equals("")) {
+							prop.setProperty(t, "[" + e[0].toString("continuous") + ","
+									+ e[1].toString("continuous") + "]");
+						}
+						else {
+							prop.setProperty(t, e[0].toString("continuous"));
+						}
 					}
 					else {
 						prop.setProperty(t, e[0].toString("continuous"));
@@ -1550,6 +2511,7 @@ public class Abstraction extends LHPNFile {
 				}
 				else {
 					prop.setProperty(t, e[0].toString("continuous"));
+				}
 				}
 			}
 			rateAssignments.put(s, prop);
@@ -1560,6 +2522,7 @@ public class Abstraction extends LHPNFile {
 			for (Object o : prop.keySet()) {
 				String t = o.toString();
 				ExprTree[] e = expr.get(t);
+				if (e != null) {
 				if (expr.get(t)[1] != null) {
 					if (!e[1].toString().equals("")) {
 						prop.setProperty(t, "[" + e[0].toString("integer") + ","
@@ -1571,6 +2534,7 @@ public class Abstraction extends LHPNFile {
 				}
 				else {
 					prop.setProperty(t, e[0].toString("integer"));
+				}
 				}
 			}
 			intAssignments.put(s, prop);
@@ -1851,12 +2815,22 @@ public class Abstraction extends LHPNFile {
 		for (String t : placePreset) {
 			removeControlFlow(t, place);
 			for (String p : preset) {
-				if (!p.equals(place)) {
+				if (!p.equals(place) && !t.equals(transition)) {
 					addControlFlow(t, p);
 				}
 			}
 		}
 		for (String t : postset) {
+			if (enablingTrees.containsKey(transition)) {
+				ExprTree expr = enablingTrees.get(transition);
+				if (enablingTrees.containsKey(t)) {
+					expr.setNodeValues(expr, enablingTrees.get(t), "&&", 'l');
+					enablingTrees.put(transition, expr);
+				}
+			}
+			else if (enablingTrees.containsKey(t)) {
+				enablingTrees.put(transition, enablingTrees.get(t));
+			}
 			removeControlFlow(place, t);
 		}
 		removePlace(place);
@@ -2043,7 +3017,13 @@ public class Abstraction extends LHPNFile {
 	private boolean removeTrans4(String transition) {
 		// Remove a transition with a single place in the preset
 		String place = controlFlow.get(transition).getProperty("preset");
-		String[] preset = controlPlaces.get(place).getProperty("preset").split("\\s");
+		String[] preset;
+		if (controlPlaces.get(place).containsKey("preset")) {
+			preset = controlPlaces.get(place).getProperty("preset").split("\\s");
+		}
+		else {
+			preset = new String[0];
+		}
 		String[] postset = controlFlow.get(transition).getProperty("postset").split("\\s");
 		String[] transPostset = controlPlaces.get(place).getProperty("postset").split("\\s");
 		// Check to make sure that the place is not a self-loop
@@ -2053,6 +3033,7 @@ public class Abstraction extends LHPNFile {
 				return false;
 			}
 		}
+		// boolean isFail;
 		if (fail.contains(transition)) {
 			return false;
 		}
@@ -2424,6 +3405,7 @@ public class Abstraction extends LHPNFile {
 				for (String t : controlPlaces.get(p).getProperty("postset").split("\\s")) {
 					if (unvisited.contains(t)) {
 						change = trans8Iteration(t, unvisited, change);
+						unvisited.remove(t);
 					}
 				}
 			}
@@ -2546,11 +3528,12 @@ public class Abstraction extends LHPNFile {
 								}
 							}
 						}
+						change = true;
 					}
 				}
 			}
 		}
-		return true;
+		return change;
 	}
 
 	private boolean readBeforeWrite(String trans, String var) {
@@ -2558,69 +3541,69 @@ public class Abstraction extends LHPNFile {
 			for (String p : controlFlow.get(trans).getProperty("postset").split("\\s")) {
 				if (controlPlaces.get(p).containsKey("postset")) {
 					for (String t : controlPlaces.get(p).getProperty("postset").split("\\s")) {
-						if (enablingTrees.containsKey(trans)) {
-							if (enablingTrees.get(trans).getVars().contains(var)) {
-								return false;
-							}
-						}
-						if (booleanAssignmentTrees.containsKey(trans)) {
-							for (String s : booleanAssignmentTrees.get(trans).keySet()) {
-								for (ExprTree e1 : booleanAssignmentTrees.get(trans).get(s)) {
-									if (e1.getVars().contains(var)) {
+						if (booleanAssignmentTrees.containsKey(t)) {
+							for (String s : booleanAssignmentTrees.get(t).keySet()) {
+								for (ExprTree e1 : booleanAssignmentTrees.get(t).get(s)) {
+									if (s.equals(var)) {
 										return false;
 									}
-								}
-								if (s.equals(var)) {
-									return true;
-								}
-							}
-						}
-						if (contAssignmentTrees.containsKey(trans)) {
-							for (String s : contAssignmentTrees.get(trans).keySet()) {
-								for (ExprTree e1 : contAssignmentTrees.get(trans).get(s)) {
 									if (e1.getVars().contains(var)) {
-										return false;
+										return true;
 									}
 								}
+							}
+						}
+						if (contAssignmentTrees.containsKey(t)) {
+							for (String s : contAssignmentTrees.get(t).keySet()) {
 								if (s.equals(var)) {
-									return true;
+									return false;
+								}
+								for (ExprTree e1 : contAssignmentTrees.get(t).get(s)) {
+									if (e1.getVars().contains(var)) {
+										return true;
+									}
 								}
 							}
 						}
-						if (intAssignmentTrees.containsKey(trans)) {
-							for (String s : intAssignmentTrees.get(trans).keySet()) {
-								for (ExprTree e1 : intAssignmentTrees.get(trans).get(s)) {
+						if (intAssignmentTrees.containsKey(t)) {
+							for (String s : intAssignmentTrees.get(t).keySet()) {
+								if (s.equals(var)) {
+									return false;
+								}
+								for (ExprTree e1 : intAssignmentTrees.get(t).get(s)) {
 									if (e1 != null) {
 										if (e1.getVars().contains(var)) {
-											return false;
+											return true;
 										}
 									}
 								}
-								if (s.equals(var)) {
-									return true;
-								}
 							}
 						}
-						if (rateAssignmentTrees.containsKey(trans)) {
-							for (String s : rateAssignmentTrees.get(trans).keySet()) {
-								for (ExprTree e1 : rateAssignmentTrees.get(trans).get(s)) {
-									if (e1.getVars().contains(var)) {
+						if (rateAssignmentTrees.containsKey(t)) {
+							for (String s : rateAssignmentTrees.get(t).keySet()) {
+								for (ExprTree e1 : rateAssignmentTrees.get(t).get(s)) {
+									if (s.equals(var)) {
 										return false;
 									}
-								}
-								if (s.equals(var)) {
-									return true;
+									if (e1.getVars().contains(var)) {
+										return true;
+									}
 								}
 							}
 						}
-						if (!readBeforeWrite(t, var)) {
-							return false;
+						if (enablingTrees.containsKey(t)) {
+							if (enablingTrees.get(t).getVars().contains(var)) {
+								return true;
+							}
+						}
+						if (readBeforeWrite(t, var)) {
+							return true;
 						}
 					}
 				}
 			}
 		}
-		return true;
+		return false;
 	}
 
 	public void addPlaces(HashMap<String, Boolean> newPlaces) {
@@ -2690,13 +3673,15 @@ public class Abstraction extends LHPNFile {
 	public void addMovements(HashMap<String, Properties> newMovement) {
 		for (String s : newMovement.keySet()) {
 			Properties prop = new Properties();
-			Properties oldProp = newMovement.get(s);
-			for (Object o : oldProp.keySet()) {
-				String t = o.toString();
-				prop.setProperty(t, oldProp.getProperty(t));
+			if (newMovement.get(s) != null) {
+				Properties oldProp = newMovement.get(s);
+				for (Object o : oldProp.keySet()) {
+					String t = o.toString();
+					prop.setProperty(t, oldProp.getProperty(t));
+				}
+				// System.out.println(s + prop.toString());
+				controlFlow.put(s, prop);
 			}
-			// System.out.println(s + prop.toString());
-			controlFlow.put(s, prop);
 		}
 	}
 
@@ -3063,7 +4048,7 @@ public class Abstraction extends LHPNFile {
 			}
 			if (assignTree.containsKey(trans)) {
 				for (String v : assignTree.get(trans).keySet()) {
-					if (!v.equals(var)) {
+					// if (!v.equals(var)) {
 					ExprTree[] e1 = assignTree.get(trans).get(v);
 					// if (e1[1] == null && expr[1] != null) {
 					// e1[1] = e1[0];
@@ -3141,7 +4126,7 @@ public class Abstraction extends LHPNFile {
 					// + expr[1].toString() + "]");
 					// }
 					// }
-				}
+					// }
 				}
 			}
 		}
