@@ -789,7 +789,7 @@ public class LHPNFile {
 	}
 
 	public void addControlFlow(String fromName, String toName) {
-		// log.addText(fromName+toName);
+		//log.addText(fromName+toName);
 		if (isTransition(fromName)) {
 			Properties propTrans = new Properties();
 			Properties propPlace = new Properties();
@@ -919,7 +919,7 @@ public class LHPNFile {
 					list = prop.getProperty("preset").split("\\s");
 					String fromList = "";
 					for (String t : list) {
-						if (!toName.equals(t)) {
+						if (!fromName.equals(t)) {
 							fromList = fromList + t + " ";
 						}
 					}
