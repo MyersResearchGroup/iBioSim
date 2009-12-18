@@ -7799,7 +7799,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							// Runtime.getRuntime().exec(cmd);
 						}
 						catch (Exception e1) {
-							// e1.printStackTrace();
+							 e1.printStackTrace();
 							JOptionPane.showMessageDialog(frame, "Unable to view this LHPN file.",
 									"Error", JOptionPane.ERROR_MESSAGE);
 						}

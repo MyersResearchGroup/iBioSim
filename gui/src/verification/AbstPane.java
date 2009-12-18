@@ -64,10 +64,11 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 			xform15 = "Remove Dead Transitions - simplification",
 			xform16 = "Simplify Enabling Conditions - simplification",
 			xform17 = "Remove Dominated Transitions - simplification",
-			xform18 = "Remove Unread Variables - abstraction";
+			xform18 = "Remove Unread Variables - abstraction",
+			xform19 = "Merge Coordinated Variables - abstraction";
 
 	private String[] transforms = { xform0, xform1, xform3, xform4, xform5, xform6, xform7, xform8,
-			xform9, xform10, xform11, xform12, xform13, xform14, xform15, xform16, xform17, xform18 };
+			xform9, xform10, xform11, xform12, xform13, xform14, xform15, xform16, xform17, xform18, xform19 };
 
 	private boolean change;
 

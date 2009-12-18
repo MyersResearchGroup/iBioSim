@@ -61,6 +61,7 @@ public class ExprTree {
 
 	public ExprTree(Abstraction abstraction) {
 		// this.abstraction = abstraction;
+		this.lhpn = abstraction;
 		String[] bools = abstraction.getBooleanVars();
 		String[] conts = abstraction.getContVars();
 		String[] ints = abstraction.getIntVars();
@@ -1949,6 +1950,29 @@ public class ExprTree {
 			}
 		}
 	}
+	
+	public void replaceVar(String var1, String var2) {
+		switch (isit) {
+		case 'b': // Boolean
+		case 'i': // Integer
+		case 'c': // Continuous
+			if (variable.equals(var1)) {
+				variable = var2;
+			}
+			return;
+		case 'w': // bitWise
+		case 'l': // Logical
+		case 'r': // Relational
+		case 'a': // Arithmetic
+			if (r1 != null)
+				r1.replaceVar(var1, var2);
+			if (r2 != null)
+				r2.replaceVar(var1, var2);
+		case 't': // Truth value
+		case 'n': // Number
+			break;
+		}
+	}
 
 	public void copy(ExprTree e, String type) {
 		if (e.op != null) {
@@ -2002,34 +2026,115 @@ public class ExprTree {
 						}
 					}
 				}
+				else if (r1.equals(r2)) {
+					if (r1.isit == 'l' || r1.isit == 'a' || r1.isit == 'w' || r1.isit == 'r') {
+						setNodeValues(r1.r1, r1.r2, r1.op, r1.isit);
+					}
+					else {
+						setVarValues(r1.isit, r1.lvalue, r1.uvalue, r1.variable);
+					}
+				}
+				else {
+					ExprTree notE = new ExprTree(this);
+					notE.setNodeValues((this), null, "!", 'l');
+					if (r1.equals(notE) || notE.equals(r1)) {
+						setVarValues('t', 0.0, 0.0, null);
+					}
+				}
 			}
 			else if (op.equals("||")) {
-				if (((r1.isit == 'n') || (r1.isit == 't'))
-						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
-					(this).isit = 't';
-					if (r1.lvalue != 0 || r2.lvalue != 0) {
-						this.lvalue = 1;
+				if ((r1.isit == 'n') || (r1.isit == 't')) {
+					if (r1.lvalue != 0) {
+						setVarValues('t', 1.0, 1.0, null);
+						simplify = true;
 					}
 					else {
-						this.lvalue = 0;
+						if (r2.isit == 'l' || r2.isit == 'a' || r2.isit == 'w' || r2.isit == 'r') {
+							setNodeValues(r2.r1, r2.r2, r2.op, r2.isit);
+						}
+						else {
+							setVarValues(r2.isit, r2.lvalue, r2.uvalue, r2.variable);
+						}
 					}
-					(this).uvalue = (this).lvalue;
-					simplify = true;
 				}
+				else if (((r2).isit == 'n') || ((r2).isit == 't')) {
+					if (r2.lvalue != 0) {
+						setVarValues('t', 1.0, 1.0, null);
+						simplify = true;
+					}
+					else {
+						if (r1.isit == 'l' || r1.isit == 'a' || r1.isit == 'w' || r1.isit == 'r') {
+							setNodeValues(r1.r1, r1.r2, r1.op, r1.isit);
+						}
+						else {
+							setVarValues(r1.isit, r1.lvalue, r1.uvalue, r1.variable);
+						}
+					}
+				}
+				else if (r1.equals(r2)) {
+					if (r1.isit == 'l' || r1.isit == 'a' || r1.isit == 'w' || r1.isit == 'r') {
+						setNodeValues(r1.r1, r1.r2, r1.op, r1.isit);
+					}
+					else {
+						setVarValues(r1.isit, r1.lvalue, r1.uvalue, r1.variable);
+					}
+				}
+				else {
+					ExprTree notE = new ExprTree(this);
+					notE.setNodeValues((this), null, "!", 'l');
+					if (r1.equals(notE) || notE.equals(r1)) {
+						setVarValues('t', 1.0, 1.0, null);
+					}
+				}
+//				if (((r1.isit == 'n') || (r1.isit == 't'))
+//						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
+//					(this).isit = 't';
+//					if (r1.lvalue != 0 || r2.lvalue != 0) {
+//						this.lvalue = 1;
+//					}
+//					else {
+//						this.lvalue = 0;
+//					}
+//					(this).uvalue = (this).lvalue;
+//					simplify = true;
+//				}
 			}
 			else if (op.equals("->")) {
-				if (((r1.isit == 'n') || (r1.isit == 't'))
-						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
-					(this).isit = 't';
-					if (r1.lvalue != 0 || r2.lvalue == 0) {
-						this.lvalue = 1;
+				if (r1.isit == 'n' || r1.isit == 't') {
+					if (r1.lvalue != 0) {
+						if (r2.isit == 'l' || r2.isit == 'a' || r2.isit == 'w' || r2.isit == 'r') {
+							setNodeValues(r2.r1, r2.r2, r2.op, r2.isit);
+						}
+						else {
+							setVarValues(r2.isit, r2.lvalue, r2.uvalue, r2.variable);
+						}
 					}
-					else {
-						this.lvalue = 0;
+					else if (r1.uvalue == 0) {
+						setVarValues('t', 1.0, 1.0, null);
 					}
-					(this).uvalue = (this).lvalue;
-					simplify = true;
 				}
+				else if (r2.isit == 't' || r2.isit == 'n') {
+					if (r2.lvalue != 0) {
+						setVarValues('t', 1.0, 1.0, null);
+					}
+					else if (r2.uvalue == 0) {
+						ExprTree notE = new ExprTree(r2);
+						notE.setNodeValues((this), null, "!", 'l');
+						setNodeValues(notE.r1, notE.r2, notE.op, notE.isit);
+					}
+				}
+//				else if (((r1.isit == 'n') || (r1.isit == 't'))
+//						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
+//					(this).isit = 't';
+//					if (r1.lvalue != 0 || r2.lvalue == 0) {
+//						this.lvalue = 1;
+//					}
+//					else {
+//						this.lvalue = 0;
+//					}
+//					(this).uvalue = (this).lvalue;
+//					simplify = true;
+//				}
 			}
 			else if (op.equals("!")) {
 				if (((r1).isit == 'n') || ((r1).isit == 't')) {
@@ -2136,7 +2241,7 @@ public class ExprTree {
 					simplify = true;
 				}
 			}
-			else if (op.equals("^")) {
+			else if (isit == 'w' && op.equals("^")) {
 				if (((r1.isit == 'n') || (r1.isit == 't'))
 						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
 					(this).isit = 'n';
@@ -2171,13 +2276,39 @@ public class ExprTree {
 				}
 			}
 			else if (op.equals("*")) {
-				if (((r1.isit == 'n') || (r1.isit == 't'))
-						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
-					(this).isit = 'n';
-					(this).lvalue = (r1).lvalue * r2.lvalue;
-					(this).uvalue = (this).lvalue;
-					simplify = true;
+				if (r1.isit == 'n' || r1.isit == 't') {
+					if (r1.lvalue == 0 && r1.uvalue == 0) {
+						setVarValues('t', 0.0, 0.0, null);
+					}
+					else if (r1.lvalue == 1 && r1.uvalue == 1) {
+						if (r2.isit == 'l' || r2.isit == 'a' || r2.isit == 'w' || r2.isit == 'r') {
+							setNodeValues(r2.r1, r2.r2, r2.op, r2.isit);
+						}
+						else {
+							setVarValues(r2.isit, r2.lvalue, r2.uvalue, r2.variable);
+						}
+					}
 				}
+				else if (r2.isit == 'n' || r2.isit == 't') {
+					if (r2.lvalue == 0 && r2.uvalue == 0) {
+						setVarValues('t', 0.0, 0.0, null);
+					}
+					else if (r2.lvalue == 1 && r2.uvalue == 1) {
+						if (r1.isit == 'l' || r1.isit == 'a' || r1.isit == 'w' || r1.isit == 'r') {
+							setNodeValues(r1.r1, r1.r2, r1.op, r1.isit);
+						}
+						else {
+							setVarValues(r1.isit, r1.lvalue, r1.uvalue, r1.variable);
+						}
+					}
+				}
+//				if (((r1.isit == 'n') || (r1.isit == 't'))
+//						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
+//					(this).isit = 'n';
+//					(this).lvalue = (r1).lvalue * r2.lvalue;
+//					(this).uvalue = (this).lvalue;
+//					simplify = true;
+//				}
 			}
 			else if (op.equals("/")) {
 				if (((r1.isit == 'n') || (r1.isit == 't'))
@@ -2842,7 +2973,7 @@ public class ExprTree {
 		real = 0;
 	}
 
-	private void setNodeValues(ExprTree nr1, ExprTree nr2, String nop, char willbe) {
+	public void setNodeValues(ExprTree nr1, ExprTree nr2, String nop, char willbe) {
 		if (nr1 != null) {
 			r1 = new ExprTree(nr1);
 		}
