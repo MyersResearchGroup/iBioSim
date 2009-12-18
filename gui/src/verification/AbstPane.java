@@ -65,10 +65,12 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 			xform16 = "Simplify Enabling Conditions - simplification",
 			xform17 = "Remove Dominated Transitions - simplification",
 			xform18 = "Remove Unread Variables - abstraction",
-			xform19 = "Merge Coordinated Variables - abstraction";
+			xform19 = "Merge Coordinated Variables - abstraction",
+			xform20 = "Remove Places after Fail - simplification";
 
 	private String[] transforms = { xform0, xform1, xform3, xform4, xform5, xform6, xform7, xform8,
-			xform9, xform10, xform11, xform12, xform13, xform14, xform15, xform16, xform17, xform18, xform19 };
+			xform9, xform10, xform11, xform12, xform13, xform14, xform15, xform16, xform17,
+			xform18, xform19, xform20 };
 
 	private boolean change;
 
@@ -77,7 +79,7 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 	private Log log;
 
 	private BioSim biosim;
-	
+
 	private Verification verification;
 
 	/**
@@ -293,7 +295,7 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 			absListModel.addElement(variable);
 		}
 	}
-	
+
 	public void removeAllXform() {
 		absListModel.removeAllElements();
 	}
@@ -401,14 +403,14 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 			getFilename[0] = field.getText().trim();
 		}
 	}
-	
+
 	public boolean isSimplify() {
 		if (verification.simplify.isSelected() || verification.abstractLhpn.isSelected()) {
 			return true;
 		}
 		return false;
 	}
-	
+
 	public boolean isAbstract() {
 		return verification.abstractLhpn.isSelected();
 	}
