@@ -527,7 +527,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		 */
 
 		numBinsLabel = new JLabel("Number of Bins:");
-		String[] bins = { "2", "3", "4", "5", "6", "7", "8", "9", "17", "33", "65", "129", "257" };
+		String[] bins = { "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "33", "65", "129", "257" };
 		numBins = new JComboBox(bins);
 		numBins.setSelectedItem(biosimrc.get("biosim.learn.bins", ""));
 		numBins.addActionListener(this);
@@ -1226,7 +1226,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 					// check.setSelected(true);
 					// specs.add(check);
 					specs.add(new JTextField(s));
-					String[] options = { "2", "3", "4", "5", "6", "7", "8", "9", "17", "33", "65", "129", "257" };
+					String[] options = { "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "33", "65", "129", "257" };
 					// String[] options = { "3", "4", "5", "6", "7", "8", "9" };
 					JComboBox combo = new JComboBox(options);
 					// String[] dmvOptions = { "", "Yes", "No" };
@@ -2543,20 +2543,20 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 							String condStr = "";
 							transEnablingsVHDL[transNum] = "";
 							transEnablingsVAMS[transNum] = "";
-							String[] binIncoming = getPlaceInfoIndex(g.getPreset(t)[0]).split("");
-							String[] binOutgoing = getPlaceInfoIndex(g.getPostset(t)[0]).split("");
+							String[] binIncoming = getPlaceInfoIndex(g.getPreset(t)[0]).split(",");
+							String[] binOutgoing = getPlaceInfoIndex(g.getPostset(t)[0]).split(",");
 							for (int k : diffL) {
 								if (!((reqdVarsL.get(k).isDmvc()) && (!reqdVarsL.get(k).isInput()))) {
 									// the above condition means that if the bin change is on a non-input dmv variable, there won't be any enabling condition
 									if (Integer.parseInt(binIncoming[k + 1]) < Integer.parseInt(binOutgoing[k + 1])) {
 										//	double val = divisionsL.get(k).get(Integer.parseInt(binIncoming[k + 1])).doubleValue();
-										double val = scaleDiv.get(k).get(Integer.parseInt(binIncoming[k + 1])).doubleValue();
+										double val = scaleDiv.get(k+1).get(Integer.parseInt(binIncoming[k + 1])).doubleValue();
 										condStr += "(" + reqdVarsL.get(k).getName() + ">=" + (int) Math.floor(val) + ")";
 										transEnablingsVHDL[transNum] += reqdVarsL.get(k).getName() + "'above(" + (int) Math.floor(val)+".0)";	
 										transEnablingsVAMS[transNum] = "always@(cross((V(" + reqdVarsL.get(k).getName() + ") - " + ((int)val)/varScaleFactor +"),+1))";	// += temporary
 										transConditionalsVAMS[transNum] = "if ((place == " + g.getPreset(t)[0].split("p")[1] + ") && (V(" + reqdVarsL.get(k).getName() + ") >= " + ((int)val)/varScaleFactor +"))";
 									} else {
-										double val = scaleDiv.get(k).get(Integer.parseInt(binOutgoing[k + 1])).doubleValue();
+										double val = scaleDiv.get(k+1).get(Integer.parseInt(binOutgoing[k + 1])).doubleValue();
 										condStr += "~(" + reqdVarsL.get(k).getName() + ">="	+ (int) Math.ceil(val) + ")";
 										transEnablingsVHDL[transNum] += "not " + reqdVarsL.get(k).getName() + "'above(" + (int) Math.ceil(val)+".0)";
 										transEnablingsVAMS[transNum] = "always@(cross((V(" + reqdVarsL.get(k).getName() + ") - " + ((int)val)/varScaleFactor +"),-1))";	// +=; temporary
@@ -2639,8 +2639,8 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 							String condStr = "";
 							transEnablingsVHDL[transNum] = "";
 							transEnablingsVAMS[transNum] = "";
-							String[] binIncoming = getTransientNetPlaceIndex(g.getPreset(t)[0]).split("");
-							String[] binOutgoing = getPlaceInfoIndex(g.getPostset(t)[0]).split("");
+							String[] binIncoming = getTransientNetPlaceIndex(g.getPreset(t)[0]).split(",");
+							String[] binOutgoing = getPlaceInfoIndex(g.getPostset(t)[0]).split(",");
 							for (int k : diffL) {
 								if (!((reqdVarsL.get(k).isDmvc()) && (!reqdVarsL.get(k).isInput()))) {
 									if (Integer.parseInt(binIncoming[k + 1]) < Integer.parseInt(binOutgoing[k + 1])) {
@@ -2990,9 +2990,9 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		for (int i = 0; i < (data.get(0).size() - 1); i++) {
 			if (rates[0][i] != null) { // check if indices are ok. 0???? or 1???
 				prevPlaceKey = key;
-				key = "";
-				for (int j = 0; j < reqdVarsL.size(); j++) {
-					key += bins[j][i];
+				key = "" + bins[0][i];
+				for (int j = 1; j < reqdVarsL.size(); j++) {
+					key += "," + bins[j][i];
 				}
 				if (placeInfo.containsKey(key)) {
 					p0 = placeInfo.get(key);
@@ -3238,9 +3238,9 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 					break;
 				}
 			}
-			key = "";
-			for (int l = 0; l < reqdVarsL.size(); l++) {
-				key = key + bins[l][initMark];
+			key = "" + bins[0][initMark];
+			for (int l = 1; l < reqdVarsL.size(); l++) {
+				key = key + "," + bins[l][initMark];
 			}
 			if (!reqdVarsL.get(i).isDmvc()){
 				reqdVarsL.get(i).addInitRates((double)getMinRate(key, reqdVarsL.get(i).getName()));
@@ -3895,8 +3895,8 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 	public ArrayList<Integer> diff(String pre_bin, String post_bin) {
 		ArrayList<Integer> diffL = new ArrayList<Integer>();
 		// String p_bin[] = p.getBinEncoding();
-		String[] preset_encoding = pre_bin.split("");
-		String[] postset_encoding = post_bin.split("");
+		String[] preset_encoding = pre_bin.split(",");
+		String[] postset_encoding = post_bin.split(",");
 		for (int j = 1; j < preset_encoding.length; j++) { // to account for ""
 			// being created in the array
 			if (Integer.parseInt(preset_encoding[j]) != Integer
@@ -4417,7 +4417,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			// st1 w.r.t g
 			// p w.r.t placeInfo
 			if (placeInfo.get(p).getProperty("type").equalsIgnoreCase("RATE")) {
-				String [] bE = p.split("");
+				String [] bE = p.split(",");
 				binEncoding = new String[bE.length - 1];
 				for (int i = 0; i < bE.length - 1; i++){
 					binEncoding[i] = bE[i+1];    // since p.split("") gives ,0,1 if p was 01
@@ -4646,7 +4646,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			// st1 w.r.t g
 			// p w.r.t placeInfo
 			if (placeP.getProperty("type").equalsIgnoreCase("RATE") && placeP.getProperty("metaType").equalsIgnoreCase("true")) {
-				String [] bE = p.split("");
+				String [] bE = p.split(",");
 				binEncoding = new String[bE.length - 1];
 				for (int i = 0; i < bE.length - 1; i++){
 					binEncoding[i] = bE[i+1];    // since p.split("") gives ,0,1 if p was 01
