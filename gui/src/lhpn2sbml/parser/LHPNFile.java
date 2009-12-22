@@ -2583,13 +2583,13 @@ public class LHPNFile {
 					initCond.put("value", initValue.get(s));
 				}
 				else {
-					initCond.put("value", "0");
+					initCond.put("value", "[-inf,inf]");
 				}
 				if (initRate.containsKey(s)) {
 					initCond.put("rate", initRate.get(s));
 				}
 				else {
-					initCond.put("rate", "0");
+					initCond.put("rate", "[-inf,inf]");
 				}
 				// log.addText("check3for" + initCond.toString());
 				// System.out.println("check3for " + initCond.toString());
@@ -2640,6 +2640,9 @@ public class LHPNFile {
 				// log.addText("check3for" + s);
 				if (initValue.get(s) != null) {
 					initCond = initValue.get(s).toString();
+				}
+				else {
+					initCond = "[-inf,inf]";
 				}
 				// log.addText("check3for" + initCond);
 				integers.put(s, initCond);
