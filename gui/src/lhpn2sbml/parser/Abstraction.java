@@ -134,6 +134,10 @@ public class Abstraction extends LHPNFile {
 			change = mergeCoordinatedVars(change);
 			simplifyExpr();
 		}
+		// Transform 21 - Normalize Delays
+		if (abstPane.absListModel.contains(abstPane.xform20) && abstPane.isAbstract()) {
+			normalizeDelays();
+		}
 	}
 
 	public void abstractVars(String[] intVars) {
@@ -2562,6 +2566,44 @@ public class Abstraction extends LHPNFile {
 				}
 			}
 			intAssignments.put(s, prop);
+		}
+	}
+	
+	private void normalizeDelays() {
+		int N = 5;
+		for (String s : delays.keySet()) {
+			String delay = delays.get(s);
+			Pattern pattern = Pattern.compile("\\[([\\w-]+?),([\\w-]+?)\\]");
+			Matcher matcher = pattern.matcher(delay);
+			if (matcher.find()) {
+				String lVal = matcher.group(1);
+				String uVal = matcher.group(2);
+				if (!lVal.contains("inf")) {
+					Integer lInt = Integer.parseInt(lVal);
+					lInt = (lInt/N)*N;
+					lVal = lInt.toString();
+				}
+				if (!uVal.contains("inf")) {
+					Integer uInt = Integer.parseInt(uVal);
+					if (uInt%N != 0) {
+						uInt = (uInt/N + 1)*N;
+						uVal = uInt.toString();
+					}
+				}
+				delay = "[" + lVal + "," + uVal + "]";
+				delays.put(s, delay);
+			}
+			else {
+				if (!delay.contains("inf")) {
+					Integer val = Integer.parseInt(delay);
+					Integer lInt = (val/N)*N;
+					String lVal = lInt.toString();
+					Integer uInt = lInt + N;
+					String uVal = uInt.toString();
+					delay = "[" + lVal + "," + uVal + "]";
+					delays.put(s, delay);
+				}
+			}
 		}
 	}
 
