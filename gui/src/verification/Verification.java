@@ -836,11 +836,11 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				abstraction.abstractSTG();
 			}
 			if (!lhpn.isSelected() && !view.isSelected()) {
-				abstraction.save(directory + separator + lpnFile);
+				abstraction.save(directory + separator + abstFilename);
 			}
 		}
 		if (!lhpn.isSelected() && !view.isSelected()) {
-			abstraction.save(directory + separator + lpnFile);
+			abstraction.save(directory + separator + abstFilename);
 		}
 		if (!lhpn.isSelected() && !view.isSelected()) {
 			// String command = "/home/shang/kjones/atacs/bin/atacs -";
@@ -1054,7 +1054,12 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			for (String s : components) {
 				cmd = cmd + " " + s;
 			}
-			cmd = cmd + " " + sourceFile;
+			if (simplify.isSelected() || abstractLhpn.isSelected())	 {
+				cmd = cmd + " " + abstFilename;
+			}
+			else {
+				cmd = cmd + " " + sourceFile;
+			}
 			if (!componentField.getText().trim().equals("")) {
 				cmd = cmd + " " + componentField.getText().trim();
 			}
