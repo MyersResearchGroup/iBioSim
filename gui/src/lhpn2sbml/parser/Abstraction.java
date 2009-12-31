@@ -135,7 +135,7 @@ public class Abstraction extends LHPNFile {
 			simplifyExpr();
 		}
 		// Transform 21 - Normalize Delays
-		if (abstPane.absListModel.contains(abstPane.xform20) && abstPane.isAbstract()) {
+		if (abstPane.absListModel.contains(abstPane.xform21) && abstPane.isAbstract()) {
 			normalizeDelays();
 		}
 	}
@@ -2570,7 +2570,7 @@ public class Abstraction extends LHPNFile {
 	}
 	
 	private void normalizeDelays() {
-		int N = 5;
+		int N = abstPane.getNormFactor();
 		for (String s : delays.keySet()) {
 			String delay = delays.get(s);
 			Pattern pattern = Pattern.compile("\\[([\\w-]+?),([\\w-]+?)\\]");
