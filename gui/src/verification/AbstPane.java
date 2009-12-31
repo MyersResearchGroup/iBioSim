@@ -72,6 +72,8 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 	private String[] transforms = { xform0, xform1, xform3, xform4, xform5, xform6, xform7, xform8,
 			xform9, xform10, xform11, xform12, xform13, xform14, xform15, xform16, xform17,
 			xform18, xform19, xform20, xform21 };
+	
+	private JTextField factorField;
 
 	private boolean change;
 
@@ -141,6 +143,14 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 		speciesHolder.add(buttonHolder, "South");
 		this.add(speciesHolder, "North");
 
+		JPanel factorPanel = new JPanel();
+		JLabel factorLabel = new JLabel("Normalization Factor");
+		factorField = new JTextField("5");
+		factorField.setPreferredSize(new Dimension(40, 18));
+		factorPanel.add(factorLabel);
+		factorPanel.add(factorField);
+		this.add(factorPanel);
+		
 		// Creates the abstractions JList
 		absListModel = new DefaultListModel();
 		selectXforms = new JList(transforms);
@@ -414,6 +424,11 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 
 	public boolean isAbstract() {
 		return verification.abstractLhpn.isSelected();
+	}
+	
+	public Integer getNormFactor() {
+		String factorString = factorField.getText();
+		return Integer.parseInt(factorString);
 	}
 
 	public void viewLog() {
