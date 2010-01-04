@@ -2318,6 +2318,17 @@ public class ExprTree {
 					(this).uvalue = (this).lvalue;
 					simplify = true;
 				}
+				else if ((r1.isit == 'n' || r1.isit == 't') && r1.uvalue == 0 && r1.lvalue == 0) {
+					setVarValues('n', 0.0, 0.0, null);
+				}
+				else if ((r2.isit == 'n' || r2.isit == 't') && r2.lvalue == 1 && r2.uvalue == 1) {
+					if (r2.isit == 'l' || r2.isit == 'a' || r2.isit == 'w' || r2.isit == 'r') {
+						setNodeValues(r2.r1, r2.r2, r2.op, r2.isit);
+					}
+					else {
+						setVarValues(r2.isit, r2.lvalue, r2.uvalue, r2.variable);
+					}
+				}
 			}
 			else if (op.equals("%")) {
 				if (((r1.isit == 'n') || (r1.isit == 't'))
@@ -2326,6 +2337,17 @@ public class ExprTree {
 					(this).lvalue = (r1).lvalue % r2.lvalue;
 					(this).uvalue = (this).lvalue;
 					simplify = true;
+				}
+				else if ((r1.isit == 'n' || r1.isit == 't') && r1.lvalue == 1.0 && r1.uvalue == 1.0) {
+					setVarValues('n', 1.0, 1.0, null);
+				}
+				else if ((r2.isit == 'n' || r2.isit == 't') && r2.lvalue == 1.0 && r2.uvalue == 1.0) {
+					if (r2.isit == 'l' || r2.isit == 'a' || r2.isit == 'w' || r2.isit == 'r') {
+						setNodeValues(r2.r1, r2.r2, r2.op, r2.isit);
+					}
+					else {
+						setVarValues(r2.isit, r2.lvalue, r2.uvalue, r2.variable);
+					}
 				}
 			}
 			else if (op.equals("+")) {
@@ -2336,6 +2358,22 @@ public class ExprTree {
 					(this).uvalue = (this).lvalue;
 					simplify = true;
 				}
+				else if ((r1.isit == 'n' || r1.isit == 't') && r1.lvalue == 0 && r1.uvalue == 0) {
+					if (r1.isit == 'l' || r1.isit == 'a' || r1.isit == 'w' || r1.isit == 'r') {
+						setNodeValues(r1.r1, r1.r2, r1.op, r1.isit);
+					}
+					else {
+						setVarValues(r1.isit, r1.lvalue, r1.uvalue, r1.variable);
+					}
+				}
+				else if ((r2.isit == 'n' || r2.isit == 't') && r2.lvalue == 0 && r2.uvalue == 0) {
+					if (r2.isit == 'l' || r2.isit == 'a' || r2.isit == 'w' || r2.isit == 'r') {
+						setNodeValues(r2.r1, r2.r2, r2.op, r2.isit);
+					}
+					else {
+						setVarValues(r2.isit, r2.lvalue, r2.uvalue, r2.variable);
+					}
+				}
 			}
 			else if (op.equals("-")) {
 				if (((r1.isit == 'n') || (r1.isit == 't'))
@@ -2344,6 +2382,17 @@ public class ExprTree {
 					(this).lvalue = (r1).lvalue - r2.lvalue;
 					(this).uvalue = (this).lvalue;
 					simplify = true;
+				}
+				else if ((r1.isit == 'n' || r1.isit == 't') && r1.lvalue == 0 && r1.uvalue == 0) {
+					setNodeValues(r2, null, "U-", 'a');
+				}
+				else if ((r2.isit == 'n' || r2.isit == 't') && r2.lvalue == 0 && r2.uvalue == 0) {
+					if (r1.isit == 'l' || r1.isit == 'a' || r1.isit == 'w' || r1.isit == 'r') {
+						setNodeValues(r1.r1, r1.r2, r1.op, r1.isit);
+					}
+					else {
+						setVarValues(r1.isit, r1.lvalue, r1.uvalue, r1.variable);
+					}
 				}
 			}
 		}
