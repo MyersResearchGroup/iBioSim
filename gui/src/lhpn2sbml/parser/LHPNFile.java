@@ -779,8 +779,12 @@ public class LHPNFile {
 
 	public void addTransition(String name) {
 		//controlFlow.put(name, null);
-		controlFlow.put(name, null);
-		delays.put(name,"[0,inf]");
+		if (!controlFlow.containsKey(name)) {
+			controlFlow.put(name, null);
+		}
+		if (!delays.containsKey(name)) {
+			delays.put(name,"[0,inf]");
+		}
 	}
 
 	public void addTransition(String name, Properties prop) {
