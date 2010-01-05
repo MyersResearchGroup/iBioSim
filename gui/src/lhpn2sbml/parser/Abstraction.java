@@ -24,6 +24,8 @@ public class Abstraction extends LHPNFile {
 
 	private HashMap<String, Integer> process_read = new HashMap<String, Integer>();
 
+	private ArrayList<String> read = new ArrayList<String>();
+
 	// private Verification verPane;
 
 	private AbstPane abstPane;
@@ -2449,6 +2451,7 @@ public class Abstraction extends LHPNFile {
 			for (String t : assign.keySet()) {
 				for (Object o : assign.get(t).keySet()) {
 					String var = o.toString();
+					read = new ArrayList<String>();
 					if ((process_read.get(var).equals(process_trans.get(t)) && process_write.get(
 							var).equals(process_trans.get(t)))
 							&& !readBeforeWrite(t, var)) {
@@ -3664,8 +3667,11 @@ public class Abstraction extends LHPNFile {
 								return true;
 							}
 						}
+						if (!read.contains(t)) {
+						read.add(t);
 						if (readBeforeWrite(t, var)) {
 							return true;
+						}
 						}
 					}
 				}
