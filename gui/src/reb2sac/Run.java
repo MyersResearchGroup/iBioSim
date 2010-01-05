@@ -174,6 +174,7 @@ public class Run implements ActionListener {
 			else {
 				abs.setProperty("monte.carlo.simulation.time.step", "" + timeStep);
 			}
+			abs.setProperty("monte.carlo.simulation.absolute.error", "" + absError);
 			abs.setProperty("monte.carlo.simulation.random.seed", "" + rndSeed);
 			abs.setProperty("monte.carlo.simulation.runs", "" + run);
 			abs.setProperty("monte.carlo.simulation.out.dir", outDir);
