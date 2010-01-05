@@ -2414,181 +2414,228 @@ public class ExprTree {
 		}
 	}
 
-	public boolean becomesFalse(HashMap<String, String> variables) {
+	public String becomesFalse(HashMap<String, String> variables) {
 		switch (isit) {
 		case 'b': // Boolean
 			if (variables.containsKey(variable))
 				if (variables.get(variable).toString().toLowerCase().equals("false"))
-					return true;
-			return false;
+					return "true";
+			return "false";
 		case 't': // Truth value
 			if (lvalue == 0)
-				return true;
-			return false;
+				return "true";
+			return "false";
 		case 'l': // Logical
 		case 'w': // bitWise
 			if (op.equals("||")) {
-				if (r1.becomesFalse(variables) && r2.becomesFalse(variables))
-					return true;
-				return false;
+				if (r1.becomesFalse(variables).equals("true") && r2.becomesFalse(variables).equals("true"))
+					return "true";
+				return "false";
 			}
 			else if (op.equals("&&")) {
-				if (r1.becomesFalse(variables) || r2.becomesFalse(variables))
-					return true;
-				return false;
+				if (r1.becomesFalse(variables).equals("true") || r2.becomesFalse(variables).equals("true"))
+					return "true";
+				return "false";
 			}
 			else if (op.equals("==")) {
 				if (!r1.isEqual(r2))
-					return true;
-				return false;
+					return "true";
+				return "false";
 			}
 			else if (op.equals("!")) {
-				if (!r1.becomesFalse(variables))
-					return true;
-				return false;
+				if (r1.becomesFalse(variables).equals("false"))
+					return "true";
+				return "false";
 			}
 		case 'r': // Relational
-			double left;
-			double right;
-			if (r1 != null) {
-				left = r1.evaluateExp(variables);
-			}
-			else {
-				left = Double.NaN;
-			}
-			if (r2 != null) {
-				right = r2.evaluateExp(variables);
-			}
-			else {
-				right = Double.NaN;
-			}
-			if (op.equals("==")) {
-				if (left != right) {
-					return true;
-				}
-			}
-			else if (op.equals(">=")) {
-				if (left < right) {
-					return true;
-				}
-			}
-			else if (op.equals("<=")) {
-				if (left > right) {
-					return true;
-				}
-			}
-			else if (op.equals(">")) {
-				if (left <= right) {
-					return true;
-				}
-			}
-			else if (op.equals("<")) {
-				if (left >= right) {
-					return true;
-				}
-			}
-			return false;
+			return "unknown";
+//			double left = 0.0;
+//			double right = 0.0;
+//			boolean flagLeft = true;
+//			boolean flagRight = true;
+//			if (r1 != null) {
+//				for (String s : r1.getVars()) {
+//					if (!variables.containsKey(s)) {
+//						flagLeft = false;
+//					}
+//				}
+//				if (flagLeft) {
+//					left = r1.evaluateExp(variables);
+//				}
+//				else {
+//					left = Double.NaN;
+//				}
+//			}
+//			else {
+//				left = Double.NaN;
+//			}
+//			if (r2 != null) {
+//				for (String s : r2.getVars()) {
+//					if (!variables.containsKey(s)) {
+//						flagRight = false;
+//					}
+//				}
+//				if (flagRight) {
+//					right = r2.evaluateExp(variables);
+//				}
+//				else {
+//					right = Double.NaN;
+//				}
+//			}
+//			else {
+//				right = Double.NaN;
+//			}
+//			if (op.equals("==")) {
+//				if (left != right) {
+//					return true;
+//				}
+//			}
+//			else if (op.equals(">=")) {
+//				if (left < right) {
+//					return true;
+//				}
+//			}
+//			else if (op.equals("<=")) {
+//				if (left > right) {
+//					return true;
+//				}
+//			}
+//			else if (op.equals(">")) {
+//				if (left <= right) {
+//					return true;
+//				}
+//			}
+//			else if (op.equals("<")) {
+//				if (left >= right) {
+//					return true;
+//				}
+//			}
+//			return false;
 		case 'i': // Integer
 		case 'c': // Continuous
 		case 'a': // Arithmetic
 		case 'n': // Number
-			return false;
+			return "unknown";
 		}
-		return false;
+		return "false";
 	}
 
-	public boolean becomesTrue(HashMap<String, String> variables) {
+	public String becomesTrue(HashMap<String, String> variables) {
 		switch (isit) {
 		case 'b': // Boolean
 			if (variables.containsKey(variable)) {
 				if (variables.get(variable).toString().matches("[\\d[\\.]]+")) {
 					if (Double.parseDouble(variables.get(variable).toString()) != 0) {
-						return true;
+						return "true";
 					}
 				}
 				if (variables.get(variable).toString().toLowerCase().equals("true"))
-					return true;
+					return "true";
 			}
-			return false;
+			return "false";
 		case 'i': // Integer
-		case 'c': // Continuous
 			if (variables.containsKey(variable)) {
 				if (!variables.get(variable).equals("0.0")) {
-					return true;
+					return "true";
 				}
 			}
+		case 'c': // Continuous
+			return "unknown";
 		case 'n': // Number
 		case 't': // Truth value
 			if (uvalue != 0)
-				return true;
-			return false;
+				return "true";
+			return "false";
 		case 'l': // Logical
 		case 'w': // bitWise
 			if (op.equals("||")) {
-				if (r1.becomesTrue(variables) || r2.becomesTrue(variables))
-					return true;
-				return false;
+				if (r1.becomesTrue(variables).equals("true") || r2.becomesTrue(variables).equals("true"))
+					return "true";
+				return "false";
 			}
 			else if (op.equals("&&")) {
-				if (r1.becomesTrue(variables) && r2.becomesTrue(variables))
-					return true;
-				return false;
+				if (r1.becomesTrue(variables).equals("true") && r2.becomesTrue(variables).equals("true"))
+					return "true";
+				return "false";
 			}
 			else if (op.equals("==")) {
 				if (r1.isEqual(r2, variables))
-					return true;
-				return false;
+					return "true";
+				return "false";
 			}
 			else if (op.equals("!")) {
-				if (!r1.becomesTrue(variables))
-					return true;
-				return false;
+				if (r1.becomesTrue(variables).equals("false"))
+					return "true";
+				return "false";
 			}
 		case 'r': // Relational
-			double left;
-			double right;
-			if (r1 != null) {
-				left = r1.evaluateExp(variables);
-			}
-			else {
-				left = Double.NaN;
-			}
-			if (r2 != null) {
-				right = r2.evaluateExp(variables);
-			}
-			else {
-				right = Double.NaN;
-			}
-			if (op.equals("==")) {
-				if (left == right) {
-					return true;
-				}
-			}
-			else if (op.equals(">=")) {
-				if (left >= right) {
-					return true;
-				}
-			}
-			else if (op.equals("<=")) {
-				if (left <= right) {
-					return true;
-				}
-			}
-			else if (op.equals(">")) {
-				if (left > right) {
-					return true;
-				}
-			}
-			else if (op.equals("<")) {
-				if (left < right) {
-					return true;
-				}
-			}
-			return false;
+			return "unknown";
+//			double left = 0.0;
+//			double right = 0.0;
+//			boolean flagLeft = true;
+//			boolean flagRight = true;
+//			if (r1 != null) {
+//				for (String s : r1.getVars()) {
+//					if (!variables.containsKey(s)) {
+//						flagLeft = false;
+//					}
+//				}
+//				if (flagLeft) {
+//					left = r1.evaluateExp(variables);
+//				}
+//				else {
+//					left = Double.NaN;
+//				}
+//			}
+//			else {
+//				left = Double.NaN;
+//			}
+//			if (r2 != null) {
+//				for (String s : r2.getVars()) {
+//					if (!variables.containsKey(s)) {
+//						flagRight = false;
+//					}
+//				}
+//				if (flagRight) {
+//					right = r2.evaluateExp(variables);
+//				}
+//				else {
+//					right = Double.NaN;
+//				}
+//			}
+//			else {
+//				right = Double.NaN;
+//			}
+//			if (op.equals("==")) {
+//				if (left == right) {
+//					return true;
+//				}
+//			}
+//			else if (op.equals(">=")) {
+//				if (left >= right) {
+//					return true;
+//				}
+//			}
+//			else if (op.equals("<=")) {
+//				if (left <= right) {
+//					return true;
+//				}
+//			}
+//			else if (op.equals(">")) {
+//				if (left > right) {
+//					return true;
+//				}
+//			}
+//			else if (op.equals("<")) {
+//				if (left < right) {
+//					return true;
+//				}
+//			}
+//			return false;
 		case 'a': // Arithmetic
-			return false;
+			return "unknown";
 		}
-		return false;
+		return "false";
 	}
 
 	private String getElement() {
