@@ -1234,7 +1234,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				absErr.setEnabled(false);
 			}
 			else if (simulators.getSelectedItem().equals("mp-event")) {
-				description.setText("iSSA (Mean Path Adaptive)");
+				description.setText("iSSA (Mean Path Event)");
 				step.setEnabled(true);
 				stepLabel.setEnabled(true);
 				errorLabel.setEnabled(false);
