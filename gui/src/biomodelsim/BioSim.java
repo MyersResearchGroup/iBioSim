@@ -59,6 +59,7 @@ import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -2826,13 +2827,16 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				Run run = new Run(null);
 				JCheckBox dummy = new JCheckBox();
 				dummy.setSelected(false);
-				run.createProperties(0, "Print Interval", 1, 1, 1, tree.getFile().substring(
-						0,
-						tree.getFile().length()
-								- (tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]
-										.length())), 314159, 1, new String[0], new String[0], "tsd.printer", "amount",
-						tree.getFile().split(separator), "none", frame, tree.getFile(), 0.1, 0.1, 0.1, 15,
-						dummy, "", dummy, null);
+				JList empty = new JList();
+				run.createProperties(0, "Print Interval", 1, 1, 1, tree.getFile()
+						.substring(
+								0,
+								tree.getFile().length()
+										- (tree.getFile().split(separator)[tree.getFile().split(
+												separator).length - 1].length())), 314159, 1,
+						new String[0], new String[0], "tsd.printer", "amount", tree.getFile()
+								.split(separator), "none", frame, tree.getFile(), 0.1, 0.1, 0.1,
+						15, dummy, "", dummy, null,empty,empty,empty);
 				String filename = tree.getFile();
 				String directory = "";
 				String theFile = "";
@@ -2925,14 +2929,17 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				}
 				Run run = new Run(null);
 				JCheckBox dummy = new JCheckBox();
+				JList empty = new JList();
 				dummy.setSelected(false);
-				run.createProperties(0, "Print Interval", 1, 1, 1, tree.getFile().substring(
-						0,
-						tree.getFile().length()
-								- (tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]
-										.length())), 314159, 1, new String[0], new String[0], "tsd.printer", "amount",
-						tree.getFile().split(separator), "none", frame, tree.getFile(), 0.1, 0.1, 0.1, 15,
-						dummy, "", dummy, null);
+				run.createProperties(0, "Print Interval", 1, 1, 1, tree.getFile()
+						.substring(
+								0,
+								tree.getFile().length()
+										- (tree.getFile().split(separator)[tree.getFile().split(
+												separator).length - 1].length())), 314159, 1,
+						new String[0], new String[0], "tsd.printer", "amount", tree.getFile()
+								.split(separator), "none", frame, tree.getFile(), 0.1, 0.1, 0.1,
+						15, dummy, "", dummy, null, empty, empty, empty);
 				String filename = tree.getFile();
 				String directory = "";
 				String theFile = "";

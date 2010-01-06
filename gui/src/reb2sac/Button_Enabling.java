@@ -1,5 +1,7 @@
 package reb2sac;
 
+import java.util.*;
+
 import gcm2sbml.gui.GCM2SBMLEditor;
 
 import javax.swing.*;
@@ -29,6 +31,9 @@ public class Button_Enabling {
 			JTextField rapid1, JTextField rapid2, JTextField qssa, JTextField maxCon,
 			JLabel rapidLabel1, JLabel rapidLabel2, JLabel qssaLabel, JLabel maxConLabel,
 			JCheckBox usingSSA, JButton clearIntSpecies, JTextField fileStem, JLabel fileStemLabel,
+			JList preAbs, JList loopAbs, JList postAbs, JLabel preAbsLabel, JLabel loopAbsLabel, 
+			JLabel postAbsLabel,JButton addPreAbs,JButton rmPreAbs,JButton editPreAbs, JButton addLoopAbs,
+			JButton rmLoopAbs,JButton editLoopAbs,JButton addPostAbs,JButton rmPostAbs,JButton editPostAbs,
 			JRadioButton lhpn) {
 		if (!usingSSA.isSelected()) {
 			ODE.setEnabled(true);
@@ -37,6 +42,21 @@ public class Button_Enabling {
 		markov.setEnabled(false);
 		lhpn.setEnabled(false);
 		if (none.isSelected()) {
+			preAbs.setEnabled(false);
+			loopAbs.setEnabled(false);
+			postAbs.setEnabled(false);
+			preAbsLabel.setEnabled(false);
+			loopAbsLabel.setEnabled(false);
+			postAbsLabel.setEnabled(false);
+			addPreAbs.setEnabled(false);
+			rmPreAbs.setEnabled(false);
+			editPreAbs.setEnabled(false);
+			addLoopAbs.setEnabled(false);
+			rmLoopAbs.setEnabled(false);
+			editLoopAbs.setEnabled(false);
+			addPostAbs.setEnabled(false);
+			rmPostAbs.setEnabled(false);
+			editPostAbs.setEnabled(false);
 			intSpecies.setEnabled(false);
 			species.setEnabled(false);
 			spLabel.setEnabled(false);
@@ -52,8 +72,35 @@ public class Button_Enabling {
 			rapid1.setEnabled(false);
 			rapidLabel2.setEnabled(false);
 			rapid2.setEnabled(false);
+			ArrayList<String> getLists = new ArrayList<String>();
+			Object[] objects = getLists.toArray();
+			preAbs.setListData(objects);
+			loopAbs.setListData(objects);
+			getLists = new ArrayList<String>();
+			if (monteCarlo.isSelected()) {
+				getLists.add("distribute-transformer");
+				getLists.add("reversible-to-irreversible-transformer");
+			}
+			getLists.add("kinetic-law-constants-simplifier");
+			objects = getLists.toArray();
+			postAbs.setListData(objects);
 		}
 		else {
+			preAbs.setEnabled(true);
+			loopAbs.setEnabled(true);
+			postAbs.setEnabled(true);
+			preAbsLabel.setEnabled(true);
+			loopAbsLabel.setEnabled(true);
+			postAbsLabel.setEnabled(true);
+			addPreAbs.setEnabled(true);
+			rmPreAbs.setEnabled(true);
+			editPreAbs.setEnabled(true);
+			addLoopAbs.setEnabled(true);
+			rmLoopAbs.setEnabled(true);
+			editLoopAbs.setEnabled(true);
+			addPostAbs.setEnabled(true);
+			rmPostAbs.setEnabled(true);
+			editPostAbs.setEnabled(true);
 			intSpecies.setEnabled(true);
 			species.setEnabled(true);
 			spLabel.setEnabled(true);
@@ -69,8 +116,32 @@ public class Button_Enabling {
 			rapid1.setEnabled(true);
 			rapidLabel2.setEnabled(true);
 			rapid2.setEnabled(true);
+			ArrayList<String> getLists = new ArrayList<String>();
+			getLists.add("modifier-structure-transformer");
+			getLists.add("modifier-constant-propagation");
+			Object[] objects = getLists.toArray();
+			preAbs.setListData(objects);
+			getLists = new ArrayList<String>();
+			getLists.add("operator-site-forward-binding-remover");
+			getLists.add("dimerization-reduction");
+			getLists.add("enzyme-kinetic-rapid-equilibrium-1");
+			getLists.add("irrelevant-species-remover");
+			getLists.add("inducer-structure-transformer");
+			getLists.add("modifier-constant-propagation");
+			getLists.add("similar-reaction-combiner");
+			getLists.add("modifier-constant-propagation");
+			objects = getLists.toArray();
+			loopAbs.setListData(objects);
+			getLists = new ArrayList<String>();
+			if (monteCarlo.isSelected()) {
+				getLists.add("distribute-transformer");
+				getLists.add("reversible-to-irreversible-transformer");
+			}
+			getLists.add("kinetic-law-constants-simplifier");
+			objects = getLists.toArray();
+			postAbs.setListData(objects);
 		}
-		if (markov.isSelected() || lhpn.isEnabled()) {
+		if (markov.isSelected() || lhpn.isSelected()) {
 			if (!usingSSA.isSelected()) {
 				ODE.setSelected(true);
 			}
@@ -80,8 +151,8 @@ public class Button_Enabling {
 			monteCarlo.setSelected(false);
 			markov.setSelected(false);
 			lhpn.setEnabled(false);
-			seed.setEnabled(false);
-			seedLabel.setEnabled(false);
+			seed.setEnabled(true);
+			seedLabel.setEnabled(true);
 			runs.setEnabled(true);
 			runsLabel.setEnabled(true);
 			fileStem.setEnabled(true);
@@ -126,7 +197,11 @@ public class Button_Enabling {
 			JButton removeIntSpecies, JTextField rapid1, JTextField rapid2, JTextField qssa,
 			JTextField maxCon, JLabel rapidLabel1, JLabel rapidLabel2, JLabel qssaLabel,
 			JLabel maxConLabel, JCheckBox usingSSA, JButton clearIntSpecies, JTextField fileStem,
-			JLabel fileStemLabel, JRadioButton lhpn, GCM2SBMLEditor gcmEditor) {
+			JLabel fileStemLabel, 
+			JList preAbs, JList loopAbs, JList postAbs, JLabel preAbsLabel, JLabel loopAbsLabel, 
+			JLabel postAbsLabel,JButton addPreAbs,JButton rmPreAbs,JButton editPreAbs, JButton addLoopAbs,
+			JButton rmLoopAbs,JButton editLoopAbs,JButton addPostAbs,JButton rmPostAbs,JButton editPostAbs,
+			JRadioButton lhpn, GCM2SBMLEditor gcmEditor) {
 		ODE.setEnabled(false);
 		monteCarlo.setEnabled(true);
 		if (!usingSSA.isSelected()) {
@@ -135,6 +210,21 @@ public class Button_Enabling {
 		if (gcmEditor != null) {
 			lhpn.setEnabled(true);
 		}
+		preAbs.setEnabled(true);
+		loopAbs.setEnabled(true);
+		postAbs.setEnabled(true);
+		preAbsLabel.setEnabled(true);
+		loopAbsLabel.setEnabled(true);
+		postAbsLabel.setEnabled(true);
+		addPreAbs.setEnabled(true);
+		rmPreAbs.setEnabled(true);
+		editPreAbs.setEnabled(true);
+		addLoopAbs.setEnabled(true);
+		rmLoopAbs.setEnabled(true);
+		editLoopAbs.setEnabled(true);
+		addPostAbs.setEnabled(true);
+		rmPostAbs.setEnabled(true);
+		editPostAbs.setEnabled(true);
 		intSpecies.setEnabled(true);
 		species.setEnabled(true);
 		spLabel.setEnabled(true);
@@ -184,6 +274,30 @@ public class Button_Enabling {
 			simulators.addItem("bunker");
 			simulators.addItem("nmc");
 		}
+		ArrayList<String> getLists = new ArrayList<String>();
+		getLists.add("modifier-structure-transformer");
+		getLists.add("modifier-constant-propagation");
+		Object[] objects = getLists.toArray();
+		preAbs.setListData(objects);
+		getLists = new ArrayList<String>();
+		getLists.add("operator-site-forward-binding-remover");
+		getLists.add("dimerization-reduction-level-assignment");
+		getLists.add("enzyme-kinetic-rapid-equilibrium-1");
+		getLists.add("irrelevant-species-remover");
+		getLists.add("inducer-structure-transformer");
+		getLists.add("modifier-constant-propagation");
+		getLists.add("similar-reaction-combiner");
+		getLists.add("modifier-constant-propagation");
+		objects = getLists.toArray();
+		loopAbs.setListData(objects);
+		getLists = new ArrayList<String>();
+		if (monteCarlo.isSelected()) {
+			getLists.add("distribute-transformer");
+			getLists.add("reversible-to-irreversible-transformer");
+		}
+		getLists.add("kinetic-law-constants-simplifier");
+		objects = getLists.toArray();
+		postAbs.setListData(objects);
 	}
 
 	/**
@@ -193,7 +307,7 @@ public class Button_Enabling {
 			JLabel runsLabel, JLabel stepLabel, JTextField step, JLabel errorLabel,
 			JTextField absErr, JLabel limitLabel, JTextField limit, JComboBox intervalLabel,
 			JTextField interval, JComboBox simulators, JLabel simulatorsLabel, JLabel explanation,
-			JLabel description, JCheckBox usingSSA, JTextField fileStem, JLabel fileStemLabel) {
+			JLabel description, JCheckBox usingSSA, JTextField fileStem, JLabel fileStemLabel, JList postAbs) {
 		seed.setEnabled(true);
 		seedLabel.setEnabled(true);
 		runs.setEnabled(true);
@@ -222,6 +336,10 @@ public class Button_Enabling {
 		simulators.addItem("rk8pd");
 		simulators.addItem("rkf45");
 		simulators.setSelectedItem("rkf45");
+		ArrayList<String> getLists = new ArrayList<String>();
+		getLists.add("kinetic-law-constants-simplifier");
+		Object[] objects = getLists.toArray();
+		postAbs.setListData(objects);
 	}
 
 	/**
@@ -235,7 +353,7 @@ public class Button_Enabling {
 			JLabel runsLabel, JLabel stepLabel, JTextField step, JLabel errorLabel,
 			JTextField absErr, JLabel limitLabel, JTextField limit, JComboBox intervalLabel,
 			JTextField interval, JComboBox simulators, JLabel simulatorsLabel, JLabel explanation,
-			JLabel description, JCheckBox usingSSA, JTextField fileStem, JLabel fileStemLabel) {
+			JLabel description, JCheckBox usingSSA, JTextField fileStem, JLabel fileStemLabel, JList postAbs) {
 		seed.setEnabled(true);
 		seedLabel.setEnabled(true);
 		runs.setEnabled(true);
@@ -265,6 +383,12 @@ public class Button_Enabling {
 		simulators.addItem("bunker");
 		simulators.addItem("nmc");
 		absErr.setEnabled(false);
+		ArrayList<String> getLists = new ArrayList<String>();
+		getLists.add("distribute-transformer");
+		getLists.add("reversible-to-irreversible-transformer");
+		getLists.add("kinetic-law-constants-simplifier");
+		Object[] objects = getLists.toArray();
+		postAbs.setListData(objects);
 	}
 
 	/**
@@ -275,7 +399,7 @@ public class Button_Enabling {
 			JTextField absErr, JLabel limitLabel, JTextField limit, JComboBox intervalLabel,
 			JTextField interval, JComboBox simulators, JLabel simulatorsLabel, JLabel explanation,
 			JLabel description, JCheckBox usingSSA, JTextField fileStem, JLabel fileStemLabel,
-			GCM2SBMLEditor gcmEditor) {
+			GCM2SBMLEditor gcmEditor, JList postAbs) {
 		seed.setEnabled(false);
 		seedLabel.setEnabled(false);
 		runs.setEnabled(false);
@@ -302,6 +426,10 @@ public class Button_Enabling {
 		}
 		simulators.addItem("atacs");
 		simulators.addItem("ctmc-transient");
+		ArrayList<String> getLists = new ArrayList<String>();
+		getLists.add("kinetic-law-constants-simplifier");
+		Object[] objects = getLists.toArray();
+		postAbs.setListData(objects);
 	}
 
 	/**
@@ -312,7 +440,7 @@ public class Button_Enabling {
 			JLabel runsLabel, JLabel stepLabel, JTextField step, JLabel errorLabel,
 			JTextField absErr, JLabel limitLabel, JTextField limit, JComboBox intervalLabel,
 			JTextField interval, JComboBox simulators, JLabel simulatorsLabel, JLabel explanation,
-			JLabel description, JTextField fileStem, JLabel fileStemLabel) {
+			JLabel description, JTextField fileStem, JLabel fileStemLabel, JList postAbs) {
 		seed.setEnabled(false);
 		seedLabel.setEnabled(false);
 		runs.setEnabled(false);
@@ -332,5 +460,9 @@ public class Button_Enabling {
 		explanation.setEnabled(false);
 		description.setEnabled(false);
 		fileStem.setText("");
+		ArrayList<String> getLists = new ArrayList<String>();
+		getLists.add("kinetic-law-constants-simplifier");
+		Object[] objects = getLists.toArray();
+		postAbs.setListData(objects);
 	}
 }
