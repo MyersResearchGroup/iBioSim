@@ -3499,6 +3499,7 @@ public class Abstraction extends LHPNFile {
 					}
 				}
 				if (unassigned) {
+					change = true;
 					ExprTree init = new ExprTree(this);
 					init.token = init.intexpr_gettok(inputs.get(v));
 					init.intexpr_L(inputs.get(v));
@@ -3555,6 +3556,7 @@ public class Abstraction extends LHPNFile {
 					}
 				}
 				if (unassigned) {
+					change = true;
 					ExprTree init = new ExprTree(this);
 					init.token = init.intexpr_gettok(outputs.get(v));
 					init.intexpr_L(outputs.get(v));
@@ -3603,62 +3605,82 @@ public class Abstraction extends LHPNFile {
 			}
 		}
 		for (String v : variables.keySet()) {
-			if (!variables.get(v).getProperty("value").equals("unknown")
-					&& !variables.get(v).getProperty("rate").contains("[")) {
-				if (Float.parseFloat(variables.get(v).getProperty("rate")) == 0) {
-					boolean unassigned = true;
-					for (Properties a : contAssignments.values()) {
-						if (a.containsKey(v)) {
-							unassigned = false;
+			if (!variables.get(v).getProperty("value").equals("[-inf,inf]")) {
+				Pattern pattern = Pattern.compile("\\[([\\d\\.-]+?),([\\d\\.-]+?)\\]");
+				Matcher valMatch = pattern.matcher(variables.get(v).getProperty("value"));
+				Matcher rateMatch = pattern.matcher(variables.get(v).getProperty("rate"));
+				Double value = 0.0;
+				if (valMatch.find()) {
+					Double lval = Double.parseDouble(valMatch.group(1));
+					Double uval = Double.parseDouble(valMatch.group(2));
+					if (!lval.equals(uval)) {
+						continue;
+					}
+					value = lval;
+				}
+				else {
+					value = Double.parseDouble(variables.get(v).getProperty("value"));
+				}
+				if (rateMatch.find()) {
+					Double lval = Double.parseDouble(rateMatch.group(1));
+					Double uval = Double.parseDouble(rateMatch.group(2));
+					if (!lval.equals(0.0) || !uval.equals(0.0)) {
+						continue;
+					}
+				}
+				boolean unassigned = true;
+				for (Properties a : contAssignments.values()) {
+					if (a.containsKey(v)) {
+						unassigned = false;
+					}
+				}
+				for (Properties a : rateAssignments.values()) {
+					if (a.containsKey(v)) {
+						unassigned = false;
+					}
+				}
+				if (unassigned) {
+					change = true;
+					ExprTree init = new ExprTree(this);
+					init.token = init.intexpr_gettok(value.toString());
+					init.intexpr_L(value.toString());
+					for (ExprTree e : enablingTrees.values()) {
+						if (e != null) {
+							e.replace(v, "continuous", init);
 						}
 					}
-					for (Properties a : rateAssignments.values()) {
-						if (a.containsKey(v)) {
-							unassigned = false;
+					for (HashMap<String, ExprTree[]> m : booleanAssignmentTrees.values()) {
+						for (ExprTree[] eArray : m.values()) {
+							for (ExprTree e : eArray) {
+								if (e != null) {
+									e.replace(v, "continuous", init);
+								}
+							}
 						}
 					}
-					if (unassigned) {
-						ExprTree init = new ExprTree(this);
-						init.token = init.intexpr_gettok(variables.get(v).getProperty("value"));
-						init.intexpr_L(variables.get(v).getProperty("value"));
-						for (ExprTree e : enablingTrees.values()) {
-							if (e != null) {
-								e.replace(v, "continuous", init);
-							}
-						}
-						for (HashMap<String, ExprTree[]> m : booleanAssignmentTrees.values()) {
-							for (ExprTree[] eArray : m.values()) {
-								for (ExprTree e : eArray) {
-									if (e != null) {
-										e.replace(v, "continuous", init);
-									}
+					for (HashMap<String, ExprTree[]> m : intAssignmentTrees.values()) {
+						for (ExprTree[] eArray : m.values()) {
+							for (ExprTree e : eArray) {
+								if (e != null) {
+									e.replace(v, "continuous", init);
 								}
 							}
 						}
-						for (HashMap<String, ExprTree[]> m : intAssignmentTrees.values()) {
-							for (ExprTree[] eArray : m.values()) {
-								for (ExprTree e : eArray) {
-									if (e != null) {
-										e.replace(v, "continuous", init);
-									}
+					}
+					for (HashMap<String, ExprTree[]> m : contAssignmentTrees.values()) {
+						for (ExprTree[] eArray : m.values()) {
+							for (ExprTree e : eArray) {
+								if (e != null) {
+									e.replace(v, "continuous", init);
 								}
 							}
 						}
-						for (HashMap<String, ExprTree[]> m : contAssignmentTrees.values()) {
-							for (ExprTree[] eArray : m.values()) {
-								for (ExprTree e : eArray) {
-									if (e != null) {
-										e.replace(v, "continuous", init);
-									}
-								}
-							}
-						}
-						for (HashMap<String, ExprTree[]> m : rateAssignmentTrees.values()) {
-							for (ExprTree[] eArray : m.values()) {
-								for (ExprTree e : eArray) {
-									if (e != null) {
-										e.replace(v, "continuous", init);
-									}
+					}
+					for (HashMap<String, ExprTree[]> m : rateAssignmentTrees.values()) {
+						for (ExprTree[] eArray : m.values()) {
+							for (ExprTree e : eArray) {
+								if (e != null) {
+									e.replace(v, "continuous", init);
 								}
 							}
 						}
@@ -3667,7 +3689,21 @@ public class Abstraction extends LHPNFile {
 			}
 		}
 		for (String v : integers.keySet()) {
-			if (!integers.get(v).equals("unknown")) {
+			if (!integers.get(v).equals("[-inf,inf]")) {
+				Pattern pattern = Pattern.compile("\\[([\\d\\.-]+?),([\\d\\.-]+?)\\]");
+				Matcher valMatch = pattern.matcher(integers.get(v));
+				Double value = 0.0;
+				if (valMatch.find()) {
+					Double lval = Double.parseDouble(valMatch.group(1));
+					Double uval = Double.parseDouble(valMatch.group(2));
+					if (!lval.equals(uval)) {
+						continue;
+					}
+					value = lval;
+				}
+				else {
+					value = Double.parseDouble(integers.get(v));
+				}
 				boolean unassigned = true;
 				for (Properties a : intAssignments.values()) {
 					if (a.containsKey(v)) {
@@ -3675,9 +3711,10 @@ public class Abstraction extends LHPNFile {
 					}
 				}
 				if (unassigned) {
+					change = true;
 					ExprTree init = new ExprTree(this);
-					init.token = init.intexpr_gettok(integers.get(v));
-					init.intexpr_L(integers.get(v));
+					init.token = init.intexpr_gettok(value.toString());
+					init.intexpr_L(value.toString());
 					for (ExprTree e : enablingTrees.values()) {
 						if (e != null) {
 							e.replace(v, "integer", init);
