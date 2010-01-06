@@ -2554,7 +2554,7 @@ public class ExprTree {
 				return "false";
 			}
 			else if (op.equals("&&")) {
-				if (r1.becomesTrue(variables).equals("true") && r2.becomesTrue(variables).equals("true"))
+				if (!r1.becomesTrue(variables).equals("false") && !r2.becomesTrue(variables).equals("false"))
 					return "true";
 				return "false";
 			}
