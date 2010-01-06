@@ -55,49 +55,59 @@ public class Run implements ActionListener {
 			String[] termCond, String[] intSpecies, String printer_id,
 			String printer_track_quantity, String[] getFilename, String selectedButtons,
 			Component component, String filename, double rap1, double rap2, double qss, int con,
-			JCheckBox usingSSA, String ssaFile, JCheckBox usingSad, File sadFile) {
+			JCheckBox usingSSA, String ssaFile, JCheckBox usingSad, File sadFile, 
+			JList preAbs, JList loopAbs, JList postAbs) {
 		Properties abs = new Properties();
 		if (selectedButtons.contains("abs") || selectedButtons.contains("nary")) {
-			abs.setProperty("reb2sac.abstraction.method.0.1", "enzyme-kinetic-qssa-1");
-			abs.setProperty("reb2sac.abstraction.method.0.2",
-					"reversible-to-irreversible-transformer");
-			abs.setProperty("reb2sac.abstraction.method.0.3",
-					"multiple-products-reaction-eliminator");
-			abs.setProperty("reb2sac.abstraction.method.0.4",
-					"multiple-reactants-reaction-eliminator");
-			abs.setProperty("reb2sac.abstraction.method.0.5",
-					"single-reactant-product-reaction-eliminator");
-			abs.setProperty("reb2sac.abstraction.method.0.6", "dimer-to-monomer-substitutor");
-			abs.setProperty("reb2sac.abstraction.method.0.7", "inducer-structure-transformer");
-			abs.setProperty("reb2sac.abstraction.method.1.1", "modifier-structure-transformer");
-			abs.setProperty("reb2sac.abstraction.method.1.2", "modifier-constant-propagation");
-			abs.setProperty("reb2sac.abstraction.method.2.1",
-					"operator-site-forward-binding-remover");
-			abs.setProperty("reb2sac.abstraction.method.2.3", "enzyme-kinetic-rapid-equilibrium-1");
-			abs.setProperty("reb2sac.abstraction.method.2.4", "irrelevant-species-remover");
-			abs.setProperty("reb2sac.abstraction.method.2.5", "inducer-structure-transformer");
-			abs.setProperty("reb2sac.abstraction.method.2.6", "modifier-constant-propagation");
-			abs.setProperty("reb2sac.abstraction.method.2.7", "similar-reaction-combiner");
-			abs.setProperty("reb2sac.abstraction.method.2.8", "modifier-constant-propagation");
+			for(int i = 0; i < preAbs.getModel().getSize(); i++) {
+				abs.setProperty("reb2sac.abstraction.method.1." + (i+1),(String)preAbs.getModel().getElementAt(i));
+			 }	
+			for(int i = 0; i < loopAbs.getModel().getSize(); i++) {
+				abs.setProperty("reb2sac.abstraction.method.2." + (i+1),(String)loopAbs.getModel().getElementAt(i));
+			 }	
+//			abs.setProperty("reb2sac.abstraction.method.0.1", "enzyme-kinetic-qssa-1");
+//			abs.setProperty("reb2sac.abstraction.method.0.2",
+//					"reversible-to-irreversible-transformer");
+//			abs.setProperty("reb2sac.abstraction.method.0.3",
+//					"multiple-products-reaction-eliminator");
+//			abs.setProperty("reb2sac.abstraction.method.0.4",
+//					"multiple-reactants-reaction-eliminator");
+//			abs.setProperty("reb2sac.abstraction.method.0.5",
+//					"single-reactant-product-reaction-eliminator");
+//			abs.setProperty("reb2sac.abstraction.method.0.6", "dimer-to-monomer-substitutor");
+//			abs.setProperty("reb2sac.abstraction.method.0.7", "inducer-structure-transformer");
+//			abs.setProperty("reb2sac.abstraction.method.1.1", "modifier-structure-transformer");
+//			abs.setProperty("reb2sac.abstraction.method.1.2", "modifier-constant-propagation");
+//			abs.setProperty("reb2sac.abstraction.method.2.1",
+//			"operator-site-forward-binding-remover");
+//			abs.setProperty("reb2sac.abstraction.method.2.3", "enzyme-kinetic-rapid-equilibrium-1");
+//			abs.setProperty("reb2sac.abstraction.method.2.4", "irrelevant-species-remover");
+//			abs.setProperty("reb2sac.abstraction.method.2.5", "inducer-structure-transformer");
+//			abs.setProperty("reb2sac.abstraction.method.2.6", "modifier-constant-propagation");
+//			abs.setProperty("reb2sac.abstraction.method.2.7", "similar-reaction-combiner");
+//			abs.setProperty("reb2sac.abstraction.method.2.8", "modifier-constant-propagation");
 		}
-		if (selectedButtons.contains("abs")) {
-			abs.setProperty("reb2sac.abstraction.method.2.2", "dimerization-reduction");
-		}
-		else if (selectedButtons.contains("nary")) {
-			abs.setProperty("reb2sac.abstraction.method.2.2",
-					"dimerization-reduction-level-assignment");
-		}
+//		if (selectedButtons.contains("abs")) {
+//			abs.setProperty("reb2sac.abstraction.method.2.2", "dimerization-reduction");
+//		}
+//		else if (selectedButtons.contains("nary")) {
+//			abs.setProperty("reb2sac.abstraction.method.2.2",
+//					"dimerization-reduction-level-assignment");
+//		}
+		for(int i = 0; i < postAbs.getModel().getSize(); i++) {
+			abs.setProperty("reb2sac.abstraction.method.3." + (i+1),(String)postAbs.getModel().getElementAt(i));
+		 }	
 		abs.setProperty("simulation.printer", printer_id);
 		abs.setProperty("simulation.printer.tracking.quantity", printer_track_quantity);
-		if (selectedButtons.equals("none_monteCarlo")) {
-			abs.setProperty("reb2sac.abstraction.method.3.1", "distribute-transformer");
-			abs.setProperty("reb2sac.abstraction.method.3.2",
-					"reversible-to-irreversible-transformer");
-			abs.setProperty("reb2sac.abstraction.method.3.3", "kinetic-law-constants-simplifier");
-		}
-		else if (selectedButtons.contains("none")) {
-			abs.setProperty("reb2sac.abstraction.method.3.1", "kinetic-law-constants-simplifier");
-		}
+//		if (selectedButtons.contains("monteCarlo")) {
+//			abs.setProperty("reb2sac.abstraction.method.3.1", "distribute-transformer");
+//			abs.setProperty("reb2sac.abstraction.method.3.2",
+//					"reversible-to-irreversible-transformer");
+//			abs.setProperty("reb2sac.abstraction.method.3.3", "kinetic-law-constants-simplifier");
+//		}
+//		else if (selectedButtons.contains("none")) {
+//			abs.setProperty("reb2sac.abstraction.method.3.1", "kinetic-law-constants-simplifier");
+//		}
 		for (int i = 0; i < intSpecies.length; i++) {
 			if (intSpecies[i] != "") {
 				abs.setProperty("reb2sac.interesting.species." + (i + 1), "" + intSpecies[i]);

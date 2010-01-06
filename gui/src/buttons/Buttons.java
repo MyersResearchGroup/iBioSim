@@ -448,6 +448,57 @@ public class Buttons {
 	}
 
 	/**
+	 * Removes the selected values of the given JList from the given list and
+	 * updates the JList.
+	 */
+	public static void remove(JList currentList) {
+		Object [] list = new Object[currentList.getModel().getSize()];
+		for(int i = 0; i < currentList.getModel().getSize(); i++) {
+			list[i] = currentList.getModel().getElementAt(i);
+		}	
+
+		Object[] removeSelected = currentList.getSelectedValues();
+		int[] select = new int[list.length];
+		for (int i = 0; i < list.length; i++) {
+			select[i] = i;
+		}
+		currentList.setSelectedIndices(select);
+		Object[] getAll = currentList.getSelectedValues();
+		currentList.removeSelectionInterval(0, list.length - 1);
+		ArrayList<Object> remove = new ArrayList<Object>();
+		for (int i = 0; i < getAll.length; i++) {
+			remove.add(getAll[i]);
+		}
+		for (int i = 0; i < removeSelected.length; i++) {
+			remove.remove(removeSelected[i]);
+		}
+		String[] keep = new String[remove.size()];
+		for (int i = 0; i < remove.size(); i++) {
+			keep[i] = (String) remove.get(i);
+		}
+		currentList.setListData(keep);
+		list = keep;
+	}
+
+	/**
+	 * Adds a new item to a JList
+	 */
+	public static void add(JList currentList,Object newItem) {
+		Object [] list = new Object[currentList.getModel().getSize()+1];
+		int addAfter = currentList.getSelectedIndex();
+		for(int i = 0; i <= currentList.getModel().getSize(); i++) {
+			if (i <= addAfter) {
+				list[i] = currentList.getModel().getElementAt(i);
+			} else if (i == (addAfter+1)) {
+				list[i] = newItem;
+			} else {
+				list[i] = currentList.getModel().getElementAt(i-1);
+			}
+		}	
+		currentList.setListData(list);
+	}
+
+	/**
 	 * Adds the selected values in the add JList to the list JList. Stores all
 	 * these values into the currentList array and returns this array.
 	 */
