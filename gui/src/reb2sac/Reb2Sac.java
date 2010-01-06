@@ -1233,6 +1233,13 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				errorLabel.setEnabled(false);
 				absErr.setEnabled(false);
 			}
+			else if (simulators.getSelectedItem().equals("mp-event")) {
+				description.setText("iSSA (Mean Path Adaptive)");
+				step.setEnabled(true);
+				stepLabel.setEnabled(true);
+				errorLabel.setEnabled(false);
+				absErr.setEnabled(false);
+			}
 			else if (simulators.getSelectedItem().equals("emc-sim")) {
 				description.setText("Monte Carlo sim with jump count as" + " independent variable");
 				step.setEnabled(true);
@@ -2427,7 +2434,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		if (intervalLabel.getSelectedItem().equals("Print Interval")) {
 			if (simulators.getSelectedItem().equals("mpde")
 					|| simulators.getSelectedItem().equals("mp")
-					|| simulators.getSelectedItem().equals("mp-adaptive")) {
+					|| simulators.getSelectedItem().equals("mp-adaptive")
+					|| simulators.getSelectedItem().equals("mp-event")) {
 				// double test = printInterval / timeStep;
 				// double error = test - ((int) test);
 				// if (error > 0.0001) {
@@ -2453,7 +2461,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		else {
 			if (simulators.getSelectedItem().equals("mpde")
 					|| simulators.getSelectedItem().equals("mp")
-					|| simulators.getSelectedItem().equals("mp-adaptive")) {
+					|| simulators.getSelectedItem().equals("mp-adaptive")
+				  || simulators.getSelectedItem().equals("mp-event")) {
 				steps = (int) (printInterval);
 				// double interval = timeLimit / steps;
 				// double test = interval / timeStep;
