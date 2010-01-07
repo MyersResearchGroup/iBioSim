@@ -1668,7 +1668,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			ListOf r = document.getModel().getListOfRules();
 			for (int i = 0; i < document.getModel().getNumRules(); i++) {
 				if ((((Rule) r.get(i)).isAlgebraic())
-						&& ((Rule) r.get(i)).getFormula().equals(tempMath)) {
+						&& myFormulaToString(((Rule) r.get(i)).getMath()).equals(tempMath)) {
 					r.remove(i);
 				}
 			}
@@ -1679,7 +1679,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			String tempMath = selected.substring(selected.indexOf('=') + 2);
 			ListOf r = document.getModel().getListOfRules();
 			for (int i = 0; i < document.getModel().getNumRules(); i++) {
-				if ((((Rule) r.get(i)).isRate()) && ((Rule) r.get(i)).getFormula().equals(tempMath)
+				if ((((Rule) r.get(i)).isRate()) && 
+						myFormulaToString(((Rule) r.get(i)).getMath()).equals(tempMath)
 						&& ((Rule) r.get(i)).getVariable().equals(tempVar)) {
 					r.remove(i);
 				}
@@ -1692,7 +1693,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			ListOf r = document.getModel().getListOfRules();
 			for (int i = 0; i < document.getModel().getNumRules(); i++) {
 				if ((((Rule) r.get(i)).isAssignment())
-						&& ((Rule) r.get(i)).getFormula().equals(tempMath)
+						&& myFormulaToString(((Rule) r.get(i)).getMath()).equals(tempMath)
 						&& ((Rule) r.get(i)).getVariable().equals(tempVar)) {
 					r.remove(i);
 				}
@@ -1911,7 +1912,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			react.setReversible(r.getReversible());
 			react.setId(reacID.trim());
 			usedIDs.add(reacID.trim());
-			react.getKineticLaw().setFormula(r.getKineticLaw().getFormula());
+			react.getKineticLaw().setMath(myParseFormula(myFormulaToString(r.getKineticLaw().getMath())));
 			JList add = new JList();
 			Object[] adding = { reacID.trim() };
 			add.setListData(adding);
@@ -2201,7 +2202,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			String v = ((String) reacParameters.getSelectedValue()).split(" ")[0];
 			Reaction reaction = document.getModel().getReaction(
 					((String) reactions.getSelectedValue()).split(" ")[0]);
-			String[] vars = reaction.getKineticLaw().getFormula().split(" |\\(|\\)|\\,");
+			String[] vars = myFormulaToString(reaction.getKineticLaw().getMath()).split(" |\\(|\\)|\\,");
 			for (int j = 0; j < vars.length; j++) {
 				if (vars[j].equals(v)) {
 					JOptionPane
@@ -2441,7 +2442,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					}
 				}
 			}
-			String[] vars = reaction.getKineticLaw().getFormula().split(" |\\(|\\)|\\,");
+			String[] vars = myFormulaToString(reaction.getKineticLaw().getMath()).split(" |\\(|\\)|\\,");
 			for (int j = 0; j < vars.length; j++) {
 				if (vars[j].equals(species)) {
 					kineticLawsUsing.add(reaction.getId());
@@ -4598,7 +4599,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		String[] rateLaws = new String[(int) model.getNumReactions()];
 		for (int i = 0; i < model.getNumReactions(); i++) {
 			Reaction reaction = (Reaction) listOfReactions.get(i);
-			rateLaws[i] = reaction.getId() + " = " + reaction.getKineticLaw().getFormula();
+			rateLaws[i] = reaction.getId() + " = " + myFormulaToString(reaction.getKineticLaw().getMath());
 		}
 		String[] result = new String[rules.length + initRules.length + rateLaws.length];
 		int j = 0;
@@ -5379,6 +5380,9 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					JOptionPane.showMessageDialog(biosim.frame(),
 							"Constraint formula must be of type Boolean.", "Enter Valid Formula",
 							JOptionPane.ERROR_MESSAGE);
+					error = true;
+				}
+				else if (checkNumFunctionArguments(myParseFormula(consMath.getText().trim()))) {
 					error = true;
 				}
 				else {
@@ -7376,9 +7380,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		scroll4.setPreferredSize(new Dimension(100, 100));
 		scroll4.setViewportView(kineticLaw);
 		if (option.equals("OK")) {
-			kineticLaw.setText(document.getModel().getReaction(
-					((String) reactions.getSelectedValue()).split(" ")[0]).getKineticLaw()
-					.getFormula());
+			kineticLaw.setText(myFormulaToString(document.getModel().getReaction(
+					((String) reactions.getSelectedValue()).split(" ")[0]).getKineticLaw().getMath()));
 		}
 		JPanel kineticPanel = new JPanel(new BorderLayout());
 		kineticPanel.add(kineticLabel, "North");
@@ -7543,7 +7546,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					}
 					react.setId(reacID.getText().trim());
 					react.setName(reacName.getText().trim());
-					react.getKineticLaw().setFormula(kineticLaw.getText().trim());
+					react.getKineticLaw().setMath(myParseFormula(kineticLaw.getText().trim()));
 					error = checkKineticLawUnits(react.getKineticLaw());
 					if (!error) {
 						error = checkCycles(inits, rul);
@@ -7629,7 +7632,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					}
 					react.setId(reacID.getText().trim());
 					react.setName(reacName.getText().trim());
-					react.getKineticLaw().setFormula(kineticLaw.getText().trim());
+					react.getKineticLaw().setMath(myParseFormula(kineticLaw.getText().trim()));
 					error = checkKineticLawUnits(react.getKineticLaw());
 					if (!error) {
 						error = checkCycles(inits, rul);
@@ -9703,6 +9706,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 * Convert ASTNodes into a string
 	 */
 	public String myFormulaToString(ASTNode mathFormula) {
+		setTimeToT(mathFormula);
 		String formula = libsbml.formulaToString(mathFormula);
 		formula = formula.replaceAll("arccot", "acot");
 		formula = formula.replaceAll("arccoth", "acoth");
@@ -9722,6 +9726,19 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		formula = formula.replaceFirst("\\.e\\+", ".0e+");
 		formula = formula.replaceFirst("\\.e-", ".0e-");
 		return formula;
+	}
+
+	/**
+	 * Recursive function to change time variable to t
+	 */
+	public void setTimeToT(ASTNode node) {
+		if (node.getType() == libsbml.AST_NAME_TIME) {
+			if (!node.getName().equals("t") || !node.getName().equals("time")) {
+				node.setName("t");
+			}
+		}
+		for (int c = 0; c < node.getNumChildren(); c++)
+			setTimeToT(node.getChild(c));
 	}
 
 	/**
@@ -9848,24 +9865,14 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		case libsbml.AST_LOGICAL_AND:
 		case libsbml.AST_LOGICAL_OR:
 		case libsbml.AST_LOGICAL_XOR:
-			if (node.getNumChildren() != 2) {
-				JOptionPane.showMessageDialog(biosim.frame(), "Expected 2 arguments for "
-						+ node.getName() + " but found " + node.getNumChildren() + ".",
-						"Number of Arguments Incorrect", JOptionPane.ERROR_MESSAGE);
-				return true;
-			}
-			if (!node.getChild(0).isBoolean()) {
-				JOptionPane.showMessageDialog(biosim.frame(), "Argument 1 for " + node.getName()
-						+ " function is not of type Boolean.", "Boolean Expected",
-						JOptionPane.ERROR_MESSAGE);
-				return true;
-			}
-			if (!node.getChild(1).isBoolean()) {
-				JOptionPane.showMessageDialog(biosim.frame(), "Argument 2 for " + node.getName()
-						+ " function is not of type Boolean.", "Boolean Expected",
-						JOptionPane.ERROR_MESSAGE);
-				return true;
-			}
+			for (int i = 0; i < node.getNumChildren(); i++) {
+				if (!node.getChild(i).isBoolean()) {
+					JOptionPane.showMessageDialog(biosim.frame(), "Argument " + i + " for " + node.getName()
+							+ " function is not of type Boolean.", "Boolean Expected",
+							JOptionPane.ERROR_MESSAGE);
+					return true;
+				}
+			}	
 			break;
 		case libsbml.AST_PLUS:
 			if (node.getChild(0).isBoolean()) {

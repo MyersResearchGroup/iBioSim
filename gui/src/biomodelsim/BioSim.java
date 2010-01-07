@@ -4194,29 +4194,31 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 								.append("It is recommended that you fix them before using these models or you may get unexpected results.\n\n");
 						boolean display = false;
 						for (String s : new File(filename.trim()).list()) {
-							try {
-								SBMLDocument document = readSBML(filename.trim() + separator + s);
-								if (overwrite(root + separator + s, s)) {
-									long numErrors = document.checkConsistency();
-									if (numErrors > 0) {
-										display = true;
-										messageArea
-												.append("--------------------------------------------------------------------------------------\n");
-										messageArea.append(s);
-										messageArea
-												.append("\n--------------------------------------------------------------------------------------\n\n");
-										for (long i = 0; i < numErrors; i++) {
-											String error = document.getError(i).getMessage();
-											messageArea.append(i + ":" + error + "\n");
+							if (s.endsWith(".xml") || s.endsWith(".sbml")) {
+								try {
+									SBMLDocument document = readSBML(filename.trim() + separator + s);
+									if (overwrite(root + separator + s, s)) {
+										long numErrors = document.checkConsistency();
+										if (numErrors > 0) {
+											display = true;
+											messageArea
+											.append("--------------------------------------------------------------------------------------\n");
+											messageArea.append(s);
+											messageArea
+											.append("\n--------------------------------------------------------------------------------------\n\n");
+											for (long i = 0; i < numErrors; i++) {
+												String error = document.getError(i).getMessage();
+												messageArea.append(i + ":" + error + "\n");
+											}
 										}
+										SBMLWriter writer = new SBMLWriter();
+										writer.writeSBML(document, root + separator + s);
 									}
-									SBMLWriter writer = new SBMLWriter();
-									writer.writeSBML(document, root + separator + s);
 								}
-							}
-							catch (Exception e1) {
-								JOptionPane.showMessageDialog(frame, "Unable to import files.", "Error",
-										JOptionPane.ERROR_MESSAGE);
+								catch (Exception e1) {
+									JOptionPane.showMessageDialog(frame, "Unable to import files.", "Error",
+											JOptionPane.ERROR_MESSAGE);
+								}
 							}
 						}
 						refreshTree();
