@@ -153,7 +153,7 @@ public class Buttons {
 				}
 			}
 			else if (fd.getDirectory() != null) {
-				return fd.getDirectory();
+				return ""; //fd.getDirectory();
 			}
 			else {
 				return "";
