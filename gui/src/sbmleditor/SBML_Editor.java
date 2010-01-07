@@ -5336,8 +5336,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						consID.setText(selectedID);
 					}
 					if (((Constraint) c.get(i)).isSetMessage()) {
-						String message = XMLNode.convertXMLNodeToString(((Constraint) c.get(i))
-								.getMessage());
+						String message = ((Constraint) c.get(i)).getMessageString();
+						//XMLNode.convertXMLNodeToString(((Constraint) c.get(i)).getMessage());
 						message = message.substring(message.indexOf("xhtml\">") + 7, message
 								.indexOf("</p>"));
 						consMessage.setText(message);

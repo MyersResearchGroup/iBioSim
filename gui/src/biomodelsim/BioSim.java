@@ -101,6 +101,7 @@ import reb2sac.Run;
 import sbmleditor.SBML_Editor;
 import buttons.Buttons;
 import datamanager.DataManager;
+import java.net.*;
 
 //import datamanager.DataManagerLHPN;
 
@@ -147,6 +148,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 	private JMenuItem exit; // The exit menu item
 
 	private JMenuItem importSbml; // The import sbml menu item
+
+	private JMenuItem importBioModel; // The import sbml menu item
 
 	private JMenuItem importDot; // The import dot menu item
 
@@ -452,6 +455,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		graph = new JMenuItem("TSD Graph");
 		probGraph = new JMenuItem("Histogram");
 		importSbml = new JMenuItem("SBML Model");
+		importBioModel = new JMenuItem("BioModel");
 		importDot = new JMenuItem("Genetic Circuit Model");
 		importG = new JMenuItem("Petri Net");
 		importLpn = new JMenuItem("Labeled Petri Net");
@@ -528,6 +532,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		exit.addActionListener(this);
 		about.addActionListener(this);
 		importSbml.addActionListener(this);
+		importBioModel.addActionListener(this);
 		importDot.addActionListener(this);
 		importVhdl.addActionListener(this);
 		importLhpn.addActionListener(this);
@@ -705,6 +710,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			importLhpn.setMnemonic(KeyEvent.VK_L);
 		}
 		importSbml.setMnemonic(KeyEvent.VK_S);
+		//importBioModel.setMnemonic(KeyEvent.VK_S);
 		importVhdl.setMnemonic(KeyEvent.VK_V);
 		importSpice.setMnemonic(KeyEvent.VK_P);
 		save.setMnemonic(KeyEvent.VK_S);
@@ -725,6 +731,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		createLearn.setMnemonic(KeyEvent.VK_L);
 		importDot.setEnabled(false);
 		importSbml.setEnabled(false);
+		importBioModel.setEnabled(false);
 		importVhdl.setEnabled(false);
 		importLhpn.setEnabled(false);
 		importLpn.setEnabled(false);
@@ -852,6 +859,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		if (!async) {
 			importMenu.add(importDot);
 			importMenu.add(importSbml);
+			importMenu.add(importBioModel);
 		}
 		else if (atacs) {
 			importMenu.add(importVhdl);
@@ -3403,6 +3411,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 
 				importDot.setEnabled(true);
 				importSbml.setEnabled(true);
+				importBioModel.setEnabled(true);
 				importVhdl.setEnabled(true);
 				importLhpn.setEnabled(true);
 				importLpn.setEnabled(true);
@@ -3496,6 +3505,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						addRecentProject(projDir);
 						importDot.setEnabled(true);
 						importSbml.setEnabled(true);
+						importBioModel.setEnabled(true);
 						importVhdl.setEnabled(true);
 						importLhpn.setEnabled(true);
 						importLpn.setEnabled(true);
@@ -4317,6 +4327,116 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 									JOptionPane.ERROR_MESSAGE);
 						}
 					}
+				}
+			}
+			else {
+				JOptionPane.showMessageDialog(frame, "You must open or create a project first.", "Error",
+						JOptionPane.ERROR_MESSAGE);
+			}
+		}
+		else if (e.getSource() == importBioModel) {
+			if (root != null) {
+				String modelNumber = JOptionPane.showInputDialog(frame, "Enter BioModel Number:",
+						"BioModel Number", JOptionPane.PLAIN_MESSAGE);
+				String BMurl = "http://www.ebi.ac.uk/biomodels/models-main/publ/";
+				String filename = "BIOMD";
+				for (int i = 0; i < 10 - modelNumber.length(); i++) {
+					filename += "0";
+				}
+				filename += modelNumber + ".xml";
+				try {	
+					URL url  = new URL(BMurl + filename);
+					//System.out.println("Opening connection to " + BMurl + filename + "...");
+					URLConnection urlC = url.openConnection();
+					InputStream is = url.openStream();
+					//System.out.println("Copying resource (type: " + urlC.getContentType() + ")...");
+					//System.out.flush();
+					FileOutputStream fos=null;
+					fos = new FileOutputStream(filename);
+					int oneChar, count=0;
+					while ((oneChar=is.read()) != -1)
+					{
+						fos.write(oneChar);
+						count++;
+					}
+					is.close();
+					fos.close();
+					//System.out.println(count + " byte(s) copied");
+				}
+				catch (MalformedURLException e1)
+				{ 
+					JOptionPane.showMessageDialog(frame, e1.toString(), "Error",JOptionPane.ERROR_MESSAGE);
+					filename = "";
+				}
+				catch (IOException e1)
+				{ 
+					JOptionPane.showMessageDialog(frame, filename + " not found.", "Error",JOptionPane.ERROR_MESSAGE);
+					filename = "";
+				}
+				if (!filename.trim().equals("")) {
+						String[] file = filename.trim().split(separator);
+						try {
+							SBMLDocument document = readSBML(filename.trim());
+							if (overwrite(root + separator + file[file.length - 1], file[file.length - 1])) {
+								long numErrors = document.checkConsistency();
+								if (numErrors > 0) {
+									final JFrame f = new JFrame("SBML Errors and Warnings");
+									JTextArea messageArea = new JTextArea();
+									messageArea.append("Imported SBML file contains the errors listed below. ");
+									messageArea
+											.append("It is recommended that you fix them before using this model or you may get unexpected results.\n\n");
+									for (long i = 0; i < numErrors; i++) {
+										String error = document.getError(i).getMessage();
+										messageArea.append(i + ":" + error + "\n");
+									}
+									messageArea.setLineWrap(true);
+									messageArea.setEditable(false);
+									messageArea.setSelectionStart(0);
+									messageArea.setSelectionEnd(0);
+									JScrollPane scroll = new JScrollPane();
+									scroll.setMinimumSize(new Dimension(600, 600));
+									scroll.setPreferredSize(new Dimension(600, 600));
+									scroll.setViewportView(messageArea);
+									JButton close = new JButton("Dismiss");
+									close.addActionListener(new ActionListener() {
+										public void actionPerformed(ActionEvent e) {
+											f.dispose();
+										}
+									});
+									JPanel consistencyPanel = new JPanel(new BorderLayout());
+									consistencyPanel.add(scroll, "Center");
+									consistencyPanel.add(close, "South");
+									f.setContentPane(consistencyPanel);
+									f.pack();
+									Dimension screenSize;
+									try {
+										Toolkit tk = Toolkit.getDefaultToolkit();
+										screenSize = tk.getScreenSize();
+									}
+									catch (AWTError awe) {
+										screenSize = new Dimension(640, 480);
+									}
+									Dimension frameSize = f.getSize();
+									if (frameSize.height > screenSize.height) {
+										frameSize.height = screenSize.height;
+									}
+									if (frameSize.width > screenSize.width) {
+										frameSize.width = screenSize.width;
+									}
+									int x = screenSize.width / 2 - frameSize.width / 2;
+									int y = screenSize.height / 2 - frameSize.height / 2;
+									f.setLocation(x, y);
+									f.setVisible(true);
+								}
+								SBMLWriter writer = new SBMLWriter();
+								writer.writeSBML(document, root + separator + file[file.length - 1]);
+								refreshTree();
+							}
+						}
+						catch (Exception e1) {
+							JOptionPane.showMessageDialog(frame, "Unable to import file.", "Error",
+									JOptionPane.ERROR_MESSAGE);
+						}
 				}
 			}
 			else {
@@ -9387,6 +9507,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			if (!lema) {
 				popup.add(importDot);
 				popup.add(importSbml);
+				popup.add(importBioModel);
 			}
 			else if (atacs) {
 				popup.add(importVhdl);
