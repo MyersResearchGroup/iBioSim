@@ -69,9 +69,10 @@ public class Abstraction extends LHPNFile {
 				change = checkTrans1(change);
 			}
 			// Transform 11 - Remove Unused Variables
-			if (abstPane.absListModel.contains(abstPane.xform11) && abstPane.isSimplify()) {
-				change = removeVars(change);
-			}
+			// if (abstPane.absListModel.contains(abstPane.xform11) &&
+			// abstPane.isSimplify()) {
+			// change = removeVars(change);
+			// }
 			// Transforms 5a, 6, 7 - Combine Transitions with the Same Preset
 			// and/or Postset
 			if ((abstPane.absListModel.contains(abstPane.xform5)
@@ -86,26 +87,28 @@ public class Abstraction extends LHPNFile {
 			}
 			// Transform 4 - Remove a Transition with a Single Place in the
 			// Preset
-			if (abstPane.absListModel.contains(abstPane.xform4) && abstPane.isAbstract()) {
+			if (abstPane.absListModel.contains(abstPane.xform4) && abstPane.isSimplify()) {
 				change = checkTrans4(change);
 			}
 			// Transform 3 - Remove a Transition with a Single Place in the
 			// Postset
-			if (abstPane.absListModel.contains(abstPane.xform3) && abstPane.isAbstract()) {
+			if (abstPane.absListModel.contains(abstPane.xform3) && abstPane.isSimplify()) {
 				change = checkTrans3(change);
+			}
+			//Transform 22 - Remove Vacuous Transitions (simplification)
+			if (abstPane.absListModel.contains(abstPane.xform22) && abstPane.isSimplify()) {
+				change = checkTrans22(change);
 			}
 			// Transform 14 - Remove Dead Places
 			if (abstPane.absListModel.contains(abstPane.xform14) && abstPane.isSimplify()) {
-				if (removeDeadPlaces()) {
-					change = true;
-				}
+				change = removeDeadPlaces(change); 
 			}
 			// Transform 8 - Propagate local assignments
 			if (abstPane.absListModel.contains(abstPane.xform8) && abstPane.isSimplify()) {
 				change = checkTrans8(change);
 			}
-			// Transform 9 - Remove Assignments Read before Written
-			if (abstPane.absListModel.contains(abstPane.xform9) && abstPane.isAbstract()) {
+			// Transform 9 - Remove Write Before Write
+			if (abstPane.absListModel.contains(abstPane.xform9) && abstPane.isSimplify()) {
 				change = checkTrans9(change);
 			}
 			// Transform 10 - Simplify Expressions
@@ -114,25 +117,27 @@ public class Abstraction extends LHPNFile {
 			}
 			// Transform 15 - Remove Dead Transitions
 			if (abstPane.absListModel.contains(abstPane.xform15) && abstPane.isSimplify()) {
-				if (removeDeadTransitions()) {
-					change = true;
-				}
+				change = removeDeadTransitions(change);
 			}
-			// Transform 16 - Remove Dominated Transitions
-			if (abstPane.absListModel.contains(abstPane.xform16) && abstPane.isSimplify()) {
+			// Transform 17 - Remove Dominated Transitions
+			if (abstPane.absListModel.contains(abstPane.xform17) && abstPane.isSimplify()) {
 				change = removeDominatedTransitions(change);
 			}
 			// Transform 18 - Remove Unread Variables
-			if (abstPane.absListModel.contains(abstPane.xform18) && abstPane.isAbstract()) {
+			if (abstPane.absListModel.contains(abstPane.xform18) && abstPane.isSimplify()) {
 				change = removeUnreadVars(change);
 			}
-			// Transform 20 - Remove Places after Fail Transition
+			// Transform 20 - Remove Arc after Fail Transition
 			if (abstPane.absListModel.contains(abstPane.xform20) && abstPane.isSimplify()) {
 				change = removePostFailPlaces(change);
 			}
+			// Transform 24 - Pairwise Write Before Write
+			if (abstPane.absListModel.contains(abstPane.xform24) && abstPane.isSimplify()) {
+				change = weakWriteBeforeWrite(change);
+			}
 		}
 		// Transform 19 - Merge Coordinated Variables
-		if (abstPane.absListModel.contains(abstPane.xform19) && abstPane.isAbstract()) {
+		if (abstPane.absListModel.contains(abstPane.xform19) && abstPane.isSimplify()) {
 			change = mergeCoordinatedVars(change);
 			simplifyExpr();
 		}
@@ -427,8 +432,7 @@ public class Abstraction extends LHPNFile {
 		}
 	}
 
-	private boolean removeDeadPlaces() {
-		boolean change = false;
+	private boolean removeDeadPlaces(boolean change) {
 		ArrayList<String> removePlace = new ArrayList<String>();
 		for (String s : places.keySet()) {
 			if ((!controlPlaces.get(s).containsKey("preset") // If the place is
@@ -499,8 +503,7 @@ public class Abstraction extends LHPNFile {
 		return change;
 	}
 
-	private boolean removeDeadTransitions() {
-		boolean change = false;
+	private boolean removeDeadTransitions(boolean change) {
 		HashMap<String, String> initVars = new HashMap<String, String>();
 		for (String s : variables.keySet()) {
 			initVars.put(s, variables.get(s).getProperty("value"));
@@ -577,8 +580,19 @@ public class Abstraction extends LHPNFile {
 						}
 					}
 					if (controlFlow.get(t).containsKey("preset")) {
-						for (String s : controlFlow.get(t).getProperty("preset").split("\\s")) {
-							removeControlFlow(s, t);
+						for (String p : controlFlow.get(t).getProperty("preset").split("\\s")) {
+							removeControlFlow(p, t);
+							if (controlPlaces.get(p).containsKey("postset")) {
+								if (controlPlaces.get(p).getProperty("postset").equals("")) {
+									if (controlPlaces.get(p).containsKey("preset")) {
+										for (String tP : controlPlaces.get(p).getProperty("preset")
+												.split("\\s")) {
+											removeControlFlow(tP, p);
+										}
+									}
+									removePlace(p);
+								}
+							}
 						}
 					}
 					removeTrans.add(t);
@@ -2347,14 +2361,8 @@ public class Abstraction extends LHPNFile {
 				if (postset.length == 1 && !postset[0].equals("")) {
 					boolean assign = false;
 					if (enablings.containsKey(s)) {
-						for (String var : enablingTrees.get(s).getVars()) {
-							if (!process_write.get(var).equals(process_trans.get(s))) {
-								assign = true;
-								break;
-							}
-						}
-						// assign = true;
-						// continue;
+						assign = true;
+						continue;
 					}
 					if (!assign) {
 						for (HashMap<String, Properties> h : assignments) {
@@ -2460,6 +2468,93 @@ public class Abstraction extends LHPNFile {
 		}
 		return change;
 	}
+	
+	private boolean checkTrans22(boolean change) {
+		// Remove Vacuous Transitions
+		ArrayList<String> remove = new ArrayList<String>();
+		for (String s : controlFlow.keySet()) {
+			if (controlFlow.get(s).getProperty("postset") != null && controlFlow.get(s).getProperty("preset") != null) {
+				String[] postset = controlFlow.get(s).getProperty("postset").split(" ");
+				String[] preset = controlFlow.get(s).getProperty("preset").split(" ");
+				if (postset.length == 1 && !postset[0].equals("") && preset.length == 1 && !preset[0].equals("")) {
+					boolean assign = false;
+					if (enablings.containsKey(s)) {
+						for (String var : enablingTrees.get(s).getVars()) {
+							if (!process_write.get(var).equals(process_trans.get(s))) {
+								assign = true;
+								break;
+							}
+						}
+						// assign = true;
+						// continue;
+					}
+					if (!assign) {
+						for (HashMap<String, Properties> h : assignments) {
+							// System.out.println(assignments);
+							if (h.get(s) != null) {
+								if (!h.get(s).keySet().isEmpty()) {
+									assign = true;
+									break;
+								}
+							}
+						}
+					}
+					// log.addText(postset[0]);
+					boolean post = true;
+					String[] tempPreset;
+					if (controlFlow.get(s).containsKey("preset")) {
+						tempPreset = controlFlow.get(s).getProperty("preset").split(" ");
+						for (String p : tempPreset) {
+							if (controlPlaces.get(p).getProperty("postset").split(" ").length != 1) {
+								post = false;
+							}
+						}
+					}
+					if (controlPlaces.containsKey(postset[0])) {
+						if (controlPlaces.get(postset[0]).containsKey("preset")) {
+							tempPreset = controlPlaces.get(postset[0]).getProperty("preset").split(" ");
+							if (!((tempPreset.length == 1 || post) && !assign)) {
+								assign = true;
+							}
+						}
+					}
+					boolean pre = true;
+					if (controlFlow.get(s).containsKey("postset")
+							&& !controlFlow.get(s).getProperty("postset").equals("")) {
+						for (String p : controlFlow.get(s).getProperty("postset").split(" ")) {
+							if (controlPlaces.containsKey(p)) {
+								if (controlPlaces.get(p).getProperty("preset").split(" ").length != 1) {
+									pre = false;
+								}
+							}
+						}
+					}
+					if (controlPlaces.containsKey(preset[0])) {
+						String[] tempPostset = controlPlaces.get(preset[0]).getProperty("postset")
+								.split(" ");
+						if ((tempPostset.length == 1 || pre) && places.containsKey(preset[0])) {
+							if (!assign) {
+								remove.add(s);
+							}
+						}
+					}
+				}
+			}
+		}
+		for (String s : remove) {
+			if (controlFlow.get(s).containsKey("preset")
+					&& controlFlow.get(s).containsKey("postset")) {
+				// String[] preset =
+				// controlFlow.get(s).getProperty("preset").split(" ");
+				String[] postset = controlFlow.get(s).getProperty("postset").split(" ");
+				if (postset.length == 1 && !postset[0].equals("") && !isFail(s)) {
+					if (removeVacTrans(s))
+						change = true;
+				}
+			}
+		}
+		return change;
+	}
 
 	private boolean checkTrans8(boolean change) {
 		// Propagate expressions of local variables to transition post sets
@@ -2494,6 +2589,30 @@ public class Abstraction extends LHPNFile {
 					if ((process_read.get(var).equals(process_trans.get(t)) && process_write.get(
 							var).equals(process_trans.get(t)))
 							&& !readBeforeWrite(t, var)) {
+						// boolean tempBool = readBeforeWrite(t,var);
+						String[] temp = { t, var };
+						remove.add(temp);
+					}
+				}
+			}
+			for (String[] temp : remove) {
+				removeAssignment(temp[0], temp[1]);
+				change = true;
+			}
+		}
+		return change;
+	}
+
+	private boolean weakWriteBeforeWrite(boolean change) {
+		ArrayList<String[]> remove = new ArrayList<String[]>();
+		for (HashMap<String, Properties> assign : assignments) {
+			for (String t : assign.keySet()) {
+				for (Object o : assign.get(t).keySet()) {
+					String var = o.toString();
+					read = new ArrayList<String>();
+					if ((process_read.get(var).equals(process_trans.get(t)) && process_write.get(
+							var).equals(process_trans.get(t)))
+							&& !weakReadBeforeWrite(t, var)) {
 						// boolean tempBool = readBeforeWrite(t,var);
 						String[] temp = { t, var };
 						remove.add(temp);
@@ -3331,6 +3450,97 @@ public class Abstraction extends LHPNFile {
 		removeTransition(transition);
 		return true;
 	}
+	
+	private boolean removeVacTrans(String transition) {
+		String place = controlFlow.get(transition).getProperty("postset");
+		String[] preset = controlFlow.get(transition).getProperty("preset").split("\\s");
+		String[] postset = controlPlaces.get(place).getProperty("postset").split("\\s");
+		String[] placePreset = controlPlaces.get(place).getProperty("preset").split("\\s");
+		boolean marked = places.get(place);
+		// Check to make sure that the place is not a self-loop
+		if (preset.length == 1) {
+			if (controlPlaces.get(preset[0]).containsKey("preset")) {
+				String[] tempPreset = controlPlaces.get(preset[0]).getProperty("preset").split(" ");
+				if (tempPreset.length == 1 && tempPreset[0].equals(transition)) {
+					return false;
+				}
+			}
+		}
+		if (fail.contains(transition)) {
+			return false;
+		}
+		// Update control flow
+		removeControlFlow(transition, place);
+		for (String p : preset) {
+			if (marked)
+				places.put(p, true);
+			removeControlFlow(p, transition);
+			for (String t : postset) {
+				addControlFlow(p, t);
+			}
+		}
+		for (String t : placePreset) {
+			removeControlFlow(t, place);
+			for (String p : preset) {
+				if (!p.equals(place) && !t.equals(transition)) {
+					addControlFlow(t, p);
+				}
+			}
+		}
+		for (String t : postset) {
+			if (enablingTrees.containsKey(t)) {
+				ExprTree expr = enablingTrees.get(t);
+				if (enablingTrees.containsKey(transition)) {
+					expr.setNodeValues(expr, enablingTrees.get(transition), "&&", 'l');
+					enablingTrees.put(t, expr);
+					enablings.put(t, expr.toString());
+				}
+			}
+			else if (enablingTrees.containsKey(transition)) {
+				enablingTrees.put(t, enablingTrees.get(transition));
+				enablings.put(t, enablingTrees.get(transition).toString());
+			}
+			removeControlFlow(place, t);
+		}
+		removePlace(place);
+		// Add delays
+		String[] oldDelay = new String[2];
+		Pattern rangePattern = Pattern.compile(RANGE);
+		if (delays.containsKey(transition)) {
+			Matcher rangeMatcher = rangePattern.matcher(delays.get(transition));
+			if (rangeMatcher.find()) {
+				oldDelay[0] = rangeMatcher.group(1);
+				oldDelay[1] = rangeMatcher.group(2);
+			}
+		}
+		else {
+			oldDelay[0] = "0";
+			oldDelay[1] = "inf";
+		}
+		for (String t : postset) {
+			// String t = o.toString();
+			if (delays.get(t) != null) {
+				Matcher newMatcher = rangePattern.matcher(delays.get(t));
+				if (newMatcher.find()) {
+					String newDelay[] = { newMatcher.group(1), newMatcher.group(2) };
+					for (int i = 0; i < newDelay.length; i++) {
+						if (!oldDelay[i].equals("inf") && !newDelay[i].equals("inf")) {
+							if (i != 0 || !marked) {
+								newDelay[i] = String.valueOf(Integer.parseInt(newDelay[i])
+										+ Integer.parseInt(oldDelay[i]));
+							}
+						}
+						else {
+							newDelay[i] = "inf";
+						}
+					}
+					delays.put(t, "[" + newDelay[0] + "," + newDelay[1] + "]");
+				}
+			}
+		}
+		removeTransition(transition);
+		return true;
+	}
 
 	private void combineTransitions(String trans1, String trans2, boolean samePreset,
 			boolean samePostset) {
@@ -3926,14 +4136,15 @@ public class Abstraction extends LHPNFile {
 			for (String p : controlFlow.get(trans).getProperty("postset").split("\\s")) {
 				if (controlPlaces.get(p).containsKey("postset")) {
 					for (String t : controlPlaces.get(p).getProperty("postset").split("\\s")) {
+						boolean written = false;
 						if (booleanAssignmentTrees.containsKey(t)) {
 							for (String s : booleanAssignmentTrees.get(t).keySet()) {
 								for (ExprTree e1 : booleanAssignmentTrees.get(t).get(s)) {
-									if (s.equals(var)) {
-										return false;
-									}
 									if (e1.getVars().contains(var)) {
 										return true;
+									}
+									if (s.equals(var)) {
+										written = true;
 									}
 								}
 							}
@@ -3941,7 +4152,7 @@ public class Abstraction extends LHPNFile {
 						if (contAssignmentTrees.containsKey(t)) {
 							for (String s : contAssignmentTrees.get(t).keySet()) {
 								if (s.equals(var)) {
-									return false;
+									written = true;
 								}
 								for (ExprTree e1 : contAssignmentTrees.get(t).get(s)) {
 									if (e1.getVars().contains(var)) {
@@ -3953,7 +4164,7 @@ public class Abstraction extends LHPNFile {
 						if (intAssignmentTrees.containsKey(t)) {
 							for (String s : intAssignmentTrees.get(t).keySet()) {
 								if (s.equals(var)) {
-									return false;
+									written = true;
 								}
 								for (ExprTree e1 : intAssignmentTrees.get(t).get(s)) {
 									if (e1 != null) {
@@ -3968,7 +4179,7 @@ public class Abstraction extends LHPNFile {
 							for (String s : rateAssignmentTrees.get(t).keySet()) {
 								for (ExprTree e1 : rateAssignmentTrees.get(t).get(s)) {
 									if (s.equals(var)) {
-										return false;
+										written = true;
 									}
 									if (e1.getVars().contains(var)) {
 										return true;
@@ -3981,12 +4192,84 @@ public class Abstraction extends LHPNFile {
 								return true;
 							}
 						}
+						if (written)
+							return false;
 						if (!read.contains(t)) {
 							read.add(t);
 							if (readBeforeWrite(t, var)) {
 								return true;
 							}
 						}
+					}
+				}
+			}
+		}
+		return false;
+	}
+
+	private boolean weakReadBeforeWrite(String trans, String var) {
+		if (controlFlow.get(trans).containsKey("postset")) {
+			for (String p : controlFlow.get(trans).getProperty("postset").split("\\s")) {
+				if (controlPlaces.get(p).containsKey("postset")) {
+					for (String t : controlPlaces.get(p).getProperty("postset").split("\\s")) {
+						boolean written = false;
+						if (booleanAssignmentTrees.containsKey(t)) {
+							for (String s : booleanAssignmentTrees.get(t).keySet()) {
+								for (ExprTree e1 : booleanAssignmentTrees.get(t).get(s)) {
+									if (e1.getVars().contains(var)) {
+										return true;
+									}
+									if (s.equals(var)) {
+										written = true;
+									}
+								}
+							}
+						}
+						if (contAssignmentTrees.containsKey(t)) {
+							for (String s : contAssignmentTrees.get(t).keySet()) {
+								if (s.equals(var)) {
+									written = true;
+								}
+								for (ExprTree e1 : contAssignmentTrees.get(t).get(s)) {
+									if (e1.getVars().contains(var)) {
+										return true;
+									}
+								}
+							}
+						}
+						if (intAssignmentTrees.containsKey(t)) {
+							for (String s : intAssignmentTrees.get(t).keySet()) {
+								if (s.equals(var)) {
+									written = true;
+								}
+								for (ExprTree e1 : intAssignmentTrees.get(t).get(s)) {
+									if (e1 != null) {
+										if (e1.getVars().contains(var)) {
+											return true;
+										}
+									}
+								}
+							}
+						}
+						if (rateAssignmentTrees.containsKey(t)) {
+							for (String s : rateAssignmentTrees.get(t).keySet()) {
+								for (ExprTree e1 : rateAssignmentTrees.get(t).get(s)) {
+									if (s.equals(var)) {
+										written = true;
+									}
+									if (e1.getVars().contains(var)) {
+										return true;
+									}
+								}
+							}
+						}
+						if (enablingTrees.containsKey(t)) {
+							if (enablingTrees.get(t).getVars().contains(var)) {
+								return true;
+							}
+						}
+						if (written)
+							return false;
 					}
 				}
 			}

@@ -49,13 +49,13 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 
 	public String xform0 = "Merge Parallel Places - simplification",
 			xform1 = "Remove Place in Self-Loop - simplification",
-			xform3 = "Remove Transition with Single Place in Preset - abstraction",
-			xform4 = "Remove Transition with Single Place in Postset - abstraction",
-			xform5 = "Merge Transitions with Same Preset and Postset - abstraction",
-			xform6 = "Merge Transitions with Same Preset - abstraction",
-			xform7 = "Merge Transitions with Same Postset - abstraction",
-			xform8 = "Propagate Assignments to Local Variables - simplification",
-			xform9 = "Remove Assignments Written before Read - abstraction",
+			xform3 = "Remove Transitions with Single Place in Postset - simplification",
+			xform4 = "Remove Transitions with Single Place in Preset - simplification",
+			xform5 = "Merge Transitions with Same Preset and Postset - simplification",
+			xform6 = "Merge Transitions with Same Preset - simplification",
+			xform7 = "Merge Transitions with Same Postset - simplification",
+			xform8 = "Local Assignment Propagation - simplification",
+			xform9 = "Remove Write Before Write - simplification",
 			xform10 = "Simplify Expressions - simplification",
 			xform11 = "Remove Unused Variables - simplification",
 			xform12 = "Abstract Assignments to the Same Variable - abstraction",
@@ -63,15 +63,18 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 			xform14 = "Remove Dead Places - simplification",
 			xform15 = "Remove Dead Transitions - simplification",
 			xform16 = "Simplify Enabling Conditions - simplification",
-			xform17 = "Remove Dominated Transitions - simplification",
-			xform18 = "Remove Unread Variables - abstraction",
-			xform19 = "Merge Coordinated Variables - abstraction",
-			xform20 = "Remove Places after Fail - simplification",
-			xform21 = "Normalize Delays - abstraction";
+			xform17 = "Eliminate Dominated Transitions - simplification",
+			xform18 = "Remove Written Never Read - simplification",
+			xform19 = "Correlated Variables - simplification",
+			xform20 = "Remove Arc after Failure Transitions - simplification",
+			xform21 = "Timing Bound Normalization - abstraction",
+			xform22 = "Remove Vacuous Transitions - simplification",
+			//xform23 = "Remove Vacuous Transitions - abstraction",
+			xform24 = "Remove Pairwise Write Before Write - abstraction";
 
 	private String[] transforms = { xform0, xform1, xform3, xform4, xform5, xform6, xform7, xform8,
 			xform9, xform10, xform11, xform12, xform13, xform14, xform15, xform16, xform17,
-			xform18, xform19, xform20, xform21 };
+			xform18, xform19, xform20, xform21, xform22 };
 	
 	private JTextField factorField;
 
