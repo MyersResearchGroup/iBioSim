@@ -151,7 +151,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 	private JCheckBox resize;
 	
-	private JCheckBox semiLog;
+	private JCheckBox LogX,LogY;
 
 	private Log log;
 
@@ -312,8 +312,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		// creates text fields for changing the graph's dimensions
 		resize = new JCheckBox("Auto Resize");
 		resize.setSelected(true);
-		semiLog = new JCheckBox("Semilog");
-		semiLog.setSelected(false);
+		LogX = new JCheckBox("LogX");
+		LogX.setSelected(false);
+		LogY = new JCheckBox("LogY");
+		LogY.setSelected(false);
 		XMin = new JTextField();
 		XMax = new JTextField();
 		XScale = new JTextField();
@@ -1055,16 +1057,17 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			axis.setRange(minY - (Math.abs(minY) * .1), maxY + (Math.abs(maxY) * .1));
 		}
 		axis.setAutoTickUnitSelection(true);
-		if (semiLog.isSelected()) {
+		if (LogY.isSelected()) {
 			try {
-				NumberAxis rangeAxis = new LogarithmicAxis(chart.getXYPlot().getRangeAxis().getLabel());
+				LogarithmicAxis rangeAxis = new LogarithmicAxis(chart.getXYPlot().getRangeAxis().getLabel());
+				rangeAxis.setStrictValuesFlag(false);
 				plot.setRangeAxis(rangeAxis);
 			} catch (Exception e1) {
-				JOptionPane.showMessageDialog(biomodelsim.frame(), "Semilog plots are not allowed with data\nvalues less than or equal to zero.",
+				JOptionPane.showMessageDialog(biomodelsim.frame(), "Log plots are not allowed with data\nvalues less than or equal to zero.",
 						"Error", JOptionPane.ERROR_MESSAGE);
 				NumberAxis rangeAxis = new NumberAxis(chart.getXYPlot().getRangeAxis().getLabel());
 				plot.setRangeAxis(rangeAxis);
-				semiLog.setSelected(false);
+				LogY.setSelected(false);
 			}
 		}
 		axis = (NumberAxis) plot.getDomainAxis();
@@ -1081,6 +1084,19 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			axis.setRange(minX, maxX);
 		}
 		axis.setAutoTickUnitSelection(true);
+		if (LogX.isSelected()) {
+			try {
+				LogarithmicAxis domainAxis = new LogarithmicAxis(chart.getXYPlot().getDomainAxis().getLabel());
+				domainAxis.setStrictValuesFlag(false);
+				plot.setDomainAxis(domainAxis);
+			} catch (Exception e1) {
+				JOptionPane.showMessageDialog(biomodelsim.frame(), "Log plots are not allowed with data\nvalues less than or equal to zero.",
+						"Error", JOptionPane.ERROR_MESSAGE);
+				NumberAxis domainAxis = new NumberAxis(chart.getXYPlot().getDomainAxis().getLabel());
+				plot.setRangeAxis(domainAxis);
+				LogX.setSelected(false);
+			}
+		}
 	}
 
 	/**
@@ -1299,19 +1315,38 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		final JLabel yMin = new JLabel("Y-Min:");
 		final JLabel yMax = new JLabel("Y-Max:");
 		final JLabel yScale = new JLabel("Y-Step:");
-		semiLog.addActionListener(new ActionListener() {
+		LogX.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (((JCheckBox) e.getSource()).isSelected()) {
 					XYPlot plot = (XYPlot) chart.getXYPlot();
 					try {
-						NumberAxis rangeAxis = new LogarithmicAxis(chart.getXYPlot().getRangeAxis().getLabel());
+						LogarithmicAxis domainAxis = new LogarithmicAxis(chart.getXYPlot().getDomainAxis().getLabel());
+						domainAxis.setStrictValuesFlag(false);
+						plot.setRangeAxis(domainAxis);
+					} catch (Exception e1) {
+						JOptionPane.showMessageDialog(biomodelsim.frame(), "Log plots are not allowed with data\nvalues less than or equal to zero.",
+								"Error", JOptionPane.ERROR_MESSAGE);
+						NumberAxis domainAxis = new NumberAxis(chart.getXYPlot().getDomainAxis().getLabel());
+						plot.setRangeAxis(domainAxis);
+						LogX.setSelected(false);
+					}
+				}
+			}
+		});
+		LogY.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (((JCheckBox) e.getSource()).isSelected()) {
+					XYPlot plot = (XYPlot) chart.getXYPlot();
+					try {
+						LogarithmicAxis rangeAxis = new LogarithmicAxis(chart.getXYPlot().getRangeAxis().getLabel());
+						rangeAxis.setStrictValuesFlag(false);
 						plot.setRangeAxis(rangeAxis);
 					} catch (Exception e1) {
 						JOptionPane.showMessageDialog(biomodelsim.frame(), "Semilog plots are not allowed with data\nvalues less than or equal to zero.",
 								"Error", JOptionPane.ERROR_MESSAGE);
 						NumberAxis rangeAxis = new NumberAxis(chart.getXYPlot().getRangeAxis().getLabel());
 						plot.setRangeAxis(rangeAxis);
-						semiLog.setSelected(false);
+						LogY.setSelected(false);
 					}
 				}
 			}
@@ -2216,14 +2251,14 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			titlePanel1.add(XScale);
 			titlePanel1.add(yScale);
 			titlePanel1.add(YScale);
-			titlePanel2.add(new JPanel());
 			JPanel deselectPanel = new JPanel();
 			deselectPanel.add(deselect);
 			titlePanel2.add(deselectPanel);
-			titlePanel2.add(new JPanel());
-			titlePanel2.add(semiLog);
-			titlePanel2.add(new JPanel());
 			titlePanel2.add(resize);
+			titlePanel2.add(new JPanel());
+			titlePanel2.add(LogX);
+			titlePanel2.add(new JPanel());
+			titlePanel2.add(LogY);
 			titlePanel.add(titlePanel1, "Center");
 			titlePanel.add(titlePanel2, "South");
 			// JPanel buttonPanel = new JPanel();
@@ -4811,7 +4846,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			graph.setProperty("y.max", YMax.getText());
 			graph.setProperty("y.scale", YScale.getText());
 			graph.setProperty("auto.resize", "" + resize.isSelected());
-			graph.setProperty("semiLog", "" + semiLog.isSelected());
+			graph.setProperty("LogX", "" + LogX.isSelected());
+			graph.setProperty("LogY", "" + LogY.isSelected());
 			for (int i = 0; i < graphed.size(); i++) {
 				graph.setProperty("species.connected." + i, "" + graphed.get(i).getConnected());
 				graph.setProperty("species.filled." + i, "" + graphed.get(i).getFilled());
@@ -4933,7 +4969,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				graph.setProperty("y.max", YMax.getText());
 				graph.setProperty("y.scale", YScale.getText());
 				graph.setProperty("auto.resize", "" + resize.isSelected());
-				graph.setProperty("semiLog", "" + semiLog.isSelected());
+				graph.setProperty("LogX", "" + LogX.isSelected());
+				graph.setProperty("LogY", "" + LogY.isSelected());
 				for (int i = 0; i < graphed.size(); i++) {
 					graph.setProperty("species.connected." + i, "" + graphed.get(i).getConnected());
 					graph.setProperty("species.filled." + i, "" + graphed.get(i).getFilled());
@@ -5096,11 +5133,17 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				else {
 					resize.setSelected(false);
 				}
-				if (graph.containsKey("semiLog") && graph.getProperty("semiLog").equals("true")) {
-					semiLog.setSelected(true);
+				if (graph.containsKey("LogX") && graph.getProperty("LogX").equals("true")) {
+					LogX.setSelected(true);
 				}
 				else {
-					semiLog.setSelected(false);
+					LogX.setSelected(false);
+				}
+				if (graph.containsKey("LogY") && graph.getProperty("LogY").equals("true")) {
+					LogY.setSelected(true);
+				}
+				else {
+					LogY.setSelected(false);
 				}
 				int next = 0;
 				while (graph.containsKey("species.name." + next)) {

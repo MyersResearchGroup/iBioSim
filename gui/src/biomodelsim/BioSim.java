@@ -4928,8 +4928,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						graphName += ".grf";
 					}
 					if (overwrite(root + separator + graphName, graphName)) {
-						Graph g = new Graph(null, "amount", graphName.trim().substring(0,
-								graphName.length() - 4), "tsd.printer", root, "time", this, null, log, graphName
+						Graph g = new Graph(null, "Number of molecules", graphName.trim().substring(0,
+								graphName.length() - 4), "tsd.printer", root, "Time", this, null, log, graphName
 								.trim(), true, false);
 						addTab(graphName.trim(), g, "TSD Graph");
 						g.save();
@@ -4958,8 +4958,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						graphName += ".prb";
 					}
 					if (overwrite(root + separator + graphName, graphName)) {
-						Graph g = new Graph(null, "amount", graphName.trim().substring(0,
-								graphName.length() - 4), "tsd.printer", root, "time", this, null, log, graphName
+						Graph g = new Graph(null, "Number of Molecules", graphName.trim().substring(0,
+								graphName.length() - 4), "tsd.printer", root, "Time", this, null, log, graphName
 								.trim(), false, false);
 						addTab(graphName.trim(), g, "Probability Graph");
 						g.save();
@@ -5041,8 +5041,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						// learn.addMouseListener(this);
 						lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Learn");
 						Graph tsdGraph;
-						tsdGraph = new Graph(null, "amount", lrnName + " data", "tsd.printer", root + separator
-								+ lrnName, "time", this, null, log, null, true, false);
+						tsdGraph = new Graph(null, "Number of molecules", lrnName + " data", "tsd.printer", root + separator
+								+ lrnName, "Time", this, null, log, null, true, false);
 						// tsdGraph.addMouseListener(this);
 						lrnTab.addTab("TSD Graph", tsdGraph);
 						lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("TSD Graph");
@@ -6223,13 +6223,13 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				if (tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]
 						.contains(".grf")) {
 					addTab(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],
-							new Graph(null, "amount", "title", "tsd.printer", root, "time", this, tree.getFile(),
+							new Graph(null, "Number of molecules", "title", "tsd.printer", root, "Time", this, tree.getFile(),
 									log, tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],
 									true, false), "TSD Graph");
 				}
 				else {
 					addTab(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],
-							new Graph(null, "amount", "title", "tsd.printer", root, "time", this, tree.getFile(),
+							new Graph(null, "Percent", "title", "tsd.printer", root, "Time", this, tree.getFile(),
 									log, tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],
 									false, false), "Probability Graph");
 				}
@@ -7862,7 +7862,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						}
 						if (!done) {
 							addTab(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],
-									new Graph(null, "amount", "title", "tsd.printer", root, "time", this, tree
+									new Graph(null, "Number of molecules", "title", "tsd.printer", root, "Time", this, tree
 											.getFile(), log, tree.getFile().split(separator)[tree.getFile().split(
 											separator).length - 1], true, false), "TSD Graph");
 						}
@@ -7879,7 +7879,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						}
 						if (!done) {
 							addTab(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],
-									new Graph(null, "amount", "title", "tsd.printer", root, "time", this, tree
+									new Graph(null, "Percent", "title", "tsd.printer", root, "Time", this, tree
 											.getFile(), log, tree.getFile().split(separator)[tree.getFile().split(
 											separator).length - 1], false, false), "Probability Graph");
 						}
@@ -8860,9 +8860,9 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			// learn.addMouseListener(this);
 			lrnTab.addTab("Learn", learn);
 			lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Learn");
-			Graph tsdGraph = new Graph(null, "amount", tree.getFile().split(separator)[tree.getFile()
+			Graph tsdGraph = new Graph(null, "Number of molecules", tree.getFile().split(separator)[tree.getFile()
 					.split(separator).length - 1]
-					+ " data", "tsd.printer", tree.getFile(), "time", this, open, log, null, true, true);
+					+ " data", "tsd.printer", tree.getFile(), "Time", this, open, log, null, true, true);
 			// tsdGraph.addMouseListener(this);
 			lrnTab.addTab("TSD Graph", tsdGraph);
 			lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("TSD Graph");
@@ -8982,9 +8982,9 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			// learn.addMouseListener(this);
 			lrnTab.addTab("Learn", learn);
 			lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Learn");
-			Graph tsdGraph = new Graph(null, "amount", tree.getFile().split(separator)[tree.getFile()
+			Graph tsdGraph = new Graph(null, "Number of molecules", tree.getFile().split(separator)[tree.getFile()
 					.split(separator).length - 1]
-					+ " data", "tsd.printer", tree.getFile(), "time", this, open, log, null, true, false);
+					+ " data", "tsd.printer", tree.getFile(), "Time", this, open, log, null, true, false);
 			// tsdGraph.addMouseListener(this);
 			lrnTab.addTab("TSD Graph", tsdGraph);
 			lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("TSD Graph");
@@ -9936,8 +9936,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							((Graph) ((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j)).refresh();
 						}
 						else {
-							((JTabbedPane) tab.getComponentAt(i)).setComponentAt(j, new Graph(null, "amount",
-									learnName + " data", "tsd.printer", root + separator + learnName, "time", this,
+							((JTabbedPane) tab.getComponentAt(i)).setComponentAt(j, new Graph(null, "Number of molecules",
+									learnName + " data", "tsd.printer", root + separator + learnName, "Time", this,
 									null, log, null, true, true));
 							((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j).setName("TSD Graph");
 						}
