@@ -57,12 +57,12 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 			xform8 = "Local Assignment Propagation - simplification",
 			xform9 = "Remove Write Before Write - simplification",
 			xform10 = "Simplify Expressions - simplification",
-			xform11 = "Remove Unused Variables - simplification",
+			xform11 = "Constant False Enabling Conditions - simplification",
 			xform12 = "Abstract Assignments to the Same Variable - abstraction",
-			xform13 = "Remove Variables - abstraction",
+			xform13 = "Remove Unread Variables - abstraction",
 			xform14 = "Remove Dead Places - simplification",
 			xform15 = "Remove Dead Transitions - simplification",
-			xform16 = "Simplify Enabling Conditions - simplification",
+			xform16 = "Constant True Enabling Conditions - simplification",
 			xform17 = "Eliminate Dominated Transitions - simplification",
 			xform18 = "Remove Written Never Read - simplification",
 			xform19 = "Correlated Variables - simplification",
@@ -70,13 +70,14 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 			xform21 = "Timing Bound Normalization - abstraction",
 			xform22 = "Remove Vacuous Transitions - simplification",
 			//xform23 = "Remove Vacuous Transitions - abstraction",
-			xform24 = "Remove Pairwise Write Before Write - abstraction";
+			xform24 = "Remove Pairwise Write Before Write - abstraction",
+			xform25 = "Propagate Constant Variable Values - simplifiction";
 
 	private String[] transforms = { xform0, xform1, xform3, xform4, xform5, xform6, xform7, xform8,
-			xform9, xform10, xform11, xform12, xform13, xform14, xform15, xform16, xform17,
-			xform18, xform19, xform20, xform21, xform22 };
+			xform9, xform10, xform12, xform13, xform14, xform15, xform16, xform17,
+			xform18, xform19, xform20, xform21, xform22, xform25 };
 	
-	private JTextField factorField;
+	private JTextField factorField, iterField;
 
 	private boolean change;
 
@@ -152,6 +153,11 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 		factorField.setPreferredSize(new Dimension(40, 18));
 		factorPanel.add(factorLabel);
 		factorPanel.add(factorField);
+		JLabel iterLabel = new JLabel("Maximum Number of Iterations");
+		iterField = new JTextField("1000");
+		iterField.setPreferredSize(new Dimension(40, 18));
+		factorPanel.add(iterLabel);
+		factorPanel.add(iterField);
 		this.add(factorPanel);
 		
 		// Creates the abstractions JList
@@ -432,6 +438,11 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 	public Integer getNormFactor() {
 		String factorString = factorField.getText();
 		return Integer.parseInt(factorString);
+	}
+	
+	public Integer maxIterations() {
+		String iterString = iterField.getText();
+		return Integer.parseInt(iterString);
 	}
 
 	public void viewLog() {

@@ -36,6 +36,7 @@ public class Abstraction extends LHPNFile {
 	}
 
 	public void abstractSTG() {
+		long start = System.nanoTime();
 		boolean change = true;
 		assignments.add(booleanAssignments);
 		assignments.add(contAssignments);
@@ -58,7 +59,8 @@ public class Abstraction extends LHPNFile {
 		for (String s : removeEnab) {
 			enablings.remove(s);
 		}
-		while (change) {
+		Integer i = 0;
+		while (change && i < abstPane.maxIterations()) {
 			change = false;
 			// Transform 0 - Merge Parallel Places
 			if (abstPane.absListModel.contains(abstPane.xform0) && abstPane.isSimplify()) {
@@ -135,6 +137,11 @@ public class Abstraction extends LHPNFile {
 			if (abstPane.absListModel.contains(abstPane.xform24) && abstPane.isSimplify()) {
 				change = weakWriteBeforeWrite(change);
 			}
+			// Transform 25 - Propagate Constant Variable Values
+			if (abstPane.absListModel.contains(abstPane.xform25) && abstPane.isSimplify()) {
+				change = propagateConst(change);
+			}
+			i++;
 		}
 		// Transform 19 - Merge Coordinated Variables
 		if (abstPane.absListModel.contains(abstPane.xform19) && abstPane.isSimplify()) {
@@ -145,6 +152,9 @@ public class Abstraction extends LHPNFile {
 		if (abstPane.absListModel.contains(abstPane.xform21) && abstPane.isAbstract()) {
 			normalizeDelays();
 		}
+		Double stop = (System.nanoTime() - start) * 1.0e-9;
+		System.out.println("Total Abstraction Time: " + stop.toString() + " s");
+		System.out.println("Number of Abstraction Loop Iterations: " + i.toString());
 	}
 
 	public void abstractVars(String[] intVars) {
@@ -519,6 +529,14 @@ public class Abstraction extends LHPNFile {
 				removeEnab.add(t);
 				continue;
 			}
+			else if (expr.isit == 't') {
+				if (expr.uvalue == 0 && abstPane.absListModel.contains(abstPane.xform16) && abstPane.isSimplify()) {
+					removeTrans.add(t);
+				}
+				else if (expr.lvalue == 1 && abstPane.absListModel.contains(abstPane.xform15) && abstPane.isSimplify()) {
+					removeEnab.add(t);
+				}
+			}
 			// if (expr.containsCont())
 			// continue;
 			// If the enabling condition is initially true
@@ -550,7 +568,7 @@ public class Abstraction extends LHPNFile {
 				}
 			}
 			// If the enabling condition is initially false
-			else if (abstPane.absListModel.contains(abstPane.xform15)
+			else if (abstPane.absListModel.contains(abstPane.xform11)
 					&& (expr.evaluateExp(initVars) == 0) && abstPane.isSimplify()) {
 				boolean disabled = true;
 				for (String trans : delays.keySet()) {
@@ -603,8 +621,10 @@ public class Abstraction extends LHPNFile {
 			enablings.remove(t);
 			enablingTrees.remove(t);
 		}
+		if (abstPane.absListModel.contains(abstPane.xform15)) {
 		for (String t : removeTrans) {
 			removeTransition(t);
+		}
 		}
 		return change;
 	}
@@ -2558,7 +2578,6 @@ public class Abstraction extends LHPNFile {
 
 	private boolean checkTrans8(boolean change) {
 		// Propagate expressions of local variables to transition post sets
-		change = propagateConst(change);
 		ArrayList<String> initMarking = new ArrayList<String>();
 		ArrayList<String> unvisited = new ArrayList<String>();
 		unvisited.addAll(delays.keySet());
