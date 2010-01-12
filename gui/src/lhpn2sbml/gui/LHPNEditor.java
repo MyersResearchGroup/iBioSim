@@ -323,7 +323,9 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 
 	public void reload(String newName) {
 		filename = newName + ".lpn";
-		lhpnFile.load(directory + File.separator + newName);
+		if (new File(directory + File.separator + newName).exists()) {
+			lhpnFile.load(directory + File.separator + newName);
+		}
 		lhpnNameTextField.setText(newName);
 	}
 
