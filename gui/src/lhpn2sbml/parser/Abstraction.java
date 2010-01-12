@@ -592,27 +592,6 @@ public class Abstraction extends LHPNFile {
 					}
 				}
 				if (disabled) {
-					if (controlFlow.get(t).containsKey("postset")) {
-						for (String p : controlFlow.get(t).getProperty("postset").split("\\s")) {
-							removeControlFlow(t, p);
-						}
-					}
-					if (controlFlow.get(t).containsKey("preset")) {
-						for (String p : controlFlow.get(t).getProperty("preset").split("\\s")) {
-							removeControlFlow(p, t);
-							if (controlPlaces.get(p).containsKey("postset")) {
-								if (controlPlaces.get(p).getProperty("postset").equals("")) {
-									if (controlPlaces.get(p).containsKey("preset")) {
-										for (String tP : controlPlaces.get(p).getProperty("preset")
-												.split("\\s")) {
-											removeControlFlow(tP, p);
-										}
-									}
-									removePlace(p);
-								}
-							}
-						}
-					}
 					removeTrans.add(t);
 				}
 			}
@@ -623,6 +602,27 @@ public class Abstraction extends LHPNFile {
 		}
 		if (abstPane.absListModel.contains(abstPane.xform15)) {
 		for (String t : removeTrans) {
+			if (controlFlow.get(t).containsKey("postset")) {
+				for (String p : controlFlow.get(t).getProperty("postset").split("\\s")) {
+					removeControlFlow(t, p);
+				}
+			}
+			if (controlFlow.get(t).containsKey("preset")) {
+				for (String p : controlFlow.get(t).getProperty("preset").split("\\s")) {
+					removeControlFlow(p, t);
+					if (controlPlaces.get(p).containsKey("postset")) {
+						if (controlPlaces.get(p).getProperty("postset").equals("")) {
+							if (controlPlaces.get(p).containsKey("preset")) {
+								for (String tP : controlPlaces.get(p).getProperty("preset")
+										.split("\\s")) {
+									removeControlFlow(tP, p);
+								}
+							}
+							removePlace(p);
+						}
+					}
+				}
+			}
 			removeTransition(t);
 		}
 		}
