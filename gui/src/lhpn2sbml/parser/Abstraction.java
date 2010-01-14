@@ -97,13 +97,13 @@ public class Abstraction extends LHPNFile {
 			if (abstPane.absListModel.contains(abstPane.xform3) && abstPane.isSimplify()) {
 				change = checkTrans3(change);
 			}
-			//Transform 22 - Remove Vacuous Transitions (simplification)
+			// Transform 22 - Remove Vacuous Transitions (simplification)
 			if (abstPane.absListModel.contains(abstPane.xform22) && abstPane.isSimplify()) {
 				change = checkTrans22(change);
 			}
 			// Transform 14 - Remove Dead Places
 			if (abstPane.absListModel.contains(abstPane.xform14) && abstPane.isSimplify()) {
-				change = removeDeadPlaces(change); 
+				change = removeDeadPlaces(change);
 			}
 			// Transform 8 - Propagate local assignments
 			if (abstPane.absListModel.contains(abstPane.xform8) && abstPane.isSimplify()) {
@@ -530,10 +530,12 @@ public class Abstraction extends LHPNFile {
 				continue;
 			}
 			else if (expr.isit == 't') {
-				if (expr.uvalue == 0 && abstPane.absListModel.contains(abstPane.xform16) && abstPane.isSimplify()) {
+				if (expr.uvalue == 0 && abstPane.absListModel.contains(abstPane.xform16)
+						&& abstPane.isSimplify()) {
 					removeTrans.add(t);
 				}
-				else if (expr.lvalue == 1 && abstPane.absListModel.contains(abstPane.xform15) && abstPane.isSimplify()) {
+				else if (expr.lvalue == 1 && abstPane.absListModel.contains(abstPane.xform15)
+						&& abstPane.isSimplify()) {
 					removeEnab.add(t);
 				}
 			}
@@ -601,30 +603,30 @@ public class Abstraction extends LHPNFile {
 			enablingTrees.remove(t);
 		}
 		if (abstPane.absListModel.contains(abstPane.xform15)) {
-		for (String t : removeTrans) {
-			if (controlFlow.get(t).containsKey("postset")) {
-				for (String p : controlFlow.get(t).getProperty("postset").split("\\s")) {
-					removeControlFlow(t, p);
-				}
-			}
-			if (controlFlow.get(t).containsKey("preset")) {
-				for (String p : controlFlow.get(t).getProperty("preset").split("\\s")) {
-					removeControlFlow(p, t);
-					if (controlPlaces.get(p).containsKey("postset")) {
-						if (controlPlaces.get(p).getProperty("postset").equals("")) {
-							if (controlPlaces.get(p).containsKey("preset")) {
-								for (String tP : controlPlaces.get(p).getProperty("preset")
-										.split("\\s")) {
-									removeControlFlow(tP, p);
+			for (String t : removeTrans) {
+				if (controlFlow.get(t).containsKey("preset")) {
+					for (String p : controlFlow.get(t).getProperty("preset").split("\\s")) {
+						if (controlPlaces.get(p).containsKey("postset")) {
+							if (!controlPlaces.get(p).getProperty("postset").equals("")) {
+								if (controlPlaces.get(p).containsKey("preset")) {
+									for (String tP : controlPlaces.get(p).getProperty("preset")
+											.split("\\s")) {
+										removeControlFlow(tP, p);
+									}
 								}
+								removePlace(p);
 							}
-							removePlace(p);
 						}
+						removeControlFlow(p, t);
 					}
 				}
+				if (controlFlow.get(t).containsKey("postset")) {
+					for (String p : controlFlow.get(t).getProperty("postset").split("\\s")) {
+						removeControlFlow(t, p);
+					}
+				}
+				removeTransition(t);
 			}
-			removeTransition(t);
-		}
 		}
 		return change;
 	}
@@ -2464,11 +2466,13 @@ public class Abstraction extends LHPNFile {
 						}
 					}
 					if (controlPlaces.containsKey(preset[0])) {
-						String[] postset = controlPlaces.get(preset[0]).getProperty("postset")
-								.split(" ");
-						if ((postset.length == 1 || pre) && places.containsKey(preset[0])) {
-							if (!assign) {
-								remove.add(s);
+						if (controlPlaces.get(preset[0]).containsKey("postset")) {
+							String[] postset = controlPlaces.get(preset[0]).getProperty("postset")
+									.split(" ");
+							if ((postset.length == 1 || pre) && places.containsKey(preset[0])) {
+								if (!assign) {
+									remove.add(s);
+								}
 							}
 						}
 					}
@@ -2488,15 +2492,17 @@ public class Abstraction extends LHPNFile {
 		}
 		return change;
 	}
-	
+
 	private boolean checkTrans22(boolean change) {
 		// Remove Vacuous Transitions
 		ArrayList<String> remove = new ArrayList<String>();
 		for (String s : controlFlow.keySet()) {
-			if (controlFlow.get(s).getProperty("postset") != null && controlFlow.get(s).getProperty("preset") != null) {
+			if (controlFlow.get(s).getProperty("postset") != null
+					&& controlFlow.get(s).getProperty("preset") != null) {
 				String[] postset = controlFlow.get(s).getProperty("postset").split(" ");
 				String[] preset = controlFlow.get(s).getProperty("preset").split(" ");
-				if (postset.length == 1 && !postset[0].equals("") && preset.length == 1 && !preset[0].equals("")) {
+				if (postset.length == 1 && !postset[0].equals("") && preset.length == 1
+						&& !preset[0].equals("")) {
 					boolean assign = false;
 					if (enablings.containsKey(s)) {
 						for (String var : enablingTrees.get(s).getVars()) {
@@ -2532,7 +2538,8 @@ public class Abstraction extends LHPNFile {
 					}
 					if (controlPlaces.containsKey(postset[0])) {
 						if (controlPlaces.get(postset[0]).containsKey("preset")) {
-							tempPreset = controlPlaces.get(postset[0]).getProperty("preset").split(" ");
+							tempPreset = controlPlaces.get(postset[0]).getProperty("preset").split(
+									" ");
 							if (!((tempPreset.length == 1 || post) && !assign)) {
 								assign = true;
 							}
@@ -3469,7 +3476,7 @@ public class Abstraction extends LHPNFile {
 		removeTransition(transition);
 		return true;
 	}
-	
+
 	private boolean removeVacTrans(String transition) {
 		String place = controlFlow.get(transition).getProperty("postset");
 		String[] preset = controlFlow.get(transition).getProperty("preset").split("\\s");
@@ -4063,54 +4070,60 @@ public class Abstraction extends LHPNFile {
 			// }
 			if (controlFlow.get(trans).containsKey("postset")) {
 				for (String p : controlFlow.get(trans).getProperty("postset").split("\\s")) {
-					for (String tP : controlPlaces.get(p).getProperty("postset").split("\\s")) {
-						for (String pP : controlFlow.get(tP).getProperty("preset").split("\\s")) {
-							for (String tPP : controlPlaces.get(pP).getProperty("preset").split(
-									"\\s")) {
-								if (typeAssign.containsKey(tPP)) {
-									if (typeAssign.get(tPP).containsKey(var)) {
-										ExprTree[] ePP = typeAssign.get(tPP).get(var);
-										// for (ExprTree e1 : ePP) {
-										if (!ePP[0].isEqual(e[0])) {
-											return change; // All assignments to
-											// var
-											// in
-											// ..(t..)
-											// must be equal
-										}
-										for (String v : ePP[0].getVars()) {
-											if (!v.equals(var)) {
-												if (isBoolean(v)) { // All
-													// variables
-													// in
-													// support(e) cannot be
-													// assigned
-													if (booleanAssignments.containsKey(tPP)) {
-														if (booleanAssignments.get(tPP)
-																.containsKey(v)) {
-															return change;
+					if (controlPlaces.get(p).containsKey("postset")) {
+						for (String tP : controlPlaces.get(p).getProperty("postset").split("\\s")) {
+							for (String pP : controlFlow.get(tP).getProperty("preset").split("\\s")) {
+								for (String tPP : controlPlaces.get(pP).getProperty("preset")
+										.split("\\s")) {
+									if (typeAssign.containsKey(tPP)) {
+										if (typeAssign.get(tPP).containsKey(var)) {
+											ExprTree[] ePP = typeAssign.get(tPP).get(var);
+											// for (ExprTree e1 : ePP) {
+											if (!ePP[0].isEqual(e[0])) {
+												return change; // All
+																// assignments
+																// to
+												// var
+												// in
+												// ..(t..)
+												// must be equal
+											}
+											for (String v : ePP[0].getVars()) {
+												if (!v.equals(var)) {
+													if (isBoolean(v)) { // All
+														// variables
+														// in
+														// support(e) cannot be
+														// assigned
+														if (booleanAssignments.containsKey(tPP)) {
+															if (booleanAssignments.get(tPP)
+																	.containsKey(v)) {
+																return change;
+															}
 														}
 													}
-												}
-												else if (isInteger(v)) {
-													if (intAssignments.containsKey(tPP)) {
-														if (intAssignments.get(tPP).containsKey(v)) {
-															return change;
+													else if (isInteger(v)) {
+														if (intAssignments.containsKey(tPP)) {
+															if (intAssignments.get(tPP)
+																	.containsKey(v)) {
+																return change;
+															}
 														}
 													}
-												}
-												else {
-													if (contAssignments.containsKey(tPP)) {
-														if (contAssignments.get(tPP).containsKey(v)) {
-															return change;
+													else {
+														if (contAssignments.containsKey(tPP)) {
+															if (contAssignments.get(tPP)
+																	.containsKey(v)) {
+																return change;
+															}
 														}
 													}
 												}
 											}
 										}
-									}
-									else {
-										return change;
+										else {
+											return change;
+										}
 									}
 								}
 							}
@@ -4121,28 +4134,30 @@ public class Abstraction extends LHPNFile {
 			// Perform transform
 			if (controlFlow.get(trans).containsKey("postset")) {
 				for (String p : controlFlow.get(trans).getProperty("postset").split("\\s")) {
-					for (String tP : controlPlaces.get(p).getProperty("postset").split("\\s")) {
-						if (e.length > 1) {
-							if (e[1] != null && !e[1].toString().equals("")) {
-								return change;
-							}
-						}
-						replace(tP, var, e);
-						for (String pP : controlFlow.get(tP).getProperty("preset").split("\\s")) {
-							for (String tPP : controlPlaces.get(pP).getProperty("preset").split(
-									"\\s")) {
-								if (isBoolean(var)) {
-									removeBoolAssign(tPP, var);
-								}
-								else if (isInteger(var)) {
-									removeIntAssign(tPP, var);
-								}
-								else {
-									removeContAssign(tPP, var);
+					if (controlPlaces.get(p).containsKey("postset")) {
+						for (String tP : controlPlaces.get(p).getProperty("postset").split("\\s")) {
+							if (e.length > 1) {
+								if (e[1] != null && !e[1].toString().equals("")) {
+									return change;
 								}
 							}
+							replace(tP, var, e);
+							for (String pP : controlFlow.get(tP).getProperty("preset").split("\\s")) {
+								for (String tPP : controlPlaces.get(pP).getProperty("preset")
+										.split("\\s")) {
+									if (isBoolean(var)) {
+										removeBoolAssign(tPP, var);
+									}
+									else if (isInteger(var)) {
+										removeIntAssign(tPP, var);
+									}
+									else {
+										removeContAssign(tPP, var);
+									}
+								}
+							}
+							change = true;
 						}
-						change = true;
 					}
 				}
 			}
