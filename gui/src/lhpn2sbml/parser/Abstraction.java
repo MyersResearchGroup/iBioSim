@@ -607,7 +607,7 @@ public class Abstraction extends LHPNFile {
 				if (controlFlow.get(t).containsKey("preset")) {
 					for (String p : controlFlow.get(t).getProperty("preset").split("\\s")) {
 						if (controlPlaces.get(p).containsKey("postset")) {
-							if (!controlPlaces.get(p).getProperty("postset").equals("")) {
+							if (!controlPlaces.get(p).getProperty("postset").equals("") && !controlPlaces.get(p).getProperty("postset").trim().contains(" ")) {
 								if (controlPlaces.get(p).containsKey("preset")) {
 									for (String tP : controlPlaces.get(p).getProperty("preset")
 											.split("\\s")) {
