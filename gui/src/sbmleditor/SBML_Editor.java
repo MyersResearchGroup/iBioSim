@@ -123,7 +123,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 
 	private JTextField eventID, eventName, eventTrigger, eventDelay; // event
 
-        private JCheckBox assignTime;
+	private JCheckBox assignTime;
 	// fields;
 
 	private JComboBox eaID; // event assignment fields;
@@ -145,7 +145,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	private JComboBox compTypeBox, dimBox; // compartment type combo box
 
 	private JComboBox specTypeBox, specBoundary, specConstant, specHasOnly; // species
-																			// combo
+	// combo
 
 	// boxes
 
@@ -445,7 +445,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		for (int i = 0; i < model.getNumConstraints(); i++) {
 			if (((Constraint) ids.get(i)).isSetMetaId()) {
 				usedIDs.add(((Constraint) ids.get(i)).getMetaId());
-				}
+			}
 		}
 		ids = model.getListOfEvents();
 		for (int i = 0; i < model.getNumEvents(); i++) {
@@ -1679,8 +1679,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			String tempMath = selected.substring(selected.indexOf('=') + 2);
 			ListOf r = document.getModel().getListOfRules();
 			for (int i = 0; i < document.getModel().getNumRules(); i++) {
-				if ((((Rule) r.get(i)).isRate()) && 
-						myFormulaToString(((Rule) r.get(i)).getMath()).equals(tempMath)
+				if ((((Rule) r.get(i)).isRate())
+						&& myFormulaToString(((Rule) r.get(i)).getMath()).equals(tempMath)
 						&& ((Rule) r.get(i)).getVariable().equals(tempVar)) {
 					r.remove(i);
 				}
@@ -1912,7 +1912,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			react.setReversible(r.getReversible());
 			react.setId(reacID.trim());
 			usedIDs.add(reacID.trim());
-			react.getKineticLaw().setMath(myParseFormula(myFormulaToString(r.getKineticLaw().getMath())));
+			react.getKineticLaw().setMath(
+					myParseFormula(myFormulaToString(r.getKineticLaw().getMath())));
 			JList add = new JList();
 			Object[] adding = { reacID.trim() };
 			add.setListData(adding);
@@ -2202,7 +2203,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			String v = ((String) reacParameters.getSelectedValue()).split(" ")[0];
 			Reaction reaction = document.getModel().getReaction(
 					((String) reactions.getSelectedValue()).split(" ")[0]);
-			String[] vars = myFormulaToString(reaction.getKineticLaw().getMath()).split(" |\\(|\\)|\\,");
+			String[] vars = myFormulaToString(reaction.getKineticLaw().getMath()).split(
+					" |\\(|\\)|\\,");
 			for (int j = 0; j < vars.length; j++) {
 				if (vars[j].equals(v)) {
 					JOptionPane
@@ -2442,7 +2444,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					}
 				}
 			}
-			String[] vars = myFormulaToString(reaction.getKineticLaw().getMath()).split(" |\\(|\\)|\\,");
+			String[] vars = myFormulaToString(reaction.getKineticLaw().getMath()).split(
+					" |\\(|\\)|\\,");
 			for (int j = 0; j < vars.length; j++) {
 				if (vars[j].equals(species)) {
 					kineticLawsUsing.add(reaction.getId());
@@ -4599,7 +4602,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		String[] rateLaws = new String[(int) model.getNumReactions()];
 		for (int i = 0; i < model.getNumReactions(); i++) {
 			Reaction reaction = (Reaction) listOfReactions.get(i);
-			rateLaws[i] = reaction.getId() + " = " + myFormulaToString(reaction.getKineticLaw().getMath());
+			rateLaws[i] = reaction.getId() + " = "
+					+ myFormulaToString(reaction.getKineticLaw().getMath());
 		}
 		String[] result = new String[rules.length + initRules.length + rateLaws.length];
 		int j = 0;
@@ -4852,7 +4856,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						eventDelay.setText(myFormulaToString(event.getDelay().getMath()));
 					}
 					if (event.getUseValuesFromTriggerTime()) {
-					    assignTime.setSelected(true);
+						assignTime.setSelected(true);
 					}
 					assign = new String[(int) event.getNumEventAssignments()];
 					origAssign = new String[(int) event.getNumEventAssignments()];
@@ -5338,7 +5342,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					}
 					if (((Constraint) c.get(i)).isSetMessage()) {
 						String message = ((Constraint) c.get(i)).getMessageString();
-						//XMLNode.convertXMLNodeToString(((Constraint) c.get(i)).getMessage());
+						// XMLNode.convertXMLNodeToString(((Constraint)
+						// c.get(i)).getMessage());
 						message = message.substring(message.indexOf("xhtml\">") + 7, message
 								.indexOf("</p>"));
 						consMessage.setText(message);
@@ -7210,12 +7215,13 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			}
 		}
 		else {
-//			Parameter p = new Parameter(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
+			// Parameter p = new Parameter(BioSim.SBML_LEVEL,
+			// BioSim.SBML_VERSION);
 			Parameter p = new Parameter(document.getLevel(), document.getVersion());
 			p.setId("kf");
 			p.setValue(0.1);
 			changedParameters.add(p);
-//			p = new Parameter(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
+			// p = new Parameter(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
 			p = new Parameter(document.getLevel(), document.getVersion());
 			p.setId("kr");
 			p.setValue(1.0);
@@ -7381,7 +7387,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		scroll4.setViewportView(kineticLaw);
 		if (option.equals("OK")) {
 			kineticLaw.setText(myFormulaToString(document.getModel().getReaction(
-					((String) reactions.getSelectedValue()).split(" ")[0]).getKineticLaw().getMath()));
+					((String) reactions.getSelectedValue()).split(" ")[0]).getKineticLaw()
+					.getMath()));
 		}
 		JPanel kineticPanel = new JPanel(new BorderLayout());
 		kineticPanel.add(kineticLabel, "North");
@@ -8542,8 +8549,10 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					}
 					else {
 						int index = reacParameters.getSelectedIndex();
-//						Parameter paramet = new Parameter(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
-						Parameter paramet = new Parameter(document.getLevel(), document.getVersion());
+						// Parameter paramet = new Parameter(BioSim.SBML_LEVEL,
+						// BioSim.SBML_VERSION);
+						Parameter paramet = new Parameter(document.getLevel(), document
+								.getVersion());
 						changedParameters.add(paramet);
 						paramet.setId(reacParamID.getText().trim());
 						paramet.setName(reacParamName.getText().trim());
@@ -8792,8 +8801,10 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					products.setSelectedIndex(index);
 				}
 				else {
-//					SpeciesReference produ = new SpeciesReference(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
-					SpeciesReference produ = new SpeciesReference(document.getLevel(), document.getVersion());
+					// SpeciesReference produ = new
+					// SpeciesReference(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
+					SpeciesReference produ = new SpeciesReference(document.getLevel(), document
+							.getVersion());
 					changedProducts.add(produ);
 					produ.setSpecies((String) productSpecies.getSelectedItem());
 					if (stoiciLabel.getSelectedItem().equals("Stoichiometry")) {
@@ -8930,8 +8941,11 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					}
 				}
 				if (!error) {
-//					ModifierSpeciesReference modi = new ModifierSpeciesReference(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
-					ModifierSpeciesReference modi = new ModifierSpeciesReference(document.getLevel(), document.getVersion());
+					// ModifierSpeciesReference modi = new
+					// ModifierSpeciesReference(BioSim.SBML_LEVEL,
+					// BioSim.SBML_VERSION);
+					ModifierSpeciesReference modi = new ModifierSpeciesReference(document
+							.getLevel(), document.getVersion());
 					changedModifiers.add(modi);
 					modi.setSpecies((String) modifierSpecies.getSelectedItem());
 					JList add = new JList();
@@ -9173,8 +9187,10 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					reactants.setSelectedIndex(index);
 				}
 				else {
-//					SpeciesReference reactan = new SpeciesReference(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
-					SpeciesReference reactan = new SpeciesReference(document.getLevel(), document.getVersion());
+					// SpeciesReference reactan = new
+					// SpeciesReference(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
+					SpeciesReference reactan = new SpeciesReference(document.getLevel(), document
+							.getVersion());
 					changedReactants.add(reactan);
 					reactan.setSpecies((String) reactantSpecies.getSelectedItem());
 					if (stoiciLabel.getSelectedItem().equals("Stoichiometry")) {
@@ -9445,8 +9461,18 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						String sFormula = s.substring(s.indexOf('=') + 1).trim();
 						sFormula = myFormulaToString(myParseFormula(sFormula));
 						sFormula = s.substring(0, s.indexOf('=') + 1) + " " + sFormula;
-						if ((((Rule) d.getModel().getListOfRules().get(i)).getVariable() + " = " + formula)
-								.equals(sFormula)) {
+						Rule rule = (Rule) d.getModel().getListOfRules().get(i);
+						String ruleFormula;
+						if (rule.isAlgebraic()) {
+							ruleFormula = "0 = " + formula;
+						}
+						else if (rule.isAssignment()) {
+							ruleFormula = rule.getVariable() + " = " + formula;
+						}
+						else {
+							ruleFormula = "d( " + rule.getVariable() + " )/dt = " + formula;
+						}
+						if (ruleFormula.equals(sFormula)) {
 							d.getModel().getListOfRules().remove(i);
 						}
 					}
@@ -9867,12 +9893,12 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		case libsbml.AST_LOGICAL_XOR:
 			for (int i = 0; i < node.getNumChildren(); i++) {
 				if (!node.getChild(i).isBoolean()) {
-					JOptionPane.showMessageDialog(biosim.frame(), "Argument " + i + " for " + node.getName()
-							+ " function is not of type Boolean.", "Boolean Expected",
-							JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(biosim.frame(), "Argument " + i + " for "
+							+ node.getName() + " function is not of type Boolean.",
+							"Boolean Expected", JOptionPane.ERROR_MESSAGE);
 					return true;
 				}
-			}	
+			}
 			break;
 		case libsbml.AST_PLUS:
 			if (node.getChild(0).isBoolean()) {
@@ -10322,7 +10348,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		}
 		else if (biosim.checkUnits) {
 			UnitDefinition unitDef = delay.getDerivedUnitDefinition();
-			if (unitDef!=null && !(unitDef.isVariantOfTime())) {
+			if (unitDef != null && !(unitDef.isVariantOfTime())) {
 				JOptionPane.showMessageDialog(biosim.frame(),
 						"Event delay should be units of time.", "Event Delay Not Time Units",
 						JOptionPane.ERROR_MESSAGE);
@@ -10350,8 +10376,10 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		}
 		else if (biosim.checkUnits) {
 			UnitDefinition unitDef = law.getDerivedUnitDefinition();
-//			UnitDefinition unitDefLaw = new UnitDefinition(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
-			UnitDefinition unitDefLaw = new UnitDefinition(document.getLevel(),document.getVersion());
+			// UnitDefinition unitDefLaw = new UnitDefinition(BioSim.SBML_LEVEL,
+			// BioSim.SBML_VERSION);
+			UnitDefinition unitDefLaw = new UnitDefinition(document.getLevel(), document
+					.getVersion());
 			if (document.getModel().getUnitDefinition("substance") != null) {
 				UnitDefinition subUnitDef = document.getModel().getUnitDefinition("substance");
 				for (int i = 0; i < subUnitDef.getNumUnits(); i++) {
