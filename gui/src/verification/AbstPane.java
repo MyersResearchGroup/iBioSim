@@ -70,7 +70,7 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 			xform21 = "Timing Bound Normalization - abstraction",
 			xform22 = "Remove Vacuous Transitions - simplification",
 			//xform23 = "Remove Vacuous Transitions - abstraction",
-			xform24 = "Remove Pairwise Write Before Write - abstraction",
+			xform24 = "Remove Pairwise Write Before Write - simplification",
 			xform25 = "Propagate Constant Variable Values - simplifiction";
 
 	private String[] transforms = { xform0, xform1, xform3, xform4, xform5, xform6, xform7, xform8,
