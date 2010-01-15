@@ -12145,6 +12145,66 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 	public static SBMLDocument readSBML(String filename) {
 		SBMLReader reader = new SBMLReader();
 		SBMLDocument document = reader.readSBML(filename);
+		JTextArea messageArea = new JTextArea();
+		messageArea.append("Conversion to SBML level " + SBML_LEVEL + " version " + SBML_VERSION
+				+ " produced the errors listed below. ");
+		messageArea
+				.append("It is recommended that you fix them before using these models or you may get unexpected results.\n\n");
+		boolean display = false;
+		long numErrors = document.checkL2v4Compatibility();
+		if (numErrors > 0) {
+			display = true;
+			messageArea
+					.append("--------------------------------------------------------------------------------------\n");
+			messageArea.append(filename);
+			messageArea
+					.append("\n--------------------------------------------------------------------------------------\n\n");
+			for (long i = 0; i < numErrors; i++) {
+				String error = document.getError(i).getMessage();
+				messageArea.append(i + ":" + error + "\n");
+			}
+		}
+		if (display) {
+			final JFrame f = new JFrame("SBML Conversion Errors and Warnings");
+			messageArea.setLineWrap(true);
+			messageArea.setEditable(false);
+			messageArea.setSelectionStart(0);
+			messageArea.setSelectionEnd(0);
+			JScrollPane scroll = new JScrollPane();
+			scroll.setMinimumSize(new Dimension(600, 600));
+			scroll.setPreferredSize(new Dimension(600, 600));
+			scroll.setViewportView(messageArea);
+			JButton close = new JButton("Dismiss");
+			close.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					f.dispose();
+				}
+			});
+			JPanel consistencyPanel = new JPanel(new BorderLayout());
+			consistencyPanel.add(scroll, "Center");
+			consistencyPanel.add(close, "South");
+			f.setContentPane(consistencyPanel);
+			f.pack();
+			Dimension screenSize;
+			try {
+				Toolkit tk = Toolkit.getDefaultToolkit();
+				screenSize = tk.getScreenSize();
+			}
+			catch (AWTError awe) {
+				screenSize = new Dimension(640, 480);
+			}
+			Dimension frameSize = f.getSize();
+			if (frameSize.height > screenSize.height) {
+				frameSize.height = screenSize.height;
+			}
+			if (frameSize.width > screenSize.width) {
+				frameSize.width = screenSize.width;
+			}
+			int x = screenSize.width / 2 - frameSize.width / 2;
+			int y = screenSize.height / 2 - frameSize.height / 2;
+			f.setLocation(x, y);
+			f.setVisible(true);
+		}
 		document.setLevelAndVersion(SBML_LEVEL, SBML_VERSION);
 		return document;
 	}
