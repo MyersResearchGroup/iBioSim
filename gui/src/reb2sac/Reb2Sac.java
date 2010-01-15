@@ -2310,9 +2310,21 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		try {
 			if (((String) intervalLabel.getSelectedItem()).contains("Print Interval")) {
 				printInterval = Double.parseDouble(interval.getText().trim());
+				if (printInterval <= 0) {
+				    JOptionPane.showMessageDialog(biomodelsim.frame(),
+								  "Must Enter A Positive Number Into The Print Interval Field.", 
+								  "Error",JOptionPane.ERROR_MESSAGE);
+				    return;
+				}
 			}
 			else {
 				printInterval = Integer.parseInt(interval.getText().trim());
+				if (printInterval <= 0) {
+				    JOptionPane.showMessageDialog(biomodelsim.frame(),
+								  "Must Enter A Positive Number Into The Number of Steps Field.", 
+								  "Error",JOptionPane.ERROR_MESSAGE);
+				    return;
+				}
 			}
 		}
 		catch (Exception e1) {
