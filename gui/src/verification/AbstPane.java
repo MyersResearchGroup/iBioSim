@@ -69,14 +69,14 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 			xform20 = "Remove Arc after Failure Transitions - simplification",
 			xform21 = "Timing Bound Normalization - abstraction",
 			xform22 = "Remove Vacuous Transitions - simplification",
-			//xform23 = "Remove Vacuous Transitions - abstraction",
+			xform23 = "Remove Vacuous Transitions - abstraction",
 			xform24 = "Remove Pairwise Write Before Write - simplification",
 			xform25 = "Propagate Constant Variable Values - simplifiction";
 
 	private String[] transforms = { xform0, xform1, xform3, xform4, xform5, xform6, xform7, xform8,
-			xform9, xform10, xform12, xform13, xform14, xform15, xform16, xform17,
-			xform18, xform19, xform20, xform21, xform22, xform25 };
-	
+			xform25, xform9, xform24, xform10, xform12, xform13, xform14, xform16, xform11,
+			xform15, xform17, xform18, xform19, xform20, xform21, xform22, xform23 };
+
 	private JTextField factorField, iterField;
 
 	private boolean change;
@@ -159,7 +159,7 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 		factorPanel.add(iterLabel);
 		factorPanel.add(iterField);
 		this.add(factorPanel);
-		
+
 		// Creates the abstractions JList
 		absListModel = new DefaultListModel();
 		selectXforms = new JList(transforms);
@@ -434,12 +434,12 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 	public boolean isAbstract() {
 		return verification.abstractLhpn.isSelected();
 	}
-	
+
 	public Integer getNormFactor() {
 		String factorString = factorField.getText();
 		return Integer.parseInt(factorString);
 	}
-	
+
 	public Integer maxIterations() {
 		String iterString = iterField.getText();
 		return Integer.parseInt(iterString);
