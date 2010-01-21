@@ -141,6 +141,7 @@ public class Abstraction extends LHPNFile {
 			if (abstPane.absListModel.contains(abstPane.xform17)
 					&& abstPane.isSimplify()) {
 				change = removeDominatedTransitions(change);
+				change = removeRedundantTransitions(change);
 			}
 			// Transform 18 - Remove Unread Variables
 			if (abstPane.absListModel.contains(abstPane.xform18)
@@ -728,6 +729,129 @@ public class Abstraction extends LHPNFile {
 										change = true;
 									}
 								}
+							}
+						}
+					}
+				}
+			}
+		}
+		return change;
+	}
+
+	private boolean removeRedundantTransitions(boolean change) {
+		for (String p : controlPlaces.keySet()) {
+			if (controlPlaces.get(p).containsKey("postset")) {
+				for (String t : controlPlaces.get(p).getProperty("postset")
+						.split("\\s")) {
+					for (String tP : controlPlaces.get(p)
+							.getProperty("postset").split("\\s")) {
+						if (enablings.containsKey(t)
+								|| enablings.containsKey(tP)) {
+							if (enablings.containsKey(t)
+									&& enablings.containsKey(tP)) {
+								if (!enablings.get(t).equals(enablings.get(tP))) {
+									continue;
+								}
+							} else {
+								continue;
+							}
+						}
+						if (booleanAssignments.containsKey(t)
+								|| booleanAssignments.containsKey(tP)) {
+							if (booleanAssignments.containsKey(t)
+									&& booleanAssignments.containsKey(tP)) {
+								if (!booleanAssignments.get(t).equals(
+										booleanAssignments.get(tP))) {
+									continue;
+								}
+							} else {
+								continue;
+							}
+						}
+						if (intAssignments.containsKey(t)
+								|| intAssignments.containsKey(tP)) {
+							if (intAssignments.containsKey(t)
+									&& intAssignments.containsKey(tP)) {
+								if (!intAssignments.get(t).equals(
+										intAssignments.get(tP))) {
+									continue;
+								}
+							} else {
+								continue;
+							}
+						}
+						if (contAssignments.containsKey(t)
+								|| contAssignments.containsKey(tP)) {
+							if (contAssignments.containsKey(t)
+									&& contAssignments.containsKey(tP)) {
+								if (!contAssignments.get(t).equals(
+										contAssignments.get(tP))) {
+									continue;
+								}
+							} else {
+								continue;
+							}
+						}
+						if (rateAssignments.containsKey(t)
+								|| rateAssignments.containsKey(tP)) {
+							if (rateAssignments.containsKey(t)
+									&& rateAssignments.containsKey(tP)) {
+								if (!rateAssignments.get(t).equals(
+										rateAssignments.get(tP))) {
+									continue;
+								}
+							} else {
+								continue;
+							}
+						}
+						if (!t.equals(tP) && delays.containsKey(t)
+								&& delays.containsKey(tP)) {
+							String delayT = delays.get(t);
+							String delayTP = delays.get(tP);
+							Pattern rangePattern = Pattern
+									.compile("\\[([\\d]+),([\\d]+)\\]");
+							Matcher delayTMatcher = rangePattern
+									.matcher(delayT);
+							Matcher delayTpMatcher = rangePattern
+									.matcher(delayTP);
+							if (delayTMatcher.find() && delayTpMatcher.find()) {
+								Integer lower, upper;
+								Integer lower1 = Integer
+										.parseInt(delayTpMatcher.group(1));
+								Integer upper1 = Integer
+										.parseInt(delayTpMatcher.group(2));
+								Integer lower2 = Integer.parseInt(delayTMatcher
+										.group(1));
+								Integer upper2 = Integer.parseInt(delayTMatcher
+										.group(2));
+								if (lower1 < lower2) {
+									lower = lower1;
+								} else {
+									lower = lower2;
+								}
+								if (upper1 > upper2) {
+									upper = upper1;
+								} else {
+									upper = upper2;
+								}
+								if (controlFlow.get(tP).containsKey("preset")) {
+									for (String s : controlFlow.get(tP)
+											.getProperty("preset").split("\\s")) {
+										removeControlFlow(s, tP);
+									}
+								}
+								if (controlFlow.get(tP).containsKey("postset")) {
+									for (String s : controlFlow.get(tP)
+											.getProperty("postset")
+											.split("\\s")) {
+										removeControlFlow(tP, s);
+									}
+								}
+								String delay = "[" + lower.toString() + ","
+										+ upper.toString() + "]";
+								changeDelay(t, delay);
+								removeTransition(tP);
+								change = true;
 							}
 						}
 					}
