@@ -6261,6 +6261,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 									&& tree.getFile().substring(tree.getFile().length() - 4)
 											.equals(".gcm")
 									|| tree.getFile().length() >= 4
+									&& tree.getFile().substring(tree.getFile().length() - 4).equals(".lpn")
+									|| tree.getFile().length() >= 4
 									&& tree.getFile().substring(tree.getFile().length() - 4)
 											.equals(".vhd")
 									|| tree.getFile().length() >= 4
@@ -6292,6 +6294,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 									&& rename.substring(rename.length() - 4).equals(".xml")
 									|| rename.length() >= 4
 									&& rename.substring(rename.length() - 4).equals(".gcm")
+									|| rename.length() >= 4
+									&& rename.substring(rename.length() - 4).equals(".lpn")
 									|| rename.length() >= 4
 									&& rename.substring(rename.length() - 4).equals(".vhd")
 									|| rename.length() >= 4
@@ -6420,6 +6424,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 															".lpn")) {
 										((LHPNEditor) tab.getComponentAt(i)).reload(rename
 												.substring(0, rename.length() - 4));
+										tab.setTitleAt(i, rename);
 									}
 									else if (tab.getComponentAt(i) instanceof JTabbedPane) {
 										JTabbedPane t = new JTabbedPane();
