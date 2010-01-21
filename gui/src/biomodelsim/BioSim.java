@@ -6359,6 +6359,21 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 										+ rename
 										+ separator
 										+ tree.getFile().split(separator)[tree.getFile().split(
+												separator).length - 1] + ".ver").exists()) {
+									new File(root
+											+ separator
+											+ rename
+											+ separator
+											+ tree.getFile().split(separator)[tree.getFile().split(
+													separator).length - 1] + ".ver")
+											.renameTo(new File(root + separator + rename
+													+ separator + rename + ".ver"));
+								}
+								if (new File(root
+										+ separator
+										+ rename
+										+ separator
+										+ tree.getFile().split(separator)[tree.getFile().split(
 												separator).length - 1] + ".grf").exists()) {
 									new File(root
 											+ separator
@@ -6518,6 +6533,10 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 											t.setSelectedIndex(selected);
 											tab.setComponentAt(i, t);
 										}
+										tab.setTitleAt(i, rename);
+										tab.getComponentAt(i).setName(rename);
+									}
+									else {
 										tab.setTitleAt(i, rename);
 										tab.getComponentAt(i).setName(rename);
 									}

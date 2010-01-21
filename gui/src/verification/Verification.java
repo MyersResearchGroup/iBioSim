@@ -1632,7 +1632,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		// parameter file!",
 		// "Error Saving File", JOptionPane.ERROR_MESSAGE);
 		// }
-		backgroundField.setText(newname);
+		//backgroundField.setText(newname);
 	}
 
 	public void viewCircuit() {
