@@ -2291,248 +2291,277 @@ public class ExprTree {
 		}
 	}
 
-	public String becomesFalse(HashMap<String, String> variables) {
+	public boolean becomesFalse(HashMap<String, String> variables) {
 		switch (isit) {
 		case 'b': // Boolean
 			if (variables.containsKey(variable))
 				if (variables.get(variable).toString().toLowerCase().equals(
 						"false"))
-					return "true";
-			return "false";
+					return true;
+			return false;
 		case 't': // Truth value
 			if (lvalue == 0)
-				return "true";
-			return "false";
+				return true;
+			return false;
 		case 'l': // Logical
-		case 'w': // bitWise
 			if (op.equals("||")) {
-				if (r1.becomesFalse(variables).equals("true")
-						&& r2.becomesFalse(variables).equals("true"))
-					return "true";
-				return "false";
+				if (r1.becomesFalse(variables) && r2.becomesFalse(variables)) {
+					return true;
+				}
+				return false;
 			} else if (op.equals("&&")) {
-				if (r1.becomesFalse(variables).equals("true")
-						|| r2.becomesFalse(variables).equals("true"))
-					return "true";
-				return "false";
+				if (r1.becomesFalse(variables) || r2.becomesFalse(variables))
+					return true;
+				return false;
 			} else if (op.equals("==")) {
-				if (!r1.isEqual(r2))
-					return "true";
-				return "false";
+				if (!(r1.isEqual(r2) || r1.evaluateExp(variables) == r2
+						.evaluateExp(variables)))
+					return true;
+				return false;
 			} else if (op.equals("!")) {
-				if (r1.becomesFalse(variables).equals("false"))
-					return "true";
-				return "false";
+				if (r1.becomesTrue(variables))
+					return true;
+				return false;
+			} else if (op.equals("->")) {
+				if (r1.becomesFalse(variables) || r2.becomesTrue(variables)) {
+					return true;
+				}
+				return false;
+			}
+		case 'w': // bitWise
+			if (op.equals("&")) {
+				if (!(evaluateExp(variables) == 0.0)) {
+					return true;
+				}
+				return false;
+			} else if (op.equals("|")) {
+				if (!(evaluateExp(variables) == 0.0)) {
+					return true;
+				}
+				return false;
+			} else if (op.equals("^")) {
+				if (!(evaluateExp(variables) == 0.0)) {
+					return true;
+				}
+				return false;
+			} else if (op.equals("~")) {
+				if (!(evaluateExp(variables) == 0.0)) {
+					return true;
+				}
+				return false;
+			} else if (op.equals("[]")) {
+				if (!(evaluateExp(variables) == 0.0)) {
+					return true;
+				}
+				return false;
 			}
 		case 'r': // Relational
-			// return "unknown";
 			if (r1.isit == 'i') {
-				double left = 0.0;
-				double right = 0.0;
-				boolean flagLeft = true;
-				boolean flagRight = true;
-				if (r1 != null) {
-					for (String s : r1.getVars()) {
-						if (!variables.containsKey(s)) {
-							flagLeft = false;
-						}
-					}
-					if (flagLeft) {
-						left = r1.evaluateExp(variables);
-					} else {
-						left = Double.NaN;
-					}
-				} else {
-					left = Double.NaN;
-				}
-				if (r2 != null) {
-					for (String s : r2.getVars()) {
-						if (!variables.containsKey(s)) {
-							flagRight = false;
-						}
-					}
-					if (flagRight) {
-						right = r2.evaluateExp(variables);
-					} else {
-						right = Double.NaN;
-					}
-				} else {
-					right = Double.NaN;
+				if (!variables.containsKey(r1.variable)) {
+					return false;
 				}
 				if (op.equals("==")) {
-					if (left != right) {
-						return "true";
+					if (r1.evaluateExp(variables) == r2.evaluateExp(variables)) {
+						return false;
 					}
+					return true;
 				} else if (op.equals(">=")) {
-					if (left < right) {
-						return "true";
+					if (r1.evaluateExp(variables) >= r2.evaluateExp(variables)) {
+						return false;
 					}
+					return true;
 				} else if (op.equals("<=")) {
-					if (left > right) {
-						return "true";
+					if (r1.evaluateExp(variables) <= r2.evaluateExp(variables)) {
+						return false;
 					}
+					return true;
 				} else if (op.equals(">")) {
-					if (left <= right) {
-						return "true";
+					if (r1.evaluateExp(variables) > r2.evaluateExp(variables)) {
+						return false;
 					}
+					return true;
 				} else if (op.equals("<")) {
-					if (left >= right) {
-						return "true";
+					if (r1.evaluateExp(variables) < r2.evaluateExp(variables)) {
+						return false;
 					}
+					return true;
 				}
-				return "unknown";
-			} 
-			else {
-				return "unknown";
+				return true;
+			} else {
+				return true;
 			}
 		case 'i': // Integer
 			if (variables.containsKey(variable)) {
 				if (Integer.parseInt(variables.get(variable)) == 0.0) {
-					return "true";
+					return true;
+				} else {
+					return false;
 				}
-				else {
-					return "false";
-				}
-			}
-			else {
-				return "false";
+			} else {
+				return false;
 			}
 		case 'c': // Continuous
-			return "unknown";
+			return true;
 		case 'a': // Arithmetic
-			if (evaluateExp(variables) == 0.0) {
-				return "true";
+			boolean contains = false;
+			for (String s : getVars()) {
+				if (variables.containsKey(s)) {
+					contains = true;
+					break;
+				}
 			}
-			else {
-				return "false";
+			if (!contains) {
+				return false;
+			}
+			if (!(evaluateExp(variables) == 0.0)) {
+				return false;
+			} else {
+				return true;
 			}
 		case 'n': // Number
 			if (uvalue == 0.0 && lvalue == 0.0) {
-				return "true";
-			}
-			else {
-				return "false";
+				return true;
+			} else {
+				return false;
 			}
 		}
-		return "false";
+		return false;
 	}
 
-	public String becomesTrue(HashMap<String, String> variables) {
+	public boolean becomesTrue(HashMap<String, String> variables) {
 		switch (isit) {
 		case 'b': // Boolean
 			if (variables.containsKey(variable)) {
 				if (variables.get(variable).toString().matches("[\\d[\\.]]+")) {
 					if (Double.parseDouble(variables.get(variable).toString()) != 0) {
-						return "true";
+						return true;
 					}
 				}
 				if (variables.get(variable).toString().toLowerCase().equals(
 						"true"))
-					return "true";
+					return true;
 			}
-			return "false";
+			return false;
 		case 'i': // Integer
 			if (variables.containsKey(variable)) {
 				if (!variables.get(variable).equals("0.0")) {
-					return "true";
+					return true;
 				}
 			}
+			return false;
 		case 'c': // Continuous
-			return "unknown";
+			return true;
 		case 'n': // Number
 		case 't': // Truth value
 			if (uvalue != 0)
-				return "true";
-			return "false";
+				return true;
+			return false;
 		case 'l': // Logical
-		case 'w': // bitWise
 			if (op.equals("||")) {
-				if (!r1.becomesTrue(variables).equals("false")
-						|| !r2.becomesTrue(variables).equals("false"))
-					return "true";
-				return "false";
+				if (r1.becomesTrue(variables) || r2.becomesTrue(variables))
+					return true;
+				return false;
 			} else if (op.equals("&&")) {
-				if (!r1.becomesTrue(variables).equals("false")
-						&& !r2.becomesTrue(variables).equals("false"))
-					return "true";
-				return "false";
+				if (r1.becomesTrue(variables) && r2.becomesTrue(variables))
+					return true;
+				return false;
 			} else if (op.equals("==")) {
-				if (r1.isEqual(r2, variables))
-					return "true";
-				return "false";
+				if (r1.isEqual(r2, variables)
+						|| r1.evaluateExp(variables) == r2
+								.evaluateExp(variables))
+					return true;
+				return false;
 			} else if (op.equals("!")) {
-				if (r1.becomesTrue(variables).equals("false"))
-					return "true";
-				return "false";
+				if (r1.becomesFalse(variables))
+					return true;
+				return false;
+			} else if (op.equals("->")) {
+				if (r1.becomesTrue(variables) || r2.becomesFalse(variables)) {
+					return true;
+				} else {
+					return false;
+				}
+			}
+		case 'w': // bitWise
+			if (op.equals("&")) {
+				if (evaluateExp(variables) == 0.0) {
+					return false;
+				}
+				return true;
+			} else if (op.equals("|")) {
+				if (evaluateExp(variables) == 0.0) {
+					return false;
+				}
+				return true;
+			} else if (op.equals("^")) {
+				if (evaluateExp(variables) == 0.0) {
+					return false;
+				}
+				return true;
+			} else if (op.equals("~")) {
+				if (evaluateExp(variables) == 0.0) {
+					return false;
+				}
+				return true;
+			} else if (op.equals("[]")) {
+				if (evaluateExp(variables) == 0.0) {
+					return false;
+				}
+				return true;
 			}
 		case 'r': // Relational
-			return "unknown";
-			// double left = 0.0;
-			// double right = 0.0;
-			// boolean flagLeft = true;
-			// boolean flagRight = true;
-			// if (r1 != null) {
-			// for (String s : r1.getVars()) {
-			// if (!variables.containsKey(s)) {
-			// flagLeft = false;
-			// }
-			// }
-			// if (flagLeft) {
-			// left = r1.evaluateExp(variables);
-			// }
-			// else {
-			// left = Double.NaN;
-			// }
-			// }
-			// else {
-			// left = Double.NaN;
-			// }
-			// if (r2 != null) {
-			// for (String s : r2.getVars()) {
-			// if (!variables.containsKey(s)) {
-			// flagRight = false;
-			// }
-			// }
-			// if (flagRight) {
-			// right = r2.evaluateExp(variables);
-			// }
-			// else {
-			// right = Double.NaN;
-			// }
-			// }
-			// else {
-			// right = Double.NaN;
-			// }
-			// if (op.equals("==")) {
-			// if (left == right) {
-			// return true;
-			// }
-			// }
-			// else if (op.equals(">=")) {
-			// if (left >= right) {
-			// return true;
-			// }
-			// }
-			// else if (op.equals("<=")) {
-			// if (left <= right) {
-			// return true;
-			// }
-			// }
-			// else if (op.equals(">")) {
-			// if (left > right) {
-			// return true;
-			// }
-			// }
-			// else if (op.equals("<")) {
-			// if (left < right) {
-			// return true;
-			// }
-			// }
-			// return false;
+			if (r1.isit == 'i') {
+				if (!variables.containsKey(r1.variable)) {
+					return false;
+				}
+				if (op.equals("==")) {
+					if (!(r1.evaluateExp(variables) == r2.evaluateExp(variables))) {
+						return false;
+					}
+					return true;
+				} else if (op.equals(">=")) {
+					if (!(r1.evaluateExp(variables) >= r2.evaluateExp(variables))) {
+						return false;
+					}
+					return true;
+				} else if (op.equals("<=")) {
+					if (!(r1.evaluateExp(variables) <= r2.evaluateExp(variables))) {
+						return false;
+					}
+					return true;
+				} else if (op.equals(">")) {
+					if (!(r1.evaluateExp(variables) > r2.evaluateExp(variables))) {
+						return false;
+					}
+					return true;
+				} else if (op.equals("<")) {
+					if (!(r1.evaluateExp(variables) < r2.evaluateExp(variables))) {
+						return false;
+					}
+					return true;
+				}
+				return true;
+			} else {
+				return true;
+			}
 		case 'a': // Arithmetic
-			return "unknown";
+			boolean contains = false;
+			for (String s : getVars()) {
+				if (variables.containsKey(s)) {
+					contains = true;
+					break;
+				}
+			}
+			if (!contains) {
+				return false;
+			}
+			if (!(evaluateExp(variables) != 0.0)) {
+				return false;
+			} else {
+				return true;
+			}
 		}
-		return "false";
+		return true;
 	}
 
 	private String getElement() {
