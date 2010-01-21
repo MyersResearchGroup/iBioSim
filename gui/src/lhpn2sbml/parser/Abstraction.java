@@ -650,6 +650,7 @@ public class Abstraction extends LHPNFile {
 		}
 		if (abstPane.absListModel.contains(abstPane.xform15)) {
 			for (String t : removeTrans) {
+				if (controlFlow.containsKey(t)) {
 				if (controlFlow.get(t).containsKey("preset")) {
 					for (String p : controlFlow.get(t).getProperty("preset")
 							.split("\\s")) {
@@ -675,6 +676,7 @@ public class Abstraction extends LHPNFile {
 							.split("\\s")) {
 						removeControlFlow(t, p);
 					}
+				}
 				}
 				removeTransition(t);
 			}
