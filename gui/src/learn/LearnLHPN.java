@@ -489,7 +489,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
                 .addContainerGap())
         );
 		divisionsL = new ArrayList<ArrayList<Double>>(); // SB
-		thresholds = new HashMap<String, ArrayList<Double>>();
+		//thresholds = new HashMap<String, ArrayList<Double>>();
 		reqdVarsL = new ArrayList<Variable>();
 		/*
 		 * JLabel activationLabel = new JLabel("Ratio For Activation (Ta):");
@@ -653,7 +653,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			variablesList.add(s);
 			reqdVarsL.add(new Variable(s));
 			divisionsL.add(new ArrayList<Double>());
-			thresholds.put(s, new ArrayList<Double>());
+			//thresholds.put(s, new ArrayList<Double>());
 		}
 		// System.out.println(variablesList);
 		try {
@@ -748,7 +748,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 								//		((JTextField)(((JPanel)variablesPanel.getComponent(j+1)).getComponent(i+1))).setText(savedBins[i]);
 								if (j < variablesMap.size()) {
 									divisionsL.get(j).add(Double.parseDouble(savedBins[i]));
-									thresholds.get(st1).add(Double.parseDouble(savedBins[i]));
+									//thresholds.get(st1).add(Double.parseDouble(savedBins[i]));
 								}
 							}
 							j++;
@@ -929,7 +929,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 					if (divisionsL.get(i).size() >= combox_selected){
 						for (int j = divisionsL.get(i).size() - 1; j >= (combox_selected-1) ; j--){
 							divisionsL.get(i).remove(j); //combox_selected);
-							thresholds.get(((JTextField) variables.get(i).get(0)).getText().trim()).remove(j);
+							//thresholds.get(((JTextField) variables.get(i).get(0)).getText().trim()).remove(j);
 						}
 					}
 				}
@@ -942,7 +942,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 					if (divisionsL.get(i).size() >= combox_selected){
 						for (int j = divisionsL.get(i).size() - 1; j >= (combox_selected-1) ; j--){
 							divisionsL.get(i).remove(j); //combox_selected);
-							thresholds.get(variablesList.get(i)).remove(j);
+							//thresholds.get(variablesList.get(i)).remove(j);
 						}
 					}
 				}
@@ -995,11 +995,11 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 								//divisionsL.get(i).set(j-3,Double.parseDouble(((JTextField) variables.get(i).get(j)).getText().trim()));
 									if (divisionsL.get(i).size() <= (j-3)){
 										divisionsL.get(i).add(Double.parseDouble(((JTextField) variables.get(i).get(j)).getText().trim()));
-										thresholds.get(((JTextField) variables.get(i).get(0)).getText().trim()).add(Double.parseDouble(((JTextField) variables.get(i).get(j)).getText().trim()));
+										//thresholds.get(((JTextField) variables.get(i).get(0)).getText().trim()).add(Double.parseDouble(((JTextField) variables.get(i).get(j)).getText().trim()));
 									}
 									else{
 										divisionsL.get(i).set(j-3,Double.parseDouble(((JTextField) variables.get(i).get(j)).getText().trim()));
-										thresholds.get(((JTextField) variables.get(i).get(0)).getText().trim()).set(j-3,Double.parseDouble(((JTextField) variables.get(i).get(j)).getText().trim()));
+										//thresholds.get(((JTextField) variables.get(i).get(0)).getText().trim()).set(j-3,Double.parseDouble(((JTextField) variables.get(i).get(j)).getText().trim()));
 									}
 								}
 							}
@@ -1151,11 +1151,11 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 					//		divisionsL.get(i).set(j-3,Double.parseDouble(((JTextField) variables.get(i).get(j)).getText().trim()));
 							if (divisionsL.get(i).size() <= (j-3)){
 								divisionsL.get(i).add(Double.parseDouble(((JTextField) variables.get(i).get(j)).getText().trim()));
-								thresholds.get(((JTextField) variables.get(i).get(0)).getText().trim()).add(Double.parseDouble(((JTextField) variables.get(i).get(j)).getText().trim()));
+								//thresholds.get(((JTextField) variables.get(i).get(0)).getText().trim()).add(Double.parseDouble(((JTextField) variables.get(i).get(j)).getText().trim()));
 							}
 							else{
 								divisionsL.get(i).set(j-3,Double.parseDouble(((JTextField) variables.get(i).get(j)).getText().trim()));
-								thresholds.get(((JTextField) variables.get(i).get(0)).getText().trim()).set(j-3,Double.parseDouble(((JTextField) variables.get(i).get(j)).getText().trim()));
+								//thresholds.get(((JTextField) variables.get(i).get(0)).getText().trim()).set(j-3,Double.parseDouble(((JTextField) variables.get(i).get(j)).getText().trim()));
 							}
 						}
 					}
@@ -1840,11 +1840,11 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 						} else {
 							if (divisionsL.get(i).size() <= (j-3)){
 								divisionsL.get(i).add(Double.parseDouble(((JTextField) variables.get(i).get(j)).getText().trim()));
-								thresholds.get(((JTextField) variables.get(i).get(0)).getText().trim()).add(Double.parseDouble(((JTextField) variables.get(i).get(j)).getText().trim()));
+								//thresholds.get(((JTextField) variables.get(i).get(0)).getText().trim()).add(Double.parseDouble(((JTextField) variables.get(i).get(j)).getText().trim()));
 							}
 							else{
 								divisionsL.get(i).set(j-3,Double.parseDouble(((JTextField) variables.get(i).get(j)).getText().trim()));
-								thresholds.get(((JTextField) variables.get(i).get(0)).getText().trim()).set(j-3,Double.parseDouble(((JTextField) variables.get(i).get(j)).getText().trim()));
+								//thresholds.get(((JTextField) variables.get(i).get(0)).getText().trim()).set(j-3,Double.parseDouble(((JTextField) variables.get(i).get(j)).getText().trim()));
 							}
 						}
 					}
@@ -1858,11 +1858,11 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 						} else {
 							if (divisionsL.get(i).size() <= (j-3)){
 								divisionsL.get(i).add(Double.parseDouble(((JTextField) variables.get(i).get(j)).getText().trim()));
-								thresholds.get(((JTextField) variables.get(i).get(0)).getText().trim()).add(Double.parseDouble(((JTextField) variables.get(i).get(j)).getText().trim()));
+								//thresholds.get(((JTextField) variables.get(i).get(0)).getText().trim()).add(Double.parseDouble(((JTextField) variables.get(i).get(j)).getText().trim()));
 							}
 							else{
 								divisionsL.get(i).set(j-3,Double.parseDouble(((JTextField) variables.get(i).get(j)).getText().trim()));
-								thresholds.get(((JTextField) variables.get(i).get(0)).getText().trim()).set(j-3,Double.parseDouble(((JTextField) variables.get(i).get(j)).getText().trim()));
+								//thresholds.get(((JTextField) variables.get(i).get(0)).getText().trim()).set(j-3,Double.parseDouble(((JTextField) variables.get(i).get(j)).getText().trim()));
 							}
 						}
 					}
@@ -2202,7 +2202,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		 * JOptionPane.ERROR_MESSAGE); } } else {
 		 */
 		divisionsL = new ArrayList<ArrayList<Double>>();	// SB
-		thresholds = new HashMap<String, ArrayList<Double>>(); // SB
+		//thresholds = new HashMap<String, ArrayList<Double>>(); // SB
 		reqdVarsL = new ArrayList<Variable>();				// SB
 		LHPNFile lhpn = new LHPNFile();
 		lhpn.load(learnFile);
@@ -2211,7 +2211,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			variablesList.add(s);
 			reqdVarsL.add(new Variable(s));					// SB
 			divisionsL.add(new ArrayList<Double>());		// SB
-			thresholds.put(s,new ArrayList<Double>());
+			//thresholds.put(s,new ArrayList<Double>());
 		}
 	// Loading the inputs and bins from the existing .lrn file.	
 		Properties load = new Properties();
@@ -2247,7 +2247,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 						//		((JTextField)(((JPanel)variablesPanel.getComponent(j+1)).getComponent(i+1))).setText(savedBins[i]);
 						if (varNum < variablesMap.size()) {	// chk for varNum or j ????
 							divisionsL.get(varNum).add(Double.parseDouble(savedBins[i]));
-							thresholds.get(st1).add(Double.parseDouble(savedBins[i]));
+							//thresholds.get(st1).add(Double.parseDouble(savedBins[i]));
 						}
 					}
 					j++;
