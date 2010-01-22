@@ -18,10 +18,12 @@ public class CSVParser extends Parser {
 					"Reading Reb2sac Output Data From " + new File(filename).getName(), fileInput);
 			InputStream input = new BufferedInputStream(prog);
 			boolean reading = true;
-			char cha;
+			char cha = 0;
+			boolean usingQuotes = false;
 			while (reading) {
 				String word = "";
 				boolean readWord = true;
+				boolean withinWord = false;
 				boolean moveToData = false;
 				while (readWord && !moveToData) {
 					int read = input.read();
@@ -30,16 +32,56 @@ public class CSVParser extends Parser {
 						readWord = false;
 					}
 					cha = (char) read;
-					if (cha == '\n') {
-						moveToData = true;
-					}
-					else if (cha == ',') {
-						readWord = false;
-					}
-					else if (cha == ' ' && word.equals("")) {
+//					   if (cha == '\n') {
+//					moveToData = true;
+//				}
+//				else if (cha == ',') {
+//					readWord = false;
+//				}
+//					else if (cha == ' ' && word.equals("")) {
+//					}
+//				else {
+//					word += cha;
+//				}
+					if (withinWord) {
+						if (usingQuotes) {
+							if (cha == '\"') {
+								withinWord = false;
+								readWord = false;
+								usingQuotes = false;
+							}
+							else {
+								word += cha;
+							}
+						}
+						else {
+							if (cha == '\n') {
+								moveToData = true;
+							} else if (cha  == ',') {
+								withinWord = false;
+								readWord = false;
+							}
+							else if (cha == ' ' && word.equals("")) {
+							}
+							else {
+								word += cha;
+							}
+						}
 					}
 					else {
-						word += cha;
+						if (cha == '\n') {
+							moveToData = true;
+						}
+						else if (Character.isWhitespace(cha) || cha == ',') {
+						}
+						else if (cha == '\"') {
+							usingQuotes = true;
+							withinWord = true;
+						}
+						else {
+							withinWord = true;
+							word += cha;
+						}
 					}
 				}
 				if (!word.equals("")) {
@@ -51,6 +93,7 @@ public class CSVParser extends Parser {
 					}
 				}
 				int counter = 0;
+				int dataPoints = 0;
 				while (moveToData) {
 					word = "";
 					readWord = true;
@@ -98,6 +141,20 @@ public class CSVParser extends Parser {
 						}
 						(data.get(insert)).add(Double.parseDouble(word));
 						counter++;
+						dataPoints++;
+						if (cha == '\n') {
+							if (dataPoints > species.size()) {
+								JOptionPane.showMessageDialog(component, "Time point includes more data than number of species",
+										 "Extra Data", JOptionPane.ERROR_MESSAGE);
+								throw new ArrayIndexOutOfBoundsException();
+							}
+							if (dataPoints < species.size()) {
+								JOptionPane.showMessageDialog(component, "Time point includes less data than number of species",
+										 "Missing Data", JOptionPane.ERROR_MESSAGE);
+								throw new ArrayIndexOutOfBoundsException();
+							}
+							dataPoints = 0;
+						}
 					}
 				}
 			}
