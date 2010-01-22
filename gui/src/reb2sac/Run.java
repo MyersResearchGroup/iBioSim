@@ -400,7 +400,7 @@ public class Run implements ActionListener {
 			JRadioButton nary, int naryRun, String[] intSpecies, Log log, JCheckBox usingSSA,
 			String ssaFile, BioSim biomodelsim, JTabbedPane simTab, String root,
 			JProgressBar progress, int steps, String simName, GCM2SBMLEditor gcmEditor,
-			String direct) {
+			String direct, double timeLimit) {
 		Runtime exec = Runtime.getRuntime();
 		int exitValue = 255;
 		while (outDir.split(separator)[outDir.split(separator).length - 1].equals(".")) {
@@ -653,12 +653,26 @@ public class Run implements ActionListener {
 				InputStream reb = reb2sac.getInputStream();
 				InputStreamReader isr = new InputStreamReader(reb);
 				BufferedReader br = new BufferedReader(isr);
-				int count = 0;
-				while (br.readLine() != null) {
-					if (steps > 0) {
-						count++;
-						progress.setValue(count);
+				// int count = 0;
+				String line;
+				int time = 0;
+				int oldTime = 0;
+				while ((line = br.readLine()) != null) {
+					try {
+						time = (int) (Double.parseDouble(line.substring(line.indexOf('=') + 1, line
+								.length())));
+						while (oldTime > time) {
+							time += timeLimit;
+						}
+						oldTime = time;
 					}
+					catch (Exception e) {
+					}
+					progress.setValue(time);
+					// if (steps > 0) {
+					// count++;
+					// progress.setValue(count);
+					// }
 					// log.addText(output);
 				}
 				InputStream reb2 = reb2sac.getErrorStream();
