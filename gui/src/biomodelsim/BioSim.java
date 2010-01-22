@@ -502,14 +502,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		viewVHDL = new JMenuItem("VHDL-AMS Model"); // SB
 		viewVerilog = new JMenuItem("Verilog-AMS Model"); // SB
 		viewLHPN = new JMenuItem("LHPN Model"); // SB
-		if (!async) {
-			viewModGraph = new JMenuItem("Model");
-			viewModBrowser = new JMenuItem("Model in Browser");
-		}
-		else {
-			viewModGraph = new JMenuItem("Using GraphViz");
-			viewModBrowser = new JMenuItem("Using Browser");
-		}
+		viewModGraph = new JMenuItem("Model");
+		viewModBrowser = new JMenuItem("Model in Browser");
 		createAnal = new JMenuItem("Analysis Tool");
 		createLearn = new JMenuItem("Learn Tool");
 		createSbml = new JMenuItem("Create SBML File");
@@ -591,12 +585,12 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		check.setActionCommand("check");
 		refresh.setActionCommand("refresh");
 		export.setActionCommand("export");
-		// if (lema) {
-		// viewModGraph.setActionCommand("viewModel");
-		// }
-		// else {
-		viewModGraph.setActionCommand("graph");
-		// }
+		if (atacs) {
+		  viewModGraph.setActionCommand("viewModel");
+		}
+		else {
+		  viewModGraph.setActionCommand("graph");
+		}
 		viewModBrowser.setActionCommand("browse");
 		createLearn.setActionCommand("createLearn");
 		createSbml.setActionCommand("createSBML");
@@ -936,9 +930,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			view.add(viewTrace);
 		}
 		else if (atacs) {
-			view.add(viewModel);
-			viewModel.add(viewModGraph);
-			viewModel.add(viewModBrowser);
+			view.add(viewModGraph);
 			view.add(viewCircuit);
 			view.add(viewRules);
 			view.add(viewTrace);
