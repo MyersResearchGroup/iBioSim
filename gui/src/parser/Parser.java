@@ -67,7 +67,7 @@ public class Parser {
 			out.write(")");
 			out.close();
 		}
-		catch (IOException e) {
+		catch (Exception e) {
 			JOptionPane.showMessageDialog(component, "Error Outputting Data Into A TSD File!",
 					"Error Outputting Data", JOptionPane.ERROR_MESSAGE);
 		}

@@ -17,7 +17,7 @@ public class TSDParser extends Parser {
 					"Reading Reb2sac Output Data From " + new File(filename).getName(), fileInput);
 			InputStream input = new BufferedInputStream(prog);
 			boolean reading = true;
-			char cha;
+			char cha = 0;
 			while (reading) {
 				String word = "";
 				boolean readWord = true;
@@ -62,6 +62,7 @@ public class TSDParser extends Parser {
 					}
 				}
 				int counter = 0;
+				int dataPoints = 0;
 				while (moveToData) {
 					word = "";
 					readWord = true;
@@ -109,6 +110,20 @@ public class TSDParser extends Parser {
 						}
 						(data.get(insert)).add(Double.parseDouble(word));
 						counter++;
+						dataPoints++;
+						if (cha == ')') {
+							if (dataPoints > species.size()) {
+								JOptionPane.showMessageDialog(component, "Time point includes more data than number of species",
+										 "Extra Data", JOptionPane.ERROR_MESSAGE);
+								throw new ArrayIndexOutOfBoundsException();
+							}
+							if (dataPoints < species.size()) {
+								JOptionPane.showMessageDialog(component, "Time point includes less data than number of species",
+										 "Missing Data", JOptionPane.ERROR_MESSAGE);
+								throw new ArrayIndexOutOfBoundsException();
+							}
+							dataPoints = 0;
+						}
 					}
 				}
 			}

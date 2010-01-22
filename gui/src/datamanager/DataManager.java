@@ -836,6 +836,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 								sort(s);
 								files.setListData(s);
 								this.list = s;
+								previous = "";
 								files.setSelectedValue(importFile, true);
 								if (s.length > 0) {
 									biosim.refreshLearn(directory.split(separator)[directory
@@ -846,6 +847,8 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 						catch (IOException e1) {
 							JOptionPane.showMessageDialog(biosim.frame(), "Unable to import file.",
 									"Error", JOptionPane.ERROR_MESSAGE);
+						}
+						catch (ArrayIndexOutOfBoundsException e1) {
 						}
 					}
 					else {
