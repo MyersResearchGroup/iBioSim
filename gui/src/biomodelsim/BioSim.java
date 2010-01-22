@@ -586,10 +586,10 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		refresh.setActionCommand("refresh");
 		export.setActionCommand("export");
 		if (atacs) {
-		  viewModGraph.setActionCommand("viewModel");
+			viewModGraph.setActionCommand("viewModel");
 		}
 		else {
-		  viewModGraph.setActionCommand("graph");
+			viewModGraph.setActionCommand("graph");
 		}
 		viewModBrowser.setActionCommand("browse");
 		createLearn.setActionCommand("createLearn");
@@ -3423,6 +3423,9 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					((Graph) component).refresh();
 				}
 			}
+			else if (comp instanceof Graph) {
+				((Graph) comp).refresh();
+			}
 		}
 		else if (e.getActionCommand().equals("check")) {
 			Component comp = tab.getSelectedComponent();
@@ -6253,7 +6256,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 									&& tree.getFile().substring(tree.getFile().length() - 4)
 											.equals(".gcm")
 									|| tree.getFile().length() >= 4
-									&& tree.getFile().substring(tree.getFile().length() - 4).equals(".lpn")
+									&& tree.getFile().substring(tree.getFile().length() - 4)
+											.equals(".lpn")
 									|| tree.getFile().length() >= 4
 									&& tree.getFile().substring(tree.getFile().length() - 4)
 											.equals(".vhd")
