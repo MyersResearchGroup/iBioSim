@@ -34,6 +34,7 @@ import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.Properties;
 import java.util.Scanner;
+import java.util.prefs.Preferences;
 
 import javax.swing.Icon;
 import javax.swing.JButton;
@@ -129,8 +130,6 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	private JTextField XMin, XMax, XScale, YMin, YMax, YScale;
 
 	private ArrayList<String> graphSpecies; // names of species in the graph
-
-	private String savedPics; // directory for saved pictures
 
 	private BioSim biomodelsim; // tstubd gui
 
@@ -4198,19 +4197,20 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			sizePanel.add(heightField);
 			Object[] options2 = { "Export", "Cancel" };
 			int value;
-			File file;
-			if (savedPics != null) {
-				file = new File(savedPics);
-			}
-			else {
-				file = null;
-			}
 			String export = "Export";
 			if (timeSeries) {
 				export += " TSD";
 			}
 			else {
 				export += " Probability";
+			}
+			File file;
+			Preferences biosimrc = Preferences.userRoot();
+			if (biosimrc.get("biosim.general.export_dir", "").equals("")) {
+				file = null;
+			}
+			else {
+				file = new File(biosimrc.get("biosim.general.export_dir", ""));
 			}
 			String filename = Buttons.browse(biomodelsim.frame(), file, null,
 					JFileChooser.FILES_ONLY, export, output);
@@ -4256,6 +4256,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			}
 			if (!filename.equals("")) {
 				file = new File(filename);
+				biosimrc.put("biosim.general.export_dir", filename);
 				boolean exportIt = true;
 				if (file.exists()) {
 					Object[] options = { "Overwrite", "Cancel" };
@@ -4350,7 +4351,6 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					else if ((output == 5) || (output == 6) || (output == 7)) {
 						exportDataFile(file, output);
 					}
-					savedPics = filename;
 				}
 			}
 		}
@@ -4383,13 +4383,6 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			sizePanel.add(heightField);
 			Object[] options2 = { "Export", "Cancel" };
 			int value;
-			File file;
-			if (savedPics != null) {
-				file = new File(savedPics);
-			}
-			else {
-				file = null;
-			}
 			String export = "Export";
 			if (timeSeries) {
 				export += " TSD";
@@ -4397,10 +4390,19 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			else {
 				export += " Probability";
 			}
+			File file;
+			Preferences biosimrc = Preferences.userRoot();
+			if (biosimrc.get("biosim.general.export_dir", "").equals("")) {
+				file = null;
+			}
+			else {
+				file = new File(biosimrc.get("biosim.general.export_dir", ""));
+			}
 			String filename = Buttons.browse(biomodelsim.frame(), file, null,
 					JFileChooser.FILES_ONLY, export, output);
 			if (!filename.equals("")) {
 				file = new File(filename);
+				biosimrc.put("biosim.general.export_dir", filename);
 				boolean exportIt = true;
 				if (file.exists()) {
 					Object[] options = { "Overwrite", "Cancel" };
@@ -4495,7 +4497,6 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					else if ((output == 5) || (output == 6) || (output == 7)) {
 						exportDataFile(file, output);
 					}
-					savedPics = filename;
 				}
 			}
 		}

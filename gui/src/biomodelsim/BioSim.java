@@ -3453,10 +3453,19 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					return;
 				}
 			}
-			String filename = Buttons.browse(frame, null, null, JFileChooser.DIRECTORIES_ONLY,
+			File file;
+			Preferences biosimrc = Preferences.userRoot();
+			if (biosimrc.get("biosim.general.project_dir", "").equals("")) {
+				file = null;
+			}
+			else {
+				file = new File(biosimrc.get("biosim.general.project_dir", ""));
+			}
+			String filename = Buttons.browse(frame, file, null, JFileChooser.DIRECTORIES_ONLY,
 					"New", -1);
 			if (!filename.trim().equals("")) {
 				filename = filename.trim();
+				biosimrc.put("biosim.general.project_dir", filename);
 				File f = new File(filename);
 				if (f.exists()) {
 					Object[] options = { "Overwrite", "Cancel" };
@@ -3538,17 +3547,20 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					return;
 				}
 			}
-			File f;
-			if (root == null) {
-				f = null;
-			}
-			else {
-				f = new File(root);
-			}
+			Preferences biosimrc = Preferences.userRoot();
 			String projDir = "";
 			if (e.getSource() == openProj) {
-				projDir = Buttons.browse(frame, f, null, JFileChooser.DIRECTORIES_ONLY, "Open", -1);
+				File file;
+				if (biosimrc.get("biosim.general.project_dir", "").equals("")) {
+					file = null;
+				}
+				else {
+					file = new File(biosimrc.get("biosim.general.project_dir", ""));
+				}
+				projDir = Buttons.browse(frame, file, null, JFileChooser.DIRECTORIES_ONLY, "Open",
+						-1);
 				if (projDir.endsWith(".prj")) {
+					biosimrc.put("biosim.general.project_dir", projDir);
 					String[] tempArray = projDir.split(separator);
 					projDir = "";
 					for (int i = 0; i < tempArray.length - 1; i++) {
@@ -3573,6 +3585,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			}
 			// log.addText(projDir);
 			if (!projDir.equals("")) {
+				biosimrc.put("biosim.general.project_dir", projDir);
 				if (new File(projDir).isDirectory()) {
 					boolean isProject = false;
 					for (String temp : new File(projDir).list()) {
@@ -4314,9 +4327,18 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		// if the import sbml menu item is selected
 		else if (e.getSource() == importSbml) {
 			if (root != null) {
-				String filename = Buttons.browse(frame, new File(root), null,
+				File importFile;
+				Preferences biosimrc = Preferences.userRoot();
+				if (biosimrc.get("biosim.general.import_dir", "").equals("")) {
+					importFile = null;
+				}
+				else {
+					importFile = new File(biosimrc.get("biosim.general.import_dir", ""));
+				}
+				String filename = Buttons.browse(frame, importFile, null,
 						JFileChooser.FILES_AND_DIRECTORIES, "Import SBML", -1);
 				if (!filename.trim().equals("")) {
+					biosimrc.put("biosim.general.import_dir", filename.trim());
 					if (new File(filename.trim()).isDirectory()) {
 						JTextArea messageArea = new JTextArea();
 						messageArea.append("Imported SBML files contain the errors listed below. ");
@@ -4587,8 +4609,19 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		// if the import dot menu item is selected
 		else if (e.getSource() == importDot) {
 			if (root != null) {
-				String filename = Buttons.browse(frame, new File(root), null,
+				File importFile;
+				Preferences biosimrc = Preferences.userRoot();
+				if (biosimrc.get("biosim.general.import_dir", "").equals("")) {
+					importFile = null;
+				}
+				else {
+					importFile = new File(biosimrc.get("biosim.general.import_dir", ""));
+				}
+				String filename = Buttons.browse(frame, importFile, null,
 						JFileChooser.FILES_AND_DIRECTORIES, "Import Genetic Circuit", -1);
+				if (filename != null && !filename.trim().equals("")) {
+					biosimrc.put("biosim.general.import_dir", filename.trim());
+				}
 				if (new File(filename.trim()).isDirectory()) {
 					for (String s : new File(filename.trim()).list()) {
 						if (!(filename.trim() + separator + s).equals("")
@@ -4666,8 +4699,16 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		// if the import vhdl menu item is selected
 		else if (e.getSource() == importVhdl) {
 			if (root != null) {
-				String filename = Buttons.browse(frame, new File(root), null,
-						JFileChooser.FILES_ONLY, "Import VHDL Model", -1);
+				File importFile;
+				Preferences biosimrc = Preferences.userRoot();
+				if (biosimrc.get("biosim.general.import_dir", "").equals("")) {
+					importFile = null;
+				}
+				else {
+					importFile = new File(biosimrc.get("biosim.general.import_dir", ""));
+				}
+				String filename = Buttons.browse(frame, importFile, null, JFileChooser.FILES_ONLY,
+						"Import VHDL Model", -1);
 				if (filename.length() > 3
 						&& !filename.substring(filename.length() - 4, filename.length()).equals(
 								".vhd")) {
@@ -4677,6 +4718,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					return;
 				}
 				else if (!filename.equals("")) {
+					biosimrc.put("biosim.general.import_dir", filename);
 					String[] file = filename.split(separator);
 					try {
 						FileOutputStream out = new FileOutputStream(new File(root + separator
@@ -4705,8 +4747,16 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		// if the import lhpn menu item is selected
 		else if (e.getSource() == importLhpn) {
 			if (root != null) {
-				String filename = Buttons.browse(frame, new File(root), null,
-						JFileChooser.FILES_ONLY, "Import LHPN", -1);
+				File importFile;
+				Preferences biosimrc = Preferences.userRoot();
+				if (biosimrc.get("biosim.general.import_dir", "").equals("")) {
+					importFile = null;
+				}
+				else {
+					importFile = new File(biosimrc.get("biosim.general.import_dir", ""));
+				}
+				String filename = Buttons.browse(frame, importFile, null, JFileChooser.FILES_ONLY,
+						"Import LHPN", -1);
 				if ((filename.length() > 1 && !filename.substring(filename.length() - 2,
 						filename.length()).equals(".g"))
 						&& (filename.length() > 3 && !filename.substring(filename.length() - 4,
@@ -4719,6 +4769,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					return;
 				}
 				else if (!filename.equals("")) {
+					biosimrc.put("biosim.general.import_dir", filename);
 					String[] file = filename.split(separator);
 					try {
 						if (!filename.equals(root + separator + file[file.length - 1])) {
@@ -4771,8 +4822,16 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		}
 		else if (e.getSource() == importLpn) {
 			if (root != null) {
-				String filename = Buttons.browse(frame, new File(root), null,
-						JFileChooser.FILES_ONLY, "Import LPN", -1);
+				File importFile;
+				Preferences biosimrc = Preferences.userRoot();
+				if (biosimrc.get("biosim.general.import_dir", "").equals("")) {
+					importFile = null;
+				}
+				else {
+					importFile = new File(biosimrc.get("biosim.general.import_dir", ""));
+				}
+				String filename = Buttons.browse(frame, importFile, null, JFileChooser.FILES_ONLY,
+						"Import LPN", -1);
 				if ((filename.length() > 1 && !filename.substring(filename.length() - 2,
 						filename.length()).equals(".g"))
 						&& (filename.length() > 3 && !filename.substring(filename.length() - 4,
@@ -4783,6 +4842,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					return;
 				}
 				else if (!filename.equals("")) {
+					biosimrc.put("biosim.general.import_dir", filename);
 					String[] file = filename.split(separator);
 					try {
 						if (new File(filename).exists()) {
@@ -4839,8 +4899,16 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		}
 		else if (e.getSource() == importG) {
 			if (root != null) {
-				String filename = Buttons.browse(frame, new File(root), null,
-						JFileChooser.FILES_ONLY, "Import Net", -1);
+				File importFile;
+				Preferences biosimrc = Preferences.userRoot();
+				if (biosimrc.get("biosim.general.import_dir", "").equals("")) {
+					importFile = null;
+				}
+				else {
+					importFile = new File(biosimrc.get("biosim.general.import_dir", ""));
+				}
+				String filename = Buttons.browse(frame, importFile, null, JFileChooser.FILES_ONLY,
+						"Import Net", -1);
 				if (filename.length() > 1
 						&& !filename.substring(filename.length() - 2, filename.length()).equals(
 								".g")) {
@@ -4850,6 +4918,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					return;
 				}
 				else if (!filename.equals("")) {
+					biosimrc.put("biosim.general.import_dir", filename);
 					String[] file = filename.split(separator);
 					try {
 						FileOutputStream out = new FileOutputStream(new File(root + separator
@@ -4879,8 +4948,16 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		// if the import csp menu item is selected
 		else if (e.getSource() == importCsp) {
 			if (root != null) {
-				String filename = Buttons.browse(frame, new File(root), null,
-						JFileChooser.FILES_ONLY, "Import CSP", -1);
+				File importFile;
+				Preferences biosimrc = Preferences.userRoot();
+				if (biosimrc.get("biosim.general.import_dir", "").equals("")) {
+					importFile = null;
+				}
+				else {
+					importFile = new File(biosimrc.get("biosim.general.import_dir", ""));
+				}
+				String filename = Buttons.browse(frame, importFile, null, JFileChooser.FILES_ONLY,
+						"Import CSP", -1);
 				if (filename.length() > 1
 						&& !filename.substring(filename.length() - 4, filename.length()).equals(
 								".csp")) {
@@ -4890,6 +4967,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					return;
 				}
 				else if (!filename.equals("")) {
+					biosimrc.put("biosim.general.import_dir", filename);
 					String[] file = filename.split(separator);
 					try {
 						FileOutputStream out = new FileOutputStream(new File(root + separator
@@ -4918,8 +4996,16 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		// if the import hse menu item is selected
 		else if (e.getSource() == importHse) {
 			if (root != null) {
-				String filename = Buttons.browse(frame, new File(root), null,
-						JFileChooser.FILES_ONLY, "Import HSE", -1);
+				File importFile;
+				Preferences biosimrc = Preferences.userRoot();
+				if (biosimrc.get("biosim.general.import_dir", "").equals("")) {
+					importFile = null;
+				}
+				else {
+					importFile = new File(biosimrc.get("biosim.general.import_dir", ""));
+				}
+				String filename = Buttons.browse(frame, importFile, null, JFileChooser.FILES_ONLY,
+						"Import HSE", -1);
 				if (filename.length() > 1
 						&& !filename.substring(filename.length() - 4, filename.length()).equals(
 								".hse")) {
@@ -4929,6 +5015,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					return;
 				}
 				else if (!filename.equals("")) {
+					biosimrc.put("biosim.general.import_dir", filename);
 					String[] file = filename.split(separator);
 					try {
 						FileOutputStream out = new FileOutputStream(new File(root + separator
@@ -4957,8 +5044,16 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		// if the import unc menu item is selected
 		else if (e.getSource() == importUnc) {
 			if (root != null) {
-				String filename = Buttons.browse(frame, new File(root), null,
-						JFileChooser.FILES_ONLY, "Import UNC", -1);
+				File importFile;
+				Preferences biosimrc = Preferences.userRoot();
+				if (biosimrc.get("biosim.general.import_dir", "").equals("")) {
+					importFile = null;
+				}
+				else {
+					importFile = new File(biosimrc.get("biosim.general.import_dir", ""));
+				}
+				String filename = Buttons.browse(frame, importFile, null, JFileChooser.FILES_ONLY,
+						"Import UNC", -1);
 				if (filename.length() > 1
 						&& !filename.substring(filename.length() - 4, filename.length()).equals(
 								".unc")) {
@@ -4968,6 +5063,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					return;
 				}
 				else if (!filename.equals("")) {
+					biosimrc.put("biosim.general.import_dir", filename);
 					String[] file = filename.split(separator);
 					try {
 						FileOutputStream out = new FileOutputStream(new File(root + separator
@@ -4996,8 +5092,16 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		// if the import rsg menu item is selected
 		else if (e.getSource() == importRsg) {
 			if (root != null) {
-				String filename = Buttons.browse(frame, new File(root), null,
-						JFileChooser.FILES_ONLY, "Import RSG", -1);
+				File importFile;
+				Preferences biosimrc = Preferences.userRoot();
+				if (biosimrc.get("biosim.general.import_dir", "").equals("")) {
+					importFile = null;
+				}
+				else {
+					importFile = new File(biosimrc.get("biosim.general.import_dir", ""));
+				}
+				String filename = Buttons.browse(frame, importFile, null, JFileChooser.FILES_ONLY,
+						"Import RSG", -1);
 				if (filename.length() > 1
 						&& !filename.substring(filename.length() - 4, filename.length()).equals(
 								".rsg")) {
@@ -5007,6 +5111,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					return;
 				}
 				else if (!filename.equals("")) {
+					biosimrc.put("biosim.general.import_dir", filename);
 					String[] file = filename.split(separator);
 					try {
 						FileOutputStream out = new FileOutputStream(new File(root + separator
@@ -5035,8 +5140,16 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		// if the import spice menu item is selected
 		else if (e.getSource() == importSpice) {
 			if (root != null) {
-				String filename = Buttons.browse(frame, new File(root), null,
-						JFileChooser.FILES_ONLY, "Import Spice Circuit", -1);
+				File importFile;
+				Preferences biosimrc = Preferences.userRoot();
+				if (biosimrc.get("biosim.general.import_dir", "").equals("")) {
+					importFile = null;
+				}
+				else {
+					importFile = new File(biosimrc.get("biosim.general.import_dir", ""));
+				}
+				String filename = Buttons.browse(frame, importFile, null, JFileChooser.FILES_ONLY,
+						"Import Spice Circuit", -1);
 				if (filename.length() > 1
 						&& !filename.substring(filename.length() - 4, filename.length()).equals(
 								".cir")) {
@@ -5046,6 +5159,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					return;
 				}
 				else if (!filename.equals("")) {
+					biosimrc.put("biosim.general.import_dir", filename);
 					String[] file = filename.split(separator);
 					try {
 						FileOutputStream out = new FileOutputStream(new File(root + separator

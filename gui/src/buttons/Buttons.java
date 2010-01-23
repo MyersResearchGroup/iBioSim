@@ -18,7 +18,8 @@ public class Buttons {
 	/**
 	 * Returns the pathname of the selected file in the file chooser.
 	 */
-	public static String browse(JFrame frame, File file, JTextField text, int i, String approve, int fileType) {
+	public static String browse(JFrame frame, File file, JTextField text, int i, String approve,
+			int fileType) {
 		Preferences biosimrc = Preferences.userRoot();
 		if (biosimrc.get("biosim.general.file_browser", "").equals("FileDialog")) {
 			FileDialog fd;
@@ -49,8 +50,9 @@ public class Buttons {
 					fd = new FileDialog(frame, approve, FileDialog.SAVE);
 					fd.setFilenameFilter(new FilenameFilter() {
 						public boolean accept(File dir, String name) {
-							return name.endsWith(".csv") || name.endsWith(".dat") || name.endsWith(".eps")
-									|| name.endsWith(".jpg") || name.endsWith(".pdf") || name.endsWith(".png")
+							return name.endsWith(".csv") || name.endsWith(".dat")
+									|| name.endsWith(".eps") || name.endsWith(".jpg")
+									|| name.endsWith(".pdf") || name.endsWith(".png")
 									|| name.endsWith(".svg") || name.endsWith(".tsd");
 						}
 					});
@@ -59,8 +61,9 @@ public class Buttons {
 					fd = new FileDialog(frame, approve, FileDialog.SAVE);
 					fd.setFilenameFilter(new FilenameFilter() {
 						public boolean accept(File dir, String name) {
-							return name.endsWith(".eps") || name.endsWith(".jpg") || name.endsWith(".pdf")
-									|| name.endsWith(".png") || name.endsWith(".svg");
+							return name.endsWith(".eps") || name.endsWith(".jpg")
+									|| name.endsWith(".pdf") || name.endsWith(".png")
+									|| name.endsWith(".svg");
 						}
 					});
 				}
@@ -84,7 +87,8 @@ public class Buttons {
 					fd = new FileDialog(frame, approve, FileDialog.LOAD);
 					fd.setFilenameFilter(new FilenameFilter() {
 						public boolean accept(File dir, String name) {
-							return name.endsWith(".csv") || name.endsWith(".dat") || name.endsWith(".tsd");
+							return name.endsWith(".csv") || name.endsWith(".dat")
+									|| name.endsWith(".tsd");
 						}
 					});
 				}
@@ -153,7 +157,7 @@ public class Buttons {
 				}
 			}
 			else if (fd.getDirectory() != null) {
-				return ""; //fd.getDirectory();
+				return ""; // fd.getDirectory();
 			}
 			else {
 				return "";
@@ -161,59 +165,69 @@ public class Buttons {
 			/*
 			 * String open; Display display = new Display(); Shell shell = new
 			 * Shell(display); shell.setImage(new Image(display,
-			 * System.getenv("BIOSIM") + separator + "gui" + separator + "icons" +
-			 * separator + "iBioSim.png")); if (i == JFileChooser.DIRECTORIES_ONLY) {
-			 * DirectoryDialog dd = null; if (approve.equals("Save") ||
-			 * approve.equals("New")) { dd = new DirectoryDialog(shell, SWT.SAVE);
-			 * dd.setText(approve); } else if (approve.equals("Open")) { dd = new
-			 * DirectoryDialog(shell, SWT.OPEN); dd.setText(approve); } else { dd =
-			 * new DirectoryDialog(shell); dd.setText(approve); } if (file != null) {
-			 * dd.setFilterPath(file.getPath()); } open = dd.open(); } else {
+			 * System.getenv("BIOSIM") + separator + "gui" + separator + "icons"
+			 * + separator + "iBioSim.png")); if (i ==
+			 * JFileChooser.DIRECTORIES_ONLY) { DirectoryDialog dd = null; if
+			 * (approve.equals("Save") || approve.equals("New")) { dd = new
+			 * DirectoryDialog(shell, SWT.SAVE); dd.setText(approve); } else if
+			 * (approve.equals("Open")) { dd = new DirectoryDialog(shell,
+			 * SWT.OPEN); dd.setText(approve); } else { dd = new
+			 * DirectoryDialog(shell); dd.setText(approve); } if (file != null)
+			 * { dd.setFilterPath(file.getPath()); } open = dd.open(); } else {
 			 * FileDialog fd = null; if (approve.equals("Save") ||
 			 * approve.equals("New")) { fd = new FileDialog(shell, SWT.SAVE);
-			 * fd.setText(approve); } else if (approve.equals("Open")) { fd = new
-			 * FileDialog(shell, SWT.OPEN); fd.setText(approve); } else if
-			 * (approve.equals("Export TSD")) { fd = new FileDialog(shell, SWT.SAVE);
-			 * fd.setText(approve); fd.setFilterNames(new String[] { "Comma Separated
-			 * Values (*.csv)", "Tab Delimited Data (*.dat)", "Encapsulated Postscript
-			 * (*.eps)", "JPEG (*.jpg)", "Portable Document Format (*.pdf)", "Portable
-			 * Network Graphics (*.png)", "Scalable Vector Graphics (*.svg)", "Time
-			 * Series Data (*.tsd)" }); fd.setFilterExtensions(new String[] { "*.csv",
+			 * fd.setText(approve); } else if (approve.equals("Open")) { fd =
+			 * new FileDialog(shell, SWT.OPEN); fd.setText(approve); } else if
+			 * (approve.equals("Export TSD")) { fd = new FileDialog(shell,
+			 * SWT.SAVE); fd.setText(approve); fd.setFilterNames(new String[] {
+			 * "Comma Separated Values (*.csv)", "Tab Delimited Data
+			 * (*.dat)", "Encapsulated Postscript (*.eps)", "JPEG
+			 * (*.jpg)", "Portable Document Format (*.pdf)", "Portable Network
+			 * Graphics (*.png)", "Scalable Vector Graphics (*.svg)", "Time
+			 * Series Data
+			 * (*.tsd)" }); fd.setFilterExtensions(new String[] { "*.csv",
 			 * "*.dat", "*.eps", "*.jpg", "*.pdf", "*.png", "*.svg", "*.tsd" });
-			 * fd.setFilterIndex(4); } else if (approve.equals("Export Probability")) {
-			 * fd = new FileDialog(shell, SWT.SAVE); fd.setText(approve);
-			 * fd.setFilterNames(new String[] { "Encapsulated Postscript (*.eps)",
-			 * "JPEG (*.jpg)", "Portable Document Format (*.pdf)", "Portable Network
-			 * Graphics (*.png)", "Scalable Vector Graphics (*.svg)" });
+			 * fd.setFilterIndex(4); } else if
+			 * (approve.equals("Export Probability")) { fd = new
+			 * FileDialog(shell, SWT.SAVE); fd.setText(approve);
+			 * fd.setFilterNames(new String[] {
+			 * "Encapsulated Postscript (*.eps)", "JPEG (*.jpg)",
+			 * "Portable Document Format (*.pdf)", "Portable Network Graphics
+			 * (*.png)", "Scalable Vector Graphics (*.svg)" });
 			 * fd.setFilterExtensions(new String[] { "*.eps", "*.jpg", "*.pdf",
 			 * "*.png", "*.svg" }); fd.setFilterIndex(2); } else if
-			 * (approve.equals("Import SBML")) { fd = new FileDialog(shell, SWT.OPEN);
-			 * fd.setText(approve); fd.setFilterNames(new String[] { "Systems Biology
-			 * Markup Language (*.sbml)", "Extensible Markup Language (*.xml)" });
-			 * fd.setFilterExtensions(new String[] { "*.sbml", "*.xml" });
-			 * fd.setFilterIndex(1); } else if (approve.equals("Import Genetic
-			 * Circuit")) { fd = new FileDialog(shell, SWT.OPEN); fd.setText(approve);
-			 * fd.setFilterNames(new String[] { "Genetic Circuit Model (*.gcm)" });
-			 * fd.setFilterExtensions(new String[] { "*.gcm" }); } else if
-			 * (approve.equals("Import")) { fd = new FileDialog(shell, SWT.OPEN);
-			 * fd.setText(approve); fd.setFilterNames(new String[] { "Comma Separated
-			 * Values (*.csv)", "Tab Delimited Data (*.dat)", "Time Series Data
-			 * (*.tsd)" }); fd.setFilterExtensions(new String[] { "*.csv", "*.dat",
-			 * "*.tsd" }); fd.setFilterIndex(2); } else { fd = new FileDialog(shell);
-			 * fd.setText(approve); } if (file != null) {
-			 * fd.setFilterPath(file.getParentFile().getPath()); } open = fd.open(); }
-			 * shell.dispose(); display.dispose(); if (open != null) { return open; }
-			 * else { return ""; }
+			 * (approve.equals("Import SBML")) { fd = new FileDialog(shell,
+			 * SWT.OPEN); fd.setText(approve); fd.setFilterNames(new String[] {
+			 * "Systems Biology Markup Language (*.sbml)", "Extensible Markup
+			 * Language (*.xml)" }); fd.setFilterExtensions(new String[] {
+			 * "*.sbml", "*.xml" }); fd.setFilterIndex(1); } else if
+			 * (approve.equals("Import Genetic Circuit")) { fd = new
+			 * FileDialog(shell, SWT.OPEN); fd.setText(approve);
+			 * fd.setFilterNames(new String[] { "Genetic Circuit Model (*.gcm)"
+			 * }); fd.setFilterExtensions(new String[] { "*.gcm" }); } else if
+			 * (approve.equals("Import")) { fd = new FileDialog(shell,
+			 * SWT.OPEN); fd.setText(approve); fd.setFilterNames(new String[] {
+			 * "Comma Separated Values (*.csv)", "Tab Delimited Data
+			 * (*.dat)", "Time Series Data
+			 * (*.tsd)" }); fd.setFilterExtensions(new String[] { "
+			 * *.csv", "*.dat", "*.tsd" }); fd.setFilterIndex(2); } else { fd =
+			 * new FileDialog(shell); fd.setText(approve); } if (file != null) {
+			 * fd.setFilterPath(file.getParentFile().getPath()); } open =
+			 * fd.open(); } shell.dispose(); display.dispose(); if (open !=
+			 * null) { return open; } else { return ""; }
 			 */
 		}
 		else {
 			String filename = "";
 			JFileChooser fc = new JFileChooser();
 
-			/* This sets the default directory to the one where BioSim is executed */
 			/*
-			 * String startDir = System.getProperty("user.dir"); File curDir = new
-			 * File(startDir); fc.setCurrentDirectory(curDir);
+			 * This sets the default directory to the one where BioSim is
+			 * executed
+			 */
+			/*
+			 * String startDir = System.getProperty("user.dir"); File curDir =
+			 * new File(startDir); fc.setCurrentDirectory(curDir);
 			 */
 
 			ExampleFileFilter csvFilter = new ExampleFileFilter();
@@ -344,20 +358,21 @@ public class Buttons {
 				filename = file.getPath();
 				if (approve.equals("Export TSD")) {
 					if ((filename.length() < 4)
-							|| (!(filename.substring((filename.length() - 4), filename.length()).equals(".jpg"))
-									&& !(filename.substring((filename.length() - 4), filename.length())
-											.equals(".png"))
-									&& !(filename.substring((filename.length() - 4), filename.length())
-											.equals(".pdf"))
-									&& !(filename.substring((filename.length() - 4), filename.length())
-											.equals(".eps"))
-									&& !(filename.substring((filename.length() - 4), filename.length())
-											.equals(".svg"))
-									&& !(filename.substring((filename.length() - 4), filename.length())
-											.equals(".dat"))
-									&& !(filename.substring((filename.length() - 4), filename.length())
-											.equals(".tsd")) && !(filename.substring((filename.length() - 4), filename
-									.length()).equals(".csv")))) {
+							|| (!(filename.substring((filename.length() - 4), filename.length())
+									.equals(".jpg"))
+									&& !(filename.substring((filename.length() - 4), filename
+											.length()).equals(".png"))
+									&& !(filename.substring((filename.length() - 4), filename
+											.length()).equals(".pdf"))
+									&& !(filename.substring((filename.length() - 4), filename
+											.length()).equals(".eps"))
+									&& !(filename.substring((filename.length() - 4), filename
+											.length()).equals(".svg"))
+									&& !(filename.substring((filename.length() - 4), filename
+											.length()).equals(".dat"))
+									&& !(filename.substring((filename.length() - 4), filename
+											.length()).equals(".tsd")) && !(filename.substring(
+									(filename.length() - 4), filename.length()).equals(".csv")))) {
 						ExampleFileFilter selectedFilter = (ExampleFileFilter) fc.getFileFilter();
 						if (selectedFilter == jpgFilter) {
 							filename += ".jpg";
@@ -387,14 +402,15 @@ public class Buttons {
 				}
 				else if (approve.equals("Export Probability")) {
 					if ((filename.length() < 4)
-							|| (!(filename.substring((filename.length() - 4), filename.length()).equals(".jpg"))
-									&& !(filename.substring((filename.length() - 4), filename.length())
-											.equals(".png"))
-									&& !(filename.substring((filename.length() - 4), filename.length())
-											.equals(".pdf"))
-									&& !(filename.substring((filename.length() - 4), filename.length())
-											.equals(".eps")) && !(filename.substring((filename.length() - 4), filename
-									.length()).equals(".svg")))) {
+							|| (!(filename.substring((filename.length() - 4), filename.length())
+									.equals(".jpg"))
+									&& !(filename.substring((filename.length() - 4), filename
+											.length()).equals(".png"))
+									&& !(filename.substring((filename.length() - 4), filename
+											.length()).equals(".pdf"))
+									&& !(filename.substring((filename.length() - 4), filename
+											.length()).equals(".eps")) && !(filename.substring(
+									(filename.length() - 4), filename.length()).equals(".svg")))) {
 						ExampleFileFilter selectedFilter = (ExampleFileFilter) fc.getFileFilter();
 						if (selectedFilter == jpgFilter) {
 							filename += ".jpg";
@@ -452,10 +468,10 @@ public class Buttons {
 	 * updates the JList.
 	 */
 	public static void remove(JList currentList) {
-		Object [] list = new Object[currentList.getModel().getSize()];
-		for(int i = 0; i < currentList.getModel().getSize(); i++) {
+		Object[] list = new Object[currentList.getModel().getSize()];
+		for (int i = 0; i < currentList.getModel().getSize(); i++) {
 			list[i] = currentList.getModel().getElementAt(i);
-		}	
+		}
 
 		Object[] removeSelected = currentList.getSelectedValues();
 		int[] select = new int[list.length];
@@ -483,18 +499,20 @@ public class Buttons {
 	/**
 	 * Adds a new item to a JList
 	 */
-	public static void add(JList currentList,Object newItem) {
-		Object [] list = new Object[currentList.getModel().getSize()+1];
+	public static void add(JList currentList, Object newItem) {
+		Object[] list = new Object[currentList.getModel().getSize() + 1];
 		int addAfter = currentList.getSelectedIndex();
-		for(int i = 0; i <= currentList.getModel().getSize(); i++) {
+		for (int i = 0; i <= currentList.getModel().getSize(); i++) {
 			if (i <= addAfter) {
 				list[i] = currentList.getModel().getElementAt(i);
-			} else if (i == (addAfter+1)) {
-				list[i] = newItem;
-			} else {
-				list[i] = currentList.getModel().getElementAt(i-1);
 			}
-		}	
+			else if (i == (addAfter + 1)) {
+				list[i] = newItem;
+			}
+			else {
+				list[i] = currentList.getModel().getElementAt(i - 1);
+			}
+		}
 		currentList.setListData(list);
 	}
 
@@ -503,8 +521,8 @@ public class Buttons {
 	 * these values into the currentList array and returns this array.
 	 */
 	public static Object[] add(Object[] currentList, JList list, JList add, boolean isTermCond,
-			JTextField amountTerm, JRadioButton ge, JRadioButton gt, JRadioButton eq, JRadioButton lt,
-			JRadioButton le, Component component) {
+			JTextField amountTerm, JRadioButton ge, JRadioButton gt, JRadioButton eq,
+			JRadioButton lt, JRadioButton le, Component component) {
 		int[] select = new int[currentList.length];
 		for (int i = 0; i < currentList.length; i++) {
 			select[i] = i;
@@ -521,8 +539,8 @@ public class Buttons {
 				}
 				catch (Exception except) {
 					JOptionPane.showMessageDialog(component,
-							"Must Enter A Real Number Into The Termination Condition Field.", "Error",
-							JOptionPane.ERROR_MESSAGE);
+							"Must Enter A Real Number Into The Termination Condition Field.",
+							"Error", JOptionPane.ERROR_MESSAGE);
 					return currentList;
 				}
 				if (ge.isSelected()) {
