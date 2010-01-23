@@ -6,6 +6,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.util.*;
+import java.util.prefs.Preferences;
+
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -652,11 +654,20 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 			}
 		}
 		else if (e.getSource() == importFile) {
-			String importFile = Buttons.browse(biosim.frame(), null, null,
+			File file;
+			Preferences biosimrc = Preferences.userRoot();
+			if (biosimrc.get("biosim.general.import_dir", "").equals("")) {
+				file = null;
+			}
+			else {
+				file = new File(biosimrc.get("biosim.general.import_dir", ""));
+			}
+			String importFile = Buttons.browse(biosim.frame(), file, null,
 					JFileChooser.FILES_AND_DIRECTORIES, "Import", -1);
 			if (importFile != null && !importFile.trim().equals("")) {
 				saveChanges(null);
 				importFile = importFile.trim();
+				biosimrc.put("biosim.general.import_dir", importFile);
 				int run = 0;
 				String[] list = new File(directory).list();
 				for (int i = 0; i < list.length; i++) {
@@ -805,7 +816,8 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 									index = specs.get(a);
 									index2 = data.get(a);
 									b = a;
-									while ((b > 1) && specs.get(b - 1).compareToIgnoreCase(index) > 0) {
+									while ((b > 1)
+											&& specs.get(b - 1).compareToIgnoreCase(index) > 0) {
 										specs.set(b, specs.get(b - 1));
 										data.set(b, data.get(b - 1));
 										b = b - 1;
@@ -840,7 +852,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 								files.setSelectedValue(importFile, true);
 								if (s.length > 0) {
 									biosim.refreshLearn(directory.split(separator)[directory
-									                                               .split(separator).length - 1], true);
+											.split(separator).length - 1], true);
 								}
 							}
 						}
