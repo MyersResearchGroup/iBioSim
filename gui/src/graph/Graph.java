@@ -58,6 +58,8 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreePath;
 
+import lhpn2sbml.parser.LHPNFile;
+
 import org.apache.batik.dom.GenericDOMImplementation;
 import org.apache.batik.svggen.SVGGraphics2D;
 import org.jfree.chart.ChartFactory;
@@ -150,8 +152,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	private LinkedList<GraphProbs> probGraphed;
 
 	private JCheckBox resize;
-	
-	private JCheckBox LogX,LogY;
+
+	private JCheckBox LogX, LogY;
 
 	private Log log;
 
@@ -1059,11 +1061,14 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		axis.setAutoTickUnitSelection(true);
 		if (LogY.isSelected()) {
 			try {
-				LogarithmicAxis rangeAxis = new LogarithmicAxis(chart.getXYPlot().getRangeAxis().getLabel());
+				LogarithmicAxis rangeAxis = new LogarithmicAxis(chart.getXYPlot().getRangeAxis()
+						.getLabel());
 				rangeAxis.setStrictValuesFlag(false);
 				plot.setRangeAxis(rangeAxis);
-			} catch (Exception e1) {
-				JOptionPane.showMessageDialog(biomodelsim.frame(), "Log plots are not allowed with data\nvalues less than or equal to zero.",
+			}
+			catch (Exception e1) {
+				JOptionPane.showMessageDialog(biomodelsim.frame(),
+						"Log plots are not allowed with data\nvalues less than or equal to zero.",
 						"Error", JOptionPane.ERROR_MESSAGE);
 				NumberAxis rangeAxis = new NumberAxis(chart.getXYPlot().getRangeAxis().getLabel());
 				plot.setRangeAxis(rangeAxis);
@@ -1086,11 +1091,14 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		axis.setAutoTickUnitSelection(true);
 		if (LogX.isSelected()) {
 			try {
-				LogarithmicAxis domainAxis = new LogarithmicAxis(chart.getXYPlot().getDomainAxis().getLabel());
+				LogarithmicAxis domainAxis = new LogarithmicAxis(chart.getXYPlot().getDomainAxis()
+						.getLabel());
 				domainAxis.setStrictValuesFlag(false);
 				plot.setDomainAxis(domainAxis);
-			} catch (Exception e1) {
-				JOptionPane.showMessageDialog(biomodelsim.frame(), "Log plots are not allowed with data\nvalues less than or equal to zero.",
+			}
+			catch (Exception e1) {
+				JOptionPane.showMessageDialog(biomodelsim.frame(),
+						"Log plots are not allowed with data\nvalues less than or equal to zero.",
 						"Error", JOptionPane.ERROR_MESSAGE);
 				NumberAxis domainAxis = new NumberAxis(chart.getXYPlot().getDomainAxis().getLabel());
 				plot.setRangeAxis(domainAxis);
@@ -1113,7 +1121,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			this.setCursor(null);
 			JFreeChart chart = e.getChart();
 			XYPlot plot = (XYPlot) chart.getXYPlot();
-	        NumberAxis axis = (NumberAxis) plot.getRangeAxis();
+			NumberAxis axis = (NumberAxis) plot.getRangeAxis();
 			YMin.setText("" + axis.getLowerBound());
 			YMax.setText("" + axis.getUpperBound());
 			YScale.setText("" + axis.getTickUnit().getSize());
@@ -1320,13 +1328,19 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				if (((JCheckBox) e.getSource()).isSelected()) {
 					XYPlot plot = (XYPlot) chart.getXYPlot();
 					try {
-						LogarithmicAxis domainAxis = new LogarithmicAxis(chart.getXYPlot().getDomainAxis().getLabel());
+						LogarithmicAxis domainAxis = new LogarithmicAxis(chart.getXYPlot()
+								.getDomainAxis().getLabel());
 						domainAxis.setStrictValuesFlag(false);
 						plot.setRangeAxis(domainAxis);
-					} catch (Exception e1) {
-						JOptionPane.showMessageDialog(biomodelsim.frame(), "Log plots are not allowed with data\nvalues less than or equal to zero.",
-								"Error", JOptionPane.ERROR_MESSAGE);
-						NumberAxis domainAxis = new NumberAxis(chart.getXYPlot().getDomainAxis().getLabel());
+					}
+					catch (Exception e1) {
+						JOptionPane
+								.showMessageDialog(
+										biomodelsim.frame(),
+										"Log plots are not allowed with data\nvalues less than or equal to zero.",
+										"Error", JOptionPane.ERROR_MESSAGE);
+						NumberAxis domainAxis = new NumberAxis(chart.getXYPlot().getDomainAxis()
+								.getLabel());
 						plot.setRangeAxis(domainAxis);
 						LogX.setSelected(false);
 					}
@@ -1338,13 +1352,19 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				if (((JCheckBox) e.getSource()).isSelected()) {
 					XYPlot plot = (XYPlot) chart.getXYPlot();
 					try {
-						LogarithmicAxis rangeAxis = new LogarithmicAxis(chart.getXYPlot().getRangeAxis().getLabel());
+						LogarithmicAxis rangeAxis = new LogarithmicAxis(chart.getXYPlot()
+								.getRangeAxis().getLabel());
 						rangeAxis.setStrictValuesFlag(false);
 						plot.setRangeAxis(rangeAxis);
-					} catch (Exception e1) {
-						JOptionPane.showMessageDialog(biomodelsim.frame(), "Semilog plots are not allowed with data\nvalues less than or equal to zero.",
-								"Error", JOptionPane.ERROR_MESSAGE);
-						NumberAxis rangeAxis = new NumberAxis(chart.getXYPlot().getRangeAxis().getLabel());
+					}
+					catch (Exception e1) {
+						JOptionPane
+								.showMessageDialog(
+										biomodelsim.frame(),
+										"Semilog plots are not allowed with data\nvalues less than or equal to zero.",
+										"Error", JOptionPane.ERROR_MESSAGE);
+						NumberAxis rangeAxis = new NumberAxis(chart.getXYPlot().getRangeAxis()
+								.getLabel());
 						plot.setRangeAxis(rangeAxis);
 						LogY.setSelected(false);
 					}
@@ -7325,6 +7345,12 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						.substring(0, outDir.length() - split[split.length - 1].length())
 						+ separator + getProp[getProp.length - 1];
 			}
+			else if (p.containsKey("learn.file")) {
+				String[] getProp = p.getProperty("learn.file").split(separator);
+				background = outDir
+						.substring(0, outDir.length() - split[split.length - 1].length())
+						+ separator + getProp[getProp.length - 1];
+			}
 			else {
 				background = null;
 			}
@@ -7340,6 +7366,14 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				GCMFile gcm = new GCMFile();
 				gcm.load(background);
 				HashMap<String, Properties> speciesMap = gcm.getSpecies();
+				for (String s : speciesMap.keySet()) {
+					learnSpecs.add(s);
+				}
+			}
+			else if (background.contains(".lpn")) {
+				LHPNFile lhpn = new LHPNFile(biomodelsim.log);
+				lhpn.load(background);
+				HashMap<String, Properties> speciesMap = lhpn.getVariables();
 				for (String s : speciesMap.keySet()) {
 					learnSpecs.add(s);
 				}

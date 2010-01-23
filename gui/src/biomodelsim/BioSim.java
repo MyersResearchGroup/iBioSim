@@ -9417,7 +9417,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			Graph tsdGraph = new Graph(null, "Number of molecules",
 					tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]
 							+ " data", "tsd.printer", tree.getFile(), "Time", this, open, log,
-					null, true, false);
+					null, true, true);
 			// tsdGraph.addMouseListener(this);
 			lrnTab.addTab("TSD Graph", tsdGraph);
 			lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("TSD Graph");
