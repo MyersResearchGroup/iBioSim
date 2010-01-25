@@ -2395,15 +2395,6 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		}
 		else {
 			try {
-				minTimeStep = Double.parseDouble(minStep.getText().trim());
-			}
-			catch (Exception e1) {
-				JOptionPane.showMessageDialog(biomodelsim.frame(),
-						"Must Enter A Real Number Into The Minimum Time Step Field.", "Error",
-						JOptionPane.ERROR_MESSAGE);
-				return;
-			}
-			try {
 				// if (step.isEnabled()) {
 				timeStep = Double.parseDouble(step.getText().trim());
 				// }
@@ -2416,6 +2407,15 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				// }
 				return;
 			}
+		}
+		try {
+			minTimeStep = Double.parseDouble(minStep.getText().trim());
+		}
+		catch (Exception e1) {
+			JOptionPane.showMessageDialog(biomodelsim.frame(),
+					"Must Enter A Real Number Into The Minimum Time Step Field.", "Error",
+					JOptionPane.ERROR_MESSAGE);
+			return;
 		}
 		try {
 			// if (absErr.isEnabled()) {
@@ -3072,17 +3072,6 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		}
 		else {
 			try {
-				minTimeStep = Double.parseDouble(minStep.getText().trim());
-			}
-			catch (Exception e1) {
-				if (minStep.isEnabled()) {
-					JOptionPane.showMessageDialog(biomodelsim.frame(),
-							"Must Enter A Real Number Into The Time Step Field.", "Error",
-							JOptionPane.ERROR_MESSAGE);
-				}
-				return;
-			}
-			try {
 				timeStep = Double.parseDouble(step.getText().trim());
 			}
 			catch (Exception e1) {
@@ -3093,6 +3082,17 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				}
 				return;
 			}
+		}
+		try {
+			minTimeStep = Double.parseDouble(minStep.getText().trim());
+		}
+		catch (Exception e1) {
+			if (minStep.isEnabled()) {
+				JOptionPane.showMessageDialog(biomodelsim.frame(),
+						"Must Enter A Real Number Into The Time Step Field.", "Error",
+						JOptionPane.ERROR_MESSAGE);
+			}
+			return;
 		}
 		try {
 			// if (absErr.isEnabled()) {
