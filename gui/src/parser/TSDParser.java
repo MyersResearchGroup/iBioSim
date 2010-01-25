@@ -12,6 +12,7 @@ public class TSDParser extends Parser {
 		try {
 			warning = warn;
 			boolean warning2 = warning;
+			boolean warning3 = warning;
 			FileInputStream fileInput = new FileInputStream(new File(filename));
 			ProgressMonitorInputStream prog = new ProgressMonitorInputStream(component,
 					"Reading Reb2sac Output Data From " + new File(filename).getName(), fileInput);
@@ -101,6 +102,14 @@ public class TSDParser extends Parser {
 								warning2 = true;
 							}
 							word = "" + Double.MAX_VALUE;
+						}
+						if (word.equals("-inf")) {
+							if (!warning3) {
+								JOptionPane.showMessageDialog(component, "Found -INF in data." + "\nReplacing with "
+										+ (-1)*Double.MAX_VALUE + ".", "INF In Data", JOptionPane.WARNING_MESSAGE);
+								warning3 = true;
+							}
+							word = "" + (-1)*Double.MAX_VALUE;
 						}
 						if (counter < species.size()) {
 							insert = counter;

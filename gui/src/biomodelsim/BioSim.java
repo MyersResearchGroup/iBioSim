@@ -1101,6 +1101,9 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		if (biosimrc.get("biosim.sim.step", "").equals("")) {
 			biosimrc.put("biosim.sim.step", "inf");
 		}
+		if (biosimrc.get("biosim.sim.min.step", "").equals("")) {
+			biosimrc.put("biosim.sim.min.step", "0");
+		}
 		if (biosimrc.get("biosim.sim.error", "").equals("")) {
 			biosimrc.put("biosim.sim.error", "1.0E-9");
 		}
@@ -1463,6 +1466,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			});
 			JTextField limit = new JTextField(biosimrc.get("biosim.sim.limit", ""));
 			JTextField interval = new JTextField(biosimrc.get("biosim.sim.interval", ""));
+			JTextField minStep = new JTextField(biosimrc.get("biosim.sim.min.step", ""));
 			JTextField step = new JTextField(biosimrc.get("biosim.sim.step", ""));
 			JTextField error = new JTextField(biosimrc.get("biosim.sim.error", ""));
 			JTextField seed = new JTextField(biosimrc.get("biosim.sim.seed", ""));
@@ -1474,12 +1478,13 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			choices = new String[] { "Print Interval", "Minimum Print Interval", "Number Of Steps" };
 			JComboBox useInterval = new JComboBox(choices);
 			useInterval.setSelectedItem(biosimrc.get("biosim.sim.useInterval", ""));
-			JPanel analysisLabels = new JPanel(new GridLayout(13, 1));
+			JPanel analysisLabels = new JPanel(new GridLayout(14, 1));
 			analysisLabels.add(new JLabel("Abstraction:"));
 			analysisLabels.add(new JLabel("Simulation Type:"));
 			analysisLabels.add(new JLabel("Possible Simulators/Analyzers:"));
 			analysisLabels.add(new JLabel("Time Limit:"));
 			analysisLabels.add(useInterval);
+			analysisLabels.add(new JLabel("Minimum Time Step:"));
 			analysisLabels.add(new JLabel("Maximum Time Step:"));
 			analysisLabels.add(new JLabel("Absolute Error:"));
 			analysisLabels.add(new JLabel("Random Seed:"));
@@ -1488,12 +1493,13 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			analysisLabels.add(new JLabel("Rapid Equilibrium Cojdition 2:"));
 			analysisLabels.add(new JLabel("QSSA Condition:"));
 			analysisLabels.add(new JLabel("Max Concentration Threshold:"));
-			JPanel analysisFields = new JPanel(new GridLayout(13, 1));
+			JPanel analysisFields = new JPanel(new GridLayout(14, 1));
 			analysisFields.add(abs);
 			analysisFields.add(type);
 			analysisFields.add(sim);
 			analysisFields.add(limit);
 			analysisFields.add(interval);
+			analysisFields.add(minStep);
 			analysisFields.add(step);
 			analysisFields.add(error);
 			analysisFields.add(seed);
@@ -1706,6 +1712,12 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				try {
 					Double.parseDouble(interval.getText().trim());
 					biosimrc.put("biosim.sim.interval", interval.getText().trim());
+				}
+				catch (Exception e1) {
+				}
+				try {
+					Double.parseDouble(minStep.getText().trim());
+					biosimrc.put("biosim.min.sim.step", minStep.getText().trim());
 				}
 				catch (Exception e1) {
 				}
@@ -2910,7 +2922,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				JCheckBox dummy = new JCheckBox();
 				dummy.setSelected(false);
 				JList empty = new JList();
-				run.createProperties(0, "Print Interval", 1, 1, 1, tree.getFile()
+				run.createProperties(0, "Print Interval", 1, 1, 1, 1, tree.getFile()
 						.substring(
 								0,
 								tree.getFile().length()
@@ -3019,7 +3031,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				JCheckBox dummy = new JCheckBox();
 				JList empty = new JList();
 				dummy.setSelected(false);
-				run.createProperties(0, "Print Interval", 1, 1, 1, tree.getFile()
+				run.createProperties(0, "Print Interval", 1, 1, 1, 1, tree.getFile()
 						.substring(
 								0,
 								tree.getFile().length()

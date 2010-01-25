@@ -51,7 +51,7 @@ public class Run implements ActionListener {
 	 * @param stem
 	 */
 	public void createProperties(double timeLimit, String useInterval, double printInterval,
-			double timeStep, double absError, String outDir, long rndSeed, int run,
+			double minTimeStep, double timeStep, double absError, String outDir, long rndSeed, int run,
 			String[] termCond, String[] intSpecies, String printer_id,
 			String printer_track_quantity, String[] getFilename, String selectedButtons,
 			Component component, String filename, double rap1, double rap2, double qss, int con,
@@ -184,6 +184,7 @@ public class Run implements ActionListener {
 			else {
 				abs.setProperty("ode.simulation.time.step", "" + timeStep);
 			}
+			abs.setProperty("ode.simulation.min.time.step", "" + minTimeStep);
 			abs.setProperty("ode.simulation.absolute.error", "" + absError);
 			abs.setProperty("ode.simulation.out.dir", outDir);
 			abs.setProperty("monte.carlo.simulation.random.seed", "" + rndSeed);
@@ -210,6 +211,7 @@ public class Run implements ActionListener {
 			else {
 				abs.setProperty("monte.carlo.simulation.time.step", "" + timeStep);
 			}
+			abs.setProperty("monte.carlo.simulation.min.time.step", "" + minTimeStep);
 			abs.setProperty("monte.carlo.simulation.random.seed", "" + rndSeed);
 			abs.setProperty("monte.carlo.simulation.runs", "" + run);
 			abs.setProperty("monte.carlo.simulation.out.dir", outDir);
@@ -261,7 +263,7 @@ public class Run implements ActionListener {
 	 * the nary properties file from that information.
 	 */
 	public void createNaryProperties(double timeLimit, String useInterval, double printInterval,
-			double timeStep, String outDir, long rndSeed, int run, String printer_id,
+			double minTimeStep, double timeStep, String outDir, long rndSeed, int run, String printer_id,
 			String printer_track_quantity, String[] getFilename, Component component,
 			String filename, JRadioButton monteCarlo, String stopE, double stopR, String[] finalS,
 			ArrayList<JTextField> inhib, ArrayList<JList> consLevel,
@@ -345,6 +347,7 @@ public class Run implements ActionListener {
 			else {
 				nary.setProperty("monte.carlo.simulation.time.step", "" + timeStep);
 			}
+			nary.setProperty("monte.carlo.simulation.min.time.step", "" + minTimeStep);
 			nary.setProperty("monte.carlo.simulation.random.seed", "" + rndSeed);
 			nary.setProperty("monte.carlo.simulation.runs", "" + run);
 			nary.setProperty("monte.carlo.simulation.out.dir", ".");
