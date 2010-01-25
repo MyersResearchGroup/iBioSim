@@ -393,6 +393,8 @@ public class Run implements ActionListener {
 	/**
 	 * Executes the reb2sac program. If ODE, monte carlo, or markov is selected,
 	 * this method creates a Graph object.
+	 * 
+	 * @param runTime
 	 */
 	public int execute(String filename, JRadioButton sbml, JRadioButton dot, JRadioButton xhtml,
 			JRadioButton lhpn, Component component, JRadioButton ode, JRadioButton monteCarlo,
@@ -400,7 +402,7 @@ public class Run implements ActionListener {
 			JRadioButton nary, int naryRun, String[] intSpecies, Log log, JCheckBox usingSSA,
 			String ssaFile, BioSim biomodelsim, JTabbedPane simTab, String root,
 			JProgressBar progress, int steps, String simName, GCM2SBMLEditor gcmEditor,
-			String direct, double timeLimit) {
+			String direct, double timeLimit, double runTime) {
 		Runtime exec = Runtime.getRuntime();
 		int exitValue = 255;
 		while (outDir.split(separator)[outDir.split(separator).length - 1].equals(".")) {
@@ -655,12 +657,12 @@ public class Run implements ActionListener {
 				BufferedReader br = new BufferedReader(isr);
 				// int count = 0;
 				String line;
-				int time = 0;
-				int oldTime = 0;
+				double time = 0;
+				double oldTime = 0;
 				while ((line = br.readLine()) != null) {
 					try {
-						time = (int) (Double.parseDouble(line.substring(line.indexOf('=') + 1, line
-								.length())));
+						time = Double.parseDouble(line.substring(line.indexOf('=') + 1, line
+								.length()));
 						while (oldTime > time) {
 							time += timeLimit;
 						}
@@ -668,7 +670,7 @@ public class Run implements ActionListener {
 					}
 					catch (Exception e) {
 					}
-					progress.setValue(time);
+					progress.setValue((int) (((time * 100) / runTime)));
 					// if (steps > 0) {
 					// count++;
 					// progress.setValue(count);
