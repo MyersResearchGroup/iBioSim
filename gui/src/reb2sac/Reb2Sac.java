@@ -2656,7 +2656,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			label = new JLabel("Running " + simName);
 		}
 		int steps;
-		JProgressBar progress;
+		double runTime;
 		if (((String) intervalLabel.getSelectedItem()).contains("Print Interval")) {
 			if (simulators.getSelectedItem().equals("mpde")
 					|| simulators.getSelectedItem().equals("mp")
@@ -2679,11 +2679,14 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				// return;
 				// }
 				steps = (int) (timeLimit / printInterval);
-				progress = new JProgressBar(0, (int) timeLimit);
+				runTime = timeLimit;
+				// progress = new JProgressBar(0, (int) timeLimit);
 			}
 			else {
 				steps = (int) ((timeLimit / printInterval) * run);
-				progress = new JProgressBar(0, (int) (timeLimit * run));// steps);
+				runTime = timeLimit * run;
+				// progress = new JProgressBar(0, (int) (timeLimit * run));//
+				// steps);
 			}
 		}
 		else {
@@ -2692,7 +2695,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					|| simulators.getSelectedItem().equals("mp-adaptive")
 					|| simulators.getSelectedItem().equals("mp-event")) {
 				steps = (int) (printInterval);
-				progress = new JProgressBar(0, (int) timeLimit);
+				runTime = timeLimit;
+				// progress = new JProgressBar(0, (int) timeLimit);
 				// double interval = timeLimit / steps;
 				// double test = interval / timeStep;
 				// double error = test - ((int) test);
@@ -2705,9 +2709,12 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			}
 			else {
 				steps = (int) (printInterval * run);
-				progress = new JProgressBar(0, (int) timeLimit * run);// steps);
+				runTime = timeLimit * run;
+				// progress = new JProgressBar(0, (int) timeLimit * run);//
+				// steps);
 			}
 		}
+		JProgressBar progress = new JProgressBar(0, 100);
 		progress.setStringPainted(true);
 		// progress.setString("");
 		// progress.setIndeterminate(true);
@@ -2843,14 +2850,14 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					root + separator + simName, nary, 1, intSpecies, log, usingSSA, root
 							+ separator + outDir + separator + "user-defined.dat", biomodelsim,
 					simTab, root, progress, steps, simName + " " + direct, gcmEditor, direct,
-					timeLimit);
+					timeLimit, runTime);
 		}
 		else {
 			exit = runProgram.execute(simProp, sbml, dot, xhtml, lhpn, biomodelsim.frame(), ODE,
 					monteCarlo, sim, printer_id, printer_track_quantity,
 					root + separator + simName, nary, 1, intSpecies, log, usingSSA, root
 							+ separator + outDir + separator + "user-defined.dat", biomodelsim,
-					simTab, root, progress, steps, simName, gcmEditor, null, timeLimit);
+					simTab, root, progress, steps, simName, gcmEditor, null, timeLimit, runTime);
 		}
 		if (nary.isSelected() && !sim.equals("markov-chain-analysis") && !lhpn.isSelected()
 				&& exit == 0) {
