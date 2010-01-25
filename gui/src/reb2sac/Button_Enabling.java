@@ -23,7 +23,8 @@ public class Button_Enabling {
 	 */
 	public static void enableNoneOrAbs(JRadioButton ODE, JRadioButton monteCarlo,
 			JRadioButton markov, JTextField seed, JLabel seedLabel, JTextField runs,
-			JLabel runsLabel, JLabel stepLabel, JTextField step, JLabel errorLabel,
+			JLabel runsLabel, JLabel minStepLabel, JTextField minStep, 
+			JLabel stepLabel, JTextField step, JLabel errorLabel,
 			JTextField absErr, JLabel limitLabel, JTextField limit, JComboBox intervalLabel,
 			JTextField interval, JComboBox simulators, JLabel simulatorsLabel, JLabel explanation,
 			JLabel description, JRadioButton none, JList intSpecies, JList species, JLabel spLabel,
@@ -157,6 +158,8 @@ public class Button_Enabling {
 			runsLabel.setEnabled(true);
 			fileStem.setEnabled(true);
 			fileStemLabel.setEnabled(true);
+			minStepLabel.setEnabled(true);
+			minStep.setEnabled(true);
 			stepLabel.setEnabled(true);
 			step.setEnabled(true);
 			errorLabel.setEnabled(false);
@@ -189,8 +192,9 @@ public class Button_Enabling {
 	 * @param lhpn
 	 */
 	public static void enableNary(JRadioButton ODE, JRadioButton monteCarlo, JRadioButton markov,
-			JTextField seed, JLabel seedLabel, JTextField runs, JLabel runsLabel, JLabel stepLabel,
-			JTextField step, JLabel errorLabel, JTextField absErr, JLabel limitLabel,
+			JTextField seed, JLabel seedLabel, JTextField runs, JLabel runsLabel, 
+			JLabel minStepLabel, JTextField minStep, 
+			JLabel stepLabel, JTextField step, JLabel errorLabel, JTextField absErr, JLabel limitLabel,
 			JTextField limit, JComboBox intervalLabel, JTextField interval, JComboBox simulators,
 			JLabel simulatorsLabel, JLabel explanation, JLabel description, JList intSpecies,
 			JList species, JLabel spLabel, JLabel speciesLabel, JButton addIntSpecies,
@@ -250,6 +254,8 @@ public class Button_Enabling {
 			runsLabel.setEnabled(true);
 			fileStem.setEnabled(true);
 			fileStemLabel.setEnabled(true);
+			minStepLabel.setEnabled(false);
+			minStep.setEnabled(false);
 			stepLabel.setEnabled(false);
 			step.setEnabled(false);
 			errorLabel.setEnabled(false);
@@ -304,7 +310,7 @@ public class Button_Enabling {
 	 * This static method enables and disables the required fields for ODE.
 	 */
 	public static void enableODE(JTextField seed, JLabel seedLabel, JTextField runs,
-			JLabel runsLabel, JLabel stepLabel, JTextField step, JLabel errorLabel,
+			JLabel runsLabel, JLabel minStepLabel, JTextField minStep, JLabel stepLabel, JTextField step, JLabel errorLabel,
 			JTextField absErr, JLabel limitLabel, JTextField limit, JComboBox intervalLabel,
 			JTextField interval, JComboBox simulators, JLabel simulatorsLabel, JLabel explanation,
 			JLabel description, JCheckBox usingSSA, JTextField fileStem, JLabel fileStemLabel, JList postAbs) {
@@ -314,6 +320,8 @@ public class Button_Enabling {
 		runsLabel.setEnabled(true);
 		fileStem.setEnabled(true);
 		fileStemLabel.setEnabled(true);
+		minStepLabel.setEnabled(true);
+		minStep.setEnabled(true);
 		stepLabel.setEnabled(true);
 		step.setEnabled(true);
 		errorLabel.setEnabled(false);
@@ -350,7 +358,7 @@ public class Button_Enabling {
 	 * @param fileStem
 	 */
 	public static void enableMonteCarlo(JTextField seed, JLabel seedLabel, JTextField runs,
-			JLabel runsLabel, JLabel stepLabel, JTextField step, JLabel errorLabel,
+			JLabel runsLabel, JLabel minStepLabel, JTextField minStep, JLabel stepLabel, JTextField step, JLabel errorLabel,
 			JTextField absErr, JLabel limitLabel, JTextField limit, JComboBox intervalLabel,
 			JTextField interval, JComboBox simulators, JLabel simulatorsLabel, JLabel explanation,
 			JLabel description, JCheckBox usingSSA, JTextField fileStem, JLabel fileStemLabel, JList postAbs) {
@@ -360,6 +368,8 @@ public class Button_Enabling {
 		runsLabel.setEnabled(true);
 		fileStem.setEnabled(true);
 		fileStemLabel.setEnabled(true);
+		minStepLabel.setEnabled(true);
+		minStep.setEnabled(true);
 		stepLabel.setEnabled(true);
 		step.setEnabled(true);
 		errorLabel.setEnabled(false);
@@ -395,7 +405,7 @@ public class Button_Enabling {
 	 * This static method enables and disables the required fields for Markov.
 	 */
 	public static void enableMarkov(JTextField seed, JLabel seedLabel, JTextField runs,
-			JLabel runsLabel, JLabel stepLabel, JTextField step, JLabel errorLabel,
+			JLabel runsLabel, JLabel minStepLabel, JTextField minStep, JLabel stepLabel, JTextField step, JLabel errorLabel,
 			JTextField absErr, JLabel limitLabel, JTextField limit, JComboBox intervalLabel,
 			JTextField interval, JComboBox simulators, JLabel simulatorsLabel, JLabel explanation,
 			JLabel description, JCheckBox usingSSA, JTextField fileStem, JLabel fileStemLabel,
@@ -406,6 +416,8 @@ public class Button_Enabling {
 		runsLabel.setEnabled(false);
 		fileStem.setEnabled(false);
 		fileStemLabel.setEnabled(false);
+		minStepLabel.setEnabled(false);
+		minStep.setEnabled(false);
 		stepLabel.setEnabled(false);
 		step.setEnabled(false);
 		errorLabel.setEnabled(false);
@@ -437,7 +449,7 @@ public class Button_Enabling {
 	 * dot, and xhtml.
 	 */
 	public static void enableSbmlDotAndXhtml(JTextField seed, JLabel seedLabel, JTextField runs,
-			JLabel runsLabel, JLabel stepLabel, JTextField step, JLabel errorLabel,
+			JLabel runsLabel, JLabel minStepLabel, JTextField minStep, JLabel stepLabel, JTextField step, JLabel errorLabel,
 			JTextField absErr, JLabel limitLabel, JTextField limit, JComboBox intervalLabel,
 			JTextField interval, JComboBox simulators, JLabel simulatorsLabel, JLabel explanation,
 			JLabel description, JTextField fileStem, JLabel fileStemLabel, JList postAbs) {
@@ -447,6 +459,8 @@ public class Button_Enabling {
 		runsLabel.setEnabled(false);
 		fileStem.setEnabled(false);
 		fileStemLabel.setEnabled(false);
+		minStepLabel.setEnabled(false);
+		minStep.setEnabled(false);
 		stepLabel.setEnabled(false);
 		step.setEnabled(false);
 		errorLabel.setEnabled(false);
