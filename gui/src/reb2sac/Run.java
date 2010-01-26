@@ -637,6 +637,7 @@ public class Run implements ActionListener {
 				double time = 0;
 				double oldTime = 0;
 				int runNum = 0;
+				System.out.println("Limit: " + runTime);
 				while ((line = br.readLine()) != null) {
 					try {
 						time = Double.parseDouble(line.substring(line.indexOf('=') + 1, line.length()));
@@ -648,6 +649,7 @@ public class Run implements ActionListener {
 					}
 					catch (Exception e) {
 					}
+					System.out.println("Time: " + time);
 					progress.setValue((int) (((time * 100) / runTime)));
 					// if (steps > 0) {
 					// count++;
