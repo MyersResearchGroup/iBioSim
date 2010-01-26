@@ -643,13 +643,13 @@ public class Run implements ActionListener {
 						time = Double.parseDouble(line.substring(line.indexOf('=') + 1, line.length()));
 						if (oldTime > time) {
 							runNum++;
+							System.out.println("Time: " + time + ",Run: " + runNum);
 						}
 						oldTime = time;
 						time += (runNum * timeLimit);
 					}
 					catch (Exception e) {
 					}
-					System.out.println("Time: " + time);
 					progress.setValue((int) (((time * 100) / runTime)));
 					// if (steps > 0) {
 					// count++;
