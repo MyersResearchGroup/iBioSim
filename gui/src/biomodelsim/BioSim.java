@@ -4525,7 +4525,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					// urlC.getContentType() + ")...");
 					// System.out.flush();
 					FileOutputStream fos = null;
-					fos = new FileOutputStream(filename);
+					fos = new FileOutputStream(root + separator + filename);
 					int oneChar, count = 0;
 					while ((oneChar = is.read()) != -1) {
 						fos.write(oneChar);
@@ -4548,7 +4548,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				if (!filename.trim().equals("")) {
 					String[] file = filename.trim().split(separator);
 					try {
-						SBMLDocument document = readSBML(filename.trim());
+						SBMLDocument document = readSBML(root + separator + filename.trim());
 						if (overwrite(root + separator + file[file.length - 1],
 								file[file.length - 1])) {
 							long numErrors = document.checkConsistency();
