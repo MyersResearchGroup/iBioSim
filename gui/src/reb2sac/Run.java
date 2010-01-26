@@ -635,20 +635,22 @@ public class Run implements ActionListener {
 				// int count = 0;
 				String line;
 				double time = 0;
+				double oldTime = 0;
 				int runNum = 0;
 				while ((line = br.readLine()) != null) {
 					try {
 						if (line.contains("Time")) {
 							time = Double.parseDouble(line.substring(line.indexOf('=') + 1, line.length()));
-							if (time >= timeLimit) {
+							if (oldTime > time) {
 								runNum++;
 							}
+							oldTime = time;
 							time += (runNum * timeLimit);
 						}
 					}
 					catch (Exception e) {
 					}
-					progress.setValue((int) (((time * 100) / runTime)));
+					progress.setValue((int) Math.ceil((((time * 100) / runTime))));
 					// if (steps > 0) {
 					// count++;
 					// progress.setValue(count);
