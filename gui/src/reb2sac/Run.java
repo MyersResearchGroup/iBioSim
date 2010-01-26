@@ -637,16 +637,18 @@ public class Run implements ActionListener {
 				double time = 0;
 				double oldTime = 0;
 				int runNum = 0;
-				System.out.println("Limit: " + runTime);
+				//System.out.println("Limit: " + runTime);
 				while ((line = br.readLine()) != null) {
 					try {
+						if (line.contains("Time")) {
 						time = Double.parseDouble(line.substring(line.indexOf('=') + 1, line.length()));
 						if (oldTime > time) {
 							runNum++;
-							System.out.println("Time: " + time + ",Run: " + runNum);
+							//System.out.println("Time: " + time + ", Old Time: " + oldTime + ", Run: " + runNum);
 						}
 						oldTime = time;
 						time += (runNum * timeLimit);
+						}
 					}
 					catch (Exception e) {
 					}
