@@ -637,6 +637,7 @@ public class Run implements ActionListener {
 				double time = 0;
 				double oldTime = 0;
 				int runNum = 0;
+				int prog = 0;
 				while ((line = br.readLine()) != null) {
 					try {
 						if (line.contains("Time")) {
@@ -646,11 +647,20 @@ public class Run implements ActionListener {
 							}
 							oldTime = time;
 							time += (runNum * timeLimit);
+							double d = ((time * 100) / runTime);
+							String s = d + "";
+							double decimal = Double.parseDouble(s.substring(s.indexOf('.'), s.length()));
+							if (decimal >= 0.5) {
+								prog = (int) (Math.ceil(d));
+							}
+							else {
+								prog = (int) (d);
+							}
 						}
 					}
 					catch (Exception e) {
 					}
-					progress.setValue((int) Math.ceil((((time * 100) / runTime))));
+					progress.setValue(prog);
 					// if (steps > 0) {
 					// count++;
 					// progress.setValue(count);
