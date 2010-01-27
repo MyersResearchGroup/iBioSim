@@ -1629,7 +1629,12 @@ public class ExprTree {
 		case 'i': // Integer
 		case 'c': // Continuous
 			if (variable.equals(var)) {
-				copy(e, type);
+				if (e.isit == 'a' || e.isit == 'r' || e.isit == 'l' || e.isit == 'w') {
+					setNodeValues(e.r1, e.r2, e.op, e.isit);
+				}
+				else {
+					setVarValues(e.isit, e.lvalue, e.uvalue, e.variable);
+				}
 			}
 			return;
 		case 'w': // bitWise
@@ -1974,456 +1979,461 @@ public class ExprTree {
 		}
 	}
 
-	public void copy(ExprTree e, String type) {
-		if (e.op != null) {
-			op = e.op;
-		}
-		isit = e.isit;
-		lvalue = e.lvalue;
-		uvalue = e.uvalue;
-		if (e.variable != null) {
-			variable = e.variable;
-		}
-		real = e.real;
-		logical = e.logical;
-		r1 = new ExprTree(lhpn);
-		if (e.r1 != null) {
-			r1.copy(e.r1, type);
-		}
-		r2 = new ExprTree(lhpn);
-		if (e.r2 != null) {
-			r2.copy(e.r2, type);
-		}
-		// simplify if operands are static
-		boolean simplify = false;
-		if (isit == 'a' || isit == 'r' || isit == 'l' || isit == 'w') {
-			if (op.equals("&&")) {
-				if ((r1.isit == 'n') || (r1.isit == 't')) {
-					if (r1.lvalue == 0) {
-						setVarValues('t', 0.0, 0.0, null);
-						simplify = true;
-					}
-					else {
-						if (r2.isit == 'l' || r2.isit == 'a' || r2.isit == 'w' || r2.isit == 'r') {
-							setNodeValues(r2.r1, r2.r2, r2.op, r2.isit);
-						}
-						else {
-							setVarValues(r2.isit, r2.lvalue, r2.uvalue, r2.variable);
-						}
-					}
-				}
-				else if (((r2).isit == 'n') || ((r2).isit == 't')) {
-					if (r2.lvalue == 0) {
-						setVarValues('t', 0.0, 0.0, null);
-						simplify = true;
-					}
-					else {
-						if (r1.isit == 'l' || r1.isit == 'a' || r1.isit == 'w' || r1.isit == 'r') {
-							setNodeValues(r1.r1, r1.r2, r1.op, r1.isit);
-						}
-						else {
-							setVarValues(r1.isit, r1.lvalue, r1.uvalue, r1.variable);
-						}
-					}
-				}
-				else if (r1.equals(r2)) {
-					if (r1.isit == 'l' || r1.isit == 'a' || r1.isit == 'w' || r1.isit == 'r') {
-						setNodeValues(r1.r1, r1.r2, r1.op, r1.isit);
-					}
-					else {
-						setVarValues(r1.isit, r1.lvalue, r1.uvalue, r1.variable);
-					}
-				}
-				else {
-					ExprTree notE = new ExprTree(this);
-					notE.setNodeValues((this), null, "!", 'l');
-					if (r1.equals(notE) || notE.equals(r1)) {
-						setVarValues('t', 0.0, 0.0, null);
-					}
-				}
-			}
-			else if (op.equals("||")) {
-				if ((r1.isit == 'n') || (r1.isit == 't')) {
-					if (r1.lvalue != 0) {
-						setVarValues('t', 1.0, 1.0, null);
-						simplify = true;
-					}
-					else {
-						if (r2.isit == 'l' || r2.isit == 'a' || r2.isit == 'w' || r2.isit == 'r') {
-							setNodeValues(r2.r1, r2.r2, r2.op, r2.isit);
-						}
-						else {
-							setVarValues(r2.isit, r2.lvalue, r2.uvalue, r2.variable);
-						}
-					}
-				}
-				else if (((r2).isit == 'n') || ((r2).isit == 't')) {
-					if (r2.lvalue != 0) {
-						setVarValues('t', 1.0, 1.0, null);
-						simplify = true;
-					}
-					else {
-						if (r1.isit == 'l' || r1.isit == 'a' || r1.isit == 'w' || r1.isit == 'r') {
-							setNodeValues(r1.r1, r1.r2, r1.op, r1.isit);
-						}
-						else {
-							setVarValues(r1.isit, r1.lvalue, r1.uvalue, r1.variable);
-						}
-					}
-				}
-				else if (r1.equals(r2)) {
-					if (r1.isit == 'l' || r1.isit == 'a' || r1.isit == 'w' || r1.isit == 'r') {
-						setNodeValues(r1.r1, r1.r2, r1.op, r1.isit);
-					}
-					else {
-						setVarValues(r1.isit, r1.lvalue, r1.uvalue, r1.variable);
-					}
-				}
-				else {
-					ExprTree notE = new ExprTree(this);
-					notE.setNodeValues((this), null, "!", 'l');
-					if (r1.equals(notE) || notE.equals(r1)) {
-						setVarValues('t', 1.0, 1.0, null);
-					}
-				}
-				// if (((r1.isit == 'n') || (r1.isit == 't'))
-				// && (((r2).isit == 'n') || ((r2).isit == 't'))) {
-				// (this).isit = 't';
-				// if (r1.lvalue != 0 || r2.lvalue != 0) {
-				// this.lvalue = 1;
-				// }
-				// else {
-				// this.lvalue = 0;
-				// }
-				// (this).uvalue = (this).lvalue;
-				// simplify = true;
-				// }
-			}
-			else if (op.equals("->")) {
-				if (r1.isit == 'n' || r1.isit == 't') {
-					if (r1.lvalue != 0) {
-						if (r2.isit == 'l' || r2.isit == 'a' || r2.isit == 'w' || r2.isit == 'r') {
-							setNodeValues(r2.r1, r2.r2, r2.op, r2.isit);
-						}
-						else {
-							setVarValues(r2.isit, r2.lvalue, r2.uvalue, r2.variable);
-						}
-					}
-					else if (r1.uvalue == 0) {
-						setVarValues('t', 1.0, 1.0, null);
-					}
-				}
-				else if (r2.isit == 't' || r2.isit == 'n') {
-					if (r2.lvalue != 0) {
-						setVarValues('t', 1.0, 1.0, null);
-					}
-					else if (r2.uvalue == 0) {
-						ExprTree notE = new ExprTree(r2);
-						notE.setNodeValues((this), null, "!", 'l');
-						setNodeValues(notE.r1, notE.r2, notE.op, notE.isit);
-					}
-				}
-				// else if (((r1.isit == 'n') || (r1.isit == 't'))
-				// && (((r2).isit == 'n') || ((r2).isit == 't'))) {
-				// (this).isit = 't';
-				// if (r1.lvalue != 0 || r2.lvalue == 0) {
-				// this.lvalue = 1;
-				// }
-				// else {
-				// this.lvalue = 0;
-				// }
-				// (this).uvalue = (this).lvalue;
-				// simplify = true;
-				// }
-			}
-			else if (op.equals("!")) {
-				if (((r1).isit == 'n') || ((r1).isit == 't')) {
-					(this).isit = 't';
-					if (r1.lvalue == 1) {
-						this.lvalue = 0;
-					}
-					else {
-						this.lvalue = 1;
-					}
-					(this).uvalue = (this).lvalue;
-					simplify = true;
-				}
-			}
-			else if (op.equals("==")) {
-				if (((r1.isit == 'n') || (r1.isit == 't'))
-						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
-					(this).isit = 't';
-					if (r1.lvalue == r2.lvalue) {
-						this.lvalue = 1;
-					}
-					else {
-						this.lvalue = 0;
-					}
-					(this).uvalue = (this).lvalue;
-					simplify = true;
-				}
-			}
-			else if (op.equals(">=")) {
-				if (((r1.isit == 'n') || (r1.isit == 't'))
-						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
-					(this).isit = 't';
-					if ((r1).lvalue >= r2.lvalue) {
-						this.lvalue = 1;
-					}
-					else {
-						this.lvalue = 0;
-					}
-					(this).uvalue = (this).lvalue;
-					simplify = true;
-				}
-			}
-			else if (op.equals(">")) {
-				if (((r1.isit == 'n') || (r1.isit == 't'))
-						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
-					(this).isit = 't';
-					if ((r1).lvalue > r2.lvalue) {
-						this.lvalue = 1;
-					}
-					else {
-						this.lvalue = 0;
-					}
-					(this).uvalue = (this).lvalue;
-					simplify = true;
-				}
-			}
-			else if (op.equals("<=")) {
-				if (((r1.isit == 'n') || (r1.isit == 't'))
-						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
-					(this).isit = 't';
-					if ((r1).lvalue <= r2.lvalue) {
-						this.lvalue = 1;
-					}
-					else {
-						this.lvalue = 0;
-					}
-					(this).uvalue = (this).lvalue;
-					simplify = true;
-				}
-			}
-			else if (op.equals("<")) {
-				if (((r1.isit == 'n') || (r1.isit == 't'))
-						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
-					(this).isit = 't';
-					if ((r1).lvalue < r2.lvalue) {
-						this.lvalue = 1;
-					}
-					else {
-						this.lvalue = 0;
-					}
-					(this).uvalue = (this).lvalue;
-					simplify = true;
-				}
-			}
-			else if (op.equals("&")) {
-				if (((r1.isit == 'n') || (r1.isit == 't'))
-						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
-					// System.out.println(newresult.toString());
-					(this).isit = 'n';
-					// System.out.println(this.lvalue);
-					// System.out.println(newresult.lvalue);
-					(this).lvalue = ((int) (r1).lvalue) & ((int) r2.lvalue);
-					// System.out.println("After " + newresult.lvalue);
-					(this).uvalue = (this).lvalue;
-					simplify = true;
-				}
-			}
-			else if (op.equals("|")) {
-				if (((r1.isit == 'n') || (r1.isit == 't'))
-						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
-					(this).isit = 'n';
-					(this).lvalue = (int) (r1).lvalue | (int) r2.lvalue;
-					(this).uvalue = (this).lvalue;
-					simplify = true;
-				}
-			}
-			else if (isit == 'w' && op.equals("^")) {
-				if (((r1.isit == 'n') || (r1.isit == 't'))
-						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
-					(this).isit = 'n';
-					(this).lvalue = (int) (r1).lvalue ^ (int) r2.lvalue;
-					(this).uvalue = (this).lvalue;
-					simplify = true;
-				}
-			}
-			else if (op.equals("~")) {
-				if (((r1).isit == 'n') || ((r1).isit == 't')) {
-					(this).isit = 'n';
-					(this).lvalue = ~(int) (r1).lvalue;
-					(this).uvalue = (this).lvalue;
-					simplify = true;
-				}
-			}
-			else if (op.equals("[]")) {
-				if (((r1.isit == 'n') || (r1.isit == 't'))
-						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
-					(this).isit = 't';
-					(this).lvalue = (((int) (r1).lvalue) >> ((int) r2.lvalue)) & 1;
-					(this).uvalue = (this).lvalue;
-					simplify = true;
-				}
-			}
-			else if (op.equals("U-")) {
-				if (((r1).isit == 'n') || ((r1).isit == 't')) {
-					(this).isit = 'n';
-					(this).lvalue = -((r1).lvalue);
-					(this).uvalue = (this).lvalue;
-					simplify = true;
-				}
-			}
-			else if (op.equals("*")) {
-				if (r1.isit == 'n' || r1.isit == 't') {
-					if (r1.lvalue == 0 && r1.uvalue == 0) {
-						setVarValues('t', 0.0, 0.0, null);
-					}
-					else if (r1.lvalue == 1 && r1.uvalue == 1) {
-						if (r2.isit == 'l' || r2.isit == 'a' || r2.isit == 'w' || r2.isit == 'r') {
-							setNodeValues(r2.r1, r2.r2, r2.op, r2.isit);
-						}
-						else {
-							setVarValues(r2.isit, r2.lvalue, r2.uvalue, r2.variable);
-						}
-					}
-				}
-				else if (r2.isit == 'n' || r2.isit == 't') {
-					if (r2.lvalue == 0 && r2.uvalue == 0) {
-						setVarValues('t', 0.0, 0.0, null);
-					}
-					else if (r2.lvalue == 1 && r2.uvalue == 1) {
-						if (r1.isit == 'l' || r1.isit == 'a' || r1.isit == 'w' || r1.isit == 'r') {
-							setNodeValues(r1.r1, r1.r2, r1.op, r1.isit);
-						}
-						else {
-							setVarValues(r1.isit, r1.lvalue, r1.uvalue, r1.variable);
-						}
-					}
-				}
-				// if (((r1.isit == 'n') || (r1.isit == 't'))
-				// && (((r2).isit == 'n') || ((r2).isit == 't'))) {
-				// (this).isit = 'n';
-				// (this).lvalue = (r1).lvalue * r2.lvalue;
-				// (this).uvalue = (this).lvalue;
-				// simplify = true;
-				// }
-			}
-			else if (op.equals("/")) {
-				if (((r1.isit == 'n') || (r1.isit == 't'))
-						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
-					(this).isit = 'n';
-					(this).lvalue = (r1).lvalue / r2.lvalue;
-					(this).uvalue = (this).lvalue;
-					simplify = true;
-				}
-				else if ((r1.isit == 'n' || r1.isit == 't') && r1.uvalue == 0 && r1.lvalue == 0) {
-					setVarValues('n', 0.0, 0.0, null);
-				}
-				else if ((r2.isit == 'n' || r2.isit == 't') && r2.lvalue == 1 && r2.uvalue == 1) {
-					if (r2.isit == 'l' || r2.isit == 'a' || r2.isit == 'w' || r2.isit == 'r') {
-						setNodeValues(r2.r1, r2.r2, r2.op, r2.isit);
-					}
-					else {
-						setVarValues(r2.isit, r2.lvalue, r2.uvalue, r2.variable);
-					}
-				}
-			}
-			else if (op.equals("%")) {
-				if (((r1.isit == 'n') || (r1.isit == 't'))
-						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
-					(this).isit = 'n';
-					(this).lvalue = (r1).lvalue % r2.lvalue;
-					(this).uvalue = (this).lvalue;
-					simplify = true;
-				}
-				else if ((r1.isit == 'n' || r1.isit == 't') && r1.lvalue == 1.0 && r1.uvalue == 1.0) {
-					setVarValues('n', 1.0, 1.0, null);
-				}
-				else if ((r2.isit == 'n' || r2.isit == 't') && r2.lvalue == 1.0 && r2.uvalue == 1.0) {
-					if (r2.isit == 'l' || r2.isit == 'a' || r2.isit == 'w' || r2.isit == 'r') {
-						setNodeValues(r2.r1, r2.r2, r2.op, r2.isit);
-					}
-					else {
-						setVarValues(r2.isit, r2.lvalue, r2.uvalue, r2.variable);
-					}
-				}
-			}
-			else if (op.equals("+")) {
-				if (((r1.isit == 'n') || (r1.isit == 't'))
-						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
-					(this).isit = 'n';
-					(this).lvalue = (r1).lvalue + r2.lvalue;
-					(this).uvalue = (this).lvalue;
-					simplify = true;
-				}
-				else if ((r1.isit == 'n' || r1.isit == 't') && r1.lvalue == 0 && r1.uvalue == 0) {
-					if (r1.isit == 'l' || r1.isit == 'a' || r1.isit == 'w' || r1.isit == 'r') {
-						setNodeValues(r1.r1, r1.r2, r1.op, r1.isit);
-					}
-					else {
-						setVarValues(r1.isit, r1.lvalue, r1.uvalue, r1.variable);
-					}
-				}
-				else if ((r2.isit == 'n' || r2.isit == 't') && r2.lvalue == 0 && r2.uvalue == 0) {
-					if (r2.isit == 'l' || r2.isit == 'a' || r2.isit == 'w' || r2.isit == 'r') {
-						setNodeValues(r2.r1, r2.r2, r2.op, r2.isit);
-					}
-					else {
-						setVarValues(r2.isit, r2.lvalue, r2.uvalue, r2.variable);
-					}
-				}
-			}
-			else if (op.equals("-")) {
-				if (((r1.isit == 'n') || (r1.isit == 't'))
-						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
-					(this).isit = 'n';
-					(this).lvalue = (r1).lvalue - r2.lvalue;
-					(this).uvalue = (this).lvalue;
-					simplify = true;
-				}
-				else if ((r1.isit == 'n' || r1.isit == 't') && r1.lvalue == 0 && r1.uvalue == 0) {
-					setNodeValues(r2, null, "U-", 'a');
-				}
-				else if ((r2.isit == 'n' || r2.isit == 't') && r2.lvalue == 0 && r2.uvalue == 0) {
-					if (r1.isit == 'l' || r1.isit == 'a' || r1.isit == 'w' || r1.isit == 'r') {
-						setNodeValues(r1.r1, r1.r2, r1.op, r1.isit);
-					}
-					else {
-						setVarValues(r1.isit, r1.lvalue, r1.uvalue, r1.variable);
-					}
-				}
-			}
-		}
-		if (simplify) {
-			if (type.equals("integer") || type.equals("continuous")) {
-				isit = 'n';
-			}
-			else {
-				isit = 't';
-				if (lvalue != 0 && uvalue != 0) {
-					lvalue = 1;
-					uvalue = 1;
-				}
-				else if (lvalue != 0 || uvalue != 0) {
-					lvalue = 0;
-					uvalue = 1;
-				}
-			}
-		}
-	}
+//	public void copy(ExprTree e, String type) {
+//		if (e.op != null) {
+//			op = e.op;
+//		}
+//		isit = e.isit;
+//		lvalue = e.lvalue;
+//		uvalue = e.uvalue;
+//		if (e.variable != null) {
+//			variable = e.variable;
+//		}
+//		real = e.real;
+//		logical = e.logical;
+//		r1 = new ExprTree(lhpn);
+//		if (e.r1 != null) {
+//			r1.copy(e.r1, type);
+//		}
+//		r2 = new ExprTree(lhpn);
+//		if (e.r2 != null) {
+//			r2.copy(e.r2, type);
+//		}
+//		// simplify if operands are static
+//		boolean simplify = false;
+//		if (isit == 'a' || isit == 'r' || isit == 'l' || isit == 'w') {
+//			if (op.equals("&&")) {
+//				if ((r1.isit == 'n') || (r1.isit == 't')) {
+//					if (r1.lvalue == 0) {
+//						setVarValues('t', 0.0, 0.0, null);
+//						simplify = true;
+//					}
+//					else {
+//						if (r2.isit == 'l' || r2.isit == 'a' || r2.isit == 'w' || r2.isit == 'r') {
+//							setNodeValues(r2.r1, r2.r2, r2.op, r2.isit);
+//						}
+//						else {
+//							setVarValues(r2.isit, r2.lvalue, r2.uvalue, r2.variable);
+//						}
+//					}
+//				}
+//				else if (((r2).isit == 'n') || ((r2).isit == 't')) {
+//					if (r2.lvalue == 0) {
+//						setVarValues('t', 0.0, 0.0, null);
+//						simplify = true;
+//					}
+//					else {
+//						if (r1.isit == 'l' || r1.isit == 'a' || r1.isit == 'w' || r1.isit == 'r') {
+//							setNodeValues(r1.r1, r1.r2, r1.op, r1.isit);
+//						}
+//						else {
+//							setVarValues(r1.isit, r1.lvalue, r1.uvalue, r1.variable);
+//						}
+//					}
+//				}
+//				else if (r1.equals(r2)) {
+//					if (r1.isit == 'l' || r1.isit == 'a' || r1.isit == 'w' || r1.isit == 'r') {
+//						setNodeValues(r1.r1, r1.r2, r1.op, r1.isit);
+//					}
+//					else {
+//						setVarValues(r1.isit, r1.lvalue, r1.uvalue, r1.variable);
+//					}
+//				}
+//				else {
+//					ExprTree notE = new ExprTree(this);
+//					notE.setNodeValues((this), null, "!", 'l');
+//					if (r1.equals(notE) || notE.equals(r1)) {
+//						setVarValues('t', 0.0, 0.0, null);
+//					}
+//				}
+//			}
+//			else if (op.equals("||")) {
+//				if ((r1.isit == 'n') || (r1.isit == 't')) {
+//					if (r1.lvalue != 0) {
+//						setVarValues('t', 1.0, 1.0, null);
+//						simplify = true;
+//					}
+//					else {
+//						if (r2.isit == 'l' || r2.isit == 'a' || r2.isit == 'w' || r2.isit == 'r') {
+//							setNodeValues(r2.r1, r2.r2, r2.op, r2.isit);
+//						}
+//						else {
+//							setVarValues(r2.isit, r2.lvalue, r2.uvalue, r2.variable);
+//						}
+//					}
+//				}
+//				else if (((r2).isit == 'n') || ((r2).isit == 't')) {
+//					if (r2.lvalue != 0) {
+//						setVarValues('t', 1.0, 1.0, null);
+//						simplify = true;
+//					}
+//					else {
+//						if (r1.isit == 'l' || r1.isit == 'a' || r1.isit == 'w' || r1.isit == 'r') {
+//							setNodeValues(r1.r1, r1.r2, r1.op, r1.isit);
+//						}
+//						else {
+//							setVarValues(r1.isit, r1.lvalue, r1.uvalue, r1.variable);
+//						}
+//					}
+//				}
+//				else if (r1.equals(r2)) {
+//					if (r1.isit == 'l' || r1.isit == 'a' || r1.isit == 'w' || r1.isit == 'r') {
+//						setNodeValues(r1.r1, r1.r2, r1.op, r1.isit);
+//					}
+//					else {
+//						setVarValues(r1.isit, r1.lvalue, r1.uvalue, r1.variable);
+//					}
+//				}
+//				else {
+//					ExprTree notE = new ExprTree(this);
+//					notE.setNodeValues((this), null, "!", 'l');
+//					if (r1.equals(notE) || notE.equals(r1)) {
+//						setVarValues('t', 1.0, 1.0, null);
+//					}
+//				}
+//				// if (((r1.isit == 'n') || (r1.isit == 't'))
+//				// && (((r2).isit == 'n') || ((r2).isit == 't'))) {
+//				// (this).isit = 't';
+//				// if (r1.lvalue != 0 || r2.lvalue != 0) {
+//				// this.lvalue = 1;
+//				// }
+//				// else {
+//				// this.lvalue = 0;
+//				// }
+//				// (this).uvalue = (this).lvalue;
+//				// simplify = true;
+//				// }
+//			}
+//			else if (op.equals("->")) {
+//				if (r1.isit == 'n' || r1.isit == 't') {
+//					if (r1.lvalue != 0) {
+//						if (r2.isit == 'l' || r2.isit == 'a' || r2.isit == 'w' || r2.isit == 'r') {
+//							setNodeValues(r2.r1, r2.r2, r2.op, r2.isit);
+//						}
+//						else {
+//							setVarValues(r2.isit, r2.lvalue, r2.uvalue, r2.variable);
+//						}
+//					}
+//					else if (r1.uvalue == 0) {
+//						setVarValues('t', 1.0, 1.0, null);
+//					}
+//				}
+//				else if (r2.isit == 't' || r2.isit == 'n') {
+//					if (r2.lvalue != 0) {
+//						setVarValues('t', 1.0, 1.0, null);
+//					}
+//					else if (r2.uvalue == 0) {
+//						ExprTree notE = new ExprTree(r2);
+//						notE.setNodeValues((this), null, "!", 'l');
+//						setNodeValues(notE.r1, notE.r2, notE.op, notE.isit);
+//					}
+//				}
+//				// else if (((r1.isit == 'n') || (r1.isit == 't'))
+//				// && (((r2).isit == 'n') || ((r2).isit == 't'))) {
+//				// (this).isit = 't';
+//				// if (r1.lvalue != 0 || r2.lvalue == 0) {
+//				// this.lvalue = 1;
+//				// }
+//				// else {
+//				// this.lvalue = 0;
+//				// }
+//				// (this).uvalue = (this).lvalue;
+//				// simplify = true;
+//				// }
+//			}
+//			else if (op.equals("!")) {
+//				if (((r1).isit == 'n') || ((r1).isit == 't')) {
+//					(this).isit = 't';
+//					if (r1.lvalue == 1) {
+//						this.lvalue = 0;
+//					}
+//					else {
+//						this.lvalue = 1;
+//					}
+//					(this).uvalue = (this).lvalue;
+//					simplify = true;
+//				}
+//			}
+//			else if (op.equals("==")) {
+//				if (((r1.isit == 'n') || (r1.isit == 't'))
+//						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
+//					(this).isit = 't';
+//					if (r1.lvalue == r2.lvalue) {
+//						this.lvalue = 1;
+//					}
+//					else {
+//						this.lvalue = 0;
+//					}
+//					(this).uvalue = (this).lvalue;
+//					simplify = true;
+//				}
+//			}
+//			else if (op.equals(">=")) {
+//				if (((r1.isit == 'n') || (r1.isit == 't'))
+//						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
+//					(this).isit = 't';
+//					if ((r1).lvalue >= r2.lvalue) {
+//						this.lvalue = 1;
+//					}
+//					else {
+//						this.lvalue = 0;
+//					}
+//					(this).uvalue = (this).lvalue;
+//					simplify = true;
+//				}
+//			}
+//			else if (op.equals(">")) {
+//				if (((r1.isit == 'n') || (r1.isit == 't'))
+//						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
+//					(this).isit = 't';
+//					if ((r1).lvalue > r2.lvalue) {
+//						this.lvalue = 1;
+//					}
+//					else {
+//						this.lvalue = 0;
+//					}
+//					(this).uvalue = (this).lvalue;
+//					simplify = true;
+//				}
+//			}
+//			else if (op.equals("<=")) {
+//				if (((r1.isit == 'n') || (r1.isit == 't'))
+//						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
+//					(this).isit = 't';
+//					if ((r1).lvalue <= r2.lvalue) {
+//						this.lvalue = 1;
+//					}
+//					else {
+//						this.lvalue = 0;
+//					}
+//					(this).uvalue = (this).lvalue;
+//					simplify = true;
+//				}
+//			}
+//			else if (op.equals("<")) {
+//				if (((r1.isit == 'n') || (r1.isit == 't'))
+//						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
+//					(this).isit = 't';
+//					if ((r1).lvalue < r2.lvalue) {
+//						this.lvalue = 1;
+//					}
+//					else {
+//						this.lvalue = 0;
+//					}
+//					(this).uvalue = (this).lvalue;
+//					simplify = true;
+//				}
+//			}
+//			else if (op.equals("&")) {
+//				if (((r1.isit == 'n') || (r1.isit == 't'))
+//						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
+//					// System.out.println(newresult.toString());
+//					(this).isit = 'n';
+//					// System.out.println(this.lvalue);
+//					// System.out.println(newresult.lvalue);
+//					(this).lvalue = ((int) (r1).lvalue) & ((int) r2.lvalue);
+//					// System.out.println("After " + newresult.lvalue);
+//					(this).uvalue = (this).lvalue;
+//					simplify = true;
+//				}
+//			}
+//			else if (op.equals("|")) {
+//				if (((r1.isit == 'n') || (r1.isit == 't'))
+//						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
+//					(this).isit = 'n';
+//					(this).lvalue = (int) (r1).lvalue | (int) r2.lvalue;
+//					(this).uvalue = (this).lvalue;
+//					simplify = true;
+//				}
+//			}
+//			else if (isit == 'w' && op.equals("^")) {
+//				if (((r1.isit == 'n') || (r1.isit == 't'))
+//						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
+//					(this).isit = 'n';
+//					(this).lvalue = (int) (r1).lvalue ^ (int) r2.lvalue;
+//					(this).uvalue = (this).lvalue;
+//					simplify = true;
+//				}
+//			}
+//			else if (op.equals("~")) {
+//				if (((r1).isit == 'n') || ((r1).isit == 't')) {
+//					(this).isit = 'n';
+//					(this).lvalue = ~(int) (r1).lvalue;
+//					(this).uvalue = (this).lvalue;
+//					simplify = true;
+//				}
+//			}
+//			else if (op.equals("[]")) {
+//				if (((r1.isit == 'n') || (r1.isit == 't'))
+//						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
+//					(this).isit = 't';
+//					(this).lvalue = (((int) (r1).lvalue) >> ((int) r2.lvalue)) & 1;
+//					(this).uvalue = (this).lvalue;
+//					simplify = true;
+//				}
+//			}
+//			else if (op.equals("U-")) {
+//				if (((r1).isit == 'n') || ((r1).isit == 't')) {
+//					(this).isit = 'n';
+//					(this).lvalue = -((r1).lvalue);
+//					(this).uvalue = (this).lvalue;
+//					simplify = true;
+//				}
+//			}
+//			else if (op.equals("*")) {
+//				if (r1.isit == 'n' || r1.isit == 't') {
+//					if (r1.lvalue == 0 && r1.uvalue == 0) {
+//						setVarValues('t', 0.0, 0.0, null);
+//					}
+//					else if (r1.lvalue == 1 && r1.uvalue == 1) {
+//						if (r2.isit == 'l' || r2.isit == 'a' || r2.isit == 'w' || r2.isit == 'r') {
+//							setNodeValues(r2.r1, r2.r2, r2.op, r2.isit);
+//						}
+//						else {
+//							setVarValues(r2.isit, r2.lvalue, r2.uvalue, r2.variable);
+//						}
+//					}
+//				}
+//				else if (r2.isit == 'n' || r2.isit == 't') {
+//					if (r2.lvalue == 0 && r2.uvalue == 0) {
+//						setVarValues('t', 0.0, 0.0, null);
+//					}
+//					else if (r2.lvalue == 1 && r2.uvalue == 1) {
+//						if (r1.isit == 'l' || r1.isit == 'a' || r1.isit == 'w' || r1.isit == 'r') {
+//							setNodeValues(r1.r1, r1.r2, r1.op, r1.isit);
+//						}
+//						else {
+//							setVarValues(r1.isit, r1.lvalue, r1.uvalue, r1.variable);
+//						}
+//					}
+//				}
+//				// if (((r1.isit == 'n') || (r1.isit == 't'))
+//				// && (((r2).isit == 'n') || ((r2).isit == 't'))) {
+//				// (this).isit = 'n';
+//				// (this).lvalue = (r1).lvalue * r2.lvalue;
+//				// (this).uvalue = (this).lvalue;
+//				// simplify = true;
+//				// }
+//			}
+//			else if (op.equals("/")) {
+//				if (((r1.isit == 'n') || (r1.isit == 't'))
+//						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
+//					(this).isit = 'n';
+//					(this).lvalue = (r1).lvalue / r2.lvalue;
+//					(this).uvalue = (this).lvalue;
+//					simplify = true;
+//				}
+//				else if ((r1.isit == 'n' || r1.isit == 't') && r1.uvalue == 0 && r1.lvalue == 0) {
+//					setVarValues('n', 0.0, 0.0, null);
+//				}
+//				else if ((r2.isit == 'n' || r2.isit == 't') && r2.lvalue == 1 && r2.uvalue == 1) {
+//					if (r2.isit == 'l' || r2.isit == 'a' || r2.isit == 'w' || r2.isit == 'r') {
+//						setNodeValues(r2.r1, r2.r2, r2.op, r2.isit);
+//					}
+//					else {
+//						setVarValues(r2.isit, r2.lvalue, r2.uvalue, r2.variable);
+//					}
+//				}
+//			}
+//			else if (op.equals("%")) {
+//				if (((r1.isit == 'n') || (r1.isit == 't'))
+//						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
+//					(this).isit = 'n';
+//					(this).lvalue = (r1).lvalue % r2.lvalue;
+//					(this).uvalue = (this).lvalue;
+//					simplify = true;
+//				}
+//				else if ((r1.isit == 'n' || r1.isit == 't') && r1.lvalue == 1.0 && r1.uvalue == 1.0) {
+//					setVarValues('n', 1.0, 1.0, null);
+//				}
+//				else if ((r2.isit == 'n' || r2.isit == 't') && r2.lvalue == 1.0 && r2.uvalue == 1.0) {
+//					if (r2.isit == 'l' || r2.isit == 'a' || r2.isit == 'w' || r2.isit == 'r') {
+//						setNodeValues(r2.r1, r2.r2, r2.op, r2.isit);
+//					}
+//					else {
+//						setVarValues(r2.isit, r2.lvalue, r2.uvalue, r2.variable);
+//					}
+//				}
+//			}
+//			else if (op.equals("+")) {
+//				if (((r1.isit == 'n') || (r1.isit == 't'))
+//						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
+//					(this).isit = 'n';
+//					(this).lvalue = (r1).lvalue + r2.lvalue;
+//					(this).uvalue = (this).lvalue;
+//					simplify = true;
+//				}
+//				else if ((r1.isit == 'n' || r1.isit == 't') && r1.lvalue == 0 && r1.uvalue == 0) {
+//					if (r1.isit == 'l' || r1.isit == 'a' || r1.isit == 'w' || r1.isit == 'r') {
+//						setNodeValues(r1.r1, r1.r2, r1.op, r1.isit);
+//					}
+//					else {
+//						setVarValues(r1.isit, r1.lvalue, r1.uvalue, r1.variable);
+//					}
+//				}
+//				else if ((r2.isit == 'n' || r2.isit == 't') && r2.lvalue == 0 && r2.uvalue == 0) {
+//					if (r2.isit == 'l' || r2.isit == 'a' || r2.isit == 'w' || r2.isit == 'r') {
+//						setNodeValues(r2.r1, r2.r2, r2.op, r2.isit);
+//					}
+//					else {
+//						setVarValues(r2.isit, r2.lvalue, r2.uvalue, r2.variable);
+//					}
+//				}
+//			}
+//			else if (op.equals("-")) {
+//				if (((r1.isit == 'n') || (r1.isit == 't'))
+//						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
+//					(this).isit = 'n';
+//					(this).lvalue = (r1).lvalue - r2.lvalue;
+//					(this).uvalue = (this).lvalue;
+//					simplify = true;
+//				}
+//				else if ((r1.isit == 'n' || r1.isit == 't') && r1.lvalue == 0 && r1.uvalue == 0) {
+//					setNodeValues(r2, null, "U-", 'a');
+//				}
+//				else if ((r2.isit == 'n' || r2.isit == 't') && r2.lvalue == 0 && r2.uvalue == 0) {
+//					if (r1.isit == 'l' || r1.isit == 'a' || r1.isit == 'w' || r1.isit == 'r') {
+//						setNodeValues(r1.r1, r1.r2, r1.op, r1.isit);
+//					}
+//					else {
+//						setVarValues(r1.isit, r1.lvalue, r1.uvalue, r1.variable);
+//					}
+//				}
+//			}
+//		}
+//		if (simplify) {
+//			if (type.equals("integer") || type.equals("continuous")) {
+//				isit = 'n';
+//			}
+//			else {
+//				isit = 't';
+//				if (lvalue != 0 && uvalue != 0) {
+//					lvalue = 1;
+//					uvalue = 1;
+//				}
+//				else if (lvalue != 0 || uvalue != 0) {
+//					lvalue = 0;
+//					uvalue = 1;
+//				}
+//			}
+//		}
+//	}
 
 	public char getChange(HashMap<String, String> variables) {
 		switch (isit) {
 		case 'b': // Boolean
-			if (variables.containsKey(variable))
+			if (variables.containsKey(variable)) {
 				if (variables.get(variable).toString().toLowerCase().equals("false"))
 					return 'F';
-			if (variables.get(variable).toString().toLowerCase().equals("true"))
-				return 'T';
-			else
-				return 'X';
+				if (variables.get(variable).toString().toLowerCase().equals("true"))
+					return 'T';
+				else  {
+					return 'X';
+				}
+			}
+			else {
+				return 'U';
+			}
 		case 't': // Truth value
 			if (uvalue == 0)
 				return 'T';
@@ -3468,6 +3478,356 @@ public class ExprTree {
 			lvalue = -INFIN;
 		}
 		variable = null;
+		// simplify if operands are static
+		if (isit == 'a' || isit == 'r' || isit == 'l' || isit == 'w') {
+			if (op.equals("&&")) {
+				if ((r1.isit == 'n') || (r1.isit == 't')) {
+					if (r1.lvalue == 0) {
+						setVarValues('t', 0.0, 0.0, null);
+					}
+					else {
+						if (r2.isit == 'l' || r2.isit == 'a' || r2.isit == 'w' || r2.isit == 'r') {
+							setNodeValues(r2.r1, r2.r2, r2.op, r2.isit);
+						}
+						else {
+							setVarValues(r2.isit, r2.lvalue, r2.uvalue, r2.variable);
+						}
+					}
+				}
+				else if (((r2).isit == 'n') || ((r2).isit == 't')) {
+					if (r2.lvalue == 0) {
+						setVarValues('t', 0.0, 0.0, null);
+					}
+					else {
+						if (r1.isit == 'l' || r1.isit == 'a' || r1.isit == 'w' || r1.isit == 'r') {
+							setNodeValues(r1.r1, r1.r2, r1.op, r1.isit);
+						}
+						else {
+							setVarValues(r1.isit, r1.lvalue, r1.uvalue, r1.variable);
+						}
+					}
+				}
+				else if (r1.equals(r2)) {
+					if (r1.isit == 'l' || r1.isit == 'a' || r1.isit == 'w' || r1.isit == 'r') {
+						setNodeValues(r1.r1, r1.r2, r1.op, r1.isit);
+					}
+					else {
+						setVarValues(r1.isit, r1.lvalue, r1.uvalue, r1.variable);
+					}
+				}
+				else {
+					ExprTree notE = new ExprTree(this);
+					notE.setNodeValues((this), null, "!", 'l');
+					if (r1.equals(notE) || notE.equals(r1)) {
+						setVarValues('t', 0.0, 0.0, null);
+					}
+				}
+			}
+			else if (op.equals("||")) {
+				if ((r1.isit == 'n') || (r1.isit == 't')) {
+					if (r1.lvalue != 0) {
+						setVarValues('t', 1.0, 1.0, null);
+					}
+					else {
+						if (r2.isit == 'l' || r2.isit == 'a' || r2.isit == 'w' || r2.isit == 'r') {
+							setNodeValues(r2.r1, r2.r2, r2.op, r2.isit);
+						}
+						else {
+							setVarValues(r2.isit, r2.lvalue, r2.uvalue, r2.variable);
+						}
+					}
+				}
+				else if (((r2).isit == 'n') || ((r2).isit == 't')) {
+					if (r2.lvalue != 0) {
+						setVarValues('t', 1.0, 1.0, null);
+					}
+					else {
+						if (r1.isit == 'l' || r1.isit == 'a' || r1.isit == 'w' || r1.isit == 'r') {
+							setNodeValues(r1.r1, r1.r2, r1.op, r1.isit);
+						}
+						else {
+							setVarValues(r1.isit, r1.lvalue, r1.uvalue, r1.variable);
+						}
+					}
+				}
+				else if (r1.equals(r2)) {
+					if (r1.isit == 'l' || r1.isit == 'a' || r1.isit == 'w' || r1.isit == 'r') {
+						setNodeValues(r1.r1, r1.r2, r1.op, r1.isit);
+					}
+					else {
+						setVarValues(r1.isit, r1.lvalue, r1.uvalue, r1.variable);
+					}
+				}
+				else {
+					ExprTree notE = new ExprTree(this);
+					notE.setNodeValues((this), null, "!", 'l');
+					if (r1.equals(notE) || notE.equals(r1)) {
+						setVarValues('t', 1.0, 1.0, null);
+					}
+				}
+			}
+			else if (op.equals("->")) {
+				if (r1.isit == 'n' || r1.isit == 't') {
+					if (r1.lvalue != 0) {
+						if (r2.isit == 'l' || r2.isit == 'a' || r2.isit == 'w' || r2.isit == 'r') {
+							setNodeValues(r2.r1, r2.r2, r2.op, r2.isit);
+						}
+						else {
+							setVarValues(r2.isit, r2.lvalue, r2.uvalue, r2.variable);
+						}
+					}
+					else if (r1.uvalue == 0) {
+						setVarValues('t', 1.0, 1.0, null);
+					}
+				}
+				else if (r2.isit == 't' || r2.isit == 'n') {
+					if (r2.lvalue != 0) {
+						setVarValues('t', 1.0, 1.0, null);
+					}
+					else if (r2.uvalue == 0) {
+						ExprTree notE = new ExprTree(r2);
+						notE.setNodeValues((this), null, "!", 'l');
+						setNodeValues(notE.r1, notE.r2, notE.op, notE.isit);
+					}
+				}
+			}
+			else if (op.equals("!")) {
+				if (((r1).isit == 'n') || ((r1).isit == 't')) {
+					(this).isit = 't';
+					if (r1.lvalue == 1) {
+						this.lvalue = 0;
+					}
+					else {
+						this.lvalue = 1;
+					}
+					(this).uvalue = (this).lvalue;
+				}
+			}
+			else if (op.equals("==")) {
+				if (((r1.isit == 'n') || (r1.isit == 't'))
+						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
+					(this).isit = 't';
+					if (r1.lvalue == r2.lvalue) {
+						this.lvalue = 1;
+					}
+					else {
+						this.lvalue = 0;
+					}
+					(this).uvalue = (this).lvalue;
+				}
+			}
+			else if (op.equals(">=")) {
+				if (((r1.isit == 'n') || (r1.isit == 't'))
+						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
+					(this).isit = 't';
+					if ((r1).lvalue >= r2.lvalue) {
+						this.lvalue = 1;
+					}
+					else {
+						this.lvalue = 0;
+					}
+					(this).uvalue = (this).lvalue;
+				}
+			}
+			else if (op.equals(">")) {
+				if (((r1.isit == 'n') || (r1.isit == 't'))
+						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
+					(this).isit = 't';
+					if ((r1).lvalue > r2.lvalue) {
+						this.lvalue = 1;
+					}
+					else {
+						this.lvalue = 0;
+					}
+					(this).uvalue = (this).lvalue;
+				}
+			}
+			else if (op.equals("<=")) {
+				if (((r1.isit == 'n') || (r1.isit == 't'))
+						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
+					(this).isit = 't';
+					if ((r1).lvalue <= r2.lvalue) {
+						this.lvalue = 1;
+					}
+					else {
+						this.lvalue = 0;
+					}
+					(this).uvalue = (this).lvalue;
+				}
+			}
+			else if (op.equals("<")) {
+				if (((r1.isit == 'n') || (r1.isit == 't'))
+						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
+					(this).isit = 't';
+					if ((r1).lvalue < r2.lvalue) {
+						this.lvalue = 1;
+					}
+					else {
+						this.lvalue = 0;
+					}
+					(this).uvalue = (this).lvalue;
+				}
+			}
+			else if (op.equals("&")) {
+				if (((r1.isit == 'n') || (r1.isit == 't'))
+						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
+					// System.out.println(newresult.toString());
+					(this).isit = 'n';
+					// System.out.println(this.lvalue);
+					// System.out.println(newresult.lvalue);
+					(this).lvalue = ((int) (r1).lvalue) & ((int) r2.lvalue);
+					// System.out.println("After " + newresult.lvalue);
+					(this).uvalue = (this).lvalue;
+				}
+			}
+			else if (op.equals("|")) {
+				if (((r1.isit == 'n') || (r1.isit == 't'))
+						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
+					(this).isit = 'n';
+					(this).lvalue = (int) (r1).lvalue | (int) r2.lvalue;
+					(this).uvalue = (this).lvalue;
+				}
+			}
+			else if (isit == 'w' && op.equals("^")) {
+				if (((r1.isit == 'n') || (r1.isit == 't'))
+						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
+					(this).isit = 'n';
+					(this).lvalue = (int) (r1).lvalue ^ (int) r2.lvalue;
+					(this).uvalue = (this).lvalue;
+				}
+			}
+			else if (op.equals("~")) {
+				if (((r1).isit == 'n') || ((r1).isit == 't')) {
+					(this).isit = 'n';
+					(this).lvalue = ~(int) (r1).lvalue;
+					(this).uvalue = (this).lvalue;
+				}
+			}
+			else if (op.equals("[]")) {
+				if (((r1.isit == 'n') || (r1.isit == 't'))
+						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
+					(this).isit = 't';
+					(this).lvalue = (((int) (r1).lvalue) >> ((int) r2.lvalue)) & 1;
+					(this).uvalue = (this).lvalue;
+				}
+			}
+			else if (op.equals("U-")) {
+				if (((r1).isit == 'n') || ((r1).isit == 't')) {
+					(this).isit = 'n';
+					(this).lvalue = -((r1).lvalue);
+					(this).uvalue = (this).lvalue;
+				}
+			}
+			else if (op.equals("*")) {
+				if (r1.isit == 'n' || r1.isit == 't') {
+					if (r1.lvalue == 0 && r1.uvalue == 0) {
+						setVarValues('t', 0.0, 0.0, null);
+					}
+					else if (r1.lvalue == 1 && r1.uvalue == 1) {
+						if (r2.isit == 'l' || r2.isit == 'a' || r2.isit == 'w' || r2.isit == 'r') {
+							setNodeValues(r2.r1, r2.r2, r2.op, r2.isit);
+						}
+						else {
+							setVarValues(r2.isit, r2.lvalue, r2.uvalue, r2.variable);
+						}
+					}
+				}
+				else if (r2.isit == 'n' || r2.isit == 't') {
+					if (r2.lvalue == 0 && r2.uvalue == 0) {
+						setVarValues('t', 0.0, 0.0, null);
+					}
+					else if (r2.lvalue == 1 && r2.uvalue == 1) {
+						if (r1.isit == 'l' || r1.isit == 'a' || r1.isit == 'w' || r1.isit == 'r') {
+							setNodeValues(r1.r1, r1.r2, r1.op, r1.isit);
+						}
+						else {
+							setVarValues(r1.isit, r1.lvalue, r1.uvalue, r1.variable);
+						}
+					}
+				}
+			}
+			else if (op.equals("/")) {
+				if (((r1.isit == 'n') || (r1.isit == 't'))
+						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
+					(this).isit = 'n';
+					(this).lvalue = (r1).lvalue / r2.lvalue;
+					(this).uvalue = (this).lvalue;
+				}
+				else if ((r1.isit == 'n' || r1.isit == 't') && r1.uvalue == 0 && r1.lvalue == 0) {
+					setVarValues('n', 0.0, 0.0, null);
+				}
+				else if ((r2.isit == 'n' || r2.isit == 't') && r2.lvalue == 1 && r2.uvalue == 1) {
+					if (r2.isit == 'l' || r2.isit == 'a' || r2.isit == 'w' || r2.isit == 'r') {
+						setNodeValues(r2.r1, r2.r2, r2.op, r2.isit);
+					}
+					else {
+						setVarValues(r2.isit, r2.lvalue, r2.uvalue, r2.variable);
+					}
+				}
+			}
+			else if (op.equals("%")) {
+				if (((r1.isit == 'n') || (r1.isit == 't'))
+						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
+					(this).isit = 'n';
+					(this).lvalue = (r1).lvalue % r2.lvalue;
+					(this).uvalue = (this).lvalue;
+				}
+				else if ((r1.isit == 'n' || r1.isit == 't') && r1.lvalue == 1.0 && r1.uvalue == 1.0) {
+					setVarValues('n', 1.0, 1.0, null);
+				}
+				else if ((r2.isit == 'n' || r2.isit == 't') && r2.lvalue == 1.0 && r2.uvalue == 1.0) {
+					if (r2.isit == 'l' || r2.isit == 'a' || r2.isit == 'w' || r2.isit == 'r') {
+						setNodeValues(r2.r1, r2.r2, r2.op, r2.isit);
+					}
+					else {
+						setVarValues(r2.isit, r2.lvalue, r2.uvalue, r2.variable);
+					}
+				}
+			}
+			else if (op.equals("+")) {
+				if (((r1.isit == 'n') || (r1.isit == 't'))
+						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
+					(this).isit = 'n';
+					(this).lvalue = (r1).lvalue + r2.lvalue;
+					(this).uvalue = (this).lvalue;
+				}
+				else if ((r1.isit == 'n' || r1.isit == 't') && r1.lvalue == 0 && r1.uvalue == 0) {
+					if (r1.isit == 'l' || r1.isit == 'a' || r1.isit == 'w' || r1.isit == 'r') {
+						setNodeValues(r1.r1, r1.r2, r1.op, r1.isit);
+					}
+					else {
+						setVarValues(r1.isit, r1.lvalue, r1.uvalue, r1.variable);
+					}
+				}
+				else if ((r2.isit == 'n' || r2.isit == 't') && r2.lvalue == 0 && r2.uvalue == 0) {
+					if (r2.isit == 'l' || r2.isit == 'a' || r2.isit == 'w' || r2.isit == 'r') {
+						setNodeValues(r2.r1, r2.r2, r2.op, r2.isit);
+					}
+					else {
+						setVarValues(r2.isit, r2.lvalue, r2.uvalue, r2.variable);
+					}
+				}
+			}
+			else if (op.equals("-")) {
+				if (((r1.isit == 'n') || (r1.isit == 't'))
+						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
+					(this).isit = 'n';
+					(this).lvalue = (r1).lvalue - r2.lvalue;
+					(this).uvalue = (this).lvalue;
+				}
+				else if ((r1.isit == 'n' || r1.isit == 't') && r1.lvalue == 0 && r1.uvalue == 0) {
+					setNodeValues(r2, null, "U-", 'a');
+				}
+				else if ((r2.isit == 'n' || r2.isit == 't') && r2.lvalue == 0 && r2.uvalue == 0) {
+					if (r1.isit == 'l' || r1.isit == 'a' || r1.isit == 'w' || r1.isit == 'r') {
+						setNodeValues(r1.r1, r1.r2, r1.op, r1.isit);
+					}
+					else {
+						setVarValues(r1.isit, r1.lvalue, r1.uvalue, r1.variable);
+					}
+				}
+			}
+		}
 	}
 
 	public double evaluateExp(HashMap<String, String> variables) {
