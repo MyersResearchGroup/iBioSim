@@ -1216,7 +1216,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						if (tab.getTabCount() > 0) {
 							KeyboardFocusManager.getCurrentKeyboardFocusManager()
 									.removeKeyEventDispatcher(dispatcher);
-							if (save(tab.getSelectedIndex()) != 0) {
+							if (save(tab.getSelectedIndex(), 0) != 0) {
 								tab.remove(tab.getSelectedIndex());
 							}
 							KeyboardFocusManager.getCurrentKeyboardFocusManager()
@@ -1975,9 +1975,17 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 	}
 
 	public void exit() {
+		int autosave = 0;
 		for (int i = 0; i < tab.getTabCount(); i++) {
-			if (save(i) == 0) {
+			int save = save(i, autosave);
+			if (save == 0) {
 				return;
+			}
+			else if (save == 2) {
+				autosave = 1;
+			}
+			else if (save == 3) {
+				autosave = 2;
 			}
 		}
 		Preferences biosimrc = Preferences.userRoot();
@@ -2496,7 +2504,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							.equals(
 									tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
 						tab.setSelectedIndex(i);
-						if (save(i) != 1) {
+						if (save(i, 0) != 1) {
 							return;
 						}
 						break;
@@ -2602,7 +2610,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							.equals(
 									tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
 						tab.setSelectedIndex(i);
-						if (save(i) != 1) {
+						if (save(i, 0) != 1) {
 							return;
 						}
 						break;
@@ -2912,7 +2920,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							.equals(
 									tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
 						tab.setSelectedIndex(i);
-						if (save(i) != 1) {
+						if (save(i, 0) != 1) {
 							return;
 						}
 						break;
@@ -3021,7 +3029,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							.equals(
 									tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
 						tab.setSelectedIndex(i);
-						if (save(i) != 1) {
+						if (save(i, 0) != 1) {
 							return;
 						}
 						break;
@@ -3460,9 +3468,17 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		}
 		// if the new menu item is selected
 		else if (e.getSource() == newProj) {
+			int autosave = 0;
 			for (int i = 0; i < tab.getTabCount(); i++) {
-				if (save(i) == 0) {
+				int save = save(i, autosave);
+				if (save == 0) {
 					return;
+				}
+				else if (save == 2) {
+					autosave = 1;
+				}
+				else if (save == 3) {
+					autosave = 2;
 				}
 			}
 			File file;
@@ -3554,9 +3570,17 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		else if ((e.getSource() == openProj) || (e.getSource() == recentProjects[0])
 				|| (e.getSource() == recentProjects[1]) || (e.getSource() == recentProjects[2])
 				|| (e.getSource() == recentProjects[3]) || (e.getSource() == recentProjects[4])) {
+			int autosave = 0;
 			for (int i = 0; i < tab.getTabCount(); i++) {
-				if (save(i) == 0) {
+				int save = save(i, autosave);
+				if (save == 0) {
 					return;
+				}
+				else if (save == 2) {
+					autosave = 1;
+				}
+				else if (save == 3) {
+					autosave = 2;
 				}
 			}
 			Preferences biosimrc = Preferences.userRoot();
@@ -5266,7 +5290,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							.equals(
 									tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
 						tab.setSelectedIndex(i);
-						if (save(i) != 1) {
+						if (save(i, 0) != 1) {
 							return;
 						}
 						break;
@@ -5878,7 +5902,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							.equals(
 									tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
 						tab.setSelectedIndex(i);
-						if (save(i) != 1) {
+						if (save(i, 0) != 1) {
 							return;
 						}
 						break;
@@ -6204,7 +6228,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 										tree.getFile().split(separator)[tree.getFile().split(
 												separator).length - 1])) {
 							tab.setSelectedIndex(i);
-							if (save(i) != 1) {
+							if (save(i, 0) != 1) {
 								return;
 							}
 							break;
@@ -6838,94 +6862,179 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 	/**
 	 * Prompts the user to save work that has been done.
 	 */
-	public int save(int index) {
+	public int save(int index, int autosave) {
+		Object[] options = { "Yes", "No", "Cancel", "Yes To All", "No To All" };
 		if (tab.getComponentAt(index).getName().contains(("GCM"))
 				|| tab.getComponentAt(index).getName().contains("LHPN")) {
 			if (tab.getComponentAt(index) instanceof GCM2SBMLEditor) {
 				GCM2SBMLEditor editor = (GCM2SBMLEditor) tab.getComponentAt(index);
 				if (editor.isDirty()) {
-					Object[] options = { "Yes", "No", "Cancel" };
-					int value = JOptionPane.showOptionDialog(frame,
-							"Do you want to save changes to " + tab.getTitleAt(index) + "?",
-							"Save Changes", JOptionPane.YES_NO_CANCEL_OPTION,
-							JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-					if (value == JOptionPane.YES_OPTION) {
-						editor.save("gcm");
-						return 1;
+					if (autosave == 0) {
+						int value = JOptionPane.showOptionDialog(frame,
+								"Do you want to save changes to " + tab.getTitleAt(index) + "?",
+								"Save Changes", JOptionPane.YES_NO_CANCEL_OPTION,
+								JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+						if (value == JOptionPane.YES_OPTION) {
+							editor.save("gcm");
+							return 1;
+						}
+						else if (value == JOptionPane.NO_OPTION) {
+							return 1;
+						}
+						else if (value == JOptionPane.CANCEL_OPTION) {
+							return 0;
+						}
+						else if (value == 3) {
+							editor.save("gcm");
+							return 2;
+						}
+						else if (value == 4) {
+							return 3;
+						}
 					}
-					else if (value == JOptionPane.NO_OPTION) {
-						return 1;
+					else if (autosave == 1) {
+						editor.save("gcm");
+						return 2;
 					}
 					else {
-						return 0;
+						return 3;
 					}
 				}
 			}
 			else if (tab.getComponentAt(index) instanceof LHPNEditor) {
 				LHPNEditor editor = (LHPNEditor) tab.getComponentAt(index);
 				if (editor.isDirty()) {
-					Object[] options = { "Yes", "No", "Cancel" };
-					int value = JOptionPane.showOptionDialog(frame,
-							"Do you want to save changes to " + tab.getTitleAt(index) + "?",
-							"Save Changes", JOptionPane.YES_NO_CANCEL_OPTION,
-							JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-					if (value == JOptionPane.YES_OPTION) {
-						editor.save();
-						return 1;
+					if (autosave == 0) {
+						int value = JOptionPane.showOptionDialog(frame,
+								"Do you want to save changes to " + tab.getTitleAt(index) + "?",
+								"Save Changes", JOptionPane.YES_NO_CANCEL_OPTION,
+								JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+						if (value == JOptionPane.YES_OPTION) {
+							editor.save();
+							return 1;
+						}
+						else if (value == JOptionPane.NO_OPTION) {
+							return 1;
+						}
+						else if (value == JOptionPane.CANCEL_OPTION) {
+							return 0;
+						}
+						else if (value == 3) {
+							editor.save();
+							return 2;
+						}
+						else if (value == 4) {
+							return 3;
+						}
 					}
-					else if (value == JOptionPane.NO_OPTION) {
-						return 1;
+					else if (autosave == 1) {
+						editor.save();
+						return 2;
 					}
 					else {
-						return 0;
+						return 3;
 					}
 				}
 			}
-			return 1;
+			if (autosave == 0) {
+				return 1;
+			}
+			else if (autosave == 1) {
+				return 2;
+			}
+			else {
+				return 3;
+			}
 		}
 		else if (tab.getComponentAt(index).getName().equals("SBML Editor")) {
 			if (tab.getComponentAt(index) instanceof SBML_Editor) {
 				if (((SBML_Editor) tab.getComponentAt(index)).isDirty()) {
-					Object[] options = { "Yes", "No", "Cancel" };
-					int value = JOptionPane.showOptionDialog(frame,
-							"Do you want to save changes to " + tab.getTitleAt(index) + "?",
-							"Save Changes", JOptionPane.YES_NO_CANCEL_OPTION,
-							JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-					if (value == JOptionPane.YES_OPTION) {
-						((SBML_Editor) tab.getComponentAt(index)).save(false, "", true);
-						return 1;
+					if (autosave == 0) {
+						int value = JOptionPane.showOptionDialog(frame,
+								"Do you want to save changes to " + tab.getTitleAt(index) + "?",
+								"Save Changes", JOptionPane.YES_NO_CANCEL_OPTION,
+								JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+						if (value == JOptionPane.YES_OPTION) {
+							((SBML_Editor) tab.getComponentAt(index)).save(false, "", true);
+							return 1;
+						}
+						else if (value == JOptionPane.NO_OPTION) {
+							return 1;
+						}
+						else if (value == JOptionPane.CANCEL_OPTION) {
+							return 0;
+						}
+						else if (value == 3) {
+							((SBML_Editor) tab.getComponentAt(index)).save(false, "", true);
+							return 2;
+						}
+						else if (value == 4) {
+							return 3;
+						}
 					}
-					else if (value == JOptionPane.NO_OPTION) {
-						return 1;
+					else if (autosave == 1) {
+						((SBML_Editor) tab.getComponentAt(index)).save(false, "", true);
+						return 2;
 					}
 					else {
-						return 0;
+						return 3;
 					}
 				}
 			}
-			return 1;
+			if (autosave == 0) {
+				return 1;
+			}
+			else if (autosave == 1) {
+				return 2;
+			}
+			else {
+				return 3;
+			}
 		}
 		else if (tab.getComponentAt(index).getName().contains("Graph")) {
 			if (tab.getComponentAt(index) instanceof Graph) {
 				if (((Graph) tab.getComponentAt(index)).hasChanged()) {
-					Object[] options = { "Yes", "No", "Cancel" };
-					int value = JOptionPane.showOptionDialog(frame,
-							"Do you want to save changes to " + tab.getTitleAt(index) + "?",
-							"Save Changes", JOptionPane.YES_NO_CANCEL_OPTION,
-							JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-					if (value == JOptionPane.YES_OPTION) {
-						((Graph) tab.getComponentAt(index)).save();
-						return 1;
+					if (autosave == 0) {
+						int value = JOptionPane.showOptionDialog(frame,
+								"Do you want to save changes to " + tab.getTitleAt(index) + "?",
+								"Save Changes", JOptionPane.YES_NO_CANCEL_OPTION,
+								JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+						if (value == JOptionPane.YES_OPTION) {
+							((Graph) tab.getComponentAt(index)).save();
+							return 1;
+						}
+						else if (value == JOptionPane.NO_OPTION) {
+							return 1;
+						}
+						else if (value == JOptionPane.CANCEL_OPTION) {
+							return 0;
+						}
+						else if (value == 3) {
+							((Graph) tab.getComponentAt(index)).save();
+							return 2;
+						}
+						else if (value == 4) {
+							return 3;
+						}
 					}
-					else if (value == JOptionPane.NO_OPTION) {
-						return 1;
+					else if (autosave == 1) {
+						((Graph) tab.getComponentAt(index)).save();
+						return 2;
 					}
 					else {
-						return 0;
+						return 3;
 					}
 				}
 			}
-			return 1;
+			if (autosave == 0) {
+				return 1;
+			}
+			else if (autosave == 1) {
+				return 2;
+			}
+			else {
+				return 3;
+			}
 		}
 		else {
 			if (tab.getComponentAt(index) instanceof JTabbedPane) {
@@ -6935,18 +7044,31 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 								.equals("Simulate")) {
 							if (((Reb2Sac) ((JTabbedPane) tab.getComponentAt(index))
 									.getComponent(i)).hasChanged()) {
-								Object[] options = { "Yes", "No", "Cancel" };
-								int value = JOptionPane.showOptionDialog(frame,
-										"Do you want to save simulation option changes for "
-												+ tab.getTitleAt(index) + "?", "Save Changes",
-										JOptionPane.YES_NO_CANCEL_OPTION,
-										JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-								if (value == JOptionPane.YES_OPTION) {
+								if (autosave == 0) {
+									int value = JOptionPane.showOptionDialog(frame,
+											"Do you want to save simulation option changes for "
+													+ tab.getTitleAt(index) + "?", "Save Changes",
+											JOptionPane.YES_NO_CANCEL_OPTION,
+											JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+									if (value == JOptionPane.YES_OPTION) {
+										((Reb2Sac) ((JTabbedPane) tab.getComponentAt(index))
+												.getComponent(i)).save();
+									}
+									else if (value == JOptionPane.CANCEL_OPTION) {
+										return 0;
+									}
+									else if (value == 3) {
+										((Reb2Sac) ((JTabbedPane) tab.getComponentAt(index))
+												.getComponent(i)).save();
+										autosave = 1;
+									}
+									else if (value == 4) {
+										autosave = 2;
+									}
+								}
+								else if (autosave == 1) {
 									((Reb2Sac) ((JTabbedPane) tab.getComponentAt(index))
 											.getComponent(i)).save();
-								}
-								else if (value == JOptionPane.CANCEL_OPTION) {
-									return 0;
 								}
 							}
 						}
@@ -6954,18 +7076,31 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 								.getName().equals("SBML Editor")) {
 							if (((SBML_Editor) ((JTabbedPane) tab.getComponentAt(index))
 									.getComponent(i)).isDirty()) {
-								Object[] options = { "Yes", "No", "Cancel" };
-								int value = JOptionPane.showOptionDialog(frame,
-										"Do you want to save parameter changes for "
-												+ tab.getTitleAt(index) + "?", "Save Changes",
-										JOptionPane.YES_NO_CANCEL_OPTION,
-										JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-								if (value == JOptionPane.YES_OPTION) {
+								if (autosave == 0) {
+									int value = JOptionPane.showOptionDialog(frame,
+											"Do you want to save parameter changes for "
+													+ tab.getTitleAt(index) + "?", "Save Changes",
+											JOptionPane.YES_NO_CANCEL_OPTION,
+											JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+									if (value == JOptionPane.YES_OPTION) {
+										((SBML_Editor) ((JTabbedPane) tab.getComponentAt(index))
+												.getComponent(i)).save(false, "", true);
+									}
+									else if (value == JOptionPane.CANCEL_OPTION) {
+										return 0;
+									}
+									else if (value == 3) {
+										((SBML_Editor) ((JTabbedPane) tab.getComponentAt(index))
+												.getComponent(i)).save(false, "", true);
+										autosave = 1;
+									}
+									else if (value == 4) {
+										autosave = 2;
+									}
+								}
+								else if (autosave == 1) {
 									((SBML_Editor) ((JTabbedPane) tab.getComponentAt(index))
 											.getComponent(i)).save(false, "", true);
-								}
-								else if (value == JOptionPane.CANCEL_OPTION) {
-									return 0;
 								}
 							}
 						}
@@ -6973,22 +7108,31 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 								.getName().equals("GCM Editor")) {
 							if (((GCM2SBMLEditor) ((JTabbedPane) tab.getComponentAt(index))
 									.getComponent(i)).isDirty()) {
-								Object[] options = { "Yes", "No", "Cancel" };
-								int value = JOptionPane.showOptionDialog(frame,
-										"Do you want to save parameter changes for "
-												+ tab.getTitleAt(index) + "?", "Save Changes",
-										JOptionPane.YES_NO_CANCEL_OPTION,
-										JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-								if (value == JOptionPane.YES_OPTION) {
+								if (autosave == 0) {
+									int value = JOptionPane.showOptionDialog(frame,
+											"Do you want to save parameter changes for "
+													+ tab.getTitleAt(index) + "?", "Save Changes",
+											JOptionPane.YES_NO_CANCEL_OPTION,
+											JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+									if (value == JOptionPane.YES_OPTION) {
+										((GCM2SBMLEditor) ((JTabbedPane) tab.getComponentAt(index))
+												.getComponent(i)).saveParams(false, "");
+									}
+									else if (value == JOptionPane.CANCEL_OPTION) {
+										return 0;
+									}
+									else if (value == 3) {
+										((GCM2SBMLEditor) ((JTabbedPane) tab.getComponentAt(index))
+												.getComponent(i)).saveParams(false, "");
+										autosave = 1;
+									}
+									else if (value == 4) {
+										autosave = 2;
+									}
+								}
+								else if (autosave == 1) {
 									((GCM2SBMLEditor) ((JTabbedPane) tab.getComponentAt(index))
 											.getComponent(i)).saveParams(false, "");
-									return 1;
-								}
-								else if (value == JOptionPane.NO_OPTION) {
-									return 1;
-								}
-								else {
-									return 0;
 								}
 							}
 						}
@@ -6997,42 +7141,84 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof Learn) {
 								if (((Learn) ((JTabbedPane) tab.getComponentAt(index))
 										.getComponent(i)).hasChanged()) {
-									Object[] options = { "Yes", "No", "Cancel" };
-									int value = JOptionPane.showOptionDialog(frame,
-											"Do you want to save learn option changes for "
-													+ tab.getTitleAt(index) + "?", "Save Changes",
-											JOptionPane.YES_NO_CANCEL_OPTION,
-											JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-									if (value == JOptionPane.YES_OPTION) {
+									if (autosave == 0) {
+										int value = JOptionPane.showOptionDialog(frame,
+												"Do you want to save learn option changes for "
+														+ tab.getTitleAt(index) + "?",
+												"Save Changes", JOptionPane.YES_NO_CANCEL_OPTION,
+												JOptionPane.PLAIN_MESSAGE, null, options,
+												options[0]);
+										if (value == JOptionPane.YES_OPTION) {
+											if (((JTabbedPane) tab.getComponentAt(index))
+													.getComponent(i) instanceof Learn) {
+												((Learn) ((JTabbedPane) tab.getComponentAt(index))
+														.getComponent(i)).save();
+											}
+										}
+										else if (value == JOptionPane.CANCEL_OPTION) {
+											return 0;
+										}
+										else if (value == 3) {
+											if (((JTabbedPane) tab.getComponentAt(index))
+													.getComponent(i) instanceof Learn) {
+												((Learn) ((JTabbedPane) tab.getComponentAt(index))
+														.getComponent(i)).save();
+											}
+											autosave = 1;
+										}
+										else if (value == 4) {
+											autosave = 2;
+										}
+									}
+									else if (autosave == 1) {
 										if (((JTabbedPane) tab.getComponentAt(index))
 												.getComponent(i) instanceof Learn) {
 											((Learn) ((JTabbedPane) tab.getComponentAt(index))
 													.getComponent(i)).save();
 										}
 									}
-									else if (value == JOptionPane.CANCEL_OPTION) {
-										return 0;
-									}
 								}
 							}
 							if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof LearnLHPN) {
 								if (((LearnLHPN) ((JTabbedPane) tab.getComponentAt(index))
 										.getComponent(i)).hasChanged()) {
-									Object[] options = { "Yes", "No", "Cancel" };
-									int value = JOptionPane.showOptionDialog(frame,
-											"Do you want to save learn option changes for "
-													+ tab.getTitleAt(index) + "?", "Save Changes",
-											JOptionPane.YES_NO_CANCEL_OPTION,
-											JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-									if (value == JOptionPane.YES_OPTION) {
+									if (autosave == 0) {
+										int value = JOptionPane.showOptionDialog(frame,
+												"Do you want to save learn option changes for "
+														+ tab.getTitleAt(index) + "?",
+												"Save Changes", JOptionPane.YES_NO_CANCEL_OPTION,
+												JOptionPane.PLAIN_MESSAGE, null, options,
+												options[0]);
+										if (value == JOptionPane.YES_OPTION) {
+											if (((JTabbedPane) tab.getComponentAt(index))
+													.getComponent(i) instanceof LearnLHPN) {
+												((LearnLHPN) ((JTabbedPane) tab
+														.getComponentAt(index)).getComponent(i))
+														.save();
+											}
+										}
+										else if (value == JOptionPane.CANCEL_OPTION) {
+											return 0;
+										}
+										else if (value == 3) {
+											if (((JTabbedPane) tab.getComponentAt(index))
+													.getComponent(i) instanceof LearnLHPN) {
+												((LearnLHPN) ((JTabbedPane) tab
+														.getComponentAt(index)).getComponent(i))
+														.save();
+											}
+											autosave = 1;
+										}
+										else if (value == 4) {
+											autosave = 2;
+										}
+									}
+									else if (autosave == 1) {
 										if (((JTabbedPane) tab.getComponentAt(index))
 												.getComponent(i) instanceof LearnLHPN) {
 											((LearnLHPN) ((JTabbedPane) tab.getComponentAt(index))
 													.getComponent(i)).save();
 										}
-									}
-									else if (value == JOptionPane.CANCEL_OPTION) {
-										return 0;
 									}
 								}
 							}
@@ -7049,22 +7235,44 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof Graph) {
 								if (((Graph) ((JTabbedPane) tab.getComponentAt(index))
 										.getComponent(i)).hasChanged()) {
-									Object[] options = { "Yes", "No", "Cancel" };
-									int value = JOptionPane.showOptionDialog(frame,
-											"Do you want to save graph changes for "
-													+ tab.getTitleAt(index) + "?", "Save Changes",
-											JOptionPane.YES_NO_CANCEL_OPTION,
-											JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-									if (value == JOptionPane.YES_OPTION) {
+									if (autosave == 0) {
+										int value = JOptionPane.showOptionDialog(frame,
+												"Do you want to save graph changes for "
+														+ tab.getTitleAt(index) + "?",
+												"Save Changes", JOptionPane.YES_NO_CANCEL_OPTION,
+												JOptionPane.PLAIN_MESSAGE, null, options,
+												options[0]);
+										if (value == JOptionPane.YES_OPTION) {
+											if (((JTabbedPane) tab.getComponentAt(index))
+													.getComponent(i) instanceof Graph) {
+												Graph g = ((Graph) ((JTabbedPane) tab
+														.getComponentAt(index)).getComponent(i));
+												g.save();
+											}
+										}
+										else if (value == JOptionPane.CANCEL_OPTION) {
+											return 0;
+										}
+										else if (value == 3) {
+											if (((JTabbedPane) tab.getComponentAt(index))
+													.getComponent(i) instanceof Graph) {
+												Graph g = ((Graph) ((JTabbedPane) tab
+														.getComponentAt(index)).getComponent(i));
+												g.save();
+											}
+											autosave = 1;
+										}
+										else if (value == 4) {
+											autosave = 2;
+										}
+									}
+									else if (autosave == 1) {
 										if (((JTabbedPane) tab.getComponentAt(index))
 												.getComponent(i) instanceof Graph) {
 											Graph g = ((Graph) ((JTabbedPane) tab
 													.getComponentAt(index)).getComponent(i));
 											g.save();
 										}
-									}
-									else if (value == JOptionPane.CANCEL_OPTION) {
-										return 0;
 									}
 								}
 							}
@@ -7077,19 +7285,34 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					Component[] array = ((JPanel) tab.getComponentAt(index)).getComponents();
 					if (array[0] instanceof Synthesis) {
 						if (((Synthesis) array[0]).hasChanged()) {
-							Object[] options = { "Yes", "No", "Cancel" };
-							int value = JOptionPane.showOptionDialog(frame,
-									"Do you want to save synthesis option changes for "
-											+ tab.getTitleAt(index) + "?", "Save Changes",
-									JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE,
-									null, options, options[0]);
-							if (value == JOptionPane.YES_OPTION) {
+							if (autosave == 0) {
+								int value = JOptionPane.showOptionDialog(frame,
+										"Do you want to save synthesis option changes for "
+												+ tab.getTitleAt(index) + "?", "Save Changes",
+										JOptionPane.YES_NO_CANCEL_OPTION,
+										JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+								if (value == JOptionPane.YES_OPTION) {
+									if (array[0] instanceof Synthesis) {
+										((Synthesis) array[0]).save();
+									}
+								}
+								else if (value == JOptionPane.CANCEL_OPTION) {
+									return 0;
+								}
+								else if (value == 3) {
+									if (array[0] instanceof Synthesis) {
+										((Synthesis) array[0]).save();
+									}
+									autosave = 1;
+								}
+								else if (value == 4) {
+									autosave = 2;
+								}
+							}
+							else if (autosave == 1) {
 								if (array[0] instanceof Synthesis) {
 									((Synthesis) array[0]).save();
 								}
-							}
-							else if (value == JOptionPane.CANCEL_OPTION) {
-								return 0;
 							}
 						}
 					}
@@ -7098,23 +7321,42 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					Component[] array = ((JPanel) tab.getComponentAt(index)).getComponents();
 					if (array[0] instanceof Verification) {
 						if (((Verification) array[0]).hasChanged()) {
-							Object[] options = { "Yes", "No", "Cancel" };
-							int value = JOptionPane.showOptionDialog(frame,
-									"Do you want to save verification option changes for "
-											+ tab.getTitleAt(index) + "?", "Save Changes",
-									JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE,
-									null, options, options[0]);
-							if (value == JOptionPane.YES_OPTION) {
-								((Verification) array[0]).save();
+							if (autosave == 0) {
+								int value = JOptionPane.showOptionDialog(frame,
+										"Do you want to save verification option changes for "
+												+ tab.getTitleAt(index) + "?", "Save Changes",
+										JOptionPane.YES_NO_CANCEL_OPTION,
+										JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+								if (value == JOptionPane.YES_OPTION) {
+									((Verification) array[0]).save();
+								}
+								else if (value == JOptionPane.CANCEL_OPTION) {
+									return 0;
+								}
+								else if (value == 3) {
+									((Verification) array[0]).save();
+									autosave = 1;
+								}
+								else if (value == 4) {
+									autosave = 2;
+								}
 							}
-							else if (value == JOptionPane.CANCEL_OPTION) {
-								return 0;
+							else if (autosave == 1) {
+								((Verification) array[0]).save();
 							}
 						}
 					}
 				}
 			}
-			return 1;
+			if (autosave == 0) {
+				return 1;
+			}
+			else if (autosave == 1) {
+				return 2;
+			}
+			else {
+				return 3;
+			}
 		}
 	}
 
@@ -9194,7 +9436,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						.equals(
 								tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
 					tab.setSelectedIndex(i);
-					if (save(i) != 1) {
+					if (save(i, 0) != 1) {
 						return;
 					}
 					break;
@@ -9394,7 +9636,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			for (int i = 0; i < tab.getTabCount(); i++) {
 				if (tab.getTitleAt(i).equals(learnFile)) {
 					tab.setSelectedIndex(i);
-					if (save(i) != 1) {
+					if (save(i, 0) != 1) {
 						return;
 					}
 					break;
@@ -9520,7 +9762,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			for (int i = 0; i < tab.getTabCount(); i++) {
 				if (tab.getTitleAt(i).equals(learnFile)) {
 					tab.setSelectedIndex(i);
-					if (save(i) != 1) {
+					if (save(i, 0) != 1) {
 						return;
 					}
 					break;
@@ -9643,7 +9885,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			for (int i = 0; i < tab.getTabCount(); i++) {
 				if (tab.getTitleAt(i).equals(synthesisFile)) {
 					tab.setSelectedIndex(i);
-					if (save(i) != 1) {
+					if (save(i, 0) != 1) {
 						return;
 					}
 					break;
@@ -9716,7 +9958,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			for (int i = 0; i < tab.getTabCount(); i++) {
 				if (tab.getTitleAt(i).equals(verifyFile)) {
 					tab.setSelectedIndex(i);
-					if (save(i) != 1) {
+					if (save(i, 0) != 1) {
 						return;
 					}
 					break;
@@ -9931,7 +10173,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 											sbmlLoadFile.split(separator)[sbmlLoadFile
 													.split(separator).length - 1])) {
 								tab.setSelectedIndex(i);
-								if (save(i) != 1) {
+								if (save(i, 0) != 1) {
 									return;
 								}
 								break;
