@@ -299,7 +299,7 @@ public class CloseAndMaxTabbedPane extends JTabbedPane {
 	 * @see EventListenerList
 	 */
 	public void fireCloseTabEvent(MouseEvent e, int overTabIndex) {
-		if (biosim.save(overTabIndex) == 1) {
+		if (biosim.save(overTabIndex, 0) == 1) {
 			this.remove(overTabIndex);
 		}
 		this.overTabIndex = overTabIndex;
