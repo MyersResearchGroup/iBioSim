@@ -865,7 +865,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 					}
 					else {
 						JOptionPane.showMessageDialog(biosim.frame(), "Unable to import file."
-								+ "\nImported file must be a tsd file.", "Error",
+								+ "\nImported file must be a tsd, csv, or dat file.", "Error",
 								JOptionPane.ERROR_MESSAGE);
 					}
 				}

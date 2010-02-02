@@ -1994,7 +1994,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		}
 		if (simDir.getChildCount() == 0) {
 			JOptionPane.showMessageDialog(biomodelsim.frame(), "No data to graph."
-					+ "\nPerform some simutations to create some data first.", "No Data",
+					+ "\nPerform some simulations to create some data first.", "No Data",
 					JOptionPane.PLAIN_MESSAGE);
 		}
 		else {
@@ -6258,7 +6258,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		}
 		if (simDir.getChildCount() == 0) {
 			JOptionPane.showMessageDialog(biomodelsim.frame(), "No data to graph."
-					+ "\nPerform some simutations to create some data first.", "No Data",
+					+ "\nPerform some simulations to create some data first.", "No Data",
 					JOptionPane.PLAIN_MESSAGE);
 		}
 		else {
