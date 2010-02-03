@@ -2201,53 +2201,55 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	private void reacRemoveParam() {
 		if (reacParameters.getSelectedIndex() != -1) {
 			String v = ((String) reacParameters.getSelectedValue()).split(" ")[0];
-			Reaction reaction = document.getModel().getReaction(
-					((String) reactions.getSelectedValue()).split(" ")[0]);
-			String[] vars = myFormulaToString(reaction.getKineticLaw().getMath()).split(
-					" |\\(|\\)|\\,");
-			for (int j = 0; j < vars.length; j++) {
-				if (vars[j].equals(v)) {
-					JOptionPane
-							.showMessageDialog(
-									biosim.frame(),
-									"Cannot remove reaction parameter because it is used in the kinetic law.",
-									"Cannot Remove Parameter", JOptionPane.ERROR_MESSAGE);
-					return;
+			if (reactions.getSelectedIndex() != -1) {
+				Reaction reaction = document.getModel().getReaction(
+						((String) reactions.getSelectedValue()).split(" ")[0]);
+				String[] vars = myFormulaToString(reaction.getKineticLaw().getMath()).split(
+				" |\\(|\\)|\\,");
+				for (int j = 0; j < vars.length; j++) {
+					if (vars[j].equals(v)) {
+						JOptionPane
+						.showMessageDialog(
+								biosim.frame(),
+								"Cannot remove reaction parameter because it is used in the kinetic law.",
+								"Cannot Remove Parameter", JOptionPane.ERROR_MESSAGE);
+						return;
+					}
 				}
-			}
-			for (int j = 0; j < reaction.getNumProducts(); j++) {
-				if (reaction.getProduct(j).isSetSpecies()) {
-					String specRef = reaction.getProduct(j).getSpecies();
-					if (reaction.getProduct(j).isSetStoichiometryMath()) {
-						vars = myFormulaToString(
-								reaction.getProduct(j).getStoichiometryMath().getMath()).split(
-								" |\\(|\\)|\\,");
-						for (int k = 0; k < vars.length; k++) {
-							if (vars[k].equals(v)) {
-								JOptionPane.showMessageDialog(biosim.frame(),
-										"Cannot remove reaction parameter because it is used in the stoichiometry math for product "
-												+ specRef + ".", "Cannot Remove Parameter",
-										JOptionPane.ERROR_MESSAGE);
-								return;
+				for (int j = 0; j < reaction.getNumProducts(); j++) {
+					if (reaction.getProduct(j).isSetSpecies()) {
+						String specRef = reaction.getProduct(j).getSpecies();
+						if (reaction.getProduct(j).isSetStoichiometryMath()) {
+							vars = myFormulaToString(
+									reaction.getProduct(j).getStoichiometryMath().getMath()).split(
+									" |\\(|\\)|\\,");
+							for (int k = 0; k < vars.length; k++) {
+								if (vars[k].equals(v)) {
+									JOptionPane.showMessageDialog(biosim.frame(),
+											"Cannot remove reaction parameter because it is used in the stoichiometry math for product "
+											+ specRef + ".", "Cannot Remove Parameter",
+											JOptionPane.ERROR_MESSAGE);
+									return;
+								}
 							}
 						}
 					}
 				}
-			}
-			for (int j = 0; j < reaction.getNumReactants(); j++) {
-				if (reaction.getReactant(j).isSetSpecies()) {
-					String specRef = reaction.getReactant(j).getSpecies();
-					if (reaction.getReactant(j).isSetStoichiometryMath()) {
-						vars = myFormulaToString(
-								reaction.getReactant(j).getStoichiometryMath().getMath()).split(
-								" |\\(|\\)|\\,");
-						for (int k = 0; k < vars.length; k++) {
-							if (vars[k].equals(v)) {
-								JOptionPane.showMessageDialog(biosim.frame(),
-										"Cannot remove reaction parameter because it is used in the stoichiometry math for reactant "
-												+ specRef + ".", "Cannot Remove Parameter",
-										JOptionPane.ERROR_MESSAGE);
-								return;
+				for (int j = 0; j < reaction.getNumReactants(); j++) {
+					if (reaction.getReactant(j).isSetSpecies()) {
+						String specRef = reaction.getReactant(j).getSpecies();
+						if (reaction.getReactant(j).isSetStoichiometryMath()) {
+							vars = myFormulaToString(
+									reaction.getReactant(j).getStoichiometryMath().getMath()).split(
+									" |\\(|\\)|\\,");
+							for (int k = 0; k < vars.length; k++) {
+								if (vars[k].equals(v)) {
+									JOptionPane.showMessageDialog(biosim.frame(),
+											"Cannot remove reaction parameter because it is used in the stoichiometry math for reactant "
+											+ specRef + ".", "Cannot Remove Parameter",
+											JOptionPane.ERROR_MESSAGE);
+									return;
+								}
 							}
 						}
 					}
