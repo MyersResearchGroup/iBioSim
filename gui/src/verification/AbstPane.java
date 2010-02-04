@@ -37,10 +37,6 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 
 	private JList species, intSpecies, xforms, selectXforms;
 
-	// public JCheckBox xform0, xform1, xform3, xform4, xform5, xform6, xform7,
-	// xform8, xform9, xform10, xform11,
-	// xform12, xform13, xform14, xform15, xform16;
-
 	public DefaultListModel listModel, absListModel;
 
 	private JTextField field;
@@ -154,7 +150,7 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 		factorPanel.add(factorLabel);
 		factorPanel.add(factorField);
 		JLabel iterLabel = new JLabel("Maximum Number of Iterations");
-		iterField = new JTextField("1000");
+		iterField = new JTextField("100");
 		iterField.setPreferredSize(new Dimension(40, 18));
 		factorPanel.add(iterLabel);
 		factorPanel.add(iterField);
@@ -201,66 +197,6 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 		absButtonHolder.add(clearXforms);
 		absHolder.add(absButtonHolder, "South");
 		this.add(absHolder, "South");
-
-		// // Add abstraction option check boxes
-		// JPanel xformPanel = new JPanel();
-		// //xformPanel.setLayout(new BorderLayout());
-		// xform0 = new JCheckBox("Transform 0"); // Merge parallel places
-		// xform1 = new JCheckBox("Transform 1"); // Remove place in self-loop
-		// xform3 = new JCheckBox("Transform 3"); // Remove trans with 1 place
-		// in preset
-		// xform4 = new JCheckBox("Transform 4"); // Remove trans with 1 place
-		// in postset
-		// xform5 = new JCheckBox("Transform 5"); // Merge trans with same
-		// pre/postset
-		// xform6 = new JCheckBox("Transform 6"); // Merge trans with same
-		// preset
-		// xform7 = new JCheckBox("Transform 7"); // Merge trans with same
-		// postset
-		// xform8 = new JCheckBox("Transform 8");
-		// xform9 = new JCheckBox("Transform 9");
-		// xform10 = new JCheckBox("Transform 10");
-		// xform11 = new JCheckBox("Transform 11");
-		// xform12 = new JCheckBox("Transform 12"); // Abstract assignments
-		// xform13 = new JCheckBox("Transform 13"); // Remove variables
-		// xform14 = new JCheckBox("Transform 14"); // Remove dead places
-		// xform15 = new JCheckBox("Transform 15"); // Remove dead transitions
-		// xform16 = new JCheckBox("Transform 16"); // Simplify enabling
-		// conditions
-		// xform0.setSelected(true);
-		// xform1.setSelected(true);
-		// xform0.setSelected(true);
-		// xform3.setSelected(true);
-		// xform4.setSelected(true);
-		// xform5.setSelected(true);
-		// xform6.setSelected(true);
-		// xform7.setSelected(true);
-		// xform8.setSelected(true);
-		// xform9.setSelected(true);
-		// xform10.setSelected(true);
-		// xform11.setSelected(true);
-		// xform12.setSelected(true);
-		// xform13.setSelected(true);
-		// xform14.setSelected(true);
-		// xform15.setSelected(true);
-		// xform16.setSelected(true);
-		// xformPanel.add(xform0);
-		// xformPanel.add(xform1);
-		// xformPanel.add(xform3);
-		// xformPanel.add(xform4);
-		// xformPanel.add(xform5);
-		// xformPanel.add(xform6);
-		// xformPanel.add(xform7);
-		// xformPanel.add(xform8);
-		// xformPanel.add(xform9);
-		// xformPanel.add(xform10);
-		// xformPanel.add(xform11);
-		// xformPanel.add(xform12);
-		// xformPanel.add(xform13);
-		// xformPanel.add(xform14);
-		// xformPanel.add(xform15);
-		// xformPanel.add(xform16);
-		// this.add(xformPanel, "Center");
 
 		change = false;
 	}
