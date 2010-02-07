@@ -7988,6 +7988,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					boolean sim = false;
 					boolean synth = false;
 					boolean ver = false;
+					boolean learn = false;
 					for (String s : new File(tree.getFile()).list()) {
 						if (s.length() > 3 && s.substring(s.length() - 4).equals(".sim")) {
 							sim = true;
@@ -7998,6 +7999,9 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						if (s.length() > 3 && s.substring(s.length() - 4).equals(".ver")) {
 							ver = true;
 						}
+						if (s.length() > 3 && s.substring(s.length() - 4).equals(".lrn")) {
+							learn = true;
+						}
 					}
 					JMenuItem open;
 					if (sim) {
@@ -8005,42 +8009,47 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						open.addActionListener(this);
 						open.addMouseListener(this);
 						open.setActionCommand("openSim");
+						popup.add(open);
 					}
 					else if (synth) {
 						open = new JMenuItem("Open Synthesis View");
 						open.addActionListener(this);
 						open.addMouseListener(this);
 						open.setActionCommand("openSynth");
+						popup.add(open);
 					}
 					else if (ver) {
 						open = new JMenuItem("Open Verification View");
 						open.addActionListener(this);
 						open.addMouseListener(this);
 						open.setActionCommand("openVerification");
+						popup.add(open);
 					}
-					else {
+					else if (learn) {
 						open = new JMenuItem("Open Learn View");
 						open.addActionListener(this);
 						open.addMouseListener(this);
 						open.setActionCommand("openLearn");
+						popup.add(open);
 					}
-					JMenuItem delete = new JMenuItem("Delete");
-					delete.addActionListener(this);
-					delete.addMouseListener(this);
-					delete.setActionCommand("deleteSim");
-					JMenuItem copy = new JMenuItem("Copy");
-					copy.addActionListener(this);
-					copy.addMouseListener(this);
-					copy.setActionCommand("copy");
-					JMenuItem rename = new JMenuItem("Rename");
-					rename.addActionListener(this);
-					rename.addMouseListener(this);
-					rename.setActionCommand("rename");
-					popup.add(open);
-					popup.addSeparator();
-					popup.add(copy);
-					popup.add(rename);
-					popup.add(delete);
+					if (sim || ver || synth || learn) {
+						JMenuItem delete = new JMenuItem("Delete");
+						delete.addActionListener(this);
+						delete.addMouseListener(this);
+						delete.setActionCommand("deleteSim");
+						JMenuItem copy = new JMenuItem("Copy");
+						copy.addActionListener(this);
+						copy.addMouseListener(this);
+						copy.setActionCommand("copy");
+						JMenuItem rename = new JMenuItem("Rename");
+						rename.addActionListener(this);
+						rename.addMouseListener(this);
+						rename.setActionCommand("rename");
+						popup.addSeparator();
+						popup.add(copy);
+						popup.add(rename);
+						popup.add(delete);
+					}
 				}
 				if (popup.getComponentCount() != 0) {
 					popup.show(e.getComponent(), e.getX(), e.getY());
@@ -8665,6 +8674,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						boolean sim = false;
 						boolean synth = false;
 						boolean ver = false;
+						boolean learn = false;
 						for (String s : new File(tree.getFile()).list()) {
 							if (s.length() > 3 && s.substring(s.length() - 4).equals(".sim")) {
 								sim = true;
@@ -8674,6 +8684,9 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							}
 							else if (s.length() > 3 && s.substring(s.length() - 4).equals(".ver")) {
 								ver = true;
+							}
+							else if (s.length() > 3 && s.substring(s.length() - 4).equals(".lrn")) {
+								learn = true;
 							}
 						}
 						if (sim) {
@@ -8685,7 +8698,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						else if (ver) {
 							openVerify();
 						}
-						else {
+						else if (learn) {
 							if (lema) {
 								openLearnLHPN();
 							}
@@ -9187,6 +9200,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						boolean sim = false;
 						boolean synth = false;
 						boolean ver = false;
+						boolean learn = false;
 						for (String s : new File(tree.getFile()).list()) {
 							if (s.length() > 3 && s.substring(s.length() - 4).equals(".sim")) {
 								sim = true;
@@ -9197,6 +9211,9 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							else if (s.length() > 4 && s.substring(s.length() - 4).equals(".ver")) {
 								ver = true;
 							}
+							else if (s.length() > 4 && s.substring(s.length() - 4).equals(".lrn")) {
+								learn = true;
+							}
 						}
 						JMenuItem open;
 						if (sim) {
@@ -9204,42 +9221,47 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							open.addActionListener(this);
 							open.addMouseListener(this);
 							open.setActionCommand("openSim");
+							popup.add(open);
 						}
 						else if (synth) {
 							open = new JMenuItem("Open Synthesis View");
 							open.addActionListener(this);
 							open.addMouseListener(this);
 							open.setActionCommand("openSynth");
+							popup.add(open);
 						}
 						else if (ver) {
 							open = new JMenuItem("Open Verification View");
 							open.addActionListener(this);
 							open.addMouseListener(this);
 							open.setActionCommand("openVerification");
+							popup.add(open);
 						}
-						else {
+						else if (learn) {
 							open = new JMenuItem("Open Learn View");
 							open.addActionListener(this);
 							open.addMouseListener(this);
 							open.setActionCommand("openLearn");
+							popup.add(open);
 						}
-						JMenuItem delete = new JMenuItem("Delete");
-						delete.addActionListener(this);
-						delete.addMouseListener(this);
-						delete.setActionCommand("deleteSim");
-						JMenuItem copy = new JMenuItem("Copy");
-						copy.addActionListener(this);
-						copy.addMouseListener(this);
-						copy.setActionCommand("copy");
-						JMenuItem rename = new JMenuItem("Rename");
-						rename.addActionListener(this);
-						rename.addMouseListener(this);
-						rename.setActionCommand("rename");
-						popup.add(open);
-						popup.addSeparator();
-						popup.add(copy);
-						popup.add(rename);
-						popup.add(delete);
+						if (sim || ver | learn | synth) {
+							JMenuItem delete = new JMenuItem("Delete");
+							delete.addActionListener(this);
+							delete.addMouseListener(this);
+							delete.setActionCommand("deleteSim");
+							JMenuItem copy = new JMenuItem("Copy");
+							copy.addActionListener(this);
+							copy.addMouseListener(this);
+							copy.setActionCommand("copy");
+							JMenuItem rename = new JMenuItem("Rename");
+							rename.addActionListener(this);
+							rename.addMouseListener(this);
+							rename.setActionCommand("rename");
+							popup.addSeparator();
+							popup.add(copy);
+							popup.add(rename);
+							popup.add(delete);
+						}
 					}
 					if (popup.getComponentCount() != 0) {
 						popup.show(e.getComponent(), e.getX(), e.getY());
