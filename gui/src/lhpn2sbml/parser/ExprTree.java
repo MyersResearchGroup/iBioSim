@@ -441,6 +441,11 @@ public class ExprTree {
 				setVarValues('t', 0, 0, null);
 				(token) = intexpr_gettok(expr);
 			}
+			else if ((tokvalue.toLowerCase().equals("unknown"))) {
+				// (result) = new ExprTree('t', 0, 0, null);
+				setVarValues('t', 0, 1, null);
+				(token) = intexpr_gettok(expr);
+			}
 			else {
 				// do boolean lookup here!!!
 				// for (i = 0; i < nsignals; i++) {
@@ -3054,9 +3059,12 @@ public class ExprTree {
 				result = "FALSE";
 				// result = "TRUE";
 			}
-			else {
+			else if (uvalue == 1 && lvalue == 1) {
 				result = "TRUE";
 				// result = "FALSE";
+			}
+			else {
+				result = "UNKNOWN";
 			}
 			// else {
 			// System.out.println("WARNING: Unknown assignment to a boolean
