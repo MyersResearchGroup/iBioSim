@@ -29,6 +29,8 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JCheckBox;
+import javax.swing.JRadioButton;
+import javax.swing.ButtonGroup;;
 
 //import javax.swing.Icon;
 
@@ -48,6 +50,8 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 	private String[] allVariables;
 	
 	private JCheckBox fail;
+	
+	private JRadioButton rateButton, delayButton;
 
 	// private Object[] types = { "Boolean", "Continuous", "Integer", "Rate" };
 
@@ -84,21 +88,8 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 		fieldPanel.add(field);
 
 		// Delay field
-		field = new PropertyField("Delay Lower Bound", "0", null, null, Utility.NAMEstring);
-		fields.put("Delay lower", field);
-		fieldPanel.add(field);
-		field = new PropertyField("Delay Upper Bound", "inf", null, null, Utility.NAMEstring);
-		fields.put("Delay upper", field);
-		fieldPanel.add(field);
-
-		// Transition Rate Field
-		field = new PropertyField("Transition Rate", "", null, null, Utility.NAMEstring);
-		fields.put("Transition rate", field);
-		fieldPanel.add(field);
-
-		// Enabling condition field
-		field = new PropertyField("Enabling Condition", "", null, null, Utility.NAMEstring);
-		fields.put("Enabling Condition", field);
+		field = new PropertyField("Delay/Transition Rate", "", null, null, Utility.NAMEstring);
+		fields.put("delay/rate", field);
 		fieldPanel.add(field);
 
 		// fieldPanel.setMaximumSize(new Dimension(50,50));
@@ -121,6 +112,20 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 		constraints.gridx = 0;
 		constraints.gridy = 1;
 		add(failPanel,constraints);
+		
+		//Delay or Transition Rate Selection
+		JPanel rateSelectPanel = new JPanel(new GridLayout(1,2));
+		delayButton = new JRadioButton("Use Delay Bounds");
+		rateButton = new JRadioButton("Use Transition Rate");
+		ButtonGroup selectGroup = new ButtonGroup();
+		selectGroup.add(delayButton);
+		selectGroup.add(rateButton);
+		delayButton.setSelected(true);
+		rateSelectPanel.add(delayButton);
+		rateSelectPanel.add(rateButton);
+		constraints.gridx = 0;
+		constraints.gridy = 2;
+		add(rateSelectPanel,constraints);
 
 		// Assignment panel
 		assignments = new PropertyList("Assignment List");
@@ -179,7 +184,7 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 		JPanel assignPanel = Utility.createPanel(this, "Assignments", assignments, addAssign,
 				removeAssign, editAssign);
 		constraints.gridx = 0;
-		constraints.gridy = 2;
+		constraints.gridy = 3;
 		add(assignPanel, constraints);
 
 		/*
@@ -239,22 +244,11 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 				fail.setSelected(true);
 			}
 			if (delay != null) {
-				Pattern pattern = Pattern.compile("\\[([\\S^,]+?),([\\S^\\]]+?)\\]");
-				Matcher matcher = pattern.matcher(delay);
-				if (matcher.find()) {
-					fields.get("Delay lower").setValue(matcher.group(1));
-					fields.get("Delay upper").setValue(matcher.group(2));
-				}
-				else {
-					fields.get("Delay lower").setValue(delay);
-					if (delay.equals("")) {
-						fields.get("Delay upper").setValue("");
-					}
-				}
+				fields.get("delay/rate").setValue(delay);
 			}
 			else if (lhpn.getTransitionRate(selected) != null) {
-				fields.get("Delay lower").setValue(delay);
-				fields.get("Delay upper").setValue("");
+				fields.get("delay/rate").setValue(delay);
+				rateButton.setSelected(true);
 			}
 			//String temp = lhpn.getEnabling(selected);
 			fields.get("Enabling Condition").setValue(lhpn.getEnabling(selected));
@@ -392,12 +386,13 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 			}
 		}
 		String delay;
-		if (!fields.get("Delay upper").getValue().equals("")) {
-			delay = "[" + fields.get("Delay lower").getValue() + ","
-					+ fields.get("Delay upper").getValue() + "]";
+		if (rateButton.isSelected()) {
+			if (!lhpn.changeDelay(transition, fields.get("delay/rate").getValue()))
+				return false;
 		}
-		else {
-			delay = fields.get("Delay lower").getValue();
+		else if (delayButton.isSelected()) {
+			if (!lhpn.changeTransitionRate(transition, fields.get("delay/rate").getValue()))
+				return false;
 		}
 		if (fail.isSelected()) {
 			lhpn.addFail(transition);
@@ -405,10 +400,6 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 		else {
 			lhpn.removeFail(transition);
 		}
-		if (!lhpn.changeDelay(transition, delay))
-			return false;
-		if (!lhpn.changeTransitionRate(transition, fields.get("Transition rate").getValue()))
-			return false;
 		if (!lhpn.changeEnabling(transition, fields.get("Enabling Condition").getValue()))
 			return false;
 		return true;
