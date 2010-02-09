@@ -2807,6 +2807,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
 							options[0]);
 					if (value == JOptionPane.YES_OPTION) {
+						GeneticNetwork.setRoot(root + File.separator);
 						network.mergeSBML(root + File.separator + theFile.replace(".gcm", "")
 								+ ".xml");
 						log.addText("Saving GCM file as SBML file:\n" + root + File.separator
@@ -2819,6 +2820,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					}
 				}
 				else {
+					GeneticNetwork.setRoot(root + File.separator);
 					network.mergeSBML(root + File.separator + theFile.replace(".gcm", "") + ".xml");
 					log.addText("Saving GCM file as SBML file:\n" + root + File.separator
 							+ theFile.replace(".gcm", "") + ".xml\n");
