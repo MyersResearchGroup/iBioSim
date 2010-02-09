@@ -783,13 +783,13 @@ public class LHPNFile {
 			controlFlow.put(name, null);
 		}
 		if (!delays.containsKey(name)) {
-			delays.put(name,"[0,inf]");
+			delays.put(name,null);
 		}
 	}
 
 	public void addTransition(String name, Properties prop) {
 		controlFlow.put(name, prop);
-		delays.put(name,"[0,inf]");
+		delays.put(name,null);
 	}
 
 	public void addControlFlow(String fromName, String toName) {
@@ -2198,9 +2198,9 @@ public class LHPNFile {
 	}
 
 	public String[] getTransitionList() {
-		String[] transitionList = new String[controlFlow.keySet().size()];
+		String[] transitionList = new String[delays.keySet().size()];
 		int i = 0;
-		for (String s : controlFlow.keySet()) {
+		for (String s : delays.keySet()) {
 			transitionList[i] = s;
 			i++;
 		}
