@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Writer;
@@ -152,6 +153,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 	private JCheckBox resize;
 
+	private JComboBox XVariable;
+
 	private JCheckBox LogX, LogY;
 
 	private Log log;
@@ -215,6 +218,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	private JPanel titlePanel;
 
 	private JScrollPane scroll;
+	
+	private boolean updateXNumber;
 
 	/**
 	 * Creates a Graph Object from the data given and calls the private graph
@@ -313,6 +318,33 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		// creates text fields for changing the graph's dimensions
 		resize = new JCheckBox("Auto Resize");
 		resize.setSelected(true);
+		XVariable = new JComboBox();
+		updateXNumber = false;
+		XVariable.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (updateXNumber && node != null) {
+					String curDir = "";
+					if (node.getParent().getParent() != null
+							&& directories.contains(((IconNode) node.getParent().getParent())
+									.getName()
+									+ separator + ((IconNode) node.getParent()).getName())) {
+						curDir = ((IconNode) node.getParent().getParent()).getName()
+								+ separator + ((IconNode) node.getParent()).getName();
+					}
+					else if (directories.contains(((IconNode) node.getParent()).getName())) {
+						curDir = ((IconNode) node.getParent()).getName();
+					}
+					else {
+						curDir = "";
+					}
+					for (int i = 0; i < graphed.size(); i++) {
+						if (graphed.get(i).getDirectory().equals(curDir)) {
+							graphed.get(i).setXNumber(XVariable.getSelectedIndex());
+						}
+					}
+				}
+			}
+		});
 		LogX = new JCheckBox("LogX");
 		LogX.setSelected(false);
 		LogY = new JCheckBox("LogY");
@@ -2274,7 +2306,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			deselectPanel.add(deselect);
 			titlePanel2.add(deselectPanel);
 			titlePanel2.add(resize);
-			titlePanel2.add(new JPanel());
+			titlePanel2.add(XVariable);
 			titlePanel2.add(LogX);
 			titlePanel2.add(new JPanel());
 			titlePanel2.add(LogY);
@@ -2388,7 +2420,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								if (data.size() != 0) {
 									for (int i = 0; i < (data.get(0)).size(); i++) {
 										graphData.get(graphData.size() - 1).add(
-												(data.get(0)).get(i),
+												(data.get(g.getXNumber())).get(i),
 												(data.get(g.getNumber() + 1)).get(i));
 									}
 								}
@@ -2431,7 +2463,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								if (data.size() != 0) {
 									for (int i = 0; i < (data.get(0)).size(); i++) {
 										graphData.get(graphData.size() - 1).add(
-												(data.get(0)).get(i),
+												(data.get(g.getXNumber())).get(i),
 												(data.get(g.getNumber() + 1)).get(i));
 									}
 								}
@@ -2468,7 +2500,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								if (data.size() != 0) {
 									for (int i = 0; i < (data.get(0)).size(); i++) {
 										graphData.get(graphData.size() - 1).add(
-												(data.get(0)).get(i),
+												(data.get(g.getXNumber())).get(i),
 												(data.get(g.getNumber() + 1)).get(i));
 									}
 								}
@@ -2505,7 +2537,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								if (data.size() != 0) {
 									for (int i = 0; i < (data.get(0)).size(); i++) {
 										graphData.get(graphData.size() - 1).add(
-												(data.get(0)).get(i),
+												(data.get(g.getXNumber())).get(i),
 												(data.get(g.getNumber() + 1)).get(i));
 									}
 								}
@@ -2561,7 +2593,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 									if (data.size() != 0) {
 										for (int i = 0; i < (data.get(0)).size(); i++) {
 											graphData.get(graphData.size() - 1).add(
-													(data.get(0)).get(i),
+													(data.get(g.getXNumber())).get(i),
 													(data.get(g.getNumber() + 1)).get(i));
 										}
 									}
@@ -2616,7 +2648,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								if (data.size() != 0) {
 									for (int i = 0; i < (data.get(0)).size(); i++) {
 										graphData.get(graphData.size() - 1).add(
-												(data.get(0)).get(i),
+												(data.get(g.getXNumber())).get(i),
 												(data.get(g.getNumber() + 1)).get(i));
 									}
 								}
@@ -2661,7 +2693,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								if (data.size() != 0) {
 									for (int i = 0; i < (data.get(0)).size(); i++) {
 										graphData.get(graphData.size() - 1).add(
-												(data.get(0)).get(i),
+												(data.get(g.getXNumber())).get(i),
 												(data.get(g.getNumber() + 1)).get(i));
 									}
 								}
@@ -2700,7 +2732,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								if (data.size() != 0) {
 									for (int i = 0; i < (data.get(0)).size(); i++) {
 										graphData.get(graphData.size() - 1).add(
-												(data.get(0)).get(i),
+												(data.get(g.getXNumber())).get(i),
 												(data.get(g.getNumber() + 1)).get(i));
 									}
 								}
@@ -2739,7 +2771,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								if (data.size() != 0) {
 									for (int i = 0; i < (data.get(0)).size(); i++) {
 										graphData.get(graphData.size() - 1).add(
-												(data.get(0)).get(i),
+												(data.get(g.getXNumber())).get(i),
 												(data.get(g.getNumber() + 1)).get(i));
 									}
 								}
@@ -2799,7 +2831,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 									if (data.size() != 0) {
 										for (int i = 0; i < (data.get(0)).size(); i++) {
 											graphData.get(graphData.size() - 1).add(
-													(data.get(0)).get(i),
+													(data.get(g.getXNumber())).get(i),
 													(data.get(g.getNumber() + 1)).get(i));
 										}
 									}
@@ -2982,6 +3014,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 												((IconNode) node.getParent().getParent()).getName()
 														+ separator
 														+ ((IconNode) node.getParent()).getName())) {
+									XVariable.setSelectedIndex(g.getXNumber());
 									boxes.get(g.getNumber()).setSelected(true);
 									series.get(g.getNumber()).setText(g.getSpecies());
 									series.get(g.getNumber()).setSelectionStart(0);
@@ -3001,6 +3034,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								if (g.getRunNumber().equals(selected)
 										&& g.getDirectory().equals(
 												((IconNode) node.getParent()).getName())) {
+									XVariable.setSelectedIndex(g.getXNumber());
 									boxes.get(g.getNumber()).setSelected(true);
 									series.get(g.getNumber()).setText(g.getSpecies());
 									series.get(g.getNumber()).setSelectionStart(0);
@@ -3019,6 +3053,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							for (GraphSpecies g : graphed) {
 								if (g.getRunNumber().equals(selected)
 										&& g.getDirectory().equals("")) {
+									XVariable.setSelectedIndex(g.getXNumber());
 									boxes.get(g.getNumber()).setSelected(true);
 									series.get(g.getNumber()).setText(g.getSpecies());
 									series.get(g.getNumber()).setSelectionStart(0);
@@ -3387,6 +3422,12 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			}
 			graphSpecies.set(j, index);
 		}
+		updateXNumber=false;
+		XVariable.removeAllItems();
+		for (int i = 0; i<graphSpecies.size();i++) {
+			XVariable.addItem(graphSpecies.get(i));
+		}
+		updateXNumber=true;
 		JPanel speciesPanel1 = new JPanel(new GridLayout(graphSpecies.size(), 1));
 		JPanel speciesPanel2 = new JPanel(new GridLayout(graphSpecies.size(), 3));
 		JPanel speciesPanel3 = new JPanel(new GridLayout(graphSpecies.size(), 3));
@@ -3876,7 +3917,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								.getSelectedItem()), colory.get(colorsCombo.get(i)
 								.getSelectedItem()), filled.get(i).isSelected(), visible.get(i)
 								.isSelected(), connected.get(i).isSelected(), selected, boxes
-								.get(i).getName(), series.get(i).getText().trim(), i, directory));
+								.get(i).getName(), series.get(i).getText().trim(), XVariable.getSelectedIndex(),
+								i, directory));
 					}
 					else {
 						boolean check = false;
@@ -4872,6 +4914,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			for (int i = 0; i < graphed.size(); i++) {
 				graph.setProperty("species.connected." + i, "" + graphed.get(i).getConnected());
 				graph.setProperty("species.filled." + i, "" + graphed.get(i).getFilled());
+				graph.setProperty("species.xnumber." + i, "" + graphed.get(i).getXNumber());
 				graph.setProperty("species.number." + i, "" + graphed.get(i).getNumber());
 				graph.setProperty("species.run.number." + i, graphed.get(i).getRunNumber());
 				graph.setProperty("species.name." + i, graphed.get(i).getSpecies());
@@ -5187,18 +5230,24 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					else {
 						visible = false;
 					}
+					int xnumber = 0;
+					if (graph.containsKey("species.xnumber." + next)) {
+						xnumber = Integer.parseInt(graph.getProperty("species.xnumber." + next));
+					}
 					graphed.add(new GraphSpecies(shapes.get(graph.getProperty("species.shape."
 							+ next)), colors.get(graph.getProperty("species.paint." + next)),
 							filled, visible, connected, graph.getProperty("species.run.number."
 									+ next), graph.getProperty("species.id." + next), graph
-									.getProperty("species.name." + next), Integer.parseInt(graph
+									.getProperty("species.name." + next), xnumber, Integer.parseInt(graph
 									.getProperty("species.number." + next)), graph
 									.getProperty("species.directory." + next)));
 					next++;
 				}
+				updateXNumber=false;
+				XVariable.addItem("time");
 				refresh();
 			}
-			catch (Exception except) {
+			catch (IOException except) {
 				JOptionPane.showMessageDialog(biomodelsim.frame(), "Unable To Load Graph!",
 						"Error", JOptionPane.ERROR_MESSAGE);
 			}
@@ -5308,6 +5357,12 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 									}
 									graphSpecies.set(j, index);
 								}
+								updateXNumber=false;
+								XVariable.removeAllItems();
+								for (int i = 0; i<graphSpecies.size();i++) {
+									XVariable.addItem(graphSpecies.get(i));
+								}
+								updateXNumber=true;
 							}
 							else {
 								data = readData(outDir + separator + g.getRunNumber() + "."
@@ -5341,7 +5396,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								if (data.size() != 0) {
 									for (int i = 0; i < (data.get(0)).size(); i++) {
 										graphData.get(graphData.size() - 1).add(
-												(data.get(0)).get(i),
+												(data.get(g.getXNumber())).get(i),
 												(data.get(g.getNumber() + 1)).get(i));
 									}
 								}
@@ -5440,6 +5495,12 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 									}
 									graphSpecies.set(j, index);
 								}
+								updateXNumber=false;
+								XVariable.removeAllItems();
+								for (int i = 0; i<graphSpecies.size();i++) {
+									XVariable.addItem(graphSpecies.get(i));
+								}
+								updateXNumber=true;
 							}
 							else {
 								if (g.getRunNumber().equals("Average")
@@ -5504,7 +5565,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								if (data.size() != 0) {
 									for (int i = 0; i < (data.get(0)).size(); i++) {
 										graphData.get(graphData.size() - 1).add(
-												(data.get(0)).get(i),
+												(data.get(g.getXNumber())).get(i),
 												(data.get(g.getNumber() + 1)).get(i));
 									}
 								}
@@ -5549,6 +5610,12 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 									}
 									graphSpecies.set(j, index);
 								}
+								updateXNumber=false;
+								XVariable.removeAllItems();
+								for (int i = 0; i<graphSpecies.size();i++) {
+									XVariable.addItem(graphSpecies.get(i));
+								}
+								updateXNumber=true;
 							}
 							else {
 								data = readData(outDir + separator + g.getDirectory() + separator
@@ -5583,7 +5650,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								if (data.size() != 0) {
 									for (int i = 0; i < (data.get(0)).size(); i++) {
 										graphData.get(graphData.size() - 1).add(
-												(data.get(0)).get(i),
+												(data.get(g.getXNumber())).get(i),
 												(data.get(g.getNumber() + 1)).get(i));
 									}
 								}
@@ -5693,6 +5760,12 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 									}
 									graphSpecies.set(j, index);
 								}
+								updateXNumber=false;
+								XVariable.removeAllItems();
+								for (int i = 0; i<graphSpecies.size();i++) {
+									XVariable.addItem(graphSpecies.get(i));
+								}
+								updateXNumber=true;
 							}
 							else {
 								if (g.getRunNumber().equals("Average")
@@ -5765,7 +5838,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								if (data.size() != 0) {
 									for (int i = 0; i < (data.get(0)).size(); i++) {
 										graphData.get(graphData.size() - 1).add(
-												(data.get(0)).get(i),
+												(data.get(g.getXNumber())).get(i),
 												(data.get(g.getNumber() + 1)).get(i));
 									}
 								}
@@ -5968,16 +6041,17 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 		private String runNumber, species, directory, id;
 
-		private int number;
+		private int xnumber,number;
 
 		private GraphSpecies(Shape s, Paint p, boolean filled, boolean visible, boolean connected,
-				String runNumber, String id, String species, int number, String directory) {
+				String runNumber, String id, String species, int xnumber, int number, String directory) {
 			sP = new ShapeAndPaint(s, p);
 			this.filled = filled;
 			this.visible = visible;
 			this.connected = connected;
 			this.runNumber = runNumber;
 			this.species = species;
+			this.xnumber = xnumber;
 			this.number = number;
 			this.directory = directory;
 			this.id = id;
@@ -5985,6 +6059,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 		private void setDirectory(String directory) {
 			this.directory = directory;
+		}
+
+		private void setXNumber(int xnumber) {
+			this.xnumber = xnumber;
 		}
 
 		private void setNumber(int number) {
@@ -6013,6 +6091,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 		private void setConnected(boolean b) {
 			connected = b;
+		}
+
+		private int getXNumber() {
+			return xnumber;
 		}
 
 		private int getNumber() {
