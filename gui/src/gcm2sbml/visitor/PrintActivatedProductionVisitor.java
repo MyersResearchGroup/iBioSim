@@ -52,13 +52,11 @@ public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 		loadValues(specie.getProperties());
 		Reaction r = Utility.Reaction("R_act_production_" + promoter.getId() + "_"
 				+ specie.getId());
-		r.addReactant(Utility.SpeciesReference("RNAP_" + promoter.getId() + "_"
-				+ specie.getId(), 1));
+		r.addModifier(Utility.ModifierSpeciesReference("RNAP_" + promoter.getId() + "_"
+				+ specie.getId()));
 		for (SpeciesInterface species : promoter.getOutputs()) {
 			r.addProduct(Utility.SpeciesReference(species.getId(), stoc));
 		}
-		r.addProduct(Utility.SpeciesReference("RNAP_" + promoter.getId() + "_"
-				+ specie.getId(), 1));
 		r.setReversible(false);
 		r.setFast(false);
 		KineticLaw kl = r.createKineticLaw();
@@ -74,13 +72,11 @@ public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 		loadValues(specie.getProperties());
 		Reaction r = Utility.Reaction("R_act_production_" + promoter.getId() + "_"
 				+ specie.getId());
-		r.addReactant(Utility.SpeciesReference("RNAP_" + promoter.getId() + "_"
-				+ specie.getId(), 1));
+		r.addModifier(Utility.ModifierSpeciesReference("RNAP_" + promoter.getId() + "_"
+				+ specie.getId()));
 		for (SpeciesInterface species : promoter.getOutputs()) {
 			r.addProduct(Utility.SpeciesReference(species.getId(), stoc));
 		}
-		r.addProduct(Utility.SpeciesReference("RNAP_" + promoter.getId() + "_"
-				+ specie.getId(), 1));
 		r.setReversible(false);
 		r.setFast(false);
 		KineticLaw kl = r.createKineticLaw();
@@ -95,13 +91,11 @@ public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 		loadValues(specie.getProperties());
 		Reaction r = Utility.Reaction("R_act_production_" + promoter.getId() + "_"
 				+ specie.getId());
-		r.addReactant(Utility.SpeciesReference("RNAP_" + promoter.getId() + "_"
-				+ specie.getId(), 1));
+		r.addModifier(Utility.ModifierSpeciesReference("RNAP_" + promoter.getId() + "_"
+				+ specie.getId()));
 		for (SpeciesInterface species : promoter.getOutputs()) {
 			r.addProduct(Utility.SpeciesReference(species.getId(), stoc));
 		}
-		r.addProduct(Utility.SpeciesReference("RNAP_" + promoter.getId() + "_"
-				+ specie.getId(), 1));
 		r.setReversible(false);
 		r.setFast(false);
 		KineticLaw kl = r.createKineticLaw();
@@ -116,13 +110,11 @@ public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 		loadValues(specie.getProperties());
 		Reaction r = Utility.Reaction("R_act_production_" + promoter.getId() + "_"
 				+ specie.getId());
-		r.addReactant(Utility.SpeciesReference("RNAP_" + promoter.getId() + "_"
-				+ specie.getId(), 1));
+		r.addModifier(Utility.ModifierSpeciesReference("RNAP_" + promoter.getId() + "_"
+				+ specie.getId()));
 		for (SpeciesInterface species : promoter.getOutputs()) {
 			r.addProduct(Utility.SpeciesReference(species.getId(), stoc));
 		}
-		r.addProduct(Utility.SpeciesReference("RNAP_" + promoter.getId() + "_"
-				+ specie.getId(), 1));
 		r.setReversible(false);
 		r.setFast(false);
 		KineticLaw kl = r.createKineticLaw();
@@ -137,13 +129,11 @@ public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 		loadValues(specie.getProperties());
 		Reaction r = Utility.Reaction("R_act_production_" + promoter.getId() + "_"
 				+ specie.getId());
-		r.addReactant(Utility.SpeciesReference("RNAP_" + "_" + promoter.getId()
-				+ "_" + specie.getId(), 1));
+		r.addModifier(Utility.ModifierSpeciesReference("RNAP_" + "_" + promoter.getId()
+				+ "_" + specie.getId()));
 		for (SpeciesInterface species : promoter.getOutputs()) {
 			r.addProduct(Utility.SpeciesReference(species.getId(), stoc));
 		}
-		r.addProduct(Utility.SpeciesReference("RNAP_" + promoter.getId() + "_"
-				+ specie.getId(), 1));
 		r.setReversible(false);
 		r.setFast(false);
 		KineticLaw kl = r.createKineticLaw();
