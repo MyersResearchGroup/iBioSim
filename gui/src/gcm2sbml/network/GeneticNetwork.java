@@ -349,11 +349,10 @@ public class GeneticNetwork {
 			if (p.getActivators().size() > 0 && p.getRepressors().size() == 0) {
 				org.sbml.libsbml.Reaction r = new org.sbml.libsbml.Reaction(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
 				r.setId("R_basal_production_" + p.getId());
-				r.addReactant(Utility.SpeciesReference("RNAP_" + p.getId(), 1));
+				r.addModifier(Utility.ModifierSpeciesReference("RNAP_" + p.getId()));
 				for (SpeciesInterface species : p.getOutputs()) {
 					r.addProduct(Utility.SpeciesReference(species.getId(), stoc));
 				}
-				r.addProduct(Utility.SpeciesReference("RNAP_" + p.getId(), 1));
 				r.setReversible(false);
 				r.setFast(false);
 				KineticLaw kl = r.createKineticLaw();
@@ -375,11 +374,10 @@ public class GeneticNetwork {
 					&& p.getRepressors().size() >= 0) {
 				org.sbml.libsbml.Reaction r = new org.sbml.libsbml.Reaction(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
 				r.setId("R_production_" + p.getId());
-				r.addReactant(Utility.SpeciesReference("RNAP_" + p.getId(), 1));
+				r.addModifier(Utility.ModifierSpeciesReference("RNAP_" + p.getId()));
 				for (SpeciesInterface species : p.getOutputs()) {
 					r.addProduct(Utility.SpeciesReference(species.getId(), stoc));
 				}
-				r.addProduct(Utility.SpeciesReference("RNAP_" + p.getId(), 1));
 				r.setReversible(false);
 				r.setFast(false);
 				KineticLaw kl = r.createKineticLaw();
@@ -398,11 +396,10 @@ public class GeneticNetwork {
 				// Both activated and repressed
 				org.sbml.libsbml.Reaction r = new org.sbml.libsbml.Reaction(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
 				r.setId("R_basal_production_" + p.getId());
-				r.addReactant(Utility.SpeciesReference("RNAP_" + p.getId(), 1));
+				r.addModifier(Utility.ModifierSpeciesReference("RNAP_" + p.getId()));
 				for (SpeciesInterface species : p.getOutputs()) {
 					r.addProduct(Utility.SpeciesReference(species.getId(), stoc));
 				}
-				r.addProduct(Utility.SpeciesReference("RNAP_" + p.getId(), 1));
 				r.setReversible(false);
 				r.setFast(false);
 				KineticLaw kl = r.createKineticLaw();

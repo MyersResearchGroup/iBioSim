@@ -27,6 +27,7 @@ import org.sbml.libsbml.Reaction;
 import org.sbml.libsbml.SBMLDocument;
 import org.sbml.libsbml.Species;
 import org.sbml.libsbml.SpeciesReference;
+import org.sbml.libsbml.ModifierSpeciesReference;
 
 import biomodelsim.BioSim;
 
@@ -94,6 +95,12 @@ public class Utility {
 		SpeciesReference sr = new SpeciesReference(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
 		sr.setSpecies(id);
 		sr.setStoichiometry(stoichiometry);
+		return sr;
+	}
+
+	public static ModifierSpeciesReference ModifierSpeciesReference(String id) {
+		ModifierSpeciesReference sr = new ModifierSpeciesReference(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
+		sr.setSpecies(id);
 		return sr;
 	}
 	
