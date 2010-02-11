@@ -2545,7 +2545,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 												.getBytes());
 								out.close();
 							}
-							catch (Exception e1) {
+							catch (IOException e1) {
 								JOptionPane.showMessageDialog(frame,
 										"Unable to save parameter file!", "Error Saving File",
 										JOptionPane.ERROR_MESSAGE);
@@ -2648,7 +2648,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							out.write(("verification.file=" + circuitFileNoPath + "\n").getBytes());
 							out.close();
 						}
-						catch (Exception e1) {
+						catch (IOException e1) {
 							JOptionPane.showMessageDialog(frame, "Unable to save parameter file!",
 									"Error Saving File", JOptionPane.ERROR_MESSAGE);
 						}
@@ -5349,7 +5349,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							}
 							out.close();
 						}
-						catch (Exception e1) {
+						catch (IOException e1) {
 							JOptionPane.showMessageDialog(frame, "Unable to save parameter file!",
 									"Error Saving File", JOptionPane.ERROR_MESSAGE);
 						}
@@ -9372,7 +9372,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						out.write((dot[dot.length - 1] + "\n").getBytes());
 						out.close();
 					}
-					catch (Exception e1) {
+					catch (IOException e1) {
 						JOptionPane.showMessageDialog(frame, "Unable to save parameter file!",
 								"Error Saving File", JOptionPane.ERROR_MESSAGE);
 					}
@@ -9497,7 +9497,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						out.write((sbml1[sbml1.length - 1] + "\n").getBytes());
 						out.close();
 					}
-					catch (Exception e1) {
+					catch (IOException e1) {
 						JOptionPane.showMessageDialog(frame, "Unable to save parameter file!",
 								"Error Saving File", JOptionPane.ERROR_MESSAGE);
 					}

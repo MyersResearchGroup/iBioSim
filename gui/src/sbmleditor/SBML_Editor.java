@@ -9368,7 +9368,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			}
 			out.close();
 		}
-		catch (Exception e1) {
+		catch (IOException e1) {
 			JOptionPane.showMessageDialog(biosim.frame(), "Unable to save parameter file.",
 					"Error Saving File", JOptionPane.ERROR_MESSAGE);
 		}
