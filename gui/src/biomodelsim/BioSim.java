@@ -2516,7 +2516,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							.equals(
 									tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
 						tab.setSelectedIndex(i);
-						if (save(i, 0) != 1) {
+						if (save(i, 0) == 0) {
 							return;
 						}
 						break;
@@ -9471,7 +9471,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						.equals(
 								tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
 					tab.setSelectedIndex(i);
-					if (save(i, 0) != 1) {
+					if (save(i, 0) == 0) {
 						return;
 					}
 					break;
@@ -9671,7 +9671,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			for (int i = 0; i < tab.getTabCount(); i++) {
 				if (tab.getTitleAt(i).equals(learnFile)) {
 					tab.setSelectedIndex(i);
-					if (save(i, 0) != 1) {
+					if (save(i, 0) == 0) {
 						return;
 					}
 					break;
@@ -9797,7 +9797,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			for (int i = 0; i < tab.getTabCount(); i++) {
 				if (tab.getTitleAt(i).equals(learnFile)) {
 					tab.setSelectedIndex(i);
-					if (save(i, 0) != 1) {
+					if (save(i, 0) == 0) {
 						return;
 					}
 					break;
@@ -9920,7 +9920,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			for (int i = 0; i < tab.getTabCount(); i++) {
 				if (tab.getTitleAt(i).equals(synthesisFile)) {
 					tab.setSelectedIndex(i);
-					if (save(i, 0) != 1) {
+					if (save(i, 0) == 0) {
 						return;
 					}
 					break;
@@ -9993,7 +9993,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			for (int i = 0; i < tab.getTabCount(); i++) {
 				if (tab.getTitleAt(i).equals(verifyFile)) {
 					tab.setSelectedIndex(i);
-					if (save(i, 0) != 1) {
+					if (save(i, 0) == 0) {
 						return;
 					}
 					break;
@@ -10208,7 +10208,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 											sbmlLoadFile.split(separator)[sbmlLoadFile
 													.split(separator).length - 1])) {
 								tab.setSelectedIndex(i);
-								if (save(i, 0) != 1) {
+								if (save(i, 0) == 0) {
 									return;
 								}
 								break;
