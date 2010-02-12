@@ -14,6 +14,7 @@ import stategraph.StateGraph;
 import java.awt.AWTError;
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -65,6 +66,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
 import javax.swing.JPopupMenu;
@@ -73,6 +75,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.JTree;
+import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -102,6 +105,7 @@ import sbmleditor.SBML_Editor;
 import buttons.Buttons;
 import datamanager.DataManager;
 import java.net.*;
+import uk.ac.ebi.biomodels.*;
 
 //import datamanager.DataManagerLHPN;
 
@@ -232,6 +236,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 	public boolean atacs, lema;
 
 	private String viewer;
+
+	private String[] BioModelIds = null;
 
 	private JMenuItem copy, rename, delete, save, saveAs, saveAsGcm, saveAsGraph, saveAsSbml,
 			saveAsTemplate, saveGcmAsLhpn, saveAsLhpn, check, run, export, refresh, viewCircuit,
@@ -4545,58 +4551,151 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		}
 		else if (e.getSource() == importBioModel) {
 			if (root != null) {
-				String modelNumber = JOptionPane.showInputDialog(frame, "Enter BioModel Number:",
-						"BioModel Number", JOptionPane.PLAIN_MESSAGE);
-				String BMurl = "http://www.ebi.ac.uk/biomodels/models-main/publ/";
-				String filename = "BIOMD";
-				for (int i = 0; i < 10 - modelNumber.length(); i++) {
-					filename += "0";
-				}
-				filename += modelNumber + ".xml";
-				try {
-					URL url = new URL(BMurl + filename);
-					// System.out.println("Opening connection to " + BMurl +
-					// filename + "...");
-					URLConnection urlC = url.openConnection();
-					InputStream is = url.openStream();
-					// System.out.println("Copying resource (type: " +
-					// urlC.getContentType() + ")...");
-					// System.out.flush();
-					FileOutputStream fos = null;
-					fos = new FileOutputStream(root + separator + filename);
-					int oneChar, count = 0;
-					while ((oneChar = is.read()) != -1) {
-						fos.write(oneChar);
-						count++;
-					}
-					is.close();
-					fos.close();
-					// System.out.println(count + " byte(s) copied");
-				}
-				catch (MalformedURLException e1) {
-					JOptionPane.showMessageDialog(frame, e1.toString(), "Error",
-							JOptionPane.ERROR_MESSAGE);
-					filename = "";
-				}
-				catch (IOException e1) {
-					JOptionPane.showMessageDialog(frame, filename + " not found.", "Error",
-							JOptionPane.ERROR_MESSAGE);
-					filename = "";
-				}
-				if (!filename.trim().equals("")) {
-					String[] file = filename.trim().split(separator);
+				final BioModelsWSClient client = new BioModelsWSClient();
+				if (BioModelIds == null) {
 					try {
-						SBMLDocument document = readSBML(root + separator + filename.trim());
-						if (overwrite(root + separator + file[file.length - 1],
-								file[file.length - 1])) {
+						BioModelIds = client.getAllCuratedModelsId();
+					}
+					catch (BioModelsWSException e2) {
+						JOptionPane.showMessageDialog(frame, "Error Contacting BioModels Database", "Error",
+								JOptionPane.ERROR_MESSAGE);
+					}
+				}
+				JPanel BioModelsPanel = new JPanel(new BorderLayout());
+				final JList ListOfBioModels = new JList();
+				sort(BioModelIds);
+				ListOfBioModels.setListData(BioModelIds);
+				ListOfBioModels.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+				JLabel TextBioModels = new JLabel("List of BioModels");
+				JScrollPane ScrollBioModels = new JScrollPane();
+				ScrollBioModels.setMinimumSize(new Dimension(520, 250));
+				ScrollBioModels.setPreferredSize(new Dimension(552, 250));
+				ScrollBioModels.setViewportView(ListOfBioModels);
+				JPanel GetButtons = new JPanel();
+				JButton GetNames = new JButton("Get Names");
+				JButton GetDescription = new JButton("Get Description");
+				JButton GetReference = new JButton("Get Reference");
+				GetNames.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						for (int i = 0; i < BioModelIds.length; i++) {
+							try {
+								BioModelIds[i] += " " + client.getModelNameById(BioModelIds[i]);
+							}
+							catch (BioModelsWSException e1) {
+								JOptionPane.showMessageDialog(frame, "Error Contacting BioModels Database", "Error",
+										JOptionPane.ERROR_MESSAGE);
+							}
+						}
+						ListOfBioModels.setListData(BioModelIds);
+					}
+				});
+				GetDescription.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						String SelectedModel = ((String) ListOfBioModels.getSelectedValue()).split(" ")[0];
+						String command = "";
+						if (System.getProperty("os.name").contentEquals("Linux")) {
+							command = "gnome-open http://www.ebi.ac.uk/compneur-srv/biomodels-main/" + SelectedModel;
+						}
+						else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
+							command = "open http://www.ebi.ac.uk/compneur-srv/biomodels-main/" + SelectedModel;
+						}
+						else {
+							command = "cmd /c start http://www.ebi.ac.uk/compneur-srv/biomodels-main/" + SelectedModel;
+						}
+						log.addText("Executing:\n" + command + "\n");
+						Runtime exec = Runtime.getRuntime();
+						try {
+							exec.exec(command);
+						}
+						catch (IOException e1) {
+							JOptionPane.showMessageDialog(frame, "Unable to open model description.", "Error",
+									JOptionPane.ERROR_MESSAGE);
+						}
+					}
+				});
+				GetReference.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						String SelectedModel = ((String) ListOfBioModels.getSelectedValue()).split(" ")[0];
+						try {
+							String Pub = (client.getSimpleModelById(SelectedModel)).getPublicationId();
+							String command = "";
+							if (System.getProperty("os.name").contentEquals("Linux")) {
+								command = "gnome-open http://www.ebi.ac.uk/citexplore/citationDetails.do?dataSource=MED&externalId=" 
+									+ Pub;
+							}
+							else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
+								command = "open http://www.ebi.ac.uk/citexplore/citationDetails.do?dataSource=MED&externalId=" 
+									+ Pub;
+							}
+							else {
+								command = "cmd /c start http://www.ebi.ac.uk/citexplore/citationDetails.do?dataSource=MED&externalId=" 
+									+ Pub;
+							}
+							log.addText("Executing:\n" + command + "\n");
+							Runtime exec = Runtime.getRuntime();
+							exec.exec(command);
+						}
+						catch (BioModelsWSException e2) {
+							JOptionPane.showMessageDialog(frame, "Error Contacting BioModels Database", "Error",
+									JOptionPane.ERROR_MESSAGE);
+						}
+						catch (IOException e1) {
+							JOptionPane.showMessageDialog(frame, "Unable to open model description.", "Error",
+									JOptionPane.ERROR_MESSAGE);
+						}
+					}
+				});
+				GetButtons.add(GetNames);
+				GetButtons.add(GetDescription);
+				GetButtons.add(GetReference);
+				BioModelsPanel.add(TextBioModels, "North");
+				BioModelsPanel.add(ScrollBioModels, "Center");
+				BioModelsPanel.add(GetButtons, "South");
+				Object[] options = { "OK", "Cancel" };
+				int value = JOptionPane.showOptionDialog(frame, BioModelsPanel, "List of BioModels",
+						JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+				/* String modelNumber = JOptionPane.showInputDialog(frame, "Enter BioModel Number:",
+						"BioModel Number", JOptionPane.PLAIN_MESSAGE);*/
+				//if (modelNumber != null && !modelNumber.equals("")) {
+				if (value == JOptionPane.YES_OPTION) {
+					String BMurl = "http://www.ebi.ac.uk/biomodels/models-main/publ/";
+					String filename = ((String) ListOfBioModels.getSelectedValue()).split(" ")[0];
+/*					String filename = "BIOMD";
+					for (int i = 0; i < 10 - modelNumber.length(); i++) {
+						filename += "0";
+					}
+					filename += modelNumber + ".xml";*/
+					filename += ".xml";
+					try {
+						URL url = new URL(BMurl + filename);
+						/* System.out.println("Opening connection to " + BMurl +
+								filename + "..."); */
+						URLConnection urlC = url.openConnection();
+						InputStream is = url.openStream();
+						/* System.out.println("Copying resource (type: " +
+								urlC.getContentType() + ")...");
+						System.out.flush(); */
+						if (overwrite(root + separator + filename,filename)) {
+							FileOutputStream fos = null;
+							fos = new FileOutputStream(root + separator + filename);
+							int oneChar, count = 0;
+							while ((oneChar = is.read()) != -1) {
+								fos.write(oneChar);
+								count++;
+							}	
+							is.close();
+							fos.close();
+							// System.out.println(count + " byte(s) copied");
+							String[] file = filename.trim().split(separator);
+							SBMLDocument document = readSBML(root + separator + filename.trim());
 							long numErrors = document.checkConsistency();
 							if (numErrors > 0) {
 								final JFrame f = new JFrame("SBML Errors and Warnings");
 								JTextArea messageArea = new JTextArea();
 								messageArea
-										.append("Imported SBML file contains the errors listed below. ");
+								.append("Imported SBML file contains the errors listed below. ");
 								messageArea
-										.append("It is recommended that you fix them before using this model or you may get unexpected results.\n\n");
+								.append("It is recommended that you fix them before using this model or you may get unexpected results.\n\n");
 								for (long i = 0; i < numErrors; i++) {
 									String error = document.getError(i).getMessage();
 									messageArea.append(i + ":" + error + "\n");
@@ -4644,6 +4743,16 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							writer.writeSBML(document, root + separator + file[file.length - 1]);
 							refreshTree();
 						}
+					}
+					catch (MalformedURLException e1) {
+						JOptionPane.showMessageDialog(frame, e1.toString(), "Error",
+								JOptionPane.ERROR_MESSAGE);
+						filename = "";
+					}
+					catch (IOException e1) {
+						JOptionPane.showMessageDialog(frame, filename + " not found.", "Error",
+								JOptionPane.ERROR_MESSAGE);
+						filename = "";
 					}
 					catch (Exception e1) {
 						JOptionPane.showMessageDialog(frame, "Unable to import file.", "Error",
