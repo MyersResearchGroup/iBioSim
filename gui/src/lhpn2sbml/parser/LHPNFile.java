@@ -380,12 +380,14 @@ public class LHPNFile {
 			if (!delays.isEmpty()) {
 				flag = false;
 				for (String s : delays.keySet()) {
-					if (s != null && !delays.get(s).equals("")) {
-						if (!flag) {
-							buffer.append("#@.delay_assignments {");
-							flag = true;
+					if (s != null && delays.get(s) != null) {
+						if(!delays.get(s).equals("")) {
+							if (!flag) {
+								buffer.append("#@.delay_assignments {");
+								flag = true;
+							}
+							buffer.append("<" + s + "=" + delays.get(s) + ">");
 						}
-						buffer.append("<" + s + "=" + delays.get(s) + ">");
 					}
 				}
 				if (flag) {
