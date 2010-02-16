@@ -88,7 +88,7 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 		fieldPanel.add(field);
 
 		// Delay field
-		field = new PropertyField("Delay/Transition Rate", "", null, null, Utility.NAMEstring);
+		field = new PropertyField("Delay Assignment", "", null, null, Utility.NAMEstring);
 		fields.put("delay/rate", field);
 		fieldPanel.add(field);
 
@@ -247,12 +247,16 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 				fields.get("delay/rate").setValue(delay);
 			}
 			else if (lhpn.getTransitionRate(selected) != null) {
-				fields.get("delay/rate").setValue(delay);
+				fields.get("delay/rate").setValue(lhpn.getTransitionRate(selected));
 				rateButton.setSelected(true);
 			}
 			//String temp = lhpn.getEnabling(selected);
-			fields.get("Enabling Condition").setValue(lhpn.getEnabling(selected));
-			fields.get("Transition rate").setValue(lhpn.getTransitionRate(selected));
+			if (lhpn.getEnabling(selected) != null) {
+				fields.get("Enabling Condition").setValue(lhpn.getEnabling(selected));
+			} 
+			//if (lhpn.getTransitionRate(selected) != null) {
+			//	fields.get("Transition rate").setValue(lhpn.getTransitionRate(selected));
+			//}
 			// log.addText(selected + lhpn.getEnabling(selected));
 			// loadProperties(prop);
 		}
@@ -400,8 +404,10 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 		else {
 			lhpn.removeFail(transition);
 		}
-		if (!lhpn.changeEnabling(transition, fields.get("Enabling Condition").getValue()))
-			return false;
+		if (fields.get("Enabling Condition") != null) {
+			if (!lhpn.changeEnabling(transition, fields.get("Enabling Condition").getValue()))
+				return false;
+		}
 		return true;
 	}
 
