@@ -1212,7 +1212,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 		if (background != null) {
 			if (background.contains(".gcm")) {
 				ArrayList<String> getSpecies = new ArrayList<String>();
-				GCMFile gcm = new GCMFile();
+				GCMFile gcm = new GCMFile(biosim.getRoot());
 				gcm.load(background);
 				HashMap<String, Properties> speciesMap = gcm.getSpecies();
 				for (String s : speciesMap.keySet()) {

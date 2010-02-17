@@ -1,5 +1,6 @@
 package gcm2sbml.parser;
 
+import gcm2sbml.network.GeneticNetwork;
 import gcm2sbml.util.GlobalConstants;
 
 import java.awt.AWTError;
@@ -36,6 +37,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 
+import org.sbml.libsbml.SBMLDocument;
+
 import lhpn2sbml.parser.ExprTree;
 import lhpn2sbml.parser.LHPNFile;
 
@@ -52,7 +55,8 @@ import buttons.Buttons;
  */
 public class GCMFile {
 
-	public GCMFile() {
+	public GCMFile(String path) {
+		this.path = path;
 		species = new HashMap<String, Properties>();
 		influences = new HashMap<String, Properties>();
 		promoters = new HashMap<String, Properties>();
@@ -88,7 +92,7 @@ public class GCMFile {
 	}
 
 	public void createLogicalModel(final String filename, final Log log, final BioSim biosim,
-			final String path, final String lpnName) {
+			final String lpnName) {
 		try {
 			new File(filename + ".temp").createNewFile();
 		}
@@ -259,6 +263,12 @@ public class GCMFile {
 	}
 
 	private LHPNFile convertToLHPN(ArrayList<String> specs, ArrayList<Object[]> conLevel) {
+		for (String s : components.keySet()) {
+			GCMParser parser = new GCMParser(path + File.separator
+					+ components.get(s).getProperty("gcm"));
+			parser.setParameters(parameters);
+			GeneticNetwork network = parser.buildNetwork();
+		}
 		HashMap<String, ArrayList<String>> infl = new HashMap<String, ArrayList<String>>();
 		for (String influence : influences.keySet()) {
 			if (influences.get(influence).get(GlobalConstants.TYPE).equals(
@@ -1369,4 +1379,6 @@ public class GCMFile {
 	private HashMap<String, String> defaultParameters;
 
 	private HashMap<String, String> globalParameters;
+	
+	private String path;
 }

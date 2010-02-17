@@ -102,7 +102,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 			parameterChanges = new ArrayList<String>();
 			filename = refFile;
 		}
-		gcm = new GCMFile();
+		gcm = new GCMFile(path);
 		if (filename != null) {
 			gcm.load(path + File.separator + filename);
 			this.filename = filename;
@@ -316,14 +316,14 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 						+ " already exists.  Overwrite file?", "Save file", JOptionPane.YES_NO_OPTION,
 						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 				if (value == JOptionPane.YES_OPTION) {
-					gcm.createLogicalModel(path + File.separator + lpnName, log, biosim, path, lpnName);
+					gcm.createLogicalModel(path + File.separator + lpnName, log, biosim, lpnName);
 				}
 				else {
 					// Do nothing
 				}
 			}
 			else {
-				gcm.createLogicalModel(path + File.separator + lpnName, log, biosim, path, lpnName);
+				gcm.createLogicalModel(path + File.separator + lpnName, log, biosim, lpnName);
 			}
 		}
 		else if (command.contains("SBML")) {
@@ -1238,7 +1238,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 					}
 				}
 				if (comp != null && !comp.equals("")) {
-					GCMFile getSpecs = new GCMFile();
+					GCMFile getSpecs = new GCMFile(path);
 					getSpecs.load(path + File.separator + comp);
 					String oldPort = null;
 					if (selected != null) {

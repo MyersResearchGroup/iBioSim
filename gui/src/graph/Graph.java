@@ -218,7 +218,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	private JPanel titlePanel;
 
 	private JScrollPane scroll;
-	
+
 	private boolean updateXNumber;
 
 	/**
@@ -328,8 +328,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							&& directories.contains(((IconNode) node.getParent().getParent())
 									.getName()
 									+ separator + ((IconNode) node.getParent()).getName())) {
-						curDir = ((IconNode) node.getParent().getParent()).getName()
-								+ separator + ((IconNode) node.getParent()).getName();
+						curDir = ((IconNode) node.getParent().getParent()).getName() + separator
+								+ ((IconNode) node.getParent()).getName();
 					}
 					else if (directories.contains(((IconNode) node.getParent()).getName())) {
 						curDir = ((IconNode) node.getParent()).getName();
@@ -3422,12 +3422,12 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			}
 			graphSpecies.set(j, index);
 		}
-		updateXNumber=false;
+		updateXNumber = false;
 		XVariable.removeAllItems();
-		for (int i = 0; i<graphSpecies.size();i++) {
+		for (int i = 0; i < graphSpecies.size(); i++) {
 			XVariable.addItem(graphSpecies.get(i));
 		}
-		updateXNumber=true;
+		updateXNumber = true;
 		JPanel speciesPanel1 = new JPanel(new GridLayout(graphSpecies.size(), 1));
 		JPanel speciesPanel2 = new JPanel(new GridLayout(graphSpecies.size(), 3));
 		JPanel speciesPanel3 = new JPanel(new GridLayout(graphSpecies.size(), 3));
@@ -3917,8 +3917,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								.getSelectedItem()), colory.get(colorsCombo.get(i)
 								.getSelectedItem()), filled.get(i).isSelected(), visible.get(i)
 								.isSelected(), connected.get(i).isSelected(), selected, boxes
-								.get(i).getName(), series.get(i).getText().trim(), XVariable.getSelectedIndex(),
-								i, directory));
+								.get(i).getName(), series.get(i).getText().trim(), XVariable
+								.getSelectedIndex(), i, directory));
 					}
 					else {
 						boolean check = false;
@@ -5238,12 +5238,12 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							+ next)), colors.get(graph.getProperty("species.paint." + next)),
 							filled, visible, connected, graph.getProperty("species.run.number."
 									+ next), graph.getProperty("species.id." + next), graph
-									.getProperty("species.name." + next), xnumber, Integer.parseInt(graph
-									.getProperty("species.number." + next)), graph
+									.getProperty("species.name." + next), xnumber, Integer
+									.parseInt(graph.getProperty("species.number." + next)), graph
 									.getProperty("species.directory." + next)));
 					next++;
 				}
-				updateXNumber=false;
+				updateXNumber = false;
 				XVariable.addItem("time");
 				refresh();
 			}
@@ -5357,12 +5357,12 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 									}
 									graphSpecies.set(j, index);
 								}
-								updateXNumber=false;
+								updateXNumber = false;
 								XVariable.removeAllItems();
-								for (int i = 0; i<graphSpecies.size();i++) {
+								for (int i = 0; i < graphSpecies.size(); i++) {
 									XVariable.addItem(graphSpecies.get(i));
 								}
-								updateXNumber=true;
+								updateXNumber = true;
 							}
 							else {
 								data = readData(outDir + separator + g.getRunNumber() + "."
@@ -5495,12 +5495,12 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 									}
 									graphSpecies.set(j, index);
 								}
-								updateXNumber=false;
+								updateXNumber = false;
 								XVariable.removeAllItems();
-								for (int i = 0; i<graphSpecies.size();i++) {
+								for (int i = 0; i < graphSpecies.size(); i++) {
 									XVariable.addItem(graphSpecies.get(i));
 								}
-								updateXNumber=true;
+								updateXNumber = true;
 							}
 							else {
 								if (g.getRunNumber().equals("Average")
@@ -5610,12 +5610,12 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 									}
 									graphSpecies.set(j, index);
 								}
-								updateXNumber=false;
+								updateXNumber = false;
 								XVariable.removeAllItems();
-								for (int i = 0; i<graphSpecies.size();i++) {
+								for (int i = 0; i < graphSpecies.size(); i++) {
 									XVariable.addItem(graphSpecies.get(i));
 								}
-								updateXNumber=true;
+								updateXNumber = true;
 							}
 							else {
 								data = readData(outDir + separator + g.getDirectory() + separator
@@ -5760,12 +5760,12 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 									}
 									graphSpecies.set(j, index);
 								}
-								updateXNumber=false;
+								updateXNumber = false;
 								XVariable.removeAllItems();
-								for (int i = 0; i<graphSpecies.size();i++) {
+								for (int i = 0; i < graphSpecies.size(); i++) {
 									XVariable.addItem(graphSpecies.get(i));
 								}
-								updateXNumber=true;
+								updateXNumber = true;
 							}
 							else {
 								if (g.getRunNumber().equals("Average")
@@ -6041,10 +6041,11 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 		private String runNumber, species, directory, id;
 
-		private int xnumber,number;
+		private int xnumber, number;
 
 		private GraphSpecies(Shape s, Paint p, boolean filled, boolean visible, boolean connected,
-				String runNumber, String id, String species, int xnumber, int number, String directory) {
+				String runNumber, String id, String species, int xnumber, int number,
+				String directory) {
 			sP = new ShapeAndPaint(s, p);
 			this.filled = filled;
 			this.visible = visible;
@@ -7446,7 +7447,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		learnSpecs = new ArrayList<String>();
 		if (background != null) {
 			if (background.contains(".gcm")) {
-				GCMFile gcm = new GCMFile();
+				GCMFile gcm = new GCMFile(biomodelsim.getRoot());
 				gcm.load(background);
 				HashMap<String, Properties> speciesMap = gcm.getSpecies();
 				for (String s : speciesMap.keySet()) {

@@ -2787,7 +2787,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			try {
 				String theFile = "";
 				String filename = tree.getFile();
-				GCMFile gcm = new GCMFile();
+				GCMFile gcm = new GCMFile(root);
 				gcm.load(filename);
 				GCMParser parser = new GCMParser(filename);
 				GeneticNetwork network = null;
@@ -2842,7 +2842,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			try {
 				String theFile = "";
 				String filename = tree.getFile();
-				GCMFile gcm = new GCMFile();
+				GCMFile gcm = new GCMFile(root);
 				gcm.load(filename);
 				if (filename.lastIndexOf('/') >= 0) {
 					theFile = filename.substring(filename.lastIndexOf('/') + 1);
@@ -2858,7 +2858,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							options[0]);
 					if (value == JOptionPane.YES_OPTION) {
 						gcm.createLogicalModel(root + File.separator + theFile.replace(".gcm", "")
-								+ ".lpn", log, this, root, theFile.replace(".gcm", "") + ".lpn");
+								+ ".lpn", log, this, theFile.replace(".gcm", "") + ".lpn");
 					}
 					else {
 						// Do nothing
@@ -2866,7 +2866,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				}
 				else {
 					gcm.createLogicalModel(root + File.separator + theFile.replace(".gcm", "")
-							+ ".lpn", log, this, root, theFile.replace(".gcm", "") + ".lpn");
+							+ ".lpn", log, this, theFile.replace(".gcm", "") + ".lpn");
 				}
 			}
 			catch (Exception e1) {
@@ -3735,7 +3735,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							if (overwrite(root + separator + simName, simName)) {
 								File f = new File(root + separator + simName);
 								f.createNewFile();
-								new GCMFile().save(f.getAbsolutePath());
+								new GCMFile(root).save(f.getAbsolutePath());
 								int i = getTab(f.getName());
 								if (i != -1) {
 									tab.remove(i);
@@ -4557,8 +4557,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						BioModelIds = client.getAllCuratedModelsId();
 					}
 					catch (BioModelsWSException e2) {
-						JOptionPane.showMessageDialog(frame, "Error Contacting BioModels Database", "Error",
-								JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(frame, "Error Contacting BioModels Database",
+								"Error", JOptionPane.ERROR_MESSAGE);
 					}
 				}
 				JPanel BioModelsPanel = new JPanel(new BorderLayout());
@@ -4582,7 +4582,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 								BioModelIds[i] += " " + client.getModelNameById(BioModelIds[i]);
 							}
 							catch (BioModelsWSException e1) {
-								JOptionPane.showMessageDialog(frame, "Error Contacting BioModels Database", "Error",
+								JOptionPane.showMessageDialog(frame,
+										"Error Contacting BioModels Database", "Error",
 										JOptionPane.ERROR_MESSAGE);
 							}
 						}
@@ -4591,16 +4592,20 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				});
 				GetDescription.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						String SelectedModel = ((String) ListOfBioModels.getSelectedValue()).split(" ")[0];
+						String SelectedModel = ((String) ListOfBioModels.getSelectedValue())
+								.split(" ")[0];
 						String command = "";
 						if (System.getProperty("os.name").contentEquals("Linux")) {
-							command = "gnome-open http://www.ebi.ac.uk/compneur-srv/biomodels-main/" + SelectedModel;
+							command = "gnome-open http://www.ebi.ac.uk/compneur-srv/biomodels-main/"
+									+ SelectedModel;
 						}
 						else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
-							command = "open http://www.ebi.ac.uk/compneur-srv/biomodels-main/" + SelectedModel;
+							command = "open http://www.ebi.ac.uk/compneur-srv/biomodels-main/"
+									+ SelectedModel;
 						}
 						else {
-							command = "cmd /c start http://www.ebi.ac.uk/compneur-srv/biomodels-main/" + SelectedModel;
+							command = "cmd /c start http://www.ebi.ac.uk/compneur-srv/biomodels-main/"
+									+ SelectedModel;
 						}
 						log.addText("Executing:\n" + command + "\n");
 						Runtime exec = Runtime.getRuntime();
@@ -4608,39 +4613,45 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							exec.exec(command);
 						}
 						catch (IOException e1) {
-							JOptionPane.showMessageDialog(frame, "Unable to open model description.", "Error",
+							JOptionPane.showMessageDialog(frame,
+									"Unable to open model description.", "Error",
 									JOptionPane.ERROR_MESSAGE);
 						}
 					}
 				});
 				GetReference.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						String SelectedModel = ((String) ListOfBioModels.getSelectedValue()).split(" ")[0];
+						String SelectedModel = ((String) ListOfBioModels.getSelectedValue())
+								.split(" ")[0];
 						try {
-							String Pub = (client.getSimpleModelById(SelectedModel)).getPublicationId();
+							String Pub = (client.getSimpleModelById(SelectedModel))
+									.getPublicationId();
 							String command = "";
 							if (System.getProperty("os.name").contentEquals("Linux")) {
-								command = "gnome-open http://www.ebi.ac.uk/citexplore/citationDetails.do?dataSource=MED&externalId=" 
-									+ Pub;
+								command = "gnome-open http://www.ebi.ac.uk/citexplore/citationDetails.do?dataSource=MED&externalId="
+										+ Pub;
 							}
-							else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
-								command = "open http://www.ebi.ac.uk/citexplore/citationDetails.do?dataSource=MED&externalId=" 
-									+ Pub;
+							else if (System.getProperty("os.name").toLowerCase().startsWith(
+									"mac os")) {
+								command = "open http://www.ebi.ac.uk/citexplore/citationDetails.do?dataSource=MED&externalId="
+										+ Pub;
 							}
 							else {
-								command = "cmd /c start http://www.ebi.ac.uk/citexplore/citationDetails.do?dataSource=MED&externalId=" 
-									+ Pub;
+								command = "cmd /c start http://www.ebi.ac.uk/citexplore/citationDetails.do?dataSource=MED&externalId="
+										+ Pub;
 							}
 							log.addText("Executing:\n" + command + "\n");
 							Runtime exec = Runtime.getRuntime();
 							exec.exec(command);
 						}
 						catch (BioModelsWSException e2) {
-							JOptionPane.showMessageDialog(frame, "Error Contacting BioModels Database", "Error",
+							JOptionPane.showMessageDialog(frame,
+									"Error Contacting BioModels Database", "Error",
 									JOptionPane.ERROR_MESSAGE);
 						}
 						catch (IOException e1) {
-							JOptionPane.showMessageDialog(frame, "Unable to open model description.", "Error",
+							JOptionPane.showMessageDialog(frame,
+									"Unable to open model description.", "Error",
 									JOptionPane.ERROR_MESSAGE);
 						}
 					}
@@ -4652,37 +4663,44 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				BioModelsPanel.add(ScrollBioModels, "Center");
 				BioModelsPanel.add(GetButtons, "South");
 				Object[] options = { "OK", "Cancel" };
-				int value = JOptionPane.showOptionDialog(frame, BioModelsPanel, "List of BioModels",
-						JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-				/* String modelNumber = JOptionPane.showInputDialog(frame, "Enter BioModel Number:",
-						"BioModel Number", JOptionPane.PLAIN_MESSAGE);*/
-				//if (modelNumber != null && !modelNumber.equals("")) {
+				int value = JOptionPane.showOptionDialog(frame, BioModelsPanel,
+						"List of BioModels", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
+						null, options, options[0]);
+				/*
+				 * String modelNumber = JOptionPane.showInputDialog(frame,
+				 * "Enter BioModel Number:", "BioModel Number",
+				 * JOptionPane.PLAIN_MESSAGE);
+				 */
+				// if (modelNumber != null && !modelNumber.equals("")) {
 				if (value == JOptionPane.YES_OPTION) {
 					String BMurl = "http://www.ebi.ac.uk/biomodels/models-main/publ/";
 					String filename = ((String) ListOfBioModels.getSelectedValue()).split(" ")[0];
-/*					String filename = "BIOMD";
-					for (int i = 0; i < 10 - modelNumber.length(); i++) {
-						filename += "0";
-					}
-					filename += modelNumber + ".xml";*/
+					/*
+					 * String filename = "BIOMD"; for (int i = 0; i < 10 -
+					 * modelNumber.length(); i++) { filename += "0"; } filename
+					 * += modelNumber + ".xml";
+					 */
 					filename += ".xml";
 					try {
 						URL url = new URL(BMurl + filename);
-						/* System.out.println("Opening connection to " + BMurl +
-								filename + "..."); */
+						/*
+						 * System.out.println("Opening connection to " + BMurl +
+						 * filename + "...");
+						 */
 						URLConnection urlC = url.openConnection();
 						InputStream is = url.openStream();
-						/* System.out.println("Copying resource (type: " +
-								urlC.getContentType() + ")...");
-						System.out.flush(); */
-						if (overwrite(root + separator + filename,filename)) {
+						/*
+						 * System.out.println("Copying resource (type: " +
+						 * urlC.getContentType() + ")..."); System.out.flush();
+						 */
+						if (overwrite(root + separator + filename, filename)) {
 							FileOutputStream fos = null;
 							fos = new FileOutputStream(root + separator + filename);
 							int oneChar, count = 0;
 							while ((oneChar = is.read()) != -1) {
 								fos.write(oneChar);
 								count++;
-							}	
+							}
 							is.close();
 							fos.close();
 							// System.out.println(count + " byte(s) copied");
@@ -4693,9 +4711,9 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 								final JFrame f = new JFrame("SBML Errors and Warnings");
 								JTextArea messageArea = new JTextArea();
 								messageArea
-								.append("Imported SBML file contains the errors listed below. ");
+										.append("Imported SBML file contains the errors listed below. ");
 								messageArea
-								.append("It is recommended that you fix them before using this model or you may get unexpected results.\n\n");
+										.append("It is recommended that you fix them before using this model or you may get unexpected results.\n\n");
 								for (long i = 0; i < numErrors; i++) {
 									String error = document.getError(i).getMessage();
 									messageArea.append(i + ":" + error + "\n");
@@ -11254,7 +11272,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			String[] files = new File(root).list();
 			for (String s : files) {
 				if (s.contains(".gcm") && !saved.contains(s)) {
-					GCMFile gcm = new GCMFile();
+					GCMFile gcm = new GCMFile(root);
 					gcm.load(root + separator + s);
 					if (gcm.getSBMLFile().equals(updatedFile)) {
 						updateViews(s);

@@ -43,28 +43,29 @@ public class Run implements ActionListener {
 	}
 
 	/**
-	 * This method is given which buttons are selected and creates the properties
-	 * file from all the other information given.
+	 * This method is given which buttons are selected and creates the
+	 * properties file from all the other information given.
 	 * 
 	 * @param useInterval
 	 * 
 	 * @param stem
 	 */
 	public void createProperties(double timeLimit, String useInterval, double printInterval,
-			double minTimeStep, double timeStep, double absError, String outDir, long rndSeed, int run,
-			String[] termCond, String[] intSpecies, String printer_id, String printer_track_quantity,
-			String[] getFilename, String selectedButtons, Component component, String filename,
-			double rap1, double rap2, double qss, int con, JCheckBox usingSSA, String ssaFile,
-			JCheckBox usingSad, File sadFile, JList preAbs, JList loopAbs, JList postAbs) {
+			double minTimeStep, double timeStep, double absError, String outDir, long rndSeed,
+			int run, String[] termCond, String[] intSpecies, String printer_id,
+			String printer_track_quantity, String[] getFilename, String selectedButtons,
+			Component component, String filename, double rap1, double rap2, double qss, int con,
+			JCheckBox usingSSA, String ssaFile, JCheckBox usingSad, File sadFile, JList preAbs,
+			JList loopAbs, JList postAbs) {
 		Properties abs = new Properties();
 		if (selectedButtons.contains("abs") || selectedButtons.contains("nary")) {
 			for (int i = 0; i < preAbs.getModel().getSize(); i++) {
-				abs.setProperty("reb2sac.abstraction.method.1." + (i + 1), (String) preAbs.getModel()
-						.getElementAt(i));
+				abs.setProperty("reb2sac.abstraction.method.1." + (i + 1), (String) preAbs
+						.getModel().getElementAt(i));
 			}
 			for (int i = 0; i < loopAbs.getModel().getSize(); i++) {
-				abs.setProperty("reb2sac.abstraction.method.2." + (i + 1), (String) loopAbs.getModel()
-						.getElementAt(i));
+				abs.setProperty("reb2sac.abstraction.method.2." + (i + 1), (String) loopAbs
+						.getModel().getElementAt(i));
 			}
 			// abs.setProperty("reb2sac.abstraction.method.0.1",
 			// "enzyme-kinetic-qssa-1");
@@ -197,7 +198,9 @@ public class Run implements ActionListener {
 				abs.setProperty("monte.carlo.simulation.print.interval", "" + printInterval);
 			}
 			else if (useInterval.equals("Minimum Print Interval")) {
-				abs.setProperty("monte.carlo.simulation.minimum.print.interval", "" + printInterval);
+				abs
+						.setProperty("monte.carlo.simulation.minimum.print.interval", ""
+								+ printInterval);
 			}
 			else {
 				abs.setProperty("monte.carlo.simulation.number.steps", "" + ((int) printInterval));
@@ -225,7 +228,9 @@ public class Run implements ActionListener {
 		}
 		for (int i = 0; i < termCond.length; i++) {
 			if (termCond[i] != "") {
-				abs.setProperty("simulation.run.termination.condition." + (i + 1), "" + termCond[i]);
+				abs
+						.setProperty("simulation.run.termination.condition." + (i + 1), ""
+								+ termCond[i]);
 			}
 		}
 		try {
@@ -258,17 +263,17 @@ public class Run implements ActionListener {
 	 * the nary properties file from that information.
 	 */
 	public void createNaryProperties(double timeLimit, String useInterval, double printInterval,
-			double minTimeStep, double timeStep, String outDir, long rndSeed, int run, String printer_id,
-			String printer_track_quantity, String[] getFilename, Component component, String filename,
-			JRadioButton monteCarlo, String stopE, double stopR, String[] finalS,
-			ArrayList<JTextField> inhib, ArrayList<JList> consLevel, ArrayList<String> getSpeciesProps,
-			ArrayList<Object[]> conLevel, String[] termCond, String[] intSpecies, double rap1,
-			double rap2, double qss, int con, ArrayList<Integer> counts, JCheckBox usingSSA,
-			String ssaFile) {
+			double minTimeStep, double timeStep, String outDir, long rndSeed, int run,
+			String printer_id, String printer_track_quantity, String[] getFilename,
+			Component component, String filename, JRadioButton monteCarlo, String stopE,
+			double stopR, String[] finalS, ArrayList<JTextField> inhib, ArrayList<JList> consLevel,
+			ArrayList<String> getSpeciesProps, ArrayList<Object[]> conLevel, String[] termCond,
+			String[] intSpecies, double rap1, double rap2, double qss, int con,
+			ArrayList<Integer> counts, JCheckBox usingSSA, String ssaFile) {
 		Properties nary = new Properties();
 		try {
-			FileInputStream load = new FileInputStream(
-					new File(outDir + separator + "species.properties"));
+			FileInputStream load = new FileInputStream(new File(outDir + separator
+					+ "species.properties"));
 			nary.load(load);
 			load.close();
 		}
@@ -277,9 +282,13 @@ public class Run implements ActionListener {
 					"File Not Found", JOptionPane.ERROR_MESSAGE);
 		}
 		nary.setProperty("reb2sac.abstraction.method.0.1", "enzyme-kinetic-qssa-1");
-		nary.setProperty("reb2sac.abstraction.method.0.2", "reversible-to-irreversible-transformer");
+		nary
+				.setProperty("reb2sac.abstraction.method.0.2",
+						"reversible-to-irreversible-transformer");
 		nary.setProperty("reb2sac.abstraction.method.0.3", "multiple-products-reaction-eliminator");
-		nary.setProperty("reb2sac.abstraction.method.0.4", "multiple-reactants-reaction-eliminator");
+		nary
+				.setProperty("reb2sac.abstraction.method.0.4",
+						"multiple-reactants-reaction-eliminator");
 		nary.setProperty("reb2sac.abstraction.method.0.5",
 				"single-reactant-product-reaction-eliminator");
 		nary.setProperty("reb2sac.abstraction.method.0.6", "dimer-to-monomer-substitutor");
@@ -306,16 +315,18 @@ public class Run implements ActionListener {
 		nary.setProperty("reb2sac.analysis.stop.rate", "" + stopR);
 		for (int i = 0; i < getSpeciesProps.size(); i++) {
 			if (!(inhib.get(i).getText().trim() != "<<none>>")) {
-				nary.setProperty("reb2sac.absolute.inhibition.threshold." + getSpeciesProps.get(i), inhib
-						.get(i).getText().trim());
+				nary.setProperty("reb2sac.absolute.inhibition.threshold." + getSpeciesProps.get(i),
+						inhib.get(i).getText().trim());
 			}
 			String[] consLevels = Buttons.getList(conLevel.get(i), consLevel.get(i));
 			for (int j = 0; j < counts.get(i); j++) {
-				nary.remove("reb2sac.concentration.level." + getSpeciesProps.get(i) + "." + (j + 1));
+				nary
+						.remove("reb2sac.concentration.level." + getSpeciesProps.get(i) + "."
+								+ (j + 1));
 			}
 			for (int j = 0; j < consLevels.length; j++) {
-				nary.setProperty("reb2sac.concentration.level." + getSpeciesProps.get(i) + "." + (j + 1),
-						consLevels[j]);
+				nary.setProperty("reb2sac.concentration.level." + getSpeciesProps.get(i) + "."
+						+ (j + 1), consLevels[j]);
 			}
 		}
 		if (monteCarlo.isSelected()) {
@@ -324,7 +335,8 @@ public class Run implements ActionListener {
 				nary.setProperty("monte.carlo.simulation.print.interval", "" + printInterval);
 			}
 			else if (useInterval.equals("Minimum Print Interval")) {
-				nary.setProperty("monte.carlo.simulation.minimum.print.interval", "" + printInterval);
+				nary.setProperty("monte.carlo.simulation.minimum.print.interval", ""
+						+ printInterval);
 			}
 			else {
 				nary.setProperty("monte.carlo.simulation.number.steps", "" + ((int) printInterval));
@@ -359,15 +371,16 @@ public class Run implements ActionListener {
 		nary.setProperty("reb2sac.operator.max.concentration.threshold", "" + con);
 		for (int i = 0; i < termCond.length; i++) {
 			if (termCond[i] != "") {
-				nary.setProperty("simulation.run.termination.condition." + (i + 1), "" + termCond[i]);
+				nary.setProperty("simulation.run.termination.condition." + (i + 1), ""
+						+ termCond[i]);
 			}
 		}
 		try {
 			FileOutputStream store = new FileOutputStream(new File((filename.substring(0, filename
 					.length()
 					- getFilename[getFilename.length - 1].length()))
-					+ getFilename[getFilename.length - 1].substring(0, getFilename[getFilename.length - 1]
-							.length() - 5) + ".properties"));
+					+ getFilename[getFilename.length - 1].substring(0,
+							getFilename[getFilename.length - 1].length() - 5) + ".properties"));
 			nary.store(store, getFilename[getFilename.length - 1].substring(0,
 					getFilename[getFilename.length - 1].length() - 5)
 					+ " Properties");
@@ -390,9 +403,9 @@ public class Run implements ActionListener {
 			JRadioButton lhpn, Component component, JRadioButton ode, JRadioButton monteCarlo,
 			String sim, String printer_id, String printer_track_quantity, String outDir,
 			JRadioButton nary, int naryRun, String[] intSpecies, Log log, JCheckBox usingSSA,
-			String ssaFile, BioSim biomodelsim, JTabbedPane simTab, String root, JProgressBar progress,
-			int steps, String simName, GCM2SBMLEditor gcmEditor, String direct, double timeLimit,
-			double runTime) {
+			String ssaFile, BioSim biomodelsim, JTabbedPane simTab, String root,
+			JProgressBar progress, int steps, String simName, GCM2SBMLEditor gcmEditor,
+			String direct, double timeLimit, double runTime) {
 		Runtime exec = Runtime.getRuntime();
 		int exitValue = 255;
 		while (outDir.split(separator)[outDir.split(separator).length - 1].equals(".")) {
@@ -418,7 +431,8 @@ public class Run implements ActionListener {
 			if (out.length() > 4 && out.substring(out.length() - 5, out.length()).equals(".sbml")) {
 				out = out.substring(0, out.length() - 5);
 			}
-			else if (out.length() > 3 && out.substring(out.length() - 4, out.length()).equals(".xml")) {
+			else if (out.length() > 3
+					&& out.substring(out.length() - 4, out.length()).equals(".xml")) {
 				out = out.substring(0, out.length() - 4);
 			}
 			if (nary.isSelected() && !sim.equals("markov-chain-analysis") && !lhpn.isSelected()
@@ -428,8 +442,8 @@ public class Run implements ActionListener {
 				reb2sac = exec.exec("reb2sac --target.encoding=nary-level " + theFile, null, work);
 			}
 			else if (sbml.isSelected()) {
-				sbmlName = JOptionPane.showInputDialog(component, "Enter SBML Model ID:", "Model ID",
-						JOptionPane.PLAIN_MESSAGE);
+				sbmlName = JOptionPane.showInputDialog(component, "Enter SBML Model ID:",
+						"Model ID", JOptionPane.PLAIN_MESSAGE);
 				if (sbmlName != null && !sbmlName.trim().equals("")) {
 					sbmlName = sbmlName.trim();
 					if (sbmlName.length() > 4) {
@@ -444,8 +458,9 @@ public class Run implements ActionListener {
 					if (f.exists()) {
 						Object[] options = { "Overwrite", "Cancel" };
 						int value = JOptionPane.showOptionDialog(component, "File already exists."
-								+ "\nDo you want to overwrite?", "Overwrite", JOptionPane.YES_NO_OPTION,
-								JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+								+ "\nDo you want to overwrite?", "Overwrite",
+								JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
+								options, options[0]);
 						if (value == JOptionPane.YES_OPTION) {
 							File dir = new File(root + separator + sbmlName);
 							if (dir.isDirectory()) {
@@ -460,19 +475,19 @@ public class Run implements ActionListener {
 							return 0;
 						}
 					}
-					log.addText("Executing:\nreb2sac --target.encoding=sbml --out=" + ".." + separator
-							+ sbmlName + " " + filename + "\n");
+					log.addText("Executing:\nreb2sac --target.encoding=sbml --out=" + ".."
+							+ separator + sbmlName + " " + filename + "\n");
 					time1 = System.nanoTime();
-					reb2sac = exec.exec("reb2sac --target.encoding=sbml --out=" + ".." + separator + sbmlName
-							+ " " + theFile, null, work);
+					reb2sac = exec.exec("reb2sac --target.encoding=sbml --out=" + ".." + separator
+							+ sbmlName + " " + theFile, null, work);
 				}
 				else {
 					time1 = System.nanoTime();
 				}
 			}
 			else if (lhpn.isSelected()) {
-				lhpnName = JOptionPane.showInputDialog(component, "Enter LHPN Model ID:", "Model ID",
-						JOptionPane.PLAIN_MESSAGE);
+				lhpnName = JOptionPane.showInputDialog(component, "Enter LHPN Model ID:",
+						"Model ID", JOptionPane.PLAIN_MESSAGE);
 				if (lhpnName != null && !lhpnName.trim().equals("")) {
 					lhpnName = lhpnName.trim();
 					if (lhpnName.length() > 4) {
@@ -487,8 +502,9 @@ public class Run implements ActionListener {
 					if (f.exists()) {
 						Object[] options = { "Overwrite", "Cancel" };
 						int value = JOptionPane.showOptionDialog(component, "File already exists."
-								+ "\nDo you want to overwrite?", "Overwrite", JOptionPane.YES_NO_OPTION,
-								JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+								+ "\nDo you want to overwrite?", "Overwrite",
+								JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
+								options, options[0]);
 						if (value == JOptionPane.YES_OPTION) {
 							File dir = new File(root + separator + lhpnName);
 							if (dir.isDirectory()) {
@@ -503,8 +519,8 @@ public class Run implements ActionListener {
 							return 0;
 						}
 					}
-					gcmEditor.getGCM().createLogicalModel(root + separator + lhpnName, log, biomodelsim,
-							root, lhpnName);
+					gcmEditor.getGCM().createLogicalModel(root + separator + lhpnName, log,
+							biomodelsim, lhpnName);
 					time1 = System.nanoTime();
 					exitValue = 0;
 				}
@@ -514,26 +530,25 @@ public class Run implements ActionListener {
 				}
 			}
 			else if (dot.isSelected()) {
-				log.addText("Executing:\nreb2sac --target.encoding=dot --out=" + out + ".dot " + filename
-						+ "\n");
+				log.addText("Executing:\nreb2sac --target.encoding=dot --out=" + out + ".dot "
+						+ filename + "\n");
 				time1 = System.nanoTime();
-				reb2sac = exec.exec("reb2sac --target.encoding=dot --out=" + out + ".dot " + theFile, null,
-						work);
+				reb2sac = exec.exec("reb2sac --target.encoding=dot --out=" + out + ".dot "
+						+ theFile, null, work);
 			}
 			else if (xhtml.isSelected()) {
 				log.addText("Executing:\nreb2sac --target.encoding=xhtml --out=" + out + ".xhtml "
 						+ filename + "\n");
 				time1 = System.nanoTime();
-				reb2sac = exec.exec("reb2sac --target.encoding=xhtml --out=" + out + ".xhtml " + theFile,
-						null, work);
+				reb2sac = exec.exec("reb2sac --target.encoding=xhtml --out=" + out + ".xhtml "
+						+ theFile, null, work);
 			}
 			else if (usingSSA.isSelected()) {
-				log
-						.addText("Executing:\nreb2sac --target.encoding=ssa-with-user-update " + filename
-								+ "\n");
+				log.addText("Executing:\nreb2sac --target.encoding=ssa-with-user-update "
+						+ filename + "\n");
 				time1 = System.nanoTime();
-				reb2sac = exec
-						.exec("reb2sac --target.encoding=ssa-with-user-update " + theFile, null, work);
+				reb2sac = exec.exec("reb2sac --target.encoding=ssa-with-user-update " + theFile,
+						null, work);
 			}
 			else {
 				if (sim.equals("atacs")) {
@@ -542,31 +557,38 @@ public class Run implements ActionListener {
 					reb2sac = exec.exec("reb2sac --target.encoding=hse2 " + theFile, null, work);
 				}
 				else if (sim.equals("markov-chain-analysis")) {
-					new File(filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + ".lpn")
-							.delete();
+					new File(filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "")
+							+ ".lpn").delete();
 					gcmEditor.getGCM().createLogicalModel(
-							filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + ".lpn", log,
-							biomodelsim, directory,
-							theFile.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + ".lpn");
+							filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "")
+									+ ".lpn",
+							log,
+							biomodelsim,
+							theFile.replace(".gcm", "").replace(".sbml", "").replace(".xml", "")
+									+ ".lpn");
 					LHPNFile lhpnFile = new LHPNFile();
-					while (new File(filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "")
+					while (new File(filename.replace(".gcm", "").replace(".sbml", "").replace(
+							".xml", "")
 							+ ".lpn.temp").exists()) {
 					}
-					if (new File(filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "")
+					if (new File(filename.replace(".gcm", "").replace(".sbml", "").replace(".xml",
+							"")
 							+ ".lpn").exists()) {
-						lhpnFile.load(filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "")
+						lhpnFile.load(filename.replace(".gcm", "").replace(".sbml", "").replace(
+								".xml", "")
 								+ ".lpn");
 						StateGraph sg = new StateGraph(lhpnFile);
 						log.addText("Performing Markov Chain analysis.");
-						String simrep = sg.performMarkovianAnalysis(gcmEditor.getGCM().getConditions());
+						String simrep = sg.performMarkovianAnalysis(gcmEditor.getGCM()
+								.getConditions());
 						if (simrep != null) {
-							FileOutputStream simrepstream = new FileOutputStream(new File(directory + separator
-									+ "sim-rep.txt"));
+							FileOutputStream simrepstream = new FileOutputStream(new File(directory
+									+ separator + "sim-rep.txt"));
 							simrepstream.write((simrep).getBytes());
 							simrepstream.close();
 						}
-						sg.outputStateGraph(filename.replace(".gcm", "").replace(".sbml", "").replace(".xml",
-								"")
+						sg.outputStateGraph(filename.replace(".gcm", "").replace(".sbml", "")
+								.replace(".xml", "")
 								+ ".dot", true);
 						if (sg.getNumberOfStates() > 30) {
 							String[] options = { "Yes", "No" };
@@ -579,27 +601,28 @@ public class Run implements ActionListener {
 							if (value == JOptionPane.YES_OPTION) {
 								if (System.getProperty("os.name").contentEquals("Linux")) {
 									log.addText("Executing:\ndotty "
-											+ filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "")
-											+ ".dot" + "\n");
+											+ filename.replace(".gcm", "").replace(".sbml", "")
+													.replace(".xml", "") + ".dot" + "\n");
 									exec.exec("dotty "
-											+ theFile.replace(".gcm", "").replace(".sbml", "").replace(".xml", "")
-											+ ".dot", null, work);
+											+ theFile.replace(".gcm", "").replace(".sbml", "")
+													.replace(".xml", "") + ".dot", null, work);
 								}
-								else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
+								else if (System.getProperty("os.name").toLowerCase().startsWith(
+										"mac os")) {
 									log.addText("Executing:\nopen "
-											+ filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "")
-											+ ".dot" + "\n");
+											+ filename.replace(".gcm", "").replace(".sbml", "")
+													.replace(".xml", "") + ".dot" + "\n");
 									exec.exec("open "
-											+ theFile.replace(".gcm", "").replace(".sbml", "").replace(".xml", "")
-											+ ".dot", null, work);
+											+ theFile.replace(".gcm", "").replace(".sbml", "")
+													.replace(".xml", "") + ".dot", null, work);
 								}
 								else {
 									log.addText("Executing:\ndotty "
-											+ filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "")
-											+ ".dot" + "\n");
+											+ filename.replace(".gcm", "").replace(".sbml", "")
+													.replace(".xml", "") + ".dot" + "\n");
 									exec.exec("dotty "
-											+ theFile.replace(".gcm", "").replace(".sbml", "").replace(".xml", "")
-											+ ".dot", null, work);
+											+ theFile.replace(".gcm", "").replace(".sbml", "")
+													.replace(".xml", "") + ".dot", null, work);
 								}
 							}
 						}
@@ -612,19 +635,21 @@ public class Run implements ActionListener {
 								((Graph) simTab.getComponentAt(i)).refresh();
 							}
 							else {
-								simTab.setComponentAt(i, new Graph(r2s, printer_track_quantity, outDir
-										.split(separator)[outDir.split(separator).length - 1]
-										+ " simulation results", printer_id, outDir, "time", biomodelsim, null, log,
-										null, false, false));
+								simTab.setComponentAt(i, new Graph(r2s, printer_track_quantity,
+										outDir.split(separator)[outDir.split(separator).length - 1]
+												+ " simulation results", printer_id, outDir,
+										"time", biomodelsim, null, log, null, false, false));
 								simTab.getComponentAt(i).setName("ProbGraph");
 							}
 						}
 					}
 				}
 				else {
-					log.addText("Executing:\nreb2sac --target.encoding=" + sim + " " + filename + "\n");
+					log.addText("Executing:\nreb2sac --target.encoding=" + sim + " " + filename
+							+ "\n");
 					time1 = System.nanoTime();
-					reb2sac = exec.exec("reb2sac --target.encoding=" + sim + " " + theFile, null, work);
+					reb2sac = exec.exec("reb2sac --target.encoding=" + sim + " " + theFile, null,
+							work);
 				}
 			}
 			String error = "";
@@ -641,7 +666,8 @@ public class Run implements ActionListener {
 				while ((line = br.readLine()) != null) {
 					try {
 						if (line.contains("Time")) {
-							time = Double.parseDouble(line.substring(line.indexOf('=') + 1, line.length()));
+							time = Double.parseDouble(line.substring(line.indexOf('=') + 1, line
+									.length()));
 							if (oldTime > time) {
 								runNum++;
 							}
@@ -649,7 +675,8 @@ public class Run implements ActionListener {
 							time += (runNum * timeLimit);
 							double d = ((time * 100) / runTime);
 							String s = d + "";
-							double decimal = Double.parseDouble(s.substring(s.indexOf('.'), s.length()));
+							double decimal = Double.parseDouble(s.substring(s.indexOf('.'), s
+									.length()));
 							if (decimal >= 0.5) {
 								prog = (int) (Math.ceil(d));
 							}
@@ -725,7 +752,8 @@ public class Run implements ActionListener {
 					secondLabel = " seconds";
 				}
 				if (days != 0) {
-					time = days + dayLabel + hours + hourLabel + minutes + minuteLabel + secs + secondLabel;
+					time = days + dayLabel + hours + hourLabel + minutes + minuteLabel + secs
+							+ secondLabel;
 				}
 				else if (hours != 0) {
 					time = hours + hourLabel + minutes + minuteLabel + secs + secondLabel;
@@ -744,12 +772,14 @@ public class Run implements ActionListener {
 			if (exitValue != 0) {
 				if (exitValue == 143) {
 					JOptionPane.showMessageDialog(biomodelsim.frame(), "The simulation was"
-							+ " canceled by the user.", "Canceled Simulation", JOptionPane.ERROR_MESSAGE);
+							+ " canceled by the user.", "Canceled Simulation",
+							JOptionPane.ERROR_MESSAGE);
 				}
 				else if (exitValue == 139) {
 					JOptionPane.showMessageDialog(biomodelsim.frame(),
-							"The selected model is not a valid sbml file." + "\nYou must select an sbml file.",
-							"Not An SBML File", JOptionPane.ERROR_MESSAGE);
+							"The selected model is not a valid sbml file."
+									+ "\nYou must select an sbml file.", "Not An SBML File",
+							JOptionPane.ERROR_MESSAGE);
 				}
 				else {
 					JOptionPane.showMessageDialog(biomodelsim.frame(), "Error In Execution!\n"
@@ -761,8 +791,8 @@ public class Run implements ActionListener {
 				if (nary.isSelected() && !lhpn.isSelected() && naryRun == 1) {
 				}
 				else if (sbml.isSelected()) {
-					biomodelsim.addTab(sbmlName, new SBML_Editor(root + separator + sbmlName, null, log,
-							biomodelsim, null, null), "SBML Editor");
+					biomodelsim.addTab(sbmlName, new SBML_Editor(root + separator + sbmlName, null,
+							log, biomodelsim, null, null), "SBML Editor");
 					biomodelsim.refreshTree();
 				}
 				else if (dot.isSelected()) {
@@ -789,7 +819,9 @@ public class Run implements ActionListener {
 						exec.exec("open " + out + ".xhtml", null, work);
 					}
 					else {
-						log.addText("Executing:\ncmd /c start " + directory + out + ".xhtml" + "\n");
+						log
+								.addText("Executing:\ncmd /c start " + directory + out + ".xhtml"
+										+ "\n");
 						exec.exec("cmd /c start " + out + ".xhtml", null, work);
 					}
 				}
@@ -803,7 +835,8 @@ public class Run implements ActionListener {
 									boolean outputS = true;
 									boolean warning = false;
 									int num = -1;
-									String run = "run-1." + printer_id.substring(0, printer_id.length() - 8);
+									String run = "run-1."
+											+ printer_id.substring(0, printer_id.length() - 8);
 									for (String f : work.list()) {
 										if (f.contains("mean")) {
 											outputM = false;
@@ -831,49 +864,65 @@ public class Run implements ActionListener {
 											else if (Integer.parseInt(number) < num) {
 												num = Integer.parseInt(number);
 											}
-											run = "run-" + num + "." + printer_id.substring(0, printer_id.length() - 8);
+											run = "run-"
+													+ num
+													+ "."
+													+ printer_id.substring(0,
+															printer_id.length() - 8);
 										}
 									}
 									if (outputM) {
-										ArrayList<ArrayList<Double>> mean = ((Graph) simTab.getComponentAt(i))
-												.readData(directory + separator + run, "average", direct, warning);
+										ArrayList<ArrayList<Double>> mean = ((Graph) simTab
+												.getComponentAt(i)).readData(directory + separator
+												+ run, "average", direct, warning);
 										warning = ((Graph) simTab.getComponentAt(i)).getWarning();
-										Parser p = new TSDParser(directory + separator + run, biomodelsim, warning);
+										Parser p = new TSDParser(directory + separator + run,
+												biomodelsim, warning);
 										warning = p.getWarning();
 										Parser p2 = new Parser(p.getSpecies(), mean, biomodelsim);
 										p2.outputTSD(directory + separator + "mean.tsd");
 									}
 									if (outputV) {
-										ArrayList<ArrayList<Double>> var = ((Graph) simTab.getComponentAt(i)).readData(
-												directory + separator + run, "variance", direct, warning);
+										ArrayList<ArrayList<Double>> var = ((Graph) simTab
+												.getComponentAt(i)).readData(directory + separator
+												+ run, "variance", direct, warning);
 										warning = ((Graph) simTab.getComponentAt(i)).getWarning();
-										Parser p = new TSDParser(directory + separator + run, biomodelsim, warning);
+										Parser p = new TSDParser(directory + separator + run,
+												biomodelsim, warning);
 										warning = p.getWarning();
 										Parser p2 = new Parser(p.getSpecies(), var, biomodelsim);
 										p2.outputTSD(directory + separator + "variance.tsd");
 									}
 									if (outputS) {
-										ArrayList<ArrayList<Double>> stddev = ((Graph) simTab.getComponentAt(i))
-												.readData(directory + separator + run, "deviation", direct, warning);
+										ArrayList<ArrayList<Double>> stddev = ((Graph) simTab
+												.getComponentAt(i)).readData(directory + separator
+												+ run, "deviation", direct, warning);
 										warning = ((Graph) simTab.getComponentAt(i)).getWarning();
-										Parser p = new TSDParser(directory + separator + run, biomodelsim, warning);
+										Parser p = new TSDParser(directory + separator + run,
+												biomodelsim, warning);
 										warning = p.getWarning();
 										Parser p2 = new Parser(p.getSpecies(), stddev, biomodelsim);
-										p2.outputTSD(directory + separator + "standard_deviation.tsd");
+										p2.outputTSD(directory + separator
+												+ "standard_deviation.tsd");
 									}
 									((Graph) simTab.getComponentAt(i)).refresh();
 								}
 								else {
-									simTab.setComponentAt(i, new Graph(r2s, printer_track_quantity, outDir
-											.split(separator)[outDir.split(separator).length - 1]
-											+ " simulation results", printer_id, outDir, "time", biomodelsim, null, log,
-											null, true, false));
+									simTab
+											.setComponentAt(i,
+													new Graph(r2s, printer_track_quantity, outDir
+															.split(separator)[outDir
+															.split(separator).length - 1]
+															+ " simulation results", printer_id,
+															outDir, "time", biomodelsim, null, log,
+															null, true, false));
 									boolean outputM = true;
 									boolean outputV = true;
 									boolean outputS = true;
 									boolean warning = false;
 									int num = -1;
-									String run = "run-1." + printer_id.substring(0, printer_id.length() - 8);
+									String run = "run-1."
+											+ printer_id.substring(0, printer_id.length() - 8);
 									for (String f : work.list()) {
 										if (f.contains("mean")) {
 											outputM = false;
@@ -901,35 +950,46 @@ public class Run implements ActionListener {
 											else if (Integer.parseInt(number) < num) {
 												num = Integer.parseInt(number);
 											}
-											run = "run-" + num + "." + printer_id.substring(0, printer_id.length() - 8);
+											run = "run-"
+													+ num
+													+ "."
+													+ printer_id.substring(0,
+															printer_id.length() - 8);
 										}
 									}
 									if (outputM) {
-										ArrayList<ArrayList<Double>> mean = ((Graph) simTab.getComponentAt(i))
-												.readData(directory + separator + run, "average", direct, warning);
+										ArrayList<ArrayList<Double>> mean = ((Graph) simTab
+												.getComponentAt(i)).readData(directory + separator
+												+ run, "average", direct, warning);
 										warning = ((Graph) simTab.getComponentAt(i)).getWarning();
-										Parser p = new TSDParser(directory + separator + run, biomodelsim, warning);
+										Parser p = new TSDParser(directory + separator + run,
+												biomodelsim, warning);
 										warning = p.getWarning();
 										Parser p2 = new Parser(p.getSpecies(), mean, biomodelsim);
 										p2.outputTSD(directory + separator + "mean.tsd");
 									}
 									if (outputV) {
-										ArrayList<ArrayList<Double>> var = ((Graph) simTab.getComponentAt(i)).readData(
-												directory + separator + run, "variance", direct, warning);
+										ArrayList<ArrayList<Double>> var = ((Graph) simTab
+												.getComponentAt(i)).readData(directory + separator
+												+ run, "variance", direct, warning);
 										warning = ((Graph) simTab.getComponentAt(i)).getWarning();
-										Parser p = new TSDParser(directory + separator + run, biomodelsim, warning);
+										Parser p = new TSDParser(directory + separator + run,
+												biomodelsim, warning);
 										warning = p.getWarning();
 										Parser p2 = new Parser(p.getSpecies(), var, biomodelsim);
 										p2.outputTSD(directory + separator + "variance.tsd");
 									}
 									if (outputS) {
-										ArrayList<ArrayList<Double>> stddev = ((Graph) simTab.getComponentAt(i))
-												.readData(directory + separator + run, "deviation", direct, warning);
+										ArrayList<ArrayList<Double>> stddev = ((Graph) simTab
+												.getComponentAt(i)).readData(directory + separator
+												+ run, "deviation", direct, warning);
 										warning = ((Graph) simTab.getComponentAt(i)).getWarning();
-										Parser p = new TSDParser(directory + separator + run, biomodelsim, warning);
+										Parser p = new TSDParser(directory + separator + run,
+												biomodelsim, warning);
 										warning = p.getWarning();
 										Parser p2 = new Parser(p.getSpecies(), stddev, biomodelsim);
-										p2.outputTSD(directory + separator + "standard_deviation.tsd");
+										p2.outputTSD(directory + separator
+												+ "standard_deviation.tsd");
 									}
 									simTab.getComponentAt(i).setName("TSD Graph");
 								}
@@ -939,13 +999,18 @@ public class Run implements ActionListener {
 									((Graph) simTab.getComponentAt(i)).refresh();
 								}
 								else {
-									if (new File(filename.substring(0, filename.length()
-											- filename.split(separator)[filename.split(separator).length - 1].length())
+									if (new File(filename.substring(0,
+											filename.length()
+													- filename.split(separator)[filename
+															.split(separator).length - 1].length())
 											+ "sim-rep.txt").exists()) {
-										simTab.setComponentAt(i, new Graph(r2s, printer_track_quantity, outDir
-												.split(separator)[outDir.split(separator).length - 1]
-												+ " simulation results", printer_id, outDir, "time", biomodelsim, null,
-												log, null, false, false));
+										simTab.setComponentAt(i,
+												new Graph(r2s, printer_track_quantity,
+														outDir.split(separator)[outDir
+																.split(separator).length - 1]
+																+ " simulation results",
+														printer_id, outDir, "time", biomodelsim,
+														null, log, null, false, false));
 										simTab.getComponentAt(i).setName("ProbGraph");
 									}
 								}
@@ -955,8 +1020,11 @@ public class Run implements ActionListener {
 				}
 				else if (sim.equals("atacs")) {
 					log.addText("Executing:\natacs -T0.000001 -oqoflhsgllvA "
-							+ filename.substring(0, filename.length()
-									- filename.split(separator)[filename.split(separator).length - 1].length())
+							+ filename
+									.substring(0,
+											filename.length()
+													- filename.split(separator)[filename
+															.split(separator).length - 1].length())
 							+ "out.hse\n");
 					exec.exec("atacs -T0.000001 -oqoflhsgllvA out.hse", null, work);
 					for (int i = 0; i < simTab.getComponentCount(); i++) {
@@ -965,10 +1033,10 @@ public class Run implements ActionListener {
 								((Graph) simTab.getComponentAt(i)).refresh();
 							}
 							else {
-								simTab.setComponentAt(i, new Graph(r2s, printer_track_quantity, outDir
-										.split(separator)[outDir.split(separator).length - 1]
-										+ " simulation results", printer_id, outDir, "time", biomodelsim, null, log,
-										null, false, false));
+								simTab.setComponentAt(i, new Graph(r2s, printer_track_quantity,
+										outDir.split(separator)[outDir.split(separator).length - 1]
+												+ " simulation results", printer_id, outDir,
+										"time", biomodelsim, null, log, null, false, false));
 								simTab.getComponentAt(i).setName("ProbGraph");
 							}
 						}
@@ -994,7 +1062,8 @@ public class Run implements ActionListener {
 										boolean outputS = true;
 										boolean warning = false;
 										int num = -1;
-										String run = "run-1." + printer_id.substring(0, printer_id.length() - 8);
+										String run = "run-1."
+												+ printer_id.substring(0, printer_id.length() - 8);
 										for (String f : work.list()) {
 											if (f.contains("mean")) {
 												outputM = false;
@@ -1022,49 +1091,70 @@ public class Run implements ActionListener {
 												else if (Integer.parseInt(number) < num) {
 													num = Integer.parseInt(number);
 												}
-												run = "run-" + num + "." + printer_id.substring(0, printer_id.length() - 8);
+												run = "run-"
+														+ num
+														+ "."
+														+ printer_id.substring(0, printer_id
+																.length() - 8);
 											}
 										}
 										if (outputM) {
-											ArrayList<ArrayList<Double>> mean = ((Graph) simTab.getComponentAt(i))
-													.readData(directory + separator + run, "average", direct, warning);
-											warning = ((Graph) simTab.getComponentAt(i)).getWarning();
-											Parser p = new TSDParser(directory + separator + run, biomodelsim, warning);
+											ArrayList<ArrayList<Double>> mean = ((Graph) simTab
+													.getComponentAt(i)).readData(directory
+													+ separator + run, "average", direct, warning);
+											warning = ((Graph) simTab.getComponentAt(i))
+													.getWarning();
+											Parser p = new TSDParser(directory + separator + run,
+													biomodelsim, warning);
 											warning = p.getWarning();
-											Parser p2 = new Parser(p.getSpecies(), mean, biomodelsim);
+											Parser p2 = new Parser(p.getSpecies(), mean,
+													biomodelsim);
 											p2.outputTSD(directory + separator + "mean.tsd");
 										}
 										if (outputV) {
-											ArrayList<ArrayList<Double>> var = ((Graph) simTab.getComponentAt(i))
-													.readData(directory + separator + run, "variance", direct, warning);
-											warning = ((Graph) simTab.getComponentAt(i)).getWarning();
-											Parser p = new TSDParser(directory + separator + run, biomodelsim, warning);
+											ArrayList<ArrayList<Double>> var = ((Graph) simTab
+													.getComponentAt(i)).readData(directory
+													+ separator + run, "variance", direct, warning);
+											warning = ((Graph) simTab.getComponentAt(i))
+													.getWarning();
+											Parser p = new TSDParser(directory + separator + run,
+													biomodelsim, warning);
 											warning = p.getWarning();
 											Parser p2 = new Parser(p.getSpecies(), var, biomodelsim);
 											p2.outputTSD(directory + separator + "variance.tsd");
 										}
 										if (outputS) {
-											ArrayList<ArrayList<Double>> stddev = ((Graph) simTab.getComponentAt(i))
-													.readData(directory + separator + run, "deviation", direct, warning);
-											warning = ((Graph) simTab.getComponentAt(i)).getWarning();
-											Parser p = new TSDParser(directory + separator + run, biomodelsim, warning);
+											ArrayList<ArrayList<Double>> stddev = ((Graph) simTab
+													.getComponentAt(i))
+													.readData(directory + separator + run,
+															"deviation", direct, warning);
+											warning = ((Graph) simTab.getComponentAt(i))
+													.getWarning();
+											Parser p = new TSDParser(directory + separator + run,
+													biomodelsim, warning);
 											warning = p.getWarning();
-											Parser p2 = new Parser(p.getSpecies(), stddev, biomodelsim);
-											p2.outputTSD(directory + separator + "standard_deviation.tsd");
+											Parser p2 = new Parser(p.getSpecies(), stddev,
+													biomodelsim);
+											p2.outputTSD(directory + separator
+													+ "standard_deviation.tsd");
 										}
 										((Graph) simTab.getComponentAt(i)).refresh();
 									}
 									else {
-										simTab.setComponentAt(i, new Graph(r2s, printer_track_quantity, outDir
-												.split(separator)[outDir.split(separator).length - 1]
-												+ " simulation results", printer_id, outDir, "time", biomodelsim, null,
-												log, null, true, false));
+										simTab.setComponentAt(i,
+												new Graph(r2s, printer_track_quantity,
+														outDir.split(separator)[outDir
+																.split(separator).length - 1]
+																+ " simulation results",
+														printer_id, outDir, "time", biomodelsim,
+														null, log, null, true, false));
 										boolean outputM = true;
 										boolean outputV = true;
 										boolean outputS = true;
 										boolean warning = false;
 										int num = -1;
-										String run = "run-1." + printer_id.substring(0, printer_id.length() - 8);
+										String run = "run-1."
+												+ printer_id.substring(0, printer_id.length() - 8);
 										for (String f : work.list()) {
 											if (f.contains("mean")) {
 												outputM = false;
@@ -1092,35 +1182,52 @@ public class Run implements ActionListener {
 												else if (Integer.parseInt(number) < num) {
 													num = Integer.parseInt(number);
 												}
-												run = "run-" + num + "." + printer_id.substring(0, printer_id.length() - 8);
+												run = "run-"
+														+ num
+														+ "."
+														+ printer_id.substring(0, printer_id
+																.length() - 8);
 											}
 										}
 										if (outputM) {
-											ArrayList<ArrayList<Double>> mean = ((Graph) simTab.getComponentAt(i))
-													.readData(directory + separator + run, "average", direct, warning);
-											warning = ((Graph) simTab.getComponentAt(i)).getWarning();
-											Parser p = new TSDParser(directory + separator + run, biomodelsim, warning);
+											ArrayList<ArrayList<Double>> mean = ((Graph) simTab
+													.getComponentAt(i)).readData(directory
+													+ separator + run, "average", direct, warning);
+											warning = ((Graph) simTab.getComponentAt(i))
+													.getWarning();
+											Parser p = new TSDParser(directory + separator + run,
+													biomodelsim, warning);
 											warning = p.getWarning();
-											Parser p2 = new Parser(p.getSpecies(), mean, biomodelsim);
+											Parser p2 = new Parser(p.getSpecies(), mean,
+													biomodelsim);
 											p2.outputTSD(directory + separator + "mean.tsd");
 										}
 										if (outputV) {
-											ArrayList<ArrayList<Double>> var = ((Graph) simTab.getComponentAt(i))
-													.readData(directory + separator + run, "variance", direct, warning);
-											warning = ((Graph) simTab.getComponentAt(i)).getWarning();
-											Parser p = new TSDParser(directory + separator + run, biomodelsim, warning);
+											ArrayList<ArrayList<Double>> var = ((Graph) simTab
+													.getComponentAt(i)).readData(directory
+													+ separator + run, "variance", direct, warning);
+											warning = ((Graph) simTab.getComponentAt(i))
+													.getWarning();
+											Parser p = new TSDParser(directory + separator + run,
+													biomodelsim, warning);
 											warning = p.getWarning();
 											Parser p2 = new Parser(p.getSpecies(), var, biomodelsim);
 											p2.outputTSD(directory + separator + "variance.tsd");
 										}
 										if (outputS) {
-											ArrayList<ArrayList<Double>> stddev = ((Graph) simTab.getComponentAt(i))
-													.readData(directory + separator + run, "deviation", direct, warning);
-											warning = ((Graph) simTab.getComponentAt(i)).getWarning();
-											Parser p = new TSDParser(directory + separator + run, biomodelsim, warning);
+											ArrayList<ArrayList<Double>> stddev = ((Graph) simTab
+													.getComponentAt(i))
+													.readData(directory + separator + run,
+															"deviation", direct, warning);
+											warning = ((Graph) simTab.getComponentAt(i))
+													.getWarning();
+											Parser p = new TSDParser(directory + separator + run,
+													biomodelsim, warning);
 											warning = p.getWarning();
-											Parser p2 = new Parser(p.getSpecies(), stddev, biomodelsim);
-											p2.outputTSD(directory + separator + "standard_deviation.tsd");
+											Parser p2 = new Parser(p.getSpecies(), stddev,
+													biomodelsim);
+											p2.outputTSD(directory + separator
+													+ "standard_deviation.tsd");
 										}
 										simTab.getComponentAt(i).setName("TSD Graph");
 									}
@@ -1131,12 +1238,16 @@ public class Run implements ActionListener {
 									}
 									else {
 										if (new File(filename.substring(0, filename.length()
-												- filename.split(separator)[filename.split(separator).length - 1].length())
+												- filename.split(separator)[filename
+														.split(separator).length - 1].length())
 												+ "sim-rep.txt").exists()) {
-											simTab.setComponentAt(i, new Graph(r2s, printer_track_quantity, outDir
-													.split(separator)[outDir.split(separator).length - 1]
-													+ " simulation results", printer_id, outDir, "time", biomodelsim, null,
-													log, null, false, false));
+											simTab.setComponentAt(i,
+													new Graph(r2s, printer_track_quantity, outDir
+															.split(separator)[outDir
+															.split(separator).length - 1]
+															+ " simulation results", printer_id,
+															outDir, "time", biomodelsim, null, log,
+															null, false, false));
 											simTab.getComponentAt(i).setName("ProbGraph");
 										}
 									}
@@ -1152,7 +1263,8 @@ public class Run implements ActionListener {
 										boolean outputS = true;
 										boolean warning = false;
 										int num = -1;
-										String run = "run-1." + printer_id.substring(0, printer_id.length() - 8);
+										String run = "run-1."
+												+ printer_id.substring(0, printer_id.length() - 8);
 										for (String f : work.list()) {
 											if (f.contains("mean")) {
 												outputM = false;
@@ -1180,49 +1292,70 @@ public class Run implements ActionListener {
 												else if (Integer.parseInt(number) < num) {
 													num = Integer.parseInt(number);
 												}
-												run = "run-" + num + "." + printer_id.substring(0, printer_id.length() - 8);
+												run = "run-"
+														+ num
+														+ "."
+														+ printer_id.substring(0, printer_id
+																.length() - 8);
 											}
 										}
 										if (outputM) {
-											ArrayList<ArrayList<Double>> mean = ((Graph) simTab.getComponentAt(i))
-													.readData(directory + separator + run, "average", direct, warning);
-											warning = ((Graph) simTab.getComponentAt(i)).getWarning();
-											Parser p = new TSDParser(directory + separator + run, biomodelsim, warning);
+											ArrayList<ArrayList<Double>> mean = ((Graph) simTab
+													.getComponentAt(i)).readData(directory
+													+ separator + run, "average", direct, warning);
+											warning = ((Graph) simTab.getComponentAt(i))
+													.getWarning();
+											Parser p = new TSDParser(directory + separator + run,
+													biomodelsim, warning);
 											warning = p.getWarning();
-											Parser p2 = new Parser(p.getSpecies(), mean, biomodelsim);
+											Parser p2 = new Parser(p.getSpecies(), mean,
+													biomodelsim);
 											p2.outputTSD(directory + separator + "mean.tsd");
 										}
 										if (outputV) {
-											ArrayList<ArrayList<Double>> var = ((Graph) simTab.getComponentAt(i))
-													.readData(directory + separator + run, "variance", direct, warning);
-											warning = ((Graph) simTab.getComponentAt(i)).getWarning();
-											Parser p = new TSDParser(directory + separator + run, biomodelsim, warning);
+											ArrayList<ArrayList<Double>> var = ((Graph) simTab
+													.getComponentAt(i)).readData(directory
+													+ separator + run, "variance", direct, warning);
+											warning = ((Graph) simTab.getComponentAt(i))
+													.getWarning();
+											Parser p = new TSDParser(directory + separator + run,
+													biomodelsim, warning);
 											warning = p.getWarning();
 											Parser p2 = new Parser(p.getSpecies(), var, biomodelsim);
 											p2.outputTSD(directory + separator + "variance.tsd");
 										}
 										if (outputS) {
-											ArrayList<ArrayList<Double>> stddev = ((Graph) simTab.getComponentAt(i))
-													.readData(directory + separator + run, "deviation", direct, warning);
-											warning = ((Graph) simTab.getComponentAt(i)).getWarning();
-											Parser p = new TSDParser(directory + separator + run, biomodelsim, warning);
+											ArrayList<ArrayList<Double>> stddev = ((Graph) simTab
+													.getComponentAt(i))
+													.readData(directory + separator + run,
+															"deviation", direct, warning);
+											warning = ((Graph) simTab.getComponentAt(i))
+													.getWarning();
+											Parser p = new TSDParser(directory + separator + run,
+													biomodelsim, warning);
 											warning = p.getWarning();
-											Parser p2 = new Parser(p.getSpecies(), stddev, biomodelsim);
-											p2.outputTSD(directory + separator + "standard_deviation.tsd");
+											Parser p2 = new Parser(p.getSpecies(), stddev,
+													biomodelsim);
+											p2.outputTSD(directory + separator
+													+ "standard_deviation.tsd");
 										}
 										((Graph) simTab.getComponentAt(i)).refresh();
 									}
 									else {
-										simTab.setComponentAt(i, new Graph(r2s, printer_track_quantity, outDir
-												.split(separator)[outDir.split(separator).length - 1]
-												+ " simulation results", printer_id, outDir, "time", biomodelsim, null,
-												log, null, true, false));
+										simTab.setComponentAt(i,
+												new Graph(r2s, printer_track_quantity,
+														outDir.split(separator)[outDir
+																.split(separator).length - 1]
+																+ " simulation results",
+														printer_id, outDir, "time", biomodelsim,
+														null, log, null, true, false));
 										boolean outputM = true;
 										boolean outputV = true;
 										boolean outputS = true;
 										boolean warning = false;
 										int num = -1;
-										String run = "run-1." + printer_id.substring(0, printer_id.length() - 8);
+										String run = "run-1."
+												+ printer_id.substring(0, printer_id.length() - 8);
 										for (String f : work.list()) {
 											if (f.contains("mean")) {
 												outputM = false;
@@ -1250,35 +1383,52 @@ public class Run implements ActionListener {
 												else if (Integer.parseInt(number) < num) {
 													num = Integer.parseInt(number);
 												}
-												run = "run-" + num + "." + printer_id.substring(0, printer_id.length() - 8);
+												run = "run-"
+														+ num
+														+ "."
+														+ printer_id.substring(0, printer_id
+																.length() - 8);
 											}
 										}
 										if (outputM) {
-											ArrayList<ArrayList<Double>> mean = ((Graph) simTab.getComponentAt(i))
-													.readData(directory + separator + run, "average", direct, warning);
-											warning = ((Graph) simTab.getComponentAt(i)).getWarning();
-											Parser p = new TSDParser(directory + separator + run, biomodelsim, warning);
+											ArrayList<ArrayList<Double>> mean = ((Graph) simTab
+													.getComponentAt(i)).readData(directory
+													+ separator + run, "average", direct, warning);
+											warning = ((Graph) simTab.getComponentAt(i))
+													.getWarning();
+											Parser p = new TSDParser(directory + separator + run,
+													biomodelsim, warning);
 											warning = p.getWarning();
-											Parser p2 = new Parser(p.getSpecies(), mean, biomodelsim);
+											Parser p2 = new Parser(p.getSpecies(), mean,
+													biomodelsim);
 											p2.outputTSD(directory + separator + "mean.tsd");
 										}
 										if (outputV) {
-											ArrayList<ArrayList<Double>> var = ((Graph) simTab.getComponentAt(i))
-													.readData(directory + separator + run, "variance", direct, warning);
-											warning = ((Graph) simTab.getComponentAt(i)).getWarning();
-											Parser p = new TSDParser(directory + separator + run, biomodelsim, warning);
+											ArrayList<ArrayList<Double>> var = ((Graph) simTab
+													.getComponentAt(i)).readData(directory
+													+ separator + run, "variance", direct, warning);
+											warning = ((Graph) simTab.getComponentAt(i))
+													.getWarning();
+											Parser p = new TSDParser(directory + separator + run,
+													biomodelsim, warning);
 											warning = p.getWarning();
 											Parser p2 = new Parser(p.getSpecies(), var, biomodelsim);
 											p2.outputTSD(directory + separator + "variance.tsd");
 										}
 										if (outputS) {
-											ArrayList<ArrayList<Double>> stddev = ((Graph) simTab.getComponentAt(i))
-													.readData(directory + separator + run, "deviation", direct, warning);
-											warning = ((Graph) simTab.getComponentAt(i)).getWarning();
-											Parser p = new TSDParser(directory + separator + run, biomodelsim, warning);
+											ArrayList<ArrayList<Double>> stddev = ((Graph) simTab
+													.getComponentAt(i))
+													.readData(directory + separator + run,
+															"deviation", direct, warning);
+											warning = ((Graph) simTab.getComponentAt(i))
+													.getWarning();
+											Parser p = new TSDParser(directory + separator + run,
+													biomodelsim, warning);
 											warning = p.getWarning();
-											Parser p2 = new Parser(p.getSpecies(), stddev, biomodelsim);
-											p2.outputTSD(directory + separator + "standard_deviation.tsd");
+											Parser p2 = new Parser(p.getSpecies(), stddev,
+													biomodelsim);
+											p2.outputTSD(directory + separator
+													+ "standard_deviation.tsd");
 										}
 										simTab.getComponentAt(i).setName("TSD Graph");
 									}
@@ -1289,12 +1439,16 @@ public class Run implements ActionListener {
 									}
 									else {
 										if (new File(filename.substring(0, filename.length()
-												- filename.split(separator)[filename.split(separator).length - 1].length())
+												- filename.split(separator)[filename
+														.split(separator).length - 1].length())
 												+ "sim-rep.txt").exists()) {
-											simTab.setComponentAt(i, new Graph(r2s, printer_track_quantity, outDir
-													.split(separator)[outDir.split(separator).length - 1]
-													+ " simulation results", printer_id, outDir, "time", biomodelsim, null,
-													log, null, false, false));
+											simTab.setComponentAt(i,
+													new Graph(r2s, printer_track_quantity, outDir
+															.split(separator)[outDir
+															.split(separator).length - 1]
+															+ " simulation results", printer_id,
+															outDir, "time", biomodelsim, null, log,
+															null, false, false));
 											simTab.getComponentAt(i).setName("ProbGraph");
 										}
 									}
