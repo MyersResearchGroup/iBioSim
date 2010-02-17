@@ -2868,7 +2868,7 @@ public class LHPNFile {
 					assignProp.put(indetMatcher.group(1), indetMatcher.group(2));
 					Pattern rangePattern = Pattern.compile(RANGE);
 					Matcher rangeMatcher = rangePattern.matcher(indetMatcher.group(2));
-					if (rangeMatcher.find()) {
+					if (varMatcher.find() && rangeMatcher.find()) {
 						expr[0].token = expr[0].intexpr_gettok(rangeMatcher.group(1));
 						if (!rangeMatcher.group(1).equals("")) {
 							expr[0].intexpr_L(rangeMatcher.group(1));
