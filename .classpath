@@ -36,8 +36,8 @@
 	<classpathentry kind="lib" path="gui/lib/xml-apis-ext.jar"/>
 	<classpathentry kind="lib" path="gui/lib/xml-apis.jar"/>
 	<classpathentry kind="lib" path="gui/lib/swing-layout-1.0.3.jar"/>
-	<classpathentry kind="lib" path="/Users/myers/research/workspace/BioSim/gui/lib/biomodelswslib-standalone-1.11.jar"/>
-	<classpathentry kind="lib" path="/Users/myers/research/workspace/BioSim/gui/lib/activation.jar"/>
-	<classpathentry kind="lib" path="/Users/myers/research/workspace/BioSim/gui/lib/mail.jar"/>
+	<classpathentry kind="lib" path="gui/lib/activation.jar"/>
+	<classpathentry kind="lib" path="gui/lib/biomodelswslib-standalone-1.11.jar"/>
+	<classpathentry kind="lib" path="gui/lib/mail.jar"/>
 	<classpathentry kind="output" path="gui/dist/classes"/>
 </classpath>
