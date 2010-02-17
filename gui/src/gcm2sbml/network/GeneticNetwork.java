@@ -95,7 +95,7 @@ public class GeneticNetwork {
 	public void buildTemplate(HashMap<String, SpeciesInterface> species,			
 			HashMap<String, Promoter> promoters, String gcm, String filename) {
 		
-		GCMFile file = new GCMFile();
+		GCMFile file = new GCMFile(currentRoot);
 		file.load(currentRoot+gcm);
 		AbstractPrintVisitor.setGCMFile(file);
 		setSpecies(species);

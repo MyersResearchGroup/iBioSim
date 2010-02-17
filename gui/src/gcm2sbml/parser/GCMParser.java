@@ -11,6 +11,7 @@ import gcm2sbml.util.GlobalConstants;
 import gcm2sbml.util.Utility;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
@@ -32,7 +33,9 @@ public class GCMParser {
 
 	public GCMParser(String filename, boolean debug) {
 		this.debug = debug;
-		gcm = new GCMFile();
+		gcm = new GCMFile(filename.substring(0, filename.length()
+				- filename.split(File.separator)[filename.split(File.separator).length - 1]
+						.length()));
 		gcm.load(filename);
 		data = new StringBuffer();
 		try {

@@ -391,7 +391,7 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 			}
 		}
 		else {
-			GCMFile gcm = new GCMFile();
+			GCMFile gcm = new GCMFile(biosim.getRoot());
 			gcm.load(learnFile);
 			HashMap<String, Properties> speciesMap = gcm.getSpecies();
 			for (String s : speciesMap.keySet()) {
@@ -1403,7 +1403,7 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 			}
 		}
 		else {
-			GCMFile gcm = new GCMFile();
+			GCMFile gcm = new GCMFile(biosim.getRoot());
 			gcm.load(learnFile);
 			HashMap<String, Properties> speciesMap = gcm.getSpecies();
 			for (String s : speciesMap.keySet()) {
