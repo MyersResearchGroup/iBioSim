@@ -261,14 +261,50 @@ public class GCMFile {
 		naryFrame.setResizable(false);
 		naryFrame.setVisible(true);
 	}
+	
+	private void flattenGCM () {
+		for (String s : components.keySet()) {
+			GCMFile file = new GCMFile(path);
+			file.load(path + File.separator
+					+ components.get(s).getProperty("gcm"));
+			file.setParameters(parameters);
+			unionGCM(this, file, s);
+		}
+	}
+	
+	private void unionGCM(GCMFile topLevel, GCMFile bottomLevel, String compName) {
+		for (String s : bottomLevel.components.keySet()) {
+			GCMFile file = new GCMFile(path);
+			file.load(path + File.separator + bottomLevel.components.get(s).getProperty("gcm"));
+			file.setParameters(bottomLevel.parameters);
+			unionGCM(bottomLevel, file, s);
+		}
+		for (String prom : bottomLevel.promoters.keySet()) {
+			bottomLevel.changePromoterName(prom, compName + "_" + prom);
+		}
+		for (String spec : bottomLevel.species.keySet()) {
+			bottomLevel.changeSpeciesName(spec, compName + "_" + spec);
+		}
+		for (String spec : bottomLevel.species.keySet()) {
+			for (Object port : components.get(compName).keySet()) {
+				if (spec.equals(compName + "_" + port)) {
+					bottomLevel.changeSpeciesName(spec, (String) port);
+				}
+			}
+		}
+		for (String prom : bottomLevel.promoters.keySet()) {
+			topLevel.addPromoter(prom, bottomLevel.promoters.get(prom));
+		}
+		for (String spec : bottomLevel.species.keySet()) {
+			topLevel.addSpecies(spec, bottomLevel.species.get(spec));
+		}
+		for (String infl : bottomLevel.influences.keySet()) {
+			topLevel.addInfluences(infl, bottomLevel.influences.get(infl));
+		}
+	}
 
 	private LHPNFile convertToLHPN(ArrayList<String> specs, ArrayList<Object[]> conLevel) {
-		for (String s : components.keySet()) {
-			GCMParser parser = new GCMParser(path + File.separator
-					+ components.get(s).getProperty("gcm"));
-			parser.setParameters(parameters);
-			GeneticNetwork network = parser.buildNetwork();
-		}
+		flattenGCM();
 		HashMap<String, ArrayList<String>> infl = new HashMap<String, ArrayList<String>>();
 		for (String influence : influences.keySet()) {
 			if (influences.get(influence).get(GlobalConstants.TYPE).equals(
