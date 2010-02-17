@@ -55,7 +55,7 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 	public AssignmentPanel(String transition, String selected, PropertyList assignmentList,
 			PropertyList continuousList, PropertyList rateList, PropertyList booleanList,
 			PropertyList integerList, LHPNFile lhpn, BioSim biosim) {
-		super(new GridLayout(4, 1));
+		super(new GridLayout(3, 1));
 		this.selected = selected;
 		//this.transition = transition;
 		this.assignmentList = assignmentList;
@@ -152,20 +152,6 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 			}
 		}
 		varList = new String[contList.size() + boolList.size() + intList.size()];
-		// if (boolList.length > 0 && contList.length > 0 && intList.length > 0)
-		// {
-		// System.arraycopy(boolList, 0, varList, 0, boolList.length);
-		// System.arraycopy(contList, 0, varList, boolList.length,
-		// contList.length);
-		// System.arraycopy(intList, 0, varList, boolList.length +
-		// contList.length,
-		// intList.length);
-		// }
-		// else if (boolList.length > 0 && contList.length > 0) {
-		// System.arraycopy(boolList, 0, varList, 0, boolList.length);
-		// }
-		// else if (boolList.length > 0 && intList.length > 0) {
-		// }
 		for (int i = 0; i < boolList.size(); i++) {
 			varList[i] = boolList.get(i);
 		}
@@ -175,17 +161,6 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 		for (int i = 0; i < intList.size(); i++) {
 			varList[i + boolList.size() + contList.size()] = intList.get(i);
 		}
-
-		// Type field
-		// JPanel tempPanel = new JPanel();
-		// JLabel tempLabel = new JLabel("Type");
-		// typeBox = new JComboBox(types);
-		// typeBox.setSelectedItem(types[0]);
-		// typeBox.addActionListener(this);
-		// tempPanel.setLayout(new GridLayout(1, 2));
-		// tempPanel.add(tempLabel);
-		// tempPanel.add(typeBox);
-		// add(tempPanel);
 
 		// Variable field
 		JPanel tempPanel = new JPanel();
@@ -199,14 +174,9 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 		add(tempPanel);
 
 		// Assignment lower bound
-		PropertyField field = new PropertyField("Assignment Lower Bound", "", null, null,
+		PropertyField field = new PropertyField("Assignment", "", null, null,
 				Utility.VALstring);
-		fields.put("Assignment lower", field);
-		add(field);
-
-		// Assignment upper bound
-		field = new PropertyField("Assignment Upper Bound", "", null, null, Utility.NAMEstring);
-		fields.put("Assignment upper", field);
+		fields.put("Assignment", field);
 		add(field);
 
 		// Rate Assignment Box
@@ -238,15 +208,7 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 			else {
 				rateBox.setEnabled(false);
 			}
-			Pattern pattern = Pattern.compile("\\[([\\w-]+),([\\w-]+)\\]");
-			Matcher matcher = pattern.matcher(tempArray[1]);
-			if (matcher.find()) {
-				fields.get("Assignment lower").setValue(matcher.group(1));
-				fields.get("Assignment upper").setValue(matcher.group(2));
-			}
-			else {
-				fields.get("Assignment lower").setValue(tempArray[1]);
-			}
+			fields.get("Assignment").setValue(tempArray[1]);
 			// loadProperties(prop);
 		}
 
@@ -297,13 +259,7 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 			// }
 			// }
 			String assign = "";
-			if (fields.get("Assignment upper").getValue().equals("")) {
-				assign = fields.get("Assignment lower").getValue();
-			}
-			else {
-				assign = "[" + fields.get("Assignment lower").getValue() + ","
-						+ fields.get("Assignment upper").getValue() + "]";
-			}
+			assign = fields.get("Assignment").getValue();
 			if (rateBox.isSelected()) {
 				id = varBox.getSelectedItem().toString() + "':=" + assign;
 			}
@@ -378,41 +334,18 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 		}
 	}
 
-//	private void setID(String var) {
-//		PropertyField idField = fields.get(GlobalConstants.ID);
-//		idField.setValue(var);
-//		fields.put(GlobalConstants.ID, idField);
-//	}
-
 	public boolean save() {
 		String variable = varBox.getSelectedItem().toString();
 		String value = "";
 		ExprTree[] expr = new ExprTree[2];
 		expr[0] = new ExprTree(lhpn);
 		expr[1] = new ExprTree(lhpn);
-		if (fields.get("Assignment upper").getValue().equals("")) {
-			value = fields.get("Assignment lower").getValue();
+			value = fields.get("Assignment").getValue();
 			expr[0].token = expr[0].intexpr_gettok(value);
 			if (!value.equals("")) {
 				if (!expr[0].intexpr_L(value))
 					return false;
 			}
-		}
-		else {
-			value = "[" + fields.get("Assignment lower").getValue() + ","
-					+ fields.get("Assignment upper").getValue() + "]";
-			expr[0].token = expr[0].intexpr_gettok(fields.get("Assignment lower").getValue());
-			if (!fields.get("Assignment lower").getValue().equals("")) {
-				if (!expr[0].intexpr_L(fields.get("Assignment lower").getValue()))
-					return false;
-			}
-			System.out.println(fields.get("Assignment upper").getValue());
-			expr[1].token = expr[1].intexpr_gettok(fields.get("Assignment upper").getValue());
-			if (!fields.get("Assignment upper").getValue().equals("")) {
-				if (!expr[1].intexpr_L(fields.get("Assignment upper").getValue()))
-					return false;
-			}
-		}
 		Properties property = new Properties();
 		for (PropertyField f : fields.values()) {
 			if (f.getState() == null || f.getState().equals(PropertyField.states[1])) {
@@ -420,86 +353,7 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 			}
 		}
 		property.put("Variable", variable);
-
-//		if (lhpn.isContinuous(variable)) {
-//			if (!rateBox.isSelected()) {
-//				if (selected != null && !oldName.equals(id)) {
-//					String[] selectArray = selected.split(":=");
-//					String[] oldArray = oldName.split(":=");
-//					lhpn.removeContAssign(selectArray[0], oldArray[0]);
-//				}
-//				else {
-//					// System.out.println(transition + " " + id + " " +
-//					// property.getProperty("Assignment value"));
-//					if (!lhpn.addContAssign(transition, variable, value, expr))
-//						return false;
-//				}
-//			}
-//			else {
-//				if (selected != null && !oldName.equals(id)) {
-//					String[] selectArray = selected.split("':=");
-//					String[] oldArray = oldName.split("':=");
-//					lhpn.removeRateAssign(selectArray[0], oldArray[0]);
-//				}
-//				else {
-//					// System.out.println(transition + " " + id + " " +
-//					// property.getProperty("Assignment value"));
-//					if (!lhpn.addRateAssign(transition, variable, value))
-//						return false;
-//				}
-//			}
-//		}
-//		else if (lhpn.isInteger(variable)) {
-//			if (selected != null && !oldName.equals(id)) {
-//				String[] selectArray = selected.split(":=");
-//				String[] oldArray = oldName.split(":=");
-//				lhpn.removeIntAssign(selectArray[0], oldArray[0]);
-//			}
-//			else {
-//				// System.out.println(transition + " " + id + " " +
-//				// property.getProperty("Assignment value"));
-//				if (!lhpn.addIntAssign(transition, variable, value))
-//					return false;
-//			}
-//		}
-//		else if (lhpn.isInput(variable) || lhpn.isOutput(variable)) {
-//			if (selected != null && !oldName.equals(id)) {
-//				String[] selectArray = selected.split(":=");
-//				String[] oldArray = oldName.split(":=");
-//				lhpn.removeBoolAssign(selectArray[0], oldArray[0]);
-//			}
-//			else {
-//				// System.out.println(transition + " " + id + " " +
-//				// property.getProperty("Assignment value"));
-//				if (!lhpn.addBoolAssign(transition, variable, value)) {
-//					return false;
-//				}
-//			}
-//		}
 		return true;
 	}
 
-	// private void setType(String type) {
-	/*
-	 * if (type.equals(types[0])) { //
-	 * fields.get(GlobalConstants.MAX_DIMER_STRING).setEnabled(true);
-	 * fields.get(GlobalConstants.KASSOCIATION_STRING).setEnabled(true);
-	 * fields.get(GlobalConstants.KDECAY_STRING).setEnabled(true); } else if
-	 * (type.equals(types[1])) { //
-	 * fields.get(GlobalConstants.MAX_DIMER_STRING).setEnabled(true);
-	 * fields.get(GlobalConstants.KASSOCIATION_STRING).setEnabled(true);
-	 * fields.get(GlobalConstants.KDECAY_STRING).setEnabled(false); } else { //
-	 * fields.get(GlobalConstants.MAX_DIMER_STRING).setEnabled(true);
-	 * fields.get(GlobalConstants.KASSOCIATION_STRING).setEnabled(true);
-	 * fields.get(GlobalConstants.KDECAY_STRING).setEnabled(true); }
-	 */
-	// }
-	// private void loadProperties(Properties property) {
-	// for (Object o : property.keySet()) {
-	// if (fields.containsKey(o.toString())) {
-	// fields.get(o.toString()).setValue(property.getProperty(o.toString()));
-	// fields.get(o.toString()).setCustom();
-	// }
-	// }
-	// }
 }
