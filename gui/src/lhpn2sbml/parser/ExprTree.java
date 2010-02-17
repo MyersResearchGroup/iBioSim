@@ -429,6 +429,429 @@ public class ExprTree {
 				}
 				(token) = intexpr_gettok(expr);
 			}
+			else if (tokvalue.equals("uniform")) {
+				(token) = intexpr_gettok(expr);
+				if ((token) != '(') {
+					Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
+							+ "\nU: Expected a (");
+					// System.out.printf("ERROR: Expected a (\n");
+					return false;
+				}
+				(token) = intexpr_gettok(expr);
+				if (!intexpr_R(expr))
+					return false;
+				if ((token) != ',') {
+					Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
+							+ "\nU: Expected a (");
+					// System.out.printf("ERROR: Expected a ,\n");
+					return false;
+				}
+				(token) = intexpr_gettok(expr);
+				newresult.token = token;
+				newresult.tokvalue = tokvalue;
+				newresult.position = position;
+				if (!newresult.intexpr_R(expr))
+					return false;
+				token = newresult.token;
+				position = newresult.position;
+				if ((token) != ')') {
+					Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
+							+ "\nU: Expected a (");
+					// System.out.printf("ERROR: Expected a )\n");
+					return false;
+				}
+				// simplify if operands are static
+				if (((newresult.isit == 'n') || (newresult.isit == 't'))
+						&& (((this).isit == 'n') || ((this).isit == 't'))) {
+					(this).isit = 'n';
+					(this).lvalue = (int) (this).lvalue ^ (int) newresult.lvalue;
+					(this).uvalue = (this).lvalue;
+				}
+				else {
+					// (result) = new ExprTree((result), newresult, "^", 'w');
+					setNodeValues((this), newresult, "uniform", 'a');
+				}
+				(token) = intexpr_gettok(expr);
+			}
+			else if (tokvalue.equals("normal")) {
+				(token) = intexpr_gettok(expr);
+				if ((token) != '(') {
+					Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
+							+ "\nU: Expected a (");
+					// System.out.printf("ERROR: Expected a (\n");
+					return false;
+				}
+				(token) = intexpr_gettok(expr);
+				if (!intexpr_R(expr))
+					return false;
+				if ((token) != ',') {
+					Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
+							+ "\nU: Expected a (");
+					// System.out.printf("ERROR: Expected a ,\n");
+					return false;
+				}
+				(token) = intexpr_gettok(expr);
+				newresult.token = token;
+				newresult.tokvalue = tokvalue;
+				newresult.position = position;
+				if (!newresult.intexpr_R(expr))
+					return false;
+				token = newresult.token;
+				position = newresult.position;
+				if ((token) != ')') {
+					Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
+							+ "\nU: Expected a (");
+					// System.out.printf("ERROR: Expected a )\n");
+					return false;
+				}
+				// simplify if operands are static
+				if (((newresult.isit == 'n') || (newresult.isit == 't'))
+						&& (((this).isit == 'n') || ((this).isit == 't'))) {
+					(this).isit = 'n';
+					(this).lvalue = (int) (this).lvalue ^ (int) newresult.lvalue;
+					(this).uvalue = (this).lvalue;
+				}
+				else {
+					// (result) = new ExprTree((result), newresult, "^", 'w');
+					setNodeValues((this), newresult, "normal", 'a');
+				}
+				(token) = intexpr_gettok(expr);
+			}
+			else if (tokvalue.equals("gamma")) {
+				(token) = intexpr_gettok(expr);
+				if ((token) != '(') {
+					Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
+							+ "\nU: Expected a (");
+					// System.out.printf("ERROR: Expected a (\n");
+					return false;
+				}
+				(token) = intexpr_gettok(expr);
+				if (!intexpr_R(expr))
+					return false;
+				if ((token) != ',') {
+					Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
+							+ "\nU: Expected a (");
+					// System.out.printf("ERROR: Expected a ,\n");
+					return false;
+				}
+				(token) = intexpr_gettok(expr);
+				newresult.token = token;
+				newresult.tokvalue = tokvalue;
+				newresult.position = position;
+				if (!newresult.intexpr_R(expr))
+					return false;
+				token = newresult.token;
+				position = newresult.position;
+				if ((token) != ')') {
+					Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
+							+ "\nU: Expected a (");
+					// System.out.printf("ERROR: Expected a )\n");
+					return false;
+				}
+				// simplify if operands are static
+				if (((newresult.isit == 'n') || (newresult.isit == 't'))
+						&& (((this).isit == 'n') || ((this).isit == 't'))) {
+					(this).isit = 'n';
+					(this).lvalue = (int) (this).lvalue ^ (int) newresult.lvalue;
+					(this).uvalue = (this).lvalue;
+				}
+				else {
+					// (result) = new ExprTree((result), newresult, "^", 'w');
+					setNodeValues((this), newresult, "gamma", 'a');
+				}
+				(token) = intexpr_gettok(expr);
+			}
+			else if (tokvalue.equals("lognormal")) {
+				(token) = intexpr_gettok(expr);
+				if ((token) != '(') {
+					Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
+							+ "\nU: Expected a (");
+					// System.out.printf("ERROR: Expected a (\n");
+					return false;
+				}
+				(token) = intexpr_gettok(expr);
+				if (!intexpr_R(expr))
+					return false;
+				if ((token) != ',') {
+					Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
+							+ "\nU: Expected a (");
+					// System.out.printf("ERROR: Expected a ,\n");
+					return false;
+				}
+				(token) = intexpr_gettok(expr);
+				newresult.token = token;
+				newresult.tokvalue = tokvalue;
+				newresult.position = position;
+				if (!newresult.intexpr_R(expr))
+					return false;
+				token = newresult.token;
+				position = newresult.position;
+				if ((token) != ')') {
+					Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
+							+ "\nU: Expected a (");
+					// System.out.printf("ERROR: Expected a )\n");
+					return false;
+				}
+				// simplify if operands are static
+				if (((newresult.isit == 'n') || (newresult.isit == 't'))
+						&& (((this).isit == 'n') || ((this).isit == 't'))) {
+					(this).isit = 'n';
+					(this).lvalue = (int) (this).lvalue ^ (int) newresult.lvalue;
+					(this).uvalue = (this).lvalue;
+				}
+				else {
+					// (result) = new ExprTree((result), newresult, "^", 'w');
+					setNodeValues((this), newresult, "lognormal", 'a');
+				}
+				(token) = intexpr_gettok(expr);
+			}
+			else if (tokvalue.equals("binomial")) {
+				(token) = intexpr_gettok(expr);
+				if ((token) != '(') {
+					Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
+							+ "\nU: Expected a (");
+					// System.out.printf("ERROR: Expected a (\n");
+					return false;
+				}
+				(token) = intexpr_gettok(expr);
+				if (!intexpr_R(expr))
+					return false;
+				if ((token) != ',') {
+					Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
+							+ "\nU: Expected a (");
+					// System.out.printf("ERROR: Expected a ,\n");
+					return false;
+				}
+				(token) = intexpr_gettok(expr);
+				newresult.token = token;
+				newresult.tokvalue = tokvalue;
+				newresult.position = position;
+				if (!newresult.intexpr_R(expr))
+					return false;
+				token = newresult.token;
+				position = newresult.position;
+				if ((token) != ')') {
+					Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
+							+ "\nU: Expected a (");
+					// System.out.printf("ERROR: Expected a )\n");
+					return false;
+				}
+				// simplify if operands are static
+				if (((newresult.isit == 'n') || (newresult.isit == 't'))
+						&& (((this).isit == 'n') || ((this).isit == 't'))) {
+					(this).isit = 'n';
+					(this).lvalue = (int) (this).lvalue ^ (int) newresult.lvalue;
+					(this).uvalue = (this).lvalue;
+				}
+				else {
+					// (result) = new ExprTree((result), newresult, "^", 'w');
+					setNodeValues((this), newresult, "binomial", 'a');
+				}
+				(token) = intexpr_gettok(expr);
+			}
+			else if (tokvalue.equals("exponential")) {
+				(token) = intexpr_gettok(expr);
+				if ((token) != '(') {
+					Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
+							+ "\nU: Expected a (");
+					// System.out.printf("ERROR: Expected a (\n");
+					return false;
+				}
+				(token) = intexpr_gettok(expr);
+				if (!intexpr_R(expr))
+					return false;
+				if ((token) != ')') {
+					Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
+							+ "\nU: Expected a (");
+					// System.out.printf("ERROR: Expected a )\n");
+					return false;
+				}
+				// simplify if operands are static
+				if (((this).isit == 'n') || ((this).isit == 't')) {
+					(this).isit = 'n';
+					(this).lvalue = ~(int) (this).lvalue;
+					(this).uvalue = (this).lvalue;
+				}
+				else {
+					// (result) = new ExprTree((result), null, "~", 'w');
+					setNodeValues((this), null, "exponential", 'a');
+				}
+				(token) = intexpr_gettok(expr);
+			}
+			else if (tokvalue.equals("chisq")) {
+				(token) = intexpr_gettok(expr);
+				if ((token) != '(') {
+					Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
+							+ "\nU: Expected a (");
+					// System.out.printf("ERROR: Expected a (\n");
+					return false;
+				}
+				(token) = intexpr_gettok(expr);
+				if (!intexpr_R(expr))
+					return false;
+				if ((token) != ')') {
+					Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
+							+ "\nU: Expected a (");
+					// System.out.printf("ERROR: Expected a )\n");
+					return false;
+				}
+				// simplify if operands are static
+				if (((this).isit == 'n') || ((this).isit == 't')) {
+					(this).isit = 'n';
+					(this).lvalue = ~(int) (this).lvalue;
+					(this).uvalue = (this).lvalue;
+				}
+				else {
+					// (result) = new ExprTree((result), null, "~", 'w');
+					setNodeValues((this), null, "chisq", 'a');
+				}
+				(token) = intexpr_gettok(expr);
+			}
+			else if (tokvalue.equals("laplace")) {
+				(token) = intexpr_gettok(expr);
+				if ((token) != '(') {
+					Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
+							+ "\nU: Expected a (");
+					// System.out.printf("ERROR: Expected a (\n");
+					return false;
+				}
+				(token) = intexpr_gettok(expr);
+				if (!intexpr_R(expr))
+					return false;
+				if ((token) != ')') {
+					Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
+							+ "\nU: Expected a (");
+					// System.out.printf("ERROR: Expected a )\n");
+					return false;
+				}
+				// simplify if operands are static
+				if (((this).isit == 'n') || ((this).isit == 't')) {
+					(this).isit = 'n';
+					(this).lvalue = ~(int) (this).lvalue;
+					(this).uvalue = (this).lvalue;
+				}
+				else {
+					// (result) = new ExprTree((result), null, "~", 'w');
+					setNodeValues((this), null, "laplace", 'a');
+				}
+				(token) = intexpr_gettok(expr);
+			}
+			else if (tokvalue.equals("cauchy")) {
+				(token) = intexpr_gettok(expr);
+				if ((token) != '(') {
+					Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
+							+ "\nU: Expected a (");
+					// System.out.printf("ERROR: Expected a (\n");
+					return false;
+				}
+				(token) = intexpr_gettok(expr);
+				if (!intexpr_R(expr))
+					return false;
+				if ((token) != ')') {
+					Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
+							+ "\nU: Expected a (");
+					// System.out.printf("ERROR: Expected a )\n");
+					return false;
+				}
+				// simplify if operands are static
+				if (((this).isit == 'n') || ((this).isit == 't')) {
+					(this).isit = 'n';
+					(this).lvalue = ~(int) (this).lvalue;
+					(this).uvalue = (this).lvalue;
+				}
+				else {
+					// (result) = new ExprTree((result), null, "~", 'w');
+					setNodeValues((this), null, "cauchy", 'a');
+				}
+				(token) = intexpr_gettok(expr);
+			}
+			else if (tokvalue.equals("rayleigh")) {
+				(token) = intexpr_gettok(expr);
+				if ((token) != '(') {
+					Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
+							+ "\nU: Expected a (");
+					// System.out.printf("ERROR: Expected a (\n");
+					return false;
+				}
+				(token) = intexpr_gettok(expr);
+				if (!intexpr_R(expr))
+					return false;
+				if ((token) != ')') {
+					Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
+							+ "\nU: Expected a (");
+					// System.out.printf("ERROR: Expected a )\n");
+					return false;
+				}
+				// simplify if operands are static
+				if (((this).isit == 'n') || ((this).isit == 't')) {
+					(this).isit = 'n';
+					(this).lvalue = ~(int) (this).lvalue;
+					(this).uvalue = (this).lvalue;
+				}
+				else {
+					// (result) = new ExprTree((result), null, "~", 'w');
+					setNodeValues((this), null, "rayleigh", 'a');
+				}
+				(token) = intexpr_gettok(expr);
+			}
+			else if (tokvalue.equals("poisson")) {
+				(token) = intexpr_gettok(expr);
+				if ((token) != '(') {
+					Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
+							+ "\nU: Expected a (");
+					// System.out.printf("ERROR: Expected a (\n");
+					return false;
+				}
+				(token) = intexpr_gettok(expr);
+				if (!intexpr_R(expr))
+					return false;
+				if ((token) != ')') {
+					Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
+							+ "\nU: Expected a (");
+					// System.out.printf("ERROR: Expected a )\n");
+					return false;
+				}
+				// simplify if operands are static
+				if (((this).isit == 'n') || ((this).isit == 't')) {
+					(this).isit = 'n';
+					(this).lvalue = ~(int) (this).lvalue;
+					(this).uvalue = (this).lvalue;
+				}
+				else {
+					// (result) = new ExprTree((result), null, "~", 'w');
+					setNodeValues((this), null, "poisson", 'a');
+				}
+				(token) = intexpr_gettok(expr);
+			}
+			else if (tokvalue.equals("bernouli")) {
+				(token) = intexpr_gettok(expr);
+				if ((token) != '(') {
+					Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
+							+ "\nU: Expected a (");
+					// System.out.printf("ERROR: Expected a (\n");
+					return false;
+				}
+				(token) = intexpr_gettok(expr);
+				if (!intexpr_R(expr))
+					return false;
+				if ((token) != ')') {
+					Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
+							+ "\nU: Expected a (");
+					// System.out.printf("ERROR: Expected a )\n");
+					return false;
+				}
+				// simplify if operands are static
+				if (((this).isit == 'n') || ((this).isit == 't')) {
+					(this).isit = 'n';
+					(this).lvalue = ~(int) (this).lvalue;
+					(this).uvalue = (this).lvalue;
+				}
+				else {
+					// (result) = new ExprTree((result), null, "~", 'w');
+					setNodeValues((this), null, "bernouli", 'a');
+				}
+				(token) = intexpr_gettok(expr);
+			}
 			else if ((tokvalue.equals("true")) || (tokvalue.equals("t")) || tokvalue.equals("TRUE")
 					|| tokvalue.equals("T")) {
 				// (result) = new ExprTree('t', 1, 1, null);
@@ -445,6 +868,10 @@ public class ExprTree {
 				// (result) = new ExprTree('t', 0, 0, null);
 				setVarValues('t', 0, 1, null);
 				(token) = intexpr_gettok(expr);
+			}
+			else if (tokvalue.toLowerCase().equals("inf")) {
+				setVarValues('n', INFIN, INFIN, null);
+				token = intexpr_gettok(expr);
 			}
 			else {
 				// do boolean lookup here!!!
@@ -3160,6 +3587,66 @@ public class ExprTree {
 						if (r2 != null) {
 							result = result + r2.getElement();
 						}
+					}
+				}
+				else if (op.equals("uniform")) {
+					if (r1 != null && r2 != null) {
+						result = "uniform(" + r1.getElement() + "," + r2.getElement() + ")";
+					}
+				}
+				else if (op.equals("normal")) {
+					if (r1 != null && r2 != null) {
+						result = "normal(" + r1.getElement() + "," + r2.getElement() + ")";
+					}
+				}
+				else if (op.equals("gamma")) {
+					if (r1 != null && r2 != null) {
+						result = "gamma(" + r1.getElement() + "," + r2.getElement() + ")";
+					}
+				}
+				else if (op.equals("lognormal")) {
+					if (r1 != null && r2 != null) {
+						result = "lognormal(" + r1.getElement() + "," + r2.getElement() + ")";
+					}
+				}
+				else if (op.equals("binomial")) {
+					if (r1 != null && r2 != null) {
+						result = "binomial(" + r1.getElement() + "," + r2.getElement() + ")";
+					}
+				}
+				else if (op.equals("exponential")) {
+					if (r1 != null) {
+						result = "exponential(" + r1.getElement() + ")";
+					}
+				}
+				else if (op.equals("chisq")) {
+					if (r1 != null) {
+						result = "chisq(" + r1.getElement() + ")";
+					}
+				}
+				else if (op.equals("laplace")) {
+					if (r1 != null) {
+						result = "laplace(" + r1.getElement() + ")";
+					}
+				}
+				else if (op.equals("cauchy")) {
+					if (r1 != null) {
+						result = "cauchy(" + r1.getElement() + ")";
+					}
+				}
+				else if (op.equals("rayleigh")) {
+					if (r1 != null) {
+						result = "rayleigh(" + r1.getElement() + ")";
+					}
+				}
+				else if (op.equals("poisson")) {
+					if (r1 != null) {
+						result = "poisson(" + r1.getElement() + ")";
+					}
+				}
+				else if (op.equals("bernouli")) {
+					if (r1 != null) {
+						result = "bernouli(" + r1.getElement() + ")";
 					}
 				}
 				else if (op.equals("==")) {

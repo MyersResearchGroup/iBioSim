@@ -53,7 +53,7 @@ public class LHPNFile {
 
 	protected HashMap<String, String> delays;
 
-	// private HashMap<String, ExprTree[]> delayTrees;
+	protected HashMap<String, ExprTree> delayTrees;
 
 	protected HashMap<String, ExprTree> transitionRateTrees;
 
@@ -77,7 +77,7 @@ public class LHPNFile {
 		enablings = new HashMap<String, String>();
 		enablingTrees = new HashMap<String, ExprTree>();
 		delays = new HashMap<String, String>();
-		// delayTrees = new HashMap<String, ExprTree[]>();
+		delayTrees = new HashMap<String, ExprTree>();
 		transitionRateTrees = new HashMap<String, ExprTree>();
 		transitionRates = new HashMap<String, String>();
 		booleanAssignments = new HashMap<String, Properties>();
@@ -101,7 +101,7 @@ public class LHPNFile {
 		enablings = new HashMap<String, String>();
 		enablingTrees = new HashMap<String, ExprTree>();
 		delays = new HashMap<String, String>();
-		// delayTrees = new HashMap<String, ExprTree[]>();
+		delayTrees = new HashMap<String, ExprTree>();
 		transitionRateTrees = new HashMap<String, ExprTree>();
 		transitionRates = new HashMap<String, String>();
 		booleanAssignments = new HashMap<String, Properties>();
@@ -2923,20 +2923,24 @@ public class LHPNFile {
 			// log.addText("check8b");
 			while (delayMatcher.find()) {
 				// log.addText("check8while");
-				delays.put(delayMatcher.group(1), delayMatcher.group(2));
-				// ExprTree[] expr = new ExprTree[2];
-				// Pattern rangePattern = Pattern.compile(RANGE);
-				// Matcher rangeMatcher =
-				// rangePattern.matcher(delayMatcher.group(2));
-				// if (rangeMatcher.find()) {
-				// expr[0].token =
-				// expr[0].intexpr_gettok(rangeMatcher.group(1));
-				// expr[0].intexpr_L(rangeMatcher.group(1));
-				// expr[1].token =
-				// expr[1].intexpr_gettok(rangeMatcher.group(2));
-				// expr[1].intexpr_L(rangeMatcher.group(2));
-				// delayTrees.put(delayMatcher.group(1), expr);
-				// }
+				ExprTree e = new ExprTree(this);
+				Pattern rangePattern = Pattern.compile(RANGE);
+				Matcher rangeMatcher =
+				 rangePattern.matcher(delayMatcher.group(2));
+				if (rangeMatcher.find()) {
+					String range = "uniform(" + rangeMatcher.group(1) + "," + rangeMatcher.group(2) + ")";
+					e.token = e.intexpr_gettok(range);
+				 	e.intexpr_L(range);
+				 	delayTrees.put(delayMatcher.group(1), e);
+					delays.put(delayMatcher.group(1), range);
+				}
+				else {
+					String delay = delayMatcher.group(2);
+					e.token = e.intexpr_gettok(delay);
+					e.intexpr_L(delay);
+					delayTrees.put(delayMatcher.group(1), e);
+					delays.put(delayMatcher.group(1), delay);
+				}
 			}
 		}
 		// log.addText("check8end");
