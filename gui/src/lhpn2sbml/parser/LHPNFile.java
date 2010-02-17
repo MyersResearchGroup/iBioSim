@@ -1822,8 +1822,8 @@ public class LHPNFile {
 		return delays;
 	}
 
-	public String getDelay(String var) {
-		return delays.get(var);
+	public String getDelay(String trans) {
+		return delays.get(trans);
 	}
 
 	// public ExprTree[] getDelayTree(String var) {
@@ -1962,8 +1962,8 @@ public class LHPNFile {
 		return prop.getProperty("rate");
 	}
 
-	public String getEnabling(String var) {
-		return enablings.get(var);
+	public String getEnabling(String trans) {
+		return enablings.get(trans);
 	}
 
 	public ExprTree getEnablingTree(String var) {
@@ -2854,7 +2854,7 @@ public class LHPNFile {
 					assignProp = rateAssignments.get(assignMatcher.group(1));
 				}
 				// log.addText("here " + assignMatcher.group(2));
-				 String temp = assignMatcher.group(2);
+				// String temp = assignMatcher.group(2);
 				varMatcher = varPattern.matcher(assignMatcher.group(2));
 				//varMatcher.find();
 				// log.addText(assignMatcher.group(2) + " " + indetPattern);

@@ -37,7 +37,7 @@ public class VariablesPanel extends JPanel implements ActionListener {
 
 	private JPanel initPanel = null;
 
-	private PropertyField initLow = null, initHigh = null, rateLow, rateHigh;
+	private PropertyField initValue = null, initRate;
 
 	private JComboBox modeBox, initBox;
 
@@ -55,7 +55,7 @@ public class VariablesPanel extends JPanel implements ActionListener {
 
 	public VariablesPanel(String selected, PropertyList variablesList, Boolean boolCont,
 			Boolean integer, LHPNFile lhpn, boolean atacs, BioSim biosim) {
-		super(new GridLayout(6, 1));
+		super(new GridLayout(4, 1));
 		if (selected != null) {
 			String[] array = selected.split(" ");
 			this.name = array[0];
@@ -104,31 +104,15 @@ public class VariablesPanel extends JPanel implements ActionListener {
 			// JOptionPane.showMessageDialog(this, lhpn.isContinuous(selected));
 			if (name != null) {
 				String initVal = lhpn.getInitialVal(name);
-				Pattern pattern = Pattern.compile("\\[([\\w-]+?),([\\w-]+?)\\]");
-				Matcher matcher = pattern.matcher(initVal);
-				if (matcher.find()) {
-					initLow = new PropertyField("Initial Lower Bound", matcher.group(1), null,
-							null, Utility.NAMEstring);
-					initHigh = new PropertyField("Initial Upper Bound", matcher.group(2), null,
-							null, Utility.NAMEstring);
-				}
-				else {
-					initLow = new PropertyField("Initial Lower Bound", initVal, null, null,
+					initValue = new PropertyField("Initial Value", initVal, null, null,
 							Utility.NAMEstring);
-					initHigh = new PropertyField("Initial Upper Bound", "", null, null,
-							Utility.NAMEstring);
-				}
 			}
 			else {
-				initLow = new PropertyField("Initial Lower Bound", "0", null, null,
-						Utility.NAMEstring);
-				initHigh = new PropertyField("Initial Upper Bound", "", null, null,
+				initValue = new PropertyField("Initial Value", "0", null, null,
 						Utility.NAMEstring);
 			}
-			fields.put("Initial lower", initLow);
-			fields.put("Initial upper", initHigh);
-			add(initLow);
-			add(initHigh);
+			fields.put("Initial value", initValue);
+			add(initValue);
 		}
 		else {
 			// JOptionPane.showMessageDialog(this, lhpn.isContinuous(selected));
@@ -161,30 +145,15 @@ public class VariablesPanel extends JPanel implements ActionListener {
 		// Initial rate field
 		if (continuous) {
 			if (name != null) {
-				String initRate = lhpn.getInitialRate(name);
-				Pattern pattern = Pattern.compile("\\[([\\w-]+?),([\\w-]+?)\\]");
-				Matcher matcher = pattern.matcher(initRate);
-				if (matcher.find()) {
-					rateLow = new PropertyField("Rate Lower Bound", matcher.group(1), null, null,
+				String rate = lhpn.getInitialRate(name);
+					initRate = new PropertyField("Initial Rate", rate, null, null,
 							Utility.NAMEstring);
-					rateHigh = new PropertyField("Rate Upper Bound", matcher.group(2), null, null,
-							Utility.NAMEstring);
-				}
-				else {
-					rateLow = new PropertyField("Rate Lower Bound", initRate, null, null,
-							Utility.NAMEstring);
-					rateHigh = new PropertyField("Rate Upper Bound", "", null, null,
-							Utility.NAMEstring);
-				}
 			}
 			else {
-				rateLow = new PropertyField("Rate Lower Bound", "0", null, null, Utility.NAMEstring);
-				rateHigh = new PropertyField("Rate Upper Bound", "", null, null, Utility.NAMEstring);
+				initRate = new PropertyField("Initial Rate", "0", null, null, Utility.NAMEstring);
 			}
-			fields.put("Rate lower", rateLow);
-			fields.put("Rate upper", rateHigh);
-			add(rateLow);
-			add(rateHigh);
+			fields.put("Initial rate", initRate);
+			add(initRate);
 		}
 
 		String oldName = null;
@@ -204,15 +173,7 @@ public class VariablesPanel extends JPanel implements ActionListener {
 			// }
 			if (lhpn.isContinuous(name) || lhpn.isInteger(name)) {
 				String initVal = lhpn.getInitialVal(name);
-				Pattern pattern = Pattern.compile("\\[([\\w-]+),([\\w-]+)\\]");
-				Matcher matcher = pattern.matcher(initVal);
-				if (matcher.find()) {
-					fields.get("Initial lower").setValue(matcher.group(1));
-					fields.get("Initial upper").setValue(matcher.group(2));
-				}
-				else {
-					fields.get("Initial lower").setValue(initVal);
-				}
+				fields.get("Initial value").setValue(initVal);
 			}
 			else {
 				HashMap<String, String> inits;
@@ -238,15 +199,7 @@ public class VariablesPanel extends JPanel implements ActionListener {
 			}
 			if (lhpn.isContinuous(name)) {
 				String initRate = lhpn.getInitialRate(name);
-				Pattern pattern = Pattern.compile("\\[([\\w-]+),([\\w-]+)\\]");
-				Matcher matcher = pattern.matcher(initRate);
-				if (matcher.find()) {
-					fields.get("Rate lower").setValue(matcher.group(1));
-					fields.get("Rate upper").setValue(matcher.group(2));
-				}
-				else {
-					fields.get("Rate lower").setValue(initRate);
-				}
+				fields.get("Initial rate").setValue(initRate);
 				fields.get(GlobalConstants.ID).setValue(name);
 				// System.out.print(" " +
 				// fields.get(GlobalConstants.ID).getValue());
@@ -310,26 +263,15 @@ public class VariablesPanel extends JPanel implements ActionListener {
 				}
 			}
 			String tempVal = "";
-			if (property.containsKey("Initial Lower Bound")) {
-				tempVal = property.getProperty("Initial Lower Bound");
-				if (property.containsKey("Initial Upper Bound")
-						&& !property.get("Initial Upper Bound").equals("")) {
-					tempVal = "[" + tempVal + "," + property.getProperty("Initial Upper Bound")
-							+ "]";
-				}
+			if (property.containsKey("Initial value")) {
+				tempVal = property.getProperty("Initial value");
 				property.setProperty("value", tempVal);
-				property.remove("Initial Lower Bound");
-				property.remove("Initial Upper Bound");
+				property.remove("Initial value");
 			}
-			if (property.containsKey("Rate Lower Bound")) {
-				tempVal = property.getProperty("Rate Lower Bound");
-				if (property.containsKey("Rate Upper Bound")
-						&& !property.get("Rate Upper Bound").equals("")) {
-					tempVal = "[" + tempVal + "," + property.getProperty("Rate Upper Bound") + "]";
-				}
+			if (property.containsKey("Initial rate")) {
+				tempVal = property.getProperty("Initial rate");
 				property.setProperty("rate", tempVal);
-				property.remove("Rate Lower Bound");
-				property.remove("Rate Upper Bound");
+				property.remove("Initial rate");
 			}
 
 			// property.put(GlobalConstants.TYPE,
@@ -344,21 +286,10 @@ public class VariablesPanel extends JPanel implements ActionListener {
 			if (lhpn.isContinuous(id) || continuous) {
 				// System.out.println("add var " + property);
 				lhpn.addVar(id, property);
-				tempVal = fields.get("Initial lower").getValue();
-				if (fields.containsKey("Initial upper")
-						&& !fields.get("Initial upper").getValue().equals("")) {
-					tempVal = "[" + tempVal + "," + fields.get("Initial upper").getValue() + "]";
-					//System.out.println(fields.get("Initial upper").getValue());
-				}
 			}
 			else if (lhpn.isInteger(id) || integer) {
 				// System.out.println("add var " + property);
-				tempVal = fields.get("Initial lower").getValue();
-				if (fields.containsKey("Initial upper")
-						&& !fields.get("Initial upper").getValue().equals("")) {
-					tempVal = "[" + tempVal + "," + fields.get("Initial upper").getValue() + "]";
-					//System.out.println(fields.get("Initial upper").getValue());
-				}
+				tempVal = fields.get("Initial value").getValue();
 				lhpn.addInteger(id, tempVal);
 			}
 			else if (lhpn.isInput(id) || (!continuous && modeBox.getSelectedItem().equals("input"))) {
@@ -385,11 +316,7 @@ public class VariablesPanel extends JPanel implements ActionListener {
 				list = id + " - " + type + " - " + initBox.getSelectedItem().toString();
 			}
 			if (continuous) {
-				tempVal = fields.get("Rate lower").getValue();
-				if (fields.containsKey("Rate upper")
-						&& !fields.get("Rate upper").getValue().equals("")) {
-					tempVal = "[" + tempVal + "," + fields.get("Rate upper").getValue() + "]";
-				}
+				tempVal = fields.get("Initial rate").getValue();
 				list = list + " - " + tempVal;
 			}
 			variablesList.removeItem(list);
