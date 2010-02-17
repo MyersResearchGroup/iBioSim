@@ -304,7 +304,7 @@ public class GCMFile {
 	}
 
 	private LHPNFile convertToLHPN(ArrayList<String> specs, ArrayList<Object[]> conLevel) {
-		flattenGCM();
+		//flattenGCM();
 		HashMap<String, ArrayList<String>> infl = new HashMap<String, ArrayList<String>>();
 		for (String influence : influences.keySet()) {
 			if (influences.get(influence).get(GlobalConstants.TYPE).equals(
