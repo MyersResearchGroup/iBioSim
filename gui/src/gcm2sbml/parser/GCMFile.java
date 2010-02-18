@@ -1,6 +1,5 @@
 package gcm2sbml.parser;
 
-import gcm2sbml.network.GeneticNetwork;
 import gcm2sbml.util.GlobalConstants;
 
 import java.awt.AWTError;
@@ -23,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Properties;
+import java.util.Set;
 import java.util.prefs.Preferences;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -36,8 +36,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
-
-import org.sbml.libsbml.SBMLDocument;
 
 import lhpn2sbml.parser.ExprTree;
 import lhpn2sbml.parser.LHPNFile;
@@ -216,6 +214,7 @@ public class GCMFile {
 		JButton naryClose = new JButton("Cancel");
 		naryRun.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				flattenGCM();
 				convertToLHPN(specs, conLevel).save(filename);
 				log.addText("Saving GCM file as LHPN:\n" + path + File.separator + lpnName + "\n");
 				biosim.refreshTree();
@@ -262,33 +261,189 @@ public class GCMFile {
 		naryFrame.setVisible(true);
 	}
 	
-	private void flattenGCM () {
-		for (String s : components.keySet()) {
+	private void flattenGCM() {
+		ArrayList<String> comps = setToArrayList(components.keySet());
+		for (String s : comps) {
 			GCMFile file = new GCMFile(path);
-			file.load(path + File.separator
-					+ components.get(s).getProperty("gcm"));
+			file.load(path + File.separator + components.get(s).getProperty("gcm"));
 			file.setParameters(parameters);
 			unionGCM(this, file, s);
 		}
+		components = new HashMap<String, Properties>();
 	}
-	
+
 	private void unionGCM(GCMFile topLevel, GCMFile bottomLevel, String compName) {
-		for (String s : bottomLevel.components.keySet()) {
+		ArrayList<String> mod = setToArrayList(bottomLevel.components.keySet());
+		for (String s : mod) {
 			GCMFile file = new GCMFile(path);
 			file.load(path + File.separator + bottomLevel.components.get(s).getProperty("gcm"));
 			file.setParameters(bottomLevel.parameters);
 			unionGCM(bottomLevel, file, s);
 		}
-		for (String prom : bottomLevel.promoters.keySet()) {
+		mod = setToArrayList(bottomLevel.promoters.keySet());
+		for (String prom : mod) {
+			bottomLevel.promoters.get(prom).put(GlobalConstants.ID, compName + "_" + prom);
 			bottomLevel.changePromoterName(prom, compName + "_" + prom);
 		}
-		for (String spec : bottomLevel.species.keySet()) {
+		mod = setToArrayList(bottomLevel.species.keySet());
+		for (String spec : mod) {
+			bottomLevel.species.get(spec).put(GlobalConstants.ID, compName + "_" + spec);
 			bottomLevel.changeSpeciesName(spec, compName + "_" + spec);
 		}
-		for (String spec : bottomLevel.species.keySet()) {
+		mod = setToArrayList(bottomLevel.species.keySet());
+		for (String spec : mod) {
 			for (Object port : topLevel.components.get(compName).keySet()) {
 				if (spec.equals(compName + "_" + port)) {
-					bottomLevel.changeSpeciesName(spec, (String) port);
+					bottomLevel.species.get(spec).put(GlobalConstants.ID,
+							topLevel.components.get(compName).getProperty((String) port));
+					bottomLevel.changeSpeciesName(spec, topLevel.components.get(compName)
+							.getProperty((String) port));
+				}
+			}
+		}
+		for (String param : bottomLevel.globalParameters.keySet()) {
+			if (param.equals(GlobalConstants.KDECAY_STRING)) {
+				mod = setToArrayList(bottomLevel.species.keySet());
+				for (String spec : mod) {
+					if (!bottomLevel.species.get(spec).containsKey(GlobalConstants.KDECAY_STRING)) {
+						bottomLevel.species.get(spec).put(GlobalConstants.KDECAY_STRING,
+								bottomLevel.globalParameters.get(GlobalConstants.KDECAY_STRING));
+					}
+				}
+			}
+			else if (param.equals(GlobalConstants.KASSOCIATION_STRING)) {
+				mod = setToArrayList(bottomLevel.influences.keySet());
+				for (String infl : mod) {
+					if (!bottomLevel.influences.get(infl).containsKey(
+							GlobalConstants.KASSOCIATION_STRING)) {
+						bottomLevel.influences.get(infl).put(
+								GlobalConstants.KASSOCIATION_STRING,
+								bottomLevel.globalParameters
+										.get(GlobalConstants.KASSOCIATION_STRING));
+					}
+				}
+			}
+			else if (param.equals(GlobalConstants.KBIO_STRING)) {
+				mod = setToArrayList(bottomLevel.influences.keySet());
+				for (String infl : mod) {
+					if (!bottomLevel.influences.get(infl).containsKey(GlobalConstants.KBIO_STRING)) {
+						bottomLevel.influences.get(infl).put(GlobalConstants.KBIO_STRING,
+								bottomLevel.globalParameters.get(GlobalConstants.KBIO_STRING));
+					}
+				}
+			}
+			else if (param.equals(GlobalConstants.COOPERATIVITY_STRING)) {
+				mod = setToArrayList(bottomLevel.influences.keySet());
+				for (String infl : mod) {
+					if (!bottomLevel.influences.get(infl).containsKey(
+							GlobalConstants.COOPERATIVITY_STRING)) {
+						bottomLevel.influences.get(infl).put(
+								GlobalConstants.COOPERATIVITY_STRING,
+								bottomLevel.globalParameters
+										.get(GlobalConstants.COOPERATIVITY_STRING));
+					}
+				}
+			}
+			else if (param.equals(GlobalConstants.KREP_STRING)) {
+				mod = setToArrayList(bottomLevel.influences.keySet());
+				for (String infl : mod) {
+					if (!bottomLevel.influences.get(infl).containsKey(GlobalConstants.KREP_STRING)) {
+						bottomLevel.influences.get(infl).put(GlobalConstants.KREP_STRING,
+								bottomLevel.globalParameters.get(GlobalConstants.KREP_STRING));
+					}
+				}
+			}
+			else if (param.equals(GlobalConstants.KACT_STRING)) {
+				mod = setToArrayList(bottomLevel.influences.keySet());
+				for (String infl : mod) {
+					if (!bottomLevel.influences.get(infl).containsKey(GlobalConstants.KACT_STRING)) {
+						bottomLevel.influences.get(infl).put(GlobalConstants.KACT_STRING,
+								bottomLevel.globalParameters.get(GlobalConstants.KACT_STRING));
+					}
+				}
+			}
+			else if (param.equals(GlobalConstants.RNAP_BINDING_STRING)) {
+				mod = setToArrayList(bottomLevel.promoters.keySet());
+				for (String prom : mod) {
+					if (!bottomLevel.promoters.get(prom).containsKey(
+							GlobalConstants.RNAP_BINDING_STRING)) {
+						bottomLevel.promoters.get(prom).put(
+								GlobalConstants.RNAP_BINDING_STRING,
+								bottomLevel.globalParameters
+										.get(GlobalConstants.RNAP_BINDING_STRING));
+					}
+				}
+			}
+			else if (param.equals(GlobalConstants.OCR_STRING)) {
+				mod = setToArrayList(bottomLevel.promoters.keySet());
+				for (String prom : mod) {
+					if (!bottomLevel.promoters.get(prom).containsKey(GlobalConstants.OCR_STRING)) {
+						bottomLevel.promoters.get(prom).put(GlobalConstants.OCR_STRING,
+								bottomLevel.globalParameters.get(GlobalConstants.OCR_STRING));
+					}
+				}
+
+			}
+			else if (param.equals(GlobalConstants.KBASAL_STRING)) {
+				mod = setToArrayList(bottomLevel.promoters.keySet());
+				for (String prom : mod) {
+					if (!bottomLevel.promoters.get(prom).containsKey(GlobalConstants.KBASAL_STRING)) {
+						bottomLevel.promoters.get(prom).put(GlobalConstants.KBASAL_STRING,
+								bottomLevel.globalParameters.get(GlobalConstants.KBASAL_STRING));
+					}
+				}
+			}
+			else if (param.equals(GlobalConstants.PROMOTER_COUNT_STRING)) {
+				mod = setToArrayList(bottomLevel.promoters.keySet());
+				for (String prom : mod) {
+					if (!bottomLevel.promoters.get(prom).containsKey(
+							GlobalConstants.PROMOTER_COUNT_STRING)) {
+						bottomLevel.promoters.get(prom).put(
+								GlobalConstants.PROMOTER_COUNT_STRING,
+								bottomLevel.globalParameters
+										.get(GlobalConstants.PROMOTER_COUNT_STRING));
+					}
+				}
+			}
+			else if (param.equals(GlobalConstants.STOICHIOMETRY_STRING)) {
+				mod = setToArrayList(bottomLevel.promoters.keySet());
+				for (String prom : mod) {
+					if (!bottomLevel.promoters.get(prom).containsKey(
+							GlobalConstants.STOICHIOMETRY_STRING)) {
+						bottomLevel.promoters.get(prom).put(
+								GlobalConstants.STOICHIOMETRY_STRING,
+								bottomLevel.globalParameters
+										.get(GlobalConstants.STOICHIOMETRY_STRING));
+					}
+				}
+			}
+			else if (param.equals(GlobalConstants.ACTIVED_STRING)) {
+				mod = setToArrayList(bottomLevel.promoters.keySet());
+				for (String prom : mod) {
+					if (!bottomLevel.promoters.get(prom)
+							.containsKey(GlobalConstants.ACTIVED_STRING)) {
+						bottomLevel.promoters.get(prom).put(GlobalConstants.ACTIVED_STRING,
+								bottomLevel.globalParameters.get(GlobalConstants.ACTIVED_STRING));
+					}
+				}
+			}
+			else if (param.equals(GlobalConstants.MAX_DIMER_STRING)) {
+				mod = setToArrayList(bottomLevel.species.keySet());
+				for (String spec : mod) {
+					if (!bottomLevel.species.get(spec)
+							.containsKey(GlobalConstants.MAX_DIMER_STRING)) {
+						bottomLevel.species.get(spec).put(GlobalConstants.MAX_DIMER_STRING,
+								bottomLevel.globalParameters.get(GlobalConstants.MAX_DIMER_STRING));
+					}
+				}
+			}
+			else if (param.equals(GlobalConstants.INITIAL_STRING)) {
+				mod = setToArrayList(bottomLevel.species.keySet());
+				for (String spec : mod) {
+					if (!bottomLevel.species.get(spec).containsKey(GlobalConstants.INITIAL_STRING)) {
+						bottomLevel.species.get(spec).put(GlobalConstants.INITIAL_STRING,
+								bottomLevel.globalParameters.get(GlobalConstants.INITIAL_STRING));
+					}
 				}
 			}
 		}
@@ -306,7 +461,6 @@ public class GCMFile {
 	}
 
 	private LHPNFile convertToLHPN(ArrayList<String> specs, ArrayList<Object[]> conLevel) {
-		//flattenGCM();
 		HashMap<String, ArrayList<String>> infl = new HashMap<String, ArrayList<String>>();
 		for (String influence : influences.keySet()) {
 			if (influences.get(influence).get(GlobalConstants.TYPE).equals(
@@ -1366,6 +1520,14 @@ public class GCMFile {
 			return GlobalConstants.MAX_DIMER_STRING;
 		}
 		return key;
+	}
+	
+	private ArrayList<String> setToArrayList(Set<String> set) {
+		ArrayList<String> array = new ArrayList<String>();
+		for (String s : set) {
+			array.add(s);
+		}
+		return array;
 	}
 
 	private static final String NETWORK = "digraph\\sG\\s\\{([^}]*)\\s\\}";
