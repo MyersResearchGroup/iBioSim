@@ -286,7 +286,7 @@ public class GCMFile {
 			bottomLevel.changeSpeciesName(spec, compName + "_" + spec);
 		}
 		for (String spec : bottomLevel.species.keySet()) {
-			for (Object port : components.get(compName).keySet()) {
+			for (Object port : topLevel.components.get(compName).keySet()) {
 				if (spec.equals(compName + "_" + port)) {
 					bottomLevel.changeSpeciesName(spec, (String) port);
 				}
@@ -296,7 +296,9 @@ public class GCMFile {
 			topLevel.addPromoter(prom, bottomLevel.promoters.get(prom));
 		}
 		for (String spec : bottomLevel.species.keySet()) {
-			topLevel.addSpecies(spec, bottomLevel.species.get(spec));
+			if (!topLevel.species.keySet().contains(spec)) {
+				topLevel.addSpecies(spec, bottomLevel.species.get(spec));
+			}
 		}
 		for (String infl : bottomLevel.influences.keySet()) {
 			topLevel.addInfluences(infl, bottomLevel.influences.get(infl));
@@ -304,7 +306,7 @@ public class GCMFile {
 	}
 
 	private LHPNFile convertToLHPN(ArrayList<String> specs, ArrayList<Object[]> conLevel) {
-		//flattenGCM();
+		flattenGCM();
 		HashMap<String, ArrayList<String>> infl = new HashMap<String, ArrayList<String>>();
 		for (String influence : influences.keySet()) {
 			if (influences.get(influence).get(GlobalConstants.TYPE).equals(
