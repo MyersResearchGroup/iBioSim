@@ -159,8 +159,6 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 
 	private JMenuItem importVhdl; // The import vhdl menu item
 
-	private JMenuItem importLhpn; // The import lhpn menu item
-
 	private JMenuItem importLpn; // The import lpn menu item
 
 	private JMenuItem importG; // The import .g file menu item
@@ -459,7 +457,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		newSpice = new JMenuItem("Spice Circuit");
 		if (lema) {
 			newVhdl = new JMenuItem("VHDL-AMS Model");
-			newLhpn = new JMenuItem("Labeled Hybrid Petri Net");
+			newLhpn = new JMenuItem("Labeled Petri Net");
 		}
 		else {
 			newVhdl = new JMenuItem("VHDL Model");
@@ -477,7 +475,6 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		importDot = new JMenuItem("Genetic Circuit Model");
 		importG = new JMenuItem("Petri Net");
 		importLpn = new JMenuItem("Labeled Petri Net");
-		importLhpn = new JMenuItem("Labeled Hybrid Petri Net");
 		if (lema) {
 			importVhdl = new JMenuItem("VHDL-AMS Model");
 		}
@@ -553,7 +550,6 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		importBioModel.addActionListener(this);
 		importDot.addActionListener(this);
 		importVhdl.addActionListener(this);
-		importLhpn.addActionListener(this);
 		importLpn.addActionListener(this);
 		importG.addActionListener(this);
 		importCsp.addActionListener(this);
@@ -729,7 +725,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			importDot.setMnemonic(KeyEvent.VK_G);
 		}
 		else {
-			importLhpn.setMnemonic(KeyEvent.VK_L);
+			importLpn.setMnemonic(KeyEvent.VK_L);
 		}
 		importSbml.setMnemonic(KeyEvent.VK_S);
 		// importBioModel.setMnemonic(KeyEvent.VK_S);
@@ -755,7 +751,6 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		importSbml.setEnabled(false);
 		importBioModel.setEnabled(false);
 		importVhdl.setEnabled(false);
-		importLhpn.setEnabled(false);
 		importLpn.setEnabled(false);
 		importG.setEnabled(false);
 		importCsp.setEnabled(false);
@@ -881,7 +876,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		file.add(importMenu);
 		if (!async) {
 			importMenu.add(importDot);
-			importMenu.add(importLhpn);
+			importMenu.add(importLpn);
 			importMenu.add(importSbml);
 			importMenu.add(importBioModel);
 		}
@@ -896,7 +891,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		}
 		else {
 			importMenu.add(importVhdl);
-			importMenu.add(importLhpn);
+			importMenu.add(importLpn);
 			// importMenu.add(importSpice);
 		}
 		file.add(exportMenu);
@@ -3563,7 +3558,6 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				importSbml.setEnabled(true);
 				importBioModel.setEnabled(true);
 				importVhdl.setEnabled(true);
-				importLhpn.setEnabled(true);
 				importLpn.setEnabled(true);
 				importG.setEnabled(true);
 				importCsp.setEnabled(true);
@@ -3669,7 +3663,6 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						importSbml.setEnabled(true);
 						importBioModel.setEnabled(true);
 						importVhdl.setEnabled(true);
-						importLhpn.setEnabled(true);
 						importLpn.setEnabled(true);
 						importG.setEnabled(true);
 						importCsp.setEnabled(true);
@@ -4913,82 +4906,6 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						refreshTree();
 					}
 					catch (Exception e1) {
-						JOptionPane.showMessageDialog(frame, "Unable to import file.", "Error",
-								JOptionPane.ERROR_MESSAGE);
-					}
-				}
-			}
-			else {
-				JOptionPane.showMessageDialog(frame, "You must open or create a project first.",
-						"Error", JOptionPane.ERROR_MESSAGE);
-			}
-		}
-		// if the import lhpn menu item is selected
-		else if (e.getSource() == importLhpn) {
-			if (root != null) {
-				File importFile;
-				Preferences biosimrc = Preferences.userRoot();
-				if (biosimrc.get("biosim.general.import_dir", "").equals("")) {
-					importFile = null;
-				}
-				else {
-					importFile = new File(biosimrc.get("biosim.general.import_dir", ""));
-				}
-				String filename = Buttons.browse(frame, importFile, null, JFileChooser.FILES_ONLY,
-						"Import LHPN", -1);
-				if ((filename.length() > 1 && !filename.substring(filename.length() - 2,
-						filename.length()).equals(".g"))
-						&& (filename.length() > 3 && !filename.substring(filename.length() - 4,
-								filename.length()).equals(".lpn"))) {
-					// System.out.println(filename.substring(filename.length() -
-					// 2, filename.length()));
-					JOptionPane.showMessageDialog(frame,
-							"You must select a valid lhpn file to import.", "Error",
-							JOptionPane.ERROR_MESSAGE);
-					return;
-				}
-				else if (!filename.equals("")) {
-					biosimrc.put("biosim.general.import_dir", filename);
-					String[] file = filename.split(separator);
-					try {
-						if (!filename.equals(root + separator + file[file.length - 1])) {
-							FileOutputStream out = new FileOutputStream(new File(root + separator
-									+ file[file.length - 1]));
-							FileInputStream in = new FileInputStream(new File(filename));
-							int read = in.read();
-							while (read != -1) {
-								out.write(read);
-								read = in.read();
-							}
-							in.close();
-							out.close();
-						}
-						if (filename.substring(filename.length() - 2, filename.length()).equals(
-								".g")) {
-							File work = new File(root);
-							String oldName = root + separator + file[file.length - 1];
-							Process atacs = Runtime.getRuntime().exec("atacs -lgsl " + oldName,
-									null, work);
-							atacs.waitFor();
-							String lpnName = oldName.replace(".g", ".lpn");
-							String newName = oldName.replace(".g", "_NEW.lpn");
-							atacs = Runtime.getRuntime().exec("atacs -llsl " + lpnName, null, work);
-							atacs.waitFor();
-							FileOutputStream out = new FileOutputStream(new File(lpnName));
-							FileInputStream in = new FileInputStream(new File(newName));
-							int read = in.read();
-							while (read != -1) {
-								out.write(read);
-								read = in.read();
-							}
-							in.close();
-							out.close();
-							new File(newName).delete();
-						}
-						refreshTree();
-					}
-					catch (Exception e1) {
-						e1.printStackTrace();
 						JOptionPane.showMessageDialog(frame, "Unable to import file.", "Error",
 								JOptionPane.ERROR_MESSAGE);
 					}
@@ -10518,7 +10435,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			}
 			else if (atacs) {
 				popup.add(importVhdl);
-				popup.add(importLhpn);
+				popup.add(importLpn);
 				popup.add(importCsp);
 				popup.add(importHse);
 				popup.add(importUnc);
@@ -10526,7 +10443,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			}
 			else {
 				popup.add(importVhdl);
-				popup.add(importLhpn);
+				popup.add(importLpn);
 				popup.add(importSpice);
 			}
 			if (popup.getComponentCount() != 0) {

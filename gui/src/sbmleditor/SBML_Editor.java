@@ -123,7 +123,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 
 	private JTextField eventID, eventName, eventTrigger, eventDelay; // event
 
-	private JCheckBox assignTime;
+	private JCheckBox assignTime,disableTrigger;
 	// fields;
 
 	private JComboBox eaID; // event assignment fields;
@@ -4811,17 +4811,19 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		int index = events.getSelectedIndex();
 		JPanel eventPanel = new JPanel(new BorderLayout());
 		// JPanel evPanel = new JPanel(new GridLayout(2, 2));
-		JPanel evPanel = new JPanel(new GridLayout(5, 2));
+		JPanel evPanel = new JPanel(new GridLayout(6, 2));
 		JLabel IDLabel = new JLabel("ID:");
 		JLabel NameLabel = new JLabel("Name:");
 		JLabel triggerLabel = new JLabel("Trigger:");
 		JLabel delayLabel = new JLabel("Delay:");
-		JLabel assignTimeLabel = new JLabel("");
+		JLabel assignTimeLabel = new JLabel("Use values at trigger time");
+		JLabel disableTriggerLabel = new JLabel("Trigger can be disabled");
 		eventID = new JTextField(12);
 		eventName = new JTextField(12);
 		eventTrigger = new JTextField(12);
 		eventDelay = new JTextField(12);
-		assignTime = new JCheckBox("Use values at trigger time");
+		assignTime = new JCheckBox("");
+		disableTrigger = new JCheckBox("");
 		JPanel eventAssignPanel = new JPanel(new BorderLayout());
 		JPanel addEventAssign = new JPanel();
 		addAssignment = new JButton("Add Assignment");
@@ -4860,6 +4862,9 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					if (event.getUseValuesFromTriggerTime()) {
 						assignTime.setSelected(true);
 					}
+					if (event.getTrigger().getAnnotationString().contains("<TriggerCanBeDisabled/>")) {
+						disableTrigger.setSelected(true);
+					}
 					assign = new String[(int) event.getNumEventAssignments()];
 					origAssign = new String[(int) event.getNumEventAssignments()];
 					for (int j = 0; j < event.getNumEventAssignments(); j++) {
@@ -4895,8 +4900,10 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		evPanel.add(eventTrigger);
 		evPanel.add(delayLabel);
 		evPanel.add(eventDelay);
-		evPanel.add(assignTime);
 		evPanel.add(assignTimeLabel);
+		evPanel.add(assignTime);
+		evPanel.add(disableTriggerLabel);
+		evPanel.add(disableTrigger);
 		eventPanel.add(evPanel, "North");
 		eventPanel.add(eventAssignPanel, "South");
 		Object[] options = { option, "Cancel" };
@@ -5048,6 +5055,19 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					}
 					if (!error) {
 						e.createTrigger();
+						if (disableTrigger.isSelected()) {
+							if (!e.getTrigger().getAnnotationString().contains("<TriggerCanBeDisabled/>")) {
+								if (e.getTrigger().isSetAnnotation()) {
+									e.getTrigger().appendAnnotation("<TriggerCanBeDisabled/>");
+								} else {
+									e.getTrigger().setAnnotation("<TriggerCanBeDisabled/>");
+								}
+							}
+						} else {
+							if (e.getTrigger().getAnnotationString().contains("<TriggerCanBeDisabled/>")) {
+								e.getTrigger().unsetAnnotation();
+							}
+						}
 						e.getTrigger().setMath(myParseFormula(eventTrigger.getText().trim()));
 						if (eventID.getText().trim().equals("")) {
 							e.unsetId();
@@ -5087,6 +5107,19 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					org.sbml.libsbml.Event e = document.getModel().createEvent();
 					e.setUseValuesFromTriggerTime(assignTime.isSelected());
 					e.createTrigger();
+					if (disableTrigger.isSelected()) {
+						if (!e.getTrigger().getAnnotationString().contains("<TriggerCanBeDisabled/>")) {
+							if (e.getTrigger().isSetAnnotation()) {
+								e.getTrigger().appendAnnotation("<TriggerCanBeDisabled/>");
+							} else {
+								e.getTrigger().setAnnotation("<TriggerCanBeDisabled/>");
+							}
+						}
+					} else {
+						if (e.getTrigger().getAnnotationString().contains("<TriggerCanBeDisabled/>")) {
+							e.getTrigger().unsetAnnotation();
+						}
+					}
 					e.getTrigger().setMath(myParseFormula(eventTrigger.getText().trim()));
 					if (!eventDelay.getText().trim().equals("")) {
 						e.createDelay();
