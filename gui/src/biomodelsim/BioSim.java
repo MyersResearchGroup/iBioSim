@@ -826,6 +826,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		newMenu.add(newProj);
 		if (!async) {
 			newMenu.add(newCircuit);
+			newMenu.add(newLhpn);
 			newMenu.add(newModel);
 		}
 		else if (atacs) {
@@ -880,6 +881,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		file.add(importMenu);
 		if (!async) {
 			importMenu.add(importDot);
+			importMenu.add(importLhpn);
 			importMenu.add(importSbml);
 			importMenu.add(importBioModel);
 		}
