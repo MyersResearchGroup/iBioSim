@@ -260,7 +260,7 @@ public class GCMFile {
 		naryFrame.setResizable(false);
 		naryFrame.setVisible(true);
 	}
-	
+
 	private void flattenGCM() {
 		ArrayList<String> comps = setToArrayList(components.keySet());
 		for (String s : comps) {
@@ -467,7 +467,7 @@ public class GCMFile {
 					GlobalConstants.ACTIVATION)) {
 				String input = getInput(influence);
 				String output = getOutput(influence);
-				if (influences.get(influence).contains(GlobalConstants.BIO)
+				if (influences.get(influence).containsKey(GlobalConstants.BIO)
 						&& influences.get(influence).get(GlobalConstants.BIO).equals("yes")) {
 					if (infl.containsKey(output)) {
 						infl.get(output).add("bioAct:" + input + ":" + influence);
@@ -493,7 +493,7 @@ public class GCMFile {
 					GlobalConstants.REPRESSION)) {
 				String input = getInput(influence);
 				String output = getOutput(influence);
-				if (influences.get(influence).contains(GlobalConstants.BIO)
+				if (influences.get(influence).containsKey(GlobalConstants.BIO)
 						&& influences.get(influence).get(GlobalConstants.BIO).equals("yes")) {
 					if (infl.containsKey(output)) {
 						infl.get(output).add("bioRep:" + input + ":" + influence);
@@ -572,45 +572,45 @@ public class GCMFile {
 							bioRepressors.add(species);
 						}
 						Properties p = this.species.get(species);
-						if (p.contains(GlobalConstants.KDECAY_STRING)) {
+						if (p.containsKey(GlobalConstants.KDECAY_STRING)) {
 							kd = Double.parseDouble((String) p.get(GlobalConstants.KDECAY_STRING));
 						}
 						p = influences.get(influence);
-						if (p.contains(GlobalConstants.COOPERATIVITY_STRING)) {
+						if (p.containsKey(GlobalConstants.COOPERATIVITY_STRING)) {
 							nc = Double.parseDouble((String) p
 									.get(GlobalConstants.COOPERATIVITY_STRING));
 						}
-						if (p.contains(GlobalConstants.KREP_STRING)) {
+						if (p.containsKey(GlobalConstants.KREP_STRING)) {
 							Kr = Double.parseDouble((String) p.get(GlobalConstants.KREP_STRING));
 						}
-						if (p.contains(GlobalConstants.KACT_STRING)) {
+						if (p.containsKey(GlobalConstants.KACT_STRING)) {
 							Ka = Double.parseDouble((String) p.get(GlobalConstants.KACT_STRING));
 						}
-						if (p.contains(GlobalConstants.KBIO_STRING)) {
+						if (p.containsKey(GlobalConstants.KBIO_STRING)) {
 							Kb = Double.parseDouble((String) p.get(GlobalConstants.KBIO_STRING));
 						}
 						if (promoters.containsKey(promoter)) {
 							p = promoters.get(promoter);
-							if (p.contains(GlobalConstants.PROMOTER_COUNT_STRING)) {
+							if (p.containsKey(GlobalConstants.PROMOTER_COUNT_STRING)) {
 								ng = Double.parseDouble((String) p
 										.get(GlobalConstants.PROMOTER_COUNT_STRING));
 							}
-							if (p.contains(GlobalConstants.RNAP_BINDING_STRING)) {
+							if (p.containsKey(GlobalConstants.RNAP_BINDING_STRING)) {
 								Ko = Double.parseDouble((String) p
 										.get(GlobalConstants.RNAP_BINDING_STRING));
 							}
-							if (p.contains(GlobalConstants.OCR_STRING)) {
+							if (p.containsKey(GlobalConstants.OCR_STRING)) {
 								ko = Double.parseDouble((String) p.get(GlobalConstants.OCR_STRING));
 							}
-							if (p.contains(GlobalConstants.STOICHIOMETRY_STRING)) {
+							if (p.containsKey(GlobalConstants.STOICHIOMETRY_STRING)) {
 								np = Double.parseDouble((String) p
 										.get(GlobalConstants.STOICHIOMETRY_STRING));
 							}
-							if (p.contains(GlobalConstants.KBASAL_STRING)) {
+							if (p.containsKey(GlobalConstants.KBASAL_STRING)) {
 								kb = Double.parseDouble((String) p
 										.get(GlobalConstants.KBASAL_STRING));
 							}
-							if (p.contains(GlobalConstants.ACTIVED_STRING)) {
+							if (p.containsKey(GlobalConstants.ACTIVED_STRING)) {
 								ka = Double.parseDouble((String) p
 										.get(GlobalConstants.ACTIVED_STRING));
 							}
