@@ -7,6 +7,7 @@ import gcm2sbml.parser.GCMFile;
 import gcm2sbml.parser.GCMParser;
 import gcm2sbml.util.GlobalConstants;
 import lhpn2sbml.parser.LHPNFile;
+import lhpn2sbml.parser.Translator;
 import lhpn2sbml.gui.*;
 import graph.Graph;
 import stategraph.StateGraph;
@@ -310,8 +311,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			}
 		}
 
-	}
-
+	}	
 	/**
 	 * This is the constructor for the Proj class. It initializes all the input
 	 * fields, puts them on panels, adds the panels to the frame, and then
@@ -2507,6 +2507,9 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		// if the open popup menu is selected on a sim directory
 		else if (e.getActionCommand().equals("openSim")) {
 			openSim();
+			Translator t1 = new Translator();
+			t1.BuildTemplate(tree.getFile());
+			
 		}
 		else if (e.getActionCommand().equals("openLearn")) {
 			if (lema) {
@@ -2521,6 +2524,10 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		}
 		else if (e.getActionCommand().equals("openVerification")) {
 			openVerify();
+		}
+		else if (e.getActionCommand().equals("convertToSBML")) {
+			new Translator().BuildTemplate(tree.getFile());
+			refreshTree();
 		}
 		// if the create simulation popup menu is selected on a dot file
 		else if (e.getActionCommand().equals("createSim")) {
@@ -8131,6 +8138,10 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					createVerification.addActionListener(this);
 					createVerification.addMouseListener(this);
 					createVerification.setActionCommand("createVerify");
+					JMenuItem convertToSBML = new JMenuItem("Convert To SBML");
+					convertToSBML.addActionListener(this);
+					convertToSBML.addMouseListener(this);
+					convertToSBML.setActionCommand("convertToSBML");
 					JMenuItem viewModel = new JMenuItem("View Model");
 					viewModel.addActionListener(this);
 					viewModel.addMouseListener(this);
@@ -8166,6 +8177,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						popup.add(createVerification);
 						popup.addSeparator();
 					}
+					popup.add(convertToSBML);
 					popup.add(viewModel);
 					popup.add(viewStateGraph);
 					popup.add(markovAnalysis);
