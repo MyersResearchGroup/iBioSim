@@ -463,16 +463,10 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		newCircuit = new JMenuItem("Genetic Circuit Model");
 		newModel = new JMenuItem("SBML Model");
 		newSpice = new JMenuItem("Spice Circuit");
-		if (lema) {
-			newVhdl = new JMenuItem("VHDL-AMS Model");
-			newS = new JMenuItem("Assembly File");
-			newInst = new JMenuItem("Instruction File");
-			newLhpn = new JMenuItem("Labeled Petri Net");
-		}
-		else {
-			newVhdl = new JMenuItem("VHDL Model");
-			newLhpn = new JMenuItem("Labeled Petri Net");
-		}
+		newVhdl = new JMenuItem("VHDL-AMS Model");
+		newS = new JMenuItem("Assembly File");
+		newInst = new JMenuItem("Instruction File");
+		newLhpn = new JMenuItem("Labeled Petri Net");
 		newG = new JMenuItem("Petri Net");
 		newCsp = new JMenuItem("CSP Model");
 		newHse = new JMenuItem("Handshaking Expansion");
@@ -485,14 +479,9 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		importDot = new JMenuItem("Genetic Circuit Model");
 		importG = new JMenuItem("Petri Net");
 		importLpn = new JMenuItem("Labeled Petri Net");
-		if (lema) {
-			importVhdl = new JMenuItem("VHDL-AMS Model");
-			importS = new JMenuItem("Assembly File");
-			importInst = new JMenuItem("Instruction File");
-		}
-		else {
-			importVhdl = new JMenuItem("VHDL Model");
-		}
+		importVhdl = new JMenuItem("VHDL-AMS Model");
+		importS = new JMenuItem("Assembly File");
+		importInst = new JMenuItem("Instruction File");
 		importSpice = new JMenuItem("Spice Circuit");
 		importCsp = new JMenuItem("CSP Model");
 		importHse = new JMenuItem("Handshaking Expansion");
