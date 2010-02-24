@@ -585,6 +585,9 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					reduction.setSelected(true);
 				}
 			}
+			if (load.containsKey("verification.preprocess")) {
+				preprocStr.setText(load.getProperty("verification.preprocess"));
+			}
 			if (load.containsKey("abstraction.interesting")) {
 				String intVars = load.getProperty("abstraction.interesting");
 				String[] array = intVars.split(" ");
@@ -1669,6 +1672,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			else {
 				prop.setProperty("verification.reduction", "false");
 			}
+			prop.setProperty("verification.preprocess",preprocStr.getText());
 			String intVars = "";
 			for (int i = 0; i < abstPane.listModel.getSize(); i++) {
 				if (abstPane.listModel.getElementAt(i) != null) {
