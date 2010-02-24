@@ -2969,6 +2969,10 @@ public class Abstraction extends LHPNFile {
 			String delay = delays.get(s);
 			Pattern pattern = Pattern.compile("\\[([\\w-]+?),([\\w-]+?)\\]");
 			Matcher matcher = pattern.matcher(delay);
+			Pattern normPattern = Pattern.compile("uniform\\(([\\w-]+?),([\\w-]+?)\\)");
+			Matcher normMatcher = normPattern.matcher(delay);
+			Pattern numPattern = Pattern.compile("[-\\d]+");
+			Matcher numMatcher = numPattern.matcher(delay);
 			if (matcher.find()) {
 				String lVal = matcher.group(1);
 				String uVal = matcher.group(2);
@@ -2987,16 +2991,32 @@ public class Abstraction extends LHPNFile {
 				delay = "[" + lVal + "," + uVal + "]";
 				delays.put(s, delay);
 			}
-			else {
-				if (!delay.contains("inf")) {
-					Integer val = Integer.parseInt(delay);
-					Integer lInt = (val / N) * N;
-					String lVal = lInt.toString();
-					Integer uInt = lInt + N;
-					String uVal = uInt.toString();
-					delay = "[" + lVal + "," + uVal + "]";
-					delays.put(s, delay);
+			else if (normMatcher.find()) {
+				String lVal = normMatcher.group(1);
+				String uVal = normMatcher.group(2);
+				if (!lVal.contains("inf")) {
+					Integer lInt = Integer.parseInt(lVal);
+					lInt = (lInt / N) * N;
+					lVal = lInt.toString();
 				}
+				if (!uVal.contains("inf")) {
+					Integer uInt = Integer.parseInt(uVal);
+					if (uInt % N != 0) {
+						uInt = (uInt / N + 1) * N;
+						uVal = uInt.toString();
+					}
+				}
+				delay = "normal(" + lVal + "," + uVal + ")";
+				delays.put(s, delay);
+			}
+			else if (numMatcher.find()) {
+				Integer val = Integer.parseInt(delay);
+				Integer lInt = (val / N) * N;
+				String lVal = lInt.toString();
+				Integer uInt = lInt + N;
+				String uVal = uInt.toString();
+				delay = "[" + lVal + "," + uVal + "]";
+				delays.put(s, delay);
 			}
 		}
 	}
