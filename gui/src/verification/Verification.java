@@ -39,7 +39,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 	private JButton save, run, viewCircuit, viewTrace, viewLog, addComponent, removeComponent;
 
 	private JLabel algorithm, timingMethod, timingOptions, otherOptions, otherOptions2,
-			compilation, bddSizeLabel, advTiming, abstractLabel;
+			compilation, bddSizeLabel, advTiming, abstractLabel, preprocLabel;
 
 	public JRadioButton untimed, geometric, posets, bag, bap, baptdc, verify, vergate, orbits,
 			search, trace, bdd, dbm, smt, lhpn, view, none, simplify, abstractLhpn;
@@ -48,7 +48,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 	    orbmatch, interleav, prune, disabling, nofail, noproj, keepgoing, explpn, nochecks, reduction,
 			newTab, postProc, redCheck, xForm2, expandRate;
 
-	private JTextField bddSize, backgroundField, componentField;
+	private JTextField bddSize, backgroundField, componentField, preprocStr;
 
 	private ButtonGroup timingMethodGroup, algorithmGroup, abstractionGroup;
 
@@ -105,6 +105,8 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		timingCheckBoxPanel.setMaximumSize(new Dimension(1000, 30));
 		JPanel otherPanel = new JPanel();
 		otherPanel.setMaximumSize(new Dimension(1000, 35));
+		JPanel preprocPanel = new JPanel();
+		preprocPanel.setMaximumSize(new Dimension(1000, 35));
 		JPanel algorithmPanel = new JPanel();
 		algorithmPanel.setMaximumSize(new Dimension(1000, 35));
 		JPanel buttonPanel = new JPanel();
@@ -135,7 +137,10 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		compilation = new JLabel("Compilation Options:");
 		bddSizeLabel = new JLabel("BDD Linkspace Size:");
 		advTiming = new JLabel("Timing Options:");
-
+		preprocLabel = new JLabel("Preprocess Command:");
+		preprocStr = new JTextField();
+		preprocStr.setPreferredSize(new Dimension(500, 18));
+		
 		// Initializes the radio buttons and check boxes
 		// Abstraction Options
 		none = new JRadioButton("None");
@@ -315,6 +320,9 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		otherPanel.add(verbose);
 		otherPanel.add(graph);
 
+		preprocPanel.add(preprocLabel);
+		preprocPanel.add(preprocStr);
+		
 		algorithmPanel.add(algorithm);
 		algorithmPanel.add(verify);
 		algorithmPanel.add(vergate);
@@ -665,6 +673,9 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			basicOptions.add(timingCheckBoxPanel);
 		}
 		basicOptions.add(otherPanel);
+		if (lema) {
+			basicOptions.add(preprocPanel);
+		}
 		if (!lema) {
 			basicOptions.add(algorithmPanel);
 		}
@@ -1136,6 +1147,56 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			running.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 			work = new File(directory);
 			Runtime exec = Runtime.getRuntime();
+			if (!preprocStr.getText().equals("")) {
+				try {
+					String preprocCmd = preprocStr.getText();
+					final Process ver = exec.exec(preprocCmd, null, work);
+					cancel.setActionCommand("Cancel");
+					cancel.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent e) {
+							ver.destroy();
+							running.setCursor(null);
+							running.dispose();
+						}
+					});
+					biosim.getExitButton().setActionCommand("Exit program");
+					biosim.getExitButton().addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent e) {
+							ver.destroy();
+							running.setCursor(null);
+							running.dispose();
+						}
+					});
+					log.addText("Executing:\n" + preprocCmd + "\n");
+					String output = "";
+					InputStream reb = ver.getInputStream();
+					InputStreamReader isr = new InputStreamReader(reb);
+					BufferedReader br = new BufferedReader(isr);
+					FileWriter out = new FileWriter(new File(directory + separator + "run.log"));
+					while ((output = br.readLine()) != null) {
+						out.write(output);
+						out.write("\n");
+					}
+					out.close();
+					br.close();
+					isr.close();
+					reb.close();
+					viewLog.setEnabled(true);
+					ver.waitFor();
+					running.setCursor(null);
+					running.dispose();
+					int exitValue = ver.waitFor();
+					if (exitValue == 143) {
+						JOptionPane.showMessageDialog(biosim.frame(), "Verification was"
+								+ " canceled by the user.", "Canceled Verification",
+								JOptionPane.ERROR_MESSAGE);
+					}
+				}
+				catch (Exception e) {
+					JOptionPane.showMessageDialog(biosim.frame(), "Unable to verify model.", "Error",
+							JOptionPane.ERROR_MESSAGE);
+				}
+			}
 			try {
 				final Process ver = exec.exec(cmd, null, work);
 				cancel.setActionCommand("Cancel");
@@ -1155,18 +1216,6 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					}
 				});
 				log.addText("Executing:\n" + cmd + "\n");
-				// Process synth = exec.exec(cmd, null, work);
-				/*
-				 * else { if (traceFile.exists()) {
-				 * JOptionPane.showMessageDialog(biosim.frame(), "Verification
-				 * Failed", "Verification Results",
-				 * JOptionPane.WARNING_MESSAGE); viewTrace.setEnabled(true);
-				 * viewTrace(); } else {
-				 * JOptionPane.showMessageDialog(biosim.frame(), "Verification
-				 * Succeeded", "Verification Results",
-				 * JOptionPane.INFORMATION_MESSAGE);
-				 * viewTrace.setEnabled(false); } }
-				 */
 				String output = "";
 				InputStream reb = ver.getInputStream();
 				InputStreamReader isr = new InputStreamReader(reb);
