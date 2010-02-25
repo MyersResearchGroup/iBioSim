@@ -9805,7 +9805,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	/**
 	 * Convert String into ASTNodes
 	 */
-	public ASTNode myParseFormula(String formula) {
+	public static ASTNode myParseFormula(String formula) {
 		ASTNode mathFormula = libsbml.parseFormula(formula);
 		if (mathFormula == null)
 			return null;
@@ -9816,7 +9816,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	/**
 	 * Recursive function to set time and trig functions
 	 */
-	public void setTimeAndTrigVar(ASTNode node) {
+	public static void setTimeAndTrigVar(ASTNode node) {
 		if (node.getType() == libsbml.AST_NAME) {
 			if (node.getName().equals("t")) {
 				node.setType(libsbml.AST_NAME_TIME);
