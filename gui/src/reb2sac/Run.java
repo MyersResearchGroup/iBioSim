@@ -127,8 +127,16 @@ public class Run implements ActionListener {
 		// "kinetic-law-constants-simplifier");
 		// }
 		for (int i = 0; i < intSpecies.length; i++) {
-			if (intSpecies[i] != "") {
-				abs.setProperty("reb2sac.interesting.species." + (i + 1), "" + intSpecies[i]);
+			if (!intSpecies[i].equals("")) {
+				String[] split = intSpecies[i].split(" ");
+				abs.setProperty("reb2sac.interesting.species." + (i + 1), split[0]);
+				if (split.length > 1) {
+					String[] levels = split[1].split(",");
+					for (int j = 0; j < levels.length; j++) {
+						abs.setProperty("reb2sac.concentration.level." + split[0] + "." + (j + 1),
+								levels[j]);
+					}
+				}
 			}
 		}
 		abs.setProperty("reb2sac.rapid.equilibrium.condition.1", "" + rap1);
@@ -559,74 +567,98 @@ public class Run implements ActionListener {
 				else if (sim.equals("markov-chain-analysis")) {
 					new File(filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "")
 							+ ".lpn").delete();
-					gcmEditor.getGCM().createLogicalModel(
-							filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "")
-									+ ".lpn",
-							log,
-							biomodelsim,
-							theFile.replace(".gcm", "").replace(".sbml", "").replace(".xml", "")
-									+ ".lpn");
-					LHPNFile lhpnFile = new LHPNFile();
-					while (new File(filename.replace(".gcm", "").replace(".sbml", "").replace(
-							".xml", "")
-							+ ".lpn.temp").exists()) {
-					}
-					if (new File(filename.replace(".gcm", "").replace(".sbml", "").replace(".xml",
-							"")
-							+ ".lpn").exists()) {
-						lhpnFile.load(filename.replace(".gcm", "").replace(".sbml", "").replace(
-								".xml", "")
-								+ ".lpn");
-						StateGraph sg = new StateGraph(lhpnFile);
-						log.addText("Performing Markov Chain analysis.");
-						String simrep = sg.performMarkovianAnalysis(gcmEditor.getGCM()
-								.getConditions());
-						if (simrep != null) {
-							FileOutputStream simrepstream = new FileOutputStream(new File(directory
-									+ separator + "sim-rep.txt"));
-							simrepstream.write((simrep).getBytes());
-							simrepstream.close();
-						}
-						sg.outputStateGraph(filename.replace(".gcm", "").replace(".sbml", "")
-								.replace(".xml", "")
-								+ ".dot", true);
-						if (sg.getNumberOfStates() > 30) {
-							String[] options = { "Yes", "No" };
-							int value = JOptionPane
-									.showOptionDialog(
-											biomodelsim.frame(),
-											"The state graph contains more than 30 states and may not open well in dotty.\nOpen it with dotty anyway?",
-											"More Than 30 States", JOptionPane.YES_NO_OPTION,
-											JOptionPane.WARNING_MESSAGE, null, options, options[0]);
-							if (value == JOptionPane.YES_OPTION) {
-								if (System.getProperty("os.name").contentEquals("Linux")) {
-									log.addText("Executing:\ndotty "
-											+ filename.replace(".gcm", "").replace(".sbml", "")
-													.replace(".xml", "") + ".dot" + "\n");
-									exec.exec("dotty "
-											+ theFile.replace(".gcm", "").replace(".sbml", "")
-													.replace(".xml", "") + ".dot", null, work);
-								}
-								else if (System.getProperty("os.name").toLowerCase().startsWith(
-										"mac os")) {
-									log.addText("Executing:\nopen "
-											+ filename.replace(".gcm", "").replace(".sbml", "")
-													.replace(".xml", "") + ".dot" + "\n");
-									exec.exec("open "
-											+ theFile.replace(".gcm", "").replace(".sbml", "")
-													.replace(".xml", "") + ".dot", null, work);
-								}
-								else {
-									log.addText("Executing:\ndotty "
-											+ filename.replace(".gcm", "").replace(".sbml", "")
-													.replace(".xml", "") + ".dot" + "\n");
-									exec.exec("dotty "
-											+ theFile.replace(".gcm", "").replace(".sbml", "")
-													.replace(".xml", "") + ".dot", null, work);
+					ArrayList<String> specs = new ArrayList<String>();
+					ArrayList<Object[]> conLevel = new ArrayList<Object[]>();
+					for (int i = 0; i < intSpecies.length; i++) {
+						if (!intSpecies[i].equals("")) {
+							String[] split = intSpecies[i].split(" ");
+							if (split.length > 1) {
+								String[] levels = split[1].split(",");
+								if (levels.length > 0) {
+									specs.add(split[0]);
+									conLevel.add(levels);
 								}
 							}
 						}
 					}
+					LHPNFile lhpnFile = gcmEditor.getGCM().convertToLHPN(specs, conLevel);
+					lhpnFile.save(filename);
+					log.addText("Saving GCM file as LHPN:\n"
+							+ filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "")
+							+ ".lpn" + "\n");
+
+					// gcmEditor.getGCM().createLogicalModel(
+					// filename.replace(".gcm", "").replace(".sbml",
+					// "").replace(".xml", "")
+					// + ".lpn",
+					// log,
+					// biomodelsim,
+					// theFile.replace(".gcm", "").replace(".sbml",
+					// "").replace(".xml", "")
+					// + ".lpn");
+					// LHPNFile lhpnFile = new LHPNFile();
+					// while (new File(filename.replace(".gcm",
+					// "").replace(".sbml", "").replace(
+					// ".xml", "")
+					// + ".lpn.temp").exists()) {
+					// }
+					// if (new File(filename.replace(".gcm",
+					// "").replace(".sbml", "").replace(".xml",
+					// "")
+					// + ".lpn").exists()) {
+					// lhpnFile.load(filename.replace(".gcm",
+					// "").replace(".sbml", "").replace(
+					// ".xml", "")
+					// + ".lpn");
+					StateGraph sg = new StateGraph(lhpnFile);
+					log.addText("Performing Markov Chain analysis.");
+					String simrep = sg.performMarkovianAnalysis(gcmEditor.getGCM().getConditions());
+					if (simrep != null) {
+						FileOutputStream simrepstream = new FileOutputStream(new File(directory
+								+ separator + "sim-rep.txt"));
+						simrepstream.write((simrep).getBytes());
+						simrepstream.close();
+					}
+					sg.outputStateGraph(filename.replace(".gcm", "").replace(".sbml", "").replace(
+							".xml", "")
+							+ ".dot", true);
+					if (sg.getNumberOfStates() > 30) {
+						String[] options = { "Yes", "No" };
+						int value = JOptionPane
+								.showOptionDialog(
+										biomodelsim.frame(),
+										"The state graph contains more than 30 states and may not open well in dotty.\nOpen it with dotty anyway?",
+										"More Than 30 States", JOptionPane.YES_NO_OPTION,
+										JOptionPane.WARNING_MESSAGE, null, options, options[0]);
+						if (value == JOptionPane.YES_OPTION) {
+							if (System.getProperty("os.name").contentEquals("Linux")) {
+								log.addText("Executing:\ndotty "
+										+ filename.replace(".gcm", "").replace(".sbml", "")
+												.replace(".xml", "") + ".dot" + "\n");
+								exec.exec("dotty "
+										+ theFile.replace(".gcm", "").replace(".sbml", "").replace(
+												".xml", "") + ".dot", null, work);
+							}
+							else if (System.getProperty("os.name").toLowerCase().startsWith(
+									"mac os")) {
+								log.addText("Executing:\nopen "
+										+ filename.replace(".gcm", "").replace(".sbml", "")
+												.replace(".xml", "") + ".dot" + "\n");
+								exec.exec("open "
+										+ theFile.replace(".gcm", "").replace(".sbml", "").replace(
+												".xml", "") + ".dot", null, work);
+							}
+							else {
+								log.addText("Executing:\ndotty "
+										+ filename.replace(".gcm", "").replace(".sbml", "")
+												.replace(".xml", "") + ".dot" + "\n");
+								exec.exec("dotty "
+										+ theFile.replace(".gcm", "").replace(".sbml", "").replace(
+												".xml", "") + ".dot", null, work);
+							}
+						}
+					}
+					// }
 					time1 = System.nanoTime();
 					exitValue = 0;
 					for (int i = 0; i < simTab.getComponentCount(); i++) {
