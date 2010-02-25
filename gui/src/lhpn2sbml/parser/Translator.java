@@ -16,10 +16,17 @@ import junit.framework.TestCase;
 
 import org.omg.CORBA.PRIVATE_MEMBER;
 import org.sbml.libsbml.Compartment;
+import org.sbml.libsbml.Event;
+import org.sbml.libsbml.KineticLaw;
+import org.sbml.libsbml.ListOfParameters;
 import org.sbml.libsbml.Model;
 import org.sbml.libsbml.Parameter;
+import org.sbml.libsbml.Reaction;
 import org.sbml.libsbml.SBMLDocument;
 import org.sbml.libsbml.SBMLWriter;
+import org.sbml.libsbml.Species;
+import org.sbml.libsbml.SpeciesReference;
+import org.sbml.libsbml.Trigger;
 
 import biomodelsim.BioSim;
 
@@ -86,13 +93,79 @@ public class Translator {
 		for (String p: lhpn.getPlaceList()){
 			
 			Boolean initMarking = lhpn.getPlaceInitial(p);
-			System.out.println(p + "=" + initMarking);
+//			System.out.println(p + "=" + initMarking);
+			Species sp = m.createSpecies();
+			sp.setId(p);
+			sp.setCompartment("default");
+			sp.setBoundaryCondition(false);
+			sp.setConstant(false);
+			sp.setHasOnlySubstanceUnits(false);
+			if (initMarking){
+				sp.setInitialAmount(1);
+			}
+			else {
+				sp.setInitialAmount(0);
+			}
+			sp.setUnits("");
+			
 			
 		}
 		
-//		for (String s : lhpn.getTransitionList()) {
-//			System.out.println(s);
-//		}
+		// ----convert transitions -----	
+		int counter = lhpn.getTransitionList().length - 1;
+		
+		for (String t : lhpn.getTransitionList()) {
+			//System.out.println(s);
+			Species spT = m.createSpecies();
+			spT.setId(t);
+			spT.setCompartment("default");
+			spT.setBoundaryCondition(false);
+			spT.setConstant(false);
+			spT.setHasOnlySubstanceUnits(false);
+			spT.setInitialAmount(0);
+			spT.setUnits("");
+			
+			Reaction r = m.createReaction();
+			r.setId("r" + counter);
+			SpeciesReference reactant = r.createReactant();
+			// get preset(s) of a transition and set each as a reactant
+			for (String x : lhpn.getPreset(t)){
+				reactant.setId(x);
+				reactant.setSpecies(x);
+				//System.out.println("transition:" + t + "preset:" + x);
+			}
+			
+			SpeciesReference product  = r.createProduct();
+			product.setSpecies(t);
+			// TODO Create local variables in the reaction
+//			Parameter p_local = m.createKineticLawParameter();
+//			p_local.setConstant(false);
+//			p_local.setId("rate" + counter);
+//			p_local.setValue(0.7);
+			
+			KineticLaw rateReaction = r.createKineticLaw(); // rate of reaction
+//			rateReaction.setFormula(p_local.getId() + "*" + reactant + "*");
+			rateReaction.setFormula(t);
+			System.out.println(m.getListOfParameters());
+			
+            // TODO  fix the event (errors when edit event-> edit assignment
+			// TODO  Add event assignement
+			
+//			Event e = m.createEvent();
+//			e.setId("event" + counter);			
+//			Trigger trigger = e.createTrigger();
+//			trigger.equals(product);
+            
+			
+			
+			
+	
+			
+			
+//			org.sbml.libsbml.Event e = m.createEvent();
+//			e.createTrigger();
+			counter --;
+		}
 		//filename.replace(".lpn", ".xml");
 		SBMLWriter writer = new SBMLWriter();
 		writer.writeSBML(document, filename);
