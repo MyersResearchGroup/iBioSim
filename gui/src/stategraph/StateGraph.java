@@ -494,6 +494,17 @@ public class StateGraph {
 					num.setMaximumFractionDigits(4);
 					num.setGroupingUsed(false);
 					for (StateTransitionPair next : m.getNextStatesWithTrans()) {
+						/*
+						System.out.println(m.getID()
+								+ " -> "
+								+ next.getState().getID()
+								+ " [label=\""
+								+ next.getTransition()
+								+ "\\n");
+						System.out.println(m.getTransitionSum());
+						System.out.println(lhpn.getTransitionRateTree(
+								next.getTransition()).evaluateExp(m.getVariables()));
+								*/
 						out.write(m.getID()
 								+ " -> "
 								+ next.getState().getID()
@@ -501,8 +512,8 @@ public class StateGraph {
 								+ next.getTransition()
 								+ "\\n"
 								+ Double.parseDouble(num.format((lhpn.getTransitionRateTree(
-										next.getTransition()).evaluateExp(m.getVariables()) / m
-										.getTransitionSum()))) + "\"]\n");
+										next.getTransition()).evaluateExp(m.getVariables()) /*/ m
+										.getTransitionSum()*/))) + "\"]\n");
 					}
 				}
 			}
