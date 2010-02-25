@@ -13,6 +13,7 @@ import lhpn2sbml.parser.LHPNFile;
 
 import biomodelsim.*;
 import gcm2sbml.gui.GCM2SBMLEditor;
+import gcm2sbml.parser.GCMFile;
 import graph.*;
 import buttons.*;
 import sbmleditor.*;
@@ -581,12 +582,13 @@ public class Run implements ActionListener {
 							}
 						}
 					}
-					LHPNFile lhpnFile = gcmEditor.getGCM().convertToLHPN(specs, conLevel);
+					GCMFile gcm = gcmEditor.getGCM();
+					gcm.flattenGCM();
+					LHPNFile lhpnFile = gcm.convertToLHPN(specs, conLevel);
 					lhpnFile.save(filename);
 					log.addText("Saving GCM file as LHPN:\n"
 							+ filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "")
 							+ ".lpn" + "\n");
-
 					// gcmEditor.getGCM().createLogicalModel(
 					// filename.replace(".gcm", "").replace(".sbml",
 					// "").replace(".xml", "")
