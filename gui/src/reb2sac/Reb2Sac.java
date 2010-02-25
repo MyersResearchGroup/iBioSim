@@ -6,6 +6,7 @@ import java.util.prefs.Preferences;
 import java.util.regex.Pattern;
 import java.awt.*;
 import java.awt.event.*;
+
 import javax.swing.*;
 
 import org.sbml.libsbml.*;
@@ -34,8 +35,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 	/*
 	 * Buttons for adding and removing conditions and species
 	 */
-	private JButton addIntSpecies, removeIntSpecies, addTermCond, removeTermCond, clearIntSpecies,
-			clearTermCond;
+	private JButton addIntSpecies, removeIntSpecies, editIntSpecies, addTermCond, removeTermCond,
+			clearIntSpecies, clearTermCond;
 
 	/*
 	 * Radio Buttons that represent the different abstractions
@@ -70,7 +71,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 	/*
 	 * Labels for the changes in the abstraction
 	 */
-	private JLabel limitLabel, minStepLabel, stepLabel, errorLabel, seedLabel, runsLabel, fileStemLabel;
+	private JLabel limitLabel, minStepLabel, stepLabel, errorLabel, seedLabel, runsLabel,
+			fileStemLabel;
 
 	/*
 	 * Description of selected simulator
@@ -413,6 +415,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		scroll1.setPreferredSize(new Dimension(276, 132));
 		scroll1.setViewportView(intSpecies);
 		addIntSpecies = new JButton("Add Species");
+		editIntSpecies = new JButton("Edit Species");
 		removeIntSpecies = new JButton("Remove Species");
 		clearIntSpecies = new JButton("Clear Species");
 		listOfSpeciesLabelHolder.add(spLabel);
@@ -423,6 +426,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		speciesHolder.add(listOfSpeciesHolder, "Center");
 		JPanel buttonHolder = new JPanel();
 		buttonHolder.add(addIntSpecies);
+		buttonHolder.add(editIntSpecies);
 		buttonHolder.add(removeIntSpecies);
 		buttonHolder.add(clearIntSpecies);
 		speciesHolder.add(buttonHolder, "South");
@@ -433,8 +437,10 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		spLabel.setEnabled(false);
 		speciesLabel.setEnabled(false);
 		addIntSpecies.setEnabled(false);
+		editIntSpecies.setEnabled(false);
 		removeIntSpecies.setEnabled(false);
 		addIntSpecies.addActionListener(this);
+		editIntSpecies.addActionListener(this);
 		removeIntSpecies.addActionListener(this);
 		clearIntSpecies.setEnabled(false);
 		clearIntSpecies.addActionListener(this);
@@ -1064,14 +1070,14 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		change = true;
 		if (e.getSource() == none) {
 			Button_Enabling.enableNoneOrAbs(ODE, monteCarlo, markov, seed, seedLabel, runs,
-					runsLabel, minStepLabel, minStep, stepLabel, step, errorLabel, absErr, limitLabel, limit,
-					intervalLabel, interval, simulators, simulatorsLabel, explanation, description,
-					none, intSpecies, species, spLabel, speciesLabel, addIntSpecies,
-					removeIntSpecies, rapid1, rapid2, qssa, maxCon, rapidLabel1, rapidLabel2,
-					qssaLabel, maxConLabel, usingSSA, clearIntSpecies, fileStem, fileStemLabel,
-					preAbs, loopAbs, postAbs, preAbsLabel, loopAbsLabel, postAbsLabel, addPreAbs,
-					rmPreAbs, editPreAbs, addLoopAbs, rmLoopAbs, editLoopAbs, addPostAbs,
-					rmPostAbs, editPostAbs, lhpn);
+					runsLabel, minStepLabel, minStep, stepLabel, step, errorLabel, absErr,
+					limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel,
+					explanation, description, none, intSpecies, species, spLabel, speciesLabel,
+					addIntSpecies, editIntSpecies, removeIntSpecies, rapid1, rapid2, qssa, maxCon,
+					rapidLabel1, rapidLabel2, qssaLabel, maxConLabel, usingSSA, clearIntSpecies,
+					fileStem, fileStemLabel, preAbs, loopAbs, postAbs, preAbsLabel, loopAbsLabel,
+					postAbsLabel, addPreAbs, rmPreAbs, editPreAbs, addLoopAbs, rmLoopAbs,
+					editLoopAbs, addPostAbs, rmPostAbs, editPostAbs, lhpn);
 			if (!sbml.isSelected() && !xhtml.isSelected() && !dot.isSelected() && runFiles) {
 				overwrite.setEnabled(true);
 				append.setEnabled(true);
@@ -1096,14 +1102,14 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		// if the abstraction Radio Button is selected
 		else if (e.getSource() == abstraction) {
 			Button_Enabling.enableNoneOrAbs(ODE, monteCarlo, markov, seed, seedLabel, runs,
-					runsLabel, minStepLabel, minStep, stepLabel, step, errorLabel, absErr, limitLabel, limit,
-					intervalLabel, interval, simulators, simulatorsLabel, explanation, description,
-					none, intSpecies, species, spLabel, speciesLabel, addIntSpecies,
-					removeIntSpecies, rapid1, rapid2, qssa, maxCon, rapidLabel1, rapidLabel2,
-					qssaLabel, maxConLabel, usingSSA, clearIntSpecies, fileStem, fileStemLabel,
-					preAbs, loopAbs, postAbs, preAbsLabel, loopAbsLabel, postAbsLabel, addPreAbs,
-					rmPreAbs, editPreAbs, addLoopAbs, rmLoopAbs, editLoopAbs, addPostAbs,
-					rmPostAbs, editPostAbs, lhpn);
+					runsLabel, minStepLabel, minStep, stepLabel, step, errorLabel, absErr,
+					limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel,
+					explanation, description, none, intSpecies, species, spLabel, speciesLabel,
+					addIntSpecies, editIntSpecies, removeIntSpecies, rapid1, rapid2, qssa, maxCon,
+					rapidLabel1, rapidLabel2, qssaLabel, maxConLabel, usingSSA, clearIntSpecies,
+					fileStem, fileStemLabel, preAbs, loopAbs, postAbs, preAbsLabel, loopAbsLabel,
+					postAbsLabel, addPreAbs, rmPreAbs, editPreAbs, addLoopAbs, rmLoopAbs,
+					editLoopAbs, addPostAbs, rmPostAbs, editPostAbs, lhpn);
 			if (!sbml.isSelected() && !xhtml.isSelected() && !dot.isSelected() && runFiles) {
 				overwrite.setEnabled(true);
 				append.setEnabled(true);
@@ -1128,14 +1134,14 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		// if the nary Radio Button is selected
 		else if (e.getSource() == nary) {
 			Button_Enabling.enableNary(ODE, monteCarlo, markov, seed, seedLabel, runs, runsLabel,
-					minStepLabel, minStep, stepLabel, step, errorLabel, absErr, limitLabel, limit, intervalLabel,
-					interval, simulators, simulatorsLabel, explanation, description, intSpecies,
-					species, spLabel, speciesLabel, addIntSpecies, removeIntSpecies, rapid1,
-					rapid2, qssa, maxCon, rapidLabel1, rapidLabel2, qssaLabel, maxConLabel,
-					usingSSA, clearIntSpecies, fileStem, fileStemLabel, preAbs, loopAbs, postAbs,
-					preAbsLabel, loopAbsLabel, postAbsLabel, addPreAbs, rmPreAbs, editPreAbs,
-					addLoopAbs, rmLoopAbs, editLoopAbs, addPostAbs, rmPostAbs, editPostAbs, lhpn,
-					gcmEditor);
+					minStepLabel, minStep, stepLabel, step, errorLabel, absErr, limitLabel, limit,
+					intervalLabel, interval, simulators, simulatorsLabel, explanation, description,
+					intSpecies, species, spLabel, speciesLabel, addIntSpecies, editIntSpecies,
+					removeIntSpecies, rapid1, rapid2, qssa, maxCon, rapidLabel1, rapidLabel2,
+					qssaLabel, maxConLabel, usingSSA, clearIntSpecies, fileStem, fileStemLabel,
+					preAbs, loopAbs, postAbs, preAbsLabel, loopAbsLabel, postAbsLabel, addPreAbs,
+					rmPreAbs, editPreAbs, addLoopAbs, rmLoopAbs, editLoopAbs, addPostAbs,
+					rmPostAbs, editPostAbs, lhpn, gcmEditor);
 			if (!sbml.isSelected() && !xhtml.isSelected() && !dot.isSelected() && runFiles) {
 				overwrite.setEnabled(true);
 				append.setEnabled(true);
@@ -1159,10 +1165,10 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		}
 		// if the ODE Radio Button is selected
 		else if (e.getSource() == ODE) {
-			Button_Enabling.enableODE(seed, seedLabel, runs, runsLabel, minStepLabel, minStep, stepLabel, step,
-					errorLabel, absErr, limitLabel, limit, intervalLabel, interval, simulators,
-					simulatorsLabel, explanation, description, usingSSA, fileStem, fileStemLabel,
-					postAbs);
+			Button_Enabling.enableODE(seed, seedLabel, runs, runsLabel, minStepLabel, minStep,
+					stepLabel, step, errorLabel, absErr, limitLabel, limit, intervalLabel,
+					interval, simulators, simulatorsLabel, explanation, description, usingSSA,
+					fileStem, fileStemLabel, postAbs);
 			overwrite.setEnabled(true);
 			append.setEnabled(true);
 			choose3.setEnabled(true);
@@ -1172,10 +1178,10 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		}
 		// if the monteCarlo Radio Button is selected
 		else if (e.getSource() == monteCarlo) {
-			Button_Enabling.enableMonteCarlo(seed, seedLabel, runs, runsLabel, minStepLabel, minStep, stepLabel, step,
-					errorLabel, absErr, limitLabel, limit, intervalLabel, interval, simulators,
-					simulatorsLabel, explanation, description, usingSSA, fileStem, fileStemLabel,
-					postAbs);
+			Button_Enabling.enableMonteCarlo(seed, seedLabel, runs, runsLabel, minStepLabel,
+					minStep, stepLabel, step, errorLabel, absErr, limitLabel, limit, intervalLabel,
+					interval, simulators, simulatorsLabel, explanation, description, usingSSA,
+					fileStem, fileStemLabel, postAbs);
 			if (runFiles) {
 				overwrite.setEnabled(true);
 				append.setEnabled(true);
@@ -1199,10 +1205,10 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		}
 		// if the markov Radio Button is selected
 		else if (e.getSource() == markov) {
-			Button_Enabling.enableMarkov(seed, seedLabel, runs, runsLabel, minStepLabel, minStep, stepLabel, step,
-					errorLabel, absErr, limitLabel, limit, intervalLabel, interval, simulators,
-					simulatorsLabel, explanation, description, usingSSA, fileStem, fileStemLabel,
-					gcmEditor, postAbs);
+			Button_Enabling.enableMarkov(seed, seedLabel, runs, runsLabel, minStepLabel, minStep,
+					stepLabel, step, errorLabel, absErr, limitLabel, limit, intervalLabel,
+					interval, simulators, simulatorsLabel, explanation, description, usingSSA,
+					fileStem, fileStemLabel, gcmEditor, postAbs);
 			overwrite.setEnabled(false);
 			append.setEnabled(false);
 			choose3.setEnabled(false);
@@ -1212,10 +1218,10 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		}
 		// if the sbml Radio Button is selected
 		else if (e.getSource() == sbml) {
-			Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel, minStepLabel, minStep, stepLabel,
-					step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval,
-					simulators, simulatorsLabel, explanation, description, fileStem, fileStemLabel,
-					postAbs);
+			Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel, minStepLabel,
+					minStep, stepLabel, step, errorLabel, absErr, limitLabel, limit, intervalLabel,
+					interval, simulators, simulatorsLabel, explanation, description, fileStem,
+					fileStemLabel, postAbs);
 			overwrite.setEnabled(false);
 			append.setEnabled(false);
 			choose3.setEnabled(false);
@@ -1226,10 +1232,10 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		}
 		// if the dot Radio Button is selected
 		else if (e.getSource() == dot) {
-			Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel, minStepLabel, minStep, stepLabel,
-					step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval,
-					simulators, simulatorsLabel, explanation, description, fileStem, fileStemLabel,
-					postAbs);
+			Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel, minStepLabel,
+					minStep, stepLabel, step, errorLabel, absErr, limitLabel, limit, intervalLabel,
+					interval, simulators, simulatorsLabel, explanation, description, fileStem,
+					fileStemLabel, postAbs);
 			overwrite.setEnabled(false);
 			append.setEnabled(false);
 			choose3.setEnabled(false);
@@ -1240,10 +1246,10 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		}
 		// if the xhtml Radio Button is selected
 		else if (e.getSource() == xhtml) {
-			Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel, minStepLabel, minStep, stepLabel,
-					step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval,
-					simulators, simulatorsLabel, explanation, description, fileStem, fileStemLabel,
-					postAbs);
+			Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel, minStepLabel,
+					minStep, stepLabel, step, errorLabel, absErr, limitLabel, limit, intervalLabel,
+					interval, simulators, simulatorsLabel, explanation, description, fileStem,
+					fileStemLabel, postAbs);
 			overwrite.setEnabled(false);
 			append.setEnabled(false);
 			choose3.setEnabled(false);
@@ -1254,10 +1260,10 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		}
 		// if the lhpn Radio Button is selected
 		else if (e.getSource() == lhpn) {
-			Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel, minStepLabel, minStep, stepLabel,
-					step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval,
-					simulators, simulatorsLabel, explanation, description, fileStem, fileStemLabel,
-					postAbs);
+			Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel, minStepLabel,
+					minStep, stepLabel, step, errorLabel, absErr, limitLabel, limit, intervalLabel,
+					interval, simulators, simulatorsLabel, explanation, description, fileStem,
+					fileStemLabel, postAbs);
 			overwrite.setEnabled(false);
 			append.setEnabled(false);
 			choose3.setEnabled(false);
@@ -1268,8 +1274,11 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		}
 		// if the add interesting species button is clicked
 		else if (e.getSource() == addIntSpecies) {
-			interestingSpecies = Buttons.add(interestingSpecies, species, intSpecies, false,
-					amountTerm, ge, gt, eq, lt, le, this);
+			addInterstingSpecies();
+		}
+		// if the add interesting species button is clicked
+		else if (e.getSource() == editIntSpecies) {
+			editInterstingSpecies();
 		}
 		// if the remove interesting species button is clicked
 		else if (e.getSource() == removeIntSpecies) {
@@ -1554,10 +1563,10 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				if (ODE.isSelected()) {
 					ODE.setSelected(false);
 					monteCarlo.setSelected(true);
-					Button_Enabling.enableMonteCarlo(seed, seedLabel, runs, runsLabel, minStepLabel, minStep, stepLabel,
-							step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval,
-							simulators, simulatorsLabel, explanation, description, usingSSA,
-							fileStem, fileStemLabel, postAbs);
+					Button_Enabling.enableMonteCarlo(seed, seedLabel, runs, runsLabel,
+							minStepLabel, minStep, stepLabel, step, errorLabel, absErr, limitLabel,
+							limit, intervalLabel, interval, simulators, simulatorsLabel,
+							explanation, description, usingSSA, fileStem, fileStemLabel, postAbs);
 					if (runFiles) {
 						overwrite.setEnabled(true);
 						append.setEnabled(true);
@@ -1583,10 +1592,10 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				if (markov.isSelected()) {
 					markov.setSelected(false);
 					monteCarlo.setSelected(true);
-					Button_Enabling.enableMonteCarlo(seed, seedLabel, runs, runsLabel, minStepLabel, minStep, stepLabel,
-							step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval,
-							simulators, simulatorsLabel, explanation, description, usingSSA,
-							fileStem, fileStemLabel, postAbs);
+					Button_Enabling.enableMonteCarlo(seed, seedLabel, runs, runsLabel,
+							minStepLabel, minStep, stepLabel, step, errorLabel, absErr, limitLabel,
+							limit, intervalLabel, interval, simulators, simulatorsLabel,
+							explanation, description, usingSSA, fileStem, fileStemLabel, postAbs);
 					if (runFiles) {
 						overwrite.setEnabled(true);
 						append.setEnabled(true);
@@ -2311,7 +2320,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					getProps.load(load);
 					load.close();
 					if (getProps.containsKey("monte.carlo.simulation.time.limit")) {
-						minStep.setText(getProps.getProperty("monte.carlo.simulation.min.time.step"));
+						minStep.setText(getProps
+								.getProperty("monte.carlo.simulation.min.time.step"));
 						step.setText(getProps.getProperty("monte.carlo.simulation.time.step"));
 						limit.setText(getProps.getProperty("monte.carlo.simulation.time.limit"));
 						interval.setText(getProps
@@ -2919,9 +2929,9 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			new Nary_Run(this, amountTerm, ge, gt, eq, lt, le, simulators,
 					simProp.split(separator), simProp, sbml, dot, xhtml, lhpn, nary, ODE,
 					monteCarlo, timeLimit, ((String) (intervalLabel.getSelectedItem())),
-					printInterval, minTimeStep, timeStep, root + separator + simName, rndSeed, run, printer_id,
-					printer_track_quantity, termCond, intSpecies, rap1, rap2, qss, con, log,
-					usingSSA, root + separator + outDir + separator + "user-defined.dat",
+					printInterval, minTimeStep, timeStep, root + separator + simName, rndSeed, run,
+					printer_id, printer_track_quantity, termCond, intSpecies, rap1, rap2, qss, con,
+					log, usingSSA, root + separator + outDir + separator + "user-defined.dat",
 					biomodelsim, simTab, root, d);
 		}
 		running.setCursor(null);
@@ -2978,11 +2988,10 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 	public void mouseClicked(MouseEvent e) {
 		if (e.getClickCount() == 2) {
 			if (e.getSource() == intSpecies) {
-				interestingSpecies = Buttons.add(interestingSpecies, species, intSpecies, false,
-						amountTerm, ge, gt, eq, lt, le, this);
+				addInterstingSpecies();
 			}
 			else if (e.getSource() == species) {
-				removeIntSpecies();
+				editInterstingSpecies();
 			}
 			else if (e.getSource() == termCond) {
 				termConditions = Buttons.add(termConditions, terminations, termCond, true,
@@ -3737,41 +3746,41 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				if (load.getProperty("reb2sac.abstraction.method").equals("none")) {
 					none.setSelected(true);
 					Button_Enabling.enableNoneOrAbs(ODE, monteCarlo, markov, seed, seedLabel, runs,
-							runsLabel, minStepLabel, minStep, stepLabel, step, errorLabel, absErr, limitLabel, limit,
-							intervalLabel, interval, simulators, simulatorsLabel, explanation,
-							description, none, intSpecies, species, spLabel, speciesLabel,
-							addIntSpecies, removeIntSpecies, rapid1, rapid2, qssa, maxCon,
-							rapidLabel1, rapidLabel2, qssaLabel, maxConLabel, usingSSA,
-							clearIntSpecies, fileStem, fileStemLabel, preAbs, loopAbs, postAbs,
-							preAbsLabel, loopAbsLabel, postAbsLabel, addPreAbs, rmPreAbs,
-							editPreAbs, addLoopAbs, rmLoopAbs, editLoopAbs, addPostAbs, rmPostAbs,
-							editPostAbs, lhpn);
+							runsLabel, minStepLabel, minStep, stepLabel, step, errorLabel, absErr,
+							limitLabel, limit, intervalLabel, interval, simulators,
+							simulatorsLabel, explanation, description, none, intSpecies, species,
+							spLabel, speciesLabel, addIntSpecies, editIntSpecies, removeIntSpecies,
+							rapid1, rapid2, qssa, maxCon, rapidLabel1, rapidLabel2, qssaLabel,
+							maxConLabel, usingSSA, clearIntSpecies, fileStem, fileStemLabel,
+							preAbs, loopAbs, postAbs, preAbsLabel, loopAbsLabel, postAbsLabel,
+							addPreAbs, rmPreAbs, editPreAbs, addLoopAbs, rmLoopAbs, editLoopAbs,
+							addPostAbs, rmPostAbs, editPostAbs, lhpn);
 				}
 				else if (load.getProperty("reb2sac.abstraction.method").equals("abs")) {
 					abstraction.setSelected(true);
 					Button_Enabling.enableNoneOrAbs(ODE, monteCarlo, markov, seed, seedLabel, runs,
-							runsLabel, minStepLabel, minStep, stepLabel, step, errorLabel, absErr, limitLabel, limit,
-							intervalLabel, interval, simulators, simulatorsLabel, explanation,
-							description, none, intSpecies, species, spLabel, speciesLabel,
-							addIntSpecies, removeIntSpecies, rapid1, rapid2, qssa, maxCon,
-							rapidLabel1, rapidLabel2, qssaLabel, maxConLabel, usingSSA,
-							clearIntSpecies, fileStem, fileStemLabel, preAbs, loopAbs, postAbs,
-							preAbsLabel, loopAbsLabel, postAbsLabel, addPreAbs, rmPreAbs,
-							editPreAbs, addLoopAbs, rmLoopAbs, editLoopAbs, addPostAbs, rmPostAbs,
-							editPostAbs, lhpn);
+							runsLabel, minStepLabel, minStep, stepLabel, step, errorLabel, absErr,
+							limitLabel, limit, intervalLabel, interval, simulators,
+							simulatorsLabel, explanation, description, none, intSpecies, species,
+							spLabel, speciesLabel, addIntSpecies, editIntSpecies, removeIntSpecies,
+							rapid1, rapid2, qssa, maxCon, rapidLabel1, rapidLabel2, qssaLabel,
+							maxConLabel, usingSSA, clearIntSpecies, fileStem, fileStemLabel,
+							preAbs, loopAbs, postAbs, preAbsLabel, loopAbsLabel, postAbsLabel,
+							addPreAbs, rmPreAbs, editPreAbs, addLoopAbs, rmLoopAbs, editLoopAbs,
+							addPostAbs, rmPostAbs, editPostAbs, lhpn);
 				}
 				else {
 					nary.setSelected(true);
 					Button_Enabling.enableNary(ODE, monteCarlo, markov, seed, seedLabel, runs,
-							runsLabel, minStepLabel, minStep, stepLabel, step, errorLabel, absErr, limitLabel, limit,
-							intervalLabel, interval, simulators, simulatorsLabel, explanation,
-							description, intSpecies, species, spLabel, speciesLabel, addIntSpecies,
-							removeIntSpecies, rapid1, rapid2, qssa, maxCon, rapidLabel1,
-							rapidLabel2, qssaLabel, maxConLabel, usingSSA, clearIntSpecies,
-							fileStem, fileStemLabel, preAbs, loopAbs, postAbs, preAbsLabel,
-							loopAbsLabel, postAbsLabel, addPreAbs, rmPreAbs, editPreAbs,
-							addLoopAbs, rmLoopAbs, editLoopAbs, addPostAbs, rmPostAbs, editPostAbs,
-							lhpn, gcmEditor);
+							runsLabel, minStepLabel, minStep, stepLabel, step, errorLabel, absErr,
+							limitLabel, limit, intervalLabel, interval, simulators,
+							simulatorsLabel, explanation, description, intSpecies, species,
+							spLabel, speciesLabel, addIntSpecies, editIntSpecies, removeIntSpecies,
+							rapid1, rapid2, qssa, maxCon, rapidLabel1, rapidLabel2, qssaLabel,
+							maxConLabel, usingSSA, clearIntSpecies, fileStem, fileStemLabel,
+							preAbs, loopAbs, postAbs, preAbsLabel, loopAbsLabel, postAbsLabel,
+							addPreAbs, rmPreAbs, editPreAbs, addLoopAbs, rmLoopAbs, editLoopAbs,
+							addPostAbs, rmPostAbs, editPostAbs, lhpn, gcmEditor);
 				}
 				if (load.containsKey("ode.simulation.absolute.error")) {
 					absErr.setText(load.getProperty("ode.simulation.absolute.error"));
@@ -3885,10 +3894,10 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 						if (load.containsKey("ode.simulation.min.time.step")) {
 							minStep.setText(load.getProperty("ode.simulation.min.time.step"));
 						}
-						Button_Enabling.enableODE(seed, seedLabel, runs, runsLabel, minStepLabel, minStep, stepLabel,
-								step, errorLabel, absErr, limitLabel, limit, intervalLabel,
-								interval, simulators, simulatorsLabel, explanation, description,
-								usingSSA, fileStem, fileStemLabel, postAbs);
+						Button_Enabling.enableODE(seed, seedLabel, runs, runsLabel, minStepLabel,
+								minStep, stepLabel, step, errorLabel, absErr, limitLabel, limit,
+								intervalLabel, interval, simulators, simulatorsLabel, explanation,
+								description, usingSSA, fileStem, fileStemLabel, postAbs);
 						if (load.containsKey("selected.simulator")) {
 							simulators.setSelectedItem(load.getProperty("selected.simulator"));
 						}
@@ -3914,9 +3923,10 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 							choose3.setEnabled(true);
 						}
 						Button_Enabling.enableMonteCarlo(seed, seedLabel, runs, runsLabel,
-								minStepLabel, minStep, stepLabel, step, errorLabel, absErr, limitLabel, limit,
-								intervalLabel, interval, simulators, simulatorsLabel, explanation,
-								description, usingSSA, fileStem, fileStemLabel, postAbs);
+								minStepLabel, minStep, stepLabel, step, errorLabel, absErr,
+								limitLabel, limit, intervalLabel, interval, simulators,
+								simulatorsLabel, explanation, description, usingSSA, fileStem,
+								fileStemLabel, postAbs);
 						if (load.containsKey("selected.simulator")) {
 							simulators.setSelectedItem(load.getProperty("selected.simulator"));
 						}
@@ -3927,42 +3937,47 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					}
 					else if (load.getProperty("reb2sac.simulation.method").equals("markov")) {
 						markov.setSelected(true);
-						Button_Enabling.enableMarkov(seed, seedLabel, runs, runsLabel, minStepLabel, minStep, stepLabel,
-								step, errorLabel, absErr, limitLabel, limit, intervalLabel,
-								interval, simulators, simulatorsLabel, explanation, description,
-								usingSSA, fileStem, fileStemLabel, gcmEditor, postAbs);
+						Button_Enabling.enableMarkov(seed, seedLabel, runs, runsLabel,
+								minStepLabel, minStep, stepLabel, step, errorLabel, absErr,
+								limitLabel, limit, intervalLabel, interval, simulators,
+								simulatorsLabel, explanation, description, usingSSA, fileStem,
+								fileStemLabel, gcmEditor, postAbs);
 						absErr.setEnabled(false);
 					}
 					else if (load.getProperty("reb2sac.simulation.method").equals("SBML")) {
 						sbml.setSelected(true);
 						Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel,
-								minStepLabel, minStep, stepLabel, step, errorLabel, absErr, limitLabel, limit,
-								intervalLabel, interval, simulators, simulatorsLabel, explanation,
-								description, fileStem, fileStemLabel, postAbs);
+								minStepLabel, minStep, stepLabel, step, errorLabel, absErr,
+								limitLabel, limit, intervalLabel, interval, simulators,
+								simulatorsLabel, explanation, description, fileStem, fileStemLabel,
+								postAbs);
 						absErr.setEnabled(false);
 					}
 					else if (load.getProperty("reb2sac.simulation.method").equals("Network")) {
 						dot.setSelected(true);
 						Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel,
-								minStepLabel, minStep, stepLabel, step, errorLabel, absErr, limitLabel, limit,
-								intervalLabel, interval, simulators, simulatorsLabel, explanation,
-								description, fileStem, fileStemLabel, postAbs);
+								minStepLabel, minStep, stepLabel, step, errorLabel, absErr,
+								limitLabel, limit, intervalLabel, interval, simulators,
+								simulatorsLabel, explanation, description, fileStem, fileStemLabel,
+								postAbs);
 						absErr.setEnabled(false);
 					}
 					else if (load.getProperty("reb2sac.simulation.method").equals("Browser")) {
 						xhtml.setSelected(true);
 						Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel,
-								minStepLabel, minStep, stepLabel, step, errorLabel, absErr, limitLabel, limit,
-								intervalLabel, interval, simulators, simulatorsLabel, explanation,
-								description, fileStem, fileStemLabel, postAbs);
+								minStepLabel, minStep, stepLabel, step, errorLabel, absErr,
+								limitLabel, limit, intervalLabel, interval, simulators,
+								simulatorsLabel, explanation, description, fileStem, fileStemLabel,
+								postAbs);
 						absErr.setEnabled(false);
 					}
 					else if (load.getProperty("reb2sac.simulation.method").equals("LPHN")) {
 						lhpn.setSelected(true);
 						Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel,
-								minStepLabel, minStep, stepLabel, step, errorLabel, absErr, limitLabel, limit,
-								intervalLabel, interval, simulators, simulatorsLabel, explanation,
-								description, fileStem, fileStemLabel, postAbs);
+								minStepLabel, minStep, stepLabel, step, errorLabel, absErr,
+								limitLabel, limit, intervalLabel, interval, simulators,
+								simulatorsLabel, explanation, description, fileStem, fileStemLabel,
+								postAbs);
 						absErr.setEnabled(false);
 					}
 				}
@@ -3994,7 +4009,23 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				getLists = new ArrayList<String>();
 				i = 1;
 				while (load.containsKey("reb2sac.interesting.species." + i)) {
-					getLists.add(load.getProperty("reb2sac.interesting.species." + i));
+					String species = load.getProperty("reb2sac.interesting.species." + i);
+					int j = 2;
+					String interesting = " ";
+					if (load.containsKey("reb2sac.concentration.level." + species + ".1")) {
+						interesting += load.getProperty("reb2sac.concentration.level." + species
+								+ ".1");
+					}
+					while (load.containsKey("reb2sac.concentration.level." + species + "." + j)) {
+						interesting += ","
+								+ load.getProperty("reb2sac.concentration.level." + species + "."
+										+ j);
+						j++;
+					}
+					if (!interesting.equals(" ")) {
+						species += interesting;
+					}
+					getLists.add(species);
 					i++;
 				}
 				interestingSpecies = getLists.toArray();
@@ -4146,6 +4177,254 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 
 	public boolean hasChanged() {
 		return change;
+	}
+
+	private void addInterstingSpecies() {
+		ArrayList<String> intSpecs = new ArrayList<String>();
+		for (Object spec : interestingSpecies) {
+			intSpecs.add(((String) spec).split(" ")[0]);
+		}
+		for (Object spec : intSpecies.getSelectedValues()) {
+			if (intSpecs.contains((String) spec)) {
+				JOptionPane
+						.showMessageDialog(biomodelsim.frame(), spec
+								+ " is already an interesting species.", "Error",
+								JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+		}
+		JTabbedPane naryTabs = new JTabbedPane();
+		ArrayList<JPanel> specProps = new ArrayList<JPanel>();
+		final ArrayList<JTextField> texts = new ArrayList<JTextField>();
+		final ArrayList<JList> consLevel = new ArrayList<JList>();
+		final ArrayList<Object[]> conLevel = new ArrayList<Object[]>();
+		final ArrayList<String> specs = new ArrayList<String>();
+		for (Object spec : intSpecies.getSelectedValues()) {
+			specs.add((String) spec);
+			JPanel newPanel1 = new JPanel(new GridLayout(1, 2));
+			JPanel newPanel2 = new JPanel(new GridLayout(1, 2));
+			JPanel otherLabel = new JPanel();
+			otherLabel.add(new JLabel(spec + " Amount:"));
+			newPanel2.add(otherLabel);
+			consLevel.add(new JList());
+			conLevel.add(new Object[0]);
+			consLevel.get(consLevel.size() - 1).setListData(new Object[0]);
+			conLevel.set(conLevel.size() - 1, new Object[0]);
+			JScrollPane scroll = new JScrollPane();
+			scroll.setPreferredSize(new Dimension(260, 100));
+			scroll.setViewportView(consLevel.get(consLevel.size() - 1));
+			JPanel area = new JPanel();
+			area.add(scroll);
+			newPanel2.add(area);
+			JPanel addAndRemove = new JPanel();
+			JTextField adding = new JTextField(15);
+			texts.add(adding);
+			JButton Add = new JButton("Add");
+			JButton Remove = new JButton("Remove");
+			Add.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					int number = Integer.parseInt(e.getActionCommand().substring(3,
+							e.getActionCommand().length()));
+					try {
+						int get = Integer.parseInt(texts.get(number).getText().trim());
+						if (get <= 0) {
+							JOptionPane.showMessageDialog(biomodelsim.frame(),
+									"Amounts Must Be Positive Integers.", "Error",
+									JOptionPane.ERROR_MESSAGE);
+						}
+						else {
+							JList add = new JList();
+							Object[] adding = { "" + get };
+							add.setListData(adding);
+							add.setSelectedIndex(0);
+							Object[] sort = Buttons.add(conLevel.get(number),
+									consLevel.get(number), add, false, null, null, null, null,
+									null, null, biomodelsim.frame());
+							int in;
+							for (int out = 1; out < sort.length; out++) {
+								int temp = Integer.parseInt((String) sort[out]);
+								in = out;
+								while (in > 0 && Integer.parseInt((String) sort[in - 1]) >= temp) {
+									sort[in] = sort[in - 1];
+									--in;
+								}
+								sort[in] = temp + "";
+							}
+							conLevel.set(number, sort);
+						}
+					}
+					catch (Exception e1) {
+						JOptionPane.showMessageDialog(biomodelsim.frame(),
+								"Amounts Must Be Positive Integers.", "Error",
+								JOptionPane.ERROR_MESSAGE);
+					}
+				}
+			});
+			Add.setActionCommand("Add" + (consLevel.size() - 1));
+			Remove.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					int number = Integer.parseInt(e.getActionCommand().substring(6,
+							e.getActionCommand().length()));
+					conLevel.set(number, Buttons
+							.remove(consLevel.get(number), conLevel.get(number)));
+				}
+			});
+			Remove.setActionCommand("Remove" + (consLevel.size() - 1));
+			addAndRemove.add(adding);
+			addAndRemove.add(Add);
+			addAndRemove.add(Remove);
+			JPanel newnewPanel = new JPanel(new BorderLayout());
+			newnewPanel.add(newPanel1, "North");
+			newnewPanel.add(newPanel2, "Center");
+			newnewPanel.add(addAndRemove, "South");
+			specProps.add(newnewPanel);
+			naryTabs.addTab(spec + " Properties", specProps.get(specProps.size() - 1));
+		}
+		Object[] options = { "Add", "Cancel" };
+		int value = JOptionPane.showOptionDialog(biomodelsim.frame(), naryTabs, "Thresholds",
+				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+		if (value == JOptionPane.YES_OPTION) {
+			String[] add = new String[specs.size()];
+			for (int i = 0; i < specs.size(); i++) {
+				add[i] = specs.get(i);
+				if (conLevel.get(i).length > 0) {
+					add[i] += " " + conLevel.get(i)[0];
+				}
+				for (int j = 1; j < conLevel.get(i).length; j++) {
+					add[i] += "," + conLevel.get(i)[j];
+				}
+			}
+			JList list = new JList(add);
+			int[] select = new int[add.length];
+			for (int i = 0; i < add.length; i++) {
+				select[i] = i;
+			}
+			list.setSelectedIndices(select);
+			interestingSpecies = Buttons.add(interestingSpecies, species, list, false, amountTerm,
+					ge, gt, eq, lt, le, biomodelsim.frame());
+		}
+	}
+
+	private void editInterstingSpecies() {
+		JTabbedPane naryTabs = new JTabbedPane();
+		ArrayList<JPanel> specProps = new ArrayList<JPanel>();
+		final ArrayList<JTextField> texts = new ArrayList<JTextField>();
+		final ArrayList<JList> consLevel = new ArrayList<JList>();
+		final ArrayList<Object[]> conLevel = new ArrayList<Object[]>();
+		final ArrayList<String> specs = new ArrayList<String>();
+		for (Object spec : species.getSelectedValues()) {
+			String[] split = ((String) spec).split(" ");
+			specs.add(split[0]);
+			JPanel newPanel1 = new JPanel(new GridLayout(1, 2));
+			JPanel newPanel2 = new JPanel(new GridLayout(1, 2));
+			JPanel otherLabel = new JPanel();
+			otherLabel.add(new JLabel(split[0] + " Amount:"));
+			newPanel2.add(otherLabel);
+			consLevel.add(new JList());
+			Object[] cons;
+			if (split.length > 1) {
+				cons = split[1].split(",");
+			}
+			else {
+				cons = new Object[0];
+			}
+			conLevel.add(cons);
+			consLevel.get(consLevel.size() - 1).setListData(cons);
+			conLevel.set(conLevel.size() - 1, cons);
+			JScrollPane scroll = new JScrollPane();
+			scroll.setPreferredSize(new Dimension(260, 100));
+			scroll.setViewportView(consLevel.get(consLevel.size() - 1));
+			JPanel area = new JPanel();
+			area.add(scroll);
+			newPanel2.add(area);
+			JPanel addAndRemove = new JPanel();
+			JTextField adding = new JTextField(15);
+			texts.add(adding);
+			JButton Add = new JButton("Add");
+			JButton Remove = new JButton("Remove");
+			Add.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					int number = Integer.parseInt(e.getActionCommand().substring(3,
+							e.getActionCommand().length()));
+					try {
+						int get = Integer.parseInt(texts.get(number).getText().trim());
+						if (get <= 0) {
+							JOptionPane.showMessageDialog(biomodelsim.frame(),
+									"Amounts Must Be Positive Integers.", "Error",
+									JOptionPane.ERROR_MESSAGE);
+						}
+						else {
+							JList add = new JList();
+							Object[] adding = { "" + get };
+							add.setListData(adding);
+							add.setSelectedIndex(0);
+							Object[] sort = Buttons.add(conLevel.get(number),
+									consLevel.get(number), add, false, null, null, null, null,
+									null, null, biomodelsim.frame());
+							int in;
+							for (int out = 1; out < sort.length; out++) {
+								int temp = Integer.parseInt((String) sort[out]);
+								in = out;
+								while (in > 0 && Integer.parseInt((String) sort[in - 1]) >= temp) {
+									sort[in] = sort[in - 1];
+									--in;
+								}
+								sort[in] = temp + "";
+							}
+							conLevel.set(number, sort);
+						}
+					}
+					catch (Exception e1) {
+						JOptionPane.showMessageDialog(biomodelsim.frame(),
+								"Amounts Must Be Positive Integers.", "Error",
+								JOptionPane.ERROR_MESSAGE);
+					}
+				}
+			});
+			Add.setActionCommand("Add" + (consLevel.size() - 1));
+			Remove.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					int number = Integer.parseInt(e.getActionCommand().substring(6,
+							e.getActionCommand().length()));
+					conLevel.set(number, Buttons
+							.remove(consLevel.get(number), conLevel.get(number)));
+				}
+			});
+			Remove.setActionCommand("Remove" + (consLevel.size() - 1));
+			addAndRemove.add(adding);
+			addAndRemove.add(Add);
+			addAndRemove.add(Remove);
+			JPanel newnewPanel = new JPanel(new BorderLayout());
+			newnewPanel.add(newPanel1, "North");
+			newnewPanel.add(newPanel2, "Center");
+			newnewPanel.add(addAndRemove, "South");
+			specProps.add(newnewPanel);
+			naryTabs.addTab(split[0] + " Properties", specProps.get(specProps.size() - 1));
+		}
+		Object[] options = { "Add", "Cancel" };
+		int value = JOptionPane.showOptionDialog(biomodelsim.frame(), naryTabs, "Thresholds",
+				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+		if (value == JOptionPane.YES_OPTION) {
+			Buttons.remove(species);
+			String[] add = new String[specs.size()];
+			for (int i = 0; i < specs.size(); i++) {
+				add[i] = specs.get(i);
+				if (conLevel.get(i).length > 0) {
+					add[i] += " " + conLevel.get(i)[0];
+				}
+				for (int j = 1; j < conLevel.get(i).length; j++) {
+					add[i] += "," + conLevel.get(i)[j];
+				}
+			}
+			JList list = new JList(add);
+			int[] select = new int[add.length];
+			for (int i = 0; i < add.length; i++) {
+				select[i] = i;
+			}
+			list.setSelectedIndices(select);
+			interestingSpecies = Buttons.add(interestingSpecies, species, list, false, amountTerm,
+					ge, gt, eq, lt, le, biomodelsim.frame());
+		}
 	}
 
 	public void addToIntSpecies(String newSpecies) {

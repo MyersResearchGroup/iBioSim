@@ -587,6 +587,7 @@ public class Buttons {
 				num++;
 			}
 		}
+		sort(currentList);
 		list.setListData(currentList);
 		return currentList;
 	}
@@ -612,5 +613,19 @@ public class Buttons {
 			}
 		}
 		return list;
+	}
+
+	private static void sort(Object[] sort) {
+		int i, j;
+		String index;
+		for (i = 1; i < sort.length; i++) {
+			index = (String) sort[i];
+			j = i;
+			while ((j > 0) && ((String) sort[j - 1]).compareToIgnoreCase(index) > 0) {
+				sort[j] = sort[j - 1];
+				j = j - 1;
+			}
+			sort[j] = index;
+		}
 	}
 }

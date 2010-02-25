@@ -23,19 +23,19 @@ public class Button_Enabling {
 	 */
 	public static void enableNoneOrAbs(JRadioButton ODE, JRadioButton monteCarlo,
 			JRadioButton markov, JTextField seed, JLabel seedLabel, JTextField runs,
-			JLabel runsLabel, JLabel minStepLabel, JTextField minStep, 
-			JLabel stepLabel, JTextField step, JLabel errorLabel,
-			JTextField absErr, JLabel limitLabel, JTextField limit, JComboBox intervalLabel,
-			JTextField interval, JComboBox simulators, JLabel simulatorsLabel, JLabel explanation,
-			JLabel description, JRadioButton none, JList intSpecies, JList species, JLabel spLabel,
-			JLabel speciesLabel, JButton addIntSpecies, JButton removeIntSpecies,
+			JLabel runsLabel, JLabel minStepLabel, JTextField minStep, JLabel stepLabel,
+			JTextField step, JLabel errorLabel, JTextField absErr, JLabel limitLabel,
+			JTextField limit, JComboBox intervalLabel, JTextField interval, JComboBox simulators,
+			JLabel simulatorsLabel, JLabel explanation, JLabel description, JRadioButton none,
+			JList intSpecies, JList species, JLabel spLabel, JLabel speciesLabel,
+			JButton addIntSpecies, JButton editIntSpecies, JButton removeIntSpecies,
 			JTextField rapid1, JTextField rapid2, JTextField qssa, JTextField maxCon,
 			JLabel rapidLabel1, JLabel rapidLabel2, JLabel qssaLabel, JLabel maxConLabel,
 			JCheckBox usingSSA, JButton clearIntSpecies, JTextField fileStem, JLabel fileStemLabel,
-			JList preAbs, JList loopAbs, JList postAbs, JLabel preAbsLabel, JLabel loopAbsLabel, 
-			JLabel postAbsLabel,JButton addPreAbs,JButton rmPreAbs,JButton editPreAbs, JButton addLoopAbs,
-			JButton rmLoopAbs,JButton editLoopAbs,JButton addPostAbs,JButton rmPostAbs,JButton editPostAbs,
-			JRadioButton lhpn) {
+			JList preAbs, JList loopAbs, JList postAbs, JLabel preAbsLabel, JLabel loopAbsLabel,
+			JLabel postAbsLabel, JButton addPreAbs, JButton rmPreAbs, JButton editPreAbs,
+			JButton addLoopAbs, JButton rmLoopAbs, JButton editLoopAbs, JButton addPostAbs,
+			JButton rmPostAbs, JButton editPostAbs, JRadioButton lhpn) {
 		if (!usingSSA.isSelected()) {
 			ODE.setEnabled(true);
 		}
@@ -63,6 +63,7 @@ public class Button_Enabling {
 			spLabel.setEnabled(false);
 			speciesLabel.setEnabled(false);
 			addIntSpecies.setEnabled(false);
+			editIntSpecies.setEnabled(false);
 			removeIntSpecies.setEnabled(false);
 			clearIntSpecies.setEnabled(false);
 			maxConLabel.setEnabled(false);
@@ -107,6 +108,7 @@ public class Button_Enabling {
 			spLabel.setEnabled(true);
 			speciesLabel.setEnabled(true);
 			addIntSpecies.setEnabled(true);
+			editIntSpecies.setEnabled(true);
 			removeIntSpecies.setEnabled(true);
 			clearIntSpecies.setEnabled(true);
 			maxConLabel.setEnabled(true);
@@ -192,19 +194,19 @@ public class Button_Enabling {
 	 * @param lhpn
 	 */
 	public static void enableNary(JRadioButton ODE, JRadioButton monteCarlo, JRadioButton markov,
-			JTextField seed, JLabel seedLabel, JTextField runs, JLabel runsLabel, 
-			JLabel minStepLabel, JTextField minStep, 
-			JLabel stepLabel, JTextField step, JLabel errorLabel, JTextField absErr, JLabel limitLabel,
-			JTextField limit, JComboBox intervalLabel, JTextField interval, JComboBox simulators,
+			JTextField seed, JLabel seedLabel, JTextField runs, JLabel runsLabel,
+			JLabel minStepLabel, JTextField minStep, JLabel stepLabel, JTextField step,
+			JLabel errorLabel, JTextField absErr, JLabel limitLabel, JTextField limit,
+			JComboBox intervalLabel, JTextField interval, JComboBox simulators,
 			JLabel simulatorsLabel, JLabel explanation, JLabel description, JList intSpecies,
 			JList species, JLabel spLabel, JLabel speciesLabel, JButton addIntSpecies,
-			JButton removeIntSpecies, JTextField rapid1, JTextField rapid2, JTextField qssa,
-			JTextField maxCon, JLabel rapidLabel1, JLabel rapidLabel2, JLabel qssaLabel,
-			JLabel maxConLabel, JCheckBox usingSSA, JButton clearIntSpecies, JTextField fileStem,
-			JLabel fileStemLabel, 
-			JList preAbs, JList loopAbs, JList postAbs, JLabel preAbsLabel, JLabel loopAbsLabel, 
-			JLabel postAbsLabel,JButton addPreAbs,JButton rmPreAbs,JButton editPreAbs, JButton addLoopAbs,
-			JButton rmLoopAbs,JButton editLoopAbs,JButton addPostAbs,JButton rmPostAbs,JButton editPostAbs,
+			JButton editIntSpecies, JButton removeIntSpecies, JTextField rapid1, JTextField rapid2,
+			JTextField qssa, JTextField maxCon, JLabel rapidLabel1, JLabel rapidLabel2,
+			JLabel qssaLabel, JLabel maxConLabel, JCheckBox usingSSA, JButton clearIntSpecies,
+			JTextField fileStem, JLabel fileStemLabel, JList preAbs, JList loopAbs, JList postAbs,
+			JLabel preAbsLabel, JLabel loopAbsLabel, JLabel postAbsLabel, JButton addPreAbs,
+			JButton rmPreAbs, JButton editPreAbs, JButton addLoopAbs, JButton rmLoopAbs,
+			JButton editLoopAbs, JButton addPostAbs, JButton rmPostAbs, JButton editPostAbs,
 			JRadioButton lhpn, GCM2SBMLEditor gcmEditor) {
 		ODE.setEnabled(false);
 		monteCarlo.setEnabled(true);
@@ -234,6 +236,7 @@ public class Button_Enabling {
 		spLabel.setEnabled(true);
 		speciesLabel.setEnabled(true);
 		addIntSpecies.setEnabled(true);
+		editIntSpecies.setEnabled(true);
 		removeIntSpecies.setEnabled(true);
 		clearIntSpecies.setEnabled(true);
 		maxConLabel.setEnabled(true);
@@ -310,10 +313,11 @@ public class Button_Enabling {
 	 * This static method enables and disables the required fields for ODE.
 	 */
 	public static void enableODE(JTextField seed, JLabel seedLabel, JTextField runs,
-			JLabel runsLabel, JLabel minStepLabel, JTextField minStep, JLabel stepLabel, JTextField step, JLabel errorLabel,
-			JTextField absErr, JLabel limitLabel, JTextField limit, JComboBox intervalLabel,
-			JTextField interval, JComboBox simulators, JLabel simulatorsLabel, JLabel explanation,
-			JLabel description, JCheckBox usingSSA, JTextField fileStem, JLabel fileStemLabel, JList postAbs) {
+			JLabel runsLabel, JLabel minStepLabel, JTextField minStep, JLabel stepLabel,
+			JTextField step, JLabel errorLabel, JTextField absErr, JLabel limitLabel,
+			JTextField limit, JComboBox intervalLabel, JTextField interval, JComboBox simulators,
+			JLabel simulatorsLabel, JLabel explanation, JLabel description, JCheckBox usingSSA,
+			JTextField fileStem, JLabel fileStemLabel, JList postAbs) {
 		seed.setEnabled(true);
 		seedLabel.setEnabled(true);
 		runs.setEnabled(true);
@@ -358,10 +362,11 @@ public class Button_Enabling {
 	 * @param fileStem
 	 */
 	public static void enableMonteCarlo(JTextField seed, JLabel seedLabel, JTextField runs,
-			JLabel runsLabel, JLabel minStepLabel, JTextField minStep, JLabel stepLabel, JTextField step, JLabel errorLabel,
-			JTextField absErr, JLabel limitLabel, JTextField limit, JComboBox intervalLabel,
-			JTextField interval, JComboBox simulators, JLabel simulatorsLabel, JLabel explanation,
-			JLabel description, JCheckBox usingSSA, JTextField fileStem, JLabel fileStemLabel, JList postAbs) {
+			JLabel runsLabel, JLabel minStepLabel, JTextField minStep, JLabel stepLabel,
+			JTextField step, JLabel errorLabel, JTextField absErr, JLabel limitLabel,
+			JTextField limit, JComboBox intervalLabel, JTextField interval, JComboBox simulators,
+			JLabel simulatorsLabel, JLabel explanation, JLabel description, JCheckBox usingSSA,
+			JTextField fileStem, JLabel fileStemLabel, JList postAbs) {
 		seed.setEnabled(true);
 		seedLabel.setEnabled(true);
 		runs.setEnabled(true);
@@ -405,11 +410,11 @@ public class Button_Enabling {
 	 * This static method enables and disables the required fields for Markov.
 	 */
 	public static void enableMarkov(JTextField seed, JLabel seedLabel, JTextField runs,
-			JLabel runsLabel, JLabel minStepLabel, JTextField minStep, JLabel stepLabel, JTextField step, JLabel errorLabel,
-			JTextField absErr, JLabel limitLabel, JTextField limit, JComboBox intervalLabel,
-			JTextField interval, JComboBox simulators, JLabel simulatorsLabel, JLabel explanation,
-			JLabel description, JCheckBox usingSSA, JTextField fileStem, JLabel fileStemLabel,
-			GCM2SBMLEditor gcmEditor, JList postAbs) {
+			JLabel runsLabel, JLabel minStepLabel, JTextField minStep, JLabel stepLabel,
+			JTextField step, JLabel errorLabel, JTextField absErr, JLabel limitLabel,
+			JTextField limit, JComboBox intervalLabel, JTextField interval, JComboBox simulators,
+			JLabel simulatorsLabel, JLabel explanation, JLabel description, JCheckBox usingSSA,
+			JTextField fileStem, JLabel fileStemLabel, GCM2SBMLEditor gcmEditor, JList postAbs) {
 		seed.setEnabled(false);
 		seedLabel.setEnabled(false);
 		runs.setEnabled(false);
@@ -449,10 +454,11 @@ public class Button_Enabling {
 	 * dot, and xhtml.
 	 */
 	public static void enableSbmlDotAndXhtml(JTextField seed, JLabel seedLabel, JTextField runs,
-			JLabel runsLabel, JLabel minStepLabel, JTextField minStep, JLabel stepLabel, JTextField step, JLabel errorLabel,
-			JTextField absErr, JLabel limitLabel, JTextField limit, JComboBox intervalLabel,
-			JTextField interval, JComboBox simulators, JLabel simulatorsLabel, JLabel explanation,
-			JLabel description, JTextField fileStem, JLabel fileStemLabel, JList postAbs) {
+			JLabel runsLabel, JLabel minStepLabel, JTextField minStep, JLabel stepLabel,
+			JTextField step, JLabel errorLabel, JTextField absErr, JLabel limitLabel,
+			JTextField limit, JComboBox intervalLabel, JTextField interval, JComboBox simulators,
+			JLabel simulatorsLabel, JLabel explanation, JLabel description, JTextField fileStem,
+			JLabel fileStemLabel, JList postAbs) {
 		seed.setEnabled(false);
 		seedLabel.setEnabled(false);
 		runs.setEnabled(false);
