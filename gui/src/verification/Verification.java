@@ -783,6 +783,20 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 
 	public void run() {
 		long time1 = System.nanoTime();
+		File work = new File(directory);
+		if (!preprocStr.getText().equals("")) {
+			try {
+				String preprocCmd = preprocStr.getText();
+				Runtime exec = Runtime.getRuntime();
+				Process preproc = exec.exec(preprocCmd, null, work);
+				log.addText("Executing:\n" + preprocCmd + "\n");
+				preproc.waitFor();
+			}
+			catch (Exception e) {
+				JOptionPane.showMessageDialog(biosim.frame(), "Error with preprocessing.", "Error",
+						JOptionPane.ERROR_MESSAGE);
+			}
+		}
 		copyFile();
 		String[] array = directory.split(separator);
 		String tempDir = "";
@@ -794,7 +808,6 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		else {
 			lpnFile = verifyFile;
 		}
-		File work = new File(directory);
 		try {
 			if (verifyFile.endsWith(".lpn")) {
 				Runtime.getRuntime().exec("atacs -llsl " + verifyFile, null, work);
@@ -823,6 +836,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		else {
 			abstFilename = lpnFile.replace(".lpn", "_abs.lpn");
 		}
+		String sourceFile;
 		if (simplify.isSelected() || abstractLhpn.isSelected()) {
 			String[] boolVars = lhpnFile.getBooleanVars();
 			String[] contVars = lhpnFile.getContVars();
@@ -853,6 +867,10 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			if (!lhpn.isSelected() && !view.isSelected()) {
 				abstraction.save(directory + separator + abstFilename);
 			}
+			sourceFile = abstFilename;
+		} else {
+			String[] tempArray = verifyFile.split(separator);
+			sourceFile = tempArray[tempArray.length - 1];
 		}
 		if (!lhpn.isSelected() && !view.isSelected()) {
 			abstraction.save(directory + separator + abstFilename);
@@ -866,16 +884,16 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			String dotName = "";
 			if (componentField.getText().trim().equals("")) {
 				if (verifyFile.endsWith(".g")) {
-					pargName = directory + separator + verifyFile.replace(".g", ".prg");
-					dotName = directory + separator + verifyFile.replace(".g", ".dot");
+					pargName = directory + separator + sourceFile.replace(".g", ".prg");
+					dotName = directory + separator + sourceFile.replace(".g", ".dot");
 				}
 				else if (verifyFile.endsWith(".lpn")) {
-					pargName = directory + separator + verifyFile.replace(".lpn", ".prg");
-					dotName = directory + separator + verifyFile.replace(".lpn", ".dot");
+					pargName = directory + separator + sourceFile.replace(".lpn", ".prg");
+					dotName = directory + separator + sourceFile.replace(".lpn", ".dot");
 				}
 				else if (verifyFile.endsWith(".vhd")) {
-					pargName = directory + separator + verifyFile.replace(".vhd", ".prg");
-					dotName = directory + separator + verifyFile.replace(".vhd", ".dot");
+					pargName = directory + separator + sourceFile.replace(".vhd", ".prg");
+					dotName = directory + separator + sourceFile.replace(".vhd", ".dot");
 				}
 			}
 			else {
@@ -912,8 +930,6 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 							+ ".", "Error", JOptionPane.ERROR_MESSAGE);
 				}
 			}
-			tempArray = verifyFile.split(separator);
-			String sourceFile = tempArray[tempArray.length - 1];
 			// String[] workArray = directory.split(separator);
 			// String workDir = "";
 			// for (int i = 0; i < (workArray.length - 1); i++) {
@@ -1069,12 +1085,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			for (String s : components) {
 				cmd = cmd + " " + s;
 			}
-			if (simplify.isSelected() || abstractLhpn.isSelected())	 {
-				cmd = cmd + " " + abstFilename;
-			}
-			else {
-				cmd = cmd + " " + sourceFile;
-			}
+			cmd = cmd + " " + sourceFile;
 			if (!componentField.getText().trim().equals("")) {
 				cmd = cmd + " " + componentField.getText().trim();
 			}
@@ -1150,56 +1161,6 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			running.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 			work = new File(directory);
 			Runtime exec = Runtime.getRuntime();
-			if (!preprocStr.getText().equals("")) {
-				try {
-					String preprocCmd = preprocStr.getText();
-					final Process ver = exec.exec(preprocCmd, null, work);
-					cancel.setActionCommand("Cancel");
-					cancel.addActionListener(new ActionListener() {
-						public void actionPerformed(ActionEvent e) {
-							ver.destroy();
-							running.setCursor(null);
-							running.dispose();
-						}
-					});
-					biosim.getExitButton().setActionCommand("Exit program");
-					biosim.getExitButton().addActionListener(new ActionListener() {
-						public void actionPerformed(ActionEvent e) {
-							ver.destroy();
-							running.setCursor(null);
-							running.dispose();
-						}
-					});
-					log.addText("Executing:\n" + preprocCmd + "\n");
-					String output = "";
-					InputStream reb = ver.getInputStream();
-					InputStreamReader isr = new InputStreamReader(reb);
-					BufferedReader br = new BufferedReader(isr);
-					FileWriter out = new FileWriter(new File(directory + separator + "run.log"));
-					while ((output = br.readLine()) != null) {
-						out.write(output);
-						out.write("\n");
-					}
-					out.close();
-					br.close();
-					isr.close();
-					reb.close();
-					viewLog.setEnabled(true);
-					ver.waitFor();
-					running.setCursor(null);
-					running.dispose();
-					int exitValue = ver.waitFor();
-					if (exitValue == 143) {
-						JOptionPane.showMessageDialog(biosim.frame(), "Verification was"
-								+ " canceled by the user.", "Canceled Verification",
-								JOptionPane.ERROR_MESSAGE);
-					}
-				}
-				catch (Exception e) {
-					JOptionPane.showMessageDialog(biosim.frame(), "Unable to verify model.", "Error",
-							JOptionPane.ERROR_MESSAGE);
-				}
-			}
 			try {
 				final Process ver = exec.exec(cmd, null, work);
 				cancel.setActionCommand("Cancel");
