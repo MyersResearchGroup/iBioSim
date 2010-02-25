@@ -261,7 +261,7 @@ public class GCMFile {
 		naryFrame.setVisible(true);
 	}
 
-	private void flattenGCM() {
+	public void flattenGCM() {
 		ArrayList<String> comps = setToArrayList(components.keySet());
 		for (String s : comps) {
 			GCMFile file = new GCMFile(path);
