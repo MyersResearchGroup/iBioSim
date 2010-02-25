@@ -309,7 +309,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			}
 		}
 
-	}	
+	}
+
 	/**
 	 * This is the constructor for the Proj class. It initializes all the input
 	 * fields, puts them on panels, adds the panels to the frame, and then
@@ -2507,7 +2508,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			openSim();
 			Translator t1 = new Translator();
 			t1.BuildTemplate(tree.getFile());
-			
+
 		}
 		else if (e.getActionCommand().equals("openLearn")) {
 			if (lema) {
@@ -4010,8 +4011,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					}
 				}
 				catch (IOException e1) {
-					JOptionPane.showMessageDialog(frame, "Unable to create new assembly file.", "Error",
-							JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(frame, "Unable to create new assembly file.",
+							"Error", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		}
@@ -4019,8 +4020,9 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		else if (e.getSource() == newInst) {
 			if (root != null) {
 				try {
-					String InstName = JOptionPane.showInputDialog(frame, "Enter Instruction File Name:",
-							"Instruction File Name", JOptionPane.PLAIN_MESSAGE);
+					String InstName = JOptionPane.showInputDialog(frame,
+							"Enter Instruction File Name:", "Instruction File Name",
+							JOptionPane.PLAIN_MESSAGE);
 					if (InstName != null && !InstName.trim().equals("")) {
 						InstName = InstName.trim();
 						if (InstName.length() > 4) {
@@ -4076,8 +4078,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					}
 				}
 				catch (IOException e1) {
-					JOptionPane.showMessageDialog(frame, "Unable to create new instruction file.", "Error",
-							JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(frame, "Unable to create new instruction file.",
+							"Error", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		}
@@ -5167,7 +5169,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				JOptionPane.showMessageDialog(frame, "You must open or create a project first.",
 						"Error", JOptionPane.ERROR_MESSAGE);
 			}
-		}		
+		}
 		else if (e.getSource() == importInst) {
 			if (root != null) {
 				File importFile;
@@ -5761,7 +5763,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				lhpnFile.load(tree.getFile());
 				log.addText("Creating state graph.");
 				StateGraph sg = new StateGraph(lhpnFile);
-				sg.outputStateGraph(tree.getFile().replace(".lpn", ".dot"), false);
+				sg.outputStateGraph(tree.getFile().replace(".lpn", "_sg.dot"), false);
 				String command = "";
 				if (System.getProperty("os.name").contentEquals("Linux")) {
 					// directory = ENVVAR + "/docs/";
@@ -5777,11 +5779,11 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				}
 				String file = tree.getFile().split(separator)[tree.getFile().split(separator).length - 1];
 				log.addText("Executing:\n" + command + root + separator
-						+ (file.replace(".lpn", ".dot")) + "\n");
+						+ (file.replace(".lpn", "_sg.dot")) + "\n");
 				Runtime exec = Runtime.getRuntime();
 				File work = new File(root);
 				try {
-					exec.exec(command + (file.replace(".lpn", ".dot")), null, work);
+					exec.exec(command + (file.replace(".lpn", "_sg.dot")), null, work);
 				}
 				catch (IOException e1) {
 					JOptionPane.showMessageDialog(frame, "Unable to view state graph.", "Error",
@@ -5798,7 +5800,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				StateGraph sg = new StateGraph(lhpnFile);
 				log.addText("Performing Markov Chain analysis.");
 				sg.performMarkovianAnalysis(null);
-				sg.outputStateGraph(tree.getFile().replace(".lpn", ".dot"), true);
+				sg.outputStateGraph(tree.getFile().replace(".lpn", "_sg.dot"), true);
 				String command = "";
 				if (System.getProperty("os.name").contentEquals("Linux")) {
 					// directory = ENVVAR + "/docs/";
@@ -5814,11 +5816,11 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				}
 				String file = tree.getFile().split(separator)[tree.getFile().split(separator).length - 1];
 				log.addText("Executing:\n" + command + root + separator
-						+ (file.replace(".lpn", ".dot")) + "\n");
+						+ (file.replace(".lpn", "_sg.dot")) + "\n");
 				Runtime exec = Runtime.getRuntime();
 				File work = new File(root);
 				try {
-					exec.exec(command + (file.replace(".lpn", ".dot")), null, work);
+					exec.exec(command + (file.replace(".lpn", "_sg.dot")), null, work);
 				}
 				catch (IOException e1) {
 					JOptionPane.showMessageDialog(frame, "Unable to view state graph.", "Error",
@@ -6481,8 +6483,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 										tree.getFile().length() - 2).equals(".s"))
 								|| (tree.getFile().length() >= 5 && tree.getFile().substring(
 										tree.getFile().length() - 5).equals(".inst"))
-							|| (tree.getFile().length() >= 2 && tree.getFile().substring(
-									tree.getFile().length() - 2).equals(".g"))) {
+								|| (tree.getFile().length() >= 2 && tree.getFile().substring(
+										tree.getFile().length() - 2).equals(".g"))) {
 							FileOutputStream out = new FileOutputStream(new File(root + separator
 									+ copy));
 							FileInputStream in = new FileInputStream(new File(tree.getFile()));
@@ -8186,18 +8188,20 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				}
 				else if (tree.getFile().length() > 1
 						&& tree.getFile().substring(tree.getFile().length() - 2).equals(".s")) {
-//					JMenuItem createAnalysis = new JMenuItem("Create Analysis View");
-//					createAnalysis.addActionListener(this);
-//					createAnalysis.addMouseListener(this);
-//					createAnalysis.setActionCommand("createSim");
-//					JMenuItem createVerification = new JMenuItem("Create Verification View");
-//					createVerification.addActionListener(this);
-//					createVerification.addMouseListener(this);
-//					createVerification.setActionCommand("createVerify");
-//					JMenuItem viewModel = new JMenuItem("View Model");
-//					viewModel.addActionListener(this);
-//					viewModel.addMouseListener(this);
-//					viewModel.setActionCommand("viewModel");
+					// JMenuItem createAnalysis = new
+					// JMenuItem("Create Analysis View");
+					// createAnalysis.addActionListener(this);
+					// createAnalysis.addMouseListener(this);
+					// createAnalysis.setActionCommand("createSim");
+					// JMenuItem createVerification = new
+					// JMenuItem("Create Verification View");
+					// createVerification.addActionListener(this);
+					// createVerification.addMouseListener(this);
+					// createVerification.setActionCommand("createVerify");
+					// JMenuItem viewModel = new JMenuItem("View Model");
+					// viewModel.addActionListener(this);
+					// viewModel.addMouseListener(this);
+					// viewModel.setActionCommand("viewModel");
 					JMenuItem delete = new JMenuItem("Delete");
 					delete.addActionListener(this);
 					delete.addMouseListener(this);
@@ -8210,28 +8214,30 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					rename.addActionListener(this);
 					rename.addMouseListener(this);
 					rename.setActionCommand("rename");
-//					popup.add(createVerification);
-//					popup.addSeparator();
-//					popup.add(viewModel);
-//					popup.addSeparator();
+					// popup.add(createVerification);
+					// popup.addSeparator();
+					// popup.add(viewModel);
+					// popup.addSeparator();
 					popup.add(copy);
 					popup.add(rename);
 					popup.add(delete);
 				}
 				else if (tree.getFile().length() > 4
 						&& tree.getFile().substring(tree.getFile().length() - 5).equals(".inst")) {
-//					JMenuItem createAnalysis = new JMenuItem("Create Analysis View");
-//					createAnalysis.addActionListener(this);
-//					createAnalysis.addMouseListener(this);
-//					createAnalysis.setActionCommand("createSim");
-//					JMenuItem createVerification = new JMenuItem("Create Verification View");
-//					createVerification.addActionListener(this);
-//					createVerification.addMouseListener(this);
-//					createVerification.setActionCommand("createVerify");
-//					JMenuItem viewModel = new JMenuItem("View Model");
-//					viewModel.addActionListener(this);
-//					viewModel.addMouseListener(this);
-//					viewModel.setActionCommand("viewModel");
+					// JMenuItem createAnalysis = new
+					// JMenuItem("Create Analysis View");
+					// createAnalysis.addActionListener(this);
+					// createAnalysis.addMouseListener(this);
+					// createAnalysis.setActionCommand("createSim");
+					// JMenuItem createVerification = new
+					// JMenuItem("Create Verification View");
+					// createVerification.addActionListener(this);
+					// createVerification.addMouseListener(this);
+					// createVerification.setActionCommand("createVerify");
+					// JMenuItem viewModel = new JMenuItem("View Model");
+					// viewModel.addActionListener(this);
+					// viewModel.addMouseListener(this);
+					// viewModel.setActionCommand("viewModel");
 					JMenuItem delete = new JMenuItem("Delete");
 					delete.addActionListener(this);
 					delete.addMouseListener(this);
@@ -8244,10 +8250,10 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					rename.addActionListener(this);
 					rename.addMouseListener(this);
 					rename.setActionCommand("rename");
-//					popup.add(createVerification);
-//					popup.addSeparator();
-//					popup.add(viewModel);
-//					popup.addSeparator();
+					// popup.add(createVerification);
+					// popup.addSeparator();
+					// popup.add(viewModel);
+					// popup.addSeparator();
 					popup.add(copy);
 					popup.add(rename);
 					popup.add(delete);
@@ -8705,12 +8711,14 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							// Runtime.getRuntime().exec(command);
 						}
 						catch (Exception e1) {
-							JOptionPane.showMessageDialog(frame, "Unable to view this assembly file.",
-									"Error", JOptionPane.ERROR_MESSAGE);
+							JOptionPane.showMessageDialog(frame,
+									"Unable to view this assembly file.", "Error",
+									JOptionPane.ERROR_MESSAGE);
 						}
 					}
 					else if (tree.getFile().length() >= 5
-							&& tree.getFile().substring(tree.getFile().length() - 5).equals(".inst")) {
+							&& tree.getFile().substring(tree.getFile().length() - 5)
+									.equals(".inst")) {
 						try {
 							String filename = tree.getFile();
 							String directory = "";
@@ -8764,8 +8772,9 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							// Runtime.getRuntime().exec(command);
 						}
 						catch (Exception e1) {
-							JOptionPane.showMessageDialog(frame, "Unable to view this instruction file.",
-									"Error", JOptionPane.ERROR_MESSAGE);
+							JOptionPane.showMessageDialog(frame,
+									"Unable to view this instruction file.", "Error",
+									JOptionPane.ERROR_MESSAGE);
 						}
 					}
 					else if (tree.getFile().length() >= 5
