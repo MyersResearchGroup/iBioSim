@@ -2967,7 +2967,7 @@ public class Abstraction extends LHPNFile {
 		int N = abstPane.getNormFactor();
 		for (String s : delays.keySet()) {
 			String delay = delays.get(s);
-			Pattern pattern = Pattern.compile("\\[([\\w-]+?),([\\w-]+?)\\]");
+			Pattern pattern = Pattern.compile("uniform\\(([\\w-]+?),([\\w-]+?)\\)");
 			Matcher matcher = pattern.matcher(delay);
 			Pattern normPattern = Pattern.compile("uniform\\(([\\w-]+?),([\\w-]+?)\\)");
 			Matcher normMatcher = normPattern.matcher(delay);
