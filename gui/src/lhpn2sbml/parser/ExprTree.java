@@ -3585,7 +3585,7 @@ public class ExprTree {
 			}
 			else if (op.equals("[]")) {
 				if (r1 != null && r2 != null) {
-					result = r1.getElement() + "[" + r2.getElement() + "]";
+					result = "BIT(" + r1.getElement() + "," + r2.getElement() + ")";
 				}
 			}
 			else if (op.equals("!")) {
