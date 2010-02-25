@@ -435,7 +435,7 @@ public class ExprTree {
 				if (((newresult.isit == 'n') || (newresult.isit == 't'))
 						&& (((this).isit == 'n') || ((this).isit == 't'))) {
 					(this).isit = 'n';
-					(this).lvalue = (int) (this).lvalue ^ (int) newresult.lvalue;
+					(this).lvalue = ((int) (this).lvalue >> (int) newresult.lvalue) & 1;
 					(this).uvalue = (this).lvalue;
 				}
 				else {

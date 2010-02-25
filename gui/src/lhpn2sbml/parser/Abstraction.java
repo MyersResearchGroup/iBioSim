@@ -146,12 +146,12 @@ public class Abstraction extends LHPNFile {
 			if (abstPane.absListModel.contains(abstPane.xform25) && abstPane.isSimplify()) {
 				change = propagateConst(change);
 			}
+			// Transform 19 - Merge Coordinated Variables
+			if (abstPane.absListModel.contains(abstPane.xform19) && abstPane.isSimplify()) {
+				change = mergeCoordinatedVars(change);
+				simplifyExpr();
+			}
 			i++;
-		}
-		// Transform 19 - Merge Coordinated Variables
-		if (abstPane.absListModel.contains(abstPane.xform19) && abstPane.isSimplify()) {
-			change = mergeCoordinatedVars(change);
-			simplifyExpr();
 		}
 		// Transform 21 - Normalize Delays
 		if (abstPane.absListModel.contains(abstPane.xform21) && abstPane.isAbstract()) {
@@ -655,7 +655,7 @@ public class Abstraction extends LHPNFile {
 							if (enablingTrees.get(tP).implies(enablingTrees.get(t))) {
 								String delayT = delays.get(t);
 								String delayTP = delays.get(tP);
-								Pattern rangePattern = Pattern.compile("\\[([\\d]+),([\\d]+)\\]");
+								Pattern rangePattern = Pattern.compile("uniform\\(([\\d]+),([\\d]+)\\)");
 								Matcher delayTMatcher = rangePattern.matcher(delayT);
 								Matcher delayTpMatcher = rangePattern.matcher(delayTP);
 								if (delayTMatcher.find() && delayTpMatcher.find()) {
@@ -746,7 +746,7 @@ public class Abstraction extends LHPNFile {
 						if (!t.equals(tP) && delays.containsKey(t) && delays.containsKey(tP)) {
 							String delayT = delays.get(t);
 							String delayTP = delays.get(tP);
-							Pattern rangePattern = Pattern.compile("\\[([\\d]+),([\\d]+)\\]");
+							Pattern rangePattern = Pattern.compile("uniform\\(([\\d]+),([\\d]+)\\)");
 							Matcher delayTMatcher = rangePattern.matcher(delayT);
 							Matcher delayTpMatcher = rangePattern.matcher(delayTP);
 							if (delayTMatcher.find() && delayTpMatcher.find()) {
@@ -779,8 +779,8 @@ public class Abstraction extends LHPNFile {
 										removeControlFlow(tP, s);
 									}
 								}
-								String delay = "[" + lower.toString() + "," + upper.toString()
-										+ "]";
+								String delay = "uniform(" + lower.toString() + "," + upper.toString()
+										+ ")";
 								changeDelay(t, delay);
 								removeTransition(tP);
 								change = true;
@@ -2988,7 +2988,7 @@ public class Abstraction extends LHPNFile {
 						uVal = uInt.toString();
 					}
 				}
-				delay = "[" + lVal + "," + uVal + "]";
+				delay = "uniform(" + lVal + "," + uVal + ")";
 				delays.put(s, delay);
 			}
 			else if (normMatcher.find()) {
@@ -3015,7 +3015,7 @@ public class Abstraction extends LHPNFile {
 				String lVal = lInt.toString();
 				Integer uInt = lInt + N;
 				String uVal = uInt.toString();
-				delay = "[" + lVal + "," + uVal + "]";
+				delay = "uniform(" + lVal + "," + uVal + ")";
 				delays.put(s, delay);
 			}
 		}
@@ -3357,7 +3357,7 @@ public class Abstraction extends LHPNFile {
 							newDelay[i] = "inf";
 						}
 					}
-					delays.put(t, "[" + newDelay[0] + "," + newDelay[1] + "]");
+					delays.put(t, "uniform(" + newDelay[0] + "," + newDelay[1] + ")");
 				}
 			}
 		}
@@ -3487,7 +3487,7 @@ public class Abstraction extends LHPNFile {
 							newDelay[i] = "inf";
 						}
 					}
-					delays.put(t, "[" + newDelay[0] + "," + newDelay[1] + "]");
+					delays.put(t, "uniform(" + newDelay[0] + "," + newDelay[1] + ")");
 				}
 			}
 		}
@@ -3577,7 +3577,7 @@ public class Abstraction extends LHPNFile {
 							newDelay[i] = "inf";
 						}
 					}
-					delays.put(t, "[" + newDelay[0] + "," + newDelay[1] + "]");
+					delays.put(t, "uniform(" + newDelay[0] + "," + newDelay[1] + ")");
 				}
 			}
 		}
@@ -3696,7 +3696,7 @@ public class Abstraction extends LHPNFile {
 							newDelay[i] = "inf";
 						}
 					}
-					delays.put(t, "[" + newDelay[0] + "," + newDelay[1] + "]");
+					delays.put(t, "uniform(" + newDelay[0] + "," + newDelay[1] + ")");
 				}
 			}
 		}
@@ -3787,7 +3787,7 @@ public class Abstraction extends LHPNFile {
 							newDelay[i] = "inf";
 						}
 					}
-					delays.put(t, "[" + newDelay[0] + "," + newDelay[1] + "]");
+					delays.put(t, "uniform(" + newDelay[0] + "," + newDelay[1] + ")");
 				}
 			}
 		}
@@ -3878,7 +3878,7 @@ public class Abstraction extends LHPNFile {
 							newDelay[i] = "inf";
 						}
 					}
-					delays.put(t, "[" + newDelay[0] + "," + newDelay[1] + "]");
+					delays.put(t, "uniform(" + newDelay[0] + "," + newDelay[1] + ")");
 				}
 			}
 		}
@@ -3894,7 +3894,7 @@ public class Abstraction extends LHPNFile {
 		}
 		String[] delay = { delays.get(trans1), delays.get(trans2) };
 		String[][] delayRange = new String[2][2];
-		Pattern pattern = Pattern.compile("\\[(\\S+?),(\\S+?)\\]");
+		Pattern pattern = Pattern.compile("uniform\\((\\S+?),(\\S+?)\\)");
 		for (int i = 0; i < delay.length; i++) {
 			Matcher matcher = pattern.matcher(delay[i]);
 			if (matcher.find()) {
@@ -3931,7 +3931,7 @@ public class Abstraction extends LHPNFile {
 			delays.put(trans1, delay[0]);
 		}
 		else {
-			delays.put(trans1, "[" + delay[0] + "," + delay[1] + "]");
+			delays.put(trans1, "uniform(" + delay[0] + "," + delay[1] + ")");
 		}
 		// Combine Control Flow
 		String[] preset1 = controlFlow.get(trans1).getProperty("preset").split(" ");
@@ -5204,5 +5204,5 @@ public class Abstraction extends LHPNFile {
 			outputs.remove(var);
 	}
 
-	private static final String RANGE = "\\[(\\w+?),(\\w+?)\\]";
+	private static final String RANGE = "uniform\\((\\w+?),(\\w+?)\\)";
 }
