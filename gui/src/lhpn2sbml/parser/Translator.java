@@ -15,8 +15,10 @@ import java.util.HashMap;
 import junit.framework.TestCase;
 
 import org.omg.CORBA.PRIVATE_MEMBER;
+import org.sbml.libsbml.ASTNode;
 import org.sbml.libsbml.Compartment;
 import org.sbml.libsbml.Event;
+import org.sbml.libsbml.EventAssignment;
 import org.sbml.libsbml.KineticLaw;
 import org.sbml.libsbml.ListOfParameters;
 import org.sbml.libsbml.Model;
@@ -27,6 +29,9 @@ import org.sbml.libsbml.SBMLWriter;
 import org.sbml.libsbml.Species;
 import org.sbml.libsbml.SpeciesReference;
 import org.sbml.libsbml.Trigger;
+import org.sbml.libsbml.libsbml;
+
+import sbmleditor.SBML_Editor;
 
 import biomodelsim.BioSim;
 
@@ -137,25 +142,25 @@ public class Translator {
 			
 			SpeciesReference product  = r.createProduct();
 			product.setSpecies(t);
-			// TODO Create local variables in the reaction
-//			Parameter p_local = m.createKineticLawParameter();
-//			p_local.setConstant(false);
-//			p_local.setId("rate" + counter);
-//			p_local.setValue(0.7);
-			
+				
 			KineticLaw rateReaction = r.createKineticLaw(); // rate of reaction
-//			rateReaction.setFormula(p_local.getId() + "*" + reactant + "*");
-			rateReaction.setFormula(t);
-			System.out.println(m.getListOfParameters());
+			Parameter p_local = rateReaction.createParameter();
+			p_local.setConstant(false);
+			p_local.setId("rate" + counter);
+			p_local.setValue(0.7);
 			
-            // TODO  fix the event (errors when edit event-> edit assignment
-			// TODO  Add event assignement
-			
-//			Event e = m.createEvent();
-//			e.setId("event" + counter);			
-//			Trigger trigger = e.createTrigger();
-//			trigger.equals(product);
-            
+			// TODO add req/ack to the Kinetic law formula
+			rateReaction.setFormula(p_local.getId() + "*" + reactant.getSpecies() + "*" + lhpn.getEnabling(t));
+			//System.out.println("trans " + t + " enableCond " + lhpn.getEnabling(t));
+	
+
+			Event e = m.createEvent();
+			e.setId("event" + counter);			
+			Trigger trigger = e.createTrigger();
+			trigger.setMath(SBML_Editor.myParseFormula("eq(" + product.getSpecies() + ",1)"));
+			EventAssignment assign = e.createEventAssignment();
+			assign.setVariable(product.getSpecies());
+			assign.setMath(SBML_Editor.myParseFormula("0"));
 			
 			
 			
