@@ -12029,6 +12029,9 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				if (c instanceof Learn) {
 					learn = true;
 				}
+				else if (c instanceof GCM2SBMLEditor) {
+					viewSG.setEnabled(true);
+				}
 			}
 			// int index = tab.getSelectedIndex();
 			if (component instanceof Graph) {
@@ -12047,12 +12050,10 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				if (learn) {
 					run.setEnabled(false);
 					saveModel.setEnabled(true);
-					viewSG.setEnabled(false);
 				}
 				else {
 					run.setEnabled(true);
 					saveModel.setEnabled(false);
-					viewSG.setEnabled(true);
 				}
 				saveAs.setEnabled(true);
 				saveAsMenu.setEnabled(true);
@@ -12126,7 +12127,6 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				saveModel.setEnabled(false);
 				saveSbml.setEnabled(false);
 				saveTemp.setEnabled(false);
-				viewSG.setEnabled(true);
 			}
 			else if (component instanceof SBML_Editor) {
 				saveButton.setEnabled(true);
@@ -12161,7 +12161,6 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				saveModel.setEnabled(false);
 				saveSbml.setEnabled(false);
 				saveTemp.setEnabled(false);
-				viewSG.setEnabled(false);
 			}
 			else if (component instanceof GCM2SBMLEditor) {
 				saveButton.setEnabled(true);
@@ -12196,7 +12195,6 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				saveModel.setEnabled(false);
 				saveSbml.setEnabled(false);
 				saveTemp.setEnabled(false);
-				viewSG.setEnabled(true);
 			}
 			else if (component instanceof Learn) {
 				if (((Learn) component).isComboSelected()) {
