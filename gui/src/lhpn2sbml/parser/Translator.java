@@ -147,28 +147,77 @@ public class Translator {
 			Parameter p_local = rateReaction.createParameter();
 			p_local.setConstant(false);
 			p_local.setId("rate" + counter);
-			p_local.setValue(0.7);
-			
-			// TODO add req/ack to the Kinetic law formula
-			rateReaction.setFormula(p_local.getId() + "*" + reactant.getSpecies() + "*" + lhpn.getEnabling(t));
+			// get the transition rate from LHPN
+			double tRate = Double.parseDouble(lhpn.getTransitionRate(t));	
+			p_local.setValue(tRate);
+			// create exp for KineticLaw
+			String exp = lhpn.getEnabling(t);
+			if (exp.startsWith("~")){
+				exp = "(1 - " + exp.substring(1) + ")";
+			}
+			rateReaction.setFormula(p_local.getId() + "*" + reactant.getSpecies() + "*" + exp); 
 			//System.out.println("trans " + t + " enableCond " + lhpn.getEnabling(t));
-	
-
+			
 			Event e = m.createEvent();
 			e.setId("event" + counter);			
 			Trigger trigger = e.createTrigger();
 			trigger.setMath(SBML_Editor.myParseFormula("eq(" + product.getSpecies() + ",1)"));
-			EventAssignment assign = e.createEventAssignment();
-			assign.setVariable(product.getSpecies());
-			assign.setMath(SBML_Editor.myParseFormula("0"));
+			// t_postSet = 1
+			EventAssignment assign0 = e.createEventAssignment();
+			for (String x : lhpn.getPostset(t)){
+				assign0.setVariable(x);
+				assign0.setMath(SBML_Editor.myParseFormula("1"));
+//				System.out.println("transition: " + t + " postset: " + x);
+			}
+			// t = 0
+			EventAssignment assign1 = e.createEventAssignment();
+			assign1.setVariable(product.getSpecies());
+			assign1.setMath(SBML_Editor.myParseFormula("0"));
 			
+			// assignment <A>
+			// TODO need to test the continuous assignment
+			if (lhpn.getContAssignVars(t) != null){
+				for (String var : lhpn.getContAssignVars(t)){
+					if (lhpn.getContAssign(t, var) != null) {
+						String assignCont = lhpn.getContAssign(t, var);
+						System.out.println("continuous assign: "+ assignCont);
+						EventAssignment assign2 = e.createEventAssignment();
+						assign2.setVariable(var);
+						assign2.setMath(SBML_Editor.myParseFormula(assignCont));
+					}
+				}
+			}
 			
+			// TODO need to test the integer assignment
+			if (lhpn.getIntVars()!= null){
+				for (String var : lhpn.getIntVars()){
+					if (lhpn.getIntAssign(t, var) != null) {
+						String assignInt = lhpn.getIntAssign(t, var);
+						System.out.println("integer assignment from LHPN: " + var + " := " + assignInt);
+						EventAssignment assign3 = e.createEventAssignment();
+						assign3.setVariable(var);
+						assign3.setMath(SBML_Editor.myParseFormula(assignInt));
+					}
+				}
+			}
 			
-	
+			if (lhpn.getBooleanVars(t)!= null){
+				for (String var :lhpn.getBooleanVars(t)){
+					if (lhpn.getBoolAssign(t, var) != null) {
+						String assignBool = lhpn.getBoolAssign(t, var);
+						System.out.println("boolean assignment from LHPN: " + var + " := " + assignBool);
+						EventAssignment assign4 = e.createEventAssignment();
+						assign4.setVariable(var);
+						if (assignBool.equals("true")){
+							assign4.setMath(SBML_Editor.myParseFormula("1"));
+						}
+						if(assignBool.equals("false")){
+							assign4.setMath(SBML_Editor.myParseFormula("0"));
+						}
+					}
+				}
+			}
 			
-			
-//			org.sbml.libsbml.Event e = m.createEvent();
-//			e.createTrigger();
 			counter --;
 		}
 		//filename.replace(".lpn", ".xml");
