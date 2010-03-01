@@ -131,6 +131,7 @@ public class Translator {
 			spT.setUnits("");
 			
 			Reaction r = m.createReaction();
+			r.setReversible(false);
 			r.setId("r" + counter);
 			SpeciesReference reactant = r.createReactant();
 			// get preset(s) of a transition and set each as a reactant
