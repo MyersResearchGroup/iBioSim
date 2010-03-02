@@ -86,7 +86,7 @@ public class Translator {
 				}
 				else
 				{
-					// TODO need to create other variable types to test this case
+					// TODO variable to param mapping for int and continous vars
 					double initVal_dbl = Double.parseDouble(initValue);
 					p.setValue(initVal_dbl);
 				}
@@ -145,18 +145,22 @@ public class Translator {
 			product.setSpecies(t);
 				
 			KineticLaw rateReaction = r.createKineticLaw(); // rate of reaction
-			Parameter p_local = rateReaction.createParameter();
-			p_local.setConstant(false);
-			p_local.setId("rate" + counter);
+			//Parameter p_local = rateReaction.createParameter();
+			//p_local.setConstant(false);
+			//p_local.setId("rate" + counter);
 			// get the transition rate from LHPN
-			double tRate = Double.parseDouble(lhpn.getTransitionRate(t));	
-			p_local.setValue(tRate);
+			System.out.println(lhpn.getTransitionRate(t));
+			//double tRate = Double.parseDouble(lhpn.getTransitionRate(t));	// need to
+			
+			//lhpn.getTransitionRateTree(t)
+			
+			//p_local.setValue(tRate);
 			// create exp for KineticLaw
 			String exp = lhpn.getEnabling(t);
 			if (exp.startsWith("~")){
 				exp = "(1 - " + exp.substring(1) + ")";
 			}
-			rateReaction.setFormula(p_local.getId() + "*" + reactant.getSpecies() + "*" + exp); 
+			rateReaction.setFormula("(" + lhpn.getTransitionRate(t) + ")" + "*" + reactant.getSpecies() + "*" + exp); 
 			//System.out.println("trans " + t + " enableCond " + lhpn.getEnabling(t));
 			
 			Event e = m.createEvent();
@@ -229,55 +233,6 @@ public class Translator {
 
 	}
 	
-	
-	public void loadLhpn(String filename) {
-		LHPNFile lhpn = new LHPNFile();
-		LHPNFile foo = new LHPNFile();
-		lhpn = foo;
-		lhpn.load(filename);
-		String[] transitionList = lhpn.getTransitionList();
-		String[] places = lhpn.getPlaceList();
-		String[] continuous = lhpn.getContVars();
-		String[] integers = lhpn.getIntVars();
-		String[] booleans = lhpn.getBooleanVars();
-		for (String p : places) {
-			Boolean initMarking = lhpn.getPlaceInitial(p);
-		}
-		for (String v : continuous) {
-			String initValue = lhpn.getInitialVal(v);
-			String initRate = lhpn.getInitialRate(v);
-		}
-		for (String v : integers) {
-			String initValue = lhpn.getInitialVal(v);
-		}
-		for (String v : booleans) {
-			String initValue = lhpn.getInitialVal(v);
-		}
-		for (String t : transitionList) {
-			for (String v : continuous) {
-				if (lhpn.getContAssign(t, v) != null) {
-					String value = lhpn.getContAssign(t, v);
-				}
-			}
-			for (String v : integers) {
-				if (lhpn.getIntAssign(t, v) != null) {
-					String value = lhpn.getIntAssign(t, v);
-				}
-			}
-
-			for (String v : booleans) {
-				if (lhpn.getBoolAssign(t, v) != null) {
-					String value = lhpn.getBoolAssign(t, v);
-				}
-			}
-		}
-		for (String t : transitionList) {
-			String enabling = lhpn.getEnabling(t);
-			String delay = lhpn.getDelay(t);
-		}
-	}
-
-
 	public void setFilename(String filename) {
 		this.filename = filename;
 	}
