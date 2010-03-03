@@ -157,7 +157,9 @@ public class Translator {
 			//p_local.setValue(tRate);
 			// create exp for KineticLaw
 			String exp = lhpn.getEnabling(t);
-			if (exp.startsWith("~")){
+			if (exp == null) {
+				exp = "1";
+			} else if (exp.startsWith("~")){
 				exp = "(1 - " + exp.substring(1) + ")";
 			}
 			rateReaction.setFormula("(" + lhpn.getTransitionRate(t) + ")" + "*" + reactant.getSpecies() + "*" + exp); 
