@@ -1916,13 +1916,19 @@ public class ExprTree {
 
 	public String toString() {
 		String result = "";
-		result = getElement();
+		result = getElement("LHPN");
+		return result;
+	}
+	
+	public String toString(String type) {
+		String result = "";
+		result = getElement(type);
 		return result;
 	}
 
-	public String toString(String type) {
+	public String toString(String type, String lhpnSbml) {
 		String result = "";
-		result = getElement();
+		result = getElement(lhpnSbml);
 		if (type.equals("continuous") || type.equals("integer")) {
 			if (isit == 't') {
 				if (uvalue == 0) {
@@ -3532,7 +3538,9 @@ public class ExprTree {
 		return true;
 	}
 
-	private String getElement() {
+	private String getElement(String type) {
+		boolean sbmlFlag;
+		sbmlFlag = type.equals("SMBL");
 		String result = "";
 		switch (isit) {
 		case 'b': // Boolean
@@ -3549,7 +3557,7 @@ public class ExprTree {
 				// result = tempuval.toString();
 			}
 			else {
-				result = "[" + templval.toString() + "," + tempuval.toString() + "]";
+				result = "uniform(" + templval.toString() + "," + tempuval.toString() + ")";
 				// result = "[" + templval.toString() + "," +
 				// tempuval.toString() + "]";
 			}
@@ -3575,27 +3583,32 @@ public class ExprTree {
 		case 'w': // bitWise
 			if (op.equals("&")) {
 				if (r1 != null && r2 != null) {
-					result = "and(" + r1.getElement() + "," + r2.getElement() + ")";
+					if (sbmlFlag)	 {
+						result = "BITAND(" + r1.getElement(type) + "," + r2.getElement(type) + ")";
+					}
+					else {
+						result = "and(" + r1.getElement(type) + "," + r2.getElement(type) + ")";
+					}
 				}
 			}
 			else if (op.equals("|")) {
 				if (r1 != null && r2 != null) {
-					result = "or(" + r1.getElement() + "," + r2.getElement() + ")";
+					result = "or(" + r1.getElement(type) + "," + r2.getElement(type) + ")";
 				}
 			}
 			else if (op.equals("[]")) {
 				if (r1 != null && r2 != null) {
-					result = "BIT(" + r1.getElement() + "," + r2.getElement() + ")";
+					result = "BIT(" + r1.getElement(type) + "," + r2.getElement(type) + ")";
 				}
 			}
 			else if (op.equals("!")) {
 				if (r1 != null && r2 != null) {
-					result = "not(" + r1.getElement() + "," + r2.getElement() + ")";
+					result = "not(" + r1.getElement(type) + "," + r2.getElement(type) + ")";
 				}
 			}
 			else if (op.equals("^")) {
 				if (r1 != null && r2 != null) {
-					result = "exor(" + r1.getElement() + "," + r2.getElement() + ")";
+					result = "exor(" + r1.getElement(type) + "," + r2.getElement(type) + ")";
 				}
 			}
 			break;
@@ -3606,10 +3619,10 @@ public class ExprTree {
 				if (r1 != null) {
 					if (r1.isit == 'b' || r1.isit == 'i' || r1.isit == 'c' || r1.isit == 'n'
 							|| r1.isit == 't') {
-						result = result + "~" + r1.getElement();
+						result = result + "~" + r1.getElement(type);
 					}
 					else {
-						result = result + "~" + "(" + r1.getElement() + ")";
+						result = result + "~" + "(" + r1.getElement(type) + ")";
 					}
 				}
 				break;
@@ -3618,117 +3631,117 @@ public class ExprTree {
 				if (op.equals("&&")) {
 					if (r1.isit == 'r' || (r1.isit == 'l' && r1.op.equals("||"))) {
 						if (r1 != null) {
-							result = "(" + r1.getElement() + ")";
+							result = "(" + r1.getElement(type) + ")";
 						}
 
 					}
 					else {
 						if (r1 != null) {
-							result = r1.getElement();
+							result = r1.getElement(type);
 						}
 					}
 					result = result + "&";
 					if (r2.isit == 'r' || (r2.isit == 'l' && r2.op.equals("||"))) {
 						if (r2 != null) {
-							result = result + "(" + r2.getElement() + ")";
+							result = result + "(" + r2.getElement(type) + ")";
 						}
 					}
 					else {
 						if (r2 != null) {
-							result = result + r2.getElement();
+							result = result + r2.getElement(type);
 						}
 					}
 				}
 				else if (op.equals("||")) {
 					if (r1.isit == 'r') {
 						if (r1 != null) {
-							result = "(" + r1.getElement() + ")";
+							result = "(" + r1.getElement(type) + ")";
 						}
 					}
 					else {
 						if (r1 != null) {
-							result = r1.getElement();
+							result = r1.getElement(type);
 						}
 					}
 					result = result + "|";
 					if (r2.isit == 'r') {
 						if (r2 != null) {
-							result = result + "(" + r2.getElement() + ")";
+							result = result + "(" + r2.getElement(type) + ")";
 						}
 					}
 					else {
 						if (r2 != null) {
-							result = result + r2.getElement();
+							result = result + r2.getElement(type);
 						}
 					}
 				}
 				else if (op.equals("uniform")) {
 					if (r1 != null && r2 != null) {
-						result = "uniform(" + r1.getElement() + "," + r2.getElement() + ")";
+						result = "uniform(" + r1.getElement(type) + "," + r2.getElement(type) + ")";
 					}
 				}
 				else if (op.equals("normal")) {
 					if (r1 != null && r2 != null) {
-						result = "normal(" + r1.getElement() + "," + r2.getElement() + ")";
+						result = "normal(" + r1.getElement(type) + "," + r2.getElement(type) + ")";
 					}
 				}
 				else if (op.equals("gamma")) {
 					if (r1 != null && r2 != null) {
-						result = "gamma(" + r1.getElement() + "," + r2.getElement() + ")";
+						result = "gamma(" + r1.getElement(type) + "," + r2.getElement(type) + ")";
 					}
 				}
 				else if (op.equals("lognormal")) {
 					if (r1 != null && r2 != null) {
-						result = "lognormal(" + r1.getElement() + "," + r2.getElement() + ")";
+						result = "lognormal(" + r1.getElement(type) + "," + r2.getElement(type) + ")";
 					}
 				}
 				else if (op.equals("binomial")) {
 					if (r1 != null && r2 != null) {
-						result = "binomial(" + r1.getElement() + "," + r2.getElement() + ")";
+						result = "binomial(" + r1.getElement(type) + "," + r2.getElement(type) + ")";
 					}
 				}
 				else if (op.equals("exponential")) {
 					if (r1 != null) {
-						result = "exponential(" + r1.getElement() + ")";
+						result = "exponential(" + r1.getElement(type) + ")";
 					}
 				}
 				else if (op.equals("chisq")) {
 					if (r1 != null) {
-						result = "chisq(" + r1.getElement() + ")";
+						result = "chisq(" + r1.getElement(type) + ")";
 					}
 				}
 				else if (op.equals("laplace")) {
 					if (r1 != null) {
-						result = "laplace(" + r1.getElement() + ")";
+						result = "laplace(" + r1.getElement(type) + ")";
 					}
 				}
 				else if (op.equals("cauchy")) {
 					if (r1 != null) {
-						result = "cauchy(" + r1.getElement() + ")";
+						result = "cauchy(" + r1.getElement(type) + ")";
 					}
 				}
 				else if (op.equals("rayleigh")) {
 					if (r1 != null) {
-						result = "rayleigh(" + r1.getElement() + ")";
+						result = "rayleigh(" + r1.getElement(type) + ")";
 					}
 				}
 				else if (op.equals("poisson")) {
 					if (r1 != null) {
-						result = "poisson(" + r1.getElement() + ")";
+						result = "poisson(" + r1.getElement(type) + ")";
 					}
 				}
 				else if (op.equals("bernouli")) {
 					if (r1 != null) {
-						result = "bernouli(" + r1.getElement() + ")";
+						result = "bernouli(" + r1.getElement(type) + ")";
 					}
 				}
 				else if (op.equals("==")) {
 					if (r1 != null) {
-						result = r1.getElement();
+						result = r1.getElement(type);
 					}
 					result = result + "=";
 					if (r2 != null) {
-						result = result + r2.getElement();
+						result = result + r2.getElement(type);
 					}
 				}
 				else if (op.equals("+")) {
@@ -3740,12 +3753,12 @@ public class ExprTree {
 							|| (r1.isit == 'a' && (r1.op.equals("+") || r1.op.equals("-")
 									|| r1.op.equals("*") || r1.op.equals("/") || r1.op.equals("^")))) {
 						if (r1 != null) {
-							result = r1.getElement();
+							result = r1.getElement(type);
 						}
 					}
 					else {
 						if (r1 != null) {
-							result = "(" + r1.getElement() + ")";
+							result = "(" + r1.getElement(type) + ")";
 						}
 					}
 					result = result + "+";
@@ -3757,12 +3770,12 @@ public class ExprTree {
 							|| (r2.isit == 'a' && (r2.op.equals("+") || r2.op.equals("-")
 									|| r2.op.equals("*") || r2.op.equals("/") || r2.op.equals("^")))) {
 						if (r2 != null) {
-							result = result + r2.getElement();
+							result = result + r2.getElement(type);
 						}
 					}
 					else {
 						if (r2 != null) {
-							result = result + "(" + r2.getElement() + ")";
+							result = result + "(" + r2.getElement(type) + ")";
 						}
 					}
 				}
@@ -3775,12 +3788,12 @@ public class ExprTree {
 							|| (r1.isit == 'a' && (r1.op.equals("+") || r1.op.equals("-")
 									|| r1.op.equals("*") || r1.op.equals("/") || r1.op.equals("^")))) {
 						if (r1 != null) {
-							result = r1.getElement();
+							result = r1.getElement(type);
 						}
 					}
 					else {
 						if (r1 != null) {
-							result = "(" + r1.getElement() + ")";
+							result = "(" + r1.getElement(type) + ")";
 						}
 					}
 					result = result + "-";
@@ -3792,12 +3805,12 @@ public class ExprTree {
 							|| (r2.isit == 'a' && (r2.op.equals("-") || r2.op.equals("*")
 									|| r2.op.equals("/") || r2.op.equals("^")))) {
 						if (r2 != null) {
-							result = result + r2.getElement();
+							result = result + r2.getElement(type);
 						}
 					}
 					else {
 						if (r2 != null) {
-							result = result + "(" + r2.getElement() + ")";
+							result = result + "(" + r2.getElement(type) + ")";
 						}
 					}
 				}
@@ -3810,12 +3823,12 @@ public class ExprTree {
 							|| (r1.isit == 'a' && (r1.op.equals("*") || r1.op.equals("/") || r1.op
 									.equals("^")))) {
 						if (r1 != null) {
-							result = r1.getElement();
+							result = r1.getElement(type);
 						}
 					}
 					else {
 						if (r1 != null) {
-							result = "(" + r1.getElement() + ")";
+							result = "(" + r1.getElement(type) + ")";
 						}
 					}
 					result = result + "*";
@@ -3827,12 +3840,12 @@ public class ExprTree {
 							|| (r2.isit == 'a' && (r2.op.equals("*") || r2.op.equals("/") || r2.op
 									.equals("^")))) {
 						if (r2 != null) {
-							result = result + r2.getElement();
+							result = result + r2.getElement(type);
 						}
 					}
 					else {
 						if (r2 != null) {
-							result = result + "(" + r2.getElement() + ")";
+							result = result + "(" + r2.getElement(type) + ")";
 						}
 					}
 				}
@@ -3845,12 +3858,12 @@ public class ExprTree {
 							|| (r1.isit == 'a' && (r1.op.equals("*") || r1.op.equals("/") || r1.op
 									.equals("^")))) {
 						if (r1 != null) {
-							result = r1.getElement();
+							result = r1.getElement(type);
 						}
 					}
 					else {
 						if (r1 != null) {
-							result = "(" + r1.getElement() + ")";
+							result = "(" + r1.getElement(type) + ")";
 						}
 					}
 					result = result + "/";
@@ -3858,12 +3871,12 @@ public class ExprTree {
 							|| r2.isit == 't'
 							|| (r2.isit == 'a' && (r2.op.equals("/") || r2.op.equals("^")))) {
 						if (r2 != null) {
-							result = result + r2.getElement();
+							result = result + r2.getElement(type);
 						}
 					}
 					else {
 						if (r2 != null) {
-							result = result + "(" + r2.getElement() + ")";
+							result = result + "(" + r2.getElement(type) + ")";
 						}
 					}
 				}
@@ -3871,20 +3884,20 @@ public class ExprTree {
 					if (r1 != null) {
 						if (r1.isit == 'b' || r1.isit == 'i' || r1.isit == 'c' || r1.isit == 'n'
 								|| r1.isit == 't') {
-							result = r1.getElement();
+							result = r1.getElement(type);
 						}
 						else {
-							result = "(" + r1.getElement() + ")";
+							result = "(" + r1.getElement(type) + ")";
 						}
 					}
 					result = result + op;
 					if (r2 != null) {
 						if (r2.isit == 'b' || r2.isit == 'i' || r2.isit == 'c' || r2.isit == 'n'
 								|| r2.isit == 't') {
-							result = result + r2.getElement();
+							result = result + r2.getElement(type);
 						}
 						else {
-							result = result + "(" + r2.getElement() + ")";
+							result = result + "(" + r2.getElement(type) + ")";
 						}
 					}
 				}
