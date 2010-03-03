@@ -624,6 +624,7 @@ public class Run implements ActionListener {
 					sg.outputStateGraph(filename.replace(".gcm", "").replace(".sbml", "").replace(
 							".xml", "")
 							+ "_sg.dot", true);
+					biomodelsim.enableTabMenu(biomodelsim.getTab().getSelectedIndex());
 					// if (sg.getNumberOfStates() > 30) {
 					// String[] options = { "Yes", "No" };
 					// int value = JOptionPane
