@@ -3006,119 +3006,95 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		}
 		// if the graph popup menu is selected on an sbml file
 		else if (e.getActionCommand().equals("graph")) {
+			String directory = "";
+			String theFile = "";
 			if (!treeSelected) {
-			}
-			else {
-				try {
-					for (int i = 0; i < tab.getTabCount(); i++) {
-						if (tab.getTitleAt(i)
-								.equals(
-										tree.getFile().split(separator)[tree.getFile().split(
-												separator).length - 1])) {
-							tab.setSelectedIndex(i);
-							if (save(i, 0) != 1) {
-								return;
+				Component comp = tab.getSelectedComponent();
+				if (comp instanceof JTabbedPane) {
+					Component component = ((JTabbedPane) comp).getSelectedComponent();
+					if (component instanceof Learn) {
+						((Learn) component).viewGcm();
+						return;
+					}
+				}
+				else if (comp instanceof LHPNEditor) {
+					try {
+						String filename = tab.getTitleAt(tab.getSelectedIndex());
+						String[] findTheFile = filename.split("\\.");
+						theFile = findTheFile[0] + ".dot";
+						File dot = new File(root + separator + theFile);
+						dot.delete();
+						String cmd = "atacs -cPllodpl " + filename;
+						File work = new File(root);
+						Runtime exec = Runtime.getRuntime();
+						Process ATACS = exec.exec(cmd, null, work);
+						ATACS.waitFor();
+						log.addText("Executing:\n" + cmd);
+						if (dot.exists()) {
+							String command = "";
+							if (System.getProperty("os.name").contentEquals("Linux")) {
+								// directory = ENVVAR + "/docs/";
+								command = "gnome-open ";
 							}
-							break;
-						}
-					}
-					Run run = new Run(null);
-					JCheckBox dummy = new JCheckBox();
-					dummy.setSelected(false);
-					JList empty = new JList();
-					run.createProperties(0, "Print Interval", 1, 1, 1, 1, tree.getFile().substring(
-							0,
-							tree.getFile().length()
-									- (tree.getFile().split(separator)[tree.getFile().split(
-											separator).length - 1].length())), 314159, 1,
-							new String[0], new String[0], "tsd.printer", "amount", tree.getFile()
-									.split(separator), "none", frame, tree.getFile(), 0.1, 0.1,
-							0.1, 15, dummy, "", dummy, null, empty, empty, empty);
-					String filename = tree.getFile();
-					String directory = "";
-					String theFile = "";
-					if (filename.lastIndexOf('/') >= 0) {
-						directory = filename.substring(0, filename.lastIndexOf('/') + 1);
-						theFile = filename.substring(filename.lastIndexOf('/') + 1);
-					}
-					if (filename.lastIndexOf('\\') >= 0) {
-						directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
-						theFile = filename.substring(filename.lastIndexOf('\\') + 1);
-					}
-					File work = new File(directory);
-					String out = theFile;
-					if (out.length() > 4
-							&& out.substring(out.length() - 5, out.length()).equals(".sbml")) {
-						out = out.substring(0, out.length() - 5);
-					}
-					else if (out.length() > 3
-							&& out.substring(out.length() - 4, out.length()).equals(".xml")) {
-						out = out.substring(0, out.length() - 4);
-					}
-					log.addText("Executing:\nreb2sac --target.encoding=dot --out=" + directory
-							+ out + ".dot " + directory + theFile + "\n");
-					Runtime exec = Runtime.getRuntime();
-					Process graph = exec.exec("reb2sac --target.encoding=dot --out=" + out
-							+ ".dot " + theFile, null, work);
-					String error = "";
-					String output = "";
-					InputStream reb = graph.getErrorStream();
-					int read = reb.read();
-					while (read != -1) {
-						error += (char) read;
-						read = reb.read();
-					}
-					reb.close();
-					reb = graph.getInputStream();
-					read = reb.read();
-					while (read != -1) {
-						output += (char) read;
-						read = reb.read();
-					}
-					reb.close();
-					if (!output.equals("")) {
-						log.addText("Output:\n" + output + "\n");
-					}
-					if (!error.equals("")) {
-						log.addText("Errors:\n" + error + "\n");
-					}
-					graph.waitFor();
-					if (error.equals("")) {
-						if (System.getProperty("os.name").contentEquals("Linux")) {
-							log.addText("Executing:\ndotty " + directory + out + ".dot\n");
-							exec.exec("dotty " + out + ".dot", null, work);
-						}
-						else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
-							log.addText("Executing:\nopen " + directory + out + ".dot\n");
-							exec.exec("open " + out + ".dot", null, work);
+							else if (System.getProperty("os.name").toLowerCase().startsWith(
+									"mac os")) {
+								// directory = ENVVAR + "/docs/";
+								command = "open ";
+							}
+							else {
+								// directory = ENVVAR + "\\docs\\";
+								command = "dotty start ";
+							}
+							log.addText(command + root + separator + theFile + "\n");
+							exec.exec(command + theFile, null, work);
 						}
 						else {
-							log.addText("Executing:\ndotty " + directory + out + ".dot\n");
-							exec.exec("dotty " + out + ".dot", null, work);
+							File log = new File(root + separator + "atacs.log");
+							BufferedReader input = new BufferedReader(new FileReader(log));
+							String line = null;
+							JTextArea messageArea = new JTextArea();
+							while ((line = input.readLine()) != null) {
+								messageArea.append(line);
+								messageArea.append(System.getProperty("line.separator"));
+							}
+							input.close();
+							messageArea.setLineWrap(true);
+							messageArea.setWrapStyleWord(true);
+							messageArea.setEditable(false);
+							JScrollPane scrolls = new JScrollPane();
+							scrolls.setMinimumSize(new Dimension(500, 500));
+							scrolls.setPreferredSize(new Dimension(500, 500));
+							scrolls.setViewportView(messageArea);
+							JOptionPane.showMessageDialog(frame(), scrolls, "Log",
+									JOptionPane.INFORMATION_MESSAGE);
 						}
+						return;
 					}
-					String remove;
-					if (tree.getFile().substring(tree.getFile().length() - 4).equals("sbml")) {
-						remove = tree.getFile().substring(0, tree.getFile().length() - 4)
-								+ "properties";
+					catch (Exception e1) {
+						JOptionPane.showMessageDialog(frame, "Unable to view this lpn.", "Error",
+								JOptionPane.ERROR_MESSAGE);
+						return;
 					}
-					else {
-						remove = tree.getFile().substring(0, tree.getFile().length() - 4)
-								+ ".properties";
-					}
-					System.gc();
-					new File(remove).delete();
-					refreshTree();
 				}
-				catch (Exception e1) {
-					JOptionPane.showMessageDialog(frame, "Error graphing sbml file.", "Error",
-							JOptionPane.ERROR_MESSAGE);
+				else if (comp instanceof SBML_Editor) {
+					directory = root + separator;
+					theFile = tab.getTitleAt(tab.getSelectedIndex());
+				}
+				else if (comp instanceof GCM2SBMLEditor) {
+					directory = root + separator;
+					theFile = tab.getTitleAt(tab.getSelectedIndex());
 				}
 			}
-		}
-		// if the browse popup menu is selected on an sbml file
-		else if (e.getActionCommand().equals("browse")) {
-			try {
+			else {
+				String filename = tree.getFile();
+				if (filename.lastIndexOf('/') >= 0) {
+					directory = filename.substring(0, filename.lastIndexOf('/') + 1);
+					theFile = filename.substring(filename.lastIndexOf('/') + 1);
+				}
+				if (filename.lastIndexOf('\\') >= 0) {
+					directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
+					theFile = filename.substring(filename.lastIndexOf('\\') + 1);
+				}
 				for (int i = 0; i < tab.getTabCount(); i++) {
 					if (tab
 							.getTitleAt(i)
@@ -3131,32 +3107,60 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						break;
 					}
 				}
-				Run run = new Run(null);
-				JCheckBox dummy = new JCheckBox();
-				JList empty = new JList();
-				dummy.setSelected(false);
-				run.createProperties(0, "Print Interval", 1, 1, 1, 1, tree.getFile()
-						.substring(
-								0,
-								tree.getFile().length()
-										- (tree.getFile().split(separator)[tree.getFile().split(
-												separator).length - 1].length())), 314159, 1,
-						new String[0], new String[0], "tsd.printer", "amount", tree.getFile()
-								.split(separator), "none", frame, tree.getFile(), 0.1, 0.1, 0.1,
-						15, dummy, "", dummy, null, empty, empty, empty);
-				String filename = tree.getFile();
-				String directory = "";
-				String theFile = "";
-				if (filename.lastIndexOf('/') >= 0) {
-					directory = filename.substring(0, filename.lastIndexOf('/') + 1);
-					theFile = filename.substring(filename.lastIndexOf('/') + 1);
+			}
+			File work = new File(directory);
+			String out = theFile;
+			try {
+				if (out.contains(".lpn")) {
+					String file = theFile;
+					String[] findTheFile = file.split("\\.");
+					theFile = findTheFile[0] + ".dot";
+					File dot = new File(root + separator + theFile);
+					dot.delete();
+					String cmd = "atacs -cPllodpl " + file;
+					Runtime exec = Runtime.getRuntime();
+					Process ATACS = exec.exec(cmd, null, work);
+					ATACS.waitFor();
+					log.addText("Executing:\n" + cmd);
+					if (dot.exists()) {
+						String command = "";
+						if (System.getProperty("os.name").contentEquals("Linux")) {
+							// directory = ENVVAR + "/docs/";
+							command = "gnome-open ";
+						}
+						else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
+							// directory = ENVVAR + "/docs/";
+							command = "open ";
+						}
+						else {
+							// directory = ENVVAR + "\\docs\\";
+							command = "dotty start ";
+						}
+						log.addText(command + root + separator + theFile + "\n");
+						exec.exec(command + theFile, null, work);
+					}
+					else {
+						File log = new File(root + separator + "atacs.log");
+						BufferedReader input = new BufferedReader(new FileReader(log));
+						String line = null;
+						JTextArea messageArea = new JTextArea();
+						while ((line = input.readLine()) != null) {
+							messageArea.append(line);
+							messageArea.append(System.getProperty("line.separator"));
+						}
+						input.close();
+						messageArea.setLineWrap(true);
+						messageArea.setWrapStyleWord(true);
+						messageArea.setEditable(false);
+						JScrollPane scrolls = new JScrollPane();
+						scrolls.setMinimumSize(new Dimension(500, 500));
+						scrolls.setPreferredSize(new Dimension(500, 500));
+						scrolls.setViewportView(messageArea);
+						JOptionPane.showMessageDialog(frame(), scrolls, "Log",
+								JOptionPane.INFORMATION_MESSAGE);
+					}
+					return;
 				}
-				if (filename.lastIndexOf('\\') >= 0) {
-					directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
-					theFile = filename.substring(filename.lastIndexOf('\\') + 1);
-				}
-				File work = new File(directory);
-				String out = theFile;
 				if (out.length() > 4
 						&& out.substring(out.length() - 5, out.length()).equals(".sbml")) {
 					out = out.substring(0, out.length() - 5);
@@ -3165,8 +3169,165 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						&& out.substring(out.length() - 4, out.length()).equals(".xml")) {
 					out = out.substring(0, out.length() - 4);
 				}
+				else if (out.length() > 3
+						&& out.substring(out.length() - 4, out.length()).equals(".gcm")) {
+					try {
+						if (System.getProperty("os.name").contentEquals("Linux")) {
+							log.addText("Executing:\ndotty " + directory + theFile + "\n");
+							Runtime exec = Runtime.getRuntime();
+							exec.exec("dotty " + theFile, null, work);
+						}
+						else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
+							log.addText("Executing:\nopen " + directory + theFile + "\n");
+							Runtime exec = Runtime.getRuntime();
+							exec.exec("cp " + theFile + " " + theFile + ".dot", null, work);
+							exec = Runtime.getRuntime();
+							exec.exec("open " + theFile + ".dot", null, work);
+						}
+						else {
+							log.addText("Executing:\ndotty " + directory + theFile + "\n");
+							Runtime exec = Runtime.getRuntime();
+							exec.exec("dotty " + theFile, null, work);
+						}
+						return;
+					}
+					catch (Exception e1) {
+						JOptionPane.showMessageDialog(frame, "Unable to view this gcm file.",
+								"Error", JOptionPane.ERROR_MESSAGE);
+						return;
+					}
+				}
+				Run run = new Run(null);
+				JCheckBox dummy = new JCheckBox();
+				dummy.setSelected(false);
+				JList empty = new JList();
+				run.createProperties(0, "Print Interval", 1, 1, 1, 1, directory, 314159, 1,
+						new String[0], new String[0], "tsd.printer", "amount",
+						(directory + theFile).split(separator), "none", frame, directory + theFile,
+						0.1, 0.1, 0.1, 15, dummy, "", dummy, null, empty, empty, empty);
+				log.addText("Executing:\nreb2sac --target.encoding=dot --out=" + directory + out
+						+ ".dot " + directory + theFile + "\n");
+				Runtime exec = Runtime.getRuntime();
+				Process graph = exec.exec("reb2sac --target.encoding=dot --out=" + out + ".dot "
+						+ theFile, null, work);
+				String error = "";
+				String output = "";
+				InputStream reb = graph.getErrorStream();
+				int read = reb.read();
+				while (read != -1) {
+					error += (char) read;
+					read = reb.read();
+				}
+				reb.close();
+				reb = graph.getInputStream();
+				read = reb.read();
+				while (read != -1) {
+					output += (char) read;
+					read = reb.read();
+				}
+				reb.close();
+				if (!output.equals("")) {
+					log.addText("Output:\n" + output + "\n");
+				}
+				if (!error.equals("")) {
+					log.addText("Errors:\n" + error + "\n");
+				}
+				graph.waitFor();
+				if (error.equals("")) {
+					if (System.getProperty("os.name").contentEquals("Linux")) {
+						log.addText("Executing:\ndotty " + directory + out + ".dot\n");
+						exec.exec("dotty " + out + ".dot", null, work);
+					}
+					else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
+						log.addText("Executing:\nopen " + directory + out + ".dot\n");
+						exec.exec("open " + out + ".dot", null, work);
+					}
+					else {
+						log.addText("Executing:\ndotty " + directory + out + ".dot\n");
+						exec.exec("dotty " + out + ".dot", null, work);
+					}
+				}
+				String remove;
+				if (theFile.substring(theFile.length() - 4).equals("sbml")) {
+					remove = (directory + theFile).substring(0, (directory + theFile).length() - 4)
+							+ "properties";
+				}
+				else {
+					remove = (directory + theFile).substring(0, (directory + theFile).length() - 4)
+							+ ".properties";
+				}
+				System.gc();
+				new File(remove).delete();
+				refreshTree();
+			}
+			catch (Exception e1) {
+				JOptionPane.showMessageDialog(frame, "Error graphing sbml file.", "Error",
+						JOptionPane.ERROR_MESSAGE);
+			}
+		}
+		// if the browse popup menu is selected on an sbml file
+		else if (e.getActionCommand().equals("browse")) {
+			String directory;
+			String theFile;
+			if (!treeSelected) {
+				Component comp = tab.getSelectedComponent();
+				if (comp instanceof SBML_Editor) {
+					if (save(tab.getSelectedIndex(), 0) != 1) {
+						return;
+					}
+					theFile = tab.getTitleAt(tab.getSelectedIndex());
+					directory = root + separator;
+				}
+				else {
+					return;
+				}
+			}
+			else {
+				String filename = tree.getFile();
+				directory = "";
+				theFile = "";
+				if (filename.lastIndexOf('/') >= 0) {
+					directory = filename.substring(0, filename.lastIndexOf('/') + 1);
+					theFile = filename.substring(filename.lastIndexOf('/') + 1);
+				}
+				if (filename.lastIndexOf('\\') >= 0) {
+					directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
+					theFile = filename.substring(filename.lastIndexOf('\\') + 1);
+				}
+				for (int i = 0; i < tab.getTabCount(); i++) {
+					if (tab
+							.getTitleAt(i)
+							.equals(
+									tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
+						tab.setSelectedIndex(i);
+						if (save(i, 0) != 1) {
+							return;
+						}
+						break;
+					}
+				}
+			}
+			File work = new File(directory);
+			String out = theFile;
+			if (out.length() > 4 && out.substring(out.length() - 5, out.length()).equals(".sbml")) {
+				out = out.substring(0, out.length() - 5);
+			}
+			else if (out.length() > 3
+					&& out.substring(out.length() - 4, out.length()).equals(".xml")) {
+				out = out.substring(0, out.length() - 4);
+			}
+			try {
+				Run run = new Run(null);
+				JCheckBox dummy = new JCheckBox();
+				JList empty = new JList();
+				dummy.setSelected(false);
+				run.createProperties(0, "Print Interval", 1, 1, 1, 1, directory, 314159, 1,
+						new String[0], new String[0], "tsd.printer", "amount",
+						(directory + theFile).split(separator), "none", frame, directory + theFile,
+						0.1, 0.1, 0.1, 15, dummy, "", dummy, null, empty, empty, empty);
+
 				log.addText("Executing:\nreb2sac --target.encoding=xhtml --out=" + directory + out
-						+ ".xhtml " + tree.getFile() + "\n");
+						+ ".xhtml " + directory + theFile + "\n");
 				Runtime exec = Runtime.getRuntime();
 				Process browse = exec.exec("reb2sac --target.encoding=xhtml --out=" + out
 						+ ".xhtml " + theFile, null, work);
@@ -3209,12 +3370,12 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					exec.exec(command + out + ".xhtml", null, work);
 				}
 				String remove;
-				if (tree.getFile().substring(tree.getFile().length() - 4).equals("sbml")) {
-					remove = tree.getFile().substring(0, tree.getFile().length() - 4)
+				if (theFile.substring(theFile.length() - 4).equals("sbml")) {
+					remove = (directory + theFile).substring(0, (directory + theFile).length() - 4)
 							+ "properties";
 				}
 				else {
-					remove = tree.getFile().substring(0, tree.getFile().length() - 4)
+					remove = (directory + theFile).substring(0, (directory + theFile).length() - 4)
 							+ ".properties";
 				}
 				System.gc();
@@ -3226,43 +3387,35 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			}
 		}
 		// if the graph dot popup menu is selected
-		else if (e.getActionCommand().equals("graphDot")) {
-			try {
-				String filename = tree.getFile();
-				String directory = "";
-				String theFile = "";
-				if (filename.lastIndexOf('/') >= 0) {
-					directory = filename.substring(0, filename.lastIndexOf('/') + 1);
-					theFile = filename.substring(filename.lastIndexOf('/') + 1);
-				}
-				if (filename.lastIndexOf('\\') >= 0) {
-					directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
-					theFile = filename.substring(filename.lastIndexOf('\\') + 1);
-				}
-				File work = new File(directory);
-				if (System.getProperty("os.name").contentEquals("Linux")) {
-					log.addText("Executing:\ndotty " + directory + theFile + "\n");
-					Runtime exec = Runtime.getRuntime();
-					exec.exec("dotty " + theFile, null, work);
-				}
-				else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
-					log.addText("Executing:\nopen " + directory + theFile + "\n");
-					Runtime exec = Runtime.getRuntime();
-					exec.exec("cp " + theFile + " " + theFile + ".dot", null, work);
-					exec = Runtime.getRuntime();
-					exec.exec("open " + theFile + ".dot", null, work);
-				}
-				else {
-					log.addText("Executing:\ndotty " + directory + theFile + "\n");
-					Runtime exec = Runtime.getRuntime();
-					exec.exec("dotty " + theFile, null, work);
-				}
-			}
-			catch (Exception e1) {
-				JOptionPane.showMessageDialog(frame, "Unable to view this gcm file.", "Error",
-						JOptionPane.ERROR_MESSAGE);
-			}
-		}
+		/*
+		 * else if (e.getActionCommand().equals("graphDot")) { if
+		 * (!treeSelected) { Component comp = tab.getSelectedComponent(); if
+		 * (comp instanceof JTabbedPane) { Component component = ((JTabbedPane)
+		 * comp).getSelectedComponent(); if (component instanceof Learn) {
+		 * ((Learn) component).viewGcm(); } } } else { try { String filename =
+		 * tree.getFile(); String directory = ""; String theFile = ""; if
+		 * (filename.lastIndexOf('/') >= 0) { directory = filename.substring(0,
+		 * filename.lastIndexOf('/') + 1); theFile =
+		 * filename.substring(filename.lastIndexOf('/') + 1); } if
+		 * (filename.lastIndexOf('\\') >= 0) { directory = filename.substring(0,
+		 * filename.lastIndexOf('\\') + 1); theFile =
+		 * filename.substring(filename.lastIndexOf('\\') + 1); } File work = new
+		 * File(directory); if
+		 * (System.getProperty("os.name").contentEquals("Linux")) {
+		 * log.addText("Executing:\ndotty " + directory + theFile + "\n");
+		 * Runtime exec = Runtime.getRuntime(); exec.exec("dotty " + theFile,
+		 * null, work); } else if
+		 * (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
+		 * log.addText("Executing:\nopen " + directory + theFile + "\n");
+		 * Runtime exec = Runtime.getRuntime(); exec.exec("cp " + theFile + " "
+		 * + theFile + ".dot", null, work); exec = Runtime.getRuntime();
+		 * exec.exec("open " + theFile + ".dot", null, work); } else {
+		 * log.addText("Executing:\ndotty " + directory + theFile + "\n");
+		 * Runtime exec = Runtime.getRuntime(); exec.exec("dotty " + theFile,
+		 * null, work); } } catch (Exception e1) {
+		 * JOptionPane.showMessageDialog(frame, "Unable to view this gcm file.",
+		 * "Error", JOptionPane.ERROR_MESSAGE); } } }
+		 */
 		// if the save button is pressed on the Tool Bar
 		else if (e.getActionCommand().equals("save")) {
 			Component comp = tab.getSelectedComponent();
@@ -8009,7 +8162,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					JMenuItem graph = new JMenuItem("View Model");
 					graph.addActionListener(this);
 					graph.addMouseListener(this);
-					graph.setActionCommand("graphDot");
+					graph.setActionCommand("graph");
 					JMenuItem delete = new JMenuItem("Delete");
 					delete.addActionListener(this);
 					delete.addMouseListener(this);
@@ -9468,7 +9621,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						JMenuItem graph = new JMenuItem("View Model");
 						graph.addActionListener(this);
 						graph.addMouseListener(this);
-						graph.setActionCommand("graphDot");
+						graph.setActionCommand("graph");
 						JMenuItem delete = new JMenuItem("Delete");
 						delete.addActionListener(this);
 						delete.addMouseListener(this);
@@ -12651,7 +12804,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			else if (tree.getFile().length() > 3
 					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".gcm")) {
 				viewModGraph.setEnabled(true);
-				viewModGraph.setActionCommand("graphDot");
+				// viewModGraph.setActionCommand("graphDot");
 				viewModBrowser.setEnabled(false);
 				createAnal.setEnabled(true);
 				createAnal.setActionCommand("createSim");
