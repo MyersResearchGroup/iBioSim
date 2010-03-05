@@ -93,10 +93,7 @@ import synthesis.Synthesis;
 
 import verification.*;
 
-import org.sbml.libsbml.Compartment;
-import org.sbml.libsbml.SBMLDocument;
-import org.sbml.libsbml.SBMLReader;
-import org.sbml.libsbml.SBMLWriter;
+import org.sbml.libsbml.*;
 
 import reb2sac.Reb2Sac;
 import reb2sac.Run;
@@ -4799,6 +4796,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 								try {
 									SBMLDocument document = readSBML(filename.trim() + separator
 											+ s);
+									checkModelCompleteness(document);
 									if (overwrite(root + separator + s, s)) {
 										long numErrors = document.checkConsistency();
 										if (numErrors > 0) {
@@ -4872,14 +4870,15 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							SBMLDocument document = readSBML(filename.trim());
 							if (overwrite(root + separator + file[file.length - 1],
 									file[file.length - 1])) {
+								checkModelCompleteness(document);
 								long numErrors = document.checkConsistency();
 								if (numErrors > 0) {
 									final JFrame f = new JFrame("SBML Errors and Warnings");
 									JTextArea messageArea = new JTextArea();
 									messageArea
-											.append("Imported SBML file contains the errors listed below. ");
+									.append("Imported SBML file contains the errors listed below. ");
 									messageArea
-											.append("It is recommended that you fix them before using this model or you may get unexpected results.\n\n");
+									.append("It is recommended that you fix them before using this model or you may get unexpected results.\n\n");
 									for (long i = 0; i < numErrors; i++) {
 										String error = document.getError(i).getMessage();
 										messageArea.append(i + ":" + error + "\n");
@@ -4925,14 +4924,14 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 								}
 								SBMLWriter writer = new SBMLWriter();
 								writer
-										.writeSBML(document, root + separator
-												+ file[file.length - 1]);
+								.writeSBML(document, root + separator
+										+ file[file.length - 1]);
 								refreshTree();
 							}
 						}
 						catch (Exception e1) {
-							JOptionPane.showMessageDialog(frame, "Unable to import file.", "Error",
-									JOptionPane.ERROR_MESSAGE);
+							JOptionPane.showMessageDialog(frame, "Unable to import file.",
+									"Error", JOptionPane.ERROR_MESSAGE);
 						}
 					}
 				}
@@ -13526,4 +13525,107 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		document.setLevelAndVersion(SBML_LEVEL, SBML_VERSION);
 		return document;
 	}
+
+
+	public static void checkModelCompleteness(SBMLDocument document) {
+		JTextArea messageArea = new JTextArea();
+		messageArea.append("Model is incomplete.  Cannot be simulated until the following information is provided.\n");
+		boolean display = false;
+		Model model = document.getModel();
+		ListOf list = model.getListOfCompartments();
+		for (int i=0; i<model.getNumCompartments(); i++) {
+			Compartment compartment = (Compartment)list.get(i);
+			if (!compartment.isSetSize()) {
+				messageArea
+				.append("--------------------------------------------------------------------------\n");
+				messageArea.append("Compartment " + compartment.getId() + " needs a size.\n");
+				display = true;
+			}
+		}
+		list = model.getListOfSpecies();
+		for (int i=0; i<model.getNumSpecies(); i++) {
+			Species species = (Species)list.get(i);
+			if (!(species.isSetInitialAmount()) &&
+				!(species.isSetInitialConcentration())) {
+				messageArea
+				.append("--------------------------------------------------------------------------\n");
+				messageArea.append("Species " + species.getId() + " needs an initial amount or concentration.\n");
+				display = true;
+			}
+		}
+		list = model.getListOfParameters();
+		for (int i=0; i<model.getNumParameters(); i++) {
+			Parameter parameter = (Parameter)list.get(i);
+			if (!(parameter.isSetValue())) {
+				messageArea
+				.append("--------------------------------------------------------------------------\n");
+				messageArea.append("Parameter " + parameter.getId() + " needs an initial value.\n");
+				display = true;
+			}
+		}
+		list = model.getListOfReactions();
+		for (int i=0; i<model.getNumReactions(); i++) {
+			Reaction reaction = (Reaction)list.get(i);
+			if (!(reaction.isSetKineticLaw())) {
+				messageArea
+				.append("--------------------------------------------------------------------------\n");
+				messageArea.append("Reaction " + reaction.getId() + " needs a kinetic law.\n");
+				display = true;
+			} else {
+				ListOf params = reaction.getKineticLaw().getListOfParameters();
+				for (int j=0; j<reaction.getKineticLaw().getNumParameters(); j++) {
+					Parameter param = (Parameter)params.get(j);
+					if (!(param.isSetValue())) {
+						messageArea
+						.append("--------------------------------------------------------------------------\n");
+						messageArea.append("Local parameter " + param.getId() + " for reaction " + reaction.getId() + 
+							" needs an initial value.\n");
+						display = true;
+					}
+				}
+			}
+		}
+		if (display) {
+			final JFrame f = new JFrame("SBML Model Completeness Errors");
+			messageArea.setLineWrap(true);
+			messageArea.setEditable(false);
+			messageArea.setSelectionStart(0);
+			messageArea.setSelectionEnd(0);
+			JScrollPane scroll = new JScrollPane();
+			scroll.setMinimumSize(new Dimension(600, 600));
+			scroll.setPreferredSize(new Dimension(600, 600));
+			scroll.setViewportView(messageArea);
+			JButton close = new JButton("Dismiss");
+			close.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					f.dispose();
+				}
+			});
+			JPanel consistencyPanel = new JPanel(new BorderLayout());
+			consistencyPanel.add(scroll, "Center");
+			consistencyPanel.add(close, "South");
+			f.setContentPane(consistencyPanel);
+			f.pack();
+			Dimension screenSize;
+			try {
+				Toolkit tk = Toolkit.getDefaultToolkit();
+				screenSize = tk.getScreenSize();
+			}
+			catch (AWTError awe) {
+				screenSize = new Dimension(640, 480);
+			}
+			Dimension frameSize = f.getSize();
+			if (frameSize.height > screenSize.height) {
+				frameSize.height = screenSize.height;
+			}
+			if (frameSize.width > screenSize.width) {
+				frameSize.width = screenSize.width;
+			}
+			int x = screenSize.width / 2 - frameSize.width / 2;
+			int y = screenSize.height / 2 - frameSize.height / 2;
+			f.setLocation(x, y);
+			f.setVisible(true);
+		}
+	}
 }
+	
