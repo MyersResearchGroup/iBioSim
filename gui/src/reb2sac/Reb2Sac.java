@@ -3971,7 +3971,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 								postAbs);
 						absErr.setEnabled(false);
 					}
-					else if (load.getProperty("reb2sac.simulation.method").equals("LPHN")) {
+					else if (load.getProperty("reb2sac.simulation.method").equals("LHPN")) {
 						lhpn.setSelected(true);
 						Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel,
 								minStepLabel, minStep, stepLabel, step, errorLabel, absErr,
