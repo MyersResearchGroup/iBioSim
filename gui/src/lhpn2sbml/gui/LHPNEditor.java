@@ -133,9 +133,9 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 		propertyField = new JTextField(lhpnFile.getProperty(), 15);
 		propertyField.setEditable(true);
 		propertyField.addActionListener(this);
-		JLabel lhpnNameLabel = new JLabel("LHPN Id:");
+		JLabel lhpnNameLabel = new JLabel("LPN Id:");
 		JLabel propertyLabel = new JLabel("Property:");
-		abstButton = new JButton("Abstract LHPN");
+		abstButton = new JButton("Abstract LPN");
 		abstButton.addActionListener(this);
 		mainPanelNorth.add(lhpnNameLabel);
 		mainPanelNorth.add(lhpnNameTextField);
@@ -157,10 +157,10 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 		add(mainPanel, BorderLayout.CENTER);
 
 		JPanel buttons = new JPanel();
-		SaveButton saveButton = new SaveButton("Save LHPN", lhpnNameTextField);
+		SaveButton saveButton = new SaveButton("Save LPN", lhpnNameTextField);
 		buttons.add(saveButton);
 		saveButton.addActionListener(this);
-		saveButton = new SaveButton("Save LHPN as", lhpnNameTextField);
+		saveButton = new SaveButton("Save LPN as", lhpnNameTextField);
 		buttons.add(saveButton);
 		saveButton.addActionListener(this);
 
@@ -449,7 +449,7 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 			}
 			//String[] vars = null;
 			String abstFilename = (String) JOptionPane.showInputDialog(this,
-					"Please enter the file name for the abstracted LHPN.", "Enter Filename",
+					"Please enter the file name for the abstracted LPN.", "Enter Filename",
 					JOptionPane.PLAIN_MESSAGE);
 			if (abstFilename != null) {
 				if (!abstFilename.endsWith(".lpn"))

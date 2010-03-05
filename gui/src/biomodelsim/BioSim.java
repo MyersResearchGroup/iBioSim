@@ -503,8 +503,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		saveAsGraph = new JMenuItem("Graph");
 		saveAsSbml = new JMenuItem("Save SBML Model");
 		saveAsTemplate = new JMenuItem("Save SBML Template");
-		saveGcmAsLhpn = new JMenuItem("Save LHPN Model");
-		saveAsLhpn = new JMenuItem("LHPN");
+		saveGcmAsLhpn = new JMenuItem("Save LPN Model");
+		saveAsLhpn = new JMenuItem("LPN");
 		run = new JMenuItem("Save and Run");
 		check = new JMenuItem("Save and Check");
 		saveSbml = new JMenuItem("Save as SBML");
@@ -519,7 +519,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		viewCoverage = new JMenuItem("Coverage Report"); // SB
 		viewVHDL = new JMenuItem("VHDL-AMS Model"); // SB
 		viewVerilog = new JMenuItem("Verilog-AMS Model"); // SB
-		viewLHPN = new JMenuItem("LHPN Model"); // SB
+		viewLHPN = new JMenuItem("LPN Model"); // SB
 		viewModGraph = new JMenuItem("Model");
 		viewModBrowser = new JMenuItem("Model in Browser");
 		viewSG = new JMenuItem("State Graph");
@@ -1398,7 +1398,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			}
 			else {
 				choices = new String[] { "Monte Carlo", "Markov", "SBML", "Network", "Browser",
-						"LHPN" };
+						"LPN" };
 			}
 			final JComboBox type = new JComboBox(choices);
 			type.setSelectedItem(biosimrc.get("biosim.sim.type", ""));
@@ -1447,7 +1447,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						type.addItem("SBML");
 						type.addItem("Network");
 						type.addItem("Browser");
-						type.addItem("LHPN");
+						type.addItem("LPN");
 						type.setSelectedItem(o);
 					}
 				}
@@ -1876,7 +1876,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		}
 		else {
 			JPanel prefPanel = new JPanel(new GridLayout(0, 2));
-			viewerLabel = new JLabel("External Editor for non-LHPN files:");
+			viewerLabel = new JLabel("External Editor for non-LPN files:");
 			viewerField = new JTextField("");
 			viewerCheck = new JCheckBox("Use External Viewer");
 			viewerCheck.addActionListener(this);
@@ -1892,7 +1892,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			// JPanel lhpnPrefs = new JPanel();
 			// JTabbedPane prefTabsNoLema = new JTabbedPane();
 			// prefTabsNoLema.addTab("VHDL Preferences", vhdlPrefs);
-			// prefTabsNoLema.addTab("LHPN Preferences", lhpnPrefs);
+			// prefTabsNoLema.addTab("LPN Preferences", lhpnPrefs);
 			Preferences biosimrc = Preferences.userRoot();
 			JCheckBox dialog = new JCheckBox("Use File Dialog");
 			if (biosimrc.get("biosim.general.file_browser", "").equals("FileDialog")) {
@@ -2910,7 +2910,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				}
 			}
 			catch (Exception e1) {
-				JOptionPane.showMessageDialog(frame, "Unable to create LHPN file.", "Error",
+				JOptionPane.showMessageDialog(frame, "Unable to create LPN file.", "Error",
 						JOptionPane.ERROR_MESSAGE);
 			}
 		}
@@ -3496,8 +3496,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			Component comp = tab.getSelectedComponent();
 			// int index = tab.getSelectedIndex();
 			if (comp instanceof LHPNEditor) {
-				String newName = JOptionPane.showInputDialog(frame(), "Enter LHPN name:",
-						"LHPN Name", JOptionPane.PLAIN_MESSAGE);
+				String newName = JOptionPane.showInputDialog(frame(), "Enter LPN name:",
+						"LPN Name", JOptionPane.PLAIN_MESSAGE);
 				if (newName == null) {
 					return;
 				}
@@ -4341,7 +4341,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		else if (e.getSource() == newLhpn) {
 			if (root != null) {
 				try {
-					String lhpnName = JOptionPane.showInputDialog(frame, "Enter LHPN Model ID:",
+					String lhpnName = JOptionPane.showInputDialog(frame, "Enter LPN Model ID:",
 							"Model ID", JOptionPane.PLAIN_MESSAGE);
 					if (lhpnName != null && !lhpnName.trim().equals("")) {
 						lhpnName = lhpnName.trim();
@@ -4382,7 +4382,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							// }
 							// addTab(f.getName(), new LHPNEditor(root +
 							// separator, f.getName(),
-							// null, this, log), "LHPN Editor");
+							// null, this, log), "LPN Editor");
 							// refreshTree();
 							// }
 							if (overwrite(root + separator + lhpnName, lhpnName)) {
@@ -4876,9 +4876,9 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 									final JFrame f = new JFrame("SBML Errors and Warnings");
 									JTextArea messageArea = new JTextArea();
 									messageArea
-									.append("Imported SBML file contains the errors listed below. ");
+											.append("Imported SBML file contains the errors listed below. ");
 									messageArea
-									.append("It is recommended that you fix them before using this model or you may get unexpected results.\n\n");
+											.append("It is recommended that you fix them before using this model or you may get unexpected results.\n\n");
 									for (long i = 0; i < numErrors; i++) {
 										String error = document.getError(i).getMessage();
 										messageArea.append(i + ":" + error + "\n");
@@ -4924,14 +4924,14 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 								}
 								SBMLWriter writer = new SBMLWriter();
 								writer
-								.writeSBML(document, root + separator
-										+ file[file.length - 1]);
+										.writeSBML(document, root + separator
+												+ file[file.length - 1]);
 								refreshTree();
 							}
 						}
 						catch (Exception e1) {
-							JOptionPane.showMessageDialog(frame, "Unable to import file.",
-									"Error", JOptionPane.ERROR_MESSAGE);
+							JOptionPane.showMessageDialog(frame, "Unable to import file.", "Error",
+									JOptionPane.ERROR_MESSAGE);
 						}
 					}
 				}
@@ -5424,7 +5424,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						&& (filename.length() > 3 && !filename.substring(filename.length() - 4,
 								filename.length()).equals(".lpn"))) {
 					JOptionPane.showMessageDialog(frame,
-							"You must select a valid lhpn file to import.", "Error",
+							"You must select a valid LPN file to import.", "Error",
 							JOptionPane.ERROR_MESSAGE);
 					return;
 				}
@@ -5871,7 +5871,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							}
 							catch (IOException e1) {
 								JOptionPane.showMessageDialog(frame,
-										"Unable to generate LHPN from VHDL file!",
+										"Unable to generate LPN from VHDL file!",
 										"Error Generating File", JOptionPane.ERROR_MESSAGE);
 							}
 						}
@@ -8037,7 +8037,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			}
 		}
 		catch (Exception e1) {
-			JOptionPane.showMessageDialog(frame, "Unable to save LHPN.", "Error",
+			JOptionPane.showMessageDialog(frame, "Unable to save LPN.", "Error",
 					JOptionPane.ERROR_MESSAGE);
 		}
 	}
@@ -8154,10 +8154,10 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					createSBML.addActionListener(this);
 					createSBML.addMouseListener(this);
 					createSBML.setActionCommand("createSBML");
-					JMenuItem createLHPN = new JMenuItem("Create LHPN File");
-					createLHPN.addActionListener(this);
-					createLHPN.addMouseListener(this);
-					createLHPN.setActionCommand("createLHPN");
+					// JMenuItem createLHPN = new JMenuItem("Create LPN File");
+					// createLHPN.addActionListener(this);
+					// createLHPN.addMouseListener(this);
+					// createLHPN.setActionCommand("createLHPN");
 					JMenuItem edit = new JMenuItem("View/Edit");
 					edit.addActionListener(this);
 					edit.addMouseListener(this);
@@ -8181,7 +8181,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					popup.add(create);
 					popup.add(createLearn);
 					popup.add(createSBML);
-					popup.add(createLHPN);
+					// popup.add(createLHPN);
 					popup.addSeparator();
 					popup.add(graph);
 					popup.addSeparator();
@@ -9130,7 +9130,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						}
 						catch (Exception e1) {
 							e1.printStackTrace();
-							JOptionPane.showMessageDialog(frame, "Unable to view this LHPN file.",
+							JOptionPane.showMessageDialog(frame, "Unable to view this LPN file.",
 									"Error", JOptionPane.ERROR_MESSAGE);
 						}
 					}
@@ -9613,10 +9613,11 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						createSBML.addActionListener(this);
 						createSBML.addMouseListener(this);
 						createSBML.setActionCommand("createSBML");
-						JMenuItem createLHPN = new JMenuItem("Create LHPN File");
-						createLHPN.addActionListener(this);
-						createLHPN.addMouseListener(this);
-						createLHPN.setActionCommand("createLHPN");
+						// JMenuItem createLHPN = new
+						// JMenuItem("Create LPN File");
+						// createLHPN.addActionListener(this);
+						// createLHPN.addMouseListener(this);
+						// createLHPN.setActionCommand("createLHPN");
 						JMenuItem edit = new JMenuItem("View/Edit");
 						edit.addActionListener(this);
 						edit.addMouseListener(this);
@@ -9640,7 +9641,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						popup.add(create);
 						popup.add(createLearn);
 						popup.add(createSBML);
-						popup.add(createLHPN);
+						// popup.add(createLHPN);
 						popup.addSeparator();
 						popup.add(graph);
 						popup.addSeparator();
@@ -13526,60 +13527,61 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		return document;
 	}
 
-
 	public static void checkModelCompleteness(SBMLDocument document) {
 		JTextArea messageArea = new JTextArea();
-		messageArea.append("Model is incomplete.  Cannot be simulated until the following information is provided.\n");
+		messageArea
+				.append("Model is incomplete.  Cannot be simulated until the following information is provided.\n");
 		boolean display = false;
 		Model model = document.getModel();
 		ListOf list = model.getListOfCompartments();
-		for (int i=0; i<model.getNumCompartments(); i++) {
-			Compartment compartment = (Compartment)list.get(i);
+		for (int i = 0; i < model.getNumCompartments(); i++) {
+			Compartment compartment = (Compartment) list.get(i);
 			if (!compartment.isSetSize()) {
 				messageArea
-				.append("--------------------------------------------------------------------------\n");
+						.append("--------------------------------------------------------------------------\n");
 				messageArea.append("Compartment " + compartment.getId() + " needs a size.\n");
 				display = true;
 			}
 		}
 		list = model.getListOfSpecies();
-		for (int i=0; i<model.getNumSpecies(); i++) {
-			Species species = (Species)list.get(i);
-			if (!(species.isSetInitialAmount()) &&
-				!(species.isSetInitialConcentration())) {
+		for (int i = 0; i < model.getNumSpecies(); i++) {
+			Species species = (Species) list.get(i);
+			if (!(species.isSetInitialAmount()) && !(species.isSetInitialConcentration())) {
 				messageArea
-				.append("--------------------------------------------------------------------------\n");
-				messageArea.append("Species " + species.getId() + " needs an initial amount or concentration.\n");
+						.append("--------------------------------------------------------------------------\n");
+				messageArea.append("Species " + species.getId()
+						+ " needs an initial amount or concentration.\n");
 				display = true;
 			}
 		}
 		list = model.getListOfParameters();
-		for (int i=0; i<model.getNumParameters(); i++) {
-			Parameter parameter = (Parameter)list.get(i);
+		for (int i = 0; i < model.getNumParameters(); i++) {
+			Parameter parameter = (Parameter) list.get(i);
 			if (!(parameter.isSetValue())) {
 				messageArea
-				.append("--------------------------------------------------------------------------\n");
+						.append("--------------------------------------------------------------------------\n");
 				messageArea.append("Parameter " + parameter.getId() + " needs an initial value.\n");
 				display = true;
 			}
 		}
 		list = model.getListOfReactions();
-		for (int i=0; i<model.getNumReactions(); i++) {
-			Reaction reaction = (Reaction)list.get(i);
+		for (int i = 0; i < model.getNumReactions(); i++) {
+			Reaction reaction = (Reaction) list.get(i);
 			if (!(reaction.isSetKineticLaw())) {
 				messageArea
-				.append("--------------------------------------------------------------------------\n");
+						.append("--------------------------------------------------------------------------\n");
 				messageArea.append("Reaction " + reaction.getId() + " needs a kinetic law.\n");
 				display = true;
-			} else {
+			}
+			else {
 				ListOf params = reaction.getKineticLaw().getListOfParameters();
-				for (int j=0; j<reaction.getKineticLaw().getNumParameters(); j++) {
-					Parameter param = (Parameter)params.get(j);
+				for (int j = 0; j < reaction.getKineticLaw().getNumParameters(); j++) {
+					Parameter param = (Parameter) params.get(j);
 					if (!(param.isSetValue())) {
 						messageArea
-						.append("--------------------------------------------------------------------------\n");
-						messageArea.append("Local parameter " + param.getId() + " for reaction " + reaction.getId() + 
-							" needs an initial value.\n");
+								.append("--------------------------------------------------------------------------\n");
+						messageArea.append("Local parameter " + param.getId() + " for reaction "
+								+ reaction.getId() + " needs an initial value.\n");
 						display = true;
 					}
 				}
@@ -13628,4 +13630,3 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		}
 	}
 }
-	

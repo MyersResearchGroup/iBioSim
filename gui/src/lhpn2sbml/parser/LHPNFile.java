@@ -535,7 +535,7 @@ public class LHPNFile {
 		}
 		catch (Exception e) {
 			e.printStackTrace();
-			// throw new IllegalArgumentException("Unable to parse LHPN");
+			// throw new IllegalArgumentException("Unable to parse LPN");
 		}
 	}
 

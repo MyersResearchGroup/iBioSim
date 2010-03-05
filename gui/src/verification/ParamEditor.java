@@ -149,7 +149,7 @@ public class ParamEditor extends JPanel implements ActionListener {
 			dbm = new JRadioButton("DBM");
 			smt = new JRadioButton("SMT");
 		}
-		lhpn = new JRadioButton("LHPN");
+		lhpn = new JRadioButton("LPN");
 		view = new JRadioButton("View");
 		// Basic Timing Options
 		abst = new JCheckBox("Abstract");
@@ -191,7 +191,7 @@ public class ParamEditor extends JPanel implements ActionListener {
 		disabling = new JCheckBox("Disabling");
 		nofail = new JCheckBox("No fail");
 		keepgoing = new JCheckBox("Keep going");
-		explpn = new JCheckBox("Expand LHPN");
+		explpn = new JCheckBox("Expand LPN");
 		genrg.addActionListener(this);
 		timsubset.addActionListener(this);
 		superset.addActionListener(this);

@@ -173,7 +173,7 @@ public class Run implements ActionListener {
 			abs.setProperty("reb2sac.simulation.method", "Browser");
 		}
 		else if (selectedButtons.contains("lhpn")) {
-			abs.setProperty("reb2sac.simulation.method", "LHPN");
+			abs.setProperty("reb2sac.simulation.method", "LPN");
 		}
 		if (!selectedButtons.contains("monteCarlo")) {
 			// if (selectedButtons.equals("none_ODE") ||
@@ -497,7 +497,7 @@ public class Run implements ActionListener {
 				}
 			}
 			else if (lhpn.isSelected()) {
-				lhpnName = JOptionPane.showInputDialog(component, "Enter LHPN Model ID:",
+				lhpnName = JOptionPane.showInputDialog(component, "Enter LPN Model ID:",
 						"Model ID", JOptionPane.PLAIN_MESSAGE);
 				if (lhpnName != null && !lhpnName.trim().equals("")) {
 					lhpnName = lhpnName.trim();

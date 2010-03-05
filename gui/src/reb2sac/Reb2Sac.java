@@ -555,7 +555,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		sbml = new JRadioButton("SBML");
 		dot = new JRadioButton("Network");
 		xhtml = new JRadioButton("Browser");
-		lhpn = new JRadioButton("LHPN");
+		lhpn = new JRadioButton("LPN");
 		sbml.setSelected(true);
 		odeMonteAndMarkovPanel.add(sbml);
 		odeMonteAndMarkovPanel.add(dot);
@@ -1039,7 +1039,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			simulators.setSelectedItem(biosimrc.get("biosim.sim.sim", ""));
 			sbml.doClick();
 		}
-		else if (biosimrc.get("biosim.sim.type", "").equals("LHPN")) {
+		else if (biosimrc.get("biosim.sim.type", "").equals("LPN")) {
 			if (lhpn.isEnabled()) {
 				lhpn.doClick();
 				simulators.setSelectedItem(biosimrc.get("biosim.sim.sim", ""));
@@ -3971,7 +3971,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 								postAbs);
 						absErr.setEnabled(false);
 					}
-					else if (load.getProperty("reb2sac.simulation.method").equals("LHPN")) {
+					else if (load.getProperty("reb2sac.simulation.method").equals("LPN")) {
 						lhpn.setSelected(true);
 						Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel,
 								minStepLabel, minStep, stepLabel, step, errorLabel, absErr,

@@ -169,7 +169,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			dbm.addActionListener(this);
 			smt.addActionListener(this);
 		}
-		lhpn = new JRadioButton("LHPN");
+		lhpn = new JRadioButton("LPN");
 		view = new JRadioButton("View");
 		lhpn.addActionListener(this);
 		view.addActionListener(this);
@@ -219,7 +219,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		nofail = new JCheckBox("No fail");
 		noproj = new JCheckBox("No project");
 		keepgoing = new JCheckBox("Keep going");
-		explpn = new JCheckBox("Expand LHPN");
+		explpn = new JCheckBox("Expand LPN");
 		genrg.addActionListener(this);
 		timsubset.addActionListener(this);
 		superset.addActionListener(this);
@@ -830,7 +830,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		String abstFilename;
 		if (lhpn.isSelected()) {
 			abstFilename = (String) JOptionPane.showInputDialog(this,
-					"Please enter the file name for the abstracted LHPN.", "Enter Filename",
+					"Please enter the file name for the abstracted LPN.", "Enter Filename",
 					JOptionPane.PLAIN_MESSAGE);
 		}
 		else {

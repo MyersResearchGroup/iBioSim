@@ -307,7 +307,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		}
 		else if (command.contains("LHPN")) {
 			String lpnName = JOptionPane.showInputDialog(biosim.frame(),
-					"Enter LHPN name:", "LHPN Name", JOptionPane.PLAIN_MESSAGE);
+					"Enter LPN name:", "LPN Name", JOptionPane.PLAIN_MESSAGE);
 			if (!lpnName.trim().contains(".lpn")) {
 				lpnName = lpnName.trim() + ".lpn";
 			}

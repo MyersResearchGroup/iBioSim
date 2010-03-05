@@ -1482,7 +1482,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			}
 		} catch (Exception e1) {
 			JOptionPane.showMessageDialog(biosim.frame(),
-					"Unable to view LHPN Model.", "Error",
+					"Unable to view LPN Model.", "Error",
 					JOptionPane.ERROR_MESSAGE);
 		}
 	}
