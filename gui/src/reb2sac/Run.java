@@ -9,6 +9,7 @@ import javax.swing.*;
 
 import parser.*;
 
+import lhpn2sbml.gui.LHPNEditor;
 import lhpn2sbml.parser.LHPNFile;
 
 import biomodelsim.*;
@@ -456,12 +457,13 @@ public class Run implements ActionListener {
 				if (sbmlName != null && !sbmlName.trim().equals("")) {
 					sbmlName = sbmlName.trim();
 					if (sbmlName.length() > 4) {
-						if (!sbmlName.substring(sbmlName.length() - 4).equals(".sbml")) {
-							sbmlName += ".sbml";
+						if (!sbmlName.substring(sbmlName.length() - 3).equals(".xml")
+								|| !sbmlName.substring(sbmlName.length() - 4).equals(".sbml")) {
+							sbmlName += ".xml";
 						}
 					}
 					else {
-						sbmlName += ".sbml";
+						sbmlName += ".xml";
 					}
 					File f = new File(root + separator + sbmlName);
 					if (f.exists()) {
@@ -528,10 +530,28 @@ public class Run implements ActionListener {
 							return 0;
 						}
 					}
-					gcmEditor.getGCM().createLogicalModel(root + separator + lhpnName, log,
-							biomodelsim, lhpnName);
+					ArrayList<String> specs = new ArrayList<String>();
+					ArrayList<Object[]> conLevel = new ArrayList<Object[]>();
+					for (int i = 0; i < intSpecies.length; i++) {
+						if (!intSpecies[i].equals("")) {
+							String[] split = intSpecies[i].split(" ");
+							if (split.length > 1) {
+								String[] levels = split[1].split(",");
+								if (levels.length > 0) {
+									specs.add(split[0]);
+									conLevel.add(levels);
+								}
+							}
+						}
+					}
+					GCMFile gcm = gcmEditor.getGCM();
+					gcm.flattenGCM();
+					LHPNFile lhpnFile = gcm.convertToLHPN(specs, conLevel);
+					lhpnFile.save(root + separator + lhpnName);
+					log.addText("Saving GCM file as LHPN:\n" + root + separator + lhpnName + "\n");
 					time1 = System.nanoTime();
 					exitValue = 0;
+					biomodelsim.refreshTree();
 				}
 				else {
 					time1 = System.nanoTime();
@@ -833,6 +853,11 @@ public class Run implements ActionListener {
 				else if (sbml.isSelected()) {
 					biomodelsim.addTab(sbmlName, new SBML_Editor(root + separator + sbmlName, null,
 							log, biomodelsim, null, null), "SBML Editor");
+					biomodelsim.refreshTree();
+				}
+				else if (lhpn.isSelected()) {
+					biomodelsim.addTab(lhpnName, new LHPNEditor(root, lhpnName, null, biomodelsim,
+							log), "LHPN Editor");
 					biomodelsim.refreshTree();
 				}
 				else if (dot.isSelected()) {
