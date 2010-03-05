@@ -242,10 +242,10 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 	private String[] BioModelIds = null;
 
 	private JMenuItem copy, rename, delete, save, saveAs, saveAsGcm, saveAsGraph, saveAsSbml,
-			saveAsTemplate, saveGcmAsLhpn, saveAsLhpn, check, run, export, refresh, viewCircuit,
-			viewRules, viewTrace, viewLog, viewCoverage, viewVHDL, viewVerilog, viewLHPN, saveSbml,
-			saveTemp, saveModel, viewSG, viewModGraph, viewModBrowser, createAnal, createLearn,
-			createSbml, createSynth, createVer, close, closeAll;
+			saveAsTemplate, saveAsLhpn, check, run, export, refresh, viewCircuit, viewRules,
+			viewTrace, viewLog, viewCoverage, viewVHDL, viewVerilog, viewLHPN, saveSbml, saveTemp,
+			saveModel, viewSG, viewModGraph, viewModBrowser, createAnal, createLearn, createSbml,
+			createSynth, createVer, close, closeAll;
 
 	public String ENVVAR;
 
@@ -503,7 +503,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		saveAsGraph = new JMenuItem("Graph");
 		saveAsSbml = new JMenuItem("Save SBML Model");
 		saveAsTemplate = new JMenuItem("Save SBML Template");
-		saveGcmAsLhpn = new JMenuItem("Save LPN Model");
+		// saveGcmAsLhpn = new JMenuItem("Save LPN Model");
 		saveAsLhpn = new JMenuItem("LPN");
 		run = new JMenuItem("Save and Run");
 		check = new JMenuItem("Save and Check");
@@ -579,7 +579,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		saveAs.addActionListener(this);
 		saveAsSbml.addActionListener(this);
 		saveAsTemplate.addActionListener(this);
-		saveGcmAsLhpn.addActionListener(this);
+		// saveGcmAsLhpn.addActionListener(this);
 		run.addActionListener(this);
 		check.addActionListener(this);
 		saveSbml.addActionListener(this);
@@ -800,7 +800,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		saveAsMenu.setEnabled(false);
 		saveAsSbml.setEnabled(false);
 		saveAsTemplate.setEnabled(false);
-		saveGcmAsLhpn.setEnabled(false);
+		// saveGcmAsLhpn.setEnabled(false);
 		run.setEnabled(false);
 		check.setEnabled(false);
 		saveSbml.setEnabled(false);
@@ -874,7 +874,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			saveAsMenu.add(saveAsGraph);
 			saveAsMenu.add(saveAsSbml);
 			saveAsMenu.add(saveAsTemplate);
-			saveAsMenu.add(saveGcmAsLhpn);
+			// saveAsMenu.add(saveGcmAsLhpn);
 		}
 		else {
 			saveAsMenu.add(saveAsLhpn);
@@ -884,7 +884,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		if (!async) {
 			file.add(saveAsSbml);
 			file.add(saveAsTemplate);
-			file.add(saveGcmAsLhpn);
+			// file.add(saveGcmAsLhpn);
 		}
 		file.add(saveModel);
 		// file.add(saveParam);
@@ -2341,10 +2341,10 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			Component comp = tab.getSelectedComponent();
 			((GCM2SBMLEditor) comp).save("GCM");
 		}
-		else if (e.getSource() == saveGcmAsLhpn) {
-			Component comp = tab.getSelectedComponent();
-			((GCM2SBMLEditor) comp).save("LHPN");
-		}
+		// else if (e.getSource() == saveGcmAsLhpn) {
+		// Component comp = tab.getSelectedComponent();
+		// ((GCM2SBMLEditor) comp).save("LHPN");
+		// }
 		else if (e.getSource() == saveAsLhpn) {
 			Component comp = tab.getSelectedComponent();
 			((LHPNEditor) comp).save();
@@ -12081,7 +12081,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			saveAsGraph.setEnabled(false);
 			saveAsSbml.setEnabled(true);
 			saveAsTemplate.setEnabled(true);
-			saveGcmAsLhpn.setEnabled(true);
+			// saveGcmAsLhpn.setEnabled(true);
 			refresh.setEnabled(false);
 			check.setEnabled(false);
 			export.setEnabled(false);
@@ -12114,7 +12114,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			saveAsGraph.setEnabled(false);
 			saveAsSbml.setEnabled(false);
 			saveAsTemplate.setEnabled(false);
-			saveGcmAsLhpn.setEnabled(false);
+			// saveGcmAsLhpn.setEnabled(false);
 			refresh.setEnabled(false);
 			check.setEnabled(false);
 			export.setEnabled(false);
@@ -12147,7 +12147,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			saveAsGraph.setEnabled(false);
 			saveAsSbml.setEnabled(true);
 			saveAsTemplate.setEnabled(false);
-			saveGcmAsLhpn.setEnabled(false);
+			// saveGcmAsLhpn.setEnabled(false);
 			refresh.setEnabled(false);
 			check.setEnabled(false);
 			export.setEnabled(false);
@@ -12179,7 +12179,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			saveAsGraph.setEnabled(true);
 			saveAsSbml.setEnabled(false);
 			saveAsTemplate.setEnabled(false);
-			saveGcmAsLhpn.setEnabled(false);
+			// saveGcmAsLhpn.setEnabled(false);
 			run.setEnabled(false);
 			saveAs.setEnabled(true);
 			refresh.setEnabled(true);
@@ -12257,7 +12257,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				saveAsGraph.setEnabled(true);
 				saveAsSbml.setEnabled(false);
 				saveAsTemplate.setEnabled(false);
-				saveGcmAsLhpn.setEnabled(false);
+				// saveGcmAsLhpn.setEnabled(false);
 				refresh.setEnabled(true);
 				check.setEnabled(false);
 				export.setEnabled(true);
@@ -12305,7 +12305,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				saveAsGraph.setEnabled(false);
 				saveAsSbml.setEnabled(false);
 				saveAsTemplate.setEnabled(false);
-				saveGcmAsLhpn.setEnabled(false);
+				// saveGcmAsLhpn.setEnabled(false);
 				refresh.setEnabled(false);
 				check.setEnabled(false);
 				export.setEnabled(false);
@@ -12339,7 +12339,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				saveAsGraph.setEnabled(false);
 				saveAsSbml.setEnabled(false);
 				saveAsTemplate.setEnabled(false);
-				saveGcmAsLhpn.setEnabled(false);
+				// saveGcmAsLhpn.setEnabled(false);
 				refresh.setEnabled(false);
 				check.setEnabled(false);
 				export.setEnabled(false);
@@ -12373,7 +12373,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				saveAsGraph.setEnabled(false);
 				saveAsSbml.setEnabled(false);
 				saveAsTemplate.setEnabled(false);
-				saveGcmAsLhpn.setEnabled(false);
+				// saveGcmAsLhpn.setEnabled(false);
 				refresh.setEnabled(false);
 				check.setEnabled(false);
 				export.setEnabled(false);
@@ -12413,7 +12413,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				saveAsGraph.setEnabled(false);
 				saveAsSbml.setEnabled(false);
 				saveAsTemplate.setEnabled(false);
-				saveGcmAsLhpn.setEnabled(false);
+				// saveGcmAsLhpn.setEnabled(false);
 				refresh.setEnabled(false);
 				check.setEnabled(false);
 				export.setEnabled(false);
@@ -12458,7 +12458,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				saveAsGraph.setEnabled(false);
 				saveAsSbml.setEnabled(false);
 				saveAsTemplate.setEnabled(false);
-				saveGcmAsLhpn.setEnabled(false);
+				// saveGcmAsLhpn.setEnabled(false);
 				refresh.setEnabled(false);
 				check.setEnabled(false);
 				export.setEnabled(false);
@@ -12493,7 +12493,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				saveAsGraph.setEnabled(false);
 				saveAsSbml.setEnabled(false);
 				saveAsTemplate.setEnabled(false);
-				saveGcmAsLhpn.setEnabled(false);
+				// /saveGcmAsLhpn.setEnabled(false);
 				refresh.setEnabled(false);
 				check.setEnabled(false);
 				export.setEnabled(false);
@@ -12527,7 +12527,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				saveAsGraph.setEnabled(false);
 				saveAsSbml.setEnabled(false);
 				saveAsTemplate.setEnabled(false);
-				saveGcmAsLhpn.setEnabled(false);
+				// saveGcmAsLhpn.setEnabled(false);
 				refresh.setEnabled(false);
 				check.setEnabled(false);
 				export.setEnabled(false);
@@ -12561,7 +12561,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				saveAsGraph.setEnabled(false);
 				saveAsSbml.setEnabled(false);
 				saveAsTemplate.setEnabled(false);
-				saveGcmAsLhpn.setEnabled(false);
+				// saveGcmAsLhpn.setEnabled(false);
 				refresh.setEnabled(false);
 				check.setEnabled(false);
 				export.setEnabled(false);
@@ -12597,7 +12597,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				saveAsGraph.setEnabled(false);
 				saveAsSbml.setEnabled(false);
 				saveAsTemplate.setEnabled(false);
-				saveGcmAsLhpn.setEnabled(false);
+				// saveGcmAsLhpn.setEnabled(false);
 				refresh.setEnabled(false);
 				check.setEnabled(false);
 				export.setEnabled(false);
@@ -12650,7 +12650,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				saveAsGraph.setEnabled(false);
 				saveAsSbml.setEnabled(false);
 				saveAsTemplate.setEnabled(false);
-				saveGcmAsLhpn.setEnabled(false);
+				// saveGcmAsLhpn.setEnabled(false);
 				refresh.setEnabled(false);
 				check.setEnabled(false);
 				export.setEnabled(false);
@@ -12695,7 +12695,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			saveAsGraph.setEnabled(false);
 			saveAsSbml.setEnabled(false);
 			saveAsTemplate.setEnabled(false);
-			saveGcmAsLhpn.setEnabled(false);
+			// saveGcmAsLhpn.setEnabled(false);
 			refresh.setEnabled(false);
 			check.setEnabled(false);
 			export.setEnabled(false);
@@ -12729,7 +12729,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			saveAsGraph.setEnabled(false);
 			saveAsSbml.setEnabled(false);
 			saveAsTemplate.setEnabled(false);
-			saveGcmAsLhpn.setEnabled(false);
+			// /saveGcmAsLhpn.setEnabled(false);
 			refresh.setEnabled(false);
 			check.setEnabled(false);
 			export.setEnabled(false);
@@ -12771,7 +12771,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		saveAsGraph.setEnabled(false);
 		saveAsSbml.setEnabled(false);
 		saveAsTemplate.setEnabled(false);
-		saveGcmAsLhpn.setEnabled(false);
+		// saveGcmAsLhpn.setEnabled(false);
 		viewSG.setEnabled(false);
 		if (tree.getFile() != null) {
 			if (tree.getFile().length() > 4
