@@ -7433,7 +7433,11 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 	 */
 	public void refreshTree() {
 		tree.fixTree();
-		mainPanel.validate();
+		try {
+			mainPanel.validate();
+		}
+		catch (Exception e) {
+		}
 		updateGCM();
 	}
 
@@ -13238,7 +13242,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		}
 	}
 
-	public void updateOpenSBML(String sbmlName) {
+	public boolean updateOpenSBML(String sbmlName) {
 		for (int i = 0; i < tab.getTabCount(); i++) {
 			String tab = this.tab.getTitleAt(i);
 			if (sbmlName.equals(tab)) {
@@ -13248,9 +13252,26 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					this.tab.setComponentAt(i, newSBML);
 					this.tab.getComponentAt(i).setName("SBML Editor");
 					newSBML.save(false, "", false);
+					return true;
 				}
 			}
 		}
+		return false;
+	}
+
+	public boolean updateOpenLHPN(String lhpnName) {
+		for (int i = 0; i < tab.getTabCount(); i++) {
+			String tab = this.tab.getTitleAt(i);
+			if (lhpnName.equals(tab)) {
+				if (this.tab.getComponentAt(i) instanceof LHPNEditor) {
+					LHPNEditor newLHPN = new LHPNEditor(root, lhpnName, null, this, log);
+					this.tab.setComponentAt(i, newLHPN);
+					this.tab.getComponentAt(i).setName("LHPN Editor");
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	private String[] canDelete(String filename) {

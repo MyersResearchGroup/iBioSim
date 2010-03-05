@@ -851,14 +851,28 @@ public class Run implements ActionListener {
 				if (nary.isSelected() && !lhpn.isSelected() && naryRun == 1) {
 				}
 				else if (sbml.isSelected()) {
-					biomodelsim.addTab(sbmlName, new SBML_Editor(root + separator + sbmlName, null,
-							log, biomodelsim, null, null), "SBML Editor");
-					biomodelsim.refreshTree();
+					if (sbmlName != null && !sbmlName.trim().equals("")) {
+						if (!biomodelsim.updateOpenSBML(sbmlName)) {
+							biomodelsim.addTab(sbmlName, new SBML_Editor(root + separator
+									+ sbmlName, null, log, biomodelsim, null, null), "SBML Editor");
+							biomodelsim.refreshTree();
+						}
+						else {
+							biomodelsim.getTab().setSelectedIndex(biomodelsim.getTab(sbmlName));
+						}
+					}
 				}
 				else if (lhpn.isSelected()) {
-					biomodelsim.addTab(lhpnName, new LHPNEditor(root, lhpnName, null, biomodelsim,
-							log), "LHPN Editor");
-					biomodelsim.refreshTree();
+					if (lhpnName != null && !lhpnName.trim().equals("")) {
+						if (!biomodelsim.updateOpenLHPN(lhpnName)) {
+							biomodelsim.addTab(lhpnName, new LHPNEditor(root, lhpnName, null,
+									biomodelsim, log), "LHPN Editor");
+							biomodelsim.refreshTree();
+						}
+						else {
+							biomodelsim.getTab().setSelectedIndex(biomodelsim.getTab(lhpnName));
+						}
+					}
 				}
 				else if (dot.isSelected()) {
 					if (System.getProperty("os.name").contentEquals("Linux")) {
