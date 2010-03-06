@@ -1388,6 +1388,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			gcmPrefs.add(labels);
 			gcmPrefs.add(fields);
 			String[] choices = { "None", "Abstraction", "Logical Abstraction" };
+			JTextField simCommand = new JTextField(biosimrc.get("biosim.sim.command", ""));
 			final JComboBox abs = new JComboBox(choices);
 			abs.setSelectedItem(biosimrc.get("biosim.sim.abs", ""));
 			if (abs.getSelectedItem().equals("None")) {
@@ -1516,7 +1517,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			choices = new String[] { "Print Interval", "Minimum Print Interval", "Number Of Steps" };
 			JComboBox useInterval = new JComboBox(choices);
 			useInterval.setSelectedItem(biosimrc.get("biosim.sim.useInterval", ""));
-			JPanel analysisLabels = new JPanel(new GridLayout(14, 1));
+			JPanel analysisLabels = new JPanel(new GridLayout(15, 1));
+			analysisLabels.add(new JLabel("Simulation Command:"));
 			analysisLabels.add(new JLabel("Abstraction:"));
 			analysisLabels.add(new JLabel("Simulation Type:"));
 			analysisLabels.add(new JLabel("Possible Simulators/Analyzers:"));
@@ -1531,7 +1533,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			analysisLabels.add(new JLabel("Rapid Equilibrium Cojdition 2:"));
 			analysisLabels.add(new JLabel("QSSA Condition:"));
 			analysisLabels.add(new JLabel("Max Concentration Threshold:"));
-			JPanel analysisFields = new JPanel(new GridLayout(14, 1));
+			JPanel analysisFields = new JPanel(new GridLayout(15, 1));
+			analysisFields.add(simCommand);
 			analysisFields.add(abs);
 			analysisFields.add(type);
 			analysisFields.add(sim);
@@ -1738,6 +1741,11 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				try {
 					Double.parseDouble(INITIAL_VALUE.getText().trim());
 					biosimrc.put("biosim.gcm.INITIAL_VALUE", INITIAL_VALUE.getText().trim());
+				}
+				catch (Exception e1) {
+				}
+				try {
+					biosimrc.put("biosim.sim.command", simCommand.getText().trim());
 				}
 				catch (Exception e1) {
 				}
