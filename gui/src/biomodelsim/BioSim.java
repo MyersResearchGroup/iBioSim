@@ -7432,12 +7432,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 	 */
 	public void refreshTree() {
 		tree.fixTree();
-		try {
-			mainPanel.validate();
-		}
-		catch (Exception e) {
-		}
 		updateGCM();
+		mainPanel.validate();
 	}
 
 	/**

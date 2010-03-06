@@ -551,7 +551,6 @@ public class Run implements ActionListener {
 					log.addText("Saving GCM file as LHPN:\n" + root + separator + lhpnName + "\n");
 					time1 = System.nanoTime();
 					exitValue = 0;
-					biomodelsim.refreshTree();
 				}
 				else {
 					time1 = System.nanoTime();
