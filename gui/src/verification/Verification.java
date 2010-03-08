@@ -15,6 +15,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Properties;
+import java.util.prefs.Preferences;
 
 import lhpn2sbml.parser.Abstraction;
 import lhpn2sbml.parser.LHPNFile;
@@ -1162,39 +1163,77 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			work = new File(directory);
 			Runtime exec = Runtime.getRuntime();
 			try {
-				final Process ver = exec.exec(cmd, null, work);
-				cancel.setActionCommand("Cancel");
-				cancel.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						ver.destroy();
-						running.setCursor(null);
-						running.dispose();
-					}
-				});
-				biosim.getExitButton().setActionCommand("Exit program");
-				biosim.getExitButton().addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						ver.destroy();
-						running.setCursor(null);
-						running.dispose();
-					}
-				});
-				log.addText("Executing:\n" + cmd + "\n");
+				Preferences biosimrc = Preferences.userRoot();
 				String output = "";
-				InputStream reb = ver.getInputStream();
-				InputStreamReader isr = new InputStreamReader(reb);
-				BufferedReader br = new BufferedReader(isr);
-				FileWriter out = new FileWriter(new File(directory + separator + "run.log"));
-				while ((output = br.readLine()) != null) {
-					out.write(output);
-					out.write("\n");
+				int exitValue = 0;
+				if (biosimrc.get("biosim.verification.command", "").equals("")) {
+					final Process ver = exec.exec(cmd, null, work);
+					cancel.setActionCommand("Cancel");
+					cancel.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent e) {
+							ver.destroy();
+							running.setCursor(null);
+							running.dispose();
+						}
+					});
+					biosim.getExitButton().setActionCommand("Exit program");
+					biosim.getExitButton().addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent e) {
+							ver.destroy();
+							running.setCursor(null);
+							running.dispose();
+						}
+					});
+					log.addText("Executing:\n" + cmd + "\n");
+					InputStream reb = ver.getInputStream();
+					InputStreamReader isr = new InputStreamReader(reb);
+					BufferedReader br = new BufferedReader(isr);
+					FileWriter out = new FileWriter(new File(directory + separator + "run.log"));
+					while ((output = br.readLine()) != null) {
+						out.write(output);
+						out.write("\n");
+					}
+					out.close();
+					br.close();
+					isr.close();
+					reb.close();
+					viewLog.setEnabled(true);
+					exitValue = ver.waitFor();
+				} else {
+					cmd = biosimrc.get("biosim.verification.command","") + " " + options + " " + sourceFile.replaceAll(".lpn","");
+					final Process ver = exec.exec(cmd, null, work);
+					cancel.setActionCommand("Cancel");
+					cancel.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent e) {
+							ver.destroy();
+							running.setCursor(null);
+							running.dispose();
+						}
+					});
+					biosim.getExitButton().setActionCommand("Exit program");
+					biosim.getExitButton().addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent e) {
+							ver.destroy();
+							running.setCursor(null);
+							running.dispose();
+						}
+					});
+					log.addText("Executing:\n" + cmd + "\n");
+					InputStream reb = ver.getInputStream();
+					InputStreamReader isr = new InputStreamReader(reb);
+					BufferedReader br = new BufferedReader(isr);
+					FileWriter out = new FileWriter(new File(directory + separator + "run.log"));
+					while ((output = br.readLine()) != null) {
+						out.write(output);
+						out.write("\n");
+					}
+					out.close();
+					br.close();
+					isr.close();
+					reb.close();
+					viewLog.setEnabled(true);
+					exitValue = ver.waitFor();
 				}
-				out.close();
-				br.close();
-				isr.close();
-				reb.close();
-				viewLog.setEnabled(true);
-				ver.waitFor();
 				long time2 = System.nanoTime();
 				long minutes;
 				long hours;
@@ -1266,7 +1305,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 						break;
 					}
 				}
-				int exitValue = ver.waitFor();
+				//int exitValue = ver.waitFor();
 				if (exitValue == 143) {
 					JOptionPane.showMessageDialog(biosim.frame(), "Verification was"
 							+ " canceled by the user.", "Canceled Verification",
