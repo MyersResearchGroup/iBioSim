@@ -4428,7 +4428,7 @@ public class ExprTree {
 			try {
 				return Double.parseDouble(variables.get(variable));
 			}
-			catch (NumberFormatException e) {
+			catch (Exception e) {
 				return Double.NaN;
 			}
 		case 'n': // Number
