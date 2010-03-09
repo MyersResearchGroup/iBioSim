@@ -2843,6 +2843,7 @@ public class Abstraction extends LHPNFile {
 				for (Object o : assign.get(t).keySet()) {
 					String var = o.toString();
 					read = new ArrayList<String>();
+					// Check read variables for global writes
 					if ((process_read.get(var).equals(process_trans.get(t)) && process_write.get(
 							var).equals(process_trans.get(t)))
 							&& !weakReadBeforeWrite(t, var)) {
@@ -3568,10 +3569,10 @@ public class Abstraction extends LHPNFile {
 					String newDelay[] = { newMatcher.group(1), newMatcher.group(2) };
 					for (int i = 0; i < newDelay.length; i++) {
 						if (!oldDelay[i].equals("inf") && !newDelay[i].equals("inf")) {
-							if (i != 0 || !postTrans.get(t)) {
+							//if (i != 0 || !postTrans.get(t)) {
 								newDelay[i] = String.valueOf(Integer.parseInt(newDelay[i])
 										+ Integer.parseInt(oldDelay[i]));
-							}
+							//}
 						}
 						else {
 							newDelay[i] = "inf";
