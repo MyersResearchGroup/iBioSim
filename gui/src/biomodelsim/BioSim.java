@@ -4110,7 +4110,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							f.createNewFile();
 							refreshTree();
 							if (!viewer.equals("")) {
-								String command = viewerField.getText() + " " + root + separator
+								String command = viewer + " " + root + separator
 										+ vhdlName;
 								Runtime exec = Runtime.getRuntime();
 								try {
@@ -4176,8 +4176,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							f.createNewFile();
 							refreshTree();
 							if (!viewer.equals("")) {
-								String command = viewerField.getText() + " " + root + separator
-										+ SName;
+								String command = viewer + " " + root + separator + SName;
 								Runtime exec = Runtime.getRuntime();
 								try {
 									exec.exec(command);
@@ -4243,7 +4242,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							f.createNewFile();
 							refreshTree();
 							if (!viewer.equals("")) {
-								String command = viewerField.getText() + " " + root + separator
+								String command = viewer + " " + root + separator
 										+ InstName;
 								Runtime exec = Runtime.getRuntime();
 								try {
@@ -4309,7 +4308,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							f.createNewFile();
 							refreshTree();
 							if (!viewer.equals("")) {
-								String command = viewerField.getText() + " " + root + separator
+								String command = viewer + " " + root + separator
 										+ vhdlName;
 								Runtime exec = Runtime.getRuntime();
 								try {
@@ -4455,7 +4454,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							f.createNewFile();
 							refreshTree();
 							if (!viewer.equals("")) {
-								String command = viewerField.getText() + " " + root + separator
+								String command = viewer + " " + root + separator
 										+ cspName;
 								Runtime exec = Runtime.getRuntime();
 								try {
@@ -4526,7 +4525,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							f.createNewFile();
 							refreshTree();
 							if (!viewer.equals("")) {
-								String command = viewerField.getText() + " " + root + separator
+								String command = viewer + " " + root + separator
 										+ hseName;
 								Runtime exec = Runtime.getRuntime();
 								try {
@@ -4597,7 +4596,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							f.createNewFile();
 							refreshTree();
 							if (!viewer.equals("")) {
-								String command = viewerField.getText() + " " + root + separator
+								String command = viewer + " " + root + separator
 										+ uncName;
 								Runtime exec = Runtime.getRuntime();
 								try {
@@ -4668,7 +4667,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							f.createNewFile();
 							refreshTree();
 							if (!viewer.equals("")) {
-								String command = viewerField.getText() + " " + root + separator
+								String command = viewer + " " + root + separator
 										+ rsgName;
 								Runtime exec = Runtime.getRuntime();
 								try {
@@ -4738,7 +4737,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							f.createNewFile();
 							refreshTree();
 							if (!viewer.equals("")) {
-								String command = viewerField.getText() + " " + root + separator
+								String command = viewer + " " + root + separator
 										+ spiceName;
 								Runtime exec = Runtime.getRuntime();
 								try {
@@ -8809,7 +8808,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							}
 							else {
 								if (!viewer.equals("")) {
-									String command = viewerField.getText() + " " + directory
+									String command = viewer + " " + directory
 											+ separator + theFile;
 									Runtime exec = Runtime.getRuntime();
 									try {
@@ -8868,7 +8867,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							}
 							else {
 								if (!viewer.equals("")) {
-									String command = viewerField.getText() + " " + directory
+									String command = viewer + " " + directory
 											+ separator + theFile;
 									Runtime exec = Runtime.getRuntime();
 									try {
@@ -8929,7 +8928,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							}
 							else {
 								if (!viewer.equals("")) {
-									String command = viewerField.getText() + " " + directory
+									String command = viewer + " " + directory
 											+ separator + theFile;
 									Runtime exec = Runtime.getRuntime();
 									try {
@@ -8990,7 +8989,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							}
 							else {
 								if (!viewer.equals("")) {
-									String command = viewerField.getText() + " " + directory
+									String command = viewer + " " + directory
 											+ separator + theFile;
 									Runtime exec = Runtime.getRuntime();
 									try {
@@ -9050,7 +9049,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							}
 							else {
 								if (!viewer.equals("")) {
-									String command = viewerField.getText() + " " + directory
+									String command = viewer + " " + directory
 											+ separator + theFile;
 									Runtime exec = Runtime.getRuntime();
 									try {
@@ -9152,7 +9151,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							}
 							else {
 								if (!viewer.equals("")) {
-									String command = viewerField.getText() + " " + directory
+									String command = viewer + " " + directory
 											+ separator + theFile;
 									Runtime exec = Runtime.getRuntime();
 									try {
@@ -9209,7 +9208,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							}
 							else {
 								if (!viewer.equals("")) {
-									String command = viewerField.getText() + " " + directory
+									String command = viewer + " " + directory
 											+ separator + theFile;
 									Runtime exec = Runtime.getRuntime();
 									try {
@@ -9266,7 +9265,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							}
 							else {
 								if (!viewer.equals("")) {
-									String command = viewerField.getText() + " " + directory
+									String command = viewer + " " + directory
 											+ separator + theFile;
 									Runtime exec = Runtime.getRuntime();
 									try {
@@ -9323,7 +9322,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							}
 							else {
 								if (!viewer.equals("")) {
-									String command = viewerField.getText() + " " + directory
+									String command = viewer + " " + directory
 											+ separator + theFile;
 									Runtime exec = Runtime.getRuntime();
 									try {
@@ -9380,7 +9379,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							}
 							else {
 								if (!viewer.equals("")) {
-									String command = viewerField.getText() + " " + directory
+									String command = viewer + " " + directory
 											+ separator + theFile;
 									Runtime exec = Runtime.getRuntime();
 									try {
