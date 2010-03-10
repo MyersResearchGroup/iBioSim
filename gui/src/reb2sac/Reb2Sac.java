@@ -55,11 +55,15 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 	/*
 	 * Added interesting species and termination conditions
 	 */
-	private JList species, terminations;
+	private JList terminations;
 
-	private JList intSpecies, termCond; // List of species in sbml file
+	private JList termCond; // List of species in sbml file
 
 	private JLabel spLabel, speciesLabel; // Labels for interesting species
+
+	private JPanel speciesPanel;
+
+	private ArrayList<ArrayList<Component>> speciesInt;
 
 	/*
 	 * Text fields for changes in the abstraction
@@ -246,6 +250,27 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		change = false;
 		frames = new ArrayList<JFrame>();
 
+		SBMLDocument document = BioSim.readSBML(sbmlFile);
+		Model model = document.getModel();
+		ArrayList<String> listOfSpecs = new ArrayList<String>();
+		if (model != null) {
+			ListOf listOfSpecies = model.getListOfSpecies();
+			for (int i = 0; i < model.getNumSpecies(); i++) {
+				Species species = (Species) listOfSpecies.get(i);
+				listOfSpecs.add(species.getId());
+			}
+		}
+		allSpecies = listOfSpecs.toArray();
+		for (int i = 1; i < allSpecies.length; i++) {
+			String index = (String) allSpecies[i];
+			int j = i;
+			while ((j > 0) && ((String) allSpecies[j - 1]).compareToIgnoreCase(index) > 0) {
+				allSpecies[j] = allSpecies[j - 1];
+				j = j - 1;
+			}
+			allSpecies[j] = index;
+		}
+
 		// Creates the input fields for the changes in abstraction
 		Preferences biosimrc = Preferences.userRoot();
 		String[] odeSimulators = new String[6];
@@ -398,9 +423,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		rmPostAbs.addActionListener(this);
 		editPostAbs.addActionListener(this);
 
-		// Creates the interesting species JList
-		intSpecies = new JList();
-		species = new JList();
+		// Creates the interesting species JList intSpecies = new JList();
+		// species = new JList();
 		spLabel = new JLabel("Available Species:");
 		speciesLabel = new JLabel("Interesting Species:");
 		JPanel speciesHolder = new JPanel(new BorderLayout());
@@ -410,10 +434,10 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		JScrollPane scroll1 = new JScrollPane();
 		scroll.setMinimumSize(new Dimension(260, 200));
 		scroll.setPreferredSize(new Dimension(276, 132));
-		scroll.setViewportView(species);
+		// scroll.setViewportView(species);
 		scroll1.setMinimumSize(new Dimension(260, 200));
 		scroll1.setPreferredSize(new Dimension(276, 132));
-		scroll1.setViewportView(intSpecies);
+		// scroll1.setViewportView(intSpecies);
 		addIntSpecies = new JButton("Add Species");
 		editIntSpecies = new JButton("Edit Species");
 		removeIntSpecies = new JButton("Remove Species");
@@ -430,10 +454,10 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		buttonHolder.add(removeIntSpecies);
 		buttonHolder.add(clearIntSpecies);
 		speciesHolder.add(buttonHolder, "South");
-		intSpecies.setEnabled(false);
-		species.setEnabled(false);
-		intSpecies.addMouseListener(this);
-		species.addMouseListener(this);
+		// intSpecies.setEnabled(false);
+		// species.setEnabled(false);
+		// intSpecies.addMouseListener(this);
+		// species.addMouseListener(this);
 		spLabel.setEnabled(false);
 		speciesLabel.setEnabled(false);
 		addIntSpecies.setEnabled(false);
@@ -444,6 +468,21 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		removeIntSpecies.addActionListener(this);
 		clearIntSpecies.setEnabled(false);
 		clearIntSpecies.addActionListener(this);
+
+		speciesPanel = new JPanel();
+		JPanel sP = new JPanel();
+		((FlowLayout) sP.getLayout()).setAlignment(FlowLayout.LEFT);
+		sP.add(speciesPanel);
+		JLabel interestingLabel = new JLabel("Interesting Species:");
+		JScrollPane sPScroll = new JScrollPane();
+		sPScroll.setMinimumSize(new Dimension(260, 200));
+		sPScroll.setPreferredSize(new Dimension(276, 132));
+		sPScroll.setViewportView(sP);
+		JPanel interestingPanel = new JPanel(new BorderLayout());
+		interestingPanel.add(interestingLabel, "North");
+		interestingPanel.add(sPScroll, "Center");
+		speciesInt = new ArrayList<ArrayList<Component>>();
+		createInterestingSpeciesPanel();
 
 		// Creates some abstraction options
 		JPanel advancedGrid = new JPanel(new GridLayout(2, 4));
@@ -488,11 +527,13 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		advancedGrid.add(maxCon);
 		// advancedGrid.add(maxConSpace1);
 		// advancedGrid.add(maxConSpace2);
-		advanced.add(absHolder, "North");
-		advanced.add(advancedGrid, "Center");
+		JPanel advAbs = new JPanel(new BorderLayout());
+		advAbs.add(absHolder, "Center");
+		advAbs.add(advancedGrid, "South");
+		advanced.add(advAbs, "North");
 		// JPanel space = new JPanel();
 		// advanced.add(space);
-		advanced.add(speciesHolder, "South");
+		advanced.add(interestingPanel, "Center");
 
 		// Sets up the radio buttons for Abstraction and Nary
 		JLabel choose = new JLabel("Abstraction:");
@@ -977,27 +1018,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		// runHolder, null);
 		// splitPane.setDividerSize(0);
 		// this.add(splitPane, "South");
-		SBMLDocument document = BioSim.readSBML(sbmlFile);
-		Model model = document.getModel();
-		ArrayList<String> listOfSpecs = new ArrayList<String>();
-		if (model != null) {
-			ListOf listOfSpecies = model.getListOfSpecies();
-			for (int i = 0; i < model.getNumSpecies(); i++) {
-				Species species = (Species) listOfSpecies.get(i);
-				listOfSpecs.add(species.getId());
-			}
-		}
-		allSpecies = listOfSpecs.toArray();
-		for (int i = 1; i < allSpecies.length; i++) {
-			String index = (String) allSpecies[i];
-			int j = i;
-			while ((j > 0) && ((String) allSpecies[j - 1]).compareToIgnoreCase(index) > 0) {
-				allSpecies[j] = allSpecies[j - 1];
-				j = j - 1;
-			}
-			allSpecies[j] = index;
-		}
-		intSpecies.setListData(allSpecies);
+		// intSpecies.setListData(allSpecies);
 		termCond.setListData(allSpecies);
 		int rem = availSpecies.getItemCount();
 		for (int i = 0; i < rem; i++) {
@@ -1072,12 +1093,12 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			Button_Enabling.enableNoneOrAbs(ODE, monteCarlo, markov, seed, seedLabel, runs,
 					runsLabel, minStepLabel, minStep, stepLabel, step, errorLabel, absErr,
 					limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel,
-					explanation, description, none, intSpecies, species, spLabel, speciesLabel,
-					addIntSpecies, editIntSpecies, removeIntSpecies, rapid1, rapid2, qssa, maxCon,
-					rapidLabel1, rapidLabel2, qssaLabel, maxConLabel, usingSSA, clearIntSpecies,
-					fileStem, fileStemLabel, preAbs, loopAbs, postAbs, preAbsLabel, loopAbsLabel,
+					explanation, description, none, spLabel, speciesLabel, addIntSpecies,
+					editIntSpecies, removeIntSpecies, rapid1, rapid2, qssa, maxCon, rapidLabel1,
+					rapidLabel2, qssaLabel, maxConLabel, usingSSA, clearIntSpecies, fileStem,
+					fileStemLabel, preAbs, loopAbs, postAbs, preAbsLabel, loopAbsLabel,
 					postAbsLabel, addPreAbs, rmPreAbs, editPreAbs, addLoopAbs, rmLoopAbs,
-					editLoopAbs, addPostAbs, rmPostAbs, editPostAbs, lhpn);
+					editLoopAbs, addPostAbs, rmPostAbs, editPostAbs, lhpn, speciesInt);
 			if (!sbml.isSelected() && !xhtml.isSelected() && !dot.isSelected() && runFiles) {
 				overwrite.setEnabled(true);
 				append.setEnabled(true);
@@ -1104,12 +1125,12 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			Button_Enabling.enableNoneOrAbs(ODE, monteCarlo, markov, seed, seedLabel, runs,
 					runsLabel, minStepLabel, minStep, stepLabel, step, errorLabel, absErr,
 					limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel,
-					explanation, description, none, intSpecies, species, spLabel, speciesLabel,
-					addIntSpecies, editIntSpecies, removeIntSpecies, rapid1, rapid2, qssa, maxCon,
-					rapidLabel1, rapidLabel2, qssaLabel, maxConLabel, usingSSA, clearIntSpecies,
-					fileStem, fileStemLabel, preAbs, loopAbs, postAbs, preAbsLabel, loopAbsLabel,
+					explanation, description, none, spLabel, speciesLabel, addIntSpecies,
+					editIntSpecies, removeIntSpecies, rapid1, rapid2, qssa, maxCon, rapidLabel1,
+					rapidLabel2, qssaLabel, maxConLabel, usingSSA, clearIntSpecies, fileStem,
+					fileStemLabel, preAbs, loopAbs, postAbs, preAbsLabel, loopAbsLabel,
 					postAbsLabel, addPreAbs, rmPreAbs, editPreAbs, addLoopAbs, rmLoopAbs,
-					editLoopAbs, addPostAbs, rmPostAbs, editPostAbs, lhpn);
+					editLoopAbs, addPostAbs, rmPostAbs, editPostAbs, lhpn, speciesInt);
 			if (!sbml.isSelected() && !xhtml.isSelected() && !dot.isSelected() && runFiles) {
 				overwrite.setEnabled(true);
 				append.setEnabled(true);
@@ -1136,12 +1157,12 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			Button_Enabling.enableNary(ODE, monteCarlo, markov, seed, seedLabel, runs, runsLabel,
 					minStepLabel, minStep, stepLabel, step, errorLabel, absErr, limitLabel, limit,
 					intervalLabel, interval, simulators, simulatorsLabel, explanation, description,
-					intSpecies, species, spLabel, speciesLabel, addIntSpecies, editIntSpecies,
-					removeIntSpecies, rapid1, rapid2, qssa, maxCon, rapidLabel1, rapidLabel2,
-					qssaLabel, maxConLabel, usingSSA, clearIntSpecies, fileStem, fileStemLabel,
-					preAbs, loopAbs, postAbs, preAbsLabel, loopAbsLabel, postAbsLabel, addPreAbs,
-					rmPreAbs, editPreAbs, addLoopAbs, rmLoopAbs, editLoopAbs, addPostAbs,
-					rmPostAbs, editPostAbs, lhpn, gcmEditor);
+					spLabel, speciesLabel, addIntSpecies, editIntSpecies, removeIntSpecies, rapid1,
+					rapid2, qssa, maxCon, rapidLabel1, rapidLabel2, qssaLabel, maxConLabel,
+					usingSSA, clearIntSpecies, fileStem, fileStemLabel, preAbs, loopAbs, postAbs,
+					preAbsLabel, loopAbsLabel, postAbsLabel, addPreAbs, rmPreAbs, editPreAbs,
+					addLoopAbs, rmLoopAbs, editLoopAbs, addPostAbs, rmPostAbs, editPostAbs, lhpn,
+					gcmEditor, speciesInt);
 			if (!sbml.isSelected() && !xhtml.isSelected() && !dot.isSelected() && runFiles) {
 				overwrite.setEnabled(true);
 				append.setEnabled(true);
@@ -1273,26 +1294,26 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			absErr.setEnabled(false);
 		}
 		// if the add interesting species button is clicked
-		else if (e.getSource() == addIntSpecies) {
-			addInterstingSpecies();
-		}
+		// else if (e.getSource() == addIntSpecies) {
+		// addInterstingSpecies();
+		// }
 		// if the add interesting species button is clicked
-		else if (e.getSource() == editIntSpecies) {
-			editInterstingSpecies();
-		}
+		// else if (e.getSource() == editIntSpecies) {
+		// editInterstingSpecies();
+		// }
 		// if the remove interesting species button is clicked
-		else if (e.getSource() == removeIntSpecies) {
-			removeIntSpecies();
-		}
+		// else if (e.getSource() == removeIntSpecies) {
+		// removeIntSpecies();
+		// }
 		// if the clear interesting species button is clicked
-		else if (e.getSource() == clearIntSpecies) {
-			int[] select = new int[interestingSpecies.length];
-			for (int i = 0; i < interestingSpecies.length; i++) {
-				select[i] = i;
-			}
-			species.setSelectedIndices(select);
-			removeIntSpecies();
-		}
+		// else if (e.getSource() == clearIntSpecies) {
+		// int[] select = new int[interestingSpecies.length];
+		// for (int i = 0; i < interestingSpecies.length; i++) {
+		// select[i] = i;
+		// }
+		// //species.setSelectedIndices(select);
+		// removeIntSpecies();
+		// }
 		// if the add termination conditions button is clicked
 		else if (e.getSource() == addTermCond) {
 			termConditions = Buttons.add(termConditions, terminations, termCond, true, amountTerm,
@@ -1626,8 +1647,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				addSSA.setEnabled(true);
 				editSSA.setEnabled(true);
 				removeSSA.setEnabled(true);
-				for (int i = 0; i < ssaList.length; i++)
-					addToIntSpecies(((String) ssaList[i]).split(" ")[1]);
+				// for (int i = 0; i < ssaList.length; i++)
+				// addToIntSpecies(((String) ssaList[i]).split(" ")[1]);
 			}
 			else {
 				description.setEnabled(true);
@@ -1688,15 +1709,17 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					cond = cond.replace(')', ' ');
 					cond = cond.replace('!', ' ');
 					get = cond.split(" ");
-					for (int j = 0; j < get.length; j++)
-						if (get[j].length() > 0)
-							if ((get[j].charAt(0) != '0') && (get[j].charAt(0) != '1')
-									&& (get[j].charAt(0) != '2') && (get[j].charAt(0) != '3')
-									&& (get[j].charAt(0) != '4') && (get[j].charAt(0) != '5')
-									&& (get[j].charAt(0) != '6') && (get[j].charAt(0) != '7')
-									&& (get[j].charAt(0) != '8') && (get[j].charAt(0) != '9')) {
-								addToIntSpecies(get[j]);
-							}
+					// for (int j = 0; j < get.length; j++)
+					// if (get[j].length() > 0)
+					// if ((get[j].charAt(0) != '0') && (get[j].charAt(0) !=
+					// '1')
+					// && (get[j].charAt(0) != '2') && (get[j].charAt(0) != '3')
+					// && (get[j].charAt(0) != '4') && (get[j].charAt(0) != '5')
+					// && (get[j].charAt(0) != '6') && (get[j].charAt(0) != '7')
+					// && (get[j].charAt(0) != '8') && (get[j].charAt(0) !=
+					// '9')) {
+					// addToIntSpecies(get[j]);
+					// }
 				}
 			}
 			else {
@@ -1759,7 +1782,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 						"Select A Model For Simulation", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
-			addToIntSpecies((String) availSpecies.getSelectedItem());
+			// addToIntSpecies((String) availSpecies.getSelectedItem());
 			String add = time + " " + availSpecies.getSelectedItem() + " " + modify + mod;
 			boolean done = false;
 			for (int i = 0; i < ssaList.length; i++) {
@@ -1974,7 +1997,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 								"Select A Model For Simulation", JOptionPane.ERROR_MESSAGE);
 						return;
 					}
-					addToIntSpecies((String) availSpecies.getSelectedItem());
+					// addToIntSpecies((String) availSpecies.getSelectedItem());
 					ssaList[ssa.getSelectedIndex()] = time1 + " " + availSpecies.getSelectedItem()
 							+ " " + modify + mod1;
 					int[] index = ssa.getSelectedIndices();
@@ -2335,6 +2358,25 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 						JOptionPane.ERROR_MESSAGE);
 			}
 		}
+		else if (e.getActionCommand().contains("box")) {
+			int num = Integer.parseInt(e.getActionCommand().substring(3)) - 1;
+			if (!((JCheckBox) speciesInt.get(num).get(0)).isSelected()) {
+				for (int i = 2; i < speciesInt.get(num).size(); i++) {
+					speciesInt.get(num).get(i).setEnabled(false);
+				}
+			}
+			else {
+				for (int i = 2; i < speciesInt.get(num).size(); i++) {
+					speciesInt.get(num).get(i).setEnabled(true);
+				}
+			}
+		}
+		else if (e.getActionCommand().contains("text")) {
+			int num = Integer.parseInt(e.getActionCommand().substring(4)) - 1;
+			editNumThresholds(num);
+			speciesPanel.revalidate();
+			speciesPanel.repaint();
+		}
 	}
 
 	/**
@@ -2501,8 +2543,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		int[] index = terminations.getSelectedIndices();
 		String[] termCond = Buttons.getList(termConditions, terminations);
 		terminations.setSelectedIndices(index);
-		index = species.getSelectedIndices();
-		String[] intSpecies;
+		// index = species.getSelectedIndices();
+		String[] intSpecies = getInterestingSpecies();
 		// if (none.isSelected()) {
 		// intSpecies = new String[allSpecies.length];
 		// for (int j = 0; j < allSpecies.length; j++) {
@@ -2510,9 +2552,9 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		// }
 		// }
 		// else {
-		intSpecies = Buttons.getList(interestingSpecies, species);
+		// intSpecies = Buttons.getList(interestingSpecies, species);
 		// }
-		species.setSelectedIndices(index);
+		// species.setSelectedIndices(index);
 		String selectedButtons = "";
 		double rap1 = 0.1;
 		double rap2 = 0.1;
@@ -2987,13 +3029,13 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 	 */
 	public void mouseClicked(MouseEvent e) {
 		if (e.getClickCount() == 2) {
-			if (e.getSource() == intSpecies) {
-				addInterstingSpecies();
-			}
-			else if (e.getSource() == species) {
-				editInterstingSpecies();
-			}
-			else if (e.getSource() == termCond) {
+			// if (e.getSource() == intSpecies) {
+			// addInterstingSpecies();
+			// }
+			// else if (e.getSource() == species) {
+			// editInterstingSpecies();
+			// }
+			if (e.getSource() == termCond) {
 				termConditions = Buttons.add(termConditions, terminations, termCond, true,
 						amountTerm, ge, gt, eq, lt, le, this);
 			}
@@ -3155,8 +3197,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		int[] index = terminations.getSelectedIndices();
 		String[] termCond = Buttons.getList(termConditions, terminations);
 		terminations.setSelectedIndices(index);
-		index = species.getSelectedIndices();
-		String[] intSpecies;
+		// index = species.getSelectedIndices();
+		String[] intSpecies = getInterestingSpecies();
 		// if (none.isSelected()) {
 		// intSpecies = new String[allSpecies.length];
 		// for (int j = 0; j < allSpecies.length; j++) {
@@ -3164,9 +3206,9 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		// }
 		// }
 		// else {
-		intSpecies = Buttons.getList(interestingSpecies, species);
+		// intSpecies = Buttons.getList(interestingSpecies, species);
 		// }
-		species.setSelectedIndices(index);
+		// species.setSelectedIndices(index);
 		String selectedButtons = "";
 		double rap1 = 0.1;
 		double rap2 = 0.1;
@@ -3728,7 +3770,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 						}
 						list[j] = index;
 					}
-					intSpecies.setListData(list);
+					// intSpecies.setListData(list);
 					termCond.setListData(list);
 					int rem = availSpecies.getItemCount();
 					for (int i = 0; i < rem; i++) {
@@ -3737,10 +3779,28 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					for (int i = 0; i < list.length; i++) {
 						availSpecies.addItem(((String) list[i]).replace(" ", "_"));
 					}
+					String[] allSpecies = getAllSpecies();
+					String[] intSpecies = getInterestingSpecies();
+					createInterestingSpeciesPanel();
+					for (int i = 0; i < speciesInt.size(); i++) {
+						for (String s : intSpecies) {
+							if (s.contains(((JTextField) speciesInt.get(i).get(1)).getText() + " ")) {
+								((JCheckBox) speciesInt.get(i).get(0)).doClick();
+							}
+						}
+						for (String s : allSpecies) {
+							String[] split1 = s.split(" ");
+							if (split1.length > 1) {
+								editLine(i, split1[1]);
+							}
+						}
+					}
+					speciesPanel.revalidate();
+					speciesPanel.repaint();
 				}
 				catch (Exception e1) {
 				}
-				species.setListData(new Object[0]);
+				// species.setListData(new Object[0]);
 				terminations.setListData(new Object[0]);
 				String check;
 				if (load.getProperty("reb2sac.abstraction.method").equals("none")) {
@@ -3748,39 +3808,39 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					Button_Enabling.enableNoneOrAbs(ODE, monteCarlo, markov, seed, seedLabel, runs,
 							runsLabel, minStepLabel, minStep, stepLabel, step, errorLabel, absErr,
 							limitLabel, limit, intervalLabel, interval, simulators,
-							simulatorsLabel, explanation, description, none, intSpecies, species,
-							spLabel, speciesLabel, addIntSpecies, editIntSpecies, removeIntSpecies,
-							rapid1, rapid2, qssa, maxCon, rapidLabel1, rapidLabel2, qssaLabel,
-							maxConLabel, usingSSA, clearIntSpecies, fileStem, fileStemLabel,
-							preAbs, loopAbs, postAbs, preAbsLabel, loopAbsLabel, postAbsLabel,
-							addPreAbs, rmPreAbs, editPreAbs, addLoopAbs, rmLoopAbs, editLoopAbs,
-							addPostAbs, rmPostAbs, editPostAbs, lhpn);
+							simulatorsLabel, explanation, description, none, spLabel, speciesLabel,
+							addIntSpecies, editIntSpecies, removeIntSpecies, rapid1, rapid2, qssa,
+							maxCon, rapidLabel1, rapidLabel2, qssaLabel, maxConLabel, usingSSA,
+							clearIntSpecies, fileStem, fileStemLabel, preAbs, loopAbs, postAbs,
+							preAbsLabel, loopAbsLabel, postAbsLabel, addPreAbs, rmPreAbs,
+							editPreAbs, addLoopAbs, rmLoopAbs, editLoopAbs, addPostAbs, rmPostAbs,
+							editPostAbs, lhpn, speciesInt);
 				}
 				else if (load.getProperty("reb2sac.abstraction.method").equals("abs")) {
 					abstraction.setSelected(true);
 					Button_Enabling.enableNoneOrAbs(ODE, monteCarlo, markov, seed, seedLabel, runs,
 							runsLabel, minStepLabel, minStep, stepLabel, step, errorLabel, absErr,
 							limitLabel, limit, intervalLabel, interval, simulators,
-							simulatorsLabel, explanation, description, none, intSpecies, species,
-							spLabel, speciesLabel, addIntSpecies, editIntSpecies, removeIntSpecies,
-							rapid1, rapid2, qssa, maxCon, rapidLabel1, rapidLabel2, qssaLabel,
-							maxConLabel, usingSSA, clearIntSpecies, fileStem, fileStemLabel,
-							preAbs, loopAbs, postAbs, preAbsLabel, loopAbsLabel, postAbsLabel,
-							addPreAbs, rmPreAbs, editPreAbs, addLoopAbs, rmLoopAbs, editLoopAbs,
-							addPostAbs, rmPostAbs, editPostAbs, lhpn);
+							simulatorsLabel, explanation, description, none, spLabel, speciesLabel,
+							addIntSpecies, editIntSpecies, removeIntSpecies, rapid1, rapid2, qssa,
+							maxCon, rapidLabel1, rapidLabel2, qssaLabel, maxConLabel, usingSSA,
+							clearIntSpecies, fileStem, fileStemLabel, preAbs, loopAbs, postAbs,
+							preAbsLabel, loopAbsLabel, postAbsLabel, addPreAbs, rmPreAbs,
+							editPreAbs, addLoopAbs, rmLoopAbs, editLoopAbs, addPostAbs, rmPostAbs,
+							editPostAbs, lhpn, speciesInt);
 				}
 				else {
 					nary.setSelected(true);
 					Button_Enabling.enableNary(ODE, monteCarlo, markov, seed, seedLabel, runs,
 							runsLabel, minStepLabel, minStep, stepLabel, step, errorLabel, absErr,
 							limitLabel, limit, intervalLabel, interval, simulators,
-							simulatorsLabel, explanation, description, intSpecies, species,
-							spLabel, speciesLabel, addIntSpecies, editIntSpecies, removeIntSpecies,
-							rapid1, rapid2, qssa, maxCon, rapidLabel1, rapidLabel2, qssaLabel,
-							maxConLabel, usingSSA, clearIntSpecies, fileStem, fileStemLabel,
-							preAbs, loopAbs, postAbs, preAbsLabel, loopAbsLabel, postAbsLabel,
-							addPreAbs, rmPreAbs, editPreAbs, addLoopAbs, rmLoopAbs, editLoopAbs,
-							addPostAbs, rmPostAbs, editPostAbs, lhpn, gcmEditor);
+							simulatorsLabel, explanation, description, spLabel, speciesLabel,
+							addIntSpecies, editIntSpecies, removeIntSpecies, rapid1, rapid2, qssa,
+							maxCon, rapidLabel1, rapidLabel2, qssaLabel, maxConLabel, usingSSA,
+							clearIntSpecies, fileStem, fileStemLabel, preAbs, loopAbs, postAbs,
+							preAbsLabel, loopAbsLabel, postAbsLabel, addPreAbs, rmPreAbs,
+							editPreAbs, addLoopAbs, rmLoopAbs, editLoopAbs, addPostAbs, rmPostAbs,
+							editPostAbs, lhpn, gcmEditor, speciesInt);
 				}
 				if (load.containsKey("ode.simulation.absolute.error")) {
 					absErr.setText(load.getProperty("ode.simulation.absolute.error"));
@@ -4029,7 +4089,18 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					i++;
 				}
 				interestingSpecies = getLists.toArray();
-				species.setListData(interestingSpecies);
+				for (String s : getLists) {
+					String[] split1 = s.split(" ");
+					for (int j = 0; j < speciesInt.size(); j++) {
+						if (((JTextField) speciesInt.get(j).get(1)).getText().equals(split1[0])) {
+							((JCheckBox) speciesInt.get(j).get(0)).doClick();
+							if (split1.length > 1) {
+								editLine(j, split1[1]);
+							}
+						}
+					}
+				}
+				// species.setListData(interestingSpecies);
 
 				getLists = new ArrayList<String>();
 				i = 1;
@@ -4105,8 +4176,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		if (concentrations.isSelected()) {
 			printer_track_quantity = "concentration";
 		}
-		int[] index = species.getSelectedIndices();
-		species.setSelectedIndices(index);
+		// int[] index = species.getSelectedIndices();
+		// species.setSelectedIndices(index);
 		return new Graph(this, printer_track_quantity, simName + " simulation results", printer_id,
 				outDir, "time", biomodelsim, open, log, null, true, false);
 	}
@@ -4158,7 +4229,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			}
 			list[j] = index;
 		}
-		intSpecies.setListData(list);
+		// intSpecies.setListData(list);
 		termCond.setListData(list);
 		int rem = availSpecies.getItemCount();
 		for (int i = 0; i < rem; i++) {
@@ -4167,6 +4238,24 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		for (int i = 0; i < list.length; i++) {
 			availSpecies.addItem(((String) list[i]).replace(" ", "_"));
 		}
+		String[] allSpecies = getAllSpecies();
+		String[] intSpecies = getInterestingSpecies();
+		createInterestingSpeciesPanel();
+		for (int i = 0; i < speciesInt.size(); i++) {
+			for (String s : intSpecies) {
+				if (s.contains(((JTextField) speciesInt.get(i).get(1)).getText() + " ")) {
+					((JCheckBox) speciesInt.get(i).get(0)).doClick();
+				}
+			}
+			for (String s : allSpecies) {
+				String[] split1 = s.split(" ");
+				if (split1.length > 1) {
+					editLine(i, split1[1]);
+				}
+			}
+		}
+		speciesPanel.revalidate();
+		speciesPanel.repaint();
 	}
 
 	public void setSim(String newSimName) {
@@ -4179,346 +4268,357 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		return change;
 	}
 
-	private void addInterstingSpecies() {
-		ArrayList<String> intSpecs = new ArrayList<String>();
-		for (Object spec : interestingSpecies) {
-			intSpecs.add(((String) spec).split(" ")[0]);
-		}
-		for (Object spec : intSpecies.getSelectedValues()) {
-			if (intSpecs.contains((String) spec)) {
-				JOptionPane
-						.showMessageDialog(biomodelsim.frame(), spec
-								+ " is already an interesting species.", "Error",
-								JOptionPane.ERROR_MESSAGE);
-				return;
-			}
-		}
-		JTabbedPane naryTabs = new JTabbedPane();
-		ArrayList<JPanel> specProps = new ArrayList<JPanel>();
-		final ArrayList<JTextField> texts = new ArrayList<JTextField>();
-		final ArrayList<JList> consLevel = new ArrayList<JList>();
-		final ArrayList<Object[]> conLevel = new ArrayList<Object[]>();
-		final ArrayList<String> specs = new ArrayList<String>();
-		for (Object spec : intSpecies.getSelectedValues()) {
-			specs.add((String) spec);
-			JPanel newPanel1 = new JPanel(new GridLayout(1, 2));
-			JPanel newPanel2 = new JPanel(new GridLayout(1, 2));
-			JPanel otherLabel = new JPanel();
-			otherLabel.add(new JLabel(spec + " Amount:"));
-			newPanel2.add(otherLabel);
-			consLevel.add(new JList());
-			conLevel.add(new Object[0]);
-			consLevel.get(consLevel.size() - 1).setListData(new Object[0]);
-			conLevel.set(conLevel.size() - 1, new Object[0]);
-			JScrollPane scroll = new JScrollPane();
-			scroll.setPreferredSize(new Dimension(260, 100));
-			scroll.setViewportView(consLevel.get(consLevel.size() - 1));
-			JPanel area = new JPanel();
-			area.add(scroll);
-			newPanel2.add(area);
-			JPanel addAndRemove = new JPanel();
-			JTextField adding = new JTextField(15);
-			texts.add(adding);
-			JButton Add = new JButton("Add");
-			JButton Remove = new JButton("Remove");
-			Add.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					int number = Integer.parseInt(e.getActionCommand().substring(3,
-							e.getActionCommand().length()));
-					try {
-						int get = Integer.parseInt(texts.get(number).getText().trim());
-						if (get <= 0) {
-							JOptionPane.showMessageDialog(biomodelsim.frame(),
-									"Amounts Must Be Positive Integers.", "Error",
-									JOptionPane.ERROR_MESSAGE);
-						}
-						else {
-							JList add = new JList();
-							Object[] adding = { "" + get };
-							add.setListData(adding);
-							add.setSelectedIndex(0);
-							Object[] sort = Buttons.add(conLevel.get(number),
-									consLevel.get(number), add, false, null, null, null, null,
-									null, null, biomodelsim.frame());
-							int in;
-							for (int out = 1; out < sort.length; out++) {
-								int temp = Integer.parseInt((String) sort[out]);
-								in = out;
-								while (in > 0 && Integer.parseInt((String) sort[in - 1]) >= temp) {
-									sort[in] = sort[in - 1];
-									--in;
-								}
-								sort[in] = temp + "";
-							}
-							conLevel.set(number, sort);
-						}
-					}
-					catch (Exception e1) {
-						JOptionPane.showMessageDialog(biomodelsim.frame(),
-								"Amounts Must Be Positive Integers.", "Error",
-								JOptionPane.ERROR_MESSAGE);
-					}
-				}
-			});
-			Add.setActionCommand("Add" + (consLevel.size() - 1));
-			Remove.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					int number = Integer.parseInt(e.getActionCommand().substring(6,
-							e.getActionCommand().length()));
-					conLevel.set(number, Buttons
-							.remove(consLevel.get(number), conLevel.get(number)));
-				}
-			});
-			Remove.setActionCommand("Remove" + (consLevel.size() - 1));
-			addAndRemove.add(adding);
-			addAndRemove.add(Add);
-			addAndRemove.add(Remove);
-			JPanel newnewPanel = new JPanel(new BorderLayout());
-			newnewPanel.add(newPanel1, "North");
-			newnewPanel.add(newPanel2, "Center");
-			newnewPanel.add(addAndRemove, "South");
-			specProps.add(newnewPanel);
-			naryTabs.addTab(spec + " Properties", specProps.get(specProps.size() - 1));
-		}
-		Object[] options = { "Add", "Cancel" };
-		int value = JOptionPane.showOptionDialog(biomodelsim.frame(), naryTabs, "Thresholds",
-				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-		if (value == JOptionPane.YES_OPTION) {
-			String[] add = new String[specs.size()];
-			for (int i = 0; i < specs.size(); i++) {
-				add[i] = specs.get(i);
-				if (conLevel.get(i).length > 0) {
-					add[i] += " " + conLevel.get(i)[0];
-				}
-				for (int j = 1; j < conLevel.get(i).length; j++) {
-					add[i] += "," + conLevel.get(i)[j];
-				}
-			}
-			JList list = new JList(add);
-			int[] select = new int[add.length];
-			for (int i = 0; i < add.length; i++) {
-				select[i] = i;
-			}
-			list.setSelectedIndices(select);
-			interestingSpecies = Buttons.add(interestingSpecies, species, list, false, amountTerm,
-					ge, gt, eq, lt, le, biomodelsim.frame());
+	/*
+	 * private void addInterstingSpecies() { ArrayList<String> intSpecs = new
+	 * ArrayList<String>(); for (Object spec : interestingSpecies) {
+	 * intSpecs.add(((String) spec).split(" ")[0]); } for (Object spec :
+	 * intSpecies.getSelectedValues()) { if (intSpecs.contains((String) spec)) {
+	 * JOptionPane .showMessageDialog(biomodelsim.frame(), spec +
+	 * " is already an interesting species.", "Error",
+	 * JOptionPane.ERROR_MESSAGE); return; } } JTabbedPane naryTabs = new
+	 * JTabbedPane(); ArrayList<JPanel> specProps = new ArrayList<JPanel>();
+	 * final ArrayList<JTextField> texts = new ArrayList<JTextField>(); final
+	 * ArrayList<JList> consLevel = new ArrayList<JList>(); final
+	 * ArrayList<Object[]> conLevel = new ArrayList<Object[]>(); final
+	 * ArrayList<String> specs = new ArrayList<String>(); for (Object spec :
+	 * intSpecies.getSelectedValues()) { specs.add((String) spec); JPanel
+	 * newPanel1 = new JPanel(new GridLayout(1, 2)); JPanel newPanel2 = new
+	 * JPanel(new GridLayout(1, 2)); JPanel otherLabel = new JPanel();
+	 * otherLabel.add(new JLabel(spec + " Amount:")); newPanel2.add(otherLabel);
+	 * consLevel.add(new JList()); conLevel.add(new Object[0]);
+	 * consLevel.get(consLevel.size() - 1).setListData(new Object[0]);
+	 * conLevel.set(conLevel.size() - 1, new Object[0]); JScrollPane scroll =
+	 * new JScrollPane(); scroll.setPreferredSize(new Dimension(260, 100));
+	 * scroll.setViewportView(consLevel.get(consLevel.size() - 1)); JPanel area
+	 * = new JPanel(); area.add(scroll); newPanel2.add(area); JPanel
+	 * addAndRemove = new JPanel(); JTextField adding = new JTextField(15);
+	 * texts.add(adding); JButton Add = new JButton("Add"); JButton Remove = new
+	 * JButton("Remove"); Add.addActionListener(new ActionListener() { public
+	 * void actionPerformed(ActionEvent e) { int number =
+	 * Integer.parseInt(e.getActionCommand().substring(3,
+	 * e.getActionCommand().length())); try { int get =
+	 * Integer.parseInt(texts.get(number).getText().trim()); if (get <= 0) {
+	 * JOptionPane.showMessageDialog(biomodelsim.frame(),
+	 * "Amounts Must Be Positive Integers.", "Error",
+	 * JOptionPane.ERROR_MESSAGE); } else { JList add = new JList(); Object[]
+	 * adding = { "" + get }; add.setListData(adding); add.setSelectedIndex(0);
+	 * Object[] sort = Buttons.add(conLevel.get(number), consLevel.get(number),
+	 * add, false, null, null, null, null, null, null, biomodelsim.frame()); int
+	 * in; for (int out = 1; out < sort.length; out++) { int temp =
+	 * Integer.parseInt((String) sort[out]); in = out; while (in > 0 &&
+	 * Integer.parseInt((String) sort[in - 1]) >= temp) { sort[in] = sort[in -
+	 * 1]; --in; } sort[in] = temp + ""; } conLevel.set(number, sort); } } catch
+	 * (Exception e1) { JOptionPane.showMessageDialog(biomodelsim.frame(),
+	 * "Amounts Must Be Positive Integers.", "Error",
+	 * JOptionPane.ERROR_MESSAGE); } } }); Add.setActionCommand("Add" +
+	 * (consLevel.size() - 1)); Remove.addActionListener(new ActionListener() {
+	 * public void actionPerformed(ActionEvent e) { int number =
+	 * Integer.parseInt(e.getActionCommand().substring(6,
+	 * e.getActionCommand().length())); conLevel.set(number, Buttons
+	 * .remove(consLevel.get(number), conLevel.get(number))); } });
+	 * Remove.setActionCommand("Remove" + (consLevel.size() - 1));
+	 * addAndRemove.add(adding); addAndRemove.add(Add);
+	 * addAndRemove.add(Remove); JPanel newnewPanel = new JPanel(new
+	 * BorderLayout()); newnewPanel.add(newPanel1, "North");
+	 * newnewPanel.add(newPanel2, "Center"); newnewPanel.add(addAndRemove,
+	 * "South"); specProps.add(newnewPanel); naryTabs.addTab(spec +
+	 * " Properties", specProps.get(specProps.size() - 1)); } Object[] options =
+	 * { "Add", "Cancel" }; int value =
+	 * JOptionPane.showOptionDialog(biomodelsim.frame(), naryTabs, "Thresholds",
+	 * JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
+	 * options[0]); if (value == JOptionPane.YES_OPTION) { String[] add = new
+	 * String[specs.size()]; for (int i = 0; i < specs.size(); i++) { add[i] =
+	 * specs.get(i); if (conLevel.get(i).length > 0) { add[i] += " " +
+	 * conLevel.get(i)[0]; } for (int j = 1; j < conLevel.get(i).length; j++) {
+	 * add[i] += "," + conLevel.get(i)[j]; } } JList list = new JList(add);
+	 * int[] select = new int[add.length]; for (int i = 0; i < add.length; i++)
+	 * { select[i] = i; } list.setSelectedIndices(select); interestingSpecies =
+	 * Buttons.add(interestingSpecies, species, list, false, amountTerm, ge, gt,
+	 * eq, lt, le, biomodelsim.frame()); } }
+	 * 
+	 * private void editInterstingSpecies() { JTabbedPane naryTabs = new
+	 * JTabbedPane(); ArrayList<JPanel> specProps = new ArrayList<JPanel>();
+	 * final ArrayList<JTextField> texts = new ArrayList<JTextField>(); final
+	 * ArrayList<JList> consLevel = new ArrayList<JList>(); final
+	 * ArrayList<Object[]> conLevel = new ArrayList<Object[]>(); final
+	 * ArrayList<String> specs = new ArrayList<String>(); for (Object spec :
+	 * species.getSelectedValues()) { String[] split = ((String)
+	 * spec).split(" "); specs.add(split[0]); JPanel newPanel1 = new JPanel(new
+	 * GridLayout(1, 2)); JPanel newPanel2 = new JPanel(new GridLayout(1, 2));
+	 * JPanel otherLabel = new JPanel(); otherLabel.add(new JLabel(split[0] +
+	 * " Amount:")); newPanel2.add(otherLabel); consLevel.add(new JList());
+	 * Object[] cons; if (split.length > 1) { cons = split[1].split(","); } else
+	 * { cons = new Object[0]; } conLevel.add(cons);
+	 * consLevel.get(consLevel.size() - 1).setListData(cons);
+	 * conLevel.set(conLevel.size() - 1, cons); JScrollPane scroll = new
+	 * JScrollPane(); scroll.setPreferredSize(new Dimension(260, 100));
+	 * scroll.setViewportView(consLevel.get(consLevel.size() - 1)); JPanel area
+	 * = new JPanel(); area.add(scroll); newPanel2.add(area); JPanel
+	 * addAndRemove = new JPanel(); JTextField adding = new JTextField(15);
+	 * texts.add(adding); JButton Add = new JButton("Add"); JButton Remove = new
+	 * JButton("Remove"); Add.addActionListener(new ActionListener() { public
+	 * void actionPerformed(ActionEvent e) { int number =
+	 * Integer.parseInt(e.getActionCommand().substring(3,
+	 * e.getActionCommand().length())); try { int get =
+	 * Integer.parseInt(texts.get(number).getText().trim()); if (get <= 0) {
+	 * JOptionPane.showMessageDialog(biomodelsim.frame(),
+	 * "Amounts Must Be Positive Integers.", "Error",
+	 * JOptionPane.ERROR_MESSAGE); } else { JList add = new JList(); Object[]
+	 * adding = { "" + get }; add.setListData(adding); add.setSelectedIndex(0);
+	 * Object[] sort = Buttons.add(conLevel.get(number), consLevel.get(number),
+	 * add, false, null, null, null, null, null, null, biomodelsim.frame()); int
+	 * in; for (int out = 1; out < sort.length; out++) { int temp =
+	 * Integer.parseInt((String) sort[out]); in = out; while (in > 0 &&
+	 * Integer.parseInt((String) sort[in - 1]) >= temp) { sort[in] = sort[in -
+	 * 1]; --in; } sort[in] = temp + ""; } conLevel.set(number, sort); } } catch
+	 * (Exception e1) { JOptionPane.showMessageDialog(biomodelsim.frame(),
+	 * "Amounts Must Be Positive Integers.", "Error",
+	 * JOptionPane.ERROR_MESSAGE); } } }); Add.setActionCommand("Add" +
+	 * (consLevel.size() - 1)); Remove.addActionListener(new ActionListener() {
+	 * public void actionPerformed(ActionEvent e) { int number =
+	 * Integer.parseInt(e.getActionCommand().substring(6,
+	 * e.getActionCommand().length())); conLevel.set(number, Buttons
+	 * .remove(consLevel.get(number), conLevel.get(number))); } });
+	 * Remove.setActionCommand("Remove" + (consLevel.size() - 1));
+	 * addAndRemove.add(adding); addAndRemove.add(Add);
+	 * addAndRemove.add(Remove); JPanel newnewPanel = new JPanel(new
+	 * BorderLayout()); newnewPanel.add(newPanel1, "North");
+	 * newnewPanel.add(newPanel2, "Center"); newnewPanel.add(addAndRemove,
+	 * "South"); specProps.add(newnewPanel); naryTabs.addTab(split[0] +
+	 * " Properties", specProps.get(specProps.size() - 1)); } Object[] options =
+	 * { "Add", "Cancel" }; int value =
+	 * JOptionPane.showOptionDialog(biomodelsim.frame(), naryTabs, "Thresholds",
+	 * JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
+	 * options[0]); if (value == JOptionPane.YES_OPTION) {
+	 * Buttons.remove(species); String[] add = new String[specs.size()]; for
+	 * (int i = 0; i < specs.size(); i++) { add[i] = specs.get(i); if
+	 * (conLevel.get(i).length > 0) { add[i] += " " + conLevel.get(i)[0]; } for
+	 * (int j = 1; j < conLevel.get(i).length; j++) { add[i] += "," +
+	 * conLevel.get(i)[j]; } } JList list = new JList(add); int[] select = new
+	 * int[add.length]; for (int i = 0; i < add.length; i++) { select[i] = i; }
+	 * list.setSelectedIndices(select); interestingSpecies =
+	 * Buttons.add(interestingSpecies, species, list, false, amountTerm, ge, gt,
+	 * eq, lt, le, biomodelsim.frame()); } }
+	 */
+
+	private void createInterestingSpeciesPanel() {
+		speciesPanel.removeAll();
+		speciesInt = new ArrayList<ArrayList<Component>>();
+		speciesPanel.setLayout(new GridLayout(allSpecies.length + 1, 1));
+		JPanel label = new JPanel(new GridLayout());
+		label.add(new JLabel("Use"));
+		label.add(new JLabel("Species"));
+		label.add(new JLabel("Number Of Thresholds"));
+		speciesPanel.add(label);
+		int j = 0;
+		for (Object s : allSpecies) {
+			j++;
+			JPanel sp = new JPanel(new GridLayout());
+			ArrayList<Component> specs = new ArrayList<Component>();
+			JCheckBox check = new JCheckBox();
+			check.setSelected(false);
+			specs.add(check);
+			specs.add(new JTextField((String) s));
+			String[] options = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
+			JComboBox combo = new JComboBox(options);
+			combo.setEnabled(false);
+			specs.add(combo);
+			((JTextField) specs.get(1)).setEditable(false);
+			sp.add(specs.get(0));
+			((JCheckBox) specs.get(0)).addActionListener(this);
+			((JCheckBox) specs.get(0)).setActionCommand("box" + j);
+			sp.add(specs.get(1));
+			sp.add(specs.get(2));
+			((JComboBox) specs.get(2)).addActionListener(this);
+			((JComboBox) specs.get(2)).setActionCommand("text" + j);
+			speciesInt.add(specs);
+			speciesPanel.add(sp);
 		}
 	}
 
-	private void editInterstingSpecies() {
-		JTabbedPane naryTabs = new JTabbedPane();
-		ArrayList<JPanel> specProps = new ArrayList<JPanel>();
-		final ArrayList<JTextField> texts = new ArrayList<JTextField>();
-		final ArrayList<JList> consLevel = new ArrayList<JList>();
-		final ArrayList<Object[]> conLevel = new ArrayList<Object[]>();
-		final ArrayList<String> specs = new ArrayList<String>();
-		for (Object spec : species.getSelectedValues()) {
-			String[] split = ((String) spec).split(" ");
-			specs.add(split[0]);
-			JPanel newPanel1 = new JPanel(new GridLayout(1, 2));
-			JPanel newPanel2 = new JPanel(new GridLayout(1, 2));
-			JPanel otherLabel = new JPanel();
-			otherLabel.add(new JLabel(split[0] + " Amount:"));
-			newPanel2.add(otherLabel);
-			consLevel.add(new JList());
-			Object[] cons;
-			if (split.length > 1) {
-				cons = split[1].split(",");
+	private void editLine(int num, String thresholds) {
+		String[] thresh = thresholds.split(",");
+		ArrayList<Component> specs = speciesInt.get(num);
+		((JComboBox) specs.get(2)).setSelectedItem("" + thresh.length);
+		for (int i = 0; i < thresh.length; i++) {
+			((JTextField) specs.get(i + 3)).setText(thresh[i]);
+		}
+	}
+
+	private String getLine(int num) {
+		String line = "";
+		ArrayList<Component> specs = speciesInt.get(num);
+		int boxes = Integer.parseInt((String) ((JComboBox) specs.get(2)).getSelectedItem());
+		for (int i = 0; i < boxes; i++) {
+			line += ((JTextField) specs.get(i + 3)).getText() + ",";
+		}
+		if (line.equals("")) {
+			return "";
+		}
+		else {
+			return line.substring(0, line.length() - 1);
+		}
+	}
+
+	private String[] getInterestingSpecies() {
+		ArrayList<String> species = new ArrayList<String>();
+		for (int i = 0; i < speciesInt.size(); i++) {
+			if (((JCheckBox) speciesInt.get(i).get(0)).isSelected()) {
+				String add = ((JTextField) speciesInt.get(i).get(1)).getText();
+				String line = getLine(i);
+				if (line.equals("")) {
+					species.add(add);
+				}
+				else {
+					species.add(add + " " + line);
+				}
+			}
+		}
+		return species.toArray(new String[0]);
+	}
+
+	private String[] getAllSpecies() {
+		ArrayList<String> species = new ArrayList<String>();
+		for (int i = 0; i < speciesInt.size(); i++) {
+			species.add(((JTextField) speciesInt.get(i).get(1)).getText() + " " + getLine(i + 1));
+		}
+		return species.toArray(new String[0]);
+	}
+
+	private void editNumThresholds(int num) {
+		try {
+			ArrayList<Component> specs = speciesInt.get(num);
+			Component[] panels = speciesPanel.getComponents();
+			int boxes = Integer.parseInt((String) ((JComboBox) specs.get(2)).getSelectedItem());
+			if ((specs.size() - 3) < boxes) {
+				for (int i = 0; i < boxes; i++) {
+					try {
+						specs.get(i + 3);
+					}
+					catch (Exception e1) {
+						JTextField temp = new JTextField("");
+						((JPanel) panels[num + 1]).add(temp);
+						specs.add(temp);
+					}
+				}
 			}
 			else {
-				cons = new Object[0];
+				try {
+					if (boxes > 0) {
+						while (true) {
+							specs.remove(boxes + 3);
+							((JPanel) panels[num + 1]).remove(boxes + 3);
+						}
+					}
+					else if (boxes == 0) {
+						while (true) {
+							specs.remove(3);
+							((JPanel) panels[num + 1]).remove(3);
+						}
+					}
+				}
+				catch (Exception e1) {
+				}
 			}
-			conLevel.add(cons);
-			consLevel.get(consLevel.size() - 1).setListData(cons);
-			conLevel.set(conLevel.size() - 1, cons);
-			JScrollPane scroll = new JScrollPane();
-			scroll.setPreferredSize(new Dimension(260, 100));
-			scroll.setViewportView(consLevel.get(consLevel.size() - 1));
-			JPanel area = new JPanel();
-			area.add(scroll);
-			newPanel2.add(area);
-			JPanel addAndRemove = new JPanel();
-			JTextField adding = new JTextField(15);
-			texts.add(adding);
-			JButton Add = new JButton("Add");
-			JButton Remove = new JButton("Remove");
-			Add.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					int number = Integer.parseInt(e.getActionCommand().substring(3,
-							e.getActionCommand().length()));
+			int max = 0;
+			for (int i = 0; i < speciesInt.size(); i++) {
+				max = Math.max(max, speciesInt.get(i).size());
+			}
+			if (((JPanel) panels[0]).getComponentCount() < max) {
+				for (int i = 0; i < max - 3; i++) {
 					try {
-						int get = Integer.parseInt(texts.get(number).getText().trim());
-						if (get <= 0) {
-							JOptionPane.showMessageDialog(biomodelsim.frame(),
-									"Amounts Must Be Positive Integers.", "Error",
-									JOptionPane.ERROR_MESSAGE);
-						}
-						else {
-							JList add = new JList();
-							Object[] adding = { "" + get };
-							add.setListData(adding);
-							add.setSelectedIndex(0);
-							Object[] sort = Buttons.add(conLevel.get(number),
-									consLevel.get(number), add, false, null, null, null, null,
-									null, null, biomodelsim.frame());
-							int in;
-							for (int out = 1; out < sort.length; out++) {
-								int temp = Integer.parseInt((String) sort[out]);
-								in = out;
-								while (in > 0 && Integer.parseInt((String) sort[in - 1]) >= temp) {
-									sort[in] = sort[in - 1];
-									--in;
-								}
-								sort[in] = temp + "";
-							}
-							conLevel.set(number, sort);
-						}
+						((JPanel) panels[0]).getComponent(i + 3);
 					}
-					catch (Exception e1) {
-						JOptionPane.showMessageDialog(biomodelsim.frame(),
-								"Amounts Must Be Positive Integers.", "Error",
-								JOptionPane.ERROR_MESSAGE);
+					catch (Exception e) {
+						((JPanel) panels[0]).add(new JLabel("Threshold " + (i + 1)));
 					}
 				}
-			});
-			Add.setActionCommand("Add" + (consLevel.size() - 1));
-			Remove.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					int number = Integer.parseInt(e.getActionCommand().substring(6,
-							e.getActionCommand().length()));
-					conLevel.set(number, Buttons
-							.remove(consLevel.get(number), conLevel.get(number)));
+			}
+			else {
+				try {
+					while (true) {
+						((JPanel) panels[0]).remove(max);
+					}
 				}
-			});
-			Remove.setActionCommand("Remove" + (consLevel.size() - 1));
-			addAndRemove.add(adding);
-			addAndRemove.add(Add);
-			addAndRemove.add(Remove);
-			JPanel newnewPanel = new JPanel(new BorderLayout());
-			newnewPanel.add(newPanel1, "North");
-			newnewPanel.add(newPanel2, "Center");
-			newnewPanel.add(addAndRemove, "South");
-			specProps.add(newnewPanel);
-			naryTabs.addTab(split[0] + " Properties", specProps.get(specProps.size() - 1));
+				catch (Exception e) {
+				}
+			}
+			for (int i = 1; i < panels.length; i++) {
+				JPanel sp = (JPanel) panels[i];
+				for (int j = sp.getComponentCount() - 1; j >= 3; j--) {
+					if (sp.getComponent(j) instanceof JLabel) {
+						sp.remove(j);
+					}
+				}
+				if (max > sp.getComponentCount()) {
+					for (int j = sp.getComponentCount(); j < max; j++) {
+						sp.add(new JLabel());
+					}
+				}
+				else {
+					for (int j = sp.getComponentCount() - 3; j >= max; j--) {
+						sp.remove(j);
+					}
+				}
+			}
 		}
-		Object[] options = { "Add", "Cancel" };
-		int value = JOptionPane.showOptionDialog(biomodelsim.frame(), naryTabs, "Thresholds",
-				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-		if (value == JOptionPane.YES_OPTION) {
-			Buttons.remove(species);
-			String[] add = new String[specs.size()];
-			for (int i = 0; i < specs.size(); i++) {
-				add[i] = specs.get(i);
-				if (conLevel.get(i).length > 0) {
-					add[i] += " " + conLevel.get(i)[0];
-				}
-				for (int j = 1; j < conLevel.get(i).length; j++) {
-					add[i] += "," + conLevel.get(i)[j];
-				}
-			}
-			JList list = new JList(add);
-			int[] select = new int[add.length];
-			for (int i = 0; i < add.length; i++) {
-				select[i] = i;
-			}
-			list.setSelectedIndices(select);
-			interestingSpecies = Buttons.add(interestingSpecies, species, list, false, amountTerm,
-					ge, gt, eq, lt, le, biomodelsim.frame());
+		catch (Exception e) {
 		}
 	}
 
-	public void addToIntSpecies(String newSpecies) {
-		JList addIntSpecies = new JList();
-		Object[] addObj = { newSpecies };
-		addIntSpecies.setListData(addObj);
-		addIntSpecies.setSelectedIndex(0);
-		interestingSpecies = Buttons.add(interestingSpecies, species, addIntSpecies, false,
-				amountTerm, ge, gt, eq, lt, le, this);
-	}
-
-	public void removeIntSpecies() {
-		String message = "These species cannot be removed.\n";
-		boolean displayMessage1 = false;
-		if (usingSSA.isSelected()) {
-			ArrayList<String> keepers = new ArrayList<String>();
-			for (int i = 0; i < ssaList.length; i++) {
-				String[] get = ((String) ssaList[i]).split(" ");
-				keepers.add(get[1]);
-			}
-			int[] selected = species.getSelectedIndices();
-			for (int i = 0; i < selected.length; i++) {
-				for (int j = 0; j < keepers.size(); j++) {
-					if ((keepers.get(j)).equals(interestingSpecies[selected[i]])) {
-						species.removeSelectionInterval(selected[i], selected[i]);
-						if (!displayMessage1) {
-							message += "These species are used in user-defined data.\n";
-							displayMessage1 = true;
-						}
-						message += interestingSpecies[selected[i]] + "\n";
-						break;
-					}
-				}
-			}
-		}
-		boolean displayMessage2 = false;
-		if (usingSAD.isSelected()) {
-			ArrayList<String> keepers = new ArrayList<String>();
-			for (int i = 0; i < sadList.length; i++) {
-				String[] get = ((String) sadList[i]).split(";");
-				String cond = get[2];
-				cond = cond.replace('>', ' ');
-				cond = cond.replace('<', ' ');
-				cond = cond.replace('=', ' ');
-				cond = cond.replace('&', ' ');
-				cond = cond.replace('|', ' ');
-				cond = cond.replace('+', ' ');
-				cond = cond.replace('-', ' ');
-				cond = cond.replace('*', ' ');
-				cond = cond.replace('/', ' ');
-				cond = cond.replace('#', ' ');
-				cond = cond.replace('%', ' ');
-				cond = cond.replace('@', ' ');
-				cond = cond.replace('(', ' ');
-				cond = cond.replace(')', ' ');
-				cond = cond.replace('!', ' ');
-				get = cond.split(" ");
-				for (int j = 0; j < get.length; j++)
-					if (get[j].length() > 0)
-						if ((get[j].charAt(0) != '0') && (get[j].charAt(0) != '1')
-								&& (get[j].charAt(0) != '2') && (get[j].charAt(0) != '3')
-								&& (get[j].charAt(0) != '4') && (get[j].charAt(0) != '5')
-								&& (get[j].charAt(0) != '6') && (get[j].charAt(0) != '7')
-								&& (get[j].charAt(0) != '8') && (get[j].charAt(0) != '9')) {
-							keepers.add(get[j]);
-						}
-			}
-			int[] selected = species.getSelectedIndices();
-			for (int i = 0; i < selected.length; i++) {
-				for (int j = 0; j < keepers.size(); j++) {
-					if ((keepers.get(j)).equals(interestingSpecies[selected[i]])) {
-						species.removeSelectionInterval(selected[i], selected[i]);
-						if (!displayMessage2) {
-							message += "These species are used in termination conditions.\n";
-							displayMessage2 = true;
-						}
-						message += interestingSpecies[selected[i]] + "\n";
-						break;
-					}
-				}
-			}
-		}
-		if (displayMessage1 || displayMessage2) {
-			JTextArea messageArea = new JTextArea(message);
-			messageArea.setEditable(false);
-			JScrollPane scroll = new JScrollPane();
-			scroll.setMinimumSize(new Dimension(300, 300));
-			scroll.setPreferredSize(new Dimension(300, 300));
-			scroll.setViewportView(messageArea);
-			JOptionPane.showMessageDialog(biomodelsim.frame(), scroll, "Unable To Remove Species",
-					JOptionPane.ERROR_MESSAGE);
-		}
-		interestingSpecies = Buttons.remove(species, interestingSpecies);
-	}
+	/*
+	 * public void addToIntSpecies(String newSpecies) { JList addIntSpecies =
+	 * new JList(); Object[] addObj = { newSpecies };
+	 * addIntSpecies.setListData(addObj); addIntSpecies.setSelectedIndex(0);
+	 * interestingSpecies = Buttons.add(interestingSpecies, species,
+	 * addIntSpecies, false, amountTerm, ge, gt, eq, lt, le, this); }
+	 * 
+	 * public void removeIntSpecies() { String message =
+	 * "These species cannot be removed.\n"; boolean displayMessage1 = false; if
+	 * (usingSSA.isSelected()) { ArrayList<String> keepers = new
+	 * ArrayList<String>(); for (int i = 0; i < ssaList.length; i++) { String[]
+	 * get = ((String) ssaList[i]).split(" "); keepers.add(get[1]); } int[]
+	 * selected = species.getSelectedIndices(); for (int i = 0; i <
+	 * selected.length; i++) { for (int j = 0; j < keepers.size(); j++) { if
+	 * ((keepers.get(j)).equals(interestingSpecies[selected[i]])) {
+	 * species.removeSelectionInterval(selected[i], selected[i]); if
+	 * (!displayMessage1) { message +=
+	 * "These species are used in user-defined data.\n"; displayMessage1 = true;
+	 * } message += interestingSpecies[selected[i]] + "\n"; break; } } } }
+	 * boolean displayMessage2 = false; if (usingSAD.isSelected()) {
+	 * ArrayList<String> keepers = new ArrayList<String>(); for (int i = 0; i <
+	 * sadList.length; i++) { String[] get = ((String) sadList[i]).split(";");
+	 * String cond = get[2]; cond = cond.replace('>', ' '); cond =
+	 * cond.replace('<', ' '); cond = cond.replace('=', ' '); cond =
+	 * cond.replace('&', ' '); cond = cond.replace('|', ' '); cond =
+	 * cond.replace('+', ' '); cond = cond.replace('-', ' '); cond =
+	 * cond.replace('*', ' '); cond = cond.replace('/', ' '); cond =
+	 * cond.replace('#', ' '); cond = cond.replace('%', ' '); cond =
+	 * cond.replace('@', ' '); cond = cond.replace('(', ' '); cond =
+	 * cond.replace(')', ' '); cond = cond.replace('!', ' '); get =
+	 * cond.split(" "); for (int j = 0; j < get.length; j++) if (get[j].length()
+	 * > 0) if ((get[j].charAt(0) != '0') && (get[j].charAt(0) != '1') &&
+	 * (get[j].charAt(0) != '2') && (get[j].charAt(0) != '3') &&
+	 * (get[j].charAt(0) != '4') && (get[j].charAt(0) != '5') &&
+	 * (get[j].charAt(0) != '6') && (get[j].charAt(0) != '7') &&
+	 * (get[j].charAt(0) != '8') && (get[j].charAt(0) != '9')) {
+	 * keepers.add(get[j]); } } int[] selected = species.getSelectedIndices();
+	 * for (int i = 0; i < selected.length; i++) { for (int j = 0; j <
+	 * keepers.size(); j++) { if
+	 * ((keepers.get(j)).equals(interestingSpecies[selected[i]])) {
+	 * species.removeSelectionInterval(selected[i], selected[i]); if
+	 * (!displayMessage2) { message +=
+	 * "These species are used in termination conditions.\n"; displayMessage2 =
+	 * true; } message += interestingSpecies[selected[i]] + "\n"; break; } } } }
+	 * if (displayMessage1 || displayMessage2) { JTextArea messageArea = new
+	 * JTextArea(message); messageArea.setEditable(false); JScrollPane scroll =
+	 * new JScrollPane(); scroll.setMinimumSize(new Dimension(300, 300));
+	 * scroll.setPreferredSize(new Dimension(300, 300));
+	 * scroll.setViewportView(messageArea);
+	 * JOptionPane.showMessageDialog(biomodelsim.frame(), scroll,
+	 * "Unable To Remove Species", JOptionPane.ERROR_MESSAGE); }
+	 * interestingSpecies = Buttons.remove(species, interestingSpecies); }
+	 */
 
 	public Graph createProbGraph(String open) {
 		String outDir = root + separator + simName;
