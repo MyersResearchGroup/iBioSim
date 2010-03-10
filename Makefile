@@ -10,6 +10,7 @@ s2lpn: FORCE
 
 atacs: FORCE
 	make -C atacs/src
+	make -C atacs/src parg
 
 Reb2Sac: FORCE
 	cd reb2sac; ./install-reb2sac-linux.sh
