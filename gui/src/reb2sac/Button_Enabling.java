@@ -1,5 +1,6 @@
 package reb2sac;
 
+import java.awt.Component;
 import java.util.*;
 
 import gcm2sbml.gui.GCM2SBMLEditor;
@@ -27,15 +28,15 @@ public class Button_Enabling {
 			JTextField step, JLabel errorLabel, JTextField absErr, JLabel limitLabel,
 			JTextField limit, JComboBox intervalLabel, JTextField interval, JComboBox simulators,
 			JLabel simulatorsLabel, JLabel explanation, JLabel description, JRadioButton none,
-			JList intSpecies, JList species, JLabel spLabel, JLabel speciesLabel,
-			JButton addIntSpecies, JButton editIntSpecies, JButton removeIntSpecies,
-			JTextField rapid1, JTextField rapid2, JTextField qssa, JTextField maxCon,
-			JLabel rapidLabel1, JLabel rapidLabel2, JLabel qssaLabel, JLabel maxConLabel,
-			JCheckBox usingSSA, JButton clearIntSpecies, JTextField fileStem, JLabel fileStemLabel,
-			JList preAbs, JList loopAbs, JList postAbs, JLabel preAbsLabel, JLabel loopAbsLabel,
-			JLabel postAbsLabel, JButton addPreAbs, JButton rmPreAbs, JButton editPreAbs,
-			JButton addLoopAbs, JButton rmLoopAbs, JButton editLoopAbs, JButton addPostAbs,
-			JButton rmPostAbs, JButton editPostAbs, JRadioButton lhpn) {
+			JLabel spLabel, JLabel speciesLabel, JButton addIntSpecies, JButton editIntSpecies,
+			JButton removeIntSpecies, JTextField rapid1, JTextField rapid2, JTextField qssa,
+			JTextField maxCon, JLabel rapidLabel1, JLabel rapidLabel2, JLabel qssaLabel,
+			JLabel maxConLabel, JCheckBox usingSSA, JButton clearIntSpecies, JTextField fileStem,
+			JLabel fileStemLabel, JList preAbs, JList loopAbs, JList postAbs, JLabel preAbsLabel,
+			JLabel loopAbsLabel, JLabel postAbsLabel, JButton addPreAbs, JButton rmPreAbs,
+			JButton editPreAbs, JButton addLoopAbs, JButton rmLoopAbs, JButton editLoopAbs,
+			JButton addPostAbs, JButton rmPostAbs, JButton editPostAbs, JRadioButton lhpn,
+			ArrayList<ArrayList<Component>> speciesInt) {
 		if (!usingSSA.isSelected()) {
 			ODE.setEnabled(true);
 		}
@@ -58,8 +59,11 @@ public class Button_Enabling {
 			addPostAbs.setEnabled(false);
 			rmPostAbs.setEnabled(false);
 			editPostAbs.setEnabled(false);
-			intSpecies.setEnabled(false);
-			species.setEnabled(false);
+			for (ArrayList<Component> comp : speciesInt) {
+				for (Component c : comp) {
+					c.setEnabled(false);
+				}
+			}
 			spLabel.setEnabled(false);
 			speciesLabel.setEnabled(false);
 			addIntSpecies.setEnabled(false);
@@ -103,8 +107,15 @@ public class Button_Enabling {
 			addPostAbs.setEnabled(true);
 			rmPostAbs.setEnabled(true);
 			editPostAbs.setEnabled(true);
-			intSpecies.setEnabled(true);
-			species.setEnabled(true);
+			for (ArrayList<Component> comp : speciesInt) {
+				comp.get(0).setEnabled(true);
+				comp.get(1).setEnabled(true);
+				if (((JCheckBox) comp.get(0)).isSelected()) {
+					for (Component c : comp) {
+						c.setEnabled(true);
+					}
+				}
+			}
 			spLabel.setEnabled(true);
 			speciesLabel.setEnabled(true);
 			addIntSpecies.setEnabled(true);
@@ -198,16 +209,16 @@ public class Button_Enabling {
 			JLabel minStepLabel, JTextField minStep, JLabel stepLabel, JTextField step,
 			JLabel errorLabel, JTextField absErr, JLabel limitLabel, JTextField limit,
 			JComboBox intervalLabel, JTextField interval, JComboBox simulators,
-			JLabel simulatorsLabel, JLabel explanation, JLabel description, JList intSpecies,
-			JList species, JLabel spLabel, JLabel speciesLabel, JButton addIntSpecies,
-			JButton editIntSpecies, JButton removeIntSpecies, JTextField rapid1, JTextField rapid2,
-			JTextField qssa, JTextField maxCon, JLabel rapidLabel1, JLabel rapidLabel2,
-			JLabel qssaLabel, JLabel maxConLabel, JCheckBox usingSSA, JButton clearIntSpecies,
-			JTextField fileStem, JLabel fileStemLabel, JList preAbs, JList loopAbs, JList postAbs,
-			JLabel preAbsLabel, JLabel loopAbsLabel, JLabel postAbsLabel, JButton addPreAbs,
-			JButton rmPreAbs, JButton editPreAbs, JButton addLoopAbs, JButton rmLoopAbs,
-			JButton editLoopAbs, JButton addPostAbs, JButton rmPostAbs, JButton editPostAbs,
-			JRadioButton lhpn, GCM2SBMLEditor gcmEditor) {
+			JLabel simulatorsLabel, JLabel explanation, JLabel description, JLabel spLabel,
+			JLabel speciesLabel, JButton addIntSpecies, JButton editIntSpecies,
+			JButton removeIntSpecies, JTextField rapid1, JTextField rapid2, JTextField qssa,
+			JTextField maxCon, JLabel rapidLabel1, JLabel rapidLabel2, JLabel qssaLabel,
+			JLabel maxConLabel, JCheckBox usingSSA, JButton clearIntSpecies, JTextField fileStem,
+			JLabel fileStemLabel, JList preAbs, JList loopAbs, JList postAbs, JLabel preAbsLabel,
+			JLabel loopAbsLabel, JLabel postAbsLabel, JButton addPreAbs, JButton rmPreAbs,
+			JButton editPreAbs, JButton addLoopAbs, JButton rmLoopAbs, JButton editLoopAbs,
+			JButton addPostAbs, JButton rmPostAbs, JButton editPostAbs, JRadioButton lhpn,
+			GCM2SBMLEditor gcmEditor, ArrayList<ArrayList<Component>> speciesInt) {
 		ODE.setEnabled(false);
 		monteCarlo.setEnabled(true);
 		if (!usingSSA.isSelected()) {
@@ -231,8 +242,15 @@ public class Button_Enabling {
 		addPostAbs.setEnabled(true);
 		rmPostAbs.setEnabled(true);
 		editPostAbs.setEnabled(true);
-		intSpecies.setEnabled(true);
-		species.setEnabled(true);
+		for (ArrayList<Component> comp : speciesInt) {
+			comp.get(0).setEnabled(true);
+			comp.get(1).setEnabled(true);
+			if (((JCheckBox) comp.get(0)).isSelected()) {
+				for (Component c : comp) {
+					c.setEnabled(true);
+				}
+			}
+		}
 		spLabel.setEnabled(true);
 		speciesLabel.setEnabled(true);
 		addIntSpecies.setEnabled(true);

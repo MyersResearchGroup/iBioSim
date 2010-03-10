@@ -161,26 +161,26 @@ public class TermCond {
 
 	public final static short YYERRCODE = 256;
 
-	final static short yylhs[] = { -1, 0, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4,
-			4, 4, 4, 4, 4, };
+	final static short yylhs[] = { -1, 0, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4,
+			4, 4, 4, 4, 4, 4, };
 
-	final static short yylen[] = { 2, 1, 1, 1, 4, 4, 2, 3, 4, 3, 4, 3, 3, 3, 3, 3, 3, 3, 2, 3, 4, 6,
-			1, 1, 2, 2, 2, };
+	final static short yylen[] = { 2, 1, 1, 1, 4, 4, 2, 3, 4, 3, 4, 3, 3, 3, 3, 3, 3, 3, 2, 3, 4,
+			6, 1, 1, 2, 2, 2, };
 
-	final static short yydefred[] = { 0, 0, 22, 0, 0, 0, 0, 0, 0, 0, 0, 2, 3, 0, 0, 0, 18, 6, 25, 24,
-			0, 0, 0, 0, 26, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 13, 19, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16,
-			17, 20, 0, 4, 5, 0, 0, 0, 21, };
+	final static short yydefred[] = { 0, 0, 22, 0, 0, 0, 0, 0, 0, 0, 0, 2, 3, 0, 0, 0, 18, 6, 25,
+			24, 0, 0, 0, 0, 26, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 13, 19, 0, 0, 0, 0, 0, 0, 0, 0,
+			0, 16, 17, 20, 0, 4, 5, 0, 0, 0, 21, };
 
 	final static short yydgoto[] = { 9, 10, 11, 12, 13, };
 
 	final static short yysindex[] = { -33, -39, 0, -18, -33, -231, -229, -33, -228, 0, -24, 0, 0,
-			114, -18, -18, 0, 0, 0, 0, -24, -11, -8, 87, 0, -2, -87, -29, -22, -18, -18, -18, -18, -18,
-			121, 72, 0, 0, 0, -33, -33, -18, 46, -18, 46, 46, -37, -37, 0, 0, 0, -18, 0, 0, 46, 46, 136,
-			0, };
+			114, -18, -18, 0, 0, 0, 0, -24, -11, -8, 87, 0, -2, -87, -29, -22, -18, -18, -18, -18,
+			-18, 121, 72, 0, 0, 0, -33, -33, -18, 46, -18, 46, 46, -37, -37, 0, 0, 0, -18, 0, 0,
+			46, 46, 136, 0, };
 
-	final static short yyrindex[] = { 0, 9, 0, 0, 0, 0, 0, 0, 0, 0, 38, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-			-14, -13, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 21, 45, 20, 34, 0,
-			0, 0, 0, 0, 0, 49, 60, 0, 0, };
+	final static short yyrindex[] = { 0, 9, 0, 0, 0, 0, 0, 0, 0, 0, 38, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			0, -14, -13, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 21, 45, 20,
+			34, 0, 0, 0, 0, 0, 0, 49, 60, 0, 0, };
 
 	final static short yygindex[] = { 0, 69, 33, 36, 109, };
 
@@ -192,16 +192,17 @@ public class TermCond {
 	}
 
 	static void yytable() {
-		yytable = new short[] { 4, 14, 5, 9, 6, 32, 5, 7, 6, 23, 33, 15, 3, 5, 25, 6, 3, 5, 15, 6, 14,
-				11, 15, 3, 2, 3, 18, 3, 19, 24, 36, 8, 41, 37, 15, 8, 39, 40, 1, 43, 21, 9, 8, 22, 9, 12,
-				8, 23, 0, 8, 23, 23, 23, 23, 23, 0, 23, 0, 14, 11, 10, 14, 11, 14, 14, 14, 0, 0, 0, 23, 23,
-				23, 15, 17, 0, 15, 20, 15, 15, 15, 14, 14, 14, 12, 0, 0, 12, 8, 32, 30, 8, 31, 0, 33, 15,
-				15, 15, 0, 10, 0, 26, 10, 0, 0, 0, 0, 0, 0, 52, 53, 2, 3, 16, 38, 32, 30, 23, 31, 0, 33, 0,
-				0, 0, 34, 35, 0, 0, 9, 38, 32, 30, 0, 31, 23, 33, 0, 42, 44, 45, 46, 47, 48, 49, 0, 14, 11,
-				0, 27, 29, 28, 54, 0, 55, 0, 0, 0, 32, 30, 15, 31, 56, 33, 50, 32, 30, 51, 31, 0, 33, 12,
-				0, 0, 0, 8, 27, 29, 28, 57, 32, 30, 0, 31, 0, 33, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 0,
-				0, 1, 2, 0, 0, 0, 0, 0, 1, 2, 0, 0, 1, 2, };
+		yytable = new short[] { 4, 14, 5, 9, 6, 32, 5, 7, 6, 23, 33, 15, 3, 5, 25, 6, 3, 5, 15, 6,
+				14, 11, 15, 3, 2, 3, 18, 3, 19, 24, 36, 8, 41, 37, 15, 8, 39, 40, 1, 43, 21, 9, 8,
+				22, 9, 12, 8, 23, 0, 8, 23, 23, 23, 23, 23, 0, 23, 0, 14, 11, 10, 14, 11, 14, 14,
+				14, 0, 0, 0, 23, 23, 23, 15, 17, 0, 15, 20, 15, 15, 15, 14, 14, 14, 12, 0, 0, 12,
+				8, 32, 30, 8, 31, 0, 33, 15, 15, 15, 0, 10, 0, 26, 10, 0, 0, 0, 0, 0, 0, 52, 53, 2,
+				3, 16, 38, 32, 30, 23, 31, 0, 33, 0, 0, 0, 34, 35, 0, 0, 9, 38, 32, 30, 0, 31, 23,
+				33, 0, 42, 44, 45, 46, 47, 48, 49, 0, 14, 11, 0, 27, 29, 28, 54, 0, 55, 0, 0, 0,
+				32, 30, 15, 31, 56, 33, 50, 32, 30, 51, 31, 0, 33, 12, 0, 0, 0, 8, 27, 29, 28, 57,
+				32, 30, 0, 31, 0, 33, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 0, 0, 1, 2, 0, 0,
+				0, 0, 0, 1, 2, 0, 0, 1, 2, };
 	}
 
 	static short yycheck[];
@@ -210,17 +211,19 @@ public class TermCond {
 	}
 
 	static void yycheck() {
-		yycheck = new short[] { 33, 40, 35, 0, 37, 42, 35, 40, 37, 0, 47, 40, 45, 35, 38, 37, 45, 35,
-				40, 37, 0, 0, 40, 45, 38, 38, 257, 45, 257, 257, 41, 64, 61, 41, 0, 64, 38, 124, 0, 61, 7,
-				38, 64, 7, 41, 0, 64, 38, -1, 0, 41, 42, 43, 44, 45, -1, 47, -1, 38, 38, 0, 41, 41, 43, 44,
-				45, -1, -1, -1, 60, 61, 62, 38, 4, -1, 41, 7, 43, 44, 45, 60, 61, 62, 38, -1, -1, 41, 38,
-				42, 43, 41, 45, -1, 47, 60, 61, 62, -1, 38, -1, 124, 41, -1, -1, -1, -1, -1, -1, 39, 40,
-				124, 124, 3, 41, 42, 43, 7, 45, -1, 47, -1, -1, -1, 14, 15, -1, -1, 124, 41, 42, 43, -1,
-				45, 124, 47, -1, 27, 28, 29, 30, 31, 32, 33, -1, 124, 124, -1, 60, 61, 62, 41, -1, 43, -1,
-				-1, -1, 42, 43, 124, 45, 51, 47, 41, 42, 43, 44, 45, -1, 47, 124, -1, -1, -1, 124, 60, 61,
-				62, 41, 42, 43, -1, 45, -1, 47, 124, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-				-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-				-1, -1, -1, 257, 258, -1, -1, 257, 258, -1, -1, -1, -1, -1, 257, 258, -1, -1, 257, 258, };
+		yycheck = new short[] { 33, 40, 35, 0, 37, 42, 35, 40, 37, 0, 47, 40, 45, 35, 38, 37, 45,
+				35, 40, 37, 0, 0, 40, 45, 38, 38, 257, 45, 257, 257, 41, 64, 61, 41, 0, 64, 38,
+				124, 0, 61, 7, 38, 64, 7, 41, 0, 64, 38, -1, 0, 41, 42, 43, 44, 45, -1, 47, -1, 38,
+				38, 0, 41, 41, 43, 44, 45, -1, -1, -1, 60, 61, 62, 38, 4, -1, 41, 7, 43, 44, 45,
+				60, 61, 62, 38, -1, -1, 41, 38, 42, 43, 41, 45, -1, 47, 60, 61, 62, -1, 38, -1,
+				124, 41, -1, -1, -1, -1, -1, -1, 39, 40, 124, 124, 3, 41, 42, 43, 7, 45, -1, 47,
+				-1, -1, -1, 14, 15, -1, -1, 124, 41, 42, 43, -1, 45, 124, 47, -1, 27, 28, 29, 30,
+				31, 32, 33, -1, 124, 124, -1, 60, 61, 62, 41, -1, 43, -1, -1, -1, 42, 43, 124, 45,
+				51, 47, 41, 42, 43, 44, 45, -1, 47, 124, -1, -1, -1, 124, 60, 61, 62, 41, 42, 43,
+				-1, 45, -1, 47, 124, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+				-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+				-1, -1, -1, 257, 258, -1, -1, 257, 258, -1, -1, -1, -1, -1, 257, 258, -1, -1, 257,
+				258, };
 	}
 
 	final static short YYFINAL = 9;
@@ -228,36 +231,38 @@ public class TermCond {
 	final static short YYMAXTOKEN = 259;
 
 	final static String yyname[] = { "end-of-file", null, null, null, null, null, null, null, null,
-			null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-			null, null, null, null, null, null, null, null, null, "'!'", null, "'#'", null, "'%'", "'&'",
-			null, "'('", "')'", "'*'", "'+'", "','", "'-'", null, "'/'", null, null, null, null, null,
-			null, null, null, null, null, null, null, "'<'", "'='", "'>'", null, "'@'", null, null, null,
-			null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-			null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-			null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-			null, null, null, null, null, null, null, null, null, null, null, "'|'", null, null, null,
-			null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-			null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-			null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-			null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-			null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-			null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-			null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-			null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-			null, null, null, null, null, null, null, null, null, "WORD", "NUM", "UMINUS", };
+			null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+			null, null, null, null, null, null, null, null, null, null, "'!'", null, "'#'", null,
+			"'%'", "'&'", null, "'('", "')'", "'*'", "'+'", "','", "'-'", null, "'/'", null, null,
+			null, null, null, null, null, null, null, null, null, null, "'<'", "'='", "'>'", null,
+			"'@'", null, null, null, null, null, null, null, null, null, null, null, null, null,
+			null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+			null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+			null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+			null, null, null, null, "'|'", null, null, null, null, null, null, null, null, null,
+			null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+			null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+			null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+			null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+			null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+			null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+			null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+			null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+			null, null, null, null, null, null, null, null, null, null, null, "WORD", "NUM",
+			"UMINUS", };
 
 	final static String yyrule[] = { "$accept : program", "program : bool_exp",
-			"bool_exp : logical_exp", "bool_exp : comp_exp", "logical_exp : bool_exp '&' '&' bool_exp",
-			"logical_exp : bool_exp '|' '|' bool_exp", "logical_exp : '!' bool_exp",
-			"logical_exp : '(' logical_exp ')'", "comp_exp : num_exp '<' '=' num_exp",
-			"comp_exp : num_exp '<' num_exp", "comp_exp : num_exp '>' '=' num_exp",
-			"comp_exp : num_exp '>' num_exp", "comp_exp : num_exp '=' num_exp",
-			"comp_exp : '(' comp_exp ')'", "num_exp : num_exp '+' num_exp",
-			"num_exp : num_exp '-' num_exp", "num_exp : num_exp '*' num_exp",
-			"num_exp : num_exp '/' num_exp", "num_exp : '-' num_exp", "num_exp : '(' num_exp ')'",
-			"num_exp : WORD '(' num_exp ')'", "num_exp : WORD '(' num_exp ',' num_exp ')'",
-			"num_exp : NUM", "num_exp : WORD", "num_exp : '%' WORD", "num_exp : '#' WORD",
-			"num_exp : '@' WORD", };
+			"bool_exp : logical_exp", "bool_exp : comp_exp",
+			"logical_exp : bool_exp '&' '&' bool_exp", "logical_exp : bool_exp '|' '|' bool_exp",
+			"logical_exp : '!' bool_exp", "logical_exp : '(' logical_exp ')'",
+			"comp_exp : num_exp '<' '=' num_exp", "comp_exp : num_exp '<' num_exp",
+			"comp_exp : num_exp '>' '=' num_exp", "comp_exp : num_exp '>' num_exp",
+			"comp_exp : num_exp '=' num_exp", "comp_exp : '(' comp_exp ')'",
+			"num_exp : num_exp '+' num_exp", "num_exp : num_exp '-' num_exp",
+			"num_exp : num_exp '*' num_exp", "num_exp : num_exp '/' num_exp",
+			"num_exp : '-' num_exp", "num_exp : '(' num_exp ')'", "num_exp : WORD '(' num_exp ')'",
+			"num_exp : WORD '(' num_exp ',' num_exp ')'", "num_exp : NUM", "num_exp : WORD",
+			"num_exp : '%' WORD", "num_exp : '#' WORD", "num_exp : '@' WORD", };
 
 	// #line 152 "TermCond.y"
 
@@ -470,7 +475,8 @@ public class TermCond {
 			// if (yydebug) debug("loop");
 			// #### NEXT ACTION (from reduction table)
 			for (yyn = yydefred[yystate]; yyn == 0; yyn = yydefred[yystate]) {
-				// if (yydebug) debug("yyn:"+yyn+" state:"+yystate+" yychar:"+yychar);
+				// if (yydebug)
+				// debug("yyn:"+yyn+" state:"+yystate+" yychar:"+yychar);
 				if (yychar < 0) // we want a char?
 				{
 					yychar = yylex(); // get next token
@@ -484,14 +490,17 @@ public class TermCond {
 					}
 				}// yychar<0
 				yyn = yysindex[yystate]; // get amount to shift by (shift index)
-				if ((yyn != 0) && (yyn += yychar) >= 0 && yyn <= YYTABLESIZE && yycheck[yyn] == yychar) {
+				if ((yyn != 0) && (yyn += yychar) >= 0 && yyn <= YYTABLESIZE
+						&& yycheck[yyn] == yychar) {
 					// if (yydebug)
 					// debug("state "+yystate+", shifting to state "+yytable[yyn]);
 					// #### NEXT STATE ####
 					yystate = yytable[yyn];// we are in a new state
 					state_push(yystate); // save it
-					val_push(yylval); // push our lval as the input for next rule
-					yychar = -1; // since we have 'eaten' a token, say we need another
+					val_push(yylval); // push our lval as the input for next
+										// rule
+					yychar = -1; // since we have 'eaten' a token, say we need
+									// another
 					if (yyerrflag > 0) // have we recovered an error?
 						--yyerrflag; // give ourselves credit
 					doaction = false; // but don't process yet
@@ -499,7 +508,8 @@ public class TermCond {
 				}
 
 				yyn = yyrindex[yystate]; // reduce
-				if ((yyn != 0) && (yyn += yychar) >= 0 && yyn <= YYTABLESIZE && yycheck[yyn] == yychar) { // we
+				if ((yyn != 0) && (yyn += yychar) >= 0 && yyn <= YYTABLESIZE
+						&& yycheck[yyn] == yychar) { // we
 					// reduced!
 					// if (yydebug) debug("reduce");
 					yyn = yytable[yyn];
@@ -519,14 +529,18 @@ public class TermCond {
 						{
 							if (stateptr < 0) // check for under & overflow here
 							{
-								yyerror("stack underflow. aborting..."); // note lower case 's'
+								yyerror("stack underflow. aborting..."); // note
+																			// lower
+																			// case
+																			// 's'
 								return 1;
 							}
 							yyn = yysindex[state_peek(0)];
 							if ((yyn != 0) && (yyn += YYERRCODE) >= 0 && yyn <= YYTABLESIZE
 									&& yycheck[yyn] == YYERRCODE) {
 								// if (yydebug)
-								// debug("state "+state_peek(0)+", error recovery shifting to
+								// debug("state "+state_peek(0)+", error
+								// recovery shifting to
 								// state "+yytable[yyn]+" ");
 								yystate = yytable[yyn];
 								state_push(yystate);
@@ -537,9 +551,11 @@ public class TermCond {
 							else {
 								// if (yydebug)
 								// debug("error recovery discarding state "+state_peek(0)+" ");
-								if (stateptr < 0) // check for under & overflow here
+								if (stateptr < 0) // check for under & overflow
+													// here
 								{
-									yyerror("Stack underflow. aborting..."); // capital 'S'
+									yyerror("Stack underflow. aborting..."); // capital
+																				// 'S'
 									return 1;
 								}
 								state_pop();
@@ -556,7 +572,8 @@ public class TermCond {
 						// yys = null;
 						// if (yychar <= YYMAXTOKEN) yys = yyname[yychar];
 						// if (yys == null) yys = "illegal-symbol";
-						// debug("state "+yystate+", error recovery discards token
+						// debug("state "+yystate+", error recovery discards
+						// token
 						// "+yychar+" ("+yys+")");
 						// }
 						yychar = -1; // read another
@@ -600,7 +617,7 @@ public class TermCond {
 					boolean found = false;
 					for (int i = 0; i < listOfSpecies.size(); i++) {
 						if (val_peek(0).sval.equals(listOfSpecies.get(i))) {
-							reb2sac.addToIntSpecies(listOfSpecies.get(i));
+							// reb2sac.addToIntSpecies(listOfSpecies.get(i));
 							found = true;
 							break;
 						}
@@ -619,7 +636,7 @@ public class TermCond {
 				boolean found = false;
 				for (int i = 0; i < listOfSpecies.size(); i++) {
 					if (val_peek(0).sval.equals(listOfSpecies.get(i))) {
-						reb2sac.addToIntSpecies(listOfSpecies.get(i));
+						// reb2sac.addToIntSpecies(listOfSpecies.get(i));
 						found = true;
 						break;
 					}
@@ -637,7 +654,7 @@ public class TermCond {
 				boolean found = false;
 				for (int i = 0; i < listOfSpecies.size(); i++) {
 					if (val_peek(0).sval.equals(listOfSpecies.get(i))) {
-						reb2sac.addToIntSpecies(listOfSpecies.get(i));
+						// reb2sac.addToIntSpecies(listOfSpecies.get(i));
 						found = true;
 						break;
 					}
@@ -675,9 +692,11 @@ public class TermCond {
 			yystate = state_peek(0); // get new state
 			val_drop(yym); // corresponding value drop
 			yym = yylhs[yyn]; // select next TERMINAL(on lhs)
-			if (yystate == 0 && yym == 0)// done? 'rest' state and at first TERMINAL
+			if (yystate == 0 && yym == 0)// done? 'rest' state and at first
+											// TERMINAL
 			{
-				// if (yydebug) debug("After reduction, shifting from state 0 to state
+				// if (yydebug) debug("After reduction, shifting from state 0 to
+				// state
 				// "+YYFINAL+"");
 				yystate = YYFINAL; // explicitly say we're done
 				state_push(YYFINAL); // and save it
@@ -696,7 +715,8 @@ public class TermCond {
 			else // else not done yet
 			{ // get next state and push, for next yydefred[]
 				yyn = yygindex[yym]; // find out where to go
-				if ((yyn != 0) && (yyn += yystate) >= 0 && yyn <= YYTABLESIZE && yycheck[yyn] == yystate)
+				if ((yyn != 0) && (yyn += yystate) >= 0 && yyn <= YYTABLESIZE
+						&& yycheck[yyn] == yystate)
 					yystate = yytable[yyn]; // get new state
 				else
 					yystate = yydgoto[yym]; // else go to new defred
@@ -736,7 +756,7 @@ public class TermCond {
 	 * Create a parser, setting the debug to true or false.
 	 * 
 	 * @param debugMe
-	 *          true for debugging, false for no debug.
+	 *            true for debugging, false for no debug.
 	 */
 	public TermCond(boolean debugMe) {
 		yydebug = debugMe;
