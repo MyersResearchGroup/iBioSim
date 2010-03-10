@@ -633,7 +633,7 @@ public class Run implements ActionListener {
 					// ".xml", "")
 					// + ".lpn");
 					StateGraph sg = new StateGraph(lhpnFile);
-					log.addText("Performing Markov Chain analysis.");
+					log.addText("Performing Markov Chain analysis.\n");
 					String simrep = sg.performMarkovianAnalysis(gcmEditor.getGCM().getConditions());
 					if (simrep != null) {
 						FileOutputStream simrepstream = new FileOutputStream(new File(directory
@@ -710,14 +710,15 @@ public class Run implements ActionListener {
 						log.addText("Executing:\nreb2sac --target.encoding=" + sim + " " + filename
 								+ "\n");
 						time1 = System.nanoTime();
-						reb2sac = exec.exec("reb2sac --target.encoding=" + sim + " " + theFile, null,
-								work);
-					} else {
+						reb2sac = exec.exec("reb2sac --target.encoding=" + sim + " " + theFile,
+								null, work);
+					}
+					else {
 						String command = biosimrc.get("biosim.sim.command", "");
-						String fileStem = theFile.replaceAll(".xml","");
-						fileStem = fileStem.replaceAll(".sbml","");
-						command = command.replaceAll("filename",fileStem);
-						command = command.replaceAll("sim",sim);
+						String fileStem = theFile.replaceAll(".xml", "");
+						fileStem = fileStem.replaceAll(".sbml", "");
+						command = command.replaceAll("filename", fileStem);
+						command = command.replaceAll("sim", sim);
 						log.addText(command + "\n");
 						time1 = System.nanoTime();
 						reb2sac = exec.exec(command, null, work);
