@@ -263,15 +263,15 @@ public class VariablesPanel extends JPanel implements ActionListener {
 				}
 			}
 			String tempVal = "";
-			if (property.containsKey("Initial value")) {
-				tempVal = property.getProperty("Initial value");
+			if (property.containsKey("Initial Value")) {
+				tempVal = property.getProperty("Initial Value");
 				property.setProperty("value", tempVal);
-				property.remove("Initial value");
+				property.remove("Initial Value");
 			}
-			if (property.containsKey("Initial rate")) {
-				tempVal = property.getProperty("Initial rate");
+			if (property.containsKey("Initial Rate")) {
+				tempVal = property.getProperty("Initial Rate");
 				property.setProperty("rate", tempVal);
-				property.remove("Initial rate");
+				property.remove("Initial Rate");
 			}
 
 			// property.put(GlobalConstants.TYPE,
@@ -285,6 +285,7 @@ public class VariablesPanel extends JPanel implements ActionListener {
 			}
 			if (lhpn.isContinuous(id) || continuous) {
 				// System.out.println("add var " + property);
+				tempVal = fields.get("Initial value").getValue();
 				lhpn.addVar(id, property);
 			}
 			else if (lhpn.isInteger(id) || integer) {
