@@ -3619,10 +3619,10 @@ public class ExprTree {
 				if (r1 != null) {
 					if (r1.isit == 'b' || r1.isit == 'i' || r1.isit == 'c' || r1.isit == 'n'
 							|| r1.isit == 't') {
-						result = result + "~" + r1.getElement(type);
+						result = "~" + r1.getElement(type);
 					}
 					else {
-						result = result + "~" + "(" + r1.getElement(type) + ")";
+						result = "~" + "(" + r1.getElement(type) + ")";
 					}
 				}
 				break;
