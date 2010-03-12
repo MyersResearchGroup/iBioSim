@@ -51,7 +51,6 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 	private JRadioButton ge, gt, eq, le, lt;
 
 	private JButton run, save; // The save and run button
-
 	/*
 	 * Added interesting species and termination conditions
 	 */
