@@ -925,6 +925,26 @@ public class ExprTree {
 				}
 				(token) = intexpr_gettok(expr);
 			}
+			else if (tokvalue.equals("rate")) {
+				(token) = intexpr_gettok(expr);
+				if ((token) != '(') {
+					Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
+							+ "\nU: Expected a (");
+					// System.out.printf("ERROR: Expected a (\n");
+					return false;
+				}
+				(token) = intexpr_gettok(expr);
+				if (!intexpr_R(expr))
+					return false;
+				if ((token) != ')') {
+					Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
+							+ "\nU: Expected a (");
+					// System.out.printf("ERROR: Expected a )\n");
+					return false;
+				}
+					setNodeValues((this), null, "rate", 'a');
+				(token) = intexpr_gettok(expr);
+			}
 			else if ((tokvalue.equals("true")) || (tokvalue.equals("t")) || tokvalue.equals("TRUE")
 					|| tokvalue.equals("T")) {
 				// (result) = new ExprTree('t', 1, 1, null);
@@ -3733,6 +3753,11 @@ public class ExprTree {
 				else if (op.equals("bernouli")) {
 					if (r1 != null) {
 						result = "bernouli(" + r1.getElement(type) + ")";
+					}
+				}
+				else if (op.equals("rate")) {
+					if (r1 != null) {
+						result = "rate(" + r1.getElement(type) + ")";
 					}
 				}
 				else if (op.equals("==")) {

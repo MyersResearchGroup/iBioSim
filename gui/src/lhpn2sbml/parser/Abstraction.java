@@ -59,6 +59,12 @@ public class Abstraction extends LHPNFile {
 		for (String s : removeEnab) {
 			enablings.remove(s);
 		}
+		Integer numTrans = delays.size();
+		Integer numPlaces = places.size();
+		Integer numVars = variables.size() + inputs.size() + outputs.size() + integers.size();
+		System.out.println("Transitions before abstraction: " + numTrans);
+		System.out.println("Places before abstraction: " + numPlaces);
+		System.out.println("Variables before abstraction: " + numVars);
 		Integer i = 0;
 		while (change && i < abstPane.maxIterations()) {
 			change = false;
@@ -157,6 +163,12 @@ public class Abstraction extends LHPNFile {
 		if (abstPane.absListModel.contains(abstPane.xform21) && abstPane.isAbstract()) {
 			normalizeDelays();
 		}
+		numTrans = delays.size();
+		numPlaces = places.size();
+		numVars = variables.size() + inputs.size() + outputs.size() + integers.size();
+		System.out.println("Transitions after abstraction: " + numTrans);
+		System.out.println("Places after abstraction: " + numPlaces);
+		System.out.println("Variables after abstraction: " + numVars);
 		Double stop = (System.nanoTime() - start) * 1.0e-9;
 		System.out.println("Total Abstraction Time: " + stop.toString() + " s");
 		System.out.println("Number of Abstraction Loop Iterations: " + i.toString());
