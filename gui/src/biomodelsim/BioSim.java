@@ -102,6 +102,7 @@ import buttons.Buttons;
 import datamanager.DataManager;
 import java.net.*;
 import uk.ac.ebi.biomodels.*;
+import att.grappa.*;
 
 //import datamanager.DataManagerLHPN;
 
@@ -284,7 +285,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		public MacOSPreferencesHandler() {
 			addApplicationListener(new PreferencesHandler());
 		}
-
+		
 		class PreferencesHandler extends ApplicationAdapter {
 			public void handlePreferences(ApplicationEvent event) {
 				preferences();
