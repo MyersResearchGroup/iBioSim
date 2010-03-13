@@ -763,11 +763,62 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				}
 				j++;
 			}*/
+			String[] varsList = null;
 			if (load.containsKey("learn.varsList")){
 				String varsListString = load.getProperty("learn.varsList");
-				String[] varsList = varsListString.split("\\s");
-				j = 0;
+				varsList = varsListString.split("\\s");
 				for (String st1 : varsList){
+					boolean varFound = false;
+					String s = load.getProperty("learn.bins" + st1);
+					String[] savedBins = null;
+					if (s != null){
+						savedBins = s.split("\\s");
+					}
+					for (String st2 :variablesList){
+						if (st1.equalsIgnoreCase(st2)){
+							varFound = true;
+							break;
+						}
+					}
+					if (varFound){
+						if (savedBins != null){
+						for (int i = 2; i < savedBins.length ; i++){
+								thresholds.get(st1).add(Double.parseDouble(savedBins[i]));
+						}
+						}
+					}
+					else{
+						variablesList.add(st1);
+						reqdVarsL.add(new Variable(st1));
+						thresholds.put(st1, new ArrayList<Double>());
+						if (savedBins != null){
+							for (int i = 2; i < savedBins.length ; i++){
+								thresholds.get(st1).add(Double.parseDouble(savedBins[i]));
+							}
+						}
+					}
+				}
+				ArrayList<Variable> removeVars = new ArrayList<Variable>();
+				for (Variable v : reqdVarsL){
+					boolean varFound = false;
+					String st1 = v.getName();
+					for (String st2 : varsList){
+						if (st1.equalsIgnoreCase(st2)){
+							varFound = true;
+						}
+					}
+					if (!varFound){
+						variablesList.remove(st1);
+						removeVars.add(v);
+						//reqdVarsL.remove(v); not allowed. concurrent modification exception
+						thresholds.remove(st1); 
+					}
+				}
+				for (Variable v : removeVars){
+					reqdVarsL.remove(v);
+				}
+				
+			/*	for (String st1 : varsList){
 					String s = load.getProperty("learn.bins" + st1);
 					if (s != null){
 						String[] savedBins = s.split("\\s");
@@ -775,6 +826,11 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 						//variablesList.add(savedBins[0]);
 						//	((JComboBox)(((JPanel)variablesPanel.getComponent(j+1)).getComponent(2))).setSelectedItem(savedBins[1]);
 						boolean varFound = false;
+						if (noLpn){
+							variablesList.add(st1);
+							reqdVarsL.add(new Variable(st1));
+							thresholds.put(st1, new ArrayList<Double>());
+						}
 						for (String st2 :variablesList){
 							if (st1.equalsIgnoreCase(st2)){
 								varFound = true;
@@ -795,7 +851,12 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 							j++;
 						}
 					}
-				}
+				}*/
+			}
+			else{
+				variablesList.clear();
+				reqdVarsL.clear();
+				thresholds.clear();
 			}
 			if (load.containsKey("learn.inputs")){
 				String s = load.getProperty("learn.inputs");
@@ -1966,7 +2027,8 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 						k++;
 						continue;
 					}
-					if (k == 1){
+					if (((JCheckBox)((JPanel)c).getComponent(1)).isSelected()){ // added after required
+					if (varsList == null){ // k==1
 						varsList = ((JTextField)((JPanel)c).getComponent(0)).getText().trim();
 					}
 					else{
@@ -2000,6 +2062,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 							ip = ip + " " + ((JTextField)((JPanel)c).getComponent(0)).getText().trim();
 						}
 					}
+					}
 					k++;
 				}
 				if (inputCount != 0){
@@ -2018,7 +2081,8 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 						k++;
 						continue;
 					}
-					if (k == 1){
+					if (((JCheckBox)((JPanel)c).getComponent(1)).isSelected()){
+					if (varsList == null) { //(k == 1){
 						varsList = ((JTextField)((JPanel)c).getComponent(0)).getText().trim();
 					}
 					else{
@@ -2040,6 +2104,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 							ip = ip + " " + ((JTextField)((JPanel)c).getComponent(0)).getText().trim();
 						}
 					}
+					}
 					k++;
 				}
 				if (inputCount != 0){
@@ -2056,7 +2121,12 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			prop.setProperty("learn.absTime",String.valueOf(this.absTimeG.isSelected()));
 			prop.setProperty("learn.runTime",this.runTimeG.getText().trim());
 			prop.setProperty("learn.runLength",this.runLengthG.getText().trim());
-			prop.setProperty("learn.varsList",varsList);
+			if (varsList != null){
+				prop.setProperty("learn.varsList",varsList);
+			}
+			else{
+				prop.remove("learn.varsList");
+			}
 			
 			log.addText("Saving learn parameters to file:\n" + directory
 					+ separator + lrnFile + "\n");
@@ -3890,7 +3960,12 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 							dmvcValuesUnique.add(dmvcValues[j]);
 							out.write(dmvcValues[j].toString());
 							if (dmvcValuesUnique.size() > 1){
-								dmvSplits.add((double)(((int)(((dmvcValuesUnique.get(dmvcValuesUnique.size() - 1) + dmvcValuesUnique.get(dmvcValuesUnique.size() - 2))/2)*10000))/10000)); // truncating to 4 decimal places
+								double d1 = (dmvcValuesUnique.get(dmvcValuesUnique.size() - 1) + dmvcValuesUnique.get(dmvcValuesUnique.size() - 2))/2.0;
+								d1 = d1*10000;
+								int d2 = (int) d1; 
+								//System.out.println(d2);
+								//System.out.println(((double)d2)/10000.0);
+								dmvSplits.add(((double)d2)/10000.0); // truncating to 4 decimal places
 							}
 							for (int k = j+1; k < dmvcValues.length; k++){
 								if (Math.abs((dmvcValues[j] - dmvcValues[k])) > epsilon){
@@ -4793,6 +4868,20 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				if (numThresholds == -1){
 					for (String k : dmvDivs.keySet()){
 						for (int l = 0; l < reqdVarsL.size(); l++){
+							if (!reqdVarsL.get(l).isDmvc()){
+								JOptionPane.showMessageDialog(biosim.frame(),
+										"Can't generate the number of thresholds for continuous variables.",
+										"ERROR!", JOptionPane.ERROR_MESSAGE);
+								try {
+									out.write("ERROR! Can't generate the number of thresholds for continuous variables.");
+									out.close();
+								} catch (IOException e2) {
+									// TODO Auto-generated catch block
+									e2.printStackTrace();
+								}
+								running.setCursor(null);
+								running.dispose();
+							}
 							if (k.equalsIgnoreCase(reqdVarsL.get(l).getName())){
 								localThresholds.put(k,dmvDivs.get(k));
 							}
@@ -4807,6 +4896,20 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 							numThresholds = Integer.parseInt((String)((JComboBox)((JPanel)variablesPanel.getComponent(j)).getComponent(3)).getSelectedItem()) -1; // changed 2 to 3 after required
 							varThresholds.put(reqdVarsL.get(k).getName(),Integer.valueOf(numThresholds));
 							if (numThresholds == -1){
+								if (!reqdVarsL.get(k).isDmvc()){
+									JOptionPane.showMessageDialog(biosim.frame(),
+											"Can't generate the number of thresholds for continuous variables.",
+											"ERROR!", JOptionPane.ERROR_MESSAGE);
+									try {
+										out.write("ERROR! Can't generate the number of thresholds for continuous variables.");
+										out.close();
+									} catch (IOException e2) {
+										// TODO Auto-generated catch block
+										e2.printStackTrace();
+									}
+									running.setCursor(null);
+									running.dispose();
+								}
 								localThresholds.put(reqdVarsL.get(k).getName(),dmvDivs.get(reqdVarsL.get(k).getName()));
 							}
 							break;
