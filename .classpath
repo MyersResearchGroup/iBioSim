@@ -39,5 +39,6 @@
 	<classpathentry kind="lib" path="gui/lib/activation.jar"/>
 	<classpathentry kind="lib" path="gui/lib/biomodelswslib-standalone-1.11.jar"/>
 	<classpathentry kind="lib" path="gui/lib/mail.jar"/>
+	<classpathentry kind="lib" path="gui/lib/grappa1_2.jar"/>
 	<classpathentry kind="output" path="gui/dist/classes"/>
 </classpath>
