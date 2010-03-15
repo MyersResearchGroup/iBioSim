@@ -297,7 +297,13 @@ public class ExprTree {
 				}
 				// simplify if operands are static
 				if (((newresult.isit == 'n') || (newresult.isit == 't'))
-						&& (((this).isit == 'n') || ((this).isit == 't'))) {
+						&& (((this).isit == 'n') || ((this).isit == 't'))
+					    && ((this).lvalue == (this).uvalue)
+					    && (newresult.lvalue == newresult.uvalue)
+					    && ((this).lvalue != INFIN)
+					    && ((this).lvalue != -INFIN)
+					    && (newresult.lvalue != INFIN)
+					    && (newresult.lvalue != -INFIN)){
 					// System.out.println(newresult.toString());
 					(this).isit = 'n';
 					// System.out.println(this.lvalue);
@@ -345,7 +351,13 @@ public class ExprTree {
 				}
 				// simplify if operands are static
 				if (((newresult.isit == 'n') || (newresult.isit == 't'))
-						&& (((this).isit == 'n') || ((this).isit == 't'))) {
+						&& (((this).isit == 'n') || ((this).isit == 't'))
+					    && ((this).lvalue == (this).uvalue)
+					    && (newresult.lvalue == newresult.uvalue)
+					    && ((this).lvalue != INFIN)
+					    && ((this).lvalue != -INFIN)
+					    && (newresult.lvalue != INFIN)
+					    && (newresult.lvalue != -INFIN)) {
 					(this).isit = 'n';
 					(this).lvalue = (int) (this).lvalue | (int) newresult.lvalue;
 					(this).uvalue = (this).lvalue;
@@ -389,7 +401,13 @@ public class ExprTree {
 				}
 				// simplify if operands are static
 				if (((newresult.isit == 'n') || (newresult.isit == 't'))
-						&& (((this).isit == 'n') || ((this).isit == 't'))) {
+						&& (((this).isit == 'n') || ((this).isit == 't'))
+					    && ((this).lvalue == (this).uvalue)
+					    && (newresult.lvalue == newresult.uvalue)
+					    && ((this).lvalue != INFIN)
+					    && ((this).lvalue != -INFIN)
+					    && (newresult.lvalue != INFIN)
+					    && (newresult.lvalue != -INFIN)) {
 					(this).isit = 'n';
 					(this).lvalue = (int) (this).lvalue ^ (int) newresult.lvalue;
 					(this).uvalue = (this).lvalue;
@@ -433,7 +451,13 @@ public class ExprTree {
 				}
 				// simplify if operands are static
 				if (((newresult.isit == 'n') || (newresult.isit == 't'))
-						&& (((this).isit == 'n') || ((this).isit == 't'))) {
+						&& (((this).isit == 'n') || ((this).isit == 't'))
+					    && ((this).lvalue == (this).uvalue)
+					    && (newresult.lvalue == newresult.uvalue)
+					    && ((this).lvalue != INFIN)
+					    && ((this).lvalue != -INFIN)
+					    && (newresult.lvalue != INFIN)
+					    && (newresult.lvalue != -INFIN)) {
 					(this).isit = 'n';
 					(this).lvalue = ((int) (this).lvalue >> (int) newresult.lvalue) & 1;
 					(this).uvalue = (this).lvalue;
@@ -462,7 +486,10 @@ public class ExprTree {
 					return false;
 				}
 				// simplify if operands are static
-				if (((this).isit == 'n') || ((this).isit == 't')) {
+				if (((this).isit == 'n') || ((this).isit == 't')
+					    && ((this).lvalue == (this).uvalue)
+					    && ((this).lvalue != INFIN)
+					    && ((this).lvalue != -INFIN)) {
 					(this).isit = 'n';
 					(this).lvalue = ~(int) (this).lvalue;
 					(this).uvalue = (this).lvalue;
@@ -492,9 +519,7 @@ public class ExprTree {
 				}
 				// simplify if operands are static
 				if (((this).isit == 'n') || ((this).isit == 't')) {
-					(this).isit = 'n';
-					(this).lvalue = ~(int) (this).lvalue;
-					(this).uvalue = (this).lvalue;
+					// DO NOTHING
 				}
 				else {
 					// (result) = new ExprTree((result), null, "~", 'w');
@@ -533,17 +558,7 @@ public class ExprTree {
 					// System.out.printf("ERROR: Expected a )\n");
 					return false;
 				}
-				// simplify if operands are static
-				if (((newresult.isit == 'n') || (newresult.isit == 't'))
-						&& (((this).isit == 'n') || ((this).isit == 't'))) {
-					(this).isit = 'n';
-					(this).lvalue = (int) (this).lvalue ^ (int) newresult.lvalue;
-					(this).uvalue = (this).lvalue;
-				}
-				else {
-					// (result) = new ExprTree((result), newresult, "^", 'w');
-					setNodeValues((this), newresult, "uniform", 'a');
-				}
+				setNodeValues((this), newresult, "uniform", 'a');
 				(token) = intexpr_gettok(expr);
 			}
 			else if (tokvalue.equals("normal")) {
@@ -577,17 +592,7 @@ public class ExprTree {
 					// System.out.printf("ERROR: Expected a )\n");
 					return false;
 				}
-				// simplify if operands are static
-				if (((newresult.isit == 'n') || (newresult.isit == 't'))
-						&& (((this).isit == 'n') || ((this).isit == 't'))) {
-					(this).isit = 'n';
-					(this).lvalue = (int) (this).lvalue ^ (int) newresult.lvalue;
-					(this).uvalue = (this).lvalue;
-				}
-				else {
-					// (result) = new ExprTree((result), newresult, "^", 'w');
-					setNodeValues((this), newresult, "normal", 'a');
-				}
+				setNodeValues((this), newresult, "normal", 'a');
 				(token) = intexpr_gettok(expr);
 			}
 			else if (tokvalue.equals("gamma")) {
@@ -621,17 +626,7 @@ public class ExprTree {
 					// System.out.printf("ERROR: Expected a )\n");
 					return false;
 				}
-				// simplify if operands are static
-				if (((newresult.isit == 'n') || (newresult.isit == 't'))
-						&& (((this).isit == 'n') || ((this).isit == 't'))) {
-					(this).isit = 'n';
-					(this).lvalue = (int) (this).lvalue ^ (int) newresult.lvalue;
-					(this).uvalue = (this).lvalue;
-				}
-				else {
-					// (result) = new ExprTree((result), newresult, "^", 'w');
-					setNodeValues((this), newresult, "gamma", 'a');
-				}
+				setNodeValues((this), newresult, "gamma", 'a');
 				(token) = intexpr_gettok(expr);
 			}
 			else if (tokvalue.equals("lognormal")) {
@@ -665,17 +660,7 @@ public class ExprTree {
 					// System.out.printf("ERROR: Expected a )\n");
 					return false;
 				}
-				// simplify if operands are static
-				if (((newresult.isit == 'n') || (newresult.isit == 't'))
-						&& (((this).isit == 'n') || ((this).isit == 't'))) {
-					(this).isit = 'n';
-					(this).lvalue = (int) (this).lvalue ^ (int) newresult.lvalue;
-					(this).uvalue = (this).lvalue;
-				}
-				else {
-					// (result) = new ExprTree((result), newresult, "^", 'w');
-					setNodeValues((this), newresult, "lognormal", 'a');
-				}
+				setNodeValues((this), newresult, "lognormal", 'a');
 				(token) = intexpr_gettok(expr);
 			}
 			else if (tokvalue.equals("binomial")) {
@@ -709,17 +694,7 @@ public class ExprTree {
 					// System.out.printf("ERROR: Expected a )\n");
 					return false;
 				}
-				// simplify if operands are static
-				if (((newresult.isit == 'n') || (newresult.isit == 't'))
-						&& (((this).isit == 'n') || ((this).isit == 't'))) {
-					(this).isit = 'n';
-					(this).lvalue = (int) (this).lvalue ^ (int) newresult.lvalue;
-					(this).uvalue = (this).lvalue;
-				}
-				else {
-					// (result) = new ExprTree((result), newresult, "^", 'w');
-					setNodeValues((this), newresult, "binomial", 'a');
-				}
+				setNodeValues((this), newresult, "binomial", 'a');
 				(token) = intexpr_gettok(expr);
 			}
 			else if (tokvalue.equals("exponential")) {
@@ -739,16 +714,7 @@ public class ExprTree {
 					// System.out.printf("ERROR: Expected a )\n");
 					return false;
 				}
-				// simplify if operands are static
-				if (((this).isit == 'n') || ((this).isit == 't')) {
-					(this).isit = 'n';
-					(this).lvalue = ~(int) (this).lvalue;
-					(this).uvalue = (this).lvalue;
-				}
-				else {
-					// (result) = new ExprTree((result), null, "~", 'w');
-					setNodeValues((this), null, "exponential", 'a');
-				}
+				setNodeValues((this), null, "exponential", 'a');
 				(token) = intexpr_gettok(expr);
 			}
 			else if (tokvalue.equals("chisq")) {
@@ -768,16 +734,7 @@ public class ExprTree {
 					// System.out.printf("ERROR: Expected a )\n");
 					return false;
 				}
-				// simplify if operands are static
-				if (((this).isit == 'n') || ((this).isit == 't')) {
-					(this).isit = 'n';
-					(this).lvalue = ~(int) (this).lvalue;
-					(this).uvalue = (this).lvalue;
-				}
-				else {
-					// (result) = new ExprTree((result), null, "~", 'w');
-					setNodeValues((this), null, "chisq", 'a');
-				}
+				setNodeValues((this), null, "chisq", 'a');
 				(token) = intexpr_gettok(expr);
 			}
 			else if (tokvalue.equals("laplace")) {
@@ -797,16 +754,7 @@ public class ExprTree {
 					// System.out.printf("ERROR: Expected a )\n");
 					return false;
 				}
-				// simplify if operands are static
-				if (((this).isit == 'n') || ((this).isit == 't')) {
-					(this).isit = 'n';
-					(this).lvalue = ~(int) (this).lvalue;
-					(this).uvalue = (this).lvalue;
-				}
-				else {
-					// (result) = new ExprTree((result), null, "~", 'w');
-					setNodeValues((this), null, "laplace", 'a');
-				}
+				setNodeValues((this), null, "laplace", 'a');
 				(token) = intexpr_gettok(expr);
 			}
 			else if (tokvalue.equals("cauchy")) {
@@ -826,16 +774,7 @@ public class ExprTree {
 					// System.out.printf("ERROR: Expected a )\n");
 					return false;
 				}
-				// simplify if operands are static
-				if (((this).isit == 'n') || ((this).isit == 't')) {
-					(this).isit = 'n';
-					(this).lvalue = ~(int) (this).lvalue;
-					(this).uvalue = (this).lvalue;
-				}
-				else {
-					// (result) = new ExprTree((result), null, "~", 'w');
-					setNodeValues((this), null, "cauchy", 'a');
-				}
+				setNodeValues((this), null, "cauchy", 'a');
 				(token) = intexpr_gettok(expr);
 			}
 			else if (tokvalue.equals("rayleigh")) {
@@ -855,16 +794,7 @@ public class ExprTree {
 					// System.out.printf("ERROR: Expected a )\n");
 					return false;
 				}
-				// simplify if operands are static
-				if (((this).isit == 'n') || ((this).isit == 't')) {
-					(this).isit = 'n';
-					(this).lvalue = ~(int) (this).lvalue;
-					(this).uvalue = (this).lvalue;
-				}
-				else {
-					// (result) = new ExprTree((result), null, "~", 'w');
-					setNodeValues((this), null, "rayleigh", 'a');
-				}
+				setNodeValues((this), null, "rayleigh", 'a');
 				(token) = intexpr_gettok(expr);
 			}
 			else if (tokvalue.equals("poisson")) {
@@ -884,19 +814,10 @@ public class ExprTree {
 					// System.out.printf("ERROR: Expected a )\n");
 					return false;
 				}
-				// simplify if operands are static
-				if (((this).isit == 'n') || ((this).isit == 't')) {
-					(this).isit = 'n';
-					(this).lvalue = ~(int) (this).lvalue;
-					(this).uvalue = (this).lvalue;
-				}
-				else {
-					// (result) = new ExprTree((result), null, "~", 'w');
-					setNodeValues((this), null, "poisson", 'a');
-				}
+				setNodeValues((this), null, "poisson", 'a');
 				(token) = intexpr_gettok(expr);
 			}
-			else if (tokvalue.equals("bernouli")) {
+			else if (tokvalue.equals("bernoulli")) {
 				(token) = intexpr_gettok(expr);
 				if ((token) != '(') {
 					Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
@@ -913,16 +834,7 @@ public class ExprTree {
 					// System.out.printf("ERROR: Expected a )\n");
 					return false;
 				}
-				// simplify if operands are static
-				if (((this).isit == 'n') || ((this).isit == 't')) {
-					(this).isit = 'n';
-					(this).lvalue = ~(int) (this).lvalue;
-					(this).uvalue = (this).lvalue;
-				}
-				else {
-					// (result) = new ExprTree((result), null, "~", 'w');
-					setNodeValues((this), null, "bernouli", 'a');
-				}
+				setNodeValues((this), null, "bernoulli", 'a');
 				(token) = intexpr_gettok(expr);
 			}
 			else if (tokvalue.equals("rate")) {
@@ -942,7 +854,7 @@ public class ExprTree {
 					// System.out.printf("ERROR: Expected a )\n");
 					return false;
 				}
-					setNodeValues((this), null, "rate", 'a');
+				setNodeValues((this), null, "rate", 'a');
 				(token) = intexpr_gettok(expr);
 			}
 			else if ((tokvalue.equals("true")) || (tokvalue.equals("t")) || tokvalue.equals("TRUE")
@@ -1047,7 +959,10 @@ public class ExprTree {
 			if (!intexpr_U(expr))
 				return false;
 			// simplify if operands are static
-			if (((this).isit == 'n') || ((this).isit == 't')) {
+			if ((((this).isit == 'n') || ((this).isit == 't'))
+				    && ((this).lvalue == (this).uvalue)
+				    && ((this).lvalue != INFIN)
+				    && ((this).lvalue != -INFIN)) {
 				(this).isit = 'n';
 				(this).lvalue = -((this).lvalue);
 				(this).uvalue = (this).lvalue;
@@ -1084,7 +999,13 @@ public class ExprTree {
 			position = newresult.position;
 			// simplify if operands are static
 			if (((newresult.isit == 'n') || (newresult.isit == 't'))
-					&& (((this).isit == 'n') || ((this).isit == 't'))) {
+					&& (((this).isit == 'n') || ((this).isit == 't'))
+				    && ((this).lvalue == (this).uvalue)
+				    && (newresult.lvalue == newresult.uvalue)
+				    && ((this).lvalue != INFIN)
+				    && ((this).lvalue != -INFIN)
+				    && (newresult.lvalue != INFIN)
+				    && (newresult.lvalue != -INFIN)) {
 				(this).isit = 'n';
 				(this).lvalue = (this).lvalue * newresult.lvalue;
 				(this).uvalue = (this).lvalue;
@@ -1107,9 +1028,15 @@ public class ExprTree {
 			position = newresult.position;
 			// simplify if operands are static
 			if (((newresult.isit == 'n') || (newresult.isit == 't'))
-					&& (((this).isit == 'n') || ((this).isit == 't'))) {
+					&& (((this).isit == 'n') || ((this).isit == 't'))
+				    && ((this).lvalue == (this).uvalue)
+				    && (newresult.lvalue == newresult.uvalue)
+				    && ((this).lvalue != INFIN)
+				    && ((this).lvalue != -INFIN)
+				    && (newresult.lvalue != INFIN)
+				    && (newresult.lvalue != -INFIN)) {
 				(this).isit = 'n';
-				(this).lvalue = lvalue * newresult.lvalue;
+				(this).lvalue = Math.pow(lvalue,newresult.lvalue);
 				(this).uvalue = (this).lvalue;
 			}
 			else {
@@ -1130,7 +1057,13 @@ public class ExprTree {
 			position = newresult.position;
 			// simplify if operands are static
 			if (((newresult.isit == 'n') || (newresult.isit == 't'))
-					&& (((this).isit == 'n') || ((this).isit == 't'))) {
+					&& (((this).isit == 'n') || ((this).isit == 't'))
+				    && ((this).lvalue == (this).uvalue)
+				    && (newresult.lvalue == newresult.uvalue)
+				    && ((this).lvalue != INFIN)
+				    && ((this).lvalue != -INFIN)
+				    && (newresult.lvalue != INFIN)
+				    && (newresult.lvalue != -INFIN)) {
 				(this).isit = 'n';
 				(this).lvalue = (this).lvalue / newresult.lvalue;
 				(this).uvalue = (this).lvalue;
@@ -1153,7 +1086,13 @@ public class ExprTree {
 			position = newresult.position;
 			// simplify if operands are static
 			if (((newresult.isit == 'n') || (newresult.isit == 't'))
-					&& (((this).isit == 'n') || ((this).isit == 't'))) {
+					&& (((this).isit == 'n') || ((this).isit == 't'))
+				    && ((this).lvalue == (this).uvalue)
+				    && (newresult.lvalue == newresult.uvalue)
+				    && ((this).lvalue != INFIN)
+				    && ((this).lvalue != -INFIN)
+				    && (newresult.lvalue != INFIN)
+				    && (newresult.lvalue != -INFIN)) {
 				(this).isit = 'n';
 				(this).lvalue = (this).lvalue % newresult.lvalue;
 				(this).uvalue = (this).lvalue;
@@ -1187,7 +1126,13 @@ public class ExprTree {
 			position = newresult.position;
 			// simplify if operands are static
 			if (((newresult.isit == 'n') || (newresult.isit == 't'))
-					&& (((this).isit == 'n') || ((this).isit == 't'))) {
+					&& (((this).isit == 'n') || ((this).isit == 't'))
+				    && ((this).lvalue == (this).uvalue)
+				    && (newresult.lvalue == newresult.uvalue)
+				    && ((this).lvalue != INFIN)
+				    && ((this).lvalue != -INFIN)
+				    && (newresult.lvalue != INFIN)
+				    && (newresult.lvalue != -INFIN)) {
 				(this).isit = 'n';
 				(this).lvalue = (this).lvalue * newresult.lvalue;
 				(this).uvalue = (this).lvalue;
@@ -1226,7 +1171,13 @@ public class ExprTree {
 			position = newresult.position;
 			// simplify if operands are static
 			if (((newresult.isit == 'n') || (newresult.isit == 't'))
-					&& (((this).isit == 'n') || ((this).isit == 't'))) {
+					&& (((this).isit == 'n') || ((this).isit == 't'))
+				    && ((this).lvalue == (this).uvalue)
+				    && (newresult.lvalue == newresult.uvalue)
+				    && ((this).lvalue != INFIN)
+				    && ((this).lvalue != -INFIN)
+				    && (newresult.lvalue != INFIN)
+				    && (newresult.lvalue != -INFIN)) {
 				(this).isit = 'n';
 				(this).lvalue = (this).lvalue + newresult.lvalue;
 				(this).uvalue = (this).lvalue;
@@ -1249,7 +1200,13 @@ public class ExprTree {
 			position = newresult.position;
 			// simplify if operands are static
 			if (((newresult.isit == 'n') || (newresult.isit == 't'))
-					&& (((this).isit == 'n') || ((this).isit == 't'))) {
+					&& (((this).isit == 'n') || ((this).isit == 't'))
+				    && ((this).lvalue == (this).uvalue)
+				    && (newresult.lvalue == newresult.uvalue)
+				    && ((this).lvalue != INFIN)
+				    && ((this).lvalue != -INFIN)
+				    && (newresult.lvalue != INFIN)
+				    && (newresult.lvalue != -INFIN)) {
 				(this).isit = 'n';
 				(this).lvalue = (this).lvalue - newresult.lvalue;
 				(this).uvalue = (this).lvalue;
@@ -1347,7 +1304,13 @@ public class ExprTree {
 			position = newresult.position;
 			// simplify if operands are static
 			if (((newresult.isit == 'n') || (newresult.isit == 't'))
-					&& (((this).isit == 'n') || ((this).isit == 't'))) {
+					&& (((this).isit == 'n') || ((this).isit == 't'))
+				    && ((this).lvalue == (this).uvalue)
+				    && (newresult.lvalue == newresult.uvalue)
+				    && ((this).lvalue != INFIN)
+				    && ((this).lvalue != -INFIN)
+				    && (newresult.lvalue != INFIN)
+				    && (newresult.lvalue != -INFIN)) {
 				(this).isit = 't';
 				if (this.lvalue == newresult.lvalue) {
 					this.lvalue = 1;
@@ -1415,7 +1378,13 @@ public class ExprTree {
 				position = newresult.position;
 				// simplify if operands are static
 				if (((newresult.isit == 'n') || (newresult.isit == 't'))
-						&& (((this).isit == 'n') || ((this).isit == 't'))) {
+						&& (((this).isit == 'n') || ((this).isit == 't'))
+					    && ((this).lvalue == (this).uvalue)
+					    && (newresult.lvalue == newresult.uvalue)
+					    && ((this).lvalue != INFIN)
+					    && ((this).lvalue != -INFIN)
+					    && (newresult.lvalue != INFIN)
+					    && (newresult.lvalue != -INFIN)) {
 					(this).isit = 't';
 					if ((this).lvalue >= newresult.lvalue) {
 						this.lvalue = 1;
@@ -1479,7 +1448,13 @@ public class ExprTree {
 				position = newresult.position;
 				// simplify if operands are static
 				if (((newresult.isit == 'n') || (newresult.isit == 't'))
-						&& (((this).isit == 'n') || ((this).isit == 't'))) {
+						&& (((this).isit == 'n') || ((this).isit == 't'))
+					    && ((this).lvalue == (this).uvalue)
+					    && (newresult.lvalue == newresult.uvalue)
+					    && ((this).lvalue != INFIN)
+					    && ((this).lvalue != -INFIN)
+					    && (newresult.lvalue != INFIN)
+					    && (newresult.lvalue != -INFIN)) {
 					(this).isit = 't';
 					if ((this).lvalue > newresult.lvalue) {
 						this.lvalue = 1;
@@ -1549,7 +1524,13 @@ public class ExprTree {
 				position = newresult.position;
 				// simplify if operands are static
 				if (((newresult.isit == 'n') || (newresult.isit == 't'))
-						&& (((this).isit == 'n') || ((this).isit == 't'))) {
+						&& (((this).isit == 'n') || ((this).isit == 't'))
+					    && ((this).lvalue == (this).uvalue)
+					    && (newresult.lvalue == newresult.uvalue)
+					    && ((this).lvalue != INFIN)
+					    && ((this).lvalue != -INFIN)
+					    && (newresult.lvalue != INFIN)
+					    && (newresult.lvalue != -INFIN)) {
 					(this).isit = 't';
 					if ((this).lvalue <= newresult.lvalue) {
 						this.lvalue = 1;
@@ -1613,7 +1594,13 @@ public class ExprTree {
 				position = newresult.position;
 				// simplify if operands are static
 				if (((newresult.isit == 'n') || (newresult.isit == 't'))
-						&& (((this).isit == 'n') || ((this).isit == 't'))) {
+						&& (((this).isit == 'n') || ((this).isit == 't'))
+					    && ((this).lvalue == (this).uvalue)
+					    && (newresult.lvalue == newresult.uvalue)
+					    && ((this).lvalue != INFIN)
+					    && ((this).lvalue != -INFIN)
+					    && (newresult.lvalue != INFIN)
+					    && (newresult.lvalue != -INFIN)) {
 					(this).isit = 't';
 					if ((this).lvalue < newresult.lvalue) {
 						this.lvalue = 1;
@@ -1686,7 +1673,13 @@ public class ExprTree {
 			}
 			// simplify if operands are static
 			if (((newresult.isit == 'n') || (newresult.isit == 't'))
-					&& (((this).isit == 'n') || ((this).isit == 't'))) {
+					&& (((this).isit == 'n') || ((this).isit == 't'))
+				    && ((this).lvalue == (this).uvalue)
+				    && (newresult.lvalue == newresult.uvalue)
+				    && ((this).lvalue != INFIN)
+				    && ((this).lvalue != -INFIN)
+				    && (newresult.lvalue != INFIN)
+				    && (newresult.lvalue != -INFIN)) {
 				(this).isit = 't';
 				(this).lvalue = (((int) (this).lvalue) >> ((int) newresult.lvalue)) & 1;
 				(this).uvalue = (this).lvalue;
@@ -1749,7 +1742,10 @@ public class ExprTree {
 			if (!intexpr_O(expr))
 				return false;
 			// simplify if operands are static
-			if (((this).isit == 'n') || ((this).isit == 't')) {
+			if ((((this).isit == 'n') || ((this).isit == 't'))
+			    && ((this).lvalue == (this).uvalue)
+			    && ((this).lvalue != INFIN)
+			    && ((this).lvalue != -INFIN)) {
 				(this).isit = 't';
 				if (this.lvalue == 1) {
 					this.lvalue = 0;
@@ -1790,7 +1786,13 @@ public class ExprTree {
 			// simplify if operands are static
 			// System.out.println(newresult);
 			if (((newresult.isit == 'n') || (newresult.isit == 't'))
-					&& (((this).isit == 'n') || ((this).isit == 't'))) {
+					&& (((this).isit == 'n') || ((this).isit == 't'))
+				    && ((this).lvalue == (this).uvalue)
+				    && (newresult.lvalue == newresult.uvalue)
+				    && ((this).lvalue != INFIN)
+				    && ((this).lvalue != -INFIN)
+				    && (newresult.lvalue != INFIN)
+				    && (newresult.lvalue != -INFIN)) {
 				(this).isit = 't';
 				if ((this.lvalue == 0) || (newresult.lvalue == 0)) {
 					this.lvalue = 0;
@@ -1837,7 +1839,13 @@ public class ExprTree {
 			position = newresult.position;
 			// simplify if operands are static
 			if (((newresult.isit == 'n') || (newresult.isit == 't'))
-					&& (((this).isit == 'n') || ((this).isit == 't'))) {
+					&& (((this).isit == 'n') || ((this).isit == 't'))
+				    && ((this).lvalue == (this).uvalue)
+				    && (newresult.lvalue == newresult.uvalue)
+				    && ((this).lvalue != INFIN)
+				    && ((this).lvalue != -INFIN)
+				    && (newresult.lvalue != INFIN)
+				    && (newresult.lvalue != -INFIN)) {
 				(this).isit = 't';
 				if (this.lvalue != 0 || newresult.lvalue != 0) {
 					this.lvalue = 1;
@@ -1863,7 +1871,13 @@ public class ExprTree {
 				return false;
 			// simplify if operands are static
 			if (((newresult.isit == 'n') || (newresult.isit == 't'))
-					&& (((this).isit == 'n') || ((this).isit == 't'))) {
+					&& (((this).isit == 'n') || ((this).isit == 't'))
+				    && ((this).lvalue == (this).uvalue)
+				    && (newresult.lvalue == newresult.uvalue)
+				    && ((this).lvalue != INFIN)
+				    && ((this).lvalue != -INFIN)
+				    && (newresult.lvalue != INFIN)
+				    && (newresult.lvalue != -INFIN)) {
 				(this).isit = 't';
 				if (this.lvalue != 0 || newresult.lvalue == 0) {
 					this.lvalue = 1;
@@ -3573,11 +3587,33 @@ public class ExprTree {
 			Double tempuval = uvalue;
 			Double templval = lvalue;
 			if ((uvalue == lvalue) || tempuval.toString().equals("")) {
-				result = tempuval.toString();
+				if (lvalue==INFIN) {
+					result = "inf";
+				} else if (lvalue==-INFIN) {
+					result = "-inf";
+				} else {
+					result = tempuval.toString();
+				}
 				// result = tempuval.toString();
 			}
 			else {
-				result = "uniform(" + templval.toString() + "," + tempuval.toString() + ")";
+				String lval;
+				if (lvalue==INFIN) {
+					lval = "inf";
+				} else if (lvalue==-INFIN){
+					lval = "-inf";
+				} else {
+					lval = templval.toString();
+				}
+				String uval;
+				if (uvalue==INFIN) {
+					uval = "inf";
+				} else if (uvalue==-INFIN){
+					uval = "-inf";
+				} else {
+					uval = tempuval.toString();
+				}
+				result = "uniform(" + lval + "," + uval + ")";
 				// result = "[" + templval.toString() + "," +
 				// tempuval.toString() + "]";
 			}
@@ -3750,9 +3786,9 @@ public class ExprTree {
 						result = "poisson(" + r1.getElement(type) + ")";
 					}
 				}
-				else if (op.equals("bernouli")) {
+				else if (op.equals("bernoulli")) {
 					if (r1 != null) {
-						result = "bernouli(" + r1.getElement(type) + ")";
+						result = "bernoulli(" + r1.getElement(type) + ")";
 					}
 				}
 				else if (op.equals("rate")) {
