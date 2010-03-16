@@ -853,11 +853,11 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 					}
 				}*/
 			}
-			else{
-				variablesList.clear();
-				reqdVarsL.clear();
-				thresholds.clear();
-			}
+		//	else{ Doing this will clear the selects even first time when created from lpn
+		//		variablesList.clear();
+		//		reqdVarsL.clear();
+		//		thresholds.clear();
+		//	}
 			if (load.containsKey("learn.inputs")){
 				String s = load.getProperty("learn.inputs");
 				String[] savedInputs = s.split("\\s");
@@ -3367,6 +3367,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 //			TSDParser tsd = new TSDParser(directory + separator + datFile, biosim,false);
 			// genBins
 //			data = tsd.getData();
+		try{
 			reqdVarIndices = new ArrayList<Integer>();
 			bins = new int[reqdVarsL.size()][data.get(0).size()];
 			for (int i = 0; i < reqdVarsL.size(); i++) {
@@ -3500,6 +3501,12 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 					}
 				}
 			}
+		} catch (NullPointerException e){
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(biosim.frame(),
+					"Bins/Rates could not be generated. Please check thresholds.",
+					"ERROR!", JOptionPane.ERROR_MESSAGE);				
+		}
 			/*
 			try {
 				for (int i = 0; i < (data.get(0).size()); i++) {
@@ -3521,7 +3528,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				System.out
 						.println("Log file couldn't be opened for writing rates and bins ");
 			}*/
-		}
+	}
 
 
 	public boolean compareBins(int j, int mark) {

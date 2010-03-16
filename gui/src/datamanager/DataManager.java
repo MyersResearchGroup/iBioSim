@@ -573,7 +573,8 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 									TSDParser tsd = new TSDParser(root + separator
 											+ sims.getSelectedValue() + separator + list1[i],
 											biosim, false);
-									ArrayList<String> specs = tsd.getSpecies();
+									//COMMENTED SB
+									ArrayList<String> specs = tsd.getSpecies(); 
 									ArrayList<ArrayList<Double>> data = tsd.getData();
 									int a, b;
 									String index;
@@ -828,6 +829,34 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 								parse.setSpecies(specs);
 								parse.setData(data);
 								parse.outputTSD(directory + separator + end);
+								//ADDED BY SB. DIRTY WAY
+								TSDParser extractVars;
+								ArrayList<String> datFileVars = new ArrayList<String>();
+								ArrayList<String> allVars = new ArrayList<String>();
+								Boolean varPresent = false;
+								//Finding the intersection of all the variables present in all data files.
+								for (int i = 1; (new File(directory + separator + "run-" + i + ".tsd")).exists(); i++) {
+									Properties cProp = new Properties();
+									extractVars = new TSDParser(directory + separator + "run-" + i + ".tsd", biosim,false);
+									datFileVars = extractVars.getSpecies();
+									if (i == 1){
+										allVars.addAll(datFileVars);
+									}
+									for (String s : allVars){
+										varPresent = false;
+										for (String t : datFileVars){
+											if (s.equalsIgnoreCase(t)){
+												varPresent = true;
+												break;
+											}
+										}
+										if (!varPresent){
+											allVars.remove(s);
+										}
+									}
+								}
+								species = allVars.toArray(new String[0]);
+								//ADDED END SB
 								Properties p = new Properties();
 								FileInputStream load = new FileInputStream(new File(directory
 										+ separator + lrnName + ".lrn"));
@@ -1229,7 +1258,35 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 				for (String s : speciesMap.keySet()) {
 					getSpecies.add(s);
 				}
-				species = getSpecies.toArray(new String[0]);
+				// species = getSpecies.toArray(new String[0]); // COMMENTED SB
+				//ADDED BY SB.
+				TSDParser extractVars;
+				ArrayList<String> datFileVars = new ArrayList<String>();
+				ArrayList<String> allVars = new ArrayList<String>();
+				Boolean varPresent = false;
+				//Finding the intersection of all the variables present in all data files.
+				for (int i = 1; (new File(directory + separator + "run-" + i + ".tsd")).exists(); i++) {
+					Properties cProp = new Properties();
+					extractVars = new TSDParser(directory + separator + "run-" + i + ".tsd", biosim,false);
+					datFileVars = extractVars.getSpecies();
+					if (i == 1){
+						allVars.addAll(datFileVars);
+					}
+					for (String s : allVars){
+						varPresent = false;
+						for (String t : datFileVars){
+							if (s.equalsIgnoreCase(t)){
+								varPresent = true;
+								break;
+							}
+						}
+						if (!varPresent){
+							allVars.remove(s);
+						}
+					}
+				}
+				species = allVars.toArray(new String[0]);
+				//END ADDED BY SB.
 			}
 			else {
 				SBMLDocument document = BioSim.readSBML(background);
