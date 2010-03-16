@@ -7458,9 +7458,35 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				LHPNFile lhpn = new LHPNFile(biomodelsim.log);
 				lhpn.load(background);
 				HashMap<String, Properties> speciesMap = lhpn.getVariables();
-				for (String s : speciesMap.keySet()) {
+				/*for (String s : speciesMap.keySet()) {
 					learnSpecs.add(s);
+				}*/
+				//ADDED BY SB.
+				TSDParser extractVars;
+				ArrayList<String> datFileVars = new ArrayList<String>();
+				//ArrayList<String> allVars = new ArrayList<String>();
+				Boolean varPresent = false;
+				//Finding the intersection of all the variables present in all data files.
+				for (int i = 1; (new File(outDir + separator + "run-" + i + ".tsd")).exists(); i++) {
+					extractVars = new TSDParser(outDir + separator + "run-" + i + ".tsd", biomodelsim,false);
+					datFileVars = extractVars.getSpecies();
+					if (i == 1){
+						learnSpecs.addAll(datFileVars);
+					}
+					for (String s : learnSpecs){
+						varPresent = false;
+						for (String t : datFileVars){
+							if (s.equalsIgnoreCase(t)){
+								varPresent = true;
+								break;
+							}
+						}
+						if (!varPresent){
+							learnSpecs.remove(s);
+						}
+					}
 				}
+				//END ADDED BY SB.
 			}
 			else {
 				SBMLDocument document = BioSim.readSBML(background);

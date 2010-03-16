@@ -1265,7 +1265,6 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 				Boolean varPresent = false;
 				//Finding the intersection of all the variables present in all data files.
 				for (int i = 1; (new File(directory + separator + "run-" + i + ".tsd")).exists(); i++) {
-					Properties cProp = new Properties();
 					extractVars = new TSDParser(directory + separator + "run-" + i + ".tsd", biosim,false);
 					datFileVars = extractVars.getSpecies();
 					if (i == 1){
