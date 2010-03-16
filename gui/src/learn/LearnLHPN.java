@@ -3136,7 +3136,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			writeVerilogAMSFile(lhpnFile.replace(".lpn",".vams"));
 		} catch (IOException e) {
 			e.printStackTrace();
-			System.out.println("LPN file couldn't be created/written ");
+			//System.out.println("LPN file couldn't be created/written ");
 			JOptionPane.showMessageDialog(biosim.frame(),
 					"LPN file couldn't be created/written.",
 					"ERROR!", JOptionPane.ERROR_MESSAGE);
@@ -4888,6 +4888,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 								}
 								running.setCursor(null);
 								running.dispose();
+								return(localThresholds);
 							}
 							if (k.equalsIgnoreCase(reqdVarsL.get(l).getName())){
 								localThresholds.put(k,dmvDivs.get(k));
@@ -4916,6 +4917,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 									}
 									running.setCursor(null);
 									running.dispose();
+									return(localThresholds);
 								}
 								localThresholds.put(reqdVarsL.get(k).getName(),dmvDivs.get(reqdVarsL.get(k).getName()));
 							}
