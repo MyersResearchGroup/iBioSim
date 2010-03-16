@@ -573,7 +573,6 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 									TSDParser tsd = new TSDParser(root + separator
 											+ sims.getSelectedValue() + separator + list1[i],
 											biosim, false);
-									//COMMENTED SB
 									ArrayList<String> specs = tsd.getSpecies(); 
 									ArrayList<ArrayList<Double>> data = tsd.getData();
 									int a, b;
