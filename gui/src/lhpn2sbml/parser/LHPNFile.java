@@ -2583,6 +2583,7 @@ public class LHPNFile {
 			// log.addText("check3j");
 			// System.out.println("check3k");
 			for (String s : variables.keySet()) {
+				initCond = new Properties();
 				// log.addText("check3for" + s);
 				// System.out.println("check3for " + s);
 				if (initValue.containsKey(s)) {
