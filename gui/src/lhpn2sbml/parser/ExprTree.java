@@ -1950,7 +1950,8 @@ public class ExprTree {
 
 	public String toString() {
 		String result = "";
-		result = getElement("LHPN");
+		//result = getElement("LHPN");
+		result = getElement("SBML");
 		return result;
 	}
 	
@@ -3572,7 +3573,7 @@ public class ExprTree {
 		return true;
 	}
 
-	private String getElement(String type) {
+	public String getElement(String type) {
 		boolean sbmlFlag;
 		sbmlFlag = type.equals("SMBL");
 		String result = "";
@@ -3636,6 +3637,7 @@ public class ExprTree {
 			// result = result + "UNKNOWN";
 			// }
 			break;
+			// TODO add LHPN2SBML conversion
 		case 'w': // bitWise
 			if (op.equals("&")) {
 				if (r1 != null && r2 != null) {
@@ -3649,9 +3651,15 @@ public class ExprTree {
 			}
 			else if (op.equals("|")) {
 				if (r1 != null && r2 != null) {
-					result = "or(" + r1.getElement(type) + "," + r2.getElement(type) + ")";
+					if (sbmlFlag) {
+						result = "BITOR(" + r1.getElement(type) + "," + r2.getElement(type) + ")";
+					}
+					else {
+						result = "or(" + r1.getElement(type) + "," + r2.getElement(type) + ")";
+					}
 				}
 			}
+			// TODO need to convert [] to sbml?
 			else if (op.equals("[]")) {
 				if (r1 != null && r2 != null) {
 					result = "BIT(" + r1.getElement(type) + "," + r2.getElement(type) + ")";
@@ -3659,12 +3667,24 @@ public class ExprTree {
 			}
 			else if (op.equals("!")) {
 				if (r1 != null && r2 != null) {
-					result = "not(" + r1.getElement(type) + "," + r2.getElement(type) + ")";
+					if (sbmlFlag){
+						result = "BITNOT(" + r1.getElement(type) + ")";
+					} 
+					else {
+						result = "not(" + r1.getElement(type) +  ")";
+					}
+					
 				}
 			}
 			else if (op.equals("^")) {
 				if (r1 != null && r2 != null) {
-					result = "exor(" + r1.getElement(type) + "," + r2.getElement(type) + ")";
+					if (sbmlFlag){
+						result = "XOR(" + r1.getElement(type) + "," + r2.getElement(type) + ")";
+					}
+					else {
+						result = "exor(" + r1.getElement(type) + "," + r2.getElement(type) + ")";
+					}
+					
 				}
 			}
 			break;
@@ -3675,9 +3695,23 @@ public class ExprTree {
 				if (r1 != null) {
 					if (r1.isit == 'b' || r1.isit == 'i' || r1.isit == 'c' || r1.isit == 'n'
 							|| r1.isit == 't') {
+						if(sbmlFlag) {
+							result = "not(" + r1.getElement(type) + ")";
+						}
+						else {
+							result = "~" + r1.getElement(type);
+						}
+						
 						result = "~" + r1.getElement(type);
 					}
 					else {
+						if(sbmlFlag){
+							result = "not(" + r1.getElement(type) + ")";
+						}
+						else {
+							result = "~" + "(" + r1.getElement(type) + ")";
+						}
+						
 						result = "~" + "(" + r1.getElement(type) + ")";
 					}
 				}
@@ -3687,47 +3721,101 @@ public class ExprTree {
 				if (op.equals("&&")) {
 					if (r1.isit == 'r' || (r1.isit == 'l' && r1.op.equals("||"))) {
 						if (r1 != null) {
-							result = "(" + r1.getElement(type) + ")";
+							if (sbmlFlag) {
+								result = "and(" + r1.getElement(type) + ",";
+							} 
+							else {
+								result = "(" + r1.getElement(type) + ")";
+							}
 						}
 
 					}
 					else {
 						if (r1 != null) {
-							result = r1.getElement(type);
+							if (sbmlFlag) {
+								result = "and(" + r1.getElement(type) + ",";
+							}
+							else {
+								result = r1.getElement(type);
+							}
+							
 						}
 					}
-					result = result + "&";
+					
+					if (!sbmlFlag) {
+						result = result + "&";
+					}
+					
 					if (r2.isit == 'r' || (r2.isit == 'l' && r2.op.equals("||"))) {
 						if (r2 != null) {
-							result = result + "(" + r2.getElement(type) + ")";
+							if (sbmlFlag){
+								result = result + r2.getElement(type) + ")";
+							}
+							else {
+								result = result + "(" + r2.getElement(type) + ")";
+							}
+							
 						}
 					}
 					else {
 						if (r2 != null) {
-							result = result + r2.getElement(type);
+							if (sbmlFlag) {
+								result = result + r2.getElement(type) + ")";
+							}
+							else {
+								result = result + r2.getElement(type);
+							}
+							
 						}
 					}
 				}
 				else if (op.equals("||")) {
 					if (r1.isit == 'r') {
 						if (r1 != null) {
-							result = "(" + r1.getElement(type) + ")";
+							if (sbmlFlag) {
+								result = "or(" + r1.getElement(type) + ",";
+							}
+							else {
+								result = "(" + r1.getElement(type) + ")";
+							}
+							
 						}
 					}
 					else {
 						if (r1 != null) {
-							result = r1.getElement(type);
+							if (sbmlFlag) {
+								result = "or(" + r1.getElement(type) + ",";
+							}
+							else {
+								result = r1.getElement(type);
+							}
 						}
 					}
-					result = result + "|";
+					
+					if (!sbmlFlag){
+						result = result + "|";
+					}
+					
 					if (r2.isit == 'r') {
 						if (r2 != null) {
-							result = result + "(" + r2.getElement(type) + ")";
+							if (sbmlFlag) {
+								result = result + r2.getElement(type) + ")";
+							}
+							else {
+								result = result + "(" + r2.getElement(type) + ")";
+							}
+							
 						}
 					}
 					else {
 						if (r2 != null) {
-							result = result + r2.getElement(type);
+							if (sbmlFlag) {
+								result = result + r2.getElement(type) + ")";
+							}
+							else {
+								result = result + r2.getElement(type);
+							}
+							
 						}
 					}
 				}
@@ -3796,13 +3884,39 @@ public class ExprTree {
 						result = "rate(" + r1.getElement(type) + ")";
 					}
 				}
+				else if (op.equals("INT")) {
+					if (r1 != null) {
+						if (sbmlFlag) {
+							result = "piecewise( 1 , " + r1.getElement(type) + "0 )"; 
+						}
+						else {
+							result = "INT(" + r1.getElement(type) + ")";
+						}
+						
+					}
+				}
 				else if (op.equals("==")) {
 					if (r1 != null) {
-						result = r1.getElement(type);
+						if (sbmlFlag) {
+							result = "eq(" + r1.getElement(type) + ",";
+						}
+						else {
+							result = r1.getElement(type);
+						}
+						
 					}
-					result = result + "=";
+					if (!sbmlFlag) {
+						result = result + "=";
+					}
+					
 					if (r2 != null) {
-						result = result + r2.getElement(type);
+						if (sbmlFlag) {
+							result = result + r2.getElement(type) + ")";
+						}
+						else {
+							result = result + r2.getElement(type);
+						}
+						
 					}
 				}
 				else if (op.equals("+")) {
@@ -3941,25 +4055,58 @@ public class ExprTree {
 						}
 					}
 				}
-				else {
-					if (r1 != null) {
-						if (r1.isit == 'b' || r1.isit == 'i' || r1.isit == 'c' || r1.isit == 'n'
-								|| r1.isit == 't') {
-							result = r1.getElement(type);
+				// relational ops: geq, leq, gt, lt
+				// mod 
+				else {  
+					if (!sbmlFlag) {
+						if (r1 != null) {
+							if (r1.isit == 'b' || r1.isit == 'i' || r1.isit == 'c' || r1.isit == 'n'
+									|| r1.isit == 't') {
+								result = r1.getElement(type);
+							}
+							else {
+								result = "(" + r1.getElement(type) + ")";
+							}
 						}
-						else {
-							result = "(" + r1.getElement(type) + ")";
+						result = result + op;
+						if (r2 != null) {
+							if (r2.isit == 'b' || r2.isit == 'i' || r2.isit == 'c' || r2.isit == 'n'
+									|| r2.isit == 't') {
+								result = result + r2.getElement(type);
+							}
+							else {
+								result = result + "(" + r2.getElement(type) + ")";
+							}
 						}
 					}
-					result = result + op;
-					if (r2 != null) {
-						if (r2.isit == 'b' || r2.isit == 'i' || r2.isit == 'c' || r2.isit == 'n'
-								|| r2.isit == 't') {
-							result = result + r2.getElement(type);
+					
+					if (sbmlFlag) {
+						if (op.equals("<=")) {
+							if (r1 != null && r2 != null) {
+								result = "leq(" + r1.getElement(type) + "," + r2.getElement(type) + ")";
+							}
 						}
-						else {
-							result = result + "(" + r2.getElement(type) + ")";
+						if (op.equals(">=")) {
+							if (r1 != null && r2 != null) {								
+								result = "geq(" + r1.getElement(type) + "," + r2.getElement(type) + ")";
+							}
 						}
+						if (op.equals(">")) {
+							if (r1 != null && r2 != null) {								
+								result = "gt(" + r1.getElement(type) + "," + r2.getElement(type) + ")";
+							}
+						}
+						if (op.equals("<")) {
+							if (r1 != null && r2 != null) {								
+								result = "lt(" + r1.getElement(type) + "," + r2.getElement(type) + ")";
+							}
+						}
+						if (op.equals("%")) {
+							if (r1 != null && r2 != null) {								
+								result = "mod(" + r1.getElement(type) + "," + r2.getElement(type) + ")";
+							}
+						}
+
 					}
 				}
 			}
