@@ -235,7 +235,8 @@ public class Translator {
 				if (lhpn.getIntVars()!= null){
 					for (String var : lhpn.getIntVars()){
 						if (lhpn.getIntAssign(t, var) != null) {
-							String assignInt = lhpn.getIntAssign(t, var);
+							ExprTree[] assignIntTree = lhpn.getIntAssignTree(t, var);
+							String assignInt = assignIntTree[0].toString("SBML");
 							System.out.println("integer assignment from LHPN: " + var + " := " + assignInt);
 							EventAssignment assign3 = e.createEventAssignment();
 							assign3.setVariable(var);
@@ -248,7 +249,8 @@ public class Translator {
 				if (lhpn.getBooleanVars(t)!= null){
 					for (String var :lhpn.getBooleanVars(t)){
 						if (lhpn.getBoolAssign(t, var) != null) {
-							String assignBool = lhpn.getBoolAssign(t, var);
+							ExprTree[] assignBoolTree = lhpn.getBoolAssignTree(t, var);
+							String assignBool = assignBoolTree[0].toString("SBML");
 							System.out.println("boolean assignment from LHPN: " + var + " := " + assignBool);
 							EventAssignment assign4 = e.createEventAssignment();
 							assign4.setVariable(var);

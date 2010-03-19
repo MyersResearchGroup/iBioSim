@@ -1950,8 +1950,8 @@ public class ExprTree {
 
 	public String toString() {
 		String result = "";
-		//result = getElement("LHPN");
-		result = getElement("SBML");
+		result = getElement("LHPN");
+		//result = getElement("SBML");
 		return result;
 	}
 	
@@ -3575,7 +3575,7 @@ public class ExprTree {
 
 	public String getElement(String type) {
 		boolean sbmlFlag;
-		sbmlFlag = type.equals("SMBL");
+		sbmlFlag = type.equals("SBML");
 		String result = "";
 		switch (isit) {
 		case 'b': // Boolean
@@ -3701,8 +3701,6 @@ public class ExprTree {
 						else {
 							result = "~" + r1.getElement(type);
 						}
-						
-						result = "~" + r1.getElement(type);
 					}
 					else {
 						if(sbmlFlag){
@@ -3711,8 +3709,6 @@ public class ExprTree {
 						else {
 							result = "~" + "(" + r1.getElement(type) + ")";
 						}
-						
-						result = "~" + "(" + r1.getElement(type) + ")";
 					}
 				}
 				break;
