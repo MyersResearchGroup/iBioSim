@@ -54,7 +54,7 @@ public class Translator {
 		createFunction(m, "BITOR", "Bitwise AND", "lambda(a,b,a*b)");
 		createFunction(m, "BITNOT", "Bitwise AND", "lambda(a,b,a*b)");
 		createFunction(m, "BITXOR", "Bitwise AND", "lambda(a,b,a*b)");
-		createFunction(m, "MOD", "Bitwise AND", "lambda(a,b,a-floor(a/b)*b)");
+		createFunction(m, "mod", "Modular", "lambda(a,b,a-floor(a/b)*b)");
 //		createFunction(m, "and", "Logical AND", "lambda(a,b,a*b)");
 		createFunction(m, "uniform", "Uniform distribution", "lambda(a,b,(a+b)/2)");
 		createFunction(m, "normal", "Normal distribution", "lambda(m,s,m)");
@@ -109,15 +109,15 @@ public class Translator {
 //					System.out.println(v + "=" + initValue);
 					// check initValue type; if boolean, set parameter value as 0 or 1.
 					if (initValue.equals("true")){
-						p.setValue(1);
+//						p.setValue(1);
+						double tmp = p.getValue();
+						System.out.println("tmp = " + tmp);
 					}
 					else if (initValue.equals("false")){
-						p.setValue(0);
+//						p.setValue(0);
 					}
 					else
 					{	
-					
-						// TODO variable to param mapping for int and continous vars
 						double initVal_dbl = Double.parseDouble(initValue);
 						p.setValue(initVal_dbl);
 //						System.out.println(Double.parseDouble("3"));
@@ -147,7 +147,7 @@ public class Translator {
 		}
 		
 		// ----convert transitions -----
-		// if transition rate is null, use reaction and event;
+		// if transition rate is not null, use reaction and event;
 		// else use event only
 		if (lhpn.getTransitionRates()!= null){
 			int counter = lhpn.getTransitionList().length - 1;
@@ -194,7 +194,10 @@ public class Translator {
 					exp = "1";
 				}
 				else {
-					exp = lhpn.getEnablingTree(t).getElement("SBML");
+					String tmp_exp = lhpn.getEnablingTree(t).getElement("SBML");
+					System.out.println("tmp_exp = "+ tmp_exp);
+					exp = "piecewise(1," + tmp_exp + ",0)";
+
 				}
 				
 				//System.out.println("Kinetic law, exp = " + exp);
@@ -204,6 +207,7 @@ public class Translator {
 //				else if (exp.startsWith("~")){
 //					exp = "(1 - " + exp.substring(1) + ")";
 //				}
+				
 				rateReaction.setFormula("(" + lhpn.getTransitionRate(t) + ")" + "*" + reactant.getSpecies() + "*" + exp); 
 				//System.out.println("trans " + t + " enableCond " + lhpn.getEnabling(t));
 				
@@ -260,13 +264,12 @@ public class Translator {
 					for (String var :lhpn.getBooleanVars(t)){
 						if (lhpn.getBoolAssign(t, var) != null) {
 							ExprTree[] assignBoolTree = lhpn.getBoolAssignTree(t, var);
-							String assignBool = assignBoolTree[0].toString("SBML");
+							String assignBool_tmp = assignBoolTree[0].toString("SBML");
+							String assignBool = "piecewise(1," + assignBool_tmp + ",0)";
 							System.out.println("boolean assignment from LHPN: " + var + " := " + assignBool);
 							EventAssignment assign4 = e.createEventAssignment();
 							assign4.setVariable(var);
 							assign4.setMath(SBML_Editor.myParseFormula(assignBool));
-							// assignBool can be an integer,float, "true", "false" in lpn
-							// assignBool can be either real numbers of 1 or 0 in sbml
 //							if (assignBool.equals("true") || assignBool.){
 //								assign4.setMath(SBML_Editor.myParseFormula("1"));
 //							}
@@ -297,7 +300,7 @@ public class Translator {
 			}
 		}
 		 //Only use event
-		else {								// lhpn.getTransitionRates()== null
+		else {		// lhpn.getTransitionRates()== null
 				int counter = lhpn.getTransitionList().length - 1;
 				for (String t : lhpn.getTransitionList()) {
 					Event e = m.createEvent();
@@ -310,7 +313,8 @@ public class Translator {
 						Enabling = "1";
 					}
 					else {
-						Enabling = lhpn.getEnablingTree(t).getElement("SBML");
+						String Enabling_tmp = lhpn.getEnablingTree(t).getElement("SBML");
+						Enabling = "piecewise(1," + Enabling_tmp + ",0)";
 					}
 					trigger.setMath(SBML_Editor.myParseFormula("and(eq(" + lhpn.getPreset(t) + ",1)," + Enabling + ")"));
 					
@@ -370,7 +374,8 @@ public class Translator {
 						for (String var :lhpn.getBooleanVars(t)){
 							if (lhpn.getBoolAssign(t, var) != null) {
 								ExprTree[] assignBoolTree = lhpn.getBoolAssignTree(t, var);
-								String assignBool = assignBoolTree[0].toString("SBML");
+								String assignBool_tmp = assignBoolTree[0].toString("SBML");
+								String assignBool = "piecewise(1," + assignBool_tmp + ",0)";
 								System.out.println("boolean assignment from LHPN: " + var + " := " + assignBool);
 								EventAssignment assign4 = e.createEventAssignment();
 								assign4.setVariable(var);
