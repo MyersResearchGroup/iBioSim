@@ -1951,7 +1951,6 @@ public class ExprTree {
 	public String toString() {
 		String result = "";
 		result = getElement("LHPN");
-		//result = getElement("SBML");
 		return result;
 	}
 	
@@ -3581,9 +3580,21 @@ public class ExprTree {
 		case 'b': // Boolean
 		case 'i': // Integer
 		case 'c': // Continuous
+			if (!sbmlFlag){
 			// result = result + variable;
 			result = variable;
 			break;
+			}
+			else {
+				if (isit == 'b') {
+					result = "eq(" + variable + ",1)";
+				}
+				else {
+					result = variable;
+				}
+				break;
+				
+			}
 		case 'n': // Number
 			Double tempuval = uvalue;
 			Double templval = lvalue;
@@ -3637,7 +3648,7 @@ public class ExprTree {
 			// result = result + "UNKNOWN";
 			// }
 			break;
-			// TODO add LHPN2SBML conversion
+
 		case 'w': // bitWise
 			if (op.equals("&")) {
 				if (r1 != null && r2 != null) {
@@ -3659,7 +3670,7 @@ public class ExprTree {
 					}
 				}
 			}
-			// TODO need to convert [] to sbml?
+			
 			else if (op.equals("[]")) {
 				if (r1 != null && r2 != null) {
 					result = "BIT(" + r1.getElement(type) + "," + r2.getElement(type) + ")";
@@ -3883,7 +3894,7 @@ public class ExprTree {
 				else if (op.equals("INT")) {
 					if (r1 != null) {
 						if (sbmlFlag) {
-							result = "piecewise( 1 , " + r1.getElement(type) + "0 )"; 
+							result = "piecewise(1," + r1.getElement(type) + "0 )"; 
 						}
 						else {
 							result = "INT(" + r1.getElement(type) + ")";
