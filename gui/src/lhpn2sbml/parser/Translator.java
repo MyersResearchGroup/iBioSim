@@ -149,9 +149,9 @@ public class Translator {
 		// ----convert transitions -----
 		// if transition rate is not null, use reaction and event;
 		// else use event only
-		if (lhpn.getTransitionRates()!= null){
-			int counter = lhpn.getTransitionList().length - 1;
-			for (String t : lhpn.getTransitionList()) {
+		int counter = lhpn.getTransitionList().length - 1;
+		for (String t : lhpn.getTransitionList()) {
+			if (lhpn.getTransitionRate(t)!= null){
 				//System.out.println(s);				
 				Species spT = m.createSpecies();
 				spT.setId(t);
@@ -298,11 +298,8 @@ public class Translator {
 				// The formula in function does not represent the actual function. 
 				counter --;
 			}
-		}
 		 //Only use event
-		else {		// lhpn.getTransitionRates()== null
-				int counter = lhpn.getTransitionList().length - 1;
-				for (String t : lhpn.getTransitionList()) {
+			else {		// lhpn.getTransitionRates()== null
 					Event e = m.createEvent();
 					e.setId("event" + counter);			
 					Trigger trigger = e.createTrigger();
@@ -321,8 +318,10 @@ public class Translator {
 					// triggerCanBeDisabled := true
 					trigger.setAnnotation("true");
 					// Delay D(t)
-					Delay delay = e.createDelay();
-					delay.setMath(SBML_Editor.myParseFormula(lhpn.getDelay(t)));
+					if (lhpn.getDelay(t)!=null) {
+						Delay delay = e.createDelay();
+						delay.setMath(SBML_Editor.myParseFormula(lhpn.getDelay(t)));
+					}
 					
 					// t_preSet = 0
 					EventAssignment assign0 = e.createEventAssignment();
