@@ -605,7 +605,9 @@ public class Run implements ActionListener {
 					GCMFile gcm = gcmEditor.getGCM();
 					gcm.flattenGCM();
 					LHPNFile lhpnFile = gcm.convertToLHPN(specs, conLevel);
-					lhpnFile.save(filename);
+					lhpnFile.save(filename.replace(".gcm", "").replace(".sbml", "").replace(".xml",
+							"")
+							+ ".lpn");
 					log.addText("Saving GCM file as LHPN:\n"
 							+ filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "")
 							+ ".lpn" + "\n");
