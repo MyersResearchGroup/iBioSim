@@ -34,7 +34,6 @@ public class Translator {
 	
 	public void BuildTemplate(String lhpnFilename) {
 		this.filename = lhpnFilename.replace(".lpn", ".xml");
-		
 		// load lhpn file
 		LHPNFile lhpn = new LHPNFile();
 		lhpn.load(lhpnFilename);
@@ -43,6 +42,7 @@ public class Translator {
 		document = new SBMLDocument(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
 		Model m = document.createModel();
 		Compartment c = m.createCompartment();
+		m.setId(filename.replace(".xml", ""));
 		c.setId("default");
 		c.setSize(1.0);
 		c.setConstant(true);
