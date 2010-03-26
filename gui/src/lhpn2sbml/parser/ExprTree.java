@@ -4061,6 +4061,9 @@ public class ExprTree {
 							result = result + "(" + r2.getElement(type) + ")";
 						}
 					}
+					if (sbmlFlag) {
+						result = "floor(" + result + ")";
+					}
 				}
 				// relational ops: geq, leq, gt, lt
 				// mod 
