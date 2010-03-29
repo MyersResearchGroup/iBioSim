@@ -73,7 +73,7 @@ public class Translator {
 		for (String v: lhpn.getAllVariables()){
 			if (v != null){
 				String initVal = lhpn.getInitialVal(v);
-				//System.out.println("Begin:" + v + "= " + initVal);
+				System.out.println("Begin:" + v + "= " + initVal);
 				if (lhpn.isContinuous(v)){
 					Parameter p = m.createParameter(); 
 					p.setConstant(false);
@@ -82,7 +82,7 @@ public class Translator {
 					Parameter p_dot = m.createParameter();
 					p_dot.setConstant(false);
 					p_dot.setId(v + "_dot");
-					System.out.println("v_dot = " + v + "_dot");
+//					System.out.println("v_dot = " + v + "_dot");
 					RateRule rateRule = m.createRateRule();
 					rateRule.setVariable(v);
 					rateRule.setMath(SBML_Editor.myParseFormula(v + "_dot"));
@@ -105,21 +105,24 @@ public class Translator {
 					p.setConstant(false);
 					p.setId(v);
 					String initValue = lhpn.getInitialVal(v);
-//					System.out.println(v + "=" + initValue);
+					System.out.println(v + "=" + initValue);
 					// check initValue type; if boolean, set parameter value as 0 or 1.
 					if (initValue.equals("true")){
-//						p.setValue(1);
-						double tmp = p.getValue();
-						System.out.println("tmp = " + tmp);
+						p.setValue(1);
 					}
 					else if (initValue.equals("false")){
-//						p.setValue(0);
+						p.setValue(0);
 					}
-					else
-					{	
-						double initVal_dbl = Double.parseDouble(initValue);
-						p.setValue(initVal_dbl);
-//						System.out.println(Double.parseDouble("3"));
+					else if(initValue.contains("inf")) {
+						p.setValue(0);
+					}
+					else if (initValue.equals("unknown")){
+						p.setValue(0);
+					}
+					else {
+							double initVal_dbl = Double.parseDouble(initValue);
+							p.setValue(initVal_dbl);
+//							System.out.println(Double.parseDouble("3"));
 					}
 				}
 			}
@@ -193,7 +196,7 @@ public class Translator {
 					}
 					else {
 						String tmp_exp = lhpn.getEnablingTree(t).getElement("SBML");
-						System.out.println("tmp_exp = "+ tmp_exp);
+//						System.out.println("tmp_exp = "+ tmp_exp);
 						exp = "piecewise(1," + tmp_exp + ",0)";
 
 					}
@@ -311,7 +314,7 @@ public class Translator {
 						}		
 					}
 					
-					trigger.setMath(SBML_Editor.myParseFormula("and(" + CheckPreset + "," + Enabling + ")"));
+					trigger.setMath(SBML_Editor.myParseFormula("and(gt(t,0)," + CheckPreset + "," + Enabling + ")"));
 					
 					
 					//trigger.setMath(SBML_Editor.myParseFormula("and(eq(" + lhpn.getPreset(t) + ",1)," + Enabling + ")"));
@@ -327,10 +330,14 @@ public class Translator {
 					Delay delay = e.createDelay();
 					delay.setMath(SBML_Editor.myParseFormula(lhpn.getDelay(t)));
 					
-					// t = 0
+					// t_preSet = 0
 					EventAssignment assign0 = e.createEventAssignment();
-					assign0.setVariable(t);
-					assign0.setMath(SBML_Editor.myParseFormula("0"));
+					for (String x : lhpn.getPreset(t)){
+						assign0.setVariable(x);
+						assign0.setMath(SBML_Editor.myParseFormula("0"));
+		//				System.out.println("transition: " + t + " preset: " + x);
+					}
+					
 					
 					// t_postSet = 1
 					EventAssignment assign1 = e.createEventAssignment();
