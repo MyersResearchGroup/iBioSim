@@ -85,8 +85,6 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 	/*
 	 * List of interesting species
 	 */
-	private Object[] interestingSpecies = new Object[0];
-
 	private Object[] allSpecies = new Object[0];
 
 	private Object[] preAbstractions = new Object[0];
@@ -2173,7 +2171,6 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		else if ((e.getSource() == addPreAbs) || (e.getSource() == addLoopAbs)
 				|| (e.getSource() == addPostAbs)) {
 			JPanel addAbsPanel = new JPanel(new BorderLayout());
-			JLabel absListLabel = new JLabel("Available abstraction methods:");
 			JComboBox absList = new JComboBox();
 			absList.addItem("absolute-activation/inhibition-generator");
 			absList.addItem("absolute-inhibition-generator");
@@ -3759,24 +3756,25 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 							listOfSpecs.add(species.getId());
 						}
 					}
-					Object[] list = listOfSpecs.toArray();
-					for (int i = 1; i < list.length; i++) {
-						String index = (String) list[i];
+					allSpecies = listOfSpecs.toArray();
+					for (int i = 1; i < allSpecies.length; i++) {
+						String index = (String) allSpecies[i];
 						int j = i;
-						while ((j > 0) && ((String) list[j - 1]).compareToIgnoreCase(index) > 0) {
-							list[j] = list[j - 1];
+						while ((j > 0)
+								&& ((String) allSpecies[j - 1]).compareToIgnoreCase(index) > 0) {
+							allSpecies[j] = allSpecies[j - 1];
 							j = j - 1;
 						}
-						list[j] = index;
+						allSpecies[j] = index;
 					}
 					// intSpecies.setListData(list);
-					termCond.setListData(list);
+					termCond.setListData(allSpecies);
 					int rem = availSpecies.getItemCount();
 					for (int i = 0; i < rem; i++) {
 						availSpecies.removeItemAt(0);
 					}
-					for (int i = 0; i < list.length; i++) {
-						availSpecies.addItem(((String) list[i]).replace(" ", "_"));
+					for (int i = 0; i < allSpecies.length; i++) {
+						availSpecies.addItem(((String) allSpecies[i]).replace(" ", "_"));
 					}
 					String[] allSpecies = getAllSpecies();
 					String[] intSpecies = getInterestingSpecies();
@@ -3787,11 +3785,11 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 								((JCheckBox) speciesInt.get(i).get(0)).doClick();
 							}
 						}
-						for (String s : allSpecies) {
-							String[] split1 = s.split(" ");
-							if (split1.length > 1) {
-								editLine(i, split1[1]);
-							}
+					}
+					for (int i = 0; i < allSpecies.length; i++) {
+						String[] split1 = allSpecies[i].split(" ");
+						if (split1.length > 1) {
+							editLine(i, split1[1]);
 						}
 					}
 					speciesPanel.revalidate();
@@ -3801,7 +3799,6 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				}
 				// species.setListData(new Object[0]);
 				terminations.setListData(new Object[0]);
-				String check;
 				if (load.getProperty("reb2sac.abstraction.method").equals("none")) {
 					none.setSelected(true);
 					Button_Enabling.enableNoneOrAbs(ODE, monteCarlo, markov, seed, seedLabel, runs,
@@ -4087,7 +4084,6 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					getLists.add(species);
 					i++;
 				}
-				interestingSpecies = getLists.toArray();
 				for (String s : getLists) {
 					String[] split1 = s.split(" ");
 					for (int j = 0; j < speciesInt.size(); j++) {
@@ -4218,24 +4214,24 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				listOfSpecs.add(species.getId());
 			}
 		}
-		Object[] list = listOfSpecs.toArray();
-		for (int i = 1; i < list.length; i++) {
-			String index = (String) list[i];
+		allSpecies = listOfSpecs.toArray();
+		for (int i = 1; i < allSpecies.length; i++) {
+			String index = (String) allSpecies[i];
 			int j = i;
-			while ((j > 0) && ((String) list[j - 1]).compareToIgnoreCase(index) > 0) {
-				list[j] = list[j - 1];
+			while ((j > 0) && ((String) allSpecies[j - 1]).compareToIgnoreCase(index) > 0) {
+				allSpecies[j] = allSpecies[j - 1];
 				j = j - 1;
 			}
-			list[j] = index;
+			allSpecies[j] = index;
 		}
 		// intSpecies.setListData(list);
-		termCond.setListData(list);
+		termCond.setListData(allSpecies);
 		int rem = availSpecies.getItemCount();
 		for (int i = 0; i < rem; i++) {
 			availSpecies.removeItemAt(0);
 		}
-		for (int i = 0; i < list.length; i++) {
-			availSpecies.addItem(((String) list[i]).replace(" ", "_"));
+		for (int i = 0; i < allSpecies.length; i++) {
+			availSpecies.addItem(((String) allSpecies[i]).replace(" ", "_"));
 		}
 		String[] allSpecies = getAllSpecies();
 		String[] intSpecies = getInterestingSpecies();
@@ -4246,11 +4242,11 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					((JCheckBox) speciesInt.get(i).get(0)).doClick();
 				}
 			}
-			for (String s : allSpecies) {
-				String[] split1 = s.split(" ");
-				if (split1.length > 1) {
-					editLine(i, split1[1]);
-				}
+		}
+		for (int i = 0; i < allSpecies.length; i++) {
+			String[] split1 = allSpecies[i].split(" ");
+			if (split1.length > 1) {
+				editLine(i, split1[1]);
 			}
 		}
 		speciesPanel.revalidate();
@@ -4478,10 +4474,26 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 
 	private String[] getAllSpecies() {
 		ArrayList<String> species = new ArrayList<String>();
-		for (int i = 0; i < speciesInt.size(); i++) {
-			species.add(((JTextField) speciesInt.get(i).get(1)).getText() + " " + getLine(i));
+		for (Object s : allSpecies) {
+			species.add((String) s);
 		}
-		return species.toArray(new String[0]);
+		for (int i = 0; i < speciesInt.size(); i++) {
+			String spec = ((JTextField) speciesInt.get(i).get(1)).getText();
+			if (species.contains(spec)) {
+				species.set(species.indexOf(spec), spec + " " + getLine(i));
+			}
+		}
+		String[] speciesArray = species.toArray(new String[0]);
+		for (int i = 1; i < speciesArray.length; i++) {
+			String index = (String) speciesArray[i];
+			int j = i;
+			while ((j > 0) && ((String) speciesArray[j - 1]).compareToIgnoreCase(index) > 0) {
+				speciesArray[j] = speciesArray[j - 1];
+				j = j - 1;
+			}
+			speciesArray[j] = index;
+		}
+		return speciesArray;
 	}
 
 	private void editNumThresholds(int num) {
