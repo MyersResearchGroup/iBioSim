@@ -4478,8 +4478,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 
 	private String[] getAllSpecies() {
 		ArrayList<String> species = new ArrayList<String>();
-		for (int i = 0; i < speciesInt.size()-1; i++) {
-			species.add(((JTextField) speciesInt.get(i).get(1)).getText() + " " + getLine(i + 1));
+		for (int i = 0; i < speciesInt.size(); i++) {
+			species.add(((JTextField) speciesInt.get(i).get(1)).getText() + " " + getLine(i));
 		}
 		return species.toArray(new String[0]);
 	}
