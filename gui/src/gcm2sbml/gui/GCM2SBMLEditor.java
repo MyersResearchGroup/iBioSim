@@ -170,6 +170,11 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 			influences.removeAllItem();
 			influences.addAllItem(influes);
 			reloadParameters();
+			GCMParser parser = new GCMParser(path + File.separator + refFile);
+			GeneticNetwork network = parser.buildNetwork();
+			GeneticNetwork.setRoot(path + File.separator);
+			network.mergeSBML(path + File.separator + simName + File.separator + gcmname + ".sbml");
+			reb2sac.updateSpeciesList();
 		}
 	}
 
