@@ -661,15 +661,31 @@ public class GCMFile {
 				if (rate.equals("")) {
 					rate = "0.0";
 				}
-				LHPN.addTransitionRate(specs.get(i) + "_trans" + transNum, "(" + rate + ")/" + "("
-						+ threshold + "-" + number + ")");
+				//System.out.println(specs.get(i) + "_trans" + transNum + ":");
+				//System.out.println("(" + rate + ")/" + "("
+				//		+ threshold + "-" + number + ")");
+				//if ((specs.get(i) + "_trans" + transNum).equals("Z_trans0")) {
+				//	LHPN.addTransitionRate(specs.get(i) + "_trans" + transNum, "(" + rate + ")/" + "("
+				//			+ threshold + "-" + number + ")");
+				//}
+				//else {
+					LHPN.addTransitionRate(specs.get(i) + "_trans" + transNum, "(" + rate + ")/" + "("
+							+ threshold + "-" + number + ")");
+				//}
+				//System.out.println(LHPN.getTransitionRateTree(specs.get(i) + "_trans" + transNum).toString());
+				//System.out.println();
 				transNum++;
 				LHPN.addTransition(specs.get(i) + "_trans" + transNum);
 				LHPN.addControlFlow(specs.get(i) + placeNum, specs.get(i) + "_trans" + transNum);
 				LHPN.addControlFlow(specs.get(i) + "_trans" + transNum, previousPlaceName);
 				LHPN.addIntAssign(specs.get(i) + "_trans" + transNum, specs.get(i), number);
+				//System.out.println(specs.get(i) + "_trans" + transNum + ":");
+				//System.out.println("(" + specs.get(i) + "*"
+				//		+ kd + ")/" + "(" + threshold + "-" + number + ")");
 				LHPN.addTransitionRate(specs.get(i) + "_trans" + transNum, "(" + specs.get(i) + "*"
 						+ kd + ")/" + "(" + threshold + "-" + number + ")");
+				//System.out.println(LHPN.getTransitionRateTree(specs.get(i) + "_trans" + transNum).toString());
+				//System.out.println();
 				transNum++;
 				previousPlaceName = specs.get(i) + placeNum;
 				placeNum++;
