@@ -68,6 +68,8 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 	private Reb2Sac reb2sac;
 	
 	private SBML_Editor sbmlParamFile;
+	
+	private String separator;
 
 	public GCM2SBMLEditor(String path) {
 		this(path, null, null, null, false, null, null, null);
@@ -76,6 +78,12 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 	public GCM2SBMLEditor(String path, String filename, BioSim biosim, Log log, boolean paramsOnly,
 			String simName, String paramFile, Reb2Sac reb2sac) {
 		super();
+		if (File.separator.equals("\\")) {
+			separator = "\\\\";
+		}
+		else {
+			separator = File.separator;
+		}
 		this.biosim = biosim;
 		this.log = log;
 		this.path = path;
@@ -104,7 +112,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		}
 		gcm = new GCMFile(path);
 		if (filename != null) {
-			gcm.load(path + File.separator + filename);
+			gcm.load(path + separator + filename);
 			this.filename = filename;
 			this.gcmname = filename.replace(".gcm", "");
 		}
@@ -124,7 +132,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 	public void reload(String newName) {
 		filename = newName + ".gcm";
 		gcmname = newName;
-		gcm.load(path + File.separator + newName + ".gcm");
+		gcm.load(path + separator + newName + ".gcm");
 		GCMNameTextField.setText(newName);
 	}
 	
@@ -170,10 +178,10 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 			influences.removeAllItem();
 			influences.addAllItem(influes);
 			reloadParameters();
-			GCMParser parser = new GCMParser(path + File.separator + refFile);
+			GCMParser parser = new GCMParser(path + separator + refFile);
 			GeneticNetwork network = parser.buildNetwork();
-			GeneticNetwork.setRoot(path + File.separator);
-			network.mergeSBML(path + File.separator + simName + File.separator + gcmname + ".sbml");
+			GeneticNetwork.setRoot(path + separator);
+			network.mergeSBML(path + separator + simName + separator + gcmname + ".sbml");
 			reb2sac.updateSpeciesList();
 		}
 	}
@@ -250,7 +258,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		else {
 			gcm.setBioAbs(false);
 		}
-		GeneticNetwork.setRoot(path + File.separator);
+		GeneticNetwork.setRoot(path + separator);
 
 		if (command.contains("GCM as")) {
 			String newName = JOptionPane.showInputDialog(biosim.frame(), "Enter GCM name:", "GCM Name",
@@ -266,11 +274,11 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		}
 
 		// Write out species and influences to a gcm file
-		gcm.save(path + File.separator + gcmname + ".gcm");
-		log.addText("Saving GCM file:\n" + path + File.separator + gcmname + ".gcm\n");
+		gcm.save(path + separator + gcmname + ".gcm");
+		log.addText("Saving GCM file:\n" + path + separator + gcmname + ".gcm\n");
 
 		if (command.contains("template")) {
-			GCMParser parser = new GCMParser(path + File.separator + gcmname + ".gcm");
+			GCMParser parser = new GCMParser(path + separator + gcmname + ".gcm");
 			try {
 				parser.buildNetwork();
 			}
@@ -286,14 +294,14 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 			if (!templateName.contains(".sbml") && !templateName.contains(".xml")) {
 				templateName = templateName + ".xml";
 			}
-			if (new File(path + File.separator + templateName).exists()) {
+			if (new File(path + separator + templateName).exists()) {
 				int value = JOptionPane.showOptionDialog(biosim.frame(), templateName
 						+ " already exists.  Overwrite file?", "Save file", JOptionPane.YES_NO_OPTION,
 						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 				if (value == JOptionPane.YES_OPTION) {
 					network.buildTemplate(parser.getSpecies(), parser.getPromoters(), gcmname + ".gcm", path
-							+ File.separator + templateName);
-					log.addText("Saving GCM file as SBML template:\n" + path + File.separator + templateName
+							+ separator + templateName);
+					log.addText("Saving GCM file as SBML template:\n" + path + separator + templateName
 							+ "\n");
 					biosim.refreshTree();
 					biosim.updateOpenSBML(templateName);
@@ -304,8 +312,8 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 			}
 			else {
 				network.buildTemplate(parser.getSpecies(), parser.getPromoters(), gcmname + ".gcm", path
-						+ File.separator + templateName);
-				log.addText("Saving GCM file as SBML template:\n" + path + File.separator + templateName
+						+ separator + templateName);
+				log.addText("Saving GCM file as SBML template:\n" + path + separator + templateName
 						+ "\n");
 				biosim.refreshTree();
 			}
@@ -316,24 +324,24 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 			if (!lpnName.trim().contains(".lpn")) {
 				lpnName = lpnName.trim() + ".lpn";
 			}
-			if (new File(path + File.separator + lpnName).exists()) {
+			if (new File(path + separator + lpnName).exists()) {
 				int value = JOptionPane.showOptionDialog(biosim.frame(), lpnName
 						+ " already exists.  Overwrite file?", "Save file", JOptionPane.YES_NO_OPTION,
 						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 				if (value == JOptionPane.YES_OPTION) {
-					gcm.createLogicalModel(path + File.separator + lpnName, log, biosim, lpnName);
+					gcm.createLogicalModel(path + separator + lpnName, log, biosim, lpnName);
 				}
 				else {
 					// Do nothing
 				}
 			}
 			else {
-				gcm.createLogicalModel(path + File.separator + lpnName, log, biosim, lpnName);
+				gcm.createLogicalModel(path + separator + lpnName, log, biosim, lpnName);
 			}
 		}
 		else if (command.contains("SBML")) {
 			// Then read in the file with the GCMParser
-			GCMParser parser = new GCMParser(path + File.separator + gcmname + ".gcm");
+			GCMParser parser = new GCMParser(path + separator + gcmname + ".gcm");
 			GeneticNetwork network = null;
 			try {
 				network = parser.buildNetwork();
@@ -345,13 +353,13 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 			}
 			network.loadProperties(gcm);
 			// Finally, output to a file
-			if (new File(path + File.separator + gcmname + ".xml").exists()) {
+			if (new File(path + separator + gcmname + ".xml").exists()) {
 				int value = JOptionPane.showOptionDialog(biosim.frame(), gcmname
 						+ ".xml already exists.  Overwrite file?", "Save file", JOptionPane.YES_NO_OPTION,
 						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 				if (value == JOptionPane.YES_OPTION) {
-					network.mergeSBML(path + File.separator + gcmname + ".xml");
-					log.addText("Saving GCM file as SBML file:\n" + path + File.separator + gcmname
+					network.mergeSBML(path + separator + gcmname + ".xml");
+					log.addText("Saving GCM file as SBML file:\n" + path + separator + gcmname
 							+ ".xml\n");
 					biosim.refreshTree();
 					biosim.updateOpenSBML(gcmname + ".xml");
@@ -361,9 +369,9 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 				}
 			}
 			else {
-				network.mergeSBML(path + File.separator + gcmname + ".xml");
+				network.mergeSBML(path + separator + gcmname + ".xml");
 				log
-						.addText("Saving GCM file as SBML file:\n" + path + File.separator + gcmname
+						.addText("Saving GCM file as SBML file:\n" + path + separator + gcmname
 								+ ".xml\n");
 				biosim.refreshTree();
 			}
@@ -373,13 +381,13 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 	}
 
 	public void saveAs(String newName) {
-		if (new File(path + File.separator + newName + ".gcm").exists()) {
+		if (new File(path + separator + newName + ".gcm").exists()) {
 			int value = JOptionPane.showOptionDialog(biosim.frame(), newName
 					+ " already exists.  Overwrite file?", "Save file", JOptionPane.YES_NO_OPTION,
 					JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 			if (value == JOptionPane.YES_OPTION) {
-				gcm.save(path + File.separator + newName + ".gcm");
-				log.addText("Saving GCM file as:\n" + path + File.separator + newName + ".gcm\n");
+				gcm.save(path + separator + newName + ".gcm");
+				log.addText("Saving GCM file as:\n" + path + separator + newName + ".gcm\n");
 			}
 			else {
 				// Do nothing
@@ -387,8 +395,8 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 			}
 		}
 		else {
-			gcm.save(path + File.separator + newName + ".gcm");
-			log.addText("Saving GCM file as:\n" + path + File.separator + newName + ".gcm\n");
+			gcm.save(path + separator + newName + ".gcm");
+			log.addText("Saving GCM file as:\n" + path + separator + newName + ".gcm\n");
 		}
 		reload(newName);
 		biosim.refreshTree();
@@ -480,7 +488,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 								sweepTwo += "_" + sweepThese2.get(i) + "=" + sweep2.get(i).get(k);
 							}
 						}
-						new File(path + File.separator + simName + File.separator + stem
+						new File(path + separator + simName + separator + stem
 								+ sweepTwo.replace("/", "-")).mkdir();
 						createSBML(stem, sweepTwo);
 						if (run) {
@@ -490,7 +498,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 					}
 				}
 				else {
-					new File(path + File.separator + simName + File.separator + stem
+					new File(path + separator + simName + separator + stem
 							+ sweep.replace("/", "-")).mkdir();
 					createSBML(stem, sweep);
 					if (run) {
@@ -502,7 +510,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		}
 		else {
 			if (!stem.equals("")) {
-				new File(path + File.separator + simName + File.separator + stem).mkdir();
+				new File(path + separator + simName + separator + stem).mkdir();
 			}
 			createSBML(stem, ".");
 			if (run) {
@@ -647,10 +655,10 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 			if (direct.equals(".") && !stem.equals("")) {
 				direct = "";
 			}
-			gcm.save(path + File.separator + simName + File.separator + stem + direct
-					+ File.separator + gcmname + ".gcm");
-			GCMParser parser = new GCMParser(path + File.separator + simName + File.separator + stem + direct
-					+ File.separator + gcmname + ".gcm");
+			gcm.save(path + separator + simName + separator + stem + direct
+					+ separator + gcmname + ".gcm");
+			GCMParser parser = new GCMParser(path + separator + simName + separator + stem + direct
+					+ separator + gcmname + ".gcm");
 			GeneticNetwork network = null;
 			try {
 				network = parser.buildNetwork();
@@ -662,7 +670,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 			}
 			network.loadProperties(gcm);
 			if (!getSBMLFile().equals(none)) {
-				SBMLDocument d = BioSim.readSBML(path + File.separator + getSBMLFile());
+				SBMLDocument d = BioSim.readSBML(path + separator + getSBMLFile());
 				for (String s : sbmlParamFile.getElementChanges()) {
 					for (long i = d.getModel().getNumInitialAssignments() - 1; i >= 0; i--) {
 						if (s.contains("=")) {
@@ -702,12 +710,12 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 						}
 					}
 				}
-				network.mergeSBML(path + File.separator + simName + File.separator + stem + direct
-						+ File.separator + gcmname + ".sbml", d);
+				network.mergeSBML(path + separator + simName + separator + stem + direct
+						+ separator + gcmname + ".sbml", d);
 			}
 			else {
-				network.mergeSBML(path + File.separator + simName + File.separator + stem + direct
-						+ File.separator + gcmname + ".sbml");
+				network.mergeSBML(path + separator + simName + separator + stem + direct
+						+ separator + gcmname + ".sbml");
 			}
 		}
 		catch (Exception e1) {
@@ -1244,7 +1252,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 				}
 				if (comp != null && !comp.equals("")) {
 					GCMFile getSpecs = new GCMFile(path);
-					getSpecs.load(path + File.separator + comp);
+					getSpecs.load(path + separator + comp);
 					String oldPort = null;
 					if (selected != null) {
 						oldPort = selected.substring(selected.split(" ")[0].length()

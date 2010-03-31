@@ -145,14 +145,22 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 	public CloseTabPaneUI(BioSim biosim) {
 
 		super();
+		
+		String separator;
+		if (File.separator.equals("\\")) {
+			separator = "\\\\";
+		}
+		else {
+			separator = File.separator;
+		}
 
 		closeImgB = new BufferedImage(BUTTONSIZE, BUTTONSIZE, BufferedImage.TYPE_4BYTE_ABGR);
 
 		closeImgI = new BufferedImage(BUTTONSIZE, BUTTONSIZE, BufferedImage.TYPE_4BYTE_ABGR);
 
 		closeB = new JButton();
-		closeB.setIcon(new ImageIcon(biosim.ENVVAR + File.separator + "gui" + File.separator
-				+ "icons" + File.separator + "close.gif"));
+		closeB.setIcon(new ImageIcon(biosim.ENVVAR + separator + "gui" + separator
+				+ "icons" + separator + "close.gif"));
 		closeB.setSize(BUTTONSIZE, BUTTONSIZE);
 
 		WindowsIconFactory.createFrameCloseIcon().paintIcon(closeB, closeImgI.createGraphics(), 0, 0);

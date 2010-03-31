@@ -26,15 +26,23 @@ import java.util.regex.Pattern;
  * 
  */
 public class GCMParser {
+	
+	private String separator;
 
 	public GCMParser(String filename) {
 		this(filename, false);
 	}
 
 	public GCMParser(String filename, boolean debug) {
+		if (File.separator.equals("\\")) {
+			separator = "\\\\";
+		}
+		else {
+			separator = File.separator;
+		}
 		this.debug = debug;
 		gcm = new GCMFile(filename.substring(0, filename.length()
-				- filename.split(File.separator)[filename.split(File.separator).length - 1]
+				- filename.split(separator)[filename.split(separator).length - 1]
 						.length()));
 		gcm.load(filename);
 		data = new StringBuffer();

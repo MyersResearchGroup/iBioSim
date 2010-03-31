@@ -103,9 +103,9 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 		lhpnFile = new LHPNFile(log);
 		this.directory = directory;
 		if (filename != null) {
-			File f = new File(directory + File.separator + filename);
+			File f = new File(directory + separator + filename);
 			if (!(f.length() == 0)) {
-				lhpnFile.load(directory + File.separator + filename);
+				lhpnFile.load(directory + separator + filename);
 			}
 			this.filename = filename;
 			// this.lhpnName = filename.replace(".lpn", "");
@@ -253,7 +253,7 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 
 	public void save() {
 		lhpnFile.addProperty(propertyField.getText());
-		lhpnFile.save(directory + File.separator + filename);
+		lhpnFile.save(directory + separator + filename);
 		dirty = false;
 		biosim.updateAsyncViews(filename);
 	}
@@ -261,7 +261,7 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 	public void saveAs(String newName) {
 		dirty = false;
 		lhpnFile.addProperty(propertyField.getText());
-		lhpnFile.save(directory + File.separator + newName);
+		lhpnFile.save(directory + separator + newName);
 		reload(newName);
 		biosim.refreshTree();
 		biosim.updateAsyncViews(newName);
@@ -323,8 +323,8 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 
 	public void reload(String newName) {
 		filename = newName + ".lpn";
-		if (new File(directory + File.separator + newName).exists()) {
-			lhpnFile.load(directory + File.separator + newName);
+		if (new File(directory + separator + newName).exists()) {
+			lhpnFile.load(directory + separator + newName);
 		}
 		lhpnNameTextField.setText(newName);
 	}

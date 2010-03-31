@@ -52,8 +52,16 @@ import buttons.Buttons;
  * @email namphuon@cs.utah.edu
  */
 public class GCMFile {
+	
+	private String separator;
 
 	public GCMFile(String path) {
+		if (File.separator.equals("\\")) {
+			separator = "\\\\";
+		}
+		else {
+			separator = File.separator;
+		}
 		this.path = path;
 		species = new HashMap<String, Properties>();
 		influences = new HashMap<String, Properties>();
@@ -216,7 +224,7 @@ public class GCMFile {
 			public void actionPerformed(ActionEvent e) {
 				flattenGCM();
 				convertToLHPN(specs, conLevel).save(filename);
-				log.addText("Saving GCM file as LPN:\n" + path + File.separator + lpnName + "\n");
+				log.addText("Saving GCM file as LPN:\n" + path + separator + lpnName + "\n");
 				biosim.refreshTree();
 				naryFrame.dispose();
 				new File(filename + ".temp").delete();
@@ -265,7 +273,7 @@ public class GCMFile {
 		ArrayList<String> comps = setToArrayList(components.keySet());
 		for (String s : comps) {
 			GCMFile file = new GCMFile(path);
-			file.load(path + File.separator + components.get(s).getProperty("gcm"));
+			file.load(path + separator + components.get(s).getProperty("gcm"));
 			file.setParameters(parameters);
 			unionGCM(this, file, s);
 		}
@@ -276,7 +284,7 @@ public class GCMFile {
 		ArrayList<String> mod = setToArrayList(bottomLevel.components.keySet());
 		for (String s : mod) {
 			GCMFile file = new GCMFile(path);
-			file.load(path + File.separator + bottomLevel.components.get(s).getProperty("gcm"));
+			file.load(path + separator + bottomLevel.components.get(s).getProperty("gcm"));
 			file.setParameters(bottomLevel.parameters);
 			unionGCM(bottomLevel, file, s);
 		}
