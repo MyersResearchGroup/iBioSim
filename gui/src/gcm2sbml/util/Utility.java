@@ -262,11 +262,18 @@ public class Utility {
 	}
 
 	public static HashMap<String, double[]> calculateAverage(String folder) {
+		String separator;
+		if (File.separator.equals("\\")) {
+			separator = "\\\\";
+		}
+		else {
+			separator = File.separator;
+		}
 		HashMap<String, double[]> result = new HashMap<String, double[]>();
 		HashMap<String, double[]> average = null;
 		String[] files = getTSDFiles(folder);
 		for (int i = 0; i < files.length; i++) {
-			result = readFile(folder+File.separator+files[i]);
+			result = readFile(folder+separator+files[i]);
 			if (average == null) {
 				average = result;
 			} else {
@@ -274,7 +281,7 @@ public class Utility {
 					double[] values = result.get(s);
 					double[] averages = average.get(s);
 					if (values.length != averages.length) {
-						System.out.println(folder+File.separator+files[i]);
+						System.out.println(folder+separator+files[i]);
 					}
 					for (int j = 0; j < values.length; j++) {
 						averages[j] = averages[j] + values[j];

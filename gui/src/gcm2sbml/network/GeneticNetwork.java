@@ -45,6 +45,9 @@ import biomodelsim.BioSim;
  * 
  */
 public class GeneticNetwork {
+	
+	private String separator;
+	
 	/**
 	 * Constructor
 	 * 
@@ -64,7 +67,13 @@ public class GeneticNetwork {
 	/**
 	 * Constructor 
 	 */
-	public GeneticNetwork() {		
+	public GeneticNetwork() {
+		if (File.separator.equals("\\")) {
+			separator = "\\\\";
+		}
+		else {
+			separator = File.separator;
+		}
 	}
 
 	/**
@@ -82,6 +91,12 @@ public class GeneticNetwork {
 	public GeneticNetwork(HashMap<String, SpeciesInterface> species,
 			HashMap<String, SpeciesInterface> stateMap,
 			HashMap<String, Promoter> promoters, GCMFile gcm) {
+		if (File.separator.equals("\\")) {
+			separator = "\\\\";
+		}
+		else {
+			separator = File.separator;
+		}
 		this.species = species;
 		this.stateMap = stateMap;
 		this.promoters = promoters;
@@ -749,7 +764,7 @@ public class GeneticNetwork {
 	
 	private void printComponents(SBMLDocument document, String filename) {
 		for (String s : properties.getComponents().keySet()) {
-			GCMParser parser = new GCMParser(currentRoot + File.separator +
+			GCMParser parser = new GCMParser(currentRoot + separator +
 					properties.getComponents().get(s).getProperty("gcm"));
 			parser.setParameters(properties.getParameters());
 			GeneticNetwork network = parser.buildNetwork();
