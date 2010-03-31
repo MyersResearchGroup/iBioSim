@@ -857,14 +857,32 @@ public class ExprTree {
 				setNodeValues((this), null, "rate", 'a');
 				(token) = intexpr_gettok(expr);
 			}
-			else if ((tokvalue.equals("true")) || (tokvalue.equals("t")) || tokvalue.equals("TRUE")
-					|| tokvalue.equals("T")) {
+			else if ((tokvalue.equals("true")) || tokvalue.equals("TRUE")) {
 				// (result) = new ExprTree('t', 1, 1, null);
 				setVarValues('t', 1, 1, null);
 				(token) = intexpr_gettok(expr);
 			}
-			else if ((tokvalue.equals("false")) || (tokvalue.equals("f"))
-					|| tokvalue.equals("FALSE") || tokvalue.equals("F")) {
+			else if (tokvalue.equals("t") && !signals.contains(tokvalue)) {
+				// (result) = new ExprTree('t', 1, 1, null);
+				setVarValues('t', 1, 1, null);
+				(token) = intexpr_gettok(expr);
+			}
+			else if (tokvalue.equals("T") && !signals.contains(tokvalue)) {
+				// (result) = new ExprTree('t', 1, 1, null);
+				setVarValues('t', 1, 1, null);
+				(token) = intexpr_gettok(expr);
+			}
+			else if ((tokvalue.equals("false")) || tokvalue.equals("FALSE")) {
+				// (result) = new ExprTree('t', 0, 0, null);
+				setVarValues('t', 0, 0, null);
+				(token) = intexpr_gettok(expr);
+			}
+			else if (tokvalue.equals("f") && !signals.contains(tokvalue)) {
+				// (result) = new ExprTree('t', 0, 0, null);
+				setVarValues('t', 0, 0, null);
+				(token) = intexpr_gettok(expr);
+			}
+			else if (tokvalue.equals("F") && !signals.contains(tokvalue)) {
 				// (result) = new ExprTree('t', 0, 0, null);
 				setVarValues('t', 0, 0, null);
 				(token) = intexpr_gettok(expr);
