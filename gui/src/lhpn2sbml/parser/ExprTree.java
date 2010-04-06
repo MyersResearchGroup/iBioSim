@@ -34,16 +34,26 @@ public class ExprTree {
 
 	private ArrayList<String> signals;
 
-	// private String result;
+	private LhpnFile lhpn;
 
-	// private int nsignals;// nevents, nplaces;
-
-	private LHPNFile lhpn;
-
-	// private Abstraction abstraction;
-
-	public ExprTree(LHPNFile lhpn) {
+	public ExprTree(LhpnFile lhpn) {
 		this.lhpn = lhpn;
+		String[] bools = lhpn.getBooleanVars();
+		String[] conts = lhpn.getContVars();
+		String[] ints = lhpn.getIntVars();
+		signals = new ArrayList<String>();
+		for (int j = 0; j < bools.length; j++) {
+			signals.add(bools[j]);
+		}
+		for (int j = 0; j < conts.length; j++) {
+			signals.add(conts[j]);
+		}
+		for (int j = 0; j < ints.length; j++) {
+			signals.add(ints[j]);
+		}
+	}
+	
+	public ExprTree(LHPNFile lhpn) {
 		String[] bools = lhpn.getBooleanVars();
 		String[] conts = lhpn.getContVars();
 		String[] ints = lhpn.getIntVars();
@@ -75,6 +85,23 @@ public class ExprTree {
 		for (int j = 0; j < ints.length; j++) {
 			signals.add(ints[j]);
 		}
+	}
+	
+	public ExprTree(Transition transition) {
+		//this.lhpn = lhpn;
+		//String[] bools = lhpn.getBooleanVars();
+		//String[] conts = lhpn.getContVars();
+		//String[] ints = lhpn.getIntVars();
+		//signals = new ArrayList<String>();
+		//for (int j = 0; j < bools.length; j++) {
+		//	signals.add(bools[j]);
+		//}
+		//for (int j = 0; j < conts.length; j++) {
+		//	signals.add(conts[j]);
+		//}
+		//for (int j = 0; j < ints.length; j++) {
+		//	signals.add(ints[j]);
+		//}
 	}
 
 	ExprTree(char willbe, int lNV, int uNV, String var) {
@@ -269,7 +296,7 @@ public class ExprTree {
 
 		switch (token) {
 		case WORD:
-			if (tokvalue.equals("AND")) {
+			if (tokvalue.toLowerCase().equals("and")) {
 				token = intexpr_gettok(expr);
 				if ((token) != '(') {
 					Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
@@ -318,7 +345,7 @@ public class ExprTree {
 				}
 				(token) = intexpr_gettok(expr);
 			}
-			else if (tokvalue.equals("OR")) {
+			else if (tokvalue.toLowerCase().equals("or")) {
 				(token) = intexpr_gettok(expr);
 				if ((token) != '(') {
 					Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
@@ -368,7 +395,7 @@ public class ExprTree {
 				}
 				(token) = intexpr_gettok(expr);
 			}
-			else if (tokvalue.equals("XOR")) {
+			else if (tokvalue.toLowerCase().equals("xor")) {
 				(token) = intexpr_gettok(expr);
 				if ((token) != '(') {
 					Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
@@ -418,7 +445,7 @@ public class ExprTree {
 				}
 				(token) = intexpr_gettok(expr);
 			}
-			else if (tokvalue.equals("BIT")) {
+			else if (tokvalue.toLowerCase().equals("bit")) {
 				(token) = intexpr_gettok(expr);
 				if ((token) != '(') {
 					Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
@@ -468,7 +495,7 @@ public class ExprTree {
 				}
 				(token) = intexpr_gettok(expr);
 			}
-			else if (tokvalue.equals("NOT")) {
+			else if (tokvalue.toLowerCase().equals("not")) {
 				(token) = intexpr_gettok(expr);
 				if ((token) != '(') {
 					Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
@@ -500,7 +527,7 @@ public class ExprTree {
 				}
 				(token) = intexpr_gettok(expr);
 			}
-			else if (tokvalue.equals("INT")) {
+			else if (tokvalue.toLowerCase().equals("int")) {
 				(token) = intexpr_gettok(expr);
 				if ((token) != '(') {
 					Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
@@ -898,13 +925,8 @@ public class ExprTree {
 			}
 			else {
 				// do boolean lookup here!!!
-				// for (i = 0; i < nsignals; i++) {
-				// System.out.println("Signal " + signals[i]);
 				if (signals.contains(tokvalue)) {
 					if (lhpn.isInput(tokvalue) || lhpn.isOutput(tokvalue)) {
-						// printf("successful lookup of boolean variable
-						// %s\n",signals[i]);
-						// (result) = new ExprTree('b', 0, 1, signals[i]);
 						setVarValues('b', 0, 1, tokvalue);
 						(token) = intexpr_gettok(expr);
 						return true;
@@ -2186,6 +2208,9 @@ public class ExprTree {
 	}
 
 	public void replace(String var, String type, ExprTree e) {
+		if (this == e) {
+			return;
+		}
 		boolean simplify = false;
 		switch (isit) {
 		case 'b': // Boolean

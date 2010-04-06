@@ -2231,32 +2231,6 @@ public class LHPNFile {
 		return false;
 	}
 
-	public Abstraction abstractLhpn(Verification pane) {
-		Abstraction abstraction = new Abstraction(log, pane);
-		abstraction.addPlaces(places);
-		abstraction.addInputs(inputs);
-		abstraction.addOutputs(outputs);
-		abstraction.addEnablings(enablings);
-		abstraction.addEnablingTrees(enablingTrees);
-		abstraction.addDelays(delays);
-		abstraction.addRates(transitionRates);
-		abstraction.addBooleanAssignments(booleanAssignments);
-		abstraction.addBooleanAssignmentTrees(booleanAssignmentTrees);
-		abstraction.addMovements(controlFlow);
-		abstraction.addPlaceMovements(controlPlaces);
-		abstraction.addVariables(variables);
-		abstraction.addIntegers(integers);
-		abstraction.addRateAssignments(rateAssignments);
-		abstraction.addRateAssignmentTrees(rateAssignmentTrees);
-		abstraction.addContinuousAssignments(contAssignments);
-		abstraction.addContinuousAssignmentTrees(contAssignmentTrees);
-		abstraction.addIntegerAssignments(intAssignments);
-		abstraction.addIntegerAssignmentTrees(intAssignmentTrees);
-		abstraction.addProperty(property);
-		abstraction.addFails(fail);
-		return abstraction;
-	}
-
 	/*
 	 * private void parseTransitions(StringBuffer data) { Pattern pattern =
 	 * Pattern.compile(TRANSITION); Matcher line_matcher =
