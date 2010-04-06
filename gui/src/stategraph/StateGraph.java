@@ -10,14 +10,15 @@ import java.util.Queue;
 import java.util.Stack;
 
 import lhpn2sbml.parser.ExprTree;
-import lhpn2sbml.parser.LHPNFile;
+import lhpn2sbml.parser.LhpnFile;
+import lhpn2sbml.parser.Place;
 
 public class StateGraph {
 	private HashMap<String, LinkedList<State>> stateGraph;
 	private ArrayList<String> variables;
-	private LHPNFile lhpn;
+	private LhpnFile lhpn;
 
-	public StateGraph(LHPNFile lhpn) {
+	public StateGraph(LhpnFile lhpn) {
 		this.lhpn = lhpn;
 		buildStateGraph();
 	}
@@ -42,9 +43,8 @@ public class StateGraph {
 			allVariables.put(var, lhpn.getInitialVal(var));
 		}
 		ArrayList<String> markedPlaces = new ArrayList<String>();
-		HashMap<String, Boolean> places = lhpn.getPlaces();
-		for (String place : places.keySet()) {
-			if (places.get(place)) {
+		for (String place : lhpn.getPlaceList()) {
+			if (lhpn.getPlace(place).isMarked()) {
 				markedPlaces.add(place);
 			}
 		}
@@ -90,7 +90,7 @@ public class StateGraph {
 			}
 			for (String key : allVariables.keySet()) {
 				if (lhpn.getBoolAssignTree(fire.getTransition(), key) != null) {
-					double eval = lhpn.getBoolAssignTree(fire.getTransition(), key)[0]
+					double eval = lhpn.getBoolAssignTree(fire.getTransition(), key)
 							.evaluateExp(allVariables);
 					if (eval == 0.0) {
 						allVariables.put(key, "false");
@@ -101,12 +101,12 @@ public class StateGraph {
 				}
 				if (lhpn.getContAssignTree(fire.getTransition(), key) != null) {
 					allVariables.put(key, ""
-							+ lhpn.getContAssignTree(fire.getTransition(), key)[0]
+							+ lhpn.getContAssignTree(fire.getTransition(), key)
 									.evaluateExp(allVariables));
 				}
 				if (lhpn.getIntAssignTree(fire.getTransition(), key) != null) {
 					allVariables.put(key, ""
-							+ ((int) lhpn.getIntAssignTree(fire.getTransition(), key)[0]
+							+ ((int) lhpn.getIntAssignTree(fire.getTransition(), key)
 									.evaluateExp(allVariables)));
 				}
 			}

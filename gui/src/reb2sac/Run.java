@@ -11,7 +11,7 @@ import javax.swing.*;
 import parser.*;
 
 import lhpn2sbml.gui.LHPNEditor;
-import lhpn2sbml.parser.LHPNFile;
+import lhpn2sbml.parser.LhpnFile;
 
 import biomodelsim.*;
 import gcm2sbml.gui.GCM2SBMLEditor;
@@ -547,7 +547,7 @@ public class Run implements ActionListener {
 					}
 					GCMFile gcm = gcmEditor.getGCM();
 					gcm.flattenGCM();
-					LHPNFile lhpnFile = gcm.convertToLHPN(specs, conLevel);
+					LhpnFile lhpnFile = gcm.convertToLHPN(specs, conLevel);
 					lhpnFile.save(root + separator + lhpnName);
 					log.addText("Saving GCM file as LHPN:\n" + root + separator + lhpnName + "\n");
 					time1 = System.nanoTime();
@@ -604,7 +604,7 @@ public class Run implements ActionListener {
 					}
 					GCMFile gcm = gcmEditor.getGCM();
 					gcm.flattenGCM();
-					LHPNFile lhpnFile = gcm.convertToLHPN(specs, conLevel);
+					LhpnFile lhpnFile = gcm.convertToLHPN(specs, conLevel);
 					lhpnFile.save(filename.replace(".gcm", "").replace(".sbml", "").replace(".xml",
 							"")
 							+ ".lpn");

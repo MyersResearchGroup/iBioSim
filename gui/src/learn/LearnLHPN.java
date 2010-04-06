@@ -1,7 +1,7 @@
 package learn;
 
 //import gcm2sbml.parser.GCMFile;
-import lhpn2sbml.parser.LHPNFile;
+import lhpn2sbml.parser.LhpnFile;
 import parser.*;
 import java.awt.*;
 import java.awt.List;
@@ -99,7 +99,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 
 	private boolean placeRates = true;
 
-	private LHPNFile g;
+	private LhpnFile g;
 
 	private Integer numPlaces = 0;
 
@@ -686,10 +686,10 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		}
 		// SB
 		variablesList = new ArrayList<String>();
-		LHPNFile lhpn = new LHPNFile(log);
+		LhpnFile lhpn = new LhpnFile(log);
 		// log.addText(learnFile);
 		lhpn.load(learnFile);
-		HashMap<String, Properties> variablesMap = lhpn.getVariables();
+		HashMap<String, Properties> variablesMap = lhpn.getContinuous();
 		for (String s : variablesMap.keySet()) {
 			variablesList.add(s);
 			reqdVarsL.add(new Variable(s));
@@ -2579,9 +2579,9 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 	//	divisionsL = new ArrayList<ArrayList<Double>>();	// SB
 		thresholds = new HashMap<String, ArrayList<Double>>(); // SB
 		reqdVarsL = new ArrayList<Variable>();				// SB
-		LHPNFile lhpn = new LHPNFile();
+		LhpnFile lhpn = new LhpnFile();
 		lhpn.load(learnFile);
-		HashMap<String, Properties> variablesMap = lhpn.getVariables();
+		HashMap<String, Properties> variablesMap = lhpn.getContinuous();
 		for (String s : variablesMap.keySet()) {
 			variablesList.add(s);
 			reqdVarsL.add(new Variable(s));					// SB
@@ -2754,7 +2754,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			String enFailAnd = "";
 			String enFail = "";
 			// Add logic to deal with failprop and related places/transitions
-			g = new LHPNFile(); // The generated lhpn is stored in this object
+			g = new LhpnFile(); // The generated lhpn is stored in this object
 			placeInfo = new HashMap<String, Properties>();
 			transitionInfo = new HashMap<String, Properties>();
 			cvgInfo = new HashMap<String, Properties>();
@@ -2790,7 +2790,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				transitionInfo.put("failProp", p1);
 				p1.setProperty("transitionNum", numTransitions.toString());
 				g.addTransition("t" + numTransitions); // prevTranKey+key);
-				g.addControlFlow("p" + placeInfo.get("failProp").getProperty("placeNum"), "t" + transitionInfo.get("failProp").getProperty("transitionNum")); 
+				g.addMovement("p" + placeInfo.get("failProp").getProperty("placeNum"), "t" + transitionInfo.get("failProp").getProperty("transitionNum")); 
 				numTransitions++;
 				enFailAnd = "&~fail";
 				enFail = "~fail";
@@ -2866,7 +2866,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				} else {
 					initCond.put("value", v.getInitValue());
 					initCond.put("rate", v.getInitRate());
-					g.addVar(v.getName(), initCond);
+					g.addContinuous(v.getName(), initCond);
 				}
 			}
 			g.addOutput("fail", "false");
@@ -2894,7 +2894,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				} else {
 					initCond.put("value", v.getInitValue());
 					initCond.put("rate", v.getInitRate());
-					g.changeVarInitCond(v.getName(), initCond);
+					g.changeContInitCond(v.getName(), initCond);
 				}
 			}
 			String[] transitionList = g.getTransitionList();
@@ -3613,15 +3613,15 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 						if (ratePlaces.size() == 2){
 							transientNetTransitions.put(prevPlaceKey + key, p1);
 							g.addTransition("t" + numTransitions); // prevTranKey+key);
-							g.addControlFlow("p" + transientNetPlaces.get(prevPlaceKey).getProperty("placeNum"), "t" + transientNetTransitions.get(prevPlaceKey + key).getProperty("transitionNum")); 
-							g.addControlFlow("t" + transientNetTransitions.get(prevPlaceKey + key).getProperty("transitionNum"), "p" + placeInfo.get(key).getProperty("placeNum"));
+							g.addMovement("p" + transientNetPlaces.get(prevPlaceKey).getProperty("placeNum"), "t" + transientNetTransitions.get(prevPlaceKey + key).getProperty("transitionNum")); 
+							g.addMovement("t" + transientNetTransitions.get(prevPlaceKey + key).getProperty("transitionNum"), "p" + placeInfo.get(key).getProperty("placeNum"));
 							transientNet = true;
 						}
 						else{
 							transitionInfo.put(prevPlaceKey + key, p1);
 							g.addTransition("t" + numTransitions); // prevTranKey+key);
-							g.addControlFlow("p" + placeInfo.get(prevPlaceKey).getProperty("placeNum"), "t" + transitionInfo.get(prevPlaceKey + key).getProperty("transitionNum")); 
-							g.addControlFlow("t" + transitionInfo.get(prevPlaceKey + key).getProperty("transitionNum"), "p" + placeInfo.get(key).getProperty("placeNum"));
+							g.addMovement("p" + placeInfo.get(prevPlaceKey).getProperty("placeNum"), "t" + transitionInfo.get(prevPlaceKey + key).getProperty("transitionNum")); 
+							g.addMovement("t" + transitionInfo.get(prevPlaceKey + key).getProperty("transitionNum"), "p" + placeInfo.get(key).getProperty("placeNum"));
 						}
 						numTransitions++;
 						cvgProp.setProperty("transitions", String.valueOf(Integer.parseInt(cvgProp.getProperty("transitions"))+1));
@@ -3749,15 +3749,15 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 								if (transientNetPlaces.containsKey(prevPlace)){
 									transientNetTransitions.put(prevPlace + currPlace, p3);
 									g.addTransition("t" + numTransitions); // prevTranKey+key);
-									g.addControlFlow("p" + transientNetPlaces.get(prevPlace).getProperty("placeNum"), "t" + transientNetTransitions.get(prevPlace + currPlace).getProperty("transitionNum")); 
-									g.addControlFlow("t" + transientNetTransitions.get(prevPlace + currPlace).getProperty("transitionNum"), "p" + placeInfo.get(currPlace).getProperty("placeNum"));
+									g.addMovement("p" + transientNetPlaces.get(prevPlace).getProperty("placeNum"), "t" + transientNetTransitions.get(prevPlace + currPlace).getProperty("transitionNum")); 
+									g.addMovement("t" + transientNetTransitions.get(prevPlace + currPlace).getProperty("transitionNum"), "p" + placeInfo.get(currPlace).getProperty("placeNum"));
 								//	transientNet = true;
 								}
 								else{
 									transitionInfo.put(prevPlace + currPlace, p3);
 									g.addTransition("t" + numTransitions); // prevTranKey+key);
-									g.addControlFlow("p"+ placeInfo.get(prevPlace).getProperty("placeNum"), "t"+ transitionInfo.get(prevPlace + currPlace).getProperty("transitionNum")); 
-									g.addControlFlow("t"+ transitionInfo.get(prevPlace+ currPlace).getProperty("transitionNum"),"p"+ placeInfo.get(currPlace).getProperty("placeNum"));
+									g.addMovement("p"+ placeInfo.get(prevPlace).getProperty("placeNum"), "t"+ transitionInfo.get(prevPlace + currPlace).getProperty("transitionNum")); 
+									g.addMovement("t"+ transitionInfo.get(prevPlace+ currPlace).getProperty("transitionNum"),"p"+ placeInfo.get(currPlace).getProperty("placeNum"));
 								}
 								numTransitions++;
 								cvgProp.setProperty("transitions", String.valueOf(Integer.parseInt(cvgProp.getProperty("transitions"))+1));
@@ -5755,8 +5755,8 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 								transitionInfo.put(p + key, p1);
 								p1.setProperty("transitionNum", numTransitions.toString());
 								g.addTransition("t" + numTransitions); // prevTranKey+key);
-								g.addControlFlow("p" + placeInfo.get(p).getProperty("placeNum"), "t" + transitionInfo.get(p + key).getProperty("transitionNum")); 
-								g.addControlFlow("t" + transitionInfo.get(p + key).getProperty("transitionNum"), "p" + placeInfo.get(key).getProperty("placeNum"));
+								g.addMovement("p" + placeInfo.get(p).getProperty("placeNum"), "t" + transitionInfo.get(p + key).getProperty("transitionNum")); 
+								g.addMovement("t" + transitionInfo.get(p + key).getProperty("transitionNum"), "p" + placeInfo.get(key).getProperty("placeNum"));
 							//	g.addEnabling("t" + numTransitions, "~fail");
 								g.addEnabling("t" + numTransitions, "~(" + reqdVarsL.get(i).getName() + ">=" + (int) Math.floor(lowerLimit[i]) + ")" + "&~fail");
 								g.addRateAssign("t" + numTransitions, reqdVarsL.get(i).getName(), "["	+ getMinRate(key, reqdVarsL.get(i).getName())	+ "," + getMaxRate(key, reqdVarsL.get(i).getName()) + "]");
@@ -5765,8 +5765,8 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 								transitionInfo.put(key + p, p2);
 								p2.setProperty("transitionNum", numTransitions.toString());
 								g.addTransition("t" + numTransitions); // prevTranKey+key);
-								g.addControlFlow("p" + placeInfo.get(key).getProperty("placeNum"), "t" + transitionInfo.get(key + p).getProperty("transitionNum")); 
-								g.addControlFlow("t" + transitionInfo.get(key + p).getProperty("transitionNum"), "p" + placeInfo.get(p).getProperty("placeNum"));
+								g.addMovement("p" + placeInfo.get(key).getProperty("placeNum"), "t" + transitionInfo.get(key + p).getProperty("transitionNum")); 
+								g.addMovement("t" + transitionInfo.get(key + p).getProperty("transitionNum"), "p" + placeInfo.get(p).getProperty("placeNum"));
 								g.addEnabling("t" + numTransitions, "(" + reqdVarsL.get(i).getName() + ">=" + (int) Math.floor(lowerLimit[i]) + ")" + "&~fail");
 								g.addRateAssign("t" + numTransitions, reqdVarsL.get(i).getName(), "["	+ getMinRate(p, reqdVarsL.get(i).getName())	+ "," + getMaxRate(p, reqdVarsL.get(i).getName()) + "]");
 								numTransitions++;
@@ -5781,8 +5781,8 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 									transitionInfo.put(p + key, p1);
 									p1.setProperty("transitionNum", numTransitions.toString());
 									g.addTransition("t" + numTransitions); // prevTranKey+key);
-									g.addControlFlow("p" + placeInfo.get(p).getProperty("placeNum"), "t" + transitionInfo.get(p + key).getProperty("transitionNum")); 
-									g.addControlFlow("t" + transitionInfo.get(p + key).getProperty("transitionNum"), "p" + placeInfo.get(key).getProperty("placeNum"));
+									g.addMovement("p" + placeInfo.get(p).getProperty("placeNum"), "t" + transitionInfo.get(p + key).getProperty("transitionNum")); 
+									g.addMovement("t" + transitionInfo.get(p + key).getProperty("transitionNum"), "p" + placeInfo.get(key).getProperty("placeNum"));
 								//	g.addEnabling("t" + numTransitions, "~fail");
 									g.addEnabling("t" + numTransitions, "~(" + reqdVarsL.get(i).getName() + ">=" + (int) Math.floor(lowerLimit[i]) + ")" + "&~fail");
 									g.addRateAssign("t" + numTransitions, reqdVarsL.get(i).getName(), "["	+ getMinRate(key, reqdVarsL.get(i).getName())	+ "," + getMaxRate(key, reqdVarsL.get(i).getName()) + "]");
@@ -5860,8 +5860,8 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 								transitionInfo.put(p + key, p1);
 								p1.setProperty("transitionNum", numTransitions.toString());
 								g.addTransition("t" + numTransitions); // prevTranKey+key);
-								g.addControlFlow("p" + placeInfo.get(p).getProperty("placeNum"), "t" + transitionInfo.get(p + key).getProperty("transitionNum")); 
-								g.addControlFlow("t" + transitionInfo.get(p + key).getProperty("transitionNum"), "p" + placeInfo.get(key).getProperty("placeNum"));
+								g.addMovement("p" + placeInfo.get(p).getProperty("placeNum"), "t" + transitionInfo.get(p + key).getProperty("transitionNum")); 
+								g.addMovement("t" + transitionInfo.get(p + key).getProperty("transitionNum"), "p" + placeInfo.get(key).getProperty("placeNum"));
 							//	g.addEnabling("t" + numTransitions, "~fail");
 								g.addRateAssign("t" + numTransitions, reqdVarsL.get(i).getName(), "["	+ getMinRate(key, reqdVarsL.get(i).getName())	+ "," + getMaxRate(key, reqdVarsL.get(i).getName()) + "]");
 								g.addEnabling("t" + numTransitions, "(" + reqdVarsL.get(i).getName() + ">=" + (int) Math.ceil(upperLimit[i]) + ")" + "&~fail");
@@ -5870,8 +5870,8 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 								transitionInfo.put(key + p, p2);
 								p2.setProperty("transitionNum", numTransitions.toString());
 								g.addTransition("t" + numTransitions); // prevTranKey+key);
-								g.addControlFlow("p" + placeInfo.get(key).getProperty("placeNum"), "t" + transitionInfo.get(key + p).getProperty("transitionNum")); 
-								g.addControlFlow("t" + transitionInfo.get(key + p).getProperty("transitionNum"), "p" + placeInfo.get(p).getProperty("placeNum"));
+								g.addMovement("p" + placeInfo.get(key).getProperty("placeNum"), "t" + transitionInfo.get(key + p).getProperty("transitionNum")); 
+								g.addMovement("t" + transitionInfo.get(key + p).getProperty("transitionNum"), "p" + placeInfo.get(p).getProperty("placeNum"));
 								g.addEnabling("t" + numTransitions, "~(" + reqdVarsL.get(i).getName() + ">=" + (int) Math.ceil(upperLimit[i]) + ")" + "&~fail");
 								g.addRateAssign("t" + numTransitions, reqdVarsL.get(i).getName(), "["	+ getMinRate(p, reqdVarsL.get(i).getName())	+ "," + getMaxRate(p, reqdVarsL.get(i).getName()) + "]");
 								numTransitions++; 
@@ -5885,8 +5885,8 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 									transitionInfo.put(p + key, p1);
 									p1.setProperty("transitionNum", numTransitions.toString());
 									g.addTransition("t" + numTransitions); // prevTranKey+key);
-									g.addControlFlow("p" + placeInfo.get(p).getProperty("placeNum"), "t" + transitionInfo.get(p + key).getProperty("transitionNum")); 
-									g.addControlFlow("t" + transitionInfo.get(p + key).getProperty("transitionNum"), "p" + placeInfo.get(key).getProperty("placeNum"));
+									g.addMovement("p" + placeInfo.get(p).getProperty("placeNum"), "t" + transitionInfo.get(p + key).getProperty("transitionNum")); 
+									g.addMovement("t" + transitionInfo.get(p + key).getProperty("transitionNum"), "p" + placeInfo.get(key).getProperty("placeNum"));
 								//	g.addEnabling("t" + numTransitions, "~fail");
 									g.addRateAssign("t" + numTransitions, reqdVarsL.get(i).getName(), "["	+ getMinRate(key, reqdVarsL.get(i).getName())	+ "," + getMaxRate(key, reqdVarsL.get(i).getName()) + "]");
 									g.addEnabling("t" + numTransitions, "(" + reqdVarsL.get(i).getName() + ">=" + (int) Math.ceil(upperLimit[i]) + ")" + "&~fail");
@@ -5957,8 +5957,8 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 									transitionInfo.put(p + key, p1);
 									p1.setProperty("transitionNum", numTransitions.toString());
 									g.addTransition("t" + numTransitions); // prevTranKey+key);
-									g.addControlFlow("p" + placeInfo.get(p).getProperty("placeNum"), "t" + transitionInfo.get(p + key).getProperty("transitionNum")); 
-									g.addControlFlow("t" + transitionInfo.get(p + key).getProperty("transitionNum"), "p" + placeInfo.get(key).getProperty("placeNum"));
+									g.addMovement("p" + placeInfo.get(p).getProperty("placeNum"), "t" + transitionInfo.get(p + key).getProperty("transitionNum")); 
+									g.addMovement("t" + transitionInfo.get(p + key).getProperty("transitionNum"), "p" + placeInfo.get(key).getProperty("placeNum"));
 								//	g.addEnabling("t" + numTransitions, "~fail");
 									g.addEnabling("t" + numTransitions, "~(" + reqdVarsL.get(i).getName() + ">=" + (int) Math.floor(lowerLimit[i]) + ")" + "&~fail");
 									g.addRateAssign("t" + numTransitions, reqdVarsL.get(i).getName(), "["	+ getMinRate(key, reqdVarsL.get(i).getName())	+ "," + getMaxRate(key, reqdVarsL.get(i).getName()) + "]");
@@ -6004,8 +6004,8 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 									transitionInfo.put(p + key, p1);
 									p1.setProperty("transitionNum", numTransitions.toString());
 									g.addTransition("t" + numTransitions); // prevTranKey+key);
-									g.addControlFlow("p" + placeInfo.get(p).getProperty("placeNum"), "t" + transitionInfo.get(p + key).getProperty("transitionNum")); 
-									g.addControlFlow("t" + transitionInfo.get(p + key).getProperty("transitionNum"), "p" + placeInfo.get(key).getProperty("placeNum"));
+									g.addMovement("p" + placeInfo.get(p).getProperty("placeNum"), "t" + transitionInfo.get(p + key).getProperty("transitionNum")); 
+									g.addMovement("t" + transitionInfo.get(p + key).getProperty("transitionNum"), "p" + placeInfo.get(key).getProperty("placeNum"));
 								//	g.addEnabling("t" + numTransitions, "~fail");
 									g.addRateAssign("t" + numTransitions, reqdVarsL.get(i).getName(), "["	+ getMinRate(key, reqdVarsL.get(i).getName())	+ "," + getMaxRate(key, reqdVarsL.get(i).getName()) + "]");
 									g.addEnabling("t" + numTransitions, "(" + reqdVarsL.get(i).getName() + ">=" + (int) Math.ceil(upperLimit[i]) + ")" + "&~fail");

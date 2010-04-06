@@ -18,7 +18,7 @@ import java.util.Properties;
 import java.util.prefs.Preferences;
 
 import lhpn2sbml.parser.Abstraction;
-import lhpn2sbml.parser.LHPNFile;
+import lhpn2sbml.parser.LhpnFile;
 
 import gcm2sbml.gui.PropertyList;
 import gcm2sbml.util.Utility;
@@ -825,7 +825,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		for (int i = 0; i < array.length - 1; i++) {
 			tempDir = tempDir + array[i] + separator;
 		}
-		LHPNFile lhpnFile = new LHPNFile();
+		LhpnFile lhpnFile = new LhpnFile();
 		lhpnFile.load(directory + separator + lpnFile);
 		Abstraction abstraction = lhpnFile.abstractLhpn(this);
 		String abstFilename;

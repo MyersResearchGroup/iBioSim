@@ -12,8 +12,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Properties;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+//import java.util.regex.Matcher;
+//import java.util.regex.Pattern;
 
 //import javax.swing.DefaultListModel;
 import javax.swing.JComboBox;
@@ -33,7 +33,7 @@ public class VariablesPanel extends JPanel implements ActionListener {
 
 	private Boolean continuous, integer;
 
-	private LHPNFile lhpn;
+	private LhpnFile lhpn;
 
 	private JPanel initPanel = null;
 
@@ -54,7 +54,7 @@ public class VariablesPanel extends JPanel implements ActionListener {
 	private BioSim biosim;
 
 	public VariablesPanel(String selected, PropertyList variablesList, Boolean boolCont,
-			Boolean integer, LHPNFile lhpn, boolean atacs, BioSim biosim) {
+			Boolean integer, LhpnFile lhpn, boolean atacs, BioSim biosim) {
 		super(new GridLayout(4, 1));
 		if (selected != null) {
 			String[] array = selected.split(" ");
@@ -286,7 +286,7 @@ public class VariablesPanel extends JPanel implements ActionListener {
 			if (lhpn.isContinuous(id) || continuous) {
 				// System.out.println("add var " + property);
 				tempVal = fields.get("Initial value").getValue();
-				lhpn.addVar(id, property);
+				lhpn.addContinuous(id, property);
 			}
 			else if (lhpn.isInteger(id) || integer) {
 				// System.out.println("add var " + property);

@@ -7,19 +7,16 @@ import gcm2sbml.gui.Runnable;
 import biomodelsim.BioSim;
 import biomodelsim.Log;
 import gcm2sbml.util.GlobalConstants;
-import gcm2sbml.util.Utility;
-//import lhpn2sbml.parser.ExprTree;
+import gcm2sbml.util.Utility; //import lhpn2sbml.parser.ExprTree;
 
 //import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
-//import java.awt.Dimension;
+import java.awt.GridBagConstraints; //import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
-import java.util.Properties;
-//import java.util.regex.Matcher;
+import java.util.Properties; //import java.util.regex.Matcher;
 //import java.util.regex.Pattern;
 
 //import javax.swing.DefaultListModel;
@@ -30,7 +27,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JCheckBox;
 import javax.swing.JRadioButton;
-import javax.swing.ButtonGroup;;
+import javax.swing.ButtonGroup;
+
+;
 
 //import javax.swing.Icon;
 
@@ -46,27 +45,25 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 	private JPanel fieldPanel;
 
 	private String[] options = { "Ok", "Cancel" };
-	
+
 	private String[] allVariables;
-	
+
 	private JCheckBox fail;
-	
-	private JRadioButton rateButton, delayButton;
 
 	// private Object[] types = { "Boolean", "Continuous", "Integer", "Rate" };
 
-	private LHPNFile lhpn;
+	private LhpnFile lhpn;
 
 	// private Log log;
 
 	private HashMap<String, PropertyField> fields = null;
-	
+
 	private BioSim biosim;
 
-	//private ExprTree delayTree, rateTree, enablingTree;
+	// private ExprTree delayTree, rateTree, enablingTree;
 
 	public TransitionsPanel(String selected, PropertyList transitionsList,
-			PropertyList controlList, LHPNFile lhpn, Log log, BioSim biosim) {
+			PropertyList controlList, LhpnFile lhpn, Log log, BioSim biosim) {
 		super(new GridBagLayout());
 		GridBagConstraints constraints = new GridBagConstraints();
 		this.selected = selected;
@@ -86,7 +83,7 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 		// field.setPreferredSize(new Dimension(5, 5));
 		fields.put(GlobalConstants.ID, field);
 		fieldPanel.add(field);
-		
+
 		// Enabling Field
 		field = new PropertyField("Enabling Condition", "", null, null, Utility.NAMEstring);
 		fields.put("Enabling Condition", field);
@@ -94,7 +91,7 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 
 		// Delay field
 		field = new PropertyField("Delay Assignment", "", null, null, Utility.NAMEstring);
-		fields.put("delay/rate", field);
+		fields.put("delay", field);
 		fieldPanel.add(field);
 
 		// fieldPanel.setMaximumSize(new Dimension(50,50));
@@ -102,35 +99,21 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 		constraints.gridx = 0;
 		constraints.gridy = 0;
 		add(fieldPanel, constraints);
-		
+
 		// Fail Transition check box
 		JPanel failPanel = new JPanel(new GridLayout(1, 2));
-		//failPanel.setMinimumSize(new Dimension(200, 20));
+		// failPanel.setMinimumSize(new Dimension(200, 20));
 		JLabel failLabel = new JLabel("Fail Transition");
-		//JLabel blankLabel1 = new JLabel("  ");
+		// JLabel blankLabel1 = new JLabel("  ");
 		JLabel blankLabel2 = new JLabel("                                     ");
 		fail = new JCheckBox();
 		failPanel.add(failLabel);
-		//failPanel.add(blankLabel1);
+		// failPanel.add(blankLabel1);
 		failPanel.add(fail);
 		failPanel.add(blankLabel2);
 		constraints.gridx = 0;
 		constraints.gridy = 1;
-		add(failPanel,constraints);
-		
-		//Delay or Transition Rate Selection
-		JPanel rateSelectPanel = new JPanel(new GridLayout(1,2));
-		delayButton = new JRadioButton("Use Delay Bounds");
-		rateButton = new JRadioButton("Use Transition Rate");
-		ButtonGroup selectGroup = new ButtonGroup();
-		selectGroup.add(delayButton);
-		selectGroup.add(rateButton);
-		delayButton.setSelected(true);
-		rateSelectPanel.add(delayButton);
-		rateSelectPanel.add(rateButton);
-		constraints.gridx = 0;
-		constraints.gridy = 2;
-		add(rateSelectPanel,constraints);
+		add(failPanel, constraints);
 
 		// Assignment panel
 		assignments = new PropertyList("Assignment List");
@@ -151,8 +134,8 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 					}
 				}
 			}
-			if (lhpn.getContAssignVars(selected) != null) {
-				for (String s : lhpn.getContAssignVars(selected)) {
+			if (lhpn.getContVars(selected) != null) {
+				for (String s : lhpn.getContVars(selected)) {
 					if (s != null) {
 						if (!s.equals(null)) {
 							varAssignments.addItem(s + ":=" + lhpn.getContAssign(selected, s));
@@ -162,13 +145,10 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 				}
 			}
 			if (lhpn.getIntVars(selected) != null) {
-				for (Object obj : lhpn.getIntVars(selected).keySet()) {
-					if (obj != null) {
-						String s = (String) obj;
-						if (!s.equals(null)) {
-							intAssignments.addItem(s + ":=" + lhpn.getIntAssign(selected, s));
-							assignments.addItem(s + ":=" + lhpn.getIntAssign(selected, s));
-						}
+				for (String s : lhpn.getIntVars(selected)) {
+					if (!s.equals(null)) {
+						intAssignments.addItem(s + ":=" + lhpn.getIntAssign(selected, s));
+						assignments.addItem(s + ":=" + lhpn.getIntAssign(selected, s));
 					}
 				}
 			}
@@ -189,7 +169,7 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 		JPanel assignPanel = Utility.createPanel(this, "Assignments", assignments, addAssign,
 				removeAssign, editAssign);
 		constraints.gridx = 0;
-		constraints.gridy = 3;
+		constraints.gridy = 2;
 		add(assignPanel, constraints);
 
 		String oldName = null;
@@ -198,25 +178,25 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 			// Properties prop = lhpn.getVariables().get(selected);
 			fields.get(GlobalConstants.ID).setValue(selected);
 			// log.addText(lhpn.getDelay(selected));
-			String delay = lhpn.getDelay(selected);
-			if (lhpn.isFail(oldName)) {
+			String delay = lhpn.getTransition(selected).getDelay();
+			if (lhpn.getTransition(oldName).isFail()) {
 				fail.setSelected(true);
 			}
 			if (delay != null) {
-				fields.get("delay/rate").setValue(delay);
+				fields.get("delay").setValue(delay);
 			}
-			else if (lhpn.getTransitionRate(selected) != null) {
-				fields.get("delay/rate").setValue(lhpn.getTransitionRate(selected));
-				rateButton.setSelected(true);
-			}
-			fields.get("Enabling Condition").setValue(lhpn.getEnabling(selected));
-			//String temp = lhpn.getEnabling(selected);
-			if (lhpn.getEnabling(selected) != null) {
-				fields.get("Enabling Condition").setValue(lhpn.getEnabling(selected));
-			} 
-			//if (lhpn.getTransitionRate(selected) != null) {
-			//	fields.get("Transition rate").setValue(lhpn.getTransitionRate(selected));
+			//else if (lhpn.getTransitionRate(selected) != null) {
+			//	fields.get("delay/rate").setValue(lhpn.getTransitionRate(selected));
+			//	rateButton.setSelected(true);
 			//}
+			fields.get("Enabling Condition").setValue(lhpn.getTransition(selected).getEnabling());
+			// String temp = lhpn.getEnabling(selected);
+			if (lhpn.getTransition(selected).getEnabling() != null) {
+				fields.get("Enabling Condition").setValue(lhpn.getTransition(selected).getEnabling());
+			}
+			// if (lhpn.getTransitionRate(selected) != null) {
+			// fields.get("Transition rate").setValue(lhpn.getTransitionRate(selected));
+			// }
 			// log.addText(selected + lhpn.getEnabling(selected));
 			// loadProperties(prop);
 		}
@@ -270,7 +250,8 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 			}
 			String id = fields.get(GlobalConstants.ID).getValue();
 			if (!save(id)) {
-				//Utility.createErrorMessage("Error", "Illegal values entered.");
+				// Utility.createErrorMessage("Error",
+				// "Illegal values entered.");
 				return false;
 			}
 
@@ -281,7 +262,7 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 					property.put(f.getKey(), f.getValue());
 				}
 			}
-			
+
 			if (selected != null && !oldName.equals(id)) {
 				lhpn.changeTransitionName(oldName, id);
 			}
@@ -313,12 +294,13 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 
 	public boolean save(String transition) {
 		// log.addText("saving...");
-		lhpn.removeAllAssign(transition);
+		lhpn.getTransition(transition).removeAllAssign();
 		if (boolAssignments.getItems() != null) {
 			for (String s : boolAssignments.getItems()) {
 				// System.out.println("bool" + s);
 				String[] tempArray = s.split(":=");
-				if (!lhpn.addBoolAssign(transition, tempArray[0], tempArray[1])) return false;
+				if (!lhpn.getTransition(transition).addBoolAssign(tempArray[0], tempArray[1]))
+					return false;
 			}
 		}
 		if (varAssignments.getItems() != null) {
@@ -327,7 +309,7 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 				String[] tempArray = s.split(":=");
 				// System.out.println(transition + " " + tempArray[0] + " " +
 				// tempArray[1]);
-				lhpn.addContAssign(transition, tempArray[0], tempArray[1]);
+				lhpn.getTransition(transition).addContAssign(tempArray[0], tempArray[1]);
 				// log.addText("continuous "+ tempArray[0]);
 			}
 		}
@@ -337,7 +319,8 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 				String[] tempArray = s.split(":=");
 				// System.out.println(transition + " " + tempArray[0] + " " +
 				// tempArray[1]);
-				if (!lhpn.addIntAssign(transition, tempArray[0], tempArray[1])) return false;
+				if (!lhpn.getTransition(transition).addIntAssign(tempArray[0], tempArray[1]))
+					return false;
 				// log.addText("integer " + tempArray[0]);
 			}
 		}
@@ -346,26 +329,21 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 				// System.out.println("rate " + s);
 				String[] tempArray = s.split("':=");
 				// System.out.println(tempArray[1]);
-				if (!lhpn.addRateAssign(transition, tempArray[0], tempArray[1])) return false;
+				if (!lhpn.getTransition(transition).addRateAssign(tempArray[0], tempArray[1]))
+					return false;
 			}
 		}
-		//String delay;
-		if (rateButton.isSelected()) {
-			if (!lhpn.changeDelay(transition, fields.get("delay/rate").getValue()))
-				return false;
-		}
-		else if (delayButton.isSelected()) {
-			if (!lhpn.changeTransitionRate(transition, fields.get("delay/rate").getValue()))
-				return false;
-		}
+		// String delay;
+		if (!lhpn.getTransition(transition).addDelay(fields.get("delay").getValue()))
+			return false;
 		if (fail.isSelected()) {
-			lhpn.addFail(transition);
+			lhpn.getTransition(transition).setFail(true);
 		}
 		else {
-			lhpn.removeFail(transition);
+			lhpn.getTransition(transition).setFail(false);
 		}
 		if (fields.get("Enabling Condition") != null) {
-			if (!lhpn.changeEnabling(transition, fields.get("Enabling Condition").getValue()))
+			if (!lhpn.getTransition(transition).addEnabling(fields.get("Enabling Condition").getValue()))
 				return false;
 		}
 		return true;
@@ -393,22 +371,22 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 				if (isBoolean(assignment)) {
 					list.removeItem(assignment);
 					boolAssignments.removeItem(assignment);
-					lhpn.removeBoolAssign(selected, assignment);
+					lhpn.getTransition(selected).removeBoolAssign(assignment);
 				}
 				else if (isContinuous(assignment)) {
 					list.removeItem(assignment);
 					varAssignments.removeItem(assignment);
-					lhpn.removeContAssign(selected, assignment);
+					lhpn.getTransition(selected).removeContAssign(assignment);
 				}
 				else if (isRate(assignment)) {
 					list.removeItem(assignment);
 					rateAssignments.removeItem(assignment);
-					lhpn.removeRateAssign(selected, assignment);
+					lhpn.getTransition(selected).removeRateAssign(assignment);
 				}
 				else if (isInteger(assignment)) {
 					list.removeItem(assignment);
 					intAssignments.removeItem(assignment);
-					lhpn.removeIntAssign(selected, assignment);
+					lhpn.getTransition(selected).removeIntAssign(assignment);
 				}
 			}
 		}
@@ -462,7 +440,8 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 			else {
 				// System.out.println("transition " + selected);
 				AssignmentPanel panel = new AssignmentPanel(selected, variable, list,
-						varAssignments, rateAssignments, boolAssignments, intAssignments, lhpn, biosim);
+						varAssignments, rateAssignments, boolAssignments, intAssignments, lhpn,
+						biosim);
 			}
 		}
 

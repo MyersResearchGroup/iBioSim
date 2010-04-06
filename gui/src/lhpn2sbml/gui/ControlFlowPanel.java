@@ -33,7 +33,7 @@ public class ControlFlowPanel extends JPanel implements ActionListener {
 
 	private String[] options = { "Ok", "Cancel" };
 
-	private LHPNFile lhpn;
+	private LhpnFile lhpn;
 	
 	private boolean flag = false;
 
@@ -41,7 +41,7 @@ public class ControlFlowPanel extends JPanel implements ActionListener {
 	
 	private BioSim biosim;
 
-	public ControlFlowPanel(String selected, PropertyList flowList, LHPNFile lhpn, BioSim biosim) {
+	public ControlFlowPanel(String selected, PropertyList flowList, LhpnFile lhpn, BioSim biosim) {
 		super(new GridLayout(2, 1));
 		this.selected = selected;
 		this.flowList = flowList;
@@ -200,13 +200,13 @@ public class ControlFlowPanel extends JPanel implements ActionListener {
 			// return false;
 			// }
 			if (oldName == null) {
-				if (lhpn.containsFlow(newFlow[0], newFlow[1])) {
+				if (lhpn.containsMovement(newFlow[0], newFlow[1])) {
 					Utility.createErrorMessage("Error", "Movement already exists.");
 					return false;
 				}
 			}
 			else if (!oldName.equals(id)) {
-				if (lhpn.containsFlow(newFlow[0], newFlow[1])) {
+				if (lhpn.containsMovement(newFlow[0], newFlow[1])) {
 					Utility.createErrorMessage("Error", "Movement already exists.");
 					return false;
 				}
@@ -215,9 +215,9 @@ public class ControlFlowPanel extends JPanel implements ActionListener {
 			// Check to see if we need to add or edit
 
 			if (selected != null && !oldName.equals(id) && oldName != null) {
-				lhpn.removeControlFlow(oldFlow[0], oldFlow[1]);
+				lhpn.removeMovement(oldFlow[0], oldFlow[1]);
 			}
-			lhpn.addControlFlow(fromBox.getSelectedItem().toString(), toBox.getSelectedItem()
+			lhpn.addMovement(fromBox.getSelectedItem().toString(), toBox.getSelectedItem()
 					.toString());
 			flowList.removeItem(oldName);
 			// JOptionPane.showMessageDialog(this, id);

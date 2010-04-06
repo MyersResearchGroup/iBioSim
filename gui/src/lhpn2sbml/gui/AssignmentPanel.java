@@ -36,7 +36,7 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 
 	private String[] options = { "Ok", "Cancel" };
 
-	private LHPNFile lhpn;
+	private LhpnFile lhpn;
 
 	// private JComboBox typeBox, varBox;
 	private JComboBox varBox;
@@ -54,7 +54,7 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 
 	public AssignmentPanel(String transition, String selected, PropertyList assignmentList,
 			PropertyList continuousList, PropertyList rateList, PropertyList booleanList,
-			PropertyList integerList, LHPNFile lhpn, BioSim biosim) {
+			PropertyList integerList, LhpnFile lhpn, BioSim biosim) {
 		super(new GridLayout(3, 1));
 		this.selected = selected;
 		//this.transition = transition;
@@ -237,7 +237,7 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 				return false;
 			}
 			if (oldName == null) {
-				Properties prop = lhpn.getContVars(selected);
+				HashMap<String, String> prop = lhpn.getTransition(selected).getContAssignments();
 				if (prop != null) {
 					if (prop.containsKey((String) varBox.getSelectedItem())) {
 						Utility.createErrorMessage("Error", "Assignment id already exists.");

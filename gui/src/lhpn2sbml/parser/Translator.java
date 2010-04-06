@@ -35,7 +35,7 @@ public class Translator {
 	public void BuildTemplate(String lhpnFilename) {
 		this.filename = lhpnFilename.replace(".lpn", ".xml");
 		// load lhpn file
-		LHPNFile lhpn = new LHPNFile();
+		LhpnFile lhpn = new LhpnFile();
 		lhpn.load(lhpnFilename);
 		
 		// create sbml file
@@ -70,7 +70,7 @@ public class Translator {
 		
 		// translate from lhpn to sbml
 		// ----variables -> parameters-----
-		for (String v: lhpn.getAllVariables()){
+		for (String v: lhpn.getVariables()){
 			if (v != null){
 				String initVal = lhpn.getInitialVal(v);
 				System.out.println("Begin:" + v + "= " + initVal);
@@ -131,7 +131,7 @@ public class Translator {
 		// ----places -> species-----	
 		for (String p: lhpn.getPlaceList()){
 			
-			Boolean initMarking = lhpn.getPlaceInitial(p);
+			Boolean initMarking = lhpn.getPlace(p).isMarked();
 //			System.out.println(p + "=" + initMarking);
 			Species sp = m.createSpecies();
 			sp.setId(p);
@@ -153,7 +153,7 @@ public class Translator {
 		// else use event only
 			int counter = lhpn.getTransitionList().length - 1;
 			for (String t : lhpn.getTransitionList()) {
-				if(lhpn.getTransitionRate(t)!=null){
+				if(lhpn.getTransition(t).getTransitionRate()!=null){
 					Species spT = m.createSpecies();
 					spT.setId(t);
 					spT.setCompartment("default");
@@ -189,7 +189,7 @@ public class Translator {
 					
 					// create exp for KineticLaw
 					// expTestNull is used to test if the enabling condition exists for a transistion t
-					String expTestNull = lhpn.getEnabling(t);
+					String expTestNull = lhpn.getTransition(t).getEnabling();
 					String exp;
 					if (expTestNull == null){
 						exp = "1";
@@ -201,7 +201,7 @@ public class Translator {
 
 					}
 
-					rateReaction.setFormula("(" + lhpn.getTransitionRate(t) + ")" + "*" + reactant.getSpecies() + "*" + exp); 
+					rateReaction.setFormula("(" + lhpn.getTransition(t).getEnabling() + ")" + "*" + reactant.getSpecies() + "*" + exp); 
 					//System.out.println("trans " + t + " enableCond " + lhpn.getEnabling(t));
 					
 					Event e = m.createEvent();
@@ -224,11 +224,11 @@ public class Translator {
 					
 					// assignment <A>
 					// TODO need to test the continuous assignment
-					if (lhpn.getContAssignVars(t) != null){
-						for (String var : lhpn.getContAssignVars(t)){
+					if (lhpn.getContVars(t) != null){
+						for (String var : lhpn.getContVars(t)){
 							if (lhpn.getContAssign(t, var) != null) {
-								ExprTree[] assignContTree = lhpn.getContAssignTree(t, var);	
-								String assignCont = assignContTree[0].toString("SBML");
+								ExprTree assignContTree = lhpn.getContAssignTree(t, var);	
+								String assignCont = assignContTree.toString("SBML");
 								System.out.println("continuous assign: "+ assignCont);
 								EventAssignment assign2 = e.createEventAssignment();
 								assign2.setVariable(var);
@@ -241,8 +241,8 @@ public class Translator {
 					if (lhpn.getIntVars()!= null){
 						for (String var : lhpn.getIntVars()){
 							if (lhpn.getIntAssign(t, var) != null) {
-								ExprTree[] assignIntTree = lhpn.getIntAssignTree(t, var);
-								String assignInt = assignIntTree[0].toString("SBML");
+								ExprTree assignIntTree = lhpn.getIntAssignTree(t, var);
+								String assignInt = assignIntTree.toString("SBML");
 								System.out.println("integer assignment from LHPN: " + var + " := " + assignInt);
 								EventAssignment assign3 = e.createEventAssignment();
 								assign3.setVariable(var);
@@ -255,8 +255,8 @@ public class Translator {
 					if (lhpn.getBooleanVars(t)!= null){
 						for (String var :lhpn.getBooleanVars(t)){
 							if (lhpn.getBoolAssign(t, var) != null) {
-								ExprTree[] assignBoolTree = lhpn.getBoolAssignTree(t, var);
-								String assignBool_tmp = assignBoolTree[0].toString("SBML");
+								ExprTree assignBoolTree = lhpn.getBoolAssignTree(t, var);
+								String assignBool_tmp = assignBoolTree.toString("SBML");
 								String assignBool = "piecewise(1," + assignBool_tmp + ",0)";
 								System.out.println("boolean assignment from LHPN: " + var + " := " + assignBool);
 								EventAssignment assign4 = e.createEventAssignment();
@@ -271,8 +271,8 @@ public class Translator {
 						for (String var : lhpn.getRateVars(t)){
 							 System.out.println("rate var: "+ var);
 							if (lhpn.getRateAssign(t, var) != null) {
-								ExprTree[] assignRateTree = lhpn.getRateAssignTree(t, var);
-								String assignRate = assignRateTree[0].toString("SBML");
+								ExprTree assignRateTree = lhpn.getRateAssignTree(t, var);
+								String assignRate = assignRateTree.toString("SBML");
 		//						System.out.println("rate assign: "+ assignRate);
 								
 								EventAssignment assign5 = e.createEventAssignment();
@@ -291,7 +291,7 @@ public class Translator {
 					
 					//trigger = CheckPreset(t) && En(t);
 					//test En(t)
-					String EnablingTestNull = lhpn.getEnabling(t);
+					String EnablingTestNull = lhpn.getTransition(t).getEnabling();
 					String Enabling;
 					if (EnablingTestNull == null){
 						Enabling = "eq(1,1)"; // Enabling is true (Boolean)
@@ -328,7 +328,7 @@ public class Translator {
 				    
 					// Delay D(t)
 					Delay delay = e.createDelay();
-					delay.setMath(SBML_Editor.myParseFormula(lhpn.getDelay(t)));
+					delay.setMath(SBML_Editor.myParseFormula(lhpn.getTransition(t).getDelay()));
 					
 					// t_preSet = 0
 					EventAssignment assign0 = e.createEventAssignment();
@@ -349,11 +349,11 @@ public class Translator {
 					
 					// assignment <A>
 					// continuous assignment
-					if (lhpn.getContAssignVars(t) != null){
-						for (String var : lhpn.getContAssignVars(t)){
+					if (lhpn.getContVars(t) != null){
+						for (String var : lhpn.getContVars(t)){
 							if (lhpn.getContAssign(t, var) != null) {
-								ExprTree[] assignContTree = lhpn.getContAssignTree(t, var);	
-								String assignCont = assignContTree[0].toString("SBML");
+								ExprTree assignContTree = lhpn.getContAssignTree(t, var);	
+								String assignCont = assignContTree.toString("SBML");
 //								System.out.println("continuous assign: "+ assignCont);
 								EventAssignment assign2 = e.createEventAssignment();
 								assign2.setVariable(var);
@@ -366,8 +366,8 @@ public class Translator {
 					if (lhpn.getIntVars()!= null){
 						for (String var : lhpn.getIntVars()){
 							if (lhpn.getIntAssign(t, var) != null) {
-								ExprTree[] assignIntTree = lhpn.getIntAssignTree(t, var);
-								String assignInt = assignIntTree[0].toString("SBML");
+								ExprTree assignIntTree = lhpn.getIntAssignTree(t, var);
+								String assignInt = assignIntTree.toString("SBML");
 							  //System.out.println("integer assignment from LHPN: " + var + " := " + assignInt);
 								EventAssignment assign3 = e.createEventAssignment();
 								assign3.setVariable(var);
@@ -380,8 +380,8 @@ public class Translator {
 					if (lhpn.getBooleanVars(t)!= null){
 						for (String var :lhpn.getBooleanVars(t)){
 							if (lhpn.getBoolAssign(t, var) != null) {
-								ExprTree[] assignBoolTree = lhpn.getBoolAssignTree(t, var);
-								String assignBool_tmp = assignBoolTree[0].toString("SBML");
+								ExprTree assignBoolTree = lhpn.getBoolAssignTree(t, var);
+								String assignBool_tmp = assignBoolTree.toString("SBML");
 								String assignBool = "piecewise(1," + assignBool_tmp + ",0)";
 								//System.out.println("boolean assignment from LHPN: " + var + " := " + assignBool);
 								EventAssignment assign4 = e.createEventAssignment();
@@ -396,8 +396,8 @@ public class Translator {
 						for (String var : lhpn.getRateVars(t)){
 							 System.out.println("rate var: "+ var);
 							if (lhpn.getRateAssign(t, var) != null) {
-								ExprTree[] assignRateTree = lhpn.getRateAssignTree(t, var);
-								String assignRate = assignRateTree[0].toString("SBML");
+								ExprTree assignRateTree = lhpn.getRateAssignTree(t, var);
+								String assignRate = assignRateTree.toString("SBML");
 		//						System.out.println("rate assign: "+ assignRate);
 								
 								EventAssignment assign5 = e.createEventAssignment();
