@@ -1,7 +1,7 @@
 package datamanager;
 
 import gcm2sbml.parser.GCMFile;
-import lhpn2sbml.parser.LHPNFile;
+import lhpn2sbml.parser.LhpnFile;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
@@ -1250,10 +1250,10 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 			}
 			else if (background.contains(".lpn")) {
 				ArrayList<String> getSpecies = new ArrayList<String>();
-				LHPNFile lhpn = new LHPNFile(biosim.log);
+				LhpnFile lhpn = new LhpnFile(biosim.log);
 				// System.out.println(background);
 				lhpn.load(background);
-				HashMap<String, Properties> speciesMap = lhpn.getVariables();
+				HashMap<String, Properties> speciesMap = lhpn.getContinuous();
 				for (String s : speciesMap.keySet()) {
 					getSpecies.add(s);
 				}

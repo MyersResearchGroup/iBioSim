@@ -34,7 +34,7 @@ public class BoolAssignPanel extends JPanel implements ActionListener {
 	//private String[] values = {"true", "false"};
 	private String[] options = { "Ok", "Cancel" };
 
-	private LHPNFile lhpn;
+	private LhpnFile lhpn;
 	private Log log;
 
 	//private JComboBox typeBox, varBox;
@@ -47,7 +47,7 @@ public class BoolAssignPanel extends JPanel implements ActionListener {
 	private BioSim biosim;
 
 	public BoolAssignPanel(String transition, String selected, PropertyList assignmentList, PropertyList booleanList,
-			LHPNFile lhpn, Log log, BioSim biosim) {
+			LhpnFile lhpn, Log log, BioSim biosim) {
 		super(new GridLayout(6, 1));
 		this.selected = selected;
 		this.transition = transition;

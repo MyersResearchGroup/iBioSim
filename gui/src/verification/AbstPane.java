@@ -14,7 +14,7 @@ import java.io.IOException; //import java.io.InputStream;
 //import java.util.ArrayList;
 import java.util.Properties;
 
-import lhpn2sbml.parser.LHPNFile;
+import lhpn2sbml.parser.LhpnFile;
 
 import gcm2sbml.gui.PropertyList; //import gcm2sbml.util.Utility;
 
@@ -104,12 +104,12 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 		this.setLayout(new BorderLayout());
 		absFile = verification.getVerName() + ".abs";
 		verification.copyFile();
-		LHPNFile lhpn = new LHPNFile();
+		LhpnFile lhpn = new LhpnFile();
 		lhpn.load(directory + separator + verification.verifyFile);
 
 		// Creates the interesting species JList
 		listModel = new DefaultListModel();
-		intSpecies = new JList(lhpn.getAllVariables());
+		intSpecies = new JList(lhpn.getVariables());
 		species = new JList(listModel);
 		JLabel spLabel = new JLabel("Available Variables:");
 		JLabel speciesLabel = new JLabel("Interesting Variables:");

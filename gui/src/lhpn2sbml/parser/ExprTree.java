@@ -68,7 +68,7 @@ public class ExprTree {
 			signals.add(ints[j]);
 		}
 	}
-
+	
 	public ExprTree(Abstraction abstraction) {
 		// this.abstraction = abstraction;
 		this.lhpn = abstraction;

@@ -31,14 +31,14 @@ public class PlacePanel extends JPanel implements ActionListener {
 
 	private String[] options = { "Ok", "Cancel" };
 
-	private LHPNFile lhpn;
+	private LhpnFile lhpn;
 
 	private HashMap<String, PropertyField> fields = null;
 	
 	private BioSim biosim;
 
 	public PlacePanel(String selected, PropertyList placeList, PropertyList controlList,
-			LHPNFile lhpn, BioSim biosim) {
+			LhpnFile lhpn, BioSim biosim) {
 		super(new GridLayout(2, 1));
 		this.selected = selected;
 		this.placeList = placeList;
@@ -72,7 +72,7 @@ public class PlacePanel extends JPanel implements ActionListener {
 			oldName = selected;
 			// Properties prop = lhpn.getVariables().get(selected);
 			fields.get(GlobalConstants.ID).setValue(selected);
-			if (lhpn.getPlaceInitial(selected)) {
+			if (lhpn.getPlace(selected).isMarked()) {
 				initBox.setSelectedItem(initCond[0]);
 			}
 			else {
@@ -160,11 +160,11 @@ public class PlacePanel extends JPanel implements ActionListener {
 					String[] array = s.split("\\s");
 					for (String t : array) {
 						if (t.equals(oldName)) {
-							lhpn.removeControlFlow(array[0], array[1]);
+							lhpn.removeMovement(array[0], array[1]);
 							controlList.removeItem(s);
 							s = s.replace(oldName, id);
 							array = s.split("\\s");
-							lhpn.addControlFlow(array[0], array[1]);
+							lhpn.removeMovement(array[0], array[1]);
 							controlList.addItem(s);
 						}
 					}

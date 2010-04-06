@@ -1,6 +1,6 @@
 package lhpn2sbml.gui;
 
-import lhpn2sbml.parser.LHPNFile;
+import lhpn2sbml.parser.*;
 //import lhpn2sbml.parser.Abstraction;
 
 import gcm2sbml.gui.AbstractRunnableNamedButton;
@@ -72,7 +72,7 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 
 	// private String lhpnName = "";
 
-	private LHPNFile lhpnFile = null;
+	private LhpnFile lhpnFile = null;
 
 	private JPanel mainPanel;// buttonPanel;
 
@@ -86,7 +86,7 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 		super();
 	}
 
-	public LHPNEditor(String directory, String filename, LHPNFile lhpn, BioSim biosim, Log log) {
+	public LHPNEditor(String directory, String filename, LhpnFile lhpn, BioSim biosim, Log log) {
 		super();
 		this.biosim = biosim;
 		this.log = log;
@@ -100,7 +100,7 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 		}
 
 		// this.directory = directory;
-		lhpnFile = new LHPNFile(log);
+		lhpnFile = new LhpnFile(log);
 		this.directory = directory;
 		if (filename != null) {
 			File f = new File(directory + separator + filename);
@@ -172,7 +172,7 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 		EditButton editVar = new EditButton("Edit Variable", variables);
 		if (!lhpnFile.getVariables().equals(null)) {
 			//variables.addAllItem(lhpnFile.getVariables().keySet());
-			for (String s : lhpnFile.getVariables().keySet()) {
+			for (String s : lhpnFile.getContinuous().keySet()) {
 				variables.addItem(s + " - continuous - " + lhpnFile.getInitialVal(s) + " - " + lhpnFile.getInitialRate(s));
 			}
 		}
@@ -205,8 +205,8 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 		EditButton addPlace = new EditButton("Add Place", places);
 		RemoveButton removePlace = new RemoveButton("Remove Place", places);
 		EditButton editPlace = new EditButton("Edit Place", places);
-		for (String s : lhpnFile.getPlaces().keySet()) {
-			if (lhpnFile.getPlaceInitial(s)) {
+		for (String s : lhpnFile.getPlaceList()) {
+			if (lhpnFile.getPlace(s).isMarked()) {
 				places.addItem(s + " - marked");
 			}
 			else {
@@ -371,7 +371,7 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 			if (getName().contains("Variable")) {
 				if (!list.isSelectionEmpty()) {
 				String name = list.getSelectedValue().toString();
-				if (lhpnFile.removeVar(name) != 0) {
+				if (lhpnFile.removeVar(name) != false) {
 					JOptionPane.showMessageDialog(this, "Must delete assignments to variable "
 							+ name, "Cannot remove variable" + name, JOptionPane.ERROR_MESSAGE);
 					return;
@@ -386,7 +386,7 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 				String id = list.getSelectedValue().toString();
 				String[] array = id.split(" ");
 				String name = array[0];
-				if (lhpnFile.containsFlow(name)) {
+				if (lhpnFile.containsMovement(name)) {
 					JOptionPane.showMessageDialog(this, "Must remove " + name
 							+ " from control flow", "Cannot remove place " + name,
 							JOptionPane.ERROR_MESSAGE);
@@ -399,7 +399,7 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 			else if (getName().contains("Transition")) {
 				if (!list.isSelectionEmpty()) {
 				String name = list.getSelectedValue().toString();
-				if (lhpnFile.containsFlow(name)) {
+				if (lhpnFile.containsMovement(name)) {
 					JOptionPane.showMessageDialog(this, "Must remove " + name
 							+ " from control flow", "Cannot remove transition " + name,
 							JOptionPane.ERROR_MESSAGE);
@@ -413,7 +413,7 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 				if (list.getSelectedValue()!=null) {
 					String tempString = list.getSelectedValue().toString();
 					String[] tempArray = tempString.split("\\s");
-					lhpnFile.removeControlFlow(tempArray[0], tempArray[1]);
+					lhpnFile.removeMovement(tempArray[0], tempArray[1]);
 					controlFlow.removeItem(tempString);
 				}
 			}

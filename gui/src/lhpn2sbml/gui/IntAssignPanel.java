@@ -32,7 +32,7 @@ public class IntAssignPanel extends JPanel implements ActionListener {
 	
 	private String[] options = { "Ok", "Cancel" };
 
-	private LHPNFile lhpn;
+	private LhpnFile lhpn;
 
 	//private JComboBox typeBox, varBox;
 	private JComboBox varBox;
@@ -44,7 +44,7 @@ public class IntAssignPanel extends JPanel implements ActionListener {
 	private BioSim biosim;
 
 	public IntAssignPanel(String transition, String selected, PropertyList assignmentList, PropertyList integerList,
-			LHPNFile lhpn, BioSim biosim) {
+			LhpnFile lhpn, BioSim biosim) {
 		super(new GridLayout(6, 1));
 		this.selected = selected;
 		this.transition = transition;
@@ -104,7 +104,7 @@ public class IntAssignPanel extends JPanel implements ActionListener {
 		
 		if (selected != null) {
 			oldName = selected;
-			Properties prop = lhpn.getVariables().get(selected);
+			Properties prop = lhpn.getContinuous().get(selected);
 			PropertyField idField = fields.get(GlobalConstants.ID);
 			PropertyField assignField = fields.get("Assignment value");
 			//System.out.println(selected);
@@ -141,7 +141,7 @@ public class IntAssignPanel extends JPanel implements ActionListener {
 				return false;
 			}
 			if (oldName == null) {
-				Properties prop = lhpn.getIntVars(selected);
+				HashMap<String, String> prop = lhpn.getTransition(selected).getIntAssignments();
 				if (prop != null) {
 				if (prop.containsKey((String) varBox.getSelectedItem())) {
 					Utility.createErrorMessage("Error", "Assignment id already exists.");
@@ -214,7 +214,7 @@ public class IntAssignPanel extends JPanel implements ActionListener {
 		if (selected != null && !oldName.equals(id)) {
 			String[] selectArray = selected.split(":=");
 			String[] oldArray = oldName.split(":=");
-			lhpn.removeIntAssign(selectArray[0], oldArray[0]);
+			lhpn.getTransition(selectArray[0]).removeIntAssign(oldArray[0]);
 		}
 		else {
 			//System.out.println(transition + " " + id + " " + property.getProperty("Assignment value"));

@@ -60,7 +60,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreePath;
 
-import lhpn2sbml.parser.LHPNFile;
+import lhpn2sbml.parser.LhpnFile;
 
 import org.apache.batik.dom.GenericDOMImplementation;
 import org.apache.batik.svggen.SVGGraphics2D;
@@ -7455,9 +7455,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				}
 			}
 			else if (background.contains(".lpn")) {
-				LHPNFile lhpn = new LHPNFile(biomodelsim.log);
+				LhpnFile lhpn = new LhpnFile(biomodelsim.log);
 				lhpn.load(background);
-				HashMap<String, Properties> speciesMap = lhpn.getVariables();
+				HashMap<String, Properties> speciesMap = lhpn.getContinuous();
 				/*for (String s : speciesMap.keySet()) {
 					learnSpecs.add(s);
 				}*/

@@ -6,7 +6,7 @@ import gcm2sbml.parser.CompatibilityFixer;
 import gcm2sbml.parser.GCMFile;
 import gcm2sbml.parser.GCMParser;
 import gcm2sbml.util.GlobalConstants;
-import lhpn2sbml.parser.LHPNFile;
+import lhpn2sbml.parser.LhpnFile;
 import lhpn2sbml.parser.Translator;
 import lhpn2sbml.gui.*;
 import graph.Graph;
@@ -4193,7 +4193,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							if (overwrite(root + separator + lhpnName, lhpnName)) {
 								File f = new File(root + separator + lhpnName);
 								f.createNewFile();
-								new LHPNFile(log).save(f.getAbsolutePath());
+								new LhpnFile(log).save(f.getAbsolutePath());
 								int i = getTab(f.getName());
 								if (i != -1) {
 									tab.remove(i);
@@ -5607,7 +5607,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		}
 		else if (e.getActionCommand().equals("viewState")) {
 			if (tree.getFile().length() >= 4 && tree.getFile().substring(tree.getFile().length() - 4).equals(".lpn")) {
-				LHPNFile lhpnFile = new LHPNFile();
+				LhpnFile lhpnFile = new LhpnFile();
 				lhpnFile.load(tree.getFile());
 				log.addText("Creating state graph.");
 				StateGraph sg = new StateGraph(lhpnFile);
@@ -5639,7 +5639,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		}
 		else if (e.getActionCommand().equals("markov")) {
 			if (tree.getFile().length() >= 4 && tree.getFile().substring(tree.getFile().length() - 4).equals(".lpn")) {
-				LHPNFile lhpnFile = new LHPNFile();
+				LhpnFile lhpnFile = new LhpnFile();
 				lhpnFile.load(tree.getFile());
 				log.addText("Creating state graph.");
 				StateGraph sg = new StateGraph(lhpnFile);
@@ -8407,7 +8407,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 								directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
 								theFile = filename.substring(filename.lastIndexOf('\\') + 1);
 							}
-							LHPNFile lhpn = new LHPNFile(log);
+							LhpnFile lhpn = new LhpnFile(log);
 							if (new File(directory + theFile).length() > 0) {
 								// log.addText("here");
 								lhpn.load(directory + theFile);

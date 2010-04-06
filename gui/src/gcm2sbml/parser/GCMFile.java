@@ -38,7 +38,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 
 import lhpn2sbml.parser.ExprTree;
-import lhpn2sbml.parser.LHPNFile;
+import lhpn2sbml.parser.LhpnFile;
 
 import biomodelsim.BioSim;
 import biomodelsim.Log;
@@ -468,7 +468,7 @@ public class GCMFile {
 		}
 	}
 
-	public LHPNFile convertToLHPN(ArrayList<String> specs, ArrayList<Object[]> conLevel) {
+	public LhpnFile convertToLHPN(ArrayList<String> specs, ArrayList<Object[]> conLevel) {
 		HashMap<String, ArrayList<String>> infl = new HashMap<String, ArrayList<String>>();
 		for (String influence : influences.keySet()) {
 			if (influences.get(influence).get(GlobalConstants.TYPE).equals(
@@ -524,7 +524,7 @@ public class GCMFile {
 				}
 			}
 		}
-		LHPNFile LHPN = new LHPNFile();
+		LhpnFile LHPN = new LhpnFile();
 		for (int i = 0; i < specs.size(); i++) {
 			LHPN.addInteger(specs.get(i), "0");
 		}
@@ -538,8 +538,8 @@ public class GCMFile {
 			for (Object threshold : conLevel.get(i)) {
 				LHPN.addPlace(specs.get(i) + placeNum, false);
 				LHPN.addTransition(specs.get(i) + "_trans" + transNum);
-				LHPN.addControlFlow(previousPlaceName, specs.get(i) + "_trans" + transNum);
-				LHPN.addControlFlow(specs.get(i) + "_trans" + transNum, specs.get(i) + placeNum);
+				LHPN.addMovement(previousPlaceName, specs.get(i) + "_trans" + transNum);
+				LHPN.addMovement(specs.get(i) + "_trans" + transNum, specs.get(i) + placeNum);
 				LHPN.addIntAssign(specs.get(i) + "_trans" + transNum, specs.get(i),
 						(String) threshold);
 				ArrayList<String> activators = new ArrayList<String>();
@@ -684,8 +684,8 @@ public class GCMFile {
 				//System.out.println();
 				transNum++;
 				LHPN.addTransition(specs.get(i) + "_trans" + transNum);
-				LHPN.addControlFlow(specs.get(i) + placeNum, specs.get(i) + "_trans" + transNum);
-				LHPN.addControlFlow(specs.get(i) + "_trans" + transNum, previousPlaceName);
+				LHPN.addMovement(specs.get(i) + placeNum, specs.get(i) + "_trans" + transNum);
+				LHPN.addMovement(specs.get(i) + "_trans" + transNum, previousPlaceName);
 				LHPN.addIntAssign(specs.get(i) + "_trans" + transNum, specs.get(i), number);
 				//System.out.println(specs.get(i) + "_trans" + transNum + ":");
 				//System.out.println("(" + specs.get(i) + "*"
