@@ -9,6 +9,9 @@ import java.awt.event.*;
 
 import javax.swing.*;
 
+import lhpn2sbml.gui.LHPNEditor;
+import lhpn2sbml.parser.Translator;
+
 import org.sbml.libsbml.*;
 import sbmleditor.*;
 import gcm2sbml.gui.GCM2SBMLEditor;
@@ -221,6 +224,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 
 	private JButton editPostAbs;
 
+	private String modelFile;
+
 	/**
 	 * This is the constructor for the GUI. It initializes all the input fields,
 	 * puts them on panels, adds the panels to the frame, and then displays the
@@ -246,6 +251,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		this.simTab = simTab;
 		change = false;
 		frames = new ArrayList<JFrame>();
+		String[] tempArray = modelFile.split(separator);
+		this.modelFile = tempArray[tempArray.length - 1];
 
 		SBMLDocument document = BioSim.readSBML(sbmlFile);
 		Model model = document.getModel();
@@ -545,8 +552,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		JPanel topPanel = new JPanel(new BorderLayout());
 		JPanel backgroundPanel = new JPanel();
 		JLabel backgroundLabel = new JLabel("Model File:");
-		String[] tempArray = modelFile.split(separator);
-		JTextField backgroundField = new JTextField(tempArray[tempArray.length - 1]);
+		JTextField backgroundField = new JTextField(this.modelFile);
 		backgroundField.setEditable(false);
 		backgroundPanel.add(backgroundLabel);
 		backgroundPanel.add(backgroundField);
@@ -1532,7 +1538,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 						}
 					}
 				}
-				else {
+				else if (gcmEditor != null) {
 					if (biomodelsim.getTab().getTitleAt(i).equals(gcmEditor.getRefFile())) {
 						if (biomodelsim.getTab().getComponentAt(i) instanceof GCM2SBMLEditor) {
 							GCM2SBMLEditor gcm = ((GCM2SBMLEditor) (biomodelsim.getTab()
@@ -1551,19 +1557,54 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 						}
 					}
 				}
+				else {
+					if (biomodelsim.getTab().getTitleAt(i).equals(modelFile)) {
+						if (biomodelsim.getTab().getComponentAt(i) instanceof LHPNEditor) {
+							LHPNEditor lpn = ((LHPNEditor) (biomodelsim.getTab().getComponentAt(i)));
+							if (lpn.isDirty()) {
+								Object[] options = { "Yes", "No" };
+								int value = JOptionPane.showOptionDialog(biomodelsim.frame(),
+										"Do you want to save changes to " + modelFile
+												+ " before running the simulation?",
+										"Save Changes", JOptionPane.YES_NO_OPTION,
+										JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+								if (value == JOptionPane.YES_OPTION) {
+									lpn.save();
+								}
+							}
+						}
+					}
+				}
 			}
 			if (sbmlEditor != null) {
 				sbmlEditor.save(true, stem, true);
 			}
-			else {
+			else if (gcmEditor != null) {
 				gcmEditor.saveParams(true, stem);
+			}
+			else {
+				if (!stem.equals("")) {
+				}
+				Translator t1 = new Translator();
+				t1.BuildTemplate(root + separator + modelFile);
+				t1.setFilename(root + separator + simName + separator + stem + separator
+						+ modelFile.replace(".lpn", ".sbml"));
+				t1.outputSBML();
+				if (!stem.equals("")) {
+					new File(root + separator + simName + separator + stem).mkdir();
+					new Reb2SacThread(this).start(stem);
+				}
+				else {
+					new Reb2SacThread(this).start(".");
+				}
+				emptyFrames();
 			}
 		}
 		else if (e.getSource() == save) {
 			if (sbmlEditor != null) {
 				sbmlEditor.save(false, "", true);
 			}
-			else {
+			else if (gcmEditor != null) {
 				gcmEditor.saveParams(false, "");
 			}
 			save();
