@@ -412,8 +412,8 @@ public class Translator {
 		}
 		
 		//filename.replace(".lpn", ".xml");
-		SBMLWriter writer = new SBMLWriter();
-		writer.writeSBML(document, filename);
+		//SBMLWriter writer = new SBMLWriter();
+		//writer.writeSBML(document, filename);
 	}
 	
 	private void createFunction(Model model, String id, String name, String formula) {
@@ -425,6 +425,11 @@ public class Translator {
 	}
 }
 
+	public void outputSBML() {
+		SBMLWriter writer = new SBMLWriter();
+		writer.writeSBML(document, filename);
+	}
+	
 	public void setFilename(String filename) {
 		this.filename = filename;
 	}
