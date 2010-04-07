@@ -12,6 +12,7 @@ import parser.*;
 
 import lhpn2sbml.gui.LHPNEditor;
 import lhpn2sbml.parser.LhpnFile;
+import lhpn2sbml.parser.Translator;
 
 import biomodelsim.*;
 import gcm2sbml.gui.GCM2SBMLEditor;
@@ -416,7 +417,7 @@ public class Run implements ActionListener {
 			JRadioButton nary, int naryRun, String[] intSpecies, Log log, JCheckBox usingSSA,
 			String ssaFile, BioSim biomodelsim, JTabbedPane simTab, String root,
 			JProgressBar progress, int steps, String simName, GCM2SBMLEditor gcmEditor,
-			String direct, double timeLimit, double runTime) {
+			String direct, double timeLimit, double runTime, String modelFile) {
 		Runtime exec = Runtime.getRuntime();
 		int exitValue = 255;
 		while (outDir.split(separator)[outDir.split(separator).length - 1].equals(".")) {
@@ -487,11 +488,20 @@ public class Run implements ActionListener {
 							return 0;
 						}
 					}
-					log.addText("Executing:\nreb2sac --target.encoding=sbml --out=" + ".."
-							+ separator + sbmlName + " " + filename + "\n");
-					time1 = System.nanoTime();
-					reb2sac = exec.exec("reb2sac --target.encoding=sbml --out=" + ".." + separator
-							+ sbmlName + " " + theFile, null, work);
+					if (modelFile.contains(".lpn")) {
+						time1 = System.nanoTime();
+						Translator t1 = new Translator();
+						t1.BuildTemplate(root + separator + modelFile);
+						t1.setFilename(root + separator + sbmlName);
+						t1.outputSBML();
+					}
+					else {
+						log.addText("Executing:\nreb2sac --target.encoding=sbml --out=" + ".."
+								+ separator + sbmlName + " " + filename + "\n");
+						time1 = System.nanoTime();
+						reb2sac = exec.exec("reb2sac --target.encoding=sbml --out=" + ".."
+								+ separator + sbmlName + " " + theFile, null, work);
+					}
 				}
 				else {
 					time1 = System.nanoTime();
