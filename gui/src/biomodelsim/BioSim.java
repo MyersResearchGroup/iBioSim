@@ -2445,7 +2445,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			openSim();
 			Translator t1 = new Translator();
 			t1.BuildTemplate(tree.getFile());
-
+			
 		}
 		else if (e.getActionCommand().equals("openLearn")) {
 			if (lema) {
@@ -2464,6 +2464,19 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		else if (e.getActionCommand().equals("convertToSBML")) {
 			new Translator().BuildTemplate(tree.getFile());
 			refreshTree();
+		}
+		else if (e.getActionCommand().equals("createAnalysis")){
+			// TODO
+//			new Translator().BuildTemplate(tree.getFile());
+//			refreshTree();
+			try {
+				simulate(true);
+			}
+			catch (Exception e1) {
+				JOptionPane.showMessageDialog(frame, "You must select a valid LPN file for simulation.", "Error",
+						JOptionPane.ERROR_MESSAGE);
+			}
+		
 		}
 		// if the create simulation popup menu is selected on a dot file
 		else if (e.getActionCommand().equals("createSim")) {
@@ -7658,10 +7671,18 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					createSynthesis.addActionListener(this);
 					createSynthesis.addMouseListener(this);
 					createSynthesis.setActionCommand("createSynthesis");
+					//////////  TODO
 					JMenuItem createAnalysis = new JMenuItem("Create Analysis View");
 					createAnalysis.addActionListener(this);
 					createAnalysis.addMouseListener(this);
-					createAnalysis.setActionCommand("createSim");
+	 				createAnalysis.setActionCommand("createAnalysis");
+//					createAnalysis.setActionCommand("simulate");
+					
+//					JMenuItem simulate = new JMenuItem("Create Analysis View");
+//					simulate.addActionListener(this);
+//					simulate.addMouseListener(this);
+//					simulate.setActionCommand("simulate");
+					///////////////
 					JMenuItem createLearn = new JMenuItem("Create Learn View");
 					createLearn.addActionListener(this);
 					createLearn.addMouseListener(this);
@@ -7701,7 +7722,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					if (atacs) {
 						popup.add(createSynthesis);
 					}
-					// popup.add(createAnalysis);
+					 popup.add(createAnalysis);
 					if (lema) {
 						popup.add(createLearn);
 					}
@@ -7710,6 +7731,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						popup.addSeparator();
 					}
 					popup.add(convertToSBML);
+//					popup.add(createAnalysis); // TODO
 					popup.add(viewModel);
 					popup.add(viewStateGraph);
 					popup.add(markovAnalysis);
@@ -8826,6 +8848,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						browse.addActionListener(this);
 						browse.addMouseListener(this);
 						browse.setActionCommand("browse");
+						//TODO
 						JMenuItem simulate = new JMenuItem("Create Analysis View");
 						simulate.addActionListener(this);
 						simulate.addMouseListener(this);
