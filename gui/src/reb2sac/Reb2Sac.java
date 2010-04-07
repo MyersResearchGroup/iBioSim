@@ -2990,14 +2990,15 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					root + separator + simName, nary, 1, intSpecies, log, usingSSA, root
 							+ separator + outDir + separator + "user-defined.dat", biomodelsim,
 					simTab, root, progress, steps, simName + " " + direct, gcmEditor, direct,
-					timeLimit, runTime);
+					timeLimit, runTime, modelFile);
 		}
 		else {
 			exit = runProgram.execute(simProp, sbml, dot, xhtml, lhpn, biomodelsim.frame(), ODE,
 					monteCarlo, sim, printer_id, printer_track_quantity,
 					root + separator + simName, nary, 1, intSpecies, log, usingSSA, root
 							+ separator + outDir + separator + "user-defined.dat", biomodelsim,
-					simTab, root, progress, steps, simName, gcmEditor, null, timeLimit, runTime);
+					simTab, root, progress, steps, simName, gcmEditor, null, timeLimit, runTime,
+					modelFile);
 		}
 		if (nary.isSelected() && !sim.equals("markov-chain-analysis") && !lhpn.isSelected()
 				&& exit == 0) {
@@ -3011,7 +3012,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					printInterval, minTimeStep, timeStep, root + separator + simName, rndSeed, run,
 					printer_id, printer_track_quantity, termCond, intSpecies, rap1, rap2, qss, con,
 					log, usingSSA, root + separator + outDir + separator + "user-defined.dat",
-					biomodelsim, simTab, root, d);
+					biomodelsim, simTab, root, d, modelFile);
 		}
 		running.setCursor(null);
 		running.dispose();

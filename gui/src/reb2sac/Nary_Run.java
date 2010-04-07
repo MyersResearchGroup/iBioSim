@@ -111,6 +111,8 @@ public class Nary_Run implements ActionListener, Runnable {
 
 	private String direct;
 
+	private String modelFile;
+
 	/**
 	 * This constructs a new Nary_Run object. This object is a GUI that contains
 	 * input fields for the nary abstraction. This constructor initializes the
@@ -121,10 +123,11 @@ public class Nary_Run implements ActionListener, Runnable {
 			String[] getFilename, String filename, JRadioButton sbml, JRadioButton dot,
 			JRadioButton xhtml, JRadioButton lhpn, JRadioButton nary, JRadioButton ODE,
 			JRadioButton monteCarlo, double timeLimit, String useInterval, double printInterval,
-			double minTimeStep, double timeStep, String outDir, long rndSeed, int run, String printer_id,
-			String printer_track_quantity, String[] termCond, String[] intSpecies, double rap1,
-			double rap2, double qss, int con, Log log, JCheckBox usingSSA, String ssaFile,
-			BioSim biomodelsim, JTabbedPane simTab, String root, String direct) {
+			double minTimeStep, double timeStep, String outDir, long rndSeed, int run,
+			String printer_id, String printer_track_quantity, String[] termCond,
+			String[] intSpecies, double rap1, double rap2, double qss, int con, Log log,
+			JCheckBox usingSSA, String ssaFile, BioSim biomodelsim, JTabbedPane simTab,
+			String root, String direct, String modelFile) {
 		if (File.separator.equals("\\")) {
 			separator = "\\\\";
 		}
@@ -172,6 +175,7 @@ public class Nary_Run implements ActionListener, Runnable {
 		this.simTab = simTab;
 		this.useInterval = useInterval;
 		this.direct = direct;
+		this.modelFile = modelFile;
 
 		// creates the nary frame and adds a window listener
 		naryFrame = new JFrame("Nary Properties");
@@ -559,10 +563,11 @@ public class Nary_Run implements ActionListener, Runnable {
 		String[] finalS = Buttons.getList(finalStates, finalState);
 		Run runProgram = new Run(null);
 		naryCancel.addActionListener(runProgram);
-		runProgram.createNaryProperties(timeLimit, useInterval, printInterval, minTimeStep, timeStep, outDir,
-				rndSeed, run, printer_id, printer_track_quantity, getFilename, naryFrame, filename,
-				monteCarlo, stopE, stopR, finalS, inhib, consLevel, getSpeciesProps, conLevel,
-				termCond, intSpecies, rap1, rap2, qss, con, counts, usingSSA, ssaFile);
+		runProgram.createNaryProperties(timeLimit, useInterval, printInterval, minTimeStep,
+				timeStep, outDir, rndSeed, run, printer_id, printer_track_quantity, getFilename,
+				naryFrame, filename, monteCarlo, stopE, stopR, finalS, inhib, consLevel,
+				getSpeciesProps, conLevel, termCond, intSpecies, rap1, rap2, qss, con, counts,
+				usingSSA, ssaFile);
 		if (monteCarlo.isSelected()) {
 			File[] files = new File(outDir).listFiles();
 			for (File f : files) {
@@ -574,7 +579,7 @@ public class Nary_Run implements ActionListener, Runnable {
 		runProgram.execute(filename, sbml, dot, xhtml, lhpn, naryFrame, ODE, monteCarlo, sim,
 				printer_id, printer_track_quantity, outDir, nary, 2, intSpecies, log, usingSSA,
 				ssaFile, biomodelsim, simTab, root, progress, run, "", null, direct, timeLimit,
-				timeLimit * run);
+				timeLimit * run, modelFile);
 		running.setCursor(null);
 		running.dispose();
 		naryCancel.removeActionListener(runProgram);
