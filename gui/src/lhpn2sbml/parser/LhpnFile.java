@@ -1264,8 +1264,8 @@ public class LhpnFile {
 			Pattern delayPattern = Pattern.compile(ENABLING);
 			Matcher delayMatcher = delayPattern.matcher(lineMatcher.group(1));
 			while (delayMatcher.find()) {
-				Transition transition = transitions.get(delayMatcher.group(2));
-				transition.addDelay("exponential(" + delayMatcher.group(3) + ")");
+				Transition transition = transitions.get(delayMatcher.group(1));
+				transition.addDelay("exponential(" + delayMatcher.group(2) + ")");
 			}
 		}
 	}
