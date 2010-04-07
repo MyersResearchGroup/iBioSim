@@ -1326,7 +1326,7 @@ public class LhpnFile {
 
 	private static final String DELAY_LINE = "#@\\.delay_assignments \\{([\\S[^\\}]]+?)\\}";
 
-	private static final String DELAY = "<([\\w_]+)=(\\[\\w+,\\w+\\])>";
+	private static final String DELAY = "<([\\w_]+)=(\\S+?)>";
 
 	private static final String TRANS_RATE_LINE = "#@\\.transition_rates \\{([\\S[^\\}]]+?)\\}";
 
