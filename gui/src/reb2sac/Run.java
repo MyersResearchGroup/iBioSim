@@ -489,11 +489,13 @@ public class Run implements ActionListener {
 						}
 					}
 					if (modelFile.contains(".lpn")) {
+						progress.setIndeterminate(true);
 						time1 = System.nanoTime();
 						Translator t1 = new Translator();
 						t1.BuildTemplate(root + separator + modelFile);
 						t1.setFilename(root + separator + sbmlName);
 						t1.outputSBML();
+						exitValue = 0;
 					}
 					else {
 						log.addText("Executing:\nreb2sac --target.encoding=sbml --out=" + ".."
@@ -555,6 +557,7 @@ public class Run implements ActionListener {
 							}
 						}
 					}
+					progress.setIndeterminate(true);
 					GCMFile gcm = gcmEditor.getGCM();
 					gcm.flattenGCM();
 					LhpnFile lhpnFile = gcm.convertToLHPN(specs, conLevel);
@@ -612,6 +615,7 @@ public class Run implements ActionListener {
 							}
 						}
 					}
+					progress.setIndeterminate(true);
 					GCMFile gcm = gcmEditor.getGCM();
 					gcm.flattenGCM();
 					LhpnFile lhpnFile = gcm.convertToLHPN(specs, conLevel);
