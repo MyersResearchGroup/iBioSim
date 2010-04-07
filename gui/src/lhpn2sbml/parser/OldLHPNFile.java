@@ -19,7 +19,7 @@ import verification.Verification;
  * @organization University of Utah
  */
 
-public class LHPNFile {
+public class OldLHPNFile {
 
 	protected HashMap<String, Boolean> places;
 
@@ -69,7 +69,7 @@ public class LHPNFile {
 
 	protected Log log;
 
-	public LHPNFile(Log log) {
+	public OldLHPNFile(Log log) {
 		this.log = log;
 		places = new HashMap<String, Boolean>();
 		inputs = new HashMap<String, String>();
@@ -94,7 +94,7 @@ public class LHPNFile {
 		intAssignmentTrees = new HashMap<String, HashMap<String, ExprTree[]>>();
 	}
 
-	public LHPNFile() {
+	public OldLHPNFile() {
 		places = new HashMap<String, Boolean>();
 		inputs = new HashMap<String, String>();
 		outputs = new HashMap<String, String>();
