@@ -66,6 +66,9 @@ public class Transition {
 	}
 
 	public boolean addEnabling(String newEnab) {
+		if (newEnab.equals("")) {
+			return true;
+		}
 		boolean retVal = false;
 		enabling = newEnab;
 		ExprTree expr = new ExprTree(lhpn);
@@ -108,6 +111,9 @@ public class Transition {
 	}
 	
 	public boolean addDelay(String delay) {
+		if (delay.equals("")) {
+			return true;
+		}
 		boolean retVal;
 		this.delay = delay;
 		ExprTree expr = new ExprTree(lhpn);
