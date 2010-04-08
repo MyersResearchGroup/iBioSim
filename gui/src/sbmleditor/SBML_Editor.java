@@ -303,6 +303,10 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	public SBML_Editor(Reb2Sac reb2sac, Log log, BioSim biosim, String simDir, String paramFile) {
 		this.reb2sac = reb2sac;
 		paramsOnly = (reb2sac != null);
+		if (paramsOnly) {
+			parameterChanges = new ArrayList<String>();
+			elementChanges = new ArrayList<String>();
+		}
 		this.log = log;
 		this.biosim = biosim;
 		this.simDir = simDir;
@@ -332,6 +336,10 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			String paramFile) {
 		this.reb2sac = reb2sac;
 		paramsOnly = (reb2sac != null);
+		if (paramsOnly) {
+			parameterChanges = new ArrayList<String>();
+			elementChanges = new ArrayList<String>();
+		}
 		this.log = log;
 		this.biosim = biosim;
 		this.simDir = simDir;
@@ -468,8 +476,6 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		editCompart.addActionListener(this);
 		ArrayList<String> getParams = new ArrayList<String>();
 		if (paramsOnly) {
-			parameterChanges = new ArrayList<String>();
-			elementChanges = new ArrayList<String>();
 			try {
 				Scanner scan = new Scanner(new File(paramFile));
 				if (scan.hasNextLine()) {
