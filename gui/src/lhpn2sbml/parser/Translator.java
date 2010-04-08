@@ -201,7 +201,7 @@ public class Translator {
 
 					}
 
-					rateReaction.setFormula("(" + lhpn.getTransition(t).getEnabling() + ")" + "*" + reactant.getSpecies() + "*" + exp); 
+					rateReaction.setFormula("(" + lhpn.getTransitionRateTree(t).getElement("SBML") + ")" + "*" + reactant.getSpecies() + "*" + exp); 
 					//System.out.println("trans " + t + " enableCond " + lhpn.getEnabling(t));
 					
 					Event e = m.createEvent();
