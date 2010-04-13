@@ -526,18 +526,29 @@ public class GCMFile {
 				ArrayList<String> bioActivators = new ArrayList<String>();
 				ArrayList<String> bioRepressors = new ArrayList<String>();
 				ArrayList<String> proms = new ArrayList<String>();
-				Double np = Double.parseDouble(parameters.get(GlobalConstants.STOICHIOMETRY_STRING));
-				Double ng = Double.parseDouble(parameters.get(GlobalConstants.PROMOTER_COUNT_STRING));
-				Double kb = Double.parseDouble(parameters.get(GlobalConstants.KBASAL_STRING));
-				Double Kb = Double.parseDouble(parameters.get(GlobalConstants.KBIO_STRING));
-				Double Ko = Double.parseDouble(parameters.get(GlobalConstants.RNAP_BINDING_STRING));
-				Double ka = Double.parseDouble(parameters.get(GlobalConstants.ACTIVED_STRING));
-				Double Ka = Double.parseDouble(parameters.get(GlobalConstants.KACT_STRING));
-				Double ko = Double.parseDouble(parameters.get(GlobalConstants.OCR_STRING));
-				Double Kr = Double.parseDouble(parameters.get(GlobalConstants.KREP_STRING));
-				Double kd = Double.parseDouble(parameters.get(GlobalConstants.KDECAY_STRING));
-				Double nc = Double.parseDouble(parameters.get(GlobalConstants.COOPERATIVITY_STRING));
+				Double global_np = Double.parseDouble(parameters.get(GlobalConstants.STOICHIOMETRY_STRING));
+				Double global_ng = Double.parseDouble(parameters.get(GlobalConstants.PROMOTER_COUNT_STRING));
+				Double global_kb = Double.parseDouble(parameters.get(GlobalConstants.KBASAL_STRING));
+				Double global_Kb = Double.parseDouble(parameters.get(GlobalConstants.KBIO_STRING));
+				Double global_Ko = Double.parseDouble(parameters.get(GlobalConstants.RNAP_BINDING_STRING));
+				Double global_ka = Double.parseDouble(parameters.get(GlobalConstants.ACTIVED_STRING));
+				Double global_Ka = Double.parseDouble(parameters.get(GlobalConstants.KACT_STRING));
+				Double global_ko = Double.parseDouble(parameters.get(GlobalConstants.OCR_STRING));
+				Double global_Kr = Double.parseDouble(parameters.get(GlobalConstants.KREP_STRING));
+				Double global_kd = Double.parseDouble(parameters.get(GlobalConstants.KDECAY_STRING));
+				Double global_nc = Double.parseDouble(parameters.get(GlobalConstants.COOPERATIVITY_STRING));
 				Double RNAP = Double.parseDouble(parameters.get(GlobalConstants.RNAP_STRING));
+				Double np = global_np;
+				Double ng = global_ng;
+				Double kb = global_kb;
+				Double Kb = global_Kb;
+				Double Ko = global_Ko;
+				Double ka = global_ka;
+				Double Ka = global_Ka;
+				Double ko = global_ko;
+				Double Kr = global_Kr;
+				Double kd = global_kd;
+				Double nc = global_nc;
 				if (infl.containsKey(specs.get(i))) {
 					for (String in : infl.get(specs.get(i))) {
 						String[] parse = in.split(":");
@@ -563,6 +574,12 @@ public class GCMFile {
 				}
 				String rate = "";
 				for (String promoter : proms) {
+					ng = global_ng;
+					Ko = global_Ko;
+					ko = global_ko;
+					np = global_np;
+					kb = global_kb;
+					ka = global_ka;
 					if (promoters.containsKey(promoter)) {
 						Properties p = promoters.get(promoter);
 						if (p.containsKey(GlobalConstants.PROMOTER_COUNT_STRING)) {
@@ -591,6 +608,7 @@ public class GCMFile {
 						if (split[0].equals(promoter)) {
 							influence = split[2];
 							Properties p = influences.get(influence);
+							Kb = global_Kb;
 							if (p.containsKey(GlobalConstants.KBIO_STRING)) {
 								Kb = Double.parseDouble((String) p.get(GlobalConstants.KBIO_STRING));
 							}
@@ -612,6 +630,7 @@ public class GCMFile {
 						if (split[0].equals(promoter)) {
 							influence = split[2];
 							Properties p = influences.get(influence);
+							Kb = global_Kb;
 							if (p.containsKey(GlobalConstants.KBIO_STRING)) {
 								Kb = Double.parseDouble((String) p.get(GlobalConstants.KBIO_STRING));
 							}
@@ -640,12 +659,15 @@ public class GCMFile {
 						if (split[0].equals(promoter)) {
 							promRepressors.add(split[1] + ":" + split[2]);
 						}
-					}
+					}					
 					if (promActivators.size() != 0) {
 						promRate += "(" + np + "*" + ng + ")*((" + kb + "*" + Ko + "*" + RNAP + ")";
 						for (String act : promActivators) {
 							String split[] = act.split(":");
 							Properties p = influences.get(split[1]);
+							nc = global_nc;
+							Kr = global_Kr;
+							Ka = global_Ka;
 							if (p.containsKey(GlobalConstants.COOPERATIVITY_STRING)) {
 								nc = Double.parseDouble((String) p.get(GlobalConstants.COOPERATIVITY_STRING));
 							}
@@ -661,6 +683,9 @@ public class GCMFile {
 						for (String act : promActivators) {
 							String split[] = act.split(":");
 							Properties p = influences.get(split[1]);
+							nc = global_nc;
+							Kr = global_Kr;
+							Ka = global_Ka;
 							if (p.containsKey(GlobalConstants.COOPERATIVITY_STRING)) {
 								nc = Double.parseDouble((String) p.get(GlobalConstants.COOPERATIVITY_STRING));
 							}
@@ -676,6 +701,9 @@ public class GCMFile {
 							for (String rep : promRepressors) {
 								String split[] = rep.split(":");
 								Properties p = influences.get(split[1]);
+								nc = global_nc;
+								Kr = global_Kr;
+								Ka = global_Ka;
 								if (p.containsKey(GlobalConstants.COOPERATIVITY_STRING)) {
 									nc = Double.parseDouble((String) p.get(GlobalConstants.COOPERATIVITY_STRING));
 								}
@@ -697,6 +725,9 @@ public class GCMFile {
 							for (String rep : promRepressors) {
 								String split[] = rep.split(":");
 								Properties p = influences.get(split[1]);
+								nc = global_nc;
+								Kr = global_Kr;
+								Ka = global_Ka;
 								if (p.containsKey(GlobalConstants.COOPERATIVITY_STRING)) {
 									nc = Double.parseDouble((String) p.get(GlobalConstants.COOPERATIVITY_STRING));
 								}
@@ -731,6 +762,7 @@ public class GCMFile {
 				LHPN.addMovement(specs.get(i) + "_trans" + transNum, previousPlaceName);
 				LHPN.addIntAssign(specs.get(i) + "_trans" + transNum, specs.get(i), number);
 				Properties p = this.species.get(specs.get(i));
+				kd = global_kd;
 				if (p.containsKey(GlobalConstants.KDECAY_STRING)) {
 					kd = Double.parseDouble((String) p.get(GlobalConstants.KDECAY_STRING));
 				}
