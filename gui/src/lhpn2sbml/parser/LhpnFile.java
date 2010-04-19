@@ -249,7 +249,7 @@ public class LhpnFile {
 								buffer.append("#@.rate_assignments {");
 								flag = true;
 							}
-							buffer.append("<" + t.getName() + "=[" + var + ":=" + rateAssign.get(t)
+							buffer.append("<" + t.getName() + "=[" + var + ":=" + t.getRateAssignment(var)
 									+ "]>");
 						}
 					}
