@@ -510,12 +510,12 @@ public class Abstraction extends LhpnFile {
 					removeMovement(p.getName(), t);
 				}
 				for (Place p : trans.getPostset()) {
-					for (Transition tP : p.getPostset()) {
-						removeMovement(p.getName(), tP.getName());
-						if (tP.getPreset().length == 0) {
-							removeTransition(tP.getName());
-						}
-					}
+					//for (Transition tP : p.getPostset()) {
+					//	removeMovement(p.getName(), tP.getName());
+					//	if (tP.getPreset().length == 0) {
+					//		removeTransition(tP.getName());
+					//	}
+					//}
 					removeMovement(t, p.getName());
 				}
 				removeTransition(t);
