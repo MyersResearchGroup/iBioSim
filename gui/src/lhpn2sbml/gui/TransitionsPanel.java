@@ -293,6 +293,9 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 
 	public boolean save(String transition) {
 		// log.addText("saving...");
+		if (!lhpn.containsTransition(transition)) {
+			lhpn.addTransition(transition);
+		}
 		lhpn.getTransition(transition).removeAllAssign();
 		if (boolAssignments.getItems() != null) {
 			for (String s : boolAssignments.getItems()) {

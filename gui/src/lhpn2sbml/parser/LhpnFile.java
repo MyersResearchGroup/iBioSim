@@ -902,6 +902,10 @@ public class LhpnFile {
 		return places.get(place).isMarked();
 	}
 
+	public boolean containsTransition(String name) {
+		return transitions.containsKey(name);
+	}
+	
 	public boolean containsMovement(String name) {
 		if (places.containsKey(name)) {
 			return places.get(name).isConnected();
