@@ -265,9 +265,9 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 			if (selected != null && !oldName.equals(id)) {
 				lhpn.changeTransitionName(oldName, id);
 			}
-			else if (selected == null) {
-				lhpn.addTransition(id);
-			}
+			//else if (selected == null) {
+			//	lhpn.addTransition(id);
+			//}
 			transitionsList.removeItem(oldName);
 			transitionsList.addItem(id);
 			transitionsList.setSelectedValue(id, true);
