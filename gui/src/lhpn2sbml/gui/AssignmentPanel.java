@@ -237,7 +237,13 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 				return false;
 			}
 			if (oldName == null) {
-				HashMap<String, String> prop = lhpn.getTransition(selected).getContAssignments();
+				HashMap<String, String> prop;
+				if (lhpn.getTransition(selected) == null) {
+					prop = null;
+				}
+				else {
+					prop = lhpn.getTransition(selected).getContAssignments();
+				}
 				if (prop != null) {
 					if (prop.containsKey((String) varBox.getSelectedItem())) {
 						Utility.createErrorMessage("Error", "Assignment id already exists.");
