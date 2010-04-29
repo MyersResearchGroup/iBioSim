@@ -210,8 +210,8 @@ public class Translator {
 					trigger.setMath(SBML_Editor.myParseFormula("eq(" + product.getSpecies() + ",1)"));
 					
 					// t_postSet = 1
-					EventAssignment assign0 = e.createEventAssignment();
 					for (String x : lhpn.getPostset(t)){
+						EventAssignment assign0 = e.createEventAssignment();
 						assign0.setVariable(x);
 						assign0.setMath(SBML_Editor.myParseFormula("1"));
 		//				System.out.println("transition: " + t + " postset: " + x);
@@ -331,8 +331,8 @@ public class Translator {
 					delay.setMath(SBML_Editor.myParseFormula(lhpn.getTransition(t).getDelay()));
 					
 					// t_preSet = 0
-					EventAssignment assign0 = e.createEventAssignment();
 					for (String x : lhpn.getPreset(t)){
+						EventAssignment assign0 = e.createEventAssignment();
 						assign0.setVariable(x);
 						assign0.setMath(SBML_Editor.myParseFormula("0"));
 		//				System.out.println("transition: " + t + " preset: " + x);
@@ -340,8 +340,8 @@ public class Translator {
 					
 					
 					// t_postSet = 1
-					EventAssignment assign1 = e.createEventAssignment();
 					for (String x : lhpn.getPostset(t)){
+						EventAssignment assign1 = e.createEventAssignment();
 						assign1.setVariable(x);
 						assign1.setMath(SBML_Editor.myParseFormula("1"));
 		//				System.out.println("transition: " + t + " postset: " + x);
