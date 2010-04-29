@@ -162,8 +162,10 @@ public class Transition {
 	}
 	
 	public String getTransitionRate() {
-		if (delayTree.op.equals("exponential")) {
-			return delayTree.r1.toString();
+		if (delayTree != null) {
+			if (delayTree.op.equals("exponential")) {
+				return delayTree.r1.toString();
+			}	
 		}
 		return null;
 	}
