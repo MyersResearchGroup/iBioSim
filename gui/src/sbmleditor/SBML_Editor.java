@@ -9714,6 +9714,11 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					log.addText("Saving SBML file:\n" + file + "\n");
 				}
 				document.getModel().setName(modelName.getText().trim());
+				/*
+				for (int i=0;i<document.getModel().getNumEvents();i++) {
+					System.out.println(i + " " + document.getModel().getEvent(i).getId());
+				}
+				*/
 				SBMLWriter writer = new SBMLWriter();
 				writer.writeSBML(document, file);
 				dirty = false;
