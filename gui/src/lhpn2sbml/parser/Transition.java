@@ -112,6 +112,8 @@ public class Transition {
 	
 	public boolean addDelay(String delay) {
 		if (delay.equals("")) {
+			this.delay = null;
+			delayTree = null;
 			return true;
 		}
 		boolean retVal;
