@@ -137,10 +137,10 @@ public class LhpnFile {
 								buffer.append("#@.init_state [");
 								flag = true;
 							}
-							if (booleans.get(s).equals("true")) {
+							if (booleans.get(s).getInitValue().equals("true")) {
 								buffer.append("1");
 							}
-							else if (booleans.get(s).equals("false")) {
+							else if (booleans.get(s).getInitValue().equals("false")) {
 								buffer.append("0");
 							}
 							else {

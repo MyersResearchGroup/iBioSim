@@ -371,13 +371,13 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 			if (getName().contains("Variable")) {
 				if (!list.isSelectionEmpty()) {
 				String name = list.getSelectedValue().toString();
-				if (lhpnFile.removeVar(name) != false) {
+				String var = name.split("\\s")[0];
+				if (lhpnFile.removeVar(var) == false) {
 					JOptionPane.showMessageDialog(this, "Must delete assignments to variable "
 							+ name, "Cannot remove variable" + name, JOptionPane.ERROR_MESSAGE);
 					return;
 				}
 				variables.removeItem(name);
-				String var = name.split(" ")[0];
 				lhpnFile.removeVar(var);
 				}
 			}
