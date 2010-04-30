@@ -56,7 +56,7 @@ public class Abstraction extends LhpnFile {
 		}
 		Integer numTrans = transitions.size();
 		Integer numPlaces = places.size();
-		Integer numVars = variables.size() + booleans.size() + integers.size();
+		Integer numVars = variables.size();
 		System.out.println("Transitions before abstraction: " + numTrans);
 		System.out.println("Places before abstraction: " + numPlaces);
 		System.out.println("Variables before abstraction: " + numVars);
