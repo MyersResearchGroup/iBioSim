@@ -70,7 +70,13 @@ public class Translator {
 		
 		// translate from lhpn to sbml
 		// ----variables -> parameters-----
+		int i;
+		for (i=0; i < lhpn.getVariables().length; i++){
+			System.out.println("LHPN Vars " + lhpn.getVariables()[i]);
+		}
+		
 		for (String v: lhpn.getVariables()){
+			System.out.println("Vars from lhpn.getVariables() " + v);
 			if (v != null){
 				String initVal = lhpn.getInitialVal(v);
 				System.out.println("Begin:" + v + "= " + initVal);
@@ -86,7 +92,6 @@ public class Translator {
 					RateRule rateRule = m.createRateRule();
 					rateRule.setVariable(v);
 					rateRule.setMath(SBML_Editor.myParseFormula(v + "_dot"));
-//					boolean error = checkRateRuleUnits(rateRule);
 				
 					
 					String initValue = lhpn.getInitialVal(v);
@@ -327,8 +332,10 @@ public class Translator {
 					trigger.setAnnotation("<TriggerCanBeDisabled/>");
 				    
 					// Delay D(t)
-					Delay delay = e.createDelay();
-					delay.setMath(SBML_Editor.myParseFormula(lhpn.getTransition(t).getDelay()));
+					if (lhpn.getTransition(t).getDelay()!=null) {
+						Delay delay = e.createDelay();
+						delay.setMath(SBML_Editor.myParseFormula(lhpn.getTransition(t).getDelay()));
+					}
 					
 					// t_preSet = 0
 					for (String x : lhpn.getPreset(t)){
@@ -438,4 +445,3 @@ public class Translator {
 		return filename;
 	}
 }
-
