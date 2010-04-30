@@ -69,17 +69,12 @@ public class Translator {
 		createFunction(m, "bernoulli", "Bernoulli distribution", "lambda(p,p)");
 		
 		// translate from lhpn to sbml
-		// ----variables -> parameters-----
-		int i;
-		for (i=0; i < lhpn.getVariables().length; i++){
-			System.out.println("LHPN Vars " + lhpn.getVariables()[i]);
-		}
-		
+		// ----variables -> parameters-----	
 		for (String v: lhpn.getVariables()){
-			System.out.println("Vars from lhpn.getVariables() " + v);
+//			System.out.println("Vars from lhpn.getVariables() " + v);
 			if (v != null){
 				String initVal = lhpn.getInitialVal(v);
-				System.out.println("Begin:" + v + "= " + initVal);
+//				System.out.println("Begin:" + v + "= " + initVal);
 				if (lhpn.isContinuous(v)){
 					Parameter p = m.createParameter(); 
 					p.setConstant(false);
@@ -110,7 +105,7 @@ public class Translator {
 					p.setConstant(false);
 					p.setId(v);
 					String initValue = lhpn.getInitialVal(v);
-					System.out.println(v + "=" + initValue);
+//					System.out.println(v + "=" + initValue);
 					// check initValue type; if boolean, set parameter value as 0 or 1.
 					if (initValue.equals("true")){
 						p.setValue(1);
@@ -234,7 +229,7 @@ public class Translator {
 							if (lhpn.getContAssign(t, var) != null) {
 								ExprTree assignContTree = lhpn.getContAssignTree(t, var);	
 								String assignCont = assignContTree.toString("SBML");
-								System.out.println("continuous assign: "+ assignCont);
+//								System.out.println("continuous assign: "+ assignCont);
 								EventAssignment assign2 = e.createEventAssignment();
 								assign2.setVariable(var);
 								assign2.setMath(SBML_Editor.myParseFormula(assignCont));
@@ -248,7 +243,7 @@ public class Translator {
 							if (lhpn.getIntAssign(t, var) != null) {
 								ExprTree assignIntTree = lhpn.getIntAssignTree(t, var);
 								String assignInt = assignIntTree.toString("SBML");
-								System.out.println("integer assignment from LHPN: " + var + " := " + assignInt);
+//								System.out.println("integer assignment from LHPN: " + var + " := " + assignInt);
 								EventAssignment assign3 = e.createEventAssignment();
 								assign3.setVariable(var);
 								assign3.setMath(SBML_Editor.myParseFormula(assignInt));
@@ -263,7 +258,7 @@ public class Translator {
 								ExprTree assignBoolTree = lhpn.getBoolAssignTree(t, var);
 								String assignBool_tmp = assignBoolTree.toString("SBML");
 								String assignBool = "piecewise(1," + assignBool_tmp + ",0)";
-								System.out.println("boolean assignment from LHPN: " + var + " := " + assignBool);
+//								System.out.println("boolean assignment from LHPN: " + var + " := " + assignBool);
 								EventAssignment assign4 = e.createEventAssignment();
 								assign4.setVariable(var);
 								assign4.setMath(SBML_Editor.myParseFormula(assignBool));
@@ -274,7 +269,7 @@ public class Translator {
 					// rate assignment
 					if (lhpn.getRateVars(t)!= null){
 						for (String var : lhpn.getRateVars(t)){
-							 System.out.println("rate var: "+ var);
+//							 System.out.println("rate var: "+ var);
 							if (lhpn.getRateAssign(t, var) != null) {
 								ExprTree assignRateTree = lhpn.getRateAssignTree(t, var);
 								String assignRate = assignRateTree.toString("SBML");
@@ -289,7 +284,7 @@ public class Translator {
 				}
 				 //Only use event
 				else {			//lhpn.getContAssign(t, var) == null
-					System.out.println("Event Only");
+//					System.out.println("Event Only");
 					Event e = m.createEvent();
 					e.setId("event" + counter);	
 					Trigger trigger = e.createTrigger();
@@ -304,7 +299,7 @@ public class Translator {
 					else {
 						Enabling = lhpn.getEnablingTree(t).getElement("SBML");
 					}
-					System.out.println("Enabling = " + Enabling);
+//					System.out.println("Enabling = " + Enabling);
 					
 					//test Preset(t)
 					// TODO how to get the marking for preset ? lhpn.getPlaceInitial(preset)?
@@ -401,7 +396,7 @@ public class Translator {
 					// rate assignment
 					if (lhpn.getRateVars(t)!= null){
 						for (String var : lhpn.getRateVars(t)){
-							 System.out.println("rate var: "+ var);
+//							 System.out.println("rate var: "+ var);
 							if (lhpn.getRateAssign(t, var) != null) {
 								ExprTree assignRateTree = lhpn.getRateAssignTree(t, var);
 								String assignRate = assignRateTree.toString("SBML");
