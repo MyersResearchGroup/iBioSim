@@ -3639,6 +3639,8 @@ public class ExprTree {
 				
 			}
 		case 'n': // Number
+			// TODO: create a random initial value
+			// Temporary: initialize all inf, -inf, [-inf, inf] to 0
 			Double tempuval = uvalue;
 			Double templval = lvalue;
 			if ((uvalue == lvalue) || tempuval.toString().equals("")) {
@@ -3662,7 +3664,7 @@ public class ExprTree {
 				}
 				String uval;
 				if (uvalue==INFIN) {
-					uval = "inf";
+					uval = "inf";	
 				} else if (uvalue==-INFIN){
 					uval = "-inf";
 				} else {
@@ -3671,6 +3673,7 @@ public class ExprTree {
 				result = "uniform(" + lval + "," + uval + ")";
 				// result = "[" + templval.toString() + "," +
 				// tempuval.toString() + "]";
+
 			}
 			break;
 		case 't': // Truth value
@@ -3683,7 +3686,11 @@ public class ExprTree {
 				// result = "FALSE";
 			}
 			else {
+				if (sbmlFlag){
+					result = "0";
+				}
 				result = "UNKNOWN";
+				
 			}
 			// else {
 			// System.out.println("WARNING: Unknown assignment to a boolean
