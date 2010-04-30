@@ -72,6 +72,14 @@ public class Variable {
 		return output;
 	}
 	
+	public String toString() {
+		return name;
+	}
+	
+	public boolean equals(Object var) {
+		return name.equals(var.toString());
+	}
+	
 	public static final String BOOLEAN = "boolean";
 	
 	public static final String INTEGER = "integer";
