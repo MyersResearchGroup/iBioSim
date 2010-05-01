@@ -5069,7 +5069,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				 * JOptionPane.PLAIN_MESSAGE);
 				 */
 				// if (modelNumber != null && !modelNumber.equals("")) {
-				if (value == JOptionPane.YES_OPTION) {
+				if (value == JOptionPane.YES_OPTION && ListOfBioModels.getSelectedValue() != null) {
 					String BMurl = "http://www.ebi.ac.uk/biomodels/models-main/publ/";
 					String filename = ((String) ListOfBioModels.getSelectedValue()).split(" ")[0];
 					/*
