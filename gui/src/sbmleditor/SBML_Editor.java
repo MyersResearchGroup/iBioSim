@@ -5113,6 +5113,12 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					org.sbml.libsbml.Event e = document.getModel().createEvent();
 					e.setUseValuesFromTriggerTime(assignTime.isSelected());
 					e.createTrigger();
+					if (!eventID.getText().trim().equals("")) {
+						e.setId(eventID.getText().trim());
+					}
+					if (!eventName.getText().trim().equals("")) {
+						e.setName(eventName.getText().trim());
+					}
 					if (disableTrigger.isSelected()) {
 						if (!e.getTrigger().getAnnotationString().contains("<TriggerCanBeDisabled/>")) {
 							if (e.getTrigger().isSetAnnotation()) {
@@ -5141,12 +5147,6 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 							if (error)
 								break;
 						}
-					}
-					if (!eventID.getText().trim().equals("")) {
-						e.setId(eventID.getText().trim());
-					}
-					if (!eventName.getText().trim().equals("")) {
-						e.setName(eventName.getText().trim());
 					}
 					Object[] adding = { e.getId() };
 					// Object[] adding = {
@@ -9714,11 +9714,9 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					log.addText("Saving SBML file:\n" + file + "\n");
 				}
 				document.getModel().setName(modelName.getText().trim());
-				/*
-				for (int i=0;i<document.getModel().getNumEvents();i++) {
+				/*for (int i=0;i<document.getModel().getNumEvents();i++) {
 					System.out.println(i + " " + document.getModel().getEvent(i).getId());
-				}
-				*/
+				}*/
 				SBMLWriter writer = new SBMLWriter();
 				writer.writeSBML(document, file);
 				dirty = false;
