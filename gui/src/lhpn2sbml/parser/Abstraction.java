@@ -63,6 +63,11 @@ public class Abstraction extends LhpnFile {
 		Integer i = 0;
 		while (change && i < abstPane.maxIterations()) {
 			change = false;
+			// Transform 19 - Merge Coordinated Variables
+			if (abstPane.absListModel.contains(abstPane.xform19) && abstPane.isSimplify()) {
+				change = mergeCoordinatedVars(change);
+				simplifyExpr();
+			}
 			// Transform 0 - Merge Parallel Places
 			if (abstPane.absListModel.contains(abstPane.xform0) && abstPane.isSimplify()) {
 				change = checkTrans0(change);
@@ -146,11 +151,6 @@ public class Abstraction extends LhpnFile {
 			// Transform 25 - Propagate Constant Variable Values
 			if (abstPane.absListModel.contains(abstPane.xform25) && abstPane.isSimplify()) {
 				change = propagateConst(change);
-			}
-			// Transform 19 - Merge Coordinated Variables
-			if (abstPane.absListModel.contains(abstPane.xform19) && abstPane.isSimplify()) {
-				change = mergeCoordinatedVars(change);
-				simplifyExpr();
 			}
 			i++;
 		}
