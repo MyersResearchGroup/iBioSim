@@ -1288,7 +1288,7 @@ public class Abstraction extends LhpnFile {
 					}
 				}
 				Transition[] tempPostset = preset[0].getPostset();
-				if ((tempPostset.length == 1 || pre) && places.containsKey(preset[0])) {
+				if ((tempPostset.length == 1 || pre) && places.containsKey(preset[0].getName())) {
 					if (!assign) {
 						remove.add(t);
 					}
