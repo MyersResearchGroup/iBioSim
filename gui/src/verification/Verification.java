@@ -608,6 +608,12 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					}
 				}
 			}
+			if (load.containsKey("abstraction.factor")) {
+				abstPane.factorField.setText(load.getProperty("abstraction.factor"));
+			}
+			if (load.containsKey("abstraction.iterations")) {
+				abstPane.iterField.setText(load.getProperty("abstraction.iterations"));
+			}
 			tempArray = verifyFile.split(separator);
 			sourceFileNoPath = tempArray[tempArray.length - 1];
 			backgroundField = new JTextField(sourceFileNoPath);
@@ -1696,6 +1702,12 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			}
 			else {
 				prop.remove("abstraction.transforms");
+			}
+			if (!abstPane.factorField.getText().equals("")) {
+				prop.setProperty("abstraction.factor", abstPane.factorField.getText());
+			}
+			if (!abstPane.iterField.getText().equals("")) {
+				prop.setProperty("abstraction.iterations", abstPane.iterField.getText());
 			}
 			FileOutputStream out = new FileOutputStream(new File(directory + separator + verFile));
 			prop.store(out, verifyFile);
