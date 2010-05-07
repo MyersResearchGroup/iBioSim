@@ -64,93 +64,19 @@ public class Abstraction extends LhpnFile {
 		while (change && i < abstPane.maxIterations()) {
 			change = false;
 			divideProcesses();
-			// Transform 19 - Merge Coordinated Variables
-			if (abstPane.absListModel.contains(abstPane.xform19) && abstPane.isSimplify()) {
-				change = mergeCoordinatedVars(change);
-				simplifyExpr();
-			}
 			// Transform 0 - Merge Parallel Places
 			if (abstPane.absListModel.contains(abstPane.xform0) && abstPane.isSimplify()) {
 				change = checkTrans0(change);
 			}
-			// Transform 25 - Propagate Constant Variable Values
-			if (abstPane.absListModel.contains(abstPane.xform25)
-					&& abstPane.isSimplify()) {
-				change = propagateConst(change);
+			// Transform 1 - Remove a Place in a Self Loop
+			if (abstPane.absListModel.contains(abstPane.xform1) && abstPane.isSimplify()) {
+				change = checkTrans1(change);
 			}
-			// Transform 24 - Pairwise Write Before Write
-			if (abstPane.absListModel.contains(abstPane.xform24)
-					&& abstPane.isSimplify()) {
-				change = weakWriteBeforeWrite(change);
-			}
-			// Transform 20 - Remove Arc after Fail Transition
-			if (abstPane.absListModel.contains(abstPane.xform20)
-					&& abstPane.isSimplify()) {
-				change = removePostFailPlaces(change);
-			}
-			// Transform 18 - Remove Unread Variables
-			if (abstPane.absListModel.contains(abstPane.xform18)
-					&& abstPane.isSimplify()) {
-				change = removeUnreadVars(change);
-			}
-			// Transform 17 - Remove Dominated Transitions
-			if (abstPane.absListModel.contains(abstPane.xform17)
-					&& abstPane.isSimplify()) {
-				change = removeDominatedTransitions(change);
-				change = removeRedundantTransitions(change);
-			}
-			// Transform 15 - Remove Dead Transitions
-			if (abstPane.absListModel.contains(abstPane.xform15)
-					&& abstPane.isSimplify()) {
-				change = removeDeadTransitions(change);
-			}
-			// Transform 10 - Simplify Expressions
-			if (abstPane.absListModel.contains(abstPane.xform10)
-					&& abstPane.isSimplify()) {
-				simplifyExpr();
-			}
-			// Transform 9 - Remove Write Before Write
-			if (abstPane.absListModel.contains(abstPane.xform9)
-					&& abstPane.isSimplify()) {
-				change = checkTrans9(change);
-			}
-			// Transform 8 - Propagate local assignments
-			if (abstPane.absListModel.contains(abstPane.xform8)
-					&& abstPane.isSimplify()) {
-				change = checkTrans8(change);
-			}
-			// Transform 14 - Remove Dead Places
-			if (abstPane.absListModel.contains(abstPane.xform14)
-					&& abstPane.isSimplify()) {
-				change = removeDeadPlaces(change);
-			}
-			// Transform 23 - Remove Vacuous Transitions (abstraction)
-			if (abstPane.absListModel.contains(abstPane.xform22)
-					&& abstPane.isAbstract()) {
-				change = checkTrans23(change);
-			}
-			// Transform 22 - Remove Vacuous Transitions (simplification)
-			if (abstPane.absListModel.contains(abstPane.xform22)
-					&& abstPane.isSimplify()) {
-				change = checkTrans22(change);
-			}
-			// Transform 3 - Remove a Transition with a Single Place in the
-			// Postset
-			if (abstPane.absListModel.contains(abstPane.xform3)
-					&& abstPane.isSimplify()) {
-				change = checkTrans3(change);
-			}
-			// Transform 4 - Remove a Transition with a Single Place in the
-			// Preset
-			if (abstPane.absListModel.contains(abstPane.xform4)
-					&& abstPane.isSimplify()) {
-				change = checkTrans4(change);
-			}
-			// Transform 5b
-			if (abstPane.absListModel.contains(abstPane.xform5)
-					&& abstPane.isAbstract()) {
-				change = checkTrans5b(change);
-			}
+			// Transform 11 - Remove Unused Variables
+			// if (abstPane.absListModel.contains(abstPane.xform11) &&
+			// abstPane.isSimplify()) {
+			// change = removeVars(change);
+			// }
 			// Transforms 5a, 6, 7 - Combine Transitions with the Same Preset
 			// and/or Postset
 			if ((abstPane.absListModel.contains(abstPane.xform5)
@@ -159,15 +85,73 @@ public class Abstraction extends LhpnFile {
 					&& abstPane.isAbstract()) {
 				change = checkTrans5(change);
 			}
-			// Transform 1 - Remove a Place in a Self Loop
-			if (abstPane.absListModel.contains(abstPane.xform1)
-					&& abstPane.isSimplify()) {
-				change = checkTrans1(change);
+			// Transform 5b
+			if (abstPane.absListModel.contains(abstPane.xform5) && abstPane.isAbstract()) {
+				change = checkTrans5b(change);
 			}
-			// Transform 0 - Merge Parallel Places
-			if (abstPane.absListModel.contains(abstPane.xform0)
-					&& abstPane.isSimplify()) {
-				change = checkTrans0(change);
+			// Transform 4 - Remove a Transition with a Single Place in the
+			// Preset
+			if (abstPane.absListModel.contains(abstPane.xform4) && abstPane.isSimplify()) {
+				change = checkTrans4(change);
+			}
+			// Transform 3 - Remove a Transition with a Single Place in the
+			// Postset
+			if (abstPane.absListModel.contains(abstPane.xform3) && abstPane.isSimplify()) {
+				change = checkTrans3(change);
+			}
+			// Transform 22 - Remove Vacuous Transitions (simplification)
+			if (abstPane.absListModel.contains(abstPane.xform22) && abstPane.isSimplify()) {
+				change = checkTrans22(change);
+			}
+			// Transform 23 - Remove Vacuous Transitions (abstraction)
+			if (abstPane.absListModel.contains(abstPane.xform22) && abstPane.isAbstract()) {
+				change = checkTrans23(change);
+			}
+			// Transform 14 - Remove Dead Places
+			if (abstPane.absListModel.contains(abstPane.xform14) && abstPane.isSimplify()) {
+				change = removeDeadPlaces(change);
+			}
+			// Transform 8 - Propagate local assignments
+			if (abstPane.absListModel.contains(abstPane.xform8) && abstPane.isSimplify()) {
+				change = checkTrans8(change);
+			}
+			// Transform 9 - Remove Write Before Write
+			if (abstPane.absListModel.contains(abstPane.xform9) && abstPane.isSimplify()) {
+				change = checkTrans9(change);
+			}
+			// Transform 10 - Simplify Expressions
+			if (abstPane.absListModel.contains(abstPane.xform10) && abstPane.isSimplify()) {
+				simplifyExpr();
+			}
+			// Transform 15 - Remove Dead Transitions
+			if (abstPane.absListModel.contains(abstPane.xform15) && abstPane.isSimplify()) {
+				change = removeDeadTransitions(change);
+			}
+			// Transform 17 - Remove Dominated Transitions
+			if (abstPane.absListModel.contains(abstPane.xform17) && abstPane.isSimplify()) {
+				change = removeDominatedTransitions(change);
+				change = removeRedundantTransitions(change);
+			}
+			// Transform 18 - Remove Unread Variables
+			if (abstPane.absListModel.contains(abstPane.xform18) && abstPane.isSimplify()) {
+				change = removeUnreadVars(change);
+			}
+			// Transform 20 - Remove Arc after Fail Transition
+			if (abstPane.absListModel.contains(abstPane.xform20) && abstPane.isSimplify()) {
+				change = removePostFailPlaces(change);
+			}
+			// Transform 24 - Pairwise Write Before Write
+			if (abstPane.absListModel.contains(abstPane.xform24) && abstPane.isSimplify()) {
+				change = weakWriteBeforeWrite(change);
+			}
+			// Transform 25 - Propagate Constant Variable Values
+			if (abstPane.absListModel.contains(abstPane.xform25) && abstPane.isSimplify()) {
+				change = propagateConst(change);
+			}
+			// Transform 19 - Merge Coordinated Variables
+			if (abstPane.absListModel.contains(abstPane.xform19) && abstPane.isSimplify()) {
+				change = mergeCoordinatedVars(change);
+				simplifyExpr();
 			}
 			i++;
 		}
