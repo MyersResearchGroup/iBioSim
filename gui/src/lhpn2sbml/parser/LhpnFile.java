@@ -593,6 +593,19 @@ public class LhpnFile {
 		}
 		return vars;
 	}
+	
+	public Variable getVariable(String name) {
+		if (isBoolean(name)) {
+			return booleans.get(name);
+		}
+		else if (isContinuous(name)) {
+			return continuous.get(name);
+		}
+		else if (isInteger(name)) {
+			return integers.get(name);
+		}
+		return null;
+	}
 
 	public HashMap<String, String> getInputs() {
 		HashMap<String, String> inputs = new HashMap<String, String>();
