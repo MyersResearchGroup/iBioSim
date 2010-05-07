@@ -425,7 +425,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					if (load.getProperty("verification.timing.methods").equals("bdd")) {
 						bdd.setSelected(true);
 					}
-					else if (load.getProperty("verification.timing.methods").equals("dcm")) {
+					else if (load.getProperty("verification.timing.methods").equals("dbm")) {
 						dbm.setSelected(true);
 					}
 					else if (load.getProperty("verification.timing.methods").equals("smt")) {
