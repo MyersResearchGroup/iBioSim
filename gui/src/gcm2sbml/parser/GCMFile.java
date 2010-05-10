@@ -776,99 +776,105 @@ public class GCMFile {
 		}
 		return LHPN;
 	}
-
-	public void save(String filename) {
-		try {
-			PrintStream p = new PrintStream(new FileOutputStream(filename));
-			StringBuffer buffer = new StringBuffer("digraph G {\n");
-			for (String s : species.keySet()) {
-				buffer.append(s + " [");
-				Properties prop = species.get(s);
-				for (Object propName : prop.keySet()) {
-					if ((propName.toString().equals(GlobalConstants.NAME))
-							|| (propName.toString().equals("label"))) {
-						buffer.append(checkCompabilitySave(propName.toString()) + "=" + "\""
-								+ prop.getProperty(propName.toString()).toString() + "\"" + ",");
-					}
-					else {
-						buffer.append(checkCompabilitySave(propName.toString()) + "=" + "\""
-								+ prop.getProperty(propName.toString()).toString() + "\"" + ",");
-					}
-				}
-				if (!prop.containsKey("shape")) {
-					buffer.append("shape=ellipse,");
-				}
-				if (!prop.containsKey("label")) {
-					buffer.append("label=\"" + s + "\"");
+	
+	/**
+	 * Save the contents to a StringBuffer. Can later be written to a file or other stream.
+	 * @return
+	 */
+	public StringBuffer save_to_buffer(Boolean includeGlobals){
+		StringBuffer buffer = new StringBuffer("digraph G {\n");
+		for (String s : species.keySet()) {
+			buffer.append(s + " [");
+			Properties prop = species.get(s);
+			for (Object propName : prop.keySet()) {
+				if ((propName.toString().equals(GlobalConstants.NAME))
+						|| (propName.toString().equals("label"))) {
+					buffer.append(checkCompabilitySave(propName.toString()) + "=" + "\""
+							+ prop.getProperty(propName.toString()).toString() + "\"" + ",");
 				}
 				else {
-					buffer.deleteCharAt(buffer.lastIndexOf(","));
+					buffer.append(checkCompabilitySave(propName.toString()) + "=" + "\""
+							+ prop.getProperty(propName.toString()).toString() + "\"" + ",");
 				}
-				// buffer.deleteCharAt(buffer.length() - 1);
-				buffer.append("]\n");
 			}
-			for (String s : components.keySet()) {
-				buffer.append(s + " [");
-				Properties prop = components.get(s);
-				for (Object propName : prop.keySet()) {
-					if (propName.toString().equals("gcm")) {
-						buffer.append(checkCompabilitySave(propName.toString()) + "=\""
-								+ prop.getProperty(propName.toString()).toString() + "\"");
-					}
-				}
-				buffer.append("]\n");
+			if (!prop.containsKey("shape")) {
+				buffer.append("shape=ellipse,");
 			}
-			for (String s : influences.keySet()) {
-				buffer.append(getInput(s) + " -> "// + getArrow(s) + " "
-						+ getOutput(s) + " [");
-				Properties prop = influences.get(s);
-				String promo = "default";
-				if (prop.containsKey(GlobalConstants.PROMOTER)) {
-					promo = prop.getProperty(GlobalConstants.PROMOTER);
+			if (!prop.containsKey("label")) {
+				buffer.append("label=\"" + s + "\"");
+			}
+			else {
+				buffer.deleteCharAt(buffer.lastIndexOf(","));
+			}
+			// buffer.deleteCharAt(buffer.length() - 1);
+			buffer.append("]\n");
+		}
+		for (String s : components.keySet()) {
+			buffer.append(s + " [");
+			Properties prop = components.get(s);
+			for (Object propName : prop.keySet()) {
+				if (propName.toString().equals("gcm")) {
+					buffer.append(checkCompabilitySave(propName.toString()) + "=\""
+							+ prop.getProperty(propName.toString()).toString() + "\"");
 				}
-				prop.setProperty(GlobalConstants.NAME, "\"" + getInput(s) + " " + getArrow(s) + " "
-						+ getOutput(s) + ", Promoter " + promo + "\"");
-				for (Object propName : prop.keySet()) {
-					if (propName.toString().equals("label")) {
-						buffer.append("label=\"\"");
-					}
-					else {
-						buffer.append(checkCompabilitySave(propName.toString()) + "="
-								+ prop.getProperty(propName.toString()).toString() + ",");
-					}
+			}
+			buffer.append("]\n");
+		}
+		for (String s : influences.keySet()) {
+			buffer.append(getInput(s) + " -> "// + getArrow(s) + " "
+					+ getOutput(s) + " [");
+			Properties prop = influences.get(s);
+			String promo = "default";
+			if (prop.containsKey(GlobalConstants.PROMOTER)) {
+				promo = prop.getProperty(GlobalConstants.PROMOTER);
+			}
+			prop.setProperty(GlobalConstants.NAME, "\"" + getInput(s) + " " + getArrow(s) + " "
+					+ getOutput(s) + ", Promoter " + promo + "\"");
+			for (Object propName : prop.keySet()) {
+				if (propName.toString().equals("label")) {
+					buffer.append("label=\"\"");
 				}
+				else {
+					buffer.append(checkCompabilitySave(propName.toString()) + "="
+							+ prop.getProperty(propName.toString()).toString() + ",");
+				}
+			}
 
-				String type = "";
-				if (!prop.containsKey("arrowhead")) {
-					if (prop.getProperty(GlobalConstants.TYPE).equals(GlobalConstants.ACTIVATION)) {
-						type = "vee";
-					}
-					else if (prop.getProperty(GlobalConstants.TYPE).equals(
-							GlobalConstants.REPRESSION)) {
-						type = "tee";
-					}
-					else {
-						type = "dot";
-					}
-					buffer.append("arrowhead=" + type + "");
+			String type = "";
+			if (!prop.containsKey("arrowhead")) {
+				if (prop.getProperty(GlobalConstants.TYPE).equals(GlobalConstants.ACTIVATION)) {
+					type = "vee";
 				}
-				if (buffer.charAt(buffer.length() - 1) == ',') {
-					buffer.deleteCharAt(buffer.length() - 1);
+				else if (prop.getProperty(GlobalConstants.TYPE).equals(
+						GlobalConstants.REPRESSION)) {
+					type = "tee";
 				}
-				buffer.append("]\n");
+				else {
+					type = "dot";
+				}
+				buffer.append("arrowhead=" + type + "");
 			}
-			for (String s : components.keySet()) {
-				Properties prop = components.get(s);
-				for (Object propName : prop.keySet()) {
-					if (!propName.toString().equals("gcm")
-							&& !propName.toString().equals(GlobalConstants.ID)) {
-						buffer.append(s + " -> " + prop.getProperty(propName.toString()).toString()
-								+ " [port=" + propName.toString());
-						buffer.append(", arrowhead=none]\n");
-					}
+			if (buffer.charAt(buffer.length() - 1) == ',') {
+				buffer.deleteCharAt(buffer.length() - 1);
+			}
+			buffer.append("]\n");
+		}
+		for (String s : components.keySet()) {
+			Properties prop = components.get(s);
+			for (Object propName : prop.keySet()) {
+				if (!propName.toString().equals("gcm")
+						&& !propName.toString().equals(GlobalConstants.ID)) {
+					buffer.append(s + " -> " + prop.getProperty(propName.toString()).toString()
+							+ " [port=" + propName.toString());
+					buffer.append(", arrowhead=none]\n");
 				}
 			}
-			buffer.append("}\nGlobal {\n");
+		}
+		buffer.append("}\n");
+		
+		// For saving .gcm file before sending to dotty, omit the rest of this.
+		if(includeGlobals){
+			buffer.append("Global {\n");
 			for (String s : defaultParameters.keySet()) {
 				if (globalParameters.containsKey(s)) {
 					String value = globalParameters.get(s);
@@ -917,6 +923,20 @@ public class GCMFile {
 			if (dimAbs) {
 				buffer.append(GlobalConstants.DIMABS + "=true\n");
 			}
+		}
+		return buffer;
+	}
+
+	/**
+	 * Save the current object to file.
+	 * @param filename
+	 */
+	public void save(String filename) {
+		try {
+			PrintStream p = new PrintStream(new FileOutputStream(filename));
+
+			StringBuffer buffer = save_to_buffer(true);
+			
 			p.print(buffer);
 			p.close();
 		}

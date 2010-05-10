@@ -41,6 +41,10 @@ import sbmleditor.SBML_Editor;
 import biomodelsim.BioSim;
 import biomodelsim.Log;
 
+import gcm2sbml.gui.grappa.GCIGrappaPanel;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.ChangeEvent;
+
 /**
  * This is the GCM2SBMLEditor class. It takes in a gcm file and allows the user
  * to edit it by changing different fields displayed in a frame. It also
@@ -122,7 +126,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		if (paramsOnly) {
 			loadParams();
 		}
-		buildGui(this.filename);
+		buildGui(this.filename, this.path);
 	}
 
 	public String getFilename() {
@@ -752,7 +756,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		lock = false;
 	}
 
-	private void buildGui(String filename) {
+	private void buildGui(String filename, String path) {
 		JPanel mainPanelNorth = new JPanel();
 		JPanel mainPanelCenter = new JPanel(new BorderLayout());
 		JPanel mainPanelCenterUp = new JPanel();
@@ -806,6 +810,9 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 			dimAbs.setSelected(true);
 		}
 
+		// create the grappa panel
+		GCIGrappaPanel grappaPanel = new GCIGrappaPanel(filename);
+		
 		JPanel mainPanel = new JPanel(new BorderLayout());
 		mainPanel.setLayout(new BorderLayout());
 		mainPanel.add(mainPanelNorth, "North");
@@ -813,9 +820,28 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		JTabbedPane tab = new JTabbedPane();
 		tab.addTab("Main Elements", mainPanel);
 		tab.addTab("Components", tabPanel);
+		tab.addTab("Grappa Panel", grappaPanel);
 		setLayout(new BorderLayout());
 		add(tab, BorderLayout.CENTER);
 		add(mainPanelCenterDown, BorderLayout.SOUTH);
+		
+		tab.addChangeListener(new ChangeListener(){
+			public void stateChanged(ChangeEvent e) {
+				JTabbedPane selected_tab = (JTabbedPane)(e.getSource());
+				
+				JPanel selected_panel = (JPanel)selected_tab.getComponent(selected_tab.getSelectedIndex());
+
+				if(selected_panel.getClass().getName().indexOf("GCIGrappaPanel") > 0){
+
+					((GCIGrappaPanel)selected_panel).display(gcm.save_to_buffer(false));
+				}else{
+					// TODO: Loop through all the panels, find the grappa panel, and
+					// tell it to hide.
+				}
+
+				
+			}
+		});
 
 		JPanel buttons = new JPanel();
 		SaveButton saveButton = new SaveButton("Save GCM", GCMNameTextField);
