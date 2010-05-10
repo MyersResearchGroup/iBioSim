@@ -1334,15 +1334,12 @@ public class Abstraction extends LhpnFile {
 					}
 				}
 				Transition[] tempPostset = preset[0].getPostset();
-				if ((tempPostset.length == 1 || pre)
-						&& places.containsKey(preset[0])) {
 				if ((tempPostset.length == 1 || pre) && places.containsKey(preset[0].getName())) {
 					if (!assign) {
 						remove.add(t);
 					}
 				}
 			}
-		}
 		}
 		for (Transition t : remove) {
 			Place[] postset = t.getPostset();
@@ -2042,7 +2039,7 @@ public class Abstraction extends LhpnFile {
 	private boolean trans8(String transName, String var, boolean change) {
 		// Propagate expressions of local variables to transition post sets
 		Transition trans = transitions.get(transName);
-		if (!(process_read.get(var).equals(process_trans.get(trans)) && process_write
+		if (!((process_read.get(var).equals(process_trans.get(trans)) || process_read.get(var) == 0) && process_write
 				.get(var).equals(process_trans.get(trans)))) {
 			return change; // Return if the variable is not local
 		}
