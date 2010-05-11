@@ -1189,6 +1189,7 @@ public class LhpnFile {
 	private void parseAssign(StringBuffer data) {
 		Pattern linePattern = Pattern.compile(ASSIGNMENT_LINE);
 		Matcher lineMatcher = linePattern.matcher(data.toString());
+		Pattern rangePattern = Pattern.compile(RANGE);
 		if (lineMatcher.find()) {
 			Pattern assignPattern = Pattern.compile(ASSIGNMENT);
 			Matcher assignMatcher = assignPattern.matcher(lineMatcher.group(1));
@@ -1201,10 +1202,22 @@ public class LhpnFile {
 					String variable = varMatcher.group(1);
 					String assignment = varMatcher.group(2);
 					if (isInteger(variable)) {
-						transition.addIntAssign(variable, assignment);
+						Matcher rangeMatcher = rangePattern.matcher(assignment);
+						if (rangeMatcher.find()) {
+							transition.addIntAssign(variable, "uniform(" + rangeMatcher.group(1) + "," + rangeMatcher.group(2) + ")");
+						}
+						else {
+							transition.addIntAssign(variable, assignment);
+						}
 					}
 					else {
-						transition.addContAssign(variable, assignment);
+						Matcher rangeMatcher = rangePattern.matcher(assignment);
+						if (rangeMatcher.find()) {
+							transition.addContAssign(variable, "uniform(" + rangeMatcher.group(1) + "," + rangeMatcher.group(2) + ")");
+						}
+						else {
+							transition.addContAssign(variable, assignment);
+						}
 					}
 				}
 			}
@@ -1214,6 +1227,7 @@ public class LhpnFile {
 	private void parseRateAssign(StringBuffer data) {
 		Pattern linePattern = Pattern.compile(RATE_ASSIGNMENT_LINE);
 		Matcher lineMatcher = linePattern.matcher(data.toString());
+		Pattern rangePattern = Pattern.compile(RANGE);
 		if (lineMatcher.find()) {
 			Pattern assignPattern = Pattern.compile(ASSIGNMENT);
 			Matcher assignMatcher = assignPattern.matcher(lineMatcher.group(1));
@@ -1225,7 +1239,13 @@ public class LhpnFile {
 				while (varMatcher.find()) {
 					String variable = varMatcher.group(1);
 					String assignment = varMatcher.group(2);
-					transition.addRateAssign(variable, assignment);
+					Matcher rangeMatcher = rangePattern.matcher(assignment);
+					if (rangeMatcher.find()) {
+						transition.addRateAssign(variable, "uniform(" + rangeMatcher.group(1) + "," + rangeMatcher.group(2) + ")");
+					}
+					else {
+						transition.addRateAssign(variable, assignment);
+					}
 				}
 			}
 		}
