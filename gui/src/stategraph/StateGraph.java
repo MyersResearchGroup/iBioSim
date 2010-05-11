@@ -505,6 +505,7 @@ public class StateGraph {
 						System.out.println(lhpn.getTransitionRateTree(
 								next.getTransition()).evaluateExp(m.getVariables()));
 								*/
+						if (lhpn.getTransitionRateTree(next.getTransition()) != null) {
 						out.write(m.getID()
 								+ " -> "
 								+ next.getState().getID()
@@ -514,6 +515,14 @@ public class StateGraph {
 								+ Double.parseDouble(num.format((lhpn.getTransitionRateTree(
 										next.getTransition()).evaluateExp(m.getVariables()) /*/ m
 										.getTransitionSum()*/))) + "\"]\n");
+						} else {
+						out.write(m.getID()
+								+ " -> "
+								+ next.getState().getID()
+								+ " [label=\""
+								+ next.getTransition()
+								+ "\"]\n");
+						}
 					}
 				}
 			}
@@ -521,6 +530,7 @@ public class StateGraph {
 			out.close();
 		}
 		catch (Exception e) {
+			e.printStackTrace();
 			System.err.println("Error outputting state graph as dot file.");
 		}
 	}
