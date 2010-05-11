@@ -153,6 +153,10 @@ public class Abstraction extends LhpnFile {
 				change = mergeCoordinatedVars(change);
 				simplifyExpr();
 			}
+			// Transform 26 - Remove Dangling Transitions
+			if (abstPane.absListModel.contains(abstPane.xform26) && abstPane.isSimplify()) {
+				change = removeDanglingTransitions(change);
+			}
 			i++;
 		}
 		// Transform 21 - Normalize Delays
@@ -2182,6 +2186,22 @@ public class Abstraction extends LhpnFile {
 			}
 		}
 		return true;
+	}
+	
+	private Boolean removeDanglingTransitions(Boolean change) {
+		for (Transition t : transitions.values()) {
+			if (t.getPostset().length == 0) {
+				if (t.getAssignments().size() == 0) {
+					if (!t.isFail()) {
+						for (Place p : t.getPostset()) {
+							removeMovement(p.getName(), t.getName());
+						}
+						removeTransition(t.getName());
+					}
+				}
+			}
+		}
+		return change;
 	}
 
 	private boolean divideProcesses() {
