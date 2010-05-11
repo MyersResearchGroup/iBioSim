@@ -522,6 +522,7 @@ public class LhpnFile {
 	}
 
 	public ExprTree getTransitionRateTree(String transition) {
+		if (transitions.get(transition).getDelayTree() == null) return null;
 		if (transitions.get(transition).getDelayTree().op.equals("exponential")) {
 			return transitions.get(transition).getDelayTree().r1;
 		}
