@@ -1751,7 +1751,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				}
 				if (!copy.equals("")) {
 					if (copy.length() > 1) {
-						if (!copy.substring(copy.length() - 4).equals(".lpn")) {
+						if (copy.length() < 4 || !copy.substring(copy.length() - 4).equals(".lpn")) {
 							copy += ".lpn";
 						}
 					} else {
