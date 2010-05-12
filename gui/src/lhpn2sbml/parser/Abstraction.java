@@ -154,9 +154,11 @@ public class Abstraction extends LhpnFile {
 				simplifyExpr();
 			}
 			// Transform 26 - Remove Dangling Transitions
+			/*
 			if (abstPane.absListModel.contains(abstPane.xform26) && abstPane.isSimplify()) {
 				change = removeDanglingTransitions(change);
 			}
+			*/
 			i++;
 		}
 		// Transform 21 - Normalize Delays
