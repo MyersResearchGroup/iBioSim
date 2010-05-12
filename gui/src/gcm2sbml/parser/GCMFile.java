@@ -831,9 +831,10 @@ public class GCMFile {
 			prop.setProperty(GlobalConstants.NAME, "\"" + getInput(s) + " " + getArrow(s) + " "
 					+ getOutput(s) + ", Promoter " + promo + "\"");
 			for (Object propName : prop.keySet()) {
-				if (propName.toString().equals("label")) {
-					buffer.append("label=\"\"");
-				}
+				if (propName.toString().equals("label") &&
+						prop.getProperty(propName.toString()).toString().equals("")) {
+					buffer.append("label=\"\",");
+				}	
 				else {
 					buffer.append(checkCompabilitySave(propName.toString()) + "="
 							+ prop.getProperty(propName.toString()).toString() + ",");
