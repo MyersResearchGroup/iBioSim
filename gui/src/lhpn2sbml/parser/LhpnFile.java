@@ -1232,6 +1232,11 @@ public class LhpnFile {
 					if (isInteger(variable)) {
 						Matcher rangeMatcher = rangePattern.matcher(assignment);
 						if (rangeMatcher.find()) {
+							if (rangeMatcher.group(1).matches(INTEGER) && rangeMatcher.group(2).matches(INTEGER)) {
+								if (Integer.parseInt(rangeMatcher.group(1)) == Integer.parseInt(rangeMatcher.group(2))) {
+									transition.addIntAssign(variable, rangeMatcher.group(1));
+								}
+							}
 							transition.addIntAssign(variable, "uniform(" + rangeMatcher.group(1)
 									+ "," + rangeMatcher.group(2) + ")");
 						}
@@ -1242,6 +1247,11 @@ public class LhpnFile {
 					else {
 						Matcher rangeMatcher = rangePattern.matcher(assignment);
 						if (rangeMatcher.find()) {
+							if (rangeMatcher.group(1).matches(INTEGER) && rangeMatcher.group(2).matches(INTEGER)) {
+								if (Integer.parseInt(rangeMatcher.group(1)) == Integer.parseInt(rangeMatcher.group(2))) {
+									transition.addContAssign(variable, rangeMatcher.group(1));
+								}
+							}
 							transition.addContAssign(variable, "uniform(" + rangeMatcher.group(1)
 									+ "," + rangeMatcher.group(2) + ")");
 						}
@@ -1271,6 +1281,11 @@ public class LhpnFile {
 					String assignment = varMatcher.group(2);
 					Matcher rangeMatcher = rangePattern.matcher(assignment);
 					if (rangeMatcher.find()) {
+						if (rangeMatcher.group(1).matches(INTEGER) && rangeMatcher.group(2).matches(INTEGER)) {
+							if (Integer.parseInt(rangeMatcher.group(1)) == Integer.parseInt(rangeMatcher.group(2))) {
+								transition.addRateAssign(variable, rangeMatcher.group(1));
+							}
+						}
 						transition.addRateAssign(variable, "uniform(" + rangeMatcher.group(1) + ","
 								+ rangeMatcher.group(2) + ")");
 					}
@@ -1361,6 +1376,8 @@ public class LhpnFile {
 	private static final String TRANSITION = "\\.dummy([^\\n]*?)\\n";
 
 	private static final String WORD = "(\\S+)";
+	
+	private static final String INTEGER = "([-\\d]+)";
 
 	private static final String PLACE = "\\n([\\w_\\+-/&&[^\\.#]]+ [\\w_\\+-/]+)";
 
