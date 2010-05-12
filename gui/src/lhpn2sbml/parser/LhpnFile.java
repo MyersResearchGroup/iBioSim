@@ -522,7 +522,8 @@ public class LhpnFile {
 	}
 
 	public ExprTree getTransitionRateTree(String transition) {
-		if (transitions.get(transition).getDelayTree() == null) return null;
+		if (transitions.get(transition).getDelayTree() == null)
+			return null;
 		if (transitions.get(transition).getDelayTree().op.equals("exponential")) {
 			return transitions.get(transition).getDelayTree().r1;
 		}
@@ -568,13 +569,26 @@ public class LhpnFile {
 		}
 	}
 
-	public String[] getPostset(String transition) {
-		String[] postset = new String[transitions.get(transition).getPostset().length];
-		int i = 0;
-		for (Place p : transitions.get(transition).getPostset()) {
-			postset[i++] = p.getName();
+	public String[] getPostset(String name) {
+		if (isTransition(name)) {
+			String[] postset = new String[transitions.get(name).getPostset().length];
+			int i = 0;
+			for (Place p : transitions.get(name).getPostset()) {
+				postset[i++] = p.getName();
+			}
+			return postset;
 		}
-		return postset;
+		else if (places.containsKey(name)) {
+			String[] postset = new String[places.get(name).getPostset().length];
+			int i = 0;
+			for (Transition t : places.get(name).getPostset()) {
+				postset[i++] = t.getName();
+			}
+			return postset;
+		}
+		else {
+			return null;
+		}
 	}
 
 	public String[] getControlFlow() {
