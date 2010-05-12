@@ -52,7 +52,6 @@ public class GCIGrappaPanel extends JPanel {
 		grappaPanel = null;
 		
 		StringReader sr = new StringReader(gcmStringBuffer.toString());
-		
 		try{
 			graph = this.initGraph(sr);
 		}catch(CouldNotParseException ex){
