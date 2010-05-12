@@ -232,8 +232,8 @@ public class LhpnFile {
 							flag = true;
 						}
 						for (String var : intAssign.keySet()) {
-							buffer.append("<" + t.getName() + "=[" + var + ":=" + intAssign.get(var)
-									+ "]>");
+							buffer.append("<" + t.getName() + "=[" + var + ":="
+									+ intAssign.get(var) + "]>");
 						}
 					}
 				}
@@ -249,8 +249,8 @@ public class LhpnFile {
 								buffer.append("#@.rate_assignments {");
 								flag = true;
 							}
-							buffer.append("<" + t.getName() + "=[" + var + ":=" + t.getRateAssignment(var)
-									+ "]>");
+							buffer.append("<" + t.getName() + "=[" + var + ":="
+									+ t.getRateAssignment(var) + "]>");
 						}
 					}
 				}
@@ -432,7 +432,7 @@ public class LhpnFile {
 			variables.add(var);
 		}
 	}
-	
+
 	public void addTransitionRate(String transition, String rate) {
 		transitions.get(transition).addDelay("exponential(" + rate + ")");
 	}
@@ -546,13 +546,26 @@ public class LhpnFile {
 		return places.get(place);
 	}
 
-	public String[] getPreset(String transition) {
-		String[] preset = new String[transitions.get(transition).getPreset().length];
-		int i = 0;
-		for (Place p : transitions.get(transition).getPreset()) {
-			preset[i++] = p.getName();
+	public String[] getPreset(String name) {
+		if (isTransition(name)) {
+			String[] preset = new String[transitions.get(name).getPreset().length];
+			int i = 0;
+			for (Place p : transitions.get(name).getPreset()) {
+				preset[i++] = p.getName();
+			}
+			return preset;
 		}
-		return preset;
+		else if (places.containsKey(name)) {
+			String[] preset = new String[places.get(name).getPreset().length];
+			int i = 0;
+			for (Transition t : places.get(name).getPreset()) {
+				preset[i++] = t.getName();
+			}
+			return preset;
+		}
+		else {
+			return null;
+		}
 	}
 
 	public String[] getPostset(String transition) {
@@ -594,7 +607,7 @@ public class LhpnFile {
 		}
 		return vars;
 	}
-	
+
 	public Variable getVariable(String name) {
 		if (isBoolean(name)) {
 			return booleans.get(name);
@@ -826,7 +839,7 @@ public class LhpnFile {
 			variables.remove(booleans.get(name));
 		}
 	}
-	
+
 	public void removeOutput(String name) {
 		if (name != null && booleans.containsKey(name)) {
 			booleans.remove(name);
@@ -919,7 +932,7 @@ public class LhpnFile {
 	public boolean containsTransition(String name) {
 		return transitions.containsKey(name);
 	}
-	
+
 	public boolean containsMovement(String name) {
 		if (places.containsKey(name)) {
 			return places.get(name).isConnected();
@@ -1205,7 +1218,8 @@ public class LhpnFile {
 					if (isInteger(variable)) {
 						Matcher rangeMatcher = rangePattern.matcher(assignment);
 						if (rangeMatcher.find()) {
-							transition.addIntAssign(variable, "uniform(" + rangeMatcher.group(1) + "," + rangeMatcher.group(2) + ")");
+							transition.addIntAssign(variable, "uniform(" + rangeMatcher.group(1)
+									+ "," + rangeMatcher.group(2) + ")");
 						}
 						else {
 							transition.addIntAssign(variable, assignment);
@@ -1214,7 +1228,8 @@ public class LhpnFile {
 					else {
 						Matcher rangeMatcher = rangePattern.matcher(assignment);
 						if (rangeMatcher.find()) {
-							transition.addContAssign(variable, "uniform(" + rangeMatcher.group(1) + "," + rangeMatcher.group(2) + ")");
+							transition.addContAssign(variable, "uniform(" + rangeMatcher.group(1)
+									+ "," + rangeMatcher.group(2) + ")");
 						}
 						else {
 							transition.addContAssign(variable, assignment);
@@ -1242,7 +1257,8 @@ public class LhpnFile {
 					String assignment = varMatcher.group(2);
 					Matcher rangeMatcher = rangePattern.matcher(assignment);
 					if (rangeMatcher.find()) {
-						transition.addRateAssign(variable, "uniform(" + rangeMatcher.group(1) + "," + rangeMatcher.group(2) + ")");
+						transition.addRateAssign(variable, "uniform(" + rangeMatcher.group(1) + ","
+								+ rangeMatcher.group(2) + ")");
 					}
 					else {
 						transition.addRateAssign(variable, assignment);
