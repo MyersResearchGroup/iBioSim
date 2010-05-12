@@ -811,7 +811,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		}
 
 		// create the grappa panel
-		GCIGrappaPanel grappaPanel = new GCIGrappaPanel(filename);
+		GCIGrappaPanel grappaPanel = new GCIGrappaPanel();
 		
 		JPanel mainPanel = new JPanel(new BorderLayout());
 		mainPanel.setLayout(new BorderLayout());
@@ -820,11 +820,12 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		JTabbedPane tab = new JTabbedPane();
 		tab.addTab("Main Elements", mainPanel);
 		tab.addTab("Components", tabPanel);
-		tab.addTab("Grappa Panel", grappaPanel);
+		tab.addTab("Model View", grappaPanel);
 		setLayout(new BorderLayout());
 		add(tab, BorderLayout.CENTER);
 		add(mainPanelCenterDown, BorderLayout.SOUTH);
 		
+		// When the Graphical View panel gets clicked on, tell it to display itself.
 		tab.addChangeListener(new ChangeListener(){
 			public void stateChanged(ChangeEvent e) {
 				JTabbedPane selected_tab = (JTabbedPane)(e.getSource());
@@ -834,9 +835,6 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 				if(selected_panel.getClass().getName().indexOf("GCIGrappaPanel") > 0){
 
 					((GCIGrappaPanel)selected_panel).display(gcm.save_to_buffer(false));
-				}else{
-					// TODO: Loop through all the panels, find the grappa panel, and
-					// tell it to hide.
 				}
 
 				

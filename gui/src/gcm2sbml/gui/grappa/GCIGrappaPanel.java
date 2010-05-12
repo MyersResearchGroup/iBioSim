@@ -28,6 +28,7 @@ public class GCIGrappaPanel extends JPanel {
 	GrappaPanel grappaPanel;
 	private boolean isLaidOut;
 	
+	
     public final static String INSTANCES = "instances";
 
     
@@ -35,10 +36,8 @@ public class GCIGrappaPanel extends JPanel {
 	/**
 	 * Generates a panel complete with controls 
 	 */
-	public GCIGrappaPanel(String filename) {
-		// TODO Auto-generated constructor stub
-		super();
-		//buildPanel(filename);
+	public GCIGrappaPanel() {
+		super(new BorderLayout());
 	}
 	
 	
@@ -51,15 +50,28 @@ public class GCIGrappaPanel extends JPanel {
 		isLaidOut = false;
 		graph = null;
 		grappaPanel = null;
-		this.removeAll();
 		
 		StringReader sr = new StringReader(gcmStringBuffer.toString());
-		buildPanel(sr);
 		
-		this.layoutGraph();
+		try{
+			graph = this.initGraph(sr);
+		}catch(CouldNotParseException ex){
+			JTextArea jt = new JTextArea(ex.getMessage());
+			jt.setBorder(new EmptyBorder(5,5,5,5));
+			this.add(jt);
+			return;
+		}
+		
+		
+		buildPanel(graph);
+		
+		layoutGraph(graph);
 	}
+
 	
-	private void buildPanel(StringReader gcmSB){
+	private void buildPanel(Graph graph){
+		
+		this.removeAll();
 		
 		// Add a button to re-layout
 //
@@ -72,22 +84,15 @@ public class GCIGrappaPanel extends JPanel {
 //			}
 //		});
 //		this.add(relayout);
-	
-		// build the graph
-		try{
-			graph = initGraph(gcmSB);
-		}catch(CouldNotParseException ex){
-			JTextArea jt = new JTextArea(ex.getMessage());
-			jt.setBorder(new EmptyBorder(5,5,5,5));
-			this.add(jt);
-			return;
-		}
+		
 
 		// build the GrappaPanel
 		grappaPanel = new GrappaPanel(graph);
-		Object a = graph.currentSelection;
+		
+		JScrollPane scrollPane = new JScrollPane(grappaPanel);
 
-		this.add(grappaPanel);
+
+		this.add(scrollPane);
 	}
 
 	
@@ -102,8 +107,6 @@ public class GCIGrappaPanel extends JPanel {
 	 * @return: A Graph object all initialized, or null if something went wrong.
 	 */
 	private Graph initGraph(StringReader input) throws CouldNotParseException{
-		
-
 		
 		// Parse the .dot file
 		Parser program = new Parser(input);//, System.err);
@@ -121,9 +124,7 @@ public class GCIGrappaPanel extends JPanel {
 		g.setMenuable(true);
 		
 		g.setSelectable(true);
-		
-		
-		
+			
 		return(g);
 	}
 	
@@ -132,7 +133,7 @@ public class GCIGrappaPanel extends JPanel {
 	/**
 	 * Called when we need to re-position the graph.
 	 */
-	private void layoutGraph(){ 
+	private void layoutGraph(Graph graph){ 
 		Object connector = null;
 		// TODO: Attempt to run the connector locally first.
 		
