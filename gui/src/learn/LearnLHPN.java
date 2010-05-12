@@ -529,7 +529,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		 */
 
 		numBinsLabel = new JLabel("Number of Bins:");
-		String[] bins = { "0", "2", "3", "4", "5", "6", "7", "8", "9"};//, "10", "11", "12", "13", "14", "15", "16", "17", "33", "65", "129", "257" };
+		String[] bins = { "0", "2", "3", "4", "5", "6", "7", "8", "9", "16"};//, "10", "11", "12", "13", "14", "15", "16", "17", "33", "65", "129", "257" };
 		numBins = new JComboBox(bins);
 		numBins.setSelectedItem(biosimrc.get("biosim.learn.bins", ""));
 		numBins.addActionListener(this);
@@ -1490,7 +1490,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 					// check.setSelected(true);
 					// specs.add(check);
 					specs.add(new JTextField(s));
-					String[] options = { "0", "2", "3", "4", "5", "6", "7", "8", "9"};//, "10", "11", "12", "13", "14", "15", "16", "17", "33", "65", "129", "257" };
+					String[] options = { "0", "2", "3", "4", "5", "6", "7", "8", "9", "16"};//, "10", "11", "12", "13", "14", "15", "16", "17", "33", "65", "129", "257" };
 					JComboBox combo = new JComboBox(options);
 					// String[] dmvOptions = { "", "Yes", "No" };
 					// JComboBox dmv = new JComboBox(dmvOptions);
@@ -2814,9 +2814,9 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 //ORDER REVERSED this first then detectDMV				genBinsRates(divisionsL); // changes made here.. data being used was global before.
 				//genBinsRates("run-" + i + ".tsd", divisionsL);
 				findReqdVarIndices();
+				genBinsRates(thresholds); // moved this above detectDMV on May 11,2010 assuming this order reversal won't affect things.
 				detectDMV(data,false); // changes made here.. data being used was global before.
 			//	genBinsRates(divisionsL); commented after replacing divisionsL with thresholds 
-				genBinsRates(thresholds);
 				updateGraph(bins, rates, cProp,running);
 				//cProp.store(coverage,  "run-" + String.valueOf(i) + ".tsd");
 				coverage.write("run-" + String.valueOf(i) + ".tsd\t");
@@ -2957,11 +2957,13 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 										transDelayAssignVHDL[dmvTnum] = "delay(" + (int) Math.floor(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(pPrev)).getProperty("dMin"))) + "," + (int) Math.ceil(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(pPrev)).getProperty("dMax"))) + ")";
 										if (!vamsRandom){
 											transIntAssignVAMS[dmvTnum][k] = reqdVarsL.get(k).getName()+"Val = "+ ((int)(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(nextPlace)).getProperty(reqdVarsL.get(k).getName() + "_vMin")) + Double.parseDouble(placeInfo.get(getPlaceInfoIndex(nextPlace)).getProperty(reqdVarsL.get(k).getName() + "_vMax"))))/(2.0*varScaleFactor)+";\n";
-											transDelayAssignVAMS[dmvTnum] = "#" + (int)(((Math.floor(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(pPrev)).getProperty("dMin"))) + Math.ceil(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(pPrev)).getProperty("dMax"))))*Math.pow(10, 12))/(2.0*delayScaleFactor));	// converting seconds to ns using math.pow(10,9)
+											//transDelayAssignVAMS[dmvTnum] = "#" + (int)(((Math.floor(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(pPrev)).getProperty("dMin"))) + Math.ceil(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(pPrev)).getProperty("dMax"))))*Math.pow(10, 12))/(2.0*delayScaleFactor));	// converting seconds to ns using math.pow(10,9)
+											transDelayAssignVAMS[dmvTnum] = "#" + (int)(((Math.floor(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(pPrev)).getProperty("dMin"))) + Math.ceil(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(pPrev)).getProperty("dMax")))))/(2.0*delayScaleFactor));	// converting seconds to ns using math.pow(10,9)
 										}
 										else{
 											transIntAssignVAMS[dmvTnum][k] = reqdVarsL.get(k).getName()+"Val = $dist_uniform(seed,"+ String.valueOf((int)Math.floor(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(nextPlace)).getProperty(reqdVarsL.get(k).getName() + "_vMin"))/varScaleFactor)) + "," + String.valueOf((int)Math.ceil(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(nextPlace)).getProperty(reqdVarsL.get(k).getName() + "_vMax"))/varScaleFactor))+");\n";
-											transDelayAssignVAMS[dmvTnum] = "del = $dist_uniform(seed," + (int)Math.floor(((Double.parseDouble(placeInfo.get(getPlaceInfoIndex(pPrev)).getProperty("dMin")))/delayScaleFactor)*Math.pow(10, 12)) + "," +(int)Math.ceil((Double.parseDouble(placeInfo.get(getPlaceInfoIndex(pPrev)).getProperty("dMax"))/delayScaleFactor)*Math.pow(10, 12)) + ");\n\t\t\t#del";	// converting seconds to ns using math.pow(10,9)
+											//transDelayAssignVAMS[dmvTnum] = "del = $dist_uniform(seed," + (int)Math.floor(((Double.parseDouble(placeInfo.get(getPlaceInfoIndex(pPrev)).getProperty("dMin")))/delayScaleFactor)*Math.pow(10, 12)) + "," +(int)Math.ceil((Double.parseDouble(placeInfo.get(getPlaceInfoIndex(pPrev)).getProperty("dMax"))/delayScaleFactor)*Math.pow(10, 12)) + ");\n\t\t\t#del";	// converting seconds to ns using math.pow(10,9)
+											transDelayAssignVAMS[dmvTnum] = "del = $dist_uniform(seed," + (int)Math.floor(((Double.parseDouble(placeInfo.get(getPlaceInfoIndex(pPrev)).getProperty("dMin")))/delayScaleFactor)) + "," +(int)Math.ceil((Double.parseDouble(placeInfo.get(getPlaceInfoIndex(pPrev)).getProperty("dMax"))/delayScaleFactor)) + ");\n\t\t\t#del";	// converting seconds to ns using math.pow(10,9)
 										}
 									/*}
 									else{
@@ -3050,11 +3052,13 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 										transDelayAssignVHDL[dmvTnum] = "delay(" + (int) Math.floor(Double.parseDouble(transientNetPlaces.get(getTransientNetPlaceIndex(pPrev)).getProperty("dMin"))) + "," + (int) Math.ceil(Double.parseDouble(transientNetPlaces.get(getTransientNetPlaceIndex(pPrev)).getProperty("dMax"))) + ")";
 										if (!vamsRandom){
 											transIntAssignVAMS[dmvTnum][k] = reqdVarsL.get(k).getName()+"Val = "+ ((int)(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(nextPlace)).getProperty(reqdVarsL.get(k).getName() + "_vMin")) + Double.parseDouble(placeInfo.get(getPlaceInfoIndex(nextPlace)).getProperty(reqdVarsL.get(k).getName() + "_vMax"))))/(2.0*varScaleFactor)+";\n";;
-											transDelayAssignVAMS[dmvTnum] =  "#" + (int)(((Math.floor(Double.parseDouble(transientNetPlaces.get(getTransientNetPlaceIndex(pPrev)).getProperty("dMin"))) + Math.ceil(Double.parseDouble(transientNetPlaces.get(getTransientNetPlaceIndex(pPrev)).getProperty("dMax"))))*Math.pow(10, 12))/(2.0*delayScaleFactor));	// converting seconds to ns using math.pow(10,9)
+//											transDelayAssignVAMS[dmvTnum] =  "#" + (int)(((Math.floor(Double.parseDouble(transientNetPlaces.get(getTransientNetPlaceIndex(pPrev)).getProperty("dMin"))) + Math.ceil(Double.parseDouble(transientNetPlaces.get(getTransientNetPlaceIndex(pPrev)).getProperty("dMax"))))*Math.pow(10, 12))/(2.0*delayScaleFactor));	// converting seconds to ns using math.pow(10,9)
+											transDelayAssignVAMS[dmvTnum] =  "#" + (int)(((Math.floor(Double.parseDouble(transientNetPlaces.get(getTransientNetPlaceIndex(pPrev)).getProperty("dMin"))) + Math.ceil(Double.parseDouble(transientNetPlaces.get(getTransientNetPlaceIndex(pPrev)).getProperty("dMax")))))/(2.0*delayScaleFactor));	// converting seconds to ns using math.pow(10,9)
 										}
 										else{
 											transIntAssignVAMS[dmvTnum][k] = reqdVarsL.get(k).getName()+"Val = $dist_uniform(seed,"+ String.valueOf(Math.floor((Double.parseDouble(placeInfo.get(getPlaceInfoIndex(nextPlace)).getProperty(reqdVarsL.get(k).getName() + "_vMin"))/varScaleFactor))) + "," + String.valueOf(Math.ceil((Double.parseDouble(placeInfo.get(getPlaceInfoIndex(nextPlace)).getProperty(reqdVarsL.get(k).getName() + "_vMax"))/varScaleFactor)))+");\n";
-											transDelayAssignVAMS[dmvTnum] =  "del = $dist_uniform(seed," + (int)Math.floor(((Double.parseDouble(transientNetPlaces.get(getTransientNetPlaceIndex(pPrev)).getProperty("dMin")))/delayScaleFactor)*Math.pow(10, 12)) + "," + (int)Math.ceil((Double.parseDouble(transientNetPlaces.get(getTransientNetPlaceIndex(pPrev)).getProperty("dMax"))/delayScaleFactor)*Math.pow(10, 12)) + ");\n\t\t\t#del";	// converting seconds to ns using math.pow(10,9)
+											//transDelayAssignVAMS[dmvTnum] =  "del = $dist_uniform(seed," + (int)Math.floor(((Double.parseDouble(transientNetPlaces.get(getTransientNetPlaceIndex(pPrev)).getProperty("dMin")))/delayScaleFactor)*Math.pow(10, 12)) + "," + (int)Math.ceil((Double.parseDouble(transientNetPlaces.get(getTransientNetPlaceIndex(pPrev)).getProperty("dMax"))/delayScaleFactor)*Math.pow(10, 12)) + ");\n\t\t\t#del";	// converting seconds to ns using math.pow(10,9)
+											transDelayAssignVAMS[dmvTnum] =  "del = $dist_uniform(seed," + (int)Math.floor(((Double.parseDouble(transientNetPlaces.get(getTransientNetPlaceIndex(pPrev)).getProperty("dMin")))/delayScaleFactor)) + "," + (int)Math.ceil((Double.parseDouble(transientNetPlaces.get(getTransientNetPlaceIndex(pPrev)).getProperty("dMax"))/delayScaleFactor)) + ");\n\t\t\t#del";	// converting seconds to ns using math.pow(10,9)
 										}
 								}
 							}
@@ -3408,98 +3412,55 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			int mark, k; // indices of rates not same as that of the variable. if
 			// wanted, then size of rates array should be varNames
 			// not reqdVars
-			if (placeRates) {
-				if (rateSampling == -1) { // replacing inf with -1 since int
-					mark = 0;
-					for (int i = 0; i < data.get(0).size(); i++) {
-						if (i < mark) {
-							continue;
+			if (rateSampling == -1) { // replacing inf with -1 since int
+				mark = 0;
+				for (int i = 0; i < data.get(0).size(); i++) {
+					if (i < mark) {
+						continue;
+					}
+					while ((mark < data.get(0).size()) && (compareBins(i, mark))) {
+						mark++;
+					}
+					if ((data.get(0).get(mark - 1) != data.get(0).get(i)) && ((mark - i) >=  pathLength) && (mark != data.get(0).size())) { 	// && (mark != (data.get(0).size() - 1 condition added on nov 23.. to avoid the last region bcoz it's not complete. rechk
+						for (int j = 0; j < reqdVarsL.size(); j++) {
+							k = reqdVarIndices.get(j);
+							rates[j][i] = ((data.get(k).get(mark - 1) - data.get(k).get(i)) / (data.get(0).get(mark - 1) - data.get(0).get(i)));
 						}
-						while ((mark < data.get(0).size()) && (compareBins(i, mark))) {
-							mark++;
-						}
-						if ((data.get(0).get(mark - 1) != data.get(0).get(i)) && ((mark - i) >=  pathLength) && (mark != data.get(0).size())) { 	// && (mark != (data.get(0).size() - 1 condition added on nov 23.. to avoid the last region bcoz it's not complete. rechk
-							for (int j = 0; j < reqdVarsL.size(); j++) {
-								k = reqdVarIndices.get(j);
-								rates[j][i] = ((data.get(k).get(mark - 1) - data.get(k).get(i)) / (data.get(0).get(mark - 1) - data.get(0).get(i)));
+						duration[i] = data.get(0).get(mark - 1)	- data.get(0).get(i);
+					}
+				}
+			} else {
+				boolean calcRate;
+				boolean prevFail = true;
+				int binStartPoint = 0, binEndPoint = 0;
+				for (int i = 0; i < (data.get(0).size() - rateSampling); i++) {
+					calcRate = true;
+					for (int l = 0; l < rateSampling; l++) {
+						if (!compareBins(i, i + l)) {
+							if (!prevFail){
+								binEndPoint = i -2 + rateSampling;
+								duration[binStartPoint] = data.get(0).get(binEndPoint)	- data.get(0).get(binStartPoint);
 							}
-							duration[i] = data.get(0).get(mark - 1)	- data.get(0).get(i);
+							calcRate = false;
+							prevFail = true;
+							break;
 						}
 					}
-				} else {
-					boolean calcRate;
-					boolean prevFail = true;
-					int binStartPoint = 0, binEndPoint = 0;
-					for (int i = 0; i < (data.get(0).size() - rateSampling); i++) {
-						calcRate = true;
-						for (int l = 0; l < rateSampling; l++) {
-							if (!compareBins(i, i + l)) {
-								if (!prevFail){
-									binEndPoint = i -2 + rateSampling;
-									duration[binStartPoint] = data.get(0).get(binEndPoint)	- data.get(0).get(binStartPoint);
-								}
-								calcRate = false;
-								prevFail = true;
-								break;
-							}
+					if (calcRate && (data.get(0).get(i + rateSampling) != data.get(0).get(i))) {
+						for (int j = 0; j < reqdVarsL.size(); j++) {
+							k = reqdVarIndices.get(j);
+							rates[j][i] = ((data.get(k).get(i + rateSampling) - data.get(k).get(i)) / (data.get(0).get(i + rateSampling) - data.get(0).get(i)));
 						}
-						if (calcRate && (data.get(0).get(i + rateSampling) != data.get(0).get(i))) {
-							for (int j = 0; j < reqdVarsL.size(); j++) {
-								k = reqdVarIndices.get(j);
-								rates[j][i] = ((data.get(k).get(i + rateSampling) - data.get(k).get(i)) / (data.get(0).get(i + rateSampling) - data.get(0).get(i)));
-							}
-							if (prevFail){
-								binStartPoint = i;
-							}
-							prevFail = false;
+						if (prevFail){
+							binStartPoint = i;
 						}
+						prevFail = false;
 					}
-					// commented on nov 23. don't need this. should avoid rate calculation too for this region. but not avoiding now.
+				}
+				// commented on nov 23. don't need this. should avoid rate calculation too for this region. but not avoiding now.
 				/*	if (!prevFail){ // for the last genuine rate-calculating region of the trace; this may not be required if the trace is incomplete.trace data may not necessarily end at a region endpt
 						duration[binStartPoint] = data.get(0).get(data.get(0).size()-1)	- data.get(0).get(binStartPoint);
 					}*/ 
-				}
-			} 
-			/*
-			 * ADD LATER: duration[i] SHOULD BE ADDED TO THE NEXT 2 IF/ELSE
-			 * BRANCHES(Transition based rate calc) ALSO
-			 */
-			else { // Transition based rate calculation
-				if (rateSampling == -1) { // replacing inf with -1 since int
-					for (int j = 0; j < reqdVarsL.size(); j++) {
-						mark = 0;
-						k = reqdVarIndices.get(j);
-						for (int i = 0; i < data.get(0).size(); i++) {
-							if (i < mark) {
-								continue;
-							}
-							while ((mark < data.get(0).size())
-									&& (bins[k][i] == bins[k][mark])) {
-								mark++;
-							}
-							if ((data.get(0).get(mark - 1) != data.get(0).get(i))) {
-								rates[j][i] = ((data.get(k).get(mark - 1) - data.get(k).get(i)) / (data.get(0).get(mark - 1) - data.get(0).get(i)));
-							}
-						}
-					}
-				} else {
-					boolean calcRate;
-					for (int i = 0; i < (data.get(0).size() - rateSampling); i++) {
-						for (int j = 0; j < reqdVarsL.size(); j++) {
-							calcRate = true;
-							k = reqdVarIndices.get(j);
-							for (int l = 0; l < rateSampling; l++) {
-								if (bins[k][i] != bins[k][i + l]) {
-									calcRate = false;
-									break;
-								}
-							}
-							if (calcRate && (data.get(0).get(i + rateSampling) != data.get(0).get(i))) {
-								rates[j][i] = ((data.get(k).get(i + rateSampling) - data.get(k).get(i)) / (data.get(0).get(i + rateSampling) - data.get(0).get(i)));
-							}
-						}
-					}
-				}
 			}
 		} catch (NullPointerException e){
 			e.printStackTrace();
@@ -3839,7 +3800,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 							Math.abs(data.get(reqdVarIndices.get(i)).get(j) - data.get(reqdVarIndices.get(i)).get(j + 1)) <= epsilon) {
 						startPoint = j;
 						runs.addValue(data.get(reqdVarIndices.get(i)).get(j)); // chk carefully reqdVarIndices.get(i)
-						while (((j + 1) < data.get(0).size()) && (Math.abs(data.get(reqdVarIndices.get(i)).get(startPoint) - data.get(reqdVarIndices.get(i)).get(j + 1)) <= epsilon)) {
+						while (((j + 1) < data.get(0).size()) && (bins[i][startPoint] == bins[i][j+1]) && (Math.abs(data.get(reqdVarIndices.get(i)).get(startPoint) - data.get(reqdVarIndices.get(i)).get(j + 1)) <= epsilon)) {       //checking of same bins[] condition added on May 11,2010.
 							runs.addValue(data.get(reqdVarIndices.get(i)).get(j + 1)); // chk carefully
 							// reqdVarIndices.get(i)
 							j++;
@@ -6729,10 +6690,12 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 								transientDoneFirst = false;
 							}
 							if (!vamsRandom){
-								initBuffer.append("\t\t\t#"+  (int)(((Double.parseDouble(placeInfo.get(p).getProperty("dMin"))+ Double.parseDouble(placeInfo.get(p).getProperty("dMax")))*Math.pow(10, 12))/(2.0*delayScaleFactor)) +" "); // converting seconds to nanosec. hence pow(10,9)
+								//initBuffer.append("\t\t\t#"+  (int)(((Double.parseDouble(placeInfo.get(p).getProperty("dMin"))+ Double.parseDouble(placeInfo.get(p).getProperty("dMax")))*Math.pow(10, 12))/(2.0*delayScaleFactor)) +" "); // converting seconds to nanosec. hence pow(10,9)
+								initBuffer.append("\t\t\t#"+  (int)(((Double.parseDouble(placeInfo.get(p).getProperty("dMin"))+ Double.parseDouble(placeInfo.get(p).getProperty("dMax"))))/(2.0*delayScaleFactor)) +" "); // converting seconds to nanosec. hence pow(10,9)
 							}
 							else{
-								initBuffer.append("\t\t\tdel = $dist_uniform(seed," + (int)Math.floor(((Double.parseDouble(placeInfo.get(p).getProperty("dMin")))/delayScaleFactor)*Math.pow(10, 12)) + "," +(int)Math.ceil((Double.parseDouble(placeInfo.get(p).getProperty("dMax"))/delayScaleFactor)*Math.pow(10, 12)) + ");\n\t\t\t#del ");	// converting seconds to ns using math.pow(10,9)
+								//initBuffer.append("\t\t\tdel = $dist_uniform(seed," + (int)Math.floor(((Double.parseDouble(placeInfo.get(p).getProperty("dMin")))/delayScaleFactor)*Math.pow(10, 12)) + "," +(int)Math.ceil((Double.parseDouble(placeInfo.get(p).getProperty("dMax"))/delayScaleFactor)*Math.pow(10, 12)) + ");\n\t\t\t#del ");	// converting seconds to ns using math.pow(10,9)
+								initBuffer.append("\t\t\tdel = $dist_uniform(seed," + (int)Math.floor(((Double.parseDouble(placeInfo.get(p).getProperty("dMin")))/delayScaleFactor)) + "," +(int)Math.ceil((Double.parseDouble(placeInfo.get(p).getProperty("dMax"))/delayScaleFactor)) + ");\n\t\t\t#del ");	// converting seconds to ns using math.pow(10,9)
 							}
 							initBuffer.append(reqdVarsL.get(i).getName()+ "Val = "+  ((int)(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(g.getPostset(g.getPostset("p" + placeInfo.get(p).getProperty("placeNum"))[0])[0])).getProperty("DMVCValue"))))/varScaleFactor + ";\n");
 						}
@@ -6744,10 +6707,12 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 							buffer3.append("\tend\n");*/
 							transientDoneFirst = true;
 							if (!vamsRandom){
-								initBuffer.append("\t\t#"+  (int)(((Double.parseDouble(transientNetPlaces.get(p).getProperty("dMin"))+ Double.parseDouble(transientNetPlaces.get(p).getProperty("dMax")))*Math.pow(10, 12))/(2.0*delayScaleFactor)) +" "); // converting seconds to nanosec. hence pow(10,9)
+								//initBuffer.append("\t\t#"+  (int)(((Double.parseDouble(transientNetPlaces.get(p).getProperty("dMin"))+ Double.parseDouble(transientNetPlaces.get(p).getProperty("dMax")))*Math.pow(10, 12))/(2.0*delayScaleFactor)) +" "); // converting seconds to nanosec. hence pow(10,9)
+								initBuffer.append("\t\t#"+  (int)(((Double.parseDouble(transientNetPlaces.get(p).getProperty("dMin"))+ Double.parseDouble(transientNetPlaces.get(p).getProperty("dMax"))))/(2.0*delayScaleFactor)) +" "); // converting seconds to nanosec. hence pow(10,9)
 							}
 							else{
-								initBuffer.append("\t\tdel = $dist_uniform(seed," + (int)Math.floor(((Double.parseDouble(transientNetPlaces.get(p).getProperty("dMin")))/delayScaleFactor)*Math.pow(10, 12)) + "," +(int)Math.ceil((Double.parseDouble(transientNetPlaces.get(p).getProperty("dMax"))/delayScaleFactor)*Math.pow(10, 12)) + ");\n\t\t#del ");	// converting seconds to ns using math.pow(10,9)
+								//initBuffer.append("\t\tdel = $dist_uniform(seed," + (int)Math.floor(((Double.parseDouble(transientNetPlaces.get(p).getProperty("dMin")))/delayScaleFactor)*Math.pow(10, 12)) + "," +(int)Math.ceil((Double.parseDouble(transientNetPlaces.get(p).getProperty("dMax"))/delayScaleFactor)*Math.pow(10, 12)) + ");\n\t\t#del ");	// converting seconds to ns using math.pow(10,9)
+								initBuffer.append("\t\tdel = $dist_uniform(seed," + (int)Math.floor(((Double.parseDouble(transientNetPlaces.get(p).getProperty("dMin")))/delayScaleFactor)) + "," +(int)Math.ceil((Double.parseDouble(transientNetPlaces.get(p).getProperty("dMax"))/delayScaleFactor)) + ");\n\t\t#del ");	// converting seconds to ns using math.pow(10,9)
 							}
 							initBuffer.append(reqdVarsL.get(i).getName()+ "Val = "+  ((int)(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(g.getPostset(g.getPostset("p" + transientNetPlaces.get(p).getProperty("placeNum"))[0])[0])).getProperty("DMVCValue"))))/varScaleFactor + ";\n" );
 						//	initBuffer.append("\tend\n");
