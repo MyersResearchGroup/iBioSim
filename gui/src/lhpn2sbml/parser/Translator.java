@@ -1,5 +1,6 @@
 package lhpn2sbml.parser;
 
+import org.apache.batik.svggen.font.table.Program;
 import org.sbml.libsbml.Compartment;
 import org.sbml.libsbml.Delay;
 import org.sbml.libsbml.Event;
@@ -74,32 +75,100 @@ public class Translator {
 //			System.out.println("Vars from lhpn.getVariables() " + v);
 			if (v != null){
 				String initVal = lhpn.getInitialVal(v);
-//				System.out.println("Begin:" + v + "= " + initVal);
-				if (lhpn.isContinuous(v)){
+//				System.out.println("Begin:" + v + "= " + initVal);			
+				if (lhpn.isContinuous(v) || lhpn.isInteger(v)){
 					Parameter p = m.createParameter(); 
 					p.setConstant(false);
 					p.setId(v);
 					
-					Parameter p_dot = m.createParameter();
-					p_dot.setConstant(false);
-					p_dot.setId(v + "_dot");
-//					System.out.println("v_dot = " + v + "_dot");
-					RateRule rateRule = m.createRateRule();
-					rateRule.setVariable(v);
-					rateRule.setMath(SBML_Editor.myParseFormula(v + "_dot"));
-				
-					
-					String initValue = lhpn.getInitialVal(v);
-					String initValDot= lhpn.getInitialRate(v);
-					//System.out.println("initValue = " + initValue);
-					//System.out.println("initValDot = " + initValDot);
-					//System.out.println(v + "=" + initValue);
-					double initVal_dbl = Double.parseDouble(initValue);
-					p.setValue(initVal_dbl);
-					double initValDot_dbl = Double.parseDouble(initValDot);
-					p_dot.setValue(initValDot_dbl);
+					// For each continuous variable v, create rate rule dv/dt and set its initial value to lhpn.getInitialRate(v). 
+					if (lhpn.isContinuous(v)){
+						Parameter p_dot = m.createParameter();
+						p_dot.setConstant(false);
+						p_dot.setId(v + "_dot");
+//						System.out.println("v_dot = " + v + "_dot");
+						RateRule rateRule = m.createRateRule();
+						rateRule.setVariable(v);
+						rateRule.setMath(SBML_Editor.myParseFormula(v + "_dot"));
+						String initValDot= lhpn.getInitialRate(v);
+						double initValDot_dbl = Double.parseDouble(initValDot);
+						p_dot.setValue(initValDot_dbl);
 					}
-				else
+				
+				
+					// Assign initial values to continuous, discrete and boolean variables
+//					Short term fix: Extract the lower and upper bounds and set the initial value to the mean. 
+//									Anything that involves infinity, take either the lower or upper bound which is not infinity.  
+//									If both are infinity, set to 0.	
+					String initValue = lhpn.getInitialVal(v);
+					String tmp_initValue = initValue;
+					String[] subString = initValue.split(",");
+					String lowerBound = null;
+					String upperBound = null;
+					
+					// initial value is a range
+					if (tmp_initValue.contains(",")){
+						// If the initial value is a range, check the range only contains one ","
+						tmp_initValue = tmp_initValue.replaceFirst(",", "");
+//						// Test if tmp_initValue contains any more ",": if not, continue to extract upper and lower bounds 
+//						if (tmp_initValue.contains(",")){
+//							System.out.println("The inital range of variable " + v + " is incorrect.");
+//							System.exit(0);
+//						}
+						// Extract the lower and upper bound of the initValue
+						int i;
+						for (i = 0; i<subString.length; i ++)
+						{
+//							System.out.println("splitted initValue range " + subString[i].toString());
+							if (subString[i].contains("[")){
+								lowerBound = subString[i].replace("[", "");	
+//								System.out.println("remove [ " + subString[i].replace("[", "").toString());
+							}
+							if (subString[i].contains("uniform(")){
+								lowerBound = subString[i].replace("uniform(", "");	
+//								System.out.println("remove uniform( " + subString[i].replace("[", "").toString());
+							}
+							else if(subString[i].contains("]")){
+								upperBound = subString[i].replace("]", "");
+//								System.out.println("remove ] " + subString[i].replace("]", "").toString());
+							}
+							else if(subString[i].contains(")")){
+								upperBound = subString[i].replace(")", "");
+//								System.out.println("remove ) " + subString[i].replace("]", "").toString());
+							}
+						}
+						
+						// initial value involves infinity
+						if (lowerBound.contains("inf") || upperBound.contains("inf")){
+							if (lowerBound.contains("-inf") && upperBound.contains("inf")){
+								initValue = "0" ; // if [-inf,inf], initValue = 0
+							}
+							else if (lowerBound.contains("-inf") && !upperBound.contains("inf")){
+								initValue = upperBound; // if [-inf,a], initValue = a
+							}
+							else if (!lowerBound.contains("-inf") && upperBound.contains("inf")){
+								initValue = lowerBound; // if [a,inf], initValue = a
+							}
+							double initVal_dbl = Double.parseDouble(initValue);
+							p.setValue(initVal_dbl);
+						}
+						// initial value is a range, not involving infinity	
+					    else {
+					    	double lowerBound_dbl = Double.parseDouble(lowerBound);
+					    	double upperBound_dbl = Double.parseDouble(upperBound);
+					    	double initVal_dbl = (lowerBound_dbl + upperBound_dbl)/2;
+					    	initVal_dbl = initVal_dbl;
+					    	p.setValue(initVal_dbl);
+						}	
+					} 
+					
+					// initial value is a single number
+					else {
+							double initVal_dbl = Double.parseDouble(initValue);
+							p.setValue(initVal_dbl);
+					}
+				}
+				else  // boolean variable 
 				{
 					Parameter p = m.createParameter(); 
 					p.setConstant(false);
@@ -113,18 +182,21 @@ public class Translator {
 					else if (initValue.equals("false")){
 						p.setValue(0);
 					}
-					else if(initValue.contains("inf")) {
-						p.setValue(0);
-					}
+//					else if(initValue.contains("inf")) {
+//						p.setValue(0);
+//					}
 					else if (initValue.equals("unknown")){
 						p.setValue(0);
 					}
 					else {
-							double initVal_dbl = Double.parseDouble(initValue);
-							p.setValue(initVal_dbl);
-//							System.out.println(Double.parseDouble("3"));
+//							double initVal_dbl = Double.parseDouble(initValue);
+//							p.setValue(initVal_dbl);
+							System.out.println("It should be a boolean variable.");
+							System.exit(0);
 					}
 				}
+				
+
 			}
 		}
 				
