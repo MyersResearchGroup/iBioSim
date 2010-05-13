@@ -472,21 +472,20 @@ public class StateGraph {
 
 	public void outputStateGraph(String file, boolean withProbs) {
 		try {
+			NumberFormat num = NumberFormat.getInstance();
+			num.setMaximumFractionDigits(6);
+			num.setGroupingUsed(false);
 			BufferedWriter out = new BufferedWriter(new FileWriter(file));
 			out.write("digraph G {\n");
-
 			for (String state : stateGraph.keySet()) {
 				for (State m : stateGraph.get(state)) {
 					if (withProbs) {
 						out.write(m.getID() + " [shape=\"ellipse\",label=\"" + m.getID() + "\\n<" + state
-								+ ">\\nProb = " + m.getCurrentProb() + "\"]\n");
+								+ ">\\nProb = " + num.format(m.getCurrentProb()) + "\"]\n");
 					}
 					else {
 						out.write(m.getID() + " [shape=\"ellipse\",label=\"" + m.getID() + "\\n<" + state + ">\"]\n");
 					}
-					NumberFormat num = NumberFormat.getInstance();
-					num.setMaximumFractionDigits(4);
-					num.setGroupingUsed(false);
 					for (StateTransitionPair next : m.getNextStatesWithTrans()) {
 						/*
 						 * System.out.println(m.getID() + " -> " +
