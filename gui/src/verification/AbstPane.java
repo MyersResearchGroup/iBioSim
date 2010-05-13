@@ -60,20 +60,21 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 			xform15 = "Remove Dead Transitions - simplification",
 			xform16 = "Constant True Enabling Conditions - simplification",
 			xform17 = "Eliminate Dominated Transitions - simplification",
-			xform18 = "Remove Written Never Read - simplification",
+			xform18 = "Remove Unread Variables - simplification",
 			xform19 = "Correlated Variables - simplification",
 			xform20 = "Remove Arc after Failure Transitions - simplification",
 			xform21 = "Timing Bound Normalization - abstraction",
 			xform22 = "Remove Vacuous Transitions - simplification",
 			xform23 = "Remove Vacuous Transitions - abstraction",
 			xform24 = "Remove Pairwise Write Before Write - simplification",
-			xform25 = "Propagate Constant Variable Values - simplifiction";
+			xform25 = "Propagate Constant Variable Values - simplifiction",
+			xform26 = "Remove Dangling Transitions - simplification";
 
 	private String[] transforms = { xform0, xform1, xform3, xform4, xform5, xform6, xform7, xform8,
 			xform25, xform9, xform24, xform10, xform12, xform14, xform16, xform11,
-			xform15, xform17, xform18, xform19, xform20, xform21, xform22, xform23 };
+			xform15, xform17, xform18, xform19, xform20, xform21, xform22, xform23, xform26 };
 
-	JTextField factorField, iterField;
+	public JTextField factorField, iterField;
 
 	private boolean change;
 
@@ -106,6 +107,114 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 		verification.copyFile();
 		LhpnFile lhpn = new LhpnFile();
 		lhpn.load(directory + separator + verification.verifyFile);
+
+		// Creates the interesting species JList
+		listModel = new DefaultListModel();
+		intSpecies = new JList(lhpn.getVariables());
+		species = new JList(listModel);
+		JLabel spLabel = new JLabel("Available Variables:");
+		JLabel speciesLabel = new JLabel("Interesting Variables:");
+		JPanel speciesHolder = new JPanel(new BorderLayout());
+		JPanel listOfSpeciesLabelHolder = new JPanel(new GridLayout(1, 2));
+		JPanel listOfSpeciesHolder = new JPanel(new GridLayout(1, 2));
+		JScrollPane scroll = new JScrollPane();
+		JScrollPane scroll1 = new JScrollPane();
+		scroll.setMinimumSize(new Dimension(260, 200));
+		scroll.setPreferredSize(new Dimension(276, 132));
+		scroll.setViewportView(species);
+		scroll1.setMinimumSize(new Dimension(260, 200));
+		scroll1.setPreferredSize(new Dimension(276, 132));
+		scroll1.setViewportView(intSpecies);
+		addIntSpecies = new JButton("Add Variable");
+		removeIntSpecies = new JButton("Remove Variable");
+		clearIntSpecies = new JButton("Clear Variable");
+		addIntSpecies.addActionListener(this);
+		removeIntSpecies.addActionListener(this);
+		clearIntSpecies.addActionListener(this);
+		listOfSpeciesLabelHolder.add(spLabel);
+		listOfSpeciesHolder.add(scroll1);
+		listOfSpeciesLabelHolder.add(speciesLabel);
+		listOfSpeciesHolder.add(scroll);
+		speciesHolder.add(listOfSpeciesLabelHolder, "North");
+		speciesHolder.add(listOfSpeciesHolder, "Center");
+		JPanel buttonHolder = new JPanel();
+		buttonHolder.add(addIntSpecies);
+		buttonHolder.add(removeIntSpecies);
+		buttonHolder.add(clearIntSpecies);
+		speciesHolder.add(buttonHolder, "South");
+		this.add(speciesHolder, "North");
+
+		JPanel factorPanel = new JPanel();
+		JLabel factorLabel = new JLabel("Normalization Factor");
+		factorField = new JTextField("5");
+		factorField.setPreferredSize(new Dimension(40, 18));
+		factorPanel.add(factorLabel);
+		factorPanel.add(factorField);
+		JLabel iterLabel = new JLabel("Maximum Number of Iterations");
+		iterField = new JTextField("100");
+		iterField.setPreferredSize(new Dimension(40, 18));
+		factorPanel.add(iterLabel);
+		factorPanel.add(iterField);
+		this.add(factorPanel);
+
+		// Creates the abstractions JList
+		absListModel = new DefaultListModel();
+		selectXforms = new JList(transforms);
+		xforms = new JList(absListModel);
+		for (String s : transforms) {
+			absListModel.addElement(s);
+		}
+		JLabel absLabel = new JLabel("Available Transforms:");
+		JLabel abstractLabel = new JLabel("Selected Transforms:");
+		JPanel absHolder = new JPanel(new BorderLayout());
+		JPanel listOfTransformsLabelHolder = new JPanel(new GridLayout(1, 2));
+		JPanel listOfTransformsHolder = new JPanel(new GridLayout(1, 2));
+		JScrollPane absScroll = new JScrollPane();
+		JScrollPane absScroll1 = new JScrollPane();
+		absScroll.setMinimumSize(new Dimension(260, 200));
+		absScroll.setPreferredSize(new Dimension(276, 132));
+		absScroll.setViewportView(xforms);
+		absScroll1.setMinimumSize(new Dimension(260, 200));
+		absScroll1.setPreferredSize(new Dimension(276, 132));
+		absScroll1.setViewportView(selectXforms);
+		addXform = new JButton("Add Transform");
+		removeXform = new JButton("Remove Transform");
+		addAllXforms = new JButton("Add All Transforms");
+		clearXforms = new JButton("Clear Transforms");
+		addXform.addActionListener(this);
+		removeXform.addActionListener(this);
+		addAllXforms.addActionListener(this);
+		clearXforms.addActionListener(this);
+		listOfTransformsLabelHolder.add(absLabel);
+		listOfTransformsHolder.add(absScroll1);
+		listOfTransformsLabelHolder.add(abstractLabel);
+		listOfTransformsHolder.add(absScroll);
+		absHolder.add(listOfTransformsLabelHolder, "North");
+		absHolder.add(listOfTransformsHolder, "Center");
+		JPanel absButtonHolder = new JPanel();
+		absButtonHolder.add(addXform);
+		absButtonHolder.add(removeXform);
+		absButtonHolder.add(addAllXforms);
+		absButtonHolder.add(clearXforms);
+		absHolder.add(absButtonHolder, "South");
+		this.add(absHolder, "South");
+
+		change = false;
+	}
+	
+	public AbstPane(String directory, String lpnFile, Log log, BioSim biosim,
+			boolean lema, boolean atacs) {
+		if (File.separator.equals("\\")) {
+			separator = "\\\\";
+		}
+		else {
+			separator = File.separator;
+		}
+		this.directory = directory;
+		this.log = log;
+		this.setLayout(new BorderLayout());
+		LhpnFile lhpn = new LhpnFile();
+		lhpn.load(directory + separator + lpnFile);
 
 		// Creates the interesting species JList
 		listModel = new DefaultListModel();
@@ -367,6 +476,9 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 	}
 
 	public boolean isSimplify() {
+		if (verification == null) {
+			return true;
+		}
 		if (verification.simplify.isSelected() || verification.abstractLhpn.isSelected()) {
 			return true;
 		}
@@ -374,6 +486,9 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 	}
 
 	public boolean isAbstract() {
+		if (verification == null) {
+			return true;
+		}
 		return verification.abstractLhpn.isSelected();
 	}
 
