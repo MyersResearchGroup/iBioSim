@@ -37,6 +37,18 @@ public class Abstraction extends LhpnFile {
 		variables = lhpn.variables;
 		property = lhpn.property;
 	}
+	
+	public Abstraction(LhpnFile lhpn, AbstPane abst) {
+		super(lhpn.log);
+		this.abstPane = abst;
+		transitions = lhpn.transitions;
+		places = lhpn.places;
+		booleans = lhpn.booleans;
+		continuous = lhpn.continuous;
+		integers = lhpn.integers;
+		variables = lhpn.variables;
+		property = lhpn.property;
+	}
 
 	public void abstractSTG() {
 		long start = System.nanoTime();
@@ -154,11 +166,9 @@ public class Abstraction extends LhpnFile {
 				simplifyExpr();
 			}
 			// Transform 26 - Remove Dangling Transitions
-			/*
 			if (abstPane.absListModel.contains(abstPane.xform26) && abstPane.isSimplify()) {
 				change = removeDanglingTransitions(change);
 			}
-			*/
 			i++;
 		}
 		// Transform 21 - Normalize Delays
@@ -1428,6 +1438,7 @@ public class Abstraction extends LhpnFile {
 		int N = abstPane.getNormFactor();
 		for (Transition t : transitions.values()) {
 			String delay = t.getDelay();
+			if (delay != null) {
 			Pattern pattern = Pattern
 					.compile("uniform\\(([\\w-]+?),([\\w-]+?)\\)");
 			Matcher matcher = pattern.matcher(delay);
@@ -1478,6 +1489,7 @@ public class Abstraction extends LhpnFile {
 				String uVal = uInt.toString();
 				delay = "uniform(" + lVal + "," + uVal + ")";
 				t.addDelay(delay);
+			}
 			}
 		}
 	}
@@ -2191,17 +2203,31 @@ public class Abstraction extends LhpnFile {
 	}
 	
 	private Boolean removeDanglingTransitions(Boolean change) {
+		ArrayList<Transition> remove = new ArrayList<Transition>();
 		for (Transition t : transitions.values()) {
 			if (t.getPostset().length == 0) {
 				if (t.getAssignments().size() == 0) {
 					if (!t.isFail()) {
-						for (Place p : t.getPostset()) {
-							removeMovement(p.getName(), t.getName());
+						for (Place p : t.getPreset()) {
+							if (p.getPostset().length > 1) {
+								return change;
+							}
 						}
-						removeTransition(t.getName());
+						remove.add(t);
 					}
 				}
 			}
+		}
+		for (Transition t : remove) {
+			for (Place p : t.getPreset()) {
+				for (Transition tP : p.getPreset()) {
+					removeMovement(tP.getName(), p.getName());
+				}
+				removeMovement(p.getName(), t.getName());
+				removePlace(p.getName());
+			}
+			removeTransition(t.getName());
+			change = true;
 		}
 		return change;
 	}

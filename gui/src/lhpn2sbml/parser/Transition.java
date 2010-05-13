@@ -66,6 +66,9 @@ public class Transition {
 	}
 
 	public boolean addEnabling(String newEnab) {
+		if (newEnab == null) {
+			return false;
+		}
 		if (newEnab.equals("")) {
 			return true;
 		}

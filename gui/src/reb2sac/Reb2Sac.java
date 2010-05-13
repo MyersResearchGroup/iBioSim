@@ -14,6 +14,7 @@ import lhpn2sbml.parser.Translator;
 
 import org.sbml.libsbml.*;
 import sbmleditor.*;
+import verification.AbstPane;
 import gcm2sbml.gui.GCM2SBMLEditor;
 import graph.*;
 import biomodelsim.*;
@@ -225,6 +226,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 	private JButton editPostAbs;
 
 	private String modelFile;
+	
+	private AbstPane lhpnAbstraction;
 
 	/**
 	 * This is the constructor for the GUI. It initializes all the input fields,
@@ -234,7 +237,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 	 * @param modelFile
 	 */
 	public Reb2Sac(String sbmlFile, String sbmlProp, String root, BioSim biomodelsim,
-			String simName, Log log, JTabbedPane simTab, String open, String modelFile) {
+			String simName, Log log, JTabbedPane simTab, String open, String modelFile, AbstPane 
+			lhpnAbstraction) {
 		if (File.separator.equals("\\")) {
 			separator = "\\\\";
 		}
@@ -249,6 +253,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		this.simName = simName;
 		this.log = log;
 		this.simTab = simTab;
+		this.lhpnAbstraction = lhpnAbstraction;
 		change = false;
 		frames = new ArrayList<JFrame>();
 		String[] tempArray = modelFile.split(separator);
@@ -2900,7 +2905,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				usingSSA,
 				// root + separator + simName + separator +
 				"user-defined.dat", usingSAD, new File(root + separator + outDir + separator
-						+ "termCond.sad"), preAbs, loopAbs, postAbs);
+						+ "termCond.sad"), preAbs, loopAbs, postAbs, lhpnAbstraction);
 		int[] indecies = properties.getSelectedIndices();
 		props = Buttons.getList(props, properties);
 		properties.setSelectedIndices(indecies);
@@ -2990,7 +2995,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					root + separator + simName, nary, 1, intSpecies, log, usingSSA, root
 							+ separator + outDir + separator + "user-defined.dat", biomodelsim,
 					simTab, root, progress, steps, simName + " " + direct, gcmEditor, direct,
-					timeLimit, runTime, modelFile);
+					timeLimit, runTime, modelFile, lhpnAbstraction, abstraction);
 		}
 		else {
 			exit = runProgram.execute(simProp, sbml, dot, xhtml, lhpn, biomodelsim.frame(), ODE,
@@ -2998,7 +3003,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					root + separator + simName, nary, 1, intSpecies, log, usingSSA, root
 							+ separator + outDir + separator + "user-defined.dat", biomodelsim,
 					simTab, root, progress, steps, simName, gcmEditor, null, timeLimit, runTime,
-					modelFile);
+					modelFile, lhpnAbstraction, abstraction);
 		}
 		if (nary.isSelected() && !sim.equals("markov-chain-analysis") && !lhpn.isSelected()
 				&& exit == 0) {
@@ -3012,7 +3017,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					printInterval, minTimeStep, timeStep, root + separator + simName, rndSeed, run,
 					printer_id, printer_track_quantity, termCond, intSpecies, rap1, rap2, qss, con,
 					log, usingSSA, root + separator + outDir + separator + "user-defined.dat",
-					biomodelsim, simTab, root, d, modelFile);
+					biomodelsim, simTab, root, d, modelFile, abstraction, lhpnAbstraction);
 		}
 		running.setCursor(null);
 		running.dispose();
@@ -3410,7 +3415,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				usingSSA,
 				// root + separator + simName + separator +
 				"user-defined.dat", usingSAD, new File(root + separator + outDir + separator
-						+ "termCond.sad"), preAbs, loopAbs, postAbs);
+						+ "termCond.sad"), preAbs, loopAbs, postAbs, lhpnAbstraction);
 		int[] indecies = properties.getSelectedIndices();
 		props = Buttons.getList(props, properties);
 		properties.setSelectedIndices(indecies);
@@ -3757,6 +3762,31 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					else if (key.equals("reb2sac.analysis.stop.rate")) {
 					}
 					else if (key.equals("monte.carlo.simulation.start.index")) {
+					}
+					else if (key.equals("abstraction.interesting")) {
+						String intVars = load.getProperty("abstraction.interesting");
+						String[] array = intVars.split(" ");
+						for (String s : array) {
+							if (!s.equals("")) {
+								lhpnAbstraction.addIntVar(s);
+							}
+						}
+					}
+					else if (key.equals("abstraction.transforms")) {
+						lhpnAbstraction.removeAllXform();
+						String xforms = load.getProperty("abstraction.transforms");
+						String[] array = xforms.split(", ");
+						for (String s : array) {
+							if (!s.equals("")) {
+								lhpnAbstraction.addXform(s.replace(",", ""));
+							}
+						}
+					}
+					else if (key.equals("abstraction.factor")) {
+						lhpnAbstraction.factorField.setText(load.getProperty("abstraction.factor"));
+					}
+					else if (key.equals("abstraction.iterations")) {
+						lhpnAbstraction.iterField.setText(load.getProperty("abstraction.iterations"));
 					}
 					else {
 						loadProperties.add(key + "=" + load.getProperty((String) key));
@@ -4201,6 +4231,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			change = false;
 		}
 		catch (Exception e1) {
+			e1.printStackTrace();
 			JOptionPane.showMessageDialog(biomodelsim.frame(), "Unable to load properties file!",
 					"Error Loading Properties", JOptionPane.ERROR_MESSAGE);
 		}
@@ -4303,6 +4334,10 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 
 	public boolean hasChanged() {
 		return change;
+	}
+	
+	public void addLhpnAbstraction(AbstPane pane) {
+		lhpnAbstraction = pane;
 	}
 
 	/*

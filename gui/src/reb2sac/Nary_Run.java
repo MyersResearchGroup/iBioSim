@@ -5,6 +5,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
+
+import verification.AbstPane;
 import biomodelsim.*;
 import buttons.*;
 
@@ -112,6 +114,10 @@ public class Nary_Run implements ActionListener, Runnable {
 	private String direct;
 
 	private String modelFile;
+	
+	private JRadioButton abstraction;
+	
+	private AbstPane abstPane;
 
 	/**
 	 * This constructs a new Nary_Run object. This object is a GUI that contains
@@ -127,7 +133,7 @@ public class Nary_Run implements ActionListener, Runnable {
 			String printer_id, String printer_track_quantity, String[] termCond,
 			String[] intSpecies, double rap1, double rap2, double qss, int con, Log log,
 			JCheckBox usingSSA, String ssaFile, BioSim biomodelsim, JTabbedPane simTab,
-			String root, String direct, String modelFile) {
+			String root, String direct, String modelFile, JRadioButton abstraction, AbstPane abstPane) {
 		if (File.separator.equals("\\")) {
 			separator = "\\\\";
 		}
@@ -176,6 +182,8 @@ public class Nary_Run implements ActionListener, Runnable {
 		this.useInterval = useInterval;
 		this.direct = direct;
 		this.modelFile = modelFile;
+		this.abstPane = abstPane;
+		this.abstraction = abstraction;
 
 		// creates the nary frame and adds a window listener
 		naryFrame = new JFrame("Nary Properties");
@@ -579,7 +587,7 @@ public class Nary_Run implements ActionListener, Runnable {
 		runProgram.execute(filename, sbml, dot, xhtml, lhpn, naryFrame, ODE, monteCarlo, sim,
 				printer_id, printer_track_quantity, outDir, nary, 2, intSpecies, log, usingSSA,
 				ssaFile, biomodelsim, simTab, root, progress, run, "", null, direct, timeLimit,
-				timeLimit * run, modelFile);
+				timeLimit * run, modelFile, abstPane, abstraction);
 		running.setCursor(null);
 		running.dispose();
 		naryCancel.removeActionListener(runProgram);
