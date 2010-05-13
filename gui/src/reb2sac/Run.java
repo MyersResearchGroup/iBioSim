@@ -533,7 +533,7 @@ public class Run implements ActionListener {
 							LhpnFile lhpnFile = new LhpnFile();
 							lhpnFile.load(root + separator + modelFile);
 							Abstraction abst = new Abstraction(lhpnFile, abstPane);
-							abst.abstractSTG();
+							abst.abstractSTG(false);
 							abst.save(root + separator + simName + separator + modelFile);
 							t1.BuildTemplate(root + separator + simName + separator + modelFile);
 						}

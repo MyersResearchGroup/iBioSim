@@ -869,7 +869,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				if (abstPane.absListModel.contains("Remove Variables")) {
 					abstraction.abstractVars(abstPane.getIntVars());
 				}
-				abstraction.abstractSTG();
+				abstraction.abstractSTG(true);
 			}
 			if (!lhpn.isSelected() && !view.isSelected()) {
 				abstraction.save(directory + separator + abstFilename);

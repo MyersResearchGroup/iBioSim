@@ -37,7 +37,7 @@ public class Abstraction extends LhpnFile {
 		variables = lhpn.variables;
 		property = lhpn.property;
 	}
-	
+
 	public Abstraction(LhpnFile lhpn, AbstPane abst) {
 		super(lhpn.log);
 		this.abstPane = abst;
@@ -50,7 +50,7 @@ public class Abstraction extends LhpnFile {
 		property = lhpn.property;
 	}
 
-	public void abstractSTG() {
+	public void abstractSTG(boolean print) {
 		long start = System.nanoTime();
 		boolean change = true;
 		if (abstPane.absListModel.contains(abstPane.xform12)) {
@@ -60,8 +60,7 @@ public class Abstraction extends LhpnFile {
 			if (t.getEnabling() == null) {
 				continue;
 			}
-			if (t.getEnabling().equals("")
-					|| t.getEnabling().trim().equals("~shutdown")
+			if (t.getEnabling().equals("") || t.getEnabling().trim().equals("~shutdown")
 					|| t.getEnabling().equals("~fail")) {
 				t.addEnabling(null);
 			}
@@ -69,9 +68,11 @@ public class Abstraction extends LhpnFile {
 		Integer numTrans = transitions.size();
 		Integer numPlaces = places.size();
 		Integer numVars = variables.size();
-		System.out.println("Transitions before abstraction: " + numTrans);
-		System.out.println("Places before abstraction: " + numPlaces);
-		System.out.println("Variables before abstraction: " + numVars);
+		if (print) {
+			System.out.println("Transitions before abstraction: " + numTrans);
+			System.out.println("Places before abstraction: " + numPlaces);
+			System.out.println("Variables before abstraction: " + numVars);
+		}
 		Integer i = 0;
 		while (change && i < abstPane.maxIterations()) {
 			change = false;
@@ -172,20 +173,20 @@ public class Abstraction extends LhpnFile {
 			i++;
 		}
 		// Transform 21 - Normalize Delays
-		if (abstPane.absListModel.contains(abstPane.xform21)
-				&& abstPane.isAbstract()) {
+		if (abstPane.absListModel.contains(abstPane.xform21) && abstPane.isAbstract()) {
 			normalizeDelays();
 		}
 		numTrans = transitions.size();
 		numPlaces = places.size();
 		numVars = variables.size();
-		System.out.println("Transitions after abstraction: " + numTrans);
-		System.out.println("Places after abstraction: " + numPlaces);
-		System.out.println("Variables after abstraction: " + numVars);
-		Double stop = (System.nanoTime() - start) * 1.0e-9;
-		System.out.println("Total Abstraction Time: " + stop.toString() + " s");
-		System.out.println("Number of Abstraction Loop Iterations: "
-				+ i.toString());
+		if (print) {
+			System.out.println("Transitions after abstraction: " + numTrans);
+			System.out.println("Places after abstraction: " + numPlaces);
+			System.out.println("Variables after abstraction: " + numVars);
+			Double stop = (System.nanoTime() - start) * 1.0e-9;
+			System.out.println("Total Abstraction Time: " + stop.toString() + " s");
+			System.out.println("Number of Abstraction Loop Iterations: " + i.toString());
+		}
 	}
 
 	public void abstractVars(String[] intVars) {
@@ -209,12 +210,14 @@ public class Abstraction extends LhpnFile {
 				// Set initial condition of removed variables to "unknown"
 				if (booleans.containsKey(s)) {
 					booleans.get(s).addInitValue("unknown");
-				} else if (continuous.containsKey(s)) {
+				}
+				else if (continuous.containsKey(s)) {
 					Properties prop = new Properties();
 					prop.setProperty("value", "[-INF,INF]");
 					prop.setProperty("rate", "[-INF,INF]");
 					continuous.get(s).addInitCond(prop);
-				} else if (integers.containsKey(s)) {
+				}
+				else if (integers.containsKey(s)) {
 					integers.get(s).addInitValue("[-INF,INF]");
 				}
 			}
@@ -230,21 +233,19 @@ public class Abstraction extends LhpnFile {
 						Transition[] postTrans = p.getPostset();
 						for (Transition tP : postTrans) {
 							boolean flag = true;
-							HashMap<String, String> contAssignments = tP
-									.getContAssignments();
+							HashMap<String, String> contAssignments = tP.getContAssignments();
 							if (contAssignments.containsKey(tP.getName())) {
 								for (String var : contAssignments.keySet()) {
-									if (!t.getContAssignments()
-											.containsKey(var)
+									if (!t.getContAssignments().containsKey(var)
 											|| (tP.getContAssignTree(var).isit != 'c')) {
 										flag = false;
 									}
 								}
-							} else {
+							}
+							else {
 								flag = false;
 							}
-							HashMap<String, String> intAssignments = tP
-									.getIntAssignments();
+							HashMap<String, String> intAssignments = tP.getIntAssignments();
 							if (intAssignments.containsKey(tP.getName())) {
 								for (String var : intAssignments.keySet()) {
 									if (!t.getIntAssignments().containsKey(var)
@@ -252,157 +253,155 @@ public class Abstraction extends LhpnFile {
 										flag = false;
 									}
 								}
-							} else {
+							}
+							else {
 								flag = false;
 							}
-							HashMap<String, String> boolAssignments = tP
-									.getBoolAssignments();
+							HashMap<String, String> boolAssignments = tP.getBoolAssignments();
 							if (boolAssignments.containsKey(tP.getName())) {
 								for (String var : boolAssignments.keySet()) {
-									if (!t.getBoolAssignments()
-											.containsKey(var)
+									if (!t.getBoolAssignments().containsKey(var)
 											|| (tP.getBoolAssignTree(var).isit != 'c')) {
 										flag = false;
 									}
 								}
-							} else {
+							}
+							else {
 								flag = false;
 							}
 							if (flag) {
 								for (String var : contAssignments.keySet()) {
-									String[] assign = {
-											contAssignments.get(var).toString(),
+									String[] assign = { contAssignments.get(var).toString(),
 											contAssignments.get(var).toString() };
 									String[][] assignRange = new String[2][2];
-									Pattern pattern = Pattern
-											.compile("\\[(\\S+?),(\\S+?)\\]");
+									Pattern pattern = Pattern.compile("\\[(\\S+?),(\\S+?)\\]");
 									for (int i = 0; i < assign.length; i++) {
-										Matcher matcher = pattern
-												.matcher(assign[i]);
+										Matcher matcher = pattern.matcher(assign[i]);
 										if (matcher.find()) {
-											assignRange[i][0] = matcher
-													.group(1);
-											assignRange[i][1] = matcher
-													.group(2);
-										} else {
+											assignRange[i][0] = matcher.group(1);
+											assignRange[i][1] = matcher.group(2);
+										}
+										else {
 											assignRange[i][0] = assign[i];
 											assignRange[i][1] = assign[i];
 										}
 									}
 									if (assignRange[0][0].equals("inf")) {
 										assign[0] = assignRange[1][0];
-									} else if (assignRange[1][0].equals("inf")) {
+									}
+									else if (assignRange[1][0].equals("inf")) {
 										assign[0] = assignRange[0][0];
-									} else if (Float
-											.parseFloat(assignRange[0][0]) < Float
+									}
+									else if (Float.parseFloat(assignRange[0][0]) < Float
 											.parseFloat(assignRange[1][0])) {
 										assign[0] = assignRange[0][0];
-									} else {
+									}
+									else {
 										assign[0] = assignRange[1][0];
 									}
 									if (assignRange[0][1].equals("inf")
 											|| assignRange[1][1].equals("inf")) {
 										assign[1] = "inf";
-									} else if (Float
-											.parseFloat(assignRange[0][1]) > Float
+									}
+									else if (Float.parseFloat(assignRange[0][1]) > Float
 											.parseFloat(assignRange[1][1])) {
 										assign[1] = assignRange[0][1];
-									} else {
+									}
+									else {
 										assign[1] = assignRange[1][1];
 									}
 									if (assign[0].equals(assign[1])) {
 										tP.addContAssign(var, assign[0]);
-									} else {
-										tP.addContAssign(var, "[" + assign[0]
-												+ "," + assign[1] + "]");
+									}
+									else {
+										tP.addContAssign(var, "[" + assign[0] + "," + assign[1]
+												+ "]");
 									}
 								}
 								for (String var : intAssignments.keySet()) {
-									String[] assign = {
-											intAssignments.get(var).toString(),
+									String[] assign = { intAssignments.get(var).toString(),
 											intAssignments.get(var).toString() };
 									String[][] assignRange = new String[2][2];
-									Pattern pattern = Pattern
-											.compile("\\[(\\S+?),(\\S+?)\\]");
+									Pattern pattern = Pattern.compile("\\[(\\S+?),(\\S+?)\\]");
 									for (int i = 0; i < assign.length; i++) {
-										Matcher matcher = pattern
-												.matcher(assign[i]);
+										Matcher matcher = pattern.matcher(assign[i]);
 										if (matcher.find()) {
-											assignRange[i][0] = matcher
-													.group(1);
-											assignRange[i][1] = matcher
-													.group(2);
-										} else {
+											assignRange[i][0] = matcher.group(1);
+											assignRange[i][1] = matcher.group(2);
+										}
+										else {
 											assignRange[i][0] = assign[i];
 											assignRange[i][1] = assign[i];
 										}
 									}
 									if (assignRange[0][0].equals("inf")) {
 										assign[0] = assignRange[1][0];
-									} else if (assignRange[1][0].equals("inf")) {
+									}
+									else if (assignRange[1][0].equals("inf")) {
 										assign[0] = assignRange[0][0];
-									} else if (Integer
-											.parseInt(assignRange[0][0]) < Integer
+									}
+									else if (Integer.parseInt(assignRange[0][0]) < Integer
 											.parseInt(assignRange[1][0])) {
 										assign[0] = assignRange[0][0];
-									} else {
+									}
+									else {
 										assign[0] = assignRange[1][0];
 									}
 									if (assignRange[0][1].equals("inf")
 											|| assignRange[1][1].equals("inf")) {
 										assign[1] = "inf";
-									} else if (Integer
-											.parseInt(assignRange[0][1]) > Integer
+									}
+									else if (Integer.parseInt(assignRange[0][1]) > Integer
 											.parseInt(assignRange[1][1])) {
 										assign[1] = assignRange[0][1];
-									} else {
+									}
+									else {
 										assign[1] = assignRange[1][1];
 									}
 									if (assign[0].equals(assign[1])) {
 										tP.addIntAssign(var, assign[0]);
-									} else {
-										tP.addIntAssign(var, "[" + assign[0]
-												+ "," + assign[1] + "]");
+									}
+									else {
+										tP.addIntAssign(var, "[" + assign[0] + "," + assign[1]
+												+ "]");
 									}
 								}
 								for (String var : boolAssignments.keySet()) {
-									String[] assign = {
-											boolAssignments.get(var).toString(),
+									String[] assign = { boolAssignments.get(var).toString(),
 											boolAssignments.get(var).toString() };
 									String[][] assignRange = new String[2][2];
-									Pattern pattern = Pattern
-											.compile("\\[(\\S+?),(\\S+?)\\]");
+									Pattern pattern = Pattern.compile("\\[(\\S+?),(\\S+?)\\]");
 									for (int i = 0; i < assign.length; i++) {
-										Matcher matcher = pattern
-												.matcher(assign[i]);
+										Matcher matcher = pattern.matcher(assign[i]);
 										if (matcher.find()) {
-											assignRange[i][0] = matcher
-													.group(1);
-											assignRange[i][1] = matcher
-													.group(2);
-										} else {
+											assignRange[i][0] = matcher.group(1);
+											assignRange[i][1] = matcher.group(2);
+										}
+										else {
 											assignRange[i][0] = assign[i];
 											assignRange[i][1] = assign[i];
 										}
 									}
 									if (assignRange[0][0].equals("false")
-											|| assignRange[1][0]
-													.equals("false")) {
+											|| assignRange[1][0].equals("false")) {
 										assign[0] = "false";
-									} else {
+									}
+									else {
 										assign[0] = "true";
 									}
 									if (assignRange[0][1].equals("true")
 											|| assignRange[1][1].equals("true")) {
 										assign[1] = "true";
-									} else {
+									}
+									else {
 										assign[1] = "false";
 									}
 									if (assign[0].equals(assign[1])) {
 										tP.addBoolAssign(var, assign[0]);
-									} else {
-										tP.addBoolAssign(var, "[" + assign[0]
-												+ "," + assign[1] + "]");
+									}
+									else {
+										tP.addBoolAssign(var, "[" + assign[0] + "," + assign[1]
+												+ "]");
 									}
 								}
 							}
@@ -477,13 +476,12 @@ public class Abstraction extends LhpnFile {
 				continue;
 			}
 			if (expr.isit == 't') {
-				if (expr.uvalue == 0
-						&& abstPane.absListModel.contains(abstPane.xform16)
+				if (expr.uvalue == 0 && abstPane.absListModel.contains(abstPane.xform16)
 						&& abstPane.isSimplify()) {
 					// If the enabling condition is constant false
 					removeTrans.add(t.getName());
-				} else if (expr.lvalue == 1
-						&& abstPane.absListModel.contains(abstPane.xform15)
+				}
+				else if (expr.lvalue == 1 && abstPane.absListModel.contains(abstPane.xform15)
 						&& abstPane.isSimplify()) {
 					// If the enabling condition is constant true
 					removeEnab.add(t.getName());
@@ -491,12 +489,10 @@ public class Abstraction extends LhpnFile {
 			}
 			// If the enabling condition is initially true
 			if (abstPane.absListModel.contains(abstPane.xform16)
-					&& (expr.evaluateExp(initVars) == 1)
-					&& abstPane.isSimplify()) {
+					&& (expr.evaluateExp(initVars) == 1) && abstPane.isSimplify()) {
 				boolean enabled = true;
 				for (Transition tP : transitions.values()) {
-					if (!tP.equals(t)
-							&& expr.getChange(tP.getAssignments()) == 'F'
+					if (!tP.equals(t) && expr.getChange(tP.getAssignments()) == 'F'
 							|| expr.getChange(tP.getAssignments()) == 'f'
 							|| expr.getChange(tP.getAssignments()) == 'X') {
 						enabled = false;
@@ -509,12 +505,10 @@ public class Abstraction extends LhpnFile {
 			}
 			// If the enabling condition is initially false
 			else if (abstPane.absListModel.contains(abstPane.xform11)
-					&& (expr.evaluateExp(initVars) == 0)
-					&& abstPane.isSimplify()) {
+					&& (expr.evaluateExp(initVars) == 0) && abstPane.isSimplify()) {
 				boolean disabled = true;
 				for (Transition tP : transitions.values()) {
-					if (!tP.getName().equals(t)
-							&& expr.getChange(tP.getAssignments()) == 'T'
+					if (!tP.getName().equals(t) && expr.getChange(tP.getAssignments()) == 'T'
 							|| expr.getChange(tP.getAssignments()) == 't'
 							|| expr.getChange(tP.getAssignments()) == 'X') {
 						disabled = false;
@@ -558,25 +552,24 @@ public class Abstraction extends LhpnFile {
 					if (!t.equals(tP)) {
 						if (t.getEnablingTree() == null) {
 							continue;
-						} else if (tP.getEnablingTree() == null) {
+						}
+						else if (tP.getEnablingTree() == null) {
 							flag = true;
-						} else if (tP.getEnablingTree().implies(
-								t.getEnablingTree())) {
+						}
+						else if (tP.getEnablingTree().implies(t.getEnablingTree())) {
 							flag = true;
 						}
 					}
 					if (flag) {
 						String delayT = t.getDelay();
 						String delayTP = t.getDelay();
-						Pattern rangePattern = Pattern
-								.compile("uniform\\(([\\d]+),([\\d]+)\\)");
+						Pattern rangePattern = Pattern.compile("uniform\\(([\\d]+),([\\d]+)\\)");
 						Matcher delayTMatcher = rangePattern.matcher(delayT);
 						Matcher delayTpMatcher = rangePattern.matcher(delayTP);
 						if (delayTMatcher.find() && delayTpMatcher.find()) {
 							String lower = delayTpMatcher.group(1);
 							String upper = delayTMatcher.group(2);
-							if (Integer.parseInt(lower) > Integer
-									.parseInt(upper)) {
+							if (Integer.parseInt(lower) > Integer.parseInt(upper)) {
 								for (Place s : tP.getPreset()) {
 									removeMovement(s.getName(), tP.getName());
 								}
@@ -603,7 +596,8 @@ public class Abstraction extends LhpnFile {
 							if (!t.getEnabling().equals(tP.getEnabling())) {
 								continue;
 							}
-						} else {
+						}
+						else {
 							continue;
 						}
 					}
@@ -619,32 +613,28 @@ public class Abstraction extends LhpnFile {
 					if (!t.getRateAssignments().equals(t.getRateAssignments())) {
 						continue;
 					}
-					if (!t.equals(tP) && t.getDelay() != null
-							&& tP.getDelay() != null) {
+					if (!t.equals(tP) && t.getDelay() != null && tP.getDelay() != null) {
 						String delayT = t.getDelay();
 						String delayTP = tP.getDelay();
-						Pattern rangePattern = Pattern
-								.compile("uniform\\(([\\d]+),([\\d]+)\\)");
+						Pattern rangePattern = Pattern.compile("uniform\\(([\\d]+),([\\d]+)\\)");
 						Matcher delayTMatcher = rangePattern.matcher(delayT);
 						Matcher delayTpMatcher = rangePattern.matcher(delayTP);
 						if (delayTMatcher.find() && delayTpMatcher.find()) {
 							Integer lower, upper;
-							Integer lower1 = Integer.parseInt(delayTpMatcher
-									.group(1));
-							Integer upper1 = Integer.parseInt(delayTpMatcher
-									.group(2));
-							Integer lower2 = Integer.parseInt(delayTMatcher
-									.group(1));
-							Integer upper2 = Integer.parseInt(delayTMatcher
-									.group(2));
+							Integer lower1 = Integer.parseInt(delayTpMatcher.group(1));
+							Integer upper1 = Integer.parseInt(delayTpMatcher.group(2));
+							Integer lower2 = Integer.parseInt(delayTMatcher.group(1));
+							Integer upper2 = Integer.parseInt(delayTMatcher.group(2));
 							if (lower1 < lower2) {
 								lower = lower1;
-							} else {
+							}
+							else {
 								lower = lower2;
 							}
 							if (upper1 > upper2) {
 								upper = upper1;
-							} else {
+							}
+							else {
 								upper = upper2;
 							}
 							for (Place s : tP.getPreset()) {
@@ -653,8 +643,8 @@ public class Abstraction extends LhpnFile {
 							for (Place s : tP.getPostset()) {
 								removeMovement(tP.getName(), s.getName());
 							}
-							String delay = "uniform(" + lower.toString() + ","
-									+ upper.toString() + ")";
+							String delay = "uniform(" + lower.toString() + "," + upper.toString()
+									+ ")";
 							t.addDelay(delay);
 							removeTransition(tP.getName());
 							change = true;
@@ -690,8 +680,7 @@ public class Abstraction extends LhpnFile {
 						break;
 					}
 				}
-				HashMap<String, ExprTree> boolAssignTrees = t
-						.getBoolAssignTrees();
+				HashMap<String, ExprTree> boolAssignTrees = t.getBoolAssignTrees();
 				for (ExprTree e : boolAssignTrees.values()) {
 					if (e != null) {
 						if (e.containsVar(s)) {
@@ -700,8 +689,7 @@ public class Abstraction extends LhpnFile {
 						}
 					}
 				}
-				HashMap<String, ExprTree> intAssignTrees = t
-						.getIntAssignTrees();
+				HashMap<String, ExprTree> intAssignTrees = t.getIntAssignTrees();
 				for (ExprTree e : intAssignTrees.values()) {
 					if (e != null) {
 						if (e.containsVar(s)) {
@@ -710,8 +698,7 @@ public class Abstraction extends LhpnFile {
 						}
 					}
 				}
-				HashMap<String, ExprTree> contAssignTrees = t
-						.getContAssignTrees();
+				HashMap<String, ExprTree> contAssignTrees = t.getContAssignTrees();
 				for (ExprTree e : contAssignTrees.values()) {
 					if (e != null) {
 						if (e.containsVar(s)) {
@@ -720,8 +707,7 @@ public class Abstraction extends LhpnFile {
 						}
 					}
 				}
-				HashMap<String, ExprTree> rateAssignTrees = t
-						.getRateAssignTrees();
+				HashMap<String, ExprTree> rateAssignTrees = t.getRateAssignTrees();
 				for (ExprTree e : rateAssignTrees.values()) {
 					if (e != null) {
 						if (e.containsVar(s)) {
@@ -751,26 +737,30 @@ public class Abstraction extends LhpnFile {
 			for (Variable var2 : booleans.values()) {
 				if (var1.equals(var2))
 					continue;
-				boolean same = areCorrelatedBooleans(var1.getName(), var2
-						.getName());
+				boolean same = areCorrelatedBooleans(var1.getName(), var2.getName());
 				boolean invert = areInverted(var1.getName(), var2.getName());
 				if (same) {
-					if (variables.contains(var1) && variables.contains(var2) && (process_read.get(var2.getName()) != -1 || process_read.get(var1.getName()) == -1)) {
+					if (variables.contains(var1)
+							&& variables.contains(var2)
+							&& (process_read.get(var2.getName()) != -1 || process_read.get(var1
+									.getName()) == -1)) {
 						String[] temp = { var1.getName(), var2.getName() };
 						merge.add(temp);
 						// mergeVariables(var1, var2);
 						remove.add(var2.getName());
 						change = true;
 					}
-				} else if (invert) {
+				}
+				else if (invert) {
 					ExprTree expr = new ExprTree(this);
 					expr.token = expr.intexpr_gettok("~" + var1.getName());
 					expr.intexpr_L("~" + var1.getName());
-					if (process_read.get(var2.getName()) != -1 || process_read.get(var1.getName()) == -1) {
+					if (process_read.get(var2.getName()) != -1
+							|| process_read.get(var1.getName()) == -1) {
 						mergeInverse.put(var2.getName(), expr);
 						remove.add(var2.toString());
 					}
-					//mergeVariables(expr, var2.getName());
+					// mergeVariables(expr, var2.getName());
 				}
 			}
 		}
@@ -778,10 +768,12 @@ public class Abstraction extends LhpnFile {
 			for (Variable var2 : continuous.values()) {
 				if (var1.equals(var2))
 					continue;
-				boolean same = areCorrelatedContinuous(var1.getName(), var2
-						.getName());
+				boolean same = areCorrelatedContinuous(var1.getName(), var2.getName());
 				if (same) {
-					if (variables.contains(var1) && variables.contains(var2) && (process_read.get(var2.getName()) != -1 || process_read.get(var1.getName()) == -1)) {
+					if (variables.contains(var1)
+							&& variables.contains(var2)
+							&& (process_read.get(var2.getName()) != -1 || process_read.get(var1
+									.getName()) == -1)) {
 						String[] temp = { var1.getName(), var2.getName() };
 						merge.add(temp);
 						// mergeVariables(var1, var2);
@@ -795,10 +787,12 @@ public class Abstraction extends LhpnFile {
 			for (Variable var2 : integers.values()) {
 				if (var1.equals(var2))
 					continue;
-				boolean same = areCorrelatedIntegers(var1.getName(), var2
-						.getName());
+				boolean same = areCorrelatedIntegers(var1.getName(), var2.getName());
 				if (same) {
-					if (variables.contains(var1) && variables.contains(var2) && (process_read.get(var2.getName()) != -1 || process_read.get(var1.getName()) == -1)) {
+					if (variables.contains(var1)
+							&& variables.contains(var2)
+							&& (process_read.get(var2.getName()) != -1 || process_read.get(var1
+									.getName()) == -1)) {
 						String[] temp = { var1.getName(), var2.getName() };
 						merge.add(temp);
 						// mergeVariables(var1, var2);
@@ -867,7 +861,8 @@ public class Abstraction extends LhpnFile {
 					tempIntVars.addAll(e.getVars());
 				}
 			}
-		} while (!intVars.equals(tempIntVars));
+		}
+		while (!intVars.equals(tempIntVars));
 		tempIntVars = intVars;
 		do {
 			intVars = new ArrayList<String>();
@@ -904,7 +899,8 @@ public class Abstraction extends LhpnFile {
 							}
 						}
 					}
-				} while (!tempProcess.equals(process));
+				}
+				while (!tempProcess.equals(process));
 				for (Transition trans : process) {
 					for (String s : trans.getEnablingTree().getVars()) {
 						if (!tempIntVars.contains(s))
@@ -912,7 +908,8 @@ public class Abstraction extends LhpnFile {
 					}
 				}
 			}
-		} while (!intVars.equals(tempIntVars));
+		}
+		while (!intVars.equals(tempIntVars));
 		return intVars;
 	}
 
@@ -937,8 +934,7 @@ public class Abstraction extends LhpnFile {
 		return true;
 	}
 
-	private boolean comparePreset(Place p1, Place p2, Transition trans1,
-			Transition trans2) {
+	private boolean comparePreset(Place p1, Place p2, Transition trans1, Transition trans2) {
 		Transition[] set1 = p1.getPreset();
 		Transition[] set2 = p2.getPreset();
 		if (set1.length != set2.length || set1.length == 0) {
@@ -1000,8 +996,7 @@ public class Abstraction extends LhpnFile {
 		return true;
 	}
 
-	private boolean comparePostset(Place p1, Place p2, Transition trans1,
-			Transition trans2) {
+	private boolean comparePostset(Place p1, Place p2, Transition trans1, Transition trans2) {
 		Transition[] set1 = p1.getPostset();
 		Transition[] set2 = p2.getPostset();
 		if (set1.length != set2.length || set1.length == 0) {
@@ -1083,7 +1078,8 @@ public class Abstraction extends LhpnFile {
 			if (preset.length == 1 && postset.length == 1) {
 				if (preset[0].equals(postset[0]) && !p.isMarked()) {
 					remove.add(p);
-				} else {
+				}
+				else {
 					continue;
 				}
 			}
@@ -1109,28 +1105,28 @@ public class Abstraction extends LhpnFile {
 						boolean[] same = { samePreset, samePostset };
 						combine.add(array);
 						samesets.put(t1, same);
-					} else if (samePreset && !assign
+					}
+					else if (samePreset && !assign
 							&& abstPane.absListModel.contains(abstPane.xform6)) {
 						Place[] postset1 = t1.getPostset();
 						Place[] postset2 = t2.getPostset();
 						if (postset1.length == 1 && postset2.length == 1) {
-							if (comparePreset(
-									places.get(postset1[0].getName()), places
-											.get(postset2[0].getName()), t1, t2)) {
+							if (comparePreset(places.get(postset1[0].getName()), places
+									.get(postset2[0].getName()), t1, t2)) {
 								Transition[] array = { t1, t2 };
 								boolean[] same = { samePreset, samePostset };
 								combine.add(array);
 								samesets.put(t1, same);
 							}
 						}
-					} else if (samePostset && !assign
+					}
+					else if (samePostset && !assign
 							&& abstPane.absListModel.contains(abstPane.xform7)) {
 						Place[] preset1 = t1.getPreset();
 						Place[] preset2 = t1.getPreset();
 						if (preset1.length == 1 && preset2.length == 1) {
-							if (comparePostset(
-									places.get(preset1[0].getName()), places
-											.get(preset2[0].getName()), t1, t2)
+							if (comparePostset(places.get(preset1[0].getName()), places
+									.get(preset2[0].getName()), t1, t2)
 									&& !t2.isFail()) {
 								Transition[] array = { t1, t2 };
 								boolean[] same = { samePreset, samePostset };
@@ -1144,8 +1140,7 @@ public class Abstraction extends LhpnFile {
 		}
 		for (Transition[] s : combine) {
 			change = true;
-			combineTransitions(s[0], s[1], samesets.get(s[0])[0], samesets
-					.get(s[0])[1]);
+			combineTransitions(s[0], s[1], samesets.get(s[0])[0], samesets.get(s[0])[1]);
 		}
 		return change;
 	}
@@ -1240,8 +1235,7 @@ public class Abstraction extends LhpnFile {
 					}
 				}
 				Transition[] postset = preset[0].getPostset();
-				if ((postset.length == 1 || pre)
-						&& places.containsKey(preset[0])) {
+				if ((postset.length == 1 || pre) && places.containsKey(preset[0])) {
 					if (!assign) {
 						remove.add(t);
 					}
@@ -1292,8 +1286,7 @@ public class Abstraction extends LhpnFile {
 					}
 				}
 				Transition[] tempPostset = preset[0].getPostset();
-				if ((tempPostset.length == 1 || pre)
-						&& places.containsKey(preset[0])) {
+				if ((tempPostset.length == 1 || pre) && places.containsKey(preset[0])) {
 					if (!assign) {
 						remove.add(t);
 					}
@@ -1320,8 +1313,7 @@ public class Abstraction extends LhpnFile {
 				boolean assign = false;
 				if (t.getEnablingTree() != null) {
 					for (String var : t.getEnablingTree().getVars()) {
-						if (!process_write.get(var)
-								.equals(process_trans.get(t))) {
+						if (!process_write.get(var).equals(process_trans.get(t))) {
 							assign = true;
 							break;
 						}
@@ -1392,8 +1384,8 @@ public class Abstraction extends LhpnFile {
 		for (Transition t : transitions.values()) {
 			for (String var : t.getAssignments().keySet()) {
 				read = new ArrayList<Transition>();
-				if ((process_read.get(var).equals(process_trans.get(t)) && process_write
-						.get(var).equals(process_trans.get(t)))
+				if ((process_read.get(var).equals(process_trans.get(t)) && process_write.get(var)
+						.equals(process_trans.get(t)))
 						&& !readBeforeWrite(t, var)) {
 					String[] temp = { t.getName(), var };
 					remove.add(temp);
@@ -1413,8 +1405,8 @@ public class Abstraction extends LhpnFile {
 			for (String var : t.getAssignments().keySet()) {
 				read = new ArrayList<Transition>();
 				// Check read variables for global writes
-				if ((process_read.get(var).equals(process_trans.get(t)) && process_write
-						.get(var).equals(process_trans.get(t)))
+				if ((process_read.get(var).equals(process_trans.get(t)) && process_write.get(var)
+						.equals(process_trans.get(t)))
 						&& !weakReadBeforeWrite(t, var)) {
 					String[] temp = { t.getName(), var };
 					remove.add(temp);
@@ -1439,57 +1431,57 @@ public class Abstraction extends LhpnFile {
 		for (Transition t : transitions.values()) {
 			String delay = t.getDelay();
 			if (delay != null) {
-			Pattern pattern = Pattern
-					.compile("uniform\\(([\\w-]+?),([\\w-]+?)\\)");
-			Matcher matcher = pattern.matcher(delay);
-			Pattern normPattern = Pattern
-					.compile("uniform\\(([\\w-]+?),([\\w-]+?)\\)");
-			Matcher normMatcher = normPattern.matcher(delay);
-			Pattern numPattern = Pattern.compile("[-\\d]+");
-			Matcher numMatcher = numPattern.matcher(delay);
-			if (matcher.find()) {
-				String lVal = matcher.group(1);
-				String uVal = matcher.group(2);
-				if (!lVal.contains("inf")) {
-					Integer lInt = Integer.parseInt(lVal);
-					lInt = (lInt / N) * N;
-					lVal = lInt.toString();
-				}
-				if (!uVal.contains("inf")) {
-					Integer uInt = Integer.parseInt(uVal);
-					if (uInt % N != 0) {
-						uInt = (uInt / N + 1) * N;
-						uVal = uInt.toString();
+				Pattern pattern = Pattern.compile("uniform\\(([\\w-]+?),([\\w-]+?)\\)");
+				Matcher matcher = pattern.matcher(delay);
+				Pattern normPattern = Pattern.compile("uniform\\(([\\w-]+?),([\\w-]+?)\\)");
+				Matcher normMatcher = normPattern.matcher(delay);
+				Pattern numPattern = Pattern.compile("[-\\d]+");
+				Matcher numMatcher = numPattern.matcher(delay);
+				if (matcher.find()) {
+					String lVal = matcher.group(1);
+					String uVal = matcher.group(2);
+					if (!lVal.contains("inf")) {
+						Integer lInt = Integer.parseInt(lVal);
+						lInt = (lInt / N) * N;
+						lVal = lInt.toString();
 					}
-				}
-				delay = "uniform(" + lVal + "," + uVal + ")";
-				t.addDelay(delay);
-			} else if (normMatcher.find()) {
-				String lVal = normMatcher.group(1);
-				String uVal = normMatcher.group(2);
-				if (!lVal.contains("inf")) {
-					Integer lInt = Integer.parseInt(lVal);
-					lInt = (lInt / N) * N;
-					lVal = lInt.toString();
-				}
-				if (!uVal.contains("inf")) {
-					Integer uInt = Integer.parseInt(uVal);
-					if (uInt % N != 0) {
-						uInt = (uInt / N + 1) * N;
-						uVal = uInt.toString();
+					if (!uVal.contains("inf")) {
+						Integer uInt = Integer.parseInt(uVal);
+						if (uInt % N != 0) {
+							uInt = (uInt / N + 1) * N;
+							uVal = uInt.toString();
+						}
 					}
+					delay = "uniform(" + lVal + "," + uVal + ")";
+					t.addDelay(delay);
 				}
-				delay = "normal(" + lVal + "," + uVal + ")";
-				t.addDelay(delay);
-			} else if (numMatcher.find()) {
-				Integer val = Integer.parseInt(delay);
-				Integer lInt = (val / N) * N;
-				String lVal = lInt.toString();
-				Integer uInt = lInt + N;
-				String uVal = uInt.toString();
-				delay = "uniform(" + lVal + "," + uVal + ")";
-				t.addDelay(delay);
-			}
+				else if (normMatcher.find()) {
+					String lVal = normMatcher.group(1);
+					String uVal = normMatcher.group(2);
+					if (!lVal.contains("inf")) {
+						Integer lInt = Integer.parseInt(lVal);
+						lInt = (lInt / N) * N;
+						lVal = lInt.toString();
+					}
+					if (!uVal.contains("inf")) {
+						Integer uInt = Integer.parseInt(uVal);
+						if (uInt % N != 0) {
+							uInt = (uInt / N + 1) * N;
+							uVal = uInt.toString();
+						}
+					}
+					delay = "normal(" + lVal + "," + uVal + ")";
+					t.addDelay(delay);
+				}
+				else if (numMatcher.find()) {
+					Integer val = Integer.parseInt(delay);
+					Integer lInt = (val / N) * N;
+					String lVal = lInt.toString();
+					Integer uInt = lInt + N;
+					String uVal = uInt.toString();
+					delay = "uniform(" + lVal + "," + uVal + ")";
+					t.addDelay(delay);
+				}
 			}
 		}
 	}
@@ -1533,11 +1525,11 @@ public class Abstraction extends LhpnFile {
 			if (t.getEnablingTree() != null) {
 				ExprTree expr = t.getEnablingTree();
 				if (transition.getEnablingTree() != null) {
-					expr.setNodeValues(expr, transition.getEnablingTree(),
-							"&&", 'l');
+					expr.setNodeValues(expr, transition.getEnablingTree(), "&&", 'l');
 					t.addEnabling(expr.toString("LHPN"));
 				}
-			} else if (transition.getEnablingTree() != null) {
+			}
+			else if (transition.getEnablingTree() != null) {
 				t.addEnabling(transition.getEnablingTree().toString());
 			}
 			removeMovement(place.getName(), t.getName());
@@ -1552,7 +1544,8 @@ public class Abstraction extends LhpnFile {
 				oldDelay[0] = rangeMatcher.group(1);
 				oldDelay[1] = rangeMatcher.group(2);
 			}
-		} else {
+		}
+		else {
 			oldDelay[0] = "0";
 			oldDelay[1] = "inf";
 		}
@@ -1560,22 +1553,19 @@ public class Abstraction extends LhpnFile {
 			if (t.getDelay() != null) {
 				Matcher newMatcher = rangePattern.matcher(t.getDelay());
 				if (newMatcher.find()) {
-					String newDelay[] = { newMatcher.group(1),
-							newMatcher.group(2) };
+					String newDelay[] = { newMatcher.group(1), newMatcher.group(2) };
 					for (int i = 0; i < newDelay.length; i++) {
-						if (!oldDelay[i].equals("inf")
-								&& !newDelay[i].equals("inf")) {
+						if (!oldDelay[i].equals("inf") && !newDelay[i].equals("inf")) {
 							if (i != 0 || !marked) {
-								newDelay[i] = String.valueOf(Integer
-										.parseInt(newDelay[i])
+								newDelay[i] = String.valueOf(Integer.parseInt(newDelay[i])
 										+ Integer.parseInt(oldDelay[i]));
 							}
-						} else {
+						}
+						else {
 							newDelay[i] = "inf";
 						}
 					}
-					t.addDelay("uniform(" + newDelay[0] + "," + newDelay[1]
-							+ ")");
+					t.addDelay("uniform(" + newDelay[0] + "," + newDelay[1] + ")");
 				}
 			}
 		}
@@ -1640,20 +1630,17 @@ public class Abstraction extends LhpnFile {
 			if (t.getDelay() != null) {
 				Matcher newMatcher = rangePattern.matcher(t.getDelay());
 				if (newMatcher.find()) {
-					String newDelay[] = { newMatcher.group(1),
-							newMatcher.group(2) };
+					String newDelay[] = { newMatcher.group(1), newMatcher.group(2) };
 					for (int i = 0; i < newDelay.length; i++) {
-						if (!oldDelay[i].equals("inf")
-								&& !newDelay[i].equals("inf")) {
-							newDelay[i] = String.valueOf(Integer
-									.parseInt(newDelay[i])
+						if (!oldDelay[i].equals("inf") && !newDelay[i].equals("inf")) {
+							newDelay[i] = String.valueOf(Integer.parseInt(newDelay[i])
 									+ Integer.parseInt(oldDelay[i]));
-						} else {
+						}
+						else {
 							newDelay[i] = "inf";
 						}
 					}
-					t.addDelay("uniform(" + newDelay[0] + "," + newDelay[1]
-							+ ")");
+					t.addDelay("uniform(" + newDelay[0] + "," + newDelay[1] + ")");
 				}
 			}
 		}
@@ -1701,11 +1688,11 @@ public class Abstraction extends LhpnFile {
 			if (t.getEnablingTree() != null) {
 				ExprTree expr = t.getEnablingTree();
 				if (transition.getEnablingTree() != null) {
-					expr.setNodeValues(expr, transition.getEnablingTree(),
-							"&&", 'l');
+					expr.setNodeValues(expr, transition.getEnablingTree(), "&&", 'l');
 					t.addEnabling(expr.toString("LHPN"));
 				}
-			} else if (transition.getEnablingTree() != null) {
+			}
+			else if (transition.getEnablingTree() != null) {
 				t.addEnabling(transition.getEnablingTree().toString("LHPN"));
 			}
 			removeMovement(place.getName(), t.getName());
@@ -1720,7 +1707,8 @@ public class Abstraction extends LhpnFile {
 				oldDelay[0] = rangeMatcher.group(1);
 				oldDelay[1] = rangeMatcher.group(2);
 			}
-		} else {
+		}
+		else {
 			oldDelay[0] = "0";
 			oldDelay[1] = "inf";
 		}
@@ -1728,22 +1716,19 @@ public class Abstraction extends LhpnFile {
 			if (t.getDelay() != null) {
 				Matcher newMatcher = rangePattern.matcher(t.getDelay());
 				if (newMatcher.find()) {
-					String newDelay[] = { newMatcher.group(1),
-							newMatcher.group(2) };
+					String newDelay[] = { newMatcher.group(1), newMatcher.group(2) };
 					for (int i = 0; i < newDelay.length; i++) {
-						if (!oldDelay[i].equals("inf")
-								&& !newDelay[i].equals("inf")) {
+						if (!oldDelay[i].equals("inf") && !newDelay[i].equals("inf")) {
 							if (i != 0 || !marked) {
-								newDelay[i] = String.valueOf(Integer
-										.parseInt(newDelay[i])
+								newDelay[i] = String.valueOf(Integer.parseInt(newDelay[i])
 										+ Integer.parseInt(oldDelay[i]));
 							}
-						} else {
+						}
+						else {
 							newDelay[i] = "inf";
 						}
 					}
-					t.addDelay("uniform(" + newDelay[0] + "," + newDelay[1]
-							+ ")");
+					t.addDelay("uniform(" + newDelay[0] + "," + newDelay[1] + ")");
 				}
 			}
 		}
@@ -1789,11 +1774,11 @@ public class Abstraction extends LhpnFile {
 			if (t.getEnablingTree() != null) {
 				ExprTree expr = t.getEnablingTree();
 				if (transition.getEnablingTree() != null) {
-					expr.setNodeValues(expr, transition.getEnablingTree(),
-							"&&", 'l');
+					expr.setNodeValues(expr, transition.getEnablingTree(), "&&", 'l');
 					t.addEnabling(expr.toString("LHPN"));
 				}
-			} else if (transition.getEnablingTree() != null) {
+			}
+			else if (transition.getEnablingTree() != null) {
 				t.addEnabling(transition.getEnabling());
 			}
 			removeMovement(place.getName(), t.getName());
@@ -1808,7 +1793,8 @@ public class Abstraction extends LhpnFile {
 				oldDelay[0] = rangeMatcher.group(1);
 				oldDelay[1] = rangeMatcher.group(2);
 			}
-		} else {
+		}
+		else {
 			oldDelay[0] = "0";
 			oldDelay[1] = "inf";
 		}
@@ -1816,22 +1802,19 @@ public class Abstraction extends LhpnFile {
 			if (t.getDelay() != null) {
 				Matcher newMatcher = rangePattern.matcher(t.getDelay());
 				if (newMatcher.find()) {
-					String newDelay[] = { newMatcher.group(1),
-							newMatcher.group(2) };
+					String newDelay[] = { newMatcher.group(1), newMatcher.group(2) };
 					for (int i = 0; i < newDelay.length; i++) {
-						if (!oldDelay[i].equals("inf")
-								&& !newDelay[i].equals("inf")) {
+						if (!oldDelay[i].equals("inf") && !newDelay[i].equals("inf")) {
 							if (i != 0) {
-								newDelay[i] = String.valueOf(Integer
-										.parseInt(newDelay[i])
+								newDelay[i] = String.valueOf(Integer.parseInt(newDelay[i])
 										+ Integer.parseInt(oldDelay[i]));
 							}
-						} else {
+						}
+						else {
 							newDelay[i] = "inf";
 						}
 					}
-					t.addDelay("uniform(" + newDelay[0] + "," + newDelay[1]
-							+ ")");
+					t.addDelay("uniform(" + newDelay[0] + "," + newDelay[1] + ")");
 				}
 			}
 		}
@@ -1839,8 +1822,8 @@ public class Abstraction extends LhpnFile {
 		return true;
 	}
 
-	private void combineTransitions(Transition trans1, Transition trans2,
-			boolean samePreset, boolean samePostset) {
+	private void combineTransitions(Transition trans1, Transition trans2, boolean samePreset,
+			boolean samePostset) {
 		if (trans2.isFail() || !transitions.containsValue(trans1)) {
 			return;
 		}
@@ -1852,32 +1835,37 @@ public class Abstraction extends LhpnFile {
 			if (matcher.find()) {
 				delayRange[i][0] = matcher.group(1);
 				delayRange[i][1] = matcher.group(2);
-			} else {
+			}
+			else {
 				delayRange[i][0] = delay[i];
 				delayRange[i][1] = delay[i];
 			}
 		}
 		if (delayRange[0][0].equals("inf")) {
 			delay[0] = delayRange[1][0];
-		} else if (delayRange[1][0].equals("inf")) {
+		}
+		else if (delayRange[1][0].equals("inf")) {
 			delay[0] = delayRange[0][0];
-		} else if (Integer.parseInt(delayRange[0][0]) < Integer
-				.parseInt(delayRange[1][0])) {
+		}
+		else if (Integer.parseInt(delayRange[0][0]) < Integer.parseInt(delayRange[1][0])) {
 			delay[0] = delayRange[0][0];
-		} else {
+		}
+		else {
 			delay[0] = delayRange[1][0];
 		}
 		if (delayRange[0][1].equals("inf") || delayRange[1][1].equals("inf")) {
 			delay[1] = "inf";
-		} else if (Integer.parseInt(delayRange[0][1]) > Integer
-				.parseInt(delayRange[1][1])) {
+		}
+		else if (Integer.parseInt(delayRange[0][1]) > Integer.parseInt(delayRange[1][1])) {
 			delay[1] = delayRange[0][1];
-		} else {
+		}
+		else {
 			delay[1] = delayRange[1][1];
 		}
 		if (delay[0].equals(delay[1])) {
 			trans1.addDelay(delay[0]);
-		} else {
+		}
+		else {
 			trans1.addDelay("uniform(" + delay[0] + "," + delay[1] + ")");
 		}
 		// Combine Control Flow
@@ -1896,7 +1884,8 @@ public class Abstraction extends LhpnFile {
 					combinePlaces(p, trans1.getPostset()[0]);
 				}
 			}
-		} else if (!samePreset) {
+		}
+		else if (!samePreset) {
 			for (Place p : trans2.getPreset()) {
 				if (p.isMarked() == trans1.getPreset()[0].isMarked()) {
 					combinePlaces(p, trans1.getPreset()[0]);
@@ -1917,8 +1906,7 @@ public class Abstraction extends LhpnFile {
 				if (unassigned) {
 					change = true;
 					ExprTree init = new ExprTree(this);
-					init.token = init.intexpr_gettok(booleans.get(v)
-							.getInitValue());
+					init.token = init.intexpr_gettok(booleans.get(v).getInitValue());
 					init.intexpr_L(booleans.get(v).getInitValue());
 					for (Transition t : transitions.values()) {
 						if (t.getEnablingTree() != null) {
@@ -1935,12 +1923,9 @@ public class Abstraction extends LhpnFile {
 		}
 		for (String v : continuous.keySet()) {
 			if (!continuous.get(v).getInitValue().equals("[-inf,inf]")) {
-				Pattern pattern = Pattern
-						.compile("uniform\\(([\\d\\.-]+?),([\\d\\.-]+?)\\)");
-				Matcher valMatch = pattern.matcher(continuous.get(v)
-						.getInitValue());
-				Matcher rateMatch = pattern.matcher(continuous.get(v)
-						.getInitRate());
+				Pattern pattern = Pattern.compile("uniform\\(([\\d\\.-]+?),([\\d\\.-]+?)\\)");
+				Matcher valMatch = pattern.matcher(continuous.get(v).getInitValue());
+				Matcher rateMatch = pattern.matcher(continuous.get(v).getInitRate());
 				Double value = 0.0;
 				if (valMatch.find()) {
 					Double lval = Double.parseDouble(valMatch.group(1));
@@ -1949,9 +1934,9 @@ public class Abstraction extends LhpnFile {
 						continue;
 					}
 					value = lval;
-				} else {
-					value = Double
-							.parseDouble(continuous.get(v).getInitValue());
+				}
+				else {
+					value = Double.parseDouble(continuous.get(v).getInitValue());
 				}
 				if (rateMatch.find()) {
 					Double lval = Double.parseDouble(rateMatch.group(1));
@@ -1986,10 +1971,8 @@ public class Abstraction extends LhpnFile {
 		}
 		for (String v : integers.keySet()) {
 			if (!integers.get(v).getInitValue().equals("[-inf,inf]")) {
-				Pattern pattern = Pattern
-						.compile("\\[([\\d\\.-]+?),([\\d\\.-]+?)\\]");
-				Matcher valMatch = pattern.matcher(integers.get(v)
-						.getInitValue());
+				Pattern pattern = Pattern.compile("\\[([\\d\\.-]+?),([\\d\\.-]+?)\\]");
+				Matcher valMatch = pattern.matcher(integers.get(v).getInitValue());
 				Double value = 0.0;
 				if (valMatch.find()) {
 					Double lval = Double.parseDouble(valMatch.group(1));
@@ -1998,7 +1981,8 @@ public class Abstraction extends LhpnFile {
 						continue;
 					}
 					value = lval;
-				} else {
+				}
+				else {
 					value = Double.parseDouble(integers.get(v).getInitValue());
 				}
 				boolean unassigned = true;
@@ -2028,8 +2012,8 @@ public class Abstraction extends LhpnFile {
 		return change;
 	}
 
-	private boolean trans8Iteration(Transition trans,
-			ArrayList<Transition> unvisited, boolean change) {
+	private boolean trans8Iteration(Transition trans, ArrayList<Transition> unvisited,
+			boolean change) {
 		ArrayList<String[]> toChange = new ArrayList<String[]>();
 		for (String var : trans.getIntAssignments().keySet()) {
 			String[] add = { trans.getName(), var };
@@ -2065,9 +2049,11 @@ public class Abstraction extends LhpnFile {
 		// The assignments that will contain var
 		if (isInteger(var)) {
 			typeAssign = trans.getIntAssignTrees();
-		} else if (isBoolean(var)) {
+		}
+		else if (isBoolean(var)) {
 			typeAssign = trans.getBoolAssignTrees();
-		} else {
+		}
+		else {
 			return change;
 		}
 		ExprTree e = typeAssign.get(var);
@@ -2100,24 +2086,24 @@ public class Abstraction extends LhpnFile {
 										// variables in
 										// support(e) cannot be
 										// assigned
-										if (tPP.getBoolAssignments()
-												.containsKey(v)) {
+										if (tPP.getBoolAssignments().containsKey(v)) {
 											return change;
 										}
-									} else if (isInteger(v)) {
-										if (tPP.getIntAssignments()
-												.containsKey(v)) {
+									}
+									else if (isInteger(v)) {
+										if (tPP.getIntAssignments().containsKey(v)) {
 											return change;
 										}
-									} else {
-										if (tPP.getContAssignments()
-												.containsKey(v)) {
+									}
+									else {
+										if (tPP.getContAssignments().containsKey(v)) {
 											return change;
 										}
 									}
 								}
 							}
-						} else {
+						}
+						else {
 							return change;
 						}
 						// }
@@ -2133,9 +2119,11 @@ public class Abstraction extends LhpnFile {
 					for (Transition tPP : pP.getPreset()) {
 						if (isBoolean(var)) {
 							tPP.removeBoolAssign(var);
-						} else if (isInteger(var)) {
+						}
+						else if (isInteger(var)) {
 							tPP.removeIntAssign(var);
-						} else {
+						}
+						else {
 							tPP.removeContAssign(var);
 						}
 					}
@@ -2201,7 +2189,7 @@ public class Abstraction extends LhpnFile {
 		}
 		return true;
 	}
-	
+
 	private Boolean removeDanglingTransitions(Boolean change) {
 		ArrayList<Transition> remove = new ArrayList<Transition>();
 		for (Transition t : transitions.values()) {
@@ -2306,22 +2294,22 @@ public class Abstraction extends LhpnFile {
 			HashMap<String, ExprTree> assignTrees = t.getAssignTrees();
 			for (String v : assignments.keySet()) { // The variables assigned on
 				// each transition
-				if ((process_write.get(v) == 0)
-						|| (process_write.get(v) == process_trans.get(t))) {
+				if ((process_write.get(v) == 0) || (process_write.get(v) == process_trans.get(t))) {
 					process_write.put(v, process_trans.get(t)); // Mark a
 					// variable as locally written to a process
-				} else {
+				}
+				else {
 					process_write.put(v, -1); // Mark a variable as globally
 					// written
 				}
 			}
 			for (ExprTree e : assignTrees.values()) {
 				for (String v : e.getVars()) {
-					if ((process_read.get(v) == 0)
-							|| (process_read.get(v) == process_trans.get(t))) {
+					if ((process_read.get(v) == 0) || (process_read.get(v) == process_trans.get(t))) {
 						process_read.put(v, process_trans.get(t)); // Mark
 						// a variable as locally read
-					} else {
+					}
+					else {
 						process_read.put(v, -1); // Mark a variable as
 						// globally read
 					}
@@ -2330,10 +2318,10 @@ public class Abstraction extends LhpnFile {
 			ExprTree e = t.getEnablingTree();
 			if (e != null) {
 				for (String v : e.getVars()) {
-					if ((process_read.get(v) == 0)
-							|| (process_read.get(v) == process_trans.get(t))) {
+					if ((process_read.get(v) == 0) || (process_read.get(v) == process_trans.get(t))) {
 						process_read.put(v, process_trans.get(t));
-					} else {
+					}
+					else {
 						process_read.put(v, -1);
 					}
 				}
@@ -2376,9 +2364,11 @@ public class Abstraction extends LhpnFile {
 		String type;
 		if (isInteger(var)) {
 			type = "integer";
-		} else if (isContinuous(var)) {
+		}
+		else if (isContinuous(var)) {
 			type = "continuous";
-		} else {
+		}
+		else {
 			type = "boolean";
 		}
 		if (trans.getEnablingTree() != null) {
@@ -2390,7 +2380,8 @@ public class Abstraction extends LhpnFile {
 			if (!trans.getIntAssignments().containsKey(var)) {
 				trans.addIntAssign(var, expr.toString());
 			}
-		} else if (isBoolean(var)) {
+		}
+		else if (isBoolean(var)) {
 			if (!trans.getBoolAssignments().containsKey(var)) {
 				trans.addBoolAssign(var, expr.toString());
 			}
@@ -2402,16 +2393,18 @@ public class Abstraction extends LhpnFile {
 			}
 			if (isBoolean(v)) {
 				trans.addBoolAssign(v, e1.toString("boolean", "LHPN"));
-			} else if (isInteger(v)) {
+			}
+			else if (isInteger(v)) {
 				trans.addIntAssign(v, e1.toString("integer", "LHPN"));
-			} else if (isContinuous(v)
-					&& trans.getContAssignments().containsKey(var)) {
+			}
+			else if (isContinuous(v) && trans.getContAssignments().containsKey(var)) {
 				trans.addContAssign(v, e1.toString("continuous", "LHPN"));
-			} else if (trans.getRateAssignments().containsKey(var)) {
+			}
+			else if (trans.getRateAssignments().containsKey(var)) {
 				trans.addRateAssign(v, e1.toString("continuous", "LHPN"));
-			} else {
-				trans.addRateAssign(v.split("\\s")[0], e1.toString(
-						"continuous", "LHPN"));
+			}
+			else {
+				trans.addRateAssign(v.split("\\s")[0], e1.toString("continuous", "LHPN"));
 			}
 		}
 		return flag;
@@ -2430,14 +2423,17 @@ public class Abstraction extends LhpnFile {
 								t.getBoolAssignments().get(var2))) {
 							return false;
 						}
-					} else {
+					}
+					else {
 						return false;
 					}
-				} else if (t.containsAssignment(var2)) {
+				}
+				else if (t.containsAssignment(var2)) {
 					return false;
 				}
 			}
-		} else {
+		}
+		else {
 			return false;
 		}
 		return true;
@@ -2459,22 +2455,22 @@ public class Abstraction extends LhpnFile {
 					expr.setNodeValues(expr, null, "!", 'l');
 					if (t.getBoolAssignTree(var2).equals(expr)) {
 						continue;
-					} else if (t.getBoolAssignment(var1).toLowerCase().equals(
-							"true")
-							&& t.getBoolAssignment(var2).toLowerCase().equals(
-									"false")
-							|| t.getBoolAssignment(var1).toLowerCase().equals(
-									"false")
-							&& t.getBoolAssignment(var2).toLowerCase().equals(
-									"true")) {
+					}
+					else if (t.getBoolAssignment(var1).toLowerCase().equals("true")
+							&& t.getBoolAssignment(var2).toLowerCase().equals("false")
+							|| t.getBoolAssignment(var1).toLowerCase().equals("false")
+							&& t.getBoolAssignment(var2).toLowerCase().equals("true")) {
 						continue;
-					} else {
+					}
+					else {
 						return false;
 					}
-				} else {
+				}
+				else {
 					return false;
 				}
-			} else if (t.containsAssignment(var2)) {
+			}
+			else if (t.containsAssignment(var2)) {
 				return false;
 			}
 		}
@@ -2486,14 +2482,15 @@ public class Abstraction extends LhpnFile {
 			for (Transition t : transitions.values()) {
 				if (t.getContAssignTrees().containsKey(var1)) {
 					if (t.getContAssignTrees().containsKey(var2)) {
-						if (!t.getContAssignTree(var1).equals(
-								t.getContAssignTree(var2))) {
+						if (!t.getContAssignTree(var1).equals(t.getContAssignTree(var2))) {
 							return false;
 						}
-					} else {
+					}
+					else {
 						return false;
 					}
-				} else if (t.getContAssignments().containsKey(var2)) {
+				}
+				else if (t.getContAssignments().containsKey(var2)) {
 					return false;
 				}
 			}
@@ -2506,18 +2503,20 @@ public class Abstraction extends LhpnFile {
 			for (Transition t : transitions.values()) {
 				if (t.getIntAssignTrees().containsKey(var1)) {
 					if (t.getIntAssignTrees().containsKey(var2)) {
-						if (!t.getIntAssignment(var1).equals(
-								t.getIntAssignment(var2))) {
+						if (!t.getIntAssignment(var1).equals(t.getIntAssignment(var2))) {
 							return false;
 						}
-					} else {
+					}
+					else {
 						return false;
 					}
-				} else if (t.getIntAssignTrees().containsKey(var2)) {
+				}
+				else if (t.getIntAssignTrees().containsKey(var2)) {
 					return false;
 				}
 			}
-		} else {
+		}
+		else {
 			return false;
 		}
 		return true;
