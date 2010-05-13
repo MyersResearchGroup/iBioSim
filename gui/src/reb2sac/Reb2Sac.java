@@ -10,6 +10,8 @@ import java.awt.event.*;
 import javax.swing.*;
 
 import lhpn2sbml.gui.LHPNEditor;
+import lhpn2sbml.parser.Abstraction;
+import lhpn2sbml.parser.LhpnFile;
 import lhpn2sbml.parser.Translator;
 
 import org.sbml.libsbml.*;
@@ -1591,7 +1593,17 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				if (!stem.equals("")) {
 				}
 				Translator t1 = new Translator();
-				t1.BuildTemplate(root + separator + modelFile);
+				if (abstraction.isSelected()) {
+					LhpnFile lhpnFile = new LhpnFile();
+					lhpnFile.load(root + separator + modelFile);
+					Abstraction abst = new Abstraction(lhpnFile, lhpnAbstraction);
+					abst.abstractSTG(false);
+					abst.save(root + separator + simName + separator + modelFile);
+					t1.BuildTemplate(root + separator + simName + separator + modelFile);
+				}
+				else {
+					t1.BuildTemplate(root + separator + modelFile);
+				}
 				t1.setFilename(root + separator + simName + separator + stem + separator
 						+ modelFile.replace(".lpn", ".sbml"));
 				t1.outputSBML();
