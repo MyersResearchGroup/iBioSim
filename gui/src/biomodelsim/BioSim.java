@@ -5958,6 +5958,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				lhpnFile.load(tree.getFile());
 				log.addText("Creating state graph.");
 				StateGraph sg = new StateGraph(lhpnFile);
+				sg.buildStateGraph();
 				sg.outputStateGraph(tree.getFile().replace(".lpn", "_sg.dot"), false);
 				String command = "";
 				if (System.getProperty("os.name").contentEquals("Linux")) {
@@ -5993,6 +5994,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				lhpnFile.load(tree.getFile());
 				log.addText("Creating state graph.");
 				StateGraph sg = new StateGraph(lhpnFile);
+				sg.buildStateGraph();
 				log.addText("Performing Markov Chain analysis.");
 				sg.performMarkovianAnalysis(null);
 				sg.outputStateGraph(tree.getFile().replace(".lpn", "_sg.dot"), true);
