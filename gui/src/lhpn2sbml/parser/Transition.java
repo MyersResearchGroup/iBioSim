@@ -345,18 +345,10 @@ public class Transition {
 	}
 	
 	public void removeAllAssign() {
-		for (String v : boolAssignments.keySet()) {
-			boolAssignments.remove(v);
-		}
-		for (String v : contAssignments.keySet()) {
-			contAssignments.remove(v);
-		}
-		for (String v : rateAssignments.keySet()) {
-			rateAssignments.remove(v);
-		}
-		for (String v : intAssignments.keySet()) {
-			intAssignments.remove(v);
-		}
+		boolAssignments.clear();
+		contAssignments.clear();
+		rateAssignments.clear();
+		intAssignments.clear();
 	}
 	
 	public void removeAssignment(String variable) {
