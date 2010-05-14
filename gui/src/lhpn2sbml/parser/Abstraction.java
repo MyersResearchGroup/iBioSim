@@ -1426,62 +1426,111 @@ public class Abstraction extends LhpnFile {
 		}
 	}
 
+	// private void normalizeDelays() {
+	// int N = abstPane.getNormFactor();
+	// for (Transition t : transitions.values()) {
+	// String delay = t.getDelay();
+	// if (delay != null) {
+	// Pattern pattern = Pattern.compile("uniform\\(([\\w-]+?),([\\w-]+?)\\)");
+	// Matcher matcher = pattern.matcher(delay);
+	// Pattern normPattern =
+	// Pattern.compile("uniform\\(([\\w-]+?),([\\w-]+?)\\)");
+	// Matcher normMatcher = normPattern.matcher(delay);
+	// Pattern numPattern = Pattern.compile("[-\\d]+");
+	// Matcher numMatcher = numPattern.matcher(delay);
+	// if (matcher.find()) {
+	// String lVal = matcher.group(1);
+	// String uVal = matcher.group(2);
+	// if (!lVal.contains("inf")) {
+	// Integer lInt = Integer.parseInt(lVal);
+	// lInt = (lInt / N) * N;
+	// lVal = lInt.toString();
+	// }
+	// if (!uVal.contains("inf")) {
+	// Integer uInt = Integer.parseInt(uVal);
+	// if (uInt % N != 0) {
+	// uInt = (uInt / N + 1) * N;
+	// uVal = uInt.toString();
+	// }
+	// }
+	// delay = "uniform(" + lVal + "," + uVal + ")";
+	// t.addDelay(delay);
+	// }
+	// else if (normMatcher.find()) {
+	// String lVal = normMatcher.group(1);
+	// String uVal = normMatcher.group(2);
+	// if (!lVal.contains("inf")) {
+	// Integer lInt = Integer.parseInt(lVal);
+	// lInt = (lInt / N) * N;
+	// lVal = lInt.toString();
+	// }
+	// if (!uVal.contains("inf")) {
+	// Integer uInt = Integer.parseInt(uVal);
+	// if (uInt % N != 0) {
+	// uInt = (uInt / N + 1) * N;
+	// uVal = uInt.toString();
+	// }
+	// }
+	// delay = "normal(" + lVal + "," + uVal + ")";
+	// t.addDelay(delay);
+	// }
+	// else if (numMatcher.find()) {
+	// Integer val = Integer.parseInt(delay);
+	// Integer lInt = (val / N) * N;
+	// String lVal = lInt.toString();
+	// Integer uInt = lInt + N;
+	// String uVal = uInt.toString();
+	// delay = "uniform(" + lVal + "," + uVal + ")";
+	// t.addDelay(delay);
+	// }
+	// }
+	// }
+	// }
+
 	private void normalizeDelays() {
 		int N = abstPane.getNormFactor();
 		for (Transition t : transitions.values()) {
-			String delay = t.getDelay();
-			if (delay != null) {
-				Pattern pattern = Pattern.compile("uniform\\(([\\w-]+?),([\\w-]+?)\\)");
-				Matcher matcher = pattern.matcher(delay);
-				Pattern normPattern = Pattern.compile("uniform\\(([\\w-]+?),([\\w-]+?)\\)");
-				Matcher normMatcher = normPattern.matcher(delay);
-				Pattern numPattern = Pattern.compile("[-\\d]+");
-				Matcher numMatcher = numPattern.matcher(delay);
-				if (matcher.find()) {
-					String lVal = matcher.group(1);
-					String uVal = matcher.group(2);
-					if (!lVal.contains("inf")) {
-						Integer lInt = Integer.parseInt(lVal);
+			ExprTree delay = t.getDelayTree();
+			switch (delay.isit) {
+			case 'n':
+				double val = delay.lvalue;
+				int lower = (int) (val / N) * N;
+				Integer lInt = (Integer) lower;
+				String lVal = lInt.toString();
+				Integer uInt = lInt + N;
+				String uVal = uInt.toString();
+				t.addDelay("uniform(" + lVal + "," + uVal + ")");
+				break;
+			case 'a':
+				if (delay.op.equals("uniform")) {
+					lower = (int) delay.r1.lvalue;
+					lInt = (Integer) lower;
+					int upper = (int) delay.r2.uvalue;
+					uInt = (Integer) upper;
+					if (lower != INFIN) {
 						lInt = (lInt / N) * N;
 						lVal = lInt.toString();
 					}
-					if (!uVal.contains("inf")) {
-						Integer uInt = Integer.parseInt(uVal);
+					else {
+						lVal = "inf";
+					}
+					if (upper != INFIN) {
 						if (uInt % N != 0) {
 							uInt = (uInt / N + 1) * N;
 							uVal = uInt.toString();
 						}
-					}
-					delay = "uniform(" + lVal + "," + uVal + ")";
-					t.addDelay(delay);
-				}
-				else if (normMatcher.find()) {
-					String lVal = normMatcher.group(1);
-					String uVal = normMatcher.group(2);
-					if (!lVal.contains("inf")) {
-						Integer lInt = Integer.parseInt(lVal);
-						lInt = (lInt / N) * N;
-						lVal = lInt.toString();
-					}
-					if (!uVal.contains("inf")) {
-						Integer uInt = Integer.parseInt(uVal);
-						if (uInt % N != 0) {
-							uInt = (uInt / N + 1) * N;
-							uVal = uInt.toString();
+						else {
+							uVal = lVal;
 						}
 					}
-					delay = "normal(" + lVal + "," + uVal + ")";
-					t.addDelay(delay);
+					else {
+						uVal = "inf";
+					}
+					t.addDelay("uniform(" + lVal + "," + uVal + ")");
 				}
-				else if (numMatcher.find()) {
-					Integer val = Integer.parseInt(delay);
-					Integer lInt = (val / N) * N;
-					String lVal = lInt.toString();
-					Integer uInt = lInt + N;
-					String uVal = uInt.toString();
-					delay = "uniform(" + lVal + "," + uVal + ")";
-					t.addDelay(delay);
-				}
+				break;
+			default:
+				break;
 			}
 		}
 	}
@@ -2664,4 +2713,6 @@ public class Abstraction extends LhpnFile {
 	}
 
 	private static final String RANGE = "uniform\\((\\w+?),(\\w+?)\\)";
+
+	private static final int INFIN = 2147483647;
 }
