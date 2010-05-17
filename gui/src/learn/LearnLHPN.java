@@ -6416,7 +6416,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 						initBuffer.append("\t\trate_"+v.getName()+" = "+ (int)spanAvg+";\n");
 					}
 					else{
-						buffer2.append("\tinteger "+v.getName()+"Val;\n");	// changed from real to int.. check??
+						buffer2.append("\treal "+v.getName()+"Val;\n");	// changed from real to int.. check??
 						vals = reqdVarsL.get(i).getInitValue().split("\\,");
 						double spanAvg = (Double.parseDouble(((vals[0]).split("\\["))[1])+Double.parseDouble(((vals[1]).split("\\]"))[0]))/(2.0*varScaleFactor);
 						initBuffer.append("\t\t"+reqdVarsL.get(i).getName()+"Val = "+ spanAvg+";\n");
@@ -6605,7 +6605,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 						if ( cnt == transNum){
 							transBuffer[cnt] = new StringBuffer();
 							if (transEnablingsVAMS[transNum].equalsIgnoreCase("")){
-								transBuffer[cnt].append("\talways@(place)" + "\n\tbegin\n");
+								//transBuffer[cnt].append("\talways@(place)" + "\n\tbegin\n"); May 14, 2010
 								placeAlwaysBlockNum = cnt;
 							}
 							else{
@@ -6715,8 +6715,9 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				String s = transBuffer[placeAlwaysBlockNum].toString();
 				s = s.replaceAll("\t\tend\n\tend\n", "\t\tend\n");
 				transBuffer[placeAlwaysBlockNum].delete(0, transBuffer[placeAlwaysBlockNum].length());
-				transBuffer[placeAlwaysBlockNum].append(s);
+				transBuffer[placeAlwaysBlockNum].append("\talways@(place)" + "\n\tbegin\n");
 				transBuffer[placeAlwaysBlockNum].append(transAlwaysPlaceBuffer);
+				transBuffer[placeAlwaysBlockNum].append(s);
 				transBuffer[placeAlwaysBlockNum].append("\tend\n");
 			}
 			for (int j = 0; j < transitions.size(); j++){
