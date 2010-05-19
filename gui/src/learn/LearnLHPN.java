@@ -1869,7 +1869,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		JFrame learnComplete = new JFrame("LEMA");
 		learnComplete.setResizable(false);
 		JPanel all = new JPanel(new BorderLayout());
-		JLabel label = new JLabel("<html><b>Learning Completed Successfully</b></html>",SwingConstants.CENTER);
+		JLabel label = new JLabel("<html><b>Learning Completed</b></html>",SwingConstants.CENTER);
 		all.add(label, BorderLayout.CENTER);
 		Dimension screenSize;
 		learnComplete.setContentPane(all);
@@ -2486,7 +2486,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 					//viewLearnComplete();			// SB
 					JFrame learnComplete = new JFrame();
 					JOptionPane.showMessageDialog(learnComplete,
-						    "Learning Completed Successfully.",
+						    "Learning Complete.",
 						    "LEMA",
 						    JOptionPane.PLAIN_MESSAGE);
 
@@ -2921,6 +2921,8 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 //							String[] binOutgoing = getPlaceInfoIndex(g.getPostset(t)[0]).split("");
 							String[] binIncoming = getPlaceInfoIndex(g.getPreset(t)[0]).split(",");
 							String[] binOutgoing = getPlaceInfoIndex(g.getPostset(t)[0]).split(",");
+							Boolean firstInputBinChg = true;
+							Boolean firstOutputBinChg = true;
 							for (int k : diffL) {
 								if (!((reqdVarsL.get(k).isDmvc()) && (!reqdVarsL.get(k).isInput()))) {
 									// the above condition means that if the bin change is on a non-input dmv variable, there won't be any enabling condition
@@ -2928,22 +2930,39 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 										//	double val = divisionsL.get(k).get(Integer.parseInt(binIncoming[k])).doubleValue();
 							// commented for replacing divisionsL by threholds double val = scaleDiv.get(k).get(Integer.parseInt(binIncoming[k])).doubleValue();
 										double val = scaledThresholds.get(reqdVarsL.get(k).getName()).get(Integer.parseInt(binIncoming[k])).doubleValue();
-										condStr += "(" + reqdVarsL.get(k).getName() + ">=" + (int) Math.floor(val) + ")";
-										transEnablingsVHDL[transNum] += reqdVarsL.get(k).getName() + "'above(" + (int) Math.floor(val)+".0)";	
-										transEnablingsVAMS[transNum] = "always@(cross((V(" + reqdVarsL.get(k).getName() + ") - " + ((int)val)/varScaleFactor +"),+1))";	// += temporary
-										transConditionalsVAMS[transNum] = "if ((place == " + g.getPreset(t)[0].split("p")[1] + ") && (V(" + reqdVarsL.get(k).getName() + ") >= " + ((int)val)/varScaleFactor +"))";
+										if (firstInputBinChg){
+											condStr += "(" + reqdVarsL.get(k).getName() + ">=" + (int) Math.floor(val) + ")";
+											transEnablingsVHDL[transNum] += reqdVarsL.get(k).getName() + "'above(" + (int) Math.floor(val)+".0)";	
+											transEnablingsVAMS[transNum] = "always@(cross((V(" + reqdVarsL.get(k).getName() + ") - " + ((int)val)/varScaleFactor +"),+1))";	// += temporary
+											transConditionalsVAMS[transNum] = "if ((place == " + g.getPreset(t)[0].split("p")[1] + ") && (V(" + reqdVarsL.get(k).getName() + ") >= " + ((int)val)/varScaleFactor +"))";
+										}
+										else{
+											condStr += "&(" + reqdVarsL.get(k).getName() + ">=" + (int) Math.floor(val) + ")";
+											transEnablingsVHDL[transNum] += " and " + reqdVarsL.get(k).getName() + "'above(" + (int) Math.floor(val)+".0)";	
+											transEnablingsVAMS[transNum] = "always@(cross((V(" + reqdVarsL.get(k).getName() + ") - " + ((int)val)/varScaleFactor +"),+1))";	// += temporary
+											transConditionalsVAMS[transNum] = "if ((place == " + g.getPreset(t)[0].split("p")[1] + ") && (V(" + reqdVarsL.get(k).getName() + ") >= " + ((int)val)/varScaleFactor +"))";
+										}
 									} else {
 										double val = scaledThresholds.get(reqdVarsL.get(k).getName()).get(Integer.parseInt(binOutgoing[k])).doubleValue();
-										condStr += "~(" + reqdVarsL.get(k).getName() + ">="	+ (int) Math.ceil(val) + ")";
-										transEnablingsVHDL[transNum] += "not " + reqdVarsL.get(k).getName() + "'above(" + (int) Math.ceil(val)+".0)";
-										transEnablingsVAMS[transNum] = "always@(cross((V(" + reqdVarsL.get(k).getName() + ") - " + ((int)val)/varScaleFactor +"),-1))";	// +=; temporary
-										transConditionalsVAMS[transNum] = "if ((place == " + g.getPreset(t)[0].split("p")[1] + ") && (V(" + reqdVarsL.get(k).getName() + ") < " + ((int)val)/varScaleFactor +"))";
+										if (firstInputBinChg){
+											condStr += "~(" + reqdVarsL.get(k).getName() + ">="	+ (int) Math.ceil(val) + ")";
+											transEnablingsVHDL[transNum] += "not " + reqdVarsL.get(k).getName() + "'above(" + (int) Math.ceil(val)+".0)";
+											transEnablingsVAMS[transNum] = "always@(cross((V(" + reqdVarsL.get(k).getName() + ") - " + ((int)val)/varScaleFactor +"),-1))";	// +=; temporary
+											transConditionalsVAMS[transNum] = "if ((place == " + g.getPreset(t)[0].split("p")[1] + ") && (V(" + reqdVarsL.get(k).getName() + ") < " + ((int)val)/varScaleFactor +"))";
+										}
+										else{
+											condStr += "&~(" + reqdVarsL.get(k).getName() + ">="	+ (int) Math.ceil(val) + ")";
+											transEnablingsVHDL[transNum] += "and not " + reqdVarsL.get(k).getName() + "'above(" + (int) Math.ceil(val)+".0)";
+											transEnablingsVAMS[transNum] = "always@(cross((V(" + reqdVarsL.get(k).getName() + ") - " + ((int)val)/varScaleFactor +"),-1))";	// +=; temporary
+											transConditionalsVAMS[transNum] = "if ((place == " + g.getPreset(t)[0].split("p")[1] + ") && (V(" + reqdVarsL.get(k).getName() + ") < " + ((int)val)/varScaleFactor +"))";
+										}
 									}
-									if (diffL.get(diffL.size() - 1) != k) {
-										condStr += "&";
-										transEnablingsVHDL[transNum] += " and ";
-										//COME BACK???	temporary			transEnablingsVAMS[transNum] += 
-									}
+									//if (diffL.get(diffL.size() - 1) != k) {
+									//	condStr += "&";
+									//	transEnablingsVHDL[transNum] += " and ";
+										////COME BACK???	temporary			transEnablingsVAMS[transNum] += 
+									//}
+									firstInputBinChg = false;
 								}
 								// Enablings Till above.. Below one is dmvc delay,assignment. Whenever a transition's preset and postset places differ in dmvc vars, then this transition gets the assignment of the dmvc value in the postset place and delay assignment of the preset place's duration range. This has to be changed after taking the causal relation input
 								if ((reqdVarsL.get(k).isDmvc()) && (!reqdVarsL.get(k).isInput())) { // require few more changes here.should check for those variables that are constant over these regions and make them as causal????? thesis
@@ -3052,25 +3071,41 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 //							String[] binOutgoing = getPlaceInfoIndex(g.getPostset(t)[0]).split("");
 							String[] binIncoming = getTransientNetPlaceIndex(g.getPreset(t)[0]).split(",");
 							String[] binOutgoing = getPlaceInfoIndex(g.getPostset(t)[0]).split(",");
+							Boolean firstInputBinChg = true;
 							for (int k : diffL) {
 								if (!((reqdVarsL.get(k).isDmvc()) && (!reqdVarsL.get(k).isInput()))) {
 									if (Integer.parseInt(binIncoming[k]) < Integer.parseInt(binOutgoing[k])) {
 										//	double val = divisionsL.get(k).get(Integer.parseInt(binIncoming[k])).doubleValue();
 										double val = scaledThresholds.get(reqdVarsL.get(k).getName()).get(Integer.parseInt(binIncoming[k])).doubleValue();
+										if (firstInputBinChg){
 										condStr += "(" + reqdVarsL.get(k).getName() + ">=" + (int) Math.floor(val) + ")";
 										transEnablingsVHDL[transNum] += reqdVarsL.get(k).getName() + "'above(" + (int) Math.floor(val)+".0)";	
 										transEnablingsVAMS[transNum] = "always@(cross((V(" + reqdVarsL.get(k).getName() + ") - " + ((int)val)/varScaleFactor +"),+1))";	// += temporary
+										}
+										else{
+											condStr += "&(" + reqdVarsL.get(k).getName() + ">=" + (int) Math.floor(val) + ")";
+											transEnablingsVHDL[transNum] += " and " + reqdVarsL.get(k).getName() + "'above(" + (int) Math.floor(val)+".0)";	
+											transEnablingsVAMS[transNum] = "always@(cross((V(" + reqdVarsL.get(k).getName() + ") - " + ((int)val)/varScaleFactor +"),+1))";	// += temporary
+										}
 									} else {
 										double val = scaledThresholds.get(reqdVarsL.get(k).getName()).get(Integer.parseInt(binOutgoing[k])).doubleValue();
+										if (firstInputBinChg){
 										condStr += "~(" + reqdVarsL.get(k).getName() + ">="	+ (int) Math.ceil(val) + ")";
-										transEnablingsVHDL[transNum] += "not " + reqdVarsL.get(k).getName() + "'above(" + (int) Math.ceil(val)+".0)";
+										transEnablingsVHDL[transNum] += " and not " + reqdVarsL.get(k).getName() + "'above(" + (int) Math.ceil(val)+".0)";
 										transEnablingsVAMS[transNum] = "always@(cross((V(" + reqdVarsL.get(k).getName() + ") - " + ((int)val)/varScaleFactor +"),-1))";	// +=; temporary
+										}
+										else{
+											condStr += "&~(" + reqdVarsL.get(k).getName() + ">="	+ (int) Math.ceil(val) + ")";
+											transEnablingsVHDL[transNum] += "not " + reqdVarsL.get(k).getName() + "'above(" + (int) Math.ceil(val)+".0)";
+											transEnablingsVAMS[transNum] = "always@(cross((V(" + reqdVarsL.get(k).getName() + ") - " + ((int)val)/varScaleFactor +"),-1))";	// +=; temporary
+										}
 									}
-									if (diffL.get(diffL.size() - 1) != k) {
-										condStr += "&";
-										transEnablingsVHDL[transNum] += " and ";
-										//COME BACK???	temporary			transEnablingsVAMS[transNum] += 
-									}
+									//if (diffL.get(diffL.size() - 1) != k) {
+									//	condStr += "&";
+									//	transEnablingsVHDL[transNum] += " and ";
+									//	//COME BACK???	temporary			transEnablingsVAMS[transNum] += 
+									//}
+									firstInputBinChg = false;
 								}
 								if ((reqdVarsL.get(k).isDmvc()) && (!reqdVarsL.get(k).isInput())) { // require few more changes here.should check for those variables that are constant over these regions and make them as causal????? thesis
 									String pPrev = g.getPreset(t)[0];
