@@ -1723,9 +1723,9 @@ public class Abstraction extends LhpnFile {
 		// Update control flow
 		removeMovement(transition.getName(), place.getName());
 		for (Place p : preset) {
+			places.put(p.getName(), p);
 			if (marked)
-				places.put(p.getName(), p);
-			p.setMarking(true);
+				p.setMarking(true);
 			removeMovement(p.getName(), transition.getName());
 			for (Transition t : postset) {
 				addMovement(p.getName(), t.getName());
