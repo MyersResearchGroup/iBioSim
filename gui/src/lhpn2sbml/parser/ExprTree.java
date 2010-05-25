@@ -3246,7 +3246,7 @@ public class ExprTree {
 					if (r1.evaluateExp(variables) >= r2.evaluateExp(variables)) {
 						return 'T';
 					}
-					else if (new Double(r2.evaluateExp(variables)).equals(Double.NaN)) {
+					else if (new Double(r2.evaluateExp(variables)).equals(Double.NaN) || new Double(r1.evaluateExp(variables)).equals(Double.NaN)) {
 						return 'X';
 					}
 					return 'F';

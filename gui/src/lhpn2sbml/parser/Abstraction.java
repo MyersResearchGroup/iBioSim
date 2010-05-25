@@ -563,21 +563,24 @@ public class Abstraction extends LhpnFile {
 					if (flag) {
 						String delayT = t.getDelay();
 						String delayTP = t.getDelay();
-						Pattern rangePattern = Pattern.compile("uniform\\(([\\d]+),([\\d]+)\\)");
-						Matcher delayTMatcher = rangePattern.matcher(delayT);
-						Matcher delayTpMatcher = rangePattern.matcher(delayTP);
-						if (delayTMatcher.find() && delayTpMatcher.find()) {
-							String lower = delayTpMatcher.group(1);
-							String upper = delayTMatcher.group(2);
-							if (Integer.parseInt(lower) > Integer.parseInt(upper)) {
-								for (Place s : tP.getPreset()) {
-									removeMovement(s.getName(), tP.getName());
+						if (delayT != null && delayTP != null) {
+							Pattern rangePattern = Pattern
+									.compile("uniform\\(([\\d]+),([\\d]+)\\)");
+							Matcher delayTMatcher = rangePattern.matcher(delayT);
+							Matcher delayTpMatcher = rangePattern.matcher(delayTP);
+							if (delayTMatcher.find() && delayTpMatcher.find()) {
+								String lower = delayTpMatcher.group(1);
+								String upper = delayTMatcher.group(2);
+								if (Integer.parseInt(lower) > Integer.parseInt(upper)) {
+									for (Place s : tP.getPreset()) {
+										removeMovement(s.getName(), tP.getName());
+									}
+									for (Place s : tP.getPreset()) {
+										removeMovement(tP.getName(), s.getName());
+									}
+									removeTransition(tP.getName());
+									change = true;
 								}
-								for (Place s : tP.getPreset()) {
-									removeMovement(tP.getName(), s.getName());
-								}
-								removeTransition(tP.getName());
-								change = true;
 							}
 						}
 					}
@@ -1490,6 +1493,9 @@ public class Abstraction extends LhpnFile {
 	private void normalizeDelays() {
 		int N = abstPane.getNormFactor();
 		for (Transition t : transitions.values()) {
+			if (!t.containsDelay()) {
+				continue;
+			}
 			ExprTree delay = t.getDelayTree();
 			switch (delay.isit) {
 			case 'n':
@@ -1876,46 +1882,51 @@ public class Abstraction extends LhpnFile {
 		if (trans2.isFail() || !transitions.containsValue(trans1)) {
 			return;
 		}
-		String[] delay = { trans1.getDelay(), trans2.getDelay() };
-		String[][] delayRange = new String[2][2];
-		Pattern pattern = Pattern.compile("uniform\\((\\S+?),(\\S+?)\\)");
-		for (int i = 0; i < delay.length; i++) {
-			Matcher matcher = pattern.matcher(delay[i]);
-			if (matcher.find()) {
-				delayRange[i][0] = matcher.group(1);
-				delayRange[i][1] = matcher.group(2);
+		if (trans1.containsDelay() && trans2.containsDelay()) {
+			String[] delay = { trans1.getDelay(), trans2.getDelay() };
+			String[][] delayRange = new String[2][2];
+			Pattern pattern = Pattern.compile("uniform\\((\\S+?),(\\S+?)\\)");
+			for (int i = 0; i < delay.length; i++) {
+				Matcher matcher = pattern.matcher(delay[i]);
+				if (matcher.find()) {
+					delayRange[i][0] = matcher.group(1);
+					delayRange[i][1] = matcher.group(2);
+				}
+				else {
+					delayRange[i][0] = delay[i];
+					delayRange[i][1] = delay[i];
+				}
+			}
+			if (delayRange[0][0].equals("inf")) {
+				delay[0] = delayRange[1][0];
+			}
+			else if (delayRange[1][0].equals("inf")) {
+				delay[0] = delayRange[0][0];
+			}
+			else if (Integer.parseInt(delayRange[0][0]) < Integer.parseInt(delayRange[1][0])) {
+				delay[0] = delayRange[0][0];
 			}
 			else {
-				delayRange[i][0] = delay[i];
-				delayRange[i][1] = delay[i];
+				delay[0] = delayRange[1][0];
+			}
+			if (delayRange[0][1].equals("inf") || delayRange[1][1].equals("inf")) {
+				delay[1] = "inf";
+			}
+			else if (Integer.parseInt(delayRange[0][1]) > Integer.parseInt(delayRange[1][1])) {
+				delay[1] = delayRange[0][1];
+			}
+			else {
+				delay[1] = delayRange[1][1];
+			}
+			if (delay[0].equals(delay[1])) {
+				trans1.addDelay(delay[0]);
+			}
+			else {
+				trans1.addDelay("uniform(" + delay[0] + "," + delay[1] + ")");
 			}
 		}
-		if (delayRange[0][0].equals("inf")) {
-			delay[0] = delayRange[1][0];
-		}
-		else if (delayRange[1][0].equals("inf")) {
-			delay[0] = delayRange[0][0];
-		}
-		else if (Integer.parseInt(delayRange[0][0]) < Integer.parseInt(delayRange[1][0])) {
-			delay[0] = delayRange[0][0];
-		}
 		else {
-			delay[0] = delayRange[1][0];
-		}
-		if (delayRange[0][1].equals("inf") || delayRange[1][1].equals("inf")) {
-			delay[1] = "inf";
-		}
-		else if (Integer.parseInt(delayRange[0][1]) > Integer.parseInt(delayRange[1][1])) {
-			delay[1] = delayRange[0][1];
-		}
-		else {
-			delay[1] = delayRange[1][1];
-		}
-		if (delay[0].equals(delay[1])) {
-			trans1.addDelay(delay[0]);
-		}
-		else {
-			trans1.addDelay("uniform(" + delay[0] + "," + delay[1] + ")");
+			trans1.addDelay("uniform(0,inf)");
 		}
 		// Combine Control Flow
 		for (Place p : trans2.getPreset()) {
@@ -2684,6 +2695,174 @@ public class Abstraction extends LhpnFile {
 			process_read.put(expr.r1.variable, -1);
 		}
 		removeVar(var2);
+	}
+
+	private boolean mergeTransitionsSimp(boolean change) {
+		ArrayList<Transition[]> toMerge = new ArrayList<Transition[]>();
+		for (Transition t1 : transitions.values()) {
+			for (Transition t2 : transitions.values()) {
+				if (t1.equals(t2)) {
+					continue;
+				}
+				if (comparePreset(t1, t2) && comparePostset(t1, t2)) {
+					boolean combine = true;
+					for (String var : t1.getAssignments().keySet()) {
+						if (!t2.containsAssignment(var)
+								|| !t1.getAssignTree(var).equals(t2.getAssignTree(var))) {
+							combine = false;
+							break;
+						}
+					}
+					for (String var : t2.getAssignments().keySet()) {
+						if (!t1.containsAssignment(var)) {
+							combine = false;
+							break;
+						}
+					}
+					if (combine) {
+						Transition[] temp = { t1, t2 };
+						toMerge.add(temp);
+					}
+				}
+			}
+		}
+		for (Transition[] tArray : toMerge) {
+			mergeTransitions(tArray, false);
+			change = true;
+		}
+		return change;
+	}
+
+	private boolean mergeTransitionsAbs(boolean change) {
+		ArrayList<Transition[]> toMerge = new ArrayList<Transition[]>();
+		for (Transition t1 : transitions.values()) {
+			for (Transition t2 : transitions.values()) {
+				if (t1.equals(t2)) {
+					continue;
+				}
+				if (comparePreset(t1, t2) && comparePostset(t1, t2)) {
+					boolean combine = true;
+					for (String var : t1.getAssignments().keySet()) {
+						if (!t2.containsAssignment(var)
+								|| !t1.getAssignTree(var).equals(t2.getAssignTree(var))) {
+							combine = false;
+							break;
+						}
+					}
+					for (String var : t2.getAssignments().keySet()) {
+						if (!t1.containsAssignment(var)) {
+							combine = false;
+							break;
+						}
+					}
+					if (combine) {
+						Transition[] temp = { t1, t2 };
+						toMerge.add(temp);
+					}
+				}
+			}
+		}
+		for (Transition[] tArray : toMerge) {
+			mergeTransitions(tArray, true);
+			change = true;
+		}
+		return change;
+	}
+
+	private void mergeTransitions(Transition[] tArray, boolean abstraction) {
+		if (abstraction) {
+			if (transitions.containsKey(tArray[0].getName())
+					&& transitions.containsKey(tArray[1].getName())) {
+				ExprTree enabTree = new ExprTree(this);
+				ExprTree enab1 = tArray[0].getEnablingTree();
+				ExprTree enab2 = tArray[1].getEnablingTree();
+				enabTree.setNodeValues(enab1, enab2, "||", 'l');
+				tArray[0].addEnabling(enabTree.toString());
+				try {
+					Pattern pattern = Pattern.compile(RANGE);
+					Matcher matcher = pattern.matcher(tArray[0].getDelay());
+					Float dl1, dl2, du1, du2;
+					if (matcher.find()) {
+						dl1 = Float.parseFloat(matcher.group(1));
+						du1 = Float.parseFloat(matcher.group(2));
+					}
+					else {
+						dl1 = Float.parseFloat(tArray[0].getDelay());
+						du1 = Float.parseFloat(tArray[0].getDelay());
+					}
+					matcher = pattern.matcher(tArray[1].getDelay());
+					if (matcher.find()) {
+						dl2 = Float.parseFloat(matcher.group(1));
+						du2 = Float.parseFloat(matcher.group(2));
+					}
+					else {
+						dl2 = Float.parseFloat(tArray[1].getDelay());
+						du2 = Float.parseFloat(tArray[1].getDelay());
+					}
+					String delay = "uniform(";
+					if (dl1.compareTo(dl2) <= 0) {
+						delay = delay + dl1.toString() + ",";
+					}
+					else {
+						delay = delay + dl2.toString() + ",";
+					}
+					if (du1.compareTo(dl2) > 0) {
+						delay = delay + du1.toString() + ")";
+					}
+					else {
+						delay = delay + du2.toString() + ")";
+					}
+					tArray[0].addDelay(delay);
+				}
+				catch (Exception e) {
+					tArray[0].addDelay("uniform(0,inf)");
+				}
+				removeTransition(tArray[1].getName());
+			}
+		}
+		else {
+			if (transitions.containsKey(tArray[0].getName())
+					&& transitions.containsKey(tArray[1].getName())) {
+				ExprTree enabTree = new ExprTree(this);
+				ExprTree enab1 = tArray[0].getEnablingTree();
+				ExprTree enab2 = tArray[1].getEnablingTree();
+				enabTree.setNodeValues(enab1, enab2, "||", 'l');
+				tArray[0].addEnabling(enabTree.toString());
+				ExprTree dl = new ExprTree(this);
+				ExprTree du = new ExprTree(this);
+				ExprTree delay = new ExprTree(this);
+				ExprTree delay1 = tArray[0].getDelayTree();
+				ExprTree delay2 = tArray[1].getDelayTree();
+				ExprTree dl1, dl2, du1, du2;
+				if (delay1.isit == 'a' & delay1.op.equals("uniform")) {
+					dl1 = delay1.r1;
+					du1 = delay1.r2;
+				}
+				else {
+					dl1 = delay1;
+					du1 = delay1;
+				}
+				if (delay2.isit == 'a' & delay2.op.equals("uniform")) {
+					dl2 = delay2.r1;
+					du2 = delay2.r2;
+				}
+				else {
+					dl2 = delay2;
+					du2 = delay2;
+				}
+				ExprTree e1 = tArray[0].getEnablingTree();
+				ExprTree e2 = tArray[1].getEnablingTree();
+				dl1.setNodeValues(e1, dl1, "*", 'a');
+				dl2.setNodeValues(e2, dl2, "*", 'a');
+				dl.setNodeValues(dl1, dl2, "+", 'a');
+				du1.setNodeValues(e1, du1, "*", 'a');
+				du2.setNodeValues(e2, du2, "*", 'a');
+				du.setNodeValues(du1, du2, "+", 'a');
+				delay.setNodeValues(dl, du, "uniform", 'a');
+				tArray[0].addDelay(delay.toString());
+				removeTransition(tArray[1].getName());
+			}
+		}
 	}
 
 	private boolean hasAssignments(Transition trans) {
