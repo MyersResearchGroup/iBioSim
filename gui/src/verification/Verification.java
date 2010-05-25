@@ -1407,6 +1407,10 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 						log.addText(command + dotName + "\n");
 						dot.waitFor();
 					}
+					else {
+						JOptionPane.showMessageDialog(biosim.frame(), "Unable to view LHPN.", "Error",
+								JOptionPane.ERROR_MESSAGE);
+					}
 				}
 				catch (Exception e) {
 					e.printStackTrace();
