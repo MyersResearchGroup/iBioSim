@@ -1384,10 +1384,11 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				abstraction.save(directory + separator + abstFilename);
 				work = new File(directory + separator);
 				try {
+					String dotName = abstFilename.replace(".lpn", ".dot");
+					new File(directory + separator + dotName).delete();
 					Runtime exec = Runtime.getRuntime();
 					Process makeDot = exec.exec("atacs -cPllodpl " + abstFilename, null, work);
 					makeDot.waitFor();
-					String dotName = abstFilename.replace(".lpn", ".dot");
 					if (new File(directory + separator + dotName).exists()) {
 						String command;
 						if (System.getProperty("os.name").contentEquals("Linux")) {

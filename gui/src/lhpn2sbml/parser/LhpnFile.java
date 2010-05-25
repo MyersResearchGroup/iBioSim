@@ -1220,7 +1220,7 @@ public class LhpnFile {
 		Pattern rangePattern = Pattern.compile(RANGE);
 		if (lineMatcher.find()) {
 			Pattern assignPattern = Pattern.compile(ASSIGNMENT);
-			Matcher assignMatcher = assignPattern.matcher(lineMatcher.group(1));
+			Matcher assignMatcher = assignPattern.matcher(lineMatcher.group(1).replace("\\s", ""));
 			Pattern varPattern = Pattern.compile(ASSIGN_VAR);
 			Matcher varMatcher;
 			while (assignMatcher.find()) {
@@ -1270,7 +1270,7 @@ public class LhpnFile {
 		Pattern rangePattern = Pattern.compile(RANGE);
 		if (lineMatcher.find()) {
 			Pattern assignPattern = Pattern.compile(ASSIGNMENT);
-			Matcher assignMatcher = assignPattern.matcher(lineMatcher.group(1));
+			Matcher assignMatcher = assignPattern.matcher(lineMatcher.group(1).replace("\\s", ""));
 			Pattern varPattern = Pattern.compile(ASSIGN_VAR);
 			Matcher varMatcher;
 			while (assignMatcher.find()) {
@@ -1302,7 +1302,7 @@ public class LhpnFile {
 		Matcher lineMatcher = linePattern.matcher(data.toString());
 		if (lineMatcher.find()) {
 			Pattern delayPattern = Pattern.compile(DELAY);
-			Matcher delayMatcher = delayPattern.matcher(lineMatcher.group(1));
+			Matcher delayMatcher = delayPattern.matcher(lineMatcher.group(1).replace("\\s", ""));
 			while (delayMatcher.find()) {
 				Transition transition = transitions.get(delayMatcher.group(1));
 				Pattern rangePattern = Pattern.compile(RANGE);
@@ -1324,7 +1324,7 @@ public class LhpnFile {
 		Matcher lineMatcher = linePattern.matcher(data.toString());
 		if (lineMatcher.find()) {
 			Pattern transPattern = Pattern.compile(BOOLEAN_TRANS);
-			Matcher transMatcher = transPattern.matcher(lineMatcher.group(1));
+			Matcher transMatcher = transPattern.matcher(lineMatcher.group(1).replace("\\s", ""));
 			Pattern assignPattern = Pattern.compile(BOOLEAN_ASSIGN);
 			while (transMatcher.find()) {
 				Transition transition = transitions.get(transMatcher.group(1));
