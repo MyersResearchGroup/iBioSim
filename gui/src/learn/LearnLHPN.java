@@ -529,7 +529,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		 */
 
 		numBinsLabel = new JLabel("Number of Bins:");
-		String[] bins = { "0", "2", "3", "4", "5", "6", "7", "8", "9", "16"};//, "10", "11", "12", "13", "14", "15", "16", "17", "33", "65", "129", "257" };
+		String[] bins = { "0", "2", "3", "4", "5", "6", "7", "8", "16", "32"};//, "10", "11", "12", "13", "14", "15", "16", "17", "33", "65", "129", "257" };
 		numBins = new JComboBox(bins);
 		numBins.setSelectedItem(biosimrc.get("biosim.learn.bins", ""));
 		numBins.addActionListener(this);
@@ -1490,7 +1490,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 					// check.setSelected(true);
 					// specs.add(check);
 					specs.add(new JTextField(s));
-					String[] options = { "0", "2", "3", "4", "5", "6", "7", "8", "9", "16"};//, "10", "11", "12", "13", "14", "15", "16", "17", "33", "65", "129", "257" };
+					String[] options = { "0", "2", "3", "4", "5", "6", "7", "8", "16", "32"};//, "10", "11", "12", "13", "14", "15", "16", "17", "33", "65", "129", "257" };
 					JComboBox combo = new JComboBox(options);
 					// String[] dmvOptions = { "", "Yes", "No" };
 					// JComboBox dmv = new JComboBox(dmvOptions);

@@ -8077,6 +8077,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				}
 				in.close();
 				out.close();
+				/*
 				out = new BufferedWriter(new FileWriter(root + separator
 						+ filename.replace(".lpn", ".sv")));
 				in = new BufferedReader(new FileReader(path.replace(".lpn", ".sv")));
@@ -8098,10 +8099,11 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				}
 				in.close();
 				out.close();
+				*/
 				refreshTree();
 			}
 		}
-		catch (Exception e1) {
+		catch (IOException e1) {
 			JOptionPane.showMessageDialog(frame, "Unable to save LPN.", "Error",
 					JOptionPane.ERROR_MESSAGE);
 		}
