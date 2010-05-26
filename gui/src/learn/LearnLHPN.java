@@ -2933,13 +2933,13 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 										if (firstInputBinChg){
 											condStr += "(" + reqdVarsL.get(k).getName() + ">=" + (int) Math.floor(val) + ")";
 											transEnablingsVHDL[transNum] += reqdVarsL.get(k).getName() + "'above(" + (int) Math.floor(val)+".0)";	
-											transEnablingsVAMS[transNum] = "always@(cross((V(" + reqdVarsL.get(k).getName() + ") - " + ((int)val)/varScaleFactor +"),+1))";	// += temporary
+											transEnablingsVAMS[transNum] = "always@(cross((V(" + reqdVarsL.get(k).getName() + ") - " + ((int)val)/varScaleFactor +"),+1)";	// += temporary
 											transConditionalsVAMS[transNum] = "if ((place == " + g.getPreset(t)[0].split("p")[1] + ") && (V(" + reqdVarsL.get(k).getName() + ") >= " + ((int)val)/varScaleFactor +"))";
 										}
 										else{
 											condStr += "&(" + reqdVarsL.get(k).getName() + ">=" + (int) Math.floor(val) + ")";
 											transEnablingsVHDL[transNum] += " and " + reqdVarsL.get(k).getName() + "'above(" + (int) Math.floor(val)+".0)";	
-											transEnablingsVAMS[transNum] = "always@(cross((V(" + reqdVarsL.get(k).getName() + ") - " + ((int)val)/varScaleFactor +"),+1))";	// += temporary
+											transEnablingsVAMS[transNum] += " and cross((V(" + reqdVarsL.get(k).getName() + ") - " + ((int)val)/varScaleFactor +"),+1)";	// += temporary
 											transConditionalsVAMS[transNum] = "if ((place == " + g.getPreset(t)[0].split("p")[1] + ") && (V(" + reqdVarsL.get(k).getName() + ") >= " + ((int)val)/varScaleFactor +"))";
 										}
 									} else {
@@ -2947,13 +2947,13 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 										if (firstInputBinChg){
 											condStr += "~(" + reqdVarsL.get(k).getName() + ">="	+ (int) Math.ceil(val) + ")";
 											transEnablingsVHDL[transNum] += "not " + reqdVarsL.get(k).getName() + "'above(" + (int) Math.ceil(val)+".0)";
-											transEnablingsVAMS[transNum] = "always@(cross((V(" + reqdVarsL.get(k).getName() + ") - " + ((int)val)/varScaleFactor +"),-1))";	// +=; temporary
+											transEnablingsVAMS[transNum] = "always@(cross((V(" + reqdVarsL.get(k).getName() + ") - " + ((int)val)/varScaleFactor +"),-1)";	// +=; temporary
 											transConditionalsVAMS[transNum] = "if ((place == " + g.getPreset(t)[0].split("p")[1] + ") && (V(" + reqdVarsL.get(k).getName() + ") < " + ((int)val)/varScaleFactor +"))";
 										}
 										else{
 											condStr += "&~(" + reqdVarsL.get(k).getName() + ">="	+ (int) Math.ceil(val) + ")";
 											transEnablingsVHDL[transNum] += "and not " + reqdVarsL.get(k).getName() + "'above(" + (int) Math.ceil(val)+".0)";
-											transEnablingsVAMS[transNum] = "always@(cross((V(" + reqdVarsL.get(k).getName() + ") - " + ((int)val)/varScaleFactor +"),-1))";	// +=; temporary
+											transEnablingsVAMS[transNum] += " and cross((V(" + reqdVarsL.get(k).getName() + ") - " + ((int)val)/varScaleFactor +"),-1)";	// +=; temporary
 											transConditionalsVAMS[transNum] = "if ((place == " + g.getPreset(t)[0].split("p")[1] + ") && (V(" + reqdVarsL.get(k).getName() + ") < " + ((int)val)/varScaleFactor +"))";
 										}
 									}
@@ -3008,6 +3008,9 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 							}
 							if (diffL.size() > 1){
 								transEnablingsVHDL[transNum] = "(" + transEnablingsVHDL[transNum] + ")";
+							}
+							if ((transEnablingsVAMS[transNum] != "") && (transEnablingsVAMS[transNum] != null)){ 
+								transEnablingsVAMS[transNum] += ")";
 							}
 							if (condStr.equalsIgnoreCase("")){
 								condStr = enFail;
@@ -3080,24 +3083,24 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 										if (firstInputBinChg){
 										condStr += "(" + reqdVarsL.get(k).getName() + ">=" + (int) Math.floor(val) + ")";
 										transEnablingsVHDL[transNum] += reqdVarsL.get(k).getName() + "'above(" + (int) Math.floor(val)+".0)";	
-										transEnablingsVAMS[transNum] = "always@(cross((V(" + reqdVarsL.get(k).getName() + ") - " + ((int)val)/varScaleFactor +"),+1))";	// += temporary
+										transEnablingsVAMS[transNum] = "always@(cross((V(" + reqdVarsL.get(k).getName() + ") - " + ((int)val)/varScaleFactor +"),+1)";	// += temporary
 										}
 										else{
 											condStr += "&(" + reqdVarsL.get(k).getName() + ">=" + (int) Math.floor(val) + ")";
 											transEnablingsVHDL[transNum] += " and " + reqdVarsL.get(k).getName() + "'above(" + (int) Math.floor(val)+".0)";	
-											transEnablingsVAMS[transNum] = "always@(cross((V(" + reqdVarsL.get(k).getName() + ") - " + ((int)val)/varScaleFactor +"),+1))";	// += temporary
+											transEnablingsVAMS[transNum] += " and cross((V(" + reqdVarsL.get(k).getName() + ") - " + ((int)val)/varScaleFactor +"),+1)";	// += temporary
 										}
 									} else {
 										double val = scaledThresholds.get(reqdVarsL.get(k).getName()).get(Integer.parseInt(binOutgoing[k])).doubleValue();
 										if (firstInputBinChg){
 										condStr += "~(" + reqdVarsL.get(k).getName() + ">="	+ (int) Math.ceil(val) + ")";
 										transEnablingsVHDL[transNum] += " and not " + reqdVarsL.get(k).getName() + "'above(" + (int) Math.ceil(val)+".0)";
-										transEnablingsVAMS[transNum] = "always@(cross((V(" + reqdVarsL.get(k).getName() + ") - " + ((int)val)/varScaleFactor +"),-1))";	// +=; temporary
+										transEnablingsVAMS[transNum] = "always@(cross((V(" + reqdVarsL.get(k).getName() + ") - " + ((int)val)/varScaleFactor +"),-1)";	// +=; temporary
 										}
 										else{
 											condStr += "&~(" + reqdVarsL.get(k).getName() + ">="	+ (int) Math.ceil(val) + ")";
 											transEnablingsVHDL[transNum] += "not " + reqdVarsL.get(k).getName() + "'above(" + (int) Math.ceil(val)+".0)";
-											transEnablingsVAMS[transNum] = "always@(cross((V(" + reqdVarsL.get(k).getName() + ") - " + ((int)val)/varScaleFactor +"),-1))";	// +=; temporary
+											transEnablingsVAMS[transNum] = " and cross((V(" + reqdVarsL.get(k).getName() + ") - " + ((int)val)/varScaleFactor +"),-1)";	// +=; temporary
 										}
 									}
 									//if (diffL.get(diffL.size() - 1) != k) {
@@ -3139,6 +3142,9 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 							}
 							if (diffL.size() > 1){
 								transEnablingsVHDL[transNum] = "(" + transEnablingsVHDL[transNum] + ")";
+							}
+							if ((transEnablingsVAMS[transNum] != "") && (transEnablingsVAMS[transNum] != null)){ 
+								transEnablingsVAMS[transNum] += ")";
 							}
 							if (condStr.equalsIgnoreCase("")){
 								condStr = enFail;
@@ -6903,6 +6909,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			
 		}
 		catch(IOException e){
+			e.printStackTrace();
 			JOptionPane.showMessageDialog(biosim.frame(),
 					"Verilog-AMS model couldn't be created/written.",
 					"ERROR!", JOptionPane.ERROR_MESSAGE);

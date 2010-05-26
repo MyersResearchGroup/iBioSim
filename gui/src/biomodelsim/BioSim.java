@@ -7,6 +7,7 @@ import gcm2sbml.parser.GCMFile;
 import gcm2sbml.parser.GCMParser;
 import gcm2sbml.util.GlobalConstants;
 import lhpn2sbml.parser.LhpnFile;
+import lhpn2sbml.parser.Lpn2verilog;
 import lhpn2sbml.parser.Translator;
 import lhpn2sbml.gui.*;
 import graph.Graph;
@@ -2185,7 +2186,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				}
 			}
 		}
-		else if (e.getSource() == viewVerilog) { // SB
+		else if (e.getSource() == viewVerilog) { // SB should change to systemverilog??
 			Component comp = tab.getSelectedComponent();
 			if (treeSelected) {
 				try {
@@ -2529,6 +2530,10 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			Translator t1 = new Translator();
 			t1.BuildTemplate(tree.getFile());
 			t1.outputSBML();
+			refreshTree();
+		}
+		else if (e.getActionCommand().equals("convertToVerilog")) {
+			new Lpn2verilog(tree.getFile());
 			refreshTree();
 		}
 		else if (e.getActionCommand().equals("createAnalysis")) {
@@ -6238,6 +6243,42 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 								JOptionPane.ERROR_MESSAGE);
 					}
 				}
+				else if (tree.getFile().length() >= 3
+						&& tree.getFile().substring(tree.getFile().length() - 3).equals(".sv")) {
+					try {
+						String svFileName = tree.getFile();
+						if (new File(svFileName).exists()) {
+							File svFile = new File(svFileName);
+							BufferedReader input = new BufferedReader(new FileReader(svFile));
+							String line = null;
+							JTextArea messageArea = new JTextArea();
+							while ((line = input.readLine()) != null) {
+								messageArea.append(line);
+								messageArea.append(System.getProperty("line.separator"));
+							}
+							input.close();
+							messageArea.setLineWrap(true);
+							messageArea.setWrapStyleWord(true);
+							messageArea.setEditable(false);
+							JScrollPane scrolls = new JScrollPane();
+							scrolls.setMinimumSize(new Dimension(800, 500));
+							scrolls.setPreferredSize(new Dimension(800, 500));
+							scrolls.setViewportView(messageArea);
+							JOptionPane.showMessageDialog(this.frame(), scrolls,
+									"SystemVerilog Model", JOptionPane.INFORMATION_MESSAGE);
+						}
+						else {
+							JOptionPane.showMessageDialog(this.frame(),
+									"SystemVerilog model does not exist.", "Error",
+									JOptionPane.ERROR_MESSAGE);
+						}
+					}
+					catch (Exception e1) {
+						JOptionPane.showMessageDialog(this.frame(),
+								"Unable to view SystemVerilog model.", "Error",
+								JOptionPane.ERROR_MESSAGE);
+					}
+				}
 				else if (tree.getFile().length() >= 4
 						&& tree.getFile().substring(tree.getFile().length() - 4).equals(".csp")) {
 					String filename = tree.getFile().split(separator)[tree.getFile().split(
@@ -8036,6 +8077,27 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				}
 				in.close();
 				out.close();
+				out = new BufferedWriter(new FileWriter(root + separator
+						+ filename.replace(".lpn", ".sv")));
+				in = new BufferedReader(new FileReader(path.replace(".lpn", ".sv")));
+				while ((str = in.readLine()) != null) {
+					out.write(str + "\n");
+				}
+				in.close();
+				out.close();
+				out = new BufferedWriter(new FileWriter(root + separator
+						+ filename.replace(".lpn", "_top.sv")));
+				learnPath = path.split(separator);
+				topVFile = path.replace(learnPath[learnPath.length - 1], "top.sv");
+				cktPath = filename.split(separator);
+				in = new BufferedReader(new FileReader(topVFile));
+				while ((str = in.readLine()) != null) {
+					str = str.replace("module top", "module "
+							+ cktPath[cktPath.length - 1].replace(".lpn", "_top"));
+					out.write(str + "\n");
+				}
+				in.close();
+				out.close();
 				refreshTree();
 			}
 		}
@@ -8268,6 +8330,32 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						popup.add(delete);
 					}
 				}
+				else if (tree.getFile().length() > 2
+						&& tree.getFile().substring(tree.getFile().length() - 3).equals(".sv")) { // SB
+					JMenuItem viewModel = new JMenuItem("View Model");
+					viewModel.addActionListener(this);
+					viewModel.addMouseListener(this);
+					viewModel.setActionCommand("viewModel");
+					JMenuItem delete = new JMenuItem("Delete");
+					delete.addActionListener(this);
+					delete.addMouseListener(this);
+					delete.setActionCommand("delete");
+					JMenuItem copy = new JMenuItem("Copy");
+					copy.addActionListener(this);
+					copy.addMouseListener(this);
+					copy.setActionCommand("copy");
+					JMenuItem rename = new JMenuItem("Rename");
+					rename.addActionListener(this);
+					rename.addMouseListener(this);
+					rename.setActionCommand("rename");
+					if (lema) {
+						popup.add(viewModel);
+						popup.addSeparator();
+						popup.add(copy);
+						popup.add(rename);
+						popup.add(delete);
+					}
+				}
 				else if (tree.getFile().length() > 1
 						&& tree.getFile().substring(tree.getFile().length() - 2).equals(".g")) {
 					JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
@@ -8348,6 +8436,10 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					convertToSBML.addActionListener(this);
 					convertToSBML.addMouseListener(this);
 					convertToSBML.setActionCommand("convertToSBML");
+					JMenuItem convertToVerilog = new JMenuItem("Convert To Verilog");
+					convertToVerilog.addActionListener(this);
+					convertToVerilog.addMouseListener(this);
+					convertToVerilog.setActionCommand("convertToVerilog");
 					JMenuItem viewModel = new JMenuItem("View Model");
 					viewModel.addActionListener(this);
 					viewModel.addMouseListener(this);
@@ -8383,10 +8475,11 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						popup.add(createVerification);
 						popup.addSeparator();
 					}
-					popup.add(convertToSBML);
 					// popup.add(createAnalysis); // TODO
 					popup.add(viewModel);
 					popup.add(viewStateGraph);
+					popup.add(convertToSBML);	// changed the order. SB
+					popup.add(convertToVerilog);
 					popup.add(markovAnalysis);
 					popup.addSeparator();
 					popup.add(copy);
@@ -9029,7 +9122,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 									text.setLineWrap(true);
 									JScrollPane scroll = new JScrollPane(text);
 									// gcm.addMouseListener(this);
-									addTab(theFile, scroll, "VHDL Editor");
+									addTab(theFile, scroll, "Verilog-AMS Editor");
 								}
 							}
 							// String[] command = { "emacs", filename };
@@ -9038,6 +9131,66 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						catch (Exception e1) {
 							JOptionPane.showMessageDialog(frame,
 									"Unable to view this Verilog-AMS file.", "Error",
+									JOptionPane.ERROR_MESSAGE);
+						}
+					}
+					else if (tree.getFile().length() >= 3
+							&& tree.getFile().substring(tree.getFile().length() - 3)
+									.equals(".sv")) {
+						try {
+							String filename = tree.getFile();
+							String directory = "";
+							String theFile = "";
+							if (filename.lastIndexOf('/') >= 0) {
+								directory = filename.substring(0, filename.lastIndexOf('/') + 1);
+								theFile = filename.substring(filename.lastIndexOf('/') + 1);
+							}
+							if (filename.lastIndexOf('\\') >= 0) {
+								directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
+								theFile = filename.substring(filename.lastIndexOf('\\') + 1);
+							}
+							File work = new File(directory);
+							int i = getTab(theFile);
+							if (i != -1) {
+								tab.setSelectedIndex(i);
+							}
+							else {
+								if (!viewer.equals("")) {
+									String command = viewer + " " + directory + separator + theFile;
+									Runtime exec = Runtime.getRuntime();
+									try {
+										exec.exec(command);
+									}
+									catch (Exception e1) {
+										JOptionPane.showMessageDialog(frame,
+												"Unable to open external editor.",
+												"Error Opening Editor", JOptionPane.ERROR_MESSAGE);
+									}
+								}
+								else {
+									File file = new File(work + separator + theFile);
+									String input = "";
+									FileReader in = new FileReader(file);
+									int read = in.read();
+									while (read != -1) {
+										input += (char) read;
+										read = in.read();
+									}
+									in.close();
+									JTextArea text = new JTextArea(input);
+									text.setEditable(true);
+									text.setLineWrap(true);
+									JScrollPane scroll = new JScrollPane(text);
+									// gcm.addMouseListener(this);
+									addTab(theFile, scroll, "SystemVerilog Editor");
+								}
+							}
+							// String[] command = { "emacs", filename };
+							// Runtime.getRuntime().exec(command);
+						}
+						catch (Exception e1) {
+							JOptionPane.showMessageDialog(frame,
+									"Unable to view this SystemVerilog file.", "Error",
 									JOptionPane.ERROR_MESSAGE);
 						}
 					}
@@ -9801,6 +9954,10 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						viewStateGraph.addActionListener(this);
 						viewStateGraph.addMouseListener(this);
 						viewStateGraph.setActionCommand("viewState");
+						JMenuItem convertToVerilog = new JMenuItem("Convert To Verilog");
+						convertToVerilog.addActionListener(this);
+						convertToVerilog.addMouseListener(this);
+						convertToVerilog.setActionCommand("convertToVerilog");
 						JMenuItem markovAnalysis = new JMenuItem("Perform Markovian Analysis");
 						markovAnalysis.addActionListener(this);
 						markovAnalysis.addMouseListener(this);
@@ -9830,6 +9987,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						}
 						popup.add(viewModel);
 						popup.add(viewStateGraph);
+						popup.add(convertToVerilog);
 						popup.add(markovAnalysis);
 						popup.addSeparator();
 						popup.add(copy);
@@ -12948,6 +13106,38 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			}
 			else if (tree.getFile().length() > 4
 					&& tree.getFile().substring(tree.getFile().length() - 5).equals(".vams")) {
+				viewModel.setEnabled(true);
+				viewModGraph.setEnabled(false); // SB
+				viewModBrowser.setEnabled(false);
+				createAnal.setEnabled(false); // SB
+				createAnal.setActionCommand("createSim");
+				createLearn.setEnabled(false); // SB
+				createSynth.setEnabled(false); // SB
+				createVer.setEnabled(false); // SB
+				refresh.setEnabled(false);
+				check.setEnabled(false);
+				export.setEnabled(false);
+				copy.setEnabled(true);
+				rename.setEnabled(true);
+				delete.setEnabled(true);
+				viewRules.setEnabled(false);
+				viewTrace.setEnabled(false);
+				viewCircuit.setEnabled(false);
+				viewLog.setEnabled(false);
+				viewCoverage.setEnabled(false);
+				viewVHDL.setEnabled(false);
+				viewVerilog.setEnabled(true);
+				viewLHPN.setEnabled(false);
+				save.setEnabled(true); // SB should be????
+				// saveas too ????
+				// viewLog should be available ???
+				// saveParam.setEnabled(false);
+				saveModel.setEnabled(false);
+				saveSbml.setEnabled(false);
+				saveTemp.setEnabled(false);
+			}
+			else if (tree.getFile().length() > 2
+					&& tree.getFile().substring(tree.getFile().length() - 3).equals(".sv")) {
 				viewModel.setEnabled(true);
 				viewModGraph.setEnabled(false); // SB
 				viewModBrowser.setEnabled(false);

@@ -3614,6 +3614,7 @@ public class ExprTree {
 	public String getElement(String type) {
 		boolean sbmlFlag;
 		sbmlFlag = type.equals("SBML");
+		Boolean verilog = type.equalsIgnoreCase("Verilog");
 		String result = "";
 		switch (isit) {
 		case 'b': // Boolean
@@ -3666,7 +3667,11 @@ public class ExprTree {
 				} else {
 					uval = tempuval.toString();
 				}
-				result = "uniform(" + lval + "," + uval + ")";
+				if (verilog){
+					result = lval + " + (($unsigned($random))%(" + uval + "-" + lval + "+1))";
+				} else {
+					result = "uniform(" + lval + "," + uval + ")";
+				}
 				// result = "[" + templval.toString() + "," +
 				// tempuval.toString() + "]";
 
@@ -3674,15 +3679,21 @@ public class ExprTree {
 			break;
 		case 't': // Truth value
 			if (uvalue == 0 && lvalue == 0) {
-				result = "FALSE";
+				if (verilog)
+					result = "0";
+				else 
+					result = "FALSE";
 				// result = "TRUE";
 			}
 			else if (uvalue == 1 && lvalue == 1) {
-				result = "TRUE";
+				if (verilog)
+					result = "1";
+				else
+					result = "TRUE";
 				// result = "FALSE";
 			}
 			else {
-				if (sbmlFlag){
+				if (sbmlFlag | verilog){
 					result = "0";
 				}
 				result = "UNKNOWN";
@@ -3701,6 +3712,9 @@ public class ExprTree {
 					if (sbmlFlag)	 {
 						result = "BITAND(" + r1.getElement(type) + "," + r2.getElement(type) + ")";
 					}
+					else if (verilog){
+						result = r1.getElement(type) + "&" + r2.getElement(type);
+					}
 					else {
 						result = "and(" + r1.getElement(type) + "," + r2.getElement(type) + ")";
 					}
@@ -3710,6 +3724,9 @@ public class ExprTree {
 				if (r1 != null && r2 != null) {
 					if (sbmlFlag) {
 						result = "BITOR(" + r1.getElement(type) + "," + r2.getElement(type) + ")";
+					}
+					else if (verilog){
+						result = r1.getElement(type) + "|" + r2.getElement(type);
 					}
 					else {
 						result = "or(" + r1.getElement(type) + "," + r2.getElement(type) + ")";
@@ -3727,6 +3744,9 @@ public class ExprTree {
 					if (sbmlFlag){
 						result = "BITNOT(" + r1.getElement(type) + ")";
 					} 
+					else if (verilog){
+						result = "~" + r1.getElement(type);
+					}
 					else {
 						result = "not(" + r1.getElement(type) +  ")";
 					}
@@ -3737,6 +3757,9 @@ public class ExprTree {
 				if (r1 != null && r2 != null) {
 					if (sbmlFlag){
 						result = "XOR(" + r1.getElement(type) + "," + r2.getElement(type) + ")";
+					}
+					else if (verilog){
+						result = r1.getElement(type) + "^" + r2.getElement(type);
 					}
 					else {
 						result = "exor(" + r1.getElement(type) + "," + r2.getElement(type) + ")";
@@ -3755,6 +3778,9 @@ public class ExprTree {
 						if(sbmlFlag) {
 							result = "not(" + r1.getElement(type) + ")";
 						}
+						else if (verilog){
+							result = "!" + r1.getElement(type);
+						}
 						else {
 							result = "~" + r1.getElement(type);
 						}
@@ -3762,6 +3788,9 @@ public class ExprTree {
 					else {
 						if(sbmlFlag){
 							result = "not(" + r1.getElement(type) + ")";
+						}
+						else if (verilog){
+							result = "!" + "(" + r1.getElement(type) + ")";
 						}
 						else {
 							result = "~" + "(" + r1.getElement(type) + ")";
@@ -3776,7 +3805,10 @@ public class ExprTree {
 						if (r1 != null) {
 							if (sbmlFlag) {
 								result = "and(" + r1.getElement(type) + ",";
-							} 
+							}
+							else if (verilog){
+								result = "(" + r1.getElement(type) + ")&&";
+							}
 							else {
 								result = "(" + r1.getElement(type) + ")";
 							}
@@ -3788,6 +3820,9 @@ public class ExprTree {
 							if (sbmlFlag) {
 								result = "and(" + r1.getElement(type) + ",";
 							}
+							else if (verilog){
+								result = r1.getElement(type) + "&&";
+							}
 							else {
 								result = r1.getElement(type);
 							}
@@ -3795,7 +3830,7 @@ public class ExprTree {
 						}
 					}
 					
-					if (!sbmlFlag) {
+					if (!sbmlFlag && !verilog) {
 						result = result + "&";
 					}
 					
@@ -3828,6 +3863,9 @@ public class ExprTree {
 							if (sbmlFlag) {
 								result = "or(" + r1.getElement(type) + ",";
 							}
+							else if (verilog){
+								result = "(" + r1.getElement(type) + ")||";
+							}
 							else {
 								result = "(" + r1.getElement(type) + ")";
 							}
@@ -3839,13 +3877,16 @@ public class ExprTree {
 							if (sbmlFlag) {
 								result = "or(" + r1.getElement(type) + ",";
 							}
+							else if (verilog){
+								result = r1.getElement(type) + "||";
+							}
 							else {
 								result = r1.getElement(type);
 							}
 						}
 					}
 					
-					if (!sbmlFlag){
+					if (!sbmlFlag && !verilog){
 						result = result + "|";
 					}
 					
@@ -3874,9 +3915,13 @@ public class ExprTree {
 				}
 				else if (op.equals("uniform")) {
 					if (r1 != null && r2 != null) {
-						result = "uniform(" + r1.getElement(type) + "," + r2.getElement(type) + ")";
+						if (verilog){
+							result = r1.getElement(type) + " + (($unsigned($random))%(" + r2.getElement(type) + "-" + r1.getElement(type) + "+1))";
+						} else {
+							result = "uniform(" + r1.getElement(type) + "," + r2.getElement(type) + ")";
+						}
 					}
-				}
+				}	//TODO: Add verilog functions for other distributions
 				else if (op.equals("normal")) {
 					if (r1 != null && r2 != null) {
 						result = "normal(" + r1.getElement(type) + "," + r2.getElement(type) + ")";
@@ -3953,12 +3998,15 @@ public class ExprTree {
 						if (sbmlFlag) {
 							result = "eq(" + r1.getElement(type) + ",";
 						}
+						else if (verilog){
+							result = r1.getElement(type) + "==";
+						}
 						else {
 							result = r1.getElement(type);
 						}
 						
 					}
-					if (!sbmlFlag) {
+					if (!sbmlFlag && !verilog) {
 						result = result + "=";
 					}
 					
