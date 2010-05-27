@@ -192,6 +192,8 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 	private boolean vamsRandom = false;
 	
 	private ArrayList<String> allVars;
+	
+	private Thread LearnThread;
 
 	
 	// private int[] numValuesL;// the number of constant values for each variable...-1 indicates that the variable isn't considered a DMVC variable
@@ -1425,7 +1427,8 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				// Thread myThread = new Thread(this);
 				generate = true;
 				execute = false;
-				new Thread(this).start();
+				LearnThread = new Thread(this);
+				LearnThread.start();
 			}
 		} catch (Exception e1) {
 			// e1.printStackTrace();
@@ -2244,7 +2247,8 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				generate = false;
 			}
 			execute = true;
-			new Thread(this).start();
+			LearnThread = new Thread(this);
+			LearnThread.start();
 		} 
 		catch (NullPointerException e1) {
 			e1.printStackTrace();
@@ -2263,7 +2267,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			//File work = new File(directory);
 			final JFrame running = new JFrame("Progress");
 			//running.setUndecorated(true);
-			//final JButton cancel = new JButton("Cancel");
+			final JButton cancel = new JButton("Cancel");
 			running.setResizable(false);
 			WindowListener w = new WindowListener() {
 				public void windowClosing(WindowEvent arg0) {
@@ -2302,10 +2306,10 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			progress.setValue(0);
 			text.add(label);
 			progBar.add(progress);
-		//	button.add(cancel);
+			button.add(cancel);
 			all.add(text, "North");
 			all.add(progBar, "Center");
-		//	all.add(button, "South");
+			all.add(button, "South");
 			running.setContentPane(all);
 			running.pack();
 			Dimension screenSize;
@@ -2330,85 +2334,21 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			logFile = new File(directory + separator + "run.log");
 			logFile.createNewFile();
 			out = new BufferedWriter(new FileWriter(logFile));
+			cancel.setActionCommand("Cancel");
+			cancel.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					running.setCursor(null);
+					running.dispose();
+					if (LearnThread != null) {
+						LearnThread.stop();
+					}
+					//throw new RuntimeException();
+					//TODO: Need to kill thread somehow???
+				}
+			});
 			if (generate) {
-		//		log.addText("Running:");
-		//		log.addText("autoGenT()");
 				out.write("Running autoGenT\n");
-				//divisionsL = autoGenT(divisionsL);		
-			//	divisionsL = autoGenT(running);	
 				thresholds = autoGenT(running);
-/*
-				String makeBin = "autogenT.py -b" + newBinFile + " -i"
-						+ iteration.getText();
-				if (range.isSelected()) {
-					makeBin = makeBin + " -cr";
-				}
-				log.addText(makeBin);
-				// log.addText("Creating levels file:\n" + directory + separator
-				// + binFile + "\n");
-				final Process bins = Runtime.getRuntime().exec(makeBin, null,
-						work);
-				cancel.setActionCommand("Cancel");
-				cancel.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						bins.destroy();
-						running.setCursor(null);
-						running.dispose();
-					}
-				});
-				biosim.getExitButton().setActionCommand("Exit program");
-				biosim.getExitButton().addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						bins.destroy();
-						running.setCursor(null);
-						running.dispose();
-					}
-				});
-				try {
-					String output = "";
-					InputStream reb = bins.getInputStream();
-					InputStreamReader isr = new InputStreamReader(reb);
-					BufferedReader br = new BufferedReader(isr);
-					int count = 0;
-					while ((output = br.readLine()) != null) {
-						if (output.matches("\\d+/\\d+")) {
-							// log.addText(output);
-							count += 500;
-							progress.setValue(count);
-						} else if (output.contains("ERROR")) {
-							fail = true;
-						}
-						out.write(output);
-						out.write("\n");
-					}
-					br.close();
-					isr.close();
-					reb.close();
-					if (!execute || fail) {
-						out.close();
-					}
-					viewLog.setEnabled(true);
-				} catch (Exception e) {
-				}
-				int exitValue = bins.waitFor();
-				if (exitValue == 143) {
-					JOptionPane.showMessageDialog(biosim.frame(),
-							"Learning was" + " canceled by the user.",
-							"Canceled Learning", JOptionPane.ERROR_MESSAGE);
-				}
-				FileOutputStream outBins = new FileOutputStream(new File(directory + separator + binFile));
-				FileInputStream inBins = new FileInputStream(new File(directory	+ separator + newBinFile));
-				int read = inBins.read();
-				while (read != -1) {
-					outBins.write(read);
-					read = inBins.read();
-				}
-				inBins.close();
-				outBins.close();
-				if (!execute) {
-					levels();
-				}
-*/
 				if (!execute) {
 					levels();
 				}
@@ -2419,63 +2359,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			if (execute && !fail) {
 				File lhpn = new File(directory + separator + lhpnFile);
 				lhpn.delete();
-				// String command = "data2lhpn.py -b" + binFile + " -l" +
-				// lhpnFile;
-			//	String command = "dataToLHPN()";
-			//	log.addText("Running:\n" + command  + "\n");
 				dataToLHPN(running);
-				// log.addText("Executing:\n" + command + " " + directory +
-				// "\n");
-				// File work = new File(directory);
-				//				
-				// final Process run = Runtime.getRuntime().exec(command,
-				// null,work);
-				// cancel.setActionCommand("Cancel");
-				// cancel.addActionListener(new ActionListener() {
-				// public void actionPerformed(ActionEvent e) {
-				// run.destroy();
-				// running.setCursor(null);
-				// running.dispose();
-				// }
-				// }
-				// );
-				// biosim.getExitButton().setActionCommand("Exit program");
-				// biosim.getExitButton().addActionListener(new ActionListener()
-				// {
-				// public void actionPerformed(ActionEvent e) {
-				// run.destroy();
-				// running.setCursor(null);
-				// running.dispose();
-				// }
-				// }
-				// );
-				// try {
-				// String output = "";
-				// InputStream reb = run.getInputStream();
-				// InputStreamReader isr = new InputStreamReader(reb);
-				// BufferedReader br = new BufferedReader(isr);
-				// while ((output = br.readLine()) != null) {
-				// if (output.contains("ERROR")) {
-				// fail = true;
-				// }
-				// out.write(output);
-				// out.write("\n");
-				// }
-				// br.close();
-				// isr.close();
-				// reb.close();
-				// out.close();
-				// viewLog.setEnabled(true);
-				// }
-				// catch (Exception e) {
-				//					  
-				// }
-				// int exitValue = run.waitFor();
-				// if (exitValue == 143) {
-				// JOptionPane.showMessageDialog(biosim.frame(), "Learning was"
-				// + "canceled by the user.", "Canceled Learning",
-				// JOptionPane.ERROR_MESSAGE);
-				// }
 				viewLog.setEnabled(true);
 				if (new File(directory + separator + lhpnFile).exists()) {
 					viewVHDL.setEnabled(true); 		// SB
@@ -2514,7 +2398,12 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 					"Unable to create log file.",
 					"ERROR!", JOptionPane.ERROR_MESSAGE);
 			
-		}
+		} 
+		/*catch (RuntimeException e1) {
+			JOptionPane.showMessageDialog(biosim.frame(),
+					"Learning was" + " canceled by the user.",
+					"Canceled Learning", JOptionPane.ERROR_MESSAGE);
+		} */
 	}
 
 	public boolean hasChanged() {
