@@ -68,11 +68,13 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 			xform23 = "Remove Vacuous Transitions - abstraction",
 			xform24 = "Remove Pairwise Write Before Write - simplification",
 			xform25 = "Propagate Constant Variable Values - simplifiction",
-			xform26 = "Remove Dangling Transitions - simplification";
+			xform26 = "Remove Dangling Transitions - simplification",
+			xform27 = "Combine Parallel Transitions - simplification",
+			xform28 = "Combine Parallel Transitions - abstraction";
 
 	private String[] transforms = { xform0, xform1, xform3, xform4, xform5, xform6, xform7, xform8,
 			xform25, xform9, xform24, xform10, xform12, xform14, xform16, xform11,
-			xform15, xform17, xform18, xform19, xform20, xform21, xform22, xform23, xform26 };
+			xform15, xform17, xform18, xform19, xform20, xform21, xform22, xform23, xform26, xform27 };
 
 	public JTextField factorField, iterField;
 

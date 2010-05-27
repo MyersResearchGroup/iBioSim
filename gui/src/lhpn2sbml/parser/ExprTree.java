@@ -2002,10 +2002,10 @@ public class ExprTree {
 		if (type.equals("continuous") || type.equals("integer")) {
 			if (isit == 't') {
 				if (uvalue == 0) {
-					result = "0.0";
+					result = "0";
 				}
 				else {
-					result = "1.0";
+					result = "1";
 				}
 			}
 		}
@@ -3646,7 +3646,13 @@ public class ExprTree {
 				} else if (lvalue==-INFIN) {
 					result = "-inf";
 				} else {
-					result = tempuval.toString();
+					if (tempuval%1 == 0) {
+						int tempval = (int) (tempuval/1);
+						result = new Integer(tempval).toString();
+					}
+					else {
+						result = tempuval.toString();
+					}
 				}
 				// result = tempuval.toString();
 			}
@@ -3657,7 +3663,13 @@ public class ExprTree {
 				} else if (lvalue==-INFIN){
 					lval = "-inf";
 				} else {
-					lval = templval.toString();
+					if (tempuval%1 == 0) {
+						int tempval = (int) (templval/1);
+						lval = new Integer(tempval).toString();
+					}
+					else {
+						lval = templval.toString();
+					}
 				}
 				String uval;
 				if (uvalue==INFIN) {
@@ -3665,7 +3677,13 @@ public class ExprTree {
 				} else if (uvalue==-INFIN){
 					uval = "-inf";
 				} else {
-					uval = tempuval.toString();
+					if (tempuval%1 == 0) {
+						int tempval = (int) (tempuval/1);
+						uval = new Integer(tempval).toString();
+					}
+					else {
+						uval = tempuval.toString();
+					}
 				}
 				if (verilog){
 					result = lval + " + (($unsigned($random))%(" + uval + "-" + lval + "+1))";
