@@ -2716,7 +2716,7 @@ public class Abstraction extends LhpnFile {
 					boolean combine = true;
 					for (String var : t1.getAssignments().keySet()) {
 						if (!t2.containsAssignment(var)
-								|| !t1.getAssignTree(var).equals(t2.getAssignTree(var))) {
+								|| !t1.getAssignTree(var).isEqual(t2.getAssignTree(var))) {
 							combine = false;
 							break;
 						}
@@ -2752,7 +2752,7 @@ public class Abstraction extends LhpnFile {
 					boolean combine = true;
 					for (String var : t1.getAssignments().keySet()) {
 						if (!t2.containsAssignment(var)
-								|| !t1.getAssignTree(var).equals(t2.getAssignTree(var))) {
+								|| !t1.getAssignTree(var).isEqual(t2.getAssignTree(var))) {
 							combine = false;
 							break;
 						}
@@ -2834,8 +2834,6 @@ public class Abstraction extends LhpnFile {
 				ExprTree enabTree = new ExprTree(this);
 				ExprTree enab1 = tArray[0].getEnablingTree();
 				ExprTree enab2 = tArray[1].getEnablingTree();
-				enabTree.setNodeValues(enab1, enab2, "||", 'l');
-				tArray[0].addEnabling(enabTree.toString());
 				ExprTree dl = new ExprTree(this);
 				ExprTree du = new ExprTree(this);
 				ExprTree delay = new ExprTree(this);
@@ -2868,6 +2866,8 @@ public class Abstraction extends LhpnFile {
 				du.setNodeValues(du1, du2, "+", 'a');
 				delay.setNodeValues(dl, du, "uniform", 'a');
 				tArray[0].addDelay(delay.toString());
+				enabTree.setNodeValues(enab1, enab2, "||", 'l');
+				tArray[0].addEnabling(enabTree.toString());
 				removeTransition(tArray[1].getName());
 			}
 		}
