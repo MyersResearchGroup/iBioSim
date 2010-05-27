@@ -8077,7 +8077,6 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				}
 				in.close();
 				out.close();
-				/*
 				out = new BufferedWriter(new FileWriter(root + separator
 						+ filename.replace(".lpn", ".sv")));
 				in = new BufferedReader(new FileReader(path.replace(".lpn", ".sv")));
@@ -8086,7 +8085,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				}
 				in.close();
 				out.close();
-				out = new BufferedWriter(new FileWriter(root + separator
+				// No top.sv file for now
+				/*out = new BufferedWriter(new FileWriter(root + separator
 						+ filename.replace(".lpn", "_top.sv")));
 				learnPath = path.split(separator);
 				topVFile = path.replace(learnPath[learnPath.length - 1], "top.sv");
@@ -8098,8 +8098,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					out.write(str + "\n");
 				}
 				in.close();
-				out.close();
-				*/
+				out.close();*/
 				refreshTree();
 			}
 		}
