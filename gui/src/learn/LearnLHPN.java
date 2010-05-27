@@ -1971,7 +1971,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 	// SB
 	public void viewVerilog() {
 		try {
-			String vamsFileName = lhpnFile.replace(".lpn", ".vams");
+			String vamsFileName = lhpnFile.replace(".lpn", ".sv");
 			if (new File(directory + separator + vamsFileName).exists()) {
 				File vamsFile = new File(directory + separator + vamsFileName);
 				BufferedReader input = new BufferedReader(new FileReader(vamsFile));

@@ -516,7 +516,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		viewLog = new JMenuItem("Log");
 		viewCoverage = new JMenuItem("Coverage Report"); // SB
 		viewVHDL = new JMenuItem("VHDL-AMS Model"); // SB
-		viewVerilog = new JMenuItem("Verilog-AMS Model"); // SB
+		viewVerilog = new JMenuItem("Verilog Model"); // SB //Being generic for System Verilog and Verilog-AMS
 		viewLHPN = new JMenuItem("LPN Model"); // SB
 		viewModGraph = new JMenuItem("Model");
 		viewModBrowser = new JMenuItem("Model in Browser");
@@ -2208,19 +2208,19 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						scrolls.setMinimumSize(new Dimension(800, 500));
 						scrolls.setPreferredSize(new Dimension(800, 500));
 						scrolls.setViewportView(messageArea);
-						JOptionPane.showMessageDialog(this.frame(), scrolls, "Verilog-AMS Model",
-								JOptionPane.INFORMATION_MESSAGE);
+						JOptionPane.showMessageDialog(this.frame(), scrolls, "Verilog Model",
+								JOptionPane.INFORMATION_MESSAGE); //Being generic for System Verilog and Verilog-AMS
 					}
 					else {
 						JOptionPane.showMessageDialog(this.frame(),
-								"Verilog-AMS model does not exist.", "Error",
-								JOptionPane.ERROR_MESSAGE);
+								"Verilog model does not exist.", "Error",
+								JOptionPane.ERROR_MESSAGE);//Being generic for System Verilog and Verilog-AMS
 					}
 				}
 				catch (Exception e1) {
 					JOptionPane
-							.showMessageDialog(this.frame(), "Unable to view Verilog-AMS model.",
-									"Error", JOptionPane.ERROR_MESSAGE);
+							.showMessageDialog(this.frame(), "Unable to view Verilog model.",
+									"Error", JOptionPane.ERROR_MESSAGE);//Being generic for System Verilog and Verilog-AMS
 				}
 			}
 			else if (comp instanceof JTabbedPane) {
