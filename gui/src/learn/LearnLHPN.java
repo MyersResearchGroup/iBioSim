@@ -2,6 +2,7 @@ package learn;
 
 //import gcm2sbml.parser.GCMFile;
 import lhpn2sbml.parser.LhpnFile;
+import lhpn2sbml.parser.Lpn2verilog;
 import parser.*;
 import java.awt.*;
 import java.awt.List;
@@ -3118,6 +3119,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			g.save(directory + separator + lhpnFile);
 			writeVHDLAMSFile(lhpnFile.replace(".lpn",".vhd"));
 			writeVerilogAMSFile(lhpnFile.replace(".lpn",".vams"));
+			new Lpn2verilog(directory + separator + lhpnFile); //writeSVFile(directory + separator + lhpnFile);
 		} catch (IOException e) {
 			e.printStackTrace();
 			//System.out.println("LPN file couldn't be created/written ");

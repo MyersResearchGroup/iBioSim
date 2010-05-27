@@ -115,13 +115,18 @@ public class Lpn2verilog {
 			}*/
 			for (String st: transitionList){
 				if (first){
-					sv.write("\twire " + st);
+					sv.write("\twire[31:0] " + st);
 			//		initBuffer.append("\t\t" + st + " <= 0"); As transitions are wires, no initial values to them
 					first = false;
 				} else{
 					sv.write(", " + st);
 			//		initBuffer.append("; " + st + " <= 0");
 				}
+			}
+			sv.write(";\n\tinteger tmax=-1");
+			for (String v: varsList){
+				if (!lpn.isInput(v) && !lpn.isOutput(v))
+					sv.write("," + v);
 			}
 			sv.write(";\n");
 			//initBuffer.append(";\n");
@@ -221,7 +226,6 @@ public class Lpn2verilog {
 			sv.write("\tinitial begin\n");
 			sv.write(initBuffer.toString());
 			sv.write("\tend\n");
-			
 			for (String st : transitionList){
 				sv.write("\tassign ");
 				String delay = lpn.getTransition(st).getDelay();
@@ -236,12 +240,12 @@ public class Lpn2verilog {
 							System.out.println("Error in delay assignments. Considering required part only");
 						}
 						if (delayBounds[0].equalsIgnoreCase(delayBounds[1])){
-							sv.write("#(" + st + "==0 ? " + delayBounds[0] + " : 0) " + st + " = ");
+							sv.write("#(" + st + "==-1 ? " + delayBounds[0] + " : 0) " + st + " = ");
 						} else{
-							sv.write("#(" + st + "==0 ? " + delayBounds[0] +" + (($unsigned($random))%(" + delayBounds[1] + "-" + delayBounds[0]+ "+1)) : 0) " + st + " = ");
+							sv.write("#(" + st + "==-1 ? " + delayBounds[0] +" + (($unsigned($random))%(" + delayBounds[1] + "-" + delayBounds[0]+ "+1)) : 0) " + st + " = ");
 						}
 					} else{
-						sv.write("#(" + st + "==0 ? " + delay + " : 0) " + st + " = ");
+						sv.write("#(" + st + "==-1 ? " + delay + " : 0) " + st + " = ");
 					}
 					
 				} else{
@@ -251,7 +255,7 @@ public class Lpn2verilog {
 					first = true;
 					for (String st2 : lpn.getPreset(st)){
 						if (first){
-							sv.write(st2);
+							sv.write("((" + st2);
 							first = false;
 						}
 						else{
@@ -262,14 +266,15 @@ public class Lpn2verilog {
 						sv.write(" && (" + lpn.getEnablingTree(st).getElement("Verilog") + ")");
 						System.out.println(st + " enabling " + lpn.getEnablingTree(st).getElement("Verilog"));
 					}
+					sv.write(")?$unsigned($random):-1)");
 				}
 				sv.write(" ;\n");
-				sv.write("\talways @(posedge " + st + ") begin\n");
+				sv.write("\talways @(" + st + ") begin\n\t\tif (" + st + " == tmax) begin\n" );
 				for (String st2 : lpn.getPreset(st)){
-					sv.write("\t\t" + st2 + " <= 0;\n");
+					sv.write("\t\t\t" + st2 + " <= 0;\n");
 				}
 				for (String st2 : lpn.getPostset(st)){
-					sv.write("\t\t" + st2 + " <= 1;\n");
+					sv.write("\t\t\t" + st2 + " <= 1;\n");
 				}
 				HashMap<String,String> assignments = lpn.getTransition(st).getAssignments(); 
 				if (assignments.size() != 0){
@@ -285,13 +290,36 @@ public class Lpn2verilog {
 								System.out.println("Error in value assignments. Considering required part only");
 							}
 							if (asgnmtBounds[0].equalsIgnoreCase(asgnmtBounds[1])){
-								sv.write("\t\t" + st2 + " <= " + asgnmtBounds[0] + ";\n");
+								sv.write("\t\t\t" + st2 + " <= " + asgnmtBounds[0] + ";\n");
 							} else{
-								sv.write("\t\t" + st2 + " <= " + asgnmtBounds[0] +" + (($unsigned($random))%(" + asgnmtBounds[1] + "-" + asgnmtBounds[0]+ "+1));\n");
+								sv.write("\t\t\t" + st2 + " <= " + asgnmtBounds[0] +" + (($unsigned($random))%(" + asgnmtBounds[1] + "-" + asgnmtBounds[0]+ "+1));\n");
 							}
 						} else{
-							sv.write("\t\t" + st2 + " <= " + asgnmt + ";\n");
+							sv.write("\t\t\t" + st2 + " <= " + asgnmt + ";\n");
 						}
+					}
+				}
+				sv.write("\t\tend\n\tend\n");
+			}
+			if (transitionList.length > 0){
+				sv.write("\talways@(");
+				first = true;
+				for (String st : transitionList){
+					if (first){
+						sv.write(st);
+						first = false;
+					}
+					else
+						sv.write("," + st);
+				}
+				sv.write(") begin\n");
+				for (String st : transitionList){
+					if (first){
+						first = false;
+						sv.write("\t\ttmax = "+st+";");
+					}
+					else{
+						sv.write("\t\tif(tmax < " + st + ")\n\t\t\ttmax = " + st + ";\n");
 					}
 				}
 				sv.write("\tend\n");
