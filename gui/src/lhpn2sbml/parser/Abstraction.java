@@ -170,6 +170,14 @@ public class Abstraction extends LhpnFile {
 			if (abstPane.absListModel.contains(abstPane.xform26) && abstPane.isSimplify()) {
 				change = removeDanglingTransitions(change);
 			}
+			// Transform 27 - Combine Parallel Transitions (Simplification)
+			if (abstPane.absListModel.contains(abstPane.xform27) && abstPane.isSimplify()) {
+				change = mergeTransitionsSimp(change);
+			}
+			// Transform 28 - Combing Parallel Transitions (Abstraction)
+			else if (abstPane.absListModel.contains(abstPane.xform28) && abstPane.isAbstract()) {
+				change = mergeTransitionsAbs(change);
+			}
 			i++;
 		}
 		// Transform 21 - Normalize Delays
@@ -2781,23 +2789,23 @@ public class Abstraction extends LhpnFile {
 				try {
 					Pattern pattern = Pattern.compile(RANGE);
 					Matcher matcher = pattern.matcher(tArray[0].getDelay());
-					Float dl1, dl2, du1, du2;
+					Integer dl1, dl2, du1, du2;
 					if (matcher.find()) {
-						dl1 = Float.parseFloat(matcher.group(1));
-						du1 = Float.parseFloat(matcher.group(2));
+						dl1 = Integer.parseInt(matcher.group(1));
+						du1 = Integer.parseInt(matcher.group(2));
 					}
 					else {
-						dl1 = Float.parseFloat(tArray[0].getDelay());
-						du1 = Float.parseFloat(tArray[0].getDelay());
+						dl1 = Integer.parseInt(tArray[0].getDelay());
+						du1 = Integer.parseInt(tArray[0].getDelay());
 					}
 					matcher = pattern.matcher(tArray[1].getDelay());
 					if (matcher.find()) {
-						dl2 = Float.parseFloat(matcher.group(1));
-						du2 = Float.parseFloat(matcher.group(2));
+						dl2 = Integer.parseInt(matcher.group(1));
+						du2 = Integer.parseInt(matcher.group(2));
 					}
 					else {
-						dl2 = Float.parseFloat(tArray[1].getDelay());
-						du2 = Float.parseFloat(tArray[1].getDelay());
+						dl2 = Integer.parseInt(tArray[1].getDelay());
+						du2 = Integer.parseInt(tArray[1].getDelay());
 					}
 					String delay = "uniform(";
 					if (dl1.compareTo(dl2) <= 0) {
