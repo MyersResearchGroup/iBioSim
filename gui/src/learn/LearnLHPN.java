@@ -696,7 +696,6 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		for (String s : variablesMap.keySet()) {
 			variablesList.add(s);
 			reqdVarsL.add(new Variable(s));
-		//	divisionsL.add(new ArrayList<Double>());
 			thresholds.put(s, new ArrayList<Double>());
 		}
 		// System.out.println(variablesList);
@@ -2466,7 +2465,6 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		 * background file!", "Error Writing Background",
 		 * JOptionPane.ERROR_MESSAGE); } } else {
 		 */
-	//	divisionsL = new ArrayList<ArrayList<Double>>();	// SB
 		thresholds = new HashMap<String, ArrayList<Double>>(); // SB
 		reqdVarsL = new ArrayList<Variable>();				// SB
 		LhpnFile lhpn = new LhpnFile();
@@ -2474,8 +2472,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		HashMap<String, Properties> variablesMap = lhpn.getContinuous();
 		for (String s : variablesMap.keySet()) {
 			variablesList.add(s);
-			reqdVarsL.add(new Variable(s));					// SB
-			// divisionsL.add(new ArrayList<Double>());		// SB
+			reqdVarsL.add(new Variable(s));					
 			thresholds.put(s,new ArrayList<Double>());
 		}
 	// Loading the inputs and bins from the existing .lrn file.	
@@ -2498,13 +2495,11 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 					else{
 						String s = load.getProperty("learn.bins" + st1);
 						String[] savedBins = s.split("\\s");
-						//divisionsL.add(new ArrayList<Double>());
 						//variablesList.add(savedBins[0]);
 						//	((JComboBox)(((JPanel)variablesPanel.getComponent(j+1)).getComponent(2))).setSelectedItem(savedBins[1]);
 						for (int i = 2; i < savedBins.length ; i++){
 							//		((JTextField)(((JPanel)variablesPanel.getComponent(j+1)).getComponent(i+1))).setText(savedBins[i]);
 							if (varNum < variablesMap.size()) {	// chk for varNum or j ????
-								//	divisionsL.get(varNum).add(Double.parseDouble(savedBins[i]));
 								thresholds.get(st1).add(Double.parseDouble(savedBins[i]));
 							}
 						}
@@ -3120,6 +3115,9 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			writeVHDLAMSFile(lhpnFile.replace(".lpn",".vhd"));
 			writeVerilogAMSFile(lhpnFile.replace(".lpn",".vams"));
 			new Lpn2verilog(directory + separator + lhpnFile); //writeSVFile(directory + separator + lhpnFile);
+			LhpnFile l1 = new LhpnFile();
+			l1.load(directory + separator + "stim.lpn");
+			mergeLhpns(l1,g);
 		} catch (IOException e) {
 			e.printStackTrace();
 			//System.out.println("LPN file couldn't be created/written ");
@@ -3140,6 +3138,13 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			}
 			running.setCursor(null);
 			running.dispose();
+		}
+		catch (java.lang.IllegalStateException e3){
+			e3.printStackTrace();
+			//System.out.println("LPN file couldn't be created/written ");
+			JOptionPane.showMessageDialog(biosim.frame(),
+					"LPN File not found for merging.",
+					"ERROR!", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 	
@@ -6807,8 +6812,113 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		}
 	}
 	//T[] aux = (T[])a.clone();
+	
+	public LhpnFile mergeLhpns(LhpnFile l1,LhpnFile l2){//(LhpnFile l1, LhpnFile l2){
+		String place1 = "p([-\\d]+)", place2 = "P([-\\d]+)";
+		String transition1 = "t([-\\d]+)", transition2 = "T([-\\d]+)";
+		int placeNum, transitionNum;
+		int minPlace=0, maxPlace=0, minTransition = 0, maxTransition = 0;
+		Boolean first = true;
+		try{
+			for (String st1: l1.getPlaceList()){
+				if ((st1.matches(place1)) || (st1.matches(place2))){
+					st1 = st1.replaceAll("p", "");
+					st1 = st1.replaceAll("P", "");
+					placeNum = Integer.valueOf(st1);
+					if (placeNum > maxPlace){
+						maxPlace = placeNum;
+						if (first){
+							first = false;
+							minPlace = placeNum;
+						}
+					}
+					if (placeNum < minPlace){
+						minPlace = placeNum;
+						if (first){
+							first = false;
+							maxPlace = placeNum;
+						}
+					}
+				}
+			}
+			for (String st1: l2.getPlaceList()){
+				if ((st1.matches(place1)) || (st1.matches(place2))){
+					st1 = st1.replaceAll("p", "");
+					st1 = st1.replaceAll("P", "");
+					placeNum = Integer.valueOf(st1);
+					if (placeNum > maxPlace)
+						maxPlace = placeNum;
+					if (placeNum < minPlace)
+						minPlace = placeNum;
+				}
+			}
+			//System.out.println("min place and max place in both lpns are : " + minPlace + "," + maxPlace);
+			for (String st2: l2.getPlaceList()){
+				for (String st1: l1.getPlaceList()){
+					if (st1.equalsIgnoreCase(st2)){
+						maxPlace++;
+						l2.renamePlace(st2, "p" + maxPlace);//, l2.getPlace(st2).isMarked());
+						break;
+					}
+				}
+			}
+			first = true;
+			for (String st1: l1.getTransitionList()){
+				if ((st1.matches(transition1)) || (st1.matches(transition2))){
+					st1 = st1.replaceAll("t", "");
+					st1 = st1.replaceAll("T", "");
+					transitionNum = Integer.valueOf(st1);
+					if (transitionNum > maxTransition){
+						maxTransition = transitionNum;
+						if (first){
+							first = false;
+							minTransition = transitionNum;
+						}
+					}
+					if (transitionNum < minTransition){
+						minTransition = transitionNum;
+						if (first){
+							first = false;
+							maxTransition = transitionNum;
+						}
+					}
+				}
+			}
+			for (String st1: l2.getTransitionList()){
+				if ((st1.matches(transition1)) || (st1.matches(transition2))){
+					st1 = st1.replaceAll("t", "");
+					st1 = st1.replaceAll("T", "");
+					transitionNum = Integer.valueOf(st1);
+					if (transitionNum > maxTransition)
+						maxTransition = transitionNum;
+					if (transitionNum < minTransition)
+						minTransition = transitionNum;
+				}
+			}
+			//System.out.println("min transition and max transition in both lpns are : " + minTransition + "," + maxTransition);
+			for (String st2: l2.getTransitionList()){
+				for (String st1: l1.getTransitionList()){
+					if (st1.equalsIgnoreCase(st2)){
+						maxTransition++;
+						l2.renameTransition(st2, "t" + maxTransition);
+						break;
+					}
+				}
+			}
+			l2.save(directory + separator + "tmp.lpn");
+			l1.load(directory + separator + "tmp.lpn");
+			l1.save(directory + separator + "merged.lpn");
+			File tmp = new File(directory + separator + "tmp.lpn");
+			tmp.delete();
+		}catch(Exception e){
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(biosim.frame(),
+					"Problem while merging lpns",
+					"ERROR!", JOptionPane.ERROR_MESSAGE);
+		}
+		return l1;
+	}
 }
-
 
 
 /*

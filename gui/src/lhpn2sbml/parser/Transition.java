@@ -441,5 +441,9 @@ public class Transition {
 	public String toString() {
 		return name;
 	}
-
+	
+	public void changeName(String newName) {
+		name = newName;
+	}
+	
 }

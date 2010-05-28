@@ -218,7 +218,7 @@ public class Lpn2verilog {
 							initBuffer.append("\t\t" + v + " <= 1'b0;\n");
 						}
 						else {
-							System.out.println("WARNING: The initial value of Boolean variable " + v + " should be a boolean value.");
+							//System.out.println("WARNING: The initial value of Boolean variable " + v + " should be a boolean value.");
 						}
 					}
 				}
@@ -230,14 +230,14 @@ public class Lpn2verilog {
 				sv.write("\tassign ");
 				String delay = lpn.getTransition(st).getDelay();
 				if (delay != null){
-					System.out.println(st + " delay " + lpn.getTransition(st).getDelay());
+					//System.out.println(st + " delay " + lpn.getTransition(st).getDelay());
 					if (delay.contains(",")){
 						delay = delay.replace("uniform(","");
 						delay = delay.replace(")","");
 						String[] delayBounds = delay.split(",");
-						System.out.println("delay bounds are " + delayBounds[0] + "," + delayBounds[1]);
+						//System.out.println("delay bounds are " + delayBounds[0] + "," + delayBounds[1]);
 						if (delayBounds.length > 2){
-							System.out.println("Error in delay assignments. Considering required part only");
+						//	System.out.println("Error in delay assignments. Considering required part only");
 						}
 						if (delayBounds[0].equalsIgnoreCase(delayBounds[1])){
 							sv.write("#(" + st + "==-1 ? " + delayBounds[0] + " : 0) " + st + " = ");
@@ -264,7 +264,7 @@ public class Lpn2verilog {
 					}
 					if (lpn.getEnablingTree(st) != null){
 						sv.write(" && (" + lpn.getEnablingTree(st).getElement("Verilog") + ")");
-						System.out.println(st + " enabling " + lpn.getEnablingTree(st).getElement("Verilog"));
+						//System.out.println(st + " enabling " + lpn.getEnablingTree(st).getElement("Verilog"));
 					}
 					sv.write(")?$unsigned($random):-1)");
 				}
@@ -279,15 +279,15 @@ public class Lpn2verilog {
 				HashMap<String,String> assignments = lpn.getTransition(st).getAssignments(); 
 				if (assignments.size() != 0){
 					for (String st2 : assignments.keySet()){
-						System.out.println("Assignment " + st2 + " <= " + lpn.getTransition(st).getAssignTree(st2));
+						//System.out.println("Assignment " + st2 + " <= " + lpn.getTransition(st).getAssignTree(st2));
 						String asgnmt = assignments.get(st2);
 						if (asgnmt.contains(",")){
 							asgnmt = asgnmt.replace("uniform(","");
 							asgnmt = asgnmt.replace(")","");
 							String[] asgnmtBounds = asgnmt.split(",");
-							System.out.println("asgnmt bounds are " + asgnmtBounds[0] + "," + asgnmtBounds[1]);
+							//System.out.println("asgnmt bounds are " + asgnmtBounds[0] + "," + asgnmtBounds[1]);
 							if (asgnmtBounds.length > 2){
-								System.out.println("Error in value assignments. Considering required part only");
+								//System.out.println("Error in value assignments. Considering required part only");
 							}
 							if (asgnmtBounds[0].equalsIgnoreCase(asgnmtBounds[1])){
 								sv.write("\t\t\t" + st2 + " <= " + asgnmtBounds[0] + ";\n");
@@ -328,7 +328,7 @@ public class Lpn2verilog {
 			sv.close();
 		} catch (IOException e){
 			e.printStackTrace();
-			System.out.println("ERROR: Verilog file could not be created/written.");
+			//System.out.println("ERROR: Verilog file could not be created/written.");
 		}
 	}
 }

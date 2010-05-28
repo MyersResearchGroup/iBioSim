@@ -88,4 +88,8 @@ public class Place {
 		return name;
 	}
 
+	public void changeName(String newName){
+		name = newName;
+	}
+
 }
