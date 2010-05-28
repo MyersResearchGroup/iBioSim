@@ -818,7 +818,7 @@ public class LhpnFile {
 		}
 	}
 
-	public void renamePlace(String oldName, String newName, Boolean ic) {
+	/*public void renamePlace(String oldName, String newName, Boolean ic) {
 		Place place = new Place(newName, ic);
 		if (oldName != null && places.containsKey(oldName)) {
 			places.put(newName, place);
@@ -827,8 +827,24 @@ public class LhpnFile {
 		for (Transition t : transitions.values()) {
 			t.renamePlace(places.get(oldName), places.get(newName));
 		}
-	}
+	}*/
 
+	public void renamePlace(String oldName, String newName) {
+		if (oldName != null && places.containsKey(oldName)) {
+			places.put(newName, places.get(oldName));
+			places.get(newName).changeName(newName);
+			places.remove(oldName);
+		}
+	}
+	
+	public void renameTransition(String oldName, String newName) {
+		if (oldName != null && transitions.containsKey(oldName)) {
+			transitions.put(newName, transitions.get(oldName));
+			transitions.get(newName).changeName(newName);
+			transitions.remove(oldName);
+		}
+	}
+	
 	public void removeMovement(String from, String to) {
 		if (isTransition(from)) {
 			transitions.get(from).removePostset(places.get(to));
