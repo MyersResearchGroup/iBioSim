@@ -3115,13 +3115,13 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			writeVHDLAMSFile(lhpnFile.replace(".lpn",".vhd"));
 			writeVerilogAMSFile(lhpnFile.replace(".lpn",".vams"));
 			new Lpn2verilog(directory + separator + lhpnFile); //writeSVFile(directory + separator + lhpnFile);
-			if (new File(directory + separator + "complete.lpn").exists()){
+			if (new File(learnFile).exists()){
 				LhpnFile l1 = new LhpnFile();
-				l1.load(directory + separator + "complete.lpn");
-				mergeLhpns(l1,g).save(directory + separator + "complete.lpn");
-			} else {
+				l1.load(learnFile);
+				mergeLhpns(l1,g).save(directory + separator + lhpnFile);
+			} /*else {
 				g.save(directory + separator + "complete.lpn");
-			}
+			}*/
 		} catch (IOException e) {
 			e.printStackTrace();
 			//System.out.println("LPN file couldn't be created/written ");
