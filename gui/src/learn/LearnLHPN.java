@@ -3115,10 +3115,12 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			writeVHDLAMSFile(lhpnFile.replace(".lpn",".vhd"));
 			writeVerilogAMSFile(lhpnFile.replace(".lpn",".vams"));
 			new Lpn2verilog(directory + separator + lhpnFile); //writeSVFile(directory + separator + lhpnFile);
-			if (new File(learnFile).exists()){
+			if (new File(learnFile).exists()){ //directory + separator + "complete.lpn").exists()){//
 				LhpnFile l1 = new LhpnFile();
 				l1.load(learnFile);
 				mergeLhpns(l1,g).save(directory + separator + lhpnFile);
+				//l1.load(directory + separator + "complete.lpn");
+				//mergeLhpns(l1,g).save(directory + separator + "complete.lpn");
 			} /*else {
 				g.save(directory + separator + "complete.lpn");
 			}*/
@@ -3400,7 +3402,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			// genRates
 			rates = new Double[reqdVarsL.size()][data.get(0).size()];
 			duration = new Double[data.get(0).size()];
-			int mark, k; // indices of rates not same as that of the variable. if
+			int mark, k, previous = 0; // indices of rates not same as that of the variable. if
 			// wanted, then size of rates array should be varNames
 			// not reqdVars
 			if (rateSampling == -1) { // replacing inf with -1 since int
@@ -3413,14 +3415,25 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 						mark++;
 					}
 					if ((data.get(0).get(mark - 1) != data.get(0).get(i)) && ((mark - i) >=  pathLength) && (mark != data.get(0).size())) { 	// && (mark != (data.get(0).size() - 1 condition added on nov 23.. to avoid the last region bcoz it's not complete. rechk
-						for (int j = 0; j < reqdVarsL.size(); j++) {
-							k = reqdVarIndices.get(j);
-							rates[j][i] = ((data.get(k).get(mark - 1) - data.get(k).get(i)) / (data.get(0).get(mark - 1) - data.get(0).get(i)));
+						if (!compareBins(previous,i)){
+							for (int j = 0; j < reqdVarsL.size(); j++) {
+								k = reqdVarIndices.get(j);
+								rates[j][i] = ((data.get(k).get(mark - 1) - data.get(k).get(i)) / (data.get(0).get(mark - 1) - data.get(0).get(i)));
+							}
+							duration[i] = data.get(0).get(mark)	- data.get(0).get(i); // changed (mark - 1) to mark on may 28,2010
+							previous = i;
+						} else{	// There was a glitch and you returned to the same region
+							for (int j = 0; j < reqdVarsL.size(); j++) {
+								k = reqdVarIndices.get(j);
+								rates[j][previous] = ((data.get(k).get(mark - 1) - data.get(k).get(previous)) / (data.get(0).get(mark - 1) - data.get(0).get(previous)));
+							}
+							duration[previous] = data.get(0).get(mark)	- data.get(0).get(previous); // changed (mark - 1) to mark on may 28,2010
 						}
-						duration[i] = data.get(0).get(mark - 1)	- data.get(0).get(i);
+					} else if ((mark - i) <  pathLength) { // account for the glitch duration
+						duration[previous] += data.get(0).get(mark)	- data.get(0).get(i); 
 					}
 				}
-			} else {
+			} else { //TODO: This may have bugs in duration calculation etc.
 				boolean calcRate;
 				boolean prevFail = true;
 				int binStartPoint = 0, binEndPoint = 0;
