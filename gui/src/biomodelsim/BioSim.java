@@ -13431,51 +13431,51 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 
 	public boolean overwrite(String fullPath, String name) {
 		if (new File(fullPath).exists()) {
+			String[] views = canDelete(name);
 			Object[] options = { "Overwrite", "Cancel" };
-			int value = JOptionPane.showOptionDialog(frame, name + " already exists."
-					+ "\nDo you want to overwrite?", "Overwrite", JOptionPane.YES_NO_OPTION,
-					JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-			if (value == JOptionPane.YES_OPTION) {
-				String[] views = canDelete(name);
-				if (views.length == 0) {
-					for (int i = 0; i < tab.getTabCount(); i++) {
-						if (tab.getTitleAt(i).equals(name)) {
-							tab.remove(i);
-						}
-					}
-					File dir = new File(fullPath);
-					if (dir.isDirectory()) {
-						deleteDir(dir);
+			int value;
+			if (views.length==0) {
+				value = JOptionPane.showOptionDialog(frame, name + " already exists."
+						+ "\nDo you want to overwrite?", "Overwrite", JOptionPane.YES_NO_OPTION,
+						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+			} else {
+				String view = "";
+				for (int i = 0; i < views.length; i++) {
+					if (i == views.length - 1) {
+						view += views[i];
 					}
 					else {
-						System.gc();
-						dir.delete();
+						view += views[i] + "\n";
 					}
-					return true;
+				}
+				String message = "The file, " + name + ", aleeady exists, and\nit is linked to the following views:\n\n" + view
+						+ "\n\nAre you sure you want to overwrite?";
+				JTextArea messageArea = new JTextArea(message);
+				messageArea.setEditable(false);
+				JScrollPane scroll = new JScrollPane();
+				scroll.setMinimumSize(new Dimension(300, 300));
+				scroll.setPreferredSize(new Dimension(300, 300));
+				scroll.setViewportView(messageArea);
+				value = JOptionPane.showOptionDialog(frame, scroll, "Overwrite", JOptionPane.YES_NO_OPTION,
+						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+				/* JOptionPane.showMessageDialog(frame, scroll, "Unable To Overwrite File",
+						JOptionPane.ERROR_MESSAGE); */
+			}
+			if (value == JOptionPane.YES_OPTION) {
+				for (int i = 0; i < tab.getTabCount(); i++) {
+					if (tab.getTitleAt(i).equals(name)) {
+						tab.remove(i);
+					}
+				}
+				File dir = new File(fullPath);
+				if (dir.isDirectory()) {
+					deleteDir(dir);
 				}
 				else {
-					String view = "";
-					for (int i = 0; i < views.length; i++) {
-						if (i == views.length - 1) {
-							view += views[i];
-						}
-						else {
-							view += views[i] + "\n";
-						}
-					}
-					String message = "Unable to overwrite file."
-							+ "\nIt is linked to the following views:\n" + view
-							+ "\nDelete these views first.";
-					JTextArea messageArea = new JTextArea(message);
-					messageArea.setEditable(false);
-					JScrollPane scroll = new JScrollPane();
-					scroll.setMinimumSize(new Dimension(300, 300));
-					scroll.setPreferredSize(new Dimension(300, 300));
-					scroll.setViewportView(messageArea);
-					JOptionPane.showMessageDialog(frame, scroll, "Unable To Overwrite File",
-							JOptionPane.ERROR_MESSAGE);
-					return false;
+					System.gc();
+					dir.delete();
 				}
+				return true;
 			}
 			else {
 				return false;
