@@ -3115,9 +3115,13 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			writeVHDLAMSFile(lhpnFile.replace(".lpn",".vhd"));
 			writeVerilogAMSFile(lhpnFile.replace(".lpn",".vams"));
 			new Lpn2verilog(directory + separator + lhpnFile); //writeSVFile(directory + separator + lhpnFile);
-			LhpnFile l1 = new LhpnFile();
-			l1.load(directory + separator + "stim.lpn");
-			mergeLhpns(l1,g);
+			if (new File(directory + separator + "complete.lpn").exists()){
+				LhpnFile l1 = new LhpnFile();
+				l1.load(directory + separator + "complete.lpn");
+				mergeLhpns(l1,g).save(directory + separator + "complete.lpn");
+			} else {
+				g.save(directory + separator + "complete.lpn");
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 			//System.out.println("LPN file couldn't be created/written ");
@@ -6907,7 +6911,6 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			}
 			l2.save(directory + separator + "tmp.lpn");
 			l1.load(directory + separator + "tmp.lpn");
-			l1.save(directory + separator + "merged.lpn");
 			File tmp = new File(directory + separator + "tmp.lpn");
 			tmp.delete();
 		}catch(Exception e){
