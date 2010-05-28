@@ -3737,7 +3737,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 
 	public void updateGraph(int[][] bins, Double[][] rates, Properties cvgProp,JFrame running) {
 		updateRateInfo(bins, rates, cvgProp);
-		updateTimeInfo(bins,cvgProp);
+		//updateTimeInfo(bins,cvgProp);
 		int initMark = -1;
 		int k;
 		String key;
