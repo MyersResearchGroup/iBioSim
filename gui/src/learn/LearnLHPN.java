@@ -877,7 +877,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 					"Error Loading Properties", JOptionPane.ERROR_MESSAGE);
 		}
 		try {
-			FileWriter write = new FileWriter(new File(directory + separator + "background.g"));
+			FileWriter write = new FileWriter(new File(directory + separator + "background.lpn"));
 			BufferedReader input = new BufferedReader(new FileReader(new File(learnFile)));
 			String line = null;
 			while ((line = input.readLine()) != null) {
