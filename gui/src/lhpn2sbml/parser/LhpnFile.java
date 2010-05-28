@@ -1143,13 +1143,19 @@ public class LhpnFile {
 					initCond.put("value", initValue.get(s));
 				}
 				else {
-					initCond.put("value", "[-inf,inf]");
+					if (continuous.get(s).getInitValue() != null)	// Added this condition for mergeLPN methods sake. SB
+						initCond.put("value", continuous.get(s).getInitValue());
+					else
+						initCond.put("value", "[-inf,inf]");
 				}
 				if (initRate.containsKey(s)) {
 					initCond.put("rate", initRate.get(s));
 				}
 				else {
-					initCond.put("rate", "[-inf,inf]");
+					if (continuous.get(s).getInitRate() != null)	// Added this condition for mergeLPN methods sake. SB
+						initCond.put("rate", continuous.get(s).getInitRate());
+					else
+						initCond.put("rate", "[-inf,inf]");
 				}
 				addContinuous(s, initCond);
 			}
@@ -1185,7 +1191,10 @@ public class LhpnFile {
 					initCond = initValue.get(s).toString();
 				}
 				else {
-					initCond = "[-inf,inf]";
+					if (integers.get(s).getInitValue() != null)	// Added this condition for mergeLPN methods sake. SB
+						initCond = integers.get(s).getInitValue();
+					else
+						initCond = "[-inf,inf]";
 				}
 				addInteger(s, initCond);
 			}
