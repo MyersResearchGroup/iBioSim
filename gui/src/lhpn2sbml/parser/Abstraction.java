@@ -175,7 +175,7 @@ public class Abstraction extends LhpnFile {
 				change = mergeTransitionsSimp(change);
 			}
 			// Transform 28 - Combing Parallel Transitions (Abstraction)
-			else if (abstPane.absListModel.contains(abstPane.xform28) && abstPane.isAbstract()) {
+			if (abstPane.absListModel.contains(abstPane.xform28) && abstPane.isAbstract()) {
 				change = mergeTransitionsAbs(change);
 			}
 			i++;
@@ -2778,7 +2778,7 @@ public class Abstraction extends LhpnFile {
 	}
 
 	private void mergeTransitions(Transition[] tArray, boolean abstraction) {
-		if (abstraction) {
+		if (!abstraction) {
 			if (transitions.containsKey(tArray[0].getName())
 					&& transitions.containsKey(tArray[1].getName())) {
 				ExprTree enabTree = new ExprTree(this);
