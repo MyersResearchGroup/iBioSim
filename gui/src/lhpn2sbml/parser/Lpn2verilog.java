@@ -29,6 +29,10 @@ public class Lpn2verilog {
 			//System.out.println("\nModule name is " + svModuleName + "\n");
 			BufferedWriter sv = new BufferedWriter(new FileWriter(svFile));
 			StringBuffer initBuffer = new StringBuffer();
+			StringBuffer markedPlaceBuffer = new StringBuffer();
+			StringBuffer alwaysBuffer = new StringBuffer();
+			StringBuffer prioritiesBuffer = new StringBuffer();
+			StringBuffer assignmentsBuffer = new StringBuffer();
 			sv.write("`timescale 1ps/1ps\n\n");		//TODO: THIS IS ASSUMPTION
 			Boolean first = true;
 			String[] varsList = lpn.getVariables();
@@ -115,7 +119,7 @@ public class Lpn2verilog {
 			}*/
 			for (String st: transitionList){
 				if (first){
-					sv.write("\twire[31:0] " + st);
+					sv.write("\twire " + st);
 			//		initBuffer.append("\t\t" + st + " <= 0"); As transitions are wires, no initial values to them
 					first = false;
 				} else{
@@ -123,10 +127,17 @@ public class Lpn2verilog {
 			//		initBuffer.append("; " + st + " <= 0");
 				}
 			}
-			sv.write(";\n\tinteger tmax=-1");
+			sv.write(";\n\tint unsigned pr[string],prMax;\n");
+			first = true;
 			for (String v: varsList){
-				if (!lpn.isInput(v) && !lpn.isOutput(v))
-					sv.write("," + v);
+				if (!lpn.isInput(v) && !lpn.isOutput(v)){
+					if (first){
+						first = false;
+						sv.write("\treal " + v);
+					}
+					else
+						sv.write("," + v);
+				}
 			}
 			sv.write(";\n");
 			//initBuffer.append(";\n");
@@ -134,35 +145,39 @@ public class Lpn2verilog {
 			for (String st: placeList){
 				if (first){
 					sv.write("\treg " + st);
-					if (lpn.getPlace(st).isMarked())
-						initBuffer.append("\t\t" + st + " <= 1");
+					if (lpn.getPlace(st).isMarked()){
+						initBuffer.append("\t\t" + st + " <= 0");
+						markedPlaceBuffer.append("\t\t" + st + " <= #1 1; //Initially Marked\n");
+					}
 					else
 						initBuffer.append("\t\t" + st + " <= 0");
 					first = false;
 				} else{
 					sv.write(", " + st);
-					if (lpn.getPlace(st).isMarked())
-						initBuffer.append("; " + st + " <= 1");
+					if (lpn.getPlace(st).isMarked()){
+						initBuffer.append("; " + st + " <= 0");
+						markedPlaceBuffer.append("; " + st + " <= #1 1; //Initially Marked\n");
+					}
 					else
 						initBuffer.append("; " + st + " <= 0");
 				}
 			}
 			sv.write(";\n");
 			initBuffer.append(";\n");
+			initBuffer.append(markedPlaceBuffer);
 			for (String v: varsList){
-				if (v != null){		//Not Required ??
+				if ((v != null) && (lpn.isOutput(v))){		//Initialize only outputs. Inputs will be initialized in their driver modules. Null condition Not Required ??
 					String initVal = lpn.getInitialVal(v);
 					if (lpn.isContinuous(v) || lpn.isInteger(v)){
 						if (lpn.isContinuous(v)){
-							// Generate Verilog-AMS and not System Verilog in this case
+							// TODO: Call Verilog-AMS generation from here. No System Verilog in this case
 							double initRate = Double.parseDouble(lpn.getInitialRate(v));
-							//TODO: rate stuff etc. here..
 						}
-
 						// Assign initial values to continuous, discrete and boolean variables
 //						As per translator.java: Extract the lower and upper bounds and set the initial value to the mean. 
 //						Anything that involves infinity, take either the lower or upper bound which is not infinity.  
-//						If both are infinity, set to 0.	
+//						If both are infinity, set to 0.
+						
 						String initValue = lpn.getInitialVal(v);
 						String tmp_initValue = initValue;
 						String[] subString = initValue.split(",");
@@ -199,8 +214,14 @@ public class Lpn2verilog {
 								initBuffer.append("\t\t" + v + " <= " + initValue + ";\n");
 							}
 							else { // initial value is a range, not involving infinity
-								if (!lowerBound.equalsIgnoreCase(upperBound))
-									initBuffer.append("\t\t" + v + " <= " + lowerBound + " + (($unsigned($random))%(" + upperBound + "-" + lowerBound + "+1));\n");
+								if (!lowerBound.equalsIgnoreCase(upperBound)){
+									if (Double.valueOf(lowerBound) > 0)
+										initBuffer.append("\t\t" + v + " <= " + lowerBound + " + $signed((($unsigned($random))%(" + upperBound + "-" + lowerBound + "+1)));\n");
+									else if (Double.valueOf(lowerBound) < 0)
+										initBuffer.append("\t\t" + v + " <= " + lowerBound + " + $signed((($unsigned($random))%(" + upperBound + "+" + Math.abs(Integer.valueOf(lowerBound)) + "+1)));\n");
+									else
+										initBuffer.append("\t\t" + v + " <= " + lowerBound + " + $signed((($unsigned($random))%(" + upperBound + "+1)));\n");
+								}
 								else
 									initBuffer.append("\t\t" + v + " <= " + lowerBound + ";\n");
 							}	
@@ -226,6 +247,7 @@ public class Lpn2verilog {
 			sv.write("\tinitial begin\n");
 			sv.write(initBuffer.toString());
 			sv.write("\tend\n");
+			Boolean firstTransition = true;
 			for (String st : transitionList){
 				sv.write("\tassign ");
 				String delay = lpn.getTransition(st).getDelay();
@@ -240,12 +262,17 @@ public class Lpn2verilog {
 						//	System.out.println("Error in delay assignments. Considering required part only");
 						}
 						if (delayBounds[0].equalsIgnoreCase(delayBounds[1])){
-							sv.write("#(" + st + "==-1 ? " + delayBounds[0] + " : 0) " + st + " = ");
+							sv.write("#(~" + st + " ? " + delayBounds[0] + " : 0) " + st + " = ");
 						} else{
-							sv.write("#(" + st + "==-1 ? " + delayBounds[0] +" + (($unsigned($random))%(" + delayBounds[1] + "-" + delayBounds[0]+ "+1)) : 0) " + st + " = ");
+							if (Double.valueOf(delayBounds[0]) > 0)
+								sv.write("#(~" + st + " ? " + delayBounds[0] +" + (($unsigned($random))%(" + delayBounds[1] + "-" + delayBounds[0]+ "+1)) : 0) " + st + " = ");
+							else if (Double.valueOf(delayBounds[0]) < 0)
+								sv.write("#(~" + st + " ? " + delayBounds[0] +" + (($unsigned($random))%(" + delayBounds[1] + "+" + Math.abs(Integer.valueOf(delayBounds[0]))+ "+1)) : 0) " + st + " = ");
+							else
+								sv.write("#(~" + st + " ? " + delayBounds[0] +" + (($unsigned($random))%(" + delayBounds[1] + "+1)) : 0) " + st + " = ");
 						}
 					} else{
-						sv.write("#(" + st + "==-1 ? " + delay + " : 0) " + st + " = ");
+						sv.write("#(~" + st + " ? " + delay + " : 0) " + st + " = ");
 					}
 					
 				} else{
@@ -255,26 +282,33 @@ public class Lpn2verilog {
 					first = true;
 					for (String st2 : lpn.getPreset(st)){
 						if (first){
-							sv.write("((" + st2);
+							sv.write(st2);
 							first = false;
 						}
 						else{
 							sv.write(" && " + st2);
 						}
+
 					}
 					if (lpn.getEnablingTree(st) != null){
 						sv.write(" && (" + lpn.getEnablingTree(st).getElement("Verilog") + ")");
 						//System.out.println(st + " enabling " + lpn.getEnablingTree(st).getElement("Verilog"));
 					}
-					sv.write(")?$unsigned($random):-1)");
 				}
-				sv.write(" ;\n");
-				sv.write("\talways @(" + st + ") begin\n\t\tif (" + st + " == tmax) begin\n" );
+				sv.write(";\n");
+				if (firstTransition){
+					firstTransition = false;
+					alwaysBuffer.append("\talways @(posedge(" + st + ")");
+				} else {
+					alwaysBuffer.append(" or posedge(" + st + ")");
+				}
+				prioritiesBuffer.append("\t\tpr[\"" + st +"\"] = " + st + " ? $unsigned($random) : 0;\n");
+				assignmentsBuffer.append("\t\tif (pr[\"" + st + "\"]==prMax) begin\n");
 				for (String st2 : lpn.getPreset(st)){
-					sv.write("\t\t\t" + st2 + " <= 0;\n");
+					assignmentsBuffer.append("\t\t\t" + st2 + " <= 0;\n");
 				}
 				for (String st2 : lpn.getPostset(st)){
-					sv.write("\t\t\t" + st2 + " <= 1;\n");
+					assignmentsBuffer.append("\t\t\t" + st2 + " <= 1;\n");
 				}
 				HashMap<String,String> assignments = lpn.getTransition(st).getAssignments(); 
 				if (assignments.size() != 0){
@@ -290,39 +324,31 @@ public class Lpn2verilog {
 								//System.out.println("Error in value assignments. Considering required part only");
 							}
 							if (asgnmtBounds[0].equalsIgnoreCase(asgnmtBounds[1])){
-								sv.write("\t\t\t" + st2 + " <= " + asgnmtBounds[0] + ";\n");
+								assignmentsBuffer.append("\t\t\t" + st2 + " <= " + asgnmtBounds[0] + ";\n");
 							} else{
-								sv.write("\t\t\t" + st2 + " <= " + asgnmtBounds[0] +" + (($unsigned($random))%(" + asgnmtBounds[1] + "-" + asgnmtBounds[0]+ "+1));\n");
+								if (Double.valueOf(asgnmtBounds[0]) > 0)
+									assignmentsBuffer.append("\t\t\t" + st2 + " <= " + asgnmtBounds[0] +" + $signed((($unsigned($random))%(" + asgnmtBounds[1] + "-" + asgnmtBounds[0]+ "+1)));\n");
+								else if (Double.valueOf(asgnmtBounds[0]) < 0)
+									assignmentsBuffer.append("\t\t\t" + st2 + " <= " + asgnmtBounds[0] +" + $signed((($unsigned($random))%(" + asgnmtBounds[1] + "+" + Math.abs(Integer.valueOf(asgnmtBounds[0]))+ "+1)));\n");
+								else
+									assignmentsBuffer.append("\t\t\t" + st2 + " <= " + asgnmtBounds[0] +" + $signed((($unsigned($random))%(" + asgnmtBounds[1] + "+1)));\n");
 							}
 						} else{
-							sv.write("\t\t\t" + st2 + " <= " + asgnmt + ";\n");
+							assignmentsBuffer.append("\t\t\t" + st2 + " <= " + asgnmt + ";\n");
 						}
 					}
 				}
-				sv.write("\t\tend\n\tend\n");
+				assignmentsBuffer.append("\t\tend\n");
 			}
 			if (transitionList.length > 0){
-				sv.write("\talways@(");
-				first = true;
-				for (String st : transitionList){
-					if (first){
-						sv.write(st);
-						first = false;
-					}
-					else
-						sv.write("," + st);
+				if (alwaysBuffer.length() != 0){
+					alwaysBuffer.append(") begin\n");
+					sv.write(alwaysBuffer.toString());
+					sv.write(prioritiesBuffer.toString());
+					sv.write("\t\tprMax = pr.max[0];\n");
+					sv.write(assignmentsBuffer.toString());
+					sv.write("\tend\n");
 				}
-				sv.write(") begin\n");
-				for (String st : transitionList){
-					if (first){
-						first = false;
-						sv.write("\t\ttmax = "+st+";");
-					}
-					else{
-						sv.write("\t\tif(tmax < " + st + ")\n\t\t\ttmax = " + st + ";\n");
-					}
-				}
-				sv.write("\tend\n");
 			}
 			sv.write("endmodule");
 			sv.close();
