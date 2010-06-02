@@ -78,7 +78,8 @@ public class Lpn2verilog {
 			ArrayList<String> transArrayList = new ArrayList(Arrays.asList(transitionList));
 			Collections.sort(transArrayList,new Comparator<String>(){
 				public int compare(String a, String b){
-					String v1 = a.split("t")[1];
+					return(a.compareToIgnoreCase(b));
+					/*String v1 = a.split("t")[1];
 					String v2 = b.split("t")[1];
 					if (Integer.parseInt(v1) < Integer.parseInt(v2)){
 						return -1;
@@ -88,7 +89,7 @@ public class Lpn2verilog {
 					}
 					else{
 						return 1;
-					}
+					}*/
 				}
 			});
 			transArrayList.toArray(transitionList);
@@ -96,7 +97,8 @@ public class Lpn2verilog {
 			ArrayList<String> placeArrayList = new ArrayList(Arrays.asList(placeList));
 			Collections.sort(placeArrayList,new Comparator<String>(){
 				public int compare(String a, String b){
-					String v1 = a.split("p")[1];
+					return(a.compareToIgnoreCase(b));
+					/*String v1 = a.split("p")[1];
 					String v2 = b.split("p")[1];
 					if (Integer.parseInt(v1) < Integer.parseInt(v2)){
 						return -1;
@@ -106,7 +108,7 @@ public class Lpn2verilog {
 					}
 					else{
 						return 1;
-					}
+					}*/
 				}
 			});
 			placeArrayList.toArray(placeList);
@@ -156,7 +158,7 @@ public class Lpn2verilog {
 					sv.write(", " + st);
 					if (lpn.getPlace(st).isMarked()){
 						initBuffer.append("; " + st + " <= 0");
-						markedPlaceBuffer.append("; " + st + " <= #1 1; //Initially Marked\n");
+						markedPlaceBuffer.append("\t\t" + st + " <= #1 1; //Initially Marked\n");
 					}
 					else
 						initBuffer.append("; " + st + " <= 0");
