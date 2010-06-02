@@ -33,6 +33,7 @@ public class Lpn2verilog {
 			StringBuffer alwaysBuffer = new StringBuffer();
 			StringBuffer prioritiesBuffer = new StringBuffer();
 			StringBuffer assignmentsBuffer = new StringBuffer();
+			StringBuffer assertionBuffer = new StringBuffer();
 			sv.write("`timescale 1ps/1ps\n\n");		//TODO: THIS IS ASSUMPTION
 			Boolean first = true;
 			String[] varsList = lpn.getVariables();
@@ -299,52 +300,62 @@ public class Lpn2verilog {
 					}
 				}
 				sv.write(";\n");
-				if (firstTransition){
-					firstTransition = false;
-					alwaysBuffer.append("\talways @(posedge(" + st + ")");
+				if (lpn.getTransition(st).isFail()){
+					assertionBuffer.append("\talways @(" + st + ") begin\n");
+					assertionBuffer.append("\t\tassert(!" + st + ")\n");
+					assertionBuffer.append("\t\telse\n");
+					assertionBuffer.append("\t\t\t$error(\"Error! Assertion " + st + " failed at time %t\",$time);\n\tend\n");
 				} else {
-					alwaysBuffer.append(" or posedge(" + st + ")");
-				}
-				prioritiesBuffer.append("\t\tpr[\"" + st +"\"] = " + st + " ? $unsigned($random) : 0;\n");
-				assignmentsBuffer.append("\t\tif (pr[\"" + st + "\"]==prMax) begin\n");
-				for (String st2 : lpn.getPreset(st)){
-					assignmentsBuffer.append("\t\t\t" + st2 + " <= 0;\n");
-				}
-				for (String st2 : lpn.getPostset(st)){
-					assignmentsBuffer.append("\t\t\t" + st2 + " <= 1;\n");
-				}
-				HashMap<String,String> assignments = lpn.getTransition(st).getAssignments(); 
-				if (assignments.size() != 0){
-					for (String st2 : assignments.keySet()){
-						//System.out.println("Assignment " + st2 + " <= " + lpn.getTransition(st).getAssignTree(st2));
-						String asgnmt = assignments.get(st2);
-						if (asgnmt.contains(",")){
-							asgnmt = asgnmt.replace("uniform(","");
-							asgnmt = asgnmt.replace(")","");
-							String[] asgnmtBounds = asgnmt.split(",");
-							//System.out.println("asgnmt bounds are " + asgnmtBounds[0] + "," + asgnmtBounds[1]);
-							if (asgnmtBounds.length > 2){
-								//System.out.println("Error in value assignments. Considering required part only");
-							}
-							if (asgnmtBounds[0].equalsIgnoreCase(asgnmtBounds[1])){
-								assignmentsBuffer.append("\t\t\t" + st2 + " <= " + asgnmtBounds[0] + ";\n");
+					if (firstTransition){
+						firstTransition = false;
+						alwaysBuffer.append("\talways @(posedge(" + st + ")");
+					} else {
+						alwaysBuffer.append(" or posedge(" + st + ")");
+					}
+					prioritiesBuffer.append("\t\tpr[\"" + st +"\"] = " + st + " ? $unsigned($random) : 0;\n");
+					assignmentsBuffer.append("\t\tif (pr[\"" + st + "\"]==prMax) begin\n");
+					for (String st2 : lpn.getPreset(st)){
+						assignmentsBuffer.append("\t\t\t" + st2 + " <= 0;\n");
+					}
+					for (String st2 : lpn.getPostset(st)){
+						assignmentsBuffer.append("\t\t\t" + st2 + " <= 1;\n");
+					}
+					HashMap<String,String> assignments = lpn.getTransition(st).getAssignments(); 
+					if (assignments.size() != 0){
+						for (String st2 : assignments.keySet()){
+							//System.out.println("Assignment " + st2 + " <= " + lpn.getTransition(st).getAssignTree(st2));
+							String asgnmt = assignments.get(st2);
+							if (asgnmt.contains(",")){
+								asgnmt = asgnmt.replace("uniform(","");
+								asgnmt = asgnmt.replace(")","");
+								String[] asgnmtBounds = asgnmt.split(",");
+								//System.out.println("asgnmt bounds are " + asgnmtBounds[0] + "," + asgnmtBounds[1]);
+								if (asgnmtBounds.length > 2){
+									//System.out.println("Error in value assignments. Considering required part only");
+								}
+								if (asgnmtBounds[0].equalsIgnoreCase(asgnmtBounds[1])){
+									assignmentsBuffer.append("\t\t\t" + st2 + " <= " + asgnmtBounds[0] + ";\n");
+								} else{
+									if (Double.valueOf(asgnmtBounds[0]) > 0)
+										assignmentsBuffer.append("\t\t\t" + st2 + " <= " + asgnmtBounds[0] +" + $signed((($unsigned($random))%(" + asgnmtBounds[1] + "-" + asgnmtBounds[0]+ "+1)));\n");
+									else if (Double.valueOf(asgnmtBounds[0]) < 0)
+										assignmentsBuffer.append("\t\t\t" + st2 + " <= " + asgnmtBounds[0] +" + $signed((($unsigned($random))%(" + asgnmtBounds[1] + "+" + Math.abs(Integer.valueOf(asgnmtBounds[0]))+ "+1)));\n");
+									else
+										assignmentsBuffer.append("\t\t\t" + st2 + " <= " + asgnmtBounds[0] +" + $signed((($unsigned($random))%(" + asgnmtBounds[1] + "+1)));\n");
+								}
 							} else{
-								if (Double.valueOf(asgnmtBounds[0]) > 0)
-									assignmentsBuffer.append("\t\t\t" + st2 + " <= " + asgnmtBounds[0] +" + $signed((($unsigned($random))%(" + asgnmtBounds[1] + "-" + asgnmtBounds[0]+ "+1)));\n");
-								else if (Double.valueOf(asgnmtBounds[0]) < 0)
-									assignmentsBuffer.append("\t\t\t" + st2 + " <= " + asgnmtBounds[0] +" + $signed((($unsigned($random))%(" + asgnmtBounds[1] + "+" + Math.abs(Integer.valueOf(asgnmtBounds[0]))+ "+1)));\n");
-								else
-									assignmentsBuffer.append("\t\t\t" + st2 + " <= " + asgnmtBounds[0] +" + $signed((($unsigned($random))%(" + asgnmtBounds[1] + "+1)));\n");
+								assignmentsBuffer.append("\t\t\t" + st2 + " <= " + asgnmt + ";\n");
 							}
-						} else{
-							assignmentsBuffer.append("\t\t\t" + st2 + " <= " + asgnmt + ";\n");
 						}
 					}
+					assignmentsBuffer.append("\t\tend\n");
 				}
-				assignmentsBuffer.append("\t\tend\n");
 			}
 			if (transitionList.length > 0){
-				if (alwaysBuffer.length() != 0){
+				if ((assertionBuffer != null) && (assertionBuffer.length()!= 0)){
+					sv.write(assertionBuffer.toString());
+				}
+				if ((alwaysBuffer != null) && (alwaysBuffer.length() != 0)){
 					alwaysBuffer.append(") begin\n");
 					sv.write(alwaysBuffer.toString());
 					sv.write(prioritiesBuffer.toString());
