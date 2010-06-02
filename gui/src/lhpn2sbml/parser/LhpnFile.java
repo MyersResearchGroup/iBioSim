@@ -452,6 +452,12 @@ public class LhpnFile {
 		transitions.get(transition).addIntAssign(variable, assign);
 	}
 
+	public void changePlaceName(String oldName, String newName) {
+		places.get(oldName).setName(newName);
+		places.put(newName, places.get(oldName));
+		places.remove(oldName);
+	}
+
 	public void changeTransitionName(String oldName, String newName) {
 		transitions.get(oldName).setName(newName);
 		transitions.put(newName, transitions.get(oldName));

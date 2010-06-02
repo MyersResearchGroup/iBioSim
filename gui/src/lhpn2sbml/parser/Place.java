@@ -62,6 +62,10 @@ public class Place {
 		return postset.contains(name);
 	}
 	
+	public void setName(String newName) {
+		this.name = newName;
+	}	
+	
 	public String getName() {
 		return name;
 	}
