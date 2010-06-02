@@ -119,7 +119,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 
 	private Double minRateVal = 10.0;
 
-	private Double minDivisionVal = 10.0;
+	private Double minDivisionVal = 100.0;
 
 	// private String decPercent;
 
