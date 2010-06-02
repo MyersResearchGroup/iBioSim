@@ -8048,6 +8048,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				}
 				in.close();
 				out.close();
+				/*
 				out = new BufferedWriter(new FileWriter(root + separator
 						+ filename.replace(".lpn", ".vhd")));
 				in = new BufferedReader(new FileReader(path.replace(".lpn", ".vhd")));
@@ -8085,6 +8086,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				}
 				in.close();
 				out.close();
+				*/
 				// No top.sv file for now
 				/*out = new BufferedWriter(new FileWriter(root + separator
 						+ filename.replace(".lpn", "_top.sv")));
