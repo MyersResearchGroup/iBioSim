@@ -36,13 +36,14 @@ public class Lpn2verilog {
 			sv.write("`timescale 1ps/1ps\n\n");		//TODO: THIS IS ASSUMPTION
 			Boolean first = true;
 			String[] varsList = lpn.getVariables();
+			sv.write("module "+svModuleName + " (");
 			for (String v: varsList){
 				if (lpn.isOutput(v)){
 					if (first){
 						if (!lpn.isBoolean(v)){
-							sv.write("module "+svModuleName+" (output real " + v);	//TODO: Integer if dmv?
+							sv.write("output real " + v);	//TODO: Integer if dmv?
 						} else{
-							sv.write("module "+svModuleName+" (output reg " + v);
+							sv.write("output reg " + v);
 						}
 						first = false;
 					} else{
@@ -56,9 +57,9 @@ public class Lpn2verilog {
 				else if (lpn.isInput(v)){
 					if (first){
 						if (!lpn.isBoolean(v)){
-							sv.write("module "+svFileName.split("\\.")[0]+" (input real " + v);
+							sv.write("input real " + v);//svFileName.split("\\.")[0]+
 						} else{
-							sv.write("module "+svFileName.split("\\.")[0]+" (input wire " + v);
+							sv.write("input wire " + v);//svFileName.split("\\.")[0]+
 						}
 						first = false;
 					} else{
