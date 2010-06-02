@@ -134,6 +134,7 @@ public class PlacePanel extends JPanel implements ActionListener {
 			//if (selected != null && !oldName.equals(id)) {
 			//	lhpn.changeVariableName(oldName, id);
 			//}
+			/*
 			lhpn.removePlace(oldName);
 			lhpn.addPlace(id, ic);
 			//lhpn.renamePlace(oldName, id, ic);
@@ -144,7 +145,20 @@ public class PlacePanel extends JPanel implements ActionListener {
 					}
 				}
 			}
-			//placeList.removeItem(oldName);
+			*/
+			if (selected != null && !oldName.equals(id)) {
+				lhpn.changePlaceName(oldName, id);
+			}
+			lhpn.changeInitialMarking(id, ic);
+			
+			for (String s : placeList.getItems()) {
+				if (oldName != null) {
+					String p = s.split(" ")[0];
+					if (p.equals(oldName)) {
+						placeList.removeItem(s);
+					}
+				}
+			}
 			String listName;
 			if (ic) {
 				listName = id + " -  marked";
@@ -157,15 +171,14 @@ public class PlacePanel extends JPanel implements ActionListener {
 			placeList.setSelectedValue(listName, true);
 			if (oldName != null  && !id.equals(oldName)) {
 				for (String s : controlList.getItems()) {
-					String[] array = s.split("\\s");
-					for (String t : array) {
-						if (t.equals(oldName)) {
-							lhpn.removeMovement(array[0], array[1]);
-							controlList.removeItem(s);
-							s = s.replace(oldName, id);
-							array = s.split("\\s");
-							lhpn.removeMovement(array[0], array[1]);
-							controlList.addItem(s);
+					if (oldName != null) {
+						String[] array = s.split("\\s");
+						for (String t : array) {
+							if (t.equals(oldName)) {
+								controlList.removeItem(s);
+								s = s.replace(oldName, id);
+								controlList.addItem(s);
+							}
 						}
 					}
 				}
