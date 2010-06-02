@@ -329,17 +329,17 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		pathLengthG = new JTextField("0");
 		JLabel rateSamplingLabel = new JLabel("Window Size");//("Rate Sampling");
 		rateSamplingG = new JTextField("-1");
-		JLabel dmvcLabel = new JLabel("DMVC determination parameters");
+		JLabel dmvcLabel = new JLabel("DMV determination parameters");
 		JLabel absTimeLabel = new JLabel("Absolute Time");
 		absTimeG = new JCheckBox();
 		absTimeG.setSelected(false);
 		absTimeG.addItemListener(this); 
 		JLabel percentLabel = new JLabel("Fraction");
 		percentG = new JTextField("0.8");
-		JLabel runTimeLabel = new JLabel("Dmvc Run Time");
+		JLabel runTimeLabel = new JLabel("DMV Run Time");
 		runTimeG = new JTextField("5e-6");
 		runTimeG.setEnabled(false);
-		JLabel runLengthLabel = new JLabel("DMVC Run Length");
+		JLabel runLengthLabel = new JLabel("DMV Run Length");
 		runLengthG = new JTextField("2");
 		runLengthG.setEnabled(true);
 		
@@ -2638,7 +2638,6 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			String failProp = "";
 			String enFailAnd = "";
 			String enFail = "";
-			// Add logic to deal with failprop and related places/transitions
 			g = new LhpnFile(); // The generated lhpn is stored in this object
 			placeInfo = new HashMap<String, Properties>();
 			transitionInfo = new HashMap<String, Properties>();
@@ -2648,11 +2647,6 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			ratePlaces = new ArrayList<String>();
 			dmvcInputPlaces = new ArrayList<String>();
 			propPlaces = new ArrayList<String>();
-			/*if (new File(directory + separator + "learn" + ".prop").exists()){
-				BufferedReader prop = new BufferedReader(new FileReader(directory + separator + "learn" + ".prop"));
-				failProp = prop.readLine();
-				failProp = failProp.replace("\n", "");
-			*/	
 			if (!(propertyG.getText()).equals("")){
 				//BufferedReader prop = new BufferedReader(new FileReader(directory + separator + "learn" + ".prop"));
 				failProp = propertyG.getText().trim();
@@ -2676,9 +2670,10 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				p1.setProperty("transitionNum", numTransitions.toString());
 				g.addTransition("t" + numTransitions); // prevTranKey+key);
 				g.addMovement("p" + placeInfo.get("failProp").getProperty("placeNum"), "t" + transitionInfo.get("failProp").getProperty("transitionNum")); 
+				g.getTransition("t" + numTransitions).setFail(true);
 				numTransitions++;
-				enFailAnd = "&~fail";
-				enFail = "~fail";
+				//enFailAnd = "&~fail";
+				//enFail = "~fail";
 			}
 			epsilon = Double.parseDouble(epsilonG.getText().trim());
 			rateSampling = Integer.parseInt(rateSamplingG.getText().trim());
@@ -2754,7 +2749,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 					g.addContinuous(v.getName(), initCond);
 				}
 			}
-			g.addOutput("fail", "false");
+			//g.addOutput("fail", "false");
 //			ArrayList<ArrayList<Double>> scaleDiv; commented for replacing divisionsL by thresholds
 			HashMap<String, ArrayList<Double>> scaledThresholds; // scaledThresholds are scaleDiv
 			// temporary
@@ -2897,15 +2892,18 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 							if ((transEnablingsVAMS[transNum] != "") && (transEnablingsVAMS[transNum] != null)){ 
 								transEnablingsVAMS[transNum] += ")";
 							}
-							if (condStr.equalsIgnoreCase("")){
-								condStr = enFail;
+							if (!condStr.equalsIgnoreCase("")){
+								//condStr += enFailAnd;
+								g.addEnabling(t, condStr);
 							}
 							else{
-								condStr += enFailAnd;
+								//Nothing added to Enabling condition.
+								//condStr = enFail;
+								//g.addEnabling(t, condStr);
 							}
 							//transEnablingsVHDL[transNum] += enFailAnd;
-							g.addEnabling(t, condStr);
 						}
+						/* Related to the separate net for DMV input driver
 						if ((placeInfo.get(getPlaceInfoIndex(g.getPreset(t)[0])).getProperty("type").equalsIgnoreCase("DMVC"))
 								&& (placeInfo.get(getPlaceInfoIndex(g.getPostset(t)[0])).getProperty("type").equalsIgnoreCase("DMVC"))) {
 							// Dealing with graphs obtained from DMVC INPUT variables
@@ -2928,8 +2926,10 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 								g.addIntAssign(t, placeInfo.get(getPlaceInfoIndex(nextPlace)).getProperty("DMVCVariable"), String.valueOf(minv));
 							g.addEnabling(t, enFail);
 						}
+						*/
 					}
 					else{
+						/* Related to the separate net for DMV input driver
 						if ((transientNetPlaces.get(getTransientNetPlaceIndex(g.getPreset(t)[0])).getProperty("type").equalsIgnoreCase("DMVC"))
 								&& (placeInfo.get(getPlaceInfoIndex(g.getPostset(t)[0])).getProperty("type").equalsIgnoreCase("DMVC"))){		// transient dmv transition
 							String prevPlace = g.getPreset(t)[0];
@@ -2948,7 +2948,8 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 							else
 								g.addIntAssign(t, placeInfo.get(getPlaceInfoIndex(nextPlace)).getProperty("DMVCVariable"), String.valueOf(minv));
 							g.addEnabling(t, enFail);
-						}	
+						}
+						*/	
 						if ((transientNetPlaces.get(getTransientNetPlaceIndex(g.getPreset(t)[0])).getProperty("type").equalsIgnoreCase("RATE"))
 								&& (placeInfo.get(getPlaceInfoIndex(g.getPostset(t)[0])).getProperty("type").equalsIgnoreCase("RATE"))){		// transient non-dmv transition
 							ArrayList<Integer> diffL = diff(getTransientNetPlaceIndex(g.getPreset(t)[0]), getPlaceInfoIndex(g.getPostset(t)[0]));
@@ -3031,20 +3032,22 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 							if ((transEnablingsVAMS[transNum] != "") && (transEnablingsVAMS[transNum] != null)){ 
 								transEnablingsVAMS[transNum] += ")";
 							}
-							if (condStr.equalsIgnoreCase("")){
-								condStr = enFail;
+							if (!condStr.equalsIgnoreCase("")){
+								//condStr += enFailAnd;
+								g.addEnabling(t, condStr);
 							}
 							else{
-								condStr += enFailAnd;
+								//condStr = enFail;
+								//g.addEnabling(t, condStr);
 							}
 							//transEnablingsVHDL[transNum] += enFailAnd;
-							g.addEnabling(t, condStr);
+							
 						}
 					}
 				}   
 				if ((g.getPreset(t) != null) && (!isTransientTransition(t)) && (placeInfo.get(getPlaceInfoIndex(g.getPreset(t)[0])).getProperty("type").equalsIgnoreCase("PROP"))){
 					g.addEnabling(t, failProp);
-					g.addBoolAssign(t, "fail", "true"); // fail would be the variable name
+					//g.addBoolAssign(t, "fail", "true"); // fail would be the variable name
 					//g.addProperty(failProp);
 				}
 				// if ((t.getIncomingP() != null) &&
@@ -3614,140 +3617,6 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		}
 	}
 
-	public void updateTimeInfo(int[][] bins, Properties cvgProp) {
-		String prevPlace = null;
-		String currPlace = null;
-		Properties p3 = null;
-		//ArrayList<String> dmvcPlaceL = new ArrayList<String>(); // only dmvc inputs
-		boolean exists;
-		// int dmvcCnt = 0; making this global .. rechk
-		String[] places;
-		try {
-			for (int i = 0; i < reqdVarsL.size(); i++) {
-				if (reqdVarsL.get(i).isDmvc() && reqdVarsL.get(i).isInput()) {
-					out.write(reqdVarsL.get(i).getName() + " is a dmvc input variable \n");
-					// dmvcCnt = 0; in case of multiple tsd files, this may be a problem. may create a new distinct place with an existing key.??
-					prevPlace = null;
-					currPlace = null;
-					p3 = null;
-					Properties p2 = null;
-					String k;
-					DMVCrun runs = reqdVarsL.get(i).getRuns();
-					Double[] avgVals = runs.getAvgVals();
-					out.write("variable " + reqdVarsL.get(i).getName() + " Number of runs = " + avgVals.length + "Avg Values are : " + avgVals.toString() + "\n");
-					for (int j = 0; j < avgVals.length; j++) { // this gives number of runs/startpoints/endpoints
-						exists = false;
-						places = g.getPlaceList();
-						if (places.length > 1) {
-							for (String st : places) {
-								k = getPlaceInfoIndex(st);
-								if (!isTransientPlace(st) && (placeInfo.get(k).getProperty("type").equalsIgnoreCase("DMVC"))) {
-									if ((Math.abs(Double.parseDouble(placeInfo.get(k).getProperty("DMVCValue")) - avgVals[j]) < epsilon)
-											&& (placeInfo.get(k).getProperty("DMVCVariable").equalsIgnoreCase(reqdVarsL.get(i).getName()))) {
-					//					out.write("Place with key " + k + "already exists. so adding dmvcTime to it\n");
-										addDmvcTime(placeInfo.get(k), reqdVarsL.get(i).getName(), calcDelay(runs.getStartPoint(j), runs.getEndPoint(j)));
-										addDuration(placeInfo.get(k),calcDelay(runs.getStartPoint(j), runs.getEndPoint(j)));
-										exists = true;
-										prevPlace = currPlace;
-										currPlace = getPlaceInfoIndex(st);// k;
-										p2 = placeInfo.get(currPlace);
-		//next few lines commented to remove multiple dmv input places of same variable from being marked initially.
-										/*	if (j == 0) { // adding the place corresponding to the first dmv run to initial marking. 
-											placeInfo.get(k).setProperty("initiallyMarked", "true");
-											g.changeInitialMarking("p"	+ placeInfo.get(k).getProperty("placeNum"),true);
-										} */
-										// break ; here?
-									}
-								}
-							}
-						}
-						if (!exists) {
-							prevPlace = currPlace;
-							currPlace = "d_" + i + "_" + dmvcCnt;
-							p2 = new Properties();
-							p2.setProperty("placeNum", numPlaces.toString());
-							p2.setProperty("type", "DMVC");
-							p2.setProperty("DMVCVariable", reqdVarsL.get(i).getName());
-							p2.setProperty("DMVCValue", avgVals[j].toString());
-							p2.setProperty("initiallyMarked", "false");
-							addDmvcTime(p2, reqdVarsL.get(i).getName(),calcDelay(runs.getStartPoint(j), runs.getEndPoint(j)));
-							//placeInfo.put("d_" + i + "_" + dmvcCnt, p2);
-							if (j == 0) {
-								transientNetPlaces.put("d_" + i + "_" + dmvcCnt, p2);
-								g.addPlace("p" + numPlaces, true);
-								p2.setProperty("initiallyMarked", "true");
-							}
-							else{
-								placeInfo.put("d_" + i + "_" + dmvcCnt, p2);
-								g.addPlace("p" + numPlaces, false);
-							}
-							dmvcInputPlaces.add("p" + numPlaces);
-							if (j == 0) { // adding the place corresponding to the first dmv run to initial marking
-								p2.setProperty("initiallyMarked", "true");
-								g.changeInitialMarking("p" + p2.getProperty("placeNum"), true);
-							}
-							numPlaces++;
-							out.write("Created new place with key " + "d_" + i + "_" + dmvcCnt + "\n");
-							dmvcCnt++;
-							//dmvcPlaceL.add(currPlace);
-							cvgProp.setProperty("places", String.valueOf(Integer.parseInt(cvgProp.getProperty("places"))+1));
-						}
-						Double d = calcDelay(runs.getStartPoint(j), runs.getEndPoint(j));// data.get(0).get(runs.getEndPoint(j)) - data.get(0).get(runs.getStartPoint(j));
-							// data.get(0).get(reqdVarsL.get(prevPlace.getDmvcVar()).getRuns().getEndPoint(j-1));
-						/* TEMPORARY FIX
-						Double minTime = getMinDmvcTime(p2);
-						if ((d > minTime*Math.pow(10.0, 4.0))){ // && (getMinDmvcTime(p2) == getMaxDmvcTime(p2))){
-							deleteInvalidDmvcTime(p2, getMinDmvcTime(p2));	// updates dmin,dmax too
-						}
-						END TEMPORARY FIX	*/
-			// For dmv input nets, transition's delay assignment is
-			// it's preset's duration; value assgnmt is value in postset.
-						addDuration(p2,d);	
-						//boolean transientNet = false;
-						//	out.write("Delay in place p"+ p2.getProperty("placeNum")+ " after updating " + d + " is ["+ p2.getProperty("dMin") + ","+ p2.getProperty("dMax") + "]\n");
-						if (prevPlace != null) {
-							if (transitionInfo.containsKey(prevPlace + currPlace)) {
-								p3 = transitionInfo.get(prevPlace + currPlace);
-							} else {
-								p3 = new Properties();
-								p3.setProperty("transitionNum", numTransitions.toString());
-								if (transientNetPlaces.containsKey(prevPlace)){
-									transientNetTransitions.put(prevPlace + currPlace, p3);
-									g.addTransition("t" + numTransitions); // prevTranKey+key);
-									g.addMovement("p" + transientNetPlaces.get(prevPlace).getProperty("placeNum"), "t" + transientNetTransitions.get(prevPlace + currPlace).getProperty("transitionNum")); 
-									g.addMovement("t" + transientNetTransitions.get(prevPlace + currPlace).getProperty("transitionNum"), "p" + placeInfo.get(currPlace).getProperty("placeNum"));
-								//	transientNet = true;
-								}
-								else{
-									transitionInfo.put(prevPlace + currPlace, p3);
-									g.addTransition("t" + numTransitions); // prevTranKey+key);
-									g.addMovement("p"+ placeInfo.get(prevPlace).getProperty("placeNum"), "t"+ transitionInfo.get(prevPlace + currPlace).getProperty("transitionNum")); 
-									g.addMovement("t"+ transitionInfo.get(prevPlace+ currPlace).getProperty("transitionNum"),"p"+ placeInfo.get(currPlace).getProperty("placeNum"));
-								}
-								numTransitions++;
-								cvgProp.setProperty("transitions", String.valueOf(Integer.parseInt(cvgProp.getProperty("transitions"))+1));
-							}
-						}
-						/*if (!transientNet){	// assuming postset duration
-							addDuration(p2, d);
-						}
-						else {
-							addTransientDuration(p2, d);
-						}*/
-						
-					}
-				} else if (reqdVarsL.get(i).isDmvc()) { // non-input dmvc
-
-				}
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-			JOptionPane.showMessageDialog(biosim.frame(),
-					"Log file couldn't be opened for writing rates and bins.",
-					"ERROR!", JOptionPane.ERROR_MESSAGE);
-		}
-	}
-
 	public void updateGraph(int[][] bins, Double[][] rates, Properties cvgProp,JFrame running) {
 		updateRateInfo(bins, rates, cvgProp);
 		//updateTimeInfo(bins,cvgProp);
@@ -3889,13 +3758,13 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 						reqdVarsL.get(i).setDmvc(true);
 						Double[] dmvcValues = reqdVarsL.get(i).getRuns().getAvgVals();
 						Arrays.sort(dmvcValues);
-						//System.out.println("Sorted DMVC values of " + reqdVarsL.get(i).getName() + " are ");
+						//System.out.println("Sorted DMV values of " + reqdVarsL.get(i).getName() + " are ");
 						//for (Double l : dmvcValues){
 						//	System.out.print(l + " ");
 						//}
 						ArrayList<Double> dmvcValuesUnique = new ArrayList<Double>();
 						ArrayList<Double> dmvSplits = new ArrayList<Double>();
-						out.write("Final DMVC values of " + reqdVarsL.get(i).getName() + " are ");
+						out.write("Final DMV values of " + reqdVarsL.get(i).getName() + " are ");
 						for (int j = 0; j < dmvcValues.length; j++){
 							dmvcValuesUnique.add(dmvcValues[j]);
 							out.write(dmvcValues[j] + " ");
@@ -4182,43 +4051,44 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 					p = transientNetPlaces.get(place);
 				}
 				if (place != "failProp"){
-
+					/* Related to the separate net for DMV input driver
 					if (p.getProperty("type").equals("DMVC")) {
 						p.setProperty("DMVCValue", Double.toString(Double.parseDouble(p.getProperty("DMVCValue"))* scaleFactor));
 					} else {
-						for (Variable v : reqdVarsL) {
-							if (!v.isDmvc()) {
-								// p.setProperty(v.getName() +
-								// "_rMin",Integer.toString((int)(Double.parseDouble(p.getProperty(v.getName()
-								// + "_rMin"))/delayScaleFactor)));
-								// p.setProperty(v.getName() +
-								// "_rMax",Integer.toString((int)(Double.parseDouble(p.getProperty(v.getName()
-								// + "_rMax"))/delayScaleFactor)));
-								p.setProperty(v.getName() + "_rMin", Double
+					 */
+					for (Variable v : reqdVarsL) {
+						if (!v.isDmvc()) {
+							// p.setProperty(v.getName() +
+							// "_rMin",Integer.toString((int)(Double.parseDouble(p.getProperty(v.getName()
+							// + "_rMin"))/delayScaleFactor)));
+							// p.setProperty(v.getName() +
+							// "_rMax",Integer.toString((int)(Double.parseDouble(p.getProperty(v.getName()
+							// + "_rMax"))/delayScaleFactor)));
+							p.setProperty(v.getName() + "_rMin", Double
+									.toString(Double.parseDouble(p.getProperty(v.getName()
+											+ "_rMin"))* scaleFactor));
+							p.setProperty(v.getName() + "_rMax", Double
+									.toString(Double.parseDouble(p.getProperty(v.getName()
+											+ "_rMax"))* scaleFactor));
+						} else {
+							// p.setProperty(v.getName() +
+							// "_rMin",Integer.toString((int)(Double.parseDouble(p.getProperty(v.getName()
+							// + "_rMin"))/delayScaleFactor)));
+							// p.setProperty(v.getName() +
+							// "_rMax",Integer.toString((int)(Double.parseDouble(p.getProperty(v.getName()
+							// + "_rMax"))/delayScaleFactor)));
+							if (!v.isInput()) {
+								p.setProperty(v.getName() + "_vMin", Double
 										.toString(Double.parseDouble(p.getProperty(v.getName()
-												+ "_rMin"))* scaleFactor));
-								p.setProperty(v.getName() + "_rMax", Double
+												+ "_vMin"))* scaleFactor));
+								p.setProperty(v.getName() + "_vMax", Double
 										.toString(Double.parseDouble(p.getProperty(v.getName()
-												+ "_rMax"))* scaleFactor));
-							} else {
-								// p.setProperty(v.getName() +
-								// "_rMin",Integer.toString((int)(Double.parseDouble(p.getProperty(v.getName()
-								// + "_rMin"))/delayScaleFactor)));
-								// p.setProperty(v.getName() +
-								// "_rMax",Integer.toString((int)(Double.parseDouble(p.getProperty(v.getName()
-								// + "_rMax"))/delayScaleFactor)));
-								if (!v.isInput()) {
-									p.setProperty(v.getName() + "_vMin", Double
-											.toString(Double.parseDouble(p.getProperty(v.getName()
-													+ "_vMin"))* scaleFactor));
-									p.setProperty(v.getName() + "_vMax", Double
-											.toString(Double.parseDouble(p.getProperty(v.getName()
-													+ "_vMax")) * scaleFactor));
-								}
-
+												+ "_vMax")) * scaleFactor));
 							}
+
 						}
 					}
+					//}
 				}
 			}
 			/*int i = 0;
@@ -4260,6 +4130,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 					p = transientNetPlaces.get(place);
 				}
 				if (place != "failProp"){
+					/* Related to the separate net for DMV input driver
 					if (p.getProperty("type").equals("DMVC")) {
 						String[] times = null;
 						String name = p.getProperty("DMVCVariable");
@@ -4271,7 +4142,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 								if (newS == null) {
 									// newS = Integer.toString((int)(Double.parseDouble(times[i])*delayScaleFactor));
 									newS = Double.toString(Double.parseDouble(times[i])
-											* delayScaleFactor);
+					 * delayScaleFactor);
 								} else {
 									// newS = newS + Integer.toString((int)(Double.parseDouble(times[i])*delayScaleFactor));
 									newS = newS + " " + Double.toString(Double
@@ -4284,30 +4155,30 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 								.getProperty("dMin")) * delayScaleFactor));
 						p.setProperty("dMax", Double.toString(Double.parseDouble(p
 								.getProperty("dMax")) * delayScaleFactor));
-					} else{
-						// p.setProperty("dMin",Integer.toString((int)(Double.parseDouble(p.getProperty("dMin"))*delayScaleFactor)));
-						// p.setProperty("dMax",Integer.toString((int)(Double.parseDouble(p.getProperty("dMax"))*delayScaleFactor)));
-						p.setProperty("dMin", Double.toString(Double.parseDouble(p
-								.getProperty("dMin")) * delayScaleFactor));
-						p.setProperty("dMax", Double.toString(Double.parseDouble(p
-								.getProperty("dMax")) * delayScaleFactor));
-						for (Variable v : reqdVarsL) {
-							if (!v.isDmvc()) {
-								// p.setProperty(v.getName() +
-								// "_rMin",Integer.toString((int)(Double.parseDouble(p.getProperty(v.getName()
-								// + "_rMin"))/delayScaleFactor)));
-								// p.setProperty(v.getName() +
-								// "_rMax",Integer.toString((int)(Double.parseDouble(p.getProperty(v.getName()
-								// + "_rMax"))/delayScaleFactor)));
-								p.setProperty(v.getName() + "_rMin", Double
-										.toString(Double.parseDouble(p.getProperty(v
-												.getName() + "_rMin"))	/ delayScaleFactor));
-								p.setProperty(v.getName() + "_rMax", Double
-										.toString(Double.parseDouble(p.getProperty(v
-												.getName() + "_rMax"))	/ delayScaleFactor));
-							}
+					} else{*/
+					// p.setProperty("dMin",Integer.toString((int)(Double.parseDouble(p.getProperty("dMin"))*delayScaleFactor)));
+					// p.setProperty("dMax",Integer.toString((int)(Double.parseDouble(p.getProperty("dMax"))*delayScaleFactor)));
+					p.setProperty("dMin", Double.toString(Double.parseDouble(p
+							.getProperty("dMin")) * delayScaleFactor));
+					p.setProperty("dMax", Double.toString(Double.parseDouble(p
+							.getProperty("dMax")) * delayScaleFactor));
+					for (Variable v : reqdVarsL) {
+						if (!v.isDmvc()) {
+							// p.setProperty(v.getName() +
+							// "_rMin",Integer.toString((int)(Double.parseDouble(p.getProperty(v.getName()
+							// + "_rMin"))/delayScaleFactor)));
+							// p.setProperty(v.getName() +
+							// "_rMax",Integer.toString((int)(Double.parseDouble(p.getProperty(v.getName()
+							// + "_rMax"))/delayScaleFactor)));
+							p.setProperty(v.getName() + "_rMin", Double
+									.toString(Double.parseDouble(p.getProperty(v
+											.getName() + "_rMin"))	/ delayScaleFactor));
+							p.setProperty(v.getName() + "_rMax", Double
+									.toString(Double.parseDouble(p.getProperty(v
+											.getName() + "_rMax"))	/ delayScaleFactor));
 						}
 					}
+					//}
 				}
 			}
 			for (Variable v : reqdVarsL) {
@@ -4429,6 +4300,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		Double minDelay = null;
 		for (String place : placeInfo.keySet()) {
 			Properties p = placeInfo.get(place);
+			/* Related to the separate net for DMV input driver
 			if (p.getProperty("type").equals("DMVC")) {
 				if ((minDelay == null) && (getMinDmvcTime(p) != null)
 						&& (getMinDmvcTime(p) != 0)) {
@@ -4438,16 +4310,16 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 						&& (getMinDmvcTime(p) < minDelay)) {
 					minDelay = getMinDmvcTime(p);
 				}
-			} else {
-				if ((minDelay == null) && (p.getProperty("dMin") != null)
-						&& (Double.parseDouble(p.getProperty("dMin")) != 0)) {
-					minDelay = Double.parseDouble(p.getProperty("dMin"));
-				} else if ((p.getProperty("dMin") != null)
-						&& (Double.parseDouble(p.getProperty("dMin")) != 0)
-						&& (Double.parseDouble(p.getProperty("dMin")) < minDelay)) {
-					minDelay = Double.parseDouble(p.getProperty("dMin"));
-				}
+			} else {*/
+			if ((minDelay == null) && (p.getProperty("dMin") != null)
+					&& (Double.parseDouble(p.getProperty("dMin")) != 0)) {
+				minDelay = Double.parseDouble(p.getProperty("dMin"));
+			} else if ((p.getProperty("dMin") != null)
+					&& (Double.parseDouble(p.getProperty("dMin")) != 0)
+					&& (Double.parseDouble(p.getProperty("dMin")) < minDelay)) {
+				minDelay = Double.parseDouble(p.getProperty("dMin"));
 			}
+			//}
 		}
 		return minDelay;
 	}
@@ -4456,6 +4328,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		Double maxDelay = null;
 		for (String place : placeInfo.keySet()) {
 			Properties p = placeInfo.get(place);
+			/* Related to the separate net for DMV input driver
 			if (p.getProperty("type").equals("DMVC")) {
 				if ((maxDelay == null) && (getMaxDmvcTime(p) != null)
 						&& (getMaxDmvcTime(p) != 0)) {
@@ -4465,20 +4338,21 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 						&& (getMaxDmvcTime(p) > maxDelay)) {
 					maxDelay = getMaxDmvcTime(p);
 				}
-			} else {
-				if ((maxDelay == null) && (p.getProperty("dMax") != null)
-						&& (Double.parseDouble(p.getProperty("dMax")) != 0)) {
-					maxDelay = Double.parseDouble(p.getProperty("dMax"));
-				} else if ((p.getProperty("dMax") != null)
-						&& (Double.parseDouble(p.getProperty("dMax")) != 0)
-						&& (Double.parseDouble(p.getProperty("dMax")) > maxDelay)) {
-					maxDelay = Double.parseDouble(p.getProperty("dMax"));
-				}
+			} else {*/
+			if ((maxDelay == null) && (p.getProperty("dMax") != null)
+					&& (Double.parseDouble(p.getProperty("dMax")) != 0)) {
+				maxDelay = Double.parseDouble(p.getProperty("dMax"));
+			} else if ((p.getProperty("dMax") != null)
+					&& (Double.parseDouble(p.getProperty("dMax")) != 0)
+					&& (Double.parseDouble(p.getProperty("dMax")) > maxDelay)) {
+				maxDelay = Double.parseDouble(p.getProperty("dMax"));
 			}
+			//}
 		}
 		return maxDelay;
 	}
 
+	/* Related to the separate net for DMV input driver
 	public Double getMinDmvcTime(Properties p) {
 		String[] times = null;
 		String name = p.getProperty("DMVCVariable");
@@ -4514,7 +4388,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			return null;
 		}
 	}
-
+*/
 	public void addDuration(Properties p, Double d) {
 		Double dMin;
 		Double dMax;
@@ -5723,7 +5597,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 								g.addMovement("p" + placeInfo.get(p).getProperty("placeNum"), "t" + transitionInfo.get(p + key).getProperty("transitionNum")); 
 								g.addMovement("t" + transitionInfo.get(p + key).getProperty("transitionNum"), "p" + placeInfo.get(key).getProperty("placeNum"));
 							//	g.addEnabling("t" + numTransitions, "~fail");
-								g.addEnabling("t" + numTransitions, "~(" + reqdVarsL.get(i).getName() + ">=" + (int) Math.floor(lowerLimit[i]) + ")" + "&~fail");
+								g.addEnabling("t" + numTransitions, "~(" + reqdVarsL.get(i).getName() + ">=" + (int) Math.floor(lowerLimit[i]) + ")");
 								int minr = getMinRate(key, reqdVarsL.get(i).getName());
 								int maxr = getMaxRate(key, reqdVarsL.get(i).getName());
 								if (minr != maxr)
@@ -5737,7 +5611,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 								g.addTransition("t" + numTransitions); // prevTranKey+key);
 								g.addMovement("p" + placeInfo.get(key).getProperty("placeNum"), "t" + transitionInfo.get(key + p).getProperty("transitionNum")); 
 								g.addMovement("t" + transitionInfo.get(key + p).getProperty("transitionNum"), "p" + placeInfo.get(p).getProperty("placeNum"));
-								g.addEnabling("t" + numTransitions, "(" + reqdVarsL.get(i).getName() + ">=" + (int) Math.floor(lowerLimit[i]) + ")" + "&~fail");
+								g.addEnabling("t" + numTransitions, "(" + reqdVarsL.get(i).getName() + ">=" + (int) Math.floor(lowerLimit[i]) + ")");
 								minr = getMinRate(p, reqdVarsL.get(i).getName());
 								maxr = getMaxRate(p, reqdVarsL.get(i).getName());
 								if (minr != maxr)
@@ -5758,7 +5632,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 									g.addMovement("p" + placeInfo.get(p).getProperty("placeNum"), "t" + transitionInfo.get(p + key).getProperty("transitionNum")); 
 									g.addMovement("t" + transitionInfo.get(p + key).getProperty("transitionNum"), "p" + placeInfo.get(key).getProperty("placeNum"));
 								//	g.addEnabling("t" + numTransitions, "~fail");
-									g.addEnabling("t" + numTransitions, "~(" + reqdVarsL.get(i).getName() + ">=" + (int) Math.floor(lowerLimit[i]) + ")" + "&~fail");
+									g.addEnabling("t" + numTransitions, "~(" + reqdVarsL.get(i).getName() + ">=" + (int) Math.floor(lowerLimit[i]) + ")");
 									int minr = getMinRate(key, reqdVarsL.get(i).getName());
 									int maxr = getMaxRate(key, reqdVarsL.get(i).getName());
 									if (minr != maxr)
@@ -5848,7 +5722,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 									g.addRateAssign("t" + numTransitions, reqdVarsL.get(i).getName(), "uniform("	+ minr	+ "," + maxr + ")");
 								else
 									g.addRateAssign("t" + numTransitions, reqdVarsL.get(i).getName(), String.valueOf(minr));
-								g.addEnabling("t" + numTransitions, "(" + reqdVarsL.get(i).getName() + ">=" + (int) Math.ceil(upperLimit[i]) + ")" + "&~fail");
+								g.addEnabling("t" + numTransitions, "(" + reqdVarsL.get(i).getName() + ">=" + (int) Math.ceil(upperLimit[i]) + ")");
 								numTransitions++;
 								Properties p2 = new Properties();
 								transitionInfo.put(key + p, p2);
@@ -5856,7 +5730,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 								g.addTransition("t" + numTransitions); // prevTranKey+key);
 								g.addMovement("p" + placeInfo.get(key).getProperty("placeNum"), "t" + transitionInfo.get(key + p).getProperty("transitionNum")); 
 								g.addMovement("t" + transitionInfo.get(key + p).getProperty("transitionNum"), "p" + placeInfo.get(p).getProperty("placeNum"));
-								g.addEnabling("t" + numTransitions, "~(" + reqdVarsL.get(i).getName() + ">=" + (int) Math.ceil(upperLimit[i]) + ")" + "&~fail");
+								g.addEnabling("t" + numTransitions, "~(" + reqdVarsL.get(i).getName() + ">=" + (int) Math.ceil(upperLimit[i]) + ")");
 								minr = getMinRate(p, reqdVarsL.get(i).getName());
 								maxr = getMaxRate(p, reqdVarsL.get(i).getName());
 								if (minr != maxr)
@@ -5883,7 +5757,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 										g.addRateAssign("t" + numTransitions, reqdVarsL.get(i).getName(), "uniform("	+ minr	+ "," + maxr + ")");
 									else
 										g.addRateAssign("t" + numTransitions, reqdVarsL.get(i).getName(), String.valueOf(minr));
-									g.addEnabling("t" + numTransitions, "(" + reqdVarsL.get(i).getName() + ">=" + (int) Math.ceil(upperLimit[i]) + ")" + "&~fail");
+									g.addEnabling("t" + numTransitions, "(" + reqdVarsL.get(i).getName() + ">=" + (int) Math.ceil(upperLimit[i]) + ")");
 									numTransitions++;
 								}
 							}
@@ -5954,7 +5828,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 									g.addMovement("p" + placeInfo.get(p).getProperty("placeNum"), "t" + transitionInfo.get(p + key).getProperty("transitionNum")); 
 									g.addMovement("t" + transitionInfo.get(p + key).getProperty("transitionNum"), "p" + placeInfo.get(key).getProperty("placeNum"));
 								//	g.addEnabling("t" + numTransitions, "~fail");
-									g.addEnabling("t" + numTransitions, "~(" + reqdVarsL.get(i).getName() + ">=" + (int) Math.floor(lowerLimit[i]) + ")" + "&~fail");
+									g.addEnabling("t" + numTransitions, "~(" + reqdVarsL.get(i).getName() + ">=" + (int) Math.floor(lowerLimit[i]) + ")");
 									int minr = getMinRate(key, reqdVarsL.get(i).getName());
 									int maxr = getMaxRate(key, reqdVarsL.get(i).getName());
 									if (minr != maxr)
@@ -6012,7 +5886,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 										g.addRateAssign("t" + numTransitions, reqdVarsL.get(i).getName(), "uniform("	+ minr	+ "," + maxr + ")");
 									else
 										g.addRateAssign("t" + numTransitions, reqdVarsL.get(i).getName(), String.valueOf(minr));
-									g.addEnabling("t" + numTransitions, "(" + reqdVarsL.get(i).getName() + ">=" + (int) Math.ceil(upperLimit[i]) + ")" + "&~fail");
+									g.addEnabling("t" + numTransitions, "(" + reqdVarsL.get(i).getName() + ">=" + (int) Math.ceil(upperLimit[i]) + ")");
 									numTransitions++;
 								}
 							}
@@ -6060,7 +5934,8 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				break;
 			}
 			if (failPropVHDL != null){
-				vhdlAms.write("\tshared variable fail:boolean:= false;\n");
+				//TODO: Make this an assertion
+				//vhdlAms.write("\tshared variable fail:boolean:= false;\n");
 			}
 			for (String st1 : g.getPlaceList()){
 				if (!isTransientPlace(st1)){
@@ -6068,9 +5943,10 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 					if (placeInfo.get(p).getProperty("type").equalsIgnoreCase("RATE")) {
 						ratePlaces.add(st1); // w.r.t g here
 					}
+					/* Related to the separate net for DMV input driver
 					if (placeInfo.get(p).getProperty("type").equalsIgnoreCase("DMVC")) {
 						dmvcPlaces.add(p); // w.r.t placeInfo here
-					}
+					}*/
 					if (placeInfo.get(p).getProperty("type").equalsIgnoreCase("PROP")) {
 
 					}
@@ -6080,9 +5956,10 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 					if (transientNetPlaces.get(p).getProperty("type").equalsIgnoreCase("RATE")){
 						ratePlaces.add(st1); // w.r.t g here
 					}
+					/* Related to the separate net for DMV input driver
 					if (transientNetPlaces.get(p).getProperty("type").equalsIgnoreCase("DMVC")){
 						dmvcPlaces.add(p); // w.r.t g here
-					}
+					}*/
 				}
 			}
 			/*for (String st:dmvcPlaces){
@@ -6315,7 +6192,8 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				vhdlAms.write("\tprocess\n");
 				vhdlAms.write("\tbegin\n");
 				vhdlAms.write("\t\twait until " + failPropVHDL + ";\n");
-				vhdlAms.write("\t\tfail := true;\n");
+				//TODO: Change this to assertion
+				//vhdlAms.write("\t\tfail := true;\n");
 				vhdlAms.write("\tend process;\n\n");
 			}
 		//	vhdlAms.write("\tend process;\n\n");
@@ -6424,9 +6302,10 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 					if (placeInfo.get(p).getProperty("type").equalsIgnoreCase("RATE")) {
 						ratePlaces.add(st1); // w.r.t g here
 					}
+					/* Related to the separate net for DMV input driver
 					if (placeInfo.get(p).getProperty("type").equalsIgnoreCase("DMVC")) {
 						dmvcPlaces.add(p); // w.r.t placeInfo here
-					}
+					}*/
 					if (placeInfo.get(p).getProperty("type").equalsIgnoreCase("PROP")) {
 
 					}
@@ -6436,9 +6315,10 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 					if (transientNetPlaces.get(p).getProperty("type").equalsIgnoreCase("RATE")){
 						ratePlaces.add(st1); // w.r.t g here
 					}
+					/* Related to the separate net for DMV input driver
 					if (transientNetPlaces.get(p).getProperty("type").equalsIgnoreCase("DMVC")){
 						dmvcPlaces.add(p); // w.r.t  placeInfo here
-					}
+					}*/
 				}
 			}
 			/*for (String st:dmvcPlaces){
@@ -6936,6 +6816,141 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 	}
 }
 
+/* This method is used for creating separate nets for each DMV input variable driver.
+public void updateTimeInfo(int[][] bins, Properties cvgProp) {
+	String prevPlace = null;
+	String currPlace = null;
+	Properties p3 = null;
+	//ArrayList<String> dmvcPlaceL = new ArrayList<String>(); // only dmvc inputs
+	boolean exists;
+	// int dmvcCnt = 0; making this global .. rechk
+	String[] places;
+	try {
+		for (int i = 0; i < reqdVarsL.size(); i++) {
+			if (reqdVarsL.get(i).isDmvc() && reqdVarsL.get(i).isInput()) {
+				out.write(reqdVarsL.get(i).getName() + " is a dmvc input variable \n");
+				// dmvcCnt = 0; in case of multiple tsd files, this may be a problem. may create a new distinct place with an existing key.??
+				prevPlace = null;
+				currPlace = null;
+				p3 = null;
+				Properties p2 = null;
+				String k;
+				DMVCrun runs = reqdVarsL.get(i).getRuns();
+				Double[] avgVals = runs.getAvgVals();
+				out.write("variable " + reqdVarsL.get(i).getName() + " Number of runs = " + avgVals.length + "Avg Values are : " + avgVals.toString() + "\n");
+				for (int j = 0; j < avgVals.length; j++) { // this gives number of runs/startpoints/endpoints
+					exists = false;
+					places = g.getPlaceList();
+					if (places.length > 1) {
+						for (String st : places) {
+							k = getPlaceInfoIndex(st);
+							if (!isTransientPlace(st) && (placeInfo.get(k).getProperty("type").equalsIgnoreCase("DMVC"))) {
+								if ((Math.abs(Double.parseDouble(placeInfo.get(k).getProperty("DMVCValue")) - avgVals[j]) < epsilon)
+										&& (placeInfo.get(k).getProperty("DMVCVariable").equalsIgnoreCase(reqdVarsL.get(i).getName()))) {
+				//					out.write("Place with key " + k + "already exists. so adding dmvcTime to it\n");
+									addDmvcTime(placeInfo.get(k), reqdVarsL.get(i).getName(), calcDelay(runs.getStartPoint(j), runs.getEndPoint(j)));
+									addDuration(placeInfo.get(k),calcDelay(runs.getStartPoint(j), runs.getEndPoint(j)));
+									exists = true;
+									prevPlace = currPlace;
+									currPlace = getPlaceInfoIndex(st);// k;
+									p2 = placeInfo.get(currPlace);
+	//next few lines commented to remove multiple dmv input places of same variable from being marked initially.
+									//	if (j == 0) { // adding the place corresponding to the first dmv run to initial marking. 
+									//	placeInfo.get(k).setProperty("initiallyMarked", "true");
+									//	g.changeInitialMarking("p"	+ placeInfo.get(k).getProperty("placeNum"),true);
+									//} 
+									// break ; here?
+								}
+							}
+						}
+					}
+					if (!exists) {
+						prevPlace = currPlace;
+						currPlace = "d_" + i + "_" + dmvcCnt;
+						p2 = new Properties();
+						p2.setProperty("placeNum", numPlaces.toString());
+						p2.setProperty("type", "DMVC");
+						p2.setProperty("DMVCVariable", reqdVarsL.get(i).getName());
+						p2.setProperty("DMVCValue", avgVals[j].toString());
+						p2.setProperty("initiallyMarked", "false");
+						addDmvcTime(p2, reqdVarsL.get(i).getName(),calcDelay(runs.getStartPoint(j), runs.getEndPoint(j)));
+						//placeInfo.put("d_" + i + "_" + dmvcCnt, p2);
+						if (j == 0) {
+							transientNetPlaces.put("d_" + i + "_" + dmvcCnt, p2);
+							g.addPlace("p" + numPlaces, true);
+							p2.setProperty("initiallyMarked", "true");
+						}
+						else{
+							placeInfo.put("d_" + i + "_" + dmvcCnt, p2);
+							g.addPlace("p" + numPlaces, false);
+						}
+						dmvcInputPlaces.add("p" + numPlaces);
+						if (j == 0) { // adding the place corresponding to the first dmv run to initial marking
+							p2.setProperty("initiallyMarked", "true");
+							g.changeInitialMarking("p" + p2.getProperty("placeNum"), true);
+						}
+						numPlaces++;
+						out.write("Created new place with key " + "d_" + i + "_" + dmvcCnt + "\n");
+						dmvcCnt++;
+						//dmvcPlaceL.add(currPlace);
+						cvgProp.setProperty("places", String.valueOf(Integer.parseInt(cvgProp.getProperty("places"))+1));
+					}
+					Double d = calcDelay(runs.getStartPoint(j), runs.getEndPoint(j));// data.get(0).get(runs.getEndPoint(j)) - data.get(0).get(runs.getStartPoint(j));
+						// data.get(0).get(reqdVarsL.get(prevPlace.getDmvcVar()).getRuns().getEndPoint(j-1));
+					// TEMPORARY FIX
+					//Double minTime = getMinDmvcTime(p2);
+					//if ((d > minTime*Math.pow(10.0, 4.0))){ // && (getMinDmvcTime(p2) == getMaxDmvcTime(p2))){
+					//	deleteInvalidDmvcTime(p2, getMinDmvcTime(p2));	// updates dmin,dmax too
+					//}
+					//END TEMPORARY FIX
+		// For dmv input nets, transition's delay assignment is
+		// it's preset's duration; value assgnmt is value in postset.
+					addDuration(p2,d);	
+					//boolean transientNet = false;
+					//	out.write("Delay in place p"+ p2.getProperty("placeNum")+ " after updating " + d + " is ["+ p2.getProperty("dMin") + ","+ p2.getProperty("dMax") + "]\n");
+					if (prevPlace != null) {
+						if (transitionInfo.containsKey(prevPlace + currPlace)) {
+							p3 = transitionInfo.get(prevPlace + currPlace);
+						} else {
+							p3 = new Properties();
+							p3.setProperty("transitionNum", numTransitions.toString());
+							if (transientNetPlaces.containsKey(prevPlace)){
+								transientNetTransitions.put(prevPlace + currPlace, p3);
+								g.addTransition("t" + numTransitions); // prevTranKey+key);
+								g.addMovement("p" + transientNetPlaces.get(prevPlace).getProperty("placeNum"), "t" + transientNetTransitions.get(prevPlace + currPlace).getProperty("transitionNum")); 
+								g.addMovement("t" + transientNetTransitions.get(prevPlace + currPlace).getProperty("transitionNum"), "p" + placeInfo.get(currPlace).getProperty("placeNum"));
+							//	transientNet = true;
+							}
+							else{
+								transitionInfo.put(prevPlace + currPlace, p3);
+								g.addTransition("t" + numTransitions); // prevTranKey+key);
+								g.addMovement("p"+ placeInfo.get(prevPlace).getProperty("placeNum"), "t"+ transitionInfo.get(prevPlace + currPlace).getProperty("transitionNum")); 
+								g.addMovement("t"+ transitionInfo.get(prevPlace+ currPlace).getProperty("transitionNum"),"p"+ placeInfo.get(currPlace).getProperty("placeNum"));
+							}
+							numTransitions++;
+							cvgProp.setProperty("transitions", String.valueOf(Integer.parseInt(cvgProp.getProperty("transitions"))+1));
+						}
+					}
+					//if (!transientNet){	// assuming postset duration
+					//	addDuration(p2, d);
+					//}
+					//else {
+					//	addTransientDuration(p2, d);
+					//}
+					
+				}
+			} else if (reqdVarsL.get(i).isDmvc()) { // non-input dmvc
+
+			}
+		}
+	} catch (IOException e) {
+		e.printStackTrace();
+		JOptionPane.showMessageDialog(biosim.frame(),
+				"Log file couldn't be opened for writing rates and bins.",
+				"ERROR!", JOptionPane.ERROR_MESSAGE);
+	}
+}
+*/
 
 /*
 			ArrayList<ArrayList<String>> ifL = new ArrayList<ArrayList<String>>();
