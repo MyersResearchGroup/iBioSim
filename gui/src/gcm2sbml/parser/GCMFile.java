@@ -1,5 +1,6 @@
 package gcm2sbml.parser;
 
+import gcm2sbml.gui.modelview.BioGraph;
 import gcm2sbml.util.GlobalConstants;
 
 import java.awt.AWTError;
@@ -36,6 +37,13 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
+
+import com.mxgraph.layout.mxCircleLayout;
+import com.mxgraph.layout.mxCompactTreeLayout;
+import com.mxgraph.layout.mxIGraphLayout;
+import com.mxgraph.view.mxEdgeStyle;
+import com.mxgraph.view.mxGraph;
+import com.mxgraph.view.mxLayoutManager;
 
 import lhpn2sbml.parser.ExprTree;
 import lhpn2sbml.parser.LhpnFile;
@@ -776,6 +784,7 @@ public class GCMFile {
 		}
 		return LHPN;
 	}
+
 	
 	/**
 	 * Save the contents to a StringBuffer. Can later be written to a file or other stream.
@@ -1266,7 +1275,7 @@ public class GCMFile {
 		}
 	}
 
-	public String getInput(String name) {
+	public static String getInput(String name) {
 		Pattern pattern = Pattern.compile(PARSE);
 		Matcher matcher = pattern.matcher(name);
 		matcher.find();
@@ -1280,7 +1289,7 @@ public class GCMFile {
 		return matcher.group(3) + matcher.group(4);
 	}
 
-	public String getOutput(String name) {
+	public static String getOutput(String name) {
 		Pattern pattern = Pattern.compile(PARSE);
 		Matcher matcher = pattern.matcher(name);
 		matcher.find();
@@ -1647,6 +1656,18 @@ public class GCMFile {
 			array.add(s);
 		}
 		return array;
+	}
+	
+	/**
+	 * Returns a hash containing the inner model. 	 
+	 */
+	public HashMap<String, HashMap<String, Properties>> getInternalModel(){
+		HashMap<String, HashMap<String, Properties>> im = new HashMap<String, HashMap<String, Properties>>();
+		im.put("species", species);
+		im.put("promoters", promoters);
+		im.put("influences", influences);
+		im.put("components", components);
+		return im;
 	}
 
 	private static final String NETWORK = "digraph\\sG\\s\\{([^}]*)\\s\\}";
