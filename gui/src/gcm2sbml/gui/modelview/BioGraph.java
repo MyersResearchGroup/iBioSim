@@ -63,7 +63,7 @@ public class BioGraph extends mxGraph {
 		// Listen for moved cells
 		this.addListener(mxEvent.CELLS_MOVED, new mxEventSource.mxIEventListener() {
 			
-			@Override
+			//@Override
 			public void invoke(Object arg0, mxEventObject event) {
 
 				Object cells[] = (Object [])event.getProperties().get("cells");
@@ -80,7 +80,7 @@ public class BioGraph extends mxGraph {
 		
 		// listener for added verticies
 		this.addListener(mxEvent.CELLS_ADDED, new mxEventSource.mxIEventListener() {
-			@Override
+			//@Override
 			public void invoke(Object arg0, mxEventObject event) {
 				Object cells[] = (Object [])event.getProperties().get("cells");
 				
