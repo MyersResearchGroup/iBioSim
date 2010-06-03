@@ -8,15 +8,15 @@ import att.grappa.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
 
 import javax.swing.border.*;
 
-class CouldNotParseException extends Exception{ public CouldNotParseException(String msg){super(msg);} }
+class CouldNotParseException extends Exception{
+	private static final long serialVersionUID = 1L;
+public CouldNotParseException(String msg){super(msg);} }
 
 /**
  * @author tyler
@@ -24,10 +24,11 @@ class CouldNotParseException extends Exception{ public CouldNotParseException(St
  */
 public class GCIGrappaPanel extends JPanel {
 
+	private static final long serialVersionUID = 1L;
 	Graph graph;
-	GrappaPanel grappaPanel;
+	GrappaPanel grappaPanel;	
+	@SuppressWarnings("unused")
 	private boolean isLaidOut;
-	
 	
     public final static String INSTANCES = "instances";
 
@@ -47,7 +48,7 @@ public class GCIGrappaPanel extends JPanel {
 	 */
 	// TODO: pass in buffer.
 	public void display(StringBuffer gcmStringBuffer){
-		isLaidOut = false;
+		this.isLaidOut = false;
 		graph = null;
 		grappaPanel = null;
 		

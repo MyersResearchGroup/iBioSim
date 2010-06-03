@@ -42,6 +42,8 @@ import biomodelsim.BioSim;
 import biomodelsim.Log;
 
 import gcm2sbml.gui.grappa.GCIGrappaPanel;
+import gcm2sbml.gui.modelview.ModelView;
+
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
 
@@ -813,6 +815,9 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		// create the grappa panel
 		GCIGrappaPanel grappaPanel = new GCIGrappaPanel();
 		
+		// create the modelview2 (jgraph) panel
+		ModelView modelView = new ModelView(gcm.getInternalModel());
+		
 		JPanel mainPanel = new JPanel(new BorderLayout());
 		mainPanel.setLayout(new BorderLayout());
 		mainPanel.add(mainPanelNorth, "North");
@@ -821,6 +826,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		tab.addTab("Main Elements", mainPanel);
 		tab.addTab("Components", tabPanel);
 		tab.addTab("Model View", grappaPanel);
+		tab.addTab("Model View 2", modelView);
 		setLayout(new BorderLayout());
 		add(tab, BorderLayout.CENTER);
 		add(mainPanelCenterDown, BorderLayout.SOUTH);
@@ -831,10 +837,16 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 				JTabbedPane selected_tab = (JTabbedPane)(e.getSource());
 				
 				JPanel selected_panel = (JPanel)selected_tab.getComponent(selected_tab.getSelectedIndex());
-
-				if(selected_panel.getClass().getName().indexOf("GCIGrappaPanel") > 0){
-
+				
+				String className = selected_panel.getClass().getName();
+				
+				// The old ModelView (grappa panel) 
+				if(className.indexOf("GCIGrappaPanel") > 0){
 					((GCIGrappaPanel)selected_panel).display(gcm.save_to_buffer(false));
+				}
+				// The new ModelView
+				else if(className.indexOf("ModelView") >= 0){
+					((ModelView)selected_panel).display();
 				}
 
 				
@@ -979,6 +991,11 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		}
 		initPanel = Utility.createPanel(this, "Conditions", conditions, addInit, removeInit, editInit);
 		tabPanel.add(initPanel, "South");
+		
+		// Set up the singleton that will be used by the modelview to pop up the properteis windows.
+		PropertiesLauncher.getInstance().initialize(this.biosim, this.gcm, 
+				this.species, this.influences, this.promoters, this.paramsOnly);
+
 	}
 
 	public void reloadFiles() {
