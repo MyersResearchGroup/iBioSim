@@ -116,7 +116,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 
 	private Double delayScaleFactor = 1.0;
 
-	private Double varScaleFactor = 1.0;
+	private Double valScaleFactor = 1.0;
 
 	BufferedWriter out;
 
@@ -700,6 +700,12 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			if (load.containsKey("learn.iter")) {
 				iteration.setText(load.getProperty("learn.iter"));
 			}
+			if (load.containsKey("learn.valueScaling")) {
+				globalValueScaling.setText(load.getProperty("learn.valueScaling"));
+			}
+			if (load.containsKey("learn.delayScaling")) {
+				globalDelayScaling.setText(load.getProperty("learn.delayScaling"));
+			}
 			if (load.containsKey("learn.bins")) {
 				numBins.setSelectedItem(load.getProperty("learn.bins"));
 			}
@@ -777,9 +783,9 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 					}
 					if (varFound){
 						if (savedBins != null){
-						for (int i = 2; i < savedBins.length ; i++){
+							for (int i = 2; i < savedBins.length ; i++){
 								thresholds.get(st1).add(Double.parseDouble(savedBins[i]));
-						}
+							}
 						}
 					}
 					else{
@@ -2003,6 +2009,8 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			in.close();
 			prop.setProperty("learn.file", learnFile);
 			prop.setProperty("learn.iter", this.iteration.getText().trim());
+			prop.setProperty("learn.valueScaling", this.globalValueScaling.getText().trim());
+			prop.setProperty("learn.delayScaling", this.globalDelayScaling.getText().trim());
 			prop.setProperty("learn.bins", (String) this.numBins.getSelectedItem());
 			prop.setProperty("learn.prop", (String) this.propertyG.getText().trim());
 			String varsList = null;
@@ -2032,14 +2040,6 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 					}
 					String currentVar = ((JTextField)((JPanel)c).getComponent(0)).getText().trim();
 					String s =  currentVar + " " + numOfBins;
-					/*if ((divisionsL != null) && (divisionsL.size() != 0)){
-						for (int i = 0; i < (numOfBins -1); i++){
-							if ((divisionsL.get(k-1)!= null) && (divisionsL.get(k-1).size() > i)){
-								s += " ";
-								s += divisionsL.get(k-1).get(i);
-							}
-						}
-					} COMMENTED ABOVE FOR REPLACING divisionsL by threholds */
 					if ((thresholds != null) && (thresholds.size() != 0)){ //Added for replacing divisionsL by thresholds
 						for (int i = 0; i < (numOfBins -1); i++){
 							if ((thresholds.get(currentVar)!= null) && (thresholds.get(currentVar).size() > i)){
@@ -2692,13 +2692,11 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			else
 				runTime = 5e-6;
 			absoluteTime = absTimeG.isSelected();
-			//globalValueScaling = new JTextField("100");
-			//globalDelayScaling = new JTextField("1..7");
 			if (globalValueScaling.getText().matches("[\\d]+\\.??[\\d]*")){
-				varScaleFactor = Double.parseDouble(globalValueScaling.getText().trim());
-				//System.out.println("varScaleFactor " + varScaleFactor);
+				valScaleFactor = Double.parseDouble(globalValueScaling.getText().trim());
+				//System.out.println("valScaleFactor " + valScaleFactor);
 			} else
-				varScaleFactor = -1.0;
+				valScaleFactor = -1.0;
 			if (globalDelayScaling.getText().matches("[\\d]+\\.??[\\d]*")){
 				delayScaleFactor = Double.parseDouble(globalDelayScaling.getText().trim());
 				//System.out.println("delayScaleFactor " + delayScaleFactor);
@@ -2774,6 +2772,8 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			// end temporary
 			
 			scaledThresholds = normalize();
+			globalValueScaling.setText(Double.toString(valScaleFactor));
+			globalDelayScaling.setText(Double.toString(delayScaleFactor));
 			initCond = new Properties(); 
 			for (Variable v : reqdVarsL) {	// Updating with scaled initial values & rates
 				if (v.isDmvc()) {
@@ -2818,28 +2818,28 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 										if (firstInputBinChg){
 											condStr += "(" + reqdVarsL.get(k).getName() + ">=" + (int) Math.floor(val) + ")";
 											transEnablingsVHDL[transNum] += reqdVarsL.get(k).getName() + "'above(" + (int) Math.floor(val)+".0)";	
-											transEnablingsVAMS[transNum] = "always@(cross((V(" + reqdVarsL.get(k).getName() + ") - " + ((int)val)/varScaleFactor +"),+1)";	// += temporary
-											transConditionalsVAMS[transNum] = "if ((place == " + g.getPreset(t)[0].split("p")[1] + ") && (V(" + reqdVarsL.get(k).getName() + ") >= " + ((int)val)/varScaleFactor +"))";
+											transEnablingsVAMS[transNum] = "always@(cross((V(" + reqdVarsL.get(k).getName() + ") - " + ((int)val)/valScaleFactor +"),+1)";	// += temporary
+											transConditionalsVAMS[transNum] = "if ((place == " + g.getPreset(t)[0].split("p")[1] + ") && (V(" + reqdVarsL.get(k).getName() + ") >= " + ((int)val)/valScaleFactor +"))";
 										}
 										else{
 											condStr += "&(" + reqdVarsL.get(k).getName() + ">=" + (int) Math.floor(val) + ")";
 											transEnablingsVHDL[transNum] += " and " + reqdVarsL.get(k).getName() + "'above(" + (int) Math.floor(val)+".0)";	
-											transEnablingsVAMS[transNum] += " and cross((V(" + reqdVarsL.get(k).getName() + ") - " + ((int)val)/varScaleFactor +"),+1)";	// += temporary
-											transConditionalsVAMS[transNum] = "if ((place == " + g.getPreset(t)[0].split("p")[1] + ") && (V(" + reqdVarsL.get(k).getName() + ") >= " + ((int)val)/varScaleFactor +"))";
+											transEnablingsVAMS[transNum] += " and cross((V(" + reqdVarsL.get(k).getName() + ") - " + ((int)val)/valScaleFactor +"),+1)";	// += temporary
+											transConditionalsVAMS[transNum] = "if ((place == " + g.getPreset(t)[0].split("p")[1] + ") && (V(" + reqdVarsL.get(k).getName() + ") >= " + ((int)val)/valScaleFactor +"))";
 										}
 									} else {
 										double val = scaledThresholds.get(reqdVarsL.get(k).getName()).get(Integer.parseInt(binOutgoing[k])).doubleValue();
 										if (firstInputBinChg){
 											condStr += "~(" + reqdVarsL.get(k).getName() + ">="	+ (int) Math.ceil(val) + ")";
 											transEnablingsVHDL[transNum] += "not " + reqdVarsL.get(k).getName() + "'above(" + (int) Math.ceil(val)+".0)";
-											transEnablingsVAMS[transNum] = "always@(cross((V(" + reqdVarsL.get(k).getName() + ") - " + ((int)val)/varScaleFactor +"),-1)";	// +=; temporary
-											transConditionalsVAMS[transNum] = "if ((place == " + g.getPreset(t)[0].split("p")[1] + ") && (V(" + reqdVarsL.get(k).getName() + ") < " + ((int)val)/varScaleFactor +"))";
+											transEnablingsVAMS[transNum] = "always@(cross((V(" + reqdVarsL.get(k).getName() + ") - " + ((int)val)/valScaleFactor +"),-1)";	// +=; temporary
+											transConditionalsVAMS[transNum] = "if ((place == " + g.getPreset(t)[0].split("p")[1] + ") && (V(" + reqdVarsL.get(k).getName() + ") < " + ((int)val)/valScaleFactor +"))";
 										}
 										else{
 											condStr += "&~(" + reqdVarsL.get(k).getName() + ">="	+ (int) Math.ceil(val) + ")";
 											transEnablingsVHDL[transNum] += "and not " + reqdVarsL.get(k).getName() + "'above(" + (int) Math.ceil(val)+".0)";
-											transEnablingsVAMS[transNum] += " and cross((V(" + reqdVarsL.get(k).getName() + ") - " + ((int)val)/varScaleFactor +"),-1)";	// +=; temporary
-											transConditionalsVAMS[transNum] = "if ((place == " + g.getPreset(t)[0].split("p")[1] + ") && (V(" + reqdVarsL.get(k).getName() + ") < " + ((int)val)/varScaleFactor +"))";
+											transEnablingsVAMS[transNum] += " and cross((V(" + reqdVarsL.get(k).getName() + ") - " + ((int)val)/valScaleFactor +"),-1)";	// +=; temporary
+											transConditionalsVAMS[transNum] = "if ((place == " + g.getPreset(t)[0].split("p")[1] + ") && (V(" + reqdVarsL.get(k).getName() + ") < " + ((int)val)/valScaleFactor +"))";
 										}
 									}
 									//if (diffL.get(diffL.size() - 1) != k) {
@@ -2873,12 +2873,12 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 									transIntAssignVHDL[dmvTnum][k] = reqdVarsL.get(k).getName() +" => span(" + (int) Math.floor(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(nextPlace)).getProperty(reqdVarsL.get(k).getName() + "_vMin"))) + ".0,"+ (int) Math.ceil(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(nextPlace)).getProperty(reqdVarsL.get(k).getName() + "_vMax"))) + ".0)";
 									transDelayAssignVHDL[dmvTnum] = "delay(" + mind + "," + maxd + ")";
 									if (!vamsRandom){
-										transIntAssignVAMS[dmvTnum][k] = reqdVarsL.get(k).getName()+"Val = "+ ((int)(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(nextPlace)).getProperty(reqdVarsL.get(k).getName() + "_vMin")) + Double.parseDouble(placeInfo.get(getPlaceInfoIndex(nextPlace)).getProperty(reqdVarsL.get(k).getName() + "_vMax"))))/(2.0*varScaleFactor)+";\n";
+										transIntAssignVAMS[dmvTnum][k] = reqdVarsL.get(k).getName()+"Val = "+ ((int)(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(nextPlace)).getProperty(reqdVarsL.get(k).getName() + "_vMin")) + Double.parseDouble(placeInfo.get(getPlaceInfoIndex(nextPlace)).getProperty(reqdVarsL.get(k).getName() + "_vMax"))))/(2.0*valScaleFactor)+";\n";
 										//transDelayAssignVAMS[dmvTnum] = "#" + (int)(((Math.floor(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(pPrev)).getProperty("dMin"))) + Math.ceil(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(pPrev)).getProperty("dMax"))))*Math.pow(10, 12))/(2.0*delayScaleFactor));	// converting seconds to ns using math.pow(10,9)
 										transDelayAssignVAMS[dmvTnum] = "#" + (int)((mind + maxd)/(2*delayScaleFactor));	// converting seconds to ns using math.pow(10,9)
 									}
 									else{
-										transIntAssignVAMS[dmvTnum][k] = reqdVarsL.get(k).getName()+"Val = $dist_uniform(seed,"+ String.valueOf((int)Math.floor(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(nextPlace)).getProperty(reqdVarsL.get(k).getName() + "_vMin"))/varScaleFactor)) + "," + String.valueOf((int)Math.ceil(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(nextPlace)).getProperty(reqdVarsL.get(k).getName() + "_vMax"))/varScaleFactor))+");\n";
+										transIntAssignVAMS[dmvTnum][k] = reqdVarsL.get(k).getName()+"Val = $dist_uniform(seed,"+ String.valueOf((int)Math.floor(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(nextPlace)).getProperty(reqdVarsL.get(k).getName() + "_vMin"))/valScaleFactor)) + "," + String.valueOf((int)Math.ceil(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(nextPlace)).getProperty(reqdVarsL.get(k).getName() + "_vMax"))/valScaleFactor))+");\n";
 										//transDelayAssignVAMS[dmvTnum] = "del = $dist_uniform(seed," + (int)Math.floor(((Double.parseDouble(placeInfo.get(getPlaceInfoIndex(pPrev)).getProperty("dMin")))/delayScaleFactor)*Math.pow(10, 12)) + "," +(int)Math.ceil((Double.parseDouble(placeInfo.get(getPlaceInfoIndex(pPrev)).getProperty("dMax"))/delayScaleFactor)*Math.pow(10, 12)) + ");\n\t\t\t#del";	// converting seconds to ns using math.pow(10,9)
 										transDelayAssignVAMS[dmvTnum] = "del = $dist_uniform(seed," + (int) (mind/delayScaleFactor) + "," +(int) (maxd/delayScaleFactor) + ");\n\t\t\t#del";	// converting seconds to ns using math.pow(10,9)
 									}
@@ -2889,7 +2889,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 										int dmvTnum =  Integer.parseInt(t.split("t")[1]);
 										transIntAssignVHDL[dmvTnum][k] = reqdVarsL.get(k).getName() +" => span(" + (int) Math.floor(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(nextPlace)).getProperty(reqdVarsL.get(k).getName() + "_vMin"))) + ".0,"+ (int) Math.ceil(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(nextPlace)).getProperty(reqdVarsL.get(k).getName() + "_vMax"))) + ".0)";
 										transDelayAssignVHDL[dmvTnum] = "delay(" + (int) Math.floor(Double.parseDouble(transientNetPlaces.get(getTransientNetPlaceIndex(pPrev)).getProperty("dMin"))) + "," + (int) Math.ceil(Double.parseDouble(transientNetPlaces.get(getTransientNetPlaceIndex(pPrev)).getProperty("dMax"))) + ")";
-										transIntAssignVAMS[dmvTnum][k] = ((int)(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(nextPlace)).getProperty(reqdVarsL.get(k).getName() + "_vMin")) + Double.parseDouble(placeInfo.get(getPlaceInfoIndex(nextPlace)).getProperty(reqdVarsL.get(k).getName() + "_vMax"))))/(2.0*varScaleFactor);
+										transIntAssignVAMS[dmvTnum][k] = ((int)(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(nextPlace)).getProperty(reqdVarsL.get(k).getName() + "_vMin")) + Double.parseDouble(placeInfo.get(getPlaceInfoIndex(nextPlace)).getProperty(reqdVarsL.get(k).getName() + "_vMax"))))/(2.0*valScaleFactor);
 										transDelayAssignVAMS[dmvTnum] =  (int)(((Math.floor(Double.parseDouble(transientNetPlaces.get(getTransientNetPlaceIndex(pPrev)).getProperty("dMin"))) + Math.ceil(Double.parseDouble(transientNetPlaces.get(getTransientNetPlaceIndex(pPrev)).getProperty("dMax"))))*Math.pow(10, 12))/(2.0*delayScaleFactor));	// converting seconds to ns using math.pow(10,9)
 									}*/
 								}
@@ -2979,24 +2979,24 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 										if (firstInputBinChg){
 										condStr += "(" + reqdVarsL.get(k).getName() + ">=" + (int) Math.floor(val) + ")";
 										transEnablingsVHDL[transNum] += reqdVarsL.get(k).getName() + "'above(" + (int) Math.floor(val)+".0)";	
-										transEnablingsVAMS[transNum] = "always@(cross((V(" + reqdVarsL.get(k).getName() + ") - " + ((int)val)/varScaleFactor +"),+1)";	// += temporary
+										transEnablingsVAMS[transNum] = "always@(cross((V(" + reqdVarsL.get(k).getName() + ") - " + ((int)val)/valScaleFactor +"),+1)";	// += temporary
 										}
 										else{
 											condStr += "&(" + reqdVarsL.get(k).getName() + ">=" + (int) Math.floor(val) + ")";
 											transEnablingsVHDL[transNum] += " and " + reqdVarsL.get(k).getName() + "'above(" + (int) Math.floor(val)+".0)";	
-											transEnablingsVAMS[transNum] += " and cross((V(" + reqdVarsL.get(k).getName() + ") - " + ((int)val)/varScaleFactor +"),+1)";	// += temporary
+											transEnablingsVAMS[transNum] += " and cross((V(" + reqdVarsL.get(k).getName() + ") - " + ((int)val)/valScaleFactor +"),+1)";	// += temporary
 										}
 									} else {
 										double val = scaledThresholds.get(reqdVarsL.get(k).getName()).get(Integer.parseInt(binOutgoing[k])).doubleValue();
 										if (firstInputBinChg){
 										condStr += "~(" + reqdVarsL.get(k).getName() + ">="	+ (int) Math.ceil(val) + ")";
 										transEnablingsVHDL[transNum] += " and not " + reqdVarsL.get(k).getName() + "'above(" + (int) Math.ceil(val)+".0)";
-										transEnablingsVAMS[transNum] = "always@(cross((V(" + reqdVarsL.get(k).getName() + ") - " + ((int)val)/varScaleFactor +"),-1)";	// +=; temporary
+										transEnablingsVAMS[transNum] = "always@(cross((V(" + reqdVarsL.get(k).getName() + ") - " + ((int)val)/valScaleFactor +"),-1)";	// +=; temporary
 										}
 										else{
 											condStr += "&~(" + reqdVarsL.get(k).getName() + ">="	+ (int) Math.ceil(val) + ")";
 											transEnablingsVHDL[transNum] += "not " + reqdVarsL.get(k).getName() + "'above(" + (int) Math.ceil(val)+".0)";
-											transEnablingsVAMS[transNum] = " and cross((V(" + reqdVarsL.get(k).getName() + ") - " + ((int)val)/varScaleFactor +"),-1)";	// +=; temporary
+											transEnablingsVAMS[transNum] = " and cross((V(" + reqdVarsL.get(k).getName() + ") - " + ((int)val)/valScaleFactor +"),-1)";	// +=; temporary
 										}
 									}
 									//if (diffL.get(diffL.size() - 1) != k) {
@@ -3028,12 +3028,12 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 									transIntAssignVHDL[dmvTnum][k] = reqdVarsL.get(k).getName() +" => span(" + (int) Math.floor(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(nextPlace)).getProperty(reqdVarsL.get(k).getName() + "_vMin"))) + ".0,"+ (int) Math.ceil(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(nextPlace)).getProperty(reqdVarsL.get(k).getName() + "_vMax"))) + ".0)";
 									transDelayAssignVHDL[dmvTnum] = "delay(" + mind + "," + maxd + ")";
 									if (!vamsRandom){
-										transIntAssignVAMS[dmvTnum][k] = reqdVarsL.get(k).getName()+"Val = "+ ((int)(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(nextPlace)).getProperty(reqdVarsL.get(k).getName() + "_vMin")) + Double.parseDouble(placeInfo.get(getPlaceInfoIndex(nextPlace)).getProperty(reqdVarsL.get(k).getName() + "_vMax"))))/(2.0*varScaleFactor)+";\n";;
+										transIntAssignVAMS[dmvTnum][k] = reqdVarsL.get(k).getName()+"Val = "+ ((int)(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(nextPlace)).getProperty(reqdVarsL.get(k).getName() + "_vMin")) + Double.parseDouble(placeInfo.get(getPlaceInfoIndex(nextPlace)).getProperty(reqdVarsL.get(k).getName() + "_vMax"))))/(2.0*valScaleFactor)+";\n";;
 										//											transDelayAssignVAMS[dmvTnum] =  "#" + (int)(((Math.floor(Double.parseDouble(transientNetPlaces.get(getTransientNetPlaceIndex(pPrev)).getProperty("dMin"))) + Math.ceil(Double.parseDouble(transientNetPlaces.get(getTransientNetPlaceIndex(pPrev)).getProperty("dMax"))))*Math.pow(10, 12))/(2.0*delayScaleFactor));	// converting seconds to ns using math.pow(10,9)
 										transDelayAssignVAMS[dmvTnum] =  "#" + (int)((mind + maxd)/(2*delayScaleFactor));	// converting seconds to ns using math.pow(10,9)
 									}
 									else{
-										transIntAssignVAMS[dmvTnum][k] = reqdVarsL.get(k).getName()+"Val = $dist_uniform(seed,"+ String.valueOf(Math.floor((Double.parseDouble(placeInfo.get(getPlaceInfoIndex(nextPlace)).getProperty(reqdVarsL.get(k).getName() + "_vMin"))/varScaleFactor))) + "," + String.valueOf(Math.ceil((Double.parseDouble(placeInfo.get(getPlaceInfoIndex(nextPlace)).getProperty(reqdVarsL.get(k).getName() + "_vMax"))/varScaleFactor)))+");\n";
+										transIntAssignVAMS[dmvTnum][k] = reqdVarsL.get(k).getName()+"Val = $dist_uniform(seed,"+ String.valueOf(Math.floor((Double.parseDouble(placeInfo.get(getPlaceInfoIndex(nextPlace)).getProperty(reqdVarsL.get(k).getName() + "_vMin"))/valScaleFactor))) + "," + String.valueOf(Math.ceil((Double.parseDouble(placeInfo.get(getPlaceInfoIndex(nextPlace)).getProperty(reqdVarsL.get(k).getName() + "_vMax"))/valScaleFactor)))+");\n";
 										//transDelayAssignVAMS[dmvTnum] =  "del = $dist_uniform(seed," + (int)Math.floor(((Double.parseDouble(transientNetPlaces.get(getTransientNetPlaceIndex(pPrev)).getProperty("dMin")))/delayScaleFactor)*Math.pow(10, 12)) + "," + (int)Math.ceil((Double.parseDouble(transientNetPlaces.get(getTransientNetPlaceIndex(pPrev)).getProperty("dMax"))/delayScaleFactor)*Math.pow(10, 12)) + ");\n\t\t\t#del";	// converting seconds to ns using math.pow(10,9)
 										transDelayAssignVAMS[dmvTnum] =  "del = $dist_uniform(seed," + (int) (mind/delayScaleFactor) + "," + (int) (maxd/delayScaleFactor) + ");\n\t\t\t#del";	// converting seconds to ns using math.pow(10,9)
 									}
@@ -3187,7 +3187,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		numPlaces = 0;
 		numTransitions = 0;
 		delayScaleFactor = 1.0;
-		varScaleFactor = 1.0;
+		valScaleFactor = 1.0;
 		for (Variable v: reqdVarsL){
 			v.reset();
 		}
@@ -3962,9 +3962,9 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		Double maxDivision = getMaxDiv(scaledThresholds);
 		Double scaleFactor = 1.0;
 		try {
-			if ((varScaleFactor == -1.0) && (delayScaleFactor == -1.0)){
+			if ((valScaleFactor == -1.0) && (delayScaleFactor == -1.0)){
 				out.write("\nAuto determining both value and delay scale factors\n");
-				varScaleFactor = 1.0;
+				valScaleFactor = 1.0;
 				delayScaleFactor = 1.0;
 				out.write("minimum delay is " + minDelay + " before scaling time.\n");
 				if ((minDelay != null) && (minDelay != 0)) {
@@ -4003,8 +4003,8 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 							System.out.println("Rate Scaling has caused an overflow");
 						}
 						out.write("minimum rate is " + minRate * scaleFactor + " after scaling by " + scaleFactor + "\n");
-						varScaleFactor = scaleFactor;
-						scaledThresholds = scaleVariable(scaleFactor,scaledThresholds);
+						valScaleFactor = scaleFactor;
+						scaledThresholds = scaleValue(scaleFactor,scaledThresholds);
 						// TEMPORARY
 						/*		for (String p : g.getPlaceList()){
 						if ((placeInfo.get(getPlaceInfoIndex(p)).getProperty("type")).equals("PROP")){
@@ -4030,8 +4030,8 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 						System.out.println("Division Scaling has caused an overflow");
 					}
 					out.write("minimum division is " + minDivision * scaleFactor + " after scaling by " + scaleFactor + "\n");
-					varScaleFactor *= scaleFactor;
-					scaledThresholds = scaleVariable(scaleFactor,scaledThresholds);
+					valScaleFactor *= scaleFactor;
+					scaledThresholds = scaleValue(scaleFactor,scaledThresholds);
 					// TEMPORARY
 					/*		for (String p : g.getPlaceList()){
 					if ((placeInfo.get(getPlaceInfoIndex(p)).getProperty("type")).equals("PROP")){
@@ -4041,9 +4041,9 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				}*/
 					// END TEMPORARY
 				}
-			} else if (varScaleFactor == -1.0){ //force delayScaling; automatic varScaling
+			} else if (valScaleFactor == -1.0){ //force delayScaling; automatic varScaling
 				out.write("\nAuto determining value scale factor; Forcing delay scale factor\n");
-				varScaleFactor = 1.0;
+				valScaleFactor = 1.0;
 				out.write("minimum delay is " + minDelay + " before scaling time.\n");
 				/*if ((minDelay != null) && (minDelay != 0)) {
 					for (int i = 0; i < 18; i++) {
@@ -4089,8 +4089,8 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 							System.out.println("Rate Scaling has caused an overflow");
 						}
 						out.write("minimum rate is " + minRate * scaleFactor + " after scaling by " + scaleFactor + "\n");
-						varScaleFactor = scaleFactor;
-						scaledThresholds = scaleVariable(scaleFactor,scaledThresholds);
+						valScaleFactor = scaleFactor;
+						scaledThresholds = scaleValue(scaleFactor,scaledThresholds);
 						// TEMPORARY
 						/*		for (String p : g.getPlaceList()){
 					if ((placeInfo.get(getPlaceInfoIndex(p)).getProperty("type")).equals("PROP")){
@@ -4117,8 +4117,8 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 						System.out.println("Division Scaling has caused an overflow");
 					}
 					out.write("minimum division is " + minDivision * scaleFactor + " after scaling by " + scaleFactor + "\n");
-					varScaleFactor *= scaleFactor;
-					scaledThresholds = scaleVariable(scaleFactor,scaledThresholds);
+					valScaleFactor *= scaleFactor;
+					scaledThresholds = scaleValue(scaleFactor,scaledThresholds);
 					// TEMPORARY
 					/*		for (String p : g.getPlaceList()){
 					if ((placeInfo.get(getPlaceInfoIndex(p)).getProperty("type")).equals("PROP")){
@@ -4146,12 +4146,12 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 					if ((maxDivision != null) && (Math.abs((int) (maxDivision * scaleFactor)) > Integer.MAX_VALUE)) {
 						out.write("ERROR: Division Scaling has caused an overflow");
 					}
-					if (scaleFactor > varScaleFactor){
+					if (scaleFactor > valScaleFactor){
 						out.write("WARNING: Minimum threshold won't be an integer with the given scale factor. So using " + scaleFactor + "instead.");
-						varScaleFactor = scaleFactor;
+						valScaleFactor = scaleFactor;
 					}
-					out.write("minimum division is " + minDivision * varScaleFactor	+ " after scaling by " + varScaleFactor + "\n");
-					scaledThresholds = scaleVariable(varScaleFactor,scaledThresholds);
+					out.write("minimum division is " + minDivision * valScaleFactor	+ " after scaling by " + valScaleFactor + "\n");
+					scaledThresholds = scaleValue(valScaleFactor,scaledThresholds);
 					// TEMPORARY
 					//		for (String p : g.getPlaceList()){
 					//if ((placeInfo.get(getPlaceInfoIndex(p)).getProperty("type")).equals("PROP")){
@@ -4161,11 +4161,11 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 					//}
 					// END TEMPORARY
 				} else {
-					scaledThresholds = scaleVariable(varScaleFactor,scaledThresholds);
+					scaledThresholds = scaleValue(valScaleFactor,scaledThresholds);
 					out.write("Min division is 0. So, not checking whether given value scale factor is correct");
 				}*/
-				scaledThresholds = scaleVariable(varScaleFactor,scaledThresholds);
-				out.write("minimum division is " + minDivision * varScaleFactor	+ " after scaling by " + varScaleFactor + "\n");
+				scaledThresholds = scaleValue(valScaleFactor,scaledThresholds);
+				out.write("minimum division is " + minDivision * valScaleFactor	+ " after scaling by " + valScaleFactor + "\n");
 				if (contVarExists){
 					scaleFactor = 1.0;
 					Double minRate = getMinRate(); // minRate should return minimum by magnitude alone?? or even by sign..
@@ -4223,7 +4223,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				out.write("\nForcing delay and value scale factors\n");
 				minDivision = getMinDiv(scaledThresholds);
 				out.write("minimum division is " + minDivision + " before scaling for division.\n");
-				scaledThresholds = scaleVariable(varScaleFactor, scaledThresholds);
+				scaledThresholds = scaleValue(valScaleFactor, scaledThresholds);
 				minDivision = getMinDiv(scaledThresholds);
 				out.write("minimum division is " + minDivision + " after scaling for division.\n");
 				minDelay = getMinDelay();
@@ -4245,12 +4245,12 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 					if ((maxDivision != null) && (Math.abs((int) (maxDivision * scaleFactor)) > Integer.MAX_VALUE)) {
 						out.write("ERROR: Division Scaling has caused an overflow");
 					}
-					if (scaleFactor > varScaleFactor){
+					if (scaleFactor > valScaleFactor){
 						out.write("WARNING: Minimum threshold won't be an integer with the given scale factor. So using " + scaleFactor + "instead.");
-						varScaleFactor = scaleFactor;
+						valScaleFactor = scaleFactor;
 					}
-					out.write("minimum division is " + minDivision * varScaleFactor	+ " after scaling by " + varScaleFactor + "\n");
-					scaledThresholds = scaleVariable(varScaleFactor,scaledThresholds);
+					out.write("minimum division is " + minDivision * valScaleFactor	+ " after scaling by " + valScaleFactor + "\n");
+					scaledThresholds = scaleValue(valScaleFactor,scaledThresholds);
 					// TEMPORARY
 					//		for (String p : g.getPlaceList()){
 					//if ((placeInfo.get(getPlaceInfoIndex(p)).getProperty("type")).equals("PROP")){
@@ -4260,7 +4260,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 					//}
 					// END TEMPORARY
 				} else {
-					scaledThresholds = scaleVariable(varScaleFactor,scaledThresholds);
+					scaledThresholds = scaleValue(valScaleFactor,scaledThresholds);
 					out.write("Min division is 0. So, not checking whether given value scale factor is correct");
 				}
 				out.write("minimum delay is " + minDelay + " before scaling time.\n");
@@ -4308,9 +4308,9 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 						}
 						out.write("minimum rate is " + minRate * scaleFactor + " after scaling delay by " + scaleFactor + "\n");
 						if (scaleFactor > 1)
-							out.write("The given value scaling factor is insufficient for rates. So increasing it to "+ scaleFactor*varScaleFactor);
-						scaledThresholds = scaleVariable(scaleFactor,scaledThresholds);
-						varScaleFactor *= scaleFactor;
+							out.write("The given value scaling factor is insufficient for rates. So increasing it to "+ scaleFactor*valScaleFactor);
+						scaledThresholds = scaleValue(scaleFactor,scaledThresholds);
+						valScaleFactor *= scaleFactor;
 						// TEMPORARY
 						//		for (String p : g.getPlaceList()){
 					//if ((placeInfo.get(getPlaceInfoIndex(p)).getProperty("type")).equals("PROP")){
@@ -4332,7 +4332,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		return(scaledThresholds);
 	}
 
-	public HashMap<String,ArrayList<Double>> scaleVariable(Double scaleFactor, HashMap<String,ArrayList<Double>> localThresholds) {
+	public HashMap<String,ArrayList<Double>> scaleValue(Double scaleFactor, HashMap<String,ArrayList<Double>> localThresholds) {
 		String place;
 		Properties p;
 		try{
@@ -6590,7 +6590,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			ArrayList<String> dmvcPlaces = new ArrayList<String>();
 			File vamsFile = new File(directory + separator + vamsFileName);
 			vamsFile.createNewFile();
-			Double rateFactor = varScaleFactor/delayScaleFactor;
+			Double rateFactor = valScaleFactor/delayScaleFactor;
 			BufferedWriter vams = new BufferedWriter(new FileWriter(vamsFile));
 			StringBuffer buffer = new StringBuffer();
 			StringBuffer buffer2 = new StringBuffer();
@@ -6618,7 +6618,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 						buffer2.append("\treal change_"+v.getName()+";\n");
 						buffer2.append("\treal rate_"+v.getName()+";\n");
 						vals = v.getInitValue().split("\\,");
-						double spanAvg = (Double.parseDouble(((vals[0]).split("\\["))[1])+Double.parseDouble(((vals[1]).split("\\]"))[0]))/(2.0*varScaleFactor);
+						double spanAvg = (Double.parseDouble(((vals[0]).split("\\["))[1])+Double.parseDouble(((vals[1]).split("\\]"))[0]))/(2.0*valScaleFactor);
 						initBuffer.append("\t\tchange_"+v.getName()+" = "+ spanAvg+";\n");
 						vals = v.getInitRate().split("\\,");
 						spanAvg = (Double.parseDouble(((vals[0]).split("\\["))[1])+Double.parseDouble(((vals[1]).split("\\]"))[0]))/(2.0*rateFactor);
@@ -6627,7 +6627,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 					else{
 						buffer2.append("\treal "+v.getName()+"Val;\n");	// changed from real to int.. check??
 						vals = reqdVarsL.get(i).getInitValue().split("\\,");
-						double spanAvg = (Double.parseDouble(((vals[0]).split("\\["))[1])+Double.parseDouble(((vals[1]).split("\\]"))[0]))/(2.0*varScaleFactor);
+						double spanAvg = (Double.parseDouble(((vals[0]).split("\\["))[1])+Double.parseDouble(((vals[1]).split("\\]"))[0]))/(2.0*valScaleFactor);
 						initBuffer.append("\t\t"+reqdVarsL.get(i).getName()+"Val = "+ spanAvg+";\n");
 					}
 				}
@@ -6949,7 +6949,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				if ((!reqdVarsL.get(j).isInput()) && (reqdVarsL.get(j).isDmvc())){
 					vams.write("\t\tV("+reqdVarsL.get(j).getName()+") <+ transition(" + reqdVarsL.get(j).getName() + "Val,delay,rtime,ftime);\n");
 					//vals = reqdVarsL.get(j).getInitValue().split("\\,");
-					//double spanAvg = (Double.parseDouble(((vals[0]).split("\\["))[1])+Double.parseDouble(((vals[1]).split("\\]"))[0]))/(2.0*varScaleFactor);
+					//double spanAvg = (Double.parseDouble(((vals[0]).split("\\["))[1])+Double.parseDouble(((vals[1]).split("\\]"))[0]))/(2.0*valScaleFactor);
 					//initBuffer.append("\t\t"+reqdVarsL.get(j).getName()+"Val = "+ spanAvg+";\n");
 				}
 			}
@@ -6979,7 +6979,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 					buffer.append("\telectrical "+ reqdVarsL.get(i).getName() + "drive;\n");
 					buffer2.append("\treal " + reqdVarsL.get(i).getName() + "Val" + ";\n");
 					vals = reqdVarsL.get(i).getInitValue().split("\\,");
-					double spanAvg = (Double.parseDouble(((vals[0]).split("\\["))[1])+Double.parseDouble(((vals[1]).split("\\]"))[0]))/(2.0*varScaleFactor);
+					double spanAvg = (Double.parseDouble(((vals[0]).split("\\["))[1])+Double.parseDouble(((vals[1]).split("\\]"))[0]))/(2.0*valScaleFactor);
 					initBuffer.append("\n\tinitial\n\tbegin\n"+"\t\t"+ reqdVarsL.get(i).getName() + "Val = "+ spanAvg+";\n");
 					if ((count == 1) && (vamsRandom) ){
 						initBuffer.append("\t\tseed = 0;\n");
@@ -6990,7 +6990,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 						if (!transientNetPlaces.containsKey(p)){	// since p is w.r.t placeInfo & not w.r.t g
 						//	buffer3.append("\t\t#"+  (int)(((Double.parseDouble(placeInfo.get(p).getProperty("dMin"))+ Double.parseDouble(placeInfo.get(p).getProperty("dMax")))*Math.pow(10, 12))/(2.0*delayScaleFactor)) +" "); // converting seconds to nanosec. hence pow(10,9)
 							// recheck above line.. truncating double to int.. becomes 0 in most unscaled cases?/
-						//	buffer3.append(reqdVarsL.get(i).getName()+ "Val = "+  ((int)(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(g.getPostset(g.getPostset("p" + placeInfo.get(p).getProperty("placeNum"))[0])[0])).getProperty("DMVCValue"))))/varScaleFactor + ";\n");
+						//	buffer3.append(reqdVarsL.get(i).getName()+ "Val = "+  ((int)(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(g.getPostset(g.getPostset("p" + placeInfo.get(p).getProperty("placeNum"))[0])[0])).getProperty("DMVCValue"))))/valScaleFactor + ";\n");
 							if (transientDoneFirst){
 								initBuffer.append("\t\tforever\n\t\tbegin\n");
 								transientDoneFirst = false;
@@ -7004,7 +7004,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 									//initBuffer.append("\t\t\tdel = $dist_uniform(seed," + (int)Math.floor(((Double.parseDouble(placeInfo.get(p).getProperty("dMin")))/delayScaleFactor)*Math.pow(10, 12)) + "," +(int)Math.ceil((Double.parseDouble(placeInfo.get(p).getProperty("dMax"))/delayScaleFactor)*Math.pow(10, 12)) + ");\n\t\t\t#del ");	// converting seconds to ns using math.pow(10,9)
 									initBuffer.append("\t\t\tdel = $dist_uniform(seed," + (int)Math.floor(((Double.parseDouble(placeInfo.get(p).getProperty("dMin")))/delayScaleFactor)) + "," +(int)Math.ceil((Double.parseDouble(placeInfo.get(p).getProperty("dMax"))/delayScaleFactor)) + ");\n\t\t\t#del ");	// converting seconds to ns using math.pow(10,9)
 								}
-								initBuffer.append(reqdVarsL.get(i).getName()+ "Val = "+  ((int)(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(g.getPostset(g.getPostset("p" + placeInfo.get(p).getProperty("placeNum"))[0])[0])).getProperty("DMVCValue"))))/varScaleFactor + ";\n");
+								initBuffer.append(reqdVarsL.get(i).getName()+ "Val = "+  ((int)(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(g.getPostset(g.getPostset("p" + placeInfo.get(p).getProperty("placeNum"))[0])[0])).getProperty("DMVCValue"))))/valScaleFactor + ";\n");
 							}
 							else{
 
@@ -7014,7 +7014,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 							/*buffer3.append("\tinitial\n\tbegin\n");
 							buffer3.append("\t\t#"+  (int)(((Double.parseDouble(transientNetPlaces.get(p).getProperty("dMin"))+ Double.parseDouble(transientNetPlaces.get(p).getProperty("dMax")))*Math.pow(10, 12))/(2.0*delayScaleFactor)) +" "); // converting seconds to nanosec. hence pow(10,9)
 							// recheck above line.. truncating double to int.. becomes 0 in most unscaled cases?/
-							buffer3.append(reqdVarsL.get(i).getName()+ "Val = "+  ((int)(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(g.getPostset(g.getPostset("p" + transientNetPlaces.get(p).getProperty("placeNum"))[0])[0])).getProperty("DMVCValue"))))/varScaleFactor + ";\n");
+							buffer3.append(reqdVarsL.get(i).getName()+ "Val = "+  ((int)(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(g.getPostset(g.getPostset("p" + transientNetPlaces.get(p).getProperty("placeNum"))[0])[0])).getProperty("DMVCValue"))))/valScaleFactor + ";\n");
 							buffer3.append("\tend\n");*/
 							transientDoneFirst = true;
 							if (!vamsRandom){
@@ -7025,7 +7025,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 								//initBuffer.append("\t\tdel = $dist_uniform(seed," + (int)Math.floor(((Double.parseDouble(transientNetPlaces.get(p).getProperty("dMin")))/delayScaleFactor)*Math.pow(10, 12)) + "," +(int)Math.ceil((Double.parseDouble(transientNetPlaces.get(p).getProperty("dMax"))/delayScaleFactor)*Math.pow(10, 12)) + ");\n\t\t#del ");	// converting seconds to ns using math.pow(10,9)
 								initBuffer.append("\t\tdel = $dist_uniform(seed," + (int)Math.floor(((Double.parseDouble(transientNetPlaces.get(p).getProperty("dMin")))/delayScaleFactor)) + "," +(int)Math.ceil((Double.parseDouble(transientNetPlaces.get(p).getProperty("dMax"))/delayScaleFactor)) + ");\n\t\t#del ");	// converting seconds to ns using math.pow(10,9)
 							}
-							initBuffer.append(reqdVarsL.get(i).getName()+ "Val = "+  ((int)(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(g.getPostset(g.getPostset("p" + transientNetPlaces.get(p).getProperty("placeNum"))[0])[0])).getProperty("DMVCValue"))))/varScaleFactor + ";\n" );
+							initBuffer.append(reqdVarsL.get(i).getName()+ "Val = "+  ((int)(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(g.getPostset(g.getPostset("p" + transientNetPlaces.get(p).getProperty("placeNum"))[0])[0])).getProperty("DMVCValue"))))/valScaleFactor + ";\n" );
 						//	initBuffer.append("\tend\n");
 						}
 					}
