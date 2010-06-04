@@ -1,5 +1,9 @@
 package lhpn2sbml.parser;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import org.apache.batik.svggen.font.table.Program;
 import org.sbml.libsbml.Compartment;
 import org.sbml.libsbml.Delay;
@@ -182,9 +186,6 @@ public class Translator {
 					else if (initValue.equals("false")){
 						p.setValue(0);
 					}
-//					else if(initValue.contains("inf")) {
-//						p.setValue(0);
-//					}
 					else if (initValue.equals("unknown")){
 						p.setValue(0);
 					}
@@ -295,7 +296,7 @@ public class Translator {
 					assign1.setMath(SBML_Editor.myParseFormula("0"));
 					
 					// assignment <A>
-					// TODO need to test the continuous assignment
+					// continuous assignment
 					if (lhpn.getContVars(t) != null){
 						for (String var : lhpn.getContVars(t)){
 							if (lhpn.getContAssign(t, var) != null) {
@@ -309,7 +310,7 @@ public class Translator {
 						}
 					}
 					
-					// TODO need to test the integer assignment
+					// integer assignment
 					if (lhpn.getIntVars()!= null){
 						for (String var : lhpn.getIntVars()){
 							if (lhpn.getIntAssign(t, var) != null) {
@@ -354,6 +355,8 @@ public class Translator {
 						}
 					}
 				}
+				
+				
 				 //Only use event
 				else {			//lhpn.getContAssign(t, var) == null
 //					System.out.println("Event Only");
@@ -374,27 +377,22 @@ public class Translator {
 //					System.out.println("Enabling = " + Enabling);
 					
 					//test Preset(t)
-					// TODO how to get the marking for preset ? lhpn.getPlaceInitial(preset)?
 					String CheckPreset = null;
 					int indexPreset = 0;
+					
+					// Check if all the presets of transition t are marked
 					for (String x:lhpn.getPreset(t)){
 						if (indexPreset == 0){
 							CheckPreset = "eq(" + x + ",1)";
 						}
 						else {
 							CheckPreset = "and(" + CheckPreset + "," + "eq(" + x + ",1)" + ")";
-						}		
+						}	
+						indexPreset ++;
 					}
 					
 					trigger.setMath(SBML_Editor.myParseFormula("and(gt(t,0)," + CheckPreset + "," + Enabling + ")"));
-					
-					
-					//trigger.setMath(SBML_Editor.myParseFormula("and(eq(" + lhpn.getPreset(t) + ",1)," + Enabling + ")"));
-//					trigger.setMath(SBML_Editor.myParseFormula("eq(" + lhpn.getPreset(t) + ",1)"));
-				
-//					
-//					trigger.setMath(SBML_Editor.myParseFormula("eq(1,1)"));
-					
+										
 					// triggerCanBeDisabled := true
 					trigger.setAnnotation("<TriggerCanBeDisabled/>");
 				    
@@ -404,23 +402,59 @@ public class Translator {
 						delay.setMath(SBML_Editor.myParseFormula(lhpn.getTransition(t).getDelay()));
 					}
 					
-					// t_preSet = 0
+					// Check if there is any self-loop. If the intersection between lhpn.getPreset(t) and lhpn.getPostset(t)
+					// is not empty, self-loop exists. 
+					List<String> t_preset = Arrays.asList(lhpn.getPreset(t));
+					List<String> t_postset = Arrays.asList(lhpn.getPostset(t));
+					List<String> t_intersect = new ArrayList<String>(); // intersection of t_preset and t_postset
+					List<String> t_NoIntersect = new ArrayList<String>(); // t_NoIntersect = t_postset - t_preset
+					Boolean selfLoopFlag = false;
+					
+					// Check if there is intersection between the preset and postset. 
 					for (String x : lhpn.getPreset(t)){
-						EventAssignment assign0 = e.createEventAssignment();
-						assign0.setVariable(x);
-						assign0.setMath(SBML_Editor.myParseFormula("0"));
-		//				System.out.println("transition: " + t + " preset: " + x);
+						if (t_postset.contains(x)){
+							selfLoopFlag = true;
+							t_intersect.add(x);
+						}
 					}
 					
-					
-					// t_postSet = 1
-					for (String x : lhpn.getPostset(t)){
-						EventAssignment assign1 = e.createEventAssignment();
-						assign1.setVariable(x);
-						assign1.setMath(SBML_Editor.myParseFormula("1"));
-		//				System.out.println("transition: " + t + " postset: " + x);
+					if (selfLoopFlag) {
+						t_NoIntersect.removeAll(t_intersect);
+						// t_preset = 0
+						for (String x : lhpn.getPreset(t)){
+							EventAssignment assign0 = e.createEventAssignment();
+							assign0.setVariable(x);
+							assign0.setMath(SBML_Editor.myParseFormula("0"));
+			//				System.out.println("transition: " + t + " preset: " + x);
+						}
+								
+						// t_NoIntersect  = 1
+						for (String x : t_NoIntersect){
+							EventAssignment assign1 = e.createEventAssignment();
+							assign1.setVariable(x);
+							assign1.setMath(SBML_Editor.myParseFormula("1"));
+			//				System.out.println("transition: " + t + " postset: " + x);
+						}
+						
 					}
-					
+					else {			// no self-loop 
+						// t_preSet = 0
+						for (String x : lhpn.getPreset(t)){
+							EventAssignment assign0 = e.createEventAssignment();
+							assign0.setVariable(x);
+							assign0.setMath(SBML_Editor.myParseFormula("0"));
+			//				System.out.println("transition: " + t + " preset: " + x);
+						}
+								
+						// t_postSet = 1
+						for (String x : lhpn.getPostset(t)){
+							EventAssignment assign1 = e.createEventAssignment();
+							assign1.setVariable(x);
+							assign1.setMath(SBML_Editor.myParseFormula("1"));
+			//				System.out.println("transition: " + t + " postset: " + x);
+						}
+					}
+
 					// assignment <A>
 					// continuous assignment
 					if (lhpn.getContVars(t) != null){
@@ -451,20 +485,63 @@ public class Translator {
 					}
 					
 					// boolean assignment
-					if (lhpn.getBooleanVars(t)!= null){
-						for (String var :lhpn.getBooleanVars(t)){
-							if (lhpn.getBoolAssign(t, var) != null) {
-								ExprTree assignBoolTree = lhpn.getBoolAssignTree(t, var);
-								String assignBool_tmp = assignBoolTree.toString("SBML");
-								String assignBool = "piecewise(1," + assignBool_tmp + ",0)";
-								//System.out.println("boolean assignment from LHPN: " + var + " := " + assignBool);
-								EventAssignment assign4 = e.createEventAssignment();
-								assign4.setVariable(var);
-								assign4.setMath(SBML_Editor.myParseFormula(assignBool));
+					if (selfLoopFlag) {
+						// if self-loop exists, create a new variable, extraVar, and a new event
+						String extraVar = t.concat("_extraVar");
+						Parameter p = m.createParameter(); 
+						p.setConstant(false);
+						p.setId(extraVar);
+						
+						EventAssignment assign4ex = e.createEventAssignment();
+						assign4ex.setVariable(extraVar);
+						assign4ex.setMath(SBML_Editor.myParseFormula("1"));
+						
+						// Create other boolean assignments
+						if (lhpn.getBooleanVars(t)!= null){
+							for (String var :lhpn.getBooleanVars(t)){
+								if (lhpn.getBoolAssign(t, var) != null) {
+									ExprTree assignBoolTree = lhpn.getBoolAssignTree(t, var);
+									String assignBool_tmp = assignBoolTree.toString("SBML");
+									String assignBool = "piecewise(1," + assignBool_tmp + ",0)";
+									//System.out.println("boolean assignment from LHPN: " + var + " := " + assignBool);
+									EventAssignment assign4 = e.createEventAssignment();
+									assign4.setVariable(var);
+									assign4.setMath(SBML_Editor.myParseFormula(assignBool));
+								}
+							}
+						}
+						
+					   // create a new event 
+						Event extraEvent = m.createEvent();
+						extraEvent.setId("extraEvent" + counter);	
+						Trigger triggerExtra = extraEvent.createTrigger();
+						triggerExtra.setMath(SBML_Editor.myParseFormula("and(gt(t,0),eq(" + extraVar + ",1))"));
+						// assignments
+						EventAssignment assign5ex1 = extraEvent.createEventAssignment();
+						EventAssignment assign5ex2 = extraEvent.createEventAssignment();
+						for (String var : t_intersect){
+							assign5ex1.setVariable(var);
+							assign5ex1.setMath(SBML_Editor.myParseFormula("1"));
+						}
+						assign5ex2.setVariable(extraVar);
+						assign5ex2.setMath(SBML_Editor.myParseFormula("0"));
+					}
+					else {
+						if (lhpn.getBooleanVars(t)!= null){
+							for (String var :lhpn.getBooleanVars(t)){
+								if (lhpn.getBoolAssign(t, var) != null) {
+									ExprTree assignBoolTree = lhpn.getBoolAssignTree(t, var);
+									String assignBool_tmp = assignBoolTree.toString("SBML");
+									String assignBool = "piecewise(1," + assignBool_tmp + ",0)";
+									//System.out.println("boolean assignment from LHPN: " + var + " := " + assignBool);
+									EventAssignment assign4 = e.createEventAssignment();
+									assign4.setVariable(var);
+									assign4.setMath(SBML_Editor.myParseFormula(assignBool));
+								}
 							}
 						}
 					}
-					
+
 					// rate assignment
 					if (lhpn.getRateVars(t)!= null){
 						for (String var : lhpn.getRateVars(t)){
