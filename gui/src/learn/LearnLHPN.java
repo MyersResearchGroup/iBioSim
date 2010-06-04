@@ -40,8 +40,6 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 
 	private JTextField iteration, backgroundField, propertyG;
 
-	// private JTextField windowRising, windowSize;
-
 	private JComboBox numBins;
 
 	private JCheckBox basicFBP;
@@ -71,8 +69,6 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 	private ArrayList<String> variablesList;
 
 	private boolean firstRead, generate, execute;
-
-	// SB
 
 	private ArrayList<Variable> reqdVarsL;
 
@@ -106,24 +102,17 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 
 	private Integer numTransitions = 0;
 
-	HashMap<String, Properties> placeInfo;
+	private HashMap<String, Properties> placeInfo;
 
-	HashMap<String, Properties> transitionInfo;
+	private HashMap<String, Properties> transitionInfo;
 	
-	HashMap<String, Properties> cvgInfo;
+	private HashMap<String, Properties> cvgInfo;
 
-	/*
-	 * public enum PType { RATE, DMVC, PROP, ASGN, TRACE }
-	 */
 	private Double minDelayVal = 10.0;
 
 	private Double minRateVal = 10.0;
 
-	private Double minDivisionVal = 100.0;
-
-	// private String decPercent;
-
-	// private boolean limitExists;
+	private Double minDivisionVal = 10.0;
 
 	private Double delayScaleFactor = 1.0;
 
@@ -157,6 +146,10 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 	private JTextField runTimeG;
 	
 	private JTextField runLengthG;
+	
+	private JTextField globalDelayScaling;
+	
+	private JTextField globalValueScaling;
 	
 	private boolean suggestIsSource = false;
 	
@@ -195,18 +188,10 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 	private ArrayList<String> allVars;
 	
 	private Thread LearnThread;
-
 	
-	// private int[] numValuesL;// the number of constant values for each variable...-1 indicates that the variable isn't considered a DMVC variable
-
-	// private double vaRateUpdateInterval = 1e-6;// how often the rate is added
-	// to the continuous variable in the Verilog-A model output
-
 	// Pattern lParenR = Pattern.compile("\\(+"); //SB
 	
 	//Pattern floatingPointNum = Pattern.compile(">=(-*[0-9]+\\.*[0-9]*)"); //SB
-
-	// Pattern absoluteTimeR = Pattern.compile(".absoluteTime"); //SB
 
 	// Pattern falseR = Pattern.compile("false",Pattern.CASE_INSENSITIVE); //pass the I flag to be case insensitive
 
@@ -227,8 +212,6 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		this.directory = directory;
 		String[] getFilename = directory.split(separator);
 		lrnFile = getFilename[getFilename.length - 1] + ".lrn";
-//		binFile = getFilename[getFilename.length - 1] + ".bins";
-//		newBinFile = getFilename[getFilename.length - 1] + "_NEW" + ".bins";
 		lhpnFile = getFilename[getFilename.length - 1] + ".lpn";
 		Preferences biosimrc = Preferences.userRoot();
 
@@ -272,8 +255,12 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		range.setSelected(true);
 		// }
 		points.addActionListener(this);
+		JLabel iterationLabel = new JLabel("Iterations of Optimization Algorithm");
+		iteration = new JTextField("10",4);
 		selection1.add(points);
 		selection1.add(range);
+		selection1.add(iterationLabel);
+		selection1.add(iteration);
 		selection2.add(auto);
 		selection2.add(user);
 		selection2.add(suggest);
@@ -308,21 +295,19 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 
 		// Sets up the thresholds area
 		JPanel thresholdPanel2 = new JPanel(new GridLayout(8, 2));
-		JPanel thresholdPanel1 = new JPanel(new GridLayout(4, 2));
+		JPanel thresholdPanel1 = new JPanel(new GridLayout(5, 2));
 		
 		JLabel backgroundLabel = new JLabel("Model File:");
 		backgroundField = new JTextField(lhpnFile);
 		backgroundField.setEditable(false);
 		thresholdPanel1.add(backgroundLabel);
 		thresholdPanel1.add(backgroundField);
-		JLabel iterationLabel = new JLabel("Iterations of Optimization Algorithm");
-		iteration = new JTextField("10");
-		thresholdPanel1.add(iterationLabel);
-		thresholdPanel1.add(iteration);
+		//JLabel iterationLabel = new JLabel("Iterations of Optimization Algorithm");
+		//iteration = new JTextField("10");
+		//thresholdPanel1.add(iterationLabel);
+		//thresholdPanel1.add(iteration);
 		
-		// SB
-		
-		JLabel rateLabel = new JLabel("Rate calculation parameters");
+		JLabel rateLabel = new JLabel("Rate calculation/DMV parameters");
 		JLabel epsilonLabel = new JLabel("Epsilon");
 		epsilonG = new JTextField("0.1");
 		JLabel pathLengthLabel = new JLabel("Minimum Pathlength");//("Pathlength");
@@ -543,6 +528,14 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		propertyG = new JTextField("");
 		thresholdPanel1.add(propertyLabel);
 		thresholdPanel1.add(propertyG);
+		JLabel valueScaleLabel = new JLabel("Scale Values by");
+		globalValueScaling = new JTextField("");
+		thresholdPanel1.add(valueScaleLabel);
+		thresholdPanel1.add(globalValueScaling);
+		JLabel delayScaleLabel = new JLabel("Scale time by");
+		globalDelayScaling = new JTextField("");
+		thresholdPanel1.add(delayScaleLabel);
+		thresholdPanel1.add(globalDelayScaling);
 		JPanel thresholdPanelHold1 = new JPanel();
 		thresholdPanelHold1.add(thresholdPanel1);
 		JLabel debugLabel = new JLabel("Debug Level:");
@@ -2674,13 +2667,43 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				//enFailAnd = "&~fail";
 				//enFail = "~fail";
 			}
-			epsilon = Double.parseDouble(epsilonG.getText().trim());
-			rateSampling = Integer.parseInt(rateSamplingG.getText().trim());
-			pathLength = Integer.parseInt(pathLengthG.getText().trim());
-			percent = Double.parseDouble(percentG.getText().trim());
-			runLength = Integer.parseInt(runLengthG.getText().trim());
-			runTime = Double.parseDouble(runTimeG.getText().trim());
+			if (epsilonG.getText().matches("[\\d]+\\.?[\\d]+?"))
+				epsilon = Double.parseDouble(epsilonG.getText().trim());
+			else 
+				epsilon = 0.1;
+			if (rateSamplingG.getText().matches("[\\d]+"))
+				rateSampling = Integer.parseInt(rateSamplingG.getText().trim());
+			else
+				rateSampling = -1;
+			if (pathLengthG.getText().matches("[\\d]+"))
+				pathLength = Integer.parseInt(pathLengthG.getText().trim());
+			else
+				pathLength = 0;
+			if (percentG.getText().matches("[\\d]+\\.?[\\d]+?"))
+				percent = Double.parseDouble(percentG.getText().trim());
+			else
+				percent = 0.2;
+			if (runLengthG.getText().matches("[\\d]+"))
+				runLength = Integer.parseInt(runLengthG.getText().trim());
+			else
+				runLength = 30;
+			if (runTimeG.getText().matches("[\\d]+\\.?[\\d]+?"))
+				runTime = Double.parseDouble(runTimeG.getText().trim());
+			else
+				runTime = 5e-6;
 			absoluteTime = absTimeG.isSelected();
+			//globalValueScaling = new JTextField("100");
+			//globalDelayScaling = new JTextField("1..7");
+			if (globalValueScaling.getText().matches("[\\d]+\\.??[\\d]*")){
+				varScaleFactor = Double.parseDouble(globalValueScaling.getText().trim());
+				//System.out.println("varScaleFactor " + varScaleFactor);
+			} else
+				varScaleFactor = -1.0;
+			if (globalDelayScaling.getText().matches("[\\d]+\\.??[\\d]*")){
+				delayScaleFactor = Double.parseDouble(globalDelayScaling.getText().trim());
+				//System.out.println("delayScaleFactor " + delayScaleFactor);
+			} else
+				delayScaleFactor = -1.0;
 			while (new File(directory + separator + "run-" + i + ".tsd").exists()) {
 				Properties cProp = new Properties();
 				cvgInfo.put(String.valueOf(i), cProp);
@@ -3831,12 +3854,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		return (data.get(0).get(j) - data.get(0).get(i));
 	}
 
-	public void addValue(Properties p, String name, Double v) { // latest
-		// change..
-		// above one
-		// working fine
-		// if this
-		// doesn't
+	public void addValue(Properties p, String name, Double v) { 
 		Double vMin;
 		Double vMax;
 		if ((p.getProperty(name + "_vMin") == null)
@@ -3922,14 +3940,14 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 	}
 	
 	public HashMap<String,ArrayList<Double>> normalize() {
-		Double minDelay = getMinDelay();
-		Double maxDelay = getMaxDelay();
-		Double minDivision = null;
-		Double maxDivision = null;
-		Double scaleFactor = 1.0;
 		HashMap<String,ArrayList<Double>> scaledThresholds = new HashMap<String,ArrayList<Double>>();
+		Boolean contVarExists = false;
+		for (Variable v : reqdVarsL){
+			if (!v.isDmvc()){
+				contVarExists = true;
+			}
+		}
 		// deep copy of divisions
-		//for (ArrayList<Double> o1 : divisionsL){
 		for (String s : thresholds.keySet()){
 			ArrayList<Double> o1 = thresholds.get(s);
 			ArrayList<Double> tempDiv = new ArrayList<Double>();
@@ -3938,84 +3956,372 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			}
 			scaledThresholds.put(s,tempDiv);
 		}
+		Double minDelay = getMinDelay();
+		Double maxDelay = getMaxDelay();
+		Double minDivision = getMinDiv(scaledThresholds);
+		Double maxDivision = getMaxDiv(scaledThresholds);
+		Double scaleFactor = 1.0;
 		try {
-			out.write("minimum delay is " + minDelay
-					+ " before scaling time.\n");
-			if ((minDelay != null) && (minDelay != 0)) {
-				for (int i = 0; i < 18; i++) {
-					if (scaleFactor > (minDelayVal / minDelay)) {
-						break;
+			if ((varScaleFactor == -1.0) && (delayScaleFactor == -1.0)){
+				out.write("\nAuto determining both value and delay scale factors\n");
+				varScaleFactor = 1.0;
+				delayScaleFactor = 1.0;
+				out.write("minimum delay is " + minDelay + " before scaling time.\n");
+				if ((minDelay != null) && (minDelay != 0)) {
+					for (int i = 0; i < 18; i++) {
+						if (scaleFactor > (minDelayVal / minDelay)) {
+							break;
+						}
+						scaleFactor *= 10.0;
 					}
-					scaleFactor *= 10.0;
-				}
-				if ((maxDelay != null) && ((int) (maxDelay * scaleFactor) > Integer.MAX_VALUE)) {
-					System.out.println("Delay Scaling has caused an overflow");
-				}
-				out.write("minimum delay value is " + scaleFactor * minDelay
-						+ "after scaling by " + scaleFactor + "\n");
-				delayScaleFactor = scaleFactor;
-				scaleDelay();
-			}
-			scaleFactor = 1.0;
-			Double minRate = getMinRate(); // minRate should return minimum by
-			// magnitude alone?? or even by sign..
-			Double maxRate = getMaxRate();
-			out.write("minimum rate is " + minRate + " before scaling the variable.\n");
-			if ((minRate != null) && (minRate != 0)) {
-				for (int i = 0; i < 14; i++) {
-					if (scaleFactor > Math.abs(minRateVal / minRate)) {
-						break;
+					if ((maxDelay != null) && ((int) (maxDelay * scaleFactor) > Integer.MAX_VALUE)) {
+						System.out.println("Delay Scaling has caused an overflow");
 					}
-					scaleFactor *= 10.0;
+					out.write("minimum delay is " + scaleFactor * minDelay + "after scaling by " + scaleFactor + "\n");
+					delayScaleFactor = scaleFactor;
+					scaleDelay(delayScaleFactor);
 				}
-				for (int i = 0; i < 14; i++) {
-					if ((maxRate != null) && (Math.abs((int) (maxRate * scaleFactor)) < Integer.MAX_VALUE)) {
-						break;
-					}
-					scaleFactor /= 10.0;
-				}
-				if ((maxRate != null) && (Math.abs((int) (maxRate * scaleFactor)) > Integer.MAX_VALUE)) {
-					System.out.println("Rate Scaling has caused an overflow");
-				}
-				out.write("minimum rate is " + minRate * scaleFactor + " after scaling by " + scaleFactor + "\n");
-				varScaleFactor = scaleFactor;
-				scaledThresholds = scaleVariable(scaleFactor,scaledThresholds);
-		// TEMPORARY
-		/*		for (String p : g.getPlaceList()){
-					if ((placeInfo.get(getPlaceInfoIndex(p)).getProperty("type")).equals("PROP")){
+				if (contVarExists){
+					scaleFactor = 1.0;
+					Double minRate = getMinRate(); // minRate should return minimum by magnitude alone?? or even by sign..
+					Double maxRate = getMaxRate();
+					out.write("minimum rate is " + minRate + " before scaling the variable.\n");
+					if ((minRate != null) && (minRate != 0)) {
+						for (int i = 0; i < 14; i++) {
+							if (scaleFactor > Math.abs(minRateVal / minRate)) {
+								break;
+							}
+							scaleFactor *= 10.0;
+						}
+						for (int i = 0; i < 14; i++) {
+							if ((maxRate != null) && (Math.abs((int) (maxRate * scaleFactor)) < Integer.MAX_VALUE)) {
+								break;
+							}
+							scaleFactor /= 10.0;
+						}
+						if ((maxRate != null) && (Math.abs((int) (maxRate * scaleFactor)) > Integer.MAX_VALUE)) {
+							System.out.println("Rate Scaling has caused an overflow");
+						}
+						out.write("minimum rate is " + minRate * scaleFactor + " after scaling by " + scaleFactor + "\n");
+						varScaleFactor = scaleFactor;
+						scaledThresholds = scaleVariable(scaleFactor,scaledThresholds);
+						// TEMPORARY
+						/*		for (String p : g.getPlaceList()){
+						if ((placeInfo.get(getPlaceInfoIndex(p)).getProperty("type")).equals("PROP")){
 						String s = g.scaleEnabling(g.getPostset(p)[0],scaleFactor);
 						System.out.println(s);
 					}
-				} */
-		// end TEMPORARY
-			}
-			minDivision = getMinDiv(scaledThresholds);
-			maxDivision = getMaxDiv(scaledThresholds);
-			out.write("minimum division is " + minDivision + " before scaling for division.\n");
-			scaleFactor = 1.0;
-			if ((minDivision != null) && (minDivision != 0)) {
-				for (int i = 0; i < 14; i++) {
-					if (Math.abs(scaleFactor * minDivision) > minDivisionVal) {
-						break;
+					} */
+						// end TEMPORARY
 					}
-					scaleFactor *= 10;
 				}
-				if ((maxDivision != null)
-						&& (Math.abs((int) (maxDivision * scaleFactor)) > Integer.MAX_VALUE)) {
-					System.out.println("Division Scaling has caused an overflow");
-				}
-				out.write("minimum division is " + minDivision * scaleFactor
-						+ " after scaling by " + scaleFactor + "\n");
-				varScaleFactor *= scaleFactor;
-				scaledThresholds = scaleVariable(scaleFactor,scaledThresholds);
-	// TEMPORARY
-		/*		for (String p : g.getPlaceList()){
+				minDivision = getMinDiv(scaledThresholds);
+				maxDivision = getMaxDiv(scaledThresholds);
+				out.write("minimum division is " + minDivision + " before scaling for division.\n");
+				scaleFactor = 1.0;
+				if ((minDivision != null) && (minDivision != 0)) {
+					for (int i = 0; i < 14; i++) {
+						if (Math.abs(scaleFactor * minDivision) > minDivisionVal) {
+							break;
+						}
+						scaleFactor *= 10;
+					}
+					if ((maxDivision != null) && (Math.abs((int) (maxDivision * scaleFactor)) > Integer.MAX_VALUE)) {
+						System.out.println("Division Scaling has caused an overflow");
+					}
+					out.write("minimum division is " + minDivision * scaleFactor + " after scaling by " + scaleFactor + "\n");
+					varScaleFactor *= scaleFactor;
+					scaledThresholds = scaleVariable(scaleFactor,scaledThresholds);
+					// TEMPORARY
+					/*		for (String p : g.getPlaceList()){
 					if ((placeInfo.get(getPlaceInfoIndex(p)).getProperty("type")).equals("PROP")){
 						String s = g.scaleEnabling(g.getPostset(p)[0],scaleFactor);
 						System.out.println(s);
 					}
 				}*/
-	// END TEMPORARY
+					// END TEMPORARY
+				}
+			} else if (varScaleFactor == -1.0){ //force delayScaling; automatic varScaling
+				out.write("\nAuto determining value scale factor; Forcing delay scale factor\n");
+				varScaleFactor = 1.0;
+				out.write("minimum delay is " + minDelay + " before scaling time.\n");
+				/*if ((minDelay != null) && (minDelay != 0)) {
+					for (int i = 0; i < 18; i++) {
+						if (scaleFactor > (minDelayVal / minDelay)) {
+							break;
+						}
+						scaleFactor *= 10.0;
+					}
+					if ((maxDelay != null) && ((int) (maxDelay * scaleFactor) > Integer.MAX_VALUE)) {
+						System.out.println("Delay Scaling has caused an overflow");
+					}
+					if (scaleFactor > delayScaleFactor){
+						out.write("WARNING: Minimum delay won't be an integer with the given scale factor. So using " + scaleFactor + "instead.");
+						delayScaleFactor = scaleFactor;
+					} //else delayScaleFactor = delayScaleFactor (user provided)
+					scaleDelay(delayScaleFactor);
+				} else {
+					scaleDelay(delayScaleFactor);// Even if we can't calculate delayScaleFactor, use user provided one whatever it is
+					out.write("min delay = 0. So, not checking whether the given delayScalefactor is correct\n");
+				}*/
+				out.write("minimum delay is " + delayScaleFactor * minDelay + "after scaling by " + delayScaleFactor + "\n");
+				scaleDelay(delayScaleFactor);
+				if (contVarExists){
+					scaleFactor = 1.0;
+					Double minRate = getMinRate(); // minRate should return minimum by
+					// magnitude alone?? or even by sign..
+					Double maxRate = getMaxRate();
+					out.write("minimum rate is " + minRate + " before scaling the variable.\n");
+					if ((minRate != null) && (minRate != 0)) {
+						for (int i = 0; i < 14; i++) {
+							if (scaleFactor > Math.abs(minRateVal / minRate)) {
+								break;
+							}
+							scaleFactor *= 10.0;
+						}
+						for (int i = 0; i < 14; i++) {
+							if ((maxRate != null) && (Math.abs((int) (maxRate * scaleFactor)) < Integer.MAX_VALUE)) {
+								break;
+							}
+							scaleFactor /= 10.0;
+						}
+						if ((maxRate != null) && (Math.abs((int) (maxRate * scaleFactor)) > Integer.MAX_VALUE)) {
+							System.out.println("Rate Scaling has caused an overflow");
+						}
+						out.write("minimum rate is " + minRate * scaleFactor + " after scaling by " + scaleFactor + "\n");
+						varScaleFactor = scaleFactor;
+						scaledThresholds = scaleVariable(scaleFactor,scaledThresholds);
+						// TEMPORARY
+						/*		for (String p : g.getPlaceList()){
+					if ((placeInfo.get(getPlaceInfoIndex(p)).getProperty("type")).equals("PROP")){
+						String s = g.scaleEnabling(g.getPostset(p)[0],scaleFactor);
+						System.out.println(s);
+					}
+					} */
+						// end TEMPORARY
+					}
+				}
+				minDivision = getMinDiv(scaledThresholds);
+				maxDivision = getMaxDiv(scaledThresholds);
+				out.write("minimum division is " + minDivision + " before scaling for division.\n");
+				scaleFactor = 1.0;
+				if ((minDivision != null) && (minDivision != 0)) {
+					for (int i = 0; i < 14; i++) {
+						if (Math.abs(scaleFactor * minDivision) > minDivisionVal) {
+							break;
+						}
+						scaleFactor *= 10;
+					}
+					if ((maxDivision != null)
+							&& (Math.abs((int) (maxDivision * scaleFactor)) > Integer.MAX_VALUE)) {
+						System.out.println("Division Scaling has caused an overflow");
+					}
+					out.write("minimum division is " + minDivision * scaleFactor + " after scaling by " + scaleFactor + "\n");
+					varScaleFactor *= scaleFactor;
+					scaledThresholds = scaleVariable(scaleFactor,scaledThresholds);
+					// TEMPORARY
+					/*		for (String p : g.getPlaceList()){
+					if ((placeInfo.get(getPlaceInfoIndex(p)).getProperty("type")).equals("PROP")){
+						String s = g.scaleEnabling(g.getPostset(p)[0],scaleFactor);
+						System.out.println(s);
+					}
+					}*/
+					// END TEMPORARY
+				}
+			} else if (delayScaleFactor == -1.0){ //force valueScaling; automatic delayScaling
+				out.write("\nAuto determining delay scale factor; Forcing value scale factor\n");
+				//May be wrong in some cases
+				delayScaleFactor = 1.0;
+				minDivision = getMinDiv(scaledThresholds);
+				maxDivision = getMaxDiv(scaledThresholds);
+				out.write("minimum division is " + minDivision + " before scaling for division.\n");
+				/*scaleFactor = 1.0;
+				if ((minDivision != null) && (minDivision != 0)) {
+					for (int i = 0; i < 14; i++) {
+						if (Math.abs(scaleFactor * minDivision) > minDivisionVal) {
+							break;
+						}
+						scaleFactor *= 10;
+					}
+					if ((maxDivision != null) && (Math.abs((int) (maxDivision * scaleFactor)) > Integer.MAX_VALUE)) {
+						out.write("ERROR: Division Scaling has caused an overflow");
+					}
+					if (scaleFactor > varScaleFactor){
+						out.write("WARNING: Minimum threshold won't be an integer with the given scale factor. So using " + scaleFactor + "instead.");
+						varScaleFactor = scaleFactor;
+					}
+					out.write("minimum division is " + minDivision * varScaleFactor	+ " after scaling by " + varScaleFactor + "\n");
+					scaledThresholds = scaleVariable(varScaleFactor,scaledThresholds);
+					// TEMPORARY
+					//		for (String p : g.getPlaceList()){
+					//if ((placeInfo.get(getPlaceInfoIndex(p)).getProperty("type")).equals("PROP")){
+					//	String s = g.scaleEnabling(g.getPostset(p)[0],scaleFactor);
+					//	System.out.println(s);
+					//}
+					//}
+					// END TEMPORARY
+				} else {
+					scaledThresholds = scaleVariable(varScaleFactor,scaledThresholds);
+					out.write("Min division is 0. So, not checking whether given value scale factor is correct");
+				}*/
+				scaledThresholds = scaleVariable(varScaleFactor,scaledThresholds);
+				out.write("minimum division is " + minDivision * varScaleFactor	+ " after scaling by " + varScaleFactor + "\n");
+				if (contVarExists){
+					scaleFactor = 1.0;
+					Double minRate = getMinRate(); // minRate should return minimum by magnitude alone?? or even by sign..
+					Double maxRate = getMaxRate();
+					out.write("minimum rate is " + minRate + " before scaling the variable.\n");
+					if ((minRate != null) && (minRate != 0)) {
+						for (int i = 0; i < 14; i++) {
+							if (scaleFactor > Math.abs(minRateVal / minRate)) {
+								break;
+							}
+							scaleFactor *= 10.0;
+						}
+						for (int i = 0; i < 14; i++) {
+							if ((maxRate != null) && (Math.abs((int) (maxRate * scaleFactor)) < Integer.MAX_VALUE)) {
+								break;
+							}
+							scaleFactor /= 10.0;
+						}
+						if ((maxRate != null) && (Math.abs((int) (maxRate * scaleFactor)) > Integer.MAX_VALUE)) {
+							out.write("Rate Scaling has caused an overflow\n");
+						}
+						out.write("minimum rate is " + minRate * scaleFactor + " after scaling delay by " + 1/scaleFactor + "\n");
+						scaleDelay(1/scaleFactor);
+						delayScaleFactor = 1/scaleFactor;
+						// TEMPORARY
+						/*		for (String p : g.getPlaceList()){
+					if ((placeInfo.get(getPlaceInfoIndex(p)).getProperty("type")).equals("PROP")){
+						String s = g.scaleEnabling(g.getPostset(p)[0],scaleFactor);
+						System.out.println(s);
+					}
+					} */
+						// end TEMPORARY
+					}
+				}
+				scaleFactor = 1.0;
+				minDelay = getMinDelay();
+				maxDelay = getMaxDelay();
+				out.write("minimum delay is " + minDelay + " before scaling time.\n");
+				if ((minDelay != null) && (minDelay != 0)) {
+					for (int i = 0; i < 18; i++) {
+						if (scaleFactor > (minDelayVal / minDelay)) {
+							break;
+						}
+						scaleFactor *= 10.0;
+					}
+					if ((maxDelay != null) && ((int) (maxDelay * scaleFactor) > Integer.MAX_VALUE)) {
+						System.out.println("Delay Scaling has caused an overflow");
+					}
+					delayScaleFactor = scaleFactor;
+					out.write("minimum delay is " + delayScaleFactor * minDelay
+							+ "after scaling delay by " + delayScaleFactor + "\n");
+					scaleDelay(delayScaleFactor);
+				}
+			} else { //User forces both delay and value scaling factors.
+				out.write("\nForcing delay and value scale factors\n");
+				minDivision = getMinDiv(scaledThresholds);
+				out.write("minimum division is " + minDivision + " before scaling for division.\n");
+				scaledThresholds = scaleVariable(varScaleFactor, scaledThresholds);
+				minDivision = getMinDiv(scaledThresholds);
+				out.write("minimum division is " + minDivision + " after scaling for division.\n");
+				minDelay = getMinDelay();
+				out.write("minimum delay is " + minDivision + " before scaling for delay.\n");
+				scaleDelay(delayScaleFactor);
+				minDelay = getMinDelay();
+				out.write("minimum delay is " + minDivision + " after scaling for delay.\n");
+				/*
+				 minDivision = getMinDiv(scaledThresholds);
+				 maxDivision = getMaxDiv(scaledThresholds); 
+				 scaleFactor = 1.0;
+				 if ((minDivision != null) && (minDivision != 0)) {
+					for (int i = 0; i < 14; i++) {
+						if (Math.abs(scaleFactor * minDivision) > minDivisionVal) {
+							break;
+						}
+						scaleFactor *= 10;
+					}
+					if ((maxDivision != null) && (Math.abs((int) (maxDivision * scaleFactor)) > Integer.MAX_VALUE)) {
+						out.write("ERROR: Division Scaling has caused an overflow");
+					}
+					if (scaleFactor > varScaleFactor){
+						out.write("WARNING: Minimum threshold won't be an integer with the given scale factor. So using " + scaleFactor + "instead.");
+						varScaleFactor = scaleFactor;
+					}
+					out.write("minimum division is " + minDivision * varScaleFactor	+ " after scaling by " + varScaleFactor + "\n");
+					scaledThresholds = scaleVariable(varScaleFactor,scaledThresholds);
+					// TEMPORARY
+					//		for (String p : g.getPlaceList()){
+					//if ((placeInfo.get(getPlaceInfoIndex(p)).getProperty("type")).equals("PROP")){
+					//	String s = g.scaleEnabling(g.getPostset(p)[0],scaleFactor);
+					//	System.out.println(s);
+					//}
+					//}
+					// END TEMPORARY
+				} else {
+					scaledThresholds = scaleVariable(varScaleFactor,scaledThresholds);
+					out.write("Min division is 0. So, not checking whether given value scale factor is correct");
+				}
+				out.write("minimum delay is " + minDelay + " before scaling time.\n");
+				scaleFactor = 1.0;
+				minDelay = getMinDelay();
+				maxDelay = getMaxDelay();
+				if ((minDelay != null) && (minDelay != 0)) {
+					for (int i = 0; i < 18; i++) {
+						if (scaleFactor > (minDelayVal / minDelay)) {
+							break;
+						}
+						scaleFactor *= 10.0;
+					}
+					if ((maxDelay != null) && ((int) (maxDelay * scaleFactor) > Integer.MAX_VALUE)) {
+						System.out.println("Delay Scaling has caused an overflow");
+					}
+					if (scaleFactor > delayScaleFactor){
+						out.write("WARNING: Minimum delay won't be an integer with the given scale factor. So using " + scaleFactor + "instead.");
+						delayScaleFactor = scaleFactor;
+					}
+					out.write("minimum delay value is " + delayScaleFactor * minDelay
+							+ "after scaling by " + delayScaleFactor + "\n");
+					scaleDelay(delayScaleFactor);
+				}
+				if (contVarExists){
+					scaleFactor = 1.0;
+					Double minRate = getMinRate(); // minRate should return minimum by magnitude alone?? or even by sign..
+					Double maxRate = getMaxRate();
+					out.write("minimum rate is " + minRate + " before scaling the variable.\n");
+					if ((minRate != null) && (minRate != 0)) {
+						for (int i = 0; i < 14; i++) {
+							if (scaleFactor > Math.abs(minRateVal / minRate)) {
+								break;
+							}
+							scaleFactor *= 10.0;
+						}
+						for (int i = 0; i < 14; i++) {
+							if ((maxRate != null) && (Math.abs((int) (maxRate * scaleFactor)) < Integer.MAX_VALUE)) {
+								break;
+							}
+							scaleFactor /= 10.0;
+						}
+						if ((maxRate != null) && (Math.abs((int) (maxRate * scaleFactor)) > Integer.MAX_VALUE)) {
+							out.write("Rate Scaling has caused an overflow\n");
+						}
+						out.write("minimum rate is " + minRate * scaleFactor + " after scaling delay by " + scaleFactor + "\n");
+						if (scaleFactor > 1)
+							out.write("The given value scaling factor is insufficient for rates. So increasing it to "+ scaleFactor*varScaleFactor);
+						scaledThresholds = scaleVariable(scaleFactor,scaledThresholds);
+						varScaleFactor *= scaleFactor;
+						// TEMPORARY
+						//		for (String p : g.getPlaceList()){
+					//if ((placeInfo.get(getPlaceInfoIndex(p)).getProperty("type")).equals("PROP")){
+					//	String s = g.scaleEnabling(g.getPostset(p)[0],scaleFactor);
+					//	System.out.println(s);
+					//}
+					//}
+						// end TEMPORARY
+					}
+				}*/
+				
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -4105,10 +4411,35 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		return localThresholds;
 	}
 
-	public void scaleDelay() {
+	public void scaleDelay(Double scaleFactor) {
 		try{
 			String place;
 			Properties p;
+			for (String t : g.getTransitionList()) {
+				if ((g.getPreset(t) != null) && (g.getPostset(t) != null)){
+					if (!isTransientTransition(t)){
+						if ((placeInfo.get(getPlaceInfoIndex(g.getPreset(t)[0])).getProperty("type").equalsIgnoreCase("RATE"))
+								&& (placeInfo.get(getPlaceInfoIndex(g.getPostset(t)[0])).getProperty("type").equalsIgnoreCase("RATE"))) {
+							String pPrev = g.getPreset(t)[0];
+							String nextPlace = g.getPostset(t)[0];
+							Double mind = Double.parseDouble(transitionInfo.get(getPlaceInfoIndex(pPrev) + getPlaceInfoIndex(nextPlace)).getProperty("dMin"));
+							Double maxd = Double.parseDouble(transitionInfo.get(getPlaceInfoIndex(pPrev) + getPlaceInfoIndex(nextPlace)).getProperty("dMax"));
+							transitionInfo.get(getPlaceInfoIndex(pPrev) + getPlaceInfoIndex(nextPlace)).setProperty("dMin",Double.toString(mind*scaleFactor));
+							transitionInfo.get(getPlaceInfoIndex(pPrev) + getPlaceInfoIndex(nextPlace)).setProperty("dMax",Double.toString(maxd*scaleFactor));
+						}
+					} else {
+						if ((transientNetPlaces.get(getTransientNetPlaceIndex(g.getPreset(t)[0])).getProperty("type").equalsIgnoreCase("RATE"))
+								&& (placeInfo.get(getPlaceInfoIndex(g.getPostset(t)[0])).getProperty("type").equalsIgnoreCase("RATE"))){		// transient non-dmv transition
+							String pPrev = g.getPreset(t)[0];
+							String nextPlace = g.getPostset(t)[0];
+							Double mind = Double.parseDouble(transientNetTransitions.get(getTransientNetPlaceIndex(pPrev)+getPlaceInfoIndex(nextPlace)).getProperty("dMin"));
+							Double maxd = Double.parseDouble(transientNetTransitions.get(getTransientNetPlaceIndex(pPrev)+getPlaceInfoIndex(nextPlace)).getProperty("dMax"));
+							transientNetTransitions.get(getTransientNetPlaceIndex(pPrev)+getPlaceInfoIndex(nextPlace)).setProperty("dMin",Double.toString(mind*scaleFactor));
+							transientNetTransitions.get(getTransientNetPlaceIndex(pPrev)+getPlaceInfoIndex(nextPlace)).setProperty("dMax",Double.toString(maxd*scaleFactor));
+						}
+					}
+				}
+			}
 			for (String st1 : g.getPlaceList()) {
 				if (!isTransientPlace(st1)){
 					place = getPlaceInfoIndex(st1);
@@ -4129,42 +4460,44 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 							times = s.split(" ");
 							for (int i = 0; i < times.length; i++) {
 								if (newS == null) {
-									// newS = Integer.toString((int)(Double.parseDouble(times[i])*delayScaleFactor));
+									// newS = Integer.toString((int)(Double.parseDouble(times[i])*scaleFactor));
 									newS = Double.toString(Double.parseDouble(times[i])
-					 * delayScaleFactor);
+					 * scaleFactor);
 								} else {
-									// newS = newS + Integer.toString((int)(Double.parseDouble(times[i])*delayScaleFactor));
+									// newS = newS + Integer.toString((int)(Double.parseDouble(times[i])*scaleFactor));
 									newS = newS + " " + Double.toString(Double
-											.parseDouble(times[i]) * delayScaleFactor);
+											.parseDouble(times[i]) * scaleFactor);
 								}
 							}
 							p.setProperty("dmvcTime_" + name, newS);
 						}
 						p.setProperty("dMin", Double.toString(Double.parseDouble(p
-								.getProperty("dMin")) * delayScaleFactor));
+								.getProperty("dMin")) * scaleFactor));
 						p.setProperty("dMax", Double.toString(Double.parseDouble(p
-								.getProperty("dMax")) * delayScaleFactor));
+								.getProperty("dMax")) * scaleFactor));
 					} else{*/
-					// p.setProperty("dMin",Integer.toString((int)(Double.parseDouble(p.getProperty("dMin"))*delayScaleFactor)));
-					// p.setProperty("dMax",Integer.toString((int)(Double.parseDouble(p.getProperty("dMax"))*delayScaleFactor)));
-					p.setProperty("dMin", Double.toString(Double.parseDouble(p
-							.getProperty("dMin")) * delayScaleFactor));
+					// p.setProperty("dMin",Integer.toString((int)(Double.parseDouble(p.getProperty("dMin"))*scaleFactor)));
+					// p.setProperty("dMax",Integer.toString((int)(Double.parseDouble(p.getProperty("dMax"))*scaleFactor)));
+				/* STORING DELAYS AT TRANSITIONS
+				  	p.setProperty("dMin", Double.toString(Double.parseDouble(p
+							.getProperty("dMin")) * scaleFactor));
 					p.setProperty("dMax", Double.toString(Double.parseDouble(p
-							.getProperty("dMax")) * delayScaleFactor));
+							.getProperty("dMax")) * scaleFactor));
+				*/			
 					for (Variable v : reqdVarsL) {
 						if (!v.isDmvc()) {
 							// p.setProperty(v.getName() +
 							// "_rMin",Integer.toString((int)(Double.parseDouble(p.getProperty(v.getName()
-							// + "_rMin"))/delayScaleFactor)));
+							// + "_rMin"))/scaleFactor)));
 							// p.setProperty(v.getName() +
 							// "_rMax",Integer.toString((int)(Double.parseDouble(p.getProperty(v.getName()
-							// + "_rMax"))/delayScaleFactor)));
+							// + "_rMax"))/scaleFactor)));
 							p.setProperty(v.getName() + "_rMin", Double
 									.toString(Double.parseDouble(p.getProperty(v
-											.getName() + "_rMin"))	/ delayScaleFactor));
+											.getName() + "_rMin"))	/ scaleFactor));
 							p.setProperty(v.getName() + "_rMax", Double
 									.toString(Double.parseDouble(p.getProperty(v
-											.getName() + "_rMax"))	/ delayScaleFactor));
+											.getName() + "_rMax"))	/ scaleFactor));
 						}
 					}
 					//}
@@ -4172,13 +4505,16 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			}
 			for (Variable v : reqdVarsL) {
 				// if (!v.isDmvc()){ this if maynot be required.. rates do exist for dmvc ones as well.. since calculated before detectDMV
-				v.scaleInitByDelay(delayScaleFactor);
+				v.scaleInitByDelay(scaleFactor);
 				// }
 			}
 			// SEE IF RATES IN TRANSITIONS HAVE TO BE ADJUSTED HERE
 		}
 		catch(NullPointerException e){
 			System.out.println("Delay scaling error due to null. Check");
+		}
+		catch(java.lang.ArrayIndexOutOfBoundsException e){
+			System.out.println("Delay scaling error due to Array Index.");
 		}
 	}
 /*
@@ -4243,17 +4579,19 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			Properties p = placeInfo.get(place);
 			if (p.getProperty("type").equals("RATE")) {
 				for (Variable v : reqdVarsL) {
-					if ((minRate == null)
-							&& (p.getProperty(v.getName() + "_rMin") != null)) {
-						minRate = Double.parseDouble(p.getProperty(v.getName()
-								+ "_rMin"));
-					} else if ((p.getProperty(v.getName() + "_rMin") != null)
-							&& (Double.parseDouble(p.getProperty(v.getName()
-									+ "_rMin")) < minRate)
-							&& (Double.parseDouble(p.getProperty(v.getName()
-									+ "_rMin")) != 0.0)) {
-						minRate = Double.parseDouble(p.getProperty(v.getName()
-								+ "_rMin"));
+					if (!v.isDmvc()){
+						if ((minRate == null)
+								&& (p.getProperty(v.getName() + "_rMin") != null)) {
+							minRate = Double.parseDouble(p.getProperty(v.getName()
+									+ "_rMin"));
+						} else if ((p.getProperty(v.getName() + "_rMin") != null)
+								&& (Double.parseDouble(p.getProperty(v.getName()
+										+ "_rMin")) < minRate)
+										&& (Double.parseDouble(p.getProperty(v.getName()
+												+ "_rMin")) != 0.0)) {
+							minRate = Double.parseDouble(p.getProperty(v.getName()
+									+ "_rMin"));
+						}
 					}
 				}
 			}
@@ -4267,17 +4605,19 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			Properties p = placeInfo.get(place);
 			if (p.getProperty("type").equals("RATE")) {
 				for (Variable v : reqdVarsL) {
-					if ((maxRate == null)
-							&& (p.getProperty(v.getName() + "_rMax") != null)) {
-						maxRate = Double.parseDouble(p.getProperty(v.getName()
-								+ "_rMax"));
-					} else if ((p.getProperty(v.getName() + "_rMax") != null)
-							&& (Double.parseDouble(p.getProperty(v.getName()
-									+ "_rMax")) > maxRate)
-							&& (Double.parseDouble(p.getProperty(v.getName()
-									+ "_rMax")) != 0.0)) {
-						maxRate = Double.parseDouble(p.getProperty(v.getName()
-								+ "_rMax"));
+					if (!v.isDmvc()){
+						if ((maxRate == null)
+								&& (p.getProperty(v.getName() + "_rMax") != null)) {
+							maxRate = Double.parseDouble(p.getProperty(v.getName()
+									+ "_rMax"));
+						} else if ((p.getProperty(v.getName() + "_rMax") != null)
+								&& (Double.parseDouble(p.getProperty(v.getName()
+										+ "_rMax")) > maxRate)
+										&& (Double.parseDouble(p.getProperty(v.getName()
+												+ "_rMax")) != 0.0)) {
+							maxRate = Double.parseDouble(p.getProperty(v.getName()
+									+ "_rMax"));
+						}
 					}
 				}
 			}
@@ -4287,19 +4627,40 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 
 	public Double getMinDelay() {
 		Double minDelay = null;
-		for (String place : placeInfo.keySet()) {
-			Properties p = placeInfo.get(place);
-			/* Related to the separate net for DMV input driver
-			if (p.getProperty("type").equals("DMVC")) {
-				if ((minDelay == null) && (getMinDmvcTime(p) != null)
-						&& (getMinDmvcTime(p) != 0)) {
-					minDelay = getMinDmvcTime(p);
-				} else if ((getMinDmvcTime(p) != null)
-						&& (getMinDmvcTime(p) != 0)
-						&& (getMinDmvcTime(p) < minDelay)) {
-					minDelay = getMinDmvcTime(p);
+		Double mind;
+		for (String t : g.getTransitionList()) {
+			if ((g.getPreset(t) != null) && (g.getPostset(t) != null)){
+				if (!isTransientTransition(t)){
+					if ((placeInfo.get(getPlaceInfoIndex(g.getPreset(t)[0])).getProperty("type").equalsIgnoreCase("RATE"))
+							&& (placeInfo.get(getPlaceInfoIndex(g.getPostset(t)[0])).getProperty("type").equalsIgnoreCase("RATE"))) {
+						String pPrev = g.getPreset(t)[0];
+						String nextPlace = g.getPostset(t)[0];
+						if (transitionInfo.get(getPlaceInfoIndex(pPrev) + getPlaceInfoIndex(nextPlace)).getProperty("dMin") != null){
+							 mind = Double.parseDouble(transitionInfo.get(getPlaceInfoIndex(pPrev) + getPlaceInfoIndex(nextPlace)).getProperty("dMin"));
+							 if (minDelay == null)
+								 minDelay = mind;
+							 else if ((minDelay > mind) && (mind != 0))
+								 minDelay = mind;
+						}
+					}
+				} else {
+					if ((transientNetPlaces.get(getTransientNetPlaceIndex(g.getPreset(t)[0])).getProperty("type").equalsIgnoreCase("RATE"))
+							&& (placeInfo.get(getPlaceInfoIndex(g.getPostset(t)[0])).getProperty("type").equalsIgnoreCase("RATE"))){		// transient non-dmv transition
+						String pPrev = g.getPreset(t)[0];
+						String nextPlace = g.getPostset(t)[0];
+						if (transientNetTransitions.get(getTransientNetPlaceIndex(pPrev)+getPlaceInfoIndex(nextPlace)).getProperty("dMin") != null){
+							mind = Double.parseDouble(transientNetTransitions.get(getTransientNetPlaceIndex(pPrev)+getPlaceInfoIndex(nextPlace)).getProperty("dMin"));
+							if (minDelay == null)
+								minDelay = mind;
+							else if ((minDelay > mind) && (mind != 0))
+								minDelay = mind;
+						}
+					}
 				}
-			} else {*/
+			}
+		}
+		/*for (String place : placeInfo.keySet()) {
+			Properties p = placeInfo.get(place);
 			if ((minDelay == null) && (p.getProperty("dMin") != null)
 					&& (Double.parseDouble(p.getProperty("dMin")) != 0)) {
 				minDelay = Double.parseDouble(p.getProperty("dMin"));
@@ -4309,25 +4670,46 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				minDelay = Double.parseDouble(p.getProperty("dMin"));
 			}
 			//}
-		}
+		}*/
 		return minDelay;
 	}
 
 	public Double getMaxDelay() {
 		Double maxDelay = null;
-		for (String place : placeInfo.keySet()) {
-			Properties p = placeInfo.get(place);
-			/* Related to the separate net for DMV input driver
-			if (p.getProperty("type").equals("DMVC")) {
-				if ((maxDelay == null) && (getMaxDmvcTime(p) != null)
-						&& (getMaxDmvcTime(p) != 0)) {
-					maxDelay = getMaxDmvcTime(p);
-				} else if ((getMaxDmvcTime(p) != null)
-						&& (getMaxDmvcTime(p) != 0)
-						&& (getMaxDmvcTime(p) > maxDelay)) {
-					maxDelay = getMaxDmvcTime(p);
+		Double maxd;
+		for (String t : g.getTransitionList()) {
+			if ((g.getPreset(t) != null) && (g.getPostset(t) != null)){
+				if (!isTransientTransition(t)){
+					if ((placeInfo.get(getPlaceInfoIndex(g.getPreset(t)[0])).getProperty("type").equalsIgnoreCase("RATE"))
+							&& (placeInfo.get(getPlaceInfoIndex(g.getPostset(t)[0])).getProperty("type").equalsIgnoreCase("RATE"))) {
+						String pPrev = g.getPreset(t)[0];
+						String nextPlace = g.getPostset(t)[0];
+						if (transitionInfo.get(getPlaceInfoIndex(pPrev) + getPlaceInfoIndex(nextPlace)).getProperty("dMax") != null){
+							 maxd = Double.parseDouble(transitionInfo.get(getPlaceInfoIndex(pPrev) + getPlaceInfoIndex(nextPlace)).getProperty("dMax"));
+							 if (maxDelay == null)
+								 maxDelay = maxd;
+							 else if ((maxDelay < maxd) && (maxd != 0))
+								 maxDelay = maxd;
+						}
+					}
+				} else {
+					if ((transientNetPlaces.get(getTransientNetPlaceIndex(g.getPreset(t)[0])).getProperty("type").equalsIgnoreCase("RATE"))
+							&& (placeInfo.get(getPlaceInfoIndex(g.getPostset(t)[0])).getProperty("type").equalsIgnoreCase("RATE"))){		// transient non-dmv transition
+						String pPrev = g.getPreset(t)[0];
+						String nextPlace = g.getPostset(t)[0];
+						if (transientNetTransitions.get(getTransientNetPlaceIndex(pPrev)+getPlaceInfoIndex(nextPlace)).getProperty("dmax") != null){
+							maxd = Double.parseDouble(transientNetTransitions.get(getTransientNetPlaceIndex(pPrev)+getPlaceInfoIndex(nextPlace)).getProperty("dmax"));
+							if (maxDelay == null)
+								maxDelay = maxd;
+							else if ((maxDelay < maxd) && (maxd != 0))
+								maxDelay = maxd;
+						}
+					}
 				}
-			} else {*/
+			}
+		}
+		/*for (String place : placeInfo.keySet()) {
+			Properties p = placeInfo.get(place);
 			if ((maxDelay == null) && (p.getProperty("dMax") != null)
 					&& (Double.parseDouble(p.getProperty("dMax")) != 0)) {
 				maxDelay = Double.parseDouble(p.getProperty("dMax"));
@@ -4337,7 +4719,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				maxDelay = Double.parseDouble(p.getProperty("dMax"));
 			}
 			//}
-		}
+		}*/
 		return maxDelay;
 	}
 
