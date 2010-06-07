@@ -146,10 +146,14 @@ public class PlacePanel extends JPanel implements ActionListener {
 				}
 			}
 			*/
-			if (selected != null && !oldName.equals(id)) {
-				lhpn.changePlaceName(oldName, id);
+			if (selected != null) {
+				if (!oldName.equals(id)) {
+					lhpn.changePlaceName(oldName, id);
+				}
+				lhpn.changeInitialMarking(id, ic);
+			} else {
+				lhpn.addPlace(id, ic);
 			}
-			lhpn.changeInitialMarking(id, ic);
 			
 			for (String s : placeList.getItems()) {
 				if (oldName != null) {

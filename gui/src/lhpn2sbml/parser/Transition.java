@@ -17,6 +17,10 @@ public class Transition {
 
 	private ExprTree delayTree;
 
+	private String priority;
+
+	private ExprTree priorityTree;
+
 	private ArrayList<Place> preset;
 
 	private ArrayList<Place> postset;
@@ -66,13 +70,13 @@ public class Transition {
 	}
 
 	public boolean addEnabling(String newEnab) {
+		boolean retVal = false;
 		if (newEnab == null) {
 			return false;
 		}
 		if (newEnab.equals("")) {
-			return true;
+			retVal = true;
 		}
-		boolean retVal = false;
 		enabling = newEnab;
 		ExprTree expr = new ExprTree(lhpn);
 		if (newEnab != null && !newEnab.equals("")) {
@@ -128,6 +132,21 @@ public class Transition {
 		return retVal;
 	}
 	
+	public boolean addPriority(String priority) {
+		if (priority.equals("")) {
+			this.priority = null;
+			priorityTree = null;
+			return true;
+		}
+		boolean retVal;
+		this.priority = priority;
+		ExprTree expr = new ExprTree(lhpn);
+		expr.token = expr.intexpr_gettok(priority);
+		retVal = expr.intexpr_L(priority);
+		priorityTree = expr;
+		return retVal;
+	}
+	
 	public boolean addBoolAssign(String variable, String assignment) {
 		boolean retVal;
 		boolAssignments.put(variable, assignment);
@@ -162,8 +181,16 @@ public class Transition {
 		return delay;
 	}
 	
+	public String getPriority() {
+		return priority;
+	}
+	
 	public ExprTree getDelayTree() {
 		return delayTree;
+	}
+	
+	public ExprTree getPriorityTree() {
+		return priorityTree;
 	}
 	
 	public String getTransitionRate() {
@@ -394,6 +421,10 @@ public class Transition {
 	
 	public boolean containsDelay() {
 		return ((delay != null)&&!delay.equals(""));
+	}
+	
+	public boolean containsPriority() {
+		return ((priority != null)&&!priority.equals(""));
 	}
 	
 	public boolean containsPreset(String name) {

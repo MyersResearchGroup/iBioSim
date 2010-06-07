@@ -267,9 +267,22 @@ public class LhpnFile {
 						buffer.append("<" + t.getName() + "=" + t.getDelay() + ">");
 					}
 				}
-			}
-			if (flag) {
-				buffer.append("}\n");
+				if (flag) {
+					buffer.append("}\n");
+				}
+				flag = false;
+				for (Transition t : transitions.values()) {
+					if (t.containsPriority()) {
+						if (!flag) {
+							buffer.append("#@.priority_assignments {");
+							flag = true;
+						}
+						buffer.append("<" + t.getName() + "=[" + t.getPriority() + "]>");
+					}
+				}
+				if (flag) {
+					buffer.append("}\n");
+				}
 			}
 			flag = false;
 			for (Transition t : transitions.values()) {
@@ -333,6 +346,7 @@ public class LhpnFile {
 		parseAssign(data);
 		parseRateAssign(data);
 		parseDelayAssign(data);
+		parsePriorityAssign(data);
 		parseBooleanAssign(data);
 		parseTransitionRate(data);
 		parseFailTransitions(data);
@@ -466,6 +480,10 @@ public class LhpnFile {
 
 	public void changeDelay(String t, String delay) {
 		transitions.get(t).addDelay(delay);
+	}
+
+	public void changePriority(String t, String priority) {
+		transitions.get(t).addDelay(priority);
 	}
 
 	public void changeInitialMarking(String p, boolean marking) {
@@ -1350,6 +1368,20 @@ public class LhpnFile {
 		}
 	}
 
+	private void parsePriorityAssign(StringBuffer data) {
+		Pattern linePattern = Pattern.compile(PRIORITY_LINE);
+		Matcher lineMatcher = linePattern.matcher(data.toString());
+		if (lineMatcher.find()) {
+			Pattern priorityPattern = Pattern.compile(PRIORITY);
+			Matcher priorityMatcher = priorityPattern.matcher(lineMatcher.group(1).replace("\\s", ""));
+			while (priorityMatcher.find()) {
+				Transition transition = transitions.get(priorityMatcher.group(1));
+				String priority = priorityMatcher.group(2);
+				transition.addPriority(priority);
+			}
+		}
+	}
+
 	private void parseBooleanAssign(StringBuffer data) {
 		Pattern linePattern = Pattern.compile(BOOLEAN_LINE);
 		Matcher lineMatcher = linePattern.matcher(data.toString());
@@ -1443,6 +1475,10 @@ public class LhpnFile {
 	private static final String DELAY_LINE = "#@\\.delay_assignments \\{([\\S[^\\}]]+?)\\}";
 
 	private static final String DELAY = "<([\\w_]+)=(\\S+?)>";
+
+	private static final String PRIORITY_LINE = "#@\\.priority_assignments \\{([\\S[^\\}]]+?)\\}";
+
+	private static final String PRIORITY = "<([\\w_]+)=\\[(\\S+?)\\]>";
 
 	private static final String TRANS_RATE_LINE = "#@\\.transition_rates \\{([\\S[^\\}]]+?)\\}";
 

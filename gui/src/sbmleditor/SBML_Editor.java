@@ -121,7 +121,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 
 	private JTextField ruleMath; // rule fields;
 
-	private JTextField eventID, eventName, eventTrigger, eventDelay; // event
+	private JTextField eventID, eventName, eventTrigger, eventDelay, eventPriority; // event
 
 	private JCheckBox assignTime,disableTrigger;
 	// fields;
@@ -406,6 +406,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			createFunction(model, "poisson", "Poisson distribution", "lambda(mu,mu)");
 			createFunction(model, "binomial", "Binomial distribution", "lambda(p,n,p*n)");
 			createFunction(model, "bernoulli", "Bernoulli distribution", "lambda(p,p)");
+			createFunction(model, "priority", "Priority expression", "lambda(d,p,d)");
 		}
 		else {
 			document = new SBMLDocument();
@@ -4817,17 +4818,19 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		int index = events.getSelectedIndex();
 		JPanel eventPanel = new JPanel(new BorderLayout());
 		// JPanel evPanel = new JPanel(new GridLayout(2, 2));
-		JPanel evPanel = new JPanel(new GridLayout(6, 2));
+		JPanel evPanel = new JPanel(new GridLayout(7, 2));
 		JLabel IDLabel = new JLabel("ID:");
 		JLabel NameLabel = new JLabel("Name:");
 		JLabel triggerLabel = new JLabel("Trigger:");
 		JLabel delayLabel = new JLabel("Delay:");
+		JLabel priorityLabel = new JLabel("Priority:");
 		JLabel assignTimeLabel = new JLabel("Use values at trigger time");
 		JLabel disableTriggerLabel = new JLabel("Trigger can be disabled");
 		eventID = new JTextField(12);
 		eventName = new JTextField(12);
 		eventTrigger = new JTextField(12);
 		eventDelay = new JTextField(12);
+		eventPriority = new JTextField(12);
 		assignTime = new JCheckBox("");
 		disableTrigger = new JCheckBox("");
 		JPanel eventAssignPanel = new JPanel(new BorderLayout());
@@ -4863,7 +4866,13 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					eventName.setText(event.getName());
 					eventTrigger.setText(myFormulaToString(event.getTrigger().getMath()));
 					if (event.isSetDelay()) {
-						eventDelay.setText(myFormulaToString(event.getDelay().getMath()));
+						ASTNode delay = event.getDelay().getMath();
+						if ((delay.getType()==libsbml.AST_FUNCTION) && (delay.getName().equals("priority"))) {
+							eventDelay.setText(myFormulaToString(delay.getLeftChild()));
+							eventPriority.setText(myFormulaToString(delay.getRightChild()));
+						} else {
+							eventDelay.setText(myFormulaToString(delay));
+						}
 					}
 					if (event.getUseValuesFromTriggerTime()) {
 						assignTime.setSelected(true);
@@ -4906,6 +4915,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		evPanel.add(eventTrigger);
 		evPanel.add(delayLabel);
 		evPanel.add(eventDelay);
+		evPanel.add(priorityLabel);
+		evPanel.add(eventPriority);
 		evPanel.add(assignTimeLabel);
 		evPanel.add(assignTime);
 		evPanel.add(disableTriggerLabel);
@@ -4937,6 +4948,12 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			else if (!eventDelay.getText().trim().equals("")
 					&& myParseFormula(eventDelay.getText().trim()) == null) {
 				JOptionPane.showMessageDialog(biosim.frame(), "Delay formula is not valid.",
+						"Enter Valid Formula", JOptionPane.ERROR_MESSAGE);
+				error = true;
+			}
+			else if (!eventPriority.getText().trim().equals("")
+					&& myParseFormula(eventPriority.getText().trim()) == null) {
+				JOptionPane.showMessageDialog(biosim.frame(), "Priority formula is not valid.",
 						"Enter Valid Formula", JOptionPane.ERROR_MESSAGE);
 				error = true;
 			}
@@ -4974,7 +4991,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 							JOptionPane.ERROR_MESSAGE);
 					error = true;
 				}
-				else {
+				if (!error) {
 					invalidVars = getInvalidVariables(eventDelay.getText().trim(), false, "", false);
 					if (invalidVars.size() > 0) {
 						String invalid = "";
@@ -5003,6 +5020,34 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					}
 				}
 				if (!error) {
+					invalidVars = getInvalidVariables(eventPriority.getText().trim(), false, "", false);
+					if (invalidVars.size() > 0) {
+						String invalid = "";
+						for (int i = 0; i < invalidVars.size(); i++) {
+							if (i == invalidVars.size() - 1) {
+								invalid += invalidVars.get(i);
+							}
+							else {
+								invalid += invalidVars.get(i) + "\n";
+							}
+						}
+						String message;
+						message = "Event priority contains unknown variables.\n\n"
+								+ "Unknown variables:\n" + invalid;
+						JTextArea messageArea = new JTextArea(message);
+						messageArea.setLineWrap(true);
+						messageArea.setWrapStyleWord(true);
+						messageArea.setEditable(false);
+						JScrollPane scrolls = new JScrollPane();
+						scrolls.setMinimumSize(new Dimension(300, 300));
+						scrolls.setPreferredSize(new Dimension(300, 300));
+						scrolls.setViewportView(messageArea);
+						JOptionPane.showMessageDialog(biosim.frame(), scrolls, "Unknown Variables",
+								JOptionPane.ERROR_MESSAGE);
+						error = true;
+					}
+				}
+				if (!error) {
 					error = checkNumFunctionArguments(myParseFormula(eventTrigger.getText().trim()));
 				}
 				if ((!error) && (!eventDelay.getText().trim().equals(""))) {
@@ -5011,6 +5056,17 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						if (myParseFormula(eventDelay.getText().trim()).isBoolean()) {
 							JOptionPane.showMessageDialog(biosim.frame(),
 									"Event delay must evaluate to a number.", "Number Expected",
+									JOptionPane.ERROR_MESSAGE);
+							error = true;
+						}
+					}
+				}
+				if ((!error) && (!eventPriority.getText().trim().equals(""))) {
+					error = checkNumFunctionArguments(myParseFormula(eventPriority.getText().trim()));
+					if (!error) {
+						if (myParseFormula(eventPriority.getText().trim()).isBoolean()) {
+							JOptionPane.showMessageDialog(biosim.frame(),
+									"Event priority must evaluate to a number.", "Number Expected",
 									JOptionPane.ERROR_MESSAGE);
 							error = true;
 						}
@@ -5037,26 +5093,53 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 							break;
 					}
 					if (!error) {
-						if (eventDelay.getText().trim().equals("")) {
-							e.unsetDelay();
-						}
-						else {
-							String oldDelayStr = "";
-							if (e.isSetDelay()) {
-								oldDelayStr = myFormulaToString(e.getDelay().getMath());
-							}
-							e.createDelay();
-							e.getDelay().setMath(myParseFormula(eventDelay.getText().trim()));
-							error = checkEventDelayUnits(e.getDelay());
-							if (error) {
-								if (oldDelayStr.equals("")) {
-									e.unsetDelay();
+						if (eventPriority.getText().trim().equals("")) {
+							if (eventDelay.getText().trim().equals("")) {
+								e.unsetDelay();
+							}	
+							else {
+								String oldDelayStr = "";
+								if (e.isSetDelay()) {
+									oldDelayStr = myFormulaToString(e.getDelay().getMath());
 								}
-								else {
-									e.createDelay();
-									e.getDelay().setMath(myParseFormula(oldDelayStr));
+								e.createDelay();
+								e.getDelay().setMath(myParseFormula(eventDelay.getText().trim()));
+								error = checkEventDelayUnits(e.getDelay());
+								if (error) {
+									if (oldDelayStr.equals("")) {
+										e.unsetDelay();
+									}
+									else {
+										e.createDelay();
+										e.getDelay().setMath(myParseFormula(oldDelayStr));
+									}
 								}
-							}
+							}	
+						} else {
+							if (eventDelay.getText().trim().equals("")) {
+								e.createDelay();
+								e.getDelay().setMath(myParseFormula("priority(0," +
+																	eventPriority.getText().trim() + ")"));
+							}	
+							else {
+								String oldDelayStr = "";
+								if (e.isSetDelay()) {
+									oldDelayStr = myFormulaToString(e.getDelay().getMath());
+								}
+								e.createDelay();
+								e.getDelay().setMath(myParseFormula("priority(" + eventDelay.getText().trim() + "," +
+																	eventPriority.getText().trim() + ")"));
+								error = checkEventDelayUnits(e.getDelay());
+								if (error) {
+									if (oldDelayStr.equals("")) {
+										e.unsetDelay();
+									}
+									else {
+										e.createDelay();
+										e.getDelay().setMath(myParseFormula(oldDelayStr));
+									}
+								}
+							}	
 						}
 					}
 					if (!error) {
@@ -5133,10 +5216,23 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						}
 					}
 					e.getTrigger().setMath(myParseFormula(eventTrigger.getText().trim()));
-					if (!eventDelay.getText().trim().equals("")) {
-						e.createDelay();
-						e.getDelay().setMath(myParseFormula(eventDelay.getText().trim()));
-						error = checkEventDelayUnits(e.getDelay());
+					if (eventPriority.getText().trim().equals("")) {
+						if (!eventDelay.getText().trim().equals("")) {
+							e.createDelay();
+							e.getDelay().setMath(myParseFormula(eventDelay.getText().trim()));
+							error = checkEventDelayUnits(e.getDelay());
+						}
+					} else {
+						if (!eventDelay.getText().trim().equals("")) {
+							e.createDelay();
+							e.getDelay().setMath(myParseFormula("priority(" + eventDelay.getText().trim() + "," +
+																eventPriority.getText().trim() + ")"));
+							error = checkEventDelayUnits(e.getDelay());
+						} else {
+							e.createDelay();
+							e.getDelay().setMath(myParseFormula("priority(0," +
+																eventPriority.getText().trim() + ")"));
+						}
 					}
 					if (!error) {
 						for (int i = 0; i < assign.length; i++) {
