@@ -484,8 +484,8 @@ public class Run implements ActionListener {
 					&& out.substring(out.length() - 4, out.length()).equals(".xml")) {
 				out = out.substring(0, out.length() - 4);
 			}
-			if (nary.isSelected() && !sim.equals("markov-chain-analysis") && !lhpn.isSelected()
-					&& naryRun == 1) {
+			if (nary.isSelected() && gcmEditor == null && !sim.equals("markov-chain-analysis")
+					&& !lhpn.isSelected() && naryRun == 1) {
 				log.addText("Executing:\nreb2sac --target.encoding=nary-level " + filename + "\n");
 				time1 = System.nanoTime();
 				reb2sac = exec.exec("reb2sac --target.encoding=nary-level " + theFile, null, work);
@@ -539,6 +539,47 @@ public class Run implements ActionListener {
 						}
 						else {
 							t1.BuildTemplate(root + separator + modelFile);
+						}
+						t1.setFilename(root + separator + sbmlName);
+						t1.outputSBML();
+						exitValue = 0;
+					}
+					else if (gcmEditor != null && nary.isSelected()) {
+						String lpnName = modelFile.replace(".sbml", "").replace(".gcm", "")
+								.replace(".xml", "")
+								+ ".lpn";
+						ArrayList<String> specs = new ArrayList<String>();
+						ArrayList<Object[]> conLevel = new ArrayList<Object[]>();
+						for (int i = 0; i < intSpecies.length; i++) {
+							if (!intSpecies[i].equals("")) {
+								String[] split = intSpecies[i].split(" ");
+								if (split.length > 1) {
+									String[] levels = split[1].split(",");
+									if (levels.length > 0) {
+										specs.add(split[0]);
+										conLevel.add(levels);
+									}
+								}
+							}
+						}
+						progress.setIndeterminate(true);
+						GCMFile gcm = gcmEditor.getGCM();
+						gcm.flattenGCM();
+						LhpnFile lpnFile = gcm.convertToLHPN(specs, conLevel);
+						lpnFile.save(root + separator + simName + separator + lpnName);
+						time1 = System.nanoTime();
+						Translator t1 = new Translator();
+						if (abstraction.isSelected()) {
+							LhpnFile lhpnFile = new LhpnFile();
+							lhpnFile.load(root + separator + simName + separator + lpnName);
+							Abstraction abst = new Abstraction(lhpnFile, abstPane);
+							abst.abstractSTG(false);
+							abst.save(root + separator + simName + separator + lpnName + ".temp");
+							t1.BuildTemplate(root + separator + simName + separator + lpnName
+									+ ".temp");
+						}
+						else {
+							t1.BuildTemplate(root + separator + simName + separator + lpnName);
 						}
 						t1.setFilename(root + separator + sbmlName);
 						t1.outputSBML();
