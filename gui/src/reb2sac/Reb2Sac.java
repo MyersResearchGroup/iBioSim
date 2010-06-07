@@ -228,7 +228,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 	private JButton editPostAbs;
 
 	private String modelFile;
-	
+
 	private AbstPane lhpnAbstraction;
 
 	/**
@@ -239,8 +239,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 	 * @param modelFile
 	 */
 	public Reb2Sac(String sbmlFile, String sbmlProp, String root, BioSim biomodelsim,
-			String simName, Log log, JTabbedPane simTab, String open, String modelFile, AbstPane 
-			lhpnAbstraction) {
+			String simName, Log log, JTabbedPane simTab, String open, String modelFile,
+			AbstPane lhpnAbstraction) {
 		if (File.separator.equals("\\")) {
 			separator = "\\\\";
 		}
@@ -3017,8 +3017,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					simTab, root, progress, steps, simName, gcmEditor, null, timeLimit, runTime,
 					modelFile, lhpnAbstraction, abstraction);
 		}
-		if (nary.isSelected() && !sim.equals("markov-chain-analysis") && !lhpn.isSelected()
-				&& exit == 0) {
+		if (nary.isSelected() && gcmEditor == null && !sim.equals("markov-chain-analysis")
+				&& !lhpn.isSelected() && exit == 0) {
 			String d = null;
 			if (!direct.equals(".")) {
 				d = direct;
@@ -3798,7 +3798,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 						lhpnAbstraction.factorField.setText(load.getProperty("abstraction.factor"));
 					}
 					else if (key.equals("abstraction.iterations")) {
-						lhpnAbstraction.iterField.setText(load.getProperty("abstraction.iterations"));
+						lhpnAbstraction.iterField.setText(load
+								.getProperty("abstraction.iterations"));
 					}
 					else {
 						loadProperties.add(key + "=" + load.getProperty((String) key));
@@ -4347,7 +4348,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 	public boolean hasChanged() {
 		return change;
 	}
-	
+
 	public void addLhpnAbstraction(AbstPane pane) {
 		lhpnAbstraction = pane;
 	}
