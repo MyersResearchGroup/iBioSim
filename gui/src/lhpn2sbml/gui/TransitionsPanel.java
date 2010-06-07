@@ -74,7 +74,7 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 		// this.log = log;
 
 		fields = new HashMap<String, PropertyField>();
-		fieldPanel = new JPanel(new GridLayout(3, 2));
+		fieldPanel = new JPanel(new GridLayout(4, 2));
 
 		// ID field
 		PropertyField field = new PropertyField(GlobalConstants.ID, "", null, null,
@@ -92,6 +92,11 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 		// Delay field
 		field = new PropertyField("Delay Assignment", "", null, null, Utility.NAMEstring);
 		fields.put("delay", field);
+		fieldPanel.add(field);
+
+		// Priority field
+		field = new PropertyField("Priority Expression", "", null, null, Utility.NAMEstring);
+		fields.put("priority", field);
 		fieldPanel.add(field);
 
 		// fieldPanel.setMaximumSize(new Dimension(50,50));
@@ -178,10 +183,10 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 			// Properties prop = lhpn.getVariables().get(selected);
 			fields.get(GlobalConstants.ID).setValue(selected);
 			// log.addText(lhpn.getDelay(selected));
-			String delay = lhpn.getTransition(selected).getDelay();
 			if (lhpn.getTransition(oldName).isFail()) {
 				fail.setSelected(true);
 			}
+			String delay = lhpn.getTransition(selected).getDelay();
 			if (delay != null) {
 				fields.get("delay").setValue(delay);
 			}
@@ -189,11 +194,15 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 			//	fields.get("delay/rate").setValue(lhpn.getTransitionRate(selected));
 			//	rateButton.setSelected(true);
 			//}
-			fields.get("Enabling Condition").setValue(lhpn.getTransition(selected).getEnabling());
-			// String temp = lhpn.getEnabling(selected);
-			if (lhpn.getTransition(selected).getEnabling() != null) {
-				fields.get("Enabling Condition").setValue(lhpn.getTransition(selected).getEnabling());
+			String enabling = lhpn.getTransition(selected).getEnabling();
+			if (enabling != null) {
+				fields.get("Enabling Condition").setValue(enabling);
 			}
+			String priority = lhpn.getTransition(selected).getPriority();
+			if (priority != null) {
+				fields.get("priority").setValue(priority);
+			}
+			// String temp = lhpn.getEnabling(selected);
 			// if (lhpn.getTransitionRate(selected) != null) {
 			// fields.get("Transition rate").setValue(lhpn.getTransitionRate(selected));
 			// }
@@ -337,6 +346,8 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 		}
 		// String delay;
 		if (!lhpn.getTransition(transition).addDelay(fields.get("delay").getValue()))
+			return false;
+		if (!lhpn.getTransition(transition).addPriority(fields.get("priority").getValue()))
 			return false;
 		if (fail.isSelected()) {
 			lhpn.getTransition(transition).setFail(true);
