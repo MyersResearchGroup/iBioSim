@@ -484,6 +484,46 @@ public class Run implements ActionListener {
 					&& out.substring(out.length() - 4, out.length()).equals(".xml")) {
 				out = out.substring(0, out.length() - 4);
 			}
+			if (nary.isSelected() && gcmEditor != null
+					&& (monteCarlo.isSelected() || xhtml.isSelected())) {
+				String lpnName = modelFile.replace(".sbml", "").replace(".gcm", "").replace(".xml",
+						"")
+						+ ".lpn";
+				ArrayList<String> specs = new ArrayList<String>();
+				ArrayList<Object[]> conLevel = new ArrayList<Object[]>();
+				for (int i = 0; i < intSpecies.length; i++) {
+					if (!intSpecies[i].equals("")) {
+						String[] split = intSpecies[i].split(" ");
+						if (split.length > 1) {
+							String[] levels = split[1].split(",");
+							if (levels.length > 0) {
+								specs.add(split[0]);
+								conLevel.add(levels);
+							}
+						}
+					}
+				}
+				GCMFile gcm = gcmEditor.getGCM();
+				gcm.flattenGCM();
+				LhpnFile lpnFile = gcm.convertToLHPN(specs, conLevel);
+				lpnFile.save(root + separator + simName + separator + lpnName);
+				time1 = System.nanoTime();
+				Translator t1 = new Translator();
+				if (abstraction.isSelected()) {
+					LhpnFile lhpnFile = new LhpnFile();
+					lhpnFile.load(root + separator + simName + separator + lpnName);
+					Abstraction abst = new Abstraction(lhpnFile, abstPane);
+					abst.abstractSTG(false);
+					abst.save(root + separator + simName + separator + lpnName + ".temp");
+					t1.BuildTemplate(root + separator + simName + separator + lpnName + ".temp");
+				}
+				else {
+					t1.BuildTemplate(root + separator + simName + separator + lpnName);
+				}
+				t1.setFilename(root + separator + simName + separator
+						+ lpnName.replace(".lpn", ".sbml"));
+				t1.outputSBML();
+			}
 			if (nary.isSelected() && gcmEditor == null && !sim.equals("markov-chain-analysis")
 					&& !lhpn.isSelected() && naryRun == 1) {
 				log.addText("Executing:\nreb2sac --target.encoding=nary-level " + filename + "\n");
@@ -660,11 +700,22 @@ public class Run implements ActionListener {
 				}
 			}
 			else if (dot.isSelected()) {
-				log.addText("Executing:\nreb2sac --target.encoding=dot --out=" + out + ".dot "
-						+ filename + "\n");
-				time1 = System.nanoTime();
-				reb2sac = exec.exec("reb2sac --target.encoding=dot --out=" + out + ".dot "
-						+ theFile, null, work);
+				if (nary.isSelected() && gcmEditor != null) {
+					String cmd = "atacs -cPllodpl "
+							+ theFile.replace(".sbml", "").replace(".xml", "") + ".lpn";
+					time1 = System.nanoTime();
+					Process ATACS = exec.exec(cmd, null, work);
+					ATACS.waitFor();
+					log.addText("Executing:\n" + cmd);
+					exitValue = 0;
+				}
+				else {
+					log.addText("Executing:\nreb2sac --target.encoding=dot --out=" + out + ".dot "
+							+ filename + "\n");
+					time1 = System.nanoTime();
+					reb2sac = exec.exec("reb2sac --target.encoding=dot --out=" + out + ".dot "
+							+ theFile, null, work);
+				}
 			}
 			else if (xhtml.isSelected()) {
 				log.addText("Executing:\nreb2sac --target.encoding=xhtml --out=" + out + ".xhtml "
@@ -976,7 +1027,7 @@ public class Run implements ActionListener {
 				}
 			}
 			else {
-				if (nary.isSelected() && !lhpn.isSelected() && naryRun == 1) {
+				if (nary.isSelected() && gcmEditor == null && !lhpn.isSelected() && naryRun == 1) {
 				}
 				else if (sbml.isSelected()) {
 					if (sbmlName != null && !sbmlName.trim().equals("")) {
