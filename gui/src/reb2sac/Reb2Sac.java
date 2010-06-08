@@ -556,6 +556,10 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		abs.add(abstraction);
 		abs.add(nary);
 		none.setSelected(true);
+		if (modelFile.contains(".lpn")) {
+			abstraction.setEnabled(false);
+			nary.setEnabled(false);
+		}
 		JPanel topPanel = new JPanel(new BorderLayout());
 		JPanel backgroundPanel = new JPanel();
 		JLabel backgroundLabel = new JLabel("Model File:");
@@ -580,7 +584,6 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		monteCarlo = new JRadioButton("Monte Carlo");
 		markov = new JRadioButton("Markov");
 		ODE.setSelected(true);
-		markov.setEnabled(false);
 		seed.setEnabled(true);
 		seedLabel.setEnabled(true);
 		runs.setEnabled(true);
@@ -1109,6 +1112,10 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					fileStemLabel, preAbs, loopAbs, postAbs, preAbsLabel, loopAbsLabel,
 					postAbsLabel, addPreAbs, rmPreAbs, editPreAbs, addLoopAbs, rmLoopAbs,
 					editLoopAbs, addPostAbs, rmPostAbs, editPostAbs, lhpn, speciesInt);
+			if (modelFile.contains(".lpn")) {
+				markov.setEnabled(true);
+				lhpn.setEnabled(true);
+			}
 			if (!sbml.isSelected() && !xhtml.isSelected() && !dot.isSelected() && runFiles) {
 				overwrite.setEnabled(true);
 				append.setEnabled(true);
@@ -1239,7 +1246,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			Button_Enabling.enableMarkov(seed, seedLabel, runs, runsLabel, minStepLabel, minStep,
 					stepLabel, step, errorLabel, absErr, limitLabel, limit, intervalLabel,
 					interval, simulators, simulatorsLabel, explanation, description, usingSSA,
-					fileStem, fileStemLabel, gcmEditor, postAbs);
+					fileStem, fileStemLabel, gcmEditor, postAbs, modelFile);
 			overwrite.setEnabled(false);
 			append.setEnabled(false);
 			choose3.setEnabled(false);
@@ -3896,6 +3903,10 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 							preAbsLabel, loopAbsLabel, postAbsLabel, addPreAbs, rmPreAbs,
 							editPreAbs, addLoopAbs, rmLoopAbs, editLoopAbs, addPostAbs, rmPostAbs,
 							editPostAbs, lhpn, speciesInt);
+					if (modelFile.contains(".lpn")) {
+						markov.setEnabled(true);
+						lhpn.setEnabled(true);
+					}
 				}
 				else if (load.getProperty("reb2sac.abstraction.method").equals("abs")) {
 					abstraction.setSelected(true);
@@ -4082,7 +4093,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 								minStepLabel, minStep, stepLabel, step, errorLabel, absErr,
 								limitLabel, limit, intervalLabel, interval, simulators,
 								simulatorsLabel, explanation, description, usingSSA, fileStem,
-								fileStemLabel, gcmEditor, postAbs);
+								fileStemLabel, gcmEditor, postAbs, modelFile);
 						absErr.setEnabled(false);
 					}
 					else if (load.getProperty("reb2sac.simulation.method").equals("SBML")) {

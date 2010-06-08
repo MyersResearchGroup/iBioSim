@@ -426,13 +426,16 @@ public class Button_Enabling {
 
 	/**
 	 * This static method enables and disables the required fields for Markov.
+	 * 
+	 * @param modelFile
 	 */
 	public static void enableMarkov(JTextField seed, JLabel seedLabel, JTextField runs,
 			JLabel runsLabel, JLabel minStepLabel, JTextField minStep, JLabel stepLabel,
 			JTextField step, JLabel errorLabel, JTextField absErr, JLabel limitLabel,
 			JTextField limit, JComboBox intervalLabel, JTextField interval, JComboBox simulators,
 			JLabel simulatorsLabel, JLabel explanation, JLabel description, JCheckBox usingSSA,
-			JTextField fileStem, JLabel fileStemLabel, GCM2SBMLEditor gcmEditor, JList postAbs) {
+			JTextField fileStem, JLabel fileStemLabel, GCM2SBMLEditor gcmEditor, JList postAbs,
+			String modelFile) {
 		seed.setEnabled(false);
 		seedLabel.setEnabled(false);
 		runs.setEnabled(false);
@@ -456,7 +459,7 @@ public class Button_Enabling {
 			description.setEnabled(true);
 		}
 		simulators.removeAllItems();
-		if (gcmEditor != null) {
+		if (gcmEditor != null || modelFile.contains(".lpn")) {
 			simulators.addItem("markov-chain-analysis");
 		}
 		simulators.addItem("atacs");
