@@ -395,6 +395,9 @@ public class Translator {
 										
 					// triggerCanBeDisabled := true
 					trigger.setAnnotation("<TriggerCanBeDisabled/>");
+					
+					// use values at trigger time = false
+					e.setUseValuesFromTriggerTime(false);
 				    
 					// Delay D(t)
 					if (lhpn.getTransition(t).getDelay()!=null) {
@@ -516,6 +519,7 @@ public class Translator {
 						extraEvent.setId("extraEvent" + counter);	
 						Trigger triggerExtra = extraEvent.createTrigger();
 						triggerExtra.setMath(SBML_Editor.myParseFormula("and(gt(t,0),eq(" + extraVar + ",1))"));
+						extraEvent.setUseValuesFromTriggerTime(false);
 						// assignments
 						EventAssignment assign5ex1 = extraEvent.createEventAssignment();
 						EventAssignment assign5ex2 = extraEvent.createEventAssignment();
