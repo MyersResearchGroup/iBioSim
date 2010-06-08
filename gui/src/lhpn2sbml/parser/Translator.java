@@ -281,6 +281,7 @@ public class Translator {
 					e.setId("event" + counter);			
 					Trigger trigger = e.createTrigger();
 					trigger.setMath(SBML_Editor.myParseFormula("eq(" + product.getSpecies() + ",1)"));
+					e.setUseValuesFromTriggerTime(false);
 					
 					// t_postSet = 1
 					for (String x : lhpn.getPostset(t)){
