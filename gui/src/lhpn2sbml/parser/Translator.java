@@ -392,10 +392,14 @@ public class Translator {
 						indexPreset ++;
 					}
 					
-					trigger.setMath(SBML_Editor.myParseFormula("and(gt(t,0)," + CheckPreset + "," + Enabling + ")"));
-										
+					//trigger.setMath(SBML_Editor.myParseFormula("and(gt(t,0)," + CheckPreset + "," + Enabling + ")"));
+					trigger.setMath(SBML_Editor.myParseFormula("and(" + CheckPreset + "," + Enabling + ")"));
+					
 					// triggerCanBeDisabled := true
-					trigger.setAnnotation("<TriggerCanBeDisabled/>");
+					trigger.setAnnotation("<TriggerCanBeDisabled/><TriggerInitiallyFalse/>");
+					
+					// TriggerInitiallyFalse
+//					trigger.setAnnotation("<TriggerInitiallyFalse/>");
 					
 					// use values at trigger time = false
 					e.setUseValuesFromTriggerTime(false);
@@ -519,7 +523,9 @@ public class Translator {
 						Event extraEvent = m.createEvent();
 						extraEvent.setId("extraEvent" + counter);	
 						Trigger triggerExtra = extraEvent.createTrigger();
-						triggerExtra.setMath(SBML_Editor.myParseFormula("and(gt(t,0),eq(" + extraVar + ",1))"));
+						//triggerExtra.setMath(SBML_Editor.myParseFormula("and(gt(t,0),eq(" + extraVar + ",1))"));
+						triggerExtra.setMath(SBML_Editor.myParseFormula("eq(" + extraVar + ",1)"));
+						triggerExtra.setAnnotation("<TriggerInitiallyFalse/>");
 						extraEvent.setUseValuesFromTriggerTime(false);
 						// assignments
 						EventAssignment assign5ex1 = extraEvent.createEventAssignment();
