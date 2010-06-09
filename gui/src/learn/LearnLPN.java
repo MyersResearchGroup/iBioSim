@@ -503,7 +503,7 @@ public class LearnLPN extends JPanel {
 							String[] binOutgoing = getPlaceInfoIndex(g.getPostset(st2)[0]).split(",");
 							String condStr = "";
 							for (String st : varsInEnabling.keySet()){
-								int bin = Integer.valueOf(binOutgoing[indexByName(st)]);
+								int bin = Integer.valueOf(binOutgoing[findReqdVarslIndex(st)]);
 								if (bin == 0){
 									if (!condStr.equalsIgnoreCase(""))
 										condStr += "&";
@@ -638,13 +638,15 @@ public class LearnLPN extends JPanel {
 		return (g);
 	}
 	
-	private int indexByName(String var){
-		for (int i=0; i < reqdVarsL.size(); i++)
-			if (reqdVarsL.get(i).getName().equalsIgnoreCase(var))
+	private int findReqdVarslIndex(String s) {
+		for (int i = 0; i < reqdVarsL.size() ; i++){
+			if (s.equalsIgnoreCase(reqdVarsL.get(i).getName())){
 				return i;
-		return reqdVarsL.size();
+			}
+		}
+		return -1;
 	}
-
+	
 	private boolean isTransientPlace(String st1) {
 		for (String s : transientNetPlaces.keySet()){
 			if (st1.equalsIgnoreCase("p" + transientNetPlaces.get(s).getProperty("placeNum"))){
