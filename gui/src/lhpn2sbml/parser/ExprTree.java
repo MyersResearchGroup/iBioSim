@@ -439,7 +439,7 @@ public class ExprTree {
 				}
 				else {
 					// (result) = new ExprTree((result), newresult, "^", 'w');
-					setNodeValues((this), newresult, "^", 'w');
+					setNodeValues((this), newresult, "X", 'w');
 				}
 				(token) = intexpr_gettok(expr);
 			}
@@ -488,7 +488,6 @@ public class ExprTree {
 					(this).uvalue = (this).lvalue;
 				}
 				else {
-					// (result) = new ExprTree((result), newresult, "^", 'w');
 					setNodeValues((this), newresult, "[]", 'w');
 				}
 				(token) = intexpr_gettok(expr);
@@ -2421,7 +2420,7 @@ public class ExprTree {
 					simplify = true;
 				}
 			}
-			else if (op.equals("^")) {
+			else if (op.equals("X")) {
 				if (((r1.isit == 'n') || (r1.isit == 't'))
 						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
 					(this).isit = 'n';
@@ -3160,7 +3159,7 @@ public class ExprTree {
 				}
 				return 'U';
 			}
-			else if (op.equals("^")) {
+			else if (op.equals("X")) {
 				if (r1.getChange(variables) == 'T') {
 					if (r2.getChange(variables) == 'T') {
 						return 'F';
@@ -3361,7 +3360,7 @@ public class ExprTree {
 				}
 				return false;
 			}
-			else if (op.equals("^")) {
+			else if (op.equals("X")) {
 				if (!(evaluateExp(variables) == 0.0)) {
 					return true;
 				}
@@ -3532,7 +3531,7 @@ public class ExprTree {
 				}
 				return true;
 			}
-			else if (op.equals("^")) {
+			else if (op.equals("X")) {
 				if (evaluateExp(variables) == 0.0) {
 					return false;
 				}
@@ -3771,7 +3770,7 @@ public class ExprTree {
 					
 				}
 			}
-			else if (op.equals("^")) {
+			else if (op.equals("X")) {
 				if (r1 != null && r2 != null) {
 					if (sbmlFlag){
 						result = "XOR(" + r1.getElement(type) + "," + r2.getElement(type) + ")";
@@ -4173,8 +4172,41 @@ public class ExprTree {
 							result = result + "(" + r2.getElement(type) + ")";
 						}
 					}
+					/*
 					if (sbmlFlag) {
 						result = "floor(" + result + ")";
+					}
+					*/
+				}
+				else if (op.equals("^")) {
+					if (r1.isit == 'b'
+							|| r1.isit == 'i'
+							|| r1.isit == 'c'
+							|| r1.isit == 'n'
+							|| r1.isit == 't'
+							|| (r1.isit == 'a' && (r1.op.equals("*") || r1.op.equals("/") || r1.op
+									.equals("^")))) {
+						if (r1 != null) {
+							result = r1.getElement(type);
+						}
+					}
+					else {
+						if (r1 != null) {
+							result = "(" + r1.getElement(type) + ")";
+						}
+					}
+					result = result + "^";
+					if (r2.isit == 'b' || r2.isit == 'i' || r2.isit == 'c' || r2.isit == 'n'
+							|| r2.isit == 't'
+							|| (r2.isit == 'a' && (r2.op.equals("/") || r2.op.equals("^")))) {
+						if (r2 != null) {
+							result = result + r2.getElement(type);
+						}
+					}
+					else {
+						if (r2 != null) {
+							result = result + "(" + r2.getElement(type) + ")";
+						}
 					}
 				}
 				// relational ops: geq, leq, gt, lt
@@ -4599,7 +4631,7 @@ public class ExprTree {
 					(this).uvalue = (this).lvalue;
 				}
 			}
-			else if (isit == 'w' && op.equals("^")) {
+			else if (isit == 'w' && op.equals("X")) {
 				if (((r1.isit == 'n') || (r1.isit == 't'))
 						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
 					(this).isit = 'n';

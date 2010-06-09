@@ -273,7 +273,6 @@ public class Translator {
 						exp = "piecewise(1," + tmp_exp + ",0)";
 
 					}
-
 					rateReaction.setFormula("(" + lhpn.getTransitionRateTree(t).getElement("SBML") + ")" + "*" + reactant.getSpecies() + "*" + exp); 
 					//System.out.println("trans " + t + " enableCond " + lhpn.getEnabling(t));
 					
