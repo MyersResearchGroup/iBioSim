@@ -264,7 +264,7 @@ public class LhpnFile {
 							buffer.append("#@.delay_assignments {");
 							flag = true;
 						}
-						buffer.append("<" + t.getName() + "=" + t.getDelay() + ">");
+						buffer.append("<" + t.getName() + "=[" + t.getDelay() + "]>");
 					}
 				}
 				if (flag) {
@@ -1362,6 +1362,9 @@ public class LhpnFile {
 				}
 				else {
 					delay = delayMatcher.group(2);
+					if (delay.startsWith("[") && delay.endsWith("]")) {
+						delay = delay.substring(1,delay.length()-1);
+					}
 				}
 				transition.addDelay(delay);
 			}
@@ -1476,6 +1479,8 @@ public class LhpnFile {
 
 	private static final String DELAY = "<([\\w_]+)=(\\S+?)>";
 
+	private static final String RANGE = "\\[([\\w-]+?),([\\w-]+?)\\]";
+
 	private static final String PRIORITY_LINE = "#@\\.priority_assignments \\{([\\S[^\\}]]+?)\\}";
 
 	private static final String PRIORITY = "<([\\w_]+)=\\[(\\S+?)\\]>";
@@ -1489,7 +1494,5 @@ public class LhpnFile {
 	private static final String BOOLEAN_TRANS = "<([\\w]+?)=([\\S[^>]]+?)>";
 
 	private static final String BOOLEAN_ASSIGN = "\\[([\\w_]+):=\\s?([\\S^\\]]+?)\\]";
-
-	private static final String RANGE = "\\[([\\w-]+?),([\\w-]+?)\\]";
 
 }
