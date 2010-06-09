@@ -3251,8 +3251,8 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			//}
 			g.save(directory + separator + lhpnFile);
 			new Lpn2verilog(directory + separator + lhpnFile); //writeSVFile(directory + separator + lhpnFile);
-			writeVHDLAMSFile(lhpnFile.replace(".lpn",".vhd"));
-			writeVerilogAMSFile(lhpnFile.replace(".lpn",".vams"));
+			//writeVHDLAMSFile(lhpnFile.replace(".lpn",".vhd"));
+			//writeVerilogAMSFile(lhpnFile.replace(".lpn",".vams"));
 			if (defaultStim){
 				int j = 0;
 				HashMap<String,Double> tPar = new HashMap<String,Double>(); 
