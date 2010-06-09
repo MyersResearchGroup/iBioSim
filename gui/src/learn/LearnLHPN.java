@@ -2,6 +2,7 @@ package learn;
 
 //import gcm2sbml.parser.GCMFile;
 import lhpn2sbml.parser.LhpnFile;
+import lhpn2sbml.parser.ExprTree;
 import lhpn2sbml.parser.Lpn2verilog;
 import parser.*;
 import java.awt.*;
@@ -17,6 +18,7 @@ import javax.swing.*;
 
 //import org.sbml.libsbml.*;
 import biomodelsim.*;
+
 import org.jdesktop.layout.*;
 
 /**
@@ -85,10 +87,10 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 	private HashMap<String, ArrayList<Double>> thresholds;
 
 	private Double[][] rates;
+	
+	private double[][] values;
 
 	private Double[] duration;
-
-	private int dmvcCnt = 0;
 
 	private int pathLength ; //= 7 ;// intFixed 25 pd 7 integrator 15;
 
@@ -151,6 +153,8 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 	
 	private JTextField globalValueScaling;
 	
+	private JCheckBox defaultEnvG;
+	
 	private boolean suggestIsSource = false;
 	
 	private Double[] lowerLimit;
@@ -188,6 +192,10 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 	private ArrayList<String> allVars;
 	
 	private Thread LearnThread;
+	
+	private HashMap<String,ArrayList<Double>> dmvcValuesUnique;
+	
+	Double dsFactor, vsFactor;
 	
 	// Pattern lParenR = Pattern.compile("\\(+"); //SB
 	
@@ -327,6 +335,10 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		JLabel runLengthLabel = new JLabel("DMV Run Length");
 		runLengthG = new JTextField("2");
 		runLengthG.setEnabled(true);
+		JLabel defaultEnvLabel = new JLabel("Default environment");
+		defaultEnvG = new JCheckBox();
+		defaultEnvG.setSelected(true);
+		defaultEnvG.addItemListener(this); 
 		
 		epsilonG.addActionListener(this); //SB
 		pathLengthG.addActionListener(this); //SB
@@ -338,7 +350,28 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		JPanel newPanel = new JPanel();
 		JPanel jPanel1 = new JPanel();
 		JPanel jPanel2 = new JPanel();
-
+		
+		JPanel panel4 = new JPanel();
+		((FlowLayout) panel4.getLayout()).setAlignment(FlowLayout.CENTER);
+		JPanel panel3 = new JPanel(new GridLayout(8, 2));
+		panel4.add(panel3, "Center");
+		panel3.add(epsilonLabel);
+		panel3.add(epsilonG);
+		panel3.add(rateSamplingLabel);
+		panel3.add(rateSamplingG);
+		panel3.add(pathLengthLabel);
+		panel3.add(pathLengthG);
+		panel3.add(absTimeLabel);
+		panel3.add(absTimeG);
+		panel3.add(percentLabel);
+		panel3.add(percentG);
+		panel3.add(runTimeLabel);
+		panel3.add(runTimeG);
+		panel3.add(runLengthLabel);
+		panel3.add(runLengthG);
+		panel3.add(defaultEnvLabel);
+		panel3.add(defaultEnvG);
+/*
         org.jdesktop.layout.GroupLayout jPanel1Layout = new org.jdesktop.layout.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -478,6 +511,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
                         .add(jPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
+*/
 		// divisionsL = new ArrayList<ArrayList<Double>>(); // SB
 		thresholds = new HashMap<String, ArrayList<Double>>();
 		reqdVarsL = new ArrayList<Variable>();
@@ -528,11 +562,11 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		propertyG = new JTextField("");
 		thresholdPanel1.add(propertyLabel);
 		thresholdPanel1.add(propertyG);
-		JLabel valueScaleLabel = new JLabel("Scale Values by");
+		JLabel valueScaleLabel = new JLabel("Scale Factor for Values");
 		globalValueScaling = new JTextField("");
 		thresholdPanel1.add(valueScaleLabel);
 		thresholdPanel1.add(globalValueScaling);
-		JLabel delayScaleLabel = new JLabel("Scale time by");
+		JLabel delayScaleLabel = new JLabel("Scale Factor for Time");
 		globalDelayScaling = new JTextField("");
 		thresholdPanel1.add(delayScaleLabel);
 		thresholdPanel1.add(globalDelayScaling);
@@ -981,7 +1015,8 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		//binsFileHoldPanel.setMinimumSize(new Dimension(10000,16000));
 		//binsFileHoldPanel.setPreferredSize(getPreferredSize());
 		//secondTab.add(binsFileHoldPanel, "Center");
-		secondTab.add(newPanel,"Center");
+		// secondTab.add(newPanel,"Center");
+		secondTab.add(panel4, "Center");
 		firstTab.add(splitPane, "Center");
 		JTabbedPane tab = new JTabbedPane();
 		tab.addTab("Basic Options", firstTab);
@@ -1351,7 +1386,14 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		    	runTimeG.setEnabled(true);
 		    	runLengthG.setEnabled(false);
 		    }
-	    } 
+	    } else if (source == defaultEnvG) {
+	        if (e.getStateChange() == ItemEvent.DESELECTED){
+		    	defaultEnvG.setSelected(false);
+		    }
+		    else{
+		    	defaultEnvG.setSelected(true);
+		    }
+	    }
 	}
 
 	private void autogen(boolean readfile) {
@@ -2667,30 +2709,43 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				//enFailAnd = "&~fail";
 				//enFail = "~fail";
 			}
+			Boolean defaultStim = defaultEnvG.isSelected();
 			if (epsilonG.getText().matches("[\\d]+\\.?[\\d]+?"))
 				epsilon = Double.parseDouble(epsilonG.getText().trim());
-			else 
+			else {
 				epsilon = 0.1;
+				System.out.println("Can't parse epsilon. Using default\n");
+			}
 			if (rateSamplingG.getText().matches("[\\d]+"))
 				rateSampling = Integer.parseInt(rateSamplingG.getText().trim());
-			else
+			else{
 				rateSampling = -1;
+				out.write("Can't parse rateSampling. Using default\n");
+			}
 			if (pathLengthG.getText().matches("[\\d]+"))
 				pathLength = Integer.parseInt(pathLengthG.getText().trim());
-			else
+			else{
 				pathLength = 0;
+				System.out.println("Can't parse pathLength. Using default\n");
+			}
 			if (percentG.getText().matches("[\\d]+\\.?[\\d]+?"))
 				percent = Double.parseDouble(percentG.getText().trim());
-			else
+			else{
 				percent = 0.2;
+				System.out.println("Can't parse percent. Using default\n");
+			}
 			if (runLengthG.getText().matches("[\\d]+"))
 				runLength = Integer.parseInt(runLengthG.getText().trim());
-			else
+			else{
 				runLength = 30;
-			if (runTimeG.getText().matches("[\\d]+\\.?[\\d]+?"))
+				System.out.println("Can't parse runLength. Using default\n");
+			}
+			if ((runTimeG.getText().matches("[\\d]+\\.?[\\d]+?")) || (runTimeG.getText().matches("[\\d]+\\.??[\\d]*?[e]??[-]??[\\d]+"))) 
 				runTime = Double.parseDouble(runTimeG.getText().trim());
-			else
+			else{
 				runTime = 5e-6;
+				System.out.println("Can't parse runTime. Using default\n");
+			}
 			absoluteTime = absTimeG.isSelected();
 			if (globalValueScaling.getText().matches("[\\d]+\\.??[\\d]*")){
 				valScaleFactor = Double.parseDouble(globalValueScaling.getText().trim());
@@ -2702,6 +2757,8 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				//System.out.println("delayScaleFactor " + delayScaleFactor);
 			} else
 				delayScaleFactor = -1.0;
+			dsFactor = delayScaleFactor;
+			vsFactor = valScaleFactor;
 			while (new File(directory + separator + "run-" + i + ".tsd").exists()) {
 				Properties cProp = new Properties();
 				cvgInfo.put(String.valueOf(i), cProp);
@@ -2977,9 +3034,9 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 										//	double val = divisionsL.get(k).get(Integer.parseInt(binIncoming[k])).doubleValue();
 										double val = scaledThresholds.get(reqdVarsL.get(k).getName()).get(Integer.parseInt(binIncoming[k])).doubleValue();
 										if (firstInputBinChg){
-										condStr += "(" + reqdVarsL.get(k).getName() + ">=" + (int) Math.floor(val) + ")";
-										transEnablingsVHDL[transNum] += reqdVarsL.get(k).getName() + "'above(" + (int) Math.floor(val)+".0)";	
-										transEnablingsVAMS[transNum] = "always@(cross((V(" + reqdVarsL.get(k).getName() + ") - " + ((int)val)/valScaleFactor +"),+1)";	// += temporary
+											condStr += "(" + reqdVarsL.get(k).getName() + ">=" + (int) Math.floor(val) + ")";
+											transEnablingsVHDL[transNum] += reqdVarsL.get(k).getName() + "'above(" + (int) Math.floor(val)+".0)";	
+											transEnablingsVAMS[transNum] = "always@(cross((V(" + reqdVarsL.get(k).getName() + ") - " + ((int)val)/valScaleFactor +"),+1)";	// += temporary
 										}
 										else{
 											condStr += "&(" + reqdVarsL.get(k).getName() + ">=" + (int) Math.floor(val) + ")";
@@ -2989,9 +3046,9 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 									} else {
 										double val = scaledThresholds.get(reqdVarsL.get(k).getName()).get(Integer.parseInt(binOutgoing[k])).doubleValue();
 										if (firstInputBinChg){
-										condStr += "~(" + reqdVarsL.get(k).getName() + ">="	+ (int) Math.ceil(val) + ")";
-										transEnablingsVHDL[transNum] += " and not " + reqdVarsL.get(k).getName() + "'above(" + (int) Math.ceil(val)+".0)";
-										transEnablingsVAMS[transNum] = "always@(cross((V(" + reqdVarsL.get(k).getName() + ") - " + ((int)val)/valScaleFactor +"),-1)";	// +=; temporary
+											condStr += "~(" + reqdVarsL.get(k).getName() + ">="	+ (int) Math.ceil(val) + ")";
+											transEnablingsVHDL[transNum] += " and not " + reqdVarsL.get(k).getName() + "'above(" + (int) Math.ceil(val)+".0)";
+											transEnablingsVAMS[transNum] = "always@(cross((V(" + reqdVarsL.get(k).getName() + ") - " + ((int)val)/valScaleFactor +"),-1)";	// +=; temporary
 										}
 										else{
 											condStr += "&~(" + reqdVarsL.get(k).getName() + ">="	+ (int) Math.ceil(val) + ")";
@@ -3070,6 +3127,71 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			for (String st1 : g.getPlaceList()) {
 				if (g.getPostset(st1).length == 0){ // a place without a postset transition
 					placesWithoutPostsetTrans.add(st1);
+				} else if (g.getPostset(st1).length > 1){
+					HashMap<String,Boolean> varsInEnabling = new HashMap<String,Boolean>();
+					for (String st2 : g.getPostset(st1)){
+						if (g.getEnablingTree(st2) != null){
+							for (String st3 : g.getEnablingTree(st2).getVars()){
+								varsInEnabling.put(st3, true);
+							}
+						}
+					}
+					for (String st2 : g.getPostset(st1)){
+						if (varsInEnabling.keySet().size() > 1){ // && (g.getEnablingTree(st2) != null))
+							String[] binOutgoing = getPlaceInfoIndex(g.getPostset(st2)[0]).split(",");
+							String condStr = "";
+							for (String st : varsInEnabling.keySet()){
+								int bin = Integer.valueOf(binOutgoing[indexByName(st)]);
+								if (bin == 0){
+									if (!condStr.equalsIgnoreCase(""))
+										condStr += "&";
+									condStr += "~(" + st + ">=" + (int) Math.ceil(scaledThresholds.get(st).get(bin).doubleValue()) + ")";
+								} else if (bin == (scaledThresholds.get(st).size())){
+									if (!condStr.equalsIgnoreCase(""))
+										condStr += "&";
+									condStr += "(" + st + ">="	+ (int) Math.floor(scaledThresholds.get(st).get(bin-1).doubleValue()) + ")";
+								} else{
+									if (!condStr.equalsIgnoreCase(""))
+										condStr += "&";
+									condStr += "(" + st + ">=" + (int) Math.floor(scaledThresholds.get(st).get(bin-1).doubleValue()) + ")&~(" + st + ">=" + (int) Math.ceil(scaledThresholds.get(st).get(bin).doubleValue()) + ")";
+								}
+							}
+							out.write("Changed enabling of " + st2 + " to " + condStr + "\n");
+							g.addEnabling(st2, condStr);
+						}
+					}
+					/*for (String st2 : g.getPostset(st1)){
+						ExprTree enableTree = g.getEnablingTree(st2);
+						if (enableTree != null){	// If enabling of a transition is null then it's obviously not mutually exclusive of any other parallel transitions from that place
+							for (String st3 : varsInEnabling.keySet()){
+								// TODO: CHECK THE BIN CHANGES HERE AND ADD ENABLING CONDITIONS
+								if (!enableTree.containsVar(st3)){
+								//	System.out.println("At place " + st1 + " for transition " + st2 + ",Get threshold of " + st3);
+									visitedPlaces = new HashMap<String,Boolean>();
+									String completeEn =traceBack(st1,st3);
+									System.out.println("At place " + st1 + " for transition " + st2 + ",Get threshold of " + st3+ " from " + completeEn);
+									Pattern enPatternParan = Pattern.compile(".*?(~?\\(" + st3+ ".*?\\)*)[a-zA-Z]*.*");
+									Pattern enPattern;
+									Matcher enMatcher;
+									//Pattern enPatternNoParan = Pattern.compile(".*?(~?\\(?" + st3+ ".*?\\)*)[a-zA-Z]*.*"); 
+									Matcher enMatcherParan = enPatternParan.matcher(completeEn);
+									if (enMatcherParan.find()) {
+										enPattern = Pattern.compile(".*?(~?\\(" + st3+ ".*?\\)).*?");
+										System.out.println("Matching for pattern " + enPattern.toString());
+										enMatcher = enPattern.matcher(completeEn);
+										String enCond = enMatcher.group(1);
+										System.out.println("Extracted " +enCond);
+									} else {
+										enPattern = Pattern.compile(".*?(" + st3+ ".*?)[a-zA-Z]*.*?");
+										System.out.println("Matching for pattern " + enPattern.toString());
+										enMatcher = enPattern.matcher(completeEn);
+										String enCond = enMatcher.group(1);
+										System.out.println("Extracted " +enCond);
+									}
+								}
+							}
+						}
+					}*/
 				}
 				if (!isTransientPlace(st1)){
 					String p = getPlaceInfoIndex(st1);
@@ -3113,22 +3235,54 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				placeInfo.remove(getPlaceInfoIndex(st1));
 				g.removePlace(st1);
 			}
+			out.write("learning main process done. Saving stuff and learning other modules.\n");
 			out.close();
 	//		addMetaBins();
 	//		addMetaBinTransitions();
 			g.save(directory + separator + lhpnFile);
 			writeVHDLAMSFile(lhpnFile.replace(".lpn",".vhd"));
 			writeVerilogAMSFile(lhpnFile.replace(".lpn",".vams"));
-			new Lpn2verilog(directory + separator + lhpnFile); //writeSVFile(directory + separator + lhpnFile);
-			if (new File(learnFile).exists()){ //directory + separator + "complete.lpn").exists()){//
-				LhpnFile l1 = new LhpnFile();
-				l1.load(learnFile);
-				mergeLhpns(l1,g).save(directory + separator + lhpnFile);
-				//l1.load(directory + separator + "complete.lpn");
-				//mergeLhpns(l1,g).save(directory + separator + "complete.lpn");
-			} /*else {
-				g.save(directory + separator + "complete.lpn");
-			}*/
+			if (defaultStim){
+				new Lpn2verilog(directory + separator + lhpnFile); //writeSVFile(directory + separator + lhpnFile);
+				int j = 0;
+				HashMap<String,Double> tPar = new HashMap<String,Double>(); 
+				tPar.put("epsilon", epsilon);
+				tPar.put("pathLength", Double.valueOf((double) pathLength));
+				tPar.put("rateSampling", Double.valueOf((double) rateSampling));
+				tPar.put("percent", percent);
+				if (absoluteTime)
+					tPar.put("runTime", runTime);
+				else
+					tPar.put("runLength", Double.valueOf((double) runLength));
+				for (Variable v : reqdVarsL){
+					if (v.isInput()){
+						j++;
+						ArrayList <Variable> varsT = new ArrayList <Variable>();
+						Variable input = new Variable("");
+						input.copy(v);
+						input.setInput(false);
+						input.setOutput(true);
+						varsT.add(input);
+						LearnLPN l = new LearnLPN();
+						LhpnFile moduleLPN = l.learnLPN(directory, log, biosim, j, thresholds, tPar, varsT ,varNames , vsFactor, dsFactor);
+						// new Lpn2verilog(directory + separator + lhpnFile); //writeSVFile(directory + separator + lhpnFile);
+						g = mergeLhpns(moduleLPN,g);
+					}	
+				}
+				g.save(directory + separator + lhpnFile);
+			} else {
+				new Lpn2verilog(directory + separator + lhpnFile); //writeSVFile(directory + separator + lhpnFile);
+				if (new File(learnFile).exists()){ //directory + separator + "complete.lpn").exists()){//
+					LhpnFile l1 = new LhpnFile();
+					l1.load(learnFile);
+					mergeLhpns(l1,g).save(directory + separator + lhpnFile);
+					//l1.load(directory + separator + "complete.lpn");
+					//mergeLhpns(l1,g).save(directory + separator + "complete.lpn");
+				} //else {
+				//	g.save(directory + separator + "complete.lpn");
+				//}
+
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(biosim.frame(),
@@ -3164,6 +3318,13 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		}
 	}
 	
+	private int indexByName(String var){
+		for (int i=0; i < reqdVarsL.size(); i++)
+			if (reqdVarsL.get(i).getName().equalsIgnoreCase(var))
+				return i;
+		return reqdVarsL.size();
+	}
+	
 	private boolean isTransientPlace(String st1) {
 		for (String s : transientNetPlaces.keySet()){
 			if (st1.equalsIgnoreCase("p" + transientNetPlaces.get(s).getProperty("placeNum"))){
@@ -3183,7 +3344,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 	}
 
 	public void resetAll(){
-		dmvcCnt = 0;
+		// dmvcCnt = 0;
 		numPlaces = 0;
 		numTransitions = 0;
 		delayScaleFactor = 1.0;
@@ -3204,176 +3365,9 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		}
 	}
 
-/* Commented after replacing divisionsL with thresholds
-	public void genBinsRates(ArrayList<ArrayList<Double>> divisionsL) { // genBins
-//	public void genBinsRates(String datFile,ArrayList<ArrayList<Double>> divisionsL) { // genBins
-//		TSDParser tsd = new TSDParser(directory + separator + datFile, biosim,false);
-		// genBins
-//		data = tsd.getData();
-		reqdVarIndices = new ArrayList<Integer>();
-		bins = new int[reqdVarsL.size()][data.get(0).size()];
-		for (int i = 0; i < reqdVarsL.size(); i++) {
-			// System.out.println("Divisions " + divisionsL.get(i));
-			for (int j = 1; j < varNames.size(); j++) {
-				if (reqdVarsL.get(i).getName().equalsIgnoreCase(varNames.get(j))) {
-					// System.out.println(reqdVarsL.get(i) + " matched "+
-					// varNames.get(j) + " i = " + i + " j = " + j);
-					reqdVarIndices.add(j);
-					for (int k = 0; k < data.get(j).size(); k++) {
-						// System.out.print(data.get(j).get(k) + " ");
-						for (int l = 0; l < divisionsL.get(i).size(); l++) {
-							if (data.get(j).get(k) <= divisionsL.get(i).get(l)) {
-								bins[i][k] = l;
-								break;
-							} else {
-								bins[i][k] = l + 1; // indices of bins not same
-								// as that of the variable.
-								// i here. not j; if j
-								// wanted, then size of bins
-								// array should be varNames
-								// not reqdVars
-							}
-						}
-					}
-					// System.out.print(" ");
-				}
-			}
-		}
-		
-		// System.out.println("array bins is :"); 
-		// for (int i = 0; i < reqdVarsL.size(); i++) { 
-		// System.out.print(reqdVarsL.get(i).getName() + " "); 
-		// for (int k = 0; k < data.get(0).size(); k++) {
-		// System.out.print(bins[i][k] + " "); 
-		// } 
-		// System.out.print("\n"); }
-		//
-		// genRates
-		rates = new Double[reqdVarsL.size()][data.get(0).size()];
-		duration = new Double[data.get(0).size()];
-		int mark, k; // indices of rates not same as that of the variable. if
-		// wanted, then size of rates array should be varNames
-		// not reqdVars
-		if (placeRates) {
-			if (rateSampling == -1) { // replacing inf with -1 since int
-				mark = 0;
-				for (int i = 0; i < data.get(0).size(); i++) {
-					if (i < mark) {
-						continue;
-					}
-					while ((mark < data.get(0).size()) && (compareBins(i, mark))) {
-						mark++;
-					}
-					if ((data.get(0).get(mark - 1) != data.get(0).get(i)) && ((mark - i) >=  pathLength) && (mark != data.get(0).size())) { 	// && (mark != (data.get(0).size() - 1 condition added on nov 23.. to avoid the last region bcoz it's not complete. rechk
-						for (int j = 0; j < reqdVarsL.size(); j++) {
-							k = reqdVarIndices.get(j);
-							rates[j][i] = ((data.get(k).get(mark - 1) - data.get(k).get(i)) / (data.get(0).get(mark - 1) - data.get(0).get(i)));
-						}
-						duration[i] = data.get(0).get(mark - 1)	- data.get(0).get(i);
-					}
-				}
-			} else {
-				boolean calcRate;
-				boolean prevFail = true;
-				int binStartPoint = 0, binEndPoint = 0;
-				for (int i = 0; i < (data.get(0).size() - rateSampling); i++) {
-					calcRate = true;
-					for (int l = 0; l < rateSampling; l++) {
-						if (!compareBins(i, i + l)) {
-							if (!prevFail){
-								binEndPoint = i -2 + rateSampling;
-								duration[binStartPoint] = data.get(0).get(binEndPoint)	- data.get(0).get(binStartPoint);
-							}
-							calcRate = false;
-							prevFail = true;
-							break;
-						}
-					}
-					if (calcRate && (data.get(0).get(i + rateSampling) != data.get(0).get(i))) {
-						for (int j = 0; j < reqdVarsL.size(); j++) {
-							k = reqdVarIndices.get(j);
-							rates[j][i] = ((data.get(k).get(i + rateSampling) - data.get(k).get(i)) / (data.get(0).get(i + rateSampling) - data.get(0).get(i)));
-						}
-						if (prevFail){
-							binStartPoint = i;
-						}
-						prevFail = false;
-					}
-				}
-				// commented on nov 23. don't need this. should avoid rate calculation too for this region. but not avoiding now.
-			//	if (!prevFail){ // for the last genuine rate-calculating region of the trace; this may not be required if the trace is incomplete.trace data may not necessarily end at a region endpt
-			//		duration[binStartPoint] = data.get(0).get(data.get(0).size()-1)	- data.get(0).get(binStartPoint);
-			//	} 
-			}
-		} 
-		//
-		// ADD LATER: duration[i] SHOULD BE ADDED TO THE NEXT 2 IF/ELSE
-		// BRANCHES(Transition based rate calc) ALSO
-		else { // Transition based rate calculation
-			if (rateSampling == -1) { // replacing inf with -1 since int
-				for (int j = 0; j < reqdVarsL.size(); j++) {
-					mark = 0;
-					k = reqdVarIndices.get(j);
-					for (int i = 0; i < data.get(0).size(); i++) {
-						if (i < mark) {
-							continue;
-						}
-						while ((mark < data.get(0).size())
-								&& (bins[k][i] == bins[k][mark])) {
-							mark++;
-						}
-						if ((data.get(0).get(mark - 1) != data.get(0).get(i))) {
-							rates[j][i] = ((data.get(k).get(mark - 1) - data.get(k).get(i)) / (data.get(0).get(mark - 1) - data.get(0).get(i)));
-						}
-					}
-				}
-			} else {
-				boolean calcRate;
-				for (int i = 0; i < (data.get(0).size() - rateSampling); i++) {
-					for (int j = 0; j < reqdVarsL.size(); j++) {
-						calcRate = true;
-						k = reqdVarIndices.get(j);
-						for (int l = 0; l < rateSampling; l++) {
-							if (bins[k][i] != bins[k][i + l]) {
-								calcRate = false;
-								break;
-							}
-						}
-						if (calcRate && (data.get(0).get(i + rateSampling) != data.get(0).get(i))) {
-							rates[j][i] = ((data.get(k).get(i + rateSampling) - data.get(k).get(i)) / (data.get(0).get(i + rateSampling) - data.get(0).get(i)));
-						}
-					}
-				}
-			}
-		}
-//		try {
-//			for (int i = 0; i < (data.get(0).size()); i++) {
-//				for (int j = 0; j < reqdVarsL.size(); j++) {
-//					k = reqdVarIndices.get(j);
-//					out.write(data.get(k).get(i) + " ");// + bins[j][i] + " " +
-//					// rates[j][i] + " ");
-//				}
-//				for (int j = 0; j < reqdVarsL.size(); j++) {
-//					out.write(bins[j][i] + " ");
-//				}
-//				for (int j = 0; j < reqdVarsL.size(); j++) {
-//					out.write(rates[j][i] + " ");
-//				}
-//				out.write(duration[i] + " ");
-//				out.write("\n");
-//			}
-//		} catch (IOException e) {
-//			System.out
-//					.println("Log file couldn't be opened for writing rates and bins ");
-//		}
-	}
-*/
-
-	public void genBinsRates(HashMap<String, ArrayList<Double>> localThresholds) { // genBins
-//		public void genBinsRates(String datFile,ArrayList<ArrayList<Double>> divisionsL) { // genBins
+	public void genBinsRates(HashMap<String, ArrayList<Double>> localThresholds) { 
 //			TSDParser tsd = new TSDParser(directory + separator + datFile, biosim,false);
-			// genBins
-//			data = tsd.getData();
+			// genBins data = tsd.getData();
 		try{
 			reqdVarIndices = new ArrayList<Integer>();
 			bins = new int[reqdVarsL.size()][data.get(0).size()];
@@ -3411,6 +3405,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			 */
 			// genRates
 			rates = new Double[reqdVarsL.size()][data.get(0).size()];
+			values = new double[reqdVarsL.size()][data.get(0).size()];
 			duration = new Double[data.get(0).size()];
 			int mark, k, previous = 0; // indices of rates not same as that of the variable. if
 			// wanted, then size of rates array should be varNames
@@ -3422,6 +3417,10 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 						continue;
 					}
 					while ((mark < data.get(0).size()) && (compareBins(i, mark))) {
+						for (int j = 0; j < reqdVarsL.size(); j++){
+							k = reqdVarIndices.get(j);
+							values[j][i] = (values[j][i]*(mark-i) + data.get(k).get(mark))/(mark-i+1);
+						}
 						mark++;
 					}
 					if ((data.get(0).get(mark - 1) != data.get(0).get(i)) && ((mark - i) >=  pathLength) && (mark != data.get(0).size())) { 	// && (mark != (data.get(0).size() - 1 condition added on nov 23.. to avoid the last region bcoz it's not complete. rechk
@@ -3482,8 +3481,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 					"Bins/Rates could not be generated. Please check thresholds.",
 					"ERROR!", JOptionPane.ERROR_MESSAGE);				
 		}
-			/*
-			try {
+			/*try {
 				for (int i = 0; i < (data.get(0).size()); i++) {
 					for (int j = 0; j < reqdVarsL.size(); j++) {
 						k = reqdVarIndices.get(j);
@@ -3524,108 +3522,135 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		// boolean addNewPlace;
 		// ArrayList<String> ratePlaces = new ArrayList<String>(); // ratePlaces can include non-input dmv places.
 		// boolean newRate = false;
-		Properties p0, p1 = null;
-		for (int i = 0; i < (data.get(0).size() - 1); i++) {
-			if (rates[0][i] != null) { // check if indices are ok. 0???? or 1???
-				prevPlaceKey = key;
-				key = "" + bins[0][i];
-				for (int j = 1; j < reqdVarsL.size(); j++) {
-//					key += "" + bins[j][i];
-					key += "," + bins[j][i];
-				}
-				if (placeInfo.containsKey(key)) {
-					p0 = placeInfo.get(key);
-				} 
-				else if ((transientNetPlaces.containsKey(key)) && (ratePlaces.size() == 1)){
-					p0 = transientNetPlaces.get(key);
-				}
-				else {
-					p0 = new Properties();
-					if (ratePlaces.size() == 0){
-						transientNetPlaces.put(key, p0);
-						g.addPlace("p" + numPlaces, true);
+		try{
+			Properties p0, p1 = null;
+			out.write("In UpdateRateInfo\n");
+			for (int i = 0; i < (data.get(0).size() - 1); i++) {
+				if (rates[0][i] != null) { // check if indices are ok. 0???? or 1???
+					prevPlaceKey = key;
+					key = "" + bins[0][i];
+					for (int j = 1; j < reqdVarsL.size(); j++) {
+//						key += "" + bins[j][i];
+						key += "," + bins[j][i];
 					}
-					else{
-						placeInfo.put(key, p0);
-						g.addPlace("p" + numPlaces, false);
+					if (placeInfo.containsKey(key)) {
+						p0 = placeInfo.get(key);
+						out.write("Came back to existing place p" + p0.getProperty("placeNum") + " at time " + data.get(0).get(i) + " bins " + key + "\n");
+					} 
+					else if ((transientNetPlaces.containsKey(key)) && (ratePlaces.size() == 1)){
+						p0 = transientNetPlaces.get(key);
+						out.write("Came back to existing transient place p" + p0.getProperty("placeNum") + " at time " + data.get(0).get(i) + " bins " + key + "\n");
 					}
-					p0.setProperty("placeNum", numPlaces.toString());
-					p0.setProperty("type", "RATE");
-					p0.setProperty("initiallyMarked", "false");
-					p0.setProperty("metaType","false");  // REMOVE LATER?????
-					ratePlaces.add("p" + numPlaces);
-					numPlaces++;
-					cvgProp.setProperty("places", String.valueOf(Integer.parseInt(cvgProp.getProperty("places"))+1));
-				}
-				for (int j = 0; j < reqdVarsL.size(); j++) {
-					// rechk if (reqdVarsL.get(j).isDmvc() && reqdVarsL.get(j).isInput()) {
-					// continue;
-					// }
-					if (reqdVarsL.get(j).isDmvc()) { // && !reqdVarsL.get(j).isInput()){
-						for (int k = 0; k < reqdVarsL.get(j).getRuns().getAvgVals().length; k++) {
+					else {
+						p0 = new Properties();
+						if (ratePlaces.size() == 0){
+							transientNetPlaces.put(key, p0);
+							g.addPlace("p" + numPlaces, true);
+						}
+						else{
+							placeInfo.put(key, p0);
+							g.addPlace("p" + numPlaces, false);
+						}
+						p0.setProperty("placeNum", numPlaces.toString());
+						p0.setProperty("type", "RATE");
+						p0.setProperty("initiallyMarked", "false");
+						p0.setProperty("metaType","false");  // REMOVE LATER?????
+						ratePlaces.add("p" + numPlaces);
+						out.write("New place p" + numPlaces + " at time " + data.get(0).get(i) + " bins " + key + "\n");
+						numPlaces++;
+						cvgProp.setProperty("places", String.valueOf(Integer.parseInt(cvgProp.getProperty("places"))+1));
+					}
+					for (int j = 0; j < reqdVarsL.size(); j++) {
+						// rechk if (reqdVarsL.get(j).isDmvc() && reqdVarsL.get(j).isInput()) {
+						// continue;
+						// }
+						if (reqdVarsL.get(j).isDmvc()) { // && !reqdVarsL.get(j).isInput()){
+							/*for (int k = 0; k < reqdVarsL.get(j).getRuns().getAvgVals().length; k++) {
 							if ((reqdVarsL.get(j).getRuns().getStartPoint(k) <= i) && (reqdVarsL.get(j).getRuns().getEndPoint(k) >= i)) {
 								addValue(p0,reqdVarsL.get(j).getName(),reqdVarsL.get(j).getRuns().getAvgVals()[k]);// data.get(reqdVarIndices.get(j)).get(i));
+								out.write("Add value : " + reqdVarsL.get(j).getName() + " -> " + reqdVarsL.get(j).getRuns().getAvgVals()[k] + " at place p" + p0.getProperty("placeNum") + "\n");
 								break;
 							}
 							if (reqdVarsL.get(j).getRuns().getStartPoint(k) >= i) {
-								addValue(p0,reqdVarsL.get(j).getName(),reqdVarsL.get(j).getRuns().getAvgVals()[k]);// data.get(reqdVarIndices.get(j)).get(i));
+								if ((k==0) || (Math.abs(reqdVarsL.get(j).getRuns().getAvgVals()[k] - values[j][i]) < Math.abs(values[j][i] - reqdVarsL.get(j).getRuns().getAvgVals()[k-1]))){	// This condition added on jun 7, 2010. Before, this was happening by default
+									addValue(p0,reqdVarsL.get(j).getName(),reqdVarsL.get(j).getRuns().getAvgVals()[k]);// data.get(reqdVarIndices.get(j)).get(i));
+									out.write("avg bin value at " + data.get(0).get(i) + " is " + values[j][i] + " So adding " + reqdVarsL.get(j).getRuns().getAvgVals()[k] + "\n");
+									out.write("Add value : " + reqdVarsL.get(j).getName() + " -> " + reqdVarsL.get(j).getRuns().getAvgVals()[k] + " at place p" + p0.getProperty("placeNum") + "\n");
+								} else {
+									addValue(p0,reqdVarsL.get(j).getName(),reqdVarsL.get(j).getRuns().getAvgVals()[k-1]);// data.get(reqdVarIndices.get(j)).get(i));
+									out.write("avg bin value at " + data.get(0).get(i) + " is " + values[j][i] + " So adding " + reqdVarsL.get(j).getRuns().getAvgVals()[k-1] + "\n");
+									out.write("Add value : " + reqdVarsL.get(j).getName() + " -> " + reqdVarsL.get(j).getRuns().getAvgVals()[k-1] + " at place p" + p0.getProperty("placeNum") + "\n");									
+								}
 								break;
 							}
 							// WRONG addValue(p0, reqdVarsL.get(j).getName(), data.get(reqdVarIndices.get(j)).get(i));
+						}*/
+							addValue(p0,reqdVarsL.get(j).getName(),dmvcValuesUnique.get(reqdVarsL.get(j).getName()).get(bins[j][i]));
+							out.write("Add value : " + reqdVarsL.get(j).getName() + " -> " + dmvcValuesUnique.get(reqdVarsL.get(j).getName()).get(bins[j][i]) + " at place p" + p0.getProperty("placeNum") + "\n");
+							continue;
 						}
-						continue;
+						addRate(p0, reqdVarsL.get(j).getName(), rates[j][i]);
+						// newR, oldR, dmvc etc. left
 					}
-					addRate(p0, reqdVarsL.get(j).getName(), rates[j][i]);
-					// newR, oldR, dmvc etc. left
-				}
-				boolean transientNet = false;
-				if (!prevPlaceKey.equalsIgnoreCase(key)) {
-					if (transitionInfo.containsKey(prevPlaceKey + key)) { // instead of tuple
-						p1 = transitionInfo.get(prevPlaceKey + key);
-					} else if (prevPlaceKey != "") {
-						// transition = new Transition(reqdVarsL.size(),place,prevPlace);
-						p1 = new Properties();
-						p1.setProperty("transitionNum", numTransitions.toString());
-						if (ratePlaces.size() == 2){
-							transientNetTransitions.put(prevPlaceKey + key, p1);
-							g.addTransition("t" + numTransitions); // prevTranKey+key);
-							g.addMovement("p" + transientNetPlaces.get(prevPlaceKey).getProperty("placeNum"), "t" + transientNetTransitions.get(prevPlaceKey + key).getProperty("transitionNum")); 
-							g.addMovement("t" + transientNetTransitions.get(prevPlaceKey + key).getProperty("transitionNum"), "p" + placeInfo.get(key).getProperty("placeNum"));
-							transientNet = true;
+					boolean transientNet = false;
+					if (!prevPlaceKey.equalsIgnoreCase(key)) {
+						if (transitionInfo.containsKey(prevPlaceKey + key)) { // instead of tuple
+							p1 = transitionInfo.get(prevPlaceKey + key);
+							out.write("Came back to existing transition t" + p1.getProperty("transitionNum") + " at time " + data.get(0).get(i) + " " + prevPlaceKey + " -> " + key);
+						} else if (prevPlaceKey != "") {
+							// transition = new Transition(reqdVarsL.size(),place,prevPlace);
+							p1 = new Properties();
+							p1.setProperty("transitionNum", numTransitions.toString());
+							if (ratePlaces.size() == 2){
+								transientNetTransitions.put(prevPlaceKey + key, p1);
+								g.addTransition("t" + numTransitions); // prevTranKey+key);
+								g.addMovement("p" + transientNetPlaces.get(prevPlaceKey).getProperty("placeNum"), "t" + transientNetTransitions.get(prevPlaceKey + key).getProperty("transitionNum")); 
+								g.addMovement("t" + transientNetTransitions.get(prevPlaceKey + key).getProperty("transitionNum"), "p" + placeInfo.get(key).getProperty("placeNum"));
+								transientNet = true;
+							}
+							else{
+								transitionInfo.put(prevPlaceKey + key, p1);
+								g.addTransition("t" + numTransitions); // prevTranKey+key);
+								g.addMovement("p" + placeInfo.get(prevPlaceKey).getProperty("placeNum"), "t" + transitionInfo.get(prevPlaceKey + key).getProperty("transitionNum")); 
+								g.addMovement("t" + transitionInfo.get(prevPlaceKey + key).getProperty("transitionNum"), "p" + placeInfo.get(key).getProperty("placeNum"));
+							}
+							out.write("New transition t" + numTransitions + " at time " + data.get(0).get(i) + " " + prevPlaceKey + " -> " + key);
+							numTransitions++;
+							cvgProp.setProperty("transitions", String.valueOf(Integer.parseInt(cvgProp.getProperty("transitions"))+1));
+							// transition.setCore(true);
 						}
-						else{
-							transitionInfo.put(prevPlaceKey + key, p1);
-							g.addTransition("t" + numTransitions); // prevTranKey+key);
-							g.addMovement("p" + placeInfo.get(prevPlaceKey).getProperty("placeNum"), "t" + transitionInfo.get(prevPlaceKey + key).getProperty("transitionNum")); 
-							g.addMovement("t" + transitionInfo.get(prevPlaceKey + key).getProperty("transitionNum"), "p" + placeInfo.get(key).getProperty("placeNum"));
+						if (prevPlaceDuration != null){ //Delay on a transition is the duration spent at its preceding place
+							addDuration(p1, prevPlaceDuration);
+							out.write(" Added duration "  + prevPlaceDuration + "\n");
+						} else {
+							out.write(" Not adding duration here. CHECK\n");
 						}
-						numTransitions++;
-						cvgProp.setProperty("transitions", String.valueOf(Integer.parseInt(cvgProp.getProperty("transitions"))+1));
-						// transition.setCore(true);
 					}
-					if (prevPlaceDuration != null){ //Delay on a transition is the duration spent at its preceding place
-						addDuration(p1, prevPlaceDuration);
-					}
-				}
-				prevPlaceDuration = duration[i];
-				/*if (duration[i] != null){	//STORING DELAYS AT TRANSITIONS NOW
+					prevPlaceDuration = duration[i];
+					/*if (duration[i] != null){	//STORING DELAYS AT TRANSITIONS NOW
 					addDuration(p0, duration[i]);
 				}*/
-				//else if (duration[i] != null && transientNet){
-				//	addTransientDuration(p0, duration[i]);
-				//}
-				if (p1 != null) {
-					for (int j = 0; j < reqdVarsL.size(); j++) {
-						if (reqdVarsL.get(j).isDmvc() && reqdVarsL.get(j).isInput()) {
-							continue;
+					//else if (duration[i] != null && transientNet){
+					//	addTransientDuration(p0, duration[i]);
+					//}
+					if (p1 != null) {
+						for (int j = 0; j < reqdVarsL.size(); j++) {
+							if (reqdVarsL.get(j).isDmvc() && reqdVarsL.get(j).isInput()) {
+								continue;
+							}
+							if (reqdVarsL.get(j).isDmvc()) {
+								continue;
+							}
+							addRate(p1, reqdVarsL.get(j).getName(), rates[j][i]);
 						}
-						if (reqdVarsL.get(j).isDmvc()) {
-							continue;
-						}
-						addRate(p1, reqdVarsL.get(j).getName(), rates[j][i]);
 					}
 				}
 			}
+		}catch (IOException e){
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(biosim.frame(),
+					"Log file couldn't be opened for writing UpdateRateInfo messages.",
+					"ERROR!", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
@@ -3670,6 +3695,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		int startPoint, endPoint, mark, numPoints;
 		HashMap<String, ArrayList<Double>> dmvDivisions = new HashMap<String, ArrayList<Double>>();
 		double absTime;
+		dmvcValuesUnique = new HashMap<String, ArrayList<Double>>();
 		for (int i = 0; i < reqdVarsL.size(); i++) {
 			absTime = 0;
 			mark = 0;
@@ -3774,14 +3800,14 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 						//for (Double l : dmvcValues){
 						//	System.out.print(l + " ");
 						//}
-						ArrayList<Double> dmvcValuesUnique = new ArrayList<Double>();
+						dmvcValuesUnique.put(reqdVarsL.get(i).getName(),new ArrayList<Double>());
 						ArrayList<Double> dmvSplits = new ArrayList<Double>();
 						out.write("Final DMV values of " + reqdVarsL.get(i).getName() + " are ");
 						for (int j = 0; j < dmvcValues.length; j++){
-							dmvcValuesUnique.add(dmvcValues[j]);
+							dmvcValuesUnique.get(reqdVarsL.get(i).getName()).add(dmvcValues[j]);
 							out.write(dmvcValues[j] + " ");
-							if (dmvcValuesUnique.size() > 1){
-								dmvSplits.add((dmvcValuesUnique.get(dmvcValuesUnique.size() - 1) + dmvcValuesUnique.get(dmvcValuesUnique.size() - 2))/2);
+							if (dmvcValuesUnique.get(reqdVarsL.get(i).getName()).size() > 1){
+								dmvSplits.add((dmvcValuesUnique.get(reqdVarsL.get(i).getName()).get(dmvcValuesUnique.get(reqdVarsL.get(i).getName()).size() - 1) + dmvcValuesUnique.get(reqdVarsL.get(i).getName()).get(dmvcValuesUnique.get(reqdVarsL.get(i).getName()).size() - 2))/2);
 							}
 							for (int k = j+1; k < dmvcValues.length; k++){
 								if (Math.abs((dmvcValues[j] - dmvcValues[k])) > epsilon){
@@ -3807,13 +3833,13 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 						reqdVarsL.get(i).setDmvc(true);
 						Double[] dmvcValues = reqdVarsL.get(i).getRuns().getAvgVals();
 						Arrays.sort(dmvcValues);
-						ArrayList<Double> dmvcValuesUnique = new ArrayList<Double>();
+						dmvcValuesUnique.put(reqdVarsL.get(i).getName(),new ArrayList<Double>());
 						ArrayList<Double> dmvSplits = new ArrayList<Double>();
 						for (int j = 0; j < dmvcValues.length; j++){
-							dmvcValuesUnique.add(dmvcValues[j]);
+							dmvcValuesUnique.get(reqdVarsL.get(i).getName()).add(dmvcValues[j]);
 							out.write(dmvcValues[j].toString());
-							if (dmvcValuesUnique.size() > 1){
-								double d1 = (dmvcValuesUnique.get(dmvcValuesUnique.size() - 1) + dmvcValuesUnique.get(dmvcValuesUnique.size() - 2))/2.0;
+							if (dmvcValuesUnique.get(reqdVarsL.get(i).getName()).size() > 1){
+								double d1 = (dmvcValuesUnique.get(reqdVarsL.get(i).getName()).get(dmvcValuesUnique.get(reqdVarsL.get(i).getName()).size() - 1) + dmvcValuesUnique.get(reqdVarsL.get(i).getName()).get(dmvcValuesUnique.get(reqdVarsL.get(i).getName()).size() - 2))/2.0;
 								d1 = d1*10000;
 								int d2 = (int) d1; 
 								//System.out.println(d2);
@@ -3895,18 +3921,6 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		}
 		p.setProperty(name + "_rMin", rMin.toString());
 		p.setProperty(name + "_rMax", rMax.toString());
-	}
-
-	public void addDmvcTime(Properties p, String name, Double t) {
-		if (p.getProperty("dmvcTime_" + name) == null) {
-			p.setProperty("dmvcTime_" + name, t.toString());
-		} else {
-			// Double d = Double.parseDouble(p.getProperty("dmvcTime_" + name));
-			// d = d + t;
-			// p.setProperty("dmvcTime_" + name, d.toString());
-			p.setProperty("dmvcTime_" + name, p.getProperty("dmvcTime_" + name)
-					+ " " + t.toString());
-		}
 	}
 
 	public void deleteInvalidDmvcTime(Properties p, Double t) {
@@ -4517,32 +4531,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			System.out.println("Delay scaling error due to Array Index.");
 		}
 	}
-/*
-	public Double getMinDiv(ArrayList<ArrayList<Double>> divisions) {
-		Double minDiv = divisions.get(0).get(0);
-		for (int i = 0; i < divisions.size(); i++) {
-			for (int j = 0; j < divisions.get(i).size(); j++) {
-				if (divisions.get(i).get(j) < minDiv) {
-					minDiv = divisions.get(i).get(j);
-				}
-			}
-		}
-		return minDiv;
-	}
 
-	public Double getMaxDiv(ArrayList<ArrayList<Double>> divisions) {
-		Double maxDiv = divisions.get(0).get(0);
-		for (int i = 0; i < divisions.size(); i++) {
-			for (int j = 0; j < divisions.get(i).size(); j++) {
-				if (divisions.get(i).get(j) > maxDiv) {
-					maxDiv = divisions.get(i).get(j);
-				}
-			}
-		}
-		return maxDiv;
-	}
-	Commented above for replacing divisionsL with thresholds
-*/
 	public Double getMinDiv(HashMap<String, ArrayList<Double>> divisions) {
 		Double minDiv = null;
 		for (String s : divisions.keySet()) {
@@ -4723,43 +4712,6 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		return maxDelay;
 	}
 
-	/* Related to the separate net for DMV input driver
-	public Double getMinDmvcTime(Properties p) {
-		String[] times = null;
-		String name = p.getProperty("DMVCVariable");
-		String s = p.getProperty("dmvcTime_" + name);
-		if (s != null) {
-			times = s.split(" ");
-			Double min = Double.parseDouble(times[0]);
-			for (int i = 0; i < times.length; i++) {
-				if (Double.parseDouble(times[i]) < min) {
-					min = Double.parseDouble(times[i]);
-				}
-			}
-			return min;
-		} else {
-			return null;
-		}
-	}
-
-	public Double getMaxDmvcTime(Properties p) {
-		String[] times = null;
-		String name = p.getProperty("DMVCVariable");
-		String s = p.getProperty("dmvcTime_" + name);
-		if (s != null) {
-			times = s.split(" ");
-			Double max = Double.parseDouble(times[0]);
-			for (int i = 0; i < times.length; i++) {
-				if (Double.parseDouble(times[i]) > max) {
-					max = Double.parseDouble(times[i]);
-				}
-			}
-			return max;
-		} else {
-			return null;
-		}
-	}
-*/
 	public void addDuration(Properties p, Double d) {
 		Double dMin;
 		Double dMax;
@@ -4868,47 +4820,6 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 	    return extrema;
 	}
 	
-/*	//public ArrayList<ArrayList<Double>> initDivisions(Double[][] extrema, ArrayList<ArrayList<Double>>  divisions ){
-	public ArrayList<ArrayList<Double>> initDivisions(Double[][] extrema){
-	//public HashMap<String, ArrayList<Double>> initDivisions(Double[][] extrema){
-		int numThresholds = Integer.parseInt(numBins.getSelectedItem().toString()) - 1;
-		double interval;
-		ArrayList<ArrayList<Double>> divisions = new ArrayList<ArrayList<Double>>(); //changed for replacing divisionsL by threholds
-		//HashMap<String, ArrayList<Double>> localThresholds = new HashMap<String, ArrayList<Double>> ();
-		for (int i = 0; i < reqdVarsL.size(); i++){
-			divisions.add(new ArrayList<Double>());//changed for replacing divisionsL by threholds
-			//localThresholds.put(reqdVarsL.get(i).getName(),new ArrayList<Double>());
-			if (!suggestIsSource){ // could use user.isselected instead of this.
-				//numThresholds = Integer.parseInt(numBins.getSelectedItem().toString()) - 1;
-			}
-			else{
-				numThresholds = Integer.parseInt((String)((JComboBox)((JPanel)variablesPanel.getComponent(i+1)).getComponent(3)).getSelectedItem())-1; // changed 2 to 3 after required
-			}
-			interval = (Math.abs(extrema[i][1] - extrema[i][0]))/(numThresholds + 1);
-			for (int j = 0; j< numThresholds; j++){
-				//if ((divisions.get(i).size() == 0) || (divisions.get(i).get(j) == null)){
-				//	divisions.get(i).set(j,extrema[i][0] + interval*j);
-				//}
-				if (divisions.get(i).size() <= j){
-					divisions.get(i).add(extrema[i][0] + interval*(j+1));  // j+1
-				}
-				else{
-					divisions.get(i).set(j,extrema[i][0] + interval*(j+1)); // j+1
-				}//changed for replacing divisionsL by threholds
-				//if (localThresholds.get(reqdVarsL.get(i).getName()).size() <= j){
-				//	localThresholds.get(reqdVarsL.get(i).getName()).add(extrema[i][0] + interval*(j+1));  // j+1
-				//}
-				//else{
-				//	localThresholds.get(reqdVarsL.get(i).getName()).set(j,extrema[i][0] + interval*(j+1)); // j+1
-				//}
-			}
-		}
-		suggestIsSource = false;
-		return divisions;
-		//return localThresholds;
-	}*/
-	
-	//public ArrayList<ArrayList<Double>> initDivisions(Double[][] extrema, ArrayList<ArrayList<Double>>  divisions ){
 	//public ArrayList<ArrayList<Double>> initDivisions(Double[][] extrema){
 	public HashMap<String, ArrayList<Double>> initDivisions(HashMap<String,Double[]> extrema){
 		int numThresholds = Integer.parseInt(numBins.getSelectedItem().toString()) - 1;
@@ -5183,120 +5094,6 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		return localThresholds;
 	}
 	
-/*	public ArrayList<ArrayList<Double>> greedyOpt(ArrayList<ArrayList<Double>> divisions,ArrayList<ArrayList<Double>> fullData, Double[][] extrema){
-		ArrayList<ArrayList<Double>> newDivs = new ArrayList<ArrayList<Double>>(); // = divisions; // initialization rechk??
-		ArrayList<Integer> res = new ArrayList<Integer>();
-		int updateVar = 0;
-		Double bestCost =0.0,newCost;
-		Double distance = 0.0;
-		boolean pointsSelected = false;
-		int numMoves = 0;
-		int iterations =  Integer.parseInt(iteration.getText());
-		if (points.isSelected()){
-			pointsSelected = true;
-			bestCost = pointDistCost(fullData, divisions,res,updateVar);
-		}
-		else if (range.isSelected()){
-			pointsSelected = false;
-			bestCost = rateRangeCost(fullData, divisions);
-		}
-		while (numMoves < iterations){
-			for (int i = 0; i < divisions.size(); i++){
-				for (int j = 0; j < divisions.get(i).size(); j++){
-					if (j == 0){
-						if (divisions.get(i).get(j) !=  null){
-							distance = Math.abs(divisions.get(i).get(j) - extrema[i][0])/2;
-						}
-						else{// will else case ever occur???
-							distance = Math.abs(divisions.get(i).get(j) - divisions.get(i).get(j-1))/2;
-						}
-					}
-					else{
-						distance = Math.abs(divisions.get(i).get(j) - divisions.get(i).get(j-1))/2;
-					}
-					// deep copy
-					//newDivs = divisions; 
-					newDivs = new ArrayList<ArrayList<Double>>();
-					for (ArrayList<Double> o1 : divisions){
-						ArrayList<Double> tempDiv = new ArrayList<Double>();
-						for (Double o2 : o1){
-							tempDiv.add( o2.doubleValue()); // clone() not working here
-						}
-						newDivs.add(tempDiv);
-					}
-					newDivs.get(i).set(j,newDivs.get(i).get(j)-distance);
-					if (pointsSelected){
-						newCost = pointDistCost(fullData,newDivs,res,i+1);
-					}
-					else{
-						newCost = rateRangeCost(fullData, newDivs);
-					}
-					numMoves++;
-					if (numMoves % 500 == 0){
-						System.out.println("Iteration "+ numMoves + "/" + iterations);
-					}
-					if (newCost < bestCost){
-						bestCost = newCost;
-						divisions = new ArrayList<ArrayList<Double>>();
-						for (ArrayList<Double> o1 : newDivs){
-							ArrayList<Double> tempDiv = new ArrayList<Double>();
-							for (Double o2 : o1){
-								tempDiv.add( o2.doubleValue()); // clone() not working here
-							}
-							divisions.add(tempDiv);
-						}
-						// divisions = newDivs; deep copy ?????
-					}
-					else{
-						if (j == (divisions.get(i).size() - 1)){
-							distance = Math.abs(extrema[i][1] - divisions.get(i).get(j))/2;
-						}
-						else{
-							distance = Math.abs(divisions.get(i).get(j+1) - divisions.get(i).get(j))/2;
-						}
-						// deep copy
-						//newDivs = divisions;
-						newDivs = new ArrayList<ArrayList<Double>>();
-						for (ArrayList<Double> o1 : divisions){
-							ArrayList<Double> tempDiv = new ArrayList<Double>();
-							for (Double o2 : o1){
-								tempDiv.add( o2.doubleValue()); // clone() not working here
-							}
-							newDivs.add(tempDiv);
-						}
-						newDivs.get(i).set(j,newDivs.get(i).get(j)+distance);
-						if (pointsSelected){
-							newCost = pointDistCost(fullData,newDivs,res,i+1);
-						}
-						else{
-							newCost = rateRangeCost(fullData, newDivs);
-						}
-						numMoves++;
-						if (numMoves % 500 == 0){
-							System.out.println("Iteration "+ numMoves + "/" + iterations);
-						}
-						if (newCost < bestCost){
-							bestCost = newCost;
-							divisions = new ArrayList<ArrayList<Double>>();
-							for (ArrayList<Double> o1 : newDivs){
-								ArrayList<Double> tempDiv = new ArrayList<Double>();
-								for (Double o2 : o1){
-									tempDiv.add( o2.doubleValue()); // clone() not working here
-								}
-								divisions.add(tempDiv);
-							}
-							// divisions = newDivs; deep copy ?????
-						}
-						if (numMoves > iterations){
-							return divisions;
-						}
-					}
-				}
-			}
-		}
-		return divisions;
-	}*/
-	
 	public HashMap<String, ArrayList<Double>> greedyOpt(HashMap<String, ArrayList<Double>> localThresholds,ArrayList<ArrayList<Double>> fullData, HashMap<String,Double[]> extrema){
 	    HashMap<String, ArrayList<Double>> newThresholds = new HashMap<String, ArrayList<Double>>(); // = divisions; // initialization rechk??
 		ArrayList<Integer> res = new ArrayList<Integer>();
@@ -5413,18 +5210,6 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 	
 	// CHANGE EXTREMA TO HASHMAP for for replacing divisionsL by threholds in autogenT
 	
-/*	public Double rateRangeCost(ArrayList<ArrayList<Double>> fullData, ArrayList<ArrayList<Double>> divisions){
-		Double total = 0.0;
-		Double[] minMaxR = {null,null};
-		//genBinsRates(datFile, divisions);
-		Double[][] rates = genBinsRatesForAutogen(fullData, divisions);
-		for (int i = 0; i < divisions.size(); i++){
-			minMaxR = getMinMaxRates(rates[i]);
-			total += Math.abs(minMaxR[1] - minMaxR[0]);
-		}
-		return total;
-	}*/
-	
 	public Double rateRangeCost(ArrayList<ArrayList<Double>> fullData, HashMap<String, ArrayList<Double>> localThresholds){
 		Double total = 0.0;
 		Double[] minMaxR = {null,null};
@@ -5436,41 +5221,6 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		}
 		return total;
 	}
-	
-/*	public Double pointDistCost(ArrayList<ArrayList<Double>> fullData,ArrayList<ArrayList<Double>> divisions, ArrayList<Integer> res, int updateVar ){
-		Double total = 0.0;
-		int pts = 0;
-		if (updateVar == 0){
-			for (int i = 0; i < divisions.size() + 1; i++){
-				res.add(0);
-			}
-			for (int i = 0; i < divisions.size(); i++){
-				pts = pointDistCostVar(fullData.get(i+1),divisions.get(i));
-				total += pts;
-				res.set(i,pts);
-			}
-		}
-		else if (updateVar > 0){  // res is kind of being passed by reference. it gets altered outside too. 
-			res.set(updateVar-1, pointDistCostVar(fullData.get(updateVar),divisions.get(updateVar-1)));
-			for (Integer i : res){
-				total += i;
-			}
-			//for (int i = 0; i < res.size(); i++){
-			//	if ((updateVar - 1) != i){
-			//		total += res.get(i);
-			//	}
-			//	else{
-			//		total += pointDistCostVar(fullData.get(updateVar),divisions.get(updateVar-1))
-			//	}
-			//} 
-		}
-		else{
-			for (int i = 0; i < divisions.size(); i++){
-				total += pointDistCostVar(fullData.get(i+1),divisions.get(i));
-			}
-		}
-		return total;
-	}*/
 	
 	public Double pointDistCost(ArrayList<ArrayList<Double>> fullData,HashMap<String, ArrayList<Double>> localThresholds, ArrayList<Integer> res, int updateVar ){
 		Double total = 0.0;
@@ -5551,165 +5301,6 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		}
 		return minMax;
 	}
-	
-	public Double[][] genBinsRatesForAutogen(ArrayList<ArrayList<Double>> data,ArrayList<ArrayList<Double>> divisionsL) { // genBins
-//		public void genBinsRates(String datFile,ArrayList<ArrayList<Double>> divisionsL) { // genBins
-//			TSDParser tsd = new TSDParser(directory + separator + datFile, biosim,false);
-			// genBins
-//			data = tsd.getData();
-			rateSampling = Integer.parseInt(rateSamplingG.getText().trim());
-			pathLength = Integer.parseInt(pathLengthG.getText().trim());
-		//	ArrayList<Integer> reqdVarIndices = new ArrayList<Integer>();
-			int[][] bins = new int[reqdVarsL.size()][data.get(0).size()];
-			for (int i = 0; i < reqdVarsL.size(); i++) {
-			//	for (int j = 1; j < varNames.size(); j++) {
-			//		if (reqdVarsL.get(i).getName().equalsIgnoreCase(varNames.get(j))) {
-						// System.out.println(reqdVarsL.get(i) + " matched "+
-						// varNames.get(j) + " i = " + i + " j = " + j);
-			//			reqdVarIndices.add(j);
-						for (int k = 0; k < data.get(i+1).size(); k++) {
-							for (int l = 0; l < divisionsL.get(i).size(); l++) {
-								if (data.get(i+1).get(k) <= divisionsL.get(i).get(l)) {
-									bins[i][k] = l;
-									break;
-								} else {
-									bins[i][k] = l + 1; // indices of bins not same as that of the variable. i here. not j; if j
-									// wanted, then size of bins array should be varNames not reqdVars
-								}
-							}
-						}
-					}
-		//		}
-		//	}
-			/*
-			 * System.out.println("array bins is :"); for (int i = 0; i <
-			 * reqdVarsL.size(); i++) { System.out.print(reqdVarsL.get(i).getName() + "
-			 * "); for (int k = 0; k < data.get(0).size(); k++) {
-			 * System.out.print(bins[i][k] + " "); } System.out.print("\n"); }
-			 */
-			// genRates
-			Double[][] rates = new Double[reqdVarsL.size()][data.get(0).size()];
-			Double[] duration = new Double[data.get(0).size()];
-			int mark ; //, k; // indices of rates not same as that of the variable. if
-			// wanted, then size of rates array should be varNames not reqdVars
-			if (placeRates) {
-				if (rateSampling == -1) { // replacing inf with -1 since int
-					mark = 0;
-					for (int i = 0; i < data.get(0).size(); i++) {
-						if (i < mark) {
-							continue;
-						}
-						while ((mark < data.get(0).size()) && (compareBins(i, mark,bins))) {
-							mark++;
-						}
-						if ((data.get(0).get(mark - 1) != data.get(0).get(i)) && ((mark - i) >=  pathLength)) { 
-							for (int j = 0; j < reqdVarsL.size(); j++) {
-								//k = reqdVarIndices.get(j);
-								rates[j][i] = ((data.get(j+1).get(mark - 1) - data.get(j+1).get(i)) / (data.get(0).get(mark - 1) - data.get(0).get(i)));
-							}
-							duration[i] = data.get(0).get(mark - 1)	- data.get(0).get(i);
-						}
-					}
-				} else {
-					boolean calcRate;
-					boolean prevFail = true;
-					int binStartPoint = 0, binEndPoint = 0;
-					for (int i = 0; i < (data.get(0).size() - rateSampling); i++) {
-						calcRate = true;
-						for (int l = 0; l < rateSampling; l++) {
-							if (!compareBins(i, i + l,bins)) {
-								if (!prevFail){
-									binEndPoint = i -2 + rateSampling;
-									duration[binStartPoint] = data.get(0).get(binEndPoint)	- data.get(0).get(binStartPoint);
-								}
-								calcRate = false;
-								prevFail = true;
-								break;
-							}
-						}
-						if (calcRate && (data.get(0).get(i + rateSampling) != data.get(0).get(i))) {
-							for (int j = 0; j < reqdVarsL.size(); j++) {
-								//k = reqdVarIndices.get(j);
-								rates[j][i] = ((data.get(j+1).get(i + rateSampling) - data.get(j+1).get(i)) / (data.get(0).get(i + rateSampling) - data.get(0).get(i)));
-							}
-							if (prevFail){
-								binStartPoint = i;
-							}
-							prevFail = false;
-						}
-					}
-					if (!prevFail){ // for the last genuine rate-calculating region of the trace; this may not be required if the trace is incomplete.trace data may not necessarily end at a region endpt
-						duration[binStartPoint] = data.get(0).get(data.get(0).size()-1)	- data.get(0).get(binStartPoint);
-					}
-				}
-			} 
-			/*
-			 * ADD LATER: duration[i] SHOULD BE ADDED TO THE NEXT 2 IF/ELSE
-			 * BRANCHES(Transition based rate calc) ALSO
-			 */
-			else { // Transition based rate calculation
-				if (rateSampling == -1) { // replacing inf with -1 since int
-					for (int j = 0; j < reqdVarsL.size(); j++) {
-						mark = 0;
-						//k = reqdVarIndices.get(j);
-						for (int i = 0; i < data.get(0).size(); i++) {
-							if (i < mark) {
-								continue;
-							}
-							while ((mark < data.get(0).size())
-									&& (bins[j][i] == bins[j][mark])) {
-								mark++;
-							}
-							if ((data.get(0).get(mark - 1) != data.get(0).get(i))) {
-								rates[j][i] = ((data.get(j+1).get(mark - 1) - data.get(j+1).get(i)) / (data.get(0).get(mark - 1) - data.get(0).get(i)));
-							}
-						}
-					}
-				} else {
-					boolean calcRate;
-					for (int i = 0; i < (data.get(0).size() - rateSampling); i++) {
-						for (int j = 0; j < reqdVarsL.size(); j++) {
-							calcRate = true;
-							//k = reqdVarIndices.get(j);
-							for (int l = 0; l < rateSampling; l++) {
-								if (bins[j][i] != bins[j][i + l]) {
-									calcRate = false;
-									break;
-								}
-							}
-							if (calcRate && (data.get(0).get(i + rateSampling) != data.get(0).get(i))) {
-								rates[j][i] = ((data.get(j+1).get(i + rateSampling) - data.get(j+1).get(i)) / (data.get(0).get(i + rateSampling) - data.get(0).get(i)));
-							}
-						}
-					}
-				}
-			}
-			/*
-			try {
-				logFile = new File(directory + separator + "tmp.log");
-				logFile.createNewFile();
-				out = new BufferedWriter(new FileWriter(logFile));
-				for (int i = 0; i < (data.get(0).size()); i++) {
-					for (int j = 0; j < reqdVarsL.size(); j++) {
-						//k = reqdVarIndices.get(j);
-						out.write(data.get(j+1).get(i) + " ");// + bins[j][i] + " " +
-						// rates[j][i] + " ");
-					}
-					for (int j = 0; j < reqdVarsL.size(); j++) {
-						out.write(bins[j][i] + " ");
-					}
-					for (int j = 0; j < reqdVarsL.size(); j++) {
-						out.write(rates[j][i] + " ");
-					}
-					out.write(duration[i] + " ");
-					out.write("\n");
-				}
-				out.close();
-			} catch (IOException e) {
-				System.out.println("Log file couldn't be opened for writing rates and bins ");
-			}*/
-			return rates;
-		}
 	
 	public Double[][] genBinsRatesForAutogen(ArrayList<ArrayList<Double>> data,HashMap<String, ArrayList<Double>> localThresholds) { // genBins
 //		public void genBinsRates(String datFile,ArrayList<ArrayList<Double>> divisionsL) { // genBins
@@ -7203,7 +6794,38 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 	}
 }
 
-/* This method is used for creating separate nets for each DMV input variable driver.
+/* 
+	private String traceBack(String place, String var){
+		String enabling = null;
+		try{
+			visitedPlaces.put(place,true);
+			for (String presetTrans : g.getPreset(place)){
+				ExprTree enableTree = g.getEnablingTree(presetTrans);
+				if ((enableTree != null) && (enableTree.containsVar(var))){
+					enabling = enableTree.toString();
+					return enabling;
+				}
+			}
+			for (String presetTrans : g.getPreset(place)){
+				for (String presetPlace : g.getPreset(presetTrans)){
+					if (!visitedPlaces.containsKey(presetPlace)){
+						enabling = traceBack(presetPlace,var);
+						if (enabling != null)
+							return enabling;
+					}
+				}
+			}
+		} catch (NullPointerException e){
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(biosim.frame(),
+					"Exception while tracing back for making the enabling conditions mutually exclusive.",
+					"ERROR!", JOptionPane.ERROR_MESSAGE);
+
+		}
+		return enabling;
+	}
+		
+This method is used for creating separate nets for each DMV input variable driver.
 public void updateTimeInfo(int[][] bins, Properties cvgProp) {
 	String prevPlace = null;
 	String currPlace = null;

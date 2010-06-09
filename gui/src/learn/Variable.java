@@ -123,6 +123,18 @@ public class Variable implements Comparable<Variable>{
 	public int compareTo(Variable o) {
 		return (this.getName().compareToIgnoreCase(o.getName()));
 	}
+	
+	public void copy(Variable a){
+		this.name = a.name;
+		this.runs = a.runs;
+		this.dmvc = a.dmvc;
+		this.dmvc = a.input;
+		this.output = a.output;
+		this.initValue_vMax = a.initValue_vMax;
+		this.initValue_vMin = a.initValue_vMin;
+		this.initRate_rMax = a.initRate_rMax;
+		this.initRate_rMin = a.initRate_rMin;
+	}
 	/*
 	public void addInitValues(Double d, int i){
 		if (initValues.isEmpty()){
