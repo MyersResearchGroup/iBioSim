@@ -76,22 +76,10 @@ public class Lpn2verilog {
 			sv.write(");\n");
 			first = true;
 			String[] transitionList = lpn.getTransitionList();
-			//Sorting works only if places are like p0,p1.. and transitions are like t0,t1..
 			ArrayList<String> transArrayList = new ArrayList(Arrays.asList(transitionList));
 			Collections.sort(transArrayList,new Comparator<String>(){
 				public int compare(String a, String b){
 					return(a.compareToIgnoreCase(b));
-					/*String v1 = a.split("t")[1];
-					String v2 = b.split("t")[1];
-					if (Integer.parseInt(v1) < Integer.parseInt(v2)){
-						return -1;
-					}
-					else if (Integer.parseInt(v1) == Integer.parseInt(v2)){
-						return 0;
-					}
-					else{
-						return 1;
-					}*/
 				}
 			});
 			transArrayList.toArray(transitionList);
@@ -100,17 +88,6 @@ public class Lpn2verilog {
 			Collections.sort(placeArrayList,new Comparator<String>(){
 				public int compare(String a, String b){
 					return(a.compareToIgnoreCase(b));
-					/*String v1 = a.split("p")[1];
-					String v2 = b.split("p")[1];
-					if (Integer.parseInt(v1) < Integer.parseInt(v2)){
-						return -1;
-					}
-					else if (Integer.parseInt(v1) == Integer.parseInt(v2)){
-						return 0;
-					}
-					else{
-						return 1;
-					}*/
 				}
 			});
 			placeArrayList.toArray(placeList);
@@ -312,7 +289,7 @@ public class Lpn2verilog {
 					} else {
 						alwaysBuffer.append(" or posedge(" + st + ")");
 					}
-					prioritiesBuffer.append("\t\tpr[\"" + st +"\"] = " + st + " ? $unsigned($random) : 0;\n");
+					prioritiesBuffer.append("\t\tpr[\"" + st +"\"] = (" + st + " && (pr[\"" + st +"\"] == 0)) ? $unsigned($random) : 0;\n");
 					assignmentsBuffer.append("\t\tif (pr[\"" + st + "\"]==prMax) begin\n");
 					for (String st2 : lpn.getPreset(st)){
 						assignmentsBuffer.append("\t\t\t" + st2 + " <= 0;\n");
@@ -360,6 +337,7 @@ public class Lpn2verilog {
 					sv.write(alwaysBuffer.toString());
 					sv.write(prioritiesBuffer.toString());
 					sv.write("\t\tprMax = pr.max[0];\n");
+					sv.write("\t\tif (prMax == 0)\n\t\t\tprMax=1;\n");
 					sv.write(assignmentsBuffer.toString());
 					sv.write("\tend\n");
 				}
