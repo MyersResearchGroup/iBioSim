@@ -1358,7 +1358,11 @@ public class LhpnFile {
 				Matcher rangeMatcher = rangePattern.matcher(delayMatcher.group(2));
 				String delay;
 				if (rangeMatcher.find()) {
-					delay = "uniform(" + rangeMatcher.group(1) + "," + rangeMatcher.group(2) + ")";
+					if (rangeMatcher.group(1).equals(rangeMatcher.group(2))) {
+						delay = rangeMatcher.group(1); 
+					} else {
+						delay = "uniform(" + rangeMatcher.group(1) + "," + rangeMatcher.group(2) + ")";
+					}
 				}
 				else {
 					delay = delayMatcher.group(2);
