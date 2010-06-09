@@ -123,7 +123,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 
 	private JTextField eventID, eventName, eventTrigger, eventDelay, eventPriority; // event
 
-	private JCheckBox assignTime,disableTrigger;
+	private JCheckBox assignTime,disableTrigger,initialTrigger;
 	// fields;
 
 	private JComboBox eaID; // event assignment fields;
@@ -4818,7 +4818,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		int index = events.getSelectedIndex();
 		JPanel eventPanel = new JPanel(new BorderLayout());
 		// JPanel evPanel = new JPanel(new GridLayout(2, 2));
-		JPanel evPanel = new JPanel(new GridLayout(7, 2));
+		JPanel evPanel = new JPanel(new GridLayout(8, 2));
 		JLabel IDLabel = new JLabel("ID:");
 		JLabel NameLabel = new JLabel("Name:");
 		JLabel triggerLabel = new JLabel("Trigger:");
@@ -4826,6 +4826,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		JLabel priorityLabel = new JLabel("Priority:");
 		JLabel assignTimeLabel = new JLabel("Use values at trigger time");
 		JLabel disableTriggerLabel = new JLabel("Trigger can be disabled");
+		JLabel initialTriggerLabel = new JLabel("Trigger initially false");
 		eventID = new JTextField(12);
 		eventName = new JTextField(12);
 		eventTrigger = new JTextField(12);
@@ -4833,6 +4834,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		eventPriority = new JTextField(12);
 		assignTime = new JCheckBox("");
 		disableTrigger = new JCheckBox("");
+		initialTrigger = new JCheckBox("");
 		JPanel eventAssignPanel = new JPanel(new BorderLayout());
 		JPanel addEventAssign = new JPanel();
 		addAssignment = new JButton("Add Assignment");
@@ -4880,6 +4882,9 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					if (event.getTrigger().getAnnotationString().contains("<TriggerCanBeDisabled/>")) {
 						disableTrigger.setSelected(true);
 					}
+					if (event.getTrigger().getAnnotationString().contains("<TriggerInitiallyFalse/>")) {
+						initialTrigger.setSelected(true);
+					}
 					assign = new String[(int) event.getNumEventAssignments()];
 					origAssign = new String[(int) event.getNumEventAssignments()];
 					for (int j = 0; j < event.getNumEventAssignments(); j++) {
@@ -4921,6 +4926,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		evPanel.add(assignTime);
 		evPanel.add(disableTriggerLabel);
 		evPanel.add(disableTrigger);
+		evPanel.add(initialTriggerLabel);
+		evPanel.add(initialTrigger);
 		eventPanel.add(evPanel, "North");
 		eventPanel.add(eventAssignPanel, "South");
 		Object[] options = { option, "Cancel" };
@@ -5157,6 +5164,19 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 								e.getTrigger().unsetAnnotation();
 							}
 						}
+						if (initialTrigger.isSelected()) {
+							if (!e.getTrigger().getAnnotationString().contains("<TriggerInitiallyFalse/>")) {
+								if (e.getTrigger().isSetAnnotation()) {
+									e.getTrigger().appendAnnotation("<TriggerInitiallyFalse/>");
+								} else {
+									e.getTrigger().setAnnotation("<TriggerInitiallyFalse/>");
+								}
+							}
+						} else {
+							if (e.getTrigger().getAnnotationString().contains("<TriggerInitiallyFalse/>")) {
+								e.getTrigger().unsetAnnotation();
+							}
+						}
 						e.getTrigger().setMath(myParseFormula(eventTrigger.getText().trim()));
 						if (eventID.getText().trim().equals("")) {
 							e.unsetId();
@@ -5212,6 +5232,19 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						}
 					} else {
 						if (e.getTrigger().getAnnotationString().contains("<TriggerCanBeDisabled/>")) {
+							e.getTrigger().unsetAnnotation();
+						}
+					}
+					if (initialTrigger.isSelected()) {
+						if (!e.getTrigger().getAnnotationString().contains("<TriggerInitiallyFalse/>")) {
+							if (e.getTrigger().isSetAnnotation()) {
+								e.getTrigger().appendAnnotation("<TriggerInitiallyFalse/>");
+							} else {
+								e.getTrigger().setAnnotation("<TriggerInitiallyFalse/>");
+							}
+						}
+					} else {
+						if (e.getTrigger().getAnnotationString().contains("<TriggerInitiallyFalse/>")) {
 							e.getTrigger().unsetAnnotation();
 						}
 					}
