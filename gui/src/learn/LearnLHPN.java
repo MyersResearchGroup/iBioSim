@@ -3141,7 +3141,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 							String[] binOutgoing = getPlaceInfoIndex(g.getPostset(st2)[0]).split(",");
 							String condStr = "";
 							for (String st : varsInEnabling.keySet()){
-								int bin = Integer.valueOf(binOutgoing[indexByName(st)]);
+								int bin = Integer.valueOf(binOutgoing[findReqdVarslIndex(st)]);
 								if (bin == 0){
 									if (!condStr.equalsIgnoreCase(""))
 										condStr += "&";
@@ -3239,11 +3239,21 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			out.close();
 	//		addMetaBins();
 	//		addMetaBinTransitions();
+			
+			if (new File(learnFile).exists()){ //directory + separator + "complete.lpn").exists()){//
+				LhpnFile l1 = new LhpnFile();
+				l1.load(learnFile);
+				g = mergeLhpns(l1,g);
+				//l1.load(directory + separator + "complete.lpn");
+				//mergeLhpns(l1,g).save(directory + separator + "complete.lpn");
+			} //else {
+			//	g.save(directory + separator + "complete.lpn");
+			//}
 			g.save(directory + separator + lhpnFile);
+			new Lpn2verilog(directory + separator + lhpnFile); //writeSVFile(directory + separator + lhpnFile);
 			writeVHDLAMSFile(lhpnFile.replace(".lpn",".vhd"));
 			writeVerilogAMSFile(lhpnFile.replace(".lpn",".vams"));
 			if (defaultStim){
-				new Lpn2verilog(directory + separator + lhpnFile); //writeSVFile(directory + separator + lhpnFile);
 				int j = 0;
 				HashMap<String,Double> tPar = new HashMap<String,Double>(); 
 				tPar.put("epsilon", epsilon);
@@ -3270,18 +3280,6 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 					}	
 				}
 				g.save(directory + separator + lhpnFile);
-			} else {
-				new Lpn2verilog(directory + separator + lhpnFile); //writeSVFile(directory + separator + lhpnFile);
-				if (new File(learnFile).exists()){ //directory + separator + "complete.lpn").exists()){//
-					LhpnFile l1 = new LhpnFile();
-					l1.load(learnFile);
-					mergeLhpns(l1,g).save(directory + separator + lhpnFile);
-					//l1.load(directory + separator + "complete.lpn");
-					//mergeLhpns(l1,g).save(directory + separator + "complete.lpn");
-				} //else {
-				//	g.save(directory + separator + "complete.lpn");
-				//}
-
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -3316,13 +3314,6 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 					"LPN File not found for merging.",
 					"ERROR!", JOptionPane.ERROR_MESSAGE);
 		}
-	}
-	
-	private int indexByName(String var){
-		for (int i=0; i < reqdVarsL.size(); i++)
-			if (reqdVarsL.get(i).getName().equalsIgnoreCase(var))
-				return i;
-		return reqdVarsL.size();
 	}
 	
 	private boolean isTransientPlace(String st1) {
