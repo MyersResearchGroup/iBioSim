@@ -781,7 +781,9 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			if (load.containsKey("learn.runLength")){
 				runLengthG.setText(load.getProperty("learn.runLength"));
 			}
-			
+			if (load.containsKey("learn.defaultEnv")){
+				defaultEnvG.setSelected(Boolean.parseBoolean(load.getProperty("learn.defaultEnv")));
+			}
 			int j = 0;
 			//levels();
 			/*while (load.containsKey("learn.bins"+j)){
@@ -2159,6 +2161,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			prop.setProperty("learn.absTime",String.valueOf(this.absTimeG.isSelected()));
 			prop.setProperty("learn.runTime",this.runTimeG.getText().trim());
 			prop.setProperty("learn.runLength",this.runLengthG.getText().trim());
+			prop.setProperty("learn.defaultEnv",String.valueOf(this.defaultEnvG.isSelected()));
 			if (varsList != null){
 				prop.setProperty("learn.varsList",varsList);
 			}
@@ -3137,7 +3140,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 						}
 					}
 					for (String st2 : g.getPostset(st1)){
-						if (varsInEnabling.keySet().size() > 1){ // && (g.getEnablingTree(st2) != null))
+						if (varsInEnabling.keySet().size() >= 1){ // && (g.getEnablingTree(st2) != null))
 							String[] binOutgoing = getPlaceInfoIndex(g.getPostset(st2)[0]).split(",");
 							String condStr = "";
 							for (String st : varsInEnabling.keySet()){
@@ -3429,8 +3432,19 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 							}
 							duration[previous] = data.get(0).get(mark)	- data.get(0).get(previous); // changed (mark - 1) to mark on may 28,2010
 						}
-					} else if ((mark - i) <  pathLength) { // account for the glitch duration
+					} else if ((mark - i) <  pathLength)  { // account for the glitch duration //  
 						duration[previous] += data.get(0).get(mark)	- data.get(0).get(i); 
+					} else if (data.get(0).get(mark - 1) == data.get(0).get(i)){ // bin with only one point. Added this condition on June 9,2010
+						//Rates are meaningless here since the bin has just one point.
+						//But calculating the rate because if it is null, then places won't be created in genBinsRates for one point bins.
+						//Calculating rate b/w start point of next bin and start point of this bin
+						out.write("Bin with one point at time " + data.get(0).get(i) + "\n");
+						for (int j = 0; j < reqdVarsL.size(); j++) {
+							k = reqdVarIndices.get(j);
+							rates[j][i] = ((data.get(k).get(mark) - data.get(k).get(i)) / (data.get(0).get(mark) - data.get(0).get(i)));
+						}
+						duration[i] = data.get(0).get(mark)	- data.get(0).get(i); // changed (mark - 1) to mark on may 28,2010
+						previous = i;
 					}
 				}
 			} else { //TODO: This may have bugs in duration calculation etc.
@@ -3471,7 +3485,13 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			JOptionPane.showMessageDialog(biosim.frame(),
 					"Bins/Rates could not be generated. Please check thresholds.",
 					"ERROR!", JOptionPane.ERROR_MESSAGE);				
+		} catch (IOException e){
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(biosim.frame(),
+					"Log file couldn't be opened for writing genBinsRates messages.",
+					"ERROR!", JOptionPane.ERROR_MESSAGE);
 		}
+		
 			/*try {
 				for (int i = 0; i < (data.get(0).size()); i++) {
 					for (int j = 0; j < reqdVarsL.size(); j++) {
