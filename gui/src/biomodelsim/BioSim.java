@@ -211,6 +211,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 
 	private JPanel mainPanel; // the main panel
 
+	private static Boolean LPN2SBML = true;
+	
 	public Log log; // the log
 
 	private JPopupMenu popup; // popup menu
@@ -319,9 +321,10 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 	 * 
 	 * @throws Exception
 	 */
-	public BioSim(boolean lema, boolean atacs) {
+	public BioSim(boolean lema, boolean atacs, boolean LPN2SBML) {
 		this.lema = lema;
 		this.atacs = atacs;
+		this.LPN2SBML = LPN2SBML;
 		async = lema || atacs;
 		if (File.separator.equals("\\")) {
 			separator = "\\\\";
@@ -8470,20 +8473,26 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					if (atacs) {
 						popup.add(createSynthesis);
 					}
-					popup.add(createAnalysis);
+					if (LPN2SBML) {
+						popup.add(createAnalysis);
+					}
 					if (lema) {
 						popup.add(createLearn);
 					}
 					if (atacs || lema) {
 						popup.add(createVerification);
-						popup.addSeparator();
 					}
+					popup.addSeparator();
 					// popup.add(createAnalysis); // TODO
 					popup.add(viewModel);
-					popup.add(viewStateGraph);
-					popup.add(convertToSBML);	// changed the order. SB
-					popup.add(convertToVerilog);
-					popup.add(markovAnalysis);
+					//popup.add(viewStateGraph);
+					if (!atacs && !lema && LPN2SBML) {
+						popup.add(convertToSBML);	// changed the order. SB
+					}
+					if (atacs || lema) {
+						popup.add(convertToVerilog);
+					}
+					//popup.add(markovAnalysis);
 					popup.addSeparator();
 					popup.add(copy);
 					popup.add(rename);
@@ -9989,9 +9998,9 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							popup.addSeparator();
 						}
 						popup.add(viewModel);
-						popup.add(viewStateGraph);
+						//popup.add(viewStateGraph);
 						popup.add(convertToVerilog);
-						popup.add(markovAnalysis);
+						//popup.add(markovAnalysis);
 						popup.addSeparator();
 						popup.add(copy);
 						popup.add(rename);
@@ -11594,7 +11603,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 	 * This is the main method. It excecutes the BioSim GUI FrontEnd program.
 	 */
 	public static void main(String args[]) {
-		boolean lemaFlag = false, atacsFlag = false;
+		boolean lemaFlag = false, atacsFlag = false, LPN2SBML = true;
 		if (args.length > 0) {
 			for (int i = 0; i < args.length; i++) {
 				if (args[i].equals("-lema")) {
@@ -11636,8 +11645,29 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						+ " security exception.");
 				System.exit(1);
 			}
+		} else {
+			String varname;
+			if (System.getProperty("mrj.version") != null)
+				varname = "DYLD_LIBRARY_PATH"; // We're on a Mac.
+			else
+				varname = "LD_LIBRARY_PATH"; // We're not on a Mac.
+			try {
+				System.loadLibrary("sbmlj");
+				// For extra safety, check that the jar file is in the
+				// classpath.
+				Class.forName("org.sbml.libsbml.libsbml");
+			}
+			catch (UnsatisfiedLinkError e) {
+				LPN2SBML = false;
+			}
+			catch (ClassNotFoundException e) {
+				LPN2SBML = false;
+			}
+			catch (SecurityException e) {
+				LPN2SBML = false;
+			}
 		}
-		new BioSim(lemaFlag, atacsFlag);
+		new BioSim(lemaFlag, atacsFlag, LPN2SBML);
 	}
 
 	public void copySim(String newSim) {
