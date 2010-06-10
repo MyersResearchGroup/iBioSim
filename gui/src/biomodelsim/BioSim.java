@@ -212,7 +212,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 	private JPanel mainPanel; // the main panel
 
 	private static Boolean LPN2SBML = true;
-	
+
 	public Log log; // the log
 
 	private JPopupMenu popup; // popup menu
@@ -519,7 +519,9 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		viewLog = new JMenuItem("Log");
 		viewCoverage = new JMenuItem("Coverage Report"); // SB
 		viewVHDL = new JMenuItem("VHDL-AMS Model"); // SB
-		viewVerilog = new JMenuItem("Verilog Model"); // SB //Being generic for System Verilog and Verilog-AMS
+		viewVerilog = new JMenuItem("Verilog Model"); // SB //Being generic for
+														// System Verilog and
+														// Verilog-AMS
 		viewLHPN = new JMenuItem("LPN Model"); // SB
 		viewModGraph = new JMenuItem("Model");
 		viewModBrowser = new JMenuItem("Model in Browser");
@@ -2189,7 +2191,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				}
 			}
 		}
-		else if (e.getSource() == viewVerilog) { // SB should change to systemverilog??
+		else if (e.getSource() == viewVerilog) { // SB should change to
+													// systemverilog??
 			Component comp = tab.getSelectedComponent();
 			if (treeSelected) {
 				try {
@@ -2212,18 +2215,32 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						scrolls.setPreferredSize(new Dimension(800, 500));
 						scrolls.setViewportView(messageArea);
 						JOptionPane.showMessageDialog(this.frame(), scrolls, "Verilog Model",
-								JOptionPane.INFORMATION_MESSAGE); //Being generic for System Verilog and Verilog-AMS
+								JOptionPane.INFORMATION_MESSAGE); // Being
+																	// generic
+																	// for
+																	// System
+																	// Verilog
+																	// and
+																	// Verilog-AMS
 					}
 					else {
-						JOptionPane.showMessageDialog(this.frame(),
-								"Verilog model does not exist.", "Error",
-								JOptionPane.ERROR_MESSAGE);//Being generic for System Verilog and Verilog-AMS
+						JOptionPane
+								.showMessageDialog(this.frame(), "Verilog model does not exist.",
+										"Error", JOptionPane.ERROR_MESSAGE);// Being
+																			// generic
+																			// for
+																			// System
+																			// Verilog
+																			// and
+																			// Verilog-AMS
 					}
 				}
 				catch (Exception e1) {
-					JOptionPane
-							.showMessageDialog(this.frame(), "Unable to view Verilog model.",
-									"Error", JOptionPane.ERROR_MESSAGE);//Being generic for System Verilog and Verilog-AMS
+					JOptionPane.showMessageDialog(this.frame(), "Unable to view Verilog model.",
+							"Error", JOptionPane.ERROR_MESSAGE);// Being generic
+																// for System
+																// Verilog and
+																// Verilog-AMS
 				}
 			}
 			else if (comp instanceof JTabbedPane) {
@@ -2533,6 +2550,14 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			Translator t1 = new Translator();
 			t1.BuildTemplate(tree.getFile());
 			t1.outputSBML();
+			String theFile = "";
+			if (tree.getFile().lastIndexOf('/') >= 0) {
+				theFile = tree.getFile().substring(tree.getFile().lastIndexOf('/') + 1);
+			}
+			if (tree.getFile().lastIndexOf('\\') >= 0) {
+				theFile = tree.getFile().substring(tree.getFile().lastIndexOf('\\') + 1);
+			}
+			updateOpenSBML(theFile.replace(".lpn", ".xml"));
 			refreshTree();
 		}
 		else if (e.getActionCommand().equals("convertToVerilog")) {
@@ -8052,58 +8077,43 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				in.close();
 				out.close();
 				/*
-				out = new BufferedWriter(new FileWriter(root + separator
-						+ filename.replace(".lpn", ".vhd")));
-				in = new BufferedReader(new FileReader(path.replace(".lpn", ".vhd")));
-				while ((str = in.readLine()) != null) {
-					out.write(str + "\n");
-				}
-				in.close();
-				out.close();
-				out = new BufferedWriter(new FileWriter(root + separator
-						+ filename.replace(".lpn", ".vams")));
-				in = new BufferedReader(new FileReader(path.replace(".lpn", ".vams")));
-				while ((str = in.readLine()) != null) {
-					out.write(str + "\n");
-				}
-				in.close();
-				out.close();
-				out = new BufferedWriter(new FileWriter(root + separator
-						+ filename.replace(".lpn", "_top.vams")));
-				String[] learnPath = path.split(separator);
-				String topVFile = path.replace(learnPath[learnPath.length - 1], "top.vams");
-				String[] cktPath = filename.split(separator);
-				in = new BufferedReader(new FileReader(topVFile));
-				while ((str = in.readLine()) != null) {
-					str = str.replace("module top", "module "
-							+ cktPath[cktPath.length - 1].replace(".lpn", "_top"));
-					out.write(str + "\n");
-				}
-				in.close();
-				out.close();
-				out = new BufferedWriter(new FileWriter(root + separator
-						+ filename.replace(".lpn", ".sv")));
-				in = new BufferedReader(new FileReader(path.replace(".lpn", ".sv")));
-				while ((str = in.readLine()) != null) {
-					out.write(str + "\n");
-				}
-				in.close();
-				out.close();
-				*/
+				 * out = new BufferedWriter(new FileWriter(root + separator +
+				 * filename.replace(".lpn", ".vhd"))); in = new
+				 * BufferedReader(new FileReader(path.replace(".lpn", ".vhd")));
+				 * while ((str = in.readLine()) != null) { out.write(str +
+				 * "\n"); } in.close(); out.close(); out = new
+				 * BufferedWriter(new FileWriter(root + separator +
+				 * filename.replace(".lpn", ".vams"))); in = new
+				 * BufferedReader(new FileReader(path.replace(".lpn",
+				 * ".vams"))); while ((str = in.readLine()) != null) {
+				 * out.write(str + "\n"); } in.close(); out.close(); out = new
+				 * BufferedWriter(new FileWriter(root + separator +
+				 * filename.replace(".lpn", "_top.vams"))); String[] learnPath =
+				 * path.split(separator); String topVFile =
+				 * path.replace(learnPath[learnPath.length - 1], "top.vams");
+				 * String[] cktPath = filename.split(separator); in = new
+				 * BufferedReader(new FileReader(topVFile)); while ((str =
+				 * in.readLine()) != null) { str = str.replace("module top",
+				 * "module " + cktPath[cktPath.length - 1].replace(".lpn",
+				 * "_top")); out.write(str + "\n"); } in.close(); out.close();
+				 * out = new BufferedWriter(new FileWriter(root + separator +
+				 * filename.replace(".lpn", ".sv"))); in = new
+				 * BufferedReader(new FileReader(path.replace(".lpn", ".sv")));
+				 * while ((str = in.readLine()) != null) { out.write(str +
+				 * "\n"); } in.close(); out.close();
+				 */
 				// No top.sv file for now
-				/*out = new BufferedWriter(new FileWriter(root + separator
-						+ filename.replace(".lpn", "_top.sv")));
-				learnPath = path.split(separator);
-				topVFile = path.replace(learnPath[learnPath.length - 1], "top.sv");
-				cktPath = filename.split(separator);
-				in = new BufferedReader(new FileReader(topVFile));
-				while ((str = in.readLine()) != null) {
-					str = str.replace("module top", "module "
-							+ cktPath[cktPath.length - 1].replace(".lpn", "_top"));
-					out.write(str + "\n");
-				}
-				in.close();
-				out.close();*/
+				/*
+				 * out = new BufferedWriter(new FileWriter(root + separator +
+				 * filename.replace(".lpn", "_top.sv"))); learnPath =
+				 * path.split(separator); topVFile =
+				 * path.replace(learnPath[learnPath.length - 1], "top.sv");
+				 * cktPath = filename.split(separator); in = new
+				 * BufferedReader(new FileReader(topVFile)); while ((str =
+				 * in.readLine()) != null) { str = str.replace("module top",
+				 * "module " + cktPath[cktPath.length - 1].replace(".lpn",
+				 * "_top")); out.write(str + "\n"); } in.close(); out.close();
+				 */
 				refreshTree();
 			}
 		}
@@ -8485,14 +8495,14 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					popup.addSeparator();
 					// popup.add(createAnalysis); // TODO
 					popup.add(viewModel);
-					//popup.add(viewStateGraph);
+					// popup.add(viewStateGraph);
 					if (!atacs && !lema && LPN2SBML) {
-						popup.add(convertToSBML);	// changed the order. SB
+						popup.add(convertToSBML); // changed the order. SB
 					}
 					if (atacs || lema) {
 						popup.add(convertToVerilog);
 					}
-					//popup.add(markovAnalysis);
+					// popup.add(markovAnalysis);
 					popup.addSeparator();
 					popup.add(copy);
 					popup.add(rename);
@@ -9147,8 +9157,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						}
 					}
 					else if (tree.getFile().length() >= 3
-							&& tree.getFile().substring(tree.getFile().length() - 3)
-									.equals(".sv")) {
+							&& tree.getFile().substring(tree.getFile().length() - 3).equals(".sv")) {
 						try {
 							String filename = tree.getFile();
 							String directory = "";
@@ -9998,9 +10007,9 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							popup.addSeparator();
 						}
 						popup.add(viewModel);
-						//popup.add(viewStateGraph);
+						// popup.add(viewStateGraph);
 						popup.add(convertToVerilog);
-						//popup.add(markovAnalysis);
+						// popup.add(markovAnalysis);
 						popup.addSeparator();
 						popup.add(copy);
 						popup.add(rename);
@@ -11224,9 +11233,11 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							}
 						}
 						JTabbedPane simTab = new JTabbedPane();
-						AbstPane lhpnAbstraction = new AbstPane(root, gcmFile, log, this, false, false);
+						AbstPane lhpnAbstraction = new AbstPane(root, gcmFile, log, this, false,
+								false);
 						Reb2Sac reb2sac = new Reb2Sac(sbmlLoadFile, getAFile, root, this,
-								split[split.length - 1].trim(), log, simTab, openFile, gcmFile, lhpnAbstraction);
+								split[split.length - 1].trim(), log, simTab, openFile, gcmFile,
+								lhpnAbstraction);
 						simTab.addTab("Simulation Options", reb2sac);
 						simTab.getComponentAt(simTab.getComponents().length - 1)
 								.setName("Simulate");
@@ -11645,7 +11656,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						+ " security exception.");
 				System.exit(1);
 			}
-		} else {
+		}
+		else {
 			String varname;
 			if (System.getProperty("mrj.version") != null)
 				varname = "DYLD_LIBRARY_PATH"; // We're on a Mac.
@@ -12459,8 +12471,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		else if (comp instanceof JTabbedPane) {
 			Component component = ((JTabbedPane) comp).getSelectedComponent();
 			Boolean learn = false;
-			for (String s : new File(root + separator
-					+ tab.getTitleAt(tab.getSelectedIndex())).list()) {
+			for (String s : new File(root + separator + tab.getTitleAt(tab.getSelectedIndex()))
+					.list()) {
 				if (s.contains("_sg.dot")) {
 					viewSG.setEnabled(true);
 				}
@@ -13464,11 +13476,12 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			String[] views = canDelete(name);
 			Object[] options = { "Overwrite", "Cancel" };
 			int value;
-			if (views.length==0) {
+			if (views.length == 0) {
 				value = JOptionPane.showOptionDialog(frame, name + " already exists."
 						+ "\nDo you want to overwrite?", "Overwrite", JOptionPane.YES_NO_OPTION,
 						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-			} else {
+			}
+			else {
 				String view = "";
 				for (int i = 0; i < views.length; i++) {
 					if (i == views.length - 1) {
@@ -13478,7 +13491,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						view += views[i] + "\n";
 					}
 				}
-				String message = "The file, " + name + ", aleeady exists, and\nit is linked to the following views:\n\n" + view
+				String message = "The file, " + name
+						+ ", aleeady exists, and\nit is linked to the following views:\n\n" + view
 						+ "\n\nAre you sure you want to overwrite?";
 				JTextArea messageArea = new JTextArea(message);
 				messageArea.setEditable(false);
@@ -13486,10 +13500,13 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				scroll.setMinimumSize(new Dimension(300, 300));
 				scroll.setPreferredSize(new Dimension(300, 300));
 				scroll.setViewportView(messageArea);
-				value = JOptionPane.showOptionDialog(frame, scroll, "Overwrite", JOptionPane.YES_NO_OPTION,
-						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-				/* JOptionPane.showMessageDialog(frame, scroll, "Unable To Overwrite File",
-						JOptionPane.ERROR_MESSAGE); */
+				value = JOptionPane.showOptionDialog(frame, scroll, "Overwrite",
+						JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
+						options[0]);
+				/*
+				 * JOptionPane.showMessageDialog(frame, scroll,
+				 * "Unable To Overwrite File", JOptionPane.ERROR_MESSAGE);
+				 */
 			}
 			if (value == JOptionPane.YES_OPTION) {
 				for (int i = 0; i < tab.getTabCount(); i++) {
