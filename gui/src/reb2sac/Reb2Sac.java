@@ -2680,6 +2680,9 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		else if (nary.isSelected() && markov.isSelected()) {
 			selectedButtons = "nary_markov";
 		}
+		else if (none.isSelected() && markov.isSelected()) {
+			selectedButtons = "none_markov";
+		}
 		else if (none.isSelected() && sbml.isSelected()) {
 			selectedButtons = "none_sbml";
 		}
@@ -2691,6 +2694,9 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		}
 		else if (none.isSelected() && dot.isSelected()) {
 			selectedButtons = "none_dot";
+		}
+		else if (none.isSelected() && lhpn.isSelected()) {
+			selectedButtons = "none_lhpn";
 		}
 		else if (abstraction.isSelected() && dot.isSelected()) {
 			selectedButtons = "abs_dot";
@@ -3335,6 +3341,9 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		else if (nary.isSelected() && markov.isSelected()) {
 			selectedButtons = "nary_markov";
 		}
+		else if (none.isSelected() && markov.isSelected()) {
+			selectedButtons = "none_markov";
+		}
 		else if (none.isSelected() && sbml.isSelected()) {
 			selectedButtons = "none_sbml";
 		}
@@ -3346,6 +3355,9 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		}
 		else if (none.isSelected() && dot.isSelected()) {
 			selectedButtons = "none_dot";
+		}
+		else if (none.isSelected() && lhpn.isSelected()) {
+			selectedButtons = "none_lhpn";
 		}
 		else if (abstraction.isSelected() && dot.isSelected()) {
 			selectedButtons = "abs_dot";

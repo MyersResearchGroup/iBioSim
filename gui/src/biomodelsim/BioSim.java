@@ -12459,17 +12459,15 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		else if (comp instanceof JTabbedPane) {
 			Component component = ((JTabbedPane) comp).getSelectedComponent();
 			Boolean learn = false;
+			for (String s : new File(root + separator
+					+ tab.getTitleAt(tab.getSelectedIndex())).list()) {
+				if (s.contains("_sg.dot")) {
+					viewSG.setEnabled(true);
+				}
+			}
 			for (Component c : ((JTabbedPane) comp).getComponents()) {
 				if (c instanceof Learn) {
 					learn = true;
-				}
-				else if (c instanceof GCM2SBMLEditor) {
-					for (String s : new File(root + separator
-							+ tab.getTitleAt(tab.getSelectedIndex())).list()) {
-						if (s.contains("_sg.dot")) {
-							viewSG.setEnabled(true);
-						}
-					}
 				}
 			}
 			// int index = tab.getSelectedIndex();

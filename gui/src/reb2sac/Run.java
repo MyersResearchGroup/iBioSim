@@ -671,28 +671,38 @@ public class Run implements ActionListener {
 							return 0;
 						}
 					}
-					ArrayList<String> specs = new ArrayList<String>();
-					ArrayList<Object[]> conLevel = new ArrayList<Object[]>();
-					for (int i = 0; i < intSpecies.length; i++) {
-						if (!intSpecies[i].equals("")) {
-							String[] split = intSpecies[i].split(" ");
-							if (split.length > 1) {
-								String[] levels = split[1].split(",");
-								if (levels.length > 0) {
-									specs.add(split[0]);
-									conLevel.add(levels);
+					if (modelFile.contains(".lpn")) {
+						LhpnFile lhpnFile = new LhpnFile();
+						lhpnFile.load(root + separator + modelFile);
+						lhpnFile.save(root + separator + lhpnName);
+						time1 = System.nanoTime();
+						exitValue = 0;
+					}
+					else {
+						ArrayList<String> specs = new ArrayList<String>();
+						ArrayList<Object[]> conLevel = new ArrayList<Object[]>();
+						for (int i = 0; i < intSpecies.length; i++) {
+							if (!intSpecies[i].equals("")) {
+								String[] split = intSpecies[i].split(" ");
+								if (split.length > 1) {
+									String[] levels = split[1].split(",");
+									if (levels.length > 0) {
+										specs.add(split[0]);
+										conLevel.add(levels);
+									}
 								}
 							}
 						}
+						progress.setIndeterminate(true);
+						GCMFile gcm = gcmEditor.getGCM();
+						gcm.flattenGCM();
+						LhpnFile lhpnFile = gcm.convertToLHPN(specs, conLevel);
+						lhpnFile.save(root + separator + lhpnName);
+						log.addText("Saving GCM file as LHPN:\n" + root + separator + lhpnName
+								+ "\n");
+						time1 = System.nanoTime();
+						exitValue = 0;
 					}
-					progress.setIndeterminate(true);
-					GCMFile gcm = gcmEditor.getGCM();
-					gcm.flattenGCM();
-					LhpnFile lhpnFile = gcm.convertToLHPN(specs, conLevel);
-					lhpnFile.save(root + separator + lhpnName);
-					log.addText("Saving GCM file as LHPN:\n" + root + separator + lhpnName + "\n");
-					time1 = System.nanoTime();
-					exitValue = 0;
 				}
 				else {
 					time1 = System.nanoTime();
@@ -707,6 +717,18 @@ public class Run implements ActionListener {
 					Process ATACS = exec.exec(cmd, null, work);
 					ATACS.waitFor();
 					log.addText("Executing:\n" + cmd);
+					exitValue = 0;
+				}
+				else if (modelFile.contains(".lpn")) {
+					LhpnFile lhpnFile = new LhpnFile();
+					lhpnFile.load(root + separator + modelFile);
+					lhpnFile.save(root + separator + simName + separator + modelFile);
+					String cmd = "atacs -cPllodpl " + modelFile;
+					time1 = System.nanoTime();
+					Process ATACS = exec.exec(cmd, null, work);
+					ATACS.waitFor();
+					log.addText("Executing:\n" + cmd);
+					time1 = System.nanoTime();
 					exitValue = 0;
 				}
 				else {
@@ -738,32 +760,40 @@ public class Run implements ActionListener {
 					reb2sac = exec.exec("reb2sac --target.encoding=hse2 " + theFile, null, work);
 				}
 				else if (sim.equals("markov-chain-analysis")) {
-					new File(filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "")
-							+ ".lpn").delete();
-					ArrayList<String> specs = new ArrayList<String>();
-					ArrayList<Object[]> conLevel = new ArrayList<Object[]>();
-					for (int i = 0; i < intSpecies.length; i++) {
-						if (!intSpecies[i].equals("")) {
-							String[] split = intSpecies[i].split(" ");
-							if (split.length > 1) {
-								String[] levels = split[1].split(",");
-								if (levels.length > 0) {
-									specs.add(split[0]);
-									conLevel.add(levels);
+					LhpnFile lhpnFile;
+					if (modelFile.contains(".lpn")) {
+						lhpnFile = new LhpnFile();
+						lhpnFile.load(root + separator + modelFile);
+					}
+					else {
+						new File(filename.replace(".gcm", "").replace(".sbml", "").replace(".xml",
+								"")
+								+ ".lpn").delete();
+						ArrayList<String> specs = new ArrayList<String>();
+						ArrayList<Object[]> conLevel = new ArrayList<Object[]>();
+						for (int i = 0; i < intSpecies.length; i++) {
+							if (!intSpecies[i].equals("")) {
+								String[] split = intSpecies[i].split(" ");
+								if (split.length > 1) {
+									String[] levels = split[1].split(",");
+									if (levels.length > 0) {
+										specs.add(split[0]);
+										conLevel.add(levels);
+									}
 								}
 							}
 						}
+						progress.setIndeterminate(true);
+						GCMFile gcm = gcmEditor.getGCM();
+						gcm.flattenGCM();
+						lhpnFile = gcm.convertToLHPN(specs, conLevel);
+						lhpnFile.save(filename.replace(".gcm", "").replace(".sbml", "").replace(
+								".xml", "")
+								+ ".lpn");
+						log.addText("Saving GCM file as LHPN:\n"
+								+ filename.replace(".gcm", "").replace(".sbml", "").replace(".xml",
+										"") + ".lpn" + "\n");
 					}
-					progress.setIndeterminate(true);
-					GCMFile gcm = gcmEditor.getGCM();
-					gcm.flattenGCM();
-					LhpnFile lhpnFile = gcm.convertToLHPN(specs, conLevel);
-					lhpnFile.save(filename.replace(".gcm", "").replace(".sbml", "").replace(".xml",
-							"")
-							+ ".lpn");
-					log.addText("Saving GCM file as LHPN:\n"
-							+ filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "")
-							+ ".lpn" + "\n");
 					// gcmEditor.getGCM().createLogicalModel(
 					// filename.replace(".gcm", "").replace(".sbml",
 					// "").replace(".xml", "")
@@ -795,7 +825,12 @@ public class Run implements ActionListener {
 						log.addText("Performing Markov Chain analysis.\n");
 						PerfromMarkovAnalysisThread performMarkovAnalysis = new PerfromMarkovAnalysisThread(
 								sg);
-						performMarkovAnalysis.start(gcmEditor.getGCM().getConditions());
+						if (modelFile.contains(".lpn")) {
+							performMarkovAnalysis.start(null);
+						}
+						else {
+							performMarkovAnalysis.start(gcmEditor.getGCM().getConditions());
+						}
 						performMarkovAnalysis.join();
 						if (!sg.getStop()) {
 							String simrep = sg.getMarkovResults();
