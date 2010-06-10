@@ -557,7 +557,6 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		abs.add(nary);
 		none.setSelected(true);
 		if (modelFile.contains(".lpn")) {
-			abstraction.setEnabled(false);
 			nary.setEnabled(false);
 		}
 		JPanel topPanel = new JPanel(new BorderLayout());
@@ -1148,6 +1147,10 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					fileStemLabel, preAbs, loopAbs, postAbs, preAbsLabel, loopAbsLabel,
 					postAbsLabel, addPreAbs, rmPreAbs, editPreAbs, addLoopAbs, rmLoopAbs,
 					editLoopAbs, addPostAbs, rmPostAbs, editPostAbs, lhpn, speciesInt);
+			if (modelFile.contains(".lpn")) {
+				markov.setEnabled(true);
+				lhpn.setEnabled(true);
+			}
 			if (!sbml.isSelected() && !xhtml.isSelected() && !dot.isSelected() && runFiles) {
 				overwrite.setEnabled(true);
 				append.setEnabled(true);
@@ -2683,6 +2686,9 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		else if (none.isSelected() && markov.isSelected()) {
 			selectedButtons = "none_markov";
 		}
+		else if (abstraction.isSelected() && markov.isSelected()) {
+			selectedButtons = "abs_markov";
+		}
 		else if (none.isSelected() && sbml.isSelected()) {
 			selectedButtons = "none_sbml";
 		}
@@ -2715,6 +2721,9 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		}
 		else if (nary.isSelected() && lhpn.isSelected()) {
 			selectedButtons = "nary_lhpn";
+		}
+		else if (abstraction.isSelected() && lhpn.isSelected()) {
+			selectedButtons = "abs_lhpn";
 		}
 		try {
 			FileOutputStream out = new FileOutputStream(new File(root + separator + outDir
@@ -3344,6 +3353,9 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		else if (none.isSelected() && markov.isSelected()) {
 			selectedButtons = "none_markov";
 		}
+		else if (abstraction.isSelected() && markov.isSelected()) {
+			selectedButtons = "abs_markov";
+		}
 		else if (none.isSelected() && sbml.isSelected()) {
 			selectedButtons = "none_sbml";
 		}
@@ -3376,6 +3388,9 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		}
 		else if (nary.isSelected() && lhpn.isSelected()) {
 			selectedButtons = "nary_lhpn";
+		}
+		else if (abstraction.isSelected() && lhpn.isSelected()) {
+			selectedButtons = "abs_lhpn";
 		}
 		try {
 			FileOutputStream out = new FileOutputStream(new File(root + separator + simName
@@ -3932,6 +3947,10 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 							preAbsLabel, loopAbsLabel, postAbsLabel, addPreAbs, rmPreAbs,
 							editPreAbs, addLoopAbs, rmLoopAbs, editLoopAbs, addPostAbs, rmPostAbs,
 							editPostAbs, lhpn, speciesInt);
+					if (modelFile.contains(".lpn")) {
+						markov.setEnabled(true);
+						lhpn.setEnabled(true);
+					}
 				}
 				else {
 					nary.setSelected(true);
