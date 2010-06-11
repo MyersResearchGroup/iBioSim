@@ -72,7 +72,7 @@ public class Translator {
 		createFunction(m, "poisson", "Poisson distribution", "lambda(mu,mu)");
 		createFunction(m, "binomial", "Binomial distribution", "lambda(p,n,p*n)");
 		createFunction(m, "bernoulli", "Bernoulli distribution", "lambda(p,p)");
-//		createFunction(m, "priority", "Priority expressions", "priority(d,p)=d");
+		createFunction(m, "priority", "Priority expression", "lambda(d,p,d)");
 		
 		// translate from lhpn to sbml
 		// ----variables -> parameters-----	
