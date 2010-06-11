@@ -74,7 +74,7 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 
 	private String[] transforms = { xform0, xform1, xform3, xform4, xform5, xform6, xform7, xform8,
 			xform25, xform9, xform24, xform10, xform12, xform14, xform16, xform11,
-			xform15, xform17, xform18, xform19, xform20, xform21, xform22, xform23, xform26, xform27 };
+			xform15, xform17, xform18, xform19, xform20, xform21, xform22, xform23, xform26, xform27, xform28 };
 
 	public JTextField factorField, iterField;
 
