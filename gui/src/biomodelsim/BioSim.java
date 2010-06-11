@@ -10530,9 +10530,15 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				// reb2sac.addMouseListener(this);
 				simTab.addTab("Simulation Options", reb2sac);
 				simTab.getComponentAt(simTab.getComponents().length - 1).setName("Simulate");
-				JPanel abstraction = reb2sac.getAdvanced();
 				// abstraction.addMouseListener(this);
-				simTab.addTab("Abstraction Options", abstraction);
+				if (fileType == 2) {
+					simTab.addTab("Abstraction Options", new AbstPane(root, sbml1[sbml1.length - 1], log, this, false,
+							false));
+				}
+				else {
+					//System.out.println(fileType);
+					simTab.addTab("Abstraction Options", reb2sac.getAdvanced());
+				}
 				simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
 				// simTab.addTab("Advanced Options",
 				// reb2sac.getProperties());
