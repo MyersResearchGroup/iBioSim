@@ -72,6 +72,7 @@ public class Translator {
 		createFunction(m, "poisson", "Poisson distribution", "lambda(mu,mu)");
 		createFunction(m, "binomial", "Binomial distribution", "lambda(p,n,p*n)");
 		createFunction(m, "bernoulli", "Bernoulli distribution", "lambda(p,p)");
+//		createFunction(m, "priority", "Priority expressions", "priority(d,p)=d");
 		
 		// translate from lhpn to sbml
 		// ----variables -> parameters-----	
@@ -282,6 +283,24 @@ public class Translator {
 					trigger.setMath(SBML_Editor.myParseFormula("eq(" + product.getSpecies() + ",1)"));
 					e.setUseValuesFromTriggerTime(false);
 					
+					// Priority and delay
+					if (lhpn.getTransition(t).getPriority()==null) {
+						if (lhpn.getTransition(t).getDelay()!=null) {
+							e.createDelay();
+							e.getDelay().setMath(SBML_Editor.myParseFormula(lhpn.getTransition(t).getDelay()));
+						}
+					}
+					else {
+						if (lhpn.getTransition(t).getDelay()!=null) {
+							e.createDelay();
+							e.getDelay().setMath(SBML_Editor.myParseFormula("priority(" + lhpn.getTransition(t).getDelay() + "," + lhpn.getTransition(t).getPriority() + ")"));
+						} 
+						else {
+						e.createDelay();
+						e.getDelay().setMath(SBML_Editor.myParseFormula("priority(0," + lhpn.getTransition(t).getPriority() + ")"));
+						}
+					}
+					
 					// t_postSet = 1
 					for (String x : lhpn.getPostset(t)){
 						EventAssignment assign0 = e.createEventAssignment();
@@ -358,7 +377,7 @@ public class Translator {
 				
 				
 				 //Only use event
-				else {			//lhpn.getContAssign(t, var) == null
+				else {			// transitions only have ranges
 //					System.out.println("Event Only");
 					Event e = m.createEvent();
 					e.setId("event" + counter);	
@@ -402,12 +421,26 @@ public class Translator {
 					
 					// use values at trigger time = false
 					e.setUseValuesFromTriggerTime(false);
-				    
-					// Delay D(t)
-					if (lhpn.getTransition(t).getDelay()!=null) {
-						Delay delay = e.createDelay();
-						delay.setMath(SBML_Editor.myParseFormula(lhpn.getTransition(t).getDelay()));
+				    					
+					// Priority and delay
+					if (lhpn.getTransition(t).getPriority()==null) {
+						if (lhpn.getTransition(t).getDelay()!=null) {
+							e.createDelay();
+							e.getDelay().setMath(SBML_Editor.myParseFormula(lhpn.getTransition(t).getDelay()));
+						}
 					}
+					else {
+						if (lhpn.getTransition(t).getDelay()!=null) {
+							e.createDelay();
+							e.getDelay().setMath(SBML_Editor.myParseFormula("priority(" + lhpn.getTransition(t).getDelay() + "," + lhpn.getTransition(t).getPriority() + ")"));
+						} 
+						else {
+						e.createDelay();
+						e.getDelay().setMath(SBML_Editor.myParseFormula("priority(0," + lhpn.getTransition(t).getPriority() + ")"));
+						}
+					}
+					
+					
 					
 					// Check if there is any self-loop. If the intersection between lhpn.getPreset(t) and lhpn.getPostset(t)
 					// is not empty, self-loop exists. 
