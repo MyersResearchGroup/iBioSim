@@ -170,13 +170,13 @@ public class Abstraction extends LhpnFile {
 			if (abstPane.absListModel.contains(abstPane.xform26) && abstPane.isSimplify()) {
 				change = removeDanglingTransitions(change);
 			}
-			// Transform 27 - Combine Parallel Transitions (Simplification)
-			if (abstPane.absListModel.contains(abstPane.xform27) && abstPane.isSimplify()) {
-				change = mergeTransitionsSimp(change);
-			}
 			// Transform 28 - Combing Parallel Transitions (Abstraction)
-			else if (abstPane.absListModel.contains(abstPane.xform28) && abstPane.isAbstract()) {
+			if (abstPane.absListModel.contains(abstPane.xform28) && abstPane.isAbstract()) {
 				change = mergeTransitionsAbs(change);
+			}
+			// Transform 27 - Combine Parallel Transitions (Simplification)
+			else if (abstPane.absListModel.contains(abstPane.xform27) && abstPane.isSimplify()) {
+				change = mergeTransitionsSimp(change);
 			}
 			i++;
 		}
