@@ -282,25 +282,7 @@ public class Translator {
 					Trigger trigger = e.createTrigger();
 					trigger.setMath(SBML_Editor.myParseFormula("eq(" + product.getSpecies() + ",1)"));
 					e.setUseValuesFromTriggerTime(false);
-					
-					// Priority and delay
-					if (lhpn.getTransition(t).getPriority()==null) {
-						if (lhpn.getTransition(t).getDelay()!=null) {
-							e.createDelay();
-							e.getDelay().setMath(SBML_Editor.myParseFormula(lhpn.getTransition(t).getDelay()));
-						}
-					}
-					else {
-						if (lhpn.getTransition(t).getDelay()!=null) {
-							e.createDelay();
-							e.getDelay().setMath(SBML_Editor.myParseFormula("priority(" + lhpn.getTransition(t).getDelay() + "," + lhpn.getTransition(t).getPriority() + ")"));
-						} 
-						else {
-						e.createDelay();
-						e.getDelay().setMath(SBML_Editor.myParseFormula("priority(0," + lhpn.getTransition(t).getPriority() + ")"));
-						}
-					}
-					
+				
 					// t_postSet = 1
 					for (String x : lhpn.getPostset(t)){
 						EventAssignment assign0 = e.createEventAssignment();
