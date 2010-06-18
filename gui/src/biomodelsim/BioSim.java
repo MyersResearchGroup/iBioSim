@@ -11518,35 +11518,35 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 	}
 
 	public void mouseEntered(MouseEvent e) {
-		if (e.getSource() == tree.tree) {
-			setGlassPane(false);
-		}
-		else if (e.getSource() == popup) {
-			popupFlag = true;
-			setGlassPane(false);
-		}
-		else if (e.getSource() instanceof JMenuItem) {
-			menuFlag = true;
-			setGlassPane(false);
-		}
+//		if (e.getSource() == tree.tree) {
+//			setGlassPane(false);
+//		}
+//		else if (e.getSource() == popup) {
+//			popupFlag = true;
+//			setGlassPane(false);
+//		}
+//		else if (e.getSource() instanceof JMenuItem) {
+//			menuFlag = true;
+//			setGlassPane(false);
+//		}
 	}
 
 	public void mouseExited(MouseEvent e) {
-		if (e.getSource() == tree.tree && !popupFlag && !menuFlag) {
-			setGlassPane(true);
-		}
-		else if (e.getSource() == popup) {
-			popupFlag = false;
-			if (!menuFlag) {
-				setGlassPane(true);
-			}
-		}
-		else if (e.getSource() instanceof JMenuItem) {
-			menuFlag = false;
-			if (!popupFlag) {
-				setGlassPane(true);
-			}
-		}
+//		if (e.getSource() == tree.tree && !popupFlag && !menuFlag) {
+//			setGlassPane(true);
+//		}
+//		else if (e.getSource() == popup) {
+//			popupFlag = false;
+//			if (!menuFlag) {
+//				setGlassPane(true);
+//			}
+//		}
+//		else if (e.getSource() instanceof JMenuItem) {
+//			menuFlag = false;
+//			if (!popupFlag) {
+//				setGlassPane(true);
+//			}
+//		}
 	}
 
 	public void mouseDragged(MouseEvent e) {

@@ -380,41 +380,56 @@ public class InfluencePanel extends JPanel implements ActionListener {
 		return updates;
 	}
 
+	/**
+	 * Builds the influence name
+	 * @param parentId
+	 * @param childId
+	 * @param type
+	 * @param isBio: has to be "yes" or "no"
+	 * @param promoter
+	 * @return
+	 */
+	public static String buildName(String parentId, String childId, String type, String isBio, String promoter){
+		String arrow = " -> ";
+		if ((type==types[0]) && (isBio.equals(bio[0]))) {
+			arrow = " -| ";
+		} else if ((type==types[0]) && (isBio.equals(bio[1]))) {
+			arrow = " +| ";
+		} else if ((type==types[1]) && (isBio.equals(bio[1]))) {
+			arrow = " +> ";
+		} else if ((type==types[2])) {
+			arrow = " x> ";
+		}
+		
+		String out = parentId + arrow + childId + ", Promoter " + promoter;
+		
+		return out;
+	}
+	
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("comboBoxChanged")
 				&& e.getSource().equals(typeBox)) {
 			setType(typeBox.getSelectedItem().toString());
-			String arrow = " -> ";
-			if ((typeBox.getSelectedItem()==types[0]) && (bioBox.getSelectedItem().equals(bio[0]))) {
-				arrow = " -| ";
-			} else if ((typeBox.getSelectedItem()==types[0]) && (bioBox.getSelectedItem().equals(bio[1]))) {
-				arrow = " +| ";
-			} else if ((typeBox.getSelectedItem()==types[1]) && (bioBox.getSelectedItem().equals(bio[1]))) {
-				arrow = " +> ";
-			} else if ((typeBox.getSelectedItem()==types[2])) {
-				arrow = " x> ";
-			}	
-			fields.get(GlobalConstants.NAME).setValue(
-					inputBox.getSelectedItem() + arrow
-					+ outputBox.getSelectedItem() + ", Promoter "
-					+ promoterBox.getSelectedItem());
+
+			fields.get(GlobalConstants.NAME).setValue(buildName(
+					inputBox.getSelectedItem().toString(), 
+					outputBox.getSelectedItem().toString(),
+					typeBox.getSelectedItem().toString(),
+					bioBox.getSelectedItem().toString(),
+					promoterBox.getSelectedItem().toString()
+					));
+
 		} else if (e.getActionCommand().equals("comboBoxChanged")
 				&& (e.getSource().equals(inputBox) || e.getSource().equals(
 						outputBox)) || e.getSource().equals(promoterBox)) {
-			String arrow = " -> ";
-			if ((typeBox.getSelectedItem()==types[0]) && (bioBox.getSelectedItem().equals(bio[0]))) {
-				arrow = " -| ";
-			} else if ((typeBox.getSelectedItem()==types[0]) && (bioBox.getSelectedItem().equals(bio[1]))) {
-				arrow = " +| ";
-			} else if ((typeBox.getSelectedItem()==types[1]) && (bioBox.getSelectedItem().equals(bio[1]))) {
-				arrow = " +> ";
-			} else if ((typeBox.getSelectedItem()==types[2])) {
-				arrow = " x> ";
-			}
-			fields.get(GlobalConstants.NAME).setValue(
-					inputBox.getSelectedItem() + arrow
-					+ outputBox.getSelectedItem() + ", Promoter "
-					+ promoterBox.getSelectedItem());
+			
+			fields.get(GlobalConstants.NAME).setValue(buildName(
+					inputBox.getSelectedItem().toString(), 
+					outputBox.getSelectedItem().toString(),
+					typeBox.getSelectedItem().toString(),
+					bioBox.getSelectedItem().toString(),
+					promoterBox.getSelectedItem().toString()
+					));
 		}
 		if (e.getActionCommand().equals("comboBoxChanged")
 				&& (e.getSource().equals(bioBox))) {
@@ -425,20 +440,14 @@ public class InfluencePanel extends JPanel implements ActionListener {
 				state = true;
 			}
 			fields.get(GlobalConstants.KBIO_STRING).setEnabled(state);
-			String arrow = " -> ";
-			if ((typeBox.getSelectedItem()==types[0]) && (bioBox.getSelectedItem().equals(bio[0]))) {
-				arrow = " -| ";
-			} else if ((typeBox.getSelectedItem()==types[0]) && (bioBox.getSelectedItem().equals(bio[1]))) {
-				arrow = " +| ";
-			} else if ((typeBox.getSelectedItem()==types[1]) && (bioBox.getSelectedItem().equals(bio[1]))) {
-				arrow = " +> ";
-			} else if ((typeBox.getSelectedItem()==types[2])) {
-				arrow = " x> ";
-			}
-			fields.get(GlobalConstants.NAME).setValue(
-					inputBox.getSelectedItem() + arrow
-					+ outputBox.getSelectedItem() + ", Promoter "
-					+ promoterBox.getSelectedItem());
+			
+			fields.get(GlobalConstants.NAME).setValue(buildName(
+					inputBox.getSelectedItem().toString(), 
+					outputBox.getSelectedItem().toString(),
+					typeBox.getSelectedItem().toString(),
+					bioBox.getSelectedItem().toString(),
+					promoterBox.getSelectedItem().toString()
+					));
 		}
 	}
 
@@ -471,8 +480,8 @@ public class InfluencePanel extends JPanel implements ActionListener {
 	}
 
 	private String[] options = { "Ok", "Cancel" };
-	private String[] types = { "repression", "activation", "no influence" };
-	private String[] bio = { "no", "yes" };
+	private static String[] types = { "repression", "activation", "no influence" };
+	private static String[] bio = { "no", "yes" };
 	private HashMap<String, PropertyField> fields = null;
 	private GCMFile gcm = null;
 	private String selected = "";

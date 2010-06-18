@@ -62,6 +62,6 @@ public class PropertiesLauncher {
 	public void launchInfluencePanel(String selected){
 		ensureInitialized();
 //		public InfluencePanel(String selected, PropertyList list, GCMFile gcm, boolean paramsOnly, BioSim biosim)
-		InfluencePanel panel = new InfluencePanel(selected, propertyList, gcmFile, paramsOnly, biosim);
+		InfluencePanel panel = new InfluencePanel(selected, influencesList, gcmFile, paramsOnly, biosim);
 	}
 }

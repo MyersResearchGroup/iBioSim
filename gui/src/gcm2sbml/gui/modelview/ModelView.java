@@ -1,5 +1,6 @@
 package gcm2sbml.gui.modelview;
 
+import gcm2sbml.gui.InfluencePanel;
 import gcm2sbml.gui.PropertiesLauncher;
 
 import java.awt.BorderLayout;
@@ -16,10 +17,14 @@ import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JRadioButton;
 import javax.swing.JToolBar;
 
 import com.mxgraph.model.mxCell;
 import com.mxgraph.swing.mxGraphComponent;
+import com.mxgraph.util.mxEvent;
+import com.mxgraph.util.mxEventObject;
+import com.mxgraph.util.mxEventSource;
 
 public class ModelView extends JPanel implements ActionListener {
 		
@@ -45,6 +50,47 @@ public class ModelView extends JPanel implements ActionListener {
 
 		if(graph == null){
 			graph = new BioGraph(internalModel);
+			
+			// Listen for moved cells
+			graph.addListener(mxEvent.CELLS_MOVED, new mxEventSource.mxIEventListener() {
+				
+				@Override
+				public void invoke(Object arg0, mxEventObject event) {
+
+					Object cells[] = (Object [])event.getProperties().get("cells");
+
+					for(int i=0; i<cells.length; i++){
+						mxCell cell = (mxCell)cells[i];
+						graph.updateInternalPosition(cell);
+					}
+					
+				}
+			});
+
+//			// listener for added verticies
+//			graph.addListener(mxEvent.CELLS_ADDED, new mxEventSource.mxIEventListener() {
+//				@Override
+//				public void invoke(Object arg0, mxEventObject event) {
+//					Object cells[] = (Object [])event.getProperties().get("cells");
+//					
+//					System.out.print(event.getName()+"\n");
+//					
+//					if(cells.length == 1 && ((mxCell)(cells[0])).isEdge()){
+//						String isBio = "no";
+//						String type = "activation";
+//						String promoter = "default";
+//						String parentId = "";
+//						String childId = "";
+//						String name = InfluencePanel.buildName(parentId, childId, type, isBio, promoter);
+//						
+//						String a = "ASDF";
+//					}
+//
+//				}
+//			});
+			
+			
+			
 			refreshGraph();
 		}
 		
@@ -67,7 +113,6 @@ public class ModelView extends JPanel implements ActionListener {
 						if (cell != null){
 							System.out.println("cell="+graph.getLabel(cell) + " " + e.getClickCount());
 							graph.cellClickHandler(cell);
-//							graph.updateInternalPosition(cell);
 							refreshGraph();
 							
 						}
@@ -102,7 +147,7 @@ public class ModelView extends JPanel implements ActionListener {
 		JToolBar toolBar = new JToolBar();
 
 		toolBar.add(Utils.makeToolButton("", "showLayouts", "Apply Layout", this));
-		toolBar.add(Utils.makeToolButton("", "addSpecies", "Add Species", this));
+		toolBar.add(Utils.makeToolButton("add_species.png", "addSpecies", "Add Species", this));
 		toolBar.add(Utils.makeToolButton("", "addInfluence", "Add Influence", this));
 
 		return toolBar;
