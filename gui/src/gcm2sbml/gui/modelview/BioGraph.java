@@ -3,6 +3,7 @@
  */
 package gcm2sbml.gui.modelview;
 
+import gcm2sbml.gui.InfluencePanel;
 import gcm2sbml.gui.PropertiesLauncher;
 import gcm2sbml.parser.GCMFile;
 import gcm2sbml.util.GlobalConstants;
@@ -11,6 +12,8 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.HashMap;
 import java.util.Properties;
+
+import javax.xml.bind.JAXBElement.GlobalScope;
 
 import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxGeometry;
@@ -59,41 +62,7 @@ public class BioGraph extends mxGraph {
 		
 		this.initializeMaps();
 		this.internalModel = internalModel;
-		
-		// Listen for moved cells
-		this.addListener(mxEvent.CELLS_MOVED, new mxEventSource.mxIEventListener() {
-			
-			//@Override
-			public void invoke(Object arg0, mxEventObject event) {
-
-				Object cells[] = (Object [])event.getProperties().get("cells");
-
-				mxCell cell;
-				for(int i=0; i<cells.length; i++){
-					cell = (mxCell)cells[i];
-					updateInternalPosition(cell);
-				}
-				
-			}
-		});
-		
-		
-		// listener for added verticies
-		this.addListener(mxEvent.CELLS_ADDED, new mxEventSource.mxIEventListener() {
-			//@Override
-			public void invoke(Object arg0, mxEventObject event) {
-				Object cells[] = (Object [])event.getProperties().get("cells");
-				
-				System.out.print(event.getName()+"\n");
-				
-				if(cells.length == 1 && ((mxCell)(cells[0])).isEdge()){
-					
-				}
-
-			}
-		});
-		
-		
+	
 	}
 	
 	public void cellClickHandler(mxCell cell){
@@ -222,8 +191,10 @@ public class BioGraph extends mxGraph {
 				style += mxConstants.ARROW_OVAL;
 			else
 				style += mxConstants.ARROW_OPEN; // This should never happen.
+//			=[';p']
+			String label = prop.getProperty(GlobalConstants.PROMOTER, "");
 					
-			Object edge = graph.insertEdge(parent, id, null, 
+			Object edge = graph.insertEdge(parent, id, label, 
 					graph.getSpeciesCell(GCMFile.getInput(inf)), 
 					graph.getSpeciesCell(GCMFile.getOutput(inf)), 
 					style
