@@ -9288,11 +9288,11 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 								theFile = filename.substring(filename.lastIndexOf('\\') + 1);
 							}
 							LhpnFile lhpn = new LhpnFile(log);
-							if (new File(directory + theFile).length() > 0) {
+							//if (new File(directory + theFile).length() > 0) {
 								// log.addText("here");
-								lhpn.load(directory + theFile);
+							//	lhpn.load(directory + theFile);
 								// log.addText("there");
-							}
+							//}
 							// log.addText("load completed");
 							File work = new File(directory);
 							int i = getTab(theFile);
