@@ -5,8 +5,6 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.omg.CORBA.NameValuePair;
-
 import verification.Verification;
 
 import biomodelsim.Log;
