@@ -4402,12 +4402,15 @@ public class ExprTree {
 	}
 
 	public void setNodeValues(ExprTree nr1, ExprTree nr2, String nop, char willbe) {
+		ExprTree r1temp = null, r2temp = null;
 		if (nr1 != null) {
-			r1 = new ExprTree(nr1);
+			r1temp = new ExprTree(nr1);
 		}
 		if (nr2 != null) {
-			r2 = new ExprTree(nr2);
+			r2temp = new ExprTree(nr2);
 		}
+		r1 = r1temp;
+		r2 = r2temp;
 		op = nop;
 		isit = willbe;
 		if ((isit == 'r') || (isit == 'l')) {

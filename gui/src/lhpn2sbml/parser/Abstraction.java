@@ -2845,16 +2845,16 @@ public class Abstraction extends LhpnFile {
 					du1 = delay1.r2;
 				}
 				else {
-					dl1 = delay1;
-					du1 = delay1;
+					dl1 = new ExprTree(delay1);
+					du1 = new ExprTree(delay1);
 				}
 				if (delay2.isit == 'a' & delay2.op.equals("uniform")) {
 					dl2 = delay2.r1;
 					du2 = delay2.r2;
 				}
 				else {
-					dl2 = delay2;
-					du2 = delay2;
+					dl2 = new ExprTree(delay2);
+					du2 = new ExprTree(delay2);
 				}
 				ExprTree e1 = tArray[0].getEnablingTree();
 				ExprTree e2 = tArray[1].getEnablingTree();
