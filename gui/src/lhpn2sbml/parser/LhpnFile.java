@@ -1,5 +1,7 @@
 package lhpn2sbml.parser;
 
+import gcm2sbml.util.Utility;
+
 import java.io.*;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -137,11 +139,10 @@ public class LhpnFile {
 							}
 							if (booleans.get(s).getInitValue().equals("true")) {
 								buffer.append("1");
-							}
-							else if (booleans.get(s).getInitValue().equals("false")) {
+							} else if (booleans.get(s).getInitValue().equals(
+									"false")) {
 								buffer.append("0");
-							}
-							else {
+							} else {
 								buffer.append("X");
 							}
 						}
@@ -183,15 +184,18 @@ public class LhpnFile {
 			if (!continuous.isEmpty() || !integers.isEmpty()) {
 				buffer.append("#@.init_vals {");
 				for (Variable var : continuous.values()) {
-					buffer.append("<" + var.getName() + "=" + var.getInitValue() + ">");
+					buffer.append("<" + var.getName() + "="
+							+ var.getInitValue() + ">");
 				}
 				for (Variable var : integers.values()) {
-					buffer.append("<" + var.getName() + "=" + var.getInitValue() + ">");
+					buffer.append("<" + var.getName() + "="
+							+ var.getInitValue() + ">");
 				}
 				if (!continuous.isEmpty()) {
 					buffer.append("}\n#@.init_rates {");
 					for (Variable var : continuous.values()) {
-						buffer.append("<" + var.getName() + "=" + var.getInitRate() + ">");
+						buffer.append("<" + var.getName() + "="
+								+ var.getInitRate() + ">");
 					}
 				}
 				buffer.append("}\n");
@@ -204,7 +208,8 @@ public class LhpnFile {
 							buffer.append("#@.enablings {");
 							flag = true;
 						}
-						buffer.append("<" + t.getName() + "=[" + t.getEnabling() + "]>");
+						buffer.append("<" + t.getName() + "=["
+								+ t.getEnabling() + "]>");
 					}
 				}
 				if (flag) {
@@ -219,8 +224,8 @@ public class LhpnFile {
 							flag = true;
 						}
 						for (String var : contAssign.keySet()) {
-							buffer.append("<" + t.getName() + "=[" + t + ":=" + contAssign.get(var)
-									+ "]>");
+							buffer.append("<" + t.getName() + "=[" + t + ":="
+									+ contAssign.get(var) + "]>");
 						}
 					}
 					HashMap<String, String> intAssign = t.getIntAssignments();
@@ -262,7 +267,8 @@ public class LhpnFile {
 							buffer.append("#@.delay_assignments {");
 							flag = true;
 						}
-						buffer.append("<" + t.getName() + "=[" + t.getDelay() + "]>");
+						buffer.append("<" + t.getName() + "=[" + t.getDelay()
+								+ "]>");
 					}
 				}
 				if (flag) {
@@ -275,7 +281,8 @@ public class LhpnFile {
 							buffer.append("#@.priority_assignments {");
 							flag = true;
 						}
-						buffer.append("<" + t.getName() + "=[" + t.getPriority() + "]>");
+						buffer.append("<" + t.getName() + "=["
+								+ t.getPriority() + "]>");
 					}
 				}
 				if (flag) {
@@ -290,8 +297,8 @@ public class LhpnFile {
 						buffer.append("#@.boolean_assignments {");
 						flag = true;
 					}
-					buffer.append("<" + t.getName() + "=[" + var + ":=" + boolAssign.get(var)
-							+ "]>");
+					buffer.append("<" + t.getName() + "=[" + var + ":="
+							+ boolAssign.get(var) + "]>");
 				}
 			}
 			if (flag) {
@@ -310,8 +317,7 @@ public class LhpnFile {
 			if (log != null) {
 				log.addText("Saving:\n" + file + "\n");
 			}
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -326,13 +332,13 @@ public class LhpnFile {
 				data.append(str + "\n");
 			}
 			in.close();
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 			throw new IllegalStateException("Error opening file");
 		}
 
 		// try {
+
 		parseProperty(data);
 		parseInOut(data);
 		parsePlaces(data);
@@ -340,14 +346,20 @@ public class LhpnFile {
 		parseVars(data);
 		parseIntegers(data);
 		parseMarking(data);
-		parseEnabling(data);
-		parseAssign(data);
-		parseRateAssign(data);
-		parseDelayAssign(data);
-		parsePriorityAssign(data);
-		parseBooleanAssign(data);
-		parseTransitionRate(data);
+		boolean error = parseEnabling(data);
+		error = parseAssign(data, error);
+		error = parseRateAssign(data, error);
+		error = parseDelayAssign(data, error);
+		error = parsePriorityAssign(data, error);
+		error = parseBooleanAssign(data, error);
+		error = parseTransitionRate(data, error);
 		parseFailTransitions(data);
+
+		if (!error) {
+			Utility
+					.createErrorMessage("Invalid Expressions",
+							"The input file contained invalid expressions.  See console for details.");
+		}
 		// }
 		// catch (Exception e) {
 		// e.printStackTrace();
@@ -387,8 +399,7 @@ public class LhpnFile {
 		if (isTransition(fromName)) {
 			transitions.get(fromName).addPostset(places.get(toName));
 			places.get(toName).addPreset(transitions.get(fromName));
-		}
-		else {
+		} else {
 			transitions.get(toName).addPreset(places.get(fromName));
 			places.get(fromName).addPostset(transitions.get(toName));
 		}
@@ -449,7 +460,8 @@ public class LhpnFile {
 		transitions.get(transition).addDelay("exponential(" + rate + ")");
 	}
 
-	public void addBoolAssign(String transition, String variable, String assignment) {
+	public void addBoolAssign(String transition, String variable,
+			String assignment) {
 		if (!variables.contains(variable)) {
 			addOutput(variable, "unknown");
 		}
@@ -492,12 +504,10 @@ public class LhpnFile {
 		if (isContinuous(oldName)) {
 			continuous.put(newName, continuous.get(oldName));
 			continuous.remove(oldName);
-		}
-		else if (isBoolean(oldName)) {
+		} else if (isBoolean(oldName)) {
 			booleans.put(newName, booleans.get(oldName));
 			booleans.remove(oldName);
-		}
-		else if (isInteger(oldName)) {
+		} else if (isInteger(oldName)) {
 			integers.put(newName, integers.get(oldName));
 			integers.remove(oldName);
 		}
@@ -512,7 +522,8 @@ public class LhpnFile {
 	}
 
 	public String[] getAllIDs() {
-		String[] ids = new String[transitions.size() + places.size() + variables.size()];
+		String[] ids = new String[transitions.size() + places.size()
+				+ variables.size()];
 		int i = 0;
 		for (String t : transitions.keySet()) {
 			ids[i++] = t;
@@ -577,16 +588,14 @@ public class LhpnFile {
 				preset[i++] = p.getName();
 			}
 			return preset;
-		}
-		else if (places.containsKey(name)) {
+		} else if (places.containsKey(name)) {
 			String[] preset = new String[places.get(name).getPreset().length];
 			int i = 0;
 			for (Transition t : places.get(name).getPreset()) {
 				preset[i++] = t.getName();
 			}
 			return preset;
-		}
-		else {
+		} else {
 			return null;
 		}
 	}
@@ -599,16 +608,14 @@ public class LhpnFile {
 				postset[i++] = p.getName();
 			}
 			return postset;
-		}
-		else if (places.containsKey(name)) {
+		} else if (places.containsKey(name)) {
 			String[] postset = new String[places.get(name).getPostset().length];
 			int i = 0;
 			for (Transition t : places.get(name).getPostset()) {
 				postset[i++] = t.getName();
 			}
 			return postset;
-		}
-		else {
+		} else {
 			return null;
 		}
 	}
@@ -647,11 +654,9 @@ public class LhpnFile {
 	public Variable getVariable(String name) {
 		if (isBoolean(name)) {
 			return booleans.get(name);
-		}
-		else if (isContinuous(name)) {
+		} else if (isContinuous(name)) {
 			return continuous.get(name);
-		}
-		else if (isInteger(name)) {
+		} else if (isInteger(name)) {
 			return integers.get(name);
 		}
 		return null;
@@ -706,7 +711,8 @@ public class LhpnFile {
 	}
 
 	public String[] getBooleanVars(String transition) {
-		Set<String> set = transitions.get(transition).getBoolAssignments().keySet();
+		Set<String> set = transitions.get(transition).getBoolAssignments()
+				.keySet();
 		String[] array = new String[set.size()];
 		int i = 0;
 		for (String s : set) {
@@ -725,7 +731,8 @@ public class LhpnFile {
 	}
 
 	public String[] getContVars(String transition) {
-		Set<String> set = transitions.get(transition).getContAssignments().keySet();
+		Set<String> set = transitions.get(transition).getContAssignments()
+				.keySet();
 		String[] array = new String[set.size()];
 		int i = 0;
 		for (String s : set) {
@@ -735,7 +742,8 @@ public class LhpnFile {
 	}
 
 	public String[] getRateVars(String transition) {
-		Set<String> set = transitions.get(transition).getRateAssignments().keySet();
+		Set<String> set = transitions.get(transition).getRateAssignments()
+				.keySet();
 		String[] array = new String[set.size()];
 		int i = 0;
 		for (String s : set) {
@@ -754,7 +762,8 @@ public class LhpnFile {
 	}
 
 	public String[] getIntVars(String transition) {
-		Set<String> set = transitions.get(transition).getIntAssignments().keySet();
+		Set<String> set = transitions.get(transition).getIntAssignments()
+				.keySet();
 		String[] array = new String[set.size()];
 		int i = 0;
 		for (String s : set) {
@@ -766,11 +775,9 @@ public class LhpnFile {
 	public String getInitialVal(String var) {
 		if (isBoolean(var)) {
 			return booleans.get(var).getInitValue();
-		}
-		else if (isInteger(var)) {
+		} else if (isInteger(var)) {
 			return integers.get(var).getInitValue();
-		}
-		else {
+		} else {
 			return continuous.get(var).getInitValue();
 		}
 	}
@@ -778,8 +785,7 @@ public class LhpnFile {
 	public String getInitialRate(String var) {
 		if (isContinuous(var)) {
 			return continuous.get(var).getInitRate();
-		}
-		else
+		} else
 			return null;
 	}
 
@@ -840,16 +846,13 @@ public class LhpnFile {
 		}
 	}
 
-	/*public void renamePlace(String oldName, String newName, Boolean ic) {
-		Place place = new Place(newName, ic);
-		if (oldName != null && places.containsKey(oldName)) {
-			places.put(newName, place);
-			places.remove(oldName);
-		}
-		for (Transition t : transitions.values()) {
-			t.renamePlace(places.get(oldName), places.get(newName));
-		}
-	}*/
+	/*
+	 * public void renamePlace(String oldName, String newName, Boolean ic) {
+	 * Place place = new Place(newName, ic); if (oldName != null &&
+	 * places.containsKey(oldName)) { places.put(newName, place);
+	 * places.remove(oldName); } for (Transition t : transitions.values()) {
+	 * t.renamePlace(places.get(oldName), places.get(newName)); } }
+	 */
 
 	public void renamePlace(String oldName, String newName) {
 		if (oldName != null && places.containsKey(oldName)) {
@@ -858,7 +861,7 @@ public class LhpnFile {
 			places.remove(oldName);
 		}
 	}
-	
+
 	public void renameTransition(String oldName, String newName) {
 		if (oldName != null && transitions.containsKey(oldName)) {
 			transitions.put(newName, transitions.get(oldName));
@@ -866,13 +869,12 @@ public class LhpnFile {
 			transitions.remove(oldName);
 		}
 	}
-	
+
 	public void removeMovement(String from, String to) {
 		if (isTransition(from)) {
 			transitions.get(from).removePostset(places.get(to));
 			places.get(to).removePreset(transitions.get(from));
-		}
-		else {
+		} else {
 			transitions.get(to).removePreset(places.get(from));
 			places.get(from).removePostset(transitions.get(to));
 		}
@@ -921,14 +923,11 @@ public class LhpnFile {
 		}
 		if (name != null && continuous.containsKey(name)) {
 			removeContinuous(name);
-		}
-		else if (name != null && booleans.containsKey(name)) {
+		} else if (name != null && booleans.containsKey(name)) {
 			removeBoolean(name);
-		}
-		else if (name != null && integers.containsKey(name)) {
+		} else if (name != null && integers.containsKey(name)) {
 			removeInteger(name);
-		}
-		else {
+		} else {
 			for (Variable v : variables) {
 				if (v.getName().equals(name)) {
 					variables.remove(v);
@@ -988,8 +987,7 @@ public class LhpnFile {
 	public boolean containsMovement(String name) {
 		if (places.containsKey(name)) {
 			return places.get(name).isConnected();
-		}
-		else {
+		} else {
 			return transitions.get(name).isConnected();
 		}
 	}
@@ -997,8 +995,7 @@ public class LhpnFile {
 	public boolean containsMovement(String from, String to) {
 		if (isTransition(from)) {
 			return transitions.get(from).containsPostset(to);
-		}
-		else {
+		} else {
 			return places.get(from).containsPostset(to);
 		}
 	}
@@ -1059,11 +1056,9 @@ public class LhpnFile {
 				String name = varOrder.getProperty(i.toString());
 				if (initArray[i].equals("1")) {
 					addInput(name, "true");
-				}
-				else if (initArray[i].equals("0")) {
+				} else if (initArray[i].equals("0")) {
 					addInput(name, "false");
-				}
-				else {
+				} else {
 					addInput(name, "unknown");
 				}
 			}
@@ -1071,23 +1066,20 @@ public class LhpnFile {
 				String name = varOrder.getProperty(i.toString());
 				if (initArray[i].equals("1") && name != null) {
 					addOutput(name, "true");
-				}
-				else if (initArray[i].equals("0") && name != null) {
+				} else if (initArray[i].equals("0") && name != null) {
 					addOutput(name, "false");
-				}
-				else {
+				} else {
 					addOutput(name, "unknown");
 				}
 			}
-		}
-		else {
+		} else {
 			if (varOrder.size() != 0) {
-				System.out.println("WARNING: Boolean variables have not been initialized.");
+				System.out
+						.println("WARNING: Boolean variables have not been initialized.");
 				for (i = 0; i < varOrder.size(); i++) {
 					if (i < inLength) {
 						addInput(varOrder.getProperty(i.toString()), "unknown");
-					}
-					else {
+					} else {
 						addOutput(varOrder.getProperty(i.toString()), "unknown");
 					}
 				}
@@ -1117,8 +1109,7 @@ public class LhpnFile {
 					if (!places.containsKey(tempPlace[1])) {
 						addPlace(tempPlace[1], false);
 					}
-				}
-				else {
+				} else {
 					if (!places.containsKey(tempPlace[0])) {
 						addPlace(tempPlace[0], false);
 					}
@@ -1144,10 +1135,12 @@ public class LhpnFile {
 			Matcher initLineMatcher = initLinePattern.matcher(data.toString());
 			if (initLineMatcher.find()) {
 				Pattern initPattern = Pattern.compile(INIT_COND);
-				Matcher initMatcher = initPattern.matcher(initLineMatcher.group(1));
+				Matcher initMatcher = initPattern.matcher(initLineMatcher
+						.group(1));
 				while (initMatcher.find()) {
 					if (continuous.containsKey(initMatcher.group(1))) {
-						initValue.put(initMatcher.group(1), initMatcher.group(2));
+						initValue.put(initMatcher.group(1), initMatcher
+								.group(2));
 					}
 				}
 			}
@@ -1155,7 +1148,8 @@ public class LhpnFile {
 			Matcher rateLineMatcher = rateLinePattern.matcher(data.toString());
 			if (rateLineMatcher.find()) {
 				Pattern ratePattern = Pattern.compile(INIT_COND);
-				Matcher rateMatcher = ratePattern.matcher(rateLineMatcher.group(1));
+				Matcher rateMatcher = ratePattern.matcher(rateLineMatcher
+						.group(1));
 				while (rateMatcher.find()) {
 					initRate.put(rateMatcher.group(1), rateMatcher.group(2));
 				}
@@ -1163,18 +1157,26 @@ public class LhpnFile {
 			for (String s : continuous.keySet()) {
 				if (initValue.containsKey(s)) {
 					initCond.put("value", initValue.get(s));
-				}
-				else {
-					if (continuous.get(s).getInitValue() != null)	// Added this condition for mergeLPN methods sake. SB
+				} else {
+					if (continuous.get(s).getInitValue() != null) // Added this
+																	// condition
+																	// for
+																	// mergeLPN
+																	// methods
+																	// sake. SB
 						initCond.put("value", continuous.get(s).getInitValue());
 					else
 						initCond.put("value", "[-inf,inf]");
 				}
 				if (initRate.containsKey(s)) {
 					initCond.put("rate", initRate.get(s));
-				}
-				else {
-					if (continuous.get(s).getInitRate() != null)	// Added this condition for mergeLPN methods sake. SB
+				} else {
+					if (continuous.get(s).getInitRate() != null) // Added this
+																	// condition
+																	// for
+																	// mergeLPN
+																	// methods
+																	// sake. SB
 						initCond.put("rate", continuous.get(s).getInitRate());
 					else
 						initCond.put("rate", "[-inf,inf]");
@@ -1201,19 +1203,24 @@ public class LhpnFile {
 			Matcher initLineMatcher = initLinePattern.matcher(data.toString());
 			if (initLineMatcher.find()) {
 				Pattern initPattern = Pattern.compile(INIT_COND);
-				Matcher initMatcher = initPattern.matcher(initLineMatcher.group(1));
+				Matcher initMatcher = initPattern.matcher(initLineMatcher
+						.group(1));
 				while (initMatcher.find()) {
 					if (integers.containsKey(initMatcher.group(1))) {
-						initValue.put(initMatcher.group(1), initMatcher.group(2));
+						initValue.put(initMatcher.group(1), initMatcher
+								.group(2));
 					}
 				}
 			}
 			for (String s : integers.keySet()) {
 				if (initValue.get(s) != null) {
 					initCond = initValue.get(s).toString();
-				}
-				else {
-					if (integers.get(s).getInitValue() != null)	// Added this condition for mergeLPN methods sake. SB
+				} else {
+					if (integers.get(s).getInitValue() != null) // Added this
+																// condition for
+																// mergeLPN
+																// methods sake.
+																// SB
 						initCond = integers.get(s).getInitValue();
 					else
 						initCond = "[-inf,inf]";
@@ -1249,25 +1256,31 @@ public class LhpnFile {
 		}
 	}
 
-	private void parseEnabling(StringBuffer data) {
+	private boolean parseEnabling(StringBuffer data) {
+		boolean error = true;
 		Pattern linePattern = Pattern.compile(ENABLING_LINE);
 		Matcher lineMatcher = linePattern.matcher(data.toString());
 		if (lineMatcher.find()) {
 			Pattern enabPattern = Pattern.compile(ENABLING);
 			Matcher enabMatcher = enabPattern.matcher(lineMatcher.group(1));
 			while (enabMatcher.find()) {
-				transitions.get(enabMatcher.group(1)).addEnabling(enabMatcher.group(2));
+				if (transitions.get(enabMatcher.group(1)).addEnabling(
+						enabMatcher.group(2)) == false) {
+					error = false;
+				}
 			}
 		}
+		return error;
 	}
 
-	private void parseAssign(StringBuffer data) {
+	private boolean parseAssign(StringBuffer data, boolean error) {
 		Pattern linePattern = Pattern.compile(ASSIGNMENT_LINE);
 		Matcher lineMatcher = linePattern.matcher(data.toString());
 		Pattern rangePattern = Pattern.compile(RANGE);
 		if (lineMatcher.find()) {
 			Pattern assignPattern = Pattern.compile(ASSIGNMENT);
-			Matcher assignMatcher = assignPattern.matcher(lineMatcher.group(1).replace("\\s", ""));
+			Matcher assignMatcher = assignPattern.matcher(lineMatcher.group(1)
+					.replace("\\s", ""));
 			Pattern varPattern = Pattern.compile(ASSIGN_VAR);
 			Matcher varMatcher;
 			while (assignMatcher.find()) {
@@ -1279,45 +1292,61 @@ public class LhpnFile {
 					if (isInteger(variable)) {
 						Matcher rangeMatcher = rangePattern.matcher(assignment);
 						if (rangeMatcher.find()) {
-							if (rangeMatcher.group(1).matches(INTEGER) && rangeMatcher.group(2).matches(INTEGER)) {
-								if (Integer.parseInt(rangeMatcher.group(1)) == Integer.parseInt(rangeMatcher.group(2))) {
-									transition.addIntAssign(variable, rangeMatcher.group(1));
+							if (rangeMatcher.group(1).matches(INTEGER)
+									&& rangeMatcher.group(2).matches(INTEGER)) {
+								if (Integer.parseInt(rangeMatcher.group(1)) == Integer
+										.parseInt(rangeMatcher.group(2))) {
+									transition.addIntAssign(variable,
+											rangeMatcher.group(1));
 								}
 							}
-							transition.addIntAssign(variable, "uniform(" + rangeMatcher.group(1)
-									+ "," + rangeMatcher.group(2) + ")");
+							if (transition.addIntAssign(variable, "uniform("
+									+ rangeMatcher.group(1) + ","
+									+ rangeMatcher.group(2) + ")") == false) {
+								error = false;
+							}
+						} else {
+							if (transition.addIntAssign(variable, assignment) == false) {
+								error = false;
+							}
 						}
-						else {
-							transition.addIntAssign(variable, assignment);
-						}
-					}
-					else {
+					} else {
 						Matcher rangeMatcher = rangePattern.matcher(assignment);
 						if (rangeMatcher.find()) {
-							if (rangeMatcher.group(1).matches(INTEGER) && rangeMatcher.group(2).matches(INTEGER)) {
-								if (Integer.parseInt(rangeMatcher.group(1)) == Integer.parseInt(rangeMatcher.group(2))) {
-									transition.addContAssign(variable, rangeMatcher.group(1));
+							if (rangeMatcher.group(1).matches(INTEGER)
+									&& rangeMatcher.group(2).matches(INTEGER)) {
+								if (Integer.parseInt(rangeMatcher.group(1)) == Integer
+										.parseInt(rangeMatcher.group(2))) {
+									if (transition.addContAssign(variable,
+											rangeMatcher.group(1)) == false) {
+										error = false;
+									}
 								}
 							}
-							transition.addContAssign(variable, "uniform(" + rangeMatcher.group(1)
-									+ "," + rangeMatcher.group(2) + ")");
-						}
-						else {
-							transition.addContAssign(variable, assignment);
+							if (transition.addContAssign(variable, "uniform("
+									+ rangeMatcher.group(1) + ","
+									+ rangeMatcher.group(2) + ")") == false) {
+								error = false;
+							}
+						} else if (transition.addContAssign(variable,
+								assignment) == false) {
+							error = false;
 						}
 					}
 				}
 			}
 		}
+		return error;
 	}
 
-	private void parseRateAssign(StringBuffer data) {
+	private boolean parseRateAssign(StringBuffer data, boolean error) {
 		Pattern linePattern = Pattern.compile(RATE_ASSIGNMENT_LINE);
 		Matcher lineMatcher = linePattern.matcher(data.toString());
 		Pattern rangePattern = Pattern.compile(RANGE);
 		if (lineMatcher.find()) {
 			Pattern assignPattern = Pattern.compile(ASSIGNMENT);
-			Matcher assignMatcher = assignPattern.matcher(lineMatcher.group(1).replace("\\s", ""));
+			Matcher assignMatcher = assignPattern.matcher(lineMatcher.group(1)
+					.replace("\\s", ""));
 			Pattern varPattern = Pattern.compile(ASSIGN_VAR);
 			Matcher varMatcher;
 			while (assignMatcher.find()) {
@@ -1328,87 +1357,110 @@ public class LhpnFile {
 					String assignment = varMatcher.group(2);
 					Matcher rangeMatcher = rangePattern.matcher(assignment);
 					if (rangeMatcher.find()) {
-						if (rangeMatcher.group(1).matches(INTEGER) && rangeMatcher.group(2).matches(INTEGER)) {
-							if (Integer.parseInt(rangeMatcher.group(1)) == Integer.parseInt(rangeMatcher.group(2))) {
-								transition.addRateAssign(variable, rangeMatcher.group(1));
+						if (rangeMatcher.group(1).matches(INTEGER)
+								&& rangeMatcher.group(2).matches(INTEGER)) {
+							if (Integer.parseInt(rangeMatcher.group(1)) == Integer
+									.parseInt(rangeMatcher.group(2))) {
+								if (transition.addRateAssign(variable,
+										rangeMatcher.group(1)) == false) {
+									error = false;
+								}
 							}
 						}
-						transition.addRateAssign(variable, "uniform(" + rangeMatcher.group(1) + ","
-								+ rangeMatcher.group(2) + ")");
-					}
-					else {
-						transition.addRateAssign(variable, assignment);
+						if (transition.addRateAssign(variable, "uniform("
+								+ rangeMatcher.group(1) + ","
+								+ rangeMatcher.group(2) + ")") == false) {
+							error = false;
+						}
+					} else if (transition.addRateAssign(variable, assignment) == false) {
+						error = false;
 					}
 				}
 			}
 		}
+		return error;
 	}
 
-	private void parseDelayAssign(StringBuffer data) {
+	private boolean parseDelayAssign(StringBuffer data, boolean error) {
 		Pattern linePattern = Pattern.compile(DELAY_LINE);
 		Matcher lineMatcher = linePattern.matcher(data.toString());
 		if (lineMatcher.find()) {
 			Pattern delayPattern = Pattern.compile(DELAY);
-			Matcher delayMatcher = delayPattern.matcher(lineMatcher.group(1).replace("\\s", ""));
+			Matcher delayMatcher = delayPattern.matcher(lineMatcher.group(1)
+					.replace("\\s", ""));
 			while (delayMatcher.find()) {
 				Transition transition = transitions.get(delayMatcher.group(1));
 				Pattern rangePattern = Pattern.compile(RANGE);
-				Matcher rangeMatcher = rangePattern.matcher(delayMatcher.group(2));
+				Matcher rangeMatcher = rangePattern.matcher(delayMatcher
+						.group(2));
 				String delay;
 				if (rangeMatcher.find()) {
 					if (rangeMatcher.group(1).equals(rangeMatcher.group(2))) {
-						delay = rangeMatcher.group(1); 
+						delay = rangeMatcher.group(1);
 					} else {
-						delay = "uniform(" + rangeMatcher.group(1) + "," + rangeMatcher.group(2) + ")";
+						delay = "uniform(" + rangeMatcher.group(1) + ","
+								+ rangeMatcher.group(2) + ")";
 					}
-				}
-				else {
+				} else {
 					delay = delayMatcher.group(2);
 					if (delay.startsWith("[") && delay.endsWith("]")) {
-						delay = delay.substring(1,delay.length()-1);
+						delay = delay.substring(1, delay.length() - 1);
 					}
 				}
-				transition.addDelay(delay);
+				if (transition.addDelay(delay) == false) {
+					error = false;
+				}
 			}
 		}
+		return error;
 	}
 
-	private void parsePriorityAssign(StringBuffer data) {
+	private boolean parsePriorityAssign(StringBuffer data, boolean error) {
 		Pattern linePattern = Pattern.compile(PRIORITY_LINE);
 		Matcher lineMatcher = linePattern.matcher(data.toString());
 		if (lineMatcher.find()) {
 			Pattern priorityPattern = Pattern.compile(PRIORITY);
-			Matcher priorityMatcher = priorityPattern.matcher(lineMatcher.group(1).replace("\\s", ""));
+			Matcher priorityMatcher = priorityPattern.matcher(lineMatcher
+					.group(1).replace("\\s", ""));
 			while (priorityMatcher.find()) {
-				Transition transition = transitions.get(priorityMatcher.group(1));
+				Transition transition = transitions.get(priorityMatcher
+						.group(1));
 				String priority = priorityMatcher.group(2);
-				transition.addPriority(priority);
+				if (transition.addPriority(priority) == false) {
+					error = false;
+				}
 			}
 		}
+		return error;
 	}
 
-	private void parseBooleanAssign(StringBuffer data) {
+	private boolean parseBooleanAssign(StringBuffer data, boolean error) {
 		Pattern linePattern = Pattern.compile(BOOLEAN_LINE);
 		Matcher lineMatcher = linePattern.matcher(data.toString());
 		if (lineMatcher.find()) {
 			Pattern transPattern = Pattern.compile(BOOLEAN_TRANS);
-			Matcher transMatcher = transPattern.matcher(lineMatcher.group(1).replace("\\s", ""));
+			Matcher transMatcher = transPattern.matcher(lineMatcher.group(1)
+					.replace("\\s", ""));
 			Pattern assignPattern = Pattern.compile(BOOLEAN_ASSIGN);
 			while (transMatcher.find()) {
 				Transition transition = transitions.get(transMatcher.group(1));
-				Matcher assignMatcher = assignPattern.matcher(transMatcher.group(2));
+				Matcher assignMatcher = assignPattern.matcher(transMatcher
+						.group(2));
 				for (int i = 0; i < booleans.size(); i++) {
 					while (assignMatcher.find()) {
 						String variable = assignMatcher.group(1);
 						String assignment = assignMatcher.group(2);
-						transition.addBoolAssign(variable, assignment);
+						if (transition.addBoolAssign(variable, assignment) == false) {
+							error = false;
+						}
 					}
 				}
 			}
 		}
+		return error;
 	}
 
-	private void parseTransitionRate(StringBuffer data) {
+	private boolean parseTransitionRate(StringBuffer data, boolean error) {
 		Pattern linePattern = Pattern.compile(TRANS_RATE_LINE);
 		Matcher lineMatcher = linePattern.matcher(data.toString());
 		if (lineMatcher.find()) {
@@ -1416,9 +1468,13 @@ public class LhpnFile {
 			Matcher delayMatcher = delayPattern.matcher(lineMatcher.group(1));
 			while (delayMatcher.find()) {
 				Transition transition = transitions.get(delayMatcher.group(1));
-				transition.addDelay("exponential(" + delayMatcher.group(2) + ")");
+				if (transition.addDelay("exponential(" + delayMatcher.group(2)
+						+ ")") == false) {
+					error = false;
+				}
 			}
 		}
+		return error;
 	}
 
 	private void parseFailTransitions(StringBuffer data) {
@@ -1444,7 +1500,7 @@ public class LhpnFile {
 	private static final String TRANSITION = "\\.dummy([^\\n]*?)\\n";
 
 	private static final String WORD = "(\\S+)";
-	
+
 	private static final String INTEGER = "([-\\d]+)";
 
 	private static final String PLACE = "\\n([\\w_\\+-/&&[^\\.#]]+ [\\w_\\+-/]+)";
