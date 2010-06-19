@@ -1028,14 +1028,14 @@ public class Abstraction extends LhpnFile {
 	}
 
 	private boolean comparePostset(Transition t1, Transition t2) {
-		Place[] pre1 = t1.getPostset();
-		Place[] pre2 = t2.getPostset();
-		if (pre1.length != pre2.length || pre1.length == 0) {
+		Place[] post1 = t1.getPostset();
+		Place[] post2 = t2.getPostset();
+		if (post1.length != post1.length || post1.length == 0) {
 			return false;
 		}
-		for (Place p1 : pre1) {
+		for (Place p1 : post1) {
 			boolean contains = false;
-			for (Place p2 : pre2) {
+			for (Place p2 : post2) {
 				if (p1.equals(p2)) {
 					contains = true;
 					break;
@@ -2864,7 +2864,12 @@ public class Abstraction extends LhpnFile {
 				du1.setNodeValues(e1, du1, "*", 'a');
 				du2.setNodeValues(e2, du2, "*", 'a');
 				du.setNodeValues(du1, du2, "+", 'a');
-				delay.setNodeValues(dl, du, "uniform", 'a');
+				if (!dl.isEqual(du)) {
+					delay.setNodeValues(dl, du, "uniform", 'a');
+				}
+				else {
+					delay = dl;
+				}
 				tArray[0].addDelay(delay.toString());
 				enabTree.setNodeValues(enab1, enab2, "||", 'l');
 				tArray[0].addEnabling(enabTree.toString());

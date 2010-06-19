@@ -77,43 +77,51 @@ public class Transition {
 		if (newEnab.equals("")) {
 			retVal = true;
 		}
-		enabling = newEnab;
 		ExprTree expr = new ExprTree(lhpn);
 		if (newEnab != null && !newEnab.equals("")) {
 			expr.token = expr.intexpr_gettok(newEnab);
 			retVal = expr.intexpr_L(newEnab);
-			enablingTree = expr;
+			if (retVal) {
+				enablingTree = expr;
+				enabling = newEnab;
+			}
 		}
 		return retVal;
 	}
 
 	public boolean addIntAssign(String variable, String assignment) {
 		boolean retVal;
-		intAssignments.put(variable, assignment);
 		ExprTree expr = new ExprTree(lhpn);
 		expr.token = expr.intexpr_gettok(assignment);
 		retVal = expr.intexpr_L(assignment);
-		intAssignTrees.put(variable, expr);
+		if (retVal) {
+			intAssignTrees.put(variable, expr);
+			intAssignments.put(variable, assignment);
+		}
 		return retVal;
 	}
 
 	public boolean addContAssign(String variable, String assignment) {
 		boolean retVal;
-		contAssignments.put(variable, assignment);
 		ExprTree expr = new ExprTree(lhpn);
 		expr.token = expr.intexpr_gettok(assignment);
 		retVal = expr.intexpr_L(assignment);
-		contAssignTrees.put(variable, expr);
+		if (retVal) {
+			contAssignTrees.put(variable, expr);
+			contAssignments.put(variable, assignment);
+		}
 		return retVal;
 	}
 	
 	public boolean addRateAssign(String variable, String assignment) {
 		boolean retVal;
-		rateAssignments.put(variable, assignment);
 		ExprTree expr = new ExprTree(lhpn);
 		expr.token = expr.intexpr_gettok(assignment);
 		retVal = expr.intexpr_L(assignment);
-		rateAssignTrees.put(variable, expr);
+		if (retVal) {
+			rateAssignTrees.put(variable, expr);
+			rateAssignments.put(variable, assignment);
+		}
 		return retVal;
 	}
 	
@@ -124,11 +132,13 @@ public class Transition {
 			return true;
 		}
 		boolean retVal;
-		this.delay = delay;
 		ExprTree expr = new ExprTree(lhpn);
 		expr.token = expr.intexpr_gettok(delay);
 		retVal = expr.intexpr_L(delay);
-		delayTree = expr;
+		if (retVal) {
+			delayTree = expr;
+			this.delay = delay;
+		}
 		return retVal;
 	}
 	
@@ -139,21 +149,25 @@ public class Transition {
 			return true;
 		}
 		boolean retVal;
-		this.priority = priority;
 		ExprTree expr = new ExprTree(lhpn);
 		expr.token = expr.intexpr_gettok(priority);
 		retVal = expr.intexpr_L(priority);
-		priorityTree = expr;
+		if (retVal) {
+			priorityTree = expr;
+			this.priority = priority;
+		}
 		return retVal;
 	}
 	
 	public boolean addBoolAssign(String variable, String assignment) {
 		boolean retVal;
-		boolAssignments.put(variable, assignment);
 		ExprTree expr = new ExprTree(lhpn);
 		expr.token = expr.intexpr_gettok(assignment);
 		retVal = expr.intexpr_L(assignment);
-		boolAssignTrees.put(variable, expr);
+		if (retVal) {
+			boolAssignTrees.put(variable, expr);
+			boolAssignments.put(variable, assignment);
+		}
 		return retVal;
 	}
 	
